@@ -1,0 +1,7 @@
+<span class="small_font">
+	<nobr>{time} {date}</nobr>
+	{t(post)}:{post}<br>
+	{t(author)}:
+		{if("profile_link" ne "")}{profile_link}{/if}
+		{if("profile_link" eq "")}{user_name}{/if}
+</span>

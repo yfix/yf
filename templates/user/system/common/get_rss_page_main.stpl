@@ -1,0 +1,13 @@
+<table border="1">
+	<tr>
+		<td><strong><a href="{channel_url}" target="_child">{channel_title}</a></strong></td>
+	</tr>
+	<tr>
+		<td>{channel_desc}</td>
+	</tr>
+	<tr>
+		<td height="30">&nbsp;</td>
+	</tr>
+{items}
+</table>
+<br /><br />

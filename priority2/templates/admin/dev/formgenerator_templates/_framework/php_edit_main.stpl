@@ -1,0 +1,48 @@
+	/**
+	* Edit item
+	*/
+	function edit () {
+		$_GET["id"] = intval($_GET["id"]);
+		$A = db()->query_fetch("SELECT * FROM `".db('%table%')."` WHERE `id`=".intval($_GET["id"]));
+		if (!$A) {
+			return _e("No id");
+		}
+		if (!empty($_POST)) {
+			db()->UPDATE("%table%", array(
+%items%
+			), "`id`=".intval($_GET["id"]));
+			return js_redirect("./?object=".$_GET["object"]."&action=show");
+		}
+		$DATA = my_array_merge($A, $_POST);
+
+		$replace = array(
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
+			"back_url"		=> process_url("./?object=".$_GET["object"]),
+			"error"			=> _e(),
+//			"for_edit"		=> 1,
+%items_replace%
+		);
+		return tpl()->parse($_GET["object"]."/edit", $replace);
+	}
+
+	/**
+	* Add item
+	*/
+	function add () {
+		if (!empty($_POST)) {
+			db()->INSERT("%table%", array(
+%items%
+			));
+			return js_redirect("./?object=".$_GET["object"]."&action=show");
+		}
+		$DATA = $_POST;
+
+		$replace = array(
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
+			"back_url"		=> process_url("./?object=".$_GET["object"]),
+			"error"			=> _e(),
+//			"for_edit"		=> 0,
+%items_replace%
+		);
+		return tpl()->parse($_GET["object"]."/edit", $replace);
+	}

@@ -1,0 +1,8 @@
+<form action='{form_action}' %enctype%>
+<table>
+%items%
+	<div class='button_div'>
+		<input type='submit' value='Save'>
+	</div>
+</table>
+</form>

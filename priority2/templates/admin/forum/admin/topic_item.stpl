@@ -1,0 +1,16 @@
+<tr class="style"> 
+	<td class="{td_class}" width="15" height="10"><span class="forum_new_post">{new_msg}</span></td>
+	<td class="{td_class}">
+		<a href="{link}"><span class="big_font">{topic_name}</span></a><br>
+		<span class="small_font">{topic_pages}</span>
+	</td>
+	<td class="{td_class}" align="center">{author}</td>
+	<td class="{td_class}" align="center">{num_posts}</td>
+	<td class="{td_class}" align="center">{num_views}</td>
+	<td class="{td_class}" align="left">{last_post}</td>
+	<td class="{td_class}" align="left">
+		<input type="button" value="{t(edit)}" onclick="window.location.href='{edit_link}'"><br>
+		<input type="button" value="{t(delete)}" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{delete_link}'"><br>
+		(<small><a href="{active_link}" class="change_active">{if("is_active" eq 1)}<b style="color:green;">{t(ACTIVE)}</b>{/if}{if("is_active" eq 0)}<b style="color:red;">{t(INACTIVE)}</b>{/if}</a></small>)
+	</td>
+</tr>

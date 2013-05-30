@@ -1,0 +1,25 @@
+<div>
+<a href="{hourly_latest_link}">{t(Latest Hourly Stats)}</a>&nbsp;
+<a href="{hourly_archive_link}">{t(Archive Hourly Stats)}</a>&nbsp;
+<a href="{exec_log_link}">{t(Raw Exec Log)}</a>&nbsp;
+<br />
+<a href="{max_exec_link}">{t(Max Exec Time Stats)}</a>&nbsp;
+<a href="{image_graphs_link}">{t(Image Graphs)}</a>&nbsp;
+<a href="{user_agents_link}">{t(User Agents Stats)}</a>&nbsp;
+<a href="{referers_link}">{t(Referers Stats)}</a>&nbsp;
+</div>
+
+<br />
+<br />
+<br />
+
+<div align="center">
+	<form action="{move_to_archive_action}" method="post">
+		<b>{t(Move Log Records To Archive older than)}</b>
+		<input type="text" name="days" value="7" size="5"> <b>{t(days)}</b>
+		<input type="submit" name="go" value="{t(Go)}">
+
+		<br />({t(NOTE)}: {t(This can take several minutes or so)}.
+		{t(But will speed up stats display after finish)})
+	</form>
+</div>

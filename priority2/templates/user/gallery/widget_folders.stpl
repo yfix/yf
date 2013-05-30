@@ -1,0 +1,7 @@
+{if("info" ne "")}
+<ul>
+{foreach("info")}
+	<li><a href="./?object=gallery&action=view_folder&id={#.id}">{#.title}</a>
+{/foreach}
+</ul>
+{/if}

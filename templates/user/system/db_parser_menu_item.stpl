@@ -1,0 +1,1 @@
+<tr><td><a href="{link}" {confirm} style="text-transform:capitalize">{name}</a></td></tr>

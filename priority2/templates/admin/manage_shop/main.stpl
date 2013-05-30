@@ -1,0 +1,30 @@
+<div align="center">
+<br />
+<br />
+<table >
+	<tr>
+	<td><a href="{products_url}">{t(Manage Products)}</a></td>
+	<td><a href="{orders_url}">{t(Manage Orders)}</a></td>
+	<!-- <td><a href="{attributes_url}">{t(Manage Attributes)}</a></td> -->
+	<td><a href="{categories_url}">{t(Manage Categories)}</a></td>
+	<td><a href="{manufacturer_url}">{t(Manage Manufacturer)}</a></td>
+	<td><a href="{reports_url}">{t(Reports)}</a></td>
+	<td><a href="{settings_url}">{t(Settings)}</a></td>
+	
+	</tr>
+</table>
+<br />
+<br />
+<table class="sortable_wrapper">
+	<thead>
+		<th colspan = 2>{t(Overview)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+	<br />
+	
+
+</div>

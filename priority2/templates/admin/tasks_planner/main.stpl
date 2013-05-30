@@ -1,0 +1,65 @@
+<div id='description'>The task manager contains all your scheduled tasks.<br />
+	Please note that as these tasks are run when the board is accessed, the next 
+	run time is to be used as a guide only and depends on the traffic your board 
+	gets.
+</div>
+<br />
+<h3>Your scheduled tasks</h3>
+<br />
+
+<script type="text/javascript">
+<!--
+function toggleview(id) {
+	if (!id) return;
+	if (itm = document.getElementById(id)) {
+		if (itm.style.display == "none") {
+			my_show_div(itm);
+		} else {
+			my_hide_div(itm);
+		}
+	}
+}
+function my_hide_div(itm) {
+	if (!itm) return;
+	itm.style.display = "none";
+}
+function my_show_div(itm) {
+	if (!itm) return;
+	itm.style.display = "";
+}
+-->
+</script>
+
+<table align="center">
+	<colgroup align="center">
+		<col width='40%' align="left" />
+		<col width='1%' />
+		<col width='15%' />
+		<col width='2%' />
+		<col width='2%' />
+		<col width='2%' />
+		<col width='2%' />
+		<col width='5%' />
+	</colgroup>
+	<thead>
+		<th>{t(Title)}</th>
+		<th>{t(Next Run)}</th>
+		<th>{t(Next Run)}</th>
+		<th>{t(Min)}</th>
+		<th>{t(Hour)}</th>
+		<th>{t(MDay)}</th>
+		<th>{t(WDay)}</th>
+		<th>{t(Actions)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+<br />
+<div align="center">
+	<input type="button" value="{t(Add new task)}" onclick="window.location.href='{add_link}'">
+</div>
+
+{if("pages" ne "")}<div align="center">{pages}</div><br />{/if}
+<br />
+<div align="center"><a href="{view_logs_link}">{t(View task logs)}</a></div>

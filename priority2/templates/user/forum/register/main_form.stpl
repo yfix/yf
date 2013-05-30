@@ -1,0 +1,105 @@
+<form action="{form_action}" method="post" name="REG">
+<div class="borderwrap">
+	<div class="maintitle"><img src="images/forum/nav_m.gif" border='0'  alt='&gt;' width='8' height='8' />&nbsp;{t(Registration Form)}</div>
+	<div class="formsubtitle">Please ensure that you complete all the fields fully, taking particular care over the password fields.</div>
+	<div class="tablepad">
+		<table width="100%">
+			<tr>
+				<td width="50%">
+					<fieldset class="row3">
+					<legend><b>{t(Username)}:</b></legend>
+						<table width="100%">
+							<tr>
+								<td>{t(Enter your Username)} &nbsp;<span>(<a href="#" style="cursor: help; color: #555;" title="Usernames must be between 3 and 32 characters long">?</a>)</span></td>
+							</tr>
+							<tr>
+								<td><input type="text" size="50" maxlength="64" value="" name="login" /></td>
+							</tr>
+						</table>
+					</fieldset><br />
+					
+					<fieldset class="row3">
+					<legend><b>{t(Password)}:</b></legend>
+						<table width="100%">
+							<tr>
+								<td width="1%">{t(Enter your password)} &nbsp;<span>(<a href="javascript:;" style="cursor: help; color: #555;" title="Passwords must be between 3 and 32 characters long">?</a>)</span></td>
+								<td width="100%">{t(Confirm Password)} &nbsp;<span>(<a href="javascript:;" style="cursor: help; color: #555;" title="Please re-enter your password: It must match exactly">?</a>)</span></td>
+							</tr>
+							<tr>
+								<td><input type="password" size="25" maxlength="32" value="" name="pswd" /></td>
+								<td><input type="password" size="25" maxlength="32" value=""  name="pswd2" /></td>
+							</tr>
+						</table>
+					</fieldset><br />
+				
+					<fieldset class="row3">
+					<legend><b>{t(Email Address)}:</b></legend>
+						<table width="100%">
+							<tr>
+								<td width="1%">{t(Enter your Email Address)} &nbsp;<span>(<a href="javascript:;" style="cursor: help; color: #555;" title="Make sure you enter a valid email address">?</a>)</span></td>
+								<td width="100%"></td>
+							</tr>
+							<tr>
+								<td><input type="text" size="25" maxlength="50" value=""  name="email" /></td>
+								<td></td>
+							</tr>
+						</table>
+					</fieldset>
+				</td>
+				<td width="50%" valign="top">
+<div>
+	<b>{t(Optional Information)}</b><br /><br />
+	<table width="100%">
+		<tr>
+			<td>
+				<fieldset>
+				<legend>{t(Receiving Email)}</legend>
+					<div class="desc">Now and again, the administrators and other members might wish to contact you via email through this board.</div><br />
+					<input type="checkbox" name="allow_admin_mail" value="1" class="checkbox" checked="checked" /> Receive email from administrators<br />
+					<input type="checkbox" name="allow_member_mail" value="1" class="checkbox"  /> Receive email from other members
+				</fieldset><br />
+		
+				<fieldset>
+				<legend>{t(Time Zone Settings)}</legend>
+					<div class="desc">You can adjust the default time zone setting below</div><br />
+{time_zone_box}
+					<br /><br />
+					<input type="checkbox" name="dst_status" value="1" class="checkbox"  /> {t(Observing Daylight Saving Time)}?<br />
+				</fieldset>
+			</td>
+		</tr>
+	</table>
+</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+
+{if("captcha_image" ne "")}
+
+	<br />
+	<input type="hidden" name="captcha_hash" value="{captcha_hash}" />
+	<fieldset class="row3">
+	<legend><b>{t(Security Code Confirmation)}</b></legend>
+		<table width="100%">
+			<tr>
+				<td width="1%">
+					{t(Confirm security code)}
+					<div class="desc">{t(Please enter the code shown in the image)}.</div>
+					<input type="text" size="25" maxlength="32" name="captcha_code" />
+				</td>
+				<td align="center">{captcha_image}</td>
+			</tr>
+		</table>
+	</fieldset><br />
+{/if}
+				</td>
+				<td valign="middle" align="center">
+					<div class="desc">I agree to the terms of this registration and wish to proceed.</div><br />
+						<input type="submit" value="{t(Submit my registration)} &gt; &gt;" />
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

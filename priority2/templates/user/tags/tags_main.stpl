@@ -1,0 +1,23 @@
+{if("items" eq "")}
+{if("is_simple" eq "0")}
+	{t(No tags)}
+{/if}
+	{if("show_edit_button" eq "1")}
+		<a href="{edit_url}" onclick="openWin('{edit_url}','400','400');return false;">[{t(Add tags)}]</a>
+	{/if}
+{/if}
+{if("items" ne "")}
+	{if("is_simple" eq "0")}{t(Tags)}:{/if} {items}
+	{if("show_edit_button" eq "1")}
+		<a href="{edit_url}" onclick="openWin('{edit_url}','400','400');return false;">[{t(Edit tags)}]</a>
+	{/if}
+{/if}
+
+{if("is_simple" eq "0")}
+<div id="tag_{div_id}" style="display:none;">
+	<small>
+		<a href="" class="tag_s_url_by_user">{t(Show)} <b class="tag_text"></b> {t(posts by this user)}</a><br />
+		<a href="" class="tag_s_url">{t(Show)} <b class="tag_text"></b> {t(posts by all users)}</a>
+	</small>
+</div>
+{/if}

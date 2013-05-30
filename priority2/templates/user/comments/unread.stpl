@@ -1,0 +1,8 @@
+{if("items" ne "")}
+	
+	{foreach(items)}
+		In {#.object_name} - <a href="./?object={#.object_name}&action={#.action}&id={#.object_id}#cid_{#.id}">{#.text}</a> <br />
+	{/foreach}
+{/if}
+
+{if("pages" ne "")}<div align="center"><br />{t(Pages)}: {pages}<br /></div>{/if}

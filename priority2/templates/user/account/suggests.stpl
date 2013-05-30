@@ -1,0 +1,12 @@
+<h3>{t(Some suggestions regarding your account)}</h3>
+
+<p>{t(There are some simple steps that could promote you in our community and help you to find better
+partners with less time and efforts. Most of them won&#39;t take you more that a few minutes to
+complete)}.</p>
+
+<ul>
+	{foreach("suggests")}
+		<li>{_val}</li>
+	{/foreach}
+	
+</ul>

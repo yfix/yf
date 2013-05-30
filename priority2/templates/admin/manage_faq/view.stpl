@@ -1,0 +1,31 @@
+<h2>{question}</h2>
+
+<div>
+	<div class="column" style="width:60%;">
+		<small>
+	{if("cat_name" ne "")}{t(FAQ Category)}: <a href="{cat_link}">{cat_name}</a><br />{/if}
+	{t(Added on)}: {add_date}
+{if("edit_date" ne "")}, <b>{t(edited)}:</b> {edit_date}{/if}
+			<br />
+{if("status" eq "active")}<span class="positive">{t(Active)}</span>{/if}
+{if("status" ne "active")}<span class="negative">{t(Inactive)}</span>{/if}
+			<a href="{edit_link}">{t(Edit)}</a>&nbsp;
+			<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Delete)}</a>&nbsp;
+		</small>
+	</div>
+{if("social_bookmarks" ne "")}
+	<div class="column" style="width:30%;">
+		<small>{t(Like this page)}? {t(Bookmark it)}:<br /></small>
+		{social_bookmarks}
+	</div>
+{/if}
+</div>
+<br /><br />
+
+<div class="container" style="clear:both;">
+<br />
+<hr />
+	{answer}
+</div>
+<br />
+<div>{comments}</div>

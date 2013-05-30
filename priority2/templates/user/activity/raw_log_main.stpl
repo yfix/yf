@@ -1,0 +1,27 @@
+<h1>{t(Raw activity log)}</h1>
+
+{if("items" ne "")}
+<table align="center">
+	<thead>
+		<th>{t(Date)}</th>
+		<th>{t(Task Name)}</th>
+		<th>{t(Points)}</th>
+	</thead>
+{foreach("items")}
+	<tr class="{#.bg_class}">
+		<td><i>{#.add_date}</i></td>
+		<td align="center"><b>{#.task_name}</b></td>
+		<td align="center"><b>{#.points}</b></td>
+	</tr>
+{/foreach}
+</table>
+{/if}
+
+{if("pages" ne "")}
+	<br /><br />
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}
+{if("items" eq "")}
+	<div align="center">{t(No activity logs yet)}</div>
+{/if}
+

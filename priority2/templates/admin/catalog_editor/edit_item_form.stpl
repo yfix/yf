@@ -1,0 +1,62 @@
+<div align="center">
+	<h3>{t(Categories Editor)}</h3>
+	<h4>
+{if("for_edit" eq 1)}{t(Edit Catalog Item)} {/if}
+{if("for_edit" eq 0)}{t(Add Catalog Item)} {/if}
+{t(for)}  "{catalog_name}"
+	</h4>
+</div>
+
+<table border="0" cellpadding="5" cellspacing="0" width="100%" align="center">
+<form method="post" action="{form_action}">
+	<tr>
+		<td align="right" width="25%"><b>{t(Parent Item)}</b></td>
+		<td>{parent_id_box}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Node Type)}</b></td>
+		<td>{node_type_box}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Item Title)}</b></td>
+		<td><input type="text" name="name" value="{name}" size="30" style="width:100%;"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Description)}</b></td>
+		<td><textarea name="desc" cols="50" rows="3" style="width:100%;">{desc}</textarea></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(URL Keywords)}</b></td>
+		<td><input type="text" name="url" value="{url}" size="30" style="width:100%;"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Item Icon Path)}</b></td>
+		<td><input type="text" name="icon" value="{icon}" size="30" style="width:100%;"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Other Info)}</b></td>
+		<td><textarea name="other_info" cols="50" rows="3" style="width:100%;">{other_info}</textarea></td>
+	</tr>
+	<tr>
+		<td align="right" width="25%"><b>{t(Is Featured)}</b></td>
+		<td>{featured_box}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Display Order)}</b></td>
+		<td><input type="text" name="item_order" value="{order}" size="5"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Active)}</b></td>
+		<td>{active_box}</td>
+	</tr>
+	<tr>
+		<td height="25" colspan="2" align="center">
+			<input type="submit" value="  {t(Save)}  " name="go" />
+		</td>
+	</tr>
+</form>
+</table>
+
+<br /><br />
+
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>

@@ -1,0 +1,134 @@
+<h2>{t(Congratulations)}! <br /> {t(Your order has been processed)}.</h2>
+
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="cart">
+<form method="post" action="{form_action}">
+
+<h3>{t(Order No)}: {order_no}</h3>
+
+<fieldset>
+	<legend>{t(Ordered products)}</legend>
+{if("products" ne "")}
+<table width="100%">
+	<col><col width="60%"><col>
+	<th>{t(Quantity)}</th>
+	<th>{t(Name)}</th>
+	<th>{t(Price)}</th>
+	<tbody>
+{foreach("products")}
+	<tr>
+		<td>{#.quantity}</td>
+		<td>
+			<a href="{#.details_link}">{#.name}</a>
+	{if("#.dynamic_atts" ne "")}<br /><small>{#.dynamic_atts}</small>{/if}
+		</td>
+		<td>{#.price}</td>
+	</tr>
+{/foreach}
+	</tbody>
+</table>
+{/if}
+
+<hr />
+
+{if("products" ne "")}
+<h3>{t(Total)}: {total_price}</h3>
+{/if}
+</fieldset>
+
+<br />
+
+
+<fieldset>
+	<legend>{t(Contact information)}</legend>
+	<p class="first">
+		<label for="first_name">{t(First Name)}</label> : {first_name}
+	</p>
+	<p>
+		<label for="last_name">{t(Last Name)}</label> : {last_name}
+	</p>
+	<p>
+		<label for="email">{t(Email)}</label> : {email}
+	</p>
+	<p>
+		<label for="phone">{t(Phone)}</label> : {phone}
+	</p>
+</fieldset>
+
+<br />
+
+<fieldset>
+	<legend>{t(Payment Information)}</legend>
+	<p class="first">
+		<label for="login">{t(Card Number)}</label> : {card_num}
+	</p>
+	<p>
+		<label for="password">{t(Expiration Date)}</label> : {exp_date}
+	</p>
+</fieldset>
+
+<br />
+
+
+<fieldset>
+	<legend>{t(Billing address)}</legend>
+	<p class="first">
+		<label for="b_first_name">{t(First Name)}</label> : {b_first_name}
+	</p>
+	<p>
+		<label for="b_last_name">{t(Last Name)}</label> : {b_last_name}
+	</p>
+	<p>
+		<label for="b_address">{t(Address)}</label> : {b_address}
+	</p>
+	<p>
+		<label for="b_address2">{t(Address, line 2)}</label> : {b_address2}
+	</p>
+	<p>
+		<label for="b_city">{t(City)}</label> : {b_city}
+	</p>
+	<p>
+		<label for="b_state">{t(State)}</label> : {b_state}
+	</p>
+	<p>
+		<label for="b_zip_code">{t(Zip code)}</label> : {b_zip_code}
+	</p>
+</fieldset>
+
+<br />
+
+
+<fieldset>
+	<legend>{t(Shipping address)}</legend>
+	<p class="first">
+		<label for="s_first_name">{t(First Name)}</label> : {s_first_name}
+	</p>
+	<p>
+		<label for="s_last_name">{t(Last Name)}</label> : {s_last_name}
+	</p>
+	<p>
+		<label for="s_address">{t(Address)}</label> : {s_address}
+	</p>
+	<p>
+		<label for="s_address2">{t(Address, line 2)}</label> : {s_address2}
+	</p>
+	<p>
+		<label for="s_city">{t(City)}</label> : {s_city}
+	</p>
+	<p>
+		<label for="s_state">{t(State)}</label> : {s_state}
+	</p>
+	<p>
+		<label for="s_zip_code">{t(Zip code)}</label> : {s_zip_code}
+	</p>
+</fieldset>
+
+
+	<div class="button_div">
+		<a href="{back_link}" title="{t(Back)}">{t(Back to Shop)}</a>
+	</div>
+</form>
+</div>

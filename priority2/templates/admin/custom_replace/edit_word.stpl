@@ -1,0 +1,33 @@
+<h2>{if("for_edit" eq 1)}{t(Edit)}{/if}{if("for_edit" eq 0)}{t(Add)}{/if} {t(Custom Replace Word)}</h2>
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="key">{t(Word Key)}</label>
+		<input type="text" id="key" name="key" value="{key}" size="40">
+	</p>
+	<p>
+		<label for="value">{t(Word Value)}</label>
+		<textarea id="value" name="value" cols="50" rows="10" width="100%">{value}</textarea>
+	</p>
+	<p>
+		<label for="desc">{t(Word Description)}</label>
+		<textarea id="desc" name="desc" cols="50" rows="3">{desc}</textarea>
+	</p>
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		{active_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Save)}  " name="go" />
+	</div>
+</form>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_link}">{t(Back To Words List)}</a></div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>!!!TODO: DESCRIPTION HERE !!!</p>
+</div>

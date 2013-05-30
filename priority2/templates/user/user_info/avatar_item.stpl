@@ -1,0 +1,11 @@
+	<p>
+		<label>{t(Current Avatar)}</label>
+{user_avatar}
+{if("avatar_exists" eq 1)}<a href="{del_avatar_url}" class="actionlink">{t(Delete avatar)}</a>&nbsp;&nbsp;&nbsp;<a href="./?object=faq&action=view&id=17" class="actionlink" target="_new">{t(Can not change pic)}?</a>{/if}
+	</p>
+	<p>
+		<label>{t(New Avatar)}<br />
+			<small>{t('Up to %avatarmax bytes',%avatarmax='{avatar_max_file_size}')}</small>
+		</label>
+		<input type="file" name="avatar" />  {tip('user_info.avatar')}
+	</p>

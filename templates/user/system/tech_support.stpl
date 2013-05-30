@@ -1,0 +1,1 @@
+<a href="mailto:{admin_email}" class="bottom" onMouseOver="change_status(this, true); return true;" onMouseOut="change_status(this, false); return true;">{link_text}</a>

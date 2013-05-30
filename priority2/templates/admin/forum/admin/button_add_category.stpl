@@ -1,0 +1,1 @@
+<input type="button" value="{t(add_category)}" onclick="window.location.href='./?object=forum&action=add_category'">

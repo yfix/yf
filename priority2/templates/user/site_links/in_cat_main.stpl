@@ -1,0 +1,14 @@
+<h1 class="header">Links: {cat_name}</h1>
+
+<p align="center"><a href="{links_main_url}">Back to Link Category Index</a></p>
+
+<table border="0" cellpadding="3" cellspacing="0" align="center" width="100%">
+{items}
+</table>
+
+<table border="0" cellpadding="2" cellspacing="1" align="center" width="100%">
+	<tr><td>{bottom}</td></tr>
+</table>
+
+<p align="center">[ <a href="{add_link_url}">Add link</a> ]</p>
+<p align="center"><a href="{links_main_url}">Back to Link Category Index</a></p>

@@ -1,0 +1,16 @@
+<h2>Add new theme {if("location" ne "")}to "{location}"{/if}</h2>
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first"> 
+		<label for="theme_name">{t(Theme name)}</label>
+		<input type="text" id="theme_name" name="theme_name" value="">
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+</form>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

@@ -1,0 +1,64 @@
+<h1>{t(View answers for help ticket)} ({total})</h1>
+
+<h2>{t(Ticket Details)}</h2>
+
+<div class="editform">
+	<p>
+		<label>{t(Ticket ID)}</label>
+		<b>{ticket_id}</b>
+	</p>
+	<p>
+		<label>{t(Subject)}</label>
+		{ticket_subject}
+	</p>
+	<p>
+		<label>{t(Message)}</label>
+		{ticket_message}
+	</p>
+	<p>
+		<label>{t(Category)}</label>
+		{ticket_category}
+	</p>
+	<p>
+		<label>{t(Opened Date)}</label>
+		{ticket_opened_date}
+	</p>
+	<p>
+		<label>{t(Priority)}</label>
+		<b>{ticket_priority}</b>
+	</p>
+	<p>
+		<label>{t(Status)}</label>
+		<b>{ticket_status}</b>
+	</p>
+{if("ticket_closed_date" ne "")}
+	<p>
+		<label>{t(Closed Date)}</label>
+		{ticket_closed_date}
+	</p>
+{/if}
+{if("ticket_urls" ne "")}
+	<p>
+		<label>{t(Related URLs)}</label>
+		{ticket_urls}
+	</p>
+{/if}
+{if("close_link" ne "")}
+<form method="post" action="{close_link}" id="close_ticket_form">
+	<p class="full_width">
+		<input type="hidden" name="go" value="">
+		<a href="javascript:;" class="actionlink" onclick="if (confirm ('{t(Are you sure?)}')) document.getElementById('close_ticket_form').submit();" title="{t(Close this ticket)}">{t(Close this ticket)}</a>
+	</p>
+</form>
+{/if}
+{if("reopen_link" ne "")}
+<form method="post" action="{reopen_link}" id="reopen_ticket_form">
+	<p class="full_width">
+		<input type="hidden" name="go" value="">
+		<a href="javascript:;" class="actionlink" onclick="if (confirm ('{t(Are you sure?)}')) document.getElementById('reopen_ticket_form').submit();" title="{t(Re-Open this ticket)}">{t(Re-Open this ticket)}</a>
+	</p>
+</form>
+{/if}
+</div>
+
+{answers}

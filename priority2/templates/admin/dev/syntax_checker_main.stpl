@@ -1,0 +1,25 @@
+<div align="center">
+	<h2>{t(Syntax checker)}</h2>
+	<p>{t(Checks PHP syntax in framework files &#40classes, modules, admin modules&#41)}</p>
+</div>
+<br />
+
+	<p class="positive">{t(PHP syntax checked successfully)}</p>
+	<p>{t('%numfiles files checked',%numfiles='{num_files}')}</p>
+	{if("num_errors" ne "")}
+		<p class="negative">{t('%numerrors syntax errors found',%numerrors='{num_errors}')}</p>
+	{/if}
+	{if("num_errors" eq "")}
+		<p>{t(No errors detected)}</p>
+	{/if}
+	<p>{t('Syntax check time %exectime seconds', %exectime='{exec_time}')}</p>
+<br />
+
+{if("errors_items" ne "")}
+	{errors_items}
+<br /><br />
+<p><span class="negative">{t(Note)}:</span>
+{t(Syntax checker can find only first fatal error in a file. Recheck syntax after correct error)}</p>
+{/if}
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

@@ -1,0 +1,26 @@
+<h3>{t(Activity actions list)}</h3>
+
+
+{if("items" ne "")}
+<table align="center">
+	<thead>
+		<th>{t(Name)}</th>
+		<th>{t(Description)}</th>
+		<th>{t(Points gained)}</th>
+		<th>{t(Minimum characters)}</th>
+	</thead>
+{foreach("items")}
+	<tr class="{items.bg_class}">
+		<td align="left"><b>{#.name}</b></td>
+		<td align="left"><small>{#.desc}</small></td>
+		<td align="center">{#.points}</td>
+		<td align="center">{#.min_value}</td>
+	</tr>
+{/foreach}
+</table>
+{/if}
+{if("items" eq "")}
+	<div align="center">{t(No activity actions yet)}</div>
+{/if}
+
+

@@ -1,0 +1,20 @@
+<h2>{t(Select Payment Method)}</h2>
+
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}" name="checkout_form">
+	<p class="first">
+		<label for="pay_type">{t(Payment Method)}</label>
+		{pay_type_box}
+	</p>
+
+	<div class="button_div">
+		{hidden_fields}
+		<a href="{back_link}" title="{t(Back)}">{t(Back)}</a>
+		<a href="javascript:;" title="{t(Next)}" onclick="document.forms['checkout_form'].submit();" style="float:right;">{t(Next)}</a>
+	</div>
+</form>
+</div>

@@ -1,0 +1,20 @@
+<tr>
+	<td width="80%" align="left">{t(Total Orders)}:</td>
+	<td align="right">{total_order}</td>
+</tr>
+<tr>
+	<td width="80%" align="left">{t(Total Orders Pending)}:</td>
+	<td align="right" {if("summ" ne "")} bgcolor = "#ffcc00" {/if}>{total_order_pending}</td>
+</tr>
+<tr>
+	<td width="80%" align="left">{t(Total Order Sum)}:</td>
+	<td align="right" >{summ}</td>
+</tr>
+<tr>
+	<td width="80%" align="left">{t(Total Shipped Order Sum)}:</td>
+	<td align="right" >{total_sum_shipped}</td>
+</tr>
+<tr>
+	<td width="80%" align="left">{t(Total Products)}:</td>
+	<td align="right">{total_prod}</td>
+</tr>

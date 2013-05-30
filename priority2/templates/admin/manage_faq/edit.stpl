@@ -1,0 +1,54 @@
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}" enctype="multipart/form-data">
+	<p class="first">
+		<label for="cats_box">{t(Category)}</label>
+		{cats_box}
+		{if("edit_cats_link" ne "")}<a href="{edit_cats_link}">{t(Manage Categories)}</a>{/if}
+	</p>
+	<p>
+		<label for="question_text">{t(Question)}</label>
+		<textarea id="question_text" name="question_text" cols="50" rows="5">{question_text}</textarea>
+	</p>
+	<p>
+		<label for="text">{t(Answer)}</label>
+{if("use_editor_code" eq 1)}{answer_text}{/if}
+{if("use_editor_code" ne 1)}
+		<textarea name="answer_text" id="text" cols="50" rows="20">{answer_text}</textarea>
+{/if}
+	</p>
+	<p>
+		<label for="statuses_box">{t(Status)}</label>
+		{statuses_box}
+	</p>
+	<p>
+		<label for="priority">{t(Priority)}</label>
+		<input type="text" id="priority" name="priority" size="5" value="{priority}">
+	</p>
+{if("add_date" ne "")}
+	<p>
+		<label>{t(Add Date)}</label>
+		{add_date}
+	</p>
+{/if}
+{if("edit_date" ne "")}
+	<p>
+		<label>{t(Edit Date)}</label>
+		{edit_date}
+	</p>
+{/if}
+{if("for_edit" eq 1)}
+	<p>
+		<label>{t(Views)}</label>
+		{views}
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(Save)}" />
+	</div>
+</form>
+</div>
+
+<br />
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>

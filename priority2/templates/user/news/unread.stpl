@@ -1,0 +1,8 @@
+{if("items" ne "")}
+	
+	{foreach(items)}
+		<a href="./?object=news&action=full_news&id={#.id}">{#.title}</a><br />
+	{/foreach}
+{/if}
+
+{if("pages" ne "")}<div align="center"><br />{t(Pages)}: {pages}<br /></div>{/if}

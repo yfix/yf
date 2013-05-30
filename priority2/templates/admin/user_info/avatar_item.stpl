@@ -1,0 +1,7 @@
+		<p class="full_width">
+			<br />{image}
+		</p>
+		<p>
+			<label for="">{t(Avatar)}</label>
+			<input type="file" name="avatar" />
+		</p>

@@ -1,0 +1,1 @@
+{t(Handshake request to)} <b>{receiver_name}</b> {t(send)}. <a href="./?object=friends&action=all_handshake_request">Manage handshake</a>  

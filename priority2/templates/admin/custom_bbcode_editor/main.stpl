@@ -1,0 +1,37 @@
+<h3>{t(Total)} ({total})</h3>
+
+<div>
+	<input type="button" onclick="window.location.href='{add_link}'" value="{t(ADD)}">
+</div>
+<br /><br />
+
+{if("items" ne "")}
+<table align="center">
+<form action='{form_action}' method='post' name='admin_form'>
+	<thead>
+		<th>#</th>
+		<th>{t(Title)}</th>
+		<th>{t(Description)}</th>
+		<th>{t(Tag)}</th>
+		<th>{t(HTML-code)}</th>
+		<th>{t(Example)}</th>
+		<th>{t(Result)}</th>
+		<th>{t(Active)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+<div>
+	<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+	<input type='submit' value='{t(Delete seleted)}'>
+</div>
+
+</form>
+{/if}
+{if("items" eq "")}<div align="center">{t(No custom bb-codes yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}

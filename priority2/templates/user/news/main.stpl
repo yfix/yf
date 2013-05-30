@@ -1,0 +1,25 @@
+<h1>{t(Site News)} ({total})</h1>
+
+<table align="center" width="100%">
+{if("items" ne "")}
+{foreach("items")}
+	<tr class="subtitle">
+		<td align="left">
+			{#.title} ({#.add_date})
+		</td>
+	</tr>
+	<tr>
+		<td align="left">
+			<p  class="text_main">{#.head_text} <a href="{#.full_link}">{t(Read more...)}</a></p>
+			<a href="{#.full_link}" class="actionlink">{t(Read entire article)}</a>&nbsp;
+			<a href="{#.full_link}" class="actionlink">{t(Comments)} ({#.num_comments})</a>&nbsp;
+			<br /><br />
+		</td>
+	</tr>
+{/foreach}
+{/if}
+</table>
+{if("items" eq "")}<div align="center">{t(No active news found)}</div>{/if}
+{if("pages" ne "")}
+	<div align="center">{pages}</div>
+{/if}

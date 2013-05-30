@@ -1,0 +1,6 @@
+<tr class="{bg_class}">
+	<td width='20%' valign='middle'><b>{log_name}</b></td>
+	<td width='10%' valign='middle' align="center">{if("log_time" ne "")}<b>{log_time}</b> {t(sec)}{/if}</td>
+	<td width='10%' valign='middle'>{log_date}</td>
+	<td width='40%' valign='middle'>{log_desc}</td>
+</tr>

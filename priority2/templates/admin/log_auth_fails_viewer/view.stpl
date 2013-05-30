@@ -1,0 +1,39 @@
+<div class="displayform">
+	<p class="first">
+		<label>{t(Login)}</label>
+		{login}
+	</p>
+	<p>
+		<label>{t(Password)}</label>
+		{pswd}
+	</p>
+	<p>
+		<label>{t(IP Address)}</label>
+		{ip}
+	</p>
+	<p>
+		<label>{t(Date)}</label>
+		{date}
+	</p>
+	<p>
+		<label>{t(Reason)}</label>
+{if("reason" eq "w")}
+	{t(Wrong login)}
+{/if}
+{if("reason" eq "b")}
+	{t(Blocked)}
+{/if}
+	</p>
+</div>
+
+<br />
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>
+
+{{--
+<script type="text/javascript">
+$(function() {
+	$("table.my_view_table tr:even").addClass("bg1");
+	$("table.my_view_table tr:odd").addClass("bg2");
+});
+</script>--}}

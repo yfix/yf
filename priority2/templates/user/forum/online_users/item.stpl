@@ -1,0 +1,10 @@
+	<tr>
+		<td class="row1">
+{if("user_profile_link" ne "")}<a href="{user_profile_link}">{user_name}</a>{/if}
+{if("user_profile_link" eq "")}{user_name}{/if}
+{if("is_admin" eq 1)}( {user_ip} ){/if}
+		</td>
+		<td class="row1">{user_action}<!--Viewing Online List--></td>
+		<td class="row1" align="center">{user_lastup_time}<!--Today, 01:51 PM--></td>
+		<td class="row1" align="center">{if("user_pm_link" ne "")}<a href="{user_pm_link}"><img src="images/forum/p_pm.gif" border="0"  alt="PM" /></a>{/if}&nbsp;</td>
+	</tr>

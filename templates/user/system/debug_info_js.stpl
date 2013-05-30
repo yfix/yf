@@ -1,0 +1,79 @@
+<style type="text/css">
+.debug_header {
+	background: #cfc;
+	cursor: hand;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	display: block;
+	width: 30%;
+}
+</style>
+
+<script type="text/javascript">
+<!--
+// If no JQuery available - show debug console
+if (typeof $ == "object") {
+	document.write('<sty' + 'le type="text/c' + 'ss">.debug_allow_close {display: none;}' + '</' + 'style>');
+}
+try {
+// jQuery on DOM ready
+$(function(){
+
+	// Prepare header text
+	function _prepare_text(text) {
+		return escape(text).replace(/[^a-z0-9\_]/ig, '').substring(0, 30);
+	}
+
+	// Set default show/hide status
+	$(".debug_allow_close > b:first-child").each(function(){
+		var _cur_status = "s";
+		if ($.cookie) {
+			_cur_status = $.cookie("_debug_info[" + _prepare_text($(this).text()) + "]");
+		}
+		var _what_elm = $(this).parent().children().not(this);
+		if (_cur_status == "h") {
+			_what_elm.hide();
+		} else {
+			_what_elm.show();
+		}
+	});
+	$(".debug_allow_close > b:first-child").toggle(
+		function(e){
+			$(this).parent().children().not(this).hide();
+			if ($.cookie) {
+				$.cookie("_debug_info[" + _prepare_text($(this).text()) + "]", "h");
+			}
+		},
+		function(e){
+			$(this).parent().children().not(this).show();
+			if ($.cookie) {
+				$.cookie("_debug_info[" + _prepare_text($(this).text()) + "]", "s");
+			}
+		}
+	).addClass("debug_header");
+
+	$(".debug_allow_close").show();
+
+
+	var _elm_to_prepend = $("<br /><br /><b class='debug_close_all'>CLOSE ALL<b/>").css({
+		"cursor"	: "hand",
+		"background": "#cfc"
+	}).toggle(function(){
+		$(".debug_allow_close").hide();
+	}, function(){
+		$(".debug_allow_close").show();
+	});
+
+	$(".debug_allow_close:first").before(_elm_to_prepend);
+
+});
+} catch (e) {}
+-->
+</script>
+<noscript>
+<style type="text/css">
+.debug_allow_close {
+	display: block;
+}
+</style>
+</noscript>

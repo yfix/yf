@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>EditArea - the code editor in a textarea</title>
+</head>
+<body>
+	<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.js"></script>
+	<script language="Javascript" type="text/javascript">
+		// initialisation
+		editAreaLoader.init({
+			id: "exemple_1"	// id of the textarea to transform		
+			,start_highlight: true	// if start with highlight
+/*
+			,allow_resize: "both"
+			,allow_toggle: true
+			,language: "en"
+*/
+			,syntax: "php"	
+		});
+	</script>
+<form action='' method='post'>
+	<fieldset>
+		<legend>Example 1</legend>
+		<p>Test in English with php syntax, highlighted, toggle enabled, resize enabled and default toolbar.</p>
+		<textarea id="exemple_1" style="height: 350px; width: 100%;" name="test_1">
+<?php	
+	$authors= array();
+	$news= array();
+	$query="SELECT author, COUNT(id) as 'nb_news' FROM news_messages GROUP BY author";
+	$result=mysql_query($query, $DBnews);
+	while($line = mysql_fetch_assoc($result)){
+		$authors[$line["author"]]= $line["author"];
+		$news[$line["author"]]=$line['nb_news'];
+	}
+	
+	$list= sprintf("('%s')", implode("', '", $authors));
+	
+	
+	$query="SELECT p.people_id, p.name, p.fname, p.status, team_name, t.leader_id=p.people_id as 'team_leader', w.name as 'wp_name', w.type
+			FROM people p, teams t, wppartis wp, wps w
+			WHERE p.people_id IN $list AND p.org_id=t.team_id AND wp.team_id=t.team_id AND wp.wp_id=w.wp_id 
+			GROUP BY p.people_id";
+	if(isset($_GET["order"]) && $_GET["order"]!="nb_news")
+		$query.=" ORDER BY ".$_GET["order"];
+		
+	$result=mysql_query($query, $DBkal);
+	while($line = mysql_fetch_assoc($result)){
+		printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", $line["name"], $line["fname"],
+			$news[$line["people_id"]], $line["status"], $line["team_name"], ($line["team_leader"]=="1")?"yes":"no", $line["type"], $line["wp_name"]);
+	
+	}
+	printf("</table>");
+?>
+		</textarea>
+		<p>Custom controls:<br />
+			<input type='button' onclick='alert(editAreaLoader.getValue("exemple_1"));' value='get value' />
+			<input type='button' onclick='editAreaLoader.setValue("exemple_1", "new_value");' value='set value' />
+			<input type='button' onclick='editAreaLoader.insertTags("exemple_1", "[OPEN]", "[CLOSE]");' value='insertTags' />
+		</p>
+	</fieldset>
+</form>
+</body>
+</html>

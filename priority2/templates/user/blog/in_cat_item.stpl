@@ -1,0 +1,7 @@
+<table>
+	<tr>
+		<td align="left">
+			<li><a href="{single_post_link}"><b>{post_title}</b></a> in <a href="{view_blog_link}">{blog_title}</a> by <a href="{user_profile_link}">{user_name}</a> <small><i>({add_date})</i></small></li>
+		</td>
+	</tr>
+</table>

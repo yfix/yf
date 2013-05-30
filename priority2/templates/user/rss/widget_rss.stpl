@@ -1,0 +1,1 @@
+<div align="center">{rss_posts_button} &nbsp;&nbsp;&nbsp; <a href="{manage_rss_link}">{t(Manage)}</a></div>

@@ -1,0 +1,4 @@
+	<tr valign='top'>
+		<td><label for='%f_name%'>%f_label%</label></td>
+		<td>%field_by_type%</td>
+	</tr>

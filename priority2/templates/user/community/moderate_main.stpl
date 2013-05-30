@@ -1,0 +1,15 @@
+{if("items" ne "")}
+<table align="center">
+	<thead>
+		<th>{t(ID)}</th>
+		<th>{t(Community)}</th>
+		<th>{t(Title)}</th>		
+		<th>{t(User)}</th>		
+		<th>{t(Active)}</th>		
+		<th width="11%" align="center">{t(Action)}</th>
+	</thead>
+{items}
+</table>
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No posts yet)}</div>{/if}

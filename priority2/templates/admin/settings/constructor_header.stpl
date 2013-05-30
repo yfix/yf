@@ -1,0 +1,10 @@
+<tr>
+	<td><b>{t(num)}</b></td>
+	<td><b>{t(item)}</b></td>
+	<td><b>{t(value)}</b></td>
+	<td><b>{t(type)}</b></td>
+	<td><b>{t(size)}</b></td>
+	<td><b>{t(sort_order)}</b></td>
+	<td><b>{t(category)}</b></td>
+	<td><b>{t(action)}</b></td>
+</tr>

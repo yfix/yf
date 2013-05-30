@@ -1,0 +1,28 @@
+<br />
+{if("items" ne "")}
+<table>
+	<thead>
+		<th>{t(Key)}</th>
+		<th>{t(Desc)}</th>
+		<th>{t(Active)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No words yet)}</div>{/if}
+<br />
+{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div>{/if}
+<br />
+<div align="center">
+<a href="{add_link}">{t(Add new word)}</a><br /><br />
+<a href="{back_link}">{t(Back To Tags List)}</a>
+</div>
+
+<br />
+<div>
+	<p><b>NOTE:</b></p>
+	<p>!!!TODO: DESCRIPTION HERE !!!</p>
+</div>

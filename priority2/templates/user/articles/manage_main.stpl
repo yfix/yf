@@ -1,0 +1,34 @@
+{if("total" ne "")}<div align="center">{t("You have posted %total articles",%total='{total}')}<br /><br /></div>{/if}
+{{--
+<div align="right">
+	<a href="{add_link}">{t(Add New Article)}</a>
+	<a href="{comments_search_link}">{t(Comments to my article)}</a>
+</div>
+--}}
+
+{if("items" ne "")}
+<table align="center">
+	<thead>
+		<th width="20">#</th>
+		<th width="200" nowrap>{t(Title)}</th>
+		<th width="75">{t(Views)}</th>
+		<th width="80">{t(Added)}</th>
+		<th width="75">{t(Status)}</th>
+		<th width="75">{t(Action)}</th>
+	</thead>
+	<tbody>
+		{items}
+	</tbody>
+</table>
+{/if}
+
+{if("items" eq "")}
+	<div align="center">
+			{t(You have no articles yet)}, 
+			<a href="{add_link}">{t(click here)}</a> {t(to post an article)}.
+	</div>
+{/if}
+
+{if("pages" ne "")}<br /><div align="center">{pages}</div>{/if}
+
+<br />

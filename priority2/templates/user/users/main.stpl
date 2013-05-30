@@ -1,0 +1,11 @@
+<h1>{t("Registered users")} ({total} found)</h1>
+
+<div align="center">
+{if("items" ne "")}
+	<table border="0" width="100%" cellspacing="0" cellpadding="2" align="center">
+	{items}
+	</table>
+{/if}
+{if("items" eq "")}No users found!{/if}
+{if("pages" ne "")}<br />Pages: {pages}<br />{/if}
+</div>

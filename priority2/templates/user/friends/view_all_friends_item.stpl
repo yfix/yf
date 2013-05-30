@@ -1,0 +1,7 @@
+<td align="center">
+	{user_avatar}<a href="{user_details_link}"><strong>{user_name}</strong></a>
+{if("is_mutual_friend" eq 1)}<br /><b>{t(Mutual Friend)}</b>{/if}
+{if("delete_link" ne "")}<br /><br /><input type="button" value="{t(Delete)}" onclick="if (confirm('{t(Are you sure)}?')) window.location.href='{delete_link}';"><br /><br />{/if}
+{if("is_mutual_friend" eq 0)}<a href="{handshake_link}">{t(Handshake request)}</a>{/if}
+</td>
+{if("need_div" eq 1)}</tr><tr>{/if}

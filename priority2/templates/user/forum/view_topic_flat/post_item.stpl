@@ -1,0 +1,50 @@
+{{--{if("is_last_post" eq 1)}<div id="last_post"></div>{/if}--}}
+<div class="post_item" id="entry_{post_id}">
+<table>
+	<tr class="subtitle" valign="top">
+		<td valign="middle" width="130">
+{if("user_profile_link" ne "")}<a href="{user_profile_link}">{user_name}</a>{/if}
+{if("user_profile_link" eq "")}{user_name}{/if}
+		</td>
+		<td align="right">
+			<span class="postdetails">{post_date}</span>
+{if("is_moderator" eq 1)}
+			<span class="post_checkbox">| <input type="checkbox" id="bulk_{post_id}" title="{t(Click to select this post for bulk moderation)}" onclick="toggle_id('{post_id}');" /></span>
+{/if}
+		</td>
+	</tr>
+	<tr valign="top">
+		<td align="center" width="130">{user_details}</td>
+		<td align="left">
+			<div class="postcolor">{post_text}</div>
+{if("show_edit_by" eq 1)}
+			<br /><br />
+			<span class='edit'><small>{t(This post has been edited by)} <b>{editor_name}</b>: {edit_time}</small></span>
+{/if}
+{if("attach_image_src" ne "")}
+			<br />
+			<img src="{attach_image_src}" border="0" alt="attachment" />
+{/if}
+{if("user_sig" ne "")}
+			<br /><br />--------------------<br />
+			<div class="signature">{user_sig}</div>
+{/if}
+		</td>
+	</tr>
+	<tr>
+		<td class="formbuttonrow">&nbsp;</td>
+		<td class="formbuttonrow">
+			<div style="float: left;">
+{if("report_link" ne "")}<a href="javascript:openWin('{report_link}',400,200)" class="actionlink">{t(Report Post)}</a>{/if}
+			</div>
+			<div align="right">
+{if("delete_link" ne "")}<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink">{t(Delete Post)}</a>{/if}
+{if("edit_link" ne "")}&nbsp;&nbsp;&nbsp;<a href="{edit_link}" class="actionlink">{t(Edit Post)}</a><br />{/if}
+{if("add_post_link" ne "")}<a href="{add_post_link}" class=actionlink>{t(Reply to This Post)}</a>&nbsp;{/if}
+{if("quote_link" ne "")}&nbsp;<a href="{quote_link}" title="{t(Reply directly to this post)}" class="actionlink">{t(Reply with Quote)}</a>{/if}
+{if("no_quote_link" ne "")}&nbsp;&nbsp;&nbsp;<a href="{no_quote_link}" title="{t(Reply directly to this post without quote)}" class="actionlink">{t(Reply to this Post)}</a>{/if}
+			</div>
+		</td>
+	</tr>
+</table>
+</div>

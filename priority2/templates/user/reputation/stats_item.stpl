@@ -1,0 +1,12 @@
+<tr class="{bg_class}">
+	<td width="20%">{avatar}</td>
+	<td width="80%">
+		<a href="{user_link}"><b>{user_name}</b></a><br />
+		<small>
+			{t(Points)}: <b>{num_points}</b><br />
+			{t(Alt Power)}: <b>{alt_power}</b><br />
+			{t(Voted for)}: <b>{num_voted}</b><br />
+			{t(Votes)}: <b>{num_votes}</b>
+		</small>
+	</td>
+</tr>

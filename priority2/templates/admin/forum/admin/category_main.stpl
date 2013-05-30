@@ -1,0 +1,30 @@
+<table width="100%" border="0" align="center" cellpadding="3" cellspacing="0" class="tbb">
+	<tr> 
+		<td colspan="2" class="nb">
+			<a href="{cat_link}"><span class="big_font">{cat_name}</span></a>
+		</td>
+		<td colspan="4" class="nb">
+			(<small><a href="{active_link}" class="change_active">{if("is_active" eq 1)}<b style="color:green;">{t(ACTIVE)}</b>{/if}{if("is_active" eq 0)}<b style="color:red;">{t(INACTIVE)}</b>{/if}</a></small>)
+			<input type="button" value="{t(edit)}" onclick="window.location.href='{edit_link}'">
+			<input type="button" value="{t(delete)}" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{delete_link}'">
+		</td>
+	</tr>
+	<tr class="forum_title_bg">
+		<td width="20" height="20" class="forum_title">ID</td>
+		<td width="100%" class="forum_title">{t(Forum_name)}</td>
+		<td width="20" align="center" class="forum_title">{t(Posts)}&nbsp;</td>
+		<td width="20" align="center" class="forum_title">{t(Topics)}&nbsp;</td>
+		<td width="100" align="center" class="forum_title">{t(Last post)}</td>
+		<td align="center" class="forum_title">{t(action)}</td>
+	</tr>
+
+	{forums}
+
+	<tr>
+		<td colspan="6" class="nb">
+			<input type="button" value="{t(add_forum)}" onclick="window.location.href='{add_link}'">
+{if("future_topic_link" ne "")}<input type="button" value="{t(add_future_topic)}" onclick="window.location.href='{future_topic_link}'">{/if}
+		</td>
+	</tr>
+	<tr><td colspan="6" class="nb">&nbsp;</td></tr>
+</table>

@@ -1,0 +1,26 @@
+<h1>
+{if("folder_name" eq "inbox")}{t(Received Messages)}{/if}
+{if("folder_name" eq "sent")}{t(Sent Messages)}{/if}
+</h1>
+
+
+<div align="right">
+	<a class="actionlink" href="{inbox_link}">{t(Inbox)} ({t(Received)})</a> &nbsp;
+	<a class="actionlink" href="{sent_link}">{t(Outbox)} ({t(Sent)})</a>
+<br />
+</div>
+{if("items" ne "")}
+<table align="center">
+	<thead>
+		<th width="100">{if("folder_name" eq "inbox")}{t(From)}{/if}{if("folder_name" eq "sent")}{t(To)}{/if}</th>
+		<th width="320">{t(Subject)}</th>
+		<th width="140">{t(Date)}</th>
+		<th width="110">{t(Action)}</th>
+	</thead>
+{items}
+</table>
+{/if}
+
+{if("pages" ne "")}
+<br /><div align="center">{pages}</div>
+{/if}

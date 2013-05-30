@@ -1,0 +1,152 @@
+<!-- {cats_block} -->
+
+<form action="{add_to_cart_url}" method="post" name="product_details_form">
+<div class="product_block">
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr>
+			<td style="text-align: center; width: 250px; vertical-align: top;">
+	<p class="product_name">{name}</p>
+	<p class="product_image">
+{if("thumb_path" ne "")}
+	{if("img_path" ne "")}
+		<a  class="thickbox" href="{img_path}" title="{t(View large)}" target="_blank">
+	{/if}
+			<img height = "300" src="{thumb_path}" alt="{name}_image" />
+	{if("img_path" ne "")}
+		</a>
+	{/if}
+{/if}
+	</p>
+			</td>
+			<td style="padding-left: 15px; width: 296px; vertical-align: top;">
+			<table width="100%">
+            <tr>
+                <p class="price"></p> 
+				<td><b>{t(Price)}:</b></td>
+				<td>{price}</td>
+			</tr>
+			<tr>
+                <td><b>{t(Availability)}:</b></td>
+                <td>In Stock</td>
+            </tr>
+			<tr>
+                <td><b>{t(Model)}:</b></td>
+                <td>{model}</td>
+			</tr>
+			<tr>
+                <td><b>{t(Manufacturer)}:</b></td>
+                <td><a href="{url_manufacturer}">{manufacturer}</a></td>
+            </tr>
+            <tr>
+                <td><b>{t(Average Rating)}:</b></td>
+                <td>  Not Rated  </td>
+            </tr>
+			<tr>
+                <p class="price"></p> 
+				<td></td>
+				<td></td>
+			</tr>
+	{if("dynamic_atts" ne "")}		
+			<tr>
+			   <td><b>{t(Available Options)}:</b></td>
+                <td> 
+				<table>
+{foreach("dynamic_atts")}
+		<tr>
+			<td width="20%"><b>{#.name}</b></td>
+			</tr>
+			<tr>
+			<td>{#.box}</td>
+		</tr>
+{/foreach}
+		</table> </td>
+            </tr>
+	{/if}
+           <tr>
+                <td><b></b></td>
+                <td><div class="button_div">
+{if("external_url" ne "")}
+		<a href="{add_to_cart_url}" title="{t(Add to cart)}" target="_blank">{t(Add to cart)}</a>
+{else}
+		<a href="javascript:;" title="{t(Add to cart)}" onclick="document.forms['product_details_form'].submit();">{t(Add to cart)}</a>
+{/if}
+		
+	</div></td>
+			</tr>
+		   </table>
+         
+
+	<br style="clear: both;">
+	</td>
+	</tr>
+	</table>
+	
+	
+	<div class="tabs">
+		<a tab="#tab_description" class="selected">Description</a>
+		<a tab="#tab_image" class="">Additional Images</a>
+		{if("review" ne "")}
+		<a tab="#tab_review" class="">Reviews (0)</a>
+		{/if}
+		<a tab="#tab_related" class="">Related Products</a>
+	</div>
+	<div id="tab_description" class="tab_page">
+		<div class="product_desc">
+		<p>{desc}</p>
+		</div>
+	</div>
+	<div id="tab_image" class="tab_page" >
+        <div style="display: inline-block;">
+      {if("image" ne "")}
+ <span style="font-size: 11px;">Click to enlarge</span>
+			<br /><br />
+		{image}
+{/if}
+	   </div>
+          </div>
+		  {if("review" ne "")}
+	<div id="tab_review" class="tab_page">
+      {review_items}
+      
+    </div>
+    {/if}
+    <div id="tab_related" class="tab_page">
+     
+    </div>
+	
+	<div class="button_div">
+		<a href="{back_url}" title="Back" style="float: right; ">{t(Back)}</a>
+	</div>
+</div>
+</form>
+
+
+<script type="text/javascript">
+$.tabs = function(selector, start) {
+	$(selector).each(function(i, element) {
+		$($(element).attr('tab')).css('display', 'none');
+		
+		$(element).click(function() {
+			$(selector).each(function(i, element) {
+				$(element).removeClass('selected');
+				
+				$($(element).attr('tab')).css('display', 'none');
+			});
+			
+			$(this).addClass('selected');
+			
+			$($(this).attr('tab')).css('display', 'block');
+		});
+	});
+	
+	if (!start) {
+		start = $(selector + ':first').attr('tab');
+	}
+
+	$(selector + '[tab=\'' + start + '\']').trigger('click');
+};
+<!--
+$.tabs('.tabs a'); 
+//--></script>
+
+

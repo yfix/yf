@@ -1,0 +1,13 @@
+<td {if('from_cur_month' eq 1)}class="cur_month"{/if}{if('from_cur_month' eq 0)}class="not_cur_month"{/if}>
+{if("onclick_link" ne "")}<a href="{onclick_link}" class='day_click'>{/if}
+	<div>
+		<div class="
+{if("status_id" eq "2")} available{/if}
+{if("status_id" eq "1")} busy{/if}
+{if("status_id" eq "3")} travel{/if}
+{if("is_cur_day" eq "1")} highlight_cur_day{/if}">
+		{day_num}
+		</div>
+	</div>
+{if("onclick_link" ne "")}</a>{/if}
+</td>

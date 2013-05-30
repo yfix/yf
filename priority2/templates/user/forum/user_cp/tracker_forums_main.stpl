@@ -1,0 +1,50 @@
+<form action="{form_action}" name="mutliact" method="post">
+<div class="formsubtitle">{t(Your Forum Subscriptions)}</div>
+<div class="borderwrapm">
+	<table cellspacing="1" width="100%">
+		<tr>
+			<th width="5%">&nbsp;</th>
+			<th width="50%">{t(Forum)}</th>
+			<th align="center" width="5%">{t(Topics)}</th>
+			<th align="center" width="5%">{t(Replies)}</th>
+			<th align="center" width="35%">{t(Last Post)}</th>
+			<th width="1%">&nbsp;</th>
+		</tr>
+{forums}
+
+
+		<tr>
+			<td class="row1" align="center" width="5%"><img src="images/forum/bf_nonew.gif" border='0'  alt='No New Posts' /></td>
+			<td class="row1">
+				<b><a href="http://192.168.0.5/ipb/index.php?act=SF&amp;f=2">A Test Forum</a></b>
+				<div class="desc">
+					A test forum that may be removed at any time
+						<br />
+					Type: Delayed Emailed Notification
+				</div>
+			</td>
+			<td class="row1" align="center">5</td>
+			<td class="row1" align="center">0</td>
+			<td class="row1">Oct 27 2005, 09:04 AM<br />In: <a href='http://192.168.0.5/ipb/index.php?showtopic=6&view=getlastpost'>tttttttt</a><br />By: <a href='http://192.168.0.5/ipb/index.php?showuser=1'>admin</a></td>
+			<td class="row1" align="center"><input type="checkbox" name="id-2" value="yes" /></td>
+		</tr>
+<!--
+-->
+		<tr>
+			<td align="right" class="formbuttonrow" valign="middle" colspan="6">
+
+			<select name="trackchoice">
+				<option value="unsubscribe">Unsubscribe</option>
+				<option value="none">Change to: No Email Notification</option>
+				<option value="immediate">Change to: Immediate Email Notification</option>
+				<option value="delayed">Change to: Delayed Emailed Notification</option>
+				<option value="daily">Change to: Daily Email Digest</option>
+				<option value="weekly">Change to: Weekly Email Digest</option>
+			</select>&nbsp;&nbsp;
+
+			<input type="submit" class="button" value="with selected" />
+		</td>
+	</tr>
+</table>
+</div>
+</form>

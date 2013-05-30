@@ -1,0 +1,71 @@
+<h3>Links Management</h3>
+<a href="{users_list_url}">User List</a><br />
+<br />
+<table border="0" cellpadding="5" cellspacing="0" align="center">
+	<form action="{form_action}" method="post">
+	<tr>
+		<td align="right"> <b>User Name:</b> </td>
+		<td><a href="{user_account_url}">{user_name}</a></td>
+	</tr>
+	<tr>
+		<td align="right"> <b>E-Mail:</b> </td>
+		<td><a href="mailto:{email}">{email}</a></td>
+	</tr>
+	<tr>
+		<td align="right" valign="top"> <b>Password:</b> </td>
+		<td>{password}</td>
+	</tr>
+	<tr>
+		<td align="right" valign="top"> <b>Added:</b> </td>
+		<td>{add_date} </td>
+	</tr>
+	<tr>
+		<td align="right"><b>Site title:</b></td>
+		<td><input class="text" name="title" type="text" size="40" value="{site_title}" /></td>
+	</tr>
+	<tr>
+		<td align="right"> <a href="{site_url}" target="_blank">Site URL:</a> </td>
+		<td><input name="url" type="text" size="40" value="{site_url}" /></td>
+	</tr>
+	<tr>
+		<td align="right">Reciprocal Link URLs:</td>
+		<td><textarea name="link_url" cols="100" rows="5" style="font-family:Arial;font-size:9px;">{link_url}</textarea></td>
+	</tr>
+	<tr>
+		<td align="right"> <a href="{banner_url}" target="_blank">Banner URL:</a> </td>
+		<td><input name="banner_url" type="text" size="40" value="{banner_url}" /><br /> <input type="checkbox" name="get_banner" value="1" /> Upload to our server </td>
+	</tr>
+	<tr>
+		<td align="right" valign="top"> <b>Description:</b> </td>
+		<td><textarea name="description" cols="40" rows="12">{desc}</textarea></td>
+	</tr>
+	<tr>
+		<td align="right" valign="top"> <b>Link Type:</b> </td>
+		<td>{link_type_box}</td>
+	</tr>
+	<tr>
+		<td align="right"> <b>Site Category:</b> </td>
+		<td>{site_cat_box}</td>
+	</tr>
+	<tr>
+		<td align="right" valign="top"> <b>Links Added to:</b> </td>
+		<td>{site_added_to_box}</td>
+	</tr>
+	<tr > 
+		<td align="right"> <b>Link Priority:</b> </td>
+		<td>{priority_box}</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">
+			<p align="center"><b>Change status to: </b> </p>
+			{status_box}
+		</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2"><input type="submit" value="SAVE LINK"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2"><input type="button" onclick="window.location.href='{delete_url}'" value="DELETE LINK"></td>
+	</tr>
+	</form>
+</table>

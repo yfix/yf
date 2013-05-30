@@ -1,0 +1,12 @@
+{if("msg" eq "confirm_not_needed")}
+	{t(Your account does not need to be confirmed)}.
+	{t(Please login)} <a href="./?object=login_form">{t(here)}</a>.
+{/if}
+{if("msg" eq "already_confirmed")}
+	{t(Your account is already confirmed)}.<br />
+	{t(Please login)} <a href="./?object=login_form">{t(here)}</a>.
+{/if}
+{if("msg" eq "confirm_success")}
+	{t(Registration Confirmed)}! {t(Thank You)}!
+	{t(Please login)} <a href="./?object=login_form">{t(here)}</a>.
+{/if}

@@ -1,0 +1,303 @@
+<style type="text/css">
+table.attributes td {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+</style>
+
+<div class="editform">
+
+<form action="{form_action}" enctype="multipart/form-data"  method="post">
+	<p class="first">
+		<label for="name">{t(Name)}</label>
+		<input type="text" name="name" id="name" value="{name}">
+	</p>
+	<p >
+		<label for="model">{t(Model)}</label>
+		<input type="text" name="model" id="model" value="{model}">
+	</p>
+	
+	<p>
+		<label for="category_box">{t(Category)}</label>
+		{category_box}
+	</p>
+	<p>
+		<label for="manufacturer_box">{t(Manufacturer)}</label>
+		{manufacturer_box}
+	</p>
+	<p>
+		<label for="featured_box">{t(Is Featured)}</label>
+		{featured_box}
+	</p>
+	<p>
+		<label for="desc">{t(Description)}</label>
+	
+{if("use_editor_code" eq 0)}
+		<textarea id="desc" name="desc" cols="50" rows="20" class="editable">{desc}</textarea>
+{else}
+		{#.body}
+{/if}
+	</p>
+	<p>
+		<label for="meta_desc">{t(Тэг META description)}</label>
+	
+{if("use_editor_code" eq 0)}
+		<textarea id="meta_desc" name="meta_desc" cols="50" rows="5" >{meta_desc}</textarea>
+{else}
+		{#.meta_desc}
+{/if}
+	</p>
+	<p>
+		<label for="meta_keywords">{t(Тэг META keywords)}</label>
+	
+{if("use_editor_code" eq 0)}
+		<textarea id="meta_keywords" name="meta_keywords" cols="50" rows="5" >{meta_keywords}</textarea>
+{else}
+		{#.meta_keywords}
+{/if}
+	</p>
+	<p>
+		<label for="ext_url">{t(External URL)}<br />
+			<small>(for fake products)</small>
+		</label>
+		<input type="text" name="ext_url" id="ext_url" value="{ext_url}" />
+	</p>
+	<p>
+		<label for="price">{t(Price)}</label>
+		<input type="text" name="price" id="price" value="{price}" style="width:auto;" />
+	</p>
+
+	<p>
+		<label for="quantity">{t(Quantity)}</label>
+		<input type="text" name="quantity" id="quantity" value="{quantity}" style="width:auto;" />
+	</p>
+{if("group_prices" ne "")}
+{foreach("group_prices")}
+	<p>
+		<label for="group_prices_{#.group_id}">{t(Price for)} {#.group_name}</label>
+		<input type="text" name="group_prices[{#.group_id}]" id="group_prices_{#.group_id}" value="{#.price}" style="width:auto;" />
+	</p>
+{/foreach}
+{/if}
+
+<p>
+		<label for="image">{t(Product  Images)}</label>
+		 
+{if("image" ne "")}
+{image}
+{/if}
+	<a class="button" onclick="addImage();"><span>Add Image</span></a>	
+<p id="images">
+</p>	
+<br />	
+</p>
+
+<p>
+		<label for="relate_products">{t(Related Products)}:</label>
+		<br /> 
+		<center>
+		<table>
+                <tr>
+                  <td style="padding: 0;" colspan="3">
+                     {category_select_box}
+					  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0;">
+				  <select multiple="multiple" id="product" size="10" style="width: 200px;">
+                    </select>
+					</td>
+                  <td style="vertical-align: middle;">
+				  <input type="button" value="--&gt;" onclick="addRelated();" />
+                    <br />
+                    <input type="button" value="&lt;--" onclick="removeRelated();" /></td>
+                  <td style="padding: 0;">
+				  <select multiple="multiple" id="related" size="10" style="width: 200px;">
+				  {if("product_related" ne "")}
+				{foreach("product_related")}
+			   <option value="{#.related_id}">{#.name}</option>
+			   {/foreach}
+			   {/if}
+                    </select>
+					</td>
+                </tr>
+              </table>
+             </center>
+			 <div id="product_related">
+				{if("product_related" ne "")}
+				{foreach("product_related")}
+			   <input type="hidden" name="product_related[]" value="{#.related_id}" />
+			   {/foreach}
+			   {/if}
+              </div>
+	</p>
+	
+
+{{--
+{foreach("single_atts")}
+	<p>
+		<label for="{#.name}">{#.title}</label>
+		{#.box}
+	</p>
+{/foreach}
+--}}
+
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}">
+		<input type="button" value="{t(Back)}" onclick="window.location.href='{back_url}'">
+	</div>
+
+{if("dynamic_fields" ne "")}
+<p>
+	<h3>{t(Product Attributes)}</h3>
+
+	<div align="center">
+	<table width="300" class="attributes">
+		<col align="left" />
+		<col align="left" />
+		<col align="left" />
+		<thead>
+			<th width="5%">#</th>
+			<th>{t(Attribute Name)}</th>
+			<th width="20%">{t(Value Price)}</th>
+		</thead>
+{foreach("dynamic_fields")}
+		<tr class="{#.bg_class}">
+			<td><input type="checkbox" name="attributes_use[{#.id}]" value="1" {if("#.attr_checked" eq "1")}checked{/if} /></td>
+			<td><b>{#.attr_name}</b> {#.attr_value}</td>
+			<td><input type="text" name="attributes_price[{#.id}]" value="{#.attr_price}" size="5" style="width:auto;"></td>
+		</tr>
+{/foreach}
+	</table>
+
+	<br /><a href="{manage_attrs_url}">{t(Manage Product Attributes)}</a>
+
+	</div>
+
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}">
+		<input type="button" value="{t(Back)}" onclick="window.location.href='{back_url}'">
+	</div>
+	</p>
+{/if}
+</form>
+</div>
+
+
+
+
+<script type="text/javascript"><!--
+function image_upload(field, preview) {
+	$('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="index.php?route=common/filemanager&field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
+	
+	$('#dialog').dialog({
+		title: 'Image Manager',
+		close: function (event, ui) {
+			if ($('#' + field).attr('value')) {
+				$.ajax({
+					url: 'index.php?route=common/filemanager/image',
+					type: 'POST',
+					data: 'image=' + encodeURIComponent($('#' + field).attr('value')),
+					dataType: 'text',
+					success: function(data) {
+						$('#' + preview).replaceWith('<img src="' + data + '" alt="" id="' + preview + '" style="border: 1px solid #EEEEEE;" />');
+					}
+				});
+			}
+		},	
+		bgiframe: false,
+		width: 700,
+		height: 400,
+		resizable: false,
+		modal: false
+	});
+};
+//--></script>
+<script type="text/javascript"><!--
+var image_row = 0;
+
+function addImage() {
+    html  = '<div id="image_row' + image_row + '"><input type="file" name="image[' + image_row + ']"  value="">';
+	
+	html += '<a onclick="$(\'#image_row' + image_row  + '\').remove();" class="button">Remove</a>';
+	 html  += '<br /></div>'; 
+	
+	$('#images').append(html);
+	
+	image_row++;
+}
+//--></script>
+
+<script type="text/javascript"><!--
+function addRelated() {
+	$('#product :selected').each(function() {
+		$(this).remove();
+		
+		$('#related option[value=\'' + $(this).attr('value') + '\']').remove();
+		
+		$('#related').append('<option value="' + $(this).attr('value') + '">' + $(this).text() + '</option>');
+		
+		$('#product_related input[value=\'' + $(this).attr('value') + '\']').remove();
+		
+		$('#product_related').append('<input type="hidden" name="product_related[]" value="' + $(this).attr('value') + '" />');
+	});
+}
+
+function removeRelated() {
+	$('#related :selected').each(function() {
+		$(this).remove();
+		
+		$('#product option[value=\'' + $(this).attr('value') + '\']').remove();
+		$('#product').append('<option value="' + $(this).attr('value') + '">' + $(this).text() + '</option>');
+		
+		$('#product_related input[value=\'' + $(this).attr('value') + '\']').remove();
+	});
+}
+
+function getProducts() {
+	$('#product option').remove();
+	$.ajax({
+		url: '{link_get_product}' + $('#category_select_box').attr('value'),
+		dataType: 'json',
+		success: function(data) {
+			for (i = 0; i < data.length; i++) {
+				$('#product').append('<option value="' + data[i]['product_id'] + '">' + data[i]['name'] + '</option>');
+			}
+		},
+		
+	});
+}
+
+/* 
+function getRelated() {
+	$('#related option').remove();
+	
+	$.ajax({
+		url: 'index.php?route=catalog/product/related',
+		type: 'POST',
+		dataType: 'json',
+		data: $('#product_related input'),
+		success: function(data) {
+			$('#product_related input').remove();
+			
+			for (i = 0; i < data.length; i++) {
+	 			$('#related').append('<option value="' + data[i]['product_id'] + '">' + data[i]['name'] + '</option>');
+				
+				$('#product_related').append('<input type="hidden" name="product_related[]" value="' + data[i]['product_id'] + '" />');
+			} 
+		}
+	});
+}
+  */ 
+$(function(){
+	$("select#category_select_box").change(function(){
+	getProducts();
+	});
+});
+getProducts();
+//getRelated();
+//--></script>
+
+

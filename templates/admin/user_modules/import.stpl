@@ -1,0 +1,27 @@
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div align="center">
+<form method="post" action="{form_action}" enctype="multipart/form-data">
+<div class="editform" style="width: 50%;">
+	<p class="first">
+		<label>{t(Module Archive File)}<br /><small>({t(ZIP,TAR GZ allowed)})</small></label>
+		<input type="file" name="import_file" size="40">
+	</p>
+	<div align="center">
+		<input type="submit" value="{t(Import)}" name="go" />
+	</div>
+</div>
+</form>
+</div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>!!!!____TODO____!!!!</p>
+</div>
+
+<br />
+<br />
+<div align="center"><a href="{back_link}">{t(Back to modules list)}</a></div>

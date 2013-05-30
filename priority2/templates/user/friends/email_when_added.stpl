@@ -1,0 +1,7 @@
+Hello, {target_user_name}!
+
+
+User "{user_name}" addded you to his(her) friends list.
+
+You can view profile of this user here:
+{profile_link}

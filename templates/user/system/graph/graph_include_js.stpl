@@ -1,0 +1,5 @@
+<!--[if IE]><script language="javascript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/jqplot/excanvas.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/jqplot/jquery.jqplot.js"></script>
+<link rel='stylesheet' type='text/css' href='{const(WEB_PATH)}templates/admin/jquery.jqplot.css'>
+<script type="text/javascript" src="{const(WEB_PATH)}js/jquery/jqplot/need_plugins.js"></script>
+<script type="text/javascript" src="{const(WEB_PATH)}js/graph.js"></script>

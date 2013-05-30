@@ -1,0 +1,40 @@
+{if("total" ne "0")}<h3>{t(Total)} {total}</h3>{/if}
+{if("refresh_timeout" ne "")}
+<meta http-equiv="refresh" content="{refresh_timeout}" />
+{/if}
+<div align="center">
+{filter}
+</div>
+<br />
+
+{if("items" ne "")}
+<br />
+<table align="center">
+	<thead>
+		<th>{t(User)}</th>
+		<th>{t(Points)}</th>
+		<th>{t(Action)}</th>
+		<th>{t(Date)}</th>
+		<th>{t(Total Points)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+
+{/if}
+{if("items" eq "")}<div align="center">{t(No activity yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+{{--<script type="text/javascript">
+<!--
+$(function() {
+	$("table.my_form_table tr").not(":first-child")
+		.filter(":even").addClass("bg1").end()
+		.filter(":odd").addClass("bg2").end();
+});
+-->
+</script>--}}

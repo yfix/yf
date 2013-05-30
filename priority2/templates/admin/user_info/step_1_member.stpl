@@ -1,0 +1,53 @@
+<h1>{t(Edit user info)}</h1>
+
+{js_validator}
+<form method="post" action="{form_action}" {js_form_code} enctype="multipart/form-data">
+<div class="editform">
+	<p class="first">
+		<label for="">{t(Nick)}<br /><small>(Must be unique among all site users)</small></label>
+		<input type="text" name="nick" size="20" value="{nick}" style="font-weight:bold;" />
+	</p>
+	<p>
+		<label for="">{t(Login)} / {t(Account ID)}</label>
+		{login}
+	</p>
+	<p>
+		<label for="">{t(E-mail)}</label>
+		<input type="text" name="email" size="20" maxlength="128" value="{email}" />
+	</p>
+	<p>
+		<label for="">{t(Visitor Name)}</label>
+		<input type="text" name="name" size="20" maxlength="128" value="{user_name}" />
+	</p>
+	<p>
+		<label for="">{t(Password)}</label>
+		<input type="text" name="pswd" size="20" maxlength="128" value="{pswd}" />
+	</p>
+	<p>
+		<label for="">{t(Zip Code)}</label>
+		<input type="text" name="zip_code" size="10" maxlength="10" value="{zip_code}" /> 
+	</p>
+{city_select}
+	<p>
+		<label for="">{t(Sex)}</label>
+		{sex_box}
+	</p>
+	<p>
+		<label for="">{t(Age)}</label>
+		{age_box}
+	</p>
+{avatar}
+{include("user_info/admin_options")}
+	<p class="full_width">
+		<input type="hidden" name="step" value="2" />
+		<input type="submit" value="  {t(Update Account)}  " />
+		<input type="reset" value="  {t(Reset)}  " />
+	</p>
+</div>
+</form>
+
+<br /><br />
+
+<hr />
+
+{admin_msgs}

@@ -1,0 +1,209 @@
+<script type="text/javascript">
+<!--
+	var tasks				= new Array('view','edit', 'copy','move','delete','chmod','make_zip','unzip','download','email');
+	var form_action			= '{form_action}'
+	var default_zip_name	= '{default_zip_name}';
+	var default_email		= '{default_email}';
+	var default_chmod		= '{default_chmod}';
+	/* Translate vars */
+	var t__will_be_deleted	= '{t(these_items_will_be_deleted)} ';
+	var t__same_file_name	= '{t(same_file_name)} ';
+	var t__please_select	= '{t(please_select_items)} ';
+	var t__select_one_file	= '{t(select_one_file)} ';
+	var t__new_zip_name		= '{t(new_zip_name)} ';
+	var t__target_email		= '{t(target_email_address)} ';
+	var t__new_chmod_value	= '{t(new_chmod_value)} ';
+	var t__is_not_a_file	= '{t(not_file)} ';
+	var t__wrong_task		= '{t(wrong_task)} !';
+	var t__need_dir_name	= '{t(no_directory_name)} ';
+	var t__no_file_selected	= '{t(no_file_selected)} ';
+	var t__new_name_for		= '{t(new_name_for)} ';
+	var t__empty_file_name	= '{t(empty_file_name)} ';
+
+	function submit_form (task) {
+		var verify = false;
+		var form_name = 'dir_contents';
+		var counter = 0;
+		var selected = '';
+
+		for (key in tasks) if (task == tasks[key]) verify = true;
+		if (verify) {
+			var desc = '';
+			document.forms[form_name].action = form_action + task + '_item';
+			document.forms[form_name].elements.verify.value = '1';
+				
+			for (i = 0; i < document.forms[form_name].length; i++)	{
+				if (document.forms[form_name].elements[i].type == 'checkbox' && document.forms[form_name].elements[i].checked == true) {
+					if (document.forms[form_name].elements[i].name == 'check_all') continue;
+					desc += document.forms[form_name].elements[i].value + '\r\n'; 
+					selected = document.forms[form_name].elements[i].name;
+					counter++; 
+				}
+			}
+			if (desc) {
+				if (task == 'delete') {
+					if (confirm(t__will_be_deleted + ':\r\n\r\n' + desc))
+						document.forms[form_name].submit();
+				} else if (task == 'make_zip') { 
+					if (document.forms[form_name].elements.new_zip_name.value = window.prompt(t__new_zip_name, default_zip_name))
+						document.forms[form_name].submit();
+				} else if (task == 'email') { 
+					if (document.forms[form_name].elements.target_email.value = window.prompt(t__target_email, default_email))
+						document.forms[form_name].submit();
+				} else if (task == 'chmod') { 
+					if (document.forms[form_name].elements.new_chmod.value = window.prompt(t__new_chmod_value, default_chmod))
+						document.forms[form_name].submit();
+				} else { 
+					if (task == 'view' || task == 'edit' || task == 'download') {
+						if (counter > 1) alert(t__select_one_file)
+						else {
+							if (selected.substr(0, 1) != 'f') alert(t__is_not_a_file);
+							else document.forms[form_name].submit();
+						}
+					} else {
+						alert(task + ':\r\n\r\n' + desc)
+						document.forms[form_name].submit();
+					}
+				}
+			} else alert(t__please_select);
+		} else alert(t__wrong_task);
+	}
+
+	function check_mkdir () {
+		var verify = false;
+		var form_name = 'mkdir';
+		if (document.forms[form_name].elements['name'].value != '') verify = true
+		if (verify) {
+			document.forms[form_name].elements.verify.value = '1';
+			document.forms[form_name].submit();
+		} else alert(t__need_dir_name);
+	}
+
+	function check_upload () {
+		var verify = false;
+		var form_name = 'upload';
+		if (document.forms[form_name].elements['file'].value != '') verify = true
+		if (verify) {
+			document.forms[form_name].elements.verify.value = '1';
+			document.forms[form_name].submit();
+		} else alert(t__no_file_selected);
+	}
+
+	function rename_prompt (url_go, file_name) {
+		var new_name;
+		new_name = prompt(t__new_name_for + '"' + file_name +'"', file_name);
+		if (new_name) 
+			if (new_name != file_name)
+				window.location.href = url_go + '&new_name=' + new_name
+			else alert(t__same_file_name);
+		else alert(t__empty_file_name);
+	}
+
+	function select_all_checkboxes () {
+		var form_name = 'dir_contents';
+		var reverse = false;
+
+		if (document.forms[form_name].elements['check_all'].checked == true) reverse = true;
+		else reverse = false;
+
+		for (i = 0; i < document.forms[form_name].length; i++) {
+			if (document.forms[form_name].elements[i].type == 'checkbox')
+				document.forms[form_name].elements[i].checked = reverse;
+		}
+	}
+-->
+</script>
+
+<form name="dir_contents" method="post">
+<div align="center">
+	<b>{cur_dir_name}</b><br /><br />
+	<input type="hidden" name="verify" value="">
+	<input type="button" value="{t(up_one_level)}" onclick="window.location.href='{go_up_level_link}'">&nbsp;
+	<input type="button" value="{t(home)}" onclick="window.location.href='{go_home_link}'">
+	<input type="hidden" name="dir_name" value="{encoded_dir_name}">
+</div>
+<br />
+
+<div align="center">
+<table align="center" border="0" cellpadding="0" cellspacing="0">
+{if("items" ne "")}
+	<thead>
+		<th>&nbsp;</th>
+		<th><i>{t(name)}</i></th>
+		<th width="5">&nbsp;</th>
+		<th><i>{t(size)}</i></th>
+		<th width="5">&nbsp;</th>
+		<th><i>{t(last_modified)}</i></th>
+		<th width="5">&nbsp;</th>
+		<th><i>{t(perms)}</i></th>
+		<th width="5">&nbsp;</th>
+	</thead>
+{/if}
+{items}
+	<tr align="center">
+		<td><input type="checkbox" class="check" name="check_all" value="1" onclick="select_all_checkboxes()"></td>
+		<td colspan="2"><b>{t(Total)}</b> :</td>
+		<td><b>{total_files_size}</b></td>
+		<td colspan="5"><b>{total_files}</b> {t(files)}, <b>{total_dirs}</b> {t(dirs)}</td>
+	</tr>
+</table>
+
+<table align="center" border="0" cellpadding="2" cellspacing="2">
+	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
+	<tr><td colspan="12" align="center"><b>{t(with_selected)}</b></td></tr>
+	<tr>
+		<td colspan="12" align="center">
+			<input type="button" value="{t(view)}" onclick="submit_form('view')"> 
+			<input type="button" value="{t(edit)}" onclick="submit_form('edit')"> 
+			<input type="button" value="{t(copy)}" onclick="submit_form('copy')"> 
+			<input type="button" value="{t(delete)}" onclick="submit_form('delete')"> 
+		</td>
+	</tr>
+	<tr>
+		<td colspan="12" align="center">
+			<input type="button" value="{t(chmod)}" onclick="submit_form('chmod')"> 
+			<input type="button" value="{t(make_zip)}" onclick="submit_form('make_zip')"> 
+			<input type="button" value="{t(unzip)}" onclick="submit_form('unzip')"> 
+			<input type="button" value="{t(download)}" onclick="submit_form('download')"> 
+			<input type="button" value="{t(email)}" onclick="submit_form('email')"> 
+			<input type="hidden" name="new_zip_name" value="{default_zip_name}"> 
+			<input type="hidden" name="target_email" value="{default_email}"> 
+			<input type="hidden" name="new_chmod" value="{default_chmod}"> 
+		</td>
+	</tr>
+	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
+
+</form>
+<form name="upload" action="{upload_form_action}" method="post" enctype="multipart/form-data">
+
+	<tr><td colspan="12" align="center"><b>{t(upload_file)}</b></td></tr>
+	<tr>
+		<td colspan="12" align="center">
+			{t(new_name)} &nbsp;
+			<input type="text" name="name"> &nbsp;
+			<input type="file" name="file">
+			<input type="button" value="{t(upload)}" onclick="check_upload()">
+			<input type="hidden" name="verify" value="">
+			<input type="hidden" name="dir_name" value="{encoded_dir_name}">
+		</td>
+	</tr>
+
+</form>
+<form name="mkdir" action="{mkdir_form_action}" method="post">
+
+	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
+	<tr><td colspan="12" align="center"><b>{t(make_directory)}</b></td></tr>
+	<tr>
+		<td colspan="12" align="center">
+			{t(name)} &nbsp;<input type="text" name="name"> &nbsp;
+			<input type="button" value="{t(make)}" onclick="check_mkdir()">
+			<input type="hidden" name="verify" value="">
+			<input type="hidden" name="dir_name" value="{encoded_dir_name}">
+		</td>
+	</tr>
+
+</form>
+
+	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
+</table>
+</div>

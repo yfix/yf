@@ -1,0 +1,45 @@
+<h2>
+{if("blog_title" ne "")}{blog_title}{/if}
+{if("blog_title" eq "")}<a href="{user_profile_link}">{user_name}</a> 's {t(blog)}{/if}
+&nbsp;{rss_posts_button}
+</h2>
+
+{if("poll_block" ne "")}
+<div align="center">
+<div style="width:60%;">
+	{poll_block}
+</div>
+</div>
+	<br />
+{/if}
+
+{post_info}
+
+{if("vote_popup_link" ne "")}
+<br />
+	<div align="right"><a href="javascript:openWin('{vote_popup_link}',400,500)" class="actionlink">{t(Vote for this post)}!</a></div>
+{/if}
+
+{if("related_posts" ne "")}
+	<h3>{t(Related posts)}:</h3>
+	<ol>
+{foreach("related_posts")}
+		<li><a href="{#.post_link}" title="{#.post_title}">{#.post_title}</a></li>
+{/foreach}
+	</ol>
+	<br />
+{/if}
+
+{comments}
+
+<div align="center">
+	<br /><br />
+	<p align="center"><a href="{back_url}" class="actionlink">{t(Back to the main page of this blog)}</a></p>
+</div>
+
+<br />
+<div class="se_keywords">
+<!-- SE_KEYWORDS -->
+{execute(graphics,_show_se_keywords,display_limit=10;display_type=random;only_from_current_site=0;search_words={eval_code(_prepare_for_stpl_exec($GLOBALS['user_info']['city']))},{eval_code(_prepare_for_stpl_exec($GLOBALS['user_info']['state']))},{eval_code(_prepare_for_stpl_exec($GLOBALS['user_info']['country']))};fill_with_popular=1)}
+<!-- /SE_KEYWORDS -->
+</div>

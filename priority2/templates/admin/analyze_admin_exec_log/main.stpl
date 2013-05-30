@@ -1,0 +1,5 @@
+{error}
+
+<ul>
+	<li><a href="./?object=analyze_admin_exec_log&action=realtime">Realtime Stats</a></li>
+</ul>

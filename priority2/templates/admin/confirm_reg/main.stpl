@@ -1,0 +1,11 @@
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label>{t(Enter login to confirm)}:</label> 
+		<input type="text" name="login" size="35" maxlength="35" />
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Submit)}  " />
+	</div>
+</form>
+</div>

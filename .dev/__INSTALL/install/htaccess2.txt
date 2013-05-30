@@ -1,0 +1,14 @@
+RewriteEngine on
+
+RewriteBase %%%#path#%%%
+#RewriteBase /
+
+### To allow files inheritance we need to httpd.conf string like:  
+# Return non-existed images from the base site (allows to store design images and css in one place)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteRule ^templates\/([^\/]+)\/images\/forum\/(.*)$ uploads/forum/std_images/$2 [PT]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteRule ^(admin|js|fckeditor|templates|uploads|pma)\/(.*)$ /$1/$2 [PT] 

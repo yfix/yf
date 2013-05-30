@@ -1,0 +1,9 @@
+<tr>
+	<td align="center" nowrap>../{location}/{theme}/{name}.stpl</td>
+	<td align="center" nowrap><a href="{db_src_link}" target="_blank">{t(Show)}</a> ({t(size)} {db_src_size})</td>
+	<td align="center" nowrap><a href="{file_src_link}" target="_blank">{t(Show)}</a> ({t(size)} {file_src_size})</td>
+	<td width="5%" align="center">
+		<input type="checkbox" name="items[{id}]" value="{id}">
+		<input type="hidden" name="path_hidden[{id}]" value="{path_hidden}">
+	</td>
+</tr>

@@ -1,0 +1,34 @@
+<div align="center">
+<form action='{form_action}' method='post' name='group_action_form'>
+{if("items" ne "")}
+	<table>
+		<thead>
+			<th>#</th>
+			<th>{t(Name)}</th>
+			<th>{t(Default value)}</th>
+			<th>{t(Type)}</th>
+			<th>{t(Value list)}</th>
+			<th>{t(Order)}</th>
+			<th>{t(Activity)}</th>
+			<th>{t(Action)}</th>
+		</thead>
+		<tbody>
+	{items}
+		</tbody>
+	</table>
+
+<br />
+<div align="center">
+	<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+	<input type='submit' value='{t(Delete seleted)}'>
+</div>
+<br />
+</form>
+{else}
+	<div align="center">{t(No fields added)}</div>
+{/if}
+
+	<div>
+		<a href="{add_url}">{t(Add field)}</a>
+	</div>
+</div>

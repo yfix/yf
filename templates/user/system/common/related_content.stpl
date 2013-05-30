@@ -1,0 +1,6 @@
+<h3>{t(Related posts)}:</h3>
+<ol>
+{foreach("data")}
+	<li><a href="{#.href}" title="{t(Permanent link)}: {#.title}">{#.title}</a></li>
+{/foreach}
+</ol>

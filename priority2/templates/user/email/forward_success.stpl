@@ -1,0 +1,8 @@
+<h1>{t("Forward Success")}</h1>
+
+<div align="center">
+	The message has been forwarded to your regular email:&nbsp; {user_email}. 
+	You should be able to find it there soon.<br />
+	<br />
+	<a href="javascript:history.back()">{t("Back")}</a>
+</div>

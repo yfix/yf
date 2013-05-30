@@ -1,0 +1,19 @@
+<h2>Edit home page for the theme "{theme_name}"<br /> for the site "{site_name}"</h2>
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first"> 
+		<label>{t(Template source)}</label>
+		<textarea name="string" cols="70" rows="20" wrap="off" class="html_code"/>{string}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Update)}  " />
+		<input type="reset" value="  {t(Reset)}  " />
+	</div>
+</form>
+</div>
+<br />
+<br />
+<div align="center"><a href="./?object=home_page_editor">Back</a></div>
+<br />
+<br />
+<div align="center"><iframe src="{home_page_url}" width="700" height="600"></iframe></div>

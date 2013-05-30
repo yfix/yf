@@ -1,0 +1,5 @@
+<tr>
+	<td><nobr>{text}</nobr></td>
+	<td align="center"><input type="radio" name="{name}" {checked1} value="1" class="check"></td>
+	<td align="center"><input type="radio" name="{name}" {checked2} value="0" class="check"></td>
+</tr>

@@ -1,0 +1,13 @@
+<table border="0" cellpadding="2" cellspacing="0" width="100%" align="center">
+	<thead>
+		<tr> 
+			<th width="100%" colspan="2">{t(Latest entries)}:</th>
+		</tr>
+	</thead>
+{latest_posts}
+</table>
+{if("latest_posts" eq "")}
+	<div align="center">
+		{t(No entries yet)}!
+	</div>
+{/if}

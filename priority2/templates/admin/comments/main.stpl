@@ -1,0 +1,26 @@
+<h1 class="header">{t(Comments)} ({num_comments})</h1>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+{if("comments" eq "")}
+	<tr><td align="center">{t(No comments yet)}</td></tr>
+{/if}
+{comments}
+</table>
+{if("comments_pages" ne "")}
+	<hr />
+	<div align="center"><b>{t(Pages)}: {comments_pages}</b></div>
+	<br />
+{/if}
+
+<hr />
+
+{if("is_logged_in" eq 1)}{add_comment_form}{/if}
+<p align="center">
+{if("is_logged_in" eq 0)}
+	{t(Only members can place comments. <br />Please, login or register, if you want to submit a comment.)} 
+{/if}
+{if("login_link" ne "")}
+	<br /><br />
+	<a href="{login_link}">{t(Click here to login)}</a>
+{/if}
+</p>

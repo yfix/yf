@@ -1,0 +1,34 @@
+<div style="background-color: white;padding: 5px 5px 5px 5px; height: 500px;">
+<h1>Vote for this post and change user reputation</h1>
+<small>The User Reputation System provides a way of rating users based on the 
+	quality of their posts. Registered users can add or subtract reputation points
+	from other users by clicking the reputation link in their posts. 
+	User reputations will allow community members to tell which users are 
+	active quality members and which users are less so. In response to this user
+	feedback, we have the ability to automatically label and reward(or penalize) 
+	users for the quality of their posts, as is indicated by their reputation level.
+<br /><br />
+	You can rate the quality of this post here. Please use the buttons below to express your
+	opinion. If you find this post useful, thoughtful, friendly, funny etc. please press "good" 
+	button. If the post is inadequate, rude, misleading, useless
+	etc. please press "bad" button. This voting is completely anonymous.
+</small>
+
+<div align="center">
+<form action="{form_action}" method="post">
+	{t(User)} : <b><a href="{user_profile_link}" target="_blank">{user_name}</a></b><br /><br />
+	{t(Current reputation)}: <b>{reput_points}</b> {if("reput_stars" ne "")}{reput_stars}{/if}
+
+	<br /><br />
+
+{vote_change_box}
+
+	<input type="submit" value="{t(Vote)}!">
+	<input type="hidden" name="url_return_to" value="{url_return_to}">
+</form>
+</div>
+
+<br />
+
+<div align="center"><a href="javascript:self.close();" class="actionlink">{t(Close Window)}</a></div>
+</div>

@@ -1,0 +1,30 @@
+<tr> 
+	<td class="{td_class}" height="60" align="center">
+		<b>{forum_id}</b>
+	</td>
+	<td class="{td_class}" width="460" style="padding-left: 5px;">
+		<a href="{link}"><span class="big_font">{name}</span></a>{if("is_closed" eq 1)}<b style='color:red;'>(closed)</b>{/if}<br />
+		<span class="small_font">{desc}</span>
+{if("has_sub_forums" ne "")}
+	<br />
+	<small><b>Sub-forums:</b> 
+	{foreach("sub_forums")}
+		<a href="{#.view_link}">{#.name}</a> {if("#.is_closed" eq 1)}<b style='color:red;'>(closed)</b>{/if}
+		<input type="button" value="E" title="{t(edit)}" style="width:15px;" onclick="window.location.href='{#.edit_link}'">
+		<input type="button" value="D" title="{t(delete)}" style="width:15px;" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{#.delete_link}'">
+	{/foreach}
+	</small>
+{/if}
+{if("moderators" ne "")}
+	<br /><small><b>Moderating:</b> {moderators}</small>
+{/if}
+	</td>
+	<td class="{td_class}" align="center">{num_posts}</td>
+	<td class="{td_class}" align="center">{num_topics}</td>
+	<td class="{td_class}" width="150" align="left">{last_post}</td>
+	<td class="{td_class}" align="left">
+		<input type="button" value="{t(edit)}" onclick="window.location.href='{edit_link}'"><br>
+		<input type="button" value="{t(delete)}" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{delete_link}'"><br>
+		(<small><a href="{active_link}" class="change_active">{if("is_active" eq 1)}<b style="color:green;">{t(ACTIVE)}</b>{/if}{if("is_active" eq 0)}<b style="color:red;">{t(INACTIVE)}</b>{/if}</a></small>)
+	</td>
+</tr>

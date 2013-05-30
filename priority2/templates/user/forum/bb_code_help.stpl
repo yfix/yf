@@ -1,0 +1,156 @@
+	<div><strong>What is {t(BB Code)}?</strong><br /><br />{t(BB Code)} is a quick and easy way to add effects or formatting to your posts.<br />It is used in a similar format to HTML tags which you may already be familiar with.<br />Below is a quick guide to the most common {t(BB Code)} uses.</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[b]</b></div>This is sample text<div><b>[/b]</b></div></td>
+	<td class="row1" valign="middle"><b>This is sample text</b></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[i]</b></div>This is sample text<div><b>[/i]</b></div></td>
+	<td class="row1" valign="middle"><i>This is sample text</i></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[u]</b></div>This is sample text<div><b>[/u]</b></div></td>
+	<td class="row1" valign="middle"><u>This is sample text</u></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[url]</b></div>http://www.domain.com<div><b>[/url]</b></div></td>
+	<td class="row1" valign="middle"><a href='http://www.domain.com' target='_blank'>http://www.domain.com</a></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[url=http://www.domain.com]</b></div>Click here!<div><b>[/url]</b></div></td>
+	<td class="row1" valign="middle"><a href='http://www.domain.com' target='_blank'>Click here!</a></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[size=7]</b></div>This is sample text<div><b>[/size]</b></div></td>
+	<td class="row1" valign="middle"><span style='font-size:14pt;line-height:100%'>This is sample text</span></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[font=times]</b></div>This is sample text<div><b>[/font]</b></div></td>
+	<td class="row1" valign="middle"><span style='font-family:times'>This is sample text</span></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[color=red]</b></div>This is sample text<div><b>[/color]</b></div></td>
+	<td class="row1" valign="middle"><span style='color:red'>This is sample text</span></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[quote]</b></div>This is sample text<div><b>[/quote]</b></div></td>
+	<td class="row1" valign="middle"><div class='quotetop'>QUOTE</div><div class='quotemain'>This is sample text</div></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">{t(BB Code)}</div>
+		<div class="row2"></div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[code]</b></div>$this_var = "Hello World!";<div><b>[/code]</b></div></td>
+	<td class="row1" valign="middle"><div class='codetop'>CODE</div><div class='codemain'>$this_var = "Hello World!";</div></td>
+</tr></table>
+	</div>
+</div>
+<br /><div>
+	<div class="borderwrap">
+		<div class="maintitle">CODEBOX</div>
+		<div class="row2">Use this BBCode tag to show a scrolling codebox. Useful for long sections of code.</div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="50%" align="center" class="row1" valign="middle">You Type</td>
+				<td width="50%" align="center" class="row1" valign="middle">We Show</td>
+			</tr><tr>
+	<td class="row1" valign="middle"><div><b>[codebox]</b></div>long_code_here = ';<div><b>[/codebox]</b></div></td>
+	<td class="row1" valign="middle"><div class='codetop'>CODE</div><div class='codemain' style='height:200px;white-space:pre;overflow:auto'>long_code_here = ';</div></td>
+</tr></table>
+	</div>
+</div>
+<br />

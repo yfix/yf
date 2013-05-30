@@ -1,0 +1,63 @@
+<h2>{t(List available output cache pages)} ({total})</h2>
+
+<div align="center">
+	{filter}
+</div>
+
+<br />
+{if("items" ne "")}
+<form action="{form_action}" method="post" name="my_form">
+<table align="center">
+	<thead>
+		<th>#</th>
+		<th>{t(Cached)}</th>
+		<th>{t(Object)}</th>
+		<th>{t(Action)}</th>
+		<th>{t(Query string)}</th>
+		<th>{t(Group)}</th>
+		<th>{t(Site Id)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+<br />
+<div align="left">
+	<label><input type='checkbox' name='check_all' onchange='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+	<input type='submit' value='{t(Clean seleted)}'>
+</div>
+</form>
+{/if}
+
+{if("items" eq "")}
+<br />
+<div align="center">{t(No items to show)}</div>
+{/if}
+
+{if("pages" ne "")}
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}
+<br /><br />
+<div align="center"><a href="{main_link}">{t(Back to output cache editor main)}</a></div>
+
+
+<script type="text/javascript">
+<!--
+function my_toggle_boxes () {
+	var form_name = 'my_form';
+	var reverse = false;
+
+	if (document.forms[form_name].elements['check_all'].checked == true) {
+		reverse = true;
+	} else {
+		reverse = false;
+	}
+
+	for (i = 0; i < document.forms[form_name].elements.length; i++) {
+		if (document.forms[form_name].elements[i].type == 'checkbox')
+			document.forms[form_name].elements[i].checked = reverse;
+	}
+}
+-->
+</script>

@@ -1,0 +1,12 @@
+<h3>{t(Last 24 hours Stats)}</h3>
+
+<li>{t(Unique visitors)} (Hosts): <b>{total_hosts}</b></li>
+<br />
+
+<li>{t(Total page views)} (Hits): <b>{total_hits}</b></li>
+<br />
+
+<li>{t(Guests hits)}: <b>{hits_guests}</b></li>
+<li>{t(Hobbyists hits)}: <b>{hits_hobbyists}</b></li>
+<li>{t(Escorts hits)}: <b>{hits_escorts}</b></li>
+<li>{t(Agencies hits)}: <b>{hits_agencies}</b></li>

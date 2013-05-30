@@ -1,0 +1,47 @@
+<form action='{save_action}' method='post' name="filter_form">
+<table cellspacing="0" cellpadding="0" align="center">
+	<tr valign="top">
+		<td>
+			<table width="200" cellspacing="0" cellpadding="3" align="center">
+				<tr>
+					<td nowrap><b>Date From</b></td>
+					<td><input type="text" name="date_min" value="{date_min}" size="8"></td>
+				</tr>
+				<tr>
+					<td nowrap><b>Date To</b></td>
+					<td><input type="text" name="date_max" value="{date_max}" size="8"></td>
+				</tr>
+				<tr>
+					<td nowrap><b>User Id</b></td>
+					<td>{user_id_box}</td>
+				</tr>
+				<tr>
+					<td nowrap><b>Poster id</b></td>
+					<td>{poster_id_box}</td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table width="200" cellspacing="0" cellpadding="3" align="center">
+				<tr>
+					<td nowrap><b>Type</b></td>
+					<td>{post_type_box}</td>
+				</tr>
+				<tr>
+					<td nowrap><b>Sort By Field</b></td>
+					<td>{sort_by_box}</td>
+				</tr>
+				<tr>
+					<td nowrap><b>Sort order</b></td>
+					<td>{sort_order_box}</td>
+				</tr>
+				<td class="nb" align="center" colspan="2">
+					<input type="submit" value="SAVE"><input type="button" onclick="window.location.href='{clear_url}'" value="CLEAR">
+				</td>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>
+
+<br />

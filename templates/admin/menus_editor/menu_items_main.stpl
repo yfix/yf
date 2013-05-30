@@ -1,0 +1,156 @@
+<h2>{t(Edit items for menu)}: "<a href="{edit_menu_link}">{menu_name}</a>"</h2>
+
+{if("items" ne "")}
+<form action="{save_form_action}" method="post" name="menu_form">
+<table align="center" class="menu_items_table">
+	<colgroup>
+		<col width="1%" />
+		<col width="1%" />
+		<col width="40%" />
+		<col width="40%" />
+		<col width="5%" />
+		<col width="5%" />
+		<col width="1%" align="center"/>
+		<col width="1%" align="center" />
+		<col />
+	</colgroup>
+	<thead>
+	<tr>
+		<th width="1%">#</th>
+		<th width="1%"></th>
+		<th>{t(Name)}</th>
+		<th>{t(Location)}</th>
+		<th nowrap="nowrap">{t(Item Type)}</th>
+		<th>{t(Groups)}</th>
+		<th>{t(Active)}</th>
+		<th>{t(Order)}</th>
+		<th width="5%">{t(Action)}</th>
+	</tr>
+	</thead>
+	<tbody>
+{items}                 
+		<tr class="{bg_class}" id="del_row_{item_id}">
+			<td width="1%" colspan="2"><input type="checkbox" name='check_all' onclick="my_toggle_boxes(this.form)" id="my_check_all"></td>
+			<td width="40%" colspan="7" style="padding-left:{level_pad}px;" nowrap><label for="my_check_all"><b>Select all</b></label></td>
+		</tr>
+	</tbody>
+</table>
+{/if}
+
+{if("items" ne "")}
+<div align="center">
+	<br />
+	<input type="submit" name="go" value="{t(SAVE)}" />&nbsp;
+	<input type="submit" name="multi-delete" value="{t(DELETE SELECTED)}" onclick="return confirm('Are you sure?')" />
+</div>
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No items yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br />
+
+<div align="center">
+	<a href="{add_item_link}">{t(Add new item)}</a>&nbsp;
+	<a href="{back_link}">{t(Back)}</a>
+</div>
+
+<br />
+
+<hr />
+
+<h3>{t(Operation with selected)}</h3>
+
+<div align="center">
+<table>
+	<thead>
+	<tr>
+		<th>{t(Item Type)}</th>
+		<th>{t(Parent Item)}</th>
+		<th>{t(Groups)}</th>
+		<th>{t(Active)}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr valign="top">
+		<td>
+			<select name="type_id">
+				<option value="0" selected>{t(Not selected)}</option>
+				<option value="1" >{t(Internal link)}</option>
+				<option value="2" >{t(External link)}</option>
+				<option value="3" >{t(Spacer)}</option>
+			</select>
+		</td>
+		<td>{parent_id_box}</td>
+		<td>{groups_box}</td>
+		<td>
+			<select name="active">
+				<option value="0" selected>{t(Not selected)}</option>
+				<option value="1" class="negative">{t(INACTIVE)}</option>
+				<option value="2" class="positive">{t(ACTIVE)}</option>
+			</select>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<input type="submit" name="go" value="{t(group save)}" onclick="get_selected()">
+
+</div>
+
+</form>
+
+<br />
+
+<h3>Multi-add items</h3>
+
+<div align="center">
+<form action="{multi_add_action}" method="post" name="multi_add_form">
+<table align="center">
+	<thead>
+		<th>Num items</th>
+		<th>Name</th>
+		<th>Location</th>
+		<th>Icon</th>
+		<th>Active</th>
+	</thead>
+	<tr>
+		<td><input type="text" size="2" value="1" name="num" /></td>
+		<td><input type="text" size="20" value="" name="name" /></td>
+		<td><input type="text" size="20" value="" name="location" /></td>
+		<td><input type="text" size="10" value="" name="icon" /></td>
+		<td>
+			<select name="active">
+				<option value="0" selected  class="negative">{t(INACTIVE)}</option>
+				<option value="1" class="positive">{t(ACTIVE)}</option>
+			</select>              
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" align="center"><input type="submit" name="go" value="{t(Add)}"></td>
+	</tr>
+</table>
+</form>
+</div>
+
+<script type="text/javascript">
+<!--
+	var _icons_list_link = "{icons_list_link}";
+	var _icons_web_path	= "{icons_web_path}";
+-->
+</script>
+
+<div class='icon_external_box' style="display:none;">
+	<div align="center">Loading...</div>
+</div>
+
+{include("menus_editor/menu_items_js")}
+
+{if("js_redir_frame" eq "1")}
+<script type="text/javascript">
+try {
+	parent.window.frames[0].location.reload();
+} catch (e) {}
+</script>
+{/if}

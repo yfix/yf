@@ -1,0 +1,23 @@
+{if("logged_in" ne 0)}
+<div id="userlinks">
+	<p class="home"><b>{t(Logged in as)}: 
+		<a href="{user_info_link}">{user_name}</a></b> 
+		( <a href="{logout_link}">{t(Log Out)}</a> )
+	</p>
+	<p>
+	{if("admin_mode" eq 1)}
+		<b><a href="{admin_cp_link}" target="_blank">{t(Admin CP)}</a></b> &middot;&nbsp;
+	{/if}
+		<b><a href="{user_cp_link}" title="{t(Edit my settings, such as signature, avatar and more)}...">{t(My Controls)}</a></b> 
+		&middot;&nbsp;<a href="{new_posts_link}">{t(View New Posts)}</a>&nbsp;
+	</p>
+</div>
+{/if}
+{if("logged_in" eq 0)}
+<div id="userlinksguest">
+	<p class="pcen">
+		<b>{t(Welcome Guest)}</b> 
+		(<a href="{login_link}">{t(Log In)}</a> | <a href="{register_link}">{t(Register)}</a>)
+	</p>
+</div>
+{/if}

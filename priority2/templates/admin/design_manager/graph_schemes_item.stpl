@@ -1,0 +1,21 @@
+<tr valign="top">
+	<td align="center">
+{if("img_path" ne "")}
+		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" profy:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" border="0" />{if("photo_m_src" ne "")}</a>{/if}
+{/if}
+	</td>
+	<td align="left"><b>{scheme_name}</b></td>
+	<td align="left"><small>{descr}</small></td>
+	<td align="left">{num_images}</td>
+	<td align="center">
+		<a href="{active_link}" class="change_active">
+{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}
+{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}
+		</a>
+	</td>
+	<td align="left" nowrap>
+		<a href="{edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit Theme)}" /></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
+		<a href="{delete_url}" onclick="javascript:return confirm('{t(Are you sure?)}')"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Theme)}" /></a>&nbsp;
+	</td>
+</tr>

@@ -1,0 +1,8 @@
+<div class="borderwrap">
+	<div class="formsubtitle">
+		{num_total_online} {t(Users are reading this topic)} ({num_guests} {t(Guests)})
+	</div>
+	<div class="row1">
+{if("num_members" gt 0)}{num_members} {t(Members)}: {online_users}{/if}&nbsp;
+	</div>
+</div>

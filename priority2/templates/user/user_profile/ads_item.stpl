@@ -1,0 +1,11 @@
+	<tr>
+		<td align="center" valign="top" class="small">{num}</td>
+		<td valign="top" class="small"><a href="{view_link}">{subject}</a></td>
+		<td valign="top" class="small"><a href="{cat_link}">{category}</a></td>
+		<td valign="top" class="small">{date}</td>
+	</tr>
+	
+	<tr>
+		<td align="center" valign="top" class="small"></td>
+		<td valign="top" class="small" colspan="3"><small>{descript}...</small></td>
+	</tr>

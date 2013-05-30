@@ -1,0 +1,51 @@
+<table cellspacing="0" cellpadding="0" width="100%">
+		<thead class="big">
+		<tr>
+			<th width="65%" align="left" valign="top">
+				<a href="{topic_link}"><b style="color:white;">{topic_name}</b></a>
+			</th>
+			<th width="35%" align="right">
+
+			</th>
+		</tr>
+		</thead>		
+</table>
+
+<table id="entry_{post_id}">
+	<tr>
+		<td valign="middle" class="subtitle" width="130">
+{if("user_profile_link" ne "")}<a href="{user_profile_link}">{user_name}</a>{/if}
+{if("user_profile_link" eq "")}{user_name}{/if}
+		</td>
+		<td valign="middle" class="subtitle" align="right">
+<span class="postdetails">
+{post_date}
+</span>
+		</td>		
+	</tr>
+	<tr valign="top">
+		<td align="center" width="130">
+{user_details}
+			<br /> 
+		</td>
+		<td>
+			<div class="postcolor">{post_text}</div>
+			<div align="right"><small>
+			{t(Posted in forum)}: <a href="{forum_link}">{forum_name}</a><br />
+			{t(Replies)}: {num_replies}<br />
+			{t(Views)}: {num_views}</small></div>
+	</td>
+	</tr>
+	<tr>
+		<td class="formbuttonrow">
+		</td>
+		<td class="formbuttonrow">
+         	<div align="right">
+{if("delete_link" ne "")}&nbsp;<a href="{delete_link}"  class="actionlink" onclick="return confirm('{t(Are you sure)}?');">{t(Delete Post)}</a>&nbsp;{/if}
+{if("edit_link" ne "")}&nbsp;<a href="{edit_link}"  class="actionlink">{t(Edit Post)}</a>&nbsp;{/if}
+{if("quote_link" ne "")}&nbsp;<a href="{quote_link}"  class="actionlink" title="{t(Reply to this post)}">{t(Reply to this Post)}</a>&nbsp;{/if}
+         	</div>
+         </td>
+	</tr>
+</table>
+<br /><br />

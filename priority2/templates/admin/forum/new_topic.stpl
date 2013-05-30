@@ -1,0 +1,42 @@
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td><p><span class="style"><font size="3"><strong>{forum_name}</strong></font></span></p></td>
+	</tr>
+	<tr>
+		<td height="30" class="style"><nobr><strong>
+			<a href="{cat_link}">{cat_name}</a> &gt; 
+{foreach("parent_forums")}
+	<a href="{#.link}">{#.name}</a> &gt;
+{/foreach}
+			<a href="{forum_link}">{forum_name}</a> &gt;
+			{t(New Topic)}</nobr></strong>
+		</td>
+	</tr>
+</table>
+<table width="50%" border="0" align="center" cellpadding="0" cellspacing="1" bordercolor="#FFFFFF">
+	<form action="{action}" method="post">
+	<tr> 
+		<td width="50%" align="right"><strong>{t(Title)}: </strong></td>
+		<td align="left"><input type="text" name="title" value="" size="50" maxlength="255"></td>
+	</tr>
+	<tr> 
+		<td width="50%" align="right"><strong>{t(Author)}: </strong></td>
+		<td align="left"><input type="text" name="user_name" value="" maxlength="255"></td>
+	</tr>
+	<tr> 
+		<td width="50%" align="right"><strong>{t(Text)}: </strong></td>
+		<td align="left"><textarea name="text" cols="100" rows="15" maxlength="255"></textarea></td>
+	</tr>
+	<tr> 
+		<td>&nbsp;</td>
+		<td align="left">&nbsp;</td>
+	</tr>
+	<tr> 
+		<td>&nbsp;</td>
+		<td align="left"><input type="submit" value="{t(save)}"></td>
+	</tr>
+	</form>
+</table>

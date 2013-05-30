@@ -1,0 +1,154 @@
+<div align="center"><a href="{back_url}">{t(Back to tickets list)}</a></div>
+<br />
+
+{if("error_message" ne "")}
+<div align="center">
+	<b class="alarm">{error_message}</b>
+</div>
+{/if}
+
+<form method="post" action="{form_action}" enctype="multipart/form-data" name="REPLIER">
+<table border="0" cellpadding="5" cellspacing="0" width="100%" align="center" class="my_view_table">
+	<tr>
+		<td><b>{t(Ticket ID)}</b></td>
+		<td align="left"><b>{ticket_id}</b></td>
+	</tr>
+	<tr>
+		<td><b>{t(User Info)}</b></td>
+		<td align="left">
+			Name: {if("profile_link" ne "")}<a href="{profile_link}" target="_blank"><b>{user_name}</b></a>{/if}{if("profile_link" eq "")}<b>{user_name}</b>{/if}<br />
+			Email: <a href="mailto:{user_email}">{user_email}</a><br />
+			<a href="{search_email_link}">Search tickets with this email</a><br />
+{if("user_id" gt 0)}
+			<a href="./?object=log_auth_view&action=show_for_user&id={user_id}" target="_blank">User Login Stats</a><br />
+			<a href="./?object=check_multi_accounts&action=show_by_user&id={user_id}">View Multi Accounts</a><br />
+			<a href="./?object=log_user_errors_viewer&action=show_for_user&id={user_id}" target="_blank">User Errors</a><br />
+{/if}
+{if("user_id" eq 0)}
+			<a href="./?object=log_user_errors_viewer&action=show_for_ip&id={ip}" target="_blank">User Errors by IP</a><br />
+{/if}
+			<hr />
+
+			<br />
+{if("activate_link" ne "")}
+			<br /><br /><a href="javascript:void(0)" onclick="openWin('{activate_link}',200,200);">Activate account</a>
+			&nbsp;({if("account_active" eq 1)}<b style="color:green;">Account is active</b>{/if}{if("account_active" eq 0)}<b style="color:red;">Account is inactive</b>{/if})
+{/if}
+		</td>
+	</tr>
+	<tr>
+		<td><b>{t(Category)}</b></td>
+		<td align="left"><b>{category_name}</b></td>
+	</tr>
+	<tr>
+		<td><b>{t(User Priority)}</b></td>
+		<td align="left"><b>{user_priority}</b></td>
+	</tr>
+	<tr>
+		<td><b>{t(Admin Priority)}</b></td>
+		<td align="left">{admin_priority_box}</td>
+	</tr>
+	<tr>
+		<td><b>{t(Status)}</b></td>
+		<td align="left">{status_box}</td>
+	</tr>
+	<tr>
+		<td><b>{t(Assigned To)}</b></td>
+		<td align="left">{assigned_to_box}</td>
+	</tr>
+	<tr>
+		<td width="15%"><b>{t(Opened Date)}</b></td>
+		<td align="left">{opened_date}</td>
+	</tr>
+{if("closed_date" ne "")}
+	<tr>
+		<td width="15%"><b>{t(Closed Date)}</b></td>
+		<td align="left">{closed_date}</td>
+	</tr>
+{/if}
+	<tr>
+		<td width="15%"><b>{t(Subject)}</b></td>
+		<td align="left">{subject}</td>
+	</tr>
+	<tr>
+		<td><b>{t(Message)}</b></td>
+		<td align="left" style="border:1px dashed black;"><small>{message}</small></td>
+	</tr>
+	<tr>
+		<td><b>{t(Related URLs)}</b></td>
+		<td align="left">
+{if("urls" ne "")}
+{foreach("urls")}<a href="{#.cur_url}" target="_blank">{#.cur_url}</a><br />{/foreach}
+{/if}
+		</td>
+	</tr>
+	<tr>
+		<td><b>{t(User Agent)}</b></td>
+		<td align="left"><small>{user_agent}</small></td>
+	</tr>
+	<tr>
+		<td><b>{t(IP address)}</b></td>
+		<td align="left"><b>{ip}</b></td>
+	</tr>
+{if("site_name" ne "")}
+	<tr>
+		<td><b>{t(Site id)}</b></td>
+		<td align="left"><b>{site_name}</b></td>
+	</tr>
+{/if}
+{if("referer" ne "")}
+	<tr>
+		<td><b>{t(Referer)}</b></td>
+		<td align="left"><a href="{referer}">{referer}</a></td>
+	</tr>
+{/if}
+	<tr>
+		<td><b>{t(Cookies Enabled)}</b></td>
+		<td align="left">{if("cookies_enabled" eq 1)}<b style="color:green">YES</b>{/if}{if("cookies_enabled" eq 0)}<b style="color:red">NO</b>{/if}</td>
+	</tr>
+	<tr>
+		<td><b>{t(Admin comments)}</b></td>
+		<td align="left">
+			<textarea name="admin_comments" cols="50" rows="2" style="width:50%">{admin_comments}</textarea>
+		</td>
+	</tr>
+	<tr>
+		<td width="100%" height="30" colspan="2" align="center"> 
+			<input type="submit" name="go" value="  {t(Post)}  " />
+			<input type="reset" value="  {t(Clear)}  " />
+		</td>
+	</tr>
+</table>
+</form>
+
+<table width="100%" border="0" cellpadding="15">
+	<tr>
+		<td width="40%" valign="top">
+			{answers}
+		</td>
+		<td width="46%" valign="top">
+			<small>
+			Dear {user_name}, <br />We activated your account. You can sign in now with login {user_login} and password {user_password} at {const(WEB_PATH)}login_form/. <br /><hr /><br />
+			Dear {user_name}, <br />You can sign in with login {user_login} and password {user_password} at {const(WEB_PATH)}login_form/. <br /><hr /><br />
+			Dear {user_name}, <br />Thanks for reporting this bug to us and sorry for the inconvenience! We'll solve this problem as soon as possible. <br /><hr /><br />
+			Dear {user_name}, <br />We need more specific information on this issue. Could you give us the exact URL of the page related to your request? Otherwise, we can't locate any data to process it.<br /><hr /><br />
+			Dear {user_name}, <br />Thanks for your report and sorry for any inconvenience! This was a bug in our sortware that has been fixed. Everything must work well now.<br /><hr /><br />
+			Dear {user_name}, <br />Please refer to our FAQ section at {const(WEB_PATH)}static_pages/show/faq. Your question is answered there.<br /><hr /><br />
+			Dear {user_name}, <br />This email {user_email} is not found in our database. Please let us know the exact email address that you used when creating your account. Or register an account again with {user_email}.<br /><br />
+			</small>
+		</td>
+	</tr>
+</table>
+
+<div align="center"><a href="{back_url}">{t(Back to tickets list)}</a></div>
+
+<script type="text/javascript">
+<!--
+/*
+$(function() {
+	$("table.my_view_table tr:even").addClass("bg1");
+	$("table.my_view_table tr:odd").addClass("bg2");
+});
+*/
+-->
+</script>

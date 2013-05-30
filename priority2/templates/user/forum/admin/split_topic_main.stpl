@@ -1,0 +1,41 @@
+<form action='{form_action}' method='POST' name='REPLIER'>
+<input type='hidden' name='p_act' value='split'>
+<div class="borderwrap">
+	<div class="maintitle">{t(Split Topic)}: {old_forum_name} -&gt; {old_topic_name}</div>
+	<div class="row1">
+		Splitting a topic allows you to select posts to be moved into a new topic. 
+		Please specify the title and description for the new topic and its destination forum before continuing.<br />
+		<b>Note</b> Long posts are reverted back to code tags and shortened to prevent long pages
+	</div>
+	<table width="100%">
+		<tr>
+			<td class="row1"><b>{t(Topic Title)}</b></td>
+			<td class="row2"><input type="text" size="40"  maxlength="100" name="new_title" value="" /></td>
+		</tr>
+		<tr>
+			<td class="row1"><b>{t(Topic Description)}</b></td>
+			<td class="row2"><input type="text" size="40"  maxlength="100" name="new_desc" value="" /></td>
+		</tr>
+		<tr>
+			<td class="row1"><b>{t(Forum for new topic)}</b></td>
+			<td class="row2">{forums_box}</td>
+		</tr>
+	</table>
+</div>
+<br />
+<div class="borderwrap">
+	<div class="maintitle">{t(Post Review)}</div>
+{foreach("posts")}
+	<div class="formsubtitle">{t(Posted by)} <b>{#.user_name}</b> on <b>{#.post_date}</b></div>
+	<div class="tablepad">{#.post_text}
+		<div align="right">
+			<b>{t(Move this post)}</b>&nbsp;&nbsp;
+			<input type="checkbox" name="post_{#.post_id}" value="1" checked="checked" />
+		</div>
+	</div>
+{/foreach}
+	<div class="formsubtitle" align="center">
+		<input type="submit" name="submit" value="{t(Split the selected posts)}" />
+	</div>
+</div>
+</form>

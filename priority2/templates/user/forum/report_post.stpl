@@ -1,0 +1,8 @@
+{t(You&#39;re going to report this post to our moderators as irrelevant or breaking site rules. They will check this information and take appropriate actions. Are you sure you want to submit this report)}?
+<br /><br />
+
+<form action="{form_action}" method="post">
+	<input type="button" value="{t(No, everything is ok here)}" onclick="window.close()">
+	<input type="hidden" name="post_id" value="{post_id}">
+	<input type="submit" value="{t(Yes, submit it)}!">
+</form>

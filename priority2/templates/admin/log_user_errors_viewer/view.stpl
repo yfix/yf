@@ -1,0 +1,71 @@
+<h3>{t(Record)} #{record_id}</h3>
+
+<div class="displayform">
+	<p>
+		<label>{t(Section)}</label>
+		{section_name}
+	</p>
+	<p>
+		<label>{t(User ID)}</label>
+		{if("user_id" ne "")}<a href="{member_url}">{user_name}</a>(ID: {user_id}){/if}
+	</p>
+	<p>
+		<label>{t(User Group)}</label>
+		{user_group}
+	</p>
+	<p>
+		<label>{t(Message)}</label>
+		{message}
+	</p>
+	<p>
+		<label>{t(Date)}</label>
+		{date}
+	</p>
+	<p>
+		<label>{t(Query String)}</label>
+		<a href="{query_string}">{query_string}</a>
+	</p>
+	<p>
+		<label>{t(Request URI)}</label>
+		<a href="{request_uri}">{request_uri}</a>
+	</p>
+	<p>
+		<label>{t(Site)}</label>
+		<a href="{site_link}">{site_name}</a>
+	</p>
+	<p>
+		<label>{t(IP Address)}</label>
+		{log_ip}
+	</p>
+	<p>
+		<label>{t(Referer)}</label>
+		<a href="{log_referer}">{log_referer}</a>
+	</p>
+	<p>
+		<label>{t(User Agent)}</label>
+		{log_browser}
+	</p>
+	<p>
+		<label>{t(Source)}</label>
+		<a href="{edit_source_link}">{source_file}</a> {t(on line)} {source_line}
+	</p>
+{if("env_data" ne "")}
+	<p>
+		<label>{t(Env data)}</label>
+		{env_data}
+	</p>
+{/if}
+</div>
+
+<br /><br />
+
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+
+{{--
+<script type="text/javascript">
+$(function() {
+	$("table.my_view_table tr:even").addClass("bg1");
+	$("table.my_view_table tr:odd").addClass("bg2");
+});
+</script>
+--}}

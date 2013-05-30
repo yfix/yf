@@ -1,0 +1,1 @@
+	<li><b><a href="{articles_link}">{user_name} ({num_articles} {t(::stats::articles)})</a></b></li>

@@ -1,0 +1,16 @@
+<h3>{t(Recent Votes)}</h3>
+
+<table align="center">
+	<thead>
+	<tr>
+		<th>URL</th>
+		<th width="10">{t(Vote)}</th>
+	</tr>
+	</thead>
+{foreach("votes")}
+	<tr class="{#.bg_class}">
+		<td align="left"><small><b><a href="{#.url}">{#.url}</a></b></small></td>
+		<td align="center"><b style="font-size:18px;">{#.direction}</b></td>
+	</tr>
+{/foreach}
+</table>

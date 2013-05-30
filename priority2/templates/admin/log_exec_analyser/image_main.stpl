@@ -1,0 +1,14 @@
+<div align="center">
+<a href="{main_link}">Back to analyser main</a>
+<br /><br />
+
+<div>
+<table border="0" cellspacing="0" cellpadding="5" align="center">
+	<p>{years_box}</p>
+	<p>{months_box}</p>
+	<p>{days_box}</p>
+<br />
+	<p><img src="{img_src}" alt="{img_title}" title="{img_title}" border="0"></p>
+</div>
+</table>
+</div>

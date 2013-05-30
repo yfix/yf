@@ -1,0 +1,37 @@
+<h2>{t(Shopping cart)}</h2>
+
+<div class="cart">
+<form method="post" action="{form_action}" name="cart_form_side">
+
+{if("products" ne "")}
+<table width="100%">
+	<col><col width="60%"><col>
+	<th>{t(Quantity)}</th>
+	<th>{t(Name)}</th>
+	<th>{t(Price)}</th>
+	<th>{t(Action)}</th>
+	<tbody>
+{foreach("products")}
+	<tr>
+		<td><input type="text" size="2" name="quantity[{_key}]" value="{#.quantity}"></td>
+		<td align="left"><a href="{#.details_link}">{#.name}</a></td>
+		<td align="left">{#.price}</td>
+		<td><a href="{#.delete_link}">{t(Remove)}</a></td>
+	</tr>
+{/foreach}
+	</tbody>
+</table>
+{else}
+<div align="center">{t(No items)}</div>
+{/if}
+{if("products" ne "")}
+<hr />
+{t(Total)}: {total_price}
+	<div class="button_div">
+		<a href="javascript:;" title="{t(Submit)}" onclick="document.forms['cart_form_side'].submit();">{t(Update)}</a>&nbsp;
+		<a href="{clean_all_link}" title="{t(Clean all)}" onclick="return confirm('{t(Are you sure)}?');">{t(Clean all)}</a>&nbsp;
+		<a href="{order_link}" title="{t(Checkout)}">{t(Checkout)}</a>&nbsp;
+	</div>
+{/if}
+</form>
+</div>

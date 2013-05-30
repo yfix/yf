@@ -1,0 +1,45 @@
+{if("items" ne "")}
+<form action="{group_form_action}" method="POST" name="manage">
+	<table align="center">
+		<thead>
+			<th></th>
+			<th>{t(Name)}</th>
+			<th>{t(Description)}</th>
+			<th>{t(Date)}</th>		
+			<th>{t(Action date)}</th>	
+			<th>{t(Status)}</th>	
+			<th width="11%" align="center">{t(Action)}</th>
+		</thead>
+	{items}
+		<tr>
+			<td width="1%"><input type="checkbox" name='check_all' onclick="my_toggle_boxes(this.form)" id="my_check_all"></td>
+			<td colspan="3" width="40%" nowrap><label for="my_check_all"><b>{t(Select all)}</b></label> <input type="submit" name="accept" value="{t(accept selected)}" /> <input type="submit" name="decline" value="{t(decline selected)}" /></td>
+		</tr>
+	</table>
+</form>
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No handshake yet)}</div>{/if}
+<br />
+
+{if("pages" ne "")}<br /><br /><div align="center">{t(Pages)}: {pages}</div><br /><br />{/if}
+
+<script type="text/javascript">
+<!--
+	function my_toggle_boxes (form_obj) {
+
+	var form_name = form_obj.name;
+	var reverse = false;
+	if (document.forms[form_name].elements['check_all'].checked == true) {
+		reverse = true;
+	} else {
+		reverse = false;
+	}
+
+	for (i = 0; i < document.forms[form_name].elements.length; i++) {
+		if (document.forms[form_name].elements[i].type == 'checkbox')
+			document.forms[form_name].elements[i].checked = reverse;
+	}
+}
+-->
+</script>

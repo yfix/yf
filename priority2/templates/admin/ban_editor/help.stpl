@@ -1,0 +1,6 @@
+{if("action" eq "add")}
+	Here you can specify IP address in these formats:
+	- In common format: 192.168.1.1
+	- In Wildcard format: 192.168.1.*
+	- In CIDR format: 192.168.1.0/24
+{/if}

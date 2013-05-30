@@ -1,0 +1,8 @@
+	<table width="120" height="120" align="center" valign="center">
+		<tr>
+			<td class="avatar">
+				<img src="{avatar_src}" border="0"><br /><br />
+				<a href="{del_url}">{t(Delete avatar)}</a>
+			</td>
+		</tr>
+	</table>

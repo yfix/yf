@@ -1,0 +1,5 @@
+<div align="left">
+	<div class="subtitle">
+		<li><a href="{post_link}">{post_title}</a>
+	</div>
+</div>

@@ -1,0 +1,125 @@
+{{--
+{execute(graphics,_generate_typos,limit=10;type=0;stpl=escorts_typos;text=mytest)}
+--}}
+
+<h3>Test new STPL features</h3>
+
+<div align="center"><b>1 - dimensional array, also use "magick" replaces: {_key}, {_val}</b></div>
+
+{foreach("test_array_1")}
+	test 1: key:{_key},  val:{_val}<br />
+{/foreach}
+
+<div align="center"><b>Simple 10 times repeated content</b></div>
+
+{foreach("10")}
+	test 1: key:{_key},  val:{_val}<br />
+{/foreach}
+
+<div align="center"><b>Other "magick" replaces: {_even}, {_odd}, {_first}, {_last}, {_num}, {_total}</b></div>
+
+{foreach("test_array_2")}
+	{_num} <small>(key: {_key})</small>
+	{if("_first" eq 1)}<b style="color:red;">First!!!</b><br /> {/if}
+	<span style='
+		{if("_even" eq 1)}color: blue;{/if}
+		{if("_odd" eq 1)}color: green;{/if}
+	'>
+		name: {#.name}<br />
+		testing dollar: {#.name}<br />
+		num_items: {_total}<br />
+	</span>
+	{if("_last" ne 1)} , <br />{/if}
+{/foreach}
+
+<br />
+{if("cond_2" eq "1")}
+	cond_2 is 1
+{else}
+	cond_2 is not 1
+	{if("cond_1" eq "1")}
+		<br />
+		cond_1 is 1
+	{/if}
+{/if}
+
+<br />
+<hr />
+<br />
+
+{foreach("test_array_2")}
+	aaa
+	{if("_first" eq 1)}<b style="color:red;">First!!!</b><br /> {/if}
+	<br />
+	{_num} <small>(key: {_key})</small>
+	<span style='
+		{if("_even" eq 1)}color: blue;{/if}
+		{if("_odd" eq 1)}color: green;{/if}
+	'>
+		name: {#.name}<br />
+		testing dollar: {#.name}<br />
+		num_items: {_total}<br />
+	</span>
+	<br />
+{/foreach}
+
+<br />
+<hr />
+<br />
+{catch("test_more")}3{/catch}
+{catch("test_more2")}6{/catch}
+{catch("test_more3")}9{/catch}
+
+{if("test_more" eq "3" and "test_more2" ge 6 and "test_more3" lt 10)}
+	Multi-condition is working!
+{/if}
+
+{if("test_more" ne "3" and "test_more2" lt 6 and "test_more3" gt 10)}
+	This multi-condition must not appear because it's result is false
+{/if}
+
+<br />
+{if("cond_2" eq "#cond_3")}
+	<br />Comparison of 2 variables working
+{/if}
+{if("cond_2" eq "#cond_3fsdfsd")}
+	<br /><b style="color:red;">2 variables NOT WORKING!!!</b>
+{/if}
+
+<br /><br />
+
+Test macros for the delete link<br />
+{macro('delete_link')}
+
+<br /><br />
+
+<b>Test debug_methods:</b> <br /><br />
+
+_debug_get_replace: <br />
+{_debug_get_replace()}
+
+_debug_get_vars: <br />
+
+{var_1}{var_3}{var_2}{var_5}{var_4}
+
+{_debug_get_vars()}
+
+<br /><br />
+
+translate: <br />
+{t(Download)}<br />
+{t('Download')}<br />
+{t("Download")}<br />
+{t("Download %program free")}<br />
+{t('Download %program free')}<br />
+{t(Download %program free)}<br />
+{t("::soft2::Download %program free")}<br />
+{t(::soft2::Download %program free)}<br />
+{t("::soft2::Download %program free",%program=Adobe)}<br />
+{t('::soft2::Download %program free',%program=Adobe)}<br />
+{t("::soft2::Download %program free",%program='Adobe Flash Player IE AOL')}<br />
+{t("::soft2::Download %program free",%program='Adobe Flash Player IE & AOL')}<br />
+{t("::soft2::Download %program free",%program='Adobe Flash Player (IE & AOL)')}<br />
+{t('::soft2::Download %program free',%program="Adobe Flash Player (IE & AOL)")}<br />
+{t('::soft2::Download %program free %num times',%program='Adobe Flash Player (IE & AOL)';%num='1';%num2='2';%num3='3')}<br />
+<br /><br />

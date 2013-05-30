@@ -1,0 +1,12 @@
+<tr class="{bg_class}" id="del_row_{id}">
+	<td><input type="checkbox" name="items[]" value="{id}"></td>
+	<td nowrap><small><b>{section_name}</b></small></td>
+	<td nowrap>{if("account_link" ne "")}<a href="{account_link}">{user_name}</a>{/if}{if("account_link" eq "")}Guest{/if}</td>
+	<td><small>{message}&nbsp;</small></td>
+	<td nowrap><small><a href="{by_ip_link}">{log_ip}</a></small></td>
+	<td nowrap><small>{date}</small></td>
+	<td nowrap>
+		<a href="{details_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Details)} " /></a>&nbsp;
+		<a href="{delete_link}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Record)} " /></a>&nbsp;
+	</td>
+</tr>

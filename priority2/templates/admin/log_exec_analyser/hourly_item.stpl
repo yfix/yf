@@ -1,0 +1,7 @@
+	<tr class="{bg_class}">
+		<td align="center">{date}</td>
+		<td align="center">{exec_time}</td>
+		<td align="center">{hits}</td>
+		<td align="center">{hosts}</td>
+		<td align="center">{traffic}</td>
+	</tr>

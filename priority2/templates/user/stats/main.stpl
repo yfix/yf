@@ -1,0 +1,11 @@
+<h1>{t(Choose stats to view)}</h1>
+
+<b><a href="{online_link}">{t(Who's Online)}</a></b><br />
+<b><a href="{last_24_stats_link}">{t(Last 24 hours stats)}</a></b><br />
+{{--
+<b><a href="{members_link}">{t(All Members list)}</a></b><br />
+<b><a href="{most_active_link}">{t(Most active users)}</a></b><br />
+<b><a href="{last_updated_link}">{t(Last updated users)}</a></b><br />
+--}}
+
+{quick_users_stats}

@@ -1,0 +1,22 @@
+<p class="subtitle"><h4>{t(Add Your Answer)}</h4></p>
+
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p>
+		<label>{t(Answer Text)}:</label>
+		<textarea name="text" rows="8" cols="40">{text}</textarea>
+	</p>
+{if("captcha_block" ne "")}
+	<p>
+		<label>{t(CAPTCHA Image)}:</label>
+		{captcha_block}<br />
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="submit" value="{t(Submit!)}" />
+		<input type="reset" value="{t(Clear)}" />
+	</div>
+</form>
+</div>

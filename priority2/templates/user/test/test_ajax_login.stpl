@@ -1,0 +1,26 @@
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/thickbox/thickbox-compressed.js"></script>
+
+<script type="text/javascript">
+<!--
+// JQuery on DOM ready
+$(function(){
+	try {
+		$("a.menu_side:contains('Login')")
+			.attr({
+				href: '{const(WEB_PATH)}?object=login_form&action=ajax&height=95&width=220'
+				, title: "Please login"
+			})
+			.css({background:"yellow"})
+			.toggleClass("thickbox");
+		tb_init('a.thickbox');
+		imgLoader.src = "{eval_code(WEB_PATH)}js/jquery/thickbox/loading.gif";
+	} catch (e) {}
+});
+-->
+</script>
+
+<style type="text/css">
+@import url('{const(WEB_PATH)}js/jquery/thickbox/thickbox.css');
+</style>
+
+<a class="menu_side" href="./?object=login_form">Login Click Me</a>

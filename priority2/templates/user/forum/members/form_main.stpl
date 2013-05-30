@@ -1,0 +1,189 @@
+<div class="borderwrap">
+	<div class="maintitle">
+{if("use_filter" eq 1)}
+		<div style="float: right;">
+			<form name="quickjumpform" action="{form_action}" method="post">
+				<input type="submit" name="q" value="{t(Name begins with)}..." class="button" />
+{name_begins_box}
+{{--
+				<select name="quickjump">
+					<option value="a">a</option><option value="b">b</option><option value="c">c</option><option value="d">d</option><option value="e">e</option><option value="f">f</option><option value="g">g</option><option value="h">h</option><option value="i">i</option><option value="j">j</option><option value="k">k</option><option value="l">l</option><option value="m">m</option><option value="n">n</option><option value="o">o</option><option value="p">p</option><option value="q">q</option><option value="r">r</option><option value="s">s</option><option value="t">t</option><option value="u">u</option><option value="v">v</option><option value="w">w</option><option value="x">x</option><option value="y">y</option><option value="z">z</option>
+				</select>
+--}}
+			</form>
+		</div>
+{/if}
+		<div>{t(Member List)}</div>
+	</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<th width="40%">{t(Name)}</th>
+			<th align="center" width="10%">{t(Level)}</th>
+			<th align="center" width="10%">{t(Group)}</th>
+			<th align="center" width="20%">{t(Joined)}</th>
+			<th align="center" width="10%">{t(Posts)}</th>
+			<th width="10%" align="center">{t(Avatar)}</th>
+		</tr>
+{items}
+{if("items" eq "")}
+		<tr>
+			<td class="row2" colspan="7" align="center">{t(No Results)}</td>
+		</tr>
+{/if}
+		<tr>
+			<td class="catend" colspan="7"></td>
+		</tr>
+	</table>
+</div>
+{if("pages" ne "")}<br /><div>{pages}</div>{/if}
+{if("use_filter" eq 1)}
+<br />
+<form action="{form_action}" method="post">
+	<div class="borderwrap">
+		<div class="maintitle">
+			<div style="float: right;"><input type="button" class="button" value="{t(Toggle More Options)}..." onclick="toggleview('mlist');" /></div>
+			<div>{t(Search and Filter Options)}</div>
+		</div>
+		<div class="tablepad" align="center">
+			<table width="100%">
+				<tr>
+					<td width="50%" valign="top">
+						<fieldset>
+						<legend><b>{t(Member name)}</b></legend>
+							<select name="name_box">
+								<option value="begins">begins with</option>
+								<option value="contains">contains</option>
+							</select>
+							&nbsp;<input type="text" size="25" name="name" value="" />
+						</fieldset>
+					</td>
+					<td width="50%" valign="top">
+						<fieldset>
+						<legend><b>{t(Home page contains)}</b></legend>
+							<input type="text" size="50" name="homepage" value="" />
+						</fieldset>
+					</td>
+				</tr>
+			</table>
+			
+	<div style="display: none;" id="mlist">
+		<table width="100%">
+			<tr>
+				<td width="50%" valign="top">
+					<fieldset>
+					<legend><b>{t(Photo)}</b></legend>
+						{t(Members with a photo only)}?
+						&nbsp;<input type="checkbox" value="1" name="photoonly"  />
+					</fieldset>
+				</td>
+				<td width="50%" valign="top">
+					<fieldset>
+						<legend><b>{t(Signature contains)}</b></legend>
+							<input type="text" size="50" name="signature" value="" />
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<td width="50%" valign="top">
+					<fieldset>
+					<legend><b>{t(Messengers)}</b></legend>
+						<table width="100%">
+							<tr>
+								<td width="60%">{t(AIM Identity contains)}</td>
+								<td width="40%"><input type="text" size="20" name="aim" value="" /></td>
+							</tr>
+							<tr>
+								<td width="60%">{t(Yahoo Identity contains)}</td>
+								<td width="40%"><input type="text" size="20" name="yahoo" value="" /></td>
+							</tr>
+							<tr>
+								<td width="60%">{t(ICQ Number contains)}</td>
+								<td width="40%"><input type="text" size="20" name="icq" value="" /></td>
+							</tr>
+							<tr>
+								<td width="60%">{t(MSN Identity contains)}</td>
+								<td width="40%"><input type="text" size="20" name="msn" value="" /></td>
+							</tr>
+						</table>
+					</fieldset>
+				</td>
+				<td width="50%" valign="top">
+					<fieldset>
+					<legend><b>{t(Post and Date Ranges)}</b></legend>
+						<table width="100%">
+							<tr>
+								<td width="30%">{t(Post count is)}</td>
+								<td width="70%">
+									<select class="dropdown" name="posts_ltmt">
+										<option value="lt">less than</option>
+										<option value="mt">more than</option>
+									</select>
+									&nbsp;<input type="text" size="15" name="posts" value="" />
+								</td>
+							</tr>
+							<tr>
+								<td width="30%">{t(Join date is)}</td>
+								<td width="70%">
+									<select class="dropdown" name="joined_ltmt">
+										<option value="lt">less than</option>
+										<option value="mt">more than</option>
+									</select>
+									&nbsp;<input type="text" size="10" name="joined" value="" />
+									<span class="desc">(MM-DD-YYYY)</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="30%">{t(Last post is)}</td>
+								<td width="70%">
+									<select class="dropdown" name="lastpost_ltmt">
+										<option value="lt">less than</option>
+										<option value="mt">more than</option>
+									</select>
+									&nbsp;<input type="text" size="10" name="lastpost" value="" />
+									<span class="desc">(MM-DD-YYYY)</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="30%">{t(Last visit is)}</td>
+								<td width="70%">
+									<select class="dropdown" name="lastvisit_ltmt">
+										<option value="lt">less than</option>
+										<option value="mt">more than</option>
+									</select>
+									&nbsp;<input type="text" size="10" name="lastvisit" value="" />
+									<span class="desc">(MM-DD-YYYY)</span>
+								</td>
+							</tr>
+						</table>
+					</fieldset>
+				</td>
+			</tr>
+		</table>
+		</div>
+	</div>
+	<div align="center" class="formsubtitle">
+		<select name='filter' class='forminput'>
+			<option value='ALL' selected>All Members</option>
+			<option value='4'>Admin</option>
+			<option value='3'>Members</option>
+			<option value='1'>Validating</option>
+		</select> by <select name='sort_key' class='forminput'>
+			<option value='name' selected>Member Name</option>
+			<option value='posts'>Total Posts</option>
+			<option value='joined'>Join Date</option>
+		</select> in <select name='sort_order' class='forminput'>
+			<option value='desc'>Descending Order</option>
+			<option value='asc' selected>Ascending Order</option>
+		</select> with <select name='max_results' class='forminput'>
+			<option value='10' selected>10</option>
+			<option value='20'>20</option>
+			<option value='30'>30</option>
+			<option value='40'>40</option>
+			<option value='50'>50</option>
+		</select>{t(results per page)}
+		<input type="submit" name="q" value="Go!" class="button" />
+	</div>
+</div>
+</form>
+{/if}
+<br /><br />

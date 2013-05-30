@@ -1,0 +1,28 @@
+<div align="center"><h3>{t("edit_ban_list")}</h3></div>
+<table align="center" cellspacing="0" cellpadding="5" class="tbb">
+	<tr>
+		<td class="td_header">ID</td>
+		<td class="td_header">{t("type")}</td>
+		<td class="td_header">{t("value")}</td>
+		<td class="td_header">{t("expiration")}</td>
+		<td class="td_header">{t("moderator")}</td>
+		<td class="td_header">{t("action")}</td>
+	</tr>
+	{items}
+</table>
+<div align="center"><h3>{t("add_IP_to_ban_list")}</h3></div>
+<table align="center" cellspacing="0" cellpadding="5">
+<form action="{form_action}" method="post">
+	<tr>
+		<td align="right" width="50%">{t("IP")}:</td>
+		<td align="left"><input type="text" size="16" name="ip"></td>
+	</tr>
+	<tr>
+		<td align="right">{t("ban_minutes")}:</td>
+		<td align="left"><input type="text" size="5" name="minutes" value="60"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2"><input type="submit" value="{t(add)}"></td>
+	</tr>
+</form>
+</table>

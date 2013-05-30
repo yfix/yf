@@ -1,0 +1,9 @@
+<ul>
+	<li><a href="{module_settings_link}">{t(General module settings)}</a></li>
+	<li><a href="{gallery_settings_link}">{t(Extended module settings)}</a></li>
+	<li><a href="{view_content_link}">{t(View current content)}</a></li>
+	<li><a href="{add_photo_link}">{t(Add photos)}</a></li>
+	<li><a href="{edit_content_link}">{t(Edit photos)}</a></li>
+	<li><a href="{add_folder_link}">{t(Create a new folder)}</a></li>
+	<li><a href="{search_comments_link}">{t(Comments to my gallery)}</a></li>
+</ul>

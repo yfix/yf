@@ -1,0 +1,18 @@
+Dear {user_name},
+
+Here is your requested login information.
+
+Login:     {login}
+Password:  {password}
+Login URL: {login_url}
+
+Don't forget that password is case sensitive, so pay attention to CAPSLOCK and other keyboard settings.
+You should also have cookies enabled in your browser. Otherwise, login will be failing.
+
+Should you have any further questions, please, refer to our FAQ at {faq_url}.
+
+Yours,
+
+{advert_name} administration
+
+Please visit us at {home_url}.

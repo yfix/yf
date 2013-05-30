@@ -1,0 +1,28 @@
+<div class="comment_item" style="margin-left: {comment_margin_left}px;">
+	<a name="cid_{id}" />
+	<div class="comments_holder">
+		{if("user_profile_link" ne "")}
+			<a href="javascript:;" profy:user_id="{user_id}" class="ajax_user_info">{if("user_avatar" ne "")}<img src="{user_avatar}" width="25px" style="position:relative; top:6px;" />{else}<small><b>[i]</b></small>{/if}</a>&nbsp;  
+			<a href="{user_profile_link}"><b>{user_name}</b></a>
+		{/if}
+		{if("user_profile_link" eq "")}<b>{user_name}</b>{/if}
+
+		{reput_text} <small>{add_date}</small> 
+		{if("user_email" ne "")}(<a href="mailto:{user_email}">{user_email}</a>){/if}
+		<a href="{current_link}" title="{t(link)}"><small>#</small></a>
+		<div style="float:right;">
+			{if("edit_comment_link" ne "")}<a href="{edit_comment_link}" class="actionlink">{t(Edit)}</a>&nbsp;{/if}
+			{if("delete_comment_link" ne "")}<a href="{delete_comment_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink">{t(Delete)}</a>{/if}
+		</div>
+	</div>
+	<div class="comment_text">
+		{comment_text}
+	</div>
+{if("is_logged_in" eq "1")}
+	{if("user_id" ne "0")}
+	<div class="comments_reply">
+		<div class="reply_word_holder" id="cid_holder_{id}">(<a href="javascript:show_form('{id}');">{t(reply)}</a>)</div>
+	</div>
+	{/if}
+{/if}
+</div>

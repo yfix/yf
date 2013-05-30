@@ -1,0 +1,23 @@
+<h1>{t("Your Inbox")}: {t("Read Message")}</h1>
+
+<div align="center">
+	<p class="subtitle">
+		<b>{if("folder_name" eq "inbox")}{from}{/if}{if("folder_name" eq "sent")}{to}{/if} - {subject} &nbsp;({t("sent on")} {sent_date})</b>
+	</p>
+	<table width="100%">
+		<tr valign="top">
+			<td align="center" width="10%">
+{if("user_avatar" ne "")}{user_avatar}{reput_info}{/if}
+			</td>
+			<td align="left">{message}</td>
+		</tr>
+	</table>
+</div>
+
+<div align="center">
+	<br />
+	<a href="javascript:history.back()" class="actionlink">{t("Back")}</a>&nbsp;
+	- &nbsp;<a href="{reply_link}" class="actionlink">{t("Reply")}</a>&nbsp;
+	- &nbsp;<a href="{forward_link}" class="actionlink">{t("Forward")}</a>&nbsp;
+	- &nbsp;<a href="{delete_link}" class="actionlink">{t("Delete")}</a>
+</div>

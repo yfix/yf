@@ -1,0 +1,11 @@
+<h2>{t(Move to archive)}</h2>
+
+<a href="{main_link}">{t(Back to analyser main)}</a>
+<br /><br />
+
+<div align="center">
+	{t(Moving records older than)} {prune_days} {t(days)}...<br /><br />
+	{t(RESULT)}:<br />
+	{num_old_records} {t(records from raw exec table moved successfully to archive)}<br />
+	{num_new_records} {t(records created successfully in the hourly table)}
+</div>

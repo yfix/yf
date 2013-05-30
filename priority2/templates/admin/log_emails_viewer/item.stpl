@@ -1,0 +1,13 @@
+<tr class="{bg_class}" id="del_row_{id}">
+	<td><input type="checkbox" name="items[]" value="{id}"></td>
+	<td>{if("account_link" ne "")}<a href="{account_link}">{user_name}</a>{/if}{if("account_link" eq "")}Guest{/if}</td>
+	<td><a href="mailto:{email_to}" target="_blank">{email_to}</a></td>
+	<td><small>{subject}&nbsp;</small></td>
+	<td nowrap>{date}&nbsp;</td>
+	<td>{if("success" eq 1)}<span class="positive">YES</span>{/if}{if("success" eq 0)}<span class="negative">NO</span>{/if}</td>
+	<td>{send_time}</td>
+	<td nowrap>
+		<a href="{details_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Details)}" /></a>&nbsp;
+		<a href="{delete_link}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Record)}" /></a>&nbsp;
+	</td>
+</tr>

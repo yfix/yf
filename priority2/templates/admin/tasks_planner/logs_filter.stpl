@@ -1,0 +1,65 @@
+{{--
+<form action='http://192.168.0.5/ipb/admin.php?adsess=19718143170a4697c050aa2757459376' method='post' name='theAdminForm' >
+	<input type='hidden' name='act' value='task'>
+	<input type='hidden' name='code' value='showlog'><div class='tableborder'> 
+	<div class='maintitle'>View Task Logs</div><table width='100%' cellspacing='0' cellpadding='5' align='center' border='0'>
+	<tr> </tr>
+	<tr> 
+		<td class='tdrow1'  width='60%'  valign='middle'><b>View logs for task:</b></td>
+		<td class='tdrow2'  width='40%'  valign='middle'><select name='task_id'  class='dropdown'>
+				<option value='-1'>All tasks</option>
+				<option value='Announcements Update'>Announcements Update</option>
+				<option value='Birthday and Events Cache'>Birthday and Events 
+				Cache</option>
+				<option value='Daily Clean Out'>Daily Clean Out</option>
+				<option value='Daily Stats Rebuild'>Daily Stats Rebuild</option>
+				<option value='Daily Topic &amp; Forum Digest'>Daily Topic &amp; 
+				Forum Digest</option>
+				<option value='Hourly Clean Out'>Hourly Clean Out</option>
+				<option value='Send Bulk Mail'>Send Bulk Mail</option>
+				<option value='Weekly Topic &amp; Forum Digest'>Weekly Topic &amp; 
+				Forum Digest</option>
+			</select> </td>
+	</tr>
+	<tr> 
+		<td class='tdrow1'  width='60%'  valign='middle'><b>Show how many log 
+			entries?</b></td>
+		<td class='tdrow2'  width='40%'  valign='middle'><input type='text' name='task_count' value='30' size='30' class='textinput'></td>
+	</tr>
+	<tr>
+		<td align='center' class='pformstrip' colspan='2' ><input type='submit' value='View Logs' id='button' accesskey='s'></td>
+	</tr>
+</form></table></div>
+<br />
+<form action='http://192.168.0.5/ipb/admin.php?adsess=19718143170a4697c050aa2757459376' method='post' name='theAdminForm' >
+	<input type='hidden' name='act' value='task'>
+	<input type='hidden' name='code' value='deletelog'><div class='tableborder'> 
+	<div class='maintitle'>DELETE Task Logs</div><table width='100%' cellspacing='0' cellpadding='5' align='center' border='0'>
+	<tr> </tr>
+	<tr> 
+		<td class='tdrow1'  width='60%'  valign='middle'><b>Delete logs for task:</b></td>
+		<td class='tdrow2'  width='40%'  valign='middle'><select name='task_id'  class='dropdown'>
+				<option value='-1'>All tasks</option>
+				<option value='Announcements Update'>Announcements Update</option>
+				<option value='Birthday and Events Cache'>Birthday and Events 
+				Cache</option>
+				<option value='Daily Clean Out'>Daily Clean Out</option>
+				<option value='Daily Stats Rebuild'>Daily Stats Rebuild</option>
+				<option value='Daily Topic &amp; Forum Digest'>Daily Topic &amp; 
+				Forum Digest</option>
+				<option value='Hourly Clean Out'>Hourly Clean Out</option>
+				<option value='Send Bulk Mail'>Send Bulk Mail</option>
+				<option value='Weekly Topic &amp; Forum Digest'>Weekly Topic &amp; 
+				Forum Digest</option>
+			</select> </td>
+	</tr>
+	<tr> 
+		<td class='tdrow1'  width='60%'  valign='middle'><b>Delete logs older 
+			than (in days)?</b></td>
+		<td class='tdrow2'  width='40%'  valign='middle'><input type='text' name='task_prune' value='30' size='30' class='textinput'></td>
+	</tr>
+	<tr>
+		<td align='center' class='pformstrip' colspan='2' ><input type='submit' value='DELETE Logs' id='button' accesskey='s'></td>
+	</tr>
+</form></table></div>
+--}}

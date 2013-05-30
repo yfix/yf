@@ -1,0 +1,21 @@
+<h3>{t(Total)} {total}</h3>
+
+{if("items" ne "")}
+<table>
+	<col><col><col align="center"><col align="center"><col>
+	<thead>
+		<th>{t(Object name)}</th>
+		<th>{t(Object ID)}</th>
+		<th width="5%">{t(Revisions)}</th>
+		<th width="15%">{t(Last revision)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+<br />
+{if("items" eq "")}<div align="center">{t(No revisions yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}

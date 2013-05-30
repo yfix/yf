@@ -1,0 +1,42 @@
+<h2>
+{if("name" ne "")}{t(Edit field)} "{name}"{/if}
+{if("name" eq "")}{t(Add field)}{/if}
+</h2>
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="name">{t(Name)}</label>
+		<input type="text" id="name" name="name" value="{name}">
+	</p>
+	<p>
+		<label for="type">{t(Type)}</label>
+		{type_box}
+	</p>
+	<p>
+		<label for="value_list">{t(Value List)}<br />
+		<small>({t(values divided by)} ";")</small></label>
+		<textarea id="value_list" name="value_list" cols="50" rows="3">{value_list}</textarea>
+	</p>
+	<p>
+		<label for="default_value">{t(Default Value)}</label>
+		<input type="text" id="default_value" name="default_value" value="{default_value}">
+	</p>
+	<p>
+		<label for="order">{t(Display Order)}</label>
+		<input type="text" id="order" name="order" value="{order}">
+	</p>
+	<p>
+		<label for="comment">{t(Comment)}<br />
+		<small>({t(in form will be shown as label)})</small></label>
+		<textarea id="comment" name="comment" cols="50" rows="3">{comment}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" name="go" />
+	</div>
+</form>
+</div>
+
+<br /><br />
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

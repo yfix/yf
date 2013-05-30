@@ -1,0 +1,46 @@
+<h3>{header_text}</h3>
+<table width="50%" border="0" align="center" cellpadding="0" cellspacing="5">
+	<form action="{form_action}" method="post">
+	<tr>
+		<td width="50%" align="right"><b>{t(subject)}: </b></td>
+		<td align="left"><input type="text" name="subject" value="{subject}" size="50" maxlength="255"></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><strong>{t(Text)}: </strong></td>
+		<td align="left"><textarea name="text" cols="100" rows="15">{text}</textarea></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(user_name)}: </b></td>
+		<td align="left">
+			<input type="text" name="user_name" value="{user_name}" size="20">
+			{if("user_id" ne 0)}<a href="./?object=account&user_id={user_id}">{t(Profile)}</a>{/if}
+		</td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(user_id)}: </b></td>
+		<td align="left"><input type="text" name="user_id" value="{user_id}" size="5"></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(poster_ip)}: </b></td>
+		<td align="left"><input type="text" name="poster_ip" value="{poster_ip}" size="15"></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Created)}: </b></td>
+		<td align="left"><input type="text" name="created" value="{created}" size="24"></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Activity)}: </b></td>
+		<td align="left">{activity}</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td align="left"><input type="submit" value="{t(save)}"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">{back}</td>
+	</tr>
+	</form>
+</table>

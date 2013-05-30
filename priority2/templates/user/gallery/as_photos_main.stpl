@@ -1,0 +1,24 @@
+<h1 class="header">{t(Gallery Search)}{if("total" ne "")} ({total} total){/if}</h1>
+
+{if("filter" ne "")}{filter}<br />{/if}
+
+<div align="center">
+{items}
+
+{if("items" eq "")}{t(No photos found)}!{/if}
+
+{if("pages" ne "")}
+<br class="clearfloat" /><div align="center">Pages: {pages}</div>
+{/if}
+</div>
+
+{if("use_ajax" eq 1)}
+<script type="text/javascript">
+<!--
+// JQuery on DOM ready
+$(function(){
+	$("a.gallery_photo").profy_tooltip();
+});
+-->
+</script>
+{/if}

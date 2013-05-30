@@ -1,0 +1,14 @@
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="langs_box">{t(Language Name)}</label>
+		{langs_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Add)}  " name="go" />
+	</div>
+</form>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>

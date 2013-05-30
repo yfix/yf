@@ -1,0 +1,132 @@
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label>{t(Order ID)}:</label>
+		<b>{order_id}</b>
+	</p>
+	<p>
+		<label>{t(Status)}:</label>
+		{status_box}
+	</p>
+	<p>
+		<label>{t(User)}:</label>
+		<a href="{user_link}">{user_name}</a>
+	</p>
+	<p>
+		<label>{t(Date)}:</label>
+		{date}
+	</p>
+	<p>
+		<label>{t(Total sum)}:</label>
+		<b>{total_sum}</b>
+	</p>
+	<p>
+		<label>{t(Shipping Type)}</label>
+		{ship_type}
+	</p>
+	<p>
+		<label>{t(Payment Type)}</label>
+		{pay_type}
+	</p>
+<fieldset>
+	<legend>{t(Billing address)}</legend>
+	<p class="first">
+		<label>{t(First Name)}</label>
+		{b_first_name}
+	</p>
+	<p>
+		<label>{t(Last Name)}</label>
+		{b_last_name}
+	</p>
+	<p>
+		<label>{t(Address)}</label>
+		{b_address}
+	</p>
+	<p>
+		<label>{t(Address, line 2)}</label>
+		{b_address2}
+	</p>
+	<p>
+		<label>{t(City)}</label>
+		{b_city}
+	</p>
+	<p>
+		<label>{t(State)}</label>
+		{b_state}
+	</p>
+	<p>
+		<label>{t(Zip code)}</label>
+		{b_zip_code}
+	</p>
+</fieldset>
+
+<br />
+
+<fieldset>
+	<legend>{t(Shipping address)}</legend>
+	<p class="first">
+		<label>{t(First Name)}</label>
+		{s_first_name}
+	</p>
+	<p>
+		<label>{t(Last Name)}</label>
+		{s_last_name}
+	</p>
+	<p>
+		<label>{t(Address)}</label>
+		{s_address}
+	</p>
+	<p>
+		<label>{t(Address, line 2)}</label>
+		{s_address2}
+	</p>
+	<p>
+		<label>{t(City)}</label>
+		{s_city}
+	</p>
+	<p>
+		<label>{t(State)}</label>
+		{s_state}
+	</p>
+	<p>
+		<label>{t(Zip code)}</label>
+		{s_zip_code}
+	</p>
+</fieldset>
+	<div class="button_div">
+		<input type="button" value="Back" onclick="window.location.href='{back_url}'">
+	</div>
+
+</form>
+
+<h3>{t(Products)}</h3>
+
+{if("products" ne "")}
+<table width="100%">
+	<col><col width="60%"><col>
+	<th>{t(Quantity)}</th>
+	<th>{t(Name)}</th>
+	<th>{t(Price)}</th>
+	<tbody>
+{foreach("products")}
+	<tr>
+		<td>{#.quantity}</td>
+		<td>
+			<a href="{#.details_link}">{#.name}</a>
+			{if("#.dynamic_atts" ne "")}<br /><small>{#.dynamic_atts}</small>{/if}
+		</td>
+		<td>{#.price}</td>
+	</tr>
+{/foreach}
+	</tbody>
+</table>
+{else}
+<div align="center">{t(No items)}</div>
+{/if}
+
+<hr />
+{if("products" ne "")}
+{t(Total)}: {total_price}
+{/if}
+
+</div>

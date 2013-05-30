@@ -1,0 +1,9 @@
+<h1 class="header">{t(User Gallery)}</h1>
+
+<div align="center">
+{if("is_own_gallery" eq 1)}
+	{t(You have no photos in your gallery)}.<br /><br />
+	<a href="{start_link}">{t(Click here to start your gallery now)}!</a>
+{/if}
+{if("is_own_gallery" eq 0)}{t(This user gallery has no images yet)}.{/if}
+</div>

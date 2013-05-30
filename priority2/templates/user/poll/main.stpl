@@ -1,0 +1,38 @@
+<div class="poll">
+<fieldset>
+<legend>{t(Poll)}</legend>
+
+<h3>{question}</h3>
+
+	<div>
+	<form action="{form_action}" method="post">
+		{foreach("choices")}
+		<p class="answer">
+			<label class="simple">
+			{if("multiple" ne "1")}
+				<input type="radio" name="choice" value="{#.id}">
+			{/if}
+			{if("multiple" eq "1")}
+				<input type="checkbox" name="choice[]" value="{#.id}">
+			{/if}
+			{#.text}</label>
+		</p>
+		{/foreach}
+
+		<input type="hidden" name="_not_for_comments" value="1">
+		<input type="hidden" name="poll_id" value="{poll_id}">
+		<div align="center">
+			<input type="submit" value="Vote!">
+		</div>
+	</form>
+	</div>
+{if("is_owner" eq "1")}
+	<div align="center">
+		<a href="javascript:openWin('{results_link}','600','400')">{t(Show results)}</a>&nbsp;
+		<a href="{delete_url}">{t(Delete poll)}</a>&nbsp;
+	</div>
+{/if}
+
+</fieldset>
+</div>
+

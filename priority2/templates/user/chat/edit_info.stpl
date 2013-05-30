@@ -1,0 +1,169 @@
+<script type="text/javascript">
+<!--
+// Cross-browser form required fields checking function
+function form_check(the_form) {
+	try {
+		var error_msg = '';
+		// Check login and password length
+		if (the_form.password.value.length > 32 || the_form.password.value.length < 4)
+			error_msg = '4 < {t("password")}< 32\n\n' + error_msg;
+		// Check passwords
+		if ((the_form.password.value != the_form.password2.value) || the_form.password2.value == 0) 
+			error_msg = '{t("pass_again")}\n\n' + error_msg;
+		// Show error or submit form
+		if (error_msg) alert ('{t("required_fields")} : \n\n' + error_msg);
+		else the_form.submit();
+	} catch (x) {alert('{t("internal_error")}');return false;}
+}
+-->
+</script>
+
+<div align="center"><h3>{login} - {t("edit_info")}</h3></div>
+<table align="center" cellspacing="5" cellpadding="5" border="0">
+<form action="{form_action}" method="post" enctype="multipart/form-data">
+	<tr class="bg1">
+		<td align="right" width="30%"><b>{t("email")}</b></td>
+		<td align="left">{email}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("login")}</b></td>
+		<td align="left"><b>{login}</b></td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><font color="red">* </font><b>{t("password")}</b><br>(4-32 {t("symbols")})</td>
+		<td align="left"><input type="password" name="password" size="15" maxlength="32"></td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><font color="red">* </font><b>{t("pass_again")}</b><br>(4-32 {t("symbols")})</td>
+		<td align="left"><input type="password" name="password2" size="15" maxlength="32"></td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("first_name")}</b></td>
+		<td align="left"><input type="text" name="first_name" value="{first_name}" size="15" maxlength="32"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_first_name" value="1" {c_first_name}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("last_name")}</b></td>
+		<td align="left"><input type="text" name="last_name" value="{last_name}" size="15" maxlength="32"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_last_name" value="1" {c_last_name}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("city")}</b></td>
+		<td align="left"><input type="text" name="city" value="{city}" size="15" maxlength="64"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_city" value="1" {c_city}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("country")}</b></td>
+		<td align="left"><input type="text" name="country" value="{country}" size="15" maxlength="64"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_country" value="1" {c_country}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("birth")}</b></td>
+		<td align="left">{birth_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_birth" value="1" {c_birth}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("height")}</b>, {t("cm")}</td>
+		<td align="left"><input type="text" name="height" value="{height}" size="5" maxlength="5"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_height" value="1" {c_height}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("weight")}</b>, {t("kg")}</td>
+		<td align="left"><input type="text" name="weight" value="{weight}" size="5" maxlength="5"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_weight" value="1" {c_weight}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("Hair_color")}</b></td>
+		<td align="left">{hair_color_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_hair_color" value="1" {c_hair_color}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("eyes_color")}</b></td>
+		<td align="left">{eyes_color_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_eyes_color" value="1" {c_eyes_color}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("education")}</b></td>
+		<td align="left">{education_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_education" value="1" {c_education}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("job")}</b></td>
+		<td align="left"><input type="text" name="job" value="{job}" size="30" maxlength="64"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_job" value="1" {c_job}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("speciality")}</b></td>
+		<td align="left"><input type="text" name="speciality" value="{speciality}" size="30" maxlength="64"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_speciality" value="1" {c_speciality}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("married")}</b></td>
+		<td align="left">{married_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_married" value="1" {c_married}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("children")}</b></td>
+		<td align="left">{children_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_children" value="1" {c_children}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("drinking")}</b></td>
+		<td align="left">{drink_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_drinking" value="1" {c_drinking}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("smoking")}</b></td>
+		<td align="left">{smoke_box}</td>
+		<td align="left"><input type="checkbox" class="check" name="c_smoking" value="1" {c_smoking}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("home_phone")}</b></td>
+		<td align="left"><input type="text" name="home_phone" value="{home_phone}" size="15" maxlength="32"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_home_phone" value="1" {c_home_phone}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("cell_phone")}</b></td>
+		<td align="left"><input type="text" name="cell_phone" value="{cell_phone}" size="15" maxlength="32"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_cell_phone" value="1" {c_cell_phone}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("icq")}</b></td>
+		<td align="left"><input type="text" name="icq" value="{icq}" size="15" maxlength="16"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_icq" value="1" {c_icq}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("msn")}</b></td>
+		<td align="left"><input type="text" name="msn" value="{msn}" size="30" maxlength="255"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_msn" value="1" {c_msn}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("yahoo")}</b></td>
+		<td align="left"><input type="text" name="yahoo" value="{yahoo}" size="30" maxlength="255"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_yahoo" value="1" {c_yahoo}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("web_page")}</b></td>
+		<td align="left"><input type="text" name="web_page" value="{web_page}" size="30" maxlength="128"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_web_page" value="1" {c_web_page}>{t("show_to_all")}</td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><b>{t("other_info")}</b></td>
+		<td align="left"><textarea name="other_info" cols="50" rows="10">{other_info}</textarea></td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><b>{t("photo")}</b><br>(max 100kB, <= 800x600, JPEG)</td>
+		<td align="left"><input type="file" name="photo" value="{photo}" size="20"></td>
+		<td align="left"><input type="checkbox" class="check" name="c_photo" value="1" {c_photo}>{t("show_to_all")}</td>
+	</tr>
+	<tr>
+		<td align="left" colspan="3"><font color="red">*</font> - {t("required_fields")}</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="3"><input type="button" value="{t("save")}" onClick="form_check(this.form);"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="3"><input type="button" value="{t("close_window")}" onClick="self.window.close();"></td>
+	</tr>
+</form>
+</table>

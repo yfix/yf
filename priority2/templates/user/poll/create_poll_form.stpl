@@ -1,0 +1,96 @@
+<h3>{t(Poll)}</h3>
+
+<h4>
+{if("object_name" ne "polls_manager")}
+	{t(Create poll for {object_name} entry)}
+{/if}
+
+{if("object_name" eq "polls_manager")}
+	{t(Create common poll)}
+{/if}
+</h4>
+
+<div class="editform">
+<form action="{form_action}" method='post' name='REPLIER' onsubmit='return ValidateForm()' enctype='multipart/form-data'>
+	<p class="first">
+		<label>{t(Poll Question)}</label>
+		<input type="text" size="70" maxlength="250" name="poll_question" value="" />
+	</p>
+{if("dynamic_que_adding" ne "1")}
+	<p>
+		<label>{t(Poll Choices)}<br />
+			<small>{t(Please put one answer per line)}. <br />
+			{t(Maximum {max_choices} answers)}.
+			</small>
+		</label>
+		<textarea cols="70" rows="12" name="poll_choices"></textarea>
+	</p>
+{/if}
+
+{if("dynamic_que_adding" eq "1")}
+	<p class="full_width">{t(Poll Choices)}</p>
+	<span id="answers_block">
+	<p class="ans_input">
+		<label>{t(Choice #<b>1</b>)}</label>
+		<input type="text" maxlength="250" name="choices_dyn[]" value="" />
+	</p>
+	<p class="ans_input">
+		<label>{t(Choice #<b>2</b>)}</label>
+		<input type="text" maxlength="250" name="choices_dyn[]" value="" />
+	</p>
+	</span>
+	<div align="center"><input type="button" value="{t(Add more choices)}" id="more_answers"></div>
+
+{/if}
+
+{if("allow_multiple" eq "1")}
+	<p>
+		<label class="simple"><input type="checkbox" name="allow_multiple" value="1">{t(Allow multiple choices)}</label>
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="hidden" value="{return_action}" name="return_action">
+		<input type="hidden" value="{max_choices}" name="max_choices">
+		<input type="submit" value="{t(Create)}">
+	</div>
+</form>
+</div>
+
+{if("dynamic_que_adding" eq "1")}
+<script type="text/javascript">
+<!--
+$.fn.fullhtml = function() {
+	var tagName = this[0].tagName.toLowerCase()
+	var attribs = this[0].attributes
+	var outCode = "<" + tagName;
+	for( var i = 0; i < attribs.length; i++ ) {
+		var attrName = attribs[i].nodeName;
+		outCode += " "+ attrName + "='" + $(this).attr( attrName ) + "'"
+	}
+	outCode += ">" + $(this).html() + "</" + tagName + ">"
+	return outCode;
+} 
+
+$(function () { 
+	var i = $("p.ans_input").length;
+	var max_choices = $("input[type=hidden][name=max_choices]").val();
+	$("#more_answers").click(function() {
+		i++;
+		$("#answers_block").append(
+			$("p.ans_input:last").fullhtml()
+		);
+		$("p.ans_input:last").find("label").find("b").text(i);
+		if (i >= max_choices) {
+			$("#more_answers").remove();
+		}
+//alert($("p.ans_input:last").find("#more_answers").attr("id"));
+	});
+});
+-->
+</script>
+<noscript>
+	<span class="negative">{t(You have JavaScript turned off in your browser or it does not support it)}.<br /> 
+		{t(To add more answers - please turn it on)}.
+	</span>
+</noscript>
+{/if}

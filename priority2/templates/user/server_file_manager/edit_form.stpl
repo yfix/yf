@@ -1,0 +1,15 @@
+<h4>{filename}</h4>
+<div class="editform">
+<form method="post">
+	<p class="first">
+		<label>{t(File source)}</label>
+	</p>
+	<p class="first full_width">
+		<textarea rows="20" cols="50" name="file_content">{file_content}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}">
+		<input type="button" value="{t(Back)}" onclick="window.location.href='{back_url}';">
+	</div>
+</form>
+</div>

@@ -1,0 +1,70 @@
+<table border="0" cellspacing="0" cellpadding="2" width="100%" height="100%">
+	<tr>
+		<td colspan="2" class="menu_header">Statistics</td>
+	</tr>
+	<tr>
+		<td colspan="2" align="center" class="left_td"><b>---=== Users ===---</b></td>
+	</tr>
+	<tr>
+		<td class="left_td" width="80%"><li>Total</td>
+		<td align="right"><b>{total_users}</b></td>
+	</tr>
+	<tr>
+		<td class="left_td"><li>Escorts</td>
+		<td align="right"><b>{total_escort}</b></td>
+	</tr>
+	<tr>
+		<td class="left_td"><li>Agencies</td>
+		<td align="right"><b>{total_agency}</b></td>
+	</tr>
+	<tr>
+		<td class="left_td"><li>Visitors</td>
+		<td align="right"><b>{total_visitor}</b></td>
+	</tr>
+	<tr>
+		<td class="left_td"><li>Linkers</td>
+		<td align="right"><b>{total_linker}</b></td>
+	</tr>
+
+	<tr>
+		<td colspan="2" align="center" class="left_td"><b>---=== Forum ===---</b></td>
+	</tr>
+	<tr>
+		<td class="left_td" width="80%"><li>Topics</td>
+		<td align="right"><b>{forum_topics}</b></td>
+	</tr>
+	<tr>
+		<td class="left_td"><li>Posts</td>
+		<td align="right"><b>{forum_posts}</b></td>
+	</tr>
+
+	<tr>
+		<td colspan="2" align="center" class="left_td"><b>---=== Gallery ===---</b></td>
+	</tr>
+	<tr>
+		<td class="left_td" width="80%"><li>Photos</td>
+		<td align="right"><b>{gallery_photos}</b></td>
+	</tr>
+
+	<tr>
+		<td colspan="2" align="center" class="left_td"><b>---=== Blog ===---</b></td>
+	</tr>
+	<tr>
+		<td class="left_td" width="80%"><li>Posts</td>
+		<td align="right"><b>{blog_posts}</b></td>
+	</tr>
+
+	<tr>
+		<td colspan="2" align="center" class="left_td"><b>---=== Articles ===---</b></td>
+	</tr>
+	<tr>
+		<td class="left_td" width="80%"><li>Texts</td>
+		<td align="right"><b>{articles}</b></td>
+	</tr>
+
+</table>
+
+<div>
+	<p><b>{t(NOTE)}:</b></p> 
+	<p>{t(To reduce the time of page loading statistics data is cached for)} {cache_time} {t(minutes)}</p>
+</div>

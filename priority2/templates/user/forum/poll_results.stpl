@@ -1,0 +1,30 @@
+<h3>{t(Poll results)}: "{question}"</h3>
+
+<table>
+	<tr>
+		<td colspan="3" align="right">
+{if("edit_link" ne "")}<a href="{edit_link}">{t(Edit poll)}</a>{/if}
+{if("delete_link" ne "")}<a href="{delete_link}">{t(Delete poll)}</a>{/if}
+		</td>
+	</tr>
+{foreach("results")}
+	<tr valign="middle">
+		<td>{#.text}</td>
+		<td> [ <b>{#.num}</b> ] </td>
+		<td>
+			<img src='images/forum/bar_left.gif' border='0' alt='*' /><img src="images/forum/bar.gif" width="{#.width}" height="11" alt="" /><img src='images/forum/bar_right.gif' border='0'  alt='*' />&nbsp;[{#.percents}%]
+		</td>
+	</tr>
+{/foreach}
+	<tr>
+		<td colspan="3" align="center">
+			<b>{t(Total votes)}: {total_votes}</b>
+		</td>
+	</tr>
+</table>
+{foreach("results")}
+<div style="width:700px;">
+	{#.num} - {#.text}
+	<div style="width:{#.percents};"></div>
+</div>
+{/foreach}

@@ -1,0 +1,2 @@
+<span>{t(Logged in as)}</span> <a href="./?object=user_info"><b>{name}</b></a> ({group}) <a href="./?task=logout">{t(Log out)}</a>
+

@@ -1,0 +1,56 @@
+	<table border="0" cellpadding="0" cellspacing="0" width="150" align="center">
+		<tr>
+			<td height="5"></td>
+		</tr>
+		<tr>
+			<td class="right_menu_header">{user_name}</td>
+		</tr>
+		<tr>
+			<td height="5">&nbsp;</td>
+		</tr>
+		<tr>
+			<td align="center">{user_avatar}</td>
+		</tr>
+{if("reput_text" ne "")}
+		<tr><td align="center">{reput_text}</td></tr>
+{/if}
+		<tr>
+			<td  height="5">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class="right_menu_body">
+					<a class="menu_side" href="{user_profile_link}">{t(Profile)} ({account_type})</a><br />
+{if("ads_link" ne "")}		<a class="menu_side" href="{ads_link}">{t(Ads)}</a><br />{/if}
+{if("reviews_link" ne "")}	<a class="menu_side" href="{reviews_link}">Reviews</a><br />{/if}
+{if("gallery_link" ne "")}	<a class="menu_side" href="{gallery_link}">{t(Gallery)}</a><br />{/if}
+{if("blogs_link" ne "")}	<a class="menu_side" href="{blogs_link}">{t(Blog)}</a><br />{/if}
+{if("que_link" ne "")}		<a class="menu_side" href="{que_link}">Interview</a><br />{/if}
+{if("articles_link" ne "")}	<a class="menu_side" href="{articles_link}">{t(Articles)}</a><br />{/if}
+{if("interests_link" ne "")}<a class="menu_side" href="{interests_link}">Interests</a><br />{/if}
+{if("escort_refs_link" ne "")}<a class="menu_side" href="{escort_refs_link}">Hobby References</a><br />{/if}
+{if("industry_refs_link" ne "")}<a class="menu_side" href="{industry_refs_link}">Industry References</a><br />{/if}
+
+{if("display_contact_items" eq 1)}
+	<br />
+	{if("add_review_link" ne "")}	<a class="menu_side" href="{add_review_link}">Submit a Review!</a><br />{/if}
+	{if("contact_link" ne "")}	<a class="menu_side" href="{contact_link}">{t(Contact)}</a><br />{/if}
+	{if("is_in_favorites" eq 0)}<a class="menu_side" href="{favorites_link}">{t(Add to Favorites)}</a><br />{/if}
+	{if("is_in_favorites" eq 1)}<a class="menu_side" href="{favorites_link}">{t(Remove from Favorites)}</a><br />{/if}
+	{if("is_ignored" eq 0)}		<a class="menu_side" href="{ignore_link}">{t(Ignore User)}</a><br />{/if}
+	{if("is_ignored" eq 1)}		<a class="menu_side" href="{ignore_link}">{t(Unignore User)}</a><br />{/if}
+	{if("is_a_friend" eq 0)}	<a class="menu_side" href="{make_friend_link}">{t(Add to Friends)}</a><br />{/if}
+	{if("is_a_friend" eq 1)}	<b>{t(In My Friends List)}</b><br />{/if}
+	{if("is_friend_of" eq 1)}	<b>{t(I&#39;m a Friend of)}</b><br />{/if}
+
+{/if}
+<br />
+			</td>
+		</tr>
+{if("other_items" ne "")}
+		<tr valign="top">
+			<td>
+{other_items}
+			</td>
+		</tr>
+{/if}
+	</table>

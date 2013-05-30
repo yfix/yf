@@ -1,0 +1,6 @@
+<div align="center">
+<form method="post" action="{form_action}">
+	<b>{t(STPL name)}</b>:<input type="text" name="name" value="" />&nbsp;
+	<input type="submit" value="{t(Add STPL)}" />
+</form>
+</div>

@@ -1,0 +1,6 @@
+<tr class="{bg_class}">
+	<td>{site_id}.</td>
+	<td>{site_name}</td>
+	<td>{theme_name}</td>
+	<td><a href="{edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit Home Page)}" /></a>&nbsp;</td>
+</tr>

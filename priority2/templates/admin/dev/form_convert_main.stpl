@@ -1,0 +1,7 @@
+<form action="{form_action}" method="post">
+Source:<br />
+<textarea name="source" cols="100" rows="15" style="width:100%;">{source}</textarea><br />
+Result:<br />
+<textarea name="result" cols="100" rows="15" style="width:100%;">{result}</textarea><br />
+<input type="submit" name="submit" value="convert"><br />
+</form>

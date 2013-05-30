@@ -1,0 +1,15 @@
+<br />
+
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p>
+		<label for="tag_name">{t(Allow tag editing to)}:</label>
+		{allowed_groups_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}">
+	</div>
+</form>
+</div>
+	
+

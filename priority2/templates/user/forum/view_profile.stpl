@@ -1,0 +1,169 @@
+<div class="borderwrap">
+	<div class="maintitle">{t(Viewing Profile)}: {user_name}</div>
+	<table width="100%">
+		<tr>
+			<td width="1%" valign="top" class="row1">
+				<h3>{user_name}</h3>
+{user_details}
+			</td>
+			<td width="30%" align="center" valign="top" class="row1">
+{if("is_member" ne 0)}
+				<fieldset>
+					<legend><b>{t(Profile Options)}</b></legend>
+					<table width="100%">
+						<tr>
+							<td width="1%"><img src="images/forum/profile_item.gif" border='0' alt="{t(Profile Item)}" /></td>
+							<td width="99%"><a href="{find_user_posts_link}">{t(Find member posts)}</a></td>
+						</tr>
+						<tr>
+							<td width="1%"><img src="images/forum/profile_item.gif" border='0' alt="{t(Profile Item)}" /></td>
+							<td width="99%"><a href="{find_user_topics_link}">{t(Find member topics)}</a></td>
+						</tr>
+{/if}
+{if("is_admin" eq 1)}
+						<tr>
+							<td width="1%"><img src="images/forum/profile_item.gif" border='0' alt="{t(Profile Item)}" /></td>
+							<td width="99%"><a href="{edit_user_link}">{t(Edit Member)}</a></td>
+						</tr>
+{/if}
+{if("delete_user_link" ne "")}
+						<tr>
+							<td width="1%"><img src="images/forum/profile_item.gif" border='0' alt="{t(Profile Item)}" /></td>
+							<td width="99%"><a href="{delete_user_link}" onclick="return confirm('Are you sure?')">{t(Delete Member)}</a></td>
+						</tr>
+{/if}
+{if("is_member" ne 0)}
+					</table>
+				</fieldset>
+{/if}
+			</td>
+			<td width="1%" align="right" class="row1"></td>
+		</tr>
+	</table>
+</div>
+
+<br />
+
+<table>
+	<tr>
+		<td width="50%" valign="top">
+			<table cellspacing="1" class="borderwrap">
+				<tr>
+					<td align="center" colspan="2" class="maintitle">{t(Active Stats)}</td>
+				</tr>
+				<tr>
+					<td class="row2" valign="top"><b>{t(User local time)}</b></td>
+					<td class="row1"><i>{user_local_time}{if("user_local_time" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+				<tr>
+					<td class="row2" width="30%" valign="top"><b>{t(Total Posts)}</b></td>
+					<td width="70%" class="row1"><b>{user_total_posts}</b>
+{if("user_total_posts" ne 0)}
+					<br />( {posts_per_day} {t(posts per day)} / {posts_percent}% {t(of total forum posts)} )
+{/if}
+					</td>
+				</tr>
+{if("user_total_posts" gt 0)}
+				<tr>
+					<td class="row2" valign="top"><b>{t(Most active in)}</b></td>
+					<td class="row1"><a href="{most_forum_link}"><b>{most_forum_name}</b></a><br />( {most_forum_posts} {t(posts)} / {most_forum_percent}% {t(of this member active posts)} )</td>
+				</tr>
+{/if}
+{if("last_active_date" ne "")}
+				<tr>
+					<td class="row2" valign="top"><b>{t(Last Active)}</b></td>
+					<td class="row1">{last_active_date}</td>
+				</tr>
+{/if}
+				<tr>
+					<td class="row2" valign="top"><b>{t(Status)}</b></td>
+					<td class="row1">
+{if("user_is_online" eq 1)}<img src="images/forum/p_online.gif" border="0"  alt="{t(User is online)}!" />{/if}
+{if("user_is_offline" eq 1)}<img src="images/forum/p_offline.gif" border="0"  alt="{t(User is offline)}" />{/if}
+						<!--(Active in User Control Panel / PM Center)-->
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td width="50%" valign="top">
+			<table class="borderwrap">
+				<tr>
+					<td align="center" colspan="2" class="maintitle">{t(Communicate)}</td>
+				</tr>
+				<tr>
+					<td width="1%" class="row1"><img src="images/forum/profile_aim.gif" border='0' alt='AIM' /></td>
+					<td width="99%" class="row2"><i>{user_aim}{if("user_aim" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+				<tr>
+					<td width="1%" class="row1"><img src="images/forum/profile_yahoo.gif" border='0'  alt='Yahoo' /></td>
+					<td width="99%" class="row2"><i>{user_yim}{if("user_yim" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+				<tr>
+					<td width="1%" class="row1"><img src="images/forum/profile_icq.gif" border='0'  alt='ICQ' /></td>
+					<td width="99%" class="row2"><i>{user_icq}{if("user_icq" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+				<tr>
+					<td width="1%" class="row1"><img src="images/forum/profile_msn.gif" border='0'  alt='MSN' /></td>
+					<td width="99%" class="row2"><i>{user_msn}{if("user_msn" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+{if("send_pm_link" ne "")}
+				<tr>
+					<td width="1%" class="row1"><img src="images/forum/icon_msg_nonew.gif" border="0"  alt="{t(Contact)}" /></td>
+					<td width="99%" class="row2"><a href="{send_pm_link}">{t(Send a Personal Message)}</a></td>
+				</tr>
+{/if}
+{if("send_email_link" ne "")}
+				<tr>
+					<td width="1%" class="row1"><img src="images/forum/icon_msg_nonew.gif" border="0"  alt="Contact" /></td>
+					<td width="99%" class="row2"><a href="{send_email_link}">{t(Send an Email)}</a></td>
+				</tr>
+{/if}
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td width="50%" valign="top">
+			<table class="borderwrap">
+				<tr>
+					<td align="center" colspan="2" class="maintitle">{t(Information)}</td>
+				</tr>
+				<tr>
+					<td class="row2" width="30%" valign="top"><b>{t(Home Page)}</b></td>
+					<td width="70%" class="row1"><i><a href="{user_home_page}">{user_home_page}</a>{if("user_home_page" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+				<tr>
+					<td class="row2" valign="top"><b>{t(Birthday)}</b></td>
+					<td class="row1"><i>{user_birth} {if("user_birth" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+				<tr>
+					<td class="row2" valign="top"><b>{t(Location)}</b></td>
+					<td class="row1"><i>{user_location} {if("user_location" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+				<tr>
+					<td class="row2" valign="top"><b>{t(Interests)}</b></td>
+					<td class="row1"><i>{user_interests}{if("user_interests" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+			</table>
+		</td>
+		<td width="50%" valign="top">
+			<table class="borderwrap">
+				<tr>
+					<td align="center" colspan="2" class="maintitle">{t(Additional Information)}</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center" class="row2"><i>{user_add_info}{if("user_add_info" eq "")}{t(No Information)}{/if}</i></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<br />
+
+{if("is_my_info" eq 1)}
+<div class="borderwrap">
+	<div class="formsubtitle" align="center">
+		<a href="{edit_profile_link}">{t(Edit my Profile)}</a>
+	</div>
+</div>
+{/if}

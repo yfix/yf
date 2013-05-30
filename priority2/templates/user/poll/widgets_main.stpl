@@ -1,0 +1,27 @@
+<div class="poll">
+<h6>{question}</h6>
+
+	<div>
+	<form action="{form_action}" method="post">
+		{foreach("choices")}
+		<p class="answer">
+			<label class="simple">
+			{if("multiple" ne "1")}
+				<input type="radio" name="choice" value="{#.id}">
+			{/if}
+			{if("multiple" eq "1")}
+				<input type="checkbox" name="choice[]" value="{#.id}">
+			{/if}
+			{#.text}</label>
+		</p>
+		{/foreach}
+
+		<input type="hidden" name="_not_for_comments" value="1">
+		<input type="hidden" name="poll_id" value="{poll_id}">
+		<div align="center">
+			<input type="submit" value="Vote!">
+		</div>
+	</form>
+	</div>
+</div>
+

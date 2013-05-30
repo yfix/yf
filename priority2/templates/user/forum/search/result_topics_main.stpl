@@ -1,0 +1,71 @@
+{if("pages" ne "")}
+<table>
+	<tr>
+		<td width="60%"><div>{pages}&nbsp;</div></td>
+	</tr>
+</table>
+
+<br />
+{/if}
+
+<div class="borderwrap">
+{if("items" ne "")}
+	<div class="maintitle">
+		<div style="float: left;"><img src="images/forum/nav_m.gif" border="0" alt="&gt;" width='8' height='8' />&nbsp;{t(Your topics)}</div>
+		<div align="right">&nbsp;</div>
+	</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<th colspan="2">&nbsp;</th>
+			<th>{t(Topic Title)}</th>
+			<th align="center">{t(Forum)}</th>
+			<th align="center">{t(Topic Starter)}</th>
+			<th align="center">{t(Replies)}</th>
+			<th align="center">{t(Views)}</th>
+			<th>{t(Last Action)}</th>
+		</tr>
+{items}
+		<tr>
+			<td class="catend" colspan="8"></td>
+		</tr>
+	</table>
+{/if}
+{if("items" eq "")}
+	<div class="row2" align="center">{t(No matches found)}</div>
+{/if}
+</div>
+
+{if("pages" ne "")}
+<br />
+<table>
+	<tr>
+		<td width="60%"><div>{pages}&nbsp;</div></td>
+	</tr>
+</table>
+{/if}
+
+<br />
+{if("items" ne "")}
+<div class="activeusers">
+	<div class="row2">
+		<table>
+			<tr valign="top">
+				<td nowrap="nowrap">
+					<img src="images/forum/f_norm.gif" border="0"  alt="{t(New Posts)}" />&nbsp;&nbsp;<span class="desc">{t(New Replies)}</span>
+					<br /><img src="images/forum/f_norm_no.gif" border="0"  alt="{t(No New Posts)}" />&nbsp;&nbsp;<span class="desc">{t(No New Replies)}</span>
+					<br /><img src="images/forum/f_hot.gif" border="0"  alt="{t(Hot topic)}" />&nbsp;&nbsp;<span class="desc">{t(Hot Topic)} ({t(New Replies)})</span>
+					<br /><img src="images/forum/f_hot_no.gif" border="0"  alt="{t(No new)}" />&nbsp;&nbsp;<span class="desc">{t(Hot Topic)} ({t(No New Replies)})</span>&nbsp;
+				</td>
+				<td nowrap="nowrap">
+					<img src="images/forum/f_closed.gif" border="0" alt="{t(Closed)}" />&nbsp;&nbsp;<span class="desc">{t(Locked Topic)}</span>
+					<br /><img src="images/forum/f_moved.gif" border="0" alt="{t(Moved)}" />&nbsp;&nbsp;<span class="desc">{t(Moved Topic)}</span>
+				</td>
+				<td align="right" width="90%">
+{board_fast_nav}
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<br />
+{/if}

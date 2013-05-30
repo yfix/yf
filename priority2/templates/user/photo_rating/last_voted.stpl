@@ -1,0 +1,42 @@
+<table border="0" cellpadding="0" cellspacing="0" width="150" align="center">
+	<tr>
+		<td height="5"></td>
+	</tr>
+	<tr>
+		<td class="right_menu_header">{t(Last Rated)}</td>
+	</tr>
+	<tr>
+		<td class="right_menu_body">
+		
+		{if("is_logged_in" eq 0)}
+			<small>{t(You are not logged in, so your votes are not counted and you can&#39;t see the results)}. 
+			{t(Please)} <a href="./?object=register">{t(register)}</a> {t(or)} <a href="./?object=login_form">{t(login)}</a>.</small>
+		{/if}
+		<br />		
+		{if("is_logged_in" eq 1)}
+			<div align="center">
+			<table width="120" height="120" style="margin:0px;padding:0px;" class="avatar_table">
+				<tr>
+					<td width="120" class="avatar" nowrap>
+						<a href="{photo_link}"><img src="{img_src}" alt="{photo_name}{if('photo_name' eq '')}{user_name} photo{/if}" border="0" hspace="5" vspace="5"{if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} profy:user_id="{user_id}" /></a>
+					</td>
+				</tr>
+			</table>
+			<b><a href="{user_link}">{user_name}</a></b><br /><br />
+			</div>
+
+			<b>{t(Your vote)}:</b> {voted}<br />
+			<b>{t(Overall)}:</b> {photo_rating}<br />
+			<b>{t(Total votes)}:</b> {num_votes}<br /><br />
+		{/if}
+
+		</td>
+	</tr>
+	<tr class="detail"> 
+		<td><b class="detail">&nbsp;{t(Useful Links)}:</b><br /></td>
+	</tr>
+	<tr>
+		<td align="left">
+		</td>
+	</tr>
+</table>

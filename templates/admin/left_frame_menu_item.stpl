@@ -1,0 +1,11 @@
+{if("level_num" eq "0")}
+	</ul>
+	<div class="top_level">{name}</div>
+	<ul>
+{/if}
+{if("level_num" eq "1")}
+	{if("type_id" ne 3)}
+		{if("name" ne "")}<li><a href="{link}" target="main">{name}</a></li>{/if}
+	{/if}
+	{if("type_id" eq 3)}<li><a href="javascript:;" target="main">{name}</a></li>{/if}
+{/if}

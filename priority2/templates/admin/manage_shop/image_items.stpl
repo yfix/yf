@@ -1,0 +1,17 @@
+
+
+{if("img_path" ne "")}
+
+		<a href="{img_path}" title="View large" target="_blank">
+
+{if("thumb_path" ne "")}
+		<img src="{thumb_path}" alt="{name}" class="product_image" >
+{/if}		
+
+			
+		</a>
+{/if}
+
+{if("del_url" ne "")}
+		<a href="{del_url}">Delete image</a><br />
+{/if}

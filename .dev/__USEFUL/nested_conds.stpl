@@ -1,0 +1,79 @@
+<hr>
+Testing multi conditions<br /><br />
+
+
+simple (my_var_1 eq 1) (true): <b>{if("my_var_1" eq "1")} really true {/if}</b><br />
+simple (my_var_2 eq 1) (false): <b>{if("my_var_2" eq "1")} wrong!!! {/if}</b><br />
+simple (my_var_2 eq 2) (true): <b>{if("my_var_2" eq "2")} really true {/if}</b><br />
+
+complex (my_var_1 + my_var_2) eq 3 (true): <b>{if("my_var_1 + my_var_2" eq "3")} really true {/if}</b><br />
+complex (my_var_1 + my_var_2) eq -1 (false): <b>{if("my_var_1 + my_var_2" eq "-1")} wrong!!! {/if}</b><br />
+
+complex (my_var_1 + %3) eq 4 (true): <b>{if("my_var_1 + %3" eq "4")} really true {/if}</b><br />
+complex (my_var_1 + %3) eq -1 (false): <b>{if("my_var_1 + %3" eq "-1")} wrong!!! {/if}</b><br />
+
+complex (my_var_1 and my_var_2) eq 1 (true): <b>{if("my_var_1 and my_var_2" eq "1")} really true {/if}</b><br />
+complex (my_var_1 and my_var_2) eq 0 (false): <b>{if("my_var_1 and my_var_2" eq "0")} wrong!!! {/if}</b><br />
+
+complex (get.object) eq "mod_example" (true): <b>{if("get.object" eq "mod_example")} really true {/if}</b><br />
+complex (get.object) eq "some_other" (false): <b>{if("get.object" eq "some_other")} wrong!!! {/if}</b><br />
+
+nested (3 level deep if's) (my_var_1 eq 1)(my_var_2 eq 2)(my_var_1 eq 1): 
+
+{if("my_var_1" eq "1")}
+	{if("my_var_2" eq "2")}
+		{if("my_var_1" eq "1")}
+			really true 
+
+<table border="1">
+{table_rows}
+</table>
+
+{translate("testing translate")}
+
+Testing inclusion of the javascript (if ok - you wil see nothing after double colon):<br />
+<script language="javascript" type="text/javascript">
+<!--
+	function ___showstatus() {
+		if (2) {
+			var test;
+		}
+		window.status = this.innerText;
+		return true;
+	}
+	function ___hidestatus() {
+		window.status = document.title;
+		return true;
+	}
+	function __set_status() {
+		var i = 0;
+		while(document.links[i]) {
+			document.links[i].onmouseover = showstatus;
+			document.links[i].onmouseout = hidestatus;
+			i++;
+		}
+		window.document.body.onload = set_status;
+	}
+-->
+</script>
+
+		{/if}
+	{/if}
+{/if}
+
+{if("test_array.0.test_3" eq 1)}
+	Testing call to the sub array (not global, but from the $replace)!!!<br />
+{/if}
+
+<hr>
+Testing foreach cycles<br /><br />
+
+{foreach('test_array')}
+	<b>String inside foreach</b><br />
+	{if('test_array.test_3' eq "1")}
+		<i>Test_3 is equal 1 here!!!!</i><br />
+	{/if}
+	{if("my_var_1" eq "1")}
+		<u>Simple comparison with global replace item</u><br />
+	{/if}
+{/foreach}

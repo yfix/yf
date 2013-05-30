@@ -1,0 +1,5 @@
+{if("create_poll_url" ne "")}
+<div align="right">
+	<a href="{create_poll_url}">{t(Create poll)}</a>
+</div>
+{/if}

@@ -1,0 +1,1 @@
+<span class="tag_item"><a href="{tag_search_url}">{tag_text}</a> {if("is_simple" eq "0")}<em id="{div_id}" class="tag_more" profy:tag_url_by_user="{tag_search_url_by_user}">&#x25bc;</em>{/if}</span>

@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{execute(graphics,show_site_title)}</title>
+{execute(graphics,show_css)}
+</head>
+<body>
+<div id="login_wrap">
+	<form id="myform" action="./?task=login" method="post">
+	<p>
+	    <label for="login">{t(Login)}</label>
+    	<input type="text" name="login" id="login" value="" />
+	</p>
+	<p>
+	    <label for="pswd">{t(Password)}</label>
+    	<input type="password" name="password" id="pswd" value="" />
+	</p>
+	<div align="right">
+	   	<input type="submit" value="Enter" id="enter" />
+	</div>
+	</form>
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{if("display_i18n_js_vars" eq 1)}
+<script type="text/javascript">
+<!--
+var BB_CODES_I18N_VARS = {
+	text_enter_url		: "{t(Enter the complete URL for the hyperlink)} ",
+	text_enter_url_name	: "{t(Enter the title of the webpage)} ",
+	text_enter_image	: "{t(Enter the complete URL for the image)} ",
+	text_enter_email	: "{t(Enter the email address)} ",
+	text_enter_flash	: "{t(Enter the URL to the Flash movie.)} ",
+	text_code			: "{t(Usage: [CODE] Your Code Here.. [/CODE])} ",
+	text_quote			: "{t(Usage: [QUOTE] Your Quote Here.. [/QUOTE])} ",
+	error_no_url		: "{t(You must enter a URL)} ",
+	error_no_title		: "{t(You must enter a title)} ",
+	error_no_email		: "{t(You must enter an email address)} ",
+	error_no_width		: "{t(You must enter a width)} ",
+	error_no_height		: "{t(You must enter a height)} ",
+	prompt_start		: "{t(Enter the text to be formatted)} ",
+	help_bold			: "{t(Insert Bold Text)}  (alt + b)",
+	help_italic			: "{t(Insert Italic Text)}  (alt + i)",
+	help_under			: "{t(Insert Underlined Text)}  (alt + u)",
+	help_font			: "{t(Insert Font Face tags)} ",
+	help_size			: "{t(Insert Font Size tags)} ",
+	help_color			: "{t(Insert Font Color tags)} ",
+	help_close			: "{t(Close all open tags)} ",
+	help_url			: "{t(Insert Hyperlink)}  (alt + h)",
+	help_img			: "{t(Image)}  (alt + g) [img]http://www.dom.com/img.gif[/img]",
+	help_email			: "{t(Insert Email Address)}  (alt + e)",
+	help_quote			: "{t(Insert Quoted Text)}  (alt + q)",
+	help_list			: "{t(Create a list)}  (alt + l)",
+	help_code			: "{t(Insert Monotype Text)}  (alt + p)",
+	help_click_close	: "{t(Click button again to close)} ",
+	list_prompt			: "{t(Enter a list item. Click --cancel-- or leave blank to end the list)} ",
+	max_allowed_length	: "{t(The maximum allowed length is)} ",
+	characters			: "{t(characters)} ",
+	you_have_used		: "{t(You have used)} ",
+
+	__the_last_test_var	: ""
+};
+var BB_CODES_MAX_LENGTH		= "{max_length}";
+var BB_CODES_EMO_POP_LINK	= "{emo_pop_link}";
+var BB_CODES_BB_POP_LINK	= "{bb_pop_link}";
+-->
+</script>
+{/if}
+
+{if("bb_codes_js_src" ne "")}<script type="text/javascript" src="{bb_codes_js_src}"></script>{/if}

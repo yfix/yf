@@ -1,0 +1,2 @@
+{t(Common typos for this page)}: 
+{foreach("typos")} {#.text} {/foreach}

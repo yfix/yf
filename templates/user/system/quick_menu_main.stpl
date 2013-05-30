@@ -1,0 +1,6 @@
+<div id="quick_menu">
+	<div id="qm_button">{t(Quick menu)}</div>
+	<div id="qm_body">
+		{items}
+	</div>
+</div>

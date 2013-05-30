@@ -1,0 +1,2 @@
+<label><input type="radio" class="radiobutton" name="iconid" value="{icon_id}" {selected} />&nbsp;&nbsp;<img src="{img_src}"  align='middle' alt='' />&nbsp;&nbsp;</label>
+{if("need_div" eq 1)}<br />{/if}

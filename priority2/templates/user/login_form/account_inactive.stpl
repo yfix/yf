@@ -1,0 +1,27 @@
+<h1>{t(Account activation)}</h1>
+
+<p>
+{t(account_activation_info)}
+</p>
+
+<div style="margin: 10px;">
+<h4>{t(Enter activation code)}</h4>
+
+<form action="./?object=register&action=enter_code" method="post">
+	<b>{t(Enter code)}</b>: <input type="text" name="confirm_code" value="" size="40">
+	<input type="submit" value="{t(GO)}">
+</form>
+
+<h4>{t(Resend activation code)}</h4>
+
+<form action="./?object=register&action=resend_code" method="post">
+	<b>{t(Enter email)}</b>: <input type="text" name="email" value="" size="40">
+	<input type="submit" value="  {t(Submit)}  ">
+</form>
+</div>
+
+<p>
+{t(If you can not find it please)}<a href="./?object=help&action=email_form">{t(contact us)}</a>
+{t(so that we can activate your account manually. Be sure to mention the email you used in your registration)}. 
+</p>
+

@@ -1,0 +1,10 @@
+<div align="center">
+
+<b>{t("registratiom_successful")}</b><br><br>
+{t("registration_info")}:<br>
+
+{t("login")} : {login} <br>
+{t("password")} : {password} <br>
+
+<br><i> Profy Chat Team</i>
+</div>

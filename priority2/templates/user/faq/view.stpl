@@ -1,0 +1,25 @@
+<h1>{question}</h1>
+
+<div style="float: left;">
+	<small>
+{if("cat_name" ne "")}{t(FAQ Category)}: <a href="{cat_link}">{cat_name}</a><br />{/if}
+{t(Added on)}: {add_date}
+	</small>
+</div>
+
+{if("social_bookmarks" ne "")}
+<div style="float: right;">
+	<small>Like this page? Bookmark it:<br /></small>
+	{social_bookmarks}
+</div>
+{/if}
+
+<br style="clear:both;" />
+<hr style="background:#cccccc; height:1px;" noshade />
+
+{answer}
+
+<br /><br />
+
+<div>{comments}</div>
+

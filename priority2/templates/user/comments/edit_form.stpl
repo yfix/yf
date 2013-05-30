@@ -1,0 +1,29 @@
+<h1>{t(Edit Your Comment)}</h1>
+
+{if("js_check" eq 1)}{include("comments/js_check")}{/if}
+
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}" {if("js_check" eq 1)}onsubmit="try {return _check_comment_form(this);} catch (e) {return true;}"{/if} name="comment_form">
+{if("bb_codes_block" ne "")}
+	<p>{bb_codes_block}</p>
+{/if}
+	<p>
+		<label>{t(Comment Text)}:</label>
+		<textarea id="text" name="text" rows="10" cols="40">{text}</textarea>
+	</p>
+{if("captcha_block" ne "")}
+	<p>
+		<label>{t(CAPTCHA Image)}:</label>
+		{captcha_block}
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="submit" value="    {t(Save)}    " />
+		<input type="reset" value="    {t(Clear)}    " />
+	</div>
+</form>
+</div>
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

@@ -1,0 +1,27 @@
+{{--
+<h1>
+	{if("custom_header" eq "")}{t(Interests Search)}{/if}
+	{if("custom_header" ne "")}{custom_header}{/if}
+	{if("total" ne "")} ({total}){/if}
+</h1>--}}
+
+{if("filter" ne "")}
+	{filter}<br />
+{/if}
+
+{if("search_form" ne "")}
+	{search_form}<br />
+{/if}
+
+<div align="center">
+{if("items" ne "")}
+	<table>
+	<thead>
+		<th width="100%" colspan="2" align="left">{t(User name and interests)}:</th>
+	</thead>
+	{items}
+	</table>
+{/if}
+{if("items" eq "")}{t(No interests found)}{/if}
+{if("pages" ne "")}<br />{t(Pages)}: {pages}<br />{/if}
+</div>

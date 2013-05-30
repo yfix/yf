@@ -1,0 +1,11 @@
+The message below has been sent by {sender_name} {sender_email} 
+from {eval_code(SITE_ADVERT_URL)} website, where you placed your personal. 
+ATTENTION! 
+Do not reply directly to this email as it may go to the wrong address!
+Reply exactly to {sender_email} instead.
+===============================================
+
+{message}
+
+===============================================
+Please visit us at {eval_code(SITE_ADVERT_URL)}

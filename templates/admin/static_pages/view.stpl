@@ -1,0 +1,16 @@
+<div class="static_content">
+	{content}
+</div>
+{{--
+<div align="right">
+{if("print_link" ne "")}
+	<a href="{print_link}" title="print"><img src="images/page_print.gif" alt="print" border="0"></a>
+{/if}
+{if("email_link" ne "")}
+	<a href="{email_link}" title="email"><img src="images/page_email.gif" alt="email" border="0"></a>
+{/if}
+{if("pdf_link" ne "")}
+	<a href="{pdf_link}" title="pdf"><img src="images/page_pdf.gif" alt="pdf" border="0"></a>
+{/if}
+</div>
+--}}

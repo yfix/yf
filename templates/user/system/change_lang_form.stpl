@@ -1,0 +1,4 @@
+<form action="{form_action}" name="langselectorbox" method="post">
+	<input type="hidden" name="back_url" value="{back_url}">
+{lang_box}
+</form>

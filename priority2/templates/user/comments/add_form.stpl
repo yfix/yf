@@ -1,0 +1,38 @@
+<h3>{t(Add your comment)}</h3>
+
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+{if("bb_codes_block" ne "")}
+	<p>{bb_codes_block}</p>
+{/if}
+{{--	
+	<p>
+		<label>{t("Your Name")}</label>
+		<input name="user_name" size="30" value="">
+	</p>
+--}}
+{if("user_email" ne "0")}
+	<p>
+		<label for="user_email">{t(Email)}</label>
+		<input name="user_email" size="30" value="{user_email}" id="user_email">
+	</p>
+{/if}
+	<p>
+		<label>{t("Text")}</label>
+		<textarea id="text" name="text" cols="50" rows="10">{text}</textarea>
+	</p>
+{if("captcha_block" ne "")}
+	<p>
+		<label>{t(Captcha Image)}</label>
+		{captcha_block}
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="hidden" name="parent_id" value="{parent_id}" />
+		<input type="submit" name="go" value="  {t(Save)}  " />
+		<input type="reset" value="  {t(Clear)}  " />
+	</div>
+</form>
+</div>

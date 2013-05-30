@@ -1,0 +1,16 @@
+{{--
+<br />
+{if("is_logged_in" eq "1")}
+<div align="right">
+	<a href="{tags_settings_url}">{t(Tags settings)}</a>
+</div>
+<br />
+{/if}
+--}}
+<div align="center">
+	{include("tags/search_tags_form")}
+</div>
+<br />
+<div align="center" class="cloud">
+	{items}
+</div>

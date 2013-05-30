@@ -1,0 +1,42 @@
+{if("error_message" ne "")}
+<div align="center">{error_message}</div>
+{/if}
+
+<div align="center">
+<div class="editform" style="width:50%;">
+<form action="{form_action}" method="post">
+{if("single_table" ne "")}
+	<p>
+		<label>{t(Table Name)}</label>
+		<b>{single_table}</b> <br />(rows: <b>{table_num_rows}</b>, size: <b>{table_size}</b>)
+	</p>
+{/if}
+{if("single_table" eq "")}
+	<p>
+		<label>{t(Table Name)}</label>
+		{tables_box}
+	</p>
+{/if}
+	<p>
+		<label>{t(Data options)}</label>
+		<span class="vertical">
+		<input type="checkbox" id="full_inserts" name="full_inserts" value="1" checked><label for="full_inserts" class="simple">&nbsp;{t(Full inserts)}</label><br />
+		<input type="checkbox" id="ext_inserts" name="ext_inserts" value="1" checked><label for="ext_inserts" class="simple">&nbsp;{t(Extended inserts)}</label>
+		</span>
+	</p>
+	<p>
+		<label>{t(Export Type)}</label>
+		{export_type_box}
+	</p>
+	<p>
+		<label>{t(Use compression)}</label>
+		{compress_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(GO)}">
+	</div>
+</form>
+</div>
+<br />
+<a href="{back_link}">{t(Back)}</a>
+</div>

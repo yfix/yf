@@ -1,0 +1,18 @@
+<div style="background-color: white;padding: 5px 5px 5px 5px; height: 500px;">
+<h1>{t(Voting Results)}</h1>
+
+<div align="left">
+{if("success" eq 1)}
+	{t(Thanks for taking time to vote for this post)}! {t(This will help us to improve the quality of site content, to reward users for informative postings or penalize for the low quality and rude one)}.<br />
+	{text}
+{/if}
+{if("success" eq 0)}
+	{t(Vote not saved)}!<br />
+	{text}
+{/if}
+</div>
+
+<br /><br />
+
+<div align="center"><a href="javascript:self.close();" class="actionlink">{t(Close Window)}</a></div>
+</div>

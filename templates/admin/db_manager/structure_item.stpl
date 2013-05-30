@@ -1,0 +1,9 @@
+<tr class="{bg_class}">
+	<td><b>{field}</b></td>
+	<td>{type}</td>
+	<td>{collation}</td>
+	<td>{null}</td>
+	<td>{key}</td>
+	<td>{default}</td>
+	<td>{extra}</td>
+</tr>

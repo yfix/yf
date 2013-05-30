@@ -1,0 +1,11 @@
+<h1>Who's online ({total} total, {num_members} members, {num_guests} guests)</h1>
+
+{if("items" ne "")}
+<table cellspacing="0" cellpadding="10" width="100%" border="0">
+	<tr>{items}</tr>
+</table>
+{/if}
+{if("pages" ne "")}
+	<br /><span class="pages">{t(Pages)}: {pages}</span>
+{/if}
+{if("items" eq "")}<div align="right"><strong>{t(No online stats)}</strong></div>{/if}

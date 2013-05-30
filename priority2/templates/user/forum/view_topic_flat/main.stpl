@@ -1,0 +1,100 @@
+<script type="text/javascript">
+<!--
+function link_to_post(post_id) {
+	var base_link = "{link_to_post_base}";
+	re = /\/0/i;
+	var post_link = base_link.replace(re, "\/" + post_id);
+	temp = prompt('{t(Link to the post)}', post_link);
+	return false;
+}
+-->
+</script>
+
+<div class="view_topic_main">
+
+<table>
+	<tr>
+		<td width="40%" valign="middle"><div>{topic_pages}&nbsp;</div></td>
+		<td class='nopad' align="right" width="60%" valign="middle">
+{rss_topic_button}
+{if("add_post_link" ne "")}<a href="{add_post_link}" class="actionlink">{t(Reply to this topic)}</a>{/if}
+{if("topic_closed" eq 1)}&nbsp;{t(Topic is closed)}{/if}
+{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}" class="actionlink">{t(Start new topic)}</a>{/if}
+{if("forum_closed" eq 1)}&nbsp;Forum is read-only{/if}
+{if("new_poll_link" ne "")}&nbsp;<a href="{new_poll_link}" class="actionlink">{t(New poll)}</a>{/if}
+		</td>
+	</tr>
+</table>
+
+<table>
+	<thead class="big">
+	<tr>
+		<th width="65%" align="left" valign="top">
+			{if("topic_link" ne "")}<a href="{topic_link}">{/if}<b>{topic_name}</b>{if("topic_link" ne "")}</a>{/if}
+		</th>
+		<th width="35%" align="right">
+{if("allow_change_view" eq 1)}
+			<a href="{tree_view_link}">{t(Tree View)}</a> &middot;
+		[ <a href="{flat_view_link}">{t(Flat View)}</a> ]
+{/if}
+		</th>
+	</tr>
+	</thead>		
+</table>
+		
+{poll} {if("poll" ne "")}<br /><br />{/if}
+
+{posts}
+
+<br />
+
+{if("is_moderator" eq 1)}
+<br />
+
+<div class="borderwrap">
+	<div class="bar" style="padding: 5px; height:18px;">
+		<div style="float: right; text-align: right;">
+	 		<form name="modform" method="post" action="{admin_action}" onsubmit="return check_delete();">
+	 			<input type="hidden" name="selected_ids" value="" />
+{p_act_box} &nbsp;
+	 			<input type="submit" name="gobutton" value="{t(With Selected)}" class="button" />
+	 		</form>
+		</div>
+{mod_options_box}
+	</div>
+</div>
+
+<br />
+{/if}
+
+<table>
+	<tr>
+		<td width="30%" valign="middle">
+			<div>{topic_pages}&nbsp;</div>
+		</td>
+		<td class="nopad" align="right" width="70%">
+{if("use_fast_reply" eq 1)}<a href="javascript:ShowHide('qr_open','qr_closed');" title="Open Fast Reply Window" accesskey="f"  class="actionlink">{t(Fast Reply)}</a>{/if}
+{if("use_topic_options" eq 1)}&nbsp;<a href="javascript:ShowHide('topic_open','topic_closed')" title="Open Topic Options" class="actionlink">{t(Topic Options)}</a>{/if}
+{if("add_post_link" ne "")}&nbsp;<a href="{add_post_link}" class="actionlink">{t(Reply to this topic)}</a>{/if}
+{if("topic_closed" eq 1)}&nbsp;{t(Topic is closed)}{/if}
+{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}"  class="actionlink">{t(Start new topic)}</a>{/if}
+{if("forum_closed" eq 1)}&nbsp;Forum is read-only{/if}
+		</td>
+	</tr>
+</table>
+
+{topic_online}
+{fast_reply_form}
+{topic_options_form}
+
+<br />
+
+{if("board_fast_nav" ne "")}
+<div class="borderwrap">
+	<div class="row2"><div align="right">{board_fast_nav}</div></div>
+</div>
+
+<br />
+{/if}
+
+</div>

@@ -1,0 +1,13 @@
+<div align="center">
+	<form action='{form_action}' method='post'>
+
+	<b>{t(Keyword)}: </b> &nbsp;
+
+	<input type="text" name="id" value="{keyword}">&nbsp;&nbsp;
+	<input type="submit" value=" {t(Search)} "><br />
+
+	<label><input type="radio" name="match" value="partial" {if("exact_match" eq 0)}checked{/if}> {t(Partial)}</label>
+	<label><input type="radio" name="match" value="exact" {if("exact_match" eq 1)}checked{/if}> {t(Exact Match)}</label>
+
+	</form>
+</div>

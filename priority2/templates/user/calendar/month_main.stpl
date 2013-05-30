@@ -1,0 +1,18 @@
+<h3>{month_name} {year}</h3>
+
+<table class="my_calendar">
+	<tr>
+		<th>{t(Sunday)}</th>
+		<th>{t(Monday)}</th>
+		<th>{t(Tuesday)}</th>
+		<th>{t(Wednesday)}</th>
+		<th>{t(Thursday)}</th>
+		<th>{t(Friday)}</th>
+		<th>{t(Saturday)}</th>
+	</tr>
+{foreach("weeks")}
+	<tr>
+{#.days}
+	</tr>
+{/foreach}
+</table>

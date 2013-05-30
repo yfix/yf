@@ -1,0 +1,130 @@
+html{
+	overflow-x: auto; /* fixes MSIE scrollbar bug DO NOT REMOVE, has no effect in Mozilla, or Opera */
+}
+form {
+	display: inline;
+	margin: 0; /* removes mystery form tag gapping */
+	padding: 0; /* removes mystery form tag gapping */
+}
+/*
+body, table, th, tr, td, span, div, p, strong, small, b, a {
+	font-family: Verdana;
+	line-height: 140%;
+	font-size: 12px;
+}
+*/
+body, table, tr, td, span, div, p, strong, small, b, a {
+	font-family: Verdana;
+	font-size: 11px;
+	color: #555555;
+}
+body {
+	margin: 0px;
+	padding:0px;
+}
+h3 {
+	font: 24px Verdana;
+	color: #555555;
+}
+.check {
+	border: 0px;
+	background: transparent;
+}
+div {
+	margin: 0px;
+	padding: 2px;
+	font-size: 10px;
+	font-family: Verdana;
+}
+div.bg1 {
+	background: #ffffff;
+}
+div.bg2 {
+	background: #f5f5f5;
+}
+div.users_m {
+	background: #0000ff;
+	color: #ffffff;
+	font-weight: bold;
+	text-align: center;
+}
+div.users_f {
+	background: #ff0000;
+	color: #ffffff;
+	font-weight: bold;
+	text-align: center;
+}
+div.total_users {
+	background: yellow;
+	color: #000000;
+	text-align: center;
+}
+div.total_users2 {
+	background: #ffcc00;
+	color: #000000;
+	text-align: center;
+}
+div.msg_bg1 {
+	background: #ffffff;
+}
+div.msg_bg2 {
+	background: #ffffff;
+}
+span.user_msg {
+	font-size: 12px;
+}
+input, select, textarea {
+	border: 1px solid black;
+	color: black;
+	font-size: 10px;
+	font-weight: bold;
+	font-family: verdana;
+	background: white;
+}
+A, A:visited {
+	font-weight: bold;
+	text-decoration: underline;
+	color: #555555;
+}
+A:hover, A:active {
+	font-weight:bold;
+	text-decoration: underline;
+	color: #555555;
+}
+.chat_user_ignore_0 {
+	color: #33aa00;
+}
+.chat_user_ignore_1 {
+	color: #ff0000;
+}
+.bg1 {
+	background:#f5f5f5;
+}
+.bg2 {
+	background:#fff;
+}
+span.smile {
+	color: yellow;
+	font: 12px Verdana;
+	font-weight: bold;
+	background: black;
+	margin: 0px 5px;
+}
+.header {
+	color: white;
+	background-color: #555555;
+	text-align: center;
+	text-transform: capitalize;
+}
+table.tbb td{
+	border: 1px solid #555555;
+}
+table.tbb {
+	border-collapse: collapse;
+}
+.td_header {
+	color: white;
+	background-color: #555555;
+	text-align: center;
+	text-transform: capitalize;
+}

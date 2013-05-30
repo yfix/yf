@@ -1,0 +1,41 @@
+<h1 class="header">{t(Delete folder)}</h1>
+
+{error_message}
+
+<div>
+{if("is_last_folder" ne 1)}
+
+<p>{t(You are going to delete)} "{folder_name}" {t(folder)}. {t(This action can&#39;t be reverted!)}</p>
+
+<form action="{form_action}" method="post">
+
+{if("contains_photos" eq 1)}
+	<p>{t(Please choose what you would like to do with it&#39;s images)}</p>
+
+	<div align="left">
+		<input type="radio" name="choose" value="delete" id="choose_delete" />
+		<label for="choose_delete">{t(Delete all images)}</label>
+	</div>
+
+	<div align="left">
+		<input type="radio" name="choose" value="move" id="choose_move" checked />
+		<label for="choose_move">{t(Move images to another folder)}</label> {folders_box}
+	</div>
+{/if}
+
+	<br />
+
+	<div align="center">
+		<input type="submit" value="{t(Submit)}!" />
+		<input type="button" value="{t(Cancel)}" onclick="window.location.href='{back_link}'" />
+	</div>
+
+</form>
+{/if}
+
+{if("is_last_folder" eq 1)}
+	<p>{t(You can&#39;t delete the last folder)}! {t(Please either simply rename it or create another one first.)}</p>
+
+	<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+{/if}
+</div>

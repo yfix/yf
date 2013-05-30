@@ -1,0 +1,21 @@
+{if("items" ne "")}
+<table border="0" cellspacing="0" cellpadding="3" width="400" align="center">
+	<tr class="frame">
+		<td><b>{t(User)}</b></td>
+		<td><b>{t(Start Date)}</b></td>
+		<td><b>{t(Child Accounts)}</b></td>
+		<td width="5%" align="center"><b>{t(Action)}</b></td>
+	</tr>
+{items}
+</table>
+{/if}
+{if("items" eq "")}<div align="center">No forum posters yet</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">Pages: {pages}</div><br />{/if}
+
+{if("add_link" ne "")}
+<br />
+<div align="center">
+	<a href="{add_link}">Add new forum poster</a><br /><br />
+</div>
+{/if}

@@ -1,0 +1,14 @@
+{if("link" eq "")}
+	</div>
+</div>
+{if("need_clear" eq "1")}<br style="clear:both;" />{/if}
+<div class="admin_menu_block" style="float:left;width:200px;">
+	<div class="admin_menu">
+		<div class="top_level">{name}</div>
+{else}
+		<li><a href="{link}"><b>{name}</b></a></li>
+{/if}
+{if("is_last_item" eq "1")}
+	</div>
+</div>
+{/if}

@@ -1,0 +1,6 @@
+<p>Apply selected color scheme</p>
+
+<form action="{form_action}" method="post">
+	{schemes_box}
+	<input type="submit" value="GO">
+</form>

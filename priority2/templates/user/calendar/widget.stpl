@@ -1,0 +1,10 @@
+<div class="calendar">
+{if("cal_title" ne "")}
+	<div align="center">
+		<b>{cal_title}</b><br />
+	</div>
+{/if}
+	<div align="center" id="calendar_cur_month">
+		{cur_month}
+	</div>
+</div>

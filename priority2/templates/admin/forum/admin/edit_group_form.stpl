@@ -1,0 +1,27 @@
+<h3>{if("is_for_edit" eq 1)}Edit forum group{/if}{if("is_for_edit" eq 0)}Add new forum group{/if}</h3>
+
+<form action="{form_action}" method="post">
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="5">
+{if("error_message" ne "")}
+	<tr>
+		<td align="center"><b style="color:red;">{error_message}</b></td>
+	</tr>
+{/if}
+	<tr>
+		<td width="50%" align="right"><b>{t(Title)}: </b></td>
+		<td align="left"><input type="text" name="title" value="{title}" size="20"></td>
+	</tr>
+{foreach("group_triggers")}
+	<tr>
+		<td align="right"><b>{#.desc}: </b></td>
+		<td align="left">{#.box}</td>
+	</tr>
+{/foreach}
+</table>
+
+<div align="center">
+	<input type="submit" value="{t(Save)}">
+	<br /><br />
+	<a href="{back_link}">Back</a>
+</div>
+</form>

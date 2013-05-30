@@ -1,0 +1,75 @@
+<h3>Forum poster stats</h3>
+
+<div align="center">
+	<b>{t(Poster)}: </b>
+	<a href="./?object=admin&action=edit&id={poster_id}"><b>{poster_name}</b></a> (ID={poster_id})
+</div>
+
+{filter}
+
+<table width="400" border="1" align="center" cellpadding="5" cellspacing="0">
+	<tr class="frame">
+		<td width="20%"><b>{t(Param)}</b></td>
+		<td><b>{t(Total)}</b></td>
+		<td nowrap><b>{t(Per month average)}</b></td>
+		<td nowrap><b>{t(Per day average)}</b></td>
+	</tr>
+	<tr valign="top">
+		<td nowrap><b>{t(Themes Created)}</b></td>
+		<td><b>{themes_total}</b></td>
+		<td><b>{themes_per_month}</b></td>
+		<td><b>{themes_per_day}</b></td>
+	</tr>
+	<tr valign="top">
+		<td><b>{t(Posts)}</b></td>
+		<td><b>{posts_total}</b></td>
+		<td><b>{posts_per_month}</b></td>
+		<td><b>{posts_per_day}</b></td>
+	</tr>
+	<tr valign="top">
+		<td><b>{t(Words)}</b></td>
+		<td><b>{words_total}</b></td>
+		<td><b>{words_per_month}</b></td>
+		<td><b>{words_per_day}</b></td>
+	</tr>
+	<tr valign="top">
+		<td><b>{t(Symbols)}</b></td>
+		<td><b>{symbols_total}</b></td>
+		<td><b>{symbols_per_month}</b></td>
+		<td><b>{symbols_per_day}</b></td>
+	</tr>
+</table>
+
+<br />
+
+<table width="300" border="1" align="center" cellpadding="5" cellspacing="0">
+	<tr>
+		<td width="20%" nowrap><b>{t(Start Date)}</b></td>
+		<td>{start_date}</td>
+	</tr>
+	<tr>
+		<td nowrap><b>{t(Work Days)}</b></td>
+		<td>{work_days}</td>
+	</tr>
+	<tr>
+		<td nowrap><b>{t(Total Responses)}</b></td>
+		<td>{total_responses}</td>
+	</tr>
+	<tr>
+		<td nowrap><b>{t(Responses Per Theme)}</b></td>
+		<td>{responses_per_topic}</td>
+	</tr>
+	<tr>
+		<td nowrap><b>Other's themes posts %</b></td>
+		<td>{others_themes_posts}</td>
+	</tr>
+	<tr>
+		<td nowrap><b>Other's themes length %</b></td>
+		<td>{others_themes_length}</td>
+	</tr>
+</table>
+
+<div align="center">
+	<br /><br />
+	<a href="{back_link}">Back</a>
+</div>

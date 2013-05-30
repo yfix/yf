@@ -1,0 +1,537 @@
+<script src="{const(WEB_PATH)}js/jquery/ui/ui.core.js"></script>
+<script src="{const(WEB_PATH)}js/jquery/ui/ui.sortable.js"></script>
+
+<style type="text/css">
+#fields_container li{
+	list-style:none;
+	border: 1px solid #000000;
+	background: #f1f1f1;
+	padding: 2px 10px;
+	margin: 10px 0;	
+/*	width: 800px;*/
+	width: 90%;
+}
+#fields_container li:hover{
+	cursor: move;
+	background: #e1e1e1;
+
+}
+
+#fields_container li a {
+	margin-left: 10px;
+}
+#fields_container li a img{
+	vertical-align: middle;
+}
+.subtitle {
+	padding: 0.5em 3em;
+	margin-bottom: 5px;
+}
+#result {
+	display: none;
+}
+#result .result{
+	font-size: 0.9em;
+	float:left;
+	width: 30%;
+	margin: 1em;
+}
+#result .result textarea {
+	width:100%;
+	font-size: 1em;
+}
+#preview_area {
+	width:80%;
+	margin:0 auto;
+	height:300px;
+	overflow:auto;
+	border: 3px solid #f1f1f1;
+	padding:15px;
+}
+.duplicate {
+	background: #FF1A1A;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+.remove_btn {
+	display: block;
+	margin: 3px;
+	padding-left: 20px;
+/*	height: 16px;*/
+	background: url("uploads/icons/cross.png") no-repeat;
+	float:right;
+}
+.opt_div{
+	position:absolute;
+	top: 200px;
+	left: 200px;
+	display: none;
+	background: blue;
+}
+.opt_div textarea{
+	display: inline;
+}
+</style>
+
+<div>
+<p>
+Generate a standart Framework's module code and base templates<br>
+</p>
+
+<p class="subtitle">Configure:</p>
+<p>Select form style: {style_box}&nbsp;
+	DB table: {db_table_box} or DB_PREFIX_<input type="text" name="dbt_name" id="dbt_name" value="">
+</p>
+
+
+
+<p class="subtitle">Fields</p>
+<div style="float: right;">
+	<input type="button" value="Clear all" id="clear_all"/>
+	<input type="button" value="Remove empty" id="remove_empty" />
+	<input type="button" value="Remove all" id="remove_all" />
+</div>
+
+<div style="float: left;">
+	<input type="button" id="add_filelds" value="Add" /> <input type="text" id="fields_num" size="2" maxlength="2" value="1" /> field(s) or fields list
+	<textarea cols="20" rows="3" id="fields_list" style="vertical-align: top;"></textarea>
+</div>
+<br style="clear: both;">
+<br />
+<hr />
+
+<div id="fields_container">
+	<ul>
+		<li id="standard">
+			<a href="javascript:;" title="Remove row" class="remove_btn">Remove{{--<img height="16" width="16" border="0" src="uploads/icons/cross.png" alt="{t(Remove)}" />--}}</a>
+			Name: <input type="text" name="name" class="name"/> 
+			Label: <input type="text" name="label" />
+			<label>Type:
+			<select class="field_type">
+				<option value="text">text</option>
+				<option value="textarea">textarea</option>
+				<option value="file">file</option>
+				<option value="select">select</option>
+				<option value="checkbox">checkbox</option>
+				<option value="radio">radio</option>
+				<option value="box">-box-</option>
+			</select>
+			</label>
+			<label><input type="checkbox" class="use_on_main" checked> Use in main template</label>
+			<a href="#" class="options" style="display:none">Options</a>
+		</li>
+	</ul>
+</div>
+<div>
+	<input type="button" value="Generate" id="get_code" />
+</div>
+
+<div class="opt_div" id="opt_div">
+	values <br  />
+	<textarea cols="20" rows="5"></textarea>
+</div>
+
+<div id="result">
+	<p class="subtitle">
+		Result 
+	</p>
+	<form action="{download_url}" method="post">
+		<div class="result">
+			<b>{t(Edit)}</b><br />
+			<textarea id="result_edit" name="stpl[edit]" cols="80" rows="20"></textarea>
+		</div>
+		<div class="result">
+			<b>{t(View)}</b><br />
+			<textarea id="result_view" name="stpl[view]" cols="80" rows="20" ></textarea>
+		</div>
+		<div class="result">
+			<b>{t(Main)}</b><br />
+			<textarea id="result_main" name="stpl[main]" cols="80" rows="20" ></textarea>
+		</div>
+
+		<br style="clear:both;" />
+
+		<div class="result">
+			<b>{t(PHP Edit)}</b><br />
+			<textarea id="result_php_edit" name="php[edit]" cols="80" rows="20"></textarea>
+		</div>
+		<div class="result">
+			<b>{t(PHP View)}</b><br />
+			<textarea id="result_php_view" name="php[view]" cols="80" rows="20" ></textarea>
+		</div>
+		<div class="result">
+			<b>{t(PHP Main)}</b><br />
+			<textarea id="result_php_main" name="php[main]" cols="80" rows="20" ></textarea>
+		</div>
+
+	<br style="clear:both;" />
+	<br />
+	<hr />
+	<br />
+		{t(Module name)}: <input type="text" name="module_name" value="module_name">
+		<input type="submit" value="Save as module" name="save" />
+	</form>
+
+	<br style="clear:both;" />
+{{--
+	<p class="subtitle">
+		<label>Preview</label>
+		<input type="button" value="Show preview" id="show_preview" />
+	</p>
+	<p>
+		<div id="preview_area"></div>
+	</p>
+--}}
+</div>
+
+</div>
+
+<script type="text/javascript">
+<!--
+$(function() {
+
+	var _maxfields = 20;
+
+	var _get_style_url = '{get_style_url}';
+
+	// Current template elements
+	var _field_p = "<li>" + $("#standard").html() + "</li>";
+
+	// Template settings
+	//current style
+	var _style_name = $("#style_box option:selected").val();
+	// Get stpls contents
+	get_tpls(_style_name);
+	// Template source here
+	var _ts_ = {};
+	// Field types
+	_ts_["text"] 		= "<input type='text' name='%f_name%' id='%f_name%' value='{%f_name%}'>";
+	_ts_["textarea"] 	= "<textarea name='%f_name%' id='%f_name%' cols='50' rows='5'>{%f_name%}</textarea>";
+	_ts_["select"]		= "<select name='%f_name%' id='%f_name%'>\n\t\t\t<option value=''></option>\n\t\t</select>";
+	_ts_["file"]		= "<input type='file' name='%f_name%' id='%f_name%'>";
+	_ts_["checkbox"] 	= "<input type='checkbox' name='%f_name%' id='%f_name%' value='{%f_name%}'><label class='simple' for='%f_name%'>%f_name%</label>";
+	_ts_["radio"] 		= "<input type='radio' name='%f_name%' id='%f_name%' value='{%f_name%}'><label class='simple'>%f_name%</label>";
+	_ts_["box"] 		= "{%f_name%_box}";
+
+	// Reload form templates by style
+	$("#style_box").bind("change", function() {
+		_style_name = $(this).find("option:selected").val();
+		get_tpls(_style_name);
+		refresh();
+	});
+
+	$("#add_filelds").click(function() {
+
+		var _fields_str = $.trim($("#fields_list").val());
+
+		if (!_fields_str) {
+			var _add_num = Math.abs(parseInt($("#fields_num").val()));
+			if (!_add_num) {
+				_add_num = 1;
+			}
+			// Check fields quantity and limit them to '_maxfields' parameter
+			var _exist_field_num = parseInt($("#fields_container ul li ").length);
+			if((_exist_field_num + _add_num) > _maxfields) {
+				_add_num = _maxfields - _exist_field_num;
+			}
+			
+			// Adds 'i' fields
+			for (i=1; i<=_add_num; i++) {
+				$("#fields_container").append(_field_p);
+    
+				//If fields changed disable textarea with code
+				$("#fields_container li").bind("keyup change", function() {
+					refresh();				
+				});
+				$("#fields_container li a").click(function() {
+					refresh();
+				});
+			}
+		} else {
+			//prepare array of fields from textarea
+			var _fields_list = {};
+			_fields_str = _fields_str.replace(/[^a-z0-9_\-\n]/g, "");
+			_fields_list = _fields_str.split("\n");
+
+			$.each(_fields_list, function(i, v) {
+				if(v != "") {
+					$("#fields_container").append(_field_p);
+					$("#fields_container li input.name:last").val(v);
+					sync_label($("#fields_container li input.name:last"));
+				}
+			});
+
+			refresh();
+		}
+
+
+		// Synchronize name and label for fields
+		$("#fields_container").find("input[name=name]").bind("blur", function(){
+			sync_label($(this));
+		});
+
+		// Make fields draggable
+		$("#fields_container").sortable({
+			stop: function() {
+				refresh();
+			}
+		});
+
+		// Event
+		$(".remove_btn").click(function(){
+			$(this).parent().remove();
+			return false;
+		});
+	});	
+
+	// Synchronize name and label for fields
+	$("#fields_container").find("input[name=name]").bind("blur", function(){
+		sync_label($(this));
+	});
+
+	// Removes all additional fields
+	$("#remove_all").click(function() {
+		$("#fields_container li").remove();		
+	});
+
+	// Removes all empty fields
+	$("#remove_empty").click(function() {
+		$("#fields_container li").each(function() {
+			if($(this).find("input[type=text]").val() == "") {
+				$(this).remove();
+			}
+		});
+	});
+
+	// Clears all fields
+	$("#clear_all").click(function() {
+		$("#fields_container li input[type=text]").attr("value", "");		
+	});
+
+	// Perform result
+	$("#get_code").click(function() {
+
+		_no_duplicate_fields = true;
+
+		// Check if fields are unique
+		$("#fields_container li input.name").each(function() {
+			$(this).val($(this).val().toLowerCase());
+			if ($(this).val() != "") {
+				var _values = $("#fields_container li input.name[value=" + $(this).val() + "]");
+				if (_values.length > 1) {
+					_values.addClass("duplicate");
+					alert("Duplicate fields found!!!");
+					_no_duplicate_fields = false;
+					return false;
+				}
+			}
+		});
+
+		if (_no_duplicate_fields == false) {
+			return false;
+		}
+
+		_result = get_code();
+
+		$("#result").find("#result_edit").val(_result["edit"]);
+		$("#result").find("#result_view").val(_result["view"]);
+		$("#result").find("#result_main").val(_result["main"]);
+
+		$("#result").find("#result_php_edit").val(_result["php_edit"]);
+		$("#result").find("#result_php_view").val(_result["php_view"]);
+		$("#result").find("#result_php_main").val(_result["php_main"]);
+
+		$("#result").show();
+	});
+
+	// Make a preview
+/*
+	$("#show_preview").click(function() {
+		$("#preview_area").show();		
+		$("#preview_area").html("");
+		$("#preview_area").append($("#result").find("textarea[name=result_edit]").val());
+	});
+*/
+
+	// Options for select, check and radio
+/*
+	$(".field_type").live("click", function() {
+		_type = $(this).find("option:selected").val();
+		if (_type == "select" || _type == "checkbox" || _type == "radio"){
+			$(this).parent().parent().find("a.options").show();
+		} else {
+			$(this).parent().parent().find("a.options").hide();
+		}
+	});
+
+	// Event on click to 'options' link
+	$("a.options").live("click", function(){
+		_item_obj = $(this).parent();
+		_name = _item_obj.find("input.name").val();
+		$(".opt_div").show();
+
+//		$("#fields_container").after("<div style='position:absolute;top:100px; left:200px;border: 1px solid red;background: blue;'>" + _item_obj.find("input.name").val() + "</div>");
+		
+		return false;
+	});
+*/	
+
+/* ------------------------------------------------------------------------------ */
+	// return generated code
+	function get_code() {
+		var _items_edit = "";
+		var _items_view = "";
+		var _items_main_th = "";
+		var _items_main_tb = "";
+
+		var _items_php_main = "";
+		var _items_php_edit = "";
+		var _items_php_edit_replace = "";
+		var _items_php_view = "";
+
+		var _result_edit = "";
+		var _result_view = "";
+		var _result_main = "";
+
+		var _result_php_edit = "";
+		var _result_php_view = "";
+		var _result_php_main = "";
+
+		var _file_field_used = false;
+
+		var _db_table = "";
+
+		_result_edit	+= _ts_["form_main"];
+		_result_view	+= _ts_["view_main"];
+		_result_main	+= _ts_["main_main"];
+
+		_result_php_edit	+= _ts_["php_edit_main"];
+		_result_php_view	+= _ts_["php_view_main"];
+		_result_php_main	+= _ts_["php_main_main"];
+		
+
+		if ($("#dbt_name").val()){
+			_db_table = $("#dbt_name").val();
+		} else {
+			_db_table = $("#db_table_box option:selected").val();
+		}
+
+		// Process fields
+		$("#fields_container li").each(function() {
+
+			_fname = $(this).find("input[name=name]").val();
+			_ftype = $(this).find("select option:selected").val();
+			_flabel = $(this).find("input[name=label]").val();
+
+			if (_ftype == "file") {
+				_file_field_used = true;
+			}
+			if(_fname != '') {
+				_field_code = eval("_ts_['" + _ftype + "']");
+				_field_wrapper = _ts_["form_item"].replace(/%field_by_type%/g, _field_code);
+
+	            _items_edit += _field_wrapper
+					.replace(/%f_label%/g, _flabel)
+					.replace(/%f_name%/g, _fname) + "\n";
+
+				_items_view += _ts_["view_item"]
+					.replace(/%f_label%/g, _flabel)
+					.replace(/%value%/g, _fname) + "\n";
+
+				_items_php_main += _ts_["php_main_item"].replace(/%value%/g, _fname) + "\n";
+				_items_php_edit += _ts_["php_edit_item"].replace(/%value%/g, _fname) + "\n";
+
+				if(_ftype == "-box-") {
+					_items_php_edit_replace += _ts_["php_edit_item_box"].replace(/%value%/g, _fname) + "\n";
+				} else {
+					_items_php_edit_replace += _ts_["php_edit_item_replace"].replace(/%value%/g, _fname) + "\n";
+				}
+
+				_items_php_view += _ts_["php_view_item"].replace(/%value%/g, _fname) + "\n";
+
+				// check if we need to add item to main template
+				if($(this).find(".use_on_main").is(":checked")){
+					_items_main_th += _ts_["main_thead_item"].replace(/%f_label%/g, _flabel);
+					_items_main_tb += _ts_["main_tbody_item"].replace(/%value%/g, "#." + _fname);
+				}
+			}
+		});
+
+		// Add enctype if needed
+		if (_file_field_used == true) {
+			_result_edit = _result_edit.replace(/%enctype%/, "enctype='multipart/form-data'");
+		} else {
+			_result_edit = _result_edit.replace(/%enctype%/, "");
+		}
+		_result_edit = _result_edit.replace(/%items%/g, _items_edit).replace(/\'/g, "\"");
+
+		_result_view = _result_view.replace(/%items%/g, _items_view).replace(/\'/g, "\"");
+
+		_result_main = _result_main
+			.replace(/%thead_items%/g, _items_main_th)
+			.replace(/%tbody_items%/g, _items_main_tb)
+			.replace(/%form_name%/g, _db_table)
+			.replace(/\'/g, "\"");
+
+		_result_php_main = _result_php_main.replace(/%items%/g, _items_php_main).replace(/%table%/g, _db_table).replace(/\'/g, "\"");
+		_result_php_edit = _result_php_edit.replace(/%items%/g, _items_php_edit).replace(/%items_replace%/g, _items_php_edit_replace).replace(/%table%/g, _db_table).replace(/\'/g, "\"");
+		_result_php_view = _result_php_view.replace(/%items%/g, _items_php_view).replace(/%table%/g, _db_table).replace(/\'/g, "\"");
+
+		return {
+			"edit"		: _result_edit,
+			"view"		: _result_view,
+			"main"		: _result_main,
+			"php_edit"	: _result_php_edit,
+			"php_view"	: _result_php_view,
+			"php_main"	: _result_php_main,
+			__last__	: null
+		};
+	}
+
+	function sync_label(obj) {
+		var _cleared_name = obj.val().replace(/_/g, " ");
+		_cleared_name = ucfirst(_cleared_name);
+		obj.parent().find("input[name=label]").val(_cleared_name);
+	}
+
+	function ucfirst(str) {
+		var _firstchar = str.substr(0,1); 
+		_upstr = str.replace(_firstchar, _firstchar.toUpperCase());
+		return _upstr;
+	}
+
+	function get_tpls(style_name) {
+		$.post(_get_style_url, { 'style' : style_name }, function(data){
+			_result = eval("(" + data + ")");
+			_ts_["form_main"] = _result["edit_main"];
+			_ts_["form_item"] = _result["edit_item"];
+			_ts_["view_main"] = _result["view_main"];
+			_ts_["view_item"] = _result["view_item"];
+			_ts_["main_main"] = _result["main_main"];
+			_ts_["main_thead_item"] = _result["main_thead_item"];
+			_ts_["main_tbody_item"] = _result["main_tbody_item"];
+
+			_ts_["php_edit_main"]	= _result["php_edit_main"];
+			_ts_["php_edit_item"]	= _result["php_edit_item"];
+			_ts_["php_edit_item_replace"]	= _result["php_edit_item_replace"];
+			_ts_["php_edit_item_box"]		= _result["php_edit_item_box"];
+
+			_ts_["php_view_main"]	= _result["php_view_main"];
+			_ts_["php_view_item"]	= _result["php_view_item"];
+			_ts_["php_main_main"]	= _result["php_main_main"];
+			_ts_["php_main_item"]	= _result["php_main_item"];
+		});
+		return true;
+	}
+
+	function refresh() {
+		$("#result").hide();
+		$("#preview_area").hide();
+		$("#fields_container input[type=text]").removeClass("duplicate");
+
+	}
+
+});
+
+-->
+</script>

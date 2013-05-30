@@ -1,0 +1,23 @@
+<h3>{t(Total)} ({total})</h3>
+<div align="center">
+{filter}
+<br />
+{if("items" ne "")}
+<table class="sortable_wrapper">
+	<col align="left"><col align="left"><col><col align="left"><col>
+	<thead>
+		<th>{t(Server)}</th>
+		<th>{t(User)}</th>
+		<th>{t(Date)}</th>
+		<th>{t(Log action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+
+{if("items" eq "")}{t(No webshell actions)}{/if}
+
+{if("pages" ne "")}<br />{t(Pages)}: {pages}{/if}
+</div>

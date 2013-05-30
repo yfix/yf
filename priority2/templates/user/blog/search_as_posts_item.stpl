@@ -1,0 +1,24 @@
+<table>
+	<tr valign="top">
+		<td width="10%" rowspan="2">{avatar}</td>
+		<td width="90%" class="subtitle">
+			<a href="{view_post_link}"><b>{post_title}</b></a>
+		</td>
+	</tr>
+	<tr valign="top">
+		<td align="left">
+			{t(Posted in)} <a href="{view_blog_link}">{blog_title}</a> {t(by)} <a href="{user_profile_link}">{user_name}</a>
+<br />
+			{t(Location)}: {location}<br />
+			{if("gender" ne "")}{t(Sex)}: {gender}<br />{/if}
+			{if("user_status" ne "")}{t(Status)}: {user_status}<br />{/if}
+			{t(Views)}: {num_blog_views},<br />
+			{t(Comments)}: {num_blog_comments}<br />
+<br />
+
+			<small>{found_text}</small>
+		</td>
+	</tr>
+</table>
+
+<br />

@@ -1,0 +1,106 @@
+<h3>Add future post</h3>
+
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td><span class="big_font">{forum_name}</span></td>
+	</tr>
+	<tr>
+		<td height="30"><nobr><strong>
+			<a href="{cat_link}">{cat_name}</a> &gt; 
+{foreach("parent_forums")}
+	<a href="{#.link}">{#.name}</a> &gt;
+{/foreach}
+			<a href="{forum_link}">{forum_name}</a> &gt;
+			<a href="{topic_link}">{topic_name}</a></strong> &gt;
+			{t(Reply)}</nobr>
+		</td>
+	</tr>
+</table>
+
+{if("error_message" ne "")}<div align="center"><b style="color:red;">{error_message}</b></div>{/if}
+
+<form action="{form_action}" method="post" id="my_post_form">
+
+<div align='left'><a href="javascript:void(0)" class="button_add_more"><b style="color:green;">Add more</b></a></div>
+
+<div id="my_block_1">
+<table border="0" align="center" cellpadding="5" cellspacing="0" class="data_block">
+	<tr>
+		<td width="20%" align="right"><b>{t(User Account)}: </b></td>
+		<td align="left">{users_box}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Date)}: </b><br /><small>(Date when this record should appear in forum)</small></td>
+		<td align="left"><input type="text" name="date[]" value="{date}" size="24" class="future_date"><small> (Current: {eval_code(date('Y-m-d H:i:s'))})</small><input type="hidden" name="time[]" value="{time}" class="future_time" /></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Subject)}: </b></td>
+		<td align="left"><input type="text" name="subject[]" value="{subject}" size="50" maxlength="255"></td>
+	</tr>
+	<tr> 
+		<td align="right"><b>{t(Post Text)}: </b></td>
+		<td align="left"><textarea name="text[]" cols="100" rows="15">{text}</textarea></td>
+	</tr>
+</table>
+
+<hr>
+
+</div>
+
+<div align="center" id="save_block">
+	<div align='left'><a href="javascript:void(0)" class="button_add_more"><b style="color:green;">Add more</b></a></div>
+	<input type="submit" value="{t(Save)}"> {back}
+</div>
+
+</form>
+
+<script type="text/javascript">
+<!--
+var _rnd_min = parseInt("{next_date_min}");
+var _rnd_max = parseInt("{next_date_max}");
+var _counter = 1;
+var _prev_time = parseInt($("#my_block_" + _counter).find(".future_time").val());
+
+$(".button_add_more").click(function() {
+	_counter++;
+
+	var _my_block_html = $("#my_block_1").html();
+
+	$("#save_block").before(
+		"<div id='my_block_" + _counter + "'>"
+		+ "<div align='left'><b style='font-size:20px;'>" + _counter + "</b>&nbsp;<a href='javascript:void(0)' class='button_remove' onclick='return _remove_block(" + _counter + ");'><b style='color:red;'>Remove</b></a></div>"
+		+ _my_block_html
+		+ "</div>"
+	);
+
+	var _next_rnd_add = parseInt(_rnd_min + (_rnd_max - _rnd_min) * Math.random());
+	_prev_time += _next_rnd_add;
+
+	var _my_date = new Date(_prev_time * 1000);
+	var _new_date_string = _my_date.getFullYear() + "-" + _str_pad_left(_my_date.getMonth() + 1) + "-" + _str_pad_left(_my_date.getDate()) + " " + _str_pad_left(_my_date.getHours()) + ":" + _str_pad_left(_my_date.getMinutes()) + ":" + _str_pad_left(_my_date.getSeconds());
+
+	$("#my_block_" + _counter).find(".future_time").val(_prev_time);
+	$("#my_block_" + _counter).find(".future_date").val(_new_date_string);
+});
+
+function _remove_block (_id){
+	$("#my_block_" + _id).remove();
+}
+
+$("#my_block_1 .future_date").bind("change", function(e) {
+	var _new_time = Date.parse($(this).val()) / 1000;
+	$("#my_block_1 .future_time").val(_new_time);
+	if (_counter == 1) {
+		_prev_time = _new_time;
+	}
+});
+
+function _str_pad_left (text, pad_symbol, pad_length) {
+	text = text.toString();
+	if (!pad_symbol) pad_symbol = "0";
+	if (!pad_length) pad_length = 2;
+	if (text.length < pad_length) for (i = 0; i < (pad_length - text.length); i++) text = pad_symbol + text.toString();
+	return text;
+}
+-->
+</script>

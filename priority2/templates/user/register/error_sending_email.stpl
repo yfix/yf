@@ -1,0 +1,2 @@
+{t(Problems with sending confirmation email, 
+please try again or contact site admin from)} <a href="{contact_link}">{t(here)}</a>

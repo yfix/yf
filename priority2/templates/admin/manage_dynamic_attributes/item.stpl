@@ -1,0 +1,17 @@
+<tr class="{bg_class}">
+	<td><input type="checkbox" name="items_to_delete[]" value="{id}"></td>
+	<td><b>{name}</b></td>
+	<td>{default_value}</td>
+	<td><b style="text-transform:uppercase;">{type}</b></td>
+	<td>{value_list}</td>
+	<td>{order}</td>
+	<td>
+		<a href="{active_link}" class="change_active">
+{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{else}<span class="negative">{t(INACTIVE)}</span>{/if}
+		</a>
+	</td>
+	<td>
+		<a href="{edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
+		<a href="{delete_url}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
+	</td>
+</tr>

@@ -1,0 +1,1 @@
+<b>{num_posts}</b> - <a href="{user_profile_link}">{user_name}</a><br />

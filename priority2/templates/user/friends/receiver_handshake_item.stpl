@@ -1,0 +1,12 @@
+<tr class="{bg_class}">
+	<td width="1%"><input type="checkbox" name="item[]" value="{id}"></td>
+	<td><b><a href="{user_link}">{name}</a></b></td>
+	<td>{description}</td>
+	<td>{date}</td>
+	<td>{action_date}</td>
+	<td>{status}</td>
+	<td align="center" nowrap>	
+		<a href="{accept_link}" onclick="return confirm('{t(Are you sure)}?');">{t(accept)}</a>
+		<a href="{decline_link}" onclick="return confirm('{t(Are you sure)}?');">{t(decline)}</a>
+	</td>
+</tr>

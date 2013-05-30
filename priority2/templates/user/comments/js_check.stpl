@@ -1,0 +1,52 @@
+<script type="text/javascript">
+<!--
+// Cross-browser form required fields checking function
+function _check_comment_form(the_form) {
+	try {
+		var error_msg		= '';
+		var email_found		= false;
+		var phone_found		= false;
+		// Check if email exists inside message
+		var email_pattern = /([._a-z0-9-]+[._a-z0-9-]*)@(([a-z0-9-]+\.)*([a-z0-9-]+)(\.[a-z]{2,3}))/i;
+		if (email_pattern.exec(the_form.text.value)) {
+			email_found		= true;
+		}
+		// Check if phone exists inside message
+		var _p = '';
+		for (var i = 0; i < 7; i++) {
+			_p += '[0-9]{1}[\\(\\)\\-+\\s]{0,3}';
+		}
+		var phone_pattern = new RegExp(_p, "i");
+		if (phone_pattern.exec(the_form.text.value)) {
+			email_found		= true;
+		}
+		// Raise error if email or phone found inside text
+		if (email_found || phone_found) {
+			error_msg = 'Contact details (email, phone) are not allowed!\n\n' + error_msg;
+		}
+		// Check CAPTCHA
+		if (the_form.captcha && the_form.captcha.value == "") {
+			error_msg = '{t(Please enter code)}\n\n' + error_msg;
+		}
+		// Show error or submit form
+		if (error_msg) {
+			alert('{t(required_fields)} : \n\n' + error_msg);
+			return false;
+		} else {
+			the_form.submit();
+			return true;
+		}
+	} catch (x) {
+		if (typeof the_form == "object") {
+			the_form.submit();
+			return true;
+		}
+		return false;
+	}
+}
+// Hook for preview
+function _preview_on_submit (the_form) {
+	return _check_comment_form(the_form);
+}
+-->
+</script>

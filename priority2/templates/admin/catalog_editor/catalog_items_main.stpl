@@ -1,0 +1,45 @@
+<div align="center">
+	<h3>{t(Catalogs Editor)}</h3> 
+	<h4>{t(Edit items for catalog:)}  "{category_name}"</h4>
+</div>
+
+{if("pages" ne "")}<div align="center">{t(Pages)} : {pages}</div><br />{/if}
+
+{if("items" ne "")}
+<form action="{save_form_action}" method="post">
+<table border="0" cellspacing="0" cellpadding="3" width="100%" align="center">
+	<tr class="frame">
+		<td colspan="2" align="center"><b>{t(Name)}</b></td>
+		<td align="center"><b>{t(Url)}</b></td>
+		<td><b>{t(Active)}</b></td>
+		<td><b>{t(Order)}</b></td>
+		<td width="5%" align="center"><b>{t(Action)}</b></td>
+	</tr>
+{items}
+</table>
+{/if}
+{if("items" ne "")}<div align="center"><br /><input type="submit" name="go" value="{t(SAVE)} "></div>{/if}
+</form>
+{if("items" eq "")}<div align="center">{t(No items yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)} : {pages}</div>{/if}
+
+<br />
+
+<div align="center">
+	<a href="{add_item_link}">{t(Add new item)}</a>
+	<br /><br />
+	<a href="{back_link}">{t(Back)}</a>
+</div>
+
+<br />
+<table border="0" cellspacing="0" cellpadding="3" width="600" align="center">
+	<tr>
+		<td><b>{t(NOTE)} :</b></td>
+	</tr>
+	<tr>
+		<td>
+!!!!____TODO____!!!!
+		</td>
+	</tr>
+</table>

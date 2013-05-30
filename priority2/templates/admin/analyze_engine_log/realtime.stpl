@@ -1,0 +1,266 @@
+<style type="text/css">
+table#info td {
+	font-size: 10px;
+	white-space: nowrap;
+}
+.color_cars {
+	color: #2B920C;
+}
+.color_homes {
+	color: #0750D9;
+}
+.color_jobs {
+	color: #EA7202;
+}
+#logger_content select {
+	font-size:10px;
+}
+</style>
+
+<div id="logger_content">
+
+<b>{t(update time)}:</b> {update_box} sec &nbsp; 
+<b>{t(tail lines)}:</b> {tail_limit_box} &nbsp; 
+<b>{t(Site)}:</b> {site_id_box} &nbsp;
+<b>{t(Bots)}:</b> {bots_switch_box} &nbsp;
+
+<input type="button" value="Pause" id="pause" />
+<input type="button" value="Export" id="export" />
+
+<img id="loading" style="display:none" src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif" />
+<span id="error_msg" style="color:red;display:none;"></span>
+<br /><br />
+
+<div style="width:1030px; height:600px; overflow-y:scroll; overflow-x:hidden;" id="log_container">
+<table id="info" style="border:0;width:800px;">
+	<tbody>
+	</tbody>
+</table>
+</div>
+
+</div>
+
+<script type="text/javascript" src="{const(WEB_PATH)}js/jquery/jquery.color.js"></script>
+
+<style type="text/css">@import url("{const(WEB_PATH)}uploads/icons/flags.css")</style>
+
+<script type="text/javascript">
+
+$(function(){
+	get_data();
+
+	$("#pause").toggle(function(){
+		if (_timeout_id) {
+			clearTimeout(_timeout_id);
+			$(this).val("Resume");
+		}
+	}, function(){
+		$(this).val("Pause");
+		get_data();
+	})
+
+	$("#export").click(function(){
+		// Create div for export
+		if (!$("#for_export").length) {
+			var _tmp_html = $("<textarea id='for_export' readonly></textarea>").css({
+				"width"		: $("#log_container").css("width"),
+				"height"	: $("#log_container").css("height"),
+				"font-size"	: "x-small",
+				"border"	: "1px solid black",
+				"overflow"	: "scroll"
+			});
+			$("#log_container").after(_tmp_html).after("<b>Exported data:</b><br />");
+		} else {
+			$("#for_export").html("");
+		}
+
+		$("#info tr").each(function(i,v){
+			var line = "";
+			$("td", $(this)).each(function(i2, v2){
+				if ($("a", this).length) {
+					line += $("a", this).text();
+					line += "|";
+					line += $("a", this).attr("href");
+				} else if ($("span.flag", this).length) {
+					line += $("span.flag", this).attr("title");
+				} else {
+					line += $(this).text();
+				}
+				line += ";";
+			})
+			line += "<br />\n";
+			line += "<br />\n";
+			$("#for_export").append(line);
+		})
+
+		$("#for_export").focus().select();
+	});
+
+});
+
+var _last_update = 0;
+var _post_url = "{get_process_link}";
+var _timeout_id		= 0;
+var _errors_count	= 0;
+var _errors_max		= 5;
+
+function get_data() {
+	
+	$("#loading").css("display", "");
+	$("#error_msg").css("display", "none");
+
+	var _site_id		= $("#site_id_box option:selected").val();
+	var _refresh_time	= parseInt($("#update_box_box option:selected").val());
+	var _tail_limit		= parseInt($("#tail_limit_box option:selected").val());
+	var _bots_switch	= $("#bots_switch_box option:selected").val();
+
+	$.ajaxSetup({
+		timeout : 10000, // ms
+		error	: function (XMLHttpRequest, textStatus, errorThrown) {
+			_errors_count++;
+
+			$("#loading, #error_msg").css("display", "none");
+
+			$("#error_msg").text(textStatus	|| errorThrown).css("display", "");
+
+			if (_errors_count <= _errors_max) {
+				get_data();
+			}
+		}
+	});
+
+	$.post(_post_url,  {
+		"last_update"	: _last_update, 
+		"tail_limit"	: _tail_limit,
+		"bots_switch"	: _bots_switch,
+		"site_id"		: _site_id
+	}, function (data) {
+		if (data == "") {
+			return false;
+		}
+		try {
+			var data = eval("(" + data + ")");
+		} catch (e) {
+			$("#error_msg").text(e).css("display", "");
+		}
+		if (data) {
+			_last_update = data["last_update"];
+
+			$.each(data["items"], function(key, val) {
+				add_item(val);
+			});
+		}
+
+		$("#loading, #error_msg").css("display", "none");
+
+		_timeout_id = setTimeout("get_data()", _refresh_time);
+	});
+
+}
+
+function add_item(info) {
+	var item = "";
+
+	var _vertical = (info["site_name"]).substring(3).toLowerCase();
+	var _color_class = "color_" + _vertical;
+
+	item += "<tr id='" + info["unique_id"] + "'>";
+
+	item += "<td class='" + _color_class +"'><b style='font-family:tahoma;'>"+ info["sys_host"] +"</b></td>";
+	item += "<td style='width:60%;' title='" + info["get_params"] + "'><a href='" + info["link"] + "' target='_blank'><b>" + Url.decode(info["request_uri"]) + "</b></a></td>";
+	item += "<td>" + (info["referer"] ? "<a href='"+ info["referer"] + "' target='_blank'>[ref]</a>" : "") + (info["referer_se"] ? " <small>(" + info["referer_se"] + ")</small>" : "") + "</td>";
+	item += "<td><i>&nbsp;"+ info["date"] +"</i></td>";
+	item += "<td class='" + _color_class +"'><b>&nbsp;"+ info["site_name"] +"</b></td>";
+	item += "<td title='" + info["html_size"] + " bytes'><b>" + info["exec_time"] +"</b>s" + (info["from_cache"] ? " <b>(CACHE)</b>" : ", <b>" + info["num_db_q"] + "</b> db") + "</td>";
+	item += "<td>" + (info["ip_country"] ? "<span class='flag " + info["ip_country"] + "' title='" + info["country_name"] + "'>&nbsp;</span>" : "") + "</td>";
+	item += "<td><a href='http://ip-lookup.net/index.php?ip=" + escape($.trim(info["ip"])) + "' title='" + info["ua"] + "' target='_blank'>" + info["ip"] + "</a>" + (info["spider_name"] ? " <b style='color:red;'>(bot:" + info["spider_name"] + ")</b>" : (info["user_id"] ? " <b>[member:" + info["user_id"] + "]</b>" : "")) +"</td>";
+
+	item += "</tr>";
+
+	$("#info tbody").prepend(item);
+
+	var _bg_color = "white";
+	if ($("#info tbody tr").length % 2) {
+		_bg_color = "#eee";
+	}
+	$("#info tr[id=" + info["unique_id"] + "]")
+		.css("background", "orange")
+		.animate({backgroundColor: _bg_color}, parseInt($("#update_box_box option:selected").val()));
+}
+
+/**
+*  URL encode / decode
+*  http://www.webtoolkit.info/
+**/
+var Url = {
+ 
+	// public method for url encoding
+	encode : function (string) {
+		return escape(this._utf8_encode(string));
+	},
+ 
+	// public method for url decoding
+	decode : function (string) {
+		return this._utf8_decode(unescape(string));
+	},
+ 
+	// private method for UTF-8 encoding
+	_utf8_encode : function (string) {
+		string = string.replace(/\r\n/g,"\n");
+		var utftext = "";
+ 
+		for (var n = 0; n < string.length; n++) {
+ 
+			var c = string.charCodeAt(n);
+ 
+			if (c < 128) {
+				utftext += String.fromCharCode(c);
+			}
+			else if((c > 127) && (c < 2048)) {
+				utftext += String.fromCharCode((c >> 6) | 192);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+			else {
+				utftext += String.fromCharCode((c >> 12) | 224);
+				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+ 
+		}
+ 
+		return utftext;
+	},
+ 
+	// private method for UTF-8 decoding
+	_utf8_decode : function (utftext) {
+		var string = "";
+		var i = 0;
+		var c = c1 = c2 = 0;
+ 
+		while ( i < utftext.length ) {
+ 
+			c = utftext.charCodeAt(i);
+ 
+			if (c < 128) {
+				string += String.fromCharCode(c);
+				i++;
+			}
+			else if((c > 191) && (c < 224)) {
+				c2 = utftext.charCodeAt(i+1);
+				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+				i += 2;
+			}
+			else {
+				c2 = utftext.charCodeAt(i+1);
+				c3 = utftext.charCodeAt(i+2);
+				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+				i += 3;
+			}
+ 
+		}
+ 
+		return string;
+	}
+}
+
+</script>

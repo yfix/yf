@@ -1,0 +1,19 @@
+<h1>{t(Thank you)}, {nick}</h1>
+
+<p>{t(Your account has been created successfully)}! 
+
+{if("confirm_register" eq "1")}
+
+But we require it to be confirmed using your regular email address.
+We sent account activation instructions to your email and it should arrive in a couple of minutes.
+It might be placed to Spam or Junk mail folder by yahoo.com, aol.com, hotmail.com or some other email serviece providers.
+Please check these folders.<br />
+If you can't find it please <a href="./?object=help&action=email_form">contact us</a>
+so that we can activate your account manually. Be sure to mention the email you used in your registration. 
+
+{else}
+
+{t(Now you can login into your account)} <a href="./?object=login_form">{t(here)}</a>
+
+{/if}
+</p>

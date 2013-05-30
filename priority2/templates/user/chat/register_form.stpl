@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/tr/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+</head>
+<body>
+
+<style type="text/css" id="profy_chat_style">@import url('{css_src}');</style>
+
+<script type="text/javascript">
+<!--
+// Cross-browser form required fields checking function
+function form_check(the_form) {
+	try {
+		var error_msg = '';
+		var req_fields = new Array({tasks_1});
+		var req_fields_tr = new Array({tasks_2});
+		// Check auto-generated required fields
+		for (i in req_fields) eval("if (!the_form." + req_fields[i] + ".value) {error_msg += req_fields_tr[i] + '\\n';}");
+		// Check passwords
+		if ((the_form.password.value != the_form.password2.value) || the_form.password2.value == 0) 
+			error_msg = '{t("pass_again")}\n\n' + error_msg;
+		// Check login and password length
+		if (!error_msg) {
+			if (the_form.login.value.length > 32 || the_form.login.value.length < 2)
+				error_msg = '2 < {t("login")}< 32\n\n' + error_msg;
+			if (the_form.password.value.length > 32 || the_form.password.value.length < 4)
+				error_msg = '4 < {t("password")}< 32\n\n' + error_msg;
+		}
+		// Check email
+		var pattern = /^([._a-z0-9-]+[._a-z0-9-]*)@(([a-z0-9-]+\.)*([a-z0-9-]+)(\.[a-z]{2,3}))$/;
+		if (!pattern.exec(the_form.email.value)) error_msg = '{t("wrong_email")}\n\n' + error_msg;
+		// Show error or submit form
+		if (error_msg) alert ('{t("required_fields")} : \n\n' + error_msg);
+		else the_form.submit();
+	} catch (x) {alert('{t("internal_error")}');return false;}
+}
+-->
+</script>
+
+<div id="profy_chat">
+
+<div align="center"><h3>{t("chat_registration")}</h3></div>
+<table width="400" align="center" cellspacing="5" cellpadding="5" border="0">
+<form action="{form_action}" method="post">
+	<tr class="bg1">
+		<td align="right"><font color="red">* </font><b>{t("login")}</b><br>(2-32 {t("symbols")})</td>
+		<td align="left"><input type="text" name="login" value="{login}" size="15" maxlength="32" title="{t(allowed_symbols_are)}:  a-zà-ÿ ._-+=:;~!@#%^&*(){}[]"></td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><font color="red">* </font><b>{t("password")}</b><br>(4-32 {t("symbols")})</td>
+		<td align="left"><input type="password" name="password" size="15" maxlength="32"></td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><font color="red">* </font><b>{t("pass_again")}</b><br>(4-32 {t("symbols")})</td>
+		<td align="left"><input type="password" name="password2" size="15" maxlength="32"></td>
+	</tr>
+	<tr class="bg2">
+		<td align="right"><font color="red">* </font><b>{t("email")}</b></td>
+		<td align="left"><input type="text" name="email" value="{email}" size="20" maxlength="128"></td>
+	</tr>
+	<tr class="bg1">
+		<td align="right"><font color="red">* </font><b>{t("gender")}</b></td>
+		<td align="left">
+			Male :<input type="radio" name="gender" value="m" class="check" checked>
+			Female: <input type="radio" name="gender" value="f" class="check">
+		</td>
+	</tr>
+	<tr>
+		<td align="left" colspan="2"><font color="red">*</font> - {t("required_fields")}</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">
+			<input type="hidden" name="step" value="2">
+			<input type="button" value="{t("save")}" onClick="form_check(this.form);">
+		</td>
+	</tr>
+</form>
+</table>
+
+</div>
+</body>
+</html>

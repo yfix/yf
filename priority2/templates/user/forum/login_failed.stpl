@@ -1,0 +1,6 @@
+<div align="center">
+
+{t(login_failed)} <br /><br />
+<a href="./?object=forum&action=login">{t(try_again)}</a>
+
+</div>

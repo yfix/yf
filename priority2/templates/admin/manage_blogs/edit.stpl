@@ -1,0 +1,24 @@
+<h2>{t(Edit blog post)} </h2>
+
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="title">{t(Post title)}:</label>
+		<input type="text" id="title" name="title" size="30" value="{title}">
+	</p>
+	<p>
+		<label for="text">{t(Post text)}:</label>
+		<textarea id="text" name="text" rows="10" cols="50">{text}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" />
+		<input type="reset" value="{t(Clear)}" />
+	</div>
+</form>
+</div>
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

@@ -1,0 +1,18 @@
+<h3>{t(Tag name)} "{tag_name}" ({total}). {if("user_nick" ne "")}{t(User)}: <a href="{user_profile_link}">{user_nick}</a>. {/if}</h3>
+
+<div align="right">
+	<a href="{new_search_url}">{t(New search)}</a>
+</div>
+
+<br />
+{items}
+<br style="clear:both;">
+{if("items" eq "")}<div align="center">{t(No results by this tag)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br />
+
+<div align="right">
+	<a href="{new_search_url}">{t(New search)}</a>
+</div>

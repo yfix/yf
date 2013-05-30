@@ -1,0 +1,6 @@
+{message}
+
+This message has been sent from {eval_code(SITE_ADVERT_NAME)} website, 
+where you placed your personal.
+
+Please visit us at {eval_code(SITE_ADVERT_NAME)}

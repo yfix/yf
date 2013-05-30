@@ -1,0 +1,18 @@
+{if("shop_cats" ne "")}
+<div class="box">
+  <div class="top"><img alt="" src="templates/shop/image/category.png">Categories</div>
+  <div class="middle" id="category">
+  <div class="cats_block">
+	<ul class="cats_block_ul">
+	{foreach("shop_cats")}
+		<li class="cats_block_item">&raquo; <a href="{_val}">{_key}</a></li>
+	{/foreach}
+	</ul>
+	<br style="clear:both;" />
+	</div>
+</div>
+  <div class="bottom">&nbsp;</div>
+</div>
+
+{/if}
+

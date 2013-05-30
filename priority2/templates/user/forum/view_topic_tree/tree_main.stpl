@@ -1,0 +1,9 @@
+<div class="borderwrap">
+	<div class="subtitle">{t(Posts in this topic)}</div>
+	<div class="tablepad" align="left">
+{root_item}
+{items}
+	</div>
+{if("pages" ne "")}<div class="row1">{pages}</div>{/if}
+</div>
+<br />

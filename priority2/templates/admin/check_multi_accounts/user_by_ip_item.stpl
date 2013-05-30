@@ -1,0 +1,4 @@
+{if("this_cookie_match" eq 1)}<span class="negative" title="Matched with current user">**</span>{/if}
+<a href="{link}" class="ajax_user_info" profy:user_id="{id}">
+{nick}</a> {ban_popup_link} ({num_m_ips}) ({ban_info}{if("has_cookie_match" eq 1)}<span class="negative" title="Cookie matched">+</span>{/if})
+<br />

@@ -1,0 +1,16 @@
+	<tr>
+		<td class="left_menu_header">Your Location</td>
+	</tr>
+	<tr>
+		<td class="left_menu_body">
+			<small>
+{if("country_name" ne "")}
+			<img src="uploads/flags/{country_code_lower}.gif">&nbsp;{country_name}
+	{if("region_name" ne "")},<br /> {region_name}{/if}
+	{if("city_name" ne "")},<br /> {city_name}{/if}
+{/if}
+{if("country_name" eq "")}Unknown location{/if}
+				<br /><a href="{change_link}" class="actionlink">Change</a>
+			</small>
+		</td>
+	</tr>

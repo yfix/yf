@@ -1,0 +1,3 @@
+<div class="container" style="clear:both; overflow:auto; width:650px;">
+{items}
+</div>

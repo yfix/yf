@@ -1,0 +1,14 @@
+<tr class="{bg_class}" id="del_row_{id}">
+	<td width="1%"><input type="checkbox" name="items[]" value="{id}"></td>
+	<td nowrap>{date}</td>
+	<td><a href="{profile_link}">{user_name}</a></td>
+	<td><small>{subject}</small></td>
+	<td><b>{type}</b></td>
+	<td><a href="{forum_link}">{forum_name}</a></td>
+	<td>{if("topic_name" ne "")}<a href="{topic_link}">{topic_name}</a>{/if}&nbsp;</td>
+	<td nowrap>{poster_name}</td>
+	<td nowrap>
+		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="Edit" /></a>&nbsp;
+		<a href="{delete_link}" onclick="return confirm('Are you sure?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="Delete" /></a>&nbsp;
+	</td>
+</tr>

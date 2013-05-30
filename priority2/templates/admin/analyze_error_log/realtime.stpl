@@ -1,0 +1,358 @@
+<style type="text/css">
+table#info td {
+	font-size: 10px;
+	white-space: nowrap;
+}
+
+#logger_content select {
+	font-size:10px;
+}
+
+.tp {position:relative;text-indent:0;}
+.tp k {
+   cursor:help;
+   font-weight:normal;
+}
+.tp k span {display:none;}
+/*-- для FF, OPERA, IE7 --*/
+.tp k:hover {
+  
+   color:red;
+}
+.tp k:hover span {
+   background:lightcyan;
+   border:silver 2px outset;
+   color:#000;
+   display:block;
+   padding:10px;
+   position:absolute;
+   top:15px;
+   left:5px;
+   z-index:15;
+   text-align:left;
+   width:400px;
+}
+.tp {position:relative;text-indent:0;}
+.tp l {
+   cursor:help;
+   font-weight:normal;
+}
+.tp l span {display:none;}
+/*-- для FF, OPERA, IE7 --*/
+.tp l:hover {
+  
+   color:red;
+}
+.tp l:hover span {
+   background:lightcyan;
+   border:silver 2px outset;
+   color:#000;
+   display:block;
+   padding:10px;
+   position:absolute;
+   top:15px;
+   left:5px;
+   z-index:15;
+   text-align:left;
+   width:800px;
+}
+
+</style>
+
+<!--[if IE 6]>
+<style type="text/css">
+.tp k {behavior:url(hover.htc);}
+.tp .hover {
+   border-bottom:red 1px dotted;
+   color:red;
+}
+.tp .hover span {
+   background:lightcyan;
+   border:silver 2px outset;
+   color:#000;
+   display:block;
+   padding:7px;
+   position:absolute;
+   top:2px;
+   left:5px;
+   z-index:10;
+   text-align:left;
+   width:300px;
+}
+</style>
+
+<style type="text/css">
+.tp l {behavior:url(hover.htc);}
+.tp .hover {
+   border-bottom:red 1px dotted;
+   color:red;
+}
+.tp .hover span {
+   background:lightcyan;
+   border:silver 2px outset;
+   color:#000;
+   display:block;
+   padding:7px;
+   position:absolute;
+   top:2px;
+   left:5px;
+   z-index:10;
+   text-align:left;
+   width:250px;
+}
+</style>
+<![endif]-->
+
+
+
+<div id="logger_content">
+
+<b>{t(update time)}:</b> {update_box} sec &nbsp; 
+<b>{t(tail lines)}:</b> {tail_limit_box} &nbsp; 
+
+<input type="button" value="Pause" id="pause" />
+<input type="button" value="Export" id="export" />
+
+<img id="loading" style="display:none" src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif" />
+<span id="error_msg" style="color:red;display:none;"></span>
+<br /><br />
+
+<div style="width:1030px; height:500px; overflow-y:scroll; overflow-x:hidden;" id="log_container">
+<table id="info" style="border:0;width:800px;">
+	<tbody>
+	<thead>
+	<tr>
+		<td>
+		DATE
+		</td>
+		<td>
+		error message
+		</td>
+		<td>
+		QUERY_STRING
+		</td>
+		<td>
+			SOURCE 
+		</td>
+	</tr>
+	</thead>
+	</tbody>
+</table>
+
+</div>
+
+</div>
+
+<script type="text/javascript" src="{const(WEB_PATH)}js/jquery/jquery.color.js"></script>
+
+<style type="text/css">@import url("{const(WEB_PATH)}uploads/icons/flags.css")</style>
+
+<script type="text/javascript">
+
+$(function(){
+	get_data();
+
+	$("#pause").toggle(function(){
+		if (_timeout_id) {
+			clearTimeout(_timeout_id);
+			$(this).val("Resume");
+		}
+	}, function(){
+		$(this).val("Pause");
+		get_data();
+	})
+
+	$("#export").click(function(){
+		// Create div for export
+		if (!$("#for_export").length) {
+			var _tmp_html = $("<textarea id='for_export' readonly></textarea>").css({
+				"width"		: $("#log_container").css("width"),
+				"height"	: $("#log_container").css("height"),
+				"font-size"	: "x-small",
+				"border"	: "1px solid black",
+				"overflow"	: "scroll"
+			});
+			$("#log_container").after(_tmp_html).after("<b>Exported data:</b><br />");
+		} else {
+			$("#for_export").html("");
+		}
+
+		$("#info tr").each(function(i,v){
+			var line = "";
+			$("td", $(this)).each(function(i2, v2){
+				if ($("a", this).length) {
+					line += $("a", this).text();
+					line += "|";
+					line += $("a", this).attr("href");
+				} else  {
+					line += $("span.all", this).text() ;
+				} 
+				//line += ";";
+			})
+			line += "<br />\n";
+			line += "<br />\n";
+			$("#for_export").append(line);
+		})
+
+		$("#for_export").focus().select();
+	});
+
+});
+
+var _last_update = 0;
+var _post_url = "{get_process_link}";
+var _timeout_id		= 0;
+var _errors_count	= 0;
+var _errors_max		= 5;
+
+function get_data() {
+	
+	$("#loading").css("display", "");
+	$("#error_msg").css("display", "none");
+
+
+	var _refresh_time	= parseInt($("#update_box_box option:selected").val());
+	var _tail_limit		= parseInt($("#tail_limit_box option:selected").val());
+	
+	$.ajaxSetup({
+		timeout : 10000, // ms
+		error	: function (XMLHttpRequest, textStatus, errorThrown) {
+			_errors_count++;
+
+			$("#loading, #error_msg").css("display", "none");
+
+			$("#error_msg").text(textStatus	|| errorThrown).css("display", "");
+
+			if (_errors_count <= _errors_max) {
+				get_data();
+			}
+		}
+	});
+
+	$.post(_post_url,  {
+		"last_update"	: _last_update, 
+		"tail_limit"	: _tail_limit,
+		
+	}, function (data) {
+		if (data == "") {
+			return false;
+		}
+		try {
+			var data = eval("(" + data + ")");
+		} catch (e) {
+			$("#error_msg").text(e).css("display", "");
+		}
+		if (data) {
+			_last_update = data["last_update"];
+
+			$.each(data["items"], function(key, val) {
+				add_item(val);
+			});
+		}
+
+		$("#loading, #error_msg").css("display", "none");
+
+		_timeout_id = setTimeout("get_data()", _refresh_time);
+	});
+
+}
+
+function add_item(info) {
+	var item = "";
+
+	//var _vertical = "";
+	//var _color_class = "color_" + _vertical;
+
+	item += "<tr id='" + info["unique_id"] + "'>";
+	item += "<td><b style='font-family:tahoma;'><p class='tp' ><l>  " + info["date"] + "<span class='all' style='left:120px; '>" + info["all"] + "</span></l> </p></b></td>";
+	item += "<td><p class='tp' ><k>  " + info["content_short"] + "<span style='left:30px; '>" + info["content"] + "</span></k> </p></td>";
+	item += "<td><p class='tp' ><k>  " + info["query_string_short"] + "<span style='left:30px;'>" + info["query_string"] + "</span></k> </p></td>";
+	item += "<td><p class='tp' ><k>  " + info["source_short"] + "<span style='left:-250px;'>" + info["source"] + "</span></k> </p></td>";
+	item += "</tr>";
+	$("#info tbody").prepend(item);
+
+	var _bg_color = "white";
+	if ($("#info tbody tr").length % 2) {
+		_bg_color = "#eee";
+	}
+	$("#info tr[id=" + info["unique_id"] + "]")
+		//.css("background", "orange")
+		.animate({backgroundColor: _bg_color}, parseInt($("#update_box_box option:selected").val()));
+}
+
+/**
+*  URL encode / decode
+*  http://www.webtoolkit.info/
+**/
+var Url = {
+ 
+	// public method for url encoding
+	encode : function (string) {
+		return escape(this._utf8_encode(string));
+	},
+ 
+	// public method for url decoding
+	decode : function (string) {
+		return this._utf8_decode(unescape(string));
+	},
+ 
+	// private method for UTF-8 encoding
+	_utf8_encode : function (string) {
+		string = string.replace(/\r\n/g,"\n");
+		var utftext = "";
+ 
+		for (var n = 0; n < string.length; n++) {
+ 
+			var c = string.charCodeAt(n);
+ 
+			if (c < 128) {
+				utftext += String.fromCharCode(c);
+			}
+			else if((c > 127) && (c < 2048)) {
+				utftext += String.fromCharCode((c >> 6) | 192);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+			else {
+				utftext += String.fromCharCode((c >> 12) | 224);
+				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+ 
+		}
+ 
+		return utftext;
+	},
+ 
+	// private method for UTF-8 decoding
+	_utf8_decode : function (utftext) {
+		var string = "";
+		var i = 0;
+		var c = c1 = c2 = 0;
+ 
+		while ( i < utftext.length ) {
+ 
+			c = utftext.charCodeAt(i);
+ 
+			if (c < 128) {
+				string += String.fromCharCode(c);
+				i++;
+			}
+			else if((c > 191) && (c < 224)) {
+				c2 = utftext.charCodeAt(i+1);
+				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+				i += 2;
+			}
+			else {
+				c2 = utftext.charCodeAt(i+1);
+				c3 = utftext.charCodeAt(i+2);
+				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+				i += 3;
+			}
+ 
+		}
+ 
+		return string;
+	}
+}
+
+</script>

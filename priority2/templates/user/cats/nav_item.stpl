@@ -1,0 +1,1 @@
+ <a href="{item_link}">{item_name}</a>{if("is_last" ne 1)} :: {/if}

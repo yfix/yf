@@ -1,0 +1,7 @@
+<BR>
+<form method="POST" action="{action}">
+		OpenID: <input type="text" name="openid_url" style="width:400px;"/>
+</form>
+<BR>
+<BR>
+{message}

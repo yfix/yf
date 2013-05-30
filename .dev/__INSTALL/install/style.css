@@ -1,0 +1,90 @@
+*{
+	font-family: Verdana;
+	font-size: 12px;
+}
+body {
+	background: #353639;
+	color: #EFF0F0;
+	min-width: 580px;
+	min-height: 300px;
+	text-align: center; /*For IE*/
+}
+h1 {
+	font-size: 2em;
+	color: #3697E9;
+	text-align:center;
+	border-bottom: 2px dotted #3697E9;
+	font-weight:normal;
+	padding-bottom: 0.5em;
+}
+h3 {
+	font-size: 1.5em;
+	color: #3697E9;
+	text-align:left;
+	border-bottom: 2px dotted #3697E9;
+	font-weight:normal;
+	padding-bottom: 0.2em;
+}
+
+table{
+	text-align: left;
+	width: 100%;
+}	
+th {
+	color: #3697E9;
+	padding: 1em;
+}
+th.ms{
+	border-bottom: 1px solid #3697E9;
+	padding: 0.5em 1em;
+	border-left: 5px solid #3697E9;
+	margin-bottom: 0.5em;
+}
+td {
+	padding: 0.5em 0;
+}
+#container {
+	border-right: 5px solid #4A525E;
+	border-bottom: 5px solid #4A525E;
+	width: 600px;
+	margin:100px auto;
+}
+#inner {
+	border: 3px solid #626C7B;
+	padding: 10px;
+	text-align:left;
+}
+input,select {
+	border: 1px solid #3697E9;
+	background: #626C7B;
+	color: #FFFFFF;
+	margin: 0 5px 0 0;
+	font-weight: bold;
+}
+.btn input {
+	padding: 3px 10px;
+	cursor: pointer;
+	cursor: hand; 
+}
+.btn input:hover{
+	background: #3697E9;
+}
+input.text {
+	width: 90%;
+}
+.required {
+	color: red;
+}
+
+a {
+	color: #3697E9;
+}
+a:hover {
+	color: #FFFFFF;
+}
+.green {
+	color: #A5EF5F;
+}
+.red {
+	color:#E87274;
+}

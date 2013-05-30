@@ -1,0 +1,1 @@
+<a href="{user_profile_link}" title="{user_login_date}">{user_name}</a>{if("user_group" eq 1)} ({t(Administrator)}){/if}{if("user_group" eq 2)} ({t(Moderator)}){/if}

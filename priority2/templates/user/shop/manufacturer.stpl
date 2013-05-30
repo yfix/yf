@@ -1,0 +1,7 @@
+<div class="box">
+  <div class="top"><img alt="" src="templates/shop/image/brands.png">Brands</div>
+  <div style="text-align: center;" class="middle">
+    {manufacturer_box}
+  </div>
+  <div class="bottom">&nbsp;</div>
+</div>

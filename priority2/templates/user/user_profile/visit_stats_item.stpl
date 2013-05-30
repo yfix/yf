@@ -1,0 +1,5 @@
+<tr>
+	<td>{avatar}</td>
+	<td><a href="{profile_url}">{user_nick}</a></td>
+	<td><small><b>{visit_date}</b></small></td>
+</tr>

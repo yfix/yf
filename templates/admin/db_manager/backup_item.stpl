@@ -1,0 +1,10 @@
+<tr>
+	<td><a href="{download_url}">{backup_name}</a></td>
+	<td>{backup_fsize}</td>
+	<td>{backup_date}</td>
+	<td>
+		<a href="{delete_url}" onclick="javascript:return confirm('{t(Are you sure?)}')"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a><br />
+		<a href="{restore_url}" onclick="javascript:return confirm('{t(Are you sure?)}')">{t(Restore)}</a><br />
+		<a href="{download_url}" onclick="javascript:return confirm('{t(Are you sure?)}')">{t(Export)}</a><br />
+	</td>
+</tr>

@@ -1,0 +1,30 @@
+<div align="center">
+<form action='{form_action}' method='post'>
+<div class="editform" style="width: 50%;">
+{if("for_edit" eq 1)}
+	<p>
+		<label>{t(Group Id)}</label>
+		{group_id}
+	</p>
+{/if}
+	<p>
+		<label for="name">{t(Group Name)}</label>
+		<input type='text' id="name" name='name' size='15' value='{name}'>
+	</p>
+	<p>
+		<label for="go_after_login">{t(URL after login)}</label>
+		<input type='text' id="go_after_login" name='go_after_login' size='30' value='{go_after_login}'>
+	</p>
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		{active_box}
+	</p>
+	<div class="button_div">
+		<input type='submit' value='{t(SAVE)}'>
+	</div>
+</div>
+</form>
+</div>
+
+<br />
+<div align="center"><a href="{back_link}">{t(Back to groups list)}</a></div>

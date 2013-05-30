@@ -1,0 +1,63 @@
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/ui/ui.core.js"></script>
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/ui/date_picker/ui.datepicker.js"></script>
+<link rel='stylesheet' type='text/css' href='{const(WEB_PATH)}js/jquery/ui/date_picker/ui.base.css'>
+<link rel='stylesheet' type='text/css' href='{const(WEB_PATH)}js/jquery/ui/date_picker/ui.theme.css'>
+
+<div class="filter">
+<fieldset>
+<legend>{t(Filter)}</legend>
+<form action='{save_action}' method='post'>
+	<div class="column">
+		<p>
+			<label for="server">{t(Server)}</label>
+			{server_box}
+		</p>
+		<p>
+			<label for="ip">IP</label>
+			<input type="text" id="ip" name="ip" value="{ip}">
+		</p>
+		<p>
+			<label for="comment">{t(Comment)}</label>
+			<input type="text" id="comment" name="comment" value="{comment}">
+		</p>
+		<p>
+			<label for="action">{t(Action)}</label>
+			<input type="text" id="action" name="action" value="{action}">
+		</p>
+	</div>
+	<div class="column">
+		<p>
+			<label for="sort_by_box">{t(Sort By Field)}</label>
+			{sort_by_box}
+		</p>
+		<p>
+			<label for="sort_order_box">{t(Sort order)}</label>
+			{sort_order_box}
+		</p>
+		<p>
+			<label>{t(Period from)}</label>
+			<input name="time_from" id="time_from" class="date-pick" style="width:80px" value="{time_from}">&nbsp;&nbsp;&nbsp;
+   		</p>
+		<p>
+			<label>{t(Period to)}</label>
+			<input name="time_to" id="time_to" class="date-pick" style="width:80px" value="{time_to}">&nbsp;&nbsp;&nbsp;
+   		</p>
+	</div>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}">
+		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+{{--		<input type="button" onclick="window.location.href='{delete_sel}'" value="{t(DELETE ALL FILTERED)}">--}}
+	</div>
+</form>
+</fieldset>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+		$(".date-pick").datepicker({
+				showOn: 'button',
+				buttonImage: '../uploads/icons/calendar.gif',
+				buttonImageOnly: true,
+				dateFormat: 'dd.mm.yy'
+			});
+});
+</script>

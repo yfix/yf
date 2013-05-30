@@ -1,0 +1,8 @@
+Dear {user_name}, 
+
+We activated your account. 
+You can sign in now with login {user_login} and password {user_password} 
+at {const(SITE_ADVERT_URL)}login_form/ 
+
+If you have any further questions, 
+please do not hesitate to contact us by opening another support ticket.

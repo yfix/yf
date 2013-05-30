@@ -1,0 +1,31 @@
+<tr valign="top">
+	<td>
+		<input type="checkbox" name="selected[]" value="{encoded_name}">
+	</td>
+	<td>
+		{if("ext_img" ne "")}
+			<img src="uploads/icons/ext/{ext_img}" alt="" />
+		{/if}
+	</td>
+	<td class="{type}" nowrap>
+		<b>{if("dir_url" ne "")}<a href="{dir_url}" title="{t(Go to dir)}">{else}<label for="f_{encoded_name}">{/if}{name}{if("dir_url" ne "")}</a>{else}</label>{/if}</b>
+	</td>
+	<td nowrap>{if("type" eq "d")}<b>{t(DIR)}</b>{else}{size}{/if}</td>
+	<td nowrap>{date}</td>
+	<td style="font-family:monospace;">{if("chmod_url" ne "")}<a href="{chmod_url}" title="{t(Chmod)}" style="font-family:monospace;text-decoration:none;">{/if}{perms}{if("chmod_url" ne "")}</a>{/if}</td>
+	<td>{user}</td>
+	<td>
+		{if("view_url" ne "")}
+			<a href="{view_url}" title="{t(View)}"><img class="action_image" src="images/details.gif" alt="{t(Veiw)}"/></a>
+		{/if}
+		{if("edit_url" ne "")}
+			<a href="{edit_url}" title="{t(Edit)}"><img class="action_image" src="images/links_edit.gif" alt="{t(Edit)}"/></a>
+		{/if}
+		{if("delete_url" ne "")}
+			<a href="{delete_url}" title="{t(Delete)}" onclick="return confirm('{t(Delete)} {name}. {t(Are you sure)}?');"><img class="action_image" src="images/links_delete.gif" alt="{t(Delete)}"/></a>
+		{/if}
+		{if("download_url" ne "")}
+			<a href="{download_url}" onclick="javascript:return confirm('{t(Download)} {name}. {t(Are you sure)}?')" title="{t(Download)}"><img class="action_image" src="uploads/icons/application_put.png" alt="{t(Download)}"/></a>
+		{/if}
+	</td>
+</tr>

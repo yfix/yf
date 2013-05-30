@@ -1,0 +1,4 @@
+	<p>
+		<label>{t({name})}</label>
+		<a href="{link}">{t(Click Here)}</a>
+	</p>

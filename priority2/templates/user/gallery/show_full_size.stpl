@@ -1,0 +1,17 @@
+<div align="center">
+{if("const.PROJECT_NAME" eq "SEXY_NET")}
+<!-- TOP_BANNER -->
+{execute(banner_rotator,show,place_id=5)}<br />
+<!-- /TOP_BANNER -->
+<br /><br />
+{/if}
+
+{if("img_src" ne "")}<img src="{img_src}" border="0" alt="{photo_name}" {if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} />{/if}
+
+{if("const.PROJECT_NAME" eq "SEXY_NET")}
+<br /><br /><br /><br />
+<!-- BOTTOM_BANNER -->
+{execute(banner_rotator,show,place_id=6)}<br />
+<!-- /BOTTOM_BANNER -->
+{/if}
+</div>

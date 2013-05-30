@@ -1,0 +1,24 @@
+<h3><?ti("Select modules")?></h3>
+<form action="./install.php?step=<? echo $_GET["step"] ?>" name="install" method="post">
+	<table>
+		<tr>
+			<th colspan="2" class="ms"><?ti("Select modules")?></th>
+		</tr>
+<? foreach ((array)$items_for_template as $_id => $_name) { ?>
+		<tr>
+			<td><label><input type="checkbox" name="modules[<?=$_id?>]" <? if(isset($checked_items[$_id])) echo "checked=\"true\""; ?> /> <?=$_name?></label></td>
+		</tr>
+<? } ?>
+		<tr>
+			<th colspan="2" class="ms"><?ti("Initial data")?></th>
+		</tr>
+		<tr>
+			<td><label><input type="checkbox" name="import_initial_data" checked="true"/> <?ti("Import initial data")?></label></td>
+		</tr>
+	</table>
+	<br />
+	<div class="btn">
+		<input type="submit" name="next" value="<?ti("Next")?> &gt;" style="float:right;" />
+		<input type="submit" name="prev" value="&lt; <?ti("Back")?>"  />
+	</div>
+</form>

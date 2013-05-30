@@ -1,0 +1,24 @@
+<h2>{t(Edit dir)} "{dir_name}" {t(in theme)} "{theme_name}" {t(in)} "{location}"</h2>
+<br />
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p> 
+		<label for="dir_name">{t(Dir name)}</label>
+		<input type="text" id="dir_name" name="dir_name" value="{dir_name}">
+	</p>
+{if("location" ne "framework")}
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+{/if}
+	</form>
+</div>
+<br />
+{if("location" eq "framework")}
+<div>
+	<p class="negative">{t(NOTE)}:</p>
+	<p>{t(You can't rename directory in a FRAMEWORK)}</p>
+</div>
+{/if}
+<br />
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

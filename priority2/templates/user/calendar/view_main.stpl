@@ -1,0 +1,40 @@
+{{--
+{if("manage_link" ne "")}
+<div align="right">
+	<a href="{manage_link}" class="actionlink">{t(Edit your calendar)}</a>
+</div>
+{/if}
+--}}
+<div align="center">
+{{--	<b>{cal_title}</b><br />--}}
+	<i>{cal_desc}</i>
+</div>
+
+<div align="center" id="calendar_cur_month">
+{cur_month}
+</div>
+
+<div align="center">
+<table align="center">
+	<tr>
+		<td align="left" width="50%" nowrap>
+{if("prev_month_link" ne "")}<a href='{prev_month_link}' class="actionlink">({t(Previous month)}) &lt;&lt;&lt;</a>{/if}
+		</td>
+		<td align="right" width="50%" nowrap>
+{if("next_month_link" ne "")}<a href='{next_month_link}' class="actionlink">&gt;&gt;&gt; ({t(Next month)})</a>{/if}
+		</td>
+	</tr>
+</table>
+</div>
+
+<br />
+
+<div align="center" id="calendar_next_month">
+{next_month_1}
+</div>
+
+<br />
+
+<div align="center" id="calendar_next_month">
+{next_month_2}
+</div>

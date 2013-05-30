@@ -1,0 +1,20 @@
+<h2>{t(Preview of)} "<em>{object_name} -- {object_id}</em>"</h2>
+
+<div>
+
+<div class="column">
+<div class="title">Old</div>
+	<div class="example_container">
+	{old_text}           
+	</div>
+</div>
+<div class="column">
+<div class="title">New</div>
+	<div class="example_container">
+	{new_text}
+	</div>
+</div>
+</div>
+<br style="clear:both;" />
+<br />
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

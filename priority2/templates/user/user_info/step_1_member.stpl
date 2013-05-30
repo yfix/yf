@@ -1,0 +1,103 @@
+{include("user_info/menu_header")}
+{js_validator}
+
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}" {js_form_code} enctype="multipart/form-data">
+	<p class="first">
+		<label for="nick">{t(Nick)}</label>
+		<input type="text" id="nick" name="nick" size="20" maxlength="40" value="{nick}" style="font-weight:bold;" />
+	</p>
+	<p>
+		<label>{t(Login)} / {t(Account ID)}</label>
+		{login}
+	</p>
+	<p>
+		<label>{t(E-mail)}</label>
+		<b>{email}</b>{{--&nbsp;<a href="{change_email_url}" class="actionlink">{t(Change)}</a>--}}
+	</p>
+{{--
+	<p>
+		<label class="simple"><input type="checkbox" name="show_mail" {if("show_mail" eq 1)}checked{/if}>&nbsp;{t(Allow members to see my email address)}</label>   {tip('register.show_email')}
+	</p>
+--}}
+	<p>
+		<label class="simple"><input type="checkbox" name="contact_by_email" {if("contact_by_email" eq 0)}checked{/if}>&nbsp;{t(Don&#39;t allow to contact me by email)}</label>   {tip('register.contact_by_email')}
+	</p>
+	<p>
+		<label for="pswd">{t(Password)} ({t(not shown)})</label>
+		<input type="password" id="pswd" name="pswd" size="20" maxlength="20" value="" />  {tip('register.password')}
+	</p>
+{{--
+	<p>
+		<label for="city">{t(City)}</label>
+		<input type="text" id="city" name="city" size="20" maxlength="40" value="{city}" />
+	</p>
+	<p>
+		<label for="zip_code">{t(Zip Code)}</label>
+		<input type="text" id="zip_code" name="zip_code" size="10" maxlength="10" value="{zip_code}" />
+	</p>
+	<p>
+		<label for="state_box">{t(State)}</label>
+		{state_box}
+	</p>
+	<p>
+		<label for="country_box">{t(Country)}</label>
+		{country_box}
+	</p>
+--}}
+{{--<!-- MESSENGERS -->
+	<p>
+		<label for="icq">{t(ICQ)}</label>
+		<input type="text" id="icq" name="icq" size="20" maxlength="128" value="{icq}" />
+	</p>
+	<p>
+		<label for="yahoo">{t(YIM)}</label>
+		<input type="text" id="yahoo" name="yahoo" size="20" maxlength="128" value="{yahoo}" />
+	</p>
+	<p>
+		<label for="aim">{t(AIM)}</label>
+		<input type="text" id="aim" name="aim" size="20" maxlength="128" value="{aim}" />
+	</p>
+	<p>
+		<label for="msn">{t(MSN)}</label>
+		<input type="text" id="msn" name="msn" size="20" maxlength="128" value="{msn}" />
+	</p>
+	<p>
+		<label for="jabber">{t(Jabber)}</label>
+		<input type="text" id="jabber" name="jabber" size="20" maxlength="128" value="{jabber}" />
+	</p>
+	<p>
+		<label for="skype">{t(Skype)}</label>
+		<input type="text" id="skype" name="skype" size="20" maxlength="128" value="{skype}" />
+	</p>
+<!-- /MESSENGERS -->
+	<p>
+		<label for="sex_box">{t(Sex)}</label>
+		{sex_box}
+	</p>
+	<p>
+		<label for="age_box">{t(Age)}</label>
+		{age_box}
+	</p>
+--}}
+
+{foreach("dynamic_items")}
+	<p>
+		<label for="{#.name}">{t({#.name})}:
+		{if("#.comment" ne "")}<br /><small>({#.comment})</small>{/if}</label>
+		{#.field}
+	</p>
+{/foreach}
+
+{avatar}
+	<div class="button_div">
+		<input type="hidden" name="step" value="2" />
+		<input type="submit" value="  {t(Update Account)}  " />
+		<input type="reset" value="  {t(Reset)}  " />
+	</div>
+</form>
+</div>

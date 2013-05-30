@@ -1,0 +1,24 @@
+<h3>{t(Total)} ({total})</h3>
+<div align="center">
+{filter}
+<br />
+{if("items" ne "")}
+<table class="sortable_wrapper" width="400">
+	<col align="left"><col><col><col><col>
+	<thead>
+		<th>{t(Login)}</th>
+		<th>{t(IP)}</th>
+		<th>{t(Date)}</th>
+		<th>{t(Reason)}</th>		
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+
+{if("items" eq "")}{t(No auth fails)}{/if}
+
+{if("pages" ne "")}<br />{t(Pages)}: {pages}{/if}
+</div>

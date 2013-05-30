@@ -1,0 +1,6 @@
+<h1 class="header">Email changed!</h1>
+
+<p align="center">
+	Your email address has been changed successfully!
+</p>
+<p align="center"><a href="./?object=login_form"><b>Click here to login</b></a></p>

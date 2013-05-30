@@ -1,0 +1,6 @@
+{foreach("fields")}
+	<p>
+		<label for="{#.name}">{t({#.title})}</label>
+		{#.field}
+	</p>
+{/foreach}

@@ -1,0 +1,28 @@
+{{--<h1>{t(Welcome)}, {user_name}</h1>--}}
+
+<p>{t(This is your account management area. 
+	Please use the links from the account menu to edit your profile, blog, gallery etc)}.
+</p>
+<br />
+{suggests}
+<br />
+<br />
+
+{if("admin_messages" ne "")}
+<div align="left">
+	<h4>{t(Messages from site administration)}</h4>
+	
+	{foreach("admin_messages")}
+		<li><span class="negative"><b>{admin_messages.title}</b></span><br />{admin_messages.text}<br /><a href="{admin_messages.read_link}" class="actionlink">{t(OK, I read this message, don&#0039;t show it any more)}</a></li>
+	{/foreach}
+	<br />
+</div>
+{/if}
+
+<br />
+<br />
+<br />
+<br />
+
+{execute(account,_show_stats)}
+

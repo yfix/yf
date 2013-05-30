@@ -1,0 +1,60 @@
+<h3>{t(Comments)}</h3>
+
+{if("comments" ne "")}
+{{-- Testing comments block with scrolling, uncomment to try
+<div style="height:500px;overflow:scroll;overflow-x:auto;">--}}
+
+<div style="margin-left: 10px;" id="comments">
+	{comments}
+</div>
+
+{{--</div>--}}
+{/if}
+
+{if("comments" eq "")}
+<div>
+	<p>{t(No comments yet. If you have something valuable to say about this post, please, feel free to be the first one to leave a comment.)}</p>
+</div>
+{/if}
+
+{if("add_comment_form" ne "")}
+	{add_comment_form}
+{else}
+<p>	
+<br />	
+	{t(Only site members can place comments)}.
+	Please, <a href="{login_link}">{t(login)}</a> first, if you want to submit a comment.
+</p>
+{/if}
+
+<div style="display: none" id="tree_reply_block">
+	<form action="{add_comment_action}" method="post">
+		<input type="hidden" name="parent_id" value="0"/>
+		<textarea class="input_comments_reply" name="text2"></textarea>
+		<input type="submit" name="send" value="{t(save)}">
+	</form>
+</div>
+
+
+<script type="text/javascript">
+<!--
+var _prev_id = 0;
+var _form_html = $("#tree_reply_block").html();
+var _any_reply_link = "";
+
+function show_form(id){
+	if (!_any_reply_link) {
+		_any_reply_link = $("#cid_holder_" + id).html();
+	}
+	// Revert previous "reply" link
+	if (_prev_id) {
+		var _prev_reply_link = _any_reply_link.replace(/show_form\([^)]+\)/i, "show_form('" + _prev_id + "')");
+		$("#cid_holder_" + _prev_id).html(_prev_reply_link);
+	}
+	var _cur_form_html = $(_form_html).find("input[name=parent_id]").val(id).end().parent().html();
+	$("#cid_holder_" + id).html(_cur_form_html);
+
+	_prev_id = id;
+}
+-->
+</script>

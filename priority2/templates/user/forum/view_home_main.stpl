@@ -1,0 +1,14 @@
+<div id="forum_home">
+{cats}
+</div>
+
+{if("is_admin" eq 1)}<div align="center"><a href="{sync_board_link}">{t(Resynchronize Board)}</a></div>{/if}
+
+<script type="text/javascript">
+<!--
+// JQuery on DOM ready
+$(function(){
+	$("a.topic_author").profy_tooltip();
+})
+-->
+</script>

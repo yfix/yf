@@ -1,0 +1,27 @@
+<h1>{t(Admin Modules Editor)}</h1>
+<h2>{t(Install module)}</h2>
+
+{if("error_message" ne "")}
+<div align="center">{error_message}</div>
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}" enctype="multipart/form-data">
+	<p class="first">
+		<label for="import_file">{t(Module Archive File)}<br /><small>({t(ZIP,TAR GZ allowed)})</small></label>
+		<input type="file" id="import_file" name="import_file" size="40">
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Import)}" name="go" />
+	</div>
+</form>
+</div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>!!!!____TODO____!!!!</p>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_link}">{t(Back to modules list)}</a></div>

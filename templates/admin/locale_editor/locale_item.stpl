@@ -1,0 +1,1 @@
+{if("is_empty" ne 1)}<b>{name}</b>{/if}{if("is_empty" eq 1)}<s>{name}</s>{/if}

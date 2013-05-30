@@ -1,0 +1,15 @@
+{foreach("dynamic_items")}
+<p>
+	<label for="{#.html_id}">{t({#.name})}</label>
+	{if("#.comment" ne "")}{itip({#.comment})}{/if}
+	{if("#.type" eq "text")}
+		<textarea rows="5" cols="50" name="{#.name}" id="{#.name}">{#.value}</textarea>
+	{/if}
+	{if("#.type" eq "varchar")}
+		<input type="text" name="{#.name}" id="{#.name}" value="{#.value}" />
+	{/if}
+	{if("#.box" ne "")}
+		{#.box}
+	{/if}
+</p>
+{/foreach}

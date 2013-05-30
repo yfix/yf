@@ -1,0 +1,50 @@
+<div class="filter">
+<fieldset>
+<legend>{t(Filter)}</legend>
+<form action='{save_action}' method='post'>
+	<div class="">
+		<p>
+			<label for="name">{t(Name)}</label>
+			<input type="text" id="name" name="name" value="{name}">
+		</p>
+		<p>
+			<label for="price_min">{t(Price MIN)}</label>
+			<input type="text" id="price_min" name="price_min" value="{price_min}">
+		</p>
+		<p>
+			<label for="price_max">{t(Price MAX)}</label>
+			<input type="text" id="price_max" name="price_max" value="{price_max}">
+		</p>
+		<p>
+			<label for="quantity_min">{t(Quantity MIN)}</label>
+			<input type="text" id="quantity_min" name="quantity_min" value="{quantity_min}">
+		</p>
+		<p>
+			<label for="quantity_max">{t(Quantity MAX)}</label>
+			<input type="text" id="quantity_max" name="quantity_max" value="{quantity_max}">
+		</p>
+		
+		<p>
+			<label for="status">{t(Status)}</label>
+			{status_prod_box}
+		</p>
+		<!-- <p>
+			<label for="date">{t(Date)}</label>
+			{seals_box}
+		</p> -->
+		<p>
+			<label for="sort_by">{t(Sort By)}</label>
+			{sort_by_box}
+		</p>
+		<p>
+			<label for="sort_order_box">{t(Sort Order)}</label>
+			{sort_order_box}
+		</p>
+	</div>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}">
+		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+	</div>
+</form>
+</fieldset>
+</div>

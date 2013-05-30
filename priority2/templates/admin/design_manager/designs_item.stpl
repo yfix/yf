@@ -1,0 +1,36 @@
+<tr id="del_row_{id}">
+{{--
+{if("preview_img" ne "")}
+	{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" profy:img_m_src="{photo_m_src}">{/if}<img src="{preview_img}" border="0" />{if("photo_m_src" ne "")}</a>{/if}
+{/if}
+    --}}
+{if("img_path" ne "")}
+	<td align="center">
+		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" profy:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" border="0" />{if("photo_m_src" ne "")}</a>{/if}
+	</td>
+{/if}
+{if("img_path" eq "")}
+	<td align="center">&nbsp;</td>
+{/if}
+	<td align="left"><b>{name}</b></td>
+	<td align="left">{tags}</td>
+	<td align="left">
+{if("owner_id" ne "")}
+		<a href="{owner_profile_link}" profy:user_id="{owner_id}" class="ajax_user_info">{owner_nick}</a>
+{/if}
+	</td>
+	<td align="left">{num_images}</td>
+	<td align="center">
+		<a href="{active_link}" class="change_active">
+{if("active" eq 1)}<span class="positive">ACTIVE</span>{/if}
+{if("active" ne 1)}<span class="negative">INACTIVE</span>{/if}
+		</a>
+	</td>
+	<td align="left" nowrap>
+		<a href="{edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit Theme)}" /></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
+	{if("delete_url" ne "")}
+		<a href="{delete_url}" onclick="javascript:return confirm('{t(Are you sure?)}')"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Theme)}" /></a>&nbsp;
+	{/if}
+	</td>
+</tr>

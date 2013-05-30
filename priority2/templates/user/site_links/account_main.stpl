@@ -1,0 +1,22 @@
+<h1 class="header">Link Management</h1>
+
+<table align="center" border="0" cellspacing="0" cellpadding="3" width="100%">
+	<thead class="big">
+	<tr valign="top">
+		<th width="20"><b>#</b></th>
+		<th width="260"><b>Site title</b></th>
+		<th width="70"><b>Category</b></th>
+		<th width="90"><b>Type</b></th>
+		<th width="90"><b>Status</b></th>
+		<th width="80" align="center"><b>Added</b></th>
+		<th width="50" align="center"><b>Edit</b></th>
+		<th width="50" align="center"><b>Delete</b></th>
+	</tr>
+	</thead>
+{items}
+</table>
+
+<p align="center">
+	<a href="{add_site_url}">Add Site</a>&nbsp;&nbsp;
+	<a href="./?object=logout">Logout</a>
+</p>

@@ -1,0 +1,18 @@
+<h3>{month_name} {year}</h3>
+
+<table cellpadding='2' cellspacing='1' width="100%">
+	<tr>
+		<th>{t(Sun)}</th>
+		<th>{t(Mon)}</th>
+		<th>{t(Tue)}</th>
+		<th>{t(Wed)}</th>
+		<th>{t(Thu)}</th>
+		<th>{t(Fri)}</th>
+		<th>{t(Sat)}</th>
+	</tr>
+{foreach("weeks")}
+	<tr>
+{#.days}
+	</tr>
+{/foreach}
+</table>

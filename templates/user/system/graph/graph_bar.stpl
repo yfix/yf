@@ -1,0 +1,8 @@
+<div class="bar_chart" direction="{direction}" id="{id}" style="width:{width}">
+	{foreach("data")}
+		<input class="line" type="hidden" name="{_key}" value="{#.val}" link="{#.link}"/>
+	{/foreach}
+	{foreach("ticks")}
+		<input type="hidden" class="x" name="{_key}" value="{_val}"/>
+	{/foreach}
+</div>

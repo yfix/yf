@@ -1,0 +1,12 @@
+<h3>{t(Poll)}: "{question}"</h3>
+
+<form action="{form_action}" method="post">
+{foreach("choices")}
+	<label><input type="radio" name="choice" value="{#.id}">{#.text}</label>
+	<br />
+{/foreach}
+<input type="hidden" name="poll_id" value="{poll_id}">
+<input type="submit" value="Vote!">
+</form>
+
+<div align="center"><a href="{results_link}">{t(Show results)}</a></div>

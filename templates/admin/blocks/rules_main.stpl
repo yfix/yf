@@ -1,0 +1,50 @@
+<h2>{t(Edit rules for block)}: "{block_name}" ({block_type})</h2>
+
+{if("items" ne "")}
+<table>
+	<thead>
+		<th width="1%">{t(Order)}</th>
+		<th width="5%">{t(Rule)}</th>
+		<th>{t(Modules Methods)}</th>
+		<th width="5%" nowrap>{t(User Groups)}</th>
+		<th width="5%">{t(Themes)}</th>
+		<th width="5%">{t(Locales)}</th>
+		<th width="5%">{t(Sites)}</th>
+		<th width="5%">{t(Servers)}</th>
+		<th width="5%">{t(Active)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No rules yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br />
+
+<div align="center">
+	<a href="{add_rule_link}">{t(Add new rule)}</a>
+	<br /><br />
+	<a href="{back_link}">{t(Back)}</a>
+	<br /><br />
+
+	<a href="{modules_link}">{t(Modules)}</a>
+	<a href="{groups_link}">{t(Groups)}</a>
+	<a href="{themes_link}">{t("Themes")}</a>
+	<a href="{locales_link}">{t("Locales")}</a>
+	<a href="{sites_link}">{t("Sites")}</a>
+	<a href="{servers_link}">{t("Servers")}</a>
+</div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>By Default rules are set to <b>DENY ALL</b><br />
+	This mean that if no rules are set - then current block is <b>DENIED</b> to display<br />
+	So if you want to allow current block in some cases - you need rule type <span class="positive">ALLOW</span><br />
+	Rule type <span class="negative">DENY</span> designed for cases when you need an exclusion from <span class="positive">ALLOW</span> rules
+	</p>
+</div>

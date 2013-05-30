@@ -1,0 +1,9 @@
+{if("blog_links" ne "")}
+<div>
+	<ul>
+	{foreach("blog_links")}
+		<li><a href="{blog_links.url}" target="_blank">{blog_links.title}</a></li>
+	{/foreach}
+	</ul>
+</div>
+{/if}

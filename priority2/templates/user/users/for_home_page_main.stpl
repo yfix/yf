@@ -1,0 +1,5 @@
+<table cellspacing="10" cellpadding="2" border="0">
+	<tr>
+		{items}
+	</tr>	
+</table>

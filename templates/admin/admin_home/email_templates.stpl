@@ -1,0 +1,16 @@
+<h3>Available email templates</h3>
+
+<table cellpadding="5" cellspacing="0" border="0" width="400" align="center">
+	<tr class="frame">
+		<td><b>Template name</b></td>
+		<td><b>Init type</b></td>
+		<td><b>Theme</b></td>
+	</tr>
+{foreach("items")}
+	<tr class="{#.bg_class}">
+		<td><a href="{#.stpl_edit_link}"><b>{#.stpl_name}</b></a></td>
+		<td style="text-transform:uppercase;"><b>{#.init_type}</b></td>
+		<td><a href="{#.theme_edit_link}"><b>{#.theme_name}</b></a></td>
+	</tr>
+{/foreach}
+</table>

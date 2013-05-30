@@ -1,0 +1,53 @@
+<div align="center">
+{if("items" ne "")}
+<form action="{form_action}" method="post" name="">
+<table class="sortable_wrapper" align="center">
+	<thead>
+		<th>#</th>
+		<th>{t(Name)}</th>
+		<th>{t(Translation)}</th>
+		<th>{t(User id)}</th>
+		<th>{t(Updated)}</th>
+		<th>{t(Locale)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+{foreach("items")}
+		<tr valign="top">
+			<td><input type="checkbox" name="items[]" value="{#.id}"></td>
+			<td align="left"><b style="background:{#.var_bg_color};">{#.name}</b></td>
+			<td align="left">{#.translation}</td>
+			<td><small><a href="{#.user_link}">{#.user_name}</a></small></td>
+			<td nowrap><small>{#.last_update}</small></td>
+			<td><b>{#.locale}</b></td>
+			<td nowrap>
+				<a href="{#.edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
+				<a href="{#.delete_url}" onclick="return confirm("{t(Are you sure)} ?");"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
+				<small><a href="{#.push_url}" onclick="return confirm("{t(Are you sure)} ?");">{t(Push)}</a>&nbsp;</small>
+			</td>
+		</tr>
+{/foreach}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="20">
+				<label for="my_check_all"><input type="checkbox" id="my_check_all" name="check_all" onclick="my_toggle_boxes(this.form);">{t(SELECT ALL)}</label>
+				&nbsp;<input type="submit" name="multi-push" value="{t(PUSH SELECTED)}" onclick="return confirm('{t(Are you sure)}?');" />
+				&nbsp;<input type="submit" name="multi-delete" value="{t(DELETE SELECTED)}" onclick="return confirm('{t(Are you sure)}?');" />
+			</td>
+		</tr>
+	</tfoot> 
+</table>
+</form>
+</div>
+
+<br /><b>{t(total)}: {total}</b><br />
+
+{else}
+
+<div align="center">{t(No records)}</div>
+{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+	<a href="{show_vars_link}">{t(Manage vars)}</a>&nbsp;

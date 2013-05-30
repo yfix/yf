@@ -1,0 +1,5 @@
+<div id="nav_1" class="nav_1">
+	<a href="./">{t(Home)}</a> :: <a href="./?object=forum">{t(Forum)}</a>
+	{foreach("items_links")}<b>&nbsp;::&nbsp;<a href="{#.link}">{#.name}</a></b>{/foreach}
+	{foreach("items_texts")}<b>&nbsp;::&nbsp;{#.name}</b>{/foreach}
+</div>

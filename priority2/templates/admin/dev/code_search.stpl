@@ -1,0 +1,16 @@
+<div align="center">
+<form action="{form_action}" method="post">
+	<input type="text" name="text" value="{text}" style="width:200px;" />
+	<input type="submit" name="go" value="go" />
+</form>
+</div>
+
+<br />
+{if("items" ne "")}
+	<h2>Total: {total} files found with text: "{text}"</h2>
+<small>
+{foreach("items")}
+	<li><a href="{#.edit_link}">{#.path}</a></li>
+{/foreach}
+</small>
+{/if}

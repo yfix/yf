@@ -1,0 +1,6 @@
+<tr>
+	<td>{server}</td>
+	<td>{user}</td>
+	<td nowrap><small>{date}</small></td>
+	<td><small>{action}</small></td>
+</tr>

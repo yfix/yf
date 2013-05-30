@@ -1,0 +1,11 @@
+<tr class="{bg_class}" valign="top">
+	<td align="left" width="130" nowrap>{user_avatar}</td>
+	<td align="left"  width="460">
+		<a href="{user_profile_link}"><b>{user_name}</b></a><br /><br />
+{if("keywords" ne "")}
+	<small><b>{t(Interests)}:</b><br />
+	{foreach("keywords")}<a href="{#.search_link}">{#.word}</a> {/foreach}
+	</small>
+{/if}
+	</td>
+</tr>

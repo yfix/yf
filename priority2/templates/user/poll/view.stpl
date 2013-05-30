@@ -1,0 +1,30 @@
+<div align="center">
+<div class="poll">
+<fieldset>
+<legend>{t(Poll results)}</legend>
+
+	<span class="que">{question}</span>
+	<br /><br />
+	<div>
+		<table width="100%">
+		{foreach("results")}
+			<tr align="left">
+				<td width="10%" nowrap align="center"><small>({#.num})<br /><b>{#.percents}%</b></small></td>
+				<td><span class="answer"><small>{#.text}</small></span><div style="width:{#.percents}%;background-color:{#.color}" class="poll_result_bar">&nbsp;</div></td>
+			</tr>
+		{/foreach}
+		</table>
+	</div>
+
+	<b>{t(Total votes)}: {total_votes}</b>
+	{if("is_owner" eq "1")}
+	<br />
+	<div align="right">
+		<a href="{delete_url}">{t(Delete poll)}</a>
+	</div>
+	{/if}
+
+</fieldset>
+</div>
+</div>
+

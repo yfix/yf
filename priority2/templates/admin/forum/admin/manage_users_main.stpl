@@ -1,0 +1,28 @@
+<div align="center">
+{if("items" ne "")}
+<table width="500">
+	<thead>
+		<th><b>{t(id)}</b></th>
+		<th><b>{t(Name)}</b></th>
+		<th><b>{t(Group)}</b></th>
+		<th><b>{t(Posts)}</b></th>
+		<th><b>{t(Last Visit)}</b></th>
+		<th width="5%" align="center"><b>{t(Action)}</b></th>
+	</thead>
+{foreach("items")}
+	<tr class="{#.bg_class}">
+		<td>{#.id}</td>
+		<td align="left"><b>{#.name}</b></td>
+		<td>{#.group_name}</td>
+		<td>{#.num_posts}</td>
+		<td>{#.last_visit}</td>
+		<td nowrap>
+			<a href="{#.edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="Edit" /></a>&nbsp;
+<!--			<a href="{delete_link}" onclick="return confirm('Are you sure?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="Delete" /></a>&nbsp;-->
+		</td>
+	</tr>
+{/foreach}
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No forum users yet)}</div>{/if}
+</div>

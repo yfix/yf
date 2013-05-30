@@ -1,0 +1,31 @@
+<input type="hidden" name="parent_object"		value="{parent_object}"		id="preview_parent_object">
+<input type="hidden" name="parent_action"		value="{parent_action}"		id="preview_parent_action">
+<input type="hidden" name="preview_form_action"	value="{default_action}"	id="preview_old_form_action">
+
+<script type="text/javascript">
+<!--
+	bak_action = document.forms[0].action;
+
+	document.getElementById("preview_old_form_action").value = bak_action;
+
+	function preview_click(){
+		var form = document.forms[0];
+		form.action = '{preview_link}';
+		form.target = 'preview_window';
+		open('about:blank', 'preview_window', 'resizable=yes,width={width},height={height},status=no,toolbar=no,menubar=no,scrollbars=yes');
+		form.submit();
+		return false;
+	}
+
+	function post_click(){
+		var form = document.forms[0];
+		form.action = bak_action;
+		form.target = '';
+		form.submit();
+		return false;
+	}
+-->
+</script>
+
+<input type="button" onclick="preview_click()" value="{t(Preview)}">
+<input type="button" onclick="post_click()" value="{t(Post)}">

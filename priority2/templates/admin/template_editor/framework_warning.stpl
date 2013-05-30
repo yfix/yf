@@ -1,0 +1,6 @@
+<fieldset class="warning">
+	<legend>{t(Warning)}</legend>
+	<p>
+		<b>Changing content of framework is not allowed!</b>
+	</p>
+</fieldset>

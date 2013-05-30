@@ -1,0 +1,7 @@
+{error}
+
+<ul>
+	<li><a href="./?object=analyze_error_log&action=realtime">Realtime Stats</a></li>
+	<br />
+	<li><a href="./?object=analyze_error_log&action=update_stats">Update Stats</a></li>
+</ul>

@@ -1,0 +1,11 @@
+Hi,
+				
+Your link has been approved and placed on the following sites:
+{site_names}
+
+Thanks for your cooperation!
+
+Regards,
+{eval_code(SITE_ADVERT_NAME)} Administration
+
+{eval_code(SITE_ADVERT_URL)}

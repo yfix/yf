@@ -1,0 +1,22 @@
+{{--<h1>{t(Most Commented Blog Posts)}</h1>--}}
+
+<div align="right">
+{if("is_logged_in" eq 1)}
+	<br /><a href="{show_own_posts_link}" class="actionlink">{t(Go to my blog)}</a>
+	&nbsp;&nbsp;<a href="{change_settings_link}" class="actionlink">{t(Change my blog settings)}</a>
+{/if}
+	&nbsp;&nbsp;<a href="{all_blogs_link}" class="actionlink">{t(List all blogs)}</a><br /><br />
+</div>
+
+<h2 class="subtitle">{t(Most Commented Entries)}:</h2>
+
+{most_commented_posts}
+
+{if("most_commented_posts" eq "")}
+	<div align="center">{t(No commented entries yet!)}</div>
+{/if}
+
+
+{if("pages" ne "")}
+<div align="center">{pages}</div>
+{/if}

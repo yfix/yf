@@ -1,0 +1,23 @@
+<table>
+	<tr class="subtitle">
+		<td colspan="2">
+			<a href="{post_link}">{result_num}. {user_name} - {post_title}</a> {rss_posts_button}
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5" height="5"></td>
+	</tr>
+	<tr>
+		<td align="center" valign="top">{avatar}</td>
+		<td valign="top" align="left">
+			<p class="text_short">{post_text}... </p>
+			<a href="{post_link}" class="actionlink">{t(More)}...</a><br />
+			<div align="right"><small>
+{t(Posted in)}: <a href="{blog_link}">{if("blog_title" eq "")}{user_name}'s {t(blog)}{/if}{if("blog_title" ne "")}{blog_title}{/if}</a>
+{t( on)}: {post_date}<br />
+{t(Read)}: {num_reads} times<br />
+{if("num_comments" ne "-1")}{t(Comments)}: {num_comments}<br />{/if}
+			</small></div>
+		</td>
+	</tr>
+</table>

@@ -1,0 +1,64 @@
+<h1 class="header">Edit Link</h1>
+
+<p><b class="alarm">Attention!</b> <b>
+	To participate in link exchange you are required to place 
+	a link to our site on your site. For linking instrustions 
+	please <a href="{banners_url}" target="_new">click here</a>. 
+	Please place the link before or immediately after submitting 
+	this form, otherwise your link will be deleted. Your link 
+	on our sites will get visible after the moderator's approval.</b></p>
+<p><b class="alarm">Please note!</b> <b>We basically don't 
+	list low quality sites, sites with 0 Page Rank, sites that 
+	place link to us on hidden pages etc. Anyway we ask you to 
+	give our link a good position on your main page or some other 
+	page linked directly to your main page. We reserve the right 
+	to reject any site.</b></p>
+<br /> <br />
+
+<table border="0" cellpadding="5" cellspacing="0" align="center" width="100%">
+	<form action="{form_action}" method="post">
+		<tr>
+			<td align="right"><b>Site Title:</b></td>
+			<td><input class="text" name="title" type="text" size="40" value="{site_title}" /></td>
+		</tr>
+		<tr>
+			<td align="right"><b>Site URL:</b></td>
+			<td><input name="url" type="text" size="40" value="{site_url}" /></td>
+		</tr>
+		<tr>
+			<td align="right"><b>Your Reciprocal Link URL:</b></td>
+			<td><input name="link_url" type="text" size="40" value="{link_url}" /></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top"><b>Banner URL:</b><br /><small>(optional)</small></td>
+			<td valign="top">
+				<input name="banner_url" type="text" size="40" value="{banner_url}" /><br />
+				<input type="checkbox" name="get_banner" value="1" />Upload to our server
+			</td>
+		</tr>
+		<tr>
+			<td align="right" valign="top"><b>Description:</b></td>
+			<td><textarea name="description" cols="34" rows="12">{desc}</textarea></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">
+				<b>Link Type:</b><small><br />
+				This is how you want your link to be displayed on our<br />
+				sites, either text link with description or banner.</small>
+			</td>
+			<td valign="top">{link_type_box}</td>
+		</tr>
+		<tr>
+			<td align="right"><b>Site Category:</b></td>
+			<td>{site_cat_box}</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2">
+				<input type="submit" value="Submit" /> &nbsp; 
+				<input type="reset" value="  Clear  " />
+			</td>
+		</tr>
+	</form>
+</table>
+
+<p align="center"><a href="{site_list_url}">Back to site list</a></p>

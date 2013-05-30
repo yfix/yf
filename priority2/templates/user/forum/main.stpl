@@ -1,0 +1,24 @@
+{{--{navigation}--}}
+
+<h1>{t(Forum)}</h1>
+
+<script type="text/javascript" src="{main_js_src}"></script>
+
+{menu_top}
+   
+{items}
+
+{totals}
+{footer}
+
+<script type="text/javascript">
+<!--
+$(function(){
+	// Fix for the last_post scroll problem
+	if (window.location.hash == "#last_post") {
+		var _offset = $("#forum [id^='entry_']:last").offset();
+		window.scroll(0, Math.ceil(_offset.top));
+	}
+})
+-->
+</script>

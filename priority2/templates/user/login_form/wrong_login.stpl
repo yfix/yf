@@ -1,0 +1,6 @@
+<div align="center" class="negative">
+	{t(Sorry, but some info you have entered is wrong.)}<br />
+	{t(You will be redirected to the login form.)}
+</div>
+
+<META http-equiv="Refresh" content="1; Url={login_form_url}" />

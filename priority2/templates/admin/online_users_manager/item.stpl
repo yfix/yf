@@ -1,0 +1,25 @@
+<div style="float:left;">
+<table class="my_form_table">
+	<tr>
+		<td align="center">{user_avatar}</td>
+	</tr>
+	<tr>
+		<td align="center"><b><a href="{profile_link}" title="{user_nick}">{user_nick}</a></b></td>
+	</tr>
+	<tr>
+		<td align="left"><small><b>{t(Group)}:</b> <b>{user_group}</b></small></td>
+	</tr>
+	<tr>
+		<td align="left"><small><b><a href="{location}">{location_text}</a></b></small></td>
+	</tr>
+	<tr>
+		<td align="left"><small><b>{t(IP)}: </b> <b>{ip}</b></small></td>
+	</tr>
+	<tr>
+		<td align="left"><small><b>{t(Time)}: </b> <b>{time}</b></small></td>
+	</tr>
+	<tr>
+		<td align="left"><small>{user_agent}</small></td>
+	</tr>
+</table>
+</div>

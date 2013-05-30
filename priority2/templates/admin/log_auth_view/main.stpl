@@ -1,0 +1,36 @@
+<h3>{t(Total)} ({total})</h3>
+<div align="center">
+	{filter}
+</div>
+<br />
+<table>
+	<thead>
+		<th width="5%">UID</th>
+		<th>{t(Login)}</th>
+		<th>{t(Log IP)}</th>
+		<th>{t(Log Date)}</th>
+		<th>{t(User Agent)}</th>
+		<th>{t(Referer)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+<br />
+{if("pages" ne "")}
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}
+<br />
+<hr />
+<div align="center"> 
+	<form action="{prune_action}" method="post">
+		{t(Prune logs older than)}<input type="text" name="prune_days" size="5" value="30"> {t(days)}&nbsp;<input type="submit" value="{t(GO)}!">
+	</form>
+</div>
+<br />
+<hr />
+<div align="center"> 
+	<form action="{same_ips_action}" method="post">
+		{t(Check Same IP for users)}<small>({t(separate users ids by comma)})</small> <br /><input type="text" name="id" size="30" value="">&nbsp;<input type="submit" value="{t(GO)}!">
+	</form>
+</div>

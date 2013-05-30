@@ -1,0 +1,11 @@
+<tr class="{bg_class}">
+	<td width="1%"><input type="checkbox" name="item[]" value="{id}"></td>
+	<td><b><a href="{user_link}">{name}</a></b></td>
+	<td>{description}</td>
+	<td>{date}</td>
+	<td>{action_date}</td>
+	<td>{status}</td>
+	<td align="center" nowrap>	
+		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>
+	</td>
+</tr>

@@ -1,0 +1,12 @@
+<h2>{t(Admin Message for user)}: <a href="{account_link}" target="_blank"><b>{user_name}</b></a></h2>
+<br />
+<div>
+	<p>
+		<label><small><b>{t(Title)}</b>: </small></label><br />
+		{title}
+	</p>
+	<p>
+		<label><small><b>{t(Text)}</b>: </small></label><br />
+			{text}
+	</p>
+</div>

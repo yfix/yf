@@ -1,0 +1,8 @@
+<form action="{save_action}" method="post">
+{sort_by_box}
+{sort_order_box}
+{prune_day_box}
+{topics_flag_box}
+	<input type="hidden" name="act" value="save_filter" />
+	<input type="submit" value="{t(Go)}" class="button" />
+</form>

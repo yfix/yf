@@ -1,0 +1,13 @@
+Dear {user_name}! <br /><br />
+On "{website}" website the new post item was added to the "{topic_name}" topic<br /><br />
+-----------------------------------------------<br /><br />
+Message text: <br /><br />
+"{post_text}"<br /><br />
+-----------------------------------------------<br /><br />
+You can read the entire thread by clicking 
+<a href="{view_topic_url}">here</a><br /><br />
+-----------------------------------------------<br /><br />
+<br /><br />
+You can unsubscribe from watching this topic by clicking 
+<a href="{dont_notify_url}">Here</a><br /><br />
+

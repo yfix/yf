@@ -1,0 +1,18 @@
+	<tr class="{bg_class}">
+		<td width="1%"><input type="checkbox" name="names[]" value="{name}"></td>
+		<td width="20%" align="left"><a href="{settings_link}"><b>{name}</b></a></td>
+		<td width="10%" align="left">{foreach("locations")}<a href="{#.link}"><small><b>{#.name}</b></small></a>{if("_last" ne "1")},<br />{/if}{/foreach}</td>
+		<td nowrap="nowrap" align="center">
+{if("active_link" ne "")}<a href="{active_link}" class="change_active">{/if}
+{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}
+{if("active_link" ne "")}</a>{/if}
+		</td>
+{{--
+		<td nowrap="nowrap">
+			{if("uninstall_link" ne "")}<a href="{uninstall_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Uninstall)}</a>{/if}
+		</td>
+--}}
+{{--
+		<td width="50%" align="left"><small>{desc}</small></td>
+--}}
+	</tr>

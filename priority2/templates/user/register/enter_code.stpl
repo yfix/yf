@@ -1,0 +1,6 @@
+<h6>Enter activation code</h6>
+
+<form action="./?object=register&action=enter_code" method="post">
+	<b>Enter code</b>: <input type="text" name="confirm_code" value="" size="40">
+	<input type="submit" value="GO">
+</form>

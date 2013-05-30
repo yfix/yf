@@ -1,0 +1,54 @@
+{if("for_edit" eq 1)}<h2>{t(Edit Rule for Block)}: "{block_name}"</h2>{/if}
+{if("for_edit" eq 0)}<h2>{t(Add Rule for Block)}: "{block_name}"</h2>{/if}
+
+{if("error_message" ne "")}
+	<div align="center">{error_message}</div>
+{/if}
+
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p class="first">
+		<label for="rule_type_box">{t(Rule Type)}</label>
+		{rule_type_box}
+	</p>
+	<p>
+		<label for="methods_box">{t(Methods)}</label>
+		{methods_box}&nbsp;<a href="{modules_link}">{t(Edit Modules)}</a>
+	</p>
+	<p>
+		<label for="user_groups_box">{t(User Groups)}</label>
+		{user_groups_box}&nbsp;<a href="{groups_link}">{t(Edit User Groups)}</a>
+	</p>
+	<p>
+		<label for="themes_box">{t(Themes)}</label>
+		{themes_box}&nbsp;<a href="{themes_link}">{t(Edit Themes)}</a>
+	</p>
+	<p>
+		<label for="locales_box">{t(Locales)}</label>
+		{locales_box}&nbsp;<a href="{locales_link}">{t(Edit Locales)}</a>
+	</p>
+	<p>
+		<label for="site_ids_box">{t(Sites)}</label>
+		{site_ids_box}&nbsp;<a href="{sites_link}">{t(Edit Sites)}</a>
+	</p>
+	<p>
+		<label for="server_ids_box">{t(Servers)}</label>
+		{server_ids_box}&nbsp;<a href="{servers_link}">{t(Edit Servers)}</a>
+	</p>
+	<p>
+		<label for="order">{t(Rule Processing Order)}</label>
+		<input type="text" id="order" name="order" value="{order}" size="5" style="width:50px;" />
+	</p>
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		<span class="vertical">{active_box}</span>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+</form>
+</div>
+
+<br /><br />
+
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>

@@ -1,0 +1,1 @@
+				"%value%"			=> _prepare_html($A["%value%"]),

@@ -1,0 +1,10 @@
+<tr class="{bg_class}">
+	<td>{rev_number}</td>
+	<td>{rev_date}</td>
+	<td>{fsize_prev}</td>
+	<td>{fsize_curr}</td>
+	<td>{comment}</td>
+	<td>
+		<a href="{details_link}">{t(Preview)}</a>&nbsp;
+	</td>
+</tr>

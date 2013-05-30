@@ -1,0 +1,50 @@
+<table border="0" cellpadding="3" align="center">
+	<tr><td align="center" colspan="2"><span class="big_font">{t(User_profile)} "{name}"</span></td></tr>
+	<tr>
+		<td align="right"><b>{t(Register)}</b></td>
+		<td align="left">{user_regdate}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Posts)}</b></td>
+		<td align="left">{user_posts}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(From)}</b></td>
+		<td align="left">{user_from}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Occupation)}</b></td>
+		<td align="left">{user_occ}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Interests)}</b></td>
+		<td align="left">{user_interests}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Website)}</b></td>
+		<td align="left">{user_website}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Email)}</b></td>
+		<td align="left">{user_email}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(ICQ)}</b></td>
+		<td align="left">{user_icq}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(AIM)}</b></td>
+		<td align="left">{user_aim}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Yahoo)}</b></td>
+		<td align="left">{user_yim}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(MSN)}</b></td>
+		<td align="left">{user_msnm}</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2"><input type="button" value="{t(Send PM)}" onclick="window.location.href='{pm_link}'"></td>
+	</tr>
+</table>

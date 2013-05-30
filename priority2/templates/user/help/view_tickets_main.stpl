@@ -1,0 +1,25 @@
+<h2>{t(Your Tickets)} ({total})</h2>
+
+{if("items" ne "")}
+<table>
+	<thead>
+		<th width="5%">#</th>
+		<th width="60%">{t(Subject)}</th>
+		<th>{t(Status)}</th>
+		<th>{t(Added)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+{items}
+</table>
+{/if}
+{if("items" eq "")}
+	<div align="center">{t(No support tickets)}</div>
+{/if}
+
+{if("pages" ne "")}<br /><br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br />
+
+<div align="right">
+	<a href="./?object=help&action=email_form" class="actionlink">{t(Add New Ticket)}</a>
+</div>

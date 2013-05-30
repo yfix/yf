@@ -1,0 +1,32 @@
+{filter}
+
+{if("items" ne "")}
+<form action='{mass_delete_action}' method='post' name='future_posts_form'>
+<table border="0" cellspacing="0" cellpadding="3" width="100%" align="center">
+	<tr class="frame">
+		<td><b>#</b></td>
+		<td nowrap><b>{t(Future Date)}</b></td>
+		<td><b>{t(User)}</b></td>
+		<td width="40%"><b>{t(Subject)} ({t(Name)})</b></td>
+		<td><b>{t(Type)}</b></td>
+		<td><b>{t(Forum)}</b></td>
+		<td><b>{t(Topic)}</b></td>
+		<td><b>{t(Poster)}</b></td>
+		<td width="5%" align="center"><b>{t(Action)}</b></td>
+	</tr>
+{items}
+</table>
+
+<br />
+<div align="left">
+	<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'> SELECT ALL</label>
+	<input type='submit' value='Delete seleted' onclick="return confirm('Are you sure?');">
+</div>
+
+</form>
+{/if}
+{if("items" eq "")}<div align="center">No future posts yet</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">Pages: {pages}</div><br />{/if}
+
+{if("future_topic_link" ne "")}<br /><div align="center"><a href="{future_topic_link}">Add future topic</a></div>{/if}

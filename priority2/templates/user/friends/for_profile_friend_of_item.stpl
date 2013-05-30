@@ -1,0 +1,4 @@
+<td align="center">
+	{user_avatar}<a href="{user_details_link}"><strong>{user_name}</strong></a>
+</td>
+{if("need_div" eq 1)}</tr><tr>{/if}

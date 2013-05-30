@@ -1,0 +1,7 @@
+<form action='{delete_by_hits_action}' method='post' name='hits_form'>
+<div>
+	<b>{t(Delete records with less than)}&nbsp;&nbsp;
+	<input type="text" name="hits" size="5" value=""> {t(hits)} </b>
+	<input type='submit' value='Delete' class="ajax_delete">
+</div>
+</form>

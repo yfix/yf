@@ -1,0 +1,11 @@
+	<tr class="{bg_class}" valign="top">
+		<td height="25" align="center"><a href="{view_link}" title="{ticket_id}">#</a></td>
+		<td align="left"><a href="{view_link}"><b>{subject}</b></a></td>
+		<td align="left"><b>{status}</b></td>
+		<td align="left" nowrap><small>{opened_date}</small></td>
+		<td align="center" nowrap><small>
+			<a href="{view_link}"><img src="images/view.gif" alt="{t(View)}" border="0" hspace="3" /></a>
+			{if("edit_link" ne "")}<a href="{edit_link}"><img src="images/edit.gif" alt="{t(Edit)}" border="0" hspace="3" /></a>{/if}
+			{if("delete_link" ne "")}<a href="{delete_link}"><img src="images/delete.gif" alt="{t(Delete)}" border="0" hspace="3" /></a>{/if}
+		</small></td>
+	</tr>

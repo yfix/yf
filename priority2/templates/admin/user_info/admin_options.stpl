@@ -1,0 +1,12 @@
+		<p>
+			<label for="">Account Type</label>
+			{account_type_box}
+		</p>
+		<p>
+			<label for="">Account active</label>
+			{active_box}
+		</p>
+		<p>
+			<label for="">Admin Comments</label>
+			<textarea name="admin_comments" cols="50" rows="5">{admin_comments}</textarea>
+		</p>

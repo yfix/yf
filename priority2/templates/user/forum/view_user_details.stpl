@@ -1,0 +1,13 @@
+{if("user_id" ne 0)}<span class="postdetails">{/if}
+{if("user_avatar_src" ne "")}<img src="{user_avatar_src}" alt="avatar" /><br />{/if}
+{if("user_id" ne 0)}{user_rank_name}<br />{/if}
+{if("show_user_level" eq 1)}{foreach("user_level")}<img src="images/forum/pip.gif" border="0"  alt="*" />{/foreach}{/if}
+{if("user_id" ne 0)}
+	<br />{t(Group)}: {user_group}<br />
+	{t(Posts)}: {user_num_posts}<br />
+	{t(Joined)}: {user_reg_date}<br />
+	{t(Member No)}: {user_id}<br /><br />
+</span>
+{/if}
+{if("user_id" eq 0)}<br /><br />{t(Unregistered)}{/if}
+<br /><img src="images/forum/spacer.gif" alt="" width="15" height="1" /><br />

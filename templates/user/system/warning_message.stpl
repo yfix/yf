@@ -1,0 +1,6 @@
+<div align="center">
+	<div class="warning">
+		<p>{t(Warning)}</p>
+		<span>{items}</span>
+	</div>
+</div>

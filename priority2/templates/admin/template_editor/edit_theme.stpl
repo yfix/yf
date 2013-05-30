@@ -1,0 +1,16 @@
+<h2>{t(Edit theme)} "{theme_name}" {t(in)} "{location}"</h2>
+<br />
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first"> 
+		<label for="theme_name">{t(Theme name)}</label>
+		<input type="text" id="theme_name" name="theme_name" value="{theme_name}">
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+</form>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

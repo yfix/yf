@@ -1,0 +1,21 @@
+<div class="filter">
+<fieldset>
+<legend>{t(Filter)}</legend>
+<form action='{save_action}' method='post'>
+	<div class="column">
+		<p>
+			<label for="text">{t(Keyword Text)}</label>
+			<input type="text" id="text" name="text" value="{text}">
+		</p>
+		<p>
+			<label for="engine_box">{t(Search Engine)}</label>
+			{engine_box}
+		</p>
+	</div>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}">
+		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+	</div>
+</form>
+</fieldset>
+</div>

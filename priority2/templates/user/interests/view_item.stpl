@@ -1,0 +1,4 @@
+<td align="left">
+	<li><a href="{search_link}"><strong>{keyword}</strong></a></li>
+</td>
+{if("need_div" eq 1)}</tr><tr>{/if}

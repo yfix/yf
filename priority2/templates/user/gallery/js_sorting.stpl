@@ -1,0 +1,58 @@
+<script type="text/javascript">
+<!--
+// Sorting photos using AJAX
+$(function(){
+	_hide_not_needed();
+
+	$(".sort_change_link").bind("click", function(e){
+		e.stopPropagation(); e.preventDefault();
+	    
+		var obj	= this;
+		var _go_up	= $(this).hasClass("sort_up");
+		var _go_class = _go_up ? "sort_up" : "sort_down";
+
+		var _cur_pos = 0;
+
+		$(".sort_change_link" + "." + _go_class).each(function(){
+			if (obj == this) {
+				return false;
+			}
+			_cur_pos++;
+		});
+
+		var _cur_obj	= $("div.photo_item:eq(" + _cur_pos + ")");
+		if (!_cur_obj) {
+			return false;
+		}
+
+		if (_go_up) {
+			var _prev_obj	= $("div.photo_item:eq(" + (_cur_pos - 1) + ")");
+			if (!_prev_obj) {
+				return false;
+			}
+			$(_cur_obj).insertBefore(_prev_obj);
+		} else {
+			var _next_obj	= $("div.photo_item:eq(" + (_cur_pos + 1) + ")");
+			if (!_next_obj) {
+				return false;
+			}
+			$(_cur_obj).insertAfter(_next_obj);
+		}
+
+		_hide_not_needed();
+
+		$.post(obj.href, {ajax_mode: 1}, function(data){});
+        
+		return false;
+	});
+
+	// Hide first and last links
+	function _hide_not_needed(){
+		$(".sort_change_link").show();
+		$(".sort_change_link.sort_up:first").hide();
+		$(".sort_change_link.sort_down:last").hide();
+	}
+
+});
+-->
+</script>

@@ -1,0 +1,12 @@
+<style type="text/css">
+#center_column {
+	margin-right: 190px;
+}
+#right_column {
+	display: block;
+}
+</style>
+
+{execute(right_block,_show)}
+
+{execute(widgets,_show;column=right)}

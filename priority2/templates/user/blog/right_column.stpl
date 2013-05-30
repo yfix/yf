@@ -1,0 +1,63 @@
+<div class="menus">
+{if("custom_cats" ne "")}
+
+	<h3>{t(Blog Categories)}</h3>
+
+	<ul class="menu_list">
+	{foreach("custom_cats")}<li><a href="{#.link}">{#.name}</a></li>{/foreach}
+	</ul>
+{/if}
+
+	<h3>{t(Blog Archive)}</h3>
+
+{calendar_code}
+{calendar_container}
+
+{if("archive_nav" ne "")}
+	<a href="{all_posts_link}" class="actionlink">{t(All My Posts)}</a>
+	<br />
+
+	{foreach("archive_nav")}
+		{if("#.is_year" eq 1)}
+			<a href="{#.link}" class="actionlink">{#.year} {t(Blogs)}</a>
+		{/if}
+		{if("#.is_year" eq 0)}
+			<a href="{#.link}" class="actionlink" style="margin-left:10px;">{#.name} {#.year}</a>
+		{/if}
+		<br />
+	{/foreach}
+{/if}
+{if("latest_posts" eq "")}{t(No archived posts yet)}{/if}
+<br />
+
+<h3>{t(Latest Entries)}</h3>
+
+{if("latest_posts" ne "")}
+	<ul class="menu_list">
+	{foreach("latest_posts")}
+		<li><a href="{latest_posts.post_link}">{latest_posts.post_title}</a></li>
+	{/foreach}
+	</ul>
+{/if}
+
+{if("blog_links" ne "")}
+	<h3>{t(Friendly Sites)}</h3>
+
+	<ul class="menu_list">
+	{foreach("blog_links")}
+		<li><a href="{blog_links.url}" target="_blank">{blog_links.title}</a></li>
+	{/foreach}
+	</ul>
+{/if}
+{if("friends_posts" ne "")}
+	<h3>{t(Friends Posts)}</h3>
+
+	<ul class="menu_list">
+	{foreach("friends_posts")}
+		<li><a href="{friends_posts.profile_link}">{friends_posts.user_name}</a>:<br /><a href="{friends_posts.post_link}">{friends_posts.post_title}</a></li>
+	{/foreach}
+	</ul>
+
+	<div align="right" class="actionlink"><a href="{all_friends_posts_link}">{t(View all)}</a></div>
+{/if}
+</div>

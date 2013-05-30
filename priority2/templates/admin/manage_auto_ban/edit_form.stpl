@@ -1,0 +1,92 @@
+<div class="editform">
+<form action="{form_action}" id="" name="" method="post">
+	<p>
+		<label for="user_name">{t(user_name)}</label>
+		<input type="text" id="user_name" name="user_name" value="{user_name}">
+	</p>
+	<p>
+		<label for="email">{t(email)}</label>
+		<input type="text" id="email" name="email" value="{email}">
+	</p>
+	<p>
+		<label for="password">{t(password)}</label>
+		<input type="text" id="password" name="password" value="{password}">
+	</p>
+	<p>
+		<label for="text">{t(text)}</label>
+		<input type="text" id="text" name="text" value="{text}">
+	</p>
+	<p>
+		<label for="phone">{t(phone)}</label>
+		<input type="text" id="phone" name="phone" value="{phone}">
+	</p>
+	<p>
+		<label for="fax">{t(fax)}</label>
+		<input type="text" id="fax" name="fax" value="{fax}">
+	</p>
+	<p>
+		<label for="url">{t(url)}</label>
+		<input type="text" id="url" name="url" value="{url}">
+	</p>
+	<p>
+		<label for="recip_url">{t(recip_url)}</label>
+		<input type="text" id="recip_url" name="recip_url" value="{recip_url}">
+	</p>
+	<p>
+		<label for="ad_text">{t(ad_text)}</label>
+		<input type="text" id="ad_text" name="ad_text" value="{ad_text}">
+	</p>
+	<p>
+		<label for="forum_text">{t(forum_text)}</label>
+		<input type="text" id="forum_text" name="forum_text" value="{forum_text}">
+	</p>
+	<p>
+		<label for="comment_text">{t(comment_text)}</label>
+		<input type="text" id="comment_text" name="comment_text" value="{comment_text}">
+	</p>
+	<p>
+		<label for="email_text">{t(email_text)}</label>
+		<input type="text" id="email_text" name="email_text" value="{email_text}">
+	</p>
+	<p>
+		<label for="ban_ads_box">{t(ban_ads)}</label>
+		{ban_ads_box}
+	</p>
+	<p>
+		<label for="ban_reviews_box">{t(ban_reviews)}</label>
+		{ban_reviews_box}
+	</p>
+	<p>
+		<label for="ban_images_box">{t(ban_images)}</label>
+		{ban_images_box}
+	</p>
+	<p>
+		<label for="ban_email_box">{t(ban_email)}</label>
+		{ban_email_box}
+	</p>
+	<p>
+		<label for="ban_forum_box">{t(ban_forum)}</label>
+		{ban_forum_box}
+	</p>
+	<p>
+		<label for="ban_comments_box">{t(ban_comments)}</label>
+		{ban_comments_box}
+	</p>
+	<p>
+		<label for="ban_blog_box">{t(ban_blog)}</label>
+		{ban_blog_box}
+	</p>
+	<p>
+		<label for="ban_bad_contact_box">{t(ban_bad_contact)}</label>
+		{ban_bad_contact_box}
+	</p>
+	<p>
+		<label for="ban_reput_box">{t(ban_reput)}</label>
+		{ban_reput_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" name="submit" value="{t(save)}">
+		<input type='button' onclick="javascript:window.location.href='{back_link}'" value='{t(back)}'>
+	</div>
+</form>
+</div>

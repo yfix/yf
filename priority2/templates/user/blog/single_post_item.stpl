@@ -1,0 +1,23 @@
+<div class="subtitle">{title}</div>
+<div>{text}
+
+<br /><br />
+
+{if("attach_image_src" ne "")}<img src="{attach_image_src}" border="0" alt="{t(attachment)}" /><br /><br />{/if}
+	<div align="right">
+	{if("tags_block" ne "")}<small>{tags_block}</small><br />{/if}
+
+	<small>
+	{if("blog_cat_name" ne "")}{t(General Category)}: <a href="{blog_cat_link}">{blog_cat_name}</a><br />{/if}
+	{if("custom_cat_name" ne "")}{t(Custom Blog Category)}: <a href="{custom_cat_link}">{custom_cat_name}</a><br />{/if}
+	{if("mode_text" ne "")}{mode_type}: {mode_text}<br />{/if}
+	{if("mood" ne "")}{t(Current mood)}: {mood}<br />{/if}
+	{t(Added on)}: {add_date}
+	</small><br />
+	{if("edit_post_link" ne "")}<a href="{edit_post_link}" class="actionlink">{t(Edit entry)}</a>&nbsp;{/if}
+	{if("delete_post_link" ne "")}<a href="{delete_post_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink">{t(Delete entry)}</a>&nbsp;{/if}
+	{if("vote_popup_link" ne "")}<br /><a href="javascript:openWin('{vote_popup_link}',400,500)" class="actionlink">{t(Vote for this post)}!</a>{/if}
+	<br />
+	</div>
+
+</div>

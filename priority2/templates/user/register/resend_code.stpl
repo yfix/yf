@@ -1,0 +1,6 @@
+<h6>{t(Resend activation code)}</h6>
+
+<form action="./?object=register&action=resend_code" method="post">
+	<b>{t(Enter email)}</b>: <input type="text" name="email" value="" size="40">
+	<input type="submit" value="  {t(Submit)}  ">
+</form>

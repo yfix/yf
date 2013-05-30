@@ -1,0 +1,23 @@
+<div style="width:400px;">
+<p>	{t(Admin Message for user)}: <a href="{account_link}" target="_blank"><b>{user_name}</b></a></p>
+
+<br />
+
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p>
+		<label for="title"><small>{t(Title)}</small></label>
+		<input type="text" id="title" name="title" value="">
+	</p>
+	<p>
+		<label><small>{t(Text)}</small></label>
+		<textarea name="text" cols="50" rows="8" style="width:100%;height:80%;"></textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(Send)}">
+	</div>
+</form>
+</div>
+
+<div align="center"><a href="javascript:void(0)" onclick="self.window.close();">{t(Close Window)}</a></div>
+</div>

@@ -1,0 +1,162 @@
+profy_main - it's a heart of the PROFY_FRAMEWORK, we could call it "controller".
+All required initialization tasks are called from here.
+
+Example code how to call this class (usually you should put code below into index.php of your site):
+
+--------------------
+// Physical path to framework
+define("PROFY_FRAMEWORK_PATH", "d:/www/htdocs/PROFY_FRAMEWORK/");
+// Include main class file
+require PROFY_FRAMEWORK_PATH."classes/profy_main.class.php";
+// Initialize main engine (creating an instance of the profy_main class)
+$GLOBALS['main'] = new profy_main("user", 0, 1);
+--------------------
+
+It's designed as class divided into separate methods.
+
+Let's talk about every class method:
+
+---------------------
+function profy_main ($type = "user", $no_db_connect = false, $auto_init_all = false)
+---------------------
+
+Class constructor, all required actions are called from here automatically when you creating an instance
+of the profy_main class.
+Arguments: 
+
+$type	- (user|admin) Most important argument tells what we need to launch: user section or
+administration panel.
+
+$no_db_connect	- tells to engine that we need database connection (usefull for some small utils based on
+	the framework).
+
+$auto_init_all - means that you do not need to put these two lines of code 
+	after $GLOBALS['main'] = new profy_main("user");   :
+
+// Initialize authentification engine
+$GLOBALS['main']->init_auth();
+// Initialize graphics
+$GLOBALS['main']->init_graphics();
+
+---------------------
+function init_session ()
+---------------------
+
+Handles code related to start current session. Takes main class properties as params:
+	SESSION_SAVE_DIR		- path to the folder where we need to store session data files (for files mode).
+	SESSION_LIFE_TIME		- sessions expiration time.
+	CUSTOM_SESSION_HANDLER	- (db|files|none|"") switch between available session handlers.
+
+---------------------
+function init_files ()
+---------------------
+
+includes required files for the current init type (user|admin) and possibly (depends on settings) 
+creates an instances for "db", "common", "errors", "cache" framework classes.
+
+---------------------
+function init_settings()
+---------------------
+
+Creates conf() contents. First apply default settings, then try to override them with current
+ones (from db table sys_settings, or from it's cache file)
+
+---------------------
+function init_locale ()
+---------------------
+
+Creates an instance of the i18n (Internationalization) sub-engine "locale"
+
+---------------------
+function init_auth ()
+---------------------
+
+Tries to process user authentification with sub-modules (user|admin) stored in the folder "classes/auth/"
+$GLOBALS['no_internal_auth'] - this setting tells not to init auth automatically (useful for forum, chat etc)
+
+---------------------
+function init_graphics ()
+---------------------
+
+Starting output processing with template engines (built-in or smarty). Creates an instance of the current
+template engine and tries to recognize current theme, on success tries to parse template "main.stpl"
+("main.tpl" for smarty) inside current theme's folder.
+Themes are ususally stored inside "templates/" folder (for admin and user section).
+
+---------------------
+function &init_class ($class_name, $custom_path = "", $params = "")
+---------------------
+
+---------------------
+function load_class_file($class_name = "", $custom_path = "")
+---------------------
+
+---------------------
+function include_module($path_to_module = "", $is_required = false)
+---------------------
+
+---------------------
+function call_class_method ($class_name = "", $custom_path = "", $method_name = "", $method_params = "", $tpl_name = "", $silent = false)
+---------------------
+
+---------------------
+function tasks($CHECK_IF_ALLOWED = false)
+---------------------
+
+---------------------
+function check_status($task_name, $table_name = "", $for_menu = "")
+---------------------
+
+---------------------
+function _send_main_headers($content_length = 0)
+---------------------
+
+---------------------
+function _execute ($class_name = "", $method_name = "", $method_params = "", $tpl_name = "", $silent = false)
+---------------------
+
+---------------------
+function _translate ($string = "", $args_from_tpl = "")
+---------------------
+
+---------------------
+function _eval_code ($code_text = "", $as_string = 1)
+---------------------
+
+---------------------
+function _search_stpl_line ($class_name, $method_name, $method_params = "", $tpl_name)
+---------------------
+
+---------------------
+function _replace_images_paths ($string = "")
+---------------------
+
+---------------------
+function _set_module_conf($module_name = "", &$MODULE_OBJ)
+---------------------
+
+---------------------
+function get_data ($handler_name = "")
+---------------------
+
+---------------------
+function _load_data_handlers ()
+---------------------
+
+---------------------
+function _fix_required_constants()
+---------------------
+
+---------------------
+function _set_required_php_params()
+---------------------
+
+---------------------
+function _strip_quotes_recursive($mixed)
+---------------------
+
+---------------------
+function _set_default_settings()
+---------------------
+
+---------------------

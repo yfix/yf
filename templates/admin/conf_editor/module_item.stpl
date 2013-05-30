@@ -1,0 +1,4 @@
+<li{if("is_current" eq "1")} class="active_module_item"{/if}>
+	<span {if("num_changed" gt "0")}style="background:#FFFF00;"{/if}>{num_conf_items}{if("num_changed" gt "0")}&nbsp;({num_changed}){/if}</span>
+	<a href="{edit_url}" style="margin-left:30%;">{module_name}</a>
+</li>

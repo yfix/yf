@@ -1,0 +1,22 @@
+{{--<h1>
+	{if("custom_header" eq "")}{t(Articles Search)}{/if}
+	{if("custom_header" ne "")}{custom_header}{/if}
+	{if("total" ne "")} ({total}){/if}
+</h1>--}}
+
+{if("filter" ne "")}
+<div align="center">
+	{filter}
+</div>
+<br />
+{/if}
+
+{custom_content}
+
+<div align="left">
+{if("items" ne "")}
+	{items}
+{/if}
+{if("items" eq "")}{t(No articles)}{/if}
+{if("pages" ne "")}<br />{t(Pages)}: {pages}<br />{/if}
+</div>

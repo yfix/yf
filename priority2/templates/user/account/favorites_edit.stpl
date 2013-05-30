@@ -1,0 +1,31 @@
+<p>{t(This is the list of your favorite users, those you like and might be interested in contacting in the future)}. 
+	{t(You can add site users to your favorites list while browsing our site and come back to their profile later)}. 
+	{t(This will help you not to forget or miss interesting contacts)}.
+</p>
+{if("items" ne "")}
+<table align="left">
+	<thead>
+		<th width="140">{t(Avatar)}</th>
+		<th width="80%">{t(Details)}</th>
+	</thead>
+{foreach("items")}
+	<tr class="{items.bg_class}">
+		<td valign="top" align="center">{#.avatar}</td>
+		<td align="left" valign="top"><a href="{#.profile_link}"><b>{#.user_name}</b></a><br />
+		<small>{t(Location)}: {#.location}<br />
+		{t(Sex)}: {#.gender}<br />
+{t(Age)}: {#.age}</small><br /><br />
+<a href="{#.delete_link}" onclick="return confirm('{t(Are_you_sure)}?')" class="actionlink">{t(Delete)}</a></td>
+	</tr>
+{/foreach}
+</table>
+{/if}
+{if("items" eq "")}
+	<br />
+	<div align="center">{t(No favorite users yet)}</div>
+{/if}
+
+{if("pages" ne "")}
+	<br /><br />
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}

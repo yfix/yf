@@ -1,0 +1,52 @@
+<h2>{t(Editing static page)} "{page_name}"</h2>
+
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p class="first">
+		<label for="name">{t(Edit Name)}</label>
+		<input type="text" id="name" name="name" value="{page_name}">
+	</p>
+{foreach("page_info")}
+	{if("multi_lang" eq "1")}
+		<p class="title full_width">{t(Locale)}: {#.locale}</p>
+	{/if}
+	<p>
+		<label for="{#.text_field_name}">{t(Content)}</label>
+	</p>
+	<p class="first full_width">
+{if("use_editor_code" eq 0)}
+		<textarea id="{#.text_field_name}" name="{#.text_field_name}" cols="50" rows="20" class="editable">{#.body}</textarea>
+{else}
+		{#.body}
+{/if}
+	</p>
+	<p>
+		<label for="{#.locale}[page_title]">{t(Page Title)}</label>
+		<input type="text" name="{#.locale}[page_title]" id="{#.locale}[page_title]" value="{#.page_title}" />
+	</p>
+	<p>
+		<label for="{#.locale}[page_heading]">{t(Page Heading)}</label>
+		<input type="text" name="{#.locale}[page_heading]" id="{#.locale}[page_heading]" value="{#.page_heading}" />
+	</p>
+	<p>
+		<label for="{#.locale}[meta_keywords]">{t(Meta Keywords)}</label>
+		<textarea name="{#.locale}[meta_keywords]" id="{#.locale}[meta_keywords]">{#.meta_keywords}</textarea>
+	</p>
+	<p>
+		<label for="{#.locale}[meta_desc]">{t(Meta Description)}</label>
+		<textarea name="{#.locale}[meta_desc]" id="{#.locale}[meta_desc]">{#.meta_desc}</textarea>
+	</p>
+{/foreach}
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		{active_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(save)}" name="save">
+	</div>
+</form>
+</div>
+
+<br />
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

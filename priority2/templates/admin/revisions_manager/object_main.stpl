@@ -1,0 +1,26 @@
+<h2>{t(Revisions of)} "<em>{object_name} -- {object_id}</em>"</h2>
+
+{if("total" ne "0")}
+<h3>{t(Total)} {total}</h3>
+{/if}
+
+{if("items" ne "")}
+<table>
+	<colgroup align="center"><col><col><col><col></colgroup><col><col>
+	<thead>
+		<th width="5%">{t(Revision)}</th>
+		<th width="15%">{t(Date)}</th>
+		<th width="8%">{t(Old size)}</th>
+		<th width="8%">{t(New size)}</th>
+		<th>{t(Comment)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+<br />
+{if("items" eq "")}<div align="center">{t(No revisions yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}

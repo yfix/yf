@@ -1,0 +1,14 @@
+<p class="subtitle">
+	<a href="{community_link}" class="column_title">{name}</a> {if("adult" ne "none")}(Warning! {adult} adult){/if} 
+</p>
+<p align="left">
+<b>{t(Title)}:</b>	{title} <br />
+{if("about" ne "")}
+<b>{t(About)}:</b><br />
+	{about}<br /><br />
+{/if}	
+
+{if("interests" ne "")} 
+<b>{t(Interests)}</b>: {foreach("interests")}<a href="{#.search_link}">{#.keyword}</a> {/foreach}
+{/if}
+</p>

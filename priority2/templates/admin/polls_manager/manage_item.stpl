@@ -1,0 +1,15 @@
+<tr>
+	<td>{question}</td>
+	<td>{choices}</td>
+	<td>{add_date}</td>
+	<td>{votes}</td>
+	<td>
+		<a href="{activate_url}">
+			{if("active" eq "1")}<span class="positive">Active</span>{/if}
+			{if("active" eq "0")}<span class="negative">Inactive</span>{/if}
+		</a>
+	</td>
+	<td>
+		<a href="{delete_url}" onclick="return confirm('{t(Are you sure?)}');">{t(Delete)}</a>
+	</td>
+</tr>

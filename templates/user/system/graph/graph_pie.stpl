@@ -1,0 +1,5 @@
+<div class="pie_chart" id="{id}" style="width:{width}; height:{height}">
+	{foreach("data")}
+		<input type="hidden" name="{_key}" value="{#.val}" link="{#.link}"/>
+	{/foreach}
+</div>

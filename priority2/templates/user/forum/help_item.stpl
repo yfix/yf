@@ -1,0 +1,16 @@
+<div class="borderwrap">
+	<div class="maintitle">
+		<img src="images/forum/nav_m.gif" border="0" alt='&gt;' width='8' height='8' />&nbsp;{title}
+	</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<th>{t(Here is the topic you chose to view)}</th>
+		</tr>
+		<tr>
+			<td class="row2">{text}</td>
+		</tr>
+		<tr>
+			<td class="catend"></td>
+		</tr>
+	</table>
+</div>

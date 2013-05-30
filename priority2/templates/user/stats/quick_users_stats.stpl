@@ -1,0 +1,8 @@
+<h3>{t(Members Stats)}</h3>
+
+<li>{t(Total members)}: <b>{total_members}</b></li>
+<br />
+
+<li>{t(Hobbyists)}: <b>{num_hobbyists}</b></li>
+<li>{t(Escorts)}: <b>{num_escorts}</b></li>
+<li>{t(Agencies)}: <b>{num_agencies}</b></li>

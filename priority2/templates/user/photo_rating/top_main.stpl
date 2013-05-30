@@ -1,0 +1,18 @@
+<h1>{top_per_page} {if("reverse" eq 0)}{t(Top)}{/if}{if("reverse" eq 1)}{t(Bottom)}{/if} {t(rated)} ({t(with at least)} {top_min_votes} {t(votes)})</h1>
+
+<table align="center" width="400">
+{foreach("photos")}	
+	<tr>
+		<td width="20%">
+			<a href="{#.photo_link}"><img src="{#.img_src}" alt="{#.photo_name}{if('#.photo_name' eq '')}{#.user_name} photo{/if}" border="0" hspace="5" vspace="5"{if('#.real_w' ne 0)} width="{#.real_w}"{/if}{if('#.real_h' ne 0)} height="{#.real_h}"{/if} profy:user_id="{#.user_id}" /></a>
+		</td>
+		<td align="center" width="20%" nowrap>
+			#{#.pos} - {#.rating}<br />({#.num_votes} votes)
+		</td>
+		<td align="center">
+			<a href="{#.user_link}"><b>{#.user_name}</b></a>
+			<small><br /><a href="{#.gallery_link}">{t(Gallery)}</a></small>
+		</td>
+	</tr>
+{/foreach}
+</table>

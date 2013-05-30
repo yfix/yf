@@ -1,0 +1,8 @@
+Hi {name},
+We registred a link exchange account at {eval_code(SITE_ADVERT_NAME)} website.
+Your information: 
+Name: {name}
+E-Mail: {email}
+Password: {password}
+Login URL: {login_url}
+Now you can log in to your account and submit your website information for link exchange.

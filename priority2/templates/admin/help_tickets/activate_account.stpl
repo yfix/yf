@@ -1,0 +1,4 @@
+<div align="center">
+	{if("success" eq 1)}Account activated!{/if}{if("success" eq 0)}Error occured!{/if}<br /><br />
+	<a href="javascript:void(0)" onclick="self.window.close()">Close window</a>
+</div>

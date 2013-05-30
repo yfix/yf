@@ -1,0 +1,20 @@
+<h1 class="header">Links Member Login</h1>
+
+<table border="0" cellpadding="5" cellspacing="0" align="center">
+	<form action="{form_action}" method="post">
+		<tr>
+			<td align="right"><b>E-mail:</b></td>
+			<td><input name="email" type="text" size="24" /></td>
+		</tr>
+		<tr>
+			<td rowspan="2" align="right" valign="top"><b>Password:</b></td>
+			<td><input name="password" type="password" size="24" /></td>
+		</tr>
+		<tr>
+			<td align="center"><input type="submit" name="go" value="Login" /></td>
+		</tr>
+	</form>
+</table>
+
+<p align="center"> <a href="{register_url}">Not registered yet? Register here!</a></p>
+<p align="center"><a href="{get_pswd_url}">Forgot your password?</a></p>

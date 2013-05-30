@@ -1,0 +1,25 @@
+<div class="editform">
+<form action='{save_action}' method='post'>
+	<div class="subtitle">{t(Display Settings)}</div>
+	<p>{t(You can select what kind of content you want to be displayed)}.</p>
+	<p class="first">
+		<label for="sex_box">{t(Gender)}:</label>
+		{sex_box}
+	</p>
+{{--
+	<p>
+		<label for="race_box">Race:</label>
+		{race_box}
+	</p>
+--}}
+	<p>
+		<label for="country_box">{t(Country)}:</label>
+		{country_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Save)}  " />
+		&nbsp;&nbsp;<input type="button" onclick="window.location.href='{clear_url}'" value="  {t(Reset)}  ">
+	</div>
+</form>
+</div>
+<br style="clear: both;"/>

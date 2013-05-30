@@ -1,0 +1,12 @@
+<tr class="{bg_class}">
+	<td>{id}</td>
+	<td>{title}</td>
+	<td><b>{if("is_admin" eq 1)}YES{/if}{if("is_admin" eq 0)}NO{/if}</b></td>
+	<td><b>{if("is_mod" eq 1)}YES{/if}{if("is_mod" eq 0)}NO{/if}</b></td>
+	<td>{num_users}</td>
+	<td nowrap>
+		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="Edit" /></a>&nbsp;
+		<a href="{delete_link}" onclick="return confirm('Are you sure?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="Delete" /></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
+	</td>
+</tr>

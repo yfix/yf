@@ -1,0 +1,22 @@
+	<tr>
+		<td align="center" class="{css_class_2}">{topic_status_icon}</td>
+		<td align="center" width="3%" class="{css_class_1}">&nbsp;</td>
+		<td class="{css_class_2}">
+			<table>
+				<tr>
+					<td width="100%"><a href="{topic_link}">{topic_name}</a> {topic_pages}</td>
+				</tr>
+			</table>
+			<span class="desc">{topic_desc}</span>
+		</td>
+		<td width="10%" class="{css_class_2}">
+			<span class="forumdesc"><a href="{forum_link}" title="{forum_name}">{forum_name}</a></span>
+		</td>
+		<td align="center" class="{css_class_1}">
+{if("topic_author_link" ne "")}<a href='{topic_author_link}'>{topic_author_name}</a>{/if}
+{if("topic_author_link" eq "")}{topic_author_name}{/if}
+		</td>
+		<td align="center" class="{css_class_2}">{topic_num_posts}</td>
+		<td align="center" class="{css_class_1}">{topic_num_views}</td>
+		<td class="{css_class_1}"><span class="desc">{topic_last_post}</span></td>
+	</tr>

@@ -1,0 +1,32 @@
+<h2>Rules for tag <a href="{edit_tag_link}">{tag_name}</a></h2>
+<br />
+{if("items" ne "")}
+<table>
+	<thead>
+		<th>{t(Method)}</th>
+		<th>{t(Sites)}</th>
+		<th>{t(Languages)}</th>
+		<th>{t(User Groups)}</th>
+		<th>{t(Active)}</th>
+		<th>{t(Order)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No rules yet)}</div>{/if}
+<br />
+{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div>{/if}
+<br />
+<div align="center">
+<a href="{add_link}">{t(Add new rule)}</a><br /><br />
+<a href="{back_link}">{t(Back To Tags List)}</a>
+</div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>!!!TODO: DESCRIPTION HERE !!!</p>
+</div>

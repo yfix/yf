@@ -1,0 +1,14 @@
+<div class="borderwrap" id="fo_stat">
+	<div class="maintitle">
+		<p><img src="images/forum/nav_m.gif" border="0"  alt="&gt;" width="8" height="8" />&nbsp;{t(Search_Keywords)}</p>
+	</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<td class="formsubtitle" colspan="2" style="text-align:justify;">{keywords}</td>
+		</tr>
+		<tr>
+			<td class="catend" colspan="2"></td>
+		</tr>
+	</table>
+</div>
+<br />

@@ -1,0 +1,101 @@
+	<p>
+		<label>{t(Country)}:</label>
+		{country_box}
+	</p>
+
+<script type="text/javascript">
+<!--
+// JQuery on DOM ready
+$(function(){
+	var _ajax_link		= "{ajax_link}";
+	var _def_msg_region	= "<option value=''>--   Please select country first  --</option>";
+	var _def_msg_city	= "<option value=''>--   Please select region first  --</option>";
+	var _obj_country	= $("select[name=country]");
+	var _obj_region		= $("select[name=region]");
+	var _obj_city		= $("select[name=city]");
+	var _hide_parent	= 1;
+	var _init_country	= "{sel_country}";
+	var _init_region	= "{sel_region}";
+	var _init_city		= "{sel_city}";
+	var _init_no_regions= "{sel_no_regions}";
+	var _container_tag	= "p";
+	var _old_display_type = $(_container_tag).css("display");
+
+	if (_init_country && !_init_region && !_init_no_regions) {
+		_toggle_view("region", 1);
+	} else if (_init_country && !_init_region) {
+		_toggle_view("region", 1);
+	} else if (!_init_country && !_init_region) {
+		_toggle_view("region", 0);
+	}
+
+	_obj_country.change(function (){
+		var _sel_country = $(this).find(":selected").val();
+
+		_toggle_view("region", 0);
+
+		$.post(_ajax_link, {"country": _sel_country}, function(data){
+			if (!data) {
+				return false;
+			}
+			_obj_region.html(data);
+			_toggle_view("region", 1);
+		});
+	});
+
+	_obj_region.change(function (){
+		var _sel_country	= _obj_country.find(":selected").val();
+		var _sel_region		= $(this).find(":selected").val();
+
+		_toggle_view("city", 0);
+
+		$.post(_ajax_link, {"country": _sel_country, "region": _sel_region}, function(data){
+			if (!data) {
+				return false;
+			}
+			_obj_city.html(data);
+			_toggle_view("city", 1);
+		});
+	});
+
+	/* Toggle select region and city blocks view */
+	function _toggle_view (type, value) {
+		if (type == "region") {
+			if (!value) {
+				_obj_region.html(_def_msg_region);
+			}
+			_obj_region.attr({"disabled" : (value ? 0 : 1)}).val(0);
+			if (_hide_parent) {
+				$("#region_sel_block").css({"display" : (value ? _old_display_type : "none")});
+			}
+		}
+		if (type == "city" || (type == "region" && !value)) {
+			if (!value) {
+				_obj_city.html(_def_msg_city);
+			}
+			_obj_city.attr({"disabled" : (value ? 0 : 1)}).val(0);
+			if (_hide_parent) {
+				$("#city_sel_block").css({"display" : (value ? _old_display_type : "none")});
+			}
+		}
+	}
+});
+-->
+</script>
+
+<noscript>
+	<p class="negative">
+		Attention!<br />
+		You have turned off JavaScript in your browser or your browser do not support it.<br />
+		In order to use this feature you need to have JavaScript support.
+	</p>
+</noscript>
+
+	<p id="region_sel_block" {if("sel_country" eq "")}style="display:none;"{/if}>
+		<label>{t(Region)} ({t(State)}):</label>
+		{region_box}
+	</p>
+	<p id="city_sel_block" {if("sel_region" eq "")}style="display:none;"{/if}>
+		<label>{t(City)}:</label>
+		{city_box}
+	</p>

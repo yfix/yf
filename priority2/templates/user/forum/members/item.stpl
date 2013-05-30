@@ -1,0 +1,8 @@
+		<tr>
+			<td class="row2" width="40%"><b>{if("user_profile_link" ne "")}<a href="{user_profile_link}">{user_name}</a>{/if}{if("user_profile_link" eq "")}{user_name}{/if}</b></td>
+			<td class="row2" width="10%">{if("show_user_level" eq 1)}{foreach("user_level")}<img src="images/forum/pip.gif" border="0"  alt="*" />{/foreach}{/if}</td>
+			<td class="row1" align="center" width="10%">{user_group}</td>
+			<td class="row2" align="center" width="20%">{add_date}</td>
+			<td class="row2" align="center" width="10%">{num_posts}</td>
+			<td class="row1" align="center" width="10%">{if("user_avatar_src" ne "")}<img src="{user_avatar_src}" alt="{user_name}" /><br />{/if}</td>
+		</tr>

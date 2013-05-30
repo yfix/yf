@@ -1,0 +1,58 @@
+<h3>Edit future record</h3>
+
+{if("error_message" ne "")}<div align="center"><b style="color:red;">{error_message}</b></div>{/if}
+
+<form action="{form_action}" method="post">
+<table border="0" align="center" cellpadding="0" cellspacing="5">
+	<tr>
+		<td align="right"><b>{t(Type)}: </b></td>
+		<td align="left"><b>{if("is_new_topic" ne 1)}POST{/if}{if("is_new_topic" eq 1)}TOPIC{/if}</b></td>
+	</tr>
+	<tr>
+		<td width="20%" align="right"><b>{t(User Account)}: </b></td>
+		<td align="left">{users_box}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Date)}: </b><br /><small>(Date when this record should appear in forum)</small></td>
+		<td align="left"><input type="text" name="date" value="{date}" size="24"><small> (Current: {eval_code(date('Y-m-d H:i:s'))})</small></td>
+	</tr>
+{if("is_new_topic" ne 1)}
+	<tr>
+		<td align="right"><b>{t(Subject)}: </b></td>
+		<td align="left"><input type="text" name="subject" value="{subject}" size="50" maxlength="255"></td>
+	</tr>
+	<tr> 
+		<td align="right"><b>{t(Post Text)}: </b></td>
+		<td align="left"><textarea name="text" cols="100" rows="15">{text}</textarea></td>
+	</tr>
+{/if}
+{if("is_new_topic" eq 1)}
+	<tr>
+		<td align="right"><b>{t(Forum)}: </b></td>
+		<td align="left">{forum_box}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Topic Name)}: </b></td>
+		<td align="left"><input type="text" name="name" value="{name}" size="50" maxlength="255"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Topic Description)}: </b></td>
+		<td align="left"><input type="text" name="subject" value="{subject}" size="50" maxlength="255"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Topic Text)}: </b></td>
+		<td align="left"><textarea name="text" cols="100" rows="15">{text}</textarea></td>
+	</tr>
+{/if}
+	<tr>
+		<td align="center" colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td align="left"><input type="submit" value="{t(Save)}"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">{back}</td>
+	</tr>
+</table>
+</form>

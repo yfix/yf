@@ -1,0 +1,34 @@
+<h3>{header_text}</h3>
+<table width="500" align="center" cellspacing="0" cellpadding="5" border="0">
+<form action="{form_action}" method="post">
+<tr>
+	<td align="right">{t(item)}</td>
+	<td align="left"><input type="text" name="item" value="{item}"></td>
+</tr>
+<tr>
+	<td align="right">{t(value)}</td>
+	<td align="left"><input type="text" name="value" value="{value}"></td>
+</tr>
+<tr>
+	<td align="right">{t(type)}</td>
+	<td align="left">{type}</td>
+</tr>
+<tr>
+	<td align="right">{t(size)}</td>
+	<td><input type="text" value="{size}" name="size"></td>
+</tr>
+<tr>
+	<td align="right">{t(sort_order)}</td>
+	<td>{order}</td>
+</tr>
+<tr>
+	<td align="right">{t(category)}</td>
+	<td>{category}</td>
+</tr>
+<tr>
+	<td align="center" colspan="2"><input type="submit" name="submit" value="{t(save)}"></td>
+</tr>
+<tr><td colspan="2">{back}</td></tr>
+<tr><td colspan="2" height="10">&nbsp;</td></tr>
+</form>
+</table>

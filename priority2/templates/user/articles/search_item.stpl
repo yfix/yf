@@ -1,0 +1,8 @@
+<ul>
+	<li>
+		<a href="{view_link}"><b>{title}</b></a><br /><br />
+		 by {if("user_profile_link" ne "")}<a href="{user_profile_link}">{user_name}</a>{/if}{if("user_profile_link" eq "")}<b>{user_name}</b>{/if} <small><i>({add_date})</i></small> in category <a href="{cat_link}">{cat_name}</a>
+		<br /><br />
+		<small>{summary}</small>
+	</li>
+</ul>

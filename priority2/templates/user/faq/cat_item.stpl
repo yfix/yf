@@ -1,0 +1,3 @@
+<div style="padding-left:{padding}px; margin:2px; font-size: 11px;">
+	<a href="{url}" style="color:#555;"><b style="{if(level eq 0)}font-size:18px;{/if}{if(level eq 1)}font-size:14px;{/if}">{name}</b></a><br />
+</div>

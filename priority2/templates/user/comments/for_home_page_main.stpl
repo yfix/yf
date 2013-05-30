@@ -1,0 +1,7 @@
+{items}
+
+{if("items" eq "")}
+	<div align="center">{t(No latest comments yet)}!</div>
+{/if}
+
+

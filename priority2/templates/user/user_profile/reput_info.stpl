@@ -1,0 +1,12 @@
+<p>
+	<label>{t(Reputation)}</label>
+	{reput_points} {stars}
+</p>
+<p>
+	<label>{t(Reputation Altering Power)}</label>
+	{alt_power}
+</p>
+<p>
+	<label>{t(Site Activity)}</label>
+	{activity_points}
+</p>

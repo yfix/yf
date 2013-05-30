@@ -1,0 +1,3 @@
+{foreach("most_popular")}
+<a href="{#.search_link}" style="line-height: {#.font_size}px;font-size:{#.font_size}px;" title="{#.keyword} ({#.users} users)">{#.keyword}</a>&nbsp; 
+{/foreach}

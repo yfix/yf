@@ -1,0 +1,34 @@
+<tr class="{bg_class}" valign="top">
+	<td><input type="checkbox" name="ids[]" value="{user_id}"></td>
+	<td align="center" nowrap>
+		{avatar}{if("avatar" eq "")}no avatar<br />{/if}
+		<a href="{profile_link}"><b>{user_name}</b></a>
+	</td>
+	<td align="center" nowrap>
+		{ban_info}{if("has_cookie_match" eq 1)}<b title="Cookie matched" style="color:red;">+</b>{/if}
+		<small>
+			<br />Matched IPs: {num_m_ips}
+			<br />Users by IPs: {num_m_users}
+		</small>
+	</td>
+	<td align="left" nowrap>
+{foreach("matching_ips")}
+		<small><a href="{#.link}">{#.ip}</a></small> ({#.num_m_users})<br />
+{/foreach}
+	</td>
+	<td align="left" nowrap>
+		<small>
+{if("limit_reached" eq 1)}
+	Displaying <b>{limit_users}</b> users from <b>{num_m_users}</b><br />
+	<div align="right"><a href="{show_by_user_link}">Display all</a></div>
+{/if}
+{users_by_ips}
+		</small>
+	</td>
+	<td nowrap>{last_update}</td>
+	<td align="center" nowrap><b>{account_type}</b></td>
+	<td nowrap>
+		<a href="{show_by_user_link}">Show all by this user</a><br />
+		<a href="{del_by_user_link}" onclick="return confirm('Are you sure?');">Delete matching records</a>
+	</td>
+</tr>

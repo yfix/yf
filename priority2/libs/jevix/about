@@ -1,0 +1,16 @@
+http://code.google.com/p/jevix/
+http://jevix.ru/
+
+Jevix - система автоматического применения правил набора текстов (типографика) разработанная в ТМT (http://thematicmedia.ru) для собственных проектов (Хабрахабр (http://habrahabr.ru), Автокадабра (http://autokadabra.ru), Дрибблер (http://dribbler.ru)) с открытым исходным кодом наделённая способностью унифицировать разметку HTML/XML документов, контролировать перечень допустимых тегов и аттрибутов и предотвращать возможные XSS-атаки в коде документов. 
+
+Системные требования: PHP5 + mbstring с включённой перегрузкой функций. Работает только с UTF-8 
+
+Возможные настройки в .htaccess для корректной рботы mbstring: 
+php_value       mbstring.func_overload  7
+php_value       default_charset         UTF-8
+php_value       mbstring.language       Russian
+php_value       mbstring.internal_encoding      UTF-8
+php_flag        mbstring.encoding_translation   on
+php_value       mbstring.http_input     "UTF-8,CP1251,KOI8-R"
+php_value       mbstring.http_output    UTF-8
+php_value       mbstring.detect_order   "UTF-8,CP1251,KOI8-R"

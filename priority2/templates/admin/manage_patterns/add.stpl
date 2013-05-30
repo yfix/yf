@@ -1,0 +1,52 @@
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p>
+		<label for="name">{t(Name)}</label>
+		<input type="text" id="name" name="name" value="{name}" size="30">
+	</p>
+	<p>
+		<label for="description">{t(Description)}</label>
+		<textarea id="description" name="description" cols="50" rows="10">{description}</textarea>
+	</p>
+	<p>
+		<label for="pattern">{t(Pattern)}</label>
+		<textarea id="pattern" name="pattern" cols="50" rows="10">{pattern}</textarea>
+	</p>
+	<p>
+		<label for="replace_pattern">{t(Replace Pattern)}</label>
+		<textarea id="replace_pattern" name="replace_pattern" cols="50" rows="10">{replace_pattern}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" name="save" />
+	</div>
+</div>
+<br /><br /><br />
+<div align="center"><h3>Testing</h3></div>
+<br />
+<div class="editform">
+	<p>
+		<label id="site_url">{t(Site url)}</label>
+		<input type="text" id="site_url" name="site_url" value="{site_url}" size="30">
+	</p>
+	<p>
+		<label for="source">{t(Source)}</label>
+		<textarea id="source" name="source" cols="50" rows="10">{source}</textarea>
+	</p>
+	<p>
+		<label for="parsed">{t(Parsed)}</label>
+		<textarea id="parsed" name="parsed" cols="50" rows="10">{parsed}</textarea>
+	</p>	
+</div>
+<br />
+<div style="border: 1px solid #FF0033;">
+	{parsed2}
+</div>
+<br />
+<div align="center"><input type="submit" value="{t(Test)}" name="parse" /></div>
+</form>
+
+
+<br /><br />
+<div align="center"><a href="./?object=manage_patterns">{t(Back)}</a></div>

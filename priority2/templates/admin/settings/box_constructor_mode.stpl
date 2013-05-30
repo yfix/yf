@@ -1,0 +1,4 @@
+<p>
+	<label for="select_box">{t(constructor_mode)}</label>
+	{select_box}
+</p>

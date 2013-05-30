@@ -1,0 +1,114 @@
+<div align="center">
+{if("server_url" ne "")}
+<h3>{t(Server)}: <a href="{server_url}" title="{t(View server info)}">{server_name}</a>{if("server_ip" ne "")} ({server_ip}){/if}</h3>
+{/if}
+<h3>
+{if("up_level_url" ne "")}
+	<small>
+		<input type="button" value="{t(Up)}" onclick="window.location.href='{up_level_url}'">
+	</small>
+{/if}
+{t(Current dir)}:{if("dir_name" ne "")}{dir_name}{else}/{/if}
+</h3>
+<br />
+
+{if("items" ne "")}
+<form name="dir_contents" method="post">
+<table class="sortable_wrapper">
+	<col align="left"><col><col align="left"><col><col><col><col align="left"><col align="left">
+	<thead>
+		<th colspan="2"></th>
+		<th>{t(Name)}</th>
+		<th>{t(Size)}</th>
+		<th>{t(Last modified)}</th>
+		<th>{t(Perms)}</th>
+		<th>{t(User)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td></td>
+			<td></td>
+			<td><b>{t(Total)}:</b></td>
+			<td><b>{total_fsize}</b></td>
+			<td colspan="4" align="left"><b>
+				{if("num_dirs" ne "0")}{t(Folders)} - {num_dirs}&nbsp;{/if}
+				{if("num_files" ne "0")}{t(Files)} - {num_files}&nbsp;{/if}
+			</b></td>
+		</tr>
+		<tr>
+			<td colspan="8">
+				<input type="checkbox" id="check_all" name="check_all" value="1">
+				<label for="check_all"><b>{t(Select all)}</b></label>
+				&nbsp;|&nbsp;{t(With selected)}:
+				<a href="{group_delete_url}" title="{t(Delete selected items)}" onclick="return submit_form(this.href);"><img class="action_image" src="images/links_delete.gif" alt="{t(Delete)}"/></a>
+				<a href="{group_chmod_url}" title="{t(Chmod selected items)}" onclick="return submit_form(this.href);"><img class="action_image" src="uploads/icons/application_key.png" alt="{t(Chmod)}"/></a>
+				<a href="{tar_url}" title="{t(Compress selected items)}" onclick="return submit_form(this.href);"><img class="action_image" src="uploads/icons/compress.png" alt="{t(Compress)}"/></a>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+{/if}
+{if("items" eq "")}{t(Folder is empty)}{/if}
+<br /><br />
+<div class="editform" style="width:70%;">
+<form action="{form_action}" name="upload_form" method="post" enctype="multipart/form-data">
+	<p class="first">
+		<label>{t(Upload file)}:</label>
+		<input type="file" name="file_to_upload" style="width: auto;" />
+		<input type="submit" value="{t(Upload)}" />
+	</p>
+</form>
+<form action="{mkdir_action}" method="post">
+	<p>
+		<label>{t(Create folder)}:</label>
+		<input type="text" name="new_dir_name" style="width: auto;" />
+		<input type="submit" value="{t(Create)}" />
+	</p>
+</form>
+</div>
+</div>
+
+<script type="text/javascript">
+<!--
+$(function(){
+	// Check/uncheck all checkboxes (for group actions)
+	$("input[name=check_all]").change(function(){
+		if($(this).is(":checked")){
+			$("input[type=checkbox]").attr("checked", "checked");
+		} else {
+			$("input[type=checkbox]").attr("checked", "");
+		}
+	});
+
+	$("form[name=upload_form]").bind("submit", function(){
+		if($("input[type=file]").attr("value")){
+			$(this).submit();
+		} else {
+			alert("{t(Choose file to upload)}!");
+			return false;
+		}
+	});
+
+});
+
+function submit_form(task) {
+	if($("input[type=checkbox]:checked").length > 0) {	
+		var title = $("a[href="+task+"]").attr("title");
+		if (confirm(title + "?")) {
+			// Submit form
+			$("form[name=dir_contents]").attr("action", task);
+			$("form[name=dir_contents]").submit();
+		}
+	} else {
+		alert('{t(No selected items)}');
+	}
+	return false;
+}
+
+-->
+</script>

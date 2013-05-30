@@ -1,0 +1,61 @@
+<div style="width:400px;">
+
+<h2>{t(Ban user)}: <a href="{user_account_link}">{user_name}</a></h2>
+
+<div class="editform" style="width:100%;">
+<form action="{form_action}" method="post">
+	<p>
+		<label for="ban_ads_box">{t(Ads)}</label>
+		{ban_ads_box}
+	</p>
+	<p>
+		<label for="ban_email_box">{t(Emails)}</label>
+		{ban_email_box}
+	</p>
+	<p>
+		<label for="ban_reviews_box">{t(Reviews)}</label>
+		{ban_reviews_box}
+	</p>
+	<p>
+		<label for="ban_images_box">{t(Images)}</label>
+		{ban_images_box}
+	</p>
+	<p>
+		<label for="ban_forum_box">{t(Forum posts)}</label>
+		{ban_forum_box}
+	</p>
+	<p>
+		<label for="ban_comments_box">{t(Comments)}</label>
+		{ban_comments_box}
+	</p>
+	<p>
+		<label for="ban_blog_box">{t(Blog)}</label>
+		{ban_blog_box}
+	</p>
+	<p>
+		<label for="ban_bad_contact_box">{t(Bad contact reports)}</label>
+		{ban_bad_contact_box}
+	</p>
+	<p>
+		<label for="ban_reput_box">{t(Bad reputation vote)}</label>
+		{ban_reput_box}
+	</p>
+	<p>
+		<label for="active_box">{t(Account active)}</label>
+		{active_box}
+	</p>
+	<p>
+		<label for="admin_comments">{t(Admin Comments)}</label>
+		<textarea id="admin_comments" name="admin_comments" cols="40" rows="3">{admin_comments}</textarea>
+	</p>
+	<p>
+		<label for="admin_message">{t(Admin Message to user)}</label>
+		<textarea id="admin_message" name="admin_message" cols="40" rows="3">{admin_message}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}" name="go">
+	</div>
+</form>
+</div>
+
+</div>

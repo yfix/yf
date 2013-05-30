@@ -1,0 +1,7 @@
+ <tr>
+	<td><nobr>{text}</nobr></td>
+	<td align="center"><input type="radio" class="check" name="allow_{name}" {allow1} value="1"></td>
+	<td align="center"><input type="radio" class="check" name="allow_{name}" {allow2} value="0"></td>
+	<td align="center"><input type="checkbox" class="check" name="debug_{name}" {debug}></td>
+	<td align="center"><input type="checkbox" class="check" name="hide_{name}" {hide}></td>
+</tr>

@@ -1,0 +1,4 @@
+<div class="chart" id="{id}" style="width:{width}; height:{height}">
+	{foreach("items")}<input type="hidden" name="{#.name}" date="{#.date}" value="{#.val}" />
+	{/foreach}
+</div>

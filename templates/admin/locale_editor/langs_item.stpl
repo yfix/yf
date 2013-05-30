@@ -1,0 +1,18 @@
+<tr class="{bg_class}">
+	<td><b>{code}</b></td>
+	<td>
+{if("is_default" eq 0)}<input type="text" name="name_{id}" value="{name}" size="20">{/if}
+{if("is_default" eq 1)}{name}<input type="hidden" name="name_{id}" value="{name}">{/if}
+	</td>
+	<td>
+{if("is_default" eq 0)}<input type="text" name="charset_{id}" value="{charset}" size="12">{/if}
+{if("is_default" eq 1)}{charset}<input type="hidden" name="charset_{id}" value="{charset}">{/if}
+	</td>
+	<td><input type="checkbox" name="active_{id}" value="1"{if("active" eq 1)} checked{/if}></td>
+	<td><input type="radio" name="default" value="{id}"{if("is_default" eq 1)} checked{/if}></td>
+	<td>
+{if("tr_vars" eq 0)} n/a {/if}
+{if("tr_vars" ne 0)}{tr_vars}/{total_vars} ({tr_stats}%){/if}
+	</td>
+	<td nowrap>{if("is_default" eq 0)}<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Delete)}</a>{/if}&nbsp;</td>
+</tr>

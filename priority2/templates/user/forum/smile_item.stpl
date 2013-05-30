@@ -1,0 +1,1 @@
+{if("as_image" eq 1)}<img src="{img_src}" alt="{img_alt}" border="0" />{/if}{if("as_image" eq 0)}<span class="{css_class}">{text}</span>{/if}

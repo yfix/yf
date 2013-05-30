@@ -1,0 +1,8 @@
+Hello {name}, thank you for registering with us!
+
+Your login e-mail is: {email}
+Your password is: {password}
+
+Yours,
+{eval_code(SITE_ADVERT_NAME)}
+Please visit us at {eval_code(SITE_ADVERT_URL)}

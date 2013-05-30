@@ -1,0 +1,236 @@
+{if("custom_css" ne "")}{custom_css}{/if}
+
+<h1>
+	{if("page_link" ne "")}<a href="{eval_code(WEB_PATH)}{page_link}">{user_name}</a>{/if}
+	{if("page_link" eq "")}{user_name}{/if}
+</h1>
+
+<div class="displayform">
+	<p class="subtitle">{t(Personal Details)}</p>
+
+{info_items}
+
+{{-- Dynamic items --}}
+{foreach("dynamic_items")}
+{if("#.value" ne "")}
+	<p>
+		<label>{t({#.name})}:</label>
+		{#.value}
+	</p>
+{/if}
+{/foreach}
+{{-- /Dynamic items --}}
+
+<!-- REPUT_INFO -->
+{if("reput_info" ne "")}
+	<p class="subtitle">{t(User Reputation)}</p>
+
+{reput_info}
+
+{/if}
+<!-- /REPUT_INFO -->
+<!-- PROFILE_STATS -->
+	<p class="subtitle">{t(Profile Stats)}</p>
+	<p>
+		<label>{t(Registration Date)}</label>
+		{reg_date}
+	</p>
+	<p>
+		<label>{t(Last Update)}</label>
+		{last_update}
+	</p>
+	<p>
+		<label>{t(Last Login)}</label>
+		{last_login}
+	</p>
+	<p>
+		<label>{t(Number Of Logins)}</label>
+		{num_logins}
+	</p>
+	<p>
+		<label>{t(Emails Received)}</label>
+		{emails_received}
+	</p>
+	<p>
+		<label>{t(Emails Sent)}</label>
+		{emails_sent}
+	</p>
+	<p>
+		<label>{t(Visits Statistics)}</label>
+		<a href="{stats_visit_url}">{t(Show visits statistics)}</a>
+	</p>
+	<p>
+		<label>{t(Friendship Statistics)}</label>
+		<a href="{stats_friend_url}">{t(Show friendship statistics)}</a>
+	</p>
+<!-- PROFILE_STATS -->
+<!-- INTERESTS -->
+	<p class="subtitle">{t(Interests)}</p>
+	<p class="full_width">
+{if("interests" eq "")}
+	{t(No interests provided by this user yet)}
+{/if}
+{if("interests" ne "")}
+	{interests}
+{/if}
+	</p>
+<!-- /INTERESTS -->
+<!-- FORUM_POSTS -->
+	<p class="subtitle">{t(Forum Posts)}</p>
+	<p class="full_width">
+{if("forum_posts" eq "")}
+	{t(This user has made no forum posts so far)}
+{/if}
+{if("forum_posts" ne "")}
+	<table width="100%">
+		<thead>
+			<th width="1%">#</th>
+			<th width="80%">{t(Post Title)}</th>
+			<th width="20%">{t(Date)}</th>
+		</thead>
+{forum_posts}
+	</table>
+	<br />
+	<div align="center">{forum_pages}</div>
+{/if}
+	</p>
+{if("num_forum_posts" ne 0)}
+	<p class="full_width">
+	{t(These are the most recent messages. This user posted total)} {num_forum_posts} {t(messages at out forums)}. <a href="{forum_posts_link}" class="small">{t(Click here)}</a> {t(to see all posts)}.
+	</p>
+{/if}
+<!-- /FORUM_POSTS -->
+<!-- BLOG_POSTS -->
+	<p class="subtitle">{t(User Blog)}</p>
+	<p class="full_width">
+{if("blog_posts" eq "")}
+		{t(This user has not started the blog yet)}
+{/if}
+{if("blog_posts" ne "")}
+	<table width="100%">
+		<thead>
+			<th width="1%">#</th>
+			<th width="80%">{t(Post Title)}</th>
+			<th width="20%">{t(Date)}</th>
+		</thead>
+{blog_posts}
+	</table>
+	<br />
+	<div align="center">{blog_pages}</div>
+{/if}
+	</p>
+{if("num_blog_posts" ne 0)}
+	<p class="full_width">
+		{t(These are the most recent entries in a total of)} {num_blog_posts} {t(in)} {user_name}'s {t(blog)}. {t(You can browse)}<a href="{blog_posts_link}">{t(blog archive)}</a> {t(to see more)}.
+	</p>
+{/if}
+<!-- /BLOG_POSTS -->
+
+<!-- ARTICLES -->
+	<p class="subtitle">{t(User Articles)}</p>
+	<p class="full_width">
+{if("articles" eq "")}
+		{t(This user has not started the articles yet)}
+{/if}
+{if("articles" ne "")}
+	<table width="100%">
+		<thead>
+			<th width="1%">#</th>
+			<th width="80%">{t(Post Title)}</th>
+			<th width="20%">{t(Date)}</th>
+		</thead>
+{articles}
+	</table>
+	<br />
+	<div align="center">{articles_pages}</div>
+	
+{/if}
+	</p>
+	
+{{--{if("num_blog_posts" ne 0)}
+	<p class="full_width">
+		{t(These are the most recent entries in a total of)} {num_blog_posts} {t(in)} {user_name}'s {t(blog)}. {t(You can browse)}<a href="{blog_posts_link}">{t(blog archive)}</a> {t(to see more)}.
+	</p>
+{/if}
+--}}
+<!-- /ARTICLES -->
+
+<!-- GALLERY_PHOTOS -->
+	<p class="subtitle">{t(User Gallery)}</p>
+	<p class="full_width">
+{if("gallery_photos" eq "")}
+		{t(This user has upload no photo so far)}
+{/if}
+
+	{gallery_photos}
+	</p>
+<!-- /GALLERY_PHOTOS -->
+
+
+<!-- COMMENTS -->
+	<p class="subtitle">{t(User Comments)}</p>
+	<p class="full_width">
+{if("comments" eq "")}
+		{t(No comments yet)}
+{/if}
+{if("comments" ne "")}
+	<table width="100%">
+		<thead>
+			<th width="1%">#</th>
+			<th>{t(Post Title)}</th>
+			<th>{t(Comment)}</th>
+			<th width="20%">{t(Date)}</th>
+		</thead>
+{comments}
+	</table>
+	<br />
+	
+{/if}
+	</p>
+<!-- /COMMENTS -->
+
+<!-- FRIENDS -->
+	<p class="subtitle">{t(Friends)}</p>
+{if("friends_users" eq "")}
+	<p class="full_width">
+	{t(This user has not added anybody to friends so far)}
+	</p>
+{/if}
+{if("friends_users" ne "")}
+	<p class="full_width">
+		<table><tr>
+			<td colspan="2" align="left">
+{friends_users}
+			</td>
+		</tr></table>
+	</p>
+{/if}
+{if("num_friends" ne 0)}
+	<p class="full_width">
+		{t(There are other users in)} {user_name}'s {t(friends list)} (total {num_friends}). <a href="{all_friends_link}">{t(Click here)}</a> {t(to see more)}.
+	</p>
+{/if}
+<!-- /FRIENDS -->
+<!-- FRIEND_OF -->
+	<p class="subtitle">{t(Friend Of)}</p>
+{if("friend_of_users" eq "")}
+	<p class="full_width">
+	{t(Nobody has added this user to friends so far)}
+	</p>
+{/if}
+{if("friend_of_users" ne "")}
+	<p class="full_width">
+	<table><tr>
+		<td colspan="2" align="left">
+{friend_of_users}
+		</td>
+	</tr></table>
+	</p>
+{/if}
+{if("num_friend_of" ne 0)}
+	<p class="full_width">
+		{t(There are other users added)} {user_name} {t(to their friends lists)} (total {num_friend_of}). <a href="{all_friend_of_link}">{t(Click here)}</a> {t(to see more)}.
+	</p>
+{/if}
+<!-- /FRIEND_OF -->
+</div>

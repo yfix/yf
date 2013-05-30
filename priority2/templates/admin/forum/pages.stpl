@@ -1,0 +1,8 @@
+<strong>
+{t(Pages)} ({total}):
+[
+{first_link}
+{pages}
+{last_link}
+] 
+</strong>

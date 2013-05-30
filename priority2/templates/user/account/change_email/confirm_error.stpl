@@ -1,0 +1,11 @@
+<h1 class="header">Confirmation Error</h1>
+
+<table width="100%" align="center">
+	<tr>
+		<td><p>Sorry, either you have already confirmed this action or your confirmation code is wrong. 
+				Please check you account info <a href="./?object=user_info">here</a> 
+				or enter your confirmation code provided in our email <a href="./?object=account&action=confirm_change_email">here</a>.
+			</p><br />
+		</td>
+	</tr>
+</table>

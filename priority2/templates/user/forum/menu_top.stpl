@@ -1,0 +1,19 @@
+{{--
+<div class="borderwrap">
+	<div id="submenu">
+		<p class="home"><a href="{home_link}">{t(Home)}</a></p>
+		<p>
+{if("search_link" ne "")}
+			<a href="{search_link}">{t(Search)}</a>
+{/if}
+{if("user_cp_link" ne "")}
+			&nbsp; <a href="{user_cp_link}">{t(Forum settings)}</a>
+{/if}
+{if("view_reports_link" ne "")}
+			&nbsp; <a href="{view_reports_link}">{t(View reported posts)}</a>
+{/if}
+		</p>
+	</div>
+</div>
+<br style="clear:both;" />
+--}}

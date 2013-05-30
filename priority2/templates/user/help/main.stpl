@@ -1,0 +1,7 @@
+<h1>{t(Help and Support)}</h1>
+
+<div>
+	<p><b>{t(Do you have questions or need support)}?</b></p> 
+	<p>{t(First, please, review our)} <a href="./?object=static_pages&action=show&id=faq">{t(Frequently Asked Questions)} (FAQ)</a>{t( section)}. {t(There's a good chance that your question is already answered there)}.</p>
+	<p>{t(If you faliled to find the answer there, please, contact site administration using our)} <a href="./?object=help&action=email_form">{t(Contact Form)}</a>.</p>
+</div>

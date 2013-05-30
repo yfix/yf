@@ -1,0 +1,37 @@
+<h3>Directory Links Checker</h3>
+
+<form action="{form_action}" method="post">
+<table border="0" cellpadding="5" cellspacing="0" align="center" width="600">
+	<tr>
+		<td width="60%" align="right"><b>Start Link ID:</b></td>
+		<td align="left"><input type="text" name="link_id_1" value="" size="10" /></td>
+	</tr>
+	<tr>
+		<td align="right"><b>End Link ID:</b></td>
+		<td align="left"><input type="text" name="link_id_2" value="" size="10" /></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>Limit number of links to process at one time:</b><br />(0 - unlimited)</td>
+		<td align="left"><input type="text" name="limit_links_num" value="2" size="10" /></td>
+	</tr>
+	<tr>
+		<td align="right"><b>Check links with status:</b></td>
+		<td align="left">{status_box}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>Update database records automatically:</b> (set "approved_recip" field status)</td>
+		<td align="left"><input type="checkbox" name="auto_update_db" value="1" checked /></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2"><input type="submit" value="Start" name="go" /></td>
+	</tr>
+	<tr>
+		<td align="left" colspan="2">
+<b>NOTE:</b><br /> 
+if you will not specify any filters - <br />
+then all escorts users will be processed.<br /><br />
+These filters will be useful because of large number of users.
+		</td>
+	</tr>
+</table>
+</form>

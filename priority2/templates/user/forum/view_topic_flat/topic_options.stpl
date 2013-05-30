@@ -1,0 +1,12 @@
+<div id="topic_open" style="display: none; z-index: 2;">
+	<br />
+	<div class="borderwrap">
+		<div class="maintitle"><img src="images/forum/nav_m.gif" border="0"  alt="&gt;" width="8" height="8" />&nbsp;<a href="javascript:ShowHide('topic_open','topic_closed')">{t(Close Topic Options)}</a></div>
+		<div class="tablepad">
+			<b><a href="{track_topic_link}">{t(Track this topic)}</a></b><br />
+			<span class="desc">{t(Receive email notification when a reply has been made to this topic and you are not active on the board)}.</span><br /><br />
+			<b><a href="{subscribe_forum_link}">{t(Subscribe to this forum)}</a></b><br />
+			<span class="desc">{t(Receive email notification when a new topic is posted in this forum and you are not active on the board)}.</span><br /><br />
+		</div>
+	</div>
+</div>

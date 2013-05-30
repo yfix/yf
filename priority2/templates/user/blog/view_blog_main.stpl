@@ -1,0 +1,30 @@
+<h2>
+{if("blog_title" ne "")}{blog_title}{/if}
+{if("blog_title" eq "")}<a href="{user_profile_link}">{user_name}</a> 's {t(blog)}{/if}
+&nbsp;{rss_posts_button}
+</h2>
+
+<h2>{if("custom_cat_name" ne "")}{custom_cat_name}{/if}{if("archive_date" ne "")}{archive_date}{/if}</h2>
+
+{{--
+<div align="right">
+{if("add_post_link" ne "")}<a href="{add_post_link}"  class="actionlink">{t(Add new entry)}</a>{/if}
+{if("change_settings_link" ne "")}&nbsp;<a href="{change_settings_link}" class="actionlink">{t(Change blog settings)}</a>{/if}
+{if("users_comments_link" ne "")}&nbsp;<a href="{users_comments_link}" class="actionlink">{t(Comments to my blog)}</a>{/if}
+</div>
+--}}
+
+{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<div align="center">
+{if("posts" ne "")}{posts}{/if}{if("posts" eq "")}{t(No blog entries found)}{/if}
+</div>
+
+{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+<div class="se_keywords">
+<!-- SE_KEYWORDS -->
+{execute(graphics,_show_se_keywords,display_limit=15;display_type=random;only_from_current_site=1;search_words={eval_code(_prepare_for_stpl_exec($GLOBALS['user_info']['city']))},{eval_code(_prepare_for_stpl_exec($GLOBALS['user_info']['state']))},{eval_code(_prepare_for_stpl_exec($GLOBALS['user_info']['country']))};fill_with_popular=1)}
+<!-- /SE_KEYWORDS -->
+</div>

@@ -1,0 +1,12 @@
+<tr class="{bg_class}">
+	<td><a href="{rules_link}"><b>{name}</b></a></td>
+	<td>{desc}</td>
+	<td>{if("active" eq 1)}<span class="positive">YES</span>{/if}
+		{if("active" eq 0)}<span class="negative">NO</span>{/if}
+	</td>
+	<td nowrap>
+		<a href="{rules_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Edit Tag Rules)}" /></a>&nbsp;
+		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit Tag)}" /></a>&nbsp;
+		<a href="{delete_link}" onclick="return confirm('Are you sure?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Tag)}" /></a>&nbsp;
+	</td>
+</tr>

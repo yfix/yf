@@ -1,0 +1,15 @@
+.profy-ratings {
+	width:100%;
+	filter: alpha(opacity=100);
+	-moz-opacity: 1;
+	opacity: 1;
+	/* background-color: #ffffff; */
+}
+.profy-ratings-loading {
+	display: none;
+	height: 16px;
+	text-align: left;
+}
+.profy-ratings-image {
+	border: 0px;
+}

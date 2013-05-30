@@ -1,0 +1,103 @@
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+
+<form action="{form_action}" method="post">
+	<ol>
+		<li>
+			<div class='formitem'>
+				<div class='formitemName'>{t(Membership)}</div>
+				<div class='formitemDesc'>{t(Who can join your community)}?</div>
+				<div>
+					<p>
+						<input type='radio' {if("membership" eq "open")}checked='checked'{/if} value="open" name="membership" id="memopen" />
+						<label for='memopen'> <b>{t(Open Membership)}</b><br />{t(Anybody can join without getting approved)}.</label>
+						<br />
+					</p>
+					<p>
+						<input type='radio' {if("membership" eq "moderated")}checked='checked'{/if} value="moderated" name="membership" id="memmoderated" />
+						<label for='memmoderated'> <b>{t(Moderated Membership)}</b><br />{t(Requests to join are emailed to you for approval)}.</label>
+					</p>
+					<p>
+						<input type='radio' {if("membership" eq "closed")}checked='checked'{/if} value="closed" name="membership" id="memclosed" />
+						<label for='memclosed'> <b>{t(Closed Membership)}</b><br />{t(Nobody can join the community)}.</label>
+					</p>
+				</div>
+			</div>
+		</li>
+		<li>
+			<div class='formitem'>
+				<div class='formitemName'>{t(Non-Member Posting Restrictions)}</div>
+				<div class='formitemDesc'>{t(Can users post to this community without having to join it)}?</div>
+				<div>
+					<p>
+						<input type='radio' {if("nonmember_posting" eq "0")}checked='checked'{/if} value="0" name="nonmember_posting" id="nonopen" />
+						<label for='nonopen'> <b>Non-Members Cannot Post</b><br />Users have to join this community in order to post in it.</label>
+					</p>
+					<p>
+						<input type='radio' {if("nonmember_posting" eq "1")}checked='checked'{/if} value="1" name="nonmember_posting" id="nonclosed" />
+						<label for='nonclosed'> <b>Non-Members Can Post</b><br />Users can post to this community without having to join it.</label>
+					</p>
+				</div>
+			</div>
+		</li>
+		<li>
+			<div class='formitem'>
+				<div class='formitemName'>Member Posting Restrictions</div>
+				<div class='formitemDesc'>Do you want to allow only certain members the ability to post?</div>
+				<div>
+					<p>
+						<input type='radio' {if("postlevel" eq "members")}checked='checked'{/if} value="members" name="postlevel" id="postopen" />
+						<label for='postopen'> <b>All Members</b><br />Anybody can post immediately once a member.</label>
+					</p>
+					<p>
+						<input type='radio' {if("postlevel" eq "select")}checked='checked'{/if} value="select" name="postlevel" id="postclosed" />
+						<label for='postclosed'> <b>Select Members</b><br />Only some members are able to post, once a maintainer gives them access.</label>
+					</p>
+				</div>
+			</div>
+		</li>
+		<li>
+			<div class='formitem'>
+				<div class='formitemName'>Entry Moderation</div>
+				<div class='formitemDesc'>Are submissions to this community moderated?</div>
+				<div>
+					<p>
+						<input type='radio' {if("moderated" eq "0")}checked='checked'{/if} value="0" name="moderated" id="radunmod" />
+						<label for='radunmod'> <b>Unmoderated</b><br />New entries appear immediately.</label>
+					</p>
+					<p>
+						<input type='radio' {if("moderated" eq "1")}checked='checked'{/if} value="1" name="moderated" id="radmod" />
+						<label for='radmod'> <b>Moderated</b><br />New entries must be approved by a moderator.</label>
+					</p>
+				</div>
+			</div>
+		</li>
+		<li>
+			<div class='formitem'>
+				<div class='formitemName'>Adult Content </div>
+				<div class='formitemDesc'>Does this community have adult content?</div>
+				<div>
+					<p>
+						<input type='radio' {if("adult" eq "none")}checked='checked'{/if} value="none" name="adult" id="adultnone" />
+						<label for='adultnone'> No Adult Content</label>
+					</p>
+					<p>
+						<input type='radio' {if("adult" eq "concepts")}checked='checked'{/if} value="concepts" name="adult" id="adultconcepts" />
+						<label for='adultconcepts'> Adult Concepts</label>
+					</p>
+					<p>
+						<input type='radio' {if("adult" eq "explicit")}checked='checked'{/if} value="explicit" name="adult" id="adultexplicit" />
+						<label for='adultexplicit'> Explicit Adult Content</label>
+					</p>
+				</div>
+			</div>
+		</li>
+	</ol>
+	<div align="center">
+		<input type='submit' name="go" value="Update settings">
+	</div>
+	
+</form>
+

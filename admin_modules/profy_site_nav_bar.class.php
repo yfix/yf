@@ -1,0 +1,144 @@
+<?php
+
+//-----------------------------------------------------------------------------
+// Navigation bar handler
+class profy_site_nav_bar {
+
+	/** @var string */
+	var $HOOK_NAME = "_nav_bar_items";
+
+	//-----------------------------------------------------------------------------
+	// Constructor
+	function profy_site_nav_bar () {
+		$this->USER_ID = $_SESSION['user_id'];
+		// Get object name constant
+		define("SITE_NAV_BAR_OBJ", "site_nav_bar");
+	}
+
+	//-----------------------------------------------------------------------------
+	// Display navigation bar
+	function _show () {
+		$items = array();
+		// Switch between specific actions
+		if (in_array($_GET["object"], array(/*"account"*/))) {
+// TODO: need to add code here
+		} else {
+			if (!in_array($_GET["action"], array("", "show"))) {
+				$items[]	= $this->_nav_item($this->_decode_from_url($_GET["object"]), "./?object=".$_GET["object"]);
+				$items[]	= $this->_nav_item($this->_decode_from_url($_GET["action"]));
+			} else {
+				$items[]	= $this->_nav_item($this->_decode_from_url($_GET["object"]));
+			}
+		}
+		if (empty($items)) {
+			return false;
+		}
+		// Add first item to all valid items
+		array_unshift($items, $this->_nav_item("Home", "./?object=admin_home"));
+		// Try to get items from hook "_nav_bar_items"
+		if (!empty($this->HOOK_NAME)) {
+			$CUR_OBJ = module($_GET["object"]);
+		}
+		if (is_object($CUR_OBJ)) {
+			$hook_params = array(
+				"nav_bar_obj"	=> &$this,
+				"items"			=> $items,
+			);
+			$try_array = array(&$CUR_OBJ, $this->HOOK_NAME);
+			if (is_callable($try_array)) {
+				$hooked_items = call_user_func($try_array, $hook_params);
+			}
+		}
+		// Hook have max priority
+		if (!empty($hooked_items)) {
+			$items = $hooked_items;
+		}
+		// Process template
+		$replace = array(
+			"items"			=> is_array($items) ? implode(tpl()->parse(SITE_NAV_BAR_OBJ."/div"), $items) : "",
+			"is_logged_in"	=> intval((bool) $_SESSION["user_id"]),
+			"bookmark_page"	=> $bookmark_page_code,
+		);
+		return tpl()->parse(SITE_NAV_BAR_OBJ."/main", $replace);
+	}
+
+	//-----------------------------------------------------------------------------
+	// Display navigation bar item
+	function _nav_item ($name = "", $nav_link = "") {
+		$replace = array(
+			"name"			=> _prepare_html($name),
+			"link"			=> $nav_link,
+			"as_link"		=> !empty($nav_link) ? 1 : 0,
+			"is_logged_in"	=> intval((bool) $_SESSION["user_id"]),
+		);
+		return tpl()->parse(SITE_NAV_BAR_OBJ."/item", $replace);
+	}
+
+	//-----------------------------------------------------------------------------
+	// Get root categories array
+	function _get_root_cat_ids () {
+		foreach ((array)$this->_cats as $A) {
+			if ($A["parent_id"] == 0) $root_ids[$A["id"]] = $A["id"];
+		}
+		return $root_ids;
+	}
+
+	//-----------------------------------------------------------------------------
+	// 
+	function _get_cat_id_by_name ($cat_name = "") {
+		$cat_id = 0;
+		if (empty($cat_name)) {
+			$cat_name = $_GET["cat_name"];
+		}
+		$cat_name = strtolower(str_replace(" ", "_", $cat_name));
+		foreach ((array)$this->_cats as $A) {
+			if (strtolower(str_replace(" ", "_", $A["name"])) == $cat_name) {
+				$cat_id = $A["id"];
+				break;
+			}
+		}
+		return $cat_id;
+	}
+
+	//-----------------------------------------------------------------------------
+	// 
+	function _get_parent_cat_name ($cat_id = "") {
+		$parent_id = $this->_cats[$cat_id]["parent_id"];
+		return $this->_cats[$parent_id]["name"];
+	}
+
+	//-----------------------------------------------------------------------------
+	// 
+	function _get_city_id_by_name ($city_name = "") {
+		$city_id = 0;
+		if (empty($city_name)) {
+			$city_name = $_GET["city"];
+		}
+		$city_name = strtolower(str_replace("_", " ", $city_name));
+		foreach ((array)$GLOBALS['cities'] as $A) {
+			if (strtolower($A["phrase"]) == $city_name) {
+				$city_id = $A["id"];
+				break;
+			}
+		}
+		return $city_id;
+	}
+
+	//-----------------------------------------------------------------------------
+	// 
+	function _get_city_name_by_id ($city_id = "") {
+		return $this->_cities[$city_id]["phrase"];
+	}
+
+	//-----------------------------------------------------------------------------
+	// Decode name
+	function _decode_from_url ($text = "") {
+		return ucwords(str_replace("_", " ", $text));
+	}
+
+	//-----------------------------------------------------------------------------
+	// Encode name
+	function _encode_for_url ($text = "") {
+		return strtolower(str_replace(" ", "_", $text));
+	}
+}

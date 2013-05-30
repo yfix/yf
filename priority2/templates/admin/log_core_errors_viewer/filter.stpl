@@ -1,0 +1,36 @@
+<div class="filter">
+<fieldset>
+<legend>{t(Filter)}</legend>
+<form action='{save_action}' method='post'>
+	<div class="column">
+		<p>
+			<label for="user_id">{t(User ID)}</label>
+			<input type="text" id="user_id" name="user_id" value="{user_id}">
+		</p>
+		<p>
+			<label for="ip">IP {t(address)}</label>
+			<input type="text" id="ip" name="ip" value="{ip}">
+		</p>
+		<p>
+			<label for="error_text">{t(Message)}</label>
+			<input type="text" id="error_text" name="error_text" value="{error_text}" size="40">
+		</p>
+	</div>
+	<div class="column">
+		<p>
+			<label for="sort_by_box">{t(Sort By Field)}</label>
+			{sort_by_box}
+		</p>
+		<p>
+			<label for="sort_order_box">{t(Sort order)}</label>
+			{sort_order_box}
+		</p>
+	</div>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}">
+		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+		<input type="button" onclick="window.location.href='{delete_sel}'" value="{t(DELETE ALL FILTERED)}">
+	</div>
+</form>
+</fieldset>
+</div>

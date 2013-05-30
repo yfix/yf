@@ -1,0 +1,23 @@
+<tr class="{bg_class}" valign="middle">
+	<td>
+		{if("active" eq 1)}<b>{name}</b>{/if}
+		{if("active" eq 0)}<b style="color:grey;">{name} ({t(Disabled)})</b>{/if}
+		<div style="color:gray"><i>{desc}</i></div>
+		<div align="center" style="position:absolute;width:auto;display:none;text-align:center;background:#EEE;border:2px outset #555;padding:4px" id="pop{id}">
+			<small>{cron_run_link}</small>
+		</div>
+	</td>
+	<td nowrap>
+		<a href="javascript:;" onClick="toggleview('pop{id}')" title="{t(Show CURL to use in a cron)}"><img src="images/task_cron.gif" border="0" alt="Cron" /></a> 
+		<a href="{run_link}" title="Run task now (id: {id})">{if("run_expired" eq 1)}<img src="images/task_run_now.gif"  border="0" alt="{t(Run)}" />{/if}{if("run_expired" eq 0)}<img src="images/task_run.gif"  border="0" alt="{t(Run)}" />{/if}</a> 
+	</td>
+	<td>{if("active" eq 1)}{next_run}{/if}{if("active" eq 0)}<s title="Task disabled">{next_run}</s>{/if}</td>
+	<td>{if("minute" ne "-1")}{minute}{/if}{if("minute" eq "-1")}-{/if}</td>
+	<td>{if("hour" ne "-1")}{hour}{/if}{if("hour" eq "-1")}-{/if}</td>
+	<td>{if("month_day" ne "-1")}{month_day}{/if}{if("month_day" eq "-1")}-{/if}</td>
+	<td>{if("week_day" ne "-1")}{week_day}{/if}{if("week_day" eq "-1")}-{/if}</td>
+	<td>
+		<input type="button" value="{t(Edit)}" onClick="window.location.href='{edit_link}'" title="{t(Edit)}" />
+		<input type="button" value="{t(Delete)}" onClick="if(confirm('{t(Are you sure)}?')) window.location.href='{delete_link}'" />
+	</td>
+</tr>

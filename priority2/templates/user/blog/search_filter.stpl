@@ -1,0 +1,65 @@
+<div class="filter">
+<form action='{save_action}' method='post'>
+<table align="center" width="95%">
+	<tr valign="top">
+		<td>
+			<table width="50%" cellspacing="0" cellpadding="3" align="center">
+{if("const.PROJECT_NAME" eq "SEXY_NET")}
+				<tr>
+					<td height="15" nowrap><b>{t(Account Type)}</b></td>
+					<td>{account_type_box}</td>
+				</tr>
+				<tr>
+					<td nowrap><b>{t(Sex)}</b></td>
+					<td>{gender_box}</td>
+				</tr>
+				<tr>
+					<td nowrap><b>{t(Race)}</b></td>
+					<td>{race_box}</td>
+				</tr>
+{/if}
+				<tr>
+					<td nowrap><b>{t(User Name)}</b></td>
+					<td><input type="text" name="nick" value="{nick}"></td>
+				</tr>
+				<tr>
+					<td nowrap><b>{t(Blog Title)}</b></td>
+					<td><input type="text" name="blog_title" value="{blog_title}"></td>
+				</tr>
+				<tr>
+					<td nowrap><b>{t(Post Text)}</b></td>
+					<td><input type="text" name="post_text" value="{post_text}"></td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table width="50%" cellspacing="0" cellpadding="3" align="center">
+				<tr>
+					<td nowrap><b>{t(Country)}</b></td>
+					<td>{country_box}</td>
+				</tr>
+{if("const.PROJECT_NAME" eq "SEXY_NET")}
+				<tr>
+					<td nowrap><b>{t(State)}</b><br /><small> ({t(US only)})</small></td>
+					<td>{state_box}</td>
+				</tr>
+				<tr>
+					<td nowrap><b>{t(City)}</b></td>
+					<td><input type="text" name="city" value="{city}"></td>
+				</tr>
+{/if}
+{if("sort_by_box" ne "")}
+				<tr>
+					<td nowrap><b>{t(Sort by)}</b></td>
+					<td nowrap>{sort_by_box} {sort_order_box}</td>
+				</tr>
+{/if}
+				<td class="nb" align="center" colspan="2">
+					<br /><input type="submit" value="{t(Search)}!">&nbsp;&nbsp;<input type="button" onclick="window.location.href='{clear_url}'" value="{t(Reset)}!">
+				</td>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>
+</div>

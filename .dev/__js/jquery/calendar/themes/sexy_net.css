@@ -1,0 +1,118 @@
+#calendar_div, 
+.calendar_inline {
+	font-family: Verdana;
+	font-size: 9px;
+	padding: 0;
+	margin: 0;
+}
+#calendar_div {
+	display: none;
+	z-index: 10; /*must have*/ 
+}
+#calendar_div, 
+.calendar_links, 
+.calendar_header, 
+.calendar {
+	width: 165px;
+}
+.calendar_inline {
+	float: left;
+	display: block;
+	border: 0;
+}
+.calendar_links, 
+.calendar_header, 
+.calendar {
+	clear: both;
+	float: left;
+	color: #fff;
+}
+.calendar_links {
+	font-weight: bold;
+	font-size: 80%;
+	letter-spacing: 1px;
+}
+.calendar_links label { /* disabled links */
+	padding: 2px 5px;
+	display: none;
+}
+.calendar_prev {
+	float: left;
+	width: 40px;
+}
+.calendar_current {
+	float: left;
+	text-align: center;
+	width: 80px;
+}
+.calendar_next {
+	float: right;
+	width: 40px;
+}
+.calendar_header {
+	background: transparent;
+	color: #000;
+	text-align: center;
+	font-weight: bold;
+}
+.calendar_header select {
+	color: #fff;
+	border: 0px;
+	font-weight: bold;
+}
+.calendar {
+	text-align: center;
+	font-size: 100%;
+}
+.calendar a {
+	display: block;
+	cursor: pointer;
+	cursor: hand;
+	font-weight: bold;
+}
+.calendar .calendar_titleRow {
+	background: #777;
+}
+.calendar .calendar_daysRow {
+	background: #eee;
+	color: #666;
+	font-weight: bold;
+}
+.calendar .calendar_daysCell {
+	color: #000;
+	border: 1px solid #ddd;
+	font-weight: bold;
+}
+#calendar .calendar_daysCell a{
+	display: block;
+}
+.calendar .calendar_weekEndCell {
+	background: #ddd;
+}
+.calendar .calendar_daysCellOver {
+	background: #fff;
+	border: 1px solid #777;
+}
+.calendar .calendar_unselectable {
+	color: #888;
+}
+.calendar_today {
+	background: #fcc !important;
+}
+.calendar_currentDay {
+	background: #999 !important;
+	background: yellow;
+}
+/* ___________ IE6 IFRAME FIX ________ */
+
+.calendar_cover {
+    display: none;
+    display/**/: block;
+    position: absolute;
+    z-index: -1;
+    filter: mask();
+    top: -4px;
+    left: -4px;
+    width: 173px;
+    height: 160px;
+}

@@ -1,0 +1,36 @@
+{if("items" ne "")}
+<table>
+	<thead>
+		<th>{t(Keyword)}</th>
+		<th>{t(Description)}</th>
+		<th>{t(Type)}</th>
+		<th>{t(Items)}</th>
+		<th>{t(Active)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No categories yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br /><br />
+
+<div align="center">
+	<form action="{form_action}" method="post">
+	<b>{t(Add new category block)}:</b><br />
+	{t(Keyword)}: <input type="text" name="name" value="">&nbsp;
+	<label>{t(USER)}<input type="radio" name="type" value="user" checked></label>&nbsp;
+	<label>{t(ADMIN)}<input type="radio" name="type" value="admin"></label>&nbsp;
+	<input type="submit" name="go" value="{t(ADD)}">
+	</form>
+</div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>!!!!____TODO____!!!!</p>
+</div>

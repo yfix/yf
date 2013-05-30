@@ -1,0 +1,12 @@
+Hi,
+Someone asked us to change your email on file from {old_email} to {new_email},
+this action is to be confirmed.
+The confirmation code has been sent to {new_email}
+If it was not you who asked us to change your record on file please contact us immediately from 
+
+{email_form_url}
+
+Yours,
+{const(SITE_ADVERT_NAME)} - {const(SITE_ADVERT_URL)}
+
+P.S. Please do not reply to this automatic message.

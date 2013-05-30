@@ -1,0 +1,36 @@
+{if("total" ne "0")}<h3>{t(Total)} {total}</h3>{/if}
+
+<div align="center">
+{filter}
+</div>
+<br />
+{if("error_message" ne "")}{error_message}{/if}
+<form action="{form_action}" method="post">
+<table>
+	<thead>
+		<th width="5" height="25">#</th>
+		<th width="20%">{t(User)}</th>
+		<th width="10%">{t(Ban info)}</th>
+		<th width="25%">{t(Matching IPs)}</th>
+		<th width="30%">{t(Matching users)}</th>
+		<th width="10%">{t(Last update)}</th>
+		<th width="5%">{t(Account type)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+	<div>
+		<input type="submit" name="go" value="{t(DELETE SELECTED)}">
+	</div>
+</form>
+{if("pages" ne "")}<br /><div align="center"><b>{t(Pages)}:</b> {pages}</div>{/if}
+<div>
+<p><b>Notations:</b></p>
+<p>
+  +  user has cookie matches;<br />
+  ** user has cookie matches with the current user;<br />
+  () number of IP matches with the current user.
+</p>
+</div>

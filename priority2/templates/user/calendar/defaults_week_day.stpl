@@ -1,0 +1,26 @@
+<h4>{week_day_name}</h4>
+
+<table width="60%" align="center">
+	<thead>
+		<th>{t(From)}</th>
+		<th>{t(To)}</th>
+		<th>{t(Status)}</th>
+		<th>{t(Comment)}</th>
+		<th>{t(Operations)}</th>
+	</thead>
+{foreach("status_items")}
+		<tr
+	{if("#.status_id" eq "1")}class="busy"{/if}
+	{if("#.status_id" eq "2")}class="available"{/if}
+	{if("#.status_id" eq "3")}class="travel"{/if}
+		>
+		<td align="center">{#.from}</td>	
+		<td align="center">{#.to}</td>	
+		<td>{#.status}</td>
+		<td>{#.comment}</td>	
+		<td align="center" nowrap>	
+			<a href="{#.delete_link}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>	
+		</td>
+	</tr>
+{/foreach}
+</table>

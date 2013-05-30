@@ -1,0 +1,53 @@
+{if("total" ne "0")}
+<h3>{t(Total)} {total}</h3>
+{/if}
+
+<div align="center">
+	{filter}
+</div>
+<br />
+
+{if("items" ne "")}
+{delete_by_hits}
+<br />
+<form action='{form_action}' method='post' name='admin_form'>
+<table align="center">
+	<thead>
+		<th>#</th>
+		<th>{t(Keyword Text)}</th>
+		<th>{t(Engine)}</th>
+		<th>{t(Hits)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+<div align="left">
+	<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+	<input type='submit' value='{t(Delete seleted)}'>
+</div>
+</form>
+<br />
+
+{delete_by_hits}
+<br />
+
+{/if}
+{if("items" eq "")}<div align="center">{t(No keywords yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+{{--
+<script type="text/javascript">
+<!--
+$(function() {
+	$("table.my_form_table tr").not(":first-child")
+		.filter(":even").addClass("bg1").end()
+		.filter(":odd").addClass("bg2").end();
+});
+-->
+</script>
+--}}

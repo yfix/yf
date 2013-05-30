@@ -1,0 +1,19 @@
+<div class="borderwrap">
+	<div class="maintitle">{t(Choose a Topic)}</div>
+    <table>
+		<tr>
+			<th>{t(Choose a topic from the list)}</th>
+		</tr>
+{foreach("items")}
+		<tr>
+			<td class="row1">
+				<a href="{#.topic_link}"><b>{#.topic_name}</b></a><br />
+				{#.desc}
+			</td>
+		</tr>
+{/foreach}
+		<tr>
+			<td class="catend"></td>
+		</tr>
+	</table>
+</div>

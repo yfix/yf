@@ -1,0 +1,8 @@
+<form action="{form_action}" method="post">
+	{rss_manage_box}
+	<br />	
+	<input type="submit" name="go" value="{t(Get rss url)}" />
+</form>
+
+<div><b>RSS URL</b> - <small><a href="{rss_url}">{rss_url}</a></small></div>
+

@@ -1,0 +1,17 @@
+<div class="poll">
+
+<h6>{question}</h6>
+	<div>
+		<table width="100%">
+		{foreach("results")}
+			<tr align="left">
+				<td width="10%" nowrap align="center"><small>({#.num})<br /><b>{#.percents}%</b></small></td>
+				<td><span class="answer"><small>{#.text}</small></span><div style="width:{#.percents}%;background-color:{#.color}" class="poll_result_bar">&nbsp;</div></td>
+			</tr>
+		{/foreach}
+		</table>
+	</div>
+
+	<small>{t(Total votes)}: {total_votes}</small>
+</div>
+

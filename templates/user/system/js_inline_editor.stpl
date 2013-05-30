@@ -1,0 +1,488 @@
+<style type="text/css">
+span.locale_tr {
+	background: yellow;
+	color: black;
+	font-weight: bold;
+	z-index: 1000;
+	margin: 1px;
+}
+span.locale_not_tr {
+	background: #F19AF4;
+	z-index: 1000;
+	margin: 1px;
+}
+span.stpl_name_inline {
+	border:1px dashed black;
+	font-size: 9px;
+	color:black;
+	font-weight: bold;
+	background:#E8CD92;
+	z-index: 1000;
+}
+#inline_edit_stpl {
+	width:800px;
+	height:570px;
+	position:absolute;
+	left:20px;
+	top:20px;
+	z-index:1000;
+	background:#ddd;
+	border: 2px ridge black;
+	display: none;
+}
+#inline_edit_header {
+	width:800px;
+	height: 20px;
+	border-bottom: 2px ridge black;
+	background:yellow;
+	font-weight: bold;
+}
+textarea#inline_edit_text {
+	overflow:scroll;
+	width:98%;
+	height:505px;
+}
+span.var_old_value {
+	background:black;
+	color: white;
+/*	font-weight: normal;*/
+	font-size: 10px;
+}
+span.tooltip_edit_inline {
+	background:blue;
+	color: white;
+	font-weight: bold;
+	font-size: 10px;
+	cursor: hand;
+}
+
+#inline_edit_tip {
+	width:500px;
+	height:250px;
+	position:absolute;
+	left:20px;
+	top:20px;
+	z-index:1000;
+	background:#ddd;
+	border: 2px ridge black;
+	display: none;
+}
+#inline_edit_tip_header {
+	width:99%;
+	height: 20px;
+	padding-top: 5px;
+	padding-left: 5px;
+	border-bottom: 2px ridge black;
+	background:blue;
+	color:white;
+	font-weight: bold;
+}
+#inline_edit_tip_text {
+	overflow:scroll;
+	width:99%;
+	height:200px;
+}
+</style>
+
+<script type="text/javascript">
+<!--
+try {
+
+// Prepare required global vars
+var _form_action	= "?object=dynamic&action=save_locale_var";
+var _edit_stpl_url	= "?object=dynamic&action=edit_locale_stpl";
+var _edit_tip_url	= "?object=dynamic&action=edit_tip";
+var _tip_text_url	= "?object=help&action=show_tip&page=no_debug";
+var _last_tr_item	= null;
+var _last_tr_html	= null;
+var _stpl_name		= "";
+var _old_clicks		= {};
+var _old_text		= "";
+var _just_saved		= 0;
+var _old_tip_text	= "";
+var _tip_just_saved = 0;
+var _tip_id			= 0;
+var _USE_EDITAREA	= 0;
+
+function _locale_tr_click_handle (e){
+	if (!e.ctrlKey) {
+		return ;
+	}
+	$(this).attr("s_var", $(this).attr("s_var").replace("%20", " "));
+	// Special for the hyperlinks
+	$(this).parent().bind("click", function(){return false;});
+	_my_save_var();
+	// Save last edited element
+	_last_tr_item = $(this);
+	_last_tr_html = $(this).html();
+	$(this).html(
+		"<input type='text' value='" + $(this).text().replace(/\'/, '&#39;') + "' class='editable_tr' s_var='" + $(this).attr("s_var").replace(/\'/, '&#39;') + "' />" 
+		+ " <span class='var_old_value'>" + $(this).attr("s_var") + "</span>"
+	);
+	
+	// Set current field focused and selected
+	$(this).find("input.editable_tr").focus().select();
+
+	return false;
+}
+
+$(function(){
+
+	if (typeof WEB_PATH != "undefined") {
+		_form_action	= WEB_PATH + _form_action;
+		_edit_stpl_url	= WEB_PATH + _edit_stpl_url;
+		_edit_tip_url	= WEB_PATH + _edit_tip_url;
+		_tip_text_url	= WEB_PATH + _tip_text_url;
+	} else {
+//		alert("INLINE EDITOR: Please define missed JS global variable 'WEB_PATH'");
+		return false;
+	}
+
+	// Singleton
+	if (typeof _inline_editor_loaded != "undefined" && _inline_editor_loaded) {
+		return false;
+	}
+
+	// Highlight not translated vars
+// TODO: check if working
+
+	if (typeof _i18n_not_translated != "undefined") {
+		$("span.locale_tr").each(function(){
+			if (_i18n_not_translated[($(this).html()).toLowerCase()]) {
+				$(this).addClass("locale_not_tr");
+			}
+		});
+	}
+
+	// Catch double click
+	$(document).bind("dblclick", function(e){
+		_my_save_var();
+		return false;
+	});
+
+	// Catch keyboard keys
+	$(document).bind("keyup", function(e){
+		if (e.keyCode != 13 && e.keyCode != 27) {
+			return true;
+		}
+		e.stopPropagation(); e.preventDefault();
+		// "Enter" (13)
+		if (e.keyCode == 13) {
+			_my_save_var();
+		}
+		// "Esc" key (27) - cancel editing
+		if (e.keyCode == 27) {
+			if (_last_tr_item != null) {
+				_last_tr_item.html(_last_tr_html);
+				_last_tr_item.parent().unbind("click");
+				_last_tr_item = null;
+			}
+			// Hide stpl edit div
+			if (_old_text != "" && _old_text != $("#inline_edit_text").val()) {
+				if (!confirm("Text has changed, are you sure you wan't to quit editing?")) {
+					return false;
+				}
+			}
+			$("#inline_edit_stpl").css({"display" : "none"});
+			_old_text = "";
+		}
+		return false;
+	});
+
+	// Fix "input" fields
+	$("input[value*='locale_tr']").not("[type=text]").each(function(){
+		var _old_val = $(this).val();
+		$(this).val(_old_val.replace(/<span class=['"]?locale_tr['"]?[^>]*>|<\/span>/ig, ''))
+			.after(_old_val);
+	});
+
+	// Catch locale vars edit
+	$("span.locale_tr").bind("click", _locale_tr_click_handle);
+
+	// Add special class for the all elements that have template names attributes
+	$("[stpl_name]").each(function(i) {
+		var _stpl_name	= $(this).attr("stpl_name");
+		var _tag_name	= $(this).get(0).tagName.toLowerCase();
+		try {
+			$(this).prepend("<span class='stpl_name_inline'>" + _stpl_name + "</span> ");
+		} catch (e) {}
+	});
+
+	// Catch inline template edit
+	$("span.stpl_name_inline").click(function(e){
+		if (!e.ctrlKey) {
+			return true;
+		}
+		e.stopPropagation(); e.preventDefault();
+		_stpl_name = $(this).html();
+		// Construct edit area
+		$("#inline_edit_header").html("EDIT: " + _stpl_name);
+		$("#inline_edit_stpl").css({"display" : "block"});
+		$("#inline_edit_text").val("loading...");
+		$.get(_edit_stpl_url + "&id=" + _stpl_name, function(data) {
+			_old_text = data;
+			$("#inline_edit_text").val(data);
+			if (_USE_EDITAREA) {
+				editAreaLoader.setValue("inline_edit_text", data);
+			}
+		})
+		// Catch save action
+		$("#inline_edit_save").click(function(e2){
+			e2.stopPropagation(); e2.preventDefault();
+			// Catch if nothing changed
+			if (_old_text == "" 
+				|| $("#inline_edit_text").val() == "loading..." 
+				|| _old_text == $("#inline_edit_text").val()
+			) {
+				if (_old_text != "") {
+					alert("Nothing changed");
+				}
+				$("#inline_edit_stpl").css({"display" : "none"});
+				_old_text = "";
+				return false;
+			}
+			// prevent strange event bubbling (maybe my bug, maybe not, not sure yet)
+			_just_saved++;
+			if (_just_saved == 1) {
+				$.post(_edit_stpl_url + "&id=" + _stpl_name, {"text" : $("#inline_edit_text").val()}, function(data) {
+					$("#inline_edit_stpl").css({"display" : "none"});
+					alert("STPL: \n\n" + _stpl_name + "\n\nSERVER SAID: \n\n" + data);
+					// Reload current window after replacement
+					window.location.reload();
+					return false;				
+				})
+			}
+			return false;
+		});
+		// Catch cancel action
+		$("#inline_edit_cancel").click(function(e){
+			e.stopPropagation(); e.preventDefault();
+			// Check if text has changed but we are cancelling
+			if (_old_text != "" && _old_text != $("#inline_edit_text").val()) {
+				if (!confirm("Text has changed, are you sure you wan't to quit editing?")) {
+					return false;
+				}
+			}
+			$("#inline_edit_stpl").css({"display" : "none"});
+			_old_text = "";
+			return false;
+		});
+		window.scrollTo(0,0);
+		return false;
+	});
+
+	// Prepare html for the templates inline editor
+	$("body").append("" 
+		+ "<div id='inline_edit_stpl'>" 
+		+ "<div id='inline_edit_header'></div>"
+		+ "<table border='0' cellspacing='0' cellpadding='0' width='99%'><tr valign='top'><td width='85%'><textarea name='edit_stpl' id='inline_edit_text'></textarea></td><td width='15%'>"
+		+ "<b>HTML Entities</b>:<br /><small>_ => &amp;#95;<br />' => &amp;prime;<br />&quot; => &amp;quot;<br />&frasl; => &amp;frasl;<br />&#92; => &amp;#92;<br />[ => &amp;#91;<br />] => &amp;#93;<br />( => &amp;#40;<br />) => &amp;#41;<br />{ => &amp;#123;<br />} => &amp;#125;<br />? => &amp;#63;<br />! => &amp;#33;<br />| => &amp;#124;<br />&bull; => &amp;bull;<br />&copy; => &amp;copy;<br />$ => &amp;#36;<br />@ => &amp;#64;<br /></small>"
+		+ "</td></tr></table>" 
+		+ "<input type='button' value='SAVE' id='inline_edit_save' />" 
+		+ "<input type='button' value='CANCEL' id='inline_edit_cancel' />" 
+		+ "</div>"
+	);
+
+	if (_USE_EDITAREA) {
+		var _editarea_path = WEB_PATH + "js/editarea/edit_area/edit_area_full.js";
+		$.getScript(_editarea_path, function(){
+			if (typeof editAreaLoader == "undefined") {
+				return false;
+			}
+			editAreaLoader.init({
+				id: "inline_edit_text"	// id of the textarea to transform		
+				,start_highlight: true	// if start with highlight
+				,allow_resize: "both"
+				,allow_toggle: true
+				,min_width: 700
+				,min_height: 480
+				,language: "en"
+				,syntax: "html"
+			});
+		})
+	}
+
+	_inline_editor_loaded = true;
+
+//===================================================================================================//
+
+	// Prepare html for the tips inline editor
+	$("body").append("" 
+		+ "<div id='inline_edit_tip'>" 
+		+ "<div id='inline_edit_tip_header'></div>"
+		+ "<table border='0' cellspacing='0' cellpadding='0' width='500'><tr valign='top'><td width='90%'><textarea name='edit_tip' id='inline_edit_tip_text'></textarea></td>"
+		+ "</tr></table>" 
+		+ "<input type='button' value='SAVE' id='inline_edit_tip_save' />" 
+		+ "<input type='button' value='CANCEL' id='inline_edit_tip_cancel' />" 
+		+ "</div>"
+	);
+
+	// Add tooltip edit button
+	$(".help_tooltip").each(function() {
+		$(this).after("<span class='tooltip_edit_inline' profy:tip_id=" + $(this).attr("profy:tip_id") + ">Edit Tip</span>");
+	});
+
+	// Catch tip inline edit
+	$("span.tooltip_edit_inline").click(function(e){
+		if (!e.ctrlKey) {
+			return ;
+		}
+		_tip_id = $(this).attr("profy:tip_id");
+
+		// Construct edit area
+		$("#inline_edit_tip_header").html("EDIT TIP: " + _tip_id);
+		$("#inline_edit_tip").css({"display" : "block"});
+		$("#inline_edit_tip_text").val("loading...");
+
+		$.post(_tip_text_url + "&id=help_" + _tip_id, function(data) {
+			if (data.substring(0, 7) == "No info") {
+				data = "";
+			}
+			txt_arr = data.split("<hr>");
+			data = txt_arr[0];
+			_old_tip_text = data;
+			// determine if there is <br /> tags in a text
+			var _regexp = new RegExp("<br />", "gi");
+			var _matches = _regexp.exec(data);
+			// split string into array by <br /> tag
+			if (_matches) {
+				data_array = data.split("<br />");
+				var data2 = "";
+				for (_key in data_array)
+				  {
+				     data2 += data_array[_key];
+				  }
+				data = data2;
+			}
+ 
+			$("#inline_edit_tip_text").val(data);
+			window.scrollTo(0,0);
+		});
+
+		return false;
+	});
+
+	// Catch cancel action
+	$("#inline_edit_tip_cancel").click(function(e){
+		e.stopPropagation(); e.preventDefault();
+		// Check if text has changed but we are cancelling
+		if (_old_tip_text != "" && _old_tip_text != $("#inline_edit_tip_text").val()) {
+			if (!confirm("Tip text has changed, are you sure you wan't to quit editing?")) {
+				return false;
+			}
+		}
+		$("#inline_edit_tip").css({"display" : "none"});
+		_old_tip_text = "";
+		return false;
+	});
+
+	// Catch save action
+	$("#inline_edit_tip_save").click(function(e){
+		e.stopPropagation(); e.preventDefault();
+
+		// Catch if nothing changed
+		if (_old_tip_text == "" 
+			|| $("#inline_edit_tip_text").val() == "loading..." 
+			|| _old_tip_text == $("#inline_edit_tip_text").val()
+		) {
+			if (_old_tip_text != "") {
+				alert("Nothing changed");
+			}
+			$("#inline_edit_tip").css({"display" : "none"});
+			_old_tip_text = "";
+			return false;
+		}
+
+		// prevent strange event bubbling (maybe my bug, maybe not, not sure yet)
+		_tip_just_saved++;
+		if (_tip_just_saved == 1) {
+			$.post(_edit_tip_url, {"text" : $("#inline_edit_tip_text").val(), "name" : _tip_id}, function(data) {
+				$("#inline_edit_tip").css({"display" : "none"});
+				alert("TIP: \n\n" + _tip_id + "\n\nSERVER SAID: \n\n" + data);
+				// Reload current window after replacement
+				window.location.reload();
+				return false;				
+			})
+		}
+	});
+
+	// Catch keyboard keys
+	$(document).bind("keyup", function(e){
+		// "Esc" key (27) - cancel editing
+		if (e.keyCode != 27) {
+			return true;
+		}
+		e.stopPropagation(); e.preventDefault();
+		// Hide tips edit div
+		if (_old_tip_text != "" && _old_tip_text != $("#inline_edit_tip_text").val()) {
+			if (!confirm("Tip text has changed, are you sure you wan't to quit editing?")) {
+				return false;
+			}
+		}
+		$("#inline_edit_tip").css({"display" : "none"});
+		_old_tip_text = "";
+	});
+
+//===================================================================================================//
+
+})
+
+// Revert last state of the previous element
+function _my_save_var () {
+	if (_last_tr_item == null || typeof _i18n_for_page == "undefined") {
+		return false;
+	}
+	var _edited_value = _last_tr_item.find("input.editable_tr").attr("value");
+	// Try to find source var
+	var _source_var = "";
+	if (_last_tr_html != "") {
+		_source_var = _last_tr_item.find("input.editable_tr").attr("s_var");
+	}
+	if (typeof _edited_value != "undefined" 
+		&& _edited_value != "" 
+		&& typeof _source_var != "undefined"
+		&& _source_var != ""
+		&& $.trim(_last_tr_html) != $.trim(_edited_value)
+		&& confirm("Are you sure you wan't to save your changes?")
+	) {
+		// JQuery AJAX post
+		$.post(
+			_form_action,
+			{"source_var": _source_var, "edited_value":_edited_value},
+			function(data){
+				// Translate all same elements on page
+				$("span.locale_tr").each(function(i){
+					if (_last_tr_html != "" && $(this).html() == _last_tr_html) {
+						$(this).html(_edited_value);
+					}
+				});
+				alert("NEW:\n\n" + _edited_value + "\n\nOLD:\n\n" + _last_tr_html + "\n\nSERVER SAID:\n\n" + data);
+				_last_tr_html = "";
+				// Allow further edit this var without page refresh
+				_i18n_for_page[_edited_value] = _source_var;
+			}
+		);
+		_last_tr_item.html(_edited_value);
+	} else {
+		if (_last_tr_html != "") {
+			_last_tr_item.html(_last_tr_html);
+		}
+	}
+	_last_tr_item.parent().unbind("click");
+	_last_tr_item = null;
+}
+
+// Do not touch! Needed to prevent double init of the inline editor
+var _inline_editor_loaded = false;
+
+// Catch ajax tooltip
+function _debug_catch(obj) {
+	$("span.locale_tr", $(obj)).bind("click", _locale_tr_click_handle);
+}
+
+// End of try{} block
+} catch (e) {
+	alert("Internal error:\n\n" + e);
+}
+-->
+</script>

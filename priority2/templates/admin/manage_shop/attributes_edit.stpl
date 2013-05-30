@@ -1,0 +1,27 @@
+<h2>
+{if("name" ne "")}{t(Edit field)} "{name}"{/if}
+{if("name" eq "")}{t(Add field)}{/if}
+</h2>
+
+{error}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="name">{t(Name)}</label>
+		<input type="text" id="name" name="name" value="{name}">
+	</p>
+	<p>
+		<label for="value_list">{t(Value List)}<br />
+		<small>({t(one value per line)})</small></label>
+		<textarea id="value_list" name="value_list" cols="30" rows="10">{value_list}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" name="go" />
+	</div>
+</form>
+</div>
+
+<br /><br />
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

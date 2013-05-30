@@ -1,0 +1,6 @@
+<h1>{title} ({add_date})</h1>
+
+<p>{full_text}</p>
+
+<br />
+{comments}

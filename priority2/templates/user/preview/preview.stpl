@@ -1,0 +1,14 @@
+<table class="tbl_border" align="center" cellspacing="1" cellpadding="5">
+<tr><td colspan=2 align=center class="tbl_h">Preview</td></tr>
+
+{items}
+</table>
+<br><br>
+
+<form method=post>
+{input_vars}
+<input type=hidden name=mode value=1>
+<input type=submit name=submit value='Post'>
+</form><br>
+<a href="javascript:history.back()">Back</a>
+

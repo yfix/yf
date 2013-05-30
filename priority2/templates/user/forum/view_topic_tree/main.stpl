@@ -1,0 +1,69 @@
+<table>
+	<tr>
+		<td width="40%" valign="middle"><div>{topic_pages}&nbsp;</div></td>
+		<td class='nopad' align="right" width="60%" valign="middle">
+{if("add_post_link" ne "")}<a href="{add_post_link}" class=actionlink>{t(Reply to this topic)}</a>{/if}
+{if("topic_closed" eq 1)}&nbsp;{t(Topic is closed)}{/if}
+{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}" class=actionlink>{t(Start new topic)}</a>{/if}
+{if("forum_closed" eq 1)}&nbsp;Forum is read-only{/if}
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+<!--
+function link_to_post(post_id) {
+	var base_link = "{link_to_post_base}";
+	re = /\/0/i;
+	var post_link = base_link.replace(re, "\/" + post_id);
+	temp = prompt('{t(Link to the post)}', post_link);
+	return false;
+}
+-->
+</script>
+<table cellspacing="0" cellpadding="0" width="100%">
+	<thead class="big">
+	<tr>
+		<th width="65%" align="left" valign="top">
+			{if("topic_link" ne "")}<a href="{topic_link}">{/if}<b>{topic_name}</b>{if("topic_link" ne "")}</a>{/if}
+		</th>
+		<th width="35%" align="right">
+{if("allow_change_view" eq 1)}
+			[ <a href="{tree_view_link}">{t(Tree View)}</a> ] &middot;
+		<a href="{flat_view_link}">{t(Flat View)}</a>
+{/if}
+		</th>
+	</tr>
+	</thead>		
+</table>
+
+{current_post}
+
+<br />
+
+{posts_tree}
+
+<br />
+
+<table cellspacing="0" width="100%">
+	<tr>
+		<td width="30%" valign="middle">
+			<div>{topic_pages}&nbsp;</div>
+		</td>
+		<td class="nopad" align="right" width="70%">
+{if("add_post_link" ne "")}<a href="{add_post_link}" class="actionlink">{t(Reply to this topic)}</a>{/if}
+{if("topic_closed" eq 1)}&nbsp;{t(Topic is closed)}{/if}
+{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}" class="actionlink">{t(Start new topic)}</a>{/if}
+{if("forum_closed" eq 1)}&nbsp;Forum is read-only{/if}
+		</td>
+	</tr>
+</table>
+
+{topic_online}
+
+{if("board_fast_nav" ne "")}
+<br />
+<div class="borderwrap">
+	<div class="row2"><div align="right">{board_fast_nav}</div></div>
+</div>
+<br />
+{/if}

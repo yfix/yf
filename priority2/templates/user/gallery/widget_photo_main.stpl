@@ -1,0 +1,15 @@
+{if("latest_photos" ne "")}
+{latest_photos}
+
+	{if("use_ajax" eq 1)}
+<script type="text/javascript">
+<!--
+	// JQuery on DOM ready
+	$(function(){
+		$("a.gallery_photo").profy_tooltip();
+	})
+-->
+</script>
+	{/if}
+
+{/if}

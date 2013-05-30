@@ -1,0 +1,1 @@
+	<li><a href="{cat_link}">{cat_name} ({num_posts} {t(::blog_cat::entries)})</a></li>

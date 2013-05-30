@@ -1,0 +1,42 @@
+{if("errors" ne "")}
+<div style="background:#FFBBBB; margin-bottom:1em">
+Errors: {errors}
+</div>
+{/if}
+
+<form method="POST">
+<p>
+  <label for="email_1">Email</label>:
+  <input type="text" name="email_1" id="email_1" meta:validator="filled email"><br>
+</p>
+<p>
+  <label for="t1">First name</label>:
+  <input type="text" name="first" id="t1" meta:validator="filled"><br>
+</p>
+<p>
+  <label for="t2">Age</label>:
+  <input type="text" name="age" id="t2" meta:validator="natural"><br>
+</p>
+<p>
+  Select:
+  <select name="sel">
+    <option value="a">aaa</option>
+    <option value="b">bbb</option>
+  </select><br>
+</p>
+<p>
+  <input type="submit" name="save" value="Send!">
+</p>
+</form>
+
+{if("errors" ne "")}
+<!-- Highlight error fields. -->
+<script>
+<!--
+try {
+	{meta_error_js}
+} catch (e) {
+}
+-->
+</script>
+{/if}

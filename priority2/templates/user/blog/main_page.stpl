@@ -1,0 +1,57 @@
+{if("const.PROJECT_NAME" eq "SEXY_NET")}<h1>{t(Blogs of Escorts and their Clients)}</h1>{/if}
+{{--{if("const.PROJECT_NAME" ne "SEXY_NET")}{t(Blogs)}{/if}--}}
+
+{include("blog/main_page_note")}
+
+<div align="right">
+{{--
+{if("is_logged_in" eq 1)}
+	<br /><a href="{show_own_posts_link}" class="actionlink">{t(Go to my blog)}</a>
+	&nbsp;&nbsp;<a href="{change_settings_link}" class="actionlink">{t(Change my blog settings)}</a>
+{/if}
+--}}
+	&nbsp;&nbsp;<a href="{all_blogs_link}" class="actionlink">{t(Search / List all blogs)}</a><br /><br />
+</div>
+
+
+<div class="container-2col">
+	<div class="column">
+		<h3 class="title">{t(Active Blog Categories)}:</h3>
+
+		{if("blog_cats_posts" ne "")}<ul>{blog_cats_posts}</ul>{/if}
+		{if("blog_cats_posts" eq "")}{t(No entries in categories yet!)}{/if}
+	</div>
+	<div class="column">
+		<h3 class="title">&nbsp;</h3>
+
+		<p><a href="{most_commented_link}" class="actionlink">{t(Most Commented Entries)}</a></p>
+		<p><a href="{most_read_link}" class="actionlink">{t(Most Read Entries)}</a></p>
+	</div>
+</div>
+
+
+<br /><br style="clear:both;" />
+
+
+<h2 class="header">{t(Latest Entries)}</h2>
+<div class="container">
+	<h3 class="title">{t(The most recent entries posted in blogs)}:&nbsp;{rss_latest_button}</h3>
+{latest_posts}
+{if("latest_posts" eq "")}
+	<div align="center">{t(No latest entries yet)}!</div>
+{/if}
+
+{if("latest_pages" ne "")}
+	<div align="center">{t(Pages)}: {latest_pages}</div>
+{/if}
+</div>
+
+
+<br /><br />
+
+
+<h2 class="header">{t(Search blogs)}</h2>
+<div class="container">
+{most_active_bloggers}
+{if("most_active_bloggers" eq "")}<div align="center">{t(No blogs yet! Be the first to start one!)}</div>{/if}
+</div>

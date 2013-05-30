@@ -1,0 +1,9 @@
+	<tr>
+		<td align="left">
+			<p class="text_main">
+				<li><a href="{view_link}"><b>{question}</b></a>
+				<br />
+				<small>added: {add_date}, views: {num_views}</small></li>
+			</p>
+		</td>
+	</tr>

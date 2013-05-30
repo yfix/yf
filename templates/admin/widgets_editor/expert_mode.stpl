@@ -1,0 +1,31 @@
+<h2>{title} area</h2>
+
+<form action="{form_action}" method="post">
+	<input type="hidden" name="group_save_id" value="{group_save_id}" />
+	
+	<table width="70%">
+		<thead>
+			<th>{t(Source)}</th>
+			<th>{t(widgets)}</th>
+		</thead>
+		<tr>
+			<td>
+				<textarea name="text" cols="80" rows="30">{text}</textarea>
+			</td>
+			<td align="left" valign="top">
+				{foreach("widgets")}
+					&#123;execute({#.execute})&#125;<br />
+				{/foreach}		
+			</td>
+		</tr>
+	</table>
+	
+	<br />
+	<br />
+	<div align="center">
+		<input type="submit" name="go" value="save"/>
+	</div>
+</form>
+
+
+

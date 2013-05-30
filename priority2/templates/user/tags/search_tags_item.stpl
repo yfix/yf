@@ -1,0 +1,4 @@
+<div style="clear:both;text-align:center;">
+	<p class="title" style="text-align:left;">{t(Found in)}: {t({cat_name})}</p>
+	{item}
+</div>

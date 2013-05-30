@@ -1,0 +1,6 @@
+<div align="center">
+	<div class="success">
+		<p>{t(Success)}</p>
+		<span>{items}</span>
+	</div>
+</div>

@@ -1,0 +1,4 @@
+<p>
+	<label>{item_name}</label>
+	{item_value}
+</p>

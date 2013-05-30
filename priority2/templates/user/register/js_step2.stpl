@@ -1,0 +1,55 @@
+<script type="text/javascript">
+<!--
+// Cross-browser form required fields checking function
+function form_check(the_form) {
+	try {
+		var error_msg		= '';
+		var req_fields		= new Array({js_array_1});
+		var req_fields_tr	= new Array({js_array_2});
+		// Check auto-generated required fields
+		for (i in req_fields) {
+			var _cur_field = the_form[req_fields[i]];
+			if (typeof _cur_field != 'object') {
+				continue;
+			}
+			if (!_cur_field.value) {
+				error_msg += req_fields_tr[i] + '\n';
+			}
+		}
+		// Check passwords
+		if ((the_form.password.value != the_form.password2.value) || the_form.password2.value == 0) {
+			error_msg = '{t(password_again)}\n\n' + error_msg;
+		}
+		// Check email
+		var email_pattern = /^([._a-z0-9-]+[._a-z0-9-]*)@(([a-z0-9-]+\.)*([a-z0-9-]+)(\.[a-z]{2,3}))$/i;
+		if (!email_pattern.exec(the_form.email.value)) {
+			error_msg = '{t(wrong_email)}\n\n' + error_msg;
+		}
+		// Check login
+		var login_pattern = /^[a-z0-9]+$/i;
+		if (!login_pattern.exec(the_form.login.value)) {
+			error_msg = '{t(wrong_login)}\n\n' + error_msg;
+		}
+		// Check CAPTCHA
+		if (the_form.captcha && the_form.captcha.value == "") {
+			error_msg = '{t(Please enter code)}\n\n' + error_msg;
+		}
+		// Show error or submit form
+		if (error_msg) {
+			alert('{t(required_fields)} : \n\n' + error_msg);
+			return false;
+		} else {
+			the_form.submit();
+			return true;
+		}
+	} catch (x) {
+//		alert('{t(internal_error)}');
+		if (typeof the_form == "object") {
+			the_form.submit();
+			return true;
+		}
+		return false;
+	}
+}
+-->
+</script>

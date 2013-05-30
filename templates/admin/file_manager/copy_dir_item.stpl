@@ -1,0 +1,6 @@
+<tr align="center">
+	<td align="left" style="padding-left:{padding}px;">
+		<input type="checkbox" name="d_{encoded_name}" value="{name}">
+		<span style="color:{color};"><b>{name}</b></span>
+	</td>
+</tr>

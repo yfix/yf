@@ -1,0 +1,36 @@
+{if("cur_cat_name" ne "")}
+<h2>{cur_cat_name}</h2>
+{/if}
+
+{if("items" ne "")}
+<div class="products_wrapper">
+{foreach("items")}
+	<div class="product_item">
+		<p class="product_name"><b><a href="{#.details_url}" title="{t(View details)}" {if("#.external_url" ne "")} target="_blank" {/if} >{#.name}</a></b></p>
+		<div class="product_image">
+{if("#.thumb_path" ne "")}
+			<a href="{#.details_url}" title="{t(View details)}" {if("#.external_url" ne "")} target="_blank" {/if} >
+				<img src="{#.thumb_path}" alt="{#.name}_image" />
+			</a>
+{/if}
+		</div>
+
+		<p class="price">{t(Price)}: {#.price}</p>
+		<div class="button_div">
+			<a href="{#.add_to_cart_url}" title="Add to cart" style="margin-left:0;" {if("#.external_url" ne "")} target="_blank" {/if} >{t(Add to cart)}</a>
+		</div>
+		<br style="clear:both;" />
+	</div>
+{/foreach}
+</div>
+{/if}
+
+<br style="clear: both;" />
+
+{if("items" eq "")}<div align="center">{t(No products found)}</div>{/if}
+
+{{--<div><br /><a href="{show_cart_url}">{t(Show cart)}</a></div>--}}
+
+{if("pages" ne "")}
+	<div align="center">{pages}</div>
+{/if}

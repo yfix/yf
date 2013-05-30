@@ -1,0 +1,26 @@
+<h2>{t(Edit STPL)} "{stpl_name}" {t(for the theme)} "{theme_name}" {t(in)} "{location}"</h2>
+<br />
+<div class="button_div">
+<form method="post" action="{form_action}">
+	<p class="first"> 
+		<label for="stpl_text">{t(Template source)}:</label>
+		<textarea name="stpl_text" cols="90" rows="20" wrap="off" class="html_code" />{stpl_text}</textarea>
+	</p>	
+{if("location" ne "framework")}
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+{/if}
+</form>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>
+{if("location" eq "framework")}
+<br />
+<br />
+<div>	
+	<p class="negative"><b>{t(NOTE)}:</b></p>
+	<p>{t(You can view or copy template source but can't make changes in FRAMEWORK templates)}</p>
+</div>
+{/if}

@@ -1,0 +1,2 @@
+<li><a href="{link}"{if("is_cur_page" eq "1")} class="menu_cur_page"{/if}><b>{if("icon_path" ne "")}<img src="{icon_path}" width="16" height="16" border="0" /> {/if}{name}</b></a></li>
+

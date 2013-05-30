@@ -1,0 +1,74 @@
+<div class="filter">
+<form action='{save_action}' method='post'>
+	<div class="column" style="width:40%;">
+{{--
+			<p>
+				<label>{t(Account type)}</label>
+				{account_type_box}
+			</p>
+			<p>
+				<label>{t(Sex)}</label>
+				{gender_box}
+			</p>
+			<p>
+				<label>{t(Race)}</label>
+				{race_box}
+			</p>
+			<p>
+				<label>{t(Nick)}</label>
+				<input type="text" name="nick" value="{nick}">
+				<input type="hidden" name="user_id" value="{user_id}">
+				
+			</p>
+--}}
+			<p>
+				<label>{t(Author Name)}</label>
+				<input type="text" name="author_name" value="{author_name}">
+			</p>
+{{--
+			<p>
+				<label>{t(User ID)}</label>
+				<input type="text" name="user_id" value="{user_id}">
+			</p>
+--}}
+			<p>
+				<label>{t(Text)}</label>
+				<input type="text" name="full_text" value="{full_text}">
+			</p>
+		</div>
+		<div  class="column" style="width:40%;">
+			<p>
+				<label>{t(Category)}</label>
+				{cat_id_box}
+			</p>
+			<p>
+				<label>{t(Title)}</label>
+				<input type="text" name="title" value="{title}">
+			</p>
+{{--
+			<p>
+				<label>{t(Country)}</label>
+				{country_box}
+			</p>
+			<p>
+				<label>{t(State)}</label>
+				<input type="text" name="state" value="{state}">
+			</p>
+			<p>
+				<label>{t(City)}</label>
+				<input type="text" name="city" value="{city}">
+			</p>
+--}}
+{if("sort_by_box" ne "")}
+			<p>
+				<label>{t(Sort By Field)}</label>
+				{sort_by_box} {sort_order_box}
+			</p>
+{/if}
+		</div>
+		<div class="button_div">
+			<input type="submit" value="{t(SAVE)}">
+			<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+		</div>
+	</form>
+</div>

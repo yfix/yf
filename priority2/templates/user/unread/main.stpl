@@ -1,0 +1,13 @@
+{if("unread" ne "")}
+
+<div class="widget">	
+<div class="title">Unread</div>
+
+	<div align="center"><small><a href="{set_all_read_link}">{t(Set all read)}</a></small></div>
+	
+	{foreach("unread")}
+		<div style="margin-left:10px"><a href="{#.link}"><b>{_key}({#.count})</b></a></div>
+	{/foreach}
+	
+</div>
+{/if}

@@ -1,0 +1,39 @@
+<h3>{t(Forum Reports)}</h3>
+
+<div class="reports_page">
+{foreach("reports")}
+{t(Reported by)} <a href="{#.report_user_link}" target="_new">{#.report_user_name}</a> on {#.time} &nbsp;&nbsp;
+<br />
+<form action="{#.button_action}" method="post">
+	<input type="checkbox" id="delete_topic_{#.report_id}" name="delete_topic[{#.topic_id}]" value="1"><label for="delete_topic_{#.report_id}">{t(delete topic)}</label> 
+	<input type="checkbox" id="delete_post_{#.report_id}" name="delete_post[{#.post_id}]" value="1"><label for="delete_post_{#.report_id}">{t(delete post)}</label>
+	<input type="submit" value="{t(close report)}">
+</form>
+<br />
+
+<table class="tborder" border="0">
+  <tr>
+	<td class="page">
+		<table cellpadding="0" border="0" width="100%">
+		  <tr valign="bottom">
+			<td><small>{t(Posted by)} <a href="{#.post_user_link}" target="_new">{#.post_author}</a></small></td>
+			<td align="right">{t(Forum)}: <a href="{#.forum_link}" target="_new">{#.forum_name}</a> {t(Topic)}: <a href="{#.topic_link}" target="_new">{#.topic_name}</a></td>
+		  </tr>
+		</table>
+
+		<hr />
+
+		<div>{#.post_text}</div>
+	</td>
+  </tr>
+</table>
+
+<br/><br/>
+{/foreach}
+
+{if("reports" eq "")}
+	<div align="center">{t(No reports yet)}</div>
+{/if}
+
+{if("pages" ne "")}<br /><br /><div align="center">{t(Pages)}: {pages}</div><br /><br />{/if}
+</div>

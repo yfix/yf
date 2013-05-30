@@ -1,0 +1,36 @@
+<div class="editform">
+<form  action="{form_action}" method="POST">
+	<p class="first">
+		<label for="user_search_name">{t(Nickname)}:</label>
+		<input type="text" id="user_search_name" name="user_search_name" value="{search}">
+	</p>										
+	<p>
+		<label for="user_search_interests">{t(Interests)}:</label>
+		<input type="text" id="user_search_interests" name="user_search_interests" value="{interests}">
+	</p>
+	<p>
+		<label for="sex">{t(Sex)}:</label>
+		{sex}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Search)}">
+	</div>
+</form>	
+</div>
+<br />
+
+<h1>{t("Registered users")} ({total} found)</h1>
+<br />
+{if("items" ne "")}
+	<table border="0" width="90%" cellspacing="0" cellpadding="2" align="center">		
+	{items}
+	</table>
+{/if}
+<br />
+{if("items" eq "")}
+		<div align="center">{t(No users found)}!</div>
+{/if}
+{if("pages" ne "")}
+		<br />
+		<div align="center">{t(Pages)}: {pages}</div>
+{/if}

@@ -1,0 +1,69 @@
+<h1 class="header">{t(Crop Photo)}</h1>
+
+<p class="text_main">
+Please, select the desired part of the image by pulling the selection frame handles 
+(small squares at the corners and in the middle of the selection borders). <br />
+You can also drag and drop the entire selection frame.<br />
+When you're done push Save button, to crop and save the selected area.
+</p>
+
+<table border="0" cellspacing="0" cellpadding="5" align="center">
+<form action="{form_action}" method="post" enctype="multipart/form-data" name="crop_form" id="crop_form">
+{if("error_message" ne "")}
+	<tr>
+		<td colspan="2" align="center"><b class="alarm">{error_message}</b></td>
+	</tr>
+{/if}
+{if("thumb_src" ne "")}
+	<tr>
+		<td colspan="2" align="center">
+			<img src="{thumb_src}" alt="Photo" id="photo_to_crop" width="{real_w}" height="{real_h}" />
+		</td>
+	</tr>
+{/if}
+	<tr>
+		<td colspan="2" align="center">
+			<input type="submit" name="go" value="  {t(Save)}  ">
+			<input type="hidden" name="params" id="crop_params" value="">
+			<input type="button" onclick="window.location.href='{back_link}'" value="  {t(Cancel)}  ">
+		</td>
+	</tr>
+</form>
+</table>
+
+<style type="text/css">
+	@import url('{const(WEB_PATH)}js/yui/image-cropper/resize.css');
+	@import url('{const(WEB_PATH)}js/yui/image-cropper/imagecropper.css');
+</style>
+
+<script type="text/javascript" src="{const(WEB_PATH)}js/yui/image-cropper/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="{const(WEB_PATH)}js/yui/image-cropper/dragdrop-min.js"></script>
+<script type="text/javascript" src="{const(WEB_PATH)}js/yui/image-cropper/element-beta-min.js"></script>
+<script type="text/javascript" src="{const(WEB_PATH)}js/yui/image-cropper/resize-beta-min.js"></script>
+<script type="text/javascript" src="{const(WEB_PATH)}js/yui/image-cropper/imagecropper-beta-min.js"></script>
+
+<script type="text/javascript">
+<!--
+
+$(function() {
+	var _real_w = parseInt('{real_w}');
+	var _real_h = parseInt('{real_h}');
+	var _crop_config = {  
+		initHeight	: parseInt(_real_h * 0.8),
+		initWidth	: parseInt(_real_w * 0.8),
+		initialXY	: [parseInt(_real_w * 0.1), parseInt(_real_h * 0.1)]
+	};
+	
+	var crop = new YAHOO.widget.ImageCropper('photo_to_crop', _crop_config);  
+	
+	$("form[name=crop_form]").submit(function(e) {
+		if (!confirm('Are you sure?')) {
+			return false;
+		}
+		var _params = crop.getCropCoords();
+		$("#crop_params").val(_params.left + ";" + _params.top + ";" + _params.width + ";" + _params.height);
+		return true;
+	});
+});
+-->
+</script>

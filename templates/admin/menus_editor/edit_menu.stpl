@@ -1,0 +1,118 @@
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label>{t(Menu Type)}</label>
+		<b style="text-transform:uppercase;">{type}</b>
+	</p>
+	<p>
+		<label for="name">{t(Menu Keyword)}</label>
+		<input type="text" id="name" name="name" value="{name}">
+	</p>
+	<p>
+		<label for="desc">{t(Menu Description)}</label>
+		<textarea id="desc" name="desc" cols="50" rows="3">{desc}</textarea>
+	</p>
+	<p>
+		<label for="stpl_name">{t(Custom Template)}</label>
+		{stpls_box} <input type="button" value="V" onclick="insert_word(this.form.stpls.options[this.form.stpls.selectedIndex].value, '', true, 'stpl_name');" title="{t(Insert Selected Word)}">&nbsp;<a href="{stpls_link}">{t(Edit Templates)}</a><br />
+		{itip("Template will be forced to use when processing. Example: right_area/main")} 
+		<input type="text" id="stpl_name" name="stpl_name" value="{stpl_name}">
+	</p>
+	<p>
+		<label for="method_name">{t(Custom class Method)}</label>
+		{methods_box} <input type="button" value="V" onclick="insert_word(this.form.methods.options[this.form.methods.selectedIndex].value, '', true, 'method_name');" title="{t(Insert Selected Word)}">&nbsp;&nbsp;<a href="{modules_link}">{t(Edit Modules)}</a><br />
+		{itip("Class method will be used to process. Example: main.tasks")} 
+		<input type="text" id="method_name" name="method_name" value="{method_name}">
+	</p>
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		{active_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" name="go" />
+	</div>
+</form>
+</div>
+
+<br /><br />
+
+<div align="center">
+	<a href="{items_link}">{t(Edit Items)}</a>&nbsp;
+	<a href="{back_link}">{t(Back)}</a>
+</div>
+
+
+<script type="text/javascript">
+<!--
+var uagent    = navigator.userAgent.toLowerCase();
+var is_safari = ( (uagent.indexOf('safari') != -1) || (navigator.vendor == "Apple Computer, Inc.") );
+var is_ie     = ( (uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv) );
+var is_opera  = (uagent.indexOf('opera') != -1);
+var is_webtv  = (uagent.indexOf('webtv') != -1);
+var is_win    =  ( (uagent.indexOf("win") != -1) || (uagent.indexOf("16bit") !=- 1) );
+var ua_vers   = parseInt(navigator.appVersion);
+//insert_word("[test]", "[/test]", true);
+// GENERAL INSERT FUNCTION
+function insert_word(ibTag, ibClsTag, isSingle, force_id) {
+	p_obj = document.getElementById(force_id || "tag_replace");
+	var isClose = false;
+	// It's IE!
+	if ((ua_vers >= 4) && is_ie && is_win)	{
+		if (p_obj.isTextEdit) {
+			p_obj.focus();
+			var sel = document.selection;
+			var rng = sel.createRange();
+			rng.colapse;
+			if((sel.type == "Text" || sel.type == "None") && rng != null) {
+				if (ibClsTag != "" && rng.text.length > 0) {
+					ibTag += rng.text + ibClsTag;
+				} else if(isSingle) {
+					isClose = true;
+				}
+				rng.text = ibTag;
+			}
+		} else {
+			if(isSingle) {
+				isClose = true;
+			}
+			p_obj.value += ibTag;
+		}
+	}
+	// It's MOZZY!
+	else if (p_obj.selectionEnd) { 
+		var ss = p_obj.selectionStart;
+		var st = p_obj.scrollTop;
+		var es = p_obj.selectionEnd;
+		if (es <= 2) {
+			es = p_obj.textLength;
+		}
+		var start  = (p_obj.value).substring(0, ss);
+		var middle = (p_obj.value).substring(ss, es);
+		var end    = (p_obj.value).substring(es, p_obj.textLength);
+		// text range?
+		if (p_obj.selectionEnd - p_obj.selectionStart > 0) {
+			middle = ibTag + middle + ibClsTag;
+		} else {
+			middle = ibTag + middle;
+			if (isSingle) {
+				isClose = true;
+			}
+		}
+		p_obj.value = start + middle + end;
+		var cpos = ss + (middle.length);
+		p_obj.selectionStart = cpos;
+		p_obj.selectionEnd   = cpos;
+		p_obj.scrollTop      = st;
+	}
+	// It's CRAPPY!
+	else {
+		if (isSingle) {
+			isClose = true;
+		}
+		p_obj.value += ibTag;
+	}
+	p_obj.focus();
+	return isClose;
+}
+-->
+</script>

@@ -1,0 +1,40 @@
+{if("items" ne "")}
+<table width="80%">
+	<thead>
+		<th>{t(Keyword)}</th>
+		<th width="5%">{t(Template)}</th>
+		<th width="5%">{t(Method)}</th>
+		<th width="5%">{t(Type)}</th>
+		<th width="5%">{t(Active)}</th>
+		<th width="5%">{t(Items)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No menus yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br /><br />
+
+<div align="center">
+	<form action="{form_action}" method="post">
+	<b>{t(Add new menu)}:</b><br />
+	{t(Keyword)}: <input type="text" name="name" value="">&nbsp;
+	<label>{t(USER)} <input type="radio" name="type" value="user" checked></label>&nbsp;
+	<label>{t(ADMIN)} <input type="radio" name="type" value="admin"></label>&nbsp;
+	<input type="submit" name="go" value="{t(ADD)}">
+	</form>
+</div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>
+		Menu system consists of menu blocks with menu items inside.<br />
+		Menu blocks separated by main init type (USER or ADMIN)
+	</p>
+</div>

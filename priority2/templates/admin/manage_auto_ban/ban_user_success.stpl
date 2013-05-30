@@ -1,0 +1,6 @@
+<fieldset class="success">
+	<legend>{t(Success)}</legend>
+	<p>
+		<b>{t(Saved successfully)}!</b>
+	</p>
+</fieldset>

@@ -1,0 +1,31 @@
+{if("items" ne "")}
+<table align="center">
+	<colgroup align="left" valign="top">
+		<col>
+		<col>
+	</colgroup>
+	<colgroup align="center" valign="top">
+		<col>
+		<col>
+		<col>
+		<col>
+	</colgroup>
+	<thead>
+		<th>{t(Question)}</th>
+		<th>{t(Choices)}</th>
+		<th>{t(Add date)}</th>
+		<th>{t(Votes)}</th>
+		<th>{t(Active)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+
+{if("items" eq "")}
+	<div align="center">{t(No polls)}</div>
+{/if}
+<br />
+<p align="center"><a href="{create_url}">{t(Create common poll)}</a></p>

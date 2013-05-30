@@ -1,0 +1,171 @@
+<script type="text/javascript">
+<!--
+// jQuery on DOM ready
+$(function(){
+	var _icons_loaded	= false;
+
+	$("input#icon_selector").show().click(function(){
+		$("div.icon_external_box")
+			.css("display", "block")
+
+		// Cache content
+		if (_icons_loaded) {
+			return true;
+		}
+		// Get from server
+		$.get(_icons_list_link, function(data){
+			var _new_data = [];
+
+			$.each(data.split("\n"), function(i, v){
+				_new_data[i] = "<div class='icon_item'><img src='" + _icons_web_path + v + "' width='16' height='16' /></div>";
+			});
+
+			$("div.icon_external_box")
+				.html("<div align='center'><a href='javascript:_icon_external_close();'><b>Close dialog</b></a></div>" + _new_data.join("\n"));
+
+			$("div.icon_item img").click(function(){
+				$("#icon").val($(this).attr("src").replace(_icons_web_path, ""));
+				_icon_external_close();
+				$("span.icon_preview").html($(this).fullhtml());
+			})
+			// For caching
+			_icons_loaded = true;
+		})
+	})
+
+	// Catch keyboard buttons
+	$(document).bind("keyup", function(e){
+		if (e.keyCode != 27) {
+			return true;
+		}
+		// "Esc" key (27)
+		if (e.keyCode == 27) {
+			_icon_external_close();
+		}
+		return false;
+	});
+
+})
+
+function _icon_external_close(){
+	jQuery("div.icon_external_box").css("display", "none");
+}
+
+// Full HTML plugin
+(function() {
+
+jQuery.fn.fullhtml = function() {
+	var tagName = this[0].tagName.toLowerCase()
+	var attribs = this[0].attributes
+	var outCode = "<" + tagName;
+	for( var i = 0; i < attribs.length; i++ ) {
+		var attrName = attribs[i].nodeName;
+		outCode += " "+ attrName + "='" + $(this).attr( attrName ) + "'"
+	}
+	outCode += ">" + $(this).html() + "</" + tagName + ">"
+	return outCode
+}
+
+})(jQuery);
+
+-->
+</script>
+
+<style type="text/css">
+div.icon_external_box {
+	position:absolute;
+	top: 10%;
+	left: 30%;
+	display: none;
+	z-index: 1000;
+	border: 3px solid #0066CC;
+	background: white;
+	width: 400px;
+	height: 520px;
+	overflow: scroll;
+	padding: 3px;
+}
+div.icon_item {
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin: 3px;
+	cursor: hand;
+	cursor: pointer;
+}
+</style>
+
+<script type="text/javascript">
+<!--
+var uagent    = navigator.userAgent.toLowerCase();
+var is_safari = ( (uagent.indexOf('safari') != -1) || (navigator.vendor == "Apple Computer, Inc.") );
+var is_ie     = ( (uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv) );
+var is_opera  = (uagent.indexOf('opera') != -1);
+var is_webtv  = (uagent.indexOf('webtv') != -1);
+var is_win    =  ( (uagent.indexOf("win") != -1) || (uagent.indexOf("16bit") !=- 1) );
+var ua_vers   = parseInt(navigator.appVersion);
+//insert_word("[test]", "[/test]", true);
+// GENERAL INSERT FUNCTION
+function insert_word(ibTag, ibClsTag, isSingle) {
+	p_obj = document.getElementById("item_location");
+	var isClose = false;
+	// It's IE!
+	if ((ua_vers >= 4) && is_ie && is_win)	{
+		if (p_obj.isTextEdit) {
+			p_obj.focus();
+			var sel = document.selection;
+			var rng = sel.createRange();
+			rng.colapse;
+			if((sel.type == "Text" || sel.type == "None") && rng != null) {
+				if (ibClsTag != "" && rng.text.length > 0) {
+					ibTag += rng.text + ibClsTag;
+				} else if(isSingle) {
+					isClose = true;
+				}
+				rng.text = ibTag;
+			}
+		} else {
+			if(isSingle) {
+				isClose = true;
+			}
+			p_obj.value += ibTag;
+		}
+	}
+	// It's MOZZY!
+	else if (p_obj.selectionEnd) { 
+		var ss = p_obj.selectionStart;
+		var st = p_obj.scrollTop;
+		var es = p_obj.selectionEnd;
+		if (es <= 2) {
+			es = p_obj.textLength;
+		}
+		var start  = (p_obj.value).substring(0, ss);
+		var middle = (p_obj.value).substring(ss, es);
+		var end    = (p_obj.value).substring(es, p_obj.textLength);
+		// text range?
+		if (p_obj.selectionEnd - p_obj.selectionStart > 0) {
+			middle = ibTag + middle + ibClsTag;
+		} else {
+			middle = ibTag + middle;
+			if (isSingle) {
+				isClose = true;
+			}
+		}
+		p_obj.value = start + middle + end;
+		var cpos = ss + (middle.length);
+		p_obj.selectionStart = cpos;
+		p_obj.selectionEnd   = cpos;
+		p_obj.scrollTop      = st;
+	}
+	// It's CRAPPY!
+	else {
+		if (isSingle) {
+			isClose = true;
+		}
+		p_obj.value += ibTag;
+	}
+	p_obj.focus();
+	return isClose;
+}
+-->
+</script>

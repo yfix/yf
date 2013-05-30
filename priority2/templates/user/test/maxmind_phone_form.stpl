@@ -1,0 +1,4 @@
+<form action="{action}" method="post">
+{user_box}<br />
+<input type="submit" name="go" value="GO!">
+</form>

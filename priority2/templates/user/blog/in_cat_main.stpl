@@ -1,0 +1,8 @@
+<h2>{cat_name} {rss_cat_button}</h2>
+
+<div align="center">
+	{items}
+
+{if("items" eq "")}{t(No entries yet!)}{/if}
+{if("pages" ne "")}<br />{t(Pages)}: {pages}<br />{/if}
+</div>

@@ -1,0 +1,40 @@
+<h3>{t(Database Manager)}: {t(Import SQL)}</h3>
+
+<div align="center">
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+{if("exec_success" ne "")}
+	<b style="color:green;">{t(Your query executed successfully)}</b><br />
+{/if}
+
+{if("exec_time" ne "")}	{t(Spent time)}: <b>{exec_time}</b> {t(secs)}<br />{/if}
+</div>
+
+{if("fetch_result" ne "")}
+<br />
+{t(Fetched result)}:<br />
+<div align="center">{fetch_result}</div>
+{/if}
+
+<br />
+
+{if("sql" ne "")}
+{t(Imported SQL)}:<br />
+<div style="font-family:fixedsys,monospace;background-color:#ccc;">
+{sql}
+</div>
+{/if}
+
+<h2>{t(Execute SQL)}</h2>
+
+<div align="center">
+	<form action="{form_action}" method="post">
+	<textarea name="sql" cols="50" rows="10" style="width:100%"></textarea>
+	<input type="submit" name="go" value="{t(GO)}">
+	</form>
+</div>
+
+<br />
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>

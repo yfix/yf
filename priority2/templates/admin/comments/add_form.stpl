@@ -1,0 +1,19 @@
+<h3 class="header">{t(Add your comment)}</h3>
+
+{if("error_message" ne "")}<div align="center" class="alert">{error_message}</div>{/if}
+
+<form method="post" action="{form_action}">
+	<table border="0" cellpadding="5" cellspacing="0" width="100%" align="center">
+		<tr>
+			<td width="80" valign=top><b>{t(Comment text)} :</b></td>
+			<td width="100%" valign=top><textarea name="text" rows="10" cols="50" style="width:100%;">{text}</textarea></td>
+		</tr>
+		<tr>
+			<td width="80" height="18" valign=top></td>
+			<td width="100%" height="18" valign=top> 
+				<input type="submit" value="    {t(Save)}     " />
+				<input type="reset" value="    {t(Clear)}     " />
+			</td>
+		</tr>
+	</table>
+</form>

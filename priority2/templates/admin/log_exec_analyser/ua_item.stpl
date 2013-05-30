@@ -1,0 +1,4 @@
+	<tr class="{bg_class}">
+		<td align="center">{hits}</td>
+		<td align="left">{text}</td>
+	</tr>

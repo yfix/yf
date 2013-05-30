@@ -1,0 +1,9 @@
+<div class='editform'>
+<form method='post' action='{form_action}' %enctype%>
+%items%
+	<div class='button_div'>
+		<input type='submit' value='{t(Save)}'>
+		<input type='button' value='{t(Back)}' onclick="window.location.href='{back_url}'">
+	</div>
+</form>
+</div>

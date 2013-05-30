@@ -1,0 +1,4 @@
+<div class="errors_main" align="center">
+	<b>{t(Some errors occured)}:</b>
+	<li>{text}</li>
+</div>

@@ -1,0 +1,11 @@
+<table width="120" height="120" style="margin:0px;padding:0px;margin-top:5px;">
+	<tr>
+		<td width="120" class="avatar" nowrap{if("use_ajax" eq 1)} onMouseover="ajaxtooltip('{user_id}', this, event, '320px');" onMouseout="hidetip(event);"{/if}>
+{if("as_link" eq 1)}<a href="{user_details_link}">{/if}
+{if('photo_src' ne '')}<img src="{photo_src}" border="0" hspace="0" vspace="0" alt="{user_name}" />{/if}
+{if("as_link" eq 1)}</a>{/if}
+{if('no_photo_middle' eq 1)}No Photo{/if}
+{if('no_photo_small' eq 1)}No Photo{/if}
+		</td>
+	</tr>
+</table>

@@ -1,0 +1,68 @@
+<input type="button" accesskey="b" value=" {t(B)}  " onclick="profy_bb_codes.simple_tag('B','{unique_id}')" class="codebuttons" id="B_{unique_id}" name="B_{unique_id}" style="font-weight: bold;" onmouseover="profy_bb_codes.hstat('bold','{unique_id}')" />
+<input type="button" accesskey="i" value=" {t(I)}  " onclick="profy_bb_codes.simple_tag('I','{unique_id}')" class="codebuttons" id="I_{unique_id}" name="I_{unique_id}" style="font-style: italic;" onmouseover="profy_bb_codes.hstat('italic','{unique_id}')" />
+<input type="button" accesskey="u" value=" {t(U)}  " onclick="profy_bb_codes.simple_tag('U','{unique_id}')" class="codebuttons" id="U_{unique_id}" name="U_{unique_id}" style="text-decoration: underline;" onmouseover="profy_bb_codes.hstat('under','{unique_id}')" />
+
+{if("display_font_family" eq 1)}
+<select name="f_family_{unique_id}" id="f_family_{unique_id}" class="codebuttons" onchange="profy_bb_codes.alter_font(this.options[this.selectedIndex].value,'FONT','{unique_id}')" onmouseover="profy_bb_codes.hstat('font','{unique_id}')">
+	<option value="0">{t(FONT)}</option>
+	<option value="Arial" style="font-family: Arial;">Arial</option>
+	<option value="Times" style="font-family: Times;">Times</option>
+	<option value="Courier" style="font-family: Courier;">Courier</option>
+	<option value="Impact" style="font-family: Impact;">Impact</option>
+	<option value="Geneva" style="font-family: Geneva;">Geneva</option>
+	<option value="Optima" style="font-family: Optima;">Optima</option>
+</select>
+{/if}
+
+{if("display_font_size" eq 1)}
+<select name="f_size_{unique_id}" id="f_size_{unique_id}" class="codebuttons" onchange="profy_bb_codes.alter_font(this.options[this.selectedIndex].value,'SIZE','{unique_id}')" onmouseover="profy_bb_codes.hstat('size','{unique_id}')">
+	<option value="0">{t(SIZE)}</option>
+	<option value="1">{t(Small)}</option>
+	<option value="7">{t(Large)}</option>
+	<option value="14">{t(Largest)}</option>
+</select>
+{/if}
+
+{if("display_font_color" eq 1)}
+<select name="f_color_{unique_id}" id="f_color_{unique_id}" class="codebuttons" onchange="profy_bb_codes.alter_font(this.options[this.selectedIndex].value,'COLOR','{unique_id}')" onmouseover="profy_bb_codes.hstat('color','{unique_id}')">
+	<option value="0">{t(COLOR)}</option>
+	<option value="blue" style="color: blue;">Blue</option>
+	<option value="red" style="color: red;">Red</option>
+	<option value="purple" style="color: purple;">Purple</option>
+	<option value="orange" style="color: orange;">Orange</option>
+	<option value="yellow" style="color: yellow;">Yellow</option>
+	<option value="gray" style="color: gray;">Gray</option>
+	<option value="green" style="color: green;">Green</option>
+</select>
+{/if}
+
+{if("display_extra_fields" eq 1)}
+<br />
+<input type="button" accesskey="h" value=" http:// " onclick="profy_bb_codes.tag_url('{unique_id}')" class="codebuttons" name="url" onmouseover="profy_bb_codes.hstat('url','{unique_id}')" />
+<input type="button" accesskey="g" value=" IMG " onclick="profy_bb_codes.tag_image('{unique_id}')" class="codebuttons" name="img" onmouseover="profy_bb_codes.hstat('img','{unique_id}')" />
+<input type="button" accesskey="e" value="  @  " onclick="profy_bb_codes.tag_email('{unique_id}')" class="codebuttons" name="email" onmouseover="profy_bb_codes.hstat('email','{unique_id}')" />
+<input type="button" accesskey="q" value=" {t(QUOTE)}  " id="QUOTE_{unique_id}" onclick="profy_bb_codes.simple_tag('QUOTE','{unique_id}')" class="codebuttons" name="QUOTE" onmouseover="profy_bb_codes.hstat('quote','{unique_id}')" />
+<input type="button" accesskey="p" value=" {t(CODE)}  " id="CODE_{unique_id}" onclick="profy_bb_codes.simple_tag('CODE','{unique_id}')" class="codebuttons" name="CODE" onmouseover="profy_bb_codes.hstat('code','{unique_id}')" />
+<input type="hidden" accesskey="l" value=" LIST " id="LIST_{unique_id}" onclick="profy_bb_codes.tag_list('{unique_id}')" class="codebuttons" name="LIST" onmouseover="profy_bb_codes.hstat('list','{unique_id}')" />
+<input type="button" accesskey="l" value=" SQL " id="SQL_{unique_id}" onclick="profy_bb_codes.simple_tag('SQL','{unique_id}')" class="codebuttons" name="SQL" />
+<input type="button" accesskey="t" value=" HTML " id="HTML_{unique_id}" onclick="profy_bb_codes.simple_tag('HTML','{unique_id}')" class="codebuttons" name="HTML" />
+{/if}
+
+{if("display_help_box" eq 1)}
+<br />
+<input type="text" name="helpbox_{unique_id}" id="helpbox_{unique_id}" size="50" maxlength="120" readonly="readonly" class="helpbox" value="" />
+{/if}
+
+{if("display_open_tags" eq 1)}
+<br />
+<small><b>{t(Open Tags)} :</b></small>&nbsp;
+<input type="text" name="tag_count_{unique_id}" id="tag_count_{unique_id}" size="3" maxlength="3" readonly="readonly" class="helpbox" value="0" />
+{/if}
+
+<br />
+<small>
+	<b><a href="javascript:profy_bb_codes.close_all('{unique_id}');" onmouseover="profy_bb_codes.hstat('close','{unique_id}')">{t(Close all Tags)}</a></b>&nbsp; 
+	<b><a href="javascript:profy_bb_codes.check_length('{unique_id}')">{t(Check Post Length)}</a></b>
+</small>
+
+{js_vars_code}

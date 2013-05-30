@@ -1,0 +1,109 @@
+{{--<h1>
+	{if("stpl_for_edit" eq 1)}{t(Edit Blog Entry)}{/if}
+	{if("stpl_for_edit" eq 0)}{t(Post a New Blog Entry)}{/if}
+</h1>--}}
+
+{include("blog/edit_post_note")}
+
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}" enctype="multipart/form-data" name="REPLIER">
+
+{if("community_select_box" ne "")}
+	<p class="first">
+		<label for="post_title">{t(Post into)}:<br /><small>({t(Your blog, or communitys)})</small></label>
+		{community_select_box}
+	</p>
+{/if}
+
+	<p {if("community_select_box" eq "")}class="first"{/if}>
+		<label for="post_title">{t(Title)}:<br /><small>({t('Up to %maxlen characters', %maxlen='{max_post_title}')})</small></label>
+		<input type="text" name="post_title" id="post_title" value="{post_title}" maxlength="{max_post_title}" />
+	</p>
+{if("blog_cats_box" ne "")}
+	<p>
+		<label for="blog_cats_box">{t(Category)}:</label>
+		<span>{blog_cats_box}  {tip('blog.general_category')}</span>
+	</p>
+{/if}
+{if("custom_cats_box" ne "")}
+	<p>
+		<label for="custom_cats_box">{t(Custom Category)}:</label>
+		<span>{custom_cats_box}  {tip('blog.custom_category')} <small><a href="{edit_settings_link}">{t(Add&frasl;Edit Categories)}</a></small></span>
+	</p>
+{/if}
+	<p>
+		<label for="bb_text">{t(Text)}: <br /><small>({t('Up to %textlength characters',%textlength='{max_post_text}')})</small></label>
+{if("bb_codes_block" ne "")}
+		{bb_codes_block}
+{/if}
+		<textarea id="bb_text" name="post_text" cols="50" rows="10">{post_text}</textarea>
+	</p>
+{if("max_num_tags" ne "")}
+	<p>
+		<label for="tags">{t(Tags)}: <br /><small>(max: <b>{max_num_tags}</b> tags, from <b>{min_tag_len}</b> to <b>{max_tag_len} symbols</b> each. One tag per line)</small></label>
+		<textarea id="tags" name="tags" cols="30" rows="{max_num_tags}">{tags}</textarea>
+	</p>
+{/if}
+	<p>
+		<label for="attach_image">{t(Attach Image)}: <br /><small>({t('JPEGs only, up to %maxfilesize bytes, max width:%maxwidth px, max height:%maxheight px',%maxfilesize='{max_attach_size}';%maxwidth='{max_width}';%maxheight='{max_height}')})</small></label>
+{if("attach_image_src" ne "")}
+		<span><img src="{attach_image_src}" border="0" /><br /><a href="{del_image_link}">Delete image</a></span>
+{/if}
+		<input type="file" name="attach_image" id="attach_image" />
+	</p>
+	<p>
+		<label for="mood_box">{t(Current Mood)}:</label>
+		<span>{mood_box} {t(Other)}: <input type="text" name="mood2" value="{mood2}" size="20" style="width:30%" /></span>
+	</p>
+	<p>
+		<label for="allow_comments_box">{t(Allow Comments)}:</label>
+		<span>{allow_comments_box}  {tip('blog.comments')}</span>
+	</p>
+	<p>
+		<label for="privacy_box">{t(Privacy)}:</label>
+		<span>{privacy_box}  {tip('blog.privacy')} <span id="friends_group" style="display:none"><br /><br />{friends_group_box}</span></span>
+	</p>
+	<p>
+		<label for="add_date">{t(Add date)}:<br /><small>(YYYY-MM-DD HH:MM:SS)</small></label>
+		<input type="text" name="add_date" id="add_date" size="20" maxlength="19" value="{add_date}" />
+	</p>
+{if("captcha_block" ne "")}
+	<p>
+		<label for="captcha_input">{t(CAPTCHA Image)}:</label>
+		{captcha_block}
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="submit" name="go" value="  {t(Post)}  " />
+		<input type="reset" value="  {t(Clear)}  " />
+	</div>
+</form>
+</div>
+
+<script type="text/javascript">
+	//privacy_box
+	
+	$(function(){
+		show_group();
+	
+		$("#privacy_box").change(function(){
+			show_group();
+		});
+	});
+	
+	function show_group(){
+		var privacy = $("#privacy_box option:selected").val();
+		
+		if((privacy == "4") || (privacy == "5")){
+			//alert("123");
+			
+			$("#friends_group").css("display", "inline");
+			
+		}else{
+			$("#friends_group").css("display", "none");
+		}
+	}
+
+</script>

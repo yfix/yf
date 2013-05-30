@@ -1,0 +1,81 @@
+{if("use_global_users" eq 0)}
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/tr/xhtml1/DTD/xhtml1-transitional.dtd">-->
+<html>
+<head>
+	<title>{t("chat_login")}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+</head>
+<body style="background: white;">
+{/if}
+
+<style type="text/css" id="profy_chat_style">@import url('{css_src}');</style>
+
+<script type="text/javascript" language="javascript" src="{const(WEB_PATH)}js/profy_colorer.js"></script>
+<script language="javascript" type="text/javascript">
+<!--
+// Cross-browser form required fields checking function
+function form_check(the_form) {
+	try {
+		var error_msg = '';
+		// Check login and password length
+		if (the_form.login.value.length > 32 || the_form.login.value.length < 2)
+			error_msg = '2 < {t("login")}< 32\n\n' + error_msg;
+		if (the_form.password.value.length > 32 || the_form.password.value.length < 4)
+			error_msg = '4 < {t("password")}< 32\n\n' + error_msg;
+		if (!the_form.color.value || !(the_form.color.value.match(new RegExp("^#[0-9A-F]{6}$", 'i')) || the_form.color.value.match(new RegExp("^[A-Z]{3,16}$", 'i'))))
+			error_msg = '{t("wrong_color")}\n\n' + error_msg;
+		// Show error or submit form
+		if (error_msg) alert ('{t("required_fields")} : \n\n' + error_msg);
+		else the_form.submit();
+	} catch (x) {alert('{t("internal_error")}');return false;}
+}
+function set_button_color (color) {
+	if (color) document.getElementById('color_select').style.background = color;
+}
+-->
+</script>
+
+<div id="profy_chat">
+
+<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+<form action="{form_action}" method="post" onsubmit="form_check(this);return false;">
+	<tr valign="middle">
+		<td align="center">
+			<table border="0" cellpadding="5" cellspacing="0">
+				<tr valign="middle">
+					<td align="center" colspan="2"><h3>{t("chat_login")}</h3></td>
+				</tr>
+				<tr>
+					<td align="right"><b>{t("login")}</b></td>
+					<td align="left"><input type="text" name="login" value="{login}" size="10" style="width:100px; height:20px; font-size:12px; padding:2px;" maxlength="32"></td>
+				</tr>
+				<tr>
+					<td align="right"><b>{t("password")}</b></td>
+					<td align="left"><input type="password" name="password" size="10" style="width:100px; height:20px; font-size:12px; padding:2px;" maxlength="32"></td>
+				</tr>
+				<tr>
+					<td align="right"><b>{t("room")}</b></td>
+					<td align="left">{rooms}</td>
+				</tr>
+				<tr>
+					<td align="right"><b>{t("color")}</b></td>
+					<td align="left">
+						<input type="hidden" name="color" value="#000000" size="10" id="selected_color" maxlength="16">
+						<input type="button" id="color_select" value="" style="width:50px;background:#000000;" onclick="profy_colorer.get('selected_color',this,'set_button_color');">
+					</td>
+				</tr>
+				<tr><td colspan="2" align="center"><input type="submit" value="{t("ENTER")}"></td></tr>
+				<tr><td colspan="2" align="center">&nbsp;</td></tr>
+				<tr><td colspan="2" align="center"><input type="button" value="{t("register")}" onclick="window.location.href='{register_url}'"></td></tr>
+			</table>
+		</td>
+	</tr>
+</form>
+</table>
+
+</div>
+{if("use_global_users" eq 0)}
+</body>
+</html>
+{/if}

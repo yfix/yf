@@ -1,0 +1,66 @@
+<style type="text/css">
+/* ###### (start) PROFY FORUM ITEMS ###### */
+#forum td {
+	padding: 2px;
+}
+#forum tr {
+	vertical-align: middle;
+}
+.forum1 {
+	background: #DFE6EC;
+}
+.forum2 {
+	background: #ffffff;
+}
+.forum_code {
+	background: #cccccc;
+	border: 1px solid black;
+	padding: 5px;
+	font: monospace;
+	color: blue;
+	margin: 10px;
+}
+.forum_quote {
+	background: #cccccc;
+	border: 1px solid black;
+	padding: 5px;
+	color: black;
+	margin: 5px;
+}
+.forum_new_post {
+	color: blue;
+	font: 20px Verdana;
+}
+.button {
+	font: 12px Tahoma;
+	font-weight: bold;
+	letter-spacing: 1px;
+}
+.big_font {
+	font-size: 14px;
+}
+.small_font {
+	font-size:10px;
+}
+.forum_smile {
+	color: yellow;
+	font: 12px Verdana;
+	font-weight: bold;
+	background: black;
+	margin: 0px 5px;
+}
+.forum_msg_head {
+	height: 5px;
+	text-align: right;
+	background: #eeeeee;
+	padding-right:5px;
+}
+.forum_title {
+	color: white;
+	font-weight: bold;
+}
+.forum_title_bg {
+	background: #0066CC;
+}
+/* ###### (end) PROFY FORUM ITEMS ###### */
+</style>

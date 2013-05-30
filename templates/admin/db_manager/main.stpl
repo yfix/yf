@@ -1,0 +1,146 @@
+<h3>{t(Execute SQL)}</h3>
+
+<div align="center">
+	<form action="{form_action}" method="post" enctype="multipart/form-data">
+	{t(Paste SQL here)}
+	<textarea name="sql" cols="50" rows="10" style="width:100%"></textarea>
+	<br /><br />
+	{t(Or select file to process)}<small>({t(Plain text, ZIP, GZIP allowed)})</small><br />
+	<input type="file" size="40" name="sql_file" value="">
+	<br /><br />
+	<input type="submit" name="go" value="{t(EXECUTE)}">
+	</form>
+</div>
+
+<div align="right">
+<a href="{backup_link}"><b>{t(Backup)}</b></a>
+</div>
+
+<h3>{t(All Tables List)} ({total})</h3>
+
+<div align="center">
+	<a href="{ajax_status_link}" id="ajax_status_link">{t(Refresh Tables Status)}</a>
+	<span id="ajax_loading" style="display:none;">{t(Loading)}... <img src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif"></span>
+</div>
+
+<table id="tables">
+	<thead>
+		<th></th>
+		<th>{t(Name)}</th>
+		<th>{t(Engine)}</th>
+		<th>{t(Collation)}</th>
+		<th>{t(Num Rows)}</th>
+		<th>{t(Data Size)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{tables}
+	</tbody>
+{if("tables" ne "")}
+	<tfoot>
+	<tr id="total_info">
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td nowrap><b>{total_rows}</b></td>
+		<td nowrap><b>{total_size}</b></td>
+		<td>&nbsp;</td>
+	</tr>
+	</tfoot>
+{/if}
+</table>
+
+
+	<input type="checkbox" name='check_all' onclick="check_all()" check_status="0" id="my_check_all">
+	<label for="my_check_all"><b>Select all</b></label> {actions_select_box}
+	
+	<br /><br />
+	<img id="loading" style="display:none" src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif"></img>
+	<span id="status_message"></span>
+
+<script type="text/javascript">
+<!--
+$(function(){
+	$("a#ajax_status_link").click(function(){
+		$("#ajax_loading").show();
+
+		$.post($(this).attr("href"), function(data) {
+			data = eval("(" + data + ")");
+
+			$("tr[id^=dbt_]").each(function() {
+				var _short_name = $(this).attr("id").substr(4);
+				var cur_data = data[_short_name];
+				if (!cur_data) {
+					return ;
+				}
+				$("td:eq(2)", this).html(cur_data["engine"]);
+				$("td:eq(3)", this).html(cur_data["collation"]);
+				$("td:eq(4)", this).html(cur_data["rows"]);
+				$("td:eq(5)", this).html(cur_data["data_size"]);
+			});
+
+			$("tr#total_info td:eq(4) b").html(data["__total_rows"]);
+			$("tr#total_info td:eq(5) b").html(data["__total_size"]);
+
+			$("#ajax_loading").hide();
+		})
+
+		return false;
+	});
+});
+
+
+function check_all (){
+	var check_status = $("#my_check_all").attr("check_status");
+	if(check_status == 0){
+		$("#tables input").attr("checked", true);
+		$("#my_check_all").attr("check_status", "1");
+	}else{
+		$("#tables input").attr("checked", false);
+		$("#my_check_all").attr("check_status", "0");
+	}
+}
+
+function group_action (){
+	var action = $("#group_action_select_box option:selected").val();
+	
+	if(action == 0){
+		return;
+	}
+	
+	// get selected tables
+	var tables = "";
+	$(".group_action:checked").each(function(){
+		tables += $(this).val() + ",";
+	});
+	
+	if(tables == ""){
+		alert("Please select tables!");
+		$("#group_action_select_box option:first").attr("selected", true);
+		return;
+	}
+	
+	if(!confirm(action + '?')){
+		$("#group_action_select_box option:first").attr("selected", true);
+		return;
+	}
+	
+	$("#loading").css("display", "");
+	$("#status_message").html(action);
+	
+	$.post("./?object=db_manager&action="+action,
+	  {
+		tables: tables
+	  },
+		function (data){
+		
+			$("#loading").css("display", "none");
+			$("#status_message").html(data);
+		}
+	);
+	
+}
+
+
+-->
+</script>

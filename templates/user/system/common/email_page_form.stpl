@@ -1,0 +1,28 @@
+<h1>{t(Email page to a friend)}</h1>
+
+{error_message}
+
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p class="first"> 
+		<label>{t(Your Name)}:&nbsp;</label>
+		<input name="name" type="text" value="{name}" size="50" />
+	</p>
+	<p>
+		<label>{t(Friend&#39;s Email)}:&nbsp;</label>
+		<input name="email" type="text" value="{email}" size="50" />
+	</p>
+	<p>
+		<label>{t(Your comment)}:&nbsp;<br /><small>({t(optional)})</small></label>
+		<input name="comment" type="text" value="{comment}" size="50" />
+	</p>
+	<div class="button_div">
+		<input type="hidden" name="message" value="{message}" />
+		<input type="submit" name="go" value="{t(Send)}" />
+	</div>
+</form>
+</div>
+
+<h2>{t(Page preview)}:</h2>
+
+<div style="border:1px dashed #aaa;">{page_preview}</div>

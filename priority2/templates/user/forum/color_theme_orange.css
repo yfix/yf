@@ -1,0 +1,249 @@
+#forum table {
+	border: 0;
+}
+#forum input,
+#forum textarea,
+#forum select {
+	background: transparent;
+	color: #000;
+}
+#forum select {
+	border: 0;
+}
+#forum .pagelink,
+#forum .pagelinklast,
+#forum .pagecurrent,
+#forum .minipagelink {
+	background: transparent;
+}
+#forum .pagelinklast {
+	background: transparent;
+}
+#forum .forumdesc,#forum .forumdesc a:link,#forum .forumdesc a:visited,#forum .forumdesc a:active {
+	background: transparent;
+	color: #000;
+}
+#forum .activeusers {
+	background: #fff;
+	border: 0px solid #cccccc;
+	color: #000;
+}
+#forum .signature {
+	background: transparent;
+	color: #339;
+}
+#forum .plainborder,
+#forum .tablepad {
+	background: transparent;
+}
+#forum .tablepad {
+	border: 0;
+}
+#forum .desc {
+	color: #000;
+}
+#forum .lastaction {
+	color: #434951;
+}
+#forum .online_users_list {
+	border: 1px solid #fff;
+	border-left: 0;
+	border-right: 0;
+}
+#forum .pformleft,
+#forum .pformright {
+	background: #f5f9fd;
+	border: 1px solid #c2cfdf;
+	border-bottom: 0;
+	border-left: 0;
+}
+#forum .formtable td.formright,
+#forum .pformright {
+	border-right: 0;
+}
+#forum .formtable td.formtitle,
+#forum .formsubtitle {
+	background: #F0C000;
+	border: 1px solid #9fb9d4;
+	border-bottom: 0;
+	border-left: 0;
+	border-right: 0;
+}
+#forum .formsubtitle {
+	border: 0;
+	color: #ffffff;
+}
+#forum .formtable td.formstrip {
+	background: #dde8f2;
+	border: 1px solid #9fb9d4;
+	border-left: 0;
+	border-right: 0;
+}
+#forum .borderwrap {
+	background: transparent;
+}
+#forum .borderwrap h3,
+#forum .maintitle,
+#forum .maintitle a {
+	background: transparent;
+	color: #F0C000;
+}
+#forum .maintitle p,
+#forum .formsubtitle p {
+	background: transparent;
+	border: 0;
+}
+#forum .maintitle a:link, 
+#forum .maintitle a:visited {
+	background: transparent;
+	color: #F0C000;
+}
+#forum .maintitle a:hover, 
+#forum .maintitle a:active {
+	background: transparent;
+	color: red;
+}
+#forum table th,
+#forum .borderwrap table th {
+	background: #F0C000;
+	color: #ffffff;
+}
+#forum .borderwrap table th a:link, #forum .borderwrap table th a:visited, #forum .borderwrap table th a:active, #forum .borderwrap table th a:hover,
+#forum .subtitle a:link, #forum .subtitle a:visited,  #forum .subtitle a:active, #forum .subtitle a:hover {
+	background: transparent;
+	color: #3a4f6c;
+}
+#forum .borderwrap h4 {
+	background: transparent;
+	border: 1px solid #fff;
+	border-bottom: 1px solid #5176b5;
+	border-top: 1px solid #5176b5;
+	color: #5176b5;
+}
+#forum .borderwrap p {
+	background: transparent;
+	border: 1px solid #ccc;
+}
+#forum td.formbuttonrow,
+#forum .borderwrap p.formbuttonrow {
+	background: transparent;
+	border-top: 1px solid #cccccc;
+}
+#forum td.formbuttonrow {
+	border-bottom: 0;
+	border-left: 0;
+	border-right: 0;
+}
+#forum .catend {
+	border-top: 2px solid #ccc;
+}
+#forum .itemend {
+	border-bottom: 1px solid #ccc;
+}
+#forum #main_footer {
+	background: transparent;
+	color: #000;
+}
+#forum #main_footer td {
+	color: #fff;
+}
+#forum #main_footer a:link,
+#forum #main_footer a:visited {
+	color: #fff;
+}
+#forum #submenu {
+	background: transparent;
+	border-top: 0;
+	color: #F0C000;
+}
+#forum #userlinks,
+#forum #userlinksguest {
+	background: #f0f5fa;
+	border: 1px solid #c2cfdf;
+}
+#forum #userlinksguest {
+	background: #f4e7ea;
+	border: 1px solid #986265;
+}
+#forum #submenu p,
+#forum #userlinks p,
+#forum #userlinksguest p {
+	background: transparent;
+	border: 0;
+}
+#forum #submenu a:link, 
+#forum #submenu  a:visited {
+	background: transparent;
+	color: #F0C000;
+}
+#forum #submenu a:hover, 
+#forum #submenu a:active {
+	background: transparent;
+	color: red;
+}
+#forum .toplinks {
+	background: transparent;
+	color: #000;
+}
+#forum .toplinks span {
+	background: #f0f5fa;
+	border: 1px solid #c2cfdf;
+	border-bottom: 0;
+	color: #000;
+}
+#forum .copyright {
+	background: #eee;
+}
+#forum .forum1 {
+	background: #dfe6ec;
+}
+#forum .forum2 {
+	background: #ffffff;
+}
+#forum .forum_code {
+	color: blue;
+	background: #ccc;
+	border: 1px dotted #eee;
+}
+#forum .forum_quote {
+	color: #333;
+	background: #eee;
+	border: 1px dotted #999;
+}
+#forum .forum_smile {
+	color: yellow;
+	background: black;
+}
+#forum table td.forum_post {
+	color: #333;
+	border: 0px;
+}
+#forum table td.forum_msg_head {
+	color: black;
+	background: #eeeeee;
+	border: 0px;
+	border-bottom: 1px dashed #999;
+}
+#forum .forum_title {
+	color: white;
+	background: #18617b;
+}
+#forum .reports_page {
+	background-color: #ffffff;
+	color: #767676;
+}
+#forum .reports_page .tborder {
+	border: 1px solid #808080;
+}
+#forum .reports_page .thead {
+	background-color: #eeeeee;
+}
+#forum .icon_forum {
+	color: #F0C000;
+}
+#forum .icon_forum_new {
+	color: red;
+}
+#forum .icon_forum_readonly {
+	color: #ddd;
+}

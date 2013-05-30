@@ -1,0 +1,12 @@
+<p class="subtitle">
+	<a href="{user_link}" class="column_title">{user_name}</a> - <a href="{full_link}" class="column_title">{title}</a> ({add_date})
+</p>
+<p align="left">
+	{summary}...
+{{--
+	<a href="{full_link}">{t(More)}...</a><br /><br />
+	<a href="{full_link}" class="actionlink">{t(Read the entire article)}...</a>&nbsp;
+	<a href="{full_link}" class="actionlink">{t(Comments)} ({num_comments})</a>&nbsp;
+--}}
+</p>
+

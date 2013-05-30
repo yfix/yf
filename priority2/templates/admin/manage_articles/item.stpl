@@ -1,0 +1,12 @@
+<tr class="{bg_class}">
+	<td><b>{id}</b></td>
+	<td>{if("member_url" ne "")}<a href="{member_url}" target="_new">{/if}{author_name}{if("member_url" ne "")}</a>{/if}</td>
+	<td><a href="{view_link}">{title}</a></td>
+	<td><small>{summary}</small></td>
+	<td align="center" nowrap>{add_date}</td>
+	<td align="center"><b>{status}</b></td>
+	<td align="center" nowrap>
+		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)} " /></a>&nbsp;
+		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)} ?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)} " /></a>&nbsp;
+	</td>
+</tr>

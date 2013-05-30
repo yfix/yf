@@ -1,0 +1,27 @@
+<form action="{form_action}" name="langselectorbox" method="post">
+	<input type="hidden" name="back_url" value="{back_url}">
+	<b>STPL inline edit</b>: {stpl_edit_box}<br />
+	<b>Locale vars inline edit</b>: {locale_edit_box}<br />
+	<b>Hide bottom console</b>: {hide_console_box}<br />
+	<b>GZIP output</b>: {force_gzip_box}<br />
+
+	<input type="submit" value="SAVE">
+</form>
+
+<p>NOTE: if global DEBUG_MODE is turned off - then these settings will not take effect.</p>
+<p>NOTE: these settings must be enabled in PROJECT_CONF:
+<pre>
+$GLOBALS['PROJECT_CONF'] = my_array_merge($GLOBALS['PROJECT_CONF'], array(
+	"locale" => array(
+		"TRACK_TRANSLATED"  => 1,
+	),
+	"debug_info" => array(
+		"_SHOW_NOT_TRANSLATED"  => 1,
+		"_SHOW_I18N_VARS"   => 1,
+	),
+	"tpl"	=> array(
+		"ALLOW_LANG_BASED_STPLS"	=> 1,
+	),
+));
+</pre>
+</p>

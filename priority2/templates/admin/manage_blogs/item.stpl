@@ -1,0 +1,12 @@
+<tr class="{bg_class}" id="del_row_{post_id}">
+	<td><input type="checkbox" name="items_to_delete[]" value="{post_id}"></td>
+	<td><b>{post_id}</b></td>
+	<td><small>{title}</small></td>
+	<td width="50%"><small>{text}</small></td>
+	<td align="center"><a href="{member_url}" target="_new">{user_nick}</a>{if("ban_popup_link" ne "")}<br /><br />{ban_popup_link}{/if}</td>
+	<td width="70" align="center">{add_date}</td>
+	<td align="center" nowrap>
+		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
+		<a href="{delete_link}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
+	</td>
+</tr>

@@ -1,0 +1,11 @@
+<form action="{form_action}" method="post">
+	<div class="editform">
+		<p class="first">
+			<label for="name">{t(Name)}</label>
+			<input type="text" id="name" name="name" value="{name}">
+		</p>
+		<div class="button_div">
+			<input type="submit" name="go" value="{t(Save)}" />
+		</div>
+	</div>
+</form>

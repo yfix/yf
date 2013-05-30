@@ -1,0 +1,48 @@
+{t(You have)} {num_unread_emails} {t(new unread messages in your mailbox. 
+Please)} <a href="{inbox_link}">{t(click here)}</a> {t(to read them)}.
+
+<div id="alert_box" align="center" style="display:none;">
+	<b>{t('You have %num new unread messages in your mailbox.',%num='{num_unread_emails}')}</b>
+	<br /><br />
+	<b><a href="{inbox_link}">[{t(Read now)}]</a>&nbsp; <a href="javascript:_close_alert();">[{t(Later)}]</a></b>
+	<b><a href="javascript:_close_alert();" style="position:absolute;top:2px;right:5px;">X</a></b>
+</div>
+
+
+<style type="text/css">
+#alert_box {
+	position: fixed;
+	top: 250px;
+	left: 35%;
+	right: 35%;
+	width: 30%;
+	display: none;
+	z-index: 1000;
+	border: 3px solid #0066CC;
+	background: #ffc;
+	overflow: hidden;
+	font-size: 14px;
+	padding: 20px;
+}
+#alert_box a {
+	text-decoration: none;
+}
+</style>
+<script type="text/javascript">
+<!--
+$(function(){
+	$("#alert_box").show("medium");
+	// Catch keyboard keys
+	$(document).bind("keyup", function(e){
+		// "Esc" key (27) - cancel editing
+		if (e.keyCode != 27) {
+			return true;
+		}
+		_close_alert();
+	});
+});
+function _close_alert() {
+	$("div#alert_box").css("display", "none");
+}
+-->
+</script>

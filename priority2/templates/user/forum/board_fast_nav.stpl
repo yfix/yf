@@ -1,0 +1,5 @@
+<div class="fast_nav_box">
+<form onsubmit="if(document.jumpmenu.fast_nav.value == -1){return false;}" action="{form_action}" method="post" name="jumpmenu">
+{fast_nav_box}<input type='submit' value='Go' class='button' />
+</form>
+</div>

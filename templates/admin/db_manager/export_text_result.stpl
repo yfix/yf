@@ -1,0 +1,13 @@
+<div align="center">
+	<textarea name="sql" id="sql" cols="50" rows="30" style="width:90%;color:blue;background:#eeeeee;font-family:monospace;font-size:11px;" wrap="off">{sql_text}</textarea>
+</div>
+
+<br />
+
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+
+<script type="text/javascript">
+$(function(){
+	$("#sql").focus().select();
+})
+</script>

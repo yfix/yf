@@ -1,0 +1,251 @@
+<script type="text/javascript">
+	var PATH_TO_IMAGE = '{const(WEB_PATH)}'+'uploads/forum/smilies/';
+</script>
+<div id="post_form">
+
+<form action="{form_action}" method='post' name='REPLIER' onsubmit='return ValidateForm()' enctype='multipart/form-data'>
+
+<input type='hidden' name='topic_id' value='{topic_id}' />
+<input type='hidden' name='forum_id' value='{forum_id}' />
+<input type='hidden' name='post_id' value='{post_id}' />
+<input type='hidden' name='parent_id' value='{parent_id}' />
+<input type='hidden' name='act' value='{act_name}' />
+
+<div class="borderwrap">
+
+<h2>
+{if("new_topic" eq 1)}{t(Post a new topic in)} {forum_name}{/if}
+{if("edit_post" eq 1)}{t(Editing a post in)} {forum_name}{/if}
+{if("add_reply" eq 1)}{t(Replying to)} {topic_name}{/if}
+</h2>
+
+{include("forum/new_post_note")}
+
+<table>
+	<colgroup>
+		<col width="20%" />
+		<col width="80%" />
+	</colgroup>
+{if("user_id" eq 0)}
+	<tr>
+		<td colspan="2" class="formsubtitle">{t(Unregistered User Info)}</td>
+	</tr>
+	<tr>
+		<td><label for="author_name">{t(Enter your Name)}</label></td>
+		<td><input type="text" id="author_name" size="40" maxlength="40" name="user_name" value="" tabindex="1" class="textinput" /></td>
+	</tr>
+{/if}
+{if("new_topic" eq 1)}
+	<tr>
+		<td><label for="topic_title"><b>{t(Topic Title)}</b></label></td>
+		<td><input type="text" id="topic_title" size="70" maxlength="50" name="title" value="" tabindex="5" /></td>
+	</tr>
+	<tr>
+		<td><label for="topic_desc"><b>{t(Topic Description)}</b></label></td>
+		<td><input type="text" id="topic_desc" size="70" name="desc" value="" tabindex="10" /></td>
+	</tr>
+{/if}
+{if("allow_polls" eq 1)}
+	<tr valign="top" id="poll_1">
+		<td><b>{t(Poll Question)}</b></td>
+		<td><input type="text" size="70" maxlength="250" name="poll_question" value="" /></td>
+	</tr>
+	<tr valign="top" id="poll_2">
+		<td>
+			<b>{t(Poll Choices)}</b><br />
+			<small>{t(Please put one answer per line)}. <br />
+			{t('Maximum %maxans answers', %maxans='20')}.<br /><br />
+			</small>
+		</td>
+		<td>
+			<textarea cols="70" rows="12" name="poll_choices"></textarea><br />
+{{--
+			<input type="checkbox" size="40" value="1" name="allow_disc" />&nbsp;<b>Make Poll Only?</b><br />
+			(No replies allowed)
+--}}
+		</td>
+	</tr>
+	<tr valign="top" id="poll_3" style="display:none;">
+		<td colspan="2"><a href="javascript:void(0)" onclick="return show_hide_poll();">{t(Show poll options)}</a></td>
+	</tr>
+{/if}
+{if("bb_codes_block" ne "")}
+	<tr id="bb_codes_block" valign="top" {if("wysiwyg_editor" ne "")}style="display:none;"{/if}>
+		<td></td>
+		<td>
+{bb_codes_block}
+		</td>
+	</tr>
+{/if}
+	<tr valign="top">
+		<td>
+			<label for="text"><b>{t(Post Text)}</b></label>
+{if("allow_smilies" eq 1)}
+			<br /><br />
+			<table>
+				<tr align='center'>
+{smile_icons}
+					<td colspan="3">&nbsp;</td>
+				</tr>
+			</table>
+			<br />
+{/if}
+		</td>
+		<td>
+{if("wysiwyg_editor" ne "")}
+			<span id="wysiwyg_switch" style="display:none;"><input type="checkbox" name="bbcode" onclick='if(this.checked){show_bbcodes(this)}else{hide_bbcodes(this)}' id="mode_switch_box" /> <label for="mode_switch_box">{t(Edit in simple mode)}</label></span>
+			<textarea id="text" name="text" style="display:none" tabindex="20" cols="70" rows="20" style="width:95%;">{text}</textarea>
+{/if}
+
+{wysiwyg_editor}
+
+{if("wysiwyg_editor" eq "")}
+			<textarea id="text" name="text" tabindex="20" cols="70" rows="20" style="width:95%;">{text}</textarea> 
+{/if}
+{if("wysiwyg_editor" ne "")}
+<script type="text/javascript">
+<!--
+// Try to show bb_codes block if FCKEditor not loaded
+try {
+	if (!$("iframe#text2___Frame").length) {
+		$("#bb_codes_block").css("display", $("<tr>").css("display"));
+	} else {
+		$("#wysiwyg_switch").css("display", "block");
+	}
+} catch (e) {}
+-->
+</script>
+{/if}
+		</td>
+	</tr>
+{if("allow_attaches" eq 1)}
+{if("attach_image_src" ne "")}
+	<tr>
+		<td valign="top">&nbsp;</td>
+		<td align="center" valign="top">
+			<img src="{attach_image_src}" border="0" />
+			<br /><a href="{del_attach_link}">{t(Delete image)}</a>
+		</td>
+	</tr>
+{/if}
+	<tr>
+		<td valign="top">
+			<label for="post_attach"><b>{t(Attach image)}</b></label>
+			<small>(JPEGs only, up to {attach_max_size} bytes, max width={attach_max_width} px, max height={attach_max_height} px)</small>
+		</td>
+		<td valign="top">
+			<input type="file" id="post_attach" name="attach" value="" size="50" />
+		</td>
+	</tr>
+{/if}
+{if("edit_post" eq 1)}
+	<tr>
+		<td valign="top"><b>{t(Edit Options)}</b></td>
+		<td valign="top"><label><input type="checkbox" name="enable_edit_by" value="1" {show_edit_by} /><small>&nbsp;<b>Add</b> the &#39;Edit by&#39; line in this post?</small></label></td>
+	</tr>
+{/if}
+	<tr>
+		<td colspan="2" align="center">
+{if("new_topic" eq 1)}<input type="submit" name="submit" value="{t(Post New Topic)}" tabindex="25" class="button" />&nbsp;{/if}
+{if("edit_post" eq 1)}<input type="submit" name="submit" value="{t(Save)}" tabindex="25" class="button" />&nbsp;{/if}
+{if("add_reply" eq 1)}<input type="submit" name="submit" value="{t(Add Reply)}" tabindex="25" class="button" />&nbsp;{/if}
+		</td>
+	</tr>
+</table>
+</div>
+</form>
+
+
+{include("forum/new_post_js")}
+
+
+{if("hide_poll_data" eq 1)}
+<script type="text/javascript">
+<!--
+var old_display_mode = $("#poll_1").css("display");
+
+$("#poll_1, #poll_2").css({"display": "none"});
+$("#poll_3").css({"display": old_display_mode});
+
+function show_hide_poll () {
+	$("#poll_1, #poll_2").css({"display": $("#poll_1").css("display") != "none" ? "none" : old_display_mode});
+	$("#poll_3").css({"display": $("#poll_3").css("display") != "none" ? "none" : old_display_mode});
+	return false;
+}
+-->
+</script>
+{/if}
+
+
+{if("new_topic" eq 0)}
+<br /><br />
+
+<div class="borderwrap">
+	<div class="maintitle" align="center">
+		{t('Last %numlastposts Posts',%numlastposts='10')} ( {t(In reverse order)} )
+	</div>
+
+	<br />
+
+{if("last_posts" ne "")}
+	<table>
+{foreach("last_posts")}
+		<tr valign="top">
+			<td class="row2" width="15%"><b>{#.user_name}</b></td>
+			<td class="row2" width="85%"><small>{t(Posted)} {#.posted_date}</small></td>
+		</tr>
+		<tr valign="top">
+			<td class="row1">&nbsp;</td>
+			<td class="row1"><span class="postcolor">{#.text}</span></td>
+		</tr>
+		<tr>
+			<td class="itemend" colspan="2"></td>
+		</tr>
+{/foreach}
+		<tr>
+			<td class="catend" colspan="2"></td>
+		</tr>
+	</table>
+{/if}
+{if("last_posts" eq "")}
+	<div align="center">{t(No last posts yet)}</div>
+{/if}
+
+</div>
+{/if}
+
+</div>
+
+<script type="text/javascript">
+<!--
+	function show_bbcodes(){
+		$("#bb_codes_block").css("display", $("<tr>").css("display"));
+		$("#text").css({"display":""});
+		$("iframe#text2___Frame").css({"display":"none"});
+
+		var oEditor = FCKeditorAPI.GetInstance('text2');
+		$("#text").text(oEditor.GetHTML());
+	}
+
+	function hide_bbcodes(){
+		$("#bb_codes_block").css({"display":"none"});
+		$("#text").css({"display":"none"});
+		$("iframe#text2___Frame").css({"display":""});
+
+		var oEditor = FCKeditorAPI.GetInstance('text2');
+		oEditor.SetHTML($("#text").text());
+	}
+
+$(function(){
+	$('input[name=submit]').click(function(){
+			var oEditor = FCKeditorAPI.GetInstance('text2');
+		
+			if($("iframe#text2___Frame").css("display") !== 'none'){
+				$("#text").text(oEditor.GetHTML());
+			}
+			// Do not allow new page
+			return true;
+	});
+});
+-->
+</script>

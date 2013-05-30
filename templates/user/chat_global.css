@@ -1,0 +1,140 @@
+html{
+	overflow-x: auto; /* fixes MSIE scrollbar bug DO NOT REMOVE, has no effect in Mozilla, or Opera */
+}
+#profy_chat {
+	margin:	0px;
+	padding: 0px;
+}
+#profy_chat form {
+	display: inline;
+	margin: 0; /* removes mystery form tag gapping */
+	padding: 0; /* removes mystery form tag gapping */
+}
+#profy_chat table, 
+#profy_chat tr, 
+#profy_chat td, 
+#profy_chat span, 
+#profy_chat div, 
+#profy_chat p, 
+#profy_chat strong, 
+#profy_chat small, 
+#profy_chat b, 
+#profy_chat a {
+	font-family: Verdana;
+	font-size: 11px;
+	color: #555555;
+}
+#profy_chat body {
+	margin: 0px;
+	padding:0px;
+}
+#profy_chat h3 {
+	font: 24px Verdana;
+	color: #555555;
+}
+#profy_chat .check {
+	border: 0px;
+	background: transparent;
+}
+#profy_chat div {
+	margin: 0px;
+	padding: 2px;
+	font-size: 10px;
+	font-family: Verdana;
+}
+#profy_chat div.bg1 {
+	background: #ffffff;
+}
+#profy_chat div.bg2 {
+	background: #f5f5f5;
+}
+#profy_chat div.users_m {
+	background: #0000ff;
+	color: #ffffff;
+	font-weight: bold;
+	text-align: center;
+}
+#profy_chat div.users_f {
+	background: #ff0000;
+	color: #ffffff;
+	font-weight: bold;
+	text-align: center;
+}
+#profy_chat div.total_users {
+	background: yellow;
+	color: #000000;
+	text-align: center;
+}
+#profy_chat div.total_users2 {
+	background: #ffcc00;
+	color: #000000;
+	text-align: center;
+}
+#profy_chat div.msg_bg1 {
+	background: #ffffff;
+}
+#profy_chat div.msg_bg2 {
+	background: #ffffff;
+}
+#profy_chat span.user_msg {
+	font-size: 12px;
+}
+#profy_chat input, 
+#profy_chat select, 
+#profy_chat textarea {
+	border: 1px solid black;
+	color: black;
+	font-size: 10px;
+	font-weight: bold;
+	font-family: verdana;
+	background: white;
+}
+#profy_chat a, 
+#profy_chat a:visited {
+	font-weight: bold;
+	text-decoration: underline;
+	color: #555555;
+}
+#profy_chat a:hover, 
+#profy_chat a:active {
+	font-weight:bold;
+	text-decoration: underline;
+	color: #555555;
+}
+#profy_chat .chat_user_ignore_0 {
+	color: #33aa00;
+}
+#profy_chat .chat_user_ignore_1 {
+	color: #ff0000;
+}
+#profy_chat .bg1 {
+	background:#f5f5f5;
+}
+#profy_chat .bg2 {
+	background:#fff;
+}
+#profy_chat span.smile {
+	color: yellow;
+	font: 12px Verdana;
+	font-weight: bold;
+	background: black;
+	margin: 0px 5px;
+}
+#profy_chat .header {
+	color: white;
+	background-color: #555555;
+	text-align: center;
+	text-transform: capitalize;
+}
+#profy_chat table.tbb td{
+	border: 1px solid #555555;
+}
+#profy_chat table.tbb {
+	border-collapse: collapse;
+}
+#profy_chat .td_header {
+	color: white;
+	background-color: #555555;
+	text-align: center;
+	text-transform: capitalize;
+}

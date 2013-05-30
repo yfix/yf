@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	{if("title" ne "")}<title>{title}</title>{/if}
+	<meta http-equiv="Content-Type" content="text/html; charset={conf('charset')}" />
+{execute(graphics,show_css)}
+</head>
+<body {if("full_width" ne "1")} id="empty_page"{/if}>
+<div {if("full_width" ne "1")} id="wrapper"{/if}>
+{text}
+{if("close_button" eq 1)}<div align="center"><a href="javascript:void(0)" onclick="window.close();">{t(Close)}</a></div>{/if}
+</div>
+</body>
+</html>

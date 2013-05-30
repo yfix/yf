@@ -1,0 +1,17 @@
+<h3>{t(Search)}</h3>
+
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p>
+		<label for="tag_name">{t(Tag)}:</label>
+		<input type="text" id="tag_name" name="tag_name" />
+	</p>
+	<p>
+		<label for="tag_name">{t(Search in)}:</label>
+		{search_categories_multibox}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Search)}">
+	</div>
+</form>
+</div>

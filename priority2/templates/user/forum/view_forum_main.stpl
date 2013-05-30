@@ -1,0 +1,208 @@
+<div class="borderwrap">
+
+<div class="maintitle">
+	{rss_forum_button} {forum_name}
+</div>
+
+{if("sub_forums_items" ne "")}
+
+<br />
+<b>{t(Sub-forums)}: </b>
+<br />
+
+<div class="borderwrap" id="cat_{cat_id}">
+	<table>
+		<colgroup>
+			<col align="center" width="1" />
+			<col align="left" width="60%" />
+			<col align="center" width="20" />
+			<col align="center" width="20" />
+			<col align="left" width="240" />
+		</colgroup>
+		<thead class="big">
+		<tr>
+			<th colspan="2" align="left">{t(Forum)}</th>
+			<th>{t(Topics)}</th>
+			<th>{t(Replies)}</th>
+			<th>{t(Last Post)}</th>
+		</tr>
+		</thead>
+{sub_forums_items}
+		<tr>
+			<td class="catend" colspan="5"></td>
+		</tr>
+	</table>
+</div>
+
+<br />
+{/if}
+
+
+{if("forum_closed" ne 1)}
+
+
+<table>
+	<tr>
+		<td width="70%">
+			<div>{forum_pages}&nbsp;</div>
+		</td>
+		<td class='nopad' align="right">
+{if("mark_forum_read_link" ne "")}<a href="{mark_forum_read_link}" class="actionlink">{t(Mark this forum as read)}</a>{/if}
+{if("subscribe_forum_link" ne "")}&nbsp;<a href="{subscribe_forum_link}" class="actionlink">{t(Subscribe to this forum)}</a>{/if}
+{if("add_topic_link" ne "")}&nbsp;<span nowrap><a href="{add_topic_link}" class="actionlink">{t(Start new topic)}</a></span>{/if}
+{if("new_poll_link" ne "")}&nbsp;<a href="{new_poll_link}" class="actionlink">{t(New poll)}</a>{/if}
+{if("forum_closed" eq 1)}&nbsp;<img src="images/forum/t_closed.gif" border="0"  alt="{t(Forum is read-only)}" />{/if}
+		</td>
+	</tr>
+</table>
+
+<table>
+	<colgroup>
+		<col width="1" align="center" />
+		<col width="0" align="center" />
+		<col width="60%" align="left" />
+		<col width="30" align="center" />
+		<col width="40" align="center" />
+		<col width="1" align="center" />
+		<col width="30%" align="left" />
+		<col align="center" width="0" />
+	</colgroup>
+	<thead class="big">
+	<tr>
+		<th>#</th>
+		<th>&nbsp;</th>
+		<th>{t(Topic Title)}</th>
+		<th>{t(Replies)}</th>
+		<th>{t(Author)}</th>
+		<th>{t(Views)}</th>
+		<th>{t(Last Action)}</th>
+		<th></th>
+	</tr>
+	</thead>
+{if("anounce_items" ne "")}
+	<tr>
+		<td class="subtitle" colspan="8"><b>{t(Announcements)}</b></td>
+	</tr>
+{/if}
+
+{anounce_items}
+
+{if("pinned_items" ne "")}
+	<tr>
+		<td class="subtitle" colspan="8"><b>{t(Important Topics)}</b></td>
+	</tr>
+{/if}   
+
+{pinned_items}
+
+{if("show_sub_header" ne "")}
+	<tr>
+		<td class="subtitle" colspan="8"><b>{t(Forum Topics)}</b></td>
+	</tr>
+{/if}   
+
+{forum_topics}
+
+	<tr>
+		<td colspan="8">
+			<table>
+				<tr>
+					<td width="50%" class="nopad">
+
+					</td>
+					<td width="50%" align="right" class="nopad">
+{if("is_moderator" eq 1)}
+	<form name="modform" method="post" action="{admin_action_link}" onsubmit="return check_delete();">
+		<input type="hidden" name="selected_ids" value="">
+		{t_act_box} &nbsp;
+		<input type="submit" name="gobutton" value="{t(With Selected)}" class="button" />
+	</form>
+{/if}
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="catend" colspan="8"></td>
+	</tr>
+</table>
+
+<!--end of borderwrap-->
+</div>
+
+<table>
+	<tr>
+		<td width="60%">
+			<div><br />{forum_pages}&nbsp;<br /><br /></div>
+		</td>
+		<td class='nopad' align="right">
+	{if("add_topic_link" ne "")}<a href="{add_topic_link}" class="actionlink">{t(Start new topic)}</a>{/if}
+{if("forum_closed" eq 1)}&nbsp;<img src="images/forum/t_closed.gif" border="0"  alt="Forum is read-only" />{/if}
+		</td>
+	</tr>
+</table>
+
+{forum_online}
+
+<br />
+
+<div class="activeusers">
+<table>
+	<tr>
+		<td width="25%" valign="top">
+			<img src="images/forum/f_norm.gif" border="0"  alt="{t(New Posts)}" />&nbsp;&nbsp;<span class="desc">{t(New Replies)}</span>
+			<br /><img src="images/forum/f_norm_no.gif" border="0"  alt="{t(No New Posts)}" />&nbsp;&nbsp;<span class="desc">{t(No New Replies)}</span>
+			<br /><img src="images/forum/f_hot.gif" border="0"  alt="{t(Hot topic)}" />&nbsp;&nbsp;<span class="desc">{t(Hot Topic)} ({t(New Replies)})</span>
+			<br /><img src="images/forum/f_hot_no.gif" border="0"  alt="{t(No new)}" />&nbsp;&nbsp;<span class="desc">{t(Hot Topic)} ({t(No New Replies)})</span>&nbsp;
+		</td>
+		<td width="25%" valign="top">
+			<img src="images/forum/f_closed.gif" border="0" alt="{t(Closed)}" />&nbsp;&nbsp;<span class="desc">{t(Locked Topic)}</span>
+			<br /><img src="images/forum/f_moved.gif" border="0" alt="{t(Moved)}" />&nbsp;&nbsp;<span class="desc">{t(Moved Topic)}</span>
+		</td>
+		<td align="right" width="50%"  valign="top">
+{board_fast_nav}
+{if("search_form_action" ne "")}
+			<form action="{search_form_action}" method="post" name="search">
+				<input type="hidden" name="forums" value="{forum_id}" />
+				<input type="hidden" name="q" value="result" />
+				<input type="hidden" name="result_type" value="posts" />
+				<input type="hidden" name="search_in" value="posts" />
+				<input type="text" size="30" name="keywords" value="{t(Enter Keywords)}" onfocus="this.value = '';" />
+				<input type="submit" value="{t(Search this forum)}" class="button" />
+			</form>
+{/if} &nbsp;
+			<br /><br />
+
+{forum_filter}
+
+		</td>
+	</tr>
+</table>
+</div>
+
+<script type="text/javascript">
+<!--
+// JQuery on DOM ready
+$(function(){
+	$("a.topic_last_post, a.topic_title").profy_tooltip({
+		ajax_id: "profy:post_id"
+		,ajax_prefix: "pp_"
+		,ajax_url: WEB_PATH + "?object=forum&action=compact_post_preview"
+		,delay: 500
+	});
+
+	$("a.topic_author").profy_tooltip();
+})
+-->
+</script>
+
+
+{/if}{{--end of if forum_closed--}}
+
+
+{if("is_admin" eq 1)}
+	<br />
+	<div align="center"><a href="{resync_forum_link}">{t(Resynchronize Forum)}</a></div>
+	<br /><br />
+{/if}

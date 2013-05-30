@@ -1,0 +1,67 @@
+<form name='fg' action='{form_action}' method='post'>
+	{groups_hidden} 
+	{friends}
+	{friends_map}
+	
+	{include("friends/group_editor")}
+	
+<table cellspacing='5'>
+	<tr valign='bottom'>
+		<td nowrap='1' colspan='2'><strong>{t(Your custom friends groups)}:</strong></td>
+		<td nowrap='1' colspan='2'><strong>{t(Not in group)}:</strong></td>
+		<td nowrap='1'><strong>{t(In group)}:</strong></td>
+	</tr>
+	<tr valign='top'>
+		<td>
+			<select name='list_groups' style='width: 150px;' size='15' onchange='groupClicked();'>
+				{groups}
+			</select>
+		</td>
+		<td valign='middle'>
+			<input type='button' value='{t(Move up)}' onClick='moveGroup(-1);' />
+			<br />
+			<br />
+			<input type='button' value='{t(Move down)}' onClick='moveGroup(1);' />
+		</td>
+		<td>
+			<select name='list_out' multiple='1' size='15'>
+				<option value=''>---------------</option>
+			</select>
+		</td>
+		<td valign='middle'>
+			<input type='button' onClick='moveIn();' value='&gt;&gt;' />
+			<br />
+			<br />
+			<input type='button' onClick='moveOut();' value='&lt;&lt;' />
+		</td>
+		<td>
+			<select name='list_in' multiple='1' size='15'>
+				<option value=''>---------------</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan='2'>
+			<nobr>
+			<input type='button' value='{t(New)}' onClick='newGroup();' />
+			<input type='button' value='{t(Delete)}' onClick='deleteGroup();' />
+			<input type='button' value='{t(Rename)}' onClick='renameGroup();' />
+			</nobr>
+			<br />
+			<nobr>
+			<!--<input type='button' value='Public' onClick='makePublic();' />
+			<input type='button' value='Private' onClick='makePrivate();' />-->
+			</nobr>
+		</td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
+
+<h2>{t(Done)}?</h2>
+<p>{t(When you are done, press the button below to save your changes)}.</p>
+<p>
+	<input type='submit' name="go" value='{t(Save Changes)}' />
+</p>
+</form>

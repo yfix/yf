@@ -1,0 +1,23 @@
+	<tr>
+		<td class="{css_class_1}">
+			<b><a href="{view_announce_link}">{announce_title}</a></b>
+			<div class="desc">{t(By)}: {creator_name}</div>
+		</td>
+		<td class="{css_class_1}" align="center">{if("start_date" ne "")}{start_date}{/if}{if("start_date" eq "")}--{/if}</td>
+		<td class="{css_class_1}" align="center">{if("end_date" ne "")}{end_date}{/if}{if("end_date" eq "")}--{/if}</td>
+		<td class="{css_class_1}">
+{if("all_forums" eq 1)}{t(All forums)}{/if}
+{if("all_forums" eq 0)}
+<div class="forumdesc">
+	{foreach("forums")}<a href='{#.forum_link}'>{#.forum_name}</a><br />{/foreach}
+</div>
+{/if}
+		</td>
+		<td class="{css_class_1}" align="center">
+			<form action="{form_action}" method="post">
+				<input type="hidden" name="item_id" value="{announce_id}">
+				<input type="submit" name="edit" value="{t(Edit)}">&middot; 
+				<input type="submit" name="delete" value="{t(Delete)}">
+			</form>
+		</td>
+	</tr>

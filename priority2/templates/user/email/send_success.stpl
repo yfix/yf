@@ -1,0 +1,56 @@
+<h1>{t(Sending message to)} {receiver_name} - {t(step 2)}.</h1>
+
+<div align="center">
+{if("show_email" eq 0)}
+	{if("send_result" eq 1)}
+			<p>{t(Message to)} {receiver_name} {t(has been sent)}.</p>
+	{/if}
+	{if("send_result" eq 0)}
+			<p>{t(Email delivery through our server has failed)}.</p>
+	{/if}
+{/if}
+{if("show_email" eq 1)}
+	{if("send_result" eq 1)}
+			<p>{t(Message to)} {receiver_name} {t(at)} 
+			<a href="mailto:{receiver_email}?subject={subject}">{receiver_email}</a> 
+			{t(has been sent using our server software, but)}...</p>
+	{/if}
+	{if("send_result" eq 0)}
+			<p>{t(Email delivery through our server has failed. 
+				Please use the form below to send it via your local client)}.</p>
+	{/if}
+			<span class="negative"><b>{t(Attention)}!</b></span> 
+
+			{t(Since many email providers (like aol.com, hotmail.com etc.) often block or filter out
+			incoming messages from our server we <b>strongly suggest</b> 
+			you to send a copy of your email to)} <b>{receiver_name} {t(at)} <a href="mailto:{receiver_email}?subject={subject}">{receiver_email}</a></b> 
+			{t(manually using your email client software (MS Outlook, Outlook Express, theBat! etc.). 
+			Just hit the "Send it!" button below to do it. 
+			Caution! This email will be sent from your local email account that you use on this computer. It may be unsafe in corporate environment.)}
+			<br />
+</div>
+<div align="center">
+	<div class="editform">
+	<form method="post" enctype="text/plain" action="mailto:{receiver_email}?subject={subject}">
+		<p>
+			<label>{t(Subject)}:</label>
+			<input type="text" name="Subject" value='{subject}' size="52" maxlength="150">
+		</p>
+		<p>
+			<label>{t(Message)}:</label>
+			<textarea rows="15" name="Message" cols="50">{message}</textarea>
+		</p>
+		<div class="button_div">
+			<input type="hidden" name="From" value="{sender_name} <{sender_email}>">
+			<br /><input type="submit" value="  Send it! ">
+		</div>
+	</form>
+	</div>
+</div>
+{/if}
+<div align="center">
+	{t(You may continue to browse other personals at the)} 
+	<a href="{prev_location}">{t(same location)}</a>, {t(from the)} 
+	<a href="./">{t(home page)}</a> {t(or return to your)} 
+	<a href="{mailbox_url}">{t(mailbox)}</a>.
+</div>

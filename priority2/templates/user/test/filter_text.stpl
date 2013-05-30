@@ -1,0 +1,11 @@
+<h1>Testing Text filter (trim long words)</h1>
+
+<b>Source:</b><br />
+<form action="{form_action}" method="post">
+<textarea name="text" cols="50" rows="5" style="width:95%;">{source}</textarea>
+<br />
+<input type="submit" value="Go" />
+</form>
+
+<b>Result:</b><br />
+<div>{result}</div><br />

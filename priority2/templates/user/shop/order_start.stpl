@@ -1,0 +1,34 @@
+<div class="cart">
+
+{if("products" ne "")}
+<table width="100%">
+	<col><col width="60%"><col>
+	<th>{t(Quantity)}</th>
+	<th>{t(Name)}</th>
+	<th>{t(Price)}</th>
+	<tbody>
+{foreach("products")}
+	<tr>
+		<td>{#.quantity}</td>
+		<td>
+			<a href="{#.details_link}">{#.name}</a>
+	{if("#.dynamic_atts" ne "")}<br /><small>{#.dynamic_atts}</small>{/if}
+		</td>
+		<td>{#.price}</td>
+	</tr>
+{/foreach}
+	</tbody>
+</table>
+{else}
+<div align="center">{t(No items)}</div>
+{/if}
+
+<hr />
+{if("products" ne "")}
+{t(Total)}: {total_price}
+{/if}
+	<div class="button_div">
+		<a href="{back_link}" title="{t(Back)}">{t(Back)}</a>
+		<a href="{next_link}" title="{t(Next)}" style="float: right;">{t(Next)}</a>
+	</div>
+</div>

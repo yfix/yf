@@ -1,0 +1,1 @@
+ALTER TABLE `new_sys_settings` CHANGE `type` `type` VARCHAR( 16 ) CHARACTER SET cp1251 COLLATE cp1251_general_ci NOT NULL DEFAULT 'text'

@@ -1,0 +1,2 @@
+{if("reput_stars" ne "")}{reput_stars}{/if}
+{if("popup_link" ne "")}<a href="javascript:openWin('{popup_link}',400,500);" class="actionlink" style="margin:auto 0px auto 0px; padding:auto 0px auto 0px;"><img src="images/rep_vote_2.gif" border="0" alt="Vote!" width="24" height="12"></a>{/if}

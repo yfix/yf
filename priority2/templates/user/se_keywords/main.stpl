@@ -1,0 +1,6 @@
+{if("keywords" ne "")}
+
+<p class="kw_bottom">{t(The latest site pages referred from the search engines)}:
+{foreach("keywords")}<a href="{#.site_url}" title="{#.text}">{#.text}</a> {/foreach}
+</p>
+{/if}

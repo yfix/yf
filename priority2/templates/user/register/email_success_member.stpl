@@ -1,0 +1,6 @@
+Hello {nick}, thank you for registering with us!
+Your account e-mail is: {email}
+Your password is: {password}
+Yours,
+{advert_name}
+Please visit us at {advert_url}

@@ -1,0 +1,4 @@
+{if("good" eq 1)}<img border="0" src="images/star_yellow_2.gif" width="12" height="12" alt="User reputation: {reput_value}">{/if}
+{if("bad" eq 1)}<img border="0" src="images/star_black_2.gif" width="12" height="12" alt="User reputation: {reput_value}">{/if}
+{if("grey" eq 1)}<img border="0" src="images/star_gray_2.gif" width="12" height="12" alt="User reputation: {reput_value}">{/if}
+{if("neutral" eq 1)}<img border="0" src="images/star_blue_2.gif" width="12" height="12" alt="User reputation: {reput_value}"> {/if}

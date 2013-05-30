@@ -1,0 +1,24 @@
+<h3>{t(Edit Tags)}</h3>
+
+<div align="center">
+
+{if("tags" ne "")}<br /><b>{foreach("tags")} <a href="{_val}">{_key}</a> {/foreach}</b><br />{/if}
+<br />
+
+<form action="{form_action}" method="post">
+
+	<b>{t(Edit tags)}:</b><small> (max: <b>{max_num_tags}</b> tags, from <b>{min_tag_len}</b> to <b>{max_tag_len} symbols</b> each)</small>
+	<br />
+
+	<textarea name="tags" cols="30" rows="5">{tags_to_edit}</textarea>
+	<br />
+
+	<input type="hidden" name="_not_for_comments" value="1">
+	<input type="hidden" name="tags_edited" value="1">
+	<input type="submit" value="{t(Save tags)}">
+</form>
+
+<br />
+<a href="javascript:window.close()">{t(Close window)}</a>
+
+</div>

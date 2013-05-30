@@ -1,0 +1,4 @@
+	<p>
+		<label for='%f_name%'>{t(%f_label%)}</label>
+		%field_by_type%
+	</p>

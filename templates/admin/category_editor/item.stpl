@@ -1,0 +1,17 @@
+<tr class="{bg_class}">
+	<td><a href="{items_link}"><b>{name}</b></a></td>
+	<td>{desc}</td>
+	<td><b style="text-transform:uppercase;">{type}</b></td>
+	<td>{num_items}</td>
+	<td><a href="{active_link}" class="change_active">
+{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}
+{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a>
+	</td>
+	<td nowrap>
+		<a href="{items_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Edit Items)}" /></a>&nbsp;
+		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
+		<a href="{delete_link}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
+		<a href="{export_link}" title="{t(Export)}"><img height="16" width="16" border="0" src="uploads/icons/folder_go.png" alt="{t(Export)}" /></a>&nbsp;
+	</td>
+</tr>

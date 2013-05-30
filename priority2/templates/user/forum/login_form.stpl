@@ -1,0 +1,52 @@
+<form action="{form_action}" method="post" name="LOGIN">
+	<input type="hidden" name="back_url" value="{back_url}" />
+	<div class="borderwrap">
+		<div class="maintitle"><img src="images/forum/nav_m.gif" border="0"  alt="&gt;" width="8" height="8" />&nbsp;{t(Log In)}</div>
+		<div class="formsubtitle">{t(Please enter your details below to log in)}</div>
+		<div class="errorwrap">
+			<h4>Attention!</h4>
+			<p>You must already have registered for an account before you can log in.<br />
+				If you do not have an account, you may register by clicking the 'register' link near the top of the screen</p>
+			<p><b>I've forgotten my password! <a href="{forgot_pswd_link}">Click here!</a></b></p>
+		</div>
+		<table cellspacing="1" width="100%">
+			<tr>
+				<td width="60%" valign="top">
+					<fieldset>
+						<legend><b>{t(Log In)}</b></legend>
+						<table cellspacing="1" width="100%">
+							<tr><td width="50%"><b>{t(Enter your user name)}</b></td>
+								<td width="50%"><input type="text" size="25" maxlength="64" name="login" class="forminput" /></td>
+							</tr>
+							<tr>
+								<td width="50%"><b>{t(Enter your password)}</b></td>
+								<td width="50%"><input type="password" size="25" name="pswd" class="forminput" /></td>
+							</tr>
+						</table>
+					</fieldset>
+				</td>
+				<td width="40%" valign="top">
+					<fieldset>
+						<legend><b>{t(Options)}</b></legend>
+						<table cellspacing="1" width="100%">
+							<tr>
+								<td width="10%"><input type="checkbox" name="remember_me" value="1" checked="checked" /></td>
+								<td width="90%"><b>{t(Remember me)}?</b><br /><span class="desc">{t(This is not recommended for shared computers)}</span></td>
+							</tr>
+							<tr>
+								<td width="10%"><input type="checkbox" name="private_mode" value="1" /></td>
+								<td width="90%"><b>Log in as invisible</b><br /><span class="desc">Don't add me to the active users list</span></td>
+							</tr>
+						</table>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<td class="formbuttonrow" colspan="2"><input class="button" type="submit" name="submit" value="Log me in" /></td>
+			</tr>
+			<tr>
+				<td class="catend" colspan="2"></td>
+			</tr>
+		</table>
+	</div>
+</form>

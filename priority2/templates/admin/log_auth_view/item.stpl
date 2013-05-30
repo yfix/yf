@@ -1,0 +1,8 @@
+<tr class="{bg_class}">
+	<td><a href="{for_user_link}"><b>{user_id}</b></a></td>
+	<td><a href="{member_url}" target="_new">{log_login}</a></td>
+	<td align="left"><a href="{for_ip_link}"><b>{log_ip}</b></a></td>
+	<td align="center" nowrap>{log_date}</td>
+	<td align="center"><small>{log_ua}</small></td>
+	<td align="center"><small>{log_referer}</small></td>
+</tr>

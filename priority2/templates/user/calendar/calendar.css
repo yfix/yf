@@ -1,0 +1,55 @@
+table.my_calendar {
+	background:#F8F8F8;
+	border: 1px solid black;
+	text-align:center;
+	font-size:0.8em;
+	color:#000000;
+}
+
+table.my_calendar th{
+	width: 14%;
+	text-align:center;
+	font-weight:normal;
+}
+
+table.my_calendar a,
+table.my_calendar a:link,
+table.my_calendar a:hover,
+table.my_calendar a:active,
+table.my_calendar a:visited, 
+table.my_calendar td {
+	font-size:0.8em;
+	color:#000000;
+	background: transparent;
+}
+table.my_calendar div{
+	margin: 0;
+}
+table.my_calendar div div {
+	padding: 0.5em;
+}
+
+#calendar .busy {
+	background-color: #FF7373;
+}
+#calendar .available {
+	background-color: #80FF80;
+}
+#calendar .travel {
+	background-color: #FFFF80;
+}
+
+#calendar td.cur_month {
+	background-color: #E8E8E8;
+}
+#calendar td.not_cur_month {
+	background-color: #CCCCCC;
+}
+
+#calendar .highlight_cur_day {
+	border:1px solid black;
+}
+#calendar a.day_click{
+	text-decoration: none;
+	display: block;
+}

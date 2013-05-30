@@ -1,0 +1,18 @@
+<h2>{t(Ticket Answers)}</h2>
+
+{if("comments" ne "")}
+<table width="100%">
+	{comments}
+</table>
+
+	{if("comments_pages" ne "")}
+		<hr />
+		<div align="center"><b>{t(Pages)}: {comments_pages}</b></div>
+		<br />
+	{/if}
+{/if}
+{if("comments" eq "")}
+	<div align="center">{t(No answers yet)}.</div>
+{/if}
+
+{add_comment_form}

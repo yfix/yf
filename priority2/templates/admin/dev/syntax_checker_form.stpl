@@ -1,0 +1,39 @@
+<div align="center">
+	<h2>{t(Syntax checker)}</h2>
+	<p>{t(Checks PHP syntax in framework files &#40classes, modules, admin modules&#41)}</p>
+</div>
+<br />
+
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div align="center">
+	<div class="editform" style="width:50%;">
+	<form action="{form_action}" method="post">
+		<p class="first">
+			<label>{t(Check syntax in)}:</label>
+			<span class="vertical">
+				{location_box}		
+			</span>	
+		</p>
+		<p>
+			<label>{t(Path to)} <em>php.exe</em></label>
+			<input type="text" value="{path_to_php}" name="path_to_php">
+		</p>
+		<p>
+			<label>{t(Current PHP version)}:</label>
+			{php_version}
+		</p>
+{if("cache_enabled" ne "1")}
+		<p class="full_width"><span class="negative">{t(Note)}:</span>
+		{t(System cache is disabled. It can increase execution time)}</p>
+<br />
+{/if}
+
+		<div class="button_div">
+			<input type="submit" value="{t(Check)}">
+		</div>
+	</form>
+	</div>
+</div>

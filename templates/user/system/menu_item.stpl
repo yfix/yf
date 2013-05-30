@@ -1,0 +1,24 @@
+<li {if("level_num" eq 0)} class="level0"{/if}>
+	<a href="{link}"{if("is_cur_page" eq "1")} class="menu_cur_page"{/if} {if("type_id" eq 2)} target="_blank"{/if}>
+		<span>{name}</span>
+	</a>
+{if("next_level_diff" eq 1)}
+{if("next_level" eq 1)}
+	<ul class="level1">
+{/if}
+{/if}
+
+{if("next_level_diff" eq 1)}
+{if("next_level" eq 0)}
+		</li>
+	</ul>
+	</li>
+{/if}
+{/if}
+
+{if("next_level_diff" ne 1)}
+</li>
+{/if}
+{if("is_last_item" eq 1)}
+	<div style="clear: both;"></div>
+{/if}

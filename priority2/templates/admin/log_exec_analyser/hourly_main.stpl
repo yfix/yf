@@ -1,0 +1,23 @@
+<h2>{if("is_archive" eq 0)}{t(Latest)}{/if}{if("is_archive" ne 0)}{t(Archived)}{/if} {t(hourly stats)} ({t(total)} {total} {t(entries)})</h2>
+
+<div align="center">
+<a href="{main_link}">{t(Back to analyser main)}</a>
+<br /><br />
+
+<table>
+	<thead>
+		<th>{t(Date)}</th>
+		<th>{t(Exec Time)}<br /><small>({t(average)})</small></th>
+		<th>{t(Hits)}</th>
+		<th>{t(Hosts)}</th>
+		<th>{t(Traffic)}<br /><small>({t(only)} HTML)</small></th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+</div>
+{if("pages" ne "")}
+<br /><br />
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}

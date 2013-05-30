@@ -1,0 +1,17 @@
+<h3>{t(Admin Messages)} ({total})</h3>
+
+{if("items" ne "")}
+<table>
+<tbody>
+{items}
+</tbody>
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No messages yet)}</div>{/if}
+
+{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br />
+<div align="center">
+	<a href="javascript:;" onclick="javascript:openWin('{popup_add_link}',400,300);">{t(Send Admin Message to User)}</a>
+</div>

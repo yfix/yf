@@ -1,0 +1,8 @@
+	<tr>
+		<td width="5%">#{id}</td>
+		<td>
+			<a href="{view_link}" target="_blank">{title}</a><br />
+			{t(Added)}: {add_date}, 
+			{t(User read)}: <b>{if("user_read" eq 1)}{t(YES)}{/if}{if("user_read" eq 0)}{t(NO)}{/if}</b><br />
+		</td>
+	</tr>

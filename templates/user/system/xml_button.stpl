@@ -1,0 +1,6 @@
+<a href="{feed_link}" title="{feed_name}"><img 
+	align="middle" border="0" height="16" width="16" src="images/xml.gif" alt="RSS Feed" /></a>
+<a href="http://www.google.com/reader/preview/*/feed/{feed_link}" target="_blank" title="Subscribe on Google Reader"><img 
+	align="middle" border="0" height="16" width="16" src="images/web/google.gif" alt="Subscribe on Google Reader" /></a>
+<a href="http://add.my.yahoo.com/content?url={feed_link}" target="_blank" title="Subscribe on Yahoo"><img 
+	align="middle" border="0" height="16" width="16" src="images/web/yahoo.gif" alt="Subscribe on Yahoo" /></a>

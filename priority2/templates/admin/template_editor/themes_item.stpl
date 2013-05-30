@@ -1,0 +1,14 @@
+<tr class="{bg_class}">
+	<td><a href="{theme_url}">{name}</a></td>
+	<td align="center">{num_stpls}</td>
+	<td nowrap>&nbsp;</td>
+	<td nowrap align="right">
+{if("location" ne "framework")}
+		<a href="{edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit Theme)}" /></a>&nbsp;
+		<a href="{delete_url}" onclick="return confirm('{t(Are you sure)}?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Theme)}" /></a>&nbsp;
+		<a href="{into_files_url}" onclick="return confirm('{t(Are you sure)}?');">{t(DB to Files)}</a>&nbsp;
+{/if}
+		<a href="{into_db_url}" onclick="return confirm('{t(Are you sure)}?');">{t(Files to DB)}</a>&nbsp;
+		<a href="{export_url}">{t(Export)}</a>&nbsp;
+	</td>
+</tr>

@@ -1,0 +1,54 @@
+<script type="text/javascript">
+<!--
+var f_obj    = document.REPLIER;
+var p_obj    = f_obj.text2 ? f_obj.text2 : f_obj.text;
+
+var MessageMax    = "";
+var Override      = "";
+
+MessageMax        = parseInt(MessageMax);
+if (MessageMax < 0) {
+	MessageMax = 0;
+}
+function emo_pop(){
+	window.open("{emo_pop_link}","Legends","width=250,height=500,resizable=yes,scrollbars=yes"); 
+}
+function bbc_pop(){
+	window.open("{bb_pop_link}","Legends","width=700,height=500,resizable=yes,scrollbars=yes"); 
+}
+function CheckLength(){
+	MessageLength  = p_obj.value.length;
+	message  = "";
+	if (MessageMax > 0){
+		message = "{t(Post)}: {t(The maximum allowed length is)} " + MessageMax + " {t(characters)}.";
+	} else{
+		message = "";
+	}
+	alert(message + "{t(You have used)} " + MessageLength + " {t(characters)}.");
+}
+function ValidateForm(isMsg){
+	MessageLength  = p_obj.value.length;
+	errors = "";
+	if (isMsg == 1) {
+		if (f_obj.msg_title.value.length < 2){
+			errors = "{t(You must enter a message title)}";
+		}
+	}
+	if (MessageLength < 2) {
+		errors = "{t(You must enter a message to post)}!";
+	}
+	if (MessageMax !=0) {
+		if (MessageLength > MessageMax) {
+			errors = "{t(The maximum allowed length is)} " + MessageMax + " {t(characters)}. {t(Current Characters)}: " + MessageLength;
+		}
+	}
+	if (errors != "" && Override == ""){
+		alert(errors);
+		return false;
+	} else {
+		f_obj.submit.disabled = true;
+		return true;
+	}
+}
+-->
+</script>

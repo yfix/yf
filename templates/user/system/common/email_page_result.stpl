@@ -1,0 +1,6 @@
+<h1>Email page to a friend</h1>
+
+<div align="center">
+{if("result" eq 1)}{t(Your email was sent successfully)}!{/if}
+{if("result" eq 0)}<b class="negative">{t(Cannot send email. Please contact the site admin)}!</b>{/if}
+</div>

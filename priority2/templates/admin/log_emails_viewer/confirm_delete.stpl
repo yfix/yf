@@ -1,0 +1,16 @@
+<form action='{confirmed}' method='post'>
+<fieldset class="warning">
+	<legend>{t(Warning)}</legend>
+	<p>
+		<b>{t(Delete multiple items)}</b>
+	</p>
+	<p>
+		<b>{t(This action will delete)} {num_records} {(items)}<br/>{t(Are you sure?)}</b>
+	</p>
+	<div align="center">
+		<input type="submit" value="{t(YES)}">
+		<input type="button" onclick="window.location.href='{cancel_del}'" value="{t(NO)}">
+		<input type="hidden" value="1" name="confirm">
+	</div>
+</fieldset>
+</form>

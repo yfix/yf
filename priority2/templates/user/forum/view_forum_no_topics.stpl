@@ -1,0 +1,7 @@
+<tr>
+	<td colspan="8" align="center">
+		<br />
+		<b>{t(No topics were found. This is either because there are no topics in this forum, or the topics are older than the current age cut-off)}.</b>
+		<br /><br />
+	</td>
+</tr>

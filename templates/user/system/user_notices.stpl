@@ -1,0 +1,9 @@
+<div align="center">
+<fieldset class="success">
+	<legend align="center">{t(Notice)}</legend>
+	<br />
+{foreach("items")}
+	<li>{_val}</li>
+{/foreach}
+</fieldset>
+</div>

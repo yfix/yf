@@ -1,0 +1,5 @@
+	<tr>
+		<td align="center" valign="top" class="small">{num}</td>
+		<td valign="top" class="small"><a href="{view_link}">{title}</a></td>
+		<td valign="top" class="small">{created}</td>
+	</tr>

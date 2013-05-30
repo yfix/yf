@@ -1,0 +1,40 @@
+	/**
+	* Display items
+	*/
+	function show () {
+		if (isset($_GET["id"]) && !isset($_GET["page"])) {
+			$_GET["page"] = $_GET["id"];
+			$_GET["id"] = null;
+		}
+
+		$sql = "SELECT * FROM `".db('%table%')."`";
+//		$filter_sql = $this->_create_filter_sql();
+		$sql .= strlen($filter_sql) ? " WHERE 1 ". $filter_sql : " ORDER BY `name` ASC ";
+
+		list($add_sql, $pages, $total) = common()->divide_pages($sql);
+
+		$Q = db()->query($sql. $add_sql);
+		while ($A = db()->fetch_assoc($Q)) {
+			$items[] = array(
+				"id"			=> $A["id"],
+				"bg_class"		=> $i++ % 2 ? "bg1" : "bg2",
+%items%
+				"active"		=> intval($A["active"]),
+				"view_url"		=> "./?object=".$_GET["object"]."&action=view&id=".$A["id"],
+				"edit_url"		=> "./?object=".$_GET["object"]."&action=edit&id=".$A["id"],
+				"delete_url"	=> "./?object=".$_GET["object"]."&action=delete&id=".$A["id"],
+				"active_url"	=> "./?object=".$_GET["object"]."&action=activate&id=".$A["id"],
+			);
+		}
+
+		$replace = array(
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
+			"error"			=> _e(),
+//			"filter"		=> $this->_show_filter(),
+			"items"			=> $items,
+			"pages"			=> $pages,
+			"total"			=> $total,
+			"add_link"		=> "./?object=".$_GET["object"]."&action=add",
+		);
+		return tpl()->parse($_GET["object"]."/main", $replace);
+	}

@@ -1,0 +1,14 @@
+#server_file_manager table tfoot td {
+	border-top: 1px solid #79B1D4;
+}
+
+#server_file_manager tr .d,
+#server_file_manager tr .d a {
+	color: #3E64D1;
+}
+#server_file_manager tr .f {
+	color: #000000;
+}
+#server_file_manager tr .l {
+	color: #009600;
+}

@@ -1,0 +1,26 @@
+<h1>{t(Friendship statistics)} ({total})</h1>
+{if("items" ne "")}
+<table align="center">
+	<col><col valign="top"><col valign="top"><col valign="top">
+	<thead>
+		<th>{t(Avatar)}</th>
+		<th>{t(Nick)}</th>
+		<th>{t(Event)}</th>
+		<th>{t(Date)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+
+{if("pages" ne "")}
+<br />
+<div align="center">{t(Pages)}: {pages}</div>
+{/if}
+
+{if("items" eq "")}
+<div align="center">No data</div>
+{/if}
+
+<div align="center"><a href="{back_url}">{t(Back)}</a></div>

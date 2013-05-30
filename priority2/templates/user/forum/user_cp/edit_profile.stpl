@@ -1,0 +1,148 @@
+<form action="{form_action}" method="post" enctype='multipart/form-data' onsubmit="return validate_forum_profile();" name="theForm" id="forum_profile_form">
+
+{if("global_users_mode" eq 0)}
+<div class="formsubtitle">{t(Your personal profile)}, {t(this section is optional)}</div>
+
+<table>
+	<tr>
+		<td class="pformleft"><b>{t(Your Date of Birth)}</b></td>
+		<td class="pformright">{birth_date_box}</td>
+	</tr>
+	<tr>
+		<td class="pformleft"><b>{t(Your website url)}</b></td>
+		<td class="pformright"><input type="text" size="40" maxlength="1200" name="user_website" value="{user_website}" /></td>
+	</tr>  
+	<tr>
+		<td class="pformleft"><b>{t(Your ICQ UIN)}</b></td>
+		<td class="pformright"><input type="text" size="40" maxlength="20" name="user_icq" value="{user_icq}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft"><b>{t(Your AOL identity)}</b></td>
+		<td class="pformright"><input type="text" size="40" maxlength="30" name="user_aim" value="{user_aim}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft"><b>{t(Your Yahoo identity)}</b></td>
+		<td class="pformright"><input type="text" size="40" maxlength="30" name="user_yim" value="{user_yim}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft"><b>{t(Your MSN Messenger identity)}</b></td>
+		<td class="pformright"><input type="text" size="40" maxlength="30" name="user_msnm" value="{user_msnm}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft"><b>{t(Your Location)}</b><br />(<a href="javascript:check_length('location');">{t(Check Length)}</a>)</td>
+		<td class="pformright"><input type="text" size="40" name="user_location" value="{user_location}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft" valign="top"><b>{t(Your interests)}</b><br />(<a href="javascript:check_length('interest');">{t(Check Length)}</a>)</td>
+		<td class="pformright"><textarea cols="60" rows="10" wrap="soft" name="user_interests">{user_interests}</textarea></td>
+	</tr>
+</table>
+{/if}
+{if("global_users_mode" eq 0)}
+<div class="formsubtitle">{t(Your Avatar Settings)}, {t(this section is optional)}</div>
+
+<p>Your avatar must be no bigger than {avatar_max_x} pixels by {avatar_max_y} pixels in size. 
+	Uploaded avatars from your computer must be no larger than {avatar_max_bytes} bytes.
+	<br />The following file types are allowed: <strong>{avatar_image_types}</strong>
+</p>
+
+<div class="formsubtitle">{t(Your Current Avatar)}</div>
+
+<div class="tablepad" align="center">
+{/if}
+{if("avatar_src" ne "")}
+	<img src='{avatar_src}' border='0' alt='' /><br /> 
+	<input type="button" onclick="window.location.href='{delete_avatar_link}'" name="remove" value="{t(Remove Avatar)}" />
+{/if}
+{if("global_users_mode" eq 0)}
+</div>
+<table cellspacing="0" width="100%">
+	<tr>
+		<td class="pformleft">{t(Upload a new image from your computer)}</td>
+		<td class="pformright"><input type="file" size="30" name="user_avatar" /></td>
+	</tr>
+</table>
+{/if}
+
+<h4 class="subtitle">{t(Your current Signature)}</h4>
+
+<div class="signature">{user_sig_with_bb}{if("user_sig_with_bb" eq "")}{t(--No signature yet--)}{/if}</div>
+
+<h4 class="subtitle">{t(Edit your signature)}</h4>
+
+<table cellspacing="0" width="100%">
+	<tr>
+		<td colspan="2" align="center">
+			<textarea cols="60" rows="12" name="user_sig" tabindex="3" class="textinput" >{user_sig}</textarea>
+			<br />
+			<small><a href="javascript:void(0)" onclick="check_length('sig');">{t(Check Length)}</a></small>
+		</td>
+	</tr>
+</table>
+
+<div align="center">
+	<input type="submit" name="submit" value="{t(Update Info)}" />
+</div>
+</form>
+
+<script type="text/javascript">
+<!--
+var location_max	= "1000";
+var interest_max	= "1000";
+var sig_max			= parseInt({max_sig_length});
+var form_obj		= document.getElementById("forum_profile_form");
+
+function check_length(type) {
+	if (typeof form_obj == "undefined") {
+		return false;
+	}
+	var message  = "";
+	if (type == "location" && typeof form_obj.user_location != "undefined") {
+		var location_length	= form_obj.user_location.value.length;
+		message = (location_max != 0) ? "Location: The maximum allowed length is " + location_max + " characters." : "";
+		alert(message + "  You have used " + location_length + " characters so far.");
+	}
+	if (type == "interest" && typeof form_obj.user_interests != "undefined") {
+		var interests_length = form_obj.user_interests.value.length;
+		message = (interest_max != 0) ? "Interests: The maximum allowed length is " + interest_max + " characters." : "";
+		alert(message + "  You have used " + interests_length + " characters so far.");
+	}
+	if (type == "sig" && typeof form_obj.user_sig != "undefined") {
+		var sig_length = form_obj.user_sig.value.replace(/\[[^\]]+\]/ig, "").length;
+		message = (sig_max != 0) ? "Interests: The maximum allowed length is " + sig_max + " characters." : "";
+		alert(message + "  You have used " + sig_length + " characters so far.");
+	}
+}
+
+function validate_forum_profile() {
+	if (typeof form_obj == "undefined") {
+		return false;
+	}
+	var errors = "";
+	if (typeof form_obj.user_location != "undefined") {
+		var location_length	= form_obj.user_location.value.length;
+		if (location_max != 0 && location_length > location_max) {
+			errors = "Location:  The maximum allowed length is " + location_max + " characters.  You have used: " + location_length;
+		}
+	}
+	if (typeof form_obj.user_interests != "undefined") {
+		var interests_length = form_obj.user_interests.value.length;
+		if (interest_max != 0 && interests_length > interest_max) {
+			errors = errors + "  Interests:  The maximum allowed length is " + interest_max + " characters.  You have used: " + interests_length;
+		}
+	}
+	if (typeof form_obj.user_sig != "undefined") {
+		var sig_length = form_obj.user_sig.value.replace(/\[[^\]]+\]/ig, "").length;
+		if (sig_max != 0 && sig_length > sig_max) {
+			errors = errors + "  Signature:  The maximum allowed length is " + sig_max + " characters.  You have used: " + sig_length;
+		}
+	}
+	if (errors != "") {
+	    alert(errors);
+    	return false;
+   	} else {
+		return true;
+	}
+}
+-->
+</script>

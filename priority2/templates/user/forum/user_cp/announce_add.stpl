@@ -1,0 +1,36 @@
+<form action="{form_action}" method="post">
+<input type="hidden" name="add" value="add" />
+<input type="hidden" name="save" value="save" />
+<div class="formsubtitle">{t(Add Announcement)}</div>
+<table>
+	<tr>
+		<td class="pformleft"><b>{t(Announcement Title)}</b></td>
+		<td class="pformright" valign="top"><input type="text" size="30" name="announce_title" value="{announce_title}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft"><b>{t(Start Date)} (YYYY-MM-DD)</b><div class="desc">{t(Leave blank to not use this date)}</div></td>
+		<td class="pformright" valign="top"><input type="text" size="10" name="announce_start" value="{announce_start}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft"><b>{t(End Date)} (YYYY-MM-DD)</b><div class="desc">{t(Leave blank to not use this date)}</div></td>
+		<td class="pformright" valign="top"><input type="text" size="10" name="announce_end" value="{announce_end}" /></td>
+	</tr>
+	<tr>
+		<td class="pformleft" valign="top"><b>{t(Activate in Forums)}</b><div class="desc">{t(You may choose more than one)}</div></td>
+		<td class="pformright" valign="top">{forums_box}</td>
+	</tr>
+	<tr>
+		<td class="pformleft" valign="top"><b>{t(Announcement Content)}</b></td>
+		<td class="pformright" valign="top"><textarea cols="50" class="textarea" rows="15" name="announce_post" tabindex="3">{announce_content}</textarea></td>
+	</tr>
+	<tr>
+		<td class="pformleft" valign="top"><b>{t(Options)}</b></td>
+		<td class="pformright" valign="middle">
+			<input type="checkbox" class="checkbox" name="announce_active" value="1" {if("announce_active" eq 1)}checked="checked"{/if} id="ann_active" />&nbsp;<label for="ann_active">{t(Enable this announcement)}</label>
+		</td>
+	</tr>
+	<tr>
+		<td class="formbuttonrow" colspan="2"><input type="submit" value="{t(Add Announcement)}" class="button" /></td>
+	</tr>
+</table>
+</form>

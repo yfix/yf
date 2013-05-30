@@ -1,0 +1,6 @@
+<p>Apply selected design</p>
+
+<form action="{form_action}" method="post">
+	{designs_box}
+	<input type="submit" value="GO">
+</form>

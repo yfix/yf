@@ -1,0 +1,43 @@
+<tr>
+	<td {if("changed" eq "1")}class="conf_changed"{/if} nowrap>{itip('{description}')}<b>{var_name}</b></td>
+	<td>
+	{if("type" eq "int" or "type" eq "float")}
+		<input type="text" size="10" name="{form_name}" value="{value}" />
+	{/if}
+	{if("type" eq "string")}
+		<textarea rows="2" cols="30" name="{form_name}">{value}</textarea>
+	{/if}
+	{if("type" eq "bool")}
+		<input type="radio" name="{form_name}" id="{var_name}_yes" value="1" {if("value" eq "1")}checked{/if}>
+			<label for="{var_name}_yes"><span class="positive">YES</span></label>
+		<input type="radio" name="{form_name}" id="{var_name}_no" value="0" {if("value" ne "1")}checked{/if}>
+			<label for="{var_name}_no"><span class="negative">NO</span></label>
+	{/if}
+	{if("type" eq "array")}
+		<textarea rows="2" cols="30" name="{form_name}">{value}</textarea>
+		<div class="json_value" profy:json_for="{var_name}" style="display:none;">{value_json}</div>
+	{/if}
+	{if("type" eq "enum")}
+		{enum_box}
+	{/if}
+	{if("type" eq "")}
+		{value}
+	{/if}
+	</td>
+	<td>
+	{if("type" ne "bool")}
+		{if("type" eq "array")}<small>{/if}
+		{default}
+		{if("type" eq "array")}</small>{/if}
+	{/if}
+	{if("type" eq "bool")}
+		{if("default" eq "1")}
+			<span class="positive">YES</span>
+		{else}
+			<span class="negative">NO</span>
+		{/if}
+	{/if}
+	</td>
+	<td><small>{type}</small></td>
+	<td>{description}</td>
+</tr>

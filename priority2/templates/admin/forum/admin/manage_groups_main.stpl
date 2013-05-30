@@ -1,0 +1,20 @@
+<div align="center">
+{if("items" ne "")}
+<table width="500">
+	<thead>
+		<th><b>{t(id)}</b></th>
+		<th><b>{t(Title)}</b></th>
+		<th><b>{t(Is Admin)}</b></th>
+		<th><b>{t(Is Moderator)}</b></th>
+		<th><b>{t(Users)}</b></th>
+		<th width="5%" align="center"><b>{t(Action)}</b></th>
+	</thead>
+{items}
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No groups yet)}</div>{/if}
+
+<br />
+	<a href="{add_link}">{t(Add new group)}</a><br /><br />
+
+</div>

@@ -1,0 +1,72 @@
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td><span class="big_font">{forum_name}</span>
+			<input type="button" value="{t(edit)}" onclick="window.location.href='{edit_link}'">
+			<input type="button" value="{t(delete)}" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{delete_link}'">
+			(<small><a href="{active_link}" class="change_active">{if("is_active" eq 1)}<b style="color:green;">{t(ACTIVE)}</b>{/if}{if("is_active" eq 0)}<b style="color:red;">{t(INACTIVE)}</b>{/if}</a></small>)
+		</td>
+	</tr>
+	<tr>
+		<td height="30">
+			<strong><a href="{cat_link}">{cat_name}</a></strong> &gt; 
+{foreach("parent_forums")}
+	<b><a href="{#.link}">{#.name}</a></b> &gt;
+{/foreach}
+			{forum_name}
+		</td>
+	</tr>
+</table>
+
+{if("sub_forums_items" ne "")}
+
+<br /><b>Sub-forums: </b><br />
+
+<table width="100%" border="0" align="center" cellpadding="3" cellspacing="0" class="tbb">
+	<tr class="forum_title_bg">
+		<td width="20" height="20"><br> </td>
+		<td width="100%" class="forum_title">{t(Forum_name)}</td>
+		<td width="20" align="center" class="forum_title">{t(Posts)}&nbsp;</td>
+		<td width="20" align="center" class="forum_title">{t(Topics)}&nbsp;</td>
+		<td width="100" align="center" class="forum_title">{t(Last post)}</td>
+		<td align="center" class="forum_title">{t(action)}</td>
+	</tr>
+{sub_forums_items}
+	<tr><td colspan="6" class="nb">&nbsp;</td></tr>
+</table>
+{/if}
+
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="3">
+	<tr> 
+		<td width="400" align="left">
+			<input type="button" onclick="window.location.href='{add_link}'" value="{t(Add_topic)}">
+{if("future_topic_link" ne "")}
+			<input type="button" onclick="window.location.href='{future_topic_link}'" value="{t(Add future topic)}">
+{/if}
+		</td>
+		<td align="right">{pages}</td>
+	</tr>
+</table>
+{if("topics" ne "")}
+<table width="100%" border="0" align="center" cellpadding="3" cellspacing="0" class="tbb">
+	<tr class="forum_title_bg"> 
+		<td width="15" height="20">&nbsp;</td>
+		<td width="500" class="forum_title">{forum_name}</td>
+		<td width="30" align="center" class="forum_title">{t(Author)}</td>
+		<td width="30" align="center" class="forum_title">{t(Posts)}</td>
+		<td width="30" align="center" class="forum_title">{t(Views)}</td>
+		<td width="150" align="center" class="forum_title">{t(Last_post)}</td>
+		<td align="center" class="forum_title">{t(action)}</td>
+	</tr>
+
+	{topics}
+
+</table>
+{/if}
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="3">
+	<tr> 
+		<td width="400" align="left">&nbsp;</td>
+		<td align="right">{pages}</td>
+	</tr>
+</table>
+
+{show_filter}

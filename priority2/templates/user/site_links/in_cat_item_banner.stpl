@@ -1,0 +1,6 @@
+	<tr>
+		<td align="center">
+			<a href="{site_url}" target="_blank"><img border="0" src="{banner_url}" alt="{img_alt}" /></a>
+			<br /><br />
+		</td>
+	</tr>

@@ -1,0 +1,15 @@
+<tr class="{bg_class}" id="dbt_{name}">
+	<td>
+		<input class="group_action" type="checkbox" name="item[]" value="{name}">
+	</td>
+	<td width="90%"><a href="{view_link}"><b>{name}</b></a></td>
+	<td>{engine}</td>
+	<td>{collation}</td>
+	<td>{num_rows}</td>
+	<td nowrap>{data_size}</td>
+	<td nowrap>
+		<a href="{view_link}" title="view"><img src="{CONST(WEB_PATH)}uploads/icons/db_manager/b_browse.png" alt="view" /></a>
+		<a href="{structure_link}" title="structure"><img src="{CONST(WEB_PATH)}uploads/icons/db_manager/b_props.png" alt="structure" /></a>
+		<a href="{export_link}"><img src="{CONST(WEB_PATH)}uploads/icons/folder_go.png" alt="{t(Export)}" /></a>&nbsp;
+	</td>
+</tr>

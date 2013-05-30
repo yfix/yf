@@ -1,0 +1,8 @@
+<!--PROFY_ERROR_MESSAGE_START-->
+<div align="center">
+	<div class="error">
+		<p>{t(Error)}</p>
+		<span>{foreach("items")}<li>{_val}</li>{/foreach}</span>
+	</div>
+</div>
+<!--PROFY_ERROR_MESSAGE_END-->

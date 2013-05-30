@@ -1,0 +1,21 @@
+{if("rss_board_button" ne "")}{t(Board latest posts RSS feed)}: {rss_board_button}{/if}
+<table id="gfooter">
+	<tr>
+		<td width="45%">
+{if("allow_skin_change" eq 1)}
+			<form action="{skin_form_link}" name="skinselectorbox" method="post">
+				<input type="hidden" name="back_url" value="{back_url}">
+{skin_id_box}
+			</form>
+{/if}
+{if("allow_lang_change" eq 1)}
+			<form action="{lang_form_link}" name="langselectorbox" method="post">
+				<input type="hidden" name="back_url" value="{back_url}">
+{lang_id_box}
+			</form>
+{/if}
+		</td>
+		<td width="10%" align="center">{{--<a href="{light_version_link}"><b>{t(Light Version)}</b></a>--}}</td>
+		<td width="45%" align="right"></td>
+	</tr>
+</table>

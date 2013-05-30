@@ -1,0 +1,10 @@
+{if("filter" ne "")}
+	<h3 class="subtitle">{t(Gallery Search)}</h3>
+	{filter}
+{/if}
+
+{items}
+
+{if("pages" ne "")}
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}

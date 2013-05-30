@@ -1,0 +1,29 @@
+<h3>{t(Comments)}</h3>
+
+{if("comments" ne "")}
+{{-- Testing comments block with scrolling, uncomment to try
+<div style="height:500px;overflow:scroll;overflow-x:auto;">--}}
+<table width="100%">
+{comments}
+</table>
+{{--</div>--}}
+	{if("comments_pages" ne "")}
+		<hr />
+		<div align="center"><b>{t(Pages)}: {comments_pages}</b></div>
+		<br />
+	{/if}
+{/if}
+
+{if("comments" eq "")}
+<p>{t(No comments yet)}. {t(If you have something valuable to say about this post, please, feel free to be the first one to leave a comment)}.</p>
+{/if}
+
+{if("add_comment_form" ne "")}
+	{add_comment_form}
+{else}
+<p>	
+<br />	
+	{t(Only site members can place comments)}.
+	Please, <a href="{login_link}">{t(login)}</a> first, if you want to submit a comment.
+</p>
+{/if}

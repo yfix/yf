@@ -1,0 +1,16 @@
+<table width="100%" border="0" align="center" cellpadding="3" cellspacing="0" class="tbb">
+	<tr> 
+		<td colspan="5" class="nb"><a href="{cat_link}"><span class="big_font">{cat_name}</span></a></td>
+	</tr>
+	<tr class="forum_title_bg">
+		<td width="20" height="20"><br> </td>
+		<td width="100%" class="forum_title">{t(Forum_name)}</td>
+		<td width="20" align="center" class="forum_title">{t(Posts)}&nbsp;</td>
+		<td width="20" align="center" class="forum_title">{t(Topics)}&nbsp;</td>
+		<td width="100" align="center" class="forum_title">{t(Last post)}</td>
+	</tr>
+
+	{forums}
+
+	<tr><td colspan="5" class="nb">&nbsp;</td></tr>
+</table>

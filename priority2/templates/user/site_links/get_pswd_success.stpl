@@ -1,0 +1,5 @@
+<p align="center">
+	Your password has been sent to {email}.
+	<br /><br />
+	<a href="{login_url}">Back to login</a>
+</p>

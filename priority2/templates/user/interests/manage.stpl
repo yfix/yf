@@ -1,0 +1,87 @@
+<p>{t(This section helps our members to find the best matches easily. By entering your interests here you will provide site members with another handy way to find your profile)}. </p>
+
+<form method="post" action="{form_action}" {if("js_check" eq 1)} onsubmit="return form_check(this);"{/if}>
+
+<table border="0" cellpadding="5" cellspacing="0" width="100%" align="center">
+	<tr valign="top">
+		<td>
+{foreach("act_keywords")}
+<label><input type="checkbox" name="act_keywords[{#.id}]" value="{#.id}" {if("#.checked" eq 1)} checked {/if} /> {#.word}</label><br />
+{if("#.need_div" eq 1)}</td><td>{/if}
+{/foreach}
+		</td>
+	</tr>
+</table>
+
+<h3>{t(Other Interests)}</h3>
+
+{if("error_message" ne "")}{error_message}{/if}
+
+<p>{t('You can add even more interests below. Please note, every interest should be a simple phrase of less then %maxlen characters long. For example',%maxlen='{max_length}')}:
+<br />{t(travelling)}
+<br />{t(skiing)}
+<br />{t(going to the cinema)}
+<br />{t(dancing)}
+<br />{t(nuclear physics)}.
+</p>
+<p>{t(Please make sure that every keyword phrase is entered on a separate line. Press)} "{t(Enter)}" {t(button on your keyboard after every interest phrase to do so. Keep in mind, you should type a set of short keywords, not the story about yourself or personal ad)}. 
+</p>
+
+<div class="editform">
+	<p>
+		<label>{t(Other Interests)}<br />
+			<small>{t('Up to %maxitems items, one phrase of less than %maxlen characters per line',%maxitems='{max_items}';%maxlen='{max_length}')}</small>
+		</label>
+		<textarea name="keywords" cols="35" rows="15">{keywords}</textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(Save)}" />
+	</div>
+</form>
+</div>
+<script type="text/javascript">
+<!--
+// Cross-browser form required fields checking function
+function form_check(the_form) {
+	try {
+		var error_msg		= '';
+		var text_to_check	= the_form["keywords"].value;
+		var max_num_lines	= parseInt('{max_items}');
+		var min_line_length = parseInt('{min_length}');
+		var max_line_length = parseInt('{max_length}');
+		var lines			= text_to_check.split("\n");
+		var num_lines		= lines.length;
+		// Check number of lines
+		if (num_lines > max_num_lines) {
+			error_msg += "Max number of keywords is " + max_num_lines + "\n\n" + "You have entered " + num_lines + "\n";
+		}
+		// Check lines length
+		if (text_to_check.length > 0 && num_lines > 0) {
+			for (i = 0; i < num_lines; i++) {
+				var _cur_line_text = lines[i];
+				if (_cur_line_text.length < min_line_length) {
+					error_msg += "keyword \"" + _cur_line_text + "\" is too short (min length=" + min_line_length + ")\n";
+				} else if (_cur_line_text.length > max_line_length) {
+					error_msg += "keyword \"" + _cur_line_text + "\" is too long (max length" + max_line_length + ")\n";
+				}
+			}
+		}
+		// Show error or submit form
+		if (error_msg) {
+			alert('{t(Please correct your data)} : \n\n' + error_msg);
+			return false;
+		} else {
+			the_form.submit();
+			return true;
+		}
+	} catch (x) {
+//		alert('{t(internal_error)}');
+		if (typeof the_form == "object") {
+			the_form.submit();
+			return true;
+		}
+		return false;
+	}
+}
+-->
+</script>

@@ -1,0 +1,8 @@
+<td align="center">
+{if("user_id" ne 0)}
+	{user_avatar}<br /><a href="{user_details_link}"><strong>{user_name}</strong></a>
+{/if}
+{if("user_id" eq 0)}<i>Guest</i>{/if}
+{if("is_you" eq 1)}<br /><b class="alarm">YOU</b>{/if}
+</td>
+{if("need_div" eq 1)}</tr><tr>{/if}

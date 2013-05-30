@@ -1,0 +1,43 @@
+<h3>{header_text}</h3>
+<table width="50%" border="0" align="center" cellpadding="0" cellspacing="5">
+	<form action="{form_action}" method="post">
+	<tr>
+		<td width="50%" align="right"><b>{t(name)}: </b></td>
+		<td align="left"><input type="text" name="name" value="{name}" size="50" maxlength="255"></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Description)}: </b></td>
+		<td align="left"><textarea name="description" cols="50" rows="10">{description}</textarea></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Parent)}: </b></td>
+		<td align="left">{parent_box}</td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Display_order)}: </b></td>
+		<td align="left"><input type="text" name="display_order" value="{display_order}" size="5"></td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Activity)}: </b></td>
+		<td align="left">{activity_box}</td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Postings)}: </b></td>
+		<td align="left">{postings_box}</td>
+	</tr>
+	<tr>
+		<td width="50%" align="right"><b>{t(Only for user groups)}: </b></td>
+		<td align="left">{user_groups_box}</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td align="left"><input type="submit" value="{t(save)}"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">{back}</td>
+	</tr>
+	</form>
+</table>

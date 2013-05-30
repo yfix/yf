@@ -1,0 +1,46 @@
+{if("items" ne "")}
+<form action="{form_action}" method="post" name="%form_name%">
+<table class="sortable_wrapper" align="center">
+	<thead>
+		<th>#</th>
+%thead_items%
+		<th>{t(Active)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+{foreach("items")}
+		<tr valign="top">
+			<td><input type="checkbox" name="items[]" value="{#.id}"></td>
+%tbody_items%
+			<td nowrap>
+				{if("#.active_url" ne "")}<a href="{#.active_url}" class="change_active">{/if}
+				{if("#.active" eq "1")}<span class="positive">{t(ACTIVE)}</span>{else}<span class="negative">{t(INACTIVE)}</span>{/if}
+				{if("#.active_url" ne "")}</a>{/if}
+			</td>
+			<td nowrap>
+				<a href="{#.view_url}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(View)}" /></a>&nbsp;
+				<a href="{#.edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
+				<a href="{#.delete_url}" onclick="return confirm('{t(Are you sure)} ?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
+			</td>
+		</tr>
+{/foreach}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="20">
+				<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+				&nbsp;<input type="submit" name="multi-delete" value="{t(DELETE SELECTED)}" onclick="return confirm('{t(Are you sure)}?');" />
+			</td>
+		</tr>
+	</tfoot> 
+</table>
+
+<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+</form>
+{else}
+<div align="center">{t(No records)}</div>
+{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+{if("add_link" ne "")}<br /><div align="center"><a href="{add_link}">{t(Add)}</a></div>{/if}

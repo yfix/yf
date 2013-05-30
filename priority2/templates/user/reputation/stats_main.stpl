@@ -1,0 +1,100 @@
+<h1>{t(Users Reputation Statistics)}</h1>
+
+{if("is_logged_in" eq 1)}
+<div align="right">
+	<br /><a href="{own_reput_link}" class="actionlink">{t(Go to my reputation stats)}</a>
+</div>
+{/if}
+
+<div>
+	<div class="column">
+
+{if("max_reput" ne "")}
+	<table>
+		<thead>
+			<th width="100%" colspan="2">{t(Users with max reputation points)}:</th>
+		</thead>
+	{max_reput}
+	</table>
+{/if}
+{if("max_reput" eq "")}
+	<p>{t(No users with reputation yet)}!</p>
+{/if}
+
+	</div>
+	<div class="column">
+
+	{if("min_reput" ne "")}
+	<table>
+		<thead>
+			<th width="100%" colspan="2">{t(Users with min reputation points)}:</th>
+		</thead>
+	{min_reput}
+	</table>
+	{/if}
+	{if("min_reput" eq "")}
+	<p>{t(No users with reputation yet)}!</p>
+	{/if}
+
+	</div>
+</div>
+<div>
+	<div class="column">
+{if("max_alt_power" ne "")}
+	<table>
+		<thead>
+			<th width="100%" colspan="2">{t(Users with max altering power)}:</th>
+		</thead>
+	{max_alt_power}
+	</table>
+{/if}
+{if("max_alt_power" eq "")}
+	<p>{t(No users with reputation yet)}!</p>
+{/if}
+
+</div>
+	<div class="column">
+{if("min_alt_power" ne "")}
+	<table>
+		<thead>
+			<th width="100%" colspan="2">{t(Users with min altering power)}:</th>
+		</thead>
+	{min_alt_power}
+	</table>
+{/if}
+{if("min_alt_power" eq "")}
+	<p>{t(No users with reputation yet)}!</p>
+{/if}
+
+	</div>
+</div>
+<div>
+	<div class="column">
+{if("top_voted_for" ne "")}
+	<table>
+		<thead>
+			<th width="100%" colspan="2">{t(Users max voted for)}:</th>
+		</thead>
+	{top_voted_for}
+	</table>
+{/if}
+{if("top_voted_for" eq "")}
+	<p>{t(No users with reputation yet)}!</p>
+{/if}
+
+	</div>
+	<div class="column">
+{if("top_by_votes" ne "")}
+	<table>
+		<thead>
+			<th width="100%" colspan="2">{t(Users with max number of votes)}:</th>
+		</thead>
+		{top_by_votes}
+	</table>
+{/if}
+{if("top_by_votes" eq "")}
+	<p>{t(No users with reputation yet)}!</p>
+{/if}
+
+	</div>
+</div>

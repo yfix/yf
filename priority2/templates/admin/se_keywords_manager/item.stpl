@@ -1,0 +1,9 @@
+<tr id="del_row_{id}">
+	<td><input type="checkbox" name="items[]" value="{id}"></td>
+	<td><b><a href="{engine_link}">{text}</a></b></td>
+	<td>{engine}</td>
+	<td><b>{hits}</b></td>
+	<td nowrap align="center">
+		<a href="{delete_link}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Record)}" /></a>&nbsp;
+	</td>
+</tr>

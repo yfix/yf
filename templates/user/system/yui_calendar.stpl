@@ -1,0 +1,91 @@
+<script type="text/javascript">
+<!--
+	var selected_dates			= "{selected_days}"; 			// ex. "02/02/2006,02/22/2006-02/23/2006"
+	var cur_month				= "{cur_month}";				// ex. "02/2006"
+	var min_days_from_now		= {min_days_from_now};			// ex. 30
+	var max_days_from_now		= {max_days_from_now};			// ex. 100
+	var cal_container_id		= "{cal_container_id}"; 		// ex. cal1Container
+	var locale_months_long		= new Array({month_names}); 	// ex. "January","February", ...
+	var locale_weekdays_short	= new Array({week_days_short}); // ex. "Monday","Tuesday", ...
+	var locale_start_weekday	= {start_weekday}; 				// ex. 0
+	var on_select_location		= "{on_select_link}"; 			// ex. http://somepath?date=
+-->
+</script>
+
+<link rel="stylesheet" href="{eval_code(WEB_PATH)}js/yui/calendar.css" type="text/css">
+
+<script type="text/javascript" src="{eval_code(WEB_PATH)}js/yui/YAHOO.js"></script>
+<script type="text/javascript" src="{eval_code(WEB_PATH)}js/yui/event.js" ></script>
+<script type="text/javascript" src="{eval_code(WEB_PATH)}js/yui/calendar.js"></script>
+<script type="text/javascript">
+<!--
+	var cal1;
+
+	// Set locale vars
+	YAHOO.widget.Calendar.prototype.customConfig = function() {
+		this.Config.Locale.MONTHS_LONG		= locale_months_long;
+		this.Config.Locale.WEEKDAYS_SHORT	= locale_weekdays_short;
+		this.Config.Options.START_WEEKDAY	= locale_start_weekday;
+	}
+
+	// Calendar initialization
+	function init() {
+		cal1 = new YAHOO.widget.Calendar("cal1", cal_container_id, cur_month, "");
+		cal1.Options.NAV_ARROW_LEFT		= "{eval_code(WEB_PATH)}js/yui/images/callt.gif";
+		cal1.Options.NAV_ARROW_RIGHT	= "{eval_code(WEB_PATH)}js/yui/images/calrt.gif";
+
+		cal1.onSelect = cal_on_select;
+
+		cal1.minDate = YAHOO.widget.DateMath.add(new Date(), YAHOO.widget.DateMath.DAY, -min_days_from_now);
+		cal1.maxDate = YAHOO.widget.DateMath.add(new Date(), YAHOO.widget.DateMath.DAY, max_days_from_now);
+
+		// Set restricted days if they are not selected
+		var start_time	= cal1.minDate.getTime();
+		var end_time	= cal1.maxDate.getTime();
+		var step		= 1000*60*60*24; // One day in milliseconds
+
+		var selected_days_array = cal1._parseDates(selected_dates);
+
+		for (var cur_time = start_time; cur_time <= end_time; cur_time+= step) {
+			var cur_date	= new Date(cur_time);
+			var is_selected = 0;
+			// Check if current day is selected
+			for (var d = 0; d < selected_days_array.length; ++d) {
+				var dateArray	= selected_days_array[d];
+				if (cur_date.getFullYear() == dateArray[0].toString() && cur_date.getDate() == dateArray[2].toString() && (cur_date.getMonth() + 1) == dateArray[1].toString()) {
+					is_selected = 1;
+					break;
+				}
+			}
+			var cur_month_text = cur_date.getMonth() + 1;
+			cur_month_text = cur_month_text.toString();
+			if (cur_month_text.length == 1) cur_month_text = "0" + cur_month_text;
+			var cur_text_date = cur_month_text + "/" + cur_date.getDate() + "/" + cur_date.getFullYear();
+			// Check if date is selected
+			if (is_selected) {
+				cal1.addRenderer(selected_dates, cal1.renderCellStyleHighlight2);
+			} else {
+				cal1.addRenderer(cur_text_date, cal1.renderBodyCellRestricted);
+			}
+		}
+		cal1.render();
+	}
+
+	// Method that called on date select
+	function cal_on_select () {
+		var cur_date = cal1.getSelectedDates()[0];
+		var cur_month_text = cur_date.getMonth() + 1;
+		cur_month_text = cur_month_text.toString();
+		if (cur_month_text.length == 1) cur_month_text = "0" + cur_month_text;
+		var cur_text_date = cur_date.getFullYear() + "-" + cur_month_text + "-" + cur_date.getDate();
+		// Redirect user to the specified location
+		window.location.href = on_select_location.replace(/{id}/i, cur_text_date);
+		return true;
+	}
+-->
+</script>
+<script type="text/javascript">
+<!--
+	try {document.body.onload=init;} catch (e) {alert('something wrong with calendar')}
+-->
+</script>

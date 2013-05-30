@@ -1,0 +1,6 @@
+	<tr>
+		<td align="center" valign="top" class="small">{num}</td>
+		<td valign="top" class="small"><a href="{view_link}">{t({where_comment})} - {title}</a></td>
+		<td valign="top" class="small">{text}</td>
+		<td valign="top" class="small">{created}</td>
+	</tr>

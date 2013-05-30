@@ -1,0 +1,39 @@
+<table border="0" width="100%">
+	<tr valign="top">
+		<td width="60%">
+{t(Name)}: <a href="{user_profile_link}" class="actionlink">{user_name}</a><br />
+<small>
+{t(Group)}: {user_group}<br />
+{t(Registration Date)}: {reg_date}<br />
+{t(Last Update)}: {last_update}<br />
+{t(Last Login)}: {last_login}<br />
+{t(Number of Logins)}: {num_logins}<br />
+</small>
+{if("gallery_link" ne "")}<a href="{gallery_link}" class="actionlink">{t(Gallery)}</a><br />{/if}
+{if("blog_link" ne "")}<a href="{blog_link}" class="actionlink">{t(Blog)}</a><br />{/if}
+{if("articles_link" ne "")}<a href="{articles_link}" class="actionlink">{t(Articles)}</a><br />{/if}
+{if("interests_link" ne "")}<a href="{interests_link}" class="actionlink">{t(Interests)}</a><br />{/if}
+
+{if("contact_link" ne "")}<br /><a href="{contact_link}" class="actionlink">{t(Contact)}</a>{/if}
+		</td>
+		<td>
+	{user_avatar}
+	{reput_points} {reput_text}<br />
+{if("alt_power" ne "")}{t(Alt power)}: {alt_power}<br />{/if}
+{if("activity_points" ne "")}{t(Site activity)}: {activity_points}<br />{/if}
+
+{if("is_admin" eq "1")}
+<hr />
+<small>
+	<a href="./?object=log_auth_view&action=show_for_user&id={user_id}" target="_blank">{t(View Login Stats)}</a><br />
+	<a href="./?object=check_multi_accounts&action=show_by_user&id={user_id}"  target="_blank">{t(View Multi Accounts)}</a><br />
+	<a href="./?object=log_user_errors_viewer&action=save_filter&user_id={user_id}" target="_blank">{t(User Errors)}</a><br />
+	{ban_popup_link}
+	{if("verify_link" ne "")}<br /><a href="{verify_link}">{t(Verify User Photo)}</a><br />{/if}
+	<a href="./?object=gallery&action=del_tags_by_user&id={user_id}" target="_blank" onclick="return confirm('{t(Are you sure)}?');">{t(delete all tags by this user)}</a><br />
+	<a href="./?object=admin_messages&action=show_popup&user_id={user_id}" target="_blank">{t(Send admin message)}</a>
+</small>
+{/if}
+		</td>
+	</tr>
+</table>

@@ -1,0 +1,50 @@
+<h1>{t(Welcome)}!</h1>
+
+{if("newest_users" ne "")}
+<h3 class="title">{t(New Users)}</h3>
+<div align="center"> 
+	{newest_users}
+</div> 
+{/if}
+
+{if("newest_news" ne "")}
+<h3 class="title">{t(Last News)}</h3>
+<div align="center"> 
+	{newest_news}
+</div> 
+{/if}
+
+{if("newest_forum_posts" ne "")}
+<h3 class="title">{t(New Forum Posts)}</h3>
+<div>
+	{newest_forum_posts}
+</div>
+{/if}
+
+{if("newest_gallery_photo" ne "")}
+<h3 class="title">{t(New Gallery Photos)}</h3>
+<div align="center">
+	{newest_gallery_photo}
+</div>
+{/if}
+
+{if("newest_blog_posts" ne "")}
+<h3 class="title">{t(New Blog Posts)}</h3>
+<div>
+	{newest_blog_posts}
+</div>
+{/if}
+
+{if("newest_article_post" ne "")}
+<h3 class="title">{t(New Article Posts)}</h3>
+<div>
+	{newest_article_post}
+</div>
+{/if}
+
+{if("newest_comments" ne "")}
+<h3 class="title">{t(New Comments)}</h3>
+<div>
+	{newest_comments}
+</div>
+{/if}

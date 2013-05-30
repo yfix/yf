@@ -1,0 +1,24 @@
+Hello {nick}, 
+
+thanks for registering with us!
+
+In order to protect our system from abuse we require 
+all the new registrations to be confirmed.
+
+Your confirmation code is:   {confirm_code}
+Please visit the following link to confirm your membership:
+
+{conf_link}
+
+AOL users please <a href="{aol_link}">click here</a>
+
+If the above links do not work, 
+go to {conf_form_url} and enter this confirmation code:
+
+{confirm_code}
+
+Yours,
+{admin_name} administration
+
+P.S. Please do not reply to this automatic message.
+If you never asked for our membership just ignore this email.

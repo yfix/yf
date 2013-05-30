@@ -1,0 +1,65 @@
+{error_message}
+
+<div class="editform">
+<form action="{form_action}" method="post" enctype="multipart/form-data">
+	<p class="first">
+		<label for="folders_box">{t(Photo folder)}&nbsp;{itip('Folders allow you to organize your gallery in a more structured way. If you have only a few photos you do not need it, but if you have several sets of photos, it is better to create several folders for them. Splitting your gallery to several subgalleries of 10-20 images each is a good practice.')}</label>
+		<span>{folders_box}  <a href="./?object=gallery&action=add_folder" class="actionlink">{t(Add folder)}</a></span>
+	</p>
+	<p>
+		<label for="photo_file">{t(Image file)}<br />
+			<small>
+				({t('JPEGs only, up to %maxfilesize bytes',%maxfilesize='{max_image_size}')})
+			</small>
+		</label>
+		<input type="file" id="photo_file" name="photo_file" size="30">
+	</p>
+	<p>
+		<label for="photo_name">{t(Photo title)}&nbsp;{itip('Optional field. Although you may leave it blank, photo title will allow your site pages to be better positioned on search engines.')}<br /><small>({t(up to)} {max_name_length} {t(characters)})</small></label>
+		<input type="text" id="photo_name" name="photo_name" value="{photo_name}" size="30" maxlength="{max_name_length}">
+	</p>
+	<p>
+		<label for="photo_desc">{t(Photo comments)}&nbsp;{itip('Optional field. You can write a short photo description here. Remember, although you may leave it blank, description texts allow your site pages to be better positioned on search engines.')}<br />
+			<small>
+				({t('up to %maxlen characters', %maxlen='{max_desc_length}')})
+			</small>
+		</label>
+		<textarea cols="50" rows="5" id="photo_desc" name="photo_desc">{photo_desc}</textarea>
+	</p>
+{if("max_num_tags" ne "")}
+	<p>
+		<label for="tags">{t(Tags)}&nbsp;{itip('Optional field. Tags allow you to further organize your gallery by adding simple one-two word descrtiptions of the content. Remember, although you may leave it blank, tags allow your site pages to be better positioned on search engines.')}<br /><small>(up to {max_num_tags} tags, from {min_tag_len} to {max_tag_len} characters each; one tag per line)</small></label>
+		<textarea id="tags" name="tags" cols="30" rows="{max_num_tags}">{tags}</textarea>
+	</p>
+{/if}
+
+{if("const.PROJECT_NAME" eq "SEXY_NET")}
+	<p>
+		<label for="show_in_ads_box">{t(Show in ads)}<br /><small>{t(Check if you want this photo to appear on your ads.)}</small></label>
+		<span>
+{if("show_ads_denied" ne "")}<span class="alarm">Photos from this folder are not allowed to be displayed on ads. Only images from public accessible folders can be included in ads. Change folder privacy settings if you want to enable this feature.</span>{/if}
+{if("show_ads_denied" eq "")}{show_in_ads_box} {tip('gallery.show_in_ads')}{/if}	
+		</span>
+	</p>
+{/if}
+{if("rate_enabled" eq 1)}
+	<p>
+		<label for="allow_rate_box">{t(Allow to rate this photo)}</label>
+		{allow_rate_box}
+	</p>
+{/if}
+{if("tagging_enabled" eq 1)}
+	<p>
+		<label for="allow_tagging_box">{t(Allow tagging)}</label>
+		{allow_tagging_box}
+	</p>
+{/if}
+	<p>
+		<label for="is_featured_box">{t(Featured photo)}&nbsp;{itip('Featured photos will be shown on the main page of your gallery. Check this field to show the best of your pics. You can have up to 15 featured images. If you have only a few photos in your entire gallery, we suggest to make all of them featured to show them on the first page.')}</label>
+		{is_featured_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="  {t(Upload)}  ">
+	</div>
+</form>
+</div>

@@ -1,0 +1,20 @@
+<h2>{t(Top User Agents)} ({t(total)} {total} {t(entries)})</h2>
+
+<div align="center">
+<a href="{main_link}">{t(Back to analyser main)}</a>
+<br /><br />
+
+<table>
+	<thead>
+		<th>{t(Hits)}</th>
+		<th>{t(User Agent)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+</div>
+{if("pages" ne "")}
+<br /><br />
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}

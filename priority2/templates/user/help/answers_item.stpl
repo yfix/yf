@@ -1,0 +1,24 @@
+{if("need_div" eq 1)}
+<tr><td colspan="2"><hr class="grey_line"  /></td></tr>
+{/if}
+<tr>
+	<td align="left" class="text_main" width="90%">
+		<a name="cid_{comment_id}" />
+{if("user_profile_link" ne "")}<a href="{user_profile_link}"><b>{user_name}</b></a>{/if}
+{if("user_profile_link" eq "")}<b>{user_name}</b>{/if}
+	</td>
+	<td align="right" width="120" class="text_main" nowrap>
+	{reput_text}
+	</td>
+</tr>
+<tr>
+	<td colspan="2" align="left" class="text_main">
+{comment_text}
+<div align="right">
+<small>{t(Posted on)}: {add_date}</small>
+<br />
+{if("edit_comment_link" ne "")}<a href="{edit_comment_link}" class="actionlink">{t(Edit)}</a>&nbsp;{/if}
+{if("delete_comment_link" ne "")}<a href="{delete_comment_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink">{t(Delete)}</a>{/if}
+</div>
+	</td>
+</tr>

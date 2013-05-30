@@ -1,0 +1,8 @@
+<h2>{t(SHOW CREATE TABLE FOR)} "{table_name}"</h2>
+
+<div style="font-family:fixedsys,monospace;background-color:#ccc;">
+{text}
+</div>
+
+<br />
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>

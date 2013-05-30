@@ -1,0 +1,38 @@
+<h2>
+{if("date_format_num" eq 0)}
+	{day} {month_name}, {year}
+{else}
+	{month_name} {day}, {year}
+{/if}
+</h2>
+
+<div style="width:50%;">
+
+	<b>{title}</b><br>
+{if("hours" ne "")}
+	<table align="center">
+		<thead>
+			<th>{t(From)}</th>
+			<th>{t(To)}</th>
+			<th>{t(Status)}</th>
+			<th>{t(Comment)}</th>
+		</thead>
+{foreach("hours")}
+		<tr
+	{if("#.status_id" eq "1")}class="busy"{/if}
+	{if("#.status_id" eq "2")}class="available"{/if}
+	{if("#.status_id" eq "3")}class="travel"{/if}
+		>
+			<td align="center">{#.from}</td>	
+			<td align="center">{#.to}</td>	
+			<td>{#.status}</td>
+			<td>{#.comment}</td>	
+		</tr>
+{/foreach}
+	</table>
+{/if}
+</div>
+
+<div align="center" id="calendar_day_month" style="width:50%;">
+{cur_month}
+</div>

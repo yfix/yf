@@ -1,0 +1,60 @@
+<h3>{t(Total)} ({total})</h3>
+
+{filter}
+
+<br />
+
+{if("items" ne "")}
+<form action="{form_action}" method="post" name="help_tickets_form">
+<table align="center">
+	<thead>
+		<th width="5%">ID</th>
+		<th>Name</th>
+		<th>Subject</th>
+		<th>Opened Date</th>
+		<th>Category</th>
+		<th>Admin Priority</th>
+		<th>Status</th>
+		<th>Number Of Replies</th>
+		<th>Asiigned To</th>
+		<th>Action</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+<div align="center">
+	<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'> SELECT ALL</label>
+	<input type='submit' value='Delete selected' name="delete">
+	<input type='submit' value='Close selected' name="close">
+	<input type='submit' value='Activate selected' name="activate">
+	<br /><br />
+	Reply Text: <textarea name="reply_text" cols="80" rows="3"></textarea>
+	<small><br />(You can use these macroses: %%user_name%%, %%account_type%%)</small>
+	<br />
+	<label><input type='checkbox' name="reply_close" value='1' checked> close tickets</label>
+	<input type='submit' value='Mass Reply' name="mass_reply">
+</div>
+
+</form>
+{/if}
+{if("items" eq "")}<div align="center">No tickets matching your criteria found</div>{/if}
+<br />
+{if("pages" ne "")}
+	<div align="center">Pages: {pages}</div>
+{/if}
+
+
+<script type="text/javascript">
+<!--
+$(function(){
+	$("a.ajax_ticket_info").profy_tooltip({
+		ajax_id: "profy:ticket_id"
+		,ajax_url: "{ajax_link}"
+		,ajax_prefix: "ticket_"
+	});
+});
+-->
+</script>

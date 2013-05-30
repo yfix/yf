@@ -1,0 +1,27 @@
+<div class="admin_home">
+	<div class="top_level">{t(Current Settings)}</div>
+	<p><label>{t(Site Enabled)}</label>
+		<span {if("site_enabled" eq "1")}class="positive">Yes{/if}
+		{if("site_enabled" eq "0")}class="negative">No{/if}</span></p>
+	<p><label>{t(Rewrite Mode)}</label>
+		<span {if("rewrite_mode" eq "1")}class="positive">Enabled{/if}
+		{if("rewrite_mode" eq "0")}class="negative">Disabled{/if}</span></p>
+	<p><label>{t(Output Caching)}</label>
+		<span {if("output_caching" eq "1")}class="positive">Enabled{/if}
+		{if("output_caching" eq "0")}class="negative">Disabled{/if}</span></p>
+	<p><label>{t(GZIP Compression)}</label>
+		<span {if("gzip_compress" eq "1")}class="positive">Enabled{/if}
+		{if("gzip_compress" eq "0")}class="negative">Disabled{/if}</span></p>
+	<p><label>{t(Compress output)}</label>
+		<span {if("compress_output" eq "1")}class="positive">Enabled{/if}
+		{if("compress_output" eq "0")}class="negative">Disabled{/if}</span></p>
+	<p><label>{t(Mail Debug)}</label>
+		<span {if("mail_debug" eq "1")}class="positive">Enabled{/if}
+		{if("mail_debug" eq "0")}class="negative">Disabled{/if}</span></p>
+	<p><label>{t(Language)}</label>{language}</p>
+	<p><label>{t(Charset)}</label>{charset}</p>
+	<p><label>{t(Admin E-mail)}</label>{admin_email}&nbsp;</p>
+{if("settings_link" ne "")}
+	<p><label></label><a href="{settings_link}">{t(Change Settings)}</a></p>
+{/if}
+</div>

@@ -1,0 +1,9 @@
+<table width="100%" height="100%">
+	<tr>
+		<td valign="center" align="center">
+{if("template" eq "")}<span style="color:red;">-- {t(Empty)} --</span>{/if}
+{template}
+<br /><a href="javascript:void(0)" onclick="window.close()">{t(Close)}</a>
+		</td>
+	</tr>
+</table>

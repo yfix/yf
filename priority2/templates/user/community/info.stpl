@@ -1,0 +1,27 @@
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p class="first">
+		<label>{t(Name)} / {t(Community ID)}</label>
+		{name}
+	</p>
+	<p>
+		<label for="title">{t(Title)}</label>
+		<input type="text" id="title" name="title" size="20" value="{title}"/>
+	</p>
+	<p>
+		<label for="about">{t(About community)}</label>
+		<textarea id="about" name="about" cols="50" rows="10">{about}</textarea><br />
+		<small>{t(Tell other users about yourself or your community)}.</small>
+	</p>
+	<p>
+		<label for="keywords">{t(Interests)}</label>
+		<textarea id="keywords" name="keywords" cols="50" rows="10">{keywords}</textarea><br />
+		<small>{t(Please make sure that every keyword phrase is entered on a separate line. Press &quot;Enter&quot; button on your keyboard after every interest phrase to do so. Keep in mind, you should type a set of short keywords, not the story about yourself or personal ad)}.</small>
+	</p>
+
+
+	<div class="button_div">
+		<input type="submit" name="go" value="  {t(Update Account)}  " />
+	</div>
+</form>
+</div>

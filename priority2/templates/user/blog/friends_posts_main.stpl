@@ -1,0 +1,18 @@
+<h2>
+{t(Bloglist of)} <a href="{profile_link}">{user_name}</a>'s {t(Friends)} ({total})
+&nbsp;{rss_friends_button}
+</h2>
+
+<h3 class="subtitle">{t(Latest Blog Entries)}:</h3>
+{items}
+{if("items" eq "")}
+<div align="center">{t(No latest entries yet)}!</div>
+{/if}
+
+{if("pages" ne "")}
+<br /><br />
+
+<div align="center">
+	<span class="pages">{t(Pages)}: {pages}</span>
+</div>
+{/if}

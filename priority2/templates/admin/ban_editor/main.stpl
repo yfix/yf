@@ -1,0 +1,30 @@
+<div align="center">
+
+{if("items" ne "")}
+<table>
+	<thead>
+		<th>{t(IP)}</th>
+		<th>{t(Date)}</th>
+		<th>{t(Admin)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+{foreach("items")}
+	<tr>
+		<td><b>{#.ip}</b></td>
+		<td>{#.date}</td>
+		<td><a href="{#.admin_link}">{#.admin_name}</a></td>
+		<td><a href="{#.delete_link}" onclick="javascript:return confirm('{t(Are you sure?)}')"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a></td>
+	</tr>
+{/foreach}
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No banned IPs yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)} : {pages}</div>{/if}
+
+<br />
+<div align="center">
+	<a href="{add_link}">{t(Add)}</a>
+</div>
+
+</div>

@@ -1,0 +1,36 @@
+		{if("is_logged_in" ne 0)}
+			<div class="left_menu">
+				<h4>{t(Site Menu)}</h4>
+<!-- LEFT_TOP_MENU -->
+{execute(graphics,_show_menu;name=user_side_menu)}
+<!-- /LEFT_TOP_MENU -->
+			</div>
+		{/if}
+		
+		{if("is_logged_in" eq 0)}
+			{include("small_login_form")}
+		{/if}
+
+		<div class="left_menu">
+			<br />
+			<a href="./?object=layout_settings">{t(layout settings)}</a> 
+		</div>
+
+			
+			<br />
+			<div>
+				{execute(unread,show)}
+			</div>
+
+		
+{{--				<h4>{t(Account)}</h4>
+<!-- LEFT_BOTTOM_MENU -->
+{execute(graphics,_show_menu;name=left_bottom_menu)}
+<!-- /LEFT_BOTTOM_MENU -->
+<br />
+--}}
+<br />
+
+<div id="widgets">
+	{execute(widgets,_show;column=left)}
+</div>

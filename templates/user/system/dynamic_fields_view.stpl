@@ -1,0 +1,4 @@
+<p>
+	<label>{t({label})}</label>
+	{value}
+</p>

@@ -1,0 +1,3 @@
+{t(Welcome)} 
+{if("edit_link" ne "")}<a href="{edit_link}">{/if}<b>{name}</b>{if("edit_link" ne "")}</a>{/if} 
+<small>({group})</small>

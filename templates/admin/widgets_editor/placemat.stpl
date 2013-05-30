@@ -1,0 +1,4 @@
+<span class="handle">
+	<h4>{t(Default content)}</h4>
+	{t(Drop widgets here and place them in order you want)}.
+</span>

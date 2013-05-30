@@ -1,0 +1,31 @@
+<form action='{form_action}' method='POST' name='REPLIER'>
+<input type='hidden' name='p_act' value='do_move' />
+<div class="borderwrap">
+	<div class="maintitle">{t(Move Posts)}: {old_forum_name} -&gt; {old_topic_name}</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<td class="row2" width="40%">
+				<b>{t(Enter topic ID)}</b>
+				<div class="desc">{t(This is the ID of the topic these posts will be moved into)}.<br />({t(Tip: You can simply copy the URL from your browser address bar when viewing the topic and paste it here)})</div>
+			</td>
+			<td class="row2" width="60%"><input type="text" size="50" name="topic_url" value="" /></td>
+		</tr>
+	</table>
+</div>
+<br />
+<div class="borderwrap">
+	<div class="maintitle">{t(Post Review)}</div>
+{foreach("posts")}
+	<div class="formsubtitle">{t(Posted by)} <b>{#.user_name}</b> on <b>{#.post_date}</b></div>
+	<div class="tablepad">{#.post_text}
+		<div align="right">
+			<b>{t(Move this post)}</b>&nbsp;&nbsp;
+			<input type="checkbox" name="post_{#.post_id}" value="1" checked="checked" />
+		</div>
+	</div>
+{/foreach}
+	<div class="formsubtitle" align="center">
+		<input type="submit" name="submit" value="{t(Move Posts)}" />
+	</div>
+</div>
+</form>

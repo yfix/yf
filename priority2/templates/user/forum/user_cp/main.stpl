@@ -1,0 +1,12 @@
+<h3 style="margin-top:0px;">{t(Your forum control panel)}</h3>
+
+{menu}
+
+{content}
+
+{if("board_fast_nav" ne "")}
+<div class="borderwrap">
+	<div class="row2"><div align="right">{board_fast_nav}</div></div>
+</div>
+<br />
+{/if}

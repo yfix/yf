@@ -1,0 +1,13 @@
+{if("items" ne "")}
+<div align="center">
+			<table cellspacing="0" cellpadding="2" border="0" width="100%" align="center">
+				<tr>{items}</tr>
+			</table>
+</div>
+{/if}
+
+{if("pages" ne "")}
+			<div align="center"><br /><strong>{t(Pages)}: {pages}</strong></div>
+{/if}
+{if("items" eq "")}<div align="right"><strong>{t(No interests yet)}</strong></div>{/if}
+

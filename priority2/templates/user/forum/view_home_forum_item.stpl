@@ -1,0 +1,23 @@
+<tr class="forum_item">
+	<td class="status">{forum_status_icon}</td>
+	<td>{{--{rss_forum_button} --}}<b>{if("forum_link" ne "")}<a href="{forum_link}">{forum_name}</a>{else}<b>{forum_name}</b>{/if}</b>
+{if("is_private" eq 1)}<small>({t(Private forum)})</small>{/if}
+		<br />
+{if("forum_desc" ne "")}
+		<span class="forumdesc">{forum_desc}</span>
+		<br />
+{/if}
+{if("has_sub_forums" ne "")}
+		<small class="sub_forums_list">{t(Sub-forums)}: {foreach("sub_forums")} <a href="{#.view_link}">{#.name}</a> {/foreach}</small>
+{/if}
+{if("moderators_list" ne "")}
+		<small>{t(Moderators)}: {moderators_list}</small>
+{/if}
+	</td>
+	<td align="center"><small>{forum_num_topics}</small></td>
+	<td align="center"><small>{forum_num_posts}</small></td>
+	<td><small>{forum_last_post}</small></td>
+</tr>
+<tr>
+	<td class="itemend" colspan="5"></td>
+</tr>

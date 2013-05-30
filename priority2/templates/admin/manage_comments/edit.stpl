@@ -1,0 +1,18 @@
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+		<p class="first">
+			<label>{t(Comment text)}:</label>
+			<textarea name="text" rows="10" cols="50">{text}</textarea>
+		</p>
+		<div class="button_div">
+			<input type="submit" value="{t(Save)}" />
+			<input type="reset" value="{t(Clear)}" />
+		</div>
+</form>
+</div>
+
+<div align="center"><a href="{back_url}">{t(Back)} </a></div>

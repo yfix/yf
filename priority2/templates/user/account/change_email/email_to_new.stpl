@@ -1,0 +1,16 @@
+Hi,
+
+You asked us to change you account email on file, this action is to be confirmed.
+
+Your confirmation code is: {confirm_code}
+
+Please visit the following link to confirm this change:
+{confirm_link}
+If the above links do not work, 
+go to {manual_url} and enter the confirmation code:
+{confirm_code} there
+
+Yours,
+{const(SITE_ADVERT_NAME)} - {const(SITE_ADVERT_URL)}
+
+P.S. Please do not reply to this automatic message.

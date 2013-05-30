@@ -1,0 +1,23 @@
+<div class="formsubtitle">{t(Current Announcements)}</div>
+<div class="borderwrapm">
+<table cellspacing="1" width="100%">
+	<tr>
+		<th width="35%">{t(Title)}</th>
+		<th align="center" width="10%">{t(Starts)}</th>
+		<th align="center" width="10%">{t(Ends)}</th>
+		<th width="25%">{t(Forums)}</th>
+		<th width="15%">&nbsp;</th>
+	</tr>
+{if("items" eq "")}
+	<tr><td class="row1" colspan="5">{t(No announcements)}</td></tr>
+{/if}
+{if("items" ne "")}{items}{/if}
+	<tr>
+		<td class="formbuttonrow" colspan="5">
+			<form action="{form_action}" name="mutliact" method="post" name="add_announce">
+			<input type="submit" name="add" value="{t(Add Announcement)}">
+			</form>
+		</td>
+	</tr>
+</table>
+</div>

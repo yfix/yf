@@ -1,0 +1,16 @@
+{catch("_tmp")}{eval_code($GLOBALS['no_page_header']=1)}{/catch}
+<h1>Community - {name}</h1>
+<h5>{title}</h5>
+<div align="center">
+{if("join_link" ne "")}<a href="{join_link}">{t(Join)}</a>{/if} 
+</div>
+<br />
+{items}
+
+{if("items" eq "")}
+	<div align="center">{t(No posts yet)}!</div>
+{/if}
+
+{if("pages" ne "")}<div align="center"><br />{t(Pages)}: {pages}<br /></div>{/if}
+
+

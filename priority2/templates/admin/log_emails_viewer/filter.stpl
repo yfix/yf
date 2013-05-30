@@ -1,0 +1,44 @@
+<div class="filter">
+<fieldset>
+<legend>{t(Filter)}</legend>
+	<form action='{save_action}' method='post'>
+	<div class="column">
+		<p>
+			<label for="">{t(User ID)}</label>
+			<td><input type="text" id="user_id" name="user_id" value="{user_id}"></td>
+		</p>
+		<p>
+			<label for="email_from">{t(Email From)}</label>
+			<input type="text" id="email_from" name="email_from" value="{email_from}">
+		</p>
+		<p>
+			<label for="email_to">{t(Email To)}</label>
+			<input type="text" id="email_to" name="email_to" value="{email_to}">
+		</p>
+		<p>
+			<label for="error_text">Error Message</label>
+			<input type="text" id="error_text" name="error_text" value="{error_text}" size="40">
+		</p>
+	</div>
+	<div class="column">
+		<p>
+			<label for="success_box">{t(Sent successful)}</label>
+			{success_box}
+		</p>
+		<p>
+			<label for="sort_by_box">{t(Sort By Field)}</label>
+			{sort_by_box}
+		</p>
+		<p>
+			<label for="sort_order_box">{t(Sort order)}</label>
+			{sort_order_box}
+		</p>
+	</div>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}">
+		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+		<input type="button" onclick="window.location.href='{delete_sel}'" value="{t(DELETE ALL FILTERED)}">
+	</div>
+</form>
+</fieldset>
+</div>

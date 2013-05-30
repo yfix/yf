@@ -1,0 +1,14 @@
+<h3>Test synonimizer</h3>
+
+<form action="{form_action}" method="post">
+
+<b>Source:</b><br />
+<textarea cols="50" rows="5" style="width:100%;" name="source">{source}</textarea><br />
+
+<b>Result:</b><br />
+<textarea cols="50" rows="10" style="width:100%; height:200px" name="result">{result}</textarea><br />
+<BR>
+
+<input type="submit" name="go" value="GO!">
+
+</form>

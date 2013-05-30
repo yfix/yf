@@ -1,0 +1,23 @@
+<h1>{t(FAQ)} ({t(Frequently Asked Questions)})</h1>
+
+{cats_header}
+<br />
+<hr />
+
+{foreach("cats_items")}
+<table border="0" cellpadding="0" align="center" width="100%">
+	<tr>
+		<td align="left"><b>{cats_items.cat_name}</b><a name="cat_id_{cats_items.cat_id}" /></td>
+	</tr>
+{cats_items.faqs_texts}
+</table>
+
+<br />
+{/foreach}
+
+{if("cats_items" eq "")}<div align="center">{t(No FAQs found)}</div>{/if}
+{{--
+{if("pages" ne "")}
+	<div align="center">{pages}</div>
+{/if}
+--}}

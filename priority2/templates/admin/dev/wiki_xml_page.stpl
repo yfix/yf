@@ -1,0 +1,28 @@
+<page>
+	<title>{title}</title>
+	<id>{id}</id>
+	<revision>
+		<id>1</id>
+		<timestamp>2008-05-12T11:29:47Z</timestamp>
+		<contributor>
+			<username>Admin</username>
+		</contributor>
+		<text xml:space="preserve">
+{if("vars" ne "")}		
+= Vars =
+	{foreach("vars")}
+=={_key}==
+'''{_key} ({#.type})''' -  {#.desc}
+	{/foreach}
+
+
+
+{/if}
+
+= Methods =
+{foreach("methods")}
+== {_val} ==
+{/foreach}
+		</text>
+	</revision>
+</page>

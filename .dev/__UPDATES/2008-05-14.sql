@@ -1,0 +1,1 @@
+ALTER TABLE `test_gallery_folders` ADD `allow_tagging` TINYINT UNSIGNED NOT NULL ;

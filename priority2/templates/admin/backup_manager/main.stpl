@@ -1,0 +1,59 @@
+{if("error_message" ne "")}
+<div align="center">{error_message}</div>
+{/if}
+
+<div align="center">
+{if("items" ne "")}
+<table class="sortable_wrapper">
+	<colgroup align="left" valign="top">
+		<col><col align="center" width="10%"><col align="center" width="15%"><col width="10%">
+	</colgroup>
+	<thead>
+		<th>{t(Name)}</th>
+		<th>{t(Size)}</th>
+		<th>{t(Date)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+	{items}
+	</tbody>
+</table>
+{else}
+{t(No backups)}
+{/if}
+</div>
+<br />
+<div align="center">
+<form action="{form_action}" method="post">
+		<input type="submit" name="go" value="{t(Create backup)}">
+</form>
+<br />
+<form method="post" action="{import_form_action}" enctype="multipart/form-data">
+	<input type="file" name="import_file" value="" />
+	<input type="submit" value="{t(Import)}">
+</form>
+</div>
+
+{{--
+<div align="center">
+	<p>
+		<h2>{t(Option for backup database)}</h2>
+	</p>
+
+<div class="editform" style="width:50%;">
+<form action="{form_action}" method="post">
+	<p>
+		<label>{t(Backup options)}</label>
+		<span class="vertical">
+		<input type="checkbox" id="use_gzip" name="use_gzip" value="1" checked><label for="use_gzip" class="simple">&nbsp;{t(Use Gzip)}</label><br />
+		</span>
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(GO)}">
+	</div>
+</form>
+</div>
+<br />
+<a href="{back_link}">{t(Back)}</a>
+</div>
+--}}

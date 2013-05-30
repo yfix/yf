@@ -1,0 +1,16 @@
+<h1 class="header">{t(Gallery Search)}{if("total" ne "")} ({t(total)} {total}){/if}</h1>
+
+{if("filter" ne "")}
+	{filter}<br />
+{/if}
+
+<div align="center">
+{items}
+
+{if("items" eq "")}{t(No galleries found)}!{/if}
+
+{if("pages" ne "")}
+<br class="clearfloat" />
+<div align="center">Pages: {pages}</div>
+{/if}
+</div>

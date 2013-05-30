@@ -1,0 +1,40 @@
+{{--<h1>{t(Start Your Blog)}</h1>--}}
+
+<div align="center">
+{t(You need to set your future blog settings first)}:
+</div>
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="blog_title">{t(Blog Title)}:<br />
+			<small>{t(The general title of your diary. Each entry will have it&#39;s own title)}. {t(Up to)} {max_blog_title} {t(characters)}.</small>
+		</label>
+		<input type="text" id="blog_title" name="blog_title" value="{blog_title}" maxlength="{max_blog_title}">
+	</p>
+	<p>
+		<label>{t(Default Blog Privacy)}:<br />
+			<small>{t(You will also be able set or edit it individually for each blog entry)}.</small>
+		</label>
+		{blog_privacy_box}{tip('blog.def_privacy')}
+	</p>
+	<p>
+		<label>{t(Default Comments Permission)}:<br />
+			<small>{t(You will also be able to set or edit it individually for each blog entry)}.</small>
+		</label>
+		{blog_comments_box} {tip('blog.def_comments')}
+	</p>
+{if("blog_tagging_box" ne "")}
+	<p>
+		<label for="blog_tagging_box">{t(Allow Tagging for)}:<br /><small>({t(you can also set or edit it individually for each blog entry)})</small></label>
+		<span>{blog_tagging_box}</span>
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="submit" name="go" value="  {t(Save)}  " />
+	</div>
+</form>
+</div>

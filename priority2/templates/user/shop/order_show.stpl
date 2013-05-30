@@ -1,0 +1,33 @@
+<div align="center">
+{if("items" ne "")}
+<table class="sortable_wrapper">
+	<col align="left"><col><col align="left"><col align="left"><col><col>
+	<thead>
+		<th>{t(Order N)}</th>
+		<th>{t(Date)}</th>
+		<th>{t(Sum)}</th>
+		<th>{t(User)}</th>
+		<th>{t(Status)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+{foreach("items")}
+	<tr>
+		<td><b>{#.order_id}</b></td>
+		<td>{#.date}</td>
+		<td><b>{#.sum}</b></td>
+		<td><a href="{#.user_link}" title="User info">{#.user_name}</a></td>
+		<td><span class="status_{#.status}">{#.status}</span></td>
+		<td nowrap>
+			<a href="{#.view_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(View)} " /></a>&nbsp;
+			{if("#.delete_url" ne "")}
+			<a href="{#.delete_url}" onclick="return confirm('{t(Are you sure)} ?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)} " /></a>&nbsp;{/if}
+		</td>
+	</tr>
+{/foreach}
+	</tbody>
+</table>
+{else}
+{t(No orders)}
+{/if}
+</div>

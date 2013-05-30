@@ -1,0 +1,6 @@
+<tr>
+	<td valign="top" class="small">{num}</td>
+	<td valign="top" class="small"><a href="{view_link}">{reviewer_name}: "{review_title}"</a></td>
+	<td valign="top" class="small">{rating}</td>
+	<td valign="top" class="small">{date}</td>
+</tr>

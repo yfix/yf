@@ -1,0 +1,50 @@
+{if("display_js" eq 1)}
+<script type="text/javascript">
+<!--
+	var WEB_PATH		= '{const(WEB_PATH)}';
+	var do_vote_url		= '{do_vote_url}';
+	var rate_images_url	= '{rate_images_url}';
+	var ratings_image	= 'stars';
+	var ratings_max		= '{total_stars}';
+	var ratings_mouseover_image = new Image();
+	ratings_mouseover_image.src = rate_images_url + ratings_image + '/rating_over.gif';
+-->
+</script>
+
+<script src="{const(WEB_PATH)}js/profy_rate/profy_rate.js" type="text/javascript"></script>
+<script src="{const(WEB_PATH)}js/profy_sack.js" type="text/javascript"></script>
+<style type="text/css">
+	@import url('{const(WEB_PATH)}js/profy_rate/profy_rate.css');
+	.profy-ratings img {
+		cursor: pointer;
+		border: 0px;
+	}
+</style>
+<!--
+TODO: write more JS to decrease HTML size
+
+<script type="text/javascript">
+	test_on_load = function () {
+		var collector = '';
+		var all_images = document.getElementsByTagName("img");
+		for (var i = 0; i < all_images.length; i++) {
+			var iid = all_images[i].id;
+			if (iid.substring(0,7) == "rating_") {
+				all_images[i].onmouseover = function () {current_rating({rate_id}, {stars.number});}
+			}
+		}
+	}
+	self.window.onload = test_on_load;
+</script>
+-->
+{/if}
+
+<div id="profy-ratings-{rate_id}" class="profy-ratings">
+{foreach("stars")}<img id="rating_{rate_id}_{stars.number}" src="{rate_images_url}stars/{stars.cur_image}.gif" alt="{total_votes} Votes | Average: {cur_rate} out of {max_rate}" title="{stars.number} Stars"
+	{if("allow_vote" eq 1)} onmouseover="current_rating({rate_id}, {stars.number});" onmouseout="ratings_off({cur_rate}, {stars.insert_half});" onclick="rate_post();" onkeypress="rate_post();"{/if} 
+/>{/foreach}
+<br /><small>({if("total_votes" eq 0)}No Ratings Yet{/if}{if("total_votes" gt 0)}<b>{total_votes}</b> votes, average: <b>{cur_rate}</b> out of {max_rate}{/if})</small>
+</div>
+{if("allow_vote" eq 1)}
+<div id="profy-ratings-{rate_id}-loading" class="profy-ratings-loading" style="display:none;"><img src="{const(WEB_PATH)}js/profy_rate/images/loading.gif" width="16" height="16" alt="Loading ..." title="Loading ..." class="post-ratings-image" />&nbsp;Loading ...</div>
+{/if}

@@ -1,0 +1,14 @@
+Dear {name},
+
+Your support ticket at {site_name} has been answered by {author_name}:
+
+{text}
+
+Please go to the following URL to read the full ticket history:
+{ticket_url} 
+
+Regards,
+
+{site_name} administration
+
+Please, do not reply to this email. Use support ticket system for communication with us instead.

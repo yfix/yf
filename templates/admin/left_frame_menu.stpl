@@ -1,0 +1,7 @@
+<div class="admin_menu">
+	<ul>
+{items}
+	</ul>
+</div>
+
+<br /><br />

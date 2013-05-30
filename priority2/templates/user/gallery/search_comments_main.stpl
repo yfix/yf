@@ -1,0 +1,24 @@
+<div align="center"> 
+	<form action="{form_action}" method="post">
+		{t(Author)}: {author_select_box} &nbsp;&nbsp;&nbsp; {t(Folder)}: {cats_select_box} &nbsp;&nbsp;&nbsp; {t(Sort order)}: {sort_type_select_box}
+	</form>
+</div>
+
+
+{if("items" ne "")}
+<table align="center">
+	<thead>
+		<th>{t(Author)}</th>
+		<th>{t(Folder)}</th>
+		<th>{t(Comment)}</th>
+		<th>{t(Date)}</th>		
+		{if("delete" eq "1")}<th></th>{/if}
+	</thead>
+{items}
+</table>
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No comments yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><br /><div align="center">{t(Pages)}: {pages}</div><br /><br />{/if}
+<br />

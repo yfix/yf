@@ -1,0 +1,11 @@
+<tr>
+	<td>{avatar}</td>
+	<td><a href="{profile_url}">{user_nick}</a></td>
+	<td>
+		<b>
+			{if("event" eq "add_friend")}{t(Added to friends)}{/if}
+			{if("event" eq "del_friend")}{t(Deleted from friends)}{/if}		
+		</b>
+	</td>
+	<td><small><b>{event_date}</b></small></td>
+</tr>

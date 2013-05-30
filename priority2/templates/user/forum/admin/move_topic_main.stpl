@@ -1,0 +1,25 @@
+<form action='{form_action}' method='post' name='REPLIER' id="REPLIER">
+	<input type='hidden' name='f' value='{forum_id}' />
+	<input type='hidden' name='t_act' value='do_move' />
+	<div class="borderwrap"> 
+		<div class="maintitle">{t(Moving topics from forum)}: {forum_name}</div>
+		<table width="100%">
+{foreach("selected_topics")}
+			<tr>
+				<td class="row1" width="40%" align="right"><input type="checkbox" name="tid_{#.topic_id}" value="1" checked="checked" /></td>
+				<td class="row1" width="60%"><b>{#.topic_name}</b></td>
+			</tr>
+{/foreach}
+		</table>
+		<div align="center" class="tablepad"><b>{t(Select a destination forum)}</b>&nbsp;&nbsp;
+{forums_box}
+		</div>
+		<div align="center" class="formsubtitle">&nbsp;</div>
+		<div align="center" class="tablepad"><b>{t(Leave a link to the new topic in the source forum)}</b>&nbsp;&nbsp;
+{leave_link_box}
+		</div>
+		<div align="center" class="formsubtitle">
+			<input type="submit" value="{t(Move selected topics)}" />
+		</div>
+	</div>
+</form>

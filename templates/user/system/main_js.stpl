@@ -1,0 +1,333 @@
+{if("js_console_allow" eq 1)}
+{if("const.DEBUG_MODE" eq 1)}
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/console.js"></script>
+{else}
+<script language="JavaScript" type="text/javascript">
+if (!window.console || !console.firebug) {
+	var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+	window.console = {};
+	for (var i = 0; i < names.length; ++i)
+		window.console[names[i]] = function() {}
+}
+</script>
+{/if}
+{/if}
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/jquery.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/bgiframe/jquery.bgiframe.pack.js"></script>
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/profy_tooltip/jquery.profy_tooltip.js"></script>
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/cookie/jquery.cookie.js"></script>
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/treeview/jquery.treeview.js"></script>
+<script language="JavaScript" type="text/javascript" src="{const(WEB_PATH)}js/jquery/jquery.field.js"></script>
+<style type="text/css">
+@import url('{const(WEB_PATH)}js/jquery/profy_tooltip/jquery.profy_tooltip.css');
+#qm_body {
+	display: none;
+}
+</style>
+
+<noscript>
+<style type="text/css">
+#qm_body {
+	display: block;
+}
+</style>
+</noscript>
+
+<script type="text/javascript">
+<!--
+// Provide PHP settings to the JS
+var WEB_PATH = '{const(WEB_PATH)}';
+
+// JQuery on DOM ready
+$(function(){
+try {
+	// Set default settings for the current project
+	$.extend($.profy_tooltip.defaults, {
+		ajax_id: "profy:user_id"
+		,ajax_url: WEB_PATH + '?object=user_profile&action=compact_info'
+		,extraClass: "profy"
+		,showURL: false
+	});
+
+	// Default tooltip on avatar
+	$(".avatar,.ajax_user_info").not(".no_ajax").profy_tooltip();
+
+	// Help tooltip
+	$(".help_tooltip").profy_tooltip({
+		ajax_id: "profy:tip_id"
+		,ajax_prefix: "help_"
+		,ajax_url: WEB_PATH + '?object=help&action=show_tip'
+		,extraClass: "profy help_tip"
+	});
+} catch (e) {}
+
+// Set default cookie with window width
+/*
+if ($.cookie && !$.cookie("layout[max_page_width]")) {
+	var _width = 700;
+	if ($(document.body).width() < _width) {
+		_width = $(document.body).width();
+	}
+	$.cookie("layout[max_page_width]", _width, {path: "/"});
+}
+*/
+});
+
+// Spoiler
+$(function () {
+try {
+	$("div.spoiler_body").hide();
+
+	$("div.spoiler_head").toggle(
+		function () {
+			$(".toggle_button", $(this)).val("-");
+			$("div.spoiler_body:first", $(this).parent()).slideDown("fast");
+		},
+		function () {
+			$(".toggle_button", $(this)).val("+");
+			$("div.spoiler_body:first", $(this).parent()).slideUp("fast");
+		}
+	);
+} catch (e) {}
+});
+
+// Tag more details
+$(function() {
+try {
+	$("em.tag_more").click(function(event) {
+		var _cur_tag 				= $(event.target).parent().find("a").text();
+		var _cur_tag_url			= $(event.target).parent().find("a").attr("href");
+		var _cur_tag_url_by_user 	= $(event.target).attr("profy:tag_url_by_user");
+		var _tmp_elm = $("#tag_" + event.target.id);
+
+		_tmp_elm.find("b.tag_text").text(_cur_tag);
+		_tmp_elm.find("a.tag_s_url").attr("href", _cur_tag_url);
+		_tmp_elm.find("a.tag_s_url_by_user").attr("href", _cur_tag_url_by_user);
+
+		_tmp_elm.show();
+	});
+} catch (e) {}
+});
+-->
+</script>
+
+{{-- start special CSS for quick menu --}}
+{if("my_globals.qm_hidden" eq "1")}
+<style type="text/css">
+	#qm_body { display: none; }
+</style>
+{/if}
+<noscript>
+<style type="text/css">
+	#qm_body { display: block; }
+</style>
+</noscript>
+{{-- /end special CSS for quick menu --}}
+
+
+<script type="text/javascript">
+<!--
+// For quick menu
+
+$(function(){
+try {
+/*	$("#quick_menu").css("position", "absolute");*/
+	$("#qm_body").css("position", "absolute");
+	$("#qm_button").prepend("<b>&#x25bc; &nbsp;</b>");
+
+	$("#qm_button").click(function(){
+		$("#qm_body").slideToggle("fast", function () {
+			if($("#qm_body").is(":visible")){
+				$("#qm_button").find("b").html("&#x25b2; &nbsp;");
+				// Set cookie with quick menu hide state
+				$.cookie("qm_hidden", 0, {path: "/"});
+			}
+			if($("#qm_body").is(":hidden")){
+				$("#qm_button").find("b").html("&#x25bc; &nbsp;");
+				// Set cookie with quick menu hide state
+				$.cookie("qm_hidden", 1, {path: "/"});
+			}
+		});
+	});
+} catch (e) {}
+});
+
+-->
+</script>
+
+{{--
+<script type="text/javascript">
+<!--
+// For quick menu
+$(function(){
+try {
+	$("#qm_body").hide();
+	if ($.browser.safari) {
+		$("#qm_button").prepend("<b><small>\\/</small> &nbsp; </b>");	
+	} else {
+		$("#qm_button").prepend("<b>&#x25bc; &nbsp; </b>");
+	}
+
+	$("#qm_button").click(function(){
+		$("#qm_body").slideToggle("fast", function () {
+			if($("#qm_body").is(":visible")){
+				if ($.browser.safari) {
+					$("#qm_button").find("b").html("<small>/\\</small> &nbsp; ");
+				} else {
+					$("#qm_button").find("b").html("&#x25b2; &nbsp; ");
+				}
+			}
+			if($("#qm_body").is(":hidden")){
+				if ($.browser.safari) {
+					$("#qm_button").find("b").html("<small>\\/</small> &nbsp; ");
+				} else {	
+					$("#qm_button").find("b").html("&#x25bc; &nbsp; ");
+				}
+			}
+		});
+	});
+} catch (e) {}
+});
+-->
+</script>
+--}}
+
+<script type="text/javascript">
+<!--
+// Simple popup method
+function openWin(url,w,h) {
+	myWin=open(url, "displayWindow","width="+w+",height="+h+", status=no, toolbar=no, menubar=no, scrollbars=no");
+}
+
+$(function(){
+try {
+	// Change activity status of different elemts without page refresh
+	$("a.change_active").click(function(){
+		var obj = this;
+		// JQuery AJAX post
+		$.post(
+			obj.href,
+			{ajax_mode: 1},
+			function(data){
+				obj.innerHTML =
+					(data == "1")
+					? '<b style="color:green;">' + "{t(ACTIVE)}" + '</b>'
+					: '<b style="color:red;">' + "{t(INACTIVE)}" + '</b>';
+			}
+		);
+		// Do not allow new page
+		return false;
+	});
+	// Delete record and delete interface row related to that record
+	$(".ajax_delete").click(function(){
+		if (!confirm('{t(Are you sure)}?')) {
+			return false;
+		}
+		var obj = this;
+		// JQuery AJAX post
+		$.post(
+			obj.href || $(this).attr("profy:href"),
+			{ajax_mode: 1},
+			function(data){
+				$("#del_row_" + data).remove();
+			}
+		);
+		// Do not allow new page
+		return false;
+	});
+} catch (_e) {}
+});
+
+// Toggle filter
+$(function(){
+try {
+	$("div.filter legend").prepend("<b style='font-size:22px;line-height:14px;'>&#x25bc;</b>&nbsp;");
+	$("div.filter legend").css("cursor", $.browser.mozilla ? "pointer" : "hand");
+
+	$("div.filter form").hide();
+	$("div.filter legend").click(function(){
+		$("div.filter form").slideToggle("fast", function () {
+			if($("div.filter form").is(":visible")){
+				$("div.filter legend").find("b").html("&#x25b2;&nbsp;");
+			}
+			if($("div.filter form").is(":hidden")){
+				$("div.filter legend").find("b").html("&#x25bc;&nbsp;");
+			}
+		});
+	});
+} catch (e) {}
+});
+
+/*Dropdown menu*/
+$(function(){
+try {
+	var timeout    = 500;
+	var closetimer = 0;
+	var ddmenuitem = 0;
+
+	function jsddm_open()
+	{  jsddm_canceltimer();
+	   jsddm_close();
+	   ddmenuitem = $(this).find('ul').css('visibility', 'visible');}
+
+	function jsddm_close()
+	{  if(ddmenuitem) ddmenuitem.css('visibility', 'hidden');}
+
+	function jsddm_timer()
+	{  closetimer = window.setTimeout(jsddm_close, timeout);}
+
+	function jsddm_canceltimer()
+	{  if(closetimer)
+	   {  window.clearTimeout(closetimer);
+	      closetimer = null;}}
+
+	$(document).ready(function()
+	{  $('#jsddm > li').bind('mouseover', jsddm_open)
+	   $('#jsddm > li').bind('mouseout',  jsddm_timer)});
+	
+	document.onclick = jsddm_close;
+} catch (_e) {}
+});
+
+$(function(){
+try {
+	$("#slide_menu").treeview({
+		collapsed: 1,		//Start with all branches collapsed.
+		animated: "fast",		//Creates a treeview with fast animations 
+		unique: true,			//Set to allow only one branch on one level to be open (closing siblings which opening)
+		persist: "cookie",		//If set to "cookie", saves the state of the tree on each click to a cookie and restores that state on page load.(cookie/location)
+//		cookieId: "slide_menu",
+		__always_last: null
+	});
+} catch (_e) {}
+});
+
+// Checkboxes select with Shift button
+$(function(){
+try {
+	$("input:checkbox").createCheckboxRange();
+} catch (_e) {}
+});
+
+-->
+</script>
+
+
+{{--
+<!-- Testing console logging -->
+<script type="text/javascript">
+window.onload = function(){
+	console.log("string: %d %s %d", 10, "text", 10);
+	console.info({});
+	console.info([]);
+	console.info(null);
+	console.info(window);
+	console.info(document);
+	console.info(document.getElementsByTagName("body"));
+	console.info(document.getElementsByTagName("body")[0]);
+	console.info(Math);
+	(function(z){try {x.y = z;}catch(e){console.info(e);}})(null);
+	//(function(x,y,z){console.info(arguments)})(1,2,3); // fail
+}
+</script>
+--}}

@@ -1,0 +1,70 @@
+<table border="0" cellpadding="3" align="center">
+	<form action="./?object=forum&action=edit_profile" method="post" enctype="multipart/form-data">
+	<tr><td align="center" colspan="2"><span class="big_font">{t(User_profile)} "{name}"</span></td></tr>
+	<tr>
+		<td align="right"><b>{t(Register)}</b></td>
+		<td align="left">{user_regdate}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Posts)}</b></td>
+		<td align="left">{user_posts}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(From)}</b></td>
+		<td align="left"><input type="text" name="user_from" value="{user_from}"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Occupation)}</b></td>
+		<td align="left"><input type="text" name="user_occ" value="{user_occ}"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Interests)}</b></td>
+		<td align="left"><textarea name="user_interests" cols="30" rows="3">{user_interests}</textarea></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Website)}</b></td>
+		<td align="left"><input type="text" name="user_website" value="{user_website}" size="25"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Email)}</b></td>
+		<td align="left"><input type="text" name="user_email" value="{user_email}" size="25"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Show Email)}</b></td>
+		<td align="left"><input type="checkbox" name="user_viewemail" class="check" {user_viewemail} value="1"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(ICQ)}</b></td>
+		<td align="left"><input type="text" name="user_icq" value="{user_icq}" size="15"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(AIM)}</b></td>
+		<td align="left"><input type="text" name="user_aim" value="{user_aim}" size="15"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Yahoo)}</b></td>
+		<td align="left"><input type="text" name="user_yim" value="{user_yim}" size="15"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(MSN)}</b></td>
+		<td align="left"><input type="text" name="user_msnm" value="{user_msnm}" size="15"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Signature)}</b></td>
+		<td align="left"><textarea name="user_sig" cols="30" rows="3">{user_sig}</textarea></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">{avatar_img}</td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Avatar)}</b></td>
+		<td align="left"><input type="file" name="user_avatar"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2"><input type="submit" value="{t(Save)}"></td>
+	</tr>
+	</form>
+</table>

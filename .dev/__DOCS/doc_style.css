@@ -1,0 +1,31 @@
+body {
+	font-family: Verdana;
+	line-height: 1.4 em;
+	text-indent: 20px;
+	padding-left: 20px;
+}
+h1, h2, h3, h4, h5 {
+	font-family: Arial, serif;
+}
+h2 {
+	font-size: 1.3em;
+}
+h3, h4, h5 {
+	font-size: 1em;
+	margin: 0.2em;
+}
+pre {
+	font-family: Verdana;
+	font-size: 12px;
+}
+pre.listing {
+	border: solid 1px #444;
+	background-color: #e0e0e0;
+	padding: 0.1in;
+	margin: 0.2in;
+	clear: right;
+	text-indent: 0px;
+}
+hr {
+	display: none;
+}

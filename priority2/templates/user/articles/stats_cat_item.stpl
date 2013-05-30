@@ -1,0 +1,1 @@
+	<li><b><small>{cat_nav}({num_articles} {t(::stats::articles)})</small><!--<a href="{cat_link}">{cat_name} ({num_articles} {t(articles)})</a>--></b></li>

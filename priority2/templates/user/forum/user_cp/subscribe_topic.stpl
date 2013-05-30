@@ -1,0 +1,36 @@
+<form action="{form_action}" method="post" name="REPLIER">
+<input type="hidden" name="topic_id" value="{topic_id}" />
+<div class="formsubtitle">{t(Subscription Information)}</div>
+<div>
+	<b>{t(Topic Subscription)}: {topic_name}</b>
+	<div class="desc">Please choose your notification method.<br />
+		Forum subscriptions will notify when new topics have been made and topic 
+		subscriptions notify when a reply has been made.
+	</div>
+</div>
+<table>
+	<tr>
+		<td width="5%" align="center"><input type="radio" name="emailtype" value="none" /></td>
+		<td><b>No Email Notification</b><div class="desc">This option will not send out any email notification but will retain the topic or forum in your subscriptions panel.</div></td>
+	</tr>
+	<tr>
+		<td width="5%" align="center"><input type="radio" name="emailtype" value="delayed" checked="checked" /></td>
+		<td><b>Delayed Emailed Notification</b><div class="desc">This option will send out a notification if a new topic or reply has been made and you're not active on the board.</div></td>
+	</tr>
+	<tr>
+		<td width="5%" align="center"><input type="radio" name="emailtype" value="immediate" /></td>
+		<td><b>Immediate Email Notification</b><div class="desc">This option will send out a notification immediately after a new topic or reply has been made regardless of your activity.</div></td>
+	</tr>
+	<tr>
+		<td width="5%" align="center"><input type="radio" name="emailtype" value="daily" /></td>
+		<td><b>Daily Email Digest</b><div class="desc">This option will send out a daily digest showing all new replies or topics for that day</div></td>
+	</tr>
+	<tr>
+		<td width="5%" align="center"><input type="radio" name="emailtype" value="weekly" /></td>
+		<td><b>Weekly Email Digest</b><div class="desc">This option will send out a weekly digest showing all new replies or topics for that week</div></td>
+	</tr>
+	<tr>
+		<td class="formbuttonrow" colspan="2"><input type="submit" value="Proceed" class="button" /></td>
+	</tr>
+</table>
+</form>

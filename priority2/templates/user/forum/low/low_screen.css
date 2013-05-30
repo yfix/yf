@@ -1,0 +1,86 @@
+body { 
+	background-color: #FFF;
+	color: #000;
+	font-family: Verdana;
+	font-size: 1em;
+	margin: 20px;
+	padding: 0px;
+}
+.ipbnav {
+	font-size: 11px;
+	font-weight: bold;
+	border:1px solid gray;
+	padding:10px;
+}
+.ipbpagespan {
+	font-size: 11px;
+	font-weight: bold;
+	border:1px solid gray;
+	padding:10px;
+	margin-top: 10px;
+}
+.ipbnavsmall {
+	font-size: 10px;
+	font-weight: bold;
+	border:1px dotted lightgray;
+	padding:8px 8px 8px 8px;
+	text-align:center;
+	width:350px;
+	float:right;
+}
+
+
+.topicwrap,
+.forumwrap {
+	line-height:130%;
+}
+.topicwrap ul,
+.forumwrap ul {
+	list-style-type: none;
+}
+.topicwrap li,
+.forumwrap li {
+	font-size: 1em;
+}
+.forumwrap strong {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+.desc {
+	color: gray;
+	font-size: 10px;
+}
+.smalltext {
+	color: gray;
+	font-size: 10px;
+	text-align:center;
+	padding:10px;
+}
+
+
+
+.postwrapper {
+	border:1px solid #E6E3E4;
+	padding:1px;
+	margin-bottom: 15px;
+}
+.posttopbar {
+	background-color: #E6E3E4;
+	padding: 6px;
+}
+.postname {
+	font-weight: bold;
+	font-size: 0.8em;
+	width: auto;
+	float:left;
+}
+.postdate {
+	width:auto;
+	font-size: 0.8em;
+	color: gray;
+	text-align:right;
+}
+.postcontent {
+	padding: 6px;
+	font-size: 0.8em;
+}

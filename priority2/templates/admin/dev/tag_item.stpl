@@ -1,0 +1,8 @@
+{if("file_path" ne "")}
+	<a href="{editor_url}">{file_path}</a><br /> 
+{/if}
+<div style="margin-left:30px">
+	<b>{tag_name}</b>
+	{t(open)} {tag_open_count}, {t(close)} {tag_close_count}
+</div>
+

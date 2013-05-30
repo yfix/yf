@@ -1,0 +1,18 @@
+	<tr>
+		<td align="left">
+			<p class="text_main">
+				<li><a href="{view_link}"><b>{question}</b></a></li>
+				<small>
+					<b>added:</b> {add_date}
+{if("edit_date" ne "")}, <b>edited:</b> {edit_date}{/if}
+					, <b>views:</b> {num_views}
+					, <b>comments:</b> {num_comments}
+					<br />
+{if("status" eq "active")}<b style="color:green;">Active</b>{/if}
+{if("status" ne "active")}<b style="color:red;">Inactive</b>{/if}
+					<a href="{edit_link}">Edit</a>&nbsp;
+					<a href="{delete_link}" onclick="return confirm('Are you sure?');">Delete</a>&nbsp;
+				</small>
+			</p>
+		</td>
+	</tr>

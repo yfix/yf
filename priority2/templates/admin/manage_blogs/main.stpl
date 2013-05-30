@@ -1,0 +1,33 @@
+<h1>{t(Blog posts List)} ({total})</h1>
+<div align="center"> 
+{filter}
+</div>
+<br />
+
+<form action='{form_action}' method='post' name='blog_posts_form'>
+<table>
+	<thead>
+		<th>#</th>
+		<th width="5%">ID</th>
+		<th>{t(Title)}</th>
+		<th>{t(Text Preview)}</th>
+		<th>{t(Author)}</th>
+		<th width="20">{t(Date)}</th>
+		<th>{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+<div align="left">
+	<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+	<input type='submit' value='{t(Delete seleted)}'>
+</div>
+
+</form>
+
+{if("pages" ne "")}
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}

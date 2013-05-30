@@ -1,0 +1,23 @@
+<div class="photo_item" style="width:260px;height:120px;">
+	<div class="photo_inner"> 
+		<div class="thumb_holder" style="float:left;">
+			<a href="{medium_size_link}" class="gallery_photo" profy:user_id="{user_id}" 
+			>{if("show_pswd_protected" eq 0)}<img src="{img_src}" alt="{photo_name}{if('photo_name' eq '')}{user_name} {t(photo)}{/if}" border="0" {if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} 
+			/>{else}Password<br /> protected{/if}</a>
+		</div>
+		<div style="float:left;width:130px;">
+			<p style="margin:0;">
+				{if("photo_name" ne "")}{photo_name}{/if}
+			{{--{if("photo_name" eq "")}{user_name}{/if}--}}
+				{if("photo_name" eq "")}{t(Untitled photo)}{/if}
+			</p>
+{if("photo_desc" ne "")}<p style="margin:0;text-align:left;font-weight:normal;"><small>{photo_desc}</small></p>{/if}
+{if("tags_block" ne "")}<small>{tags_block}</small>{/if}
+
+		{if("rate_allowed" eq "1")}{if("rate_num_votes" gt 0)}
+			<br /><span class="photo_rate_result" profy:photo_id="{photo_id}">{t(Rating)}: {rating}, {t(votes)}: {rate_num_votes}</span> 
+		{/if}{/if}
+		</div>
+		<br style="clear:both;" />
+	</div>
+</div>

@@ -1,0 +1,13 @@
+<div class="admin_home">
+	<div class="top_level">{t(General Info)}</div>
+	<p><label>PHP</label>{php_ver}</p>
+	<p><label>MySQL {t(server)}</label>{mysql_serv_ver}</p>
+	<p><label>MySQL {t(host)}</label>{mysql_host_info}</p>
+	<p><label>{t(DB name)}</label>{db_name}</p>
+{if("db_size" ne "")}
+	<p><label>{t(DB size)}</label>{db_size}</p>
+{/if}
+{if("project_dir_size" ne "")}
+	<p><label>{t(Project dir size)}</label>{project_dir_size}</p>
+{/if}
+</div>

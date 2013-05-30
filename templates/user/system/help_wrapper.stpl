@@ -1,0 +1,8 @@
+{if("body" ne "")}
+<div id="help_wrapper">
+	<br />
+	<hr />
+	<b>{t(Note)}:</b><br />
+	{body}
+</div>
+{/if}

@@ -1,0 +1,53 @@
+<h1>{t(Contact Us)}</h1>
+
+{error_message}
+
+<p>{t(Please be sure to review our)} 
+	<a href="./?object=static_pages&action=show&id=faq">{t(Frequently Asked Questions)} ({t(FAQ)})</a> 
+	{t(section prior to contacting us. Most of the questions have already been answered there.)}
+</p>
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<input type="hidden" name="send" value="true" />
+		<label for="name">{t(Your Name)}:</label>
+		<input type="text" id= "name" name="name" value="{name}" />
+	</p>
+	<p>
+		<label for="email">{t(Your Email Address)}:</label>
+		<input type="text" id="email" name="email" size="40" value="{email}" />
+	</p>
+	<p>
+		<label for="subject">{t(Request Subject)}:</label>
+		<input type="text" id="subject" name="subject" size="40" value="{subject}" />
+	</p>
+	<p>
+		<label>{t(Request Priority)}:</label>
+		{priority_box}
+	</p>
+	<p>
+		<label>{t(Request Category)}:</label>
+		{category_box}
+	</p>
+	<p>
+		<label>{t(Message)}:</label>
+		<textarea cols="50" rows="5" name="message">{message}</textarea>
+	</p>
+	<p>
+		<label>{t(Related URLs)}:</label>
+		<textarea cols="50" rows="5" name="urls">{urls}</textarea><br />
+		<small>{t(Please enter the URLs)} ({t(web addresses starting with)} http://) {t(of the pages related to your question or request)}</small>
+	</p>
+{if("captcha_block" ne "")}
+	<p>
+		<label>{t(CAPTCHA Image)}:</label>
+		{captcha_block}
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="submit" value="{t(Submit)}" />&nbsp;&nbsp;
+		<input type="reset" value="{t(Reset Fields)}">
+	</div>
+</form>
+</div>

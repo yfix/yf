@@ -1,0 +1,8 @@
+	<tr class="{bg_class}">
+		<td align="center">{num}</td>
+		<td style="padding-left:{pad}px; font-size:11px;">&nbsp;<a href="{edit_stpl_url}">{name}</a>&nbsp;</td>
+		<td>&nbsp;{stpl_size}&nbsp;</td>
+{if("location" ne "framework")}
+		<td>&nbsp;<a href="{edit_stpl_url}">Edit</a>&nbsp;<a href="{del_stpl_url}" onclick="return confirm('Are you sure?');">Delete</a>&nbsp;</td>
+{/if}
+	</tr>

@@ -1,0 +1,48 @@
+RewriteEngine on
+
+RewriteBase %%%#path#%%%
+#RewriteBase /
+
+### To allow files inheritance we need to httpd.conf string like:  
+# Return non-existed images from the base site (allows to store design images and css in one place)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteRule ^templates\/([^\/]+)\/images\/forum\/(.*)$ uploads/forum/std_images/$2 [PT]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteRule ^(admin|js|fckeditor|templates|uploads|pma)\/(.*)$ /$1/$2 [PT] 
+
+RewriteRule ^sitemap.xml$	index.php?object=site_map	[L,NC,T=application/x-httpd-php]
+
+# first, correct the www if necessary 
+#rewriteCond %{HTTP_HOST} . 
+#rewriteCond %{HTTP_HOST} !^www\.test\.com [NC] 
+#rewriteRule ^(.*)$ http://www.test.com/$1 [R=301] 
+
+# Dynamic image (to prevent hotlinking)
+RewriteRule ^(dynamic)/([a-z0-9_\-]+)/(.+)([\/]*|[\.html]*)$	index.php?object=$1&action=$2&id=$3	[L,NC,T=application/x-httpd-php]
+# Allow to include static html pages inside folder "html", also allow "admin" folder and old images directory
+RewriteRule ^(admin|design_editor|js|templates|uploads|html|images|webalizer|fckeditor|error)\/(.*)	$1/$2	[L,NC]
+
+### LOGIN AND LOGOUT ###
+RewriteRule ^(login|logout)([\/]*|[\.html]*)$							index.php?task=$1										[L,NC,T=application/x-httpd-php]
+
+### PROFY_FORUM RULES ###
+RewriteRule ^([a-z]{3})*[\/]*(forum)+[\/]*([0-9]*)([\/]*|[\.html]*)$													index.php?object=$2&id=$3&language=$1						[L,NC,T=application/x-httpd-php]
+RewriteRule ^([a-z]{3})*[\/]*(forum)+/(confirm_register)/([0-9a-z_=\+\/\]+)([\/]*|[\.html]*)$							index.php?object=$2&action=$3&key=$4&language=$1			[L,NC,T=application/x-httpd-php]
+RewriteRule ^([a-z]{3})*[\/]*(forum)+/(search)/([^\/]+)[\/]*([0-9]*)([\/]*|[\.html]*)$									index.php?object=$2&action=$3&$4&page=$5&language=$1		[L,NC,T=application/x-httpd-php]
+RewriteRule ^([a-z]{3})*[\/]*(forum)+/([0-9a-z_\-]+)[\/]*([0-9]*)[\/]*([0-9]*)([\/]*|[\.html]*)([\#]*[a-z0-9\_\-]*)$	index.php?object=$2&action=$3&id=$4&page=$5&language=$1$7	[L,NC,T=application/x-httpd-php]
+
+### OTHER RULES ###
+RewriteRule ^login/([^\/\.]+)([\/]*|[\.html]*)$												index.php?object=login_form&go_url=$1					[L,NC,T=application/x-httpd-php]
+RewriteRule ^(register|account)/(confirm|confirm_change_email)/([a-z0-9\=\+]*)([\/]*|[\.html]*)$	index.php?object=$1&action=$2&id=$3	[L,NC,T=application/x-httpd-php]
+
+### FRAMEWORK STD REWRITES ###
+rewriteCond %{REQUEST_URI} !\/(admin|html)\/ [NC] 
+RewriteRule ^([a-z0-9_\-]+)([\/]*|[\.html]*)$													index.php?object=$1									[L,NC,T=application/x-httpd-php]
+rewriteCond %{REQUEST_URI} !\/(admin|html)\/ [NC] 
+RewriteRule ^([a-z0-9_\-]+)/([0-9]+)([\/]*|[\.html]*)$										index.php?object=$1&id=$2							[L,NC,T=application/x-httpd-php]
+RewriteRule ^([a-z0-9_\-]+)/([a-z0-9_\-]+)([\/]*|[\.html]*)$								index.php?object=$1&action=$2							[L,NC,T=application/x-httpd-php]
+RewriteRule ^([a-z0-9_\-]+)/([a-z0-9_\-]+)/([^\/]+)([\/]*|[\.html]*)$					index.php?object=$1&action=$2&id=$3						[L,NC,T=application/x-httpd-php]
+RewriteRule ^([a-z0-9_\-]+)/([a-z0-9_\-]+)/([^\/]+)/([a-z0-9_\-]+)([\/]*|[\.html]*)$	index.php?object=$1&action=$2&id=$3&page=$4	[L,NC,T=application/x-httpd-php]

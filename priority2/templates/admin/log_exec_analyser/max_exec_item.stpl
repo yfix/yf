@@ -1,0 +1,5 @@
+	<tr class="{bg_class}">
+		<td align="center">{exec_max}</td>
+		<td align="center">{exec_avg}</td>
+		<td align="left">{page_addr}</td>
+	</tr>

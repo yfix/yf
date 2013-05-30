@@ -1,0 +1,15 @@
+<?php
+
+/**
+* {class_name} class
+*/
+class {class_name} {
+
+	/**
+	* Framework constructor
+	*/
+	function _init() {
+	}
+
+{functions}
+}

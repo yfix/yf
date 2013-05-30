@@ -1,0 +1,30 @@
+<p>{t(This is the list of your ignored users, those you would not like to be contacted by)}. 
+	{t(If someone annoys you by sending rude or offending emails, you can add this person to your ignored list)}.
+</p>
+
+{if("items" ne "")}
+<table align="left">
+	<thead>
+		<th width="140" align="center">{t(Avatar)}</th>
+		<th width="80%">{t(Details)}</th>
+	</thead>
+{foreach("items")}
+	<tr class="{#.bg_class}">
+		<td valign="top" align="center">{#.avatar}</td>
+		<td valign="top" align="left"><a href="{#.profile_link}"><b>{#.user_name}</b></a><br />
+		<small>{t(Location)}: {#.location}<br />
+		{t(Sex)}: {#.gender}<br />
+{t(Age)}: {#.age}</small><br /><br />
+<a href="{#.delete_link}"  onclick="return confirm('{t(Are_you_sure)}?')" class="actionlink">{t(Delete)}</a></td>
+	</tr>
+{/foreach}
+</table>
+{/if}
+{if("items" eq "")}
+	<div align="center">{t(No ignored users yet)}</div>
+{/if}
+
+{if("pages" ne "")}
+	<br /><br />
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}

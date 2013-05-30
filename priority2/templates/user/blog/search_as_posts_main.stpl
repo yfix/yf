@@ -1,0 +1,16 @@
+<h2>{t(Blog Search)}{if("total" ne "")} ({total} entries found){/if}</h2>
+
+{if("filter" ne "")}
+	{filter}<br />
+{/if}
+
+<div align="center">
+{items}
+
+{if("items" eq "")}{t(No blog entries matching your criteria found)}!{/if}
+{if("pages" ne "")}
+	<br class="clearfloat" />
+	<div align="center"><span class="pages">{t(Pages)}: {pages}</span></div>
+	<br />
+{/if}
+</div>

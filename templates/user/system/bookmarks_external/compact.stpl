@@ -1,0 +1,62 @@
+<a href="javascript:void(0)" class="bookmark_link"><img src="images/xml.gif" alt="Bookmark" border="0"></a>
+
+<div class='external_box'><div align="center">Loading...</div></div>
+
+<style type="text/css">
+div.external_box {
+	position:absolute;
+	top: 30%;
+	left: 40%;
+	display: none;
+	z-index: 1000;
+	border: 3px solid #0066CC;
+	background: white;
+	width: 370px;
+	height: 520px;
+	overflow: hidden;
+}
+</style>
+
+<script type="text/javascript">
+<!--
+$(function(){
+	var _external_link		= "{bookmark_url}";
+	var _cur_page_url		= "{encoded_url}";
+	var _cur_page_title		= "{encoded_title}";
+	// Handle Bookmark button
+	$("a.bookmark_link").click(function(){
+		// Revert click action and do close bookmarks block
+		if ($("div.external_box").css("display") != "none") {
+			_bookmarks_close();
+			return false;
+		}
+		$("div.external_box").css("display", "block");
+		// Cache content to prevent server flooding
+		if ($("div#social-bookmark").attr("id")) {
+			return false;
+		}
+		$.post(_external_link, {"url": _cur_page_url, "title": _cur_page_title}, function(data){
+			$("div.external_box").html(data);
+			$("div#social-bookmark").append("<div align='center'><br /><a href='javascript:_bookmarks_close();'>Close</a></div>");
+		});
+	});
+	// Catch keyboard buttons
+	$(document).bind("keyup", function(e){
+		if (e.keyCode != 27) {
+			return true;
+		}
+		// "Esc" key (27)
+		if (e.keyCode == 27) {
+			_bookmarks_close();
+		}
+		return false;
+	});
+});
+// Do close bookmarks block
+if (typeof _bookmarks_close == "undefined") {
+	function _bookmarks_close(){
+		$("div.external_box").css("display", "none");
+	}
+}
+-->
+</script>

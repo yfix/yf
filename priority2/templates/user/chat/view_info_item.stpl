@@ -1,0 +1,4 @@
+	<tr class="{bg_class}">
+		<td align="right"><b>{item}</b></td>
+		<td align="left">{value}</td>
+	</tr>

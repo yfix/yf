@@ -1,0 +1,44 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+	<style type="text/css" id="profy_chat_style">@import url('{css_src}');</style>
+</head>
+
+<body onload="parent.window.PROFY_CHAT.post_form_init();" style="margin:0px;padding:0px;">
+
+<div id="profy_chat">
+<form method="post" name="chat_post_form" id="chat_post_form">
+<table width="100%" cellspacing="0" cellpadding="2" border="0">
+	<tr>
+		<td>
+			<input type="text" name="private_to" id="chat_post_private_to" readonly="yes" title="{t('private_to')}" style="width:90px;">&nbsp;
+			<input type='button' value="x" onclick="parent.window.PROFY_CHAT.move_to();" id="clear_private_to" title="{t('clear_private')}" style="width:20px;">&nbsp;
+			<input type="text" name="msg" id="chat_post_msg" maxlength="{max_msg_length}" size="40" style="width:45%;" title="{t('message')}" autocomplete="Off">&nbsp;
+			<input type="button" name="clear_msg" title="{t('clear_message_field')}" value="x" onClick="parent.window.PROFY_CHAT.reset_form();" style="width:20px;">&nbsp;
+			<input type="submit" value="{t(send)}" title="{t('send')}!" style="width:50px;" onclick="return(parent.window.PROFY_CHAT.check_form());">&nbsp;
+			<!--<input type="button" value="{t(cancel)}" title="{t('cancel')}!" style="width:70px;" onClick="parent.window.PROFY_CHAT.move_to();parent.window.PROFY_CHAT.reset_form();">-->
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type="button" value=" b " onclick="parent.window.PROFY_CHAT.post_form_insert_bbcode('b');" title="{t('bold')}" style="font-weight:bold;width:20px;">&nbsp;
+			<input type="button" value=" i " onclick="parent.window.PROFY_CHAT.post_form_insert_bbcode('i');" title="{t('italic')}" style="font-style:italic;width:20px;">&nbsp;
+			<input type="button" value=" u " onclick="parent.window.PROFY_CHAT.post_form_insert_bbcode('u');" title="{t('underline')}" style="text-decoration:underline;width:20px;">&nbsp;
+
+			<!--<input type="button" id="chat_personal_info" onclick="parent.window.PROFY_CHAT.edit_personal_info();" value="{t('Edit_info')}" style="" title="{t('Edit_info')}">&nbsp;-->
+			<!--<input type="button" id="chat_user_settings" onclick="parent.window.PROFY_CHAT.edit_settings();" value="{t('Settings')}" style="" title="{t('Settings')}">&nbsp;-->
+			<input type="button" id="chat_manual_refresh" onclick="parent.window.PROFY_CHAT.get_commands();" value="{t('Refresh')}!" style="" title="{t('Refresh')}!">&nbsp;
+			<input type="button" id="chat_control_button" onclick="parent.window.PROFY_CHAT.chat_start_stop();" value="{t('Stop_chat')}!" style="background:red; color:white;" title="{t('Stop_chat')}!">&nbsp;
+			<input type="button" onclick="if (confirm('{t(are_you_sure)}?')) parent.window.PROFY_CHAT.do_log_out();" value="{t('logout')}" style="background:red; color:white;" title="{t('logout')}">&nbsp;
+			<input type="button" id="chat_ban_list_button" onclick="parent.window.PROFY_CHAT.edit_ban_list();" value="{t('Ban_list')}!" style="background:black; color:white;display:none;" title="{t('Ban_list')}!">
+		</td>
+	</tr>
+	<tr>
+		<td id="chat_smilies_area"></td>
+	</tr>
+</table>
+</form>
+</div>
+
+</body>
+</html>

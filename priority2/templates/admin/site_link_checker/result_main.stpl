@@ -1,0 +1,17 @@
+<h2>{t(Check Results)}</h2>
+
+<div align="center">
+	Total {num_links} links checked.
+</div>
+
+<table align="center">
+	<thead>
+		<th width="100">Title</th>
+		<th>User Name</th>
+		<th>Links Check results</th>
+		<th width="5%">Action</th>
+		<th>Total Status</th>
+	</thead>
+{items}
+</table>
+{if("pages" ne "")}<br /><div align="center">Pages: {pages}</div>{/if}

@@ -1,0 +1,55 @@
+<div class="filter">
+<fieldset>
+<legend>{t(Filter)}</legend>
+<form action='{save_action}' method='post'>
+	<div class="column">
+		<p>
+			<label for="date_min">{t(Date From)}</label>
+			<input type="text" id="date_min" name="date_min" value="{date_min}" size="8">
+		</p>
+		<p>
+			<label for="date_max">{t(Date To)}</label>
+			<input type="text" id="date_max" name="date_max" value="{date_max}" size="8">
+		</p>
+		<p>
+			<label for="title">{t(Title)}</label>
+			<input type="text" id="title" name="title" value="{title}">
+		</p>
+		<p>
+			<label for="text">{t(Text)}</label>
+			<input type="text" id="text" name="text" value="{text}">
+		</p>
+		<p>
+			<input type="checkbox" id="plblog_only" name="plblog_only" value="1" {if("plblog_only" eq 1)}checked{/if}>&nbsp;
+			<label for="plblog_only" class="simple">{t(Punterlink users only)}</label>
+		</p>
+	</div>
+	<div class="column">
+		<p>
+			<label for="user_id">{t(User Id)}</label>
+			<input type="text" id="user_id" name="user_id" value="{user_id}">
+		</p>
+		<p>
+			<label for="nick">{t(User Nick)}</label>
+			<input type="text" id="nick" name="nick" value="{nick}">
+		</p>
+		<p>
+			<label for="account_type_box">{t(Account type)}</label>
+			{account_type_box}
+		</p>
+		<p>
+			<label for="sort_by_box">{t(Sort By Field)}</label>
+			{sort_by_box}
+		</p>
+		<p>
+			<label for="sort_order_box">{t(Sort order)}</label>
+			{sort_order_box}
+		</p>
+	</div>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}">
+		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+	</div>
+</form>
+</fieldset>
+</div>

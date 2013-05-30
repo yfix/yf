@@ -1,0 +1,34 @@
+<h1>{t(Member Login)}</h1>
+
+<p>{t(In order to use our free service you must log in to your account first. If you are new to our site, please,)}<a href="./?object=register">{t(::register2::register)}</a> {t(first)}.</p>
+<p>{t(In order for the login to work cookies must be enabled in your browser)}.</p>
+
+<div align="center">
+<div class="editform" style="width:50%">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="login">{t(Login)}:</label>
+		<input type="text" id="login" name="login" value="" size="20" maxlength="50" />
+	</p>
+	<p>
+		<label for="password">{t(Password)}:</label>
+		<input type="password" id="password" name="password" size="20" maxlength="12" />
+	</p>
+	<p>
+		<input type="checkbox" name="remember_me" id="remember_me" value="1" />
+		<label for="remember_me" class="simple">{t(Remember Me)}</label>
+	</p>
+
+	<div class="button_div">
+		<input type="hidden" name="action" value="login" />
+		<input type="submit" value="  {t(Login)}  " />
+	</div>
+</form>
+
+</div>
+</div>
+
+<br /><br />
+
+<div align="center"><b>{t(Not a member yet)}?<br /><a href="./?object=register">{t(Register now)}!</a></b></div>
+<div align="center"><b><a href="./?object=get_pswd">{t(Retrieve lost password)}!</a></b></div>

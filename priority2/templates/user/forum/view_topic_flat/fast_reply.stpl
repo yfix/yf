@@ -1,0 +1,25 @@
+<br />
+
+<div id="qr_open" style="display: none; position: relative;">
+
+<form name="REPLIER" action="{post_form_action}" method="post">
+
+<input type='hidden' name='topic_id' value='{topic_id}' />
+<input type='hidden' name='forum_id' value='{forum_id}' />
+<input type='hidden' name='act' value='{act_name}' />
+
+<div class="borderwrap">
+	<div class="maintitle" align="center">
+		<img src="images/forum/nav_m.gif" border="0"  alt="&gt;" width="8" height="8" />&nbsp;{t(Fast Reply)}
+	</div>
+	<div style="padding:6px" align="center">
+		<textarea cols="70" rows="8" name="text" class="textarea" tabindex="1"></textarea><br /><br />
+		<input type="checkbox" name="enable_emo" value="yes" class="checkbox" checked="checked" />&nbsp;{t(Enable Smilies)} &#124;
+		<input type="checkbox" name="enable_sig" value="yes" class="checkbox" checked="checked" />&nbsp;{t(Enable Signature)}<br /><br />
+		<input type="submit" name="submit" value="{t(Add Reply)}" class="button" tabindex="2" accesskey="s" />&nbsp;
+		&nbsp;&nbsp; <input type="button" name="qrc" onclick="ShowHide('qr_open','qr_closed');" value="{t(Close Fast Reply)}" class="button" />
+	</div>
+</div>
+</form>
+
+</div>

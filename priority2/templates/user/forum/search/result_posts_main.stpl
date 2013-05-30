@@ -1,0 +1,30 @@
+{if("pages" ne "")}<table cellspacing="0" width="100%"><tr><td width="60%"><div>{pages}&nbsp;</div></td></tr></table><br />{/if}
+
+{items}
+
+{if("pages" ne "")}<br /><table cellspacing="0" width="100%"><tr><td width="60%"><div>{pages}&nbsp;</div></td></tr></table>{/if}
+<br />
+{if("items" ne "")}
+<div class="activeusers">
+	<div class="row2">
+		<table>
+			<tr valign="top">
+				<td nowrap="nowrap">
+					<img src="images/forum/f_norm.gif" border="0"  alt="{t(New Posts)}" />&nbsp;&nbsp;<span class="desc">{t(New Replies)}</span>
+					<br /><img src="images/forum/f_norm_no.gif" border="0"  alt="{t(No New Posts)}" />&nbsp;&nbsp;<span class="desc">{t(No New Replies)}</span>
+					<br /><img src="images/forum/f_hot.gif" border="0"  alt="{t(Hot topic)}" />&nbsp;&nbsp;<span class="desc">{t(Hot Topic)} ({t(New Replies)})</span>
+					<br /><img src="images/forum/f_hot_no.gif" border="0"  alt="{t(No new)}" />&nbsp;&nbsp;<span class="desc">{t(Hot Topic)} ({t(No New Replies)})</span>&nbsp;
+				</td>
+				<td nowrap="nowrap">
+					<img src="images/forum/f_closed.gif" border="0" alt="{t(Closed)}" />&nbsp;&nbsp;<span class="desc">{t(Locked Topic)}</span>
+					<br /><img src="images/forum/f_moved.gif" border="0" alt="{t(Moved)}" />&nbsp;&nbsp;<span class="desc">{t(Moved Topic)}</span>
+				</td>
+				<td align="right" width="90%">
+{board_fast_nav}
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<br />
+{/if}

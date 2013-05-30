@@ -1,0 +1,21 @@
+	<tr valign="middle" class="{bg_class}">
+		<td align="left" valign="top">
+{if("is_unread_msg" eq 1)}<b>{/if}
+{if("folder_name" eq "inbox")}
+			<a href="{profile_url}">{from}</a>
+{/if}
+{if("folder_name" eq "sent")}
+			<a href="{profile_url}">{to}</a>
+{/if}
+{if("is_unread_msg" eq 1)}</b>{/if}
+		</td>
+		<td align="left" valign="top">{if("is_unread_msg" eq 1)}<b>{/if}<a href="{view_link}">{subject}</a>{if("is_unread_msg" eq 1)}</b>{/if}</td>
+		<td align="left" valign="top" nowrap>{if("is_unread_msg" eq 1)}<b>{/if}<small>{sent_date}</small>{if("is_unread_msg" eq 1)}</b>{/if}</td>
+		<td align="center" valign="top" nowrap><b>{r_status}</b>{if("r_status" eq "read")}<br /><small>({r_read_time})</small>{/if}</td>
+		<td align="center" valign="top" nowrap><small>
+			<a href="{view_link}"><img src="images/view.gif" alt="{t(View)}" border="0" hspace="3" /></a>
+			<a href="{reply_link}"><img src="images/reply.gif" alt="{t(Reply)}" border="0" hspace="3" /></a>
+			<a href="{forward_link}" onclick="return confirm('{t(Are you sure)}?');"><img src="images/forward.gif" alt="{t(Forward)}" border="0" hspace="3" /></a>
+			<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');"><img src="images/delete.gif" alt="{t(Delete)}" border="0" hspace="3" /></a>
+		</small></td>
+	</tr>

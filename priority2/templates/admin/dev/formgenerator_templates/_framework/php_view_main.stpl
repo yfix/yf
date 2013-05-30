@@ -1,0 +1,57 @@
+	/**
+	* View item
+	*/
+	function view () {
+		$_GET["id"] = intval($_GET["id"]);
+		// Get record
+		if (!empty($_GET["id"])) {
+			$A = db()->query_fetch("SELECT * FROM `".db('%table%')."` WHERE `id`=".intval($_GET["id"]));
+		}
+		if (empty($log_info)) {
+			return "No such record!";
+		}
+		// Process template
+		$replace = array(
+			"back_url"			=> process_url("./?object=".$_GET["object"]),
+%items%
+		);
+		return tpl()->parse($_GET["object"]."/view", $replace);
+	}
+
+	/**
+	* Change activity
+	*/
+	function activate () {
+		$_GET["id"] = intval($_GET["id"]);
+		// Get current info
+		if (!empty($_GET["id"])) {
+			$info = db()->query_fetch("SELECT * FROM `".db('%table%')."` WHERE `id`=".intval($_GET["id"]));
+		}
+		// Change activity
+		if (!empty($info["id"])) {
+			db()->UPDATE("%table%", array("active" => (int)$info["active"] ? 0 : 1), "`id`=".intval($_GET["id"]));
+		}
+		// Return user back
+		if ($_POST["ajax_mode"]) {
+			main()->NO_GRAPHICS = true;
+			echo ($info["active"] ? 0 : 1);
+		} else {
+			return js_redirect($_SERVER["HTTP_REFERER"], 0);
+		}
+	}
+
+	/**
+	* Delete item
+	*/
+	function delete () {
+		$_GET["id"] = intval($_GET["id"]);
+		// Do delete record
+		db()->query("DELETE FROM `".db('%table%')."` WHERE `id`=".intval($_GET["id"]));
+		// Return user back
+		if ($_POST["ajax_mode"]) {
+			main()->NO_GRAPHICS = true;
+			echo $_GET["id"];
+		} else {
+			return js_redirect($_SERVER["HTTP_REFERER"], 0);
+		}
+	}

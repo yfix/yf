@@ -1,0 +1,7 @@
+<ul>
+	<li>{t("last_visit")}: {last_visit}</li>
+	<li>{t("month_chat_time")}: {month_chat_time} ({t("average_per_day")}: {average_per_day})</li>
+	<li>{t("first_visit")}: {first_visit}</li>
+	<li>{t("info_add_date")}: {info_add_date}</li>
+	<li>{t("photo_date")}: {photo_date}</li>
+</ul>

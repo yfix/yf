@@ -1,0 +1,32 @@
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td><span class="big_font">{forum_name}</span></td>
+	</tr>
+	<tr>
+		<td height="30"><nobr><strong>
+			<a href="{cat_link}">Forum {cat_name}</a> &gt; 
+{foreach("parent_forums")}
+	<a href="{#.link}">{#.name}</a> &gt;
+{/foreach}
+			<a href="{forum_link}">{forum_name}</a> &gt;
+			<a href="{topic_link}">{topic_name}</a></strong> &gt;
+			{t(New Post)}</nobr>
+		</td>
+	</tr>
+</table>
+<table width="50%" border="0" align="center" cellpadding="0" cellspacing="1">
+	<form action="{action}" method="post">
+	<tr> 
+		<td width="50%" align="right"><b>{t(Text)}: </b></td>
+		<td align="left"><textarea name="text" cols="50" rows="5"></textarea></td>
+	</tr>
+	<tr> 
+		<td width="50%" align="right"><b>{t(Author)}: </b></td>
+		<td align="left"><input type="text" name="user_name" value="" maxlength="255"></td>
+	</tr>
+	<tr> 
+		<td>&nbsp;</td>
+		<td align="left"><input type="submit" value="{t(reply)}"></td>
+	</tr>
+	</form>
+</table>

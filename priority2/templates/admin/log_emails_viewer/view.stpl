@@ -1,0 +1,119 @@
+<h2>{t(View email)} #{record_id}</h2>
+
+<div class="displayform">
+	<p>
+		<label>{t(Sent Successful)}</label>
+		{if("success" eq 1)}<span class="positive">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="negative">{t(NO)}</span>{/if}
+	</p>
+{if("error_text" ne "")}
+	<p>
+		<label>{t(Error Text)}</label>
+		<small class="negative">{error_text}</small>
+	</p>
+{/if}
+	<p>
+		<label>{t(Spent Time)}</label>
+		{send_time}
+	</p>
+	<p>
+		<label>{t(Email From)}</label>
+		{email_from}
+	</p>
+	<p>
+		<label>{t(User Group)}</label>
+		{user_group}
+	</p>
+	<p>
+		<label>{t(User ID)}</label>
+		{if("user_id" gt 0)}<a href="{member_url}">{user_name}</a> (ID: {user_id}){/if}
+	</p>
+	<p>
+		<label>{t(Section)}</label>
+		{section_name}
+	</p>
+	<p>
+		<label>{t(Name From)}</label>
+		{name_from}
+	</p>
+	<p>
+		<label>{t(Email To)}</label>
+		<a href="mailto:{email_to}" target="_blank">{email_to}</a>
+	</p>
+	<p>
+		<label>{t(Name To)}</label>
+		{name_to}
+	</p>
+	<p>
+		<label>{t(Subject)}</label>
+		{subject}
+	</p>
+	<p>
+		<label>{t(Message)}</label>
+		<small>{message}</small>
+	</p>
+	<p>
+		<label>{t(Date)}</label>
+		{date}
+	</p>
+	<p>
+		<label>{t(Query String)}</label>
+		<a href="{query_string}">{query_string}</a>
+	</p>
+	<p>
+		<label>{t(Request URI)}</label>
+		<a href="{request_uri}">{request_uri}</a>
+	</p>
+	<p>
+		<label>{t(Site)}</label>
+		<a href="{site_link}">{site_name}</a>
+	</p>
+	<p>
+		<label>{t(IP Address)}</label>
+		{log_ip}
+	</p>
+	<p>
+		<label>{t(Referer)}</label>
+		<a href="{log_referer}">{log_referer}</a>
+	</p>
+	<p>
+		<label>{t(User Agent)}</label>
+		{log_browser}
+	</p>
+	<p>
+		<label>{t(Source)}</label>
+		<a href="{edit_source_link}">{source_file}</a> {t(on line)} {source_line}
+	</p>
+	<p>
+		<label>{t(Mail Debug used)}</label>
+		{if("mail_debug" eq 1)}<span class="positive">YES</span>{/if}{if("mail_debug" eq 0)}<span class="negative">NO</span>{/if}
+	</p>
+	<p>
+		<label>{t(Used Mailer)}</label>
+		{used_mailer}
+	</p>
+{if("other_options" ne "")}
+	<p>
+		<label>{t(Other Options)}</label>
+		{other_options}
+	</p>
+{/if}
+{if("env_data" ne "")}
+	<p>
+		<label>{t(Env data)}</label>
+		{env_data}
+	</p>
+{/if}
+</div>
+
+<br /><br />
+
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+
+{{--
+<script type="text/javascript">
+$(function() {
+	$("table.my_view_table tr:even").addClass("bg1");
+	$("table.my_view_table tr:odd").addClass("bg2");
+});
+</script>
+--}}

@@ -1,0 +1,27 @@
+<h3>{if("is_for_edit" eq 1)}Edit forum user{/if}{if("is_for_edit" eq 0)}Add new forum user{/if}</h3>
+
+{error_message}
+
+<form action="{form_action}" method="post">
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="5">
+	<tr>
+		<td width="50%" align="right"><b>{t(ID)}: </b></td>
+		<td align="left"><b>{user_id}</b></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(User Name)}: </b></td>
+		<td align="left"><b>{user_name}</b></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Group)}: </b></td>
+		<td align="left">{group_box}</td>
+	</tr>
+</table>
+
+<div align="center">
+	<input type="submit" value="{t(Save)}">
+
+	<br /><br />
+	<a href="{back_link}">Back</a>
+</div>
+</form>

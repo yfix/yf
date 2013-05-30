@@ -1,0 +1,73 @@
+{error_message}
+<br />
+<div class="editform">
+<form method="post" action="{form_action}" enctype="multipart/form-data" name="REPLIER">
+		<p>
+			<label for="author_name">{t(Author Name)}</label>
+			<span>
+				<input type="text" id="author_name" name="author_name" value="{author_name}" maxlength="255">
+				<br /><small>({t('Up to %maxlen characters', %maxlen='255')})</small><br />
+				<label for="not_own_article" class="simple">
+					<input type="checkbox" id="not_own_article" name="not_own_article" value="1" {if("is_own_article" eq 0)}checked{/if}>
+					{t(This is not my article. Please don&#39;t associate it with my account)}
+				</label>
+			</span>
+		</p>
+		<p>
+			<label for="title">{t(Title)}</label>
+			<span>
+			<input type="text" id="title" name="title" value="{title}" maxlength="{max_title_length}">
+			<br /><small>({t('Up to %maxlen characters', %maxlen='{max_title_length}')})</small>
+			</span>
+		</p>
+		<p>
+			<label for="cats_box">{t(Category)}</label>
+			<span>
+			{cats_box}
+			</span>
+		</p>
+		<p>
+			<label for="bb_summary">{t(Summary)}</label>
+			<span>
+{if("bb_codes_block_summary" ne "")}
+			{bb_codes_block_summary}
+{/if}
+			<textarea id="bb_summary" name="summary" cols="50" rows="5">{summary}</textarea>
+			<br /><small>({t('Up to %maxlen characters', %maxlen='{max_summary_length}')})</small>
+			</span>
+		</p>
+		<p>
+			<label for="bb_full_text">{t(Text)}</label>
+			<span>
+{if("bb_codes_block_full_text" ne "")}
+			{bb_codes_block_full_text}
+{/if}
+			<textarea id="bb_full_text" name="full_text" cols="50" rows="20">{full_text}</textarea>
+			<br /><small>({t('Up to %maxlen characters', %maxlen='{max_full_text_length}')})</small>
+			</span>
+		</p>
+		<p>
+			<label for="bb_cred">{t(Credentials)}</label>
+			<span>
+{if("bb_codes_block_cred" ne "")}
+			{bb_codes_block_cred}
+{/if}
+			<textarea id="bb_cred" name="credentials" cols="50" rows="5">{credentials}</textarea>
+			<br /><small>({t('Up to %maxlen characters', %maxlen='{max_credentials_length}')})</small>
+			</span>
+		</p>
+{if("captcha_block" ne "")}
+		<p>
+			<label></label>
+			<span>
+			{captcha_block}
+			</span>
+		</p>
+{/if}
+
+		<div class="button_div">
+			<input type="submit" name="go" value="{t(Post)}" />
+			<input type="reset" value="{t(Clear)}" />
+		</div>
+</form>
+</div>

@@ -1,0 +1,57 @@
+<h1 class="header">{t(Forum Search)}</h1>
+
+<table border="0" cellpadding="5">
+<form action="{form_action}" method="post" name="sForm">
+	<tr>
+		<td width="130" valign="top"><b>{t(Search Keywords)}:</b></td>
+		<td valign="top"><input type="text" maxlength="100" size="40" name="keywords" id="keywords" value="{keywords}" /></td>
+	</tr>
+	<tr>
+		<td valign="top"><b>{t(Filter by Member Name)}:</b><br />({t(optional)})</td>
+		<td valign="top"><input type="text" maxlength="100" size="40" name="user_name" value="{user_name}" /></td>
+	</tr>
+	<tr>
+		<td valign="top"><b>{t(Match Exact Name)}:</b></td>
+		<td valign="top"><input type="checkbox" name="exact_name" id="matchexact" value="1" class="checkbox" /></td>
+	</tr>
+	<tr>
+		<td valign="top"><b>{t(Limit To Forums)}:</b></td>
+		<td valign="top">{forums_box}</td>
+	</tr>
+	<tr>
+		<td><b>{t(Search posts from)}:</b></td>
+		<td>
+{prune_days_box}&nbsp;
+			<input type="radio" name="prune_type" id="prune_older" value="older" class="radiobutton" />&nbsp;<label for="prune_older">{t(Older)}</label>&nbsp;
+			<input type="radio" name="prune_type" id="prune_newer" value="newer" class="radiobutton" checked="checked" />&nbsp;<label for="prune_newer">{t(Newer)}</label>
+		</td>
+	</tr>
+	<tr>
+		<td><b>{t(Sort results by)}:</b></td>
+		<td>
+{sort_by_box}&nbsp;
+			<input type="radio" name="sort_order" id="sort_desc" class="radiobutton" value="desc" checked="checked" /><label for="sort_desc">{t(descending)}</label>&nbsp;
+			<input type="radio" name="sort_order" id="sort_asc" class="radiobutton" value="asc" /><label for="sort_asc">{t(ascending)}</label>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top"><b>{t(Search Where)}:</b></td>
+		<td>
+			<input type="radio" name="search_in" class="radiobutton" id="search_in_posts" value="posts" checked="checked" /><label for="search_in_posts">{t(Search entire post)}</label>&nbsp;
+			<input type="radio" name="search_in" class="radiobutton" id="search_in_titles" value="titles" /><label for="search_in_titles">{t(Search titles only)}</label>
+		</td>
+	</tr>
+	<tr>
+		<td><b>{t(Result Type)}:</b></td>
+		<td>
+			<input type="radio" name="result_type" class="radiobutton" value="topics" id="result_topics" checked="checked" /><label for="result_topics">{t(Show results as topics)}</label>&nbsp;
+			<input type="radio" name="result_type" class="radiobutton" value="posts" id="result_posts" /><label for="result_posts">{t(Show results as posts)}</label>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2"><br /><br />
+			<input type="submit" name="q" value="   {t(Search)}!   " />
+		</td>
+	</tr>
+</form>
+</table>

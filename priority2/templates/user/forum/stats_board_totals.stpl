@@ -1,0 +1,44 @@
+{if("is_loggged_in" eq 1)}
+<div class="toplinks">
+	{if("is_admin" eq 1)}<a href="{sync_board_link}">{t(Synchronize board)}</a>{/if}
+	<a href="{mark_all_read_link}">{t(Mark all posts as read)}</a>
+</div>
+{/if}
+
+<div class="borderwrap" id="fo_stat">
+	<div class="maintitle">{t(Board Statistics)}</div>
+
+	<table>
+		<tr>
+			<td class="formsubtitle" colspan="2">
+				{num_active_users} {t(users active in the past)} {last_posts_time} {t(minutes)}
+			</td>
+		</tr>
+		<tr>
+			<td class="row1" width="1%"></td>
+			<td class="row2">
+				<b>{num_guests}</b> {t(guests)}, 
+				<b>{num_members}</b> {t(members)}
+{if("is_admin" gt 0)}, <b>{num_inv_members}</b> {t(invisible members)} {/if}
+				<div class="online_users_list">{online_users}</div>
+				<b>{t(Show detailed by)}:</b> 
+				<a href="{by_last_click_link}">{t(Last Click)}</a>, 
+				<a href="{by_member_name_link}">{t(Member Name)}</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="formsubtitle" colspan="2">{t(Board Statistics)}</td>
+		</tr>
+		<tr>
+			<td class="row1" width="1%"></td>
+			<td class="row2">
+				{t(Our members have made a total of)} <b>{total_posts}</b> {t(posts)}<br />
+				{t(We have)} <b>{total_users}</b> {t(registered members)}<br />
+				{t(The newest member is)} <b><a href="{newest_user_link}">{newest_user_name}</a></b><br />
+				{t(Most users ever online was)} <b>{num_most_users}</b> on <b>{most_date}</b></td>
+		</tr>
+		<tr>
+			<td class="catend" colspan="2"></td>
+		</tr>
+	</table>
+</div>

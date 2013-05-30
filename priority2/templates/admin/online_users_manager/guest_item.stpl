@@ -1,0 +1,7 @@
+<tr>
+	<td align="center"><b>{session_id}</b></td>
+	<td align="center"><small><b><a href="{location}">{location_text}</a></b></small></td>
+	<td align="center"><small><b>{ip}</b></small></td>
+	<td align="center"><small><b>{time}</b></small></td>
+	<td align="center"><small>{user_agent}</small></td>
+</tr>

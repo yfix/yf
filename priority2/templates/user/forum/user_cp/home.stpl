@@ -1,0 +1,46 @@
+<fieldset class="search">
+	<legend><b>{t(Your account summary)}</b></legend>
+
+	<table>
+{if("user_email" ne "")}
+		<tr>
+			<td width="50%"><b>{t(Email address)}</b></td>
+			<td width="50%">{user_email}</td>
+		</tr>
+{/if}
+{if("user_posts" ne "")}
+		<tr>
+			<td width="50%"><b>{t(Posts)}</b></td>
+			<td width="50%">{user_posts}</td>
+		</tr>
+{/if}
+{if("user_regdate" ne "")}
+		<tr>
+			<td width="50%"><b>{t(Registered on)}</b></td>
+			<td width="50%">{user_regdate}</td>
+		</tr>
+{/if}
+{if("posts_per_day" ne "")}
+		<tr>
+			<td width="50%"><b>{t(Average posts per day)}</b></td>
+			<td width="50%">{posts_per_day}</td>
+		</tr>
+{/if}
+	</table>
+</fieldset>
+
+{if("recent_topics" ne "")}
+
+<h4>{t(Recently Read Topics)}</h4>
+
+<table cellspacing="1" width="100%">
+	<tr>
+		<th width="40%" colspan="3">{t(Topic Title)}</th>
+		<th width="7%" align="center">{t(Replies)}</th>
+		<th width="14%" align="center">{t(Topic Starter)}</th>
+		<th width="7%" align="center">{t(Views)}</th>
+		<th width="32%">{t(Last Action)}</th>
+	</tr>
+{recent_topics}
+</table>
+{/if}

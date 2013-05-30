@@ -1,0 +1,32 @@
+<div class="editform">
+<form method="post" action="{form_action}" >
+	<p>
+		<label for="id">{t(Id)}</label>
+		<b>{id}</b>
+	</p>
+	<p>
+		<label for="user_id">{t(User id)}</label>
+		<b>{user_id}</b>
+	</p>
+	<p>
+		<label for="locale">{t(Locale)}</label>
+		<b>{locale}</b>
+	</p>
+	<p>
+		<label for="site_id">{t(Site id)}</label>
+		<b>{site_id}</b>
+	</p>
+	<p>
+		<label for="name">{t(Name)}</label>
+		<input type="text" name="name" id="name" value="{name}">
+	</p>
+	<p>
+		<label for="translation">{t(Translation)}</label>
+		<input type="text" name="translation" id="translation" value="{translation}">
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}">
+		<input type="button" value="{t(Back)}" onclick="window.location.href='{back_url}'">
+	</div>
+</form>
+</div>

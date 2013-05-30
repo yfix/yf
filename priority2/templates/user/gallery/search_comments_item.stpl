@@ -1,0 +1,16 @@
+<tr class="{bg_class}">
+	<td>
+		{if("user_link" ne "")}<a href="{user_link}" profy:user_id="{user_id}" class="ajax_user_info">{/if}
+			{user_name}
+		{if("user_link" ne "")}</a>{/if}
+	</td>
+	<td>{cat}</td>
+	<td>{text}</td>
+	<td>{date}</td>
+	{if("delete" eq "1")}
+	<td align="center" nowrap>	
+		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>	
+	</td>
+	{/if}
+</tr>
+

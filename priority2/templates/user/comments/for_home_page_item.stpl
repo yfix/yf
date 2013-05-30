@@ -1,0 +1,7 @@
+<p class="subtitle">
+	<a href="{user_link}" class="column_title">{user_name}</a> {t(comment in {where_comment})} <a href="{link}" class="column_title">{title}</a> ({add_date})
+</p>
+<p align="left">
+	{text}
+</p>
+

@@ -1,0 +1,13 @@
+<tr valign="top">
+	<td valign="top">{avatar}</td>
+	<td width="80%" valign="top" align="left">
+		<br />{t(Name)}: <a href="{profile_link}"><b>{name}</b></a>
+		<br />{t(Sex)}: <b>{sex}</b>
+		{if("interests" ne "")}
+		<br />{t(Interest)}: <b>{interest}</b>
+		{/if}
+		<br />{t(Account ID)}: <a href="{profile_link}"><b>{id}</b></a>
+		<br /><i>{t(Add date)}: {add_date}</i>
+		<br /><br />{t(Account type)}: <b>{account_type}</b>
+	</td>
+</tr>

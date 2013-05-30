@@ -1,0 +1,6 @@
+<div align="center">
+	<h3>{t(Template located in)}: <br /> {location}</h3><br />
+	<textarea name="stpl_text" cols="90" rows="20" wrap="off" class="html_code"/>{stpl_text}</textarea>
+</div>
+<br /><br />
+<div align="center"><a href="javascript:window.close()">{t(Close window)}</a></div>

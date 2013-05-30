@@ -1,0 +1,50 @@
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="blog_title">{t(Blog Title)}:<br /><small>({t('max %maxlength characters',%maxlength={max_blog_title})})</small></label>
+		<span><input type="text" name="blog_title" id="blog_title" value="{blog_title}" size="50" maxlength="{max_blog_title}" /></span>
+	</p>
+	<p>
+		<label for="custom_cats">{t(Custom Blog Categories)}:<br /><small>({t('Up to %maxcats categories',%maxcats='{max_custom_cats}')}. {t(One item per line)}.{t(Example)}:<br /><i>{t(Category)} 1<br />{t(Category)} 2</i>)</small></label>
+		<span><textarea name="custom_cats" id="custom_cats" cols="50" rows="5" >{custom_cats}</textarea>  {tip('blog.custom_categories')}</span>
+	</p>
+	<p>
+		<label for="blog_privacy_box">{t(Blog Privacy)}:<br /><small>({t(you can also set or edit it individually for each blog entry)})</small></label>
+		<span>{blog_privacy_box}  {tip('blog.def_privacy')}</span>
+	</p>
+	<p>
+		<label for="blog_comments_box">{t(Allow Comments)}:<br /><small>({t(you can also set or edit it individually for each blog entry)})</small></label>
+		<span>{blog_comments_box} {tip('blog.def_comments')}</span>
+	</p>
+{if("blog_tagging_box" ne "")}
+	<p>
+		<label for="blog_tagging_box">{t(Allow Tagging for)}:<br /><small>({t(you can also set or edit it individually for each blog entry)})</small></label>
+		<span>{blog_tagging_box}</span>
+	</p>
+{/if}
+	<p class="full_width">
+		<div align="center"><b>{t(Friendly Sites)}:</b> <small>({t('Up to %maxlinks items',%maxlinks='{max_blog_links}')})</small></div>
+		<span>
+			<table width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td width="25%" align="center"><b>{t(Title)}</b></td>
+					<td width="5">&nbsp;</td>
+					<td width="75%" align="center"><b>URL</b></td>
+				</tr>
+{foreach("blog_links_array")}
+				<tr>
+					<td width="25%"><input type="text" name="blog_links_titles[]" value="{#.title}" /></td>
+					<td width="5">&nbsp;</td>
+					<td width="75%"><input type="text" name="blog_links_urls[]" value="{#.url}" /></td>
+				</tr>
+{/foreach}
+			</table>
+		</span>
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(Save)}" />
+	</div>
+</form>
+</div>

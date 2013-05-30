@@ -1,0 +1,32 @@
+{if("need_div" eq 1)}
+<tr><td><hr /></td></tr>
+{/if}
+<tr>
+	<td align="left">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">
+			<tr valign="top">
+				<td align="left" class="text_main" nowrap>
+{if("user_avatar" ne "")}{user_avatar}<br />{/if}
+<small>
+{if("user_profile_link" ne "")}<a href="{user_profile_link}"><b>{user_name}</b></a>{/if}{if("user_profile_link" eq "")}<b>{user_name}</b>{/if}
+</small>
+				</td>
+				<td align="right" width="100%" class="text_main" nowrap>{reput_text}</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="left" class="text_main">
+<br />
+<small>{answer_text}</small>
+				</td>
+			</tr>
+			<tr valign="bottom">
+				<td colspan="2" align="right" width="100%">
+<small>{t(Posted on)}: {add_date}</small>
+<br />
+{if("edit_link" ne "")}<a href="{edit_link}" class="actionlink">{t(Edit)}</a>&nbsp;{/if}
+{if("delete_link" ne "")}<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink">{t(Delete)}</a>{/if}
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>

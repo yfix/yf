@@ -1,0 +1,37 @@
+<h3>{t(Total)} ({total})</h3>
+<div align="center">
+{filter}
+</div>
+<br />
+
+{if("items" ne "")}
+<div align="center"><a href="{top}">TOP OF ERRORS</a></div><br />
+
+<form action='{form_action}' method='post' name='admin_form'>
+<table>
+	<thead>
+		<th>#</th>
+		<th>{t(User)}</th>
+		<th>{t(Email To)}</th>
+		<th>{t(Subject)}</th>
+		<th>{t(Date)}</th>
+		<th>{t(Sent successful)}</th>
+		<th>{t(Time Spent)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+<div align="left">
+	<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+	<input type='submit' value='{t(Delete seleted)}'>
+</div>
+
+</form>
+{/if}
+{if("items" eq "")}<div align="center">{t(No logged emails yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}

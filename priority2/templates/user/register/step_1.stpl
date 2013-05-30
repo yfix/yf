@@ -1,0 +1,18 @@
+<h1>{t(Member Registration)}</h1>
+
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<input type="radio" name="account_type" value="member" id="acc_member" checked />
+		<label for="acc_member"><b> {t(Member)}</b></label>
+	</p>
+	<div class="button_div">
+		<input type="hidden" name="step" value="2" />
+		<input type="submit" value="{t(Continue)}" />
+	</div>
+</form>
+</div>

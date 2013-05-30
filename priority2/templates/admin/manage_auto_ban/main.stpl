@@ -1,0 +1,35 @@
+<h3>{t(Total)} {total} {t(records)}</h3>
+<br /><br />
+
+<table>
+	<thead>
+		<th>id</th>
+		<th>{t(user name)}</th>
+		<th>{t(email)}</th>
+		<th>{t(password)}</th>
+		<th>{t(text)}</th>
+		<th>{t(phone)}</th>
+		<th>{t(fax)}</th>
+		<th>url</th>
+		<th>{t(recip url)}</th>
+		<th>{t(ad text)}</th>
+		<th>{t(forum text)}</th>
+		<th>{t(comment text)}</th>
+		<th>{t(email text)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+{if("pages" ne "")}
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}
+
+<br />
+
+<div align="center">
+	<input type='button' value='{t(add)}' onclick="window.location.href='{add_link}'">
+</div>

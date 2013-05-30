@@ -1,0 +1,1 @@
+<div align="center"><span style="color:{color};">{file_name} {if("type" ne "")} ({type}) {/if}</span></div>

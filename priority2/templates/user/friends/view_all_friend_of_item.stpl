@@ -1,0 +1,6 @@
+<td align="center">
+	{user_avatar}<br /><a href="{user_details_link}"><strong>{user_name}</strong></a>
+{if("is_mutual_friend" eq 1)}<br /><b>{t(Mutual Friend)}</b>{/if}
+{if("add_to_friends_link" ne "")}<br /><br /><a href="{add_to_friends_link}" class="menu_link">{t(Add to My Friends)}</a><br /><br />{/if}
+</td>
+{if("need_div" eq 1)}</tr><tr>{/if}

@@ -1,0 +1,142 @@
+<script type="text/javascript" src="{eval_code(WEB_PATH)}js/profy_colorer.js"></script>
+
+<script type="text/javascript">
+<!--
+function set_button_color (color, callback_obj) {
+	if (!color || !callback_obj) {
+		return false;
+	}
+	callback_obj.style.background = color;
+	callback_obj.style.color = color;
+	callback_obj.title = color;
+}
+-->
+</script>
+
+<style type="text/css">
+	.color_picker,
+	select {
+		border: 1px solid black;
+		cursor: default;
+	}
+	table.edit_styles_main td {
+		text-align: left;
+	}
+	table.edit_styles_main td.items_spacer {
+		height: 40px;
+	}	
+</style>
+
+{error_message}
+<br />
+
+<form action="{form_action}" method="post" enctype="multipart/form-data">
+<table width="100%" align="center" cellspacing="0" cellpadding="5" align="center">
+	<tr> 
+		<td align="center" width="100%">
+			<table align="center" border="0" cellspacing="0" cellpadding="2" class="edit_styles_main">
+				<tr> 
+					<td valign="top" width="25%">{t(Background color)}:</td>
+					<td><input type="text" size="8" readonly="readonly" name="back_color" value="{back_color}" id="back_selected_color" maxlength="16" class="color_picker" style="background-color:{back_color};color:{back_color};" /> 
+						<input type="button" id="back_color_select" value="Select" onclick="profy_colorer.get('back_selected_color',this,'set_button_color');" /> 
+					</td>
+				</tr>
+				<tr> 
+					<td valign="top">{t(Background image)}:<small><br />({t(max size)}={max_bg_image_size}, {t(JPEG,GIF accepted)})</small></td>
+					<td>
+{if("link_deleteback" eq "")}<input type="file" name="back" />{/if}
+{if("bg_image_link" ne "")}<a href="{bg_image_link}" target="_blank"><b>View Image</b></a>{/if}
+{if("link_deleteback" ne "")}<a href="{link_deleteback}">{t(Delete Background Image)}</a><br /><br />{/if}
+<label><input type="checkbox" class="check" name="is_tiledback" {is_tiledback} value="1" />&nbsp;{t(Tiled)}</label>
+<label><input type="checkbox" class="check" name="is_scrollback" {is_scrollback} value="1" />&nbsp;{t(Scrollable)}</label>
+<label><input type="checkbox" class="check" name="is_transback" {is_transback} value="1" />&nbsp;{t(Transparent)}</label><br />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="items_spacer">&nbsp;</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Main text style)}:</td>
+					<td nowrap>{main_text_style}</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="items_spacer">&nbsp;</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Link style)}:</td>
+					<td nowrap>{link_style}</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Link hover style)}:</td>
+					<td nowrap>{link_hover_style}</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="items_spacer">&nbsp;</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Table header background color)}:</td>
+					<td><input type="text" size="8" readonly="readonly" name="th_backcolor" value="{th_backcolor}" id="th_backcolor_selected_color" maxlength="16" class="color_picker" style="background-color:{th_backcolor};color:{th_backcolor};" /> 
+						<input type="button" id="th_backcolor_select" value="Select" onclick="profy_colorer.get('th_backcolor_selected_color',this,'set_button_color');" /> 
+					</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Table header style)}:</td>
+					<td nowrap>{th_style}</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Table content background color)}:</td>
+					<td><input type="text" size="8" readonly="readonly" name="table_backcolor" value="{table_backcolor}" id="table_backcolor_selected_color" maxlength="16" class="color_picker" style="background-color:{table_backcolor};color:{table_backcolor};" /> 
+						<input type="button" id="table_backcolor_select" value="Select" onclick="profy_colorer.get('table_backcolor_selected_color',this,'set_button_color');" />
+					</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Table border color)}:</td>
+					<td><input type="text" size="8" readonly="readonly" name="table_bordercolor" value="{table_bordercolor}" id="table_bordercolor_selected_color" maxlength="16" class="color_picker" style="background-color:{table_bordercolor};color:{table_bordercolor};" /> 
+						<input type="button" id="table_bordercolor_select" value="Select" onclick="profy_colorer.get('table_bordercolor_selected_color',this,'set_button_color');" /> 
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="items_spacer">&nbsp;</td>
+				</tr>
+				<tr> 
+					<td valign="top">{t(Image border color)}:</td>
+					<td><input type="text" size="8" readonly="readonly" name="image_color" value="{image_color}" id="image_selected_color" maxlength="16" class="color_picker" style="background-color:{image_color};color:{image_color};" /> 
+						<input type="button" id="image_color_select" value="Select" onclick="profy_colorer.get('image_selected_color',this,'set_button_color');" /> 
+					</td>
+				</tr>
+				<tr> 
+					<td valign="top">{t(Image border hover color)}:</td>
+					<td><input type="text" size="8" readonly="readonly" name="image_hover_color" value="{image_hover_color}" id="image_hover_selected_color" maxlength="16" class="color_picker" style="background-color:{image_hover_color};color:{image_hover_color};" /> 
+						<input type="button" id="image_hover_color_select" value="Select" onclick="profy_colorer.get('image_hover_selected_color',this,'set_button_color');" /> 
+					</td>
+				</tr>
+				<tr>
+					<td valign="top">{t(Image effects)}:</td>
+					<td>
+<label><input type="checkbox" class="check" name="is_lightimg" {is_lightimg} value="1" />&nbsp;{t(Transparency)}</label>
+<label><input type="checkbox" class="check" name="is_fliphorimg" {is_fliphorimg} value="1" />&nbsp;{t(Flip horisontal)}</label>
+<label><input type="checkbox" class="check" name="is_flipvertimg" {is_flipvertimg} value="1" />&nbsp;{t(Flip vertical)}</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="items_spacer">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<a href="{revert_link}" onclick='return confirm("{t(Are you sure)}?")'><b>{t(Revert design to default)}</b></a><br />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="items_spacer">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="hidden" name="mode" value="1" />
+						<input type="submit" value="{t(SAVE)}" />
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>

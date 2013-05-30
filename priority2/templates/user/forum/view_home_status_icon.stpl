@@ -1,0 +1,1 @@
+<span class="icon_forum {if('status_id' eq 0)}icon_forum_nonew{/if}{if('status_id' eq 1)}icon_forum_new{/if}{if('status_id' eq 2)}icon_forum_readonly{/if}">&#x2022;</span>

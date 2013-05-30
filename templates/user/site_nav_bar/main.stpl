@@ -1,0 +1,7 @@
+<div class="site_nav_bar"{{-- style="float:left;width:70%;"--}}>
+	{items}
+	<div style="width:10%; float:right;text-align:right;">
+		{bookmark_page}
+	</div>
+</div>
+

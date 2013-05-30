@@ -1,0 +1,21 @@
+<h3>{t(Wordpress themes converter)}</h3>
+<br />
+
+{error_message}
+{if("success" eq "1")}
+	<div align="center"><b style="color:green;">Theme converted successfully!</b></div>
+{/if}
+
+<div align="center">
+	<div class="editform" style="width:50%;">
+	<form action="{form_action}" method="post" enctype="multipart/form-data">
+		<p class="first">
+			<label>{t(Theme zip-file path)}:</label>
+			<input type="file" name="theme" value="">
+		</p>
+		<div class="button_div">
+			<input type="submit" value="{t(Convert)}">
+		</div>
+	</form>
+	</div>
+</div>

@@ -1,0 +1,41 @@
+{if("suggests" ne "")}
+<div style="color: red; font-size: 16px;">	
+	<b>NOTE:</b><br />
+		{foreach("suggests")}		
+			&nbsp;&nbsp;{#.message} (<a href="{#.url}">Show</a>)<br />
+		{/foreach}
+	</div>
+<br /><br />
+
+<div id="alert_box" class="alert_box" align="center" style="display:none;">
+
+
+	{foreach("suggests")}		
+		<b><a href="{#.url}">{#.message}</a></b><br /><br />
+	{/foreach}
+
+<br /><br />
+&nbsp; <b><a href="javascript:_close_alert();">[{t(Later)}]</a></b>
+	<b><a href="javascript:_close_alert();" style="position:absolute;top:2px;right:5px;">X</a></b>
+	
+</div>
+
+<script type="text/javascript">
+<!--
+$(function(){
+	$("#alert_box").show("medium");
+	// Catch keyboard keys
+	$(document).bind("keyup", function(e){
+		// "Esc" key (27) - cancel editing
+		if (e.keyCode != 27) {
+			return true;
+		}
+		_close_alert();
+	});
+});
+function _close_alert() {
+	$("div#alert_box").css("display", "none");
+}
+-->
+</script>
+{/if}

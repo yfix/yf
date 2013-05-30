@@ -1,0 +1,9 @@
+<tr class="{bg_class}">
+	<td><b>{name}</b></td>
+	<td>{title}</td>
+	<td align="center" nowrap>	
+		<a href="{info_link}">[{t(Info)}]</a>
+		<a href="{settings_link}">[{t(Settings)}]</a>
+		<a href="{members_link}">[{t(Members)}]</a>
+	</td>
+</tr>

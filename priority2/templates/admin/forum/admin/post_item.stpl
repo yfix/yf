@@ -1,0 +1,44 @@
+<tr class="style" valign="top"> 
+	<td height="20" valign="top" class="{td_class}" align="center">
+		<span class="big_font">
+		{if("profile_link" ne "")}{profile_link}{/if}
+		{if("profile_link" eq "")}{user_name}{/if}
+		</span><br>
+		<span class="small_font">
+			{avatar}
+			{rank}<br>
+			{user_posts}<br>
+			{location}
+			<i>{register_date}</i>
+		</span>
+	</td>
+	<td class="{td_class}" style="padding:0px;"><a name="post{post_id}" />
+		<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td class="forum_msg_head">{t(created)}:{date} {time}</td>
+			</tr>
+			<tr valign="top">
+				<td width="100%" height="150" class="nb" style="padding:3px;">{text}</td>
+			</tr>
+			<tr valign="bottom" height="1">
+				<td class="nb" style="border-top: 1px dashed;padding:3px;">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td align="left" width="100%" class="nb">{user_sig}&nbsp;</td>
+							<td align="right" class="nb">
+								<input type="button" value="{t(Quote)}" onclick="window.location.href='{quote_link}'">
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td class="nb" align="left" style="border-top: 1px dashed;padding:3px;">
+					<input type="button" value="{t(edit)}" onclick="window.location.href='{edit_link}'">
+					<input type="button" value="{t(delete)}" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{delete_link}'">
+					(<small><a href="{active_link}" class="change_active">{if("is_active" eq 1)}<b style="color:green;">{t(ACTIVE)}</b>{/if}{if("is_active" eq 0)}<b style="color:red;">{t(INACTIVE)}</b>{/if}</a></small>)
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>

@@ -1,0 +1,27 @@
+<table cellspacing="0" cellpadding="0" align="center">
+	<form action='{save_action}' method='post'>
+	<tr valign="top">
+		<td>
+			<table width="200" cellspacing="0" cellpadding="3" align="center">
+				<tr>
+					<td><b>{t(Keyword)}</b></td>
+					<td><input type="text" name="keyword" value="{keyword}"></td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table width="200" cellspacing="0" cellpadding="3" align="center">
+{if("sort_by_box" ne "")}
+				<tr>
+					<td nowrap><b>{t(Sort By Field)}</b></td>
+					<td nowrap>{sort_by_box} {sort_order_box}</td>
+				</tr>
+{/if}
+				<td class="nb" align="center" colspan="2">
+					<input type="submit" value="{t(SAVE)}"><input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
+				</td>
+			</table>
+		</td>
+	</tr>
+	</form>
+</table>

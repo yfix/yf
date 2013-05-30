@@ -1,0 +1,26 @@
+<h1>{t(Admin Modules Editor)}</h1>
+<h2>{t(Uninstall module)}"{module_name}"</h2>
+
+{if("files_to_delete" ne "")}
+<form action="{form_action}" method="post">
+<table>
+	<thead>
+		<th>#</th>
+		<th>{t(Path)}</th>
+	</thead>
+	<tbody>
+{files_to_delete}
+	</tbody>
+</table>
+	<div align="center">
+			<br />
+			<input type="submit" value="{t(CONFIRM)}" name="go" onclick="return confirm('{t(Are you sure?)}')">
+			<input type="button" value="{t(CANCEL)}" onclick="window.location.href='{back_link}'">
+	</div>
+	</form>
+{/if}
+<br />
+<div>
+		<p><b>{t(NOTE)} :</b></p>
+		<p>!!!!____TODO____!!!!</p>
+</div>

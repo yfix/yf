@@ -1,0 +1,11 @@
+<input type="text" size="8" readonly="readonly" name="{name}_font_color" value="{value}" id="{name}_selected_color" maxlength="16" class="color_picker" style="background-color:{value};color:{value};" />
+<input type="button" id="{name}_color_select" value="{t(Select)}" onclick="profy_colorer.get('{name}_selected_color',this,'set_button_color');">
+
+{font_type_box} 
+{font_size_box} px 
+
+<br />
+
+<label><input type="checkbox" class="check" name="{name}_bold" value="1" {if("bold" eq 1)}checked{/if}>&nbsp;<b>Bold</b></label>&nbsp;
+<label><input type="checkbox" class="check" name="{name}_underline" value="1" {if("underline" eq 1)}checked{/if}>&nbsp;<u>Underline</u></label>&nbsp;
+<label><input type="checkbox" class="check" name="{name}_italic" value="1" {if("italic" eq 1)}checked{/if}>&nbsp;<i>Italic</i></label>&nbsp;

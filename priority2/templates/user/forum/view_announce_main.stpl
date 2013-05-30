@@ -1,0 +1,45 @@
+<div class="borderwrap">
+	<div class="maintitle"><img src="images/forum/nav_m.gif" border='0'  alt='&gt;' width='8' height='8' />&nbsp;{t(Announcement)}: {announce_name}</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<td valign="middle" class="row2">
+				<a href="{user_profile_link}">{user_name}</a>
+			</td>
+			<td class="row2" valign="top">
+				<div class="row2">
+					<span class="postdetails"><b>{announce_name}</b>&nbsp; 
+{if("end_date" ne "")}
+{t(Announcement ends)} {end_date}
+{/if}
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="post1">
+				<span class="postdetails">
+{if("user_id" ne 0)}<span class="postdetails">{/if}
+{if("user_avatar_src" ne "")}<img src="{user_avatar_src}" alt="{t(avatar)}" /><br />{/if}
+{if("user_id" ne 0)}
+		{user_rank_name}<br />
+		<br />{t(Group)}: {user_group}<br />
+		{t(Posts)}: {user_num_posts}<br />
+		{t(Joined)}: {user_reg_date}<br />
+		{t(Member No)}: {user_id}<br /><br />
+		</span>
+{/if}
+{if("user_id" eq 0)}<br /><br />{t(Unregistered)}{/if}
+				</span><br />
+				<img src="images/forum/spacer.gif" alt="" width="160" height="1" /><br /> 
+			</td>
+			<td width="100%" valign="top" class="post1"><div class="postcolor">{announce_text}</div><br /></td>
+		</tr>
+		<tr>
+			<td class="darkrow3">&nbsp;</td>
+			<td class="darkrow3">
+				<div class="darkrow3">
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>

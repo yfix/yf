@@ -1,0 +1,12 @@
+{if("charset" ne "")}
+<meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+{/if}
+{if("keywords" ne "")}
+<meta name="Keywords" content="{keywords}" />
+{/if}
+{if("description" ne "")}
+<meta name="Description" content="{description}" />
+{/if}
+{if("const.DEBUG_MODE" eq "1")}
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+{/if}

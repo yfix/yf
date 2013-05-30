@@ -1,0 +1,16 @@
+{if("archive_nav" ne "")}
+<div style="position:relative;right:20%;left:20%;padding:5%;">
+	<a href="{all_posts_link}">{t(All My Posts)}</a>
+	<br />
+
+	{foreach("archive_nav")}
+		{if("#.is_year" eq 1)}
+			<a href="{#.link}">{#.year} {t(Blogs)}</a>
+		{/if}
+		{if("#.is_year" eq 0)}
+			<a href="{#.link}" style="margin-left:10px;">{#.name} {#.year}</a>
+		{/if}
+		<br />
+	{/foreach}
+</div>
+{/if}

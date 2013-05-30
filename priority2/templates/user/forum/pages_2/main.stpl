@@ -1,0 +1,1 @@
+<small>{t(Pages)} : {pages}{page_last}</small>

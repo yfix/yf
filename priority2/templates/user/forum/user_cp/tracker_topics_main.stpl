@@ -1,0 +1,76 @@
+<script type="text/javascript">
+<!--
+function CheckAll(cb) {
+	var fmobj = document.mutliact;
+	for (var i = 0; i < fmobj.elements.length; i++) {
+		var e = fmobj.elements[i];
+		if ((e.name != "allbox") && (e.type=="checkbox") && (!e.disabled)) e.checked = fmobj.allbox.checked;
+	}
+}
+function CheckCheckAll(cb) {
+	var fmobj = document.mutliact;
+	var TotalBoxes = 0;
+	var TotalOn = 0;
+	for (var i = 0; i < fmobj.elements.length; i++){
+		var e = fmobj.elements[i];
+		if ((e.name != "allbox") && (e.type == "checkbox")) {
+	 		TotalBoxes++;
+	 		if (e.checked) TotalOn++;
+		}
+	}
+	if (TotalBoxes == TotalOn) {fmobj.allbox.checked=true;}
+	else fmobj.allbox.checked=false;
+}
+-->
+</script>
+<div class="formsubtitle">{t(Current Subscriptions)}</div>
+<form action="{form_action}" name="mutliact" method="post">
+<div class="borderwrapm">
+	<table cellspacing="1" width="100%">
+		<tr>
+			<th width="5%">&nbsp;</th>
+			<th width="55%">{t(Topic)}</th>
+			<th align="center" width="5%">{t(Replies)}</th>
+			<th align="center" width="5%">{t(Views)}</th>
+			<th width="25%">{t(Last Post)}</th>
+			<th align="center" width="5%"><input name="allbox" type="checkbox" value="Check All" onClick="CheckAll();" /></th>
+		</tr>
+{topics}
+
+
+		<tr>
+			<td colspan="6" class="row1"><b>A Test Forum</b></td>
+		</tr>
+		<tr>
+			<td class="row2" align="center" width="5%"><img src="images/forum/f_closed.gif" border='0'  alt='Closed' /></td>
+			<td class="row2">
+				<a href="{topic_link}">test1</a>&nbsp;
+				( <a href="{new_window_link}" target="_blank">New Window</a> )
+				<div class="desc">test1111<br />Subscribed on Oct 27 2005, 08:53 AM
+					<br />
+					Type: Delayed Emailed Notification
+				</div>
+			</td>
+			<td class="row2" align="center"><a href="javascript:who_posted(2);">0</a></td>
+			<td class="row2" align="center">5</td>
+			<td class="row2">Oct 27 2005, 08:53 AM<br />By: <a href='{user_profile_link}'>admin</a></td>
+			<td class="row1" align="center"><input type="checkbox" name="id-1" value="yes" /></td>
+		</tr>
+<!--
+-->
+		<tr>
+			<td align="center" class="formbuttonrow" valign="middle" colspan="6">
+				<select name="trackchoice">
+					<option value="unsubscribe">Unsubscribe</option>
+					<option value="none">Change to: No Email Notification</option>
+					<option value="immediate">Change to: Immediate Email Notification</option>
+					<option value="delayed">Change to: Delayed Emailed Notification</option>
+					<option value="daily">Change to: Daily Email Digest</option>
+					<option value="weekly">Change to: Weekly Email Digest</option>
+				</select>&nbsp;&nbsp;
+				<input type="submit" class="button" value="with selected" />
+			</td>
+		</tr>
+	</table>
+</div>
+</form>

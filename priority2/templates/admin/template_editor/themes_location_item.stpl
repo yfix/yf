@@ -1,0 +1,10 @@
+<tr class="bg1">
+	<td nowrap><b>/{location}/</b></td>
+	<td>&nbsp;</td>
+	<td nowrap>{themes_lib_dir}&nbsp;</td>
+	<td align="right">
+{if("location" ne "framework")}
+			<input type="button" value="{t(Add theme)}" onclick="window.location.href='{add_url}'">
+{/if}
+	</td>
+</tr>

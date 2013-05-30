@@ -1,0 +1,30 @@
+<h3>{t(Total)} {total}</h3>
+{{--
+<div align="right"><a href="{all_handshake_request_to_you}">{t(All handshake request to you)}</a></div>
+--}}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+{if("is_own_page" eq 0)}
+	<tr>
+		<td align="center">
+{user_avatar}
+			<br />
+			<a href="{user_details_link}"><strong>{user_name}</strong></a> 
+			<hr />
+		</td>
+	</tr>
+{/if}
+	<tr>
+		<td align="center">
+{if("items" ne "")}
+			<table cellspacing="0" cellpadding="2" border="0" width="100%" align="center">
+				<tr>{items}</tr>
+			</table>
+{/if}
+{if("pages" ne "")}
+			<div align="center"><br /><strong>{t(Pages)}: {pages}</strong></div>
+{/if}
+{if("items" eq "")}<div align="center"><strong>{t(No Friend of yet)}</strong></div>{/if}
+		</td>
+	</tr>
+</table>

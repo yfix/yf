@@ -1,0 +1,20 @@
+<h1>{header_text}</h1>
+<form action="{form_action}" method="post">
+<table>
+	<thead>
+		<th>{t(modules)}<br /><br /></th>
+		<th>{t(allowed)}</th>
+		<th>{t(denied)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+	<div align="center">
+		<label for="admin_group_name">{t(group_name)}</label>&nbsp;&nbsp;
+		<input type="text" name="admin_group_name" value="{group_name}"><br />
+		<input type="submit" value="{t(save)}">
+	</div>
+</form>
+{show_tables}
+{back}

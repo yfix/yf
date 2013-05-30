@@ -1,0 +1,21 @@
+<div class="editform">
+<form action='{form_action}' method='post'>
+	<p class="first">
+		<label for='title_box'>{t(Title of Calendar page)}</label>
+		<input type='text' name='title' id='title_box' value='{cal_title}' size='40'>
+	</p>
+	<p>
+		<label for='content_box'>{t(Content)} ({t(few words about your calendar)})</label>
+		<textarea name='desc' id='content_box' rows='5' cols='60'>{cal_desc}</textarea>
+	</p>
+	<p>
+		<label for='date_format_box'>{t(Date format)}</label>
+		{date_format_box}
+	</p>
+	<div class="button_div">
+		<input type='submit' value='{t(Save)}' class='button' name='save'>
+		<input type="button" value="{t(Back)}" onclick="window.location.href='{back_url}'">
+{{--		<input type='submit' value='{t(Disable)}' class='button' name='disable'>--}}
+	</div>
+</form>
+</div>

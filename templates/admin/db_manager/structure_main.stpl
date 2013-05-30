@@ -1,0 +1,60 @@
+<style>
+tr.bg1{
+	background: #E5E5E5;
+}
+tr.bg2 {
+	background: #D5D5D5;
+}
+tr.header {
+	background: #D3DCE3;
+}
+</style>
+
+
+<table>
+	<tr class="header">
+		<td><b>Field</b></td>
+		<td><b>Type</b></td>
+		<td><b>Collation</b></td>
+		<td><b>Null</b></td>
+		<td><b>Key</b></td>
+		<td><b>Default</b></td>
+		<td><b>Extra</b></td>
+	</tr>
+	
+	{items}
+	
+</table>
+
+
+<br />
+<hr>
+<br />
+
+<b>Index</b>
+<table>
+	<tr class="header">
+		<td>Key_name</td>
+		<td>Cardinality</td>
+		<td>Column_name</td>
+		
+	</tr>
+	
+	{foreach("table_index")}
+		<tr>
+			<td>{#.Key_name}</td>
+			<td>{#.Cardinality}</td>
+			<td>{#.Column_name}</td>
+		</tr>
+	{/foreach}
+</table>
+
+
+<br />
+<br />
+<b>show_create_table</b>
+<div style="font-family:fixedsys,monospace;background-color:#ccc;">
+{show_create_table}
+</div>
+	
+

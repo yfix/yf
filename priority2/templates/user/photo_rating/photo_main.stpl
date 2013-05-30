@@ -1,0 +1,69 @@
+<h1>{t(Photo Rating)}</h1>
+
+{if("no_results" eq 1)}
+<p>{t(No more images for the specified filter)}. 
+	{t(Please, change filter settings to see images from other locations, or gender)}</p>
+
+{filter}
+
+{/if}
+
+{if("no_results" eq 0)}
+<div class="line_item">
+<form action="{form_action}" method="post" id="photo_rate_form">
+	<div class="cell">
+		<div class="photo_rate_box">{rate_box}</div>
+		<br />
+
+		<a href="{photo_link}"><img src="{img_src}" alt="{photo_name}{if('photo_name' eq '')}{user_name} photo{/if}" border="0" hspace="5" vspace="5"{if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} profy:user_id="{user_id}" /></a>
+		<br />
+
+		{if("photo_name" ne "")}<b>{t(Photo title)}: {photo_name}<br />{/if}</b><br />
+		{t(More photos of)} <a href="{user_link}" class="photo_author" profy:user_id="{user_id}">{user_name}</a> {t(in the)} <a href="{gallery_link}">{t(Gallery)}</a>
+</form>
+</div>
+<div class="cell">{execute(photo_rating,_show_last_voted)}
+</div>
+</div>
+
+{filter}
+
+{comments}
+
+<noscript>
+	<p class="alarm">{t(You need to enable JavaScript in your browser in order to use this feature)}.</p>
+</noscript>
+
+<script type="text/javascript">
+<!--
+var _photo_id = "{photo_id}";
+// Jquery on DOM ready
+$(function(){
+
+	if (_photo_id == "" || !_photo_id) {
+		return ;
+	}
+
+	$(":radio[name=rate_value]").bind("click", function(e){
+		$("div.photo_rate_box").html("{t(Processing)}...");
+		$.post(
+			$("form#photo_rate_form").attr("action")
+			, {"post_id" : _photo_id, "rate_value" : $(this).val(), "by_ajax" : 1}
+			, function(data){
+				$("div.photo_rate_box").html("<b style='color:green;'>{t(Thanks for voting)}!</b>");
+				window.location.reload();
+			}
+		);
+		// Handle slow or broken server response (force refresh window after 10 seconds)
+		window.setTimeout(function(){
+			$("div.photo_rate_box").html("{t(Sorry, server did not responded, refreshing page)}...");
+			window.location.reload();
+		}, 10 * 1000);
+		return false;
+	});
+
+	$("a.photo_author").profy_tooltip();
+});
+-->
+</script>
+{/if}

@@ -1,0 +1,32 @@
+<div class="spoiler_block">
+	<div class="spoiler_head">
+		<input type='button' class='toggle_button' value='+'>		
+		{head_text}
+	</div>
+	<div class="spoiler_body">
+		{body_text}
+	</div>
+</div>
+
+<script type="text/javascript">
+<!--
+function init_spoiler() {
+	$("div.spoiler_body").hide();
+}
+
+$(function () { 
+	init_spoiler();
+	$("div.spoiler_head").toggle(
+		function () {
+			$(".toggle_button", $(this)).val("-");
+			$("div.spoiler_body:first", $(this).parent()).slideDown("fast");
+		},
+		function () {
+			$(".toggle_button", $(this)).val("+");
+			$("div.spoiler_body:first", $(this).parent()).slideUp("fast");
+		}
+	);
+});
+-->
+</script>
+    

@@ -1,0 +1,7 @@
+
+{execute({execute_text})%%##%%
+
+<div class="widget">
+<div class="title">{display_name}</div>
+{text}
+</div>

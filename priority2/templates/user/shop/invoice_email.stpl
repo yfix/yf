@@ -1,0 +1,346 @@
+<p>Dear {first_name} {last_name},<br />
+	<br />
+	Your order has been processed successfully.<br />
+	<br />
+<b>Invoice:</b></p>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+	<tr>
+		<td>
+			<p><img width="1" height="1" id="_x0000_i1025"  src="cid:csimg0.gif" /></p>
+		</td>
+		<td width="600">
+			<div align="center">
+				<table border="1" cellspacing="0" cellpadding="0" width="100%">
+					<tr>
+						<td>
+							<table border="0" cellspacing="0" cellpadding="0"
+width="100%">
+								<tr>
+									<td valign="top">
+										<table border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td valign="top">
+												</td>
+												<td>&nbsp; </td>
+												<td valign="top">
+													<p><b><span style='font-size:10.5pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;'>{company_name}</span></b></p>
+													<p><span style='font-size:7.5pt;font-family:&quot;Verdana&quot;,&quot;sans-serif&quot;'>{company_address}<br />
+														{company_address2}<br />
+														<b>Phone</b>: {company_phone}<br />
+														<b>Web site</b>: <a href="{company_website}" target="_blank">{company_website}</a><br />
+													<b>E-mail</b>: <u><a href="mailto:{company_email}" target="_blank">{company_email}</a></u></span></p>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td valign="top">
+										<div align="right">
+											<table border="0" cellspacing="0" cellpadding="0">
+												<tr>
+													<td valign="top">
+														<p align="center" style='text-align:center'><b><span
+style='font-size:16.5pt;font-family:&quot;Tahoma&quot;,&quot;sans-serif&quot;;text-transform:
+uppercase'>INVOICE</span></b></p>
+														<p><b><span style='font-size:8.5pt;font-family:&quot;Tahoma&quot;,&quot;sans-serif&quot;'>Order:</span></b><span
+style='font-size:8.5pt;font-family:&quot;Tahoma&quot;,&quot;sans-serif&quot;'> &nbsp;#{id} <br />
+															<b>Status:</b> &nbsp; {status}<br />
+															<b>Date:</b> &nbsp;{date}<br />
+															<b>Payment method:</b> &nbsp;{pay_type}<br />
+														<b>Shipping method:</b> &nbsp;{ship_type}</span></p>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+							</table>
+							<table border="0" cellspacing="0" cellpadding="0"
+width="100%">
+								<tr>
+									<td width="50%" valign="top">
+										<table border="0" cellspacing="1" cellpadding="0"
+width="100%">
+											<tr>
+												<td colspan="2">
+													<p>Contact information</p>
+													<div align="center" style='text-align:center'>
+														<hr size="1" width="100%" noshade="noshade" style='color:#A0A0A0' align="center" />
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>First name:&nbsp;</p>
+												</td>
+												<td>
+													<p>{first_name}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Last name:&nbsp;</p>
+												</td>
+												<td>
+													<p>{last_name}</p>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td width="1%">&nbsp; </td>
+									<td width="49%" valign="top">
+										<table border="0" cellspacing="1" cellpadding="0"
+width="100%">
+											<tr>
+												<td colspan="2">
+													<div align="center" style='text-align:center'>
+														<hr size="1" width="100%" noshade="noshade" style='color:#A0A0A0' align="center" />
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>E-mail:&nbsp;</p>
+												</td>
+												<td>
+													<p><a href="mailto:{email}" target="_blank">{email}</a> </p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Phone:&nbsp;</p>
+												</td>
+												<td>
+													<p>{phone}</p>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td valign="top">
+										<table border="0" cellspacing="1" cellpadding="0"
+width="100%">
+											<tr>
+												<td colspan="2">
+													<p>Billing address</p>
+													<div align="center" style='text-align:center'>
+														<hr size="1" width="100%" noshade="noshade" style='color:#A0A0A0' align="center" />
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>First name:&nbsp;</p>
+												</td>
+												<td>
+													<p>{b_first_name}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Last name:&nbsp;</p>
+												</td>
+												<td>
+													<p>{b_last_name}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Address:&nbsp;</p>
+												</td>
+												<td>
+													<p>{b_address}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>City:&nbsp;</p>
+												</td>
+												<td>
+													<p>{b_city}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Country:&nbsp;</p>
+												</td>
+												<td>
+													<p>{country}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>State/province:&nbsp;</p>
+												</td>
+												<td>
+													<p>{b_state}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Zip/postal code:&nbsp;</p>
+												</td>
+												<td>
+													<p>{b_zip_code}</p>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td>&nbsp; </td>
+									<td valign="top">
+										<table border="0" cellspacing="1" cellpadding="0"
+width="100%">
+											<tr>
+												<td colspan="2">
+													<p>Shipping address</p>
+													<div align="center" style='text-align:center'>
+														<hr size="1" width="100%" noshade="noshade" style='color:#A0A0A0' align="center" />
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>First name:&nbsp;</p>
+												</td>
+												<td>
+													<p>{s_first_name}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Last name:&nbsp;</p>
+												</td>
+												<td>
+													<p>{s_last_name}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Address:&nbsp;</p>
+												</td>
+												<td>
+													<p>{s_address}</p>
+												</td>
+
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>City:&nbsp;</p>
+												</td>
+												<td>
+													<p>{s_city}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Country:&nbsp;</p>
+												</td>
+												<td>
+													<p>{country}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>State/province:&nbsp;</p>
+												</td>
+												<td>
+													<p>{s_state}</p>
+												</td>
+											</tr>
+											<tr>
+												<td width="30%" nowrap="nowrap">
+													<p>Zip/postal code:&nbsp;</p>
+												</td>
+												<td>
+													<p>{s_zip_code}</p>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+							<table border="0" cellpadding="0" width="100%">
+								<tr>
+									<td width="10%">
+										<p align="center" style='text-align:center'><b>CODE</b></p>
+									</td>
+									<td width="50%">
+										<p align="center" style='text-align:center'><b>Product</b></p>
+									</td>
+									<td width="10%">
+										<p align="center" style='text-align:center'><b>Amount</b></p>
+									</td>
+									<td width="10%" nowrap="nowrap">
+										<p align="center" style='text-align:center'><b>Unit price</b></p>
+									</td>
+									<td width="10%">
+										<p align="center" style='text-align:center'><b>Subtotal</b></p>
+									</td>
+								</tr>
+								{foreach(&quot;products&quot;)}
+								<tr>
+									<td>&nbsp; </td>
+									<td>
+										<p>{#.name}</p>
+									</td>
+									<td>
+										<p align="center" style='text-align:center'>{#.quantity}</p>
+									</td>
+									<td>
+										<p align="right" style='text-align:right'>{#.price}</p>
+									</td>
+									<td>
+										<p align="right" style='text-align:right'><b>{#.sum}</b>&nbsp;</p>
+									</td>
+								</tr>
+								{/foreach}
+							</table>
+							<div align="right">
+								<table border="0" cellpadding="0">
+									<tr>
+										<td nowrap="nowrap">
+											<p align="right" style='text-align:right'><b>Subtotal:</b>&nbsp;</p>
+										</td>
+										<td nowrap="nowrap">
+											<p align="right" style='text-align:right'>{total_sum}</p>
+										</td>
+									</tr>
+									<tr>
+										<td nowrap="nowrap">
+											<p align="right" style='text-align:right'><b>Shipping cost:</b>&nbsp;</p>
+										</td>
+										<td nowrap="nowrap">
+											<p align="right" style='text-align:right'>{ship_cost}</p>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2">
+											<div style='border:solid #444444 1.0pt;border-bottom:solid #444444 1.5pt;
+padding:2.0pt 0in 0in 0in'>
+												<p><img border="0" width="100" height="20" id="_x0000_i1031"
+src="cid:csimg0.gif" /></p>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td nowrap="nowrap">
+											<p align="right" style='text-align:right'><b>Total cost:</b>&nbsp;</p>
+										</td>
+										<td nowrap="nowrap">
+											<p align="right" style='text-align:right'>{total_cost}</p>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+		<td>
+			<p><img border="0" width="1" height="1" id="_x0000_i1032"
+src="cid:csimg0.gif" /></p>
+		</td>
+	</tr>
+</table>
+<p>Thank you for using our shopping cart. </p>

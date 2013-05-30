@@ -1,0 +1,23 @@
+<h3>{t(Total)} {total}</h3>
+
+{cats_header}
+<br />
+<a href="{edit_cats_link}">{t(Edit categories)}</a>
+<br />
+<hr noshade />
+
+{foreach("cats_items")}
+<table border="0" cellpadding="0" align="center" width="100%">
+	<tr>
+		<td align="left"><b>{#.cat_name}</b><a name="cat_id_{#.cat_id}" /></td>
+	</tr>
+{#.faqs_texts}
+</table>
+
+<br />
+{/foreach}
+
+{if("cats_items" eq "")}<div align="center">{t(No FAQs found)}</div>{/if}
+
+<br />
+<div align="center"><a href="{add_link}">{t(Add new entry)}</a></div>

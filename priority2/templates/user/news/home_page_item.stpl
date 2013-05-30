@@ -1,0 +1,12 @@
+<table align="center" width="100%">
+	<tr class="subtitle">
+		<td align="left">
+			<a href="{full_link}" class="column_title">{title}</a> ({add_date})
+		</td>
+	</tr>
+	<tr>
+		<td align="left">
+			<p  class="text_main">{head_text}</p>
+		</td>
+	</tr>
+</table>

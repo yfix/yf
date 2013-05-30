@@ -1,0 +1,9 @@
+<tr class="{bg_class}">
+	<td>{object_name}</td>
+	<td>{object_id}</td>
+	<td>{num_revisions}</td>
+	<td>{last_date}</td>
+	<td>
+		<a href="{details_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Details)}" /></a>&nbsp;
+	</td>
+</tr>

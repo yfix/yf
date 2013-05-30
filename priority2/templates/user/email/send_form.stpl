@@ -1,0 +1,31 @@
+<h1>{t("Send message to")} {receiver_name}</h1>
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p>
+		<label>{t("Subject")}:</label>
+		<input type="text" name="subject" value='{subject}' size="52" maxlength="150" />
+	</p>
+	<p>
+		<label>{t("Message")}:</label>
+		<textarea rows="15" name="message" cols="50">{if("is_reply" eq 0)}{message}{/if}{if("is_reply" eq 1)}
+Hi {receiver_name},
+In your email you wrote:
+>>> {message}
+			{/if}</textarea>
+	</p>
+	<p>
+		<label>{t("CAPTCHA Image")}:</label>
+		{captcha_block}
+	</p>
+	<div class="button_div">
+			<input type="submit" value="  {t(Send)}  " />
+			<input type="hidden" name="action" value="sendmail" />
+			<input type="hidden" name="prev_location" value="{prev_location}" />
+			<input type="hidden" name="receiver_id" value="{receiver_id}" />
+			<br />
+			<br />
+			<a href="javascript:history.back()"><b>{t("Back")}</b></a>
+	</div>
+</form>
+</div>

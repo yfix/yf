@@ -1,0 +1,24 @@
+<h2>Success!</h2>
+
+<p>Your community has been created.  Additionally, your account has been made a maintainer of it.</p>
+<p>Your community will be available at:</p>
+
+<div align="center">
+	<font size='+1' face='arial'>
+		<b><a href='{community_href}'>{community_url}</a></b>
+	</font>
+</div>
+
+<p>Now, please take the time to fill in some information about the community.  It's mostly optional, but it lets other users have an idea of what this community is for.</p>
+	<div align="center">
+		<input type='button' value="Enter Community Information &rarr;" onclick="window.location.href='{form_action}'" />
+	</div>
+
+<noscript>
+<br />
+<br />
+	<a href="{form_action}">Enter Community Information &rarr;</a>
+</noscript>
+
+
+

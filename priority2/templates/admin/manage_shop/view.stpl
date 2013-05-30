@@ -1,0 +1,92 @@
+<div class="displayform">
+	<p class="first">
+		<label>{t(Name)}:</label>
+		{name}
+	</p>
+	<p >
+		<label>{t(Model)}:</label>
+		{model}
+	</p>
+	<p>
+		<label>{t(Price)}:</label>
+		{price}
+	</p>
+	<p>
+		<label for="category">{t(Category)}:</label>
+		{category}
+	</p>
+	<p>
+		<label for="manufacturer">{t(Manufacturer)}:</label>
+		{manufacturer}
+	</p>
+	<p>
+		<label>{t(Description)}:</label>
+		{desc}
+	</p>
+	<p>
+		<label>{t(Тэг META description)}:</label>
+		{meta_desc}
+	</p>
+	<p>
+		<label>{t(Тэг META keywords)}:</label>
+		{meta_keywords}
+	</p>
+	<p>
+		<label>{t(External URL)}:</label>
+		{ext_url}
+	</p>
+{if("image" ne "")}
+	<p>
+		<label>{t(Image)}:</label>
+			to enlarge click on image
+			<br />
+	{if("image" ne "")}
+	{image}
+	{/if}
+
+	</p>
+	
+{/if}
+
+{if("dynamic_fields" ne "")}
+
+	<h3>{t(Product Attributes)}</h3>
+
+	<div align="center">
+	<table width="300" class="attributes">
+		<col align="left" />
+		<col align="left" />
+		<thead>
+			<th>{t(Attribute Name)}</th>
+			<th width="20%">{t(Value Price)}</th>
+		</thead>
+{foreach("dynamic_fields")}
+		<tr class="{#.bg_class}">
+			<td><b>{#.attr_name}</b> {#.attr_value}</td>
+			<td>{#.attr_price}</td>
+		</tr>
+{/foreach}
+	</table>
+
+	<br /><a href="{manage_attrs_url}">{t(Manage Product Attributes)}</a>
+
+	</div>
+{/if}
+<p>
+		<label for="relate_products">{t(Related Products)}:</label>
+		<br /> 
+		<center>
+<select multiple="multiple" id="related" size="10" style="width: 200px;">
+				  {if("product_related" ne "")}
+				{foreach("product_related")}
+			   <option value="{#.related_id}">{#.name}</option>
+			   {/foreach}
+			   {/if}
+                    </select>
+					  </center>
+
+	</p>
+	<div class="button_div">
+		<input type="button" value="back" onclick="window.location.href='{back_url}'">
+	</div>
+</div>

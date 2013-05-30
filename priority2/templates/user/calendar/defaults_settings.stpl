@@ -1,0 +1,49 @@
+{selected_week_days}
+
+{if("selected_week_days" eq "")}
+	{t(No defaults yet)}<br />
+{/if}
+
+<br />
+
+{error_message}
+
+
+<fieldset>
+	<legend><b>{t(Add default status)}</b></legend>
+
+<form action="{form_action}" method="POST">
+<div class="editform">
+	<div class="column" style="width:45%;">
+		<p class="first">
+			<label>{t(Start time)}:</label>
+			{start_time_box} {t(hour)}
+		</p>
+		<p>		
+			<label>{t(End time)}:</label>
+			{end_time_box} {t(hour)}
+		</p>
+		<p>
+			<label>{t(Status)}:</label>
+			{status_box}
+		</p>
+		<p>
+			<label>{t(Comments)}:</label>
+			<textarea name="comments" style="height:50px; width:200px"></textarea>
+		</p>
+	</div>
+	<div class="column" style="width:20%;margin-left:5em;">
+		{week_day_box}
+	</div>
+	<div class="button_div" style="clear:both;">	
+		<input type="submit" value="{t(Submit)}" name="save2">	
+	</div>
+</div>
+</form>
+
+</fieldset>
+
+<br />
+<div align="center">
+	<a href="{clean_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Clean all defaults)}</a>
+</div>

@@ -1,0 +1,13 @@
+<tr class="{bg_class}">
+	<td>{id}</td>
+	<td><a href="{community_link}">{community_name}</a></td>
+	<td><a href="{post_link}">{post_title}</a></td>
+	<td><a href="{user_link}">{user_name}</a></td>
+	<td><a href="{active_link}" class="change_active">
+{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}
+{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a>
+	</td>
+	<td align="center" nowrap>	
+		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure)}?');"><img class="action_image" src="images/links_delete.gif" alt="{t(Delete)}"/></a>
+	</td>
+</tr>

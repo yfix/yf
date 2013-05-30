@@ -1,0 +1,92 @@
+<h1>{t(Visitor Account Registration)}</h1>
+<p>{t(Please, fill in the form below)}.</p>
+{js_validator}
+
+{if("error_message" ne "")}
+	{error_message}
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}" {js_form_code} id="register_form">
+	<p>
+		<label for="nick">{t(Nickname)}</label>
+		<input type="text" id="nick" name="nick" size="20" maxlength="50" value="{nick}" style="width:auto"/> {tip('register.nick')}
+	</p>
+	<p>
+		<label for="login">{t(Login)}</label>
+		<input type="text" id="login" name="login" size="20" maxlength="50" value="{login}" style="width:auto"/> {tip('register.login')}
+	</p>
+	<p>
+		<label for="password">{t(Password)}</label>
+		<input type="password" id="password" name="password" size="20" maxlength="40" /> {tip('register.password')}
+	</p>
+	<p>
+		<label for="password2">{t(Password again)}</label>
+		<input type="password" id="password2" name="password2" size="20" maxlength="40" />
+	</p>
+	<p>
+		<label for="email">{t(Email)}</label>
+		<input type="text" id="email" name="email" size="20" maxlength="128" value="{email}" style="width:auto"/> {tip('register.email')}
+	</p>
+{{--{city_select}--}}
+	<p>
+		<label for="sex_box">{t(Sex)}</label>
+		{sex_box}
+	</p>
+{{--
+	<p>
+		<label for="age_box">{t(Age)}</label>
+		{age_box}
+	</p>
+--}}
+	<p>
+		<label for="age_box">{t(Birth date)}</label>
+		{birth_date_box}
+	</p>
+{dynamic_fields}
+{{-- Dynamic fields processing 
+{if("dynamic_items" ne "")}
+	{foreach("dynamic_items")}
+	<p style="background:#f1f1f1;">
+		<label for="{#.html_id}">{t({#.label})}</label>
+		{if("#.type" eq "text")}
+			<textarea rows="5" cols="50" name="{#.name}" id="{#.name}">{#.default}</textarea>
+		{/if}
+		{if("#.type" eq "varchar")}
+			<input type="text" name="{#.name}" id="{#.name}" value="{#.default}" />
+		{/if}
+		{if("#.box" ne "")}
+			{#.box}
+		{/if}
+	</p>
+	{/foreach}
+{/if}
+--}}
+
+	{foreach("dynamic_items")}
+		<p>
+			<label for="{#.name}">{t({#.name})}:
+			{if("#.comment" ne "")}<br /><small>({#.comment})</small>{/if}</label>
+			{#.field}
+		</p>
+	{/foreach}
+
+	<p>
+		<label>{t(CAPTCHA Image)}</label>
+		{captcha_block}
+	</p>
+	<div class="button_div">
+		<input type="hidden" name="step" value="3" />
+		<input type="hidden" name="account_type" value="{account_type}" />
+		<input type="submit" value="  {t(Continue)}  " />
+		<input type="reset" value="  {t(Clear)}  " />
+	</div>
+</form>
+</div>
+
+{if("js_check_avail" eq 1)}
+	{include("register/js_check_avail")}
+{/if}
+{{--
+<div align="center">{back}</div>
+--}}

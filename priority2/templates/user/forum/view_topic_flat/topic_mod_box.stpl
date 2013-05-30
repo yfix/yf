@@ -1,0 +1,19 @@
+<div>
+<form method="POST" name="modform2" action="{admin_action}">
+	<input type="hidden" name="t" value="{topic_id}" />
+	<input type="hidden" name="f" value="{forum_id}" />
+	<select class="dropdown" name="m_act">
+		<option value="-1">{t(Moderation Options)}</option>
+		<option value="unapprove">-{t(Set Invisible)} ({t(Unapprove Topic)})</option>
+		<option value="move">-{t(Move this topic)}</option>
+		<option value="close">-{t(Close this topic)}</option>
+		<option value="delete">-{t(Delete this topic)}</option>
+		<option value="edit">-{t(Edit Topic Title)}</option>
+		<option value="pin">-{t(Pin this Topic)}</option>
+		<option value="merge">-{t(Merge Topic)}</option>
+		<option value="unsubscribe_all">-{t(Unsubscribe all from topic)}</option>
+		<option value="90">-{t(View Topic History)} ({t(Admin Option)})</option>
+	</select>&nbsp;
+	<input type="submit" value="{t(Go)}" class="button" />
+</form>
+</div>

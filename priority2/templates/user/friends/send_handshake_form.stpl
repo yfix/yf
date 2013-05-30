@@ -1,0 +1,20 @@
+<h1>{t("Send handshake to")} {receiver_name}</h1>
+
+{error}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label>{t("Message")}:</label>
+		<textarea rows="15" name="message" cols="50">{if("message" eq "")}Hi {receiver_name},{/if}{if("message" ne "")}{message}{/if}</textarea>
+	</p>
+	<p>
+		<label>{t("CAPTHA Image")}:</label>
+		{captcha_block}
+	</p>
+	<div class="button_div">
+			<input type="submit" value="  {t(Send)}  " />
+			<a href="javascript:history.back()"><b>{t("Back")}</b></a>
+	</div>
+</form>
+</div>

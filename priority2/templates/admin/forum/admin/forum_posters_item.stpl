@@ -1,0 +1,15 @@
+<tr class="{bg_class}">
+	<td>{user_name}</td>
+	<td>{start_date}</td>
+	<td><!--div style="height:100px;overflow:scroll;"--><small>
+{foreach("users_array")}
+	<a href="{#.link}">{#.name}</a><br >
+{/foreach}
+		</small><!--/div-->
+	</td>
+	<td nowrap>
+		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="Edit" /></a>&nbsp;
+		<a href="{stats_link}">Stats</a>&nbsp;
+<!--		<a href="{delete_link}" onclick="return confirm('Are you sure?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="Delete" /></a>&nbsp;-->
+	</td>
+</tr>

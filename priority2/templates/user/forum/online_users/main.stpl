@@ -1,0 +1,14 @@
+<div class="borderwrap">
+	<div class="maintitle">&nbsp;&nbsp;{t(Online Users)}</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<th width="30%">{t(Member Name)}</th>
+			<th width="30%">{t(Location)}</th>
+			<th align="center" width="20%">{t(Time)}</th>
+			<th width="10%">&nbsp;</th>
+		</tr>
+{items}
+{filter}
+	</table>
+</div>
+<br />

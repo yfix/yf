@@ -1,0 +1,61 @@
+{if("display_js" eq 1)}
+<span style="display:none;">{vote_box}</span>
+
+<style type="text/css">
+	select.vote_box {
+		display: none;
+	}
+	.vote_block {
+		width: 100px;
+		display: none;
+/*		margin-bottom: 0px;*/
+	}
+	.vote_button {
+		font-size: 10px;
+		width: 40px;
+	}
+</style>
+
+<script type="text/javascript">
+<!--
+try {
+// JQuery on DOM loaded
+$(function(){
+	var WEB_PATH	= '{const(WEB_PATH)}';
+	var do_vote_url	= '{do_vote_url}';
+
+	if (WEB_PATH == "" || do_vote_url == "") {
+		return ;
+	}
+	var _select_display	= $("<select></select>").css("display");
+
+	$(".vote_block").prepend($("select.vote_box")).css("display", "inline");
+	$("select.vote_box").css("display", _select_display);
+
+	$("input[type=button].vote_button").click(function(e){
+		var _post_id	= $(this).parent().attr("profy:object_id");
+		var _rate_value = $(this).parent().find("select.vote_box :selected").val();
+		if (!_post_id) {
+			return false;
+		}
+		if (!_rate_value) {
+			alert("{t(Please select vote value)}!");
+			return false;
+		}
+		$.post(do_vote_url, {"post_id": _post_id, "rate_value": _rate_value, "by_ajax": 1}, function(data){
+			$(".vote_block").filter(function(){return $(this).attr("profy:object_id") == _post_id})
+				.html("<b style='color:green;'>{t(Thanks for voting)}!</b>");
+			var _resp_array = data.split(",");
+			if (_resp_array[0]) {
+				$("span.photo_rate_result").filter(function(){return $(this).attr("profy:photo_id") == _post_id})
+					.html("Rating: " + _resp_array[4] + ", votes: " + _resp_array[3]);
+			}
+		});
+	});
+});
+} catch (e) {}
+-->
+</script>
+{/if}
+
+<span class="vote_block" profy:object_id="{object_id}"><input type="button" value="{t(Vote)}!" class="vote_button"></span>

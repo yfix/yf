@@ -1,0 +1,3 @@
+<tr>
+	<td><strong><a href="{item_url}" target="_child">{item_title}</a></strong> - {item_text}</td>
+</tr>

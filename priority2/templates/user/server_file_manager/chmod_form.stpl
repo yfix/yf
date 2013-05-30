@@ -1,0 +1,132 @@
+<h3>{t(File name)}: {filepath}</h3>
+{error_message}
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p class="first">
+{if("user_box" ne "")}
+		<label for="user_box">{t(User)}:</label>
+		{user_box}
+	</p>
+	<p>
+		<label for="group_box">{t(Group)}:</label>
+		{group_box}
+	</p>
+	<p>
+{/if}
+		<label for="perms_octal">{t(Permissions)}:</label>
+{foreach("perms")}
+	{if("_key" eq "0")}{/if}
+	<input type="checkbox" value="{#.1}" profy_order="{_key}" name="perms[{_key}]" {if("#.1" ne "-")}checked{/if}>{#.0}
+	{if("_key" eq "2")}-&nbsp;{t(Owner)}<br />{/if}
+	{if("_key" eq "5")}-&nbsp;{t(Group)}<br />{/if}
+	{if("_key" eq "8")}-&nbsp;{t(Others)}{/if}
+{/foreach}
+	<br /><input type="text" id="perms_octal" name="perms_octal" value="" size="5" style="width:auto;">
+	</p>
+{if("is_folder" eq "1")}
+	<p>
+		<input type="checkbox" id="change_recurs" value="1" name="change_recurs"><label for="change_recurs" class="simple">{t(Change for all inner files and folders)}</label>
+	</p>
+{/if}
+	<div class="button_div">
+		<input type="hidden" name="mass_selected" value="{mass_selected}" />
+		<input type="submit" value="{t(Save)}" />
+		<input type="button" value="{t(Back)}" onclick="window.location.href='{back_url}';" />
+	</div>
+</form>
+</div>
+
+<script type="text/javascript">
+<!--
+function rwx2octal(){
+	var own = 0;
+	var grp = 0;
+	var oth = 0;
+		$("input[type=checkbox]").each(function(){
+			if ($(this).is(":checked")) {
+				var id = $(this).attr("profy_order");
+				// read
+				if(id == 0) {
+					own += 4;
+				}
+				if(id == 1) {
+					own += 2;
+				}
+				if(id == 2) {
+					own += 1;
+				}
+				// write
+				if(id == 3) {
+					grp += 4;
+				}
+				if(id == 4) {
+					grp += 2;
+				}
+				if(id == 5) {
+					grp += 1;
+				}
+				// execute
+				if(id == 6) {
+					oth += 4;
+				}
+				if(id == 7) {
+					oth += 2;
+				}
+				if(id == 8) {
+					oth += 1;
+				}
+			}
+		});		
+	return own + "" + grp + "" + oth;
+}
+
+$(function(){
+	var octal = rwx2octal();
+	$("input#perms_octal").attr("value", octal);
+	$("input[type=checkbox]").change(function(){
+		var octal = rwx2octal();
+		$("input#perms_octal").attr("value", octal);
+	});
+
+	$("input#perms_octal").change(function(){
+		var tmp = 0;
+		var octal = $(this).attr("value");
+		var octal_array = octal.split("");
+		if(octal_array.length != 3) {
+			alert("{t(Wrong permission)}!");
+			exit;
+		}
+		for (i in octal_array) {
+			if (parseInt(octal_array[i]) > 7){
+				alert("{t(Wrong permission)}!");
+				exit;
+			}
+
+			var _start_id = parseInt(i) * 3;
+			$("input[profy_order=" + _start_id + "]").attr("checked", "");
+			$("input[profy_order=" + (_start_id + 1) + "]").attr("checked", "");
+			$("input[profy_order=" + (_start_id + 2) + "]").attr("checked", "");
+
+			if (parseInt(octal_array[i]) >= 4) {
+				tmp = parseInt(octal_array[i]) - 4;
+				$("input[profy_order=" + _start_id + "]").attr("checked", "checked");				
+			} else {
+				tmp = parseInt(octal_array[i]);
+			}
+			if (tmp == 0) {
+				continue;
+			}
+			tmp = (tmp - 2);
+			if (tmp >= 0) {
+				$("input[profy_order=" + (_start_id + 1) + "]").attr("checked", "checked");
+			} else {
+				$("input[profy_order=" + (_start_id + 2) + "]").attr("checked", "checked");
+			}
+			if ((tmp - 1) >= 0) {
+				$("input[profy_order=" + (_start_id + 2) + "]").attr("checked", "checked");
+			}
+		}
+	});
+});
+-->
+</script>

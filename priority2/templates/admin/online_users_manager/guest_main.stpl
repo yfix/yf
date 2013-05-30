@@ -1,0 +1,35 @@
+<h1>{t(Online Guests Manager)} ({total} {t(now online)})</h1>
+
+{if("items" ne "")}
+<br />
+<table>
+	<thead>
+		<th>{t(Session ID)}</th>
+		<th>{t(Location)}</th>
+		<th>{t(IP)}</th>
+		<th>{t(Time)}</th>
+		<th>{t(User Agent)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br />
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No online guests)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+{{--
+<script type="text/javascript">
+<!--
+$(function() {
+	$("table.my_form_table tr").not(":first-child")
+		.filter(":even").addClass("bg1").end()
+		.filter(":odd").addClass("bg2").end();
+});
+-->
+</script>
+--}}

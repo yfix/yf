@@ -1,0 +1,9 @@
+	<tr>
+		<td><a href="{site_url}" target="_blank"><b>{site_name}</b></a></td>
+	</tr>
+	<tr>
+		<td>
+			{text}
+			<br /><br />
+		</td>
+	</tr>

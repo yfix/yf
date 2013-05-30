@@ -1,0 +1,12 @@
+		<tr>
+			<td colspan="4" class="formbuttonrow" align="center" valign="middle">
+				<form action="{save_action}" method="post">
+					<b>{t(Sort by)}: &nbsp;</b>
+{sort_by_box}
+{show_members_box}
+{sort_order_box}
+					<input type="hidden" name="act" value="save_filter">
+					<input type="submit" value="{t(Update)}" class="forminput" />
+				</form>
+			</td>
+		</tr>

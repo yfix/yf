@@ -1,0 +1,10 @@
+	<tr class="{bg_class}">
+		<td><input type="text" name="new_member[{id}][name]" /></td>
+		<td align="center"><input type="checkbox" checked='checked' name="new_member[{id}][member]" /></td>
+		<td align="center"><input type="checkbox" checked='checked' name="new_member[{id}][post]" /></td>
+	{if("moderated" eq "1")}	
+		<td align="center"><input type="checkbox" name="new_member[{id}][unmoderated]" /></td>
+		<td align="center"><input type="checkbox" name="new_member[{id}][moderator]" /></td>
+	{/if}
+		<td align="center"><input type="checkbox" name="new_member[{id}][maintainer]" /></td>
+	</tr>

@@ -1,0 +1,82 @@
+<p>
+You can define here your calendar, by blocking busy days or setting days 
+available for escort service.
+</p>
+
+<div align="center" id="calendar_cur_month">
+{cur_month}
+</div>
+
+<div align="center">
+<table>
+	<tr>
+		<td width='50%' align="left" nowrap>
+{if("prev_month_link" ne "")}<a href='{prev_month_link}' class="actionlink">(Previous month) &lt;&lt;&lt;</a>{/if}
+		</td>
+		<td width='50%' align="right" nowrap>
+{if("next_month_link" ne "")}<a href='{next_month_link}' class="actionlink">&gt;&gt;&gt; (Next month)</a>{/if}
+		</td>
+	</tr>
+</table>
+</div>
+
+<br />
+
+<div align="center">
+	<a href="{apply_defaults_link}" class="actionlink" onclick="return confirm('Are you sure?');">Apply default settings to this month</a>
+	&nbsp; &nbsp; <a href="{edit_defaults_link}" class="actionlink">Edit defaults</a>
+
+	<br /><br />
+	<form action="{form_action}" method="post">
+		<input type="hidden" name="start_year" value="{cur_year_num}">
+		<input type="hidden" name="start_month" value="{cur_month_num}">
+		<input type="hidden" name="start_day" value="01">
+		<input type="hidden" name="start_time" value="0">
+
+		<input type="hidden" name="end_year" value="{cur_year_num}">
+		<input type="hidden" name="end_month" value="{cur_month_num}">
+		<input type="hidden" name="end_day" value="{next_day_num}">
+		<input type="hidden" name="end_time" value="23">
+		Set the whole month as {quick_status_box} <input type="submit" name="save2" value="Set" onclick="return confirm('This action will erase all other events inside this month and set all days as ' + (this.form.status ? this.form.status.options[this.form.status.selectedIndex].innerText : 'SELECTED_STATUS') + '. Are you sure you won\'t miss any significant data and want to proceed?');">
+	</form>
+</div>
+
+<br />
+
+{error_message}
+
+<fieldset>
+<legend><b>{t(Add schedule entry)}</b></legend>
+<div class="editform">
+<form action="{form_action}" method="POST">
+	<p class="first">
+		<label for="start_year_box">{t(Start time)}:</label>
+		{start_year_box} {start_month_box} {start_day_box} {start_time_box} {t(hour)}
+	</p>
+	<p>		
+		<label for="end_year_box">{t(End time)}:</label>
+		{end_year_box} {end_month_box} {end_day_box} {end_time_box} {t(hour)}
+	</p>
+	<p>
+		<label for="status_box">{t(Status)}:</label>
+		{status_box}
+	</p>
+	<p>
+		<label for="comments">{t(Comments)}:</label>
+		<textarea name="comments" id="comments" style="height:50px;"></textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="submit" name="save2">
+	</div>
+</div>
+</form>
+</fieldset>
+
+<p>
+You can click on a particular day in order to define if in that day you are 
+<b>available</b> (green color) or 
+<b>not available</b> (red color) for escorting service. 
+If you define one day as being Not Available (red color), 
+then your clients will not be able to choose that day when they will do booking. 
+<b>Grey</b> colors will have the meaning of days with no defined status.
+</p>

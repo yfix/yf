@@ -1,0 +1,80 @@
+<div align="center">
+	{t(Calendar for date)}: <b>{cur_date}</b>
+</div>
+
+<br />
+{if("status_items" ne "")}
+<table width="60%" align="center">
+	<thead>
+		<th>{t(From)}</th>
+		<th>{t(To)}</th>
+		<th>{t(Status)}</th>
+		<th>{t(Comment)}</th>
+		<th>{t(Operations)}</th>
+	</thead>
+{foreach("status_items")}
+		<tr
+	{if("#.status_id" eq "1")}class="busy"{/if}
+	{if("#.status_id" eq "2")}class="available"{/if}
+	{if("#.status_id" eq "3")}class="travel"{/if}
+		>
+		<td align="center">{#.from}</td>	
+		<td align="center">{#.to}</td>	
+		<td>{#.status}</td>
+		<td>{#.comment}</td>	
+		<td align="center" nowrap>	
+			<a href="{#.delete_link}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>	
+		</td>
+	</tr>
+{/foreach}
+</table>
+{/if}
+{if("status_items" eq "")}
+	{t(No tasks yet)}
+{/if}
+
+<br />
+
+<div align="center">
+	<a href="{apply_defaults_link}" class="actionlink" {if("quick_confirm" eq 1)}onclick="return confirm('Are you sure?');"{/if}>{t(Apply default settings to this day)}</a>
+	&nbsp; &nbsp; <a href="{edit_defaults_link}" class="actionlink">{t(Edit defaults)}</a>
+
+	<br /><br />
+	<form action="{form_action}" method="post">
+		<input type="hidden" name="start_time" value="0">
+		<input type="hidden" name="end_time" value="23">
+		{t(Set the whole day as)} {quick_status_box} <input type="submit" name="save2" value="Set" {if("quick_confirm" eq 1)}onclick="return confirm('{t(This action will erase all other events inside this day. Are you sure you want to proceed)}?');"{/if}>
+	</form>
+</div>
+
+<br />
+
+{error_message}
+
+<fieldset>
+	<legend><b>{t(Add task)}</b></legend>
+<form action="{form_action}" method="POST">
+<div class="editform">
+	<p class="first">
+		<label for="start_time_box">{t(Start time)}:</label>
+		{start_time_box} {t(hour)}
+	</p>
+	<p>		
+		<label for="end_time_box">{t(End time)}:</label>
+		<td>{end_time_box} {t(hour)}</td>
+	</p>
+	<p>
+		<label for="status_box">{t(Status)}:</label>
+		{status_box}
+	</p>
+	<p>
+		<label for="comments">{t(Comments)}:</label>
+		<textarea name="comments" id="comments" style="height:50px;"></textarea>
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Submit)}" name="save2">
+	</div>
+</div>
+
+</fieldset>
+</form>                                                                               	

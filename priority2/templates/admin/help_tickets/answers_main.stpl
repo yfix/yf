@@ -1,0 +1,18 @@
+{add_answer_form}
+
+<h1 class="header">{t(Old answers)} ({num_answers})</h1>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+{if("answers" eq "")}
+	<tr><td align="center">{t(No answers yet)}</td></tr>
+{/if}
+{answers}
+</table>
+{if("pages" ne "")}
+
+	<hr />
+
+	<div align="center"><b>{t(Pages)}: {pages}</b></div>
+	<br />
+{/if}
+

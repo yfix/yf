@@ -1,0 +1,104 @@
+<script type="text/javascript">
+<!--
+var the_form			= document.getElementById("register_form");
+var force_request_file	= WEB_PATH + "?object=register&action=check_avail_field";
+var field_name_to_check	= "";
+var in_checking			= 0;
+var checked_cache		= new Array();
+
+var _fields_to_check	= ["nick","email","login"];
+
+// Add "check" buttons
+for (i = 0; i < _fields_to_check.length; i++) {
+	var _field_name	= _fields_to_check[i];
+	var _field_obj	= the_form[_field_name];
+	if (!_field_obj) {
+		continue;
+	}
+	_field_obj.parentNode.innerHTML += ' <input type="button" id="check_avail_' + _field_name + '" value="{t(check)}" onclick="return check_avail_field(\'' + _field_name + '\');">';
+}
+
+// Universal check field availiability method
+function check_avail_field(id) {
+	if (typeof (id) == "undefined" || id == 0 || id == "") {
+		alert("{t(No field name (id) specified)}!");
+		return false;
+	}
+	// Check if field is empty and we not need to disturb the server
+	var value_to_check = the_form[id] ? the_form[id].value : "";
+	if (typeof (value_to_check) == "undefined" || value_to_check == "") {
+		alert("{t(Empty field)}!");
+		return false;
+	}
+	// Make singleton checking
+	if (in_checking == 1) {
+		alert("{t(Please wait while previous checking completed)}!");
+		return false;
+	} else {
+		in_checking			= 1;
+	}
+	// Global storage
+	field_name_to_check = id;
+	// Try to use cached result
+	if (checked_cache[String(id + value_to_check)] != null) {
+		in_checking			= 0;
+		return _show_check_result(checked_cache[String(id + value_to_check)]);
+	}
+	// Prevent from double execution
+	var obj = document.getElementById("check_avail_" + field_name_to_check);
+	obj.disabled = 'true';
+	// Empty result message
+	_write_check_result_msg("");
+	// Do AJAX request
+	$.post(force_request_file, {"id": id, "value": value_to_check}, function(data){
+		var value_to_check = the_form[field_name_to_check] ? the_form[field_name_to_check].value : "";
+		// Cache store
+		if (checked_cache[String(field_name_to_check + value_to_check)] == null) {
+			checked_cache[String(field_name_to_check + value_to_check)] = data;
+		}
+		// Release singleton checking
+		in_checking = 0;
+		// Display result
+		_show_check_result(data);
+	});
+}
+
+// Display check result
+function _show_check_result(response) {
+	var msg = '';
+	// Avail
+	if (response == 1) {
+		msg = '<b style="color:green">{t(Available)}</b>';
+	// Not avail (already reserved)
+	} else {
+		msg = '<b style="color:red">{t(Already Reserved)}</b>';
+	}
+	msg = '<br /><small>' + msg + '</small>';
+	// Release button disable status
+	var obj = document.getElementById("check_avail_" + field_name_to_check);
+	obj.disabled = '';
+	// Release singleton checking
+	in_checking = 0;
+	// Display
+	if (response.length > 1) {
+		alert(response);
+	}
+	// Add message to the HTML
+	_write_check_result_msg(msg);
+}
+
+// Display check result
+function _write_check_result_msg(msg) {
+	var obj = document.getElementById("check_avail_" + field_name_to_check);
+	var text_container = document.getElementById("check_avail_result_" + field_name_to_check);
+	if (!text_container) {
+		var value_to_check = the_form[field_name_to_check] ? the_form[field_name_to_check].value : "";
+		obj.parentNode.innerHTML += ' <span id="check_avail_result_' + field_name_to_check + '">' + msg + '</span>';
+		// Restore field value
+		the_form[field_name_to_check].value = value_to_check;
+	} else {
+		text_container.innerHTML = msg;
+	}
+}
+-->
+</script>

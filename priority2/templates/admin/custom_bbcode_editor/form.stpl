@@ -1,0 +1,47 @@
+<h2>{t({action_text} record)} {if("record_id" ne "")}#{record_id}{/if}</h2>
+
+<div class="editform">
+<form action='{save_link}' method='post' name='admin_form'>
+	<p class="first">
+		<label for="title">{t(Title)}</label>
+		<input type="text" id="title" name="title" value="{title}">
+	</p>
+	<p>
+		<label for="desc">{t(Description)}</label>
+		<textarea id="desc" name="desc" cols="75" rows="5">{description}</textarea>
+	</p>
+	<p>
+		<label for="tag">{t(Tag)}</label>
+		<input type="text" id="tag" name="tag" value="{tag}">
+	</p>
+	<p>
+		<label for="replace">{t(HTML-code)}</label>
+		<textarea id="replace" name="replace" cols="75" rows="5">{html_code}</textarea>
+	</p>
+	<p>
+		<label for="example">{t(Example)}</label>
+		<input type="text" id="example" name="example" value="{example}" size="75">
+	</p>
+	<p>
+		<label for="use_option_box">{t(Use Option)}</label>
+		{use_option_box}
+	</p>
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		{active_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(SAVE)}">&nbsp;
+		<input type="button" onclick="window.location.href='{back_link}'" value="{t(BACK)}">
+	</div>
+</form>
+</div>
+
+{{--<script type="text/javascript">
+<!--
+$(function() {
+	$("table.my_view_table tr:even").addClass("bg1");
+	$("table.my_view_table tr:odd").addClass("bg2");
+});
+-->
+</script>--}}

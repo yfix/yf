@@ -1,0 +1,78 @@
+<h2>
+{if("for_edit" eq 1)}{t(Edit Menu Item)} {/if}
+{if("for_edit" eq 0)}{t(Add Menu Item)} {/if}
+{t(for)}  "<a href="{edit_menu_link}">{menu_name}</a>"
+</h2>
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="type_id_box">{t(Item Type)}</label>
+		{type_id_box}
+	</p>
+	<p>
+		<label for="parent_id_box">{t(Parent Item)}</label>
+		{parent_id_box}
+	</p>
+	<p>
+		<label for="name">{t(Item Title)}</label>
+		<input type="text" id="name" name="name" value="{name}" size="30">
+	</p>
+	<p>
+		<label for="item_location">{t(Item Location)}</label>
+		{methods_box} <input type="button" value="V" onclick="insert_word(this.form.methods.options[this.form.methods.selectedIndex].value, '', true);">
+		&nbsp;<a href="{edit_modules_link}">{t(Edit Modules)}</a>
+		<br /><br />
+		<input type="text" name="location" id="item_location" value="{location}" size="30">
+	</p>
+	<p>
+		<label for="icon">{t(Item Icon)}</label>
+		<span class="icon_preview">{if("icon_src" ne "")}<img src="{icon_src}" />{/if}</span>
+		<input type="text" id="icon" name="icon" value="{icon}" size="30" style="width:auto;" />
+		<input type="button" value="V" id="icon_selector" style="display:none;" />
+	</p>
+	<p>
+		<label for="groups_box">{t(Groups)}</label>
+		{groups_box}&nbsp;<a href="{edit_groups_link}">{t(Edit Groups)}</a>
+	</p>
+	<p>
+		<label for="site_ids_box">{t(Sites)}</label>
+		{site_ids_box}&nbsp;<a href="{sites_link}">{t(Edit Sites)}</a>
+	</p>
+	<p>
+		<label for="server_ids_box">{t(Servers)}</label>
+		{server_ids_box}&nbsp;<a href="{servers_link}">{t(Edit Servers)}</a>
+	</p>
+	<p>
+		<label for="cond_code">{t(Condition Code)}</label>
+		{itip("Put here PHP code that will be evaled. Return value is true or false. Influences item display. If true - item displayed, if false - then not")}
+		<input type="text" id="cond_code" name="cond_code" value="{cond_code}" size="50" />
+	</p>
+	<p>
+		<label for="item_order">{t(Display Order)}</label>
+		<input type="text" id="item_order" name="item_order" value="{order}" size="5" style="width:auto;" />
+	</p>
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		{active_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Save)}" name="go" />
+	</div>
+</form>
+</div>
+
+<br /><br />
+
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+
+<script type="text/javascript">
+<!--
+var _icons_list_link = "{icons_list_link}";
+var _icons_web_path	= "{icons_web_path}";
+-->
+</script>
+
+<div class='icon_external_box' style="display:none;"><div align="center">Loading...</div></div>
+
+{include("menus_editor/edit_item_js")}

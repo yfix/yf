@@ -1,0 +1,24 @@
+<h2>Member List ({num_members})</h2>
+
+{filter}
+
+<br />
+<table align="center">
+	<thead>
+		<th width="5%">UID</th>
+		<th>Login</th>
+		<th>Nick</th>
+		<th width="25%">E-mail</th>
+		<!--<th width="20">IP</th>-->
+		<th width="20">Add date</th>
+		<th width="20">Status</th>
+		<th width="5%">Action</th>
+	</thead>
+{items}
+</table>
+<br />
+{if("pages" ne "")}
+	<div align="center">Pages: {pages}</div>
+{/if}
+
+{if("add_link" ne "")}<br /><div align="center"><a href="{add_link}">Add</a></div>{/if}

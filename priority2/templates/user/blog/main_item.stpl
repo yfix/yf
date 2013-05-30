@@ -1,0 +1,22 @@
+<div align="left">
+	<div class="subtitle">
+		<a href="{post_link}">{result_num}. {user_name} - {post_title}</a> 
+	</div>
+
+	<table>
+		<tr valign="top">
+			<td>{avatar}</td>
+			<td>
+				{post_text}... <a href="{post_link}" class="actionlink">{t(More)}...</a>
+			</td>
+		</tr>
+	</table>
+	<div align="right" class="post_details">
+		<small>
+{t(Posted in)}: <a href="{blog_link}">{if("blog_title" eq "")}{user_name}'s {t(blog)}{/if}{if("blog_title" ne "")}{blog_title}{/if}</a>&nbsp;
+{t('::blog::on %postdate', %postdate='{post_date}')}<br />
+{t('Read %numreads times',%numreads='{num_reads}')}<br />
+{if("num_comments" ne "-1")}{t(Comments)}: {num_comments}<br />{/if}
+		</small>
+	</div>
+</div>

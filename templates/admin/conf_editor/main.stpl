@@ -1,0 +1,142 @@
+<div style="position:relative;">
+<div class="module_group_menu">
+	<a href="{user_modules_url}"{if("get.action" eq "user_modules")} class="active_group_item"{/if}>{t(User modules)}</a> |
+	<a href="{admin_modules_url}"{if("get.action" eq "admin_modules")} class="active_group_item"{/if}>{t(Admin modules)}</a> |
+	<a href="{classes_url}"{if("get.action" eq "classes")} class="active_group_item"{/if}>{t(Classes)}</a>
+</div>
+<div class="module_inner_menu">
+	<ul>
+		{items}
+	</ul>
+</div>
+<div style="padding:10px;margin-left:200px;">
+	<h3>Configuration of module "{module_name}"</h3>
+{if("config_content" ne "")}	
+<form method="post" action="{form_action}">
+	<div style="text-align:right;padding:15px;">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+
+   	{config_content}
+
+	<div style="text-align:right;padding:15px;">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+</form>
+{else}
+	<div align="center">{t(No configuration for this module)}</div>
+{/if}
+</div>
+<br style="clear:both;" />
+</div>
+
+{if("use_js_convert" eq "1")}
+<script type="text/javascript">
+<!--
+$(function(){
+
+	// Replace all textareas with more user friendly inputs
+	$(".json_value").each(function(){
+		var _json_for	= $(this).attr("profy:json_for");
+		var _cur_elm	= $(this).parent();
+		var _cur_json	= $(this).html();
+
+		$("textarea[name='" + _json_for + "']").hide();
+
+		// Make array editable
+		// We accept only 1- and 2- dimensional arrays
+		var _evaled_array = {};
+		try {
+			eval("_evaled_array = " + _cur_json + ";");
+		} catch (x) {}
+
+		$.each(_evaled_array, function(i, v) {
+
+			// Has sub array
+			if (typeof v == "object") {
+
+				$("<span></span>")
+					.html("&quot;" + i + "&quot; =&gt; array(")
+					.add("<br />")
+					.appendTo(_cur_elm);
+				// Sub items
+				$.each(v, function(i2, v2) {
+					$("<span style='width:80px;'></span>")
+						.css({"margin-left" : "30px"})
+						.html("&quot;" + i2 + "&quot; ")
+						.add("<input type='text' class='array_item' />")
+						.attr({"name" : _json_for + "[" + i + "][" + $.trim(i2) +" ]"})
+						.val(v2)
+						.add("<br />")
+						.appendTo(_cur_elm);
+				});
+			// 1-dimensional array
+			} else {
+				$("<span></span>")
+					.html("&quot;" + i + "&quot; =&gt; ")
+					.add("<input type='text' class='array_item' />")
+					.attr({"name" : _json_for + "[" + i + "]"})
+					.val(v)
+					.add("<br />")
+					.appendTo(_cur_elm);
+			}
+
+		})
+	});
+})
+-->
+</script>
+{/if}
+
+<style type="text/css">
+.module_inner_menu {
+	color: #0066CC;
+	float:left;
+	width:200px;
+	border-right:2px solid #0066CC;
+}
+
+.module_inner_menu li{
+	list-style:none;
+	position:relative;
+	padding: 2px;
+	margin: 0 2px 0 0;
+}
+.module_inner_menu li:hover {
+	background-color: #D6E7F2;
+}
+.module_inner_menu li a{
+	display: block;
+	padding: 0.1em 0.5em;
+
+}
+.module_inner_menu li a:hover{
+}
+.module_inner_menu li span{
+	float:left;
+	padding:0 0.5em;
+	width:40px;
+	border:1px solid #0066CC;
+}
+.module_group_menu {
+	padding:5px;
+	border-bottom:2px solid #0066CC;
+	margin-bottom:5px;
+}
+.conf_changed {
+	background:#FFFF00;
+	border:1px solid black;
+}
+li.active_module_item {
+	margin-right: -2px;
+	border: 2px solid #0066CC;
+	border-right: 2px solid #FFFFFF;
+	background-color: #D6E7F2;
+}
+.active_group_item {
+	padding: 5px;
+	border: 2px solid #0066CC;
+	border-bottom: 2px solid #FFFFFF;
+	background-color: #D6E7F2;
+}
+</style>

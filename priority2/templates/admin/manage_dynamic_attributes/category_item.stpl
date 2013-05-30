@@ -1,0 +1,8 @@
+<tr class="{bg_class}">
+	<td>{name}</td>
+	<td align="center" nowrap>
+		<a href="{view_link}" title="{t(View)}"><img class="action_image" src="images/details.gif" alt="{t(View)}"/></a>
+		<a href="{edit_link}" title="{t(Edit)}"><img class="action_image" src="images/links_edit.gif" alt="{t(Edit)}"/></a>
+		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure)}?');"><img class="action_image" src="images/links_delete.gif" alt="{t(Delete)}"/></a>
+	</td>
+</tr>

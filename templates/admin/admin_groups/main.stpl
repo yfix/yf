@@ -1,0 +1,41 @@
+{if("items" ne "")}
+<div align="center">
+<table align="center" width="60%">
+	<thead>
+		<th>#</th>
+		<th nowrap>{t(Name)}</th>
+		<th>{t(URL after login)}</th>
+		<th>{t(Active)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{foreach("items")}
+		<tr class="{#.bg_class}">
+			<td>{#.id}</td>
+			<td><b>{#.name}</b></td>
+			<td>{#.go_after_login}</td>
+			<td>
+	{if("#.active_link" ne "")}<a href="{#.active_link}" class="change_active">{/if}
+	{if("#.active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{else}<span class="negative">{t(INACTIVE)}</span>{/if}
+	{if("#.active_link" ne "")}</a>{/if}
+			</td>
+			<td nowrap="nowrap" align="left">
+	{if("#.edit_link" ne "")}<a href="{#.edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;{/if}
+	{if("#.delete_link" ne "")}<a href="{#.delete_link}" onclick="return confirm('{t(Are you sure)}?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;{/if}
+			</td>
+		</tr>
+{/foreach}
+	</tbody>
+</table>
+</div>
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No admin groups yet)}</div>{/if}
+
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+
+<br /><div align="center">
+{if("add_link" ne "")}<a href="{add_link}">{t(Add new group)}</a> &nbsp; {/if}
+{if("blocks_link" ne "")}<a href="{blocks_link}">{t(Blocks Access)}</a> &nbsp; {/if}
+{if("menu_link" ne "")}<a href="{menu_link}">{t(Edit Menu)}</a> &nbsp; {/if}
+</div>

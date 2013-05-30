@@ -1,0 +1,40 @@
+{if("mode" eq "js")}
+	{if("js_show_text" eq "1")}
+	<div align="center" id="redirect_text" style="display:none;">
+		<b>{text}</b><br /><br />
+		<i>{t(You_will_be_redirected_in)} {ttl} {t(seconds)}</i><br /><br />
+		<a href="{location}">{t(Click here if you don&#39;t want to wait or have some trouble with auto redirect)}.</a>
+	</div>
+	{/if}
+<script type="text/javascript">
+<!--
+var _elm = document.getElementById("redirect_text");
+if (_elm) {
+	_elm.style.display = 'block';
+}
+var _redirect_tll = parseInt('{ttl}');
+var _interval = window.setInterval(function(){
+	window.clearInterval(_interval);
+	window.location.href='{location}';
+}, (_redirect_tll || 0.1) * 1000);
+-->
+</script>
+<noscript>{html_redirect}</noscript>
+{/if}
+{if("mode" eq "html")}
+<meta http-equiv="Refresh" content="{ttl}; Url='{location}'" /><br />
+<div align="center">
+	<b>{text}</b><br /><br />
+	<i>{t(You_will_be_redirected_in)} {ttl} {t(seconds)}</i><br /><br />
+	<a href="{location}">{t(Click here if you don&#39;t want to wait or have some trouble with auto redirect)}.</a>
+</div>
+{/if}
+{if("mode" eq "debug")}
+<form action="{location}" method="POST">
+	{t(Debug redirect)}: <input type="submit" value="{t(Go Next)}" /> 
+	(<small>{location}</small>)<br />
+	TTL: <b>{ttl} secs</b>;
+	{t(Redirect mode)}: <b>{normal_mode}</b>;
+	{t(Text)}: <b>{text}</b>;
+</form>
+{/if}

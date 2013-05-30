@@ -1,0 +1,69 @@
+<div class="editform">
+<form action="{form_action}" method="post">
+	<p class="first">
+		<label for="color_theme_box">{t(Choose color theme)}</label>		
+		{themes_box}
+	</p>
+	<p>
+		<label for="font_size_box">{t(Choose base font size)}</label>		
+		{font_size_box}
+	</p>
+	<p>
+		<label for="max_page_width_box">{t(Choose max layout width)}</label>		
+		{max_page_width_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="{t(Apply)}">
+		<input type="button" value="{t(Reset settings)}" onclick="window.location.href='{reset_link}'">
+	</div>
+</form>
+</div>
+
+<script type="text/javascript">
+<!--
+//var _dynamic_css_link = '{tpl_path}';
+var _dynamic_css_link = '{dynamic_css_link}';
+// jQuery on DOM ready
+$(function(){
+	$("<link rel='stylesheet' type='text/css' title='custom_style' href='' />")
+		.appendTo("body");
+
+	$("#color_theme_box").change(function(e){
+		var _selected_color_theme = $("option:selected", this).val();
+
+		$("link[title=custom_style]")
+			.attr("href", _selected_color_theme ? (_dynamic_css_link + "color_theme_" + _selected_color_theme + ".css") : "");
+	});
+
+	// IE6 fix
+	if ($.browser.msie && $.browser.version <= 6.1 && !navigator.userAgent.match(/msie (7|8)/i)) {
+		$("#font_size_box option").each(function(){
+			if ($(this).val() > 100) {
+				$(this).remove();
+			}
+		});
+	}
+
+	$("#font_size_box").change(function(e){
+		var _selected_font_size = $("option:selected", this).val();
+
+		$("html")
+			.css("font-size", _selected_font_size ? (_selected_font_size + "%") : "100%");
+	});
+
+	$("#max_page_width_box").change(function(e){
+		var _selected_max_layout_width = $("option:selected", this).val();
+		if (!$.browser.msie) {
+			$("body")
+				.css("max-width", _selected_max_layout_width + "px");
+		} else {
+/*
+			try {
+				$("#container").css("width", (_selected_max_layout_width * 0.9) + "px");
+			} catch (e) {alert(e.description)}
+*/
+		}
+	});
+});
+-->
+</script>

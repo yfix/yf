@@ -1,0 +1,23 @@
+<form action="{form_action}" method="post">
+<input type="hidden" name="p_act" value="merge" />
+<input type="hidden" name="selected_ids" value="{selected_ids}" />
+<input type="hidden" name="merged_post_id" value="{merged_post_id}" />
+<div class="borderwrap">
+	<div class="maintitle">{t(Merging Posts)}</div>
+	<table cellspacing="1" width="100%">
+		<tr>
+			<td width="35%" class="row2"><b>{t(Final Merged Post Date)}</b></td>
+			<td width="65%" class="row2">{dates_box}</td>
+		</tr>
+		<tr>
+			<td class="row2"><b>{t(Final Merged Post Author)}</b></td>
+			<td class="row2">{authors_box}</td>
+		</tr>
+		<tr>
+			<td class="row2" valign="top"><b>{t(Final Merged Post Content)}</b></td>
+			<td class="row2"><textarea cols="70" rows="20" name="new_text" class="textarea">{text}</textarea></td>
+		</tr>
+	</table>
+	<div class="formsubtitle" align="center"><input type="submit" value="{t(Merge Posts)}" /></div>
+</div>
+</form>

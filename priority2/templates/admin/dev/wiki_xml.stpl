@@ -1,0 +1,60 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Profy</sitename>
+    <base>http://192.168.1.8/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.12.0</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Profy</namespace>
+      <namespace key="5">Profy talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+    </namespaces>
+  </siteinfo>
+  
+	<page>
+		<title>Main Page</title>
+		<id>1</id>
+		<revision>
+			<id>1</id>
+			<timestamp>2008-05-12T11:29:47Z</timestamp>
+			<contributor>
+				<ip>MediaWiki default</ip>
+			</contributor>
+<text xml:space="preserve">
+= user modules =
+{foreach("links_user")}
+[[{_val}]]
+{/foreach}
+
+= admin modules =
+{foreach("links_admin")}
+[[{_val}]]
+{/foreach}
+
+= classes modules =
+{foreach("links_class")}
+[[{_val}]]
+{/foreach}
+</text>
+		</revision>
+	</page>
+  
+  
+{pages}  
+  
+</mediawiki>

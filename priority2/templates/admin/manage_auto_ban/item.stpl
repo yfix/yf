@@ -1,0 +1,19 @@
+	<tr class="{bg_class}">
+		<td><b>{id}</b></td>
+		<td>{user_name}&nbsp;</td>
+		<td>{email}&nbsp;</td>
+		<td>{password}&nbsp;</td>
+		<td>{text}&nbsp;</td>
+		<td>{phone}&nbsp;</td>
+		<td>{fax}&nbsp;</td>
+		<td>{url}&nbsp;</td>
+		<td>{recip_url}&nbsp;</td>
+		<td>{ad_text}&nbsp;</td>
+		<td>{forum_text}&nbsp;</td>
+		<td>{comment_text}&nbsp;</td>
+		<td>{email_text}&nbsp;</td>
+		<td nowrap>
+			<input type="button" value="{t(edit)}" onclick=" window.location.href='{edit_link}'">
+			<input type="button" value="{t(delete)}" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{delete_link}'">
+		</td>
+	</tr>

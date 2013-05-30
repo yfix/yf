@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{execute(graphics,show_site_title)}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset={conf('charset')}" />
+{{--	<style type="text/css">*, html, body {margin:0;padding:0}</style>--}}
+</head>
+
+<frameset cols="220,*" rows="*" border="0">
+	<frame src="./left_frame.php" name="nav" />
+	<frame src="./index.php{query_string}" name="main" />
+</frameset>
+
+<noframes>
+	<body bgcolor="#FFFFFF" text="#000000">
+		<p>Sorry, your browser doesn't seem to support frames</p>
+	</body>
+</noframes>
+</html>

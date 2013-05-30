@@ -1,0 +1,36 @@
+{if("error_message" ne "")}
+<div align="center">{error_message}</div>
+{/if}
+
+<div class="editform">
+<form method="post" action="{form_action}" enctype="multipart/form-data">
+	<p class="first">
+		<label for="import_file">{t(Language File)}</label>
+		<input type="file" id="import_file" name="import_file" size="40">
+	</p>
+	<p>
+		<label for="file_formats_box">{t(File Format)}</label>
+		{file_formats_box}
+	</p>
+	<p>
+		<label for="langs_box">{t(Language Name)}</label>
+		{langs_box}<br /><small>({t(Choose the language you want to add strings into. If you choose a language which is not yet set up, then it will be added.)})</small>
+	</p>
+	<p>
+		<label for="modes_box">{t(Mode)}</label>
+		{modes_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Import)}   " name="go" />
+	</div>
+</form>
+</div>
+
+<br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>!!!!____TODO____!!!!</p>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_link}">{t(Back to languages)}</a></div>

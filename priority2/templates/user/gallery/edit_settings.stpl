@@ -1,0 +1,104 @@
+{error_message}
+
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p>
+		<label for="gallery_privacy_box">{t(Gallery Privacy)}:<br /><small>({t(you can also set or edit it individually for each gallery entry)})</small></label>
+		<span>{privacy_box}  {tip('gallery.def_privacy')}</span>
+	</p>
+	<p>
+		<label for="gallery_comments_box">{t(Allow Comments)}:<br /><small>({t(you can also set or edit it individually for each gallery entry)})</small></label>
+		<span>{comments_box} {tip('gallery.def_comments')}</span>
+	</p>
+{if("tagging_box" ne "")}
+	<p>
+		<label for="gallery_tagging_box">{t(Allow tagging for)}:<br /><small>({t(you can also set or edit it individually for each gallery entry)})</small></label>
+		<span>{tagging_box}</span>
+	</p>
+{/if}
+{if("allow_rate_box" ne "")}
+	<p>
+		<label for="allow_rate_box">{t(Allow rating photos)}<br /></label>
+		<span>{allow_rate_box} {tip('gallery.allow_rate')}</span>
+	</p>
+{/if}
+	<p>
+		<label for="thumb_type_box">{t(Thumbnail variant)}&nbsp;{itip('Square cropped thumbnails look better. However, if you have too wide or too high images they may be cropped in an awkward way, use original images in this case.')}</label>
+		<span>{thumb_type_box}</span>
+	</p>
+	<p>
+		<label for="medium_size_box">{t(Resize photos to)}&nbsp;{itip('We have several image sizes that you can choose to fit the design of your site. All the photos that you upload will be resized to the selected size. You can change this setting at any time however, the images will be resized again without any quality loss. 350px wide size is for compact designs. 450px wide images will fit most of the designs, it is neither too large, nor too small. 600px is for those who have high resolution photos and would love to show them on the site. It might be too large for some of the designs however.')}</label>
+		<span>{medium_size_box} px</span>
+	</p>
+	<p>
+		<label for="layout_type_box">{t(Main gallery page layout)}&nbsp;{itip('We have several pre-built gallery layouts, choose the one you feel is better.')}</label>
+		<span>{layout_type_box}</span>
+	</p>
+	<p>
+		<label for="thumbs_loc_box">{t(Thumbs Location)}</label>
+		<span>{thumbs_loc_box}</span>
+	</p>
+	<p>
+		<label for="thumbs_in_row_box">{t(Thumbs in a row)}</label>
+		<span>{thumbs_in_row_box}</span>
+	</p>
+	<p>
+		<label for="slideshow_mode_box">{t(Slideshow Mode)}:<br /></label>
+		<span>{slideshow_mode_box}</span>
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(Save)}" />
+	</div>
+</form>
+</div>
+
+<script type="text/javascript">
+<!--
+$(function(){
+	var _thumbs_loc	= {
+		0 : "top",
+		1 : "side",
+		2 : "side",
+	}
+
+	// Sync select rows with location
+	function _thumbs_loc_rows_sync (_cur_loc) {
+		var _parent_select = $("select#thumbs_in_row_box");
+
+		_parent_select.find("option").each(function(){
+			var _cur_rows = $(this).val();
+
+			if (_cur_loc == "top") {
+				if (_cur_rows >= 2 && _cur_rows <= 4) {
+					$(this).attr("disabled", "true");
+					if ($(this).attr("selected")) {
+						_parent_select.find("option[value=10]").attr("selected", true);
+					}
+				} else {
+					$(this).attr("disabled", "");
+				}
+			} else {
+				if (_cur_rows >= 10) {
+					$(this).attr("disabled", "true");
+					if ($(this).attr("selected")) {
+						_parent_select.find("option[value=2]").attr("selected", true);
+					}
+				} else {
+					$(this).attr("disabled", "");
+				}
+			}
+		});
+	}
+
+	// Sync onchange
+	$("select#thumbs_loc_box").change(function(){
+		var _cur_loc = _thumbs_loc[$(this).find(":selected").val()];
+
+		_thumbs_loc_rows_sync(_cur_loc);
+	});
+
+	// Sync onload
+	$("select#thumbs_loc_box").change();
+})
+-->
+</script>

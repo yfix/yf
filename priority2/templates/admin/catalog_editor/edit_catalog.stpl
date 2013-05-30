@@ -1,0 +1,38 @@
+<div align="center">
+	<h3>{t(Catalogs Editor)}</h3>
+	<h4>{t(Edit Catalog Block)}</h4>
+</div>
+
+<table border="0" cellpadding="5" cellspacing="0" width="100%" align="center">
+<form method="post" action="{form_action}">
+	<tr>
+		<td align="right" width="30%"><b>{t(Catalog Keyword)}</b></td>
+		<td><input type="text" name="name" value="{name}"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Catalog Description)}</b></td>
+		<td><textarea name="desc" cols="50" rows="3">{desc}</textarea></td>
+	</tr>
+	<tr>
+		<td align="right" width="30%"><b>{t(Custom Template)}</b></td>
+		<td><input type="text" name="stpl_name" value="{stpl_name}"></td>
+	</tr>
+	<tr>
+		<td align="right" width="30%"><b>{t(Custom class Method)}</b></td>
+		<td><input type="text" name="method_name" value="{method_name}"></td>
+	</tr>
+	<tr>
+		<td align="right"><b>{t(Active)}</b></td>
+		<td>{active_box}</td>
+	</tr>
+	<tr>
+		<td height="25" colspan="2" align="center">
+			<input type="submit" value="  {t(Save)}  " name="go" />
+		</td>
+	</tr>
+</form>
+</table>
+
+<br /><br />
+
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>

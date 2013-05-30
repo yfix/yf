@@ -1,0 +1,8 @@
+{catch("_tmp")}{eval_code($GLOBALS['no_page_header']=1)}{/catch}
+
+<h1>{t(User Blog)}</h1>
+
+{if("is_own_blog" eq 1)}
+	{t(You have not started your blog yet. You can do it right now!)} <a href="{start_link}">{t(Click here)}</a> {t(to start)}!
+{/if}
+{if("is_own_blog" eq 0)}{t(Sorry, this user has not started his&#40;her&#41; blog yet)}.{/if}

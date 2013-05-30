@@ -1,0 +1,48 @@
+<table width="100%" border="0" align="center" cellpadding="3" cellspacing="0">
+	<tr>
+		<td><span class="big_font">{forum_name}</span></td>
+	</tr>
+	<tr>
+		<td height="30">
+				<input type="button" value="{t(edit)}" onclick="window.location.href='{edit_link}'">
+				<input type="button" value="{t(delete)}" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{delete_link}'">
+				(<small><a href="{active_link}" class="change_active">{if("is_active" eq 1)}<b style="color:green;">{t(ACTIVE)}</b>{/if}{if("is_active" eq 0)}<b style="color:red;">{t(INACTIVE)}</b>{/if}</a></small>)<br>
+			<strong><a href="{cat_link}">{cat_name}</a> &gt; 
+{foreach("parent_forums")}
+	<a href="{#.link}">{#.name}</a> &gt;
+{/foreach}
+			<a href="{forum_link}">{forum_name}</a></strong> &gt; 
+			{topic_name}
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="3">
+  <tr> 
+	<td width="400" align="left">
+		<input type="button" onclick="window.location.href='{new_topic_link}'" value="{t(New Topic)}">
+		<input type="button" onclick="window.location.href='{add_link}'" value="{t(Reply)}">
+{if("future_topic_link" ne "")}
+			<input type="button" onclick="window.location.href='{future_topic_link}'" value="{t(Add future topic)}">
+{/if}
+{if("future_post_link" ne "")}
+			<input type="button" onclick="window.location.href='{future_post_link}'" value="{t(Add future post)}">
+{/if}
+	</td>
+	<td align="right">{pages}</td>
+  </tr>
+</table>
+<table width="100%" border="0" align="center" cellpadding="3" cellspacing="0" class="tbb">
+	<tr class="forum_title_bg" class="nb">
+		<td width="100" height="20">&nbsp;</td>
+		<td width="700" class="forum_title">{topic_name}</td>
+	</tr>
+
+	{posts}
+
+</table>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="3">
+  <tr> 
+	<td width="400" align="left">&nbsp;</td>
+	<td align="right">{pages}</td>
+  </tr>
+</table>

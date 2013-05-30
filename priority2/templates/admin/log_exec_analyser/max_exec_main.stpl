@@ -1,0 +1,21 @@
+<h2>{t(Top Execution Time Pages)} ({t(total)} {total} {t(entries)})</h2>
+
+<div align="center">
+<a href="{main_link}">{t(Back to analyser main)}</a>
+<br /><br />
+
+<table>
+	<thead>
+		<th>{t(Exec Time)}<br /><small>(max)</small></th>
+		<th>{t(Exec Time)}<br /><small>({t(average)})</small></th>
+		<th>{t(Page Address)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+</div>
+{if("pages" ne "")}
+<br /><br />
+	<div align="center">{t(Pages)}: {pages}</div>
+{/if}

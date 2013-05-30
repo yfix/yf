@@ -1,0 +1,9 @@
+<tr valign="top">
+	<td width="10%" valign="top">{avatar}</td>
+	<td width="90%" valign="top" align="left">
+		Name: <a href="{profile_link}"><b>{name}</b></a>
+		<br />Account ID: <a href="{profile_link}"><b>{id}</b></a>
+		<br /><i>Add date: {add_date}</i>
+		<br /><br />Account type: <b>{account_type}</b>
+	</td>
+</tr>

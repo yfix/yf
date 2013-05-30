@@ -1,0 +1,19 @@
+{error}
+
+{if("items" ne "")}
+<div align="center">
+	<table>
+		<thead>
+			<th>{t(Name)}</th>
+			<th width="11%" align="center">{t(Action)}</th>
+		</thead>
+	{items}
+	</table>
+</div>
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No category yet)}</div>{/if}
+{if("pages" ne "")}<div align="center"><br />{t(Pages)}: {pages}<br /></div>{/if}
+
+<br />
+<div align="center"> <a href="{add_actegory_link}">{t(Add category)}</a></div>

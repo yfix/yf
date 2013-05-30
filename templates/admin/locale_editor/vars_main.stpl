@@ -1,0 +1,53 @@
+<h3>{t(Total)} ({total})</h3>
+
+<div align="center">
+	{filter}
+</div>
+<br />
+{if("items" ne "")}
+<form action="{mass_delete_link}" method="post" name="locale_vars_form">
+<table>
+	<thead>
+		<th width="2%">#</th>
+		<th>{t(String)}</th>
+		<th>{t(Locales)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+	<tfoot>
+		<td colspan="4">
+			<br />
+			<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'>{t(SELECT ALL)}</label>
+			<input type='submit' value='{t(Delete seleted)}' onclick="return confirm('{t(Are you sure?)}');">
+		</td>
+	</tfoot>
+</table>
+
+</form>
+{/if}
+{if("items" eq "")}<div align="center">{t(No vars yet)}</div>{/if}
+<br />
+
+{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div><br />{/if}
+
+<div align="center">
+<form action="{add_link}" method="post" name="add_var_form">
+	{t(Add new variable)}:&nbsp;<input type="text" value="" name="var_name" />&nbsp;<input type="submit" value="{t(ADD)}">
+</form>
+</div>
+<br />
+
+<div align="center">
+	<a href="{import_vars_link}">{t(Import Vars)}</a>&nbsp;
+	<a href="{export_vars_link}">{t(Export Vars)}</a>&nbsp;<br /><br />
+	<a href="{collect_vars_link}" onclick="return confirm('{t(Are you sure)}?')">{t(Collect vars from source code)}</a>&nbsp;
+	<small>({t(Note that collecting vars might take a while)})</small><br />
+	<a href="{cleanup_vars_link}">{t(Cleanup Vars)}</a>&nbsp;
+	<small>({t(Clenaup vars deletes all empty or not changed vars)})</small><br />
+	<a href="{user_vars_link}">{t(User Vars)}</a>&nbsp;
+</div>
+
+<br />
+<div align="center"><a href="{back_link}">{t(Back to languages)}</a></div>

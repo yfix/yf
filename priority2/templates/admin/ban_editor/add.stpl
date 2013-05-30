@@ -1,0 +1,18 @@
+<div align="center">
+
+<div class="editform" style="width:300px;">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="ip">{t(IP)}</label>
+		<input type="text" name="ip" id="ip" value="{ip}" size="20" style="width:auto;" />
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="{t(Add)}" />
+	</div>
+</form>
+</div>
+
+<br />
+<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+
+</div>

@@ -1,0 +1,39 @@
+<div align="right"><a href="{handshake_link}">{t(You handshake request)}</a></div>
+<div align="right"><a href="{handshake_to_you_link}">{t(Handshake request to you)}</a></div>
+
+{if("error_message" ne "")}
+	{error_message}
+	<br />
+{/if}
+
+{if("notices" ne "")}
+	{notices}
+	<br />
+{/if}
+
+
+{if("items" ne "")}
+<form action="{form_action}" method="post">
+	<table align="center">
+		<thead>
+			<th>{t(Nick)}</th>
+			<th>{t(Member)}</th>
+			<th>{t(Posting Access)}</th>
+		{if("moderated" eq "1")}
+			<th>{t(Unmoderated)}</th>
+			<th>{t(Moderator)}</th>
+		{/if}
+			<th>{t(Maintainer)}</th>
+		</thead>
+	{items}
+	{new_members}
+	</table>
+	<br />
+	<div align="center">
+		<input type="submit" name="go" value="Update settings" />
+	</div>
+</form>
+{/if}
+
+{if("items" eq "")}<div align="center">{t(No members yet)}</div>{/if}
+<br />

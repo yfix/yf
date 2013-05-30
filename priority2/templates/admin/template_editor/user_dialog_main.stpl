@@ -1,0 +1,24 @@
+<h3>Please check templates you want to replace</h3>
+<form action='{form_action}' method='post' name='admin_form'>
+<table align="center">
+	<thead>
+		<th>{t(Template name)}</th>
+		<th>{t(Source in DB)}</th>
+		<th>{t(Source in file)}</th>
+		<th width="5%">{t(Replace)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+	<tfoot>
+		<td colspan="3" align="right">{t(SELECT ALL)}</td>
+		<td width="5%" align="center">
+			<label for="my_check_all"><input type='checkbox' id="my_check_all" name='check_all' onclick='my_toggle_boxes(this.form);'></label>
+		</td>
+	</tfoot>
+</table>
+<br />
+<div align="center">
+	<input type='submit' value='{t(Replace selected)}'>
+</div>
+</form>

@@ -1,0 +1,75 @@
+{{--
+	To use with text pages where need to make some action when part of text is selected
+--}}
+
+<div id="alert_box" align="center" style="display:none;">
+	<b>{t(Add selection to quotations)}?</b>
+	<br /><br />
+	<b><a href="javascript:_send_data();">[{t(Yes)}]</a>&nbsp; <a href="javascript:_close_alert();">[{t(No)}]</a></b>
+	<b><a href="javascript:_close_alert();" style="position:absolute;top:2px;right:5px;">X</a></b>
+</div>
+
+<style type="text/css">
+#alert_box {
+	position: fixed;
+	top: 250px;
+	left: 35%;
+	right: 35%;
+	width: 30%;
+	display: none;
+	z-index: 1000;
+	border: 3px solid #0066CC;
+	background: #ffc;
+	overflow: hidden;
+	font-size: 14px;
+	padding: 20px;
+}
+#alert_box a {
+	text-decoration: none;
+}
+</style>
+
+<script type="text/javascript">
+<!--
+	var _sel = null;
+
+$(function(){
+	$(document).bind("mouseup", function(){
+
+		if ($.browser.msie){
+			_sel = document.selection.createRange().text;
+		} else {
+			_sel = document.getSelection();
+		}
+		if (_sel != "") {
+			$("#alert_box").fadeIn("slow");
+		}
+	});
+
+	// Catch keyboard keys
+	$(document).bind("keyup", function(e){
+		// "Esc" key (27) - cancel editing
+		if (e.keyCode != 27) {
+			return true;
+		}
+		_close_alert();
+	});
+});
+
+function _close_alert() {
+//	$("div#alert_box").css("display", "none");
+	$("div#alert_box").fadeOut("fast");
+};
+
+function _send_data() {
+
+	$("div#alert_box").css("display", "none");
+	// Url for save method
+	var _url = "{save_selected_text_url}";
+	if (_url !="" && _sel !="") {
+		$.post(_url, {text: _sel});
+	}
+}
+
+-->
+</script>

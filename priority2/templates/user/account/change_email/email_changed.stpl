@@ -1,0 +1,9 @@
+Hi,
+
+Your account email has been changed from {old_email} to {new_email} as you requested.
+
+Yours,
+{const(SITE_ADVERT_NAME)}
+
+Please, visit us at {const(SITE_ADVERT_URL)}
+

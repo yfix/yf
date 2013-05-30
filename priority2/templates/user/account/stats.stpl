@@ -1,0 +1,10 @@
+<hr />
+
+<div align="left">
+	<small>
+		{t(Member since)}: {member_since}<br />
+		{t(Last update)}: {last_update}<br />
+		{t(Emails sent to you)}: {emails}<br />
+		{{--{t(Overall website visits)}: {visits}--}}
+	</small>
+</div>

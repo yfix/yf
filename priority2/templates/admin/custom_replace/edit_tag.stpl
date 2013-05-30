@@ -1,0 +1,36 @@
+<div class="editform">
+<form method="post" action="{form_action}">
+	<p class="first">
+		<label for="name">{t(Tag Name)}</label>
+		<input type="text" id="name" name="name" value="{name}">
+	</p>
+	<p>
+		<label for="desc">{t(Tag Description)}</label>
+		<textarea id="desc" name="desc" cols="50" rows="3">{desc}</textarea>
+	</p>
+	<p>
+		<label for="pattern_find">{t(Pattern Find)}</label>
+		<textarea id="pattern_find" name="pattern_find" cols="50" rows="3">{pattern_find}</textarea>
+	</p>
+	<p>
+		<label for="pattern_replace">{t(Pattern Replace)}</label>
+		<textarea id="pattern_replace" name="pattern_replace" cols="50" rows="3">{pattern_replace}</textarea>
+	</p>
+	<p>
+		<label for="active_box">{t(Active)}</label>
+		{active_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" value="  {t(Save)}  " name="go" />
+	</div>
+</form>
+</div>
+<br />
+<br />
+<div align="center"><a href="{back_link}">{t(Back To Tags List)}</a></div>
+
+<br />
+<div>
+	<p><b>NOTE:</b></p>
+	<p>!!!TODO: DESCRIPTION HERE !!!</p>
+</div>

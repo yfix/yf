@@ -1,0 +1,8 @@
+	<tr class="{bg_class}">
+		<td class="td">{id}</td>
+		<td><b>{type}</b></td>
+		<td>{value}</td>
+		<td><i>{expiration}</i></td>
+		<td><b>{moderator}</b></td>
+		<td><input type="button" value="{t(delete)}" onclick="window.location.href='{ban_delete_url}'"></td>
+	</tr>

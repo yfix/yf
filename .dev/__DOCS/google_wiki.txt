@@ -1,0 +1,15 @@
+*PROFY FRAMEWORK* is a PHP Framework designed to use inside highload web sites and projects.
+
+It is used in several projects with more than 1 million dynamic page views per day.
+
+System requirements: PHP 4.3+ (Yes, we know and use PHP5, but this is not a requirement for most parts of code), MySQL 4.1+ (For working with Framework as CMS).
+
+Framework has inbuilt web-based installer (used for rapid application development by our team). We also use it for testing and displying availiable features.
+
+How to install sample website based on PROFY FRAMEWORK:
+
+  # You need to put PROFY_FRAMEWORK somewhere onto your hard drive (ex. /usr/local/share/PROFY_FRAMEWORK/) extracting from archive downloaded from this site or by using "svn checkout http://profyframework.googlecode.com/svn/trunk/ /usr/local/share/PROFY_FRAMEWORK".
+  # Copy file "PROFY_FRAMEWORK/__INSTALL/install.php" into any folder availiable through your web-server (ex. "/var/www/test/install.php")
+  # Call it from web browser (ex. http://localhost/test/install.php) and follow installer instuctions.
+
+You will receive fully functional website with lot of features ready for use or modifications.

@@ -1,0 +1,39 @@
+<form action="{form_action}" method="post">
+<div class="formsubtitle">{t(Time Zone)}</div>
+<p>
+	<b>You may adjust the base time zone</b><br />The time (including your current adjustment) is:&nbsp;{user_time}<!--Today, 02:59 PM-->
+	<br />
+
+{time_zone_box}
+
+	<br /><br />
+	<input type="checkbox" name="{dst_status}" value="1" {if('dst_status' eq 1)}checked="yes"{/if} /> &nbsp;<b>Is daylight saving time in effect?</b><br />
+	(If you have selected the correct time zone and the clock appears an hour out, check or uncheck box to suit)
+</p>
+<div class="formsubtitle">{t(Board Display Settings)}</div>
+<table>
+	<tr>
+		<td width="70%">Do you wish to view members signatures when reading topics?</td>
+		<td>{view_sig_box}</td>
+	</tr>
+	<tr>
+		<td>Do you wish to view images in posts, such as smilies and posted images?</td>
+		<td>{view_images_box}</td>
+	</tr>
+	<tr>
+		<td>Do you wish to view members avatars when reading topics?</td>
+		<td>{view_avatars_box}</td>
+	</tr>
+	<tr>
+		<td>Number of posts to show for each topic page</td>
+		<td>{posts_per_page_box}</td>
+	</tr>
+	<tr>
+		<td>Number of topics to show for each forum page</td>
+		<td>{topics_per_page_box}</td>
+	</tr>
+	<tr>
+		<td class="formbuttonrow" colspan="2"><input type="submit" name="submit" value="{t(Save)}" /></td>
+	</tr>
+</table>
+</form>

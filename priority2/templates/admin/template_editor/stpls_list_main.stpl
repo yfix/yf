@@ -1,0 +1,49 @@
+<h2>{t(STPLs list in)} "{location}" {t(in the theme)} "{theme_name}"</h2>
+<br />
+<div align="center">
+{include("template_editor/add_stpl_form")}
+</div>
+<br />
+<div align="center">
+	<a href="{back_url}">{t(Back to themes list)}</a>
+</div>
+<br />
+{if("items" ne "")}
+<table align="center">
+	<thead>
+		<th width="1%">#</th>
+		<th>{t(Name)}</th>
+		<th>{t(Size)}</th>
+{if("location" ne "framework")}
+		<th width="5%">{t(Action)}</th>
+{/if}
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+
+{if("items" eq "")}
+<br />
+<div align="center">{t(No templates)}</div>
+{/if}
+
+{if("pages" ne "")}
+<br />
+<div align="center">{t(Pages)}: {pages}</div>
+{/if}
+<br /><br />
+<div align="center"><a href="{back_url}">{t(Back to themes list)}</a></div>
+<br />
+<div align="center">
+{include("template_editor/add_stpl_form")}
+</div>
+
+
+{if("location" eq "framework")}
+	<div>
+		<p><b>{t(NOTE)}:</b></p>
+		<p class="negative">{t(You cannot edit or delete templates or folders in FRAMEWORK using web-interface)}</p>
+	</div>
+{/if}

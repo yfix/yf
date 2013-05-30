@@ -1,0 +1,35 @@
+{if("conf_items" ne "")}
+{{--
+<form method="post" action="{form_action}">
+	<div style="text-align:right;padding:15px;">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+--}}
+{if("header_text" ne "")}<h3>{header_text}</h3>{/if}
+
+	<div align="center">
+		<table class="sortable_wrapper" style="width:99%;">
+			<colgroup align="left" valign="top">
+			<col width="35%"><col><col width="15%"><col><col width="25%">
+			</colgroup>
+			<thead>
+				<th>Config var</th>
+				<th>Value</th>
+				<th>Default</th>
+				<th>Type</th>
+				<th>Description</th>
+			</thead>
+			<tbody>
+		{conf_items}
+			</tbody>
+		</table>
+	</div>
+	<input type="hidden" value="{module_id}" name="module_id" />
+
+{{--
+	<div style="text-align:right;padding:15px;">
+		<input type="submit" value="{t(Save)}" />
+	</div>
+</form>
+--}}
+{/if}

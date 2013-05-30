@@ -1,0 +1,25 @@
+<table align="center">
+	<thead>
+		<th>{t(Name)}</th>
+		<th>{t(Num STPLs)}</th>
+		<th>{t(Themes library dir used)}:</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+
+<br /><br />
+<div align="center">
+	<form action="{import_url}" method='post' name='import_form' enctype="multipart/form-data">
+		<input type="file" name="import_file" size="40">&nbsp;
+		<input type='submit' value='Import' name="go">
+	</form>
+</div>
+
+<br /><br />
+<div>
+	<p><b>{t(NOTE)}:</b></p>
+	<p>{t(This module allows to manage templates located in framework, project and sites)}</p>
+</div>

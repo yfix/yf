@@ -1,0 +1,6 @@
+<div align="center">
+	<div class="error">
+		<p>{t(Error)}</p>
+		<span>{t(Not_found)}!</span>
+	</div>
+</div>

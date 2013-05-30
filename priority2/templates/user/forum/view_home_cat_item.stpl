@@ -1,0 +1,32 @@
+{if("show_cat_contents" eq 1)}
+<div class="borderwrap" id="cat_{cat_id}">
+	<div class="maintitle">
+		<a href="{cat_link}">{cat_name}</a>
+	</div>
+	<table>
+		<colgroup>
+			<col align="center" width="1" />
+			<col align="left" width="60%" />
+			<col align="center" width="30" />
+			<col align="center" width="30" />
+			<col align="left" width="240" />
+		</colgroup>
+		<thead class="big">
+		<tr>
+			<th colspan="2" align="left">{t(Forum)}</th>
+			<th>{t(Topics)}</th>
+			<th>{t(Replies)}</th>
+			<th nowrap>{t(Last Post)}</th>
+		</tr>
+		</thead>
+		<tbody>
+{forums}
+		</tbody>
+		<tr>
+			<td class="catend" colspan="5"></td>
+		</tr>
+	</table>
+</div>
+
+<br />
+{/if}

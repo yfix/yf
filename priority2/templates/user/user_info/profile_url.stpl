@@ -1,0 +1,31 @@
+{if("show_profile_url_form" eq 0)}
+<p>
+	<label>{t(Profile URL)}:</label>
+	<strong>{eval_code(WEB_PATH)}{profile_url}</strong>
+</p>
+{/if}
+{if("show_profile_url_form" eq 1)}
+<p class="full_width">
+	<table width="100%" border="0" cellspacing="2" cellpadding="5">
+		<tr>
+			<td><strong>Create your own profile address, so that others will be able to find you easily.</strong></td>
+		</tr>
+		<tr>
+			<td><small>
+Example: If you enter "Susanna" in the box below, your profile address<br />
+would be "{eval_code(WEB_PATH)}Susanna"
+			</small></td>
+		</tr>
+		<tr valign="middle">
+			<td nowrap>{eval_code(WEB_PATH)}<input type="text" name="profile_url" value="{profile_url}" size="20"></td>
+		</tr>
+		<tr valign="middle">
+			<td><strong>
+Important Notes: <br />
+Letters and numbers only with no spaces.<br />
+Once you create a profile address, you won't be able to change it.
+			</strong></td>
+		</tr>
+	</table>
+</p>
+{/if}

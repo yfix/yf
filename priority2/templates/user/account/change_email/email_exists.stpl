@@ -1,0 +1,10 @@
+<h1 class="header">Email Change Error</h1>
+
+<table width="100%" align="center">
+	<tr>
+		<td><p>Sorry, it seems that user with this email address already exists! 
+				Use <a href="./?object=get_pswd">password reminder</a> to retrieve the password for this account.
+			</p>
+		</td>
+	</tr>
+</table>

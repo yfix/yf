@@ -1,0 +1,56 @@
+<h3><?ti("Other settings")?></h3>
+<form action="./install.php?step=<? echo $_GET["step"] ?>" name="install" method="post">
+	<table>
+		<tr>
+			<th colspan="2" class="ms"><?ti("Rewrite settings")?></th>
+		</tr>
+		<tr>
+			<td width="50%"><label><input type="checkbox" checked="true" name="rewrite"/> <?ti("Enable rewrite")?></label></td>
+		</tr>
+		<tr>
+			<td>RewriteBase</td>
+			<td> <input class="text" type="text" name="rewrite_base" value="<? echo dirname($_SERVER["REQUEST_URI"]) != "/" ? dirname($_SERVER["REQUEST_URI"]) ."/" : "/"; ?>"/></td>
+		</tr>
+		<tr>
+			<th colspan="2" class="ms"><?ti("Language in project")?></th>
+		</tr>
+		<tr>
+			<td><?ti("Select Language")?></td>
+			<td>
+				<select name="language_in_project">
+					<option value="en" <? echo ($install_lang == "en" ? "selected" : ""); ?> >English</option>
+					<option value="ru" <? echo ($install_lang == "ru" ? "selected" : ""); ?> >Русский</option>
+					<option value="uk" <? echo ($install_lang == "uk" ? "selected" : ""); ?> >Українська</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th colspan="2" class="ms"><?ti("Site name")?></th>
+		</tr>
+		<tr>
+			<td><?ti("Site name")?></td>
+			<td><input class="text" type="text" name="site_name" value="<?ti("your site name")?>"/></td>
+		</tr>
+		<tr>
+			<th colspan="2" class="ms"><?ti("Default color theme")?></th>
+		</tr>
+		<tr>
+			<td><?ti("Select theme")?></td>
+			<td>
+				<select name="theme">
+					<option value=""><?ti("--DEFAULT--")?></option>
+<? foreach ((array)$themes_for_template as $_name) { ?>
+					<option value="<?=$_name?>"><?ti($_name)?></option>
+<? } ?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><label><input type="checkbox" name="show_install_debug_info" <? if($_SESSION['INSTALL']['show_install_debug_info']) echo "checked=\"checked\"";?> /> <?ti("Show install debug info")?></label></td>
+		</tr>
+	</table>
+	<div class="btn">
+		<input type="submit" name="next" value="<?ti("Install")?>" style="float:right;" />
+		<input type="submit" name="prev" value="&lt; <?ti("Back")?>"  />
+	</div>
+</form>

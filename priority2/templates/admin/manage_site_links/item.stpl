@@ -1,0 +1,11 @@
+<tr class="{bg_class}">
+	<td><a href="{edit_url}" target="_new10">{site_title}</a></td>
+	<td><a href="{user_account_url}" target="_new">{user_name}</a></td>
+	<td>{priority}</td>
+	<td>{foreach("link_urls")}<a href="{#.url}" target="_new">[X]</a>&nbsp;{/foreach}</td>
+	<td>{status}</td>
+	<td>
+		<a href="{edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="Edit Link" /></a>&nbsp;
+		<a href="{delete_url}" onclick="return confirm('Are you sure?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="Delete Site" /></a>
+	</td>
+</tr>

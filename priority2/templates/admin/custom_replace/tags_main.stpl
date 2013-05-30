@@ -1,0 +1,42 @@
+{if("items" ne "")}
+<table>
+	<thead>
+		<th>{t(Name)}</th>
+		<th>{t(Description)}</th>
+		<th>{t(Active)}</th>
+		<th width="5%">{t(Action)}</th>
+	</thead>
+	<tbody>
+{items}
+	</tbody>
+</table>
+{/if}
+{if("items" eq "")}<div align="center">{t(No tags yet)}</div>{/if}
+
+<br />
+{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div>{/if}
+<br />
+
+<div align="center">
+	<form action="{form_action}" method="post">
+	<b>{t(Add new tag)}:</b><br />
+	{t(Name)}: <input type="text" name="name" value="">&nbsp;<input type="submit" name="go" value="{t(ADD)}">
+	</form>
+</div>
+
+<br />
+
+<div align="center">
+	<a href="{words_link}">{t(Manage Replace Words)}</a><br />
+</div>
+
+<br />
+<div>
+	<p><b>NOTE:</b></p>
+	<p>
+P.S: Icons meaning:<br />
+<img src="images/details.gif"> - View list of tag rules.<br />
+<img src="images/links_edit.gif"> - Edit tag text info.<br />
+<img src="images/links_delete.gif"> - Delete tag and all of its rules.<br />
+	</p>
+</div>

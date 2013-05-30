@@ -1,0 +1,11 @@
+<h1>{t(Site Activity)}</h1>
+
+
+<br />
+<p>This feature is implemented to measure activity of site members. Active users have more possibilities to influence other members <a href="{reput_link}">reputation</a>, will be able to exchange the activity points to paid advertising and have some other rewards and privileges.</p>
+<p>Currently you accumulated a total of <b>{total_points}</b> activity points. Go to <a href="{raw_log_link}">full activity log</a> to find out more details.</p>
+<p>The table below represent the activity types and thier current values.</p>
+
+	{actions_list}
+	
+	

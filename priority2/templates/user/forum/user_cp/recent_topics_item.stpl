@@ -1,0 +1,22 @@
+	<tr>
+		<td align="center" class="{css_class_1}">{topic_status_icon}</td>
+		<td align="center" class="{css_class_1}">&nbsp;</td>
+		<td class="{css_class_1}" valign="middle">
+			<div>
+				<a href="{topic_link}" title="{t(This topic was started)}: {topic_start_date}">{topic_name}</a> 
+				<div class="desc">{topic_desc}</div>
+				<div class="desc">{topic_pages}</div>
+			</div>
+		</td>
+		<td align='center' class="{css_class_2}">{topic_num_posts}</td>
+		<td align="center" class="{css_class_2}">
+{if("topic_author_link" ne "")}
+	<a href="{topic_author_link}" target="_blank">{topic_author_name}</a>
+{/if}
+{if("topic_author_link" eq "")}
+	{topic_author_name}
+{/if}
+		</td>
+		<td align="center" class="{css_class_2}">{topic_num_views}</td>
+		<td class="{css_class_2}">{topic_last_post}</td>
+	</tr>

@@ -1,0 +1,22 @@
+<table>
+	<tr valign="top">
+		<td width="10%" rowspan="2">{avatar}</td>
+		<td width="90%" class="subtitle">
+			{if("view_blog_link" ne "")}<a href="{view_blog_link}">{/if}
+			<b>{if("blog_title" ne "")}{blog_title}{/if}{if("blog_title" eq "")}{t(Blog of)} {user_name}{/if}</b>
+			{if("view_blog_link" ne "")}</a>{/if}
+		</td>
+	</tr>	
+	<tr valign="top">
+		<td align="left">
+			{if("location" ne "")}{t(Location)}: {location}<br />{/if}
+			{if("gender" ne "")}{t(Sex)}: {gender}<br />{/if}
+			{if("user_status" ne "")}{t(Status)}: {user_status}<br />{/if}
+			{t(Entries)}: {num_blog_posts}<br />
+			{t(Views)}: {num_blog_views}<br />
+{if("comments_disabled" eq 0)}{t(Comments)}: {num_blog_comments}<br />{/if}
+		</td>
+	</tr>
+</table>
+
+<br />

@@ -1,0 +1,3 @@
+{if("most_commented_posts" ne "")}
+	{most_commented_posts}
+{/if}

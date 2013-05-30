@@ -1,0 +1,246 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>PROFY_FRAMEWORK API</title>
+<link rel="stylesheet" href="doc_style.css" type="text/css">
+</head>
+<body bgcolor="#FFFFFF">
+<div class="main">
+
+<h1>PROFY_FRAMEWORK API</h1>
+
+<h2>Intended audience</h2>
+
+<pre>
+Developers who are using Profy Framework to create different Web Solutions.
+This guide includes example source codes which explains basic concepts of how to 
+connect and use many of framework possibilities.
+</pre>
+
+<h2>Requirements</h2>
+
+<pre>
+<li>Programming language: PHP (4,3+, 5,0+)
+We need some of PHP modules for some specific operations:
+<li>MySQL (or other used PHP RDBMS connection module)
+<li>GD2 (for image resizing and checking)
+<li>CURL (for some remote tasks)
+None of them are required. Requirements depends on what are you doing with framework.
+</pre>
+
+<h2>Main framework concepts</h2>
+
+<pre>
+<li>The main goal for creating the framework was speed-up development of web sites written in PHP.
+<li>Better to think about the framework as a new programming language that was written for specific tasks and based on PHP.
+<li>It has it's own syntax and some standards for writing code for it.
+<li>Each class is located in separate file with the same name with the extension ".class.php"
+(ex. class profy_debug_info is located in file profy_debug_info.class.php)
+<li>All classes inside framework have prefix "profy_" to avoid naming conflicts with inheritance.
+<li>Every module is a class with a custom name, but there are some limitations: it's name cannot have one of the reserved core names (for all classes inside the folder "classes/").
+<li>Framework could be initialized in two main types of operation: "user" (front-end) and "admin" (back-end).
+</pre>
+
+<h2>Framework features</h2>
+
+<pre>
+<li>Internal architecture that is optimimized for speed and easy code deployment (allows you to inherit and extends 
+most of framework classes). 
+<li>MVC (Model-View-Controller) structure. It means that framework code by itself do not show anything. You need to create a "view" file (in 99% cases it will be named "index.php"), where you need to connect to the framework and initialize "controller" (classes/main.class.php).
+<li>Database abstraction layer that supports many of popular RDBMS (MySQL, MS SQL, PostgreSQL, Oracle etc).
+<li>Template engine, that supports simple conditional and cycle patterns and custom methods.
+<li>Localization engine for creating multi-language interfaces.
+<li>Custom PHP errors handler.
+<li>Multi-level caching system.
+<li>User groups permissions system.
+<li>Modules installer system.
+<li>Output caching system (generating static HTML on-the-fly and then reuse generated code).
+<li>Skins support (with inheritance).
+<li>Multiple inheritance system designed for multi-site environment (When we have one project with many different interfaces).
+<li>Easy modules syntax that allows to create modules from small to large (with submodules).
+<li>Encryption system with ability to work without installed Mcrypt PHP module.
+<li>Authentification system.
+<li>Internal visits counter (with analyser), designed for heavy traffic.
+<li>Built-in in profiler allows you to easily determine bottlenecks in your code.
+<li>Built -in powerful debugging system allows you to develop projects based on the framework with ease.
+<li>Support for popular PHP-based technologies like PEAR, Smarty, ADODB, so if you want/need you could use any of them together
+with framework internal ones.
+<li>Many CMS (Content Management System) features:
+<li>Blocks system allows you to create as many display areas as you need with assigning access rules for every area.
+<li>Custom replace system (output filter) will replace anything in the output content without changing the project code.
+<li>Menus manager allow you to create as menu menu blocks as you need, assign different templates for each, etc.
+<li>Captcha class for preventing auto-posting on different areas.
+<li>Transparent comments module could be easily inserted in many places where you will need comments.
+<li>Static pages editor based on popular FCKEditor (cross-browser, full-featured HTML editor).
+<li>Built in methods to display page contents as "send-to-a-friend", PDF, RSS, etc
+<li>Mailer system with many features (can use SMTP, PHP mail(), PEAR::Mail)
+<li>Search-engine optimization built-in system
+<li>Rewrite links built-in system (for operate with Apache's mod_rewrite module or similar one on other web-server)
+<li>Database auto-install and restore system (system partially install itself datanase structure when needed).
+<li>We have many ready-to-use backend modules:
+<li>User and Admin modules Editor (installer)
+<li>User and Admin groups editors
+<li>Backednd users editor
+<li>Blocks Editor
+<li>Custom Replace Editor
+<li>Locale Editor
+<li>Menus Editor
+<li>Templates Editor
+<li>Home Page Editor
+<li>Static Pages Editor
+<li>Simple database manager
+<li>File manager
+<li>Setting Editor
+<li>Execution log stats analyzer and profiler
+<li>Tasks Planner (for repeated jobs)
+<li>User comments editor
+<li>User articles editor
+<li>Many useful code pre-written and available inside the framework for every project.
+<li>Easy-to-understand internal code written mostly with compliance with PEAR code formatting standard.
+
+This list is increasing every day.
+</pre>
+
+<h2>Typical Framework files list looks like this</h2>
+
+<pre>
+	+ admin_modules/ - Administration backend standard framework modules
+		profy_admin.class.php
+		profy_admin_groups.class.php
+		profy_blocks.class.php
+		profy_custom_replace.class.php
+		profy_db_manager.class.php
+		profy_db_parser.class.php
+		profy_edit_menu.class.php
+		profy_file_manager.class.php
+		profy_home_page_editor.class.php
+		profy_locale_editor.class.php
+		profy_log_exec_analyser.class.php
+		profy_manage_articles.class.php
+		profy_manage_comments.class.php
+		profy_menus_editor.class.php
+		profy_settings.class.php
+		profy_static_pages_fck.class.php
+		profy_tasks_planner.class.php
+		profy_template_editor.class.php
+		profy_user_groups.class.php
+		profy_user_modules.class.php
+	+ adodb/ - ADODB external library (Database abstraction layer)
+	+ classes/ - Core framework classes
+	+ auth/
+		profy_auth_admin.class.php
+		profy_auth_user.class.php
+	+ common/
+		profy_debug_info.class.php
+		profy_divide_pages.class.php
+		profy_email_page.class.php
+		profy_html.class.php
+		profy_log_exec.class.php
+		profy_make_alphabet.class.php
+		profy_pdf_page.class.php
+		profy_pear_emailer.class.php
+		profy_print_page.class.php
+		profy_send_mail.class.php
+	+ crypto/
+		profy_blowfish.class.php
+		profy_cast_128.class.php
+	+ db_drivers/
+		profy_db2.class.php
+		profy_msaccess.class.php
+		profy_mssql.class.php
+		profy_mssql_odbc.class.php
+		profy_mysql.class.php
+		profy_mysql4.class.php
+		profy_mysql41.class.php
+		profy_oracle.class.php
+		profy_postgres7.class.php
+	profy_adodb_db.class.php
+	profy_bb_codes.class.php
+	profy_cache.class.php
+	profy_captcha.class.php
+	profy_common.class.php
+	profy_db.class.php
+	profy_dir.class.php
+	profy_encryption.class.php
+	profy_errors.class.php
+	profy_form.class.php
+	profy_graphics.class.php
+	profy_installer.class.php
+	profy_locale.class.php
+	profy_logs.class.php
+	profy_main.class.php
+	profy_minicalendar.class.php
+	profy_module.class.php
+	profy_output_cache.class.php
+	profy_pclzip.class.php
+	profy_resize_images.class.php
+	profy_se_keywords.class.php
+	profy_table.class.php
+	profy_task_manager.class.php
+	profy_tpl.class.php
+	profy_tpl_smarty.class.php
+	profy_yui_calendar.class.php
+	profy_zip_codes.class.php
+	+ html2fpdf/ - HTML2PDF external library (conversions from HTML into PDF)
+	+ modules/ - User interface standard framework modules
+	+ pear/ - PEAR external library (PHP framework)
+	+ smarty/ - SMARTY external library (template engine)
+	+ templates/ - basic templates for standard framework modules (for admin and user section)
+	+ admin/ - templates for admin section
+	+ user/ - templates for user section
+
+	NOTE: this is an example list and coul be in any time changed (some files could be removed, som could be added), bu main concepts remains.
+</pre>
+
+<h2>Example of creating project based on profy framework</h2>
+
+<pre>
+First of all you need to place framework files somewhere on the server 
+(better is out from the web server's document root). 
+For encrypted version of the framework you will need installed Zend Optimizer on your 
+web-server to execute the framework code.
+Then you need to create such basic project structure:
+Then you need to connect to the framework with such code:
+We will thinf that you are working on Windows and have apache installed into the folder "d:/www/"
+So you have htdocs folder "d:/www/htdocs/"
+And we think that you have extracted framework from archive (or just put it there) 
+into "d:/www/htdocs/ZEND_ENCODED/PROFY_FRAMEWORK/"
+</pre>
+
+<h3>index.php source for front-end ("user" section)</h3>
+
+<pre class="listing">
+&lt;?php
+// Set engine debugging mode on/off
+define(&quot;DEBUG_MODE&quot;, true);
+// Path to the FrameWork
+define(&quot;PROFY_FRAMEWORK_PATH&quot;, &quot;d:/www/htdocs/ZEND_ENCODED/PROFY_FRAMEWORK/&quot;);
+// Default skin
+define(&quot;DEFAULT_SKIN&quot;, &quot; example_skin&quot;);
+// Include main class
+require PROFY_FRAMEWORK_PATH.&quot;classes/profy_main.class.php&quot;;
+// Initialize main engine
+$GLOBALS['main'] = new profy_main(&quot;user&quot;, 0, 1);
+?&gt;
+</pre>
+
+<h3>db_setup.php source</h3>
+
+<pre class="listing">
+&lt;?php
+define('DB_TYPE', &quot;mysql41&quot;);		// Type of current DB Server to use
+define('DB_HOST', &quot;localhost&quot;);	// DB Server Host Name
+define('DB_NAME', &quot;example_site&quot;);// Database Name
+define('DB_USER', &quot;root&quot;);		// DB Server User
+define('DB_PSWD', &quot;&quot;);			// DB Server Password
+define('DB_PREFIX', &quot;example_&quot;);	// Table prefix 
+?&gt;
+</pre>
+
+<pre>
+Now all you need  ...
+</pre>
+
+</div>
+</body>
+</html>

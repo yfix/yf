@@ -1,0 +1,11 @@
+<h1>{t("Choose items to search")}</h1>
+<br />
+
+<div align="left" style="margin-left:10px">
+	<b><a href="{users_search_link}">{t(User)}</a></b><br />
+	<b><a href="{blogs_search_link}">{t(Blogs)}</a></b><br />
+	<b><a href="{galleries_search_link}">{t(Galleries)}</a></b><br />
+	<b><a href="{forum_search_link}">{t(Forum Posts)}</a></b><br />
+	<b><a href="{interests_search_link}">{t(Interests)}</a></b><br />
+</div>
+<br />

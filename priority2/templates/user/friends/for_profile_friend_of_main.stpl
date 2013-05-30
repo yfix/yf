@@ -1,0 +1,7 @@
+{if("items" ne "")}
+<table cellspacing="0" cellpadding="2" border="0" width="100%" align="center">
+<tr>{items}</tr>
+</table>
+<div align="right"><a href="{more_link}"><strong>{t(View All Friends)}</strong></a></div>
+{/if}
+{if("items" eq "")}<div align="right"><strong>{t(No Friends yet)}</strong></div>{/if}

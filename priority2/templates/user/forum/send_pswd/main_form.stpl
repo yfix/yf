@@ -1,0 +1,40 @@
+<form action="{form_action}" method="post">
+<div class="borderwrap">
+	<div class="maintitle"><img src="images/forum/nav_m.gif" border='0'  alt='&gt;' width='8' height='8' />&nbsp;{t(Lost Password Form)}</div>
+	<div class="formsubtitle">{t(How to reset your password)}</div>
+	<div class="tablepad"><span>Enter your account username in the field below. The username is case <b>in</b>sensitive.<br />
+		Once you have submitted the form, you will receive an email asking for validation of this request to ensure that no malicious use has occured. This email will also contain a link that you must click.<br />
+		You will be presented with a form that will allow you to enter a new password to use for this account.	</span>
+	</div>
+	<div class="formsubtitle">{t(Please complete the form fully)}</div>
+	<table>
+		<tr>
+			<td class="pformleft"><strong>{t(Enter your account username)}</strong></td>
+			<td class="pformright"><input type="text" size="32" maxlength="32" name="login" /></td>
+		</tr>
+	</table>
+
+{if("captcha_image" ne "")}
+	<br />
+	<input type="hidden" name="captcha_hash" value="{captcha_hash}" />
+	<fieldset class="row3">
+	<legend><b>{t(Security Code Confirmation)}</b></legend>
+		<table>
+			<tr>
+				<td width="1%">
+					{t(Confirm security code)}
+					<div class="desc">{t(Please enter the code shown in the image)}.</div>
+					<input type="text" size="25" maxlength="32" name="captcha_code" />
+				</td>
+				<td align="center">{captcha_image}</td>
+			</tr>
+		</table>
+	</fieldset><br />
+{/if}
+
+</div>
+<br />
+<div class="borderwrap">
+	<div class="formsubtitle" align="center"><input type="submit" value="{t(Proceed)}" /></div>
+</div>
+</form>

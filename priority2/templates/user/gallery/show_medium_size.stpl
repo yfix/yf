@@ -1,0 +1,112 @@
+<div align="center" id="medium_size_block">
+
+{mini_thumbs}
+
+<div id="medium_size_photo">
+	<img src="{img_src}" border="0" alt="{photo_name}" {if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} />{if("full_image_link" ne "")}<a href="{large_size_link}" target="_blank" class="arrow" title="{t(View original image)}">&#x25ba;</a>{/if}
+</div>
+<div style="clear:both" /></div>
+
+{if("photo_desc" ne "")}<p>{photo_desc}</p>{/if}
+
+{if("const.PROJECT_NAME" eq "SEXY_NET")}
+	{if("tagging_allowed" eq 1)}
+	<br />
+		{if("tags" ne "")}<small><b>{t(Tags)}: {foreach("tags")} <a href="{_val}">{_key}</a> {/foreach}</b></small>{/if}
+		{if("tags" eq "")}<small><b>{t(Tags)}: {t(No tags yet)}</b></small>{/if}
+		{if("allow_edit_tag" eq 1)} <a href="javascript:openWin('{edit_tag_link}',400,500)" class="actionlink">{if("is_own_gallery" eq 0)}[{t(Add tags)}]{/if}{if("is_own_gallery" eq 1)}[{t(Edit&nbsp;tags)}]{/if}</a>{/if}
+	<br />
+	{/if}
+{/if}
+
+{if("const.PROJECT_NAME" ne "SEXY_NET")}
+	{if("tags_block" ne "")}
+	<div id="tags">{tags_block}</div>
+	{/if}
+{/if}
+
+{if("rate_allowed" eq "1")}{if("is_logged_in" eq "1")}
+	<b>{t(Rate this image)}:</b> {rate_block}
+	<br />
+	{if("rate_num_votes" gt 0)}
+		<span class="photo_rate_result" profy:photo_id="{photo_id}">{t(Currently)}: {rate_num_votes} {t(votes)}, {rating} {t(average)}</span><br /><br />
+	{/if}
+{/if}{/if}
+
+{if("is_own_gallery" eq 1)}
+
+	{if("edit_photo_link" ne "")} <a href="{edit_photo_link}" class="actionlink"><b>{t(Edit)}</b></a>&nbsp; {/if}
+	{if("delete_photo_link" ne "")} <a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink"><b>{t(Delete)}</b></a>&nbsp; {/if}
+
+	{if("const.PROJECT_NAME" eq "SEXY_NET")}
+		{if("show_in_ads" ge 0)} <a href="{change_show_ads_link}" class="actionlink change_show_in_ads" profy:photo_id="{photo_id}">{if("show_in_ads" eq 0)}{t(Show in ads)}{/if}{if("show_in_ads" eq 1)}{t(Don&#39;t show in ads)}{/if}</a>&nbsp;	{/if}
+		{if("show_ads_denied" ne "")}<small><b class="alarm">Not allowed in ads</b></small>{/if}
+	{/if}
+
+	<br />
+	{if("rate_enabled" eq 1)} <a href="{change_rate_link}" class="actionlink change_allow_rate" profy:photo_id="{photo_id}">{if("rate_allowed" eq 0)}{t(Allow rate)}{/if}{if("rate_allowed" eq 1)}{t(Deny rate)}{/if}</a>&nbsp; {/if}
+	{if("tagging_enabled" eq 1)} 
+		<a href="{change_tagging_link}" class="actionlink change_allow_tagging">{if("tagging_allowed" eq 0)}Allow tagging{/if}{if("tagging_allowed" eq 1)}{t(Deny tagging)}{/if}</a>&nbsp; 
+	{/if}
+
+<br />
+{/if}
+
+</div>
+
+<br style="clear:both;" />
+
+{comments}
+
+<script type="text/javascript">
+<!--
+// JQuery on DOM ready
+$(function(){
+
+{if("const.PROJECT_NAME" eq "SEXY_NET")}
+	$("a.change_show_in_ads").click(function(){
+		var obj = this;
+		obj.innerHTML = "Wait...";
+		$.post(obj.href, {ajax_mode: 1}, function(data){
+			obj.innerHTML = (data == "1") ? '{t(Don&#39;t show in ads)}' : '{t(Show in ads)}';
+		});
+		return false;
+	});
+{/if}
+
+	$("a.change_allow_rate").click(function(){
+		var obj = this;
+		obj.innerHTML = "Wait...";
+		$.post(obj.href, {ajax_mode: 1}, function(data){
+			obj.innerHTML = (data == "1") ? '{t(Deny rate)}' : '{t(Allow rate)}';
+		});
+		return false;
+	});
+
+	$("a.change_allow_tagging").click(function(){
+		var obj = this;
+		obj.innerHTML = "Wait...";
+		$.post(obj.href, {ajax_mode: 1}, function(data){
+			obj.innerHTML = (data == "1") ? '{t(Deny tagging)}' : '{t(Allow tagging)}';
+		});
+		return false;
+	});
+});
+-->
+</script>
+<style type="text/css">
+{if("thumbs_location" eq "left")}
+	.mini_thumbs_block { float: left; }
+	#medium_size_photo { float: left; }
+{/if}
+{if("thumbs_location" eq "right")}
+	.mini_thumbs_block { float: right; }
+	#medium_size_photo { float: left; }
+{/if}
+{if("thumbs_in_row" eq "2")} .mini_thumbs_block { width: 150px; } {/if}
+{if("thumbs_in_row" eq "3")} .mini_thumbs_block { width: 230px; } {/if}
+{if("thumbs_in_row" eq "4")} .mini_thumbs_block { width: 280px; } {/if}
+{if("thumbs_in_row" eq "10")} .mini_thumbs_block { width: 750px; } {/if}
+{if("thumbs_in_row" eq "12")} .mini_thumbs_block { width: 900px; } {/if}
+{if("thumbs_in_row" eq "15")} .mini_thumbs_block { width: 1350px; } {/if}
+</style>

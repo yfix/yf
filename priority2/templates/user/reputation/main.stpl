@@ -1,0 +1,52 @@
+<h1>{t(Site Reputation)}</h1>
+
+<div align="center">
+	{if("activity_link" ne "")}<p align="center"><a href="{activity_link}">{t(Go to activity stats)}</a></p>{/if}
+</div>
+
+
+	<h3>{t(Your reputation info)}:</h3>
+
+	{if("reput_stars" ne "")}<div align="center">{reput_stars}</div>{/if}
+
+<table align="center">
+	<tr class="bg1">
+		<td align="left">{t(Total activity points)}:</td>
+		<td><b>{total_points}</b></td>
+	</tr>
+	<tr class="bg2">
+		<td align="left">{t(Reputation altering power)}:</td>
+		<td><b>{alt_power}</b></td>
+	</tr>
+	<tr class="bg1">
+		<td align="left">{t(Number of votes done)}:</td>
+		<td><b>{num_votes}</b></td>
+	</tr>
+	<tr class="bg2">
+		<td align="left">{t(Number of votes for you by other users)}:</td>
+		<td><b>{num_voted}</b></td>
+	</tr>
+</table>
+
+<br /><br />
+
+<p align="left">{t(The User Reputation System provides a way of rating users based on the 
+	quality of their posts. Registered users can add or subtract reputation points
+	from other users by clicking the reputation link in their posts. 
+	User reputations will allow community members to tell which users are 
+	active quality members and which users are less so. In response to this user
+	feedback, we have the ability to automatically label and reward(or penalize) 
+	users for the quality of their posts, as is indicated by their reputation level)}.
+</p>
+
+<li>Everyone starts off with <b>{start_reput_points}</b>  points of reputation and
+	<b>{start_reput_alt}</b> points of reputation-altering power.</li>
+<li>You need minimum of <b>{min_reput}</b> reputation points and <b>{min_activity}</b> 
+	of activity to alter other member's reputation.</li>
+<li>You gain <b>1</b> point of reputation-altering power for every
+	<b>{act_reput_value}</b> post counts.</li>
+<li>You gain <b>1</b> point of reputation-altering power for every <b>{reput_add_alt_points}</b> 
+	points of reputation.</li>
+<li>You are allowed to use your reputation clicks <b>{max_reput_clicks}</b> times a day.</li>
+<li>You are not allowed to use your reputation clicks on the same member until you have used 
+	it on <b>{reput_cast_value}</b> other members.</li>

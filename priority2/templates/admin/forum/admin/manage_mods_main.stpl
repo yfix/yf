@@ -1,0 +1,18 @@
+{if("items" ne "")}
+<div align="center">
+<table width="400">
+	<thead>
+		<th><b>{t(User)}</b></th>
+		<th><b>{t(Forums)}</b></th>
+		<th width="5%" align="center"><b>{t(Action)}</b></th>
+	</thead>
+{items}
+</table>
+</div>
+{/if}
+{if("items" eq "")}<div align="center">No moderators yet</div>{/if}
+
+<br />
+<div align="center">
+	<a href="{add_link}">Add new moderator</a><br /><br />
+</div>

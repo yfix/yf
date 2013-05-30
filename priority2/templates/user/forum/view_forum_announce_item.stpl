@@ -1,0 +1,10 @@
+	<tr>
+		<td><img src="images/forum/f_pinned.gif" border="0"  alt="{t(Pinned)}" /></td>
+		<td></td>
+		<td><b>{t(Announcement)}: <a href="{announce_link}">{announce_title}</a></b></td>
+		<td>-</td>
+		<td><a href="{announce_author_link}">{announce_author_name}</a></td>
+		<td>{announce_num_views}</td>
+		<td><span class="desc">--<br /><a href="{announce_link}">{t(Last post by)}:</a> <b><a href="{announce_author_link}">{announce_author_name}</a></b></span></td>
+		<td></td>
+	</tr>

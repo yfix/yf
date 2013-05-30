@@ -1,0 +1,42 @@
+<h3>Welcome to the administration panel</h3>
+
+<br />
+
+<div>Now: <b>{current_date}</b></div>
+
+<br />
+{custom_content}
+
+{execute(admin_home,_home_block_from_menu)}
+
+<br /><br />
+
+<div style="clear:both; margin-left: 20px;">
+	{cur_settings}
+<br />
+	{general_info}
+<br />
+{if("statistics" ne "")} 
+		{statistics}
+{/if}
+</div>
+
+{if("suggests" ne "")} 
+		{suggests}
+{/if}
+
+
+<script type="text/javascript">
+<!--
+$(function(){
+	if($.browser.mozilla) {
+		$(".admin_menu li img").css("display", "none");
+	}
+	$(".admin_menu_block").each(function(){
+		if (!$("a", this).length) {
+			$(this).hide();
+		}
+	});
+})
+-->
+</script>

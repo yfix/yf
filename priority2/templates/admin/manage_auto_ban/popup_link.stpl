@@ -1,0 +1,1 @@
+<a href="javascript:;" onclick="javascript:openWin('{popup_link}',420,600);"><b>{if("force_text" eq "")}{t(Ban user)}{/if}{force_text}</b></a>

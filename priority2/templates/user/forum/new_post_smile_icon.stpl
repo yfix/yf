@@ -1,0 +1,1 @@
+<td style="padding-right:20px;"><a href="javascript:profy_bb_codes.emoticon('{code}','text')">{smile_item}</a></td>{if("need_div" eq 1)}</tr><tr align='center'>{/if}

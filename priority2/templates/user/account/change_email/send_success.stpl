@@ -1,0 +1,10 @@
+<h1 class="header">Email change confirmation required</h1>
+
+<table width="100%" align="center">
+	<tr>
+		<td>In order to protect the system from abuse we require this action to be confirmed. 
+			We sent an e-mail with a link to confirm your email change. 
+			Please check your new mailbox in a couple of minutes.
+		</td>
+	</tr>
+</table>

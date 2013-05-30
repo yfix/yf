@@ -1,0 +1,11 @@
+<table width="100%" align="center">
+	<tr>
+		<td><p align="center">
+			Your link exchange account has been registered! <br />
+			Confirmation E-Mail has been sent you. Please check your mailbox.<br />
+			To log in to your account click <a href="{login_url}">Here</a>
+			</p>
+			<p align="center">Already registered? Login <a href="{login_url}">here</a></p>
+		</td>
+	</tr>
+</table>

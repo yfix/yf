@@ -1,0 +1,5 @@
+<table border="0" cellspacing="0" cellpadding="5" align="center">
+	<tr>
+		<td align="center" style="color:#cc0000;">{t("no_info")}</td>
+	</tr>
+</table>

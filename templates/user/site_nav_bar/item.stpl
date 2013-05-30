@@ -1,0 +1,2 @@
+{if("as_link" eq 1)}<a href="{link}">{name}</a>{/if}
+{if("as_link" eq 0)}<b>{name}</b>{/if}

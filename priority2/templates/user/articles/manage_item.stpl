@@ -1,0 +1,14 @@
+	<tr class="{bg_class}">
+		<td height="25" align="center" valign="top">{num}</td>
+		<td valign="top">{title}</td>
+		<td align="center" valign="top">{views}</td>
+		<td align="center" valign="top" nowrap>{add_date}</td>
+		<td align="center" valign="top"><b>{status}</b></td>
+		<td align="center" valign="top" nowrap>
+			<small>
+			<a href="{view_link}"><img src="images/view.gif" alt="{t(View)}" border="0" hspace="3" /></a>
+			<a href="{edit_link}"><img src="images/edit.gif" alt="{t(Edit)}" border="0" hspace="3" /></a>
+			<a href="{delete_link}" onclick="return confirm('{t(Are you sure?)}')"><img src="images/delete.gif" alt="{t(Delete)}" border="0" hspace="3" /></a>
+			</small>
+		</td>
+	</tr>

@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{execute(graphics,show_site_title)}</title>
+	<base href="{const(ADMIN_WEB_PATH)}"/>
+	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+{execute(graphics,show_metatags)}
+{execute(graphics,show_css)}
+{execute(graphics,show_javascript)}
+{{--	<script src="http://dev.jquery.com/~john/plugins/profile/jquery-profile.js"></script>--}}
+</head>
+<body>
+<div id="container" style="overflow:visible;">
+
+	<div id="top_outer">
+		<div id="top">
+
+{if("const.ADMIN_FRAMESET_MODE" eq 1)}
+<script type="text/javascript">
+<!--
+	var _ua = navigator.userAgent.toLowerCase();
+	var _browser = {
+		safari: /webkit/.test(_ua),
+		opera: /opera/.test(_ua),
+		msie: /msie/.test(_ua) && !/opera/.test(_ua),
+		mozilla: /mozilla/.test(_ua) && !/(compatible|webkit)/.test(_ua)
+	}
+	try {
+		if (window.parent == window.self) {
+			document.write('<a href="./frameset.php' + window.location.search + '" target="_parent" id="frameset_link" style="display:none;"><b>Go to Frameset</b></a>&nbsp;');
+			document.getElementById("frameset_link").style.display = '';
+		} else {
+			var frameset_link_text = 'frameset.php' + window.location.search;
+			if (frameset_link_text.length > 60) {
+				frameset_link_text = frameset_link_text.substr(0,60) + "<br />\n" + frameset_link_text.substr(60);
+			}
+			document.write('<span style="float:left;">');
+			document.write('<a href="./' + window.location.search + '"target="_parent"  id="no_frameset_link" style="display:none;"><b>F</b></a> ');
+			document.write('<a href="./frameset.php' + window.location.search + '" target="_parent" id="frameset_link" style="display:none;"><small><b>' + frameset_link_text + '</b></small></a>');
+			document.write('</span>');
+			document.getElementById("frameset_link").style.display = '';
+			document.getElementById("no_frameset_link").style.display = '';
+
+
+			// Fix work area in frameset mode
+			var _css_fix = false;
+			if (_browser.opera) {
+				var _fixed_width = $("body").width() - 30;
+//				_css_fix = 'body,#container,#top_outer,#center_outer,table{width:90%;}';
+				_css_fix = 'body{width:'+ _fixed_width +'px;}';
+			} else if (_browser.msie) {
+			}
+			if (_css_fix) {
+				document.write("<st"+"yle type='text/css'>" + _css_fix + "</"+"style>");
+			}
+		}
+	} catch (e) {
+	}
+	try {
+		if (window.parent != window.self) {
+			var self_title		= document.getElementsByTagName("title")[0];
+			var parent_title	= window.parent.document.getElementsByTagName("title")[0];
+			parent_title.innerHTML = self_title.innerHTML;
+		}
+	} catch (e) {
+	}
+-->
+</script>
+{/if}
+
+{execute(graphics,show_welcome)}
+
+			<a href="./?task=logout" target="_parent"><strong>{t(Logout)}</strong></a>&nbsp;&nbsp;
+
+		</div>
+	</div>
+
+	<div id="center_outer">
+<!-- QUICK_MENU -->
+{execute(graphics,quick_menu)}
+<!-- /QUICK_MENU -->
+<!-- SITE_NAV_BAR -->
+{execute(site_nav_bar,_show)}
+<!-- /SITE_NAV_BAR -->
+		<div id="center">
+
+<div style="clear:both;"></div>
+
+<!-- CONTENT_HEADER -->
+{execute(graphics,_show_header)}
+<!-- /CONTENT_HEADER --> 
+
+{execute(graphics,_show_block;name=center_area)}
+<!-- SHOW_HELP -->
+{execute(graphics,show_help)}
+<!-- /SHOW_HELP -->
+		</div>
+	</div>
+
+</div>
+</body>
+</html>

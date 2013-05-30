@@ -1,0 +1,10 @@
+{spacer}
+<span {if("is_current_post" eq 1)}style='color:red;'{/if}>
+{add_image}
+&#9658; 
+<b><a href="{view_topic_link}">{post_title}</a></b>
+<span class="desc"><i> by
+{if("user_id" gt 0)}<a href="{user_profile_link}">{user_name}</a>{/if}
+{if("user_id" eq 0)}{user_name}{/if} on 
+{post_date}</i></span><br />
+</span>
