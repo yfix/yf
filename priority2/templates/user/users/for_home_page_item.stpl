@@ -5,7 +5,7 @@
 		</tr>
 		<tr>
 			<td>
-				<table class="avatar" profy:user_id="{user_id}">
+				<table class="avatar" yf:user_id="{user_id}">
 					<tr>
 						<td nowrap><a href="{user_link}"><img src="{user_avatar_src}" border="0" hspace="0" vspace="0" alt="test"></a>
 						</td>

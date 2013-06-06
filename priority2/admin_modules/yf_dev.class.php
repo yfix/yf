@@ -877,7 +877,7 @@ class yf_dev{
 			"<?php bloginfo('name'); ?>"					=> "{conf('site_title')}",
 		);
 		$NEW_META_TAGS = array(
-			"<meta name='generator' content='ProfyFramework' />",
+			"<meta name='generator' content='YFFramework' />",
 		);
 
 //TODO atomatic theme download

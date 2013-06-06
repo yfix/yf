@@ -4,7 +4,7 @@
 {foreach("photos")}	
 	<tr>
 		<td width="20%">
-			<a href="{#.photo_link}"><img src="{#.img_src}" alt="{#.photo_name}{if('#.photo_name' eq '')}{#.user_name} photo{/if}" border="0" hspace="5" vspace="5"{if('#.real_w' ne 0)} width="{#.real_w}"{/if}{if('#.real_h' ne 0)} height="{#.real_h}"{/if} profy:user_id="{#.user_id}" /></a>
+			<a href="{#.photo_link}"><img src="{#.img_src}" alt="{#.photo_name}{if('#.photo_name' eq '')}{#.user_name} photo{/if}" border="0" hspace="5" vspace="5"{if('#.real_w' ne 0)} width="{#.real_w}"{/if}{if('#.real_h' ne 0)} height="{#.real_h}"{/if} yf:user_id="{#.user_id}" /></a>
 		</td>
 		<td align="center" width="20%" nowrap>
 			#{#.pos} - {#.rating}<br />({#.num_votes} votes)

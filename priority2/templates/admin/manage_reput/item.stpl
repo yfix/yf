@@ -1,14 +1,14 @@
 <tr class="{bg_class}" id="del_row_{id}" valign="top">
 	<td><input type="checkbox" name="items_to_delete[]" value="{id}"></td>
 	<td nowrap>
-		<a href="{voter_link}" target="_new" class="ajax_user_info" profy:user_id="{voter_id}">{voter_nick}</a><br />
+		<a href="{voter_link}" target="_new" class="ajax_user_info" yf:user_id="{voter_id}">{voter_nick}</a><br />
 		<small>
 			{voter_ban_info}<br />
 			{voter_ban_popup_link}
 		</small>
 	</td>
 	<td nowrap>
-		<a href="{target_link}" target="_new" class="ajax_user_info" profy:user_id="{target_id}">{target_nick}</a><br />
+		<a href="{target_link}" target="_new" class="ajax_user_info" yf:user_id="{target_id}">{target_nick}</a><br />
 		<small>
 			{target_ban_info}<br />
 			{target_ban_popup_link}

@@ -25,7 +25,7 @@ class compat_main {
 			require $fname;
 			$GLOBALS['modules'][$class_name] = new $_class_name($params);
 		} else {
-			$_class_name = "profy_".$class_name;
+			$_class_name = "yf_".$class_name;
 			$fname = INCLUDE_PATH."classes/".$_class_name.".class.php";
 			if (file_exists($fname)) {
 				require $fname;

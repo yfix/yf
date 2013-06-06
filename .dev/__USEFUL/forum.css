@@ -1,53 +1,53 @@
 /* Main forum wrapper */
-#profy_forum { 
+#yf_forum { 
 	margin: 20px auto 20px auto;
 	text-align: left;
 	width: 720px;
 }
 /* required for text in tables, because tables do not inherit from body */
-#profy_forum table,
-#profy_forum tr,
-#profy_forum td {
+#yf_forum table,
+#yf_forum tr,
+#yf_forum td {
 	background: transparent;
 	color: #222;
 	font-size: 11px;
 	line-height: 135%;
 }
 /* makes all tables 100% wide */
-#profy_forum table {
+#yf_forum table {
 	width: 100%;
 }
 /* gives all tables faux cellpadding of 5px */
-#profy_forum td,
-#profy_forum .divpad{ 
+#yf_forum td,
+#yf_forum .divpad{ 
 	padding: 5px;
 }
 /* allows some tables to have no padding on the td */
-#profy_forum td.nopad {
+#yf_forum td.nopad {
 	padding: 0;
 }
 /* makes sure linked images do not have a border */
-#profy_forum img {
+#yf_forum img {
 	border: 0;
 	vertical-align: middle;
 }
 /* global hyperlink styles */
-#profy_forum a {
+#yf_forum a {
 	background: transparent;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	color: #0033CC;
     text-decoration: underline;
 }
-#profy_forum a:hover {
+#yf_forum a:hover {
 	color: #000000;
 	text-decoration : none;
 	cursor: pointer;
 }
 /* form styles */
-#profy_forum input,
-#profy_forum textarea,
-#profy_forum select {
+#yf_forum input,
+#yf_forum textarea,
+#yf_forum select {
 /*
 	background: #FFF;
 	border: 1px solid #4C77B6;
@@ -59,7 +59,7 @@
 	vertical-align: middle;
 */
 }
-#profy_forum select {
+#yf_forum select {
 /*
 	border: 0;
 	font-family: verdana, helvetica, sans-serif;
@@ -68,19 +68,19 @@
 	padding: 0;
 */
 }
-#profy_forum input.button {
+#yf_forum input.button {
 /*
 	margin: 0;
 	width: auto;
 */
 }
-#profy_forum optgroup option {
+#yf_forum optgroup option {
 /*
 	font-family: verdana, helvetica, sans-serif;
 	font-size: 12px;
 */
 }
-#profy_forum .codebuttons { 
+#yf_forum .codebuttons { 
 /*
 	font-family: Verdana, Helvetica, Sans-Serif; 
 	font-size: 10px; 
@@ -88,10 +88,10 @@
 	margin:2px;
 */
 }
-#profy_forum .textarea,
-#profy_forum .searchinput,
-#profy_forum .button,
-#profy_forum .gobutton{
+#yf_forum .textarea,
+#yf_forum .searchinput,
+#yf_forum .button,
+#yf_forum .gobutton{
 /*
 	background: #FFF;
 	border: 1px solid #4C77B6;
@@ -102,12 +102,12 @@
 	vertical-align: middle;
 */
 }
-#profy_forum .button{
+#yf_forum .button{
 /*
 	background: #DFE6EF;
 */
 }
-#profy_forum .gobutton{
+#yf_forum .gobutton{
 /*
 	background: transparent;
 	border: 0;
@@ -116,47 +116,47 @@
 	vertical-align: middle;
 */
 }
-#profy_forum .radiobutton,
-#profy_forum .checkbox,
-#profy_forum .helpbox { 
+#yf_forum .radiobutton,
+#yf_forum .checkbox,
+#yf_forum .helpbox { 
 	border: 0;
 	vertical-align: middle;
 }
 /* styles for pagination links */
-#profy_forum .pagelink,
-#profy_forum .pagelinklast,
-#profy_forum .pagecurrent,
-#profy_forum .minipagelink,
-#profy_forum .minipagelinklast {
+#yf_forum .pagelink,
+#yf_forum .pagelinklast,
+#yf_forum .pagecurrent,
+#yf_forum .minipagelink,
+#yf_forum .minipagelinklast {
 	background: #F0F5FA;
 	border: 1px solid #072A66;
 	padding: 1px 3px 1px 3px;
 }
-#profy_forum .pagelinklast,
-#profy_forum .minipagelinklast {
+#yf_forum .pagelinklast,
+#yf_forum .minipagelinklast {
 	background: #DFE6EF;
 }
-#profy_forum .pagecurrent{
+#yf_forum .pagecurrent{
 	background: #FFC9A5;
 }
-#profy_forum .minipagelink,
-#profy_forum .minipagelinklast {
+#yf_forum .minipagelink,
+#yf_forum .minipagelinklast {
 	border: 1px solid #C2CFDF;
 	font-size: 10px;
 	margin: 0 1px 0 0;
 }
-#profy_forum .pagelink a,
-#profy_forum .pagelinklast a,
-#profy_forum .pagecurrent a,
-#profy_forum .minipagelink a,
-#profy_forum .minipagelinklast a {
+#yf_forum .pagelink a,
+#yf_forum .pagelinklast a,
+#yf_forum .pagecurrent a,
+#yf_forum .minipagelink a,
+#yf_forum .minipagelinklast a {
 	text-decoration: none;
 }
 /* Forum desc */
-#profy_forum .forumdesc,
-#profy_forum .forumdesc a:link,
-#profy_forum .forumdesc a:visited,
-#profy_forum .forumdesc a:active{ 
+#yf_forum .forumdesc,
+#yf_forum .forumdesc a:link,
+#yf_forum .forumdesc a:visited,
+#yf_forum .forumdesc a:active{ 
 /*
 	background: transparent;
 	font-size: 10px; 
@@ -167,36 +167,36 @@
 */
 }
 /* tableborders gives the white column / row lines effect */
-#profy_forum .plainborder,
-#profy_forum .tablefill,
-#profy_forum .tablepad {
+#yf_forum .plainborder,
+#yf_forum .tablefill,
+#yf_forum .tablepad {
 	background: #F5F9FD;
 	border: 1px solid #345487;
 }
-#profy_forum .tablefill,
-#profy_forum .tablepad {
+#yf_forum .tablefill,
+#yf_forum .tablepad {
 	padding: 6px;  
 }
-#profy_forum .tablepad {
+#yf_forum .tablepad {
 	border: 0 !important;
 }
-#profy_forum .pagelinks {
+#yf_forum .pagelinks {
 	float: left;
 	line-height: 1.2em;
 	width: 35%;
 }
-#profy_forum .desc {
+#yf_forum .desc {
 	font-size: 11px; 
 	color: #434951;
 }
-#profy_forum .lastaction {
+#yf_forum .lastaction {
 	font-size: 10px; 
 	color: #434951;
 }
-#profy_forum .edit {
+#yf_forum .edit {
 	font-size: 9px;
 }
-#profy_forum .thin {
+#yf_forum .thin {
 	border: 1px solid #FFF;
 	border-left: 0;
 	border-right: 0;
@@ -205,7 +205,7 @@
 	padding: 6px 0 6px 0;
 }
 /* quote and code wrappers */
-#profy_forum .quotetop {
+#yf_forum .quotetop {
 	background: #E4EAF2;
 	border: 1px dotted #000;
 	border-bottom: 0;
@@ -216,7 +216,7 @@
 	margin: 8px auto 0 auto;
 	padding: 3px;
 }
-#profy_forum .quotemain {
+#yf_forum .quotemain {
 	background: #FAFCFE;
 	border: 1px dotted #000;
 	border-left: 4px solid #8394B2;
@@ -225,9 +225,9 @@
 	padding: 4px;
 	margin: 0 auto 8px auto;
 }
-#profy_forum .codetop,
-#profy_forum .sqltop,
-#profy_forum .htmltop {
+#yf_forum .codetop,
+#yf_forum .sqltop,
+#yf_forum .htmltop {
 	background: #FDDBCC;
 	color: #000;
 	font-weight: bold;
@@ -235,9 +235,9 @@
 	padding: 3px;
 	width: 98%;
 }
-#profy_forum .codemain,
-#profy_forum .sqlmain,
-#profy_forum .htmlmain {
+#yf_forum .codemain,
+#yf_forum .sqlmain,
+#yf_forum .htmlmain {
 	background: #FAFCFE;
 	border: 1px dotted #000;
 	color: #465584;
@@ -247,20 +247,20 @@
 	width: 98%;
 }
 /* All New Styles */
-#profy_forum .borderwrap,
-#profy_forum .borderwrapm {/* this will affect the outlining border of all the tables and boxes through-out the skin. */
+#yf_forum .borderwrap,
+#yf_forum .borderwrapm {/* this will affect the outlining border of all the tables and boxes through-out the skin. */
 	background: #FFF; 
 /*	border: 1px solid #072A66;*/
 	border: 1px solid #555;
 	padding: 0; 
 	margin: 0; 
 }
-#profy_forum .borderwrapm{
+#yf_forum .borderwrapm{
 	margin: 5px;
 }
-#profy_forum .borderwrap h3,
-#profy_forum .maintitle,
-#profy_forum .formsubtitle {
+#yf_forum .borderwrap h3,
+#yf_forum .maintitle,
+#yf_forum .formsubtitle {
 	background: #43434D;
 	border: 1px solid #FFF;
 /*	border-bottom: 1px solid #ccc;*/
@@ -270,40 +270,40 @@
 	margin: 0;
 	padding: 8px;
 }
-#profy_forum .formsubtitle {
+#yf_forum .formsubtitle {
 	background: #d0d0d0;
 	color: #000;
 	font-size: 10px;
 	padding: 4px;
 }
-#profy_forum .maintitle p,
-#profy_forum .formsubtitle p {
+#yf_forum .maintitle p,
+#yf_forum .formsubtitle p {
 	background: transparent !important;
 	border: 0 !important;
 	margin: 0 !important;
 	padding: 0 !important;
 }
-#profy_forum .maintitle p.expand,
-#profy_forum .maintitle p.goto,
-#profy_forum .formsubtitle p.members {
+#yf_forum .maintitle p.expand,
+#yf_forum .maintitle p.goto,
+#yf_forum .formsubtitle p.members {
 	float: right;
 	width: auto !important;
 }
-#profy_forum .maintitle a:link, 
-#profy_forum .maintitle a:visited {
+#yf_forum .maintitle a:link, 
+#yf_forum .maintitle a:visited {
 	background: transparent;
 	color: #FFF;
 	text-decoration: none;
 }
-#profy_forum .maintitle a:hover, 
-#profy_forum .maintitle a:active {
+#yf_forum .maintitle a:hover, 
+#yf_forum .maintitle a:active {
 	background: transparent;
 	color: #FFF;
 	text-decoration: underline;
 }
-#profy_forum table th,
-#profy_forum .borderwrap table th,
-#profy_forum .subtitle {
+#yf_forum table th,
+#yf_forum .borderwrap table th,
+#yf_forum .subtitle {
 /*	background: #43434D;*/
 	border-bottom: 1px solid #555;
 /*	color: #3A4F6C; */
@@ -313,19 +313,19 @@
 	margin: 0; 
 	padding: 5px; 
 }
-#profy_forum .borderwrap table th a:link,
-#profy_forum .subtitle a:link,
-#profy_forum .borderwrap table th a:visited,
-#profy_forum .subtitle a:visited, 
-#profy_forum .borderwrap table th a:active,
-#profy_forum .subtitle a:active,
-#profy_forum .borderwrap table th a:hover,
-#profy_forum .subtitle a:hover {
+#yf_forum .borderwrap table th a:link,
+#yf_forum .subtitle a:link,
+#yf_forum .borderwrap table th a:visited,
+#yf_forum .subtitle a:visited, 
+#yf_forum .borderwrap table th a:active,
+#yf_forum .subtitle a:active,
+#yf_forum .borderwrap table th a:hover,
+#yf_forum .subtitle a:hover {
 	background: transparent;
 	color: #3A4F6C;
 	text-decoration: none; 
 }
-#profy_forum .borderwrap h4{
+#yf_forum .borderwrap h4{
 	background: #DDE6F2;
 	border: 1px solid #FFF;
 /*	border-bottom: 1px solid #5176B5;*/
@@ -339,15 +339,15 @@
 	margin: 0;
 	padding: 5px;
 }
-#profy_forum .borderwrap p{
+#yf_forum .borderwrap p{
 	background: #F9F9F9;
 	border: 1px solid #CCC;
 	margin: 5px;
 	padding: 10px;
 	text-align: left;
 }
-#profy_forum td.formbuttonrow,
-#profy_forum .borderwrap p.formbuttonrow {
+#yf_forum td.formbuttonrow,
+#yf_forum .borderwrap p.formbuttonrow {
 	background: #d0d0d0 !important; 
 	border: 1px solid #FFF;
 /*	border-top: 1px solid #5176B5;*/
@@ -356,23 +356,23 @@
 	padding: 5px !important;
 	text-align: center;
 }
-#profy_forum td.formbuttonrow{
+#yf_forum td.formbuttonrow{
 	border-bottom: 0;
 	border-left: 0;
 	border-right: 0;
 }
-#profy_forum .bar,
-#profy_forum .barb,
-#profy_forum .barc {
+#yf_forum .bar,
+#yf_forum .barb,
+#yf_forum .barc {
 /*	background: #DFE6EF;*/
 	border: 1px solid #FFF;
 }
-#profy_forum .barc {
+#yf_forum .barc {
 	border-bottom: 0;
 }
-#profy_forum .bar p,
-#profy_forum .barb p,
-#profy_forum .barc p {
+#yf_forum .bar p,
+#yf_forum .barb p,
+#yf_forum .barc p {
 	background: transparent;
 	border: 0;
 	color: #222;
@@ -381,24 +381,24 @@
 	padding: 5px;
 	text-align: left;
 }
-#profy_forum .barb p {
+#yf_forum .barb p {
 	text-align: right;
 }
-#profy_forum .catend {
+#yf_forum .catend {
 /*	background: #8394B2;*/
 	color: #000;
 	font-size: 1px;
 	height: 1px;
 	padding: 0px;
 }
-#profy_forum .errorwrap {
+#yf_forum .errorwrap {
 	background: #F2DDDD;
 	border: 1px solid #992A2A;
 	border-top: 0;
 	margin: 5px;
 	padding: 0;
 }
-#profy_forum .errorwrap h4{
+#yf_forum .errorwrap h4{
 	background: #E3C0C0;
 	border: 1px solid #992A2A;
 	border-left: 0;
@@ -409,14 +409,14 @@
 	margin: 0;
 	padding: 5px;
 }
-#profy_forum .errorwrap p {
+#yf_forum .errorwrap p {
 	background: transparent;
 	border: 0;
 	color: #992A2A;
 	margin: 0;
 	padding: 8px;
 }
-#profy_forum .ruleswrap{
+#yf_forum .ruleswrap{
 	background: #F2DDDD;
 	border: 1px solid #992A2A;
 	color: #992A2A; 
@@ -520,14 +520,14 @@
 	color: #5176B5; 
 */
 }
-#profy_forum .toplinks {
+#yf_forum .toplinks {
 	background: transparent;
 	color: #000;
 	margin: 0;
 	padding: 0 0 5px 0;
 	text-align: right;
 }
-#profy_forum .toplinks span {
+#yf_forum .toplinks span {
 	background: #F0F5FA;
 	border: 1px solid #C2CFDF;
 	border-bottom: 0;
@@ -537,20 +537,20 @@
 	margin: 0 10px 0 0;
 	padding: 5px;
 }
-#profy_forum .copyright {
+#yf_forum .copyright {
 	background: #EEE;
 	font-size: 11px; 
 	margin: 0 0 5px 0;
 	padding: 8px;
 }
-/* Profy forum other styles */
-#profy_forum .forum1 {
+/* YF forum other styles */
+#yf_forum .forum1 {
 	background: #DFE6EC;
 }
-#profy_forum .forum2 {
+#yf_forum .forum2 {
 	background: #ffffff;
 }
-#profy_forum .forum_code {
+#yf_forum .forum_code {
 	font: monospace;
 	line-height: 10px;
 	color: blue;
@@ -561,7 +561,7 @@
 	width: 700px;
 	overflow: auto;
 }
-#profy_forum .forum_quote {
+#yf_forum .forum_quote {
 	color: #333;
 	background: #BBC7D0;
 	border: 1px solid #999;
@@ -569,14 +569,14 @@
 	margin: 5px;
 	overflow: auto;
 }
-#profy_forum div.forum_quote .forum_quote,
-#profy_forum div.forum_quote .forum_quote .forum_quote .forum_quote {
+#yf_forum div.forum_quote .forum_quote,
+#yf_forum div.forum_quote .forum_quote .forum_quote .forum_quote {
 	background: #D3DAE1;
 }
-#profy_forum div.forum_quote .forum_quote .forum_quote {
+#yf_forum div.forum_quote .forum_quote .forum_quote {
 	background: #BBC7D0;
 }
-#profy_forum .forum_smile {
+#yf_forum .forum_smile {
 	color: yellow;
 	font: 12px Verdana;
 	font-weight: bold;
@@ -584,25 +584,25 @@
 	margin: 0px 5px;
 }
 /* Shade styles */
-#profy_forum .row2shaded,
-#profy_forum .post1shaded {
+#yf_forum .row2shaded,
+#yf_forum .post1shaded {
 	background-color: #aaa
 }
-#profy_forum .row4shaded,
-#profy_forum .post2shaded {
+#yf_forum .row4shaded,
+#yf_forum .post2shaded {
 	background-color: #bbb
 }
-#profy_forum .row1 {
+#yf_forum .row1 {
 	background: #ddd; 
 }
-#profy_forum .row2 {
+#yf_forum .row2 {
 	background: #ddd; 
 }
-#profy_forum .darkrow1 {
+#yf_forum .darkrow1 {
 	background: #d0d0d0;
 	color: #fff; 
 }
-#profy_forum .darkrow3 {
+#yf_forum .darkrow3 {
 	background: #d0d0d0; 
 	color: #fff; 
 }

@@ -2,8 +2,8 @@
 
 define("DEBUG_MODE", 1);
 define("PF_PATH", realpath("./yf")."/");
-require PF_PATH."classes/profy_main.class.php";
-$GLOBALS['main'] = new profy_main("user", 1, 0);
+require PF_PATH."classes/yf_main.class.php";
+$GLOBALS['main'] = new yf_main("user", 1, 0);
 
 $DIR_OBJ = $GLOBALS['main']->init_class("dir", "classes/");
 

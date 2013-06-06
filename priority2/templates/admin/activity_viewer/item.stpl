@@ -1,5 +1,5 @@
 <tr>
-	<td align="left"><b><a href="{profile_link}" class="ajax_user_info" profy:user_id="{user_id}">{user}</a></b></td>
+	<td align="left"><b><a href="{profile_link}" class="ajax_user_info" yf:user_id="{user_id}">{user}</a></b></td>
 	<td align="center"><b>{add_points}</b></td>
 	<td align="center"><b>{task_name}</b></td>
 	<td align="left"><small>{date}</small></td>

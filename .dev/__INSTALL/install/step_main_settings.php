@@ -69,7 +69,7 @@ if(empty($_POST["create_database"])){
 $_SESSION['INSTALL']["web_path"] = $_POST["web_path"];
 	$log_text .= "Web Path: ".$_SESSION['INSTALL']["web_path"]."\n";
 $_SESSION['INSTALL']["framework_path"] = $_POST["framework_path"];
-	$log_text .= "Profy Framework Path: ".$_SESSION['INSTALL']["framework_path"]."\n";
+	$log_text .= "YF Framework Path: ".$_SESSION['INSTALL']["framework_path"]."\n";
 $_SESSION['INSTALL']["admin_name"] = $_POST["admin_name"];
 	$log_text .= "Administrator Username: ".$_SESSION['INSTALL']["admin_name"]."\n";
 $_SESSION['INSTALL']["admin_pass1"] = $_POST["admin_pass1"]; 

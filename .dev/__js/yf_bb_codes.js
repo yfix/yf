@@ -1,5 +1,5 @@
 // Main bb codes object
-var profy_bb_codes = function() {
+var yf_bb_codes = function() {
 
 	// Current user agent
 	this.ua					= navigator.userAgent.toLowerCase();
@@ -425,7 +425,7 @@ var profy_bb_codes = function() {
 }
 	
 // Singleton pattern (init only once)
-if (isNaN(profy_bb_codes)) {
-	var profy_bb_codes = new profy_bb_codes();
-	profy_bb_codes.init();
+if (isNaN(yf_bb_codes)) {
+	var yf_bb_codes = new yf_bb_codes();
+	yf_bb_codes.init();
 }

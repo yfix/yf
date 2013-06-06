@@ -6,5 +6,5 @@
 {t("login")} : {login} <br>
 {t("password")} : {password} <br>
 
-<br><i> Profy Chat Team</i>
+<br><i> YF Chat Team</i>
 </div>

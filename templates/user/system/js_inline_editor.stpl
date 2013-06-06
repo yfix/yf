@@ -319,7 +319,7 @@ $(function(){
 
 	// Add tooltip edit button
 	$(".help_tooltip").each(function() {
-		$(this).after("<span class='tooltip_edit_inline' profy:tip_id=" + $(this).attr("profy:tip_id") + ">Edit Tip</span>");
+		$(this).after("<span class='tooltip_edit_inline' yf:tip_id=" + $(this).attr("yf:tip_id") + ">Edit Tip</span>");
 	});
 
 	// Catch tip inline edit
@@ -327,7 +327,7 @@ $(function(){
 		if (!e.ctrlKey) {
 			return ;
 		}
-		_tip_id = $(this).attr("profy:tip_id");
+		_tip_id = $(this).attr("yf:tip_id");
 
 		// Construct edit area
 		$("#inline_edit_tip_header").html("EDIT TIP: " + _tip_id);

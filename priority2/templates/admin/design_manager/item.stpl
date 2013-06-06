@@ -1,7 +1,7 @@
 <tr id="del_row_{id}"  valign="top">
 {if("img_path" ne "")}
 	<td align="center">
-		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" profy:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" border="0" />{if("photo_m_src" ne "")}</a>{/if}
+		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" yf:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" border="0" />{if("photo_m_src" ne "")}</a>{/if}
 	</td>
 {/if}
 {if("img_path" eq "")}

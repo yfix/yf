@@ -1,6 +1,6 @@
 <h3><?ti("Installation compatibility")?></h3>
 <p>
-	<?ti("Before proceeding with the full installation Profy Framework will carry out some tests on your server configuration and files to ensure that you are able to install and run Profy Framework. Please ensure you read through the results thoroughly and do not proceed until all the required tests are passed.")?>
+	<?ti("Before proceeding with the full installation YF Framework will carry out some tests on your server configuration and files to ensure that you are able to install and run YF Framework. Please ensure you read through the results thoroughly and do not proceed until all the required tests are passed.")?>
 </p>
 <br />
 <table>

@@ -6,7 +6,7 @@
 class yf_test_maxmind_phone_check {
 
 	/**
-	* Profy module constructor
+	* YF module constructor
 	*/
 	function _init () {
 		$this->TEST_OBJ = module("test");

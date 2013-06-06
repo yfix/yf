@@ -2,7 +2,7 @@
 
 //-----------------------------------------------------------------------------
 // User profile handling module
-class yf_user_profile extends profy_module {
+class yf_user_profile extends yf_module {
 
 	/** @var int */
 	var $MAX_SHOW_ADS			= 10;

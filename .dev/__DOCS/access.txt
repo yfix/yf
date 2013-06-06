@@ -1,2 +1,2 @@
-http://profyframework.googlecode.com/svn/trunk
+http://yfframework.googlecode.com/svn/trunk
 

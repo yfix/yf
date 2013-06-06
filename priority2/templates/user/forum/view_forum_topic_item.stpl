@@ -2,13 +2,13 @@
 		<td class="status">{topic_status_icon}</td>
 		<td>{if("topic_icon" ne "")}<img src="{topic_icon}" alt="{t(topic icon)}" />{/if}{if("topic_icon" eq "")}&nbsp;{/if}</td>
 		<td>{rss_topic_button}
-			<a href="{topic_link}" class="topic_title" title="{t(This topic was started)}: {topic_start_date} by {topic_author_name}" profy:post_id="{first_post_id}"><b>{topic_name}</b></a> 
+			<a href="{topic_link}" class="topic_title" title="{t(This topic was started)}: {topic_start_date} by {topic_author_name}" yf:post_id="{first_post_id}"><b>{topic_name}</b></a> 
 			<div class="desc">{topic_desc}</div>
 			<div class="desc">{topic_pages}</div>
 		</td>
-		<td>{if("fast_view_replies" eq 1)}<a href="javascript:void(0)" profy:topic_id="{topic_id}" class="ajax_topic_repliers">{/if}{topic_num_posts}{if("fast_view_replies" eq 1)}</a>{/if}</td>
+		<td>{if("fast_view_replies" eq 1)}<a href="javascript:void(0)" yf:topic_id="{topic_id}" class="ajax_topic_repliers">{/if}{topic_num_posts}{if("fast_view_replies" eq 1)}</a>{/if}</td>
 		<td>
-{if("topic_author_link" ne "")}<a href="{topic_author_link}" target="_blank" class="topic_author" profy:user_id="{user_id}"><small>{topic_author_name}</small></a>{/if}
+{if("topic_author_link" ne "")}<a href="{topic_author_link}" target="_blank" class="topic_author" yf:user_id="{user_id}"><small>{topic_author_name}</small></a>{/if}
 {if("topic_author_link" eq "")}<small>{topic_author_name}</small>{/if}
 		</td>
 		<td><small>{topic_num_views}</small></td>

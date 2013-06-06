@@ -8,7 +8,7 @@
 * @version		1.0
 * @revision	$Revision$
 */
-class yf_photo_rating extends profy_module {
+class yf_photo_rating extends yf_module {
 
 	/** @var int Number of stars to use */
 	var $NUM_STARS					= 10;

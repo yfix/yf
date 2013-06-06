@@ -1,4 +1,4 @@
-profy_user_data.class.php
+yf_user_data.class.php
 
 	Может использоваться в 2-х режимах:
 		- режим единой таблицы для инфо пользователя (var $MODE = "SIMPLE") - при этом функция будет 

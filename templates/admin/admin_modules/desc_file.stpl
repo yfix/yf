@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<profy_install type="{install_type}">
+<yf_install type="{install_type}">
 	<name>{module_name}</name>
 	<description>{module_desc}</description>
 {if("files" ne "")}
@@ -43,4 +43,4 @@
 {if("uninstall_file" ne "")}
 	<uninstall_file>{uninstall_file}</uninstall_file>
 {/if}
-</profy_install>
+</yf_install>

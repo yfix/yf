@@ -1,7 +1,7 @@
 <tr class="{bg_class}" id="del_row_{item_id}">
 	<td><input type="checkbox" name="item[]" value="{item_id}"></td>
 	<td>
-		<div class="select_icon" profy:item_id="{item_id}">{if("icon_src" ne "")}<img src="{icon_src}" />{/if}</div>
+		<div class="select_icon" yf:item_id="{item_id}">{if("icon_src" ne "")}<img src="{icon_src}" />{/if}</div>
 		<input type="hidden" name="icon[{item_id}]" value="{icon_value}" />
 	</td>
 	<td style="padding-left:{level_pad}px;">

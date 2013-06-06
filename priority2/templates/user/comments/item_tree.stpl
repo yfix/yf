@@ -2,7 +2,7 @@
 	<a name="cid_{id}" />
 	<div class="comments_holder">
 		{if("user_profile_link" ne "")}
-			<a href="javascript:;" profy:user_id="{user_id}" class="ajax_user_info">{if("user_avatar" ne "")}<img src="{user_avatar}" width="25px" style="position:relative; top:6px;" />{else}<small><b>[i]</b></small>{/if}</a>&nbsp;  
+			<a href="javascript:;" yf:user_id="{user_id}" class="ajax_user_info">{if("user_avatar" ne "")}<img src="{user_avatar}" width="25px" style="position:relative; top:6px;" />{else}<small><b>[i]</b></small>{/if}</a>&nbsp;  
 			<a href="{user_profile_link}"><b>{user_name}</b></a>
 		{/if}
 		{if("user_profile_link" eq "")}<b>{user_name}</b>{/if}

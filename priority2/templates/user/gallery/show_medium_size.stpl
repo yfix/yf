@@ -29,7 +29,7 @@
 	<b>{t(Rate this image)}:</b> {rate_block}
 	<br />
 	{if("rate_num_votes" gt 0)}
-		<span class="photo_rate_result" profy:photo_id="{photo_id}">{t(Currently)}: {rate_num_votes} {t(votes)}, {rating} {t(average)}</span><br /><br />
+		<span class="photo_rate_result" yf:photo_id="{photo_id}">{t(Currently)}: {rate_num_votes} {t(votes)}, {rating} {t(average)}</span><br /><br />
 	{/if}
 {/if}{/if}
 
@@ -39,12 +39,12 @@
 	{if("delete_photo_link" ne "")} <a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink"><b>{t(Delete)}</b></a>&nbsp; {/if}
 
 	{if("const.PROJECT_NAME" eq "SEXY_NET")}
-		{if("show_in_ads" ge 0)} <a href="{change_show_ads_link}" class="actionlink change_show_in_ads" profy:photo_id="{photo_id}">{if("show_in_ads" eq 0)}{t(Show in ads)}{/if}{if("show_in_ads" eq 1)}{t(Don&#39;t show in ads)}{/if}</a>&nbsp;	{/if}
+		{if("show_in_ads" ge 0)} <a href="{change_show_ads_link}" class="actionlink change_show_in_ads" yf:photo_id="{photo_id}">{if("show_in_ads" eq 0)}{t(Show in ads)}{/if}{if("show_in_ads" eq 1)}{t(Don&#39;t show in ads)}{/if}</a>&nbsp;	{/if}
 		{if("show_ads_denied" ne "")}<small><b class="alarm">Not allowed in ads</b></small>{/if}
 	{/if}
 
 	<br />
-	{if("rate_enabled" eq 1)} <a href="{change_rate_link}" class="actionlink change_allow_rate" profy:photo_id="{photo_id}">{if("rate_allowed" eq 0)}{t(Allow rate)}{/if}{if("rate_allowed" eq 1)}{t(Deny rate)}{/if}</a>&nbsp; {/if}
+	{if("rate_enabled" eq 1)} <a href="{change_rate_link}" class="actionlink change_allow_rate" yf:photo_id="{photo_id}">{if("rate_allowed" eq 0)}{t(Allow rate)}{/if}{if("rate_allowed" eq 1)}{t(Deny rate)}{/if}</a>&nbsp; {/if}
 	{if("tagging_enabled" eq 1)} 
 		<a href="{change_tagging_link}" class="actionlink change_allow_tagging">{if("tagging_allowed" eq 0)}Allow tagging{/if}{if("tagging_allowed" eq 1)}{t(Deny tagging)}{/if}</a>&nbsp; 
 	{/if}

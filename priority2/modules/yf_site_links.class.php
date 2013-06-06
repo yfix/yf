@@ -28,7 +28,7 @@ class yf_site_links {
 	);
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		$GLOBALS['no_page_header'] = true;
 		define("LINKS_CLASS_NAME", "site_links");

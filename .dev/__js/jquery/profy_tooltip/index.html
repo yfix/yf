@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-<title>Tests for profy_tooltip</title>
+<title>Tests for yf_tooltip</title>
 
-<link rel="stylesheet" href="jquery.profy_tooltip.css" />
+<link rel="stylesheet" href="jquery.yf_tooltip.css" />
 <script src="../jquery-1.2.3.pack.js" type="text/javascript"></script>
 <script src="../bgiframe/jquery.bgiframe.pack.js" type="text/javascript"></script>
 <script src="../dimensions/jquery.dimensions.js" type="text/javascript"></script>
-<script src="jquery.profy_tooltip.js" type="text/javascript"></script>
+<script src="jquery.yf_tooltip.js" type="text/javascript"></script>
 <style type="text/css">
 #main { padding: 1em; }
 #banner { padding: 15px; background-color: #06b; color: white; font-size: large; border-bottom: 1px solid #ccc;    background: url(bg.gif) repeat-x; text-align: center }
@@ -30,29 +30,29 @@ if (typeof TOOLTIP_REQUEST_URL == "undefined") {
 
 $(function() {
 
-$('.avatar').profy_tooltip({
-	ajax_id: "profy:user_id",
+$('.avatar').yf_tooltip({
+	ajax_id: "yf:user_id",
 	ajax_url: TOOLTIP_REQUEST_URL,
 //	extraClass: "pretty",
-	extraClass: "profy",
+	extraClass: "yf",
 //	fixPNG: true,
 	__dummy:null
 });
 
-$('#set1 *').profy_tooltip();
+$('#set1 *').yf_tooltip();
 
-$('img').profy_tooltip({
+$('img').yf_tooltip({
 	delay: 0
 });
 
-$('#yahoo a').profy_tooltip({
+$('#yahoo a').yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
 	showBody: " - "
 });
 
-$("#fancy").profy_tooltip({
+$("#fancy").yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
@@ -64,7 +64,7 @@ $("#fancy").profy_tooltip({
 	left: 5
 });
 
-$('#pretty').profy_tooltip({
+$('#pretty').yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
@@ -75,17 +75,17 @@ $('#pretty').profy_tooltip({
 	left: -120
 });
 
-$("map *").profy_tooltip();
+$("map *").yf_tooltip();
 
-$('#right a').profy_tooltip({
+$('#right a').yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
 	extraClass: "right"
 });
-$('#right2 a').profy_tooltip({ showURL: false });
+$('#right2 a').yf_tooltip({ showURL: false });
 
-$("#block").click($.profy_tooltip.block);
+$("#block").click($.yf_tooltip.block);
 
 });
 </script>
@@ -116,14 +116,14 @@ $("#block").click($.profy_tooltip.block);
 
 <div>
 <div>
-<h1 id="banner">jQuery profy_tooltip Plugin Examples</h1>
+<h1 id="banner">jQuery yf_tooltip Plugin Examples</h1>
 
 <div align="left">
-<table width="120" height="120" style="margin:0px;padding:0px;" class="avatar_table"><tr><td width="120" class="avatar" nowrap profy:user_id="5"><a href="http://localhost/user-97-40033/"></a>No Photo</td></tr></table>
+<table width="120" height="120" style="margin:0px;padding:0px;" class="avatar_table"><tr><td width="120" class="avatar" nowrap yf:user_id="5"><a href="http://localhost/user-97-40033/"></a>No Photo</td></tr></table>
 </div>
 
 <div align="right">
-<table width="120" height="120" style="margin:0px;padding:0px;" class="avatar_table"><tr><td width="120" class="avatar" nowrap profy:user_id="1"><a href="http://localhost/user-97-40033/"></a>No Photo</td></tr></table>
+<table width="120" height="120" style="margin:0px;padding:0px;" class="avatar_table"><tr><td width="120" class="avatar" nowrap yf:user_id="1"><a href="http://localhost/user-97-40033/"></a>No Photo</td></tr></table>
 </div>
 
 <div id="main">
@@ -136,7 +136,7 @@ $("#block").click($.profy_tooltip.block);
 		<input title="Note that the tooltip disappears when clicking the input element" type="text" value="Test" name="action" id="text1"/>
 		
 		<h3>Code</h3>
-		<pre><code class="mix">$('#set1 *').profy_tooltip();</code></pre>
+		<pre><code class="mix">$('#set1 *').yf_tooltip();</code></pre>
 	</fieldset>
 	
 
@@ -145,7 +145,7 @@ $("#block").click($.profy_tooltip.block);
 		<legend>An image with a tooltip</legend>
 		<img src="image.png" height="80" title="No delay. The src value is displayed below the title" />
 		<h3>Code</h3>
-	<pre><code class="mix">$('img').profy_tooltip({
+	<pre><code class="mix">$('img').yf_tooltip({
 	delay: 0
 });</code></pre>
 	</fieldset>
@@ -153,7 +153,7 @@ $("#block").click($.profy_tooltip.block);
 	<fieldset>
 		<legend>Blocking tooltips</legend>
 		<button id="block">Click this button to block/unblock all tooltips</button>
-		<pre><code class="mix">$("#block").click($.profy_tooltip.block);</code></pre>
+		<pre><code class="mix">$("#block").click($.yf_tooltip.block);</code></pre>
 	</fieldset>
 	
 	<fieldset>
@@ -166,7 +166,7 @@ $("#block").click($.profy_tooltip.block);
 		</div>
 		<select><option>bgiframe test</option></select>
 		<h3>Code</h3>
-		<pre><code class="mix">$('#yahoo a').profy_tooltip({
+		<pre><code class="mix">$('#yahoo a').yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
@@ -184,7 +184,7 @@ $("#block").click($.profy_tooltip.block);
 		<br/>
 		<select><option>bgiframe test</option></select>
 		<h3>Code</h3>
-		<pre><code class="mix">$("#fancy").profy_tooltip({
+		<pre><code class="mix">$("#fancy").yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
@@ -196,7 +196,7 @@ $("#block").click($.profy_tooltip.block);
 	left: 5
 });
 
-$('#pretty').profy_tooltip({
+$('#pretty').yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
@@ -245,29 +245,29 @@ $('#pretty').profy_tooltip({
 		        href="http://www.baden-aktuell.de/" alt="Baden" title="Baden">
 		</map>
 		<h3>Code</h3>
-		<pre><code class="mix">$("map *").profy_tooltip();</code></pre>
+		<pre><code class="mix">$("map *").yf_tooltip();</code></pre>
 	</fieldset>
 	
 	<fieldset>
 		<legend>Testing repositioning at viewport borders</legend>
 		<p id="right">
-			profy_tooltip with fixed width<br/>
+			yf_tooltip with fixed width<br/>
 			<a title="Short title" href="http://goggle">Google me!</a><br/>
 			<a title="Rather a very very long title with no meaning but yet quite long long long" href="http://goggle">Google me!</a>
 		</p>
 		<p id="right2">
-			profy_tooltip width auto width<br/>
+			yf_tooltip width auto width<br/>
 			<a title="Short title" href="http://goggle">Google me!</a><br/>
 			<a title="Rather a very very long title with no meaning but yet quite long long long" href="http://goggle">Google me!</a>
 		</p>
 		<h3>Code</h3>
-		<pre><code class="mix">$('#right a').profy_tooltip({
+		<pre><code class="mix">$('#right a').yf_tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
 	extraClass: "right"
 });
-$('#right2 a').profy_tooltip({ showURL: false });</code></pre>
+$('#right2 a').yf_tooltip({ showURL: false });</code></pre>
 	</fieldset>
 </div>
 

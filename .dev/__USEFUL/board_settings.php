@@ -75,7 +75,7 @@ $this->SETTINGS = array_merge($this->SETTINGS, array(
 	"RSS_LATEST_IN_TOPIC"	=> 15,		// Latest posts for feed in topic
 	// Other options
 	"AVATAR_IMAGE_TYPES"	=> "gif,jpg,jpeg,png",	// Allowed avatar image types
-	"ADMIN_EMAIL_FROM"		=> "admin@profy.net",	// Email from
+	"ADMIN_EMAIL_FROM"		=> "admin@yfix.dev",	// Email from
 	"SECRET_KEY"			=> "_#@%^&_secret_key",	// Secret key used for encryption data
 	"AVATARS_DIR"			=> "uploads/avatars/",	// Avatars folder
 	"SMILIES_DIR"			=> "uploads/forum/smilies/",	// Smilies folder

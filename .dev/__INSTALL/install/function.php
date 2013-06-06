@@ -117,7 +117,7 @@ function split_sql(&$ret, $sql) {
 		if ($time1 >= $time0 + 30) {
 			$time0 = $time1;
 			if (!$is_headers_sent) {
-				header('X-ProfyPing: Pong');
+				header('X-YFPing: Pong');
 			}
 		}
 	}

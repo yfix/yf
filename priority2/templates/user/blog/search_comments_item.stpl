@@ -1,6 +1,6 @@
 <tr class="{bg_class}">
 	<td>
-	{if("user_link" ne "")}<a href="{user_link}" profy:user_id="{user_id}" class="ajax_user_info">{/if}
+	{if("user_link" ne "")}<a href="{user_link}" yf:user_id="{user_id}" class="ajax_user_info">{/if}
 			{user_name}
 	{if("user_link" ne "")}</a>{/if}
 	</td>

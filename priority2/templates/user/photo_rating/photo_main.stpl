@@ -15,11 +15,11 @@
 		<div class="photo_rate_box">{rate_box}</div>
 		<br />
 
-		<a href="{photo_link}"><img src="{img_src}" alt="{photo_name}{if('photo_name' eq '')}{user_name} photo{/if}" border="0" hspace="5" vspace="5"{if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} profy:user_id="{user_id}" /></a>
+		<a href="{photo_link}"><img src="{img_src}" alt="{photo_name}{if('photo_name' eq '')}{user_name} photo{/if}" border="0" hspace="5" vspace="5"{if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} yf:user_id="{user_id}" /></a>
 		<br />
 
 		{if("photo_name" ne "")}<b>{t(Photo title)}: {photo_name}<br />{/if}</b><br />
-		{t(More photos of)} <a href="{user_link}" class="photo_author" profy:user_id="{user_id}">{user_name}</a> {t(in the)} <a href="{gallery_link}">{t(Gallery)}</a>
+		{t(More photos of)} <a href="{user_link}" class="photo_author" yf:user_id="{user_id}">{user_name}</a> {t(in the)} <a href="{gallery_link}">{t(Gallery)}</a>
 </form>
 </div>
 <div class="cell">{execute(photo_rating,_show_last_voted)}
@@ -62,7 +62,7 @@ $(function(){
 		return false;
 	});
 
-	$("a.photo_author").profy_tooltip();
+	$("a.photo_author").yf_tooltip();
 });
 -->
 </script>

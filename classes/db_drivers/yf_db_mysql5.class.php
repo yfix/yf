@@ -10,6 +10,6 @@ require_once dirname(__FILE__)."/yf_db_mysql41.class.php";
 * @version		1.0
 * @revision	$Revision$
 */
-class yf_db_mysql5 extends profy_db_mysql41 {
+class yf_db_mysql5 extends yf_db_mysql41 {
 
 }

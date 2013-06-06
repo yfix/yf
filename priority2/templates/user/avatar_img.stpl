@@ -1,4 +1,4 @@
-<table class="avatar" {if("use_ajax" eq 1)}profy:user_id="{user_id}"{/if}>
+<table class="avatar" {if("use_ajax" eq 1)}yf:user_id="{user_id}"{/if}>
 	<tr>
 		<td nowrap {if("photo_verified" eq 1)} style="background-image: url('images/verified.gif'); background-repeat:no-repeat; background-position: left bottom;"{/if}>
 {if("as_link" eq 1)}{if("user_profile_link" ne "")}<a href="{user_details_link}" border="0">{/if}{/if}

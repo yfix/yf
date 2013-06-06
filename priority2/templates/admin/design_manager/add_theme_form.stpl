@@ -17,7 +17,7 @@
 	<p>
 {if("img_path" ne "")}
 		<label>{t(Preview image)}:</label>
-		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" profy:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" alt="preview_image" border="0" />{if("photo_m_src" ne "")}</a>{/if}
+		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" yf:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" alt="preview_image" border="0" />{if("photo_m_src" ne "")}</a>{/if}
 		<br />
 		<a href="{del_image_link}">{t(Delete preview image)}</a>
 {/if}

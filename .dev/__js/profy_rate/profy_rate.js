@@ -18,9 +18,9 @@ function rade_fadein_text() {
 		if(is_opera)  {
 			rate_fadein_opacity = 100;
 		} else	 if(is_ie) {
-			document.getElementById('profy-ratings-' + post_id).filters.alpha.opacity = rate_fadein_opacity;
+			document.getElementById('yf-ratings-' + post_id).filters.alpha.opacity = rate_fadein_opacity;
 		} else	 if(is_moz) {
-			document.getElementById('profy-ratings-' + post_id).style.MozOpacity = (rate_fadein_opacity/100);
+			document.getElementById('yf-ratings-' + post_id).style.MozOpacity = (rate_fadein_opacity/100);
 		}
 		setTimeout("rade_fadein_text()", 100); 
 	} else {
@@ -61,13 +61,13 @@ function ratings_off(rating_score, insert_half) {
 
 // Post Ratings Loading Text
 function rate_loading_text() {
-	document.getElementById('profy-ratings-' + post_id + '-loading').style.display = 'block';
+	document.getElementById('yf-ratings-' + post_id + '-loading').style.display = 'block';
 }
 
 
 // Post Ratings Finish Loading Text
 function rate_unloading_text() {
-	document.getElementById('profy-ratings-' + post_id + '-loading').style.display = 'none';
+	document.getElementById('yf-ratings-' + post_id + '-loading').style.display = 'none';
 }
 
 
@@ -90,9 +90,9 @@ function rate_process() {
 		if(is_opera) {
 			rate_fadein_opacity = 0;
 		} else if(is_ie) {
-			document.getElementById('profy-ratings-' + post_id).filters.alpha.opacity = rate_fadeout_opacity;
+			document.getElementById('yf-ratings-' + post_id).filters.alpha.opacity = rate_fadeout_opacity;
 		} else if(is_moz) {
-			document.getElementById('profy-ratings-' + post_id).style.MozOpacity = (rate_fadeout_opacity/100);
+			document.getElementById('yf-ratings-' + post_id).style.MozOpacity = (rate_fadeout_opacity/100);
 		}
 		setTimeout("rate_process()", 100); 
 	} else {
@@ -101,7 +101,7 @@ function rate_process() {
 		ajax.setVar("post_id", post_id);
 		ajax.setVar("rate_value", post_rating);
 		ajax.method = 'POST';
-		ajax.element = 'profy-ratings-' + post_id;
+		ajax.element = 'yf-ratings-' + post_id;
 		ajax.requestFile = do_vote_url;
 		ajax.onCompletion = rade_fadein_text;
 		ajax.runAJAX();

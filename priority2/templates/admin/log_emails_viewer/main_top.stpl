@@ -25,7 +25,7 @@
 // JQuery on DOM ready
 $(function(){
 	$("a.my_save_filter").css("visibility", "visible").click(function(){
-		$("#my_error_text").val($("input#my_msg_" + $(this).attr("profy:item_id")).val());
+		$("#my_error_text").val($("input#my_msg_" + $(this).attr("yf:item_id")).val());
 		$("form[name=admin_form]").submit();
 		return false;
 	});

@@ -3,7 +3,7 @@
 	<td width="80%"><small>{message}&nbsp;</small><input type="hidden" id="my_msg_{id}" value="{message}"></td>
 	<td nowrap><small>{num}</small></td>
 	<td nowrap>
-		<a href="./" class="my_save_filter" profy:item_id="{id}" style="visibility:hidden;">{t(Save filter)}</a>&nbsp;
-		<a href="./" class="my_delete_by_filter" profy:item_id="{id}" style="visibility:hidden;">{t(Delete)}</a>&nbsp;
+		<a href="./" class="my_save_filter" yf:item_id="{id}" style="visibility:hidden;">{t(Save filter)}</a>&nbsp;
+		<a href="./" class="my_delete_by_filter" yf:item_id="{id}" style="visibility:hidden;">{t(Delete)}</a>&nbsp;
 	</td>
 </tr>

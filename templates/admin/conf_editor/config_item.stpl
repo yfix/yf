@@ -15,7 +15,7 @@
 	{/if}
 	{if("type" eq "array")}
 		<textarea rows="2" cols="30" name="{form_name}">{value}</textarea>
-		<div class="json_value" profy:json_for="{var_name}" style="display:none;">{value_json}</div>
+		<div class="json_value" yf:json_for="{var_name}" style="display:none;">{value_json}</div>
 	{/if}
 	{if("type" eq "enum")}
 		{enum_box}

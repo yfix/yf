@@ -5,7 +5,7 @@
 class yf_boxes {
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		$this->_get_data();
 		// Array of select boxes to process
@@ -134,7 +134,7 @@ class yf_boxes {
 	}
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function box ($params = array()) {
 		$name		= $params["name"];
 		$selected	= $params["selected"];

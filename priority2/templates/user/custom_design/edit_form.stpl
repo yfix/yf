@@ -1,4 +1,4 @@
-<script type="text/javascript" src="{eval_code(WEB_PATH)}js/profy_colorer.js"></script>
+<script type="text/javascript" src="{eval_code(WEB_PATH)}js/yf_colorer.js"></script>
 
 <script type="text/javascript">
 <!--
@@ -38,7 +38,7 @@ function set_button_color (color, callback_obj) {
 				<tr> 
 					<td valign="top" width="25%">{t(Background color)}:</td>
 					<td><input type="text" size="8" readonly="readonly" name="back_color" value="{back_color}" id="back_selected_color" maxlength="16" class="color_picker" style="background-color:{back_color};color:{back_color};" /> 
-						<input type="button" id="back_color_select" value="Select" onclick="profy_colorer.get('back_selected_color',this,'set_button_color');" /> 
+						<input type="button" id="back_color_select" value="Select" onclick="yf_colorer.get('back_selected_color',this,'set_button_color');" /> 
 					</td>
 				</tr>
 				<tr> 
@@ -76,7 +76,7 @@ function set_button_color (color, callback_obj) {
 				<tr>
 					<td valign="top">{t(Table header background color)}:</td>
 					<td><input type="text" size="8" readonly="readonly" name="th_backcolor" value="{th_backcolor}" id="th_backcolor_selected_color" maxlength="16" class="color_picker" style="background-color:{th_backcolor};color:{th_backcolor};" /> 
-						<input type="button" id="th_backcolor_select" value="Select" onclick="profy_colorer.get('th_backcolor_selected_color',this,'set_button_color');" /> 
+						<input type="button" id="th_backcolor_select" value="Select" onclick="yf_colorer.get('th_backcolor_selected_color',this,'set_button_color');" /> 
 					</td>
 				</tr>
 				<tr>
@@ -86,13 +86,13 @@ function set_button_color (color, callback_obj) {
 				<tr>
 					<td valign="top">{t(Table content background color)}:</td>
 					<td><input type="text" size="8" readonly="readonly" name="table_backcolor" value="{table_backcolor}" id="table_backcolor_selected_color" maxlength="16" class="color_picker" style="background-color:{table_backcolor};color:{table_backcolor};" /> 
-						<input type="button" id="table_backcolor_select" value="Select" onclick="profy_colorer.get('table_backcolor_selected_color',this,'set_button_color');" />
+						<input type="button" id="table_backcolor_select" value="Select" onclick="yf_colorer.get('table_backcolor_selected_color',this,'set_button_color');" />
 					</td>
 				</tr>
 				<tr>
 					<td valign="top">{t(Table border color)}:</td>
 					<td><input type="text" size="8" readonly="readonly" name="table_bordercolor" value="{table_bordercolor}" id="table_bordercolor_selected_color" maxlength="16" class="color_picker" style="background-color:{table_bordercolor};color:{table_bordercolor};" /> 
-						<input type="button" id="table_bordercolor_select" value="Select" onclick="profy_colorer.get('table_bordercolor_selected_color',this,'set_button_color');" /> 
+						<input type="button" id="table_bordercolor_select" value="Select" onclick="yf_colorer.get('table_bordercolor_selected_color',this,'set_button_color');" /> 
 					</td>
 				</tr>
 				<tr>
@@ -101,13 +101,13 @@ function set_button_color (color, callback_obj) {
 				<tr> 
 					<td valign="top">{t(Image border color)}:</td>
 					<td><input type="text" size="8" readonly="readonly" name="image_color" value="{image_color}" id="image_selected_color" maxlength="16" class="color_picker" style="background-color:{image_color};color:{image_color};" /> 
-						<input type="button" id="image_color_select" value="Select" onclick="profy_colorer.get('image_selected_color',this,'set_button_color');" /> 
+						<input type="button" id="image_color_select" value="Select" onclick="yf_colorer.get('image_selected_color',this,'set_button_color');" /> 
 					</td>
 				</tr>
 				<tr> 
 					<td valign="top">{t(Image border hover color)}:</td>
 					<td><input type="text" size="8" readonly="readonly" name="image_hover_color" value="{image_hover_color}" id="image_hover_selected_color" maxlength="16" class="color_picker" style="background-color:{image_hover_color};color:{image_hover_color};" /> 
-						<input type="button" id="image_hover_color_select" value="Select" onclick="profy_colorer.get('image_hover_selected_color',this,'set_button_color');" /> 
+						<input type="button" id="image_hover_color_select" value="Select" onclick="yf_colorer.get('image_hover_selected_color',this,'set_button_color');" /> 
 					</td>
 				</tr>
 				<tr>

@@ -4,9 +4,9 @@
 */
 $DIR_TO_PROCESS		= "d:/www/htdocs/yf";
 $DIR_FOR_PROCESSED	= "d:/www/htdocs/yf_PROCESSED";
-$PACKAGE_NAME		= "Profy Framework";
+$PACKAGE_NAME		= "YF Framework";
 $AUTHOR_NAME		= "Yuri Vysotskiy";
-$AUTHOR_EMAIL		= "profy.net@gmail.com";
+$AUTHOR_EMAIL		= "yfix.dev@gmail.com";
 $VERSION			= "1.0";
 $REVISION			= "\$Revision\$";
 $class_header = <<<CLASS_HEADER

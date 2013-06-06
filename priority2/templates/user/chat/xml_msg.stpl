@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="{charset}"?>
-<profy_chat>
+<yf_chat>
 {foreach("cmds")}
 	<cmd>
 		<cmd_name>{cmds.name}</cmd_name>
 		<cmd_value>{cmds.value}</cmd_value>
 	</cmd>
 {/foreach}
-</profy_chat>
+</yf_chat>

@@ -4,6 +4,6 @@
 пути
 YF_PATH - путь к фреймворке (f)
 INCLUDE_PATH- путь к проекту (p)
-путь к сайту (s) - для каждого сайта определить (profy_sites_info.class.php)
+путь к сайту (s) - для каждого сайта определить (yf_sites_info.class.php)
 
 

@@ -1,6 +1,6 @@
 <tr class="{bg_class}">
 	<td>{check_type_full}{if("check_type" eq "i")}<br /><a href="{force_verify_link}">Force Verify</a>{/if}</td>
-	<td><a href="{profile_link}" class="ajax_user_info" profy:user_id="{owner_id}">{user_nick}</a>(ID #{owner_id})</td>
+	<td><a href="{profile_link}" class="ajax_user_info" yf:user_id="{owner_id}">{user_nick}</a>(ID #{owner_id})</td>
 	<td>{phone_num}</td>
 	<td>{phone_type}</td>
 	<td>{verify_code}</td>

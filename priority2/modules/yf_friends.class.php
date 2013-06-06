@@ -2,7 +2,7 @@
 
 //-----------------------------------------------------------------------------
 // Friends manager
-class yf_friends extends profy_module {
+class yf_friends extends yf_module {
 
 	/** @var int Number of "friends" on edit page */
 	var $ALL_FRIENDS_PER_PAGE		= 10;
@@ -56,7 +56,7 @@ class yf_friends extends profy_module {
 	);
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Friends class name (to allow changing only in one place)
 		define("FRIENDS_CLASS_NAME", "friends");

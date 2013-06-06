@@ -1,9 +1,9 @@
 <span class="lastaction">
 	{last_post_date}
 	<br />
-	<a href="{last_post_link}" class="topic_last_post" profy:post_id="{last_post_id}">{t(Last post by)}:</a> 
+	<a href="{last_post_link}" class="topic_last_post" yf:post_id="{last_post_id}">{t(Last post by)}:</a> 
 {if("last_post_author_link" ne "")}
-	<b><a href="{last_post_author_link}" target="_blank" class="topic_author" profy:user_id="{user_id}">{last_post_author_name}</a></b>
+	<b><a href="{last_post_author_link}" target="_blank" class="topic_author" yf:user_id="{user_id}">{last_post_author_name}</a></b>
 {/if}
 {if("last_post_author_link" eq "")}<b>{last_post_author_name}</b>{/if}
 </span>

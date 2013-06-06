@@ -9,7 +9,7 @@ class yf_geo_content {
 	var $AJAX_USE_CACHE = false;
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		define("GEO_CONTENT_CLASS_NAME", "geo_content");
 	}

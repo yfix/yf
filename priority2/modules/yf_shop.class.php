@@ -3,7 +3,7 @@
 /**
 * Shop module
 */
-class yf_shop extends profy_module {
+class yf_shop extends yf_module {
 
 	/* Test CC numbers:
 

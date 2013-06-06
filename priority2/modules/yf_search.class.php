@@ -50,7 +50,7 @@ class yf_search {
 	}
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Boxes used in the form
 		$this->_boxes = array(

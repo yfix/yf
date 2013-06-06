@@ -97,8 +97,8 @@ define("SITE_ADVERT_NAME", "{$_SESSION['INSTALL']["site_name"]}");
 require dirname(__FILE__)."/project_conf.php"; // Such call required to allow console calls
 \$GLOBALS["PROJECT_CONF"]["tpl"]["REWRITE_MODE"] = {$rewrite_mode_status};
 {$_add_content}
-require YF_PATH."classes/profy_main.class.php";
-\$GLOBALS['main'] = new profy_main("user", 0, 1);
+require YF_PATH."classes/yf_main.class.php";
+\$GLOBALS['main'] = new yf_main("user", 0, 1);
 EOD;
 $index_file_content.="\n?>";
 
@@ -125,8 +125,8 @@ define("SITE_DEFAULT_PAGE", "./?object=admin_home");
 define("ADMIN_FRAMESET_MODE", 1);
 require dirname(dirname(__FILE__))."/project_conf.php";
 {$_add_content}
-require YF_PATH."classes/profy_main.class.php";
-\$GLOBALS['main'] = new profy_main("admin", 0, 1);
+require YF_PATH."classes/yf_main.class.php";
+\$GLOBALS['main'] = new yf_main("admin", 0, 1);
 EOD;
 $admin_index_file_content.="\n?>";
 
@@ -236,8 +236,8 @@ if (!empty($tables_in_base)) {
 define("DEBUG_MODE", true);
 
 define("YF_PATH", $framework_path);
-require YF_PATH."classes/profy_main.class.php";
-$GLOBALS['main'] = new profy_main("user", $no_db_connect = false, $auto_init_all = false);
+require YF_PATH."classes/yf_main.class.php";
+$GLOBALS['main'] = new yf_main("user", $no_db_connect = false, $auto_init_all = false);
 
 
 // create tables with yf

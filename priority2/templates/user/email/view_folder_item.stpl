@@ -2,10 +2,10 @@
 		<td align="left" valign="top">
 {if("is_unread_msg" eq 1)}<b>{/if}
 {if("folder_name" eq "inbox")}
-			<a href="{profile_url}" profy:user_id="{user_id}" class="ajax_user_info">{from}</a>
+			<a href="{profile_url}" yf:user_id="{user_id}" class="ajax_user_info">{from}</a>
 {/if}
 {if("folder_name" eq "sent")}
-			<a href="{profile_url}" profy:user_id="{user_id}" class="ajax_user_info">{to}</a>
+			<a href="{profile_url}" yf:user_id="{user_id}" class="ajax_user_info">{to}</a>
 {/if}
 {if("is_unread_msg" eq 1)}</b>{/if}
 		</td>

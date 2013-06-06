@@ -2,7 +2,7 @@
 
 //-----------------------------------------------------------------------------
 // Help section module
-class yf_help extends profy_module {
+class yf_help extends yf_module {
 
 	/** @var string */
 	var $TICKET_DELIM	= "jq";
@@ -29,7 +29,7 @@ class yf_help extends profy_module {
 	var $USE_CAPTCHA = 1;
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Array of select boxes to process
 		$this->_boxes = array(

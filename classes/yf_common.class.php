@@ -379,7 +379,7 @@ class yf_common {
 	*/
 	function _show_error_message ($cur_error_msg = "", $clear_error = true) {
 		// Prevent recursive display
-		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, "<!--PROFY_ERROR_MESSAGE_START-->")) {
+		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, "<!--YF_ERROR_MESSAGE_START-->")) {
 			return $cur_error_msg;
 		}
 		if (!isset($this->USER_ERRORS)) {

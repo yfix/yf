@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<style type="text/css" id="profy_chat_style">@import url('{css_src}');</style>
+<style type="text/css" id="yf_chat_style">@import url('{css_src}');</style>
 
 <script type="text/javascript">
 <!--
@@ -39,7 +39,7 @@ function form_check(the_form) {
 -->
 </script>
 
-<div id="profy_chat">
+<div id="yf_chat">
 
 <div align="center"><h3>{t("chat_registration")}</h3></div>
 <table width="400" align="center" cellspacing="5" cellpadding="5" border="0">

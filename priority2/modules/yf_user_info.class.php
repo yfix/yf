@@ -16,7 +16,7 @@ class yf_user_info {
 	var $AVATAR_MAX_FILE_SIZE	= 500000; // bytes
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Array of select boxes to process
 		$this->_boxes = array(

@@ -1,8 +1,8 @@
 <div class="photo_item">
 	<div class="photo_inner">
 			<div class="thumb_holder">
-				<a href="{medium_size_link}" class="gallery_photo{if("slideshow_mode" gt "0")} hs_clickable{/if}" profy:user_id="{user_id}"
-{if("slideshow_mode" gt "0")} profy:img_m_src="{img_m_src}" {/if}
+				<a href="{medium_size_link}" class="gallery_photo{if("slideshow_mode" gt "0")} hs_clickable{/if}" yf:user_id="{user_id}"
+{if("slideshow_mode" gt "0")} yf:img_m_src="{img_m_src}" {/if}
 				><img src="{img_src}" alt="{photo_name}{if('photo_name' eq '')}{user_name} {t(photo)}{/if}" border="0" {if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} 
 				/></a>
 			</div>
@@ -25,7 +25,7 @@
 {/if}
 
 {if("rate_allowed" eq "1")}{if("rate_num_votes" gt 0)}
-	<div class="photo_rate_result" profy:photo_id="{photo_id}"><small><b>{t(Rating)}: {rating}, {t(votes)}: {rate_num_votes}</b></small></div> 
+	<div class="photo_rate_result" yf:photo_id="{photo_id}"><small><b>{t(Rating)}: {rating}, {t(votes)}: {rate_num_votes}</b></small></div> 
 {/if}{/if}
 {if("slideshow_mode" gt "0")} <a href="{medium_size_link}" style="display:none;">.</a>{/if}
 {if("is_own_gallery" eq 1)}

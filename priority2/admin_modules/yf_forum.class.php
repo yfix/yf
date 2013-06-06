@@ -487,7 +487,7 @@ class yf_forum {
 		} else {
 			$user_id	= intval($user_info);
 		}
-		return $user_id ? "<a class=\"forum_profile_link\" profy:user_id=\"".$user_id."\" href=\"./?object=".$_GET["object"]."&action=view_profile&id=".$user_id."\" target=\"_blank\">".(strlen($user_name) ? $user_name : $user_id)."</a>" : (strlen($user_name) ? $user_name : t("Anonymous"));
+		return $user_id ? "<a class=\"forum_profile_link\" yf:user_id=\"".$user_id."\" href=\"./?object=".$_GET["object"]."&action=view_profile&id=".$user_id."\" target=\"_blank\">".(strlen($user_name) ? $user_name : $user_id)."</a>" : (strlen($user_name) ? $user_name : t("Anonymous"));
 	}
 
 	/**

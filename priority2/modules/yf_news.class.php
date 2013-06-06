@@ -2,7 +2,7 @@
 
 //-----------------------------------------------------------------------------
 // News handler module
-class yf_news extends profy_module {
+class yf_news extends yf_module {
 	
 	//** @var int */
 //	var $TRIM_LENGTH	= 100;
@@ -14,7 +14,7 @@ class yf_news extends profy_module {
 	);
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Try to override param
 //		$this->TRIM_LENGTH = conf('length_trim') ? conf('length_trim') : $this->TRIM_LENGTH;

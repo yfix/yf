@@ -8,7 +8,7 @@
 * @version		1.0
 * @revision	$Revision$
 */
-class yf_blog extends profy_module {
+class yf_blog extends yf_module {
 
 	/** @var int Max post title length */
 	var $MAX_POST_TITLE_LENGTH		= 95;

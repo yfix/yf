@@ -1,4 +1,4 @@
-profy_main - it's a heart of the yf, we could call it "controller".
+yf_main - it's a heart of the yf, we could call it "controller".
 All required initialization tasks are called from here.
 
 Example code how to call this class (usually you should put code below into index.php of your site):
@@ -7,9 +7,9 @@ Example code how to call this class (usually you should put code below into inde
 // Physical path to framework
 define("YF_PATH", "d:/www/htdocs/yf/");
 // Include main class file
-require YF_PATH."classes/profy_main.class.php";
-// Initialize main engine (creating an instance of the profy_main class)
-$GLOBALS['main'] = new profy_main("user", 0, 1);
+require YF_PATH."classes/yf_main.class.php";
+// Initialize main engine (creating an instance of the yf_main class)
+$GLOBALS['main'] = new yf_main("user", 0, 1);
 --------------------
 
 It's designed as class divided into separate methods.
@@ -17,11 +17,11 @@ It's designed as class divided into separate methods.
 Let's talk about every class method:
 
 ---------------------
-function profy_main ($type = "user", $no_db_connect = false, $auto_init_all = false)
+function yf_main ($type = "user", $no_db_connect = false, $auto_init_all = false)
 ---------------------
 
 Class constructor, all required actions are called from here automatically when you creating an instance
-of the profy_main class.
+of the yf_main class.
 Arguments: 
 
 $type	- (user|admin) Most important argument tells what we need to launch: user section or
@@ -31,7 +31,7 @@ $no_db_connect	- tells to engine that we need database connection (usefull for s
 	the framework).
 
 $auto_init_all - means that you do not need to put these two lines of code 
-	after $GLOBALS['main'] = new profy_main("user");   :
+	after $GLOBALS['main'] = new yf_main("user");   :
 
 // Initialize authentification engine
 $GLOBALS['main']->init_auth();

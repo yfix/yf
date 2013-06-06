@@ -31,7 +31,7 @@ class yf_user_modules {
 	/** @var int Number of modules to display on one page */
 	var $MODULES_PER_PAGE	= 200;
 	/** @var bool Parse core "module" class in get_methods */
-	var $PARSE_PROFY_MODULE	= 0;
+	var $PARSE_YF_MODULE	= 0;
 
 	/**
 	* Framework constructor
@@ -417,7 +417,7 @@ class yf_user_modules {
 				$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
 				$extends_file_path2 = YF_PATH. "priority2/". USER_MODULES_DIR. $class_name_2. CLASS_EXT;
 				// Special processing of the "yf_module"
-				if ($this->PARSE_PROFY_MODULE && $class_name_2 == PF_PREFIX."module") {
+				if ($this->PARSE_YF_MODULE && $class_name_2 == PF_PREFIX."module") {
 					$extends_file_path = YF_PATH. "classes/".PF_PREFIX."module". CLASS_EXT;
 				}
 			}

@@ -6,7 +6,7 @@
 class yf_test_user_design {
 
 	/**
-	* Profy module constructor
+	* YF module constructor
 	*/
 	function _init () {
 		$this->TEST_OBJ = module("test");

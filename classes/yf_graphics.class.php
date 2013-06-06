@@ -358,7 +358,7 @@ class yf_graphics {
 			if (preg_match_all($p, $body, $m)) {
 				$web_path_len = strlen($this->MEDIA_PATH);
 				foreach((array)$m[1] as $id => $_src) {
-					if (false === strpos($m[0][$id], "profy:cacheable")) {
+					if (false === strpos($m[0][$id], "yf:cacheable")) {
 						unset($m[0][$id]);
 						continue;
 					}

@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Profy Login Form
+* YF Login Form
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>

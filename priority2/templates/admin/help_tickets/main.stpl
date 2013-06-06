@@ -50,8 +50,8 @@
 <script type="text/javascript">
 <!--
 $(function(){
-	$("a.ajax_ticket_info").profy_tooltip({
-		ajax_id: "profy:ticket_id"
+	$("a.ajax_ticket_info").yf_tooltip({
+		ajax_id: "yf:ticket_id"
 		,ajax_url: "{ajax_link}"
 		,ajax_prefix: "ticket_"
 	});

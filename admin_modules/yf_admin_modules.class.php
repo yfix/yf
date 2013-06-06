@@ -30,7 +30,7 @@ class yf_admin_modules {
 	/** @var int Number of modules to display on one page */
 	var $MODULES_PER_PAGE	= 200;
 	/** @var bool Parse core "module" class in get_methods */
-	var $PARSE_PROFY_MODULE	= false;
+	var $PARSE_YF_MODULE	= false;
 
 	/**
 	* Framework constructor
@@ -445,7 +445,7 @@ class yf_admin_modules {
 				}
 			}
 			// Special processing of the "yf_module"
-			if ($this->PARSE_PROFY_MODULE && $class_name_2 == PF_PREFIX. "module") {
+			if ($this->PARSE_YF_MODULE && $class_name_2 == PF_PREFIX. "module") {
 				$extends_file_path = YF_PATH. "classes/". PF_PREFIX. "module". CLASS_EXT;
 			}
 			if (!empty($extends_file_path) && file_exists($extends_file_path)) {

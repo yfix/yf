@@ -329,7 +329,7 @@ class yf_table {
 			$body .= "\t\t\t<input type=\"button\" class=\"".($k == "delete" ? "ajax_delete" : "button2")."\" value=\"".translate($k)."\""
 /*				.(" onclick=\"".($k == "delete" ? "if (confirm('".t("are_you_sure")."?'))" : "")." window.location.href='".$href. _add_get()."'")*/
 				.($k != "delete" ? " onclick=\"window.location.href='".$href. _add_get()."'\"" : "")
-				.(" profy:href='".$href. _add_get()."'")
+				.(" yf:href='".$href. _add_get()."'")
 				."\">\r\n";
 		}
 		$body .= "\t\t</nobr></td>\r\n";

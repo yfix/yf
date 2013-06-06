@@ -1,5 +1,5 @@
 <style type="text/css">
-/* ###### (start) PROFY FORUM ITEMS ###### */
+/* ###### (start) YF FORUM ITEMS ###### */
 #forum td {
 	padding: 2px;
 }
@@ -62,5 +62,5 @@
 .forum_title_bg {
 	background: #0066CC;
 }
-/* ###### (end) PROFY FORUM ITEMS ###### */
+/* ###### (end) YF FORUM ITEMS ###### */
 </style>

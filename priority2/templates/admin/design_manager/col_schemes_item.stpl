@@ -1,7 +1,7 @@
 <tr valign="top">
 	<td align="center">
 {if("img_path" ne "")}
-		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" profy:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" border="0" />{if("photo_m_src" ne "")}</a>{/if}
+		{if("photo_m_src" ne "")}<a href="{photo_m_src}" class="hs_clickable" yf:img_m_src="{photo_m_src}">{/if}<img src="{img_path}" border="0" />{if("photo_m_src" ne "")}</a>{/if}
 {/if}
 	</td>
 	<td align="left"><b>{scheme_name}</b></td>

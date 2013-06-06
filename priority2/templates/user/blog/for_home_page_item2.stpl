@@ -1,5 +1,5 @@
 <p class="subtitle">
-	<a href="{user_link}" class="ajax_user_info" profy:user_id="{user_id}">{user_name}</a> 
+	<a href="{user_link}" class="ajax_user_info" yf:user_id="{user_id}">{user_name}</a> 
 	{t(post in blog)} <a href="{blog_link}">{blog_title}</a> 
 	{t('at %adddate',%adddate='{add_date}')}
 </p>

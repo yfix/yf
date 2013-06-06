@@ -32,7 +32,7 @@ class yf_maxmind_phone_verify {
 	var $_error_log			= "";
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function  _init() {
 		$this->_maxmind_phone_id_code = main()->get_data("maxmind_phone_id_code");
 		$this->_call_code = main()->get_data("call_codes");

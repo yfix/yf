@@ -26,7 +26,7 @@ class yf_register {
 	var $USE_CAPTCHA			= true;
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Get user account type
 		$this->_account_types	= main()->get_data("user_groups");

@@ -28,45 +28,45 @@
 </script>
 {/if}
 
-<style type="text/css" id="profy_chat_style">@import url('{css_src}');</style>
+<style type="text/css" id="yf_chat_style">@import url('{css_src}');</style>
 
 <style type="text/css">
-.profy_chat_div {
+.yf_chat_div {
 /*	border:1px solid black;*/
 	padding: 0px;
 /*	overflow: hidden;*/
 }
 </style>
 
-<div id="profy_chat">
+<div id="yf_chat">
 
 <table width="100%" height="97%" cellspacing="0" cellpadding="2" border="1">
 	<tr valign="top">
 		<td width="75%">
-			<div id="chat_mf" width="100%" class="profy_chat_div"></div>
+			<div id="chat_mf" width="100%" class="yf_chat_div"></div>
 		</td>
 		<td width="25%" rowspan="2">
-			<div id="chat_uf" width="250" class="profy_chat_div"></div>
+			<div id="chat_uf" width="250" class="yf_chat_div"></div>
 		</td>
 	</tr>
 	<tr valign="top">
 		<td height="10%">
-			<div id="chat_pf" width="100%" class="profy_chat_div"></div>
+			<div id="chat_pf" width="100%" class="yf_chat_div"></div>
 		</td>
 	</tr>
 	<tr valign="top">
 		<td>
-			<div id="chat_ff" width="100" height="80" class="profy_chat_div"></div>
+			<div id="chat_ff" width="100" height="80" class="yf_chat_div"></div>
 		</td>
 		<td>
-			<div id="chat_rf" width="250" height="80" class="profy_chat_div"></div>
+			<div id="chat_rf" width="250" height="80" class="yf_chat_div"></div>
 		</td>
 	</tr>
 	<tr valign="top">
 		<td colspan="2">
 <div align="center" style="font-size:9px;">
-	{t("Powered by")}<a href="http://www.profy.net/" target="_blank">Profy Chat</a> 
-	{chat_version} &copy; 2003-{eval_code(date('Y'))} Profy.Net Group
+	{t("Powered by")}<a href="http://www.yf.net/" target="_blank">YF Chat</a> 
+	{chat_version} &copy; 2003-{eval_code(date('Y'))} YF.Net Group
 </div>
 		</td>
 	</tr>

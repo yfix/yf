@@ -1,1 +1,1 @@
-<img src="images/{if('tip_type' eq 1)}tip_q.gif{/if}{if('tip_type' eq 2)}tip_lamp.gif{/if}" class="help_tooltip" profy:tip_id="{tip_id}" />
+<img src="images/{if('tip_type' eq 1)}tip_q.gif{/if}{if('tip_type' eq 2)}tip_lamp.gif{/if}" class="help_tooltip" yf:tip_id="{tip_id}" />

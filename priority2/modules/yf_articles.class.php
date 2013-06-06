@@ -8,7 +8,7 @@
 * @version		1.0
 * @revision	$Revision$
 */
-class yf_articles extends profy_module {
+class yf_articles extends yf_module {
 
 	/** @var int Maximum length of title field */
 	var $MAX_TITLE_LENGTH			= 100;

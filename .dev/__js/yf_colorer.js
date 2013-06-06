@@ -1,12 +1,12 @@
-// Profy colorer object
-var profy_colorer = function() {
+// YF colorer object
+var yf_colorer = function() {
 
 	/** @var */
-	this.main_block_id		= "profy_colorer_main";
+	this.main_block_id		= "yf_colorer_main";
 	/** @var */
-	this.prev_block_id		= "profy_coloer_prev";
+	this.prev_block_id		= "yf_coloer_prev";
 	/** @var */
-	this.hex_block_id		= "profy_colorer_hex";
+	this.hex_block_id		= "yf_colorer_hex";
 	/** @var */
 	this.main_elm_obj		= null;
 	/** @var */
@@ -161,13 +161,13 @@ var profy_colorer = function() {
 					for (col = 0; col < 6; col++) {
 						body += color.charAt(Math.floor(col / 2));
 					}
-					body += "' onMouseOver='profy_colorer.preview(this)' onMouseDown='profy_colorer.select(this)'></td>";
+					body += "' onMouseOver='yf_colorer.preview(this)' onMouseDown='yf_colorer.select(this)'></td>";
 				}
 				body += "</tr>";
 			}
 			body += "<tr>" +
 				"<td id='" + this.prev_block_id + "' height=25 colspan=14 style='background:#000;border: 1px solid #FFF; cursor:auto;'>&nbsp;</td>"+
-				"<td height=25 colspan=7 align='center' valign='middle' bgcolor='#dadada'><form onSubmit='profy_colorer.select(profy_colorer.hex_elm_obj);return false;'><input id='" + this.hex_block_id + "' type=text size=7 maxlength=7 onChange='profy_colorer.change(this)' onKeyUp='profy_colorer.change(this)' onKeyPressed='profy_colorer.change(this)'></td></form>" +
+				"<td height=25 colspan=7 align='center' valign='middle' bgcolor='#dadada'><form onSubmit='yf_colorer.select(yf_colorer.hex_elm_obj);return false;'><input id='" + this.hex_block_id + "' type=text size=7 maxlength=7 onChange='yf_colorer.change(this)' onKeyUp='yf_colorer.change(this)' onKeyPressed='yf_colorer.change(this)'></td></form>" +
 				"</tr>" +
 				"</table>";
 	    
@@ -202,6 +202,6 @@ var profy_colorer = function() {
 
 	
 // Singleton pattern (init only once)
-if (typeof(profy_colorer) != "object") {
-	var profy_colorer = new profy_colorer();
+if (typeof(yf_colorer) != "object") {
+	var yf_colorer = new yf_colorer();
 }

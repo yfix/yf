@@ -5,7 +5,7 @@
 class yf_right_block {
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Get user account type
 		$this->_account_types	= main()->get_data("account_types");

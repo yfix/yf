@@ -15,15 +15,15 @@ var mf = null,
 var CHAT_USERS = [];
 
 //---------------------------------------------------------------------
-// Initialize PROFY_CHAT class
+// Initialize YF_CHAT class
 function chat_init () {
-	PROFY_CHAT = new PROFY_CHAT();
-	PROFY_CHAT.init();
+	YF_CHAT = new YF_CHAT();
+	YF_CHAT.init();
 }
 
 //---------------------------------------------------------------------
-// Main PROFY_CHAT class
-var PROFY_CHAT = function() {
+// Main YF_CHAT class
+var YF_CHAT = function() {
 
 	// Init mode (currently supported: "FRAMESET_MODE", "IFRAME_MODE", "DIV_MODE" (experimental))
 	this.INIT_MODE			= "";
@@ -67,13 +67,13 @@ var PROFY_CHAT = function() {
 			if (frames_col.length == 0) {
 				var frames_col = document.getElementsByTagName("FRAME");
 				if (frames_col.length > 0) {
-					PROFY_CHAT.INIT_MODE = "FRAMESET_MODE";
+					YF_CHAT.INIT_MODE = "FRAMESET_MODE";
 				}
 			} else {
-				PROFY_CHAT.INIT_MODE = "IFRAME_MODE";
+				YF_CHAT.INIT_MODE = "IFRAME_MODE";
 			}
 			// Frames mode (IFRAME_MODE or FRAMESET_MODE)
-			if (PROFY_CHAT.INIT_MODE == "IFRAME_MODE" || PROFY_CHAT.INIT_MODE == "FRAMESET_MODE") {
+			if (YF_CHAT.INIT_MODE == "IFRAME_MODE" || YF_CHAT.INIT_MODE == "FRAMESET_MODE") {
 				for (var i = 0; i < frames_col.length; i++) {
 					var fid = frames_col[i].id;
 					if (fid.length == 7 && fid.substring(0,5) == "chat_") {
@@ -82,7 +82,7 @@ var PROFY_CHAT = function() {
 				}
 				// Check required areas (mf, ff)
 				if (typeof mf == "object" && typeof ff == "object") {
-					// Try to init main PROFY_CHAT structures
+					// Try to init main YF_CHAT structures
 					ff.document.open();
 					ff.document.write(CHAT_VARS["post_page_contents"]);
 					ff.document.close();
@@ -91,7 +91,7 @@ var PROFY_CHAT = function() {
 					}
 				} else {
 					// Give up...
-					PROFY_CHAT.INIT_MODE = "";
+					YF_CHAT.INIT_MODE = "";
 				}
 			// Maybe DIV_MODE ?
 			} else {
@@ -104,16 +104,16 @@ var PROFY_CHAT = function() {
 				}
 				// Check required areas (mf, ff)
 				if (typeof mf == "object" && typeof ff == "object") {
-					PROFY_CHAT.INIT_MODE = "DIV_MODE";
-					// Try to init main PROFY_CHAT structures
-					ff.innerHTML = CHAT_VARS["post_page_contents"].replace(/<html>.*<div id=\"profy_chat\">/ig, '').replace(/(<\/body>|<\/html>)/ig, '');
+					YF_CHAT.INIT_MODE = "DIV_MODE";
+					// Try to init main YF_CHAT structures
+					ff.innerHTML = CHAT_VARS["post_page_contents"].replace(/<html>.*<div id=\"yf_chat\">/ig, '').replace(/(<\/body>|<\/html>)/ig, '');
 				} else {
 					// Give up...
-					PROFY_CHAT.INIT_MODE = "";
+					YF_CHAT.INIT_MODE = "";
 				}
 			}
 			// Check if we found init mode
-			if (PROFY_CHAT.INIT_MODE == "" || !PROFY_CHAT.INIT_MODE) {
+			if (YF_CHAT.INIT_MODE == "" || !YF_CHAT.INIT_MODE) {
 				throw('Init mode not found');
 			} else {
 				this._copy_css_styles();
@@ -121,14 +121,14 @@ var PROFY_CHAT = function() {
 				this._rebuild_users();
 				this.build_msg_divs();
 				this.build_private_divs();
-				if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+				if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 					this.post_form_init();
 				}
 			}
 		} catch (e) {
-			alert('Cant init PROFY_CHAT!');
+			alert('Cant init YF_CHAT!');
 			// Logging...
-			PROFY_CHAT.debug_log("Cant init PROFY_CHAT!\n", "e", e);
+			YF_CHAT.debug_log("Cant init YF_CHAT!\n", "e", e);
 		}
 	}
 
@@ -141,7 +141,7 @@ var PROFY_CHAT = function() {
 		}
 		var data_to_post = "known_users=" + known_users;
 		// Make request
-		PROFY_CHAT.CONN_OBJ = YAHOO.util.Connect.asyncRequest('POST', CHAT_VARS["xml_cmd_url"], PROFY_CHAT.xml_response_callback, data_to_post);
+		YF_CHAT.CONN_OBJ = YAHOO.util.Connect.asyncRequest('POST', CHAT_VARS["xml_cmd_url"], YF_CHAT.xml_response_callback, data_to_post);
 	}
 
 	//---------------------------------------------------------------------
@@ -155,7 +155,7 @@ var PROFY_CHAT = function() {
 			// Process
 			// Check if user is trying to submit empty message
 			if (msg_obj.value == "") {
-				alert(PROFY_CHAT.translate('empty_message'));
+				alert(YF_CHAT.translate('empty_message'));
 				return false;
 			}
 			// Make request
@@ -165,12 +165,12 @@ var PROFY_CHAT = function() {
 				text_to_post = text_to_post + encodeURIComponent("private_to") + "=" + encodeURIComponent(private_to_obj.value) + "&";
 			}
 			text_to_post = text_to_post.substr(0, text_to_post.length - 1);
-			this.CONN_OBJ = YAHOO.util.Connect.asyncRequest('POST', CHAT_VARS["post_form_url"], PROFY_CHAT.xml_response_callback, text_to_post);
+			this.CONN_OBJ = YAHOO.util.Connect.asyncRequest('POST', CHAT_VARS["post_form_url"], YF_CHAT.xml_response_callback, text_to_post);
 			this.reset_form();
 			this.get_commands();
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'check_form'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'check_form'\n", "e", e);
 		}
 		return false;
 	}
@@ -185,17 +185,17 @@ var PROFY_CHAT = function() {
 				return false;
 			}
 			// Logging...
-			PROFY_CHAT.debug_log("XML RESPONSE SUCCESS\n allResponseHeaders:\n " + obj.allResponseHeaders + "\n responseText:\n " + obj.responseText);
+			YF_CHAT.debug_log("XML RESPONSE SUCCESS\n allResponseHeaders:\n " + obj.allResponseHeaders + "\n responseText:\n " + obj.responseText);
 			// Start process items
 			var cmd_items = xml_obj.getElementsByTagName("cmd");
 			for (var i = 0; i < cmd_items.length; i++) {
 				var cmd_name = null, cmd_value = null;
 				var is_error_in_cmd = false;
 				try {
-					if (PROFY_CHAT.is_opera || PROFY_CHAT.is_moz) {
+					if (YF_CHAT.is_opera || YF_CHAT.is_moz) {
 						cmd_name	= cmd_items[i].childNodes[1].childNodes[0].nodeValue;
 						cmd_value	= cmd_items[i].childNodes[3];
-					} else if (PROFY_CHAT.is_ie)  {
+					} else if (YF_CHAT.is_ie)  {
 						cmd_name	= cmd_items[i].childNodes(0).childNodes(0).nodeValue;
 						cmd_value	= cmd_items[i].childNodes(1);
 					}
@@ -203,14 +203,14 @@ var PROFY_CHAT = function() {
 					is_error_in_cmd = true;
 				}
 				if (!is_error_in_cmd) {
-					PROFY_CHAT.process_server_cmds(cmd_name, cmd_value);
+					YF_CHAT.process_server_cmds(cmd_name, cmd_value);
 				}
 			}
 			return true;
 		},
 		failure: function (obj) {
 			// Logging...
-			PROFY_CHAT.debug_log("XML RESPONSE FAILURE!!!\n allResponseHeaders:\n " + obj.allResponseHeaders + "\n responseText:\n " + obj.responseText);
+			YF_CHAT.debug_log("XML RESPONSE FAILURE!!!\n allResponseHeaders:\n " + obj.allResponseHeaders + "\n responseText:\n " + obj.responseText);
 		}
 	}
 
@@ -263,7 +263,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'process_server_cmds'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'process_server_cmds'\n", "e", e);
 		}
 	}
 
@@ -337,7 +337,7 @@ var PROFY_CHAT = function() {
 					elm_inner_html = this._parse_tpl("user_elm_ignore_link", {
 						'elm_id'	: "user_ignore_" + user_id,
 						'user_id'	: user_id,
-						'onclick'	: "parent.window.PROFY_CHAT.user_ignore(\"" + user_login + "\");",
+						'onclick'	: "parent.window.YF_CHAT.user_ignore(\"" + user_login + "\");",
 						'title'		: user_ignore ? this.translate('Dont_ignore') : this.translate('Ignore'),
 						'label'		: 'X',
 						'user_color': user_ignore ? CHAT_COLORS["user_ignored"] : CHAT_COLORS["user_not_ignored"]
@@ -347,7 +347,7 @@ var PROFY_CHAT = function() {
 						elm_inner_html += this._parse_tpl("user_elm_info_link", {
 							'elm_id'	: "user_info_" + user_id,
 							'user_id'	: user_id,
-							'onclick'	: "parent.window.PROFY_CHAT.show_user_info(\"" + user_login + "\");",
+							'onclick'	: "parent.window.YF_CHAT.show_user_info(\"" + user_login + "\");",
 							'title'		: user_info == 2 ? this.translate('User_Info_with_Photo') : this.translate('User_Info'),
 							'label'		: user_info == 2 ? "P" : "I",
 							'user_color': CHAT_COLORS["user_info"]
@@ -365,7 +365,7 @@ var PROFY_CHAT = function() {
 						elm_inner_html += this._parse_tpl("user_elm_private_link", {
 							'elm_id'	: "user_private_" + user_id,
 							'user_id'	: user_id,
-							'onclick'	: "parent.window.PROFY_CHAT.private_to(\"" + user_login + "\");",
+							'onclick'	: "parent.window.YF_CHAT.private_to(\"" + user_login + "\");",
 							'title'		: this.translate('Write_private'),
 							'user_login': user_login,
 							'user_color': user_gender == "m" ? CHAT_COLORS["user_male"] : CHAT_COLORS["user_female"]
@@ -389,7 +389,7 @@ var PROFY_CHAT = function() {
 						elm_inner_html += this._parse_tpl("user_elm_ban_btn", {
 							'elm_id'	: "user_ban_btn_" + user_id,
 							'user_id'	: user_id,
-							'onclick'	: "parent.window.PROFY_CHAT.do_ban_user(\"" + user_login + "\");",
+							'onclick'	: "parent.window.YF_CHAT.do_ban_user(\"" + user_login + "\");",
 							'title'		: this.translate('do_ban_user'),
 							'label'		: 'X'
 						});
@@ -402,7 +402,7 @@ var PROFY_CHAT = function() {
 					new_elm_obj.className	= "users_" + user_gender;
 					new_elm_obj				= null;
 				}
-				try_elm_obj = PROFY_CHAT.INIT_MODE == "DIV_MODE" 
+				try_elm_obj = YF_CHAT.INIT_MODE == "DIV_MODE" 
 					? document.getElementById(elm_text_id) 
 					: uf.document.getElementById(elm_text_id);
 				// Check if such element already exists
@@ -416,7 +416,7 @@ var PROFY_CHAT = function() {
 			return CHAT_USERS.length;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'build_user_divs'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'build_user_divs'\n", "e", e);
 		}
 	}
 
@@ -427,7 +427,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_rebuild_users'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_rebuild_users'\n", "e", e);
 			return false;
 		}
 	}
@@ -452,7 +452,7 @@ var PROFY_CHAT = function() {
 			this.build_user_divs();
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'users_add'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'users_add'\n", "e", e);
 		}
 	}
 
@@ -487,7 +487,7 @@ var PROFY_CHAT = function() {
 			this.build_user_divs();
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'users_del'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'users_del'\n", "e", e);
 		}
 	}
 
@@ -499,7 +499,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_kill_all_users_divs'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_kill_all_users_divs'\n", "e", e);
 		}
 	}
 
@@ -513,7 +513,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_kill_user_dividers'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_kill_user_dividers'\n", "e", e);
 		}
 	}
 
@@ -523,7 +523,7 @@ var PROFY_CHAT = function() {
 			var num = 0;
 			// Process users
 			for (key in CHAT_USERS) {
-				if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+				if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 					var user_obj = document.getElementById("chat_user_" + CHAT_USERS[key]["user_id"]);
 				} else {
 					var user_obj = uf.document.getElementById("chat_user_" + CHAT_USERS[key]["user_id"]);
@@ -533,7 +533,7 @@ var PROFY_CHAT = function() {
 			return num;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_color_user_divs'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_color_user_divs'\n", "e", e);
 		}
 	}
 
@@ -550,7 +550,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'show_user_info'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'show_user_info'\n", "e", e);
 		}
 	}
 
@@ -563,7 +563,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'edit_ban_list'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'edit_ban_list'\n", "e", e);
 		}
 	}
 
@@ -574,7 +574,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'edit_personal_info'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'edit_personal_info'\n", "e", e);
 		}
 	}
 
@@ -585,7 +585,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'edit_settings'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'edit_settings'\n", "e", e);
 		}
 	}
 
@@ -645,7 +645,7 @@ var PROFY_CHAT = function() {
 					elm_inner_html += this._parse_tpl("msg_delete_btn", {
 						'elm_id'	: "msg_del_btn_" + msg_id,
 						'msg_id'	: msg_id,
-						'onclick'	: "parent.window.PROFY_CHAT.do_ban_message(\"" + msg_id + "\");",
+						'onclick'	: "parent.window.YF_CHAT.do_ban_message(\"" + msg_id + "\");",
 						'title'		: this.translate('do_ban_message'),
 						'label'		: 'X'
 					});
@@ -662,7 +662,7 @@ var PROFY_CHAT = function() {
 				});
 				// Create div ID
 				var elm_text_id = "chat_msg_" + msg_id;
-				var try_elm_obj	= PROFY_CHAT.INIT_MODE == "DIV_MODE" 
+				var try_elm_obj	= YF_CHAT.INIT_MODE == "DIV_MODE" 
 					? document.getElementById(elm_text_id) 
 					: mf.document.getElementById(elm_text_id);
 				// Check if such element already exists
@@ -677,7 +677,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'messages_add'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'messages_add'\n", "e", e);
 		}
 	}
 
@@ -726,7 +726,7 @@ var PROFY_CHAT = function() {
 				});
 				// Create div ID
 				var elm_text_id = "chat_private_" + msg_id;
-				var try_elm_obj	= PROFY_CHAT.INIT_MODE == "DIV_MODE" 
+				var try_elm_obj	= YF_CHAT.INIT_MODE == "DIV_MODE" 
 					? document.getElementById(elm_text_id) 
 					: pf.document.getElementById(elm_text_id);
 				// Check if such element already exists
@@ -741,7 +741,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'private_add'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'private_add'\n", "e", e);
 		}
 	}
 
@@ -753,7 +753,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'build_msg_divs'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'build_msg_divs'\n", "e", e);
 		}
 	}
 
@@ -765,7 +765,7 @@ var PROFY_CHAT = function() {
 			return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'build_private_divs'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'build_private_divs'\n", "e", e);
 		}
 	}
 
@@ -786,7 +786,7 @@ var PROFY_CHAT = function() {
 		var output_text = "";
 		if (user_login.length) {
 			output_text = this._parse_tpl("add_user_link", {
-				'onclick'	: (typeof pf == "object" && pf != null) ? "parent.window.PROFY_CHAT.send_to(\"" + user_login + "\")" : "",
+				'onclick'	: (typeof pf == "object" && pf != null) ? "parent.window.YF_CHAT.send_to(\"" + user_login + "\")" : "",
 				'text_color': text_color,
 				'title'		: this.translate('Write_to'),
 				'user_login': user_login
@@ -802,7 +802,7 @@ var PROFY_CHAT = function() {
 	//---------------------------------------------------------------------
 	this._add_private_link	= function (user_login, text_color) {
 		var output_text = this._parse_tpl("add_private_link", {
-			'onclick'	: (typeof pf != "undefined" && pf != null) ? "parent.window.PROFY_CHAT.private_to(\"" + user_login + "\");" : "",
+			'onclick'	: (typeof pf != "undefined" && pf != null) ? "parent.window.YF_CHAT.private_to(\"" + user_login + "\");" : "",
 			'text_color': text_color,
 			'title'		: this.translate('Write_private'),
 			'user_login': user_login
@@ -833,7 +833,7 @@ var PROFY_CHAT = function() {
 			this._process_smilies();
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'post_form_init'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'post_form_init'\n", "e", e);
 		}
 	}
 
@@ -842,7 +842,7 @@ var PROFY_CHAT = function() {
 		try {
 			var s_path		= CHAT_VARS["path_to_smilies"];
 			var s_array		= CHAT_VARS["smilies_array"];
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				var s_area		= document.getElementById("chat_smilies_area");
 			} else {
 				var s_area		= ff.document.getElementById("chat_smilies_area");
@@ -850,7 +850,7 @@ var PROFY_CHAT = function() {
 			var tmp_array	= new Array();
 			var url_exists	= 0;
 			if (s_array.length && s_path.length) {
-				s_array.sort(PROFY_CHAT._sort_smilies);
+				s_array.sort(YF_CHAT._sort_smilies);
 				// Try to filter repeated images
 				for (k1 in s_array) {
 					url_exists = 0;
@@ -873,7 +873,7 @@ var PROFY_CHAT = function() {
 					var s_code		= s_array[key][1];
 					var s_url		= s_array[key][2];
 					var s_title		= s_array[key][3];
-					if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+					if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 						var new_img		= document.createElement("IMG");
 					} else {
 						var new_img		= ff.document.createElement("IMG");
@@ -881,7 +881,7 @@ var PROFY_CHAT = function() {
 					new_img.id		= "chat_smile_" + s_id;
 					new_img.src		= s_path + s_url;
 					new_img.title	= s_title;
-					new_img.onclick	= new Function ("PROFY_CHAT._add_smile_code(\"" + s_code + "\")");
+					new_img.onclick	= new Function ("YF_CHAT._add_smile_code(\"" + s_code + "\")");
 					new_img.style.margin = '2px';
 					new_img.style.cursor = this.is_moz ? 'pointer' : 'hand';
 					s_area.appendChild(new_img);
@@ -889,7 +889,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_process_smilies'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_process_smilies'\n", "e", e);
 		}
 	}
 
@@ -905,35 +905,35 @@ var PROFY_CHAT = function() {
 			msg_obj.value = msg_obj.value + " " + s_code + " ";
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_add_smile_code'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_add_smile_code'\n", "e", e);
 		}
 	}
 
 	//---------------------------------------------------------------------
 	this.chat_start_stop	= function () {
 		try {
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				var control_button = document.getElementById("chat_control_button");
 			} else {
 				var control_button = ff.document.getElementById("chat_control_button");
 			}
-			if (PROFY_CHAT.INTERVAL_ID) {
-				window.clearInterval(PROFY_CHAT.INTERVAL_ID);
-				PROFY_CHAT.INTERVAL_ID = false;
-				alert(PROFY_CHAT.translate('CHAT_STOPPED!'));
-				control_button.value = control_button.title = PROFY_CHAT.translate('Start_chat!');
+			if (YF_CHAT.INTERVAL_ID) {
+				window.clearInterval(YF_CHAT.INTERVAL_ID);
+				YF_CHAT.INTERVAL_ID = false;
+				alert(YF_CHAT.translate('CHAT_STOPPED!'));
+				control_button.value = control_button.title = YF_CHAT.translate('Start_chat!');
 				control_button.style.background = "green";
 			} else {
-				PROFY_CHAT._set_refresh_time();
-				alert(PROFY_CHAT.translate('CHAT_STARTED!'));
-				control_button.value = control_button.title = PROFY_CHAT.translate('Stop_chat!');
+				YF_CHAT._set_refresh_time();
+				alert(YF_CHAT.translate('CHAT_STARTED!'));
+				control_button.value = control_button.title = YF_CHAT.translate('Stop_chat!');
 				control_button.style.background = "red";
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'chat_start_stop'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'chat_start_stop'\n", "e", e);
 		}
-		return PROFY_CHAT.INTERVAL_ID;
+		return YF_CHAT.INTERVAL_ID;
 	}
 
 	//-----------------------------------------------------------
@@ -945,7 +945,7 @@ var PROFY_CHAT = function() {
 			var msg_obj			= this._get_post_msg_obj();
 			// Process
 			private_to_obj.value	= user_login;
-			PROFY_CHAT.remember_nick= "";
+			YF_CHAT.remember_nick= "";
 			msg_obj.value			= "";
 			msg_obj.focus();
 			this._set_post_area_bg_color(CHAT_COLORS["post_form_def_mark"]);
@@ -958,7 +958,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'private_to'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'private_to'\n", "e", e);
 		}
 		return true;
 	}
@@ -981,7 +981,7 @@ var PROFY_CHAT = function() {
 			this._set_post_area_bg_color(CHAT_COLORS["post_form_def_bg"]);
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'send_to'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'send_to'\n", "e", e);
 		}
 		return true;
 	}
@@ -1002,7 +1002,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'move_to'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'move_to'\n", "e", e);
 		}
 		return true;
 	}
@@ -1018,12 +1018,12 @@ var PROFY_CHAT = function() {
 			if (private_to_obj.value == "") {
 				this._set_post_area_bg_color(CHAT_COLORS["post_form_def_bg"]);
 			}
-			PROFY_CHAT.remember_nick	= '';
+			YF_CHAT.remember_nick	= '';
 			msg_obj.value			= '';
 			msg_obj.focus();
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'reset_form'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'reset_form'\n", "e", e);
 		}
 		return true;
 	}
@@ -1040,7 +1040,7 @@ var PROFY_CHAT = function() {
 			var tag_2 = "[/" + bbcode_tag + "]";
 			var txt_area = msg_obj;
 			if (this.is_ie) {
-				if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+				if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 					var the_selection = document.selection.createRange().text;
 					if (the_selection) {
 						document.selection.createRange().text = tag_1 + the_selection + tag_2;
@@ -1066,7 +1066,7 @@ var PROFY_CHAT = function() {
 			txt_area.focus();
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'post_form_insert_bbcode'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'post_form_insert_bbcode'\n", "e", e);
 		}
 		return true;
 	}
@@ -1075,7 +1075,7 @@ var PROFY_CHAT = function() {
 	this._store_caret			= function (textEl) {
 		try {
 			if (textEl.createTextRange) {
-				if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+				if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 					textEl.caretPos = document.selection.createRange().duplicate();
 				} else {
 					textEl.caretPos = ff.document.selection.createRange().duplicate();
@@ -1083,7 +1083,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_store_caret'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_store_caret'\n", "e", e);
 		}
 	}
 
@@ -1095,7 +1095,7 @@ var PROFY_CHAT = function() {
 	this._get_post_form_obj		= function () {
 		try {
 			var f = null;
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				f = document.getElementById("chat_post_form");
 			} else {
 				f = ff.document.forms[0];
@@ -1107,7 +1107,7 @@ var PROFY_CHAT = function() {
 			return f;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_get_post_form_obj'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_get_post_form_obj'\n", "e", e);
 		}
 		return false;
 	}
@@ -1117,7 +1117,7 @@ var PROFY_CHAT = function() {
 		try {
 			var f		= this._get_post_form_obj();
 			var msg_obj	= null;
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				msg_obj	= document.getElementById("chat_post_msg");
 			} else {
 				msg_obj	= f.msg;
@@ -1125,7 +1125,7 @@ var PROFY_CHAT = function() {
 			return msg_obj;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_get_post_msg_obj'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_get_post_msg_obj'\n", "e", e);
 		}
 		return false;
 	}
@@ -1135,7 +1135,7 @@ var PROFY_CHAT = function() {
 		try {
 			var f				= this._get_post_form_obj();
 			var private_to_obj	= null;
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				private_to_obj	= document.getElementById("chat_post_private_to")
 			} else {
 				private_to_obj	= f.private_to;
@@ -1143,7 +1143,7 @@ var PROFY_CHAT = function() {
 			return private_to_obj;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_get_post_private_to_obj'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_get_post_private_to_obj'\n", "e", e);
 		}
 		return false;
 	}
@@ -1151,14 +1151,14 @@ var PROFY_CHAT = function() {
 	//-----------------------------------------------------------
 	this._set_post_area_bg_color	= function (new_color) {
 		try {
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				ff.style.background = new_color;
 			} else {
 				ff.document.body.style.background = new_color;
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_set_post_area_bg_color'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_set_post_area_bg_color'\n", "e", e);
 		}
 	}
 
@@ -1170,10 +1170,10 @@ var PROFY_CHAT = function() {
 	//---------------------------------------------------------------------
 	// Set cyclic method to retrieve data from server
 	this._set_refresh_time		= function () {
-		if (PROFY_CHAT.INTERVAL_ID) {
-			window.clearInterval(PROFY_CHAT.INTERVAL_ID);
+		if (YF_CHAT.INTERVAL_ID) {
+			window.clearInterval(YF_CHAT.INTERVAL_ID);
 		}
-		PROFY_CHAT.INTERVAL_ID = window.setInterval("parent.window.PROFY_CHAT.get_commands()", CHAT_VARS["refresh"]);
+		YF_CHAT.INTERVAL_ID = window.setInterval("parent.window.YF_CHAT.get_commands()", CHAT_VARS["refresh"]);
 		return true;
 	}
 
@@ -1188,20 +1188,20 @@ var PROFY_CHAT = function() {
 			} else {
 				p = self.window;
 			}
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				new_elm = document.createElement("DIV");
 			} else {
 				new_elm = p.document.createElement("DIV");
 			}
 			new_elm.id = elm_id;
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				p.appendChild(new_elm);
 			} else {
 				p.document.body.appendChild(new_elm);
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_create_elm'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_create_elm'\n", "e", e);
 			return false;
 		}
 		return new_elm;
@@ -1219,7 +1219,7 @@ var PROFY_CHAT = function() {
 			}
 			// Default parent element obj
 			if (parent_elm_obj == null || !parent_elm_obj) {
-				if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+				if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 					parent_elm_obj = p;
 				} else {
 					parent_elm_obj = p.document.body;
@@ -1228,7 +1228,7 @@ var PROFY_CHAT = function() {
 			if (typeof parent_elm_obj != "object" || parent_elm_obj == null) {
 				return false;
 			}
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 				var obj_to_remove = document.getElementById(elm_id);
 			} else {
 				var obj_to_remove = p.document.getElementById(elm_id);
@@ -1246,7 +1246,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_remove_elm'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_remove_elm'\n", "e", e);
 			return false;
 		}
 		return true;
@@ -1259,7 +1259,7 @@ var PROFY_CHAT = function() {
 			return false;
 		}
 		try {
-			if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+			if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 // TODO
 				throw ("'_scroll_to_end' not implemented in 'DIV_MODE' yet");
 			} else {
@@ -1273,7 +1273,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_scroll_to_end'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_scroll_to_end'\n", "e", e);
 			return false;
 		}
 	}
@@ -1360,7 +1360,7 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_bbcode'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_bbcode'\n", "e", e);
 		}
 		return text = text.replace(/\[([\/]{0,1}[biu]{1})\]/ig,"<$1>");
 	}
@@ -1478,7 +1478,7 @@ var PROFY_CHAT = function() {
 	//---------------------------------------------------------------------
 	// Init debugging
 	this.init_debug	= function () {
-		PROFY_CHAT.dump_maxLevel = 4;
+		YF_CHAT.dump_maxLevel = 4;
 		// Add "repeat" method to the String object
 		if (!String.prototype.repeat) {
 			String.prototype.repeat = function(n) { 
@@ -1506,7 +1506,7 @@ var PROFY_CHAT = function() {
 	// Dump given element into human-readable format
 	this.dump	= function (o, level) {
 		level = level || 1;
-		if (level > PROFY_CHAT.dump_maxLevel) {
+		if (level > YF_CHAT.dump_maxLevel) {
 			return "Too deep";
 		}
 		var ret = '';
@@ -1518,7 +1518,7 @@ var PROFY_CHAT = function() {
 			try {
 				for (i in o) {
 					try {
-						ret += "\t".repeat(level) + i + ' => ' + (typeof(o[i]) == 'string' ? o[i] : PROFY_CHAT.dump(o[i], level+1)) + '\r\n';
+						ret += "\t".repeat(level) + i + ' => ' + (typeof(o[i]) == 'string' ? o[i] : YF_CHAT.dump(o[i], level+1)) + '\r\n';
 					} catch (e) {
 					}
 				}
@@ -1573,7 +1573,7 @@ var PROFY_CHAT = function() {
 		try {
 			var error_text = "";
 			if (typeof error_object != "undefined") {
-				error_text = error_object.toString() + "\n" + PROFY_CHAT.dump(error_object);
+				error_text = error_object.toString() + "\n" + YF_CHAT.dump(error_object);
 			}
 			// Default log color
 			var	_log_color	= CHAT_COLORS["log_default"];
@@ -1587,11 +1587,11 @@ var PROFY_CHAT = function() {
 				_log_color	= CHAT_COLORS["log_error"];
 			}
 			// Create log window if not done so yet
-			if (typeof PROFY_CHAT._debug_win_id == "undefined") {
-				PROFY_CHAT._debug_win_id = window.open(""/*"about:blank"/*"javascript://"*/, "debug_win"/*, "", 1*/);
+			if (typeof YF_CHAT._debug_win_id == "undefined") {
+				YF_CHAT._debug_win_id = window.open(""/*"about:blank"/*"javascript://"*/, "debug_win"/*, "", 1*/);
 				try {
 					// Add empty page contents (with CSS)
-					PROFY_CHAT._debug_win_id.document.write(CHAT_VARS["frame_blank_page"]);
+					YF_CHAT._debug_win_id.document.write(CHAT_VARS["frame_blank_page"]);
 				} catch (e1) {
 					throw(e2);
 				}
@@ -1601,12 +1601,12 @@ var PROFY_CHAT = function() {
 			text_to_log = "<br>\n------------------ " + cur_date.toGMTString() + " ---------------<br>\n<span style='color:" + _log_color + ";'>" + (text_to_log + error_text).replace(/</ig, "&lt;").replace(/>/ig, "&gt;").replace(/\n/ig, "<br />") + "</span>";
 			// Write debug info into new window
 			try {
-				PROFY_CHAT._debug_win_id.document.write(text_to_log);
+				YF_CHAT._debug_win_id.document.write(text_to_log);
 			} catch (e2) {
 				throw(e2);
 			}
 		} catch (e) {
-			// alert(PROFY_CHAT.dump(e));
+			// alert(YF_CHAT.dump(e));
 		}
 	}
 
@@ -1648,7 +1648,7 @@ var PROFY_CHAT = function() {
 */
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'user_ignore'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'user_ignore'\n", "e", e);
 		}
 	}
 
@@ -1670,7 +1670,7 @@ var PROFY_CHAT = function() {
 */
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'do_ban_user'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'do_ban_user'\n", "e", e);
 		}
 	}
 
@@ -1683,14 +1683,14 @@ var PROFY_CHAT = function() {
 //		return true;
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in 'do_ban_message'\n", "e", e);
+			YF_CHAT.debug_log("Exception in 'do_ban_message'\n", "e", e);
 		}
 	}
 
 	//---------------------------------------------------------------------
 	// Copy styles from the main frame into the child ones
 	this._copy_css_styles		= function () {
-		if (PROFY_CHAT.INIT_MODE == "DIV_MODE") {
+		if (YF_CHAT.INIT_MODE == "DIV_MODE") {
 			return false;
 		}
 		// Only IE and Moz is supported
@@ -1701,7 +1701,7 @@ var PROFY_CHAT = function() {
 // TODO
 /*
 			var sheets_col = parent.window.document.styleSheets;
-			// First we try to find "profy_chat" stylesheet
+			// First we try to find "yf_chat" stylesheet
 			var tmp = "";
 
 //alert(parent.window.document.styleSheets[0].imports);
@@ -1751,12 +1751,12 @@ var PROFY_CHAT = function() {
 			}
 		} catch (e) {
 			// Logging...
-			PROFY_CHAT.debug_log("Exception in '_copy_css_styles'\n", "e", e);
+			YF_CHAT.debug_log("Exception in '_copy_css_styles'\n", "e", e);
 		}
 	}
 
 
-} // End of PROFY_CHAT class
+} // End of YF_CHAT class
 
 
 function MM_findObj(n, d) { //v4.01

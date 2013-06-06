@@ -200,11 +200,11 @@ class yf_admin_modules_install {
 				$this->PARENT_OBJ->XML_OBJ->xml_parse_document(file_get_contents($extract_path. $package_desc_file_name));
 				$xml_data = &$this->PARENT_OBJ->XML_OBJ->xml_array;
 				// Validate array parsed from package file
-				if (!isset($xml_data["yf_install"]) || !isset($xml_data["profy_install"]["ATTRIBUTES"]["type"])) {
+				if (!isset($xml_data["yf_install"]) || !isset($xml_data["yf_install"]["ATTRIBUTES"]["type"])) {
 					common()->_raise_error(t("Cant find package info in XML data"));
 				} elseif ($xml_data["yf_install"]["ATTRIBUTES"]["type"] != "admin_module") {
 					common()->_raise_error(t("Wrong package type"));
-				} elseif (empty($xml_data["yf_install"]["name"]["VALUE"]) || $PACKAGE_NAME != $xml_data["profy_install"]["name"]["VALUE"]) {
+				} elseif (empty($xml_data["yf_install"]["name"]["VALUE"]) || $PACKAGE_NAME != $xml_data["yf_install"]["name"]["VALUE"]) {
 					common()->_raise_error(t("Wrong package name"));
 				} elseif (empty($xml_data["yf_install"]["files"]["VALUE"])) {
 					common()->_raise_error(t("Empty package files list"));

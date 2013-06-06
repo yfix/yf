@@ -8,7 +8,7 @@
 * @version		1.0
 * @revision	$Revision$
 */
-class yf_gallery extends profy_module {
+class yf_gallery extends yf_module {
 
 	/** @var array Array of current photo sizes details */
 	var $PHOTO_TYPES = array(

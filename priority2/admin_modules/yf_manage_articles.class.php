@@ -2,7 +2,7 @@
 
 //-----------------------------------------------------------------------------
 // Comments management module
-class yf_manage_articles extends profy_module {
+class yf_manage_articles extends yf_module {
 
 	/** @var int Text preview cutoff */
 	var $TEXT_PREVIEW_LENGTH	= 200;

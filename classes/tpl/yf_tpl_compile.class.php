@@ -11,7 +11,7 @@
 class yf_tpl_compile {
 
 	/**
-	* Profy constructor
+	* YF constructor
 	*/
 	function _init () {
 	}

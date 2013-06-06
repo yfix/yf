@@ -14,14 +14,14 @@ $GLOBALS['TI_VARS'] = array(
 			=> "Нет",
 		"Installation"	
 			=> "Установка",
-		"Welcome to Profy Framework"
-			=> "Добро пожаловать в Profy Framework",
-		"Thank you to choose Profy Framework. In order to complete this install please fill out the details requested below."
-			=> "Спасибо за выбор Profy Framework. Для продолжения установки следуйте инструкциям ниже	.",
+		"Welcome to YF Framework"
+			=> "Добро пожаловать в YF Framework",
+		"Thank you to choose YF Framework. In order to complete this install please fill out the details requested below."
+			=> "Спасибо за выбор YF Framework. Для продолжения установки следуйте инструкциям ниже	.",
 		"Installation compatibility"
 			=> "Проверка требований",
-		"Before proceeding with the full installation Profy Framework will carry out some tests on your server configuration and files to ensure that you are able to install and run Profy Framework. Please ensure you read through the results thoroughly and do not proceed until all the required tests are passed."
-			=> "Перед продолжением полной установки Profy Framework выполнит некоторые тесты для проверки кофигурации вашего сервера, чтобы гарантировать, что Вы в состоянии установить и управлять Profy Framework.",
+		"Before proceeding with the full installation YF Framework will carry out some tests on your server configuration and files to ensure that you are able to install and run YF Framework. Please ensure you read through the results thoroughly and do not proceed until all the required tests are passed."
+			=> "Перед продолжением полной установки YF Framework выполнит некоторые тесты для проверки кофигурации вашего сервера, чтобы гарантировать, что Вы в состоянии установить и управлять YF Framework.",
 		"PHP version"
 			=> "Версия PHP",
 		"PHP setting Register Globals is disabled:"
@@ -56,7 +56,7 @@ $GLOBALS['TI_VARS'] = array(
 			=> "Настройки администратора",
 		"Web Path:"
 			=> "Веб путь:",
-		"Profy Framework Path:"
+		"YF Framework Path:"
 			=> "Путь к Framework Path:",
 		"Administrator Username:"
 			=> "Логин администратора:",
@@ -169,14 +169,14 @@ $GLOBALS['TI_VARS'] = array(
 			=> "Ні",
 		"Installation"	
 			=> "Встановлення",
-		"Welcome to Profy Framework"
-			=> "Ласкаво просимо до Profy Framework",
-		"Thank you to choose Profy Framework. In order to complete this install please fill out the details requested below."
-			=> "Дякуємо за вибір Profy Framework. Для продовження процесу установки керуйтеся наданими нижче інструкціями.",
+		"Welcome to YF Framework"
+			=> "Ласкаво просимо до YF Framework",
+		"Thank you to choose YF Framework. In order to complete this install please fill out the details requested below."
+			=> "Дякуємо за вибір YF Framework. Для продовження процесу установки керуйтеся наданими нижче інструкціями.",
 		"Installation compatibility"
 			=> "Перевірка необхідних даних",
-		"Before proceeding with the full installation Profy Framework will carry out some tests on your server configuration and files to ensure that you are able to install and run Profy Framework. Please ensure you read through the results thoroughly and do not proceed until all the required tests are passed."
-			=> "Перед продовженням повного встановлення Profy Framework виконає деякі тести для перевірки конфігурації вашого сервера, щоб гарантувати, що Ви будете мати можливість використовувати та керувати Profy Framework.",
+		"Before proceeding with the full installation YF Framework will carry out some tests on your server configuration and files to ensure that you are able to install and run YF Framework. Please ensure you read through the results thoroughly and do not proceed until all the required tests are passed."
+			=> "Перед продовженням повного встановлення YF Framework виконає деякі тести для перевірки конфігурації вашого сервера, щоб гарантувати, що Ви будете мати можливість використовувати та керувати YF Framework.",
 		"PHP version"
 			=> "Версія PHP",
 		"PHP setting Register Globals is disabled:"
@@ -211,8 +211,8 @@ $GLOBALS['TI_VARS'] = array(
 			=> "Налаштування Адміністратора",
 		"Web Path:"
 			=> "Веб шлях до сайту:",
-		"Profy Framework Path:"
-			=> "Шлях до Profy Framework:",
+		"YF Framework Path:"
+			=> "Шлях до YF Framework:",
 		"Administrator Username:"
 			=> "Логін Адміністратора:",
 		"Administrator Password:"

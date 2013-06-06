@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Profy Minicalendar
+ * YF Minicalendar
  * 
  * @package		YF
  * @author		YFix Team <yfix.dev@gmail.com>
@@ -32,7 +32,7 @@ class yf_minicalendar {
 	var $sun_first = true;
 
 	/**
-	 * Profy Minicalendar
+	 * YF Minicalendar
 	 */
 	function yf_minicalendar() {
 		$this->setWeek(array("Mon","Tue","Thu","Wed","Fri","Sat","Sun"));

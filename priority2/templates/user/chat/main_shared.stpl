@@ -110,4 +110,4 @@ var CHAT_COLORS = {
 
 <script type="text/javascript" src="{const(WEB_PATH)}js/YAHOO.js"></script>
 <script type="text/javascript" src="{const(WEB_PATH)}js/connection.js"></script>
-<script type="text/javascript" src="{const(WEB_PATH)}js/profy_chat.js"></script>
+<script type="text/javascript" src="{const(WEB_PATH)}js/yf_chat.js"></script>

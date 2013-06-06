@@ -28,7 +28,7 @@ RewriteRule ^(admin|design_editor|js|templates|uploads|html|images|webalizer|fck
 ### LOGIN AND LOGOUT ###
 RewriteRule ^(login|logout)([\/]*|[\.html]*)$							index.php?task=$1										[L,NC,T=application/x-httpd-php]
 
-### PROFY_FORUM RULES ###
+### YF_FORUM RULES ###
 RewriteRule ^([a-z]{3})*[\/]*(forum)+[\/]*([0-9]*)([\/]*|[\.html]*)$													index.php?object=$2&id=$3&language=$1						[L,NC,T=application/x-httpd-php]
 RewriteRule ^([a-z]{3})*[\/]*(forum)+/(confirm_register)/([0-9a-z_=\+\/\]+)([\/]*|[\.html]*)$							index.php?object=$2&action=$3&key=$4&language=$1			[L,NC,T=application/x-httpd-php]
 RewriteRule ^([a-z]{3})*[\/]*(forum)+/(search)/([^\/]+)[\/]*([0-9]*)([\/]*|[\.html]*)$									index.php?object=$2&action=$3&$4&page=$5&language=$1		[L,NC,T=application/x-httpd-php]

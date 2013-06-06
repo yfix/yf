@@ -1,6 +1,6 @@
 <?php
 
-class profy_db_static {
+class yf_db_static {
 
 	static private $connection_params = array();
 	static private $links = array();

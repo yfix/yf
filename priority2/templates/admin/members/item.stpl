@@ -1,6 +1,6 @@
 <tr class="{bg_class}">
 	<td><b>{user_id}</b></td>
-	<td><a href="{member_url}" target="_new" profy:user_id="{user_id}" class="ajax_user_info">{login}</a></td>
+	<td><a href="{member_url}" target="_new" yf:user_id="{user_id}" class="ajax_user_info">{login}</a></td>
 	<td>{nick}</td>
 	<td><a href="mailto:{email}"><small>{email}</small></a></td>
 	<!--<td align="left">{ip}</td>-->

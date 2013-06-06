@@ -21,7 +21,7 @@ class yf_account {
 
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		$this->_active_modules = main()->get_data("user_modules");
 	}

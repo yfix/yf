@@ -1,5 +1,5 @@
 <?php
-	// PROFY_FORUM datas
+	// YF_FORUM datas
 	$data = my_array_merge((array)$data, array(
 		"forum_categories"	=> array(
 			99999 => array(

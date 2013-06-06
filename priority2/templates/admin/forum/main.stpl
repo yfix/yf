@@ -30,7 +30,7 @@
 {totals}
 
 <div align="center" style="margin-top:10px; font-size:9px;">
-Powered by <a href="http://www.profy.net">Profy Forum</a> {version}<!-- &copy; 2004-{eval_code(date('Y'))} Profy.Net-->
+Powered by <a href="http://www.yf.net">YF Forum</a> {version}<!-- &copy; 2004-{eval_code(date('Y'))} YFix Team-->
 </div>
 
 </div>
@@ -38,7 +38,7 @@ Powered by <a href="http://www.profy.net">Profy Forum</a> {version}<!-- &copy; 2
 <script type="text/javascript">
 <!--
 $(function(){
-	$("a.forum_profile_link").profy_tooltip();
+	$("a.forum_profile_link").yf_tooltip();
 });
 -->
 </script>

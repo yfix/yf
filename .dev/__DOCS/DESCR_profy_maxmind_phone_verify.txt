@@ -1,4 +1,4 @@
-class profy_maxmind_phone_verify
+class yf_maxmind_phone_verify
 
 Предназначен для проверки телефонов с помощью сервиса "online fraud detection tools" (http://www.maxmind.com/)
 и надиктовки цифрового четырехзначного кода с помощью которого производится какое-либо подтверждение на сайте

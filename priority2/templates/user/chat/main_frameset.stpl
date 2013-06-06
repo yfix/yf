@@ -7,7 +7,7 @@
 
 </head>
 
-<style type="text/css" id="profy_chat_style">@import url('{css_src}');</style>
+<style type="text/css" id="yf_chat_style">@import url('{css_src}');</style>
 
 <FRAMESET COLS="75%, 25%" ROWS="87%,13%" FRAMEBORDER="1" onload="chat_init();">
 	<FRAMESET ROWS="80%,20%">

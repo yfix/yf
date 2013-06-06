@@ -1,7 +1,7 @@
 <?php
 	// Get database connection string
 	require(realpath(dirname(__FILE__))."/db_setup.php");
-	// PROFY project base web path
+	// YF project base web path
 	define("BASE_WS_PATH",				"/example_site/");
 	define('DIR_FS_CATALOG',			str_replace("\\", "/", realpath("./"))."/");
 	// Define the webserver and path parameters

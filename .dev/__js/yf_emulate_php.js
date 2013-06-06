@@ -10,16 +10,16 @@ var is_ns     = ((userAgent.indexOf('compatible') == -1) && (userAgent.indexOf('
 var is_ns4    = ((is_ns) && (parseInt(navigator.appVersion) == 4));
 var is_mac    = (userAgent.indexOf('mac') != -1);
 
-// profy_PHP_Emulator class
+// yf_PHP_Emulator class
 
 /**
 * PHP Function Emulator Class
 */
-function profy_PHP_Emulator()
+function yf_PHP_Emulator()
 {
 }
 
-// profy_PHP_Emulator Methods
+// yf_PHP_Emulator Methods
 
 /**
 * Find a string within a string (case insensitive)
@@ -30,7 +30,7 @@ function profy_PHP_Emulator()
 *
 * @return	mixed	Not found: false / Found: integer position
 */
-profy_PHP_Emulator.prototype.stripos = function(haystack, needle, offset) {
+yf_PHP_Emulator.prototype.stripos = function(haystack, needle, offset) {
 	if (typeof offset == 'undefined') {
 		offset = 0;
 	}
@@ -45,7 +45,7 @@ profy_PHP_Emulator.prototype.stripos = function(haystack, needle, offset) {
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.ltrim = function(str) {
+yf_PHP_Emulator.prototype.ltrim = function(str) {
 	return str.replace(/^\s+/g, '');
 }
 
@@ -56,7 +56,7 @@ profy_PHP_Emulator.prototype.ltrim = function(str) {
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.rtrim = function(str) {
+yf_PHP_Emulator.prototype.rtrim = function(str) {
 	return str.replace(/(\s+)$/g, '');
 }
 
@@ -67,7 +67,7 @@ profy_PHP_Emulator.prototype.rtrim = function(str) {
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.trim = function(str) {
+yf_PHP_Emulator.prototype.trim = function(str) {
 	return this.ltrim(this.rtrim(str));
 }
 
@@ -78,19 +78,19 @@ profy_PHP_Emulator.prototype.trim = function(str) {
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.preg_quote = function(str) {
+yf_PHP_Emulator.prototype.preg_quote = function(str) {
 	// replace + { } ( ) [ ] | / ? ^ $ \ . = ! < > : * with backslash+character
 	return str.replace(/(\+|\{|\}|\(|\)|\[|\]|\||\/|\?|\^|\$|\\|\.|\=|\!|\<|\>|\:|\*)/g, "\\$1");
 }
 
 /**
-* Emulates unhtmlspecialchars in profy_ulletin
+* Emulates unhtmlspecialchars in yf_ulletin
 *
 * @param	string	String to process
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.unhtmlspecialchars = function(str) {
+yf_PHP_Emulator.prototype.unhtmlspecialchars = function(str) {
 	f = new Array(/&lt;/g, /&gt;/g, /&quot;/g, /&amp;/g);
 	r = new Array('<', '>', '"', '&');
 	for (var i in f) {
@@ -100,13 +100,13 @@ profy_PHP_Emulator.prototype.unhtmlspecialchars = function(str) {
 }
 
 /**
-* Unescape CDATA from profy__AJAX_XML_Builder PHP class
+* Unescape CDATA from yf__AJAX_XML_Builder PHP class
 *
 * @param	string	Escaped CDATA
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.unescape_cdata = function(str) {
+yf_PHP_Emulator.prototype.unescape_cdata = function(str) {
 	var r1 = /<\=\!\=\[\=C\=D\=A\=T\=A\=\[/g;
 	var r2 = /\]\=\]\=>/g;
 	return str.replace(r1, '<![CDATA[').replace(r2, ']]>');
@@ -119,7 +119,7 @@ profy_PHP_Emulator.prototype.unescape_cdata = function(str) {
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.htmlspecialchars = function(str) {
+yf_PHP_Emulator.prototype.htmlspecialchars = function(str) {
 	//var f = new Array(/&(?!#[0-9]+;)/g, /</g, />/g, /"/g);
 	var f = new Array(
 		(is_mac && is_ie ? new RegExp('&', 'g') : new RegExp('&(?!#[0-9]+;)', 'g')),
@@ -148,7 +148,7 @@ profy_PHP_Emulator.prototype.htmlspecialchars = function(str) {
 *
 * @return	integer	Not found: -1 / Found: integer index
 */
-profy_PHP_Emulator.prototype.in_array = function(ineedle, haystack, caseinsensitive) {
+yf_PHP_Emulator.prototype.in_array = function(ineedle, haystack, caseinsensitive) {
 	var needle = new String(ineedle);
 	if (caseinsensitive) {
 		needle = needle.toLowerCase();
@@ -176,7 +176,7 @@ profy_PHP_Emulator.prototype.in_array = function(ineedle, haystack, caseinsensit
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.str_pad = function(text, length, padstring) {
+yf_PHP_Emulator.prototype.str_pad = function(text, length, padstring) {
 	text = new String(text);
 	padstring = new String(padstring);
 	if (text.length < length) {
@@ -196,7 +196,7 @@ profy_PHP_Emulator.prototype.str_pad = function(text, length, padstring) {
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.urlencode = function(text) {
+yf_PHP_Emulator.prototype.urlencode = function(text) {
 	text = text.toString();
 	// this escapes 128 - 255, as JS uses the unicode code points for them.
 	// This causes problems with submitting text via AJAX with the UTF-8 charset.
@@ -218,7 +218,7 @@ profy_PHP_Emulator.prototype.urlencode = function(text) {
 *
 * @return	string
 */
-profy_PHP_Emulator.prototype.ucfirst = function(str, cutoff) {
+yf_PHP_Emulator.prototype.ucfirst = function(str, cutoff) {
 	if (typeof cutoff != 'undefined') {
 		var cutpos = str.indexOf(cutoff);
 		if (cutpos > 0)	{
@@ -233,4 +233,4 @@ profy_PHP_Emulator.prototype.ucfirst = function(str, cutoff) {
 }
 
 // initialize the PHP emulator
-var PHP = new profy_PHP_Emulator();
+var PHP = new yf_PHP_Emulator();

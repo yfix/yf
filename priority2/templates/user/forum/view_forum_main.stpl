@@ -185,14 +185,14 @@
 <!--
 // JQuery on DOM ready
 $(function(){
-	$("a.topic_last_post, a.topic_title").profy_tooltip({
-		ajax_id: "profy:post_id"
+	$("a.topic_last_post, a.topic_title").yf_tooltip({
+		ajax_id: "yf:post_id"
 		,ajax_prefix: "pp_"
 		,ajax_url: WEB_PATH + "?object=forum&action=compact_post_preview"
 		,delay: 500
 	});
 
-	$("a.topic_author").profy_tooltip();
+	$("a.topic_author").yf_tooltip();
 })
 -->
 </script>

@@ -1,6 +1,6 @@
 <table width="120" height="120" style="margin:0px;padding:0px;margin-top:5px;">
 	<tr>
-		<td class="avatar" align="center" width="120" {if("use_ajax" eq 1)}profy:user_id="{user_id}"{/if}
+		<td class="avatar" align="center" width="120" {if("use_ajax" eq 1)}yf:user_id="{user_id}"{/if}
 		{if("photo_verified" eq 1)}style="background-image: url('images/verified.gif'); background-repeat:no-repeat; background-position: right bottom;"{/if}>
 {if("avatar_src" ne "")}<a href="{user_profile_link}"><img src="{avatar_src}"  border="0" hspace="0" vspace="0" title="{user_name}" alt="{user_name}" /></a>{/if}
 {if("avatar_src" eq "")}{t(No Photo)}{/if}

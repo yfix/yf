@@ -1,5 +1,5 @@
 <?php  
-require '../share/functions/profy_common_funcs.php';
+require '../share/functions/yf_common_funcs.php';
 
 class highlight_text extends PHPUnit_Framework_TestCase {
 

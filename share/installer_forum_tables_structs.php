@@ -1,5 +1,5 @@
 <?php
-	// PROFY_FORUM tables
+	// YF_FORUM tables
 	$data = my_array_merge((array)$data, array(
 		"forum_announce"	=> "
 			`id` int(10) unsigned NOT NULL auto_increment,

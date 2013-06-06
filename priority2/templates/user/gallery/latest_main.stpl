@@ -19,7 +19,7 @@
 <!--
 // JQuery on DOM ready
 $(function(){
-	$("a.gallery_photo").profy_tooltip();
+	$("a.gallery_photo").yf_tooltip();
 })
 -->
 </script>

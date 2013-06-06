@@ -4,7 +4,7 @@ var appeardelay			= 100;		// tooltip appear speed onMouseover (in miliseconds)
 var disappeardelay		= 100;		// tooltip disappear speed onMouseout (in miliseconds)
 var vertical_offset		= "0px";	// horizontal offset of tooltip from anchor link
 var horizontal_offset	= "0px";	// horizontal offset of tooltip from anchor link
-var profy_tooltip_id	= "fixedtipdiv";
+var yf_tooltip_id	= "fixedtipdiv";
 
 /////No further editting needed
 
@@ -12,7 +12,7 @@ var ie4 = document.all;
 var ns6 = document.getElementById && !document.all;
 
 if (ie4 || ns6) {
-	document.write('<div id="' + profy_tooltip_id + '" style="visibility:hidden;width:'+tipwidth+';' + (tipbgcolor != '' ? 'background-color:'+tipbgcolor+';' : '') + '" onMouseover="clearhidetip()" onMouseout="hidetip(event)" ></div>');
+	document.write('<div id="' + yf_tooltip_id + '" style="visibility:hidden;width:'+tipwidth+';' + (tipbgcolor != '' ? 'background-color:'+tipbgcolor+';' : '') + '" onMouseover="clearhidetip()" onMouseout="hidetip(event)" ></div>');
 	try {
 		document.write('<scr' + 'ipt ty ' + 'pe="text/j' + 'avascr' + 'ipt" sr' + 'c="' + WEB_PATH + 'js/zpeffects/effects.js' + '"></s' + 'cript>');
 	} catch (x) {}
@@ -74,8 +74,8 @@ function showhide(obj, e, visible, hidden, tipwidth){
 		obj.visibility = visible;
 		// Try to apply slide effect
 		try {
-			$(profy_tooltip_id).slideDown(20);
-/*			Zapatec.Effects.show(profy_tooltip_id, 20, 'slide');*/
+			$(yf_tooltip_id).slideDown(20);
+/*			Zapatec.Effects.show(yf_tooltip_id, 20, 'slide');*/
 		} catch (x) {}
 	} else if (e.type=="click") {
 		obj.visibility = hidden;
@@ -117,7 +117,7 @@ function ajaxtooltip(id, obj, e, tipwidth, force_request_file) {
 
 	clearhidetip();
 
-	dropmenuobj = document.getElementById? document.getElementById(profy_tooltip_id) : fixedtipdiv;
+	dropmenuobj = document.getElementById? document.getElementById(yf_tooltip_id) : fixedtipdiv;
 	dropmenuobj.innerHTML = "loading...";
 
 	if (ajaxcache[String(id)] != null) {

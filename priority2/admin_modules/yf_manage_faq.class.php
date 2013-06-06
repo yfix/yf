@@ -2,7 +2,7 @@
 
 //-----------------------------------------------------------------------------
 // FAQ management module
-class yf_manage_faq extends profy_module {
+class yf_manage_faq extends yf_module {
 
 	/** @var bool Use bb codes */
 	var $USE_BB_CODES		= false;

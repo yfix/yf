@@ -25,7 +25,7 @@ class yf_test {
 	);
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 	}
 
@@ -164,7 +164,7 @@ class yf_test {
 			return "Access denied. Only for members!";
 		}
 		if ($_POST["email"]) {
-			$msg = "Profy_Framework: Testing ".$_SERVER["HTTP_HOST"]." mailer";
+			$msg = "YF_Framework: Testing ".$_SERVER["HTTP_HOST"]." mailer";
 			$result = common()->quick_send_mail($_POST["email"], $msg, $msg."\nMessage part here");
 			return "Result: ".$result ? "<b style='color:green;'>success</b>" : "<b style='color:green;'>failed</b>";
 		}

@@ -1,6 +1,6 @@
 <div class="last_post">
 	<p class="subtitle">
-		{t(Posted in)} <a href="{blog_link}">{blog_title}</a> {t(by)} <a href="{user_link}" class="ajax_user_info" profy:user_id="{user_id}">{user_name}</a> 
+		{t(Posted in)} <a href="{blog_link}">{blog_title}</a> {t(by)} <a href="{user_link}" class="ajax_user_info" yf:user_id="{user_id}">{user_name}</a> 
 	</p>
 	<p class="text">
 		{text}

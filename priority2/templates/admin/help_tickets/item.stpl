@@ -13,7 +13,7 @@
 	<td align="center" nowrap>
 		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
 		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
-		{{--<a href="javascript:void(0)" class="ajax_ticket_info" profy:ticket_id="{ticket_id}">[?]</a>&nbsp;--}}
+		{{--<a href="javascript:void(0)" class="ajax_ticket_info" yf:ticket_id="{ticket_id}">[?]</a>&nbsp;--}}
 		<input type="checkbox" name="items[]" value="{ticket_id}">
 	</td>
 </tr>

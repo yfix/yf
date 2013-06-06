@@ -72,7 +72,7 @@ class yf_project_packer {
 		$this->PACKER['CLASSES_PATHS']	= array();
 		$this->PACKER["BUILT_IN_CLASSES"]= array();
 		foreach ((array)get_declared_classes() as $class_name) {
-			if (in_array($class_name, array("yf_main", "main", "profy_common", "common"))) {
+			if (in_array($class_name, array("yf_main", "main", "yf_common", "common"))) {
 				break;
 			}
 			$this->PACKER["BUILT_IN_CLASSES"][] = $class_name;

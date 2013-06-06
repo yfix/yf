@@ -36,7 +36,7 @@ class yf_js_calendar {
 	}
 
 	/**
-	* Profy Constructor
+	* YF Constructor
 	* 
 	* @access	private
 	*/

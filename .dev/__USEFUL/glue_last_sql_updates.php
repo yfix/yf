@@ -8,9 +8,9 @@ define("PF_PATH", INCLUDE_PATH."yf/");
 // Get current project settings
 require (INCLUDE_PATH."common_vars.php");
 // Include main class
-require PF_PATH."classes/profy_main.class.php";
+require PF_PATH."classes/yf_main.class.php";
 // Initialize main engine
-$GLOBALS['main'] = new profy_main("user");
+$GLOBALS['main'] = new yf_main("user");
 //----------------------------------------------------
 $SQL_UPDATES_DIR	= INCLUDE_PATH."_UPDATES/";
 $GLUED_SQL_FILE		= "./glued_updates.sql";

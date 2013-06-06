@@ -12,17 +12,17 @@ if (!window.console || !console.firebug) {
 </script>
 {/if}
 {/if}
-<script type="text/javascript" profy:cacheable src="{const(WEB_PATH)}js/jquery/jquery.min.js"></script>
-<script type="text/javascript" profy:cacheable src="{const(WEB_PATH)}js/jquery/bgiframe/jquery.bgiframe.pack.js"></script>
-<script type="text/javascript" profy:cacheable src="{const(WEB_PATH)}js/jquery/profy_tooltip/jquery.profy_tooltip.js"></script>
-<script type="text/javascript" profy:cacheable src="{const(WEB_PATH)}js/jquery/cookie/jquery.cookie.js"></script>
-<script type="text/javascript" profy:cacheable src="{const(WEB_PATH)}js/jquery/jquery.field.js"></script>
-<script type="text/javascript" profy:cacheable src="{const(WEB_PATH)}js/jquery/jquery.fck.js"></script>
+<script type="text/javascript" yf:cacheable src="{const(WEB_PATH)}js/jquery/jquery.min.js"></script>
+<script type="text/javascript" yf:cacheable src="{const(WEB_PATH)}js/jquery/bgiframe/jquery.bgiframe.pack.js"></script>
+<script type="text/javascript" yf:cacheable src="{const(WEB_PATH)}js/jquery/yf_tooltip/jquery.yf_tooltip.js"></script>
+<script type="text/javascript" yf:cacheable src="{const(WEB_PATH)}js/jquery/cookie/jquery.cookie.js"></script>
+<script type="text/javascript" yf:cacheable src="{const(WEB_PATH)}js/jquery/jquery.field.js"></script>
+<script type="text/javascript" yf:cacheable src="{const(WEB_PATH)}js/jquery/jquery.fck.js"></script>
 {{--
 {if("const.DEBUG_MODE" eq 1)}<script src="{const(WEB_PATH)}js/jquery/jquery-profile.js"></script>{/if}
 --}}
 <style type="text/css">
-	@import url('{const(WEB_PATH)}js/jquery/profy_tooltip/jquery.profy_tooltip.css');
+	@import url('{const(WEB_PATH)}js/jquery/yf_tooltip/jquery.yf_tooltip.css');
 </style>
 
 <script type="text/javascript">
@@ -35,22 +35,22 @@ $(function(){
 
 try {
 	// Set default settings for the current project
-	$.extend($.fn.profy_tooltip.defaults, {
-		ajax_id: "profy:user_id"
+	$.extend($.fn.yf_tooltip.defaults, {
+		ajax_id: "yf:user_id"
 		,ajax_url: WEB_PATH + '?object=user_profile&action=compact_info'
-		,extraClass: "profy"
+		,extraClass: "yf"
 		,showURL: false
 	});
 
 	// Default tooltip on avatar
-	$(".avatar,.ajax_user_info").not(".no_ajax").profy_tooltip();
+	$(".avatar,.ajax_user_info").not(".no_ajax").yf_tooltip();
 
 	// Help tooltip
-	$(".help_tooltip").profy_tooltip({
-		ajax_id: "profy:tip_id"
+	$(".help_tooltip").yf_tooltip({
+		ajax_id: "yf:tip_id"
 		,ajax_prefix: "help_"
 		,ajax_url: WEB_PATH + '?object=help&action=show_tip'
-		,extraClass: "profy help_tip"
+		,extraClass: "yf help_tip"
 	});
 } catch (_e) {}
 });
@@ -122,7 +122,7 @@ $(function(){
 		var obj = this;
 		// JQuery AJAX post
 		$.post(
-			obj.href || $(this).attr("profy:href"),
+			obj.href || $(this).attr("yf:href"),
 			{ajax_mode: 1},
 			function(data){
 				$("#del_row_" + data).remove();
@@ -215,7 +215,7 @@ try {
 	$("textarea.editable").each(function() {
 		$(this).fck({
 			path: '{const(WEB_PATH)}fckeditor/'
-			,toolbar: "profynet"
+			,toolbar: "yfnet"
 			,height: $(this).height()
 		});
 	});
@@ -241,7 +241,7 @@ try {
 	hs.outlineType = 'rounded-white';
 	// Apply highslide library
 	$(".hs_clickable").each(function(){
-		this.href = $(this).attr("profy:img_m_src");
+		this.href = $(this).attr("yf:img_m_src");
 		this.onclick= function(){ return hs.expand(this); };
 		this.style.cursor = "{const(WEB_PATH)}js/highslide/graphics/zoomin.cur";
 	});

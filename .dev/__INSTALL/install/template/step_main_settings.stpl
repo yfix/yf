@@ -38,7 +38,7 @@
 			<td><input class="text" type="text" name="web_path" value="<? echo $_SESSION['INSTALL']['_WEB_PATH']; ?>" /></td>
 		</tr>
 		<tr valign="top">
-			<td><b class="required">*</b><?ti("Profy Framework Path:")?></td>
+			<td><b class="required">*</b><?ti("YF Framework Path:")?></td>
 			<td><input class="text" type="text" name="framework_path" value="<? echo $_SESSION['INSTALL']["framework_path"]; ?>" /></td>
 		</tr>
 		<tr valign="top">

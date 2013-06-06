@@ -1,5 +1,5 @@
 <?php
-	// PROFY_CHAT tables
+	// YF_CHAT tables
 	$data = array_merge((array)$data, array(
 		"chat_archive_log_online"	=> "
 			`id` int(10) unsigned NOT NULL auto_increment,

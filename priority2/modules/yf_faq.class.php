@@ -8,7 +8,7 @@
 * @version		1.0
 * @revision	$Revision$
 */
-class yf_faq extends profy_module {
+class yf_faq extends yf_module {
 
 	/** @var bool Use bb codes */
 	var $USE_BB_CODES		= false;

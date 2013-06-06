@@ -996,7 +996,7 @@ body#empty_page #wrapper {
 }
 
 /*tooltip*/
-#tooltip.profy {
+#tooltip.yf {
 	position: absolute;
 	z-index: 3000;
 	border:3px solid #79B1D4;

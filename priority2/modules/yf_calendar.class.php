@@ -32,7 +32,7 @@ class yf_calendar {
 	var $HIDE_EMPTY_MONTHS = true;
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		$this->_max_year = gmdate("Y") + 5;
 		// Array of select boxes to process

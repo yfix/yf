@@ -5,7 +5,7 @@ if (!$link) {
 	die('Could not connect: ' . mysql_error());
 }
 
-require dirname(dirname(__FILE__)).'/share/functions/profy_cache.php';
+require dirname(dirname(__FILE__)).'/share/functions/yf_cache.php';
 
 class get_ip_test extends PHPUnit_Framework_TestCase {
 

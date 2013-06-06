@@ -4,7 +4,7 @@
 	<td><a href="{item_link}"><b>{object_name}</b></a></td>
 	<td>{object_id}</td>
 	<td><small>{text}</small></td>
-	<td>{if("user_nick" ne "")}<a href="{member_url}" target="_new" profy:user_id="{user_id}" class="ajax_user_info">{user_nick}</a>{else}{user_name}{/if}</td>
+	<td>{if("user_nick" ne "")}<a href="{member_url}" target="_new" yf:user_id="{user_id}" class="ajax_user_info">{user_nick}</a>{else}{user_name}{/if}</td>
 	<td align="center" nowrap>{add_date}</td>
 	<td align="center"><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a></td>
 	<td align="center" nowrap>

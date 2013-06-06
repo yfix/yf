@@ -98,7 +98,7 @@ class yf_chat_settings {
 				$body .= "<script>window.opener.CHAT_VARS['own_color']			= '".$_POST["chat_your_color"]."';</script>\r\n";
 				$body .= "<script>window.opener.CHAT_VARS['user_msg_show_time']	= '".$_POST["messages_time"]."';</script>\r\n";
 				$body .= "<script>window.opener.CHAT_VARS['refresh']			= ".($_POST["refresh_time"] * 1000).";</script>\r\n";
-				$body .= "<script>window.opener.PROFY_CHAT._set_refresh_time();</script>\r\n";
+				$body .= "<script>window.opener.YF_CHAT._set_refresh_time();</script>\r\n";
 				for ($i = 1; $i <= 4; $i++) {
 					$body .= "<script>window.opener.CHAT_VARS['user_color_".$i."'] = '".$_POST["chat_color_".$i]."';</script>\r\n";
 				}
@@ -146,8 +146,8 @@ class yf_chat_settings {
 				$ignore = 1;
 			}
 			$users_add = "new Array(".$A3["user_id"].",\"".$A3["gender"]."\",\"".$A3["text_color"]."\",".intval($ignore).",\"".$A3["login"]."\",".intval($A3["info_status"]).")";
-			echo "<script>parent.window.PROFY_CHAT.users_del('".$A["id"]."');</script>\r\n";
-			echo "<script>parent.window.PROFY_CHAT.users_add(new Array(".$users_add."));</script>\r\n";
+			echo "<script>parent.window.YF_CHAT.users_del('".$A["id"]."');</script>\r\n";
+			echo "<script>parent.window.YF_CHAT.users_add(new Array(".$users_add."));</script>\r\n";
 		}
 		return $body;
 	}

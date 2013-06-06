@@ -37,7 +37,7 @@ $(function(){
 
 	// Replace all textareas with more user friendly inputs
 	$(".json_value").each(function(){
-		var _json_for	= $(this).attr("profy:json_for");
+		var _json_for	= $(this).attr("yf:json_for");
 		var _cur_elm	= $(this).parent();
 		var _cur_json	= $(this).html();
 

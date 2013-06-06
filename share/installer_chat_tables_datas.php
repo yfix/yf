@@ -1,5 +1,5 @@
 <?php
-	// PROFY_CHAT datas
+	// YF_CHAT datas
 	$data = my_array_merge((array)$data, array(
 		"chat_rooms"	=> array(
 			99999 => array(

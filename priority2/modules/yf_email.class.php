@@ -17,7 +17,7 @@ class yf_email {
 	var $DELETE_EMAIL_RECORDS	= false;
 
 	//-----------------------------------------------------------------------------
-	// Profy module constructor
+	// YF module constructor
 	function _init () {
 		// Try to init captcha
 		$this->CAPTCHA = main()->init_class("captcha", "classes/");

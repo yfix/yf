@@ -1,4 +1,4 @@
-###profy_html.class.php###
+###yf_html.class.php###
 
 Вызываются: $GLOBALS['common']->[function_name()]
 

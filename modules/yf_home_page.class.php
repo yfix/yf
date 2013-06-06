@@ -8,7 +8,7 @@
 * @version		1.0
 * @revision	$Revision$
 */
-class yf_home_page extends profy_module {
+class yf_home_page extends yf_module {
 
 	/**
 	* Default function

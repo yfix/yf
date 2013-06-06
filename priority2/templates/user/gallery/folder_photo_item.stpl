@@ -29,7 +29,7 @@
 	</div>
 {/if}
 {if("rate_allowed" eq "1")}{if("rate_num_votes" gt 0)}
-	<div class="photo_rate_result" profy:photo_id="{photo_id}"><small><b>{t(Rating)}: {rating}, {t(votes)}: {rate_num_votes}</b></small></div> 
+	<div class="photo_rate_result" yf:photo_id="{photo_id}"><small><b>{t(Rating)}: {rating}, {t(votes)}: {rate_num_votes}</b></small></div> 
 {/if}{/if}
 
 {if("const.PROJECT_NAME" eq "SEXY_NET")}

@@ -16,7 +16,7 @@
 		<label for="perms_octal">{t(Permissions)}:</label>
 {foreach("perms")}
 	{if("_key" eq "0")}{/if}
-	<input type="checkbox" value="{#.1}" profy_order="{_key}" name="perms[{_key}]" {if("#.1" ne "-")}checked{/if}>{#.0}
+	<input type="checkbox" value="{#.1}" yf_order="{_key}" name="perms[{_key}]" {if("#.1" ne "-")}checked{/if}>{#.0}
 	{if("_key" eq "2")}-&nbsp;{t(Owner)}<br />{/if}
 	{if("_key" eq "5")}-&nbsp;{t(Group)}<br />{/if}
 	{if("_key" eq "8")}-&nbsp;{t(Others)}{/if}
@@ -44,7 +44,7 @@ function rwx2octal(){
 	var oth = 0;
 		$("input[type=checkbox]").each(function(){
 			if ($(this).is(":checked")) {
-				var id = $(this).attr("profy_order");
+				var id = $(this).attr("yf_order");
 				// read
 				if(id == 0) {
 					own += 4;
@@ -103,13 +103,13 @@ $(function(){
 			}
 
 			var _start_id = parseInt(i) * 3;
-			$("input[profy_order=" + _start_id + "]").attr("checked", "");
-			$("input[profy_order=" + (_start_id + 1) + "]").attr("checked", "");
-			$("input[profy_order=" + (_start_id + 2) + "]").attr("checked", "");
+			$("input[yf_order=" + _start_id + "]").attr("checked", "");
+			$("input[yf_order=" + (_start_id + 1) + "]").attr("checked", "");
+			$("input[yf_order=" + (_start_id + 2) + "]").attr("checked", "");
 
 			if (parseInt(octal_array[i]) >= 4) {
 				tmp = parseInt(octal_array[i]) - 4;
-				$("input[profy_order=" + _start_id + "]").attr("checked", "checked");				
+				$("input[yf_order=" + _start_id + "]").attr("checked", "checked");				
 			} else {
 				tmp = parseInt(octal_array[i]);
 			}
@@ -118,12 +118,12 @@ $(function(){
 			}
 			tmp = (tmp - 2);
 			if (tmp >= 0) {
-				$("input[profy_order=" + (_start_id + 1) + "]").attr("checked", "checked");
+				$("input[yf_order=" + (_start_id + 1) + "]").attr("checked", "checked");
 			} else {
-				$("input[profy_order=" + (_start_id + 2) + "]").attr("checked", "checked");
+				$("input[yf_order=" + (_start_id + 2) + "]").attr("checked", "checked");
 			}
 			if ((tmp - 1) >= 0) {
-				$("input[profy_order=" + (_start_id + 2) + "]").attr("checked", "checked");
+				$("input[yf_order=" + (_start_id + 2) + "]").attr("checked", "checked");
 			}
 		}
 	});

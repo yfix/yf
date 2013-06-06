@@ -33,7 +33,7 @@ $(function(){
 	$("select.vote_box").css("display", _select_display);
 
 	$("input[type=button].vote_button").click(function(e){
-		var _post_id	= $(this).parent().attr("profy:object_id");
+		var _post_id	= $(this).parent().attr("yf:object_id");
 		var _rate_value = $(this).parent().find("select.vote_box :selected").val();
 		if (!_post_id) {
 			return false;
@@ -43,11 +43,11 @@ $(function(){
 			return false;
 		}
 		$.post(do_vote_url, {"post_id": _post_id, "rate_value": _rate_value, "by_ajax": 1}, function(data){
-			$(".vote_block").filter(function(){return $(this).attr("profy:object_id") == _post_id})
+			$(".vote_block").filter(function(){return $(this).attr("yf:object_id") == _post_id})
 				.html("<b style='color:green;'>{t(Thanks for voting)}!</b>");
 			var _resp_array = data.split(",");
 			if (_resp_array[0]) {
-				$("span.photo_rate_result").filter(function(){return $(this).attr("profy:photo_id") == _post_id})
+				$("span.photo_rate_result").filter(function(){return $(this).attr("yf:photo_id") == _post_id})
 					.html("Rating: " + _resp_array[4] + ", votes: " + _resp_array[3]);
 			}
 		});
@@ -58,4 +58,4 @@ $(function(){
 </script>
 {/if}
 
-<span class="vote_block" profy:object_id="{object_id}"><input type="button" value="{t(Vote)}!" class="vote_button"></span>
+<span class="vote_block" yf:object_id="{object_id}"><input type="button" value="{t(Vote)}!" class="vote_button"></span>

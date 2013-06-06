@@ -1,8 +1,8 @@
 <?php
 
 define("PF_PATH", dirname(dirname(dirname(__FILE__)))."/");
-require PF_PATH."classes/profy_main.class.php";
-$GLOBALS['main'] = new profy_main("user", 1, 0);
+require PF_PATH."classes/yf_main.class.php";
+$GLOBALS['main'] = new yf_main("user", 1, 0);
 
 function _tpl($stpl_text = "", $replace = array(), $name = "") {
 	return tpl()->parse_string($name, $replace, $stpl_text);

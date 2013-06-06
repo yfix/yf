@@ -33,7 +33,7 @@ $(function(){
 				_last_clicked_elm
 					.html("<img src='" + $(this).attr("src") + "' width='16' height='16' />");
 
-				$("input[type=hidden][name='icon[" + _last_clicked_elm.attr("profy:item_id") + "]']")
+				$("input[type=hidden][name='icon[" + _last_clicked_elm.attr("yf:item_id") + "]']")
 					.val($(this).attr("src").replace(_icons_web_path, ""));
 			});
 
@@ -43,7 +43,7 @@ $(function(){
 				_last_clicked_elm
 					.html("<img src='" + _icons_web_path + $("#force_icon").val() + "' width='16' height='16' />");
 
-				$("input[type=hidden][name='icon[" + _last_clicked_elm.attr("profy:item_id") + "]']")
+				$("input[type=hidden][name='icon[" + _last_clicked_elm.attr("yf:item_id") + "]']")
 					.val($("#force_icon").val().replace(_icons_web_path, ""));
 			});
 

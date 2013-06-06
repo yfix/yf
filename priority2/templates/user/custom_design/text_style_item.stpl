@@ -1,5 +1,5 @@
 <input type="text" size="8" readonly="readonly" name="{name}_font_color" value="{value}" id="{name}_selected_color" maxlength="16" class="color_picker" style="background-color:{value};color:{value};" />
-<input type="button" id="{name}_color_select" value="{t(Select)}" onclick="profy_colorer.get('{name}_selected_color',this,'set_button_color');">
+<input type="button" id="{name}_color_select" value="{t(Select)}" onclick="yf_colorer.get('{name}_selected_color',this,'set_button_color');">
 
 {font_type_box} 
 {font_size_box} px 

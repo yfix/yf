@@ -1,5 +1,5 @@
 /*
- * jQuery Profy Tooltip plugin 1.0.3
+ * jQuery YF Tooltip plugin 1.0.3
  * based on jQuery Tooltip plugin 1.1
  *
  * http://bassistance.de/jquery-plugins/jquery-plugin-tooltip/
@@ -13,7 +13,7 @@
  * ADDED: ability to get content by AJAX query using cache
  *
  * @author Jörn Zaefferer (http://bassistance.de)
- * @author Yuriy Vysotskiy (http://profy.net)
+ * @author Yuriy Vysotskiy (http://yfix.dev)
  */
 ;(function($) {
 
@@ -37,7 +37,7 @@
 	// Put here any html you wan't to appear when waiting for the AJAX response
 	var loading_html = "loading...";
 
-	$.profy_tooltip = {
+	$.yf_tooltip = {
 		blocked: false,
 		defaults: {
 			ajax_id: false,
@@ -51,21 +51,21 @@
 			left: 15
 		},
 		block: function() {
-			$.profy_tooltip.blocked = !$.profy_tooltip.blocked;
+			$.yf_tooltip.blocked = !$.yf_tooltip.blocked;
 		}
 	};
 
 	$.fn.extend({
-		profy_tooltip: function(settings) {
-			settings = $.extend({}, $.profy_tooltip.defaults, settings);
+		yf_tooltip: function(settings) {
+			settings = $.extend({}, $.yf_tooltip.defaults, settings);
 			createHelper();
 			return this.each(function() {
 					this.tSettings = settings;
 					if (this.tSettings.ajax_id && typeof this.tSettings.ajax_id == "string") {
 						this.tSettings.ajax_num_id = $(this).attr(this.tSettings.ajax_id);
-						$(this).attr("profy:tooltip_url", this.tSettings.ajax_url);
-						$(this).attr("profy:ajax_num_id", this.tSettings.ajax_num_id);
-						$(this).attr("profy:ajax_prefix", this.tSettings.ajax_prefix);
+						$(this).attr("yf:tooltip_url", this.tSettings.ajax_url);
+						$(this).attr("yf:ajax_num_id", this.tSettings.ajax_num_id);
+						$(this).attr("yf:ajax_prefix", this.tSettings.ajax_prefix);
 					}
 					// copy tooltip into its own expando and remove the title
 					this.tooltipText = this.title;
@@ -153,7 +153,7 @@
 	// save elements title before the tooltip is displayed
 	function save() {
 		// if this is the current source, or it has no title (occurs with click event), stop
-		if ( $.profy_tooltip.blocked || this == current || (!this.tooltipText && !this.tSettings.ajax_num_id))
+		if ( $.yf_tooltip.blocked || this == current || (!this.tooltipText && !this.tSettings.ajax_num_id))
 			return;
 		// save current
 		current = this;
@@ -204,12 +204,12 @@
 	function show(cur_settings) {
 		tID = null;
 
-		var _id		= $(current).attr("profy:ajax_num_id");
-		var _prefix = $(current).attr("profy:ajax_prefix");
+		var _id		= $(current).attr("yf:ajax_num_id");
+		var _prefix = $(current).attr("yf:ajax_prefix");
 		if (typeof _prefix != "undefined") {
 			_id	= _prefix + _id;
 		}
-		var _url	= $(current).attr("profy:tooltip_url");
+		var _url	= $(current).attr("yf:tooltip_url");
 		// Default show method
 		if (!_id) {
 			helper.parent.show();
@@ -254,7 +254,7 @@
 	* removes itself when no current element
 	*/
 	function update(event)	{
-		if($.profy_tooltip.blocked)
+		if($.yf_tooltip.blocked)
 			return;
 		
 		// stop updating when tracking is disabled and the tooltip is visible
@@ -307,7 +307,7 @@
 	
 	// hide helper and restore added classes and the title
 	function hide(event, cur_settings) {
-		if($.profy_tooltip.blocked) {
+		if($.yf_tooltip.blocked) {
 			return;
 		}
 		// clear timeout if possible
@@ -329,8 +329,8 @@
 			if( s.fixPNG ) {
 				helper.parent.unfixPNG();
 			}
-			// Fix for the profy class
-			helper.parent.removeClass("profy");
+			// Fix for the yf class
+			helper.parent.removeClass("yf");
 		}
 	}
 	
@@ -362,7 +362,7 @@
 			return;
 		}
 		if (!$(e.target).parents().filter("#tooltip").length) {
-			$("#tooltip").hide().removeClass("profy");
+			$("#tooltip").hide().removeClass("yf");
 		}
 	})
 	

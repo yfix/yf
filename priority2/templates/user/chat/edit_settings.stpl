@@ -1,4 +1,4 @@
-<script type="text/javascript" language="javascript" src="{const(WEB_PATH)}js/profy_colorer.js"></script>
+<script type="text/javascript" language="javascript" src="{const(WEB_PATH)}js/yf_colorer.js"></script>
 <script type="text/javascript">
 <!--
 // Cross-browser form required fields checking function
@@ -37,35 +37,35 @@ function set_button_color_4 (color) {if (color) document.getElementById('color_4
 		<td align="right"><b>{t("your_messages_text_color")}</b></td>
 		<td align="left">
 			<input type="hidden" name="chat_your_color" value="{your_color}" size="10" id="chat_your_color" maxlength="16">
-			<input type="button" id="your_color_select" value="" style="width:50px;background:{your_color};" onclick="profy_colorer.get('chat_your_color',this,'set_button_your_color');">
+			<input type="button" id="your_color_select" value="" style="width:50px;background:{your_color};" onclick="yf_colorer.get('chat_your_color',this,'set_button_your_color');">
 		</td>
 	</tr>
 	<tr class="bg2">
 		<td align="right"><b>{t("your_messages_bg_color")}</b></td>
 		<td align="left">
 			<input type="hidden" name="chat_color_1" value="{chat_color_1}" size="10" id="chat_color_1" maxlength="16">
-			<input type="button" id="color_1_select" value="" style="width:50px;background:{chat_color_1};" onclick="profy_colorer.get('chat_color_1',this,'set_button_color_1');">
+			<input type="button" id="color_1_select" value="" style="width:50px;background:{chat_color_1};" onclick="yf_colorer.get('chat_color_1',this,'set_button_color_1');">
 		</td>
 	</tr>
 	<tr class="bg1">
 		<td align="right"><b>{t("messages_for_you_bg_color")}</b></td>
 		<td align="left">
 			<input type="hidden" name="chat_color_2" value="{chat_color_2}" size="10" id="chat_color_2" maxlength="16">
-			<input type="button" id="color_2_select" value="" style="width:50px;background:{chat_color_2};" onclick="profy_colorer.get('chat_color_2',this,'set_button_color_2');">
+			<input type="button" id="color_2_select" value="" style="width:50px;background:{chat_color_2};" onclick="yf_colorer.get('chat_color_2',this,'set_button_color_2');">
 		</td>
 	</tr>
 	<tr class="bg2">
 		<td align="right"><b>{t("your_private_bg_color")}</b></td>
 		<td align="left">
 			<input type="hidden" name="chat_color_3" value="{chat_color_3}" size="10" id="chat_color_3" maxlength="16">
-			<input type="button" id="color_3_select" value="" style="width:50px;background:{chat_color_3};" onclick="profy_colorer.get('chat_color_3',this,'set_button_color_3');">
+			<input type="button" id="color_3_select" value="" style="width:50px;background:{chat_color_3};" onclick="yf_colorer.get('chat_color_3',this,'set_button_color_3');">
 		</td>
 	</tr>
 	<tr class="bg1">
 		<td align="right"><b>{t("private_for_you_bg_color")}</b></td>
 		<td align="left">
 			<input type="hidden" name="chat_color_4" value="{chat_color_4}" size="10" id="chat_color_4" maxlength="16">
-			<input type="button" id="color_4_select" value="" style="width:50px;background:{chat_color_4};" onclick="profy_colorer.get('chat_color_4',this,'set_button_color_4');">
+			<input type="button" id="color_4_select" value="" style="width:50px;background:{chat_color_4};" onclick="yf_colorer.get('chat_color_4',this,'set_button_color_4');">
 		</td>
 	</tr>
 	<tr>

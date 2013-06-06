@@ -20,7 +20,7 @@ class yf_editor_fckeditor {
 	var $Height				= '400';
 	/** @var string */
 //	var $ToolbarSet			= 'Default';
-	var $ToolbarSet			= 'profynet';
+	var $ToolbarSet			= 'yfnet';
 	/** @var string @conf_skip */
 	var $value				= '';
 	/** @var array */
