@@ -13,7 +13,7 @@
 if (!defined('PF_PATH')) {
 	die();
 }
-require_once PF_PATH."share/functions/profy_aliases.php";
+require_once PF_PATH."share/functions/yf_aliases.php";
 
 // Load and run fast init function code
 function _call_fast_func ($f_name) {
