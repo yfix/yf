@@ -4,7 +4,7 @@
 * Chat Register
 * 
 * @package		YF
-* @author		Yuri Vysotskiy <profy.net@gmail.com>
+* @author		Yuri Vysotskiy <yfix.dev@gmail.com>
 * @version		1.0
 * @revision	$Revision$
 */
@@ -86,7 +86,7 @@ class yf_chat_register {
 				"password"	=> $_POST["password"],
 			);
 			$text = $html = tpl()->parse("chat/register_mail", $replace);
-			common()->send_mail("admin@chat.profy.net", "yf_chat_admin", $_POST["email"], $_POST["login"], t("chat_registration"), $text, $html);
+			common()->send_mail("admin@chat.yfix.dev", "yf_chat_admin", $_POST["email"], $_POST["login"], t("chat_registration"), $text, $html);
 			$body .= "<script>alert('".t("registratiom_successful")."');</script>\r\n";
 			js_redirect("./?object=".CHAT_CLASS_NAME);
 		} else $body .= common()->_show_error_message();

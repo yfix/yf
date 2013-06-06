@@ -4,7 +4,7 @@
 * Execution logs analyser
 * 
 * @package		YF
-* @author		Yuri Vysotskiy <profy.net@gmail.com>
+* @author		Yuri Vysotskiy <yfix.dev@gmail.com>
 * @version		1.0
 * @revision	$Revision$
 */
@@ -456,7 +456,7 @@ class yf_log_exec_analyser {
 		}
 		// Image texts
 		$this->_image_header_text	= $DATA['title'];
-		$this->_image_footer_text	= " (C) Profy.NET Log Exec Analyser for ".conf('website_name');
+		$this->_image_footer_text	= " (C) yfix.dev Log Exec Analyser for ".conf('website_name');
 		// Create blank image for manipulations
 		$img	= imagecreatetruecolor($this->_image_width, $this->_image_height + 5);
 		// Set image background

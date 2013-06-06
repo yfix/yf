@@ -15,7 +15,7 @@ class yf_test {
 	);
 	/** @conf_skip */
 	var $TEST_MAIL = array(
-		"email_to"		=> "profy.net@gmail.com",
+		"email_to"		=> "yfix.dev@gmail.com",
 		"name_to"		=> "test receiver",
 		"email_from"	=> "of@of.com",
 		"name_from"		=> "test from",
@@ -199,7 +199,7 @@ class yf_test {
 	//-----------------------------------------------------------------------------
 	// 
 	function send_mail () {
-		return common()->quick_send_mail("profy.net@gmail.com", "test subject", "blablabla");
+		return common()->quick_send_mail("yfix.dev@gmail.com", "test subject", "blablabla");
 	}
 
 	/**

@@ -4,7 +4,7 @@
 * File manager module
 * 
 * @package		YF
-* @author		Yuri Vysotskiy <profy.net@gmail.com>
+* @author		Yuri Vysotskiy <yfix.dev@gmail.com>
 * @version		1.0
 * @revision	$Revision$
 */
@@ -555,14 +555,14 @@ class yf_file_manager {
 		// If there is at least one file to send - then continue with sending
 		if (count($attach)) {
 // TODO: Add config vars here
-	        $email_from = "PROFY.NET auto-sender";
+	        $email_from = "yfix.dev auto-sender";
 			if (!$_POST['target_email']) {
 				$email_to = "ph@mail.zp.ua";
 			} else {
 				$email_to = $_POST['target_email'];
 			}
 			$to_name = "auto-sender destination";
-    	    $subject = "PROFY.NET auto-sender generated email";
+    	    $subject = "yfix.dev auto-sender generated email";
 			$HTML = "see attachment";
 			$TEXT = "see attachment";
 			$result = common()->send_mail("PHP-Mailer", $email_from, $email_to, $to_name, $subject, $TEXT, $HTML, $attach);

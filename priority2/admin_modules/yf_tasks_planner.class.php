@@ -4,7 +4,7 @@
 * Planner for regular tasks (backend)
 * 
 * @package		YF
-* @author		Yuri Vysotskiy <profy.net@gmail.com>
+* @author		Yuri Vysotskiy <yfix.dev@gmail.com>
 * @version		1.0
 * @revision	$Revision$
 */

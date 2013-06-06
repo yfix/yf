@@ -4,7 +4,7 @@
 * File uploads wrapper
 * 
 * @package		YF
-* @author		Yuri Vysotskiy <profy.net@gmail.com>
+* @author		Yuri Vysotskiy <yfix.dev@gmail.com>
 * @version		1.0
 * @revision	$Revision$
 */
@@ -745,7 +745,7 @@ class yf_remote_files {
 			// We don't add the port to prevent from breaking rewrite rules checking
 			// the host that do not take into account the port number.
 			'Host' => "Host: $host",
-			'User-Agent' => 'User-Agent: YF (+http://profy.net/)',
+			'User-Agent' => 'User-Agent: YF (+http://yfix.dev/)',
 			'Content-Length' => 'Content-Length: '. strlen($data)
 		);
 	
