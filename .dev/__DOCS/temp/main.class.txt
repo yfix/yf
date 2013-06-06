@@ -1,13 +1,13 @@
-profy_main - it's a heart of the PROFY_FRAMEWORK, we could call it "controller".
+profy_main - it's a heart of the yf, we could call it "controller".
 All required initialization tasks are called from here.
 
 Example code how to call this class (usually you should put code below into index.php of your site):
 
 --------------------
 // Physical path to framework
-define("PROFY_FRAMEWORK_PATH", "d:/www/htdocs/PROFY_FRAMEWORK/");
+define("YF_PATH", "d:/www/htdocs/yf/");
 // Include main class file
-require PROFY_FRAMEWORK_PATH."classes/profy_main.class.php";
+require YF_PATH."classes/profy_main.class.php";
 // Initialize main engine (creating an instance of the profy_main class)
 $GLOBALS['main'] = new profy_main("user", 0, 1);
 --------------------

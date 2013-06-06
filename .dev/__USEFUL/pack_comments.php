@@ -1,7 +1,7 @@
 <?php
 
 define("DEBUG_MODE", 1);
-define("PF_PATH", realpath("./PROFY_FRAMEWORK")."/");
+define("PF_PATH", realpath("./yf")."/");
 require PF_PATH."classes/profy_main.class.php";
 $GLOBALS['main'] = new profy_main("user", 1, 0);
 

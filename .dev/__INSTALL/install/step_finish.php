@@ -86,7 +86,7 @@ if ($_SESSION['INSTALL']["user_info_dynamic"]) {
 $index_file_content = <<<EOD
 <?php
 define("DEBUG_MODE", substr(\$_SERVER["REQUEST_URI"], -5) == "debug" ? true : false);
-define("PROFY_FRAMEWORK_PATH", "{$framework_path}");
+define("YF_PATH", "{$framework_path}");
 define("WEB_PATH", "{$_SESSION['INSTALL']["web_path"]}");
 define("SITE_DEFAULT_PAGE", "./?object={$site_default_page}");
 //define("DEFAULT_SKIN", "user");
@@ -97,7 +97,7 @@ define("SITE_ADVERT_NAME", "{$_SESSION['INSTALL']["site_name"]}");
 require dirname(__FILE__)."/project_conf.php"; // Such call required to allow console calls
 \$GLOBALS["PROJECT_CONF"]["tpl"]["REWRITE_MODE"] = {$rewrite_mode_status};
 {$_add_content}
-require PROFY_FRAMEWORK_PATH."classes/profy_main.class.php";
+require YF_PATH."classes/profy_main.class.php";
 \$GLOBALS['main'] = new profy_main("user", 0, 1);
 EOD;
 $index_file_content.="\n?>";
@@ -120,12 +120,12 @@ $db_setup_file_content.="\n?>";
 $admin_index_file_content = <<<EOD
 <?php
 define("DEBUG_MODE", false);
-define("PROFY_FRAMEWORK_PATH", "{$framework_path}");
+define("YF_PATH", "{$framework_path}");
 define("SITE_DEFAULT_PAGE", "./?object=admin_home");
 define("ADMIN_FRAMESET_MODE", 1);
 require dirname(dirname(__FILE__))."/project_conf.php";
 {$_add_content}
-require PROFY_FRAMEWORK_PATH."classes/profy_main.class.php";
+require YF_PATH."classes/profy_main.class.php";
 \$GLOBALS['main'] = new profy_main("admin", 0, 1);
 EOD;
 $admin_index_file_content.="\n?>";
@@ -235,12 +235,12 @@ if (!empty($tables_in_base)) {
 
 define("DEBUG_MODE", true);
 
-define("PROFY_FRAMEWORK_PATH", $framework_path);
-require PROFY_FRAMEWORK_PATH."classes/profy_main.class.php";
+define("YF_PATH", $framework_path);
+require YF_PATH."classes/profy_main.class.php";
 $GLOBALS['main'] = new profy_main("user", $no_db_connect = false, $auto_init_all = false);
 
 
-// create tables with PROFY_FRAMEWORK
+// create tables with yf
 $log_text .= "Create db tables: \n";
 ti("create tables : ");
 db()->query("SELECT * FROM ".dbt_admin." LIMIT 1");

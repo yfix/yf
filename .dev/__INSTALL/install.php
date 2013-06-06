@@ -153,7 +153,7 @@ if (!isset($_GET["step"])) {
 		$files_list = get_remote_page($install_server_web_path);
 
 		$framework_path = realpath($_POST["framework_path"])."/";
-		$_text = "Getting PROFY_FRAMEWORK remotely from ".$install_server_web_path."<br /><br />\n\n";
+		$_text = "Getting yf remotely from ".$install_server_web_path."<br /><br />\n\n";
 		echo ($_POST["show_log"] ? $_text : "");
 		$log_text .= $_text;
 		echo ($_POST["show_log"] ? "<pre><small>" : "");
@@ -196,7 +196,7 @@ if (!isset($_GET["step"])) {
 		}
 		add_log(strip_tags($log_text));
 	} else {
-		//step 0, get PROFY_FRAMEWORK path
+		//step 0, get yf path
 		?>
 <html>
 <head>
@@ -268,7 +268,7 @@ input {
 				</tr>
 				<tr>
 					<td width="30%">Profy Framework Path:</td>
-					<td><input type="text" name='framework_path' value='<?=(isset($_POST["framework_path"]) ? $_POST["framework_path"] : '../PROFY_FRAMEWORK/')?>' style='width:100%;'></td>
+					<td><input type="text" name='framework_path' value='<?=(isset($_POST["framework_path"]) ? $_POST["framework_path"] : '../yf/')?>' style='width:100%;'></td>
 				</tr>
 				<tr>
 					<th colspan="2">...or copy it from remote server</td>

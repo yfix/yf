@@ -114,8 +114,8 @@ define('OS_WINDOWS', substr(PHP_OS, 0, 3) == 'WIN');
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 // settings
-$source_dir					= "./PROFY_FRAMEWORK_COMPRESSED/";
-$compiled_dir				= "./PROFY_FRAMEWORK_COMPILED/";
+$source_dir					= "./yf_COMPRESSED/";
+$compiled_dir				= "./yf_COMPILED/";
 $compiled_file_path_admin	= $compiled_dir."framework_compiled_user.php";
 $compiled_file_path_user	= $compiled_dir."framework_compiled_admin.php";
 // templates

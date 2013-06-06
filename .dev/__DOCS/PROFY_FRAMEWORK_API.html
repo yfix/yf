@@ -1,13 +1,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>PROFY_FRAMEWORK API</title>
+<title>yf API</title>
 <link rel="stylesheet" href="doc_style.css" type="text/css">
 </head>
 <body bgcolor="#FFFFFF">
 <div class="main">
 
-<h1>PROFY_FRAMEWORK API</h1>
+<h1>yf API</h1>
 
 <h2>Intended audience</h2>
 
@@ -204,7 +204,7 @@ Then you need to connect to the framework with such code:
 We will thinf that you are working on Windows and have apache installed into the folder "d:/www/"
 So you have htdocs folder "d:/www/htdocs/"
 And we think that you have extracted framework from archive (or just put it there) 
-into "d:/www/htdocs/ZEND_ENCODED/PROFY_FRAMEWORK/"
+into "d:/www/htdocs/ZEND_ENCODED/yf/"
 </pre>
 
 <h3>index.php source for front-end ("user" section)</h3>
@@ -214,11 +214,11 @@ into "d:/www/htdocs/ZEND_ENCODED/PROFY_FRAMEWORK/"
 // Set engine debugging mode on/off
 define(&quot;DEBUG_MODE&quot;, true);
 // Path to the FrameWork
-define(&quot;PROFY_FRAMEWORK_PATH&quot;, &quot;d:/www/htdocs/ZEND_ENCODED/PROFY_FRAMEWORK/&quot;);
+define(&quot;YF_PATH&quot;, &quot;d:/www/htdocs/ZEND_ENCODED/yf/&quot;);
 // Default skin
 define(&quot;DEFAULT_SKIN&quot;, &quot; example_skin&quot;);
 // Include main class
-require PROFY_FRAMEWORK_PATH.&quot;classes/profy_main.class.php&quot;;
+require YF_PATH.&quot;classes/profy_main.class.php&quot;;
 // Initialize main engine
 $GLOBALS['main'] = new profy_main(&quot;user&quot;, 0, 1);
 ?&gt;

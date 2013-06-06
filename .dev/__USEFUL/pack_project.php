@@ -241,8 +241,8 @@ function mkdir_m($dir_name, $dir_mode = 0755, $create_index_htmls = 0, $start_fo
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 // dirs
-$source_dir		= "./PROFY_FRAMEWORK/";
-$compressed_dir	= "./PROFY_FRAMEWORK_COMPRESSED/";
+$source_dir		= "./yf/";
+$compressed_dir	= "./yf_COMPRESSED/";
 // Get files array
 $files_to_compress = scan_dir($source_dir, 1, "#.*\.(php)\$#", "#(__SANDBOX|__DOCS|__SAMPLES|__TESTS|share\/|pear|xpm2|smarty|adodb|domit|html2fpdf|feedcreator|convertcharset)\/#");
 //print_r($files_to_compress);

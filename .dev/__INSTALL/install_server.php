@@ -1,9 +1,10 @@
 <?php
 
-$PF_PATH = "./PROFY_FRAMEWORK/";
+$PF_PATH = "./yf/";
 
 $exclude_array = array(
 	"\.svn",
+	"\.git",
 	"__DOCS",
 	"__SAMPLES",
 	"__SANDBOX",

@@ -1,6 +1,6 @@
 log exec ajax howto
 
-* PROFY_FRAMEWORK/libs/geoip - определение страны
+* yf/libs/geoip - определение страны
 * share/geo_ip_binary_db.dat - бинарная база geoip 
 * uploads/icons/flags.css
 * uploads/icons/flagssprite_small.png

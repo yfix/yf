@@ -1,7 +1,7 @@
 <?php
 
 define("INCLUDE_PATH", "/home/www/toggle3/public_html/");
-define("PF_PATH", "/home/www/PROFY_FRAMEWORK/");
+define("PF_PATH", "/home/www/yf/");
 require_once INCLUDE_PATH."db_setup.php";
 #require_once PF_PATH."classes/profy_db_static.class.php";
 require_once "./profy_db_static.class.php";

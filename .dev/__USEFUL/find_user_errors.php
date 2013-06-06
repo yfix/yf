@@ -37,7 +37,7 @@ function scan_dir ($d, $flat_mode = true) {
 }
 //-----------------------------------------------------------------------------
 //$files = scan_dir('.');
-$files = scan_dir('./PROFY_FRAMEWORK/');
+$files = scan_dir('./yf/');
 //-----------------------------------------------------------------------------
 // Skip images and files with no extension (parse "php", "tpl", "stpl")
 if (is_array($files)) foreach ((array)$files as $file_name) {

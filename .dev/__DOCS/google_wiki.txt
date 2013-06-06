@@ -8,8 +8,8 @@ Framework has inbuilt web-based installer (used for rapid application developmen
 
 How to install sample website based on PROFY FRAMEWORK:
 
-  # You need to put PROFY_FRAMEWORK somewhere onto your hard drive (ex. /usr/local/share/PROFY_FRAMEWORK/) extracting from archive downloaded from this site or by using "svn checkout http://profyframework.googlecode.com/svn/trunk/ /usr/local/share/PROFY_FRAMEWORK".
-  # Copy file "PROFY_FRAMEWORK/__INSTALL/install.php" into any folder availiable through your web-server (ex. "/var/www/test/install.php")
+  # You need to put yf somewhere onto your hard drive (ex. /usr/local/share/PROFY_FRAMEWORK/) extracting from archive downloaded from this site or by using "svn checkout http://profyframework.googlecode.com/svn/trunk/ /usr/local/share/PROFY_FRAMEWORK".
+  # Copy file "yf/__INSTALL/install.php" into any folder availiable through your web-server (ex. "/var/www/test/install.php")
   # Call it from web browser (ex. http://localhost/test/install.php) and follow installer instuctions.
 
 You will receive fully functional website with lot of features ready for use or modifications.

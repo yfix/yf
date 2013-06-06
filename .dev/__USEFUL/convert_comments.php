@@ -2,8 +2,8 @@
 /*
 	Converts old-style comments into the PEAR and JavaDoc style
 */
-$DIR_TO_PROCESS		= "d:/www/htdocs/PROFY_FRAMEWORK";
-$DIR_FOR_PROCESSED	= "d:/www/htdocs/PROFY_FRAMEWORK_PROCESSED";
+$DIR_TO_PROCESS		= "d:/www/htdocs/yf";
+$DIR_FOR_PROCESSED	= "d:/www/htdocs/yf_PROCESSED";
 $PACKAGE_NAME		= "Profy Framework";
 $AUTHOR_NAME		= "Yuri Vysotskiy";
 $AUTHOR_EMAIL		= "profy.net@gmail.com";
