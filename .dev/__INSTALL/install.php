@@ -33,45 +33,16 @@ function add_log ($text) {
 	return true;	
 }
 
-
-/************* INSTALLER BODY ************/
-
-// Check correct step
-if (isset($_GET["step"]) && !in_array($_GET["step"], $steps)) {
-	unset($_GET["step"]);
-}
-
-if (!isset($_GET["step"])) {
-	$_SESSION = array();
-
-	$request_uri	= getenv("REQUEST_URI");
-	$cur_web_path	= $request_uri[strlen($request_uri) - 1] == "/" ? substr($request_uri, 0, -1) : dirname($request_uri);
-	$_SESSION['INSTALL']['_WEB_PATH'] = "http://".getenv("HTTP_HOST").str_replace(array("\\","//"), array("/","/"), $cur_web_path."/");
-	if (file_exists("install.log")) {
-		if (file_exists("install.log.bak")) {
-			unlink("install.log.bak");
-		}
-		rename("install.log", "install.log.bak");		
+function show_install_html($errors = array()) {
+	if ($errors) {
+		$error = '<div align="center"><b style="color:red;">'.implode(',', $errors).'</b></div>';
 	}
-
-	$log_text .= "//********* YF **********//\n";
-	if (isset($_POST["framework_path"]) && file_exists($_POST["framework_path"]) && file_exists($_POST["framework_path"]."classes/yf_main.class.php")){
-		$log_text .= "YF_PATH is ".$_POST["framework_path"]." \n\n";
-		add_log($log_text);
-
-		$_GET["step"] = "language";
-		
-		$_SESSION['INSTALL']["framework_path"] = $_POST["framework_path"];
-		$_SESSION['INSTALL']["install_path"] = $_POST["framework_path"]."__INSTALL/install/";
-
-	} else {
-		//step 0, get yf path
-		?>
+	$_yf_path = (isset($_POST["framework_path"]) ? $_POST["framework_path"] : '../yf/');
+	return print '
 <html>
 <head>
 	<title>YF :: Install</title>
 	<style type="text/css">
-
 *{
 	font-family: Verdana;
 	font-size: 12px;
@@ -131,24 +102,61 @@ input {
 		<div align="center" id="inner">
 		<h1>Welcome to <b style="color: #F1CF44;font-size:24px;">YF</b> installation</h1>
 		<form action="./install.php" method="post">
+				<div align="center"><b style="color:red;">'. $error .'</b></div> 
 			<table>
 				<tr>
 					<td width="30%">YF_PATH:</td>
-					<td><input type="text" name='framework_path' value='<?=(isset($_POST["framework_path"]) ? $_POST["framework_path"] : realpath('../yf/'))?>' style='width:100%;'></td>
+					<td><input type="text" name="framework_path" value="'. $_yf_path .'" style="width:100%;"></td>
 				</tr>
 				<tr>
 					<td><br /><input type="checkbox" name="show_log" id="show_log" value="1"><label for="show_log">Show log</label></td>
 					<td></td>
 				</tr>
 			</table>
-<?php if ($_POST["framework_path"]) { ?>
-				<div align="center"><b style='color:red;'>Wrong YF_PATH</b></div> 
-<?php } ?>
 				<div align="right" class="btn"><input type="submit" value="Next &gt;"></div>
 			</div>
 		</div>
 		</form>
-		<?php
+	';
+}
+
+/************* INSTALLER BODY ************/
+
+// Check correct step
+if (isset($_GET["step"]) && !in_array($_GET["step"], $steps)) {
+	unset($_GET["step"]);
+}
+
+if (!isset($_GET["step"])) {
+	$_SESSION = array();
+
+	$request_uri	= getenv("REQUEST_URI");
+	$cur_web_path	= $request_uri[strlen($request_uri) - 1] == "/" ? substr($request_uri, 0, -1) : dirname($request_uri);
+	$_SESSION['INSTALL']['_WEB_PATH'] = "http://".getenv("HTTP_HOST").str_replace(array("\\","//"), array("/","/"), $cur_web_path."/");
+	if (file_exists("install.log")) {
+		if (file_exists("install.log.bak")) {
+			unlink("install.log.bak");
+		}
+		rename("install.log", "install.log.bak");		
+	}
+
+	$log_text .= "//********* YF **********//\n";
+	if (isset($_POST["framework_path"]) && file_exists($_POST["framework_path"]) && file_exists($_POST["framework_path"]."classes/yf_main.class.php")){
+		$log_text .= "YF_PATH is ".$_POST["framework_path"]." \n\n";
+		add_log($log_text);
+
+		$_GET["step"] = "language";
+		
+		$_SESSION['INSTALL']["framework_path"] = $_POST["framework_path"];
+		$_SESSION['INSTALL']["install_path"] = $_POST["framework_path"].".dev/__INSTALL/install/";
+
+	} else {
+		//step 0, get yf path
+		$errors = array();
+		if ($_POST["framework_path"]) {
+			$errors[] = 'Wrong YF_PATH';
+		}
+		show_install_html($errors);
 		exit();
 	}
 }
@@ -168,6 +176,3 @@ if ($_GET["step"] && isset($_SESSION['INSTALL']["install_path"])) {
 
 	include $_SESSION['INSTALL']["install_path"]."step_".$_GET["step"].".php";
 }
-?>
-</body>
-</html>
