@@ -51,7 +51,7 @@ if (!isset($GLOBALS['sys_cache'])) {
 	$f = INCLUDE_PATH. "classes/".$cache_class.".class.php";
 	if (!file_exists($f)) {
 		$cache_class = "yf_cache";
-		$f = (defined('PF_PATH') ? PF_PATH : PROFY_FRAMEWORK_PATH). "classes/".$cache_class.".class.php";
+		$f = (defined('YF_PATH') ? PF_PATH : YF_PATH). "classes/".$cache_class.".class.php";
 	}
 	if (file_exists($f)) {
 		require_once $f;

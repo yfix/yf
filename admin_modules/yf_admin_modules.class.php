@@ -70,8 +70,8 @@ class yf_admin_modules {
 		while ($A = db()->fetch_assoc($Q)) {
 			$is_in_project		= file_exists(ADMIN_REAL_PATH. ADMIN_MODULES_DIR. $A["name"]. CLASS_EXT);
 			$is_in_project2		= file_exists(ADMIN_REAL_PATH. "priority2/". ADMIN_MODULES_DIR. $A["name"]. CLASS_EXT);
-			$is_in_framework	= file_exists(PF_PATH. ADMIN_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
-			$is_in_framework2	= file_exists(PF_PATH. "priority2/". ADMIN_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
+			$is_in_framework	= file_exists(YF_PATH. ADMIN_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
+			$is_in_framework2	= file_exists(YF_PATH. "priority2/". ADMIN_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
 			$locations = array();
 			if ($is_in_project) {
 				$locations[] = array(
@@ -88,13 +88,13 @@ class yf_admin_modules {
 			if ($is_in_framework) {
 				$locations[] = array(
 					"name"	=> "framework",
-					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(PF_PATH. "modules"),
+					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(YF_PATH. "modules"),
 				);
 			}
 			if ($is_in_framework2) {
 				$locations[] = array(
 					"name"	=> "framework_p2",
-					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(PF_PATH. "priority2/modules"),
+					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(YF_PATH. "priority2/modules"),
 				);
 			}
 			$replace2 = array(
@@ -319,7 +319,7 @@ class yf_admin_modules {
 		}
 		// Do parse files from the framework
 		if ($include_framework) {
-			$dir_to_scan = PF_PATH. ADMIN_MODULES_DIR;
+			$dir_to_scan = YF_PATH. ADMIN_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
 				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
@@ -337,7 +337,7 @@ class yf_admin_modules {
 				}
 				$admin_modules_array[$module_name] = $module_name;
 			}
-			$dir_to_scan = PF_PATH. "priority2/". ADMIN_MODULES_DIR;
+			$dir_to_scan = YF_PATH. "priority2/". ADMIN_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
 				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
@@ -376,10 +376,10 @@ class yf_admin_modules {
 			$file_name = ADMIN_REAL_PATH. ADMIN_MODULES_DIR. $user_module_name. CLASS_EXT;
 			// Try to get file from the framework
 			if (!file_exists($file_name)) {
-				$file_name = PF_PATH. ADMIN_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
+				$file_name = YF_PATH. ADMIN_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
 			}
 			if (!file_exists($file_name)) {
-				$file_name = PF_PATH. "priority2/". ADMIN_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
+				$file_name = YF_PATH. "priority2/". ADMIN_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
 			}
 			// Try with ADMIN_CLASS_PREFIX
 			if (!file_exists($file_name)) {
@@ -425,8 +425,8 @@ class yf_admin_modules {
 				// Special admin prefix
 				if (substr($class_name_1, 0, strlen(ADMIN_CLASS_PREFIX)) == ADMIN_CLASS_PREFIX) {
 					if ($_extends_from_fwork) {
-						$extends_file_path = PF_PATH. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
-						$extends_file_path2 = PF_PATH. "priority2/". ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
+						$extends_file_path = YF_PATH. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
+						$extends_file_path2 = YF_PATH. "priority2/". ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
 					} else {
 						$extends_file_path = INCLUDE_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
 						$extends_file_path2 = INCLUDE_PATH. "priority2/". USER_MODULES_DIR. $class_name_2. CLASS_EXT;
@@ -435,18 +435,18 @@ class yf_admin_modules {
 					$user_module_name = substr($user_module_name, strlen(ADMIN_CLASS_PREFIX));
 				// Check if we parsing current class
 				} elseif ($class_name_1 == $user_module_name || str_replace(PF_PREFIX, "", $class_name_1) == $user_module_name) {
-					$extends_file_path = PF_PATH. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
-					$extends_file_path2 = PF_PATH. "priority2/". ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
+					$extends_file_path = YF_PATH. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
+					$extends_file_path2 = YF_PATH. "priority2/". ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
 				}
 			} elseif ($_type == "user") {
 				if ($class_name_1 == $user_module_name || str_replace(PF_PREFIX, "", $class_name_1) == $user_module_name) {
-					$extends_file_path = PF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
-					$extends_file_path2 = PF_PATH. "priority2/". USER_MODULES_DIR. $class_name_2. CLASS_EXT;
+					$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
+					$extends_file_path2 = YF_PATH. "priority2/". USER_MODULES_DIR. $class_name_2. CLASS_EXT;
 				}
 			}
 			// Special processing of the "yf_module"
 			if ($this->PARSE_PROFY_MODULE && $class_name_2 == PF_PREFIX. "module") {
-				$extends_file_path = PF_PATH. "classes/". PF_PREFIX. "module". CLASS_EXT;
+				$extends_file_path = YF_PATH. "classes/". PF_PREFIX. "module". CLASS_EXT;
 			}
 			if (!empty($extends_file_path) && file_exists($extends_file_path)) {
 				$extends_file_text = file_get_contents($extends_file_path);

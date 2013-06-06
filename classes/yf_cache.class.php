@@ -126,7 +126,7 @@ class yf_cache {
 			} elseif (class_exists("Memcache")) {
 				$mc_obj = new Memcache();
 			} else {
-				$client_path = PROFY_FRAMEWORK_PATH."libs/memcached/memcached_client.class.php";
+				$client_path = YF_PATH."libs/memcached/memcached_client.class.php";
 				if (file_exists($client_path)) {
 					include $client_path;
 				}

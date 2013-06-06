@@ -160,7 +160,7 @@ echo "<pre>";
 		}
 // TODO: get only those files really needed from framework
 /*
-		$source_dir		= PF_PATH."classes/";
+		$source_dir		= YF_PATH."classes/";
 		$files_to_compress = $this->DIR_OBJ->scan_dir($source_dir, true, $pattern_include_php, $pattern_exclude_php);
 		foreach ((array)$files_to_compress as $cur_file_path) {
 			$compressed_file_path	= $packed_dir. substr($cur_file_path, strlen($source_dir));
@@ -171,7 +171,7 @@ echo "<pre>";
 			// Do compress
 			$this->_do_compress_php_file($cur_file_path, $compressed_file_path);
 		}
-		$source_dir		= PF_PATH."modules/";
+		$source_dir		= YF_PATH."modules/";
 		$files_to_compress = $this->DIR_OBJ->scan_dir($source_dir, true, $pattern_include_php, $pattern_exclude_php);
 		foreach ((array)$files_to_compress as $cur_file_path) {
 			$compressed_file_path	= $packed_dir. substr($cur_file_path, strlen($source_dir));
@@ -368,7 +368,7 @@ echo "<pre>";
 	*/
 	function _compress_framework() {
 		$params = array(
-			"source_dir"	=> PF_PATH,
+			"source_dir"	=> YF_PATH,
 			"compressed_dir"=> INCLUDE_PATH."PF_COMPRESSED/",
 			"only_these_php"=> $this->_include_php_fwork_user,
 		);

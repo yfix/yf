@@ -20,8 +20,8 @@ class yf_template_editor {
 		define(TPLS_LIB_PATH, INCLUDE_PATH. tpl()->_THEMES_PATH);
 		define(TPLS_LIB_PATH2, INCLUDE_PATH. "priority2/". tpl()->_THEMES_PATH);
 		// Framework templates physical path
-		define(F_TPLS_LIB_PATH, PF_PATH. tpl()->_THEMES_PATH);
-		define(F_TPLS_LIB_PATH2, PF_PATH. "priority2/". tpl()->_THEMES_PATH);
+		define(F_TPLS_LIB_PATH, YF_PATH. tpl()->_THEMES_PATH);
+		define(F_TPLS_LIB_PATH2, YF_PATH. "priority2/". tpl()->_THEMES_PATH);
 		// Project templates physical path
 		define(P_TPLS_LIB_PATH, INCLUDE_PATH. tpl()->_THEMES_PATH);
 		define(P_TPLS_LIB_PATH2, INCLUDE_PATH. "priority2/". tpl()->_THEMES_PATH);

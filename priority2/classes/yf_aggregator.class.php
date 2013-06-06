@@ -45,7 +45,7 @@ class yf_aggregator {
 		if (!file_exists($this->AGGR_CACHE_PATH)) {
 			_mkdir_m($this->AGGR_CACHE_PATH);
 		}
-		$this->DOMIT_RSS_PATH	= PF_PATH. $this->DOMIT_RSS_PATH;
+		$this->DOMIT_RSS_PATH	= YF_PATH. $this->DOMIT_RSS_PATH;
 
 		$this->CONVERTER_OBJ = main()->init_class("convert_charset", "classes/");
 	}

@@ -84,7 +84,7 @@ $item_to_repair = $m[1];
 		// Check if this table is a system one
 		$IS_SYS_TABLE = (substr($table_name, 0, strlen("sys_")) == "sys_");
 		// Try to get table "model" from the framework "share" folder
-		$file_path = PF_PATH."share/installer_".($IS_SYS_TABLE ? "sys" : "other")."_tables_structs_arrays.php";
+		$file_path = YF_PATH."share/installer_".($IS_SYS_TABLE ? "sys" : "other")."_tables_structs_arrays.php";
 		// Try to convert strings structure into arrays (if not done yet)
 		if (!file_exists($file_path)) {
 			$this->PARENT_OBJ->_create_struct_files(1);

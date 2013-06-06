@@ -42,7 +42,7 @@ class yf_adodb_db {
 	*/
 	function yf_adodb_db ($db_type = "", $no_parse_tables = 0) {
 		// Add path to the ADODB library
-		set_include_path (PF_PATH. "libs/adodb". PATH_SEPARATOR. get_include_path());
+		set_include_path (YF_PATH. "libs/adodb". PATH_SEPARATOR. get_include_path());
 		require_once("adodb.inc.php");
 		// Tables names cache file
 		$this->_cache_tables_file = INCLUDE_PATH. "core_cache/cache_db_tables.php";

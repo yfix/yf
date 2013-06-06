@@ -18,8 +18,8 @@ class yf_test_smtp_swift {
 	function run_test () {
 		$time_start = microtime(true);
 
-		require_once PF_PATH. "libs/swift/lib/Swift.php";
-		require_once PF_PATH. "libs/swift/lib/Swift/Connection/SMTP.php";
+		require_once YF_PATH. "libs/swift/lib/Swift.php";
+		require_once YF_PATH. "libs/swift/lib/Swift/Connection/SMTP.php";
 
 		$conn =& new Swift_Connection_SMTP($this->TEST_OBJ->SMTP_OPTIONS["smtp_host"], $this->TEST_OBJ->SMTP_OPTIONS["smtp_port"], $this->TEST_OBJ->SMTP_OPTIONS["smtp_secure"] == "tls" ? SWIFT_SMTP_ENC_TLS : false);
 		$conn->setUsername($this->TEST_OBJ->SMTP_OPTIONS["smtp_user_name"]);

@@ -190,8 +190,8 @@ class yf_i18n {
 			foreach ((array)$modules as $module_name) {
 				$_module_locale_path = "modules/".$module_name."/__locale__".$lang.".php";
 				// Framework level
-				if (file_exists(PF_PATH. $_module_locale_path)) {
-					$_module_locale_paths[$module_name."_fwork"] = PF_PATH. $_module_locale_path;
+				if (file_exists(YF_PATH. $_module_locale_path)) {
+					$_module_locale_paths[$module_name."_fwork"] = YF_PATH. $_module_locale_path;
 				}
 				// Project level
 				if (file_exists(PROJECT_PATH. $_module_locale_path)) {

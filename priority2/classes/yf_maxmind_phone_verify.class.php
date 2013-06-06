@@ -276,7 +276,7 @@ class yf_maxmind_phone_verify {
 		curl_setopt($ch, CURLOPT_TIMEOUT,			$this->_timeout);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,	0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,	1);
-		curl_setopt($ch, CURLOPT_CAINFO, 			PF_PATH."/share/ca-bundle.crt");
+		curl_setopt($ch, CURLOPT_CAINFO, 			YF_PATH."/share/ca-bundle.crt");
 
 		// this option allows to store the result in a string 
 		curl_setopt($ch, CURLOPT_POST,          1);

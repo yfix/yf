@@ -4,7 +4,7 @@ class yf_openid{
 
 	function _get($openid_url){
 
-		set_include_path (PF_PATH. "libs/openid". PATH_SEPARATOR. get_include_path());
+		set_include_path (YF_PATH. "libs/openid". PATH_SEPARATOR. get_include_path());
 		
 		require_once('openid_common.php');
 
@@ -50,7 +50,7 @@ class yf_openid{
 
 
 	function complete(){
-		set_include_path (PF_PATH. "/openid". PATH_SEPARATOR. get_include_path());
+		set_include_path (YF_PATH. "/openid". PATH_SEPARATOR. get_include_path());
 		require_once('openid_common.php');
 
 		if( empty($openid_error) )

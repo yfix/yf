@@ -52,7 +52,7 @@ class yf_test_ssh {
 //		$DIR_OBJ = main()->init_class("dir", "classes/");
 //		$DIR_OBJ->delete_dir(INCLUDE_PATH."__123testing123", 1);
 //		$SSH_OBJ->download_dir($server_info, "/etc/apache2", INCLUDE_PATH."__123testing123");
-//		$SSH_OBJ->upload_dir($server_info, PF_PATH."__UPDATES", "/var/www/__tmp_new", "", "/(svn|git)/i");
+//		$SSH_OBJ->upload_dir($server_info, YF_PATH."__UPDATES", "/var/www/__tmp_new", "", "/(svn|git)/i");
 //		$SSH_OBJ->rmdir($server_info, "/var/www/__tmp");
 
 //		$body .= "<br /><b>Scan Dir: \"/etc\" with \"0\" depth level (only direct children)</b><br /><br />";

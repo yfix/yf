@@ -1181,10 +1181,10 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get source files from the framework
 		if (!$params["only_project"]) {
 			if (!$params["only_stpls"]) {
-				$yf_framework_php_files	= _class("dir")->scan_dir(PF_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
+				$yf_framework_php_files	= _class("dir")->scan_dir(YF_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
 			}
 			if (!$params["only_php"]) {
-				$yf_framework_stpl_files	= _class("dir")->scan_dir(PF_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
+				$yf_framework_stpl_files	= _class("dir")->scan_dir(YF_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
 			}
 		}
 		// Get source files from the current project
@@ -1199,7 +1199,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get PHP files from the framework (classes and functions only)
 		foreach ((array)$yf_framework_php_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, PF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
 			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
@@ -1208,7 +1208,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get PHP files from the current project (classes and functions only)
 		foreach ((array)$cur_project_php_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, PF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
 			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
@@ -1217,7 +1217,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get STPL files from the framework
 		foreach ((array)$yf_framework_stpl_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, PF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
 			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_stpl_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
@@ -1226,7 +1226,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get STPL files from the current project
 		foreach ((array)$cur_project_stpl_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, PF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
 			if ($stpl_path_pattern && !preg_match($stpl_path_pattern, $short_file_name)) {
 				continue;
 			}
@@ -1293,8 +1293,8 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 				$path_to = REAL_PATH;
 			} elseif (file_exists(INCLUDE_PATH.$cur_file_name)) {
 				$path_to = INCLUDE_PATH;
-			} elseif (file_exists(PF_PATH.$cur_file_name)) {
-				$path_to = PF_PATH;
+			} elseif (file_exists(YF_PATH.$cur_file_name)) {
+				$path_to = YF_PATH;
 			}
 			// Check if file is found
 			if (empty($path_to)) {

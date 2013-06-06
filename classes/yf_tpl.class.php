@@ -868,15 +868,15 @@ class yf_tpl {
             if ($this->_INHERITED_SKIN2) {
                 $storages["inherit_project2"]= PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. "/". $file_name;
             }
-            $storages["framework"]          = PF_PATH. $this->_THEMES_PATH. MAIN_TYPE."/". $file_name;
-            $storages["framework_p2"]       = PF_PATH. "priority2/". $this->_THEMES_PATH. MAIN_TYPE."/". $file_name;
+            $storages["framework"]          = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE."/". $file_name;
+            $storages["framework_p2"]       = YF_PATH. "priority2/". $this->_THEMES_PATH. MAIN_TYPE."/". $file_name;
             if (MAIN_TYPE_ADMIN) {
                 // user section within admin
                 $storages["user_section"]       = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). "/". $file_name;
                 // user section from framework within admin
-                $storages["framework_user"]     = PF_PATH. $this->_THEMES_PATH. "user/". $file_name;
+                $storages["framework_user"]     = YF_PATH. $this->_THEMES_PATH. "user/". $file_name;
                 // user section from framework within admin priority2
-                $storages["framework_user_p2"]  = PF_PATH. "priority2/". $this->_THEMES_PATH. "user/". $file_name;
+                $storages["framework_user_p2"]  = YF_PATH. "priority2/". $this->_THEMES_PATH. "user/". $file_name;
             }
             // Try storages one-by-one in inheritance order, stop when found
             $storage = "";
@@ -970,15 +970,15 @@ class yf_tpl {
             if (MAIN_TYPE_ADMIN) {
                 $def_user_theme = $this->_get_def_user_theme();
                 $paths = array(
-                    "framework"     => PF_PATH. $this->_THEMES_PATH. "admin". "/",
-                    "framework_user"=> PF_PATH. $this->_THEMES_PATH. "user". "/",
+                    "framework"     => YF_PATH. $this->_THEMES_PATH. "admin". "/",
+                    "framework_user"=> YF_PATH. $this->_THEMES_PATH. "user". "/",
                     "user_section"  => INLCUDE_PATH. $this->_THEMES_PATH. $def_user_theme. "/",
                 );
             } else {
                 $paths = array(
                     "site"         		=> SITE_PATH. $this->_THEMES_PATH. conf('theme'). "/",
                     "project"      		=> PROJECT_PATH. $this->_THEMES_PATH. conf('theme'). "/",
-                    "framework"     	=> PF_PATH. $this->_THEMES_PATH. "user". "/",
+                    "framework"     	=> YF_PATH. $this->_THEMES_PATH. "user". "/",
                     "inherit_project"	=> $this->_INHERITED_SKIN ? PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. "/". $file_name : "",
                     "inherit_project2"	=> $this->_INHERITED_SKIN2 ? PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. "/". $file_name : "",
                 );

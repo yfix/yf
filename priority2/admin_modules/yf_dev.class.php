@@ -198,7 +198,7 @@ class yf_dev{
 		if (!empty($_POST) && strlen($_POST["text"])) {
 			$items = array();
 			$DIR_OBJ = main()->init_class("dir", "classes/");
-			foreach ((array)$DIR_OBJ->search(array(INCLUDE_PATH/*, PF_PATH*/), array("", "/\.class\.php/"), "/(svn|git)/", "#".preg_quote($_POST["text"], "#")."#") as $_path) {
+			foreach ((array)$DIR_OBJ->search(array(INCLUDE_PATH/*, YF_PATH*/), array("", "/\.class\.php/"), "/(svn|git)/", "#".preg_quote($_POST["text"], "#")."#") as $_path) {
 				$items[] = array(
 					"path"		=> _prepare_html($_path),
 					"edit_link"	=> "./?object=file_manager&action=edit_item&id=".urlencode($_path),
@@ -224,7 +224,7 @@ class yf_dev{
 		$pattern_exclude = "#\.(svn|git)#";
 		$DIR_OBJ = main()->init_class("dir", "classes/");
 
-		$_fwork_classes = $DIR_OBJ->scan_dir(PF_PATH."classes/", 1, $pattern_include, $pattern_exclude);
+		$_fwork_classes = $DIR_OBJ->scan_dir(YF_PATH."classes/", 1, $pattern_include, $pattern_exclude);
 		$_project_classes = $DIR_OBJ->scan_dir(INCLUDE_PATH."classes/", 1, $pattern_include, $pattern_exclude);
 
 		$_ext_len = strlen(CLASS_EXT);
@@ -299,10 +299,10 @@ class yf_dev{
 				}
 				
 				if($modules_key == "admin"){
-					$path = PF_PATH."admin_modules/yf_".$module.".class.php";
+					$path = YF_PATH."admin_modules/yf_".$module.".class.php";
 				}
 				if($modules_key == "user"){
-					$path = PF_PATH."modules/yf_".$module.".class.php";
+					$path = YF_PATH."modules/yf_".$module.".class.php";
 				}
 				if($modules_key == "classes"){
 					$path = $module;
@@ -403,16 +403,16 @@ class yf_dev{
 				$file_path = INCLUDE_PATH.$dir_name.$_module_name.CLASS_EXT;
 				$_source = "project";
 				if (!file_exists($file_path)) {
-					$file_path = PF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+					$file_path = YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
 					$_source = "framework";
 					if (!file_exists($file_path)) {
 						continue;
 					}
 				} else {
-					$file_path_fwork = PF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+					$file_path_fwork = YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
 				}
 			} else {
-				$file_path_fwork	= PF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+				$file_path_fwork	= YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
 				$file_path_project	= INCLUDE_PATH.$dir_name.$_module_name.CLASS_EXT;
 			}
 
@@ -498,7 +498,7 @@ class yf_dev{
 	*/
 	function check_tag($internal_request = false){
 		$DIRS = array(
-			"framework" => PF_PATH."templates/",
+			"framework" => YF_PATH."templates/",
 			"project"	=> "../templates/",
 		);
 	
@@ -508,7 +508,7 @@ class yf_dev{
 		);
 		
 		$project_exclude_file_path = "../share/dev_check_tag_exclude_files.php";
-		$framework_exclude_file_path = PF_PATH."/share/dev_check_tag_exclude_files.php";
+		$framework_exclude_file_path = YF_PATH."/share/dev_check_tag_exclude_files.php";
 		
 		if(file_exists($project_exclude_file_path)){
 			include $project_exclude_file_path;
@@ -518,7 +518,7 @@ class yf_dev{
 			include $framework_exclude_file_path;
 			
 			foreach ((array)$exclude_files_list_framework as $val){
-				$exclude_files_list[] = PF_PATH.$val;
+				$exclude_files_list[] = YF_PATH.$val;
 			}
 		}
 		
@@ -779,7 +779,7 @@ class yf_dev{
 						continue;
 					}
 					if ($location == "framework") {
-						$basedir = PF_PATH;
+						$basedir = YF_PATH;
 					} elseif ($location == "project") {
 						$basedir = INCLUDE_PATH;
 					}
@@ -1014,7 +1014,7 @@ class yf_dev{
 	*/
 	function form_generator() {
 
-		$FORM_TEMPLATES_DIR = PF_PATH."templates/admin/dev/formgenerator_templates/";
+		$FORM_TEMPLATES_DIR = YF_PATH."templates/admin/dev/formgenerator_templates/";
  
 		$db_tables = array();
 		foreach ((array)db()->meta_tables() as $_name) {

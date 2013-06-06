@@ -10,10 +10,10 @@
 */
 
 // Protection from direct call
-if (!defined('PF_PATH')) {
+if (!defined('YF_PATH')) {
 	die();
 }
-require_once PF_PATH."share/functions/yf_aliases.php";
+require_once YF_PATH."share/functions/yf_aliases.php";
 
 // Load and run fast init function code
 function _call_fast_func ($f_name) {
@@ -22,7 +22,7 @@ function _call_fast_func ($f_name) {
 		return false;
 	}
 	$f_name = "_fast_".$f_name;
-	$fwork_fast_path = PF_PATH."share/fast_init/";
+	$fwork_fast_path = YF_PATH."share/fast_init/";
 	$path = $fwork_fast_path."func_".$f_name.".php";
 	include ($path);
 	return $f_name();

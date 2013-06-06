@@ -18,7 +18,7 @@ class yf_test_smtp_xpm2 {
 	function run_test () {
 		$time_start = microtime(true);
 		// path to smtp.php from XPM2 package
-		require_once PF_PATH.'libs/xpm2/smtp.php';
+		require_once YF_PATH.'libs/xpm2/smtp.php';
 		// Process options
 		$mailer = new SMTP;
 		if (!empty($this->TEST_OBJ->SMTP_OPTIONS["smtp_host"])) {

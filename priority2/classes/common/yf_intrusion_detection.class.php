@@ -14,7 +14,7 @@ class yf_intrusion_detection {
 	* Contructor
 	*/
 	function _init () {
-		$this->BASE_PATH = PF_PATH.'libs/phpids/';
+		$this->BASE_PATH = YF_PATH.'libs/phpids/';
 		// set the include path properly for PHPIDS
 		set_include_path(
 			get_include_path()
@@ -109,7 +109,7 @@ class yf_intrusion_detection {
 			'POST'		=> $_POST,
 			'COOKIE'	=> $_COOKIE
 		);
-//		$init = IDS_Init::init(PF_PATH.'libs/phpids/'.'IDS/Config/Config.ini');
+//		$init = IDS_Init::init(YF_PATH.'libs/phpids/'.'IDS/Config/Config.ini');
 		$init = IDS_Init::init();
 		$init->setConfig($this->config, true);
 		$ids = new IDS_Monitor($request, $init);

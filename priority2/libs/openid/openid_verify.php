@@ -1,5 +1,5 @@
 <?php
-set_include_path (PF_PATH. "openid". PATH_SEPARATOR. get_include_path());
+set_include_path (YF_PATH. "openid". PATH_SEPARATOR. get_include_path());
 require_once('openid_common.php');
 
 if( empty($openid_error) )

@@ -468,7 +468,7 @@ class yf_site_map {
 		}
 		// Do parse files from the framework
 		if ($include_framework) {
-			$dir_to_scan = PF_PATH. USER_MODULES_DIR;
+			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
 				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
@@ -485,7 +485,7 @@ class yf_site_map {
 					$user_modules_array[$module_name] = $module_name;
 				}
 			}
-			$dir_to_scan = PF_PATH. "priority2/". USER_MODULES_DIR;
+			$dir_to_scan = YF_PATH. "priority2/". USER_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
 				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {

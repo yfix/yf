@@ -33,7 +33,7 @@ class yf_task_manager {
 	function _init () {
 		// Path to the tasks files
 		define("PROJECT_TASKS_FILES_PATH",	INCLUDE_PATH."classes/tasks/");
-		define("FRAMEWORK_TASKS_FILES_PATH",PF_PATH."share/tasks_to_run/");
+		define("FRAMEWORK_TASKS_FILES_PATH",YF_PATH."share/tasks_to_run/");
 		// Define that we are inside task_manager
 		define("INSIDE_TASK_MANAGER", true);
 		// Prepare lock file

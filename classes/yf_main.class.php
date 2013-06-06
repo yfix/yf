@@ -238,7 +238,7 @@ class yf_main {
 			include ($fast_init_file);
 			return true;
 		}
-		$fast_init_file = PF_PATH."share/fast_init.php";
+		$fast_init_file = YF_PATH."share/fast_init.php";
 		if (file_exists($fast_init_file)) {
 			include ($fast_init_file);
 			return true;
@@ -328,7 +328,7 @@ class yf_main {
 		}
 		// Load common functions
 		$common_funcs_path	= PROJECT_PATH."share/functions/common_funcs.php";
-		$fwork_funcs_path	= PF_PATH."share/functions/".PF_PREFIX."common_funcs.php";
+		$fwork_funcs_path	= YF_PATH."share/functions/".PF_PREFIX."common_funcs.php";
 		if (file_exists($common_funcs_path)) {
 			$this->include_module($common_funcs_path, 1);
 		} elseif (file_exists($fwork_funcs_path)) {
@@ -447,7 +447,7 @@ class yf_main {
 		if (function_exists('fb') && class_exists('FirePHP')) {
 			return true;
 		}
-		$f = PF_PATH."priority2/libs/firephp-core/lib/FirePHPCore/fb.php";
+		$f = YF_PATH."priority2/libs/firephp-core/lib/FirePHPCore/fb.php";
 		if (file_exists($f)) {
 			include_once $f;
 		}
@@ -846,15 +846,15 @@ class yf_main {
 				$site_path_dev		= SITE_PATH. $dev_path. USER_MODULES_DIR;
 				$project_path		= PROJECT_PATH. USER_MODULES_DIR;
 				$project_path_dev	= PROJECT_PATH. $dev_path. USER_MODULES_DIR;
-				$fwork_path			= PF_PATH. USER_MODULES_DIR;
-				$fwork_path2		= PF_PATH. "priority2/". USER_MODULES_DIR;
+				$fwork_path			= YF_PATH. USER_MODULES_DIR;
+				$fwork_path2		= YF_PATH. "priority2/". USER_MODULES_DIR;
 			} elseif (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH)) {
 				$site_path			= SITE_PATH. $custom_path;
 				$site_path_dev		= SITE_PATH. $dev_path. $custom_path;
 				$project_path		= PROJECT_PATH. $custom_path;
 				$project_path_dev	= PROJECT_PATH. $dev_path. $custom_path;
-				$fwork_path			= PF_PATH. $custom_path;
-				$fwork_path2		= PF_PATH. "priority2/". $custom_path;
+				$fwork_path			= YF_PATH. $custom_path;
+				$fwork_path2		= YF_PATH. "priority2/". $custom_path;
 			} else {
 				$site_path			= $custom_path;
 			}
@@ -864,16 +864,16 @@ class yf_main {
 				$site_path_dev		= ADMIN_SITE_PATH. $dev_path. ADMIN_MODULES_DIR;
 				$project_path		= PROJECT_PATH. ADMIN_MODULES_DIR;
 				$project_path_dev	= PROJECT_PATH. $dev_path. ADMIN_MODULES_DIR;
-				$fwork_path			= PF_PATH. ADMIN_MODULES_DIR;
-				$fwork_path2		= PF_PATH. "priority2/". ADMIN_MODULES_DIR;
+				$fwork_path			= YF_PATH. ADMIN_MODULES_DIR;
+				$fwork_path2		= YF_PATH. "priority2/". ADMIN_MODULES_DIR;
 				$project_path2		= PROJECT_PATH. USER_MODULES_DIR;
 			} elseif (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH) && false === strpos($custom_path, ADMIN_SITE_PATH)) {
 				$site_path			= ADMIN_SITE_PATH. $custom_path;
 				$site_path_dev		= ADMIN_SITE_PATH. $dev_path. $custom_path;
 				$project_path		= PROJECT_PATH. $custom_path;
 				$project_path_dev	= PROJECT_PATH. $dev_path. $custom_path;
-				$fwork_path			= PF_PATH. $custom_path;
-				$fwork_path2		= PF_PATH. "priority2/". $custom_path;
+				$fwork_path			= YF_PATH. $custom_path;
+				$fwork_path2		= YF_PATH. "priority2/". $custom_path;
 			} else {
 				$site_path			= $custom_path;
 			}
@@ -895,7 +895,7 @@ class yf_main {
 		$storages["framework_p2"]	= array($fwork_path2, PF_PREFIX);
 		if (MAIN_TYPE_ADMIN) {
 			$storages["admin_user_project"]		= array($project_path2);
-			$storages["admin_user_framework"]	= array(PF_PATH. USER_MODULES_DIR, PF_PREFIX);
+			$storages["admin_user_framework"]	= array(YF_PATH. USER_MODULES_DIR, PF_PREFIX);
 		}
 		$storage = "";
 		$loaded_path = "";
@@ -1243,7 +1243,7 @@ class yf_main {
 			return false;
 		}
 		// Load from the framework
-		$framework_rules_file_path = PF_PATH. "share/data_handlers.php";
+		$framework_rules_file_path = YF_PATH. "share/data_handlers.php";
 		if (file_exists($framework_rules_file_path)) {
 			include($framework_rules_file_path);
 		}
@@ -1411,12 +1411,12 @@ class yf_main {
 			define('REAL_PATH', SITE_PATH);
 		}
 		// Define default framework path
-		if (!defined('PROFY_FRAMEWORK_PATH')) {
-			define('PROFY_FRAMEWORK_PATH', dirname(PROJECT_PATH)."/PROFY_FRAMEWORK/");
+		if (!defined('YF_PATH')) {
+			define('YF_PATH', dirname(PROJECT_PATH)."/PROFY_FRAMEWORK/");
 		}
 		// Alias
-		if (!defined('PF_PATH')) {
-			define('PF_PATH', PROFY_FRAMEWORK_PATH);
+		if (!defined('YF_PATH')) {
+			define('YF_PATH', YF_PATH);
 		}
 		// Set WEB_PATH (if not done yet)
 		if (!defined('WEB_PATH'))	{
@@ -1519,7 +1519,7 @@ class yf_main {
 	function set_required_php_params() {
 		error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
 		// Set path to PEAR
-		set_include_path (PF_PATH."libs/pear/". PATH_SEPARATOR. get_include_path());
+		set_include_path (YF_PATH."libs/pear/". PATH_SEPARATOR. get_include_path());
 		ini_set('url_rewriter.tags', '');
 		ini_set('magic_quotes_runtime',	0);
 		ini_set('magic_quotes_sybase', 0);

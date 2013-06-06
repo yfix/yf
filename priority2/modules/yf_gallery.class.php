@@ -253,7 +253,7 @@ class yf_gallery extends profy_module {
 			$this->TAG_OBJ = main()->init_class("tags", "modules/");
 		}
 		// Check if we could handle bulk upload (using zip archive with photos)
-		if ($this->ALLOW_BULK_UPLOAD && !file_exists(PF_PATH."classes/yf_pclzip.class.php")) {
+		if ($this->ALLOW_BULK_UPLOAD && !file_exists(YF_PATH."classes/yf_pclzip.class.php")) {
 			$this->ALLOW_BULK_UPLOAD = false;
 		}
 	}

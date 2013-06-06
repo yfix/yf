@@ -44,8 +44,8 @@ class yf_backup_manager {
 		$this->backup_folder_path = INCLUDE_PATH. $this->BACKUP_PATH;
 		
 		$paths = array(
-			"@@PF_PATH@@"	=> PF_PATH,
-			"@@PF_PATH@@"				=> PF_PATH,
+			"@@YF_PATH@@"	=> PF_PATH,
+			"@@YF_PATH@@"				=> PF_PATH,
 			"@@INCLUDE_PATH@@"			=> INCLUDE_PATH,
 			"@@ADMIN_REAL_PATH@@"		=> ADMIN_REAL_PATH,
 		);

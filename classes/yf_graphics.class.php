@@ -258,7 +258,7 @@ class yf_graphics {
 			} elseif (filemtime($CACHED_CSS) < (time() - $this->CACHE_CSS_TTL)) {
 				$_cache_refresh = true;
 			}
-			$FS_PATH = PF_PATH. "templates/".MAIN_TYPE."/". $css_name;
+			$FS_PATH = YF_PATH. "templates/".MAIN_TYPE."/". $css_name;
 			if (file_exists($FS_PATH) && $_cache_refresh) {
 				_mkdir_m(dirname($CACHED_CSS));
 				if (is_writable($CACHED_CSS)) {
@@ -298,14 +298,14 @@ class yf_graphics {
 		}
 		// Try to load from admin section
 		if (MAIN_TYPE_ADMIN) {
-			$FS_PATH = PF_PATH. "templates/admin/". $css_name;
+			$FS_PATH = YF_PATH. "templates/admin/". $css_name;
 			if (file_exists($FS_PATH)) {
 				$this->_css_loaded_from[$name] = "framework_admin";
 				return file_get_contents($FS_PATH);
 			}
 		}
 		// Try framework user section
-		$FS_PATH = PF_PATH. "templates/user/". $css_name;
+		$FS_PATH = YF_PATH. "templates/user/". $css_name;
 		if (file_exists($FS_PATH)) {
 			$this->_css_loaded_from[$name] = "framework_user";
 			return file_get_contents($FS_PATH);

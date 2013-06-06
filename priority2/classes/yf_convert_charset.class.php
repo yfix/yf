@@ -53,7 +53,7 @@ class yf_convert_charset {
 		} elseif (function_exists('iconv')) {
 			$text = iconv($string_char_set, $destination_char_set, $string);
 		} else {
-			require_once (PF_PATH. "libs/convertcharset/ConvertCharset.class.php");
+			require_once (YF_PATH. "libs/convertcharset/ConvertCharset.class.php");
 			$convert	=& new ConvertCharset();
 			$text		= $convert->Convert($string, $string_char_set, $destination_char_set, false);
 		}

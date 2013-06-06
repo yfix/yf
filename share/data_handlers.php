@@ -1,6 +1,6 @@
 <?php
 if (!defined("H_PATH")) {
-	define("H_PATH", PF_PATH."share/data_handlers/");
+	define("H_PATH", YF_PATH."share/data_handlers/");
 }
 // Add your rules here
 conf("data_handlers", my_array_merge((array)conf("data_handlers"), array(

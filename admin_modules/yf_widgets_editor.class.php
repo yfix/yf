@@ -156,7 +156,7 @@ class widgets_editor {
 		if (file_exists($this->theme_path.$name)) {
 			return file_get_contents($this->theme_path.$name);
 		}else{
-			return file_get_contents(PF_PATH."templates/user/".$name);
+			return file_get_contents(YF_PATH."templates/user/".$name);
 		}
 	}
 	

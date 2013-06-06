@@ -18,7 +18,7 @@ class yf_test_smtp_phpmailer {
 	function run_test () {
 		$time_start = microtime(true);
 
-		require_once(PF_PATH."libs/phpmailer/class.phpmailer.php");
+		require_once(YF_PATH."libs/phpmailer/class.phpmailer.php");
 
 		$mail = new PHPMailer();
 

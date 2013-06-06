@@ -1247,12 +1247,12 @@
 		",
 	));
 	// Try to load chat tables
-	$chat_tables_structs_file = PF_PATH."share/installer_chat_tables_structs.php";
+	$chat_tables_structs_file = YF_PATH."share/installer_chat_tables_structs.php";
 	if (file_exists($chat_tables_structs_file)) {
 		include_once($chat_tables_structs_file);
 	}
 	// Try to load forum tables
-	$forum_tables_structs_file = PF_PATH."share/installer_forum_tables_structs.php";
+	$forum_tables_structs_file = YF_PATH."share/installer_forum_tables_structs.php";
 	if (file_exists($forum_tables_structs_file)) {
 		include_once($forum_tables_structs_file);
 	}

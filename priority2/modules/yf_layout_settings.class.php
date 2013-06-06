@@ -64,7 +64,7 @@ class yf_layout_settings {
 		}
 		// If no custom themes in project - then use ones from framework
 		if (empty($this->_css_themes)) {
-			$path_to_color_themes = PF_PATH. "templates/user/";
+			$path_to_color_themes = YF_PATH. "templates/user/";
 			// Get available color themes
 			foreach ((array)$DIR_OBJ->scan_dir($path_to_color_themes, 1, array("", "/".$_prefix.".*\.css\$/i"), "/(svn|git)/i") as $_path) {
 				// Skip cached styles

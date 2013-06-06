@@ -201,7 +201,7 @@ class yf_db {
 			$driver_class_name = $GLOBALS['main']->load_class_file("db_". $this->DB_TYPE, $this->DB_DRIVERS_DIR);
 		} else {
 			$driver_class_name = "yf_". "db_". $this->DB_TYPE;
-			$db_driver_path = (defined("PROFY_FRAMEWORK_PATH") ? PROFY_FRAMEWORK_PATH: INCLUDE_PATH). $this->DB_DRIVERS_DIR. $driver_class_name. ".class.php";
+			$db_driver_path = (defined("YF_PATH") ? PROFY_FRAMEWORK_PATH: INCLUDE_PATH). $this->DB_DRIVERS_DIR. $driver_class_name. ".class.php";
 			include_once ($db_driver_path);
 		}
 		$this->DB_HOST		= !empty($db_host)		? $db_host		: DB_HOST;

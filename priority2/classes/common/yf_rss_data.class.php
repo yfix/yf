@@ -53,7 +53,7 @@ class yf_rss_data {
 		// Set paths
 		$this->FEEDS_CACHE_PATH	= INCLUDE_PATH. $this->FEEDS_CACHE_PATH;
 		$this->AGGR_CACHE_PATH	= INCLUDE_PATH. $this->AGGR_CACHE_PATH;
-		$this->DOMIT_RSS_PATH	= PF_PATH. $this->DOMIT_RSS_PATH;
+		$this->DOMIT_RSS_PATH	= YF_PATH. $this->DOMIT_RSS_PATH;
 		// Do create cache dirs
 		if (!file_exists($this->FEEDS_CACHE_PATH)) {
 			_mkdir_m($this->FEEDS_CACHE_PATH);
@@ -68,7 +68,7 @@ class yf_rss_data {
 	*/
 	function show_rss_page ($data = array(), $params = array()) {
 		// Connect ot the feed creator
-		require_once (PF_PATH."libs/feedcreator/feedcreator.class.php");
+		require_once (YF_PATH."libs/feedcreator/feedcreator.class.php");
 		// Instantinate it
 		$rss = new UniversalFeedCreator();
 		// use cached version if age < 1 hour

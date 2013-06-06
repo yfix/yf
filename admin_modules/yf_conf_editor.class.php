@@ -193,14 +193,14 @@ class yf_conf_editor {
 		$folders_list = array();
 
 		// Processing framework
-		$files_list = _class("dir")->scan_dir(PF_PATH. "classes/", true, array("", "/\.class\.php\$/i"), "/\.(svn|git)/i");
+		$files_list = _class("dir")->scan_dir(YF_PATH. "classes/", true, array("", "/\.class\.php\$/i"), "/\.(svn|git)/i");
 
 		foreach ((array)$files_list as $filename) {
 			$module_name = basename($filename);
 			$module_name = str_replace(array("yf_",".class.php"), "", $module_name);
 			$modules_list[$module_name] = $filename;
 
-			$folder_name = substr($filename,strlen(PF_PATH),-strlen(basename($filename)));
+			$folder_name = substr($filename,strlen(YF_PATH),-strlen(basename($filename)));
 			if (!$folder_name) {
 				continue;
 			}
@@ -317,7 +317,7 @@ class yf_conf_editor {
 			if (empty($conf_array)) {
     
 				// Get module file contents
-				$test_string = file_get_contents(PF_PATH. "modules/yf_forum.class.php");
+				$test_string = file_get_contents(YF_PATH. "modules/yf_forum.class.php");
 				preg_match("/var[\s\t]+\\\$SETTINGS[\s\t]*=[\s\t]*array\((.*?)\);/ims", $test_string, $m);
 				$settings_string = str_replace(array("\r", "\n\n"), array("\n", "\n"), trim($m[1]));
 				preg_match_all("/\"([^\"]+)\"[\s\t]*=>[\s\t]*(true|false|[0-9\.]+|[\"\'][^\"]+[\"\']),[\s\t]*(\/\/([^\n]+)){0,1}/ims", $settings_string, $m);
@@ -471,7 +471,7 @@ class yf_conf_editor {
 		$PARSED_META 	= array();
 
 		foreach ((array)$modules_list as $_module_name) {
-			$file_path_fwork	= PF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+			$file_path_fwork	= YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
 			if ($dir_name == "admin_modules/") {
 				$file_path_project	= ADMIN_REAL_PATH.$dir_name.$_module_name.CLASS_EXT;
 			} else {

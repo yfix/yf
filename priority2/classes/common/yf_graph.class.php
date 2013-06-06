@@ -200,7 +200,7 @@ class yf_graph {
 			return;
 		}
 		
-		include_once PF_PATH.'libs/open_flash_chart/open-flash-chart.php';
+		include_once YF_PATH.'libs/open_flash_chart/open-flash-chart.php';
 
 		$width = isset($params["width"])?$params["width"]:"90%";
 		$height = isset($params["height"])?$params["height"]:"90%";
@@ -252,7 +252,7 @@ class yf_graph {
 			return;
 		}
 		
-		include_once PF_PATH.'libs/open_flash_chart/open-flash-chart.php';
+		include_once YF_PATH.'libs/open_flash_chart/open-flash-chart.php';
 
 		$width = isset($params["width"])?$params["width"]:"90%";
 		$height = isset($params["height"])?$params["height"]:"90%";

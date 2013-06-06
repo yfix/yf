@@ -72,8 +72,8 @@ class yf_user_modules {
 // TODO: need to add "site__" and "adm__" functionality
 			$is_in_project		= file_exists(INCLUDE_PATH. USER_MODULES_DIR. $A["name"]. CLASS_EXT);
 			$is_in_project2		= file_exists(INCLUDE_PATH. "priority2/". USER_MODULES_DIR. $A["name"]. CLASS_EXT);
-			$is_in_framework	= file_exists(PF_PATH. USER_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
-			$is_in_framework2	= file_exists(PF_PATH. "priority2/". USER_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
+			$is_in_framework	= file_exists(YF_PATH. USER_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
+			$is_in_framework2	= file_exists(YF_PATH. "priority2/". USER_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
 			$locations = array();
 			if ($is_in_project) {
 				$locations[] = array(
@@ -90,13 +90,13 @@ class yf_user_modules {
 			if ($is_in_framework) {
 				$locations[] = array(
 					"name"	=> "framework",
-					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(PF_PATH. "modules"),
+					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(YF_PATH. "modules"),
 				);
 			}
 			if ($is_in_framework2) {
 				$locations[] = array(
 					"name"	=> "framework",
-					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(PF_PATH. "priority2/modules"),
+					"link"	=> "./?object=file_manager&action=edit_item&f_="."yf_".$A["name"].".class.php"."&dir_name=".urlencode(YF_PATH. "priority2/modules"),
 				);
 			}
 			$replace2 = array(
@@ -319,7 +319,7 @@ class yf_user_modules {
 		}
 		// Do parse files from the framework
 		if ($include_framework) {
-			$dir_to_scan = PF_PATH. USER_MODULES_DIR;
+			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
 				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
@@ -336,7 +336,7 @@ class yf_user_modules {
 				}
 				$user_modules_array[$module_name] = $module_name;
 			}
-			$dir_to_scan = PF_PATH. "priority2/". USER_MODULES_DIR;
+			$dir_to_scan = YF_PATH. "priority2/". USER_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
 				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
@@ -369,10 +369,10 @@ class yf_user_modules {
 			$file_name = INCLUDE_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
 			// Try to get file from teh framework
 			if (!file_exists($file_name)) {
-				$file_name = PF_PATH. USER_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
+				$file_name = YF_PATH. USER_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
 			}
 			if (!file_exists($file_name)) {
-				$file_name = PF_PATH. "priority2/". USER_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
+				$file_name = YF_PATH. "priority2/". USER_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
 			}
 			if (!file_exists($file_name)) {
 				continue;
@@ -414,11 +414,11 @@ class yf_user_modules {
 			$_extends_from_fwork = (substr($class_name_2, 0, strlen(PF_PREFIX)) == PF_PREFIX);
 			// Check if we parsing current class
 			if ($class_name_1 == $user_module_name || str_replace(PF_PREFIX, "", $class_name_1) == $user_module_name) {
-				$extends_file_path = PF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
-				$extends_file_path2 = PF_PATH. "priority2/". USER_MODULES_DIR. $class_name_2. CLASS_EXT;
+				$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
+				$extends_file_path2 = YF_PATH. "priority2/". USER_MODULES_DIR. $class_name_2. CLASS_EXT;
 				// Special processing of the "yf_module"
 				if ($this->PARSE_PROFY_MODULE && $class_name_2 == PF_PREFIX."module") {
-					$extends_file_path = PF_PATH. "classes/".PF_PREFIX."module". CLASS_EXT;
+					$extends_file_path = YF_PATH. "classes/".PF_PREFIX."module". CLASS_EXT;
 				}
 			}
 			if (!empty($extends_file_path) && file_exists($extends_file_path)) {

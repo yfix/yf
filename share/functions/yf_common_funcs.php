@@ -768,5 +768,5 @@ if (!function_exists('_exec_in_background')) {
 
 // INCLUDE PHP4 compatible mode functions
 if ((double)phpversion() < 5.0 && FRAMEWORK_IS_COMPILED != 1) {
-	require_once (PF_PATH."share/functions/yf_funcs_php4_compat.php");
+	require_once (YF_PATH."share/functions/yf_funcs_php4_compat.php");
 }

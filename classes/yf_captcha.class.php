@@ -95,7 +95,7 @@ class yf_captcha {
 		}
 		$this->set_secret_key();
 		$lib_path	= PROJECT_PATH. "fonts/";
-		$fwork_path	= PF_PATH. "share/captcha_fonts/";
+		$fwork_path	= YF_PATH. "share/captcha_fonts/";
 		$path = file_exists($lib_path) ? $lib_path : $fwork_path;
 		$this->set_font_path(array($path."pioneer.ttf", $path."banco.ttf", $path."glast.ttf"));
 		$this->set_symbols_array(1);

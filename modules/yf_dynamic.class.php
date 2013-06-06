@@ -94,14 +94,14 @@ class yf_dynamic {
 		}
 		// Try to load from admin section
 		if (empty($css) && MAIN_TYPE_ADMIN) {
-			$FS_PATH = PF_PATH. "templates/admin/". $name;
+			$FS_PATH = YF_PATH. "templates/admin/". $name;
 			if (file_exists($FS_PATH)) {
 				return file_get_contents($FS_PATH);
 			}
 		}
 		// Try framework user section
 		if (empty($css)) {
-			$FS_PATH = PF_PATH. "templates/user/". $name;
+			$FS_PATH = YF_PATH. "templates/user/". $name;
 			if (file_exists($FS_PATH)) {
 				$css = file_get_contents($FS_PATH);
 			}

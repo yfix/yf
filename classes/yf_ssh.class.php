@@ -50,7 +50,7 @@ class yf_ssh {
 		if (!$this->DRIVER) {
 			$this->DRIVER = "phpseclib";
 		}
-		$test_phpseclib_path = PF_PATH."libs/phpseclib/Net/SSH2.php";
+		$test_phpseclib_path = YF_PATH."libs/phpseclib/Net/SSH2.php";
 		if ($this->DRIVER == "phpseclib" && !file_exists($test_phpseclib_path)) {
 			trigger_error("phpseclib Net_SSH2 not found", E_USER_WARNING);
 			return false;
@@ -62,7 +62,7 @@ class yf_ssh {
 		}
 
 		if ($this->_INIT_OK && $this->DRIVER == "phpseclib") {
-			set_include_path (PF_PATH."libs/phpseclib/". PATH_SEPARATOR. get_include_path());
+			set_include_path (YF_PATH."libs/phpseclib/". PATH_SEPARATOR. get_include_path());
 			require_once('Crypt/RSA.php');
 			require_once('Net/SSH2.php');
 		}

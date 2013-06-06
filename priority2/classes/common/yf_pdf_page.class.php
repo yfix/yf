@@ -25,7 +25,7 @@ class yf_pdf_page {
 	* @private
 	*/
 	function __construct() {
-		require_once (PF_PATH."libs/html2fpdf/html2fpdf.php");
+		require_once (YF_PATH."libs/html2fpdf/html2fpdf.php");
 		$this->pdf_obj =& new html2fpdf();
 	}
 

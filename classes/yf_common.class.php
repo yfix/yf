@@ -639,7 +639,7 @@ class yf_common {
 		}
 		// Search in framework
 		if (!file_exists($stpl_file)) {
-			$stpl_file = PF_PATH. tpl()->TPL_PATH. $tpl_name;
+			$stpl_file = YF_PATH. tpl()->TPL_PATH. $tpl_name;
 		}
 		if (file_exists($stpl_file)) {
 			$line_search = preg_grep("/\{execute\([\"']*".$class_name.",".$method_name.(!empty($method_params) ? ",".$method_params : "")."[\"']*\)\}/i", @file($stpl_file));
@@ -725,8 +725,8 @@ class yf_common {
 			return json_encode($string);
 		}
 		// Else try pure PHP implementation
-		include_once PF_PATH."libs/phpxmlrpc/lib/xmlrpc.inc";
-		include_once PF_PATH."libs/phpxmlrpc/extras/jsonrpc/jsonrpc.inc";
+		include_once YF_PATH."libs/phpxmlrpc/lib/xmlrpc.inc";
+		include_once YF_PATH."libs/phpxmlrpc/extras/jsonrpc/jsonrpc.inc";
 		if (function_exists('php_jsonrpc_encode')) {
 			$value =& php_jsonrpc_encode($string);
 			return $value->serialize();
@@ -746,8 +746,8 @@ class yf_common {
 			return json_decode($string);
 		}
 		// Else try pure PHP implementation
-		include_once PF_PATH."libs/phpxmlrpc/lib/xmlrpc.inc";
-		include_once PF_PATH."libs/phpxmlrpc/extras/jsonrpc/jsonrpc.inc";
+		include_once YF_PATH."libs/phpxmlrpc/lib/xmlrpc.inc";
+		include_once YF_PATH."libs/phpxmlrpc/extras/jsonrpc/jsonrpc.inc";
 		if (function_exists('php_jsonrpc_decode')) {
 			$value =& php_jsonrpc_decode_json($string);
 			if ($value) {
@@ -1036,7 +1036,7 @@ class yf_common {
 	*/
 	function is_utf8 ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (PF_PATH."libs/utf8_funcs/". PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH."libs/utf8_funcs/". PATH_SEPARATOR. get_include_path()); 
 		}
 		$this->_set_include_path = true;
 		
@@ -1049,7 +1049,7 @@ class yf_common {
 	*/
 	function utf8_html_entity_decode ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (PF_PATH."libs/utf8_funcs/". PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH."libs/utf8_funcs/". PATH_SEPARATOR. get_include_path()); 
 		}
 		$this->_set_include_path = true;
 		
@@ -1062,7 +1062,7 @@ class yf_common {
 	*/
 	function strip_tags_smart ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (PF_PATH."libs/utf8_funcs/". PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH."libs/utf8_funcs/". PATH_SEPARATOR. get_include_path()); 
 		}
 		$this->_set_include_path = true;
 		

@@ -65,7 +65,7 @@ class yf_installer_db {
 			$this->LOCK_FILE_NAME = PROJECT_PATH. $this->LOCK_FILE_NAME;
 		}
 		// Load install data from external files
-		$path_to_external_files = PF_PATH."share/";
+		$path_to_external_files = YF_PATH."share/";
 		foreach ((array)$this->_external_files as $cur_array_name => $cur_file_name) {
 			$data = array();
 			if (!file_exists($path_to_external_files.$cur_file_name)) {
@@ -463,7 +463,7 @@ class yf_installer_db {
 	if (file_exists($forum_tables_structs_file)) {
 		include_once($forum_tables_structs_file);
 	}'."\n";
-		$SHARE_PATH		= PF_PATH."share/";
+		$SHARE_PATH		= YF_PATH."share/";
 		$CACHE_PATH		= PROJECT_PATH."core_cache/";
 		_mkdir_m($CACHE_PATH);
 		$this->_convert_struct_files(

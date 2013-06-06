@@ -55,7 +55,7 @@ class yf_tpl_smarty {
 //		$this->TPL_PATH = SMARTY_THEMES_PATH. conf('theme'). "/";
 		$this->TPL_PATH = INCLUDE_PATH. SMARTY_THEMES_PATH. conf('theme'). "/";
 		// Init Smarty Engine
-		define('SMARTY_DIR', PF_PATH.'libs/smarty/libs/');
+		define('SMARTY_DIR', YF_PATH.'libs/smarty/libs/');
 		// Folder for smarty cache, compiled templates and configs
 		$this->SMARTY_VAR_DIR = INCLUDE_PATH. 'smarty_var/';
 		// Smarty sub folders (absolute paths)

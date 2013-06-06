@@ -309,7 +309,7 @@ class yf_other_common {
 		if (!isset($this->JEVIX)) {
 			$this->JEVIX = false;
 
-			require(PF_PATH. "libs/jevix/jevix.class.php");
+			require(YF_PATH. "libs/jevix/jevix.class.php");
 
 			if (class_exists("Jevix")) {
 				$this->JEVIX = new Jevix();
@@ -426,7 +426,7 @@ class yf_other_common {
 			if (!file_exists($db_path)) {
 				return false;
 			}
-			$lib_path = PF_PATH."libs/geoip/geoip.inc";
+			$lib_path = YF_PATH."libs/geoip/geoip.inc";
 			if (!file_exists($lib_path)) {
 				return false;
 			}

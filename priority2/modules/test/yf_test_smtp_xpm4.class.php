@@ -18,12 +18,12 @@ class yf_test_smtp_xpm4 {
 	function run_test () {
 		$time_start = microtime(true);
 		// Seth path to XPM4
-//		set_include_path (PF_PATH."libs/xpm4". PATH_SEPARATOR. get_include_path());
+//		set_include_path (YF_PATH."libs/xpm4". PATH_SEPARATOR. get_include_path());
 
 		define('DISPLAY_XPM4_ERRORS', false);	// display XPM4 errors
 		define('LOG_XPM4_ERRORS', true);		// log XPM4 errors
 
-		require_once PF_PATH.'libs/xpm4/MAIL.php';
+		require_once YF_PATH.'libs/xpm4/MAIL.php';
 
 		$mailer = new MAIL;
 		$mailer->From($this->TEST_OBJ->TEST_MAIL["email_from"], $this->TEST_OBJ->TEST_MAIL["name_from"]);

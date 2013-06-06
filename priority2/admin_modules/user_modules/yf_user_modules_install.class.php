@@ -170,7 +170,7 @@ class yf_user_modules_install {
 						common()->_raise_error(t("Error while extracting files from ZIP archive"));
 					}
 				} elseif (in_array($ARCHIVE_TYPE, array("gz","bz2"))) {
-					include (PF_PATH."libs/pear/Archive/Tar.php");
+					include (YF_PATH."libs/pear/Archive/Tar.php");
 					if (class_exists("Archive_Tar")) {
 						$this->PARENT_OBJ->TAR_OBJ = &new Archive_Tar($uploaded_file_path, $ARCHIVE_TYPE);
 					}
@@ -423,7 +423,7 @@ class yf_user_modules_install {
 				chdir($tmp_folder_path);
 				// Put result files to archive
 				if (in_array($_POST["file_format"], array("gz","bz2"))) {
-					include (PF_PATH."libs/pear/Archive/Tar.php");
+					include (YF_PATH."libs/pear/Archive/Tar.php");
 					if (class_exists("Archive_Tar")) {
 						$this->PARENT_OBJ->TAR_OBJ = &new Archive_Tar($new_archive_name, $_POST["file_format"]);
 					}

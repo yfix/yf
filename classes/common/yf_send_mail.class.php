@@ -155,7 +155,7 @@ class yf_send_mail {
 		} elseif ($this->USE_MAILER == "xpm2") {
 
 			// path to smtp.php from XPM2 package
-			require_once PF_PATH.'libs/xpm2/smtp.php';
+			require_once YF_PATH.'libs/xpm2/smtp.php';
 			// Process options
 			$mailer = new SMTP;
 			if (!empty($this->SMTP_OPTIONS["smtp_host"])) {
@@ -190,7 +190,7 @@ class yf_send_mail {
 		// Try to use XPM4 mailer
 		} elseif ($this->USE_MAILER == "xpm4") {
 
-			require_once PF_PATH.'libs/xpm4/MAIL.php';
+			require_once YF_PATH.'libs/xpm4/MAIL.php';
 	    	// Prepare
 			$mailer = new MAIL;
 			// Set different "Reply-To" field if needed
@@ -228,8 +228,8 @@ class yf_send_mail {
 		// Try to use Swift mailer
 		} elseif ($this->USE_MAILER == "swift") {
 
-			require_once PF_PATH. "/swift/lib/Swift.php";
-			require_once PF_PATH. "/swift/lib/Swift/Connection/SMTP.php";
+			require_once YF_PATH. "/swift/lib/Swift.php";
+			require_once YF_PATH. "/swift/lib/Swift/Connection/SMTP.php";
 
 			$conn = new Swift_Connection_SMTP($this->SMTP_OPTIONS["smtp_host"], $this->SMTP_OPTIONS["smtp_port"], $this->SMTP_OPTIONS["smtp_secure"] == "tls" ? SWIFT_SMTP_ENC_TLS : false);
 			$conn->setUsername($this->SMTP_OPTIONS["smtp_user_name"]);
@@ -245,7 +245,7 @@ class yf_send_mail {
 		// Try to use PHPMailer mailer
 		} elseif ($this->USE_MAILER == "phpmailer") {
 
-			require_once(PF_PATH."libs/phpmailer/class.phpmailer.php");
+			require_once(YF_PATH."libs/phpmailer/class.phpmailer.php");
 			
 			$mail = new PHPMailer(true); // defaults to using php "mail()"
 			try {

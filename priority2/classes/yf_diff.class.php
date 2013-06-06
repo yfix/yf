@@ -200,11 +200,11 @@ class yf_diff {
     	$str1 = explode("\n", str_replace("\r\n", "\n", $str1));
     	$str2 = explode("\n", str_replace("\r\n", "\n", $str2));
 
-    	include_once PF_PATH.'libs/pear/Text/Diff.php';
-		include_once PF_PATH.'libs/pear/Text/Diff/Renderer.php';
-		include_once PF_PATH.'libs/pear/Text/Diff/Renderer/inline.php';
-//		include_once PF_PATH.'libs/pear/Text/Diff/Renderer/context.php';
-//		include_once PF_PATH.'libs/pear/Text/Diff/Renderer/unified.php';
+    	include_once YF_PATH.'libs/pear/Text/Diff.php';
+		include_once YF_PATH.'libs/pear/Text/Diff/Renderer.php';
+		include_once YF_PATH.'libs/pear/Text/Diff/Renderer/inline.php';
+//		include_once YF_PATH.'libs/pear/Text/Diff/Renderer/context.php';
+//		include_once YF_PATH.'libs/pear/Text/Diff/Renderer/unified.php';
 
 		$diff = new Text_Diff($str1, $str2);
 
@@ -243,8 +243,8 @@ class yf_diff {
 	*/
 	function _get_exec_diff($str1, $str2)	{
 		// Write the tmp files
-		$file1 = PF_PATH.'uploads/'.time().'-1';
-		$file2 = PF_PATH.'uploads/'.time().'-2';
+		$file1 = YF_PATH.'uploads/'.time().'-1';
+		$file2 = YF_PATH.'uploads/'.time().'-2';
 		if ($FH1 = @fopen($file1, 'w'))	{
 			@fwrite($FH1, $str1, strlen($str1));
 			@fclose($FH1);
@@ -275,21 +275,21 @@ class yf_diff {
 		// Write the tmp files
 		$file1 = 'tmp-1';
 		$file2 = 'tmp-2';
-		if ($FH1 = @fopen(PF_PATH.'uploads/'.$file1, 'w')) {
+		if ($FH1 = @fopen(YF_PATH.'uploads/'.$file1, 'w')) {
 			@fwrite($FH1, $str1, strlen($str1));
 			@fclose($FH1);
 		}
-		if ($FH2 = @fopen(PF_PATH.'uploads/'.$file2, 'w')) {
+		if ($FH2 = @fopen(YF_PATH.'uploads/'.$file2, 'w')) {
 			@fwrite($FH2, $str2, strlen($str2));
 			@fclose($FH2);
 		}
 		// Check
-		if (file_exists(PF_PATH.'uploads/'.$file1) && file_exists(PF_PATH.'uploads/'.$file2)) {
+		if (file_exists(YF_PATH.'uploads/'.$file1) && file_exists(PF_PATH.'uploads/'.$file2)) {
 // FIXME: need to check cgi paths
-			$result = file_get_contents(PF_PATH."cgi/cgi_getdifference.cgi");
+			$result = file_get_contents(YF_PATH."cgi/cgi_getdifference.cgi");
 
-			@unlink(PF_PATH.'uploads/'.$file1);
-			@unlink(PF_PATH.'uploads/'.$file2);
+			@unlink(YF_PATH.'uploads/'.$file1);
+			@unlink(YF_PATH.'uploads/'.$file2);
 
 			return explode("\n", $result);
 		} else {

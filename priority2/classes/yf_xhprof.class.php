@@ -10,7 +10,7 @@ class yf_xhprof {
 	function __construct ($path_to_lib = "") {
 		
 		if(empty($path_to_lib)){
-			$path_to_lib = PF_PATH."libs/xhprof/xhprof_lib/";
+			$path_to_lib = YF_PATH."libs/xhprof/xhprof_lib/";
 		}
 		
 		$this->path_to_lib = $path_to_lib;

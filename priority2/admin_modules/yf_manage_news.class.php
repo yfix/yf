@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists("news")) {
-	require_once (PF_PATH."priority2/modules/yf_news.class.php");
+	require_once (YF_PATH."priority2/modules/yf_news.class.php");
 }
 
 class yf_manage_news extends profy_news {

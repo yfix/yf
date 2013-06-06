@@ -39,7 +39,7 @@ class yf_rewrite {
 		}
 		// Try to load default patterns if not loaded yet
 		if (!isset($GLOBALS['REWRITE_PATTERNS'])) {
-			$_def_path = PF_PATH."share/def_rewrite_rules.php";
+			$_def_path = YF_PATH."share/def_rewrite_rules.php";
 			if (file_exists($_def_path)) {
 				eval("?>".file_get_contents($_def_path));
 			}

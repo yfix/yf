@@ -206,7 +206,7 @@ class yf_test {
 	* PHPAmiler testing
 	*/
 	function phpmailer () {
-		require_once(PF_PATH."libs/phpmailer/class.phpmailer.php");
+		require_once(YF_PATH."libs/phpmailer/class.phpmailer.php");
 		$mail             = new PHPMailer(); // defaults to using php "mail()"
 		$body             = file_get_contents(INCLUDE_PATH. 'uploads/mail_test.html');
 		$mail->SetFrom('yuri.vysotskiy@gmail.com', 'YFix Team');
@@ -594,7 +594,7 @@ class yf_test {
 	//-----------------------------------------------------------------------------
 	// 
 	function utf8_clean () {
-		$text = file_get_contents(PF_PATH. "libs/utf8_funcs/utils/broken_utf8.txt");
+		$text = file_get_contents(YF_PATH. "libs/utf8_funcs/utils/broken_utf8.txt");
 		$body .= $text;
 		$body .= "<br /><hr />\n\n";
 		$body .= common()->utf8_clean($text);

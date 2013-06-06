@@ -195,12 +195,12 @@
 		),
 	));
 	// Try to load chat datas
-	$chat_tables_datas_file = PF_PATH."share/installer_chat_tables_datas.php";
+	$chat_tables_datas_file = YF_PATH."share/installer_chat_tables_datas.php";
 	if (file_exists($chat_tables_datas_file)) {
 		include_once($chat_tables_datas_file);
 	}
 	// Try to load forum datas
-	$forum_tables_datas_file = PF_PATH."share/installer_forum_tables_datas.php";
+	$forum_tables_datas_file = YF_PATH."share/installer_forum_tables_datas.php";
 	if (file_exists($forum_tables_datas_file)) {
 		include_once($forum_tables_datas_file);
 	}
