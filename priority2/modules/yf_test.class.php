@@ -209,7 +209,7 @@ class yf_test {
 		require_once(PF_PATH."libs/phpmailer/class.phpmailer.php");
 		$mail             = new PHPMailer(); // defaults to using php "mail()"
 		$body             = file_get_contents(INCLUDE_PATH. 'uploads/mail_test.html');
-		$mail->SetFrom('yuri.vysotskiy@gmail.com', 'yuri vysotskiy');
+		$mail->SetFrom('yuri.vysotskiy@gmail.com', 'YFix Team');
 		$address = "yuri.vysotskiy@gmail.com";
 		$mail->AddAddress($address, "yuri.vysotskiy");
 		$mail->Subject    = "PHPMailer Test Subject via mail(), basic";

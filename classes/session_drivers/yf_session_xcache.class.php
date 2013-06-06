@@ -4,7 +4,7 @@
 * Session storage in XCache (http://xcache.lighttpd.net/wiki/XcacheApi)
 * 
 * @package		YF
-* @author		Yuri Vysotskiy <yfix.dev@gmail.com>
+* @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 * @revision	$Revision$
 */
