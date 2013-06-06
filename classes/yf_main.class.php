@@ -1412,7 +1412,7 @@ class yf_main {
 		}
 		// Define default framework path
 		if (!defined('YF_PATH')) {
-			define('YF_PATH', dirname(PROJECT_PATH)."/PROFY_FRAMEWORK/");
+			define('YF_PATH', dirname(PROJECT_PATH)."/yf/");
 		}
 		// Alias
 		if (!defined('YF_PATH')) {

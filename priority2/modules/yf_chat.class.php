@@ -90,7 +90,7 @@ class yf_chat {
 	}
 
 	/**
-	* Catch _ANY_ call to the class methods (PROFY_FRAMEWORK special hook)
+	* Catch _ANY_ call to the class methods (yf special hook)
 	*/
 	function _module_action_handler($called_action = "") {
 		// Prepare path to CSS

@@ -199,7 +199,7 @@ class yf_forum {
 	}
 
 	/**
-	* Catch _ANY_ call to the class methods (PROFY_FRAMEWORK special hook)
+	* Catch _ANY_ call to the class methods (yf special hook)
 	*/
 	function _module_action_handler($called_action = "") {
 		if (!$this->_check_acl($called_action)) {

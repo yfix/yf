@@ -303,7 +303,7 @@ class yf_bb_codes {
 	}
 
 	function _geshi_highlight ($text = "", $prog_lang = "html4strict") {
-		require_once (dirname(INCLUDE_PATH)."/PROFY_FRAMEWORK/__SANDBOX/geshi/geshi.php");
+		require_once (dirname(INCLUDE_PATH)."/yf/__SANDBOX/geshi/geshi.php");
 		$text = geshi_highlight($text, $prog_lang, "", 1);
 // TODO
 		return $text;

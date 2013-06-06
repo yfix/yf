@@ -1498,12 +1498,12 @@ Call Stack:
     0.0023     328536   1. {main}() /home/www/toggle3_dev/public_html/rewrite.php:0
     0.0071     430564   2. require_once('/home/www/toggle3_dev/public_html/index.php') /home/www/toggle3_dev/public_html/rewrite.php:190
     0.0743    1071220   3. yf_main->__construct() /home/www/toggle3_dev/public_html/index.php:107
-    0.1409    1681372   4. yf_tpl->init_graphics() /home/www/PROFY_FRAMEWORK/classes/profy_main.class.php:207
-    0.8170   23572448   5. yf_common->show_debug_info() /home/www/PROFY_FRAMEWORK/classes/profy_tpl.class.php:433
-    0.8226   24132436   6. yf_debug_info->go() /home/www/PROFY_FRAMEWORK/classes/profy_common.class.php:309
-    0.8227   24140900   7. yf_debug_info->_debug_db_queries() /home/www/PROFY_FRAMEWORK/classes/common/profy_debug_info.class.php:186
-    0.8228   24141464   8. yf_debug_info->_do_debug_db_connection_queries() /home/www/PROFY_FRAMEWORK/classes/common/profy_debug_info.class.php:247
-    0.8317   24193916   9. yf_debug_info->_pretty_trace() /home/www/PROFY_FRAMEWORK/classes/common/profy_debug_info.class.php:327
+    0.1409    1681372   4. yf_tpl->init_graphics() /home/www/yf/classes/profy_main.class.php:207
+    0.8170   23572448   5. yf_common->show_debug_info() /home/www/yf/classes/profy_tpl.class.php:433
+    0.8226   24132436   6. yf_debug_info->go() /home/www/yf/classes/profy_common.class.php:309
+    0.8227   24140900   7. yf_debug_info->_debug_db_queries() /home/www/yf/classes/common/profy_debug_info.class.php:186
+    0.8228   24141464   8. yf_debug_info->_do_debug_db_connection_queries() /home/www/yf/classes/common/profy_debug_info.class.php:247
+    0.8317   24193916   9. yf_debug_info->_pretty_trace() /home/www/yf/classes/common/profy_debug_info.class.php:327
 */
 	function _pretty_trace($trace = array()) {
 		if (!is_array($trace)) {
