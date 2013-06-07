@@ -23,12 +23,12 @@
 
 	$user=UrlEncode("");
 	$password=UrlEncode("");
-	$realm=UrlEncode("");                         /* Authentication realm or domain            */
-	$workstation=UrlEncode("");                   /* Workstation for NTLM authentication       */
-	$apop=0;                                      /* Use APOP authentication                   */
-	$authentication_mechanism=UrlEncode("USER");  /* SASL authentication mechanism             */
-	$debug=1;                                     /* Output debug information                  */
-	$html_debug=1;                                /* Debug information is in HTML              */
+	$realm=UrlEncode("");						 /* Authentication realm or domain			*/
+	$workstation=UrlEncode("");				   /* Workstation for NTLM authentication	   */
+	$apop=0;									  /* Use APOP authentication				   */
+	$authentication_mechanism=UrlEncode("USER");  /* SASL authentication mechanism			 */
+	$debug=1;									 /* Output debug information				  */
+	$html_debug=1;								/* Debug information is in HTML			  */
 	$message=1;
 	$message_file='pop3://'.$user.':'.$password.'@localhost/'.$message.
 		'?debug='.$debug.'&html_debug='.$html_debug.'&realm='.$realm.'&workstation='.$workstation.
@@ -51,12 +51,12 @@
 		'File'=>$message_file,
 		
 		/* Read a message from a string instead of a file */
-		/* 'Data'=>'My message data string',              */
+		/* 'Data'=>'My message data string',			  */
 
-		/* Save the message body parts to a directory     */
-		/* 'SaveBody'=>'/tmp',                            */
+		/* Save the message body parts to a directory	 */
+		/* 'SaveBody'=>'/tmp',							*/
 
-		/* Do not retrieve or save message body parts     */
+		/* Do not retrieve or save message body parts	 */
 		   'SkipBody'=>1,
 	);
 	$success=$mime->Decode($parameters, $decoded);

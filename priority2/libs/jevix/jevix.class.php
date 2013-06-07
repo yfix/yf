@@ -22,11 +22,11 @@
  *  + Знак дюйма 33" больше не превращается в открывающуюся кавычку. Однако варриант "мой 24" монитор" - парсер не переварит.
  * 0.99
  *  + Расширена функциональность для проверки атрибутов тега: 
- *    можно указать тип атрибута ( 'colspan'=>'#int', 'value' => '#text' )
- *    в Jevix, по-умолчанию, определён массив типов для нескольких стандартных атрибутов (src, href, width, height)
+ *	можно указать тип атрибута ( 'colspan'=>'#int', 'value' => '#text' )
+ *	в Jevix, по-умолчанию, определён массив типов для нескольких стандартных атрибутов (src, href, width, height)
  * 0.98
  *  + Расширена функциональность для проверки атрибутов тега: 
- *    можно задавать список дозможных значений атрибута (  'align'=>array('left', 'right', 'center') )
+ *	можно задавать список дозможных значений атрибута (  'align'=>array('left', 'right', 'center') )
  * 0.97
  *  + Обычные "кавычки" сохраняются как &quote; если они были так написаны
  * 0.96
@@ -34,10 +34,10 @@
  * 0.95
  *  + Исправлено типографирование ?.. и !.. (две точки в конце больше не превращаются в троеточие)
  *  + Отключено автоматическое добавление пробела после точки для латиницы из-за чего невозможно было написать 
- *    index.php или .htaccess
+ *	index.php или .htaccess
  * 0.94
  *  + Добавлена настройка автодобавления параметров тегов. Непример rel = "nofolow" для ссылок. 
- *    Спасибо Myroslav Holyak (vbhjckfd@gmail.com)
+ *	Спасибо Myroslav Holyak (vbhjckfd@gmail.com)
  * 0.93
  * 	+ Исправлен баг с удалением пробелов (например в "123 &mdash; 123")
  *  + Исправлена ошибка из-за которой иногда не срабатывало автоматическое преобразования URL в ссылу
@@ -46,7 +46,7 @@
  * 0.92
  * 	+ Добавлена настройка cfgSetAutoBrMode. При установке в false, переносы строк не будут автоматически заменяться на BR
  * 	+ Изменена обработка HTML-сущностей. Теперь все сущности имеющие эквивалент в Unicode (за исключением <>)
- *    автоматически преобразуются в символ
+ *	автоматически преобразуются в символ
  * 0.91
  * 	+ Добавлена обработка преформатированных тегов <pre>, <code>. Для задания используйте cfgSetTagPreformatted()
  *  + Добавлена настройка cfgSetXHTMLMode. При отключении пустые теги будут оформляться как <br>, при включенном - <br/> 
@@ -57,21 +57,21 @@
 
 class Jevix{
 	const PRINATABLE  = 0x1;
-	const ALPHA       = 0x2;
-	const LAT         = 0x4;	
-	const RUS         = 0x8;		
-	const NUMERIC     = 0x10;	
-	const SPACE       = 0x20;
-	const NAME        = 0x40;
-	const URL         = 0x100;
-	const NOPRINT     = 0x200;
+	const ALPHA	   = 0x2;
+	const LAT		 = 0x4;	
+	const RUS		 = 0x8;		
+	const NUMERIC	 = 0x10;	
+	const SPACE	   = 0x20;
+	const NAME		= 0x40;
+	const URL		 = 0x100;
+	const NOPRINT	 = 0x200;
 	const PUNCTUATUON = 0x400;
-	//const           = 0x800;
-	//const           = 0x1000;
+	//const		   = 0x800;
+	//const		   = 0x1000;
 	const HTML_QUOTE  = 0x2000;
 	const TAG_QUOTE   = 0x4000;
 	const QUOTE_CLOSE = 0x8000;	
-	const NL          = 0x10000;
+	const NL		  = 0x10000;
 	const QUOTE_OPEN  = 0;
 	
 	const STATE_TEXT = 0;
@@ -113,8 +113,8 @@ class Jevix{
 	
 	protected $noTypoMode = false;
 	
-	public    $outBuffer = '';
-	public    $errors;
+	public	$outBuffer = '';
+	public	$errors;
 
 	
 	/**
@@ -127,11 +127,11 @@ class Jevix{
 	const TR_TAG_SHORT = 4;   		 // Тег может быть коротким (img, br)
 	const TR_TAG_CUT = 5;			 // Тег необходимо вырезать вместе с контентом (script, iframe)
 	const TR_TAG_CHILD = 6;			 // Тег может содержать другие теги
-	const TR_TAG_CONTAINER = 7;      // Тег может содержать лишь указанные теги. В нём не может быть текста
+	const TR_TAG_CONTAINER = 7;	  // Тег может содержать лишь указанные теги. В нём не может быть текста
 	const TR_TAG_CHILD_TAGS = 8;	 // Теги которые может содержать внутри себя другой тег
 	const TR_TAG_PARENT = 9;		 // Тег в котором должен содержаться данный тег
 	const TR_TAG_PREFORMATTED = 10;	 // Преформатированные тег, в котором всё заменяется на HTML сущности типа <pre> сохраняя все отступы и пробелы
-	const TR_PARAM_AUTO_ADD = 11;    // Auto add parameters + default values (a->rel[=nofollow]) 
+	const TR_PARAM_AUTO_ADD = 11;	// Auto add parameters + default values (a->rel[=nofollow]) 
 	const TR_TAG_NO_TYPOGRAPHY = 12; // Отключение типографирования для тега
 	
 	/**
@@ -268,21 +268,21 @@ class Jevix{
 		}
 	}
 	
-    /** 
-     * CONFIGURATION: Adding autoadd attributes and their values to tag 
-     * @param string $tag tag 
-     * @param string|array $params array of pairs attributeName => attributeValue 
-     */ 
-    function cfgSetTagParamsAutoAdd($tag, $params){ 
-        if(!isset($this->tagsRules[$tag])) throw new Exception("Tag $tag is missing in allowed tags list"); 
-        if(!is_array($params)) $params = array($params); 
-        if(!isset($this->tagsRules[$tag][self::TR_PARAM_AUTO_ADD])) { 
-            $this->tagsRules[$tag][self::TR_PARAM_AUTO_ADD] = array(); 
-        } 
-        foreach($params as $param => $value){ 
-            $this->tagsRules[$tag][self::TR_PARAM_AUTO_ADD][$param] = $value; 
-        } 
-    }
+	/** 
+	 * CONFIGURATION: Adding autoadd attributes and their values to tag 
+	 * @param string $tag tag 
+	 * @param string|array $params array of pairs attributeName => attributeValue 
+	 */ 
+	function cfgSetTagParamsAutoAdd($tag, $params){ 
+		if(!isset($this->tagsRules[$tag])) throw new Exception("Tag $tag is missing in allowed tags list"); 
+		if(!is_array($params)) $params = array($params); 
+		if(!isset($this->tagsRules[$tag][self::TR_PARAM_AUTO_ADD])) { 
+			$this->tagsRules[$tag][self::TR_PARAM_AUTO_ADD] = array(); 
+		} 
+		foreach($params as $param => $value){ 
+			$this->tagsRules[$tag][self::TR_PARAM_AUTO_ADD][$param] = $value; 
+		} 
+	}
 	
 
 	/**
@@ -398,7 +398,7 @@ class Jevix{
 	protected function saveState(){
 		$state = array(
 			'pos'   => $this->curPos,
-			'ch'    => $this->curCh,
+			'ch'	=> $this->curCh,
 			'ord'   => $this->curChOrd,
 			'class' => $this->curChClass,
 		);
@@ -421,8 +421,8 @@ class Jevix{
 			$this->states = array_slice($this->states, 0, $index);
 		}
 		
-		$this->curPos     = $state['pos'];
-		$this->curCh      = $state['ch'];
+		$this->curPos	 = $state['pos'];
+		$this->curCh	  = $state['ch'];
 		$this->curChOrd   = $state['ord'];
 		$this->curChClass = $state['class'];	
 	}
@@ -894,12 +894,12 @@ class Jevix{
 		
 		// Автодобавляемые параметры
 		if(!empty($tagRules[self::TR_PARAM_AUTO_ADD])){
-	        foreach($tagRules[self::TR_PARAM_AUTO_ADD] as $name => $value) { 
-	            // If there isn't such attribute or it has wrong value - setup it 
-	            if(!array_key_exists($name, $resParams) || $resParams[$name] != $value) { 
-	                $resParams[$name] = $value; 
-	            } 
-	        } 
+			foreach($tagRules[self::TR_PARAM_AUTO_ADD] as $name => $value) { 
+				// If there isn't such attribute or it has wrong value - setup it 
+				if(!array_key_exists($name, $resParams) || $resParams[$name] != $value) { 
+					$resParams[$name] = $value; 
+				} 
+			} 
 		}
 		
 		// Пустой некороткий тег удаляем
@@ -1105,8 +1105,8 @@ class Jevix{
 		// Закрывается тогда, одна из кавычек была открыта и (до кавычки не было пробела или пробел или пунктуация есть после кавычки)
 		// Или, если открыто больше двух кавычек - точно закрываем
 		$closed =  ($this->quotesOpened >= 2) || 
-		          (($this->quotesOpened >  0) && 
-		           (!$spacesBefore || $this->curChClass & self::SPACE || $this->curChClass & self::PUNCTUATUON));
+				  (($this->quotesOpened >  0) && 
+				   (!$spacesBefore || $this->curChClass & self::SPACE || $this->curChClass & self::PUNCTUATUON));
 		return true;
 	}
 	
@@ -1249,10 +1249,10 @@ class Jevix{
 		
 		$this->errors[] = array(
 			'message' => $message,
-			'pos'     => $this->curPos,
-			'ch'      => $this->curCh,
-			'line'    => 0, 
-			'str'     => $str,
+			'pos'	 => $this->curPos,
+			'ch'	  => $this->curCh,
+			'line'	=> 0, 
+			'str'	 => $str,
 		);
 	}
 }
@@ -1264,23 +1264,23 @@ class Jevix{
  * @return int код символа
  */
 function uniord($c) {
-    $h = ord($c{0});
-    if ($h <= 0x7F) {
-        return $h;
-    } else if ($h < 0xC2) {
-        return false;
-    } else if ($h <= 0xDF) {
-        return ($h & 0x1F) << 6 | (ord($c{1}) & 0x3F);
-    } else if ($h <= 0xEF) {
-        return ($h & 0x0F) << 12 | (ord($c{1}) & 0x3F) << 6
-                                 | (ord($c{2}) & 0x3F);
-    } else if ($h <= 0xF4) {
-        return ($h & 0x0F) << 18 | (ord($c{1}) & 0x3F) << 12
-                                 | (ord($c{2}) & 0x3F) << 6
-                                 | (ord($c{3}) & 0x3F);
-    } else {
-        return false;
-    }
+	$h = ord($c{0});
+	if ($h <= 0x7F) {
+		return $h;
+	} else if ($h < 0xC2) {
+		return false;
+	} else if ($h <= 0xDF) {
+		return ($h & 0x1F) << 6 | (ord($c{1}) & 0x3F);
+	} else if ($h <= 0xEF) {
+		return ($h & 0x0F) << 12 | (ord($c{1}) & 0x3F) << 6
+								 | (ord($c{2}) & 0x3F);
+	} else if ($h <= 0xF4) {
+		return ($h & 0x0F) << 18 | (ord($c{1}) & 0x3F) << 12
+								 | (ord($c{2}) & 0x3F) << 6
+								 | (ord($c{3}) & 0x3F);
+	} else {
+		return false;
+	}
 }
 
 /**
@@ -1290,18 +1290,18 @@ function uniord($c) {
  * @return string символ utf-8
  */
 function unichr($c) {
-    if ($c <= 0x7F) {
-        return chr($c);
-    } else if ($c <= 0x7FF) {
-        return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
-    } else if ($c <= 0xFFFF) {
-        return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
-                                    . chr(0x80 | $c & 0x3F);
-    } else if ($c <= 0x10FFFF) {
-        return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
-                                    . chr(0x80 | $c >> 6 & 0x3F)
-                                    . chr(0x80 | $c & 0x3F);
-    } else {
-        return false;
-    }
+	if ($c <= 0x7F) {
+		return chr($c);
+	} else if ($c <= 0x7FF) {
+		return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
+	} else if ($c <= 0xFFFF) {
+		return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
+									. chr(0x80 | $c & 0x3F);
+	} else if ($c <= 0x10FFFF) {
+		return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
+									. chr(0x80 | $c >> 6 & 0x3F)
+									. chr(0x80 | $c & 0x3F);
+	} else {
+		return false;
+	}
 }

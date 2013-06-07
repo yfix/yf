@@ -986,7 +986,7 @@ class yf_forum {
 			"show"				=> "",
 			"show_forum_posters"=> "Manage forum posters",
 			"show_future_posts"	=> "Manage_future_posts",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

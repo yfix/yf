@@ -16,7 +16,7 @@ $(function(){
 
 	/* 1 day = 2px */
 //	var	now		= new Date("2009-02-15");
-	var	now		= new Date();             
+	var	now		= new Date();			 
 	Date.format = 'yyyy-mm-dd';
 	if (months_abbr) {
 		Date.abbrMonthNames = months_abbr;
@@ -172,24 +172,24 @@ function date_url(date_from, date_to){
 		return new_url;
 }
 
-function count( mixed_var, mode ) {    // Count elements in an array, or properties in an object
-    // 
-    // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +      input by: _argos
+function count( mixed_var, mode ) {	// Count elements in an array, or properties in an object
+	// 
+	// +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+	// +	  input by: _argos
  
-    var key, cnt = 0;
+	var key, cnt = 0;
  
-    if( mode == 'COUNT_RECURSIVE' ) mode = 1;
-    if( mode != 1 ) mode = 0;
+	if( mode == 'COUNT_RECURSIVE' ) mode = 1;
+	if( mode != 1 ) mode = 0;
  
-    for (key in mixed_var){
-        cnt++;
-        if( mode==1 && mixed_var[key] && (mixed_var[key].constructor === Array || mixed_var[key].constructor === Object) ){
-            cnt += count(mixed_var[key], 1);
-        }
-    }
+	for (key in mixed_var){
+		cnt++;
+		if( mode==1 && mixed_var[key] && (mixed_var[key].constructor === Array || mixed_var[key].constructor === Object) ){
+			cnt += count(mixed_var[key], 1);
+		}
+	}
  
-    return cnt;
+	return cnt;
 }
 
 //Localize date from slider value format "-365" to format "15 May 2009" for example
@@ -204,34 +204,34 @@ function _localized_date (_days) {
 }
 
 function explode( delimiter, string ) {
-    var emptyArray = { 0: '' };
+	var emptyArray = { 0: '' };
  
-    if ( arguments.length != 2
-        || typeof arguments[0] == 'undefined'
-        || typeof arguments[1] == 'undefined' )
-    {
-        return null;
-    }
+	if ( arguments.length != 2
+		|| typeof arguments[0] == 'undefined'
+		|| typeof arguments[1] == 'undefined' )
+	{
+		return null;
+	}
  
-    if ( delimiter === ''
-        || delimiter === false
-        || delimiter === null )
-    {
-        return false;
-    }
+	if ( delimiter === ''
+		|| delimiter === false
+		|| delimiter === null )
+	{
+		return false;
+	}
  
-    if ( typeof delimiter == 'function'
-        || typeof delimiter == 'object'
-        || typeof string == 'function'
-        || typeof string == 'object' )
-    {
-        return emptyArray;
-    }
+	if ( typeof delimiter == 'function'
+		|| typeof delimiter == 'object'
+		|| typeof string == 'function'
+		|| typeof string == 'object' )
+	{
+		return emptyArray;
+	}
  
-    if ( delimiter === true ) {
-        delimiter = '1';
-    }
+	if ( delimiter === true ) {
+		delimiter = '1';
+	}
  
-    return string.toString().split ( delimiter.toString() );
+	return string.toString().split ( delimiter.toString() );
 }
 

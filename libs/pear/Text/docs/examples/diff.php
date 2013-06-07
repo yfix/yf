@@ -15,16 +15,16 @@ include_once 'Text/Diff/Renderer/unified.php';
 
 /* Make sure we have enough arguments. */
 if (count($argv) < 3) {
-    echo "Usage: diff.php <file1> <file2>\n\n";
-    exit;
+	echo "Usage: diff.php <file1> <file2>\n\n";
+	exit;
 }
 
 /* Make sure both files exist. */
 if (!is_readable($argv[1])) {
-    echo "$argv[1] not found or not readable.\n\n";
+	echo "$argv[1] not found or not readable.\n\n";
 }
 if (!is_readable($argv[2])) {
-    echo "$argv[2] not found or not readable.\n\n";
+	echo "$argv[2] not found or not readable.\n\n";
 }
 
 /* Load the lines of each file. */

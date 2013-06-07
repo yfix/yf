@@ -26,12 +26,12 @@ class ADODB_sqlitepo extends ADODB_sqlite {
 
    function ADODB_sqlitepo()
    {
-      $this->ADODB_sqlite();
+	  $this->ADODB_sqlite();
    }
 }
 
 /*--------------------------------------------------------------------------------------
-       Class Name: Recordset
+	   Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
 class ADORecordset_sqlitepo extends ADORecordset_sqlite {
@@ -40,23 +40,23 @@ class ADORecordset_sqlitepo extends ADORecordset_sqlite {
 
    function ADORecordset_sqlitepo($queryID,$mode=false)
    {
-      $this->ADORecordset_sqlite($queryID,$mode);
+	  $this->ADORecordset_sqlite($queryID,$mode);
    }
    
    // Modified to strip table names from returned fields
    function _fetch($ignore_fields=false)
    {
-      $this->fields = array();
-      $fields = @sqlite_fetch_array($this->_queryID,$this->fetchMode);
-      if(is_array($fields))
-         foreach($fields as $n => $v)
-         {
-            if(($p = strpos($n, ".")) !== false)
-               $n = substr($n, $p+1);
-            $this->fields[$n] = $v;
-         }
+	  $this->fields = array();
+	  $fields = @sqlite_fetch_array($this->_queryID,$this->fetchMode);
+	  if(is_array($fields))
+		 foreach($fields as $n => $v)
+		 {
+			if(($p = strpos($n, ".")) !== false)
+			   $n = substr($n, $p+1);
+			$this->fields[$n] = $v;
+		 }
 
-      return !empty($this->fields);
+	  return !empty($this->fields);
    }
 }
 ?>

@@ -253,7 +253,7 @@ class yf_image_manip {
 		// Generate correct resize command for NetPBM library
 		$PATH_TO_NETPBM = $this->FOUND_NETPBM_PATH;
 //		$dest_file_path = $source_file_path;
-	    // Check operation system
+		// Check operation system
 		if (OS_WINDOWS) {
 			$ext = common()->get_file_ext(basename($source_file_path));
 			// Check extentions
@@ -270,7 +270,7 @@ class yf_image_manip {
 		else {
 				$netpbm_cmd = $PATH_TO_NETPBM."anytopnm \"".$source_file_path."\" | ".$PATH_TO_NETPBM."pnmcut ".$pos_left." ".$pos_top." ".$LIMIT_Width." ".$LIMIT_Height." | ".$PATH_TO_NETPBM."ppmtojpeg -quality=75 > \"".$dest_file_path."\"";
 		}
-    	$output = @exec($netpbm_cmd);
+		$output = @exec($netpbm_cmd);
 		
 		return ($dest_file_path);
 	}
@@ -285,7 +285,7 @@ class yf_image_manip {
 	function _netpbm_rotate($source_file_path, $dest_file_path, $LIMIT) {
 		$PATH_TO_NETPBM = $this->FOUND_NETPBM_PATH;
 		$dest_file_path = $source_file_path;
-	    // Check operation system
+		// Check operation system
 		if (OS_WINDOWS) {
 			$ext = common()->get_file_ext(basename($source_file_path));
 
@@ -319,7 +319,7 @@ class yf_image_manip {
 		return $dest_file_path;
 	}
 
-    /**
+	/**
 	* Crop image use Image Magick library	http://www.imagemagick.org/
 	*/
 	function _imagick_crop($source_file_path, $dest_file_path, $LIMIT_width, $LIMIT_height, $pos_left, $pos_top) {

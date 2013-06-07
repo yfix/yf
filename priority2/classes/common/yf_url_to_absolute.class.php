@@ -221,47 +221,47 @@ class yf_url_to_absolute {
 	function split_url( $url, $decode=false )
 	{
 		// Character sets from RFC3986.
-		$xunressub     = 'a-zA-Z\d\-._~\!$&\'()\[\]*+,;=\|';
-		$xpchar        = $xunressub . ':@%';
+		$xunressub	 = 'a-zA-Z\d\-._~\!$&\'()\[\]*+,;=\|';
+		$xpchar		= $xunressub . ':@%';
 
 		// Scheme from RFC3986.
-		$xscheme        = '([a-zA-Z][a-zA-Z\d+-.]*)';
+		$xscheme		= '([a-zA-Z][a-zA-Z\d+-.]*)';
 
 		// User info (user + password) from RFC3986.
-		$xuserinfo     = '((['  . $xunressub . '%]*)' .
-		                 '(:([' . $xunressub . ':%]*))?)';
+		$xuserinfo	 = '((['  . $xunressub . '%]*)' .
+						 '(:([' . $xunressub . ':%]*))?)';
 
 		// IPv4 from RFC3986 (without digit constraints).
-		$xipv4         = '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})';
+		$xipv4		 = '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})';
 
 		// IPv6 from RFC2732 (without digit and grouping constraints).
-		$xipv6         = '(\[([a-fA-F\d.:]+)\])';
+		$xipv6		 = '(\[([a-fA-F\d.:]+)\])';
 
 		// Host name from RFC1035.  Technically, must start with a letter.
 		// Relax that restriction to better parse URL structure, then
 		// leave host name validation to application.
-		$xhost_name    = '([a-zA-Z\d-.%]+)';
+		$xhost_name	= '([a-zA-Z\d-.%]+)';
 
 		// Authority from RFC3986.  Skip IP future.
-		$xhost         = '(' . $xhost_name . '|' . $xipv4 . '|' . $xipv6 . ')';
-		$xport         = '(\d*)';
-		$xauthority    = '((' . $xuserinfo . '@)?' . $xhost .
-			         '?(:' . $xport . ')?)';
+		$xhost		 = '(' . $xhost_name . '|' . $xipv4 . '|' . $xipv6 . ')';
+		$xport		 = '(\d*)';
+		$xauthority	= '((' . $xuserinfo . '@)?' . $xhost .
+					 '?(:' . $xport . ')?)';
 
 		// Path from RFC3986.  Blend absolute & relative for efficiency.
-		$xslash_seg    = '(/[' . $xpchar . ']*)';
+		$xslash_seg	= '(/[' . $xpchar . ']*)';
 		$xpath_authabs = '((//' . $xauthority . ')((/[' . $xpchar . ']*)*))';
-		$xpath_rel     = '([' . $xpchar . ']+' . $xslash_seg . '*)';
-		$xpath_abs     = '(/(' . $xpath_rel . ')?)';
-		$xapath        = '(' . $xpath_authabs . '|' . $xpath_abs .
+		$xpath_rel	 = '([' . $xpchar . ']+' . $xslash_seg . '*)';
+		$xpath_abs	 = '(/(' . $xpath_rel . ')?)';
+		$xapath		= '(' . $xpath_authabs . '|' . $xpath_abs .
 				 '|' . $xpath_rel . ')';
 
 		// Query and fragment from RFC3986.
-		$xqueryfrag    = '([' . $xpchar . '/?' . ']*)';
+		$xqueryfrag	= '([' . $xpchar . '/?' . ']*)';
 
 		// URL.
-		$xurl          = '^(' . $xscheme . ':)?' .  $xapath . '?' .
-		                 '(\?' . $xqueryfrag . ')?(#' . $xqueryfrag . ')?$';
+		$xurl		  = '^(' . $xscheme . ':)?' .  $xapath . '?' .
+						 '(\?' . $xqueryfrag . ')?(#' . $xqueryfrag . ')?$';
 
 
 		// Split the URL into components.
@@ -271,20 +271,20 @@ class yf_url_to_absolute {
 		if ( !empty($m[2]) )		$parts['scheme']  = strtolower($m[2]);
 
 		if ( !empty($m[7]) ) {
-			if ( isset( $m[9] ) )	$parts['user']    = $m[9];
-			else			$parts['user']    = '';
+			if ( isset( $m[9] ) )	$parts['user']	= $m[9];
+			else			$parts['user']	= '';
 		}
-		if ( !empty($m[10]) )		$parts['pass']    = $m[11];
+		if ( !empty($m[10]) )		$parts['pass']	= $m[11];
 
 		if ( !empty($m[13]) )		$h=$parts['host'] = $m[13];
-		else if ( !empty($m[14]) )	$parts['host']    = $m[14];
-		else if ( !empty($m[16]) )	$parts['host']    = $m[16];
-		else if ( !empty( $m[5] ) )	$parts['host']    = '';
-		if ( !empty($m[17]) )		$parts['port']    = $m[18];
+		else if ( !empty($m[14]) )	$parts['host']	= $m[14];
+		else if ( !empty($m[16]) )	$parts['host']	= $m[16];
+		else if ( !empty( $m[5] ) )	$parts['host']	= '';
+		if ( !empty($m[17]) )		$parts['port']	= $m[18];
 
-		if ( !empty($m[19]) )		$parts['path']    = $m[19];
-		else if ( !empty($m[21]) )	$parts['path']    = $m[21];
-		else if ( !empty($m[25]) )	$parts['path']    = $m[25];
+		if ( !empty($m[19]) )		$parts['path']	= $m[19];
+		else if ( !empty($m[21]) )	$parts['path']	= $m[21];
+		else if ( !empty($m[25]) )	$parts['path']	= $m[25];
 
 		if ( !empty($m[27]) )		$parts['query']   = $m[28];
 		if ( !empty($m[29]) )		$parts['fragment']= $m[30];
@@ -292,15 +292,15 @@ class yf_url_to_absolute {
 		if ( !$decode )
 			return $parts;
 		if ( !empty($parts['user']) )
-			$parts['user']     = rawurldecode( $parts['user'] );
+			$parts['user']	 = rawurldecode( $parts['user'] );
 		if ( !empty($parts['pass']) )
-			$parts['pass']     = rawurldecode( $parts['pass'] );
+			$parts['pass']	 = rawurldecode( $parts['pass'] );
 		if ( !empty($parts['path']) )
-			$parts['path']     = rawurldecode( $parts['path'] );
+			$parts['path']	 = rawurldecode( $parts['path'] );
 		if ( isset($h) )
-			$parts['host']     = rawurldecode( $parts['host'] );
+			$parts['host']	 = rawurldecode( $parts['host'] );
 		if ( !empty($parts['query']) )
-			$parts['query']    = rawurldecode( $parts['query'] );
+			$parts['query']	= rawurldecode( $parts['query'] );
 		if ( !empty($parts['fragment']) )
 			$parts['fragment'] = rawurldecode( $parts['fragment'] );
 			
@@ -362,17 +362,17 @@ class yf_url_to_absolute {
 		if ( $encode )
 		{
 			if ( isset( $parts['user'] ) )
-				$parts['user']     = rawurlencode( $parts['user'] );
+				$parts['user']	 = rawurlencode( $parts['user'] );
 			if ( isset( $parts['pass'] ) )
-				$parts['pass']     = rawurlencode( $parts['pass'] );
+				$parts['pass']	 = rawurlencode( $parts['pass'] );
 			if ( isset( $parts['host'] ) &&
 				!preg_match( '!^(\[[\da-f.:]+\]])|([\da-f.:]+)$!ui', $parts['host'] ) )
-				$parts['host']     = rawurlencode( $parts['host'] );
+				$parts['host']	 = rawurlencode( $parts['host'] );
 			if ( !empty( $parts['path'] ) )
-				$parts['path']     = preg_replace( '!%2F!ui', '/',
+				$parts['path']	 = preg_replace( '!%2F!ui', '/',
 					rawurlencode( $parts['path'] ) );
 			if ( isset( $parts['query'] ) )
-				$parts['query']    = rawurlencode( $parts['query'] );
+				$parts['query']	= rawurlencode( $parts['query'] );
 			if ( isset( $parts['fragment'] ) )
 				$parts['fragment'] = rawurlencode( $parts['fragment'] );
 		}

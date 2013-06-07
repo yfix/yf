@@ -34,13 +34,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category    Mail
- * @package     Mail
- * @author      Chuck Hagenbuch <chuck@horde.org> 
+ * @category	Mail
+ * @package	 Mail
+ * @author	  Chuck Hagenbuch <chuck@horde.org> 
  * @copyright   2010 Chuck Hagenbuch
- * @license     http://opensource.org/licenses/bsd-license.php New BSD License
- * @version     CVS: $Id: mail.php 294747 2010-02-08 08:18:33Z clockwerx $
- * @link        http://pear.php.net/package/Mail/
+ * @license	 http://opensource.org/licenses/bsd-license.php New BSD License
+ * @version	 CVS: $Id: mail.php 294747 2010-02-08 08:18:33Z clockwerx $
+ * @link		http://pear.php.net/package/Mail/
  */
 
 /**
@@ -50,119 +50,119 @@
  */
 class Mail_mail extends Mail {
 
-    /**
-     * Any arguments to pass to the mail() function.
-     * @var string
-     */
-    var $_params = '';
+	/**
+	 * Any arguments to pass to the mail() function.
+	 * @var string
+	 */
+	var $_params = '';
 
-    /**
-     * Constructor.
-     *
-     * Instantiates a new Mail_mail:: object based on the parameters
-     * passed in.
-     *
-     * @param array $params Extra arguments for the mail() function.
-     */
-    function Mail_mail($params = null)
-    {
-        // The other mail implementations accept parameters as arrays.
-        // In the interest of being consistent, explode an array into
-        // a string of parameter arguments.
-        if (is_array($params)) {
-            $this->_params = join(' ', $params);
-        } else {
-            $this->_params = $params;
-        }
+	/**
+	 * Constructor.
+	 *
+	 * Instantiates a new Mail_mail:: object based on the parameters
+	 * passed in.
+	 *
+	 * @param array $params Extra arguments for the mail() function.
+	 */
+	function Mail_mail($params = null)
+	{
+		// The other mail implementations accept parameters as arrays.
+		// In the interest of being consistent, explode an array into
+		// a string of parameter arguments.
+		if (is_array($params)) {
+			$this->_params = join(' ', $params);
+		} else {
+			$this->_params = $params;
+		}
 
-        /* Because the mail() function may pass headers as command
-         * line arguments, we can't guarantee the use of the standard
-         * "\r\n" separator.  Instead, we use the system's native line
-         * separator. */
-        if (defined('PHP_EOL')) {
-            $this->sep = PHP_EOL;
-        } else {
-            $this->sep = (strpos(PHP_OS, 'WIN') === false) ? "\n" : "\r\n";
-        }
-    }
+		/* Because the mail() function may pass headers as command
+		 * line arguments, we can't guarantee the use of the standard
+		 * "\r\n" separator.  Instead, we use the system's native line
+		 * separator. */
+		if (defined('PHP_EOL')) {
+			$this->sep = PHP_EOL;
+		} else {
+			$this->sep = (strpos(PHP_OS, 'WIN') === false) ? "\n" : "\r\n";
+		}
+	}
 
-    /**
-     * Implements Mail_mail::send() function using php's built-in mail()
-     * command.
-     *
-     * @param mixed $recipients Either a comma-seperated list of recipients
-     *              (RFC822 compliant), or an array of recipients,
-     *              each RFC822 valid. This may contain recipients not
-     *              specified in the headers, for Bcc:, resending
-     *              messages, etc.
-     *
-     * @param array $headers The array of headers to send with the mail, in an
-     *              associative array, where the array key is the
-     *              header name (ie, 'Subject'), and the array value
-     *              is the header value (ie, 'test'). The header
-     *              produced from those values would be 'Subject:
-     *              test'.
-     *
-     * @param string $body The full text of the message body, including any
-     *               Mime parts, etc.
-     *
-     * @return mixed Returns true on success, or a PEAR_Error
-     *               containing a descriptive error message on
-     *               failure.
-     *
-     * @access public
-     */
-    function send($recipients, $headers, $body)
-    {
-        if (!is_array($headers)) {
-            return PEAR::raiseError('$headers must be an array');
-        }
+	/**
+	 * Implements Mail_mail::send() function using php's built-in mail()
+	 * command.
+	 *
+	 * @param mixed $recipients Either a comma-seperated list of recipients
+	 *			  (RFC822 compliant), or an array of recipients,
+	 *			  each RFC822 valid. This may contain recipients not
+	 *			  specified in the headers, for Bcc:, resending
+	 *			  messages, etc.
+	 *
+	 * @param array $headers The array of headers to send with the mail, in an
+	 *			  associative array, where the array key is the
+	 *			  header name (ie, 'Subject'), and the array value
+	 *			  is the header value (ie, 'test'). The header
+	 *			  produced from those values would be 'Subject:
+	 *			  test'.
+	 *
+	 * @param string $body The full text of the message body, including any
+	 *			   Mime parts, etc.
+	 *
+	 * @return mixed Returns true on success, or a PEAR_Error
+	 *			   containing a descriptive error message on
+	 *			   failure.
+	 *
+	 * @access public
+	 */
+	function send($recipients, $headers, $body)
+	{
+		if (!is_array($headers)) {
+			return PEAR::raiseError('$headers must be an array');
+		}
 
-        $result = $this->_sanitizeHeaders($headers);
-        if (is_a($result, 'PEAR_Error')) {
-            return $result;
-        }
+		$result = $this->_sanitizeHeaders($headers);
+		if (is_a($result, 'PEAR_Error')) {
+			return $result;
+		}
 
-        // If we're passed an array of recipients, implode it.
-        if (is_array($recipients)) {
-            $recipients = implode(', ', $recipients);
-        }
+		// If we're passed an array of recipients, implode it.
+		if (is_array($recipients)) {
+			$recipients = implode(', ', $recipients);
+		}
 
-        // Get the Subject out of the headers array so that we can
-        // pass it as a seperate argument to mail().
-        $subject = '';
-        if (isset($headers['Subject'])) {
-            $subject = $headers['Subject'];
-            unset($headers['Subject']);
-        }
+		// Get the Subject out of the headers array so that we can
+		// pass it as a seperate argument to mail().
+		$subject = '';
+		if (isset($headers['Subject'])) {
+			$subject = $headers['Subject'];
+			unset($headers['Subject']);
+		}
 
-        // Also remove the To: header.  The mail() function will add its own
-        // To: header based on the contents of $recipients.
-        unset($headers['To']);
+		// Also remove the To: header.  The mail() function will add its own
+		// To: header based on the contents of $recipients.
+		unset($headers['To']);
 
-        // Flatten the headers out.
-        $headerElements = $this->prepareHeaders($headers);
-        if (is_a($headerElements, 'PEAR_Error')) {
-            return $headerElements;
-        }
-        list(, $text_headers) = $headerElements;
+		// Flatten the headers out.
+		$headerElements = $this->prepareHeaders($headers);
+		if (is_a($headerElements, 'PEAR_Error')) {
+			return $headerElements;
+		}
+		list(, $text_headers) = $headerElements;
 
-        // We only use mail()'s optional fifth parameter if the additional
-        // parameters have been provided and we're not running in safe mode.
-        if (empty($this->_params) || ini_get('safe_mode')) {
-            $result = mail($recipients, $subject, $body, $text_headers);
-        } else {
-            $result = mail($recipients, $subject, $body, $text_headers,
-                           $this->_params);
-        }
+		// We only use mail()'s optional fifth parameter if the additional
+		// parameters have been provided and we're not running in safe mode.
+		if (empty($this->_params) || ini_get('safe_mode')) {
+			$result = mail($recipients, $subject, $body, $text_headers);
+		} else {
+			$result = mail($recipients, $subject, $body, $text_headers,
+						   $this->_params);
+		}
 
-        // If the mail() function returned failure, we need to create a
-        // PEAR_Error object and return it instead of the boolean result.
-        if ($result === false) {
-            $result = PEAR::raiseError('mail() returned failure');
-        }
+		// If the mail() function returned failure, we need to create a
+		// PEAR_Error object and return it instead of the boolean result.
+		if ($result === false) {
+			$result = PEAR::raiseError('mail() returned failure');
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 
 }

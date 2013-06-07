@@ -233,7 +233,7 @@ in an alphabetic order.';
 	$agesorter_doc='Send this method an array of [string, int] structs, eg:
 <pre>
  Dave   35
- Edd    45
+ Edd	45
  Fred   23
  Barney 37
 </pre>
@@ -555,9 +555,9 @@ mimetype, a string, is a standard MIME type, for example, text/plain.
 		return new xmlrpcresp(new xmlrpcval(array(
 			"ctLeftAngleBrackets"  => new xmlrpcval($lt, "int"),
 			"ctRightAngleBrackets" => new xmlrpcval($gt, "int"),
-			"ctAmpersands"         => new xmlrpcval($amp, "int"),
-			"ctApostrophes"        => new xmlrpcval($ap, "int"),
-			"ctQuotes"             => new xmlrpcval($qu, "int")),
+			"ctAmpersands"		 => new xmlrpcval($amp, "int"),
+			"ctApostrophes"		=> new xmlrpcval($ap, "int"),
+			"ctQuotes"			 => new xmlrpcval($qu, "int")),
 			"struct"
 		));
 	}

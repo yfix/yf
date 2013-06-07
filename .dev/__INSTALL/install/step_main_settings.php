@@ -5,43 +5,43 @@ require dirname(__FILE__)."/header.php";
 if(isset($_POST["next"])){
 
 	if($_POST["admin_pass1"] != $_POST["admin_pass2"]){
-       ti("Confirmed password did not match original");
-        
+	   ti("Confirmed password did not match original");
+		
 		echo "<br><input type=\"button\" value=\"";
 		ti("Back");
 		echo  "\" onclick=\"javascript:history.back()\">";
-        return;
-    }
+		return;
+	}
 
 	if(empty($_POST["admin_pass1"])){
 		ti("The administrator's password field can't be empty");
 		
-        echo "<br><input type=\"button\" value=\"";
+		echo "<br><input type=\"button\" value=\"";
 		ti("Back");
 		echo  "\" onclick=\"javascript:history.back()\">";
-        return;
-    }
+		return;
+	}
 
 	if(empty($_POST["dbname"])){
-        ti("The database name field can't be empty");
-        echo "<br><input type=\"button\" value=\"";
+		ti("The database name field can't be empty");
+		echo "<br><input type=\"button\" value=\"";
 		ti("Back");
 		echo  "\" onclick=\"javascript:history.back()\">";
-        return;
-    } elseif (!preg_match("/[a-z0-9\-\_]/i", $_POST["dbname"])) {
-        ti("The database name can have only latin symbols, numbers, underscore and -");
-        echo "<br><input type=\"button\" value=\"";
+		return;
+	} elseif (!preg_match("/[a-z0-9\-\_]/i", $_POST["dbname"])) {
+		ti("The database name can have only latin symbols, numbers, underscore and -");
+		echo "<br><input type=\"button\" value=\"";
 		ti("Back");
 		echo  "\" onclick=\"javascript:history.back()\">";
-        return;
+		return;
 	}
 
 	if (!preg_match("/[a-z0-9\-\_]/i", $_POST["dbuser"])) {
-        ti("The database user can have only latin symbols, numbers, underscore and -");
-        echo "<br><input type=\"button\" value=\"";
+		ti("The database user can have only latin symbols, numbers, underscore and -");
+		echo "<br><input type=\"button\" value=\"";
 		ti("Back");
 		echo  "\" onclick=\"javascript:history.back()\">";
-        return;
+		return;
 	}
 
 	$log_text .= "\n//********* Requirements test **********//\n";	

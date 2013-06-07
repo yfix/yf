@@ -45,12 +45,12 @@
  * });
  * @before <div id="nav">
  *  <div>
- *    <div class="title">Header 1</div>
- *    <div>Content 1</div>
+ *	<div class="title">Header 1</div>
+ *	<div>Content 1</div>
  *  </div>
  *  <div>
- *    <div class="title">Header 2</div>
- *    <div>Content 2</div>
+ *	<div class="title">Header 2</div>
+ *	<div>Content 2</div>
  *  </div>
  * </div>
  * @desc Creates an Accordion from the given div structure
@@ -60,18 +60,18 @@
  * });
  * @before <ul id="nav">
  *   <li>
- *     <a class="head">Header 1</a>
- *     <ul>
- *       <li><a href="#">Link 1</a></li>
- *       <li><a href="#">Link 2></a></li>
- *     </ul>
+ *	 <a class="head">Header 1</a>
+ *	 <ul>
+ *	   <li><a href="#">Link 1</a></li>
+ *	   <li><a href="#">Link 2></a></li>
+ *	 </ul>
  *   </li>
  *   <li>
- *     <a class="head">Header 2</a>
- *     <ul>
- *       <li><a href="#">Link 3</a></li>
- *       <li><a href="#">Link 4></a></li>
- *     </ul>
+ *	 <a class="head">Header 2</a>
+ *	 <ul>
+ *	   <li><a href="#">Link 3</a></li>
+ *	   <li><a href="#">Link 4></a></li>
+ *	 </ul>
  *   </li>
  * </ul>
  * @desc Creates an Accordion from the given navigation list
@@ -135,24 +135,24 @@
 jQuery.fn.extend({
 	// nextUntil is necessary, would be nice to have this in jQuery core
 	nextUntil: function(expr) {
-	    var match = [];
+		var match = [];
 	
-	    // We need to figure out which elements to push onto the array
-	    this.each(function(){
-	        // Traverse through the sibling nodes
-	        for( var i = this.nextSibling; i; i = i.nextSibling ) {
-	            // Make sure that we're only dealing with elements
-	            if ( i.nodeType != 1 ) continue;
+		// We need to figure out which elements to push onto the array
+		this.each(function(){
+			// Traverse through the sibling nodes
+			for( var i = this.nextSibling; i; i = i.nextSibling ) {
+				// Make sure that we're only dealing with elements
+				if ( i.nodeType != 1 ) continue;
 	
-	            // If we find a match then we need to stop
-	            if ( jQuery.filter( expr, [i] ).r.length ) break;
+				// If we find a match then we need to stop
+				if ( jQuery.filter( expr, [i] ).r.length ) break;
 	
-	            // Otherwise, add it on to the stack
-	            match.push( i );
-	        }
-	    });
+				// Otherwise, add it on to the stack
+				match.push( i );
+			}
+		});
 	
-	    return this.pushStack( match );
+		return this.pushStack( match );
 	},
 	// the plugin method itself
 	Accordion: function(settings) {

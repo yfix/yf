@@ -35,35 +35,35 @@ echo "<br /><hr />\n\n";
 echo "<pre>\n";
 echo "++Invalid UTF-8 in pattern\n";
 foreach ( $examples as $name => $str ) {
-    echo "$name\n";
-    @preg_match("/".$str."/u",'Testing');
+	echo "$name\n";
+	@preg_match("/".$str."/u",'Testing');
 }
 
 echo "++ preg_match() examples\n";
 foreach ( $examples as $name => $str ) {
-    
-    @preg_match("/\xf8\xa1\xa1\xa1\xa1/u", $str, $ar);
-    echo "$name: ";
+	
+	@preg_match("/\xf8\xa1\xa1\xa1\xa1/u", $str, $ar);
+	echo "$name: ";
 
-    if ( count($ar) == 0 ) {
-        echo "Matched nothing!\n";
-    } else {
-        echo "Matched {$ar[0]}\n";
-    }
-    
+	if ( count($ar) == 0 ) {
+		echo "Matched nothing!\n";
+	} else {
+		echo "Matched {$ar[0]}\n";
+	}
+	
 }
 
 echo "++ preg_match_all() examples\n";
 foreach ( $examples as $name => $str ) {
-    preg_match_all('/./u', $str, $ar);
-    echo "$name: ";
-    
-    $num_utf8_chars = count($ar[0]);
-    if ( $num_utf8_chars == 0 ) {
-        echo "Matched nothing!\n";
-    } else {
-        echo "Matched $num_utf8_chars character\n";
-    }
-    
+	preg_match_all('/./u', $str, $ar);
+	echo "$name: ";
+	
+	$num_utf8_chars = count($ar[0]);
+	if ( $num_utf8_chars == 0 ) {
+		echo "Matched nothing!\n";
+	} else {
+		echo "Matched $num_utf8_chars character\n";
+	}
+	
 }
 */

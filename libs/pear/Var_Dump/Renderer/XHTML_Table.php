@@ -1,19 +1,19 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
+// | PHP version 4														|
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
+// | Copyright (c) 1997-2004 The PHP Group								|
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 3.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.php.net/license/3_0.txt.                                  |
+// | This source file is subject to version 3.0 of the PHP license,	   |
+// | that is bundled with this package in the file LICENSE, and is		|
+// | available through the world-wide-web at the following url:		   |
+// | http://www.php.net/license/3_0.txt.								  |
 // | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
+// | obtain it through the world-wide-web, please send a note to		  |
+// | license@php.net so we can mail you a copy immediately.			   |
 // +----------------------------------------------------------------------+
-// | Authors: Frederic Poeydomenge <fpoeydomenge at free dot fr>          |
+// | Authors: Frederic Poeydomenge <fpoeydomenge at free dot fr>		  |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -36,28 +36,28 @@ require_once 'Var_Dump/Renderer/Table.php';
 class Var_Dump_Renderer_XHTML_Table extends Var_Dump_Renderer_Table
 {
 
-    /**
-     * Class constructor.
-     *
-     * @param array $options Parameters for the rendering.
-     * @access public
-     */
-    function Var_Dump_Renderer_XHTML_Table($options = array())
-    {
-        // See Var_Dump/Renderer/Table.php for the complete list of options
-        $this->defaultOptions = array_merge(
-            $this->defaultOptions,
-            array(
-                'before_type'  => '<i>',
-                'after_type'   => '</i>',
-                'start_table'  => '<table class="var_dump">',
-                'start_tr_alt' => '<tr class="alt">',
-                'start_td_key' => '<th>',
-                'end_td_key'   => '</th>'
-            )
-        );
-        $this->setOptions($options);
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param array $options Parameters for the rendering.
+	 * @access public
+	 */
+	function Var_Dump_Renderer_XHTML_Table($options = array())
+	{
+		// See Var_Dump/Renderer/Table.php for the complete list of options
+		$this->defaultOptions = array_merge(
+			$this->defaultOptions,
+			array(
+				'before_type'  => '<i>',
+				'after_type'   => '</i>',
+				'start_table'  => '<table class="var_dump">',
+				'start_tr_alt' => '<tr class="alt">',
+				'start_td_key' => '<th>',
+				'end_td_key'   => '</th>'
+			)
+		);
+		$this->setOptions($options);
+	}
 
 }
 

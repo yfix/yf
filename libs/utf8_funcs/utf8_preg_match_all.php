@@ -10,31 +10,31 @@
  * @version  1.0.1
  */
 function utf8_preg_match_all(
-    /*string*/ $pattern,
-    /*string*/ $subject,
-    /*array*/  &$matches,
-    /*int*/    $flags = PREG_PATTERN_ORDER,
-    /*int*/    $char_offset = 0
+	/*string*/ $pattern,
+	/*string*/ $subject,
+	/*array*/  &$matches,
+	/*int*/	$flags = PREG_PATTERN_ORDER,
+	/*int*/	$char_offset = 0
 )
 {
-    if ($char_offset)
-    {
-        if (! function_exists('utf8_substr')) include_once 'utf8_substr.php';
-        $byte_offset = strlen(utf8_substr($subject, 0, $char_offset));
-    }
-    else $byte_offset = $char_offset;
+	if ($char_offset)
+	{
+		if (! function_exists('utf8_substr')) include_once 'utf8_substr.php';
+		$byte_offset = strlen(utf8_substr($subject, 0, $char_offset));
+	}
+	else $byte_offset = $char_offset;
 
-    if (preg_match_all($pattern, $subject, $matches, $flags, $byte_offset) === false) return false;
+	if (preg_match_all($pattern, $subject, $matches, $flags, $byte_offset) === false) return false;
 
-    if ($flags & PREG_OFFSET_CAPTURE)
-    {
-        if (! function_exists('utf8_strlen')) include_once 'utf8_strlen.php';
-        foreach($matches as &$match)
-        {
-            foreach($match as &$a) $a[1] = utf8_strlen(substr($subject, 0, $a[1]));
-        }
-    }
+	if ($flags & PREG_OFFSET_CAPTURE)
+	{
+		if (! function_exists('utf8_strlen')) include_once 'utf8_strlen.php';
+		foreach($matches as &$match)
+		{
+			foreach($match as &$a) $a[1] = utf8_strlen(substr($subject, 0, $a[1]));
+		}
+	}
 
-    return $return;
+	return $return;
 }
 ?>

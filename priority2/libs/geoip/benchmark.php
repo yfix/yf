@@ -12,44 +12,44 @@ define("GEOIP_CITY_DATABASE",2);
 class mainappc{
   var $dbfilename = array("/usr/local/share/GeoIP/GeoIP.dat","/usr/local/share/GeoIP/GeoIPRegion.dat","/usr/local/share/GeoIP/GeoIPCity.dat");
   function randomipaddress(){
-    $result = "";
-    for ($a = 0;$a < 4;$a++){
-      if ($a > 0){$result = $result . ".";}
-      $a2 = rand(1, 254);
-      $result = $result . $a2;
-    }
-    return $result;
+	$result = "";
+	for ($a = 0;$a < 4;$a++){
+	  if ($a > 0){$result = $result . ".";}
+	  $a2 = rand(1, 254);
+	  $result = $result . $a2;
+	}
+	return $result;
   }
   function ftime(){
-    $a = gettimeofday();
-    return $a[sec] + ($a[usec]*0.000001);
+	$a = gettimeofday();
+	return $a[sec] + ($a[usec]*0.000001);
   }
   function testgeoipdatabase($type,$flags,$msg,$numlookups){
-    $gi = geoip_open($this->dbfilename[$type],$flags);
-    if ($gi == null){
-      print "error: " . $this->dbfilename[$type] . " does not exist\n" ;
-      return;
-    }
-    $t1 = $this->ftime();
-    $i4 = 0;
-    for ($i2 = 0;$i2 < $numlookups;$i2++){
-      switch ($type) {
-        case GEOIP_COUNTRY_DATABASE:
-        geoip_country_code_by_addr($gi,$this->randomipaddress());  
-        break;
-        case GEOIP_REGION_DATABASE:
-        geoip_region_by_addr($gi,$this->randomipaddress());  
-        break;
-        case GEOIP_CITY_DATABASE:
-        GeoIP_record_by_addr($gi,$this->randomipaddress());
-        break;
-      }
-    }
-    $t2 = $this->ftime();
-    $t3 = $t2-$t1;
-    print $msg . "\n";
-    print $numlookups . " lookups made in " . $t3 . " seconds \n"; 
-    geoip_close($gi);
+	$gi = geoip_open($this->dbfilename[$type],$flags);
+	if ($gi == null){
+	  print "error: " . $this->dbfilename[$type] . " does not exist\n" ;
+	  return;
+	}
+	$t1 = $this->ftime();
+	$i4 = 0;
+	for ($i2 = 0;$i2 < $numlookups;$i2++){
+	  switch ($type) {
+		case GEOIP_COUNTRY_DATABASE:
+		geoip_country_code_by_addr($gi,$this->randomipaddress());  
+		break;
+		case GEOIP_REGION_DATABASE:
+		geoip_region_by_addr($gi,$this->randomipaddress());  
+		break;
+		case GEOIP_CITY_DATABASE:
+		GeoIP_record_by_addr($gi,$this->randomipaddress());
+		break;
+	  }
+	}
+	$t2 = $this->ftime();
+	$t3 = $t2-$t1;
+	print $msg . "\n";
+	print $numlookups . " lookups made in " . $t3 . " seconds \n"; 
+	geoip_close($gi);
   }
 }
 

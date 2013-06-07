@@ -3,6 +3,6 @@ Hi {name},
 		
 Here is the account info you requested:
 
-Email:     {email},
+Email:	 {email},
 Password:  {password}
 Login URL: {login_url}

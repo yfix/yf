@@ -313,7 +313,7 @@ exit; */
 		if (!$_GET["id"]) {
 			return is_redirect("./?object=".SHOP_CLASS_NAME);
 		}
-        // Get products from database
+		// Get products from database
 		if (is_numeric($_GET["id"] )) {
 			$add_sql = "`id`= '".intval($_GET["id"]);
 		} else {

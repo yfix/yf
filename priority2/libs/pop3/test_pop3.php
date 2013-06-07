@@ -20,19 +20,19 @@
 	require(dirname(__FILE__)."/sasl/sasl.php");
 
 	$pop3=new pop3_class;
-	$pop3->hostname="localhost";             /* POP 3 server host name                      */
-	$pop3->port=110;                         /* POP 3 server host port,
-	                                            usually 110 but some servers use other ports
-	                                            Gmail uses 995                              */
-	$pop3->tls=0;                            /* Establish secure connections using TLS      */
-	$user="username";                        /* Authentication user name                    */
-	$password="password";                    /* Authentication password                     */
-	$pop3->realm="";                         /* Authentication realm or domain              */
-	$pop3->workstation="";                   /* Workstation for NTLM authentication         */
-	$apop=0;                                 /* Use APOP authentication                     */
-	$pop3->authentication_mechanism="USER";  /* SASL authentication mechanism               */
-	$pop3->debug=1;                          /* Output debug information                    */
-	$pop3->html_debug=1;                     /* Debug information is in HTML                */
+	$pop3->hostname="localhost";			 /* POP 3 server host name					  */
+	$pop3->port=110;						 /* POP 3 server host port,
+												usually 110 but some servers use other ports
+												Gmail uses 995							  */
+	$pop3->tls=0;							/* Establish secure connections using TLS	  */
+	$user="username";						/* Authentication user name					*/
+	$password="password";					/* Authentication password					 */
+	$pop3->realm="";						 /* Authentication realm or domain			  */
+	$pop3->workstation="";				   /* Workstation for NTLM authentication		 */
+	$apop=0;								 /* Use APOP authentication					 */
+	$pop3->authentication_mechanism="USER";  /* SASL authentication mechanism			   */
+	$pop3->debug=1;						  /* Output debug information					*/
+	$pop3->html_debug=1;					 /* Debug information is in HTML				*/
 	$pop3->join_continuation_header_lines=1; /* Concatenate headers split in multiple lines */
 
 	if(($error=$pop3->Open())=="")

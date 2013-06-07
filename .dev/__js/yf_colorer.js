@@ -170,13 +170,13 @@ var yf_colorer = function() {
 				"<td height=25 colspan=7 align='center' valign='middle' bgcolor='#dadada'><form onSubmit='yf_colorer.select(yf_colorer.hex_elm_obj);return false;'><input id='" + this.hex_block_id + "' type=text size=7 maxlength=7 onChange='yf_colorer.change(this)' onKeyUp='yf_colorer.change(this)' onKeyPressed='yf_colorer.change(this)'></td></form>" +
 				"</tr>" +
 				"</table>";
-	    
+		
 			new_elm.innerHTML = body;
-	    
+		
 			this.main_elm_obj	= document.getElementById(this.main_block_id);
 			this.prev_elm_obj	= document.getElementById(this.prev_block_id);
 			this.hex_elm_obj	= document.getElementById(this.hex_block_id);
-	    
+		
 			this.is_created = true;
 		} catch (e) {}
 	}

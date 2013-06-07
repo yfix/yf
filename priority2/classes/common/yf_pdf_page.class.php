@@ -40,7 +40,7 @@ class yf_pdf_page {
 		// For now we cut all image tags from source
 		// Need to test html2fpdf library about this more carefully
 		$text = preg_replace("/<img [^>]+>/ims", "", $text);
-        // Process PDF page
+		// Process PDF page
 		$this->pdf_obj->AddPage();
 		$this->pdf_obj->WriteHTML($text);
 		$this->pdf_obj->Output($name.'.pdf','D');

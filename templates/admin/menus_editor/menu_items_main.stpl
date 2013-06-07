@@ -28,7 +28,7 @@
 	</tr>
 	</thead>
 	<tbody>
-{items}                 
+{items}				 
 		<tr class="{bg_class}" id="del_row_{item_id}">
 			<td width="1%" colspan="2"><input type="checkbox" name='check_all' onclick="my_toggle_boxes(this.form)" id="my_check_all"></td>
 			<td width="40%" colspan="7" style="padding-left:{level_pad}px;" nowrap><label for="my_check_all"><b>Select all</b></label></td>
@@ -124,7 +124,7 @@
 			<select name="active">
 				<option value="0" selected  class="negative">{t(INACTIVE)}</option>
 				<option value="1" class="positive">{t(ACTIVE)}</option>
-			</select>              
+			</select>			  
 		</td>
 	</tr>
 	<tr>

@@ -28,15 +28,15 @@
 	};
 	
 
-    /**
-     * The autogrow object.
-     *
-     * @constructor
-     * @name jQuery.autogrow
-     * @param Object e The textarea to create the autogrow for.
-     * @param Hash o A set of key/value pairs to set as configuration properties.
-     * @cat Plugins/autogrow
-     */
+	/**
+	 * The autogrow object.
+	 *
+	 * @constructor
+	 * @name jQuery.autogrow
+	 * @param Object e The textarea to create the autogrow for.
+	 * @param Hash o A set of key/value pairs to set as configuration properties.
+	 * @cat Plugins/autogrow
+	 */
 	
 	jQuery.autogrow = function (e, o)
 	{
@@ -54,7 +54,7 @@
 	};
 	
 	jQuery.autogrow.fn = jQuery.autogrow.prototype = {
-    autogrow: '1.1'
+	autogrow: '1.1'
   };
 	
  	jQuery.autogrow.fn.extend = jQuery.autogrow.extend = jQuery.extend;
@@ -85,14 +85,14 @@
 				this.dummy.css({
 												'font-size'  : this.textarea.css('font-size'),
 												'font-family': this.textarea.css('font-family'),
-												'width'      : this.textarea.css('width'),
-												'padding'    : this.textarea.css('padding'),
+												'width'	  : this.textarea.css('width'),
+												'padding'	: this.textarea.css('padding'),
 												'line-height': this.textarea.css('line-height'),
 												'overflow-x' : 'hidden',
-												'display'    : 'none',
+												'display'	: 'none',
 												'position'   : 'absolute',
-												'top'        : 0,
-												'left'       : '-9999px'
+												'top'		: 0,
+												'left'	   : '-9999px'
 												}).appendTo('body');
 			}
 			

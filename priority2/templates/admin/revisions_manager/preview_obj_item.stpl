@@ -5,7 +5,7 @@
 <div class="column">
 <div class="title">Old</div>
 	<div class="example_container">
-	{old_text}           
+	{old_text}		   
 	</div>
 </div>
 <div class="column">

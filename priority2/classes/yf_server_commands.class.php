@@ -796,11 +796,11 @@ class yf_server_commands{
 	*
 	*/
 	function get_mysql_processlist ($server_info) {
-	    if (substr(php_uname(), 0, 7) == "Windows"){ 
+		if (substr(php_uname(), 0, 7) == "Windows"){ 
 //			return "Windows :(";
-	    }
+		}
 		
-	    if (substr(php_uname(), 0, 7) == "Windows"){ 
+		if (substr(php_uname(), 0, 7) == "Windows"){ 
 			$result = file_get_contents("../../test.xml");
 		}else{
 			$command = "echo \"show full processlist;\" | mysql --xml -u ".$server_info["mysql_user"]." -p\"".$server_info["mysql_pswd"]."\" ".$server_info["mysql_default_db"];
@@ -1218,7 +1218,7 @@ class yf_server_commands{
 				
 				if($job_name == $i){
 					unset($content[$key]);
-					break;    
+					break;	
 				}
 				
 				$i++;	

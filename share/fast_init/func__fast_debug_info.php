@@ -27,6 +27,6 @@ function _fast_debug_info () {
 		."</i>: <b>".$total_size."&nbsp;</b> bytes, <i>".("total_include_time")
 		."</i>: <b>".round($total_include_time, 5)
 		."</b> sec<br /><br /></div>\r\n";
-*/    
+*/	
 	echo $body;
 }

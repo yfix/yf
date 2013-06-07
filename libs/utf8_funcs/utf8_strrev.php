@@ -9,8 +9,8 @@
 */
 function utf8_strrev($string)
 {
-    if (! function_exists('utf8_str_split')) include_once 'utf8_str_split.php';
-    if (! is_array($a = utf8_str_split($string))) return false;
-    return implode('', array_reverse($a));
+	if (! function_exists('utf8_str_split')) include_once 'utf8_str_split.php';
+	if (! is_array($a = utf8_str_split($string))) return false;
+	return implode('', array_reverse($a));
 }
 ?>

@@ -553,7 +553,7 @@
 			`file_name` varchar(64) NOT NULL default '',
 			PRIMARY KEY	(`id`),
 			UNIQUE KEY `id` (`id`)
-    	",
+		",
 		"links_links"	=> "
 			`id` int(5) NOT NULL auto_increment,
 			`user_id` int(5) NOT NULL default '0',
@@ -605,7 +605,7 @@
 			`site30` smallint(1) NOT NULL default '0',
 			UNIQUE KEY `id` (`id`),
 			KEY `user_id` (`user_id`)
-    	",
+		",
 		"links_mails"	=> "
 			`id` int(5) NOT NULL auto_increment,
 			`time` int(11) NOT NULL default '0',

@@ -235,9 +235,9 @@ function _adodb_getmenu(&$zthis, $name,$defstr='',$blank1stItem=true,$multiple=f
 	else $compareFields0 = true;
 	
 	$value = '';
-    $optgroup = null;
-    $firstgroup = true;
-    $fieldsize = $zthis->FieldCount();
+	$optgroup = null;
+	$firstgroup = true;
+	$fieldsize = $zthis->FieldCount();
 	while(!$zthis->EOF) {
 		$zval = rtrim(reset($zthis->fields));
 
@@ -246,7 +246,7 @@ function _adodb_getmenu(&$zthis, $name,$defstr='',$blank1stItem=true,$multiple=f
 			continue;
 		}
 
-        if ($fieldsize > 1) {
+		if ($fieldsize > 1) {
 			if (isset($zthis->fields[1]))
 				$zval2 = rtrim($zthis->fields[1]);
 			else
@@ -254,20 +254,20 @@ function _adodb_getmenu(&$zthis, $name,$defstr='',$blank1stItem=true,$multiple=f
 		}
 		$selected = ($compareFields0) ? $zval : $zval2;
 		
-        $group = '';
+		$group = '';
 		if ($fieldsize > 2) {
-            $group = rtrim($zthis->fields[2]);
-        }
+			$group = rtrim($zthis->fields[2]);
+		}
 /* 
-        if ($optgroup != $group) {
-            $optgroup = $group;
-            if ($firstgroup) {
-                $firstgroup = false;
-                $s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
-            } else {
-                $s .="\n</optgroup>";
-                $s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
-            }
+		if ($optgroup != $group) {
+			$optgroup = $group;
+			if ($firstgroup) {
+				$firstgroup = false;
+				$s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
+			} else {
+				$s .="\n</optgroup>";
+				$s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
+			}
 		}
 */
 		if ($hasvalue) 
@@ -289,9 +289,9 @@ function _adodb_getmenu(&$zthis, $name,$defstr='',$blank1stItem=true,$multiple=f
 		$zthis->MoveNext();
 	} // while
 	
-    // closing last optgroup
-    if($optgroup != null) {
-        $s .= "\n</optgroup>";
+	// closing last optgroup
+	if($optgroup != null) {
+		$s .= "\n</optgroup>";
 	}
 	return $s ."\n</select>\n";
 }
@@ -321,9 +321,9 @@ function _adodb_getmenu_gp(&$zthis, $name,$defstr='',$blank1stItem=true,$multipl
 	else $compareFields0 = true;
 	
 	$value = '';
-    $optgroup = null;
-    $firstgroup = true;
-    $fieldsize = sizeof($zthis->fields);
+	$optgroup = null;
+	$firstgroup = true;
+	$fieldsize = sizeof($zthis->fields);
 	while(!$zthis->EOF) {
 		$zval = rtrim(reset($zthis->fields));
 
@@ -332,7 +332,7 @@ function _adodb_getmenu_gp(&$zthis, $name,$defstr='',$blank1stItem=true,$multipl
 			continue;
 		}
 
-        if ($fieldsize > 1) {
+		if ($fieldsize > 1) {
 			if (isset($zthis->fields[1]))
 				$zval2 = rtrim($zthis->fields[1]);
 			else
@@ -340,20 +340,20 @@ function _adodb_getmenu_gp(&$zthis, $name,$defstr='',$blank1stItem=true,$multipl
 		}
 		$selected = ($compareFields0) ? $zval : $zval2;
 		
-        $group = '';
+		$group = '';
 		if (isset($zthis->fields[2])) {
-            $group = rtrim($zthis->fields[2]);
-        }
+			$group = rtrim($zthis->fields[2]);
+		}
  
-        if ($optgroup != $group) {
-            $optgroup = $group;
-            if ($firstgroup) {
-                $firstgroup = false;
-                $s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
-            } else {
-                $s .="\n</optgroup>";
-                $s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
-            }
+		if ($optgroup != $group) {
+			$optgroup = $group;
+			if ($firstgroup) {
+				$firstgroup = false;
+				$s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
+			} else {
+				$s .="\n</optgroup>";
+				$s .="\n<optgroup label='". htmlspecialchars($group) ."'>";
+			}
 		}
 	
 		if ($hasvalue) 
@@ -375,9 +375,9 @@ function _adodb_getmenu_gp(&$zthis, $name,$defstr='',$blank1stItem=true,$multipl
 		$zthis->MoveNext();
 	} // while
 	
-    // closing last optgroup
-    if($optgroup != null) {
-        $s .= "\n</optgroup>";
+	// closing last optgroup
+	if($optgroup != null) {
+		$s .= "\n</optgroup>";
 	}
 	return $s ."\n</select>\n";
 }
@@ -646,41 +646,41 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 						$fnameq = $upperfname;
 					
 					
-                // is_null requires php 4.0.4
-                //********************************************************//
-                if (is_null($arrFields[$upperfname])
+				// is_null requires php 4.0.4
+				//********************************************************//
+				if (is_null($arrFields[$upperfname])
 					|| (empty($arrFields[$upperfname]) && strlen($arrFields[$upperfname]) == 0)
-                    || $arrFields[$upperfname] === $zthis->null2null
-                    )
-                {
-                    switch ($force) {
+					|| $arrFields[$upperfname] === $zthis->null2null
+					)
+				{
+					switch ($force) {
 
-                        //case 0:
-                        //    //Ignore empty values. This is allready handled in "adodb_key_exists" function.
-                        //break;
+						//case 0:
+						//	//Ignore empty values. This is allready handled in "adodb_key_exists" function.
+						//break;
 
-                        case 1:
-                            //Set null
-                            $setFields .= $field->name . " = null, ";
-                        break;
+						case 1:
+							//Set null
+							$setFields .= $field->name . " = null, ";
+						break;
 							
-                        case 2:
-                            //Set empty
-                            $arrFields[$upperfname] = "";
-                            $setFields .= _adodb_column_sql($zthis, 'U', $type, $upperfname, $fnameq,$arrFields, $magicq);
-                        break;
+						case 2:
+							//Set empty
+							$arrFields[$upperfname] = "";
+							$setFields .= _adodb_column_sql($zthis, 'U', $type, $upperfname, $fnameq,$arrFields, $magicq);
+						break;
 						default:
-                        case 3:
-                            //Set the value that was given in array, so you can give both null and empty values
-                            if (is_null($arrFields[$upperfname]) || $arrFields[$upperfname] === $zthis->null2null) {
-                                $setFields .= $field->name . " = null, ";
-                            } else {
-                                $setFields .= _adodb_column_sql($zthis, 'U', $type, $upperfname, $fnameq,$arrFields, $magicq);
-                            }
-                        break;
-                    }
-                //********************************************************//
-                } else {
+						case 3:
+							//Set the value that was given in array, so you can give both null and empty values
+							if (is_null($arrFields[$upperfname]) || $arrFields[$upperfname] === $zthis->null2null) {
+								$setFields .= $field->name . " = null, ";
+							} else {
+								$setFields .= _adodb_column_sql($zthis, 'U', $type, $upperfname, $fnameq,$arrFields, $magicq);
+							}
+						break;
+					}
+				//********************************************************//
+				} else {
 						//we do this so each driver can customize the sql for
 						//DB specific column types. 
 						//Oracle needs BLOB types to be handled with a returning clause
@@ -811,40 +811,40 @@ static $cacheCols;
 			
 			$type = $recordSet->MetaType($field->type);
 			
-            /********************************************************/
-            if (is_null($arrFields[$upperfname])
-                || (empty($arrFields[$upperfname]) && strlen($arrFields[$upperfname]) == 0)
-                || $arrFields[$upperfname] === $zthis->null2null
+			/********************************************************/
+			if (is_null($arrFields[$upperfname])
+				|| (empty($arrFields[$upperfname]) && strlen($arrFields[$upperfname]) == 0)
+				|| $arrFields[$upperfname] === $zthis->null2null
 				)
-               {
-                    switch ($force) {
+			   {
+					switch ($force) {
 
-                        case 0: // we must always set null if missing
+						case 0: // we must always set null if missing
 							$bad = true;
 							break;
 							
-                        case 1:
-                            $values  .= "null, ";
-                        break;
+						case 1:
+							$values  .= "null, ";
+						break;
 		
-                        case 2:
-                            //Set empty
-                            $arrFields[$upperfname] = "";
-                            $values .= _adodb_column_sql($zthis, 'I', $type, $upperfname, $fnameq,$arrFields, $magicq);
-                        break;
+						case 2:
+							//Set empty
+							$arrFields[$upperfname] = "";
+							$values .= _adodb_column_sql($zthis, 'I', $type, $upperfname, $fnameq,$arrFields, $magicq);
+						break;
 
 						default:
-                        case 3:
-                            //Set the value that was given in array, so you can give both null and empty values
+						case 3:
+							//Set the value that was given in array, so you can give both null and empty values
 							if (is_null($arrFields[$upperfname]) || $arrFields[$upperfname] === $zthis->null2null) { 
 								$values  .= "null, ";
 							} else {
-                        		$values .= _adodb_column_sql($zthis, 'I', $type, $upperfname, $fnameq, $arrFields, $magicq);
-             				}
-              			break;
-             		} // switch
+								$values .= _adodb_column_sql($zthis, 'I', $type, $upperfname, $fnameq, $arrFields, $magicq);
+			 				}
+			  			break;
+			 		} // switch
 
-            /*********************************************************/
+			/*********************************************************/
 			} else {
 				//we do this so each driver can customize the sql for
 				//DB specific column types. 
@@ -894,7 +894,7 @@ static $cacheCols;
  * the column type.  We want to do 'safe' handling of BLOBs
  * 
  * @param string the type of sql we are trying to create
- *                'I' or 'U'. 
+ *				'I' or 'U'. 
  * @param string column data type from the db::MetaType() method  
  * @param string the column name
  * @param array the column value
@@ -904,70 +904,70 @@ static $cacheCols;
  */
 function _adodb_column_sql_oci8(&$zthis,$action, $type, $fname, $fnameq, $arrFields, $magicq) 
 {
-    $sql = '';
-    
-    // Based on the datatype of the field
-    // Format the value properly for the database
-    switch($type) {
-    case 'B':
-        //in order to handle Blobs correctly, we need
-        //to do some magic for Oracle
+	$sql = '';
+	
+	// Based on the datatype of the field
+	// Format the value properly for the database
+	switch($type) {
+	case 'B':
+		//in order to handle Blobs correctly, we need
+		//to do some magic for Oracle
 
-        //we need to create a new descriptor to handle 
-        //this properly
-        if (!empty($zthis->hasReturningInto)) {
-            if ($action == 'I') {
-                $sql = 'empty_blob(), ';
-            } else {
-                $sql = $fnameq. '=empty_blob(), ';
-            }
-            //add the variable to the returning clause array
-            //so the user can build this later in
-            //case they want to add more to it
-            $zthis->_returningArray[$fname] = ':xx'.$fname.'xx';
-        } else if (empty($arrFields[$fname])){
-            if ($action == 'I') {
-                $sql = 'empty_blob(), ';
-            } else {
-                $sql = $fnameq. '=empty_blob(), ';
-            }            
-        } else {
-            //this is to maintain compatibility
-            //with older adodb versions.
-            $sql = _adodb_column_sql($zthis, $action, $type, $fname, $fnameq, $arrFields, $magicq,false);
-        }
-        break;
+		//we need to create a new descriptor to handle 
+		//this properly
+		if (!empty($zthis->hasReturningInto)) {
+			if ($action == 'I') {
+				$sql = 'empty_blob(), ';
+			} else {
+				$sql = $fnameq. '=empty_blob(), ';
+			}
+			//add the variable to the returning clause array
+			//so the user can build this later in
+			//case they want to add more to it
+			$zthis->_returningArray[$fname] = ':xx'.$fname.'xx';
+		} else if (empty($arrFields[$fname])){
+			if ($action == 'I') {
+				$sql = 'empty_blob(), ';
+			} else {
+				$sql = $fnameq. '=empty_blob(), ';
+			}			
+		} else {
+			//this is to maintain compatibility
+			//with older adodb versions.
+			$sql = _adodb_column_sql($zthis, $action, $type, $fname, $fnameq, $arrFields, $magicq,false);
+		}
+		break;
 
-    case "X":
-        //we need to do some more magic here for long variables
-        //to handle these correctly in oracle.
+	case "X":
+		//we need to do some more magic here for long variables
+		//to handle these correctly in oracle.
 
-        //create a safe bind var name
-        //to avoid conflicts w/ dupes.
-       if (!empty($zthis->hasReturningInto)) {
-            if ($action == 'I') {
-                $sql = ':xx'.$fname.'xx, ';                
-            } else {
-                $sql = $fnameq.'=:xx'.$fname.'xx, ';
-            }
-            //add the variable to the returning clause array
-            //so the user can build this later in
-            //case they want to add more to it
-            $zthis->_returningArray[$fname] = ':xx'.$fname.'xx';
-        } else {
-            //this is to maintain compatibility
-            //with older adodb versions.
-            $sql = _adodb_column_sql($zthis, $action, $type, $fname, $fnameq, $arrFields, $magicq,false);
-        }            
-        break;
-        
-    default:
-        $sql = _adodb_column_sql($zthis, $action, $type, $fname, $fnameq,  $arrFields, $magicq,false);
-        break;
-    }
-    
-    return $sql;
-}    
+		//create a safe bind var name
+		//to avoid conflicts w/ dupes.
+	   if (!empty($zthis->hasReturningInto)) {
+			if ($action == 'I') {
+				$sql = ':xx'.$fname.'xx, ';				
+			} else {
+				$sql = $fnameq.'=:xx'.$fname.'xx, ';
+			}
+			//add the variable to the returning clause array
+			//so the user can build this later in
+			//case they want to add more to it
+			$zthis->_returningArray[$fname] = ':xx'.$fname.'xx';
+		} else {
+			//this is to maintain compatibility
+			//with older adodb versions.
+			$sql = _adodb_column_sql($zthis, $action, $type, $fname, $fnameq, $arrFields, $magicq,false);
+		}			
+		break;
+		
+	default:
+		$sql = _adodb_column_sql($zthis, $action, $type, $fname, $fnameq,  $arrFields, $magicq,false);
+		break;
+	}
+	
+	return $sql;
+}	
 	
 function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields, $magicq, $recurse=true) 
 {
@@ -996,18 +996,18 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 		
 		case "T":
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
-            break;
+			break;
 
 		case "N":
-		    $val = $arrFields[$fname];
+			$val = $arrFields[$fname];
 			if (!is_numeric($val)) $val = str_replace(',', '.', (float)$val);
 			break;
 
 		case "I":
 		case "R":
-		    $val = $arrFields[$fname];
+			$val = $arrFields[$fname];
 			if (!is_numeric($val)) $val = (integer) $val;
-		    break;
+			break;
 
 		default:
 			$val = str_replace(array("'"," ","("),"",$arrFields[$fname]); // basic sql injection defence
@@ -1145,9 +1145,9 @@ function _adodb_find_from($sql)
 
 	for($i = 0; $i < $charCount; $i++) {
 
-    	$char = substr($sql,$i,1);
-	    $prevChars = substr($sql,0,$i);
-    	$nextChars = substr($sql,$i+1);
+		$char = substr($sql,$i,1);
+		$prevChars = substr($sql,0,$i);
+		$nextChars = substr($sql,$i+1);
 
 		if((($char == "'" || $char == '"' || $char == '`') && substr($prevChars,-1,1) != '\\') && $inString === false) {
 			$quote = $char;

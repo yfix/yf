@@ -587,7 +587,7 @@ class yf_user_profile extends yf_module {
 		}
 		$members_ids = array_unique((array)$members_ids);
 		$user_infos = user($members_ids, "short");
-    
+	
 		foreach ((array)$stats_array as $A) {
 			$replace2 = array(
 				"avatar"		=> _show_avatar($A["member_id"]),
@@ -624,7 +624,7 @@ class yf_user_profile extends yf_module {
 		}
 		$members_ids = array_unique((array)$members_ids);
 		$user_infos = user($members_ids, "short");
-    
+	
 		foreach ((array)$stats_array as $A) {
 			$replace2 = array(
 				"avatar"		=> _show_avatar($A["member_id"]),

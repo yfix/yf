@@ -141,14 +141,14 @@ class yf_settings {
 			if ($A['item'] == "theme") {
 				$tpl_dir = dirname(INCLUDE_PATH. tpl()->TPL_PATH)."/";
 				if ($h = opendir($tpl_dir)) {
-			    	while (false !== ($fp = readdir($h))) { 
+					while (false !== ($fp = readdir($h))) { 
 						if (in_array($fp, array(".","..","index.htm","index.htm","index.php"))) continue;
 						if (!is_dir($tpl_dir.$fp)) continue;
 						if (false !== strpos($fp, ".svn")) continue;
 						if ($A['value'] == $fp) $selected = $A['value'];
 						$values[$fp] = $fp;
-			    	}
-				    closedir($h); 
+					}
+					closedir($h); 
 				}
 			// Show language field (non-standard field)
 			} elseif ($A['item'] == "language") {

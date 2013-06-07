@@ -43,7 +43,7 @@ class yf_logs {
 	/**
 	* Catch missing method call
 	*/
-    function __call($name, $arguments) {
+	function __call($name, $arguments) {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}
@@ -335,6 +335,6 @@ class yf_logs {
 			"add_date"		=> time(),
 		);
 		db()->INSERT("log_user_action", $sql_array);
-		return true;		    
+		return true;			
 	}
 }

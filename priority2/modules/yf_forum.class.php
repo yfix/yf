@@ -12,7 +12,7 @@ class yf_forum {
 
 	/** @var string @conf_skip Current forum version */
 	var $VERSION				= "1.0rc1";
-    /** @var array forum settings (default values) */
+	/** @var array forum settings (default values) */
 	var	$SETTINGS = array(
 		// Most important options
 		"USE_GLOBAL_USERS"		=> false,	// Use global user accounts or only forum internals

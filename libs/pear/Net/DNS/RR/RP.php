@@ -26,72 +26,72 @@
  */
 class Net_DNS_RR_RP extends Net_DNS_RR
 {
-    /* class variable definitions {{{ */
-    var $name;
-    var $type;
-    var $class;
-    var $ttl;
-    var $rdlength;
-    var $rdata;
-    var $mboxdname;
-    var $txtdname;
+	/* class variable definitions {{{ */
+	var $name;
+	var $type;
+	var $class;
+	var $ttl;
+	var $rdlength;
+	var $rdata;
+	var $mboxdname;
+	var $txtdname;
 
-    /* }}} */
-    /* class constructor - RR(&$rro, $data, $offset = '') {{{ */
-    function Net_DNS_RR_RP(&$rro, $data, $offset = '')
-    {
-        $this->name = $rro->name;
-        $this->type = $rro->type;
-        $this->class = $rro->class;
-        $this->ttl = $rro->ttl;
-        $this->rdlength = $rro->rdlength;
-        $this->rdata = $rro->rdata;
+	/* }}} */
+	/* class constructor - RR(&$rro, $data, $offset = '') {{{ */
+	function Net_DNS_RR_RP(&$rro, $data, $offset = '')
+	{
+		$this->name = $rro->name;
+		$this->type = $rro->type;
+		$this->class = $rro->class;
+		$this->ttl = $rro->ttl;
+		$this->rdlength = $rro->rdlength;
+		$this->rdata = $rro->rdata;
 
-        if ($offset) {
-            if ($this->rdlength > 0) {
-                $packet = new Net_DNS_Packet();
+		if ($offset) {
+			if ($this->rdlength > 0) {
+				$packet = new Net_DNS_Packet();
 
-                list($this->mboxdname, $offset) = $packet->dn_expand($data, $offset);
-                list($this->txtdname, $offset) = $packet->dn_expand($data, $offset);
-            }
-        } elseif (is_array($data)) {
+				list($this->mboxdname, $offset) = $packet->dn_expand($data, $offset);
+				list($this->txtdname, $offset) = $packet->dn_expand($data, $offset);
+			}
+		} elseif (is_array($data)) {
 
-            $this->mboxdname = $data['mboxdname'];
-            $this->txtdname = $data['txtdname'];
-        } else {
+			$this->mboxdname = $data['mboxdname'];
+			$this->txtdname = $data['txtdname'];
+		} else {
 
-            preg_match("/([^ ]+)\s+([^ ]+)/", $data, $matches);
+			preg_match("/([^ ]+)\s+([^ ]+)/", $data, $matches);
 
-            $this->mboxdname = preg_replace('/\.$/', '', $matches[1]);
-            $this->txtdname = preg_replace('/\.$/', '', $matches[2]);
-        }
-    }
+			$this->mboxdname = preg_replace('/\.$/', '', $matches[1]);
+			$this->txtdname = preg_replace('/\.$/', '', $matches[2]);
+		}
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_RP::rdatastr() {{{ */
-    function rdatastr()
-    {
-        if (strlen($this->mboxdname) > 0) {
-            return $this->mboxdname . '. ' . $this->txtdname . '.';
-        }
-        return '; no data';
-    }
+	/* }}} */
+	/* Net_DNS_RR_RP::rdatastr() {{{ */
+	function rdatastr()
+	{
+		if (strlen($this->mboxdname) > 0) {
+			return $this->mboxdname . '. ' . $this->txtdname . '.';
+		}
+		return '; no data';
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_RP::rr_rdata($packet, $offset) {{{ */
-    function rr_rdata($packet, $offset)
-    {
-        if (strlen($this->mboxdname) > 0) {
+	/* }}} */
+	/* Net_DNS_RR_RP::rr_rdata($packet, $offset) {{{ */
+	function rr_rdata($packet, $offset)
+	{
+		if (strlen($this->mboxdname) > 0) {
 
-            $rdata = $packet->dn_comp($this->mboxdname, $offset);
-            $rdata .= $packet->dn_comp($this->txtdname, $offset + strlen($rdata));
+			$rdata = $packet->dn_comp($this->mboxdname, $offset);
+			$rdata .= $packet->dn_comp($this->txtdname, $offset + strlen($rdata));
 
-            return $rdata;
-        }
-        return null;
-    }
+			return $rdata;
+		}
+		return null;
+	}
 
-    /* }}} */
+	/* }}} */
 }
 /* }}} */
 /* VIM settings {{{

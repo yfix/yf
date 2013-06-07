@@ -1,24 +1,24 @@
 <?php
 
 /***************************************************************************************
- *                                                                                     *
+ *																					 *
  * This file is part of the XPertMailer package (http://xpertmailer.sourceforge.net/)  *
- *                                                                                     *
- * XPertMailer is free software; you can redistribute it and/or modify it under the    *
- * terms of the GNU General Public License as published by the Free Software           *
+ *																					 *
+ * XPertMailer is free software; you can redistribute it and/or modify it under the	*
+ * terms of the GNU General Public License as published by the Free Software		   *
  * Foundation; either version 2 of the License, or (at your option) any later version. *
- *                                                                                     *
- * XPertMailer is distributed in the hope that it will be useful, but WITHOUT ANY      *
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A     *
- * PARTICULAR PURPOSE.  See the GNU General Public License for more details.           *
- *                                                                                     *
- * You should have received a copy of the GNU General Public License along with        *
+ *																					 *
+ * XPertMailer is distributed in the hope that it will be useful, but WITHOUT ANY	  *
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A	 *
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.		   *
+ *																					 *
+ * You should have received a copy of the GNU General Public License along with		*
  * XPertMailer; if not, write to the Free Software Foundation, Inc., 51 Franklin St,   *
- * Fifth Floor, Boston, MA  02110-1301  USA                                            *
- *                                                                                     *
+ * Fifth Floor, Boston, MA  02110-1301  USA											*
+ *																					 *
  * XPertMailer SMTP & POP3 PHP Mail Client. Can send and read messages in MIME Format. *
- * Copyright (C) 2006  Tanase Laurentiu Iulian                                         *
- *                                                                                     *
+ * Copyright (C) 2006  Tanase Laurentiu Iulian										 *
+ *																					 *
  ***************************************************************************************/
 
 class MIME {
@@ -84,22 +84,22 @@ class MIME {
 	function qpencode($str, $len = 74, $end = "\r\n"){
 
 		$out = '';
-        $exp = explode($end, $str);
-        foreach($exp as $line){
+		$exp = explode($end, $str);
+		foreach($exp as $line){
 			$line = str_replace('=', '=3D', $line);
-            $line = str_replace($this->_qpkeys, $this->_qpvrep, $line);
-            preg_match_all('/.{1,'.$len.'}([^=]{0,2})?/', $line, $match);
+			$line = str_replace($this->_qpkeys, $this->_qpvrep, $line);
+			preg_match_all('/.{1,'.$len.'}([^=]{0,2})?/', $line, $match);
 			$mcnt = count($match[0]);
-            for($i = 0; $i < $mcnt; $i++){
+			for($i = 0; $i < $mcnt; $i++){
 				$line = (substr($match[0][$i], -1) == ' ') ? substr($match[0][$i], 0, -1).'=20' : $match[0][$i];
-                if(($i+1) < $mcnt) $line .= '=';
-                $out .= $line.$end;
-            }
-        }
-        if($out == '') return '';
-        return substr($out, 0, -(strlen($end)));
+				if(($i+1) < $mcnt) $line .= '=';
+				$out .= $line.$end;
+			}
+		}
+		if($out == '') return '';
+		return substr($out, 0, -(strlen($end)));
 
-    }
+	}
 
 	function enc_header($str, $charset = 'utf-8', $encoding = 'quoted-printable'){
 

@@ -995,7 +995,7 @@ class yf_db_manager {
 	/**
 	* Removes comment lines and splits up large sql files into individual queries
 	*
-	* @param   array    the splitted sql commands
+	* @param   array	the splitted sql commands
 	* @param   string   the sql commands
 	*
 	* @return  boolean  always true
@@ -1219,7 +1219,7 @@ class yf_db_manager {
 			"show"				=> "",
 			"export"			=> "Export SQL",
 			"show_create_table" => "",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

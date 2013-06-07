@@ -17,7 +17,7 @@ class yf_virtual_host{
 		switch($server_info["http_d_type"]){
 			case 1:		// apache
 				return $this->apache_virtual_hosts_get($server_info);
-				break;    
+				break;	
 			case 2:		// apache+nginx
 				return $this->apache_virtual_hosts_get($server_info);
 				break;
@@ -37,7 +37,7 @@ class yf_virtual_host{
 		switch($server_info["http_d_type"]){
 			case 1:		// apache
 				$this->apache_virtual_host_enable($server_info, $virtual_host_name);
-				break;    
+				break;	
 			case 2:		// apache+nginx
 				$this->apache_virtual_host_enable($server_info, $virtual_host_name);
 				$this->nginx_virtual_host_enable($server_info, $virtual_host_name);
@@ -58,7 +58,7 @@ class yf_virtual_host{
 		switch($server_info["http_d_type"]){
 			case 1:		// apache
 				$this->apache_virtual_host_disable($server_info, $virtual_host_name);
-				break;    
+				break;	
 			case 2:		// apache+nginx
 				$this->apache_virtual_host_disable($server_info, $virtual_host_name);
 				$this->nginx_virtual_host_disable($server_info, $virtual_host_name);
@@ -79,7 +79,7 @@ class yf_virtual_host{
 		switch($server_info["http_d_type"]){
 			case 1:		// apache
 				$this->apache_virtual_host_add($server_info, $param);
-				break;    
+				break;	
 			case 2:		// apache+nginx
 				$this->apache_virtual_host_add($server_info, $param);
 				$this->nginx_virtual_host_add($server_info, $param);
@@ -100,7 +100,7 @@ class yf_virtual_host{
 		switch($server_info["http_d_type"]){
 			case 1:		// apache
 				$this->apache_virtual_host_delete($server_info, $virtual_host_name);
-				break;    
+				break;	
 			case 2:		// apache+nginx
 				$this->apache_virtual_host_delete($server_info, $virtual_host_name);
 				$this->nginx_virtual_host_delete($server_info, $virtual_host_name);
@@ -121,7 +121,7 @@ class yf_virtual_host{
 		switch($server_info["http_d_type"]){
 			case 1:		// apache
 				$this->apache_virtual_host_edit($server_info, $param);
-				break;    
+				break;	
 			case 2:		// apache+nginx
 				$this->apache_virtual_host_edit($server_info, $param);
 				break;

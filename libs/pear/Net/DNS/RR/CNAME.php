@@ -25,60 +25,60 @@
  */
 class Net_DNS_RR_CNAME extends Net_DNS_RR
 {
-    /* class variable definitions {{{ */
-    var $name;
-    var $type;
-    var $class;
-    var $ttl;
-    var $rdlength;
-    var $rdata;
-    var $cname;
+	/* class variable definitions {{{ */
+	var $name;
+	var $type;
+	var $class;
+	var $ttl;
+	var $rdlength;
+	var $rdata;
+	var $cname;
 
-    /* }}} */
-    /* class constructor - RR(&$rro, $data, $offset = '') {{{ */
-    function Net_DNS_RR_CNAME(&$rro, $data, $offset = '')
-    {
-        $this->name = $rro->name;
-        $this->type = $rro->type;
-        $this->class = $rro->class;
-        $this->ttl = $rro->ttl;
-        $this->rdlength = $rro->rdlength;
-        $this->rdata = $rro->rdata;
+	/* }}} */
+	/* class constructor - RR(&$rro, $data, $offset = '') {{{ */
+	function Net_DNS_RR_CNAME(&$rro, $data, $offset = '')
+	{
+		$this->name = $rro->name;
+		$this->type = $rro->type;
+		$this->class = $rro->class;
+		$this->ttl = $rro->ttl;
+		$this->rdlength = $rro->rdlength;
+		$this->rdata = $rro->rdata;
 
-        if ($offset) {
-            if ($this->rdlength > 0) {
-                $packet = new Net_DNS_Packet();
-                list($cname, $offset) = $packet->dn_expand($data, $offset);
-                $this->cname = $cname;
-            }
-        } elseif (is_array($data)) {
-            $this->cname = $data['cname'];
-        } else {
-            $this->cname = preg_replace("/[ \t]+(.+)[\. \t]*$/", '\\1', $data);
-        }
-    }
+		if ($offset) {
+			if ($this->rdlength > 0) {
+				$packet = new Net_DNS_Packet();
+				list($cname, $offset) = $packet->dn_expand($data, $offset);
+				$this->cname = $cname;
+			}
+		} elseif (is_array($data)) {
+			$this->cname = $data['cname'];
+		} else {
+			$this->cname = preg_replace("/[ \t]+(.+)[\. \t]*$/", '\\1', $data);
+		}
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_CNAME::rdatastr() {{{ */
-    function rdatastr()
-    {
-        if (strlen($this->cname)) {
-            return $this->cname . '.';
-        }
-        return '; no data';
-    }
+	/* }}} */
+	/* Net_DNS_RR_CNAME::rdatastr() {{{ */
+	function rdatastr()
+	{
+		if (strlen($this->cname)) {
+			return $this->cname . '.';
+		}
+		return '; no data';
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_CNAME::rr_rdata($packet, $offset) {{{ */
-    function rr_rdata($packet, $offset)
-    {
-        if (strlen($this->cname)) {
-            return $packet->dn_comp($this->cname, $offset);
-        }
-        return null;
-    }
+	/* }}} */
+	/* Net_DNS_RR_CNAME::rr_rdata($packet, $offset) {{{ */
+	function rr_rdata($packet, $offset)
+	{
+		if (strlen($this->cname)) {
+			return $packet->dn_comp($this->cname, $offset);
+		}
+		return null;
+	}
 
-    /* }}} */
+	/* }}} */
 }
 /* }}} */
 /* VIM settings {{{

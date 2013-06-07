@@ -166,7 +166,7 @@ $.extend(PopUpCal.prototype, {
 	   @param  dateText  string - the initial date to display (in the current format)
 	   @param  onSelect  function - the function(dateText) to call when a date is selected
 	   @param  settings  object - update the dialog calendar instance's settings (anonymous object)
-	   @param  pos       int[2] - coordinates for the dialog's position within the screen
+	   @param  pos	   int[2] - coordinates for the dialog's position within the screen
 			leave empty for default (screen centre)
 	   @return void */
 	dialogCalendar: function(dateText, onSelect, settings, pos) {
@@ -251,7 +251,7 @@ $.extend(PopUpCal.prototype, {
 
 	/* Set the date for a calendar attached to an input field or division.
 	   @param  control  element - the input field or div/span attached to the calendar
-	   @param  date     Date - the new date
+	   @param  date	 Date - the new date
 	   @return void */
 	setDateFor: function(control, date) {
 		var inst = this._getInst(control._calId);
@@ -352,7 +352,7 @@ $.extend(PopUpCal.prototype, {
 	},
 
 	/* Hide the calendar from view.
-	   @param  id     string/object - the ID of the current calendar instance,
+	   @param  id	 string/object - the ID of the current calendar instance,
 			or the instance itself
 	   @param  speed  string - the speed at which to close the calendar
 	   @return void */

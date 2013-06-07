@@ -138,8 +138,8 @@ function validate_forum_profile() {
 		}
 	}
 	if (errors != "") {
-	    alert(errors);
-    	return false;
+		alert(errors);
+		return false;
    	} else {
 		return true;
 	}

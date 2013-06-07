@@ -104,18 +104,18 @@ define ( "SPH_GROUPBY_ATTRPAIR",	5 );
 
 // the packing code below works as follows:
 //  - when we got an int, just pack it
-//    if performance is a problem, this is the branch users should aim for
+//	if performance is a problem, this is the branch users should aim for
 //
 //  - otherwise, we got a number in string form
-//    this might be due to different reasons, but we assume that this is
-//    because it didn't fit into PHP int
+//	this might be due to different reasons, but we assume that this is
+//	because it didn't fit into PHP int
 //
 //  - factor the string into high and low ints for packing
-//    - if we have bcmath, then it is used
-//    - if we don't, we have to do it manually (this is the fun part)
+//	- if we have bcmath, then it is used
+//	- if we don't, we have to do it manually (this is the fun part)
 //
-//    - x64 branch does factoring using ints
-//    - x32 (ab)uses floats, since we can't fit unsigned 32-bit number into an int
+//	- x64 branch does factoring using ints
+//	- x32 (ab)uses floats, since we can't fit unsigned 32-bit number into an int
 //
 // unpacking routines are pretty much the same.
 //  - return ints if we can
@@ -547,7 +547,7 @@ class SphinxClient
 			$this->_mbenc = mb_internal_encoding();
 			mb_internal_encoding ( "latin1" );
 		}
-    }
+	}
 
 	/// leave mbstring workaround mode
 	function _MBPop ()
@@ -945,9 +945,9 @@ class SphinxClient
 
 	/// clear all attribute value overrides (for multi-queries)
 	function ResetOverrides ()
-    {
-    	$this->_overrides = array ();
-    }
+	{
+		$this->_overrides = array ();
+	}
 
 	//////////////////////////////////////////////////////////////////////////////
 

@@ -476,7 +476,7 @@ class yf_template_editor {
 		}
 		$body .= "<br /><br /><a href=\"\" onclick=\"javascript:history.back();\">{t(\"Back\")}</a>\r\n";
 		$body .= "</div>";
-        return $body;
+		return $body;
 	}
 
 	/**
@@ -767,7 +767,7 @@ class yf_template_editor {
 							// Do create template files
 							$body .= $this->_import_theme_stpls ($v1, $theme_name, $stpl_name, $stpl_content);
 						}
-    				}
+					}
 				}
 			}
 		}
@@ -789,7 +789,7 @@ class yf_template_editor {
 		// Get multidimensional array of files inside theme
 		$files_array = _class("dir")->scan_dir($this->_cur_theme_path, true);
 		// Begin to create export file
-		$export_file_content .= $ef_header."\r\n";              
+		$export_file_content .= $ef_header."\r\n";			  
 		$export_file_content .= "\t\"".$location."\" => \r\n \t\tarray(\r\n\t\t\"".$theme_name."\" => \r\n \t\t\tarray(\r\n";
 		foreach ((array)$files_array as $file_name) {
 			// Skip all other files except templates
@@ -911,7 +911,7 @@ class yf_template_editor {
 			"add_theme_form"		=> "",
 			"show_stpls_in_theme" 	=> "",
 			"edit_stpl"				=> "",
-		);             		
+		);			 		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

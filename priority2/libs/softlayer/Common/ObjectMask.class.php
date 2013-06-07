@@ -6,13 +6,13 @@
  * modification, are permitted provided that the following conditions are met:
  *
  *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ *	this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ *	this list of conditions and the following disclaimer in the documentation
+ *	and/or other materials provided with the distribution.
  *  * Neither SoftLayer Technologies, Inc. nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *	be used to endorse or promote products derived from this software without
+ *	specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -62,23 +62,23 @@
  * in the SoftLayer customer portal if you have any questions regarding use of
  * this library.
  *
- * @author      SoftLayer Technologies, Inc. <sldn@softlayer.com>
+ * @author	  SoftLayer Technologies, Inc. <sldn@softlayer.com>
  * @copyright   Copyright (c) 2009 - 2010, Softlayer Technologies, Inc
- * @license     http://sldn.softlayer.com/wiki/index.php/License
- * @see         SoftLayer_SoapClient::setObjectMask()
- * @see         SoftLayer_XmlrpcClient::setObjectMask()
+ * @license	 http://sldn.softlayer.com/wiki/index.php/License
+ * @see		 SoftLayer_SoapClient::setObjectMask()
+ * @see		 SoftLayer_XmlrpcClient::setObjectMask()
  */
 class SoftLayer_ObjectMask
 {
-    /**
-     * Define an object mask value
-     *
-     * @param string $var
-     */
-    public function __get($var)
-    {
-        $this->{$var} = new SoftLayer_ObjectMask();
+	/**
+	 * Define an object mask value
+	 *
+	 * @param string $var
+	 */
+	public function __get($var)
+	{
+		$this->{$var} = new SoftLayer_ObjectMask();
 
-        return $this->{$var};
-    }
+		return $this->{$var};
+	}
 }

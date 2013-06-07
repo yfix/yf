@@ -38,7 +38,7 @@ set_include_path(dirname(dirname(__FILE__)).'/lib'.PATH_SEPARATOR.get_include_pa
 require('FirePHPCore/fb.php');
 
 /* NOTE: You must have Output Buffering enabled via
-         ob_start() or output_buffering ini directive. */
+		 ob_start() or output_buffering ini directive. */
 
 fb('Hello World'); /* Defaults to FirePHP::LOG */
 
@@ -50,7 +50,7 @@ fb('Error message',FirePHP::ERROR);
 fb('Message with label','Label',FirePHP::LOG);
 
 fb(array('key1'=>'val1',
-         'key2'=>array(array('v1','v2'),'v3')),
+		 'key2'=>array(array('v1','v2'),'v3')),
    'TestArray',FirePHP::LOG);
 
 function test($Arg1) {

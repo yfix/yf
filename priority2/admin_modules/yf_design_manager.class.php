@@ -1185,7 +1185,7 @@ class yf_design_manager {
 			"edit_design"		=> "",
 			"add_design_form"	=> "",
 
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

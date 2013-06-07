@@ -140,25 +140,25 @@ function replaceVariablesInFile(path)
 	var content = FILE.read(path);
 
 	// @pinf replace '0.3' with '%%VERSION%%'
-    var re1  = /\n(.*)\/\/\s*@pinf\s(.*)\n/g;
-    var match1;
-    while (match1 = re1.exec(content)) {
-        var rule = match1[2].match(/^replace (.*?) with (.*)$/);
-        if(rule) {
-            // replace variables in rule
-            var re2  = /%%([^%]*)%%/g;
-            var match2;
-            while (match2 = re2.exec(rule[2])) {
-                var value;
-                if(match2[1]=="VERSION") {
-                    value = version;
-                }
-                rule[2] = rule[2].replace(match2[0], value);
-            }
-            match1[1] = match1[1].replace(rule[1], rule[2]);
-            content = content.replace(match1[0], "\n"+match1[1]+"\n");
-        }
-    }
-    
-    FILE.write(path, content);
+	var re1  = /\n(.*)\/\/\s*@pinf\s(.*)\n/g;
+	var match1;
+	while (match1 = re1.exec(content)) {
+		var rule = match1[2].match(/^replace (.*?) with (.*)$/);
+		if(rule) {
+			// replace variables in rule
+			var re2  = /%%([^%]*)%%/g;
+			var match2;
+			while (match2 = re2.exec(rule[2])) {
+				var value;
+				if(match2[1]=="VERSION") {
+					value = version;
+				}
+				rule[2] = rule[2].replace(match2[0], value);
+			}
+			match1[1] = match1[1].replace(rule[1], rule[2]);
+			content = content.replace(match1[0], "\n"+match1[1]+"\n");
+		}
+	}
+	
+	FILE.write(path, content);
 }

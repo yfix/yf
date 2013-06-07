@@ -23,36 +23,36 @@
 
  class ADODB_Iterator implements Iterator {
 
-    private $rs;
+	private $rs;
 
-    function __construct($rs) 
+	function __construct($rs) 
 	{
-        $this->rs = $rs;
-    }
-    function rewind() 
+		$this->rs = $rs;
+	}
+	function rewind() 
 	{
-        $this->rs->MoveFirst();
-    }
+		$this->rs->MoveFirst();
+	}
 
 	function valid() 
 	{
-        return !$this->rs->EOF;
-    }
+		return !$this->rs->EOF;
+	}
 	
-    function key() 
+	function key() 
 	{
-        return $this->rs->_currentRow;
-    }
+		return $this->rs->_currentRow;
+	}
 	
-    function current() 
+	function current() 
 	{
-        return $this->rs->fields;
-    }
+		return $this->rs->fields;
+	}
 	
-    function next() 
+	function next() 
 	{
-        $this->rs->MoveNext();
-    }
+		$this->rs->MoveNext();
+	}
 	
 	function __call($func, $params)
 	{
@@ -69,9 +69,9 @@
 
 
 class ADODB_BASE_RS implements IteratorAggregate {
-    function getIterator() {
-        return new ADODB_Iterator($this);
-    }
+	function getIterator() {
+		return new ADODB_Iterator($this);
+	}
 	
 	/* this is experimental - i don't really know what to return... */
 	function __toString()

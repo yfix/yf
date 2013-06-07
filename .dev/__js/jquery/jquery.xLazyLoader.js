@@ -73,7 +73,7 @@
 					&& d.css.length == loaded.css.length 
 					&& d.image.length == loaded.image.length
 					&& d.load.apply(loaded, []);
-                    return;
+					return;
 				}, d.name ?'lazy-loaded-'+ d.name : 'lazy-loaded-'+new Date().getTime());
 			};
 			
@@ -86,10 +86,10 @@
 				return;
 			};
 
-            var script = document.createElement('script');
-            script.setAttribute("type","text/javascript");
-            script.setAttribute("src", src);
-            script.setAttribute('id', name);
+			var script = document.createElement('script');
+			script.setAttribute("type","text/javascript");
+			script.setAttribute("src", src);
+			script.setAttribute('id', name);
 
 			if ($.browser.msie)
 				script.onreadystatechange = function ()	{
@@ -115,7 +115,7 @@
 
 			if ($.browser.msie)
 				link.onreadystatechange = function ()	{
-                    /loaded|complete/.test(link.readyState) && callback();
+					/loaded|complete/.test(link.readyState) && callback();
 				}
 			else if ($.browser.opera)
 				link.onload = callback;

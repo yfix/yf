@@ -38,12 +38,12 @@ function publish()
 	};
 
 	var packages = [
-	    {
-	    	"uid": descriptor.uid,
-	    	"stream": "stable",
-	    	"version": info.version,
-	    	"bundles": bundles
-	    }
+		{
+			"uid": descriptor.uid,
+			"stream": "stable",
+			"version": info.version,
+			"bundles": bundles
+		}
 	];
 
 	try

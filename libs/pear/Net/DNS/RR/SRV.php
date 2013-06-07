@@ -25,78 +25,78 @@
  */
 class Net_DNS_RR_SRV extends Net_DNS_RR
 {
-    /* class variable definitions {{{ */
-    var $name;
-    var $type;
-    var $class;
-    var $ttl;
-    var $rdlength;
-    var $rdata;
-    var $preference;
-    var $weight;
-    var $port;
-    var $target;
+	/* class variable definitions {{{ */
+	var $name;
+	var $type;
+	var $class;
+	var $ttl;
+	var $rdlength;
+	var $rdata;
+	var $preference;
+	var $weight;
+	var $port;
+	var $target;
 
-    /* }}} */
-    /* class constructor - RR(&$rro, $data, $offset = '') {{{ */
-    function Net_DNS_RR_SRV(&$rro, $data, $offset = '')
-    {
-        $this->name = $rro->name;
-        $this->type = $rro->type;
-        $this->class = $rro->class;
-        $this->ttl = $rro->ttl;
-        $this->rdlength = $rro->rdlength;
-        $this->rdata = $rro->rdata;
+	/* }}} */
+	/* class constructor - RR(&$rro, $data, $offset = '') {{{ */
+	function Net_DNS_RR_SRV(&$rro, $data, $offset = '')
+	{
+		$this->name = $rro->name;
+		$this->type = $rro->type;
+		$this->class = $rro->class;
+		$this->ttl = $rro->ttl;
+		$this->rdlength = $rro->rdlength;
+		$this->rdata = $rro->rdata;
 
-        if ($offset) {
-            if ($this->rdlength > 0) {
-                $a = unpack("@$offset/npreference/nweight/nport", $data);
-                $offset += 6;
-                $packet = new Net_DNS_Packet();
+		if ($offset) {
+			if ($this->rdlength > 0) {
+				$a = unpack("@$offset/npreference/nweight/nport", $data);
+				$offset += 6;
+				$packet = new Net_DNS_Packet();
 
-                list($target, $offset) = $packet->dn_expand($data, $offset);
-                $this->preference = $a['preference'];
-                $this->weight = $a['weight'];
-                $this->port = $a['port'];
-                $this->target = $target;
-            }
-        } elseif (is_array($data)) {
-            $this->preference = $data['preference'];
-            $this->weight = $data['weight'];
-            $this->port = $data['port'];
-            $this->target = $data['target'];
-        } else {
-            preg_match("/([0-9]+)[ \t]+([0-9]+)[ \t]+([0-9]+)[ \t]+(.+)[ \t]*$/", $data, $regs);
-            $this->preference = $regs[1];
-            $this->weight = $regs[2];
-            $this->port = $regs[3];
-            $this->target = preg_replace('/(.*)\.$/', '\\1', $regs[4]);
-        }
-    }
+				list($target, $offset) = $packet->dn_expand($data, $offset);
+				$this->preference = $a['preference'];
+				$this->weight = $a['weight'];
+				$this->port = $a['port'];
+				$this->target = $target;
+			}
+		} elseif (is_array($data)) {
+			$this->preference = $data['preference'];
+			$this->weight = $data['weight'];
+			$this->port = $data['port'];
+			$this->target = $data['target'];
+		} else {
+			preg_match("/([0-9]+)[ \t]+([0-9]+)[ \t]+([0-9]+)[ \t]+(.+)[ \t]*$/", $data, $regs);
+			$this->preference = $regs[1];
+			$this->weight = $regs[2];
+			$this->port = $regs[3];
+			$this->target = preg_replace('/(.*)\.$/', '\\1', $regs[4]);
+		}
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_SRV::rdatastr() {{{ */
-    function rdatastr()
-    {
-        if ($this->port) {
-            return intval($this->preference) . ' ' . intval($this->weight) . ' ' . intval($this->port) . ' ' . $this->target . '.';
-        }
-        return '; no data';
-    }
+	/* }}} */
+	/* Net_DNS_RR_SRV::rdatastr() {{{ */
+	function rdatastr()
+	{
+		if ($this->port) {
+			return intval($this->preference) . ' ' . intval($this->weight) . ' ' . intval($this->port) . ' ' . $this->target . '.';
+		}
+		return '; no data';
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_SRV::rr_rdata($packet, $offset) {{{ */
-    function rr_rdata($packet, $offset)
-    {
-        if (isset($this->preference)) {
-            $rdata = pack('nnn', $this->preference, $this->weight, $this->port);
-            $rdata .= $packet->dn_comp($this->target, $offset + strlen($rdata));
-            return $rdata;
-        }
-        return null;
-    }
+	/* }}} */
+	/* Net_DNS_RR_SRV::rr_rdata($packet, $offset) {{{ */
+	function rr_rdata($packet, $offset)
+	{
+		if (isset($this->preference)) {
+			$rdata = pack('nnn', $this->preference, $this->weight, $this->port);
+			$rdata .= $packet->dn_comp($this->target, $offset + strlen($rdata));
+			return $rdata;
+		}
+		return null;
+	}
 
-    /* }}} */
+	/* }}} */
 }
 /* }}} */
 /* VIM settings {{{

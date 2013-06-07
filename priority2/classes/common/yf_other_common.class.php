@@ -485,7 +485,7 @@ class yf_other_common {
 						continue;
 					}
 					$c2_to_eur	= $currency2 == "EUR" ? 1 : $eur_rates[$currency2];
-    
+	
 					$v = $c2_to_eur / $c_to_eur;
 					$rates[$currency][$currency2] = $v;
 				}

@@ -635,7 +635,7 @@ class yf_forum_post {
 				while ($A = db()->fetch_assoc($Q)) $GLOBALS["BAD_WORDS_ARRAY"] = $A["word"];
 			}
 			$str = str_replace($GLOBALS["BAD_WORDS_ARRAY"], "", $str);
-	    } 
+		} 
 		return $str;
 	} 
 

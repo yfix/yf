@@ -40,28 +40,28 @@ $rss->image = $image;
 mysql_select_db($dbHost, $dbUser, $dbPass); 
 $res = mysql_query("SELECT * FROM news ORDER BY newsdate DESC"); 
 while ($data = mysql_fetch_object($res)) { 
-    $item = new FeedItem(); 
-    $item->title = $data->title; 
-    $item->link = $data->url; 
-    $item->description = $data->short; 
-    
-    //optional
-    item->descriptionTruncSize = 500;
-    item->descriptionHtmlSyndicated = true;
-    
-    //optional (enclosure)
-    $item->enclosure = new EnclosureItem();
-    $item->enclosure->url='http://http://www.dailyphp.net/media/voice.mp3';
-    $item->enclosure->length="950230";
-    $item->enclosure->type='audio/x-mpeg'
-    
-    
+	$item = new FeedItem(); 
+	$item->title = $data->title; 
+	$item->link = $data->url; 
+	$item->description = $data->short; 
+	
+	//optional
+	item->descriptionTruncSize = 500;
+	item->descriptionHtmlSyndicated = true;
+	
+	//optional (enclosure)
+	$item->enclosure = new EnclosureItem();
+	$item->enclosure->url='http://http://www.dailyphp.net/media/voice.mp3';
+	$item->enclosure->length="950230";
+	$item->enclosure->type='audio/x-mpeg'
+	
+	
 
-    $item->date = $data->newsdate; 
-    $item->source = "http://www.dailyphp.net"; 
-    $item->author = "John Doe"; 
-     
-    $rss->addItem($item); 
+	$item->date = $data->newsdate; 
+	$item->source = "http://www.dailyphp.net"; 
+	$item->author = "John Doe"; 
+	 
+	$rss->addItem($item); 
 } 
 
 // valid format strings are: RSS0.91, RSS1.0, RSS2.0,
@@ -73,7 +73,7 @@ $rss->outputFeed("RSS1.0");
 
 
 ***************************************************************************
-*          A little setup                                                 *
+*		  A little setup												 *
 **************************************************************************/
 
 // your local timezone, set to "" to disable or for GMT
@@ -134,7 +134,7 @@ class FeedItem extends HtmlDescribable {
 	/**
 	 * Any additional elements to include as an assiciated array. All $key => $value pairs
 	 * will be included unencoded in the feed item in the form
-	 *     <$key>$value</$key>
+	 *	 <$key>$value</$key>
 	 * Again: No encoding will be used! This means you can invalidate or enhance the feed
 	 * if $value contains markup. This may be abused to embed tags not implemented by
 	 * the FeedCreator class used.
@@ -204,7 +204,7 @@ class HtmlDescribable {
 	/**
 	 * Returns a formatted description field, depending on descriptionHtmlSyndicated and
 	 * $descriptionTruncSize properties
-	 * @return    string    the formatted description  
+	 * @return	string	the formatted description  
 	 */
 	function getDescription() {
 		$descriptionField = new FeedHtmlField($this->description);
@@ -249,7 +249,7 @@ class FeedHtmlField {
 		
 	/**
 	 * Creates the right output, depending on $truncSize, $syndicateHtml properties.
-	 * @return string    the formatted field
+	 * @return string	the formatted field
 	 */
 	function output() {
 		// when field available and syndicated in html we assume 
@@ -385,7 +385,7 @@ class UniversalFeedCreator extends FeedCreator {
 				$this->_feed = new RSSCreator091();
 				break;
 		}
-        
+		
 		$vars = get_object_vars($this);
 		foreach ($vars as $key => $value) {
 			// prevent overwriting of properties "contentType", "encoding"; do not copy "_feed" itself
@@ -398,10 +398,10 @@ class UniversalFeedCreator extends FeedCreator {
 	/**
 	 * Creates a syndication feed based on the items previously added.
 	 *
-	 * @see        FeedCreator::addItem()
-	 * @param    string    format    format the feed should comply to. Valid values are:
+	 * @see		FeedCreator::addItem()
+	 * @param	string	format	format the feed should comply to. Valid values are:
 	 *			"mbox", "RSS0.91", "RSS1.0", "RSS2.0", "OPML", "ATOM0.3", "HTML", "JS"
-	 * @return    string    the contents of the feed.
+	 * @return	string	the contents of the feed.
 	 */
 	function createFeed($format = "RSS0.91") {
 		$this->_setFormat($format);
@@ -427,20 +427,20 @@ class UniversalFeedCreator extends FeedCreator {
 
 
    /**
-    * Turns on caching and checks if there is a recent version of this feed in the cache.
-    * If there is, an HTTP redirect header is sent.
-    * To effectively use caching, you should create the FeedCreator object and call this method
-    * before anything else, especially before you do the time consuming task to build the feed
-    * (web fetching, for example).
-    *
-    * @param   string   format   format the feed should comply to. Valid values are:
-    *       "mbox", "RSS0.91", "RSS1.0", "RSS2.0", "OPML", "ATOM0.3".
-    * @param filename   string   optional the filename where a recent version of the feed is saved. If not specified, the filename is $_SERVER["PHP_SELF"] with the extension changed to .xml (see _generateFilename()).
-    * @param timeout int      optional the timeout in seconds before a cached version is refreshed (defaults to 3600 = 1 hour)
-    */
+	* Turns on caching and checks if there is a recent version of this feed in the cache.
+	* If there is, an HTTP redirect header is sent.
+	* To effectively use caching, you should create the FeedCreator object and call this method
+	* before anything else, especially before you do the time consuming task to build the feed
+	* (web fetching, for example).
+	*
+	* @param   string   format   format the feed should comply to. Valid values are:
+	*	   "mbox", "RSS0.91", "RSS1.0", "RSS2.0", "OPML", "ATOM0.3".
+	* @param filename   string   optional the filename where a recent version of the feed is saved. If not specified, the filename is $_SERVER["PHP_SELF"] with the extension changed to .xml (see _generateFilename()).
+	* @param timeout int	  optional the timeout in seconds before a cached version is refreshed (defaults to 3600 = 1 hour)
+	*/
    function useCached($format="RSS0.91", $filename="", $timeout=3600) {
-      $this->_setFormat($format);
-      $this->_feed->useCached($filename, $timeout);
+	  $this->_setFormat($format);
+	  $this->_feed->useCached($filename, $timeout);
    }
 
    
@@ -448,7 +448,7 @@ class UniversalFeedCreator extends FeedCreator {
 	* Outputs feed to the browser - needed for on-the-fly feed generation (like it is done in WordPress, etc.)
 	*
 	* @param	format	string	format the feed should comply to. Valid values are:
-    * 							"mbox", "RSS0.91", "RSS1.0", "RSS2.0", "OPML", "ATOM0.3".
+	* 							"mbox", "RSS0.91", "RSS1.0", "RSS2.0", "OPML", "ATOM0.3".
 	*/
    function outputFeed($format='RSS0.91') {
 		$this->_setFormat($format);
@@ -512,14 +512,14 @@ class FeedCreator extends HtmlDescribable {
 	/**
 	 * Any additional elements to include as an assiciated array. All $key => $value pairs
 	 * will be included unencoded in the feed in the form
-	 *     <$key>$value</$key>
+	 *	 <$key>$value</$key>
 	 * Again: No encoding will be used! This means you can invalidate or enhance the feed
 	 * if $value contains markup. This may be abused to embed tags not implemented by
 	 * the FeedCreator class used.
 	 */
 	var $additionalElements = Array();
    
-    
+	
 	/**
 	 * Adds an FeedItem to the feed.
 	 *
@@ -539,9 +539,9 @@ class FeedCreator extends HtmlDescribable {
 	 * If the string is already shorter than $length, it is returned unchanged.
 	 * 
 	 * @static
-	 * @param string    string A string to be truncated.
-	 * @param int        length the maximum length the string should be truncated to
-	 * @return string    the truncated string
+	 * @param string	string A string to be truncated.
+	 * @param int		length the maximum length the string should be truncated to
+	 * @return string	the truncated string
 	 */
 	function iTrunc($string, $length) {
 		if (strlen($string)<=$length) {
@@ -586,7 +586,7 @@ class FeedCreator extends HtmlDescribable {
 	 * $additionalElements.
 	 * @param	elements	array	an associative array containing key => value pairs
 	 * @param indentString	string	a string that will be inserted before every generated line
-	 * @return    string    the XML tags corresponding to $additionalElements
+	 * @return	string	the XML tags corresponding to $additionalElements
 	 */
 	function _createAdditionalElements($elements, $indentString="") {
 		$ae = "";
@@ -609,7 +609,7 @@ class FeedCreator extends HtmlDescribable {
 	/**
 	 * Builds the feed's text.
 	 * @abstract
-	 * @return    string    the feed's complete text 
+	 * @return	string	the feed's complete text 
 	 */
 	function createFeed() {
 	}
@@ -659,7 +659,7 @@ class FeedCreator extends HtmlDescribable {
 		readfile($filename, "r");
 		//die();
 	}
-    
+	
 	/**
 	 * Turns on caching and checks if there is a recent version of this feed in the cache.
 	 * If there is, an HTTP redirect header is sent.
@@ -826,9 +826,9 @@ class RSSCreator10 extends FeedCreator {
 	/**
 	 * Builds the RSS feed's text. The feed will be compliant to RDF Site Summary (RSS) 1.0.
 	 * The feed will contain all items previously added in the same order.
-	 * @return    string    the feed's complete text 
+	 * @return	string	the feed's complete text 
 	 */
-	function createFeed() {     
+	function createFeed() {	 
 		$feed = "<?xml version=\"1.0\" encoding=\"".$this->encoding."\"?>\n";
 		$feed.= $this->_createGeneratorComment();
 		if ($this->cssStyleSheet=="") {
@@ -836,55 +836,55 @@ class RSSCreator10 extends FeedCreator {
 		}
 		$feed.= $this->_createStylesheetReferences();
 		$feed.= "<rdf:RDF\n";
-		$feed.= "    xmlns=\"http://purl.org/rss/1.0/\"\n";
-		$feed.= "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n"; 
-		$feed.= "    xmlns:slash=\"http://purl.org/rss/1.0/modules/slash/\"\n";
-		$feed.= "    xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n";
-		$feed.= "    <channel rdf:about=\"".$this->syndicationURL."\">\n";
-		$feed.= "        <title>".htmlspecialchars($this->title)."</title>\n";
-		$feed.= "        <description>".htmlspecialchars($this->description)."</description>\n";
-		$feed.= "        <link>".$this->link."</link>\n";
+		$feed.= "	xmlns=\"http://purl.org/rss/1.0/\"\n";
+		$feed.= "	xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n"; 
+		$feed.= "	xmlns:slash=\"http://purl.org/rss/1.0/modules/slash/\"\n";
+		$feed.= "	xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n";
+		$feed.= "	<channel rdf:about=\"".$this->syndicationURL."\">\n";
+		$feed.= "		<title>".htmlspecialchars($this->title)."</title>\n";
+		$feed.= "		<description>".htmlspecialchars($this->description)."</description>\n";
+		$feed.= "		<link>".$this->link."</link>\n";
 		if ($this->image!=null) {
-			$feed.= "        <image rdf:resource=\"".$this->image->url."\" />\n";
+			$feed.= "		<image rdf:resource=\"".$this->image->url."\" />\n";
 		}
 		$now = new FeedDate();
-		$feed.= "       <dc:date>".htmlspecialchars($now->iso8601())."</dc:date>\n";
-		$feed.= "        <items>\n";
-		$feed.= "            <rdf:Seq>\n";
+		$feed.= "	   <dc:date>".htmlspecialchars($now->iso8601())."</dc:date>\n";
+		$feed.= "		<items>\n";
+		$feed.= "			<rdf:Seq>\n";
 		for ($i=0;$i<count($this->items);$i++) {
-			$feed.= "                <rdf:li rdf:resource=\"".htmlspecialchars($this->items[$i]->link)."\"/>\n";
+			$feed.= "				<rdf:li rdf:resource=\"".htmlspecialchars($this->items[$i]->link)."\"/>\n";
 		}
-		$feed.= "            </rdf:Seq>\n";
-		$feed.= "        </items>\n";
-		$feed.= "    </channel>\n";
+		$feed.= "			</rdf:Seq>\n";
+		$feed.= "		</items>\n";
+		$feed.= "	</channel>\n";
 		if ($this->image!=null) {
-			$feed.= "    <image rdf:about=\"".$this->image->url."\">\n";
-			$feed.= "        <title>".$this->image->title."</title>\n";
-			$feed.= "        <link>".$this->image->link."</link>\n";
-			$feed.= "        <url>".$this->image->url."</url>\n";
-			$feed.= "    </image>\n";
+			$feed.= "	<image rdf:about=\"".$this->image->url."\">\n";
+			$feed.= "		<title>".$this->image->title."</title>\n";
+			$feed.= "		<link>".$this->image->link."</link>\n";
+			$feed.= "		<url>".$this->image->url."</url>\n";
+			$feed.= "	</image>\n";
 		}
-		$feed.= $this->_createAdditionalElements($this->additionalElements, "    ");
+		$feed.= $this->_createAdditionalElements($this->additionalElements, "	");
 		
 		for ($i=0;$i<count($this->items);$i++) {
-			$feed.= "    <item rdf:about=\"".htmlspecialchars($this->items[$i]->link)."\">\n";
-			//$feed.= "        <dc:type>Posting</dc:type>\n";
-			$feed.= "        <dc:format>text/html</dc:format>\n";
+			$feed.= "	<item rdf:about=\"".htmlspecialchars($this->items[$i]->link)."\">\n";
+			//$feed.= "		<dc:type>Posting</dc:type>\n";
+			$feed.= "		<dc:format>text/html</dc:format>\n";
 			if ($this->items[$i]->date!=null) {
 				$itemDate = new FeedDate($this->items[$i]->date);
-				$feed.= "        <dc:date>".htmlspecialchars($itemDate->iso8601())."</dc:date>\n";
+				$feed.= "		<dc:date>".htmlspecialchars($itemDate->iso8601())."</dc:date>\n";
 			}
 			if ($this->items[$i]->source!="") {
-				$feed.= "        <dc:source>".htmlspecialchars($this->items[$i]->source)."</dc:source>\n";
+				$feed.= "		<dc:source>".htmlspecialchars($this->items[$i]->source)."</dc:source>\n";
 			}
 			if ($this->items[$i]->author!="") {
-				$feed.= "        <dc:creator>".htmlspecialchars($this->items[$i]->author)."</dc:creator>\n";
+				$feed.= "		<dc:creator>".htmlspecialchars($this->items[$i]->author)."</dc:creator>\n";
 			}
-			$feed.= "        <title>".htmlspecialchars(strip_tags(strtr($this->items[$i]->title,"\n\r","  ")))."</title>\n";
-			$feed.= "        <link>".htmlspecialchars($this->items[$i]->link)."</link>\n";
-			$feed.= "        <description>".htmlspecialchars($this->items[$i]->description)."</description>\n";
-			$feed.= $this->_createAdditionalElements($this->items[$i]->additionalElements, "        ");
-			$feed.= "    </item>\n";
+			$feed.= "		<title>".htmlspecialchars(strip_tags(strtr($this->items[$i]->title,"\n\r","  ")))."</title>\n";
+			$feed.= "		<link>".htmlspecialchars($this->items[$i]->link)."</link>\n";
+			$feed.= "		<description>".htmlspecialchars($this->items[$i]->description)."</description>\n";
+			$feed.= $this->_createAdditionalElements($this->items[$i]->additionalElements, "		");
+			$feed.= "	</item>\n";
 		}
 		$feed.= "</rdf:RDF>\n";
 		return $feed;
@@ -924,7 +924,7 @@ class RSSCreator091 extends FeedCreator {
 	/**
 	 * Builds the RSS feed's text. The feed will be compliant to RDF Site Summary (RSS) 1.0.
 	 * The feed will contain all items previously added in the same order.
-	 * @return    string    the feed's complete text 
+	 * @return	string	the feed's complete text 
 	 */
 	function createFeed() {
 		$feed = "<?xml version=\"1.0\" encoding=\"".$this->encoding."\"?>\n";
@@ -935,120 +935,120 @@ class RSSCreator091 extends FeedCreator {
 		$feed.= "\n xmlns:dc=\"http://purl.org/dc/elements/1.1/\"";
 		$feed.= "\n xmlns:atom=\"http://www.w3.org/2005/Atom\"";
 		$feed.= "\n>\n"; 
-		$feed.= "    <channel>\n";
-		$feed.= "        <title>".FeedCreator::iTrunc(htmlspecialchars($this->title),100)."</title>\n";
+		$feed.= "	<channel>\n";
+		$feed.= "		<title>".FeedCreator::iTrunc(htmlspecialchars($this->title),100)."</title>\n";
 		$this->descriptionTruncSize = 500;
-		$feed.= "        <description>".$this->getDescription()."</description>\n";
-		$feed.= "        <link>".$this->link."</link>\n";
+		$feed.= "		<description>".$this->getDescription()."</description>\n";
+		$feed.= "		<link>".$this->link."</link>\n";
 // Added by of
 		if ($this->self_link) {
-			$feed.= "        <atom:link href=\"".$this->self_link."\" rel=\"self\" type=\"application/rss+xml\" />\n";
+			$feed.= "		<atom:link href=\"".$this->self_link."\" rel=\"self\" type=\"application/rss+xml\" />\n";
 		}
 		$now = new FeedDate();
-		$feed.= "        <lastBuildDate>".htmlspecialchars($now->rfc822())."</lastBuildDate>\n";
-//		$feed.= "        <generator>".FEEDCREATOR_VERSION."</generator>\n";
+		$feed.= "		<lastBuildDate>".htmlspecialchars($now->rfc822())."</lastBuildDate>\n";
+//		$feed.= "		<generator>".FEEDCREATOR_VERSION."</generator>\n";
 
 		if ($this->image!=null) {
-			$feed.= "        <image>\n";
-			$feed.= "            <url>".$this->image->url."</url>\n"; 
-			$feed.= "            <title>".FeedCreator::iTrunc(htmlspecialchars($this->image->title),100)."</title>\n"; 
-			$feed.= "            <link>".$this->image->link."</link>\n";
+			$feed.= "		<image>\n";
+			$feed.= "			<url>".$this->image->url."</url>\n"; 
+			$feed.= "			<title>".FeedCreator::iTrunc(htmlspecialchars($this->image->title),100)."</title>\n"; 
+			$feed.= "			<link>".$this->image->link."</link>\n";
 			if ($this->image->width!="") {
-				$feed.= "            <width>".$this->image->width."</width>\n";
+				$feed.= "			<width>".$this->image->width."</width>\n";
 			}
 			if ($this->image->height!="") {
-				$feed.= "            <height>".$this->image->height."</height>\n";
+				$feed.= "			<height>".$this->image->height."</height>\n";
 			}
 			if ($this->image->description!="") {
-				$feed.= "            <description>".$this->image->getDescription()."</description>\n";
+				$feed.= "			<description>".$this->image->getDescription()."</description>\n";
 			}
-			$feed.= "        </image>\n";
+			$feed.= "		</image>\n";
 		}
 		if ($this->language!="") {
-			$feed.= "        <language>".$this->language."</language>\n";
+			$feed.= "		<language>".$this->language."</language>\n";
 		}
 		if ($this->copyright!="") {
-			$feed.= "        <copyright>".FeedCreator::iTrunc(htmlspecialchars($this->copyright),100)."</copyright>\n";
+			$feed.= "		<copyright>".FeedCreator::iTrunc(htmlspecialchars($this->copyright),100)."</copyright>\n";
 		}
 		if ($this->editor!="") {
-			$feed.= "        <managingEditor>".FeedCreator::iTrunc(htmlspecialchars($this->editor),100)."</managingEditor>\n";
+			$feed.= "		<managingEditor>".FeedCreator::iTrunc(htmlspecialchars($this->editor),100)."</managingEditor>\n";
 		}
 		if ($this->webmaster!="") {
-			$feed.= "        <webMaster>".FeedCreator::iTrunc(htmlspecialchars($this->webmaster),100)."</webMaster>\n";
+			$feed.= "		<webMaster>".FeedCreator::iTrunc(htmlspecialchars($this->webmaster),100)."</webMaster>\n";
 		}
 		if ($this->pubDate!="") {
 			$pubDate = new FeedDate($this->pubDate);
-			$feed.= "        <pubDate>".htmlspecialchars($pubDate->rfc822())."</pubDate>\n";
+			$feed.= "		<pubDate>".htmlspecialchars($pubDate->rfc822())."</pubDate>\n";
 		}
 		if ($this->category!="") {
-			$feed.= "        <category>".htmlspecialchars($this->category)."</category>\n";
+			$feed.= "		<category>".htmlspecialchars($this->category)."</category>\n";
 		}
 		if ($this->docs!="") {
-			$feed.= "        <docs>".FeedCreator::iTrunc(htmlspecialchars($this->docs),500)."</docs>\n";
+			$feed.= "		<docs>".FeedCreator::iTrunc(htmlspecialchars($this->docs),500)."</docs>\n";
 		}
 		if ($this->ttl!="") {
-			$feed.= "        <ttl>".htmlspecialchars($this->ttl)."</ttl>\n";
+			$feed.= "		<ttl>".htmlspecialchars($this->ttl)."</ttl>\n";
 		}
 		if ($this->rating!="") {
-			$feed.= "        <rating>".FeedCreator::iTrunc(htmlspecialchars($this->rating),500)."</rating>\n";
+			$feed.= "		<rating>".FeedCreator::iTrunc(htmlspecialchars($this->rating),500)."</rating>\n";
 		}
 		if ($this->skipHours!="") {
-			$feed.= "        <skipHours>".htmlspecialchars($this->skipHours)."</skipHours>\n";
+			$feed.= "		<skipHours>".htmlspecialchars($this->skipHours)."</skipHours>\n";
 		}
 		if ($this->skipDays!="") {
-			$feed.= "        <skipDays>".htmlspecialchars($this->skipDays)."</skipDays>\n";
+			$feed.= "		<skipDays>".htmlspecialchars($this->skipDays)."</skipDays>\n";
 		}
-		$feed.= $this->_createAdditionalElements($this->additionalElements, "    ");
+		$feed.= $this->_createAdditionalElements($this->additionalElements, "	");
 
 		for ($i=0;$i<count($this->items);$i++) {
-			$feed.= "        <item>\n";
-			$feed.= "            <title>".FeedCreator::iTrunc(htmlspecialchars(strip_tags($this->items[$i]->title)),100)."</title>\n";
-			$feed.= "            <link>".htmlspecialchars($this->items[$i]->link)."</link>\n";
-			$feed.= "            <description>".$this->items[$i]->getDescription()."</description>\n";
+			$feed.= "		<item>\n";
+			$feed.= "			<title>".FeedCreator::iTrunc(htmlspecialchars(strip_tags($this->items[$i]->title)),100)."</title>\n";
+			$feed.= "			<link>".htmlspecialchars($this->items[$i]->link)."</link>\n";
+			$feed.= "			<description>".$this->items[$i]->getDescription()."</description>\n";
 			
 			if ($this->items[$i]->author!="") {
-//				$feed.= "            <author>".htmlspecialchars($this->items[$i]->author)."</author>\n";
+//				$feed.= "			<author>".htmlspecialchars($this->items[$i]->author)."</author>\n";
 // Added by of
-				$feed.= "            <dc:creator>".htmlspecialchars($this->items[$i]->author)."</dc:creator>\n";
+				$feed.= "			<dc:creator>".htmlspecialchars($this->items[$i]->author)."</dc:creator>\n";
 			}
 			/*
 			// on hold
 			if ($this->items[$i]->source!="") {
-					$feed.= "            <source>".htmlspecialchars($this->items[$i]->source)."</source>\n";
+					$feed.= "			<source>".htmlspecialchars($this->items[$i]->source)."</source>\n";
 			}
 			*/
 			if ($this->items[$i]->category!="") {
-				$feed.= "            <category>".htmlspecialchars($this->items[$i]->category)."</category>\n";
+				$feed.= "			<category>".htmlspecialchars($this->items[$i]->category)."</category>\n";
 			}
 			if ($this->items[$i]->comments!="") {
-				$feed.= "            <comments>".htmlspecialchars($this->items[$i]->comments)."</comments>\n";
+				$feed.= "			<comments>".htmlspecialchars($this->items[$i]->comments)."</comments>\n";
 			}
 			if ($this->items[$i]->date!="") {
 			$itemDate = new FeedDate($this->items[$i]->date);
-				$feed.= "            <pubDate>".htmlspecialchars($itemDate->rfc822())."</pubDate>\n";
+				$feed.= "			<pubDate>".htmlspecialchars($itemDate->rfc822())."</pubDate>\n";
 			}
 			if ($this->items[$i]->guid!="") {
-				$feed.= "            <guid isPermaLink=\"false\">".htmlspecialchars($this->items[$i]->guid)."</guid>\n";
+				$feed.= "			<guid isPermaLink=\"false\">".htmlspecialchars($this->items[$i]->guid)."</guid>\n";
 			}
-			$feed.= $this->_createAdditionalElements($this->items[$i]->additionalElements, "        ");
+			$feed.= $this->_createAdditionalElements($this->items[$i]->additionalElements, "		");
 			
 			if ($this->RSSVersion == "2.0" && $this->items[$i]->enclosure != NULL)
 				{
-				                $feed.= "            <enclosure url=\"";
-				                $feed.= $this->items[$i]->enclosure->url;
-				                $feed.= "\" length=\"";
-				                $feed.= $this->items[$i]->enclosure->length;
-				                $feed.= "\" type=\"";
-				                $feed.= $this->items[$i]->enclosure->type;
-				                $feed.= "\"/>\n";
-		            	}
-            	
+								$feed.= "			<enclosure url=\"";
+								$feed.= $this->items[$i]->enclosure->url;
+								$feed.= "\" length=\"";
+								$feed.= $this->items[$i]->enclosure->length;
+								$feed.= "\" type=\"";
+								$feed.= $this->items[$i]->enclosure->type;
+								$feed.= "\"/>\n";
+						}
+				
 		
 		
-			$feed.= "        </item>\n";
+			$feed.= "		</item>\n";
 		}
 		
-		$feed.= "    </channel>\n";
+		$feed.= "	</channel>\n";
 		$feed.= "</rss>\n";
 		return $feed;
 	}
@@ -1065,10 +1065,10 @@ class RSSCreator091 extends FeedCreator {
  */
 class RSSCreator20 extends RSSCreator091 {
 
-    function RSSCreator20() {
-        parent::_setRSSVersion("2.0");
-    }
-    
+	function RSSCreator20() {
+		parent::_setRSSVersion("2.0");
+	}
+	
 }
 
 /**
@@ -1103,47 +1103,47 @@ class RSSCreator20 extends RSSCreator091 {
 			$feed.= " xml:lang=\"".$this->language."\"";
 		}
 		$feed.= ">\n"; 
-		$feed.= "    <title>".htmlspecialchars($this->title)."</title>\n";
-		$feed.= "    <subtitle>".htmlspecialchars($this->description)."</subtitle>\n";
-		$feed.= "    <link rel=\"alternate\" type=\"text/html\" href=\"".htmlspecialchars($this->link)."\"/>\n";
-		$feed.= "    <id>".htmlspecialchars($this->link)."</id>\n";
+		$feed.= "	<title>".htmlspecialchars($this->title)."</title>\n";
+		$feed.= "	<subtitle>".htmlspecialchars($this->description)."</subtitle>\n";
+		$feed.= "	<link rel=\"alternate\" type=\"text/html\" href=\"".htmlspecialchars($this->link)."\"/>\n";
+		$feed.= "	<id>".htmlspecialchars($this->link)."</id>\n";
 		$now = new FeedDate();
-		$feed.= "    <updated>".htmlspecialchars($now->iso8601())."</updated>\n";
+		$feed.= "	<updated>".htmlspecialchars($now->iso8601())."</updated>\n";
 		if ($this->editor!="") {
-			$feed.= "    <author>\n";
-			$feed.= "        <name>".$this->editor."</name>\n";
+			$feed.= "	<author>\n";
+			$feed.= "		<name>".$this->editor."</name>\n";
 			if ($this->editorEmail!="") {
-				$feed.= "        <email>".$this->editorEmail."</email>\n";
+				$feed.= "		<email>".$this->editorEmail."</email>\n";
 			}
-			$feed.= "    </author>\n";
+			$feed.= "	</author>\n";
 		}
-//		$feed.= "    <generator>".FEEDCREATOR_VERSION."</generator>\n";
+//		$feed.= "	<generator>".FEEDCREATOR_VERSION."</generator>\n";
 		$feed.= "<link rel=\"self\" type=\"application/atom+xml\" href=\"". $this->syndicationURL . "\" />\n";
-		$feed.= $this->_createAdditionalElements($this->additionalElements, "    ");
+		$feed.= $this->_createAdditionalElements($this->additionalElements, "	");
 		for ($i=0;$i<count($this->items);$i++) {
-			$feed.= "    <entry>\n";
-			$feed.= "        <title>".htmlspecialchars(strip_tags($this->items[$i]->title))."</title>\n";
-			$feed.= "        <link rel=\"alternate\" type=\"text/html\" href=\"".htmlspecialchars($this->items[$i]->link)."\"/>\n";
+			$feed.= "	<entry>\n";
+			$feed.= "		<title>".htmlspecialchars(strip_tags($this->items[$i]->title))."</title>\n";
+			$feed.= "		<link rel=\"alternate\" type=\"text/html\" href=\"".htmlspecialchars($this->items[$i]->link)."\"/>\n";
 			if ($this->items[$i]->date=="") {
 				$this->items[$i]->date = time();
 			}
 			$itemDate = new FeedDate($this->items[$i]->date);
-			$feed.= "        <published>".htmlspecialchars($itemDate->iso8601())."</published>\n";
-			$feed.= "        <updated>".htmlspecialchars($itemDate->iso8601())."</updated>\n";
-			$feed.= "        <id>".htmlspecialchars($this->items[$i]->link)."</id>\n";
-			$feed.= $this->_createAdditionalElements($this->items[$i]->additionalElements, "        ");
+			$feed.= "		<published>".htmlspecialchars($itemDate->iso8601())."</published>\n";
+			$feed.= "		<updated>".htmlspecialchars($itemDate->iso8601())."</updated>\n";
+			$feed.= "		<id>".htmlspecialchars($this->items[$i]->link)."</id>\n";
+			$feed.= $this->_createAdditionalElements($this->items[$i]->additionalElements, "		");
 			if ($this->items[$i]->author!="") {
-				$feed.= "        <author>\n";
-				$feed.= "            <name>".htmlspecialchars($this->items[$i]->author)."</name>\n";
-				$feed.= "        </author>\n";
+				$feed.= "		<author>\n";
+				$feed.= "			<name>".htmlspecialchars($this->items[$i]->author)."</name>\n";
+				$feed.= "		</author>\n";
 			}
 			if ($this->items[$i]->description!="") {
-				$feed.= "        <summary>".htmlspecialchars($this->items[$i]->description)."</summary>\n";
+				$feed.= "		<summary>".htmlspecialchars($this->items[$i]->description)."</summary>\n";
 			}
 			if ($this->items[$i]->enclosure != NULL) {
-			$feed.="        <link rel=\"enclosure\" href=\"". $this->items[$i]->enclosure->url ."\" type=\"". $this->items[$i]->enclosure->type."\"  length=\"". $this->items[$i]->enclosure->length . "\" />\n";
+			$feed.="		<link rel=\"enclosure\" href=\"". $this->items[$i]->enclosure->url ."\" type=\"". $this->items[$i]->enclosure->type."\"  length=\"". $this->items[$i]->enclosure->length . "\" />\n";
 			}
-			$feed.= "    </entry>\n";
+			$feed.= "	</entry>\n";
 		}
 		$feed.= "</feed>\n";
 		return $feed;
@@ -1164,7 +1164,7 @@ class MBOXCreator extends FeedCreator {
 		$this->contentType = "text/plain";
 		$this->encoding = "ISO-8859-15";
 	}
-    
+	
 	function qp_enc($input = "", $line_max = 76) { 
 		$hex = array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'); 
 		$lines = preg_split("/(?:\r\n|\r|\n)/", $input); 
@@ -1198,7 +1198,7 @@ class MBOXCreator extends FeedCreator {
 
 	/**
 	 * Builds the MBOX contents.
-	 * @return    string    the feed's complete text 
+	 * @return	string	the feed's complete text 
 	 */
 	function createFeed() {
 		for ($i=0;$i<count($this->items);$i++) {
@@ -1250,32 +1250,32 @@ class OPMLCreator extends FeedCreator {
 	function OPMLCreator() {
 		$this->encoding = "utf-8";
 	}
-    
-	function createFeed() {     
+	
+	function createFeed() {	 
 		$feed = "<?xml version=\"1.0\" encoding=\"".$this->encoding."\"?>\n";
 		$feed.= $this->_createGeneratorComment();
 		$feed.= $this->_createStylesheetReferences();
 		$feed.= "<opml xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
-		$feed.= "    <head>\n";
-		$feed.= "        <title>".htmlspecialchars($this->title)."</title>\n";
+		$feed.= "	<head>\n";
+		$feed.= "		<title>".htmlspecialchars($this->title)."</title>\n";
 		if ($this->pubDate!="") {
 			$date = new FeedDate($this->pubDate);
-			$feed.= "         <dateCreated>".$date->rfc822()."</dateCreated>\n";
+			$feed.= "		 <dateCreated>".$date->rfc822()."</dateCreated>\n";
 		}
 		if ($this->lastBuildDate!="") {
 			$date = new FeedDate($this->lastBuildDate);
-			$feed.= "         <dateModified>".$date->rfc822()."</dateModified>\n";
+			$feed.= "		 <dateModified>".$date->rfc822()."</dateModified>\n";
 		}
 		if ($this->editor!="") {
-			$feed.= "         <ownerName>".$this->editor."</ownerName>\n";
+			$feed.= "		 <ownerName>".$this->editor."</ownerName>\n";
 		}
 		if ($this->editorEmail!="") {
-			$feed.= "         <ownerEmail>".$this->editorEmail."</ownerEmail>\n";
+			$feed.= "		 <ownerEmail>".$this->editorEmail."</ownerEmail>\n";
 		}
-		$feed.= "    </head>\n";
-		$feed.= "    <body>\n";
+		$feed.= "	</head>\n";
+		$feed.= "	<body>\n";
 		for ($i=0;$i<count($this->items);$i++) {
-			$feed.= "    <outline type=\"rss\" ";
+			$feed.= "	<outline type=\"rss\" ";
 			$title = htmlspecialchars(strip_tags(strtr($this->items[$i]->title,"\n\r","  ")));
 			$feed.= " title=\"".$title."\"";
 			$feed.= " text=\"".$title."\"";
@@ -1283,7 +1283,7 @@ class OPMLCreator extends FeedCreator {
 			$feed.= " url=\"".htmlspecialchars($this->items[$i]->link)."\"";
 			$feed.= "/>\n";
 		}
-		$feed.= "    </body>\n";
+		$feed.= "	</body>\n";
 		$feed.= "</opml>\n";
 		return $feed;
 	}
@@ -1346,7 +1346,7 @@ class HTMLCreator extends FeedCreator {
 
 	/**
 	 * Writes the HTML.
-	 * @return    string    the scripts's complete text 
+	 * @return	string	the scripts's complete text 
 	 */
 	function createFeed() {
 		// if there is styleless output, use the content of this variable and ignore the rest
@@ -1427,7 +1427,7 @@ class HTMLCreator extends FeedCreator {
 		$feed= "".join($feedArray, "\r\n");
 		return $feed;
 	}
-    
+	
 	/**
 	 * Overrrides parent to produce .html extensions
 	 *
@@ -1453,7 +1453,7 @@ class JSCreator extends HTMLCreator {
 	
 	/**
 	 * writes the javascript
-	 * @return    string    the scripts's complete text 
+	 * @return	string	the scripts's complete text 
 	 */
 	function createFeed() 
 	{
@@ -1466,7 +1466,7 @@ class JSCreator extends HTMLCreator {
 		}
 		return $jsFeed;
 	}
-    
+	
 	/**
 	 * Overrrides parent to produce .js extensions
 	 *

@@ -152,19 +152,19 @@ class yf_dev{
 				}
 				$nginx_sites[] = 
 "server {
-	listen      ".$server["listen"].";
+	listen	  ".$server["listen"].";
 	server_name  ".str_replace(":81", "", $server["name"]." ".$server["aliases"]).";
 	root ".$server["root"].";
 
-    include nginx_shared.conf;
+	include nginx_shared.conf;
 
 	location @proxy_without_cache {
-        proxy_pass	http://".$server["name"].":81;
-        proxy_set_header Host \$server_name;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+		proxy_pass	http://".$server["name"].":81;
+		proxy_set_header Host \$server_name;
+		proxy_set_header X-Real-IP \$remote_addr;
+		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
 		proxy_set_header If-Modified-Since \"\";
-    }
+	}
 	location @proxy_with_cache {
 		proxy_cache mycache;
 		proxy_cache_valid 200 301 302 304 5m;
@@ -172,17 +172,17 @@ class yf_dev{
 		proxy_hide_header \"Set-Cookie\";
 		proxy_ignore_headers \"Cache-Control\" \"Expires\";
 
-        proxy_pass  http://".$server["name"].":81;
-        proxy_set_header Host \$server_name;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+		proxy_pass  http://".$server["name"].":81;
+		proxy_set_header Host \$server_name;
+		proxy_set_header X-Real-IP \$remote_addr;
+		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
 		proxy_set_header If-Modified-Since \"\";
 	}
 }
 ";
 			}
 //print_R($hosts);
-			$body .= "<pre>".str_replace(array("    ", "\r"), array("\t", ""), implode("\n\n\n", $nginx_sites)."</pre>");
+			$body .= "<pre>".str_replace(array("	", "\r"), array("\t", ""), implode("\n\n\n", $nginx_sites)."</pre>");
 		}
 		$body .= "<form action='./?object=".$_GET["object"]."&action=".$_GET["action"]."' method='post'>
 					<textarea name='apache_conf' style='width:90%; height:200px;'></textarea>
@@ -650,7 +650,7 @@ class yf_dev{
 			"result"	=> _prepare_html($_result),
 			"form_action"=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 		);
-    	return tpl()->parse($_GET["object"]."/form_convert_main", $replace);
+		return tpl()->parse($_GET["object"]."/form_convert_main", $replace);
 	}
 
 	/**
@@ -673,21 +673,21 @@ class yf_dev{
 			"result"		=> _prepare_html($_result),
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 		);
-    	return tpl()->parse($_GET["object"]."/css_divider_main", $replace);
+		return tpl()->parse($_GET["object"]."/css_divider_main", $replace);
 	}
 	
 	/**
 	* Do parse given CSS string into array
 	*/
 	function _parse_css ($str) {
-	    // Remove comments
-	    $str = preg_replace("/\/\*(.*)?\*\//Usi", "", $str);
+		// Remove comments
+		$str = preg_replace("/\/\*(.*)?\*\//Usi", "", $str);
 
-	    // Parse csscode into array [selector] => array([properties]=>[values])
-	    $parts = explode("}",$str);
+		// Parse csscode into array [selector] => array([properties]=>[values])
+		$parts = explode("}",$str);
 		foreach ((array)$parts as $part) {
 			$part = trim($part);
-	        list($keystr,$codestr) = explode("{",$part);
+			list($keystr,$codestr) = explode("{",$part);
 			$properties = explode(";", trim($codestr));
 			foreach ((array)$properties as $A) {
 				list($property, $value) = explode(":", $A);
@@ -783,9 +783,9 @@ class yf_dev{
 					} elseif ($location == "project") {
 						$basedir = INCLUDE_PATH;
 					}
-		    
+			
 					foreach ((array)$fld as $folder) {
-		    
+			
 						// Get array of files inside folder
 						foreach ((array)$this->DIR_OBJ->scan_dir($basedir. $folder, true, array("", "/.php\$/"), "/(svn|git)/") as $fpath) {
 							if (!strlen($fpath)) {
@@ -805,7 +805,7 @@ class yf_dev{
 								$retval = implode("\n", (array)$retval);
 								if (false === strpos($retval, "No syntax errors detected")) {
 									$p = strpos($retval, "Errors parsing");
-		                            $retval = substr($retval, 0, $p);
+									$retval = substr($retval, 0, $p);
 									$error_message[] = $retval;
 								} else {
 									if (empty($syntax_check_file_hashes[$fpath]) || $_file_hash != $syntax_check_file_hashes[$fpath]) {
@@ -817,7 +817,7 @@ class yf_dev{
 						}
 					}
 				}
-		    
+			
 				$files_changed = 0;			
 				if (empty($hashes_old) || $hashes_old != $syntax_check_file_hashes) {
 					$files_changed = 1;
@@ -826,7 +826,7 @@ class yf_dev{
 				if (main()->USE_SYSTEM_CACHE && $files_changed) {
 					cache()->put("syntax_check_file_hashes", $syntax_check_file_hashes);
 				}
-		    
+			
 				$num_errors = count($error_message);
 				
 				if($internal_request){

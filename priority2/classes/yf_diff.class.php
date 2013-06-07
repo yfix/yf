@@ -23,7 +23,7 @@ class yf_diff {
 	* Type of diff to use
 	* @var int
 	*/
-	var $method       = 'exec';
+	var $method	   = 'exec';
 	
 	/**
 	* Differences found?
@@ -96,7 +96,7 @@ class yf_diff {
 						$diff_res_array[$c]['new'][] = substr($l_val,2);
 					}
 				}
-				$out_str    = '';
+				$out_str	= '';
 				$clr_buffer = '';
 				for ($a = -1; $a < count($str1_lines); $a++) {
 					if (is_array($diff_res_array[$a+1])) {
@@ -104,7 +104,7 @@ class yf_diff {
 							$this->diff_found = 1;
 							$clr_buffer .= htmlspecialchars($str1_lines[$a]).' ';
 						}
-						$out_str     .= $clr_buffer;
+						$out_str	 .= $clr_buffer;
 						$clr_buffer   = '';
 						if (is_array($diff_res_array[$a+1]['old'])) {
 							$this->diff_found = 1;
@@ -196,11 +196,11 @@ class yf_diff {
 	* @param	string	comapre string 2
 	* @return	string
 	*/
-    function _get_php_diff($str1 , $str2) {
-    	$str1 = explode("\n", str_replace("\r\n", "\n", $str1));
-    	$str2 = explode("\n", str_replace("\r\n", "\n", $str2));
+	function _get_php_diff($str1 , $str2) {
+		$str1 = explode("\n", str_replace("\r\n", "\n", $str1));
+		$str2 = explode("\n", str_replace("\r\n", "\n", $str2));
 
-    	include_once YF_PATH.'libs/pear/Text/Diff.php';
+		include_once YF_PATH.'libs/pear/Text/Diff.php';
 		include_once YF_PATH.'libs/pear/Text/Diff/Renderer.php';
 		include_once YF_PATH.'libs/pear/Text/Diff/Renderer/inline.php';
 //		include_once YF_PATH.'libs/pear/Text/Diff/Renderer/context.php';
@@ -234,7 +234,7 @@ class yf_diff {
 		$result = $this->_diff_tag_space($result,1);
 
 		return $result;
-    }
+	}
 
 	/**
 	* Produce differences using unix

@@ -32,12 +32,12 @@
 		'File'=>$message_file,
 		
 		/* Read a message from a string instead of a file */
-		/* 'Data'=>'My message data string',              */
+		/* 'Data'=>'My message data string',			  */
 
-		/* Save the message body parts to a directory     */
-		/* 'SaveBody'=>'/tmp',                            */
+		/* Save the message body parts to a directory	 */
+		/* 'SaveBody'=>'/tmp',							*/
 
-		/* Do not retrieve or save message body parts     */
+		/* Do not retrieve or save message body parts	 */
 		'SkipBody'=>1,
 	);
 

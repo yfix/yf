@@ -36,7 +36,7 @@ if (!defined('ADODB_DIR')) die();
 //
 // Also if your month is showing as month-1, 
 //   e.g. Jan 13, 2002 is showing as 13/0/2002, then see
-//     http://phplens.com/lens/lensforum/msgs.php?id=7048&x=1
+//	 http://phplens.com/lens/lensforum/msgs.php?id=7048&x=1
 //   it's a localisation problem.
 //----------------------------------------------------------------
 
@@ -156,9 +156,9 @@ class ADODB_mssql extends ADOConnection {
 	// the same scope. A scope is a module -- a stored procedure, trigger, 
 	// function, or batch. Thus, two statements are in the same scope if 
 	// they are in the same stored procedure, function, or batch.
-        if ($this->lastInsID !== false) {
-            return $this->lastInsID; // InsID from sp_executesql call
-        } else {
+		if ($this->lastInsID !== false) {
+			return $this->lastInsID; // InsID from sp_executesql call
+		} else {
 			return $this->GetOne($this->identitySQL);
 		}
 	}
@@ -352,29 +352,29 @@ class ADODB_mssql extends ADOConnection {
 
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-        	$savem = $this->SetFetchMode(FALSE);
-        }
-        
-        $rs = $this->Execute($sql);
-        if (isset($savem)) {
-        	$this->SetFetchMode($savem);
-        }
-        $ADODB_FETCH_MODE = $save;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+			$savem = $this->SetFetchMode(FALSE);
+		}
+		
+		$rs = $this->Execute($sql);
+		if (isset($savem)) {
+			$this->SetFetchMode($savem);
+		}
+		$ADODB_FETCH_MODE = $save;
 
-        if (!is_object($rs)) {
-        	return FALSE;
-        }
+		if (!is_object($rs)) {
+			return FALSE;
+		}
 
 		$indexes = array();
 		while ($row = $rs->FetchRow()) {
 			if (!$primary && $row[5]) continue;
 			
-            $indexes[$row[0]]['unique'] = $row[6];
-            $indexes[$row[0]]['columns'][] = $row[1];
-    	}
-        return $indexes;
+			$indexes[$row[0]]['unique'] = $row[6];
+			$indexes[$row[0]]['columns'][] = $row[1];
+		}
+		return $indexes;
 	}
 	
 	function MetaForeignKeys($table, $owner=false, $upper=false)
@@ -562,28 +562,28 @@ order by constraint_name, referenced_table_name, keyno";
 	}
 	
 	// returns concatenated string
-    // MSSQL requires integers to be cast as strings
-    // automatically cast every datatype to VARCHAR(255)
-    // @author David Rogers (introspectshun)
-    function Concat()
-    {
-            $s = "";
-            $arr = func_get_args();
+	// MSSQL requires integers to be cast as strings
+	// automatically cast every datatype to VARCHAR(255)
+	// @author David Rogers (introspectshun)
+	function Concat()
+	{
+			$s = "";
+			$arr = func_get_args();
 
-            // Split single record on commas, if possible
-            if (sizeof($arr) == 1) {
-                foreach ($arr as $arg) {
-                    $args = explode(',', $arg);
-                }
-                $arr = $args;
-            }
+			// Split single record on commas, if possible
+			if (sizeof($arr) == 1) {
+				foreach ($arr as $arg) {
+					$args = explode(',', $arg);
+				}
+				$arr = $args;
+			}
 
-            array_walk($arr, create_function('&$v', '$v = "CAST(" . $v . " AS VARCHAR(255))";'));
-            $s = implode('+',$arr);
-            if (sizeof($arr) > 0) return "$s";
-            
+			array_walk($arr, create_function('&$v', '$v = "CAST(" . $v . " AS VARCHAR(255))";'));
+			$s = implode('+',$arr);
+			if (sizeof($arr) > 0) return "$s";
+			
 			return '';
-    }
+	}
 	
 	/* 
 	Usage:
@@ -671,11 +671,11 @@ order by constraint_name, referenced_table_name, keyno";
 			# bind input params with sp_executesql: 
 			# see http://www.quest-pipelines.com/newsletter-v3/0402_F.htm
 			# works only with sql server 7 and newer
-            $getIdentity = false;
-            if (!is_array($sql) && preg_match('/^\\s*insert/i', $sql)) {
-                $getIdentity = true;
-                $sql .= (preg_match('/;\\s*$/i', $sql) ? ' ' : '; ') . $this->identitySQL;
-            }
+			$getIdentity = false;
+			if (!is_array($sql) && preg_match('/^\\s*insert/i', $sql)) {
+				$getIdentity = true;
+				$sql .= (preg_match('/;\\s*$/i', $sql) ? ' ' : '; ') . $this->identitySQL;
+			}
 			if (!is_array($sql)) $sql = $this->Prepare($sql);
 			$params = '';
 			$decl = '';
@@ -715,20 +715,20 @@ order by constraint_name, referenced_table_name, keyno";
 			$decl = $this->qstr($decl);
 			if ($this->debug) ADOConnection::outp("<font size=-1>sp_executesql N{$sql[1]},N$decl,$params</font>");
 			$rez = mssql_query("sp_executesql N{$sql[1]},N$decl,$params", $this->_connectionID);
-            if ($getIdentity) {
-                $arr = @mssql_fetch_row($rez);
-                $this->lastInsID = isset($arr[0]) ? $arr[0] : false;
-                @mssql_data_seek($rez, 0);
-            }
+			if ($getIdentity) {
+				$arr = @mssql_fetch_row($rez);
+				$this->lastInsID = isset($arr[0]) ? $arr[0] : false;
+				@mssql_data_seek($rez, 0);
+			}
 			
 		} else if (is_array($sql)) {
 			# PrepareSP()
 			$rez = mssql_execute($sql[1]);
-            $this->lastInsID = false;
+			$this->lastInsID = false;
 			
 		} else {
 			$rez = mssql_query($sql,$this->_connectionID);
-            $this->lastInsID = false;
+			$this->lastInsID = false;
 		}
 		return $rez;
 	}
@@ -1035,8 +1035,8 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 Code Example 1:
 
 select 	object_name(constid) as constraint_name,
-       	object_name(fkeyid) as table_name, 
-        col_name(fkeyid, fkey) as column_name,
+	   	object_name(fkeyid) as table_name, 
+		col_name(fkeyid, fkey) as column_name,
 	object_name(rkeyid) as referenced_table_name,
    	col_name(rkeyid, rkey) as referenced_column_name
 from sysforeignkeys

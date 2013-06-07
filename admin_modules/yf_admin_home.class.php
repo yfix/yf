@@ -95,7 +95,7 @@ class yf_admin_home {
 			$sql_parts = array_merge($sql_parts, $sql_parts2);
 			$sql = "(\r\n".implode("\r\n) UNION ALL (\r\n",$sql_parts)."\r\n)";
 			$B = db()->query_fetch_all($sql);
-    
+	
 			foreach ((array)$B as $V) {
 				$admin_statistics_array[$V[0]] = $V[1];
 			}
@@ -106,7 +106,7 @@ class yf_admin_home {
 		}
 
 		// Statistics
-       	if ($this->DISPLAY_STATS) {
+	   	if ($this->DISPLAY_STATS) {
 			$statistics = tpl()->parse($_GET["object"]."/statistics", $admin_statistics_array);
 		}
 

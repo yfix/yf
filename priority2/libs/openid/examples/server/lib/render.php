@@ -3,16 +3,16 @@
 define('page_template',
 '<html>
   <head>
-    <meta http-equiv="cache-control" content="no-cache"/>
-    <meta http-equiv="pragma" content="no-cache"/>
-    <title>%s</title>
+	<meta http-equiv="cache-control" content="no-cache"/>
+	<meta http-equiv="pragma" content="no-cache"/>
+	<title>%s</title>
 %s
   </head>
   <body>
-    %s
+	%s
 <div id="content">
-    <h1>%s</h1>
-    %s
+	<h1>%s</h1>
+	%s
 </div>
   </body>
 </html>');
@@ -34,7 +34,7 @@ define('header_connection_close', 'Connection: close');
 define('header_content_text', 'Content-Type: text/plain; charset=us-ascii');
 
 define('redirect_message',
-       'Please wait; you are being redirected to <%s>');
+	   'Please wait; you are being redirected to <%s>');
 
 
 /**
@@ -44,9 +44,9 @@ define('redirect_message',
  * it does.
  */
 function link_render($url, $text=null) {
-    $esc_url = htmlspecialchars($url, ENT_QUOTES);
-    $text = ($text === null) ? $esc_url : $text;
-    return sprintf('<a href="%s">%s</a>', $esc_url, $text);
+	$esc_url = htmlspecialchars($url, ENT_QUOTES);
+	$text = ($text === null) ? $esc_url : $text;
+	return sprintf('<a href="%s">%s</a>', $esc_url, $text);
 }
 
 /**
@@ -54,32 +54,32 @@ function link_render($url, $text=null) {
  */
 function redirect_render($redir_url)
 {
-    $headers = array(http_found,
-                     header_content_text,
-                     header_connection_close,
-                     'Location: ' . $redir_url,
-                     );
-    $body = sprintf(redirect_message, $redir_url);
-    return array($headers, $body);
+	$headers = array(http_found,
+					 header_content_text,
+					 header_connection_close,
+					 'Location: ' . $redir_url,
+					 );
+	$body = sprintf(redirect_message, $redir_url);
+	return array($headers, $body);
 }
 
 function navigation_render($msg, $items)
 {
-    $what = link_render(buildURL(), 'PHP OpenID Server');
-    if ($msg) {
-        $what .= ' &mdash; ' . $msg;
-    }
-    if ($items) {
-        $s = '<p>' . $what . '</p><ul class="bottom">';
-        foreach ($items as $action => $text) {
-            $url = buildURL($action);
-            $s .= sprintf('<li>%s</li>', link_render($url, $text));
-        }
-        $s .= '</ul>';
-    } else {
-        $s = '<p class="bottom">' . $what . '</p>';
-    }
-    return sprintf('<div class="navigation">%s</div>', $s);
+	$what = link_render(buildURL(), 'PHP OpenID Server');
+	if ($msg) {
+		$what .= ' &mdash; ' . $msg;
+	}
+	if ($items) {
+		$s = '<p>' . $what . '</p><ul class="bottom">';
+		foreach ($items as $action => $text) {
+			$url = buildURL($action);
+			$s .= sprintf('<li>%s</li>', link_render($url, $text));
+		}
+		$s .= '</ul>';
+	} else {
+		$s = '<p class="bottom">' . $what . '</p>';
+	}
+	return sprintf('<div class="navigation">%s</div>', $s);
 }
 
 /**
@@ -87,28 +87,28 @@ function navigation_render($msg, $items)
  */
 function page_render($body, $user, $title, $h1=null, $login=false)
 {
-    $h1 = $h1 ? $h1 : $title;
+	$h1 = $h1 ? $h1 : $title;
 
-    if ($user) {
-        $msg = sprintf(logged_in_pat, link_render(idURL($user), $user),
-                       link_render(idURL($user)));
-        $nav = array('logout' => 'Log Out');
+	if ($user) {
+		$msg = sprintf(logged_in_pat, link_render(idURL($user), $user),
+					   link_render(idURL($user)));
+		$nav = array('logout' => 'Log Out');
 
-        $navigation = navigation_render($msg, $nav);
-    } else {
-        if (!$login) {
-            $msg = link_render(buildURL('login'), 'Log In');
-            $navigation = navigation_render($msg, array());
-        } else {
-            $navigation = '';
-        }
-    }
+		$navigation = navigation_render($msg, $nav);
+	} else {
+		if (!$login) {
+			$msg = link_render(buildURL('login'), 'Log In');
+			$navigation = navigation_render($msg, array());
+		} else {
+			$navigation = '';
+		}
+	}
 
-    $style = getStyle();
-    $text = sprintf(page_template, $title, $style, $navigation, $h1, $body);
-    // No special headers here
-    $headers = array();
-    return array($headers, $text);
+	$style = getStyle();
+	$text = sprintf(page_template, $title, $style, $navigation, $h1, $body);
+	// No special headers here
+	$headers = array();
+	return array($headers, $text);
 }
 
 ?>

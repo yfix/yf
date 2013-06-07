@@ -133,7 +133,7 @@ class yf_user_modules_install {
 				if ($file_ext == "zip") {
 					$ARCHIVE_TYPE = "zip";
 				} else {
-            		$fp		= @fopen($path, 'rb');
+					$fp		= @fopen($path, 'rb');
 					$test	= fread($fp, 3);
 					fclose($fp);
 					if ($test[0] == chr(31) && $test[1] == chr(139)) {
@@ -436,7 +436,7 @@ class yf_user_modules_install {
 					// Set headers params
 					if ($_POST["file_format"] == "gz") {
 						$mime_type = "application/x-gzip";
-				        // needed to avoid recompression by server modules like mod_gzip:
+						// needed to avoid recompression by server modules like mod_gzip:
 						$content_encoding = 'x-gzip';
 					} else {
 						$mime_type = "application/x-bzip2";
@@ -488,7 +488,7 @@ class yf_user_modules_install {
 				} else {
 					header("Content-Disposition: attachment; filename=\"".$file_name."\"");
 					header("Pragma: no-cache");
-				}           
+				}		   
 				// Throw content
 				echo $body;
 			}

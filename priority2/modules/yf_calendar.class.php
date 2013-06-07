@@ -1097,7 +1097,7 @@ class yf_calendar {
 		return $this->_week_day_names[$num];
 	}
 
-    /**
+	/**
 	* Prepare date for output
 	*/
 	function _format_date ($date = 0, $type = "") {

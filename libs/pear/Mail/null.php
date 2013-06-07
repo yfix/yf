@@ -34,13 +34,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category    Mail
- * @package     Mail
- * @author      Phil Kernick <philk@rotfl.com.au>
+ * @category	Mail
+ * @package	 Mail
+ * @author	  Phil Kernick <philk@rotfl.com.au>
  * @copyright   2010 Phil Kernick
- * @license     http://opensource.org/licenses/bsd-license.php New BSD License
- * @version     CVS: $Id: null.php 294747 2010-02-08 08:18:33Z clockwerx $
- * @link        http://pear.php.net/package/Mail/
+ * @license	 http://opensource.org/licenses/bsd-license.php New BSD License
+ * @version	 CVS: $Id: null.php 294747 2010-02-08 08:18:33Z clockwerx $
+ * @link		http://pear.php.net/package/Mail/
  */
 
 /**
@@ -51,34 +51,34 @@
  */
 class Mail_null extends Mail {
 
-    /**
-     * Implements Mail_null::send() function. Silently discards all
-     * mail.
-     *
-     * @param mixed $recipients Either a comma-seperated list of recipients
-     *              (RFC822 compliant), or an array of recipients,
-     *              each RFC822 valid. This may contain recipients not
-     *              specified in the headers, for Bcc:, resending
-     *              messages, etc.
-     *
-     * @param array $headers The array of headers to send with the mail, in an
-     *              associative array, where the array key is the
-     *              header name (ie, 'Subject'), and the array value
-     *              is the header value (ie, 'test'). The header
-     *              produced from those values would be 'Subject:
-     *              test'.
-     *
-     * @param string $body The full text of the message body, including any
-     *               Mime parts, etc.
-     *
-     * @return mixed Returns true on success, or a PEAR_Error
-     *               containing a descriptive error message on
-     *               failure.
-     * @access public
-     */
-    function send($recipients, $headers, $body)
-    {
-        return true;
-    }
+	/**
+	 * Implements Mail_null::send() function. Silently discards all
+	 * mail.
+	 *
+	 * @param mixed $recipients Either a comma-seperated list of recipients
+	 *			  (RFC822 compliant), or an array of recipients,
+	 *			  each RFC822 valid. This may contain recipients not
+	 *			  specified in the headers, for Bcc:, resending
+	 *			  messages, etc.
+	 *
+	 * @param array $headers The array of headers to send with the mail, in an
+	 *			  associative array, where the array key is the
+	 *			  header name (ie, 'Subject'), and the array value
+	 *			  is the header value (ie, 'test'). The header
+	 *			  produced from those values would be 'Subject:
+	 *			  test'.
+	 *
+	 * @param string $body The full text of the message body, including any
+	 *			   Mime parts, etc.
+	 *
+	 * @return mixed Returns true on success, or a PEAR_Error
+	 *			   containing a descriptive error message on
+	 *			   failure.
+	 * @access public
+	 */
+	function send($recipients, $headers, $body)
+	{
+		return true;
+	}
 
 }

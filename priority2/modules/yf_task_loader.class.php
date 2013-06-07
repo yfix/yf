@@ -24,11 +24,11 @@ class yf_task_loader {
 			// Init Task manager object
 			$TASK_MGR_OBJ = &main()->init_class("task_manager", "classes/");
 			// Check shutdown functions
-	    	if ($this->USE_SHUTDOWN) {
+			if ($this->USE_SHUTDOWN) {
 				register_shutdown_function(array(&$TASK_MGR_OBJ, 'run_task'));
 			} else {
 				$TASK_MGR_OBJ->run_task();
-    		}
+			}
 		}
 		// Print out the 'blank' gif for the browser
 		if ($TASK_MGR_OBJ->type != 'cron') {

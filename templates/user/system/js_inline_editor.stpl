@@ -350,7 +350,7 @@ $(function(){
 				var data2 = "";
 				for (_key in data_array)
 				  {
-				     data2 += data_array[_key];
+					 data2 += data_array[_key];
 				  }
 				data = data2;
 			}

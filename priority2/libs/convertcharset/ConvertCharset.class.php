@@ -196,8 +196,8 @@ class ConvertCharset {
 	  $StringLenght = strlen ($UnicodeString);
 	  for ($CharPosition = 0; $CharPosition < $StringLenght; $CharPosition++) 
 		{
-	    $Char = $UnicodeString [$CharPosition];
-	    $AsciiChar = ord ($Char);
+		$Char = $UnicodeString [$CharPosition];
+		$AsciiChar = ord ($Char);
 
 	   if ($AsciiChar < 128) //1 7 0bbbbbbb (127)
 	   {
@@ -229,7 +229,7 @@ class ConvertCharset {
 			
 			$Entity = sprintf ("&#%d;", $AsciiChar);
 			$OutString .= $Entity;
-	    }
+		}
 		else if ($AsciiChar >> 3 == 30) //4 21 11110bbb 10bbbbbb 10bbbbbb 10bbbbbb
 		{
 			$FirstByte = ($AsciiChar & 31);
@@ -249,7 +249,7 @@ class ConvertCharset {
 	
 			$Entity = sprintf ("&#%d;", $AsciiChar);
 			$OutString .= $Entity;
-	    }
+		}
 	  }
 	  return $OutString;
 	} 
@@ -270,9 +270,9 @@ class ConvertCharset {
 		$OutputChar = "";
 		$UtfCharInDec = hexdec($UtfCharInHex);
 		if($UtfCharInDec<128) $OutputChar .= chr($UtfCharInDec);
-    else if($UtfCharInDec<2048)$OutputChar .= chr(($UtfCharInDec>>6)+192).chr(($UtfCharInDec&63)+128);
-    else if($UtfCharInDec<65536)$OutputChar .= chr(($UtfCharInDec>>12)+224).chr((($UtfCharInDec>>6)&63)+128).chr(($UtfCharInDec&63)+128);
-    else if($UtfCharInDec<2097152)$OutputChar .= chr($UtfCharInDec>>18+240).chr((($UtfCharInDec>>12)&63)+128).chr(($UtfCharInDec>>6)&63+128). chr($UtfCharInDec&63+128);
+	else if($UtfCharInDec<2048)$OutputChar .= chr(($UtfCharInDec>>6)+192).chr(($UtfCharInDec&63)+128);
+	else if($UtfCharInDec<65536)$OutputChar .= chr(($UtfCharInDec>>12)+224).chr((($UtfCharInDec>>6)&63)+128).chr(($UtfCharInDec&63)+128);
+	else if($UtfCharInDec<2097152)$OutputChar .= chr($UtfCharInDec>>18+240).chr((($UtfCharInDec>>12)&63)+128).chr(($UtfCharInDec>>6)&63+128). chr($UtfCharInDec&63+128);
 	return $OutputChar;
 	}
 
@@ -325,7 +325,7 @@ class ConvertCharset {
 			$FileName = func_get_arg($i);
 			if (!is_file(CONVERT_TABLES_DIR . $FileName)) 
 			{
-			    print $this->DebugOutput(0, 0, CONVERT_TABLES_DIR . $FileName); //Print an error message
+				print $this->DebugOutput(0, 0, CONVERT_TABLES_DIR . $FileName); //Print an error message
 					exit;
 			}
 			$FileWithEncTabe = fopen(CONVERT_TABLES_DIR . $FileName, "r") or die(); //This die(); is just to make sure...
@@ -370,7 +370,7 @@ class ConvertCharset {
 	 **/
 	if ((func_num_args() > 1) && (count($ConvertTable[$FirstEncoding]) == count($ConvertTable[$SecondEncoding])) && (count(array_diff_assoc($ConvertTable[$FirstEncoding], $ConvertTable[$SecondEncoding])) == 0)) 
 	{
-	    print $this->DebugOutput(1, 1, "$FirstEncoding, $SecondEncoding");
+		print $this->DebugOutput(1, 1, "$FirstEncoding, $SecondEncoding");
 	}
 	return $ConvertTable;
 	}
@@ -425,11 +425,11 @@ class ConvertCharset {
 		 **/
 		if ($FromCharset == $ToCharset) 
 		{
-		    print $this->DebugOutput(1, 0, $FromCharset);
+			print $this->DebugOutput(1, 0, $FromCharset);
 		}
 		if (($FromCharset == $ToCharset) AND ($FromCharset == "utf-8")) 
 		{
-		    print $this->DebugOutput(0, 4, $FromCharset);
+			print $this->DebugOutput(0, 4, $FromCharset);
 				exit;
 		}
 		
@@ -509,14 +509,14 @@ class ConvertCharset {
 						{
 							$UnicodeHexChar = array_search($HexChar, $CharsetTable[$FromCharset]);
 							/**
-					     * Sometimes there are two or more utf-8 chars per one regular char.
+						 * Sometimes there are two or more utf-8 chars per one regular char.
 							 * Extream, example is polish old Mazovia encoding, where one char contains
 							 * two lettes 007a (z) and 0142 (l slash), we need to figure out how to
 							 * solve this problem.
 							 * The letters are merge with "plus" sign, there can be more than two chars.
 							 * In Mazowia we have 007A+0142, but sometimes it can look like this
 							 * 0x007A+0x0142+0x2034 (that string means nothing, it just shows the possibility...)
-					     **/
+						 **/
 							$UnicodeHexChars = explode("+",$UnicodeHexChar);
 							for($UnicodeHexCharElement = 0; $UnicodeHexCharElement < count($UnicodeHexChars); $UnicodeHexCharElement++)
 							{

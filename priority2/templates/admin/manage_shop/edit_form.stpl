@@ -99,39 +99,39 @@ table.attributes td {
 		<br /> 
 		<center>
 		<table>
-                <tr>
-                  <td style="padding: 0;" colspan="3">
-                     {category_select_box}
+				<tr>
+				  <td style="padding: 0;" colspan="3">
+					 {category_select_box}
 					  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 0;">
+				</tr>
+				<tr>
+				  <td style="padding: 0;">
 				  <select multiple="multiple" id="product" size="10" style="width: 200px;">
-                    </select>
+					</select>
 					</td>
-                  <td style="vertical-align: middle;">
+				  <td style="vertical-align: middle;">
 				  <input type="button" value="--&gt;" onclick="addRelated();" />
-                    <br />
-                    <input type="button" value="&lt;--" onclick="removeRelated();" /></td>
-                  <td style="padding: 0;">
+					<br />
+					<input type="button" value="&lt;--" onclick="removeRelated();" /></td>
+				  <td style="padding: 0;">
 				  <select multiple="multiple" id="related" size="10" style="width: 200px;">
 				  {if("product_related" ne "")}
 				{foreach("product_related")}
 			   <option value="{#.related_id}">{#.name}</option>
 			   {/foreach}
 			   {/if}
-                    </select>
+					</select>
 					</td>
-                </tr>
-              </table>
-             </center>
+				</tr>
+			  </table>
+			 </center>
 			 <div id="product_related">
 				{if("product_related" ne "")}
 				{foreach("product_related")}
 			   <input type="hidden" name="product_related[]" value="{#.related_id}" />
 			   {/foreach}
 			   {/if}
-              </div>
+			  </div>
 	</p>
 	
 
@@ -219,7 +219,7 @@ function image_upload(field, preview) {
 var image_row = 0;
 
 function addImage() {
-    html  = '<div id="image_row' + image_row + '"><input type="file" name="image[' + image_row + ']"  value="">';
+	html  = '<div id="image_row' + image_row + '"><input type="file" name="image[' + image_row + ']"  value="">';
 	
 	html += '<a onclick="$(\'#image_row' + image_row  + '\').remove();" class="button">Remove</a>';
 	 html  += '<br /></div>'; 

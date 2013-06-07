@@ -169,7 +169,7 @@ class pop3_class
 	}
 
 	/* Close method - this method must be called at least if there are any
-     messages to be deleted */
+	 messages to be deleted */
 
 	Function Close()
 	{
@@ -198,7 +198,7 @@ class pop3_class
 	}
 
 	/* Login method - pass the user name and password of POP account.  Set
-     $apop to 1 or 0 wether you want to login using APOP method or not.  */
+	 $apop to 1 or 0 wether you want to login using APOP method or not.  */
 
 	Function Login($user,$password,$apop=0)
 	{
@@ -349,7 +349,7 @@ class pop3_class
 	}
 
 	/* Statistics method - pass references to variables to hold the number of
-     messages in the mail box and the size that they take in bytes.  */
+	 messages in the mail box and the size that they take in bytes.  */
 
 	Function Statistics(&$messages,&$size)
 	{
@@ -368,11 +368,11 @@ class pop3_class
 	}
 
 	/* ListMessages method - the $message argument indicates the number of a
-     message to be listed.  If you specify an empty string it will list all
-     messages in the mail box.  The $unique_id flag indicates if you want
-     to list the each message unique identifier, otherwise it will
-     return the size of each message listed.  If you list all messages the
-     result will be returned in an array. */
+	 message to be listed.  If you specify an empty string it will list all
+	 messages in the mail box.  The $unique_id flag indicates if you want
+	 to list the each message unique identifier, otherwise it will
+	 return the size of each message listed.  If you list all messages the
+	 result will be returned in an array. */
 
 	Function ListMessages($message,$unique_id)
 	{
@@ -415,10 +415,10 @@ class pop3_class
 	}
 
 	/* RetrieveMessage method - the $message argument indicates the number of
-     a message to be listed.  Pass a reference variables that will hold the
-     arrays of the $header and $body lines.  The $lines argument tells how
-     many lines of the message are to be retrieved.  Pass a negative number
-     if you want to retrieve the whole message. */
+	 a message to be listed.  Pass a reference variables that will hold the
+	 arrays of the $header and $body lines.  The $lines argument tells how
+	 many lines of the message are to be retrieved.  Pass a negative number
+	 if you want to retrieve the whole message. */
 
 	Function RetrieveMessage($message,&$headers,&$body,$lines)
 	{
@@ -488,9 +488,9 @@ class pop3_class
 	}
 
 	/* OpenMessage method - the $message argument indicates the number of
-     a message to be opened. The $lines argument tells how many lines of
-     the message are to be retrieved.  Pass a negative number if you want
-     to retrieve the whole message. */
+	 a message to be opened. The $lines argument tells how many lines of
+	 the message are to be retrieved.  Pass a negative number if you want
+	 to retrieve the whole message. */
 
 	Function OpenMessage($message, $lines=-1)
 	{
@@ -519,10 +519,10 @@ class pop3_class
 	}
 
 	/* GetMessage method - the $count argument indicates the number of bytes
-     to be read from an opened message. The $message returns by reference
-     the data read from the message. The $end_of_message argument returns
-     by reference a boolean value indicated whether it was reached the end
-     of the message. */
+	 to be read from an opened message. The $message returns by reference
+	 the data read from the message. The $end_of_message argument returns
+	 by reference a boolean value indicated whether it was reached the end
+	 of the message. */
 
 	Function GetMessage($count, &$message, &$end_of_message)
 	{
@@ -564,8 +564,8 @@ class pop3_class
 	}
 
 	/* DeleteMessage method - the $message argument indicates the number of
-     a message to be marked as deleted.  Messages will only be effectively
-     deleted upon a successful call to the Close method. */
+	 a message to be marked as deleted.  Messages will only be effectively
+	 deleted upon a successful call to the Close method. */
 
 	Function DeleteMessage($message)
 	{
@@ -583,8 +583,8 @@ class pop3_class
 	}
 
 	/* ResetDeletedMessages method - Reset the list of marked to be deleted
-     messages.  No messages will be marked to be deleted upon a successful
-     call to this method.  */
+	 messages.  No messages will be marked to be deleted upon a successful
+	 call to this method.  */
 
 	Function ResetDeletedMessages()
 	{
@@ -602,9 +602,9 @@ class pop3_class
 	}
 
 	/* IssueNOOP method - Just pings the server to prevent it auto-close the
-     connection after an idle timeout (tipically 10 minutes).  Not very
-     useful for most likely uses of this class.  It's just here for
-     protocol support completeness.  */
+	 connection after an idle timeout (tipically 10 minutes).  Not very
+	 useful for most likely uses of this class.  It's just here for
+	 protocol support completeness.  */
 
 	Function IssueNOOP()
 	{

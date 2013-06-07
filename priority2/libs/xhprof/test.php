@@ -348,10 +348,10 @@ function _my_array_merge($Arr1, $Arr2)
  {
    foreach($Arr2 as $key => $Value)
    {
-     if(isset($Arr1[$key]) && is_array($Value))
-       $Arr1[$key] = _my_array_merge($Arr1[$key], $Arr2[$key]);
-     else
-       $Arr1[$key] = $Value;
+	 if(isset($Arr1[$key]) && is_array($Value))
+	   $Arr1[$key] = _my_array_merge($Arr1[$key], $Arr2[$key]);
+	 else
+	   $Arr1[$key] = $Value;
    }
 
    return $Arr1;

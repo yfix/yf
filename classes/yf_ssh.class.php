@@ -38,7 +38,7 @@ class yf_ssh {
 	/**
 	* Catch missing method call
 	*/
-    function __call($name, $arguments) {
+	function __call($name, $arguments) {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}
@@ -318,7 +318,7 @@ class yf_ssh {
 				stream_set_blocking($stream, true);
 				$data = "";
 				while ($buf = fgets($stream)) {
-			    	$data .= $buf;
+					$data .= $buf;
 				}
 				fclose($stream);
 			}
@@ -383,7 +383,7 @@ class yf_ssh {
 				stream_set_blocking($this->shell, true);
 				$data = "";
 				while ($buf = fgets($this->shell)) {
-			    	$data .= $buf;
+					$data .= $buf;
 				}
 				fclose($this->shell);
 			}
@@ -575,11 +575,11 @@ class yf_ssh {
 					if ($this->file_exists($server_info, $remote_archive_path)) {
 						$first_local_dir = trim(substr($_local_tmp_dir, 0, strpos($_local_tmp_dir, "/", 1)), "/");
 						$_cwd = trim($this->exec($server_info, "pwd"));
-		    
+			
 						$_tmp_dir = $this->_prepare_path($_remote_dir. "/". str_replace(array(".tar", ".gz", ".bz"), "", basename($archive_path)));
 
 						$this->mkdir_m($server_info, $_tmp_dir);
-		    
+			
 						$cmd = "cd '".$_tmp_dir."';"
 							." tar --extract ".($this->USE_GZIP ? " --ungzip" : "")." -p -f '".$remote_archive_path."';"
 							." unlink '".$remote_archive_path."';";
@@ -594,7 +594,7 @@ class yf_ssh {
 							." unlink '".$_remote_dir."';"
 							." cd '".$_cwd."'";
 						$this->exec($server_info, $cmd);
-		    
+			
 						$completed = true;
 					}
 					unlink($archive_path);

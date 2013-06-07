@@ -93,11 +93,11 @@ class yf_custom_bbcode_editor {
 			"tag"				=> $A["tag"],
 			"html_code"			=> _prepare_html($A["replace"]),
 			"example"			=> _prepare_html($A["example"]),
-	        "use_option_box"	=> common()->select_box("useoption", $this->_select_yn, $A["useoption"], 0, 2, "", false),
+			"use_option_box"	=> common()->select_box("useoption", $this->_select_yn, $A["useoption"], 0, 2, "", false),
 			"save_link"			=> "./?object=".$_GET["object"]."&action=save&id=".$A["id"],
 			"back_link"			=> "./?object=".$_GET["object"],
 			"action_text"		=> ucfirst($_GET["action"]),
-	        "active_box"		=> common()->select_box("active", $this->_select_yn, $A["active"], 0, 2, "", false),
+			"active_box"		=> common()->select_box("active", $this->_select_yn, $A["active"], 0, 2, "", false),
 		);
 		return tpl()->parse($_GET["object"]."/form", $replace);
 	}
@@ -128,11 +128,11 @@ class yf_custom_bbcode_editor {
 		);
 
 		$replace = array(
-	        "use_option_box"	=> common()->select_box("useoption", $this->_select_yn, 0, 0, 2, "", false),
+			"use_option_box"	=> common()->select_box("useoption", $this->_select_yn, 0, 0, 2, "", false),
 			"save_link"			=> "./?object=".$_GET["object"]."&action=save",
 			"back_link"			=> "./?object=".$_GET["object"],
 			"action_text"		=> ucfirst($_GET["action"]),
-	        "active_box"		=> common()->select_box("active", $this->_select_yn, 0, 0, 2, "", false),
+			"active_box"		=> common()->select_box("active", $this->_select_yn, 0, 0, 2, "", false),
 		);
 
 		foreach ((array)$this->fields_in_form as $k){
@@ -159,7 +159,7 @@ class yf_custom_bbcode_editor {
 				"useoption"	=> intval($_POST["useoption"]),
 				"active"	=> intval($_POST["active"]),
 			), "`id`=".$_GET["id"]);
-		}                                
+		}								
 		else {
 			db()->INSERT("custom_bbcode", array(
 				"title"		=> _es($_POST["title"]),
@@ -256,7 +256,7 @@ class yf_custom_bbcode_editor {
 			"show"				=> "",
 			"add"				=> "",
 			"edit"				=> "",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

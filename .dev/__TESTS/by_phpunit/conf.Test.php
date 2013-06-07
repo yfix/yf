@@ -4,15 +4,15 @@ require_once dirname(dirname(dirname(__FILE__))).'/share/functions/yf_conf.php';
 
 class conf_test extends PHPUnit_Framework_TestCase {
 
-    public function test_2() {
+	public function test_2() {
 		$GLOBALS["PROJECT_CONF"]["test"]["test"] = "55";
-        $this->assertEquals(module_conf("test", "test"), "55");
-    }
-    public function test_3() {
-		$GLOBALS["PROJECT_CONF"]["test"]["test"]["sub"] = "sub";
-        $this->assertEquals(module_conf("test", "test::sub"), "sub");
+		$this->assertEquals(module_conf("test", "test"), "55");
 	}
-    public function test_4() {
+	public function test_3() {
+		$GLOBALS["PROJECT_CONF"]["test"]["test"]["sub"] = "sub";
+		$this->assertEquals(module_conf("test", "test::sub"), "sub");
+	}
+	public function test_4() {
 		module_conf("test", array(
 			"key1"	=> "val1",
 			"key2"	=> "val2",
@@ -25,9 +25,9 @@ class conf_test extends PHPUnit_Framework_TestCase {
 				"key3"	=> "val3",
 			),
 		);
-       	$this->assertEquals($GLOBALS["PROJECT_CONF"], $_conf_should_be);
-    }
-    public function test_5() {
+	   	$this->assertEquals($GLOBALS["PROJECT_CONF"], $_conf_should_be);
+	}
+	public function test_5() {
 		module_conf("test", array(
 			"key1"			=> "val1",
 			"key2::sub1"	=> "val21",
@@ -56,17 +56,17 @@ class conf_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-       	$this->assertEquals($GLOBALS["PROJECT_CONF"], $_conf_should_be);
-    }
-    public function test_12() {
-		$GLOBALS["CONF"]["test"] = "55";
-        $this->assertEquals(conf("test"), "55");
-    }
-    public function test_13() {
-		$GLOBALS["CONF"]["test"]["sub"] = "sub1";
-        $this->assertEquals(conf("test::sub"), "sub1");
+	   	$this->assertEquals($GLOBALS["PROJECT_CONF"], $_conf_should_be);
 	}
-    public function test_14() {
+	public function test_12() {
+		$GLOBALS["CONF"]["test"] = "55";
+		$this->assertEquals(conf("test"), "55");
+	}
+	public function test_13() {
+		$GLOBALS["CONF"]["test"]["sub"] = "sub1";
+		$this->assertEquals(conf("test::sub"), "sub1");
+	}
+	public function test_14() {
 		conf(array(
 			"key1"	=> "val1",
 			"key2"	=> "val2",
@@ -77,9 +77,9 @@ class conf_test extends PHPUnit_Framework_TestCase {
 			"key2"	=> "val2",
 			"key3"	=> "val3",
 		);
-       	$this->assertEquals($GLOBALS["CONF"], $_conf_should_be);
-    }
-    public function test_15() {
+	   	$this->assertEquals($GLOBALS["CONF"], $_conf_should_be);
+	}
+	public function test_15() {
 		conf(array(
 			"key1"			=> "val1",
 			"key2::sub1"	=> "val21",
@@ -106,9 +106,9 @@ class conf_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-       	$this->assertEquals($GLOBALS["CONF"], $_conf_should_be);
-    }
-    public function test_16() {
+	   	$this->assertEquals($GLOBALS["CONF"], $_conf_should_be);
+	}
+	public function test_16() {
 		$GLOBALS["CONF"] = array(
 			"key2"	=> array(
 				"sub4"	=> array(
@@ -118,17 +118,17 @@ class conf_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-       	$this->assertEquals(conf("key2::sub4::ss1::sss2"), "val2412");
-    }
-    public function test_22() {
-		$GLOBALS["DEBUG"]["test"] = "55";
-        $this->assertEquals(debug("test"), "55");
-    }
-    public function test_23() {
-		$GLOBALS["DEBUG"]["test"]["sub"] = "sub1";
-        $this->assertEquals(debug("test::sub"), "sub1");
+	   	$this->assertEquals(conf("key2::sub4::ss1::sss2"), "val2412");
 	}
-    public function test_24() {
+	public function test_22() {
+		$GLOBALS["DEBUG"]["test"] = "55";
+		$this->assertEquals(debug("test"), "55");
+	}
+	public function test_23() {
+		$GLOBALS["DEBUG"]["test"]["sub"] = "sub1";
+		$this->assertEquals(debug("test::sub"), "sub1");
+	}
+	public function test_24() {
 		debug(array(
 			"key1"	=> "val1",
 			"key2"	=> "val2",
@@ -139,9 +139,9 @@ class conf_test extends PHPUnit_Framework_TestCase {
 			"key2"	=> "val2",
 			"key3"	=> "val3",
 		);
-       	$this->assertEquals($GLOBALS["DEBUG"], $_conf_should_be);
-    }
-    public function test_25() {
+	   	$this->assertEquals($GLOBALS["DEBUG"], $_conf_should_be);
+	}
+	public function test_25() {
 		debug(array(
 			"key1"			=> "val1",
 			"key2::sub1"	=> "val21",
@@ -168,9 +168,9 @@ class conf_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-       	$this->assertEquals($GLOBALS["DEBUG"], $_conf_should_be);
-    }
-    public function test_26() {
+	   	$this->assertEquals($GLOBALS["DEBUG"], $_conf_should_be);
+	}
+	public function test_26() {
 		$GLOBALS["DEBUG"] = array(
 			"key2"	=> array(
 				"sub4"	=> array(
@@ -180,10 +180,10 @@ class conf_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-       	$this->assertEquals(debug("key2::sub4::ss1::sss2"), "val2412");
-    }
+	   	$this->assertEquals(debug("key2::sub4::ss1::sss2"), "val2412");
+	}
 /*
-    public function test_27() {
+	public function test_27() {
 		debug(array(
 			"key2::sub4::ss1::"	=> "val0",
 			"key2::sub4::ss1::"	=> "val1",
@@ -202,7 +202,7 @@ class conf_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-       	$this->assertEquals($GLOBALS["DEBUG"], $_conf_should_be);
-    }
+	   	$this->assertEquals($GLOBALS["DEBUG"], $_conf_should_be);
+	}
 */
 }

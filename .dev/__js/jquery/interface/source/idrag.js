@@ -26,24 +26,24 @@
  * @option Array grid (optional) A number of x-pixels and y-pixels indicating the grid that the element should snap to
  * @option Integer fx (optional) Duration for the effect (like ghosting or revert) applied to the draggable
  * @option String containment (optional) Define the zone where the draggable can be moved. 'parent' moves it inside parent
- *                           element, while 'document' prevents it from leaving the document and forcing additional
- *                           scrolling
+ *						   element, while 'document' prevents it from leaving the document and forcing additional
+ *						   scrolling
  * @option Array containment An 4-element array (left, top, width, height) indicating the containment of the element
  * @option String axis (optional) Set an axis: vertical (with 'vertically') or horizontal (with 'horizontally')
  * @option Function onStart (optional) Callback function triggered when the dragging starts
  * @option Function onStop (optional) Callback function triggered when the dragging stops
  * @option Function onChange (optional) Callback function triggered when the dragging stop *and* the element was moved at least
- *                          one pixel
+ *						  one pixel
  * @option Function onDrag (optional) Callback function triggered while the element is dragged. Receives two parameters: x and y
- *                        coordinates. You can return an object with new coordinates {x: x, y: y} so this way you can
- *                        interact with the dragging process (for instance, build your containment)
+ *						coordinates. You can return an object with new coordinates {x: x, y: y} so this way you can
+ *						interact with the dragging process (for instance, build your containment)
  * @option Boolean insideParent Forces the element to remain inside its parent when being dragged (like Google Maps)
  * @option Integer snapDistance (optional) The element is not moved unless it is dragged more than snapDistance. You can prevent
- *                             accidental dragging and keep regular clicking enabled (for links or form elements, 
- *                             for instance)
+ *							 accidental dragging and keep regular clicking enabled (for links or form elements, 
+ *							 for instance)
  * @option Object cursorAt (optional) The dragged element is moved to the cursor position with the offset specified. Accepts value
- *                        for top, left, right and bottom offset. Basically, this forces the cursor to a particular
- *                        position during the entire drag operation.
+ *						for top, left, right and bottom offset. Basically, this forces the cursor to a particular
+ *						position during the entire drag operation.
  * @option Boolean autoSize (optional) When true, the drag helper is resized to its content, instead of the dragged element's sizes
  * @option String frameClass (optional) When is set the cloned element is hidden so only a frame is dragged
  * @type jQuery

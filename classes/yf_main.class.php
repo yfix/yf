@@ -217,7 +217,7 @@ class yf_main {
 	/**
 	* Catch missing method call
 	*/
-    function __call($name, $arguments) {
+	function __call($name, $arguments) {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}
@@ -343,8 +343,8 @@ class yf_main {
 		$GLOBALS['modules'] = &$this->modules; // Compatibility with old code
 	}
 
-    /**
-    */
+	/**
+	*/
 	function init_db() {
 		// Check if current object/action not required db connection
 		if ($this->NO_DB_FOR && $_GET["object"] && isset($this->NO_DB_FOR[$_GET["object"]])) {
@@ -364,24 +364,24 @@ class yf_main {
 		$this->db =& $this->modules["db"];
 	}
 
-    /**
-    */
+	/**
+	*/
 	function init_common() {
 		$this->init_class("common", "classes/");
 		$this->common =& $this->modules['common'];
 		$GLOBALS['common'] =& $this->modules['common'];
 	}
 
-    /**
-    */
+	/**
+	*/
 	function init_tpl() {
 		$this->init_class("tpl", "classes/");
 		$this->tpl =& $this->modules['tpl'];
 		$GLOBALS['tpl'] =& $this->modules['tpl'];
 	}
 
-    /**
-    */
+	/**
+	*/
 	function init_cache() {
 		if ($this->CACHE_CONTROL_FROM_URL && $_GET["no_core_cache"]) {
 			$this->USE_SYSTEM_CACHE = false;
@@ -397,8 +397,8 @@ class yf_main {
 		}
 	}
 
-    /**
-    */
+	/**
+	*/
 	function init_error_reporting() {
 		if ($this->USE_CUSTOM_ERRORS) {
 			$this->init_class("errors", "classes/");
@@ -413,8 +413,8 @@ class yf_main {
 
 	}
 
-    /**
-    */
+	/**
+	*/
 	function init_server_health() {
 		// Server health result (needed to correctly self turn off faulty box from frontend requests)
 		if (!$this->CONSOLE_MODE && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
@@ -607,7 +607,7 @@ class yf_main {
 			} else {
 				ini_set('zlib.output_compression_level', 3);
 			}
-	    }
+		}
 	}
 
 	/**
@@ -1316,7 +1316,7 @@ class yf_main {
 	/**
 	* Trying to find site matching current environment
 	* Examples: 127.0.0.1  192.168.  192.168.1.5  :443  :81  example.com  .example.com  .dev  .example.dev  .example.dev:443  .example.dev:81
-	*     subdomain. subdomain.:443 sub1.sub2. sub1.sub2.:443
+	*	 subdomain. subdomain.:443 sub1.sub2. sub1.sub2.:443
 	*
 	* @access	private
 	* @return	string
@@ -1627,18 +1627,18 @@ class yf_main {
 		chdir($this->_CWD);
 		// Currently disabled by default
 		if ($this->CATCH_FATAL_ERRORS) {
-	        $error = error_get_last();
-    	    if (in_array($error, array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR))) {
-        	    $info = "[".gmdate("Y-m-d H:i:s")."] [SHUTDOWN] file:".$error['file']." | ln:".$error['line']." | msg:".$error['message'] .PHP_EOL;
-	            file_put_contents(PROJECT_PATH. "fatal_log.txt", $info, FILE_APPEND);
+			$error = error_get_last();
+			if (in_array($error, array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR))) {
+				$info = "[".gmdate("Y-m-d H:i:s")."] [SHUTDOWN] file:".$error['file']." | ln:".$error['line']." | msg:".$error['message'] .PHP_EOL;
+				file_put_contents(PROJECT_PATH. "fatal_log.txt", $info, FILE_APPEND);
 				echo $info;
 			}
-        }
+		}
 #		$this->_pack_php_code();
 #		foreach ((array)$this->_SHUTDOWN_CODE_ARRAY as $_cur_code) {
 #			eval($_cur_code);
 #		}
-    }
+	}
 
 	/**
 	* PHP code compression

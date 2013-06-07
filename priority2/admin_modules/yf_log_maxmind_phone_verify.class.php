@@ -404,7 +404,7 @@ class yf_log_maxmind_phone_verify {
 			//$_GET["action"] => {string to replace}
 			"show"					=> "",
 			"force_identify"		=> "Identify Phone",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

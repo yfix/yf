@@ -61,11 +61,11 @@ class ADODB_postgres64 extends ADOConnection{
 	var $_resultid = false;
   	var $concat_operator='||';
 	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
-    var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
+	var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
 	and tablename not in ('sql_features', 'sql_implementation_info', 'sql_languages',
 	 'sql_packages', 'sql_sizing', 'sql_sizing_profiles') 
 	union 
-        select viewname,'V' from pg_views where viewname not like 'pg\_%'";
+		select viewname,'V' from pg_views where viewname not like 'pg\_%'";
 	//"select tablename from pg_tables where tablename not like 'pg_%' order by 1";
 	var $isoDates = true; // accepts dates in ISO format
 	var $sysDate = "CURRENT_DATE";
@@ -205,10 +205,10 @@ a different OID if a database must be reloaded. */
 	{
 		$info = $this->ServerInfo();
 		if ($info['version'] >= 7.3) {
-	    	$this->metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
+			$this->metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
 			  and schemaname  not in ( 'pg_catalog','information_schema')
 	union 
-        select viewname,'V' from pg_views where viewname not like 'pg\_%'  and schemaname  not in ( 'pg_catalog','information_schema') ";
+		select viewname,'V' from pg_views where viewname not like 'pg\_%'  and schemaname  not in ( 'pg_catalog','information_schema') ";
 		}
 		if ($mask) {
 			$save = $this->metaTablesSQL;
@@ -443,7 +443,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 	{
 	
 		if ($blobtype == 'CLOB') {
-    		return $this->Execute("UPDATE $table SET $column=" . $this->qstr($val) . " WHERE $where");
+			return $this->Execute("UPDATE $table SET $column=" . $this->qstr($val) . " WHERE $where");
 		}
 		// do not use bind params which uses qstr(), as blobencode() already quotes data
 		return $this->Execute("UPDATE $table SET $column='".$this->BlobEncode($val)."'::bytea WHERE $where");
@@ -579,9 +579,9 @@ select viewname,'V' from pg_views where viewname like $mask";
 	}
 
 	  function &MetaIndexes ($table, $primary = FALSE)
-      {
-         global $ADODB_FETCH_MODE;
-                
+	  {
+		 global $ADODB_FETCH_MODE;
+				
 				$schema = false;
 				$this->_findschema($table,$schema);
 
@@ -594,52 +594,52 @@ JOIN pg_catalog.pg_class c2 ON c2.oid=i.indrelid
 	,pg_namespace n 
 WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\')) and c.relnamespace=c2.relnamespace and c.relnamespace=n.oid and n.nspname=\'%s\'';
 				} else {
-	                $sql = '
+					$sql = '
 SELECT c.relname as "Name", i.indisunique as "Unique", i.indkey as "Columns"
 FROM pg_catalog.pg_class c
 JOIN pg_catalog.pg_index i ON i.indexrelid=c.oid
 JOIN pg_catalog.pg_class c2 ON c2.oid=i.indrelid
 WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\'))';
-    			}
-				            
-                if ($primary == FALSE) {
-                	$sql .= ' AND i.indisprimary=false;';
-                }
-                
-                $save = $ADODB_FETCH_MODE;
-                $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-                if ($this->fetchMode !== FALSE) {
-                        $savem = $this->SetFetchMode(FALSE);
-                }
-                
-                $rs = $this->Execute(sprintf($sql,$table,$table,$schema));
-                if (isset($savem)) {
-                        $this->SetFetchMode($savem);
-                }
-                $ADODB_FETCH_MODE = $save;
-
-                if (!is_object($rs)) {
-                	$false = false;
-					return $false;
-                }
+				}
+							
+				if ($primary == FALSE) {
+					$sql .= ' AND i.indisprimary=false;';
+				}
 				
-                $col_names = $this->MetaColumnNames($table,true,true); 
+				$save = $ADODB_FETCH_MODE;
+				$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+				if ($this->fetchMode !== FALSE) {
+						$savem = $this->SetFetchMode(FALSE);
+				}
+				
+				$rs = $this->Execute(sprintf($sql,$table,$table,$schema));
+				if (isset($savem)) {
+						$this->SetFetchMode($savem);
+				}
+				$ADODB_FETCH_MODE = $save;
+
+				if (!is_object($rs)) {
+					$false = false;
+					return $false;
+				}
+				
+				$col_names = $this->MetaColumnNames($table,true,true); 
 				//3rd param is use attnum, 
 				// see http://sourceforge.net/tracker/index.php?func=detail&aid=1451245&group_id=42718&atid=433976
-                $indexes = array();
-                while ($row = $rs->FetchRow()) {
-                        $columns = array();
-                        foreach (explode(' ', $row[2]) as $col) {
-                                $columns[] = $col_names[$col];
-                        }
-                        
-                        $indexes[$row[0]] = array(
-                                'unique' => ($row[1] == 't'),
-                                'columns' => $columns
-                        );
-                }
-                return $indexes;
-        }
+				$indexes = array();
+				while ($row = $rs->FetchRow()) {
+						$columns = array();
+						foreach (explode(' ', $row[2]) as $col) {
+								$columns[] = $col_names[$col];
+						}
+						
+						$indexes[$row[0]] = array(
+								'unique' => ($row[1] == 't'),
+								'columns' => $columns
+						);
+				}
+				return $indexes;
+		}
 
 	// returns true or false
 	//
@@ -983,7 +983,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	{
 				
 		if ($this->_currentRow >= $this->_numOfRows && $this->_numOfRows >= 0)
-        	return false;
+			return false;
 
 		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
 		

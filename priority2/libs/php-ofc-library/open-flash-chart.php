@@ -46,7 +46,7 @@ class graph
 		$this->y_grid_colour = '';
 		$this->y2_axis_colour = '';
 		
-		// AXIS LABEL styles:         
+		// AXIS LABEL styles:		 
 		$this->x_label_style = '';
 		$this->y_label_style = '';
 		$this->y_label_style_right = '';

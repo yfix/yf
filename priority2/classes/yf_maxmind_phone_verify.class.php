@@ -155,12 +155,12 @@ class yf_maxmind_phone_verify {
 				"phone_type"	=> $data["phoneType"], 
 				"check_type"	=> "i",
 				"owner_id"		=> $owner_id,
-    
+	
 				"success"		=> (!strlen($error_text)) ? 1 : 0,
 				"date"			=> time(),
 				"process_time"	=> floatval(common()->_format_time_value(microtime(true) - (float)$_time_start)),
 				"error_text"	=> _es($error_text),
-    
+	
 				"site_id"		=> (int)conf('SITE_ID'),
 				"user_id"		=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_id" : "user_id"]),
 				"user_group"	=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_group" : "user_group"]),
@@ -231,12 +231,12 @@ class yf_maxmind_phone_verify {
 				"check_type"	=> "v",
 				"phone_type"	=> $A["phone_type"], 
 				"owner_id"		=> $A["owner_id"],
-    
+	
 				"success"		=> (!strlen($error_text)) ? 1 : 0,
 				"date"			=> time(),
 				"process_time"	=> floatval(common()->_format_time_value(microtime(true) - (float)$_time_start)),
 				"error_text"	=> _es($error_text),
-    
+	
 				"site_id"		=> (int)conf('SITE_ID'),
 				"user_id"		=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_id" : "user_id"]),
 				"user_group"	=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_group" : "user_group"]),
@@ -279,8 +279,8 @@ class yf_maxmind_phone_verify {
 		curl_setopt($ch, CURLOPT_CAINFO, 			YF_PATH."/share/ca-bundle.crt");
 
 		// this option allows to store the result in a string 
-		curl_setopt($ch, CURLOPT_POST,          1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS,    $query_string);
+		curl_setopt($ch, CURLOPT_POST,		  1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS,	$query_string);
 
 		$data = array();		
 		// get the content

@@ -443,7 +443,7 @@ class yf_log_core_errors_viewer {
 				"url"	=> "./?object=".$_GET["object"],
 			),
 			array(
-				"name"	=> "Top of errors",              
+				"name"	=> "Top of errors",			  
 				"url"	=> "./?object=".$_GET["object"]."&action=top_of_errors",
 			),
 			array(
@@ -466,7 +466,7 @@ class yf_log_core_errors_viewer {
 		$cases = array (
 			//$_GET["action"] => {string to replace}
 			"show"				=> "",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

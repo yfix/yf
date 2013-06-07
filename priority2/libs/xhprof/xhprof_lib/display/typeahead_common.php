@@ -5,7 +5,7 @@
 //  you may not use this file except in compliance with the License.
 //  You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,19 +21,19 @@
  * implements the iXHProfRuns interface.
  *
  * @author(s)  Kannan Muthukkaruppan
- *             Changhao Jiang
+ *			 Changhao Jiang
  */
 
 
 include_once $GLOBALS['XHPROF_LIB_ROOT'].'/utils/xhprof_lib.php';
 
 // param name, its type, and default value
-$params = array('q'          => array(XHPROF_STRING_PARAM, ''),
-                'run'        => array(XHPROF_STRING_PARAM, ''),
-                'run1'       => array(XHPROF_STRING_PARAM, ''),
-                'run2'       => array(XHPROF_STRING_PARAM, ''),
-                'source'     => array(XHPROF_STRING_PARAM, 'xhprof'),
-                );
+$params = array('q'		  => array(XHPROF_STRING_PARAM, ''),
+				'run'		=> array(XHPROF_STRING_PARAM, ''),
+				'run1'	   => array(XHPROF_STRING_PARAM, ''),
+				'run2'	   => array(XHPROF_STRING_PARAM, ''),
+				'source'	 => array(XHPROF_STRING_PARAM, 'xhprof'),
+				);
 
 // pull values of these params, and create named globals for each param
 xhprof_param_init($params);
@@ -67,10 +67,10 @@ if (in_array($q, $functions)) {
 
   $functions = array($q);
   foreach ($old_functions as $f) {
-    // exact match case has already been added to the front
-    if ($f != $q) {
-      $functions[] =$f;
-    }
+	// exact match case has already been added to the front
+	if ($f != $q) {
+	  $functions[] =$f;
+	}
   }
 }
 

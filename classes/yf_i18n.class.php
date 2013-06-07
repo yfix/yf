@@ -104,7 +104,7 @@ class yf_i18n {
 	/**
 	* Catch missing method call
 	*/
-    function __call($name, $arguments) {
+	function __call($name, $arguments) {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}
@@ -270,7 +270,7 @@ class yf_i18n {
 	*
 	* We have ability to use custom prefix for vars with same names in different places with different translations
 	* ex. for var "welcome" we can have several vars with prefixes  "::forum::welcome"
-	* Prefix syntax:     "::[a-z_-]::text to tranlate here"
+	* Prefix syntax:	 "::[a-z_-]::text to tranlate here"
 	*
 	* @access	public
 	* @param	$string string	Text to translate

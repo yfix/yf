@@ -20,8 +20,8 @@
 	</p>
 {/if}
 	<div class="button_div">
-		<input type="submit" value="    {t(Save)}    " />
-		<input type="reset" value="    {t(Clear)}    " />
+		<input type="submit" value="	{t(Save)}	" />
+		<input type="reset" value="	{t(Clear)}	" />
 	</div>
 </form>
 </div>

@@ -326,9 +326,9 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 #define SQL_TYPE_TIME	  92
 #define SQL_TYPE_TIMESTAMP 93
 
-#define SQL_UNICODE                             (-95)
-#define SQL_UNICODE_VARCHAR                     (-96)
-#define SQL_UNICODE_LONGVARCHAR                 (-97)
+#define SQL_UNICODE							 (-95)
+#define SQL_UNICODE_VARCHAR					 (-96)
+#define SQL_UNICODE_LONGVARCHAR				 (-97)
 */
 	function ODBCTypes($t)
 	{
@@ -411,9 +411,9 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 		
 		
 		case 'db2':
-            $colname = "%";
-            $qid = odbc_columns($this->_connectionID, "", $schema, $table, $colname);
-            break;
+			$colname = "%";
+			$qid = odbc_columns($this->_connectionID, "", $schema, $table, $colname);
+			break;
 			
 		default:
 			$qid = @odbc_columns($this->_connectionID,'%','%',strtoupper($table),'%');

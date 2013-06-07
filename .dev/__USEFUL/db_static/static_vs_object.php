@@ -2,12 +2,12 @@
 
 class db_pf {
 	function exists () { return true; }
-    function __call($name, $arguments) { return false; }
+	function __call($name, $arguments) { return false; }
 	public static function __callStatic($name, $arguments) { return false; }
 }
 class db_pf2 {
 	function exists () { return true; }
-    function __call($name, $arguments) { trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING); return false; }
+	function __call($name, $arguments) { trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING); return false; }
 	public static function __callStatic($name, $arguments) { trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING); return false; }
 }
 class db_pf22 extends db_pf2 {

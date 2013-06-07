@@ -8,7 +8,7 @@ v4.991 16 Oct 2008  (c) 2000-2008 John Lim (jlim#natsoft.com). All rights reserv
   Latest version is available at http://adodb.sourceforge.net
   
   SQLite info: http://www.hwaci.com/sw/sqlite/
-    
+	
   Install Instructions:
   ====================
   1. Place this in adodb/drivers
@@ -88,25 +88,25 @@ class ADODB_sqlite extends ADOConnection {
 	  $rs = $this->Execute("PRAGMA table_info('$tab')");
 	  if (isset($savem)) $this->SetFetchMode($savem);
 	  if (!$rs) {
-	    $ADODB_FETCH_MODE = $save; 
-	    return $false;
+		$ADODB_FETCH_MODE = $save; 
+		return $false;
 	  }
 	  $arr = array();
 	  while ($r = $rs->FetchRow()) {
-	    $type = explode('(',$r['type']);
-	    $size = '';
-	    if (sizeof($type)==2)
-	    $size = trim($type[1],')');
-	    $fn = strtoupper($r['name']);
-	    $fld = new ADOFieldObject;
-	    $fld->name = $r['name'];
-	    $fld->type = $type[0];
-	    $fld->max_length = $size;
-	    $fld->not_null = $r['notnull'];
-	    $fld->default_value = $r['dflt_value'];
-	    $fld->scale = 0;
-	    if ($save == ADODB_FETCH_NUM) $arr[] = $fld;	
-	    else $arr[strtoupper($fld->name)] = $fld;
+		$type = explode('(',$r['type']);
+		$size = '';
+		if (sizeof($type)==2)
+		$size = trim($type[1],')');
+		$fn = strtoupper($r['name']);
+		$fld = new ADOFieldObject;
+		$fld->name = $r['name'];
+		$fld->type = $type[0];
+		$fld->max_length = $size;
+		$fld->not_null = $r['notnull'];
+		$fld->default_value = $r['dflt_value'];
+		$fld->scale = 0;
+		if ($save == ADODB_FETCH_NUM) $arr[] = $fld;	
+		else $arr[strtoupper($fld->name)] = $fld;
 	  }
 	  $rs->Close();
 	  $ADODB_FETCH_MODE = $save;
@@ -127,8 +127,8 @@ class ADODB_sqlite extends ADOConnection {
 	
 	function _affectedrows()
 	{
-        return sqlite_changes($this->_connectionID);
-    }
+		return sqlite_changes($this->_connectionID);
+	}
 	
 	function ErrorMsg() 
  	{
@@ -265,25 +265,25 @@ class ADODB_sqlite extends ADOConnection {
 	{
 		$false = false;
 		// save old fetch mode
-        global $ADODB_FETCH_MODE;
-        $save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-               $savem = $this->SetFetchMode(FALSE);
-        }
+		global $ADODB_FETCH_MODE;
+		$save = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+			   $savem = $this->SetFetchMode(FALSE);
+		}
 		$SQL=sprintf("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='%s'", strtolower($table));
-        $rs = $this->Execute($SQL);
-        if (!is_object($rs)) {
+		$rs = $this->Execute($SQL);
+		if (!is_object($rs)) {
 			if (isset($savem)) 
 				$this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
-            return $false;
-        }
+			return $false;
+		}
 
 		$indexes = array ();
 		while ($row = $rs->FetchRow()) {
 			if ($primary && preg_match("/primary/i",$row[1]) == 0) continue;
-            if (!isset($indexes[$row[0]])) {
+			if (!isset($indexes[$row[0]])) {
 
 			$indexes[$row[0]] = array(
 				   'unique' => preg_match("/unique/i",$row[1]),
@@ -301,10 +301,10 @@ class ADODB_sqlite extends ADOConnection {
 			$indexes[$row[0]]['columns'] = $cols;
 		}
 		if (isset($savem)) { 
-            $this->SetFetchMode($savem);
+			$this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 		}
-        return $indexes;
+		return $indexes;
 	}
 
 }

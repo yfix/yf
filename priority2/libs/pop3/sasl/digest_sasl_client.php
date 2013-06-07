@@ -6,9 +6,9 @@
  *
  */
 
-define('SASL_DIGEST_STATE_START',             0);
+define('SASL_DIGEST_STATE_START',			 0);
 define('SASL_DIGEST_STATE_RESPOND_CHALLENGE', 1);
-define('SASL_DIGEST_STATE_DONE',              2);
+define('SASL_DIGEST_STATE_DONE',			  2);
 
 class digest_sasl_client_class
 {

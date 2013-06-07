@@ -9,14 +9,14 @@
  * @version  1.0.0
  */
 function utf8_substr_replace(/*string*/ $string,
-                             /*string*/ $replacement,
-                             /*int*/    $start,
-                             /*int*/    $length = null)
+							 /*string*/ $replacement,
+							 /*int*/	$start,
+							 /*int*/	$length = null)
 {
-    if (! function_exists('utf8_str_split')) include_once 'utf8_str_split.php';
-    if (! is_array($a = utf8_str_split($string))) return false;
-    array_splice($a, $start, $length, $replacement);
-    return implode('', $a);
+	if (! function_exists('utf8_str_split')) include_once 'utf8_str_split.php';
+	if (! is_array($a = utf8_str_split($string))) return false;
+	array_splice($a, $start, $length, $replacement);
+	return implode('', $a);
 }
 ?>
 

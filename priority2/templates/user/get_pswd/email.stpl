@@ -2,7 +2,7 @@ Dear {user_name},
 
 Here is your requested login information.
 
-Login:     {login}
+Login:	 {login}
 Password:  {password}
 Login URL: {login_url}
 

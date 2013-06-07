@@ -76,15 +76,15 @@ class yf_xml_rpc {
 	*/
 	function xml_rpc_decode($_xml) {
 		$xml_parser = new xmlrpc_parser();
-	    $data       = $xml_parser->parse( $_xml );
-	    $xml_parser->destruct();
+		$data	   = $xml_parser->parse( $_xml );
+		$xml_parser->destruct();
 
 		if (isset($data['methodResponse']['fault'])) {
-		    $tmp            = $this->xml_rpc_adjust_value( $data['methodResponse']['fault']['value'] );
+			$tmp			= $this->xml_rpc_adjust_value( $data['methodResponse']['fault']['value'] );
 			$this->errors[] = $tmp['faultString'];
 		}
 		
-		$this->xmlrpc_params      = $this->xml_rpc_get_params( $data );
+		$this->xmlrpc_params	  = $this->xml_rpc_get_params( $data );
 		$this->xmlrpc_method_call = $this->xml_rpc_get_method_name( $data );
 		
 		if ($this->_XML_RPC_DEBUG) {
@@ -99,112 +99,112 @@ class yf_xml_rpc {
 	*/
 	function & xml_rpc_adjust_value( & $current_node )
 	{
-	    if ( is_array( $current_node ) )
+		if ( is_array( $current_node ) )
 		{
-	        if ( isset($current_node['array']) )
+			if ( isset($current_node['array']) )
 			{
-	            if ( ! is_array($current_node['array']['data']) )
+				if ( ! is_array($current_node['array']['data']) )
 				{
-	                return array();
-	            }
+					return array();
+				}
 				else
 				{
-	                $temp = &$current_node['array']['data']['value'];
+					$temp = &$current_node['array']['data']['value'];
 	
-	                if ( is_array($temp) and array_key_exists(0, $temp) )
+					if ( is_array($temp) and array_key_exists(0, $temp) )
 					{
-	                    $count = count($temp);
+						$count = count($temp);
 	
-	                    for( $n = 0 ; $n < $count ; $n++ )
+						for( $n = 0 ; $n < $count ; $n++ )
 						{
-	                        $temp2[$n] = & $this->xml_rpc_adjust_value(&$temp[$n]);
-	                    }
+							$temp2[$n] = & $this->xml_rpc_adjust_value(&$temp[$n]);
+						}
 	
-	                    $temp = &$temp2;
+						$temp = &$temp2;
 	
-	                }
+					}
 					else
 					{
-	                    $temp2 = & $this->xml_rpc_adjust_value(&$temp);
-	                    $temp = array(&$temp2);
-	                }
-	            }
-	        }
+						$temp2 = & $this->xml_rpc_adjust_value(&$temp);
+						$temp = array(&$temp2);
+					}
+				}
+			}
 			elseif ( isset($current_node['struct']) )
 			{
-	            if ( ! is_array($current_node['struct']) )
+				if ( ! is_array($current_node['struct']) )
 				{
-	                return array();
-	            }
+					return array();
+				}
 				else
 				{
-	                $temp = &$current_node['struct']['member'];
+					$temp = &$current_node['struct']['member'];
 	
-	                if ( is_array($temp) and array_key_exists(0, $temp) )
+					if ( is_array($temp) and array_key_exists(0, $temp) )
 					{
-	                    $count = count($temp);
+						$count = count($temp);
 	
-	                    for( $n = 0 ; $n < $count ; $n++ )
+						for( $n = 0 ; $n < $count ; $n++ )
 						{
-	                        $temp2[$temp[$n]['name']] = & $this->xml_rpc_adjust_value(&$temp[$n]['value']);
-	                    }
-	                }
+							$temp2[$temp[$n]['name']] = & $this->xml_rpc_adjust_value(&$temp[$n]['value']);
+						}
+					}
 					else
 					{
-	                    $temp2[$temp['name']] = & $this->xml_rpc_adjust_value(&$temp['value']);
-	                }
-	                $temp = &$temp2;
-	            }
-	        }
+						$temp2[$temp['name']] = & $this->xml_rpc_adjust_value(&$temp['value']);
+					}
+					$temp = &$temp2;
+				}
+			}
 			else
 			{
-	            $got_it = false;
+				$got_it = false;
 	
-	            foreach ( $this->var_types as $type )
+				foreach ( $this->var_types as $type )
 				{
-	                if ( array_key_exists($type, $current_node) )
+					if ( array_key_exists($type, $current_node) )
 					{
-	                    $temp   = &$current_node[$type];
-	                    $got_it = true;
-	                    break;
-	                }
-	            }
+						$temp   = &$current_node[$type];
+						$got_it = true;
+						break;
+					}
+				}
 	
-	            if ( ! $got_it )
+				if ( ! $got_it )
 				{
-	                $type = 'string';
-	                
-	            }
+					$type = 'string';
+					
+				}
 	
-	            switch ($type)
+				switch ($type)
 				{
-	                case 'int':
+					case 'int':
 	 				case 'i4':
 					case 'integer':
 					case 'integar':
-						$temp = (int)    $temp;
+						$temp = (int)	$temp;
 						break;
-	                case 'string':
+					case 'string':
 						$temp = (string) $temp;
 						break;
-	                case 'double':
+					case 'double':
 						$temp = (double) $temp; 
 						break;
-	                case 'boolean':
+					case 'boolean':
 						$temp = (bool)   $temp;
 						break;
 					case 'base64':
 						$temp = trim($temp);
 						break;
-	            }
-	        }
-	    }
+				}
+			}
+		}
 		else
 		{
-	        $temp = (string) $current_node;
-	    }
+			$temp = (string) $current_node;
+		}
 	
-	    return $temp;
+		return $temp;
 	}
 	
 	/**
@@ -225,23 +225,23 @@ class yf_xml_rpc {
 			return array();
 		}
 	   
-	    if ( is_array( $temp ) and array_key_exists( 0, $temp ) )
+		if ( is_array( $temp ) and array_key_exists( 0, $temp ) )
 		{
-            $count = count($temp);
+			$count = count($temp);
 
-            for( $n = 0 ; $n < $count ; $n++)
+			for( $n = 0 ; $n < $count ; $n++)
 			{
-                $temp2[$n] = & $this->xml_rpc_adjust_value(&$temp[$n]['value']);
-            }
-        }
+				$temp2[$n] = & $this->xml_rpc_adjust_value(&$temp[$n]['value']);
+			}
+		}
 		else
 		{
-            $temp2[0] = & $this->xml_rpc_adjust_value($temp['value']);
-        }
+			$temp2[0] = & $this->xml_rpc_adjust_value($temp['value']);
+		}
 
-        $temp = &$temp2;
+		$temp = &$temp2;
 
-        return $temp;
+		return $temp;
 	}
 	
 	/**
@@ -249,7 +249,7 @@ class yf_xml_rpc {
 	*/
 	function xml_rpc_get_method_name( $request )
 	{
-	    return $request['methodCall']['methodName'];
+		return $request['methodCall']['methodName'];
 	}
 	
 	/**
@@ -363,10 +363,10 @@ class yf_xml_rpc {
 		$to_print = $this->header."
 		<methodResponse>
 		   <params>
-		      <param>
-		         <value><boolean>1</boolean></value>
-		         </param>
-		      </params>
+			  <param>
+				 <value><boolean>1</boolean></value>
+				 </param>
+			  </params>
 		   </methodResponse>";
 		
 		@header( "Connection: close" );
@@ -410,23 +410,23 @@ class yf_xml_rpc {
 		$to_print = $this->header."
 		<methodResponse>
 		   <fault>
-		      <value>
-		         <struct>
-		            <member>
-		               <name>faultCode</name>
-		               <value>
-		                  <int>".intval($error_code)."</int>
-		                  </value>
-		               </member>
-		            <member>
-		               <name>faultString</name>
-		               <value>
-		                  <string>".$error_msg."</string>
-		                  </value>
-		               </member>
-		            </struct>
-		         </value>
-		            </fault>
+			  <value>
+				 <struct>
+					<member>
+					   <name>faultCode</name>
+					   <value>
+						  <int>".intval($error_code)."</int>
+						  </value>
+					   </member>
+					<member>
+					   <name>faultString</name>
+					   <value>
+						  <string>".$error_msg."</string>
+						  </value>
+					   </member>
+					</struct>
+				 </value>
+					</fault>
 		   </methodResponse>";
 		
 		@header( "Connection: close" );
@@ -447,7 +447,7 @@ class yf_xml_rpc {
 	*/
 	function xml_rpc_post( $file_location, $xmldata='' )
 	{
-		$data            = null;
+		$data			= null;
 		$fsocket_timeout = 10;
 		
 		// Send it..
@@ -460,10 +460,10 @@ class yf_xml_rpc {
 		}
 		// Finalize
 		$host = $url_parts['host'];
-      	$port = ( isset($url_parts['port']) ) ? $url_parts['port'] : 80;
+	  	$port = ( isset($url_parts['port']) ) ? $url_parts['port'] : 80;
 
-      	// Tidy up path
-      	if ( ! empty( $url_parts["path"] ) )
+	  	// Tidy up path
+	  	if ( ! empty( $url_parts["path"] ) )
 		{
 			$path = $url_parts["path"];
 		}
@@ -478,10 +478,10 @@ class yf_xml_rpc {
 		}
 		
 		if ( ! $fp = @fsockopen( $host, $port, $errno, $errstr, $fsocket_timeout ) )
-	    {
+		{
 			$this->errors[] = "CONNECTION REFUSED FROM $host";
 			return FALSE;
-        
+		
 		}
 		else
 		{
@@ -496,24 +496,24 @@ class yf_xml_rpc {
 				$this->errors[] = "Unable to send request to $host!";
 				return FALSE;
 			}
-         }
+		 }
 
-         @stream_set_timeout($fp, $fsocket_timeout);
-        
-         $status = @socket_get_status($fp);
-        
-         while( ! feof($fp) && ! $status['timed_out'] )         
-         {
-            $data  .= fgets ( $fp, 8192 );
-            $status = socket_get_status($fp);
-         }
-        
-        fclose ($fp);
-       
-        // Strip headers
-        
-        $tmp  = split("\r\n\r\n", $data, 2);
-        $data = $tmp[1];
+		 @stream_set_timeout($fp, $fsocket_timeout);
+		
+		 $status = @socket_get_status($fp);
+		
+		 while( ! feof($fp) && ! $status['timed_out'] )		 
+		 {
+			$data  .= fgets ( $fp, 8192 );
+			$status = socket_get_status($fp);
+		 }
+		
+		fclose ($fp);
+	   
+		// Strip headers
+		
+		$tmp  = split("\r\n\r\n", $data, 2);
+		$data = $tmp[1];
 
 		if ( $this->_XML_RPC_DEBUG )
 		{
@@ -579,139 +579,139 @@ class xmlrpc_parser {
 	/**
 	* Parser object
 	*/
-    var $parser;
+	var $parser;
 	/**
 	* Current document
 	*/
-    var $document;
+	var $document;
 	/**
 	* Current tag
 	*/
-    var $current;
+	var $current;
 	/**
 	* Parent tag
 	*/
-    var $parent;
+	var $parent;
 	/**
 	* Parents
 	*/
-    var $parents;
+	var $parents;
 	/**
 	* Last opened tag
 	*/
-    var $last_opened_tag;
+	var $last_opened_tag;
 	
 	/**
 	* Constructor
 	*/
-    function xmlrpc_parser( $data=null )
+	function xmlrpc_parser( $data=null )
 	{
-        $this->parser = xml_parser_create();
+		$this->parser = xml_parser_create();
 
-        xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
-        xml_set_object(               $this->parser, &$this);
-        xml_set_element_handler(      $this->parser, "rpc_open", "rpc_close");
-        xml_set_character_data_handler($this->parser, "rpc_data");
-    }
+		xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_set_object(			   $this->parser, &$this);
+		xml_set_element_handler(	  $this->parser, "rpc_open", "rpc_close");
+		xml_set_character_data_handler($this->parser, "rpc_data");
+	}
 	
 	/**
 	* Object destructor
 	*/
-    function destruct()
+	function destruct()
 	{
-        xml_parser_free( $this->parser );
-    }
+		xml_parser_free( $this->parser );
+	}
 	
 	/**
 	* Parse the XML data
 	*/
-    function parse( $data )
+	function parse( $data )
 	{
-        $this->document        = array();
-        $this->parent          = &$this->document;
-        $this->parents         = array();
-        $this->last_opened_tag = NULL;
+		$this->document		= array();
+		$this->parent		  = &$this->document;
+		$this->parents		 = array();
+		$this->last_opened_tag = NULL;
 
-        xml_parse($this->parser, $data);
+		xml_parse($this->parser, $data);
 		
 		$tmp = $this->document;
-        return $tmp;
-    }
+		return $tmp;
+	}
 	
 	/**
 	* Open handler for XML object
 	*/
-    function rpc_open($parser, $tag, $attributes)
+	function rpc_open($parser, $tag, $attributes)
 	{
-        $this->data            = "";
-        $this->last_opened_tag = $tag;
+		$this->data			= "";
+		$this->last_opened_tag = $tag;
 
-        if ( array_key_exists( $tag, $this->parent ) )
+		if ( array_key_exists( $tag, $this->parent ) )
 		{
-            if ( is_array( $this->parent[$tag] ) and array_key_exists( 0, $this->parent[$tag] ) )
+			if ( is_array( $this->parent[$tag] ) and array_key_exists( 0, $this->parent[$tag] ) )
 			{
-                $key = is_array( $this->parent[$tag] ) ? count( array_filter( array_keys($this->parent[$tag]), 'is_numeric' ) ) : 0;
-            }
+				$key = is_array( $this->parent[$tag] ) ? count( array_filter( array_keys($this->parent[$tag]), 'is_numeric' ) ) : 0;
+			}
 			else
 			{
-                $temp = &$this->parent[$tag];
-                unset($this->parent[$tag]);
+				$temp = &$this->parent[$tag];
+				unset($this->parent[$tag]);
 
-                $this->parent[$tag][0] = &$temp;
+				$this->parent[$tag][0] = &$temp;
 
-                if ( array_key_exists( $tag ." attr", $this->parent ) )
+				if ( array_key_exists( $tag ." attr", $this->parent ) )
 				{
-                    $temp = &$this->parent[ $tag ." attr" ];
-                    unset($this->parent[ $tag ." attr" ]);
-                    $this->parent[$tag]["0 attr"] = &$temp;
-                }
+					$temp = &$this->parent[ $tag ." attr" ];
+					unset($this->parent[ $tag ." attr" ]);
+					$this->parent[$tag]["0 attr"] = &$temp;
+				}
 
-                $key = 1;
-            }
+				$key = 1;
+			}
 
-            $this->parent = &$this->parent[$tag];
-        }
+			$this->parent = &$this->parent[$tag];
+		}
 		else
 		{
-            $key = $tag;
-        }
+			$key = $tag;
+		}
 
-        if ( $attributes )
+		if ( $attributes )
 		{
-            $this->parent[ $key ." attr" ] = $attributes;
-        }
+			$this->parent[ $key ." attr" ] = $attributes;
+		}
 
-        $this->parent[$key] = array();
-        $this->parent       = &$this->parent[$key];
+		$this->parent[$key] = array();
+		$this->parent	   = &$this->parent[$key];
 
-        array_unshift($this->parents, &$this->parent);
-    }
+		array_unshift($this->parents, &$this->parent);
+	}
 
 	/**
 	* XML data handler
 	*/
-    function rpc_data($parser, $data)
+	function rpc_data($parser, $data)
 	{
-        if ( $this->last_opened_tag != NULL )
+		if ( $this->last_opened_tag != NULL )
 		{
-            $this->data .= $data;
-        }
-    }
+			$this->data .= $data;
+		}
+	}
 	
 	/**
 	* XML close handler
 	*/
-    function rpc_close($parser, $tag)
+	function rpc_close($parser, $tag)
 	{
 		if ( $this->last_opened_tag == $tag )
 		{
-            $this->parent = $this->data;
-            $this->last_opened_tag = NULL;
-        }
+			$this->parent = $this->data;
+			$this->last_opened_tag = NULL;
+		}
 
-        array_shift($this->parents);
+		array_shift($this->parents);
 
-        $this->parent = &$this->parents[0];
-    }
+		$this->parent = &$this->parents[0];
+	}
 }
 

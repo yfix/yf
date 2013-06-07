@@ -276,15 +276,15 @@ class yf_static_pages {
 					}
 /*					$DATA[$_all_locale] = array(
 						$DATA[$_all_locale]["id"] => "",
-                        $DATA[$_all_locale]["cat_id"] => "",
-                        $DATA[$_all_locale]["name"] => "",
-                        $DATA[$_all_locale]["text"] => $_text,
+						$DATA[$_all_locale]["cat_id"] => "",
+						$DATA[$_all_locale]["name"] => "",
+						$DATA[$_all_locale]["text"] => $_text,
 						$DATA[$_all_locale]["page_title"] => "",
-                        $DATA[$_all_locale]["page_heading"] => "",
-                        $DATA[$_all_locale]["meta_keywords"] => "", 
-                        $DATA[$_all_locale]["meta_desc"] => "",
-                        $DATA[$_all_locale]["locale"] => $_all_locale,
-                        $DATA[$_all_locale]["active"] => "1",
+						$DATA[$_all_locale]["page_heading"] => "",
+						$DATA[$_all_locale]["meta_keywords"] => "", 
+						$DATA[$_all_locale]["meta_desc"] => "",
+						$DATA[$_all_locale]["locale"] => $_all_locale,
+						$DATA[$_all_locale]["active"] => "1",
 						$DATA[$_all_locale]["text_field_name"] => $this->TEXT_FIELD_NAME[$_all_locale],
 						$DATA[$_all_locale]["body"] => $_body,
 					);*/
@@ -484,7 +484,7 @@ class yf_static_pages {
 			//$_GET["action"] => {string to replace}
 			"show"			=> "",
 			"edit"			=> "",
-		);             		
+		);			 		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

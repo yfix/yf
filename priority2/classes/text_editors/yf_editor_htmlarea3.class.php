@@ -44,9 +44,9 @@ class yf_editor_htmlarea3 {
 			<script type="text/javascript">
 			  HTMLArea.loadPlugin("ContextMenu");
 			  HTMLArea.onload = function() {
-			    var editor = new HTMLArea("my_editor");
-			    editor.registerPlugin(ContextMenu);
-			    editor.generate();
+				var editor = new HTMLArea("my_editor");
+				editor.registerPlugin(ContextMenu);
+				editor.generate();
 			  };
 			  HTMLArea.init();
 			</script>

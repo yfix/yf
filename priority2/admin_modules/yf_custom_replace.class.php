@@ -620,7 +620,7 @@ class yf_custom_replace {
 			"add_rule"			=> "",
 			"show_words"		=> "Replace words list",
 			"add_word"			=> "",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

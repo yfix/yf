@@ -75,9 +75,9 @@ class yf_shop_payment {
 			"x_fp_timestamp"		=> $time_stamp,
 			"x_fp_hash"				=> $fingerprint,
 			"x_test_request"		=> $TEST_MODE,
-			"x_delim_char"      		=> '|', // The default delimiter is a comma
-			"x_delim_data"      		 => 'TRUE',
-			"x_version"           		 => '3.1',  // 3.1 is required to use CVV codes
+			"x_delim_char"	  		=> '|', // The default delimiter is a comma
+			"x_delim_data"	  		 => 'TRUE',
+			"x_version"		   		 => '3.1',  // 3.1 is required to use CVV codes
 			"x_relay_response"	=> "FALSE",
 
 			//"x_show_form"			=> "PAYMENT_FORM",

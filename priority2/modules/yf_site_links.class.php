@@ -459,7 +459,7 @@ class yf_site_links {
 			$Q = db()->query("SELECT * FROM `".db('links_sites')."`");
 			while ($A = db()->fetch_array($Q)) {
 				$_POST["site"][$A["id"]] = intval($_POST["site"][$A["id"]]);
-	    	    if (!empty($_POST["site"][$A["id"]])) {
+				if (!empty($_POST["site"][$A["id"]])) {
 					$site_names .= $A["title"]." - ".$A["url"]."\r\n";
 				}
 			}
@@ -561,7 +561,7 @@ class yf_site_links {
 			$Q = db()->query("SELECT * FROM `".db('links_sites')."`");
 			while ($A = db()->fetch_array($Q)) {
 				$_POST["site"][$A["id"]] = intval($_POST["site"][$A["id"]]);
-		        if (!empty($_POST["site"][$A["id"]])) {
+				if (!empty($_POST["site"][$A["id"]])) {
 					$site_names .= $A["title"]." - ".$A["url"]."\r\n";
 				}
 			}

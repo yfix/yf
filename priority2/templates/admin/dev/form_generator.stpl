@@ -238,7 +238,7 @@ $(function() {
 			// Adds 'i' fields
 			for (i=1; i<=_add_num; i++) {
 				$("#fields_container").append(_field_p);
-    
+	
 				//If fields changed disable textarea with code
 				$("#fields_container li").bind("keyup change", function() {
 					refresh();				
@@ -430,7 +430,7 @@ $(function() {
 				_field_code = eval("_ts_['" + _ftype + "']");
 				_field_wrapper = _ts_["form_item"].replace(/%field_by_type%/g, _field_code);
 
-	            _items_edit += _field_wrapper
+				_items_edit += _field_wrapper
 					.replace(/%f_label%/g, _flabel)
 					.replace(/%f_name%/g, _fname) + "\n";
 

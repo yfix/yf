@@ -251,10 +251,10 @@ jQuery.fn.Selectable = function(o)
 		}
 	}
 
-    if (!o) {
+	if (!o) {
 		o = {};
 	}
-    return this.each(
+	return this.each(
 		function()
 		{
 			if (this.isSelectable)

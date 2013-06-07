@@ -523,7 +523,7 @@ class yf_manage_articles extends yf_module {
 			"show"					=> "",
 			"add"					=> "Add new article",
 			"edit"					=> "Edit article",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

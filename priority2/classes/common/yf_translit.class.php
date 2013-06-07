@@ -71,8 +71,8 @@ class yf_translit {
 				$byte1 >>= 2; // c1 shifts 2 to the right
 
 				$word = ($byte1<<8) + $byte2;
-				if ($word==1025) $out .= chr(168);                    // ?
-				elseif ($word==1105) $out .= chr(184);                // ?
+				if ($word==1025) $out .= chr(168);					// ?
+				elseif ($word==1105) $out .= chr(184);				// ?
 				elseif ($word>=0x0410 && $word<=0x044F) $out .= chr($word-848); // ?-? ?-?
 				else {  
 					$a = dechex($byte1);

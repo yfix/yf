@@ -78,19 +78,19 @@ class yf_intrusion_detection {
 				// If you would like to use other methods than file caching you can configure them here
 			),
 			'Caching'	=> array(
-				// caching:      session|file|database|memcached|none
+				// caching:	  session|file|database|memcached|none
 				"caching"=> "none",
 				//"expiration_time" => 600,
-				// file cache    
+				// file cache	
 				//"path"			=> INCLUDE_PATH. "uploads/tmp/default_filter.cache",
 				// database cache
 				//"wrapper"		=> "mysql:host=".DB_HOST.";port=3306;dbname=".DB_NAME,
 				//"user"		=> DB_USER
 				//"password"	=> DB_PSWD,
 				//"table"		=> db('phpids_cache'),
-				// memcached     
+				// memcached	 
 				//"host"		=> "localhost",
-                //"port"		=> "11211",
+				//"port"		=> "11211",
 				//"key_prefix"	=> "PHPIDS",
 				//"tmp_path"	=> "tmp/memcache.timestamp",
 			),

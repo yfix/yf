@@ -6,11 +6,11 @@
  * PHP versions 4 and 5
  *
  * @category   Text
- * @package    Text_Wiki
- * @author     Justin Patrin <justinpatrin@php.net>
- * @license    http://www.gnu.org/copyleft/lesser.html  LGPL License 2.1
- * @version    CVS: $Id: Default.php 208363 2006-03-01 16:58:17Z justinpatrin $
- * @link       http://pear.php.net/package/Text_Wiki
+ * @package	Text_Wiki
+ * @author	 Justin Patrin <justinpatrin@php.net>
+ * @license	http://www.gnu.org/copyleft/lesser.html  LGPL License 2.1
+ * @version	CVS: $Id: Default.php 208363 2006-03-01 16:58:17Z justinpatrin $
+ * @link	   http://pear.php.net/package/Text_Wiki
  */
 
 require_once('Text/Wiki.php');
@@ -19,9 +19,9 @@ require_once('Text/Wiki.php');
  * This is the parser for the Default ruleset. For now, this simply extends Text_Wiki.
  *
  * @category   Text
- * @package    Text_Wiki
- * @version    Release: @package_version@
- * @author     Justin Patrin <justinpatrin@php.net>
+ * @package	Text_Wiki
+ * @version	Release: @package_version@
+ * @author	 Justin Patrin <justinpatrin@php.net>
  */
 class Text_Wiki_Default extends Text_Wiki {
 }

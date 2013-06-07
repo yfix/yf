@@ -98,7 +98,7 @@ class yf_conf_editor {
 		}
 
 		$this->conf_array = $this->_get_group_conf_array(__FUNCTION__);
-    	// Show first class settings
+		// Show first class settings
 		if (!$_GET["id"] && $this->conf_array[0]) {
 			$tmp = array_keys($this->conf_array[0]);
 			asort($tmp);
@@ -256,7 +256,7 @@ class yf_conf_editor {
 				}
 			}
 		} elseif ($group == "admin_modules") {
-		    
+			
 			$CACHE_NAME = "adm_modules_conf_tmp";
 
 			if ($this->USE_CACHE) {
@@ -286,7 +286,7 @@ class yf_conf_editor {
 			if ($this->USE_CACHE) {
 				$conf_array = $CACHE_OBJ->get($CACHE_NAME, $this->CACHE_TTL);
 			}
-		    
+			
 			if (empty($conf_array)) {
 				if (empty($this->_classes_tree)) {
 					$this->_classes_tree = $this->_get_classes();
@@ -310,12 +310,12 @@ class yf_conf_editor {
 		} elseif ($group == "forum") {
 
 			$CACHE_NAME = "forum_conf_tmp";
-    
+	
 			if ($this->USE_CACHE) {
 				$conf_array = $CACHE_OBJ->get($CACHE_NAME, $this->CACHE_TTL);
 			}
 			if (empty($conf_array)) {
-    
+	
 				// Get module file contents
 				$test_string = file_get_contents(YF_PATH. "modules/yf_forum.class.php");
 				preg_match("/var[\s\t]+\\\$SETTINGS[\s\t]*=[\s\t]*array\((.*?)\);/ims", $test_string, $m);
@@ -327,7 +327,7 @@ class yf_conf_editor {
 					$conf_array[1]["_forum"][$var_name]["desc"] = trim($m[4][$k]);
 					$conf_array[1]["_forum"][$var_name]["type"] = $this->_get_type(@eval("return ".$m[2][$k].";"));
 				}
-    
+	
 				if ($this->USE_CACHE) {
 					$CACHE_OBJ->put($CACHE_NAME, $conf_array);
 				}

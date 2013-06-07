@@ -84,7 +84,7 @@ function parseAttributes($attrText, $convertEntities = true, $definedEntities = 
 					else {
 						if ($quoteType == $currentChar) {
 							if ($convertEntities && $maybeEntity) {
-							    $valueDump = strtr($valueDump, DOMIT_PREDEFINED_ENTITIES);
+								$valueDump = strtr($valueDump, DOMIT_PREDEFINED_ENTITIES);
 								$valueDump = strtr($valueDump, $definedEntities);
 							}
 
@@ -107,7 +107,7 @@ function parseAttributes($attrText, $convertEntities = true, $definedEntities = 
 					else {
 						if ($quoteType == $currentChar) {
 							if ($convertEntities && $maybeEntity) {
-							    $valueDump = strtr($valueDump, $predefinedEntities);
+								$valueDump = strtr($valueDump, $predefinedEntities);
 								$valueDump = strtr($valueDump, $definedEntities);
 							}
 

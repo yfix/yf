@@ -24,12 +24,12 @@ class yf_db_mysql41 {
 	var $META_TABLES_SQL	= "SHOW TABLES";	
 	/** @var @conf_skip */
 	var $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
-    /** @var @conf_skip */
-    var $DEF_CHARSET        = "utf8";
-    /** @var @conf_skip */
-    var $DEF_PORT           = 3306;
-    /** @var @conf_skip */
-    var $SQL_NO_CACHE		= false;
+	/** @var @conf_skip */
+	var $DEF_CHARSET		= "utf8";
+	/** @var @conf_skip */
+	var $DEF_PORT		   = 3306;
+	/** @var @conf_skip */
+	var $SQL_NO_CACHE		= false;
 
 	/**
 	* Constructor
@@ -57,7 +57,7 @@ class yf_db_mysql41 {
 			: mysql_connect($connect_host, $this->user, $this->password, true, $use_ssl ? MYSQL_CLIENT_SSL : 0);
 
 		if (!$this->db_connect_id) {
-                        conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
+						conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
 			return false;
 		}
 		if ($this->dbname != "") {

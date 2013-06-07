@@ -26,7 +26,7 @@ class yf_module {
 	/**
 	* Catch missing method call
 	*/
-    function __call($name, $arguments) {
+	function __call($name, $arguments) {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}

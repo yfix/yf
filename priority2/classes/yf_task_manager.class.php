@@ -105,9 +105,9 @@ class yf_task_manager {
 						return false;
 					}
 				}
-			    
+				
 				require_once ($task_file_path);
-			    
+				
 				$myobj = new task_item();
 				$myobj->register_class($this);
 				$myobj->pass_task($this_task);
@@ -145,11 +145,11 @@ class yf_task_manager {
 	*/
 	function generate_next_run($task = array()) {
 		// Did we set a day?
-		$day_set       = 1;
-		$min_set       = 1;
+		$day_set	   = 1;
+		$min_set	   = 1;
 		$day_increment = 0;
 
-		$this->run_day    = $this->date_now['wday'];
+		$this->run_day	= $this->date_now['wday'];
 		$this->run_minute = $this->date_now['minute'];
 		$this->run_hour   = $this->date_now['hour'];
 		$this->run_month  = $this->date_now['month'];

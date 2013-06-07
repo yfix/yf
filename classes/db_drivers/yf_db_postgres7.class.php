@@ -26,11 +26,11 @@ class yf_db_postgres7 {
 	var $num_queries		= 0;
 
 	/** @var @conf_skip */
-    var $META_TABLES_SQL	= "SELECT tablename,'T' FROM pg_tables WHERE tablename NOT LIKE 'pg\_%'
+	var $META_TABLES_SQL	= "SELECT tablename,'T' FROM pg_tables WHERE tablename NOT LIKE 'pg\_%'
 		AND tablename NOT IN ('sql_features', 'sql_implementation_info', 'sql_languages',
 		 'sql_packages', 'sql_sizing', 'sql_sizing_profiles') 
 		UNION 
-    	    SELECT viewname,'V' FROM pg_views WHERE viewname NOT LIKE 'pg\_%'";
+			SELECT viewname,'V' FROM pg_views WHERE viewname NOT LIKE 'pg\_%'";
 
 	/** @var @conf_skip */
 	var $META_COLUMNS_SQL	= "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 

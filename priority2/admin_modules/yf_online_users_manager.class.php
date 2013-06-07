@@ -66,7 +66,7 @@ class yf_online_users_manager {
 		// Start counter of columns
 		$i = 1;
 
-    	foreach ((array)$A as $V){
+		foreach ((array)$A as $V){
 			$user_ids[$V["user_id"]] = $V["user_id"];
 			$this->_user_info = $this->_get_users_info($user_ids);
 			parse_str($V["query_string"], $q_string);
@@ -306,7 +306,7 @@ class yf_online_users_manager {
 		$cases = array (
 			//$_GET["action"] => {string to replace}
 			"show"					=> "",
-		);             		
+		);			 		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

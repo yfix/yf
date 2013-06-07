@@ -207,13 +207,13 @@ class yf_test {
 	*/
 	function phpmailer () {
 		require_once(YF_PATH."libs/phpmailer/class.phpmailer.php");
-		$mail             = new PHPMailer(); // defaults to using php "mail()"
-		$body             = file_get_contents(INCLUDE_PATH. 'uploads/mail_test.html');
+		$mail			 = new PHPMailer(); // defaults to using php "mail()"
+		$body			 = file_get_contents(INCLUDE_PATH. 'uploads/mail_test.html');
 		$mail->SetFrom('yuri.vysotskiy@gmail.com', 'YFix Team');
 		$address = "yuri.vysotskiy@gmail.com";
 		$mail->AddAddress($address, "yuri.vysotskiy");
-		$mail->Subject    = "PHPMailer Test Subject via mail(), basic";
-		$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!"; // optional, comment out and test
+		$mail->Subject	= "PHPMailer Test Subject via mail(), basic";
+		$mail->AltBody	= "To view the message, please use an HTML compatible email viewer!"; // optional, comment out and test
 		$mail->MsgHTML($body);
 		$mail->IsHTML(true);
 		if(!$mail->Send()) {
@@ -272,7 +272,7 @@ class yf_test {
 	// Main function
 	function maxmind_phone_check() {
 		return $this->_call_sub_module(__FUNCTION__);
-    }
+	}
 
 	//-----------------------------------------------------------------------------
 	// 
@@ -481,7 +481,7 @@ class yf_test {
 			<label for="google_stats_id">Google stats ID &nbsp;&nbsp;
 				{itip("New tooltip text goes here<br />New tooltip text goes here<br />New tooltip text goes here")}
 			</label>
-		    <input type="text" name="google_stats_id" value="" id="google_stats_id">
+			<input type="text" name="google_stats_id" value="" id="google_stats_id">
 		';
 
 		return $body;

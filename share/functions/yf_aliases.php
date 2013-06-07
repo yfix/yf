@@ -79,7 +79,7 @@ if (!function_exists("_force_get_url")) {
 	function _force_get_url($params = array(), $host = "", $url_str = "") { return module("rewrite")->_force_get_url($params, $host, $url_str); }
 }
 if (!function_exists("_generate_url")) {
-    function _generate_url($params = array(), $host = "") { return module("rewrite")->_generate_url($params, $host); }
+	function _generate_url($params = array(), $host = "") { return module("rewrite")->_generate_url($params, $host); }
 }
 if (!function_exists("getmicrotime")) {
 	function getmicrotime() { return microtime(true); }

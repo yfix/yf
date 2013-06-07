@@ -31,7 +31,7 @@ class yf_unicode_funcs {
 	/**
 	* Catch missing method call
 	*/
-    function __call($name, $arguments) {
+	function __call($name, $arguments) {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}
@@ -58,7 +58,7 @@ class yf_unicode_funcs {
 		if (preg_match('/[à-á]/u', 'â')) {
 			return array($this->UNICODE_ERROR, t('The PCRE library in your PHP installation is outdated. This will cause problems when handling Unicode text. If you are running PHP 4.3.3 or higher, make sure you are using the PCRE library supplied by PHP. Please refer to the <a href="@url">PHP PCRE documentation</a> for more information.', array('@url' => 'http://www.php.net/pcre')));
 		}
-    
+	
 		// Check for mbstring extension
 		if (!function_exists('mb_strlen')) {
 			return array($this->UNICODE_SINGLEBYTE, t('Operations on Unicode strings are emulated on a best-effort basis. Install the <a href="@url">PHP mbstring extension</a> for improved Unicode support.', array('@url' => 'http://www.php.net/mbstring')));
@@ -152,7 +152,7 @@ class yf_unicode_funcs {
 			if ($out !== FALSE) {
 				$encoding = 'utf-8';
 				$data = preg_replace('#^(<\?xml[^>]+encoding)="([^"]+)"#', '\\1="utf-8"', $out);
-		    } else {
+			} else {
 				_debug_log(t("Can not convert XML encoding %s to UTF-8.", array('%s' => $encoding)));
 				return 0;
 			}
@@ -179,7 +179,7 @@ class yf_unicode_funcs {
 		if (function_exists('iconv')) {
 			$out = @iconv($encoding, 'utf-8', $data);
 		} else if (function_exists('mb_convert_encoding')) {
-		    $out = @mb_convert_encoding($data, 'utf-8', $encoding);
+			$out = @mb_convert_encoding($data, 'utf-8', $encoding);
 		} else if (function_exists('recode_string')) {
 			$out = @recode_string($encoding .'..utf-8', $data);
 		} else {
@@ -209,10 +209,10 @@ class yf_unicode_funcs {
 	*/
 	function truncate_bytes($string, $len) {
 		if (strlen($string) <= $len) {
-		    return $string;
+			return $string;
 		}
 		if ((ord($string[$len]) < 0x80) || (ord($string[$len]) >= 0xC0)) {
-		    return substr($string, 0, $len);
+			return substr($string, 0, $len);
 		}
 		while (--$len >= 0 && ord($string[$len]) >= 0x80 && ord($string[$len]) < 0xC0) {};
 		return substr($string, 0, $len);
@@ -234,23 +234,23 @@ class yf_unicode_funcs {
 	*/
 	function truncate_utf8($string, $len, $wordsafe = FALSE, $dots = FALSE) {
 		if ($this->strlen($string) <= $len) {
-		    return $string;
+			return $string;
 		}
 		if ($dots) {
 			$len -= 4;
 		}
 		if ($wordsafe) {
 			$string = $this->substr($string, 0, $len + 1); 	// leave one more character
-		    if ($last_space = strrpos($string, ' ')) { 		// space exists AND is not on position 0
-	    		$string = substr($string, 0, $last_space);
-	    	} else {
-			    $string = $this->substr($string, 0, $len);
-    		}
+			if ($last_space = strrpos($string, ' ')) { 		// space exists AND is not on position 0
+				$string = substr($string, 0, $last_space);
+			} else {
+				$string = $this->substr($string, 0, $len);
+			}
   		} else {
-		    $string = $this->substr($string, 0, $len);
+			$string = $this->substr($string, 0, $len);
 		}
 		if ($dots) {
-		    $string .= '...';
+			$string .= '...';
 		}
 		return $string;
 	}
@@ -272,10 +272,10 @@ class yf_unicode_funcs {
 	*/
 	function mime_header_encode($string) {
 		if (preg_match('/[^\x20-\x7E]/', $string)) {
-		    $chunk_size = 47; // floor((75 - strlen("=?UTF-8?B??=")) * 0.75);
-		    $len = strlen($string);
-		    $output = '';
-		    while ($len > 0) {
+			$chunk_size = 47; // floor((75 - strlen("=?UTF-8?B??=")) * 0.75);
+			$len = strlen($string);
+			$output = '';
+			while ($len > 0) {
 				$chunk = $this->truncate_utf8($string, $chunk_size);
 				$output .= ' =?UTF-8?B?'. base64_encode($chunk) ."?=\n";
 				$c = strlen($chunk);
@@ -327,11 +327,11 @@ class yf_unicode_funcs {
 		// We store named entities in a table for quick processing.
 		if (!isset($table)) {
 			// Get all named HTML entities.
-		    $table = array_flip(get_html_translation_table(HTML_ENTITIES));
-	    	// PHP gives us ISO-8859-1 data, we need UTF-8.
-		    $table = array_map('utf8_encode', $table);
-		    // Add apostrophe (XML)
-		    $table['&apos;'] = "'";
+			$table = array_flip(get_html_translation_table(HTML_ENTITIES));
+			// PHP gives us ISO-8859-1 data, we need UTF-8.
+			$table = array_map('utf8_encode', $table);
+			// Add apostrophe (XML)
+			$table['&apos;'] = "'";
 		}
 		$newtable = array_diff($table, $exclude);
 
@@ -345,9 +345,9 @@ class yf_unicode_funcs {
 	function _decode_entities($prefix, $codepoint, $original, &$table, &$exclude) {
 		// Named entity
 		if (!$prefix) {
-		    if (isset($table[$original])) {
+			if (isset($table[$original])) {
 				return $table[$original];
-		    } else {
+			} else {
 				return $original;
 			}
 		}
@@ -364,23 +364,23 @@ class yf_unicode_funcs {
 			$str = chr($codepoint);
 		}
 		else if ($codepoint < 0x800) {
-		    $str = chr(0xC0 | ($codepoint >> 6))
-	         . chr(0x80 | ($codepoint & 0x3F));
+			$str = chr(0xC0 | ($codepoint >> 6))
+			 . chr(0x80 | ($codepoint & 0x3F));
 		}
 		else if ($codepoint < 0x10000) {
-		    $str = chr(0xE0 | ( $codepoint >> 12))
-        	 . chr(0x80 | (($codepoint >> 6) & 0x3F))
-	         . chr(0x80 | ( $codepoint       & 0x3F));
+			$str = chr(0xE0 | ( $codepoint >> 12))
+			 . chr(0x80 | (($codepoint >> 6) & 0x3F))
+			 . chr(0x80 | ( $codepoint	   & 0x3F));
 		}
 		else if ($codepoint < 0x200000) {
-		    $str = chr(0xF0 | ( $codepoint >> 18))
-        	 . chr(0x80 | (($codepoint >> 12) & 0x3F))
-	         . chr(0x80 | (($codepoint >> 6)  & 0x3F))
-    	     . chr(0x80 | ( $codepoint        & 0x3F));
+			$str = chr(0xF0 | ( $codepoint >> 18))
+			 . chr(0x80 | (($codepoint >> 12) & 0x3F))
+			 . chr(0x80 | (($codepoint >> 6)  & 0x3F))
+			 . chr(0x80 | ( $codepoint		& 0x3F));
 		}
 		// Check for excluded characters
 		if (in_array($str, $exclude)) {
-		    return $original;
+			return $original;
 		} else {
 			return $str;
 		}
@@ -411,13 +411,13 @@ class yf_unicode_funcs {
 			return $text;
 		}
 		if ($this->MULTIBYTE == $this->UNICODE_MULTIBYTE) {
-		    return mb_strtoupper($text);
+			return mb_strtoupper($text);
 		} else {
-		    // Use C-locale for ASCII-only uppercase
-		    $text = strtoupper($text);
-		    // Case flip Latin-1 accented letters
+			// Use C-locale for ASCII-only uppercase
+			$text = strtoupper($text);
+			// Case flip Latin-1 accented letters
 			$text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', array($this, "_unicode_caseflip"), $text);
-		    return $text;
+			return $text;
 		}
 	}
 
@@ -434,9 +434,9 @@ class yf_unicode_funcs {
 		if ($this->MULTIBYTE == $this->UNICODE_MULTIBYTE) {
 			return mb_strtolower($text);
 		} else {
-		    // Use C-locale for ASCII-only lowercase
-		    $text = strtolower($text);
-		    // Case flip Latin-1 accented letters
+			// Use C-locale for ASCII-only lowercase
+			$text = strtolower($text);
+			// Case flip Latin-1 accented letters
 			$text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', array($this, "_unicode_caseflip"), $text);
 			return $text;
 		}
@@ -494,17 +494,17 @@ class yf_unicode_funcs {
 		if ($this->MULTIBYTE == $this->UNICODE_MULTIBYTE) {
 			return $length === NULL ? mb_substr($text, $start) : mb_substr($text, $start, $length);
 		} else {
-		    $strlen = strlen($text);
-		    // Find the starting byte offset
-		    $bytes = 0;
+			$strlen = strlen($text);
+			// Find the starting byte offset
+			$bytes = 0;
 			if ($start > 0) {
 				// Count all the continuation bytes from the start until we have found
 				// $start characters
 				$bytes = -1; $chars = -1;
 				while ($bytes < $strlen && $chars < $start) {
 					$bytes++;
-			        $c = ord($text[$bytes]);
-			        if ($c < 0x80 || $c >= 0xC0) {
+					$c = ord($text[$bytes]);
+					if ($c < 0x80 || $c >= 0xC0) {
 						$chars++;
 					}
 				}
@@ -514,9 +514,9 @@ class yf_unicode_funcs {
 				$start = abs($start);
 				$bytes = $strlen; $chars = 0;
 				while ($bytes > 0 && $chars < $start) {
-			        $bytes--;
-			        $c = ord($text[$bytes]);
-			        if ($c < 0x80 || $c >= 0xC0) {
+					$bytes--;
+					$c = ord($text[$bytes]);
+					if ($c < 0x80 || $c >= 0xC0) {
 						$chars++;
 					}
 				}

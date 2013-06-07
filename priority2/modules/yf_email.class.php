@@ -565,7 +565,7 @@ class yf_email {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Show captcha image
+	// Show captcha image
 	function show_image() {
 		$this->CAPTCHA->show_image();
 	}

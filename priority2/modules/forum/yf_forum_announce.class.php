@@ -111,7 +111,7 @@ class yf_forum_announce {
 		// Get all announces from db
 		$Q = db()->query("SELECT * FROM `".db('forum_announce')."`");
 		while ($A = db()->fetch_assoc($Q)) $announces[$A["id"]] = $A;
-        // Get users infos
+		// Get users infos
 		foreach ((array)$announces as $ann_info) {
 			$users_ids[$ann_info["author_id"]] = $ann_info["author_id"];
 		}

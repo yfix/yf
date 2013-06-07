@@ -9,9 +9,9 @@
 * <productlist name="myname" version="1.0">
 *  <productgroup name="thisgroup">
 *   <product id="1.0">
-*    <description>This is a descrption</description>
-*    <title>Baked Beans</title>
-*    <room store="1">103</room>
+*	<description>This is a descrption</description>
+*	<title>Baked Beans</title>
+*	<room store="1">103</room>
 *   </product>
 *  </productgroup>
 * </productlist>
@@ -24,8 +24,8 @@
 * 
 * // Build entry content
 * $content[] = $xml->xml_build_simple_tag( 'description', "This is a descrption" );
-* $content[] = $xml->xml_build_simple_tag( 'title'      , "Baked Beans"          );
-* $content[] = $xml->xml_build_simple_tag( 'room'       , '103'         , array( 'store' => 1 ) );
+* $content[] = $xml->xml_build_simple_tag( 'title'	  , "Baked Beans"		  );
+* $content[] = $xml->xml_build_simple_tag( 'room'	   , '103'		 , array( 'store' => 1 ) );
 * 
 * // Build entry
 * $entry[]   = $xml->xml_build_entry( 'product', $content, array( 'id' => '1.0' ) );
@@ -67,14 +67,14 @@ class yf_xml_parser {
 	*
 	* @var string
 	*/
-	var $header            = "";
+	var $header			= "";
 	
 	/**
 	* Root tag name
 	*
 	* @var string
 	*/
-	var $root_tag          = '';
+	var $root_tag		  = '';
 	
 	/**
 	* Root attributes
@@ -88,56 +88,56 @@ class yf_xml_parser {
 	*
 	* @var array
 	*/
-	var $entries           = array();
+	var $entries		   = array();
 	
 	/**
 	* String of compiled XML document
 	*
 	* @var string
 	*/
-	var $xml_document      = "";
+	var $xml_document	  = "";
 	
 	/**
 	* Work variable
 	*
 	* @var int
 	*/
-	var $depth             = 0;
+	var $depth			 = 0;
 	
 	/**
 	* Tmp doc, used during creation
 	*
 	* @var string
 	*/
-	var $tmp_doc           = "";
+	var $tmp_doc		   = "";
 	
 	/**
 	* Tag groups
 	*
 	* @var string
 	*/
-	var $groups            = "";
+	var $groups			= "";
 	
 	/**
 	* Index numerically flag
 	*
 	* @var int
 	*/
-	var $index_numeric     = 0;
+	var $index_numeric	 = 0;
 	
 	/**
 	* Collapse duplicate tags flag
 	*
 	* @var int
 	*/
-	var $collapse_dups     = 1;
+	var $collapse_dups	 = 1;
 	
 	/**
 	* Main XML array of parsed components
 	*
 	* @var array
 	*/
-	var $xml_array         = array();
+	var $xml_array		 = array();
 	
 	/**
 	* Collapse newlines in CDATA tags
@@ -151,7 +151,7 @@ class yf_xml_parser {
 	*
 	* @var int
 	*/
-	var $lite_parser       = 1;
+	var $lite_parser	   = 1;
 	
 	/**
 	* DOC type
@@ -214,7 +214,7 @@ class yf_xml_parser {
 		$this->xml_document .= "<".$this->root_tag.$this->root_attributes.">\n";
 		$this->xml_document .= $this->tmp_doc;
 		$this->xml_document .= "\n</".$this->root_tag.">";
-		$this->tmp_doc       = "";
+		$this->tmp_doc	   = "";
 	}
 	
 	/**
@@ -225,7 +225,7 @@ class yf_xml_parser {
 	* @return	void
 	*/
 	function xml_set_root($tag, $attributes = array()) {
-		$this->root_tag        = $tag;
+		$this->root_tag		= $tag;
 		$this->root_attributes = $this->_xml_build_attribute_string( $attributes );
 	}
 	
@@ -329,7 +329,7 @@ class yf_xml_parser {
 				$children['VALUE'] .= $this->_xml_unconvert_safecdata( $vals[$i]['value'] );
 			}
 			// COMPLETE: At end of current branch
-			// OPEN:    Node has children, recurse
+			// OPEN:	Node has children, recurse
 			else if ( $type === 'complete' OR $type === 'open' ) {
 				$tag = $this->_xml_build_tag( $vals[$i], $vals, $i, $type );
 				if ( $this->index_numeric )	{
@@ -435,10 +435,10 @@ class yf_xml_parser {
 	function _xml_convert_safecdata( $v ) {
 		// Legacy
 		//$v = str_replace( "<![CDATA[", "<!¢|CDATA|", $v );
-		//$v = str_replace( "]]>"      , "|¢]>"      , $v );
+		//$v = str_replace( "]]>"	  , "|¢]>"	  , $v );
 		// New
 		$v = str_replace( "<![CDATA[", "<!#^#|CDATA|", $v );
-		$v = str_replace( "]]>"      , "|#^#]>"      , $v );
+		$v = str_replace( "]]>"	  , "|#^#]>"	  , $v );
 		return $v;
 	}
 
@@ -452,10 +452,10 @@ class yf_xml_parser {
 	function _xml_unconvert_safecdata( $v ) {
 		// Legacy
 		$v = str_replace( "<!¢|CDATA|", "<![CDATA[", $v );
-		$v = str_replace( "|¢]>"      , "]]>"      , $v );
+		$v = str_replace( "|¢]>"	  , "]]>"	  , $v );
 		// New
 		$v = str_replace( "<!#^#|CDATA|", "<![CDATA[", $v );
-		$v = str_replace( "|#^#]>"      , "]]>"      , $v );
+		$v = str_replace( "|#^#]>"	  , "]]>"	  , $v );
 		return $v;
 	}
 }
@@ -472,8 +472,8 @@ class xml_lite_parse {
 	var $xml_class;
 	var $parser;
 	var $preserve_cdata = 1;
-	var $stack    = array();
-	var $level    = 1;
+	var $stack	= array();
+	var $level	= 1;
 	var $tagname  = "";
 	var $array_id = 0;
 	var $last_id  = 0;
@@ -567,11 +567,11 @@ class xml_lite_parse {
 	function my_data_element( &$parser_obj, $data ) {
 		if ( $this->tagname ) {
 			$this->stack[ $this->array_id ] = array(
-				'tag'        => $this->tagname,
-				'type'       => 'open',
-				'level'      => $this->level,
-				'value'      => yf_xml_parser::_xml_unconvert_safecdata($data),
-				'_data'      => 1,
+				'tag'		=> $this->tagname,
+				'type'	   => 'open',
+				'level'	  => $this->level,
+				'value'	  => yf_xml_parser::_xml_unconvert_safecdata($data),
+				'_data'	  => 1,
 			);
 		}
 		// Inc. array ID
@@ -585,10 +585,10 @@ class xml_lite_parse {
 	
 	// Free memory
 	function garbage_collect() {
-		$this->stack    = array();
+		$this->stack	= array();
 		$this->tagname  = array();
 		$this->array_id = 0;
-		$this->level    = 0;
+		$this->level	= 0;
 		$this->xmldoc   = "";
 	}
 }
@@ -697,9 +697,9 @@ class xml_extract {
 				$uc_tag_text = strtoupper($text);
 				if ( strpos($uc_tag_text, $this->xml_constants['CDATA_TAG']) !== false ) {
 					// CDATA text
-					$total          = strlen($text);
+					$total		  = strlen($text);
 					$openbrace_cnt  = 0;
-					$tn_text        = '';
+					$tn_text		= '';
 
 					for ( $i = 0; $i < $total; $i++ )
 					{
@@ -757,7 +757,7 @@ class xml_extract {
 			
 				if ( (strpos($text, '"') !== false) || (strpos($text, "'") !== false) )
 				{
-					$total    = strlen($text);
+					$total	= strlen($text);
 					$tag_name = '';
 
 					for ($i = 0; $i < $total; $i++)
@@ -802,14 +802,14 @@ class xml_extract {
 	
 	// Parse Attributes
 	function parse_attr( $text ) {
-		$text         = trim($text);	
+		$text		 = trim($text);	
 		$attr_array   = array();
 		$query_entity = false;			
 		
-		$total        = strlen($text);
-		$dump_key     = '';
+		$total		= strlen($text);
+		$dump_key	 = '';
 		$dump_value   = '';
-		$cur_state    = 0;  // 0 = none, 1 = key, 2 = value
+		$cur_state	= 0;  // 0 = none, 1 = key, 2 = value
 		$quote_type   = '';
 		
 		for ($i = 0; $i < $total; $i++) {								
@@ -839,7 +839,7 @@ class xml_extract {
 					if ( $cur_state == 2 ) {
 						$dump_value .= $cc;
 					} else {
-						$cur_state    = 2;
+						$cur_state	= 2;
 						$quote_type   = '';
 						$query_entity = false;
 					}

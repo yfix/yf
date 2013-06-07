@@ -14,7 +14,7 @@ class task_item {
 		if (!defined("INSIDE_TASK_MANAGER")) {
 			return false;
 		}
-        _class("user_stats")->_refresh_all_stats();
+		_class("user_stats")->_refresh_all_stats();
 		// Log to log table - modify but dont delete
 		$this->class->append_task_log($this->task, 'User Stats Updated');
 	}

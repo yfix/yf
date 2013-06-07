@@ -191,7 +191,7 @@ class yf_send_mail {
 		} elseif ($this->USE_MAILER == "xpm4") {
 
 			require_once YF_PATH.'libs/xpm4/MAIL.php';
-	    	// Prepare
+			// Prepare
 			$mailer = new MAIL;
 			// Set different "Reply-To" field if needed
 			if (defined("SITE_ADMIN_EMAIL")) {
@@ -261,11 +261,11 @@ class yf_send_mail {
 //				$mail->AddReplyTo($email_from, $name_from);
 				$mail->AddAddress($email_to, $name_to);
 				$mail->Subject	= $subject;
-			    
+				
 				$mail->IsHTML(true);
-				$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!";
+				$mail->AltBody	= "To view the message, please use an HTML compatible email viewer!";
 				$mail->MsgHTML($html);
-			    
+				
 				if ($this->ALLOW_ATTACHMENTS) {
 					foreach ((array)$attaches as $cur_file) {
 						$mail->AddAttachment($cur_file);
@@ -363,7 +363,7 @@ class yf_send_mail {
 		$text = $text ? $text : "Sorry, but you need an html mailer to read this mail.";
 
 		$OB = "----=_OuterBoundary_000";
-    	$IB = "----=_InnerBoundery_001";
+		$IB = "----=_InnerBoundery_001";
 		$headers  = "MIME-Version: 1.0\r\n"; 
 		// Strange behaviour on windows,
 		if (OS_WINDOWS) {
@@ -379,7 +379,7 @@ class yf_send_mail {
 		$headers .= "X-Mailer:".$mailer_name."\r\n"; 
 		$headers .= "Content-Type:multipart/mixed;\r\n\tboundary=\"".$OB."\"\r\n";
 		// Messages start with text/html alternatives in OB
-    	$msg  = "This is a multi-part message in MIME format.\r\n";
+		$msg  = "This is a multi-part message in MIME format.\r\n";
 		$msg .= "\r\n--".$OB."\r\n";
 		if (strlen($text) || strlen($html)) {
 			$msg .= "Content-Type: multipart/alternative;\r\n\tboundary=\"".$IB."\"\r\n\r\n";
@@ -388,7 +388,7 @@ class yf_send_mail {
 		if (strlen($text)) {
 			$msg .= "\r\n--".$IB."\r\n";
 			$msg .= "Content-Type: text/plain;\r\n\tcharset=\"".$charset."\"\r\n";
-    		$msg .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
+			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
 			// plaintext goes here
 			$msg .= $text."\r\n\r\n";
 		}
@@ -396,7 +396,7 @@ class yf_send_mail {
 		if (strlen($html)) {
 			$msg .= "\r\n--".$IB."\r\n";
 			$msg .= "Content-Type: text/html;\r\n\tcharset=\"".$charset."\"\r\n";
-	    	$msg .= "Content-Transfer-Encoding: base64\r\n\r\n";
+			$msg .= "Content-Transfer-Encoding: base64\r\n\r\n";
 			// html goes here 
 			$msg .= chunk_split(base64_encode($html))."\r\n\r\n";
 		}
@@ -416,7 +416,7 @@ class yf_send_mail {
 				$msg .= chunk_split(base64_encode(@file_get_contents($att_file)));
 				$msg .= "\r\n\r\n";
 			}
-    	}
+		}
 		// message ends
 		$msg .= "\r\n--".$OB."--\r\n";
 		// Send composed email

@@ -936,7 +936,7 @@ class yf_locale_editor {
 		if ($_POST["translate"] && $_POST["locale"]) {
 			set_time_limit(1800); 
 			$LOCALE_RES = $_POST["locale"];
-    
+	
 			$base_url = "http://ajax.googleapis.com/ajax/services/language/translate"."?v=1.0";
 			
 			$vars = db()->query_fetch_all(
@@ -1755,7 +1755,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 			"import_vars"		=> "Import variables",
 			"export_vars"		=> "Export variables",
 			"autotranslate"		=> "Autotranslate",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

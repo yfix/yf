@@ -1,6 +1,6 @@
 <div class="borderwrap">
 	<div class="maintitle">{t(Choose a Topic)}</div>
-    <table>
+	<table>
 		<tr>
 			<th>{t(Choose a topic from the list)}</th>
 		</tr>

@@ -895,7 +895,7 @@ class yf_remote_files {
 			} else {
 				@exec("nslookup -type=mx ".$domain, $_mx_result);
 				foreach ((array)$_mx_result as $_key => $_value) {
-                	if (strstr($_value, "mail exchanger")) {
+					if (strstr($_value, "mail exchanger")) {
 						$_nslookup[$i++] = $_value;
 					}
 				}
@@ -905,7 +905,7 @@ class yf_remote_files {
 					if (empty($_m[2])) {
 						continue;
 					}
-                	$_mx[$_m[2]] = $_m[1];
+					$_mx[$_m[2]] = $_m[1];
 				}
 				asort($_mx);
 				$mailers = array_keys($_mx);

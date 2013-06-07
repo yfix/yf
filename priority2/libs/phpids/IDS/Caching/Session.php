@@ -28,7 +28,7 @@
  * @author   Christian Matthies <ch0012@gmail.com>
  * @author   Lars Strojny <lars@strojny.net>
  * @license  http://www.gnu.org/licenses/lgpl.html LGPL
- * @link     http://php-ids.org/
+ * @link	 http://php-ids.org/
  */
 
 require_once 'IDS/Caching/Interface.php';
@@ -40,101 +40,101 @@ require_once 'IDS/Caching/Interface.php';
  *
  * @category  Security
  * @package   PHPIDS
- * @author    Christian Matthies <ch0012@gmail.com>
- * @author    Mario Heiderich <mario.heiderich@gmail.com>
- * @author    Lars Strojny <lars@strojny.net>
+ * @author	Christian Matthies <ch0012@gmail.com>
+ * @author	Mario Heiderich <mario.heiderich@gmail.com>
+ * @author	Lars Strojny <lars@strojny.net>
  * @copyright 2007 The PHPIDS Group
  * @license   http://www.gnu.org/licenses/lgpl.html LGPL
  * @version   Release: $Id:Session.php 517 2007-09-15 15:04:13Z mario $
- * @link      http://php-ids.org/
- * @since     Version 0.4
+ * @link	  http://php-ids.org/
+ * @since	 Version 0.4
  */
 class IDS_Caching_Session implements IDS_Caching_Interface
 {
 
-    /**
-     * Caching type
-     *
-     * @var string
-     */
-    private $type = null;
+	/**
+	 * Caching type
+	 *
+	 * @var string
+	 */
+	private $type = null;
 
-    /**
-     * Cache configuration
-     *
-     * @var array
-     */
-    private $config = null;
+	/**
+	 * Cache configuration
+	 *
+	 * @var array
+	 */
+	private $config = null;
 
-    /**
-     * Holds an instance of this class
-     *
-     * @var object
-     */
-    private static $cachingInstance = null;
+	/**
+	 * Holds an instance of this class
+	 *
+	 * @var object
+	 */
+	private static $cachingInstance = null;
 
-    /**
-     * Constructor
-     *
-     * @param string $type caching type
-     * @param array  $init the IDS_Init object
-     * 
-     * @return void
-     */
-    public function __construct($type, $init) 
-    {
-        $this->type   = $type;
-        $this->config = $init->config['Caching'];
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param string $type caching type
+	 * @param array  $init the IDS_Init object
+	 * 
+	 * @return void
+	 */
+	public function __construct($type, $init) 
+	{
+		$this->type   = $type;
+		$this->config = $init->config['Caching'];
+	}
 
-    /**
-     * Returns an instance of this class
-     *
-     * @param string $type   caching type
-     * @param array  $init the IDS_Init object
-     * 
-     * @return object $this
-     */
-    public static function getInstance($type, $init) 
-    {
+	/**
+	 * Returns an instance of this class
+	 *
+	 * @param string $type   caching type
+	 * @param array  $init the IDS_Init object
+	 * 
+	 * @return object $this
+	 */
+	public static function getInstance($type, $init) 
+	{
 
-        if (!self::$cachingInstance) {
-            self::$cachingInstance = new IDS_Caching_Session($type, $init);
-        }
+		if (!self::$cachingInstance) {
+			self::$cachingInstance = new IDS_Caching_Session($type, $init);
+		}
 
-        return self::$cachingInstance;
-    }
+		return self::$cachingInstance;
+	}
 
-    /**
-     * Writes cache data into the session
-     *
-     * @param array $data the caching data
-     * 
-     * @return object $this
-     */
-    public function setCache(array $data) 
-    {
+	/**
+	 * Writes cache data into the session
+	 *
+	 * @param array $data the caching data
+	 * 
+	 * @return object $this
+	 */
+	public function setCache(array $data) 
+	{
 
-        $_SESSION['PHPIDS'][$this->type] = $data;
-        return $this;
-    }
+		$_SESSION['PHPIDS'][$this->type] = $data;
+		return $this;
+	}
 
-    /**
-     * Returns the cached data
-     *
-     * Note that this method returns false if either type or file cache is not set
-     *
-     * @return mixed cache data or false
-     */
-    public function getCache() 
-    {
+	/**
+	 * Returns the cached data
+	 *
+	 * Note that this method returns false if either type or file cache is not set
+	 *
+	 * @return mixed cache data or false
+	 */
+	public function getCache() 
+	{
 
-        if ($this->type && $_SESSION['PHPIDS'][$this->type]) {
-            return $_SESSION['PHPIDS'][$this->type];
-        }
+		if ($this->type && $_SESSION['PHPIDS'][$this->type]) {
+			return $_SESSION['PHPIDS'][$this->type];
+		}
 
-        return false;
-    }
+		return false;
+	}
 }
 
 /**

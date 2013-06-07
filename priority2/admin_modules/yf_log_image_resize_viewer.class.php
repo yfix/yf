@@ -157,7 +157,7 @@ class yf_log_image_resize_viewer {
 			"user_id"			=> $A["user_id"],
 			"si_bigfile"		=> (intval($A["source_file_size"]) >= $this->image_size_limit) ? 0 : 1,
 			"ri_bigfile"		=> (intval($A["result_file_size"]) >= $this->image_size_limit) ? 0 : 1,
-    	);
+		);
 		return tpl()->parse($_GET["object"]."/view", $replace);
 	}
 
@@ -444,7 +444,7 @@ class yf_log_image_resize_viewer {
 		$cases = array (
 			//$_GET["action"] => {string to replace}
 			"show"					=> "",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

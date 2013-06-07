@@ -36,7 +36,7 @@ class yf_catalog_editor {
 			"1" => "<span class='positive'>YES</span>",
 		);
 
-        // Get node types
+		// Get node types
 		$Q = db()->query("SELECT * FROM `".db('catalog_node_types')."` WHERE `active`='1'");
 		while ($A = db()->fetch_assoc($Q)) $this->_node_types[$A['id']] = $A['name'];
 

@@ -118,7 +118,7 @@ if (!function_exists("text_filter")) {
 				conf("BAD_WORDS_ARRAY", $bad_words);
 			}
 			$str = str_replace($bad_words, "", $str);
-    	}
+		}
 		return $str;
 	}
 }
@@ -760,7 +760,7 @@ if (!function_exists('_exec_in_background')) {
 	function _exec_in_background($cmd) {
 		if (substr(PHP_OS, 0, 3) == 'WIN') {
 			pclose(popen("start /B ". $cmd, "r"));
-    	} else {
+		} else {
 			exec($cmd . " > /dev/null &");
 		}
 	}

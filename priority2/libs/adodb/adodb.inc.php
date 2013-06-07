@@ -76,11 +76,11 @@
 		2 = force empty. All empty, php null and string 'null' fields are changed to sql empty '' or 0 values.
 		3 = force value. Value is left as it is. Php null and string 'null' are set to sql NULL values and empty fields '' are set to empty '' sql values.
 	*/
-        define('ADODB_FORCE_IGNORE',0);
-        define('ADODB_FORCE_NULL',1);
-        define('ADODB_FORCE_EMPTY',2);
-        define('ADODB_FORCE_VALUE',3);
-    //********************************************************//
+		define('ADODB_FORCE_IGNORE',0);
+		define('ADODB_FORCE_NULL',1);
+		define('ADODB_FORCE_EMPTY',2);
+		define('ADODB_FORCE_VALUE',3);
+	//********************************************************//
 
 
 	if (!$ADODB_EXTENSION || ADODB_EXTENSION < 4.0) {
@@ -265,7 +265,7 @@
 		
 			if (strlen($ADODB_CACHE_DIR) > 1) {
 				$rez = $this->_dirFlush($ADODB_CACHE_DIR);
-	         	if ($debug) DOConnection::outp( "flushall: $dir<br><pre>\n". $rez."</pre>");
+			 	if ($debug) DOConnection::outp( "flushall: $dir<br><pre>\n". $rez."</pre>");
 	   		}
 			return $rez;
 		}
@@ -455,7 +455,7 @@
 	
 	function IsConnected()
 	{
-    	return !empty($this->_connectionID);
+		return !empty($this->_connectionID);
 	}
 	
 	function _findvers($str)
@@ -1696,15 +1696,15 @@
 	/**
    * Flush cached recordsets that match a particular $sql statement. 
    * If $sql == false, then we purge all files in the cache.
-    */
+	*/
 	function CacheFlush($sql=false,$inputarr=false)
 	{
 	global  $ADODB_CACHE;
 		
 		if (!$sql) {
 			 $ADODB_CACHE->flushall($this->debug);
-	         return;
-	    }
+			 return;
+		}
 		
 		$f = $this->_gencachename($sql.serialize($inputarr),false);
 		return $ADODB_CACHE->flushcache($f, $this->debug);
@@ -1905,12 +1905,12 @@
 	{
 		global $ADODB_INCLUDED_LIB;
 
-        //********************************************************//
-        //This is here to maintain compatibility
-        //with older adodb versions. Sets force type to force nulls if $forcenulls is set.
+		//********************************************************//
+		//This is here to maintain compatibility
+		//with older adodb versions. Sets force type to force nulls if $forcenulls is set.
 		if (!isset($force)) {
 				global $ADODB_FORCE_TYPE;
-			    $force = $ADODB_FORCE_TYPE;
+				$force = $ADODB_FORCE_TYPE;
 		}
 		//********************************************************//
 
@@ -2361,29 +2361,29 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		return $false;
 	}
 	
-    /**
-      * List indexes on a table as an array.
-      * @param table  table name to query
-      * @param primary true to only show primary keys. Not actually used for most databases
+	/**
+	  * List indexes on a table as an array.
+	  * @param table  table name to query
+	  * @param primary true to only show primary keys. Not actually used for most databases
 	  *
-      * @return array of indexes on current table. Each element represents an index, and is itself an associative array.
+	  * @return array of indexes on current table. Each element represents an index, and is itself an associative array.
 	  
 		 Array (
-		    [name_of_index] => Array
-		      (
-	          [unique] => true or false
-	          [columns] => Array
-	          (
-	          	[0] => firstname
-		      	[1] => lastname
-	          )
+			[name_of_index] => Array
+			  (
+			  [unique] => true or false
+			  [columns] => Array
+			  (
+			  	[0] => firstname
+			  	[1] => lastname
+			  )
 		)		
-      */
-     function &MetaIndexes($table, $primary = false, $owner = false)
-     {
+	  */
+	 function &MetaIndexes($table, $primary = false, $owner = false)
+	 {
 	 		$false = false;
-            return $false;
-     }
+			return $false;
+	 }
 
 	/**
 	 * List columns names in a table as an array. 

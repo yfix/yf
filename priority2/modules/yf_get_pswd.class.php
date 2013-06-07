@@ -15,7 +15,7 @@ class yf_get_pswd {
 		}
 		$step = intval($_REQUEST['step']);
 		$method_name = "_step_".$step;
-        if (method_exists($this, $method_name)) {
+		if (method_exists($this, $method_name)) {
 			return $this->$method_name();
 		}
 	}
@@ -98,7 +98,7 @@ class yf_get_pswd {
 		$email_from	= SITE_ADMIN_EMAIL;
 		$email_to	= $A['email'];
 		$name_to	= _display_name($A);
-    	$subject	= t("Password Found");
+		$subject	= t("Password Found");
 		// Send email to the user
 		$result		= common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $message, nl2br($message));
 		return $result;

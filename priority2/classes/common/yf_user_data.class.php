@@ -59,7 +59,7 @@ class yf_user_data {
 			"last_update",
 			"last_login",
 			"num_logins",
-			"ip",    
+			"ip",	
 		),
 		"ban"	=> array(
 		//	"ban_email",
@@ -807,7 +807,7 @@ class yf_user_data {
 					$table_names = $this->_arrange_fields(array_keys($val), $this->_user_tables);
 					$i = count($val);
 					foreach ((array)$val as $fld => $v) {
-    					foreach ((array)$table_names as $_table_name => $fields) {
+						foreach ((array)$table_names as $_table_name => $fields) {
 							if (in_array($fld, $fields)) {
 								$table = $_table_name;
 								break;
@@ -829,7 +829,7 @@ class yf_user_data {
 				} else {
 				// for constructions like "ORDER BY `field`"
 					$table_names = $this->_arrange_fields($val, $this->_user_tables);
-    				foreach ((array)$table_names as $_table_name => $fields) {
+					foreach ((array)$table_names as $_table_name => $fields) {
 						if (in_array($val, $fields)) {
 							$table = $_table_name;
 							break;

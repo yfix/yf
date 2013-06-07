@@ -80,11 +80,11 @@ function source2doc($filename)
   $const = $const[0];
   for($i=0; $i < count($const) ; $i++)
   {
-    $html .= '<tr>' . endl;
-    $html .= '<td colspan="2">' . endl;
-    $html .= '<font size=2>' . $const[$i] . '</font>' .endl;
-    $html .= '</td>' . endl;
-    $html .= '</tr>' . endl;
+	$html .= '<tr>' . endl;
+	$html .= '<td colspan="2">' . endl;
+	$html .= '<font size=2>' . $const[$i] . '</font>' .endl;
+	$html .= '</td>' . endl;
+	$html .= '</tr>' . endl;
   }
 
 ////
@@ -103,11 +103,11 @@ function source2doc($filename)
   $imports = $imports[0];
   for($i=0; $i < count($imports) ; $i++)
   {
-    $html .= '<tr>' . endl;
-    $html .= '<td colspan="2">' . endl;
-    $html .= '<font size=2>' . $imports[$i] . '</font>' .endl;
-    $html .= '</td>' . endl;
-    $html .= '</tr>' . endl;
+	$html .= '<tr>' . endl;
+	$html .= '<td colspan="2">' . endl;
+	$html .= '<font size=2>' . $imports[$i] . '</font>' .endl;
+	$html .= '</td>' . endl;
+	$html .= '</tr>' . endl;
   }
 
 ////
@@ -128,29 +128,29 @@ function source2doc($filename)
   
   if(!empty($vname))
   {
-    $html .= '<tr>' . endl;
-    $html .= '<td align="center" width="10%" bgcolor="#bbbbbb">' . endl;
-    $html .= 'TYPE' . endl;
-    $html .= '</td>' . endl;
-    $html .= '<td align="center" width="90%" bgcolor="#bbbbbb">' . endl;
-    $html .= 'NAME' . endl;
-    $html .= '</td>' . endl;
-    $html .= '</tr>' . endl;
+	$html .= '<tr>' . endl;
+	$html .= '<td align="center" width="10%" bgcolor="#bbbbbb">' . endl;
+	$html .= 'TYPE' . endl;
+	$html .= '</td>' . endl;
+	$html .= '<td align="center" width="90%" bgcolor="#bbbbbb">' . endl;
+	$html .= 'NAME' . endl;
+	$html .= '</td>' . endl;
+	$html .= '</tr>' . endl;
   }
 
   for($i=0; $i < count($vname) ; $i++)
   {
-    $html .= '<tr>' . endl;
+	$html .= '<tr>' . endl;
 
-    $html .= '<td align="center">' . endl;
-    if (empty($vtype[$i])) $html .= '<font size=2><i>(???)</i></font>' . endl;
-    else $html .= '<font size=2><i>('. $vtype[$i] .')</i></font>' . endl;
-    $html .= '</td>' . endl;
+	$html .= '<td align="center">' . endl;
+	if (empty($vtype[$i])) $html .= '<font size=2><i>(???)</i></font>' . endl;
+	else $html .= '<font size=2><i>('. $vtype[$i] .')</i></font>' . endl;
+	$html .= '</td>' . endl;
 
-    $html .= '<td>' . endl;
-    $html .= '<font size=2><b>var</b> ' . $vname[$i] . ';</font>' . endl;
-    $html .= '</td>' . endl;
-    $html .= '</tr>' . endl;
+	$html .= '<td>' . endl;
+	$html .= '<font size=2><b>var</b> ' . $vname[$i] . ';</font>' . endl;
+	$html .= '</td>' . endl;
+	$html .= '</tr>' . endl;
   }
 
 /////
@@ -171,51 +171,51 @@ function source2doc($filename)
 
   for($i=0; $i < count($funcname) ; $i++)
   {
-    $html .= '<tr>' . endl;
-    $html .= '<td bgcolor="#33ff99" colspan="2">' . endl;
-    $html .= '<font size=2><b>function</b> ' . $funcname[$i] . ')</font>' . endl;
-    $html .= '</td>' . endl;
-    $html .= '</tr>' . endl;
+	$html .= '<tr>' . endl;
+	$html .= '<td bgcolor="#33ff99" colspan="2">' . endl;
+	$html .= '<font size=2><b>function</b> ' . $funcname[$i] . ')</font>' . endl;
+	$html .= '</td>' . endl;
+	$html .= '</tr>' . endl;
 
-    $desc = '';
-    $ret = '';
+	$desc = '';
+	$ret = '';
  	  $regexp = '|//!(.*)|mi';
-    preg_match_all($regexp,$funccomment[$i],$temp);
-    $temp = $temp[1];
+	preg_match_all($regexp,$funccomment[$i],$temp);
+	$temp = $temp[1];
 
-    if (empty($temp[0])) continue;
-    foreach($temp as $val)
-    {
-      if (strstr($val,'@desc'))
-      {
-       	$regexp = '|.*?@desc(.*)|si';
-        preg_match($regexp,$val,$temp2);
-        $desc = $temp2[1];
-      }
-      elseif (strstr($val,'@return'))
-      {
-       	$regexp = '|.*?@return(.*)|si';
-        preg_match($regexp,$val,$temp3);
-        $ret = $temp3[1];
-      }      
-    }
-    if ($ret != '' or $desc != '')
-    {
-      $html .= '<tr>' . endl;
+	if (empty($temp[0])) continue;
+	foreach($temp as $val)
+	{
+	  if (strstr($val,'@desc'))
+	  {
+	   	$regexp = '|.*?@desc(.*)|si';
+		preg_match($regexp,$val,$temp2);
+		$desc = $temp2[1];
+	  }
+	  elseif (strstr($val,'@return'))
+	  {
+	   	$regexp = '|.*?@return(.*)|si';
+		preg_match($regexp,$val,$temp3);
+		$ret = $temp3[1];
+	  }	  
+	}
+	if ($ret != '' or $desc != '')
+	{
+	  $html .= '<tr>' . endl;
 
-      //@return column
-      $html .= '<td width="30%">' . endl;
-      if ($ret == '') $html .= '<font size=2><b>Return:</b> <i>?void?</i></font>' . endl;
-      else $html .= '<font size=2><b>Return:</b> <i>' . trim($ret) . '</i></font>' . endl;
-      $html .= '</td>' . endl;
-      //@desc column
-      $html .= '<td width="70%">' . endl;
-      if ($desc == '') $html .= '<font size=2><b>OBS:</b> </font>' . endl;
-      else $html .= '<font size=2><b>OBS:</b> ' . trim($desc) . '</font>' . endl;
-      $html .= '</td>' . endl;
+	  //@return column
+	  $html .= '<td width="30%">' . endl;
+	  if ($ret == '') $html .= '<font size=2><b>Return:</b> <i>?void?</i></font>' . endl;
+	  else $html .= '<font size=2><b>Return:</b> <i>' . trim($ret) . '</i></font>' . endl;
+	  $html .= '</td>' . endl;
+	  //@desc column
+	  $html .= '<td width="70%">' . endl;
+	  if ($desc == '') $html .= '<font size=2><b>OBS:</b> </font>' . endl;
+	  else $html .= '<font size=2><b>OBS:</b> ' . trim($desc) . '</font>' . endl;
+	  $html .= '</td>' . endl;
 
-      $html .= '</tr>' . endl;
-    }
+	  $html .= '</tr>' . endl;
+	}
   }
 
 /////

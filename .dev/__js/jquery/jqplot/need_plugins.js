@@ -21,250 +21,250 @@
 
 //jqplot.pieRenderer.min.js
 (function($) {
-    $.jqplot.PieRenderer = function(){
-        $.jqplot.LineRenderer.call(this);
-    };
-    
-    $.jqplot.PieRenderer.prototype = new $.jqplot.LineRenderer();
-    $.jqplot.PieRenderer.prototype.constructor = $.jqplot.PieRenderer;
-    $.jqplot.PieRenderer.prototype.init = function(options) {
-        this.diameter = null;
-        this.padding = 20;
-        this.sliceMargin = 0;
-        this.fill = true;
-        this.shadowOffset = 2;
-        this.shadowAlpha = 0.07;
-        this.shadowDepth = 5;
-        this.tickRenderer = $.jqplot.PieTickRenderer;
-        $.extend(true, this, options);
-        if (this.diameter != null) {
-            this.diameter = this.diameter - this.sliceMargin;
-        }
-    };
-    $.jqplot.PieRenderer.prototype.setGridData = function() {
-    };
-    $.jqplot.PieRenderer.prototype.makeGridData = function(data) {
-        var stack = [];
-        var td = [];
-        for (var i=0; i<data.length; i++){
-            stack.push(data[i][1]);
-            td.push([data[i][0]]);
-            if (i>0) {
-                stack[i] += stack[i-1];
-            }
-        }
-        var fact = Math.PI*2/stack[stack.length - 1];
-        
-        for (var i=0; i<stack.length; i++) {
-            td[i][1] = stack[i] * fact;
-        }
-        return td;
-    };
-    $.jqplot.PieRenderer.prototype.drawSlice = function (ctx, ang1, ang2, color, isShadow) {
-        var r = this.diameter / 2;
-        var fill = this.fill;
-        var lineWidth = this.lineWidth;
-        ctx.save();
-        ctx.translate(this.sliceMargin*Math.cos((ang1+ang2)/2), this.sliceMargin*Math.sin((ang1+ang2)/2));
-        if (isShadow) {
-            for (var i=0; i<this.shadowDepth; i++) {
-                ctx.save();
-                ctx.translate(this.shadowOffset*Math.cos(this.shadowAngle/180*Math.PI), this.shadowOffset*Math.sin(this.shadowAngle/180*Math.PI));
-                doDraw();
-            }
-        }
-        else {
-            doDraw();
-        }
-        function doDraw () {
-            ctx.beginPath();  
-            ctx.moveTo(0, 0);
-            ctx.fillStyle = color;
-            ctx.strokeStyle = color;
-            ctx.lineWidth = lineWidth;
-            ctx.arc(0, 0, r, ang1, ang2, false);
-            ctx.closePath();
-            if (fill) {
-                ctx.fill();
-            }
-            else {
-                ctx.stroke();
-            }
-        }
-        if (isShadow) {
-            for (var i=0; i<this.shadowDepth; i++) {
-                ctx.restore();
-            }
-        }
-        ctx.restore();        
-    };
-    $.jqplot.PieRenderer.prototype.draw = function (ctx, gd, options) {
-        var i;
-        var opts = (options != undefined) ? options : {};
-        // offset and direction of offset due to legend placement
-        var offx = 0;
-        var offy = 0;
-        var trans = 1;
-        var colorGenerator = new this.colorGenerator(this.seriesColors);
-        if (options.legendInfo) {
-            var li = options.legendInfo;
-            switch (li.location) {
-                case 'nw':
-                    offx = li.width + li.xoffset;
-                    break;
-                case 'w':
-                    offx = li.width + li.xoffset;
-                    break;
-                case 'sw':
-                    offx = li.width + li.xoffset;
-                    break;
-                case 'ne':
-                    offx = li.width + li.xoffset;
-                    trans = -1;
-                    break;
-                case 'e':
-                    offx = li.width + li.xoffset;
-                    trans = -1;
-                    break;
-                case 'se':
-                    offx = li.width + li.xoffset;
-                    trans = -1;
-                    break;
-                case 'n':
-                    offy = li.height + li.yoffset;
-                    break;
-                case 's':
-                    offy = li.height + li.yoffset;
-                    trans = -1;
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-        var shadow = (opts.shadow != undefined) ? opts.shadow : this.shadow;
-        var showLine = (opts.showLine != undefined) ? opts.showLine : this.showLine;
-        var fill = (opts.fill != undefined) ? opts.fill : this.fill;
-        var cw = ctx.canvas.width;
-        var ch = ctx.canvas.height;
-        var w = cw - offx - 2 * this.padding;
-        var h = ch - offy - 2 * this.padding;
-        var d = Math.min(w,h);
-        this.diameter = this.diameter  || d - this.sliceMargin;
-        var r = this.diameter/2;
-        ctx.save();
-        ctx.translate((cw - trans * offx)/2 + trans * offx, (ch - trans*offy)/2 + trans * offy);
-        if (this.shadow) {
-            var shadowColor = 'rgba(0,0,0,'+this.shadowAlpha+')';
-            for (var i=0; i<gd.length; i++) {
-                var ang1 = (i == 0) ? 0 : gd[i-1][1];
-                this.renderer.drawSlice.call (this, ctx, ang1, gd[i][1], shadowColor, true);
-            }
-        }
-        for (var i=0; i<gd.length; i++) {
-            var ang1 = (i == 0) ? 0 : gd[i-1][1];
-            this.renderer.drawSlice.call (this, ctx, ang1, gd[i][1], colorGenerator.next());
-        }
-        ctx.restore();        
-    };
-    $.jqplot.PieAxisRenderer = function() {
-        $.jqplot.LinearAxisRenderer.call(this);
-    };
-    $.jqplot.PieAxisRenderer.prototype = new $.jqplot.LinearAxisRenderer();
-    $.jqplot.PieAxisRenderer.prototype.constructor = $.jqplot.PieAxisRenderer;
-    $.jqplot.PieAxisRenderer.prototype.init = function(options){
-        this.tickRenderer = $.jqplot.PieTickRenderer;
-        $.extend(true, this, options);
-        this._dataBounds = {min:0, max:100};
-        this.min = 0;
-        this.max = 100;
-        this.showTicks = false;
-        this.ticks = [];
-        this.showMark = false;
-        this.show = false; 
-    };
-    $.jqplot.PieTickRenderer = function() {
-        $.jqplot.AxisTickRenderer.call(this);
-    };
-    $.jqplot.PieTickRenderer.prototype = new $.jqplot.AxisTickRenderer();
-    $.jqplot.PieTickRenderer.prototype.constructor = $.jqplot.PieTickRenderer;
-    $.jqplot.PieLegendRenderer = function() {
-        $.jqplot.TableLegendRenderer.call(this);
-    };
-    $.jqplot.PieLegendRenderer.prototype = new $.jqplot.TableLegendRenderer();
-    $.jqplot.PieLegendRenderer.prototype.constructor = $.jqplot.PieLegendRenderer;
-    $.jqplot.PieLegendRenderer.prototype.draw = function() {
-        var legend = this;
-        if (this.show) {
-            var series = this._series;
-            var ss = 'position:absolute;';
-            this._elem = $('<div class="jqplot-legend" style="'+ss+'"></div>');
-            var pad = false;
-            var s = series[0];
-            var colorGenerator = new s.colorGenerator(s.seriesColors);
-            if (s.show) {
-                var pd = s.data;
-                for (var i=0; i<pd.length; i++){
-                    var lt = pd[i][0].toString();
-                    if (lt) {
-                        addrow.call(this, lt, colorGenerator.next(), pad);
-                        pad = true;
-                    }  
-                }
-            }
-        }
-        function addrow(label, color, pad) {
-            var tr = $('<div class="jqplot-legend_row"></div>').appendTo(this._elem);
-            $('<div class="jqplot-legend_color_wrapper">'+
-                '<div class="jqplot-legend_color" style="background-color:'+color+';"></div>'+
-                '</div>').appendTo(tr);
-            var elem = $('<span class="jqplot-legend_text"></span>');
-            elem.appendTo(tr);
-            if (this.escapeHtml) {
-                elem.text(label);
-            }
-            else {
-                elem.html(label);
-            }
-            tr.append("<br style='clear:both;'>");
-        }
-        return this._elem;
-    };
-    function preInit(target, data, options) {
-        options = options || {};
-        options.axesDefaults = options.axesDefaults || {};
-        options.legend = options.legend || {};
-        options.seriesDefaults = options.seriesDefaults || {};
-        var setopts = false;
-        if (options.seriesDefaults.renderer == $.jqplot.PieRenderer) {
-            setopts = true;
-        }
-        else if (options.series) {
-            for (var i=0; i < options.series.length; i++) {
-                if (options.series[i].renderer == $.jqplot.PieRenderer) {
-                    setopts = true;
-                }
-            }
-        }
-        if (setopts) {
-            options.axesDefaults.renderer = $.jqplot.PieAxisRenderer;
-            options.legend.renderer = $.jqplot.PieLegendRenderer;
-            options.legend.preDraw = true;
-        }
-    }
-    function postParseOptions(options) {
-        for (var i=0; i<this.series.length; i++) {
-            this.series[i].seriesColors = this.seriesColors;
-            this.series[i].colorGenerator = this.colorGenerator;
-        }
-    }
-    $.jqplot.preInitHooks.push(preInit);
-    $.jqplot.postParseOptionsHooks.push(postParseOptions);
-    $.jqplot.PieTickRenderer = function() {
-        $.jqplot.AxisTickRenderer.call(this);
-    };
-    $.jqplot.PieTickRenderer.prototype = new $.jqplot.AxisTickRenderer();
-    $.jqplot.PieTickRenderer.prototype.constructor = $.jqplot.PieTickRenderer;
+	$.jqplot.PieRenderer = function(){
+		$.jqplot.LineRenderer.call(this);
+	};
+	
+	$.jqplot.PieRenderer.prototype = new $.jqplot.LineRenderer();
+	$.jqplot.PieRenderer.prototype.constructor = $.jqplot.PieRenderer;
+	$.jqplot.PieRenderer.prototype.init = function(options) {
+		this.diameter = null;
+		this.padding = 20;
+		this.sliceMargin = 0;
+		this.fill = true;
+		this.shadowOffset = 2;
+		this.shadowAlpha = 0.07;
+		this.shadowDepth = 5;
+		this.tickRenderer = $.jqplot.PieTickRenderer;
+		$.extend(true, this, options);
+		if (this.diameter != null) {
+			this.diameter = this.diameter - this.sliceMargin;
+		}
+	};
+	$.jqplot.PieRenderer.prototype.setGridData = function() {
+	};
+	$.jqplot.PieRenderer.prototype.makeGridData = function(data) {
+		var stack = [];
+		var td = [];
+		for (var i=0; i<data.length; i++){
+			stack.push(data[i][1]);
+			td.push([data[i][0]]);
+			if (i>0) {
+				stack[i] += stack[i-1];
+			}
+		}
+		var fact = Math.PI*2/stack[stack.length - 1];
+		
+		for (var i=0; i<stack.length; i++) {
+			td[i][1] = stack[i] * fact;
+		}
+		return td;
+	};
+	$.jqplot.PieRenderer.prototype.drawSlice = function (ctx, ang1, ang2, color, isShadow) {
+		var r = this.diameter / 2;
+		var fill = this.fill;
+		var lineWidth = this.lineWidth;
+		ctx.save();
+		ctx.translate(this.sliceMargin*Math.cos((ang1+ang2)/2), this.sliceMargin*Math.sin((ang1+ang2)/2));
+		if (isShadow) {
+			for (var i=0; i<this.shadowDepth; i++) {
+				ctx.save();
+				ctx.translate(this.shadowOffset*Math.cos(this.shadowAngle/180*Math.PI), this.shadowOffset*Math.sin(this.shadowAngle/180*Math.PI));
+				doDraw();
+			}
+		}
+		else {
+			doDraw();
+		}
+		function doDraw () {
+			ctx.beginPath();  
+			ctx.moveTo(0, 0);
+			ctx.fillStyle = color;
+			ctx.strokeStyle = color;
+			ctx.lineWidth = lineWidth;
+			ctx.arc(0, 0, r, ang1, ang2, false);
+			ctx.closePath();
+			if (fill) {
+				ctx.fill();
+			}
+			else {
+				ctx.stroke();
+			}
+		}
+		if (isShadow) {
+			for (var i=0; i<this.shadowDepth; i++) {
+				ctx.restore();
+			}
+		}
+		ctx.restore();		
+	};
+	$.jqplot.PieRenderer.prototype.draw = function (ctx, gd, options) {
+		var i;
+		var opts = (options != undefined) ? options : {};
+		// offset and direction of offset due to legend placement
+		var offx = 0;
+		var offy = 0;
+		var trans = 1;
+		var colorGenerator = new this.colorGenerator(this.seriesColors);
+		if (options.legendInfo) {
+			var li = options.legendInfo;
+			switch (li.location) {
+				case 'nw':
+					offx = li.width + li.xoffset;
+					break;
+				case 'w':
+					offx = li.width + li.xoffset;
+					break;
+				case 'sw':
+					offx = li.width + li.xoffset;
+					break;
+				case 'ne':
+					offx = li.width + li.xoffset;
+					trans = -1;
+					break;
+				case 'e':
+					offx = li.width + li.xoffset;
+					trans = -1;
+					break;
+				case 'se':
+					offx = li.width + li.xoffset;
+					trans = -1;
+					break;
+				case 'n':
+					offy = li.height + li.yoffset;
+					break;
+				case 's':
+					offy = li.height + li.yoffset;
+					trans = -1;
+					break;
+				default:
+					break;
+			}
+		}
+		
+		var shadow = (opts.shadow != undefined) ? opts.shadow : this.shadow;
+		var showLine = (opts.showLine != undefined) ? opts.showLine : this.showLine;
+		var fill = (opts.fill != undefined) ? opts.fill : this.fill;
+		var cw = ctx.canvas.width;
+		var ch = ctx.canvas.height;
+		var w = cw - offx - 2 * this.padding;
+		var h = ch - offy - 2 * this.padding;
+		var d = Math.min(w,h);
+		this.diameter = this.diameter  || d - this.sliceMargin;
+		var r = this.diameter/2;
+		ctx.save();
+		ctx.translate((cw - trans * offx)/2 + trans * offx, (ch - trans*offy)/2 + trans * offy);
+		if (this.shadow) {
+			var shadowColor = 'rgba(0,0,0,'+this.shadowAlpha+')';
+			for (var i=0; i<gd.length; i++) {
+				var ang1 = (i == 0) ? 0 : gd[i-1][1];
+				this.renderer.drawSlice.call (this, ctx, ang1, gd[i][1], shadowColor, true);
+			}
+		}
+		for (var i=0; i<gd.length; i++) {
+			var ang1 = (i == 0) ? 0 : gd[i-1][1];
+			this.renderer.drawSlice.call (this, ctx, ang1, gd[i][1], colorGenerator.next());
+		}
+		ctx.restore();		
+	};
+	$.jqplot.PieAxisRenderer = function() {
+		$.jqplot.LinearAxisRenderer.call(this);
+	};
+	$.jqplot.PieAxisRenderer.prototype = new $.jqplot.LinearAxisRenderer();
+	$.jqplot.PieAxisRenderer.prototype.constructor = $.jqplot.PieAxisRenderer;
+	$.jqplot.PieAxisRenderer.prototype.init = function(options){
+		this.tickRenderer = $.jqplot.PieTickRenderer;
+		$.extend(true, this, options);
+		this._dataBounds = {min:0, max:100};
+		this.min = 0;
+		this.max = 100;
+		this.showTicks = false;
+		this.ticks = [];
+		this.showMark = false;
+		this.show = false; 
+	};
+	$.jqplot.PieTickRenderer = function() {
+		$.jqplot.AxisTickRenderer.call(this);
+	};
+	$.jqplot.PieTickRenderer.prototype = new $.jqplot.AxisTickRenderer();
+	$.jqplot.PieTickRenderer.prototype.constructor = $.jqplot.PieTickRenderer;
+	$.jqplot.PieLegendRenderer = function() {
+		$.jqplot.TableLegendRenderer.call(this);
+	};
+	$.jqplot.PieLegendRenderer.prototype = new $.jqplot.TableLegendRenderer();
+	$.jqplot.PieLegendRenderer.prototype.constructor = $.jqplot.PieLegendRenderer;
+	$.jqplot.PieLegendRenderer.prototype.draw = function() {
+		var legend = this;
+		if (this.show) {
+			var series = this._series;
+			var ss = 'position:absolute;';
+			this._elem = $('<div class="jqplot-legend" style="'+ss+'"></div>');
+			var pad = false;
+			var s = series[0];
+			var colorGenerator = new s.colorGenerator(s.seriesColors);
+			if (s.show) {
+				var pd = s.data;
+				for (var i=0; i<pd.length; i++){
+					var lt = pd[i][0].toString();
+					if (lt) {
+						addrow.call(this, lt, colorGenerator.next(), pad);
+						pad = true;
+					}  
+				}
+			}
+		}
+		function addrow(label, color, pad) {
+			var tr = $('<div class="jqplot-legend_row"></div>').appendTo(this._elem);
+			$('<div class="jqplot-legend_color_wrapper">'+
+				'<div class="jqplot-legend_color" style="background-color:'+color+';"></div>'+
+				'</div>').appendTo(tr);
+			var elem = $('<span class="jqplot-legend_text"></span>');
+			elem.appendTo(tr);
+			if (this.escapeHtml) {
+				elem.text(label);
+			}
+			else {
+				elem.html(label);
+			}
+			tr.append("<br style='clear:both;'>");
+		}
+		return this._elem;
+	};
+	function preInit(target, data, options) {
+		options = options || {};
+		options.axesDefaults = options.axesDefaults || {};
+		options.legend = options.legend || {};
+		options.seriesDefaults = options.seriesDefaults || {};
+		var setopts = false;
+		if (options.seriesDefaults.renderer == $.jqplot.PieRenderer) {
+			setopts = true;
+		}
+		else if (options.series) {
+			for (var i=0; i < options.series.length; i++) {
+				if (options.series[i].renderer == $.jqplot.PieRenderer) {
+					setopts = true;
+				}
+			}
+		}
+		if (setopts) {
+			options.axesDefaults.renderer = $.jqplot.PieAxisRenderer;
+			options.legend.renderer = $.jqplot.PieLegendRenderer;
+			options.legend.preDraw = true;
+		}
+	}
+	function postParseOptions(options) {
+		for (var i=0; i<this.series.length; i++) {
+			this.series[i].seriesColors = this.seriesColors;
+			this.series[i].colorGenerator = this.colorGenerator;
+		}
+	}
+	$.jqplot.preInitHooks.push(preInit);
+	$.jqplot.postParseOptionsHooks.push(postParseOptions);
+	$.jqplot.PieTickRenderer = function() {
+		$.jqplot.AxisTickRenderer.call(this);
+	};
+	$.jqplot.PieTickRenderer.prototype = new $.jqplot.AxisTickRenderer();
+	$.jqplot.PieTickRenderer.prototype.constructor = $.jqplot.PieTickRenderer;
 })(jQuery);
 
 //jqplot.pointLabels.min.js

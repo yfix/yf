@@ -577,12 +577,12 @@ class fulltext_sphinx
 	/**
 	 * Updates wordlist and wordmatch tables when a message is posted or changed
 	 *
-	 * @param string   $mode    Contains the post mode: edit, post, reply, quote
-	 * @param int      $post_id The id of the post which is modified/created
+	 * @param string   $mode	Contains the post mode: edit, post, reply, quote
+	 * @param int	  $post_id The id of the post which is modified/created
 	 * @param string   &$message   New or updated post content
 	 * @param string   &$subject   New or updated post subject
-	 * @param int      $poster_id  Post author's user id
-	 * @param int      $forum_id   The id of the forum in which the post is located
+	 * @param int	  $poster_id  Post author's user id
+	 * @param int	  $forum_id   The id of the forum in which the post is located
 	 *
 	 * @access   public
 	 */

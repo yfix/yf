@@ -17,14 +17,14 @@ class yf_graph {
 		OR 
 		
 		Array{
-		    "{LINE_NAME1}" => Array(
-		            "DATE1" => "VAL1",
-		            "DATE2" => "VAL2",
-		    ),
-		    "{LINE_NAME2}" => Array(
-		            "DATE1" => "VAL1",
-		            "DATE2" => "VAL2",
-		    )
+			"{LINE_NAME1}" => Array(
+					"DATE1" => "VAL1",
+					"DATE2" => "VAL2",
+			),
+			"{LINE_NAME2}" => Array(
+					"DATE1" => "VAL1",
+					"DATE2" => "VAL2",
+			)
 		}
 	*/
 	function graph ($data, $params) {
@@ -119,9 +119,9 @@ class yf_graph {
 		data array format for pie graph
 		Array{	
 			"{NAME}" => Array(
-		            "val" => "{VALUE}",
-		            "link" => "{LINK}"
-	        )
+					"val" => "{VALUE}",
+					"link" => "{LINK}"
+			)
 		}
 	*/
 	function graph_pie ($data, $params) {

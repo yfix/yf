@@ -36,25 +36,25 @@ class yf_db_static {
 		if (!$link) {
 			return false;
 		}
-	    $a = array();
+		$a = array();
 		$n = array();
-	    $query = mysql_query($sql, $link);
+		$query = mysql_query($sql, $link);
 		if (!$query) {
 			echo mysql_error($link);
 			return false;
 		}
-	    while ($r = mysql_fetch_assoc($query)) {
+		while ($r = mysql_fetch_assoc($query)) {
 			if (!$n) {
 				$n = array_keys($r);
 			}
-	      	if ($keys == 1) {
-        		$a[$r[$n[0]]] = $r;
-	      	}
-	    	if($keys == 2) {
-    	    	$a[$r[$n[0]]][$r[$n[1]]] = $r;
-		    }
+		  	if ($keys == 1) {
+				$a[$r[$n[0]]] = $r;
+		  	}
+			if($keys == 2) {
+				$a[$r[$n[0]]][$r[$n[1]]] = $r;
+			}
 			if ($keys == 3) {
-    	    	$a[$r[$n[0]]][$r[$n[1]]][$r[$n[2]]] = $r;
+				$a[$r[$n[0]]][$r[$n[1]]][$r[$n[2]]] = $r;
 			}
 		}
 		mysql_free_result($query);

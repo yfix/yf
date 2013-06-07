@@ -358,7 +358,7 @@ class yf_manage_faq extends yf_module {
 			"show"					=> "",
 			"add"					=> "Add new question",
 			"edit"					=> "Edit question",
-		);             		
+		);			 		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

@@ -20,8 +20,8 @@ Errors: {errors}
 <p>
   Select:
   <select name="sel">
-    <option value="a">aaa</option>
-    <option value="b">bbb</option>
+	<option value="a">aaa</option>
+	<option value="b">bbb</option>
   </select><br>
 </p>
 <p>

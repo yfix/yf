@@ -27,10 +27,10 @@
 class Net_DNS_RR_SPF extends Net_DNS_RR_TXT
 {
 
-    //
-    // There's no work to be done here, since the SPF RR is identical to the TXT RR- we
-    // just extend the Net_DNS_RR_TXT record class and inherit everything.
-    //
+	//
+	// There's no work to be done here, since the SPF RR is identical to the TXT RR- we
+	// just extend the Net_DNS_RR_TXT record class and inherit everything.
+	//
 
 }
 /* }}} */

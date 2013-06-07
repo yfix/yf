@@ -1,12 +1,12 @@
 <script type="text/javascript">
 <!--
-var f_obj    = document.REPLIER;
-var p_obj    = f_obj.text2 ? f_obj.text2 : f_obj.text;
+var f_obj	= document.REPLIER;
+var p_obj	= f_obj.text2 ? f_obj.text2 : f_obj.text;
 
-var MessageMax    = "";
-var Override      = "";
+var MessageMax	= "";
+var Override	  = "";
 
-MessageMax        = parseInt(MessageMax);
+MessageMax		= parseInt(MessageMax);
 if (MessageMax < 0) {
 	MessageMax = 0;
 }

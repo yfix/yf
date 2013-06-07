@@ -1,12 +1,12 @@
 <?php
 /*******************************************************************************
-* Software: FPDF                                                               *
-* Version:  1.52(modified)                                                     *
-* Date:     2003-12-30                                                         *
-* Author:   Olivier PLATHEY                                                    *
-* License:  Freeware                                                           *
-*                                                                              *
-* You may use, modify and redistribute this software as you wish.              *
+* Software: FPDF															   *
+* Version:  1.52(modified)													 *
+* Date:	 2003-12-30														 *
+* Author:   Olivier PLATHEY													*
+* License:  Freeware														   *
+*																			  *
+* You may use, modify and redistribute this software as you wish.			  *
 *******************************************************************************/
 
 // Modified by Renato A.C. [html2fpdf.sf.net]
@@ -23,63 +23,63 @@ var $DisplayPreferences=''; //EDITEI - added
 var $outlines=array(); //EDITEI - added
 var $OutlineRoot; //EDITEI - added
 var $flowingBlockAttr; //EDITEI - added
-var $page;               //current page number
-var $n;                  //current object number
-var $offsets;            //array of object offsets
-var $buffer;             //buffer holding in-memory PDF
-var $pages;              //array containing pages
-var $state;              //current document state
-var $compress;           //compression flag
-var $DefOrientation;     //default orientation
-var $CurOrientation;     //current orientation
+var $page;			   //current page number
+var $n;				  //current object number
+var $offsets;			//array of object offsets
+var $buffer;			 //buffer holding in-memory PDF
+var $pages;			  //array containing pages
+var $state;			  //current document state
+var $compress;		   //compression flag
+var $DefOrientation;	 //default orientation
+var $CurOrientation;	 //current orientation
 var $OrientationChanges; //array indicating orientation changes
-var $k;                  //scale factor (number of points in user unit)
-var $fwPt,$fhPt;         //dimensions of page format in points
-var $fw,$fh;             //dimensions of page format in user unit
-var $wPt,$hPt;           //current dimensions of page in points
-var $w,$h;               //current dimensions of page in user unit
-var $lMargin;            //left margin
-var $tMargin;            //top margin
-var $rMargin;            //right margin
-var $bMargin;            //page break margin
-var $cMargin;            //cell margin
-var $x,$y;               //current position in user unit for cell positioning
-var $lasth;              //height of last cell printed
-var $LineWidth;          //line width in user unit
-var $CoreFonts;          //array of standard font names
-var $fonts;              //array of used fonts
-var $FontFiles;          //array of font files
-var $diffs;              //array of encoding differences
-var $images;             //array of used images
-var $PageLinks;          //array of links in pages
-var $links;              //array of internal links
-var $FontFamily;         //current font family
-var $FontStyle;          //current font style
-var $underline;          //underlining flag
-var $CurrentFont;        //current font info
-var $FontSizePt;         //current font size in points
-var $FontSize;           //current font size in user unit
-var $DrawColor;          //commands for drawing color
-var $FillColor;          //commands for filling color
-var $TextColor;          //commands for text color
-var $ColorFlag;          //indicates whether fill and text colors are different
-var $ws;                 //word spacing
-var $AutoPageBreak;      //automatic page breaking
+var $k;				  //scale factor (number of points in user unit)
+var $fwPt,$fhPt;		 //dimensions of page format in points
+var $fw,$fh;			 //dimensions of page format in user unit
+var $wPt,$hPt;		   //current dimensions of page in points
+var $w,$h;			   //current dimensions of page in user unit
+var $lMargin;			//left margin
+var $tMargin;			//top margin
+var $rMargin;			//right margin
+var $bMargin;			//page break margin
+var $cMargin;			//cell margin
+var $x,$y;			   //current position in user unit for cell positioning
+var $lasth;			  //height of last cell printed
+var $LineWidth;		  //line width in user unit
+var $CoreFonts;		  //array of standard font names
+var $fonts;			  //array of used fonts
+var $FontFiles;		  //array of font files
+var $diffs;			  //array of encoding differences
+var $images;			 //array of used images
+var $PageLinks;		  //array of links in pages
+var $links;			  //array of internal links
+var $FontFamily;		 //current font family
+var $FontStyle;		  //current font style
+var $underline;		  //underlining flag
+var $CurrentFont;		//current font info
+var $FontSizePt;		 //current font size in points
+var $FontSize;		   //current font size in user unit
+var $DrawColor;		  //commands for drawing color
+var $FillColor;		  //commands for filling color
+var $TextColor;		  //commands for text color
+var $ColorFlag;		  //indicates whether fill and text colors are different
+var $ws;				 //word spacing
+var $AutoPageBreak;	  //automatic page breaking
 var $PageBreakTrigger;   //threshold used to trigger page breaks
-var $InFooter;           //flag set when processing footer
-var $ZoomMode;           //zoom display mode
-var $LayoutMode;         //layout display mode
-var $title;              //title
-var $subject;            //subject
-var $author;             //author
-var $keywords;           //keywords
-var $creator;            //creator
-var $AliasNbPages;       //alias for total number of pages
+var $InFooter;		   //flag set when processing footer
+var $ZoomMode;		   //zoom display mode
+var $LayoutMode;		 //layout display mode
+var $title;			  //title
+var $subject;			//subject
+var $author;			 //author
+var $keywords;		   //keywords
+var $creator;			//creator
+var $AliasNbPages;	   //alias for total number of pages
 
 /*******************************************************************************
-*                                                                              *
-*                               Public methods                                 *
-*                                                                              *
+*																			  *
+*							   Public methods								 *
+*																			  *
 *******************************************************************************/
 function FPDF($orientation='P',$unit='mm',$format='A4')
 {
@@ -618,29 +618,29 @@ function Cell($w,$h=0,$txt='',$border=0,$ln=0,$align='',$fill=0,$link='',$curren
 		if($align=='R')	$dx=$w-$this->cMargin-$this->GetStringWidth($txt);
 		elseif($align=='C')	$dx=($w-$this->GetStringWidth($txt))/2;
 		elseif($align=='L' or $align=='J') $dx=$this->cMargin;
-    else $dx = 0;
+	else $dx = 0;
 		if($this->ColorFlag) $s.='q '.$this->TextColor.' ';
 		$txt2=str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',$txt)));
-    //Check whether we are going to outline text or not
+	//Check whether we are going to outline text or not
 		if($this->outline_on)
 		{
 		  $s.=' '.sprintf('%.2f w',$this->LineWidth*$this->k).' ';
 		  $s.=" $this->DrawColor ";
-      $s.=" 2 Tr ";
-    }
-    //Superscript and Subscript Y coordinate adjustment
-    $adjusty = 0;
-    if($this->SUB) $adjusty = 1;
-    if($this->SUP) $adjusty = -1;
-    //End of coordinate adjustment
+	  $s.=" 2 Tr ";
+	}
+	//Superscript and Subscript Y coordinate adjustment
+	$adjusty = 0;
+	if($this->SUB) $adjusty = 1;
+	if($this->SUP) $adjusty = -1;
+	//End of coordinate adjustment
 		$s.=sprintf('BT %.2f %.2f Td (%s) Tj ET',($this->x+$dx)*$k,($this->h-(($this->y+$adjusty)+.5*$h+.3*$this->FontSize))*$k,$txt2); //EDITEI
 		if($this->underline)
 			$s.=' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize+$adjusty,$txt2);
-    //Superscript and Subscript Y coordinate adjustment (now for striked-through texts)
-    $adjusty = 1.6;
-    if($this->SUB) $adjusty = 3.05;
-    if($this->SUP) $adjusty = 1.1;
-    //End of coordinate adjustment
+	//Superscript and Subscript Y coordinate adjustment (now for striked-through texts)
+	$adjusty = 1.6;
+	if($this->SUB) $adjusty = 3.05;
+	if($this->SUP) $adjusty = 1.1;
+	//End of coordinate adjustment
 		if($this->strike) //EDITEI
 			$s.=' '.$this->_dounderline($this->x+$dx,$this->y+$adjusty,$txt);
 		if($this->ColorFlag) $s.=' Q';
@@ -658,7 +658,7 @@ function Cell($w,$h=0,$txt='',$border=0,$ln=0,$align='',$fill=0,$link='',$curren
 			//Move to next line
 			if ($currentx != 0) $this->x=$currentx;
 			else $this->x=$this->lMargin;
-    }
+	}
 	}
 	else $this->x+=$w;
 }
@@ -849,8 +849,8 @@ function Write($h,$txt,$currentx=0,$link='') //EDITEI
 }
 
 //-------------------------FLOWING BLOCK------------------------------------//
-//EDITEI some things (added/changed)                                        //
-//The following functions were originally written by Damon Kohler           //
+//EDITEI some things (added/changed)										//
+//The following functions were originally written by Damon Kohler		   //
 //--------------------------------------------------------------------------//
 
 function saveFont()
@@ -895,7 +895,7 @@ function restoreFont( $saved )
    $this->outline_on = $saved[ 'is_outline' ]; //EDITEI
 
    if( $this->page > 0)
-      $this->_out( sprintf( 'BT /F%d %.2f Tf ET', $this->CurrentFont[ 'i' ], $this->FontSizePt ) );
+	  $this->_out( sprintf( 'BT /F%d %.2f Tf ET', $this->CurrentFont[ 'i' ], $this->FontSizePt ) );
 }
 
 function newFlowingBlock( $w, $h, $b = 0, $a = 'J', $f = 0 , $is_table = false )
@@ -946,284 +946,284 @@ function finishFlowingBlock($outofblock=false)
    $margins = (2*$this->cMargin);
    if ($outofblock)
    {
-      $align = 'C';
-      $empty = 0;
-      $margins = $this->cMargin;
+	  $align = 'C';
+	  $empty = 0;
+	  $margins = $this->cMargin;
    }
    switch($align)
    {
-      case 'R':
-          foreach ( $content as $k => $chunk )
-          {
-              $this->restoreFont( $font[ $k ] );
-              $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
-              // determine which borders should be used
-              $b = '';
-              if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
-              if ( $k == count( $content ) - 1 && is_int( strpos( $border, 'R' ) ) ) $b .= 'R';
-                      
-              if ($k == $arraysize-1 and !$outofblock) $skipln = 1;
-              else $skipln = 0;
+	  case 'R':
+		  foreach ( $content as $k => $chunk )
+		  {
+			  $this->restoreFont( $font[ $k ] );
+			  $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
+			  // determine which borders should be used
+			  $b = '';
+			  if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
+			  if ( $k == count( $content ) - 1 && is_int( strpos( $border, 'R' ) ) ) $b .= 'R';
+					  
+			  if ($k == $arraysize-1 and !$outofblock) $skipln = 1;
+			  else $skipln = 0;
 
-              if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF , $currentx ); //mono-style line
-              elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
-              elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, $skipln, '', $fill, $this->HREF, $currentx );//last part
-              else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
-          }
-          break;
-      case 'L':
-      case 'J':
-          foreach ( $content as $k => $chunk )
-          {
-              $this->restoreFont( $font[ $k ] );
-              $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
-              // determine which borders should be used
-              $b = '';
-              if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
-              if ( $k == 0 && is_int( strpos( $border, 'L' ) ) ) $b .= 'L';
+			  if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF , $currentx ); //mono-style line
+			  elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
+			  elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, $skipln, '', $fill, $this->HREF, $currentx );//last part
+			  else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
+		  }
+		  break;
+	  case 'L':
+	  case 'J':
+		  foreach ( $content as $k => $chunk )
+		  {
+			  $this->restoreFont( $font[ $k ] );
+			  $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
+			  // determine which borders should be used
+			  $b = '';
+			  if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
+			  if ( $k == 0 && is_int( strpos( $border, 'L' ) ) ) $b .= 'L';
 
-              if ($k == $arraysize-1 and !$outofblock) $skipln = 1;
-              else $skipln = 0;
+			  if ($k == $arraysize-1 and !$outofblock) $skipln = 1;
+			  else $skipln = 0;
 
-              if (!$is_table and !$outofblock and !$fill and $align=='L' and $k == 0) {$align='';$margins=0;} //Remove margins in this special (though often) case
+			  if (!$is_table and !$outofblock and !$fill and $align=='L' and $k == 0) {$align='';$margins=0;} //Remove margins in this special (though often) case
 
-              if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF , $currentx ); //mono-style line
-              elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF );//first part
-              elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, $skipln, '', $fill, $this->HREF, $currentx );//last part
-              else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, $skipln, '', $fill, $this->HREF );//middle part
-          }
-          break;
-      case 'C':
-          foreach ( $content as $k => $chunk )
-          {
-              $this->restoreFont( $font[ $k ] );
-              $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
-              // determine which borders should be used
-              $b = '';
-              if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
+			  if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF , $currentx ); //mono-style line
+			  elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF );//first part
+			  elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, $skipln, '', $fill, $this->HREF, $currentx );//last part
+			  else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, $skipln, '', $fill, $this->HREF );//middle part
+		  }
+		  break;
+	  case 'C':
+		  foreach ( $content as $k => $chunk )
+		  {
+			  $this->restoreFont( $font[ $k ] );
+			  $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
+			  // determine which borders should be used
+			  $b = '';
+			  if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
 
-              if ($k == $arraysize-1 and !$outofblock) $skipln = 1;
-              else $skipln = 0;
+			  if ($k == $arraysize-1 and !$outofblock) $skipln = 1;
+			  else $skipln = 0;
 
-              if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF , $currentx ); //mono-style line
-              elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
-              elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, $skipln, 'L', $fill, $this->HREF, $currentx );//last part
-              else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
-          }
-          break;
-     default: break;
+			  if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, $skipln, $align, $fill, $this->HREF , $currentx ); //mono-style line
+			  elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
+			  elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, $skipln, 'L', $fill, $this->HREF, $currentx );//last part
+			  else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
+		  }
+		  break;
+	 default: break;
    }
 }
 
 function WriteFlowingBlock( $s , $outofblock = false )
 {
-    if (!$outofblock) $currentx = $this->x; //EDITEI - in order to make the Cell method work better
-    $is_table = $this->flowingBlockAttr[ 'is_table' ];
-    // width of all the content so far in points
-    $contentWidth =& $this->flowingBlockAttr[ 'contentWidth' ];
-    // cell width in points
-    $maxWidth =& $this->flowingBlockAttr[ 'width' ];
-    $lineCount =& $this->flowingBlockAttr[ 'lineCount' ];
-    // line height in user units
-    $lineHeight =& $this->flowingBlockAttr[ 'height' ];
-    $border =& $this->flowingBlockAttr[ 'border' ];
-    $align =& $this->flowingBlockAttr[ 'align' ];
-    $fill =& $this->flowingBlockAttr[ 'fill' ];
-    $content =& $this->flowingBlockAttr[ 'content' ];
-    $font =& $this->flowingBlockAttr[ 'font' ];
+	if (!$outofblock) $currentx = $this->x; //EDITEI - in order to make the Cell method work better
+	$is_table = $this->flowingBlockAttr[ 'is_table' ];
+	// width of all the content so far in points
+	$contentWidth =& $this->flowingBlockAttr[ 'contentWidth' ];
+	// cell width in points
+	$maxWidth =& $this->flowingBlockAttr[ 'width' ];
+	$lineCount =& $this->flowingBlockAttr[ 'lineCount' ];
+	// line height in user units
+	$lineHeight =& $this->flowingBlockAttr[ 'height' ];
+	$border =& $this->flowingBlockAttr[ 'border' ];
+	$align =& $this->flowingBlockAttr[ 'align' ];
+	$fill =& $this->flowingBlockAttr[ 'fill' ];
+	$content =& $this->flowingBlockAttr[ 'content' ];
+	$font =& $this->flowingBlockAttr[ 'font' ];
 
-    $font[] = $this->saveFont();
-    $content[] = '';
+	$font[] = $this->saveFont();
+	$content[] = '';
 
-    $currContent =& $content[ count( $content ) - 1 ];
+	$currContent =& $content[ count( $content ) - 1 ];
 
-    // where the line should be cutoff if it is to be justified
-    $cutoffWidth = $contentWidth;
+	// where the line should be cutoff if it is to be justified
+	$cutoffWidth = $contentWidth;
 
-    // for every character in the string
-    for ( $i = 0; $i < strlen( $s ); $i++ )
-    {
-       // extract the current character
-       $c = $s{$i};
-       // get the width of the character in points
-       $cw = $this->CurrentFont[ 'cw' ][ $c ] * ( $this->FontSizePt / 1000 );
+	// for every character in the string
+	for ( $i = 0; $i < strlen( $s ); $i++ )
+	{
+	   // extract the current character
+	   $c = $s{$i};
+	   // get the width of the character in points
+	   $cw = $this->CurrentFont[ 'cw' ][ $c ] * ( $this->FontSizePt / 1000 );
 
-       if ( $c == ' ' )
-       {
-           $currContent .= ' ';
-           $cutoffWidth = $contentWidth;
-           $contentWidth += $cw;
-           continue;
-       }
-       // try adding another char
-       if ( $contentWidth + $cw > $maxWidth )
-       {
-           // it won't fit, output what we already have
-           $lineCount++;
-           //Readjust MaxSize in order to use the whole page width
-           if ($outofblock and ($lineCount == 1) ) $maxWidth = $this->pgwidth * $this->k;
-           // contains any content that didn't make it into this print
-           $savedContent = '';
-           $savedFont = array();
-           // first, cut off and save any partial words at the end of the string
-           $words = explode( ' ', $currContent );
-           
-           // if it looks like we didn't finish any words for this chunk
-           if ( count( $words ) == 1 )
-           {
-              // save and crop off the content currently on the stack
-              $savedContent = array_pop( $content );
-              $savedFont = array_pop( $font );
+	   if ( $c == ' ' )
+	   {
+		   $currContent .= ' ';
+		   $cutoffWidth = $contentWidth;
+		   $contentWidth += $cw;
+		   continue;
+	   }
+	   // try adding another char
+	   if ( $contentWidth + $cw > $maxWidth )
+	   {
+		   // it won't fit, output what we already have
+		   $lineCount++;
+		   //Readjust MaxSize in order to use the whole page width
+		   if ($outofblock and ($lineCount == 1) ) $maxWidth = $this->pgwidth * $this->k;
+		   // contains any content that didn't make it into this print
+		   $savedContent = '';
+		   $savedFont = array();
+		   // first, cut off and save any partial words at the end of the string
+		   $words = explode( ' ', $currContent );
+		   
+		   // if it looks like we didn't finish any words for this chunk
+		   if ( count( $words ) == 1 )
+		   {
+			  // save and crop off the content currently on the stack
+			  $savedContent = array_pop( $content );
+			  $savedFont = array_pop( $font );
 
-              // trim any trailing spaces off the last bit of content
-              $currContent =& $content[ count( $content ) - 1 ];
-              $currContent = rtrim( $currContent );
-           }
-           else // otherwise, we need to find which bit to cut off
-           {
-              $lastContent = '';
-              for ( $w = 0; $w < count( $words ) - 1; $w++) $lastContent .= "{$words[ $w ]} ";
+			  // trim any trailing spaces off the last bit of content
+			  $currContent =& $content[ count( $content ) - 1 ];
+			  $currContent = rtrim( $currContent );
+		   }
+		   else // otherwise, we need to find which bit to cut off
+		   {
+			  $lastContent = '';
+			  for ( $w = 0; $w < count( $words ) - 1; $w++) $lastContent .= "{$words[ $w ]} ";
 
-              $savedContent = $words[ count( $words ) - 1 ];
-              $savedFont = $this->saveFont();
-              // replace the current content with the cropped version
-              $currContent = rtrim( $lastContent );
-           }
-           // update $contentWidth and $cutoffWidth since they changed with cropping
-           $contentWidth = 0;
-           foreach ( $content as $k => $chunk )
-           {
-              $this->restoreFont( $font[ $k ] );
-              $contentWidth += $this->GetStringWidth( $chunk ) * $this->k;
-           }
-           $cutoffWidth = $contentWidth;
-           // if it's justified, we need to find the char spacing
-           if( $align == 'J' )
-           {
-              // count how many spaces there are in the entire content string
-              $numSpaces = 0;
-              foreach ( $content as $chunk ) $numSpaces += substr_count( $chunk, ' ' );
-              // if there's more than one space, find word spacing in points
-              if ( $numSpaces > 0 ) $this->ws = ( $maxWidth - $cutoffWidth ) / $numSpaces;
-              else $this->ws = 0;
-              $this->_out( sprintf( '%.3f Tw', $this->ws ) );
-           }
-           // otherwise, we want normal spacing
-           else $this->_out( sprintf( '%.3f Tw', 0 ) );
+			  $savedContent = $words[ count( $words ) - 1 ];
+			  $savedFont = $this->saveFont();
+			  // replace the current content with the cropped version
+			  $currContent = rtrim( $lastContent );
+		   }
+		   // update $contentWidth and $cutoffWidth since they changed with cropping
+		   $contentWidth = 0;
+		   foreach ( $content as $k => $chunk )
+		   {
+			  $this->restoreFont( $font[ $k ] );
+			  $contentWidth += $this->GetStringWidth( $chunk ) * $this->k;
+		   }
+		   $cutoffWidth = $contentWidth;
+		   // if it's justified, we need to find the char spacing
+		   if( $align == 'J' )
+		   {
+			  // count how many spaces there are in the entire content string
+			  $numSpaces = 0;
+			  foreach ( $content as $chunk ) $numSpaces += substr_count( $chunk, ' ' );
+			  // if there's more than one space, find word spacing in points
+			  if ( $numSpaces > 0 ) $this->ws = ( $maxWidth - $cutoffWidth ) / $numSpaces;
+			  else $this->ws = 0;
+			  $this->_out( sprintf( '%.3f Tw', $this->ws ) );
+		   }
+		   // otherwise, we want normal spacing
+		   else $this->_out( sprintf( '%.3f Tw', 0 ) );
 
-           //EDITEI - Print content according to alignment
-           if (!isset($numSpaces)) $numSpaces = 0;
-           $contentWidth -= ($this->ws*$numSpaces);
-           $empty = $maxWidth - $contentWidth - 2*($this->ws*$numSpaces);
-           $empty /= $this->k;
-           $b = ''; //do not use borders
-           /*'If' below used in order to fix "first-line of other page with justify on" bug*/
-           if($this->y+$this->divheight>$this->PageBreakTrigger and !$this->InFooter and $this->AcceptPageBreak())
-	         {
-           		$bak_x=$this->x;//Current X position
-             	$ws=$this->ws;//Word Spacing
-		          if($ws>0)
-		          {
-			         $this->ws=0;
-			         $this->_out('0 Tw');
-		          }
-		          $this->AddPage($this->CurOrientation);
-		          $this->x=$bak_x;
-		          if($ws>0)
-		          {
-			         $this->ws=$ws;
-			         $this->_out(sprintf('%.3f Tw',$ws));
-            	}
-	         }
-           $arraysize = count($content);
-           $margins = (2*$this->cMargin);
-           if ($outofblock)
-           {
-              $align = 'C';
-              $empty = 0;
-              $margins = $this->cMargin;
-           }
-           switch($align)
-           {
-             case 'R':
-                 foreach ( $content as $k => $chunk )
-                 {
-                     $this->restoreFont( $font[ $k ] );
-                     $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
-                     // determine which borders should be used
-                     $b = '';
-                     if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
-                     if ( $k == count( $content ) - 1 && is_int( strpos( $border, 'R' ) ) ) $b .= 'R';
+		   //EDITEI - Print content according to alignment
+		   if (!isset($numSpaces)) $numSpaces = 0;
+		   $contentWidth -= ($this->ws*$numSpaces);
+		   $empty = $maxWidth - $contentWidth - 2*($this->ws*$numSpaces);
+		   $empty /= $this->k;
+		   $b = ''; //do not use borders
+		   /*'If' below used in order to fix "first-line of other page with justify on" bug*/
+		   if($this->y+$this->divheight>$this->PageBreakTrigger and !$this->InFooter and $this->AcceptPageBreak())
+			 {
+		   		$bak_x=$this->x;//Current X position
+			 	$ws=$this->ws;//Word Spacing
+				  if($ws>0)
+				  {
+					 $this->ws=0;
+					 $this->_out('0 Tw');
+				  }
+				  $this->AddPage($this->CurOrientation);
+				  $this->x=$bak_x;
+				  if($ws>0)
+				  {
+					 $this->ws=$ws;
+					 $this->_out(sprintf('%.3f Tw',$ws));
+				}
+			 }
+		   $arraysize = count($content);
+		   $margins = (2*$this->cMargin);
+		   if ($outofblock)
+		   {
+			  $align = 'C';
+			  $empty = 0;
+			  $margins = $this->cMargin;
+		   }
+		   switch($align)
+		   {
+			 case 'R':
+				 foreach ( $content as $k => $chunk )
+				 {
+					 $this->restoreFont( $font[ $k ] );
+					 $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
+					 // determine which borders should be used
+					 $b = '';
+					 if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
+					 if ( $k == count( $content ) - 1 && is_int( strpos( $border, 'R' ) ) ) $b .= 'R';
 
-                     if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, 1, $align, $fill, $this->HREF , $currentx ); //mono-style line
-                     elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
-                     elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, 1, '', $fill, $this->HREF, $currentx );//last part
-                     else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
-                 }
-                break;
-             case 'L':
-             case 'J':
-                 foreach ( $content as $k => $chunk )
-                 {
-                     $this->restoreFont( $font[ $k ] );
-                     $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
-                     // determine which borders should be used
-                     $b = '';
-                     if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
-                     if ( $k == 0 && is_int( strpos( $border, 'L' ) ) ) $b .= 'L';
+					 if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, 1, $align, $fill, $this->HREF , $currentx ); //mono-style line
+					 elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
+					 elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, 1, '', $fill, $this->HREF, $currentx );//last part
+					 else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
+				 }
+				break;
+			 case 'L':
+			 case 'J':
+				 foreach ( $content as $k => $chunk )
+				 {
+					 $this->restoreFont( $font[ $k ] );
+					 $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
+					 // determine which borders should be used
+					 $b = '';
+					 if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
+					 if ( $k == 0 && is_int( strpos( $border, 'L' ) ) ) $b .= 'L';
 
-                     if (!$is_table and !$outofblock and !$fill and $align=='L' and $k == 0)
-                     {
-                         //Remove margins in this special (though often) case
-                         $align='';
-                         $margins=0;
-                     }
+					 if (!$is_table and !$outofblock and !$fill and $align=='L' and $k == 0)
+					 {
+						 //Remove margins in this special (though often) case
+						 $align='';
+						 $margins=0;
+					 }
 
-                     if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, 1, $align, $fill, $this->HREF , $currentx ); //mono-style line
-                     elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, 0, $align, $fill, $this->HREF );//first part
-                     elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, 1, '', $fill, $this->HREF, $currentx );//last part
-                     else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
+					 if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, 1, $align, $fill, $this->HREF , $currentx ); //mono-style line
+					 elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2), $lineHeight, $chunk, $b, 0, $align, $fill, $this->HREF );//first part
+					 elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + $empty, $lineHeight, $chunk, $b, 1, '', $fill, $this->HREF, $currentx );//last part
+					 else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
 
-                     if (!$is_table and !$outofblock and !$fill and $align=='' and $k == 0)
-                     {
-                         $align = 'L';
-                         $margins = (2*$this->cMargin);
-                     }
-                 }
-                 break;
-             case 'C':
-                 foreach ( $content as $k => $chunk )
-                 {
-                     $this->restoreFont( $font[ $k ] );
-                     $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
-                     // determine which borders should be used
-                     $b = '';
-                     if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
+					 if (!$is_table and !$outofblock and !$fill and $align=='' and $k == 0)
+					 {
+						 $align = 'L';
+						 $margins = (2*$this->cMargin);
+					 }
+				 }
+				 break;
+			 case 'C':
+				 foreach ( $content as $k => $chunk )
+				 {
+					 $this->restoreFont( $font[ $k ] );
+					 $stringWidth = $this->GetStringWidth( $chunk ) + ( $this->ws * substr_count( $chunk, ' ' ) / $this->k );
+					 // determine which borders should be used
+					 $b = '';
+					 if ( $lineCount == 1 && is_int( strpos( $border, 'T' ) ) ) $b .= 'T';
 
-                     if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, 1, $align, $fill, $this->HREF , $currentx ); //mono-style line
-                     elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
-                     elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, 1, 'L', $fill, $this->HREF, $currentx );//last part
-                     else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
-                 }
-                 break;
-                 default: break;
-           }
-           // move on to the next line, reset variables, tack on saved content and current char
-           $this->restoreFont( $savedFont );
-           $font = array( $savedFont );
-           $content = array( $savedContent . $s{ $i } );
+					 if ($arraysize == 1) $this->Cell( $stringWidth + $margins + $empty, $lineHeight, $chunk, $b, 1, $align, $fill, $this->HREF , $currentx ); //mono-style line
+					 elseif ($k == 0) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, 0, 'R', $fill, $this->HREF );//first part
+					 elseif ($k == $arraysize-1 ) $this->Cell( $stringWidth + ($margins/2) + ($empty/2), $lineHeight, $chunk, $b, 1, 'L', $fill, $this->HREF, $currentx );//last part
+					 else $this->Cell( $stringWidth , $lineHeight, $chunk, $b, 0, '', $fill, $this->HREF );//middle part
+				 }
+				 break;
+				 default: break;
+		   }
+		   // move on to the next line, reset variables, tack on saved content and current char
+		   $this->restoreFont( $savedFont );
+		   $font = array( $savedFont );
+		   $content = array( $savedContent . $s{ $i } );
 
-           $currContent =& $content[ 0 ];
-           $contentWidth = $this->GetStringWidth( $currContent ) * $this->k;
-           $cutoffWidth = $contentWidth;
-       }
-       // another character will fit, so add it on
-       else
-       {
-           $contentWidth += $cw;
-           $currContent .= $s{ $i };
-       }
-    }
+		   $currContent =& $content[ 0 ];
+		   $contentWidth = $this->GetStringWidth( $currContent ) * $this->k;
+		   $cutoffWidth = $contentWidth;
+	   }
+	   // another character will fit, so add it on
+	   else
+	   {
+		   $contentWidth += $cw;
+		   $currContent .= $s{ $i };
+	   }
+	}
 }
 //----------------------END OF FLOWING BLOCK------------------------------------//
 
@@ -1231,52 +1231,52 @@ function WriteFlowingBlock( $s , $outofblock = false )
 //Thanks to Ron Korving for the WordWrap() function
 function WordWrap(&$text, $maxwidth)
 {
-    $biggestword=0;//EDITEI
-    $toonarrow=false;//EDITEI
+	$biggestword=0;//EDITEI
+	$toonarrow=false;//EDITEI
 
-    $text = trim($text);
-    if ($text==='') return 0;
-    $space = $this->GetStringWidth(' ');
-    $lines = explode("\n", $text);
-    $text = '';
-    $count = 0;
+	$text = trim($text);
+	if ($text==='') return 0;
+	$space = $this->GetStringWidth(' ');
+	$lines = explode("\n", $text);
+	$text = '';
+	$count = 0;
 
-    foreach ($lines as $line)
-    {
-        $words = preg_split('/ +/', $line);
-        $width = 0;
+	foreach ($lines as $line)
+	{
+		$words = preg_split('/ +/', $line);
+		$width = 0;
 
-        foreach ($words as $word)
-        {
-            $wordwidth = $this->GetStringWidth($word);
+		foreach ($words as $word)
+		{
+			$wordwidth = $this->GetStringWidth($word);
 
-	          //EDITEI
-	          //Warn user that maxwidth is insufficient
-	          if ($wordwidth > $maxwidth)
-	          {
-  		         if ($wordwidth > $biggestword) $biggestword = $wordwidth;
-    		       $toonarrow=true;//EDITEI
-	          }
-            if ($width + $wordwidth <= $maxwidth)
-            {
-                $width += $wordwidth + $space;
-                $text .= $word.' ';
-            }
-            else
-            {
-                $width = $wordwidth + $space;
-                $text = rtrim($text)."\n".$word.' ';
-                $count++;
-            }
-        }
-        $text = rtrim($text)."\n";
-        $count++;
-    }
-    $text = rtrim($text);
+			  //EDITEI
+			  //Warn user that maxwidth is insufficient
+			  if ($wordwidth > $maxwidth)
+			  {
+  				 if ($wordwidth > $biggestword) $biggestword = $wordwidth;
+				   $toonarrow=true;//EDITEI
+			  }
+			if ($width + $wordwidth <= $maxwidth)
+			{
+				$width += $wordwidth + $space;
+				$text .= $word.' ';
+			}
+			else
+			{
+				$width = $wordwidth + $space;
+				$text = rtrim($text)."\n".$word.' ';
+				$count++;
+			}
+		}
+		$text = rtrim($text)."\n";
+		$count++;
+	}
+	$text = rtrim($text);
 
-    //Return -(wordsize) if word is bigger than maxwidth 
-    if ($toonarrow) return -$biggestword;
-    else return $count;
+	//Return -(wordsize) if word is bigger than maxwidth 
+	if ($toonarrow) return -$biggestword;
+	else return $count;
 }
 
 //EDITEI
@@ -1305,17 +1305,17 @@ function SetTextOutline($width, $r=0, $g=-1, $b=-1) //EDITEI
 { 
   if ($width == false) //Now resets all values
   { 
-    $this->outline_on = false;
-    $this->SetLineWidth(0.2); 
-    $this->SetDrawColor(0); 
-    $this->_setTextRendering(0); 
-    $this->_out('0 Tr'); 
+	$this->outline_on = false;
+	$this->SetLineWidth(0.2); 
+	$this->SetDrawColor(0); 
+	$this->_setTextRendering(0); 
+	$this->_out('0 Tr'); 
   }
   else
   { 
-    $this->SetLineWidth($width); 
-    $this->SetDrawColor($r, $g , $b); 
-    $this->_out('2 Tr'); //Fixed
+	$this->SetLineWidth($width); 
+	$this->SetDrawColor($r, $g , $b); 
+	$this->_out('2 Tr'); //Fixed
   } 
 }
 
@@ -1323,38 +1323,38 @@ function SetTextOutline($width, $r=0, $g=-1, $b=-1) //EDITEI
 //EDITEI
 function Circle($x,$y,$r,$style='')
 {
-    $this->Ellipse($x,$y,$r,$r,$style);
+	$this->Ellipse($x,$y,$r,$r,$style);
 }
 
 //function Ellipse() thanks to Olivier PLATHEY
 //EDITEI
 function Ellipse($x,$y,$rx,$ry,$style='D')
 {
-    if($style=='F') $op='f';
-    elseif($style=='FD' or $style=='DF') $op='B';
-    else $op='S';
-    $lx=4/3*(M_SQRT2-1)*$rx;
-    $ly=4/3*(M_SQRT2-1)*$ry;
-    $k=$this->k;
-    $h=$this->h;
-    $this->_out(sprintf('%.2f %.2f m %.2f %.2f %.2f %.2f %.2f %.2f c',
-        ($x+$rx)*$k,($h-$y)*$k,
-        ($x+$rx)*$k,($h-($y-$ly))*$k,
-        ($x+$lx)*$k,($h-($y-$ry))*$k,
-        $x*$k,($h-($y-$ry))*$k));
-    $this->_out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
-        ($x-$lx)*$k,($h-($y-$ry))*$k,
-        ($x-$rx)*$k,($h-($y-$ly))*$k,
-        ($x-$rx)*$k,($h-$y)*$k));
-    $this->_out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
-        ($x-$rx)*$k,($h-($y+$ly))*$k,
-        ($x-$lx)*$k,($h-($y+$ry))*$k,
-        $x*$k,($h-($y+$ry))*$k));
-    $this->_out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c %s',
-        ($x+$lx)*$k,($h-($y+$ry))*$k,
-        ($x+$rx)*$k,($h-($y+$ly))*$k,
-        ($x+$rx)*$k,($h-$y)*$k,
-        $op));
+	if($style=='F') $op='f';
+	elseif($style=='FD' or $style=='DF') $op='B';
+	else $op='S';
+	$lx=4/3*(M_SQRT2-1)*$rx;
+	$ly=4/3*(M_SQRT2-1)*$ry;
+	$k=$this->k;
+	$h=$this->h;
+	$this->_out(sprintf('%.2f %.2f m %.2f %.2f %.2f %.2f %.2f %.2f c',
+		($x+$rx)*$k,($h-$y)*$k,
+		($x+$rx)*$k,($h-($y-$ly))*$k,
+		($x+$lx)*$k,($h-($y-$ry))*$k,
+		$x*$k,($h-($y-$ry))*$k));
+	$this->_out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
+		($x-$lx)*$k,($h-($y-$ry))*$k,
+		($x-$rx)*$k,($h-($y-$ly))*$k,
+		($x-$rx)*$k,($h-$y)*$k));
+	$this->_out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
+		($x-$rx)*$k,($h-($y+$ly))*$k,
+		($x-$lx)*$k,($h-($y+$ry))*$k,
+		$x*$k,($h-($y+$ry))*$k));
+	$this->_out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c %s',
+		($x+$lx)*$k,($h-($y+$ry))*$k,
+		($x+$rx)*$k,($h-($y+$ly))*$k,
+		($x+$rx)*$k,($h-$y)*$k,
+		$op));
 }
 
 function Image($file,$x,$y,$w=0,$h=0,$type='',$link='',$paint=true)
@@ -1516,79 +1516,79 @@ function DrawDot($x,$y) //center x y
 
 function SetDash($black=false,$white=false)
 {
-        if($black and $white) $s=sprintf('[%.3f %.3f] 0 d',$black*$this->k,$white*$this->k);
-        else $s='[] 0 d';
-        $this->_out($s);
+		if($black and $white) $s=sprintf('[%.3f %.3f] 0 d',$black*$this->k,$white*$this->k);
+		else $s='[] 0 d';
+		$this->_out($s);
 }
 
 function Bookmark($txt,$level=0,$y=0)
 {
-    if($y == -1) $y = $this->GetY();
-    $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
+	if($y == -1) $y = $this->GetY();
+	$this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
 }
 
 function DisplayPreferences($preferences)
 {
-    $this->DisplayPreferences .= $preferences;
+	$this->DisplayPreferences .= $preferences;
 }
 
 function _putbookmarks()
 {
-    $nb=count($this->outlines);
-    if($nb==0) return;
-    $lru=array();
-    $level=0;
-    foreach($this->outlines as $i=>$o)
-    {
-        if($o['l']>0)
-        {
-            $parent=$lru[$o['l']-1];
-            //Set parent and last pointers
-            $this->outlines[$i]['parent']=$parent;
-            $this->outlines[$parent]['last']=$i;
-            if($o['l']>$level)
-            {
-                //Level increasing: set first pointer
-                $this->outlines[$parent]['first']=$i;
-            }
-        }
-        else
-            $this->outlines[$i]['parent']=$nb;
-        if($o['l']<=$level and $i>0)
-        {
-            //Set prev and next pointers
-            $prev=$lru[$o['l']];
-            $this->outlines[$prev]['next']=$i;
-            $this->outlines[$i]['prev']=$prev;
-        }
-        $lru[$o['l']]=$i;
-        $level=$o['l'];
-    }
-    //Outline items
-    $n=$this->n+1;
-    foreach($this->outlines as $i=>$o)
-    {
-        $this->_newobj();
-        $this->_out('<</Title '.$this->_textstring($o['t']));
-        $this->_out('/Parent '.($n+$o['parent']).' 0 R');
-        if(isset($o['prev']))
-            $this->_out('/Prev '.($n+$o['prev']).' 0 R');
-        if(isset($o['next']))
-            $this->_out('/Next '.($n+$o['next']).' 0 R');
-        if(isset($o['first']))
-            $this->_out('/First '.($n+$o['first']).' 0 R');
-        if(isset($o['last']))
-            $this->_out('/Last '.($n+$o['last']).' 0 R');
-        $this->_out(sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]',1+2*$o['p'],($this->h-$o['y'])*$this->k));
-        $this->_out('/Count 0>>');
-        $this->_out('endobj');
-    }
-    //Outline root
-    $this->_newobj();
-    $this->OutlineRoot=$this->n;
-    $this->_out('<</Type /Outlines /First '.$n.' 0 R');
-    $this->_out('/Last '.($n+$lru[0]).' 0 R>>');
-    $this->_out('endobj');
+	$nb=count($this->outlines);
+	if($nb==0) return;
+	$lru=array();
+	$level=0;
+	foreach($this->outlines as $i=>$o)
+	{
+		if($o['l']>0)
+		{
+			$parent=$lru[$o['l']-1];
+			//Set parent and last pointers
+			$this->outlines[$i]['parent']=$parent;
+			$this->outlines[$parent]['last']=$i;
+			if($o['l']>$level)
+			{
+				//Level increasing: set first pointer
+				$this->outlines[$parent]['first']=$i;
+			}
+		}
+		else
+			$this->outlines[$i]['parent']=$nb;
+		if($o['l']<=$level and $i>0)
+		{
+			//Set prev and next pointers
+			$prev=$lru[$o['l']];
+			$this->outlines[$prev]['next']=$i;
+			$this->outlines[$i]['prev']=$prev;
+		}
+		$lru[$o['l']]=$i;
+		$level=$o['l'];
+	}
+	//Outline items
+	$n=$this->n+1;
+	foreach($this->outlines as $i=>$o)
+	{
+		$this->_newobj();
+		$this->_out('<</Title '.$this->_textstring($o['t']));
+		$this->_out('/Parent '.($n+$o['parent']).' 0 R');
+		if(isset($o['prev']))
+			$this->_out('/Prev '.($n+$o['prev']).' 0 R');
+		if(isset($o['next']))
+			$this->_out('/Next '.($n+$o['next']).' 0 R');
+		if(isset($o['first']))
+			$this->_out('/First '.($n+$o['first']).' 0 R');
+		if(isset($o['last']))
+			$this->_out('/Last '.($n+$o['last']).' 0 R');
+		$this->_out(sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]',1+2*$o['p'],($this->h-$o['y'])*$this->k));
+		$this->_out('/Count 0>>');
+		$this->_out('endobj');
+	}
+	//Outline root
+	$this->_newobj();
+	$this->OutlineRoot=$this->n;
+	$this->_out('<</Type /Outlines /First '.$n.' 0 R');
+	$this->_out('/Last '.($n+$lru[0]).' 0 R>>');
+	$this->_out('endobj');
 }
 
 function Ln($h='')
@@ -1699,9 +1699,9 @@ function Output($name='',$dest='')
 }
 
 /*******************************************************************************
-*                                                                              *
-*                              Protected methods                               *
-*                                                                              *
+*																			  *
+*							  Protected methods							   *
+*																			  *
 *******************************************************************************/
 function _dochecks()
 {
@@ -1994,20 +1994,20 @@ function _putcatalog()
   //EDITEI - added lines below
   if(count($this->outlines)>0)
   {
-      $this->_out('/Outlines '.$this->OutlineRoot.' 0 R');
-      $this->_out('/PageMode /UseOutlines');
+	  $this->_out('/Outlines '.$this->OutlineRoot.' 0 R');
+	  $this->_out('/PageMode /UseOutlines');
   }
   if(is_int(strpos($this->DisplayPreferences,'FullScreen'))) $this->_out('/PageMode /FullScreen');
   if($this->DisplayPreferences)
   {
-     $this->_out('/ViewerPreferences<<');
-     if(is_int(strpos($this->DisplayPreferences,'HideMenubar'))) $this->_out('/HideMenubar true');
-     if(is_int(strpos($this->DisplayPreferences,'HideToolbar'))) $this->_out('/HideToolbar true');
-     if(is_int(strpos($this->DisplayPreferences,'HideWindowUI'))) $this->_out('/HideWindowUI true');
-     if(is_int(strpos($this->DisplayPreferences,'DisplayDocTitle'))) $this->_out('/DisplayDocTitle true');
-     if(is_int(strpos($this->DisplayPreferences,'CenterWindow'))) $this->_out('/CenterWindow true');
-     if(is_int(strpos($this->DisplayPreferences,'FitWindow'))) $this->_out('/FitWindow true');
-     $this->_out('>>');
+	 $this->_out('/ViewerPreferences<<');
+	 if(is_int(strpos($this->DisplayPreferences,'HideMenubar'))) $this->_out('/HideMenubar true');
+	 if(is_int(strpos($this->DisplayPreferences,'HideToolbar'))) $this->_out('/HideToolbar true');
+	 if(is_int(strpos($this->DisplayPreferences,'HideWindowUI'))) $this->_out('/HideWindowUI true');
+	 if(is_int(strpos($this->DisplayPreferences,'DisplayDocTitle'))) $this->_out('/DisplayDocTitle true');
+	 if(is_int(strpos($this->DisplayPreferences,'CenterWindow'))) $this->_out('/CenterWindow true');
+	 if(is_int(strpos($this->DisplayPreferences,'FitWindow'))) $this->_out('/FitWindow true');
+	 $this->_out('>>');
   }
 }
 

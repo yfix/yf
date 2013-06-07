@@ -6,12 +6,12 @@
  *
  */
 
-define("SASL_PLAIN_STATE_START",    0);
+define("SASL_PLAIN_STATE_START",	0);
 define("SASL_PLAIN_STATE_IDENTIFY", 1);
-define("SASL_PLAIN_STATE_DONE",     2);
+define("SASL_PLAIN_STATE_DONE",	 2);
 
-define("SASL_PLAIN_DEFAULT_MODE",            0);
-define("SASL_PLAIN_EXIM_MODE",               1);
+define("SASL_PLAIN_DEFAULT_MODE",			0);
+define("SASL_PLAIN_EXIM_MODE",			   1);
 define("SASL_PLAIN_EXIM_DOCUMENTATION_MODE", 2);
 
 class plain_sasl_client_class

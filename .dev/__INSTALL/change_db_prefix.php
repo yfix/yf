@@ -49,11 +49,11 @@ function &db_query($sql = "", $db_connection = false) {
 }
 
 function db_fetch($res = null) {
-    if (!is_resource($res)) {
-        echo mysql_error($GLOBALS["_db_connection"]);
-        debug_backtrace();
-        exit();
-    }
+	if (!is_resource($res)) {
+		echo mysql_error($GLOBALS["_db_connection"]);
+		debug_backtrace();
+		exit();
+	}
 	return mysql_fetch_assoc($res);
 }
 

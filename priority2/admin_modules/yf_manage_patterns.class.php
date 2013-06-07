@@ -187,7 +187,7 @@ class yf_manage_patterns{
 			//$_GET["action"] => {string to replace}
 			"show"					=> "",
 			"add"					=> $_GET["id"] ? "Edit" : "Add",
-		);             		
+		);			 		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

@@ -47,8 +47,8 @@ if (!function_exists('ctype_alnum')) {
 	Same with 'abc def'.
 	However if `abc def`, then will read in as `abc def`
 	
-	@param endstmtchar    Character that indicates end of statement
-	@param tokenchars     Include the following characters in tokens apart from A-Z and 0-9 
+	@param endstmtchar	Character that indicates end of statement
+	@param tokenchars	 Include the following characters in tokens apart from A-Z and 0-9 
 	@returns 2 dimensional array containing parsed tokens.
 */
 function Lens_ParseArgs($args,$endstmtchar=',',$tokenchars='_.-')
@@ -570,12 +570,12 @@ class ADODB_DataDict {
 		$sql = $this->_TableSQL($tabname,$lines,$pkey,$taboptions);
 		
 		// ggiunta - 2006/10/12 - KLUDGE:
-        // if we are on autoincrement, and table options includes REPLACE, the
-        // autoincrement sequence has already been dropped on table creation sql, so
-        // we avoid passing REPLACE to trigger creation code. This prevents
-        // creating sql that double-drops the sequence
-        if ($this->autoIncrement && isset($taboptions['REPLACE']))
-        	unset($taboptions['REPLACE']);
+		// if we are on autoincrement, and table options includes REPLACE, the
+		// autoincrement sequence has already been dropped on table creation sql, so
+		// we avoid passing REPLACE to trigger creation code. This prevents
+		// creating sql that double-drops the sequence
+		if ($this->autoIncrement && isset($taboptions['REPLACE']))
+			unset($taboptions['REPLACE']);
 		$tsql = $this->_Triggers($tabname,$taboptions);
 		foreach($tsql as $s) $sql[] = $s;
 		
@@ -592,7 +592,7 @@ class ADODB_DataDict {
 	function _GenFields($flds,$widespacing=false)
 	{
 		if (is_string($flds)) {
-			$padding = '     ';
+			$padding = '	 ';
 			$txt = $flds.$padding;
 			$flds = array();
 			$flds0 = Lens_ParseArgs($txt,',');
@@ -680,7 +680,7 @@ class ADODB_DataDict {
 				case 'AUTOINCREMENT':
 				case 'AUTO':	$fautoinc = true; $fnotnull = true; break;
 				case 'KEY':
-                // a primary key col can be non unique in itself (if key spans many cols...)
+				// a primary key col can be non unique in itself (if key spans many cols...)
 				case 'PRIMARY':	$fprimary = $v; $fnotnull = true; /*$funiqueindex = true;*/ break;
 				case 'DEF':
 				case 'DEFAULT': $fdefault = $v; break;
@@ -784,9 +784,9 @@ class ADODB_DataDict {
 			if ($widespacing) $fname = str_pad($fname,24);
 			
 			 // check for field names appearing twice
-            if (array_key_exists($fid, $lines)) {
-            	 ADOConnection::outp("Field '$fname' defined twice");
-            }
+			if (array_key_exists($fid, $lines)) {
+				 ADOConnection::outp("Field '$fname' defined twice");
+			}
 			
 			$lines[$fid] = $fname.' '.$ftype.$suffix;
 			
@@ -873,7 +873,7 @@ class ADODB_DataDict {
 		$s = "CREATE TABLE $tabname (\n";
 		$s .= implode(",\n", $lines);
 		if (sizeof($pkey)>0) {
-			$s .= ",\n                 PRIMARY KEY (";
+			$s .= ",\n				 PRIMARY KEY (";
 			$s .= implode(", ",$pkey).")";
 		}
 		if (isset($tableoptions['CONSTRAINTS'])) 

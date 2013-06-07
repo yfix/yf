@@ -210,7 +210,7 @@ class yf_site_map {
 			// Close file
 			@fclose($this->_fp);
 		}
-        // Verification the number of files with name $SITEMAP_FILE_NAME (if more than 1 create sitemap index)
+		// Verification the number of files with name $SITEMAP_FILE_NAME (if more than 1 create sitemap index)
 		$files = _class("dir")->scan_dir($this->SITEMAP_STORE_FOLDER);
 		// Create array of sitemap filenames 
 		foreach ((array)$files as $file_name) {
@@ -231,7 +231,7 @@ class yf_site_map {
 		}
 		// Process generated files
 		if ($sitemaps) {
-    		foreach ((array)$sitemaps as $filename) {
+			foreach ((array)$sitemaps as $filename) {
 				$this->_process_sitemap_file($filename);
 			}
 		} 

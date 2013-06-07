@@ -89,7 +89,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $_refLOBs = array();
 	
 	// var $ansiOuter = true; // if oracle9
-    
+	
 	function ADODB_oci8() 
 	{
 		$this->_hasOCIFetchStatement = ADODB_PHPVER >= 0x4200;
@@ -122,8 +122,8 @@ class ADODB_oci8 extends ADOConnection {
 			$fld->scale = $rs->fields[3];
 			if ($rs->fields[1] == 'NUMBER') {
 				if ($rs->fields[3] == 0) $fld->type = 'INT';
-	     		$fld->max_length = $rs->fields[4];
-	    	}	
+		 		$fld->max_length = $rs->fields[4];
+			}	
 		   	$fld->not_null = (strncmp($rs->fields[5], 'NOT',3) === 0);
 			$fld->binary = (strpos($fld->type,'BLOB') !== false);
 			$fld->default_value = $rs->fields[6];
@@ -152,14 +152,14 @@ class ADODB_oci8 extends ADOConnection {
   Multiple modes of connection are supported:
   
   a. Local Database
-    $conn->Connect(false,'scott','tiger');
+	$conn->Connect(false,'scott','tiger');
   
   b. From tnsnames.ora
-    $conn->Connect(false,'scott','tiger',$tnsname); 
-    $conn->Connect($tnsname,'scott','tiger'); 
+	$conn->Connect(false,'scott','tiger',$tnsname); 
+	$conn->Connect($tnsname,'scott','tiger'); 
   
   c. Server + service name
-    $conn->Connect($serveraddress,'scott,'tiger',$service_name);
+	$conn->Connect($serveraddress,'scott,'tiger',$service_name);
   
   d. Server + SID
   	$conn->connectSID = true;
@@ -186,7 +186,7 @@ NATSOFT.DOMAIN =
 		if (!function_exists('OCIPLogon')) return null;
 		
 		
-        $this->_errorMsg = false;
+		$this->_errorMsg = false;
 		$this->_errorCode = false;
 		
 		if($argHostname) { // added by Jorma Tuomainen <jorma.tuomainen@ppoy.fi>
@@ -332,15 +332,15 @@ NATSOFT.DOMAIN =
 	// Mark Newnham 
 	function &MetaIndexes ($table, $primary = FALSE, $owner=false)
 	{
-        // save old fetch mode
-        global $ADODB_FETCH_MODE;
+		// save old fetch mode
+		global $ADODB_FETCH_MODE;
 
-        $save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		$save = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 
-        if ($this->fetchMode !== FALSE) {
-               $savem = $this->SetFetchMode(FALSE);
-        }
+		if ($this->fetchMode !== FALSE) {
+			   $savem = $this->SetFetchMode(FALSE);
+		}
 
 		// get index details
 		$table = strtoupper($table);
@@ -355,45 +355,45 @@ NATSOFT.DOMAIN =
 
 		if ($primary==TRUE && $primary_key=='') {
 			 if (isset($savem)) 
-                $this->SetFetchMode($savem);
+				$this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			return $false; //There is no primary key
 		}
 
-        $rs = $this->Execute(sprintf("SELECT ALL_INDEXES.INDEX_NAME, ALL_INDEXES.UNIQUENESS, ALL_IND_COLUMNS.COLUMN_POSITION, ALL_IND_COLUMNS.COLUMN_NAME FROM ALL_INDEXES,ALL_IND_COLUMNS WHERE UPPER(ALL_INDEXES.TABLE_NAME)='%s' AND ALL_IND_COLUMNS.INDEX_NAME=ALL_INDEXES.INDEX_NAME",$table));
+		$rs = $this->Execute(sprintf("SELECT ALL_INDEXES.INDEX_NAME, ALL_INDEXES.UNIQUENESS, ALL_IND_COLUMNS.COLUMN_POSITION, ALL_IND_COLUMNS.COLUMN_NAME FROM ALL_INDEXES,ALL_IND_COLUMNS WHERE UPPER(ALL_INDEXES.TABLE_NAME)='%s' AND ALL_IND_COLUMNS.INDEX_NAME=ALL_INDEXES.INDEX_NAME",$table));
 
 		
-        if (!is_object($rs)) {
+		if (!is_object($rs)) {
 			if (isset($savem)) 
 				$this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
-            return $false;
-        }
+			return $false;
+		}
 
 		$indexes = array ();
-        // parse index data into array
+		// parse index data into array
 
-        while ($row = $rs->FetchRow()) {
+		while ($row = $rs->FetchRow()) {
 			if ($primary && $row[0] != $primary_key) continue;
-            if (!isset($indexes[$row[0]])) {
+			if (!isset($indexes[$row[0]])) {
 				$indexes[$row[0]] = array(
 				   'unique' => ($row[1] == 'UNIQUE'),
 				   'columns' => array()
 				);
-            }
-            $indexes[$row[0]]['columns'][$row[2] - 1] = $row[3];
-        }
+			}
+			$indexes[$row[0]]['columns'][$row[2] - 1] = $row[3];
+		}
 
-        // sort columns by order in the index
-        foreach ( array_keys ($indexes) as $index ) {
-            ksort ($indexes[$index]['columns']);
-        }
+		// sort columns by order in the index
+		foreach ( array_keys ($indexes) as $index ) {
+			ksort ($indexes[$index]['columns']);
+		}
 
 		if (isset($savem)) { 
-            $this->SetFetchMode($savem);
+			$this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 		}
-        return $indexes;
+		return $indexes;
 	}
 	
 	function BeginTrans()
@@ -887,11 +887,11 @@ NATSOFT.DOMAIN =
 	{
 		
 		if (!is_array($stmt)) return false;
-        
-        if (($type == OCI_B_CURSOR) && sizeof($stmt) >= 5) { 
-            return OCIBindByName($stmt[1],":".$name,$stmt[4],$size,$type);
-        }
-        
+		
+		if (($type == OCI_B_CURSOR) && sizeof($stmt) >= 5) { 
+			return OCIBindByName($stmt[1],":".$name,$stmt[4],$size,$type);
+		}
+		
 		if ($name == false) {
 			if ($type !== false) $rez = OCIBindByName($stmt[1],":".$stmt[2],$var,$size,$type);
 			else $rez = OCIBindByName($stmt[1],":".$stmt[2],$var,$size); // +1 byte for null terminator
@@ -900,13 +900,13 @@ NATSOFT.DOMAIN =
 			if ($this->debug) {
 				ADOConnection::outp("<b>Bind</b>: name = $name");
 			}
-            //we have to create a new Descriptor here
+			//we have to create a new Descriptor here
 			$numlob = count($this->_refLOBs);
-        	$this->_refLOBs[$numlob]['LOB'] = OCINewDescriptor($this->_connectionID, oci_lob_desc($type));
+			$this->_refLOBs[$numlob]['LOB'] = OCINewDescriptor($this->_connectionID, oci_lob_desc($type));
 			$this->_refLOBs[$numlob]['TYPE'] = $isOutput;
 			
 			$tmp = &$this->_refLOBs[$numlob]['LOB'];
-	        $rez = OCIBindByName($stmt[1], ":".$name, $tmp, -1, $type);
+			$rez = OCIBindByName($stmt[1], ":".$name, $tmp, -1, $type);
 			if ($this->debug) {
 				ADOConnection::outp("<b>Bind</b>: descriptor has been allocated, var (".$name.") binded");
 			}
@@ -1032,7 +1032,7 @@ NATSOFT.DOMAIN =
 			}
 		}
 		
-        $this->_errorMsg = false;
+		$this->_errorMsg = false;
 		$this->_errorCode = false;
 		if (OCIExecute($stmt,$this->_commit)) {
 //OCIInternalDebug(1);			
@@ -1047,41 +1047,41 @@ NATSOFT.DOMAIN =
 						//$_GLOBALS[$this -> _refLOBs[$key]['VAR']] = $tmp;
 						$this -> _refLOBs[$key]['VAR'] = $tmp;
 					} else {
-                        $this->_refLOBs[$key]['LOB']->save($this->_refLOBs[$key]['VAR']);
+						$this->_refLOBs[$key]['LOB']->save($this->_refLOBs[$key]['VAR']);
 						$this -> _refLOBs[$key]['LOB']->free();
 						unset($this -> _refLOBs[$key]);
-                        if ($this->debug) {
+						if ($this->debug) {
 							ADOConnection::outp("<b>IN LOB</b>: LOB has been saved. <br>");
 						}
-                    }					
+					}					
 				}
 			}
 		
-            switch (@OCIStatementType($stmt)) {
-                case "SELECT":
+			switch (@OCIStatementType($stmt)) {
+				case "SELECT":
 					return $stmt;
 				
 				case 'DECLARE':
-                case "BEGIN":
-                    if (is_array($sql) && !empty($sql[4])) {
+				case "BEGIN":
+					if (is_array($sql) && !empty($sql[4])) {
 						$cursor = $sql[4];
 						if (is_resource($cursor)) {
 							$ok = OCIExecute($cursor);	
-	                        return $cursor;
+							return $cursor;
 						}
 						return $stmt;
-                    } else {
+					} else {
 						if (is_resource($stmt)) {
 							OCIFreeStatement($stmt);
 							return true;
 						}
-                        return $stmt;
-                    }
-                    break;
-                default :
+						return $stmt;
+					}
+					break;
+				default :
 					// ociclose -- no because it could be used in a LOB?
-                    return true;
-            }
+					return true;
+			}
 		}
 		return false;
 	}

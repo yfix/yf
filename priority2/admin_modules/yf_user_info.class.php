@@ -341,7 +341,7 @@ class yf_user_info {
 	}	
 
 	//-----------------------------------------------------------------------------
-    // Validate form for steps 3 and 4
+	// Validate form for steps 3 and 4
 	function _validate_form () {
 		// Cleanup all $_POST fields
 		foreach ((array)$_POST as $k => $v) trim($_POST[$k]);

@@ -129,7 +129,7 @@ $GLOBALS["PROJECT_CONF"] = my_array_merge((array)$GLOBALS["PROJECT_CONF"], array
 
 $OVERRIDE_CONF_FILE = dirname(dirname(__FILE__))."/.dev/override_conf_after.php";
 if (file_exists($OVERRIDE_CONF_FILE)) {
-    include_once $OVERRIDE_CONF_FILE;
+	include_once $OVERRIDE_CONF_FILE;
 }
 // Load auto-configured file
 $AUTO_CONF_FILE = dirname(__FILE__)."/_auto_conf.php";

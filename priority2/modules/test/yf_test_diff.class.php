@@ -20,30 +20,30 @@ class yf_test_diff {
 		$str1 = 
 "class Text_Diff_Op_add extends Text_Diff_Op {
 
-    function Text_Diff_Op_add(\$lines)
-    {
-        \$this->final = \$lines;
-        \$this->orig = false;
-    }
+	function Text_Diff_Op_add(\$lines)
+	{
+		\$this->final = \$lines;
+		\$this->orig = false;
+	}
 
-    function &reverse()
-    {
-        \$reverse = &new Text_Diff_Op_delete(\$this->final);
-        return \$reverse;
-    }
+	function &reverse()
+	{
+		\$reverse = &new Text_Diff_Op_delete(\$this->final);
+		return \$reverse;
+	}
 
 }";
 		$str2 = 
 "class Text_Diff_Op_add extends Text_Diff_Op {
-    function Text_Diff_Op_add(\$lines) {
+	function Text_Diff_Op_add(\$lines) {
 		\$this->final = \$lines;
 		\$this->orig = false;
 	}
-    function &reverse() {
+	function &reverse() {
 		\$reverse = &new Text_Diff_Op_delete(\$this->final);
 		return \$reverse;
 	}
-    function &reverse2() {
+	function &reverse2() {
 		\$reverse = &new Text_Diff_Op_delete(\$this->final);
 		return \$reverse;
 	}

@@ -49,11 +49,11 @@ class yf_common {
 	/**
 	* Catch missing method call
 	*/
-    function __call($name, $arguments) {
+	function __call($name, $arguments) {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}
-    
+	
 	/**
 	* Secondary database connection
 	*/
@@ -128,7 +128,7 @@ class yf_common {
 	function multi_select_box ($name, $values, $selected = "", $show_text = false, $type = 2, $add_str = "", $translate = 0, $level = 0, $disabled = false) {
 		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
-    
+	
 	/**
 	* This function generate date box
 	*/
@@ -1167,12 +1167,12 @@ class yf_common {
 	*		array("id" => 1), 
 	*		array("id" => 2),
 	* 	);
-    * @example: 
+	* @example: 
 	*	for ($i = 0; $i < 10; $i++) {
 	*		$threads[] = array('id' => $i);
 	*	}
 	*	print_r(common()->threaded_exec($_GET["object"], "console", $threads), 1);
-    * @example: 
+	* @example: 
 	*	function console () {
 	*		main()->NO_GRAPHICS = true;
 	*		session_write_close();
@@ -1180,9 +1180,9 @@ class yf_common {
 	*			exit("No direct access to method allowed");
 	*		}
 	*		sleep(3);
-    *   	$params = common()->get_console_params();
+	*   	$params = common()->get_console_params();
 	*		echo $params["id"];
-    *		exit();
+	*		exit();
 	*	}
 	*/
 	function threaded_exec($object, $action = "show", $threads_params = array(), $max_threads = 10) {
@@ -1199,7 +1199,7 @@ class yf_common {
 				$ids_to_params[$thread_id] = $param_id;
 			}
 			while (false !== ($result = $threads->iteration())) {
-			    if (!empty($result)) {
+				if (!empty($result)) {
 					$thread_id	= $result[0];
 					$param_id	= $ids_to_params[$thread_id];
 					$results[$param_id] = $result[1];

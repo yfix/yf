@@ -382,7 +382,7 @@ class yf_menus_editor {
 			$this->_methods = &$this->_user_methods;
 		}
 
-        // Get items for the parent_id menu
+		// Get items for the parent_id menu
 		$this->_items_for_parent[-1] = "Not selected";
 		$this->_items_for_parent[0] = "-- TOP --";
 		foreach ((array)$this->_recursive_get_menu_items($menu_info["id"], $_GET["id"]) as $cur_item_id => $cur_item_info) {
@@ -472,12 +472,12 @@ class yf_menus_editor {
 
 		$query = "UPDATE `".db('menu_items')."` SET ";
 
-        if (!empty($_POST["type_id"])) {
+		if (!empty($_POST["type_id"])) {
 			$query.= "`type_id`='".$_POST["type_id"]."'";
 		}
 
 		if (intval($_POST["parent_id"]) != -1) {
-            if(!empty($_POST["type_id"])) {
+			if(!empty($_POST["type_id"])) {
 				$query.=",";
 			}
 			$query.= " `parent_id`='".$_POST["parent_id"]."'";
@@ -485,34 +485,34 @@ class yf_menus_editor {
 
 		if (!empty($_POST["active"])) {
 			$_POST["active"]-= 1;
-            if( (!empty($_POST["type_id"])) || (intval($_POST["parent_id"]) != -1) ) {
+			if( (!empty($_POST["type_id"])) || (intval($_POST["parent_id"]) != -1) ) {
 				$query.=",";
 			}
 			$query.= " `active`='".$_POST["active"]."'";
 		}
 
 		if (!empty($_POST["groups"])) {
-            if (is_array($_POST["groups"]))	{
+			if (is_array($_POST["groups"]))	{
 				$_POST["groups"] = implode(",",$_POST["groups"]);
 			}
 			$_POST["groups"] = str_replace(array(" ","\t","\r","\n"), "", $_POST["groups"]);
 
-            if( (!empty($_POST["type_id"])) || (intval($_POST["parent_id"]) != -1) || (!empty($_POST["active"])) ) {
+			if( (!empty($_POST["type_id"])) || (intval($_POST["parent_id"]) != -1) || (!empty($_POST["active"])) ) {
 				$query.=",";
 			}
 			$query.= " `user_groups`='"._es($_POST["groups"])."'";
 		}
 
-        $query.=  " WHERE `id` IN(".implode(",", $_POST["item"]).")";
+		$query.=  " WHERE `id` IN(".implode(",", $_POST["item"]).")";
 
-       	db()->query($query);
+	   	db()->query($query);
 
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("menu_items");
 		}
 
-        return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
+		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
 	}
 
 	/**

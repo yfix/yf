@@ -348,7 +348,7 @@ class yf_analyze_engine_log {
 				continue;
 			}
 			$stats = array();
-		    while (!feof($h)) {
+			while (!feof($h)) {
 				$info = array();
 				$tmp = explode("#@#", fgets($h, 4096));
 				$info["user_id"]	= (int)$tmp[1];
@@ -375,8 +375,8 @@ class yf_analyze_engine_log {
 				if ($info["from_cache"]) {
 					$stats["cache_hits"][$info["site_id"]]++;
 				}
-		    }
-		    fclose($h);
+			}
+			fclose($h);
 
 			foreach ((array)$stats["hits"] as $site_id => $hits_all) {
 				if (!$site_id) {

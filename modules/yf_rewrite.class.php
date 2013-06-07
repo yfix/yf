@@ -242,9 +242,9 @@ class yf_rewrite {
 	function _sort_by_length ($a, $b) {
 		$sa = strlen($a);
 		$sb = strlen($b);
-        if ($sa == $sb) {
-            return 0;
-        }
-        return ($sa < $sb) ? +1 : -1;
+		if ($sa == $sb) {
+			return 0;
+		}
+		return ($sa < $sb) ? +1 : -1;
 	}
 }

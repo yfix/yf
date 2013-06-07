@@ -127,7 +127,7 @@ class yf_rss {
 		}
 	
 		return $resultArr;
-	}           
+	}		   
 
 	/**
 	* widget, show rss button

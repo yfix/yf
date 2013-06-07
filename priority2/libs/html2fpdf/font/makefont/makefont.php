@@ -1,8 +1,8 @@
 <?php
 /*******************************************************************************
-* Utility to generate font definition files                                    *
-* Version: 1.12                                                                *
-* Date:    2003-12-30                                                          *
+* Utility to generate font definition files									*
+* Version: 1.12																*
+* Date:	2003-12-30														  *
 *******************************************************************************/
 
 function ReadMap($enc)
@@ -285,11 +285,11 @@ function CheckTTF($file)
 }
 
 /*******************************************************************************
-* $fontfile: path to TTF file (or empty string if not to be embedded)          *
-* $afmfile:  path to AFM file                                                  *
-* $enc:      font encoding (or empty string for symbolic fonts)                *
-* $patch:    optional patch for encoding                                       *
-* $type :    font type if $fontfile is empty                                   *
+* $fontfile: path to TTF file (or empty string if not to be embedded)		  *
+* $afmfile:  path to AFM file												  *
+* $enc:	  font encoding (or empty string for symbolic fonts)				*
+* $patch:	optional patch for encoding									   *
+* $type :	font type if $fontfile is empty								   *
 *******************************************************************************/
 function MakeFont($fontfile,$afmfile,$enc='cp1252',$patch=array(),$type='TrueType')
 {

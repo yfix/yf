@@ -82,7 +82,7 @@
 			   <option value="{#.related_id}">{#.name}</option>
 			   {/foreach}
 			   {/if}
-                    </select>
+					</select>
 					  </center>
 
 	</p>

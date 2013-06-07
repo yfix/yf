@@ -137,10 +137,10 @@ class yf_mem_info{
 			$results['ram']['percent'] = round(($results['ram']['used'] * 100) / $results['ram']['total']);
 		}
 		
-      
+	  
 		// values for splitting memory usage
 		if (isset($results['ram']['cached']) && isset($results['ram']['buffers'])) {
-	        $results['ram']['app'] = $results['ram']['used'] - $results['ram']['cached'] - $results['ram']['buffers'];
+			$results['ram']['app'] = $results['ram']['used'] - $results['ram']['cached'] - $results['ram']['buffers'];
 			
 			if(!empty($results['ram']['total'])){
 				$results['ram']['app_percent'] = round(($results['ram']['app'] * 100) / $results['ram']['total']);
@@ -152,8 +152,8 @@ class yf_mem_info{
 		$bufr = _ssh_exec($server_info, "cat /proc/swaps");
 		
 		if ( $bufr != "ERROR" ) {
-	        $swaps = explode("\n", $bufr);
-	        for ($i = 1; $i < (sizeof($swaps)); $i++) {
+			$swaps = explode("\n", $bufr);
+			for ($i = 1; $i < (sizeof($swaps)); $i++) {
 				if( trim( $swaps[$i] ) != "" ) {
 					$ar_buf = preg_split('/\s+/', $swaps[$i], 6);
 					$results['devswap'][$i - 1] = array();
@@ -171,7 +171,7 @@ class yf_mem_info{
 				}
 			} 
 		}
-    
+	
 		return $results;
 	}
 }

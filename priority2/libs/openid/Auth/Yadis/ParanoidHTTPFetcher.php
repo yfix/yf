@@ -27,200 +27,200 @@ require_once "Auth/OpenID.php";
  * @package OpenID
  */
 class Auth_Yadis_ParanoidHTTPFetcher extends Auth_Yadis_HTTPFetcher {
-    function Auth_Yadis_ParanoidHTTPFetcher()
-    {
-        $this->reset();
-    }
+	function Auth_Yadis_ParanoidHTTPFetcher()
+	{
+		$this->reset();
+	}
 
-    function reset()
-    {
-        $this->headers = array();
-        $this->data = "";
-    }
+	function reset()
+	{
+		$this->headers = array();
+		$this->data = "";
+	}
 
-    /**
-     * @access private
-     */
-    function _writeHeader($ch, $header)
-    {
-        array_push($this->headers, rtrim($header));
-        return strlen($header);
-    }
+	/**
+	 * @access private
+	 */
+	function _writeHeader($ch, $header)
+	{
+		array_push($this->headers, rtrim($header));
+		return strlen($header);
+	}
 
-    /**
-     * @access private
-     */
-    function _writeData($ch, $data)
-    {
-        if (strlen($this->data) > 1024*Auth_OpenID_FETCHER_MAX_RESPONSE_KB) {
-            return 0;
-        } else {
-            $this->data .= $data;
-            return strlen($data);
-        }
-    }
+	/**
+	 * @access private
+	 */
+	function _writeData($ch, $data)
+	{
+		if (strlen($this->data) > 1024*Auth_OpenID_FETCHER_MAX_RESPONSE_KB) {
+			return 0;
+		} else {
+			$this->data .= $data;
+			return strlen($data);
+		}
+	}
 
-    /**
-     * Does this fetcher support SSL URLs?
-     */
-    function supportsSSL()
-    {
-        $v = curl_version();
-        if(is_array($v)) {
-            return in_array('https', $v['protocols']);
-        } elseif (is_string($v)) {
-            return preg_match('/OpenSSL/i', $v);
-        } else {
-            return 0;
-        }
-    }
+	/**
+	 * Does this fetcher support SSL URLs?
+	 */
+	function supportsSSL()
+	{
+		$v = curl_version();
+		if(is_array($v)) {
+			return in_array('https', $v['protocols']);
+		} elseif (is_string($v)) {
+			return preg_match('/OpenSSL/i', $v);
+		} else {
+			return 0;
+		}
+	}
 
-    function get($url, $extra_headers = null)
-    {
-        if (!$this->canFetchURL($url)) {
-            return null;
-        }
+	function get($url, $extra_headers = null)
+	{
+		if (!$this->canFetchURL($url)) {
+			return null;
+		}
 
-        $stop = time() + $this->timeout;
-        $off = $this->timeout;
+		$stop = time() + $this->timeout;
+		$off = $this->timeout;
 
-        $redir = true;
+		$redir = true;
 
-        while ($redir && ($off > 0)) {
-            $this->reset();
+		while ($redir && ($off > 0)) {
+			$this->reset();
 
-            $c = curl_init();
+			$c = curl_init();
 
-            if ($c === false) {
-                Auth_OpenID::log(
-                    "curl_init returned false; could not " .
-                    "initialize for URL '%s'", $url);
-                return null;
-            }
+			if ($c === false) {
+				Auth_OpenID::log(
+					"curl_init returned false; could not " .
+					"initialize for URL '%s'", $url);
+				return null;
+			}
 
-            if (defined('CURLOPT_NOSIGNAL')) {
-                curl_setopt($c, CURLOPT_NOSIGNAL, true);
-            }
+			if (defined('CURLOPT_NOSIGNAL')) {
+				curl_setopt($c, CURLOPT_NOSIGNAL, true);
+			}
 
-            if (!$this->allowedURL($url)) {
-                Auth_OpenID::log("Fetching URL not allowed: %s",
-                                 $url);
-                return null;
-            }
+			if (!$this->allowedURL($url)) {
+				Auth_OpenID::log("Fetching URL not allowed: %s",
+								 $url);
+				return null;
+			}
 
-            curl_setopt($c, CURLOPT_WRITEFUNCTION,
-                        array(&$this, "_writeData"));
-            curl_setopt($c, CURLOPT_HEADERFUNCTION,
-                        array(&$this, "_writeHeader"));
+			curl_setopt($c, CURLOPT_WRITEFUNCTION,
+						array(&$this, "_writeData"));
+			curl_setopt($c, CURLOPT_HEADERFUNCTION,
+						array(&$this, "_writeHeader"));
 
-            if ($extra_headers) {
-                curl_setopt($c, CURLOPT_HTTPHEADER, $extra_headers);
-            }
+			if ($extra_headers) {
+				curl_setopt($c, CURLOPT_HTTPHEADER, $extra_headers);
+			}
 
-            $cv = curl_version();
-            if(is_array($cv)) {
-              $curl_user_agent = 'curl/'.$cv['version'];
-            } else {
-              $curl_user_agent = $cv;
-            }
-            curl_setopt($c, CURLOPT_USERAGENT,
-                        Auth_OpenID_USER_AGENT.' '.$curl_user_agent);
-            curl_setopt($c, CURLOPT_TIMEOUT, $off);
-            curl_setopt($c, CURLOPT_URL, $url);
+			$cv = curl_version();
+			if(is_array($cv)) {
+			  $curl_user_agent = 'curl/'.$cv['version'];
+			} else {
+			  $curl_user_agent = $cv;
+			}
+			curl_setopt($c, CURLOPT_USERAGENT,
+						Auth_OpenID_USER_AGENT.' '.$curl_user_agent);
+			curl_setopt($c, CURLOPT_TIMEOUT, $off);
+			curl_setopt($c, CURLOPT_URL, $url);
 
-            curl_exec($c);
+			curl_exec($c);
 
-            $code = curl_getinfo($c, CURLINFO_HTTP_CODE);
-            $body = $this->data;
-            $headers = $this->headers;
+			$code = curl_getinfo($c, CURLINFO_HTTP_CODE);
+			$body = $this->data;
+			$headers = $this->headers;
 
-            if (!$code) {
-                Auth_OpenID::log("Got no response code when fetching %s", $url);
-                Auth_OpenID::log("CURL error (%s): %s",
-                                 curl_errno($c), curl_error($c));
-                return null;
-            }
+			if (!$code) {
+				Auth_OpenID::log("Got no response code when fetching %s", $url);
+				Auth_OpenID::log("CURL error (%s): %s",
+								 curl_errno($c), curl_error($c));
+				return null;
+			}
 
-            if (in_array($code, array(301, 302, 303, 307))) {
-                $url = $this->_findRedirect($headers);
-                $redir = true;
-            } else {
-                $redir = false;
-                curl_close($c);
+			if (in_array($code, array(301, 302, 303, 307))) {
+				$url = $this->_findRedirect($headers);
+				$redir = true;
+			} else {
+				$redir = false;
+				curl_close($c);
 
-                $new_headers = array();
+				$new_headers = array();
 
-                foreach ($headers as $header) {
-                    if (strpos($header, ': ')) {
-                        list($name, $value) = explode(': ', $header, 2);
-                        $new_headers[$name] = $value;
-                    }
-                }
+				foreach ($headers as $header) {
+					if (strpos($header, ': ')) {
+						list($name, $value) = explode(': ', $header, 2);
+						$new_headers[$name] = $value;
+					}
+				}
 
-                Auth_OpenID::log(
-                    "Successfully fetched '%s': GET response code %s",
-                    $url, $code);
+				Auth_OpenID::log(
+					"Successfully fetched '%s': GET response code %s",
+					$url, $code);
 
-                return new Auth_Yadis_HTTPResponse($url, $code,
-                                                    $new_headers, $body);
-            }
+				return new Auth_Yadis_HTTPResponse($url, $code,
+													$new_headers, $body);
+			}
 
-            $off = $stop - time();
-        }
+			$off = $stop - time();
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    function post($url, $body, $extra_headers = null)
-    {
-        if (!$this->canFetchURL($url)) {
-            return null;
-        }
+	function post($url, $body, $extra_headers = null)
+	{
+		if (!$this->canFetchURL($url)) {
+			return null;
+		}
 
-        $this->reset();
+		$this->reset();
 
-        $c = curl_init();
+		$c = curl_init();
 
-        if (defined('CURLOPT_NOSIGNAL')) {
-            curl_setopt($c, CURLOPT_NOSIGNAL, true);
-        }
+		if (defined('CURLOPT_NOSIGNAL')) {
+			curl_setopt($c, CURLOPT_NOSIGNAL, true);
+		}
 
-        curl_setopt($c, CURLOPT_POST, true);
-        curl_setopt($c, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($c, CURLOPT_TIMEOUT, $this->timeout);
-        curl_setopt($c, CURLOPT_URL, $url);
-        curl_setopt($c, CURLOPT_WRITEFUNCTION,
-                    array(&$this, "_writeData"));
+		curl_setopt($c, CURLOPT_POST, true);
+		curl_setopt($c, CURLOPT_POSTFIELDS, $body);
+		curl_setopt($c, CURLOPT_TIMEOUT, $this->timeout);
+		curl_setopt($c, CURLOPT_URL, $url);
+		curl_setopt($c, CURLOPT_WRITEFUNCTION,
+					array(&$this, "_writeData"));
 
-        curl_exec($c);
+		curl_exec($c);
 
-        $code = curl_getinfo($c, CURLINFO_HTTP_CODE);
+		$code = curl_getinfo($c, CURLINFO_HTTP_CODE);
 
-        if (!$code) {
-            Auth_OpenID::log("Got no response code when fetching %s", $url);
-            return null;
-        }
+		if (!$code) {
+			Auth_OpenID::log("Got no response code when fetching %s", $url);
+			return null;
+		}
 
-        $body = $this->data;
+		$body = $this->data;
 
-        curl_close($c);
+		curl_close($c);
 
-        $new_headers = $extra_headers;
+		$new_headers = $extra_headers;
 
-        foreach ($this->headers as $header) {
-            if (strpos($header, ': ')) {
-                list($name, $value) = explode(': ', $header, 2);
-                $new_headers[$name] = $value;
-            }
+		foreach ($this->headers as $header) {
+			if (strpos($header, ': ')) {
+				list($name, $value) = explode(': ', $header, 2);
+				$new_headers[$name] = $value;
+			}
 
-        }
+		}
 
-        Auth_OpenID::log("Successfully fetched '%s': POST response code %s",
-                         $url, $code);
+		Auth_OpenID::log("Successfully fetched '%s': POST response code %s",
+						 $url, $code);
 
-        return new Auth_Yadis_HTTPResponse($url, $code,
-                                           $new_headers, $body);
-    }
+		return new Auth_Yadis_HTTPResponse($url, $code,
+										   $new_headers, $body);
+	}
 }
 
 ?>

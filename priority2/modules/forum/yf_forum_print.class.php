@@ -26,12 +26,12 @@ class yf_forum_print {
 
 		$topic_id = intval($_GET["id"]);
 
-        // Get topic info
+		// Get topic info
 		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." LIMIT 1");
 		if (empty($topic_info)) {
 			return "";
 		}
-        ?>
+		?>
 <html>
 <head>
 <title><?php echo $topic_info["name"]?></title>
@@ -62,9 +62,9 @@ td, p, div
 </style>
 </head>
 <body class="page">
-        <?php
+		<?php
 
-        echo "<a href='".process_url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".$topic_info["name"]."</b></a><br/>\r\n";
+		echo "<a href='".process_url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".$topic_info["name"]."</b></a><br/>\r\n";
 		// Prepare SQL query
 		$sql = "SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".$topic_id;
 		$order_by = " ORDER BY `created` ASC ";
@@ -76,14 +76,14 @@ td, p, div
 		  }
 
 
-        echo "<BR>";
+		echo "<BR>";
 		// Init bb codes module
 		$BB_OBJ = main()->init_class("bb_codes", "classes/");
 		// Process posts
 		$Q = db()->query($sql. $order_by. $add_sql);
 		while ($post_info = db()->fetch_assoc($Q))
 		  {
-           ?>
+		   ?>
 <table class="tborder" cellpadding="6" cellspacing="1" border="0" width="100%">
   <tr>
 	<td class="page">
@@ -99,8 +99,8 @@ td, p, div
   </tr>
 </table>
 <br/>
-           <?php
+		   <?php
 		  }
-        echo "</body></html>";
+		echo "</body></html>";
 	}
 }

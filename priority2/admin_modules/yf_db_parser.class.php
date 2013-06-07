@@ -68,7 +68,7 @@ class yf_db_parser {
 			foreach ((array)$fields as $A) {
 				$field_name		= $A["name"];
 				$field_type		= $A["type"];
-			    $field_length	= $A["max_length"];
+				$field_length	= $A["max_length"];
 				// Skip ID field
 				if ($field_name == "id") {
 					continue;
@@ -76,7 +76,7 @@ class yf_db_parser {
 				if ($field_type == "int") {
 					$sql .= "`".$field_name."` = ".intval($_POST[$field_name]).", \r\n";
 				} else {
-				    if ($field_name == "password" && $field_length >= 32) {
+					if ($field_name == "password" && $field_length >= 32) {
 						// Do not try to save not typed password
 						if (empty($_POST[$field_name])) {
 							continue;

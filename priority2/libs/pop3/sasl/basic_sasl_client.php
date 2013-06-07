@@ -6,8 +6,8 @@
  *
  */
 
-define("SASL_BASIC_STATE_START",    0);
-define("SASL_BASIC_STATE_DONE",     1);
+define("SASL_BASIC_STATE_START",	0);
+define("SASL_BASIC_STATE_DONE",	 1);
 
 class basic_sasl_client_class
 {

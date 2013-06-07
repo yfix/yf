@@ -11,7 +11,7 @@ $key->loadKey(file_get_contents('d:/www/htdocs/toggle2_remote/scripts/yurikey.pe
 
 $ssh = new Net_SSH2('ns211349.ovh.net');
 if (!$ssh->login('root', $key)) {
-    exit('Login Failed');
+	exit('Login Failed');
 }
 
 #echo $ssh->exec('pwd');

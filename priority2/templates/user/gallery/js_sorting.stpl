@@ -6,7 +6,7 @@ $(function(){
 
 	$(".sort_change_link").bind("click", function(e){
 		e.stopPropagation(); e.preventDefault();
-	    
+		
 		var obj	= this;
 		var _go_up	= $(this).hasClass("sort_up");
 		var _go_class = _go_up ? "sort_up" : "sort_down";
@@ -42,7 +42,7 @@ $(function(){
 		_hide_not_needed();
 
 		$.post(obj.href, {ajax_mode: 1}, function(data){});
-        
+		
 		return false;
 	});
 

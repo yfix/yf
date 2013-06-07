@@ -28,7 +28,7 @@
  * @author   Christian Matthies <ch0012@gmail.com>
  * @author   Lars Strojny <lars@strojny.net>
  * @license  http://www.gnu.org/licenses/lgpl.html LGPL
- * @link     http://php-ids.org/
+ * @link	 http://php-ids.org/
  */
 
 require_once 'IDS/Caching/Interface.php';
@@ -40,138 +40,138 @@ require_once 'IDS/Caching/Interface.php';
  *
  * @category  Security
  * @package   PHPIDS
- * @author    Christian Matthies <ch0012@gmail.com>
- * @author    Mario Heiderich <mario.heiderich@gmail.com>
- * @author    Lars Strojny <lars@strojny.net>
+ * @author	Christian Matthies <ch0012@gmail.com>
+ * @author	Mario Heiderich <mario.heiderich@gmail.com>
+ * @author	Lars Strojny <lars@strojny.net>
  * @copyright 2007 The PHPIDS Group
  * @license   http://www.gnu.org/licenses/lgpl.html LGPL
  * @version   Release: $Id:File.php 517 2007-09-15 15:04:13Z mario $
- * @link      http://php-ids.org/
- * @since     Version 0.4
+ * @link	  http://php-ids.org/
+ * @since	 Version 0.4
  */
 class IDS_Caching_File implements IDS_Caching_Interface
 {
 
-    /**
-     * Caching type
-     *
-     * @var string
-     */
-    private $type = null;
+	/**
+	 * Caching type
+	 *
+	 * @var string
+	 */
+	private $type = null;
 
-    /**
-     * Cache configuration
-     *
-     * @var array
-     */
-    private $config = null;
+	/**
+	 * Cache configuration
+	 *
+	 * @var array
+	 */
+	private $config = null;
 
-    /**
-     * Path to cache file
-     *
-     * @var string
-     */
-    private $path = null;
+	/**
+	 * Path to cache file
+	 *
+	 * @var string
+	 */
+	private $path = null;
 
-    /**
-     * Holds an instance of this class
-     *
-     * @var object
-     */
-    private static $cachingInstance = null;
+	/**
+	 * Holds an instance of this class
+	 *
+	 * @var object
+	 */
+	private static $cachingInstance = null;
 
-    /**
-     * Constructor
-     *
-     * @param string $type caching type
-     * @param array  $init the IDS_Init object
-     * 
-     * @return void
-     */
-    public function __construct($type, $init)
-    {
-    	
-        $this->type   = $type;
-        $this->config = $init->config['Caching'];
-        $this->path   = $init->getBasePath() . $this->config['path'];
+	/**
+	 * Constructor
+	 *
+	 * @param string $type caching type
+	 * @param array  $init the IDS_Init object
+	 * 
+	 * @return void
+	 */
+	public function __construct($type, $init)
+	{
+		
+		$this->type   = $type;
+		$this->config = $init->config['Caching'];
+		$this->path   = $init->getBasePath() . $this->config['path'];
 
-        if (file_exists($this->path) && !is_writable($this->path)) {
-            throw new Exception('Make sure all files in ' . 
-            htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8') . 
-                'are writeable!');
-        }
-    }
+		if (file_exists($this->path) && !is_writable($this->path)) {
+			throw new Exception('Make sure all files in ' . 
+			htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8') . 
+				'are writeable!');
+		}
+	}
 
-    /**
-     * Returns an instance of this class
-     *
-     * @param string $type caching type
-     * @param array  $init the IDS_Init object
-     * 
-     * @return object $this
-     */
-    public static function getInstance($type, $init)
-    {
-        if (!self::$cachingInstance) {
-            self::$cachingInstance = new IDS_Caching_File($type, $init);
-        }
+	/**
+	 * Returns an instance of this class
+	 *
+	 * @param string $type caching type
+	 * @param array  $init the IDS_Init object
+	 * 
+	 * @return object $this
+	 */
+	public static function getInstance($type, $init)
+	{
+		if (!self::$cachingInstance) {
+			self::$cachingInstance = new IDS_Caching_File($type, $init);
+		}
 
-        return self::$cachingInstance;
-    }
+		return self::$cachingInstance;
+	}
 
-    /**
-     * Writes cache data into the file
-     *
-     * @param array $data the cache data
-     * 
-     * @throws Exception if cache file couldn't be created
-     * @return object $this
-     */
-    public function setCache(array $data) 
-    {
+	/**
+	 * Writes cache data into the file
+	 *
+	 * @param array $data the cache data
+	 * 
+	 * @throws Exception if cache file couldn't be created
+	 * @return object $this
+	 */
+	public function setCache(array $data) 
+	{
 
-        if (!is_writable(preg_replace('/[\/][^\/]+\.[^\/]++$/', null, 
-            $this->path))) {
-            throw new Exception('Temp directory ' . 
-            htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8') . 
-            ' seems not writable');
-        }    	
-        
-        if ((!file_exists($this->path) || (time()-filectime($this->path)) > 
-            $this->config['expiration_time'])) {
-            $handle = @fopen($this->path, 'w+');
-            
-            if (!$handle) {
-                throw new Exception("Cache file couldn't be created");
-            }
-            
-            fwrite($handle, serialize($data));
-            fclose($handle);
-        }
+		if (!is_writable(preg_replace('/[\/][^\/]+\.[^\/]++$/', null, 
+			$this->path))) {
+			throw new Exception('Temp directory ' . 
+			htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8') . 
+			' seems not writable');
+		}		
+		
+		if ((!file_exists($this->path) || (time()-filectime($this->path)) > 
+			$this->config['expiration_time'])) {
+			$handle = @fopen($this->path, 'w+');
+			
+			if (!$handle) {
+				throw new Exception("Cache file couldn't be created");
+			}
+			
+			fwrite($handle, serialize($data));
+			fclose($handle);
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Returns the cached data
-     *
-     * Note that this method returns false if either type or file cache is 
-     * not set
-     * 
-     * @return mixed cache data or false
-     */
-    public function getCache() 
-    {
+	/**
+	 * Returns the cached data
+	 *
+	 * Note that this method returns false if either type or file cache is 
+	 * not set
+	 * 
+	 * @return mixed cache data or false
+	 */
+	public function getCache() 
+	{
 
-        // make sure filters are parsed again if cache expired
-        if (file_exists($this->path) && (time()-filectime($this->path)) < 
-            $this->config['expiration_time']) {
-            $data = unserialize(file_get_contents($this->path));
-              return $data;
-        }
+		// make sure filters are parsed again if cache expired
+		if (file_exists($this->path) && (time()-filectime($this->path)) < 
+			$this->config['expiration_time']) {
+			$data = unserialize(file_get_contents($this->path));
+			  return $data;
+		}
 
-        return false;
-    }
+		return false;
+	}
 }
 
 /**

@@ -60,9 +60,9 @@ $.extend($.fn, {
 $.livequery = function(selector, context, type, fn, fn2) {
 	this.selector = selector;
 	this.context  = context || document;
-	this.type     = type;
-	this.fn       = fn;
-	this.fn2      = fn2;
+	this.type	 = type;
+	this.fn	   = fn;
+	this.fn2	  = fn2;
 	this.elements = [];
 	this.stopped  = false;
 	

@@ -78,7 +78,7 @@
 						.addClass(CLASSES.collapsable)
 						.replaceClass(CLASSES.last, CLASSES.lastCollapsable);
 						
-	            // create hitarea
+				// create hitarea
 				this.prepend("<div class=\"" + CLASSES.hitarea + "\"/>").find("div." + CLASSES.hitarea).each(function() {
 					var classes = "";
 					$.each($(this).parent().attr("class").split(" "), function() {

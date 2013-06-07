@@ -8,33 +8,33 @@
  <link rel="stylesheet" href="farbtastic.css" type="text/css" />
  <style type="text/css" media="screen">
    .colorwell {
-     border: 2px solid #fff;
-     width: 6em;
-     text-align: center;
-     cursor: pointer;
+	 border: 2px solid #fff;
+	 width: 6em;
+	 text-align: center;
+	 cursor: pointer;
    }
    body .colorwell-selected {
-     border: 2px solid #000;
-     font-weight: bold;
+	 border: 2px solid #000;
+	 font-weight: bold;
    }
  </style>
  
  <script type="text/javascript" charset="utf-8">
   $(document).ready(function() {
-    $('#demo').hide();
-    var f = $.farbtastic('#picker');
-    var p = $('#picker').css('opacity', 0.25);
-    var selected;
-    $('.colorwell')
-      .each(function () { f.linkTo(this); $(this).css('opacity', 0.75); })
-      .focus(function() {
-        if (selected) {
-          $(selected).css('opacity', 0.75).removeClass('colorwell-selected');
-        }
-        f.linkTo(this);
-        p.css('opacity', 1);
-        $(selected = this).css('opacity', 1).addClass('colorwell-selected');
-      });
+	$('#demo').hide();
+	var f = $.farbtastic('#picker');
+	var p = $('#picker').css('opacity', 0.25);
+	var selected;
+	$('.colorwell')
+	  .each(function () { f.linkTo(this); $(this).css('opacity', 0.75); })
+	  .focus(function() {
+		if (selected) {
+		  $(selected).css('opacity', 0.75).removeClass('colorwell-selected');
+		}
+		f.linkTo(this);
+		p.css('opacity', 1);
+		$(selected = this).css('opacity', 1).addClass('colorwell-selected');
+	  });
   });
  </script>
 </head>

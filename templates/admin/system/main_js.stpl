@@ -165,7 +165,7 @@ $(function () {
 $(function(){
 try {
 	$("#qm_body").hide();
-	                                     
+										 
 	$("#qm_button").prepend("<b>&#x25bc; &nbsp;</b>");
 
 	$("#qm_button").click(function(){
@@ -233,7 +233,7 @@ try {
 </script>
 
 <script type="text/javascript" src="{const(WEB_PATH)}js/highslide/highslide.packed.js"></script>
-<script type="text/javascript">    
+<script type="text/javascript">	
 <!--
 $(function(){
 try {

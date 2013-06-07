@@ -28,11 +28,11 @@
 	</div>
 		<p>
 			<label>{t(Period from)}</label>
-		    {time_from_box}
+			{time_from_box}
    		</p>
 		<p>
 			<label>{t(Period to)}</label>
-		    {time_to_box}
+			{time_to_box}
    		</p>
 	<div class="button_div">
 		<input type="submit" value="{t(SAVE)}">

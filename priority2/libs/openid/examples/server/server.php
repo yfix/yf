@@ -8,39 +8,39 @@ ini_set('include_path', $path);
 $try_include = @include 'config.php';
 
 if (!$try_include) {
-    header("Location: setup.php");
+	header("Location: setup.php");
 }
 
 header('Cache-Control: no-cache');
 header('Pragma: no-cache');
 
 if (function_exists('getOpenIDStore')) {
-    require_once 'lib/session.php';
-    require_once 'lib/actions.php';
+	require_once 'lib/session.php';
+	require_once 'lib/actions.php';
 
-    init();
+	init();
 
-    $action = getAction();
-    if (!function_exists($action)) {
-        $action = 'action_default';
-    }
+	$action = getAction();
+	if (!function_exists($action)) {
+		$action = 'action_default';
+	}
 
-    $resp = $action();
+	$resp = $action();
 
-    writeResponse($resp);
+	writeResponse($resp);
 } else {
 ?>
 <html>
   <head>
-    <title>PHP OpenID Server</title>
-    <body>
-      <h1>PHP OpenID Server</h1>
-      <p>
-        This server needs to be configured before it can be used. Edit
-        <code>config.php</code> to reflect your server's setup, then
-        load this page again.
-      </p>
-    </body>
+	<title>PHP OpenID Server</title>
+	<body>
+	  <h1>PHP OpenID Server</h1>
+	  <p>
+		This server needs to be configured before it can be used. Edit
+		<code>config.php</code> to reflect your server's setup, then
+		load this page again.
+	  </p>
+	</body>
   </head>
 </html>
 <?php

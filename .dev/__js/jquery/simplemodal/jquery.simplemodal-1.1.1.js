@@ -106,7 +106,7 @@
 	 * closeTitle: (String:'Close') The title value of the default close link. Depends on close
 	 * closeClass: (String:'modalClose') The CSS class used to bind to the close event
 	 * persist: (Boolean:false) Persist the data across modal calls? Only used for existing
-	            DOM elements. If true, the data will be maintained across modal calls, if false,
+				DOM elements. If true, the data will be maintained across modal calls, if false,
 				the data will be reverted to its original state.
 	 * onOpen: (Function:null) The callback function used in place of SimpleModal's open
 	 * onShow: (Function:null) The callback function used after the modal dialog has opened
@@ -288,8 +288,8 @@
 		/*
 		 * Open the modal dialog elements
 		 * - Note: If you use the onOpen callback, you must "show" the 
-		 *         overlay and container elements manually 
-		 *         (the iframe will be handled by SimpleModal)
+		 *		 overlay and container elements manually 
+		 *		 (the iframe will be handled by SimpleModal)
 		 */
 		open: function () {
 			// display the iframe
@@ -314,11 +314,11 @@
 		/*
 		 * Close the modal dialog
 		 * - Note: If you use an onClose callback, you must remove the 
-		 *         overlay, container and iframe elements manually
+		 *		 overlay, container and iframe elements manually
 		 *
 		 * @param {boolean} external Indicates whether the call to this
-		 *     function was internal or external. If it was external, the
-		 *     onClose callback will be ignored
+		 *	 function was internal or external. If it was external, the
+		 *	 onClose callback will be ignored
 		 */
 		close: function (external) {
 			// prevent close when dialog does not exist

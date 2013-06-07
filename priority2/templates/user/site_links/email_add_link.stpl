@@ -1,14 +1,14 @@
 Hi {name},
-                
+				
 Your link has been added to our database.
 
 Information about your site stored: 
 
-Title:       {title}
-Site URL:    {url}
+Title:	   {title}
+Site URL:	{url}
 Links URL:   {link_url}
-Banner:      {banner_url}
-Category:    {cat_name}
+Banner:	  {banner_url}
+Category:	{cat_name}
 Description: {desc}
 
 You can see/edit/delete your links on our sites by logging in to

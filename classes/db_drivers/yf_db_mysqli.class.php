@@ -24,12 +24,12 @@ class yf_db_mysqli {
 	var $META_TABLES_SQL	= "SHOW TABLES";	
 	/** @var @conf_skip */
 	var $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
-    /** @var @conf_skip */
-    var $DEF_CHARSET        = "utf8";
-    /** @var @conf_skip */
-    var $DEF_PORT           = 3306;
-    /** @var @conf_skip */
-    var $SQL_NO_CACHE		= false;
+	/** @var @conf_skip */
+	var $DEF_CHARSET		= "utf8";
+	/** @var @conf_skip */
+	var $DEF_PORT		   = 3306;
+	/** @var @conf_skip */
+	var $SQL_NO_CACHE		= false;
 
 	/**
 	*/

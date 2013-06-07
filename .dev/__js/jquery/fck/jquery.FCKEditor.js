@@ -73,7 +73,7 @@ $.extend($, {
    if($.fn.ajaxSubmit){
 				$.fck.intercepted = $.fn.ajaxSubmit;
 				$.fn.ajaxSubmit = function() {
-     $.fck.update(); // update html
+	 $.fck.update(); // update html
 					return $.fck.intercepted.apply( this, arguments );
 				};
 			};
@@ -92,7 +92,7 @@ $.extend($, {
 			});
 			/*
 			$.extend(o.Config,{
-    CustomConfigurationsPath: o.BasePath+'fck.js'
+	CustomConfigurationsPath: o.BasePath+'fck.js'
    });
 			*/
 			// Make sure we have a jQuery object

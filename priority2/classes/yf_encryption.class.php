@@ -109,16 +109,16 @@ class yf_encryption {
 			if (!strlen($this->_iv)) $this->_iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
 			mcrypt_generic_init ($td, $key, $this->_iv);
 			$encrypt = mcrypt_generic ($td, $data);
-    		mcrypt_generic_deinit ($td);
+			mcrypt_generic_deinit ($td);
 		// Use classes written in PHP (less speed, more flexibility)
 		} elseif (is_object($this->_cur_cipher)) {
 			if ($this->_key_assigned == false) {
 				$this->_cur_cipher->setkey($this->_secret_key);
 				$this->_key_assigned = true;
 			}
-	    	$encrypt = $this->_cur_cipher->encrypt($data);
+			$encrypt = $this->_cur_cipher->encrypt($data);
 		}
-    	return $encrypt;
+		return $encrypt;
 	}
 
 	/**
@@ -142,9 +142,9 @@ class yf_encryption {
 				$this->_cur_cipher->setkey($this->_secret_key);
 				$this->_key_assigned = true;
 			}
-    		$decrypt = $this->_cur_cipher->decrypt($data);
+			$decrypt = $this->_cur_cipher->decrypt($data);
 		}
-    	return rtrim($decrypt);
+		return rtrim($decrypt);
 	}
 
 	/**
@@ -152,7 +152,7 @@ class yf_encryption {
 	*/
 	function encrypt_file ($SourceFile, $EncryptedFile) {
 		$data = file_get_contents($SourceFile);
-	    $encrypted = $this->encrypt($data);
+		$encrypted = $this->encrypt($data);
 		file_put_contents($EncryptedFile, $encrypted);
 	}
 
@@ -161,7 +161,7 @@ class yf_encryption {
 	*/
 	function decrypt_file($SourceFile, $DecryptedFile) {
 		$data = file_get_contents($SourceFile);
-	    $decrypted = $this->decrypt($data);
+		$decrypted = $this->decrypt($data);
 		file_put_contents($DecryptedFile, $decrypted);
 	}
 

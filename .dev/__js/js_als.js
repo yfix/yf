@@ -14,12 +14,12 @@ var js = {
  */
 function $(element) {
   if (arguments.length > 1) {
-    for (var i = 0, elements = [], length = arguments.length; i < length; i++)
-      elements.push($(arguments[i]));
-    return elements;
+	for (var i = 0, elements = [], length = arguments.length; i < length; i++)
+	  elements.push($(arguments[i]));
+	return elements;
   }
   if (typeof element == 'string')
-    element = document.getElementById(element);
+	element = document.getElementById(element);
   return element;
 }
 
@@ -27,13 +27,13 @@ Function.prototype.bind = function() {
   var __method = this;
   var object = arguments[0];
   return function() {
-    return __method.apply(object);
+	return __method.apply(object);
   }
 }
 
 Object.extend = function(destination, source) {
   for (var property in source) {
-    destination[property] = source[property];
+	destination[property] = source[property];
   }
   return destination;
 }
@@ -41,17 +41,17 @@ Object.extend = function(destination, source) {
 js.getXHTTPTransport = function() {
 	var result = false;
 	var actions = [
-      function() {return new XMLHttpRequest()},
-      function() {return new ActiveXObject('Msxml2.XMLHTTP')},
-      function() {return new ActiveXObject('Microsoft.XMLHTTP')}
-    ];
-    for(var i = 0; i < actions.length; i++) {
-    	try{
-    		result = actions[i]();
-    		break;
-    	} catch (e) {}	
-    }
-    return result;
+	  function() {return new XMLHttpRequest()},
+	  function() {return new ActiveXObject('Msxml2.XMLHTTP')},
+	  function() {return new ActiveXObject('Microsoft.XMLHTTP')}
+	];
+	for(var i = 0; i < actions.length; i++) {
+		try{
+			result = actions[i]();
+			break;
+		} catch (e) {}	
+	}
+	return result;
  }
  
 /**
@@ -165,22 +165,22 @@ js.extend = function(newClass, superClass, props) {
 js.define = js.extend;
 
 js.createClass = function() {
-    return function() {
+	return function() {
 		var _this = arguments.callee.prototype;
 		_this.init.apply(this, arguments);
 		for(var i = 0, mixins = _this.constructor.mixins, length = mixins.length; i < length; i++){
 			mixins[i].init.apply(this);
 		}
-    }
+	}
 }
 
 js.hasOwnProperty = function(obj, prop) {
-        if (Object.prototype.hasOwnProperty) {
-            return obj.hasOwnProperty(prop);
-        }
-        
-        return typeof obj[prop] != 'undefined' && 
-                obj.constructor.prototype[prop] !== obj[prop];
+		if (Object.prototype.hasOwnProperty) {
+			return obj.hasOwnProperty(prop);
+		}
+		
+		return typeof obj[prop] != 'undefined' && 
+				obj.constructor.prototype[prop] !== obj[prop];
 }
 
 js.dump = function(text){};

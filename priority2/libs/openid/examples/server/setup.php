@@ -23,9 +23,9 @@ require_once "Auth/OpenID.php";
  */
 
 $store_types = array("Filesystem" => "Auth_OpenID_FileStore",
-                     "MySQL" => "Auth_OpenID_MySQLStore",
-                     "PostgreSQL" => "Auth_OpenID_PostgreSQLStore",
-                     "SQLite" => "Auth_OpenID_SQLiteStore");
+					 "MySQL" => "Auth_OpenID_MySQLStore",
+					 "PostgreSQL" => "Auth_OpenID_PostgreSQLStore",
+					 "SQLite" => "Auth_OpenID_SQLiteStore");
 
 /**
  * Main.
@@ -37,10 +37,10 @@ session_start();
 init_session();
 
 if (!check_session() ||
-    isset($_GET['add_openid'])) {
-    render_form();
+	isset($_GET['add_openid'])) {
+	render_form();
 } else {
-    print generate_config(isset($_GET['download']));
+	print generate_config(isset($_GET['download']));
 }
 
 /**
@@ -48,154 +48,154 @@ if (!check_session() ||
  */
 
 function check_url($url) {
-    return (Auth_OpenID::normalizeUrl($url) !== null);
+	return (Auth_OpenID::normalizeUrl($url) !== null);
 }
 
 function build_url() {
-    $port = (($_SERVER['SERVER_PORT'] == 80) ? null : $_SERVER['SERVER_PORT']);
+	$port = (($_SERVER['SERVER_PORT'] == 80) ? null : $_SERVER['SERVER_PORT']);
 
-    $parts = explode("/", $_SERVER['SERVER_PROTOCOL']);
-    $scheme = strtolower($parts[0]);
+	$parts = explode("/", $_SERVER['SERVER_PROTOCOL']);
+	$scheme = strtolower($parts[0]);
 
-    if ($port) {
-        return sprintf("%s://%s:%s%s/server.php", $scheme, $_SERVER['SERVER_NAME'],
-                       $port, dirname($_SERVER['PHP_SELF']));
-    } else {
-        return sprintf("%s://%s%s/server.php", $scheme, $_SERVER['SERVER_NAME'],
-                       dirname($_SERVER['PHP_SELF']));
-    }
+	if ($port) {
+		return sprintf("%s://%s:%s%s/server.php", $scheme, $_SERVER['SERVER_NAME'],
+					   $port, dirname($_SERVER['PHP_SELF']));
+	} else {
+		return sprintf("%s://%s%s/server.php", $scheme, $_SERVER['SERVER_NAME'],
+					   dirname($_SERVER['PHP_SELF']));
+	}
 }
 
 function check_open_basedir($path) {
   if (ini_get('open_basedir')) {
-    $parts = explode(PATH_SEPARATOR, ini_get('open_basedir'));
+	$parts = explode(PATH_SEPARATOR, ini_get('open_basedir'));
 
-    $found = false;
+	$found = false;
 
-    foreach ($parts as $p) {
-      if (strpos($path, $p) === 0) {
-        $found = true;
-        break;
-      }
-    }
+	foreach ($parts as $p) {
+	  if (strpos($path, $p) === 0) {
+		$found = true;
+		break;
+	  }
+	}
 
-    return $found;
+	return $found;
   } else {
-    return true;
+	return true;
   }
 }
 
 function check_session() {
 
-    global $messages;
+	global $messages;
 
-    if ($_GET && isset($_GET['clear'])) {
-        session_destroy();
-        $_SESSION = array();
-        init_session();
-        return false;
-    }
+	if ($_GET && isset($_GET['clear'])) {
+		session_destroy();
+		$_SESSION = array();
+		init_session();
+		return false;
+	}
 
-    $bad_path = false;
+	$bad_path = false;
 
-    if (isset($_GET['generate'])) {
-        if (!$_SESSION['server_url']) {
-            $messages[] = "Please enter a server URL.";
-        }
+	if (isset($_GET['generate'])) {
+		if (!$_SESSION['server_url']) {
+			$messages[] = "Please enter a server URL.";
+		}
 
-        if (!isset($_SESSION['store_type'])) {
-            $messages[] = "No store type chosen.";
-        } else {
-            switch ($_SESSION['store_type']) {
-            case "Filesystem":
-                if (!@$_SESSION['store_data']['fs_path']) {
-                    $messages[] = "Please specify a filesystem store path.";
-                } else {
-                  if (!check_open_basedir($_SESSION['store_data']['fs_path'])) {
-                    $messages[] = "The filesystem store path violates PHP's <code>open_basedir</code> setting.";
-                    $bad_path = true;
-                  }
-                }
-                break;
+		if (!isset($_SESSION['store_type'])) {
+			$messages[] = "No store type chosen.";
+		} else {
+			switch ($_SESSION['store_type']) {
+			case "Filesystem":
+				if (!@$_SESSION['store_data']['fs_path']) {
+					$messages[] = "Please specify a filesystem store path.";
+				} else {
+				  if (!check_open_basedir($_SESSION['store_data']['fs_path'])) {
+					$messages[] = "The filesystem store path violates PHP's <code>open_basedir</code> setting.";
+					$bad_path = true;
+				  }
+				}
+				break;
 
-            case "SQLite":
-                if (!@$_SESSION['store_data']['sqlite_path']) {
-                    $messages[] = "Please specify a SQLite database path.";
-                } else {
-                  if (!check_open_basedir($_SESSION['store_data']['sqlite_path'])) {
-                    $messages[] = "The SQLite store path violates PHP's <code>open_basedir</code> setting.";
-                    $bad_path = true;
-                  }
-                }
-                break;
+			case "SQLite":
+				if (!@$_SESSION['store_data']['sqlite_path']) {
+					$messages[] = "Please specify a SQLite database path.";
+				} else {
+				  if (!check_open_basedir($_SESSION['store_data']['sqlite_path'])) {
+					$messages[] = "The SQLite store path violates PHP's <code>open_basedir</code> setting.";
+					$bad_path = true;
+				  }
+				}
+				break;
 
-            default:
-                if (!($_SESSION['store_data']['host'] &&
-                      $_SESSION['store_data']['database'] &&
-                      $_SESSION['store_data']['username'] &&
-                      $_SESSION['store_data']['password'])) {
-                    $messages[] = "Please specify database connection details.";
-                }
-            }
-        }
-    }
+			default:
+				if (!($_SESSION['store_data']['host'] &&
+					  $_SESSION['store_data']['database'] &&
+					  $_SESSION['store_data']['username'] &&
+					  $_SESSION['store_data']['password'])) {
+					$messages[] = "Please specify database connection details.";
+				}
+			}
+		}
+	}
 
-    if ($_SESSION['store_type'] &&
-        $_SESSION['server_url'] &&
-        (parse_url($_SESSION['server_url']) !== false) &&
-        ((($_SESSION['store_type'] == 'Filesystem') &&
-          $_SESSION['store_data']['fs_path']) ||
-         (($_SESSION['store_type'] == 'SQLite') &&
-          $_SESSION['store_data']['sqlite_path']) ||
-         ($_SESSION['store_data']['host'] &&
-          $_SESSION['store_data']['username'] &&
-          $_SESSION['store_data']['database'] &&
-          $_SESSION['store_data']['password'])) &&
-        !$bad_path) {
+	if ($_SESSION['store_type'] &&
+		$_SESSION['server_url'] &&
+		(parse_url($_SESSION['server_url']) !== false) &&
+		((($_SESSION['store_type'] == 'Filesystem') &&
+		  $_SESSION['store_data']['fs_path']) ||
+		 (($_SESSION['store_type'] == 'SQLite') &&
+		  $_SESSION['store_data']['sqlite_path']) ||
+		 ($_SESSION['store_data']['host'] &&
+		  $_SESSION['store_data']['username'] &&
+		  $_SESSION['store_data']['database'] &&
+		  $_SESSION['store_data']['password'])) &&
+		!$bad_path) {
 
-        return true;
-    }
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 function render_form() {
 
-    global $store_types, $fields, $messages;
+	global $store_types, $fields, $messages;
 
-    $basedir_msg = "";
+	$basedir_msg = "";
 
-    if (ini_get('open_basedir')) {
-        $basedir_msg = "</br><span class=\"notice\">Note: Due to the ".
-            "<code>open_basedir</code> php.ini setting, be sure to ".
-            "choose a path in one of the following directories:<ul><li>".
-            implode("<li>",
-                    explode(PATH_SEPARATOR, ini_get('open_basedir'))).
-            "</ul></span>";
-    }
+	if (ini_get('open_basedir')) {
+		$basedir_msg = "</br><span class=\"notice\">Note: Due to the ".
+			"<code>open_basedir</code> php.ini setting, be sure to ".
+			"choose a path in one of the following directories:<ul><li>".
+			implode("<li>",
+					explode(PATH_SEPARATOR, ini_get('open_basedir'))).
+			"</ul></span>";
+	}
 
-    $sqlite_found = false;
-    if (extension_loaded('sqlite') ||
-        @dl('sqlite.' . PHP_SHLIB_SUFFIX)) {
-      $sqlite_found = true;
-    }
+	$sqlite_found = false;
+	if (extension_loaded('sqlite') ||
+		@dl('sqlite.' . PHP_SHLIB_SUFFIX)) {
+	  $sqlite_found = true;
+	}
 
-    $mysql_found = false;
-    if (extension_loaded('mysql') ||
-        @dl('mysql.' . PHP_SHLIB_SUFFIX)) {
-      $mysql_found = true;
-    }
+	$mysql_found = false;
+	if (extension_loaded('mysql') ||
+		@dl('mysql.' . PHP_SHLIB_SUFFIX)) {
+	  $mysql_found = true;
+	}
 
-    $pgsql_found = false;
-    if (extension_loaded('pgsql') ||
-        @dl('pgsql.' . PHP_SHLIB_SUFFIX)) {
-      $pgsql_found = true;
-    }
+	$pgsql_found = false;
+	if (extension_loaded('pgsql') ||
+		@dl('pgsql.' . PHP_SHLIB_SUFFIX)) {
+	  $pgsql_found = true;
+	}
 
 ?>
 <html>
   <head>
-    <style type="text/css">
+	<style type="text/css">
 span.label {
  float: left;
  width: 2in;
@@ -207,9 +207,9 @@ span.notice {
 }
 
 div p {
-    border-top: 1px solid #ccc;
-    font-style: italic;
-    padding-top: 0.5em;
+	border-top: 1px solid #ccc;
+	font-style: italic;
+	padding-top: 0.5em;
 }
 
 div {
@@ -233,7 +233,7 @@ div.store_fields > div {
 }
 
 div.store_fields > div > div {
-    margin-left: 0.4in;
+	margin-left: 0.4in;
 }
 
 div.errors {
@@ -249,11 +249,11 @@ div.errors {
 
 <?php
 if ($messages) {
-    print "<div class=\"errors\">";
-    foreach ($messages as $m) {
-        print "<div>$m</div>";
-    }
-    print "</div>";
+	print "<div class=\"errors\">";
+	foreach ($messages as $m) {
+		print "<div>$m</div>";
+	}
+	print "</div>";
 
 }
 ?>
@@ -274,8 +274,8 @@ configuration for use with the OpenID server example.
 
   <span class="label"><label for="i_server_url">Server URL:</label></span>
   <span>
-    <input type="text" id="i_server_url" size="35" name="server_url"
-     value="<?php print $_SESSION['server_url'] ?>">
+	<input type="text" id="i_server_url" size="35" name="server_url"
+	 value="<?php print $_SESSION['server_url'] ?>">
   </span>
 </div>
 
@@ -288,11 +288,11 @@ configuration for use with the OpenID server example.
   </p>
 
   <span class="label">
-    <label for="i_include_path">Include path (optional):</label>
+	<label for="i_include_path">Include path (optional):</label>
   </span>
   <span>
-    <input type="text" id="i_include_path" size="35" name="include_path"
-     value="<?php print $_SESSION['include_path'] ?>">
+	<input type="text" id="i_include_path" size="35" name="include_path"
+	 value="<?php print $_SESSION['include_path'] ?>">
   </span>
 </div>
 
@@ -306,65 +306,65 @@ configuration for use with the OpenID server example.
   <span class="label">Store method:</span>
   <div class="store_fields">
 
-    <div>
-      <input type="radio" name="store_type" value="Filesystem"
-       id="i_filesystem"<?php if ($_SESSION['store_type'] == 'Filesystem') { print " CHECKED"; } ?>>
-      <label for="i_filesystem">Filesystem</label>
-      <div>
-        <label for="i_fs_path" class="field">Filesystem path:</label>
-        <input type="text" name="fs_path" id="i_fs_path"
-         value="<?php print @$_SESSION['store_data']['fs_path']; ?>">
-        <?php print $basedir_msg; ?>
-      </div>
-    </div>
+	<div>
+	  <input type="radio" name="store_type" value="Filesystem"
+	   id="i_filesystem"<?php if ($_SESSION['store_type'] == 'Filesystem') { print " CHECKED"; } ?>>
+	  <label for="i_filesystem">Filesystem</label>
+	  <div>
+		<label for="i_fs_path" class="field">Filesystem path:</label>
+		<input type="text" name="fs_path" id="i_fs_path"
+		 value="<?php print @$_SESSION['store_data']['fs_path']; ?>">
+		<?php print $basedir_msg; ?>
+	  </div>
+	</div>
 
 <?php if ($sqlite_found) { ?>
-    <div>
-      <input type="radio" name="store_type" value="SQLite"
-       id="i_sqlite"<?php if ($_SESSION['store_type'] == 'SQLite') { print " CHECKED"; } ?>>
-      <label for="i_sqlite">SQLite</label>
-      <div>
-        <label for="i_sqlite_path" class="field">SQLite database path:</label>
-        <input type="text" value="<?php print @$_SESSION['store_data']['sqlite_path']; ?>"
-         name="sqlite_path" id="i_sqlite_path">
-        <?php print $basedir_msg; ?>
-      </div>
-    </div>
+	<div>
+	  <input type="radio" name="store_type" value="SQLite"
+	   id="i_sqlite"<?php if ($_SESSION['store_type'] == 'SQLite') { print " CHECKED"; } ?>>
+	  <label for="i_sqlite">SQLite</label>
+	  <div>
+		<label for="i_sqlite_path" class="field">SQLite database path:</label>
+		<input type="text" value="<?php print @$_SESSION['store_data']['sqlite_path']; ?>"
+		 name="sqlite_path" id="i_sqlite_path">
+		<?php print $basedir_msg; ?>
+	  </div>
+	</div>
 <?php } ?>
 
 
 <?php if ($mysql_found || $pgsql_found) { ?>
-    <div>
+	<div>
 
 <?php if ($mysql_found) { ?>
-      <input type="radio" name="store_type" value="MySQL"
-       id="i_mysql"<?php if ($_SESSION['store_type'] == 'MySQL') { print " CHECKED"; } ?>>
-      <label for="i_mysql">MySQL</label>
+	  <input type="radio" name="store_type" value="MySQL"
+	   id="i_mysql"<?php if ($_SESSION['store_type'] == 'MySQL') { print " CHECKED"; } ?>>
+	  <label for="i_mysql">MySQL</label>
 <?php } ?>
 
 <?php if ($pgsql_found) { ?>
-      <input type="radio" name="store_type" value="PostgreSQL"
-       id="i_pgsql"<?php if ($_SESSION['store_type'] == 'PostgreSQL') { print " CHECKED"; } ?>>
-      <label for="i_pgsql">PostgreSQL</label>
+	  <input type="radio" name="store_type" value="PostgreSQL"
+	   id="i_pgsql"<?php if ($_SESSION['store_type'] == 'PostgreSQL') { print " CHECKED"; } ?>>
+	  <label for="i_pgsql">PostgreSQL</label>
 <?php } ?>
 
-      <div>
-        <label for="i_m_host" class="field">Host:</label>
-        <input type="text" value="<?php print @$_SESSION['store_data']['host']; ?>" name="host" id="i_m_host">
-      </div>
-      <div>
-        <label for="i_m_database" class="field">Database:</label>
-        <input value="<?php print @$_SESSION['store_data']['database']; ?>" type="text" name="database" id="i_m_database">
-      </div>
-      <div>
-        <label for="i_m_username" class="field">Username:</label>
-        <input type="text" name="username" id="i_m_username" value="<?php print @$_SESSION['store_data']['username']; ?>">
-      </div>
-      <div>
-        <label for="i_m_password" class="field">Password:</label>
-        <input type="password" name="password" id="i_m_password" value="<?php print @$_SESSION['store_data']['password']; ?>">
-      </div>
-    </div>
+	  <div>
+		<label for="i_m_host" class="field">Host:</label>
+		<input type="text" value="<?php print @$_SESSION['store_data']['host']; ?>" name="host" id="i_m_host">
+	  </div>
+	  <div>
+		<label for="i_m_database" class="field">Database:</label>
+		<input value="<?php print @$_SESSION['store_data']['database']; ?>" type="text" name="database" id="i_m_database">
+	  </div>
+	  <div>
+		<label for="i_m_username" class="field">Username:</label>
+		<input type="text" name="username" id="i_m_username" value="<?php print @$_SESSION['store_data']['username']; ?>">
+	  </div>
+	  <div>
+		<label for="i_m_password" class="field">Password:</label>
+		<input type="password" name="password" id="i_m_password" value="<?php print @$_SESSION['store_data']['password']; ?>">
+	  </div>
+	</div>
 <?php } ?>
 </div>
 </div>
@@ -378,44 +378,44 @@ configuration for use with the OpenID server example.
 
 function init_session() {
 
-    global $messages;
+	global $messages;
 
-    // Set a guess value for the server url.
-    if (!array_key_exists('server_url', $_SESSION)) {
-        $_SESSION['server_url'] = build_url();
-    }
+	// Set a guess value for the server url.
+	if (!array_key_exists('server_url', $_SESSION)) {
+		$_SESSION['server_url'] = build_url();
+	}
 
-    foreach (array('server_url', 'include_path', 'store_type') as $key) {
-        if (!isset($_SESSION[$key])) {
-            $_SESSION[$key] = "";
-        }
-    }
+	foreach (array('server_url', 'include_path', 'store_type') as $key) {
+		if (!isset($_SESSION[$key])) {
+			$_SESSION[$key] = "";
+		}
+	}
 
-    if (!isset($_SESSION['store_data'])) {
-        $_SESSION['store_data'] = array();
-    }
+	if (!isset($_SESSION['store_data'])) {
+		$_SESSION['store_data'] = array();
+	}
 
-    foreach (array('server_url', 'include_path', 'store_type') as $field) {
-        if (array_key_exists($field, $_GET)) {
-            $_SESSION[$field] = $_GET[$field];
-        }
-    }
+	foreach (array('server_url', 'include_path', 'store_type') as $field) {
+		if (array_key_exists($field, $_GET)) {
+			$_SESSION[$field] = $_GET[$field];
+		}
+	}
 
-    foreach (array('username', 'password', 'database', 'host', 'fs_path', 'sqlite_path') as $field) {
-        if (array_key_exists($field, $_GET)) {
-            $_SESSION['store_data'][$field] = $_GET[$field];
-        }
-    }
+	foreach (array('username', 'password', 'database', 'host', 'fs_path', 'sqlite_path') as $field) {
+		if (array_key_exists($field, $_GET)) {
+			$_SESSION['store_data'][$field] = $_GET[$field];
+		}
+	}
 }
 
 function generate_config($download = false) {
 
-    if ($download) {
-        // Emit headers to force browser download.
-        header("Content-type: text/plain");
-        header("Content-disposition: attachment; filename=config.php");
-        print "<?php\n";
-    } else {
+	if ($download) {
+		// Emit headers to force browser download.
+		header("Content-type: text/plain");
+		header("Content-disposition: attachment; filename=config.php");
+		print "<?php\n";
+	} else {
 ?>
 <html>
 <body>
@@ -469,90 +469,90 @@ print $_SESSION['server_url'];
  */
 function getOpenIDStore()
 {
-    <?php
+	<?php
 
-    switch ($_SESSION['store_type']) {
-    case "Filesystem":
+	switch ($_SESSION['store_type']) {
+	case "Filesystem":
 
-        print "require_once \"Auth/OpenID/FileStore.php\";\n    ";
-        print "return new Auth_OpenID_FileStore(\"".$_SESSION['store_data']['fs_path']."\");\n";
-        break;
+		print "require_once \"Auth/OpenID/FileStore.php\";\n	";
+		print "return new Auth_OpenID_FileStore(\"".$_SESSION['store_data']['fs_path']."\");\n";
+		break;
 
-    case "SQLite":
+	case "SQLite":
 
-        print "require_once \"Auth/OpenID/SQLiteStore.php\";\n    ";
-        print "\$s = new Auth_OpenID_SQLiteStore(\"".$_SESSION['store_data']['sqlite_path']."\");\n    ";
-        print "\$s->createTables();\n    ";
-        print "return \$s;\n";
-        break;
+		print "require_once \"Auth/OpenID/SQLiteStore.php\";\n	";
+		print "\$s = new Auth_OpenID_SQLiteStore(\"".$_SESSION['store_data']['sqlite_path']."\");\n	";
+		print "\$s->createTables();\n	";
+		print "return \$s;\n";
+		break;
 
-    case "MySQL":
+	case "MySQL":
 
-        ?>require_once 'Auth/OpenID/MySQLStore.php';
-    require_once 'DB.php';
+		?>require_once 'Auth/OpenID/MySQLStore.php';
+	require_once 'DB.php';
 
-    $dsn = array(
-                 'phptype'  => 'mysql',
-                 'username' => '<?php print $_SESSION['store_data']['username']; ?>',
-                 'password' => '<?php print $_SESSION['store_data']['password']; ?>',
-                 'hostspec' => '<?php print $_SESSION['store_data']['host']; ?>'
-                 );
+	$dsn = array(
+				 'phptype'  => 'mysql',
+				 'username' => '<?php print $_SESSION['store_data']['username']; ?>',
+				 'password' => '<?php print $_SESSION['store_data']['password']; ?>',
+				 'hostspec' => '<?php print $_SESSION['store_data']['host']; ?>'
+				 );
 
-    $db =& DB::connect($dsn);
+	$db =& DB::connect($dsn);
 
-    if (PEAR::isError($db)) {
-        return null;
-    }
+	if (PEAR::isError($db)) {
+		return null;
+	}
 
-    $db->query("USE <?php print $_SESSION['store_data']['database']; ?>");
-        
-    $s =& new Auth_OpenID_MySQLStore($db);
+	$db->query("USE <?php print $_SESSION['store_data']['database']; ?>");
+		
+	$s =& new Auth_OpenID_MySQLStore($db);
 
-    $s->createTables();
+	$s->createTables();
 
-    return $s;
+	return $s;
 <?php
-        break;
+		break;
 
-    case "PostgreSQL":
+	case "PostgreSQL":
 
-        ?>require_once 'Auth/OpenID/PostgreSQLStore.php';
-    require_once 'DB.php';
+		?>require_once 'Auth/OpenID/PostgreSQLStore.php';
+	require_once 'DB.php';
 
-    $dsn = array(
-                 'phptype'  => 'pgsql',
-                 'username' => '<?php print $_SESSION['store_data']['username']; ?>',
-                 'password' => '<?php print $_SESSION['store_data']['password']; ?>',
-                 'hostspec' => '<?php print $_SESSION['store_data']['host']; ?>',
-                 'database' => '<?php print $_SESSION['store_data']['database']; ?>'
-                 );
+	$dsn = array(
+				 'phptype'  => 'pgsql',
+				 'username' => '<?php print $_SESSION['store_data']['username']; ?>',
+				 'password' => '<?php print $_SESSION['store_data']['password']; ?>',
+				 'hostspec' => '<?php print $_SESSION['store_data']['host']; ?>',
+				 'database' => '<?php print $_SESSION['store_data']['database']; ?>'
+				 );
 
-    $db =& DB::connect($dsn);
+	$db =& DB::connect($dsn);
 
-    if (PEAR::isError($db)) {
-        return null;
-    }
+	if (PEAR::isError($db)) {
+		return null;
+	}
 
-    $s =& new Auth_OpenID_PostgreSQLStore($db);
+	$s =& new Auth_OpenID_PostgreSQLStore($db);
 
-    $s->createTables();
+	$s->createTables();
 
-    return $s;
+	return $s;
 <?php
-        break;
-    }
+		break;
+	}
 
-    ?>
+	?>
 }
 
 <?php
-    print "?>";
-    if (!$download) {
+	print "?>";
+	if (!$download) {
 ?>
 </pre>
 </body>
 </html>
 <?php
-      }
-    } // end function generate_config ()
+	  }
+	} // end function generate_config ()
 ?>

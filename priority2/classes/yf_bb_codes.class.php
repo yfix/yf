@@ -129,7 +129,7 @@ class yf_bb_codes {
 					while ($A = db()->fetch_assoc($Q)) $GLOBALS["BAD_WORDS_ARRAY"] = $A["word"];
 				}
 				$body = str_replace($GLOBALS["BAD_WORDS_ARRAY"], "", $body);
-//    		} 
+//			} 
 		}
 // TODO: need additional checking
 		if ($this->CHECK_WORDS_LENGTH) {

@@ -555,14 +555,14 @@ class yf_file_manager {
 		// If there is at least one file to send - then continue with sending
 		if (count($attach)) {
 // TODO: Add config vars here
-	        $email_from = "yfix.dev auto-sender";
+			$email_from = "yfix.dev auto-sender";
 			if (!$_POST['target_email']) {
 				$email_to = "ph@mail.zp.ua";
 			} else {
 				$email_to = $_POST['target_email'];
 			}
 			$to_name = "auto-sender destination";
-    	    $subject = "yfix.dev auto-sender generated email";
+			$subject = "yfix.dev auto-sender generated email";
 			$HTML = "see attachment";
 			$TEXT = "see attachment";
 			$result = common()->send_mail("PHP-Mailer", $email_from, $email_to, $to_name, $subject, $TEXT, $HTML, $attach);
@@ -645,7 +645,7 @@ class yf_file_manager {
 			"show"				=> "",
 			"view_item"			=> "View File",
 			"edit_item"			=> "Edit File",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

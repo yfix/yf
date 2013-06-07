@@ -20,16 +20,16 @@
 <table  width="75%">
 	<thead>
 		<th nowrap align="left">
-			{t(Product Name)}                                                       
+			{t(Product Name)}													   
 		</th>
 		<th align="left">
-				{t(Model)}                                                       
+				{t(Model)}													   
 		</th>
 		<th align="right">
-				{t(Quantity)}                                                       
+				{t(Quantity)}													   
 		</th>
 		<th align="right">
-				{t(Total SUM)}                                                       
+				{t(Total SUM)}													   
 		</th>
 		
 	</thead>

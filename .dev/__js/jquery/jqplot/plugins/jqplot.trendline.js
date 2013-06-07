@@ -3,113 +3,113 @@
 * This software is licensed under the GPL version 2.0 and MIT licenses.
 */
 (function($) {
-    
-    /**
-     * Class: $.jqplot.Trendline
-     * Plugin which will automatically compute and draw trendlines for plotted data.
-     */
-    $.jqplot.Trendline = function() {
-        // Group: Properties
-        
-        // prop: show
-        // Wether or not to show the trend line.
-        this.show = true;
-        // prop: color
-        // CSS color spec for the trend line.
-        // By default this wil be the same color as the primary line.
-        this.color = '#666666';
-        // prop: renderer
-        // Renderer to use to draw the trend line.
-        // The data series that is plotted may not be rendered as a line.
-        // Therefore, we use our own line renderer here to draw a trend line.
-        this.renderer = new $.jqplot.LineRenderer();
-        // prop: rendererOptions
-        // Options to pass to the line renderer.
-        // By default, markers are not shown on trend lines.
-        this.rendererOptions = {marker:{show:false}};
-        // prop: label
-        // Label for the trend line to use in the legend.
-        this.label = '';
-        // prop: type
-        // Either 'exponential', 'exp', or 'linear'.
-        this.type = 'linear';
-        // prop: shadow
-        // true or false, wether or not to show the shadow.
-        this.shadow = true;
-        // prop: markerRenderer
-        // Renderer to use to draw markers on the line.
-        // I think this is wrong.
-        this.markerRenderer = {show:false};
-        // prop: lineWidth
-        // Width of the trend line.
-        this.lineWidth = 1.5;
-        // prop: shadowAngle
-        // Angle of the shadow on the trend line.
-        this.shadowAngle = 45;
-        // prop: shadowOffset
-        // pixel offset for each stroke of the shadow.
-        this.shadowOffset = 1.0;
-        // prop: shadowAlpha
-        // Alpha transparency of the shadow.
-        this.shadowAlpha = 0.07;
-        // prop: shadowDepth
-        // number of strokes to make of the shadow.
-        this.shadowDepth = 3;
-        
-    };
-    
-    $.jqplot.postParseSeriesOptionsHooks.push(parseTrendLineOptions);
-    $.jqplot.postDrawSeriesHooks.push(drawTrendline);
-    $.jqplot.addLegendRowHooks.push(addTrendlineLegend);
-    
-    // called witin scope of the legend object
-    // current series passed in
-    // must return null or an object {label:label, color:color}
-    function addTrendlineLegend(series) {
-        var lt = series.trendline.label.toString();
-        var ret = null;
-        if (series.trendline.show && lt) {
-            ret = {label:lt, color:series.trendline.color};
-        }
-        return ret;
-    }
+	
+	/**
+	 * Class: $.jqplot.Trendline
+	 * Plugin which will automatically compute and draw trendlines for plotted data.
+	 */
+	$.jqplot.Trendline = function() {
+		// Group: Properties
+		
+		// prop: show
+		// Wether or not to show the trend line.
+		this.show = true;
+		// prop: color
+		// CSS color spec for the trend line.
+		// By default this wil be the same color as the primary line.
+		this.color = '#666666';
+		// prop: renderer
+		// Renderer to use to draw the trend line.
+		// The data series that is plotted may not be rendered as a line.
+		// Therefore, we use our own line renderer here to draw a trend line.
+		this.renderer = new $.jqplot.LineRenderer();
+		// prop: rendererOptions
+		// Options to pass to the line renderer.
+		// By default, markers are not shown on trend lines.
+		this.rendererOptions = {marker:{show:false}};
+		// prop: label
+		// Label for the trend line to use in the legend.
+		this.label = '';
+		// prop: type
+		// Either 'exponential', 'exp', or 'linear'.
+		this.type = 'linear';
+		// prop: shadow
+		// true or false, wether or not to show the shadow.
+		this.shadow = true;
+		// prop: markerRenderer
+		// Renderer to use to draw markers on the line.
+		// I think this is wrong.
+		this.markerRenderer = {show:false};
+		// prop: lineWidth
+		// Width of the trend line.
+		this.lineWidth = 1.5;
+		// prop: shadowAngle
+		// Angle of the shadow on the trend line.
+		this.shadowAngle = 45;
+		// prop: shadowOffset
+		// pixel offset for each stroke of the shadow.
+		this.shadowOffset = 1.0;
+		// prop: shadowAlpha
+		// Alpha transparency of the shadow.
+		this.shadowAlpha = 0.07;
+		// prop: shadowDepth
+		// number of strokes to make of the shadow.
+		this.shadowDepth = 3;
+		
+	};
+	
+	$.jqplot.postParseSeriesOptionsHooks.push(parseTrendLineOptions);
+	$.jqplot.postDrawSeriesHooks.push(drawTrendline);
+	$.jqplot.addLegendRowHooks.push(addTrendlineLegend);
+	
+	// called witin scope of the legend object
+	// current series passed in
+	// must return null or an object {label:label, color:color}
+	function addTrendlineLegend(series) {
+		var lt = series.trendline.label.toString();
+		var ret = null;
+		if (series.trendline.show && lt) {
+			ret = {label:lt, color:series.trendline.color};
+		}
+		return ret;
+	}
 
-    // called within scope of a series
-    function parseTrendLineOptions (seriesDefaults, options) {
-        this.trendline = new $.jqplot.Trendline();
-        options = options || {};
-        $.extend(true, this.trendline, {color:this.color}, seriesDefaults.trendline, options.trendline);
-        this.trendline.renderer.init.call(this.trendline, null);
-    }
-    
-    // called within scope of series object
-    function drawTrendline(sctx, options) {
-        // if we have options, merge trendline options in with precedence
-        if (options) {
-            $.extend(true, options, options.trendline);
-        }
-        else {
-            options = {};
-        }
-        if (options.show == null) {
-            options.show = this.trendline.show;
-        }
-        if (options.show) {
-            var fit;
-            // this.renderer.setGridData.call(this);
-            var data = options.data || this.data;
-            fit = fitData(data, this.trendline.type);
-            var gridData = options.gridData || this.renderer.makeGridData.call(this, fit.data);
-        
-            this.trendline.renderer.draw.call(this.trendline, sctx, gridData, {showLine:true, shadow:this.trendline.shadow});
-        }
-    }
+	// called within scope of a series
+	function parseTrendLineOptions (seriesDefaults, options) {
+		this.trendline = new $.jqplot.Trendline();
+		options = options || {};
+		$.extend(true, this.trendline, {color:this.color}, seriesDefaults.trendline, options.trendline);
+		this.trendline.renderer.init.call(this.trendline, null);
+	}
+	
+	// called within scope of series object
+	function drawTrendline(sctx, options) {
+		// if we have options, merge trendline options in with precedence
+		if (options) {
+			$.extend(true, options, options.trendline);
+		}
+		else {
+			options = {};
+		}
+		if (options.show == null) {
+			options.show = this.trendline.show;
+		}
+		if (options.show) {
+			var fit;
+			// this.renderer.setGridData.call(this);
+			var data = options.data || this.data;
+			fit = fitData(data, this.trendline.type);
+			var gridData = options.gridData || this.renderer.makeGridData.call(this, fit.data);
+		
+			this.trendline.renderer.draw.call(this.trendline, sctx, gridData, {showLine:true, shadow:this.trendline.shadow});
+		}
+	}
 	
 	function regression(x, y, typ)  {
 		var type = (typ == null) ? 'linear' : typ;
-	    var N = x.length;
-	    var slope;
-	    var intercept;	
+		var N = x.length;
+		var slope;
+		var intercept;	
 		var SX = 0;
 		var SY = 0;
 		var SXX = 0;
@@ -130,23 +130,23 @@
 				}
 				else {
 					X.push(x[i]);
-			    	Y.push(Math.log(y[i]));
+					Y.push(Math.log(y[i]));
 				}
 			}
 		}
 
 		for ( var i = 0; i < N; i++) {
-		    SX = SX + X[i];
-		    SY = SY + Y[i];
-		    SXY = SXY + X[i]* Y[i];
-		    SXX = SXX + X[i]* X[i];
-		    SYY = SYY + Y[i]* Y[i];
+			SX = SX + X[i];
+			SY = SY + Y[i];
+			SXY = SXY + X[i]* Y[i];
+			SXX = SXX + X[i]* X[i];
+			SYY = SYY + Y[i]* Y[i];
 		}
 
 		slope = (N*SXY - SX*SY)/(N*SXX - SX*SX);
 		intercept = (SY - slope*SX)/N;
 
-	    return [slope, intercept];
+		return [slope, intercept];
 	}
 
 	function linearRegression(X,Y) {
@@ -183,15 +183,15 @@
 		if (type == 'linear') {
 			ret = linearRegression(x,y);
 			for ( var i=0; i<x.length; i++){
-			    res = ret[0]*x[i] + ret[1];
-			    ypred.push([x[i], res]);
+				res = ret[0]*x[i] + ret[1];
+				ypred.push([x[i], res]);
 			}
 		}
 		else if (type == 'exp' || type == 'exponential') {
 			ret = expRegression(x,y);
 			for ( var i=0; i<x.length; i++){
-			    res = ret[1]*Math.pow(ret[0],x[i]);
-			    ypred.push([x[i], res]);
+				res = ret[1]*Math.pow(ret[0],x[i]);
+				ypred.push([x[i], res]);
 			}
 		}
 		return {data: ypred, slope: ret[0], intercept: ret[1]};

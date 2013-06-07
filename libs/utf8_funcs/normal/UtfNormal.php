@@ -339,8 +339,8 @@ class UtfNormal {
 								# They are totally forbidden here in UTF-8
 								# utopia.
 								$replace[] = array( UTF8_REPLACEMENT,
-								             $base + $i + 1 - strlen( $sequence ),
-								             strlen( $sequence ) );
+											 $base + $i + 1 - strlen( $sequence ),
+											 strlen( $sequence ) );
 								$head = '';
 								continue;
 							}
@@ -354,7 +354,7 @@ class UtfNormal {
 								# tricked into failing to see a match for an ASCII
 								# character, for instance, which can be a security hole
 								# if blacklist checks are being used.
-							       ($n  < 0xc2 && $sequence <= UTF8_OVERLONG_A)
+								   ($n  < 0xc2 && $sequence <= UTF8_OVERLONG_A)
 								|| ($n == 0xe0 && $sequence <= UTF8_OVERLONG_B)
 								|| ($n == 0xf0 && $sequence <= UTF8_OVERLONG_C)
 
@@ -368,8 +368,8 @@ class UtfNormal {
 								|| ($n >= 0xf0 && $sequence > UTF8_MAX) ) {
 
 								$replace[] = array( UTF8_REPLACEMENT,
-								                    $base + $i + 1 - strlen( $sequence ),
-								                    strlen( $sequence ) );
+													$base + $i + 1 - strlen( $sequence ),
+													strlen( $sequence ) );
 								$head = '';
 								continue;
 							}
@@ -517,9 +517,9 @@ class UtfNormal {
 					# but adds a lot of memory & disk needs.
 					#
 					$index = ( (ord( $c{0} ) & 0x0f) << 12
-					         | (ord( $c{1} ) & 0x3f) <<  6
-					         | (ord( $c{2} ) & 0x3f) )
-					       - UNICODE_HANGUL_FIRST;
+							 | (ord( $c{1} ) & 0x3f) <<  6
+							 | (ord( $c{2} ) & 0x3f) )
+						   - UNICODE_HANGUL_FIRST;
 					$l = intval( $index / UNICODE_HANGUL_NCOUNT );
 					$v = intval( ($index % UNICODE_HANGUL_NCOUNT) / UNICODE_HANGUL_TCOUNT);
 					$t = $index % UNICODE_HANGUL_TCOUNT;
@@ -670,7 +670,7 @@ class UtfNormal {
 						#$lIndex = utf8ToCodepoint( $startChar ) - UNICODE_HANGUL_LBASE;
 						#$vIndex = utf8ToCodepoint( $c ) - UNICODE_HANGUL_VBASE;
 						$lIndex = ord( $startChar{2} ) - 0x80;
-						$vIndex = ord( $c{2}         ) - 0xa1;
+						$vIndex = ord( $c{2}		 ) - 0xa1;
 
 						$hangulPoint = UNICODE_HANGUL_FIRST +
 							UNICODE_HANGUL_TCOUNT *
@@ -679,7 +679,7 @@ class UtfNormal {
 						# Hardcode the limited-range UTF-8 conversion:
 						$startChar = chr( $hangulPoint >> 12 & 0x0f | 0xe0 ) .
 									 chr( $hangulPoint >>  6 & 0x3f | 0x80 ) .
-									 chr( $hangulPoint       & 0x3f | 0x80 );
+									 chr( $hangulPoint	   & 0x3f | 0x80 );
 						$lastHangul = 0;
 						continue;
 					} elseif( $c >= UTF8_HANGUL_TBASE &&

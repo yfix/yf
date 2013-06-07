@@ -25,19 +25,19 @@
 	stream_wrapper_register('pop3', 'pop3_stream');  /* Register the pop3 stream handler class */
 
 	$pop3=new pop3_class;
-	$pop3->hostname="pop.gmail.com";             /* POP 3 server host name                      */
-	$pop3->port=995;                         /* POP 3 server host port,
-	                                            usually 110 but some servers use other ports
-	                                            Gmail uses 995                              */
-	$pop3->tls=1;                            /* Establish secure connections using TLS      */
-	$user="communet02@gmail.com";                        /* Authentication user name                    */
-	$password="communitylocal";                    /* Authentication password                     */
-	$pop3->realm="";                         /* Authentication realm or domain              */
-	$pop3->workstation="";                   /* Workstation for NTLM authentication         */
-	$apop=0;                                 /* Use APOP authentication                     */
-	$pop3->authentication_mechanism="USER";  /* SASL authentication mechanism               */
-	$pop3->debug=1;                          /* Output debug information                    */
-	$pop3->html_debug=1;                     /* Debug information is in HTML                */
+	$pop3->hostname="pop.gmail.com";			 /* POP 3 server host name					  */
+	$pop3->port=995;						 /* POP 3 server host port,
+												usually 110 but some servers use other ports
+												Gmail uses 995							  */
+	$pop3->tls=1;							/* Establish secure connections using TLS	  */
+	$user="communet02@gmail.com";						/* Authentication user name					*/
+	$password="communitylocal";					/* Authentication password					 */
+	$pop3->realm="";						 /* Authentication realm or domain			  */
+	$pop3->workstation="";				   /* Workstation for NTLM authentication		 */
+	$apop=0;								 /* Use APOP authentication					 */
+	$pop3->authentication_mechanism="USER";  /* SASL authentication mechanism			   */
+	$pop3->debug=1;						  /* Output debug information					*/
+	$pop3->html_debug=1;					 /* Debug information is in HTML				*/
 	$pop3->join_continuation_header_lines=1; /* Concatenate headers split in multiple lines */
 
 	if(($error=$pop3->Open())=="")
@@ -65,12 +65,12 @@
 						'File'=>$message_file,
 
 						/* Read a message from a string instead of a file */
-						/* 'Data'=>'My message data string',              */
+						/* 'Data'=>'My message data string',			  */
 
-						/* Save the message body parts to a directory     */
-						/* 'SaveBody'=>'/tmp',                            */
+						/* Save the message body parts to a directory	 */
+						/* 'SaveBody'=>'/tmp',							*/
 
-						/* Do not retrieve or save message body parts     */
+						/* Do not retrieve or save message body parts	 */
 							'SkipBody'=>1,
 					);
 					$success=$mime->Decode($parameters, $decoded);

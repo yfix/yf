@@ -1,24 +1,24 @@
 <?php
 
 /***************************************************************************************
- *                                                                                     *
+ *																					 *
  * This file is part of the XPertMailer package (http://xpertmailer.sourceforge.net/)  *
- *                                                                                     *
- * XPertMailer is free software; you can redistribute it and/or modify it under the    *
- * terms of the GNU General Public License as published by the Free Software           *
+ *																					 *
+ * XPertMailer is free software; you can redistribute it and/or modify it under the	*
+ * terms of the GNU General Public License as published by the Free Software		   *
  * Foundation; either version 2 of the License, or (at your option) any later version. *
- *                                                                                     *
- * XPertMailer is distributed in the hope that it will be useful, but WITHOUT ANY      *
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A     *
- * PARTICULAR PURPOSE.  See the GNU General Public License for more details.           *
- *                                                                                     *
- * You should have received a copy of the GNU General Public License along with        *
+ *																					 *
+ * XPertMailer is distributed in the hope that it will be useful, but WITHOUT ANY	  *
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A	 *
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.		   *
+ *																					 *
+ * You should have received a copy of the GNU General Public License along with		*
  * XPertMailer; if not, write to the Free Software Foundation, Inc., 51 Franklin St,   *
- * Fifth Floor, Boston, MA  02110-1301  USA                                            *
- *                                                                                     *
+ * Fifth Floor, Boston, MA  02110-1301  USA											*
+ *																					 *
  * XPertMailer SMTP & POP3 PHP Mail Client. Can send and read messages in MIME Format. *
- * Copyright (C) 2006  Tanase Laurentiu Iulian                                         *
- *                                                                                     *
+ * Copyright (C) 2006  Tanase Laurentiu Iulian										 *
+ *																					 *
  ***************************************************************************************/
 
 require_once 'func.php';
@@ -1068,7 +1068,7 @@ class SMTP extends MIME {
 			$this->_fromaddr = array('address' => $fromaddr, 'name' => '');
 		}
 		if(!$this->_fromhost){
-			if(isset($_SERVER['SERVER_NAME']))     $this->_fromhost = $_SERVER['SERVER_NAME'];
+			if(isset($_SERVER['SERVER_NAME']))	 $this->_fromhost = $_SERVER['SERVER_NAME'];
 			elseif(isset($_SERVER['HTTP_HOST']))   $this->_fromhost = $_SERVER['HTTP_HOST'];
 			elseif(isset($_SERVER['REMOTE_ADDR'])) $this->_fromhost = $_SERVER['REMOTE_ADDR'];
 			elseif(isset($_SERVER['SERVER_ADDR'])) $this->_fromhost = $_SERVER['SERVER_ADDR'];

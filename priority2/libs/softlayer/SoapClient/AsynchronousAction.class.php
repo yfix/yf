@@ -6,13 +6,13 @@
  * modification, are permitted provided that the following conditions are met:
  *
  *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ *	this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ *	this list of conditions and the following disclaimer in the documentation
+ *	and/or other materials provided with the distribution.
  *  * Neither SoftLayer Technologies, Inc. nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *	be used to endorse or promote products derived from this software without
+ *	specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -73,29 +73,29 @@
  * $client = SoftLayer_SoapClient::getClient('SoftLayer_Account');
  *
  * try {
- *     // Request our account information.
- *     $account = $client->getObjectAsync();
+ *	 // Request our account information.
+ *	 $account = $client->getObjectAsync();
  *
- *     // Request a PDF of our next invoice. This can take much longer than
- *     // getting simple account information.
- *     $nextInvoicePdf = $client->getNextInvoicePdfAsync();
+ *	 // Request a PDF of our next invoice. This can take much longer than
+ *	 // getting simple account information.
+ *	 $nextInvoicePdf = $client->getNextInvoicePdfAsync();
  *
- *     // While we're at it we'll enable VLAN spanning on our account.
- *     $vlanSpanResult = $client->setVlanSpanAsync(true);
+ *	 // While we're at it we'll enable VLAN spanning on our account.
+ *	 $vlanSpanResult = $client->setVlanSpanAsync(true);
  *
- *     // The three requests are now processing in parallel. Use the wait()
- *     // method to retrieve the resuls of our requests. The wait time involved
- *     // is roughly the same time as the longest API call.
- *     $account = $account->wait();
- *     $nextInvoicePdf = $nextInvoicePdf->wait();
- *     $vlanSpanResult = $vlanSpanResult->wait();
+ *	 // The three requests are now processing in parallel. Use the wait()
+ *	 // method to retrieve the resuls of our requests. The wait time involved
+ *	 // is roughly the same time as the longest API call.
+ *	 $account = $account->wait();
+ *	 $nextInvoicePdf = $nextInvoicePdf->wait();
+ *	 $vlanSpanResult = $vlanSpanResult->wait();
  *
- *     // Finally, display our results.
- *     var_dump($account);
- *     var_dump($nextInvoicePdf);
- *     var_dump($vlanSpanResult);
+ *	 // Finally, display our results.
+ *	 var_dump($account);
+ *	 var_dump($nextInvoicePdf);
+ *	 var_dump($vlanSpanResult);
  * } catch (Exception $e) {
- *     die('Unable to retrieve account information: ' . $e->getMessage());
+ *	 die('Unable to retrieve account information: ' . $e->getMessage());
  * }
  *
  * ----------
@@ -106,119 +106,119 @@
  * in the SoftLayer customer portal if you have any questions regarding use of
  * this library.
  *
- * @author      SoftLayer Technologies, Inc. <sldn@softlayer.com>
+ * @author	  SoftLayer Technologies, Inc. <sldn@softlayer.com>
  * @copyright   Copyright (c) 2009 - 2010, Softlayer Technologies, Inc
- * @license     http://sldn.softlayer.com/wiki/index.php/License
- * @see         SoftLayer_SoapClient
+ * @license	 http://sldn.softlayer.com/wiki/index.php/License
+ * @see		 SoftLayer_SoapClient
  */
 class SoftLayer_SoapClient_AsynchronousAction
 {
-    /**
-     * The SoftLayer SOAP client making an asynchronous call
-     *
-     * @var SoftLayer_SoapClient
-     */
-    protected $_soapClient;
+	/**
+	 * The SoftLayer SOAP client making an asynchronous call
+	 *
+	 * @var SoftLayer_SoapClient
+	 */
+	protected $_soapClient;
 
-    /**
-     * The name of the function we're calling
-     *
-     * @var string
-     */
-    protected $_functionName;
+	/**
+	 * The name of the function we're calling
+	 *
+	 * @var string
+	 */
+	protected $_functionName;
 
-    /**
-     * A socket connection to the SoftLayer SOAP API
-     *
-     * @var resource
-     */
-    protected $_socket;
+	/**
+	 * A socket connection to the SoftLayer SOAP API
+	 *
+	 * @var resource
+	 */
+	protected $_socket;
 
-    /**
-     * Perform an asynchgronous SoftLayer SOAP call
-     *
-     * Create a raw socket connection to the URL specified by the
-     * SoftLayer_SoapClient class and send SOAP HTTP headers and request XML to
-     * that socket. Throw exceptions if we're unable to make the socket
-     * connection or send data to that socket.
-     *
-     * @param SoftLayer_SoapClient $soapClient The SoftLayer SOAP client making the asynchronous call.
-     * @param string $functionName The name of the function we're calling.
-     * @param string $request The full XML SOAP request we wish to make.
-     * @param string $location The URL of the web service we wish to call.
-     * @param string $action The value of the HTTP SOAPAction header in our SOAP call.
-     */
-    public function __construct($soapClient, $functionName, $request, $location, $action)
-    {
-        preg_match('%^(http(?:s)?)://(.*?)(/.*?)$%', $location, $matches);
+	/**
+	 * Perform an asynchgronous SoftLayer SOAP call
+	 *
+	 * Create a raw socket connection to the URL specified by the
+	 * SoftLayer_SoapClient class and send SOAP HTTP headers and request XML to
+	 * that socket. Throw exceptions if we're unable to make the socket
+	 * connection or send data to that socket.
+	 *
+	 * @param SoftLayer_SoapClient $soapClient The SoftLayer SOAP client making the asynchronous call.
+	 * @param string $functionName The name of the function we're calling.
+	 * @param string $request The full XML SOAP request we wish to make.
+	 * @param string $location The URL of the web service we wish to call.
+	 * @param string $action The value of the HTTP SOAPAction header in our SOAP call.
+	 */
+	public function __construct($soapClient, $functionName, $request, $location, $action)
+	{
+		preg_match('%^(http(?:s)?)://(.*?)(/.*?)$%', $location, $matches);
 
-        $this->_soapClient = $soapClient;
-        $this->_functionName = $functionName;
+		$this->_soapClient = $soapClient;
+		$this->_functionName = $functionName;
 
-        $protocol   = $matches[1];
-        $host       = $matches[2];
-        $endpoint   = $matches[3];
+		$protocol   = $matches[1];
+		$host	   = $matches[2];
+		$endpoint   = $matches[3];
 
-        $headers = array(
-            'POST ' . $endpoint . ' HTTP/1.1',
-            'Host: ' . $host,
-            'User-Agent: PHP-SOAP/' . phpversion(),
-            'Content-Type: text/xml; charset=utf-8',
-            'SOAPAction: "' . $action . '"',
-            'Content-Length: ' . strlen($request),
-            'Connection: close',
-        );
+		$headers = array(
+			'POST ' . $endpoint . ' HTTP/1.1',
+			'Host: ' . $host,
+			'User-Agent: PHP-SOAP/' . phpversion(),
+			'Content-Type: text/xml; charset=utf-8',
+			'SOAPAction: "' . $action . '"',
+			'Content-Length: ' . strlen($request),
+			'Connection: close',
+		);
 
-        if ($protocol == 'https') {
-            $host = 'ssl://' . $host;
-            $port = 443;
-        } else {
-            $port = 80;
-        }
+		if ($protocol == 'https') {
+			$host = 'ssl://' . $host;
+			$port = 443;
+		} else {
+			$port = 80;
+		}
 
-        $data = implode("\r\n", $headers) . "\r\n\r\n" . $request . "\r\n";
-        $this->_socket = fsockopen($host, $port, $errorNumber, $errorMessage);
+		$data = implode("\r\n", $headers) . "\r\n\r\n" . $request . "\r\n";
+		$this->_socket = fsockopen($host, $port, $errorNumber, $errorMessage);
 
-        if ($this->_socket === false) {
-            $this->_socket = null;
-            throw new Exception('Unable to make an asynchronous SoftLayer API call: ' . $errorNumber . ': ' . $errorMessage);
-        }
+		if ($this->_socket === false) {
+			$this->_socket = null;
+			throw new Exception('Unable to make an asynchronous SoftLayer API call: ' . $errorNumber . ': ' . $errorMessage);
+		}
 
-        if (fwrite($this->_socket, $data) === false) {
-            throw new Exception('Unable to write data to an asynchronous SoftLayer API call.');
-        }
-    }
+		if (fwrite($this->_socket, $data) === false) {
+			throw new Exception('Unable to write data to an asynchronous SoftLayer API call.');
+		}
+	}
 
-    /**
-     * Process and return the results of an asyncrhonous SoftLayer API call
-     *
-     * Read data from our socket and process the raw SOAP result from the
-     * SoftLayer_SoapClient instance that made the asynchronous call. wait()
-     * *must* be called in order to recieve the results from your API call.
-     *
-     * @return object
-     */
-    public function wait()
-    {
-        $soapResult = '';
+	/**
+	 * Process and return the results of an asyncrhonous SoftLayer API call
+	 *
+	 * Read data from our socket and process the raw SOAP result from the
+	 * SoftLayer_SoapClient instance that made the asynchronous call. wait()
+	 * *must* be called in order to recieve the results from your API call.
+	 *
+	 * @return object
+	 */
+	public function wait()
+	{
+		$soapResult = '';
 
-        while (!feof($this->_socket)) {
-            $soapResult .= fread($this->_socket, 8192);
-        }
+		while (!feof($this->_socket)) {
+			$soapResult .= fread($this->_socket, 8192);
+		}
 
-        // separate the SOAP result into headers and data.
-        list($headers, $data) = explode("\r\n\r\n", $soapResult);
+		// separate the SOAP result into headers and data.
+		list($headers, $data) = explode("\r\n\r\n", $soapResult);
 
-        return $this->_soapClient->handleAsyncResult($this->_functionName, $data);
-    }
+		return $this->_soapClient->handleAsyncResult($this->_functionName, $data);
+	}
 
-    /**
-     * Close the socket created when the SOAP request was created.
-     */
-    public function __destruct()
-    {
-        if ($this->_socket != null) {
-            fclose($this->_socket);
-        }
-    }
+	/**
+	 * Close the socket created when the SOAP request was created.
+	 */
+	public function __destruct()
+	{
+		if ($this->_socket != null) {
+			fclose($this->_socket);
+		}
+	}
 }

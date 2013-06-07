@@ -94,7 +94,7 @@ class yf_html {
 			}
 			list($year, $month, $day) = explode("-", $selected_date);
 		}
-    	if (strlen($years)) {
+		if (strlen($years)) {
 			list($start_year, $end_year) = explode("-", $years);
 		} else {
 			$start_year = 1940;
@@ -112,7 +112,7 @@ class yf_html {
 			$m .= "\t<option ".(($month == $a) ? "selected=\"selected\"" : "")." value=\"".$a."\">".($translate ? t($this->month($a)) : $this->month($a)) ."</option>\r\n";
 		}
 		$m .= "</select>\r\n";
-    	$d .= "<select name=\"day".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"day_".$name_postfix."_box\"" : "").">\r\n";
+		$d .= "<select name=\"day".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"day_".$name_postfix."_box\"" : "").">\r\n";
 		$d .= $show_text ? "\t<option ".(!$day ? "selected=\"selected\"" : "")." value=\"\">-".($translate ? t('day') : 'day')."-</option>\r\n" : "";
 		for ($a = 1; $a <= 31; $a++) {
 			$d .= "\t<option ".(($day == $a) ? "selected=\"selected\"" : "")." value=\"".$a."\">".$a."</option>\r\n";
@@ -142,18 +142,18 @@ class yf_html {
 			}
 			list ($hour, $minute, $second) = explode(":", $selected_date);
 		}
-    	$body .= "\r\n<select name=\"hour".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"hour_".$name_postfix."_box\"" : "").">\r\n";
+		$body .= "\r\n<select name=\"hour".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"hour_".$name_postfix."_box\"" : "").">\r\n";
 		$body .= $show_text ? "\t<option ".($hour == "" ? "selected=\"selected\"" : "")." value=\"\">-".($translate ? t('hour') : 'hour')."-</option>\r\n" : "";
 		for ($a = 0; $a <= 23; $a++) {
 			$body .= "\t<option ".(($hour == $a && $hour != "") ? "selected=\"selected\"" : "")." value=\"".$a."\">".$a."</option>\r\n";
 		}
 		$body .= "</select>\r\n";
 		$body .= "<select name=\"minute".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"minute_".$name_postfix."_box\"" : "").">\r\n";
-    	$body .= $show_text ? "\t<option ".($minute == "" ? "selected=\"selected\"" : "")." value=''>-".($translate ? t('minute') : 'minute')."-</option>\r\n" : "";
+		$body .= $show_text ? "\t<option ".($minute == "" ? "selected=\"selected\"" : "")." value=''>-".($translate ? t('minute') : 'minute')."-</option>\r\n" : "";
 		for ($a = 0; $a <= 59; $a++) {
 			$body .= "\t<option ".(($minute == $a && $minute != "") ? "selected=\"selected\"" : "")." value=\"".$a."\">".$a."</option>\r\n";
 		}
-    	$body .= "</select>\r\n";
+		$body .= "</select>\r\n";
 		$body .= "<select name=\"second".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"second_".$name_postfix."_box\"" : "").">\r\n";
 		$body .= $show_text ? "\t<option ".($second == "" ? "selected=\"selected\"" : "")." value=''>-".($translate ? t('second') : 'second')."-</option>\r\n" : "";
 		for ($a = 0; $a <= 59; $a++) {

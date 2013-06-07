@@ -14,7 +14,7 @@ if ( $dh = opendir ( "frames/" ) ) {
 }
 /*
 		GIFEncoder constructor:
-        =======================
+		=======================
 
 		image_stream = new GIFEncoder	(
 							URL or Binary data	'Sources'
@@ -37,12 +37,12 @@ $gif = new GIFEncoder	(
 		Possibles outputs:
 		==================
 
-        Output as GIF for browsers :
-        	- Header ( 'Content-type:image/gif' );
-        Output as GIF for browsers with filename:
-        	- Header ( 'Content-disposition:Attachment;filename=myanimation.gif');
-        Output as file to store into a specified file:
-        	- FWrite ( FOpen ( "myanimation.gif", "wb" ), $gif->GetAnimation ( ) );
+		Output as GIF for browsers :
+			- Header ( 'Content-type:image/gif' );
+		Output as GIF for browsers with filename:
+			- Header ( 'Content-disposition:Attachment;filename=myanimation.gif');
+		Output as file to store into a specified file:
+			- FWrite ( FOpen ( "myanimation.gif", "wb" ), $gif->GetAnimation ( ) );
 */
 Header ( 'Content-type:image/gif' );
 echo	$gif->GetAnimation ( );

@@ -20,7 +20,7 @@
 		<tr>
 			<td width="80" height="18" valign="top"></td>
 			<td width="100%" height="18" valign="top"> 
-				<input type="submit" value="    {t(Save)}    " />
+				<input type="submit" value="	{t(Save)}	" />
 			</td>
 		</tr>
 	</table>

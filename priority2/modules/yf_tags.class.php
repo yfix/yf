@@ -420,7 +420,7 @@ class yf_tags {
 			);			
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
-		$replace = array(              
+		$replace = array(			  
 			"allowed_groups_box"	=> common()->select_box("allowed_group", $this->GROUPS, $this->ALLOWED_GROUP, 0),		
 			"form_action"			=> "./?object=tags&action=settings",
 		);
@@ -440,10 +440,10 @@ class yf_tags {
 			if ($params["module"] == "blog" && isset($params["object_id"])) {
 				$A = db()->query_fetch("SELECT `allow_tagging` FROM `".db('blog_settings')."` WHERE `user_id`=".$params["object_id"]);
 				$allowed_box = common()->select_box("allowed_group", $this->GROUPS, $A["allow_tagging"], 0);		
-    		} elseif ($params["module"] == "gallery" && isset($params["object_id"])) {
+			} elseif ($params["module"] == "gallery" && isset($params["object_id"])) {
 				$A = db()->query_fetch("SELECT `allow_tagging` FROM `".db('gallery_folders')."` WHERE `id`=".$params["object_id"]);
 				$allowed_box = common()->select_box("allowed_group", $this->GROUPS, $A["allow_tagging"], 0);		
-    		} else {
+			} else {
 				return $allowed_box = common()->select_box("allowed_group", $this->GROUPS, $this->ALLOWED_GROUP, 0); // default settings otherwise
 			}
 			return $allowed_box;
@@ -486,11 +486,11 @@ class yf_tags {
 					FROM `".db('blog_settings')."` AS bs, `".db('blog_posts')."` AS bp 
 					WHERE bp.`id` IN('".implode("','",$obj_id)."') AND bs.`user_id`=bp.`user_id`";
 		//Custom settings for gallery folder
-    	} elseif ($OBJECT_NAME == "gallery") {
+		} elseif ($OBJECT_NAME == "gallery") {
 			$sql = "SELECT gp.`id`, gp.`user_id`, gf.`allow_tagging` AS `allowed_group` 
 					FROM `".db('gallery_folders')."` AS gf, `".db('gallery_photos')."` AS gp 
 					WHERE gp.`id` IN('".implode("','",$obj_id)."') AND gp.`folder_id`=gf.`id`";
-    	} else {
+		} else {
 			$sql = "SELECT obj.`id`, obj.`user_id`, s.`allowed_group` 
 					FROM `".DB_PREFIX. $this->_db_tables_for_object[$OBJECT_NAME]."` AS obj, `".db('tags_settings')."` AS s  
 					WHERE obj.`id` IN('".implode("','",$obj_id)."') AND s.`user_id`=obj.`user_id`";

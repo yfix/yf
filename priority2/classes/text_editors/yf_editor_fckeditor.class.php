@@ -94,7 +94,7 @@ class yf_editor_fckeditor {
 			} else {
 				$WidthCSS = $this->Width;
 			}
-            if (strpos($this->Height, '%') === false) {
+			if (strpos($this->Height, '%') === false) {
 				$HeightCSS = $this->Height.'px';
 			} else {
 				$HeightCSS = $this->Height;
@@ -113,7 +113,7 @@ class yf_editor_fckeditor {
 
 		if ( !isset( $_SERVER ) ) {
 			global $HTTP_SERVER_VARS ;
-		    $_SERVER = $HTTP_SERVER_VARS ;
+			$_SERVER = $HTTP_SERVER_VARS ;
 		}
 		
 		if ( isset( $HTTP_USER_AGENT ) )

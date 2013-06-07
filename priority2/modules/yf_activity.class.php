@@ -413,7 +413,7 @@ class yf_activity {
 	}
 
 	/**
-    * Update activity for all users (use only when number of user is small !)
+	* Update activity for all users (use only when number of user is small !)
 	*/
 	function _sync_all_users_activity () {
 		$Q = db()->query("SELECT `id` FROM `".db('user')."`");

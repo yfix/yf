@@ -28,7 +28,7 @@
  * @author   Christian Matthies <ch0012@gmail.com>
  * @author   Lars Strojny <lars@strojny.net>
  * @license  http://www.gnu.org/licenses/lgpl.html LGPL
- * @link     http://php-ids.org/
+ * @link	 http://php-ids.org/
  */
 
 /**
@@ -36,24 +36,24 @@
  *
  * @category  Security
  * @package   PHPIDS
- * @author    Christian Matthies <ch0012@gmail.com>
- * @author    Mario Heiderich <mario.heiderich@gmail.com>
- * @author    Lars Strojny <lars@strojny.net>
+ * @author	Christian Matthies <ch0012@gmail.com>
+ * @author	Mario Heiderich <mario.heiderich@gmail.com>
+ * @author	Lars Strojny <lars@strojny.net>
  * @copyright 2007 The PHPIDS Group
  * @version   Release: $Id:Interface.php 517 2007-09-15 15:04:13Z mario $
  * @license   http://www.gnu.org/licenses/lgpl.html LGPL
- * @link      http://php-ids.org/
+ * @link	  http://php-ids.org/
  */
 interface IDS_Log_Interface
 {
-    /**
-     * Interface method
-     *
-     * @param IDS_Report $data the report data
-     * 
-     * @return void 
-     */
-    public function execute(IDS_Report $data);
+	/**
+	 * Interface method
+	 *
+	 * @param IDS_Report $data the report data
+	 * 
+	 * @return void 
+	 */
+	public function execute(IDS_Report $data);
 }
 
 /**

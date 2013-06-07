@@ -160,19 +160,19 @@ function ti($input_string, $args = 0) {
 }
 
 function rus2uni($str,$isTo = true) {
-    $arr = array('ñ'=>'&#x451;','ğ'=>'&#x401;');
-    for($i=192;$i<256;$i++)
-        $arr[chr($i)] = '&#x4'.dechex($i-176).';';
-    $str =preg_replace(array('@([ -ï]) @i','@ ([ -ï])@i'),array('$1&#x0a0;','&#x0a0;$1'),$str);
-    return strtr($str,$isTo?$arr:array_flip($arr));
+	$arr = array('ñ'=>'&#x451;','ğ'=>'&#x401;');
+	for($i=192;$i<256;$i++)
+		$arr[chr($i)] = '&#x4'.dechex($i-176).';';
+	$str =preg_replace(array('@([ -ï]) @i','@ ([ -ï])@i'),array('$1&#x0a0;','&#x0a0;$1'),$str);
+	return strtr($str,$isTo?$arr:array_flip($arr));
 }
 
 // Recursive function that preserves keys of merged arrays
 if (!function_exists('my_array_merge')) {
-    function my_array_merge($a1, $a2) {
-        foreach ((array)$a2 as $k => $v) { if (isset($a1[$k]) && is_array($a1[$k])) { if (is_array($a2[$k])) { 
-            foreach ((array)$a2[$k] as $k2 => $v2) { if (isset($a1[$k][$k1]) && is_array($a1[$k][$k1])) { $a1[$k][$k2] += $v2; } else { $a1[$k][$k2] = $v2; } 
-        } } else { $a1[$k] += $v; } } else { $a1[$k] = $v; } }
-        return $a1;
-    }
+	function my_array_merge($a1, $a2) {
+		foreach ((array)$a2 as $k => $v) { if (isset($a1[$k]) && is_array($a1[$k])) { if (is_array($a2[$k])) { 
+			foreach ((array)$a2[$k] as $k2 => $v2) { if (isset($a1[$k][$k1]) && is_array($a1[$k][$k1])) { $a1[$k][$k2] += $v2; } else { $a1[$k][$k2] = $v2; } 
+		} } else { $a1[$k] += $v; } } else { $a1[$k] = $v; } }
+		return $a1;
+	}
 }

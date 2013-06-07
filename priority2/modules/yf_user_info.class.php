@@ -224,7 +224,7 @@ class yf_user_info {
 	}	
 
 	//-----------------------------------------------------------------------------
-    // Form validator
+	// Form validator
 	function _validate_form () {
 		// Cleanup all $_POST fields
 		foreach ((array)$_POST as $k => $v) {

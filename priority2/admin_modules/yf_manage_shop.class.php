@@ -978,7 +978,7 @@ class yf_manage_shop {
 			$Q = db()->query(
 				"SELECT * FROM `".db('shop_group_options')."` 
 				WHERE `product_id`=".$product_id." 
-				    AND `group_id` IN (".implode(",", array_keys($user_groups)).")"
+					AND `group_id` IN (".implode(",", array_keys($user_groups)).")"
 			);
 			while($A = db()->fetch_assoc($Q)) {
 				if (!$A["group_id"] || !isset($user_groups[$A["group_id"]])) {
@@ -1087,7 +1087,7 @@ class yf_manage_shop {
 			//$_GET["action"] => {string to replace}
 			"show"		=> "Products",
 			"add"			=> "Add product",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

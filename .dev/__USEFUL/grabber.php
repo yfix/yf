@@ -127,7 +127,7 @@ class grabber {
 						$phone	= str_replace(array_keys($REPLACE), array_values($REPLACE), $m[1][$_id]);
 						$usage	= $m[2][$_id];
 						$info	= $m[3][$_id];
-                  
+				  
 						$GLOBALS['db']->INSERT("plans", array(
 							"phone"	=> $GLOBALS['db']->es($phone),
 							"cc"	=> $GLOBALS['db']->es($cc),
@@ -234,8 +234,8 @@ class grabber {
 		$curly[$id] = curl_init();
 
 		$url = (is_array($d) && !empty($d['url'])) ? $d['url'] : $d;
-		curl_setopt($curly[$id], CURLOPT_URL,            $url);
-		curl_setopt($curly[$id], CURLOPT_HEADER,         0);
+		curl_setopt($curly[$id], CURLOPT_URL,			$url);
+		curl_setopt($curly[$id], CURLOPT_HEADER,		 0);
 		curl_setopt($curly[$id], CURLOPT_RETURNTRANSFER, 1);
 
 		curl_setopt($curly[$id], CURLOPT_CONNECTTIMEOUT, 5);
@@ -254,7 +254,7 @@ class grabber {
 		// post?
 		if (is_array($d)) {
 		  if (!empty($d['post'])) {
-			curl_setopt($curly[$id], CURLOPT_POST,       1);
+			curl_setopt($curly[$id], CURLOPT_POST,	   1);
 			curl_setopt($curly[$id], CURLOPT_POSTFIELDS, $d['post']);
 		  }
 		}

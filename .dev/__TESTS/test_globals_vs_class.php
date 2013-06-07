@@ -37,10 +37,10 @@ function wrap_class_var( $name, $value = NULL ) {
 $GLOBALS[ 'var' ] = array(
 	false => false,
 	true  => true,
-	1     => 1,
+	1	 => 1,
 	'name_string' => 'string_value',
 	'name_array'  => array(
-		1              => 1,
+		1			  => 1,
 		'name_string1' => 'string_value1',
 		'name_string2' => 'string_value2',
 		'name_string3' => 'string_value3',
@@ -56,9 +56,9 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		// GLOBALS write
 		$msg = 'GLOBALS: write'; $start_ts = microtime( true );
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
-			globals_var( false,    false     );
-			globals_var( true,     true      );
-			globals_var( 111,      111       );
+			globals_var( false,	false	 );
+			globals_var( true,	 true	  );
+			globals_var( 111,	  111	   );
 			globals_var( 'string', 'string'  );
 			globals_var( 'array',  $GLOBALS[ 'var' ] );
 		}
@@ -70,9 +70,9 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		// GLOBALS write
 		$msg = 'GLOBALS: write'; $start_ts = microtime( true );
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
-			globals_var( false,    false     );
-			globals_var( true,     true      );
-			globals_var( 111,      111       );
+			globals_var( false,	false	 );
+			globals_var( true,	 true	  );
+			globals_var( 111,	  111	   );
 			globals_var( 'string', 'string'  );
 			globals_var( 'array',  $array_var );
 		}
@@ -83,9 +83,9 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		// GLOBALS write
 		$msg = 'GLOBALS: write'; $start_ts = microtime( true );
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
-			globals_var( false,    false     );
-			globals_var( true,     true      );
-			globals_var( 111,      111       );
+			globals_var( false,	false	 );
+			globals_var( true,	 true	  );
+			globals_var( 111,	  111	   );
 			globals_var( 'string', 'string'  );
 			globals_var( 'array',  $array_var );
 		}
@@ -109,9 +109,9 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		$config = Config::Instance();
 		$msg = 'CLASS  : write'; $start_ts = microtime( true );
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
-			$config->variable( false,    false     );
-			$config->variable( true,     true      );
-			$config->variable( 111,      111       );
+			$config->variable( false,	false	 );
+			$config->variable( true,	 true	  );
+			$config->variable( 111,	  111	   );
 			$config->variable( 'string', 'string'  );
 			$config->variable( 'array',  $GLOBALS[ 'var' ] );
 		}
@@ -124,9 +124,9 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		$config = Config::Instance();
 		$msg = 'CLASS  : write'; $start_ts = microtime( true );
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
-			$config->variable( false,    false     );
-			$config->variable( true,     true      );
-			$config->variable( 111,      111       );
+			$config->variable( false,	false	 );
+			$config->variable( true,	 true	  );
+			$config->variable( 111,	  111	   );
 			$config->variable( 'string', 'string'  );
 			$config->variable( 'array',  $array_var );
 		}
@@ -138,9 +138,9 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		$config = Config::Instance();
 		$msg = 'CLASS  : write'; $start_ts = microtime( true );
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
-			$config->variable( false,    false     );
-			$config->variable( true,     true      );
-			$config->variable( 111,      111       );
+			$config->variable( false,	false	 );
+			$config->variable( true,	 true	  );
+			$config->variable( 111,	  111	   );
 			$config->variable( 'string', 'string'  );
 			$config->variable( 'array',  $array_var );
 		}
@@ -161,9 +161,9 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		// Class write
 		$msg = 'CLASS  : write'; $start_ts = microtime( true );
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
-			wrap_class_var( false,    false     );
-			wrap_class_var( true,     true      );
-			wrap_class_var( 111,      111       );
+			wrap_class_var( false,	false	 );
+			wrap_class_var( true,	 true	  );
+			wrap_class_var( 111,	  111	   );
 			wrap_class_var( 'string', 'string'  );
 			wrap_class_var( 'array',  $GLOBALS[ 'var' ] );
 		}

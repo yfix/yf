@@ -4,14 +4,14 @@ require_once "lib/session.php";
 require_once "lib/render.php";
 
 define('about_error_template',
-       '<div class="error">
+	   '<div class="error">
 An error occurred when processing your request:
 <br />
 %s
 </div>');
 
 define('about_body',
-       '<p>
+	   '<p>
   This is an <a href="http://www.openid.net/">OpenID</a> server
   endpoint. This server is built on the <a
   href="http://www.openidenabled.com/openid/libraries/php">JanRain PHP OpenID
@@ -32,10 +32,10 @@ define('about_body',
   <a href="http://www.openidenabled.com/resources/openid-test/checkup">OpenID
   Checkup tool</a>:
   <form method="post"
-        action="http://www.openidenabled.com/resources/openid-test/checkup/start">
-    <label for="checkup">OpenID URL:
-    </label><input id="checkup" type="text" name="openid_url" />
-    <input type="submit" value="Check" />
+		action="http://www.openidenabled.com/resources/openid-test/checkup/start">
+	<label for="checkup">OpenID URL:
+	</label><input id="checkup" type="text" name="openid_url" />
+	<input type="submit" value="Check" />
   </form>
 </p>
 ');
@@ -45,14 +45,14 @@ define('about_body',
  */
 function about_render($error=false, $internal=true)
 {
-    $headers = array();
-    $body = sprintf(about_body, buildURL());
-    if ($error) {
-        $headers[] = $internal ? http_internal_error : http_bad_request;
-        $body .= sprintf(about_error_template, htmlspecialchars($error));
-    }
-    $current_user = getLoggedInUser();
-    return page_render($body, $current_user, 'OpenID Server Endpoint');
+	$headers = array();
+	$body = sprintf(about_body, buildURL());
+	if ($error) {
+		$headers[] = $internal ? http_internal_error : http_bad_request;
+		$body .= sprintf(about_error_template, htmlspecialchars($error));
+	}
+	$current_user = getLoggedInUser();
+	return page_render($body, $current_user, 'OpenID Server Endpoint');
 }
 
 ?>

@@ -37,8 +37,8 @@ function ConvertColor($color="#000000"){
   	$color = str_replace("rgb(",'',$color); //remove ´rgb(´
   	$color = str_replace("RGB(",'',$color); //remove ´RGB(´ -- PHP < 5 does not have str_ireplace
   	$color = str_replace(")",'',$color); //remove ´)´
-    $cores = explode(",", $color);
-    $color = array();
+	$cores = explode(",", $color);
+	$color = array();
 	  $color['R']=$cores[0];
 	  $color['G']=$cores[1];
 	  $color['B']=$cores[2];
@@ -111,10 +111,10 @@ function AdjustHTML($html,$usepre=true)
 	$html = str_replace("\r",'',$html); //replace carriage return by nothing
  	if ($usepre) //used to keep \n on content inside <pre> and inside <textarea>
  	{
-    // Preserve '\n's in content between the tags <pre> and </pre>
+	// Preserve '\n's in content between the tags <pre> and </pre>
   	$regexp = '#<pre(.*?)>(.+?)</pre>#si';
   	$thereispre = preg_match_all($regexp,$html,$temp);
-    // Preserve '\n's in content between the tags <textarea> and </textarea>
+	// Preserve '\n's in content between the tags <textarea> and </textarea>
   	$regexp2 = '#<textarea(.*?)>(.+?)</textarea>#si';
   	$thereistextarea = preg_match_all($regexp2,$html,$temp2);
   	$html = str_replace("\n",' ',$html); //replace linefeed by spaces
@@ -124,24 +124,24 @@ function AdjustHTML($html,$usepre=true)
    	$iterator = 0;
   	while($thereispre) //Recover <pre attributes>content</pre>
   	{
-      $temp[2][$iterator] = str_replace("\n","<br>",$temp[2][$iterator]);
-    	$html = preg_replace($regexp,'<erp'.$temp[1][$iterator].'>'.$temp[2][$iterator].'</erp>',$html,1);
-    	$thereispre--;
-    	$iterator++;
-    }
-    $iterator = 0;
-    while($thereistextarea) //Recover <textarea attributes>content</textarea>
+	  $temp[2][$iterator] = str_replace("\n","<br>",$temp[2][$iterator]);
+		$html = preg_replace($regexp,'<erp'.$temp[1][$iterator].'>'.$temp[2][$iterator].'</erp>',$html,1);
+		$thereispre--;
+		$iterator++;
+	}
+	$iterator = 0;
+	while($thereistextarea) //Recover <textarea attributes>content</textarea>
 	  {
-      $temp2[2][$iterator] = str_replace(" ","&nbsp;",$temp2[2][$iterator]);
-    	$html = preg_replace($regexp2,'<aeratxet'.$temp2[1][$iterator].'>'.trim($temp2[2][$iterator]).'</aeratxet>',$html,1);
-    	$thereistextarea--;
-    	$iterator++;
-    }
-    //Restore original tag names
-    $html = str_replace("<erp","<pre",$html);
-    $html = str_replace("</erp>","</pre>",$html);
-    $html = str_replace("<aeratxet","<textarea",$html);
-    $html = str_replace("</aeratxet>","</textarea>",$html);
+	  $temp2[2][$iterator] = str_replace(" ","&nbsp;",$temp2[2][$iterator]);
+		$html = preg_replace($regexp2,'<aeratxet'.$temp2[1][$iterator].'>'.trim($temp2[2][$iterator]).'</aeratxet>',$html,1);
+		$thereistextarea--;
+		$iterator++;
+	}
+	//Restore original tag names
+	$html = str_replace("<erp","<pre",$html);
+	$html = str_replace("</erp>","</pre>",$html);
+	$html = str_replace("<aeratxet","<textarea",$html);
+	$html = str_replace("</aeratxet>","</textarea>",$html);
   // (the code above might slowdown overall performance?)
   } //end of if($usepre)
   else
@@ -164,20 +164,20 @@ function dec2alpha($valor,$toupper="true"){
   if (($valor < 1)  || ($valor > 18278)) return "?"; //supports 'only' up to 18278
   $c1 = $c2 = $c3 = '';
   if ($valor > 702) // 3 letters (up to 18278)
-    {
-      $c1 = 65 + floor(($valor-703)/676);
-      $c2 = 65 + floor((($valor-703)%676)/26);
-      $c3 = 65 + floor((($valor-703)%676)%26);
-    }
+	{
+	  $c1 = 65 + floor(($valor-703)/676);
+	  $c2 = 65 + floor((($valor-703)%676)/26);
+	  $c3 = 65 + floor((($valor-703)%676)%26);
+	}
   elseif ($valor > 26) // 2 letters (up to 702)
   {
-      $c1 = (64 + (int)(($valor-1) / 26));
-      $c2 = (64 + (int)($valor % 26));
-      if ($c2 == 64) $c2 += 26;
+	  $c1 = (64 + (int)(($valor-1) / 26));
+	  $c2 = (64 + (int)($valor % 26));
+	  if ($c2 == 64) $c2 += 26;
   }
   else // 1 letter (up to 26)
   {
-      $c1 = (64 + $valor);
+	  $c1 = (64 + $valor);
   }
   $alpha = chr($c1);
   if ($c2 != '') $alpha .= chr($c2);
@@ -192,46 +192,46 @@ function dec2roman($valor,$toupper=true){
   $aux = (int)($valor/1000);
   if ($aux!==0)
   {
-    $valor %= 1000;
-    while($aux!==0)
-    {
-    	$r1 .= "M";
-    	$aux--;
-    }
+	$valor %= 1000;
+	while($aux!==0)
+	{
+		$r1 .= "M";
+		$aux--;
+	}
   }
   $aux = (int)($valor/100);
   if ($aux!==0)
   {
-    $valor %= 100;
-    switch($aux){
-    	case 3: $r2="C";
-    	case 2: $r2.="C";
-    	case 1: $r2.="C"; break;
+	$valor %= 100;
+	switch($aux){
+		case 3: $r2="C";
+		case 2: $r2.="C";
+		case 1: $r2.="C"; break;
   	  case 9: $r2="CM"; break;
   	  case 8: $r2="C";
   	  case 7: $r2.="C";
-    	case 6: $r2.="C";
-      case 5: $r2="D".$r2; break;
-      case 4: $r2="CD"; break;
-      default: break;
+		case 6: $r2.="C";
+	  case 5: $r2="D".$r2; break;
+	  case 4: $r2="CD"; break;
+	  default: break;
 	  }
   }
   $aux = (int)($valor/10);
   if ($aux!==0)
   {
-    $valor %= 10;
-    switch($aux){
-    	case 3: $r3="X";
-    	case 2: $r3.="X";
-    	case 1: $r3.="X"; break;
-    	case 9: $r3="XC"; break;
-    	case 8: $r3="X";
-    	case 7: $r3.="X";
+	$valor %= 10;
+	switch($aux){
+		case 3: $r3="X";
+		case 2: $r3.="X";
+		case 1: $r3.="X"; break;
+		case 9: $r3="XC"; break;
+		case 8: $r3="X";
+		case 7: $r3.="X";
   	  case 6: $r3.="X";
-      case 5: $r3="L".$r3; break;
-      case 4: $r3="XL"; break;
-      default: break;
-    }
+	  case 5: $r3="L".$r3; break;
+	  case 4: $r3="XL"; break;
+	  default: break;
+	}
   }
   switch($valor){
   	case 3: $r4="I";
@@ -239,11 +239,11 @@ function dec2roman($valor,$toupper=true){
   	case 1: $r4.="I"; break;
   	case 9: $r4="IX"; break;
   	case 8: $r4="I";
-    case 7: $r4.="I";
-    case 6: $r4.="I";
-    case 5: $r4="V".$r4; break;
-    case 4: $r4="IV"; break;
-    default: break;
+	case 7: $r4.="I";
+	case 6: $r4.="I";
+	case 5: $r4="V".$r4; break;
+	case 4: $r4="IV"; break;
+	default: break;
   }
   $roman = $r1.$r2.$r3.$r4;
   if (!$toupper) $roman = strtolower($roman);

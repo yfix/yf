@@ -14,36 +14,36 @@ WEBSITE: http://noteslog.com/chili/
 
 ChiliBook = { //implied global
 
-	  version:            "1.9" // 2007-09-24
+	  version:			"1.9" // 2007-09-24
 
-	, automatic:          true
+	, automatic:		  true
 	, automaticSelector:  "code"
 
-	, codeLanguage:       function( el ) {
+	, codeLanguage:	   function( el ) {
 		var recipeName = $( el ).attr( "class" );
 		return recipeName ? recipeName : '';
 	}
 
-	, metadataSelector:   "object.chili"             // use an empty string for not executing
+	, metadataSelector:   "object.chili"			 // use an empty string for not executing
 
-	, recipeLoading:      true
-	, recipeFolder:       "" // used like: recipeFolder + recipeName + '.js'
+	, recipeLoading:	  true
+	, recipeFolder:	   "" // used like: recipeFolder + recipeName + '.js'
 	, stylesheetLoading:  true
 	, stylesheetFolder:   "" // used like: stylesheetFolder + recipeName + '.css'
 
 	, defaultReplacement: '<span class="$0">$$</span>'
 
-	, replaceSpace:       "&#160;"                   // use an empty string for not replacing
-	, replaceTab:         "&#160;&#160;&#160;&#160;" // use an empty string for not replacing
-	, replaceNewLine:     "&#160;<br/>"              // use an empty string for not replacing
+	, replaceSpace:	   "&#160;"				   // use an empty string for not replacing
+	, replaceTab:		 "&#160;&#160;&#160;&#160;" // use an empty string for not replacing
+	, replaceNewLine:	 "&#160;<br/>"			  // use an empty string for not replacing
 
-	, recipes:            {} //repository
-	, queue:              {} //register
+	, recipes:			{} //repository
+	, queue:			  {} //register
 
 	//fix for IE: copy of PREformatted text strips off all html, losing newlines
-	, preFixCopy:         document.selection && document.selection.createRange
-	, preContent:         ""
-	, preElement:         null
+	, preFixCopy:		 document.selection && document.selection.createRange
+	, preContent:		 ""
+	, preElement:		 null
 };
 
 
@@ -51,7 +51,7 @@ $.metaobjects = function( options ) {
 
 	options = $.extend( { 
 		  context:  document 
-		, clean:    true 
+		, clean:	true 
 		, selector: 'object.metaobject' 
 	}, options ); 
 
@@ -95,13 +95,13 @@ $.fn.chili = function( options ) {
 			steps.push( {
 				stepName: stepName
 				, exp: "(" + exp + ")"
-				, length: 1                         // add 1 to account for the newly added parentheses
-					+ (exp                          // count number of submatches in here
-						.replace( /\\./g, "%" )     // disable any escaped character
+				, length: 1						 // add 1 to account for the newly added parentheses
+					+ (exp						  // count number of submatches in here
+						.replace( /\\./g, "%" )	 // disable any escaped character
 						.replace( /\[.*?\]/g, "%" ) // disable any character class
-						.match( /\((?!\?)/g )       // match any open parenthesis, not followed by a ?
-					|| []                           // make sure it is an empty array if there are no matches
-					).length                        // get the number of matches
+						.match( /\((?!\?)/g )	   // match any open parenthesis, not followed by a ?
+					|| []						   // make sure it is an empty array if there are no matches
+					).length						// get the number of matches
 				, replacement: (step.replacement) ? step.replacement : book.defaultReplacement 
 			} );
 		} // function prepareStep( stepName, step )
@@ -157,16 +157,16 @@ $.fn.chili = function( options ) {
 						var replacement = step.replacement
 							.replace( pattern, function( m, escaped, K ) {
 								var bit = '';
-								if( escaped ) {       /* \$ */ 
+								if( escaped ) {	   /* \$ */ 
 									return "$";
 								}
-								else if( !K ) {       /* $$ */ 
+								else if( !K ) {	   /* $$ */ 
 									return filter( aux[ j ] );
 								}
 								else if( K == "0" ) { /* $0 */ 
 									return step.stepName;
 								}
-								else {                /* $K */
+								else {				/* $K */
 									return filter( aux[ j + parseInt( K, 10 ) ] );
 								}
 							} );
@@ -248,8 +248,8 @@ $.fn.chili = function( options ) {
 
 	function getPath( recipeName, options ) {
 		var settingsDef = {
-			  recipeFolder:     book.recipeFolder
-			, recipeFile:       recipeName + ".js"
+			  recipeFolder:	 book.recipeFolder
+			, recipeFile:	   recipeName + ".js"
 			, stylesheetFolder: book.stylesheetFolder
 			, stylesheetFile:   recipeName + ".css"
 		};
@@ -261,7 +261,7 @@ $.fn.chili = function( options ) {
 			settings = settingsDef;
 		}
 		return {
-			  recipe    : settings.recipeFolder     + settings.recipeFile
+			  recipe	: settings.recipeFolder	 + settings.recipeFile
 			, stylesheet: settings.stylesheetFolder + settings.stylesheetFile
 		};
 	} //function getPath( recipeName, options )

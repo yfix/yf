@@ -25,76 +25,76 @@
  */
 class Net_DNS_RR_HINFO extends Net_DNS_RR
 {
-    /* class variable definitions {{{ */
-    var $name;
-    var $type;
-    var $class;
-    var $ttl;
-    var $rdlength;
-    var $rdata;
-    var $cpu;
-    var $os;
+	/* class variable definitions {{{ */
+	var $name;
+	var $type;
+	var $class;
+	var $ttl;
+	var $rdlength;
+	var $rdata;
+	var $cpu;
+	var $os;
 
-    /* }}} */
-    /* class constructor - RR(&$rro, $data, $offset = '') {{{ */
-    function Net_DNS_RR_HINFO(&$rro, $data, $offset = '')
-    {
-        $this->name = $rro->name;
-        $this->type = $rro->type;
-        $this->class = $rro->class;
-        $this->ttl = $rro->ttl;
-        $this->rdlength = $rro->rdlength;
-        $this->rdata = $rro->rdata;
+	/* }}} */
+	/* class constructor - RR(&$rro, $data, $offset = '') {{{ */
+	function Net_DNS_RR_HINFO(&$rro, $data, $offset = '')
+	{
+		$this->name = $rro->name;
+		$this->type = $rro->type;
+		$this->class = $rro->class;
+		$this->ttl = $rro->ttl;
+		$this->rdlength = $rro->rdlength;
+		$this->rdata = $rro->rdata;
 
-        if ($offset) {
-            if ($this->rdlength > 0) {
-                list($cpu, $offset) = Net_DNS_Packet::label_extract($data, $offset);
-                list($os,  $offset) = Net_DNS_Packet::label_extract($data, $offset);
+		if ($offset) {
+			if ($this->rdlength > 0) {
+				list($cpu, $offset) = Net_DNS_Packet::label_extract($data, $offset);
+				list($os,  $offset) = Net_DNS_Packet::label_extract($data, $offset);
 
-                $this->cpu = $cpu;
-                $this->os  = $os;
-            }
-        } elseif (is_array($data)) {
-            $this->cpu = $data['cpu'];
-            $this->os = $data['os'];
-        } else {
-            $data = str_replace('\\\\', chr(1) . chr(1), $data); /* disguise escaped backslash */
-            $data = str_replace('\\"', chr(2) . chr(2), $data); /* disguise \" */
+				$this->cpu = $cpu;
+				$this->os  = $os;
+			}
+		} elseif (is_array($data)) {
+			$this->cpu = $data['cpu'];
+			$this->os = $data['os'];
+		} else {
+			$data = str_replace('\\\\', chr(1) . chr(1), $data); /* disguise escaped backslash */
+			$data = str_replace('\\"', chr(2) . chr(2), $data); /* disguise \" */
 
-            preg_match('/("[^"]*"|[^ \t]*)[ \t]+("[^"]*"|[^ \t]*)[ \t]*$/', $data, $regs);
-            foreach($regs as $idx => $value) {
-                $value = str_replace(chr(2) . chr(2), '\\"', $value);
-                $value = str_replace(chr(1) . chr(1), '\\\\', $value);
-                $regs[$idx] = stripslashes($value);
-            }
+			preg_match('/("[^"]*"|[^ \t]*)[ \t]+("[^"]*"|[^ \t]*)[ \t]*$/', $data, $regs);
+			foreach($regs as $idx => $value) {
+				$value = str_replace(chr(2) . chr(2), '\\"', $value);
+				$value = str_replace(chr(1) . chr(1), '\\\\', $value);
+				$regs[$idx] = stripslashes($value);
+			}
 
-            $this->cpu = $regs[1];
-            $this->os = $regs[2];
-        }
-    }
+			$this->cpu = $regs[1];
+			$this->os = $regs[2];
+		}
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_HINFO::rdatastr() {{{ */
-    function rdatastr()
-    {
-        if ($this->text) {
-            return '"' . addslashes($this->cpu) . '" "' . addslashes($this->os) . '"';
-        } else return '; no data';
-    }
+	/* }}} */
+	/* Net_DNS_RR_HINFO::rdatastr() {{{ */
+	function rdatastr()
+	{
+		if ($this->text) {
+			return '"' . addslashes($this->cpu) . '" "' . addslashes($this->os) . '"';
+		} else return '; no data';
+	}
 
-    /* }}} */
-    /* Net_DNS_RR_HINFO::rr_rdata($packet, $offset) {{{ */
-    function rr_rdata($packet, $offset)
-    {
-        if ($this->text) {
-            $rdata  = pack('C', strlen($this->cpu)) . $this->cpu;
-            $rdata .= pack('C', strlen($this->os))  . $this->os;
-            return $rdata;
-        }
-        return null;
-    }
+	/* }}} */
+	/* Net_DNS_RR_HINFO::rr_rdata($packet, $offset) {{{ */
+	function rr_rdata($packet, $offset)
+	{
+		if ($this->text) {
+			$rdata  = pack('C', strlen($this->cpu)) . $this->cpu;
+			$rdata .= pack('C', strlen($this->os))  . $this->os;
+			return $rdata;
+		}
+		return null;
+	}
 
-    /* }}} */
+	/* }}} */
 }
 /* }}} */
 /* VIM settings {{{

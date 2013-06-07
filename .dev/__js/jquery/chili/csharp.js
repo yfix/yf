@@ -2,7 +2,7 @@
 ===============================================================================
 Chili is the jQuery code highlighter plugin
 ...............................................................................
-                                               Copyright 2007 / Andrea Ercolino
+											   Copyright 2007 / Andrea Ercolino
 -------------------------------------------------------------------------------
 LICENSE: http://www.opensource.org/licenses/mit-license.php
 WEBSITE: http://noteslog.com/chili/
@@ -12,7 +12,7 @@ WEBSITE: http://noteslog.com/chili/
 {
 	steps: {
 		  mlcom  : { exp: /\/\*[^*]*\*+(?:[^\/][^*]*\*+)*\// }
-		, com    : { exp: /\/\/.*/ }
+		, com	: { exp: /\/\/.*/ }
 		, string : { exp: /(?:\'[^\'\\\n]*(?:\\.[^\'\\\n]*)*\')|(?:\"[^\"\\\n]*(?:\\.[^\"\\\n]*)*\")/ }
 		, preproc: { exp: /^\s*#.*/ }
 		, number : { exp: /\b[+-]?(?:\d*\.?\d+|\d+\.?\d*)(?:[eE][+-]?\d+)?\b/ }

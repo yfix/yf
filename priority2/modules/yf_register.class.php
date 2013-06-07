@@ -89,7 +89,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Default function
+	// Default function
 	function show () {
 		if ($this->USER_ID && $this->DENY_FOR_LOGGED_IN) {
 			return _e("You are already registered on our site!");
@@ -102,13 +102,13 @@ class yf_register {
 		}
 		// Show required function output
 		$method_name = "_step_".$_POST['step'];
-        if (method_exists($this, $method_name)) {
+		if (method_exists($this, $method_name)) {
 			return $this->$method_name();
 		}
 	}
 
 	//-----------------------------------------------------------------------------
-    // Show captcha image
+	// Show captcha image
 	function show_image() {
 		is_object($this->CAPTCHA) ? $this->CAPTCHA->show_image() : "";
 	}
@@ -238,7 +238,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Last step (inserting data into database, sending email with verification code)
+	// Last step (inserting data into database, sending email with verification code)
 	function _step_4 () {
 // TODO
 		$birth_date = $_POST["birth_date"];
@@ -320,7 +320,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Send email with verification code
+	// Send email with verification code
 	function _send_email_with_code ($code = "") {
 		$replace = array(
 			"nick"			=> $_POST["nick"],
@@ -343,7 +343,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Send success email
+	// Send success email
 	function _send_success_email () {
 		$replace = array(
 			"code"			=> $code,
@@ -363,7 +363,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Validate form for steps 3 and 4
+	// Validate form for steps 3 and 4
 	function _validate_form () {
 		// Cleanup all $_POST fields
 		foreach ((array)$_POST as $k => $v) {
@@ -434,7 +434,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Confirm registration for common users
+	// Confirm registration for common users
 	function confirm () {
 		// Send registration confirmation email
 		if (!$this->CONFIRM_REGISTER) {
@@ -486,7 +486,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Manually enter code
+	// Manually enter code
 	function enter_code () {
 		// Do activate
 		if (isset($_POST["confirm_code"])) {
@@ -500,7 +500,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Re-send confirmation code
+	// Re-send confirmation code
 	function resend_code () {
 		// Process posted form
 		if (!empty($_POST["email"])) {
@@ -553,7 +553,7 @@ class yf_register {
 	}
 
 	//-----------------------------------------------------------------------------
-    // Confirm registration for users from AOL
+	// Confirm registration for users from AOL
 	function confirm_aol () {
 // TODO: Need to check if need this
 		if (strlen($_GET["code"])) {

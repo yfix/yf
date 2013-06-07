@@ -819,7 +819,7 @@ class yf_category_editor {
 			"show_items"			=> "",
 			"edit_item"				=> "",
 			"edit"					=> "Edit category block",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

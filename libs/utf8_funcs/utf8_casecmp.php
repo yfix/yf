@@ -9,7 +9,7 @@
  */
 function utf8_casecmp($s1, $s2)
 {
-    if (! function_exists('utf8_convert_case')) include_once 'utf8_convert_case.php';
-    return strcmp(utf8_lowercase($s1), utf8_lowercase($s2));
+	if (! function_exists('utf8_convert_case')) include_once 'utf8_convert_case.php';
+	return strcmp(utf8_lowercase($s1), utf8_lowercase($s2));
 }
 

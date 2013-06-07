@@ -9,8 +9,8 @@ require_once "Auth/OpenID/Server.php";
  */
 function init()
 {
-    session_name('openid_server');
-    session_start();
+	session_name('openid_server');
+	session_start();
 }
 
 /**
@@ -18,9 +18,9 @@ function init()
  */
 function getStyle()
 {
-    $parent = rtrim(dirname(getServerURL()), '/');
-    $url = htmlspecialchars($parent . '/openid-server.css', ENT_QUOTES);
-    return sprintf('<link rel="stylesheet" type="text/css" href="%s" />', $url);
+	$parent = rtrim(dirname(getServerURL()), '/');
+	$url = htmlspecialchars($parent . '/openid-server.css', ENT_QUOTES);
+	return sprintf('<link rel="stylesheet" type="text/css" href="%s" />', $url);
 }
 
 /**
@@ -28,17 +28,17 @@ function getStyle()
  */
 function getServerURL()
 {
-    $path = $_SERVER['SCRIPT_NAME'];
-    $host = $_SERVER['HTTP_HOST'];
-    $port = $_SERVER['SERVER_PORT'];
-    $s = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 's' : '';
-    if (($s && $port == "443") || (!$s && $port == "80")) {
-        $p = '';
-    } else {
-        $p = ':' . $port;
-    }
+	$path = $_SERVER['SCRIPT_NAME'];
+	$host = $_SERVER['HTTP_HOST'];
+	$port = $_SERVER['SERVER_PORT'];
+	$s = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 's' : '';
+	if (($s && $port == "443") || (!$s && $port == "80")) {
+		$p = '';
+	} else {
+		$p = ':' . $port;
+	}
 
-    return "http$s://$host$p$path";
+	return "http$s://$host$p$path";
 }
 
 /**
@@ -46,11 +46,11 @@ function getServerURL()
  */
 function buildURL($action=null, $escaped=true)
 {
-    $url = getServerURL();
-    if ($action) {
-        $url .= '/' . $action;
-    }
-    return $escaped ? htmlspecialchars($url, ENT_QUOTES) : $url;
+	$url = getServerURL();
+	if ($action) {
+		$url .= '/' . $action;
+	}
+	return $escaped ? htmlspecialchars($url, ENT_QUOTES) : $url;
 }
 
 /**
@@ -58,10 +58,10 @@ function buildURL($action=null, $escaped=true)
  */
 function getAction()
 {
-    $path_info = @$_SERVER['PATH_INFO'];
-    $action = ($path_info) ? substr($path_info, 1) : '';
-    $function_name = 'action_' . $action;
-    return $function_name;
+	$path_info = @$_SERVER['PATH_INFO'];
+	$action = ($path_info) ? substr($path_info, 1) : '';
+	$function_name = 'action_' . $action;
+	return $function_name;
 }
 
 /**
@@ -69,10 +69,10 @@ function getAction()
  */
 function writeResponse($resp)
 {
-    list ($headers, $body) = $resp;
-    array_walk($headers, 'header');
-    header(header_connection_close);
-    print $body;
+	list ($headers, $body) = $resp;
+	array_walk($headers, 'header');
+	header(header_connection_close);
+	print $body;
 }
 
 /**
@@ -80,12 +80,12 @@ function writeResponse($resp)
  */
 function getServer()
 {
-    static $server = null;
-    if (!isset($server)) {
-        $server =& new Auth_OpenID_Server(getOpenIDStore(),
-                                          buildURL());
-    }
-    return $server;
+	static $server = null;
+	if (!isset($server)) {
+		$server =& new Auth_OpenID_Server(getOpenIDStore(),
+										  buildURL());
+	}
+	return $server;
 }
 
 /**
@@ -93,7 +93,7 @@ function getServer()
  */
 function hashPassword($password)
 {
-    return bin2hex(Auth_OpenID_SHA1($password));
+	return bin2hex(Auth_OpenID_SHA1($password));
 }
 
 /**
@@ -104,9 +104,9 @@ function hashPassword($password)
  */
 function getLoggedInUser()
 {
-    return isset($_SESSION['openid_url'])
-        ? $_SESSION['openid_url']
-        : false;
+	return isset($_SESSION['openid_url'])
+		? $_SESSION['openid_url']
+		: false;
 }
 
 /**
@@ -117,62 +117,62 @@ function getLoggedInUser()
  */
 function setLoggedInUser($identity_url=null)
 {
-    if (!isset($identity_url)) {
-        unset($_SESSION['openid_url']);
-    } else {
-        $_SESSION['openid_url'] = $identity_url;
-    }
+	if (!isset($identity_url)) {
+		unset($_SESSION['openid_url']);
+	} else {
+		$_SESSION['openid_url'] = $identity_url;
+	}
 }
 
 function getRequestInfo()
 {
-    return isset($_SESSION['request'])
-        ? unserialize($_SESSION['request'])
-        : false;
+	return isset($_SESSION['request'])
+		? unserialize($_SESSION['request'])
+		: false;
 }
 
 function setRequestInfo($info=null)
 {
-    if (!isset($info)) {
-        unset($_SESSION['request']);
-    } else {
-        $_SESSION['request'] = serialize($info);
-    }
+	if (!isset($info)) {
+		unset($_SESSION['request']);
+	} else {
+		$_SESSION['request'] = serialize($info);
+	}
 }
 
 
 function getSreg($identity)
 {
-    // from config.php
-    global $openid_sreg;
+	// from config.php
+	global $openid_sreg;
 
-    if (!is_array($openid_sreg)) {
-        return null;
-    }
+	if (!is_array($openid_sreg)) {
+		return null;
+	}
 
-    return $openid_sreg[$identity];
+	return $openid_sreg[$identity];
 
 }
 
 function idURL($identity)
 {
-    return buildURL('idpage') . "?user=" . $identity;
+	return buildURL('idpage') . "?user=" . $identity;
 }
 
 function idFromURL($url)
 {
-    if (strpos($url, 'idpage') === false) {
-        return null;
-    }
+	if (strpos($url, 'idpage') === false) {
+		return null;
+	}
 
-    $parsed = parse_url($url);
+	$parsed = parse_url($url);
 
-    $q = $parsed['query'];
+	$q = $parsed['query'];
 
-    $parts = array();
-    parse_str($q, $parts);
+	$parts = array();
+	parse_str($q, $parts);
 
-    return @$parts['user'];
+	return @$parts['user'];
 }
 
 ?>

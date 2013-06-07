@@ -24,13 +24,13 @@ class yf_openid{
 													 // Required
 													 array('nickname'),
 													 // Optional
-													 array('fullname', 'email','gender'));           
+													 array('fullname', 'email','gender'));		   
 													 
 					if ($sreg_request) {
 						$auth_request->addExtension($sreg_request);
 					}
-					$auth_request->shouldSendRedirect();             
-					$redirect_url = $auth_request->redirectURL($trust_root,$return_to);           
+					$auth_request->shouldSendRedirect();			 
+					$redirect_url = $auth_request->redirectURL($trust_root,$return_to);		   
 					
 					if( Auth_OpenID::isFailure($redirect_url) )
 						$openid_error = "Не могу перенаправить на сервер: ". $redirect_url->message;
@@ -55,19 +55,19 @@ class yf_openid{
 
 		if( empty($openid_error) )
 		{
-		    $response = $consumer->complete($return_to);
-		    // Проверяем ответ
-		    if ($response->status == Auth_OpenID_CANCEL) {
-		        // Это означает, что аутентификация была отменена
-		        $openid_error = 'Регистрация отменена.';
-		    } else if ($response->status == Auth_OpenID_FAILURE) {
-		        // Неудача. Отображаем сообщение
-		        $openid_error = "Регистрация не удалась: " . $response->message;
-		    } else if ($response->status == Auth_OpenID_SUCCESS) {
-		        // Все в порядке. Получаем identify url и данные пользователя
-		        
-		        $openid = $response->getDisplayIdentifier();
-		         
+			$response = $consumer->complete($return_to);
+			// Проверяем ответ
+			if ($response->status == Auth_OpenID_CANCEL) {
+				// Это означает, что аутентификация была отменена
+				$openid_error = 'Регистрация отменена.';
+			} else if ($response->status == Auth_OpenID_FAILURE) {
+				// Неудача. Отображаем сообщение
+				$openid_error = "Регистрация не удалась: " . $response->message;
+			} else if ($response->status == Auth_OpenID_SUCCESS) {
+				// Все в порядке. Получаем identify url и данные пользователя
+				
+				$openid = $response->getDisplayIdentifier();
+				 
 				//Получаем данные о пользователе
 				$sreg_resp = Auth_OpenID_SRegResponse::fromSuccessResponse($response);
 
@@ -126,7 +126,7 @@ class yf_openid{
 				}
 
 */
-		    }
+			}
 		}
 
 		echo $openid_error;

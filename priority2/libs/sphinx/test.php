@@ -131,7 +131,7 @@ if ( $res===false )
 	print "Query stats:\n";
 	if ( is_array($res["words"]) )
 		foreach ( $res["words"] as $word => $info )
-			print "    '$word' found $info[hits] times in $info[docs] documents\n";
+			print "	'$word' found $info[hits] times in $info[docs] documents\n";
 	print "\n";
 
 	if ( is_array($res["matches"]) )

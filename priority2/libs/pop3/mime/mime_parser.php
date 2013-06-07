@@ -6,23 +6,23 @@
  *
  */
 
-define('MIME_PARSER_START',        1);
-define('MIME_PARSER_HEADER',       2);
+define('MIME_PARSER_START',		1);
+define('MIME_PARSER_HEADER',	   2);
 define('MIME_PARSER_HEADER_VALUE', 3);
-define('MIME_PARSER_BODY',         4);
+define('MIME_PARSER_BODY',		 4);
 define('MIME_PARSER_BODY_START',   5);
-define('MIME_PARSER_BODY_DATA',    6);
-define('MIME_PARSER_BODY_DONE',    7);
-define('MIME_PARSER_END',          8);
+define('MIME_PARSER_BODY_DATA',	6);
+define('MIME_PARSER_BODY_DONE',	7);
+define('MIME_PARSER_END',		  8);
 
-define('MIME_MESSAGE_START',            1);
+define('MIME_MESSAGE_START',			1);
 define('MIME_MESSAGE_GET_HEADER_NAME',  2);
 define('MIME_MESSAGE_GET_HEADER_VALUE', 3);
-define('MIME_MESSAGE_GET_BODY',         4);
-define('MIME_MESSAGE_GET_BODY_PART',    5);
+define('MIME_MESSAGE_GET_BODY',		 4);
+define('MIME_MESSAGE_GET_BODY_PART',	5);
 
-define('MIME_ADDRESS_START',            1);
-define('MIME_ADDRESS_FIRST',            2);
+define('MIME_ADDRESS_START',			1);
+define('MIME_ADDRESS_FIRST',			2);
 
 /*
 {metadocument}<?xml version="1.0" encoding="ISO-8859-1" ?>

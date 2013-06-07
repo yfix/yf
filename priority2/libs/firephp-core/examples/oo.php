@@ -38,7 +38,7 @@ set_include_path(dirname(dirname(__FILE__)).'/lib'.PATH_SEPARATOR.get_include_pa
 require('FirePHPCore/FirePHP.class.php');
 
 /* NOTE: You must have Output Buffering enabled via
-         ob_start() or output_buffering ini directive. */
+		 ob_start() or output_buffering ini directive. */
 
 
 $firephp = FirePHP::getInstance(true);
@@ -54,7 +54,7 @@ $firephp->fb('Error message',FirePHP::ERROR);
 $firephp->fb('Message with label','Label',FirePHP::LOG);
 
 $firephp->fb(array('key1'=>'val1',
-         'key2'=>array(array('v1','v2'),'v3')),
+		 'key2'=>array(array('v1','v2'),'v3')),
    'TestArray',FirePHP::LOG);
 
 function test($Arg1) {

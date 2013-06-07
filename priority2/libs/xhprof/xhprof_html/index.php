@@ -5,7 +5,7 @@
 //  you may not use this file except in compliance with the License.
 //  You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,15 +20,15 @@
 // XHProf has two components:
 //
 //  * This module is the UI/reporting component, used
-//    for viewing results of XHProf runs from a browser.
+//	for viewing results of XHProf runs from a browser.
 //
 //  * Data collection component: This is implemented
-//    as a PHP extension (XHProf).
+//	as a PHP extension (XHProf).
 //
 //
 //
 // @author(s)  Kannan Muthukkaruppan
-//             Changhao Jiang
+//			 Changhao Jiang
 //
 
 // by default assume that xhprof_html & xhprof_lib directories
@@ -38,15 +38,15 @@ $GLOBALS['XHPROF_LIB_ROOT'] = dirname(__FILE__) . '/../xhprof_lib';
 include_once $GLOBALS['XHPROF_LIB_ROOT'].'/display/xhprof.php';
 
 // param name, its type, and default value
-$params = array('run'        => array(XHPROF_STRING_PARAM, ''),
-                'wts'        => array(XHPROF_STRING_PARAM, ''),
-                'symbol'     => array(XHPROF_STRING_PARAM, ''),
-                'sort'       => array(XHPROF_STRING_PARAM, 'wt'), // wall time
-                'run1'       => array(XHPROF_STRING_PARAM, ''),
-                'run2'       => array(XHPROF_STRING_PARAM, ''),
-                'source'     => array(XHPROF_STRING_PARAM, 'xhprof'),
-                'all'        => array(XHPROF_UINT_PARAM, 0),
-                );
+$params = array('run'		=> array(XHPROF_STRING_PARAM, ''),
+				'wts'		=> array(XHPROF_STRING_PARAM, ''),
+				'symbol'	 => array(XHPROF_STRING_PARAM, ''),
+				'sort'	   => array(XHPROF_STRING_PARAM, 'wt'), // wall time
+				'run1'	   => array(XHPROF_STRING_PARAM, ''),
+				'run2'	   => array(XHPROF_STRING_PARAM, ''),
+				'source'	 => array(XHPROF_STRING_PARAM, 'xhprof'),
+				'all'		=> array(XHPROF_UINT_PARAM, 0),
+				);
 				
 // pull values of these params, and create named globals for each param
 xhprof_param_init($params);
@@ -61,7 +61,7 @@ foreach ($params as $k => $v) {
   // unset key from params that are using default values. So URLs aren't
   // ridiculously long.
   if ($params[$k] == $v[1]) {
-    unset($params[$k]);
+	unset($params[$k]);
   }
 }
 

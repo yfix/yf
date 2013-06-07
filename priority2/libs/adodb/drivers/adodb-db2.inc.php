@@ -52,10 +52,10 @@ class ADODB_db2 extends ADOConnection {
 	var $uCaseTables = true; // for meta* functions, uppercase table names
 	var $hasInsertID = true;
 	
-    function _insertid()
-    {
-        return ADOConnection::GetOne('VALUES IDENTITY_VAL_LOCAL()');
-    }
+	function _insertid()
+	{
+		return ADOConnection::GetOne('VALUES IDENTITY_VAL_LOCAL()');
+	}
 	
 	function ADODB_db2() 
 	{ 	
@@ -451,9 +451,9 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 #define SQL_TYPE_TIME	  92
 #define SQL_TYPE_TIMESTAMP 93
 
-#define SQL_UNICODE                             (-95)
-#define SQL_UNICODE_VARCHAR                     (-96)
-#define SQL_UNICODE_LONGVARCHAR                 (-97)
+#define SQL_UNICODE							 (-95)
+#define SQL_UNICODE_VARCHAR					 (-96)
+#define SQL_UNICODE_LONGVARCHAR				 (-97)
 */
 	function DB2Types($t)
 	{
@@ -507,8 +507,8 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 	
-        	$colname = "%";
-	        $qid = db2_columns($this->_connectionID, "", $schema, $table, $colname);
+			$colname = "%";
+			$qid = db2_columns($this->_connectionID, "", $schema, $table, $colname);
 		if (empty($qid)) return $false;
 		
 		$rs =& new ADORecordSet_db2($qid);
@@ -560,7 +560,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 		$rs->Close(); 
 		if (empty($retarr)) $retarr = false;
 
-	      $qid = db2_primary_keys($this->_connectionID, "", $schema, $table);
+		  $qid = db2_primary_keys($this->_connectionID, "", $schema, $table);
 		if (empty($qid)) return $false;
 		
 		$rs =& new ADORecordSet_db2($qid);

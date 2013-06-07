@@ -231,7 +231,7 @@ jQuery.fx.cssProps = {
 	right:1,
 	textIndent:1,
 	top:1,
-    width:1,
+	width:1,
 	zIndex:1
 };
 /**

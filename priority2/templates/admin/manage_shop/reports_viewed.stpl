@@ -42,22 +42,22 @@ $(function(){
 	<thead>
 		<th nowrap align="left">
 			<a href="#" id="name-asc" class="sortby_btn" title="ASC sorting">&#x25bc;</a>
-			{t(Product Name)}                                                       
+			{t(Product Name)}													   
 			<a href="#" id="name-desc" class="sortby_btn" title="DESC sorting">&#x25b2;</a>
 		</th>
 		<th align="left">
 			<a href="#" id="model-asc" class="sortby_btn" title="ASC sorting">&#x25bc;</a>
-				{t(Model)}                                                       
+				{t(Model)}													   
 			<a href="#" id="model-desc" class="sortby_btn" title="DESC sorting">&#x25b2;</a>
 		</th>
 		<th align="right">
 			<a href="#" id="viewed-asc" class="sortby_btn" title="ASC sorting">&#x25bc;</a>
-				{t(Viewed)}                                                       
+				{t(Viewed)}													   
 			<a href="#" id="viewed-desc" class="sortby_btn sortby_select" title="DESC sorting">&#x25b2;</a>
 		</th>
 		<th align="right">
 			<a href="#" id="percent-asc" class="sortby_btn" title="ASC sorting">&#x25bc;</a>
-				{t(Percent)}                                                       
+				{t(Percent)}													   
 			<a href="#" id="percent-desc" class="sortby_btn" title="DESC sorting">&#x25b2;</a>
 		</th>
 		

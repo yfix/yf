@@ -1315,7 +1315,7 @@ class yf_log_exec_analyser {
 			"display_image_graphs"	=> "Image graphs",
 			"user_agents_stats"		=> "",
 			"referers_stats"		=> "",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

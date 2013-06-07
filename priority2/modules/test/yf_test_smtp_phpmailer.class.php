@@ -39,7 +39,7 @@ class yf_test_smtp_phpmailer {
 		$mail->IsHTML(true);
 
 		$mail->Subject = $this->TEST_OBJ->TEST_MAIL["subject"];
-		$mail->Body    = $this->TEST_OBJ->TEST_MAIL["html"];
+		$mail->Body	= $this->TEST_OBJ->TEST_MAIL["html"];
 		$mail->AltBody = $this->TEST_OBJ->TEST_MAIL["text"];
 
 		// Go!

@@ -37,7 +37,7 @@ editAreaLoader.load_syntax["css"] = {
 			'above', 'absolute', 'always', 'armenian', 'aural', 'auto', 'avoid',
 			'baseline', 'behind', 'below', 'bidi-override', 'black', 'blue', 'blink', 'block', 'bold', 'bolder', 'both',
 			'capitalize', 'center-left', 'center-right', 'center', 'circle', 'cjk-ideographic', 
-            'close-quote', 'collapse', 'condensed', 'continuous', 'crop', 'crosshair', 'cross', 'cursive',
+			'close-quote', 'collapse', 'condensed', 'continuous', 'crop', 'crosshair', 'cross', 'cursive',
 			'dashed', 'decimal-leading-zero', 'decimal', 'default', 'digits', 'disc', 'dotted', 'double',
 			'e-resize', 'embed', 'extra-condensed', 'extra-expanded', 'expanded',
 			'fantasy', 'far-left', 'far-right', 'faster', 'fast', 'fixed', 'fuchsia',

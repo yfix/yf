@@ -214,7 +214,7 @@ class yf_activity_viewer {
 		$cases = array (
 			//$_GET["action"] => {string to replace}
 			"show"				=> "",
-		);              		
+		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];

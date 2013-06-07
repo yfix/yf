@@ -227,14 +227,14 @@
 			<div class="_container">		
 				<div align="center" class="w_center">
 					<input type="hidden" id="sidebar-center-toporder" name="sidebar-center-toporder" value="" />
-    
+	
 					<div class="dropzone" style="clear:both;">
 						<h3>{t(Central-top column)}</h3>
-    
+	
 						<div id="sidebar-center-topplacemat" class="placemat">
 							{include("widgets_editor/placemat")}
 						</div>
-    
+	
 						<ul id="sidebar-center-top">
 						{foreach("sidebar_center_top")}
 							<li class="module" id="widgetprefix-{_key}">
@@ -243,7 +243,7 @@
 								</span>
 							</li>
 						{/foreach}
-    
+	
 						</ul>
 					</div>
 					<div style="clear:left;">
@@ -286,11 +286,11 @@
 					<input type="hidden" id="sidebar-2order" name="sidebar-2order" value="" />
 					<div class="dropzone">
 						<h3>{t(Right column)}</h3>
-    
+	
 						<div id="sidebar-2placemat" class="placemat">
 							{include("widgets_editor/placemat")}
 						</div>
-    
+	
 						<ul id="sidebar-2">
 						{foreach("sidebar_right")}
 							<li class="module" id="widgetprefix-{_key}">
