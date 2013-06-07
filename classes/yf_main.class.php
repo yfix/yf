@@ -328,7 +328,7 @@ class yf_main {
 		}
 		// Load common functions
 		$common_funcs_path	= PROJECT_PATH."share/functions/common_funcs.php";
-		$fwork_funcs_path	= YF_PATH."share/functions/".PF_PREFIX."common_funcs.php";
+		$fwork_funcs_path	= YF_PATH."share/functions/".YF_PREFIX."common_funcs.php";
 		if (file_exists($common_funcs_path)) {
 			$this->include_module($common_funcs_path, 1);
 		} elseif (file_exists($fwork_funcs_path)) {
@@ -830,8 +830,8 @@ class yf_main {
 		if (class_exists($cur_hook_prefix. $class_name)) {
 			return $cur_hook_prefix. $class_name;
 		}
-		if (class_exists(PF_PREFIX. $class_name)) {
-			return PF_PREFIX. $class_name;
+		if (class_exists(YF_PREFIX. $class_name)) {
+			return YF_PREFIX. $class_name;
 		}
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
@@ -891,11 +891,11 @@ class yf_main {
 		}
 		$storages["site_hook"]		= array($site_path, $cur_hook_prefix);
 		$storages["project"]		= array($project_path);
-		$storages["framework"]		= array($fwork_path, PF_PREFIX);
-		$storages["framework_p2"]	= array($fwork_path2, PF_PREFIX);
+		$storages["framework"]		= array($fwork_path, YF_PREFIX);
+		$storages["framework_p2"]	= array($fwork_path2, YF_PREFIX);
 		if (MAIN_TYPE_ADMIN) {
 			$storages["admin_user_project"]		= array($project_path2);
-			$storages["admin_user_framework"]	= array(YF_PATH. USER_MODULES_DIR, PF_PREFIX);
+			$storages["admin_user_framework"]	= array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
 		}
 		$storage = "";
 		$loaded_path = "";
@@ -1468,7 +1468,7 @@ class yf_main {
 		define('AUTH_MODULES_DIR', "classes/auth/");
 		define('CLASS_EXT', ".class.php");
 		// Prefix to the all framework classes
-		define('PF_PREFIX', "yf_");
+		define('YF_PREFIX', "yf_");
 		// Prefix for the admin files (optional, to inherit user class with the same name)
 		define('ADMIN_CLASS_PREFIX', "adm__");
 		// Prefix for the site files (optional, to inherit project level user class with the same name)

@@ -46,7 +46,7 @@ class yf_test {
 		);
 		// Process footer
 		$replace = array(
-			"form_action"		=> "./?object=".str_replace(PF_PREFIX, "", __CLASS__)."&action=".__FUNCTION__,
+			"form_action"		=> "./?object=".str_replace(YF_PREFIX, "", __CLASS__)."&action=".__FUNCTION__,
 			"stpl_edit_box"		=> common()->radio_box("stpl_edit",	$_trigger, $_SESSION['stpls_inline_edit'], false, 2, $atts, false),
 			"locale_edit_box"	=> common()->radio_box("locale_edit",	$_trigger, $_SESSION['locale_vars_edit'], false, 2, $atts, false),
 			"hide_console_box"	=> common()->radio_box("hide_console",$_trigger, $_SESSION['hide_debug_console'], false, 2, $atts, false),

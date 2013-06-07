@@ -4,11 +4,11 @@ define("DEBUG_MODE", true);
 // Physical path to the ProEngine Core files
 define("INCLUDE_PATH", "../../");
 // Path to the FrameWork
-define("PF_PATH", INCLUDE_PATH."yf/");
+define("YF_PATH", INCLUDE_PATH."yf/");
 // Get current project settings
 require (INCLUDE_PATH."common_vars.php");
 // Include main class
-require PF_PATH."classes/yf_main.class.php";
+require YF_PATH."classes/yf_main.class.php";
 // Initialize main engine
 $GLOBALS['main'] = new yf_main("user");
 //----------------------------------------------------

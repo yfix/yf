@@ -1,9 +1,9 @@
 <?php
 
 define("INCLUDE_PATH", "/home/www/toggle3/public_html/");
-define("PF_PATH", "/home/www/yf/");
+define("YF_PATH", "/home/www/yf/");
 require_once INCLUDE_PATH."db_setup.php";
-#require_once PF_PATH."classes/yf_db_static.class.php";
+#require_once YF_PATH."classes/yf_db_static.class.php";
 require_once "./yf_db_static.class.php";
 
 // Required to catch missing methods of the shortcut functions objects
@@ -21,7 +21,7 @@ function load_db_class() {
 	}
 	$classes = array(
 		'db'		=> INCLUDE_PATH.'classes/db.class.php',
-		'yf_db'	=> PF_PATH.'classes/yf_db.class.php',
+		'yf_db'	=> YF_PATH.'classes/yf_db.class.php',
 	);
 	foreach ((array)$classes as $cl => $f) {
 		if (!file_exists($f)) {

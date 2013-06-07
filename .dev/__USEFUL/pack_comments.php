@@ -1,16 +1,16 @@
 <?php
 
 define("DEBUG_MODE", 1);
-define("PF_PATH", realpath("./yf")."/");
-require PF_PATH."classes/yf_main.class.php";
+define("YF_PATH", realpath("./yf")."/");
+require YF_PATH."classes/yf_main.class.php";
 $GLOBALS['main'] = new yf_main("user", 1, 0);
 
 $DIR_OBJ = $GLOBALS['main']->init_class("dir", "classes/");
 
 $sub_dirs = array(
-	PF_PATH."admin_modules/",
-	PF_PATH."classes/",
-	PF_PATH."modules/",
+	YF_PATH."admin_modules/",
+	YF_PATH."classes/",
+	YF_PATH."modules/",
 );
 $pattern_include	= "/\.class\.php\$/i";
 $pattern_exclude	= "/svn/ims";

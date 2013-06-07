@@ -230,7 +230,7 @@ class yf_dev{
 		$_ext_len = strlen(CLASS_EXT);
 		$_fwork_class_names = array();
 		foreach ((array)$_fwork_classes as $_path) {
-			$_class_name = str_replace(PF_PREFIX, "", substr(strrchr($_path, "/"), 1, -$_ext_len));
+			$_class_name = str_replace(YF_PREFIX, "", substr(strrchr($_path, "/"), 1, -$_ext_len));
 			$_classes[$_class_name] = $_path;
 			$_classes_for_vars[$_class_name] = $_class_name;
 			
@@ -403,16 +403,16 @@ class yf_dev{
 				$file_path = INCLUDE_PATH.$dir_name.$_module_name.CLASS_EXT;
 				$_source = "project";
 				if (!file_exists($file_path)) {
-					$file_path = YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+					$file_path = YF_PATH.$dir_name.YF_PREFIX.$_module_name.CLASS_EXT;
 					$_source = "framework";
 					if (!file_exists($file_path)) {
 						continue;
 					}
 				} else {
-					$file_path_fwork = YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+					$file_path_fwork = YF_PATH.$dir_name.YF_PREFIX.$_module_name.CLASS_EXT;
 				}
 			} else {
-				$file_path_fwork	= YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+				$file_path_fwork	= YF_PATH.$dir_name.YF_PREFIX.$_module_name.CLASS_EXT;
 				$file_path_project	= INCLUDE_PATH.$dir_name.$_module_name.CLASS_EXT;
 			}
 

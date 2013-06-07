@@ -92,7 +92,6 @@ class yf_errors {
 		register_shutdown_function(array($this, 'error_handler_destructor'));
 		
 		set_exception_handler(array($this,  'EXCEPTION_HANDLER' ));
-		
 	}
 
 	/**

@@ -174,7 +174,7 @@ class yf_dynamic {
 		$atts = " onchange=\"this.form.submit();\"";
 		// Process footer
 		$replace = array(
-			"form_action"	=> "./?object=".str_replace(PF_PREFIX, "", __CLASS__)."&action=change_lang",
+			"form_action"	=> "./?object=".str_replace(YF_PREFIX, "", __CLASS__)."&action=change_lang",
 			"lang_box"		=> common()->select_box("lang_id", array(t("Language") => $lang_names), conf('language'), false, 2, $atts, false),
 			"back_url"		=> WEB_PATH."?object=".$_GET["object"].($_GET["action"] != "show" ? "&action=".$_GET["action"] : ""). (!empty($_GET["id"]) ? "&id=".$_GET["id"] : ""). (!empty($_GET["page"]) ? "&page=".$_GET["page"] : ""),
 		);

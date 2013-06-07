@@ -471,7 +471,7 @@ class yf_conf_editor {
 		$PARSED_META 	= array();
 
 		foreach ((array)$modules_list as $_module_name) {
-			$file_path_fwork	= YF_PATH.$dir_name.PF_PREFIX.$_module_name.CLASS_EXT;
+			$file_path_fwork	= YF_PATH.$dir_name.YF_PREFIX.$_module_name.CLASS_EXT;
 			if ($dir_name == "admin_modules/") {
 				$file_path_project	= ADMIN_REAL_PATH.$dir_name.$_module_name.CLASS_EXT;
 			} else {

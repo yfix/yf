@@ -351,7 +351,7 @@ class yf_db {
 					$_db_class_name1 = "db.class.php";
 					// Try to skip back trace for "query" function
 					for ($i = 0; $i < 5; $i++) {
-						if (in_array(strtolower($_trace[$i]["class"]), array("db", PF_PREFIX."db")) 
+						if (in_array(strtolower($_trace[$i]["class"]), array("db", YF_PREFIX."db")) 
 							&& in_array(strtolower($_trace[$i]["function"]), array("query", "unbuffered_query", "insert", "update", "replace")) 
 							&& (substr($_trace[$i]["file"], -strlen($_db_class_name1)) == $_db_class_name1)
 						) {

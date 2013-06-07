@@ -1,7 +1,7 @@
 <?php
 
-define("PF_PATH", dirname(dirname(dirname(__FILE__)))."/");
-require PF_PATH."classes/yf_main.class.php";
+define("YF_PATH", dirname(dirname(dirname(__FILE__)))."/");
+require YF_PATH."classes/yf_main.class.php";
 $GLOBALS['main'] = new yf_main("user", 1, 0);
 
 function _tpl($stpl_text = "", $replace = array(), $name = "") {
@@ -10,13 +10,13 @@ function _tpl($stpl_text = "", $replace = array(), $name = "") {
 
 class tpl_core_test extends PHPUnit_Framework_TestCase {
 	public function test_10() {
-		$this->assertEquals(PF_PATH, _tpl( '{const("PF_PATH")}' ));
+		$this->assertEquals(YF_PATH, _tpl( '{const("YF_PATH")}' ));
 	}
 	public function test_11() {
-		$this->assertEquals(PF_PATH, _tpl( '{const(\'PF_PATH\')}' ));
+		$this->assertEquals(YF_PATH, _tpl( '{const(\'YF_PATH\')}' ));
 	}
 	public function test_12() {
-		$this->assertEquals(PF_PATH, _tpl( '{const(PF_PATH)}' ));
+		$this->assertEquals(YF_PATH, _tpl( '{const(YF_PATH)}' ));
 	}
 	public function test_13() {
 		$this->assertEquals('{const(WRONG-CONST)}', _tpl( '{const(WRONG-CONST)}' ));
@@ -25,7 +25,7 @@ class tpl_core_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('{const()}', _tpl( '{const()}' ));
 	}
 	public function test_15() {
-		$this->assertEquals(substr(PF_PATH, 0, 8), _tpl( '{eval_code(substr(PF_PATH, 0, 8))}' ));
+		$this->assertEquals(substr(YF_PATH, 0, 8), _tpl( '{eval_code(substr(YF_PATH, 0, 8))}' ));
 	}
 	public function test_20() {
 		$this->assertEquals('val1', _tpl( '{replace1}', array("replace1" => "val1") ));

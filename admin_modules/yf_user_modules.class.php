@@ -72,8 +72,8 @@ class yf_user_modules {
 // TODO: need to add "site__" and "adm__" functionality
 			$is_in_project		= file_exists(INCLUDE_PATH. USER_MODULES_DIR. $A["name"]. CLASS_EXT);
 			$is_in_project2		= file_exists(INCLUDE_PATH. "priority2/". USER_MODULES_DIR. $A["name"]. CLASS_EXT);
-			$is_in_framework	= file_exists(YF_PATH. USER_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
-			$is_in_framework2	= file_exists(YF_PATH. "priority2/". USER_MODULES_DIR. PF_PREFIX. $A["name"]. CLASS_EXT);
+			$is_in_framework	= file_exists(YF_PATH. USER_MODULES_DIR. YF_PREFIX. $A["name"]. CLASS_EXT);
+			$is_in_framework2	= file_exists(YF_PATH. "priority2/". USER_MODULES_DIR. YF_PREFIX. $A["name"]. CLASS_EXT);
 			$locations = array();
 			if ($is_in_project) {
 				$locations[] = array(
@@ -329,7 +329,7 @@ class yf_user_modules {
 					continue;
 				}
 				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-				$module_name = str_replace(PF_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_PREFIX, "", $module_name);
 				$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
@@ -346,7 +346,7 @@ class yf_user_modules {
 					continue;
 				}
 				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-				$module_name = str_replace(PF_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_PREFIX, "", $module_name);
 				$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
@@ -369,10 +369,10 @@ class yf_user_modules {
 			$file_name = INCLUDE_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
 			// Try to get file from teh framework
 			if (!file_exists($file_name)) {
-				$file_name = YF_PATH. USER_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
+				$file_name = YF_PATH. USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
 			}
 			if (!file_exists($file_name)) {
-				$file_name = YF_PATH. "priority2/". USER_MODULES_DIR. PF_PREFIX. $user_module_name. CLASS_EXT;
+				$file_name = YF_PATH. "priority2/". USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
 			}
 			if (!file_exists($file_name)) {
 				continue;
@@ -386,7 +386,7 @@ class yf_user_modules {
 			$methods_by_modules[$user_module_name] = $this->_recursive_get_methods_from_extends($file_text, $user_module_name, $ONLY_PRIVATE_METHODS);
 			// Try to match methods in the current file
 			foreach ((array)$this->_get_methods_names_from_text($file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
-				$method_name = str_replace(PF_PREFIX, "", $method_name);
+				$method_name = str_replace(YF_PREFIX, "", $method_name);
 				// Skip constructors in PHP4 style
 				if ($method_name == $user_module_name) {
 					continue;
@@ -411,14 +411,14 @@ class yf_user_modules {
 			$class_name_1 = $matches_extends[1];
 			$class_name_2 = $matches_extends[2];
 			// Check if we need to extends file from framework
-			$_extends_from_fwork = (substr($class_name_2, 0, strlen(PF_PREFIX)) == PF_PREFIX);
+			$_extends_from_fwork = (substr($class_name_2, 0, strlen(YF_PREFIX)) == YF_PREFIX);
 			// Check if we parsing current class
-			if ($class_name_1 == $user_module_name || str_replace(PF_PREFIX, "", $class_name_1) == $user_module_name) {
+			if ($class_name_1 == $user_module_name || str_replace(YF_PREFIX, "", $class_name_1) == $user_module_name) {
 				$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
 				$extends_file_path2 = YF_PATH. "priority2/". USER_MODULES_DIR. $class_name_2. CLASS_EXT;
 				// Special processing of the "yf_module"
-				if ($this->PARSE_YF_MODULE && $class_name_2 == PF_PREFIX."module") {
-					$extends_file_path = YF_PATH. "classes/".PF_PREFIX."module". CLASS_EXT;
+				if ($this->PARSE_YF_MODULE && $class_name_2 == YF_PREFIX."module") {
+					$extends_file_path = YF_PATH. "classes/".YF_PREFIX."module". CLASS_EXT;
 				}
 			}
 			if (!empty($extends_file_path) && file_exists($extends_file_path)) {

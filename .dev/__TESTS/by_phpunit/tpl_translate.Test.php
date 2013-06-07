@@ -1,7 +1,7 @@
 <?php  
 
-define("PF_PATH", dirname(dirname(dirname(__FILE__)))."/");
-require PF_PATH."classes/yf_main.class.php";
+define("YF_PATH", dirname(dirname(dirname(__FILE__)))."/");
+require YF_PATH."classes/yf_main.class.php";
 $GLOBALS['main'] = new yf_main("user", 1, 0);
 
 function _tpl($stpl_text = "", $replace = array(), $name = "") {

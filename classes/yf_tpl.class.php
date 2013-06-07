@@ -811,8 +811,9 @@ class yf_tpl {
         $NOT_FOUND  = false;
         $storage    = "inline";
         // Support for the framework calls
-        if (substr($file_name, 0, 6) == "yf_") {
-            $file_name = substr($file_name, 6);
+		$l = strlen(YF_PREFIX);
+        if (substr($file_name, 0, $l) == YF_PREFIX) {
+            $file_name = substr($file_name, $l);
         }
         $file_name  .= $this->_STPL_EXT;
         // Fix double extesion
@@ -912,8 +913,7 @@ class yf_tpl {
         }
         // Log error message if template file was not found
         if ($NOT_FOUND) {
-            $backtrace = debug_backtrace();
-            trigger_error("STPL: template \"".$file_name."\" in theme \"".conf('theme')."\" not found". ($backtrace[1]["function"] == "parse" ? " in \"".$backtrace[1]["file"]."\" on line ".$backtrace[1]["line"] : ""), E_USER_WARNING);
+            trigger_error("STPL: template \"".$file_name."\" in theme \"".conf('theme')."\" not found.<pre>". main()->trace_string()."</pre>", E_USER_WARNING);
         } else {
             $this->CACHE[str_replace($this->_STPL_EXT, "", $file_name)]['storage'] = $storage;
         }

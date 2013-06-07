@@ -284,7 +284,7 @@ class yf_diff {
 			@fclose($FH2);
 		}
 		// Check
-		if (file_exists(YF_PATH.'uploads/'.$file1) && file_exists(PF_PATH.'uploads/'.$file2)) {
+		if (file_exists(YF_PATH.'uploads/'.$file1) && file_exists(YF_PATH.'uploads/'.$file2)) {
 // FIXME: need to check cgi paths
 			$result = file_get_contents(YF_PATH."cgi/cgi_getdifference.cgi");
 

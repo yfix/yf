@@ -1309,7 +1309,7 @@ class yf_debug_info {
 			"@LANG"			=> conf("language"),
 			"SITE_PATH"		=> SITE_PATH,
 			"PROJECT_PATH"	=> PROJECT_PATH,
-			"YF_PATH"		=> PF_PATH,
+			"YF_PATH"		=> YF_PATH,
 			"WEB_PATH"		=> WEB_PATH,
 			"MEDIA_PATH"	=> MEDIA_PATH,
 			"IS_SPIDER"		=> (int)conf('IS_SPIDER'),

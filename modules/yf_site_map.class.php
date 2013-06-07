@@ -478,7 +478,7 @@ class yf_site_map {
 					continue;
 				}
 				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-				$module_name = str_replace(PF_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_PREFIX, "", $module_name);
 				$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
 				$file_content = file_get_contents($v);
 				if (preg_match($pattern, $file_content, $matches)) {
@@ -495,7 +495,7 @@ class yf_site_map {
 					continue;
 				}
 				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-				$module_name = str_replace(PF_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_PREFIX, "", $module_name);
 				$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
 				$file_content = file_get_contents($v);
 				if (preg_match($pattern, $file_content, $matches)) {
