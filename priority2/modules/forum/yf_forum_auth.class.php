@@ -11,25 +11,25 @@
 class yf_forum_auth {
 
 	/** @var int */
-	var $MAX_LOGIN_LENGTH		= 64;
+	public $MAX_LOGIN_LENGTH		= 64;
 	/** @var int */
-	var $MAX_PSWD_LENGTH		= 64;
+	public $MAX_PSWD_LENGTH		= 64;
 	/** @var string */
-	var $COOKIE_NAME			= "yf_forum_user_id";
+	public $COOKIE_NAME			= "yf_forum_user_id";
 	/** @var string */
-	var $COOKIE_LIFE_TIME		= 2592000;	// 60*60*24*30 = 30 days
+	public $COOKIE_LIFE_TIME		= 2592000;	// 60*60*24*30 = 30 days
 	/** @var string */
-	var $VAR_NAME_USER_ID		= "forum_user_id";
+	public $VAR_NAME_USER_ID		= "forum_user_id";
 	/** @var string */
-	var $VAR_NAME_USER_NAME		= "forum_user_name";
+	public $VAR_NAME_USER_NAME		= "forum_user_name";
 	/** @var string */
-	var $VAR_NAME_GROUP_ID		= "forum_group_id";
+	public $VAR_NAME_GROUP_ID		= "forum_group_id";
 	/** @var string */
-	var $VAR_NAME_VISIBILITY	= "forum_visibility";
+	public $VAR_NAME_VISIBILITY	= "forum_visibility";
 	/** @var string */
-	var $VAR_NAME_TIME_ZONE		= "forum_user_time_zone";
+	public $VAR_NAME_TIME_ZONE		= "forum_user_time_zone";
 	/** @var int */
-	var $LASTUP_TTL				= 900; // 15*60 = 15 minutes
+	public $LASTUP_TTL				= 900; // 15*60 = 15 minutes
 
 	/**
 	* Constructor

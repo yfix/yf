@@ -11,7 +11,7 @@
 class yf_log_user_errors_viewer {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 
 	/**
 	* Constructor (PHP 4.x)

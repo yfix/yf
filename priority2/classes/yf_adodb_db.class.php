@@ -11,31 +11,31 @@
 class yf_adodb_db {
 
 	/** @var string Type of database (default) @conf_skip */
-	var $DB_TYPE				= "mysql";
+	public $DB_TYPE				= "mysql";
 	/** @var bool Use tables names caching @conf_skip */
-	var $CACHE_TABLE_NAMES		= true;
+	public $CACHE_TABLE_NAMES		= true;
 	/** @var int @conf_skip Number of queries */
-	var $NUM_QUERIES			= 0;
+	public $NUM_QUERIES			= 0;
 	/** @var array  @conf_skip Query log array */
-	var $QUERY_LOG				= array();
+	public $QUERY_LOG				= array();
 	/** @var int Tables cache lifetime (while developing need to be short) (else need to be very large) @conf_skip */
-	var $TABLE_NAMES_CACHE_TTL	= 86400; // @var 1*3600*24 = 1 day
+	public $TABLE_NAMES_CACHE_TTL	= 86400; // @var 1*3600*24 = 1 day
 	/** @var bool Auto-connect on/off @conf_skip */
-	var $AUTO_CONNECT			= false;
+	public $AUTO_CONNECT			= false;
 	/** @var bool Use backtrace in error message @conf_skip */
-	var $ERROR_BACKTRACE		= true;
+	public $ERROR_BACKTRACE		= true;
 	/** @var string Folder where databases drivers are stored @conf_skip */
-	var $DB_DRIVERS_DIR			= "classes/db_drivers/";
+	public $DB_DRIVERS_DIR			= "classes/db_drivers/";
 	/** @var int Num tries to reconnect (will be useful if db server is overloaded) @conf_skip */
-	var $NUM_RECONNECT_TRIES	= 3; // @var Set to "0" for disabling
+	public $NUM_RECONNECT_TRIES	= 3; // @var Set to "0" for disabling
 	/** @var int Time to wait between reconnects (in seconds) @conf_skip */
-	var $RECONNECT_DELAY		= 1;
+	public $RECONNECT_DELAY		= 1;
 	/** @var bool Connection required or not (else E_USER_WARNING will be thrown not E_USER_ERROR) @conf_skip */
-	var $CONNECTION_REQUIRED	= 0;
+	public $CONNECTION_REQUIRED	= 0;
 	/** @var mixed @conf_skip Internal vars (default values) @conf_skip */
-	var $_tried_to_connect		= false;
+	public $_tried_to_connect		= false;
 	/** @var mixed @conf_skip Internal var (default values) @conf_skip */
-	var $_connected				= false;
+	public $_connected				= false;
 
 	/**
 	* Constructor

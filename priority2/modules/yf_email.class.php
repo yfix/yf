@@ -5,16 +5,16 @@
 class yf_email {
 
 	/** @var array @conf_skip Mail folders */
-	var $_mail_folders = array(
+	public $_mail_folders = array(
 		0	=> "deleted",
 		1	=> "inbox",
 		2	=> "sent",
 		3	=> "trash",
 	);
 	/** @var int Limit number of daily sending emails (set to "0" to disable) */
-	var $EMAILS_ALLOWED_DAILY	= 20;
+	public $EMAILS_ALLOWED_DAILY	= 20;
 	/** @var bool Really delete emails records? */
-	var $DELETE_EMAIL_RECORDS	= false;
+	public $DELETE_EMAIL_RECORDS	= false;
 
 	//-----------------------------------------------------------------------------
 	// YF module constructor

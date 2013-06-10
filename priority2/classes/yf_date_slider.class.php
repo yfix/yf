@@ -6,7 +6,7 @@
 class yf_date_slider {
 
 	/** @var int default period for the stats in DAYS */
-	var $STATS_PERIOD_VIEW					= 30;
+	public $STATS_PERIOD_VIEW					= 30;
 
 	/**
 	* Framework constructor

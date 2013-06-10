@@ -11,59 +11,59 @@
 class yf_graphics {
 
 	/** @var bool Insert css styleshhet contents into every page or link it as separate file */
-	var $EMBED_CSS				= false;
+	public $EMBED_CSS				= false;
 	/** @var bool Cache CSS file in project from framework (works only if EMBED_CSS is off) */
-	var $CACHE_CSS				= false;
+	public $CACHE_CSS				= false;
 	/** @var int */
-	var $CACHE_CSS_TTL			= 3600;
+	public $CACHE_CSS_TTL			= 3600;
 	/** @var bool */
-	var $CSS_FIXES_FOR_IE		= true;
+	public $CSS_FIXES_FOR_IE		= true;
 	/** @var bool Try to use "link" tag for CSS */
-	var $CSS_USE_LINK_TAG		= true;
+	public $CSS_USE_LINK_TAG		= true;
 	/** @var bool Only one file for CSS */
-	var $CSS_USE_ONE_FILE		= true;
+	public $CSS_USE_ONE_FILE		= true;
 	/** @var bool */
-	var $CSS_ADD_RESET			= false;
+	public $CSS_ADD_RESET			= false;
 	/** @var bool */
-	var $CSS_ADD_BASE			= false;
+	public $CSS_ADD_BASE			= false;
 	/** @var bool Cache Javascript files */
-	var $CACHE_JAVASCRIPT		= false;
+	public $CACHE_JAVASCRIPT		= false;
 	/** @var int */
-	var $CACHE_JS_TTL			= 3600;
+	public $CACHE_JS_TTL			= 3600;
 	/** @var bool Add pages names to the title */
-	var $ADD_TITLE_PAGES		= true;
+	public $ADD_TITLE_PAGES		= true;
 	/** @var bool Show auto-parsed (and tried to translate) task name */
-	var $SHOW_AUTO_TASK_NAME	= false;
+	public $SHOW_AUTO_TASK_NAME	= false;
 	/** @var bool IFRAME in the center */
-	var $IFRAME_CENTER			= false;
+	public $IFRAME_CENTER			= false;
 	/** @var bool Use Search Engine based keywords block */
-	var $USE_SE_KEYWORDS		= false;
+	public $USE_SE_KEYWORDS		= false;
 	/** @var string Sub-modules dir */
-	var $SUB_MODULES_PATH		= "classes/graphics/";
+	public $SUB_MODULES_PATH		= "classes/graphics/";
 	/** @var string Path to icons */
-	var $ICONS_PATH				= "uploads/icons/";
+	public $ICONS_PATH				= "uploads/icons/";
 	/** @var string Default HTML Title tag contents */
-	var $META_TITLE				= "";
+	public $META_TITLE				= "";
 	/** @var string Default HTML Meta tag "keywords" */
-	var $META_KEYWORDS			= "";
+	public $META_KEYWORDS			= "";
 	/** @var string Default HTML Meta tag "description" */
-	var $META_DESCRIPTION		= "";
+	public $META_DESCRIPTION		= "";
 	/** @var bool Enable quick menu */
-	var $QUICK_MENU_ENABLED		= true;
+	public $QUICK_MENU_ENABLED		= true;
 	/** @var bool Use Firebug-Lite javascript debug library */
-	var $USE_FIREBUG_LITE		= false;
+	public $USE_FIREBUG_LITE		= false;
 	/** @var bool Menu hide links to disabled modules */
-	var $MENU_HIDE_INACTIVE_MODULES	= false;
+	public $MENU_HIDE_INACTIVE_MODULES	= false;
 	/** @var bool */
-	var $NOT_FOUND_RAISE_WARNING= true;
+	public $NOT_FOUND_RAISE_WARNING= true;
 	/** @var bool */
-	var $HEADER_POWERED_BY		= true;
+	public $HEADER_POWERED_BY		= true;
 	/** @var bool */
-	var $JS_CONSOLE_ALLOW		= true;
+	public $JS_CONSOLE_ALLOW		= true;
 	/** @var string Required for the compatibility with old main class */
-	var $MEDIA_PATH				= "";
+	public $MEDIA_PATH				= "";
 	/** @var */
-	var $_css_loaded_from		= array();
+	public $_css_loaded_from		= array();
 
 	/**
 	* Catch missing method call

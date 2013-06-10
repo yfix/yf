@@ -5,25 +5,25 @@
 class yf_search {
 
 	/** @var int Min number of symbols to process */
-	var $MIN_KEYWORD_LENGTH		= 3;
+	public $MIN_KEYWORD_LENGTH		= 3;
 	/** @var int Max number of symbols to process */
-	var $MAX_KEYWORD_LENGTH		= 64;
+	public $MAX_KEYWORD_LENGTH		= 64;
 	/** @var int Records limit */
-	var $RECORDS_LIMIT			= 100;
+	public $RECORDS_LIMIT			= 100;
 	/** @var bool Highlight matched keywords or user_name */
-	var $HIGHLIGHT_MATCHES		= true;
+	public $HIGHLIGHT_MATCHES		= true;
 	/** @var bool @conf_skip Sub_query SQL mode */
-	var $SUBQUERY_MODE			= true;
+	public $SUBQUERY_MODE			= true;
 	/** @var mixed @conf_skip Custom highlighting method */
-	var $_highlight_method		= null;
+	public $_highlight_method		= null;
 	/** @var bool Display only active ads */
-	var $DISPLAY_ONLY_ACTIVE	= 1;
+	public $DISPLAY_ONLY_ACTIVE	= 1;
 	/** @var bool Display also expired ads (works only when DISPLAY_ONLY_ACTIVE == 1) */
-	var $DISPLAY_EXPIRED		= 0;
+	public $DISPLAY_EXPIRED		= 0;
 	/** @var bool Personal ads mode */
-	var $PERSONAL_ADS_MODE		= false;
+	public $PERSONAL_ADS_MODE		= false;
 	/** @var array */
-	var $_default_search_params = array();
+	public $_default_search_params = array();
 
 	/**
 	* Constructor (PHP 4.x)

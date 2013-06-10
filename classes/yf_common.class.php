@@ -11,29 +11,29 @@
 class yf_common {
 
 	/** @var bool Defines use or not templates for the boxes */
-	var $BOXES_USE_STPL			= true;
+	public $BOXES_USE_STPL			= true;
 	/** @var string Path to the boxes templates */
-	var $BOXES_STPL_BASE		= "system/common/";
+	public $BOXES_STPL_BASE		= "system/common/";
 	/** @var bool Store user-level errors */
-	var $TRACK_USER_ERRORS		= false;
+	public $TRACK_USER_ERRORS		= false;
 	/** @var bool Display debug info for the empty page */
-	var $EMPTY_PAGE_DEBUG_INFO	= true;
+	public $EMPTY_PAGE_DEBUG_INFO	= true;
 	/** @var string 
 	*	Default value. Cloud creates in alphabetic text order
 	*	available values - "text" or "num"
 	*	(For cloud creaion)
 	*/
-	var $CLOUD_ORDER = "text";
+	public $CLOUD_ORDER = "text";
 	/** @var int Maximum fontsize for cloud (in 'em') */
-	var $CLOUD_MAX_FSIZE = 2;
+	public $CLOUD_MAX_FSIZE = 2;
 	/** @var int Minimum fontsize for cloud (in 'em') */
-	var $CLOUD_MIN_FSIZE = 0.9;
+	public $CLOUD_MIN_FSIZE = 0.9;
 	/** @var string Translit from encoding */
-	var $TRANSLIT_FROM	= "cp1251";
+	public $TRANSLIT_FROM	= "cp1251";
 	/** @var string Required for the compatibility with old main class */
-	var $MEDIA_PATH		= "";
+	public $MEDIA_PATH		= "";
 	/** @var string Sphinx empty results logging path. Keep empty to disable. Example: /tmp/count_sphinx_empty.log */
-	var $SPHINX_EMPTY_LOG_PATH = "";	
+	public $SPHINX_EMPTY_LOG_PATH = "";	
 
 	/**
 	* Constructor

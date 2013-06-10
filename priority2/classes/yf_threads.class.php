@@ -8,24 +8,24 @@
 class yf_threads {
 
 	/** @var */
-	var $php_path = "php";
+	public $php_path = "php";
 	/** @var */
-	var $lastId = 0;
+	public $lastId = 0;
 	/** @var */
-	var $descriptorSpec = array(
+	public $descriptorSpec = array(
 		0 => array('pipe', 'r'),
 		1 => array('pipe', 'w')
 	);
 	/** @var */
-	var $handles = array();
+	public $handles = array();
 	/** @var */
-	var $streams = array();
+	public $streams = array();
 	/** @var */
-	var $results = array();
+	public $results = array();
 	/** @var */
-	var $pipes = array();
+	public $pipes = array();
 	/** @var */
-	var $timeout = 10;
+	public $timeout = 10;
 
 	/**
 	*/

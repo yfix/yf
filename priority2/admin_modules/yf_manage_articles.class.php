@@ -5,13 +5,13 @@
 class yf_manage_articles extends yf_module {
 
 	/** @var int Text preview cutoff */
-	var $TEXT_PREVIEW_LENGTH	= 200;
+	public $TEXT_PREVIEW_LENGTH	= 200;
 	/** @var bool Filter on/off */
-	var $USE_FILTER				= true;
+	public $USE_FILTER				= true;
 	/** @var bool */
-	var $USE_BB_CODES			= true;
+	public $USE_BB_CODES			= true;
 	/** @var array Params for the comments */
-	var $_comments_params			= array(
+	public $_comments_params			= array(
 		"return_action" => "view",
 		"object_name"	=> "articles",
 	);

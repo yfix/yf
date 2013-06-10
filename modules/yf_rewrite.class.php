@@ -11,15 +11,15 @@
 class yf_rewrite {
 
 	/** @var string @conf_skip "Extensions" of files in the links in rewrite mode */
-	var $_rewrite_add_extension = ".html";
+	public $_rewrite_add_extension = ".html";
 	/** @var array @conf_skip Patterns to use */
-	var $_replace_patterns		= null;
+	public $_replace_patterns		= null;
 	/** @var string @conf_skip Links pattern */
 	var	$_links_pattern			= "/(action|location|href|src)[\s]{0,1}=[\s]{0,1}[\"\']?(\.\/\?[^\"\'\>\s]+|\.\/)[\"\']?/ims";
 	/** @var string @conf_skip Pattern for iframe links */
 	var	$_iframe_pattern		= "/(action|location|href)[\s]{0,1}=[\s]{0,1}[\"\']+\.\/\?([^\"\'>\s]*)[\"\']+/ims";
 	/** @var bool Force no debug */
-	var $FORCE_NO_DEBUG			= false;
+	public $FORCE_NO_DEBUG			= false;
 
 	/**
 	* Catch missing method call

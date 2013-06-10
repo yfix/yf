@@ -11,7 +11,7 @@
 class yf_zip_codes {
 
 	/** @var int Use miles or kilometers as default measure (1 = miles, 0 = kilometers) */
-	var $USE_MILES_AS_MEASURE = 1;
+	public $USE_MILES_AS_MEASURE = 1;
 
 	/**
 	* This method returns the distance in Miles between two zip codes, 

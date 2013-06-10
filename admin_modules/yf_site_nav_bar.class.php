@@ -5,7 +5,7 @@
 class yf_site_nav_bar {
 
 	/** @var string */
-	var $HOOK_NAME = "_nav_bar_items";
+	public $HOOK_NAME = "_nav_bar_items";
 
 	//-----------------------------------------------------------------------------
 	// Constructor

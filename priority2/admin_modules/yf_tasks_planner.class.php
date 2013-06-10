@@ -11,13 +11,13 @@
 class yf_tasks_planner {
 
 	/** @var string Path to the CURL library on the server (for call from CRON) */
-	var $CURL_PATH			= "curl -s -o /dev/null ";
+	public $CURL_PATH			= "curl -s -o /dev/null ";
 	/** @var string Path to the tasks PHP files */
-	var $TASKS_FILES_PATH	= "./classes/tasks/";
+	public $TASKS_FILES_PATH	= "./classes/tasks/";
 	/** @var string Session array name where filter vars are stored */
-	var $_filter_name		= "tasks_filter";
+	public $_filter_name		= "tasks_filter";
 	/** @var bool Filter on/off */
-	var $USE_FILTER			= true;
+	public $USE_FILTER			= true;
 
 	/**
 	* Constructor

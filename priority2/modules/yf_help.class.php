@@ -5,9 +5,9 @@
 class yf_help extends yf_module {
 
 	/** @var string */
-	var $TICKET_DELIM	= "jq";
+	public $TICKET_DELIM	= "jq";
 	/** @var array @conf_skip */
-	var $_comments_params = array(
+	public $_comments_params = array(
 		"return_action"		=> "view_answers",
 		"stpl_main"			=> "help/answers_main",
 		"stpl_item"			=> "help/answers_item",
@@ -16,17 +16,17 @@ class yf_help extends yf_module {
 		"allow_guests_posts"=> 1,
 	);
 	/** @var bool */
-	var $ALLOW_CLOSE_OWN_TICKETS	= 1;
+	public $ALLOW_CLOSE_OWN_TICKETS	= 1;
 	/** @var bool */
-	var $ALLOW_DELETE_OWN_TICKETS	= 0;
+	public $ALLOW_DELETE_OWN_TICKETS	= 0;
 	/** @var bool */
-	var $ALLOW_REOPEN_OWN_TICKETS	= 1;
+	public $ALLOW_REOPEN_OWN_TICKETS	= 1;
 	/** @var bool */
-	var $ALLOW_EDIT_OWN_ANSWERS		= 0;
+	public $ALLOW_EDIT_OWN_ANSWERS		= 0;
 	/** @var bool */
-	var $ALLOW_DELETE_OWN_ANSWERS	= 0;
+	public $ALLOW_DELETE_OWN_ANSWERS	= 0;
 	/** @var bool */
-	var $USE_CAPTCHA = 1;
+	public $USE_CAPTCHA = 1;
 
 	//-----------------------------------------------------------------------------
 	// YF module constructor

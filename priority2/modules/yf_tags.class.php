@@ -18,40 +18,40 @@ class yf_tags {
 	*		\x41-\x5A (A-Z),
 	*		\x61-\x7A (a-z)
 	*/
-	var $REGEXP_ALLOWED		= '/[\x00-\x09\x0B-\x1F\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]/ims';
+	public $REGEXP_ALLOWED		= '/[\x00-\x09\x0B-\x1F\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]/ims';
 	/** @var int Min keyword length */
-	var $MIN_KEYWORD_LENGTH	= 3;
+	public $MIN_KEYWORD_LENGTH	= 3;
 	/** @var int Max keyword length */
-	var $MAX_KEYWORD_LENGTH	= 30;
+	public $MAX_KEYWORD_LENGTH	= 30;
 	/** @var bool Use utf-8 */
-	var $UTF8_MODE			= false;
+	public $UTF8_MODE			= false;
 	/** @var int Allowed group number */
-	var $ALLOWED_GROUP = 0;
+	public $ALLOWED_GROUP = 0;
 	/** @var int Number of tags per object */
-	var $TAGS_PER_OBJ = 10;
+	public $TAGS_PER_OBJ = 10;
 	/** @var int Maximum number of tags that shows in a cloud */
-	var $CLOUD_TAGS_LIMIT = 20;
+	public $CLOUD_TAGS_LIMIT = 20;
 	/** @var enum('num','text') Default value. Cloud creates in alphabetic text order*/
-	var $CLOUD_ORDER = "text";
+	public $CLOUD_ORDER = "text";
 	/** @var int Maximum fontsize for cloud (in 'em') */
-	var $CLOUD_MAX_FSIZE = 2;
+	public $CLOUD_MAX_FSIZE = 2;
 	/** @var int Minimum fontsize for cloud (in 'em') */
-	var $CLOUD_MIN_FSIZE = 0.9;
+	public $CLOUD_MIN_FSIZE = 0.9;
 	/** @var array */
-	var $GROUPS = array(
+	public $GROUPS = array(
 		"0" => "author",
 		"1"	=> "friends",
 		"2" => "members",
 		"3"	=> "all",
 	);
 	/** @var array Objects in which tagging is available */
-	var $avail_objects = array(
+	public $avail_objects = array(
 		"gallery",
 		"blog",
 		"articles",
 	);
 	/** @var array Corresponding of objects [keys] and their dbtables [values] */
-	var $_db_tables_for_object = array(
+	public $_db_tables_for_object = array(
 		"gallery"	=> "gallery_photos",
 		"blog"		=> "blog_posts",
 		"articles"	=> "articles_texts",

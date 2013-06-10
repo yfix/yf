@@ -163,8 +163,8 @@ define ("DEBUG_MODE", 1);
  * @link http://www.unicode.org Unicode Homepage
  **/
 class ConvertCharset {
-	var $RecognizedEncoding; //This value keeps information if string contains multibyte chars.
-	var $Entities; // This value keeps information if output should be with numeric entities.
+	public $RecognizedEncoding; //This value keeps information if string contains multibyte chars.
+	public $Entities; // This value keeps information if output should be with numeric entities.
 
 	/**
 	 * CharsetChange::NumUnicodeEntity()

@@ -11,25 +11,25 @@
 class yf_minicalendar {
 
 	/** @var @conf_skip */
-	var $stamp;
+	public $stamp;
 	/** @var @conf_skip */
-	var $nameWeek;
+	public $nameWeek;
 	/** @var @conf_skip */
-	var $nameMonthFull;
+	public $nameMonthFull;
 	/** @var @conf_skip */
-	var $nameMonth;
+	public $nameMonth;
 	/** @var @conf_skip */
-	var $selYear;
+	public $selYear;
 	/** @var @conf_skip */
-	var $selMonth;
+	public $selMonth;
 	/** @var @conf_skip */
-	var $startYear;
+	public $startYear;
 	/** @var @conf_skip */
-	var $endYear;
+	public $endYear;
 	/** @var @conf_skip */
 	// Set whether use "US-style" (with week starts on sunday) for true or 
 	// "European-style" (Week starts on monday) for false
-	var $sun_first = true;
+	public $sun_first = true;
 
 	/**
 	 * YF Minicalendar

@@ -11,15 +11,15 @@
 class yf_pear_emailer {
 
 	/** @var string Message header */
-	var $_header_template	= '';
+	public $_header_template	= '';
 	/** @var string Message footer */
-	var $_footer_template	= '';
+	public $_footer_template	= '';
 	/** @var string @conf_skip Email body (like HTML) */
-	var $_html				= '';
+	public $_html				= '';
 	/** @var array @conf_skip */
-	var $headers			= array();
+	public $headers			= array();
 	/** @var array @conf_skip Email options */
-	var $options		= array(
+	public $options		= array(
 		'to_email'		=> '', // To Email
 		'to_real_name'	=> '', // To Name
 		'from_email'	=> '', // From Email

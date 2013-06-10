@@ -11,9 +11,9 @@
 class yf_forum_members {
 
 	/** @var string Session array name where filter vars are stored */
-	var $_filter_name = "members_filter";
+	public $_filter_name = "members_filter";
 	/** @var bool Filter on/off */
-	var $USE_FILTER = false;
+	public $USE_FILTER = false;
 
 	/**
 	* Constructor

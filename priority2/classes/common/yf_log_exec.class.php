@@ -11,24 +11,24 @@
 class yf_log_exec {
 
 	/** @var array Stop-list for logging (REGEXPs allowed here) */
-	var $STOP_LIST				= array(
+	public $STOP_LIST				= array(
 		"object=(task_loader|aff).*",
 		"task=(login|logout)",
 	);
 	/** @var bool */
-	var $USE_STOP_LIST			= true;
+	public $USE_STOP_LIST			= true;
 	/** @var bool */
-	var $LOG_NO_GRAPHICS_PAGES	= false;
+	public $LOG_NO_GRAPHICS_PAGES	= false;
 	/** @var bool */
-	var $FILTER_BOTS			= false;
+	public $FILTER_BOTS			= false;
 	/** @var bool */
-	var $LOG_NOT_FOUND_PAGES	= false;
+	public $LOG_NOT_FOUND_PAGES	= false;
 	/** @var enum("db","file") */
-	var $LOG_DRIVER				= "file";
+	public $LOG_DRIVER				= "file";
 	/** @var  */
-	var $LOG_DIR_NAME			= "logs/log_exec/";
+	public $LOG_DIR_NAME			= "logs/log_exec/";
 	/** @var bool */
-	var $LOGGING				= true;
+	public $LOGGING				= true;
 
 	/**
 	* 

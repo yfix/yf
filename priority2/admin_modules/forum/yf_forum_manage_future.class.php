@@ -11,11 +11,11 @@
 class yf_forum_manage_future {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 	/** @var int Next auto-date lower limit (in seconds) */
-	var $NEXT_DATE_MIN	= 3600;
+	public $NEXT_DATE_MIN	= 3600;
 	/** @var int Next auto-date higher limit (in seconds) */
-	var $NEXT_DATE_MAX	= 7200;
+	public $NEXT_DATE_MAX	= 7200;
 
 	/**
 	* Framework constructor

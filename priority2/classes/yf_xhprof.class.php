@@ -2,7 +2,7 @@
 
 class yf_xhprof {
 
-	var $LOGS_PATH = "/var/log/xhprof/";
+	public $LOGS_PATH = "/var/log/xhprof/";
 
 	/**
 	*

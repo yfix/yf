@@ -5,15 +5,15 @@
 class yf_site_links {
 
 	/** @var int Number of columns to divide links display */
-	var $NUM_COLS			= 2;
+	public $NUM_COLS			= 2;
 	/** @var int @conf_skip */
-	var $USER_ID			= null;
+	public $USER_ID			= null;
 	/** @var array @conf_skip */
-	var $_user_info			= null;
+	public $_user_info			= null;
 	/** @var int @conf_skip */
-	var $PRIORITY			= null;
+	public $PRIORITY			= null;
 	/** @var array @conf_skip Link statuses */
-	var $_link_statuses		= array(
+	public $_link_statuses		= array(
 		0 => "New",
 		1 => "Waiting",
 		2 => "Active",
@@ -22,7 +22,7 @@ class yf_site_links {
 		5 => "Outdated",
 	);
 	/** @var array @conf_skip Link types */
-	var $_link_types		= array(
+	public $_link_types		= array(
 		"Text",
 		"Banner",
 	);

@@ -17,16 +17,16 @@ class yf_file_manager {
 	/** @var string Color of the ZIP archives */
 	var	$color_zip			= "navy";
 	/** @var int */
-	var $_copy_dir_deepness = 2;
+	public $_copy_dir_deepness = 2;
 	/** @var string */
-	var $_default_email		= "";
+	public $_default_email		= "";
 	/** @var string @conf_skip Include files pattern */
-	var $_include_pattern	= "";
+	public $_include_pattern	= "";
 	/** @var string @conf_skip Exclude files pattern */
-	var $_exclude_pattern	= "#\.(svn|git)#";
+	public $_exclude_pattern	= "#\.(svn|git)#";
 	/** @var int @conf_skip */
 // TODO: need to connect them
-	var $_default_chmod		= 0777;
+	public $_default_chmod		= 0777;
 
 	/**
 	* Framework constructor

@@ -11,7 +11,7 @@
 class yf_task_loader {
 
 	/** @var bool Use shutdown */
-	var $USE_SHUTDOWN = false;
+	public $USE_SHUTDOWN = false;
 
 	/**
 	* Do run sheduled tasks

@@ -11,103 +11,103 @@
 class yf_db {
 
 	/** @var string Type of database (default) */
-	var $DB_TYPE					= "mysql";
+	public $DB_TYPE					= "mysql";
 	/** @var bool Use tables names caching */
-	var $CACHE_TABLE_NAMES			= false;
+	public $CACHE_TABLE_NAMES			= false;
 	/** @var int @conf_skip Number of queries */
-	var $NUM_QUERIES				= 0;
+	public $NUM_QUERIES				= 0;
 	/** @var array Query log array */
-	var $QUERY_LOG					= array();
+	public $QUERY_LOG					= array();
 	/** @var array */
-	var $QUERY_AFFECTED_ROWS		= array();
+	public $QUERY_AFFECTED_ROWS		= array();
 	/** @var array */
-	var $QUERY_EXEC_TIME			= array();
+	public $QUERY_EXEC_TIME			= array();
 	/** @var array */
-	var $QUERY_BACKTRACE_LOG		= array();
+	public $QUERY_BACKTRACE_LOG		= array();
 	/** @var int Tables cache lifetime (while developing need to be short) (else need to be very large) */
-	var $TABLE_NAMES_CACHE_TTL		= 3600; // 1*3600*24 = 1 day
+	public $TABLE_NAMES_CACHE_TTL		= 3600; // 1*3600*24 = 1 day
 	/** @var bool Auto-connect on/off */
-	var $AUTO_CONNECT				= false;
+	public $AUTO_CONNECT				= false;
 	/** @var bool Use backtrace in error message */
-	var $ERROR_BACKTRACE			= true;
+	public $ERROR_BACKTRACE			= true;
 	/** @var bool Use backtrace to get where query was called from (will be used only when DEBUG_MODE is enabled) */
-	var $USE_QUERY_BACKTRACE		= true;
+	public $USE_QUERY_BACKTRACE		= true;
 	/** @var bool Auto-repairing on error (table not exists) on/off */
-	var $ERROR_AUTO_REPAIR			= true;
+	public $ERROR_AUTO_REPAIR			= true;
 	/** @var string Folder where databases drivers are stored */
-	var $DB_DRIVERS_DIR				= "classes/db_drivers/";
+	public $DB_DRIVERS_DIR				= "classes/db_drivers/";
 	/** @var int Num tries to reconnect (will be useful if db server is overloaded) (Set to "0" for disabling) */
-	var $RECONNECT_NUM_TRIES		= 2;
+	public $RECONNECT_NUM_TRIES		= 2;
 	/** @var int Time to wait between reconnects (in seconds) */
-	var $RECONNECT_DELAY			= 1;
+	public $RECONNECT_DELAY			= 1;
 	/** @var bool Use logarithmic increase or reconnect time */
-	var $RECONNECT_DELAY_LOG_INC	= 1;
+	public $RECONNECT_DELAY_LOG_INC	= 1;
 	/** @var bool Use locking for reconnects or not */
-	var $RECONNECT_USE_LOCKING		= 1;
+	public $RECONNECT_USE_LOCKING		= 1;
 	/** @var string */
-	var $RECONNECT_LOCK_FILE_NAME	= "uploads/db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock";
+	public $RECONNECT_LOCK_FILE_NAME	= "uploads/db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock";
 	/** @var int Time in seconds between unlock reconnect */
-	var $RECONNECT_LOCK_TIMEOUT		= 30;
+	public $RECONNECT_LOCK_TIMEOUT		= 30;
 	/** @var string */
-	var $CACHE_TABLES_NAMES_FILE	= "core_cache/cache_db_tables_[DB_HOST]_[DB_NAME]_[DB_USER].php";
+	public $CACHE_TABLES_NAMES_FILE	= "core_cache/cache_db_tables_[DB_HOST]_[DB_NAME]_[DB_USER].php";
 	/** @var bool Connection required or not (else E_USER_WARNING will be thrown not E_USER_ERROR) */
-	var $CONNECTION_REQUIRED		= 0;
+	public $CONNECTION_REQUIRED		= 0;
 	/** @var bool Allow to use shutdown queries or not */
-	var $USE_SHUTDOWN_QUERIES		= 1;
+	public $USE_SHUTDOWN_QUERIES		= 1;
 	/** @var bool Allow to cache specified queries results */
-	var $ALLOW_CACHE_QUERIES		= 0;
+	public $ALLOW_CACHE_QUERIES		= 0;
 	/** @var bool Max number of cached queries */
-	var $CACHE_QUERIES_LIMIT		= 100;
+	public $CACHE_QUERIES_LIMIT		= 100;
 	/** @var bool Max number of logged queries (set to 0 to unlimited) */
-	var $LOGGED_QUERIES_LIMIT		= 1000;
+	public $LOGGED_QUERIES_LIMIT		= 1000;
 	/** @var bool Gather affected rows stats (will be used only when DEBUG_MODE is enabled) */
-	var $GATHER_AFFECTED_ROWS		= true;
+	public $GATHER_AFFECTED_ROWS		= true;
 	/** @var bool Store db queries to file */
-	var $LOG_ALL_QUERIES			= 0;
+	public $LOG_ALL_QUERIES			= 0;
 	/** @var bool Store db queries to file */
-	var $LOG_SLOW_QUERIES			= 0;
+	public $LOG_SLOW_QUERIES			= 0;
 	/** @var string Log queries file name */
-	var $FILE_NAME_LOG_ALL			= "db_queries.log";
+	public $FILE_NAME_LOG_ALL			= "db_queries.log";
 	/** @var string Log queries file name */
-	var $FILE_NAME_LOG_SLOW			= "slow_queries.log";
+	public $FILE_NAME_LOG_SLOW			= "slow_queries.log";
 	/** @var float */
-	var $SLOW_QUERIES_TIME_LIMIT	= 0.2;
+	public $SLOW_QUERIES_TIME_LIMIT	= 0.2;
 	/** @var bool Add additional engine details to the SQL as comment for later use */
-	var $INSTRUMENT_QUERIES			= false;
+	public $INSTRUMENT_QUERIES			= false;
 	/** @var array */
-	var $_instrument_items			= array();
+	public $_instrument_items			= array();
 	/** @var bool @conf_skip Internal var (default value) */
-	var $_tried_to_connect			= false;
+	public $_tried_to_connect			= false;
 	/** @var bool @conf_skip Internal var (default value) */
-	var $_connected					= false;
+	public $_connected					= false;
 	/** @var mixed @conf_skip Driver instance */
-	var $db							= null;
+	public $db							= null;
 	/** @var string Tables names prefix */
-	var $DB_PREFIX					= null;
+	public $DB_PREFIX					= null;
 	/** @var string */
-	var $DB_HOST					= "";
+	public $DB_HOST					= "";
 	/** @var string */
-	var $DB_NAME					= "";
+	public $DB_NAME					= "";
 	/** @var string */
-	var $DB_USER					= "";
+	public $DB_USER					= "";
 	/** @var string */
-	var $DB_PSWD					= "";
+	public $DB_PSWD					= "";
 	/** @var int */
-	var $DB_PORT					= "";
+	public $DB_PORT					= "";
 	/** @var string */
-	var $DB_CHARSET					= "";
+	public $DB_CHARSET					= "";
 	/** @var string */
-	var $DB_SOCKET					= "";
+	public $DB_SOCKET					= "";
 	/** @var bool */
-	var $DB_SSL						= false;
+	public $DB_SSL						= false;
 	/** @var bool */
-	var $DB_PERSIST					= false;
+	public $DB_PERSIST					= false;
 	/** @var bool In case of true - we will try to avoid any data/structure modification queries to not break replication */
-	var $DB_REPLICATION_SLAVE		= false;
+	public $DB_REPLICATION_SLAVE		= false;
 	/** @var bool Adding SQL_NO_CACHE to SELECT queries: useful to find long running queries */
-	var $SQL_NO_CACHE				= false;
+	public $SQL_NO_CACHE				= false;
 	/** @var array List of tables inside current database */
-	var $_PARSED_TABLES				= array();
+	public $_PARSED_TABLES				= array();
 
 	/**
 	* Constructor

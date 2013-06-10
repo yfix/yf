@@ -11,19 +11,19 @@
 class yf_captcha {
 
 	/** @var string Secret key (will be added to hash) */
-	var $secret_key		= "";
+	public $secret_key		= "";
 	/** @var bool Use cookies or session vars */
-	var $use_cookies	= false;
+	public $use_cookies	= false;
 	/** @var string Cookie var name */
-	var $var_name		= "image_hash";
+	public $var_name		= "image_hash";
 	/** @var int Cookie time-to-live (in seconds) */
-	var $cookie_ttl		= 86400; // @var 24 * 3600 == 1 day
+	public $cookie_ttl		= 86400; // @var 24 * 3600 == 1 day
 	/** @var string Path to the True Type Font to use (could be array) */
-	var $ttf_font_path	= "";
+	public $ttf_font_path	= "";
 	/** @var int Result image width (in pixels) */
-	var $image_width	= 120;
+	public $image_width	= 120;
 	/** @var int Result image height (in pixels) */
-	var $image_height	= 50;
+	public $image_height	= 50;
 	/** @var array Allowed symbols to use in randomizer */
 	var	$symbols_array	= array();
 	/** @var int Number of symbols to generate */
@@ -39,9 +39,9 @@ class yf_captcha {
 	/** @var int Number of random pixels to add */
 	var	$add_pixels		= 500;
 	/** @var int @conf_skip Image background color */
-	var $bg_color		= 0x00ffffff; // @var 0x AA RR GG BB (alpha, red, green, blue)
+	public $bg_color		= 0x00ffffff; // @var 0x AA RR GG BB (alpha, red, green, blue)
 	/** @var array @conf_skip Colors arrays */
-	var $text_colors	= array(
+	public $text_colors	= array(
 		0x162A7C8F,
 		0x1628508C,
 		0x16A12F9B,
@@ -49,7 +49,7 @@ class yf_captcha {
 		0x16622A19,
 	);
 	/** @var array @conf_skip */
-	var $rect_colors	= array(
+	public $rect_colors	= array(
 		0x702A7C8F,
 		0x7028508C,
 		0x70A12F9B,
@@ -57,12 +57,12 @@ class yf_captcha {
 		0x70622A19,
 	);
 	/** @var array @conf_skip */
-	var $line_colors	= array(
+	public $line_colors	= array(
 		0x202A7C8F,
 		0x2028508C,
 	);
 	/** @var array @conf_skip */
-	var $ellipse_colors	= array(
+	public $ellipse_colors	= array(
 		0x702A7C8F,
 		0x7028508C,
 		0x70A12F9B,
@@ -70,12 +70,12 @@ class yf_captcha {
 		0x70622A19,
 	);
 	/** @var array @conf_skip */
-	var $pixel_colors	= array(
+	public $pixel_colors	= array(
 		0x202A7C8F,
 		0x2028508C,
 	);
 	/** @var CAPTCHA enabled */
-	var $ENABLED = true;
+	public $ENABLED = true;
 
 	/**
 	* Catch missing method call

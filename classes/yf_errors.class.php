@@ -11,49 +11,49 @@
 class yf_errors {
 
 	/** @var bool Log errors to the error file? */
-	var $LOG_ERRORS_TO_FILE		= false;
+	public $LOG_ERRORS_TO_FILE		= false;
 	/** @var bool Log warnings to the error file? */
-	var $LOG_WARNINGS_TO_FILE	= false;
+	public $LOG_WARNINGS_TO_FILE	= false;
 	/** @var bool Log notices to the error file? */
-	var $LOG_NOTICES_TO_FILE	= false;
+	public $LOG_NOTICES_TO_FILE	= false;
 	/** @var bool Send errors via email? */
-	var $SEND_ERRORS_TO_MAIL	= false;
+	public $SEND_ERRORS_TO_MAIL	= false;
 	/** @var bool Send warnings via email? */
-	var $SEND_WARNINGS_TO_MAIL	= false;
+	public $SEND_WARNINGS_TO_MAIL	= false;
 	/** @var bool Send notices via email? */
-	var $SEND_NOTICES_TO_MAIL	= false;
+	public $SEND_NOTICES_TO_MAIL	= false;
 	/** @var int Error reporting level */
-	var $ERROR_REPORTING		= 0;
+	public $ERROR_REPORTING		= 0;
 	/** @var string 
 	* The filename of the log file. 
 	* NOTE: $error_log_filename will only be used if you have log_errors Off and ;error_log filename in php.ini 
 	* if log_errors is On, and error_log is set, the filename in error_log will be used. 
 	*/ 
-	var $error_log_filename		= "error_logs.log";
+	public $error_log_filename		= "error_logs.log";
 	/** @var string The recipient email to mail errors to */
-	var $email_to				= "";
+	public $email_to				= "";
 	/** @var string Recipient address */
-	var $_email_addr_to			= "";
+	public $_email_addr_to			= "";
 	/** @var string Recipient name */
-	var $_email_name_to			= "";
+	public $_email_name_to			= "";
 	/** @var string @conf_skip Holds the total error report to be used by mail_error() */
-	var $mail_buffer			= "";
+	public $mail_buffer			= "";
 	/** @var bool Show start and end log headers or not */
-	var $_SHOW_BORDERS			= false;
+	public $_SHOW_BORDERS			= false;
 	/** @var bool @conf_skip Started log output or not */
-	var $_LOG_STARTED			= false;
+	public $_LOG_STARTED			= false;
 	/** @var bool Log error messages into database */
-	var $LOG_INTO_DB			= false;
+	public $LOG_INTO_DB			= false;
 	/** @var bool Log into these data: $_GET, $_POST */
-	var $DB_LOG_ENV				= true;
+	public $DB_LOG_ENV				= true;
 	/** @var Use compact format */
-	var $USE_COMPACT_FORMAT		= true;
+	public $USE_COMPACT_FORMAT		= true;
 	/** @var string Could be any sequence from GPFCS */
-	var $ENV_ARRAYS				= "GPF";
+	public $ENV_ARRAYS				= "GPF";
 	/** @var bool Quickly turn off notices */
-	var $NO_NOTICES				= true;
+	public $NO_NOTICES				= true;
 	/** @var array @conf_skip Standard error types */
-	var $error_types = array(
+	public $error_types = array(
 		1		=> "E_ERROR",
 		2		=> "E_WARNING",
 		4		=> "E_PARSE",

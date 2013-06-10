@@ -6,37 +6,37 @@
 class yf_manage_shop {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
-//	var $USE_FILTER		= false;
+	public $USE_FILTER		= true;
+//	public $USE_FILTER		= false;
 	/** @var string Folder where product's images store */
-	var $PROD_IMG_DIR		= "shop/products/";
+	public $PROD_IMG_DIR		= "shop/products/";
 	/** @var string fullsize image suffix (underscore at the beginning required)*/
-	var $FULL_IMG_SUFFIX	= "_full";
+	public $FULL_IMG_SUFFIX	= "_full";
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	var $THUMB_SUFFIX		= "_small";
+	public $THUMB_SUFFIX		= "_small";
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	var $MEDIUM_SUFFIX		= "_medium";
+	public $MEDIUM_SUFFIX		= "_medium";
 	/** @var string Image prefix */
-	var $IMG_PREFIX			= "product_";
+	public $IMG_PREFIX			= "product_";
 	/** @var int Thumb size X */
-	var $THUMB_X			= 100;
+	public $THUMB_X			= 100;
 	/** @var int Thumb size Y */
-	var $THUMB_Y			= 100;
+	public $THUMB_Y			= 100;
 	/** @var string Default currency */
-	var $CURRENCY			= "\$";
+	public $CURRENCY			= "\$";
 	/** @var Shipping types */
-	var $_ship_types = array(
+	public $_ship_types = array(
 		1	=> "Free",
 		2	=> "Courier",
 		3	=> "FedEX",
 	);
 	/** @var Payment types */
-	var $_pay_types = array(
+	public $_pay_types = array(
 		1	=> "Courier",
 		2	=> "Authorize.Net",
 	);
 	/** @var @conf_skip */
-	var $_statuses = array(
+	public $_statuses = array(
 		""									=> "",
 		"pending"					=> "Pending",
 		"pending payment"	=> "Pending payment",
@@ -45,7 +45,7 @@ class yf_manage_shop {
 		"shipped"					=> "Shipped",
 	);
 	/** @var Company info */
-	var $COMPANY_INFO = array(
+	public $COMPANY_INFO = array(
 		"company_name"			=> "Company Name",
 		"company_address"		=> "Company Address 1",
 		"company_address2"	=> "Company Address 2",
@@ -54,9 +54,9 @@ class yf_manage_shop {
 		"company_email"			=> "Company Email",
 	);
 	/** @var */
-	var $ATTRIBUTES = array();
+	public $ATTRIBUTES = array();
 	/** @var @conf_skip */
-	var $ATTRIBUTES_CAT_ID = 1;
+	public $ATTRIBUTES_CAT_ID = 1;
 
 	/**
 	* Constructor

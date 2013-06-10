@@ -11,56 +11,56 @@
 class yf_site_map {
 
 	/** @var bool Enable\disable site map generation */
-	var $SITE_MAP_ENABLED		= false;
+	public $SITE_MAP_ENABLED		= false;
 	/** @var array Array of site modules to include their parts of sitemap */
-	var $MODULES_TO_INCLUDE		= array();
+	public $MODULES_TO_INCLUDE		= array();
 	/** @var string Sitemap store folder */
-	var $SITEMAP_STORE_FOLDER	= "site_map/";
+	public $SITEMAP_STORE_FOLDER	= "site_map/";
 	/** @var string Sitemap file name */
-	var $SITEMAP_FILE_NAME		= "site_map";
+	public $SITEMAP_FILE_NAME		= "site_map";
 	/** @var @conf_skip */
-	var $_HOOK_NAME				= "_site_map_items";
+	public $_HOOK_NAME				= "_site_map_items";
 	/** @var bool Use GZIP */
-	var $USE_GZIP				= false;
+	public $USE_GZIP				= false;
 	/** @var bool Notify Google */
-	var $NOTIFY_GOOGLE			= false;
+	public $NOTIFY_GOOGLE			= false;
 	/** @var int Max entries for sitemap file */
-	var $MAX_ENTRIES			= 50000;
+	public $MAX_ENTRIES			= 50000;
 	/** @var int Max sitemap filesize */
-	var $MAX_SIZE				= 10000000;
+	public $MAX_SIZE				= 10000000;
 	/** @var int Limit max URL length to the 2048 symbols*/
-	var $MAX_URL_LENGTH			= 2048;
+	public $MAX_URL_LENGTH			= 2048;
 	/** @var int Max number of sitemaps */
-	var $MAX_SITEMAPS			= 1000;
+	public $MAX_SITEMAPS			= 1000;
 	/** @var bool Do not change! 
 	* It's a flag which is become "true" if number of sitemap 
 	* files reached $MAX_SITEMAPS. There will be no actions after this
 	*/
-	var $LIMIT_REACHED			= false;
+	public $LIMIT_REACHED			= false;
 	/** @var array Frequency avail values @conf_skip */
-	var $CHANGEFREQ_VALUES		= array('always','hourly','daily','weekly','monthly','yearly','never');
+	public $CHANGEFREQ_VALUES		= array('always','hourly','daily','weekly','monthly','yearly','never');
 	/** @var string @conf_skip */
-	var $_notify_url			= '';
+	public $_notify_url			= '';
 	/** @var string @conf_skip */
-	var $_file_name				= '';
+	public $_file_name				= '';
 	/** @var string @conf_skip */
-	var $_file_extension		= '.xml';
+	public $_file_extension		= '.xml';
 	/** @var bool Use locking */
-	var $USE_LOCKING			= false;
+	public $USE_LOCKING			= false;
 	/** @var int Lock timeout */
-	var $LOCK_TIMEOUT			= 600;
+	public $LOCK_TIMEOUT			= 600;
 	/** @var string Lock file name */
-	var $LOCK_FILE_NAME			= "uploads/site_map.lock";
+	public $LOCK_FILE_NAME			= "uploads/site_map.lock";
 	/** @var int Site map TTL */
-	var $SITEMAP_LIVE_TIME		= 43200;	// 60*60*12 = 12hours
+	public $SITEMAP_LIVE_TIME		= 43200;	// 60*60*12 = 12hours
 	/** @var bool Allow rewrite */
-	var $ALLOW_REWRITE			= false;
+	public $ALLOW_REWRITE			= false;
 	/** @var int Rewrite split length */
-	var $REWRITE_SPLIT_LENGTH	= 200000;
+	public $REWRITE_SPLIT_LENGTH	= 200000;
 	/** @var bool */
-	var $DIRECT_FILE_OUTPUT		= true;
+	public $DIRECT_FILE_OUTPUT		= true;
 	/** @var bool */
-	var $TEST_MODE				= false;
+	public $TEST_MODE				= false;
 
 	/**
 	* Catch missing method call

@@ -5,27 +5,27 @@
 class yf_friends extends yf_module {
 
 	/** @var int Number of "friends" on edit page */
-	var $ALL_FRIENDS_PER_PAGE		= 10;
+	public $ALL_FRIENDS_PER_PAGE		= 10;
 	/** @var int Number "friend of" users on page */
-	var $ALL_FRIEND_OF_PER_PAGE		= 10;
+	public $ALL_FRIEND_OF_PER_PAGE		= 10;
 	/** @var int Number of records to show for profile */
-	var $FOR_PROFILE_NUM_FRIEND_OF	= 9;
+	public $FOR_PROFILE_NUM_FRIEND_OF	= 9;
 	/** @var int Number of records to show for profile */
-	var $FOR_PROFILE_NUM_FRIENDS	= 9;
+	public $FOR_PROFILE_NUM_FRIENDS	= 9;
 	/** @var int Number of columns for view all page */
-	var $VIEW_ALL_PER_LINE			= 3;
+	public $VIEW_ALL_PER_LINE			= 3;
 	/** @var int Number of columns for profile */
-	var $FOR_PROFILE_PER_LINE		= 3;
+	public $FOR_PROFILE_PER_LINE		= 3;
 	/** @var bool Send email notifications on add/delete */
-	var $SEND_EMAIL_NOTIFY			= true;
+	public $SEND_EMAIL_NOTIFY			= true;
 	/** @var array Status */
-	var $status = array(
+	public $status = array(
 			"1"	=> "waiting",
 			"2"	=> "declined",
 			"3"	=> "accepted",
 	);
 	/** @var array Mapping of vote pages */
-	var $_map_post_urls = array(
+	public $_map_post_urls = array(
 		"forum"		=> "./?object=forum&action=view_post&id=",
 		"blog"		=> "./?object=blog&action=show_single_post&id=",
 		"articles"	=> "./?object=articles&action=view&id=",
@@ -33,7 +33,7 @@ class yf_friends extends yf_module {
 		"reviews"	=> "./?object=reviews&action=view_details&id=",
 	);
 	/** @var array pairs object=comment_action */
-	var $_comments_actions	= array(
+	public $_comments_actions	= array(
 		"articles"		=> "view",
 		"blog"			=> "show_single_post",
 		"faq"			=> "view",
@@ -46,10 +46,10 @@ class yf_friends extends yf_module {
 	);
 	
 	/** @var int Number of friends group */
-	var $NUMBER_FRIENDS_GROUP = 10;
+	public $NUMBER_FRIENDS_GROUP = 10;
 	
 	/** @var array Friends group names */
-	var $_friends_group = array(
+	public $_friends_group = array(
 		"1"	=> "Family",
 		"2"	=> "Buddies",
 		"3"	=> "CoWorkers"

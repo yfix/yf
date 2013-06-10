@@ -171,7 +171,7 @@ class yf_files_operation{
 	}
 
 	/**
-	* var $remote_path from including file "_files_config"
+	* public $remote_path from including file "_files_config"
 	*/
 	function upload_remote_dir ($server_info, $local_path, $remote_path_force = "", $user_force = "", $group_force = "") {
 	

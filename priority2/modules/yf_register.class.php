@@ -5,25 +5,25 @@
 class yf_register {
 
 	/** @var bool Allow additional JavaScript based form validation*/
-	var $_JS_VALIDATION			= true;
+	public $_JS_VALIDATION			= true;
 	/** @var bool Do confirm registrations by email or not */
-	var $CONFIRM_REGISTER		= true;
+	public $CONFIRM_REGISTER		= true;
 	/** @var int Confirm expiration time in seconds */
-	var $CONFIRM_TTL			= 864000; // 10 * 24 * 60 * 60 = 10 days
+	public $CONFIRM_TTL			= 864000; // 10 * 24 * 60 * 60 = 10 days
 	/** @var bool Check if user have been registered such email */
-	var $CHECK_EMAIL_IN_DELETED = true;
+	public $CHECK_EMAIL_IN_DELETED = true;
 	/** @var bool Check that user agreed with site terms and conditions */
-	var $CHECK_TERMS_AGREE		= true;
+	public $CHECK_TERMS_AGREE		= true;
 	/** @var int Number of the first step */
-	var $_FIRST_STEP_NUM		= 2;
+	public $_FIRST_STEP_NUM		= 2;
 	/** @var bool Use AJAX-based pre-checking of unique fields availiability */
-	var $USE_JS_CHECK_AVAIL		= true;
+	public $USE_JS_CHECK_AVAIL		= true;
 	/** @var bool Do not allow to register logged in users */
-	var $DENY_FOR_LOGGED_IN		= true;
+	public $DENY_FOR_LOGGED_IN		= true;
 	/** @var array Nick allowed synmbols */
-	var $NICK_ALLOWED_SYMBOLS	= array("a-z","0-9","_","\-","@","#"," ");
+	public $NICK_ALLOWED_SYMBOLS	= array("a-z","0-9","_","\-","@","#"," ");
 	/** @var bool Use captcha or not */
-	var $USE_CAPTCHA			= true;
+	public $USE_CAPTCHA			= true;
 
 	//-----------------------------------------------------------------------------
 	// YF module constructor

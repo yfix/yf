@@ -11,7 +11,7 @@
 class yf_custom_design {
 
 	/** @var int Max background image size (In bytes) */
-	var $MAX_BG_IMAGE_SIZE = 512000;
+	public $MAX_BG_IMAGE_SIZE = 512000;
 
 	/**
 	* Constructor (PHP 4.x)

@@ -11,7 +11,7 @@
 class yf_revisions_manager {
 
 	/** @var bool Filter on/off */
-//	var $USE_FILTER		= true;
+//	public $USE_FILTER		= true;
 
 	/**
 	* Default method

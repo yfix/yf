@@ -5,7 +5,7 @@
 class yf_admin_messages {
 
 	// Filter on/off
-	var $USE_FILTER = true;
+	public $USE_FILTER = true;
 
 	//-----------------------------------------------------------------------------
 	// Constructor

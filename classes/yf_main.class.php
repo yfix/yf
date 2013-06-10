@@ -15,148 +15,148 @@ class yf_main {
 	*	- user  (for user section)
 	*	- admin (for control panel)
 	*/
-	var $type					= "user";
+	public $type					= "user";
 	/***/
-	var $CONSOLE_MODE			= false;
+	public $CONSOLE_MODE			= false;
 	/** @var bool Use database for translation or language files */
-	var $LANG_USE_DB			= false;
+	public $LANG_USE_DB				= false;
 	/** @var bool Use custom error handler */
-	var $USE_CUSTOM_ERRORS		= false;
+	public $USE_CUSTOM_ERRORS		= false;
 	/** @var bool Sytem tables caching */
-	var $USE_SYSTEM_CACHE		= false;
+	public $USE_SYSTEM_CACHE		= false;
 	/** @var bool Task manager on/off */
-	var $USE_TASK_MANAGER		= false;
+	public $USE_TASK_MANAGER		= false;
 	/** @var bool Output caching on/off */
-	var $OUTPUT_CACHING			= false;
+	public $OUTPUT_CACHING			= false;
 	/** @var bool GZIP compression for output buffer on/off */
-	var $OUTPUT_GZIP_COMPRESS	= false;
+	public $OUTPUT_GZIP_COMPRESS	= false;
 	/** @var bool Send no-cache headers */
-	var $NO_CACHE_HEADERS		= true;
+	public $NO_CACHE_HEADERS		= true;
 	/** @var bool Strict init modules check (if turned on - then module need to be installed not only found) */
-	var $STRICT_MODULES_INIT	= false;
+	public $STRICT_MODULES_INIT		= false;
 	/** @var bool Session custom handler ("db","files","memcached","eaccelerator","apc","xcache" or false for "none") */
-	var $CUSTOM_SESSION_HANDLER	= false;
+	public $CUSTOM_SESSION_HANDLER	= false;
 	/** @var string Custom session save dir (leave ampty to skip), example: "session_data/" */
-	var $SESSION_SAVE_DIR		= "";
+	public $SESSION_SAVE_DIR		= "";
 	/** @var int Session life time (in seconds) */
-	var $SESSION_LIFE_TIME		= 7200; // 2 hours
+	public $SESSION_LIFE_TIME		= 7200; // 2 hours
 	/** @var string */
-	var $SESSION_DOMAIN			= ""; // Default empty, means current domain
+	public $SESSION_DOMAIN			= ""; // Default empty, means current domain
 	/** @var string */
-	var $SESSION_COOKIE_PATH	= "/";
+	public $SESSION_COOKIE_PATH		= "/";
 	/** @var bool */
-	var $SESSION_COOKIE_SECURE	= false;
+	public $SESSION_COOKIE_SECURE	= false;
 	/** @var bool */
-	var $SESSION_COOKIE_HTTPONLY= false;
+	public $SESSION_COOKIE_HTTPONLY	= false;
 	/** @var string */
-	var $SESSION_REFERER_CHECK	= ""; // WEB_PATH
+	public $SESSION_REFERER_CHECK	= ""; // WEB_PATH
 	/** @var string Custom session name */
-	var $USE_UNIQUE_SESSION_NAME= true;
+	public $USE_UNIQUE_SESSION_NAME	= true;
 	/** @var bool Auto-detect spiders */
-	var $SPIDERS_DETECTION		= false;
+	public $SPIDERS_DETECTION		= false;
 	/** @var bool Allow to load source code from db */
-	var $ALLOW_SOURCE_FROM_DB	= false;
+	public $ALLOW_SOURCE_FROM_DB	= false;
 	/** @var bool Allow to use overload protection methods inside user section (we will disable some heavy methods and/or queries) */
-	var $OVERLOAD_PROTECTION	= false;
+	public $OVERLOAD_PROTECTION		= false;
 	/** @var int Overloading protection turns on (if allowed) when CPU load is higher tha this value*/
-	var $OVERLOAD_CPU_LOAD		= 1;
+	public $OVERLOAD_CPU_LOAD		= 1;
 	/** @var bool Switch standard graphics processing on/off */
-	var $NO_GRAPHICS			= false;
+	public $NO_GRAPHICS				= false;
 	/** @var bool Set if no database connection needed */
-	var $NO_DB_CONNECT			= false;
+	public $NO_DB_CONNECT			= false;
 	/** @var bool Allow fast (but not complete) init */
-	var $ALLOW_FAST_INIT		= false;
+	public $ALLOW_FAST_INIT			= false;
 	/** @var bool Allow Geo IP tracking */
-	var $USE_GEO_IP				= false;
+	public $USE_GEO_IP				= false;
 	/** @var bool Allow to use PHPIDS (intrusion detection system) http://php-ids.org/ @experimental */
-	var $INTRUSION_DETECTION	= false;
+	public $INTRUSION_DETECTION		= false;
 	/** @var bool Inline edit locale vars */
-	var $INLINE_EDIT_LOCALE		= false;
+	public $INLINE_EDIT_LOCALE		= false;
 	/** @var bool Hide total ids where possible @experimental */
-	var $HIDE_TOTAL_ID			= false;
+	public $HIDE_TOTAL_ID			= false;
 	/** @var bool Switch between traditional mode and user info with dynamic fields */
-	var $USER_INFO_DYNAMIC		= false;
+	public $USER_INFO_DYNAMIC		= false;
 	/** @var bool Static pages as objects routing (eq. for URL like /terms/ instead of /static_pages/show/terms/) */
-	var $STATIC_PAGES_ROUTE_TOP	= false;
+	public $STATIC_PAGES_ROUTE_TOP	= false;
 	/** @var string "Acces denied" redirect url */
-	var $REDIR_URL_DENIED		= './?object=login_form&go_url=%%object%%;%%action%%%%add_get_vars%%';
+	public $REDIR_URL_DENIED		= './?object=login_form&go_url=%%object%%;%%action%%%%add_get_vars%%';
 	/** @var string "Not found" redirect url, also supports internal redirect, sample: array("object" => "help", "action" => "show") or array("stpl" => "my_404_page") */
-	var $REDIR_URL_NOT_FOUND	= './';
+	public $REDIR_URL_NOT_FOUND		= './';
 	/** @var bool Use only HTTPS protocol and check if not - the redirect to the HTTPS */
-	var $USE_ONLY_HTTPS			= false;
+	public $USE_ONLY_HTTPS			= false;
 	/** @var array List of patterns for https-enabled pages */
-	var $HTTPS_ENABLED_FOR		= array(
+	public $HTTPS_ENABLED_FOR		= array(
 		// "object=shop",
 	);
 	/** @var bool Track user last visit */
-	var $TRACK_USER_PAGE_VIEWS	= false;
+	public $TRACK_USER_PAGE_VIEWS	= false;
 	/** @var bool Auto-pack PHP code and use it @experimental */
-	var $AUTO_PACK_PHP_CODE		= false;
+	public $AUTO_PACK_PHP_CODE		= false;
 	/** @var bool Paid options global switch used by lot of other code @experimental */
-	var $ALLOW_PAID_OPTIONS		= false;
+	public $ALLOW_PAID_OPTIONS		= false;
 	/** @var bool Allow cache control from url modifiers */
-	var $CACHE_CONTROL_FROM_URL	= false;
+	public $CACHE_CONTROL_FROM_URL	= false;
 	/** @var bool Check server health status and return 503 if not OK (great to use with nginx upstream) */
-	var $SERVER_HEALTH_CHECK	= false;
+	public $SERVER_HEALTH_CHECK		= false;
 	/** @var bool Definies if we should connect firephp library */
-	var $FIREPHP_ENABLE			= false;
+	public $FIREPHP_ENABLE			= false;
 	/** @var int Execute method cache lifetime (in seconds), set to 0 to use cache module default value */
-	var $EXEC_CACHE_TTL			= 600;
+	public $EXEC_CACHE_TTL			= 600;
 	/** @var string Template for exec cache name */
-	var $EXEC_CACHE_NAME_TPL	= "[FUNCTION]_[CLASS]_[METHOD]_[LANG]_[DOMAIN]_[CATEGORY]_[DEBUG]";
+	public $EXEC_CACHE_NAME_TPL		= "[FUNCTION]_[CLASS]_[METHOD]_[LANG]_[DOMAIN]_[CATEGORY]_[DEBUG]";
 	/** @var string Path to the server health check result */
-	var $SERVER_HEALTH_FILE		= "/tmp/isok.txt";
+	public $SERVER_HEALTH_FILE		= "/tmp/isok.txt";
 	/** @var string @conf_skip Custom module handler method name */
-	var $MODULE_CUSTOM_HANDLER	= "_module_action_handler";
+	public $MODULE_CUSTOM_HANDLER	= "_module_action_handler";
 	/** @var string @conf_skip Module (not class) constructor name */
-	var $MODULE_CONSTRUCT		= "_init";
+	public $MODULE_CONSTRUCT		= "_init";
 	/** @var object @conf_skip Container */
-	var $db						= null;
+	public $db						= null;
 	/** @var object @conf_skip Container */
-	var $common					= null;
+	public $common					= null;
 	/** @var object @conf_skip Container */
-	var $tpl					= null;
+	public $tpl						= null;
 	/** @var object @conf_skip Container */
-	var $auth					= null;
+	public $auth					= null;
 	/** @var object @conf_skip Container */
-	var $modules				= array();
+	public $modules					= array();
 	/** @var object @conf_skip Container */
-	var $error_handler			= null;
+	public $error_handler			= null;
 	/** @var object @conf_skip Container */
-	var $sys_cache				= null;
+	public $sys_cache				= null;
 	/** @var object @conf_skip Container */
-	var $session				= null;
+	public $session					= null;
 	/** @var object @conf_skip Container */
-	var $widgets_params			= null;
+	public $widgets_params			= null;
 	/** @var int @conf_skip Current user session info */
-	var $USER_ID				= 0;
+	public $USER_ID					= 0;
 	/** @var int @conf_skip Current user session info */
-	var $USER_GROUP				= 0;
+	public $USER_GROUP				= 0;
 	/** @var array @conf_skip Current user session info */
-	var $USER_INFO				= null;
+	public $USER_INFO				= null;
 	/** @var array */
-	var $_auto_info_skip_modules = array(
+	public $_auto_info_skip_modules = array(
 		"user_data","db","cache","errors","spider_detect","user_profile",
 	);
 	/** @var array List of objects/actions for which no db connection is required
 	* @example: "object" => array("action1", "action2")
 	*/
-	var $NO_DB_FOR				= array(
+	public $NO_DB_FOR				= array(
 		"internal"	=> array(),
 		"dynamic"	=> array("php_func"),
 	);
 	/** @var int Error reporting level for production/non-debug mode (int from built-in constants) */
-	var $ERROR_REPORTING_PROD	= 0;
+	public $ERROR_REPORTING_PROD	= 0;
 	/** @var int Error reporting level for DEBUG_MODE enabled */
-	var $ERROR_REPORTING_DEBUG	= 22519; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
+	public $ERROR_REPORTING_DEBUG	= 22519; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
 	/** @var mixed Development mode, enable dev overrides layer, can containg string with developer name */
-	var $DEV_MODE				= false;
+	public $DEV_MODE				= false;
 	/** @var string Server host name */
-	var $HOSTNAME				= "";
+	public $HOSTNAME				= "";
 	/** @var int @conf_skip Multi-site mode option */
-	var $SITE_ID				= null;
+	public $SITE_ID					= null;
 	/** @var int @conf_skip Multi-server mode option */
-	var $SERVER_ID				= null;
+	public $SERVER_ID				= null;
 
 	/**
 	* Engine constructor

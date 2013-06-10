@@ -5,7 +5,7 @@
 class yf_test {
 
 	/** @conf_skip */
-	var $SMTP_OPTIONS = array(
+	public $SMTP_OPTIONS = array(
 		'smtp_host'		=> 'smtp.gmail.com',
 		'smtp_port'		=> '465',
 		'smtp_user_name'=> 'test@test.com',
@@ -14,7 +14,7 @@ class yf_test {
 		'smtp_secure'	=> 'tls',
 	);
 	/** @conf_skip */
-	var $TEST_MAIL = array(
+	public $TEST_MAIL = array(
 		"email_to"		=> "yfix.dev@gmail.com",
 		"name_to"		=> "test receiver",
 		"email_from"	=> "of@of.com",

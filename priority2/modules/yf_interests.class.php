@@ -11,23 +11,23 @@
 class yf_interests {
 
 	/** @var int */
-	var $MAX_KEYWORDS_NUM		= 25;
+	public $MAX_KEYWORDS_NUM		= 25;
 	/** @var int */
-	var $MIN_KEYWORD_LENGTH		= 3;
+	public $MIN_KEYWORD_LENGTH		= 3;
 	/** @var int */
-	var $MAX_KEYWORD_LENGTH		= 30;
+	public $MAX_KEYWORD_LENGTH		= 30;
 	/** @var int */
-	var $DISPLAY_MOST_POPULAR	= 50;
+	public $DISPLAY_MOST_POPULAR	= 50;
 	/** @var int */
-	var $CLOUD_MIN_FONT_SIZE	= 10;
+	public $CLOUD_MIN_FONT_SIZE	= 10;
 	/** @var int */
-	var $CLOUD_FONT_SIZE_STEP	= 1;
+	public $CLOUD_FONT_SIZE_STEP	= 1;
 	/** @var bool */
-	var $STATS_SORT_BY_NAME		= true;
+	public $STATS_SORT_BY_NAME		= true;
 	/** @var bool */
-	var $JS_CHECK				= true;
+	public $JS_CHECK				= true;
 	/** @var bool */
-	var $UTF8_MODE				= true;
+	public $UTF8_MODE				= true;
 
 	/**
 	* YF module constructor

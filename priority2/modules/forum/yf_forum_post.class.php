@@ -11,9 +11,9 @@
 class yf_forum_post {
 
 	/** @var bool */
-	var $DEF_USE_SIG = 1;
+	public $DEF_USE_SIG = 1;
 	/** @var bool */
-	var $DEF_USE_EMO = 1;
+	public $DEF_USE_EMO = 1;
 
 	/**
 	* Constructor

@@ -11,52 +11,52 @@
 class yf_auth_admin {
 
 	/** @var string Login field name to use @conf_skip */
-	var $LOGIN_FIELD			= "login";
+	public $LOGIN_FIELD			= "login";
 	/** @var string Password field name to use @conf_skip */
-	var $PSWD_FIELD				= "password";
+	public $PSWD_FIELD				= "password";
 	/** @var string Default user object (module) to redirect */
-	var $DEF_ADMIN_MODULE		= "settings";
+	public $DEF_ADMIN_MODULE		= "settings";
 	/** @var string Redirect URL */
-	var $URL_WRONG_LOGIN		= "./";
+	public $URL_WRONG_LOGIN		= "./";
 	/** @var string Redirect URL */
-	var $URL_SUCCESS_LOGIN		= "";
+	public $URL_SUCCESS_LOGIN		= "";
 	/** @var string Redirect URL */
-	var $URL_AFTER_LOGOUT		= "./";
+	public $URL_AFTER_LOGOUT		= "./";
 	/** @var string field name @conf_skip */
-	var $VAR_ADMIN_ID			= "admin_id";
+	public $VAR_ADMIN_ID			= "admin_id";
 	/** @var string field name @conf_skip */
-	var $VAR_ADMIN_GROUP_ID		= "admin_group";
+	public $VAR_ADMIN_GROUP_ID		= "admin_group";
 	/** @var string field name @conf_skip */
-	var $VAR_ADMIN_LOGIN_TIME	= "admin_login_time";
+	public $VAR_ADMIN_LOGIN_TIME	= "admin_login_time";
 	/** @var string field name @conf_skip */
-	var $VAR_ADMIN_GO_URL		= "admin_go_url";
+	public $VAR_ADMIN_GO_URL		= "admin_go_url";
 	/** @var string field name @conf_skip */
-	var $VAR_LOCK_IP			= "admin_auth_lock_to_ip";
+	public $VAR_LOCK_IP			= "admin_auth_lock_to_ip";
 	/** @var array @conf_skip
 	* Methods to execute after success login or logout
 	*
 	* @example	$EXEC_AFTER_LOGIN = array(array("test_method", array("Working!")));
 	* @example	$EXEC_AFTER_LOGIN = array(array(array("custom_class", "custom_method"), array("my_param_1" => "Working!")));
 	*/
-	var $EXEC_AFTER_LOGIN		= array();
+	public $EXEC_AFTER_LOGIN		= array();
 	/** @var array @conf_skip */
-	var $EXEC_AFTER_LOGOUT		= array();
+	public $EXEC_AFTER_LOGOUT		= array();
 	/** @var bool Do log into db admin login actions */
-	var $DO_LOG_LOGINS			= true;
+	public $DO_LOG_LOGINS			= true;
 	/** @var bool Save failed logins @security */
-	var $LOG_FAILED_LOGINS		= true;
+	public $LOG_FAILED_LOGINS		= true;
 	/** @var bool Block failed logins after several attempts (To prevent password bruteforcing, hacking, etc) @security */
-	var $BLOCK_FAILED_LOGINS	= false;
+	public $BLOCK_FAILED_LOGINS	= false;
 	/** @var bool Track failed logins TTL @security */
-	var $BLOCK_FAILED_TTL		= 3600;
+	public $BLOCK_FAILED_TTL		= 3600;
 	/** @var bool Track banned IPs list @security */
-	var $BLOCK_BANNED_IPS		= false;
+	public $BLOCK_BANNED_IPS		= false;
 	/** @var bool Check referer in session @security */
-	var $SESSION_REFERER_CHECK	= false;
+	public $SESSION_REFERER_CHECK	= false;
 	/** @var bool Lock session to IP address (to prevent hacks) @security */
-	var $SESSION_LOCK_TO_IP		= false;
+	public $SESSION_LOCK_TO_IP		= false;
 	/** @var bool Allow to login only by HTTPS protocol, else raise error @security */
-	var $AUTH_ONLY_HTTPS		= false;
+	public $AUTH_ONLY_HTTPS		= false;
 
 	/**
 	* Initialize auth

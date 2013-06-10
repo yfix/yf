@@ -11,11 +11,11 @@
 class yf_unicode_funcs {
 
 	// Indicates an error during check for PHP unicode support.
-	var $UNICODE_ERROR = -1;
+	public $UNICODE_ERROR = -1;
 	// Indicates that standard PHP (emulated) unicode support is being used.
-	var $UNICODE_SINGLEBYTE = 0;
+	public $UNICODE_SINGLEBYTE = 0;
 	// Indicates that full unicode support with the PHP mbstring extension is being
-	var $UNICODE_MULTIBYTE = 1;
+	public $UNICODE_MULTIBYTE = 1;
 
 	/**
 	* Constructor

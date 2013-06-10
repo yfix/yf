@@ -11,17 +11,17 @@
 class yf_module {
 
 	/** @var bool */
-	var $USE_CAPTCHA		= true;
+	public $USE_CAPTCHA		= true;
 	/** @var bool Force stripslashes on "_format_text" method */
-	var $FORCE_STRIPSLASHES	= false;
+	public $FORCE_STRIPSLASHES	= false;
 	/** @var bool Use post preview or not */
-	var $USE_PREVIEW		= false;
+	public $USE_PREVIEW		= false;
 	/** @var array @conf_skip */
-	var $_comments_params	= array();
+	public $_comments_params	= array();
 	/** @var array @conf_skip */
-	var $_poll_params		= array();
+	public $_poll_params		= array();
 	/** @var array @conf_skip */
-	var $_tags_params		= array();
+	public $_tags_params		= array();
 
 	/**
 	* Catch missing method call

@@ -5,25 +5,25 @@
 class sub_queries {
 
 	/** @var mixed @conf_skip */
-	var $_active_fields	= null;
+	public $_active_fields	= null;
 	/** @var mixed @conf_skip */
-	var $users			= null;
+	public $users			= null;
 	/** @var mixed @conf_skip */
-	var $categories		= null;
+	public $categories		= null;
 	/** @var mixed @conf_skip */
-	var $photos			= null;
+	public $photos			= null;
 	/** @var mixed @conf_skip */
-	var $total			= null;
+	public $total			= null;
 	/** @var mixed @conf_skip */
-	var $num_per_page	= null;
+	public $num_per_page	= null;
 	/** @var mixed @conf_skip */
-	var $cur_page		= null;
+	public $cur_page		= null;
 	/** @var mixed @conf_skip */
-	var $start_record	= null;
+	public $start_record	= null;
 	/** @var mixed @conf_skip */
-	var $end_record		= null;
+	public $end_record		= null;
 	/** @var mixed @conf_skip */
-	var $c				= null; // Counter
+	public $c				= null; // Counter
 
 	//-----------------------------------------------------------------------------
 	// Constructor

@@ -11,10 +11,10 @@
 class yf_log_image_resize_viewer {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 
 	/** @var int Image size limit */
-	var $image_size_limit = 150000;
+	public $image_size_limit = 150000;
 
 	/**
 	* Constructor (PHP 4.x)

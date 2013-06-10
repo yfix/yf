@@ -11,17 +11,17 @@
 class yf_jquery_calendar {
 
 	/** @var string @conf_skip */
-	var $_selected_days		= "";
+	public $_selected_days		= "";
 	/** @var string @conf_skip ex. "2006-13-01" */
-	var $_cur_date			= "";
+	public $_cur_date			= "";
 	/** @var string @conf_skip ex. 2006-01-01 */
-	var $_start_date		= "";
+	public $_start_date		= "";
 	/** @var string @conf_skip ex. 2007-01-01 */
-	var $_end_date			= "";
+	public $_end_date			= "";
 	/** @var string @conf_skip ex. http://somepath?date= */
-	var $_on_select_link	= "";
+	public $_on_select_link	= "";
 	/** @var string ex. cal1_container */
-	var $_cal_container_id	= "cal1_container";
+	public $_cal_container_id	= "cal1_container";
 
 	/**
 	* Constructor (PHP 4.x)

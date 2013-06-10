@@ -11,41 +11,41 @@
 class yf_chat {
 
 	/** @var string Current chat version */
-	var $VERSION			= "1.3.1b";
+	public $VERSION			= "1.3.1b";
 	/** @var int Refresh time (in seconds) */
-	var $REFRESH_TIME		= 10;
+	public $REFRESH_TIME		= 10;
 	/** @var int Message size limit (in symbols) */
-	var $MESSAGE_MAX_LENGTH = 512;
+	public $MESSAGE_MAX_LENGTH = 512;
 	/** @var int Old message time limit (in seconds) */
-	var $MESSAGES_SHOW_TTL	= 1800; // 30 * 60 (half an hour)
+	public $MESSAGES_SHOW_TTL	= 1800; // 30 * 60 (half an hour)
 	/** @var int Minimal time between posts (posts from IP address with less time period are denied) */
-	var $ANTISPAM_TIME		= 1;
+	public $ANTISPAM_TIME		= 1;
 	/** @var int Time to delete not responding users (clean "offline" users) (in seconds) */
-	var $OFFLINE_TTL		= 120;
+	public $OFFLINE_TTL		= 120;
 	/** @var int Number of messages to show when first time after login loading data */
-	var $FIRST_SHOW_MSGS	= 15;
+	public $FIRST_SHOW_MSGS	= 15;
 	/** @var int Age of private messages to show when first time after login loading data */
-	var $FIRST_PRIVATE_TTL	= 43200; // 12 hours (12 * 60 * 60);
+	public $FIRST_PRIVATE_TTL	= 43200; // 12 hours (12 * 60 * 60);
 	/** @var bool Use BB-Codes */
-	var $BB_CODE			= true;
+	public $BB_CODE			= true;
 	/** @var bool Show smilies images or CSS based boxes (works only if BB_CODE is allowed) */
-	var $SMILIES_IMAGES		= true;
+	public $SMILIES_IMAGES		= true;
 	/** @var bool Use global user accounts or only special for the chat */
-	var $USE_GLOBAL_USERS	= false;
+	public $USE_GLOBAL_USERS	= false;
 	/** @var bool Ban list usage ("on"/"off") */
-	var $USE_BAN_LIST		= true;
+	public $USE_BAN_LIST		= true;
 	/** @var int Max size for the user uploaded photo (in bytes) */
-	var $PHOTO_MAX_SIZE		= 100000; // (~100 kb)
+	public $PHOTO_MAX_SIZE		= 100000; // (~100 kb)
 	/** @var int Max width of the user photo (in pixels) */
-	var $PHOTO_MAX_WIDTH	= 800;
+	public $PHOTO_MAX_WIDTH	= 800;
 	/** @var int Max height of the user photo (in pixels) */
-	var $PHOTO_MAX_HEIGHT	= 800;
+	public $PHOTO_MAX_HEIGHT	= 800;
 	/** @var string Folder where user photos are storing */
-	var $PHOTOS_FOLDER		= "uploads/chat_photos/";
+	public $PHOTOS_FOLDER		= "uploads/chat_photos/";
 	/** @var bool Use HTML Frameset */
-	var $USE_HTML_FRAMESET	= false;
+	public $USE_HTML_FRAMESET	= false;
 	/** @var string Web path to the chat main CSS file (Will be filled later automatically depending on settings) */
-	var $CSS_SRC			= "";
+	public $CSS_SRC			= "";
 
 	/**
 	* Framework module constructor

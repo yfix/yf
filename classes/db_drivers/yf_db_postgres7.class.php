@@ -11,29 +11,29 @@
 class yf_db_postgres7 {
 
 	/** @var @conf_skip */
-	var $db_connect_id		= null;
+	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	var $query_result		= null;
+	public $query_result		= null;
 	/** @var @conf_skip */
-	var $in_transaction		= 0;
+	public $in_transaction		= 0;
 	/** @var @conf_skip */
-	var $row				= array();
+	public $row				= array();
 	/** @var @conf_skip */
-	var $rowset				= array();
+	public $rowset				= array();
 	/** @var @conf_skip */
-	var $rownum				= array();
+	public $rownum				= array();
 	/** @var @conf_skip */
-	var $num_queries		= 0;
+	public $num_queries		= 0;
 
 	/** @var @conf_skip */
-	var $META_TABLES_SQL	= "SELECT tablename,'T' FROM pg_tables WHERE tablename NOT LIKE 'pg\_%'
+	public $META_TABLES_SQL	= "SELECT tablename,'T' FROM pg_tables WHERE tablename NOT LIKE 'pg\_%'
 		AND tablename NOT IN ('sql_features', 'sql_implementation_info', 'sql_languages',
 		 'sql_packages', 'sql_sizing', 'sql_sizing_profiles') 
 		UNION 
 			SELECT viewname,'V' FROM pg_views WHERE viewname NOT LIKE 'pg\_%'";
 
 	/** @var @conf_skip */
-	var $META_COLUMNS_SQL	= "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
+	public $META_COLUMNS_SQL	= "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
 		FROM pg_class c, pg_attribute a,pg_type t 
 		WHERE relkind IN ('r','v') AND (c.relname='%s' or c.relname = lower('%s')) AND a.attname NOT LIKE '....%%'
 		AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";

@@ -11,7 +11,7 @@
 class yf_time_zone {
 
 	/** @var array @conf_skip */
-	var $_time_zones = array(
+	public $_time_zones = array(
 		'-12'	=> "(GMT - 12:00 hours) Enitwetok, Kwajalien",
 		'-11'	=> "(GMT - 11:00 hours) Midway Island, Samoa",
 		'-10'	=> "(GMT - 10:00 hours) Hawaii",

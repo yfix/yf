@@ -6,15 +6,15 @@
 class yf_forum {
 
 	/** @var string @conf_skip Current forum version */
-	var $VERSION		= "admin 1.1.2";
+	public $VERSION		= "admin 1.1.2";
 	/** @var int Number of topics to show on one page */
-	var $topics_on_page = 50;
+	public $topics_on_page = 50;
 	/** @var int Number of messages to show on one page */
-	var $posts_on_page	= 20;
+	public $posts_on_page	= 20;
 	/** @var int Number of symbols to trim comments, etc */
-	var $text_trim		= 300;
+	public $text_trim		= 300;
 	/** @var array @conf_skip CSS classes */
-	var $css = array (
+	public $css = array (
 		"show1"	=> "forum1",
 		"show2"	=> "forum2",
 		"quote"	=> "forum_quote",
@@ -22,62 +22,62 @@ class yf_forum {
 		"smile"	=> "forum_smile",
 	);
 	/** @var array Date/Time formats (arguments for date() function) */
-	var $format = array(
+	public $format = array(
 		"date"	=> "d/m/Y",
 		"time"	=> "H:i:s",
 	);
 	/** @var array Folder where avatars are storing */
-	var $avatars_dir = "uploads/avatars/";
+	public $avatars_dir = "uploads/avatars/";
 	/** @var bool Approve posts and topics creation */
-	var $APPROVE			= false;
+	public $APPROVE			= false;
 	/** @var bool Confirm registration with email */
-	var $CONFIRM_REGISTER	= true;
+	public $CONFIRM_REGISTER	= true;
 	/** @var bool Tree mode */
-	var $TREE_MODE			= false;
+	public $TREE_MODE			= false;
 	/** @var bool BB Codes */
-	var $BB_CODE			= true;
+	public $BB_CODE			= true;
 	/** @var bool Show smilies images or CSS based boxes (works only if smilies are allowed) */
-	var $SMILIES_IMAGES		= false;
+	public $SMILIES_IMAGES		= false;
 	/** @var bool Show user ranks */
-	var $SHOW_USER_RANKS	= true;
+	public $SHOW_USER_RANKS	= true;
 	/** @var bool Show totals */
-	var $SHOW_TOTALS		= false;
+	public $SHOW_TOTALS		= false;
 	/** @var bool Show direct links to pages inside forum */
-	var $SHOW_TOPIC_PAGES	= true;
+	public $SHOW_TOPIC_PAGES	= true;
 	/** @var bool Use global user accounts or only forum internals */
-	var $USE_GLOBAL_USERS	= true;
+	public $USE_GLOBAL_USERS	= true;
 	/** @var bool Hide some links (for using as separate discussion boards for different objects) */
-	var $HIDE_USERS_INFO	= true;
+	public $HIDE_USERS_INFO	= true;
 	/** @var int @conf_skip user ID (if exists one) */
-	var $USER_ID			= null;
+	public $USER_ID			= null;
 	/** @var int @conf_skip group ID (if exists one) */
-	var $GROUP_ID			= null;
+	public $GROUP_ID			= null;
 	/** @var string @conf_skip */
-	var $USER_NAME			= null;
+	public $USER_NAME			= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $forum_cats			= null;
+	public $forum_cats			= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $forums				= null;
+	public $forums				= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $last_posts			= null;
+	public $last_posts			= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $topics				= null;
+	public $topics				= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $posts				= null;
+	public $posts				= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $smilies			= null;
+	public $smilies			= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $users				= null;
+	public $users				= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $user_ranks			= null;
+	public $user_ranks			= null;
 	/** @var array @conf_skip (for internal use only) */
-	var $topic_watch		= null;
+	public $topic_watch		= null;
 	/** @var string @conf_skip Unique for each installation identifier (you can set it manually here) */
-	var $salt				= "";
+	public $salt				= "";
 	/** @var int Minimal time between posts (posts from IP address with less time period are denied) */
-	var $ANTISPAM_TIME		= 0;
+	public $ANTISPAM_TIME		= 0;
 	/** @var array */
-	var $_group_triggers = array(
+	public $_group_triggers = array(
 		"view_board"			=> "Allow to view forums",
 		"view_ip"				=> "Allow to view poster's saved IP address",
 		"view_member_info"		=> "Allow to view forum member info",
@@ -118,7 +118,7 @@ class yf_forum {
 		"is_moderator"			=> "Apply all other Moderator rights (IS_MODERATOR)",
 	);
 	/** @var array */
-	var $_moderator_triggers = array(
+	public $_moderator_triggers = array(
 		"view_ip"				=> "Allow to view poster's saved IP address",
 		"delete_own_topics"		=> "Allow to delete own topics",
 		"delete_other_topics"	=> "Allow to delete others' topics",
@@ -142,7 +142,7 @@ class yf_forum {
 		"vote_polls"			=> "Allow to vote in Polls",
 	);
 	/** @var bool */
-	var $ALLOW_FUTURE_POSTS		= 1;
+	public $ALLOW_FUTURE_POSTS		= 1;
 
 	/**
 	* Framework constructor

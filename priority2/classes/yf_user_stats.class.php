@@ -5,11 +5,11 @@
 class yf_user_stats {
 
 	/** @var bool */
-	var $STATS_ENABLED = true;
+	public $STATS_ENABLED = true;
 	/** @var bool */
-	var $ENABLE_REFRESH_STATS	= false;
+	public $ENABLE_REFRESH_STATS	= false;
 	/** @var */
-	var $_sql_array	= array();
+	public $_sql_array	= array();
 
 	//-----------------------------------------------------------------------------
 	// Framework constructor

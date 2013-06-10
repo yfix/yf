@@ -17,25 +17,25 @@ class yf_diff {
 	* Shell command
 	* @var string
 	*/
-	var $diff_command = 'diff';
+	public $diff_command = 'diff';
 	
 	/**
 	* Type of diff to use
 	* @var int
 	*/
-	var $method	   = 'exec';
+	public $method	   = 'exec';
 	
 	/**
 	* Differences found?
 	* @var int
 	*/
-	var $diff_found   = 0;
+	public $diff_found   = 0;
 	
 	/**
 	* Post process DIFF result?
 	* @var int
 	*/
-	var $post_process = 1;
+	public $post_process = 1;
 	
 	/**
 	* Constructor (PHP 4.x)

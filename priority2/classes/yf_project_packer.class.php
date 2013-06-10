@@ -11,9 +11,9 @@
 class yf_project_packer {
 
 	/** @var bool @conf_skip */
-	var $ADD_SOURCE_FILE_NAMES = 1;
+	public $ADD_SOURCE_FILE_NAMES = 1;
 	/** @var @conf_skip */
-	var $_skip_files = array(
+	public $_skip_files = array(
 		"project_compiled_admin.php",
 		"project_compiled_user.php",
 		"framework_compiled_admin.php",
@@ -29,39 +29,39 @@ class yf_project_packer {
 		"fast_init.php",
 	);
 	/** @var @conf_skip */
-	var $_skip_files_preg = array(
+	public $_skip_files_preg = array(
 		"/stpls_compiled_.*/"
 	);
 	/** @var array @conf_skip */
-	var $_def_patterns = array(
+	public $_def_patterns = array(
 		"include_php"	=> array("#\/(admin_modules|modules|classes)#", "#\.class\.php\$#"),
 		"exclude_php"	=> array("#(svn|git)|\/(chat|forum|gallery)#", "#|__locale__#"),
 		"include_stpl"	=> array("#\/(templates)#", "#\.stpl\$#"),
 		"exclude_stpl"	=> array("#(svn|git)|\/(chat|forum|gallery)#", "#svn#"),
 	);
 	/** @var @conf_skip */
-	var $_include_php_fwork_user = array(
+	public $_include_php_fwork_user = array(
 		"/(bb_codes|cache|captcha|cats|common|custom_meta_info|db|dir|errors|graphics|installer|locale|logs|main|module|output_cache|se_keywords|sites_info|spider_detect|task_manager|tpl|unicode_funcs)\.class\.php\$/i",
 		"/(auth_user|client_utils|utf8_clean|rewrite|l10n|db_mysql41|divide_pages|user_data|site_nav_bar)\.class\.php\$/i",
 		"/(common_funcs|data_handlers)\.php\$/i",
 	);
 	/** @var @conf_skip */
-	var $_include_php_fwork_admin = array();
+	public $_include_php_fwork_admin = array();
 	/** @var @conf_skip */
-	var $_include_php_proj_user = array(
+	public $_include_php_proj_user = array(
 		"/(modules|classes)\/(.*?)\.class\.php\$/i",
 	);
 	/** @var @conf_skip */
-	var $_include_php_proj_admin = array();
+	public $_include_php_proj_admin = array();
 	/** @var bool @conf_skip */
-	var $DEL_COMPRESSED_AFTER_COMPILE	= true;
+	public $DEL_COMPRESSED_AFTER_COMPILE	= true;
 	/** @var bool @conf_skip */
-	var $TRY_COMPRESS_ON_COMPILE		= true;
+	public $TRY_COMPRESS_ON_COMPILE		= true;
 	/** @var bool */
 // TODO: connect me
-	var $USE_LOCKING					= true;
+	public $USE_LOCKING					= true;
 	/** @var bool @conf_skip */
-	var $LOCK_FILE						= "uploads/auto_packer.lock";
+	public $LOCK_FILE						= "uploads/auto_packer.lock";
 
 	/**
 	* Constructor

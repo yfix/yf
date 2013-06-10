@@ -11,9 +11,9 @@
 class yf_forum_low {
 
 	/** @var int */
-	var $_topics_per_page	= 150;
+	public $_topics_per_page	= 150;
 	/** @var int */
-	var $_posts_per_page	= 50;
+	public $_posts_per_page	= 50;
 
 	/**
 	* Framework constructor

@@ -11,13 +11,13 @@
 class yf_tpl_smarty {
 
 	// Path to the templates (including current theme path)
-	var $TPL_PATH 				= "";
+	public $TPL_PATH 				= "";
 	// Compressing output by cutting "\t","\r","\n","  ","   "
-	var $COMPRESS_OUTPUT		= 0; // default value
+	public $COMPRESS_OUTPUT		= 0; // default value
 	// Using SEO - friendly URLs (All links need to be absolute)
-	var $REWRITE_MODE			= 0; // default value
+	public $REWRITE_MODE			= 0; // default value
 	// Custom meta information (could be unique for every page) : page titles, meta keywords, description
-	var $CUSTOM_META_INFO		= 1;
+	public $CUSTOM_META_INFO		= 1;
 
 	/**
 	 * Constructor (PHP 4.x)

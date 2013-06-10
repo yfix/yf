@@ -11,7 +11,7 @@
 class yf_gallery extends yf_module {
 
 	/** @var array Array of current photo sizes details */
-	var $PHOTO_TYPES = array(
+	public $PHOTO_TYPES = array(
 		"ad thumbnail"	=> array(
 			"max_x"		=> 50,
 			"max_y"		=> 50,
@@ -34,144 +34,144 @@ class yf_gallery extends yf_module {
 		),
 	);
 	/** @var string */
-	var $PHOTO_ITEM_DISPLAY_TYPE	= "thumbnail";
+	public $PHOTO_ITEM_DISPLAY_TYPE	= "thumbnail";
 	/** @var string Root folder for the gallery photos */
-	var $GALLERY_DIR				= "uploads/gallery/";
+	public $GALLERY_DIR				= "uploads/gallery/";
 	/** @var string Photos names template. 
 	* Any of these keys allowed:
 	* {photo_id},{user_id},{folder_id},{photo_type}
 	*/
-	var $PHOTO_NAME_TEMPLATE		= "{user_id}_{photo_id}";
+	public $PHOTO_NAME_TEMPLATE		= "{user_id}_{photo_id}";
 	/** @var string Default auto-generated images extension */
-	var $IMAGE_EXT					= ".jpg";
+	public $IMAGE_EXT					= ".jpg";
 	/** @var string Default name in form to use */
-	var $PHOTO_NAME_IN_FORM			= "photo_file";
+	public $PHOTO_NAME_IN_FORM			= "photo_file";
 	/** @var int Max photo name length */
-	var $MAX_NAME_LENGTH			= 100;
+	public $MAX_NAME_LENGTH			= 100;
 	/** @var int Max photo description length */
-	var $MAX_DESC_LENGTH			= 500;
+	public $MAX_DESC_LENGTH			= 500;
 	/** @var int Max folder title length */
-	var $MAX_FOLDER_TITLE_LENGTH	= 100;
+	public $MAX_FOLDER_TITLE_LENGTH	= 100;
 	/** @var int Max folder comment length */
-	var $MAX_FOLDER_COMMENT_LENGTH	= 500;
+	public $MAX_FOLDER_COMMENT_LENGTH	= 500;
 	/** @var int Limit uploaded image size in bytes */
-	var $MAX_IMAGE_SIZE				= 500000;// bytes
+	public $MAX_IMAGE_SIZE				= 500000;// bytes
 	/** @var int Max number of photos to show in ads */
-	var $MAX_PHOTOS_FOR_ADS			= 15;
+	public $MAX_PHOTOS_FOR_ADS			= 15;
 	/** @var int Max number of photos to upload (0 - to unlimited) */
-	var $MAX_TOTAL_PHOTOS			= 0;
+	public $MAX_TOTAL_PHOTOS			= 0;
 	/** @var int Max number of folders (0 - to unlimited) */
-	var $MAX_TOTAL_FOLDERS			= 0;
+	public $MAX_TOTAL_FOLDERS			= 0;
 	/** @var int Max number of photos in folder (0 - to unlimited) */
 // TODO: connect this
-	var $MAX_PHOTOS_IN_FOLDER		= 0;
+	public $MAX_PHOTOS_IN_FOLDER		= 0;
 	/** @var int Number of photos per column to display */
-	var $PHOTOS_IN_COLUMN			= 2;
+	public $PHOTOS_IN_COLUMN			= 2;
 	/** @var int Number of records to show on one page for "view all" */
-	var $VIEW_ALL_ON_PAGE			= 50;
+	public $VIEW_ALL_ON_PAGE			= 50;
 	/** @var int On stats page number of top galleries */
-	var $STATS_TOP_ON_PAGE			= 10;
+	public $STATS_TOP_ON_PAGE			= 10;
 	/** @var int Number of items on the stats page */
-	var $STATS_NUM_MOST_ACTIVE		= 25;
+	public $STATS_NUM_MOST_ACTIVE		= 25;
 	/** @var int */
-	var $STATS_NUM_LATEST			= 15;
-	/** @var int */
-// TODO: connect this
-	var $STATS_NUM_MOST_COMMENTED	= 10;
+	public $STATS_NUM_LATEST			= 15;
 	/** @var int */
 // TODO: connect this
-	var $STATS_NUM_MOST_VIEWED		= 10;
+	public $STATS_NUM_MOST_COMMENTED	= 10;
+	/** @var int */
+// TODO: connect this
+	public $STATS_NUM_MOST_VIEWED		= 10;
 	/** @var bool Display or not groupped by user latest photos */
-	var $LATEST_GROUP_BY_USER		= false;
+	public $LATEST_GROUP_BY_USER		= false;
 	/** @var bool Make default photo from the first uploaded one automatically or not */
-	var $MAKE_DEFAULT_PHOTO_AUTO	= true;
+	public $MAKE_DEFAULT_PHOTO_AUTO	= true;
 	/** @var int @conf_skip Default attributes for new directories */
-	var $DEF_DIR_MODE				= 0777;
+	public $DEF_DIR_MODE				= 0777;
 	/** @var bool All galleries search filter on/off */
-	var $USE_FILTER					= 1;
+	public $USE_FILTER					= 1;
 	/** @var bool Skip not existed photos */
-	var $SKIP_NOT_FOUND_PHOTOS		= 1;
+	public $SKIP_NOT_FOUND_PHOTOS		= 1;
 	/** @var bool Get previous and next photos ids */
-	var $GET_PREV_NEXT_PHOTOS		= 1;
+	public $GET_PREV_NEXT_PHOTOS		= 1;
 	/** @var bool When deleting folder delete also all photos inside it, else photos will be assigned to the default folder */
-	var $DELETE_FOLDER_WITH_PHOTOS	= 1;
+	public $DELETE_FOLDER_WITH_PHOTOS	= 1;
 	/** @var string Field name in session where entered passwords are stored */
-	var $SESSION_PSWD_FIELD			= "gallery_pswds";
+	public $SESSION_PSWD_FIELD			= "gallery_pswds";
 	/** @var bool Warn user about changing content level for the folder (photos will not be shown in public) */
-	var $WARN_NON_PUBLIC_PHOTOS		= 1;
+	public $WARN_NON_PUBLIC_PHOTOS		= 1;
 	/** @var int Display mini thumbs on medium size view (additional for the 
 	* navigation for the next and prev photos).Set to "0" to disable 
 	*/
-	var $FOR_MEDIUM_NUM_MINI_THUMBS	= 9; 
+	public $FOR_MEDIUM_NUM_MINI_THUMBS	= 9; 
 	/** @var bool Display mini thumbs only from current folder */
-	var $MINI_THUMBS_SAME_FOLDER	= false;
+	public $MINI_THUMBS_SAME_FOLDER	= false;
 	/** @var bool Display mini thumbs for all availiable to display photos */
-	var $MINI_THUMBS_SHOW_ALL		= false;
+	public $MINI_THUMBS_SHOW_ALL		= false;
 	/** @var bool Rating system for gallery on/off */
-	var $ALLOW_RATE					= false;
+	public $ALLOW_RATE					= false;
 	/** @var bool Geo filtering on/off */
-	var $ALLOW_GEO_FILTERING		= false;
+	public $ALLOW_GEO_FILTERING		= false;
 	/** @var bool Tagging system for gallery on/off */
-	var $ALLOW_TAGGING				= true;
+	public $ALLOW_TAGGING				= true;
 	/** @var int Max number of allowed tags for single photo */
-	var $TAGS_PER_PHOTO				= 5;
+	public $TAGS_PER_PHOTO				= 5;
 	/** @var bool Crop, rotate image on/off */
-	var $ALLOW_IMAGE_MANIPULATIONS	= true;
+	public $ALLOW_IMAGE_MANIPULATIONS	= true;
 	/** @var bool If this turned on - then system will hide total ids for user, 
 	* and wiil try to use small id numbers dedicated only for this user
 	*/
-	var $HIDE_TOTAL_ID				= false;
+	public $HIDE_TOTAL_ID				= false;
 	/** @var int Number of items for the RSS feed */
-	var $NUM_RSS 					= 10;
+	public $NUM_RSS 					= 10;
 	/** @var array Available values for the user custom medium size */
-	var $MEDIUM_SIZES				= array(
+	public $MEDIUM_SIZES				= array(
 		350 => 350,
 		450 => 450,
 		600 => 600
 	);
 	/** @var array Thumb types */
-	var $_thumb_types = array(
+	public $_thumb_types = array(
 		0	=> "Original",
 		1	=> "Square &#40;Cropped&#41;",
 	);
 	/** @var array Layout types */
-	var $_layout_types = array(
+	public $_layout_types = array(
 		0	=> "Hierarchical &#40;show folders and featured photos&#41;",
 		1	=> "Simple &#40;hide folders and show all photos&#41;",
 	);
 	/** @var array Thumbs location */
-	var $_thumbs_loc = array(
+	public $_thumbs_loc = array(
 		0	=> "Above the image",
 		1	=> "Left side",
 		2	=> "Right side",
 	);
 	/** @var array Slideshow modes */
-	var $_slideshow_modes = array(
+	public $_slideshow_modes = array(
 		0	=> "Default",
 		1	=> "Magnifier pop-up",
 		2	=> "Simple slideshow",
 		3	=> "Dimmed slideshow",
 	);
 	/** @var array Thumbs in row */
-	var $_thumbs_in_row = array(
+	public $_thumbs_in_row = array(
 		2, 3, 4, 10, 12, 15
 	);
 	/** @var array */
-	var $DEFAULT_SETTINGS			= array();
+	public $DEFAULT_SETTINGS			= array();
 	/** @var srting Default folder name */
-	var $DEFAULT_FOLDER_NAME		= "General";
+	public $DEFAULT_FOLDER_NAME		= "General";
 	/** @var bool What to show on user gallery home. (Currently availiable: latest|featured) */
-	var $USER_GALLERY_HOME_SHOW		= "latest";
+	public $USER_GALLERY_HOME_SHOW		= "latest";
 	/** @var bool allow delete comments */
-	var $ALLOW_DELETE_COMMENTS		= true;
+	public $ALLOW_DELETE_COMMENTS		= true;
 	/** @var bool Search comments posted by members */
-	var $SEARCH_ONLY_MEMBER			= true;
+	public $SEARCH_ONLY_MEMBER			= true;
 	/** @var bool */
-	var $USE_SQL_FORCE_KEY			= false;
+	public $USE_SQL_FORCE_KEY			= false;
 	/** @var bool */
-	var $ALLOW_BULK_UPLOAD			= false;
+	public $ALLOW_BULK_UPLOAD			= false;
 	/** @var array @conf_skip Params for the comments */
-	var $_comments_params	= array(
+	public $_comments_params	= array(
 		"return_action" => "show_medium_size",
 	);
 

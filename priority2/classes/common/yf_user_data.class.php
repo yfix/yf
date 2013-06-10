@@ -11,21 +11,21 @@
 class yf_user_data {
 
 	/** @var string can be "SIMPLE" (default), "DYNAMIC" */
-	var $MODE				= "SIMPLE";
+	public $MODE				= "SIMPLE";
 	/** @var bool */
-	var $CACHE_IN_MEMORY	= true;
+	public $CACHE_IN_MEMORY	= true;
 	/** @var bool */
-	var $DEF_RECORDS_LIMIT	= 100;
+	public $DEF_RECORDS_LIMIT	= 100;
 	/** @var bool Prevent possibly broken calls with huge number of user ids */
-	var $GET_USERS_LIMIT	= 500;
+	public $GET_USERS_LIMIT	= 500;
 	/** @var array @conf_skip (Will be replaced in _init() with real values) */
-	var $_user_tables = array(
+	public $_user_tables = array(
 		"m" => "DB_PREFIX.user_data_main", //main table must be always on a first place!!!
 		"s" => "DB_PREFIX.user_data_stats",
 	//	"b" => "DB_PREFIX.user_data_ban",
 	);
 	/** @var array */
-	var $_fields_groups = array(
+	public $_fields_groups = array(
 		"main"	=> array(
 			"group",
 			"name",
@@ -85,7 +85,7 @@ class yf_user_data {
 		),
 	);
 	/** @var array */
-	var $_allowed_sql_params = array(
+	public $_allowed_sql_params = array(
 		"WHERE",
 		"ORDER BY",
 		"GROUP BY",

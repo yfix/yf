@@ -6,7 +6,7 @@
 class widgets_editor {
 
 	/** @var array */
-	var $COLOR = array(
+	public $COLOR = array(
 		"blog"		=> "689A46",
 		"forum"		=> "FF9933",
 		"gallery"	=> "C08040",
@@ -18,7 +18,7 @@ class widgets_editor {
 		"rss"		=> "E46E14",
 	);
 	/** @var string */
-	var $FORCE_USER_THEME = "";
+	public $FORCE_USER_THEME = "";
 	
 	/**
 	* Framework constructor

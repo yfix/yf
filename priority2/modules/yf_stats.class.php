@@ -11,9 +11,9 @@
 class yf_stats {
 
 	/** @var int */
-	var $ONLINE_PER_LINE	= 4;
+	public $ONLINE_PER_LINE	= 4;
 	/** @var int */
-	var $ONLINE_PER_PAGE	= 20;
+	public $ONLINE_PER_PAGE	= 20;
 
 	/**
 	* Default method

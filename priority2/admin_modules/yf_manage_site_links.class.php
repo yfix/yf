@@ -4,15 +4,15 @@
 // Links management administration
 class yf_manage_site_links {
 
-	var $cur_status		= null;
-	var $cur_item_num	= null;
-	var $cur_item_id	= null;
-	var $cur_link_info	= null;
-	var $num_links		= null;
+	public $cur_status		= null;
+	public $cur_item_num	= null;
+	public $cur_item_id	= null;
+	public $cur_link_info	= null;
+	public $num_links		= null;
 	// Filter session array name
-	var $_filter_name = "links_filter";
+	public $_filter_name = "links_filter";
 	// Filter on/off
-	var $USE_FILTER = true;
+	public $USE_FILTER = true;
 
 	//-----------------------------------------------------------------------------
 	// Constructor

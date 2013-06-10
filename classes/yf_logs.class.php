@@ -11,27 +11,27 @@
 class yf_logs {
 
 	/** @var bool Turn logging on/off */
-	var $_LOGGING					= false;
+	public $_LOGGING					= false;
 	/** @var bool Store user auth into log table */
-	var $STORE_USER_AUTH			= false;
+	public $STORE_USER_AUTH			= false;
 	/** @var bool Update user's record for last login */
-	var $UPDATE_LAST_LOGIN			= false;
+	public $UPDATE_LAST_LOGIN			= false;
 	/** @var bool Store user auth into log table */
-	var $STORE_ADMIN_AUTH			= true;
+	public $STORE_ADMIN_AUTH			= true;
 	/** @var bool Update admin's record for last login */
-	var $UPDATE_ADMIN_LAST_LOGIN	= true;
+	public $UPDATE_ADMIN_LAST_LOGIN	= true;
 	/** @var int @conf_skip Current log level limit ("0" for disabling), could be: 0|E_ERROR|E_WARNING|E_NOTICE */
-	var $CUR_LOG_LEVEL				= E_NOTICE;
+	public $CUR_LOG_LEVEL				= E_NOTICE;
 	/** @var array @conf_skip Error levels text representation */
-	var $_error_levels_names = array(
+	public $_error_levels_names = array(
 		E_ERROR		=> "error",
 		E_WARNING	=> "warning",
 		E_NOTICE	=> "notice",
 	);
 	/** @var bool Turn logging of user actions for the stats on/off */
-	var $LOG_USER_ACTIONS	= true;
+	public $LOG_USER_ACTIONS	= true;
 	/** @var array @conf_skip Available action names*/
-	var $_avail_action_names = array(
+	public $_avail_action_names = array(
 		"visit",
 		"review",
 		"add_comment",

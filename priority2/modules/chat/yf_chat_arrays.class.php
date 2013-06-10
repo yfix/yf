@@ -10,7 +10,7 @@
 */
 class yf_chat_arrays {
 
-	var $CHAT_OBJ = null;
+	public $CHAT_OBJ = null;
 
 	/**
 	* Chat Register

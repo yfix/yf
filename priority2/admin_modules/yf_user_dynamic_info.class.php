@@ -5,7 +5,7 @@
 class yf_user_dynamic_info {
 
 	/** @var @conf_skip */
-	var $AVAIL_DISPLAY_ON = array(
+	public $AVAIL_DISPLAY_ON = array(
 		"user_info",
 		"register",
 		"user_profile",

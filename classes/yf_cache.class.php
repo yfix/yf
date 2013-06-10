@@ -11,40 +11,40 @@
 class yf_cache {
 
 	/** @var array config for file driver @conf_skip */
-	var $_file_conf				= array(
+	public $_file_conf				= array(
 		"auto_header"	=> "<?php\n",
 		"auto_footer"	=> "\n?>",
 		"file_prefix"	=> "cache_",
 		"file_ext"		=> ".php",
 	);
 	/** @var int Cache files TimeToLive value (in seconds) */
-	var $FILES_TTL				= 3600;
+	public $FILES_TTL				= 3600;
 	/** @var int Add random value for each entry TTL (to avoid one-time cache invalidation problems) */
-	var $RANDOM_TTL_ADD			= true;
+	public $RANDOM_TTL_ADD			= true;
 	/** @var string Cache rules file */
-	var $RULES_FILE				= "cache_rules.php";
+	public $RULES_FILE				= "cache_rules.php";
 	/** @var bool Allow or not custom rules (not found in rules array) */
-	var $ALLOW_CUSTOM_RULES		= true;
+	public $ALLOW_CUSTOM_RULES		= true;
 	/** @var bool Auto-create cache folder */
-	var $AUTO_CREATE_CACHE_DIR	= true;
+	public $AUTO_CREATE_CACHE_DIR	= true;
 	/** @var bool Include cache files (or simply read as string) */
-	var $INCLUDE_CACHE_FILES	= true;
+	public $INCLUDE_CACHE_FILES	= true;
 	/** @var string Cache driver enum("","auto","file","eaccelerator","apc","xcache","memcache") */
-	var $DRIVER					= "file";
+	public $DRIVER					= "file";
 	/** @var string Namespace for drivers other than "file" */
-	var $CACHE_NS				= "sys_cache:";
+	public $CACHE_NS				= "sys_cache:";
 	/** @var array internal @conf_skip */
-	var $MEMCACHE_DEF_PARAMS	= array(
+	public $MEMCACHE_DEF_PARAMS	= array(
 		"port"		=> 11211,
 		"host"		=> "127.0.0.1", // !!! DO NOT USE "localhost" on Ubuntu 10.04 (and maybe others) due to memcached bug
 		"persistent"=> true,
 	);
 	/** @var object internal @conf_skip */
-	var $_memcache				= null;
+	public $_memcache				= null;
 	/** @var bool */
-	var $FORCE_REBUILD_CACHE	= false;
+	public $FORCE_REBUILD_CACHE	= false;
 	/** @var array symbols to escape for debug */
-	var $_debug_escape_symbols = array(
+	public $_debug_escape_symbols = array(
 		"{"	=> "&#123;",
 		"}"	=> "&#125;",
 		"\\"=> "&#92;",
@@ -53,11 +53,11 @@ class yf_cache {
 		"?" => "&#63;",
 	);
 	/** @var bool We need this instead of global constant DEBUG_MODE to be able to early init cache when main is still not available */
-	var $DEBUG_MODE	= false;
+	public $DEBUG_MODE	= false;
 	/** @var int Max number of items to log when DEBUG_MODE is enabled, this limit needed to prevent stealing all RAM 
 		when we have high number of cache entries at once. Applied separately for "get", "set", "refresh".
 	*/
-	var $LOG_MAX_ITEMS	= 200;
+	public $LOG_MAX_ITEMS	= 200;
 
 	/**
 	* Framework constructor

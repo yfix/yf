@@ -11,7 +11,7 @@
 class yf_forum {
 
 	/** @var string @conf_skip Current forum version */
-	var $VERSION				= "1.0rc1";
+	public $VERSION				= "1.0rc1";
 	/** @var array forum settings (default values) */
 	var	$SETTINGS = array(
 		// Most important options
@@ -109,7 +109,7 @@ class yf_forum {
 		"_READ_MSGS_TTL"		=> 864000, 				// 10 days, Time to live unread messages
 	);
 	/** @var array Access rights array (default values) */
-	var $USER_RIGHTS = array(
+	public $USER_RIGHTS = array(
 		"is_admin"				=> false,
 		"is_moderator"			=> false,
 		"view_board"			=> true,
@@ -153,18 +153,18 @@ class yf_forum {
 		"vote_polls"			=> false,
 	);
 	/** @var array Other vars @conf_skip */
-	var $TOPIC_VIEW_TYPE = array(
+	public $TOPIC_VIEW_TYPE = array(
 		1	=> "Standard",	// Default topic view
 		2	=> "Tree",		// Tree view
 	);
 	/** @var array Available forum user groups @conf_skip */
-	var $FORUM_USER_GROUPS	= array(
+	public $FORUM_USER_GROUPS	= array(
 		1	=> "Administrator",
 		2	=> "Moderator",
 		3	=> "Member",
 	);
 	/** @var array CSS classes real names @conf_skip */
-	var $_CSS = array(
+	public $_CSS = array(
 		"show1"		=> "forum1",
 		"show2"		=> "forum2",
 		"quote"		=> "forum_quote",
@@ -178,13 +178,13 @@ class yf_forum {
 		"post_u_1"	=> "post2shaded",
 	);
 	/** @var array forum statuses @conf_skip */
-	var $FORUM_STATUSES = array(
+	public $FORUM_STATUSES = array(
 		0	=> array("images/forum/bf_nonew.gif",	"No New Posts"),
 		1	=> array("images/forum/bf_new.gif",		"New Posts"),
 		2	=> array("images/forum/bf_readonly.gif","Forum is Read-Only"),
 	);
 	/** @var array Topic statuses @conf_skip */
-	var $TOPIC_STATUSES = array(
+	public $TOPIC_STATUSES = array(
 		0	=> array("images/forum/f_norm_no.gif",	"No New Posts"),
 		1	=> array("images/forum/f_norm.gif",		"New Posts"),
 		2	=> array("images/forum/f_hot_no.gif",	"No New Posts"),
@@ -194,15 +194,15 @@ class yf_forum {
 		6	=> array("images/forum/f_pinned.gif",	"Pinned"),
 	);
 	/** @var array Topic tree images array @conf_skip */
-	var $TREE_IMAGES = array(
+	public $TREE_IMAGES = array(
 		1	=> "<img src=\"images/forum/to_post_no_children.gif\" />",
 		2	=> "<img src=\"images/forum/to_post_with_children.gif\" />",
 		3	=> "<img src=\"images/forum/to_down_pipe.gif\" /> ",
 	);
 	/** @var array Current user settings array @conf_skip */
-	var $USER_SETTINGS = array();
+	public $USER_SETTINGS = array();
 	/** @var int */
-	var $NUM_RSS 	= 10;
+	public $NUM_RSS 	= 10;
 
 
 	/**

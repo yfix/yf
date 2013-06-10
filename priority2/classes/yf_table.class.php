@@ -11,28 +11,28 @@
 class yf_table {
 
 	// Name of the database table
-	var $db_table = null;
+	public $db_table = null;
 	// Array of the database table fields
-	var $db_fields = array();
+	public $db_fields = array();
 	// Table unique ID
-	var $id = null;
+	public $id = null;
 	// Table name
-	var $name = null;
+	public $name = null;
 	// Automatic creation of the table by parsing given Database Table
-	var $auto_parser = false;
+	public $auto_parser = false;
 	// Start query to process table structure
-	var $sql = null;
+	public $sql = null;
 	// Path to the page where table is shown
-	var $path = null;
+	public $path = null;
 	// Available fileld types (other will be ignored)
-	var $cell_types = array(
+	public $cell_types = array(
 		"a" => "\$this->_p_active",
 		"d" => "\$this->_p_date",
 		"i" => "\$this->_p_image",
 		"t" => "\$this->_p_text",
 	);
 	// Available cell properties (other will be ignored)
-	var $cell_props = array(
+	public $cell_props = array(
 		"class",	// string	// HTML "class" attribute
 		"style",	// string	// HTML "style" attribute
 		"sort",		// (1 or 0)	// HTML "style" attribute
@@ -40,33 +40,33 @@ class yf_table {
 		"translate",// (1 or 0)	// translate or not contents of the cell
 	);
 	// Array of buttons for each table row
-	var $buttons = array(
+	public $buttons = array(
 		"edit"		=> "",
 		"delete"	=> "",
 		"add"		=> "",
 	);
 	// Table cells with their names and attributes
-	var $_cells = array();
+	public $_cells = array();
 	// Table header
-	var $header_text = null;
+	public $header_text = null;
 	// Display number of total records
-	var $show_total_records = true;
+	public $show_total_records = true;
 	// Display or not cell names
-	var $show_cell_names = true;
+	public $show_cell_names = true;
 	// Display actions or not
-	var $show_actions = true;
+	public $show_actions = true;
 	// Display "ADD" button
-	var $show_add_button = true;
+	public $show_add_button = true;
 	// Display actions on the left side
-	var $show_actions_left = false;
+	public $show_actions_left = false;
 	// Template to display form inside
-	var $tpl = null;
+	public $tpl = null;
 	// Custom javascript code to use
-	var $js_code = null;
+	public $js_code = null;
 	// Add group delete checkboxes to the table
-	var $ALLOW_GROUP_DELETE = true;
+	public $ALLOW_GROUP_DELETE = true;
 	// Variable that containing error message if error exists
-	var $_ERROR = null;
+	public $_ERROR = null;
 
 	/**
 	* Constructor

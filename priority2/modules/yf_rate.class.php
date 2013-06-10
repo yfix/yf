@@ -11,12 +11,12 @@
 class yf_rate {
 
 	/** @var int Number of stars to use */
-	var $NUM_STARS		= 5;
+	public $NUM_STARS		= 5;
 	/** @var bool Global switch on/off */
-	var $ENABLE_RATINGS	= 1;
+	public $ENABLE_RATINGS	= 1;
 	/** @var int Vote repeat TTL (duration), in seconds */
-//	var $VOTE_DURATION	= 3600;
-	var $VOTE_DURATION	= 10;
+//	public $VOTE_DURATION	= 3600;
+	public $VOTE_DURATION	= 10;
 
 	/**
 	* Framework constructor

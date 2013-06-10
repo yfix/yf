@@ -31,17 +31,17 @@
 class yf_xml_rpc {
 
 	/** @var bool */
-	var $_XML_RPC_DEBUG		= false;
+	public $_XML_RPC_DEBUG		= false;
 	/** @var string */
-	var $_DEBUG_FILE		= "logs/xml_rpc_debug.log";
+	public $_DEBUG_FILE		= "logs/xml_rpc_debug.log";
 	/** @var string XML header	*/
-	var $header 			= "";
+	public $header 			= "";
 	/** @var string DOC type */
-	var $doc_type			= 'UTF-8';
+	public $doc_type			= 'UTF-8';
 	/** @var array @conf_skip Error array */
-	var $errors				= array();
+	public $errors				= array();
 	/** @var array @conf_skip Variables types */
-	var $var_types			= array(
+	public $var_types			= array(
 		'string',
 		'int',
 		'i4',
@@ -51,11 +51,11 @@ class yf_xml_rpc {
 		'boolean'
 	);
 	/** @var array @conf_skip Extracted xmlrpc params */
-	var $xmlrpc_params		= array();
+	public $xmlrpc_params		= array();
 	/** @var array @conf_skip Optionally map types to key */
-	var $map_type_to_key	= array();
+	public $map_type_to_key	= array();
 	/** @var bool */
-	var $USE_COMPACT_PARAMS = 0;
+	public $USE_COMPACT_PARAMS = 0;
 	
 	/**
 	* Constructor
@@ -579,27 +579,27 @@ class xmlrpc_parser {
 	/**
 	* Parser object
 	*/
-	var $parser;
+	public $parser;
 	/**
 	* Current document
 	*/
-	var $document;
+	public $document;
 	/**
 	* Current tag
 	*/
-	var $current;
+	public $current;
 	/**
 	* Parent tag
 	*/
-	var $parent;
+	public $parent;
 	/**
 	* Parents
 	*/
-	var $parents;
+	public $parents;
 	/**
 	* Last opened tag
 	*/
-	var $last_opened_tag;
+	public $last_opened_tag;
 	
 	/**
 	* Constructor

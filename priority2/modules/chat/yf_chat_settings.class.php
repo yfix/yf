@@ -10,7 +10,7 @@
 */
 class yf_chat_settings {
 
-	var $CHAT_OBJ = null;
+	public $CHAT_OBJ = null;
 
 	/**
 	* Chat Settings

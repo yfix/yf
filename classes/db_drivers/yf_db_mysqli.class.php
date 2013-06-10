@@ -11,25 +11,25 @@
 class yf_db_mysqli {
 
 	/** @var @conf_skip */
-	var $db_connect_id		= null;
+	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	var $query_result		= null;
+	public $query_result		= null;
 	/** @var @conf_skip */
-	var $num_queries		= 0;
+	public $num_queries		= 0;
 	/** @var @conf_skip */
-	var $in_transaction		= 0;
+	public $in_transaction		= 0;
 	/** @var @conf_skip */
-	var $mTrxLevel			= 0;
+	public $mTrxLevel			= 0;
 	/** @var @conf_skip */
-	var $META_TABLES_SQL	= "SHOW TABLES";	
+	public $META_TABLES_SQL	= "SHOW TABLES";	
 	/** @var @conf_skip */
-	var $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
+	public $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
 	/** @var @conf_skip */
-	var $DEF_CHARSET		= "utf8";
+	public $DEF_CHARSET		= "utf8";
 	/** @var @conf_skip */
-	var $DEF_PORT		   = 3306;
+	public $DEF_PORT		   = 3306;
 	/** @var @conf_skip */
-	var $SQL_NO_CACHE		= false;
+	public $SQL_NO_CACHE		= false;
 
 	/**
 	*/

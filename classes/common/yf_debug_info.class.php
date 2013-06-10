@@ -11,113 +11,113 @@
 class yf_debug_info {
 
 	/** @var string */
-	var $_file_prefix				= "logs/not_translated_";
+	public $_file_prefix				= "logs/not_translated_";
 	/** @var string @conf_skip */
-	var $_file_ext					= ".php";
+	public $_file_ext					= ".php";
 	/** @var string @conf_skip */
-	var $_auto_header				= "<? die('go away!');\n";
+	public $_auto_header				= "<? die('go away!');\n";
 	/** @var string @conf_skip */
-	var $_auto_footer				= "\n?>";
+	public $_auto_footer				= "\n?>";
 	/** @var bool */
-	var $_SHOW_QUERY_LOG			= 1;
+	public $_SHOW_QUERY_LOG			= 1;
 	/** @var bool */
-	var $_SHOW_SHUTDOWN_QUERIES		= 1;
+	public $_SHOW_SHUTDOWN_QUERIES		= 1;
 	/** @var bool */
-	var $_SHOW_CACHED_QUERIES		= 1;
+	public $_SHOW_CACHED_QUERIES		= 1;
 	/** @var bool */
-	var $_SHOW_DB_SESSION_STATS		= 1;
+	public $_SHOW_DB_SESSION_STATS		= 1;
 	/** @var bool */
-	var $_SHOW_DB_EXPLAIN_QUERY		= 1;
+	public $_SHOW_DB_EXPLAIN_QUERY		= 1;
 	/** @var bool */
-	var $_SHOW_SPHINX				= 1;
+	public $_SHOW_SPHINX				= 1;
 	/** @var bool */
-	var $_SHOW_SSH					= 1;
+	public $_SHOW_SSH					= 1;
 	/** @var bool */
-	var $_SHOW_TPLS					= 1;
+	public $_SHOW_TPLS					= 1;
 	/** @var bool */
-	var $_SHOW_STPLS				= 1;
+	public $_SHOW_STPLS				= 1;
 	/** @var bool */
-	var $_SHOW_REWRITE_INFO			= 1;
+	public $_SHOW_REWRITE_INFO			= 1;
 	/** @var bool */
-	var $_SHOW_CUSTOM_REPLACED		= 1;
+	public $_SHOW_CUSTOM_REPLACED		= 1;
 	/** @var bool */
-	var $_SHOW_OUTPUT_CACHE_INFO	= 1;
+	public $_SHOW_OUTPUT_CACHE_INFO	= 1;
 	/** @var bool */
-	var $_SHOW_RESIZED_IMAGES_LOG	= 1;
+	public $_SHOW_RESIZED_IMAGES_LOG	= 1;
 	/** @var bool */
-	var $_SHOW_INCLUDED_FILES		= 1;
+	public $_SHOW_INCLUDED_FILES		= 1;
 	/** @var bool */
-	var $_SHOW_LOADED_MODULES		= 1;
+	public $_SHOW_LOADED_MODULES		= 1;
 	/** @var bool */
-	var $_INCLUDED_SKIP_CACHE		= 0;
+	public $_INCLUDED_SKIP_CACHE		= 0;
 	/** @var bool */
-	var $_SHOW_META_TAGS			= 1;
+	public $_SHOW_META_TAGS			= 1;
 	/** @var bool */
-	var $_SHOW_MEMCACHED_INFO		= 0;
+	public $_SHOW_MEMCACHED_INFO		= 0;
 	/** @var bool */
-	var $_SHOW_EACCELERATOR_INFO	= 1;
+	public $_SHOW_EACCELERATOR_INFO	= 1;
 	/** @var bool */
-	var $_SHOW_XCACHE_INFO			= 1;
+	public $_SHOW_XCACHE_INFO			= 1;
 	/** @var bool */
-	var $_SHOW_MAIN_GET_DATA		= 1;
+	public $_SHOW_MAIN_GET_DATA		= 1;
 	/** @var bool */
-	var $_SHOW_CORE_CACHE			= 1;
+	public $_SHOW_CORE_CACHE			= 1;
 	/** @var bool */
-	var $_SHOW_MAIN_EXECUTE			= 1;
+	public $_SHOW_MAIN_EXECUTE			= 1;
 	/** @var bool */
-	var $_SHOW_SEND_MAIL			= 1;
+	public $_SHOW_SEND_MAIL			= 1;
 	/** @var bool */
-	var $_SHOW_DECLARED_CLASSES		= 0;
+	public $_SHOW_DECLARED_CLASSES		= 0;
 	/** @var bool */
-	var $_SHOW_NOT_TRANSLATED		= 0;
+	public $_SHOW_NOT_TRANSLATED		= 0;
 	/** @var bool */
-	var $_SHOW_I18N_VARS			= 0;
+	public $_SHOW_I18N_VARS			= 0;
 	/** @var bool */
-	var $_SHOW_COMPRESS_INFO		= 1;
+	public $_SHOW_COMPRESS_INFO		= 1;
 	/** @var bool */
-	var $_SHOW_GZIP_INFO			= 1;
+	public $_SHOW_GZIP_INFO			= 1;
 	/** @var bool */
-	var $_SHOW_MEM_USAGE			= 1;
+	public $_SHOW_MEM_USAGE			= 1;
 	/** @var string */
-	var $_NOT_TRANSLATED_FILE		= "";
+	public $_NOT_TRANSLATED_FILE		= "";
 	/** @var bool */
-	var $_NOT_REPLACED_STPL_TAGS	= 1;
+	public $_NOT_REPLACED_STPL_TAGS	= 1;
 	/** @var bool */
-	var $_SHOW_GET_DATA				= 1;
+	public $_SHOW_GET_DATA				= 1;
 	/** @var bool */
-	var $_SHOW_POST_DATA			= 1;
+	public $_SHOW_POST_DATA			= 1;
 	/** @var bool */
-	var $_SHOW_COOKIE_DATA			= 1;
+	public $_SHOW_COOKIE_DATA			= 1;
 	/** @var bool */
-	var $_SHOW_REQUEST_DATA			= 0;
+	public $_SHOW_REQUEST_DATA			= 0;
 	/** @var bool */
-	var $_SHOW_SESSION_DATA			= 1;
+	public $_SHOW_SESSION_DATA			= 1;
 	/** @var bool */
-	var $_SHOW_FILES_DATA			= 1;
+	public $_SHOW_FILES_DATA			= 1;
 	/** @var bool */
-	var $_SHOW_SERVER_DATA			= 1;
+	public $_SHOW_SERVER_DATA			= 1;
 	/** @var bool */
-	var $_SHOW_ENV_DATA				= 0;
+	public $_SHOW_ENV_DATA				= 0;
 	/** @var bool */
-	var $_SHOW_SETTINGS				= 1;
+	public $_SHOW_SETTINGS				= 1;
 	/** @var bool */
-	var $_SHOW_PHP_INI				= 0;
+	public $_SHOW_PHP_INI				= 0;
 	/** @var bool Store db queries to file */
-	var $LOG_QUERIES_TO_FILE		= 0;
+	public $LOG_QUERIES_TO_FILE		= 0;
 	/** @var bool Store slow db queries to file */
-	var $LOG_SLOW_QUERIES_TO_FILE	= 0;
+	public $LOG_SLOW_QUERIES_TO_FILE	= 0;
 	/** @var bool Log queries file name */
-	var $LOG_QUERIES_FILE_NAME		= "db_queries.log";
+	public $LOG_QUERIES_FILE_NAME		= "db_queries.log";
 	/** @var bool Log slow queries file name */
-	var $LOG_SLOW_QUERIES_FILE_NAME	= "slow_queries.log";
+	public $LOG_SLOW_QUERIES_FILE_NAME	= "slow_queries.log";
 	/** @var float */
-	var $SLOW_QUERIES_TIME_LIMIT	= 0.2;
+	public $SLOW_QUERIES_TIME_LIMIT	= 0.2;
 	/** @var bool */
-	var $SORT_TEMPLATES_BY_NAME		= 1;
+	public $SORT_TEMPLATES_BY_NAME		= 1;
 	/** @var bool */
-	var $ADD_ADMIN_LINKS			= true;
+	public $ADD_ADMIN_LINKS			= true;
 	/** @var bool */
-	var $ADMIN_PATHS				= array(
+	public $ADMIN_PATHS				= array(
 		"edit_stpl"		=> "object=template_editor&action=edit_stpl&location=framework&theme={{THEME}}&name={{ID}}",
 		"edit_i18n"		=> "object=locale_editor&action=edit_var&id={{ID}}",
 		"edit_file"		=> "object=file_manager&action=edit_item&id={{ID}}",

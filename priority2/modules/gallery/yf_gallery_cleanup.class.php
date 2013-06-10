@@ -11,11 +11,11 @@
 class yf_gallery_cleanup {
 
 	/** @var bool Useful for debugging @conf_skip */
-	var $ALLOW_STEP_1 = 0;
+	public $ALLOW_STEP_1 = 0;
 	/** @var bool Useful for debugging @conf_skip */
-	var $ALLOW_STEP_2 = 1;
+	public $ALLOW_STEP_2 = 1;
 	/** @var bool Useful for debugging @conf_skip */
-	var $ALLOW_STEP_3 = 1;
+	public $ALLOW_STEP_3 = 1;
 
 	/**
 	* Constructor

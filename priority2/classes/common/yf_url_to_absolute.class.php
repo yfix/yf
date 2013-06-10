@@ -2,7 +2,7 @@
 
 class yf_url_to_absolute {
 
-	var $AUTO_ENCODE_DECODE = false;
+	public $AUTO_ENCODE_DECODE = false;
 
 	/**
 	 * Combine a base URL and a relative URL to produce a new

@@ -5,13 +5,13 @@
 class yf_dynamic {
 
 	/** @var bool */
-	var $ERROR_IMAGE_INTERNAL	= false;
+	public $ERROR_IMAGE_INTERNAL	= false;
 	/** @var bool */
-	var $ALLOW_LANG_CHANGE		= true;
+	public $ALLOW_LANG_CHANGE		= true;
 	/** @var bool */
-	var $VARS_IGNORE_CASE		= true;
+	public $VARS_IGNORE_CASE		= true;
 	/** @var int Quantity of finded users by user search (for 'find_users' function)*/
-	var $USER_RESULTS_LIMIT = 20;
+	public $USER_RESULTS_LIMIT = 20;
 
 	/**
 	* Catch missing method call

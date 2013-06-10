@@ -11,28 +11,28 @@
 class yf_db_msaccess {
 
 	/** @var @conf_skip */
-	var $db_connect_id		= null;
+	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	var $result_ids			= array();
+	public $result_ids			= array();
 	/** @var @conf_skip */
-	var $result				= null;
+	public $result				= null;
 
 	/** @var @conf_skip */
-	var $next_id			= null;
+	public $next_id			= null;
 
 	/** @var @conf_skip */
-	var $num_rows			= array();
+	public $num_rows			= array();
 	/** @var @conf_skip */
-	var $current_row		= array();
+	public $current_row		= array();
 	/** @var @conf_skip */
-	var $field_names		= array();
+	public $field_names		= array();
 	/** @var @conf_skip */
-	var $field_types		= array();
+	public $field_types		= array();
 	/** @var @conf_skip */
-	var $result_rowset		= array();
+	public $result_rowset		= array();
 
 	/** @var @conf_skip */
-	var $num_queries		= 0;
+	public $num_queries		= 0;
 
 	/**
 	*/

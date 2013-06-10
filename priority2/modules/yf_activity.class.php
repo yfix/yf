@@ -11,11 +11,11 @@
 class yf_activity {
 
 	/** @var int Number of records on page for raw log */
-	var $RAW_LOG_PER_PAGE		= 50;
+	public $RAW_LOG_PER_PAGE		= 50;
 	/** @var bool Log spam (flood) tries */
-	var $LOG_SPAM_TRIES			= true;
+	public $LOG_SPAM_TRIES			= true;
 	/** @var bool Allow to decrement user's activity for revert actions (delete post, remove some record etc) */
-	var $ALLOW_REMOVE_POINTS	= true;
+	public $ALLOW_REMOVE_POINTS	= true;
 
 	/**
 	* YF module constructor

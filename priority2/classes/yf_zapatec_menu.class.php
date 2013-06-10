@@ -11,7 +11,7 @@
 class yf_zapatec_menu {
 
 	/** @var array */
-	var $_menu_params = array(
+	public $_menu_params = array(
 		"vertical"			=> 0,
 		"scrollWithWindow"	=> 1,
 		"top"				=> '0px',
@@ -21,9 +21,9 @@ class yf_zapatec_menu {
 		"drag"				=> 1,
 	);
 	/** @var array @conf_skip */
-	var $_menu_items = array();
+	public $_menu_items = array();
 	/** @var string */
-	var $_theme_name = "winxp1";
+	public $_theme_name = "winxp1";
 
 	/**
 	* Display menu code

@@ -6,16 +6,16 @@
 class yf_server_file_manager {
 
 	/** @var string Home dir */
-	var $HOME_DIR 				= "/var/www/";
+	public $HOME_DIR 				= "/var/www/";
 	/** @var array Viewable and editable file extensions */
-	var $EDIT_ALLOWED_TYPES 	= array(
+	public $EDIT_ALLOWED_TYPES 	= array(
 		"php",
 		"html",
 		"htaccess",
 		"txt",
 	);
 	/** @var array Denied folders */
-	var $BLACKLIST 	= array(
+	public $BLACKLIST 	= array(
 		"/bin",
 		"/boot",
 		"/dev",
@@ -32,15 +32,15 @@ class yf_server_file_manager {
 //		"/home",
 	);
 	/** @var int Maximum filesize to allow edit or view it through web interface */
-	var $MAX_EDITABLE_FILESIZE 	= 1048000;
+	public $MAX_EDITABLE_FILESIZE 	= 1048000;
 	/** @var string Tar file prefix (using for tar filename creation when compress files) */
-	var $TAR_PREFIX 			= "compress-";
+	public $TAR_PREFIX 			= "compress-";
 	/** @var bool Allow to change user and user group */
-	var $ALLOW_CHANGE_OWNER 	= true;
+	public $ALLOW_CHANGE_OWNER 	= true;
 	/** @var bool Show server name in page header */
-	var $SHOW_SERVER_NAME 		= true;
+	public $SHOW_SERVER_NAME 		= true;
 	/** @var string Server info url */
-	var $SERVER_INFO_URL 		= "./?object=admin_servers&action=view_server";
+	public $SERVER_INFO_URL 		= "./?object=admin_servers&action=view_server";
 
 	/**
 	* Constructor

@@ -11,19 +11,19 @@
 class yf_db_manager {
 
 	/** @var bool */
-	var $AUTO_GET_TABLES_STATUS		= 0;
+	public $AUTO_GET_TABLES_STATUS		= 0;
 	/** @var string @conf_skip */
-	var $TABLES_CONSTS_PREFIX		= "dbt_";
+	public $TABLES_CONSTS_PREFIX		= "dbt_";
 	/** @var bool */
-	var $USE_HIGHLIGHT				= 1;
+	public $USE_HIGHLIGHT				= 1;
 	/** @var int Number of records in extended export mode to use in one INSERT block */
-	var $EXPORT_EXTENDED_PER_BLOCK	= 500;
+	public $EXPORT_EXTENDED_PER_BLOCK	= 500;
 	/** @var string Path where auto-backups will be stored */
-	var $BACKUP_PATH				= "backup_sql/";
+	public $BACKUP_PATH				= "backup_sql/";
 	/** @var string Path to mysql.exe */
-	var $MYSQL_CLIENT_PATH			= "d:\\www\\mysql\\bin\\";
+	public $MYSQL_CLIENT_PATH			= "d:\\www\\mysql\\bin\\";
 	/** @var int Max number of backups files to store */
-	var $MAX_BACKUP_FILES			= 5;
+	public $MAX_BACKUP_FILES			= 5;
 
 
 	/**

@@ -10,7 +10,7 @@
 */
 class yf_chat_login {
 
-	var $CHAT_OBJ = null;
+	public $CHAT_OBJ = null;
 
 	/**
 	* Chat Login

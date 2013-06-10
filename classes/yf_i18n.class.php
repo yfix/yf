@@ -11,27 +11,27 @@
 class yf_i18n {
 
 	/** @var bool Replace underscore "_" into space " " in translate_string */
-	var $REPLACE_UNDERSCORE	= true;
+	public $REPLACE_UNDERSCORE	= true;
 	/** @var bool Translation on/off */
-	var $TRANSLATE_ENABLED	= true;
+	public $TRANSLATE_ENABLED	= true;
 	/** @var bool Try to find and insert not existed vars (only if DEBUG_MODE && TRANSLATE_ENABLED) */
-	var $AUTO_FIND_VARS		= false;
+	public $AUTO_FIND_VARS		= false;
 	/** @var bool Allow user to force change lange language */
-	var $ALLOW_SESSION_LANG	= true;
+	public $ALLOW_SESSION_LANG	= true;
 	/** @var bool Display translated vars (only if DEBUG_MODE && TRANSLATE_ENABLED) */
-	var $TRACK_TRANSLATED	= true;
+	public $TRACK_TRANSLATED	= true;
 	/** @var bool */
-	var $VARS_IGNORE_CASE	= true;
+	public $VARS_IGNORE_CASE	= true;
 	/** @var bool */
-	var $TRACK_FIRST_LETTER_CASE	= true;
+	public $TRACK_FIRST_LETTER_CASE	= true;
 	/** @var string Current locale code */
-	var $CUR_LOCALE			= "en";
+	public $CUR_LOCALE			= "en";
 	/** @var string Current charset code */
-	var $CUR_CHARSET		= "utf-8";
+	public $CUR_CHARSET		= "utf-8";
 	/** @var array @conf_skip Active languages */
-	var $LANGUAGES			= array();
+	public $LANGUAGES			= array();
 	/** @var array */
-	var $_HTML_ENTITIES		= array(
+	public $_HTML_ENTITIES		= array(
 		"_" => "&#95;",
 		"'" => "&#39;",
 		'"' => "&quot;",
@@ -48,11 +48,11 @@ class yf_i18n {
 		"|" => "&#124;",
 	);
 	/** @var bool Allow to find vars in modules sub-folders */
-	var $ALLOW_MODULE_FILES		= true;
+	public $ALLOW_MODULE_FILES		= true;
 	/** @var bool User-only translation for members */
-	var $ALLOW_USER_TRANSLATE	= false;
+	public $ALLOW_USER_TRANSLATE	= false;
 	/** @var bool In-Memory cachig */
-	var $USE_TRANSLATE_CACHE	= true;
+	public $USE_TRANSLATE_CACHE	= true;
 
 	/**
 	* Framework constructor

@@ -5,13 +5,13 @@
 class yf_site_nav_bar {
 
 	/** @var string */
-	var $HOOK_NAME		= "_nav_bar_items";
+	public $HOOK_NAME		= "_nav_bar_items";
 	/** @var string */
-	var $HOME_LOCATION	= "./";
+	public $HOME_LOCATION	= "./";
 	/** @var bool */
-	var $AUTO_TRANSLATE = true;
+	public $AUTO_TRANSLATE = true;
 	/** @var bool */
-	var $SHOW_NAV_BAR	= true;
+	public $SHOW_NAV_BAR	= true;
 
 	/**
 	* Catch missing method call

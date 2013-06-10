@@ -4,7 +4,7 @@
  */
 class yf_graph {
 
-	var $TICK_COUNT = 10;
+	public $TICK_COUNT = 10;
 
 	/**
 		data array format for graph

@@ -5,15 +5,15 @@
 class yf_help_tickets {
 
 	/** @var */
-	var $TICKET_DELIM		= "jq";
+	public $TICKET_DELIM		= "jq";
 	/** @var Filter on/off */
-	var $USE_FILTER			= true;
+	public $USE_FILTER			= true;
 	/** @var Filter on/off */
-	var $DEF_PER_PAGE		= 50;
+	public $DEF_PER_PAGE		= 50;
 	/** @var string */
-	var $DEF_VIEW_STATUS	= "";
+	public $DEF_VIEW_STATUS	= "";
 	/** @var bool */
-	var $ADD_ADMIN_NAME		= true;
+	public $ADD_ADMIN_NAME		= true;
 
 	//-----------------------------------------------------------------------------
 	// Constructor

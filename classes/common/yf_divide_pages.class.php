@@ -14,17 +14,17 @@ class yf_divide_pages {
 	*	Force to rewrite given SQL to force speed with COUNT(*) operator 
 	*	Example: module_conf("divide_pages", "SQL_COUNT_REWRITE", false);
 	*/
-	var $SQL_COUNT_REWRITE		= true;
+	public $SQL_COUNT_REWRITE		= true;
 	/** @var int 
 	*	Global pages limit (to prevent pages flooding), 
 	* 	Example: 100 (pages only), 
 	*	set to "0" to disable 
 	*/
-	var $PAGES_LIMIT			= 0;
+	public $PAGES_LIMIT			= 0;
 	/** @var */
-	var $OVERRIDE_DB_OBJECT		= false;
+	public $OVERRIDE_DB_OBJECT		= false;
 	/** @var */
-	var $PAGES_PER_BLOCK		= 10;
+	public $PAGES_PER_BLOCK		= 10;
 
 	/**
 	* Divide pages

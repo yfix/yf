@@ -11,13 +11,13 @@
 class yf_static_pages {
 
 	/** @var string */
-	var $TEXT_FIELD_NAME 	= "text_to_edit";
+	public $TEXT_FIELD_NAME 	= "text_to_edit";
 	/** @var bool */
-	var $MULTILANG_MODE		= false;
+	public $MULTILANG_MODE		= false;
 	/** @var string Project default locale (defines in project index.php)*/
-	var $PROJ_DEFAULT_LOCALE= "en";
+	public $PROJ_DEFAULT_LOCALE= "en";
 	/** @var bool */
-	var $USE_VISUAL_EDIT	= true;
+	public $USE_VISUAL_EDIT	= true;
 
 	/**
 	* Module constructor

@@ -11,7 +11,7 @@
 class yf_editor_xinha {
 
 	/** @var string */
-	var $text_field_name	= "text_to_edit";
+	public $text_field_name	= "text_to_edit";
 
 	/**
 	* Helper method

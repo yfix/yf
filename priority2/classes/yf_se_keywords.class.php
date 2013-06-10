@@ -11,33 +11,33 @@
 class yf_se_keywords {
 
 	/** @var int */
-	var $KEYWORDS_DISPLAY_LIMIT = 40;
+	public $KEYWORDS_DISPLAY_LIMIT = 40;
 	/** @var bool */
-	var $USE_FULLTEXT_SEARCH	= false;
+	public $USE_FULLTEXT_SEARCH	= false;
 	/** @var bool */
-	var $CACHE_ENABLED			= false;
+	public $CACHE_ENABLED			= false;
 	/** @var int */
-	var $CACHE_TTL				= 1800;
+	public $CACHE_TTL				= 1800;
 	/** @var string */
-	var $CACHE_DIR				= "uploads/se_keywords_cache/";
+	public $CACHE_DIR				= "uploads/se_keywords_cache/";
 	/** @var bool */
-	var $USE_MEMCACHED			= false;
+	public $USE_MEMCACHED			= false;
 	/** @var int Multiplier for data from db (must be INT >= 1) */
-	var $DATA_FROM_DB_MULTIPLY	= 5;
+	public $DATA_FROM_DB_MULTIPLY	= 5;
 	/** @var int Minimal number of hits to use */
-	var $MIN_HITS_DISPLAY_LIMIT	= 5;
+	public $MIN_HITS_DISPLAY_LIMIT	= 5;
 	/** @var int Max number of keywords to allow (to decrease database load), set to "0" to disable */
-	var $MAX_TOTAL_KEYWORDS		= 0/*20000*/;
+	public $MAX_TOTAL_KEYWORDS		= 0/*20000*/;
 	/** @var int Update most popular every calls when "rand(1, $num) == 1" */
-	var $UPDATE_POPULAR_RAND	= 2;
+	public $UPDATE_POPULAR_RAND	= 2;
 	/** @var string @conf_skip */
-	var $_auto_header			= "<?php\r\n";
+	public $_auto_header			= "<?php\r\n";
 	/** @var string @conf_skip */
-	var $_auto_footer			= "\r\n?>";
+	public $_auto_footer			= "\r\n?>";
 	/** @var string @conf_skip */
-	var $_file_prefix			= "cache_";
+	public $_file_prefix			= "cache_";
 	/** @var string @conf_skip */
-	var $_file_ext				= ".php";
+	public $_file_ext				= ".php";
 
 	/**
 	* Module constructor

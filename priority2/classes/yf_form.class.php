@@ -14,29 +14,29 @@ class yf_form {
 	// 1 - Generate input with attached calendar type 1
 	// 2 - Generate input with attached calendar type 2
 	// 3 - Generate select boxes for year, month, day (and if needed - hour, minute, second)
-	var $date_mode = 1;
+	public $date_mode = 1;
 	// JavaScript-based field values confirmation before submitting the form
-	var $js_confirm = false;
+	public $js_confirm = false;
 	// Automatic creation of the form by parsing given Database Table
-	var $auto_parser = false;
+	public $auto_parser = false;
 	// Form unique ID
-	var $id = null;
+	public $id = null;
 	// Form name variable
-	var $name = null;
+	public $name = null;
 	// Submitting method (GET, POST)
-	var $method = "post";
+	public $method = "post";
 	// Target action
-	var $action = null;
+	public $action = null;
 	// Enctype for the form
-	var $enctype = 1; // 0 - "application/x-www-form-urlencoded", 1 - "multipart/form-data"
+	public $enctype = 1; // 0 - "application/x-www-form-urlencoded", 1 - "multipart/form-data"
 	// Name of the database table (used in auto-parser)
-	var $db_table = null;
+	public $db_table = null;
 	// Database query SQL text (need to auto-parser)
-	var $sql = null;
+	public $sql = null;
 	// Form filelds with their names and attributes
-	var $fields = array();
+	public $fields = array();
 	// Available fileld types (other will be ignored)
-	var $field_types = array(
+	public $field_types = array(
 		"a" 	=> "p_active",		// Input type = "radio" with translated "yes", "no"
 		"c" 	=> "p_checkbox",	// Input type = "checkbox"
 		"date" 	=> "p_date",		// Date field (YYYY-MM-DD)
@@ -57,26 +57,26 @@ class yf_form {
 		"ts" 	=> "p_timestamp",	// Timestamp field (10 digits int)
 	);
 	// Array of fields where colspan=2 is needed without showing name and input
-	var $colspan_fields = array (
+	public $colspan_fields = array (
 		"img", 
 		"photo",
 		"res", 
 		"sub",
 	);
 	// Variable where header text strored
-	var $header_text = null;
+	public $header_text = null;
 	// Back button text
-	var $back_button_url = null;
+	public $back_button_url = null;
 	// Template to display form inside
-	var $tpl = null;
+	public $tpl = null;
 	// Custom javascript code to use (otherwise default will be used)
-	var $js_code = null;
+	public $js_code = null;
 	// Calendar created (to prevent multiple initialization)
-	var $_cal_created = false;
+	public $_cal_created = false;
 	// Try to find values from other tables
-	var $_AUTO_FIND_TABLES = true;
+	public $_AUTO_FIND_TABLES = true;
 	// Variable that containing error message if error exists
-	var $_ERROR = null;
+	public $_ERROR = null;
 
 	/**
 	* Constructor

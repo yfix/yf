@@ -2,7 +2,7 @@
 
 class yf_synonymizer {
 
-	var $limit = 100;
+	public $limit = 100;
 
 	function process($str = "", $vars = array()){		
 		return $this->myPreg($this->_replace_vars($str, $vars));

@@ -11,11 +11,11 @@
 class yf_sites_info {
 
 	/** @var string Sites config file name */
-	var $_config_file_name	= "site_vars.php";
+	public $_config_file_name	= "site_vars.php";
 	/** @var string Name of sites index file */
-	var $_index_file_name	= "index.php";
+	public $_index_file_name	= "index.php";
 	/** @var array Config constants to parse */
-	var $_consts_to_parse	= array(
+	public $_consts_to_parse	= array(
 		"SITE_UPLOADS_DIR",
 		"SITE_ADVERT_PHOTOS_DIR",
 		"SITE_LINKS_BANNERS_DIR",
@@ -25,9 +25,9 @@ class yf_sites_info {
 		"DEFAULT_SKIN",
 	);
 	/** @var string @conf_skip Patterns to get constant value */
-	var $_get_const_pattern	= "/define\s*\(\s*[\"\']*##CONST_NAME##[\"\']*[\s\t]*,[\s\t]*[\"\']*([^\'\"]+)[\"\']*\s*\)/Uims";
+	public $_get_const_pattern	= "/define\s*\(\s*[\"\']*##CONST_NAME##[\"\']*[\s\t]*,[\s\t]*[\"\']*([^\'\"]+)[\"\']*\s*\)/Uims";
 	/** @var array @conf_skip Container for sites info */
-	var $info = array();
+	public $info = array();
 
 	/**
 	* Constructor (PHP 4.x)

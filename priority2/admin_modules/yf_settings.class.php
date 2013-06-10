@@ -20,7 +20,7 @@ class yf_settings {
 	/** @var array @conf_skip categories of setting (for groupping) */
 	var	$categories = array();
 	/** @var bool @conf_skip Constructor mode */
-	var $CONSTRUCTOR_MODE = false;
+	public $CONSTRUCTOR_MODE = false;
 
 	/**
 	* Constructor

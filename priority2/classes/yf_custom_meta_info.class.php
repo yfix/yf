@@ -11,11 +11,11 @@
 class yf_custom_meta_info {
 
 	/** @var array @conf_skip Replace tags */
-	var $_tags				= array();
+	public $_tags				= array();
 	/** @var array @conf_skip Current rules to process */
-	var $_rules				= array();
+	public $_rules				= array();
 	/** @var bool */
-	var $AUTO_ADD_QUOTES	= true;
+	public $AUTO_ADD_QUOTES	= true;
 
 	/**
 	* Constructor (PHP 4.x)

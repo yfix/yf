@@ -11,7 +11,7 @@
 class yf_aggregator {
 
 	/** @var array known item field names @conf_skip */
-	var $avail_item_fields	= array(
+	public $avail_item_fields	= array(
 		"title", 
 		"link", 
 		"description", 
@@ -21,19 +21,19 @@ class yf_aggregator {
 		"guid",
 	);
 	/** @var string */
-	var $AGGR_CACHE_PATH	= "uploads/rss_aggregator_cache/";
+	public $AGGR_CACHE_PATH	= "uploads/rss_aggregator_cache/";
 	/** @var string */
-	var $DOMIT_RSS_PATH		= "libs/domit/xml_domit_rss.php";
+	public $DOMIT_RSS_PATH		= "libs/domit/xml_domit_rss.php";
 	/** @var bool Use serialized cache */
 	var	$USE_ARRAY_CACHE	= true;
 	/** @var bool */
-	var $CONVERT_TO_UTF8	= true;
+	public $CONVERT_TO_UTF8	= true;
 	/** @var bool Auto-approve posts */
-	var $AUTO_APPROVE_POSTS	= true;
+	public $AUTO_APPROVE_POSTS	= true;
 	/** @var int Limit number of aggregated records from one feed at one time */
-	var $LIMIT_FROM_FEED	= 5; // Set to "0" to disable
+	public $LIMIT_FROM_FEED	= 5; // Set to "0" to disable
 	/** @var int Limit minimal text length to aggregate */
-	var $MIN_TEXT_LENGTH	= 0; // Set to "0" to disable
+	public $MIN_TEXT_LENGTH	= 0; // Set to "0" to disable
 
 	/**
 	* Framework constructor

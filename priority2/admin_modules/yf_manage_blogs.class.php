@@ -5,9 +5,9 @@
 class yf_manage_blogs {
 
 	/** @var int Text preview cutoff (set to 0 to disable) */
-	var $TEXT_PREVIEW_LENGTH	= 0;
+	public $TEXT_PREVIEW_LENGTH	= 0;
 	/** @var bool Filter on/off */
-	var $USE_FILTER				= true;
+	public $USE_FILTER				= true;
 
 	//-----------------------------------------------------------------------------
 	// Constructor

@@ -10,7 +10,7 @@
 */
 class yf_template_editor {
 
-	var $CACHE_NAME = "themes_num_stpls";
+	public $CACHE_NAME = "themes_num_stpls";
 
 	/**
 	* Framework constructor

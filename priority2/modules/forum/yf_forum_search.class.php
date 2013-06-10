@@ -11,11 +11,11 @@
 class yf_forum_search {
 
 	/** @var int @conf_skip */
-	var $FORCE_LIMIT			= null;
+	public $FORCE_LIMIT			= null;
 	/** @var bool @conf_skip */
-	var $SKIP_KEYWORDS_CHECK	= null;
+	public $SKIP_KEYWORDS_CHECK	= null;
 	/** @var Array of all allowed fields @conf_skip */
-	var $_allowed_fields = array(
+	public $_allowed_fields = array(
 		"keywords",
 		"user_name",
 		"exact_name",
@@ -32,29 +32,29 @@ class yf_forum_search {
 		"only_unread",
 	);
 	/** @var Sorting fields @conf_skip */
-	var $_sort_by = array(
+	public $_sort_by = array(
 		"last_post_date"	=> "Last Posting Date",
 		"num_posts"			=> "Number of Replies",
 		"user_name"			=> "Poster Name",
 		"forum_id"			=> "Forum Name",
 	);
 	/** @var Sort order @conf_skip */
-	var $_sort_order = array(
+	public $_sort_order = array(
 		"desc"	=> "descending order",
 		"asc"	=> "ascending order",
 	);
 	/** @var Prune type @conf_skip */
-	var $_prune_type = array(
+	public $_prune_type = array(
 		"older"	=> "Older",
 		"newer"	=> "Newer",
 	);
 	/** @var Search in @conf_skip */
-	var $_search_in = array(
+	public $_search_in = array(
 		"posts"	=> "Search entire post",
 		"titles"=> "Search titles only",
 	);
 	/** @var Result type @conf_skip */
-	var $_result_type = array(
+	public $_result_type = array(
 		"topics"	=> "Show results as topics",
 		"posts"		=> "Show results as posts",
 	);

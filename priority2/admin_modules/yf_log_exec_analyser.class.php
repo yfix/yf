@@ -11,19 +11,19 @@
 class yf_log_exec_analyser {
 
 	/** @var string @conf_skip Session array name where filter vars are stored */
-	var $_filter_name		= "log_exec_analyser_filter";
+	public $_filter_name		= "log_exec_analyser_filter";
 	/** @var string @conf_skip */
-	var $_DATA_ARRAY_NAME	= "log_exec_data";
+	public $_DATA_ARRAY_NAME	= "log_exec_data";
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 	/** @var string Define image type */
-	var $_image_type	= "png";
+	public $_image_type	= "png";
 	/** @var int Define image dimensions */
-	var $_image_width	= 600;
+	public $_image_width	= 600;
 	/** @var int */
-	var $_image_height	= 400;
+	public $_image_height	= 400;
 	/** @var array @conf_skip Define colors (for true color, first byte => alpha channel (0x00...0x7F)) */
-	var $_img_colors = array(
+	public $_img_colors = array(
 		"white"		=> 0x00FFFFFF,
 		"black"		=> 0x00000000,
 		"grey_1"	=> 0x00CACACA,
@@ -33,31 +33,31 @@ class yf_log_exec_analyser {
 		"light_blue"=> 0x006CCFFF,
 	);
 	/** @var array Define font sizes (in pixels) */
-	var $_font_widths = array(
+	public $_font_widths = array(
 		1	=> 5,
 		2	=> 6,
 	);
 	/** @var array */
-	var $_font_heights = array(
+	public $_font_heights = array(
 		1	=> 8,
 		2	=> 13,
 	);
 	/** @var array @conf_skip Statistics date periods */
-	var $_stats_periods = array(
+	public $_stats_periods = array(
 		"day"	=> "Daily",
 		"month"	=> "Monthly",
 		"year"	=> "Yearly",
 	);
 	/** @var int */
-	var $HOURLY_PER_PAGE	= 50;
+	public $HOURLY_PER_PAGE	= 50;
 	/** @var int */
-	var $UA_PER_PAGE		= 50;
+	public $UA_PER_PAGE		= 50;
 	/** @var int */
-	var $REFERERS_PER_PAGE	= 50;
+	public $REFERERS_PER_PAGE	= 50;
 	/** @var int */
-	var $MAX_EXEC_PER_PAGE	= 50;
+	public $MAX_EXEC_PER_PAGE	= 50;
 	/** @var string Folder where archived stats are stored */
-	var $STATS_ARCHIVE_DIR = "__logs/exec_stats_archive/";
+	public $STATS_ARCHIVE_DIR = "__logs/exec_stats_archive/";
 
 	/**
 	* Constructor (PHP 4.x)

@@ -5,9 +5,9 @@
 class yf_manage_reput {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER				= true;
+	public $USE_FILTER				= true;
 	/** @var array */
-	var $_known_ban_items = array(
+	public $_known_ban_items = array(
 		"ban_ads",
 		"ban_email",
 		"ban_reviews",
@@ -19,7 +19,7 @@ class yf_manage_reput {
 		"ban_reput",
 	);
 	/** @var array */
-	var $_map_vote_for = array(
+	public $_map_vote_for = array(
 		"forum_posts"	=> "./?object=forum&action=edit_post&id=",
 		"articles_texts"=> "./?object=manage_articles&action=edit&id=",
 		"blog_posts"	=> "./?object=manage_blogs&action=edit&id=",

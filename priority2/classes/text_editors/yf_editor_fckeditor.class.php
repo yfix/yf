@@ -11,20 +11,20 @@
 class yf_editor_fckeditor {
 
 	/** @var string */
-	var $text_field_name	= "text_to_edit";
+	public $text_field_name	= "text_to_edit";
 	/** @var string */
-	var $BasePath			= "";
+	public $BasePath			= "";
 	/** @var string */
-	var $Width				= '95%';
+	public $Width				= '95%';
 	/** @var string */
-	var $Height				= '400';
+	public $Height				= '400';
 	/** @var string */
-//	var $ToolbarSet			= 'Default';
-	var $ToolbarSet			= 'yfnet';
+//	public $ToolbarSet			= 'Default';
+	public $ToolbarSet			= 'yfnet';
 	/** @var string @conf_skip */
-	var $value				= '';
+	public $value				= '';
 	/** @var array */
-	var $Config				= array(
+	public $Config				= array(
 		"DefaultLanguage"	=> "en",
 		"ImageDlgHideLink"	=> 1,
 		"ImageUpload"		=> 0,

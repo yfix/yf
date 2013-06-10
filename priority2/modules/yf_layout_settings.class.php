@@ -11,23 +11,23 @@
 class yf_layout_settings {
 
 	/** @var string */
-	var $_cookie_name = "layout";
+	public $_cookie_name = "layout";
 	/** @var string */
-	var $COOKIE_PATH	= "/";
+	public $COOKIE_PATH	= "/";
 	/** @var int */
-	var $COOKIE_TTL		= 31536000; // 86400 * 365
+	public $COOKIE_TTL		= 31536000; // 86400 * 365
 	/** @var int */
-	var $MIN_FSIZE		= 75;	//%
+	public $MIN_FSIZE		= 75;	//%
 	/** @var int */
-	var $MAX_FSIZE		= 150; 	//%
+	public $MAX_FSIZE		= 150; 	//%
 	/** @var int */
-	var $STEP_FSIZE		= 5; 	//%
+	public $STEP_FSIZE		= 5; 	//%
 	/** @var int */
-	var $MIN_WIDTH		= 700;	//px
+	public $MIN_WIDTH		= 700;	//px
 	/** @var int */
-	var $MAX_WIDTH		= 1600;	//px
+	public $MAX_WIDTH		= 1600;	//px
 	/** @var int */
-	var $STEP_WIDTH		= 50; 	//px
+	public $STEP_WIDTH		= 50; 	//px
 
 	/**
 	* YF module constructor

@@ -11,32 +11,32 @@
 class yf_db_oracle {
 
 	/** @var @conf_skip */
-	var $db_connect_id		= null;
+	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	var $query_result		= null;
+	public $query_result		= null;
 	/** @var @conf_skip */
-	var $in_transaction		= 0;
+	public $in_transaction		= 0;
 	/** @var @conf_skip */
-	var $row				= array();
+	public $row				= array();
 	/** @var @conf_skip */
-	var $rowset				= array();
+	public $rowset				= array();
 	/** @var @conf_skip */
-	var $num_queries		= 0;
+	public $num_queries		= 0;
 	/** @var @conf_skip */
-	var $last_query_text	= "";
+	public $last_query_text	= "";
 	/** @var @conf_skip */
-	var $replace_quote		= "''";
+	public $replace_quote		= "''";
 	/** @var @conf_skip */
-	var $no_null_strings	= 1;
+	public $no_null_strings	= 1;
 
 	/** @var @conf_skip */
-	var $META_TABLES_SQL	= "select table_name,table_type from cat where table_type in ('TABLE','VIEW')";
+	public $META_TABLES_SQL	= "select table_name,table_type from cat where table_type in ('TABLE','VIEW')";
 	/** @var @conf_skip */
-	var $META_COLUMNS_SQL	= "select cname,coltype,width from col where tname='%s' order by colno";
+	public $META_COLUMNS_SQL	= "select cname,coltype,width from col where tname='%s' order by colno";
 	/** @var @conf_skip */
-	var $META_DATABASES_SQL	= "SELECT USERNAME FROM ALL_USERS WHERE USERNAME NOT IN ('SYS','SYSTEM','DBSNMP','OUTLN') ORDER BY 1";
+	public $META_DATABASES_SQL	= "SELECT USERNAME FROM ALL_USERS WHERE USERNAME NOT IN ('SYS','SYSTEM','DBSNMP','OUTLN') ORDER BY 1";
 	/** @var @conf_skip */
-	var $_genIDSQL			= "SELECT (%s.nextval) FROM DUAL";
+	public $_genIDSQL			= "SELECT (%s.nextval) FROM DUAL";
 
 	/**
 	* Constructor

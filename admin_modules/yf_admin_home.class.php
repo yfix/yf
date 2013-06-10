@@ -11,15 +11,15 @@
 class yf_admin_home {
 
 	/** @var string @conf_skip */
-	var $CACHE_NAME 			= "admin_statistics";
+	public $CACHE_NAME 			= "admin_statistics";
 	/** @var int */
-	var $ADMIN_HOME_CACHE_TIME  = 600;		//60sec * 10minutes 
+	public $ADMIN_HOME_CACHE_TIME  = 600;		//60sec * 10minutes 
 	/** @var bool */
-	var $DISPLAY_STATS			= false;
+	public $DISPLAY_STATS			= false;
 	/** @var bool */
-	var $SHOW_CUR_SETTINGS		= false;
+	public $SHOW_CUR_SETTINGS		= false;
 	/** @var bool */
-	var $SHOW_GENERAL_INFO		= true;
+	public $SHOW_GENERAL_INFO		= true;
 
 	/**
 	* Framework constructor

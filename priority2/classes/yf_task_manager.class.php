@@ -11,21 +11,21 @@
 class yf_task_manager {
 
 	/** @var string @conf_skip */
-	var $type				= 'internal';
+	public $type				= 'internal';
 	/** @var int @conf_skip */
-	var $time_now			= 0;
+	public $time_now			= 0;
 	/** @var array @conf_skip */
-	var $date_now			= array();
+	public $date_now			= array();
 	/** @var string @conf_skip */
-	var $cron_key			= "";
+	public $cron_key			= "";
 	/** @var string */
-	var $NEXT_RUN_CACHE_KEY = "task_next_run";
+	public $NEXT_RUN_CACHE_KEY = "task_next_run";
 	/** @var bool */
-	var $USE_LOCKING		= 1;
+	public $USE_LOCKING		= 1;
 	/** @var int */
-	var $LOCK_TIMEOUT		= 600;
+	public $LOCK_TIMEOUT		= 600;
 	/** @var string */
-	var $LOCK_FILE_NAME		= "uploads/task_manager.lock";
+	public $LOCK_FILE_NAME		= "uploads/task_manager.lock";
 
 	/**
 	* Constructor

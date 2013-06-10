@@ -6,30 +6,30 @@
 class yf_maxmind_phone_verify {
 
 	/** @var */
-	var $_timeout			= 0;
+	public $_timeout			= 0;
 	/** @var */
-	var $_license_key		= "";
+	public $_license_key		= "";
 	/** @var */
-	var $_min_phone_digits	= 7;
+	public $_min_phone_digits	= 7;
 	/** @var */
-	var $_max_phone_digits	= 10;
+	public $_max_phone_digits	= 10;
 	/** @var bool Basic phone check (phone_type) */
-	var $IDENTIFY_PHONE		= true;
+	public $IDENTIFY_PHONE		= true;
 	/** @var bool Extended phone check (makes a call with code) */
-	var $VERIFY_PHONE 		= false;
+	public $VERIFY_PHONE 		= false;
 	/** @var */
-	var $_cc_to_verify		= array(
+	public $_cc_to_verify		= array(
 		"AU",
 		"GB",
 		"US",
 		"CA",
 	);
 	/** @var bool This option is REQUIRED to operate correctly */
-	var $REMOTE_ENABLED 	= false;
+	public $REMOTE_ENABLED 	= false;
 	/** @var Debug log text */
-	var $_action_log		= "";
+	public $_action_log		= "";
 	/** @var Error log text */
-	var $_error_log			= "";
+	public $_error_log			= "";
 
 	//-----------------------------------------------------------------------------
 	// YF module constructor

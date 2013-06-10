@@ -11,13 +11,13 @@
 class yf_check_multi_accounts {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER				= true;
+	public $USE_FILTER				= true;
 	/** @var array @conf_skip */
-	var $_skip_users_ids = array(
+	public $_skip_users_ids = array(
 //		1,
 	);
 	/** @var array */
-	var $_known_ban_items = array(
+	public $_known_ban_items = array(
 		"ban_ads",
 		"ban_email",
 		"ban_reviews",
@@ -29,13 +29,13 @@ class yf_check_multi_accounts {
 		"ban_reput",
 	);
 	/** @var bool */
-	var $HIDE_SINGLE_IPS		= 1;
+	public $HIDE_SINGLE_IPS		= 1;
 	/** @var bool */
-	var $HIDE_NON_MATCHED_USERS	= 1;
+	public $HIDE_NON_MATCHED_USERS	= 1;
 	/** @var bool */
-	var $SHOW_ONLY_COOKIE_MATCH	= 0;
+	public $SHOW_ONLY_COOKIE_MATCH	= 0;
 	/** @var array IPs to ignore */
-	var $IGNORE_IPS = array(
+	public $IGNORE_IPS = array(
 /*
 		"205.188.116.*",
 		"195.93.21.*",
@@ -44,7 +44,7 @@ class yf_check_multi_accounts {
 */
 	);
 	/** @var int */
-	var $LIMIT_MATCHED_USERS	= 15;
+	public $LIMIT_MATCHED_USERS	= 15;
 
 	/**
 	* Constructor

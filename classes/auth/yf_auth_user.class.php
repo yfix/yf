@@ -11,51 +11,51 @@
 class yf_auth_user {
 
 	/** @var bool Online users vars */
-	var $STORE_ONLINE_USERS		= false;// Use db table to store online users or not
+	public $STORE_ONLINE_USERS		= false;// Use db table to store online users or not
 	/** @var int Online TTL if inactive */
-	var $ONLINE_AUTO_CLEAN		= 1800; // Default value for cleaning up inactive online users
+	public $ONLINE_AUTO_CLEAN		= 1800; // Default value for cleaning up inactive online users
 	/** @var int Online TTL if inactive */
-	var $ONLINE_MAX_IDS			= 1000; // Max number of online records (to prevent server flooding)
+	public $ONLINE_MAX_IDS			= 1000; // Max number of online records (to prevent server flooding)
 	/** @var string Login field name to use @conf_skip */
-	var $LOGIN_FIELD			= "login";
+	public $LOGIN_FIELD			= "login";
 	/** @var string Password field name to use @conf_skip */
-	var $PSWD_FIELD				= "password";
+	public $PSWD_FIELD				= "password";
 	/** @var string Remeber field name to use @conf_skip */
-	var $REMEMBER_FIELD			= "remember_me";
+	public $REMEMBER_FIELD			= "remember_me";
 	/** @var string Cookie name @conf_skip */
-	var $VAR_COOKIE_NAME		= "remember_user_id";
+	public $VAR_COOKIE_NAME		= "remember_user_id";
 	/** @var int Cookie TTL */
-	var $VAR_COOKIE_LIFE_TIME	= 2592000;	// 60*60*24*30 = 30 days (default value)
+	public $VAR_COOKIE_LIFE_TIME	= 2592000;	// 60*60*24*30 = 30 days (default value)
 	/** @var string Default user object (module) to redirect */
-	var $DEF_USER_MODULE		= "signup";
+	public $DEF_USER_MODULE		= "signup";
 	/** @var string Redirect URL */
-	var $URL_WRONG_LOGIN		= "./?object=login_form&action=wrong_login";
+	public $URL_WRONG_LOGIN		= "./?object=login_form&action=wrong_login";
 	/** @var string Redirect URL */
-	var $URL_ACCOUNT_INACTIVE	= "./?object=login_form&action=account_inactive";
+	public $URL_ACCOUNT_INACTIVE	= "./?object=login_form&action=account_inactive";
 	/** @var string Redirect URL */
-	var $URL_SUCCESS_LOGIN		= ""; // "./?object=blogs" // If empty or not isset - then last referer will be used
+	public $URL_SUCCESS_LOGIN		= ""; // "./?object=blogs" // If empty or not isset - then last referer will be used
 	/** @var string Redirect URL */
-	var $URL_AFTER_LOGOUT		= "./";
+	public $URL_AFTER_LOGOUT		= "./";
 	/** @var string field name @conf_skip */
-	var $VAR_USER_ID			= "user_id";
+	public $VAR_USER_ID			= "user_id";
 	/** @var string field name @conf_skip */
-	var $VAR_USER_GROUP_ID		= "user_group";
+	public $VAR_USER_GROUP_ID		= "user_group";
 	/** @var string field name @conf_skip */
-	var $VAR_USER_LOGIN_TIME	= "user_login_time";
+	public $VAR_USER_LOGIN_TIME	= "user_login_time";
 	/** @var string field name @conf_skip */
-	var $VAR_USER_GO_URL		= "user_go_url";
+	public $VAR_USER_GO_URL		= "user_go_url";
 	/** @var string field name @conf_skip */
-	var $VAR_USER_INFO			= "user_info";
+	public $VAR_USER_INFO			= "user_info";
 	/** @var string field name @conf_skip */
-	var $VAR_LOCK_IP			= "auth_lock_to_ip";
+	public $VAR_LOCK_IP			= "auth_lock_to_ip";
 	/** @var bool Do log into db user login actions */
-	var $DO_LOG_LOGINS			= true;
+	public $DO_LOG_LOGINS			= true;
 	/** @var bool Set cookie "member_id", useful for fast_init before session start */
-	var $SET_MEMBER_ID_COOKIE	= "";
+	public $SET_MEMBER_ID_COOKIE	= "";
 	/** @var bool Set cookie "is_logged_in", different from member_id, useful for nginx cache difference, if field empty - will be disabled */
-	var $SET_IS_LOGGED_COOKIE	= "";
+	public $SET_IS_LOGGED_COOKIE	= "";
 	/** @var string Site closed stpl name */
-	var $SITE_CLOSED_STPL		= "site_closed";
+	public $SITE_CLOSED_STPL		= "site_closed";
 	/** @var array @conf_skip 
 	* Methods to execute after success login or logout
 	*
@@ -72,25 +72,25 @@ class yf_auth_user {
 	*	If you need to call object method from within the very same object (NOT CLASS!):
 	*		call_user_func_array(array($this, 'Foo'),args);
 	*/
-	var $EXEC_AFTER_LOGIN		= array();
+	public $EXEC_AFTER_LOGIN		= array();
 	/** @var array @conf_skip */
-	var $EXEC_AFTER_LOGOUT		= array();
+	public $EXEC_AFTER_LOGOUT		= array();
 	/** @var string	*/
-	var $COOKIE_PATH			= "/";
+	public $COOKIE_PATH			= "/";
 	/** @var string	*/
-	var $COOKIE_DOMAIN			= "";
+	public $COOKIE_DOMAIN			= "";
 	/** @var string	*/
-	var $COOKIE_SECURE			= false;
+	public $COOKIE_SECURE			= false;
 	/** @var string	*/
-	var $COOKIE_HTTPONLY		= false;
+	public $COOKIE_HTTPONLY		= false;
 	/** @var bool Store or not user info in session sub array or not */
-	var $USER_INFO_IN_SESSION	= 0;
+	public $USER_INFO_IN_SESSION	= 0;
 	/** @var bool Check if user have multiple accounts @security */
-	var $CHECK_MULTI_ACCOUNTS	= false;
+	public $CHECK_MULTI_ACCOUNTS	= false;
 	/** @var bool Catch ref codes */
-	var $CATCH_REF_CODES		= false;
+	public $CATCH_REF_CODES		= false;
 	/** @var array Pages where we do not need to track online stats @conf_skip */
-	var $ONLINE_SKIP_PAGES	= array(
+	public $ONLINE_SKIP_PAGES	= array(
 		"user_profile->compact_info",
 		"help->show_tip",
 		"forum->compact_topic_repliers",
@@ -98,25 +98,25 @@ class yf_auth_user {
 		"task_loader"
 	);
 	/** @var bool Store cookie with geo info for guests */
-	var $TRACK_GEO_LOCATION		= false;
+	public $TRACK_GEO_LOCATION		= false;
 	/** @var bool Save failed logins @security */
-	var $LOG_FAILED_LOGINS		= true;
+	public $LOG_FAILED_LOGINS		= true;
 	/** @var bool Block failed logins after several attempts (To prevent password bruteforcing, hacking, etc) @security */
-	var $BLOCK_FAILED_LOGINS	= false;
+	public $BLOCK_FAILED_LOGINS	= false;
 	/** @var bool Track failed logins TTL @security */
-	var $BLOCK_FAILED_TTL		= 3600;
+	public $BLOCK_FAILED_TTL		= 3600;
 	/** @var bool Track banned IPs list @security */
-	var $BLOCK_BANNED_IPS		= false;
+	public $BLOCK_BANNED_IPS		= false;
 	/** @var bool Allow to login only by HTTPS protocol, else raise error @security */
-	var $AUTH_ONLY_HTTPS		= false;
+	public $AUTH_ONLY_HTTPS		= false;
 	/** @var bool Check referer in session @security */
-	var $SESSION_REFERER_CHECK	= false;
+	public $SESSION_REFERER_CHECK	= false;
 	/** @var bool Lock session to IP address (to prevent hacks) @security */
-	var $SESSION_LOCK_TO_IP		= true;
+	public $SESSION_LOCK_TO_IP		= true;
 	/** @var bool Allow to use "remember me in cookies" feature @security */
-	var $ALLOW_REMEMBER_ME		= true;
+	public $ALLOW_REMEMBER_ME		= true;
 	/** @var string */
-	var $USER_PASSWORD_SALT		= "";
+	public $USER_PASSWORD_SALT		= "";
 
 	/**
 	* Constructor

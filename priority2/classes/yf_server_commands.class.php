@@ -4,7 +4,7 @@
 */
 class yf_server_commands{
 
-	var $mysql_perms = array(
+	public $mysql_perms = array(
 			"Select_priv"			=> "Select table data",
 			"Insert_priv"			=> "Insert table data",
 			"Update_priv"			=> "Update table data",
@@ -33,7 +33,7 @@ class yf_server_commands{
 			"Create_user_priv"		=> "Create User",
 		);
 		
-	var $mysql_db_perms = array(
+	public $mysql_db_perms = array(
 			"Select_priv"			=> "Select table data",
 			"Insert_priv"			=> "Insert table data",
 			"Update_priv"			=> "Update table data",

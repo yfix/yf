@@ -11,7 +11,7 @@
 class yf_text_editor {
 
 	/** @var array */
-	var $_avail_editors		= array(
+	public $_avail_editors		= array(
 		"fckeditor",
 		"tinymce",
 		"htmlarea3",
@@ -20,18 +20,18 @@ class yf_text_editor {
 //		"tinymcpuk",
 	);
 	/** @var string */
-	var $_CUR_EDITOR		= "fckeditor";
-//	var $_CUR_EDITOR		= "tinymce";
-//	var $_CUR_EDITOR		= "xinha";
-//	var $_CUR_EDITOR		= "htmlarea3";
+	public $_CUR_EDITOR		= "fckeditor";
+//	public $_CUR_EDITOR		= "tinymce";
+//	public $_CUR_EDITOR		= "xinha";
+//	public $_CUR_EDITOR		= "htmlarea3";
 	/** @var array @conf_skip */
-	var $_editor_params		= array(
+	public $_editor_params		= array(
 		"CustomConfigurationsPath"	=> "editor/plugins/bbcode/_sample/sample.config.js",
 	);
 	/** @var string Default text field name where stored editable text (usually for <textarea>) */
-	var $TEXT_FIELD_NAME	= "text_to_edit";
+	public $TEXT_FIELD_NAME	= "text_to_edit";
 	/** @var bool Editor really exists in current project or not */
-	var $EDITOR_EXISTS		= false;
+	public $EDITOR_EXISTS		= false;
 
 	/**
 	* Framework contructor

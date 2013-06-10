@@ -11,23 +11,23 @@
 class yf_log_admin_exec {
 
 	/** @var array Stop-list for logging (REGEXPs allowed here) */
-	var $STOP_LIST				= array(
+	public $STOP_LIST				= array(
 		"task=(login|logout)",
 	);
 	/** @var bool */
-	var $USE_STOP_LIST			= true;
+	public $USE_STOP_LIST			= true;
 	/** @var bool */
-	var $LOG_NO_GRAPHICS_PAGES	= true;
+	public $LOG_NO_GRAPHICS_PAGES	= true;
 	/** @var bool */
-	var $FILTER_BOTS			= false;
+	public $FILTER_BOTS			= false;
 	/** @var bool */
-	var $LOG_NOT_FOUND_PAGES	= true;
+	public $LOG_NOT_FOUND_PAGES	= true;
 	/** @var enum("db","file") */
-	var $LOG_DRIVER				= "db";
+	public $LOG_DRIVER				= "db";
 	/** @var  */
-	var $LOG_DIR_NAME			= "logs/log_admin_exec/";
+	public $LOG_DIR_NAME			= "logs/log_admin_exec/";
 	/** @var bool */
-	var $LOGGING				= true;
+	public $LOGGING				= true;
 
 	/**
 	* 

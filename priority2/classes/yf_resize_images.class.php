@@ -11,41 +11,41 @@
 class yf_resize_images {
 
 	/** @var string @conf_skip Image source file name */
-	var $source_file	= null;
+	public $source_file	= null;
 	/** @var string @conf_skip Image type (like "jpeg", "gif", "png" etc) detected from source file */
-	var $source_type	= null;
+	public $source_type	= null;
 	/** @var int @conf_skip Image width (source) */
-	var $source_width	= null;
+	public $source_width	= null;
 	/** @var int @conf_skipImage height (source) */
-	var $source_height	= null;
+	public $source_height	= null;
 	/** @var mixed @conf_skip Image attributes (info from source) */
-	var $source_atts	= null;
+	public $source_atts	= null;
 	/** @var int Current limits for generating thumbnails */
-	var $limit_x		= 100;
+	public $limit_x		= 100;
 	/** @var int Current limits for generating thumbnails */
-	var $limit_y		= 100;
+	public $limit_y		= 100;
 	/** @var bool Reduce only or fit limits proportionally */
-	var $reduce_only	= false;
+	public $reduce_only	= false;
 	/** @var bool Force processing even when source and dest x/y are equal */
-	var $force_process	= false;
+	public $force_process	= false;
 	/** @var int @conf_skip Thumbnail width */
-	var $output_width	= null;
+	public $output_width	= null;
 	/** @var int @conf_skip Thumbnail height */
-	var $output_height	= null;
+	public $output_height	= null;
 	/** @var string Output image type (could be "jpeg" or "png") */
-	var $output_type	= "jpeg";
+	public $output_type	= "jpeg";
 	/** @var mixed @conf_skip For internal manipulation */
-	var $tmp_img		= null;
+	public $tmp_img		= null;
 	/** @var mixed @conf_skip Temporary resampled file stored here */
-	var $tmp_resampled	= null;
+	public $tmp_resampled	= null;
 	/** @var array @conf_skip Available image types */
-	var $_avail_types	= array (
+	public $_avail_types	= array (
 		1 => "gif",
 		2 => "jpeg",
 		3 => "png",
 	);
 	/** @var bool */
-	var $SILENT_MODE	= false;
+	public $SILENT_MODE	= false;
  
 	/**
 	* Constructor

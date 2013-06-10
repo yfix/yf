@@ -11,27 +11,27 @@
 class yf_user_modules {
 
 	/** @var array @conf_skip */
-	var $_MODULES_TO_SKIP	= array(
+	public $_MODULES_TO_SKIP	= array(
 		"rewrite",
 	);
 	/** @var string @conf_skip Pattern for files */
-	var $_include_pattern	= array("", "#\.(php|stpl)\$#");
+	public $_include_pattern	= array("", "#\.(php|stpl)\$#");
 	/** @var string @conf_skip Description file pattern */
-	var $_desc_file_pattern	= "#[a-z0-9_]\.xml\$#i";
+	public $_desc_file_pattern	= "#[a-z0-9_]\.xml\$#i";
 	/** @var string @conf_skip Class method pattern */
-	var $_method_pattern	= "/function ([a-zA-Z_][a-zA-Z0-9_]+)/is";
+	public $_method_pattern	= "/function ([a-zA-Z_][a-zA-Z0-9_]+)/is";
 	/** @var string @conf_skip Class extends pattern */
-	var $_extends_pattern	= "/class (\w+)? extends (\w+)? \{/";
+	public $_extends_pattern	= "/class (\w+)? extends (\w+)? \{/";
 	/** @var string */
-	var $TEMP_DIR			= "uploads/tmp/";
+	public $TEMP_DIR			= "uploads/tmp/";
 	/** @var bool */
-	var $USE_UNIQUE_TMP_DIR	= 0;
+	public $USE_UNIQUE_TMP_DIR	= 0;
 	/** @var bool Auto-find modules (old-style) */
-	var $AUTO_FIND_MODULES	= 0;
+	public $AUTO_FIND_MODULES	= 0;
 	/** @var int Number of modules to display on one page */
-	var $MODULES_PER_PAGE	= 200;
+	public $MODULES_PER_PAGE	= 200;
 	/** @var bool Parse core "module" class in get_methods */
-	var $PARSE_YF_MODULE	= 0;
+	public $PARSE_YF_MODULE	= 0;
 
 	/**
 	* Framework constructor

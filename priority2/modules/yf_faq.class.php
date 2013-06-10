@@ -11,15 +11,15 @@
 class yf_faq extends yf_module {
 
 	/** @var bool Use bb codes */
-	var $USE_BB_CODES		= false;
+	public $USE_BB_CODES		= false;
 	/** @var bool */
-	var $USE_CAPTCHA		= true;
+	public $USE_CAPTCHA		= true;
 	/** @var bool */
-	var $COUNT_VIEWS		= true;
+	public $COUNT_VIEWS		= true;
 	/** @var bool */
-	var $SKIP_EMPTY_CATS	= true;
+	public $SKIP_EMPTY_CATS	= true;
 	/** @var string @conf_skip Params for the comments */
-	var $_comments_params	= array(
+	public $_comments_params	= array(
 		"return_action" => "view",
 		"object_name"	=> "faq",
 	);

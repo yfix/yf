@@ -11,7 +11,7 @@
 class yf_activity_viewer {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 
 	/**
 	* Framework Constructor

@@ -6,7 +6,7 @@ class yf_geo_content {
 
 // TODO: need to connect here in all methods where needed
 	/** @var bool  */
-	var $AJAX_USE_CACHE = false;
+	public $AJAX_USE_CACHE = false;
 
 	//-----------------------------------------------------------------------------
 	// YF module constructor

@@ -11,7 +11,7 @@
 class yf_spider_detection {
 
 	/** @var */
-	var $not_spiders = array(
+	public $not_spiders = array(
 		"opera",
 		"presto",
 		"gecko",
@@ -24,7 +24,7 @@ class yf_spider_detection {
 		"safari",
 	);
 	/** @var */
-	var $well_known_bots = array(
+	public $well_known_bots = array(
 		"googlebot"		=> "Google",
 		"yahooseeker"	=> "Yahoo",
 		"slurp"			=> "Yahoo",

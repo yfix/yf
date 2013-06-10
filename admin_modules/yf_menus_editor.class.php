@@ -11,7 +11,7 @@
 class yf_menus_editor {
 
 	/** @var string Path to icons */
-	var $ICONS_PATH = "uploads/icons/";
+	public $ICONS_PATH = "uploads/icons/";
 
 	/**
 	* Constructor

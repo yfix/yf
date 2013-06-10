@@ -11,9 +11,9 @@
 class yf_user_ban {
 
 	/** @var bool Use preg_match or simple strpos */
-	var $USE_REGEXES	= 1;
+	public $USE_REGEXES	= 1;
 	/** @var array */
-	var $BAN_CHECKS		= array();
+	public $BAN_CHECKS		= array();
 
 	/**
 	* Constructor (PHP 4.x)

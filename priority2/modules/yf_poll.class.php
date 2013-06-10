@@ -6,21 +6,21 @@
 class yf_poll {
 
 	/** @var int Max choices for answer */
-	var $MAX_CHOICES			= 20;
+	public $MAX_CHOICES			= 20;
 	/** @var bool */
-	var $PROCESS_STATUS_FIELD	= false;
+	public $PROCESS_STATUS_FIELD	= false;
 	/** @var int Vote TTL */
-	var $VOTE_TTL				= 86400;
+	public $VOTE_TTL				= 86400;
 	/** @var bool Restrict voting only one time for the poll */
-	var $ONE_VOTE_FOR_USER		= false;
+	public $ONE_VOTE_FOR_USER		= false;
 	/** @var bool */
-	var $ALLOW_VIEW_FOR_GUESTS	= true;
+	public $ALLOW_VIEW_FOR_GUESTS	= true;
 	/** @var bool */
-	var $ALLOW_VOTE_FOR_OWNER	= true;
+	public $ALLOW_VOTE_FOR_OWNER	= true;
 	/** @var int */
-	var $VIEW_MAX_WIDTH			= 250;
+	public $VIEW_MAX_WIDTH			= 250;
 	/** @var array Add colors for poll bars here */
-	var $VIEW_COLORS			= array(
+	public $VIEW_COLORS			= array(
 		"", // !!! required. do not remove!
 		"#8F9EFF",	//blue2
 		"#7ACCB8",	//green2
@@ -33,9 +33,9 @@ class yf_poll {
 		"#999999",	//grey
 	);
 	/** @var bool Allow to mark more than one choice */
-	var $ALLOW_MULTI_CHOISES	= true;
+	public $ALLOW_MULTI_CHOISES	= true;
 	/** @var bool */
-	var $DYNAMIC_QUE_ADDING		= true;
+	public $DYNAMIC_QUE_ADDING		= true;
 	
 	/**
 	* Default method and main controller

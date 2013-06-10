@@ -11,7 +11,7 @@
 class yf_preview {
 
 	/** @var array These variables will not be displayed in preview */
-	var $skip_fields = array(
+	public $skip_fields = array(
 		"mode",
 		"f_family_text",
 		"f_size_text",
@@ -24,7 +24,7 @@ class yf_preview {
 		"form_action",
 	);
 	/** @var bool */
-	var $USE_BB_CODES = true;
+	public $USE_BB_CODES = true;
 
 	/**
 	* Display preview method

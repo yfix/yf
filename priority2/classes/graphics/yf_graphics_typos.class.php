@@ -20,7 +20,7 @@ class yf_graphics_typos {
 	* array of keys near character on a QWERTY keyboard
 	* only valid characters in a domain name
 	*/
-	var $keyboard = array(
+	public $keyboard = array(
 		// top row
 		'1' => array( '2', 'q' ),
 		'2' => array( '1', 'q', 'w', '3' ),
@@ -64,11 +64,11 @@ class yf_graphics_typos {
 		'm' => array( 'n', 'k', 'j' )
 	);
 	/** @var string */
-	var $DEF_STPL_NAME	= "system/typos";
+	public $DEF_STPL_NAME	= "system/typos";
 	/** @var int */
-	var $DEF_TYPE		= 0;
+	public $DEF_TYPE		= 0;
 	/** @var int */
-	var $DEF_LIMIT		= 20;
+	public $DEF_LIMIT		= 20;
 	
 	/**
 	* Get all typos with params processed through STPL

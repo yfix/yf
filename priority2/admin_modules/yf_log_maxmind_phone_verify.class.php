@@ -11,9 +11,9 @@
 class yf_log_maxmind_phone_verify {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 	/** @var */
-	var $_check_type_full = array(
+	public $_check_type_full = array(
 		"i"	=> "Identification",
 		"v"	=> "Verification",
 	);

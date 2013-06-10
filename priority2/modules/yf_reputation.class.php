@@ -11,25 +11,25 @@
 class yf_reputation {
 
 	/** @var int Initial user reputation points */
-	var $START_REPUT			= 10;
+	public $START_REPUT			= 10;
 	/** @var int Initial user reputation alt */
-	var $START_REPUT_ALT		= 1;
+	public $START_REPUT_ALT		= 1;
 	/** @var int Minimum reputation points to alter other member's reputation */
-	var $MIN_REPUT				= 2;
+	public $MIN_REPUT				= 2;
 	/** @var int Minimum activity points to alter other member's reputation */
-	var $MIN_ACTIVITY			= 3;
+	public $MIN_ACTIVITY			= 3;
 	/** @var int +1 altering power for every this number of activity points */
-	var $ACT_REPUT_VALUE		= 150;
+	public $ACT_REPUT_VALUE		= 150;
 	/** @var int +1 altering power for every this number of reputation points */
-	var $REPUT_ADD_ALT_POINTS	= 20;
+	public $REPUT_ADD_ALT_POINTS	= 20;
 	/** @var int Maximum number of allowed reputation clicks at one day */
-	var $MAX_REPUT_CLICKS_DAILY	= 10;
+	public $MAX_REPUT_CLICKS_DAILY	= 10;
 	/** @var int Number of other users to vote on until you can vote on the same user again */
-	var $REPUT_CAST_VALUE		= 2;
+	public $REPUT_CAST_VALUE		= 2;
 	/** @var int Number of last votes to track reputation changing */
-	var $REPUT_CHANGE_NUM_LAST	= 10;
+	public $REPUT_CHANGE_NUM_LAST	= 10;
 	/** @var array Array of values to display on each star */
-	var $STARS_VALUES_ARRAY		= array(
+	public $STARS_VALUES_ARRAY		= array(
 		-5	=> -100,
 		-4	=> -50,
 		-3	=> -20,
@@ -42,39 +42,39 @@ class yf_reputation {
 		5	=> 100,
 	);
 	/** @var int @conf_skip Current user reput points */
-	var $CUR_USER_REPUT_POINTS	= null;
+	public $CUR_USER_REPUT_POINTS	= null;
 	/** @var int @conf_skip Current user reput altering power */
-	var $CUR_USER_ALT_POWER		= null;
+	public $CUR_USER_ALT_POWER		= null;
 	/** @var int @conf_skip Current user number of reput votes made */
-	var $CUR_USER_NUM_VOTES		= null;
+	public $CUR_USER_NUM_VOTES		= null;
 	/** @var int @conf_skip Current user voted by others times */
-	var $CUR_USER_NUM_VOTED		= null;
+	public $CUR_USER_NUM_VOTED		= null;
 	/** @var int @conf_skip Current user reputation changing (-/+/0 points for the last $this->REPUT_CHANGE_NUM_LAST votes) */
-	var $CUR_USER_REPUT_CHANGE	= null;
+	public $CUR_USER_REPUT_CHANGE	= null;
 	/** @var array @conf_skip Current user reput info array (contains all reputation info) */
-	var $CUR_USER_REPUT_ARRAY	= null;
+	public $CUR_USER_REPUT_ARRAY	= null;
 	/** @var int Number of user votes when we will start to analyse him for cheating */
-	var $ANTICHEAT_START		= 15;
+	public $ANTICHEAT_START		= 15;
 	/** @var float negative/total votes, if greater -> ignore vote */
-	var $NEGATIVE_THRESHOLD		= 0.8;
+	public $NEGATIVE_THRESHOLD		= 0.8;
 	/** @var float positive/total votes, if greater -> ignore vote */
-	var $SINGLE_USER_THRESHOLD	= 0.5;
+	public $SINGLE_USER_THRESHOLD	= 0.5;
 	/** @var float "accounts voted negatively" / " total voted accounts", if lower -> ignore vote */
-	var $CONCENTRATION_THRESHOLD= 0.1;
+	public $CONCENTRATION_THRESHOLD= 0.1;
 	/** @var float "voter num votes for voted user" / "total votes for voted user", if greater -> ignore vote */
-	var $SINGLE_VOTER_THRESHOLD	= 0.8;
+	public $SINGLE_VOTER_THRESHOLD	= 0.8;
 	/** @var bool Add auto-generated anti-cheat comment to log */
-	var $ADD_ANTICHEAT_COMMENT	= true;
+	public $ADD_ANTICHEAT_COMMENT	= true;
 	/** @var bool Check multi-account cookie match when voting */
-	var $VOTE_CHECK_COOKIE_MATCH= true;
+	public $VOTE_CHECK_COOKIE_MATCH= true;
 	/** @var bool Check multi-IPs match when voting */
-	var $VOTE_CHECK_MULTI_IPS	= true;
+	public $VOTE_CHECK_MULTI_IPS	= true;
 	/** @var bool Track object name and id (voted for) if provided */
-	var $TRACK_OBJECT_INFO		= true;
+	public $TRACK_OBJECT_INFO		= true;
 	/** @var int Multi-IPs match TTL when voting, days */
-	var $VOTE_MULTI_IP_TTL		= 30;
+	public $VOTE_MULTI_IP_TTL		= 30;
 	/** @var array Mapping of vote pages */
-	var $_map_vote_for = array(
+	public $_map_vote_for = array(
 		"forum_posts"	=> "./?object=forum&action=view_post&id=",
 		"forum"			=> "./?object=forum&action=view_post&id=",
 		"articles_texts"=> "./?object=articles&action=view&id=",
@@ -85,7 +85,7 @@ class yf_reputation {
 		"reviews"		=> "./?object=reviews&action=view_details&id=",
 	);
 	/** @var array pairs object=comment_action */
-	var $_comments_actions	= array(
+	public $_comments_actions	= array(
 		"articles"		=> "view",
 		"blog"			=> "show_single_post",
 		"faq"			=> "view",

@@ -1,7 +1,7 @@
 <?php
 class yf_unread {
 
-	var $UNREAD_ENABLED = false;
+	public $UNREAD_ENABLED = false;
 
 	/**
 	*

@@ -11,9 +11,9 @@
 class yf_online_users_manager {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 	/** @var int */
-	var $COLUMNS		= 4;
+	public $COLUMNS		= 4;
 
 	/**
 	* Constructor (PHP 4.x)

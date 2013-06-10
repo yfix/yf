@@ -2,7 +2,7 @@
 class yf_community {
 
 	/** @var int Community group number */
-	var $COMMUNITY_GROUP = 99; 
+	public $COMMUNITY_GROUP = 99; 
 
 	function show(){
 		$sql = "SELECT * FROM `".db('community')."` WHERE `active`='1'";

@@ -11,21 +11,21 @@
 class yf_design_manager {
 
 	/** @var string @conf_skip User themes dir */
-	var $USER_THEMES_DIR	= "user_themes/";
+	public $USER_THEMES_DIR	= "user_themes/";
 	/** @var string @conf_skip Color schemes dir */
-	var $COLOR_SCHEMES_DIR	= "color_schemes/";
+	public $COLOR_SCHEMES_DIR	= "color_schemes/";
 	/** @var string @conf_skip Graphic schemes dir */
-	var $GRAPH_SCHEMES_DIR	= "graphic_schemes/";
+	public $GRAPH_SCHEMES_DIR	= "graphic_schemes/";
 	/** @var string @conf_skip Main template name */
-	var $MAIN_TEMPLATE_NAME	= "main.stpl";
+	public $MAIN_TEMPLATE_NAME	= "main.stpl";
 	/** @var string @conf_skip Main css filename */
-	var $MAIN_CSS_NAME		= "style.css";
+	public $MAIN_CSS_NAME		= "style.css";
 	/** @var string @conf_skip Designs store folder */
-	var $DESIGNS_DIR		= "designs";
+	public $DESIGNS_DIR		= "designs";
 	/** @var int Maximum number of tags */
-	var $TAGS_LIMIT			= 5;
+	public $TAGS_LIMIT			= 5;
 	/** @var int Large image limits (width and height in pixels)*/
-	var $LARGE_IMG_LIMITS	= 500;
+	public $LARGE_IMG_LIMITS	= 500;
 	/** @var string @conf_skip
 	*	Allow here only these below \x7F == 127 (ASCII) :
 	*		\x0A == 13 (CR), 
@@ -34,21 +34,21 @@ class yf_design_manager {
 	*		\x41-\x5A (A-Z),
 	*		\x61-\x7A (a-z)
 	*/
-	var $REGEXP_ALLOWED		= '/[\x00-\x09\x0B-\x1F\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]/ims';
+	public $REGEXP_ALLOWED		= '/[\x00-\x09\x0B-\x1F\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]/ims';
 	/** @var int */
-	var $MIN_KEYWORD_LENGTH	= 3;
+	public $MIN_KEYWORD_LENGTH	= 3;
 	/** @var int */
-	var $MAX_KEYWORD_LENGTH	= 30;
+	public $MAX_KEYWORD_LENGTH	= 30;
 	/** @var bool */
-	var $UTF8_MODE			= 0;
+	public $UTF8_MODE			= 0;
 	/** @var bool */
-	var $STORE_TO_DB		= 1;
+	public $STORE_TO_DB		= 1;
 	/** @var string Web path to servise which returns preview image of remote page */
-	var $SERVICE_WEB_PATH 	= "http://www.test.com/test/"; //user_login + user_domain for user part
+	public $SERVICE_WEB_PATH 	= "http://www.test.com/test/"; //user_login + user_domain for user part
 	/** @var bool Make thumbs and preview image automatically or not*/
-	var $AUTO_GENERATE_PREVIEW	= 1;
+	public $AUTO_GENERATE_PREVIEW	= 1;
 	/** @var bool If true browser do not cache images */
-	var $BREAK_BROWSER_CACHE = 1;
+	public $BREAK_BROWSER_CACHE = 1;
 
 	/**
 	* Constructor

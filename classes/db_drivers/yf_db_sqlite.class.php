@@ -11,14 +11,14 @@
 class yf_db_sqlite {
 
 	/** @var @conf_skip */
-	var $db_connect_id		= null;
+	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	var $query_result		= null;
+	public $query_result		= null;
 
 	/** @var @conf_skip */
-	var $META_TABLES_SQL	= "";	
+	public $META_TABLES_SQL	= "";	
 	/** @var @conf_skip */
-	var $META_COLUMNS_SQL	= "";
+	public $META_COLUMNS_SQL	= "";
 
 	/**
 	*/

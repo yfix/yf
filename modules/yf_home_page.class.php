@@ -14,23 +14,23 @@ class yf_home_page extends yf_module {
 	* Default function
 	*/
 	/** @var int Number of newest news to show */
-	var $NUM_NEWEST_NEWS 			= 4;
+	public $NUM_NEWEST_NEWS 			= 4;
 	/** @var int Number of newest users to show */
-	var $NUM_NEWEST_USERS			= 5;
+	public $NUM_NEWEST_USERS			= 5;
 	/** @var int */
-	var $NUM_NEWEST_FORUM_POSTS 	= 4;
+	public $NUM_NEWEST_FORUM_POSTS 	= 4;
 	/** @var int */
-	var $NEWEST_FORUM_TEXT_LEN 		= 300;
+	public $NEWEST_FORUM_TEXT_LEN 		= 300;
 	/** @var int */
-	var $NUM_NEWEST_BLOG_POSTS		= 4;
+	public $NUM_NEWEST_BLOG_POSTS		= 4;
 	/** @var int */
-	var $NEWEST_BLOG_TEXT_LEN		= 300;
+	public $NEWEST_BLOG_TEXT_LEN		= 300;
 	/** @var int */
-	var $NUM_NEWEST_GALLERY_PHOTO	= 5;
+	public $NUM_NEWEST_GALLERY_PHOTO	= 5;
 	/** @var int */
-	var $NUM_NEWEST_ARTICLE_POST	= 4;
+	public $NUM_NEWEST_ARTICLE_POST	= 4;
 	/** @var int */
-	var $NUM_NEWEST_COMMENTS		= 4;
+	public $NUM_NEWEST_COMMENTS		= 4;
 
 	/**
 	* Catch missing method call

@@ -11,7 +11,7 @@
 class yf_custom_bbcode_editor {
 
    	/** @var int Number of symbols in trimmed string **/
-	var $string_cut_limit = 30;
+	public $string_cut_limit = 30;
 
 
 	/**

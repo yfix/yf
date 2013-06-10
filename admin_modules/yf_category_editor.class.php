@@ -11,9 +11,9 @@
 class yf_category_editor {
 
 	/** @var int */
-	var $ITEMS_PER_PAGE		= 50;
+	public $ITEMS_PER_PAGE		= 50;
 	/** @var bool */
-	var $PROPOSE_SHORT_URL	= 1;
+	public $PROPOSE_SHORT_URL	= 1;
 
 	/**
 	* Framework constructor

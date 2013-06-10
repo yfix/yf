@@ -11,9 +11,9 @@
 class yf_forum_stats {
 
 	/** @var int */
-	var $LAST_POSTS_TIME = 900; // 15 minutes
+	public $LAST_POSTS_TIME = 900; // 15 minutes
 	/** @var string */
-	var $MOST_USERS_CACHE_KEY = "forum_most_users";
+	public $MOST_USERS_CACHE_KEY = "forum_most_users";
 
 	/**
 	* Show total board statistics

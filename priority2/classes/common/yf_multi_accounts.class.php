@@ -11,11 +11,11 @@
 class yf_multi_accounts {
 
 	/** @var bool Check multi-account cookie match when voting */
-	var $CHECK_COOKIE_MATCH		= true;
+	public $CHECK_COOKIE_MATCH		= true;
 	/** @var bool Check multi-IPs match when voting */
-	var $CHECK_MULTI_IPS		= true;
+	public $CHECK_MULTI_IPS		= true;
 	/** @var int Multi-IPs match TTL, days (set to 0 to disable) */
-	var $MULTI_IP_TTL			= 30;
+	public $MULTI_IP_TTL			= 30;
 
 	/**
 	* Multi-accounts checks

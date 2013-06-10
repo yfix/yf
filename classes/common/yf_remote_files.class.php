@@ -13,31 +13,31 @@ class yf_remote_files {
 	/** @var string SMTP host to verify emails from
 	*	Be sure to set this correctly! 
 	*/
-	var $SMTP_PROBE_HOST	= 'mx.test.com';
+	public $SMTP_PROBE_HOST	= 'mx.test.com';
 	/** @var string */
-	var $SMTP_PROBE_ADDRESS	= 'admin@test.com';
+	public $SMTP_PROBE_ADDRESS	= 'admin@test.com';
 	/** @var string @conf_skip */
-	var $DEF_USER_AGENT		= "Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 5.1)";
+	public $DEF_USER_AGENT		= "Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 5.1)";
 	/** @var bool @conf_skip */
-	var $REMOTE_ALLOW_CACHE	= true;
+	public $REMOTE_ALLOW_CACHE	= true;
 	/** @var string @conf_skip */
-	var $REMOTE_CACHE_DIR	= "uploads/remote_cache/";
+	public $REMOTE_CACHE_DIR	= "uploads/remote_cache/";
 	/** @var int @conf_skip */
-	var $CURL_DEF_CONNECT_TIMEOUT	= 15;
+	public $CURL_DEF_CONNECT_TIMEOUT	= 15;
 	/** @var int @conf_skip */
-	var $CURL_DEF_TIMEOUT	= 30;
+	public $CURL_DEF_TIMEOUT	= 30;
 	/** @var int @conf_skip */
-	var $CURL_DEF_MAX_REDIRECTS	= 30;
+	public $CURL_DEF_MAX_REDIRECTS	= 30;
 	/** @var int @conf_skip */
-	var $CURL_DEF_MAX_THREADS	= 20;
+	public $CURL_DEF_MAX_THREADS	= 20;
 	/** @var int @conf_skip */
-	var $CURL_DEF_INTERFACE		= "";
+	public $CURL_DEF_INTERFACE		= "";
 	/** @var int @conf_skip */
-	var $CURL_DEF_HEADER		= "";
+	public $CURL_DEF_HEADER		= "";
 	/** @var bool */
-	var $CURL_DEBUG		= false;
+	public $CURL_DEBUG		= false;
 	/** @var bool */
-	var $_is_avail_setopt_array = false;
+	public $_is_avail_setopt_array = false;
 
 	/**
 	*/

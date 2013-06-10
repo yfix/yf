@@ -11,48 +11,48 @@
 class yf_photo_rating extends yf_module {
 
 	/** @var int Number of stars to use */
-	var $NUM_STARS					= 10;
+	public $NUM_STARS					= 10;
 	/** @var string Rate object name */
-	var $RATE_OBJECT_NAME			= "gallery_photo";
+	public $RATE_OBJECT_NAME			= "gallery_photo";
 	/** @var string Photo type main */
-	var $PHOTO_TYPE_MAIN			= "medium";
+	public $PHOTO_TYPE_MAIN			= "medium";
 	/** @var string Photo type last */
-	var $PHOTO_TYPE_LAST			= "thumbnail";
+	public $PHOTO_TYPE_LAST			= "thumbnail";
 	/** @var int */
-	var $RESERVE_PHOTOS				= 10;
+	public $RESERVE_PHOTOS				= 10;
 	/** @var int Guets timeout */
-	var $GUESTS_TIMEOUT				= 3600;
+	public $GUESTS_TIMEOUT				= 3600;
 	/** @var int Time to store views log */
-	var $VIEWS_TTL					= 86400;
+	public $VIEWS_TTL					= 86400;
 	/** @var bool */
-	var $DISPLAY_RESULT_ONCE		= true;
+	public $DISPLAY_RESULT_ONCE		= true;
 	/** @var bool Search filter on/off */
-	var $USE_FILTER					= true;
+	public $USE_FILTER					= true;
 	/** @var bool Anti-cheat checking on/off */
-	var $ANTICHEAT_CHECKING			= true;
+	public $ANTICHEAT_CHECKING			= true;
 	/** @var int Number of users voted for when anti-cheat starting */
-	var $ANTICHEAT_TARGET_USERS		= 10;
+	public $ANTICHEAT_TARGET_USERS		= 10;
 	/** @var int */
-	var $ANTICHEAT_POSITIVE_VOTE	= 7;
+	public $ANTICHEAT_POSITIVE_VOTE	= 7;
 	/** @var int */
-	var $ANTICHEAT_NEGATIVE_VOTE	= 3;
+	public $ANTICHEAT_NEGATIVE_VOTE	= 3;
 	/** @var float positive/negative threshhold to turn off counting */
-	var $ANTICHEAT_POS_TO_NEG		= 4.0;
+	public $ANTICHEAT_POS_TO_NEG		= 4.0;
 	/** @var int Negative votes to turn off counting */
-	var $ANTICHEAT_NEGATE_AFTER		= 20;
+	public $ANTICHEAT_NEGATE_AFTER		= 20;
 	/** @var float Chanied with ANTICHEAT_NEGATE_AFTER, percent of negative votes */
-	var $ANTICHEAT_NEGATE_PART		= 0.75;
+	public $ANTICHEAT_NEGATE_PART		= 0.75;
 	/** @var int Number of top photos per page */
-	var $TOP_PER_PAGE				= 10;
+	public $TOP_PER_PAGE				= 10;
 	/** @var int Number of votes for top photos */
-	var $TOP_MIN_VOTES				= 10;
+	public $TOP_MIN_VOTES				= 10;
 	/** @var array @conf_skip Params for the comments */
-	var $_comments_params	= array(
+	public $_comments_params	= array(
 		"return_action" => "show",
 		"object_name"	=> "gallery",
 	);
 	/** @var int */
-	var $__TEST_MODE__				= 0;
+	public $__TEST_MODE__				= 0;
 
 	/**
 	* Framework constructor

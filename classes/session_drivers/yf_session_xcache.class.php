@@ -11,9 +11,9 @@
 class yf_session_xcache {
 
 	/** @var string */
-	var $CUR_SESSION_NAME	= "PHPSESSID";
+	public $CUR_SESSION_NAME	= "PHPSESSID";
 	/** @var string Prefix */
-	var $ITEMS_PREFIX		= "sess_";
+	public $ITEMS_PREFIX		= "sess_";
 
 	/*
 	* Open session

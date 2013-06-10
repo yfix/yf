@@ -11,7 +11,7 @@
 class yf_mail {
 
 	/** @var array Array of mail statuses */
-	var $_mail_statuses = array(
+	public $_mail_statuses = array(
 		"read",
 		"unread",
 		"replied",
@@ -20,15 +20,15 @@ class yf_mail {
 		"disapproved",
 	);
 	/** @var array Array of mail types */
-	var $_mail_types = array(
+	public $_mail_types = array(
 		"standard",
 	);
 	/** @var int Max lengths of subject (in bytes) */
-	var $MAX_LENGTH_SUBJECT = 255;
+	public $MAX_LENGTH_SUBJECT = 255;
 	/** @var int Max lengths of message (in bytes) */
-	var $MAX_LENGTH_MSG		= 5000;
+	public $MAX_LENGTH_MSG		= 5000;
 	/** @var Number of message to display on one page (If is "null" - default system value will be used) */
-	var $MESSAGES_ON_PAGE	= null;
+	public $MESSAGES_ON_PAGE	= null;
 
 	/**
 	* Constructor (PHP 4.x)

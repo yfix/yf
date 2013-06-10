@@ -53,115 +53,115 @@ class memcached_client {
 	* Command statistics
 	* @var	  array
 	*/
-	var $stats;
+	public $stats;
 
 	/**
 	* Cached Sockets that are connected
 	*
 	* @var	  array
 	*/
-	var $_cache_sock;
+	public $_cache_sock;
 
 	/**
 	* Current debug status; 0 - none to 9 - profiling
 	*
 	* @var	  boolean
 	*/
-	var $_debug;
+	public $_debug;
 
 	/**
 	* Dead hosts, assoc array, 'host'=>'unixtime when ok to check again'
 	*
 	* @var	  array
 	*/
-	var $_host_dead;
+	public $_host_dead;
 
 	/**
 	* Is compression available?
 	*
 	* @var	  bool
 	*/
-	var $_have_zlib;
+	public $_have_zlib;
 
 	/**
 	* Do we want to use compression?
 	*
 	* @var	  bool
 	*/
-	var $_compress_enable;
+	public $_compress_enable;
 
 	/**
 	* At how many bytes should we compress?
 	*
 	* @var	  int
 	*/
-	var $_compress_threshold;
+	public $_compress_threshold;
 
 	/**
 	* Are we using persistent links?
 	*
 	* @var	  bool
 	*/
-	var $_persistent;
+	public $_persistent;
 
 	/**
 	* If only using one server; contains ip:port to connect to
 	*
 	* @var	  string
 	*/
-	var $_single_sock;
+	public $_single_sock;
 
 	/**
 	* Array containing ip:port or array(ip:port, weight)
 	*
 	* @var	  array
 	*/
-	var $_servers;
+	public $_servers;
 
 	/**
 	* Our bit buckets
 	*
 	* @var	  array
 	*/
-	var $_buckets;
+	public $_buckets;
 
 	/**
 	* Total # of bit buckets we have
 	*
 	* @var	  int
 	*/
-	var $_bucketcount;
+	public $_bucketcount;
 
 	/**
 	* # of total servers we have
 	*
 	* @var	  int
 	*/
-	var $_active;
+	public $_active;
 
 	/**
 	* Stream timeout in seconds. Applies for example to fread()
 	*
 	* @var	  int
 	*/
-	var $_timeout_seconds;
+	public $_timeout_seconds;
 
 	/**
 	* Stream timeout in microseconds
 	*
 	* @var	  int
 	*/
-	var $_timeout_microseconds;
+	public $_timeout_microseconds;
 
 	/**
 	* Connect timeout in seconds
 	*/
-	var $_connect_timeout;
+	public $_connect_timeout;
 
 	/**
 	* Number of connection attempts for each server
 	*/
-	var $_connect_attempts;
+	public $_connect_attempts;
 
 	/**
 	* Constructor (PHP 4.x)

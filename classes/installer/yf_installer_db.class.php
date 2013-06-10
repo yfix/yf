@@ -11,24 +11,24 @@
 class yf_installer_db {
 
 	/** @var bool */
-	var $USE_SQL_IF_NOT_EXISTS	= true;
+	public $USE_SQL_IF_NOT_EXISTS	= true;
 	/** @var array @conf_skip Structures for the system tables */
-	var $SYS_TABLES_STRUCTS		= array();
+	public $SYS_TABLES_STRUCTS		= array();
 	/** @var array @conf_skip Structures for the other common used tables */
-	var $OTHER_TABLES_STRUCTS	= array();
+	public $OTHER_TABLES_STRUCTS	= array();
 	/** @var array @conf_skip System tables required data */
-	var $SYS_TABLES_DATAS		= array();
+	public $SYS_TABLES_DATAS		= array();
 	/** @var array @conf_skip Other common used tables required data */
-	var $OTHER_TABLES_DATAS		= array();
+	public $OTHER_TABLES_DATAS		= array();
 	/** @var array @conf_skip */
-	var $_external_files = array(
+	public $_external_files = array(
 		"SYS_TABLES_STRUCTS"	=> "installer_sys_tables_structs.php",
 		"SYS_TABLES_DATAS"		=> "installer_sys_tables_datas.php",
 		"OTHER_TABLES_STRUCTS"	=> "installer_other_tables_structs.php",
 		"OTHER_TABLES_DATAS"	=> "installer_other_tables_datas.php",
 	);
 	/** @var array @conf_skip Required patterns */
-	var $_patterns	= array(
+	public $_patterns	= array(
 		"table"		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
 		"split"		=> "/[\n]+,?/",
 		"field"		=> "/[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]+?([^\s\t]+)(.*)/ims",
@@ -40,21 +40,21 @@ class yf_installer_db {
 		"type"		=> "/([a-z]+)[\(]*([^\)]*)[\)]*/ims",
 	);
 	/** @var string @conf_skip Abstract database type */
-	var $db_type				= "";
+	public $db_type				= "";
 	/** @var int Lifetime for caches */
-	var $CACHE_TTL				= 86400; // 1*3600*24 = 1 day
+	public $CACHE_TTL				= 86400; // 1*3600*24 = 1 day
 	/** @var bool */
-	var $USE_LOCKING			= false;
+	public $USE_LOCKING			= false;
 	/** @var int */
-	var $LOCK_TIMEOUT			= 600;
+	public $LOCK_TIMEOUT			= 600;
 	/** @var string */
-	var $LOCK_FILE_NAME			= "uploads/installer_db.lock";
+	public $LOCK_FILE_NAME			= "uploads/installer_db.lock";
 	/** @var bool */
-	var $RESTORE_FULLTEXT_INDEX	= true;
+	public $RESTORE_FULLTEXT_INDEX	= true;
 	/** @var bool */
-	var $PARTITION_BY_COUNTRY	= false;
+	public $PARTITION_BY_COUNTRY	= false;
 	/** @var bool */
-	var $PARTITION_BY_MONTH		= false;
+	public $PARTITION_BY_MONTH		= false;
 
 	/**
 	* Framework constructor

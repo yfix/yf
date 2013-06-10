@@ -11,37 +11,37 @@
 class yf_tpl {
 
 	/** @var string @conf_skip Path to the templates (including current theme path) */
-	var $TPL_PATH			   = "";
+	public $TPL_PATH			   = "";
 	/** @var bool Compressing output by cutting "\t","\r","\n","  ","   " */
-	var $COMPRESS_OUTPUT		= false;
+	public $COMPRESS_OUTPUT		= false;
 	/** @var bool Using SEO - friendly URLs (All links need to be absolute) */
-	var $REWRITE_MODE		   = false;
+	public $REWRITE_MODE		   = false;
 	/** @var bool Custom meta information (customizable for every page) : page titles, meta keywords, description */
-	var $CUSTOM_META_INFO	   = false;
+	public $CUSTOM_META_INFO	   = false;
 	/** @var bool Exit after sending main content */
-	var $EXIT_AFTER_ECHO		= false;
+	public $EXIT_AFTER_ECHO		= false;
 	/** @var bool Do save execution info */
-	var $LOG_EXEC_INFO		  = false;
+	public $LOG_EXEC_INFO		  = false;
 	/** @var bool Use database to store templates */
-	var $GET_STPLS_FROM_DB	  = false;
+	public $GET_STPLS_FROM_DB	  = false;
 	/** @var bool SECURITY: allow or not eval php code (with _PATTERN_INCLUDE) */
-	var $ALLOW_EVAL_PHP_CODE	= true;
+	public $ALLOW_EVAL_PHP_CODE	= true;
 	/** @var bool Get all templates from db or not (1 query or multiple)
 	*   (NOTE: If true - Slow PHP processing but just 1 db query)
 	*/
-	var $FROM_DB_GET_ALL		= false;
+	public $FROM_DB_GET_ALL		= false;
 	/** @var int Safe limit number of replacements (to avoid dead cycles)
 	*   (type "-1" for unlimited number)
 	*/
-	var $STPL_REPLACE_LIMIT	 = -1;
+	public $STPL_REPLACE_LIMIT	 = -1;
 	/** @var int Cycles and conditions max recurse level
 	*   (how deeply could be nested template constructs like "if")
 	*/
-	var $_MAX_RECURSE_LEVEL = 4;
+	public $_MAX_RECURSE_LEVEL = 4;
 	/** @var array @conf_skip Patterns array for the STPL engine
 	*   (you can add additional patterns if you need)
 	*/
-	var $_STPL_PATTERNS	 = array(
+	public $_STPL_PATTERNS	 = array(
 		// Insert constant here (cutoff for eval_code)
 		// EXAMPLE:	 {const("SITE_NAME")}
 		'/(\{const\(["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\)\})/ie'
@@ -88,7 +88,7 @@ class yf_tpl {
 			=> 'tpl()->_generate_url_wrapper(\'$1\')',
 	);
 	/** @var array @conf_skip Show custom class method output pattern */
-	var $_PATTERN_EXECUTE   = array(
+	public $_PATTERN_EXECUTE   = array(
 		// EXAMPLE:	 {execute(graphics, translate, value = blabla; extra = strtoupper)
 		'/(\{execute\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,false)',
@@ -96,19 +96,19 @@ class yf_tpl {
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,true)',
 	);
 	/** @var array @conf_skip Include template pattern */
-	var $_PATTERN_INCLUDE   = array(
+	public $_PATTERN_INCLUDE   = array(
 		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
 		'/(\{include\(["\']{0,1})([\s\w\\/]+)["\']{0,1}?[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
 			=> '$this->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
-	var $_PATTERN_EVAL	  = array(
+	public $_PATTERN_EVAL	  = array(
 		// EXAMPLE:	 {eval_code(print_r(_class('forum')))}
 		'/(\{eval_code\()([^\}]+?)(\)\})/ie'
 			=> 'main()->_eval_code(\'$2\', 0)',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern special for the DEBUG_MODE */
-	var $_PATTERN_DEBUG	 = array(
+	public $_PATTERN_DEBUG	 = array(
 		// EXAMPLE:	 {_debug_get_replace()}
 		'/(\{_debug_get_replace\(\)\})/ie'
 			=> 'is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "";',
@@ -118,79 +118,79 @@ class yf_tpl {
 	);
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// EXAMPLE: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
-	var $_PATTERN_CATCH	 = '/\{catch\(["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\)\}(.*?)\{\/catch\}/ims';
+	public $_PATTERN_CATCH	 = '/\{catch\(["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\)\}(.*?)\{\/catch\}/ims';
 	/** @var array @conf_skip STPL internal comment pattern */
 	// EXAMPLE:	 {{-- some content you want to comment inside template only --}}
-	var $_PATTERN_COMMENT   = '/(\{\{--.*?--\}\})/ims';
+	public $_PATTERN_COMMENT   = '/(\{\{--.*?--\}\})/ims';
 	/** @var string @conf_skip Conditional pattern */
 	// EXAMPLE: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-	var $_PATTERN_IF		= '/\{if\(["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\)\}/ims';
+	public $_PATTERN_IF		= '/\{if\(["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
-	var $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
+	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern */
 	// EXAMPLE: {foreach ("lala")}<li>{lala.value1}</li>{/foreach}
-	var $_PATTERN_FOREACH   = '/\{foreach\(["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}((?![^\{]*?\{foreach\(["\']{0,1}?).*?)\{\/foreach\}/is';
+	public $_PATTERN_FOREACH   = '/\{foreach\(["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}((?![^\{]*?\{foreach\(["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var array @conf_skip For "_process_conditions" */
-	var $_cond_operators	= array("eq"=>"==","ne"=>"!=","gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=");
+	public $_cond_operators	= array("eq"=>"==","ne"=>"!=","gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=");
 	/** @var array @conf_skip For "_process_conditions" */
-	var $_math_operators	= array("and"=>"&&","xor"=>"xor","or"=>"||","+"=>"+","-"=>"-");
+	public $_math_operators	= array("and"=>"&&","xor"=>"xor","or"=>"||","+"=>"+","-"=>"-");
 	/** @var array @conf_skip
 		For "_process_conditions",
 		Will be availiable in conditions with such form: {if("get.object" eq "login_form")} Hello from login form {/if}
 	*/
-	var $_avail_arrays	  = array(
+	public $_avail_arrays	  = array(
 		"get"	   => "_GET",
 		"post"	  => "_POST",
 	);
 	/** @var array @conf_skip Temporary storage for all templates parsed from db */
-	var $_TMP_FROM_DB	   = null;
+	public $_TMP_FROM_DB	   = null;
 	/** @var array @conf_skip Array of output filters (will be called just before throwing output to user) */
-	var $_OUTPUT_FILTERS	= array();
+	public $_OUTPUT_FILTERS	= array();
 	/** @var bool Catch any output before gzipped content (works only with GZIP) */
-	var $_OB_CATCH_CONTENT  = true;
+	public $_OB_CATCH_CONTENT  = true;
 	/** @var bool Use or not Tidy to cleanup output */
-	var $TIDY_OUTPUT		= false;
+	public $TIDY_OUTPUT		= false;
 	/** @var array Configuration for Tidy */
-	var $_TIDY_CONFIG	   = array(
+	public $_TIDY_CONFIG	   = array(
 		'alt-text'	  => "",
 		'output-xhtml'  => true,
 	);
 	/** @var bool Use backtrace to get STPLs source (where called from) FOR DEBUG_MODE ONLY ! */
-	var $USE_SOURCE_BACKTRACE	   = true;
+	public $USE_SOURCE_BACKTRACE	   = true;
 	/** @var bool If available - use packed STPLs without checking if some exists in project */
-	var $AUTO_LOAD_PACKED_STPLS	 = false;
+	public $AUTO_LOAD_PACKED_STPLS	 = false;
 	/** @var bool Allow custom filter for all parsed stpls */
-	var $ALLOW_CUSTOM_FILTER		= false;
+	public $ALLOW_CUSTOM_FILTER		= false;
 	/** @var bool Allow language-based special stpls */
-	var $ALLOW_LANG_BASED_STPLS	 = false;
+	public $ALLOW_LANG_BASED_STPLS	 = false;
 	/** @var bool Allow inline debug */
-	var $ALLOW_INLINE_DEBUG		 = false;
+	public $ALLOW_INLINE_DEBUG		 = false;
 	/** @var bool Allow skin inheritance (only one level used) */
-	var $ALLOW_SKIN_INHERITANCE	 = true;
+	public $ALLOW_SKIN_INHERITANCE	 = true;
 	/** @var bool Allow to compile templates */
-	var $COMPILE_TEMPLATES		  = false;
+	public $COMPILE_TEMPLATES		  = false;
 	/** @var bool Compile templates folder */
-	var $COMPILED_DIR			   = "stpls_compiled/";
+	public $COMPILED_DIR			   = "stpls_compiled/";
 	/** @var bool TTL for compiled stpls */
-	var $COMPILE_TTL				= 3600;
+	public $COMPILE_TTL				= 3600;
 	/** @var bool TTL for compiled stpls */
-	var $COMPILE_CHECK_STPL_CHANGED = false;
+	public $COMPILE_CHECK_STPL_CHANGED = false;
 	/** @var bool Use paths cache (check and save what stpl files we have and where) */
-	var $USE_PATHS_CACHE			= false;
+	public $USE_PATHS_CACHE			= false;
 	/** @var bool */
-	var $DEBUG_STPL_VARS			= false;
+	public $DEBUG_STPL_VARS			= false;
 	/** @var string @conf_skip */
-	var $_STPL_EXT		  = ".stpl";
+	public $_STPL_EXT		  = ".stpl";
 	/** @var string @conf_skip */
-	var $_THEMES_PATH	   = "templates/";
+	public $_THEMES_PATH	   = "templates/";
 	/** @var string @conf_skip */
-	var $_IMAGES_PATH	   = "images/";
+	public $_IMAGES_PATH	   = "images/";
 	/** @var string @conf_skip */
-	var $_UPLOADS_PATH	  = "uploads/";
+	public $_UPLOADS_PATH	  = "uploads/";
 	/** @var array Global scope tags (included in any parsed template) */
-	var $_global_tags	   = array();
+	public $_global_tags	   = array();
 	/** @var STPL location codes (binary for less memory) */
-	var $_stpl_loc_codes = array(
+	public $_stpl_loc_codes = array(
 		"site"			  => 1,
 		"project"		   => 2,
 		"framework"		 => 4,

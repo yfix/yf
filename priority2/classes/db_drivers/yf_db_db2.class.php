@@ -11,23 +11,23 @@
 class yf_db_db2 {
 
 	/** @var @conf_skip */
-	var $db_connect_id;
+	public $db_connect_id;
 	/** @var @conf_skip */
-	var $query_result;
+	public $query_result;
 	/** @var @conf_skip */
-	var $query_resultset;
+	public $query_resultset;
 	/** @var @conf_skip */
-	var $query_numrows;
+	public $query_numrows;
 	/** @var @conf_skip */
-	var $next_id;
+	public $next_id;
 	/** @var @conf_skip */
-	var $row = array();
+	public $row = array();
 	/** @var @conf_skip */
-	var $rowset = array();
+	public $rowset = array();
 	/** @var @conf_skip */
-	var $row_index;
+	public $row_index;
 	/** @var @conf_skip */
-	var $num_queries = 0;
+	public $num_queries = 0;
 
 	/**
 	*/

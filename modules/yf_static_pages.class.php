@@ -11,13 +11,13 @@
 class yf_static_pages {
 
 	/** @var string @conf_skip */
-	var $PAGE_NAME			= null;
+	public $PAGE_NAME			= null;
 	/** @var string @conf_skip */
-	var $PAGE_TITLE			= null;
+	public $PAGE_TITLE			= null;
 	/** @var bool Allow HTML in text */
-	var $ALLOW_HTML_IN_TEXT	= true;
+	public $ALLOW_HTML_IN_TEXT	= true;
 	/** @var bool */
-	var $MULTILANG_MODE		= false;
+	public $MULTILANG_MODE		= false;
 
 	/**
 	* Catch missing method call

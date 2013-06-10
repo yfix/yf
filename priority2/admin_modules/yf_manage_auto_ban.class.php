@@ -5,7 +5,7 @@
 class yf_manage_auto_ban {
 
 	// Filter on/off
-	var $USE_FILTER				= true;
+	public $USE_FILTER				= true;
 
 	//-----------------------------------------------------------------------------
 	// Framework constructor

@@ -11,61 +11,61 @@
 class yf_comments {
 
 	/** @var int Number of comments to display on one page */
-	var $NUM_PER_PAGE				= 20;
+	public $NUM_PER_PAGE				= 20;
 	/** @var int Max post text length */
-	var $MAX_POST_TEXT_LENGTH		= 10000;
+	public $MAX_POST_TEXT_LENGTH		= 10000;
 	/** @var bool Use bb codes or not */
-	var $USE_BB_CODES				= true;
+	public $USE_BB_CODES				= true;
 	/** @var bool Use tree mode or not */
-	var $USE_TREE_MODE				= false;
+	public $USE_TREE_MODE				= false;
 	/** @var bool 
 		Allow Authors to delete comments from other peoples 
 		for their objects (profiles, galleries, blogs etc) 
 	*/
-	var $ALLOW_DELETE_FOR_AUTHOR	= true;
+	public $ALLOW_DELETE_FOR_AUTHOR	= true;
 	/** @var bool Use "active" field */
-	var $PROCESS_STATUS_FIELD		= true;
+	public $PROCESS_STATUS_FIELD		= true;
 	/** @var bool Auto filtering input text */
-	var $AUTO_FILTER_INPUT_TEXT		= true;
+	public $AUTO_FILTER_INPUT_TEXT		= true;
 	/** @var bool Use is text checking */
-	var $JS_TEXT_CHECKING			= true;
+	public $JS_TEXT_CHECKING			= true;
 	/** @var int Time min interval between 2 comments (in seconds). Set to 0 to disable */
-	var $ANTI_FLOOD_TIME			= 60;
+	public $ANTI_FLOOD_TIME			= 60;
 	/** @var string @conf_skip */
-	var $_user_nick_field			= "nick";
+	public $_user_nick_field			= "nick";
 	/** @var string @conf_skip */ 
-	var $_add_allowed_method		= "_comment_is_allowed";
+	public $_add_allowed_method		= "_comment_is_allowed";
 	/** @var string @conf_skip */ 
-	var $_edit_allowed_method		= "_comment_edit_allowed";
+	public $_edit_allowed_method		= "_comment_edit_allowed";
 	/** @var string @conf_skip */ 
-	var $_delete_allowed_method		= "_comment_delete_allowed";
+	public $_delete_allowed_method		= "_comment_delete_allowed";
 	/** @var string @conf_skip */ 
-	var $_view_email_allowed_method	= "_comment_view_email_allowed";
+	public $_view_email_allowed_method	= "_comment_view_email_allowed";
 	/** @var string @conf_skip Trigger method (will be called on successful add/edit/delete) */
-	var $_on_update_trigger			= "_comment_on_update";
+	public $_on_update_trigger			= "_comment_on_update";
 	/** @var int Edit limit time */
-	var $EDIT_LIMIT_TIME			= 604800; // week
+	public $EDIT_LIMIT_TIME			= 604800; // week
 	/** @var array Comment links @conf_skip */
-	var $COMMENT_LINKS = array(
+	public $COMMENT_LINKS = array(
 		"news"		=> "./?object=news&action=full_news&id=",
 		"articles"	=> "./?object=articles&action=view&id=",
 		"blog"		=> "./?object=blog&action=show_single_post&id=",
 		"gallery"	=> "./?object=gallery&action=show_medium_size&id=",
 	);
 	/** @var int */
-	var $NUM_RSS 	= 10;
+	public $NUM_RSS 	= 10;
 	/** @var string @conf_skip */
-	var $HTML_LINK_REGEX = "/<a[^>]+href=([^ >]+)[^>]*>(.*?)<\/a>/si";
+	public $HTML_LINK_REGEX = "/<a[^>]+href=([^ >]+)[^>]*>(.*?)<\/a>/si";
 	/** @var string @conf_skip */
-	var $BBCODE_LINK_REGEX = "/\[URL[^\]]*\](.+?)\[\/URL\]/si";
+	public $BBCODE_LINK_REGEX = "/\[URL[^\]]*\](.+?)\[\/URL\]/si";
 	/** @var bool */
-	var $ANTI_SPAM_DETECT = false;
+	public $ANTI_SPAM_DETECT = false;
 	/** @var bool 
 		When not register user write comment
 	*/
-	var $VIEW_EMAIL_FIELD = true;
+	public $VIEW_EMAIL_FIELD = true;
 	/** @var bool */
-	var $CHECK_ALLOW_TO_VIEW_USER_EMAIL = false;
+	public $CHECK_ALLOW_TO_VIEW_USER_EMAIL = false;
 
 	/**
 	* Framework constructor

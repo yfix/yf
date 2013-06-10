@@ -3,13 +3,13 @@
 class yf_installer_db_mysql {
 
 	/** @var int */
-	var $NUM_RETRIES = 3;
+	public $NUM_RETRIES = 3;
 	/** @var int */
-	var $RETRY_DELAY = 3;
+	public $RETRY_DELAY = 3;
 	/** @var string */
-	var $DEFAULT_CHARSET = "utf8";
+	public $DEFAULT_CHARSET = "utf8";
 	/** @var array */
-	var $_KNOWN_TABLE_OPTIONS = array(
+	public $_KNOWN_TABLE_OPTIONS = array(
 		"ENGINE",
 		"TYPE",
 		"AUTO_INCREMENT",

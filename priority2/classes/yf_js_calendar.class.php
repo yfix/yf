@@ -11,15 +11,15 @@
 class yf_js_calendar {
 
 	/** @var array */
-	var $_avail_drivers	= array(
+	public $_avail_drivers	= array(
 		"yui",
 		"zapatec",
 		"jquery",
 	);
 	/** @var string */
-	var $_CUR_DRIVER	= "zapatec";
+	public $_CUR_DRIVER	= "zapatec";
 	/** @var object @conf_skip */
-	var $DRIVER_OBJ		= null;
+	public $DRIVER_OBJ		= null;
 
 	/**
 	* Constructor (PHP 4.x)

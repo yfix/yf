@@ -4,7 +4,7 @@
 // Escorts calendar manager
 class yf_calendar {
 	/** @var array @conf_skip Calendar date statuses */
-	var $_date_statuses = array(
+	public $_date_statuses = array(
 		0	=> "Not defined",
 		1	=> "Busy",
 		2	=> "Available",
@@ -12,24 +12,24 @@ class yf_calendar {
 	);
 	/** @var int Week first day (0 - sunday, 1 - monday, etc) */
 // TODO: connect everywhere
-	var $_week_first_day	= 0;
+	public $_week_first_day	= 0;
 	/** @var int Min year */
-	var $_min_year		= 2002;
+	public $_min_year		= 2002;
 	/** @var int Max year */
-	var $_max_year		= 2030;
+	public $_max_year		= 2030;
 	/** @var bool If this turned on - then system will hide total ids for user, 
 	* and wiil try to use small id numbers dedicated only for this user
 	*/
-	var $HIDE_TOTAL_ID	= false;
+	public $HIDE_TOTAL_ID	= false;
 	/** @var int Date output format */
-	var $DATE_FORMAT_NUM = 0;
+	public $DATE_FORMAT_NUM = 0;
 	/** @var array */
-	var $_date_formats = array(
+	public $_date_formats = array(
 		0	=> "Day-Month-Year (US format)",
 		1	=> "Month-Day-Year (EU format)",
 	);
 	/** @var bool Hide empty months */
-	var $HIDE_EMPTY_MONTHS = true;
+	public $HIDE_EMPTY_MONTHS = true;
 
 	//-----------------------------------------------------------------------------
 	// YF module constructor

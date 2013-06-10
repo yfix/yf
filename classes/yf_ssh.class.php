@@ -11,29 +11,29 @@
 class yf_ssh {
 
 	/** @var string @conf_skip array("phpseclib","pecl_ssh2","auto") */
-	var $DRIVER				= "phpseclib";
+	public $DRIVER				= "phpseclib";
 	/** @var bool @conf_skip */
-	var $_INIT_OK			= false;
+	public $_INIT_OK			= false;
 	/** @var string @conf_skip */
-	var $_TMP_DIR			= "uploads/tmp";
+	public $_TMP_DIR			= "uploads/tmp";
 	/** @var enum('password','pubkey') */
-	var $AUTH_TYPE			= "password";
+	public $AUTH_TYPE			= "password";
 	/** @var bool Save actions log or not */
-	var $LOG_ACTIONS		= false;
+	public $LOG_ACTIONS		= false;
 	/** @var bool Use archiving for mass actions */
-	var $MASS_USE_ARCHIVES	= true;
+	public $MASS_USE_ARCHIVES	= true;
 	/** @var string Path to the tar archiver in console */
-	var $TAR_PATH			= "";
+	public $TAR_PATH			= "";
 	/** @var string Path to the gzip console programm */
-	var $GZIP_PATH			= "";
+	public $GZIP_PATH			= "";
 	/** @var bool */
-	var $USE_GZIP			= true;
+	public $USE_GZIP			= true;
 	/** @var bool */
-	var $CONNECT_TIMEOUT	= 5;
+	public $CONNECT_TIMEOUT	= 5;
 	/** @var bool */
-	var $MAX_RECONNECTS		= 1;
+	public $MAX_RECONNECTS		= 1;
 	/** @var bool */
-	var $LOG_FULL_EXEC		= 0;
+	public $LOG_FULL_EXEC		= 0;
 
 	/**
 	* Catch missing method call

@@ -11,9 +11,9 @@
 class yf_log_core_errors_viewer {
 
 	/** @var bool Filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 	/** @var array @conf_skip Standard error types */
-	var $_error_levels = array(
+	public $_error_levels = array(
 		1		=> "E_ERROR",
 		2		=> "E_WARNING",
 		4		=> "E_PARSE",
@@ -30,7 +30,7 @@ class yf_log_core_errors_viewer {
 		4096	=> "E_RECOVERABLE_ERROR",
 	);
 	/** @var array CSS classes for different error levels */
-	var $_css_classes = array(
+	public $_css_classes = array(
 		1		=> "log_e_error",
 		2		=> "log_e_warn",
 		8		=> "log_e_notice",

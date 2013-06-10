@@ -6,7 +6,7 @@
 class yf_analyze_error_log {
 
 	/** @var int Sow stats interval */
-	var $STATS_INTERVAL		= 90; //days
+	public $STATS_INTERVAL		= 90; //days
 
 	/**
 	* Constructor

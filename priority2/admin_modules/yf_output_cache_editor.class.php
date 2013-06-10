@@ -11,9 +11,9 @@
 class yf_output_cache_editor {
 
 	/** @var int */
-	var $VIEW_PER_PAGE	= 50;
+	public $VIEW_PER_PAGE	= 50;
 	/** @var bool */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 
 	/**
 	* Constructor

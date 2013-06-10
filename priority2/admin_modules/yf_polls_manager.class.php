@@ -6,7 +6,7 @@
 class yf_polls_manager {
 
 	/** @var bool Filter on/off */
-//	var $USE_FILTER		= true;
+//	public $USE_FILTER		= true;
 
 	/**
 	* Constructor (PHP 4.x)

@@ -11,11 +11,11 @@
 class yf_validate {
 
 	/** @var int Minimal nick length */
-	var $MIN_NICK_LENGTH		= 2;
+	public $MIN_NICK_LENGTH		= 2;
 	/** @var array Allowed nick symbols (display for user) */
-	var $NICK_ALLOWED_SYMBOLS	= array("a-z","0-9","_","\-","@","#"," ");
+	public $NICK_ALLOWED_SYMBOLS	= array("a-z","0-9","_","\-","@","#"," ");
 	/** @var array Reserved words for the profile url (default) */
-	var $reserved_words = array(
+	public $reserved_words = array(
 		"login",
 		"logout",
 		"admin",

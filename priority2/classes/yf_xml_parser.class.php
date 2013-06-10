@@ -67,98 +67,98 @@ class yf_xml_parser {
 	*
 	* @var string
 	*/
-	var $header			= "";
+	public $header			= "";
 	
 	/**
 	* Root tag name
 	*
 	* @var string
 	*/
-	var $root_tag		  = '';
+	public $root_tag		  = '';
 	
 	/**
 	* Root attributes
 	*
 	* @var string
 	*/
-	var $root_attributes   = "";
+	public $root_attributes   = "";
 	
 	/**
 	* Array of entries
 	*
 	* @var array
 	*/
-	var $entries		   = array();
+	public $entries		   = array();
 	
 	/**
 	* String of compiled XML document
 	*
 	* @var string
 	*/
-	var $xml_document	  = "";
+	public $xml_document	  = "";
 	
 	/**
 	* Work variable
 	*
 	* @var int
 	*/
-	var $depth			 = 0;
+	public $depth			 = 0;
 	
 	/**
 	* Tmp doc, used during creation
 	*
 	* @var string
 	*/
-	var $tmp_doc		   = "";
+	public $tmp_doc		   = "";
 	
 	/**
 	* Tag groups
 	*
 	* @var string
 	*/
-	var $groups			= "";
+	public $groups			= "";
 	
 	/**
 	* Index numerically flag
 	*
 	* @var int
 	*/
-	var $index_numeric	 = 0;
+	public $index_numeric	 = 0;
 	
 	/**
 	* Collapse duplicate tags flag
 	*
 	* @var int
 	*/
-	var $collapse_dups	 = 1;
+	public $collapse_dups	 = 1;
 	
 	/**
 	* Main XML array of parsed components
 	*
 	* @var array
 	*/
-	var $xml_array		 = array();
+	public $xml_array		 = array();
 	
 	/**
 	* Collapse newlines in CDATA tags
 	*
 	* @var int
 	*/
-	var $collapse_newlines = 1;
+	public $collapse_newlines = 1;
 	
 	/**
 	* Use lite parser flag
 	*
 	* @var int
 	*/
-	var $lite_parser	   = 1;
+	public $lite_parser	   = 1;
 	
 	/**
 	* DOC type
 	*
 	* @var string
 	*/
-	var $doc_type			= 'utf-8';
+	public $doc_type			= 'utf-8';
 	
 	/**
 	* Constructor
@@ -469,16 +469,16 @@ class yf_xml_parser {
 */
 class xml_lite_parse {
 
-	var $xml_class;
-	var $parser;
-	var $preserve_cdata = 1;
-	var $stack	= array();
-	var $level	= 1;
-	var $tagname  = "";
-	var $array_id = 0;
-	var $last_id  = 0;
-	var $tagopen  = array();
-	var $xmldoc   = "";
+	public $xml_class;
+	public $parser;
+	public $preserve_cdata = 1;
+	public $stack	= array();
+	public $level	= 1;
+	public $tagname  = "";
+	public $array_id = 0;
+	public $last_id  = 0;
+	public $tagopen  = array();
+	public $xmldoc   = "";
 	
 	// CONSTRUCTOR
 	function xml_lite_parse() {
@@ -601,15 +601,15 @@ class xml_lite_parse {
 */
 class xml_extract {
 
-	var $xml_array = array();
-	var $chr_sofar = "";
-	var $handler_cdata_handler;
-	var $handler_character_data;
-	var $handler_end_element;
-	var $handler_start_element;
+	public $xml_array = array();
+	public $chr_sofar = "";
+	public $handler_cdata_handler;
+	public $handler_character_data;
+	public $handler_end_element;
+	public $handler_start_element;
 	
 	// Definitions
-	var $xml_constants = array(
+	public $xml_constants = array(
 		'CDATA_TAG' => '![CDATA[',
 		'CDATA_LEN' => 8,
 		'NOTATION'  => '!NOTATION',

@@ -6,26 +6,26 @@
 class yf_backup_manager {
 
 	/** @var string Path to installed tar.exe */
-	var $TAR_PATH 			= "";
-//	var $TAR_PATH 			= "c:/tar/bin";
+	public $TAR_PATH 			= "";
+//	public $TAR_PATH 			= "c:/tar/bin";
 	/** @var string Backup file prefix */
-	var $BAK_PREFIX 		= "";
+	public $BAK_PREFIX 		= "";
 	/** @var string Backup filename format */
-	var $FNAME_FORMAT 		= "d-m-Y__H_i_s";
+	public $FNAME_FORMAT 		= "d-m-Y__H_i_s";
 	/** @var string Path where auto-backups will be stored */
-	var $BACKUP_PATH		= "backup/";
+	public $BACKUP_PATH		= "backup/";
 	/** @var string Path where auto-backups will be stored */
-	var $MD5_LIST_FNAME		= ".md5sums";
+	public $MD5_LIST_FNAME		= ".md5sums";
 	/** @var int Quantity of backup files to store */
-	var $MAX_BACKUP_FILES 	= 8;
+	public $MAX_BACKUP_FILES 	= 8;
 	/** @var bool Use archive verify */
-	var $VERIFY_ARCHIVE 	= false;
+	public $VERIFY_ARCHIVE 	= false;
 	/** @var bool Use gzip */
-	var $USE_GZIP		 	= true;
+	public $USE_GZIP		 	= true;
 	/** @var bool Create sql backup with files backup */
-	var $BACKUP_SQL		 	= true;
+	public $BACKUP_SQL		 	= true;
 	/** @var array @conf_skip Array of files to backup. All paths is relative to root */
-	var $files_list = array(
+	public $files_list = array(
 		"/var/www/1.php",
 //		"d:/gzip.exe",
 //		"d:/kyivstar",

@@ -11,9 +11,9 @@
 class yf_dir {
 
 	/** @var bool */
-	var $CHECK_IF_READABLE = true;
+	public $CHECK_IF_READABLE = true;
 	/** @var bool */
-	var $CHECK_IF_WRITABLE = true;
+	public $CHECK_IF_WRITABLE = true;
 
 	/**
 	* Catch missing method call

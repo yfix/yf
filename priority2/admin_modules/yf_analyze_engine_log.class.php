@@ -6,8 +6,8 @@
 class yf_analyze_engine_log {
 
 	/** @var int Sow stats interval */
-	var $STATS_INTERVAL		= 90; //days
-	var $STATS_PERIOD_VIEW = 5184000; // 60 days
+	public $STATS_INTERVAL		= 90; //days
+	public $STATS_PERIOD_VIEW = 5184000; // 60 days
 
 	/**
 	* Constructor

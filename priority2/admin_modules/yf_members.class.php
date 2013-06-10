@@ -5,11 +5,11 @@
 class yf_members {
 
 	// User id
-	var $USER_ID = null;
+	public $USER_ID = null;
 	// Session array name where filter vars are stored
-	var $_filter_name = "members_filter";
+	public $_filter_name = "members_filter";
 	// Filter on/off
-	var $USE_FILTER = true;
+	public $USE_FILTER = true;
 
 	//-----------------------------------------------------------------------------
 	// Constructor

@@ -17,21 +17,21 @@ class yf_shop extends yf_module {
 	*/
 
 	/** @var string Folder where product's images store */
-	var $PROD_IMG_DIR		= "shop/products/";
+	public $PROD_IMG_DIR		= "shop/products/";
 	/** @var string fullsize image suffix (underscore at the beginning required)*/
-	var $FULL_IMG_SUFFIX	= "_full";
+	public $FULL_IMG_SUFFIX	= "_full";
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	var $THUMB_SUFFIX		= "_small";
+	public $THUMB_SUFFIX		= "_small";
 	/** @var string Image prefix */
-	var $IMG_PREFIX			= "product_";
+	public $IMG_PREFIX			= "product_";
 	/** @var string Default currency */
-	var $CURRENCY			= "\$";
+	public $CURRENCY			= "\$";
 	/** @var bool SHOW_SIMILAR_PRICE or not */
-	var $SHOW_SIMILAR_PRICE		= true;
+	public $SHOW_SIMILAR_PRICE		= true;
 	/** @var bool THIS_ITEM_OFTEN_BUY or not */
-	var $THIS_ITEM_OFTEN_BUY		= true;
+	public $THIS_ITEM_OFTEN_BUY		= true;
 	 /** @var array forum settings (default values) */
-	var $COMPANY_INFO = array(
+	public $COMPANY_INFO = array(
 		"company_name"			=> "Lamore.ru ", //
 		"company_address"		=> "Company Address 1", //
 		"company_address2"	=> "Company Address 2", //
@@ -41,7 +41,7 @@ class yf_shop extends yf_module {
 		"company_title"				=> "Lamore.ru ", //
 	);
 	/** @var Billing info */
-	var $_b_fields = array(
+	public $_b_fields = array(
 		"name",
 		"email",
 		"phone",
@@ -49,7 +49,7 @@ class yf_shop extends yf_module {
 		"comment_c",
 	);
 	/** @var Shipping info */
-	var $_s_fields = array(
+	public $_s_fields = array(
 		"s_first_name",
 		"s_last_name",
 		"s_email",
@@ -64,19 +64,19 @@ class yf_shop extends yf_module {
 	
 	);
 	/** @var Required shipping and billing fields */
-	var $_required_fields = array(
+	public $_required_fields = array(
 		"name",
 		"phone",
 		);
 	/** @var @conf_skip */
-	var $_statuses = array(
+	public $_statuses = array(
 		"pending"					=> "pending",
 		"pending payment"	=> "pending payment",
 		"proccessed"				=> "proccessed",
 		"delivery"					=> "delivery",
 		"shipped"					=> "shipped",
 	);
-	var $_ship_type = array(
+	public $_ship_type = array(
 		1	=> "Free",
 		2	=> "Courier",
 		3	=> "FedEX",
@@ -84,7 +84,7 @@ class yf_shop extends yf_module {
 	);
 	
 	/** @var Shipping types */
-	var $_ship_types = array(
+	public $_ship_types = array(
 		1	=> array(
 			"name"	=> "Free",
 			"price"		=> 0,
@@ -103,16 +103,16 @@ class yf_shop extends yf_module {
 		),
 	);
 	/** @var Shipping types names (creating automatically inside "_init") @conf_skip */
-	var $_ship_types_name = array();
+	public $_ship_types_name = array();
 	/** @var Payment types */
-	var $_pay_types = array(
+	public $_pay_types = array(
 		1	=> "Cash On Delivery",
 		2	=> "Authorize.Net",
 		3	=> "Bank Transfer",
 		4	=> "Cheque / Money Order",
 	);
 	/** @var Payment methods params */
-	var $_pay_method_params = array(
+	public $_pay_method_params = array(
 		2	=> array( // Authorize.Net
 			"LOGIN_ID"						=> "7wYB5c6R",
 			"TRANSACTION_KEY"	=> "4px54kx6ZZ7489Gq",
@@ -123,17 +123,17 @@ class yf_shop extends yf_module {
 	);
 
 	/** @var Force payment method (Set to 0 to disable) */
-	var $FORCE_PAY_METHOD	= 0;
+	public $FORCE_PAY_METHOD	= 0;
 	/** @var Inline registration */
-	var $INLINE_REGISTER	= true;
+	public $INLINE_REGISTER	= true;
 	/** @var */
-	var $ATTRIBUTES_CAT_ID	= 1;
+	public $ATTRIBUTES_CAT_ID	= 1;
 	/** @var Force ship method for user group (user_group => ship_type) */
-	var $FORCE_GROUP_SHIP	= array(
+	public $FORCE_GROUP_SHIP	= array(
 		//3	=> 3,
 	);
 	/** @var Force payment method for user group (user_group => pay_type) */
-	var $FORCE_GROUP_PAY	= array(
+	public $FORCE_GROUP_PAY	= array(
 		//3	=> 1,
 	);
 	var  $_comments_params = array(

@@ -5,27 +5,27 @@
 class yf_user_profile extends yf_module {
 
 	/** @var int */
-	var $MAX_SHOW_ADS			= 10;
+	public $MAX_SHOW_ADS			= 10;
 	/** @var int */
-	var $MAX_SHOW_REVIEWS		= 10;
+	public $MAX_SHOW_REVIEWS		= 10;
 	/** @var int */
-	var $MAX_SHOW_USER_REVIEWS	= 10;
+	public $MAX_SHOW_USER_REVIEWS	= 10;
 	/** @var int */
-	var $MAX_SHOW_FORUM_POSTS	= 10;
+	public $MAX_SHOW_FORUM_POSTS	= 10;
 	/** @var int */
-	var $MAX_SHOW_ARTICLES		= 10;
+	public $MAX_SHOW_ARTICLES		= 10;
 	/** @var int */
-	var $MAX_SHOW_BLOG_POSTS	= 10;
+	public $MAX_SHOW_BLOG_POSTS	= 10;
 	/** @var int */
-	var $MAX_SHOW_GALLERY_PHOTO	= 10;
+	public $MAX_SHOW_GALLERY_PHOTO	= 10;
 	/** @var int */
-	var $MAX_SHOW_COMMENTS		= 10;
+	public $MAX_SHOW_COMMENTS		= 10;
 	/** @var int */
-	var $MAX_SHOW_FRIEND_OF		= 10;
+	public $MAX_SHOW_FRIEND_OF		= 10;
 	/** @var int */
-	var $MAX_SHOW_FRIENDS		= 10;
+	public $MAX_SHOW_FRIENDS		= 10;
 	/** @var int */
-	var $ADS_TEXT_PREVIEW_LENGTH=250;
+	public $ADS_TEXT_PREVIEW_LENGTH=250;
 
 	//-----------------------------------------------------------------------------
 	// Module constructor

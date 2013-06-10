@@ -11,17 +11,17 @@
 class yf_bb_codes {
 
 	/** @var bool BB codes Enabled or not */
-	var $ENABLE_BB_CODES	= 1;
+	public $ENABLE_BB_CODES	= 1;
 	/** @var bool Smilies in bb codes enabled or not */
-	var $ENABLE_SMILIES		= 1;
+	public $ENABLE_SMILIES		= 1;
 	/** @var bool Smilies in bb codes are like images or only with special CSS class */
-	var $SMILIES_AS_IMAGES	= 1;
+	public $SMILIES_AS_IMAGES	= 1;
 	/** @var string Smilies folder */
-	var $SMILIES_DIR		= "images/smilies/";
+	public $SMILIES_DIR		= "images/smilies/";
 	/** @var bool Try to highlight special text (SQL or HTML) */
-	var $USE_HIGHLIGHT		= 1;
+	public $USE_HIGHLIGHT		= 1;
 	/** @var array CSS classes names @conf_skip */
-	var $CSS_CLASSES = array(
+	public $CSS_CLASSES = array(
 		"show1"		=> "forum1",
 		"show2"		=> "forum2",
 		"quote"		=> "forum_quote",
@@ -35,13 +35,13 @@ class yf_bb_codes {
 		"post_u_1"	=> "post2shaded",
 	);
 	/** @var bool Filter "bad words" or not */
-	var $FILTER_BAD_WORDS	= 0;
+	public $FILTER_BAD_WORDS	= 0;
 	/** @var bool Check for long words "hacking" or not */
-	var $CHECK_WORDS_LENGTH = 0;
+	public $CHECK_WORDS_LENGTH = 0;
 	/** @var bool Enable extra codes */
-	var $ENABLE_EXTRA_CODES = 0;
+	public $ENABLE_EXTRA_CODES = 0;
 	/** @var array Default codes on/off */
-	var $DEFAULT_SHOW_CODES	= array(
+	public $DEFAULT_SHOW_CODES	= array(
 		"font_family"	=> 0,
 		"font_size"		=> 1,
 		"font_color"	=> 1,
@@ -51,13 +51,13 @@ class yf_bb_codes {
 		"youtube"		=> 0,
 	);
 	/** @var bool Check for unclosed bb codes every time when parsing */
-	var $CHECK_CODES_IF_CLOSED	= 0;
+	public $CHECK_CODES_IF_CLOSED	= 0;
 	/** @var bool */
-	var $USE_NOFOLLOW_TAG		= false;
+	public $USE_NOFOLLOW_TAG		= false;
 	/** @var bool Use or not custom bb codes (from db) */
-	var $USE_CUSTOM_BB_CODES	= false;
+	public $USE_CUSTOM_BB_CODES	= false;
 	/** @var string Available bb codes pattern (for closing codes check) */
-	var $_avail_codes = "(b|i|u|code|quote|color|size|url|img|sql|html|media|swf|email|imgurl|sub|sup|csv|li|hr|youtube|spoiler)";
+	public $_avail_codes = "(b|i|u|code|quote|color|size|url|img|sql|html|media|swf|email|imgurl|sub|sup|csv|li|hr|youtube|spoiler)";
 
 	/**
 	* Framework constructor

@@ -11,7 +11,7 @@
 class yf_rss_data {
 
 	/** @var array @conf_skip Known item field names */
-	var $avail_item_fields	= array(
+	public $avail_item_fields	= array(
 		"title",
 		"link",
 		"description",
@@ -22,7 +22,7 @@ class yf_rss_data {
 		"guid",
 	);
 	/** @var array @conf_skip Valid format strings */
-	var $avail_formats		= array(
+	public $avail_formats		= array(
 		"RSS0.91",
 		"RSS1.0",
 		"RSS2.0",
@@ -34,17 +34,17 @@ class yf_rss_data {
 		"JS",
 	);
 	/** @var string */
-	var $FEEDS_CACHE_PATH	= "uploads/rss_cache/";
+	public $FEEDS_CACHE_PATH	= "uploads/rss_cache/";
 	/** @var string */
-	var $AGGR_CACHE_PATH	= "uploads/rss_aggregator_cache/";
+	public $AGGR_CACHE_PATH	= "uploads/rss_aggregator_cache/";
 	/** @var string */
-	var $DOMIT_RSS_PATH		= "libs/domit/xml_domit_rss.php";
+	public $DOMIT_RSS_PATH		= "libs/domit/xml_domit_rss.php";
 	/** @var bool Use serialized cache */
 	var	$USE_ARRAY_CACHE	= true;
 	/** @var @string Leave empty for default */
-	var $SHOW_RSS_ENCODING	= "utf-8";
+	public $SHOW_RSS_ENCODING	= "utf-8";
 	/** @var @int Set to 0 to disable truncation */
-	var $DESC_TRUNC_SIZE	= 500;
+	public $DESC_TRUNC_SIZE	= 500;
 
 	/**
 	* Framework constructor

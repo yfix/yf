@@ -6,7 +6,7 @@
 class yf_conf_editor {
 
 	/** @var string @conf_skip */
-	var $_regexp_pairs_cleanup = array(
+	public $_regexp_pairs_cleanup = array(
 		"/([^\s\t])[\s\t]+=>/ims"
 			=> "\\1=>",
 		"/(array\(|[0-9a-z\'\"]+,|=>)[\s\t]+([^\s\t])/ims"
@@ -15,11 +15,11 @@ class yf_conf_editor {
 			=> ")",
 	);
 	/** @var string @conf_skip */
-	var $_var_regexp	= "/\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)[\s\t]*=[\s\t]*([^;]+);/ims";
+	public $_var_regexp	= "/\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)[\s\t]*=[\s\t]*([^;]+);/ims";
 	/** @var string @conf_skip */
-	var $_info_regexp	= "/[\t\s]?\/\*\*[^@]*[\s\t]{1,}@var[\s\t]{1,}(bool|int|float|array|string|mixed|enum\s*\([^\)]+\))?(.*?)\*\/.*?[\r\n]*\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)/ims";
+	public $_info_regexp	= "/[\t\s]?\/\*\*[^@]*[\s\t]{1,}@var[\s\t]{1,}(bool|int|float|array|string|mixed|enum\s*\([^\)]+\))?(.*?)\*\/.*?[\r\n]*\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)/ims";
 	/** @var array  @conf_skip */
-	var $_allowed_types	= array(
+	public $_allowed_types	= array(
 		"bool",
 		"int",
 		"float",
@@ -29,21 +29,21 @@ class yf_conf_editor {
 		"enum",	// Sample: enum('active','inactive','waiting')
 	);
 	/** @var string @conf_skip */
-	var $_SYSTEM_NS			= "_";
+	public $_SYSTEM_NS			= "_";
 	/** @var bool Use type autodetect */
-	var $USE_TYPE_AUTODETECT = true;
+	public $USE_TYPE_AUTODETECT = true;
 	/** @var bool Show arrays in default values */
-	var $SHOW_ARRAYS_IN_DEFAULTS = true;
+	public $SHOW_ARRAYS_IN_DEFAULTS = true;
 	/** @var bool Use cache for conf array or not */
-	var $USE_CACHE			= true;
+	public $USE_CACHE			= true;
 	/** @var int TTL for conf_array_cache */
-	var $CACHE_TTL			= 600;
+	public $CACHE_TTL			= 600;
 	/** @var bool Sort config items by varname */
-	var $SORT_BY_VARNAME	= true;
+	public $SORT_BY_VARNAME	= true;
 	/** @var string @conf_skip Autoconf file name */
 	var	$AUTO_CONF_FILE		= "_auto_conf.php";
 	/** @var array @conf_skip */
-	var $_auto_conf_array	= array();
+	public $_auto_conf_array	= array();
 	/** @var bool Convert array to usable form */
 	var	$JS_ARRAYS_CONVERT	= true;
 

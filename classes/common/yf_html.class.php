@@ -11,7 +11,7 @@
 class yf_html {
 
 	/** @var bool */
-	var $AUTO_ASSIGN_IDS = true;
+	public $AUTO_ASSIGN_IDS = true;
 // TODO: check ids for uniqueness
 
 	/**

@@ -6,17 +6,17 @@
 class yf_manage_shop_manufacturer {
 
 	/** @var string Folder where product's images store */
-	var $MAN_IMG_DIR		= "shop/manufacturer/";
+	public $MAN_IMG_DIR		= "shop/manufacturer/";
 	/** @var string fullsize image suffix (underscore at the beginning required)*/
-	var $FULL_IMG_SUFFIX	= "_full";
+	public $FULL_IMG_SUFFIX	= "_full";
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	var $THUMB_SUFFIX		= "_small";
+	public $THUMB_SUFFIX		= "_small";
 	/** @var string Image prefix */
-//	var $IMG_PREFIX			= "product_";
+//	public $IMG_PREFIX			= "product_";
 	/** @var int Thumb size X */
-	var $THUMB_X			= 100;
+	public $THUMB_X			= 100;
 	/** @var int Thumb size Y */
-	var $THUMB_Y			= 100;
+	public $THUMB_Y			= 100;
 	/**
 	* Constructor
 	*/

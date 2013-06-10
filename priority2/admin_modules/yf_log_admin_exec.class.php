@@ -3,9 +3,9 @@
 class yf_log_admin_exec{
 
 	/** @var bool homes search filter on/off */
-	var $USE_FILTER		= true;
+	public $USE_FILTER		= true;
 	// Session array name where filter vars are stored
-	var $_filter_name = "log_admin_exec_filter";
+	public $_filter_name = "log_admin_exec_filter";
 
 
 	/**

@@ -11,7 +11,7 @@
 class yf_send_mail {
 
 	/** @var array Allowed mailers */
-	var $_KNOWN_MAILERS			= array(
+	public $_KNOWN_MAILERS			= array(
 		"simple",
 		"internal",
 		"pear",
@@ -21,33 +21,33 @@ class yf_send_mail {
 		"phpmailer",
 	);
 	/** @var string Select mailer driver to use */
-	var $USE_MAILER				= "internal";
+	public $USE_MAILER				= "internal";
 	/** @var string Force SMTP usage if availiable (phpmailer now support) */
-	var $FORCE_USE_SMTP			= true;
+	public $FORCE_USE_SMTP			= true;
 	/** @var bool */
-	var $MAIL_DEBUG				= true;
+	public $MAIL_DEBUG				= true;
 	/** @var string */
-	var $DEBUG_TEST_ADDRESS		= "";
+	public $DEBUG_TEST_ADDRESS		= "";
 	/** @var string */
-	var $DEFAULT_CHARSET		= "windows-1251";
+	public $DEFAULT_CHARSET		= "windows-1251";
 	/** @var bool */
-	var $LOG_EMAILS				= true;
+	public $LOG_EMAILS				= true;
 	/** @var bool */
-	var $DB_LOG_ENV				= false;
+	public $DB_LOG_ENV				= false;
 	/** @var bool */
-	var $ALLOW_ATTACHMENTS		= true;
+	public $ALLOW_ATTACHMENTS		= true;
 	/** @var array @conf_skip */
-	var $PEAR_MAILER_BACKENDS	= array(
+	public $PEAR_MAILER_BACKENDS	= array(
 		"mail",
 		"sendmail",
 		"smtp",
 	);
 	/** @var bool Replaces "From" with $this->SMTP_OPTIONS["from"] */
-	var $REPLACE_FIELD_FROM		= false;
+	public $REPLACE_FIELD_FROM		= false;
 	/** @var string External SMTP config file */
-	var $_smtp_config_file		= "smtp_config.php";
+	public $_smtp_config_file		= "smtp_config.php";
 	/** @var array SMTP specific options */
-	var $SMTP_OPTIONS			= array(
+	public $SMTP_OPTIONS			= array(
 		'smtp_host'		=> '', // mx.test.com
 		'smtp_port'		=> '25',
 		'smtp_user_name'=> '', // admin@test.com

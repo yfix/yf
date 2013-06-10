@@ -11,7 +11,7 @@
 class yf_home_page_editor {
 
 	/** @var string Name of home page template */
-	var $stpl_name = "home_page/main";
+	public $stpl_name = "home_page/main";
 
 	/**
 	* Constructor

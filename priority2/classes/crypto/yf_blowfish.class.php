@@ -11,7 +11,7 @@
 class yf_blowfish {
 
 	/** @var array @conf_skip Pi Array */
-	var $p = array(
+	public $p = array(
 			0x243F6A88, 0x85A308D3, 0x13198A2E, 0x03707344,
 			0xA4093822, 0x299F31D0, 0x082EFA98, 0xEC4E6C89,
 			0x452821E6, 0x38D01377, 0xBE5466CF, 0x34E90C6C,
@@ -19,7 +19,7 @@ class yf_blowfish {
 			0x9216D5D9, 0x8979FB1B);
 
 	/** @var array @conf_skip S Boxes */
-	var $s1 = array(
+	public $s1 = array(
 			0xD1310BA6, 0x98DFB5AC, 0x2FFD72DB, 0xD01ADFB7,
 			0xB8E1AFED, 0x6A267E96, 0xBA7C9045, 0xF12C7F99,
 			0x24A19947, 0xB3916CF7, 0x0801F2E2, 0x858EFC16,
@@ -85,7 +85,7 @@ class yf_blowfish {
 			0xB6636521, 0xE7B9F9B6, 0xFF34052E, 0xC5855664,
 			0x53B02D5D, 0xA99F8FA1, 0x08BA4799, 0x6E85076A);
 	/** @var array @conf_skip */
-	var $s2 = array(
+	public $s2 = array(
 			0x4B7A70E9, 0xB5B32944, 0xDB75092E, 0xC4192623,
 			0xAD6EA6B0, 0x49A7DF7D, 0x9CEE60B8, 0x8FEDB266,
 			0xECAA8C71, 0x699A17FF, 0x5664526C, 0xC2B19EE1,
@@ -151,7 +151,7 @@ class yf_blowfish {
 			0xC5C43465, 0x713E38D8, 0x3D28F89E, 0xF16DFF20,
 			0x153E21E7, 0x8FB03D4A, 0xE6E39F2B, 0xDB83ADF7);
 	/** @var array @conf_skip */
-	var $s3 = array(
+	public $s3 = array(
 			0xE93D5A68, 0x948140F7, 0xF64C261C, 0x94692934,
 			0x411520F7, 0x7602D4F7, 0xBCF46B2E, 0xD4A20068,
 			0xD4082471, 0x3320F46A, 0x43B7D4B7, 0x500061AF,
@@ -217,7 +217,7 @@ class yf_blowfish {
 			0x6FD5C7E7, 0x56E14EC4, 0x362ABFCE, 0xDDC6C837,
 			0xD79A3234, 0x92638212, 0x670EFA8E, 0x406000E0);
 	/** @var array @conf_skip */
-	var $s4 = array(
+	public $s4 = array(
 			0x3A39CE37, 0xD3FAF5CF, 0xABC27737, 0x5AC52D1B,
 			0x5CB0679E, 0x4FA33742, 0xD3822740, 0x99BC9BBE,
 			0xD5118E9D, 0xBF0F7315, 0xD62D1C7E, 0xC700C47B,
@@ -284,7 +284,7 @@ class yf_blowfish {
 			0xB74E6132, 0xCE77E25B, 0x578FDFE3, 0x3AC372E6);
 
 	/** @var int @conf_skip The number of rounds to do */
-	var $_rounds = 16;
+	public $_rounds = 16;
 
 	/**
 	* Set the key to be used for en/decryption

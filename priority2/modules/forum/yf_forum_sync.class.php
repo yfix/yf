@@ -11,7 +11,7 @@
 class yf_forum_sync {
 
 	/** @var bool Delete or turn off wrong linked records */
-	var $DELETE_WRONG_RECORDS = 1;
+	public $DELETE_WRONG_RECORDS = 1;
 	
 	/**
 	* Synchronize total board

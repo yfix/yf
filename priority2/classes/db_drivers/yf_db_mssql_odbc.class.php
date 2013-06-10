@@ -11,26 +11,26 @@
 class yf_db_mssql_odbc {
 
 	/** @var @conf_skip */
-	var $db_connect_id;
+	public $db_connect_id;
 	/** @var @conf_skip */
-	var $result;
+	public $result;
 
 	/** @var @conf_skip */
-	var $next_id;
+	public $next_id;
 
 	/** @var @conf_skip */
-	var $num_rows = array();
+	public $num_rows = array();
 	/** @var @conf_skip */
-	var $current_row = array();
+	public $current_row = array();
 	/** @var @conf_skip */
-	var $field_names = array();
+	public $field_names = array();
 	/** @var @conf_skip */
-	var $field_types = array();
+	public $field_types = array();
 	/** @var @conf_skip */
-	var $result_rowset = array();
+	public $result_rowset = array();
 
 	/** @var @conf_skip */
-	var $num_queries = 0;
+	public $num_queries = 0;
 
 	/**
 	*/

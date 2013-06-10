@@ -14,7 +14,7 @@ class yf_make_thumb {
 
 	/** @var array */
 // TODO: connect this
-	var $ALLOWED_MIME_TYPES = array(
+	public $ALLOWED_MIME_TYPES = array(
 		"image/jpeg"	=> "jpeg",
 		"image/pjpeg"	=> "jpeg",
 		"image/png"		=> "png",
@@ -22,50 +22,50 @@ class yf_make_thumb {
 	);
 	/** @var bool */
 // TODO: connect this
-	var $OUTPUT_IMAGE_TYPE	= "jpeg";
+	public $OUTPUT_IMAGE_TYPE	= "jpeg";
 	/** @var bool */
-	var $ALLOW_NETPBM			= 1;
+	public $ALLOW_NETPBM			= 1;
 	/** @var bool */
-	var $ALLOW_IMAGICK			= 0;
+	public $ALLOW_IMAGICK			= 0;
 	/** @var array */
-	var $LIBS_PRIORITY			= array(
+	public $LIBS_PRIORITY			= array(
 		"imagick",
 		"netpbm",
 		"gd",
 	);
 	/** @var bool */
-	var $ENABLE_DEBUG_LOG		= 0;
+	public $ENABLE_DEBUG_LOG		= 0;
 	/** @var bool */
-	var $LOG_EXEC_CMDS			= 0;
+	public $LOG_EXEC_CMDS			= 0;
 	/** @var string */
-	var $DEBUG_LOG_FILE			= "logs/make_thumb.log";
+	public $DEBUG_LOG_FILE			= "logs/make_thumb.log";
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
-	var $LOG_TO_FILE			= 1;
+	public $LOG_TO_FILE			= 1;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
-	var $LOG_TO_DB				= 1;
+	public $LOG_TO_DB				= 1;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
-	var $DB_LOG_ENV				= 1;
+	public $DB_LOG_ENV				= 1;
 	/** @var bool Use all available libs in their order (if one fails - the try another) */
-	var $DEGRADE_GRACEFULLY		= 1;
+	public $DEGRADE_GRACEFULLY		= 1;
 	/** @var bool Use temporary images (more operations but more stable) */
 // TODO: currently broken
-	var $USE_TEMP_IMAGES		= 1;
+	public $USE_TEMP_IMAGES		= 1;
 	/** @var string Folder for temporary images */
-	var $TEMP_IMAGES_DIR		= "uploads/tmp/";
+	public $TEMP_IMAGES_DIR		= "uploads/tmp/";
 	/** @var string Folder for temporary images */
-	var $BAD_IMAGES_DIR			= "logs/bad_images/";
+	public $BAD_IMAGES_DIR			= "logs/bad_images/";
 	/** @var bool */
-	var $AUTO_FIND_PATHS		= 0;
+	public $AUTO_FIND_PATHS		= 0;
 	/** @var string */
-	var $FOUND_NETPBM_PATH		= "";
+	public $FOUND_NETPBM_PATH		= "";
 	/** @var string */
-	var $FOUND_IMAGICK_PATH		= "";
+	public $FOUND_IMAGICK_PATH		= "";
 	/** @var bool Collect wrong images */
-	var $COLLECT_BAD_IMAGES		= 0;
+	public $COLLECT_BAD_IMAGES		= 0;
 	/** @var bool Delete wrong images from destination folder */
-	var $DELETE_BAD_DEST_IMAGES	= 1;
+	public $DELETE_BAD_DEST_IMAGES	= 1;
 	/** @var bool Force resizing for images with lower sizes than limits, but possibly with not optimal size */
-	var $FORCE_PROCESSING		= 0;
+	public $FORCE_PROCESSING		= 0;
 
 	/**
 	* Module constructor

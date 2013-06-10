@@ -11,7 +11,7 @@
 class yf_forum_auth_global {
 
 	/** @var int */
-	var $LASTUP_TTL				= 900; // 15*60 = 15 minutes
+	public $LASTUP_TTL				= 900; // 15*60 = 15 minutes
 
 	/**
 	* Constructor

@@ -5,11 +5,11 @@
 class yf_manage_comments {
 
 	/** @var int Text preview cutoff (set to 0 to disable) */
-	var $TEXT_PREVIEW_LENGTH	= 0;
+	public $TEXT_PREVIEW_LENGTH	= 0;
 	/** @var bool Filter on/off */
-	var $USE_FILTER				= true;
+	public $USE_FILTER				= true;
 	/** @var array @conf_skip pairs object=comment_action */
-	var $_comments_actions	= array(
+	public $_comments_actions	= array(
 		"articles"		=> "view",
 		"blog"			=> "show_single_post",
 		"faq"			=> "view",

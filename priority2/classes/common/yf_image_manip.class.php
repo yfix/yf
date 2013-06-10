@@ -14,24 +14,24 @@ class yf_image_manip {
 
 	/** @var bool */
 // TODO: connect this
-	var $OUTPUT_IMAGE_TYPE	= "jpeg";
+	public $OUTPUT_IMAGE_TYPE	= "jpeg";
 	/** @var bool */
-	var $ALLOW_NETPBM			= 0;
+	public $ALLOW_NETPBM			= 0;
 	/** @var bool */
-	var $ALLOW_IMAGICK			= 0;
+	public $ALLOW_IMAGICK			= 0;
 	/** @var array */
 // TODO: connect this
-	var $LIBS_PRIORITY			= array(
+	public $LIBS_PRIORITY			= array(
 		"imagick",
 		"netpbm",
 		"gd",
 	);
 	/** @var bool */
-	var $AUTO_FIND_PATHS		= 1;
+	public $AUTO_FIND_PATHS		= 1;
 	/** @var string */
-	var $FOUND_NETPBM_PATH		= "";
+	public $FOUND_NETPBM_PATH		= "";
 	/** @var string */
-	var $FOUND_IMAGICK_PATH		= "";
+	public $FOUND_IMAGICK_PATH		= "";
 
 	/**
 	* Module constructor

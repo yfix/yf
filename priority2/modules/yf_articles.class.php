@@ -11,44 +11,44 @@
 class yf_articles extends yf_module {
 
 	/** @var int Maximum length of title field */
-	var $MAX_TITLE_LENGTH			= 100;
+	public $MAX_TITLE_LENGTH			= 100;
 	/** @var int Maximum length of summary field */
-	var $MAX_SUMMARY_LENGTH			= 1000;
+	public $MAX_SUMMARY_LENGTH			= 1000;
 	/** @var int Maximum length of full text field */
-	var $MAX_FULL_TEXT_LENGTH		= 50000;
+	public $MAX_FULL_TEXT_LENGTH		= 50000;
 	/** @var int Maximum length of credentials field  */
-	var $MAX_CREDENTIALS_LENGTH		= 1000;
+	public $MAX_CREDENTIALS_LENGTH		= 1000;
 	/** @var int Number of allowed articles to post by user (set to "0" for unlimited) */
-	var $MAX_USER_ARTICLES			= 0;
+	public $MAX_USER_ARTICLES			= 0;
 	/** @var bool Use bb codes */
-	var $USE_BB_CODES				= true;
+	public $USE_BB_CODES				= true;
 	/** @var bool Use captcha */
-	var $USE_CAPTCHA				= true;
+	public $USE_CAPTCHA				= true;
 	/** @var bool All articles search filter on/off */
-	var $USE_FILTER					= true;
+	public $USE_FILTER					= true;
 	/** @var bool Count view or not */
-	var $COUNT_VIEWS				= true;
+	public $COUNT_VIEWS				= true;
 	/** @var int Number of most active authors for the stats page */
-	var $STATS_NUM_MOST_ACTIVE		= 10;
+	public $STATS_NUM_MOST_ACTIVE		= 10;
 	/** @var int Number of latest entries for the stats page */
-	var $STATS_NUM_LATEST			= 10;
+	public $STATS_NUM_LATEST			= 10;
 	/** @var int Number of most commented articles for the stats page */
-	var $STATS_NUM_MOST_COMMENTED	= 10;
+	public $STATS_NUM_MOST_COMMENTED	= 10;
 	/** @var int Number of most read articles for the stats page */
-	var $STATS_NUM_MOST_READ		= 10;
+	public $STATS_NUM_MOST_READ		= 10;
 	/** @var int Number of records to show on one page for "view_cat", "view_user" */
-//	var $VIEW_ALL_ON_PAGE			= 20;
-	var $VIEW_ALL_ON_PAGE			= 5;
+//	public $VIEW_ALL_ON_PAGE			= 20;
+	public $VIEW_ALL_ON_PAGE			= 5;
 	/** @var bool allow delete comments */
-	var $ALLOW_DELETE_COMMENTS		= true;
+	public $ALLOW_DELETE_COMMENTS		= true;
 	/** @var bool allow delete comments */
-	var $SEARCH_ONLY_MEMBER			= true;
+	public $SEARCH_ONLY_MEMBER			= true;
 	/** @var array @conf_skip Params for the comments */
-	var $_comments_params			= array(
+	public $_comments_params			= array(
 		"return_action" => "view",
 	);
 	/** @var int */
-	var $NUM_RSS 	= 10;
+	public $NUM_RSS 	= 10;
 
 
 	/**

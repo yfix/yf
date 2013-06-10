@@ -11,9 +11,9 @@
 class yf_email_page {
 
 	/** @var string Variable name in session (for anti-flood) */
-	var $SESSION_TTL_NAME = "sent_to_friend_time";
+	public $SESSION_TTL_NAME = "sent_to_friend_time";
 	/** @var int Time between two equal page sendings */
-	var $TTL = 30; // In seconds
+	public $TTL = 30; // In seconds
 	/*
 		Example of using this method:
 		function email_post () {

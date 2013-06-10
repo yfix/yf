@@ -11,35 +11,35 @@
 class yf_db_mssql {
 
 	/** @var @conf_skip */
-	var $db_connect_id		= null;
+	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	var $result				= null;
+	public $result				= null;
 
 	/** @var @conf_skip */
-	var $next_id			= null;
+	public $next_id			= null;
 	/** @var @conf_skip */
-	var $in_transaction		= 0;
+	public $in_transaction		= 0;
 
 	/** @var @conf_skip */
-	var $row				= array();
+	public $row				= array();
 	/** @var @conf_skip */
-	var $rowset				= array();
+	public $rowset				= array();
 	/** @var @conf_skip */
-	var $limit_offset		= null;
+	public $limit_offset		= null;
 	/** @var @conf_skip */
-	var $query_limit_success= null;
+	public $query_limit_success= null;
 
 	/** @var @conf_skip */
-	var $num_queries		= 0;
+	public $num_queries		= 0;
 
 	/** @var @conf_skip */
-	var $META_TABLES_SQL	= 
+	public $META_TABLES_SQL	= 
 		"SELECT name,case WHEN type='U' THEN 'T' ELSE 'V' END 
 		FROM sysobjects 
 		WHERE (type='U' OR type='V') 
 			AND (name NOT IN ('sysallocations','syscolumns','syscomments','sysdepends','sysfilegroups','sysfiles','sysfiles1','sysforeignkeys','sysfulltextcatalogs','sysindexes','sysindexkeys','sysmembers','sysobjects','syspermissions','sysprotects','sysreferences','systypes','sysusers','sysalternates','sysconstraints','syssegments','REFERENTIAL_CONSTRAINTS','CHECK_CONSTRAINTS','CONSTRAINT_TABLE_USAGE','CONSTRAINT_COLUMN_USAGE','VIEWS','VIEW_TABLE_USAGE','VIEW_COLUMN_USAGE','SCHEMATA','TABLES','TABLE_CONSTRAINTS','TABLE_PRIVILEGES','COLUMNS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES','DOMAINS','DOMAIN_CONSTRAINTS','KEY_COLUMN_USAGE','dtproperties'))";
 	/** @var @conf_skip */
-	var $META_COLUMNS_SQL	= // xtype==61 is datetime
+	public $META_COLUMNS_SQL	= // xtype==61 is datetime
 		"SELECT c.name,t.name,c.length,
 			(CASE WHEN c.xusertype=61 THEN 0 ELSE c.xprec END),
 			(CASE WHEN c.xusertype=61 THEN 0 ELSE c.xscale END) 

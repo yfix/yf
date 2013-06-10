@@ -11,13 +11,13 @@
 class yf_user_errors {
 
 	/** @var string */
-	var $LOG_USER_ERRORS_FILE_NAME	= "user_errors.log";
+	public $LOG_USER_ERRORS_FILE_NAME	= "user_errors.log";
 	/** @var bool */
-	var $LOG_INTO_DB	= true;
+	public $LOG_INTO_DB	= true;
 	/** @var bool */
-	var $DB_LOG_ENV		= false;
+	public $DB_LOG_ENV		= false;
 	/** @var string Could be any sequence from GPFCS */
-	var $ENV_ARRAYS		= "GPF";
+	public $ENV_ARRAYS		= "GPF";
 
 	/**
 	* Track user error message

@@ -11,23 +11,23 @@
 class yf_locale_editor {
 
 	/** @var string @conf_skip PHP files to parse */
-	var $_include_php_pattern	= array("#\/(admin_modules|classes|functions|modules)#", "#\.php\$#");
+	public $_include_php_pattern	= array("#\/(admin_modules|classes|functions|modules)#", "#\.php\$#");
 	/** @var string @conf_skip STPL Files to parse */
-	var $_include_stpl_pattern	= array("#\/(templates)#", "#\.stpl\$#");
+	public $_include_stpl_pattern	= array("#\/(templates)#", "#\.stpl\$#");
 	/** @var string @conf_skip Exclude files from parser */
-	var $_exclude_pattern		= array("#\/(adodb|captcha_fonts|domit|feedcreator|html2fpdf|locale|smarty|samples|pear)#", "");
+	public $_exclude_pattern		= array("#\/(adodb|captcha_fonts|domit|feedcreator|html2fpdf|locale|smarty|samples|pear)#", "");
 	/** @var string @conf_skip Search vars in PHP files */
-	var $_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(translate|t|i18n)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
+	public $_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(translate|t|i18n)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
 	/** @var string @conf_skip Search vars in STPL files */
-	var $_translate_stpl_pattern= "/\{(t|translate|i18n)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
+	public $_translate_stpl_pattern= "/\{(t|translate|i18n)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
 	/** @var bool Display vars locations */
-	var $DISPLAY_VARS_LOCATIONS	= true;
+	public $DISPLAY_VARS_LOCATIONS	= true;
 	/** @var bool Display links to edit source files (in location) */
-	var $LOCATIONS_EDIT_LINKS	= true;
+	public $LOCATIONS_EDIT_LINKS	= true;
 	/** @var bool Filter on/off */
-	var $USE_FILTER				= true;
+	public $USE_FILTER				= true;
 	/** @var bool Ignore case on import/export */
-	var $VARS_IGNORE_CASE		= true;
+	public $VARS_IGNORE_CASE		= true;
 
 	/**
 	* Framework constructor

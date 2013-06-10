@@ -11,9 +11,9 @@
 class yf_session_memcached {
 
 	/** @var string */
-	var $CUR_SESSION_NAME	= "PHPSESSID";
+	public $CUR_SESSION_NAME	= "PHPSESSID";
 	/** @var string Prefix */
-	var $ITEMS_PREFIX		= "sess:";
+	public $ITEMS_PREFIX		= "sess:";
 
 	/**
 	* Constructor (PHP 4.x)

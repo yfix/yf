@@ -11,11 +11,11 @@
 class yf_encryption {
 
 	/** @var bool Use internal PHP MCrypt module or not */
-	var $USE_MCRYPT		= false;
+	public $USE_MCRYPT		= false;
 	/** @var int Define which cryptographic algorithm to use */
-	var $USE_CIPHER		= 0;
+	public $USE_CIPHER		= 0;
 	/** @var array Available algorithms (sorted in speed descending order) */
-	var $_avail_ciphers	= array(
+	public $_avail_ciphers	= array(
 		0	=>	"CAST_128", // note: PHP Class exists
 		1	=>	"BLOWFISH", // note: PHP Class exists
 		2	=>	"XTEA",
@@ -33,15 +33,15 @@ class yf_encryption {
 		14	=>	"SAFERPLUS",
 	);
 	/** @var string Secret key */
-	var $_secret_key	= "secret 134578";
+	public $_secret_key	= "secret 134578";
 	/** @var mixed @conf_skip Mcrypt cipher constant value */
-	var $_mcrypt_cipher = null;
+	public $_mcrypt_cipher = null;
 	/** @var mixed @conf_skip Current cipher processor */
-	var $_cur_cipher	= null;
+	public $_cur_cipher	= null;
 	/** @var mixed @conf_skip Key assigned */
-	var $_key_assigned	= false;
+	public $_key_assigned	= false;
 	/** @var mixed @conf_skip Initialization vector (Need in non-ECB mode) */
-	var $_iv			= null;
+	public $_iv			= null;
 
 	/**
 	* Constructor (PHP 4.x)

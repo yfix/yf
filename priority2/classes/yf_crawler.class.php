@@ -11,10 +11,10 @@
 class yf_crawler {
 
 	/** @var string Saved files extension */
-	var $LINKS_ADD_EXT = ".html";
+	public $LINKS_ADD_EXT = ".html";
 	/** @var string Default deepness level. Set to -1 for unlimited */
-//	var $DEF_MAX_LEVEL = 2;
-//	var $DEF_MAX_LEVEL = -1;
+//	public $DEF_MAX_LEVEL = 2;
+//	public $DEF_MAX_LEVEL = -1;
 
 	/**
 	* Constructor

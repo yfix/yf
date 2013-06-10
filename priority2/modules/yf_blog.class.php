@@ -11,112 +11,112 @@
 class yf_blog extends yf_module {
 
 	/** @var int Max post title length */
-	var $MAX_POST_TITLE_LENGTH		= 95;
+	public $MAX_POST_TITLE_LENGTH		= 95;
 	/** @var int Max post text length */
-	var $MAX_POST_TEXT_LENGTH		= 10000;
+	public $MAX_POST_TEXT_LENGTH		= 10000;
 	/** @var int Max mode text length (playing, reading etc) */
-	var $MAX_MODE_TEXT_LENGTH		= 100;
+	public $MAX_MODE_TEXT_LENGTH		= 100;
 	/** @var int Number of posts per page */
-	var $POSTS_PER_PAGE				= 10;
+	public $POSTS_PER_PAGE				= 10;
 	/** @var bool Use bb codes */
-	var $USE_BB_CODES				= true;
+	public $USE_BB_CODES				= true;
 	/** @var bool Allow HTML in posts */
-	var $ALLOW_HTML_IN_POSTS		= false;
+	public $ALLOW_HTML_IN_POSTS		= false;
 	/** @var string Folder where attached images are storing */
-	var $ATTACH_IMAGES_DIR			= "blog_images/";
+	public $ATTACH_IMAGES_DIR			= "blog_images/";
 	/** @var int @conf_skip Default attributes for folders */
-	var $DEF_DIR_MODE				= 0777;
+	public $DEF_DIR_MODE				= 0777;
 	/** @var int Attach image max width (in pixels) */
-	var $ATTACH_LIMIT_X				= 350;	// px
+	public $ATTACH_LIMIT_X				= 350;	// px
 	/** @var int Attach image max height (in pixels) */
-	var $ATTACH_LIMIT_Y				= 1000;	// px
+	public $ATTACH_LIMIT_Y				= 1000;	// px
 	/** @var int Attach image max file size (in bytes) */
-	var $MAX_IMAGE_SIZE				= 100000;// bytes
+	public $MAX_IMAGE_SIZE				= 100000;// bytes
 	/** @var int Number of blog messages for profile */
-	var $NUM_FOR_PROFILE			= 5;
+	public $NUM_FOR_PROFILE			= 5;
 	/** @var int Number of records to show on one page for "view all" */
-	var $VIEW_ALL_ON_PAGE			= 30;
+	public $VIEW_ALL_ON_PAGE			= 30;
 	/** @var int Number of records to show on one page for "show in cat" */
-	var $SHOW_IN_CAT_ON_PAGE		= 30;
+	public $SHOW_IN_CAT_ON_PAGE		= 30;
 	/** @var int Number of most active authors for the stats page */
-	var $STATS_NUM_MOST_ACTIVE		= 25;
+	public $STATS_NUM_MOST_ACTIVE		= 25;
 	/** @var int Number of the latest posts for the stats page */
-	var $STATS_NUM_LATEST_POSTS		= 25;
+	public $STATS_NUM_LATEST_POSTS		= 25;
 	/** @var int Number of most commented posts for the stats page */
-	var $STATS_NUM_MOST_COMMENTED	= 25;
+	public $STATS_NUM_MOST_COMMENTED	= 25;
 	/** @var int Number of most read posts for the stats page */
-	var $STATS_NUM_MOST_READ		= 25;
+	public $STATS_NUM_MOST_READ		= 25;
 	/** @var int Number of friends posts for the stats page */
-	var $STATS_NUM_FRIENDS_POSTS	= 25;
+	public $STATS_NUM_FRIENDS_POSTS	= 25;
 	/** @var int Number of latest posts to display */
-	var $NUM_LATEST_POSTS			= 25;
+	public $NUM_LATEST_POSTS			= 25;
 	/** @var int Latest post cut length */
-	var $LATEST_POSTS_CUT_LENGTH	= 50;
+	public $LATEST_POSTS_CUT_LENGTH	= 50;
 	/** @var int Number of latest friends posts to display */
-	var $FRIENDS_POSTS_PER_PAGE		= 25;
+	public $FRIENDS_POSTS_PER_PAGE		= 25;
 	/** @var int Max allowed blog title length */
-	var $MAX_BLOG_TITLE_LENGTH		= 100;
+	public $MAX_BLOG_TITLE_LENGTH		= 100;
 	/** @var int Max number of allowed custom categories */
-	var $MAX_CUSTOM_CATS_NUM		= 20;
+	public $MAX_CUSTOM_CATS_NUM		= 20;
 	/** @var int Max number of allowed friendly sites (links) */
-	var $MAX_BLOG_LINKS_NUM			= 10;
+	public $MAX_BLOG_LINKS_NUM			= 10;
 	/** @var array @conf_skip Current blog settings array */
-	var $BLOG_SETTINGS				= null;
+	public $BLOG_SETTINGS				= null;
 	/** @var bool Use captcha */
-	var $USE_CAPTCHA				= true;
+	public $USE_CAPTCHA				= true;
 	/** @var int Number of symbols for text preview */
-	var $POST_TEXT_PREVIEW_LENGTH	= 500;
+	public $POST_TEXT_PREVIEW_LENGTH	= 500;
 	/** @var bool Use preview on "show_posts" or not */
-	var $PREVIEW_CUT_ON_SHOW_POSTS	= false;
+	public $PREVIEW_CUT_ON_SHOW_POSTS	= false;
 	/** @var bool All blogs search filter on/off */
-	var $USE_FILTER					= true;
+	public $USE_FILTER					= true;
 	/** @var bool Force stripslashes on "_format_text" method */
-	var $FORCE_STRIPSLASHES			= true;
+	public $FORCE_STRIPSLASHES			= true;
 	/** @var int Minimal text length to search in posts (in symbols) */
-	var $MIN_SEARCH_TEXT_LENGTH		= 2;
+	public $MIN_SEARCH_TEXT_LENGTH		= 2;
 	/** @var bool Hide empty categories on teh stats page */
-	var $STATS_HIDE_EMPTY_CATS		= true;
+	public $STATS_HIDE_EMPTY_CATS		= true;
 	/** @var bool Allow RSS feeds or not */
-	var $ALLOW_RSS_EXPORT			= true;
+	public $ALLOW_RSS_EXPORT			= true;
 	/** @var bool Allow ping Google on post change */
-	var $ALLOW_PING_GOOGLE			= false;
+	public $ALLOW_PING_GOOGLE			= false;
 	/** @var bool Allow custom cats link texts */
-	var $CUSTOM_CATS_LINKS_TEXTS	= true;
+	public $CUSTOM_CATS_LINKS_TEXTS	= true;
 	/** @var bool Use js_calendar */
-	var $USE_JS_CALENDAR			= false;
+	public $USE_JS_CALENDAR			= false;
 	/** @var bool */
-	var $ARCHIVE_NAV_FULL			= false;
+	public $ARCHIVE_NAV_FULL			= false;
 	/** @var bool Enable or not Geo location limits for content */
-	var $ALLOW_GEO_FILTERING		= false;
+	public $ALLOW_GEO_FILTERING		= false;
 	/** @var bool Search related posts for single post or not */
-	var $SHOW_RELATED_POSTS			= false;
+	public $SHOW_RELATED_POSTS			= false;
 	/** @var bool If this turned on - then system will hide total ids for user, 
 	* and wiil try to use small id numbers dedicated only for this user
 	*/
-	var $HIDE_TOTAL_ID				= false;
+	public $HIDE_TOTAL_ID				= false;
 	/** @var array @conf_skip Params for the comments */
-	var $_comments_params = array(
+	public $_comments_params = array(
 		"object_name"	=> "blog",
 		"return_action" => "show_single_post",
 	);
 	/** @var array @conf_skip Params for the poll */
-	var $_poll_params = array(
+	public $_poll_params = array(
 		"return_action" => "show_single_post",
 	);
 	/** @var bool Allow tagging */
-	var $ALLOW_TAGGING				= true;
+	public $ALLOW_TAGGING				= true;
 	/** @var int */
-	var $NUM_RSS 	= 10;
+	public $NUM_RSS 	= 10;
 	/** @var bool Hide general categories from user */
-	var $HIDE_GENERAL_CATS			= false;
+	public $HIDE_GENERAL_CATS			= false;
 	/** @var enum("xml-rpc", "rest") */
-	var $PING_METHOD 				= "xml-rpc";
+	public $PING_METHOD 				= "xml-rpc";
 	/** var bool allow delete comments */
-	var $ALLOW_DELETE_COMMENTS		= true;
+	public $ALLOW_DELETE_COMMENTS		= true;
 	/** var bool allow Search comments only posted by members */
-	var $SEARCH_ONLY_MEMBER			= true;
+	public $SEARCH_ONLY_MEMBER			= true;
 	/** @var float Coeficient for number of records to get from db (to allow skipping some records) */
-	var $FROM_DB_MULTIPLY			= 1.5;
+	public $FROM_DB_MULTIPLY			= 1.5;
 
 	/**
 	* YF module constructor

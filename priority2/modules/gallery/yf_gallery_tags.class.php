@@ -18,13 +18,13 @@ class yf_gallery_tags {
 	*		\x41-\x5A (A-Z),
 	*		\x61-\x7A (a-z)
 	*/
-	var $REGEXP_ALLOWED		= '/[\x00-\x09\x0B-\x1F\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]/ims';
+	public $REGEXP_ALLOWED		= '/[\x00-\x09\x0B-\x1F\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]/ims';
 	/** @var int */
-	var $MIN_KEYWORD_LENGTH	= 3;
+	public $MIN_KEYWORD_LENGTH	= 3;
 	/** @var int */
-	var $MAX_KEYWORD_LENGTH	= 30;
+	public $MAX_KEYWORD_LENGTH	= 30;
 	/** @var bool */
-	var $UTF8_MODE			= 0;
+	public $UTF8_MODE			= 0;
 
 	/**
 	* Constructor

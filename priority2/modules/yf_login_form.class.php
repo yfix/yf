@@ -11,7 +11,7 @@
 class yf_login_form {
 
 	/** @var string */
-	var $DEF_REDIRECT_URL	= "./?object=account";
+	public $DEF_REDIRECT_URL	= "./?object=account";
 
 	/**
 	* Default function

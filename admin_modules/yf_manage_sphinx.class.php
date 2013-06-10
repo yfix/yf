@@ -3,33 +3,33 @@
 class yf_manage_sphinx {
 
 	/** @var */
-	var $CONF_PATH			= "/usr/local/sphinx/etc/";
+	public $CONF_PATH			= "/usr/local/sphinx/etc/";
 	/** @var */
-	var $BIN_PATH			= "/usr/local/sphinx/bin/";
+	public $BIN_PATH			= "/usr/local/sphinx/bin/";
 	/** @var */
-	var $DATA_PATH			= "/usr/local/sphinx/data/";
+	public $DATA_PATH			= "/usr/local/sphinx/data/";
 	/** @var */
-	var $LOG_PATH			= "/usr/local/sphinx/log/";
+	public $LOG_PATH			= "/usr/local/sphinx/log/";
 	/** @var */
-	var $INDEXER_NAME		= 'indexer';
+	public $INDEXER_NAME		= 'indexer';
 	/** @var */
-	var $SEARCHD_NAME		= 'searchd';
+	public $SEARCHD_NAME		= 'searchd';
 	/** @var */
-	var $MAX_MATCHES		= 1000;
+	public $MAX_MATCHES		= 1000;
 	/** @var */
-	var $CONNECT_RETRIES	= 3;
+	public $CONNECT_RETRIES	= 3;
 	/** @var */
-	var $CONNECT_WAIT_TIME	= 300;
+	public $CONNECT_WAIT_TIME	= 300;
 	/** @var */
-	var $SPHINX_TABLE		= "sphinx";
+	public $SPHINX_TABLE		= "sphinx";
 	/**	@var */
-	var $USE_STOP_WORDS		= false;
+	public $USE_STOP_WORDS		= false;
 	/** @var */
-	var $MEM_LIMIT			= 32; // In megabytes
+	public $MEM_LIMIT			= 32; // In megabytes
 	/** @var Add current configuration to the current config or replace it completely */
-	var $REPLACE_CONFIG		= true;
+	public $REPLACE_CONFIG		= true;
 	/** @var */
-	var $WIN32_SERVICE		= "sphinxsearch";
+	public $WIN32_SERVICE		= "sphinxsearch";
 
 	/**
 	* Framework constructor
@@ -624,8 +624,8 @@ class yf_manage_sphinx {
 */
 class sphinx_config
 {
-	var $loaded = false;
-	var $sections = array();
+	public $loaded = false;
+	public $sections = array();
 
 	/**
 	* Constructor which optionally loads data from a file
@@ -908,10 +908,10 @@ class sphinx_config
 */
 class sphinx_config_section
 {
-	var $name;
-	var $comment;
-	var $end_comment;
-	var $variables = array();
+	public $name;
+	public $comment;
+	public $end_comment;
+	public $variables = array();
 
 	/**
 	* Construct a new section
@@ -1037,9 +1037,9 @@ class sphinx_config_section
 */
 class sphinx_config_variable
 {
-	var $name;
-	var $value;
-	var $comment;
+	public $name;
+	public $value;
+	public $comment;
 
 	/**
 	* Constructs a new variable object
@@ -1094,7 +1094,7 @@ class sphinx_config_variable
 */
 class sphinx_config_comment
 {
-	var $exact_string;
+	public $exact_string;
 
 	/**
 	* Create a new comment

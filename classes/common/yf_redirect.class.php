@@ -11,17 +11,17 @@
 class yf_redirect {
 
 	/** @var array @conf_skip Available redirect types */
-	var $AVAIL_TYPES = array(
+	public $AVAIL_TYPES = array(
 		"html",
 		"js",
 		"http",
 	);
 	/** @var bool */
-	var $USE_DESIGN		= false;
+	public $USE_DESIGN		= false;
 	/** @var bool */
-	var $JS_SHOW_TEXT	= false;
+	public $JS_SHOW_TEXT	= false;
 	/** @var string Force using only this method (if text is empty), leave blank to disable */
-	var $FORCE_TYPE		= "http";
+	public $FORCE_TYPE		= "http";
 
 	/**
 	* Common redirect method

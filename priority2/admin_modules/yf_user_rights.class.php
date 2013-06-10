@@ -11,7 +11,7 @@
 class yf_user_rights {
 
 	/** @var array @conf_skip */
-	var $_trigger = array(
+	public $_trigger = array(
 		1	=> "<span class='positive'>Allowed</span>",
 		0	=> "<span class='negative'>Denied</span>",
 	);

@@ -5,15 +5,15 @@
 class yf_user_info {
 
 	/** @var bool Additional JavaScript based form validation */
-	var $_JS_VALIDATION = false;
+	public $_JS_VALIDATION = false;
 	/** @var int User ID */
-	var $USER_ID = null;
+	public $USER_ID = null;
 	/** @var int Avatar max width */
-	var $AVATAR_MAX_WIDTH		= 100;
+	public $AVATAR_MAX_WIDTH		= 100;
 	/** @var int Avatar max height */
-	var $AVATAR_MAX_HEIGHT		= 100;
+	public $AVATAR_MAX_HEIGHT		= 100;
 	/** @var int Avatar max file size */
-	var $AVATAR_MAX_FILE_SIZE	= 500000; // bytes
+	public $AVATAR_MAX_FILE_SIZE	= 500000; // bytes
 
 	//-----------------------------------------------------------------------------
 	// YF module constructor

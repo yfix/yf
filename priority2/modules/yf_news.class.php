@@ -5,11 +5,11 @@
 class yf_news extends yf_module {
 	
 	//** @var int */
-//	var $TRIM_LENGTH	= 100;
+//	public $TRIM_LENGTH	= 100;
 	/** @var bool Use bb codes */
-	var $USE_BB_CODES	= true;
+	public $USE_BB_CODES	= true;
 	/** @var array @conf_skip Params for the comments */
-	var $_comments_params = array(
+	public $_comments_params = array(
 		"return_action" => "full_news"
 	);
 

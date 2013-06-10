@@ -11,9 +11,9 @@
 class yf_forum_fast_nav {
 
 	/** @var string */
-	var $_text_forum_divider	= "&nbsp;&nbsp;&#0124;-- ";
+	public $_text_forum_divider	= "&nbsp;&nbsp;&#0124;-- ";
 	/** @var string */
-	var $_text_level_filler		= "&nbsp;&nbsp;&nbsp;&nbsp;";
+	public $_text_level_filler		= "&nbsp;&nbsp;&nbsp;&nbsp;";
 	
 	/**
 	* Board Fast Navigation Box

@@ -11,11 +11,11 @@
 class yf_session_files {
 
 	/** @var string */
-	var $CUR_SESSION_NAME	= "PHPSESSID";
+	public $CUR_SESSION_NAME	= "PHPSESSID";
 	/** @var string */
-	var $SESSION_FILES_DIR	= "session_data/";
+	public $SESSION_FILES_DIR	= "session_data/";
 	/** @var string Session Prefix */
-	var $FILES_PREFIX		= "sess_";
+	public $FILES_PREFIX		= "sess_";
 
 	/**
 	* Constructor (PHP 4.x)

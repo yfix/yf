@@ -5,13 +5,13 @@
 class yf_user_info {
 
 	// Additional JavaScript based form validation
-	var $_JS_VALIDATION = false;
+	public $_JS_VALIDATION = false;
 	// User ID
-	var $USER_ID = null;
+	public $USER_ID = null;
 	// Avatar limits
-	var $AVATAR_MAX_WIDTH		= 100;
-	var $AVATAR_MAX_HEIGHT		= 100;
-	var $AVATAR_MAX_FILE_SIZE	= 500000; // bytes
+	public $AVATAR_MAX_WIDTH		= 100;
+	public $AVATAR_MAX_HEIGHT		= 100;
+	public $AVATAR_MAX_FILE_SIZE	= 500000; // bytes
 
 	//-----------------------------------------------------------------------------
 	// Constructor

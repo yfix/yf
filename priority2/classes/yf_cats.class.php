@@ -11,15 +11,15 @@
 class yf_cats {
 
 	/** @var mixed @conf_skip */
-	var $_cats_blocks			= null;
+	public $_cats_blocks			= null;
 	/** @var mixed @conf_skip */
-	var $_items_cache			= null;
+	public $_items_cache			= null;
 	/** @var mixed @conf_skip */
-	var $_default_callback		= null;
+	public $_default_callback		= null;
 	/** @var mixed @conf_skip */
-	var $_default_cats_block	= null;
+	public $_default_cats_block	= null;
 	/** @var bool */
-	var $USE_DYNAMIC_ATTS		= 1;
+	public $USE_DYNAMIC_ATTS		= 1;
 
 	/**
 	* Constructor

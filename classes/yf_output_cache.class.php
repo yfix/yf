@@ -11,59 +11,59 @@
 class yf_output_cache {
 
 	/** @var bool Output caching on/off */
-	var $OUTPUT_CACHING			= false;
+	public $OUTPUT_CACHING			= false;
 	/** @var int Output cache TTL, in seconds (0 - for unlimited) */
-	var $OUTPUT_CACHE_TTL		= 604800; // 1 week (7 * 24 * 60 * 60)
+	public $OUTPUT_CACHE_TTL		= 604800; // 1 week (7 * 24 * 60 * 60)
 	/** @var string Output cache dir (relative to the SITE_PATH constant) */
-	var $OUTPUT_CACHE_DIR		= "pages_cache/";
+	public $OUTPUT_CACHE_DIR		= "pages_cache/";
 	/** @var bool Use separate dirs for caching for each site or not */
-	var $USE_SITES_DIRS			= true;
+	public $USE_SITES_DIRS			= true;
 	/** @var bool Use subdirs for caching for each site or not (useful hen lot of sites inside one SITE_PATH) */
-	var $SITE_ID_SUBDIR			= false;
+	public $SITE_ID_SUBDIR			= false;
 	/** @var array Stop-list for output caching (REGEXPs allowed here) @conf_skip */
-	var $_OC_STOP_LIST			= array(
+	public $_OC_STOP_LIST			= array(
 		"object=(account|advert|aff|email|forum|manage_escorts|que|reviews|reviews_search|stats|task_loader|user_info|user_profile).*",
 		"object=search&+",
 		"task=(login|logout).*",
 		"debug_mode",
 	);
 	/** @var string Use instead of "_OC_STOP_LIST", include _ONLY_ that is matched this pattern, will be checked if non-empty */
-	var $WHITE_LIST_PATTERN		= "";
+	public $WHITE_LIST_PATTERN		= "";
 	/** @var array Use this if you need to have some page cached different from the global setting "OUTPUT_CACHE_TTL" 
 	*		NOTE: NOT WORKING ON WINDOWS (php < 5.3.0) ! (because we are using touch function that is broken under windows)
 	*/
-	var $CUSTOM_CACHE_TTLS		= array(
+	public $CUSTOM_CACHE_TTLS		= array(
 //		"object=(user_profile)"		=> 20,
 	);
 	/** @var bool Include cache file as HTML file with PHP code within or throw it contents as plain HTML */
-	var $OUTPUT_CACHE_INCLUDE	= 0;
+	public $OUTPUT_CACHE_INCLUDE	= 0;
 	/** @var bool @conf_skip Tells that current page will not be cached (default) */
-	var $NO_NEED_TO_CACHE		= false;
+	public $NO_NEED_TO_CACHE		= false;
 	/** @var string @conf_skip Current page cache file path */
-	var $CACHE_FILE_PATH		= "";
+	public $CACHE_FILE_PATH		= "";
 	/** @var string Extension of all cache files */
-	var $CACHE_FILE_EXT			= ".cache.php";
+	public $CACHE_FILE_EXT			= ".cache.php";
 	/** @var bool Auto-create cache folder */
-	var $AUTO_CREATE_CACHE_DIR	= true;
+	public $AUTO_CREATE_CACHE_DIR	= true;
 	/** @var bool Create and use sub-dirs for cache files */
-	var $USE_SUB_DIRS_FOR_CACHE	= true;
+	public $USE_SUB_DIRS_FOR_CACHE	= true;
 	/** @var int @conf_skip */
-	var $DEFAULT_CHMOD			= 0777;
+	public $DEFAULT_CHMOD			= 0777;
 	/** @var bool */
-	var $LOG_PAGES_HASHES_TO_DB	= false;
+	public $LOG_PAGES_HASHES_TO_DB	= false;
 	/** @var bool Append string to the end of the cached file */
-	var $CACHE_APPEND_STRING	= true;
+	public $CACHE_APPEND_STRING	= true;
 	/** @var string PHP code that will be eval'ed and added to the cache file @conf_skip */
-	var $APPEND_STRING_CODE		= 'return "\r\n<!-- cache generated at ".date("Y-m-d H:i:s")." in ".common()->_format_time_value(microtime(true) - main()->_time_start)." secs -->\r\n";';
+	public $APPEND_STRING_CODE		= 'return "\r\n<!-- cache generated at ".date("Y-m-d H:i:s")." in ".common()->_format_time_value(microtime(true) - main()->_time_start)." secs -->\r\n";';
 	/** @var string Cache driver enum("","auto","file","eaccelerator","apc","xcache","memcached") */
 // TODO
-//	var $DRIVER					= "file";
+//	public $DRIVER					= "file";
 	/** @var bool Use memcached */
-	var $USE_MEMCACHED			= false;
+	public $USE_MEMCACHED			= false;
 	/** @var string Namespace for drivers other than "file" */
-	var $CACHE_NS				= "oc:";
+	public $CACHE_NS				= "oc:";
 	/** @var bool Allow to refresh cache from url */
-	var $CACHE_CONTROL_FROM_URL	= true;
+	public $CACHE_CONTROL_FROM_URL	= true;
 
 	/**
 	* Catch missing method call

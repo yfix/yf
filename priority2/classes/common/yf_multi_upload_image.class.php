@@ -11,7 +11,7 @@
 class yf_multi_upload_image {
 
 	/** @var array */
-	var $ALLOWED_MIME_TYPES = array(
+	public $ALLOWED_MIME_TYPES = array(
 		"image/jpeg"	=> "jpeg",
 		"image/pjpeg"	=> "jpeg",
 		"image/png"		=> "png",

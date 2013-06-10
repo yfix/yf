@@ -25,16 +25,16 @@
 */
 
 Class GIFEncoder {
-	var $GIF = "GIF89a";		/* GIF header 6 bytes	*/
-	var $VER = "GIFEncoder V2.05";	/* Encoder version		*/
+	public $GIF = "GIF89a";		/* GIF header 6 bytes	*/
+	public $VER = "GIFEncoder V2.05";	/* Encoder version		*/
 
-	var $BUF = Array ( );
-	var $LOP =  0;
-	var $DIS =  2;
-	var $COL = -1;
-	var $IMG = -1;
+	public $BUF = Array ( );
+	public $LOP =  0;
+	public $DIS =  2;
+	public $COL = -1;
+	public $IMG = -1;
 
-	var $ERR = Array (
+	public $ERR = Array (
 		ERR00=>"Does not supported function for only one image!",
 		ERR01=>"Source is not a GIF image!",
 		ERR02=>"Unintelligible flag ",

@@ -6,7 +6,7 @@
 class yf_dev{
 
 	/** @var array */
-	var $_colors = array(
+	public $_colors = array(
 		"background",
 		"background-color",
 		"background-image",
@@ -26,7 +26,7 @@ class yf_dev{
 	);
 
 	/** @var array */
-	var $_fonts = array(
+	public $_fonts = array(
 		"font",
 		"font-family",
 		"font-style",
@@ -46,7 +46,7 @@ class yf_dev{
 	
 	//#####make_wiki_xml VARS###### 
 		/** @var string @conf_skip */
-	var $_regexp_pairs_cleanup = array(
+	public $_regexp_pairs_cleanup = array(
 		"/([^\s\t])[\s\t]+=>/ims"
 			=> "\\1=>",
 		"/(array\(|[0-9a-z\'\"]+,|=>)[\s\t]+([^\s\t])/ims"
@@ -55,11 +55,11 @@ class yf_dev{
 			=> ")",
 	);
 	/** @var string @conf_skip */
-	var $_var_regexp	= "/\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)[\s\t]*=[\s\t]*([^;]+);/ims";
+	public $_var_regexp	= "/\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)[\s\t]*=[\s\t]*([^;]+);/ims";
 	/** @var string @conf_skip */
-	var $_info_regexp	= "/\t\/\*\*[^@]*[\s\t]{1,}@var[\s\t]{1,}(bool|int|float|array|string|mixed) (.*?)\*\/[\r\n]*\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)/ims";
+	public $_info_regexp	= "/\t\/\*\*[^@]*[\s\t]{1,}@var[\s\t]{1,}(bool|int|float|array|string|mixed) (.*?)\*\/[\r\n]*\tvar[\s\t]{1,}\\\$([a-z_][a-z0-9_]*)/ims";
 	/** @var array  @conf_skip */
-	var $_allowed_types	= array(
+	public $_allowed_types	= array(
 		"bool",
 		"int",
 		"float",
@@ -68,10 +68,10 @@ class yf_dev{
 		"mixed",
 	);
 	/** @var string @conf_skip */
-	var $_SYSTEM_NS		= "_";
+	public $_SYSTEM_NS		= "_";
 	
 	/** @var string @conf_skip Class method pattern */
-	var $_method_pattern		= "/function ([a-zA-Z_][a-zA-Z0-9_]+)/is";
+	public $_method_pattern		= "/function ([a-zA-Z_][a-zA-Z0-9_]+)/is";
 
 	//### END make_wiki_xml####
 

@@ -21,23 +21,23 @@ class yf_zapatec_calendar {
 		);
 	*/
 	/** @var string @conf_skip ex. "02/02/2006,02/22/2006-02/23/2006" */
-	var $_selected_days		= "";
+	public $_selected_days		= "";
 	/** @var string @conf_skip ex. "02/13/2006" */
-	var $_cur_date			= "";
+	public $_cur_date			= "";
 	/** @var string @conf_skip ex. 2006-01-01 */
-	var $_start_date		= "";
+	public $_start_date		= "";
 	/** @var string @conf_skip ex. 2007-01-01 */
-	var $_end_date			= "";
+	public $_end_date			= "";
 	/** @var string @conf_skip ex. "January","February", ... */
-	var $_month_names		= "";
+	public $_month_names		= "";
 	/** @var string @conf_skip ex. "Monday","Tuesday", ... */
-	var $_week_days_short	= "";
+	public $_week_days_short	= "";
 	/** @var string @conf_skip ex. 0 -> european style, 6 -> US style */
-	var $_start_weekday		= 1;
+	public $_start_weekday		= 1;
 	/** @var string @conf_skip ex. http://somepath?date= */
-	var $_on_select_link	= "";
+	public $_on_select_link	= "";
 	/** @var string ex. cal1Container */
-	var $_cal_container_id	= "cal1_container";
+	public $_cal_container_id	= "cal1_container";
 
 	/**
 	* Constructor (PHP 4.x)
