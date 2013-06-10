@@ -229,7 +229,7 @@ class yf_db {
 			// Try to connect several times
 			for ($i = 1; $i <= $this->RECONNECT_NUM_TRIES; $i++) {
 				$this->db = new $driver_class_name($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, $this->DB_PERSIST, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET);
-				if (!is_object($this->db)) {
+				if (!is_object($this->db) || !($this->db instanceof yf_db_driver)) {
 					trigger_error("DB: Wrong driver", $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
 					break;
 				}

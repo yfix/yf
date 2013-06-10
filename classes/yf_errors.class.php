@@ -83,11 +83,11 @@ class yf_errors {
 		}
 		$this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
 		$this->set_log_file_name(defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : INCLUDE_PATH. 'error_logs.log');
-		$this->set_flags(defined('ERROR_HANDLER_FLAGS') ? ERROR_HANDLER_FLAGS : "110000");
+		$this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : "110000");
 		$this->set_reporting_level();
 		ini_set("ignore_repeated_errors", 1);
 		ini_set("ignore_repeated_source", 1);
-		set_error_handler(array($this, 'ERROR_HANDLER'), $this->NO_NOTICES ? E_ALL ^ E_NOTICE : E_ALL);
+		set_error_handler(array($this, 'error_handler'), $this->NO_NOTICES ? E_ALL ^ E_NOTICE : E_ALL);
 		register_shutdown_function(array($this, 'error_handler_destructor'));
 		
 		set_exception_handler(array($this,  'exception_handler' ));
@@ -113,7 +113,7 @@ class yf_errors {
 		}
 		// Send the endian log text if errors exists
 		if ($this->_LOG_STARTED && $this->_SHOW_BORDERS) {
-			$this->_do_save_log_info("END EXECUTION\r\n", 1);
+			$this->_do_save_log_info("END EXECUTION\n", 1);
 		}
 	} 
 
@@ -168,7 +168,7 @@ class yf_errors {
 	/**
 	* The error handling routine set by set_error_handler()
 	*/
-	function ERROR_HANDLER ($error_type, $error_msg, $error_file, $error_line, $error_context) {
+	function error_handler ($error_type, $error_msg, $error_file, $error_line, $error_context) {
 		// quickly turn off notices logging
 		if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
 			return true;
@@ -223,7 +223,7 @@ class yf_errors {
 		}
 		// Create log message if needed
 		if ($save_log || $send_mail) {
-			$DIVIDER = "\r\n";
+			$DIVIDER = "\n";
 			if ($this->USE_COMPACT_FORMAT) {
 				$DIVIDER = "#@#";
 			}
@@ -249,7 +249,7 @@ class yf_errors {
 		if ($save_log) {
 			if (!$this->_LOG_STARTED) {
 				if ($this->_SHOW_BORDERS) {
-					$this->_do_save_log_info("START EXECUTION\r\n", 1);
+					$this->_do_save_log_info("START EXECUTION\n", 1);
 				}
 				$this->_LOG_STARTED = true;
 			}
@@ -285,7 +285,7 @@ class yf_errors {
 		}
 		// Check if need to show error message to the user
 		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($log_message)) {
-			echo "<b>".$this->error_types[$error_type]."</b>: ". $error_msg." (<i>".$error_file." on line ".$error_line."</i>)<br />\r\n";
+			echo "<b>".$this->error_types[$error_type]."</b>: ". $error_msg." (<i>".$error_file." on line ".$error_line."</i>)<pre>".main()->trace_string()."</pre><br />\n";
 		}
 		// For critical errors stop execution here
 		if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
@@ -372,10 +372,10 @@ class yf_errors {
 	}
 
 	/**
-	* Method that returns the error handler to ERROR_HANDLER()
+	* Method that returns the error handler to error_handler()
 	*/
 	function return_handler() { 
-		set_error_handler(array($this, 'ERROR_HANDLER'));
+		set_error_handler(array($this, 'error_handler'));
 	}
 
 	/**

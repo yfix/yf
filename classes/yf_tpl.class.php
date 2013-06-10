@@ -912,7 +912,7 @@ class yf_tpl {
 		}
 		// Log error message if template file was not found
 		if ($NOT_FOUND) {
-			trigger_error("STPL: template \"".$file_name."\" in theme \"".conf('theme')."\" not found.<pre>". main()->trace_string()."</pre>", E_USER_WARNING);
+			trigger_error("STPL: template \"".$file_name."\" in theme \"".conf('theme')."\" not found.", E_USER_WARNING);
 		} else {
 			$this->CACHE[str_replace($this->_STPL_EXT, "", $file_name)]['storage'] = $storage;
 		}
