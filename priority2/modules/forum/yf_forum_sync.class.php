@@ -6,7 +6,6 @@
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
-* @revision	$Revision$
 */
 class yf_forum_sync {
 

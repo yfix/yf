@@ -6,7 +6,6 @@
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
-* @revision	$Revision$
 */
 class yf_ssh {
 
@@ -1320,35 +1319,17 @@ class yf_ssh {
 				continue;
 			}
 			// Owner
-			if ($k == 0) {
-				$own += 4;
-			}
-			if ($k == 1) {
-				$own += 2;
-			}
-			if ($k == 2) {
-				$own += 1;
-			}
+			if ($k == 0) {	$own += 4;	}
+			if ($k == 1) {	$own += 2;	}
+			if ($k == 2) {	$own += 1;	}
 			// Group
-			if ($k == 3) {
-				$grp += 4;
-			}
-			if ($k == 4) {
-				$grp += 2;
-			}
-			if ($k == 5) {
-				$grp += 1;
-			}
+			if ($k == 3) {	$grp += 4;	}
+			if ($k == 4) {	$grp += 2;	}
+			if ($k == 5) {	$grp += 1;	}
 			// Others
-			if ($k == 6) {
-				$oth += 4;
-			}
-			if ($k == 7) {
-				$oth += 2;
-			}
-			if ($k == 8) {
-				$oth += 1;
-			}
+			if ($k == 6) {	$oth += 4;	}
+			if ($k == 7) {	$oth += 2;	}
+			if ($k == 8) {	$oth += 1;	}
 		}
 		return "0". $own. "". $grp. "". $oth;
 	}
