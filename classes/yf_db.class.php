@@ -12,11 +12,11 @@ class yf_db {
 	/** @var string Type of database (default) */
 	public $DB_TYPE					= "mysql";
 	/** @var bool Use tables names caching */
-	public $CACHE_TABLE_NAMES			= false;
+	public $CACHE_TABLE_NAMES		= false;
 	/** @var int @conf_skip Number of queries */
 	public $NUM_QUERIES				= 0;
 	/** @var array Query log array */
-	public $QUERY_LOG					= array();
+	public $QUERY_LOG				= array();
 	/** @var array */
 	public $QUERY_AFFECTED_ROWS		= array();
 	/** @var array */
@@ -24,17 +24,17 @@ class yf_db {
 	/** @var array */
 	public $QUERY_BACKTRACE_LOG		= array();
 	/** @var int Tables cache lifetime (while developing need to be short) (else need to be very large) */
-	public $TABLE_NAMES_CACHE_TTL		= 3600; // 1*3600*24 = 1 day
+	public $TABLE_NAMES_CACHE_TTL	= 3600; // 1*3600*24 = 1 day
 	/** @var bool Auto-connect on/off */
-	public $AUTO_CONNECT				= false;
+	public $AUTO_CONNECT			= false;
 	/** @var bool Use backtrace in error message */
 	public $ERROR_BACKTRACE			= true;
 	/** @var bool Use backtrace to get where query was called from (will be used only when DEBUG_MODE is enabled) */
 	public $USE_QUERY_BACKTRACE		= true;
 	/** @var bool Auto-repairing on error (table not exists) on/off */
-	public $ERROR_AUTO_REPAIR			= true;
+	public $ERROR_AUTO_REPAIR		= true;
 	/** @var string Folder where databases drivers are stored */
-	public $DB_DRIVERS_DIR				= "classes/db_drivers/";
+	public $DB_DRIVERS_DIR			= "classes/db_drivers/";
 	/** @var int Num tries to reconnect (will be useful if db server is overloaded) (Set to "0" for disabling) */
 	public $RECONNECT_NUM_TRIES		= 2;
 	/** @var int Time to wait between reconnects (in seconds) */
@@ -42,47 +42,47 @@ class yf_db {
 	/** @var bool Use logarithmic increase or reconnect time */
 	public $RECONNECT_DELAY_LOG_INC	= 1;
 	/** @var bool Use locking for reconnects or not */
-	public $RECONNECT_USE_LOCKING		= 1;
+	public $RECONNECT_USE_LOCKING	= 1;
 	/** @var string */
 	public $RECONNECT_LOCK_FILE_NAME	= "uploads/db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock";
 	/** @var int Time in seconds between unlock reconnect */
-	public $RECONNECT_LOCK_TIMEOUT		= 30;
+	public $RECONNECT_LOCK_TIMEOUT	= 30;
 	/** @var string */
 	public $CACHE_TABLES_NAMES_FILE	= "core_cache/cache_db_tables_[DB_HOST]_[DB_NAME]_[DB_USER].php";
 	/** @var bool Connection required or not (else E_USER_WARNING will be thrown not E_USER_ERROR) */
 	public $CONNECTION_REQUIRED		= 0;
 	/** @var bool Allow to use shutdown queries or not */
-	public $USE_SHUTDOWN_QUERIES		= 1;
+	public $USE_SHUTDOWN_QUERIES	= 1;
 	/** @var bool Allow to cache specified queries results */
 	public $ALLOW_CACHE_QUERIES		= 0;
 	/** @var bool Max number of cached queries */
 	public $CACHE_QUERIES_LIMIT		= 100;
 	/** @var bool Max number of logged queries (set to 0 to unlimited) */
-	public $LOGGED_QUERIES_LIMIT		= 1000;
+	public $LOGGED_QUERIES_LIMIT	= 1000;
 	/** @var bool Gather affected rows stats (will be used only when DEBUG_MODE is enabled) */
-	public $GATHER_AFFECTED_ROWS		= true;
+	public $GATHER_AFFECTED_ROWS	= true;
 	/** @var bool Store db queries to file */
 	public $LOG_ALL_QUERIES			= 0;
 	/** @var bool Store db queries to file */
-	public $LOG_SLOW_QUERIES			= 0;
+	public $LOG_SLOW_QUERIES		= 0;
 	/** @var string Log queries file name */
-	public $FILE_NAME_LOG_ALL			= "db_queries.log";
+	public $FILE_NAME_LOG_ALL		= "db_queries.log";
 	/** @var string Log queries file name */
-	public $FILE_NAME_LOG_SLOW			= "slow_queries.log";
+	public $FILE_NAME_LOG_SLOW		= "slow_queries.log";
 	/** @var float */
 	public $SLOW_QUERIES_TIME_LIMIT	= 0.2;
 	/** @var bool Add additional engine details to the SQL as comment for later use */
-	public $INSTRUMENT_QUERIES			= false;
+	public $INSTRUMENT_QUERIES		= false;
 	/** @var array */
-	public $_instrument_items			= array();
+	public $_instrument_items		= array();
 	/** @var bool @conf_skip Internal var (default value) */
-	public $_tried_to_connect			= false;
+	public $_tried_to_connect		= false;
 	/** @var bool @conf_skip Internal var (default value) */
-	public $_connected					= false;
+	public $_connected				= false;
 	/** @var mixed @conf_skip Driver instance */
-	public $db							= null;
+	public $db						= null;
 	/** @var string Tables names prefix */
-	public $DB_PREFIX					= null;
+	public $DB_PREFIX				= null;
 	/** @var string */
 	public $DB_HOST					= "";
 	/** @var string */
@@ -94,19 +94,25 @@ class yf_db {
 	/** @var int */
 	public $DB_PORT					= "";
 	/** @var string */
-	public $DB_CHARSET					= "";
+	public $DB_CHARSET				= "";
 	/** @var string */
-	public $DB_SOCKET					= "";
+	public $DB_SOCKET				= "";
 	/** @var bool */
-	public $DB_SSL						= false;
+	public $DB_SSL					= false;
 	/** @var bool */
-	public $DB_PERSIST					= false;
+	public $DB_PERSIST				= false;
 	/** @var bool In case of true - we will try to avoid any data/structure modification queries to not break replication */
-	public $DB_REPLICATION_SLAVE		= false;
+	public $DB_REPLICATION_SLAVE	= false;
 	/** @var bool Adding SQL_NO_CACHE to SELECT queries: useful to find long running queries */
-	public $SQL_NO_CACHE				= false;
+	public $SQL_NO_CACHE			= false;
 	/** @var array List of tables inside current database */
-	public $_PARSED_TABLES				= array();
+	public $_PARSED_TABLES			= array();
+	/** @var array */
+	public $_need_sys_prefix		= array(
+		"admin", "admin_groups", "admin_modules", "block_rules", "blocks", "categories", "category_items", "core_servers", "custom_bbcode",
+		"custom_replace_tags", "custom_replace_words", "locale_langs", "locale_translate", "locale_vars", "log_admin_auth", "log_admin_auth_fails", "log_auth",
+		"log_auth_fails", "log_core_errors", "log_emails", "log_img_resizes", "menu_items", "menus", "online", "settings", "sites", "smilies", "user_groups", "user_modules",
+	);
 
 	/**
 	* Constructor
@@ -318,7 +324,7 @@ class yf_db {
 			$result = $this->_repair_table($sql, $db_error);
 		}
 		// Try to backtrace error
-		if (!$result && $db_error/* && $GLOBALS['main']->USE_CUSTOM_ERRORS*/) {
+		if (!$result && $db_error) {
 			// Try to get new error message and code
 			$old_db_error = $db_error;
 			$db_error = $this->db->error();
@@ -1006,7 +1012,7 @@ class yf_db {
 		if (!$this->_already_parsed_tables) {
 			$this->_parse_tables();
 		}
-		return isset($this->_PARSED_TABLES[$name]) ? $this->_PARSED_TABLES[$name] : $this->DB_PREFIX. $name;
+		return isset($this->_PARSED_TABLES[$name]) ? $this->_PARSED_TABLES[$name] : $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? "sys_" : ""). $name;
 	}
 
 	/**
@@ -1037,6 +1043,7 @@ class yf_db {
 		return INCLUDE_PATH. $file_name;
 	}
 
+// TODO: cover this method with unit tests and simplify/remove constants/use PARSED TABLES
 	/**
 	* Try to fix table name
 	*/
@@ -1044,32 +1051,29 @@ class yf_db {
 		if (!strlen($name)) {
 			return "";
 		}
-// TODO: cover this method with unit tests and simplify/remove constants/use PARSED TABLES
-		if (defined($name)) {
-			return $name;
+		if (!$this->_already_parsed_tables) {
+			$this->_parse_tables();
 		}
 		if (substr($name, 0, strlen("dbt_")) == "dbt_") {
 			$name = substr($name, strlen("dbt_"));
 		}
-		// Not an error! We do that twice to be sure db('dbt_') will not happen
-		if (substr($name, 0, strlen("dbt_")) == "dbt_") {
-			$name = substr($name, strlen("dbt_"));
+		$orig_name = $name;
+		$name_wo_db_prefix = $name;
+		if ($this->DB_PREFIX && substr($name, 0, strlen($this->DB_PREFIX)) == $this->DB_PREFIX) {
+			$name_wo_db_prefix = substr($name, strlen($this->DB_PREFIX));
 		}
-		if ($this->IS_PRIMARY_CONNECTION) {
-			// Cut $this->DB_PREFIX if exists in table name
-			if ($this->DB_PREFIX && substr($name, 0, strlen($this->DB_PREFIX)) == $this->DB_PREFIX) {
-				$name = substr($name, strlen($this->DB_PREFIX));
-			}
-			$try = eval("return dbt_".$name.";");
-			if ($try && substr($try, 0, strlen("dbt_")) != "dbt_") {
-				$name = $try;
-			}
+		if (isset($this->_PARSED_TABLES[$name])) {
+			$n2 = $this->_PARSED_TABLES[$name];
+		} elseif (isset($this->_PARSED_TABLES[$name_wo_db_prefix])) {
+			$n2 = $this->_PARSED_TABLES[$name_wo_db_prefix];
 		} else {
-			if ($this->DB_PREFIX && substr($name, 0, strlen($this->DB_PREFIX)) != $this->DB_PREFIX) {
-				$name = $this->DB_PREFIX. $name;
+			if ($name_wo_db_prefix != $name) {
+				$n2 = $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? "sys_" : ""). $name_wo_db_prefix;
+			} else {
+				$n2 = $this->DB_PREFIX. $name_wo_db_prefix;
 			}
 		}
-		return $name;
+		return $n2;
 	}
 
 	/**

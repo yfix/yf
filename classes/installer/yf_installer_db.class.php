@@ -119,6 +119,9 @@ class yf_installer_db {
 		if ($this->USE_LOCKING && !$this->_get_lock()) {
 			return false;
 		}
+		if (substr($table_name, 0, strlen("sys_")) == "sys_") {
+			$table_name = substr($table_name, strlen("sys_"));
+		}
 		// Prevent repairing twice
 		if (isset($this->_installed_tables[$table_name])) {
 			return false;
