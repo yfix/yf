@@ -212,7 +212,6 @@ class yf_logs {
 			.(!empty($_SERVER['REQUEST_URI']) ? "URL: http://".$_SERVER["HTTP_HOST"].$_SERVER['REQUEST_URI']."; " : "")
 			.(!empty($_SERVER['HTTP_REFERER']) ? "REFERER = ".$_SERVER['HTTP_REFERER']."; " : "")
 			."##\r\n";
-		//-----------------------------------------------------------------------------
 		// All queries
 		if (db()->LOG_ALL_QUERIES && !empty(db()->FILE_NAME_LOG_ALL)) {
 			$c = 0;
@@ -233,7 +232,6 @@ class yf_logs {
 			fwrite($h, "####\r\n");
 			fclose($h);
 		}
-		//-----------------------------------------------------------------------------
 		// Slow queries
 		if (db()->LOG_SLOW_QUERIES && !empty(db()->FILE_NAME_LOG_SLOW)) {
 			$c = 0;

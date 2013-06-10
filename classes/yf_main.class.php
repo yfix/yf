@@ -148,6 +148,8 @@ class yf_main {
 	public $ERROR_REPORTING_PROD	= 0;
 	/** @var int Error reporting level for DEBUG_MODE enabled */
 	public $ERROR_REPORTING_DEBUG	= 22519; // 22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED;
+	/** @var string Log errors switcher, keep empty to disable logging */
+	public $ERROR_LOG_PATH			= "{PROJECT_PATH}error_php.log";
 	/** @var mixed Development mode, enable dev overrides layer, can containg string with developer name */
 	public $DEV_MODE				= false;
 	/** @var string Server host name */
@@ -170,7 +172,7 @@ class yf_main {
 		if (!isset($this->_time_start)) {
 			$this->_time_start = microtime(true);
 		}
-		if (!empty($_SERVER['argc']) && !array_key_exists('REQUEST_METHOD', $_SERVER)) {
+		if ($this->_server('argc') && !array_key_exists('REQUEST_METHOD', $this->_server())) {
 			$this->CONSOLE_MODE = true;
 		}
 		error_reporting(0); // Remove all errors initially
@@ -264,20 +266,20 @@ class yf_main {
 		if ($this->TRACK_USER_PAGE_VIEWS && $this->USER_ID) {
 			$this->_add_shutdown_code('if (!main()->NO_GRAPHICS) update_user($this->USER_ID, array("last_view" => time(), "num_views" => ++$this->_user_info["num_views"]));');
 		}
-		conf('filter_hidden', !empty($_COOKIE['filter_hidden']) ? 1 : 0);
-		conf('qm_hidden', !empty($_COOKIE['qm_hidden']) ? 1 : 0);
+		conf('filter_hidden', $this->_cookie('filter_hidden') ? 1 : 0);
+		conf('qm_hidden', $this->_cookie('qm_hidden') ? 1 : 0);
 
 		$https_needed = $this->USE_ONLY_HTTPS;
 		if (!$https_needed) {
 			foreach ((array)$this->HTTPS_ENABLED_FOR as $_item) {
-				if (preg_match("/".$_item."/ims", $_SERVER["QUERY_STRING"])) {
+				if (preg_match("/".$_item."/ims", $this->_server("QUERY_STRING"))) {
 					$https_needed = true;
 					break;
 				}
 			}
 		}
-		if ($https_needed && !$this->CONSOLE_MODE && !($_SERVER["HTTPS"] || $_SERVER["SSL_PROTOCOL"])) {
-			$redirect_url	= str_replace("http://", "https://", WEB_PATH). $_SERVER["QUERY_STRING"];
+		if ($https_needed && !$this->CONSOLE_MODE && !($this->_server("HTTPS") || $this->_server("SSL_PROTOCOL"))) {
+			$redirect_url	= str_replace("http://", "https://", WEB_PATH). $this->_server("QUERY_STRING");
 			return js_redirect(process_url($redirect_url));
 		}
 		if ($this->INTRUSION_DETECTION) {
@@ -346,8 +348,10 @@ class yf_main {
 	*/
 	function init_db() {
 		// Check if current object/action not required db connection
-		if ($this->NO_DB_FOR && $_GET["object"] && isset($this->NO_DB_FOR[$_GET["object"]])) {
-			if (empty($this->NO_DB_FOR[$_GET["object"]]) || ($_GET["action"] && in_array($_GET["action"], $this->NO_DB_FOR[$_GET["object"]]))) {
+		$get_object = $this->_get('object');
+		$get_action = $this->_get('action');
+		if ($this->NO_DB_FOR && $get_object && isset($this->NO_DB_FOR[$get_object])) {
+			if (empty($this->NO_DB_FOR[$get_object]) || ($get_action && in_array($get_action, $this->NO_DB_FOR[$get_object]))) {
 				$this->NO_DB_CONNECT = true;
 			}
 		}
@@ -382,7 +386,7 @@ class yf_main {
 	/**
 	*/
 	function init_cache() {
-		if ($this->CACHE_CONTROL_FROM_URL && $_GET["no_core_cache"]) {
+		if ($this->CACHE_CONTROL_FROM_URL && $this->_get("no_core_cache")) {
 			$this->USE_SYSTEM_CACHE = false;
 		}
 		if ($this->USE_SYSTEM_CACHE) {
@@ -403,13 +407,14 @@ class yf_main {
 			$this->init_class("errors", "classes/");
 			$this->error_handler =& $this->modules['errors'];
 		}
-
-###################
-
-		ini_set("error_log", PROJECT_PATH."error_php.log");
-
-###################
-
+		if ($this->ERROR_LOG_PATH) {
+			$replace = array(
+				'{YF_PATH}'		=> YF_PATH,
+				'{PROJECT_PATH}'=> PROJECT_PATH,
+				'{SITE_PATH}'	=> SITE_PATH,
+			);
+			ini_set("error_log", str_replace(array_keys($replace), array_values($replace), $this->ERROR_LOG_PATH));
+		}
 	}
 
 	/**
@@ -419,7 +424,7 @@ class yf_main {
 		if (!$this->CONSOLE_MODE && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
 			$health_result = file_get_contents($this->SERVER_HEALTH_FILE);
 			if ($health_result != "OK") {
-				header($_SERVER["SERVER_PROTOCOL"]." 503 Service Unavailable");
+				header($this->_server("SERVER_PROTOCOL")." 503 Service Unavailable");
 				exit();
 			}
 		}
@@ -466,7 +471,7 @@ class yf_main {
 		if (isset($_spider_name)) {
 			return $_spider_name;
 		}
-		$SPIDER_NAME = $this->modules["common"]->_is_spider($_SERVER["REMOTE_ADDR"], $_SERVER["HTTP_USER_AGENT"]);
+		$SPIDER_NAME = $this->modules["common"]->_is_spider($this->_server("REMOTE_ADDR"), $this->_server("HTTP_USER_AGENT"));
 		if (empty($SPIDER_NAME)) {
 			if (preg_match("/(bot|spider|crawler|curl|wget)/ims", $USER_AGENT)) {
 				$SPIDER_NAME = "Unknown spider";
@@ -528,13 +533,13 @@ class yf_main {
 		if ($this->SESSION_REFERER_CHECK) { // WEB_PATH
 			ini_set('session.referer_check', $this->SESSION_REFERER_CHECK);
 		}
-		conf('COOKIES_ENABLED', isset($_COOKIE[$this->SESSION_NAME]) ? 1 : 0);
+		conf('COOKIES_ENABLED', !is_null($this->_cookie($this->SESSION_NAME)) ? 1 : 0);
 		// Check if we have valid session name
-		if (isset($_COOKIE[$this->SESSION_NAME])) {
-			$_test_result = preg_replace("/[^a-z0-9]/i", "", $_COOKIE[$this->SESSION_NAME]);
-			if ($_test_result !== $_COOKIE[$this->SESSION_NAME]) {
-				$_COOKIE[$this->SESSION_NAME] = abs(crc32(microtime(true)));
-				session_id($_COOKIE[$this->SESSION_NAME]);
+		if (!is_null($this->_cookie($this->SESSION_NAME))) {
+			$_test_result = preg_replace("/[^a-z0-9]/i", "", $this->_cookie($this->SESSION_NAME));
+			if ($_test_result !== $this->_cookie($this->SESSION_NAME)) {
+				$this->_cookie($this->SESSION_NAME, abs(crc32(microtime(true))));
+				session_id($this->_cookie($this->SESSION_NAME));
 			}
 		}
 		if (!empty($this->SESSION_SAVE_DIR)) {
@@ -597,7 +602,7 @@ class yf_main {
 				}
 			}
 			if (!extension_loaded('zlib') ||
-				strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') === false ||
+				strpos($this->_server("HTTP_ACCEPT_ENCODING"), 'gzip') === false ||
 				(bool)ini_get('zlib.output_compression') ||
 				(bool)ini_get('zend_accelerator.compress_all') ||
 				ini_get("output_handler") == "ob_gzhandler"
@@ -633,7 +638,7 @@ class yf_main {
 		if (!conf('SITE_ID')) {
 			$site_id = 1;
 			foreach ((array)$this->get_data("sys_sites") as $site) {
-				if ($site["name"] == $_SERVER["HOST_NAME"]) {
+				if ($site["name"] == $this->_server("HOST_NAME")) {
 					$site_id = $site["id"];
 					break;
 				}
@@ -669,7 +674,7 @@ class yf_main {
 	* @return	void
 	*/
 	function init_locale () {
-		if (!empty($_GET['no_lang']) || conf('no_locale')) {
+		if ($this->_get('no_lang') || conf('no_locale')) {
 			return false;
 		}
 		_class("i18n")->init_locale();
@@ -691,7 +696,7 @@ class yf_main {
 			if ($def_page) {
 				parse_str(substr($def_page, 3), $_tmp);
 				foreach ((array)$_tmp as $k => $v) {
-					$_GET[$k] = $v;
+					$this-_get($k, $v);
 				}
 			}
 			return false;
@@ -701,7 +706,7 @@ class yf_main {
 			return false;
 		}
 		// Default stop-list
-		if (in_array($_GET["object"], array("site_links"))) {
+		if (in_array($this->_get("object"), array("site_links"))) {
 			return false;
 		}
 		$auth_module_name = "auth_".(MAIN_TYPE_ADMIN ? "admin" : "user");
@@ -967,7 +972,7 @@ class yf_main {
 			"[CLASS]"	=> $class_name,
 			"[METHOD]"	=> $method_name,
 			"[LANG]"	=> defined('DEFAULT_LANG') ? DEFAULT_LANG : conf('language'),
-			"[DOMAIN]"	=> defined('CUR_DOMAIN_LONG') ? CUR_DOMAIN_LONG : $_SERVER['HTTP_HOST'],
+			"[DOMAIN]"	=> defined('CUR_DOMAIN_LONG') ? CUR_DOMAIN_LONG : $this->_server('HTTP_HOST'),
 			"[CATEGORY]"=> conf('current_category'),
 			"[DEBUG]"	=> intval(DEBUG_MODE),
 		);
@@ -1075,10 +1080,10 @@ class yf_main {
 				$_cur_params = $this->call_class_method($class_name, "modules/", $method_name, array("describe" => "1"), $use_cache, $cache_ttl, $cache_key_override);
 			}
 			// First check if widget is for special _GET["object"]
-			if (isset($_cur_params["object"]) && $_cur_params["object"] && !in_array($_GET["object"], explode(",", $_cur_params["object"]))) {
+			if (isset($_cur_params["object"]) && $_cur_params["object"] && !in_array($this->_get("object"), explode(",", $_cur_params["object"]))) {
 				return false;
 			}
-			if (isset($_cur_params["action"]) && $_cur_params["action"] && !in_array($_GET["action"], explode(",", $_cur_params["action"]))) {
+			if (isset($_cur_params["action"]) && $_cur_params["action"] && !in_array($this->_get("action"), explode(",", $_cur_params["action"]))) {
 				return false;
 			}
 		}
@@ -1308,7 +1313,7 @@ class yf_main {
 		uksort($sites1, _sort_by_length);
 		uksort($sites2, _sort_by_length);
 		$sites = $sites1 + $sites2;
-		$found_site = $this->_find_site_path_best_match($sites, $_SERVER["SERVER_ADDR"], $_SERVER["SERVER_PORT"], $_SERVER["HTTP_HOST"]);
+		$found_site = $this->_find_site_path_best_match($sites, $this->_server("SERVER_ADDR"), $this->_server("SERVER_PORT"), $this->_server("HTTP_HOST"));
 		return $found_site;
 	}
 
@@ -1367,14 +1372,14 @@ class yf_main {
 		if (DEBUG_MODE) {
 			ini_set("display_errors", "stdout");
 		}
-		if (isset($_SERVER["SERVER_ADDR"])) {
-			$_SERVER["SERVER_ADDR"]	= preg_replace("#[^0-9\.]+#", "", trim($_SERVER["SERVER_ADDR"]));
+		if (!is_null($this->_server("SERVER_ADDR"))) {
+			$this->_server("SERVER_ADDR", preg_replace("#[^0-9\.]+#", "", trim( $this->_server("SERVER_ADDR") )));
 		}
-		if (isset($_SERVER["SERVER_PORT"])) {
-			$_SERVER["SERVER_PORT"]	= intval($_SERVER["SERVER_PORT"]);
+		if (!is_null($this->_server("SERVER_PORT"))) {
+			$this->_server("SERVER_PORT", intval( $this->_server("SERVER_PORT") ));
 		}
-		if (isset($_SERVER["HTTP_HOST"])) {
-			$_SERVER["HTTP_HOST"]	= strtolower(str_replace("..", ".", preg_replace("#[^0-9a-z\-\.]+#", "", trim($_SERVER["HTTP_HOST"]))));
+		if (!is_null($this->_server("HTTP_HOST"))) {
+			$this->_server("HTTP_HOST", strtolower(str_replace("..", ".", preg_replace("#[^0-9a-z\-\.]+#", "", trim( $this->_server("HTTP_HOST") )))));
 		}
 		if (defined('DEV_MODE')) {
 			conf('DEV_MODE', DEV_MODE);
@@ -1382,7 +1387,7 @@ class yf_main {
 		$this->DEV_MODE = conf('DEV_MODE');
 		$this->HOSTNAME = php_uname('n');
 		// Check if we are running in "server" or "cmd line" (or "cli") mode
-		define('IS_CLI', php_sapi_name() == "cli" || empty($_SERVER['PHP_SELF']) ? 1 : 0);
+		define('IS_CLI', php_sapi_name() == "cli" || !$this->_server('PHP_SELF') ? 1 : 0);
 		// Get server OS
 		define('OS_WINDOWS', substr(PHP_OS, 0, 3) == 'WIN');
 		// Check required params
@@ -1419,7 +1424,7 @@ class yf_main {
 		}
 		// Set WEB_PATH (if not done yet)
 		if (!defined('WEB_PATH'))	{
-			$request_uri	= $_SERVER['REQUEST_URI'];
+			$request_uri	= $this->_server('REQUEST_URI');
 			$cur_web_path	= "";
 			if ($request_uri[strlen($request_uri) - 1] == "/") {
 				$cur_web_path	= substr($request_uri, 0, -1);
@@ -1428,15 +1433,15 @@ class yf_main {
 			}
 			$host = "";
 			$conf_domains = conf("DOMAINS");
-			if ($_SERVER["HTTP_HOST"]) {
-				$host = $_SERVER["HTTP_HOST"];
+			if ($this->_server('HTTP_HOST')) {
+				$host = $this->_server('HTTP_HOST');
 			} elseif (is_array($conf_domains)) {
 				$host = (string) current($conf_domains);
 			} else {
 				$host = "127.0.0.1";
 			}
 			define('WEB_PATH',
-				(($_SERVER["HTTPS"] || $_SERVER["SSL_PROTOCOL"]) ? "https://" : "http://")
+				(($this->_server("HTTPS") || $this->_server("SSL_PROTOCOL")) ? "https://" : "http://")
 				.$host
 				.str_replace(array("\\","//"), array("/","/"), (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path)."/")
 			);
@@ -1460,7 +1465,7 @@ class yf_main {
 			}
 		}
 		// Check if current page is called via AJAX call from javascript
-		define("IS_AJAX", $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest" ? 1 : 0);
+		define("IS_AJAX", $this->_server("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest" ? 1 : 0);
 
 		define('USER_MODULES_DIR', "modules/");
 		define('ADMIN_MODULES_DIR', "admin_modules/");
@@ -1483,7 +1488,7 @@ class yf_main {
 				}
 			}
 			// Parse console options into $_GET array
-			foreach ((array)$_SERVER['argv'] as $v) {
+			foreach ((array)$this->_server('argv') as $v) {
 				if (substr($v, 0, 2) != "--") {
 					continue;
 				}
@@ -1491,18 +1496,18 @@ class yf_main {
 				list($_name, $_val) = explode("=", $v);
 				$_name	= trim($_name);
 				if (strlen($_name)) {
-					$_GET[$_name] = trim($_val);
+					$this->_get($_name, trim($_val));
 				}
 			}
 		}
 		// Filter object and action from $_GET
-		if ($_GET["action"] == $_GET["object"]) {
-			$_GET["action"] = "";
+		if ($this->_get("action") == $this->_get("object")) {
+			$this->_get("action", "");
 		}
-		$_GET["object"] = str_replace(array("yf_","-"), array("","_"), preg_replace("/[^a-z_\-0-9]*/", "", strtolower(trim($_GET["object"]))));
-		$_GET["action"] = str_replace("-", "_", preg_replace("/[^a-z_\-0-9]*/", "", strtolower(trim($_GET["action"]))));
-		if (empty($_GET['action'])) {
-			$_GET['action'] = defined('DEFAULT_ACTION') ? DEFAULT_ACTION : "show";
+		$this->_get("object", str_replace(array("yf_","-"), array("","_"), preg_replace("/[^a-z_\-0-9]*/", "", strtolower(trim( $this->_get("object") )))));
+		$this->_get("action", str_replace("-", "_", preg_replace("/[^a-z_\-0-9]*/", "", strtolower(trim( $this->_get("action") )))));
+		if (!$this->_get("action")) {
+			$this->_get("action", defined('DEFAULT_ACTION') ? DEFAULT_ACTION : "show");
 		}
 		if ($this->USER_INFO_DYNAMIC) {
 			module_conf("user_data", "MODE", "DYNAMIC");
@@ -1567,17 +1572,17 @@ class yf_main {
 	* @return	void
 	*/
 	function _init_cur_user_info(&$OBJ) {
-		if (in_array($_GET["object"], (array)$this->_auto_info_skip_modules)) {
+		if (in_array($this->_get("object"), (array)$this->_auto_info_skip_modules)) {
 			return false;
 		}
 		if (in_array(str_replace("yf_", "", get_class($OBJ)), (array)$this->_auto_info_skip_modules)) {
 			return false;
 		}
 		if (MAIN_TYPE_ADMIN) {
-			$OBJ->USER_ID = $_GET["user_id"];
+			$OBJ->USER_ID = $this->_get("user_id");
 		} elseif (MAIN_TYPE_USER && isset($_SESSION)) {
-			$OBJ->USER_ID	= isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
-			$OBJ->USER_GROUP= isset($_SESSION['user_group']) ? $_SESSION['user_group'] : 0;
+			$OBJ->USER_ID	= (int)$this->_session('user_id');
+			$OBJ->USER_GROUP= (int)$this->_session('user_group');
 		}
 		// Select user details
 		if (isset($OBJ->USER_ID) && !empty($OBJ->USER_ID)) {
@@ -1652,45 +1657,56 @@ class yf_main {
 		$OBJ = $this->init_class("project_packer", "classes/");
 	}
 
+# TODO: in DEBUG_MODE log/cleanup/catch reads/writes to these methods
+
 	/**
-	* Helpers to accessing superglobal arrays like $_GET, $_POST with future ability to log/cleanup/catch reads/writes
+	* Helper to get/set GET vars
 	*/
-	function _get($key, $val = null) {
+	function _get($key = null, $val = null) {
 		if (!is_null($val)) {
 			$_GET[$key] = $val;
 		}
-		return $_GET[$key];
+		return $key === null ? $_GET : $_GET[$key];
 	}
 
-	/***/
-	function _post($key, $val = null) {
+	/**
+	* Helper to get/set POST vars
+	*/
+	function _post($key = null, $val = null) {
 		if (!is_null($val)) {
 			$_POST[$key] = $val;
 		}
-		return $_POST[$key];
+		return $key === null ? $_POST : $_POST[$key];
 	}
 
-	/***/
-	function _session($key, $val = null) {
+	/**
+	* Helper to get/set SESSION vars
+	*/
+	function _session($key = null, $val = null) {
 		if (!is_null($val)) {
 			$_SESSION[$key] = $val;
 		}
-		return $_SESSION[$key];
+		return $key === null ? $_SESSION : $_SESSION[$key];
 	}
 
-	/***/
-	function _server($key, $val = null) {
+	/**
+	* Helper to get/set SERVER vars
+	*/
+	function _server($key = null, $val = null) {
 		if (!is_null($val)) {
 			$_SERVER[$key] = $val;
 		}
-		return $_SERVER[$key];
+		return $key === null ? $_SERVER : $_SERVER[$key];
 	}
 
-	/***/
-	function _cookie($key, $val = null) {
+	/**
+	* Helper to get/set COOKIE vars
+	*/
+	function _cookie($key = null, $val = null) {
 		if (!is_null($val)) {
+# TODO: check and use main() settings for cookies
 			setcookie($key, $val);
 		}
-		return $_COOKIE[$key];
+		return $key === null ? $_COOKIE : $_COOKIE[$key];
 	}
 }
