@@ -130,10 +130,18 @@ EOD;
 $admin_index_file_content.="\n?>";
 
 //----------------------------------------------------------------
-file_put_contents('./index.php', $index_file_content);
-file_put_contents('./db_setup.php', $db_setup_file_content);
-mkdir('./admin');
-file_put_contents('./admin/index.php', $admin_index_file_content);
+if (!file_exists('./index.php')) {
+	file_put_contents('./index.php', $index_file_content);
+}
+if (!file_exists('./db_setup.php')) {
+	file_put_contents('./db_setup.php', $db_setup_file_content);
+}
+if (!file_exists('./admin')) {
+	mkdir('./admin');
+}
+if (!file_exists('./admin/index.php')) {
+	file_put_contents('./admin/index.php', $admin_index_file_content);
+}
 echo "<span class='green'>OK</span><BR>";
 $log_text .= "OK\n";
 
@@ -410,7 +418,7 @@ $log_text .= "OK\n";
 //----------------------------------------------------------------
 // Finishing...
 
-#rename("./install.php", "./install.php.finished");
+rename("./install.php", "./install.php.finished");
 
 ti("Install complete");
 $log_text .= "\nInstall complete\n";

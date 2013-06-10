@@ -500,8 +500,6 @@ class yf_main {
 		if (conf("SESSION_OFF")) {
 			return false;
 		}
-		@ini_set('session.use_trans_sid',	0); // We need @ here to avoid error when session already started
-		ini_set('url_rewriter.tags',		"");
 		// Set custom session name
 		if ($this->USE_UNIQUE_SESSION_NAME) {
 			$force_name_path = conf('_SESSION_FORCE_NAME_PATH');
@@ -512,6 +510,11 @@ class yf_main {
 		} else {
 			$this->SESSION_NAME = ini_get("session.name"); // Usually PHPSESSID
 		}
+		if (session_status() == PHP_SESSION_ACTIVE) {
+			return true;
+		}
+		@ini_set('session.use_trans_sid',	0); // We need @ here to avoid error when session already started
+		ini_set('url_rewriter.tags',		"");
 		if (!empty($this->SESSION_LIFE_TIME)) {
 			ini_set('session.gc_maxlifetime',	$this->SESSION_LIFE_TIME);
 			ini_set('session.cookie_lifetime',	$this->SESSION_LIFE_TIME);
