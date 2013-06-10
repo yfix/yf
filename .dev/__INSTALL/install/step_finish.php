@@ -93,12 +93,11 @@ define("SITE_DEFAULT_PAGE", "./?object={$site_default_page}");
 define("DEFAULT_LANG", "{$_SESSION['INSTALL']["language_in_project"]}");
 define("SITE_ADVERT_NAME", "{$_SESSION['INSTALL']["site_name"]}");
 {$_color_theme}
-
 require dirname(__FILE__)."/project_conf.php"; // Such call required to allow console calls
 \$GLOBALS["PROJECT_CONF"]["tpl"]["REWRITE_MODE"] = {$rewrite_mode_status};
 {$_add_content}
 require YF_PATH."classes/yf_main.class.php";
-\$GLOBALS['main'] = new yf_main("user", 0, 1);
+new yf_main("user", 0, 1);
 EOD;
 $index_file_content.="\n?>";
 
@@ -107,11 +106,11 @@ $index_file_content.="\n?>";
 $db_setup_file_content = <<<EOT
 <?php;
 define('DB_TYPE',		"mysql41");		// Type of current DB Server to use";
-define('DB_HOST',		"{$_SESSION['INSTALL']["dbhost"]}"); 		// DB Server Host Name";
-define('DB_NAME',		"{$_SESSION['INSTALL']["dbname"]}");		// Database Name";
-define('DB_USER',		"{$_SESSION['INSTALL']["dbuser"]}");		// DB Server User";
-define('DB_PSWD',		"{$_SESSION['INSTALL']["dbpasswd"]}");	// DB Server Password";
-define('DB_PREFIX',		"{$_SESSION['INSTALL']["prefix"]}");		// Table prefix";
+define('DB_HOST',		"{$_SESSION['INSTALL']['dbhost']}"); 		// DB Server Host Name";
+define('DB_NAME',		"{$_SESSION['INSTALL']['dbname']}");		// Database Name";
+define('DB_USER',		"{$_SESSION['INSTALL']['dbuser']}");		// DB Server User";
+define('DB_PSWD',		"{$_SESSION['INSTALL']['dbpasswd']}");	// DB Server Password";
+define('DB_PREFIX',		"{$_SESSION['INSTALL']['prefix']}");		// Table prefix";
 define('DB_CHARSET',	"utf8"); 					// Encoding
 EOT;
 $db_setup_file_content.="\n?>";
@@ -126,49 +125,17 @@ define("ADMIN_FRAMESET_MODE", 1);
 require dirname(dirname(__FILE__))."/project_conf.php";
 {$_add_content}
 require YF_PATH."classes/yf_main.class.php";
-\$GLOBALS['main'] = new yf_main("admin", 0, 1);
+new yf_main("admin", 0, 1);
 EOD;
 $admin_index_file_content.="\n?>";
 
 //----------------------------------------------------------------
-// smtp_config.php settings
-$smtp_config_file_content = <<<EOD
-<?php
-// Array of predefined SMTP accounts
-\$GLOBALS['_smtp_accounts'] = array(
-	"noreply" => array(
-		'smtp_host'		=> '{$_SESSION['INSTALL']["smtp_host"]}',
-		'smtp_port'		=> '{$_SESSION['INSTALL']["smtp_port"]}',
-		'smtp_user_name'=> '{$_SESSION['INSTALL']["smtp_user_name"]}',
-		'smtp_password'	=> '{$_SESSION['INSTALL']["smtp_password"]}',
-		'smtp_from'		=> '{$_SESSION['INSTALL']["smtp_user_name"]}',
-		'smtp_secure'	=> 'tls',
-	),
-);
-// Array of patterns to use predefined accounts
-\$GLOBALS['_smtp_patterns'] = array(
-	'.*@.*'	=> "noreply",
-);
-EOD;
-$smtp_config_file_content.="\n?>";
-
-
-//----------------------------------------------------------------
-// set index.php settings
 file_put_contents('./index.php', $index_file_content);
-// set db_setup.php settings
 file_put_contents('./db_setup.php', $db_setup_file_content);
-// set admin_index_file_content.php settings
-@mkdir('./admin');
+mkdir('./admin');
 file_put_contents('./admin/index.php', $admin_index_file_content);
-// set smtp_config.php settings
-#if(!empty($_SESSION['INSTALL']["smtp_host"])){
-#	file_put_contents('./smtp_config.php', $smtp_config_file_content);
-#}
 echo "<span class='green'>OK</span><BR>";
 $log_text .= "OK\n";
-
-
 
 
 //----------------------------------------------------------------
@@ -207,7 +174,7 @@ unset($_temp_array);
 
 //----------------------------------------------------------------
 // delete or ignore already existed tables
-$Q = mysql_query("SHOW TABLES LIKE '".$_SESSION['INSTALL']["prefix"]."%'");
+$Q = mysql_query("SHOW TABLES LIKE '".$_SESSION['INSTALL']['prefix']."%'");
 while ($A = mysql_fetch_array($Q)){
 	$tables_in_base[$A[0]] = $A[0];
 } 
@@ -220,9 +187,9 @@ if (!empty($tables_in_base)) {
 		}
 	} else {
 		foreach ((array)$tables_in_base as $value){
-			$value = str_replace($_SESSION['INSTALL']["prefix"],"", $value);
+			$value = str_replace($_SESSION['INSTALL']['prefix'],"", $value);
 			unset($GLOBALS['INSTALL']['import_tables'][$value]);
-			echo "&#160;&#160;&#160;<small>"; ti("ignore table"); echo " - ".$_SESSION['INSTALL']["prefix"].$value."</small><br>";
+			echo "&#160;&#160;&#160;<small>"; ti("ignore table"); echo " - ".$_SESSION['INSTALL']['prefix'].$value."</small><br>";
 		}
 	}
 }
@@ -235,22 +202,23 @@ if (!empty($tables_in_base)) {
 
 define("DEBUG_MODE", true);
 
+define("DB_PREFIX", $_SESSION['INSTALL']['prefix']);
 define("YF_PATH", $framework_path);
 require YF_PATH."classes/yf_main.class.php";
-$GLOBALS['main'] = new yf_main("user", $no_db_connect = false, $auto_init_all = false);
+new yf_main("user", $no_db_connect = false, $auto_init_all = false);
 
 
 // create tables with yf
 $log_text .= "Create db tables: \n";
 ti("create tables : ");
-db()->query("SELECT * FROM ".dbt_admin." LIMIT 1");
+db()->query("SELECT * FROM ".db("admin")." LIMIT 1");
 $log_text .= "-admin\n";
-db()->query("SELECT * FROM ".dbt_admin_groups." LIMIT 1");
+db()->query("SELECT * FROM ".db("admin_groups")." LIMIT 1");
 $log_text .= "-admin_groups\n";
 
 foreach ((array)$GLOBALS['INSTALL']['import_tables'] as $value){
 	$value = str_replace("sys_", "", $value);
-	db()->query("SELECT * FROM dbt_".$value." LIMIT 1");
+	db()->query("SELECT * FROM ".db($value)." LIMIT 1");
 	$log_text .= "-".$value."\n";
 }
 
@@ -264,25 +232,25 @@ foreach ((array)$GLOBALS['INSTALL']['import_tables'] as $value){
 	if ($value == "sys_user_modules") {
 
 		include $_SESSION['INSTALL']["install_path"]."data_user_modules.php";
-		db()->REPLACE(dbt_user_modules, db()->es($GLOBALS['INSTALL']["data_user_modules"]));
+		db()->REPLACE(db("user_modules"), db()->es($GLOBALS['INSTALL']["data_user_modules"]));
 
 	} elseif ($value == "sys_menu_items") {
 
 		include $_SESSION['INSTALL']["install_path"]."data_menu_items.php";
-		db()->REPLACE(dbt_menu_items, db()->es($GLOBALS['INSTALL']["data_menu_items"]));
+		db()->REPLACE(db("menu_items"), db()->es($GLOBALS['INSTALL']["data_menu_items"]));
 
 	} else {
-		import($_SESSION['INSTALL']["install_path"]."sql/".$value.".sql", $_SESSION['INSTALL']["prefix"]);
+		import($_SESSION['INSTALL']["install_path"]."sql/".$value.".sql", $_SESSION['INSTALL']['prefix']);
 	}
-	echo "&#160;&#160;&#160;<small>"; ti("import table"); echo " - ".$_SESSION['INSTALL']["prefix"].$value."</small><br>";
-	$log_text .= "-".$_SESSION['INSTALL']["prefix"].$value."\n";
+	echo "&#160;&#160;&#160;<small>"; ti("import table"); echo " - ".$_SESSION['INSTALL']['prefix'].$value."</small><br>";
+	$log_text .= "-".$_SESSION['INSTALL']['prefix'].$value."\n";
 }
 if ($_SESSION['INSTALL']["user_info_dynamic"]) {
-	db()->query("SELECT * FROM ".dbt_user_data_main." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_user_data_stats." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_user_data_info_fields." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_user_data_info_values." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_user_data_ban." LIMIT 1");
+	db()->query("SELECT * FROM ".db("user_data_main")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("user_data_stats")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("user_data_info_fields")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("user_data_info_values")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("user_data_ban")." LIMIT 1");
 }
 
 echo "<span class='green'>OK</span><BR>";
@@ -293,41 +261,41 @@ $log_text .= "Import initial data: ";
 if(isset($_SESSION['INSTALL']["import_initial_data"])){
 	ti("import initial data : ");
 
-	db()->query("SELECT * FROM ".dbt_user." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_gallery_photos." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_gallery_folders." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_forum_topics." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_forum_posts." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_forum_forums." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_blog_posts." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_blog_settings." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_articles_texts." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_interests_keywords." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_interests." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_news." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_comments." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_favorites." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_friends." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_friends_users." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_handshake." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_ignore_list." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_mailarchive." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_polls." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_poll_votes." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_reput_total." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_static_pages." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_tags." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_tags_settings." LIMIT 1");
-	db()->query("SELECT * FROM ".dbt_activity_logs." LIMIT 1");
+	db()->query("SELECT * FROM ".db("user")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("gallery_photos")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("gallery_folders")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("forum_topics")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("forum_posts")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("forum_forums")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("blog_posts")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("blog_settings")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("articles_texts")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("interests_keywords")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("interests")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("news")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("comments")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("favorites")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("friends")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("friends_users")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("handshake")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("ignore_list")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("mailarchive")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("polls")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("poll_votes")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("reput_total")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("static_pages")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("tags")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("tags_settings")." LIMIT 1");
+	db()->query("SELECT * FROM ".db("activity_logs")." LIMIT 1");
 	
-	import($_SESSION['INSTALL']["install_path"]."sql/_initial_data_en.sql", $_SESSION['INSTALL']["prefix"]);
+	import($_SESSION['INSTALL']["install_path"]."sql/_initial_data_en.sql", $_SESSION['INSTALL']['prefix']);
 	$log_text .= "OK\n";
 
 	// Load custom language initial data
 	if ($_SESSION['INSTALL']["language_in_project"]){
 		$_custom_lang_path = $_SESSION['INSTALL']["install_path"]."sql/_initial_data_".$_SESSION['INSTALL']["language_in_project"].".sql";
 		if (file_exists($_custom_lang_path)) {
-			import($_custom_lang_path, $_SESSION['INSTALL']["prefix"]);
+			import($_custom_lang_path, $_SESSION['INSTALL']['prefix']);
 		}
 	}
 
@@ -346,7 +314,7 @@ if(isset($_SESSION['INSTALL']["import_initial_data"])){
 
 		$GLOBALS['PROJECT_CONF']["user_data"]["MODE"] = "DYNAMIC";
 
-		$Q = db()->query("SELECT * FROM `".dbt_user."`");
+		$Q = db()->query("SELECT * FROM `".db("user")."`");
 		while ($A = db()->fetch_assoc($Q)) {
 			$result = update_user($A["id"], $A);
 		}
@@ -373,7 +341,7 @@ $log_text .= "Create .htaccess file: ";
 if (isset($_SESSION['INSTALL']["rewrite"])) {
 	$htaccess_file_content = file_get_contents($_SESSION['INSTALL']["install_path"]."htaccess.txt");
 	
-	db()->UPDATE(dbt_settings, array(
+	db()->UPDATE(db("settings"), array(
 		"value"	=> 1,				
 	), "`id`=4");	
 	
@@ -396,7 +364,7 @@ if (!empty($_SESSION['INSTALL']["modules"])){
 	ti("set modules settings : ");
 
 	foreach ((array)$_SESSION['INSTALL']["modules"] as $key => $value){
-		db()->UPDATE(dbt_menu_items, array(
+		db()->UPDATE(db("menu_items"), array(
 			"active"	=> 1,				
 		), "`id`=".$key);	
 	}
@@ -408,7 +376,7 @@ if (!empty($_SESSION['INSTALL']["modules"])){
 $log_text .= "Set admin login and password: ";
 ti("set admin login and password : ");
 
-db()->UPDATE(dbt_admin, array(
+db()->UPDATE(db("admin"), array(
 	"login"		=> db()->es($_SESSION['INSTALL']["admin_name"]),
 	"password"	=> md5($_SESSION['INSTALL']["admin_pass1"]),
 	"add_date"	=> time(),
@@ -442,7 +410,7 @@ $log_text .= "OK\n";
 //----------------------------------------------------------------
 // Finishing...
 
-rename("./install.php", "./install.php.finished");
+#rename("./install.php", "./install.php.finished");
 
 ti("Install complete");
 $log_text .= "\nInstall complete\n";

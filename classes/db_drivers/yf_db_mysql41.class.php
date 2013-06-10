@@ -59,7 +59,7 @@ class yf_db_mysql41 extends yf_db_driver {
 			: mysql_connect($connect_host, $this->user, $this->password, true, $use_ssl ? MYSQL_CLIENT_SSL : 0);
 
 		if (!$this->db_connect_id) {
-						conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
+			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
 			return false;
 		}
 		if ($this->dbname != "") {

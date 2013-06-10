@@ -16,13 +16,8 @@ function import ($sql_file, $prefix) {
 				continue;
 			}
 			$item_info["query"] = str_replace("%%prefix%%", $prefix, $item_info["query"]);
-
 			// Try to use framework method if availiable
-			if (is_object($GLOBALS['db'])) {
-				$GLOBALS['db']->query($item_info["query"]);
-			} else {
-				mysql_query($item_info["query"]) or error();
-			}
+			db()->query($item_info["query"]);
 		}
 	}
 }

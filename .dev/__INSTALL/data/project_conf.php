@@ -1,16 +1,12 @@
 <?php
-//--------------
 // UPLOADS PATHS
-//--------------
 define("SITE_UPLOADS_DIR",			"uploads/");				// Root folder for all uploads
 define("SITE_AVATARS_DIR",			"uploads/avatars/");		// avatars folder
 define("SITE_BLOG_IMAGES_DIR",		"uploads/blog_images/");	// blog images folder
 define("SITE_GALLERY_DIR",			"uploads/gallery/");		// gallery root folder
 define("SITE_CUSTOM_DESIGN_DIR",	"uploads/custom_design/");	// custom_design root folder
 define("SITE_ACCOUNT_VERIFY_DIR",	"uploads/account_verify/");	// account verification photos folder
-//--------------
 // COMMON USED VARS SECTION
-//--------------
 if (!defined('SITE_ADVERT_NAME')) {
 	define("SITE_ADVERT_NAME",	"Site name");	// Advertisement name
 }
@@ -18,18 +14,13 @@ define("SITE_ADVERT_TITLE",	"Site name");	// Advertisement title
 define("SITE_ADVERT_URL",	defined('WEB_PATH')?WEB_PATH:"");	// Advertisement URL
 define("SITE_ADMIN_NAME",	"Site admin");		// Site Admin name
 define("SITE_ADMIN_EMAIL",	"info@".$_SERVER["HTTP_HOST"]);	// Admin's email used in common cases
-//--------------
 // IMAGE OPTIONS
-//--------------
 define("AVATAR_MAX_X",	100);	// Avatar max sizes
 define("AVATAR_MAX_Y",	100);
-//define("NETPBM_PATH",	substr(PHP_OS, 0, 3) == 'WIN' ? "d:\\www\\GnuWin32\\bin\\" : "/usr/bin/");	// Leave blank if you want to use GD lib instead of NETPBM
-//define("IMAGICK_PATH",substr(PHP_OS, 0, 3) == 'WIN' ? "d:\\www\\imagick\\" : "/usr/bin/");
 define("THUMB_WIDTH",	120);	// Thumbnail width (default value)
 define("THUMB_HEIGHT",	1000);	// Thumbnail maximum height (default value)
 define("THUMB_QUALITY",	75);	// JPEG quality
 define("MAX_IMAGE_SIZE",5000000);// Max image file size (in bytes)
-//--------------
 // Force resizing original photos if their size is greater (in bytes)
 define("FORCE_RESIZE_IMAGE_SIZE",500000);
 define("FORCE_RESIZE_WIDTH",	1280);	// width for force resize

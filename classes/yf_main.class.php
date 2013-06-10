@@ -316,7 +316,7 @@ class yf_main {
 	function init_files () {
 		// Basic list of required files (for both admin and user section)
 		$require_files = array();
-		if (empty($this->NO_DB_CONNECT)) {
+		if ($this->NO_DB_CONNECT == 0) {
 			$require_files[] = "db_setup";
 		}
 		// Additional files
@@ -733,11 +733,21 @@ class yf_main {
 			$_time_start = microtime(true);
 		}
 		// Will throw E_FATAL_ERROR if not found
+		$file_exists = file_exists($path_to_module);
 		if ($is_required) {
-			require_once ($path_to_module);
+			if ($file_exists) {
+				include_once ($path_to_module);
+			} else {
+				if (DEBUG_MODE) {
+					echo "<b>YF FATAL ERROR</b>: Required file not found: ".$path_to_module."<br>\n<pre>".$this->trace_string()."</pre>";
+				}
+				exit();
+			}
 		// Here we do not want any errors if file is missing
-		} elseif (file_exists($path_to_module)) {
+		} elseif ($file_exists) {
 			include_once ($path_to_module);
+		} else {
+// TODO: log E_USER_NOTICE when module not found
 		}
 		if (DEBUG_MODE) {
 			$path_prepared = strtolower(str_replace(DIRECTORY_SEPARATOR, "/", str_replace("\\", "/", $path_to_module)));

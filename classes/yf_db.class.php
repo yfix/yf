@@ -187,9 +187,6 @@ class yf_db {
 	* Connect db driver and then connect to db
 	*/
 	function connect($db_host = "", $db_user = "", $db_pswd = null, $db_name = "", $force = false, $db_ssl = false, $db_port = "", $db_socket = "", $db_charset = "") {
-		if (!empty($GLOBALS['main']->NO_DB_CONNECT)) {
-			return false;
-		}
 		if (!empty($this->_tried_to_connect) && !$force) {
 			return $this->_connected;
 		}
@@ -937,15 +934,11 @@ class yf_db {
 	* Function return resource ID of the query
 	*/
 	function _parse_tables() {
-		if (!empty($GLOBALS['main']->NO_DB_CONNECT)) {
-			return false;
-		}
 		if ($this->_already_parsed_tables) {
 			return true;
 		}
-#		// Do connect (if not done yet)
+		// Do connect (if not done yet)
 		if (!is_object($this->db)) {
-#			return false;
 			$this->connect();
 		}
 		$included = false;
@@ -1010,10 +1003,10 @@ class yf_db {
 	* Get real table name from its short variant
 	*/
 	function _real_name ($name) {
-		if (!isset($this->_PARSED_TABLES)) {
+		if (!$this->_already_parsed_tables) {
 			$this->_parse_tables();
 		}
-		return !empty($this->_PARSED_TABLES[$name]) ? $this->_PARSED_TABLES[$name] : $name;
+		return isset($this->_PARSED_TABLES[$name]) ? $this->_PARSED_TABLES[$name] : $this->DB_PREFIX. $name;
 	}
 
 	/**
@@ -1051,6 +1044,7 @@ class yf_db {
 		if (!strlen($name)) {
 			return "";
 		}
+// TODO: cover this method with unit tests and simplify/remove constants/use PARSED TABLES
 		if (defined($name)) {
 			return $name;
 		}

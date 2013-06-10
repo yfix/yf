@@ -1,5 +1,9 @@
 <?php
 
+define('PROJECT_PATH', realpath("./")."/");
+define('INCLUDE_PATH', PROJECT_PATH);
+$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
+
 ini_set("display_errors", "on");
 error_reporting(E_ALL ^E_NOTICE);
 ini_set("short_open_tag", "1");
