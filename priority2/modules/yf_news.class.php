@@ -117,11 +117,12 @@ class yf_news extends yf_module {
 		);
 		return tpl()->parse(__CLASS__."/home_page_main", $replace);
 	}
-	
+
+	/**
+	*/
 	function _rss_general(){
 		$Q = db()->query("SELECT `id`,`title`,`add_date`,`head_text` FROM `".db('news')."` WHERE `active` = '1' ORDER BY `add_date` DESC LIMIT ".intval($this->NUM_RSS));
 		while ($A = db()->fetch_assoc($Q)) {
-			
 			$data[] = array(
 				"title"			=> _prepare_html(t("News")." - ".$A["title"]),
 				"link"			=> process_url("./?object=". __CLASS__ ."&action=full_news&id=".$A["id"]),
@@ -131,8 +132,14 @@ class yf_news extends yf_module {
 				"source"		=> "",
 			);
 		}
-		
 		return $data;
+	}
+
+	/**
+	* Alias
+	*/
+	function _for_home_page ($input = array()) {
+		return $this->_show_for_home_page($input);
 	}
 	
 	/**
@@ -171,7 +178,6 @@ class yf_news extends yf_module {
 		$OBJ = &main()->init_class("unread");
 		$ids = $OBJ->_get_unread("news");
 		
-		
 		if(!empty($ids)){
 			$sql		= "SELECT `id`,`title` FROM `".db('news')."` WHERE `id` IN(".implode(",", (array)$ids).")";
 			$order_sql	= " ORDER BY `add_date` DESC";
@@ -181,15 +187,10 @@ class yf_news extends yf_module {
 				$news_info[$A["id"]] = $A;
 			}
 		}
-		
 		$replace = array(
 			"items"		=> $news_info,
 			"pages"		=> $pages,
 		);
-		
 		return tpl()->parse($_GET["object"]."/unread", $replace);
 	}
-
-
-
 }
