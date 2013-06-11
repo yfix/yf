@@ -1,0 +1,7 @@
+{
+	"require": {
+		"phpmailer/phpmailer": "v5.2.6",
+		"phpseclib/phpseclib": "0.3.5",
+		"pear/archive_tar": "dev-master"
+	}
+}

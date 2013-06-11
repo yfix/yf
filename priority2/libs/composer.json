@@ -1,0 +1,13 @@
+{
+	"require": {
+		"smarty/smarty": "dev-master"
+		,"ensepar/html2pdf": "dev-master"
+		,"facebook/xhprof": "dev-master"
+		,"openid/php-openid": "dev-master"
+		,"sharom/jevix": "dev-master"
+		,"adodb/adodb-php": "dev-master"
+		,"firephp/firephp-core": "dev-master"
+		,"ezyang/htmlpurifier": "dev-master"
+		,"phpids/phpids": "dev-master"
+	}
+}
