@@ -188,7 +188,8 @@ if (empty($_POST)) {
 // TODO: form validation here
 // TODO: check database connection
 // TODO: move everything here into functions (easy testing and debugging)
-// TODO: add language selector
+// TODO: add language selector $_POST["install_project_lang"]
+// TODO: add language selector $_POST["install_project_lang"]
 /*
 $errors = array(
 	'install_db_pswd'	=> 'Wrong Password',
@@ -365,18 +366,28 @@ if ($_POST['install_checkbox_demo_data']) {
 	}
 	
 	import(INSTALLER_PATH."install/sql/_initial_data_en.sql", DB_PREFIX);
-	// Load custom language initial data
-#	if ($_SESSION['INSTALL']["language_in_project"]){
-#		$_custom_lang_path = INSTALLER_PATH."install/sql/_initial_data_".$_SESSION['INSTALL']["language_in_project"].".sql";
-#		if (file_exists($_custom_lang_path)) {
-#			import($_custom_lang_path, DB_PREFIX);
-#		}
-#	}
+	if ($_POST["install_project_lang"]){
+		$_custom_lang_path = INSTALLER_PATH."install/sql/_initial_data_".$_POST["install_project_lang"].".sql";
+		if (file_exists($_custom_lang_path)) {
+			import($_custom_lang_path, DB_PREFIX);
+		}
+	}
 
 	ob_start();
 	module("forum")->_init();
 	_class("forum_sync", "modules/forum/")->_sync_board();
 	ob_end_clean();
+
+#	$modules_menu_enable = array(
+#		"account", "activity", "articles", "banner_rotator", "blog", "calendar", "chat",	"comments",	"community", "dynamic", "email", "faq", "forum",
+#		"friends", "gallery", "geo_content", "get_pswd", "help", "home_page", "interests", "language", "layout_settings", "login_form", "mail",
+#		"news", "openid", "photo_rating", "poll", "rate", "register", "reputation", "right_block", "rss", "search", "shop", "site_map", "site_nav_bar",
+#		"static_pages", "stats", "tags", "task_loader", "test", "user_info", "user_profile", "users", "users_search", "widgets",
+#	);
+#	foreach ((array)$modules_menu_enable as $key => $value) {
+#		db()->update(db("menu_items"), array("active" => 1), "id=".$key);
+#	}
+##	db()->update(db("menu_items"), array("active" => 1));
 }
 
 if ($_POST['install_checkbox_rw_enabled']) {
