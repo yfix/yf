@@ -3,13 +3,32 @@ define('PROJECT_PATH', realpath("./")."/");
 define('INCLUDE_PATH', PROJECT_PATH);
 $GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 
-ini_set("display_errors", "on");
+ini_set('display_errors', 'on');
 error_reporting(E_ALL ^E_NOTICE);
-ini_set("short_open_tag", "1");
+ini_set('short_open_tag', '1');
 
-function html($page = "form", $vars = array()) {
+$keys = array(
+	'install_yf_path'		=> 'Filesystem path to YF',
+	'install_db_host'		=> 'Database Host',
+	'install_db_name'		=> 'Database Name',
+	'install_db_user'		=> 'Database Username',
+	'install_db_pswd'		=> 'Database Password',
+	'install_db_prefix'		=> 'Database Prefix',
+	'install_admin_login'	=> 'Administrator Login',
+	'install_admin_pswd'	=> 'Administrator Password',
+	'install_rw_base'		=> 'URL Rewrites Base',
+	'install_web_path'		=> 'Web Path',
+	'install_web_name'		=> 'Website Name',
+	'install_checkbox_rw_enabled'		=> 'Enable URL Rewrites',
+	'install_checkbox_db_create'		=> 'Create Database if not exists',
+	'install_checkbox_db_drop_existing'	=> 'Drop Existing Tables',
+	'install_checkbox_demo_data'		=> 'Load Demo Data',
+	'install_checkbox_debug_info'		=> 'Show Debug Info',
+);
+
+function html($page = 'form', $vars = array()) {
 	ob_start();
-	if ($page == "form") {
+	if ($page == 'form') {
 ?>
 <!DOCTYPE html>
 <html>
@@ -35,60 +54,35 @@ function html($page = "form", $vars = array()) {
 	</header>
 	<div class="container">
 		<form class="form-horizontal" method="post" action="{FORM_ACTION}">
+<?php
+	global $keys;
+	foreach ((array)$keys as $name => $desc) {
+		if (false !== strpos($name, 'install_checkbox_')) {
+			continue;
+		}
+		echo '
 			<div class="control-group">
-				<label class="control-label" for="install_yf_path">Filesystem path to YF</label>
-				<div class="controls"><input type="text" id="install_yf_path" name="install_yf_path" placeholder="Filesystem path to YF" value="{install_yf_path}"></div>
+				<label class="control-label" for="'.$name.'">'.$desc.'</label>
+				<div class="controls"><input type="text" id="'.$name.'" name="'.$name.'" placeholder="'.$desc.'" value="'.htmlspecialchars($vars[$name], ENT_QUOTES).'"></div>
 			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_db_host">Database Host</label>
-				<div class="controls"><input type="text" id="install_db_host" name="install_db_host" placeholder="Database Host" value="{install_db_host}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_db_name">Database Name</label>
-				<div class="controls"><input type="text" id="install_db_name" name="install_db_name" placeholder="Database Name" value="{install_db_name}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_db_user">Database Username</label>
-				<div class="controls"><input type="text" id="install_db_user" name="install_db_user" placeholder="Database Username" value="{install_db_user}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_db_pswd">Database Password</label>
-				<div class="controls"><input type="text" id="install_db_pswd" name="install_db_pswd" placeholder="Database Password" value="{install_db_pswd}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_db_prefix">Database Prefix</label>
-				<div class="controls"><input type="text" id="install_db_prefix" name="install_db_prefix" placeholder="Database Prefix" value="{install_db_prefix}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_admin_login">Administrator Login</label>
-				<div class="controls"><input type="text" id="install_admin_login" name="install_admin_login" placeholder="Administrator Login" value="{install_admin_login}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_admin_pswd">Administrator Password</label>
-				<div class="controls"><input type="text" id="install_admin_pswd" name="install_admin_pswd" placeholder="Administrator Password" value="{install_admin_pswd}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_rw_base">URL Rewrites Base</label>
-				<div class="controls"><input type="text" id="install_rw_base" name="install_rw_base" placeholder="URL Rewrites Base" value="{install_rw_base}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_web_path">Web Path</label>
-				<div class="controls"><input type="text" id="install_web_path" name="install_web_path" placeholder="Web Path" value="{install_web_path}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="install_web_name">Website Name</label>
-				<div class="controls"><input type="text" id="install_web_name" name="install_web_name" placeholder="Website Name" value="{install_web_name}"></div>
-			</div>
+		';
+	}
+
+?>
 			<div class="control-group">
 				<div class="controls">
-					<label class="checkbox"><input type="checkbox" name="install_checkbox_rw_enabled" value="1" {install_checkbox_rw_enabled}>Enable URL Rewrites</label>
-					<label class="checkbox"><input type="checkbox" name="install_checkbox_db_create" value="1" {install_checkbox_db_create}>Create Database if not exists</label>
-					<label class="checkbox"><input type="checkbox" name="install_checkbox_db_drop_existing" value="1" {install_checkbox_db_drop_existing}>Drop Existing Tables</label>
-					<label class="checkbox"><input type="checkbox" name="install_checkbox_demo_data" value="1" {install_checkbox_demo_data}>Load Demo Data</label>
-					<label class="checkbox"><input type="checkbox" name="install_checkbox_debug_info" value="1" {install_checkbox_debug_info}>Show Debug Info</label>
+<?php
+	foreach ((array)$keys as $name => $desc) {
+		if (false === strpos($name, 'install_checkbox_')) {
+			continue;
+		}
+		echo '
+					<label class="checkbox"><input type="checkbox" name="'.$name.'" value="1" '.$vars[$name].'>'.htmlspecialchars($desc, ENT_QUOTES).'</label>
+		';
+	}
+?>
 				</div>
 			</div>
-
 			<div class="control-group">
 				<div class="controls">
 					<button type="submit" class="btn">Install!</button>
@@ -100,7 +94,7 @@ function html($page = "form", $vars = array()) {
 </body>
 </html>
 <?php
-	} elseif ($page == "results") {
+	} elseif ($page == 'results') {
 ?>
 <!DOCTYPE html>
 <html>
@@ -146,58 +140,41 @@ function html($page = "form", $vars = array()) {
 	echo str_replace(array_keys($replace), array_values($replace), $html);
 }
 function _get_default_web_path() {
-	$request_uri	= $_SERVER["REQUEST_URI"];
-	$cur_web_path	= $request_uri[strlen($request_uri) - 1] == "/" ? substr($request_uri, 0, -1) : dirname($request_uri);
-	return "//".$_SERVER["HTTP_HOST"].str_replace(array("\\","//"), array("/","/"), $cur_web_path."/");
+	$request_uri	= $_SERVER['REQUEST_URI'];
+	$cur_web_path	= $request_uri[strlen($request_uri) - 1] == '/' ? substr($request_uri, 0, -1) : dirname($request_uri);
+	return '//'.$_SERVER['HTTP_HOST'].str_replace(array("\\",'//'), '/', $cur_web_path.'/');
 }
 function _prepare_vars() {
 	$vars = array(
-		"FORM_ACTION"	=> $_SERVER["PHP_SELF"],
+		'FORM_ACTION'	=> $_SERVER['PHP_SELF'],
 	);
 	$defaults = array(
-		"install_yf_path"		=> dirname(dirname(dirname(__FILE__)))."/",
-		"install_db_host"		=> "localhost",
-		"install_db_name"		=> "test_".substr(md5(microtime()), 0, 6),
-		"install_db_user"		=> "root",
-#		"install_db_pswd"		=> "",
-		"install_db_prefix"		=> "test_",
-		"install_web_path"		=> _get_default_web_path(),
-		"install_admin_login"	=> "admin",
-		"install_admin_pswd"	=> "123456",
-		"install_rw_base"		=> "/",
-		"install_web_name"		=> "YF Website",
-		"install_checkbox_rw_enabled"		=> "1",
-		"install_checkbox_db_create"		=> "1",
-		"install_checkbox_db_drop_existing"	=> "1",
-		"install_checkbox_demo_data"		=> "1",
-		"install_checkbox_debug_info"		=> "",
+		'install_yf_path'		=> dirname(dirname(dirname(__FILE__))).'/',
+		'install_db_host'		=> 'localhost',
+		'install_db_name'		=> 'test_'.substr(md5(microtime()), 0, 6),
+		'install_db_user'		=> 'root',
+		'install_db_pswd'		=> '',
+		'install_db_prefix'		=> 'test_',
+		'install_web_path'		=> _get_default_web_path(),
+		'install_admin_login'	=> 'admin',
+		'install_admin_pswd'	=> '123456',
+		'install_rw_base'		=> '/',
+		'install_web_name'		=> 'YF Website',
+		'install_checkbox_rw_enabled'		=> '1',
+		'install_checkbox_db_create'		=> '1',
+		'install_checkbox_db_drop_existing'	=> '1',
+		'install_checkbox_demo_data'		=> '1',
+		'install_checkbox_debug_info'		=> '',
 	);
-	$keys = array(
-		"install_yf_path",
-		"install_db_host",
-		"install_db_name",
-		"install_db_user",
-		"install_db_pswd",
-		"install_db_prefix",
-		"install_web_path",
-		"install_admin_login",
-		"install_admin_pswd",
-		"install_rw_base",
-		"install_web_name",
-		"install_checkbox_rw_enabled",
-		"install_checkbox_db_create",
-		"install_checkbox_db_drop_existing",
-		"install_checkbox_demo_data",
-		"install_checkbox_debug_info",
-	);
-	foreach ((array)$keys as $k) {
+	global $keys;
+	foreach ((array)$keys as $k => $desc) {
 		$val = isset($_POST[$k]) ? $_POST[$k] : $defaults[$k];
 		if (false !== strpos($k, 'install_checkbox_') && $val) {
-			$val = "checked";
+			$val = 'checked';
 		}
 		$vars[$k] = $val;
 	}
 	return $vars;
 }
 $vars = _prepare_vars();
-html("form", $vars);
+html('form', $vars);
