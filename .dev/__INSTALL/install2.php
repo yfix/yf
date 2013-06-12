@@ -1,11 +1,10 @@
 <?php
+
 define('PROJECT_PATH', realpath("./")."/");
 define('INCLUDE_PATH', PROJECT_PATH);
 $GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
-
 ini_set('display_errors', 'on');
 error_reporting(E_ALL ^E_NOTICE);
-ini_set('short_open_tag', '1');
 
 $keys = array(
 	'install_yf_path'		=> 'Filesystem path to YF',
@@ -121,15 +120,15 @@ function html($page = 'form', $vars = array(), $errors = array()) {
 		</div>
 	</header>
 	<div class="container">
-{install_log}
-	</div>
-	<div class="container">
 		<div class="control-group">
 			<div class="controls">
 				<a class="btn" href="{install_web_path}">User Side</a>
 				<a class="btn" href="{install_web_path}admin/">Admin Side</a>
 			</div>
 		</div>
+	</div>
+	<div class="container">
+{install_log}
 	</div>
 	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 </body>
@@ -186,6 +185,10 @@ if (empty($_POST)) {
 	html('form', $vars);
 	exit();
 }
+// TODO: form validation here
+// TODO: check database connection
+// TODO: move everything here into functions (easy testing and debugging)
+// TODO: add language selector
 /*
 $errors = array(
 	'install_db_pswd'	=> 'Wrong Password',
@@ -195,7 +198,9 @@ if ($errors) {
 	html('form', $vars, $errors);
 	exit();
 }
+
 //////////////////////////////////
+
 define('DB_TYPE',	'mysql5');
 define('DB_HOST',	$_POST['install_db_host']);
 define('DB_NAME',	$_POST['install_db_name']);
@@ -204,13 +209,18 @@ define('DB_PSWD',	$_POST['install_db_pswd']);
 define('DB_PREFIX',	$_POST['install_db_prefix']);
 define('DB_CHARSET','utf8');
 
-define('DEBUG_MODE', true);
+define('DEBUG_MODE', $_POST['install_checkbox_debug_info']);
 
 define('DB_PREFIX', $_POST['install_db_prefix']);
 define('YF_PATH',	$_POST['install_yf_path']);
 require YF_PATH. 'classes/yf_main.class.php';
 new yf_main("user", $no_db_connect = false, $auto_init_all = false);
+
+define('INSTALLER_PATH', YF_PATH.'.dev/__INSTALL/');
+require (INSTALLER_PATH.'install/function.php');
+
 ///////////////////////////////////
+
 $index_file_content = '<?php
 define("DEBUG_MODE", false);
 define("YF_PATH", "'.YF_PATH.'");
@@ -258,11 +268,8 @@ $fpath = PROJECT_PATH.'admin/index.php';
 if (!file_exists($fpath)) {
 	file_put_contents($fpath, $admin_index_file_content);
 }
-/*
-//----------------------------------------------------------------
-// Prepare database structure
-//----------------------------------------------------------------
-$GLOBALS['INSTALL']['import_tables'] = array(
+
+$import_tables = array(
 	"activity_types",
 	"countries",
 	"forum_groups",
@@ -281,259 +288,118 @@ $GLOBALS['INSTALL']['import_tables'] = array(
 	"tips",
 	"user",
 );
-
 $_temp_array = array();
-foreach ((array)$GLOBALS['INSTALL']['import_tables'] as $value){
+foreach ((array)$import_tables as $value){
 	$_temp_array[$value] = $value;
 }
-$GLOBALS['INSTALL']['import_tables'] = $_temp_array;
+$import_tables = $_temp_array;
 unset($_temp_array);
 
-
-//----------------------------------------------------------------
 // delete or ignore already existed tables
-$Q = mysql_query("SHOW TABLES LIKE '".$_SESSION['INSTALL']['prefix']."%'");
-while ($A = mysql_fetch_array($Q)){
-	$tables_in_base[$A[0]] = $A[0];
+$Q = db()->query("SHOW TABLES LIKE '".DB_PREFIX."%'");
+while ($A = db()->fetch_row($Q)){
+	$existing_db_tables[$A[0]] = $A[0];
 } 
-
-if (!empty($tables_in_base)) {
-	if ($_SESSION['INSTALL']["delete_table"]) {
-		foreach ((array)$tables_in_base as $value){
-			mysql_query("DROP TABLE IF EXISTS `".$value."`");
-			echo "&#160;&#160;&#160;<small>"; ti("delete table"); echo " - ".$value."</small><br>";
+if (!empty($existing_db_tables)) {
+	if ($_POST['install_checkbox_db_drop_existing']) {
+		foreach ((array)$existing_db_tables as $value){
+			db()->query('DROP TABLE IF EXISTS `'.$value.'`');
 		}
 	} else {
-		foreach ((array)$tables_in_base as $value){
-			$value = str_replace($_SESSION['INSTALL']['prefix'],"", $value);
-			unset($GLOBALS['INSTALL']['import_tables'][$value]);
-			echo "&#160;&#160;&#160;<small>"; ti("ignore table"); echo " - ".$_SESSION['INSTALL']['prefix'].$value."</small><br>";
+		foreach ((array)$existing_db_tables as $value){
+			$value = str_replace(DB_PREFIX,"", $value);
+			unset($import_tables[$value]);
 		}
 	}
 }
-
-
-/*
-// create tables with yf
-$log_text .= "Create db tables: \n";
-ti("create tables : ");
-db()->query("SELECT * FROM ".db("admin")." LIMIT 1");
-$log_text .= "-admin\n";
-db()->query("SELECT * FROM ".db("admin_groups")." LIMIT 1");
-$log_text .= "-admin_groups\n";
-
-foreach ((array)$GLOBALS['INSTALL']['import_tables'] as $value){
-	$value = str_replace("sys_", "", $value);
-	db()->query("SELECT * FROM ".db($value)." LIMIT 1");
-	$log_text .= "-".$value."\n";
+foreach ((array)$import_tables as $table) {
+	$table = str_replace("sys_", "", $table);
+	db()->query("SELECT * FROM ".db($table)." LIMIT 1");
 }
-
-echo "<span class='green'>OK</span><BR>";
-
-//----------------------------------------------------------------
-ti("import tables : ");
-// import tables from files
-$log_text .= "Import db tables: \n";
-foreach ((array)$GLOBALS['INSTALL']['import_tables'] as $value){
-	if ($value == "sys_user_modules") {
-
-		include $_SESSION['INSTALL']["install_path"]."data_user_modules.php";
-		db()->REPLACE(db("user_modules"), db()->es($GLOBALS['INSTALL']["data_user_modules"]));
-
-	} elseif ($value == "sys_menu_items") {
-
-		include $_SESSION['INSTALL']["install_path"]."data_menu_items.php";
-		db()->REPLACE(db("menu_items"), db()->es($GLOBALS['INSTALL']["data_menu_items"]));
-
+foreach (array("admin", "admin_groups") as $table) {
+	db()->query("SELECT * FROM ".db($table)." LIMIT 1");
+}
+foreach ((array)$import_tables as $table){
+	if ($table == "sys_user_modules") {
+		include (INSTALLER_PATH."install/data_user_modules.php");
+		db()->replace(db("user_modules"), db()->es($GLOBALS['INSTALL']["data_user_modules"]));
+	} elseif ($table == "sys_menu_items") {
+		include (INSTALLER_PATH."install/data_menu_items.php");
+		db()->replace(db("menu_items"), db()->es($GLOBALS['INSTALL']["data_menu_items"]));
 	} else {
-		import($_SESSION['INSTALL']["install_path"]."sql/".$value.".sql", $_SESSION['INSTALL']['prefix']);
+		import (INSTALLER_PATH."install/sql/".$table.".sql", DB_PREFIX);
 	}
-	echo "&#160;&#160;&#160;<small>"; ti("import table"); echo " - ".$_SESSION['INSTALL']['prefix'].$value."</small><br>";
-	$log_text .= "-".$_SESSION['INSTALL']['prefix'].$value."\n";
-}
-if ($_SESSION['INSTALL']["user_info_dynamic"]) {
-	db()->query("SELECT * FROM ".db("user_data_main")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("user_data_stats")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("user_data_info_fields")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("user_data_info_values")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("user_data_ban")." LIMIT 1");
 }
 
-echo "<span class='green'>OK</span><BR>";
-
-//----------------------------------------------------------------
-$log_text .= "Import initial data: ";
-// import tables from file, initial data
-if(isset($_SESSION['INSTALL']["import_initial_data"])){
-	ti("import initial data : ");
-
-	db()->query("SELECT * FROM ".db("user")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("gallery_photos")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("gallery_folders")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("forum_topics")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("forum_posts")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("forum_forums")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("blog_posts")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("blog_settings")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("articles_texts")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("interests_keywords")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("interests")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("news")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("comments")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("favorites")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("friends")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("friends_users")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("handshake")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("ignore_list")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("mailarchive")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("polls")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("poll_votes")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("reput_total")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("static_pages")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("tags")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("tags_settings")." LIMIT 1");
-	db()->query("SELECT * FROM ".db("activity_logs")." LIMIT 1");
+if ($_POST['install_checkbox_demo_data']) {
+	$tables_to_create = array(
+		"user",
+		"gallery_photos",
+		"gallery_folders",
+		"forum_topics",
+		"forum_posts",
+		"forum_forums",
+		"blog_posts",
+		"blog_settings",
+		"articles_texts",
+		"interests_keywords",
+		"interests",
+		"news",
+		"comments",
+		"favorites",
+		"friends",
+		"friends_users",
+		"handshake",
+		"ignore_list",
+		"polls",
+		"poll_votes",
+		"reput_total",
+		"static_pages",
+		"tags",
+		"tags_settings",
+		"activity_logs",
+	);
+	// Important: this is needed to initialize YF database structure installer and create these tables, if not done before
+	foreach ($tables_to_create as $table) {
+		db()->query("SELECT * FROM ".db($table)." LIMIT 1");
+	}
 	
-	import($_SESSION['INSTALL']["install_path"]."sql/_initial_data_en.sql", $_SESSION['INSTALL']['prefix']);
-	$log_text .= "OK\n";
-
+	import(INSTALLER_PATH."install/sql/_initial_data_en.sql", DB_PREFIX);
 	// Load custom language initial data
-	if ($_SESSION['INSTALL']["language_in_project"]){
-		$_custom_lang_path = $_SESSION['INSTALL']["install_path"]."sql/_initial_data_".$_SESSION['INSTALL']["language_in_project"].".sql";
-		if (file_exists($_custom_lang_path)) {
-			import($_custom_lang_path, $_SESSION['INSTALL']['prefix']);
-		}
-	}
+#	if ($_SESSION['INSTALL']["language_in_project"]){
+#		$_custom_lang_path = INSTALLER_PATH."install/sql/_initial_data_".$_SESSION['INSTALL']["language_in_project"].".sql";
+#		if (file_exists($_custom_lang_path)) {
+#			import($_custom_lang_path, DB_PREFIX);
+#		}
+#	}
 
-	$log_text .= "Synchronize forum: ";
-	// Sync forum after inserting initial data
-	ob_start(); // To catch any errors or content inside
-		$FORUM_OBJ = main()->init_class("forum", USER_MODULES_DIR, 1);
-		// Synchronize board
-		$SYNC_OBJ = main()->init_class("forum_sync", FORUM_MODULES_DIR);
-
-		$SYNC_OBJ->_sync_board();
+	ob_start();
+	module("forum")->_init();
+	_class("forum_sync", "modules/forum/")->_sync_board();
 	ob_end_clean();
-
-	// Sync dynamic fields with single table (old-style)
-	if ($_SESSION['INSTALL']["user_info_dynamic"]) {
-
-		$GLOBALS['PROJECT_CONF']["user_data"]["MODE"] = "DYNAMIC";
-
-		$Q = db()->query("SELECT * FROM `".db("user")."`");
-		while ($A = db()->fetch_assoc($Q)) {
-			$result = update_user($A["id"], $A);
-		}
-	}
-
-	echo "<span class='green'>OK</span><BR>";
-	$log_text .= "OK\n";
 }
 
-
-//----------------------------------------------------------------
-// Load compilations hooks
-if ($_SESSION['INSTALL']["compilations"] != "all"){
-	$compilation_file = dirname(__FILE__)."/compilations/". $_SESSION['INSTALL']["compilations"]. ".comp.php";
-	if (file_exists($compilation_file)) {
-		include $compilation_file;
-	}	
-}
-
-
-//----------------------------------------------------------------
-$log_text .= "Create .htaccess file: ";
-// htaccess settings
-if (isset($_SESSION['INSTALL']["rewrite"])) {
-	$htaccess_file_content = file_get_contents($_SESSION['INSTALL']["install_path"]."htaccess.txt");
-	
-	db()->UPDATE(db("settings"), array(
-		"value"	=> 1,				
-	), "`id`=4");	
-	
+if ($_POST['install_checkbox_rw_enabled']) {
+	$htaccess_file_content = file_get_contents(INSTALLER_PATH."install/htaccess.txt");
+	db()->update(db("settings"), array("value" => 1), "id=4");
 } else {
-	$htaccess_file_content = file_get_contents($_SESSION['INSTALL']["install_path"]."htaccess2.txt");
+	$htaccess_file_content = file_get_contents(INSTALLER_PATH."install/htaccess2.txt");
+}
+file_put_contents(PROJECT_PATH.'.htaccess', str_replace("%%%#path#%%%", $_POST['install_rw_base'], $htaccess_file_content));
+
+db()->update(db("admin"), db()->es(array(
+	"login"		=> $_POST['install_admin_login'],
+	"password"	=> md5($_POST['install_admin_pswd']),
+	"add_date"	=> gmmktime(),
+)), "id=1");
+
+_class("dir")->copy_dir(INSTALLER_PATH.'data/', PROJECT_PATH, '', '/\.(svn|git)/');
+
+if ($_POST['install_checkbox_debug_info']) {
+	ini_set('memory_limit', '256M');
+	$body .= common()->show_debug_info();
 }
 
-$htaccess_file_content = str_replace("%%%#path#%%%", $_SESSION['INSTALL']["rewrite_base"], $htaccess_file_content);
-
-ti("set .htaccess : ");
-file_put_contents('./.htaccess', $htaccess_file_content);
-
-echo "<span class='green'>OK</span><BR>";
-$log_text .= "OK\n";
-
-//----------------------------------------------------------------
-// Activate installed modules
-if (!empty($_SESSION['INSTALL']["modules"])){
-	$log_text .= "Set module settings: ";
-	ti("set modules settings : ");
-
-	foreach ((array)$_SESSION['INSTALL']["modules"] as $key => $value){
-		db()->UPDATE(db("menu_items"), array(
-			"active"	=> 1,				
-		), "`id`=".$key);	
-	}
-
-	echo "<span class='green'>OK</span><BR>";
-	$log_text .= "OK\n";
-}
-
-$log_text .= "Set admin login and password: ";
-ti("set admin login and password : ");
-
-db()->UPDATE(db("admin"), array(
-	"login"		=> db()->es($_SESSION['INSTALL']["admin_name"]),
-	"password"	=> md5($_SESSION['INSTALL']["admin_pass1"]),
-	"add_date"	=> time(),
-), "`id`=1");	
-
-echo "<span class='green'>OK</span><BR>";
-$log_text .= "OK\n";
-
-
-
-//----------------------------------------------------------------
-// copy files
-//----------------------------------------------------------------
-
-$log_text .= "Copy data: ";
-ti("copy data : ");
-$OBJ_DIR = main()->init_class("dir", "classes/");
-$OBJ_DIR->copy_dir($_SESSION['INSTALL']["install_path"]."../data", "./", "", "/\.(svn|git)/");
-$theme = $_SESSION['INSTALL']["theme"];
-if (!empty($theme)) {
-	$target_dir = str_replace("\\", "/", realpath("./"))."/templates/".$theme."/";
-	if (!file_exists($target_dir)) {
-		$OBJ_DIR->mkdir_m($target_dir);
-	}
-	$OBJ_DIR->copy_dir($_SESSION['INSTALL']["install_path"]."themes/".$theme."/", $target_dir, "", "/\.(svn|git)/");
-}
-echo "<span class='green'>OK</span><BR><BR>";
-$log_text .= "OK\n";
-
-
-//----------------------------------------------------------------
-// Finishing...
-
-rename("./install.php", "./install.php.finished");
-
-ti("Install complete");
-$log_text .= "\nInstall complete\n";
-echo "<br><a href=\"./index.php\">"; ti("home page"); echo "</a> ("; ti("sample username"); echo ": <b>test</b>, "; ti("password"); echo ": <b>test</b>)<br>";
-echo "<a href=\"./admin/index.php\">"; ti("admin home page"); echo "</a><br>";
-
-add_log($log_text);
-echo "</tr></td>";
-
-include $_SESSION['INSTALL']["install_path"]."template/footer.stpl";
-
-// Display debug console
-if ($_SESSION['INSTALL']["show_install_debug_info"]) {
-	echo common()->show_debug_info();
-}
-*/
-//////////////////////////////////
 $vars["install_log"] = $body;
 html('results', $vars);
 
