@@ -26,7 +26,7 @@ $keys = array(
 	'install_checkbox_debug_info'		=> 'Show Debug Info',
 );
 
-function html($page = 'form', $vars = array()) {
+function html($page = 'form', $vars = array(), $errors = array()) {
 	ob_start();
 	if ($page == 'form') {
 ?>
@@ -61,9 +61,11 @@ function html($page = 'form', $vars = array()) {
 			continue;
 		}
 		echo '
-			<div class="control-group">
+			<div class="control-group '.(isset($errors[$name]) ? 'error' : '').'">
 				<label class="control-label" for="'.$name.'">'.$desc.'</label>
-				<div class="controls"><input type="text" id="'.$name.'" name="'.$name.'" placeholder="'.$desc.'" value="'.htmlspecialchars($vars[$name], ENT_QUOTES).'"></div>
+				<div class="controls"><input type="text" id="'.$name.'" name="'.$name.'" placeholder="'.$desc.'" value="'.htmlspecialchars($vars[$name], ENT_QUOTES).'">'
+					.(isset($errors[$name]) ? '<span class="help-inline">'.$errors[$name].'</span>' : '')
+				.'</div>
 			</div>
 		';
 	}
@@ -115,14 +117,14 @@ function html($page = 'form', $vars = array()) {
 	</div>
 	<header>
 		<div class="container">
-			<p class="lead">Welcome to YF Framework installation process. Submit form below to finish.</p>
+			<p class="lead">YF Framework installation complete.</p>
 		</div>
 	</header>
 	<div class="container">
 		<div class="control-group">
 			<div class="controls">
-				<button type="submit" class="btn">User</button>
-				<button type="submit" class="btn">Admin</button>
+				<a class="btn" href="{install_web_path}">User Side</a>
+				<a class="btn" href="{install_web_path}admin/">Admin Side</a>
 			</div>
 		</div>
 	</div>
@@ -177,4 +179,17 @@ function _prepare_vars() {
 	return $vars;
 }
 $vars = _prepare_vars();
-html('form', $vars);
+if (empty($_POST)) {
+	html('form', $vars);
+} else {
+/*
+	$errors = array(
+		'install_db_pswd'	=> 'Wrong Password',
+	);
+*/
+	if ($errors) {
+		html('form', $vars, $errors);
+	} else {
+		html('results', $vars);
+	}
+}
