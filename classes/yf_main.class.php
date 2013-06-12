@@ -314,26 +314,37 @@ class yf_main {
 	* @return	void
 	*/
 	function init_files () {
-		// Basic list of required files (for both admin and user section)
-		$require_files = array();
+		$include_files = array();
+		$required_files = array();
 		if ($this->NO_DB_CONNECT == 0) {
-			$require_files[] = "db_setup";
+			$include_files[] = PROJECT_PATH. "db_setup.php";
 		}
-		// Additional files
-		foreach ((array)conf('required_files::'.MAIN_TYPE) as $file_name) {
-			$require_files[] = $file_name;
+		foreach ((array)conf('include_files::'.MAIN_TYPE) as $path) {
+			$include_files[] = $path;
 		}
-		// Process files
-		for ($i = 0; $i < count($require_files); $i++) {
-			$this->include_module(PROJECT_PATH.$require_files[$i].".php", 1);
+		foreach ((array)conf('required_files::'.MAIN_TYPE) as $path) {
+			$required_files[] = $path;
 		}
-		// Load common functions
 		$common_funcs_path	= PROJECT_PATH."share/functions/common_funcs.php";
 		$fwork_funcs_path	= YF_PATH."share/functions/".YF_PREFIX."common_funcs.php";
 		if (file_exists($common_funcs_path)) {
-			$this->include_module($common_funcs_path, 1);
+			$required_files[] = $common_funcs_path;
 		} elseif (file_exists($fwork_funcs_path)) {
-			$this->include_module($fwork_funcs_path, 1);
+			$required_files[] = $fwork_funcs_path;
+		}
+		// Needed to have support for config vars inside paths
+		$replace = array(
+			"{SITE_PATH}"	=> SITE_PATH,
+			"{PROJECT_PATH}"=> PROJECT_PATH,
+			"{YF_PATH}"		=> YF_PATH,
+		);
+		foreach ((array)$include_files as $path) {
+			$path = str_replace(array_keys($replace), array_values($replace), $path);
+			$this->include_module($path, $_requried = false);
+		}
+		foreach ((array)$required_files as $path) {
+			$path = str_replace(array_keys($replace), array_values($replace), $path);
+			$this->include_module($path, $_requried = true);
 		}
 	}
 
