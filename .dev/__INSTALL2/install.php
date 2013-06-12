@@ -1,6 +1,15 @@
 <?php
-function html($vars = array()) {
+define('PROJECT_PATH', realpath("./")."/");
+define('INCLUDE_PATH', PROJECT_PATH);
+$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
+
+ini_set("display_errors", "on");
+error_reporting(E_ALL ^E_NOTICE);
+ini_set("short_open_tag", "1");
+
+function html($page = "form", $vars = array()) {
 	ob_start();
+	if ($page == "form") {
 ?>
 <!DOCTYPE html>
 <html>
@@ -91,6 +100,43 @@ function html($vars = array()) {
 </body>
 </html>
 <?php
+	} elseif ($page == "results") {
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>YF Installation</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand" href="https://github.com/yfix/yf">YF Framework</a>
+			<ul class="nav">
+				<li class=""><a href="https://github.com/yfix/yf">Home</a></li>
+			</ul>
+		</div>
+	</div>
+	<header>
+		<div class="container">
+			<p class="lead">Welcome to YF Framework installation process. Submit form below to finish.</p>
+		</div>
+	</header>
+	<div class="container">
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn">User</button>
+				<button type="submit" class="btn">Admin</button>
+			</div>
+		</div>
+	</div>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+<?php
+	}
 	$html = ob_get_contents();
 	ob_end_clean();
 	$replace = array();
@@ -104,50 +150,54 @@ function _get_default_web_path() {
 	$cur_web_path	= $request_uri[strlen($request_uri) - 1] == "/" ? substr($request_uri, 0, -1) : dirname($request_uri);
 	return "//".$_SERVER["HTTP_HOST"].str_replace(array("\\","//"), array("/","/"), $cur_web_path."/");
 }
-$vars = array(
-	"FORM_ACTION"	=> $_SERVER["PHP_SELF"],
-);
-$defaults = array(
-	"INSTALL_YF_PATH"		=> dirname(dirname(dirname(__FILE__)))."/",
-	"INSTALL_DB_HOST"		=> "localhost",
-	"INSTALL_DB_NAME"		=> "test_".substr(md5(microtime()), 0, 6),
-	"INSTALL_DB_USER"		=> "root",
-#	"INSTALL_DB_PSWD"		=> "",
-	"INSTALL_DB_PREFIX"		=> "test_",
-	"INSTALL_WEB_PATH"		=> _get_default_web_path(),
-	"INSTALL_ADMIN_LOGIN"	=> "admin",
-	"INSTALL_ADMIN_PSWD"	=> "123456",
-	"INSTALL_RW_BASE"		=> "/",
-	"INSTALL_WEB_NAME"		=> "YF Website",
-	"INSTALL_CHECKBOX_RW_ENABLED"		=> "1",
-	"INSTALL_CHECKBOX_DB_CREATE"		=> "1",
-	"INSTALL_CHECKBOX_DB_DROP_EXISTING"	=> "1",
-	"INSTALL_CHECKBOX_DEMO_DATA"		=> "1",
-	"INSTALL_CHECKBOX_DEBUG_INFO"		=> "",
-);
-$keys = array(
-	"INSTALL_YF_PATH",
-	"INSTALL_DB_HOST",
-	"INSTALL_DB_NAME",
-	"INSTALL_DB_USER",
-	"INSTALL_DB_PSWD",
-	"INSTALL_DB_PREFIX",
-	"INSTALL_WEB_PATH",
-	"INSTALL_ADMIN_LOGIN",
-	"INSTALL_ADMIN_PSWD",
-	"INSTALL_RW_BASE",
-	"INSTALL_WEB_NAME",
-	"INSTALL_CHECKBOX_RW_ENABLED",
-	"INSTALL_CHECKBOX_DB_CREATE",
-	"INSTALL_CHECKBOX_DB_DROP_EXISTING",
-	"INSTALL_CHECKBOX_DEMO_DATA",
-	"INSTALL_CHECKBOX_DEBUG_INFO",
-);
-foreach ((array)$keys as $k) {
-	$val = isset($_POST[$k]) ? $_POST[$k] : $defaults[$k];
-	if (false !== strpos($k, 'INSTALL_CHECKBOX_') && $val) {
-		$val = "checked";
+function _prepare_vars() {
+	$vars = array(
+		"FORM_ACTION"	=> $_SERVER["PHP_SELF"],
+	);
+	$defaults = array(
+		"INSTALL_YF_PATH"		=> dirname(dirname(dirname(__FILE__)))."/",
+		"INSTALL_DB_HOST"		=> "localhost",
+		"INSTALL_DB_NAME"		=> "test_".substr(md5(microtime()), 0, 6),
+		"INSTALL_DB_USER"		=> "root",
+#		"INSTALL_DB_PSWD"		=> "",
+		"INSTALL_DB_PREFIX"		=> "test_",
+		"INSTALL_WEB_PATH"		=> _get_default_web_path(),
+		"INSTALL_ADMIN_LOGIN"	=> "admin",
+		"INSTALL_ADMIN_PSWD"	=> "123456",
+		"INSTALL_RW_BASE"		=> "/",
+		"INSTALL_WEB_NAME"		=> "YF Website",
+		"INSTALL_CHECKBOX_RW_ENABLED"		=> "1",
+		"INSTALL_CHECKBOX_DB_CREATE"		=> "1",
+		"INSTALL_CHECKBOX_DB_DROP_EXISTING"	=> "1",
+		"INSTALL_CHECKBOX_DEMO_DATA"		=> "1",
+		"INSTALL_CHECKBOX_DEBUG_INFO"		=> "",
+	);
+	$keys = array(
+		"INSTALL_YF_PATH",
+		"INSTALL_DB_HOST",
+		"INSTALL_DB_NAME",
+		"INSTALL_DB_USER",
+		"INSTALL_DB_PSWD",
+		"INSTALL_DB_PREFIX",
+		"INSTALL_WEB_PATH",
+		"INSTALL_ADMIN_LOGIN",
+		"INSTALL_ADMIN_PSWD",
+		"INSTALL_RW_BASE",
+		"INSTALL_WEB_NAME",
+		"INSTALL_CHECKBOX_RW_ENABLED",
+		"INSTALL_CHECKBOX_DB_CREATE",
+		"INSTALL_CHECKBOX_DB_DROP_EXISTING",
+		"INSTALL_CHECKBOX_DEMO_DATA",
+		"INSTALL_CHECKBOX_DEBUG_INFO",
+	);
+	foreach ((array)$keys as $k) {
+		$val = isset($_POST[$k]) ? $_POST[$k] : $defaults[$k];
+		if (false !== strpos($k, 'INSTALL_CHECKBOX_') && $val) {
+			$val = "checked";
+		}
+		$vars[$k] = $val;
 	}
-	$vars[$k] = $val;
+	return $vars;
 }
-html($vars);
+$vars = _prepare_vars();
+html("form", $vars);
