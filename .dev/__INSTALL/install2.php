@@ -173,6 +173,7 @@ class yf_core_install {
 		define('INCLUDE_PATH', PROJECT_PATH);
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
+		$GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
 		ini_set('display_errors', 'on');
 		ini_set('memory_limit', '512M');
 		error_reporting(E_ALL ^E_NOTICE);
@@ -198,6 +199,16 @@ class yf_core_install {
 		define('INSTALLER_PATH', YF_PATH.'.dev/__INSTALL/');
 		require (INSTALLER_PATH.'install/function.php');
 		return installer();
+	}
+	function test_db_connection() {
+		$test = db()->query("SHOW TABLES");
+		if (!$test && !db()->db_connect_id) {
+			$error = db()->error();
+			if ($error['code'] == 9999) { // YF special code when cannot connect
+				installer()->cannot_connect_to_db = true;
+			}
+		}
+		return !installer()->cannot_connect_to_db;
 	}
 	function write_db_setup() {
 		$db_setup_file_content = '<?php
@@ -401,22 +412,28 @@ function installer() {
 	return $installer;
 }
 /////////////////////////////
-if (empty($_POST)) {
+$errors = array();
+if (empty($_POST)) { // Initial page
 	installer()->show_html('form', installer()->prepare_vars());
 	exit();
 }
-/*
-$errors = array(
-	'install_db_pswd'	=> 'Wrong Password',
-);
-*/
+
+installer()
+	->set_php_conf()
+	->init_yf_core()
+	->test_db_connection()
+;
+if (!installer()->test_db_connection()) {
+	$msg = 'Cannot connect to db server';
+	$errors['install_db_host'] = $msg;
+	$errors['install_db_user'] = $msg;
+	$errors['install_db_pswd'] = $msg;
+}
 if ($errors) {
 	installer()->show_html('form', installer()->prepare_vars(), $errors);
 	exit();
 }
 installer()
-	->set_php_conf()
-	->init_yf_core()
 	->write_db_setup()
 	->write_user_index_php()
 	->write_admin_index_php()

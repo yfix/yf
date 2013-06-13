@@ -17,26 +17,28 @@ class yf_db_mysql41 extends yf_db_driver {
 	/** @var @conf_skip */
 	public $query_result		= null;
 	/** @var @conf_skip */
-	public $num_queries		= 0;
+	public $num_queries			= 0;
 	/** @var @conf_skip */
 	public $in_transaction		= 0;
 	/** @var @conf_skip */
 	public $mTrxLevel			= 0;
 	/** @var @conf_skip */
-	public $META_TABLES_SQL	= "SHOW TABLES";	
+	public $META_TABLES_SQL		= "SHOW TABLES";	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
 	/** @var @conf_skip */
-	public $DEF_CHARSET		= "utf8";
+	public $DEF_CHARSET			= "utf8";
 	/** @var @conf_skip */
-	public $DEF_PORT		   = 3306;
+	public $DEF_PORT			= 3306;
 	/** @var @conf_skip */
 	public $SQL_NO_CACHE		= false;
+	/** @var @conf_skip */
+	public $ALLOW_AUTO_CREATE_DB= false;
 
 	/**
 	* Constructor
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "") {
+	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "", $allow_auto_create_db = false) {
 		$this->persistency	= $persistency;
 		$this->user			= $user;
 		$this->password		= $password;
@@ -48,6 +50,26 @@ class yf_db_mysql41 extends yf_db_driver {
 		if (!file_exists($socket)) {
 			$this->socket = "";
 		}
+		$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
+
+		$this->connect();
+
+		if (!$this->db_connect_id) {
+			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
+			return false;
+		}
+		if (empty($charset)) {
+			$charset = defined("DB_CHARSET") ? DB_CHARSET : $this->DEF_CHARSET;
+		}
+		if ($charset) {
+			$this->query("SET NAMES ". $charset);
+		}
+		return $this->db_connect_id;
+	}
+
+	/**
+	*/
+	function connect() {
 		if ($this->socket) {
 			$connect_host = $this->socket;
 		} else {
@@ -59,23 +81,21 @@ class yf_db_mysql41 extends yf_db_driver {
 			: mysql_connect($connect_host, $this->user, $this->password, true, $use_ssl ? MYSQL_CLIENT_SSL : 0);
 
 		if (!$this->db_connect_id) {
-			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
+			$this->_connect_error = true;
 			return false;
 		}
 		if ($this->dbname != "") {
+			$dbselect = mysql_select_db($this->dbname, $this->db_connect_id);
+			// Try to create database, if not exists and if allowed
+			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->dbname)) {
+				mysql_query("CREATE DATABASE IF NOT EXISTS ".$this->dbname);
+			}
 			$dbselect = mysql_select_db($this->dbname, $this->db_connect_id);
 			if (!$dbselect) {
 				mysql_close($this->db_connect_id);
 				$this->db_connect_id = $dbselect;
 			}
 		}
-		if (empty($charset)) {
-			$charset = defined("DB_CHARSET") ? DB_CHARSET : $this->DEF_CHARSET;
-		}
-		if ($charset) {
-			$this->query("SET NAMES ". $charset);
-		}
-		return $this->db_connect_id;
 	}
 
 	/**
@@ -231,9 +251,18 @@ class yf_db_mysql41 extends yf_db_driver {
 	* Error
 	*/
 	function error() {
-		$result['message'] = mysql_error($this->db_connect_id);
-		$result['code'] = mysql_errno($this->db_connect_id);
-		return $result;
+		if ($this->db_connect_id) {
+			return array(
+				'message'	=> mysql_error($this->db_connect_id),
+				'code'		=> mysql_errno($this->db_connect_id),
+			);
+		} elseif ($this->_connect_error) {
+			return array(
+				'message'	=> 'YF: Connect error',
+				'code'		=> '9999',
+			);
+		}
+		return false;
 	}
 
 	/**

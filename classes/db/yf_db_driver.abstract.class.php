@@ -11,6 +11,7 @@ abstract class yf_db_driver {
 	abstract protected function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "");
 	abstract protected function affected_rows();
 	abstract protected function begin( $fname = 'Database::begin' );
+	abstract protected function connect();
 	abstract protected function close();
 	abstract protected function commit( $fname = 'Database::commit' );
 	abstract protected function enclose_field_name($data);

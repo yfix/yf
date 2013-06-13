@@ -105,6 +105,8 @@ class yf_db {
 	public $DB_REPLICATION_SLAVE	= false;
 	/** @var bool Adding SQL_NO_CACHE to SELECT queries: useful to find long running queries */
 	public $SQL_NO_CACHE			= false;
+	/** @var bool Needed for installation and repairing process */
+	public $ALLOW_AUTO_CREATE_DB	= false;
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
 	/** @var array */
@@ -144,7 +146,7 @@ class yf_db {
 			$GLOBALS["DEBUG"]["db_instances_trace"][$debug_index] = $this->_trace();
 			$GLOBALS["DEBUG"]["db_instances_trace2"][$debug_index] = $this->_trace_string();
 		}
-		// Compatibility with standalone mode (when $GLOBALS['main'] instance is not present)
+		// Compatibility with standalone mode (when main() instance is not present)
 		if (!is_object($GLOBALS['main'])) {
 			$GLOBALS['main'] = new StdClass();
 		}
@@ -192,7 +194,7 @@ class yf_db {
 	/**
 	* Connect db driver and then connect to db
 	*/
-	function connect($db_host = "", $db_user = "", $db_pswd = null, $db_name = "", $force = false, $db_ssl = false, $db_port = "", $db_socket = "", $db_charset = "") {
+	function connect($db_host = "", $db_user = "", $db_pswd = null, $db_name = "", $force = false, $db_ssl = false, $db_port = "", $db_socket = "", $db_charset = "", $allow_auto_create_db = null) {
 		if (!empty($this->_tried_to_connect) && !$force) {
 			return $this->_connected;
 		}
@@ -214,6 +216,7 @@ class yf_db {
 		$this->DB_SOCKET	= !empty($db_socket)	? $db_socket	: (defined("DB_SOCKET") ? DB_SOCKET : "");
 		$this->DB_SSL		= !empty($db_ssl)		? $db_ssl		: (defined("DB_SSL") ? DB_SSL : false);
 		$this->DB_CHARSET	= !empty($db_charset)	? $db_charset	: (defined("DB_CHARSET") ? DB_CHARSET : "");
+		$this->ALLOW_AUTO_CREATE_DB	= !is_null($allow_auto_create_db) ? $allow_auto_create_db : $this->ALLOW_AUTO_CREATE_DB;
 		// Create new instanse of the driver class
 		if (!empty($driver_class_name) && class_exists($driver_class_name) && !is_object($this->db)) {
 			// Set lock file
@@ -231,7 +234,7 @@ class yf_db {
 			}
 			// Try to connect several times
 			for ($i = 1; $i <= $this->RECONNECT_NUM_TRIES; $i++) {
-				$this->db = new $driver_class_name($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, $this->DB_PERSIST, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET);
+				$this->db = new $driver_class_name($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, $this->DB_PERSIST, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET, $this->ALLOW_AUTO_CREATE_DB);
 				if (!is_object($this->db) || !($this->db instanceof yf_db_driver)) {
 					trigger_error("DB: Wrong driver", $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
 					break;
@@ -313,7 +316,7 @@ class yf_db {
 			// Try to reconnect if we see error "MySQL server has gone away" (2006)
 			if (false !== strpos($this->DB_TYPE, "mysql") && $db_error["code"] == 2006) {
 				$this->db = null;
-				$reconnect_successful = $this->connect($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, true, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET);
+				$reconnect_successful = $this->connect($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, true, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET, $this->ALLOW_AUTO_CREATE_DB);
 				if ($reconnect_successful) {
 					$result = $this->db->query($sql);
 				}
