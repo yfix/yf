@@ -1,6 +1,6 @@
 <?php
 
-// TODO: form validation here
+// TODO: form validation
 // TODO: check database connection
 // TODO: add language selector $_POST["install_project_lang"]
 
@@ -425,7 +425,8 @@ installer()
 if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
 }
+$debug_info = $_POST['install_checkbox_debug_info'] ? common()->show_debug_info() : "";
 installer()->show_html('results', array(
-	"install_log" => $_POST['install_checkbox_debug_info'] ? common()->show_debug_info() : "",
+	"install_log" => $debug_info,
 ));
-echo common()->show_debug_info();
+echo $debug_info;
