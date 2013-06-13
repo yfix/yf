@@ -446,7 +446,7 @@ if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
 }
 $debug_info = $_POST['install_checkbox_debug_info'] ? common()->show_debug_info() : "";
-installer()->show_html('results', array(
-	"install_log" => $debug_info,
-));
+$vars = installer()->prepare_vars();
+$vars["install_log"] = $debug_info;
+installer()->show_html('results', $vars);
 echo $debug_info;
