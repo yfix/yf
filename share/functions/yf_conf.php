@@ -80,10 +80,10 @@ if (!function_exists("conf")) {
 }
 
 if (!function_exists("conf_add")) {
-	function conf_add($name = null, $new_value = null)
-	{
-		if(!is_null($new_value))
+	function conf_add($name = null, $new_value = null) {
+		if (!is_null($new_value)) {
 			$actual_error = conf($name) ? conf($name) . ';' : '';
+		}
 		return conf($name,$actual_error . $new_value);
 	}		
 }		

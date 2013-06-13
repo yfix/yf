@@ -508,7 +508,7 @@ class yf_main {
 		if ($this->SPIDERS_DETECTION && conf('IS_SPIDER')) {
 			return false;
 		}
-		if (conf("SESSION_OFF")) {
+		if (conf("SESSION_OFF") || $this->SESSION_OFF) {
 			return false;
 		}
 		// Set custom session name
