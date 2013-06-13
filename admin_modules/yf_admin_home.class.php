@@ -295,7 +295,7 @@ class yf_admin_home {
 	function prepare_installer_db_files () {
 		$struct_array = array();
 
-		$INSTALLER_DB_OBJ = main()->init_class("installer_db", "classes/installer/");
+		$INSTALLER_DB_OBJ = main()->init_class("installer_db", "classes/db/");
 		$INSTALLER_DB_OBJ->_create_struct_files(1);
 
 		db()->query("SELECT `name` FROM `".db('settings_category')."` WHERE `id`=1");

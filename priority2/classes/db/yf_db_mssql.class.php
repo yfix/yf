@@ -1,5 +1,8 @@
 <?php
 
+#load("yf_db_driver.abstract", "classes/db/");
+require dirname(__FILE__)."/yf_db_driver.abstract.class.php";
+
 /**
 * MS SQL db class
 * 
@@ -7,7 +10,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_db_mssql {
+class yf_db_mssql extends yf_db_driver {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;

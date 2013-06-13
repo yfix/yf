@@ -34,7 +34,7 @@ class yf_db {
 	/** @var bool Auto-repairing on error (table not exists) on/off */
 	public $ERROR_AUTO_REPAIR		= true;
 	/** @var string Folder where databases drivers are stored */
-	public $DB_DRIVERS_DIR			= "classes/db_drivers/";
+	public $DB_DRIVERS_DIR			= "classes/db/";
 	/** @var int Num tries to reconnect (will be useful if db server is overloaded) (Set to "0" for disabling) */
 	public $RECONNECT_NUM_TRIES		= 2;
 	/** @var int Time to wait between reconnects (in seconds) */
@@ -1087,7 +1087,7 @@ class yf_db {
 		if (!$GLOBALS['main']->type) {
 			return false;
 		}
-		$INSTALLER_DB_OBJ = $GLOBALS['main']->init_class("installer_db", "classes/installer/");
+		$INSTALLER_DB_OBJ = $GLOBALS['main']->init_class("installer_db", "classes/db/");
 		return is_object($INSTALLER_DB_OBJ) ? $INSTALLER_DB_OBJ->_auto_repair_table($sql, $db_error, $this) : false;
 	}
 

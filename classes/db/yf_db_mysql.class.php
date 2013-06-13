@@ -1,6 +1,6 @@
 <?php
 
-#load("yf_db_mysql41", "classes/db_drivers/");
+#load("yf_db_mysql41", "classes/db/");
 require_once dirname(__FILE__)."/yf_db_mysql41.class.php";
 
 /**

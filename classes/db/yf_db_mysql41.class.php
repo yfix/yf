@@ -1,120 +1,138 @@
 <?php
 
-#load("yf_db_driver.abstract", "classes/db_drivers/");
+#load("yf_db_driver.abstract", "classes/db/");
 require dirname(__FILE__)."/yf_db_driver.abstract.class.php";
 
 /**
-* Postgres7 db class
+* MySQL4.1.x db class
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_db_postgres7 extends yf_db_driver {
+class yf_db_mysql41 extends yf_db_driver {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
 	/** @var @conf_skip */
 	public $query_result		= null;
 	/** @var @conf_skip */
+	public $num_queries		= 0;
+	/** @var @conf_skip */
 	public $in_transaction		= 0;
 	/** @var @conf_skip */
-	public $row				= array();
+	public $mTrxLevel			= 0;
 	/** @var @conf_skip */
-	public $rowset				= array();
+	public $META_TABLES_SQL	= "SHOW TABLES";	
 	/** @var @conf_skip */
-	public $rownum				= array();
+	public $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
 	/** @var @conf_skip */
-	public $num_queries		= 0;
-
+	public $DEF_CHARSET		= "utf8";
 	/** @var @conf_skip */
-	public $META_TABLES_SQL	= "SELECT tablename,'T' FROM pg_tables WHERE tablename NOT LIKE 'pg\_%'
-		AND tablename NOT IN ('sql_features', 'sql_implementation_info', 'sql_languages',
-		 'sql_packages', 'sql_sizing', 'sql_sizing_profiles') 
-		UNION 
-			SELECT viewname,'V' FROM pg_views WHERE viewname NOT LIKE 'pg\_%'";
-
+	public $DEF_PORT		   = 3306;
 	/** @var @conf_skip */
-	public $META_COLUMNS_SQL	= "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
-		FROM pg_class c, pg_attribute a,pg_type t 
-		WHERE relkind IN ('r','v') AND (c.relname='%s' or c.relname = lower('%s')) AND a.attname NOT LIKE '....%%'
-		AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
+	public $SQL_NO_CACHE		= false;
 
 	/**
+	* Constructor
 	*/
-	function __construct($sqlserver, $sqluser, $sqlpassword, $database, $persistency = false) {
-		$this->connect_string = "";
-		if (strlen($sqluser)) $this->connect_string .= "user=".$sqluser." ";
-		if (strlen($sqlpassword)) $this->connect_string .= "password=".$sqlpassword." ";
-		if ($sqlserver) {
-			if (preg_match('#:#', $sqlserver)) {
-				list($sqlserver, $sqlport) = split(":", $sqlserver);
-				$this->connect_string .= "host=".$sqlserver." port=".$sqlport." ";
-			} elseif ($sqlserver != "localhost") $this->connect_string .= "host=".$sqlserver." ";
+	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "") {
+		$this->persistency	= $persistency;
+		$this->user			= $user;
+		$this->password		= $password;
+		$this->server		= $server;
+		$this->dbname		= $database;
+		$this->port			= $port ? $port : $DEF_PORT;
+		$this->socket		= $socket;
+		ini_set('mysql.connect_timeout', 2);
+		if (!file_exists($socket)) {
+			$this->socket = "";
 		}
-		if ($database) {
-			$this->dbname = $database;
-			$this->connect_string .= "dbname=".$database;
+		if ($this->socket) {
+			$connect_host = $this->socket;
+		} else {
+			$connect_port = $this->port && $this->port != $this->DEF_PORT ? $this->port : "";
+			$connect_host = $this->server. ($connect_port ? ":".$connect_port : "");
 		}
-		$this->persistency = $persistency;
-		$this->db_connect_id = $this->persistency ? pg_pconnect($this->connect_string) : pg_connect($this->connect_string);
-		return $this->db_connect_id ? $this->db_connect_id : false;
+		$this->db_connect_id = $this->persistency 
+			? mysql_pconnect($connect_host, $this->user, $this->password, $use_ssl ? MYSQL_CLIENT_SSL : 0) 
+			: mysql_connect($connect_host, $this->user, $this->password, true, $use_ssl ? MYSQL_CLIENT_SSL : 0);
+
+		if (!$this->db_connect_id) {
+			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
+			return false;
+		}
+		if ($this->dbname != "") {
+			$dbselect = mysql_select_db($this->dbname, $this->db_connect_id);
+			if (!$dbselect) {
+				mysql_close($this->db_connect_id);
+				$this->db_connect_id = $dbselect;
+			}
+		}
+		if (empty($charset)) {
+			$charset = defined("DB_CHARSET") ? DB_CHARSET : $this->DEF_CHARSET;
+		}
+		if ($charset) {
+			$this->query("SET NAMES ". $charset);
+		}
+		return $this->db_connect_id;
 	}
 
 	/**
-	* Other base methods
+	* Close transaction
 	*/
 	function close() {
 		if ($this->db_connect_id) {
 			// Commit any remaining transactions
-			if ($this->in_transaction) @pg_exec($this->db_connect_id, "COMMIT");
-			if ($this->query_result) @pg_freeresult($this->query_result);
-			return @pg_close($this->db_connect_id);
-		} else return false;
+			if ($this->in_transaction) {
+				mysql_query("COMMIT", $this->db_connect_id);
+			}
+			return mysql_close($this->db_connect_id);
+		}
+		return false;
 	}
 
 	/**
-	* Query method
+	* Base query method
 	*/
 	function query($query = "", $transaction = false) {
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		if ($query != "") {
+
 			$this->num_queries++;
-			$query = str_replace("`", "\"", $query);
-			$query = preg_replace("/LIMIT ([0-9]+),([ 0-9]+)/", "LIMIT \\2 OFFSET \\1", $query);
 			if ($transaction == BEGIN_TRANSACTION && !$this->in_transaction) {
+				$result = mysql_query("BEGIN", $this->db_connect_id);
+				if (!$result) return false;
 				$this->in_transaction = TRUE;
-				if (!@pg_exec($this->db_connect_id, "BEGIN")) return false;
 			}
-			$this->query_result = @pg_exec($this->db_connect_id, $query);
-			if ($this->query_result) {
-				if ($transaction == END_TRANSACTION)	{
-					$this->in_transaction = false;
-					if (!@pg_exec($this->db_connect_id, "COMMIT")) {
-						@pg_exec($this->db_connect_id, "ROLLBACK");
-						return false;
-					}
-				}
-				$this->last_query_text[$this->query_result] = $query;
-				$this->rownum[$this->query_result] = 0;
-				unset($this->row[$this->query_result]);
-				unset($this->rowset[$this->query_result]);
-				return $this->query_result;
-			} else {
-				if ($this->in_transaction) @pg_exec($this->db_connect_id, "ROLLBACK");
-				$this->in_transaction = false;
-				return false;
-			}
-		} else {
+			$this->query_result = mysql_query($query, $this->db_connect_id);
+
+		} elseif ($transaction == END_TRANSACTION && $this->in_transaction)
+
+			$result = mysql_query("COMMIT", $this->db_connect_id);
+
+		if ($this->query_result) {
+
 			if ($transaction == END_TRANSACTION && $this->in_transaction) {
 				$this->in_transaction = false;
-				if (!@pg_exec($this->db_connect_id, "COMMIT")) {
-					@pg_exec($this->db_connect_id, "ROLLBACK");
+				if (!mysql_query("COMMIT", $this->db_connect_id)) {
+					mysql_query("ROLLBACK", $this->db_connect_id);
 					return false;
 				}
 			}
-			return true;
+			return $this->query_result;
+
+		} else {
+			$query_error_code = mysql_errno($this->db_connect_id);
+			$query_error = mysql_error($this->db_connect_id);
+			conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
+
+			if ($this->in_transaction) {
+				mysql_query("ROLLBACK", $this->db_connect_id);
+				$this->in_transaction = false;
+			}
+			return false;
 		}
 	}
 
@@ -122,33 +140,42 @@ class yf_db_postgres7 extends yf_db_driver {
 	* Unbuffered query method
 	*/
 	function unbuffered_query($query = "") {
-		return $this->query($query);
+		mysql_unbuffered_query($query, $this->db_connect_id);
 	}
 
 	/**
 	* Other query methods
 	*/
 	function num_rows($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-		return $query_id ? @pg_numrows($query_id) : false;
+		if (!$query_id) {
+			$query_id = $this->query_result;
+		}
+		return $query_id ? mysql_num_rows($query_id) : false;
+	}
+
+	/**
+	* Affected Rows
+	*/
+	function affected_rows() {
+		return $this->db_connect_id ? mysql_affected_rows($this->db_connect_id) : false;
+	}
+
+	/**
+	* Insert Id
+	*/
+	function insert_id() {
+		return $this->db_connect_id ? mysql_insert_id($this->db_connect_id) : false;
 	}
 
 	/**
 	* Fetch Row
 	*/
 	function fetch_row($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-/*
-		if (empty($this->rownum[$query_id])) {
-			return false;
+		if (!$query_id) {
+			$query_id = $this->query_result;
 		}
-*/
 		if ($query_id) {
-			$this->row = @pg_fetch_array($query_id/*, $this->rownum[$query_id]*/);
-			if ($this->row) {
-				$this->rownum[$query_id]++;
-				return $this->row;
-			}
+			return mysql_fetch_row($query_id);
 		}
 		return false;
 	}
@@ -157,69 +184,55 @@ class yf_db_postgres7 extends yf_db_driver {
 	* Fetch Assoc
 	*/
 	function fetch_assoc($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-/*
-		if (empty($this->rownum[$query_id])) {
-			return false;
+		if (!$query_id) {
+			$query_id = $this->query_result;
 		}
-*/
 		if ($query_id) {
-			$this->row = @pg_fetch_assoc($query_id/*, $this->rownum[$query_id]*/);
-			if ($this->row) {
-				$this->rownum[$query_id]++;
-				return $this->row;
-			}
+			return mysql_fetch_assoc($query_id);
 		}
 		return false;
 	}
 
 	/**
-	* Insert Id
+	* Fetch Array
 	*/
-	function insert_id() {
-		$query_id = $this->query_result;
-		if ($query_id && $this->last_query_text[$query_id] != "") {
-			if (preg_match("/^INSERT[\t\n ]+INTO[\t\n ]+([a-z0-9\_\-]+)/is", $this->last_query_text[$query_id], $tablename))	{
-				$query = "SELECT currval('" . $tablename[1] . "_id_seq') AS last_value";
-				$temp_q_id =  @pg_exec($this->db_connect_id, $query);
-				if (!$temp_q_id) return false;
-				$temp_result = @pg_fetch_array($temp_q_id, 0, PGSQL_ASSOC);
-				return ( $temp_result ) ? $temp_result['last_value'] : false;
-			}
+	function fetch_array($query_id = 0) {
+		if (!$query_id) {
+			$query_id = $this->query_result;
+		}
+		if ($query_id) {
+			return mysql_fetch_array($query_id);
 		}
 		return false;
-	}
-
-	/**
-	* Affected Rows
-	*/
-	function affected_rows($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-		return $query_id ? @pg_cmdtuples($query_id) : false;
 	}
 
 	/**
 	* Real Escape String
 	*/
 	function real_escape_string($string) {
-		return pg_escape_string($string);
+		return mysql_real_escape_string($string, $this->db_connect_id);
 	}
 
 	/**
 	* Free Result
 	*/
 	function free_result($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-		return $query_id ? @pg_freeresult($query_id) : false;
+		if (!$query_id) {
+			$query_id = $this->query_result;
+		}
+		if ($query_id) {
+			mysql_free_result($query_id);
+			return true;
+		}
+		return false;
 	}
 
 	/**
 	* Error
 	*/
-	function error($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-		$result['message'] = @pg_errormessage($this->db_connect_id);
-		$result['code'] = -1;
+	function error() {
+		$result['message'] = mysql_error($this->db_connect_id);
+		$result['code'] = mysql_errno($this->db_connect_id);
 		return $result;
 	}
 
@@ -300,11 +313,61 @@ class yf_db_postgres7 extends yf_db_driver {
 	}
 
 	/**
+	* Begin a transaction, or if a transaction has already started, continue it
+	*/
+	function begin( $fname = 'Database::begin' ) {
+		if ( !$this->mTrxLevel ) {
+			$this->immediateBegin( $fname );
+		} else {
+			$this->mTrxLevel++;
+		}
+	}
+
+	/**
+	* End a transaction, or decrement the nest level if transactions are nested
+	*/
+	function commit( $fname = 'Database::commit' ) {
+		if ( $this->mTrxLevel ) {
+			$this->mTrxLevel--;
+		}
+		if ( !$this->mTrxLevel ) {
+			$this->immediateCommit( $fname );
+		}
+	}
+
+	/**
+	* Rollback a transaction
+	*/
+	function rollback( $fname = 'Database::rollback' ) {
+		$this->query( 'ROLLBACK', $fname );
+		$this->mTrxLevel = 0;
+	}
+
+	/**
+	* Begin a transaction, committing any previously open transaction
+	*/
+	function immediateBegin( $fname = 'Database::immediateBegin' ) {
+		$this->query( 'BEGIN', $fname );
+		$this->mTrxLevel = 1;
+	}
+	
+	/**
+	* Commit transaction, if one is open
+	*/
+	function immediateCommit( $fname = 'Database::immediateCommit' ) {
+		$this->query( 'COMMIT', $fname );
+		$this->mTrxLevel = 0;
+	}
+
+	/**
 	* Insert array of values into table
 	*/
-	function insert($table, $data, $only_sql = false, $DB_CONNECTION) {
+	function insert($table, $data, $only_sql = false, $replace = false, $DB_CONNECTION, $ignore = false) {
 		if (empty($table) || empty($data)) {
 			return false;
+		}
+		if (is_string($replace)) {
+			$replace = false;
 		}
 		$values_array = array();
 		// Try to check if array is two-dimensional
@@ -336,8 +399,8 @@ class yf_db_postgres7 extends yf_db_driver {
 			$cols[$k] = $this->enclose_field_name($v);
 		}
 		// build the query
-		$sql = "INSERT INTO ".
-			$this->enclose_field_name(eval("return dbt_".$table.";")).
+		$sql = ($replace ? "REPLACE" : "INSERT"). ($ignore ? " IGNORE" : "")." INTO ".
+			$this->enclose_field_name($table).
 			" \r\n(".implode(', ', $cols).") VALUES \r\n".
 			implode(", ", $values_array);
 		// Return SQL text
@@ -352,8 +415,7 @@ class yf_db_postgres7 extends yf_db_driver {
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false, $DB_CONNECTION) {
-// TODO: add code here
-//		return $this->insert($table, $data, $only_sql, true, $DB_CONNECTION);
+		return $this->insert($table, $data, $only_sql, true, $DB_CONNECTION);
 	}
 
 	/**
@@ -363,14 +425,22 @@ class yf_db_postgres7 extends yf_db_driver {
 		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
+		// $where contains numeric id
+		if (is_numeric($where)) {
+			$where = "`id`=".intval($where);
+		}
 		// Prepare column names and values
 		$tmp_data = array();
 		foreach ((array)$data as $k => $v) {
+			if (empty($k)) {
+				continue;
+			}
 			$tmp_data[$k] = $this->enclose_field_name($k)." = ".$this->enclose_field_value($v);
 		}
 		// build the query
-		$sql = "UPDATE ".$this->enclose_field_name(@eval("return dbt_".$table.";")).
-			" SET ".implode(', ', $tmp_data). (!empty($where) ? " WHERE ".$where : '');
+		$sql = "UPDATE ".$this->enclose_field_name($table)
+			." SET ".implode(', ', $tmp_data)
+			.(!empty($where) ? " WHERE ".$where : '');
 		// Return SQL text
 		if ($only_sql) {
 			return $sql;
@@ -383,21 +453,18 @@ class yf_db_postgres7 extends yf_db_driver {
 	* Return database-specific limit of returned rows
 	*/
 	function limit($count, $offset) {
-// TODO: make code cross-database
-/*
 		if ($count > 0) {
 			$offset = ($offset > 0) ? $offset : 0;
 			$sql .= "LIMIT ".$offset.", ".$count;
 		}
 		return $sql;
-*/
 	}
 
 	/**
 	* Enclose field names
 	*/
 	function enclose_field_name($data) {
-		$data = "\"".$data."\"";
+		$data = "`".$data."`";
 		return $data;
 	}
 
@@ -415,8 +482,7 @@ class yf_db_postgres7 extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		$version = pg_version();
-		return $version['server_version'];
+		return mysql_get_server_info($this->db_connect_id);
 	}
 
 	/**
@@ -425,6 +491,6 @@ class yf_db_postgres7 extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		return "";
+		return mysql_get_host_info($this->db_connect_id);
 	}
 }

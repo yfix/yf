@@ -106,11 +106,6 @@ class yf_core_install {
 		echo str_replace(array_keys($replace), array_values($replace), $html);
 		return installer();
 	}
-	function get_default_web_path() {
-		$request_uri	= $_SERVER['REQUEST_URI'];
-		$cur_web_path	= $request_uri[strlen($request_uri) - 1] == '/' ? substr($request_uri, 0, -1) : dirname($request_uri);
-		return '//'.$_SERVER['HTTP_HOST'].str_replace(array("\\",'//'), '/', $cur_web_path.'/');
-	}
 	function get_form_keys() {
 		return array(
 			'install_yf_path'					=> 'Filesystem path to YF',
@@ -142,7 +137,7 @@ class yf_core_install {
 			'install_web_path'					=> installer()->get_default_web_path(),
 			'install_admin_login'				=> 'admin',
 			'install_admin_pswd'				=> '123456',
-			'install_rw_base'					=> '/',
+			'install_rw_base'					=> installer()->get_default_rewrite_base(),
 			'install_web_name'					=> 'YF Website',
 			'install_checkbox_rw_enabled'		=> '1',
 			'install_checkbox_db_create'		=> '1',
@@ -151,11 +146,19 @@ class yf_core_install {
 			'install_checkbox_debug_info'		=> '',
 		);
 	}
+	function get_default_web_path() {
+		$request_uri	= $_SERVER['REQUEST_URI'];
+		$cur_web_path	= $request_uri[strlen($request_uri) - 1] == '/' ? substr($request_uri, 0, -1) : dirname($request_uri);
+		return '//'.$_SERVER['HTTP_HOST'].str_replace(array("\\",'//'), '/', $cur_web_path.'/');
+	}
+	function get_default_rewrite_base() {
+		return dirname($_SERVER["REQUEST_URI"]) != "/" ? dirname($_SERVER["REQUEST_URI"]) ."/" : "/";
+	}
 	function prepare_vars() {
 		$vars = array(
 			'FORM_ACTION'	=> $_SERVER['PHP_SELF'],
 		);
-		$defaults = installer()->get_form_detaults();
+		$defaults = installer()->get_form_defaults();
 		foreach ((array)installer()->get_form_keys() as $k => $desc) {
 			$val = isset($_POST[$k]) ? $_POST[$k] : $defaults[$k];
 			if (false !== strpos($k, 'install_checkbox_') && $val) {

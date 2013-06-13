@@ -1,39 +1,44 @@
 <?php
 
+#load("yf_db_driver.abstract", "classes/db/");
+require dirname(__FILE__)."/yf_db_driver.abstract.class.php";
+
 /**
-* MS SQL through ODBC db class
+* MS Access db class
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_db_mssql_odbc {
+class yf_db_msaccess extends yf_db_driver {
 
 	/** @var @conf_skip */
-	public $db_connect_id;
+	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	public $result;
+	public $result_ids			= array();
+	/** @var @conf_skip */
+	public $result				= null;
 
 	/** @var @conf_skip */
-	public $next_id;
+	public $next_id			= null;
 
 	/** @var @conf_skip */
-	public $num_rows = array();
+	public $num_rows			= array();
 	/** @var @conf_skip */
-	public $current_row = array();
+	public $current_row		= array();
 	/** @var @conf_skip */
-	public $field_names = array();
+	public $field_names		= array();
 	/** @var @conf_skip */
-	public $field_types = array();
+	public $field_types		= array();
 	/** @var @conf_skip */
-	public $result_rowset = array();
+	public $result_rowset		= array();
 
 	/** @var @conf_skip */
-	public $num_queries = 0;
+	public $num_queries		= 0;
 
 	/**
 	*/
-	function __construct($sqlserver, $sqluser, $sqlpassword, $database, $persistency = true) {
+	function __construct($sqlserver, $sqluser, $sqlpassword, $database, $persistency = false) {
 		$this->persistency = $persistency;
 		$this->server = $sqlserver;
 		$this->user = $sqluser;
@@ -70,14 +75,16 @@ class yf_db_mssql_odbc {
 				if (!odbc_autocommit($this->db_connect_id, false)) return false;
 				$this->in_transaction = TRUE;
 			}
+			$query = str_replace("LOWER(", "LCASE(", $query);
+			$query = str_replace("`", "", $query);
 			if (preg_match("/^SELECT(.*?)(LIMIT ([0-9]+)[, ]*([0-9]+)*)?$/s", $query, $limits)) {
 				$query = $limits[1];
 				if (!empty($limits[2])) {
 					$row_offset = $limits[4] ? $limits[3] : "";
 					$num_rows = $limits[4] ? $limits[4] : $limits[3];
-					$query = "TOP ".($row_offset + $num_rows). $query;
+					$query = "TOP " . ($row_offset + $num_rows) . $query;
 				}
-				$this->result = odbc_exec($this->db_connect_id, "SELECT $query");
+				$this->result = odbc_exec($this->db_connect_id, "SELECT $query"); 
 				if ($this->result) {
 					if (empty($this->field_names[$this->result])) {
 						for($i = 1; $i < odbc_num_fields($this->result) + 1; $i++) {
@@ -87,21 +94,23 @@ class yf_db_mssql_odbc {
 					}
 					$this->current_row[$this->result] = 0;
 					$this->result_rowset[$this->result] = array();
-
 					$row_outer = isset($row_offset) ? $row_offset + 1 : 1;
 					$row_outer_max = isset($num_rows) ? $row_offset + $num_rows + 1 : 1E9;
 					$row_inner = 0;
 
-					while(odbc_fetch_row($this->result, $row_outer) && $row_outer < $row_outer_max)	{
-						for($j = 0; $j < count($this->field_names[$this->result]); $j++)
+					while(odbc_fetch_row($this->result) && $row_outer < $row_outer_max)	{
+						$count_f_names = count($this->field_names[$this->result]);
+						for($j = 0; $j < $count_f_names; $j++)
 							$this->result_rowset[$this->result][$row_inner][$this->field_names[$this->result][$j]] = stripslashes(odbc_result($this->result, $j + 1));
 						$row_outer++;
 						$row_inner++;
 					}
 					$this->num_rows[$this->result] = count($this->result_rowset[$this->result]);	
+					odbc_free_result($this->result);
 				}
 			} elseif (preg_match('#^INSERT #i', $query)) {
 				$this->result = odbc_exec($this->db_connect_id, $query);
+
 				if ($this->result) {
 					$result_id = odbc_exec($this->db_connect_id, "SELECT @@IDENTITY");
 					if ($result_id) {
@@ -113,8 +122,10 @@ class yf_db_mssql_odbc {
 				}
 			} else {
 				$this->result = odbc_exec($this->db_connect_id, $query);
-				if ($this->result) $this->affected_rows[$this->db_connect_id] = odbc_num_rows($this->result);
+				if ( $this->result )
+					$this->affected_rows[$this->db_connect_id] = odbc_num_rows($this->result);
 			}
+
 			if (!$this->result) {
 				if ($this->in_transaction) {
 					odbc_rollback($this->db_connect_id);
@@ -123,16 +134,16 @@ class yf_db_mssql_odbc {
 				}
 				return false;
 			}
+
 			if ($transaction == END_TRANSACTION && $this->in_transaction) {
 				$this->in_transaction = false;
-				if (!odbc_commit($this->db_connect_id)) {
+				if (!@odbc_commit($this->db_connect_id)) {
 					odbc_rollback($this->db_connect_id);
 					odbc_autocommit($this->db_connect_id, true);
 					return false;
 				}
 				odbc_autocommit($this->db_connect_id, true);
 			}
-			odbc_free_result($this->result);
 			return $this->result;
 		} else {
 			if ($transaction == END_TRANSACTION && $this->in_transaction) {
@@ -168,8 +179,23 @@ class yf_db_mssql_odbc {
 	*/
 	function fetch_row($query_id = 0) {
 		if (!$query_id) $query_id = $this->result;
+		$a = ($this->num_rows[$query_id] && $this->current_row[$query_id] < $this->num_rows[$query_id]) ? $this->result_rowset[$query_id][$this->current_row[$query_id]++] : false;
 		if ($query_id) return ($this->num_rows[$query_id] && $this->current_row[$query_id] < $this->num_rows[$query_id]) ? $this->result_rowset[$query_id][$this->current_row[$query_id]++] : false;
 		else return false;
+	}
+
+	/**
+	* Fetch Assoc
+	*/
+	function fetch_assoc($query_id = 0)	{
+		return $this->fetch_row($query_id);
+	}
+
+	/**
+	* Fetch Array
+	*/
+	function fetch_array($query_id = 0)	{
+		return $this->fetch_row($query_id);
 	}
 
 	/**
@@ -210,8 +236,8 @@ class yf_db_mssql_odbc {
 	* Error
 	*/
 	function error() {
-		$error['code'] = odbc_error($this->db_connect_id);
-		$error['message'] = odbc_errormsg($this->db_connect_id);
+		$error['code'] = "";//odbc_error($this->db_connect_id);
+		$error['message'] = "Error";//odbc_errormsg($this->db_connect_id);
 		return $error;
 	}
 

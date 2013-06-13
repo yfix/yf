@@ -24,7 +24,7 @@ class yf_adodb_db {
 	/** @var bool Use backtrace in error message @conf_skip */
 	public $ERROR_BACKTRACE		= true;
 	/** @var string Folder where databases drivers are stored @conf_skip */
-	public $DB_DRIVERS_DIR			= "classes/db_drivers/";
+	public $DB_DRIVERS_DIR			= "classes/db/";
 	/** @var int Num tries to reconnect (will be useful if db server is overloaded) @conf_skip */
 	public $NUM_RECONNECT_TRIES	= 3; // @var Set to "0" for disabling
 	/** @var int Time to wait between reconnects (in seconds) @conf_skip */

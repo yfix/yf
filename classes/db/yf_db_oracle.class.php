@@ -1,6 +1,6 @@
 <?php
 
-#load("yf_db_driver.abstract", "classes/db_drivers/");
+#load("yf_db_driver.abstract", "classes/db/");
 require dirname(__FILE__)."/yf_db_driver.abstract.class.php";
 
 /**

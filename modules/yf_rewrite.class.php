@@ -118,7 +118,7 @@ class yf_rewrite {
 			$rewrited_data = preg_replace(
 				array_keys($this->_replace_patterns), 
 				array_values($this->_replace_patterns), 
-				$links
+				str_replace("object=".YF_PREFIX, "object=", $links) // Fix for cases when __CLASS__ used in links generation inside YF
 			);
 			// Process extension
 			if (strlen($this->_rewrite_add_extension)) {
@@ -135,6 +135,7 @@ class yf_rewrite {
 			// Allow links with anchors
 			$rewrited_data = preg_replace("/(\#[a-z0-9\_]+)\//i", "/\$1", $rewrited_data);
 			// Replace rewrited links in the output
+			$r_array = array();
 			foreach ((array)$links as $k => $v) {
 				$r_array[$v] = $rewrited_data[$k];
 			}
