@@ -1,24 +1,40 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
-{execute(graphics,show_css)}
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css" rel="stylesheet">
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div id="login_wrap">
-	<form id="myform" action="./?task=login" method="post">
-	<p>
-		<label for="login">{t(Login)}</label>
-		<input type="text" name="login" id="login" value="" />
-	</p>
-	<p>
-		<label for="pswd">{t(Password)}</label>
-		<input type="password" name="password" id="pswd" value="" />
-	</p>
-	<div align="right">
-	   	<input type="submit" value="Enter" id="enter" />
+	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand" href="{const(WEB_PATH)}">{const(SITE_ADVERT_NAME)}</a>
+			<ul class="nav">
+				<li class=""><a href="{const(WEB_PATH)}">User Home</a></li>
+				<li class=""><a href="./">Admin Home</a></li>
+			</ul>
+		</div>
 	</div>
-	</form>
-</div>
+	<div class="container">
+		<form class="form-horizontal" method="post" action="./?task=login">
+			<div class="control-group">
+				<label class="control-label" for="input_login">{t(Login)}</label>
+				<div class="controls"><input type="text" id="input_login" placeholder="Login" name="login" value=""></div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="input_password">{t(Password)}</label>
+				<div class="controls"><input type="password" id="input_password" placeholder="Password" name="password" value=""></div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<!--label class="checkbox"><input type="checkbox"> Remember me</label-->
+					<button type="submit" class="btn" value="Enter">Enter</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 </body>
 </html>
