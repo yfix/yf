@@ -5,8 +5,8 @@
 <div class="editform">
 <form method="post" action="{form_action}">
 		<p class="first">
-			<label>{t(Comment text)}:</label>
-			<textarea name="text" rows="10" cols="50">{text}</textarea>
+			<label>{t(Comment text)}:
+			<textarea name="text" class="span4">{text}</textarea></label>
 		</p>
 		<div class="button_div">
 			<input type="submit" value="{t(Save)}" />

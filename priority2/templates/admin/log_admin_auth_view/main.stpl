@@ -22,7 +22,7 @@
 {/if}
 <br />
 {if("pages" ne "")}
-	<div align="center">{t(Pages)}: {pages}</div>
+	<div align="center">{pages}</div>
 {/if}
 <br />
 <hr />

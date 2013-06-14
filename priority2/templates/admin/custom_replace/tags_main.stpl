@@ -31,12 +31,12 @@
 </div>
 
 <br />
-<div>
+<div class="alert alert-info">
 	<p><b>NOTE:</b></p>
 	<p>
-P.S: Icons meaning:<br />
-<img src="images/details.gif"> - View list of tag rules.<br />
-<img src="images/links_edit.gif"> - Edit tag text info.<br />
-<img src="images/links_delete.gif"> - Delete tag and all of its rules.<br />
+	P.S: Icons meaning:<br />
+	<i class="icon-eye-open"></i> - View list of tag rules.<br />
+	<i class="icon-edit"></i> - Edit tag text info.<br />
+	<i class="icon-trash"></i> - Delete tag and all of its rules.<br />
 	</p>
 </div>

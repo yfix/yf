@@ -1,7 +1,7 @@
 <div class="filter">
 <fieldset>
 <legend>{t(Filter)}</legend>
-<form action='{save_action}' method='post'>
+<form action='{save_action}' method='post' name="log_auth_fails_viewer">
 	<div class="column">
 		<p>
 			<label for="login">{t(Login)}</label>
@@ -25,15 +25,16 @@
 			<label for="sort_order_box">{t(Sort order)}</label>
 			{sort_order_box}
 		</p>
-	</div>
-		<p>
+			<p>
 			<label>{t(Period from)}</label>
-			{time_from_box}
+		    {time_from_box}
    		</p>
 		<p>
 			<label>{t(Period to)}</label>
-			{time_to_box}
+		    {time_to_box}
    		</p>
+	</div>
+	
 	<div class="button_div">
 		<input type="submit" value="{t(SAVE)}">
 		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">

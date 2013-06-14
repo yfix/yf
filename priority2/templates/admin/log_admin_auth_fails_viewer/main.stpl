@@ -20,5 +20,5 @@
 
 {if("items" eq "")}{t(No auth fails)}{/if}
 
-{if("pages" ne "")}<br />{t(Pages)}: {pages}{/if}
+{if("pages" ne "")}<br />{pages}{/if}
 </div>

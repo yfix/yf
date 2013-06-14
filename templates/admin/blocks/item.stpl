@@ -1,18 +1,17 @@
-<tr class="{bg_class}">
-	<td><a href="{rules_link}"><b>{name}</b></a><br /><small>{desc}</small></td>
-	<td nowrap>{stpl_name}</td>
-	<td nowrap>{method_name}</td>
-	<td><b style="text-transform:uppercase;">{type}</b></td>
-	<td><b>{num_rules}</b></td>
-	<td><a href="{active_link}" class="change_active">
-{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}
-{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a>
-	</td>
-	<td nowrap>
-		<a href="{rules_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Edit Rules)}" /></a>&nbsp;
-		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
-		<a href="{delete_link}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
-		<a href="{export_link}" title="{t(Export)}"><img height="16" width="16" border="0" src="uploads/icons/folder_go.png" alt="{t(Export)}" /></a>&nbsp;
+<tr>
+	<td><a href="{rules_link}">{name}</a>{if("desc" ne "")}<br /><small>{desc}</small>{/if}</td>
+	<td>{stpl_name}</td>
+	<td>{method_name}</td>
+	<td>{type}</td>
+	<td>{num_rules}</td>
+	<td>
+<a href="{active_link}" class="change_active">
+{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}
+{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a>
+		<a href="{rules_link}" title="{t(Edit Rules)}"><i class="icon-eye-open"></i></a>&nbsp;
+		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
+		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-trash"></i></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>&nbsp;
+		<a href="{export_link}" title="{t(Export)}"><i class="icon-plus-sign"></i></a>&nbsp;
 	</td>
 </tr>

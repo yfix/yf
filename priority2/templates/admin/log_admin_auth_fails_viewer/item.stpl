@@ -11,6 +11,6 @@
 {/if}
 	</td>
 	<td nowrap>
-		<a href="{details_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Details)}" /></a>&nbsp;
+		<a href="{details_link}" title="{t(Details)}"><i class="icon-edit"></i></a>&nbsp;
 	</td>
 </tr>

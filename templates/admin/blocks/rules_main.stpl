@@ -40,7 +40,7 @@
 </div>
 
 <br />
-<div>
+<div class="alert alert-info">
 	<p><b>{t(NOTE)}:</b></p>
 	<p>By Default rules are set to <b>DENY ALL</b><br />
 	This mean that if no rules are set - then current block is <b>DENIED</b> to display<br />

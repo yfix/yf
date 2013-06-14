@@ -1,27 +1,41 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Navigation bar handler
 class yf_site_nav_bar {
 
 	/** @var string */
 	public $HOOK_NAME = "_nav_bar_items";
 
-	//-----------------------------------------------------------------------------
-	// Constructor
-	function yf_site_nav_bar () {
-		$this->USER_ID = $_SESSION['user_id'];
-		// Get object name constant
-		define("SITE_NAV_BAR_OBJ", "site_nav_bar");
+	/**
+	*/
+	function _show_dropdown_menu () {
+		$items = _class("graphics")->_show_menu(array(
+			"name"				=> "admin_home_menu",
+			"force_stpl_name"	=> "site_nav_bar/dropdown_menu",
+			"return_array"		=> 1,
+		));
+		foreach ((array)$items as $id => $item) {
+			$item["need_clear"] = 0;
+			if ($item["type_id"] == 3 && !($i++ % 3)) {
+				$item["need_clear"] = 1;
+			}
+//			if ($item["type_id"] == 1 && !$this->_url_allowed($item["link"])) {
+//				unset($items[$id]);
+//				continue;
+//			}
+			$items[$id] = tpl()->parse("site_nav_bar/dropdown_menu_item", $item);
+		}
+		return tpl()->parse("site_nav_bar/dropdown_menu", array(
+			"items" => implode("", (array)$items)
+		));
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display navigation bar
 	function _show () {
 		$items = array();
 		// Switch between specific actions
-		if (in_array($_GET["object"], array(/*"account"*/))) {
-// TODO: need to add code here
+		if (in_array($_GET["object"], array())) {
+
 		} else {
 			if (!in_array($_GET["action"], array("", "show"))) {
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET["object"]), "./?object=".$_GET["object"]);
@@ -55,14 +69,13 @@ class yf_site_nav_bar {
 		}
 		// Process template
 		$replace = array(
-			"items"			=> is_array($items) ? implode(tpl()->parse(SITE_NAV_BAR_OBJ."/div"), $items) : "",
+			"items"			=> is_array($items) ? implode(tpl()->parse("site_nav_bar/div"), $items) : "",
 			"is_logged_in"	=> intval((bool) $_SESSION["user_id"]),
 			"bookmark_page"	=> $bookmark_page_code,
 		);
-		return tpl()->parse(SITE_NAV_BAR_OBJ."/main", $replace);
+		return tpl()->parse("site_nav_bar/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display navigation bar item
 	function _nav_item ($name = "", $nav_link = "") {
 		$replace = array(
@@ -71,10 +84,9 @@ class yf_site_nav_bar {
 			"as_link"		=> !empty($nav_link) ? 1 : 0,
 			"is_logged_in"	=> intval((bool) $_SESSION["user_id"]),
 		);
-		return tpl()->parse(SITE_NAV_BAR_OBJ."/item", $replace);
+		return tpl()->parse("site_nav_bar/item", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Get root categories array
 	function _get_root_cat_ids () {
 		foreach ((array)$this->_cats as $A) {
@@ -83,7 +95,6 @@ class yf_site_nav_bar {
 		return $root_ids;
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function _get_cat_id_by_name ($cat_name = "") {
 		$cat_id = 0;
@@ -100,14 +111,12 @@ class yf_site_nav_bar {
 		return $cat_id;
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function _get_parent_cat_name ($cat_id = "") {
 		$parent_id = $this->_cats[$cat_id]["parent_id"];
 		return $this->_cats[$parent_id]["name"];
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function _get_city_id_by_name ($city_name = "") {
 		$city_id = 0;
@@ -124,19 +133,16 @@ class yf_site_nav_bar {
 		return $city_id;
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function _get_city_name_by_id ($city_id = "") {
 		return $this->_cities[$city_id]["phrase"];
 	}
 
-	//-----------------------------------------------------------------------------
 	// Decode name
 	function _decode_from_url ($text = "") {
 		return ucwords(str_replace("_", " ", $text));
 	}
 
-	//-----------------------------------------------------------------------------
 	// Encode name
 	function _encode_for_url ($text = "") {
 		return strtolower(str_replace(" ", "_", $text));

@@ -17,8 +17,8 @@
 {if("active_link" ne "")}</a>{/if}
 	</td>
 	<td nowrap>
-		<a href="{edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit Block)}" /></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
-		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Block)}" /></a>&nbsp;
+		<a href="{edit_link}" title="{t(Edit Block)}"><i class="icon-edit"></i></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>&nbsp;
+		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;
 	</td>
 </tr>

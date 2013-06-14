@@ -1,6 +1,6 @@
 <h2>{t(Edit items for category)}: "{category_name}"</h2>
 
-{if("pages" ne "")}<div align="center">{t(Pages)}: {pages}</div><br />{/if}
+{if("pages" ne "")}<div align="center">{pages}</div><br />{/if}
 
 {if("items" ne "")}
 <form action="{save_form_action}" method="post">
@@ -22,9 +22,7 @@
 </form>
 {if("items" eq "")}<div align="center">{t(No items yet)}</div>{/if}
 
-{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
-
-<br />
+{if("pages" ne "")}<div align="center">{pages}</div>{/if}
 
 <div align="center">
 	<a href="{add_item_link}">{t(Add new item)}</a>
@@ -33,7 +31,7 @@
 </div>
 
 <br />
-<div>
+<div class="alert alert-info">
 	<p><b>{t(NOTE)}:</b></p>
 	<p>!!!!____TODO____!!!!</p>
 </div>
