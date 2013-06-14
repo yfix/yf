@@ -1,31 +1,5 @@
-{if("error_message" ne "")}
-	{error_message}
-{/if}
-
-<div align="center">
-<form method="post" action="{form_action}">
-<div class="editform" style="width: 50%;">
-	<p>
-		<label for="modules_box">{t(Module Name)}</label>
-		{modules_box}<br /><small>({t(Choose the module you want to export.)})</small>
-	</p>
-	<p>
-		<label for="file_formats_box">{t(File Format)}</label>
-		<span class="vertical">{file_formats_box}</span>
-	</p>
-	<div class="button_div">
-		<input type="submit" value="{t(Export)}" name="go" />
 	</div>
 </div>
 </form>
 </div>
-
-<br />
-<div>
-	<p><b>{t(NOTE)}:</b></p>
-	<p>!!!!____TODO____!!!!</p>
-</div>
-
-<br />
-<br />
 <div align="center"><a href="{back_link}">{t(Back to modules list)}</a></div>

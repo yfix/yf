@@ -26,10 +26,4 @@
 </form>
 </div>
 
-
-<div class="alert alert-info">
-	<p><b>{t(NOTE)}:</b></p>
-	<p>!!!!____TODO____!!!!</p>
-</div>
-
 <div align="center"><a href="{back_link}">{t(Back to languages)}</a></div>

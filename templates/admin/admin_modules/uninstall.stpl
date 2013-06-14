@@ -19,8 +19,3 @@
 	</div>
 	</form>
 {/if}
-<br />
-<div class="alert alert-info">
-		<p><b>{t(NOTE)} :</b></p>
-		<p>!!!!____TODO____!!!!</p>
-</div>

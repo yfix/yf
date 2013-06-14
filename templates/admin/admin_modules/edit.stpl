@@ -20,19 +20,4 @@
 -->
 </form>
 </table>
-
-<br />
-<table border="0" cellspacing="0" cellpadding="3" width="600" align="center">
-	<tr>
-		<td><b>{t(NOTE)} :</b></td>
-	</tr>
-	<tr>
-		<td>
-!!!!____TODO____!!!!
-		</td>
-	</tr>
-</table>
-
-<br />
-<br />
 <div align="center"><a href="{back_link}">{t(Back to modules list)}</a></div>

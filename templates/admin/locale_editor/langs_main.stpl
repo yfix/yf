@@ -28,9 +28,3 @@
 	<a href="{import_vars_link}">{t(Import)}</a>&nbsp;
 	<a href="{export_vars_link}">{t(Export)}</a>&nbsp;
 </div>
-
-<br />
-<div class="alert alert-info">
-	<p><b>{t(NOTE)}:</b></p>
-	<p>!!!!____TODO____!!!!</p>
-</div>

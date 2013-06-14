@@ -17,13 +17,4 @@
 	</div>
 </form>
 </div>
-
-<br />
-<div>
-	<p><b>{t(NOTE)}:</b></p>
-	<p>!!!!____TODO____!!!!</p>
-</div>
-
-<br />
-<br />
 <div align="center"><a href="{back_link}">{t(Back to modules list)}</a></div>

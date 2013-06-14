@@ -17,11 +17,4 @@
 	<input type="submit" value="{t(CONFIRM)}" name="go" onclick="return confirm('{t(Are you sure?)}')">
 	<input type="button" value="{t(CANCEL)}" onclick="window.location.href='{back_link}'">
 </div>
-
 {/if}
-
-<br />
-<div>
-	<p><b>{t(NOTE)}:</b></p>
-	<p>!!!!____TODO____!!!!</p>
-</div>
