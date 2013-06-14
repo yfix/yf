@@ -9,22 +9,23 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 
+	{include("main_style_css")}
 	{execute(graphics,show_metatags)}
 </head>
 <body>
 	<div class="navbar navbar-inverse">
 		<div class="navbar-inner">
-			<a class="brand" href="{const(WEB_PATH)}">Backend</a>
+<!--			<a class="brand" href="{const(WEB_PATH)}">Backend</a>-->
 			<ul class="nav">
 {execute(site_nav_bar,_show)}
 			</ul>
+{execute(site_nav_bar,_show_dropdown_menu)}
 			<ul class="nav pull-right">
 				<li>{execute(graphics,show_welcome)}</li>
 				<li><a href="./?task=logout" target="_parent">{t(Logout)}</a></li>
 			</ul>
 		</div>
 	</div>
-{execute(site_nav_bar,_show_dropdown_menu)}
 	<div class="container">
 {execute(graphics,_show_block;name=center_area)}
 	</div>

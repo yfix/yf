@@ -47,7 +47,7 @@
 
 {if("items" eq "")}<div align="center">{t(No items yet)}</div>{/if}
 
-{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+{if("pages" ne "")}<br /><div align="center">{pages}</div>{/if}
 
 <br />
 

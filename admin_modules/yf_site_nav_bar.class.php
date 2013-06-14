@@ -6,30 +6,6 @@ class yf_site_nav_bar {
 	/** @var string */
 	public $HOOK_NAME = "_nav_bar_items";
 
-	/**
-	*/
-	function _show_dropdown_menu () {
-		$items = _class("graphics")->_show_menu(array(
-			"name"				=> "admin_home_menu",
-			"force_stpl_name"	=> "site_nav_bar/dropdown_menu",
-			"return_array"		=> 1,
-		));
-		foreach ((array)$items as $id => $item) {
-			$item["need_clear"] = 0;
-			if ($item["type_id"] == 3 && !($i++ % 3)) {
-				$item["need_clear"] = 1;
-			}
-//			if ($item["type_id"] == 1 && !$this->_url_allowed($item["link"])) {
-//				unset($items[$id]);
-//				continue;
-//			}
-			$items[$id] = tpl()->parse("site_nav_bar/dropdown_menu_item", $item);
-		}
-		return tpl()->parse("site_nav_bar/dropdown_menu", array(
-			"items" => implode("", (array)$items)
-		));
-	}
-
 	// Display navigation bar
 	function _show () {
 		$items = array();
@@ -146,5 +122,26 @@ class yf_site_nav_bar {
 	// Encode name
 	function _encode_for_url ($text = "") {
 		return strtolower(str_replace(" ", "_", $text));
+	}
+
+	/**
+	*/
+	function _show_dropdown_menu () {
+		$items = _class("graphics")->_show_menu(array(
+			"name"				=> "admin_home_menu",
+			"force_stpl_name"	=> "site_nav_bar/dropdown_menu",
+			"return_array"		=> 1,
+		));
+		foreach ((array)$items as $id => $item) {
+			$item["need_clear"] = 0;
+			if ($item["type_id"] == 1 && !module("admin_home")->_url_allowed($item["link"])) {
+				unset($items[$id]);
+				continue;
+			}
+			$items[$id] = tpl()->parse("site_nav_bar/dropdown_menu_item", $item);
+		}
+		return tpl()->parse("site_nav_bar/dropdown_menu", array(
+			"items" => implode("", (array)$items)
+		));
 	}
 }

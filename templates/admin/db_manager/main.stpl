@@ -5,8 +5,8 @@
 	{t(Paste SQL here)}
 	<textarea name="sql" cols="50" rows="10" style="width:100%"></textarea>
 	<br /><br />
-	{t(Or select file to process)}<small>({t(Plain text, ZIP, GZIP allowed)})</small><br />
-	<input type="file" size="40" name="sql_file" value="">
+	{t(Or select file to process)}({t(Plain text, ZIP, GZIP allowed)})<br />
+	<input type="file" name="sql_file" value="">
 	<br /><br />
 	<input type="submit" name="go" value="{t(EXECUTE)}">
 	</form>
@@ -29,7 +29,7 @@
 		<th>{t(Name)}</th>
 		<th>{t(Engine)}</th>
 		<th>{t(Collation)}</th>
-		<th>{t(Num Rows)}</th>
+		<th>{t(Num rows)}</th>
 		<th>{t(Data Size)}</th>
 		<th width="5%">{t(Action)}</th>
 	</thead>
@@ -50,9 +50,11 @@
 {/if}
 </table>
 
-
-	<input type="checkbox" name='check_all' onclick="check_all()" check_status="0" id="my_check_all">
-	<label for="my_check_all"><b>Select all</b></label> {actions_select_box}
+	<label for="my_check_all">
+		<input type="checkbox" name='check_all' onclick="check_all()" check_status="0" id="my_check_all">
+		<b>Select all</b>
+	</label> 
+	{actions_select_box}
 	
 	<br /><br />
 	<img id="loading" style="display:none" src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif"></img>

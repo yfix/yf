@@ -8,8 +8,8 @@
 	<td>{num_rows}</td>
 	<td nowrap>{data_size}</td>
 	<td nowrap>
-		<a href="{view_link}" title="view"><img src="{CONST(WEB_PATH)}uploads/icons/db_manager/b_browse.png" alt="view" /></a>
-		<a href="{structure_link}" title="structure"><img src="{CONST(WEB_PATH)}uploads/icons/db_manager/b_props.png" alt="structure" /></a>
-		<a href="{export_link}"><img src="{CONST(WEB_PATH)}uploads/icons/folder_go.png" alt="{t(Export)}" /></a>&nbsp;
+		<a href="{view_link}" title="{t(View)}"><i class="icon-eye-open"></i></a>
+		<a href="{structure_link}" title="{t(Structure)}"><i class="icon-list"></i></a>
+		<a href="{export_link}" title="{t(Export)}"><i class="icon-plus-sign"></i></a>&nbsp;
 	</td>
 </tr>

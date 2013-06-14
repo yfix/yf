@@ -10,7 +10,7 @@
 	</tbody>
 </table>
 
-<br /><br />
+
 <div align="center">
 	<form action="{import_url}" method='post' name='import_form' enctype="multipart/form-data">
 		<input type="file" name="import_file" size="40">&nbsp;
@@ -18,8 +18,7 @@
 	</form>
 </div>
 
-<br /><br />
-<div>
+<div class="alert alert-info">
 	<p><b>{t(NOTE)}:</b></p>
 	<p>{t(This module allows to manage templates located in framework, project and sites)}</p>
 </div>

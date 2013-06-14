@@ -9,10 +9,10 @@
 	</td>
 	<td>{num_items}</td>
 	<td nowrap>
-		<a href="{items_link}" title="{t(Edit Items)}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Edit Items)}" /></a>&nbsp;
-		<a href="{edit_link}" title="{t(Edit)}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
-		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
-		<a href="{export_link}" title="{t(Export)}"><img height="16" width="16" border="0" src="uploads/icons/folder_go.png" alt="{t(Export)}" /></a>&nbsp;
+		<a href="{items_link}" title="{t(Edit Items)}"><i class="icon-eye-open"></i></a>&nbsp;
+		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
+		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-trash"></i></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>&nbsp;
+		<a href="{export_link}" title="{t(Export)}"><i class="icon-plus-sign"></i></a>&nbsp;
 	</td>
 </tr>

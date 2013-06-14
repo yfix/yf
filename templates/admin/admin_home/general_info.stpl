@@ -1,13 +1,19 @@
-<div class="admin_home">
-	<div class="top_level">{t(General Info)}</div>
-	<p><label>PHP</label>{php_ver}</p>
-	<p><label>MySQL {t(server)}</label>{mysql_serv_ver}</p>
-	<p><label>MySQL {t(host)}</label>{mysql_host_info}</p>
-	<p><label>{t(DB name)}</label>{db_name}</p>
-{if("db_size" ne "")}
-	<p><label>{t(DB size)}</label>{db_size}</p>
-{/if}
-{if("project_dir_size" ne "")}
-	<p><label>{t(Project dir size)}</label>{project_dir_size}</p>
-{/if}
+<div class="admin_home offset2">
+	
+	<div class="row">
+		<div class="span2"><h4>{t(General Info)}</h4></div>
+		<div id="general-info" class="span6">
+			<span class="span2">PHP</span>				 	<span class="span3">{php_ver}</span><br/>
+			<span class="span2">MySQL {t(server)}</span> 	<span class="span3">{mysql_serv_ver}</span><br/>
+			<span class="span2">MySQL {t(host)}</span>   	<span class="span3">{mysql_host_info}</span><br/>
+			<span class="span2">{t(DB name)}</span> 	 	<span class="span3">{db_name}</span><br/>
+		{if("db_size" ne "")}
+			<span class="span2">{t(DB size)}</span>		 	<span class="span3">{db_size}</span><br/>
+		{/if}
+		{if("project_dir_size" ne "")}
+			<span class="span2">{t(Project dir size)}</span><span class="span3">{project_dir_size}</span>
+		{/if}
+		</div>
+	</div>
+
 </div>

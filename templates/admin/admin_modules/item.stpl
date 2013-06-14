@@ -7,12 +7,7 @@
 {if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}
 {if("active_link" ne "")}</a>{/if}
 		</td>
-{{--
 		<td nowrap="nowrap">
 			{if("uninstall_link" ne "")}<a href="{uninstall_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Uninstall)}</a>{/if}
 		</td>
---}}
-{{--
-		<td width="50%" align="left"><small>{desc}</small></td>
---}}
 	</tr>

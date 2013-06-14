@@ -148,12 +148,10 @@ class yf_admin_home {
 				}
 			}
 		}
-		
 		if (!empty($suggests)){
 			$replace = array(
 				"suggests"		=> $suggests,
 			);
-			
 			return tpl()->parse(__CLASS__."/suggests", $replace);
 		}
 	}

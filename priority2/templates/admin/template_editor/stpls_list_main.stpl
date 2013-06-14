@@ -33,16 +33,16 @@
 <br />
 <div align="center">{t(Pages)}: {pages}</div>
 {/if}
-<br /><br />
+
 <div align="center"><a href="{back_url}">{t(Back to themes list)}</a></div>
-<br />
+<br /><br />
 <div align="center">
 {include("template_editor/add_stpl_form")}
 </div>
 
 
 {if("location" eq "framework")}
-	<div>
+	<div class="alert alert-info">
 		<p><b>{t(NOTE)}:</b></p>
 		<p class="negative">{t(You cannot edit or delete templates or folders in FRAMEWORK using web-interface)}</p>
 	</div>

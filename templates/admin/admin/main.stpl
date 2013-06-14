@@ -26,9 +26,9 @@
 	{if("#.active_link" ne "")}</a>{/if}
 			</td>
 			<td nowrap="nowrap">
-	{if("#.edit_link" ne "")}<a href="{#.edit_link}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;{/if}
+	{if("#.edit_link" ne "")}<a href="{#.edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;{/if}
 	{if("#.admin_auth_link" ne "")}<small>[<a href="{#.admin_auth_link}">{t(log auth)}</a>]</small>&nbsp;{/if}
-	{if("#.delete_link" ne "")}<a href="{#.delete_link}" onclick="return confirm('{t(Are you sure)}?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;{/if}
+	{if("#.delete_link" ne "")}<a href="{#.delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;{/if}
 			</td>
 		</tr>
 {/foreach}
@@ -41,6 +41,6 @@
 
 {if("items" eq "")}<div align="center">{t(No admin users yet)}</div>{/if}
 
-{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+{if("pages" ne "")}<br /><div align="center">{pages}</div>{/if}
 
 {if("add_link" ne "")}<br /><div align="center"><a href="{add_link}">Add</a></div>{/if}

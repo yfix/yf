@@ -97,12 +97,12 @@ div.icon_item {
 
 <script type="text/javascript">
 <!--
-var uagent	= navigator.userAgent.toLowerCase();
+var uagent    = navigator.userAgent.toLowerCase();
 var is_safari = ( (uagent.indexOf('safari') != -1) || (navigator.vendor == "Apple Computer, Inc.") );
-var is_ie	 = ( (uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv) );
+var is_ie     = ( (uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv) );
 var is_opera  = (uagent.indexOf('opera') != -1);
 var is_webtv  = (uagent.indexOf('webtv') != -1);
-var is_win	=  ( (uagent.indexOf("win") != -1) || (uagent.indexOf("16bit") !=- 1) );
+var is_win    =  ( (uagent.indexOf("win") != -1) || (uagent.indexOf("16bit") !=- 1) );
 var ua_vers   = parseInt(navigator.appVersion);
 //insert_word("[test]", "[/test]", true);
 // GENERAL INSERT FUNCTION
@@ -141,7 +141,7 @@ function insert_word(ibTag, ibClsTag, isSingle) {
 		}
 		var start  = (p_obj.value).substring(0, ss);
 		var middle = (p_obj.value).substring(ss, es);
-		var end	= (p_obj.value).substring(es, p_obj.textLength);
+		var end    = (p_obj.value).substring(es, p_obj.textLength);
 		// text range?
 		if (p_obj.selectionEnd - p_obj.selectionStart > 0) {
 			middle = ibTag + middle + ibClsTag;
@@ -155,7 +155,7 @@ function insert_word(ibTag, ibClsTag, isSingle) {
 		var cpos = ss + (middle.length);
 		p_obj.selectionStart = cpos;
 		p_obj.selectionEnd   = cpos;
-		p_obj.scrollTop	  = st;
+		p_obj.scrollTop      = st;
 	}
 	// It's CRAPPY!
 	else {

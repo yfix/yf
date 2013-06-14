@@ -12,10 +12,10 @@
 	<td><small><b>{item_type}</b></small></td>
 	<td><small>{foreach("groups")}<b>{_val}</b><br />{/foreach}</small></td>
 	<td><small><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a></small></td>
-	<td><input type="text" name="order[{item_id}]" value="{order}" size="2" style="font-size:11px;" /></td>
+	<td><input type="text" name="order[{item_id}]" value="{order}" size="2" style="font-size:11px;"/></td>
 	<td>
-		<a href="{edit_link}" title="{t(Edit)}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)}" /></a>&nbsp;
-		<a href="{delete_link}" title="{t(Delete)}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}"><img height="16" width="16" border="0" src="uploads/icons/arrow_branch.png" alt="{t(Clone)}" /></a>&nbsp;
+		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
+		<a href="{delete_link}" title="{t(Delete)}" class="ajax_delete"><i class="icon-trash"></i></a>&nbsp;
+		<a href="{clone_link}" title="{t(Clone)}"><i class="icon-random"></i></a>&nbsp;
 	</td>
 </tr>

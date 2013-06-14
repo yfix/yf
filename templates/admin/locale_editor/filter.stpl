@@ -1,36 +1,40 @@
-<div class="filter" style="width:80%;">
+<div class="filter" >
 <fieldset>
 <legend>{t(Filter)}</legend>
 <form action="{save_action}" method="post" name="filter_form">
-	<div class="column" style="width:50%;">
+	<div class="column">
 		<p>
 			<label for="search_string">{t(Search for)}: </label>
-			<input type="text" maxlength="30" name="search_string" id="search_string" size="28" value="{search_string}" />
+			<input type="text" maxlength="30" name="search_string" id="search_string" size="28" value="{search_string}" class="span4"/>
 		</p>
 		<p>
 			<label for="case_sens_box">{t(Case sensivity)}:</label> 
 			{case_sens_box}
-			<br /><small>{t(Leave blank to show all strings.)}</small>
-			<br /><small>{t(If you want to search for word in whole sentence, then type something like: %word)}</small>
+			{{--<br/><small>{t(Leave blank to show all strings.)}</small>
+			<small>{t(If you want to search for word in whole sentence, then type something like: %word)}</small>--}}
 		</p>
 		<p>
 			<label for="per_page_box">{t(Records per page)}:</label>
 			{per_page_box}
 		</p>
+		<p>
+			<label>{search_type_box}</label>
+		</p>
 	</div>
-	<div class="column" style="width:30%;">
-		<div>
-			<b>{search_type_box}</b>
-		</div>
-		<div>
-			<b>{t(Search in)}:</b><br />{search_in_box}
-		</div>
-		<div>
-			<b>{t(Show locations)}:</b><br /> {show_locs_box}
-		</div>
-	</div>
-	<div class="column" style="width:10%;" nowrap>
-		<b>{t(Language)}</b>: <small><br />{search_lang_box}</small>
+	<div class="column">
+
+		<p>
+			<label>{t(Search in)}:</label>
+			{search_in_box}
+		</p>
+		<p>
+			<label>{t(Show locations)}:</label>
+			{show_locs_box}
+		</p>
+		<p>
+			<label>{t(Language)}:</label>
+			{search_lang_box}
+		</p>
 	</div>
 	<div class="button_div">
 		<input type="submit" name="go" value="{t(Search)}" />

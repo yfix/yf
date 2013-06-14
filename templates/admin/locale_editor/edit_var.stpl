@@ -24,7 +24,7 @@
 </div>
 <br />
 <br />
-<p>
+<p class="alert alert-info">
 	<b>NOTE:</b> Here we allow several translation variants depending on number<br />
 	<b>Sample:</b><br /><i> В процессе поиска {Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}</i>
 	<b>Sample2:</b><br /><i> {%num horas|#1:%num hora|%num horas}</i>

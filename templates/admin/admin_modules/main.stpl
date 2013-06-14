@@ -1,9 +1,5 @@
 <h3>{t(Modules List)} ({total})</h3>
 
-<div align="center">
-	<a href="{refresh_link}">{t(Refresh List)}</a>&nbsp;
-</div>
-
 {if("items" ne "")}
 <div align="center">
 <form action="{form_action}" method="post" onsubmit="return confirm('{t(Are you sure)}?');" name='modules_form'>
@@ -13,8 +9,8 @@
 		<th>{t(Name)}</th>
 		<th>{t(Location)}</th>
 		<th>{t(Active)}</th>
-{{--	<th width="5%">{t(Action)}</th>--}}
-{{--	<th>{t(Description)}</th>--}}
+		<th width="5%">{t(Action)}</th>
+{{--		<th>{t(Description)}</th>--}}
 	</thead>
 	<tbody>
 {items}
@@ -40,8 +36,8 @@
 
 {if("items" eq "")}<div align="center">{t(No modules yet)}</div>{/if}
 
-{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
-<br /><br />
+{if("pages" ne "")}<div align="center">{pages}</div>{/if}
+<br/>
 
 <div align="center">
 	<a href="{refresh_link}">{t(Refresh List)}</a>&nbsp;
@@ -50,7 +46,7 @@
 </div>
 
 <br />
-<div>
+<div class="alert alert-info">
 	<p><b>{t(NOTE)}:</b></p>
 	<p>Here you can see list of modules currently known by the system. 
 		<br />You can add new ones by simply click <a href="{refresh_link}">Refresh Modules List</a>

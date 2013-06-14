@@ -116,94 +116,76 @@
 
 <form name="dir_contents" method="post">
 <div align="center">
+	
 	<b>{cur_dir_name}</b><br /><br />
 	<input type="hidden" name="verify" value="">
-	<input type="button" value="{t(up_one_level)}" onclick="window.location.href='{go_up_level_link}'">&nbsp;
-	<input type="button" value="{t(home)}" onclick="window.location.href='{go_home_link}'">
+	<div class="btn-group offset5">
+		<input type="button" value="{t(up_one_level)}" onclick="window.location.href='{go_up_level_link}'">&nbsp;
+		<input type="button" value="{t(home)}" onclick="window.location.href='{go_home_link}'">
+	</div>
 	<input type="hidden" name="dir_name" value="{encoded_dir_name}">
 </div>
 <br />
 
 <div align="center">
-<table align="center" border="0" cellpadding="0" cellspacing="0">
-{if("items" ne "")}
-	<thead>
-		<th>&nbsp;</th>
-		<th><i>{t(name)}</i></th>
-		<th width="5">&nbsp;</th>
-		<th><i>{t(size)}</i></th>
-		<th width="5">&nbsp;</th>
-		<th><i>{t(last_modified)}</i></th>
-		<th width="5">&nbsp;</th>
-		<th><i>{t(perms)}</i></th>
-		<th width="5">&nbsp;</th>
-	</thead>
-{/if}
-{items}
-	<tr align="center">
-		<td><input type="checkbox" class="check" name="check_all" value="1" onclick="select_all_checkboxes()"></td>
-		<td colspan="2"><b>{t(Total)}</b> :</td>
-		<td><b>{total_files_size}</b></td>
-		<td colspan="5"><b>{total_files}</b> {t(files)}, <b>{total_dirs}</b> {t(dirs)}</td>
-	</tr>
-</table>
-
-<table align="center" border="0" cellpadding="2" cellspacing="2">
-	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
-	<tr><td colspan="12" align="center"><b>{t(with_selected)}</b></td></tr>
-	<tr>
-		<td colspan="12" align="center">
-			<input type="button" value="{t(view)}" onclick="submit_form('view')"> 
-			<input type="button" value="{t(edit)}" onclick="submit_form('edit')"> 
-			<input type="button" value="{t(copy)}" onclick="submit_form('copy')"> 
-			<input type="button" value="{t(delete)}" onclick="submit_form('delete')"> 
-		</td>
-	</tr>
-	<tr>
-		<td colspan="12" align="center">
-			<input type="button" value="{t(chmod)}" onclick="submit_form('chmod')"> 
-			<input type="button" value="{t(make_zip)}" onclick="submit_form('make_zip')"> 
-			<input type="button" value="{t(unzip)}" onclick="submit_form('unzip')"> 
-			<input type="button" value="{t(download)}" onclick="submit_form('download')"> 
-			<input type="button" value="{t(email)}" onclick="submit_form('email')"> 
-			<input type="hidden" name="new_zip_name" value="{default_zip_name}"> 
-			<input type="hidden" name="target_email" value="{default_email}"> 
-			<input type="hidden" name="new_chmod" value="{default_chmod}"> 
-		</td>
-	</tr>
-	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
-
+	<table align="center" border="0" cellpadding="0" cellspacing="0">
+	{if("items" ne "")}
+		<thead>
+			<th>&nbsp;</th>
+			<th>{t(Name)}</th>
+			<th width="5">&nbsp;</th>
+			<th>{t(Size)}</th>
+			<th width="5">&nbsp;</th>
+			<th>{t(Last_modified)}</th>
+			<th width="5">&nbsp;</th>
+			<th>{t(Perms)}</th>
+			<th width="5">&nbsp;</th>
+		</thead>
+	{/if}
+	{items}
+		<tr align="center">
+			<td><input type="checkbox" class="check" name="check_all" value="1" onclick="select_all_checkboxes()"></td>
+			<td colspan="2"><b>{t(Total)}</b> :</td>
+			<td><b>{total_files_size}</b></td>
+			<td colspan="5"><b>{total_files}</b> {t(files)}, <b>{total_dirs}</b> {t(dirs)}</td>
+		</tr>
+	</table>
+</div>
+<div>
+<strong>{t(with_selected)}</strong>	
+<div class="btn-group offset3" align="center">
+				<input type="button" value="{t(view)}" onclick="submit_form('view')"> 
+				<input type="button" value="{t(edit)}" onclick="submit_form('edit')"> 
+				<input type="button" value="{t(copy)}" onclick="submit_form('copy')"> 
+				<input type="button" value="{t(delete)}" onclick="submit_form('delete')"> 
+				<input type="button" value="{t(chmod)}" onclick="submit_form('chmod')"> 
+				<input type="button" value="{t(make_zip)}" onclick="submit_form('make_zip')"> 
+				<input type="button" value="{t(unzip)}" onclick="submit_form('unzip')"> 
+				<input type="button" value="{t(download)}" onclick="submit_form('download')"> 
+				<input type="button" value="{t(email)}" onclick="submit_form('email')"> 
+				<input type="hidden" name="new_zip_name" value="{default_zip_name}"> 
+				<input type="hidden" name="target_email" value="{default_email}"> 
+				<input type="hidden" name="new_chmod" value="{default_chmod}"> 
+</div>
+</div>
 </form>
-<form name="upload" action="{upload_form_action}" method="post" enctype="multipart/form-data">
+<div class="form-inline">
+	<form name="upload" action="{upload_form_action}" method="post" enctype="multipart/form-data">
+		<label><strong>{t(Upload_file)}</strong></label>
+		<input type="file" name="file">
+		<input type="button" value="{t(upload)}" onclick="check_upload()">
+		<input type="hidden" name="verify" value="">
+		<input type="hidden" name="dir_name" value="{encoded_dir_name}">
+		
+	</form>
+	<form name="mkdir" action="{mkdir_form_action}" method="post">
+		<label><strong>{t(Make_directory)}</strong></label>
+		<input type="text" name="name"> 
+		<input type="button" value="{t(make)}" onclick="check_mkdir()">
+		<input type="hidden" name="verify" value="">
+		<input type="hidden" name="dir_name" value="{encoded_dir_name}">
 
-	<tr><td colspan="12" align="center"><b>{t(upload_file)}</b></td></tr>
-	<tr>
-		<td colspan="12" align="center">
-			{t(new_name)} &nbsp;
-			<input type="text" name="name"> &nbsp;
-			<input type="file" name="file">
-			<input type="button" value="{t(upload)}" onclick="check_upload()">
-			<input type="hidden" name="verify" value="">
-			<input type="hidden" name="dir_name" value="{encoded_dir_name}">
-		</td>
-	</tr>
+	</form>
 
-</form>
-<form name="mkdir" action="{mkdir_form_action}" method="post">
 
-	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
-	<tr><td colspan="12" align="center"><b>{t(make_directory)}</b></td></tr>
-	<tr>
-		<td colspan="12" align="center">
-			{t(name)} &nbsp;<input type="text" name="name"> &nbsp;
-			<input type="button" value="{t(make)}" onclick="check_mkdir()">
-			<input type="hidden" name="verify" value="">
-			<input type="hidden" name="dir_name" value="{encoded_dir_name}">
-		</td>
-	</tr>
-
-</form>
-
-	<tr><td colspan="12" align="center" height="20" valign="middle">&nbsp;</td></tr>
-</table>
 </div>
