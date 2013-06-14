@@ -1,27 +1,24 @@
 {if("items" ne "")}
 <div align="center">
-<table align="center" width="60%">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>#</th>
-		<th nowrap>{t(Name)}</th>
+		<th>{t(Name)}</th>
 		<th>{t(URL after login)}</th>
-		<th>{t(Active)}</th>
-		<th width="5%">{t(Action)}</th>
+		<th>{t(Action)}</th>
 	</thead>
 	<tbody>
 {foreach("items")}
-		<tr class="{#.bg_class}">
+		<tr>
 			<td>{#.id}</td>
-			<td><b>{#.name}</b></td>
+			<td>{#.name}</td>
 			<td>{#.go_after_login}</td>
 			<td>
 	{if("#.active_link" ne "")}<a href="{#.active_link}" class="change_active">{/if}
-	{if("#.active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{else}<span class="negative">{t(INACTIVE)}</span>{/if}
+	{if("#.active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{else}<span class="label label-warning">{t(INACTIVE)}</span>{/if}
 	{if("#.active_link" ne "")}</a>{/if}
-			</td>
-			<td nowrap="nowrap" align="left">
-	{if("#.edit_link" ne "")}<a href="{#.edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;{/if}
-	{if("#.delete_link" ne "")}<a href="{#.delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure)}?');"><i class="icon-trash"></i></a>&nbsp;{/if}
+	{if("#.edit_link" ne "")}<a href="{#.edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>{/if}
+	{if("#.delete_link" ne "")}<a href="{#.delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure)}?');"><i class="icon-trash"></i></a>{/if}
 			</td>
 		</tr>
 {/foreach}
@@ -30,12 +27,12 @@
 </div>
 {/if}
 
-{if("items" eq "")}<div align="center">{t(No admin groups yet)}</div>{/if}
+{if("items" eq "")}{t(No admin groups yet)}{/if}
 
-{if("pages" ne "")}<br /><div align="center">{pages}</div>{/if}
+{if("pages" ne "")}{pages}{/if}
 
-<div align="center">
-{if("add_link" ne "")}<a href="{add_link}">{t(Add new group)}</a> &nbsp; {/if}
-{if("blocks_link" ne "")}<a href="{blocks_link}">{t(Blocks Access)}</a> &nbsp; {/if}
-{if("menu_link" ne "")}<a href="{menu_link}">{t(Edit Menu)}</a> &nbsp; {/if}
+<div class="container">
+{if("add_link" ne "")}<a href="{add_link}" class="btn">{t(Add new group)}</a>{/if}
+{if("blocks_link" ne "")}<a href="{blocks_link}" class="btn">{t(Blocks Access)}</a>{/if}
+{if("menu_link" ne "")}<a href="{menu_link}" class="btn">{t(Edit Menu)}</a>{/if}
 </div>

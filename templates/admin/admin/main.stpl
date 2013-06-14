@@ -1,19 +1,17 @@
 {if("items" ne "")}
-<div align="center">
-<table align="center" width="60%">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>#</th>
-		<th width="20%">{t(Name)}</th>
+		<th>{t(Name)}</th>
 		<th>{t(Login)}</th>
 		<th>{t(Group)}</th>
 		<th>{t(Add Date)}</th>
 		<th>{t(URL after login)}</th>
-		<th>{t(Active)}</th>
-		<th width="5%">{t(Action)}</th>
+		<th>{t(Action)}</th>
 	</thead>
 	<tbody>
 {foreach("items")}
-		<tr class="{#.bg_class}">
+		<tr>
 			<td>{#.id}</td>
 			<td>{#.first_name} {#.last_name}</td>
 			<td>{#.login}</td>
@@ -22,25 +20,18 @@
 			<td>{#.go_after_login}</td>
 			<td>
 	{if("#.active_link" ne "")}<a href="{#.active_link}" class="change_active">{/if}
-	{if("#.active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{else}<span class="negative">{t(INACTIVE)}</span>{/if}
+	{if("#.active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{else}<span class="label label-warning">{t(INACTIVE)}</span>{/if}
 	{if("#.active_link" ne "")}</a>{/if}
-			</td>
-			<td nowrap="nowrap">
-	{if("#.edit_link" ne "")}<a href="{#.edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;{/if}
-	{if("#.admin_auth_link" ne "")}<small>[<a href="{#.admin_auth_link}">{t(log auth)}</a>]</small>&nbsp;{/if}
+	{if("#.admin_auth_link" ne "")}[<a href="{#.admin_auth_link}">{t(log auth)}</a>]{/if}
+	{if("#.edit_link" ne "")}<a href="{#.edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>{/if}
 	{if("#.delete_link" ne "")}<a href="{#.delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;{/if}
 			</td>
 		</tr>
 {/foreach}
 	</tbody>
 </table>
-</div>
 {/if}
-
-{if("failed_log_link" ne "")}<br /><div align="left"><a href="{failed_log_link}">Failed auth log</a></div>{/if}
-
-{if("items" eq "")}<div align="center">{t(No admin users yet)}</div>{/if}
-
-{if("pages" ne "")}<br /><div align="center">{pages}</div>{/if}
-
-{if("add_link" ne "")}<br /><div align="center"><a href="{add_link}">Add</a></div>{/if}
+{if("items" eq "")}{t(No admin users yet)}{/if}
+{if("pages" ne "")}{pages}{/if}
+{if("failed_log_link" ne "")}<a href="{failed_log_link}" class="btn">Failed auth log</a>{/if}
+{if("add_link" ne "")}<a href="{add_link}" class="btn">Add</a>{/if}

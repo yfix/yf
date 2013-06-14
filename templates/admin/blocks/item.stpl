@@ -5,7 +5,7 @@
 	<td>{type}</td>
 	<td>{num_rules}</td>
 	<td>
-<a href="{active_link}" class="change_active">
+		<a href="{active_link}" class="change_active">
 {if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}
 {if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a>
 		<a href="{rules_link}" title="{t(Edit Rules)}"><i class="icon-eye-open"></i></a>&nbsp;

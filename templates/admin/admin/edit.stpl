@@ -1,49 +1,31 @@
-{if("error_message" ne "")}
-	<div align="center">{error_message}</div>
-{/if}
+{if("error_message" ne "")}<div class="alert">{error_message}</div>{/if}
 
-<div class="editform">
-<form method="post" action="{form_action}">
-	<p>
-		<label for="login">{t(Login)}</label>
-		<input type="text" id="login" name="login" value="{login}">
-	</p>
-	<p>
-		<label for="password">{t(Password)} <small>(Type here new password)</small></label>
-		<input type="text" id="password" name="password" value="{password}">
-	</p>
-	<p>
-		<label for="first_name">{t(First Name)}</label>
-		<input type="text" id="first_name" name="first_name" value="{first_name}">
-	</p>
-	<p>
-		<label for="last_name">{t(Last Name)}</label>
-		<input type="text" id="last_name" name="last_name" value="{last_name}">
-	</p>
-	<p>
-		<label for="go_after_login">{t(URL after login)}</label>
-		<input type='text' id="go_after_login" name='go_after_login' size='30' value='{go_after_login}'>
-	</p>
-	<p>
-		<label for="group_box">{t(Group)}</label>
-		{group_box} <a href="{groups_link}">Admin groups</a>
-	</p>
-	<p>
-		<label for="active_box">{t(Active)}</label>
-		{active_box}
-	</p>
+<form method="post" action="{form_action}" class="form-horizontal">
+
+{form_row("text","login","Login")}
+{form_row("text","password","Password")}
+{form_row("text","first_name","First Name")}
+{form_row("text","last_name","Last Name")}
+{form_row("text","go_after_login","Url after login")}
+
+	<div class="control-group">
+		<label class="control-label" for="group_box">{t(Group)}</label>
+		<div class="controls">{group_box} <a href="{groups_link}"><i class="icon-edit"></i></a></div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="active_box">{t(Active)}</label>
+		<div class="controls">{active_box}</div>
+	</div>
 {if("for_edit" eq 1)}
-	<p>
-		<label for="add_date_box">{t(Added)}</label>
-		{add_date}
-	</p>
+	<div class="control-group">
+		<label class="control-label">{t(Added)}</label>
+		<div class="controls"><span class="label label-info">{add_date}</span></div>
+	</div>
 {/if}
-	<div class="button_div">
-		<input type="submit" value="  {t(Save)}  " />
+	<div class="control-group">
+		<div class="controls">
+			<input type="submit" value="{t(Save)}" class="btn" />
+			<a href="{back_link}" class="btn">{t(Back)}</a>
+		</div>
 	</div>
 </form>
-</div>
-
-<br /><br />
-
-<div align="center"><a href="{back_link}">{t(Back)}</a></div>
