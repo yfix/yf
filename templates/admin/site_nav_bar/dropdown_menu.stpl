@@ -1,0 +1,34 @@
+<div class="navbar">
+	<div class="navbar-inner">
+		<ul class="nav">
+{items}
+		</ul>
+	</div>
+</div>
+
+<div class="navbar">
+	<div class="navbar-inner">
+		<ul class="nav">
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Settings <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="./?object=conf_editor">Configuration Editor</a></li>
+					<li><a href="./?object=admin_home&action=clear_output_cache">Clear Output Pages Cache</a></li>
+					<li><a href="./?object=admin_home&action=clear_core_cache">Clear Core Cache</a></li>
+					<li><a href="./?object=admin_home&action=rebuild_packed_code">Re-build packed code</a></li>
+				</ul>
+			</li>
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="./?object=file_manager">File Manager</a></li>
+					<li><a href="./?object=db_manager">Database Manager</a></li>
+					<li><a href="./?object=menus_editor">Menus Manager</a></li>
+					<li><a href="./?object=category_editor">Categories Editor</a></li>
+					<li><a href="./?object=blocks">Blocks Editor</a></li>
+					<li><a href="./?object=custom_replace">Custom Replace Editor</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>

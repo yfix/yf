@@ -1,0 +1,11 @@
+{if("next_level" gt "#level_num")}
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">{name} <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+{else}
+					<li><a href="{link}">{name}</a></li>
+{/if}
+{if("next_level" lt "#level_num")}
+				</ul>
+			</li>
+{/if}
