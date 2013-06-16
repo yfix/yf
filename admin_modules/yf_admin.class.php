@@ -127,7 +127,20 @@ class yf_admin {
 			"groups_link"	=> "./?object=admin_groups",
 			"add_date"		=> _format_date($admin_info["add_date"], "full"),
 		);
-		return tpl()->parse($_GET["object"]."/edit", $replace);
+		return common()->form2($replace)
+			->form_begin("form_action")
+			->text("login","Login")
+			->text("password","Password")
+			->text("first_name","First Name")
+			->text("last_name","Last Name")
+			->text("go_after_login","Url after login")
+			->box_with_link("group_box","Group","groups_link")
+			->active("active","Active")
+			->info("add_date","Added")
+			->form_end()
+			->render();
+
+//		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
 	/**
@@ -182,7 +195,19 @@ class yf_admin {
 			"back_link"		=> "./?object=".$_GET["object"],
 			"groups_link"	=> "./?object=admin_groups",
 		);
-		return tpl()->parse($_GET["object"]."/edit", $replace);
+		return common()->form2($replace)
+			->form_begin("form_action")
+			->text("login","Login")
+			->text("password","Password")
+			->text("first_name","First Name")
+			->text("last_name","Last Name")
+			->text("go_after_login","Url after login")
+			->box_with_link("group_box","Group","groups_link")
+			->active("active","Active")
+			->form_end()
+			->render();
+
+//		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
 	/**

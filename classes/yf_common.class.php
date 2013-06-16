@@ -52,6 +52,13 @@ class yf_common {
 		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
 		return false;
 	}
+
+	/**
+	* Form2 chained wrapper
+	*/
+	function form2($replace = array()) {
+		return _class("form2")->chained_wrapper($replace);
+	}
 	
 	/**
 	* Secondary database connection
