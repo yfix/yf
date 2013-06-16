@@ -1,31 +1,15 @@
 {if("error_message" ne "")}<div class="alert">{error_message}</div>{/if}
 
 <form method="post" action="{form_action}" class="form-horizontal">
-
-{form_row("text","login","Login")}
-{form_row("text","password","Password")}
-{form_row("text","first_name","First Name")}
-{form_row("text","last_name","Last Name")}
-{form_row("text","go_after_login","Url after login")}
-
-	<div class="control-group">
-		<label class="control-label" for="group_box">{t(Group)}</label>
-		<div class="controls">{group_box} <a href="{groups_link}"><i class="icon-edit"></i></a></div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="active_box">{t(Active)}</label>
-		<div class="controls">{active_box}</div>
-	</div>
+	{form_row("text","login","Login")}
+	{form_row("text","password","Password")}
+	{form_row("text","first_name","First Name")}
+	{form_row("text","last_name","Last Name")}
+	{form_row("text","go_after_login","Url after login")}
+	{form_row("box_with_link","group_box","Group","groups_link")}
+	{form_row("active","active","Active")}
 {if("for_edit" eq 1)}
-	<div class="control-group">
-		<label class="control-label">{t(Added)}</label>
-		<div class="controls"><span class="label label-info">{add_date}</span></div>
-	</div>
+	{form_row("info","add_date","Added")}
 {/if}
-	<div class="control-group">
-		<div class="controls">
-			<input type="submit" value="{t(Save)}" class="btn" />
-			<a href="{back_link}" class="btn">{t(Back)}</a>
-		</div>
-	</div>
+	{form_row("save_and_back","","")}
 </form>

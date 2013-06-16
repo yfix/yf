@@ -1,20 +1,9 @@
 <form action='{form_action}' method='post' class="form-horizontal">
 {if("for_edit" eq 1)}
-	<div class="control-group">
-		<label class="control-label">{t(Group Id)}</label>
-		<div class="controls"><span class="label label-info">{group_id}</span></div>
-	</div>
+	{form_row("info","group_id","Group Id")}
 {/if}
-{form_row("text","name","Group name")}
-{form_row("text","go_after_login","Url after login")}
-	<div class="control-group">
-		<label class="control-label" for="active_box">{t(Active)}</label>
-		<div class="controls">{active_box}</div>
-	</div>
-	<div class="control-group">
-		<div class="controls">
-			<input type="submit" value="{t(Save)}" class="btn" />
-			<a href="{back_link}" class="btn">{t(Back)}</a>
-		</div>
-	</div>
+	{form_row("text","name","Group name")}
+	{form_row("text","go_after_login","Url after login")}
+	{form_row("active","active","Active")}
+	{form_row("save_and_back","","")}
 </form>

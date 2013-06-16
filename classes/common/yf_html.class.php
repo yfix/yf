@@ -202,9 +202,8 @@ class yf_html {
 				);
 				$body .= tpl()->parse("system/common/radio_box_item", $replace);
 			} else {
-// TODO: auto ID
-				$body .= "<input type=\"radio\" name=\"".$box_name."\" class=\"check\" value=\"".$value."\" ".$add_str." ".((strval($value) == $selected) ? "checked" : "").">\r\n";
-				$body .= t($name)."\r\n";
+				$body .= "<label class=\"radio\"><input type=\"radio\" name=\"".$box_name."\" id=\"check_".$box_name."\" value=\"".$value."\" ".$add_str." "
+					.((strval($value) == $selected) ? "checked" : "").">".t($name)."</label>\n";
 			}
 		}
 		return $body;
@@ -222,7 +221,7 @@ class yf_html {
 		if ($translate) {
 			$value_to_display = t($value_to_display);
 		}
-		$body .= "<input type=\"checkbox\" name=\"".$box_name."\" id=\"".$box_name."_box\" class=\"check\" value=\"1\" ".($selected ? "checked" : "").">".$value_to_display. "\r\n";
+		$body .= "<label class=\"checkbox\"><input type=\"checkbox\" name=\"".$box_name."\" id=\"".$box_name."_box\" value=\"1\" ".($selected ? "checked" : "").">".$value_to_display. "</label>";
 		return $body;
 	}
 
