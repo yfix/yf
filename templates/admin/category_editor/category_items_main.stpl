@@ -1,10 +1,8 @@
 <h2>{t(Edit items for category)}: "{category_name}"</h2>
 
-{if("pages" ne "")}<div align="center">{pages}</div><br />{/if}
-
 {if("items" ne "")}
 <form action="{save_form_action}" method="post">
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th colspan="2">{t(Name)}</th>
 		<th>{t(Url)}</th>
@@ -26,6 +24,5 @@
 
 <div align="center">
 	<a href="{add_item_link}">{t(Add new item)}</a>
-	<br /><br />
 	<a href="{back_link}">{t(Back)}</a>
 </div>

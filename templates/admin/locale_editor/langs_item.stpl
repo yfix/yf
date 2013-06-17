@@ -1,4 +1,4 @@
-<tr class="{bg_class}">
+<tr>
 	<td><b>{code}</b></td>
 	<td>
 {if("is_default" eq 0)}<input type="text" name="name_{id}" value="{name}" size="20">{/if}
@@ -14,5 +14,5 @@
 {if("tr_vars" eq 0)} n/a {/if}
 {if("tr_vars" ne 0)}{tr_vars}/{total_vars} ({tr_stats}%){/if}
 	</td>
-	<td nowrap>{if("is_default" eq 0)}<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Delete)}</a>{/if}&nbsp;</td>
+	<td>{if("is_default" eq 0)}<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Delete)}</a>{/if}&nbsp;</td>
 </tr>

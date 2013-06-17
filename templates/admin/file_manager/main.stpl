@@ -127,48 +127,49 @@
 </div>
 <br />
 
-<div align="center">
-	<table align="center" border="0" cellpadding="0" cellspacing="0">
+<table class="table table-bordered table-striped table-hover">
 	{if("items" ne "")}
-		<thead>
-			<th>&nbsp;</th>
-			<th>{t(Name)}</th>
-			<th width="5">&nbsp;</th>
-			<th>{t(Size)}</th>
-			<th width="5">&nbsp;</th>
-			<th>{t(Last_modified)}</th>
-			<th width="5">&nbsp;</th>
-			<th>{t(Perms)}</th>
-			<th width="5">&nbsp;</th>
-		</thead>
+	<thead>
+		<th>&nbsp;</th>
+		<th>{t(Name)}</th>
+		<th width="5">&nbsp;</th>
+		<th>{t(Size)}</th>
+		<th width="5">&nbsp;</th>
+		<th>{t(Last_modified)}</th>
+		<th width="5">&nbsp;</th>
+		<th>{t(Perms)}</th>
+		<th width="5">&nbsp;</th>
+	</thead>
 	{/if}
 	{items}
-		<tr align="center">
-			<td><input type="checkbox" class="check" name="check_all" value="1" onclick="select_all_checkboxes()"></td>
-			<td colspan="2"><b>{t(Total)}</b> :</td>
-			<td><b>{total_files_size}</b></td>
-			<td colspan="5"><b>{total_files}</b> {t(files)}, <b>{total_dirs}</b> {t(dirs)}</td>
-		</tr>
-	</table>
-</div>
+	<tr align="center">
+		<td><input type="checkbox" class="check" name="check_all" value="1" onclick="select_all_checkboxes()"></td>
+		<td colspan="2"><b>{t(Total)}</b> :</td>
+		<td><b>{total_files_size}</b></td>
+		<td colspan="5"><b>{total_files}</b> {t(files)}, <b>{total_dirs}</b> {t(dirs)}</td>
+	</tr>
+</table>
 <div>
+
 <strong>{t(with_selected)}</strong>	
 <div class="btn-group offset3" align="center">
-				<input type="button" value="{t(view)}" onclick="submit_form('view')"> 
-				<input type="button" value="{t(edit)}" onclick="submit_form('edit')"> 
-				<input type="button" value="{t(copy)}" onclick="submit_form('copy')"> 
-				<input type="button" value="{t(delete)}" onclick="submit_form('delete')"> 
-				<input type="button" value="{t(chmod)}" onclick="submit_form('chmod')"> 
-				<input type="button" value="{t(make_zip)}" onclick="submit_form('make_zip')"> 
-				<input type="button" value="{t(unzip)}" onclick="submit_form('unzip')"> 
-				<input type="button" value="{t(download)}" onclick="submit_form('download')"> 
-				<input type="button" value="{t(email)}" onclick="submit_form('email')"> 
-				<input type="hidden" name="new_zip_name" value="{default_zip_name}"> 
-				<input type="hidden" name="target_email" value="{default_email}"> 
-				<input type="hidden" name="new_chmod" value="{default_chmod}"> 
+	<input type="button" value="{t(view)}" onclick="submit_form('view')" class="btn"> 
+	<input type="button" value="{t(edit)}" onclick="submit_form('edit')" class="btn"> 
+	<input type="button" value="{t(copy)}" onclick="submit_form('copy')" class="btn"> 
+	<input type="button" value="{t(delete)}" onclick="submit_form('delete')" class="btn"> 
+	<input type="button" value="{t(chmod)}" onclick="submit_form('chmod')" class="btn"> 
+	<input type="button" value="{t(make_zip)}" onclick="submit_form('make_zip')" class="btn"> 
+	<input type="button" value="{t(unzip)}" onclick="submit_form('unzip')" class="btn"> 
+	<input type="button" value="{t(download)}" onclick="submit_form('download')" class="btn"> 
+	<input type="button" value="{t(email)}" onclick="submit_form('email')" class="btn"> 
+
+	<input type="hidden" name="new_zip_name" value="{default_zip_name}"> 
+	<input type="hidden" name="target_email" value="{default_email}"> 
+	<input type="hidden" name="new_chmod" value="{default_chmod}"> 
 </div>
 </div>
 </form>
+
 <div class="form-inline">
 	<form name="upload" action="{upload_form_action}" method="post" enctype="multipart/form-data">
 		<label><strong>{t(Upload_file)}</strong></label>
@@ -176,7 +177,6 @@
 		<input type="button" value="{t(upload)}" onclick="check_upload()">
 		<input type="hidden" name="verify" value="">
 		<input type="hidden" name="dir_name" value="{encoded_dir_name}">
-		
 	</form>
 	<form name="mkdir" action="{mkdir_form_action}" method="post">
 		<label><strong>{t(Make_directory)}</strong></label>
@@ -184,8 +184,5 @@
 		<input type="button" value="{t(make)}" onclick="check_mkdir()">
 		<input type="hidden" name="verify" value="">
 		<input type="hidden" name="dir_name" value="{encoded_dir_name}">
-
 	</form>
-
-
 </div>

@@ -1,11 +1,7 @@
-<h2>{t(Editing static page)} "{page_name}"</h2>
+<h2>{t(Editing static page)}: {page_name}</h2>
 
-<div class="editform">
-<form action="{form_action}" method="post">
-	<p class="first">
-		<label for="name">{t(Edit Name)}</label>
-		<input type="text" id="name" name="name" value="{page_name}">
-	</p>
+<form action="{form_action}" method="post" class="form-horizontal">
+	{form_row("text","page_name")}
 {foreach("page_info")}
 	{if("multi_lang" eq "1")}
 		<p class="title full_width">{t(Locale)}: {#.locale}</p>
@@ -37,16 +33,6 @@
 		<textarea name="{#.locale}[meta_desc]" id="{#.locale}[meta_desc]">{#.meta_desc}</textarea>
 	</p>
 {/foreach}
-	<p>
-		<label for="active_box">{t(Active)}</label>
-		{active_box}
-	</p>
-	<div class="button_div">
-		<input type="submit" value="{t(save)}" name="save">
-	</div>
+	{form_row("active_box")}
+	{form_row("save_and_back")}
 </form>
-</div>
-
-<br />
-
-<div align="center"><a href="{back_url}">{t(Back)}</a></div>

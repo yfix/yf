@@ -1,6 +1,5 @@
 {if("items" ne "")}
-<div align="center">
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(id)}</th>
 		<th>{t(name)}</th>
@@ -11,17 +10,12 @@
 {items}
 	</tbody>
 </table>
-</div>
 {/if}
 
-{if("items" eq "")}<div align="center">{t(No pages yet)}</div><br />{/if}
-<br />
-<form action="{form_action}" method="post">
-<div align="center">
-	<p><b>{t(add_new_page)}</b></p>
-	<p>
-		<nobr><b>{t(Name)}</b>&nbsp;<input type="text" name="name" value=""></nobr>&nbsp;
-		<input type="submit" value="{t(add)}">
-	</p>
-</div>
+{if("items" eq "")}<div class="alert">{t(No pages yet)}</div><br />{/if}
+
+<form action="{form_action}" method="post" class="form-inline">
+	<label>{t(add_new_page)}</label>
+	<b>{t(Name)}</b> <input type="text" name="name" value="">
+	<input type="submit" value="{t(add)}" class="btn">
 </form>

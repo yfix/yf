@@ -23,7 +23,7 @@
 	<span id="ajax_loading" style="display:none;">{t(Loading)}... <img src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif"></span>
 </div>
 
-<table id="tables">
+<table id="tables" class="table table-bordered table-striped table-hover">
 	<thead>
 		<th></th>
 		<th>{t(Name)}</th>
@@ -31,7 +31,7 @@
 		<th>{t(Collation)}</th>
 		<th>{t(Num rows)}</th>
 		<th>{t(Data Size)}</th>
-		<th width="5%">{t(Action)}</th>
+		<th>{t(Action)}</th>
 	</thead>
 	<tbody>
 {tables}
@@ -42,8 +42,8 @@
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
-		<td nowrap><b>{total_rows}</b></td>
-		<td nowrap><b>{total_size}</b></td>
+		<td>{total_rows}</td>
+		<td>{total_size}</td>
 		<td>&nbsp;</td>
 	</tr>
 	</tfoot>

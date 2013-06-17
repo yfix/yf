@@ -148,20 +148,22 @@ class yf_static_pages {
 		}
 		if ($this->MULTILANG_MODE) {
 			foreach((array)$this->LANGUAGES as $locales){
-				if(in_array($locales, array_keys($page_info)) == false){
-					$page_info[$locales] = array(
-						"id"			=> "",
-						"cat_id"		=> "",
-						"name" 			=> "",
-						"text" 			=> "",
-						"page_title" 	=> "",
-						"page_heading" 	=> "",
-						"meta_keywords" => "",
-						"meta_desc" 	=> "",
-						"locale" 		=> $locales,
-						"active"		=> intval($active_status),
-					);
+// TODO: strange condition
+				if (in_array($locales, array_keys($page_info))) {
+					continue;
 				}
+				$page_info[$locales] = array(
+					"id"			=> "",
+					"cat_id"		=> "",
+					"name" 			=> "",
+					"text" 			=> "",
+					"page_title" 	=> "",
+					"page_heading" 	=> "",
+					"meta_keywords" => "",
+					"meta_desc" 	=> "",
+					"locale" 		=> $locales,
+					"active"		=> intval($active_status),
+				);
 			}
 		}
 		if (empty($page_info)) {
@@ -304,6 +306,7 @@ class yf_static_pages {
 			"page_info"			=> $DATA,
 			"page_name"			=> $page_name,
 			"multi_lang"		=> (int)$this->MULTILANG_MODE,
+			"active"			=> $active,
 			"active_box"		=> $this->_box("active", $active),
 			"back_url"			=> "./?object=".$_GET["object"],
 		);

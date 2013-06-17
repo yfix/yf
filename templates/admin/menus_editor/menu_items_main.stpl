@@ -2,7 +2,7 @@
 
 {if("items" ne "")}
 <form action="{save_form_action}" method="post" name="menu_form">
-<table align="center" class="menu_items_table">
+<table class="table table-bordered table-striped table-hover">
 	<colgroup>
 		<col width="1%" />
 		<col width="1%" />

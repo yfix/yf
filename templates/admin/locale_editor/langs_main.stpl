@@ -1,6 +1,6 @@
 {if("items" ne "")}
 <form action="{form_action}" method="post">
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Code)}</th>
 		<th>{t(Name)}</th>
@@ -8,23 +8,21 @@
 		<th>{t(Active)}</th>
 		<th>{t(Default)}</th>
 		<th>{t(Translated)}</th>
-		<th width="5%">{t(Action)}</th>
+		<th>{t(Action)}</th>
 	</thead>
 	<tbody>
 {items}
 	</tbody>
 </table>
-	<div align="center">
-		<br /><input type="submit" value="{t(SAVE)}" name="go">
-	</div>
+	<input type="submit" value="{t(SAVE)}" name="go" class="btn btn-primary">
 </form>
 {/if}
-{if("items" eq "")}<div align="center">{t(No languages yet)}</div>{/if}
 
+{if("items" eq "")}<div class="alert">{t(No languages yet)}</div>{/if}
 
 <div align="center">
-	<a href="{add_lang_link}">{t(Add language)}</a><br /><br />
-	<a href="{show_vars_link}">{t(Manage vars)}</a>&nbsp;
-	<a href="{import_vars_link}">{t(Import)}</a>&nbsp;
-	<a href="{export_vars_link}">{t(Export)}</a>&nbsp;
+	<a href="{add_lang_link}" class="btn">{t(Add language)}</a> 
+	<a href="{show_vars_link}" class="btn">{t(Manage vars)}</a>
+	<a href="{import_vars_link}" class="btn">{t(Import)}</a> 
+	<a href="{export_vars_link}" class="btn">{t(Export)}</a> 
 </div>
