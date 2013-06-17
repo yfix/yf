@@ -26,7 +26,7 @@
 			{php_version}
 		</p>
 {if("cache_enabled" ne "1")}
-		<p class="full_width"><span class="negative">{t(Note)}:</span>
+		<p class="full_width"><span class="label label-warning">{t(Note)}:</span>
 		{t(System cache is disabled. It can increase execution time)}</p>
 <br />
 {/if}

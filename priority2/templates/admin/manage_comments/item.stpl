@@ -6,7 +6,7 @@
 	<td><small>{text}</small></td>
 	<td>{if("user_nick" ne "")}<a href="{member_url}" target="_new" yf:user_id="{user_id}" class="ajax_user_info">{user_nick}</a>{else}{user_name}{/if}</td>
 	<td align="center" nowrap>{add_date}</td>
-	<td align="center"><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a></td>
+	<td align="center"><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a></td>
 	<td align="center" nowrap>
 		<a href="{edit_link}" rel="tooltip" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
 		<a href="{delete_link}" class="ajax_delete" rel="tooltip" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;

@@ -4,7 +4,7 @@
 	<td align="center">{source_x}x{source_y}<br /><b>{source_file_size}</b></td>
 	<td align="center">{result_x}x{result_y}<br /><b>{result_file_size}</b></td>
 	<td align="center">{limit_x}x{limit_y}</td>
-	<td align="center">{if("success" eq 1)}<span class="positive">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="negative">NO</span>{/if}</td>
+	<td align="center">{if("success" eq 1)}<span class="label label-success">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="label label-warning">NO</span>{/if}</td>
 	<td align="center"><small>{error_text}</small></td>
 	<td align="center"><b>{process_time}</b></td>
 	<td align="center"><a href="{by_ip_link}">{ip_addr}</a></td>

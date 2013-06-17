@@ -1,6 +1,6 @@
 <tr class="{bg_class}">
 	<td align="center"><input type="checkbox" name="ids[{id}]" value="1"></td>
-	<td align="center" nowrap>{if("is_cached" eq 0)}<span class="negative">{t(NO)}</span>{/if}{if("is_cached" eq 1)}<span class="positive">{t(YES)}</span><br /><small>({cache_size} bytes)</small>{/if}</td>
+	<td align="center" nowrap>{if("is_cached" eq 0)}<span class="label label-warning">{t(NO)}</span>{/if}{if("is_cached" eq 1)}<span class="label label-success">{t(YES)}</span><br /><small>({cache_size} bytes)</small>{/if}</td>
 	<td align="left"><b>{object}</b></td>
 	<td align="left"><b>{action}</b></td>
 	<td align="left"><a href="{page_link}"><small>{query_string}</small></a></td>

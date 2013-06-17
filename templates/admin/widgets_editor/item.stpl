@@ -22,7 +22,7 @@
 
 	<td width="1%" align="center"><b>{columns}</b></td>
 {if("item_id" ne "-1")}
-	<td width="1%" align="center"><small><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a></small></td>
+	<td width="1%" align="center"><small><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a></small></td>
 	{else}
 	<td></td>
 {/if}

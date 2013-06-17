@@ -5,7 +5,7 @@
 	<td>{phone_type}</td>
 	<td>{verify_code}</td>
 	<td nowrap><small>{date}</small></td>
-	<td>{if("success" eq 1)}<span class="positive">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="negative">NO</span>{/if}</td>
+	<td>{if("success" eq 1)}<span class="label label-success">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="label label-warning">NO</span>{/if}</td>
 	<td nowrap>
 		<a href="{view_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Details)} " /></a>&nbsp;
 	</td>

@@ -1,8 +1,8 @@
 <tr class="{bg_class}">
 	<td><a href="{rules_link}"><b>{name}</b></a></td>
 	<td>{desc}</td>
-	<td>{if("active" eq 1)}<span class="positive">YES</span>{/if}
-		{if("active" eq 0)}<span class="negative">NO</span>{/if}
+	<td>{if("active" eq 1)}<span class="label label-success">YES</span>{/if}
+		{if("active" eq 0)}<span class="label label-warning">NO</span>{/if}
 	</td>
 	<td nowrap>
 		<a href="{rules_link}" title="{t(Edit Tag Rules)}"><i class="icon-eye-open"></i></a>&nbsp;

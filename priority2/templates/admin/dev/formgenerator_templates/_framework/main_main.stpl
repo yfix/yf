@@ -14,7 +14,7 @@
 %tbody_items%
 			<td nowrap>
 				{if("#.active_url" ne "")}<a href="{#.active_url}" class="change_active">{/if}
-				{if("#.active" eq "1")}<span class="positive">{t(ACTIVE)}</span>{else}<span class="negative">{t(INACTIVE)}</span>{/if}
+				{if("#.active" eq "1")}<span class="label label-success">{t(ACTIVE)}</span>{else}<span class="label label-warning">{t(INACTIVE)}</span>{/if}
 				{if("#.active_url" ne "")}</a>{/if}
 			</td>
 			<td nowrap>

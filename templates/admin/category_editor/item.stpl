@@ -1,11 +1,11 @@
 <tr class="{bg_class}">
-	<td><a href="{items_link}"><b>{name}</b></a></td>
+	<td><a href="{items_link}">{name}</a></td>
 	<td>{desc}</td>
-	<td><b style="text-transform:uppercase;">{type}</b></td>
+	<td>{type}</td>
 	<td>{num_items}</td>
 	<td><a href="{active_link}" class="change_active">
-{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}
-{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a>
+{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}
+{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a>
 	</td>
 	<td nowrap>
 		<a href="{items_link}" title="{t(Edit Items)}"><i class="icon-eye-open"></i></a>&nbsp;

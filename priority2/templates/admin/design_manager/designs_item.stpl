@@ -22,8 +22,8 @@
 	<td align="left">{num_images}</td>
 	<td align="center">
 		<a href="{active_link}" class="change_active">
-{if("active" eq 1)}<span class="positive">ACTIVE</span>{/if}
-{if("active" ne 1)}<span class="negative">INACTIVE</span>{/if}
+{if("active" eq 1)}<span class="label label-success">ACTIVE</span>{/if}
+{if("active" ne 1)}<span class="label label-warning">INACTIVE</span>{/if}
 		</a>
 	</td>
 	<td align="left" nowrap>

@@ -36,7 +36,7 @@
 	</p>
 	<p>
 		<label>{t(Success)}</label>
-		{if("success" eq 1)}<span class="positive">YES</span>{/if}{if("success" eq 0)}<span class="negative">NO</span>{/if}
+		{if("success" eq 1)}<span class="label label-success">YES</span>{/if}{if("success" eq 0)}<span class="label label-warning">NO</span>{/if}
 	</p>
 {if("error_text" ne "")}
 	<p>

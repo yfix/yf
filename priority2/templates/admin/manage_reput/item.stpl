@@ -17,10 +17,10 @@
 	<td nowrap>
 		<small>
 		<b>{t(Voted)}:</b> {voted}, <b>{t(Counted)}:</b> {counted}<br />
-		{if("penalty" ne 0)}<span class="negative">{t(Penalty)}: {penalty}</span><br />{/if}
+		{if("penalty" ne 0)}<span class="label label-warning">{t(Penalty)}: {penalty}</span><br />{/if}
 		<b>{t(Voter IP)}:</b> {voter_ip}<br />
-		{if("same_voter" eq 1)}<span class="negative">{t(Same voter)}</span><br />{/if}
-		{if("country_match" eq 1)}<span class="negative">{t(Country Match)}</span><br />{/if}
+		{if("same_voter" eq 1)}<span class="label label-warning">{t(Same voter)}</span><br />{/if}
+		{if("country_match" eq 1)}<span class="label label-warning">{t(Country Match)}</span><br />{/if}
 		</small>
 	</td>
 	<td align="center"><small>{comment}</small></td>

@@ -4,10 +4,10 @@
 </div>
 <br />
 
-	<p class="positive">{t(PHP syntax checked successfully)}</p>
+	<p class="label label-success">{t(PHP syntax checked successfully)}</p>
 	<p>{t('%numfiles files checked',%numfiles='{num_files}')}</p>
 	{if("num_errors" ne "")}
-		<p class="negative">{t('%numerrors syntax errors found',%numerrors='{num_errors}')}</p>
+		<p class="label label-warning">{t('%numerrors syntax errors found',%numerrors='{num_errors}')}</p>
 	{/if}
 	{if("num_errors" eq "")}
 		<p>{t(No errors detected)}</p>
@@ -18,7 +18,7 @@
 {if("errors_items" ne "")}
 	{errors_items}
 <br /><br />
-<p><span class="negative">{t(Note)}:</span>
+<p><span class="label label-warning">{t(Note)}:</span>
 {t(Syntax checker can find only first fatal error in a file. Recheck syntax after correct error)}</p>
 {/if}
 

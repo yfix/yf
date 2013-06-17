@@ -87,8 +87,8 @@
 		<td>
 			<select name="active">
 				<option value="0" selected>{t(Not selected)}</option>
-				<option value="1" class="negative">{t(INACTIVE)}</option>
-				<option value="2" class="positive">{t(ACTIVE)}</option>
+				<option value="1" class="label label-warning">{t(INACTIVE)}</option>
+				<option value="2" class="label label-success">{t(ACTIVE)}</option>
 			</select>
 		</td>
 	</tr>
@@ -122,8 +122,8 @@
 		<td><input type="text" size="10" value="" name="icon" /></td>
 		<td>
 			<select name="active">
-				<option value="0" selected  class="negative">{t(INACTIVE)}</option>
-				<option value="1" class="positive">{t(ACTIVE)}</option>
+				<option value="0" selected  class="label label-warning">{t(INACTIVE)}</option>
+				<option value="1" class="label label-success">{t(ACTIVE)}</option>
 			</select>			  
 		</td>
 	</tr>

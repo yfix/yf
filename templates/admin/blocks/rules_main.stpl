@@ -37,7 +37,7 @@
 	<p><b>{t(NOTE)}:</b></p>
 	<p>By Default rules are set to <b>DENY ALL</b><br />
 	This mean that if no rules are set - then current block is <b>DENIED</b> to display<br />
-	So if you want to allow current block in some cases - you need rule type <span class="positive">ALLOW</span><br />
-	Rule type <span class="negative">DENY</span> designed for cases when you need an exclusion from <span class="positive">ALLOW</span> rules
+	So if you want to allow current block in some cases - you need rule type <span class="label label-success">ALLOW</span><br />
+	Rule type <span class="label label-warning">DENY</span> designed for cases when you need an exclusion from <span class="label label-success">ALLOW</span> rules
 	</p>
 </div>

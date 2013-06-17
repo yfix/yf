@@ -16,7 +16,7 @@
 <br />
 {if("location" eq "framework")}
 <div>
-	<p class="negative">{t(NOTE)}:</p>
+	<p class="label label-warning">{t(NOTE)}:</p>
 	<p>{t(You can't rename directory in a FRAMEWORK)}</p>
 </div>
 {/if}

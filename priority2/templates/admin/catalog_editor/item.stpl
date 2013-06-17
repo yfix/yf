@@ -2,8 +2,8 @@
 	<td><b>{name}</b></td>
 	<td>{desc}</td>
 	<td><b style="text-transform:uppercase;">{type}</b></td>
-	<td>{if("active" eq 1)}<span class="positive">{t(YES)}</span>{/if}
-		{if("active" eq 0)}<span class="negative">{t(NO)}</span>{/if}
+	<td>{if("active" eq 1)}<span class="label label-success">{t(YES)}</span>{/if}
+		{if("active" eq 0)}<span class="label label-warning">{t(NO)}</span>{/if}
 	</td>
 	<td nowrap>
 		<a href="{items_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Edit Items)}" /></a>&nbsp;

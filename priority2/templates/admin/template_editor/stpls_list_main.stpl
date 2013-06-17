@@ -44,6 +44,6 @@
 {if("location" eq "framework")}
 	<div class="alert alert-info">
 		<p><b>{t(NOTE)}:</b></p>
-		<p class="negative">{t(You cannot edit or delete templates or folders in FRAMEWORK using web-interface)}</p>
+		<p class="label label-warning">{t(You cannot edit or delete templates or folders in FRAMEWORK using web-interface)}</p>
 	</div>
 {/if}

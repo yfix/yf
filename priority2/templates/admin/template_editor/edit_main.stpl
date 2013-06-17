@@ -20,7 +20,7 @@
 <br />
 <br />
 <div>	
-	<p class="negative"><b>{t(NOTE)}:</b></p>
+	<p class="label label-warning"><b>{t(NOTE)}:</b></p>
 	<p>{t(You can view or copy template source but can't make changes in FRAMEWORK templates)}</p>
 </div>
 {/if}

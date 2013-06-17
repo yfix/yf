@@ -7,8 +7,8 @@
 	<td><small>{date}</small></td>
 	<td>
 		<a href="{activate_url}" class="change_active">
-			{if("active" eq "1")}<span class="positive">Active</span>{/if}
-			{if("active" eq "0")}<span class="negative">Inactive</span>{/if}
+			{if("active" eq "1")}<span class="label label-success">Active</span>{/if}
+			{if("active" eq "0")}<span class="label label-warning">Inactive</span>{/if}
 		</a>
 	</td>
 	<td nowrap>

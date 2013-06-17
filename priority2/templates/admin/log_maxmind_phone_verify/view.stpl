@@ -29,7 +29,7 @@
 	</p>
 	<p>
 		<label>{t(Success)}</label>
-		{if("success" eq 1)}<span class="positive">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="negative">NO</span>{/if}
+		{if("success" eq 1)}<span class="label label-success">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="label label-warning">NO</span>{/if}
 	</p>
 	<p>
 		<label>{t(Date)}</label>
@@ -59,7 +59,7 @@
 	</p>
 	<p>
 		<label>{t(Admin)}</label>
-		{if("is_admin" eq 1)}<span class="positive">{t(YES)}</span>{/if}{if("is_admin" eq 0)}<span class="negative">{t(NO)}</span>{/if}
+		{if("is_admin" eq 1)}<span class="label label-success">{t(YES)}</span>{/if}{if("is_admin" eq 0)}<span class="label label-warning">{t(NO)}</span>{/if}
 	</p>
 	<p>
 		<label>{t(IP Address)}</label>

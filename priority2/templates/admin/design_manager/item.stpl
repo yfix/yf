@@ -14,8 +14,8 @@
 	<td align="center"><a href="{designs_url}"><b>{num_designs}</b></a></td>
 	<td align="center">
 		<a href="{active_link}" class="change_active">
-{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}
-{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}
+{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}
+{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}
 		</a>
 	</td>
 	<td align="left" nowrap>

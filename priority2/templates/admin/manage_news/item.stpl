@@ -2,7 +2,7 @@
 	<td><b>{title}</b></td>
 	<td>{head_text}</td>
 	<td align="center">{add_date}</td>
-	<td width="1%" align="center"><small><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a></small></td>
+	<td width="1%" align="center"><small><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a></small></td>
 	<td align="center" nowrap>	
 		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
 		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;

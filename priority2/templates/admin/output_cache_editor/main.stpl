@@ -1,8 +1,8 @@
 <div align="center">
 	<b>{t(OUTPUT CACHING STATUS)}: </b>
 	<a href="{change_status_link}">
-		{if("caching_enabled" eq 1)}<span class="positive">{t(ENABLED)}</span>{/if}
-		{if("caching_enabled" eq 0)}<span class="negative">{t(DISABLED)}</span>{/if}
+		{if("caching_enabled" eq 1)}<span class="label label-success">{t(ENABLED)}</span>{/if}
+		{if("caching_enabled" eq 0)}<span class="label label-warning">{t(DISABLED)}</span>{/if}
 	</a>
 	<br />
 	<b>{t(CACHING TTL)}: </b> {cache_ttl} {t(seconds)} 

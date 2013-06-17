@@ -7,8 +7,8 @@
 	{t(Added on)}: {add_date}
 {if("edit_date" ne "")}, <b>{t(edited)}:</b> {edit_date}{/if}
 			<br />
-{if("status" eq "active")}<span class="positive">{t(Active)}</span>{/if}
-{if("status" ne "active")}<span class="negative">{t(Inactive)}</span>{/if}
+{if("status" eq "active")}<span class="label label-success">{t(Active)}</span>{/if}
+{if("status" ne "active")}<span class="label label-warning">{t(Inactive)}</span>{/if}
 			<a href="{edit_link}">{t(Edit)}</a>&nbsp;
 			<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');">{t(Delete)}</a>&nbsp;
 		</small>

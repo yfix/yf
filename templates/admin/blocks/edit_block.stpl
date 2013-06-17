@@ -1,31 +1,28 @@
 {if("error_message" ne "")}<div class="alert">{error_message}</div>{/if}
 
 <form method="post" action="{form_action}" class="form-horizontal">
-
-{form_row("text","name","Block name")}
-{form_row("textarea","desc","Block Description")}
-	<p>
-		<label for="stpl_name">{t(Custom Template)}</label>
-		{stpls_box} <input type="button" value="V" onclick="insert_word(this.form.stpls.options[this.form.stpls.selectedIndex].value, '', true, 'stpl_name');" title="{t(Insert Selected Word)}">&nbsp;<a href="{stpls_link}">{t(Edit Templates)}</a><br />
-		{itip("Template will be forced to use when processing block. Example: right_area/main")} 
-		<input type="text" id="stpl_name" name="stpl_name" value="{stpl_name}">
-	</p>
-	<p>
-		<label for="method_name">{t(Custom class Method)}</label>
-		{methods_box} <input type="button" value="V" onclick="insert_word(this.form.methods.options[this.form.methods.selectedIndex].value, '', true, 'method_name');" title="{t(Insert Selected Word)}">&nbsp;&nbsp;<a href="{modules_link}">{t(Edit Modules)}</a><br />
-		{itip("Class method will be used to process block. Example: main.tasks")} 
-		<input type="text" id="method_name" name="method_name" value="{method_name}">
-	</p>
+	{form_row("text","name","Block name")}
+	{form_row("textarea","desc","Block Description")}
 	<div class="control-group">
-		<label class="control-label" for="active_box">{t(Active)}</label>
-		<div class="controls">{active_box}</div>
-	</div>
-	<div class="control-group">
+		<label class="control-label" for="stpl_name">{t(Custom Template)}</label>
 		<div class="controls">
-			<input type="submit" value="{t(Save)}" class="btn" />
-			<a href="{back_link}" class="btn">{t(Back)}</a>
+			<input type="text" id="stpl_name" name="stpl_name" value="{stpl_name}">
+			{stpls_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.stpls.options[this.form.stpls.selectedIndex].value, '', true, 'stpl_name');" title="{t(Insert Selected Word)}">
+			<a href="{stpls_link}"><i class="icon-edit"></i></a>
+			{itip("Template will be forced to use when processing block. Example: right_area/main")} 
 		</div>
 	</div>
+	<div class="control-group">
+		<label class="control-label" for="method_name">{t(Custom class Method)}</label>
+		<div class="controls">
+			<input type="text" id="method_name" name="method_name" value="{method_name}">
+			{methods_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.methods.options[this.form.methods.selectedIndex].value, '', true, 'method_name');" title="{t(Insert Selected Word)}">
+			<a href="{modules_link}"><i class="icon-edit"></i></a>
+			{itip("Class method will be used to process block. Example: main.tasks")} 
+		</div>
+	</div>
+	{form_row("active_box")}
+	{form_row("save_and_back")}
 </form>
 
 {include("js_input_insert")}
