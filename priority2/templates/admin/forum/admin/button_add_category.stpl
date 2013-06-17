@@ -1,1 +1,1 @@
-<input type="button" value="{t(add_category)}" onclick="window.location.href='./?object=forum&action=add_category'">
+<a href="./?object=forum&action=add_category" class="btn btn-mini"><i class="icon-plus"></i> {t(Add category)}</a>

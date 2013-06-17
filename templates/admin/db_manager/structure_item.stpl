@@ -1,4 +1,4 @@
-<tr class="{bg_class}">
+<tr>
 	<td><b>{field}</b></td>
 	<td>{type}</td>
 	<td>{collation}</td>

@@ -94,7 +94,7 @@ class yf_form {
 			if (strlen($name)) $this->$name = trim(substr($v, strpos($v, "=") + 1));
 		}
 		// Check required form attributes
-		if (!strlen($this->action)) $this->_ERROR .= t("form_action_missing")."\r\n";
+		if (!strlen($this->action)) $this->_ERROR .= t("form_action_missing")."\n";
 		// If auto-parser is allowed - initialize it
 		if ($this->auto_parser) $this->auto();
 	}
@@ -104,9 +104,9 @@ class yf_form {
 	*/
 	function auto () {
 		// For auto-parser db_table is required
-		if (!strlen($this->db_table)) $this->_ERROR .= t("db_table_missed")."\r\n";
+		if (!strlen($this->db_table)) $this->_ERROR .= t("db_table_missed")."\n";
 		// Fro now only mysql RDBMS is done for auto-parsing fields
-		if (false === strpos(DB_TYPE, "mysql")) $this->_ERROR .= t("now_only_mysql_is_auto_parsed")."\r\n";
+		if (false === strpos(DB_TYPE, "mysql")) $this->_ERROR .= t("now_only_mysql_is_auto_parsed")."\n";
 		// If there are no errors - continue
 		if ($this->_ERROR) {
 			return $this->_show_error();
@@ -280,7 +280,7 @@ class yf_form {
 				// Check if current field type exists
 //				if (!array_key_exists($type, $this->field_types))
 				if (!isset($this->field_types[$type]))
-					$this->_ERROR .= t("wrong_field_type")."\r\n";
+					$this->_ERROR .= t("wrong_field_type")."\n";
 				// Field value (could be serialized array for select boxes)
 				$value = trim($value);
 				// Sting containing properties flags
@@ -337,7 +337,7 @@ class yf_form {
 	*/
 	function set_js($js_text = "") {
 		if (strlen($js_text)) $this->js_code = $js_text;
-		else $this->_ERROR .= t("empty_JS_code")."\r\n";
+		else $this->_ERROR .= t("empty_JS_code")."\n";
 	}
 
 	/**
@@ -345,14 +345,14 @@ class yf_form {
 	*/
 	function set_tpl($tpl_name = "") {
 		if (strlen($tpl_name)) $this->tpl = $tpl_name;
-		else $this->_ERROR .= t("empty_Template_name")."\r\n";
+		else $this->_ERROR .= t("empty_Template_name")."\n";
 	}
 
 	/**
 	* Create form contents
 	*/
 	function create() {
-		if (!count($this->fields) || !is_array($this->fields)) $this->_ERROR .= t("no_fields_to_display")."\r\n";
+		if (!count($this->fields) || !is_array($this->fields)) $this->_ERROR .= t("no_fields_to_display")."\n";
 		if (!$this->_ERROR) {
 			// Array of available enctypes
 			$enc_types = array(
@@ -418,7 +418,7 @@ class yf_form {
 	function _show_error () {
 		if (!$error_shown) {
 			$body .= "<h2>".t("FORM PROCESSOR ERROR").":</h2>
-					<span style='color:red'>".nl2br($this->_ERROR)."</span>\r\n";
+					<span style='color:red'>".nl2br($this->_ERROR)."</span>\n";
 			$this->error_shown = true;
 		}
 		return $body;
@@ -606,7 +606,7 @@ class yf_form {
 		if (conf('dir_small')) {
 			$file_path = REAL_PATH. conf('dir_small'). $field['value'];
 			if (file_exists($file_path)) {
-				$body .= "<img src=\"".$file_path."\" border=0>\r\n";
+				$body .= "<img src=\"".$file_path."\" border=0>\n";
 				$body .= "<br><input type=\"button\" value=\"".t("delete")."\" onclick=\"if (confirm('".t("are_you_sure")."?')) window.location.href='./?object=".$_GET['object']."&action=delete_photo&id=".$_GET['id']."'\">";
 			} else $body .= t("no_photo");
 		} else $body .= $this->_p_input();
@@ -620,8 +620,8 @@ class yf_form {
 		// Process all radio selectors
 		$values = unserialize($field['value']);
 		foreach ((array)$values as $k => $v) {
-			$body .= "<input type=\"radio\" name=\"".$field['name']."\" class=\"check\" value=\"".$k."\"".$field['add_str']." ".(($k == $field['props']['selected']) ? "checked" : "").">\r\n";
-			$body .= _prepare_html(translate($v))."\r\n";
+			$body .= "<input type=\"radio\" name=\"".$field['name']."\" class=\"check\" value=\"".$k."\"".$field['add_str']." ".(($k == $field['props']['selected']) ? "checked" : "").">\n";
+			$body .= _prepare_html(translate($v))."\n";
 		}
 		return $body;
 	}

@@ -91,7 +91,7 @@ class yf_table {
 		}
 		// db_table is required for correct table processing
 		if (!strlen($this->db_table)) {
-			$this->_ERROR .= t("db_table_missed")."\r\n";
+			$this->_ERROR .= t("db_table_missed")."\n";
 		}
 		// If auto-parser is allowed - initialize it
 		if ($this->auto_parser) {
@@ -162,7 +162,7 @@ class yf_table {
 			if (!strlen($type)) $type = "t";
 			// Check if current cell type exists
 			if (!isset($this->cell_types[$type])) {
-				$this->_ERROR .= t("wrong_cell_type")." \"".$type."\"\r\n";
+				$this->_ERROR .= t("wrong_cell_type")." \"".$type."\"\n";
 			}
 			// Sting containing properties flags
 			$props = $this->_parse_properties($properties);
@@ -200,14 +200,14 @@ class yf_table {
 	*/
 	function create() {
 		if (!count($this->_cells) || !is_array($this->_cells)) {
-			$this->_ERROR = t("no_cells_to_display")."\r\n";
+			$this->_ERROR = t("no_cells_to_display")."\n";
 		}
 		if ($this->_ERROR) {
 			return $this->_show_error();
 		}
 		// HEADER_TEXT
 		if ($this->header_text) {
-			$body .= "<h1>".$this->header_text."</h1>\r\n";
+			$body .= "<h1>".$this->header_text."</h1>\n";
 		}
 		// Fill array of db table fields
 		if ($this->db_table) {
@@ -230,21 +230,21 @@ class yf_table {
 		if (db()->num_rows($Q)) {
 			// TOTAL RECORDS
 			if ($this->show_total_records) {
-				$body .= "<div align=\"center\">".t('total')." ".$total." ".t("records")."<br><br></div>\r\n";
+				$body .= "<div align=\"center\">".t('total')." ".$total." ".t("records")."<br><br></div>\n";
 			}
 			if ($this->ALLOW_GROUP_DELETE) {
-				$body .= "<form action=\"./?object=".$_GET["object"]."&action=group_delete"._add_get(array("page"))."\" method=\"post\" name=\"my_cool_form\">\r\n";
+				$body .= "<form action=\"./?object=".$_GET["object"]."&action=group_delete"._add_get(array("page"))."\" method=\"post\" name=\"my_cool_form\">\n";
 			}
-			$body .= "<table align='center'>\r\n";
+			$body .= "<table class=\"table table-bordered table-striped table-hover\">\n";
 			// CELL NAMES
 			if ($this->show_cell_names) {
-				$body .= "\t<thead>\r\n";
+				$body .= "\t<thead>\n";
 				if ($this->ALLOW_GROUP_DELETE) {
-					$body .= "\t\t<th></th>\r\n";
+					$body .= "\t\t<th></th>\n";
 				}
 				// LEFT ACTIONS HEADER (if is set to show them on the left)
 				if ($this->show_actions && $this->show_actions_left) {
-					$body .= "\t\t<th>".t('action')."</th>\r\n";
+					$body .= "\t\t<th>".t('action')."</th>\n";
 				}
 				// Process lcells
 				foreach ((array)$this->_cells as $k => $v) {
@@ -260,20 +260,20 @@ class yf_table {
 					} else {
 						$body .= translate($text);
 					}
-					$body .= "</th>\r\n";
+					$body .= "</th>\n";
 				}
 				// ACTIONS HEADER (default position - on the right side)
 				if ($this->show_actions && !$this->show_actions_left) {
-					$body .= "\t\t<th>".t('action')."</th>\r\n";
+					$body .= "\t\t<th>".t('action')."</th>\n";
 				}
-				$body .= "\t</thead>\r\n";
+				$body .= "\t</thead>\n";
 			}
-			$body .= "\t<tbody>\r\n";
+			$body .= "\t<tbody>\n";
 			// Process records
 			while ($Array = db()->fetch_assoc($Q)) {
-				$body .= "\t<tr class=\"".(!(++$i % 2) ? "bg1" : "bg2")."\" id=\"del_row_".$Array["id"]."\">\r\n";
+				$body .= "\t<tr class=\"".(!(++$i % 2) ? "bg1" : "bg2")."\" id=\"del_row_".$Array["id"]."\">\n";
 				if ($this->ALLOW_GROUP_DELETE) {
-					$body .= "\t\t<td><input type=\"checkbox\" name=\"_group_".$Array["id"]."\" value=\"1\"></td>\r\n";
+					$body .= "\t\t<td><input type=\"checkbox\" name=\"_group_".$Array["id"]."\" value=\"1\"></td>\n";
 				}
 				// LEFT ACTIONS HEADER
 				if ($this->show_actions && $this->show_actions_left) $body .= $this->_show_action_buttons ($Array['id']);
@@ -281,28 +281,28 @@ class yf_table {
 				foreach ((array)$this->_cells as $k => $v) {	
 					$value = null;
 					eval("\$value = ".$this->cell_types[$v['type']]."(\$Array[\$v[\"name\"]]);");
-					$body .= "\t\t<td>".(strlen($value) ? ($v['props']['translate'] ? translate($value) : $value) : "&nbsp;")."</td>\r\n";
+					$body .= "\t\t<td>".(strlen($value) ? ($v['props']['translate'] ? translate($value) : $value) : "&nbsp;")."</td>\n";
 				}
 				// ACTIONS HEADER (right - default)
 				if ($this->show_actions && !$this->show_actions_left) $body .= $this->_show_action_buttons ($Array['id']);
-				$body .= "\t</tr>\r\n";
+				$body .= "\t</tr>\n";
 			}
-			$body .= "\t</tbody>\r\n";
-			$body .= "</table>\r\n";
+			$body .= "\t</tbody>\n";
+			$body .= "</table>\n";
 			if ($this->ALLOW_GROUP_DELETE) {
 				if ($total) {
-					$body .= "<br /><div align=\"left\"><label class=\"checkbox\" for=\"my_check_all\"><input type='checkbox' id=\"my_check_all\" name='check_all' onclick='my_toggle_boxes(this.form);'> ".t("SELECT ALL")." </label><input type='submit' value='".t("Delete selected")."'></div>\r\n";
+					$body .= "<div align=\"left\"><label class=\"checkbox\" for=\"my_check_all\"><input type='checkbox' id=\"my_check_all\" name='check_all' onclick='my_toggle_boxes(this.form);'> ".t("SELECT ALL")." </label>
+						<input type='submit' class='btn' value='".t("Delete selected")."'></div>\n";
 				}
-				$body .= "</form>\r\n";
+				$body .= "</form>\n";
 			}
 			// Show pages text
-			$body .= $pages ? "<br><div align=\"center\">".$pages."</div>\r\n" : "";
+			$body .= $pages ? "<div align=\"center\">".$pages."</div>\n" : "";
 		} else {
-			$body .= "<div align=\"center\">".t("no_records")."</div>\r\n";
+			$body .= "<div class=\"alert\">".t("no_records")."</div>\n";
 		}
-		// Show add button or not
 		if ($this->show_add_button) {
-			$body .= "<br><div align=\"center\"><input type='button' class='btn' value='".t('add')."' onclick=\"window.location.href='".(strlen($this->buttons['add']) ? $this->buttons['add'] : "./?object=".$_GET['object']."&action=add"). _add_get()."'\"></div>\r\n";
+			$body .= "<div align=\"center\"><input type='button' class='btn' value='".t('add')."' onclick=\"window.location.href='".(strlen($this->buttons['add']) ? $this->buttons['add'] : "./?object=".$_GET['object']."&action=add"). _add_get()."'\"></div>\n";
 		}
 		return $body;
 	}
@@ -311,27 +311,24 @@ class yf_table {
 	* Show buttons for each record
 	*/
 	function _show_action_buttons ($id) {
-		$body .= "\t\t<td class='td'><nobr>\r\n";
-		// Process available buttons
+		$body .= "\t\t<td>\n";
 		foreach ((array)$this->buttons as $k => $href) {
-			// Skip add button from standard processing
-			if ($k == "add") continue;
-			// Process standard "edit" and "delete" buttons
+			if ($k == "add") {
+				continue;
+			}
 			if ($k == "edit" && !strlen($href)) {
 				$href = "./?object=".$_GET['object']."&action=edit&id=".$id. _add_get();
 			} elseif ($k == "delete" && !strlen($href)) {
 				$href = "./?object=".$_GET['object']."&action=delete&id=".$id. _add_get();
-			// Make some variables to be assigned with their real values
 			} else {
 				eval("\$href = \"".$href."\";");
 			}
-			$body .= "\t\t\t<input type=\"button\" class=\"".($k == "delete" ? "ajax_delete" : "button2")."\" value=\"".translate($k)."\""
-/*				.(" onclick=\"".($k == "delete" ? "if (confirm('".t("are_you_sure")."?'))" : "")." window.location.href='".$href. _add_get()."'")*/
+			$body .= "\t\t\t<input type=\"button\" class=\"btn ".($k == "delete" ? "ajax_delete" : "button2")."\" value=\"".translate($k)."\""
 				.($k != "delete" ? " onclick=\"window.location.href='".$href. _add_get()."'\"" : "")
 				.(" yf:href='".$href. _add_get()."'")
-				."\">\r\n";
+				."\">\n";
 		}
-		$body .= "\t\t</nobr></td>\r\n";
+		$body .= "\t\t</td>\n";
 		return $body;
 	}
 
@@ -413,7 +410,7 @@ class yf_table {
 	function _show_error () {
 		if (!$error_shown) {
 			$body .= "<h2>TABLE PROCESSOR ERROR:</h2>
-					<span style='color:red'>".nl2br($this->_ERROR)."</span>\r\n";
+					<span style='color:red'>".nl2br($this->_ERROR)."</span>\n";
 			$this->error_shown = true;
 		}
 		return $body;
@@ -453,7 +450,7 @@ class yf_table {
 	*/
 	function _p_text ($input) {
 		$output = substr($input, 0, conf('length_trim') ? conf('length_trim') : 100);
-		$output = wordwrap($output, 50, "\r\n", 1);
+		$output = wordwrap($output, 50, "\n", 1);
 		return _prepare_html($output);
 	}
 }

@@ -1,39 +1,23 @@
-{include("forum/css")}
+{{-- {include("forum/css")} --}}
 
 <div id="forum">
 
-<table class="table table-bordered table-striped table-hover">
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
-	<tr>
-		<td>
-<!--	{t(welcome)} <b>{user_name}</b>-->
-{if("manage_groups_link" ne "")} | <a href="{manage_groups_link}"><b>Manage Forum Groups</b></a>{/if}
-{if("manage_mods_link" ne "")} | <a href="{manage_mods_link}"><b>Manage Moderators</b></a>{/if}
-{if("sync_board_link" ne "")} | <a href="{sync_board_link}"><b>Resynchronize Board</b></a>{/if}
-{if("forum_users_link" ne "")} | <a href="{forum_users_link}"><b>Forum Users</b></a>{/if}
-{if("forum_posters_link" ne "")} | <a href="{forum_posters_link}"><b>Forum Posters</b></a>{/if}
-{if("future_posts_link" ne "")} | <a href="{future_posts_link}"><b>Future Posts</b></a>{/if}
-		</td>
-		<td align="right" nowrap>
-<!--{menu}-->
-		</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
-</table>
+{if("manage_groups_link" ne "")} <a href="{manage_groups_link}" class="btn">Manage Forum Groups</a>{/if}
+{if("manage_mods_link" ne "")} <a href="{manage_mods_link}" class="btn">Manage Moderators</a>{/if}
+{if("sync_board_link" ne "")} <a href="{sync_board_link}" class="btn">Resynchronize Board</a>{/if}
+{if("forum_users_link" ne "")} <a href="{forum_users_link}" class="btn">Forum Users</a>{/if}
+{if("forum_posters_link" ne "")} <a href="{forum_posters_link}" class="btn">Forum Posters</a>{/if}
+{if("future_posts_link" ne "")} <a href="{future_posts_link}" class="btn">Future Posts</a>{/if}
 
 {items}
-
 {totals}
 
 <div align="center" style="margin-top:10px; font-size:9px;">
-Powered by <a href="http://www.yf.net">YF Forum</a> {version}<!-- &copy; 2004-{eval_code(date('Y'))} YFix Team-->
+	Powered by <a href="http://www.yf.net">YF Forum</a> {version}<!-- &copy; 2004-{eval_code(date('Y'))} YFix Team-->
 </div>
 
 </div>
+
 
 <script type="text/javascript">
 <!--

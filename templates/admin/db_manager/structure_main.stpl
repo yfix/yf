@@ -1,60 +1,35 @@
-<style>
-tr.bg1{
-	background: #E5E5E5;
-}
-tr.bg2 {
-	background: #D5D5D5;
-}
-tr.header {
-	background: #D3DCE3;
-}
-</style>
-
-
 <table class="table table-bordered table-striped table-hover">
 	<tr class="header">
-		<td><b>Field</b></td>
-		<td><b>Type</b></td>
-		<td><b>Collation</b></td>
-		<td><b>Null</b></td>
-		<td><b>Key</b></td>
-		<td><b>Default</b></td>
-		<td><b>Extra</b></td>
+		<td>Field</td>
+		<td>Type</td>
+		<td>Collation</td>
+		<td>Null</td>
+		<td>Key</td>
+		<td>Default</td>
+		<td>Extra</td>
 	</tr>
-	
 	{items}
-	
 </table>
 
+<h2>Index</h2>
 
-<br />
-<hr>
-<br />
-
-<b>Index</b>
 <table class="table table-bordered table-striped table-hover">
 	<tr class="header">
 		<td>Key_name</td>
 		<td>Cardinality</td>
 		<td>Column_name</td>
-		
 	</tr>
-	
-	{foreach("table_index")}
-		<tr>
-			<td>{#.Key_name}</td>
-			<td>{#.Cardinality}</td>
-			<td>{#.Column_name}</td>
-		</tr>
-	{/foreach}
+{foreach("table_index")}
+	<tr>
+		<td>{#.Key_name}</td>
+		<td>{#.Cardinality}</td>
+		<td>{#.Column_name}</td>
+	</tr>
+{/foreach}
 </table>
 
+<h2>Show create table</h3>
 
-<br />
-<br />
-<b>show_create_table</b>
 <div style="font-family:fixedsys,monospace;background-color:#ccc;">
 {show_create_table}
 </div>
-	
-

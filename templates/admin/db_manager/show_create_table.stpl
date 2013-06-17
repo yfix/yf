@@ -4,5 +4,4 @@
 {text}
 </div>
 
-<br />
-<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+<div align="center"><a href="{back_link}" class="btn">{t(Back)}</a></div>
