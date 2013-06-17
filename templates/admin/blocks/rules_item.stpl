@@ -1,24 +1,24 @@
 <tr class="{bg_class}">
 	<td>{order}</td>
 	<td>
-{if("rule_type" eq "DENY")}<span class="negative">{t(DENY)}</span>{/if}
-{if("rule_type" ne "DENY")}<span class="positive">{t(ALLOW)}</span>{/if}
+{if("rule_type" eq "DENY")}<span class="label label-warning">{t(DENY)}</span>{/if}
+{if("rule_type" ne "DENY")}<span class="label label-success">{t(ALLOW)}</span>{/if}
 	</td>
-	<td nowrap><small>{methods}</small></td>
-	<td nowrap>{user_groups}&nbsp;</td>
-	<td nowrap>{themes}&nbsp;</td>
-	<td nowrap>{locales}&nbsp;</td>
-	<td nowrap>{site_ids}&nbsp;</td>
-	<td nowrap>{server_ids}&nbsp;</td>
+	<td><small>{methods}</small></td>
+	<td>{user_groups}&nbsp;</td>
+	<td>{themes}&nbsp;</td>
+	<td>{locales}&nbsp;</td>
+	<td>{site_ids}&nbsp;</td>
+	<td>{server_ids}&nbsp;</td>
 	<td>
 {if("active_link" ne "")}<a href="{active_link}" class="change_active">{/if}
-{if("active" eq 1)}<span class="positive">{t(YES)}</span>{/if}
-{if("active" eq 0)}<span class="negative">{t(NO)}</span>{/if}
+{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}
+{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}
 {if("active_link" ne "")}</a>{/if}
 	</td>
-	<td nowrap>
-		<a href="{edit_link}" title="{t(Edit Block)}"><i class="icon-edit"></i></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>&nbsp;
-		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;
+	<td>
+		<a href="{edit_link}" title="{t(Edit Block)}"><i class="icon-edit"></i></a>
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>
+		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>
 	</td>
 </tr>

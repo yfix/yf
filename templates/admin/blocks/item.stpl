@@ -1,8 +1,7 @@
 <tr>
-	<td><a href="{rules_link}">{name}</a>{if("desc" ne "")}<br /><small>{desc}</small>{/if}</td>
+	<td><a href="{rules_link}" class="btn">{type} :: {name}</a>{if("desc" ne "")}<br /><small>{desc}</small>{/if}</td>
 	<td>{stpl_name}</td>
 	<td>{method_name}</td>
-	<td>{type}</td>
 	<td>{num_rules}</td>
 	<td>
 		<a href="{active_link}" class="change_active">

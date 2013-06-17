@@ -1,45 +1,38 @@
-<h2>{t(Edit rules for block)}: "{block_name}" ({block_type})</h2>
+<h2>{t(Edit rules for block)} {block_type} :: {block_name}</h2>
 
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
-		<th width="1%">{t(Order)}</th>
-		<th width="5%">{t(Rule)}</th>
+		<th>{t(Order)}</th>
+		<th>{t(Rule)}</th>
 		<th>{t(Modules Methods)}</th>
-		<th width="5%" nowrap>{t(User Groups)}</th>
-		<th width="5%">{t(Themes)}</th>
-		<th width="5%">{t(Locales)}</th>
-		<th width="5%">{t(Sites)}</th>
-		<th width="5%">{t(Servers)}</th>
-		<th width="5%">{t(Active)}</th>
-		<th width="5%">{t(Action)}</th>
+		<th>{t(User Groups)}</th>
+		<th>{t(Themes)}</th>
+		<th>{t(Locales)}</th>
+		<th>{t(Sites)}</th>
+		<th>{t(Servers)}</th>
+		<th>{t(Status)}</th>
+		<th>{t(Action)}</th>
 	</thead>
 	<tbody>
 {items}
 	</tbody>
 </table>
 {/if}
-{if("items" eq "")}<div align="center">{t(No rules yet)}</div>{/if}
+{if("items" eq "")}{t(No rules yet)}{/if}
 
-{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+{if("pages" ne "")}{pages}{/if}
 
-<br />
+	<a href="{add_rule_link}" class="btn">{t(Add new rule)}</a>
+	<a href="{back_link}" class="btn">{t(Back)}</a>
 
-<div align="center">
-	<a href="{add_rule_link}">{t(Add new rule)}</a>
-	<br /><br />
-	<a href="{back_link}">{t(Back)}</a>
-	<br /><br />
+	<a href="{modules_link}" class="btn">{t(Modules)}</a>
+	<a href="{groups_link}" class="btn">{t(Groups)}</a>
+	<a href="{themes_link}" class="btn">{t("Themes")}</a>
+	<a href="{locales_link}" class="btn">{t("Locales")}</a>
+	<a href="{sites_link}" class="btn">{t("Sites")}</a>
+	<a href="{servers_link}" class="btn">{t("Servers")}</a>
 
-	<a href="{modules_link}">{t(Modules)}</a>
-	<a href="{groups_link}">{t(Groups)}</a>
-	<a href="{themes_link}">{t("Themes")}</a>
-	<a href="{locales_link}">{t("Locales")}</a>
-	<a href="{sites_link}">{t("Sites")}</a>
-	<a href="{servers_link}">{t("Servers")}</a>
-</div>
-
-<br />
 <div class="alert alert-info">
 	<p><b>{t(NOTE)}:</b></p>
 	<p>By Default rules are set to <b>DENY ALL</b><br />

@@ -151,6 +151,38 @@ class yf_form2 {
 
 	/**
 	*/
+	function allow_deny_box($name = "", $desc = "", $more_param = "", $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!$name) {
+			$name = "active";
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace("_", " ", $name));
+		}
+		$_statuses = array(
+			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
+			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
+		);
+		$selected = $replace[$name];
+		$body = '<div class="control-group '.(isset($errors[$name]) ? 'error' : '').'">
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
+				<div class="controls">'
+					.common()->radio_box($name, $_statuses, $selected, false, 2, "", false)
+					.(isset($errors[$name]) ? '<span class="help-inline">'.$errors[$name].'</span>' : '')
+				.'</div>
+			</div>
+		';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	*/
 	function save($name = "", $desc = "", $more_param = "", $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;

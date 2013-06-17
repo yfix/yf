@@ -4,7 +4,6 @@
 		<th>{t(Keyword)}</th>
 		<th>{t(Template)}</th>
 		<th>{t(Method)}</th>
-		<th>{t(Type)}</th>
 		<th>{t(Num Rules)}</th>
 		<th>{t(Action)}</th>
 	</thead>
