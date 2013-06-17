@@ -2,36 +2,26 @@
 
 {if("items" ne "")}
 <form action="{save_form_action}" method="post" name="menu_form">
-<table class="table table-bordered table-striped table-hover">
-	<colgroup>
-		<col width="1%" />
-		<col width="1%" />
-		<col width="40%" />
-		<col width="40%" />
-		<col width="5%" />
-		<col width="5%" />
-		<col width="1%" align="center"/>
-		<col width="1%" align="center" />
-		<col />
-	</colgroup>
+
+<table class="table table-bordered table-striped table-hover table-condensed">
 	<thead>
 	<tr>
-		<th width="1%">#</th>
-		<th width="1%"></th>
+		<th>#</th>
+		<th></th>
 		<th>{t(Name)}</th>
 		<th>{t(Location)}</th>
-		<th nowrap="nowrap">{t(Item Type)}</th>
+		<th nowrap>{t(Item Type)}</th>
 		<th>{t(Groups)}</th>
 		<th>{t(Active)}</th>
 		<th>{t(Order)}</th>
-		<th width="5%">{t(Action)}</th>
+		<th>{t(Action)}</th>
 	</tr>
 	</thead>
 	<tbody>
 {items}				 
 		<tr class="{bg_class}" id="del_row_{item_id}">
-			<td width="1%" colspan="2"><input type="checkbox" name='check_all' onclick="my_toggle_boxes(this.form)" id="my_check_all"></td>
-			<td width="40%" colspan="7" style="padding-left:{level_pad}px;" nowrap><label for="my_check_all"><b>Select all</b></label></td>
+			<td colspan="2"><input type="checkbox" name='check_all' onclick="my_toggle_boxes(this.form)" id="my_check_all"></td>
+			<td colspan="7" style="padding-left:{level_pad}px;" nowrap><label for="my_check_all"><b>Select all</b></label></td>
 		</tr>
 	</tbody>
 </table>
@@ -39,30 +29,18 @@
 
 {if("items" ne "")}
 <div align="center">
-	<br />
-	<input type="submit" name="go" value="{t(SAVE)}" />&nbsp;
-	<input type="submit" name="multi-delete" value="{t(DELETE SELECTED)}" onclick="return confirm('Are you sure?')" />
+	<input type="submit" name="go" value="{t(SAVE)}" class="btn" />
+	<input type="submit" name="multi-delete" value="{t(DELETE SELECTED)}" onclick="return confirm('Are you sure?')" class="btn" />
+	<a href="{add_item_link}" class="btn">{t(Add new item)}</a>
+	<a href="{back_link}" class="btn">{t(Back)}</a>
 </div>
 {/if}
 
-{if("items" eq "")}<div align="center">{t(No items yet)}</div>{/if}
-
-{if("pages" ne "")}<br /><div align="center">{pages}</div>{/if}
-
-<br />
-
-<div align="center">
-	<a href="{add_item_link}">{t(Add new item)}</a>&nbsp;
-	<a href="{back_link}">{t(Back)}</a>
-</div>
-
-<br />
-
-<hr />
+{if("items" eq "")}<div class="alert">{t(No items yet)}</div>{/if}
+{if("pages" ne "")}{pages}{/if}
 
 <h3>{t(Operation with selected)}</h3>
 
-<div align="center">
 <table>
 	<thead>
 	<tr>
@@ -95,9 +73,7 @@
 	</tbody>
 </table>
 
-<input type="submit" name="go" value="{t(group save)}" onclick="get_selected()">
-
-</div>
+<input type="submit" name="go" value="{t(group save)}" onclick="get_selected()" class="btn">
 
 </form>
 
@@ -128,7 +104,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td colspan="4" align="center"><input type="submit" name="go" value="{t(Add)}"></td>
+		<td colspan="4" align="center"><input type="submit" name="go" value="{t(Add)}" class="btn"></td>
 	</tr>
 </table>
 </form>

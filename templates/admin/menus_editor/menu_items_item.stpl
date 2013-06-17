@@ -1,21 +1,21 @@
-<tr class="{bg_class}" id="del_row_{item_id}">
-	<td><input type="checkbox" name="item[]" value="{item_id}"></td>
+<tr id="del_row_{item_id}">
+	<td><input type="checkbox" name="item[]" value="{item_id}" class="input-mini"></td>
 	<td>
 		<div class="select_icon" yf:item_id="{item_id}">{if("icon_src" ne "")}<img src="{icon_src}" />{/if}</div>
 		<input type="hidden" name="icon[{item_id}]" value="{icon_value}" />
 	</td>
 	<td style="padding-left:{level_pad}px;">
 		{if("level_pad" ne "")}<span style="font-size:20px;line-height:14px;">&#9492;</span>{/if}
-		<input type="text" name="name[{item_id}]" value="{name}" size="20" style="font-size:11px;" />
+		<input type="text" name="name[{item_id}]" value="{name}" />
 	</td>
-	<td><input type="text" name="location[{item_id}]" value="{location}" size="20" style="font-size:11px;width:100%;" /></td>
-	<td><small><b>{item_type}</b></small></td>
+	<td><input type="text" name="location[{item_id}]" value="{location}"></td>
+	<td nowrap><small><b>{item_type}</b></small></td>
 	<td><small>{foreach("groups")}<b>{_val}</b><br />{/foreach}</small></td>
 	<td><small><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a></small></td>
-	<td><input type="text" name="order[{item_id}]" value="{order}" size="2" style="font-size:11px;"/></td>
-	<td>
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
-		<a href="{delete_link}" title="{t(Delete)}" class="ajax_delete"><i class="icon-trash"></i></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}"><i class="icon-random"></i></a>&nbsp;
+	<td><input type="text" name="order[{item_id}]" value="{order}" class="input-mini"></td>
+	<td nowrap>
+		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a> 
+		<a href="{delete_link}" title="{t(Delete)}" class="ajax_delete"><i class="icon-trash"></i></a> 
+		<a href="{clone_link}" title="{t(Clone)}"><i class="icon-random"></i></a> 
 	</td>
 </tr>
