@@ -59,6 +59,13 @@ class yf_common {
 	function form2($replace = array()) {
 		return _class("form2")->chained_wrapper($replace);
 	}
+
+	/**
+	* Table2 chained wrapper
+	*/
+	function table2($replace = array()) {
+		return _class("table2")->chained_wrapper($replace);
+	}
 	
 	/**
 	* Secondary database connection

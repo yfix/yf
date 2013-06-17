@@ -4,7 +4,7 @@
 		<td>{go_after_login}&nbsp;</td>
 		<td><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="positive">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="negative">{t(INACTIVE)}</span>{/if}</a></td>
 		<td nowrap="nowrap">
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
-		<a href="{delete_link}" title="{t(Delete)}"  onclick="return confirm('{t(Are you sure)}?');"><i class="icon-trash"></i></a>		
+			<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
+			<a href="{delete_link}" title="{t(Delete)}"  onclick="return confirm('{t(Are you sure)}?');"><i class="icon-trash"></i></a>		
 		</td>
 	</tr>

@@ -1,13 +1,13 @@
 {if("error_message" ne "")}<div class="alert">{error_message}</div>{/if}
 
 <form method="post" action="{form_action}" class="form-horizontal">
-	{form_row("text","login","Login")}
-	{form_row("text","password","Password")}
-	{form_row("text","first_name","First Name")}
-	{form_row("text","last_name","Last Name")}
+	{form_row("text","login")}
+	{form_row("text","password")}
+	{form_row("text","first_name")}
+	{form_row("text","last_name")}
 	{form_row("text","go_after_login","Url after login")}
 	{form_row("box_with_link","group_box","Group","groups_link")}
-	{form_row("active","active","Active")}
+	{form_row("active_box")}
 {if("for_edit" eq 1)}
 	{form_row("info","add_date","Added")}
 {/if}

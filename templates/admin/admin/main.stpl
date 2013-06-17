@@ -25,9 +25,7 @@
 	{form_row("tbl_link_del")}
 	{form_row("tbl_link","admin_auth_link","Log Auth")}
 --}}
-	{if("#.active_link" ne "")}<a href="{#.active_link}" class="change_active">{/if}
-	{if("#.active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{else}<span class="label label-warning">{t(INACTIVE)}</span>{/if}
-	{if("#.active_link" ne "")}</a>{/if}
+	{if("#.active_link" ne "")}<a href="{#.active_link}" class="change_active">{/if}{if("#.active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{else}<span class="label label-warning">{t(INACTIVE)}</span>{/if}{if("#.active_link" ne "")}</a>{/if}
 	{if("#.admin_auth_link" ne "")}[<a href="{#.admin_auth_link}">{t(log auth)}</a>]{/if}
 	{if("#.edit_link" ne "")}<a href="{#.edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>{/if}
 	{if("#.delete_link" ne "")}<a href="{#.delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;{/if}

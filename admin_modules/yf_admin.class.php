@@ -128,18 +128,18 @@ class yf_admin {
 			"add_date"		=> _format_date($admin_info["add_date"], "full"),
 		);
 		return common()->form2($replace)
-			->form_begin("form_action")
-			->text("login","Login")
-			->text("password","Password")
-			->text("first_name","First Name")
-			->text("last_name","Last Name")
+			->form_begin()
+			->text("login")
+			->text("password")
+			->text("first_name")
+			->text("last_name")
 			->text("go_after_login","Url after login")
 			->box_with_link("group_box","Group","groups_link")
-			->active("active","Active")
+			->active_box()
 			->info("add_date","Added")
+			->save_and_back()
 			->form_end()
 			->render();
-
 //		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
@@ -196,14 +196,15 @@ class yf_admin {
 			"groups_link"	=> "./?object=admin_groups",
 		);
 		return common()->form2($replace)
-			->form_begin("form_action")
-			->text("login","Login")
-			->text("password","Password")
-			->text("first_name","First Name")
-			->text("last_name","Last Name")
+			->form_begin()
+			->text("login")
+			->text("password")
+			->text("first_name")
+			->text("last_name")
 			->text("go_after_login","Url after login")
 			->box_with_link("group_box","Group","groups_link")
-			->active("active","Active")
+			->active_box()
+			->save_and_back()
 			->form_end()
 			->render();
 
