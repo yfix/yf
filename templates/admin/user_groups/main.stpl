@@ -1,8 +1,5 @@
-<h2>{t(Groups List)} ({total})</h2>
-
-<div align="center">
 {if("items" ne "")}
-<table align='center'>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Name)}</th>
 		<th>{t(Members)}</th>
@@ -15,15 +12,11 @@
 	</tbody>
 </table>
 {/if}
-</div>
 
-{if("items" eq "")}
-<div align='center'>{t(No user groups)}</div>
-{/if}
+{if("items" eq "")}{t(No user groups)}{/if}
 
-<br />
 <div align='center'>
-	<a href="{add_link}">{t(Add new group)}</a> &nbsp; 
-{if("blocks_link" ne "")}<a href="{blocks_link}">{t(Blocks Access)}</a> &nbsp; {/if}
-{if("menu_link" ne "")}<a href="{menu_link}">{t(Edit Menu)}</a> &nbsp; {/if}
+	<a href="{add_link}" class="btn">{t(Add new group)}</a> 
+	{if("blocks_link" ne "")}<a href="{blocks_link}" class="btn">{t(Blocks Access)}</a> {/if}
+	{if("menu_link" ne "")}<a href="{menu_link}" class="btn">{t(Edit Menu)}</a> {/if}
 </div>

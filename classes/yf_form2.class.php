@@ -324,10 +324,14 @@ class yf_form2 {
 
 	/**
 	*/
-	function tbl_link_active($name, $desc = "", $more_param = "", $replace = array()) {
+	function tbl_link_active($name = "", $desc = "", $more_param = "", $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
+		if (!$name) {
+			$name = "active_link";
+		}
+		$active_link = $replace[$name];
 		$body = 'TODO';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;

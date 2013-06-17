@@ -103,19 +103,17 @@ class yf_user_groups {
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
-		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
-			$replace = array(
-				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-				"name"				=> _prepare_html($group_info["name"]),
-				"go_after_login"	=> _prepare_html($group_info["go_after_login"]),
-				"active_box"		=> $this->_box("active", $group_info["active"]),
-				"back_link"			=> "./?object=".$_GET["object"],
-				"error_message"		=> _e(),
-				"for_edit"			=> 0,
-			);
-			return tpl()->parse($_GET["object"]."/edit_group_form", $replace);
-		}
+		$replace = array(
+			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
+			"name"				=> _prepare_html($group_info["name"]),
+			"go_after_login"	=> _prepare_html($group_info["go_after_login"]),
+			"active"			=> $group_info["active"],
+			"active_box"		=> $this->_box("active", $group_info["active"]),
+			"back_link"			=> "./?object=".$_GET["object"],
+			"error_message"		=> _e(),
+			"for_edit"			=> 0,
+		);
+		return tpl()->parse($_GET["object"]."/edit_group_form", $replace);
 	}
 
 	/**
@@ -152,20 +150,18 @@ class yf_user_groups {
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
-		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
-			$replace = array(
-				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-				"name"				=> _prepare_html($group_info["name"]),
-				"go_after_login"	=> _prepare_html($group_info["go_after_login"]),
-				"group_id"			=> intval($group_info["id"]),
-				"active_box"		=> $this->_box("active", $group_info["active"]),
-				"back_link"			=> "./?object=".$_GET["object"],
-				"error_message"		=> _e(),
-				"for_edit"			=> 1,
-			);
-			return tpl()->parse($_GET["object"]."/edit_group_form", $replace);
-		}
+		$replace = array(
+			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
+			"name"				=> _prepare_html($group_info["name"]),
+			"go_after_login"	=> _prepare_html($group_info["go_after_login"]),
+			"group_id"			=> intval($group_info["id"]),
+			"active"			=> $group_info["active"],
+			"active_box"		=> $this->_box("active", $group_info["active"]),
+			"back_link"			=> "./?object=".$_GET["object"],
+			"error_message"		=> _e(),
+			"for_edit"			=> 1,
+		);
+		return tpl()->parse($_GET["object"]."/edit_group_form", $replace);
 	}
 
 	/**

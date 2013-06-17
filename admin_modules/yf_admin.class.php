@@ -68,6 +68,25 @@ class yf_admin {
 			"add_link"			=> "./?object=".$_GET["object"]."&action=add",
 			"failed_log_link"	=> "./?object=log_admin_auth_fails_viewer",
 		);
+/*
+		return common()->table2($replace)
+			->table_header(array(
+				"id" 			=> "#",
+				"first_name"	=> "",
+				"last_name"		=> "",
+				"login"			=> "",
+				"group_name"	=> array("edit_group_link","Group"),
+				"add_date"		=> "",
+				"go_after_login"=> "Url after login",
+				"__buttons__"	=> "Actions",
+			))
+			->button_active("active_link")
+			->button("admin_auth_link", "Log auth")
+			->button_edit("edit_group_link")
+			->button_del("delete_link")
+			->items($replace[$items])
+			->table_end()
+*/
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
