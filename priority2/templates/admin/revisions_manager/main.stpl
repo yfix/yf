@@ -1,7 +1,7 @@
 <h3>{t(Total)} {total}</h3>
 
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<col><col><col align="center"><col align="center"><col>
 	<thead>
 		<th>{t(Object name)}</th>

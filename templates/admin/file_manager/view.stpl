@@ -1,15 +1,8 @@
 <h3>{file_name}</h3>
 
-<div align="center">
-<table align="center" border="0">
-	<tr>
-		<td bgcolor="#dddddd" align="left">{text}</td>
-	</tr>
-</table>
+{text}
 
-<br />
-<a href="{edit_link}">{t(Edit file)}</a>
-
+<div>
+	<a href="{edit_link}" class="btn">{t(Edit file)}</a>
+	{back}
 </div>
-
-{back}

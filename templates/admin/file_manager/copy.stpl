@@ -1,3 +1,25 @@
+<h3>{t(copy_selected)} :</h3>
+
+{if("items" ne "")}
+{items}
+
+<h3>{t(select_destination_dirs)}</h3>
+
+<table class="table table-bordered table-striped table-hover">
+<form action='{form_action}' method='post' name='copy_destination'>
+{dest_dirs}
+	<tr><td height='10'>&nbsp;</td></tr>
+	<tr><td align='center' colspan='2'><input type='button' value='{t(COPY)} ' onclick='submit_copy();'><input type='hidden' name='items_to_copy' value='{items_to_copy}'></td></tr>
+</form>
+</table>
+{/if}
+
+{if("items" eq "")}
+	<div align="center" style="color:red;">{t(please_select_items_to_copy)}</div>
+{/if}
+
+{back}
+
 <script type="text/javascript">
 <!--
 	var t__please_select_dir = '{t(please_select_dir)} ';
@@ -23,24 +45,3 @@
 -->
 </script>
 
-<h3>{t(copy_selected)} :</h3>
-
-{if("items" ne "")}
-{items}
-
-<h3>{t(select_destination_dirs)}</h3>
-
-<table align='center' border='0' cellspacing='0' cellpadding='0'>
-<form action='{form_action}' method='post' name='copy_destination'>
-{dest_dirs}
-	<tr><td height='10'>&nbsp;</td></tr>
-	<tr><td align='center' colspan='2'><input type='button' value='{t(COPY)} ' onclick='submit_copy();'><input type='hidden' name='items_to_copy' value='{items_to_copy}'></td></tr>
-</form>
-</table>
-{/if}
-
-{if("items" eq "")}
-	<div align="center" style="color:red;">{t(please_select_items_to_copy)}</div>
-{/if}
-
-{back}

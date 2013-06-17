@@ -7,7 +7,7 @@
 {if("items" ne "")}
 <form action="{form_action}" method="post"  name="log_exec">
 <div align="center">
-<table class="sortable_wrapper" align="center">
+<table class="table table-bordered table-striped table-hover">
 	<col><col align="left"><col align="left"><col><col align="left" width="30%"><col align="left" width="30%"><col align="left"><col>
 	<thead>
 		<th>#</th>

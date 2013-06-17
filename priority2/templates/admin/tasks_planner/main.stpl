@@ -30,7 +30,7 @@ function my_show_div(itm) {
 -->
 </script>
 
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<colgroup align="center">
 		<col width='40%' align="left" />
 		<col width='1%' />

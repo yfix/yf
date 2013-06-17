@@ -291,7 +291,7 @@ class yf_table {
 			$body .= "</table>\r\n";
 			if ($this->ALLOW_GROUP_DELETE) {
 				if ($total) {
-					$body .= "<br /><div align=\"left\"><label for=\"my_check_all\"><input type='checkbox' id=\"my_check_all\" name='check_all' onclick='my_toggle_boxes(this.form);'> ".t("SELECT ALL")." </label><input type='submit' value='".t("Delete selected")."'></div>\r\n";
+					$body .= "<br /><div align=\"left\"><label class=\"checkbox\" for=\"my_check_all\"><input type='checkbox' id=\"my_check_all\" name='check_all' onclick='my_toggle_boxes(this.form);'> ".t("SELECT ALL")." </label><input type='submit' value='".t("Delete selected")."'></div>\r\n";
 				}
 				$body .= "</form>\r\n";
 			}
@@ -302,7 +302,7 @@ class yf_table {
 		}
 		// Show add button or not
 		if ($this->show_add_button) {
-			$body .= "<br><div align=\"center\"><input type='button' class='button2' value='".t('add')."' onclick=\"window.location.href='".(strlen($this->buttons['add']) ? $this->buttons['add'] : "./?object=".$_GET['object']."&action=add"). _add_get()."'\"></div>\r\n";
+			$body .= "<br><div align=\"center\"><input type='button' class='btn' value='".t('add')."' onclick=\"window.location.href='".(strlen($this->buttons['add']) ? $this->buttons['add'] : "./?object=".$_GET['object']."&action=add"). _add_get()."'\"></div>\r\n";
 		}
 		return $body;
 	}

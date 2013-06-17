@@ -1,7 +1,7 @@
 <h2>Rules for tag <a href="{edit_tag_link}">{tag_name}</a></h2>
 <br />
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Method)}</th>
 		<th>{t(Sites)}</th>

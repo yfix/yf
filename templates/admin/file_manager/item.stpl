@@ -1,26 +1,14 @@
-{if("is_dir" eq 1)}
 	<tr>
+{if("is_dir" eq 1)}
 		<td><input type="checkbox" name="d_{encoded_name}" value="{name}"></td>
-		<td align="left"><a href="{go_into_link}"><span style="color:{color};"><b>{name}</b></span></a></td>
-		<td width="5">&nbsp;</td>
-		<td><b>DIR</b></td>
-		<td width="5">&nbsp;</td>
-		<td nowrap>{m_date}</td>
-		<td width="5">&nbsp;</td>
-		<td align="right">{perms}</td>
-		<td width="5">&nbsp;</td>
-	</tr>
+		<td><a href="{go_into_link}"><span style="color:{color};"><b>{name}</b></span></a></td>
+		<td>_DIR_</td>
 {/if}
 {if("is_file" eq 1)}
-	<tr>
 		<td><input type="checkbox" name="f_{encoded_name}" id="f_{encoded_name}" value="{name}"></td>
-		<td align="left"><label for="f_{encoded_name}"><span style="color:{color};">{name}</span></label></td>
-		<td width="5">&nbsp;</td>
+		<td><label for="f_{encoded_name}"><span style="color:{color};">{name}</span></label></td>
 		<td>{size}</td>
-		<td width="5">&nbsp;</td>
-		<td nowrap>{m_date}</td>
-		<td width="5">&nbsp;</td>
-		<td align="right">{perms}</td>
-		<td width="5">&nbsp;</td>
-	</tr>
 {/if}
+		<td>{m_date}</td>
+		<td><span class="label label-info">{perms}</span></td>
+	</tr>

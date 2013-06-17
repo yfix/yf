@@ -13,7 +13,7 @@
 <br />
 
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 	<tr>
 		<th width="10%">{if("folder_name" eq "inbox")}{t(From)}{/if}{if("folder_name" eq "sent")}{t(To)}{/if}</th>

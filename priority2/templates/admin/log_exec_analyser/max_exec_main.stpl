@@ -4,7 +4,7 @@
 <a href="{main_link}">{t(Back to analyser main)}</a>
 <br /><br />
 
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Exec Time)}<br /><small>(max)</small></th>
 		<th>{t(Exec Time)}<br /><small>({t(average)})</small></th>

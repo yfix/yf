@@ -11,7 +11,7 @@
 {delete_by_hits}
 <br />
 <form action='{form_action}' method='post' name='admin_form'>
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>#</th>
 		<th>{t(Keyword Text)}</th>

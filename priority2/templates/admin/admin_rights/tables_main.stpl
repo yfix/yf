@@ -1,7 +1,7 @@
 <h1>{header_text}</h1>
 
 <form action="{form_action}" method="post">
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(table_name)}<br /><br /></th>
 		<th>{t(allowed)}</th>

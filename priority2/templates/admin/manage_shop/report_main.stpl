@@ -1,7 +1,7 @@
 <div align="center">
 <br />
 <br />
-<table >
+<table class="table table-bordered table-striped table-hover">
 	<tr>
 	<td>{if("active" eq viewed)}<big>{/if}<a href="{viewed_url}">{t(Products Viewed Report)}</a>{if("active" eq viewed)}</big>{/if}</td>
 	<!-- <td>{if("active" eq sales)}<big>{/if}<a href="{sales_url}">{t(Sales Report)}</a>{if("active" eq sales)}</big>{/if}</td> -->

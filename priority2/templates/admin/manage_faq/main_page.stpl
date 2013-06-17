@@ -7,7 +7,7 @@
 <hr noshade />
 
 {foreach("cats_items")}
-<table border="0" cellpadding="0" align="center" width="100%">
+<table class="table table-bordered table-striped table-hover">
 	<tr>
 		<td align="left"><b>{#.cat_name}</b><a name="cat_id_{#.cat_id}" /></td>
 	</tr>

@@ -1,7 +1,7 @@
 <div align="center">
 <form action='{form_action}' method='post' name='group_action_form'>
 {if("items" ne "")}
-	<table class="sortable_wrapper">
+	<table class="table table-bordered table-striped table-hover">
 		<col align="left" />
 		<col align="left" />
 		<col />

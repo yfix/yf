@@ -1,6 +1,6 @@
 <h3>Please check templates you want to replace</h3>
 <form action='{form_action}' method='post' name='admin_form'>
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Template name)}</th>
 		<th>{t(Source in DB)}</th>

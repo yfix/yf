@@ -6,7 +6,7 @@
 
 {if("items" ne "")}
 <form action="{form_action}" method="post" name="help_tickets_form">
-<table align="center">
+<table class="table table-bordered table-striped table-hover"
 	<thead>
 		<th width="5%">ID</th>
 		<th>Name</th>

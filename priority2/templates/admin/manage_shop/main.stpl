@@ -1,7 +1,7 @@
 <div align="center">
 <br />
 <br />
-<table >
+<table class="table table-bordered table-striped table-hover">
 	<tr>
 	<td><a href="{products_url}">{t(Manage Products)}</a></td>
 	<td><a href="{orders_url}">{t(Manage Orders)}</a></td>

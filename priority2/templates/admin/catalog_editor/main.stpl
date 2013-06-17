@@ -1,5 +1,5 @@
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover"
 	<thead>
 		<th>{t(Keyword)}</th>
 		<th>{t(Description)}</th>

@@ -1,4 +1,4 @@
-<p>
-	<label>{item_name}</label>
-	{item_value}
+<div class="control-group">
+	<label class="control-label">{item_name}</label>
+	<div class="controls">{item_value}</div>
 </p>

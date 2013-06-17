@@ -6,7 +6,7 @@
 <br />
 
 <form action='{form_action}' method='post' name='reput_form'>
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="1%">#</th>
 		<th>{t(Voter)}</th>

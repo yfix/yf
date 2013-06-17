@@ -4,7 +4,7 @@
 </div>
 <br />
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="5%">ID</th>
 		<th>{t(Author)}</th>

@@ -1,15 +1,15 @@
 <h3>{file_name}</h3>
 
-<table align="center" border="0">
+<table class="table table-bordered table-striped table-hover">
 <form action="{form_action}" method="post">
 	<tr>
-		<td align="center" bgcolor="#dddddd">
-			<textarea cols="110" rows="60" name="source" id="source" style="color:blue;background:#eeeeee;font-family:monospace;font-size:11px;overflow:scroll;" wrap="off">{text}</textarea>
+		<td>
+			<textarea class="input-xxlarge" cols="100" rows="30" name="source" id="source" style="color:blue;font-family:monospace;">{text}</textarea>
 		</td>
 	</tr>
 	<tr>
 		<td align="center">
-			<input type="submit" value="{t(SAVE)} ">
+			<input type="submit" value="{t(SAVE)}" class="btn">
 		</td>
 	</tr>
 </form>
@@ -17,12 +17,11 @@
 
 {back}
 
-<script language="Javascript" type="text/javascript" src="{const(WEB_PATH)}js/edit_area/edit_area_full.js"></script>
-<script language="Javascript" type="text/javascript">
-	// initialisation
+<script type="text/javascript" src="{const(WEB_PATH)}js/edit_area/edit_area_full.js"></script>
+<script type="text/javascript">
 	editAreaLoader.init({
-		id: "source"	// id of the textarea to transform
-		,start_highlight: true	// if start with highlight
+		id: "source"
+		,start_highlight: true
 		,syntax: "{file_ext}"	
 	});
 </script>

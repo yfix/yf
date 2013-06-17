@@ -4,7 +4,7 @@
 
 <div align="center">
 {if("items" ne "")}
-<table class="sortable_wrapper">
+<table class="table table-bordered table-striped table-hover">
 	<colgroup align="left" valign="top">
 		<col><col align="center" width="10%"><col align="center" width="15%"><col width="10%">
 	</colgroup>

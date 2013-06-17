@@ -7,7 +7,7 @@
 
 {if("items" ne "")}
 <form action="{save_form_action}" method="post">
-<table border="0" cellspacing="0" cellpadding="3" width="100%" align="center">
+<table class="table table-bordered table-striped table-hover">
 	<tr class="frame">
 		<td colspan="2" align="center"><b>{t(Name)}</b></td>
 		<td align="center"><b>{t(Url)}</b></td>

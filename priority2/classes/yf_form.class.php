@@ -478,10 +478,10 @@ class yf_form {
 	* Process "active" field
 	*/
 	function _p_active ($field = array()) {
-		$body .= "<input type=\"radio\" name=\"".$field['name']."\" class=\"check\" value=\"0\" id=\"radio_".$field['name']."_0\"".$field['add_str']." ".(!$field['value'] ? "checked" : "").">\r\n";
-		$body .= "<label class=\"simple\" for=\"radio_".$field['name']."_0\"><b style=\"color:red;\">".t("no")."</b></label>\r\n";
-		$body .= "<input type=\"radio\" name=\"".$field['name']."\" class=\"check\" value=\"1\" id=\"radio_".$field['name']."_1\"".$field['add_str']." ".($field['value'] ? "checked" : "").">\r\n";
-		$body .= "<label class=\"simple\" for=\"radio_".$field['name']."_1\"><b style=\"color:green;\">".t("yes")."</b></label>\r\n";
+		$body .= '<label type="radio"><input type="radio" name="'.$field['name'].'" value="0" id="radio_'.$field['name'].'_0"'.$field['add_str'].' '.(!$field['value'] ? 'checked' : '').'>
+					<span class="label label-warning">'.t('INACTIVE').'</b></label>';
+		$body .= '<label type="radio"><input type="radio" name="'.$field['name'].'" value="1" id="radio_'.$field['name'].'_1"'.$field['add_str'].' '.($field['value'] ? 'checked' : '').'>
+					<span class="label label-success">'.t('INACTIVE').'</b></label>';
 		return $body;
 	}
 
@@ -582,7 +582,7 @@ class yf_form {
 	* Process input field
 	*/
 	function _p_input ($field = array()) {
-		return "<input type=\"text\" name=\"".$field['name']."\" value=\""._prepare_html($field['value'])."\"".$field['add_str']." style=\"width:100%;\">";
+		return "<input type=\"text\" name=\"".$field['name']."\" value=\""._prepare_html($field['value'])."\"".$field['add_str'].">";
 	}
 
 	/**
@@ -630,7 +630,7 @@ class yf_form {
 	* Process reset button
 	*/
 	function _p_reset ($field = array()) {
-		return "<input type=\"reset\" name=\"".$field['name']."\" value=\"".$field['value']."\"".$field['add_str'].">";
+		return "<input type=\"reset\" name=\"".$field['name']."\" value=\"".$field['value']."\"".$field['add_str']." class=\"btn\">";
 	}
 
 	/**
@@ -644,8 +644,8 @@ class yf_form {
 	* Process submit button
 	*/
 	function _p_submit ($field = array()) {
-		if ($this->js_confirm) $body .= "<input type=\"button\" value=\"".$field['value']."\"".$field['add_str']." onClick=\"form_check(this.form)\">";
-		else $body .= "<input type=\"submit\" name=\"".$field['name']."\" value=\"".$field['value']."\"".$field['add_str'].">";
+		if ($this->js_confirm) $body .= "<input type=\"button\" value=\"".$field['value']."\"".$field['add_str']." onClick=\"form_check(this.form)\" class=\"btn\">";
+		else $body .= "<input type=\"submit\" name=\"".$field['name']."\" value=\"".$field['value']."\"".$field['add_str']." class=\"btn\">";
 		return $body;
 	}
 
@@ -654,7 +654,7 @@ class yf_form {
 	*/
 	function _p_textarea ($field = array()) {
 		$field['add_str'] .= " cols=\"".$field["props"]["cols"]."\" rows=\"".$field["props"]["rows"]."\"";
-		return "<textarea name=\"".$field['name']."\" ".$field['add_str']." style=\"width:100%;\">"._prepare_html($field['value'])."</textarea>";
+		return "<textarea name=\"".$field['name']."\" ".$field['add_str'].">"._prepare_html($field['value'])."</textarea>";
 	}
 
 	/**

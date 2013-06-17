@@ -1,5 +1,5 @@
 <h2>{t(Settings_categories)}</h2>
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 <form action="{form_action}" method="post">
 	<thead>
 		<th>{t(name)}</th>
@@ -13,7 +13,7 @@
 </form>
 </table>
 
-<table align="center" cellspacing="0" cellpadding="5" border="0">
+<table class="table table-bordered table-striped table-hover"
 <form action="{add_action}" method="post">
 <tr><td colspan="3" height="10">&nbsp;</td></tr>
 <tr>

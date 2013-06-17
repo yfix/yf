@@ -6,7 +6,7 @@
 <br />
 {if("error_message" ne "")}{error_message}{/if}
 <form action="{form_action}" method="post">
-<table>
+<table class="table table-bordered table-striped table-hover"
 	<thead>
 		<th width="5" height="25">#</th>
 		<th width="20%">{t(User)}</th>

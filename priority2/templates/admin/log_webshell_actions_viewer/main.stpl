@@ -3,7 +3,7 @@
 {filter}
 <br />
 {if("items" ne "")}
-<table class="sortable_wrapper">
+<table class="table table-bordered table-striped table-hover">
 	<col align="left"><col align="left"><col><col align="left"><col>
 	<thead>
 		<th>{t(Server)}</th>

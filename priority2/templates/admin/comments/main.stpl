@@ -1,6 +1,6 @@
 <h1 class="header">{t(Comments)} ({num_comments})</h1>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="5">
+<table class="table table-bordered table-striped table-hover">
 {if("comments" eq "")}
 	<tr><td align="center">{t(No comments yet)}</td></tr>
 {/if}

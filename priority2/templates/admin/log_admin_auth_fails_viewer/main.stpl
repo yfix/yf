@@ -3,14 +3,14 @@
 {filter}
 <br />
 {if("items" ne "")}
-<table class="sortable_wrapper" width="400">
+<table class="table table-bordered table-striped table-hover">
 	<col align="left"><col><col><col><col>
 	<thead>
 		<th>{t(Login)}</th>
 		<th>{t(IP)}</th>
 		<th>{t(Date)}</th>
 		<th>{t(Reason)}</th>		
-		<th width="5%">{t(Action)}</th>
+		<th>{t(Action)}</th>
 	</thead>
 	<tbody>
 {items}

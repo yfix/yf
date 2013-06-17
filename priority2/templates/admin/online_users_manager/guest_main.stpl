@@ -2,7 +2,7 @@
 
 {if("items" ne "")}
 <br />
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Session ID)}</th>
 		<th>{t(Location)}</th>

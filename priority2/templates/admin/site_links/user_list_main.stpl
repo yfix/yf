@@ -1,6 +1,6 @@
 <h2>Links User List ({total})</h2>
 
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>Name</th>
 		<th width="25%">E-mail</th>

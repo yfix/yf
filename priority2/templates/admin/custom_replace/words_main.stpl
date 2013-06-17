@@ -1,6 +1,6 @@
 <br />
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover"
 	<thead>
 		<th>{t(Key)}</th>
 		<th>{t(Desc)}</th>

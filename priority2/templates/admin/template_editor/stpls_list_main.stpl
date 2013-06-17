@@ -9,7 +9,7 @@
 </div>
 <br />
 {if("items" ne "")}
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="1%">#</th>
 		<th>{t(Name)}</th>

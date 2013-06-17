@@ -4,7 +4,7 @@
 <br />
 
 <div align="center">
-<table class="my_form_table">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="20%">{t(Preview Image)}</th>
 		<th>{t(Name)}</th>

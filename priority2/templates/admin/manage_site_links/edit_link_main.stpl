@@ -1,7 +1,7 @@
 <h3>Links Management</h3>
 <a href="{users_list_url}">User List</a><br />
 <br />
-<table border="0" cellpadding="5" cellspacing="0" align="center">
+<table class="table table-bordered table-striped table-hover">
 	<form action="{form_action}" method="post">
 	<tr>
 		<td align="right"> <b>User Name:</b> </td>

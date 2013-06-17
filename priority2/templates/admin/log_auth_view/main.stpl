@@ -3,7 +3,7 @@
 	{filter}
 </div>
 <br />
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="5%">UID</th>
 		<th>{t(Login)}</th>

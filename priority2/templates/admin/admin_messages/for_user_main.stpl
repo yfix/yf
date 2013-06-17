@@ -1,7 +1,7 @@
 <h3>{t(Admin Messages)} ({total})</h3>
 
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover">
 <tbody>
 {items}
 </tbody>

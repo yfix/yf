@@ -4,7 +4,7 @@
 <a href="{main_link}">{t(Back to analyser main)}</a>
 <br /><br />
 
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Hits)}</th>
 		<th>{t(Referer)}</th>

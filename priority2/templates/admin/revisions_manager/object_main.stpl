@@ -5,7 +5,7 @@
 {/if}
 
 {if("items" ne "")}
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<colgroup align="center"><col><col><col><col></colgroup><col><col>
 	<thead>
 		<th width="5%">{t(Revision)}</th>

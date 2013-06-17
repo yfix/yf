@@ -34,7 +34,7 @@ if (!function_exists("error_back")) {
 		if (!$where_go_back) {
 			$where_go_back = "javascript:history.back()";
 		}
-		return $Text = "<div align=\"center\"><br><font color='#ff0000'><strong>".$what_to_say."</strong></font><br><br><input type='button' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".ucfirst(t('back'))."'></div>";
+		return $Text = "<div align=\"center\"><strong>".$what_to_say."</strong><input type='button' class='btn' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".ucfirst(t('back'))."'></div>";
 	}
 }
 
@@ -44,14 +44,14 @@ if (!function_exists("back")) {
 		if ($what_to_say == "back" || $what_to_say == "") {
 			$what_to_say = t('back');
 		}
-		return $Text = "<div align=\"center\"><br><input type='button' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".$what_to_say."'><br><br></div>";
+		return $Text = "<div align=\"center\"><input type='button' class='btn' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".$what_to_say."'></div>";
 	}
 }
 
 // Show Javascript alert
 if (!function_exists("js_alert")) {
 	function js_alert ($text) {
-		echo "<script language='javascript'>alert('".str_replace(array("'", "\r", "\n"), "", $text)."')</script>";
+		echo "<script type='text/javascript'>alert('".str_replace(array("'", "\r", "\n"), "", $text)."')</script>";
 	}
 }
 

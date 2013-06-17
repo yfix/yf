@@ -8,7 +8,7 @@
 <div align="center"><a href="{top}">{t(TOP OF ERRORS)}</a></div><br />
 
 <form action='{form_action}' method='post' name='admin_form'>
-<table>
+<table class="table table-bordered table-striped table-hover"
 	<thead>
 		<th>#</th>
 		<th>{t(Level)}</th>

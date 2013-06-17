@@ -6,7 +6,7 @@
 <a href="{users_list_url}">User List</a><br />
 <br />
 
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>Link</th>
 		<th>User Name</th>

@@ -6,7 +6,7 @@
 <br /><br />
 
 {if("items" ne "")}
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 <form action='{form_action}' method='post' name='admin_form'>
 	<thead>
 		<th>#</th>

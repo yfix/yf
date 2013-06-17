@@ -2,7 +2,7 @@
 
 {if("items" ne "")}
 <br />
-<table class="my_form_table">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="10%">{t(Preview Image)}</th>
 		<th width="10%">{t(Name)}</th>
@@ -26,13 +26,3 @@
 {if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
 
 <div align="center"><a href="{add_link}">{t(Add theme)}</a></div>
-
-<script type="text/javascript">
-<!--
-$(function() {
-	$("table.my_form_table tr").not(":first-child")
-		.filter(":even").addClass("bg1").end()
-		.filter(":odd").addClass("bg2").end();
-});
--->
-</script>

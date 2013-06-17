@@ -3,7 +3,7 @@
 	(shown only sites found with correct paths):
 	<br /><br />
 </div>
-<table>
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="10%">Site ID</th>
 		<th>Site Name</th>

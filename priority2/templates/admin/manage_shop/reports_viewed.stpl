@@ -38,7 +38,7 @@ $(function(){
 </script>
 
 <center>
-<table  width="75%">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th nowrap align="left">
 			<a href="#" id="name-asc" class="sortby_btn" title="ASC sorting">&#x25bc;</a>

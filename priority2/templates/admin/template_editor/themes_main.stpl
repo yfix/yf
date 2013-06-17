@@ -1,4 +1,4 @@
-<table align="center">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>{t(Name)}</th>
 		<th>{t(Num STPLs)}</th>
