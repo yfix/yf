@@ -1,67 +1,28 @@
-<div class="filter">
-<fieldset>
+<form action='{save_action}' method='post' class='form-inline'>
 <legend>{t(Filter)}</legend>
-<form action='{save_action}' method='post'>
-	<div class="column">
-		<p>
-			<label for="object_name_box">{t(Object Name)}</label>
-			{object_name_box}
-		</p>
-		<p>
-			<label for="object_id">{t(Object ID)}</label>
-			<input type="text" id="object_id" name="object_id" value="{object_id}" size="8">
-		</p>
-		<p>
-			<label for="cid_min">{t(Comment ID Min)}</label>
-			<input type="text" id="cid_min" name="cid_min" value="{cid_min}" size="8">
-		</p>
-		<p>
-			<label for="cid_max">{t(Comment ID Max)}</label>
-			<input type="text" id="cid_max" name="cid_max" value="{cid_max}" size="8">
-		</p>
-		<p>
-			<label for="date_min">{t(Date From)}</label>
-			<input type="text" id="date_min" name="date_min" value="{date_min}" size="8">
-		</p>
-		<p>
-			<label for="date_max">{t(Date To)}</label>
-			<input type="text" id="date_max" name="date_max" value="{date_max}" size="8">
-		</p>
-		<p>
-			<label for="text">{t(Text)}</label>
-			<input type="text" id="text" name="text" value="{text}">
-		</p>
-	</div>
-	<div class="column">
-		<p>
-			<label for="nick">{t(User Nick)}</label>
-			<input type="text" id="nick" name="nick" value="{nick}">
-		</p>
-		<p>
-			<label for="user_id">{t(User ID)}</label>
-			<input type="text" id="user_id" name="user_id" value="{user_id}">
-		</p>
-		<p>
-			<label for="account_type_box">{t(Account type)}</label>
-			{account_type_box}
-		</p>
-		<p>
-			<label for="active_box">{t(Message Status)}</label>
-			{active_box}
-		</p>
-		<p>
-			<label for="sort_by_box">{t(Sort By Field)}</label>
-			{sort_by_box}
-		</p>
-		<p>
-			<label for="sort_order_box">{t(Sort order)}</label>
-			{sort_order_box}
-		</p>
-	</div>
-	<div class="button_div">
-		<input type="submit" value="{t(SAVE)}">
-		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
-	</div>
+	<label for="object_name_box">{t(Object Name)}</label>
+	{object_name_box}
+
+	<input type="text" id="object_id" name="object_id" value="{object_id}" placeholder="{t(Object ID)}" class="input-mini">
+	<input type="text" id="cid_min" name="cid_min" value="{cid_min}"" placeholder="{t(Comment ID Min)}" class="input-small">
+	<input type="text" id="cid_max" name="cid_max" value="{cid_max}" placeholder="{t(Comment ID Max)}" class="input-small">
+	<input type="text" id="date_min" name="date_min" value="{date_min}" placeholder="{t(Date From)}" class="input-small">
+	<input type="text" id="date_max" name="date_max" value="{date_max}" placeholder="{t(Data To)}" class="input-small">
+	<input type="text" id="text" name="text" value="{text}" placeholder="{t(Text)}" class="input-small">
+	<input type="text" id="nick" name="nick" value="{nick}" placeholder="{t(User Nick)}" class="input-small">
+	<input type="text" id="user_id" name="user_id" value="{user_id}" placeholder="{t(User ID)}" class="input-small">
+
+	<label for="account_type_box">{t(Account type)}</label>
+	{account_type_box}
+
+	<label for="active_box">{t(Message Status)}</label>
+	{active_box}
+
+	<label for="sort_by_box">{t(Sort By Field)}</label>
+	{sort_by_box}
+
+	<label for="sort_order_box">{t(Sort order)}</label>
+	{sort_order_box}
+
+	{form_row("save_and_clear")}
 </form>
-</fieldset>
-</div>

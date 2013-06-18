@@ -225,6 +225,29 @@ class yf_form2 {
 
 	/**
 	*/
+	function save_and_clear($name = "", $desc = "", $more_param = "", $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!$name) {
+			$name = 'clear_link';
+		}
+		$body = '<div class="control-group">
+				<div class="controls">
+					<input type="submit" value="'.t('Save').'" class="btn" />'
+					.($replace[$name] ? ' <a href="'.$replace[$name].'" class="btn">'.t('Clear').'</a>' : '')
+				.'</div>
+			</div>
+		';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	*/
 	function info($name, $desc = "", $more_param = "", $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;

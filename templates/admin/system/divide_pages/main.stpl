@@ -1,0 +1,11 @@
+<div class="pagination">
+	<ul>
+{page_first}
+{block_prev}
+{page_prev}
+{pages}
+{page_next}
+{block_next}
+{page_last}
+	</ul>
+</div>
