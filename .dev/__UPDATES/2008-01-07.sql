@@ -1,1 +1,0 @@
-INSERT INTO `sexy_sys_menu_items` (`menu_id`, `type_id`, `parent_id`, `name`, `location`, `icon`, `user_groups`, `order`, `active`) VALUES ('5', '1', '109', 'Activity Viewer', 'object=activity_viewer', '', '', '53', '1' );

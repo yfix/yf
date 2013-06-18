@@ -1,22 +1,13 @@
 <?php
-// Set engine debugging mode on/off
 define("DEBUG_MODE", true);
-// Physical path to the ProEngine Core files
 define("INCLUDE_PATH", "../../");
-// Path to the FrameWork
 define("YF_PATH", INCLUDE_PATH."yf/");
-// Get current project settings
 require (INCLUDE_PATH."common_vars.php");
-// Include main class
 require YF_PATH."classes/yf_main.class.php";
-// Initialize main engine
 $GLOBALS['main'] = new yf_main("user");
-//----------------------------------------------------
 $SQL_UPDATES_DIR	= INCLUDE_PATH."_UPDATES/";
 $GLUED_SQL_FILE		= "./glued_updates.sql";
-// Date to start from
 $START_DATE = "2005-11-28";
-// Glue all separate files into one
 if ($dh = @opendir($SQL_UPDATES_DIR)) {
 	$fh = fopen($GLUED_SQL_FILE, "w");
 	// Get all sql files inside current dir
@@ -45,7 +36,6 @@ if ($dh = @opendir($SQL_UPDATES_DIR)) {
 	@fclose($fh);
 	@closedir($dh);
 }
-//----------------------------------------------------
 echo $body;
 if (DEBUG_MODE) {
 	echo "<br>";

@@ -1,3 +1,0 @@
-user modules, admin modules - брать только активные без пподмодулей
-classes - брать все из папки classes с подпапками
-

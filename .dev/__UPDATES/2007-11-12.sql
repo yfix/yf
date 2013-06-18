@@ -1,1 +1,0 @@
-INSERT INTO `sexy_sys_menu_items` (`menu_id`, `type_id`, `parent_id`, `name`, `location`, `icon`, `user_groups`, `order`, `active`) VALUES ('5', '1', '113', 'Log Image Resizes', 'object=log_image_resize_viewer', '', '', '106', '1' );

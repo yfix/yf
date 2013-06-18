@@ -22,7 +22,7 @@ $zip_query = "
 			(SIN(" . $lat . "/57.2958) * SIN(latitude/57.2958)) 
 			+ (COS(" . $lat . "/57.2958) * COS(latitude/57.2958) * COS(longitude/57.2958 - " . $lon. "/57.2958)))
 		) * 3963 AS distance 
-	FROM sexy_geo_city_location 
+	FROM t_geo_city_location 
 	WHERE (latitude >= " . $lat . " - (" . $radius . "/111)) 
 		AND (latitude <= " . $lat . " + (" . $radius . "/111)) 
 		AND (longitude >= " . $lon . "- (" . $radius . "/111)) 
@@ -37,7 +37,7 @@ $zip_query .= "
 			(SIN(" . $lat . "/57.2958) * SIN(lat/57.2958)) 
 			+ (COS(" . $lat . "/57.2958) * COS(lat/57.2958) * COS(lon/57.2958 - " . $lon. "/57.2958)))
 		) * 3963 AS distance 
-	FROM sexy_ads 
+	FROM t_ads 
 	WHERE (lat >= " . $lat . " - (" . $radius . "/111)) 
 		AND (lat <= " . $lat . " + (" . $radius . "/111)) 
 		AND (lon >= " . $lon . "- (" . $radius . "/111)) 

@@ -1,0 +1,3225 @@
+$GLOBALS["currencies"] = Array
+(
+    [0] => Array
+        (
+            [code] => AED
+            [num] => 784
+            [digits_coin] => 2
+            [name] => United Arab Emirates dirham
+            [country] => United Arab Emirates
+        )
+
+    [1] => Array
+        (
+            [code] => AFN
+            [num] => 971
+            [digits_coin] => 2
+            [name] => Afghan afghani|Afghani
+            [country] => Afghanistan
+        )
+
+    [2] => Array
+        (
+            [code] => ALL
+            [num] => 008
+            [digits_coin] => 2
+            [name] => Albanian lek|Lek
+            [country] => Albania
+        )
+
+    [3] => Array
+        (
+            [code] => AMD
+            [num] => 051
+            [digits_coin] => 2
+            [name] => Armenian Dram
+            [country] => Armenia
+        )
+
+    [4] => Array
+        (
+            [code] => ANG
+            [num] => 532
+            [digits_coin] => 2
+            [name] => Netherlands Antillian Guilder
+            [country] => Netherlands Antilles
+        )
+
+    [5] => Array
+        (
+            [code] => AOA
+            [num] => 973
+            [digits_coin] => 2
+            [name] => Kwanza
+            [country] => Angola
+        )
+
+    [6] => Array
+        (
+            [code] => ARS
+            [num] => 032
+            [digits_coin] => 2
+            [name] => Argentine peso|Argentine Peso
+            [country] => Argentina
+        )
+
+    [7] => Array
+        (
+            [code] => AUD
+            [num] => 036
+            [digits_coin] => 2
+            [name] => Australian Dollar
+            [country] => Australia, Australian Antarctic Territory, Christmas Island, Cocos (Keeling) Islands, Heard and McDonald Islands, Kiribati, Nauru, Norfolk Island, Tuvalu
+        )
+
+    [8] => Array
+        (
+            [code] => AWG
+            [num] => 533
+            [digits_coin] => 2
+            [name] => Aruban Guilder
+            [country] => Aruba
+        )
+
+    [9] => Array
+        (
+            [code] => AZN
+            [num] => 944
+            [digits_coin] => 2
+            [name] => Azerbaijanian Manat
+            [country] => Azerbaijan
+        )
+
+    [10] => Array
+        (
+            [code] => BAM
+            [num] => 977
+            [digits_coin] => 2
+            [name] => Convertible Marks
+            [country] => Bosnia and Herzegovina
+        )
+
+    [11] => Array
+        (
+            [code] => BBD
+            [num] => 052
+            [digits_coin] => 2
+            [name] => Barbados Dollar
+            [country] => Barbados
+        )
+
+    [12] => Array
+        (
+            [code] => BDT
+            [num] => 050
+            [digits_coin] => 2
+            [name] => Bangladeshi Taka
+            [country] => Bangladesh
+        )
+
+    [13] => Array
+        (
+            [code] => BGN
+            [num] => 975
+            [digits_coin] => 2
+            [name] => Bulgarian Lev
+            [country] => Bulgaria
+        )
+
+    [14] => Array
+        (
+            [code] => BHD
+            [num] => 048
+            [digits_coin] => 3
+            [name] => Bahraini Dinar
+            [country] => Bahrain
+        )
+
+    [15] => Array
+        (
+            [code] => BIF
+            [num] => 108
+            [digits_coin] => 0
+            [name] => Burundian Franc
+            [country] => Burundi
+        )
+
+    [16] => Array
+        (
+            [code] => BMD
+            [num] => 060
+            [digits_coin] => 2
+            [name] => Bermudian Dollar
+            [country] => Bermuda
+        )
+
+    [17] => Array
+        (
+            [code] => BND
+            [num] => 096
+            [digits_coin] => 2
+            [name] => Brunei Dollar
+            [country] => Brunei
+        )
+
+    [18] => Array
+        (
+            [code] => BOB
+            [num] => 068
+            [digits_coin] => 2
+            [name] => Boliviano
+            [country] => Bolivia
+        )
+
+    [19] => Array
+        (
+            [code] => BOV
+            [num] => 984
+            [digits_coin] => 2
+            [name] => Bolivian Mvdol (Funds code)
+            [country] => Bolivia
+        )
+
+    [20] => Array
+        (
+            [code] => BRL
+            [num] => 986
+            [digits_coin] => 2
+            [name] => Brazilian Real
+            [country] => Brazil
+        )
+
+    [21] => Array
+        (
+            [code] => BSD
+            [num] => 044
+            [digits_coin] => 2
+            [name] => Bahamian Dollar
+            [country] => Bahamas
+        )
+
+    [22] => Array
+        (
+            [code] => BTN
+            [num] => 064
+            [digits_coin] => 2
+            [name] => Ngultrum
+            [country] => Bhutan
+        )
+
+    [23] => Array
+        (
+            [code] => BWP
+            [num] => 072
+            [digits_coin] => 2
+            [name] => Botswana pula|Pula
+            [country] => Botswana
+        )
+
+    [24] => Array
+        (
+            [code] => BYR
+            [num] => 974
+            [digits_coin] => 0
+            [name] => Belarussian Ruble
+            [country] => Belarus
+        )
+
+    [25] => Array
+        (
+            [code] => BZD
+            [num] => 084
+            [digits_coin] => 2
+            [name] => Belize Dollar
+            [country] => Belize
+        )
+
+    [26] => Array
+        (
+            [code] => CAD
+            [num] => 124
+            [digits_coin] => 2
+            [name] => Canadian Dollar
+            [country] => Canada
+        )
+
+    [27] => Array
+        (
+            [code] => CDF
+            [num] => 976
+            [digits_coin] => 2
+            [name] => Franc Congolais
+            [country] => Democratic Republic of Congo
+        )
+
+    [28] => Array
+        (
+            [code] => CHE
+            [num] => 947
+            [digits_coin] => 2
+            [name] => WIR Bank|WIR Euro
+            [country] => Switzerland
+        )
+
+    [29] => Array
+        (
+            [code] => CHF
+            [num] => 756
+            [digits_coin] => 2
+            [name] => Swiss Franc
+            [country] => Switzerland, Liechtenstein
+        )
+
+    [30] => Array
+        (
+            [code] => CHW
+            [num] => 948
+            [digits_coin] => 2
+            [name] => WIR Bank|WIR Franc
+            [country] => Switzerland
+        )
+
+    [31] => Array
+        (
+            [code] => CLF
+            [num] => 990
+            [digits_coin] => 0
+            [name] => Unidad de Fomento (Funds code)
+            [country] => Chile
+        )
+
+    [32] => Array
+        (
+            [code] => CLP
+            [num] => 152
+            [digits_coin] => 0
+            [name] => Chilean Peso
+            [country] => Chile
+        )
+
+    [33] => Array
+        (
+            [code] => CNY
+            [num] => 156
+            [digits_coin] => 2
+            [name] => Yuan Renminbi
+            [country] => China
+        )
+
+    [34] => Array
+        (
+            [code] => COP
+            [num] => 170
+            [digits_coin] => 2
+            [name] => Colombian Peso
+            [country] => Colombia
+        )
+
+    [35] => Array
+        (
+            [code] => COU
+            [num] => 970
+            [digits_coin] => 2
+            [name] => Unidad de Valor Real
+            [country] => Colombia
+        )
+
+    [36] => Array
+        (
+            [code] => CRC
+            [num] => 188
+            [digits_coin] => 2
+            [name] => Costa Rican Colon
+            [country] => Costa Rica
+        )
+
+    [37] => Array
+        (
+            [code] => CUP
+            [num] => 192
+            [digits_coin] => 2
+            [name] => Cuban Peso
+            [country] => Cuba
+        )
+
+    [38] => Array
+        (
+            [code] => CVE
+            [num] => 132
+            [digits_coin] => 2
+            [name] => Cape Verde Escudo
+            [country] => Cape Verde
+        )
+
+    [39] => Array
+        (
+            [code] => CYP
+            [num] => 196
+            [digits_coin] => 2
+            [name] => Cyprus Pound
+            [country] => Cyprus
+        )
+
+    [40] => Array
+        (
+            [code] => CZK
+            [num] => 203
+            [digits_coin] => 2
+            [name] => Czech Koruna
+            [country] => Czech Republic
+        )
+
+    [41] => Array
+        (
+            [code] => DJF
+            [num] => 262
+            [digits_coin] => 0
+            [name] => Djibouti Franc
+            [country] => Djibouti
+        )
+
+    [42] => Array
+        (
+            [code] => DKK
+            [num] => 208
+            [digits_coin] => 2
+            [name] => Danish Krone
+            [country] => Denmark, Faroe Islands, Greenland
+        )
+
+    [43] => Array
+        (
+            [code] => DOP
+            [num] => 214
+            [digits_coin] => 2
+            [name] => Dominican Peso
+            [country] => Dominican Republic
+        )
+
+    [44] => Array
+        (
+            [code] => DZD
+            [num] => 012
+            [digits_coin] => 2
+            [name] => Algerian Dinar
+            [country] => Algeria
+        )
+
+    [45] => Array
+        (
+            [code] => EEK
+            [num] => 233
+            [digits_coin] => 2
+            [name] => Kroon
+            [country] => Estonia
+        )
+
+    [46] => Array
+        (
+            [code] => EGP
+            [num] => 818
+            [digits_coin] => 2
+            [name] => Egyptian Pound
+            [country] => Egypt
+        )
+
+    [47] => Array
+        (
+            [code] => ERN
+            [num] => 232
+            [digits_coin] => 2
+            [name] => Eritrean nakfa|Nakfa
+            [country] => Eritrea
+        )
+
+    [48] => Array
+        (
+            [code] => ETB
+            [num] => 230
+            [digits_coin] => 2
+            [name] => Ethiopian Birr
+            [country] => Ethiopia
+        )
+
+    [49] => Array
+        (
+            [code] => EUR
+            [num] => 978
+            [digits_coin] => 2
+            [name] => Euro
+            [country] => European Union
+        )
+
+    [50] => Array
+        (
+            [code] => FJD
+            [num] => 242
+            [digits_coin] => 2
+            [name] => Fiji Dollar
+            [country] => Fiji
+        )
+
+    [51] => Array
+        (
+            [code] => FKP
+            [num] => 238
+            [digits_coin] => 2
+            [name] => Falkland Islands Pound
+            [country] => Falkland Islands
+        )
+
+    [52] => Array
+        (
+            [code] => GBP
+            [num] => 826
+            [digits_coin] => 2
+            [name] => Pound Sterling
+            [country] => United Kingdom
+        )
+
+    [53] => Array
+        (
+            [code] => GEL
+            [num] => 981
+            [digits_coin] => 2
+            [name] => Georgian lari|Lari
+            [country] => Georgia
+        )
+
+    [54] => Array
+        (
+            [code] => GHS
+            [num] => 288
+            [digits_coin] => 2
+            [name] => Cedi
+            [country] => Ghana
+        )
+
+    [55] => Array
+        (
+            [code] => GIP
+            [num] => 292
+            [digits_coin] => 2
+            [name] => Gibraltar pound
+            [country] => Gibraltar
+        )
+
+    [56] => Array
+        (
+            [code] => GMD
+            [num] => 270
+            [digits_coin] => 2
+            [name] => Dalasi
+            [country] => Gambia
+        )
+
+    [57] => Array
+        (
+            [code] => GNF
+            [num] => 324
+            [digits_coin] => 0
+            [name] => Guinea Franc
+            [country] => Guinea
+        )
+
+    [58] => Array
+        (
+            [code] => GTQ
+            [num] => 320
+            [digits_coin] => 2
+            [name] => Guatemalan quetzal|Quetzal
+            [country] => Guatemala
+        )
+
+    [59] => Array
+        (
+            [code] => GYD
+            [num] => 328
+            [digits_coin] => 2
+            [name] => Guyana Dollar
+            [country] => Guyana
+        )
+
+    [60] => Array
+        (
+            [code] => HKD
+            [num] => 344
+            [digits_coin] => 2
+            [name] => Hong Kong Dollar
+            [country] => Hong Kong
+        )
+
+    [61] => Array
+        (
+            [code] => HNL
+            [num] => 340
+            [digits_coin] => 2
+            [name] => Honduran lempira|Lempira
+            [country] => Honduras
+        )
+
+    [62] => Array
+        (
+            [code] => HRK
+            [num] => 191
+            [digits_coin] => 2
+            [name] => Croatian Kuna
+            [country] => Croatia
+        )
+
+    [63] => Array
+        (
+            [code] => HTG
+            [num] => 332
+            [digits_coin] => 2
+            [name] => Haiti Gourde
+            [country] => Haiti
+        )
+
+    [64] => Array
+        (
+            [code] => HUF
+            [num] => 348
+            [digits_coin] => 2
+            [name] => Forint
+            [country] => Hungary
+        )
+
+    [65] => Array
+        (
+            [code] => IDR
+            [num] => 360
+            [digits_coin] => 2
+            [name] => Rupiah
+            [country] => Indonesia
+        )
+
+    [66] => Array
+        (
+            [code] => ILS
+            [num] => 376
+            [digits_coin] => 2
+            [name] => New Israeli Shekel
+            [country] => Israel
+        )
+
+    [67] => Array
+        (
+            [code] => INR
+            [num] => 356
+            [digits_coin] => 2
+            [name] => Indian Rupee
+            [country] => Bhutan, India
+        )
+
+    [68] => Array
+        (
+            [code] => IQD
+            [num] => 368
+            [digits_coin] => 3
+            [name] => Iraqi Dinar
+            [country] => Iraq
+        )
+
+    [69] => Array
+        (
+            [code] => IRR
+            [num] => 364
+            [digits_coin] => 2
+            [name] => Iranian Rial
+            [country] => Iran
+        )
+
+    [70] => Array
+        (
+            [code] => ISK
+            [num] => 352
+            [digits_coin] => 2
+            [name] => Iceland Krona
+            [country] => Iceland
+        )
+
+    [71] => Array
+        (
+            [code] => JMD
+            [num] => 388
+            [digits_coin] => 2
+            [name] => Jamaican Dollar
+            [country] => Jamaica
+        )
+
+    [72] => Array
+        (
+            [code] => JOD
+            [num] => 400
+            [digits_coin] => 3
+            [name] => Jordanian Dinar
+            [country] => Jordan
+        )
+
+    [73] => Array
+        (
+            [code] => JPY
+            [num] => 392
+            [digits_coin] => 0
+            [name] => Japanese yen
+            [country] => Japan
+        )
+
+    [74] => Array
+        (
+            [code] => KES
+            [num] => 404
+            [digits_coin] => 2
+            [name] => Kenyan Shilling
+            [country] => Kenya
+        )
+
+    [75] => Array
+        (
+            [code] => KGS
+            [num] => 417
+            [digits_coin] => 2
+            [name] => Kyrgyzstani som|Som
+            [country] => Kyrgyzstan
+        )
+
+    [76] => Array
+        (
+            [code] => KHR
+            [num] => 116
+            [digits_coin] => 2
+            [name] => Riel
+            [country] => Cambodia
+        )
+
+    [77] => Array
+        (
+            [code] => KMF
+            [num] => 174
+            [digits_coin] => 0
+            [name] => Comoro Franc
+            [country] => Comoros
+        )
+
+    [78] => Array
+        (
+            [code] => KPW
+            [num] => 408
+            [digits_coin] => 2
+            [name] => North Korean Won
+            [country] => North Korea
+        )
+
+    [79] => Array
+        (
+            [code] => KRW
+            [num] => 410
+            [digits_coin] => 0
+            [name] => South Korean Won
+            [country] => South Korea
+        )
+
+    [80] => Array
+        (
+            [code] => KWD
+            [num] => 414
+            [digits_coin] => 3
+            [name] => Kuwaiti Dinar
+            [country] => Kuwait
+        )
+
+    [81] => Array
+        (
+            [code] => KYD
+            [num] => 136
+            [digits_coin] => 2
+            [name] => Cayman Islands Dollar
+            [country] => Cayman Islands
+        )
+
+    [82] => Array
+        (
+            [code] => KZT
+            [num] => 398
+            [digits_coin] => 2
+            [name] => Tenge
+            [country] => Kazakhstan
+        )
+
+    [83] => Array
+        (
+            [code] => LAK
+            [num] => 418
+            [digits_coin] => 2
+            [name] => Lao kip|Kip
+            [country] => Laos
+        )
+
+    [84] => Array
+        (
+            [code] => LBP
+            [num] => 422
+            [digits_coin] => 2
+            [name] => Lebanese Pound
+            [country] => Lebanon
+        )
+
+    [85] => Array
+        (
+            [code] => LKR
+            [num] => 144
+            [digits_coin] => 2
+            [name] => Sri Lanka Rupee
+            [country] => Sri Lanka
+        )
+
+    [86] => Array
+        (
+            [code] => LRD
+            [num] => 430
+            [digits_coin] => 2
+            [name] => Liberian Dollar
+            [country] => Liberia
+        )
+
+    [87] => Array
+        (
+            [code] => LSL
+            [num] => 426
+            [digits_coin] => 2
+            [name] => Loti
+            [country] => Lesotho
+        )
+
+    [88] => Array
+        (
+            [code] => LTL
+            [num] => 440
+            [digits_coin] => 2
+            [name] => Lithuanian Litas
+            [country] => Lithuania
+        )
+
+    [89] => Array
+        (
+            [code] => LVL
+            [num] => 428
+            [digits_coin] => 2
+            [name] => Latvian Lats
+            [country] => Latvia
+        )
+
+    [90] => Array
+        (
+            [code] => LYD
+            [num] => 434
+            [digits_coin] => 3
+            [name] => Libyan Dinar
+            [country] => Libya
+        )
+
+    [91] => Array
+        (
+            [code] => MAD
+            [num] => 504
+            [digits_coin] => 2
+            [name] => Moroccan Dirham
+            [country] => Morocco, Western Sahara
+        )
+
+    [92] => Array
+        (
+            [code] => MDL
+            [num] => 498
+            [digits_coin] => 2
+            [name] => Moldovan Leu
+            [country] => Moldova
+        )
+
+    [93] => Array
+        (
+            [code] => MGA
+            [num] => 969
+            [digits_coin] => 0
+            [name] => Malagasy Ariary
+            [country] => Madagascar
+        )
+
+    [94] => Array
+        (
+            [code] => MKD
+            [num] => 807
+            [digits_coin] => 2
+            [name] => Denar
+            [country] => Former Yugoslav Republic of Macedonia
+        )
+
+    [95] => Array
+        (
+            [code] => MMK
+            [num] => 104
+            [digits_coin] => 2
+            [name] => Kyat
+            [country] => Myanmar
+        )
+
+    [96] => Array
+        (
+            [code] => MNT
+            [num] => 496
+            [digits_coin] => 2
+            [name] => Tugrik
+            [country] => Mongolia
+        )
+
+    [97] => Array
+        (
+            [code] => MOP
+            [num] => 446
+            [digits_coin] => 2
+            [name] => Macanese pataca|Pataca
+            [country] => Macau
+        )
+
+    [98] => Array
+        (
+            [code] => MRO
+            [num] => 478
+            [digits_coin] => 0
+            [name] => Ouguiya
+            [country] => Mauritania
+        )
+
+    [99] => Array
+        (
+            [code] => MTL
+            [num] => 470
+            [digits_coin] => 2
+            [name] => Maltese Lira
+            [country] => Malta
+        )
+
+    [100] => Array
+        (
+            [code] => MUR
+            [num] => 480
+            [digits_coin] => 2
+            [name] => Mauritius Rupee
+            [country] => Mauritius
+        )
+
+    [101] => Array
+        (
+            [code] => MVR
+            [num] => 462
+            [digits_coin] => 2
+            [name] => Rufiyaa
+            [country] => Maldives
+        )
+
+    [102] => Array
+        (
+            [code] => MWK
+            [num] => 454
+            [digits_coin] => 2
+            [name] => Malawian kwacha|Kwacha
+            [country] => Malawi
+        )
+
+    [103] => Array
+        (
+            [code] => MXN
+            [num] => 484
+            [digits_coin] => 2
+            [name] => Mexican Peso
+            [country] => Mexico
+        )
+
+    [104] => Array
+        (
+            [code] => MXV
+            [num] => 979
+            [digits_coin] => 2
+            [name] => Mexican Unidad de Inversion
+            [country] => Mexico
+        )
+
+    [105] => Array
+        (
+            [code] => MYR
+            [num] => 458
+            [digits_coin] => 2
+            [name] => Malaysian Ringgit
+            [country] => Malaysia
+        )
+
+    [106] => Array
+        (
+            [code] => MZN
+            [num] => 943
+            [digits_coin] => 2
+            [name] => Mozambican metical|Metical
+            [country] => Mozambique
+        )
+
+    [107] => Array
+        (
+            [code] => NAD
+            [num] => 516
+            [digits_coin] => 2
+            [name] => Namibian Dollar
+            [country] => Namibia
+        )
+
+    [108] => Array
+        (
+            [code] => NGN
+            [num] => 566
+            [digits_coin] => 2
+            [name] => Naira
+            [country] => Nigeria
+        )
+
+    [109] => Array
+        (
+            [code] => NIO
+            [num] => 558
+            [digits_coin] => 2
+            [name] => Cordoba Oro
+            [country] => Nicaragua
+        )
+
+    [110] => Array
+        (
+            [code] => NOK
+            [num] => 578
+            [digits_coin] => 2
+            [name] => Norwegian Krone
+            [country] => Norway
+        )
+
+    [111] => Array
+        (
+            [code] => NPR
+            [num] => 524
+            [digits_coin] => 2
+            [name] => Nepalese Rupee
+            [country] => Nepal
+        )
+
+    [112] => Array
+        (
+            [code] => NZD
+            [num] => 554
+            [digits_coin] => 2
+            [name] => New Zealand Dollar
+            [country] => Cook Islands, New Zealand, Niue, Pitcairn, Tokelau
+        )
+
+    [113] => Array
+        (
+            [code] => OMR
+            [num] => 512
+            [digits_coin] => 3
+            [name] => Rial Omani
+            [country] => Oman
+        )
+
+    [114] => Array
+        (
+            [code] => PAB
+            [num] => 590
+            [digits_coin] => 2
+            [name] => Panamanian balboa|Balboa
+            [country] => Panama
+        )
+
+    [115] => Array
+        (
+            [code] => PEN
+            [num] => 604
+            [digits_coin] => 2
+            [name] => Peruvian nuevo sol|Nuevo Sol
+            [country] => Peru
+        )
+
+    [116] => Array
+        (
+            [code] => PGK
+            [num] => 598
+            [digits_coin] => 2
+            [name] => Papua New Guinean kina|Kina
+            [country] => Papua New Guinea
+        )
+
+    [117] => Array
+        (
+            [code] => PHP
+            [num] => 608
+            [digits_coin] => 2
+            [name] => Philippine Peso
+            [country] => Philippines
+        )
+
+    [118] => Array
+        (
+            [code] => PKR
+            [num] => 586
+            [digits_coin] => 2
+            [name] => Pakistan Rupee
+            [country] => Pakistan
+        )
+
+    [119] => Array
+        (
+            [code] => PLN
+            [num] => 985
+            [digits_coin] => 2
+            [name] => Zloty
+            [country] => Poland
+        )
+
+    [120] => Array
+        (
+            [code] => PYG
+            [num] => 600
+            [digits_coin] => 0
+            [name] => Paraguayan guarani|Guarani
+            [country] => Paraguay
+        )
+
+    [121] => Array
+        (
+            [code] => QAR
+            [num] => 634
+            [digits_coin] => 2
+            [name] => Qatari Rial
+            [country] => Qatar
+        )
+
+    [122] => Array
+        (
+            [code] => RON
+            [num] => 946
+            [digits_coin] => 2
+            [name] => Romanian Leu|Romanian New Leu
+            [country] => Romania
+        )
+
+    [123] => Array
+        (
+            [code] => RSD
+            [num] => 941
+            [digits_coin] => 2
+            [name] => Serbian Dinar
+            [country] => Serbia
+        )
+
+    [124] => Array
+        (
+            [code] => RUB
+            [num] => 643
+            [digits_coin] => 2
+            [name] => Russian Ruble
+            [country] => Russia, Abkhazia, South Ossetia
+        )
+
+    [125] => Array
+        (
+            [code] => RWF
+            [num] => 646
+            [digits_coin] => 0
+            [name] => Rwanda Franc
+            [country] => Rwanda
+        )
+
+    [126] => Array
+        (
+            [code] => SAR
+            [num] => 682
+            [digits_coin] => 2
+            [name] => Saudi Riyal
+            [country] => Saudi Arabia
+        )
+
+    [127] => Array
+        (
+            [code] => SBD
+            [num] => 090
+            [digits_coin] => 2
+            [name] => Solomon Islands Dollar
+            [country] => Solomon Islands
+        )
+
+    [128] => Array
+        (
+            [code] => SCR
+            [num] => 690
+            [digits_coin] => 2
+            [name] => Seychelles Rupee
+            [country] => Seychelles
+        )
+
+    [129] => Array
+        (
+            [code] => SDG
+            [num] => 938
+            [digits_coin] => 2
+            [name] => Sudanese Pound
+            [country] => Sudan
+        )
+
+    [130] => Array
+        (
+            [code] => SEK
+            [num] => 752
+            [digits_coin] => 2
+            [name] => Swedish Krona
+            [country] => Sweden
+        )
+
+    [131] => Array
+        (
+            [code] => SGD
+            [num] => 702
+            [digits_coin] => 2
+            [name] => Singapore Dollar
+            [country] => Singapore
+        )
+
+    [132] => Array
+        (
+            [code] => SHP
+            [num] => 654
+            [digits_coin] => 2
+            [name] => Saint Helena Pound
+            [country] => Saint Helena
+        )
+
+    [133] => Array
+        (
+            [code] => SKK
+            [num] => 703
+            [digits_coin] => 2
+            [name] => Slovak Koruna
+            [country] => Slovakia
+        )
+
+    [134] => Array
+        (
+            [code] => SLL
+            [num] => 694
+            [digits_coin] => 2
+            [name] => Leone
+            [country] => Sierra Leone
+        )
+
+    [135] => Array
+        (
+            [code] => SOS
+            [num] => 706
+            [digits_coin] => 2
+            [name] => Somali Shilling
+            [country] => Somalia
+        )
+
+    [136] => Array
+        (
+            [code] => SRD
+            [num] => 968
+            [digits_coin] => 2
+            [name] => Surinam Dollar
+            [country] => Suriname
+        )
+
+    [137] => Array
+        (
+            [code] => STD
+            [num] => 678
+            [digits_coin] => 2
+            [name] => Sao Tome and Principe dobra|Dobra
+            [country] => Sao Tome and Principe
+        )
+
+    [138] => Array
+        (
+            [code] => SYP
+            [num] => 760
+            [digits_coin] => 2
+            [name] => Syrian Pound
+            [country] => Syria
+        )
+
+    [139] => Array
+        (
+            [code] => SZL
+            [num] => 748
+            [digits_coin] => 2
+            [name] => Lilangeni
+            [country] => Swaziland
+        )
+
+    [140] => Array
+        (
+            [code] => THB
+            [num] => 764
+            [digits_coin] => 2
+            [name] => Baht
+            [country] => Thailand
+        )
+
+    [141] => Array
+        (
+            [code] => TJS
+            [num] => 972
+            [digits_coin] => 2
+            [name] => Somoni
+            [country] => Tajikistan
+        )
+
+    [142] => Array
+        (
+            [code] => TMM
+            [num] => 795
+            [digits_coin] => 2
+            [name] => Turkmenistani manat|Manat
+            [country] => Turkmenistan
+        )
+
+    [143] => Array
+        (
+            [code] => TND
+            [num] => 788
+            [digits_coin] => 3
+            [name] => Tunisian Dinar
+            [country] => Tunisia
+        )
+
+    [144] => Array
+        (
+            [code] => TOP
+            [num] => 776
+            [digits_coin] => 2
+            [name] => Pa'anga
+            [country] => Tonga
+        )
+
+    [145] => Array
+        (
+            [code] => TRY
+            [num] => 949
+            [digits_coin] => 2
+            [name] => New Turkish Lira
+            [country] => Turkey
+        )
+
+    [146] => Array
+        (
+            [code] => TTD
+            [num] => 780
+            [digits_coin] => 2
+            [name] => Trinidad and Tobago Dollar
+            [country] => Trinidad and Tobago
+        )
+
+    [147] => Array
+        (
+            [code] => TWD
+            [num] => 901
+            [digits_coin] => 2
+            [name] => New Taiwan Dollar
+            [country] => Taiwan, list of islands of the Republic of China
+        )
+
+    [148] => Array
+        (
+            [code] => TZS
+            [num] => 834
+            [digits_coin] => 2
+            [name] => Tanzanian Shilling
+            [country] => Tanzania
+        )
+
+    [149] => Array
+        (
+            [code] => UAH
+            [num] => 980
+            [digits_coin] => 2
+            [name] => Hryvnia
+            [country] => Ukraine
+        )
+
+    [150] => Array
+        (
+            [code] => UGX
+            [num] => 800
+            [digits_coin] => 2
+            [name] => Uganda Shilling
+            [country] => Uganda
+        )
+
+    [151] => Array
+        (
+            [code] => USD
+            [num] => 840
+            [digits_coin] => 2
+            [name] => United States dollar|US Dollar
+            [country] => American Samoa, British Indian Ocean Territory, Ecuador, El Salvador, Guam, Haiti, Marshall Islands, Micronesia, Northern Mariana Islands, Palau, Panama, Puerto Rico, East Timor, Turks and Caicos Islands, United States, Virgin Islands
+        )
+
+    [152] => Array
+        (
+            [code] => USN
+            [num] => 997
+            [digits_coin] => 2
+            [name] => United States dollar (Next day)
+            [country] => United States
+        )
+
+    [153] => Array
+        (
+            [code] => USS
+            [num] => 998
+            [digits_coin] => 2
+            [name] => United States dollar (Same day)
+            [country] => United States
+        )
+
+    [154] => Array
+        (
+            [code] => UYU
+            [num] => 858
+            [digits_coin] => 2
+            [name] => Peso Uruguayo
+            [country] => Uruguay
+        )
+
+    [155] => Array
+        (
+            [code] => UZS
+            [num] => 860
+            [digits_coin] => 2
+            [name] => Uzbekistan Som
+            [country] => Uzbekistan
+        )
+
+    [156] => Array
+        (
+            [code] => VEB
+            [num] => 862
+            [digits_coin] => 2
+            [name] => Venezuelan bolivar
+            [country] => Venezuela
+        )
+
+    [157] => Array
+        (
+            [code] => VND
+            [num] => 704
+            [digits_coin] => 2
+            [name] => Vietnamese dong
+            [country] => Vietnam
+        )
+
+    [158] => Array
+        (
+            [code] => VUV
+            [num] => 548
+            [digits_coin] => 0
+            [name] => Vatu
+            [country] => Vanuatu
+        )
+
+    [159] => Array
+        (
+            [code] => WST
+            [num] => 882
+            [digits_coin] => 2
+            [name] => Samoan Tala
+            [country] => Samoa
+        )
+
+    [160] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => Cameroon, Central African Republic, Congo, Chad, Equatorial Guinea, Gabon
+        )
+
+    [161] => Array
+        (
+            [code] => XAG
+            [num] => 961
+            [digits_coin] => 0
+            [name] => Silver (one Troy ounce)
+            [country] => 
+        )
+
+    [162] => Array
+        (
+            [code] => XAU
+            [num] => 959
+            [digits_coin] => 0
+            [name] => Gold (one Troy ounce)
+            [country] => 
+        )
+
+    [163] => Array
+        (
+            [code] => XBA
+            [num] => 955
+            [digits_coin] => 0
+            [name] => European Composite Unit (EURCO)
+            [country] => 
+        )
+
+    [164] => Array
+        (
+            [code] => XBB
+            [num] => 956
+            [digits_coin] => 0
+            [name] => European Monetary Unit (E.M.U.-6)
+            [country] => 
+        )
+
+    [165] => Array
+        (
+            [code] => XBC
+            [num] => 957
+            [digits_coin] => 0
+            [name] => European Unit of Account 9]] (E.U.A.-9)
+            [country] => 
+        )
+
+    [166] => Array
+        (
+            [code] => XBD
+            [num] => 958
+            [digits_coin] => 0
+            [name] => European Unit of Account 17]] (E.U.A.-17)
+            [country] => 
+        )
+
+    [167] => Array
+        (
+            [code] => XCD
+            [num] => 951
+            [digits_coin] => 2
+            [name] => East Caribbean Dollar
+            [country] => Anguilla, Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, Saint Lucia, Saint Vincent and the Grenadines
+        )
+
+    [168] => Array
+        (
+            [code] => XDR
+            [num] => 960
+            [digits_coin] => 0
+            [name] => Special Drawing Rights
+            [country] => International Monetary Fund
+        )
+
+    [169] => Array
+        (
+            [code] => XOF
+            [num] => 952
+            [digits_coin] => 0
+            [name] => CFA Franc BCEAO
+            [country] => Benin, Burkina Faso, Cote d'Ivoire, Guinea-Bissau, Mali, Niger, Senegal, Togo
+        )
+
+    [170] => Array
+        (
+            [code] => XPD
+            [num] => 964
+            [digits_coin] => 0
+            [name] => Palladium (one Troy ounce)
+            [country] => 
+        )
+
+    [171] => Array
+        (
+            [code] => XPF
+            [num] => 953
+            [digits_coin] => 0
+            [name] => CFP franc
+            [country] => French Polynesia, New Caledonia, Wallis and Futuna
+        )
+
+    [172] => Array
+        (
+            [code] => XPT
+            [num] => 962
+            [digits_coin] => 0
+            [name] => Platinum (one Troy ounce)
+            [country] => 
+        )
+
+    [173] => Array
+        (
+            [code] => XTS
+            [num] => 963
+            [digits_coin] => 0
+            [name] => Code reserved for testing purposes
+            [country] => 
+        )
+
+    [174] => Array
+        (
+            [code] => XXX
+            [num] => 999
+            [digits_coin] => 0
+            [name] => No currency
+            [country] => 
+        )
+
+    [175] => Array
+        (
+            [code] => YER
+            [num] => 886
+            [digits_coin] => 2
+            [name] => Yemeni Rial
+            [country] => Yemen
+        )
+
+    [176] => Array
+        (
+            [code] => ZAR
+            [num] => 710
+            [digits_coin] => 2
+            [name] => South African Rand
+            [country] => South Africa
+        )
+
+    [177] => Array
+        (
+            [code] => ZMK
+            [num] => 894
+            [digits_coin] => 2
+            [name] => Zambian kwacha|Kwacha
+            [country] => Zambia
+        )
+
+    [178] => Array
+        (
+            [code] => ZWD
+            [num] => 716
+            [digits_coin] => 2
+            [name] => Zimbabwe Dollar
+            [country] => Zimbabwe
+        )
+
+    [179] => Array
+        (
+            [code] => AED
+            [num] => 784
+            [digits_coin] => 2
+            [name] => United Arab Emirates dirham
+            [country] => AE
+        )
+
+    [180] => Array
+        (
+            [code] => AFN
+            [num] => 971
+            [digits_coin] => 2
+            [name] => Afghan afghani|Afghani
+            [country] => AF
+        )
+
+    [181] => Array
+        (
+            [code] => ALL
+            [num] => 008
+            [digits_coin] => 2
+            [name] => Albanian lek|Lek
+            [country] => AL
+        )
+
+    [182] => Array
+        (
+            [code] => AMD
+            [num] => 051
+            [digits_coin] => 2
+            [name] => Armenian Dram
+            [country] => AM
+        )
+
+    [183] => Array
+        (
+            [code] => ANG
+            [num] => 532
+            [digits_coin] => 2
+            [name] => Netherlands Antillian Guilder
+            [country] => AN
+        )
+
+    [184] => Array
+        (
+            [code] => AOA
+            [num] => 973
+            [digits_coin] => 2
+            [name] => Kwanza
+            [country] => AO
+        )
+
+    [185] => Array
+        (
+            [code] => ARS
+            [num] => 032
+            [digits_coin] => 2
+            [name] => Argentine peso|Argentine Peso
+            [country] => AR
+        )
+
+    [186] => Array
+        (
+            [code] => AUD
+            [num] => 036
+            [digits_coin] => 2
+            [name] => Australian Dollar
+            [country] => AU,Australian Antarctic Territory,CX,CC,Heard and McDonald Islands,KI,NR,NF,TV
+        )
+
+    [187] => Array
+        (
+            [code] => AWG
+            [num] => 533
+            [digits_coin] => 2
+            [name] => Aruban Guilder
+            [country] => AW
+        )
+
+    [188] => Array
+        (
+            [code] => AZN
+            [num] => 944
+            [digits_coin] => 2
+            [name] => Azerbaijanian Manat
+            [country] => AZ
+        )
+
+    [189] => Array
+        (
+            [code] => BAM
+            [num] => 977
+            [digits_coin] => 2
+            [name] => Convertible Marks
+            [country] => BA
+        )
+
+    [190] => Array
+        (
+            [code] => BBD
+            [num] => 052
+            [digits_coin] => 2
+            [name] => Barbados Dollar
+            [country] => BB
+        )
+
+    [191] => Array
+        (
+            [code] => BDT
+            [num] => 050
+            [digits_coin] => 2
+            [name] => Bangladeshi Taka
+            [country] => BD
+        )
+
+    [192] => Array
+        (
+            [code] => BGN
+            [num] => 975
+            [digits_coin] => 2
+            [name] => Bulgarian Lev
+            [country] => BG
+        )
+
+    [193] => Array
+        (
+            [code] => BHD
+            [num] => 048
+            [digits_coin] => 3
+            [name] => Bahraini Dinar
+            [country] => BH
+        )
+
+    [194] => Array
+        (
+            [code] => BIF
+            [num] => 108
+            [digits_coin] => 0
+            [name] => Burundian Franc
+            [country] => BI
+        )
+
+    [195] => Array
+        (
+            [code] => BMD
+            [num] => 060
+            [digits_coin] => 2
+            [name] => Bermudian Dollar
+            [country] => BM
+        )
+
+    [196] => Array
+        (
+            [code] => BND
+            [num] => 096
+            [digits_coin] => 2
+            [name] => Brunei Dollar
+            [country] => Brunei
+        )
+
+    [197] => Array
+        (
+            [code] => BOB
+            [num] => 068
+            [digits_coin] => 2
+            [name] => Boliviano
+            [country] => BO
+        )
+
+    [198] => Array
+        (
+            [code] => BOV
+            [num] => 984
+            [digits_coin] => 2
+            [name] => Bolivian Mvdol (Funds code)
+            [country] => BO
+        )
+
+    [199] => Array
+        (
+            [code] => BRL
+            [num] => 986
+            [digits_coin] => 2
+            [name] => Brazilian Real
+            [country] => BR
+        )
+
+    [200] => Array
+        (
+            [code] => BSD
+            [num] => 044
+            [digits_coin] => 2
+            [name] => Bahamian Dollar
+            [country] => BS
+        )
+
+    [201] => Array
+        (
+            [code] => BTN
+            [num] => 064
+            [digits_coin] => 2
+            [name] => Ngultrum
+            [country] => BT
+        )
+
+    [202] => Array
+        (
+            [code] => BWP
+            [num] => 072
+            [digits_coin] => 2
+            [name] => Botswana pula|Pula
+            [country] => BW
+        )
+
+    [203] => Array
+        (
+            [code] => BYR
+            [num] => 974
+            [digits_coin] => 0
+            [name] => Belarussian Ruble
+            [country] => BY
+        )
+
+    [204] => Array
+        (
+            [code] => BZD
+            [num] => 084
+            [digits_coin] => 2
+            [name] => Belize Dollar
+            [country] => BZ
+        )
+
+    [205] => Array
+        (
+            [code] => CAD
+            [num] => 124
+            [digits_coin] => 2
+            [name] => Canadian Dollar
+            [country] => CA
+        )
+
+    [206] => Array
+        (
+            [code] => CDF
+            [num] => 976
+            [digits_coin] => 2
+            [name] => Franc Congolais
+            [country] => Democratic Republic of Congo
+        )
+
+    [207] => Array
+        (
+            [code] => CHE
+            [num] => 947
+            [digits_coin] => 2
+            [name] => WIR Bank|WIR Euro
+            [country] => CH
+        )
+
+    [208] => Array
+        (
+            [code] => CHF
+            [num] => 756
+            [digits_coin] => 2
+            [name] => Swiss Franc
+            [country] => CH,LI
+        )
+
+    [209] => Array
+        (
+            [code] => CHW
+            [num] => 948
+            [digits_coin] => 2
+            [name] => WIR Bank|WIR Franc
+            [country] => CH
+        )
+
+    [210] => Array
+        (
+            [code] => CLF
+            [num] => 990
+            [digits_coin] => 0
+            [name] => Unidad de Fomento (Funds code)
+            [country] => CL
+        )
+
+    [211] => Array
+        (
+            [code] => CLP
+            [num] => 152
+            [digits_coin] => 0
+            [name] => Chilean Peso
+            [country] => CL
+        )
+
+    [212] => Array
+        (
+            [code] => CNY
+            [num] => 156
+            [digits_coin] => 2
+            [name] => Yuan Renminbi
+            [country] => CN
+        )
+
+    [213] => Array
+        (
+            [code] => COP
+            [num] => 170
+            [digits_coin] => 2
+            [name] => Colombian Peso
+            [country] => CO
+        )
+
+    [214] => Array
+        (
+            [code] => COU
+            [num] => 970
+            [digits_coin] => 2
+            [name] => Unidad de Valor Real
+            [country] => CO
+        )
+
+    [215] => Array
+        (
+            [code] => CRC
+            [num] => 188
+            [digits_coin] => 2
+            [name] => Costa Rican Colon
+            [country] => CR
+        )
+
+    [216] => Array
+        (
+            [code] => CUP
+            [num] => 192
+            [digits_coin] => 2
+            [name] => Cuban Peso
+            [country] => CU
+        )
+
+    [217] => Array
+        (
+            [code] => CVE
+            [num] => 132
+            [digits_coin] => 2
+            [name] => Cape Verde Escudo
+            [country] => CV
+        )
+
+    [218] => Array
+        (
+            [code] => CYP
+            [num] => 196
+            [digits_coin] => 2
+            [name] => Cyprus Pound
+            [country] => CY
+        )
+
+    [219] => Array
+        (
+            [code] => CZK
+            [num] => 203
+            [digits_coin] => 2
+            [name] => Czech Koruna
+            [country] => CZ
+        )
+
+    [220] => Array
+        (
+            [code] => DJF
+            [num] => 262
+            [digits_coin] => 0
+            [name] => Djibouti Franc
+            [country] => DJ
+        )
+
+    [221] => Array
+        (
+            [code] => DKK
+            [num] => 208
+            [digits_coin] => 2
+            [name] => Danish Krone
+            [country] => DK,FO,GL
+        )
+
+    [222] => Array
+        (
+            [code] => DOP
+            [num] => 214
+            [digits_coin] => 2
+            [name] => Dominican Peso
+            [country] => DO
+        )
+
+    [223] => Array
+        (
+            [code] => DZD
+            [num] => 012
+            [digits_coin] => 2
+            [name] => Algerian Dinar
+            [country] => DZ
+        )
+
+    [224] => Array
+        (
+            [code] => EEK
+            [num] => 233
+            [digits_coin] => 2
+            [name] => Kroon
+            [country] => EE
+        )
+
+    [225] => Array
+        (
+            [code] => EGP
+            [num] => 818
+            [digits_coin] => 2
+            [name] => Egyptian Pound
+            [country] => EG
+        )
+
+    [226] => Array
+        (
+            [code] => ERN
+            [num] => 232
+            [digits_coin] => 2
+            [name] => Eritrean nakfa|Nakfa
+            [country] => ER
+        )
+
+    [227] => Array
+        (
+            [code] => ETB
+            [num] => 230
+            [digits_coin] => 2
+            [name] => Ethiopian Birr
+            [country] => ET
+        )
+
+    [228] => Array
+        (
+            [code] => EUR
+            [num] => 978
+            [digits_coin] => 2
+            [name] => Euro
+            [country] => European Union
+        )
+
+    [229] => Array
+        (
+            [code] => FJD
+            [num] => 242
+            [digits_coin] => 2
+            [name] => Fiji Dollar
+            [country] => FJ
+        )
+
+    [230] => Array
+        (
+            [code] => FKP
+            [num] => 238
+            [digits_coin] => 2
+            [name] => Falkland Islands Pound
+            [country] => FK
+        )
+
+    [231] => Array
+        (
+            [code] => GBP
+            [num] => 826
+            [digits_coin] => 2
+            [name] => Pound Sterling
+            [country] => GB
+        )
+
+    [232] => Array
+        (
+            [code] => GEL
+            [num] => 981
+            [digits_coin] => 2
+            [name] => Georgian lari|Lari
+            [country] => GE
+        )
+
+    [233] => Array
+        (
+            [code] => GHS
+            [num] => 288
+            [digits_coin] => 2
+            [name] => Cedi
+            [country] => GH
+        )
+
+    [234] => Array
+        (
+            [code] => GIP
+            [num] => 292
+            [digits_coin] => 2
+            [name] => Gibraltar pound
+            [country] => GI
+        )
+
+    [235] => Array
+        (
+            [code] => GMD
+            [num] => 270
+            [digits_coin] => 2
+            [name] => Dalasi
+            [country] => GM
+        )
+
+    [236] => Array
+        (
+            [code] => GNF
+            [num] => 324
+            [digits_coin] => 0
+            [name] => Guinea Franc
+            [country] => GN
+        )
+
+    [237] => Array
+        (
+            [code] => GTQ
+            [num] => 320
+            [digits_coin] => 2
+            [name] => Guatemalan quetzal|Quetzal
+            [country] => GT
+        )
+
+    [238] => Array
+        (
+            [code] => GYD
+            [num] => 328
+            [digits_coin] => 2
+            [name] => Guyana Dollar
+            [country] => GY
+        )
+
+    [239] => Array
+        (
+            [code] => HKD
+            [num] => 344
+            [digits_coin] => 2
+            [name] => Hong Kong Dollar
+            [country] => HK
+        )
+
+    [240] => Array
+        (
+            [code] => HNL
+            [num] => 340
+            [digits_coin] => 2
+            [name] => Honduran lempira|Lempira
+            [country] => HN
+        )
+
+    [241] => Array
+        (
+            [code] => HRK
+            [num] => 191
+            [digits_coin] => 2
+            [name] => Croatian Kuna
+            [country] => HR
+        )
+
+    [242] => Array
+        (
+            [code] => HTG
+            [num] => 332
+            [digits_coin] => 2
+            [name] => Haiti Gourde
+            [country] => HT
+        )
+
+    [243] => Array
+        (
+            [code] => HUF
+            [num] => 348
+            [digits_coin] => 2
+            [name] => Forint
+            [country] => HU
+        )
+
+    [244] => Array
+        (
+            [code] => IDR
+            [num] => 360
+            [digits_coin] => 2
+            [name] => Rupiah
+            [country] => ID
+        )
+
+    [245] => Array
+        (
+            [code] => ILS
+            [num] => 376
+            [digits_coin] => 2
+            [name] => New Israeli Shekel
+            [country] => IL
+        )
+
+    [246] => Array
+        (
+            [code] => INR
+            [num] => 356
+            [digits_coin] => 2
+            [name] => Indian Rupee
+            [country] => BT,IN
+        )
+
+    [247] => Array
+        (
+            [code] => IQD
+            [num] => 368
+            [digits_coin] => 3
+            [name] => Iraqi Dinar
+            [country] => IQ
+        )
+
+    [248] => Array
+        (
+            [code] => IRR
+            [num] => 364
+            [digits_coin] => 2
+            [name] => Iranian Rial
+            [country] => IR
+        )
+
+    [249] => Array
+        (
+            [code] => ISK
+            [num] => 352
+            [digits_coin] => 2
+            [name] => Iceland Krona
+            [country] => IS
+        )
+
+    [250] => Array
+        (
+            [code] => JMD
+            [num] => 388
+            [digits_coin] => 2
+            [name] => Jamaican Dollar
+            [country] => JM
+        )
+
+    [251] => Array
+        (
+            [code] => JOD
+            [num] => 400
+            [digits_coin] => 3
+            [name] => Jordanian Dinar
+            [country] => JO
+        )
+
+    [252] => Array
+        (
+            [code] => JPY
+            [num] => 392
+            [digits_coin] => 0
+            [name] => Japanese yen
+            [country] => JP
+        )
+
+    [253] => Array
+        (
+            [code] => KES
+            [num] => 404
+            [digits_coin] => 2
+            [name] => Kenyan Shilling
+            [country] => KE
+        )
+
+    [254] => Array
+        (
+            [code] => KGS
+            [num] => 417
+            [digits_coin] => 2
+            [name] => Kyrgyzstani som|Som
+            [country] => KG
+        )
+
+    [255] => Array
+        (
+            [code] => KHR
+            [num] => 116
+            [digits_coin] => 2
+            [name] => Riel
+            [country] => KH
+        )
+
+    [256] => Array
+        (
+            [code] => KMF
+            [num] => 174
+            [digits_coin] => 0
+            [name] => Comoro Franc
+            [country] => KM
+        )
+
+    [257] => Array
+        (
+            [code] => KPW
+            [num] => 408
+            [digits_coin] => 2
+            [name] => North Korean Won
+            [country] => KP
+        )
+
+    [258] => Array
+        (
+            [code] => KRW
+            [num] => 410
+            [digits_coin] => 0
+            [name] => South Korean Won
+            [country] => KR
+        )
+
+    [259] => Array
+        (
+            [code] => KWD
+            [num] => 414
+            [digits_coin] => 3
+            [name] => Kuwaiti Dinar
+            [country] => KW
+        )
+
+    [260] => Array
+        (
+            [code] => KYD
+            [num] => 136
+            [digits_coin] => 2
+            [name] => Cayman Islands Dollar
+            [country] => KY
+        )
+
+    [261] => Array
+        (
+            [code] => KZT
+            [num] => 398
+            [digits_coin] => 2
+            [name] => Tenge
+            [country] => KZ
+        )
+
+    [262] => Array
+        (
+            [code] => LAK
+            [num] => 418
+            [digits_coin] => 2
+            [name] => Lao kip|Kip
+            [country] => LA
+        )
+
+    [263] => Array
+        (
+            [code] => LBP
+            [num] => 422
+            [digits_coin] => 2
+            [name] => Lebanese Pound
+            [country] => LB
+        )
+
+    [264] => Array
+        (
+            [code] => LKR
+            [num] => 144
+            [digits_coin] => 2
+            [name] => Sri Lanka Rupee
+            [country] => LK
+        )
+
+    [265] => Array
+        (
+            [code] => LRD
+            [num] => 430
+            [digits_coin] => 2
+            [name] => Liberian Dollar
+            [country] => LR
+        )
+
+    [266] => Array
+        (
+            [code] => LSL
+            [num] => 426
+            [digits_coin] => 2
+            [name] => Loti
+            [country] => LS
+        )
+
+    [267] => Array
+        (
+            [code] => LTL
+            [num] => 440
+            [digits_coin] => 2
+            [name] => Lithuanian Litas
+            [country] => LT
+        )
+
+    [268] => Array
+        (
+            [code] => LVL
+            [num] => 428
+            [digits_coin] => 2
+            [name] => Latvian Lats
+            [country] => LV
+        )
+
+    [269] => Array
+        (
+            [code] => LYD
+            [num] => 434
+            [digits_coin] => 3
+            [name] => Libyan Dinar
+            [country] => LY
+        )
+
+    [270] => Array
+        (
+            [code] => MAD
+            [num] => 504
+            [digits_coin] => 2
+            [name] => Moroccan Dirham
+            [country] => MA,EH
+        )
+
+    [271] => Array
+        (
+            [code] => MDL
+            [num] => 498
+            [digits_coin] => 2
+            [name] => Moldovan Leu
+            [country] => MD
+        )
+
+    [272] => Array
+        (
+            [code] => MGA
+            [num] => 969
+            [digits_coin] => 0
+            [name] => Malagasy Ariary
+            [country] => MG
+        )
+
+    [273] => Array
+        (
+            [code] => MKD
+            [num] => 807
+            [digits_coin] => 2
+            [name] => Denar
+            [country] => Former Yugoslav Republic of Macedonia
+        )
+
+    [274] => Array
+        (
+            [code] => MMK
+            [num] => 104
+            [digits_coin] => 2
+            [name] => Kyat
+            [country] => MM
+        )
+
+    [275] => Array
+        (
+            [code] => MNT
+            [num] => 496
+            [digits_coin] => 2
+            [name] => Tugrik
+            [country] => MN
+        )
+
+    [276] => Array
+        (
+            [code] => MOP
+            [num] => 446
+            [digits_coin] => 2
+            [name] => Macanese pataca|Pataca
+            [country] => Macau
+        )
+
+    [277] => Array
+        (
+            [code] => MRO
+            [num] => 478
+            [digits_coin] => 0
+            [name] => Ouguiya
+            [country] => MR
+        )
+
+    [278] => Array
+        (
+            [code] => MTL
+            [num] => 470
+            [digits_coin] => 2
+            [name] => Maltese Lira
+            [country] => MT
+        )
+
+    [279] => Array
+        (
+            [code] => MUR
+            [num] => 480
+            [digits_coin] => 2
+            [name] => Mauritius Rupee
+            [country] => MU
+        )
+
+    [280] => Array
+        (
+            [code] => MVR
+            [num] => 462
+            [digits_coin] => 2
+            [name] => Rufiyaa
+            [country] => MV
+        )
+
+    [281] => Array
+        (
+            [code] => MWK
+            [num] => 454
+            [digits_coin] => 2
+            [name] => Malawian kwacha|Kwacha
+            [country] => MW
+        )
+
+    [282] => Array
+        (
+            [code] => MXN
+            [num] => 484
+            [digits_coin] => 2
+            [name] => Mexican Peso
+            [country] => MX
+        )
+
+    [283] => Array
+        (
+            [code] => MXV
+            [num] => 979
+            [digits_coin] => 2
+            [name] => Mexican Unidad de Inversion
+            [country] => MX
+        )
+
+    [284] => Array
+        (
+            [code] => MYR
+            [num] => 458
+            [digits_coin] => 2
+            [name] => Malaysian Ringgit
+            [country] => MY
+        )
+
+    [285] => Array
+        (
+            [code] => MZN
+            [num] => 943
+            [digits_coin] => 2
+            [name] => Mozambican metical|Metical
+            [country] => MZ
+        )
+
+    [286] => Array
+        (
+            [code] => NAD
+            [num] => 516
+            [digits_coin] => 2
+            [name] => Namibian Dollar
+            [country] => NA
+        )
+
+    [287] => Array
+        (
+            [code] => NGN
+            [num] => 566
+            [digits_coin] => 2
+            [name] => Naira
+            [country] => NG
+        )
+
+    [288] => Array
+        (
+            [code] => NIO
+            [num] => 558
+            [digits_coin] => 2
+            [name] => Cordoba Oro
+            [country] => NI
+        )
+
+    [289] => Array
+        (
+            [code] => NOK
+            [num] => 578
+            [digits_coin] => 2
+            [name] => Norwegian Krone
+            [country] => NO
+        )
+
+    [290] => Array
+        (
+            [code] => NPR
+            [num] => 524
+            [digits_coin] => 2
+            [name] => Nepalese Rupee
+            [country] => NP
+        )
+
+    [291] => Array
+        (
+            [code] => NZD
+            [num] => 554
+            [digits_coin] => 2
+            [name] => New Zealand Dollar
+            [country] => CK,NZ,NU,PN,TK
+        )
+
+    [292] => Array
+        (
+            [code] => OMR
+            [num] => 512
+            [digits_coin] => 3
+            [name] => Rial Omani
+            [country] => OM
+        )
+
+    [293] => Array
+        (
+            [code] => PAB
+            [num] => 590
+            [digits_coin] => 2
+            [name] => Panamanian balboa|Balboa
+            [country] => PA
+        )
+
+    [294] => Array
+        (
+            [code] => PEN
+            [num] => 604
+            [digits_coin] => 2
+            [name] => Peruvian nuevo sol|Nuevo Sol
+            [country] => PE
+        )
+
+    [295] => Array
+        (
+            [code] => PGK
+            [num] => 598
+            [digits_coin] => 2
+            [name] => Papua New Guinean kina|Kina
+            [country] => PG
+        )
+
+    [296] => Array
+        (
+            [code] => PHP
+            [num] => 608
+            [digits_coin] => 2
+            [name] => Philippine Peso
+            [country] => PH
+        )
+
+    [297] => Array
+        (
+            [code] => PKR
+            [num] => 586
+            [digits_coin] => 2
+            [name] => Pakistan Rupee
+            [country] => PK
+        )
+
+    [298] => Array
+        (
+            [code] => PLN
+            [num] => 985
+            [digits_coin] => 2
+            [name] => Zloty
+            [country] => PL
+        )
+
+    [299] => Array
+        (
+            [code] => PYG
+            [num] => 600
+            [digits_coin] => 0
+            [name] => Paraguayan guarani|Guarani
+            [country] => PY
+        )
+
+    [300] => Array
+        (
+            [code] => QAR
+            [num] => 634
+            [digits_coin] => 2
+            [name] => Qatari Rial
+            [country] => QA
+        )
+
+    [301] => Array
+        (
+            [code] => RON
+            [num] => 946
+            [digits_coin] => 2
+            [name] => Romanian Leu|Romanian New Leu
+            [country] => RO
+        )
+
+    [302] => Array
+        (
+            [code] => RSD
+            [num] => 941
+            [digits_coin] => 2
+            [name] => Serbian Dinar
+            [country] => RS
+        )
+
+    [303] => Array
+        (
+            [code] => RUB
+            [num] => 643
+            [digits_coin] => 2
+            [name] => Russian Ruble
+            [country] => Russia,Abkhazia,South Ossetia
+        )
+
+    [304] => Array
+        (
+            [code] => RWF
+            [num] => 646
+            [digits_coin] => 0
+            [name] => Rwanda Franc
+            [country] => RW
+        )
+
+    [305] => Array
+        (
+            [code] => SAR
+            [num] => 682
+            [digits_coin] => 2
+            [name] => Saudi Riyal
+            [country] => SA
+        )
+
+    [306] => Array
+        (
+            [code] => SBD
+            [num] => 090
+            [digits_coin] => 2
+            [name] => Solomon Islands Dollar
+            [country] => SB
+        )
+
+    [307] => Array
+        (
+            [code] => SCR
+            [num] => 690
+            [digits_coin] => 2
+            [name] => Seychelles Rupee
+            [country] => SC
+        )
+
+    [308] => Array
+        (
+            [code] => SDG
+            [num] => 938
+            [digits_coin] => 2
+            [name] => Sudanese Pound
+            [country] => SD
+        )
+
+    [309] => Array
+        (
+            [code] => SEK
+            [num] => 752
+            [digits_coin] => 2
+            [name] => Swedish Krona
+            [country] => SE
+        )
+
+    [310] => Array
+        (
+            [code] => SGD
+            [num] => 702
+            [digits_coin] => 2
+            [name] => Singapore Dollar
+            [country] => SG
+        )
+
+    [311] => Array
+        (
+            [code] => SHP
+            [num] => 654
+            [digits_coin] => 2
+            [name] => Saint Helena Pound
+            [country] => SH
+        )
+
+    [312] => Array
+        (
+            [code] => SKK
+            [num] => 703
+            [digits_coin] => 2
+            [name] => Slovak Koruna
+            [country] => SK
+        )
+
+    [313] => Array
+        (
+            [code] => SLL
+            [num] => 694
+            [digits_coin] => 2
+            [name] => Leone
+            [country] => SL
+        )
+
+    [314] => Array
+        (
+            [code] => SOS
+            [num] => 706
+            [digits_coin] => 2
+            [name] => Somali Shilling
+            [country] => SO
+        )
+
+    [315] => Array
+        (
+            [code] => SRD
+            [num] => 968
+            [digits_coin] => 2
+            [name] => Surinam Dollar
+            [country] => SR
+        )
+
+    [316] => Array
+        (
+            [code] => STD
+            [num] => 678
+            [digits_coin] => 2
+            [name] => Sao Tome and Principe dobra|Dobra
+            [country] => ST
+        )
+
+    [317] => Array
+        (
+            [code] => SYP
+            [num] => 760
+            [digits_coin] => 2
+            [name] => Syrian Pound
+            [country] => SY
+        )
+
+    [318] => Array
+        (
+            [code] => SZL
+            [num] => 748
+            [digits_coin] => 2
+            [name] => Lilangeni
+            [country] => SZ
+        )
+
+    [319] => Array
+        (
+            [code] => THB
+            [num] => 764
+            [digits_coin] => 2
+            [name] => Baht
+            [country] => TH
+        )
+
+    [320] => Array
+        (
+            [code] => TJS
+            [num] => 972
+            [digits_coin] => 2
+            [name] => Somoni
+            [country] => TJ
+        )
+
+    [321] => Array
+        (
+            [code] => TMM
+            [num] => 795
+            [digits_coin] => 2
+            [name] => Turkmenistani manat|Manat
+            [country] => TM
+        )
+
+    [322] => Array
+        (
+            [code] => TND
+            [num] => 788
+            [digits_coin] => 3
+            [name] => Tunisian Dinar
+            [country] => TN
+        )
+
+    [323] => Array
+        (
+            [code] => TOP
+            [num] => 776
+            [digits_coin] => 2
+            [name] => Pa'anga
+            [country] => TO
+        )
+
+    [324] => Array
+        (
+            [code] => TRY
+            [num] => 949
+            [digits_coin] => 2
+            [name] => New Turkish Lira
+            [country] => TR
+        )
+
+    [325] => Array
+        (
+            [code] => TTD
+            [num] => 780
+            [digits_coin] => 2
+            [name] => Trinidad and Tobago Dollar
+            [country] => TT
+        )
+
+    [326] => Array
+        (
+            [code] => TWD
+            [num] => 901
+            [digits_coin] => 2
+            [name] => New Taiwan Dollar
+            [country] => TW,list of islands of the Republic of China
+        )
+
+    [327] => Array
+        (
+            [code] => TZS
+            [num] => 834
+            [digits_coin] => 2
+            [name] => Tanzanian Shilling
+            [country] => TZ
+        )
+
+    [328] => Array
+        (
+            [code] => UAH
+            [num] => 980
+            [digits_coin] => 2
+            [name] => Hryvnia
+            [country] => UA
+        )
+
+    [329] => Array
+        (
+            [code] => UGX
+            [num] => 800
+            [digits_coin] => 2
+            [name] => Uganda Shilling
+            [country] => UG
+        )
+
+    [330] => Array
+        (
+            [code] => USD
+            [num] => 840
+            [digits_coin] => 2
+            [name] => United States dollar|US Dollar
+            [country] => AS,IO,EC,SV,GU,HT,MH,Micronesia,MP,PW,PA,PR,East Timor,TC,US,Virgin Islands
+        )
+
+    [331] => Array
+        (
+            [code] => USN
+            [num] => 997
+            [digits_coin] => 2
+            [name] => United States dollar (Next day)
+            [country] => US
+        )
+
+    [332] => Array
+        (
+            [code] => USS
+            [num] => 998
+            [digits_coin] => 2
+            [name] => United States dollar (Same day)
+            [country] => US
+        )
+
+    [333] => Array
+        (
+            [code] => UYU
+            [num] => 858
+            [digits_coin] => 2
+            [name] => Peso Uruguayo
+            [country] => UY
+        )
+
+    [334] => Array
+        (
+            [code] => UZS
+            [num] => 860
+            [digits_coin] => 2
+            [name] => Uzbekistan Som
+            [country] => UZ
+        )
+
+    [335] => Array
+        (
+            [code] => VEB
+            [num] => 862
+            [digits_coin] => 2
+            [name] => Venezuelan bolivar
+            [country] => VE
+        )
+
+    [336] => Array
+        (
+            [code] => VND
+            [num] => 704
+            [digits_coin] => 2
+            [name] => Vietnamese dong
+            [country] => Vietnam
+        )
+
+    [337] => Array
+        (
+            [code] => VUV
+            [num] => 548
+            [digits_coin] => 0
+            [name] => Vatu
+            [country] => VU
+        )
+
+    [338] => Array
+        (
+            [code] => WST
+            [num] => 882
+            [digits_coin] => 2
+            [name] => Samoan Tala
+            [country] => WS
+        )
+
+    [339] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => CM,CF,CG,TD,GQ,GA
+        )
+
+    [340] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => CM,CF,CG,TD,GQ,GA
+        )
+
+    [341] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => CM,CF,CG,TD,GQ,GA
+        )
+
+    [342] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => CM,CF,CG,TD,GQ,GA
+        )
+
+    [343] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => CM,CF,CG,TD,GQ,GA
+        )
+
+    [344] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => CM,CF,CG,TD,GQ,GA
+        )
+
+    [345] => Array
+        (
+            [code] => XAF
+            [num] => 950
+            [digits_coin] => 0
+            [name] => CFA Franc BEAC
+            [country] => CM,CF,CG,TD,GQ,GA
+        )
+
+    [346] => Array
+        (
+            [code] => XCD
+            [num] => 951
+            [digits_coin] => 2
+            [name] => East Caribbean Dollar
+            [country] => AI,AG,DM,GD,MS,KN,LC,VC
+        )
+
+    [347] => Array
+        (
+            [code] => XDR
+            [num] => 960
+            [digits_coin] => 0
+            [name] => Special Drawing Rights
+            [country] => International Monetary Fund
+        )
+
+    [348] => Array
+        (
+            [code] => XOF
+            [num] => 952
+            [digits_coin] => 0
+            [name] => CFA Franc BCEAO
+            [country] => BJ,BF,CI,GW,ML,NE,SN,TG
+        )
+
+    [349] => Array
+        (
+            [code] => XOF
+            [num] => 952
+            [digits_coin] => 0
+            [name] => CFA Franc BCEAO
+            [country] => BJ,BF,CI,GW,ML,NE,SN,TG
+        )
+
+    [350] => Array
+        (
+            [code] => XPF
+            [num] => 953
+            [digits_coin] => 0
+            [name] => CFP franc
+            [country] => PF,NC,WF
+        )
+
+    [351] => Array
+        (
+            [code] => XPF
+            [num] => 953
+            [digits_coin] => 0
+            [name] => CFP franc
+            [country] => PF,NC,WF
+        )
+
+    [352] => Array
+        (
+            [code] => XPF
+            [num] => 953
+            [digits_coin] => 0
+            [name] => CFP franc
+            [country] => PF,NC,WF
+        )
+
+    [353] => Array
+        (
+            [code] => XPF
+            [num] => 953
+            [digits_coin] => 0
+            [name] => CFP franc
+            [country] => PF,NC,WF
+        )
+
+    [354] => Array
+        (
+            [code] => YER
+            [num] => 886
+            [digits_coin] => 2
+            [name] => Yemeni Rial
+            [country] => YE
+        )
+
+    [355] => Array
+        (
+            [code] => ZAR
+            [num] => 710
+            [digits_coin] => 2
+            [name] => South African Rand
+            [country] => ZA
+        )
+
+    [356] => Array
+        (
+            [code] => ZMK
+            [num] => 894
+            [digits_coin] => 2
+            [name] => Zambian kwacha|Kwacha
+            [country] => ZM
+        )
+
+    [357] => Array
+        (
+            [code] => ZWD
+            [num] => 716
+            [digits_coin] => 2
+            [name] => Zimbabwe Dollar
+            [country] => ZW
+        )
+
+);

@@ -1,1 +1,0 @@
-ALTER TABLE `test_polls` ADD `multiple` ENUM( '0', '1' ) NOT NULL ;

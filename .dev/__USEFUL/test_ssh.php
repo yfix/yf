@@ -7,7 +7,7 @@ include('Net/SSH2.php');
 
 $key = new Crypt_RSA();
 //$key->setPassword('whatever');
-$key->loadKey(file_get_contents('d:/www/htdocs/toggle2_remote/scripts/yurikey.pem'));
+$key->loadKey(file_get_contents('/home/www/htdocs/key.pem'));
 
 $ssh = new Net_SSH2('ns211349.ovh.net');
 if (!$ssh->login('root', $key)) {

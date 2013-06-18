@@ -1,1 +1,0 @@
-ALTER TABLE `host_widgets` ADD `theme` TEXT NOT NULL AFTER `action` ;

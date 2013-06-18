@@ -23,5 +23,3 @@ if (count($_POST)) {
 	} else $body = "<span style='color:red;'>NO VALID STPL TAGS FOUND!</span>";
 	echo "<pre>".$body."</pre>";
 }
-//--------------------------------------------------------------------------
-?>
