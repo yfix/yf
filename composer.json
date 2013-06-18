@@ -1,0 +1,9 @@
+{
+    "name": "yfix/yf",
+    "description": "YF Framework",
+    "licenses": "MIT",
+    "authors": [{
+        "name": "yfix",
+        "email": "yfix.dev@gmail.com"
+    }]
+}
