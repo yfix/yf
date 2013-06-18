@@ -162,6 +162,7 @@ class yf_core_install {
 			var theme = this.id.substr(9) // 9 == strlen('theme_id_')
 			document.cookie='yf_theme=' + theme;
 			window.location.reload();
+			return false;
 		})
 	})
 	</script>
