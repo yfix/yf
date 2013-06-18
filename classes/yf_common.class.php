@@ -68,6 +68,39 @@ class yf_common {
 	}
 	
 	/**
+	*/
+	function bs_get_avail_themes() {
+		return array("amelia","cerulean","cosmo","cyborg","flatly","journal","readable","simplex","slate","spacelab","spruce","superhero","united");
+	}
+
+	/**
+	*/
+	function bs_current_theme() {
+		$theme = "slate"; // Default
+		$avail_themes = $this->bs_get_avail_themes();
+		if ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
+			$theme = $_COOKIE['yf_theme'];
+		}
+		return $theme;
+	}
+
+	/**
+	*/
+	function bs_theme_html() {
+		$theme = $this->bs_current_theme();
+		return tpl()->parse('bs_theme_html', array("cur_theme" => $this->bs_current_theme()));
+	}
+	
+	/**
+	*/
+	function bs_theme_changer() {
+		return tpl()->parse('bs_theme_changer', array(
+			"cur_theme" => $this->bs_current_theme(),
+			"themes"	=> $this->bs_get_avail_themes(),
+		));
+	}
+	
+	/**
 	* Secondary database connection
 	*/
 	function connect_db2() {

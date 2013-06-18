@@ -1,0 +1,18 @@
+<li class="dropdown">
+	<a class="dropdown-toggle" data-toggle="dropdown">Select theme <b class="caret"></b></a>
+	<ul class="dropdown-menu theme-selector">
+{foreach("themes")}
+		<li><a href="#" id="theme_id_{_val}">{_val}</a></li>
+{/foreach}
+	</ul>
+</li>
+
+<script>
+$(function(){
+	$(".theme-selector > li > a").click(function(){
+		var theme = this.id.substr(9) // 9 == strlen('theme_id_')
+		document.cookie='yf_theme=' + theme;
+		window.location.reload();
+	})
+})
+</script>

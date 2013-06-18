@@ -5,12 +5,12 @@
 // TODO: add language selector $_POST["install_project_lang"]
 
 class yf_core_install {
-	function get_avail_themes() {
+	function bs_get_avail_themes() {
 		return array("amelia","cerulean","cosmo","cyborg","flatly","journal","readable","simplex","slate","spacelab","spruce","superhero","united");
 	}
-	function current_theme() {
+	function bs_current_theme() {
 		$theme = "slate"; // Default
-		$avail_themes = installer()->get_avail_themes();
+		$avail_themes = installer()->bs_get_avail_themes();
 		if ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
 			$theme = $_COOKIE['yf_theme'];
 		}
@@ -25,7 +25,7 @@ class yf_core_install {
 	<title>YF Installation</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/<?php echo installer()->current_theme(); ?>/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/<?php echo installer()->bs_current_theme(); ?>/bootstrap.min.css" rel="stylesheet">
 
 <style type="text/css">
 .sidebar-nav {
@@ -77,7 +77,7 @@ class yf_core_install {
 					<a class="dropdown-toggle" data-toggle="dropdown">Select theme <b class="caret"></b></a>
 					<ul class="dropdown-menu theme-selector">
 <?php
-			foreach ((array)installer()->get_avail_themes() as $theme) {
+			foreach ((array)installer()->bs_get_avail_themes() as $theme) {
 				echo '<li><a href="#" id="theme_id_'.$theme.'">'.$theme.'</a></li>';
 			}
 ?>
