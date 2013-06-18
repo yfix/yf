@@ -5,6 +5,17 @@
 // TODO: add language selector $_POST["install_project_lang"]
 
 class yf_core_install {
+	function get_avail_themes() {
+		return array("amelia","cerulean","cosmo","cyborg","flatly","journal","readable","simplex","slate","spacelab","spruce","superhero","united");
+	}
+	function current_theme() {
+		$theme = "slate"; // Default
+		$avail_themes = installer()->get_avail_themes();
+		if ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
+			$theme = $_COOKIE['yf_theme'];
+		}
+		return $theme;
+	}
 	function show_html($page = 'form', $vars = array(), $errors = array()) {
 		ob_start();
 ?>
@@ -14,7 +25,47 @@ class yf_core_install {
 	<title>YF Installation</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/<?php echo installer()->current_theme(); ?>/bootstrap.min.css" rel="stylesheet">
+
+<style type="text/css">
+.sidebar-nav {
+    padding: 9px 0;
+}
+.dropdown-menu .sub-menu {
+    left: 100%;
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    margin-top: -1px;
+}
+.dropdown-menu li:hover .sub-menu {
+    visibility: visible;
+}
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
+    margin-top: 0;
+}
+.navbar .sub-menu:before {
+    border-bottom: 7px solid transparent;
+    border-left: none;
+    border-right: 7px solid rgba(0, 0, 0, 0.2);
+    border-top: 7px solid transparent;
+    left: -7px;
+    top: 10px;
+}
+.navbar .sub-menu:after {
+    border-top: 6px solid transparent;
+    border-left: none;
+    border-right: 6px solid #fff;
+    border-bottom: 6px solid transparent;
+    left: 10px;
+    top: 11px;
+    left: -6px;
+}
+</style>
+
 </head>
 <body>
 	<div class="navbar">
@@ -22,6 +73,16 @@ class yf_core_install {
 			<a class="brand" href="https://github.com/yfix/yf">YF Framework</a>
 			<ul class="nav">
 				<li class=""><a href="https://github.com/yfix/yf">Home</a></li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown">Select theme <b class="caret"></b></a>
+					<ul class="dropdown-menu theme-selector">
+<?php
+			foreach ((array)installer()->get_avail_themes() as $theme) {
+				echo '<li><a href="#" id="theme_id_'.$theme.'">'.$theme.'</a></li>';
+			}
+?>
+					</ul>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -93,7 +154,17 @@ class yf_core_install {
 <?php
 		}
 ?>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<script>
+	$(function(){
+		$(".theme-selector > li > a").click(function(){
+			var theme = this.id.substr(9) // 9 == strlen('theme_id_')
+			document.cookie='yf_theme=' + theme;
+			window.location.reload();
+		})
+	})
+	</script>
 </body>
 </html>
 <?php
