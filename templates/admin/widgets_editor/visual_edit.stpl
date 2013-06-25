@@ -8,12 +8,6 @@
 
 <script type='text/javascript' src='{const(WEB_PATH)}js/jquery/interface.js'></script>
 	
-<!--[if IE 7]>
-<style type="text/css">
-	#palette { float: left; }
-</style>
-<![endif]-->
-
 <script type="text/javascript">
 // <![CDATA[
 

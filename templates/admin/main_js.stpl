@@ -27,9 +27,9 @@ $(function(){
 		if (!confirm( _t_are_you_sure )) {
 			return false;
 		}
-		var _obj = this;
-		$.post(_obj.href || $(this).attr("yf:href"), {ajax_mode: 1}, function(data){
-			$("#del_row_" + data).remove();
+		var _obj = $(this);
+		$.post(_obj.attr("href") || _obj.attr("yf:href"), {ajax_mode: 1}, function() {
+			_obj.parents("tr").remove();
 		});
 		return false; // Do not allow new page
 	});

@@ -1,94 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html>
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
-	  <link href="./?object=rss" rel="alternate" type="application/rss+xml" title="Site RSS Feed" />
+
+{execute(common,bs_theme_html)}
+{include("main_style_css")}
 {execute(graphics,show_metatags)}
-{execute(graphics,show_javascript)}
-{execute(graphics,show_css)}
+
 </head>
 <body>
-<div id="container">
-
-{{--
-	<div id="site_header">
-		<div class="inner">
-<h1>{t(Example site)}</h1>
-			<div id="site_title">{if("site_title" ne "")}{site_title}{/if}</div>
-			<div id="site_subtitle">{if("site_subtitle" ne "")}{site_subtitle}{/if}</div>
-		</div>
-	</div>
---}}
-
-	<div id="below_header">
-		<div id="top_menu">
-<!-- TOP_MENU -->
-{execute(graphics,_show_menu;name=user_main_menu)}
-<!-- /TOP_MENU -->
-		</div>
-	</div>
-
-
-
-	<div id="center_block">{{--Do not remove!!! Needed for IE correct rendering--}}
-	<div id="content_block">
-		<div id="center_column">
-			<div class="inner">
-<!-- TASK_LOADER -->
-{execute(graphics,_show_task_loader_image)}
-<!-- /TASK_LOADER -->
-			<div>
-<!-- QUICK_MENU -->{{-- << DO NOT EXCHANGE WITH SITE NAV BAR --}}
-{execute(graphics,quick_menu)}
-<!-- /QUICK_MENU -->
-<!-- SITE_NAV_BAR -->
+	<div class="navbar navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="{const(WEB_PATH)}">{const(SITE_ADVERT_NAME)}</a>
+			<ul class="nav">
 {execute(site_nav_bar,_show)}
-<!-- /SITE_NAV_BAR -->
-			</div>
-			</div>
-<br style="clear:both;">
-			<div class="inner">
-			
-				<div id="widgets">{execute(widgets,_show;column=center-top)}</div>
-
-				<div id="{eval_code($_GET['object'])}">
-<!-- CONTENT_HEADER -->
-{execute(graphics,_show_header)}
-<!-- /CONTENT_HEADER --> 
-<!-- CENTER_AREA -->
-{execute(graphics,_show_block,name=center_area)}
-<!-- /CENTER_AREA -->
-<!-- SHOW_HELP -->
-{execute(graphics,show_help)}
-<!-- /SHOW_HELP -->
-				</div>
-				
-				<div id="widgets">{execute(widgets,_show;column=center-bottom)}</div>
-
-			</div>
+			</ul>
+{execute(site_nav_bar,_show_dropdown_menu)}
+			<ul class="nav pull-right">
+{execute(common,bs_theme_changer)}
+				<li>{execute(graphics,show_welcome)}</li>
+				<li><a href="./?task=logout" target="_parent">{t(Logout)}</a></li>
+			</ul>
 		</div>
 	</div>
-	<div id="left_column">
-		<div class="inner">
-<!-- LEFT_AREA -->
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span2">
+{execute(graphics,_show_menu;name=user_main_menu)}
 {execute(graphics,_show_block,name=left_area)}
-<!-- /LEFT_AREA -->
-		</div>
-	</div>
-	<div id="right_column">
-		<div class="inner">
-<!-- RIGHT_AREA -->
+			</div>
+			<div class="span10">
+{execute(graphics,_show_block;name=center_area)}
+			</div>
+{{--
+			<div class="span2">
 {execute(graphics,_show_block,name=right_area)}
-<!-- /RIGHT_AREA -->
+			</div>
+--}}
 		</div>
 	</div>
-	</div>{{--Do not remove!!! Needed for IE correct rendering--}}
-	<div id="below_content">
-		<div class="inner">
-			<div style="float:right;">&copy; {if("site_title" ne "")}{site_title},{/if} 1997-{eval_code(date('Y'))}</div>
-{include("bottom_links")}
-		</div>
-	</div>
-</div>
 </body>
 </html>

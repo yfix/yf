@@ -1,32 +1,21 @@
 <form action="{form_action_group_edit}" method="post" name="menu_form">
-<table align="center" width="70%">
+<table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th>#</th>
 		<th>{t(Module)}</th>
-{if("const.PROJECT_NAME" eq "SEXY_HOSTING")}
-		<th>{t(Theme)}</th>
-{/if}
 		<th>{t(Comments)}</th>
 		<th>{t(Columns)}</th>
-		<th width="11%" align="center">{t(Status)}</th>
-		<th width="11%" align="center">{t(Action)}</th>
+		<th>{t(Theme)}</th>
+		<th>{t(Status)}</th>
+		<th>{t(Action)}</th>
 	</thead>
 {items}
-	<tr class="{bg_class}" id="del_row_{item_id}">
-		<td width="1%"><input type="checkbox" name='check_all' onclick="my_toggle_boxes(this.form)" id="my_check_all"></td>
-		<td width="40%" style="padding-left:{level_pad}px;" nowrap><label for="my_check_all"><b>Select all</b></label></td>
+	<tr id="del_row_{item_id}">
+		<td><input type="checkbox" name='check_all' class="yf_toggle_all_checkboxes" id="yf_toggle_all_checkboxes"></td>
+		<td><label for="yf_toggle_all_checkboxes"><b>Select all</b></label></td>
 	</tr>
 </table>
 
-	<div align="center">
-		<input type="submit" value="{t(Group edit)}"/>
-	</div>	
-
-</form>
-
-<br />
-<form action="{form_action}" method="post">
-	<div align="center">
-		<input type="submit" value="add"/>
-	</div>	
+	<input type="submit" class="btn" value="{t(Group edit)}"/>
+	<a href="{form_action}" class="btn">{t(Add)}</a>
 </form>

@@ -20,8 +20,6 @@
 		</tr>
 	</table>
 	
-	<br />
-	<br />
 	<div align="center">
 		<input type="submit" name="go" value="save"/>
 	</div>

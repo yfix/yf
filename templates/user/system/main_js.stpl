@@ -311,23 +311,3 @@ try {
 
 -->
 </script>
-
-
-{{--
-<!-- Testing console logging -->
-<script type="text/javascript">
-window.onload = function(){
-	console.log("string: %d %s %d", 10, "text", 10);
-	console.info({});
-	console.info([]);
-	console.info(null);
-	console.info(window);
-	console.info(document);
-	console.info(document.getElementsByTagName("body"));
-	console.info(document.getElementsByTagName("body")[0]);
-	console.info(Math);
-	(function(z){try {x.y = z;}catch(e){console.info(e);}})(null);
-	//(function(x,y,z){console.info(arguments)})(1,2,3); // fail
-}
-</script>
---}}
