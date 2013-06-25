@@ -33,5 +33,9 @@ $(function(){
 		});
 		return false; // Do not allow new page
 	});
+	// Toggle checkboxes inside form, ruled by one with special class, limiting to only self form for checkbox, not touch outside
+	$("form input[type=checkbox].yf_toggle_all_checkboxes").click(function(){
+		$("input[type=checkbox]", $(this).parents("form")).not(".yf_toggle_all_checkboxes").prop("checked", $(this).is(":checked"))
+	});
 });
 </script>
