@@ -5,15 +5,16 @@
 	<meta charset="utf-8">
 	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css" rel="stylesheet">
 	<style type="text/css">.container-valign-middle { margin:20% 30%; }</style>
+	<!--meta name="viewport" content="width=device-width, initial-scale=1.0"-->
 </head>
 <body>
-	<div class="container container-valign-middle">
+	<div class="container-fluid container-valign-middle">
 		<form class="form-horizontal" method="post" action="./?task=login">
 			<div class="control-group">
-				<div class="controls"><input type="text" id="input_login" placeholder="{t(Login)}" name="login" value=""></div>
+				<div class="controls"><input type="text" id="input_login" maxlength="50" placeholder="{t(Login)}" name="login" value=""></div>
 			</div>
 			<div class="control-group">
-				<div class="controls"><input type="password" id="input_password" placeholder="{t(Password)}" name="password" value=""></div>
+				<div class="controls"><input type="password" id="input_password" maxlength="50" placeholder="{t(Password)}" name="password" value=""></div>
 			</div>
 			<div class="control-group">
 				<div class="controls">
@@ -22,6 +23,6 @@
 			</div>
 		</form>
 	</div>
-	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<!--script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script-->
 </body>
 </html>
