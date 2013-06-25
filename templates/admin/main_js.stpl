@@ -1,0 +1,37 @@
+<script>
+$(function(){
+	var _t_active = "{t(ACTIVE)}";
+	var _t_inactive = "{t(INACTIVE)}";
+	var _t_yes = "{t(YES)}";
+	var _t_no = "{t(NO)}";
+	var _t_are_you_sure = "{t(Are you sure)}?";
+
+	// Change activity status of different elemts without page refresh
+	$("a.change_active").click(function(){
+		var _obj = this;
+		$.post(_obj.href, {ajax_mode: 1}, function(data){
+			_obj.innerHTML = (data == "1") ? '<span class="label label-success">'+ _t_active +'</span>' : '<span class="label label-warning">'+ _t_inactive +'</span>';
+		});
+		return false; // Do not allow new page
+	});
+	// Change activity status of different elemts without page refresh
+	$("a.change_yes_no").click(function(){
+		var _obj = this;
+		$.post(_obj.href, {ajax_mode: 1}, function(data){
+			_obj.innerHTML = (data == "1") ? '<span class="label label-success">'+ _t_yes +'</span>' : '<span class="label label-warning">'+ _t_no +'</span>';
+		});
+		return false; // Do not allow new page
+	});
+	// Delete record and delete interface row related to that record
+	$(".ajax_delete").click(function(){
+		if (!confirm( _t_are_you_sure )) {
+			return false;
+		}
+		var _obj = this;
+		$.post(_obj.href || $(this).attr("yf:href"), {ajax_mode: 1}, function(data){
+			$("#del_row_" + data).remove();
+		});
+		return false; // Do not allow new page
+	});
+});
+</script>

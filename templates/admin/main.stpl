@@ -33,5 +33,6 @@
 	<div class="container">
 {execute(graphics,_show_block;name=center_area)}
 	</div>
+	{include("main_js")}
 </body>
 </html>
