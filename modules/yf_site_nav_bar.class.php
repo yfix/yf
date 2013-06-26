@@ -103,7 +103,7 @@ class yf_site_nav_bar {
 		));
 		foreach ((array)$items as $id => $item) {
 			$item["need_clear"] = 0;
-			if ($item["type_id"] == 1/* && !module("admin_home")->_url_allowed($item["link"])*/) {
+			if ($item["type_id"] != 1/* $item["type_id"] == 1 && !module("admin_home")->_url_allowed($item["link"])*/) {
 				unset($items[$id]);
 				continue;
 			}

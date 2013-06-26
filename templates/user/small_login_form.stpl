@@ -1,0 +1,19 @@
+{if("conf._login_form_displayed" ne "1")}
+<form method="post" action="./?task=login">
+	<div class="control-group">
+		<div class="controls"><input type="text" id="input_login" maxlength="50" placeholder="{t(Login)}" name="login" value=""></div>
+	</div>
+	<div class="control-group">
+		<div class="controls"><input type="password" id="input_password" maxlength="50" placeholder="{t(Password)}" name="password" value=""></div>
+	</div>
+	<label class="checkbox">
+		<input type="checkbox" name="remember_me" id="remember_me" value="1" /> {t(Remember me)}
+	</label>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn" value="Enter">{t(Log in)}</button>
+			<a href="./?object=register" class="btn">{t(Sign up)}</a>
+		</div>
+	</div>
+</form>
+{/if}
