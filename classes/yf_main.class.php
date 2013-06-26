@@ -521,7 +521,7 @@ class yf_main {
 		} else {
 			$this->SESSION_NAME = ini_get("session.name"); // Usually PHPSESSID
 		}
-		if (session_status() == PHP_SESSION_ACTIVE) {
+		if (session_id() !== "") { // (session_status() == PHP_SESSION_ACTIVE) => PHP 5.4+ only
 			return true;
 		}
 		@ini_set('session.use_trans_sid',	0); // We need @ here to avoid error when session already started
