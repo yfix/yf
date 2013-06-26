@@ -1,6 +1,5 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Navigation bar handler
 class yf_site_nav_bar {
 
@@ -21,7 +20,6 @@ class yf_site_nav_bar {
 		return false;
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display navigation bar
 	function _show () {
 		$items = array();
@@ -71,7 +69,6 @@ class yf_site_nav_bar {
 		return tpl()->parse(__CLASS__."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display navigation bar item
 	function _nav_item ($name = "", $nav_link = "") {
 		if ($this->AUTO_TRANSLATE) {
@@ -86,15 +83,34 @@ class yf_site_nav_bar {
 		return tpl()->parse(__CLASS__."/item", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Decode name
 	function _decode_from_url ($text = "") {
 		return ucwords(str_replace("_", " ", $text));
 	}
 
-	//-----------------------------------------------------------------------------
 	// Encode name
 	function _encode_for_url ($text = "") {
 		return strtolower(str_replace(" ", "_", $text));
+	}
+
+	/**
+	*/
+	function _show_dropdown_menu () {
+		$items = _class("graphics")->_show_menu(array(
+			"name"				=> "user_main_menu",
+			"force_stpl_name"	=> "site_nav_bar/dropdown_menu",
+			"return_array"		=> 1,
+		));
+		foreach ((array)$items as $id => $item) {
+			$item["need_clear"] = 0;
+			if ($item["type_id"] == 1/* && !module("admin_home")->_url_allowed($item["link"])*/) {
+				unset($items[$id]);
+				continue;
+			}
+			$items[$id] = tpl()->parse("site_nav_bar/dropdown_menu_item", $item);
+		}
+		return tpl()->parse("site_nav_bar/dropdown_menu", array(
+			"items" => implode("", (array)$items)
+		));
 	}
 }

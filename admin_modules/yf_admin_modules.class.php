@@ -363,7 +363,10 @@ class yf_admin_modules {
 	* Get available methods
 	*/
 	function _get_methods ($params = array()) {
-		$ONLY_PRIVATE_METHODS = $params["private"];
+		$ONLY_PRIVATE_METHODS = array();
+		if (isset($params["private"])) {
+			$ONLY_PRIVATE_METHODS = $params["private"];
+		}
 		$methods_by_modules = array();
 		foreach ((array)$GLOBALS['admin_modules_array'] as $user_module_name) {
 			// Remove admin prefix from module name here
