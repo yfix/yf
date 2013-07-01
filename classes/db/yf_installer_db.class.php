@@ -39,11 +39,11 @@ class yf_installer_db {
 		"type"		=> "/([a-z]+)[\(]*([^\)]*)[\)]*/ims",
 	);
 	/** @var string @conf_skip Abstract database type */
-	public $db_type				= "";
+	public $db_type					= "";
 	/** @var int Lifetime for caches */
 	public $CACHE_TTL				= 86400; // 1*3600*24 = 1 day
 	/** @var bool */
-	public $USE_LOCKING			= false;
+	public $USE_LOCKING				= false;
 	/** @var int */
 	public $LOCK_TIMEOUT			= 600;
 	/** @var string */
@@ -54,6 +54,8 @@ class yf_installer_db {
 	public $PARTITION_BY_COUNTRY	= false;
 	/** @var bool */
 	public $PARTITION_BY_MONTH		= false;
+	/** @var bool */
+	public $PARTITION_BY_DAY		= false;
 
 	/**
 	* Framework constructor
@@ -149,6 +151,16 @@ class yf_installer_db {
 			$p_year			= (int)substr($_t_name, -7, 4);
 			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12) {
 				$p_table_name	= substr($_t_name, 0, -8);
+			}
+		}
+		// Try sharding by year/month/day (example: db('currency_pairs_log_2013_07_01') from db('currency_pairs_log'))
+		if (!$table_found && $this->PARTITION_BY_DAY) {
+			$_t_name = $p_table_name ? $p_table_name : $table_name;
+			$p_day			= (int)substr($_t_name, -2);
+			$p_month		= (int)substr($_t_name, -5, 2);
+			$p_year			= (int)substr($_t_name, -10, 4);
+			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12 && $p_day >= 1 && $p_day <= 31) {
+				$p_table_name	= substr($_t_name, 0, -11);
 			}
 		}
 		if ($p_table_name) {
