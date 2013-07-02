@@ -64,7 +64,10 @@ class yf_cache {
 	function _init ($params = array()) {
 		// Cache namespace need to be unique, especially when using memcached shared between several projects
 #		$this->CACHE_NS = "core_".intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
-
+		$conf_cache_ns = conf('CACHE_NS');
+		if ($conf_cache_ns) {
+			$this->CACHE_NS = $conf_cache_ns;
+		}
 		$this->_main_exists = (isset($GLOBALS['main']) && method_exists($GLOBALS['main'], "init_class"));
 		if (defined("DEBUG_MODE")) {
 			$this->DEBUG_MODE = DEBUG_MODE;
