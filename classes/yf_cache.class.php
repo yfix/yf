@@ -31,9 +31,7 @@ class yf_cache {
 	/** @var string Cache driver enum("","auto","file","eaccelerator","apc","xcache","memcache") */
 	public $DRIVER					= "file";
 	/** @var string Namespace for drivers other than "file" */
-	public $CACHE_NS				= "sys_cache:";
-	/** @var string Namespace for drivers other than "file" */
-	public $CACHE_NAMESPACING		= false;
+	public $CACHE_NS				= "";
 	/** @var array internal @conf_skip */
 	public $MEMCACHE_DEF_PARAMS	= array(
 		"port"		=> 11211,
@@ -65,11 +63,7 @@ class yf_cache {
 	*/
 	function _init ($params = array()) {
 		// Cache namespace need to be unique, especially when using memcached shared between several projects
-		if ($this->CACHE_NAMESPACING) {
-			$this->CACHE_NS = "core_".intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
-		} else {
-			$this->CACHE_NS = "";
-		}
+#		$this->CACHE_NS = "core_".intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
 
 		$this->_main_exists = (isset($GLOBALS['main']) && method_exists($GLOBALS['main'], "init_class"));
 		if (defined("DEBUG_MODE")) {
