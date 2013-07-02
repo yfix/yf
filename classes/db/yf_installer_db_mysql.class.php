@@ -119,7 +119,9 @@ class yf_installer_db_mysql {
 			}
 			// Try to repair table
 			if (!empty($item_to_repair)) {
-				$this->PARENT_OBJ->create_table(str_replace("dbt_", "", $item_to_repair), $DB_CONNECTION);
+				if(!$this->PARENT_OBJ->create_table(str_replace("dbt_", "", $item_to_repair), $DB_CONNECTION)){
+					return false;
+				}
 			}
 		} elseif ($db_error['code'] == 1054) {
 			// Try to get column name from error message
@@ -153,7 +155,9 @@ class yf_installer_db_mysql {
 			}
 			// Try to repair table
 			if (!empty($item_to_repair) && !empty($m2[2])) {
-				$this->PARENT_OBJ->alter_table($table_to_repair, $item_to_repair, $DB_CONNECTION);
+				if(!$this->PARENT_OBJ->alter_table($table_to_repair, $item_to_repair, $DB_CONNECTION)){
+					return false;
+				}
 			}
 		}
 		// Refresh tables cache
