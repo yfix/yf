@@ -32,13 +32,13 @@ class yf_shop extends yf_module {
 	public $THIS_ITEM_OFTEN_BUY		= true;
 	 /** @var array forum settings (default values) */
 	public $COMPANY_INFO = array(
-		"company_name"			=> "Lamore.ru ", //
+		"company_name"			=> "Shop.com ", //
 		"company_address"		=> "Company Address 1", //
 		"company_address2"	=> "Company Address 2", //
 		"company_phone"			=> "Company Phone", //
 		"company_website"		=> "Company Website", //
 		"company_email"			=> "Company Email", //
-		"company_title"				=> "Lamore.ru ", //
+		"company_title"				=> "Shop.com ", //
 	);
 	/** @var Billing info */
 	public $_b_fields = array(
