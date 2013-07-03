@@ -62,6 +62,14 @@ class yf_cache {
 	* Framework constructor
 	*/
 	function _init ($params = array()) {
+		$conf_mc_host = conf('MEMCACHED_HOST');
+		if ($conf_mc_host) {
+			$this->MEMCACHE_DEF_PARAMS['host'] = $conf_mc_host;
+		}
+		$conf_mc_port = conf('MEMCACHED_PORT');
+		if ($conf_mc_host) {
+			$this->MEMCACHE_DEF_PARAMS['port'] = $conf_mc_port;
+		}
 		// Cache namespace need to be unique, especially when using memcached shared between several projects
 #		$this->CACHE_NS = "core_".intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
 		$conf_cache_ns = conf('CACHE_NS');
