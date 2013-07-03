@@ -8,15 +8,15 @@ class yf_manage_shop {
 	/** @var bool Filter on/off */
 	public $USE_FILTER		= true;
 	/** @var string Folder where product's images store */
-	public $PROD_IMG_DIR		= "shop/products/";
+	public $PROD_IMG_DIR	= "shop/products/";
 	/** @var string fullsize image suffix (underscore at the beginning required)*/
 	public $FULL_IMG_SUFFIX	= "_full";
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	public $THUMB_SUFFIX		= "_small";
+	public $THUMB_SUFFIX	= "_small";
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	public $MEDIUM_SUFFIX		= "_medium";
+	public $MEDIUM_SUFFIX	= "_medium";
 	/** @var string Image prefix */
-	public $IMG_PREFIX			= "product_";
+	public $IMG_PREFIX		= "product_";
 	/** @var int Thumb size X */
 	public $THUMB_X			= 100;
 	/** @var int Thumb size Y */
@@ -120,15 +120,15 @@ class yf_manage_shop {
 		$items = $this->statistic();
 		$replace = array(
 			"items"				=> $items,
-			"products_url"		=> "./?object=".$_GET['object']."&action=products_manage",
-			"manufacturer_url"	=> "./?object=".$_GET['object']."&action=show_manufacturer",
-			"categories_url"	=> ".?object=category_editor&action=show_items&id=4",
-			"attributes_url"	=> "./?object=".$_GET['object']."&action=manage_attributes", 
-			"orders_url"		=> "./?object=".$_GET['object']."&action=show_orders",
-			"reports_url"		=> "./?object=".$_GET['object']."&action=show_reports&id=viewed",
-			"settings_url"		=> "./?object=".$_GET['object']."&action=show_settings",
+			"products_url"		=> "./?object=shop&action=products_manage",
+			"manufacturer_url"	=> "./?object=shop&action=show_manufacturer",
+			"categories_url"	=> "./?object=category_editor&action=show_items&id=4",
+			"attributes_url"	=> "./?object=shop&action=manage_attributes", 
+			"orders_url"		=> "./?object=shop&action=show_orders",
+			"reports_url"		=> "./?object=shop&action=show_reports&id=viewed",
+			"settings_url"		=> "./?object=shop&action=show_settings",
 		);
-		return tpl()->parse($_GET["object"]."/home", $replace);
+		return tpl()->parse("shop/home", $replace);
 	}
 	
 	/**
@@ -188,24 +188,24 @@ class yf_manage_shop {
 				"old_price"		=> $v["old_price"],
 				"quantity"		=> $v["quantity"],
 				"active"		=> $v["active"],
-				"edit_url"		=> "./?object=".$_GET["object"]."&action=product_edit&id=".$v["id"],
-				"delete_url"	=> "./?object=".$_GET["object"]."&action=product_delete&id=".$v["id"],
-				"view_url"		=> "./?object=".$_GET["object"]."&action=product_view&id=".$v["id"],
-				"activate_url"	=> "./?object=".$_GET["object"]."&action=product_activate&id=".$v["id"],
+				"edit_url"		=> "./?object=shop&action=product_edit&id=".$v["id"],
+				"delete_url"	=> "./?object=shop&action=product_delete&id=".$v["id"],
+				"view_url"		=> "./?object=shop&action=product_view&id=".$v["id"],
+				"activate_url"	=> "./?object=shop&action=product_activate&id=".$v["id"],
 			);
-			$items .= tpl()->parse($_GET["object"]."/item", $replace2); 
+			$items .= tpl()->parse("shop/item", $replace2); 
 		}
 		$replace = array(
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"total"				=> intval($total),
 			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
-			"add_url"			=> "./?object=".$_GET['object']."&action=product_add",
+			"add_url"			=> "./?object=shop&action=product_add",
 			"categories_url"	=> ".?object=category_editor&action=show_items&id=4",
-			"attributes_url"	=> "./?object=".$_GET['object']."&action=manage_attributes",
-			"orders_url"		=> "./?object=".$_GET['object']."&action=show_orders",
+			"attributes_url"	=> "./?object=shop&action=manage_attributes",
+			"orders_url"		=> "./?object=shop&action=show_orders",
 		);
-		return tpl()->parse($_GET["object"]."/products_main", $replace);
+		return tpl()->parse("shop/products_main", $replace);
 	}
 
 	/**
@@ -257,7 +257,7 @@ class yf_manage_shop {
 				$this->_attributes_save($product_id);
 				$this->_save_group_prices($product_id);
 			}
-			return js_redirect("./?object=".$_GET["object"]);
+			return js_redirect("./?object=shop");
 		}
 		// 1-st type of assigning attributes
 		$fields = $this->_attributes_html(0);
@@ -268,9 +268,9 @@ class yf_manage_shop {
 			$_name_in_form = "single_attr[".$_attr_id."]";
 			$_selected = "";
 			$single_atts[$_attr_info["title"]] = array(
-				"title"					=> _prepare_html($_attr_info["title"]),
+				"title"			=> _prepare_html($_attr_info["title"]),
 				"name_in_form"	=> _prepare_html($_name_in_form),
-				"box"					=> common()->select_box($_name_in_form, $_attr_info["value_list"], $_selected, false, 2, "", false),
+				"box"			=> common()->select_box($_name_in_form, $_attr_info["value_list"], $_selected, false, 2, "", false),
 			);
 		}
 		// Group prices here
@@ -297,15 +297,14 @@ class yf_manage_shop {
 			"single_atts"		=> $single_atts,
 			"manufacturer_box"	=> common()->select_box("manufacturer", $this->_man_for_select, $man_id, false, 2),
 			"category_box"		=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
-			"form_action"		=> "./?object=".$_GET['object']."&action=product_add",
-			"back_url"			=> "./?object=".$_GET["object"]."&action=products_manage",
+			"form_action"		=> "./?object=shop&action=product_add",
+			"back_url"			=> "./?object=shop&action=products_manage",
 			"group_prices"		=> !empty($group_prices) ? $group_prices : "",
 		);
-		// Process boxes
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $SF[$item_name]);
 		}
-		return tpl()->parse($_GET["object"]."/product_edit", $replace);
+		return tpl()->parse("shop/product_edit", $replace);
 	}
 
 	/**
@@ -375,7 +374,7 @@ class yf_manage_shop {
 				$this->_attributes_save($_GET["id"]);
 				$this->_save_group_prices($_GET["id"]);
 			}
-			return js_redirect("./?object=".$_GET['object']."&action=products_manage");
+			return js_redirect("./?object=shop&action=products_manage");
 		}
 		if ($product_info["image"] == 0) {
 			$thumb_path = "";
@@ -389,7 +388,7 @@ class yf_manage_shop {
 			foreach((array)$image_files as $filepath) {
 				preg_match($reg, $filepath, $rezult);
 				$i =  $rezult["content"];
-				$image_delete_url ="./?object=".$_GET['object']."&action=image_delete&id=".$product_info["id"]."&name=".$product_info["url"]."&key=".$i;
+				$image_delete_url ="./?object=shop&action=image_delete&id=".$product_info["id"]."&name=".$product_info["url"]."&key=".$i;
 				$thumb_path_temp = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->THUMB_SUFFIX.".jpg";
 				$img_path = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->FULL_IMG_SUFFIX.".jpg";
 				$replace2 = array(
@@ -398,7 +397,7 @@ class yf_manage_shop {
 					"del_url" 		=> $image_delete_url,
 					"name"			=> $product_info["url"],
 				);
-				$items .= tpl()->parse($_GET["object"]."/image_items", $replace2);
+				$items .= tpl()->parse("shop/image_items", $replace2);
 			}
 		}	
 		// 1-st type of assigning attributes
@@ -456,15 +455,15 @@ class yf_manage_shop {
 			"category_box"			=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
 			"category_select_box"	=> common()->select_box("category_select", $this->_cats_for_select, $cat_id, false, 2),
 			"featured_box"			=> $this->_box("featured", $product_info["featured"]),
-			"form_action"			=> "./?object=".$_GET['object']."&action=edit&id=".$product_info["id"],
-			"back_url"				=> "./?object=".$_GET["object"]."&action=products_manage",
+			"form_action"			=> "./?object=shop&action=edit&id=".$product_info["id"],
+			"back_url"				=> "./?object=shop&action=products_manage",
 			"image"					=> $items,
-			"manage_attrs_url"		=> "./?object=".$_GET['object']."&action=manage_attributes",
+			"manage_attrs_url"		=> "./?object=shop&action=manage_attributes",
 			"group_prices"			=> !empty($group_prices) ? $group_prices : "",
-			"link_get_product"		=>  process_url("./?object=".$_GET["object"]."&action=show_product_by_category&cat_id="),
+			"link_get_product"		=>  process_url("./?object=shop&action=show_product_by_category&cat_id="),
 			"product_related"		=>  $this->get_product_related($product_info["id"]),
 		);
-		return tpl()->parse($_GET["object"]."/product_edit", $replace);
+		return tpl()->parse("shop/product_edit", $replace);
 	}
 
 	/**
@@ -494,7 +493,7 @@ class yf_manage_shop {
 					"img_path" 	=> $img_path,
 					"name"		=> $product_info["url"],
 				);
-				$items .= tpl()->parse($_GET["object"]."/image_items", $replace2);
+				$items .= tpl()->parse("shop/image_items", $replace2);
 			}
 		}	
 		$dyn_fields = $this->_attributes_view($_GET["id"]);
@@ -514,12 +513,12 @@ class yf_manage_shop {
 			"dynamic_fields"	=> $dyn_fields,
 			"manufacturer"		=> $this->_man_for_select[$product_info["manufacturer_id"]],
 			"category"			=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false, "", true),
-			"back_url"			=> "./?object=".$_GET["object"]."&action=products_manage",
+			"back_url"			=> "./?object=shop&action=products_manage",
 			"image"				=> $items,
 			"thumb_path"		=> $thumb_path,
 			"product_related"	=>  $this->get_product_related($product_info["id"]),
 		);
-		return tpl()->parse($_GET["object"]."/product_view", $replace);
+		return tpl()->parse("shop/product_view", $replace);
 	}
 
 	/**
@@ -533,7 +532,7 @@ class yf_manage_shop {
 		db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `object_id`=".$_GET["id"]);
 		db()->query("DELETE FROM `".db('shop_group_options')."` WHERE `product_id`=".$_GET["id"]);		
 		db()->query("DELETE FROM `".db('shop_products')."` WHERE `id`=".$_GET["id"]);
-		return js_redirect("./?object=".$_GET["object"]."action=products_manage");
+		return js_redirect("./?object=shopaction=products_manage");
 	}
 
 	/**
@@ -571,7 +570,7 @@ class yf_manage_shop {
 			"total_sum_shipped"		=> $this->_format_price($total_sum_shipped["SUM(`total_sum`)"]),
 			"total_prod"			=> intval($total_prod["COUNT(*)"]),
 		);
-		return tpl()->parse($_GET["object"]."/stat_main", $replace);
+		return tpl()->parse("shop/stat_main", $replace);
 	}
 
 	/**
@@ -990,15 +989,15 @@ class yf_manage_shop {
 		$menu = array(
 			array(
 				"name"	=> "Manage products",
-				"url"			=> "./?object=".$_GET["object"]."&action=show",
+				"url"	=> "./?object=shop&action=show",
 			),
 			array(
 				"name"	=> "Manage orders",
-				"url"			=> "./?object=".$_GET["object"]."&action=manage_orders",
+				"url"	=> "./?object=shop&action=manage_orders",
 			),
 			array(
 				"name"	=> "Manage attributes",
-				"url"			=> "./?object=".$_GET["object"]."&action=manage_attributes",
+				"url"	=> "./?object=shop&action=manage_attributes",
 			),
 		);
 		return $menu;	
@@ -1015,14 +1014,14 @@ class yf_manage_shop {
 		$cases = array (
 			//$_GET["action"] => {string to replace}
 			"show"		=> "Products",
-			"add"			=> "Add product",
+			"add"		=> "Add product",
 		);			  		
 		if (isset($cases[$_GET["action"]])) {
 			// Rewrite default subheader
 			$subheader = $cases[$_GET["action"]];
 		}
 		return array(
-			"header"			=> $pheader,
+			"header"	=> $pheader,
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
@@ -1078,15 +1077,14 @@ class yf_manage_shop {
 			$sql .= " ".$SF["sort_order"]." \r\n";
 		}
 		return substr($sql, 0, -3);
-		
 	}
 
 	/**
 	*/
 	function _show_filter () {
 		$replace = array(
-			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
+			"save_action"	=> "./?object=shop&action=save_filter"._add_get(),
+			"clear_url"		=> "./?object=shop&action=clear_filter"._add_get(),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -1095,7 +1093,7 @@ class yf_manage_shop {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse($_GET["object"]."/filter", $replace);
+		return tpl()->parse("shop/filter", $replace);
 	}
 
 	/**
@@ -1120,7 +1118,7 @@ class yf_manage_shop {
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=".$_GET["object"]."&action=products_manage"._add_get());
+			js_redirect("./?object=shop&action=products_manage"._add_get());
 		}
 	}
 }

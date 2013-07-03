@@ -6,18 +6,10 @@
 class yf_manage_shop_atts {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->PARENT_OBJ	= module("manage_shop");
-	}
-
-	/**
 	* Manage attributes
 	*/
 	function manage_attributes () {
-		$sql = "SELECT * FROM `".db('dynamic_fields_info')."` WHERE `category_id` = ".intval($this->PARENT_OBJ->ATTRIBUTES_CAT_ID)." ORDER BY `order`";
+		$sql = "SELECT * FROM `".db('dynamic_fields_info')."` WHERE `category_id` = ".intval(module('manage_shop')->ATTRIBUTES_CAT_ID)." ORDER BY `order`";
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$values =  (array)unserialize($A["value_list"]);
 
@@ -28,17 +20,17 @@ class yf_manage_shop_atts {
 				"value_list"	=> nl2br(_prepare_html(implode("\n", $values))),
 				"default_value"	=> _prepare_html($A["default_value"]),
 				"order"			=> $A["order"],
-				"edit_url"		=> "./?object=".$_GET["object"]."&action=edit_attribute&id=".$A["id"],
-				"delete_url"	=> "./?object=".$_GET["object"]."&action=delete_attribute&id=".$A["id"],
-				"active_link"   => "./?object=".$_GET["object"]."&action=activate_attribute&id=".$A["id"],
+				"edit_url"		=> "./?object=shop&action=edit_attribute&id=".$A["id"],
+				"delete_url"	=> "./?object=shop&action=delete_attribute&id=".$A["id"],
+				"active_link"   => "./?object=shop&action=activate_attribute&id=".$A["id"],
 				"active"		=> $A["active"],
 			);
 		}
 		$replace = array(
-			"add_url"		=> "./?object=".$_GET["object"]."&action=add_attribute",
+			"add_url"		=> "./?object=shop&action=add_attribute",
 			"items"			=> $items,
 		);
-		return tpl()->parse($_GET["object"]."/attributes_main", $replace); 
+		return tpl()->parse("shop/attributes_main", $replace); 
 	}	
 
 	/**
@@ -68,7 +60,7 @@ class yf_manage_shop_atts {
 					"value_list"	=> $value_list,
 					"default_value"	=> _es($_POST["default_value"]),
 					"order"			=> $_POST["order"],
-					"category_id"	=> intval($this->PARENT_OBJ->ATTRIBUTES_CAT_ID),
+					"category_id"	=> intval(module('manage_shop')->ATTRIBUTES_CAT_ID),
 				);
 				
 				db()->INSERT("dynamic_fields_info", $sql_array); 
@@ -77,7 +69,7 @@ class yf_manage_shop_atts {
 					cache()->refresh("dynamic_fields_info");
 				}
 
-				return js_redirect("./?object=".$_GET["object"]."&action=manage_attributes");
+				return js_redirect("./?object=shop&action=manage_attributes");
 			
 			}
 		}
@@ -86,12 +78,12 @@ class yf_manage_shop_atts {
 		$form_fields = array("name","type","value_list","default_value","order", "comment");
 		$replace = array_fill_keys($form_fields, "");
 		$replace = my_array_merge($replace, array(
-			"back_url"		=> "./?object=".$_GET["object"]."&action=manage_attributes",
+			"back_url"		=> "./?object=shop&action=manage_attributes",
 			"active"		=> 1,
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
+			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$_GET["id"],
 			"error"			=> _e(),
 		));
-		return tpl()->parse($_GET["object"]."/attributes_edit", $replace);
+		return tpl()->parse("shop/attributes_edit", $replace);
 	}
 
 	/**
@@ -137,7 +129,7 @@ class yf_manage_shop_atts {
 					cache()->refresh("dynamic_fields_info");
 				}
 
-				return js_redirect("./?object=".$_GET["object"]."&action=manage_attributes");
+				return js_redirect("./?object=shop&action=manage_attributes");
 			}
 		}
 		
@@ -147,12 +139,12 @@ class yf_manage_shop_atts {
 			"value_list"	=> _prepare_html(implode("\n", (array)unserialize($A["value_list"]))),
 			"default_value"	=> _prepare_html($A["default_value"]),
 			"order"			=> $A["order"],
-			"back_url"		=> "./?object=".$_GET["object"]."&action=manage_attributes",
+			"back_url"		=> "./?object=shop&action=manage_attributes",
 			"active"		=> 1,
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$A["id"],
+			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$A["id"],
 			"error"			=> _e(),
 		);
-		return tpl()->parse($_GET["object"]."/attributes_edit", $replace);
+		return tpl()->parse("shop/attributes_edit", $replace);
 	}
 
 	/**
@@ -170,7 +162,7 @@ class yf_manage_shop_atts {
 		// Do delete record
 		if ($_GET["id"]) {
 			db()->query("DELETE FROM `".db('dynamic_fields_info')."` WHERE `id`=".$_GET["id"]);
-			db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `category_id` = ".$this->PARENT_OBJ->ATTRIBUTES_CAT_ID." AND `field_id` = ".$_GET["id"]);
+			db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `category_id` = ".module('manage_shop')->ATTRIBUTES_CAT_ID." AND `field_id` = ".$_GET["id"]);
 
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("dynamic_fields_info");
@@ -193,7 +185,7 @@ class yf_manage_shop_atts {
 		$only_selected	= $params["only_selected"];
 
 		$category_info = main()->get_data("dynamic_fields_categories");
-		$category_id = intval($this->PARENT_OBJ->ATTRIBUTES_CAT_ID);
+		$category_id = intval(module('manage_shop')->ATTRIBUTES_CAT_ID);
 
 		if(empty($category_id)){
 			return;
@@ -209,7 +201,7 @@ class yf_manage_shop_atts {
 			$fields_ids[$key] = $key;
 		}
 
-		$fields_values = $this->PARENT_OBJ->_get_attributes_values ($category_id, $object_id, $fields_ids);
+		$fields_values = module('manage_shop')->_get_attributes_values ($category_id, $object_id, $fields_ids);
 
 		foreach ((array)$attributes as $_attr_id => $_info) {
 			$i++;
@@ -246,7 +238,7 @@ class yf_manage_shop_atts {
 		}
 		
 		$category_info = main()->get_data("dynamic_fields_categories");
-		$category_id = intval($this->PARENT_OBJ->ATTRIBUTES_CAT_ID);
+		$category_id = intval(module('manage_shop')->ATTRIBUTES_CAT_ID);
 		
 		if(empty($category_id)){
 			return;
@@ -262,7 +254,7 @@ class yf_manage_shop_atts {
 			$fields_ids[$key] = $key;
 		}
 
-		$fields_values = $this->PARENT_OBJ->_get_attributes_values ($category_id, $object_id, $fields_ids);
+		$fields_values = module('manage_shop')->_get_attributes_values ($category_id, $object_id, $fields_ids);
 
 		foreach ((array)$attributes as $_attr_id => $_info) {
 			$option_values	= array();
@@ -299,7 +291,7 @@ class yf_manage_shop_atts {
 	*/
 	function _get_attributes ($category_id = 0) {
 		if (empty($category_id)) {
-			$category_id = $this->PARENT_OBJ->ATTRIBUTES_CAT_ID;
+			$category_id = module('manage_shop')->ATTRIBUTES_CAT_ID;
 		}
 		if (empty($category_id)) {
 			return array();
@@ -342,7 +334,7 @@ class yf_manage_shop_atts {
 			foreach ((array)$A["value"] as $_attr_id => $_dummy) {
 				$_price = $A["add_value"][$_attr_id];
 				$_item_id = $A["field_id"]."_".$_attr_id;
-				$_field_info = $fields_info[$this->PARENT_OBJ->ATTRIBUTES_CAT_ID][$A["field_id"]];
+				$_field_info = $fields_info[module('manage_shop')->ATTRIBUTES_CAT_ID][$A["field_id"]];
 				$_field_info["value_list"] = strlen($_field_info["value_list"]) ? unserialize($_field_info["value_list"]) : array();
 
 				$data[$_product_id][$_item_id] = array(

@@ -17,23 +17,22 @@ class yf_manage_shop_manufacturer {
 	public $THUMB_X			= 100;
 	/** @var int Thumb size Y */
 	public $THUMB_Y			= 100;
+
 	/**
 	* Constructor
 	*/
-	
 	function _init () {
-		// Reference to the parent object
-		$this->PARENT_OBJ	= module("manage_shop");
 		$this->manufacturer_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->MAN_IMG_DIR;
 		$this->manufacturer_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->MAN_IMG_DIR;
 	}
+
 	/**
 	* Show manufacturer
 	*/
 	function show_manufacturer() {
 	
 		$sql = "SELECT * FROM `".db('shop_manufacturer')."`";
-		$filter_sql = $this->PARENT_OBJ->USE_FILTER ? $this->PARENT_OBJ->_create_filter_sql() : "";
+		$filter_sql = module('manage_shop')->USE_FILTER ? module('manage_shop')->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `name` ASC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$orders_info = db()->query_fetch_all($sql.$add_sql);
@@ -50,19 +49,19 @@ class yf_manage_shop_manufacturer {
 				"order_id"			=> $v["id"],
 				"name"				=> $v["name"],
 				"sort_order"		=> $v["sort_order"],
-				"view_url"			=> "./?object=".$_GET["object"]."&action=view_manufacturer&id=".$v["id"],
-				"delete_url"		=> "./?object=".$_GET["object"]."&action=delete_manufacturer&id=".$v["id"],
-				"edit_url"			=> "./?object=".$_GET["object"]."&action=edit_manufacturer&id=".$v["id"],
+				"view_url"			=> "./?object=shop&action=view_manufacturer&id=".$v["id"],
+				"delete_url"		=> "./?object=shop&action=delete_manufacturer&id=".$v["id"],
+				"edit_url"			=> "./?object=shop&action=edit_manufacturer&id=".$v["id"],
 			);
 		}
 		$replace = array(
 			"items"			=> (array)$items,
 			"pages"			=> $pages,
 			"total"			=> intval($total),
-			"filter"		=> $this->PARENT_OBJ->USE_FILTER ? $this->PARENT_OBJ->_show_filter() : "",
-			"add_url"		=> "./?object=".$_GET['object']."&action=add_manufacturer",
+			"filter"		=> module('manage_shop')->USE_FILTER ? module('manage_shop')->_show_filter() : "",
+			"add_url"		=> "./?object=shop&action=add_manufacturer",
 		);
-		return tpl()->parse($_GET["object"]."/manufacturer_main", $replace); 
+		return tpl()->parse("shop/manufacturer_main", $replace); 
 	}
 
 	/**
@@ -92,7 +91,7 @@ class yf_manage_shop_manufacturer {
 					$this->_upload_image ($man_id, $url);
 				} 
 			}
-			return js_redirect("./?object=".$_GET["object"]."&action=show_manufacturer");
+			return js_redirect("./?object=shop&action=show_manufacturer");
 		}
 
 		$thumb_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
@@ -108,12 +107,12 @@ class yf_manage_shop_manufacturer {
 			"sort_order"		=> "",
 			"desc"				=> "",
 			"thumb_path"		=> "",
-			"delete_image_url"	=> "./?object=".$_GET['object']."&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=".$_GET['object']."&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=".$_GET["object"]."&action=show_manufacturer",
+			"delete_image_url"	=> "./?object=shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=shop&action=show_manufacturer",
 			
 		);
-		return tpl()->parse($_GET["object"]."/manufacturer_edit", $replace);
+		return tpl()->parse("shop/manufacturer_edit", $replace);
 	}
 
 
@@ -151,7 +150,7 @@ class yf_manage_shop_manufacturer {
 					$this->_upload_image ($man_id, $url);
 				} 
 			}
-			return js_redirect("./?object=".$_GET["object"]."&action=show_manufacturer");
+			return js_redirect("./?object=shop&action=show_manufacturer");
 		}
 
 		$thumb_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
@@ -167,12 +166,12 @@ class yf_manage_shop_manufacturer {
 			"sort_order"		=> $manufacturer_info["sort_order"],
 			"desc"				=> $manufacturer_info["desc"],
 			"thumb_path"		=> $thumb_path,
-			"delete_image_url"	=> "./?object=".$_GET['object']."&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=".$_GET['object']."&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=".$_GET["object"]."&action=show_manufacturer",
+			"delete_image_url"	=> "./?object=shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=shop&action=show_manufacturer",
 			
 		);
-		return tpl()->parse($_GET["object"]."/manufacturer_edit", $replace);
+		return tpl()->parse("shop/manufacturer_edit", $replace);
 	}
 
 	/**
@@ -202,12 +201,12 @@ class yf_manage_shop_manufacturer {
 			"desc"				=> _prepare_html($manufacturer_info["desc"]),
 			"thumb_path"		=> $thumb_path,
 			"img_path"			=> $img_path,
-			"delete_image_url"	=> "./?object=".$_GET['object']."&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=".$_GET['object']."&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=".$_GET["object"]."&action=show_manufacturer",
+			"delete_image_url"	=> "./?object=shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=shop&action=show_manufacturer",
 			
 		);
-		return tpl()->parse($_GET["object"]."/manufacturer_view", $replace);
+		return tpl()->parse("shop/manufacturer_view", $replace);
 	}
 	
 	/**
@@ -229,7 +228,7 @@ class yf_manage_shop_manufacturer {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
 		} else {
-			return js_redirect("./?object=".$_GET["object"]."&action=show_manufacturer");
+			return js_redirect("./?object=shop&action=show_manufacturer");
 		}
 	}
 	

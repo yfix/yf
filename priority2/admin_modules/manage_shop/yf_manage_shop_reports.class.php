@@ -9,12 +9,11 @@ class yf_manage_shop_reports {
 	* Constructor
 	*/
 	function _init () {
-	$this->PARENT_OBJ	= module("manage_shop");
-		// Prepare filter data
-		if ($this->PARENT_OBJ->USE_FILTER) {
+		if (module('manage_shop')->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
 	}
+
 	/**
 	* Show orders
 	*/
@@ -30,14 +29,14 @@ class yf_manage_shop_reports {
 				$active = "purchased";
 		}
 		$replace = array(
-			"items"					=>	$items,
-			"active"					=>	$active,
-			"viewed_url"			=> "./?object=".$_GET['object']."&action=show_reports&id=viewed",
-			"sales_url"				=> "./?object=".$_GET['object']."&action=show_reports&id=sales",
-			"purchased_url"		=> "./?object=".$_GET['object']."&action=show_reports&id=purchased",
+			"items"			=>	$items,
+			"active"		=>	$active,
+			"viewed_url"	=> "./?object=shop&action=show_reports&id=viewed",
+			"sales_url"		=> "./?object=shop&action=show_reports&id=sales",
+			"purchased_url"	=> "./?object=shop&action=show_reports&id=purchased",
 			
 		);
-		return tpl()->parse($_GET["object"]."/report_main", $replace);
+		return tpl()->parse("shop/report_main", $replace);
 	}
 	
 	
@@ -55,20 +54,20 @@ class yf_manage_shop_reports {
 				$percent = '0%';
 			}
 			$replace2 = array(
-				"name"				=> _prepare_html($v["name"]),
-				"model"				=> _prepare_html($v["model"]),
-				"viewed"			=> _prepare_html($v["viewed"]),
-				"percent"			=> $percent,
+				"name"		=> _prepare_html($v["name"]),
+				"model"		=> _prepare_html($v["model"]),
+				"viewed"	=> _prepare_html($v["viewed"]),
+				"percent"	=> $percent,
 			);
-			$items .= tpl()->parse($_GET["object"]."/item_reports_viewed", $replace2); 
+			$items .= tpl()->parse("shop/item_reports_viewed", $replace2); 
 		}
 		$replace = array(
-			"items"			=> $items,
+			"items"		=> $items,
 			"pages"		=> $pages,
-			"total"			=> intval($total),
-			"sort_url"		=> "./?object=".$_GET['object']."&action=sort",
+			"total"		=> intval($total),
+			"sort_url"	=> "./?object=shop&action=sort",
 		);
-		return tpl()->parse($_GET["object"]."/reports_viewed", $replace);
+		return tpl()->parse("shop/reports_viewed", $replace);
 	}
 	
 	function sort() {
@@ -89,12 +88,12 @@ class yf_manage_shop_reports {
 				$percent = '0%';
 			}
 			$replace2 = array(
-				"name"				=> _prepare_html($v["name"]),
-				"model"				=> _prepare_html($v["model"]),
-				"viewed"			=> _prepare_html($v["viewed"]),
-				"percent"			=> $percent,
+				"name"		=> _prepare_html($v["name"]),
+				"model"		=> _prepare_html($v["model"]),
+				"viewed"	=> _prepare_html($v["viewed"]),
+				"percent"	=> $percent,
 			);
-			$items .= tpl()->parse($_GET["object"]."/item_reports_viewed", $replace2); 
+			$items .= tpl()->parse("shop/item_reports_viewed", $replace2); 
 		}
 		echo $items;
 		
@@ -114,7 +113,7 @@ class yf_manage_shop_reports {
 			$product[$v['product_id'] ]["quantity"]  += $v['quantity'] ;
 			$product[$v['product_id'] ]["sum"]  += $v['sum'] ;
 		}
-		if ($this->PARENT_OBJ->USE_FILTER) {
+		if (module('manage_shop')->USE_FILTER) {
 			$filter = $this->_create_filter() ;
 			if ($filter ["order"] == "DESC") {
 				arsort($product);
@@ -133,28 +132,27 @@ class yf_manage_shop_reports {
 				"name"			=> _prepare_html($item_product["name"]),
 				"model"			=> _prepare_html($item_product["model"]),
 				"viewed"		=> $quantity,
-				"percent"		=> $this->PARENT_OBJ->_format_price($sum),
+				"percent"		=> module('manage_shop')->_format_price($sum),
 			);
-			$items .= tpl()->parse($_GET["object"]."/item_reports_viewed", $replace2);  
+			$items .= tpl()->parse("shop/item_reports_viewed", $replace2);  
 		}
 		$replace = array(
 			"items"		=> $items,
 			"pages"	=> $pages,
 			"total"		=> intval($total),
-			"filter"		=> $this->PARENT_OBJ->USE_FILTER ? $this->_show_filter() : "",
-			"sort_url"	=> "./?object=".$_GET['object']."&action=show_reports_purchased",
+			"filter"		=> module('manage_shop')->USE_FILTER ? $this->_show_filter() : "",
+			"sort_url"	=> "./?object=shop&action=show_reports_purchased",
 		);
-		return tpl()->parse($_GET["object"]."/reports_product_purchased", $replace);
+		return tpl()->parse("shop/reports_product_purchased", $replace);
 	}
 	
-		//-----------------------------------------------------------------------------
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
 		$this->_filter_name	= "report_purchased_filter";
 		// Array of select boxes to process
 		$this->_boxes = array(
-			"status"				=> 'select_box("status",		$this->PARENT_OBJ->_statuses,	$selected, false, 2, "", false)',
+			"status"				=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
 			"sort_by"				=> 'select_box("sort_by",		 $this->_sort_by,			$selected, 0, 2, "", false)',
 			"sort_order"			=> 'select_box("sort_order", $this->_sort_orders,		$selected, 0, 2, "", false)',
 			"orders_by_date"	=> 'select_box("orders_by_date", $this->_orders_by_date,		$selected, 0, 2, "", false)',
@@ -191,7 +189,6 @@ class yf_manage_shop_reports {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Generate filter SQL query
 	function _create_filter () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -233,12 +230,11 @@ class yf_manage_shop_reports {
 		return ($sql);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
-			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter_report"._add_get(),
-			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter_report"._add_get(),
+			"save_action"	=> "./?object=shop&action=save_filter_report"._add_get(),
+			"clear_url"		=> "./?object=shop&action=clear_filter_report"._add_get(),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -248,10 +244,9 @@ class yf_manage_shop_reports {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse($_GET["object"]."/filter_report", $replace);
+		return tpl()->parse("shop/filter_report", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Filter save method
 	function save_filter ($silent = false) {
 		if (is_array($this->_fields_in_filter)) {
@@ -264,7 +259,6 @@ class yf_manage_shop_reports {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -273,7 +267,7 @@ class yf_manage_shop_reports {
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=".$_GET["object"]."&action=show_reports&id=purchased"._add_get());
+			js_redirect("./?object=shop&action=show_reports&id=purchased"._add_get());
 		}
 	}
 	
@@ -281,5 +275,4 @@ class yf_manage_shop_reports {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
-	
 }
