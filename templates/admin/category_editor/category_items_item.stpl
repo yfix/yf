@@ -1,16 +1,15 @@
-<tr class="{bg_class}">
-	<td width="1%"></td>
-	<td width="40%" style="padding-left:{level_pad}px;" nowrap>
-		{if("level_pad" ne "")}<span style="font-size:20px;line-height:14px;">&#9492;</span>{/if}
-		<input type="text" name="name[{item_id}]" value="{name}" size="20" style="font-size:11px;">
+<tr>
+	<td nowrap>
+		{if("level_pad" ne "")}<span>&#9492;</span>{/if}
+		<input type="text" name="name[{item_id}]" value="{name}">
 	</td>
-	<td width="30%" align="center"><input type="text" name="url[{item_id}]" value="{url}" size="30" style="font-size:11px;width:100%;"></td>
-	<td width="25%" align="center"><input type="text" name="other_info[{item_id}]" value="{other_info}" size="20" style="font-size:11px;width:100%;"></td>
-	<td width="1%" align="center"><small><a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a></small></td>
-	<td width="1%" align="center"><input type="text" name="order[{item_id}]" value="{order}" size="2" style="font-size:11px;"></td>
-	<td width="1%" nowrap>
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>&nbsp;
-		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)} ?');" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;
+	<td><input type="text" name="url[{item_id}]" value="{url}"></td>
+	<td><input type="text" name="other_info[{item_id}]" value="{other_info}"></td>
+	<td><input type="text" name="order[{item_id}]" value="{order}"></td>
+	<td nowrap>
+		<a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a>
+		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a> 
+		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a> 
+		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)} ?');" title="{t(Delete)}"><i class="icon-trash"></i></a> 
 	</td>
 </tr>

@@ -18,7 +18,6 @@ class yf_category_editor {
 	* Framework constructor
 	*/
 	function _init () {
-		// Array of select boxes to process
 		$this->_boxes = array(
 			"active"		=> 'radio_box("active",			$this->_statuses,			$selected, false, 2, "", false)',
 			"featured"		=> 'radio_box("featured",		$this->_statuses,			$selected, false, 2, "", false)',
@@ -26,19 +25,20 @@ class yf_category_editor {
 			"item_order"	=> 'select_box("item_order",	$this->_item_orders,		$selected, false, 2, "", false)',
 			"groups"		=> 'multi_select("groups",		$this->_groups,				$selected, false, 2, " size=7 ", false)',
 		);
-		// Array of statuses
 		$this->_statuses = array(
 			"0" => "<span class='negative'>NO</span>",
 			"1" => "<span class='positive'>YES</span>",
 		);
-		// Get user groups
 		$this->_user_groups[""] = "-- ALL --";
 		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_groups')."` WHERE `active`='1'");
-		while ($A = db()->fetch_assoc($Q)) $this->_user_groups[$A['id']] = $A['name'];
-		// Get admin groups
+		while ($A = db()->fetch_assoc($Q)) {
+			$this->_user_groups[$A['id']] = $A['name'];
+		}
 		$this->_admin_groups[""] = "-- ALL --";
 		$Q = db()->query("SELECT `id`,`name` FROM `".db('admin_groups')."` WHERE `active`='1'");
-		while ($A = db()->fetch_assoc($Q)) $this->_admin_groups[$A['id']] = $A['name'];
+		while ($A = db()->fetch_assoc($Q)) {
+			$this->_admin_groups[$A['id']] = $A['name'];
+		}
 	}
 
 	/**
@@ -294,12 +294,22 @@ class yf_category_editor {
 	* Display category items for the given block
 	*/
 	function show_items() {
+		$orig_id = $_GET["id"];
 		$_GET["id"] = intval($_GET["id"]);
+		// Try to show category items by its name
+		if (!$_GET["id"] && $orig_id) {
+			$cat_info = db()->get("SELECT * FROM `".db('categories')."` WHERE `name`='".db()->es($orig_id)."'");
+			if ($cat_info) {
+				$_GET["id"] = $cat_info['id'];
+			}
+		}
 		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
 		}
 		// Get current category info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+		if (!$cat_info) {
+			$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+		}
 		if (empty($cat_info)) {
 			return _e(t("No such category!"));
 		}
