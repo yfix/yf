@@ -11,21 +11,18 @@
 
 <script type="text/javascript">
 <!--
-// If no JQuery available - show debug console
-if (typeof $ == "object") {
-	document.write('<sty' + 'le type="text/c' + 'ss">.debug_allow_close {display: none;}' + '</' + 'style>');
-}
+// TODO: fix me and update
+/*
 try {
 // jQuery on DOM ready
 $(function(){
-
 	// Prepare header text
 	function _prepare_text(text) {
 		return escape(text).replace(/[^a-z0-9\_]/ig, '').substring(0, 30);
 	}
 
 	// Set default show/hide status
-	$(".debug_allow_close > b:first-child").each(function(){
+	$(".debug_allow_close > h5:first-child").each(function(){
 		var _cur_status = "s";
 		if ($.cookie) {
 			_cur_status = $.cookie("_debug_info[" + _prepare_text($(this).text()) + "]");
@@ -37,7 +34,7 @@ $(function(){
 			_what_elm.show();
 		}
 	});
-	$(".debug_allow_close > b:first-child").toggle(
+	$(".debug_allow_close > h5:first-child").toggle(
 		function(e){
 			$(this).parent().children().not(this).hide();
 			if ($.cookie) {
@@ -54,8 +51,7 @@ $(function(){
 
 	$(".debug_allow_close").show();
 
-
-	var _elm_to_prepend = $("<br /><br /><b class='debug_close_all'>CLOSE ALL<b/>").css({
+	var _elm_to_prepend = $("<h5 class='debug_close_all'>CLOSE ALL</h5>").css({
 		"cursor"	: "hand",
 		"background": "#cfc"
 	}).toggle(function(){
@@ -68,12 +64,6 @@ $(function(){
 
 });
 } catch (e) {}
+*/
 -->
 </script>
-<noscript>
-<style type="text/css">
-.debug_allow_close {
-	display: block;
-}
-</style>
-</noscript>
