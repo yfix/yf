@@ -22,7 +22,7 @@ class yf_manage_shop {
 	/** @var int Thumb size Y */
 	public $THUMB_Y			= 100;
 	/** @var string Default currency */
-	public $CURRENCY			= "\$";
+	public $CURRENCY		= "\$";
 	/** @var Shipping types */
 	public $_ship_types = array(
 		1	=> "Free",
@@ -61,7 +61,7 @@ class yf_manage_shop {
 	* Constructor
 	*/
 	function _init () {
-		$this->_cats_for_select	= _class('categories')->_prepare_for_box(shop."_cats", 0);
+		$this->_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats", 0);
 		
 		$sql = "SELECT * FROM `".db('shop_manufacturer')."` ORDER BY `name` ASC";
 		$this->man = db()->query_fetch_all($sql);
@@ -103,8 +103,7 @@ class yf_manage_shop {
 			$this->_prepare_filter_data();
 		}
 		// Sync company info with user section
-		$SHOP_OBJ = main()->init_class("shop", USER_MODULES_DIR);
-		$this->COMPANY_INFO = $SHOP_OBJ->COMPANY_INFO;
+		$this->COMPANY_INFO = module("shop")->COMPANY_INFO;
 	}
 
 	/**
@@ -120,15 +119,15 @@ class yf_manage_shop {
 		$items = $this->statistic();
 		$replace = array(
 			"items"				=> $items,
-			"products_url"		=> "./?object=shop&action=products_manage",
-			"manufacturer_url"	=> "./?object=shop&action=show_manufacturer",
+			"products_url"		=> "./?object=manage_shop&action=products_manage",
+			"manufacturer_url"	=> "./?object=manage_shop&action=show_manufacturer",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=4",
-			"attributes_url"	=> "./?object=shop&action=manage_attributes", 
-			"orders_url"		=> "./?object=shop&action=show_orders",
-			"reports_url"		=> "./?object=shop&action=show_reports&id=viewed",
-			"settings_url"		=> "./?object=shop&action=show_settings",
+			"attributes_url"	=> "./?object=manage_shop&action=manage_attributes", 
+			"orders_url"		=> "./?object=manage_shop&action=show_orders",
+			"reports_url"		=> "./?object=manage_shop&action=show_reports&id=viewed",
+			"settings_url"		=> "./?object=manage_shop&action=show_settings",
 		);
-		return tpl()->parse("shop/home", $replace);
+		return tpl()->parse("manage_shop/home", $replace);
 	}
 	
 	/**
@@ -188,24 +187,24 @@ class yf_manage_shop {
 				"old_price"		=> $v["old_price"],
 				"quantity"		=> $v["quantity"],
 				"active"		=> $v["active"],
-				"edit_url"		=> "./?object=shop&action=product_edit&id=".$v["id"],
-				"delete_url"	=> "./?object=shop&action=product_delete&id=".$v["id"],
-				"view_url"		=> "./?object=shop&action=product_view&id=".$v["id"],
-				"activate_url"	=> "./?object=shop&action=product_activate&id=".$v["id"],
+				"edit_url"		=> "./?object=manage_shop&action=product_edit&id=".$v["id"],
+				"delete_url"	=> "./?object=manage_shop&action=product_delete&id=".$v["id"],
+				"view_url"		=> "./?object=manage_shop&action=product_view&id=".$v["id"],
+				"activate_url"	=> "./?object=manage_shop&action=product_activate&id=".$v["id"],
 			);
-			$items .= tpl()->parse("shop/item", $replace2); 
+			$items .= tpl()->parse("manage_shop/item", $replace2); 
 		}
 		$replace = array(
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"total"				=> intval($total),
 			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
-			"add_url"			=> "./?object=shop&action=product_add",
-			"categories_url"	=> ".?object=category_editor&action=show_items&id=4",
-			"attributes_url"	=> "./?object=shop&action=manage_attributes",
-			"orders_url"		=> "./?object=shop&action=show_orders",
+			"add_url"			=> "./?object=manage_shop&action=product_add",
+			"categories_url"	=> "./?object=category_editor&action=show_items&id=4",
+			"attributes_url"	=> "./?object=manage_shop&action=manage_attributes",
+			"orders_url"		=> "./?object=manage_shop&action=show_orders",
 		);
-		return tpl()->parse("shop/products_main", $replace);
+		return tpl()->parse("manage_shop/products_main", $replace);
 	}
 
 	/**
@@ -257,7 +256,7 @@ class yf_manage_shop {
 				$this->_attributes_save($product_id);
 				$this->_save_group_prices($product_id);
 			}
-			return js_redirect("./?object=shop");
+			return js_redirect("./?object=manage_shop");
 		}
 		// 1-st type of assigning attributes
 		$fields = $this->_attributes_html(0);
@@ -297,14 +296,14 @@ class yf_manage_shop {
 			"single_atts"		=> $single_atts,
 			"manufacturer_box"	=> common()->select_box("manufacturer", $this->_man_for_select, $man_id, false, 2),
 			"category_box"		=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
-			"form_action"		=> "./?object=shop&action=product_add",
-			"back_url"			=> "./?object=shop&action=products_manage",
+			"form_action"		=> "./?object=manage_shop&action=product_add",
+			"back_url"			=> "./?object=manage_shop&action=products_manage",
 			"group_prices"		=> !empty($group_prices) ? $group_prices : "",
 		);
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $SF[$item_name]);
 		}
-		return tpl()->parse("shop/product_edit", $replace);
+		return tpl()->parse("manage_shop/product_edit", $replace);
 	}
 
 	/**
@@ -374,7 +373,7 @@ class yf_manage_shop {
 				$this->_attributes_save($_GET["id"]);
 				$this->_save_group_prices($_GET["id"]);
 			}
-			return js_redirect("./?object=shop&action=products_manage");
+			return js_redirect("./?object=manage_shop&action=products_manage");
 		}
 		if ($product_info["image"] == 0) {
 			$thumb_path = "";
@@ -388,7 +387,7 @@ class yf_manage_shop {
 			foreach((array)$image_files as $filepath) {
 				preg_match($reg, $filepath, $rezult);
 				$i =  $rezult["content"];
-				$image_delete_url ="./?object=shop&action=image_delete&id=".$product_info["id"]."&name=".$product_info["url"]."&key=".$i;
+				$image_delete_url ="./?object=manage_shop&action=image_delete&id=".$product_info["id"]."&name=".$product_info["url"]."&key=".$i;
 				$thumb_path_temp = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->THUMB_SUFFIX.".jpg";
 				$img_path = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->FULL_IMG_SUFFIX.".jpg";
 				$replace2 = array(
@@ -397,7 +396,7 @@ class yf_manage_shop {
 					"del_url" 		=> $image_delete_url,
 					"name"			=> $product_info["url"],
 				);
-				$items .= tpl()->parse("shop/image_items", $replace2);
+				$items .= tpl()->parse("manage_shop/image_items", $replace2);
 			}
 		}	
 		// 1-st type of assigning attributes
@@ -455,15 +454,15 @@ class yf_manage_shop {
 			"category_box"			=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
 			"category_select_box"	=> common()->select_box("category_select", $this->_cats_for_select, $cat_id, false, 2),
 			"featured_box"			=> $this->_box("featured", $product_info["featured"]),
-			"form_action"			=> "./?object=shop&action=edit&id=".$product_info["id"],
-			"back_url"				=> "./?object=shop&action=products_manage",
+			"form_action"			=> "./?object=manage_shop&action=edit&id=".$product_info["id"],
+			"back_url"				=> "./?object=manage_shop&action=products_manage",
 			"image"					=> $items,
-			"manage_attrs_url"		=> "./?object=shop&action=manage_attributes",
+			"manage_attrs_url"		=> "./?object=manage_shop&action=manage_attributes",
 			"group_prices"			=> !empty($group_prices) ? $group_prices : "",
-			"link_get_product"		=>  process_url("./?object=shop&action=show_product_by_category&cat_id="),
+			"link_get_product"		=>  process_url("./?object=manage_shop&action=show_product_by_category&cat_id="),
 			"product_related"		=>  $this->get_product_related($product_info["id"]),
 		);
-		return tpl()->parse("shop/product_edit", $replace);
+		return tpl()->parse("manage_shop/product_edit", $replace);
 	}
 
 	/**
@@ -493,7 +492,7 @@ class yf_manage_shop {
 					"img_path" 	=> $img_path,
 					"name"		=> $product_info["url"],
 				);
-				$items .= tpl()->parse("shop/image_items", $replace2);
+				$items .= tpl()->parse("manage_shop/image_items", $replace2);
 			}
 		}	
 		$dyn_fields = $this->_attributes_view($_GET["id"]);
@@ -513,12 +512,12 @@ class yf_manage_shop {
 			"dynamic_fields"	=> $dyn_fields,
 			"manufacturer"		=> $this->_man_for_select[$product_info["manufacturer_id"]],
 			"category"			=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false, "", true),
-			"back_url"			=> "./?object=shop&action=products_manage",
+			"back_url"			=> "./?object=manage_shop&action=products_manage",
 			"image"				=> $items,
 			"thumb_path"		=> $thumb_path,
 			"product_related"	=>  $this->get_product_related($product_info["id"]),
 		);
-		return tpl()->parse("shop/product_view", $replace);
+		return tpl()->parse("manage_shop/product_view", $replace);
 	}
 
 	/**
@@ -532,7 +531,7 @@ class yf_manage_shop {
 		db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `object_id`=".$_GET["id"]);
 		db()->query("DELETE FROM `".db('shop_group_options')."` WHERE `product_id`=".$_GET["id"]);		
 		db()->query("DELETE FROM `".db('shop_products')."` WHERE `id`=".$_GET["id"]);
-		return js_redirect("./?object=shopaction=products_manage");
+		return js_redirect("./?object=manage_shopaction=products_manage");
 	}
 
 	/**
@@ -551,7 +550,7 @@ class yf_manage_shop {
 			main()->NO_GRAPHICS = true;
 			echo ($active ? 1 : 0);
 		} else {
-			return js_redirect("./?object=shop");
+			return js_redirect("./?object=manage_shop");
 		}
 	}
 
@@ -570,7 +569,7 @@ class yf_manage_shop {
 			"total_sum_shipped"		=> $this->_format_price($total_sum_shipped["SUM(`total_sum`)"]),
 			"total_prod"			=> intval($total_prod["COUNT(*)"]),
 		);
-		return tpl()->parse("shop/stat_main", $replace);
+		return tpl()->parse("manage_shop/stat_main", $replace);
 	}
 
 	/**
@@ -657,7 +656,7 @@ class yf_manage_shop {
 	/**
 	*/
 	function show_settings() {
-		return $this->_call_sub_method("manage_shop_settings", __FUNCTION__);
+		return _class('manage_shop_settings', 'admin_modules/manage_shop/')->show_settings();
 	}
 	
 	/**
@@ -669,66 +668,67 @@ class yf_manage_shop {
 	/**
 	*/
 	function show_reports() {
-		return $this->_call_sub_method("manage_shop_reports", __FUNCTION__);
+		return _class('manage_shop_reports', 'admin_modules/manage_shop/')->show_reports();
 	}
 	
 	/**
 	*/
 	function show_reports_viewed() {
-		return $this->_call_sub_method("manage_shop_reports", __FUNCTION__);
+		return _class('manage_shop_reports', 'admin_modules/manage_shop/')->show_reports_viewed();
 	}
 	
 	/**
 	*/
 	function sort() {
-		return $this->_call_sub_method("manage_shop_reports", __FUNCTION__);
+		return _class('manage_shop_reports', 'admin_modules/manage_shop/')->sort();
 	}
+
 	/**
 	*/
 	function show_orders() {
-		return $this->_call_sub_method("manage_shop_orders", __FUNCTION__);
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->show_orders();
 	}
 
 	/**
 	*/
 	function show_print() {
-		return $this->_call_sub_method("manage_shop_orders", __FUNCTION__);
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->show_print();
 	}
 	
 	/**
 	*/
 	function view_order() {
-		return $this->_call_sub_method("manage_shop_orders", __FUNCTION__);
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->view_order();
 	}
 
 	/**
 	*/
 	function save_filter_order() {
-		return $this->_call_sub_method("manage_shop_orders", save_filter);
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->save_filter();
 	}
 	
 	/**
 	*/
 	function clear_filter_order() {
-		return $this->_call_sub_method("manage_shop_orders", clear_filter);
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->clear_filter();
 	}
 	
 	/**
 	*/
 	function save_filter_report() {
-		return $this->_call_sub_method("manage_shop_reports", save_filter);
+		return _class('manage_shop_reports', 'admin_modules/manage_shop/')->save_filter();
 	}
 	
 	/**
 	*/
 	function clear_filter_report() {
-		return $this->_call_sub_method("manage_shop_reports", clear_filter);
+		return _class('manage_shop_reports', 'admin_modules/manage_shop/')->clear_filter();
 	}
 
 	/**
 	*/
 	function delete_order() {
-		return $this->_call_sub_method("manage_shop_orders", __FUNCTION__);
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->delete_order();
 	}
 	
 	/**
@@ -783,49 +783,49 @@ class yf_manage_shop {
 	/**
 	*/
 	function show_manufacturer () {
-		return $this->_call_sub_method("manage_shop_manufacturer", __FUNCTION__);
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->show_manufacturer();
 	}	
 	
 	/**
 	*/
 	function edit_manufacturer () {
-		return $this->_call_sub_method("manage_shop_manufacturer", __FUNCTION__);
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->edit_manufacturer();
 	}	
 	
 	/**
 	*/
 	function add_manufacturer () {
-		return $this->_call_sub_method("manage_shop_manufacturer", __FUNCTION__);
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->add_manufacturer();
 	}	
 	
 	/**
 	*/
 	function view_manufacturer () {
-		return $this->_call_sub_method("manage_shop_manufacturer", __FUNCTION__);
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->view_manufacturer();
 	}	
 	
 	/**
 	*/
 	function manage_attributes () {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__);
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->manage_attributes();
 	}	
 
 	/**
 	*/
 	function add_attribute () {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__);
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->add_attribute();
 	}
 
 	/**
 	*/
 	function edit_attribute () {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__);
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->edit_attribute();
 	}
 
 	/**
 	*/
 	function delete_attribute () {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__);
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->delete_attribute();
 	}
 
 	/**
@@ -837,38 +837,31 @@ class yf_manage_shop {
 	/**
 	*/
 	function _attributes_html ($object_id = 0, $only_selected = false) {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__, array(
-			"object_id" 	=> $object_id,
-			"only_selected" => $only_selected
-		));
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_attributes_html($object_id, $only_selected);
 	}
 
 	/**
 	*/
 	function _attributes_save ($object_id = 0) {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__, $object_id);
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_attributes_save($object_id);
 	}
 
 	/**
 	*/
 	function _get_attributes ($category_id = 0) {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__, $category_id);
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_get_attributes($category_id);
 	}
 
 	/**
 	*/
 	function _get_products_attributes($products_ids = array()) {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__, $products_ids);
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_get_products_attributes($products_ids);
 	}
 
 	/**
 	*/
 	function _get_attributes_values ($category_id = 0, $object_id = 0, $fields_ids = 0) {
-		return $this->_call_sub_method("manage_shop_atts", __FUNCTION__, array(
-			"category_id"	=> $category_id,
-			"object_id"		=> $object_id,
-			"fields_ids"	=> $fields_ids,
-		));
+		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_get_attributes_values($category_id, $object_id, $fields_ids);
 	}
 
 	/**
@@ -953,9 +946,9 @@ class yf_manage_shop {
 		foreach ((array)$user_groups as $_group_id => $_group_name) {
 			$new_group_price = $_POST["group_prices"][$_group_id];
 			$sql = array(
-				"product_id"	=> intval($product_id),
+				"product_id"=> intval($product_id),
 				"group_id"	=> intval($_group_id),
-				"price"			=> floatval($new_group_price),
+				"price"		=> floatval($new_group_price),
 			);
 			if (isset($group_prices[$_group_id])) {
 				db()->UPDATE("shop_group_options", $sql, "`product_id`=".intval($product_id)." AND `group_id`=".intval($_group_id));
@@ -963,17 +956,6 @@ class yf_manage_shop {
 				db()->INSERT("shop_group_options", $sql);
 			}
 		}
-	}
-
-	/**
-	*/
-	function _call_sub_method ($sub_module = "", $method_name = "", $params = array()) {
-		$OBJ = main()->init_class($sub_module, ADMIN_MODULES_DIR."manage_shop/");
-		if (!is_object($OBJ)) {
-			trigger_error("MANAGE_SHOP: Cant load sub_module \"".$sub_module."\"", E_USER_WARNING);
-			return false;
-		}
-		return is_object($OBJ) ? $OBJ->$method_name($params) : "";
 	}
 
 	/**
@@ -989,15 +971,15 @@ class yf_manage_shop {
 		$menu = array(
 			array(
 				"name"	=> "Manage products",
-				"url"	=> "./?object=shop&action=show",
+				"url"	=> "./?object=manage_shop&action=show",
 			),
 			array(
 				"name"	=> "Manage orders",
-				"url"	=> "./?object=shop&action=manage_orders",
+				"url"	=> "./?object=manage_shop&action=manage_orders",
 			),
 			array(
 				"name"	=> "Manage attributes",
-				"url"	=> "./?object=shop&action=manage_attributes",
+				"url"	=> "./?object=manage_shop&action=manage_attributes",
 			),
 		);
 		return $menu;	
@@ -1083,8 +1065,8 @@ class yf_manage_shop {
 	*/
 	function _show_filter () {
 		$replace = array(
-			"save_action"	=> "./?object=shop&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=shop&action=clear_filter"._add_get(),
+			"save_action"	=> "./?object=manage_shop&action=save_filter"._add_get(),
+			"clear_url"		=> "./?object=manage_shop&action=clear_filter"._add_get(),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -1118,7 +1100,7 @@ class yf_manage_shop {
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=shop&action=products_manage"._add_get());
+			js_redirect("./?object=manage_shop&action=products_manage"._add_get());
 		}
 	}
 }

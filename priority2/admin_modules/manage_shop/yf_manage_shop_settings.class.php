@@ -12,6 +12,6 @@ class yf_manage_shop_settings {
 		$replace = array(
 			"items"		=> "settings",
 		);
-		return tpl()->parse("shop/settings_show", $replace);
+		return tpl()->parse("manage_shop/settings_show", $replace);
 	}
 }

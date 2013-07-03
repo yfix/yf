@@ -1,4 +1,4 @@
-{include("shop/product_edit_js.stpl")}
+{include("manage_shop/product_edit_js.stpl")}
 
 <form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
 	{form_row("text","name")}
@@ -70,8 +70,8 @@
 --}}
 
 	<div class="button_div">
-		<input type="submit" value="{t(Save)}">
-		<a href='{back_url}'>{t(Back)}</a>
+		<input type="submit" value="{t(Save)}" class="btn">
+		<a href='{back_url}' class="btn">{t(Back)}</a>
 	</div>
 
 {if("dynamic_fields" ne "")}
@@ -102,8 +102,8 @@
 	</div>
 
 	<div class="button_div">
-		<input type="submit" value="{t(Save)}">
-		<a href='{back_url}'>{t(Back)}</a>
+		<input type="submit" value="{t(Save)}" class="btn">
+		<a href='{back_url}' class="btn">{t(Back)}</a>
 	</div>
 	</p>
 {/if}

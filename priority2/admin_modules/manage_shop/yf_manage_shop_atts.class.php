@@ -20,17 +20,17 @@ class yf_manage_shop_atts {
 				"value_list"	=> nl2br(_prepare_html(implode("\n", $values))),
 				"default_value"	=> _prepare_html($A["default_value"]),
 				"order"			=> $A["order"],
-				"edit_url"		=> "./?object=shop&action=edit_attribute&id=".$A["id"],
-				"delete_url"	=> "./?object=shop&action=delete_attribute&id=".$A["id"],
-				"active_link"   => "./?object=shop&action=activate_attribute&id=".$A["id"],
+				"edit_url"		=> "./?object=manage_shop&action=edit_attribute&id=".$A["id"],
+				"delete_url"	=> "./?object=manage_shop&action=delete_attribute&id=".$A["id"],
+				"active_link"   => "./?object=manage_shop&action=activate_attribute&id=".$A["id"],
 				"active"		=> $A["active"],
 			);
 		}
 		$replace = array(
-			"add_url"		=> "./?object=shop&action=add_attribute",
+			"add_url"		=> "./?object=manage_shop&action=add_attribute",
 			"items"			=> $items,
 		);
-		return tpl()->parse("shop/attributes_main", $replace); 
+		return tpl()->parse("manage_shop/attributes_main", $replace); 
 	}	
 
 	/**
@@ -69,7 +69,7 @@ class yf_manage_shop_atts {
 					cache()->refresh("dynamic_fields_info");
 				}
 
-				return js_redirect("./?object=shop&action=manage_attributes");
+				return js_redirect("./?object=manage_shop&action=manage_attributes");
 			
 			}
 		}
@@ -78,12 +78,12 @@ class yf_manage_shop_atts {
 		$form_fields = array("name","type","value_list","default_value","order", "comment");
 		$replace = array_fill_keys($form_fields, "");
 		$replace = my_array_merge($replace, array(
-			"back_url"		=> "./?object=shop&action=manage_attributes",
+			"back_url"		=> "./?object=manage_shop&action=manage_attributes",
 			"active"		=> 1,
-			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$_GET["id"],
+			"form_action"	=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$_GET["id"],
 			"error"			=> _e(),
 		));
-		return tpl()->parse("shop/attributes_edit", $replace);
+		return tpl()->parse("manage_shop/attributes_edit", $replace);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class yf_manage_shop_atts {
 					cache()->refresh("dynamic_fields_info");
 				}
 
-				return js_redirect("./?object=shop&action=manage_attributes");
+				return js_redirect("./?object=manage_shop&action=manage_attributes");
 			}
 		}
 		
@@ -139,12 +139,12 @@ class yf_manage_shop_atts {
 			"value_list"	=> _prepare_html(implode("\n", (array)unserialize($A["value_list"]))),
 			"default_value"	=> _prepare_html($A["default_value"]),
 			"order"			=> $A["order"],
-			"back_url"		=> "./?object=shop&action=manage_attributes",
+			"back_url"		=> "./?object=manage_shop&action=manage_attributes",
 			"active"		=> 1,
-			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$A["id"],
+			"form_action"	=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$A["id"],
 			"error"			=> _e(),
 		);
-		return tpl()->parse("shop/attributes_edit", $replace);
+		return tpl()->parse("manage_shop/attributes_edit", $replace);
 	}
 
 	/**

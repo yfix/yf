@@ -31,12 +31,12 @@ class yf_manage_shop_reports {
 		$replace = array(
 			"items"			=>	$items,
 			"active"		=>	$active,
-			"viewed_url"	=> "./?object=shop&action=show_reports&id=viewed",
-			"sales_url"		=> "./?object=shop&action=show_reports&id=sales",
-			"purchased_url"	=> "./?object=shop&action=show_reports&id=purchased",
+			"viewed_url"	=> "./?object=manage_shop&action=show_reports&id=viewed",
+			"sales_url"		=> "./?object=manage_shop&action=show_reports&id=sales",
+			"purchased_url"	=> "./?object=manage_shop&action=show_reports&id=purchased",
 			
 		);
-		return tpl()->parse("shop/report_main", $replace);
+		return tpl()->parse("manage_shop/report_main", $replace);
 	}
 	
 	
@@ -59,15 +59,15 @@ class yf_manage_shop_reports {
 				"viewed"	=> _prepare_html($v["viewed"]),
 				"percent"	=> $percent,
 			);
-			$items .= tpl()->parse("shop/item_reports_viewed", $replace2); 
+			$items .= tpl()->parse("manage_shop/item_reports_viewed", $replace2); 
 		}
 		$replace = array(
 			"items"		=> $items,
 			"pages"		=> $pages,
 			"total"		=> intval($total),
-			"sort_url"	=> "./?object=shop&action=sort",
+			"sort_url"	=> "./?object=manage_shop&action=sort",
 		);
-		return tpl()->parse("shop/reports_viewed", $replace);
+		return tpl()->parse("manage_shop/reports_viewed", $replace);
 	}
 	
 	function sort() {
@@ -93,7 +93,7 @@ class yf_manage_shop_reports {
 				"viewed"	=> _prepare_html($v["viewed"]),
 				"percent"	=> $percent,
 			);
-			$items .= tpl()->parse("shop/item_reports_viewed", $replace2); 
+			$items .= tpl()->parse("manage_shop/item_reports_viewed", $replace2); 
 		}
 		echo $items;
 		
@@ -134,16 +134,16 @@ class yf_manage_shop_reports {
 				"viewed"		=> $quantity,
 				"percent"		=> module('manage_shop')->_format_price($sum),
 			);
-			$items .= tpl()->parse("shop/item_reports_viewed", $replace2);  
+			$items .= tpl()->parse("manage_shop/item_reports_viewed", $replace2);  
 		}
 		$replace = array(
 			"items"		=> $items,
 			"pages"	=> $pages,
 			"total"		=> intval($total),
 			"filter"		=> module('manage_shop')->USE_FILTER ? $this->_show_filter() : "",
-			"sort_url"	=> "./?object=shop&action=show_reports_purchased",
+			"sort_url"	=> "./?object=manage_shop&action=show_reports_purchased",
 		);
-		return tpl()->parse("shop/reports_product_purchased", $replace);
+		return tpl()->parse("manage_shop/reports_product_purchased", $replace);
 	}
 	
 	// Prepare required data for filter
@@ -233,8 +233,8 @@ class yf_manage_shop_reports {
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
-			"save_action"	=> "./?object=shop&action=save_filter_report"._add_get(),
-			"clear_url"		=> "./?object=shop&action=clear_filter_report"._add_get(),
+			"save_action"	=> "./?object=manage_shop&action=save_filter_report"._add_get(),
+			"clear_url"		=> "./?object=manage_shop&action=clear_filter_report"._add_get(),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -244,7 +244,7 @@ class yf_manage_shop_reports {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse("shop/filter_report", $replace);
+		return tpl()->parse("manage_shop/filter_report", $replace);
 	}
 
 	// Filter save method
@@ -267,7 +267,7 @@ class yf_manage_shop_reports {
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=shop&action=show_reports&id=purchased"._add_get());
+			js_redirect("./?object=manage_shop&action=show_reports&id=purchased"._add_get());
 		}
 	}
 	

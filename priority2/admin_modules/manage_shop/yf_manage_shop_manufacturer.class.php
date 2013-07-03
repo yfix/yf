@@ -49,9 +49,9 @@ class yf_manage_shop_manufacturer {
 				"order_id"			=> $v["id"],
 				"name"				=> $v["name"],
 				"sort_order"		=> $v["sort_order"],
-				"view_url"			=> "./?object=shop&action=view_manufacturer&id=".$v["id"],
-				"delete_url"		=> "./?object=shop&action=delete_manufacturer&id=".$v["id"],
-				"edit_url"			=> "./?object=shop&action=edit_manufacturer&id=".$v["id"],
+				"view_url"			=> "./?object=manage_shop&action=view_manufacturer&id=".$v["id"],
+				"delete_url"		=> "./?object=manage_shop&action=delete_manufacturer&id=".$v["id"],
+				"edit_url"			=> "./?object=manage_shop&action=edit_manufacturer&id=".$v["id"],
 			);
 		}
 		$replace = array(
@@ -59,9 +59,9 @@ class yf_manage_shop_manufacturer {
 			"pages"			=> $pages,
 			"total"			=> intval($total),
 			"filter"		=> module('manage_shop')->USE_FILTER ? module('manage_shop')->_show_filter() : "",
-			"add_url"		=> "./?object=shop&action=add_manufacturer",
+			"add_url"		=> "./?object=manage_shop&action=add_manufacturer",
 		);
-		return tpl()->parse("shop/manufacturer_main", $replace); 
+		return tpl()->parse("manage_shop/manufacturer_main", $replace); 
 	}
 
 	/**
@@ -91,7 +91,7 @@ class yf_manage_shop_manufacturer {
 					$this->_upload_image ($man_id, $url);
 				} 
 			}
-			return js_redirect("./?object=shop&action=show_manufacturer");
+			return js_redirect("./?object=manage_shop&action=show_manufacturer");
 		}
 
 		$thumb_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
@@ -107,12 +107,12 @@ class yf_manage_shop_manufacturer {
 			"sort_order"		=> "",
 			"desc"				=> "",
 			"thumb_path"		=> "",
-			"delete_image_url"	=> "./?object=shop&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=shop&action=show_manufacturer",
+			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=manage_shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=manage_shop&action=show_manufacturer",
 			
 		);
-		return tpl()->parse("shop/manufacturer_edit", $replace);
+		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
 	}
 
 
@@ -150,7 +150,7 @@ class yf_manage_shop_manufacturer {
 					$this->_upload_image ($man_id, $url);
 				} 
 			}
-			return js_redirect("./?object=shop&action=show_manufacturer");
+			return js_redirect("./?object=manage_shop&action=show_manufacturer");
 		}
 
 		$thumb_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
@@ -166,12 +166,12 @@ class yf_manage_shop_manufacturer {
 			"sort_order"		=> $manufacturer_info["sort_order"],
 			"desc"				=> $manufacturer_info["desc"],
 			"thumb_path"		=> $thumb_path,
-			"delete_image_url"	=> "./?object=shop&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=shop&action=show_manufacturer",
+			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=manage_shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=manage_shop&action=show_manufacturer",
 			
 		);
-		return tpl()->parse("shop/manufacturer_edit", $replace);
+		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
 	}
 
 	/**
@@ -201,12 +201,12 @@ class yf_manage_shop_manufacturer {
 			"desc"				=> _prepare_html($manufacturer_info["desc"]),
 			"thumb_path"		=> $thumb_path,
 			"img_path"			=> $img_path,
-			"delete_image_url"	=> "./?object=shop&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=shop&action=show_manufacturer",
+			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=manage_shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=manage_shop&action=show_manufacturer",
 			
 		);
-		return tpl()->parse("shop/manufacturer_view", $replace);
+		return tpl()->parse("manage_shop/manufacturer_view", $replace);
 	}
 	
 	/**
@@ -228,7 +228,7 @@ class yf_manage_shop_manufacturer {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
 		} else {
-			return js_redirect("./?object=shop&action=show_manufacturer");
+			return js_redirect("./?object=manage_shop&action=show_manufacturer");
 		}
 	}
 	

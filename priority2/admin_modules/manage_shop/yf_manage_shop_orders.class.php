@@ -38,8 +38,8 @@ class yf_manage_shop_orders {
 				"user_link"		=> _profile_link($v["user_id"]),
 				"user_name"	=> _display_name($user_infos[$v["user_id"]]),
 				"status"			=> $v["status"],
-				"delete_url"		=> "./?object=shop&action=delete_order&id=".$v["id"],
-				"view_url"			=> "./?object=shop&action=view_order&id=".$v["id"],
+				"delete_url"		=> "./?object=manage_shop&action=delete_order&id=".$v["id"],
+				"view_url"			=> "./?object=manage_shop&action=view_order&id=".$v["id"],
 			);
 		}
 		$replace = array(
@@ -49,7 +49,7 @@ class yf_manage_shop_orders {
 			"total"		=> intval($total),
 			"filter"		=> module('manage_shop')->USE_FILTER ? $this->_show_filter() : "",
 		);
-		return tpl()->parse("shop/order_main", $replace);
+		return tpl()->parse("manage_shop/order_main", $replace);
 	}
 
 	/**
@@ -70,7 +70,7 @@ class yf_manage_shop_orders {
 				"address"	=> _es($_POST["address"]),
 				"phone"	=> _es($_POST["phone"]),
 			), "`id`=".intval($_GET["id"]));
-			return js_redirect("./?object=shop&action=show_orders");
+			return js_redirect("./?object=manage_shop&action=show_orders");
 		}
 		$products_ids = array();
 		$Q = db()->query("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($order_info["id"]));
@@ -99,7 +99,7 @@ class yf_manage_shop_orders {
 				"price"			=> module('manage_shop')->_format_price($_info["sum"]),
 				"currency"	=> _prepare_html(module('manage_shop')->CURRENCY),
 				"quantity"		=> intval($_info["quantity"]),
-				"details_link"	=> process_url("./?object=shop&action=view&id=".$_product["id"]),
+				"details_link"	=> process_url("./?object=manage_shop&action=view&id=".$_product["id"]),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 			);
 			$total_price += $_info["price"] * $quantity;
@@ -107,7 +107,7 @@ class yf_manage_shop_orders {
 		$total_price = $order_info["total_sum"];
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
-			"form_action"		=> "./?object=shop&action=".$_GET["action"]."&id=".$_GET["id"],
+			"form_action"		=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$_GET["id"],
 			"order_id"				=> $order_info["id"],
 			"total_sum"			=> module('manage_shop')->_format_price($order_info["total_sum"]),
 			"user_link"			=> _profile_link($order_info["user_id"]),
@@ -119,11 +119,11 @@ class yf_manage_shop_orders {
 			"pay_type"			=> module('manage_shop')->_pay_types[$order_info["pay_type"]],
 			"date"					=> _format_date($order_info["date"], "long"),
 			"status_box"			=> module('manage_shop')->_box("status", $order_info["status"]),
-			"back_url"				=> "./?object=shop&action=show_orders",
-			"print_url"				=> "./?object=shop&action=show_print&id=".$order_info["id"],
+			"back_url"				=> "./?object=manage_shop&action=show_orders",
+			"print_url"				=> "./?object=manage_shop&action=show_print&id=".$order_info["id"],
 			
 		));
-		return tpl()->parse("shop/order_view", $replace);
+		return tpl()->parse("manage_shop/order_view", $replace);
 	}
 
 	/**
@@ -204,10 +204,10 @@ class yf_manage_shop_orders {
 			"total_price"			=> module('manage_shop')->_format_price($total_price),
 			"order_no"				=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
 			"hash"						=> _prepare_html($order_info["hash"]),
-			"back_link"				=> "./?object=shop&action=show_orders",
+			"back_link"				=> "./?object=manage_shop&action=show_orders",
 			
 		));
-		return tpl()->parse("shop/order_print_invoice", $replace);
+		return tpl()->parse("manage_shop/order_print_invoice", $replace);
 	}
 
 	/**
@@ -228,7 +228,7 @@ class yf_manage_shop_orders {
 			main()->NO_GRAPHICS = true;
 			$_GET["id"];
 		} else {
-			return js_redirect("./?object=shop&action=show_orders");
+			return js_redirect("./?object=manage_shop&action=show_orders");
 		}
 	}
 
@@ -329,8 +329,8 @@ class yf_manage_shop_orders {
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
-			"save_action"	=> "./?object=shop&action=save_filter_order"._add_get(),
-			"clear_url"		=> "./?object=shop&action=clear_filter_order"._add_get(),
+			"save_action"	=> "./?object=manage_shop&action=save_filter_order"._add_get(),
+			"clear_url"		=> "./?object=manage_shop&action=clear_filter_order"._add_get(),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -339,7 +339,7 @@ class yf_manage_shop_orders {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse("shop/filter_order", $replace);
+		return tpl()->parse("manage_shop/filter_order", $replace);
 	}
 
 	// Filter save method
@@ -362,7 +362,7 @@ class yf_manage_shop_orders {
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=shop&action=show_orders"._add_get());
+			js_redirect("./?object=manage_shop&action=show_orders"._add_get());
 		}
 	}
 	
