@@ -474,7 +474,7 @@ class yf_manage_shop {
 			"category_box"			=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
 			"category_select_box"	=> common()->select_box("category_select", $this->_cats_for_select, $cat_id, false, 2),
 			"featured_box"			=> $this->_box("featured", $product_info["featured"]),
-			"form_action"			=> "./?object=manage_shop&action=edit&id=".$product_info["id"],
+			"form_action"			=> "./?object=manage_shop&action=product_edit&id=".$product_info["id"],
 			"back_url"				=> "./?object=manage_shop&action=products_manage",
 			"image"					=> $items,
 			"categories_url"		=> "./?object=category_editor&action=show_items&id=shop_cats",
@@ -656,6 +656,55 @@ class yf_manage_shop {
 		$this->_image_delete($_GET["id"], $_GET["name"], $_GET["key"]);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
+	
+	/**
+	*/
+	function show_product_by_category ($cat = "") {
+		main()->NO_GRAPHICS = true;
+		$cat_id =  $_GET["cat_id"];
+		$sql1 = "SELECT `product_id` FROM `".db('shop_product_to_category')."` WHERE `category_id` =". $cat_id ;
+			$products = db()->query($sql1);
+			while ($A = db()->fetch_assoc($products)) {
+				$product_info .= $A["product_id"].",";
+			}	
+			$product_info = rtrim($product_info, ",");
+			
+		$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1'  AND `id` IN (".$product_info .")  ORDER BY `name`";
+		$product = db()->query_fetch_all($sql);
+		$products = array();
+		foreach ((array)$product as $v) {
+			$products []  = array (
+				"product_id"	=> $v["id"],
+				"name"			=> $v["name"],
+			);
+		}
+		echo  json_encode($products);
+	}	
+	
+	/**
+	*/
+	function get_product_related ($id = "") {
+		$product_related_data = array();
+		$sql = "SELECT * FROM `".db('shop_product_related') . "` WHERE `product_id` = ". $id;
+		$product = db()->query($sql);
+		while ($A = db()->fetch_assoc($product)){
+			$product_related_id .= $A['related_id'].",";
+		}
+		$product_related_id = rtrim($product_related_id, ",");
+		if ($product_related_id != "") {
+			$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1'  AND `id` IN (".$product_related_id .")  ORDER BY `name`";
+			$product = db()->query_fetch_all($sql);
+			$products = array();
+			foreach ((array)$product as $v) {
+				$product_related_data[] = array(
+					"related_id"=> $v["id"],
+					"name"		=> $v["name"],
+				);
+			}
+		}
+		return $product_related_data;
+		
+	}	
 
 	/**
 	*/
@@ -734,55 +783,6 @@ class yf_manage_shop {
 	function delete_order() {
 		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->delete_order();
 	}
-	
-	/**
-	*/
-	function show_product_by_category ($cat = "") {
-		main()->NO_GRAPHICS = true;
-		$cat_id =  $_GET["cat_id"];
-		$sql1 = "SELECT `product_id` FROM `".db('shop_product_to_category')."` WHERE `category_id` =". $cat_id ;
-			$products = db()->query($sql1);
-			while ($A = db()->fetch_assoc($products)) {
-				$product_info .= $A["product_id"].",";
-			}	
-			$product_info = rtrim($product_info, ",");
-			
-		$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1'  AND `id` IN (".$product_info .")  ORDER BY `name`";
-		$product = db()->query_fetch_all($sql);
-		$products = array();
-		foreach ((array)$product as $v) {
-			$products []  = array (
-				"product_id"	=> $v["id"],
-				"name"			=> $v["name"],
-			);
-		}
-		echo  json_encode($products);
-	}	
-	
-	/**
-	*/
-	function get_product_related ($id = "") {
-		$product_related_data = array();
-		$sql = "SELECT * FROM `".db('shop_product_related') . "` WHERE `product_id` = ". $id;
-		$product = db()->query($sql);
-		while ($A = db()->fetch_assoc($product)){
-			$product_related_id .= $A['related_id'].",";
-		}
-		$product_related_id = rtrim($product_related_id, ",");
-		if ($product_related_id != "") {
-			$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1'  AND `id` IN (".$product_related_id .")  ORDER BY `name`";
-			$product = db()->query_fetch_all($sql);
-			$products = array();
-			foreach ((array)$product as $v) {
-				$product_related_data[] = array(
-					"related_id"=> $v["id"],
-					"name"		=> $v["name"],
-				);
-			}
-		}
-		return $product_related_data;
-		
-	}	
 	
 	/**
 	*/
