@@ -43,32 +43,14 @@ if (!function_exists('db')) {
 		return $tbl_name ? $GLOBALS['db']->_real_name($tbl_name) : $GLOBALS['db'];
 	}
 }
-if (!function_exists('db2')) {
-	function db2($tbl_name = "") {
-		if (!isset($GLOBALS['db2'])) { common()->db2_connect(); };
-		if (!is_object($GLOBALS['db2'])) { return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__); }
-		return $tbl_name ? $GLOBALS['db2']->_real_name($tbl_name) : $GLOBALS['db2'];
+if (!function_exists('db_master')) {
+	function db_master($tbl_name = "") {
+		return db($tbl_name);
 	}
 }
-if (!function_exists('db3')) {
-	function db3($tbl_name = "") {
-		if (!isset($GLOBALS['db3'])) { common()->db3_connect(); };
-		if (!is_object($GLOBALS['db3'])) { return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__); }
-		return $tbl_name ? $GLOBALS['db3']->_real_name($tbl_name) : $GLOBALS['db3'];
-	}
-}
-if (!function_exists('db4')) {
-	function db4($tbl_name = "") {
-		if (!isset($GLOBALS['db4'])) { common()->db4_connect(); };
-		if (!is_object($GLOBALS['db4'])) { return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__); }
-		return $tbl_name ? $GLOBALS['db4']->_real_name($tbl_name) : $GLOBALS['db4'];
-	}
-}
-if (!function_exists('db5')) {
-	function db5($tbl_name = "") {
-		if (!isset($GLOBALS['db5'])) { common()->db5_connect(); };
-		if (!is_object($GLOBALS['db5'])) { return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__); }
-		return $tbl_name ? $GLOBALS['db5']->_real_name($tbl_name) : $GLOBALS['db5'];
+if (!function_exists('db_slave')) {
+	function db_slave($tbl_name = "") {
+		return db($tbl_name);
 	}
 }
 // example: load("home_page", "framework")
@@ -109,14 +91,14 @@ if (!function_exists('_re')) {
 if (!function_exists('_ee')) {
 	function _ee() { return common()->_error_exists(); }
 }
-if (!function_exists('user')) {
-	function user($user_id, $fields = "full", $params = "", $return_sql = false) { $c = common(); return is_object($c) && method_exists($c, "user") ? $c->user($user_id, $fields, $params, $return_sql) : false; }
+if (!function_exists("user")) {
+	function user($user_id, $fields = "full", $params = "", $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, "user") ? $_common->user($user_id, $fields, $params, $return_sql) : false; }
 }
-if (!function_exists('update_user')) {
-	function update_user($user_id, $data = array(), $params = "", $return_sql = false) { $c = common(); return is_object($c) && method_exists($c, "update_user") ? $c->update_user($user_id, $data, $params, $return_sql) : false; }
+if (!function_exists("update_user")) {
+	function update_user($user_id, $data = array(), $params = "", $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, "update_user") ? $_common->update_user($user_id, $data, $params, $return_sql) : false; }
 }
-if (!function_exists('search_user')) {
-	function search_user($params = array(), $fields = array(), $return_sql = false) { $c = common(); return is_object($c) && method_exists($c, "search_user") ? $c->search_user($params, $fields, $return_sql) : false; }
+if (!function_exists("search_user")) {
+	function search_user($params = array(), $fields = array(), $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, "user") ? $_common->search_user($params, $fields, $return_sql) : false; }
 }
 if (!function_exists('_truncate')) {
 	function _truncate($string, $len, $wordsafe = false, $dots = false) { return _class("unicode_funcs", "classes/")->truncate_utf8($string, $len, $wordsafe, $dots); }
