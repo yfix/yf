@@ -120,14 +120,32 @@ class yf_manage_shop {
 		$replace = array(
 			"items"				=> $items,
 			"products_url"		=> "./?object=manage_shop&action=products_manage",
-			"manufacturer_url"	=> "./?object=manage_shop&action=show_manufacturer",
+			"manufacturer_url"	=> "./?object=manage_shop&action=manufacturers_manage",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
-			"attributes_url"	=> "./?object=manage_shop&action=manage_attributes", 
+			"attributes_url"	=> "./?object=manage_shop&action=attributes_manage", 
 			"orders_url"		=> "./?object=manage_shop&action=show_orders",
 			"reports_url"		=> "./?object=manage_shop&action=show_reports&id=viewed",
 			"settings_url"		=> "./?object=manage_shop&action=show_settings",
 		);
 		return tpl()->parse("manage_shop/home", $replace);
+	}
+
+	/**
+	*/
+	function statistic () {
+		$total_sum = db()->query_fetch("SELECT SUM(`total_sum`) FROM `".db('shop_orders')."`");
+		$total_order = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_orders')."`");
+		$total_prod = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_products')."`");
+		$total_order_pending = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_orders')."` WHERE `status` = 'pending'");
+		$total_sum_shipped = db()->query_fetch("SELECT SUM(`total_sum`) FROM `".db('shop_orders')."` WHERE `status` = 'shipped'");
+		$replace = array(
+			"summ"					=> $this->_format_price($total_sum["SUM(`total_sum`)"]),
+			"total_order"			=> intval($total_order["COUNT(*)"]),
+			"total_order_pending"	=> intval($total_order_pending["COUNT(*)"]),
+			"total_sum_shipped"		=> $this->_format_price($total_sum_shipped["SUM(`total_sum`)"]),
+			"total_prod"			=> intval($total_prod["COUNT(*)"]),
+		);
+		return tpl()->parse("manage_shop/stat_main", $replace);
 	}
 	
 	/**
@@ -201,7 +219,7 @@ class yf_manage_shop {
 			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"add_url"			=> "./?object=manage_shop&action=product_add",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=4",
-			"attributes_url"	=> "./?object=manage_shop&action=manage_attributes",
+			"attributes_url"	=> "./?object=manage_shop&action=attributes_manage",
 			"orders_url"		=> "./?object=manage_shop&action=show_orders",
 		);
 		return tpl()->parse("manage_shop/products_main", $replace);
@@ -295,9 +313,11 @@ class yf_manage_shop {
 			"dynamic_fields"	=> $fields,
 			"single_atts"		=> $single_atts,
 			"manufacturer_box"	=> common()->select_box("manufacturer", $this->_man_for_select, $man_id, false, 2),
-			"category_box"		=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
+			"category_box"		=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 ", false),
 			"form_action"		=> "./?object=manage_shop&action=product_add",
 			"back_url"			=> "./?object=manage_shop&action=products_manage",
+			"category_url"		=> "./?object=category_editor&action=show_items&id=shop_cats",
+			"manufacturer_url"	=> "./?object=manage_shop&action=manufacturers_manage",
 			"group_prices"		=> !empty($group_prices) ? $group_prices : "",
 		);
 		foreach ((array)$this->_boxes as $item_name => $v) {
@@ -457,7 +477,7 @@ class yf_manage_shop {
 			"form_action"			=> "./?object=manage_shop&action=edit&id=".$product_info["id"],
 			"back_url"				=> "./?object=manage_shop&action=products_manage",
 			"image"					=> $items,
-			"manage_attrs_url"		=> "./?object=manage_shop&action=manage_attributes",
+			"manage_attrs_url"		=> "./?object=manage_shop&action=attributes_manage",
 			"group_prices"			=> !empty($group_prices) ? $group_prices : "",
 			"link_get_product"		=>  process_url("./?object=manage_shop&action=show_product_by_category&cat_id="),
 			"product_related"		=>  $this->get_product_related($product_info["id"]),
@@ -556,24 +576,6 @@ class yf_manage_shop {
 
 	/**
 	*/
-	function statistic () {
-		$total_sum = db()->query_fetch("SELECT SUM(`total_sum`) FROM `".db('shop_orders')."`");
-		$total_order = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_orders')."`");
-		$total_prod = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_products')."`");
-		$total_order_pending = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_orders')."` WHERE `status` = 'pending'");
-		$total_sum_shipped = db()->query_fetch("SELECT SUM(`total_sum`) FROM `".db('shop_orders')."` WHERE `status` = 'shipped'");
-		$replace = array(
-			"summ"					=> $this->_format_price($total_sum["SUM(`total_sum`)"]),
-			"total_order"			=> intval($total_order["COUNT(*)"]),
-			"total_order_pending"	=> intval($total_order_pending["COUNT(*)"]),
-			"total_sum_shipped"		=> $this->_format_price($total_sum_shipped["SUM(`total_sum`)"]),
-			"total_prod"			=> intval($total_prod["COUNT(*)"]),
-		);
-		return tpl()->parse("manage_shop/stat_main", $replace);
-	}
-
-	/**
-	*/
 	function image_upload () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
@@ -661,7 +663,7 @@ class yf_manage_shop {
 	
 	/**
 	*/
-	function manage_orders() {
+	function orders_manage() {
 		return $this->show_orders();
 	}
 	
@@ -782,50 +784,50 @@ class yf_manage_shop {
 	
 	/**
 	*/
-	function show_manufacturer () {
-		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->show_manufacturer();
+	function manufacturers_manage () {
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->manufacturers_manage();
 	}	
 	
 	/**
 	*/
-	function edit_manufacturer () {
-		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->edit_manufacturer();
+	function manufacturer_edit () {
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->manufacturer_edit();
 	}	
 	
 	/**
 	*/
-	function add_manufacturer () {
-		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->add_manufacturer();
+	function manufacturer_add () {
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->manufacturer_add();
 	}	
 	
 	/**
 	*/
-	function view_manufacturer () {
-		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->view_manufacturer();
+	function manufacturer_view () {
+		return _class('manage_shop_manufacturer', 'admin_modules/manage_shop/')->manufacturer_view();
 	}	
 	
 	/**
 	*/
-	function manage_attributes () {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->manage_attributes();
+	function attributes_manage () {
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->attributes_manage();
 	}	
 
 	/**
 	*/
-	function add_attribute () {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->add_attribute();
+	function attribute_add () {
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->attribute_add();
 	}
 
 	/**
 	*/
-	function edit_attribute () {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->edit_attribute();
+	function attribute_edit () {
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->attribute_edit();
 	}
 
 	/**
 	*/
-	function delete_attribute () {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->delete_attribute();
+	function attribute_delete () {
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->attribute_delete();
 	}
 
 	/**
@@ -837,31 +839,31 @@ class yf_manage_shop {
 	/**
 	*/
 	function _attributes_html ($object_id = 0, $only_selected = false) {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_attributes_html($object_id, $only_selected);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->_attributes_html($object_id, $only_selected);
 	}
 
 	/**
 	*/
 	function _attributes_save ($object_id = 0) {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_attributes_save($object_id);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->_attributes_save($object_id);
 	}
 
 	/**
 	*/
 	function _get_attributes ($category_id = 0) {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_get_attributes($category_id);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->_get_attributes($category_id);
 	}
 
 	/**
 	*/
 	function _get_products_attributes($products_ids = array()) {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_get_products_attributes($products_ids);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->_get_products_attributes($products_ids);
 	}
 
 	/**
 	*/
 	function _get_attributes_values ($category_id = 0, $object_id = 0, $fields_ids = 0) {
-		return _class('manage_shop_atts', 'admin_modules/manage_shop/')->_get_attributes_values($category_id, $object_id, $fields_ids);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->_get_attributes_values($category_id, $object_id, $fields_ids);
 	}
 
 	/**
@@ -975,11 +977,11 @@ class yf_manage_shop {
 			),
 			array(
 				"name"	=> "Manage orders",
-				"url"	=> "./?object=manage_shop&action=manage_orders",
+				"url"	=> "./?object=manage_shop&action=orders_manage",
 			),
 			array(
 				"name"	=> "Manage attributes",
-				"url"	=> "./?object=manage_shop&action=manage_attributes",
+				"url"	=> "./?object=manage_shop&action=attributes_manage",
 			),
 		);
 		return $menu;	

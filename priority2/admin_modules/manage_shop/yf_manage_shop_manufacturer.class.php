@@ -29,7 +29,7 @@ class yf_manage_shop_manufacturer {
 	/**
 	* Show manufacturer
 	*/
-	function show_manufacturer() {
+	function manufacturers_manage() {
 	
 		$sql = "SELECT * FROM `".db('shop_manufacturer')."`";
 		$filter_sql = module('manage_shop')->USE_FILTER ? module('manage_shop')->_create_filter_sql() : "";
@@ -49,9 +49,9 @@ class yf_manage_shop_manufacturer {
 				"order_id"			=> $v["id"],
 				"name"				=> $v["name"],
 				"sort_order"		=> $v["sort_order"],
-				"view_url"			=> "./?object=manage_shop&action=view_manufacturer&id=".$v["id"],
+				"view_url"			=> "./?object=manage_shop&action=manufacturer_view&id=".$v["id"],
 				"delete_url"		=> "./?object=manage_shop&action=delete_manufacturer&id=".$v["id"],
-				"edit_url"			=> "./?object=manage_shop&action=edit_manufacturer&id=".$v["id"],
+				"edit_url"			=> "./?object=manage_shop&action=manufacturer_edit&id=".$v["id"],
 			);
 		}
 		$replace = array(
@@ -59,7 +59,7 @@ class yf_manage_shop_manufacturer {
 			"pages"			=> $pages,
 			"total"			=> intval($total),
 			"filter"		=> module('manage_shop')->USE_FILTER ? module('manage_shop')->_show_filter() : "",
-			"add_url"		=> "./?object=manage_shop&action=add_manufacturer",
+			"add_url"		=> "./?object=manage_shop&action=manufacturer_add",
 		);
 		return tpl()->parse("manage_shop/manufacturer_main", $replace); 
 	}
@@ -67,7 +67,7 @@ class yf_manage_shop_manufacturer {
 	/**
 	*add manufacturer
 	*/
-	function add_manufacturer() {
+	function manufacturer_add() {
 		if (!empty($_POST)) {
 
 			if (!$_POST["name"]) {
@@ -91,7 +91,7 @@ class yf_manage_shop_manufacturer {
 					$this->_upload_image ($man_id, $url);
 				} 
 			}
-			return js_redirect("./?object=manage_shop&action=show_manufacturer");
+			return js_redirect("./?object=manage_shop&action=manufacturers_manage");
 		}
 
 		$thumb_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
@@ -108,8 +108,8 @@ class yf_manage_shop_manufacturer {
 			"desc"				=> "",
 			"thumb_path"		=> "",
 			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=manage_shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=manage_shop&action=show_manufacturer",
+			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=manage_shop&action=manufacturers_manage",
 			
 		);
 		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
@@ -120,7 +120,7 @@ class yf_manage_shop_manufacturer {
 	/**
 	*edit manufacturer
 	*/
-	function edit_manufacturer() {
+	function manufacturer_edit() {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
@@ -150,7 +150,7 @@ class yf_manage_shop_manufacturer {
 					$this->_upload_image ($man_id, $url);
 				} 
 			}
-			return js_redirect("./?object=manage_shop&action=show_manufacturer");
+			return js_redirect("./?object=manage_shop&action=manufacturers_manage");
 		}
 
 		$thumb_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
@@ -167,8 +167,8 @@ class yf_manage_shop_manufacturer {
 			"desc"				=> $manufacturer_info["desc"],
 			"thumb_path"		=> $thumb_path,
 			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=manage_shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=manage_shop&action=show_manufacturer",
+			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=manage_shop&action=manufacturers_manage",
 			
 		);
 		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
@@ -177,7 +177,7 @@ class yf_manage_shop_manufacturer {
 	/**
 	*view manufacturer
 	*/
-	function view_manufacturer() {
+	function manufacturer_view() {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
@@ -202,8 +202,8 @@ class yf_manage_shop_manufacturer {
 			"thumb_path"		=> $thumb_path,
 			"img_path"			=> $img_path,
 			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=manage_shop&action=edit_manufacturer&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=manage_shop&action=show_manufacturer",
+			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=manage_shop&action=manufacturers_manage",
 			
 		);
 		return tpl()->parse("manage_shop/manufacturer_view", $replace);
@@ -228,7 +228,7 @@ class yf_manage_shop_manufacturer {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
 		} else {
-			return js_redirect("./?object=manage_shop&action=show_manufacturer");
+			return js_redirect("./?object=manage_shop&action=manufacturers_manage");
 		}
 	}
 	
