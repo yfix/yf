@@ -193,14 +193,14 @@ class yf_tpl {
 	public $_global_tags	   = array();
 	/** @var STPL location codes (binary for less memory) */
 	public $_stpl_loc_codes = array(
-		"site"			  => 1,
-		"project"		   => 2,
-		"framework"		 => 4,
+		"site"				=> 1,
+		"project"			=> 2,
+		"framework"			=> 4,
 		"framework_user"	=> 8,
-		"user_section"	  => 16,
+		"user_section"		=> 16,
 		"inherit_project"   => 32,
-		"lang_project"	  => 64,
-		"inherit_project2"  => 128,
+		"lang_project"		=> 64,
+		"inherit_project2"	=> 128,
 	);
 
 	/**
@@ -336,15 +336,18 @@ class yf_tpl {
 	* @return   void
 	*/
 	function _init_global_tags () {
-		$this->_global_tags += array(
+		$data = array(
 			"is_logged_in"  => intval((bool) main()->USER_ID),
-			"is_spider"	 => (int)conf("IS_SPIDER"),
-			"is_https"	  => isset($_SERVER["HTTPS"]) || isset($_SERVER["SSL_PROTOCOL"]) ? 1 : 0,
-			"site_id"	   => (int)conf('SITE_ID'),
-			"lang_id"	   => conf('language'),
-			"debug_mode"	=> (int)((bool)DEBUG_MODE),
-			"tpl_path"	  => MEDIA_PATH. $this->TPL_PATH,
+			"is_spider"     => (int)conf("IS_SPIDER"),
+			"is_https"      => isset($_SERVER["HTTPS"]) || isset($_SERVER["SSL_PROTOCOL"]) ? 1 : 0,
+			"site_id"       => (int)conf('SITE_ID'),
+			"lang_id"       => conf('language'),
+			"debug_mode"    => (int)((bool)DEBUG_MODE),
+			"tpl_path"      => MEDIA_PATH. $this->TPL_PATH,
 		);
+		foreach ($data as $k => $v) {
+			$this->_global_tags[$k] = $v;
+		}
 	}
 
 	/**
