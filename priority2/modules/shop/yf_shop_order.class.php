@@ -8,15 +8,6 @@
 * @version		1.0
 */
 class yf_shop_order {
-
-	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->SHOP_OBJ		= module(SHOP_CLASS_NAME);
-		
-	}
 	
 	function _show_orders() {
 		if (!$_SESSION ["user_id"]) {
@@ -29,10 +20,10 @@ class yf_shop_order {
 				
 			}
 			$items[] = array(
-				"order_id"			=> $_POST["order_id"],
-				"email"				=> $_POST["email"],
-				"form_action"			=> "./?object=".$_GET["object"]."&action=show_orders",
-				"back_link"				=> "./?object=".SHOP_CLASS_NAME,
+				"order_id"		=> $_POST["order_id"],
+				"email"			=> $_POST["email"],
+				"form_action"	=> "./?object=shop&action=show_orders",
+				"back_link"		=> "./?object=shop",
 			);
 		} else {
 			$sql = "SELECT * FROM `".db('shop_orders')."` WHERE `user_id` = ".$_SESSION ["user_id"];
@@ -48,30 +39,30 @@ class yf_shop_order {
 			}
 			foreach ((array)$orders_info as $v){
 				if ($v["status"] == "pending" or $v["status"] == "pending payment" ){
-					$del = "./?object=".$_GET["object"]."&action=delete_order&id=".$v["id"];
+					$del = "./?object=shop&action=delete_order&id=".$v["id"];
 				} else {
 					$del = "";
 				}
 				$items[] = array(
-					"order_id"			=> $v["id"],
-					"date"					=> _format_date($v["date"], "long"),
-					"sum"					=> $this->SHOP_OBJ->_format_price($v["total_sum"]),
-					"user_link"			=> _profile_link($v["user_id"]),
-					"user_name"		=> _display_name($user_infos[$v["user_id"]]),
-					"status"				=> $v["status"],
-					"delete_url"		=> $del,
-					"view_url"			=> "./?object=".$_GET["object"]."&action=view_order&id=".$v["id"],
+					"order_id"	=> $v["id"],
+					"date"		=> _format_date($v["date"], "long"),
+					"sum"		=> $this->SHOP_OBJ->_format_price($v["total_sum"]),
+					"user_link"	=> _profile_link($v["user_id"]),
+					"user_name"	=> _display_name($user_infos[$v["user_id"]]),
+					"status"	=> $v["status"],
+					"delete_url"=> $del,
+					"view_url"	=> "./?object=shop&action=view_order&id=".$v["id"],
 				);
 			}
 		}
 		$replace = array(
-				"error_message"	=> _e(),
-				"items"		=> (array)$items,
-				"pages"		=> $pages,
-				"total"			=> intval($total),
-				"filter"			=> $this->SHOP_OBJ->USE_FILTER ? $this->SHOP_OBJ->_show_filter() : "",
-			);
-		return tpl()->parse(SHOP_CLASS_NAME."/order_show", $replace);
+			"error_message"	=> _e(),
+			"items"			=> (array)$items,
+			"pages"			=> $pages,
+			"total"			=> intval($total),
+			"filter"		=> $this->SHOP_OBJ->USE_FILTER ? $this->SHOP_OBJ->_show_filter() : "",
+		);
+		return tpl()->parse("shop/order_show", $replace);
 	}
 
 	/**
@@ -114,7 +105,7 @@ class yf_shop_order {
 			db()->UPDATE(db('shop_orders'), array(
 				"status"	=> _es($_POST["status"]),
 			), "`id`=".intval($_GET["id"]));
-			return js_redirect("./?object=".$_GET["object"]."&action=show_orders");
+			return js_redirect("./?object=shop&action=show_orders");
 		}
 
 		$products_ids = array();
@@ -146,7 +137,7 @@ class yf_shop_order {
 				"price"				=> $this->SHOP_OBJ->_format_price($_info["sum"]),
 				"currency"		=> _prepare_html($this->SHOP_OBJ->CURRENCY),
 				"quantity"		=> intval($_info["quantity"]),
-				"details_link"	=> process_url("./?object=".$_GET["object"]."&action=view&id=".$_product["id"]),
+				"details_link"	=> process_url("./?object=shop&action=view&id=".$_product["id"]),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 			);
 			$total_price += $_info["price"] * $quantity;
@@ -155,7 +146,7 @@ class yf_shop_order {
 
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
-			"form_action"			=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
+			"form_action"			=> "./?object=shop&action=".$_GET["action"]."&id=".$_GET["id"],
 			"order_id"				=> $order_info["id"],
 			"total_sum"				=> $this->SHOP_OBJ->_format_price($order_info["total_sum"]),
 			"user_link"				=> _profile_link($order_info["user_id"]),
@@ -167,9 +158,9 @@ class yf_shop_order {
 			"pay_type"				=> $this->SHOP_OBJ->_pay_types[$order_info["pay_type"]],
 			"date"						=> _format_date($order_info["date"], "long"),
 			"status_box"			=> $this->SHOP_OBJ->_statuses[$order_info["status"]],
-			"back_url"				=> "./?object=".$_GET["object"]."&action=show_orders",
+			"back_url"				=> "./?object=shop&action=show_orders",
 		));
-		return tpl()->parse($_GET["object"]."/order_view", $replace);
+		return tpl()->parse("shop/order_view", $replace);
 	}
 
 	/**
@@ -191,7 +182,7 @@ class yf_shop_order {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
 		} else {
-			return js_redirect("./?object=".$_GET["object"]."&action=show_orders");
+			return js_redirect("./?object=shop&action=show_orders");
 		}
 	}
 
@@ -236,10 +227,10 @@ class yf_shop_order {
 				"price"					=> $this->SHOP_OBJ->_format_price($price),
 				"currency"			=> _prepare_html($this->SHOP_OBJ->CURRENCY),
 				"quantity"			=> intval($quantity),
-				"details_link"		=> process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
+				"details_link"		=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"			=> _prepare_html($this->SHOP_OBJ->_shop_cats[$_info["cat_id"]]),
-				"cat_url"				=> process_url("./?object=".$_GET["object"]."&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_info["cat_id"]]['url'])),
+				"cat_url"				=> process_url("./?object=shop&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_info["cat_id"]]['url'])),
 			);
 			$total_price += $price * $quantity;
 		}
@@ -248,11 +239,11 @@ class yf_shop_order {
 			"products"		=> $products,
 			"total_price"	=> $this->SHOP_OBJ->_format_price($total_price),
 			"currency"		=> _prepare_html($this->SHOP_OBJ->CURRENCY),
-			"back_link"		=> "./?object=".SHOP_CLASS_NAME."&action=cart",
-			"next_link"		=> "./?object=".SHOP_CLASS_NAME."&action=order&id=delivery",
+			"back_link"		=> "./?object=shop&action=cart",
+			"next_link"		=> "./?object=shop&action=order&id=delivery",
 			"cats_block"	=> $this->SHOP_OBJ->_show_shop_cats(),
 		);
-		return tpl()->parse(SHOP_CLASS_NAME."/order_".$SELF_METHOD_ID, $replace);
+		return tpl()->parse("shop/order_".$SELF_METHOD_ID, $replace);
 	}
 
 	/**
@@ -290,13 +281,13 @@ class yf_shop_order {
 		$SELF_METHOD_ID = substr(__FUNCTION__, strlen("_order_step_"));
 
 		$replace = my_array_merge((array)$replace, array(
-			"form_action"	=> "./?object=".SHOP_CLASS_NAME."&action=".$_GET["action"]."&id=".$SELF_METHOD_ID,
+			"form_action"	=> "./?object=shop&action=".$_GET["action"]."&id=".$SELF_METHOD_ID,
 			"error_message"	=> _e(),
 			"ship_type_box"	=> $this->SHOP_OBJ->_box("ship_type", $force_ship_type ? $force_ship_type : $_POST["ship_type"]),
-			"back_link"				=> "./?object=".SHOP_CLASS_NAME."&action=order",
+			"back_link"				=> "./?object=shop&action=order",
 			"cats_block"			=> $this->SHOP_OBJ->_show_shop_cats(),
 		));
-		return tpl()->parse(SHOP_CLASS_NAME."/order_delivery2", $replace);
+		return tpl()->parse("shop/order_delivery2", $replace);
 	}
 
 	/**
@@ -378,14 +369,14 @@ class yf_shop_order {
 		$hidden_fields .= $this->SHOP_OBJ->_hidden_field('exp_date', $_POST['exp_date']);
 		$SELF_METHOD_ID = substr(__FUNCTION__, strlen("_order_step_"));
 		$replace = array(
-			"form_action"			=> "./?object=".SHOP_CLASS_NAME."&action=".$_GET["action"]."&id=".$SELF_METHOD_ID,
+			"form_action"			=> "./?object=shop&action=".$_GET["action"]."&id=".$SELF_METHOD_ID,
 			"error_message"	=> _e(),
 			"pay_type_box"		=> $this->SHOP_OBJ->_box("pay_type", $DATA["pay_type"]),
 			"hidden_fields"		=> $hidden_fields,
-			"back_link"				=> "./?object=".SHOP_CLASS_NAME."&action=order&id=delivery",
+			"back_link"				=> "./?object=shop&action=order&id=delivery",
 			"cats_block"			=> $this->SHOP_OBJ->_show_shop_cats(),
 		);
-		return tpl()->parse(SHOP_CLASS_NAME."/order_".$SELF_METHOD_ID, $replace);
+		return tpl()->parse("shop/order_".$SELF_METHOD_ID, $replace);
 	}
 
 	/**
@@ -514,7 +505,7 @@ class yf_shop_order {
 			// Do empty shopping cart
 			$cart = null;
 
-			return js_redirect("./?object=".SHOP_CLASS_NAME."&action=".$_GET["action"]."&id=finish&page=".intval($ORDER_ID));
+			return js_redirect("./?object=shop&action=".$_GET["action"]."&id=finish&page=".intval($ORDER_ID));
 		}
 		// Authorize.net payment type
 		if ($_POST["pay_type"] == 2) {
@@ -604,10 +595,10 @@ class yf_shop_order {
 				"sum"					=> $this->SHOP_OBJ->_format_price($_info["sum"]),
 				"currency"			=> _prepare_html($this->SHOP_OBJ->CURRENCY),
 				"quantity"			=> intval($_info["quantity"]),
-				"details_link"		=> process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
+				"details_link"		=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"			=> _prepare_html($this->SHOP_OBJ->_shop_cats[$_product["cat_id"]]),
-				"cat_url"				=> process_url("./?object=".$_GET["object"]."&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_product["cat_id"]]['url'])),
+				"cat_url"				=> process_url("./?object=shop&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_product["cat_id"]]['url'])),
 			);
 			$total_price += $price * $quantity;
 		}
@@ -635,10 +626,10 @@ class yf_shop_order {
 			"total_price"			=> $this->SHOP_OBJ->_format_price($total_price),
 			"order_no"				=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
 			"hash"						=> _prepare_html($order_info["hash"]),
-			"back_link"				=> "./?object=".SHOP_CLASS_NAME."&action=show",
+			"back_link"				=> "./?object=shop&action=show",
 			"cats_block"			=> $this->SHOP_OBJ->_show_shop_cats(),
 		));
-		return tpl()->parse(SHOP_CLASS_NAME."/order_".$SELF_METHOD_ID, $replace);
+		return tpl()->parse("shop/order_".$SELF_METHOD_ID, $replace);
 	}
 		
 	}
@@ -697,10 +688,10 @@ class yf_shop_order {
 				"sum"					=> $this->SHOP_OBJ->_format_price($_info["sum"]),
 				"currency"			=> _prepare_html($this->SHOP_OBJ->CURRENCY),
 				"quantity"			=> intval($_info["quantity"]),
-				"details_link"		=> process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
+				"details_link"		=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"			=> _prepare_html($this->SHOP_OBJ->_shop_cats[$_product["cat_id"]]),
-				"cat_url"				=> process_url("./?object=".$_GET["object"]."&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_product["cat_id"]]['url'])),
+				"cat_url"				=> process_url("./?object=shop&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_product["cat_id"]]['url'])),
 			);
 			$total_price += $price * $quantity;
 		}
@@ -714,28 +705,27 @@ class yf_shop_order {
 		$order_info = my_array_merge($this->SHOP_OBJ->COMPANY_INFO, $order_info);
 		$replace2 = my_array_merge($order_info ,array(
 			"id"		=> $_GET["id"],
-			"products"		=> $products,
-			"ship_cost"		=> $this->SHOP_OBJ->_format_price(0),
-			"total_cost"		=> $this->SHOP_OBJ->_format_price($total_price),
-			"password"		=> "", // Security!
+			"products"	=> $products,
+			"ship_cost"	=> $this->SHOP_OBJ->_format_price(0),
+			"total_cost"=> $this->SHOP_OBJ->_format_price($total_price),
+			"password"	=> "", // Security!
 		));
-		
-			// Prepare email template
-		$message = tpl()->parse(SHOP_CLASS_NAME."/invoice_email", $replace2);
+		// Prepare email template
+		$message = tpl()->parse("shop/invoice_email", $replace2);
 
 		common()->quick_send_mail($order_info["email"], "invoice #".$_GET["id"], $message); 
 
 		$SELF_METHOD_ID = substr(__FUNCTION__, strlen("_order_step_"));
 		$replace = my_array_merge($replace2, array(
 			"error_message"	=> _e(),
-			"products"				=> $products,
-			"ship_price"			=> $this->SHOP_OBJ->_format_price($this->SHOP_OBJ->_ship_types_names[$order_info["ship_type"]]),
-			"total_price"			=> $this->SHOP_OBJ->_format_price($total_price),
-			"order_no"				=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
-			"hash"						=> _prepare_html($order_info["hash"]),
-			"back_link"				=> "./?object=".SHOP_CLASS_NAME."&action=show",
-			"cats_block"			=> $this->SHOP_OBJ->_show_shop_cats(),
+			"products"		=> $products,
+			"ship_price"	=> $this->SHOP_OBJ->_format_price($this->SHOP_OBJ->_ship_types_names[$order_info["ship_type"]]),
+			"total_price"	=> $this->SHOP_OBJ->_format_price($total_price),
+			"order_no"		=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
+			"hash"			=> _prepare_html($order_info["hash"]),
+			"back_link"		=> "./?object=shop&action=show",
+			"cats_block"	=> $this->SHOP_OBJ->_show_shop_cats(),
 		));
-		return tpl()->parse(SHOP_CLASS_NAME."/order_".$SELF_METHOD_ID, $replace);
+		return tpl()->parse("shop/order_".$SELF_METHOD_ID, $replace);
 	}
 }

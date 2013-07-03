@@ -3,8 +3,8 @@
 <form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
 	{form_row("text","name")}
 	{form_row("text","model")}
-	{form_row("box","category_box","Category")}
-	{form_row("box","manufacturer_box","Manufacturer")}
+	{form_row("box_with_link","category_box","Category","categories_url")}
+	{form_row("box_with_link","manufacturer_box","Manufacturer","manufacturers_url")}
 	{form_row("box","featured_box","Is Featured")}
 	{form_row("textarea","desc","Description")}
 	{form_row("text","meta_desc")}

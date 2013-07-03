@@ -50,7 +50,7 @@ class yf_manage_shop_manufacturer {
 				"name"				=> $v["name"],
 				"sort_order"		=> $v["sort_order"],
 				"view_url"			=> "./?object=manage_shop&action=manufacturer_view&id=".$v["id"],
-				"delete_url"		=> "./?object=manage_shop&action=delete_manufacturer&id=".$v["id"],
+				"delete_url"		=> "./?object=manage_shop&action=manufacturer_delete&id=".$v["id"],
 				"edit_url"			=> "./?object=manage_shop&action=manufacturer_edit&id=".$v["id"],
 			);
 		}
@@ -83,7 +83,7 @@ class yf_manage_shop_manufacturer {
 					"desc"	=> _es($_POST["desc"]),
 					"sort_order"	=> intval($_POST["featured"]),
 				);
-				db()->UPDATE(db('shop_manufacturer'), $sql_array, "`id`=".$_GET["id"]);
+				db()->insert(db('shop_manufacturer'), $sql_array);
 				
 				// Image upload
 				if (!empty($_FILES)) {
@@ -108,15 +108,13 @@ class yf_manage_shop_manufacturer {
 			"desc"				=> "",
 			"thumb_path"		=> "",
 			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
-			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=manage_shop&action=manufacturer_add",
 			"back_url"			=> "./?object=manage_shop&action=manufacturers_manage",
 			
 		);
 		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
 	}
 
-
-	
 	/**
 	*edit manufacturer
 	*/
@@ -128,22 +126,19 @@ class yf_manage_shop_manufacturer {
 		$manufacturer_info = db()->query_fetch("SELECT * FROM `".db('shop_manufacturer')."` WHERE `id`=".$_GET["id"]);
 
 		if (!empty($_POST)) {
-
 			if (!$_POST["name"]) {
 				_re("Product name must be filled");
 			}
-
+			// Save data
 			if (!common()->_error_exists()) {
-				// Save data
 				$url			= _es(common()->_propose_url_from_name($_POST["name"]));
 				$sql_array = array(
-					"name"			=> _es($_POST["name"]),
-					"url"			=> $url,
-					"desc"	=> _es($_POST["desc"]),
-					"sort_order"	=> intval($_POST["featured"]),
+					"name"		=> _es($_POST["name"]),
+					"url"		=> $url,
+					"desc"		=> _es($_POST["desc"]),
+					"sort_order"=> intval($_POST["featured"]),
 				);
 				db()->UPDATE(db('shop_manufacturer'), $sql_array, "`id`=".$_GET["id"]);
-				
 				// Image upload
 				if (!empty($_FILES)) {
 					$man_id = $_GET["id"];
@@ -152,15 +147,12 @@ class yf_manage_shop_manufacturer {
 			}
 			return js_redirect("./?object=manage_shop&action=manufacturers_manage");
 		}
-
 		$thumb_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
 		if (!file_exists($thumb_path)) {
 			$thumb_path = "";
 		} else {
 			$thumb_path = $this->manufacturer_img_webdir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->THUMB_SUFFIX. ".jpg";
 		}
-
-		
 		$replace = array(
 			"name"				=> $manufacturer_info["name"],
 			"sort_order"		=> $manufacturer_info["sort_order"],
@@ -169,7 +161,6 @@ class yf_manage_shop_manufacturer {
 			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
 			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
 			"back_url"			=> "./?object=manage_shop&action=manufacturers_manage",
-			
 		);
 		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
 	}
@@ -212,7 +203,7 @@ class yf_manage_shop_manufacturer {
 	/**
 	* Delete manufacturer
 	*/
-	function delete_manufacturer() {
+	function manufacturer_delete() {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current info
 		if (!empty($_GET["id"])) {
@@ -246,7 +237,6 @@ class yf_manage_shop_manufacturer {
 	* Upload image
 	*/
 	function _upload_image ($man_id, $url) {
-
 		$img_properties = getimagesize($_FILES['image']['tmp_name']);
 		if (empty($img_properties) || !$man_id) {
 			return false;
@@ -267,8 +257,7 @@ class yf_manage_shop_manufacturer {
 	* Delete image
 	*/
 	function _delete_image ($man_id) {
-
-		$image_files = $this->DIR_OBJ->scan_dir($this->manufacturer_img_dir, true, "/".$this->IMG_PREFIX.$man_id."_/img");
+		$image_files = _class('dir')->scan_dir($this->manufacturer_img_dir, true, "/".$this->IMG_PREFIX.$man_id."_/img");
 		foreach((array)$image_files as $filepath) {
 			unlink($filepath);
 		}

@@ -210,7 +210,7 @@ class yf_manage_shop {
 				"view_url"		=> "./?object=manage_shop&action=product_view&id=".$v["id"],
 				"activate_url"	=> "./?object=manage_shop&action=product_activate&id=".$v["id"],
 			);
-			$items .= tpl()->parse("manage_shop/item", $replace2); 
+			$items .= tpl()->parse("manage_shop/products_item", $replace2); 
 		}
 		$replace = array(
 			"items"				=> $items,
@@ -218,7 +218,7 @@ class yf_manage_shop {
 			"total"				=> intval($total),
 			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"add_url"			=> "./?object=manage_shop&action=product_add",
-			"categories_url"	=> "./?object=category_editor&action=show_items&id=4",
+			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
 			"attributes_url"	=> "./?object=manage_shop&action=attributes_manage",
 			"orders_url"		=> "./?object=manage_shop&action=show_orders",
 		);
@@ -274,7 +274,7 @@ class yf_manage_shop {
 				$this->_attributes_save($product_id);
 				$this->_save_group_prices($product_id);
 			}
-			return js_redirect("./?object=manage_shop");
+			return js_redirect("./?object=manage_shop&action=products_manage");
 		}
 		// 1-st type of assigning attributes
 		$fields = $this->_attributes_html(0);
@@ -316,8 +316,8 @@ class yf_manage_shop {
 			"category_box"		=> common()->multi_select("category", $this->_cats_for_select, $cat_id, false, 2, " size=15 ", false),
 			"form_action"		=> "./?object=manage_shop&action=product_add",
 			"back_url"			=> "./?object=manage_shop&action=products_manage",
-			"category_url"		=> "./?object=category_editor&action=show_items&id=shop_cats",
-			"manufacturer_url"	=> "./?object=manage_shop&action=manufacturers_manage",
+			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
+			"manufacturers_url"	=> "./?object=manage_shop&action=manufacturers_manage",
 			"group_prices"		=> !empty($group_prices) ? $group_prices : "",
 		);
 		foreach ((array)$this->_boxes as $item_name => $v) {
@@ -477,6 +477,8 @@ class yf_manage_shop {
 			"form_action"			=> "./?object=manage_shop&action=edit&id=".$product_info["id"],
 			"back_url"				=> "./?object=manage_shop&action=products_manage",
 			"image"					=> $items,
+			"categories_url"		=> "./?object=category_editor&action=show_items&id=shop_cats",
+			"manufacturers_url"		=> "./?object=manage_shop&action=manufacturers_manage",
 			"manage_attrs_url"		=> "./?object=manage_shop&action=attributes_manage",
 			"group_prices"			=> !empty($group_prices) ? $group_prices : "",
 			"link_get_product"		=>  process_url("./?object=manage_shop&action=show_product_by_category&cat_id="),
@@ -1077,7 +1079,7 @@ class yf_manage_shop {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse("shop/filter", $replace);
+		return tpl()->parse("manage_shop/filter", $replace);
 	}
 
 	/**

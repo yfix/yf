@@ -10,14 +10,6 @@
 class yf_shop_payment {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->SHOP_OBJ		= module(SHOP_CLASS_NAME);
-	}
-
-	/**
 	* Order payment method by authorize.net
 	*/
 	function _order_pay_authorize_net($params = array()) {
@@ -81,11 +73,11 @@ class yf_shop_payment {
 
 			//"x_show_form"			=> "PAYMENT_FORM",
 			//"x_relay_response"	=> "TRUE",
-			//"x_relay_url"			=> process_url("./?object=".SHOP_CLASS_NAME."&action=payment_callback"),
+			//"x_relay_url"			=> process_url("./?object=shop&action=payment_callback"),
 
 			//"x_receipt_link_method"	=> "LINK",
 			//"x_receipt_link_text"	=> "Return to our online store",
-			//"x_receipt_link_URL"	=> process_url("./?object=".SHOP_CLASS_NAME),
+			//"x_receipt_link_URL"	=> process_url("./?object=shop"),
 		);
 		// Test mode only
 		if ($TEST_MODE) {
@@ -96,27 +88,27 @@ class yf_shop_payment {
 		}
 		$_order_fields_values = array(
 			"x_cust_id"				=> substr($order_info["user_id"], 0, 20),
-			"x_customer_ip"	=> substr($_SERVER["REMOTE_ADDR"], 0, 20),
-			"x_card_num"		=> substr($order_info["card_num"], 0, 50),
+			"x_customer_ip"			=> substr($_SERVER["REMOTE_ADDR"], 0, 20),
+			"x_card_num"			=> substr($order_info["card_num"], 0, 50),
 			"x_exp_date"			=> substr($order_info["exp_date"], 0, 4),
-			"x_first_name"		=> substr($order_info["b_first_name"], 0, 50),
-			"x_last_name"		=> substr($order_info["b_last_name"], 0, 50),
-			"x_address"			=> substr($order_info["b_address"], 0, 60),
-			"x_city"					=> substr($order_info["b_city"], 0, 40),
-			"x_state"					=> substr($order_info["b_state"], 0, 40),
+			"x_first_name"			=> substr($order_info["b_first_name"], 0, 50),
+			"x_last_name"			=> substr($order_info["b_last_name"], 0, 50),
+			"x_address"				=> substr($order_info["b_address"], 0, 60),
+			"x_city"				=> substr($order_info["b_city"], 0, 40),
+			"x_state"				=> substr($order_info["b_state"], 0, 40),
 			"x_zip"					=> substr($order_info["b_zip_code"], 0, 20),
 			"x_country"				=> substr($order_info["b_country"], 0, 60),
 			"x_phone"				=> substr($order_info["b_phone"], 0, 25),
-			"x_company"			=> substr($order_info["b_company"], 0, 50),
+			"x_company"				=> substr($order_info["b_company"], 0, 50),
 			"x_email"				=> substr($order_info["b_email"], 0, 255),
 
-			"x_ship_to_first_name"		=> substr($order_info["s_first_name"], 0, 50),
-			"x_ship_to_last_name"		=> substr($order_info["s_last_name"], 0, 50),
-			"x_ship_to_address"			=> substr($order_info["s_address"], 0, 60),
-			"x_ship_to_city"					=> substr($order_info["s_city"], 0, 40),
-			"x_ship_to_state"				=> substr($order_info["s_state"], 0, 40),
-			"x_ship_to_zip"					=> substr($order_info["s_zip_code"], 0, 20),
-			"x_ship_to_country"			=> substr($order_info["s_country"], 0, 60),
+			"x_ship_to_first_name"	=> substr($order_info["s_first_name"], 0, 50),
+			"x_ship_to_last_name"	=> substr($order_info["s_last_name"], 0, 50),
+			"x_ship_to_address"		=> substr($order_info["s_address"], 0, 60),
+			"x_ship_to_city"		=> substr($order_info["s_city"], 0, 40),
+			"x_ship_to_state"		=> substr($order_info["s_state"], 0, 40),
+			"x_ship_to_zip"			=> substr($order_info["s_zip_code"], 0, 20),
+			"x_ship_to_country"		=> substr($order_info["s_country"], 0, 60),
 			"x_ship_to_company"		=> substr($order_info["s_company"], 0, 50),
 		);
 
@@ -136,7 +128,7 @@ class yf_shop_payment {
 		$ch = curl_init();
 		if ($ch) {
 			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_REFERER, process_url("./?object=".SHOP_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]));
+			curl_setopt($ch, CURLOPT_REFERER, process_url("./?object=shop&action=".$_GET["action"]."&id=".$_GET["id"]));
 			curl_setopt($ch, CURLOPT_VERBOSE, 0);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $_data_to_post);

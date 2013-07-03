@@ -10,14 +10,6 @@
 class yf_shop_cart {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->SHOP_OBJ		= module(SHOP_CLASS_NAME);
-	}
-
-	/**
 	* Clean cart contents
 	*/
 	function add_to_cart() {
@@ -37,8 +29,7 @@ class yf_shop_cart {
 		// Display 
 		if (!empty($atts) && empty($_POST["atts"])) {
 			$this->SHOP_OBJ->_CART_PROCESSED = true;
-
-			return js_redirect("./?object=".SHOP_CLASS_NAME."&action=product_details&id=".$_GET["id"]);
+			return js_redirect("./?object=shop&action=product_details&id=".$_GET["id"]);
 		}
 		// Do save
 		if (!empty($_POST["quantity"]) && !$this->SHOP_OBJ->_CART_PROCESSED) {
@@ -65,7 +56,7 @@ class yf_shop_cart {
 	* Display cart contents (save changes also here)
 	*/
 	function cart($params = array()) {
-		$STPL_NAME = $params["STPL"] ? $params["STPL"] : SHOP_CLASS_NAME."/cart";
+		$STPL_NAME = $params["STPL"] ? $params["STPL"] : "shop/cart";
 		/*
 		$_SESSION["SHOP_CART"][$product_id] = array(
 			"product_id"=> 1,
@@ -75,10 +66,8 @@ class yf_shop_cart {
 		$cart = &$_SESSION["SHOP_CART"];
 		// Save cart contents
 		if (!empty($_POST["quantity"]) && !$this->SHOP_OBJ->_CART_PROCESSED) {
-
 			$this->SHOP_OBJ->_save_cart_all();
-
-			return js_redirect("./?object=".SHOP_CLASS_NAME."&action=".$_GET["action"]);
+			return js_redirect("./?object=shop&action=".$_GET["action"]);
 		}
 		// Get products from db
 		$products_ids = array();
@@ -114,21 +103,21 @@ class yf_shop_cart {
 				"price"					=> $this->SHOP_OBJ->_format_price($price),
 				"currency"			=> _prepare_html($this->SHOP_OBJ->CURRENCY),
 				"quantity"			=> intval($quantity),
-				"delete_link"		=> "./?object=".SHOP_CLASS_NAME."&action=clean_cart&id=".$URL_PRODUCT_ID,
-				"details_link"		=> process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
+				"delete_link"		=> "./?object=shop&action=clean_cart&id=".$URL_PRODUCT_ID,
+				"details_link"		=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"			=> _prepare_html($this->SHOP_OBJ->_shop_cats[$_info["cat_id"]]),
-				"cat_url"				=> process_url("./?object=".$_GET["object"]."&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_info["cat_id"]]['url'])),
+				"cat_url"				=> process_url("./?object=shop&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_info["cat_id"]]['url'])),
 			);
 			$total_price += $price * $quantity;
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".SHOP_CLASS_NAME."&action=".$_GET["action"],
+			"form_action"		=> "./?object=shop&action=".$_GET["action"],
 			"products"			=> $products,
 			"total_price"		=> $this->SHOP_OBJ->_format_price($total_price),
 			"currency"			=> _prepare_html($this->SHOP_OBJ->CURRENCY),
-			"clean_all_link"	=> "./?object=".SHOP_CLASS_NAME."&action=clean_cart",
-			"order_link"			=> "./?object=".SHOP_CLASS_NAME."&action=order",
+			"clean_all_link"	=> "./?object=shop&action=clean_cart",
+			"order_link"			=> "./?object=shop&action=order",
 			"back_link"			=> js_redirect($_SERVER["HTTP_REFERER"], false),
 			"cats_block"		=> $this->SHOP_OBJ->_show_shop_cats(),
 		);
@@ -139,7 +128,7 @@ class yf_shop_cart {
 	* Display cart contents (usually for side block)
 	*/
 	function _cart_side() {
-		return $this->cart(array("STPL" => SHOP_CLASS_NAME."/cart_side"));
+		return $this->cart(array("STPL" => "shop/cart_side"));
 	}
 
 	/**
@@ -179,11 +168,11 @@ class yf_shop_cart {
 			"total_price"	=> $this->SHOP_OBJ->_format_price($total_price),
 			"currency"		=> _prepare_html($this->SHOP_OBJ->CURRENCY),
 			"quantity"		=> $quantity,
-			"order_link"		=> "./?object=".SHOP_CLASS_NAME."&action=cart",
-			"cart_link"		=> "./?object=".SHOP_CLASS_NAME."&action=cart",
+			"order_link"	=> "./?object=shop&action=cart",
+			"cart_link"		=> "./?object=shop&action=cart",
 		
 		);
-		return tpl()->parse(SHOP_CLASS_NAME."/show_cart_main", $replace);
+		return tpl()->parse("shop/show_cart_main", $replace);
 	}
 	
 	/**
@@ -201,9 +190,9 @@ class yf_shop_cart {
 				$_quantity		= intval($_quantity);
 				if ($_product_id && $_quantity) {
 					$cart[$_product_id] = array(
-						"product_id"	=> $_product_id,
-						"quantity"		=> $_quantity,
-						"atts"				=> $_POST["atts"][$_product_id],
+						"product_id"=> $_product_id,
+						"quantity"	=> $_quantity,
+						"atts"		=> $_POST["atts"][$_product_id],
 					);
 				}
 			}

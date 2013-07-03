@@ -8,7 +8,6 @@
 		<th>{t(Old Price)}</th>
 		<th>{t(Quantity)}</th>
 		<th>{t(Date)}</th>
-		<th>{t(Status)}</th>
 		<th>{t(Action)}</th>
 	</thead>
 {items}

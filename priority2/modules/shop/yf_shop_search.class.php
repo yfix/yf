@@ -8,22 +8,13 @@
 * @version		1.0
 */
 class yf_shop_search {
-
-	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-	$this->SHOP_OBJ		= module(SHOP_CLASS_NAME);
-		
-	}
 	
 	function _short_search_form() {
 		$replace = array(
 			"search_string"	=>"",
-			"form_action"		=> process_url("./?object=".$_GET["object"]."&action=search&id=fast"),
+			"form_action"	=> process_url("./?object=shop&action=search&id=fast"),
 		);
-		return tpl()->parse(SHOP_CLASS_NAME."/short_search_form", $replace);
+		return tpl()->parse("shop/short_search_form", $replace);
 	}
 	
 	function search() {
@@ -72,9 +63,9 @@ class yf_shop_search {
 			if ($product_ids ==""){
 				$replace = array(
 					"str_search"	=>$str_search2,
-					"form_action"	=> process_url("./?object=".$_GET["object"]."&action=search&id=fast"),
+					"form_action"	=> process_url("./?object=shop&action=search&id=fast"),
 				);
-			return tpl()->parse(SHOP_CLASS_NAME."/no_search_results", $replace);
+			return tpl()->parse("shop/no_search_results", $replace);
 				
 			// возврат результата поиска
 			} else {	

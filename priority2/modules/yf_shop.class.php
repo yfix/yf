@@ -32,13 +32,13 @@ class yf_shop extends yf_module {
 	public $THIS_ITEM_OFTEN_BUY		= true;
 	 /** @var array forum settings (default values) */
 	public $COMPANY_INFO = array(
-		"company_name"			=> "Shop.com ", //
-		"company_address"		=> "Company Address 1", //
+		"company_name"		=> "Shop.com ", //
+		"company_address"	=> "Company Address 1", //
 		"company_address2"	=> "Company Address 2", //
-		"company_phone"			=> "Company Phone", //
-		"company_website"		=> "Company Website", //
-		"company_email"			=> "Company Email", //
-		"company_title"				=> "Shop.com ", //
+		"company_phone"		=> "Company Phone", //
+		"company_website"	=> "Company Website", //
+		"company_email"		=> "Company Email", //
+		"company_title"		=> "Shop.com ", //
 	);
 	/** @var Billing info */
 	public $_b_fields = array(
@@ -70,19 +70,18 @@ class yf_shop extends yf_module {
 		);
 	/** @var @conf_skip */
 	public $_statuses = array(
-		"pending"					=> "pending",
+		"pending"			=> "pending",
 		"pending payment"	=> "pending payment",
-		"proccessed"				=> "proccessed",
-		"delivery"					=> "delivery",
-		"shipped"					=> "shipped",
+		"proccessed"		=> "proccessed",
+		"delivery"			=> "delivery",
+		"shipped"			=> "shipped",
 	);
 	public $_ship_type = array(
-		1	=> "Free",
-		2	=> "Courier",
-		3	=> "FedEX",
+		1 => "Free",
+		2 => "Courier",
+		3 => "FedEX",
 		4 =>  "Post",
 	);
-	
 	/** @var Shipping types */
 	public $_ship_types = array(
 		1	=> array(
@@ -106,19 +105,19 @@ class yf_shop extends yf_module {
 	public $_ship_types_name = array();
 	/** @var Payment types */
 	public $_pay_types = array(
-		1	=> "Cash On Delivery",
-		2	=> "Authorize.Net",
-		3	=> "Bank Transfer",
-		4	=> "Cheque / Money Order",
+		1 => "Cash On Delivery",
+		2 => "Authorize.Net",
+		3 => "Bank Transfer",
+		4 => "Cheque / Money Order",
 	);
 	/** @var Payment methods params */
 	public $_pay_method_params = array(
 		2	=> array( // Authorize.Net
-			"LOGIN_ID"						=> "7wYB5c6R",
+			"LOGIN_ID"			=> "7wYB5c6R",
 			"TRANSACTION_KEY"	=> "4px54kx6ZZ7489Gq",
-			"TEST_MODE"					=> 1,
-			"IN_PRODUCTION"			=> 0,
-			"DESCRIPTION"				=> "Shop Description Here",
+			"TEST_MODE"			=> 1,
+			"IN_PRODUCTION"		=> 0,
+			"DESCRIPTION"		=> "Shop Description Here",
 		),
 	);
 
@@ -137,9 +136,9 @@ class yf_shop extends yf_module {
 		//3	=> 1,
 	);
 	var  $_comments_params = array(
-		"return_action"				=> "product_details",
-		"object_name"				=> "shop",
-		"allow_guests_posts" 	=> '1',
+		"return_action"		=> "product_details",
+		"object_name"		=> "shop",
+		"allow_guests_posts"=> '1',
 	);
 
 	/**
@@ -147,13 +146,10 @@ class yf_shop extends yf_module {
 	*/
 	function _init () {
 		define("SHOP_CLASS_NAME", "shop");
-		// Get  categories
-		$this->CATS_OBJ	= main()->init_class("cats", "classes/");
-		$this->_shop_cats	= $this->CATS_OBJ->_get_items_names(SHOP_CLASS_NAME."_cats");
-		$this->_shop_cats_all	= $this->CATS_OBJ->_get_items_array(SHOP_CLASS_NAME."_cats");
-		$this->_shop_cats_for_select	= $this->CATS_OBJ->_prepare_for_box(SHOP_CLASS_NAME."_cats");
-/* print_r($this->_shop_cats_all);
-exit; */
+
+		$this->_shop_cats				= _class('cats')->_get_items_names("shop_cats");
+		$this->_shop_cats_all			= _class('cats')->_get_items_array("shop_cats");
+		$this->_shop_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats");
 		// Get manufacturer
 		$sql_man = "SELECT * FROM `".db('shop_manufacturer')."` ORDER BY `name` ASC";
 		$this->_manufacturer = db()->query_fetch_all($sql_man);
@@ -161,11 +157,8 @@ exit; */
 		$this->_man_for_select["none"] = "--NONE--";
 		foreach ((array)$this->_manufacturer as $k =>$v) {
 			$this->_man_for_select[$v["url"]] = $v["name"];
-			
 		}
-		 $this->_man_id = "none";
-		// Init dir class
-		$this->DIR_OBJ	= main()->init_class("dir", "classes/");
+		$this->_man_id = "none";
 		$this->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
 		$this->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
 		if (!file_exists($this->products_img_dir)) {
@@ -193,20 +186,15 @@ exit; */
 	* Default method
 	*/
 	function show() {
-		
-		
 		return $this->show_products();
 	}
 
 	/**
 	* View products page (with categories)
 	*/
-	function show_products($search = "" , $str_search = "") {
-		
+	function show_products($search = "", $str_search = "") {
 		foreach ((array)$this->_shop_cats as $_cat_id => $_cat_name) {
-		
-			if ($_GET['id'] == $this->_shop_cats_all[$_cat_id]['url'] && $_GET['id'] != "" ) 
-			{
+			if ($_GET['id'] == $this->_shop_cats_all[$_cat_id]['url'] && $_GET['id'] != "" ) {
 				$_GET['id'] = $_cat_id;
 				$_show_by_cat = 1;
 				$cat_name = $_cat_name;
@@ -230,8 +218,7 @@ exit; */
 			$cat_child = rtrim($cat_child, ",");
 			$sql1 = "SELECT `product_id` FROM `".db('shop_product_to_category')."` WHERE `category_id` IN ( ". $cat_child. ")";
 			$products = db()->query($sql1);
-			while ($A = db()->fetch_assoc($products))
-			{
+			while ($A = db()->fetch_assoc($products)) {
 				$product_info .= $A["product_id"].",";
 			}	
 			$product_info = rtrim($product_info, ",");
@@ -246,9 +233,8 @@ exit; */
 				$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1' ".($_GET["id"] ? " AND `manufacturer_id` = " . $_GET["id"]  : " AND `featured`='1'")." ORDER BY `add_date`";
 			}
 		} elseif ($search == "" && $str_search !="") {
-		
 			
-		}else {
+		} else {
 			$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1' AND `id` IN (".$search .")  ORDER BY `add_date`";
 		}
 		if ($sql != ""){
@@ -259,7 +245,7 @@ exit; */
 			$group_prices = $this->_get_group_prices(array_keys($product_info));
 		}
 		$items = array();
-		$counter=1;
+		$counter = 1;
 		foreach ((array)$product_info as $v) {
 			$dirs = sprintf("%06s",$v["id"]);
 			$dir2 = substr($dirs,-3,3);
@@ -270,40 +256,39 @@ exit; */
 			$v["_group_price"] = $group_prices[$v["id"]][$this->USER_GROUP];
 			$URL_PRODUCT_ID = $this->_product_id_url($v);
 			$items[$v["id"]] = array(
-				"name"					=> _prepare_html($v["name"]),
-				"desc"						=> _prepare_html($v["description"]),
-				"date"						=> _format_date($v["add_date"], "long"),
-				"price"						=> $this->_format_price($this->_get_product_price($v)),
-				"currency"				=> _prepare_html($this->CURRENCY),
-				"thumb_path"			=> file_exists($this->products_img_dir.$mpath. $thumb_path)? $this->products_img_webdir. $mpath.$thumb_path : "",
-				"img_path"				=> file_exists($this->products_img_dir. $mpath.$img_path)	? $this->products_img_webdir.$mpath. $img_path : "",
-				"add_to_cart_url"	=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=".$_GET["object"]."&action=add_to_cart&id=".$URL_PRODUCT_ID),
-				"external_url"			=> intval((bool)$v["external_url"]),
-				"details_url"			=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
-				"counter"				=> $counter,
+				"name"				=> _prepare_html($v["name"]),
+				"desc"				=> _prepare_html($v["description"]),
+				"date"				=> _format_date($v["add_date"], "long"),
+				"price"				=> $this->_format_price($this->_get_product_price($v)),
+				"currency"			=> _prepare_html($this->CURRENCY),
+				"thumb_path"		=> file_exists($this->products_img_dir.$mpath. $thumb_path)? $this->products_img_webdir. $mpath.$thumb_path : "",
+				"img_path"			=> file_exists($this->products_img_dir. $mpath.$img_path)	? $this->products_img_webdir.$mpath. $img_path : "",
+				"add_to_cart_url"	=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=shop&action=add_to_cart&id=".$URL_PRODUCT_ID),
+				"external_url"		=> intval((bool)$v["external_url"]),
+				"details_url"		=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
+				"counter"			=> $counter,
 			);
 			if ($counter == 4) {
-			$counter = 1;
+				$counter = 1;
 			} else {
-			++ $counter;
+				++ $counter;
 			}
-			//echo $counter."<br />"/
 		}
 		if (empty($items)) {
 			$items = "";
 		}
 		$replace = array(
-			"search_string"			=>$str_search,
-			"items"						=> $items,
-			"pages"					=> $pages,
-			"total"						=> $total,
-			"currency"				=> _prepare_html($this->CURRENCY),
-			"show_cart_url"		=> process_url("./?object=".$_GET["object"]."&action=cart"),
-			"cur_cat_id"				=> intval($_GET["id"]),
-			"cur_cat_name"		=> _prepare_html($cat_name),
-			"cats_block"				=> $this->_show_shop_cats(),
+			"search_string"	=> $str_search,
+			"items"			=> $items,
+			"pages"			=> $pages,
+			"total"			=> $total,
+			"currency"		=> _prepare_html($this->CURRENCY),
+			"show_cart_url"	=> process_url("./?object=shop&action=cart"),
+			"cur_cat_id"	=> intval($_GET["id"]),
+			"cur_cat_name"	=> _prepare_html($cat_name),
+			"cats_block"	=> $this->_show_shop_cats(),
 		);
-		return tpl()->parse(SHOP_CLASS_NAME."/main", $replace);
+		return tpl()->parse("shop/main", $replace);
 	}
 
 	/**
@@ -311,7 +296,7 @@ exit; */
 	*/
 	function product_details() {
 		if (!$_GET["id"]) {
-			return is_redirect("./?object=".SHOP_CLASS_NAME);
+			return is_redirect("./?object=shop");
 		}
 		// Get products from database
 		if (is_numeric($_GET["id"] )) {
@@ -343,20 +328,20 @@ exit; */
 		if ($product_info["image"] == 0) {
 			$image = "";
 		} else {
-			$image_files = $this->DIR_OBJ->scan_dir($this->products_img_dir.$mpath, true, "/".$product_info["url"]."_".$product_info["id"].".+?_small\.jpg"."/");
+			$image_files = _class('dir')->scan_dir($this->products_img_dir.$mpath, true, "/".$product_info["url"]."_".$product_info["id"].".+?_small\.jpg"."/");
 			$reg = "/".$product_info["url"]."_".$product_info["id"]."_(?P<content>[\d]+)_small\.jpg/";
-			foreach((array)$image_files as $filepath) {
+			foreach ((array)$image_files as $filepath) {
 				preg_match($reg, $filepath, $rezult);
 				$i =  $rezult["content"];
 				if ($i != $product_info["image"]) {
-				$thumb_temp = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->THUMB_SUFFIX.".jpg";
-				$img_temp = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->FULL_IMG_SUFFIX.".jpg";
-				$replace2 = array(
-					"thumb_path" 	=> $thumb_temp,
-					"img_path" 			=> $img_temp,
-					"name"				=> $product_info["url"],
-				);
-				$image .= tpl()->parse($_GET["object"]."/image_items", $replace2);
+					$thumb_temp = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->THUMB_SUFFIX.".jpg";
+					$img_temp = $this->products_img_webdir.$mpath.$product_info["url"]."_".$product_info["id"]."_".$i.$this->FULL_IMG_SUFFIX.".jpg";
+					$replace2 = array(
+						"thumb_path"=> $thumb_temp,
+						"img_path" 	=> $img_temp,
+						"name"		=> $product_info["url"],
+					);
+					$image .= tpl()->parse("shop/image_items", $replace2);
 				}
 			}
 		}	
@@ -367,54 +352,51 @@ exit; */
 			$similar_price = $this->similar_price ( $product_info["price"],  $product_info["id"] );
 		}
 		if ($this->THIS_ITEM_OFTEN_BUY == true){
-				$this_item_often_buy = $this->this_item_often_buy ( $product_info["id"] );
+			$this_item_often_buy = $this->this_item_often_buy ( $product_info["id"] );
 		}
-		
 		$replace = array(
-			"name"						=> _prepare_html($product_info["name"]),
-			"model"						=> _prepare_html($product_info["model"]),
-			"desc"							=> $product_info["description"],
+			"name"					=> _prepare_html($product_info["name"]),
+			"model"					=> _prepare_html($product_info["model"]),
+			"desc"					=> $product_info["description"],
 			"manufacturer"			=>	_prepare_html($this->_manufacturer[$product_info["manufacturer_id"]]["name"]),
-			"url_manufacturer"		=> process_url("./?object=".$_GET["object"]."&action=show_products&id=".$this->_manufacturer[$product_info["manufacturer_id"]]["url"]),
-			"date"							=> _format_date($product_info["add_date"], "long"),
-			"price"							=> $this->_format_price($this->_get_product_price($product_info)),
-			"currency"					=> _prepare_html($this->CURRENCY),
-			"thumb_path"				=> file_exists($this->products_img_dir.$mpath. $img_path)	? $this->products_img_webdir. $mpath.$img_path : "",
-			"img_path"					=> file_exists($this->products_img_dir. $mpath.$img_path)	? $this->products_img_webdir. $mpath.$img_path : "",
-			"image"						=> $image,
-			"add_to_cart_url"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=".$_GET["object"]."&action=add_to_cart&id=".$URL_PRODUCT_ID),
-			"external_url"				=> intval((bool)$product_info["external_url"]),
-			"back_url"					=> process_url("./?object=".SHOP_CLASS_NAME),
-			"show_cart_url"			=> process_url("./?object=".$_GET["object"]."&action=cart"),
+			"url_manufacturer"		=> process_url("./?object=shop&action=show_products&id=".$this->_manufacturer[$product_info["manufacturer_id"]]["url"]),
+			"date"					=> _format_date($product_info["add_date"], "long"),
+			"price"					=> $this->_format_price($this->_get_product_price($product_info)),
+			"currency"				=> _prepare_html($this->CURRENCY),
+			"thumb_path"			=> file_exists($this->products_img_dir.$mpath. $img_path)	? $this->products_img_webdir. $mpath.$img_path : "",
+			"img_path"				=> file_exists($this->products_img_dir. $mpath.$img_path)	? $this->products_img_webdir. $mpath.$img_path : "",
+			"image"					=> $image,
+			"add_to_cart_url"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=add_to_cart&id=".$URL_PRODUCT_ID),
+			"external_url"			=> intval((bool)$product_info["external_url"]),
+			"back_url"				=> process_url("./?object=shop"),
+			"show_cart_url"			=> process_url("./?object=shop&action=cart"),
 			"dynamic_atts"			=> $this->_get_select_attributes($atts),
-			"cats_block"				=> $this->_show_shop_cats(),
-			"cat_name"					=> _prepare_html($this->_shop_cats[$product_info["cat_id"]]),
-			"cat_url"						=> process_url("./?object=".$_GET["object"]."&action=".__FUNCTION__."&id=".($this->_shop_cats_all[$product_info["cat_id"]]['url'])),
-			'comments'					=> $this->_view_comments(),
-			"N"								=> $N,
+			"cats_block"			=> $this->_show_shop_cats(),
+			"cat_name"				=> _prepare_html($this->_shop_cats[$product_info["cat_id"]]),
+			"cat_url"				=> process_url("./?object=shop&action=".__FUNCTION__."&id=".($this->_shop_cats_all[$product_info["cat_id"]]['url'])),
+			'comments'				=> $this->_view_comments(),
+			"N"						=> $N,
 			"similar_price"			=> $similar_price,
-			"this_item_often_buy"=> $this_item_often_buy,
+			"this_item_often_buy"	=> $this_item_often_buy,
 			"product_related"		=> $this->get_product_related($product_info["id"]),
 		);
 		db()->query("UPDATE `".db('shop_products')."` SET `viewed` = `viewed`+1 , `last_viewed_date` = ".time()."  WHERE ".$add_sql."'");
-		return tpl()->parse(SHOP_CLASS_NAME."/details", $replace);
+		return tpl()->parse("shop/details", $replace);
 	}
 
+	/**
+	*/
 	function _get_children_cat ($id) {
-	//	$cat_id = $id.",";
 		$sql1 =	"SELECT `id` FROM `shop_sys_category_items` WHERE `parent_id` = ". $id;
-	
 		$cat = db()->query($sql1);
-		while ($A = db()->fetch_assoc($cat))
-			{
-				$cat_id .= $A["id"].",";
-				$sql2 =	"SELECT `id` FROM `shop_sys_category_items` WHERE `parent_id` = ". $A["id"];
-				 $res_q=mysql_query($sql2);
-					if (mysql_num_rows($res_q)) {
-						$this->_get_children_cat ( $A["id"]);	
-					}
-			}	
-			
+		while ($A = db()->fetch_assoc($cat)) {
+			$cat_id .= $A["id"].",";
+			$sql2 =	"SELECT `id` FROM `shop_sys_category_items` WHERE `parent_id` = ". $A["id"];
+			$res_q = db()->query($sql2);
+			if (db()->num_rows($res_q)) {
+				$this->_get_children_cat ( $A["id"]);	
+			}
+		}	
 		$cat_id = rtrim($cat_id, ",");
 		return $cat_id;
 	}
@@ -429,13 +411,14 @@ exit; */
 		while ($A = db()->fetch_assoc($product)){
 			$product_related_id .= $A['related_id'].",";
 		}
-		 $product_related_id = rtrim($product_related_id, ",");
+		$product_related_id = rtrim($product_related_id, ",");
 		if ($product_related_id != "") {
 			$product_related = $this->show_products($product_related_id); 
 		}
 		return $product_related;
 		
 	}	
+
 	/**
 	*similar_price
 	*/
@@ -444,45 +427,40 @@ exit; */
 		$price_max =  ceil($price +($price *10/100));
 		$sql1 = "SELECT `category_id` FROM `".db('shop_product_to_category')."` WHERE `product_id` =  ".$id. "";
 		$cat_id = db()->query($sql1);
-		while ($A = db()->fetch_assoc($cat_id))
-			{
-				$cats_id .= $A["category_id"].",";
-			}	
-			$cats_id = rtrim($cats_id, ",");
+		while ($A = db()->fetch_assoc($cat_id)) {
+			$cats_id .= $A["category_id"].",";
+		}	
+		$cats_id = rtrim($cats_id, ",");
 		$sql2 = "SELECT `product_id` FROM `".db('shop_product_to_category')."` WHERE `category_id` IN ( ".$cats_id. ")";
 		$prod = db()->query($sql2);
-		while ($A = db()->fetch_assoc($prod))
-			{
-				$prods .= $A["product_id"].",";
-			}	
-			$prods = rtrim($prods, ",");
-			//while ($A = db()->fetch_assoc($products))
-		$sql = "SELECT * FROM `shop_shop_products` WHERE `price`  >". $price_min ." AND  `price` < ".$price_max ." AND `id` != ". $id. " AND `id` in ( ".$prods.")";
+		while ($A = db()->fetch_assoc($prod)) {
+			$prods .= $A["product_id"].",";
+		}	
+		$prods = rtrim($prods, ",");
+		$sql = "SELECT * FROM `".db('shop_products')."` WHERE `price`  >". $price_min ." AND  `price` < ".$price_max ." AND `id` != ". $id. " AND `id` in ( ".$prods.")";
 		$product = db()->query_fetch_all($sql);
 		foreach ((array)$product as $k => $product_info){
-	
 			$thumb_path = $product_info["url"]."_".$product_info["id"]."_1".$this->THUMB_SUFFIX.".jpg";
 			$URL_PRODUCT_ID = $this->_product_id_url($product_info);
 			$items[$product_info["id"]] = array(
-				
-				"name"			=> _prepare_html($product_info["name"]),
-				"price"				=> $this->_format_price($this->_get_product_price($product_info)),
-				"currency"		=> _prepare_html($this->CURRENCY),
-				"image"			=> file_exists($this->products_img_dir. $thumb_path)? $this->products_img_webdir. $thumb_path : "",
-				"link"				=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
-				"special" 		=>  "",			
+				"name"		=> _prepare_html($product_info["name"]),
+				"price"		=> $this->_format_price($this->_get_product_price($product_info)),
+				"currency"	=> _prepare_html($this->CURRENCY),
+				"image"		=> file_exists($this->products_img_dir. $thumb_path)? $this->products_img_webdir. $thumb_path : "",
+				"link"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
+				"special" 	=>  "",			
 			);
 		}
 		$replace = array(
-			"items"				=> $items,
-			"title"					=> "Similar price",
+			"items"	=> $items,
+			"title"	=> "Similar price",
 		);
-		return  tpl()->parse(SHOP_CLASS_NAME."/similar_price", $replace);
+		return  tpl()->parse("shop/similar_price", $replace);
 		
 	}
 	
 	function this_item_often_buy ($id) {
-		$sql_order_id = "SELECT `order_id` FROM `shop_shop_order_items` WHERE `product_id` =  ".$id;
+		$sql_order_id = "SELECT `order_id` FROM `".db('shop_order_items')."` WHERE `product_id` =  ".$id;
 		$orders = db()->query($sql_order_id);
 		while ($A = db()->fetch_assoc($orders))
 			{
@@ -490,7 +468,7 @@ exit; */
 			}	
 			$order_id = rtrim($order_id, ",");
 			if (!empty($order_id)) {
-				$sql_product_id = "SELECT `product_id` FROM `shop_shop_order_items` WHERE  `order_id` IN (  ".$order_id.") AND `product_id` != ". $id;
+				$sql_product_id = "SELECT `product_id` FROM `".db('shop_order_items')."` WHERE  `order_id` IN (  ".$order_id.") AND `product_id` != ". $id;
 				$products = db()->query($sql_product_id);
 				while ($A = db()->fetch_assoc($products))
 				{
@@ -499,26 +477,26 @@ exit; */
 				$product_id = rtrim($product_id, ","); 
 			}
 			if (!empty($product_id)) {
-			$sql = "SELECT * FROM `shop_shop_products` WHERE  `id` in ( ".$product_id.")";
+			$sql = "SELECT * FROM `".db('shop_products')."` WHERE  `id` in ( ".$product_id.")";
 			$product = db()->query_fetch_all($sql);
 			foreach ((array)$product as $k => $product_info){
 				$thumb_path = $product_info["url"]."_".$product_info["id"]."_1".$this->THUMB_SUFFIX.".jpg";
 				$URL_PRODUCT_ID = $this->_product_id_url($product_info);
 					$items[$product_info["id"]] = array(
 						"name"		=> _prepare_html($product_info["name"]),
-						"price"			=> $this->_format_price($this->_get_product_price($product_info)),
+						"price"		=> $this->_format_price($this->_get_product_price($product_info)),
 						"currency"	=> _prepare_html($this->CURRENCY),
 						"image"		=> file_exists($this->products_img_dir. $thumb_path)? $this->products_img_webdir. $thumb_path : "",
-						"link"			=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
+						"link"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 						"special" 	=>  "",			
 					);
 				}
 		}
 		$replace = array(
 			"items"	=> $items,
-			"title"		=> "Those who purchased this product also buy",
+			"title"	=> "Those who purchased this product also buy",
 		);
-		return  tpl()->parse(SHOP_CLASS_NAME."/similar_price", $replace);
+		return  tpl()->parse("shop/similar_price", $replace);
 	}
 	
 	/**
@@ -569,11 +547,9 @@ exit; */
 	function order() {
 		if (!$this->USER_ID) {
 // TODO
-
 //			if (!$this->INLINE_REGISTER) {
-			
 //			} else {
-//				return _error_need_login("./?object=".SHOP_CLASS_NAME."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""). ($_GET["page"] ? "&page=".$_GET["page"] : ""));
+//				return _error_need_login("./?object=shop&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""). ($_GET["page"] ? "&page=".$_GET["page"] : ""));
 //			}
 		}
 		$_avail_steps = array(
@@ -591,7 +567,7 @@ exit; */
 		// Prevent ordering with empty shopping cart
 		$cart = &$_SESSION["SHOP_CART"];
 		if (empty($cart) && in_array($step, array("start", "delivery", "select_payment"))) {
-			return js_redirect("./?object=".SHOP_CLASS_NAME);
+			return js_redirect("./?object=shop");
 		}
 		$func = "_order_step_". $step;
 		return $this->$func();
@@ -797,7 +773,6 @@ exit; */
 	function search() {
 		return $this->_call_sub_method("shop_search", __FUNCTION__);
 	}
-	
 
 	/**
 	* Show shop categories block
@@ -809,58 +784,30 @@ exit; */
 			if (!$_cat_name) {
 				continue;
 			}
-			$shop_cats[_prepare_html($_cat_name)] = process_url("./?object=".SHOP_CLASS_NAME."&action=show&id=".($this->_shop_cats_all[$_cat_id]['url']));
+			$shop_cats[_prepare_html($_cat_name)] = process_url("./?object=shop&action=show&id=".($this->_shop_cats_all[$_cat_id]['url']));
 		}
 		if (empty($shop_cats)) {
 			$shop_cats = "";
 		}
-	/* 
-	$_next_info = next($get_items);
-			$_next_level = $_next_info["level"];
-			If ($A["level"]  >  $_next_level){
-				$k = $A["level"]  - $_next_level;
-				$i = 1;
-				if ($k  == 1) {
-					$b[] = $k ;
-				}elseif ($k  > 1) {
-					$k  = $k+1;
-					  $i = 0;
-					   while(++$i < $k)
-					   {
-						$b[] = $k ;
-					   }
-				}
-			}else {
-				$b = "";
-			}
-			$item [] = array(
-				"categoryID"					=> intval($A["categoryID"]),
-				"parent_id"		=> intval($A["parent"]),
-				"name"				=> ($A["name"]),
-				"level"				=> $A["level"] ,
-				"next_level" 	=> $_next_level ,
-				"k"					=> $b,
-			);
-				$b = "";
-	 */
-		return tpl()->parse(SHOP_CLASS_NAME."/cats_block", array("shop_cats" => $shop_cats));
+		return tpl()->parse("shop/cats_block", array("shop_cats" => $shop_cats));
 	}
 
+	/**
+	*/
 	function _show_shop_manufacturer () {
 		// Prepare manufacturer
 		$replace = array(
-			"brand" 				=>	$this->_manufacturer,
+			"brand" 			=>	$this->_manufacturer,
 			"manufacturer_box"	=> common()->select_box("manufacturer", $this->_man_for_select, $_SESSION['man_id'] , false, 2),
-			"url_manufacturer"	=> process_url("./?object=".$_GET["object"]."&action=show_products"),
+			"url_manufacturer"	=> process_url("./?object=shop&action=show_products"),
 		);
 		unset($_SESSION["man_id"]);
-		return tpl()->parse(SHOP_CLASS_NAME."/manufacturer", $replace);
+		return tpl()->parse("shop/manufacturer", $replace);
 	}
 	
 	/**
 	* show shop best sales
 	*/
-	
 	function _show_shop_best_sales () {
 		// Prepare categories
 		$sql_prod_id = "SELECT `product_id`,  COUNT(quantity)  FROM `". db('shop_order_items') ."`  GROUP BY  `product_id` ORDER BY COUNT(quantity) DESC LIMIT 0 , 5";	
@@ -873,47 +820,42 @@ exit; */
 			$URL_PRODUCT_ID = $this->_product_id_url($product_info);
 			$items[$product_info["id"]] = array(
 				"name"		=> _prepare_html($product_info["name"]),
-				"price"			=> $this->_format_price($this->_get_product_price($product_info)),
+				"price"		=> $this->_format_price($this->_get_product_price($product_info)),
 				"currency"	=> _prepare_html($this->CURRENCY),
 				"image"		=> file_exists($this->products_img_dir. $thumb_path)? $this->products_img_webdir. $thumb_path : "",
-				"link"			=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
+				"link"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"special" 	=>  "",			
 			);
 		}
 		$replace = array(
-			"items"				=> $items,
+			"items"	=> $items,
 		);
-		return tpl()->parse(SHOP_CLASS_NAME."/best_sales", $replace);
+		return tpl()->parse("shop/best_sales", $replace);
 	}
 	
 	/**
 	* show shop last viewed
 	*/
-	
 	function _show_shop_last_viewed () {
-		
-			$sql_prod_id = "SELECT * FROM  `". db('shop_products') ."`  ORDER BY `last_viewed_date`  DESC LIMIT 5";	
-			$item_prod_id = db()->query_fetch_all($sql_prod_id);
-			$items = array();
-			foreach ((array)$item_prod_id as $k => $product_info){
-			//	$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1' AND  `id` = ".$v["product_id"];
-			//	$product_info = db()->query_fetch($sql);
-				$thumb_path = $product_info["url"]."_".$product_info["id"]."_1".$this->THUMB_SUFFIX.".jpg";
-				$URL_PRODUCT_ID = $this->_product_id_url($product_info);
-				$items[$product_info["id"]] = array(
-					"name"		=> _prepare_html($product_info["name"]),
-					"price"			=> $this->_format_price($this->_get_product_price($product_info)),
-					"currency"	=> _prepare_html($this->CURRENCY),
-					"image"		=> file_exists($this->products_img_dir. $thumb_path)? $this->products_img_webdir. $thumb_path : "",
-					"link"			=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=".$_GET["object"]."&action=product_details&id=".$URL_PRODUCT_ID),
-					"special" 	=>  "",			
-				);
-			}
-			$replace = array(
-				"items"				=> $items,
+		$sql_prod_id = "SELECT * FROM  `". db('shop_products') ."`  ORDER BY `last_viewed_date`  DESC LIMIT 5";	
+		$item_prod_id = db()->query_fetch_all($sql_prod_id);
+		$items = array();
+		foreach ((array)$item_prod_id as $k => $product_info){
+			$thumb_path = $product_info["url"]."_".$product_info["id"]."_1".$this->THUMB_SUFFIX.".jpg";
+			$URL_PRODUCT_ID = $this->_product_id_url($product_info);
+			$items[$product_info["id"]] = array(
+				"name"		=> _prepare_html($product_info["name"]),
+				"price"		=> $this->_format_price($this->_get_product_price($product_info)),
+				"currency"	=> _prepare_html($this->CURRENCY),
+				"image"		=> file_exists($this->products_img_dir. $thumb_path)? $this->products_img_webdir. $thumb_path : "",
+				"link"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
+				"special" 	=>  "",			
 			);
-			return tpl()->parse(SHOP_CLASS_NAME."/last_viewed", $replace);
-		
+		}
+		$replace = array(
+			"items"	=> $items,
+		);
+		return tpl()->parse("shop/last_viewed", $replace);
 	}
 	
 	/**
@@ -942,8 +884,8 @@ exit; */
 				$_field_info = $fields_info[$this->ATTRIBUTES_CAT_ID][$A["field_id"]];
 				$_field_info["value_list"] = strlen($_field_info["value_list"]) ? unserialize($_field_info["value_list"]) : array();
 				$data[$_product_id][$_item_id] = array(
-					"id" 					=> $_item_id,
-					"price"				=> $_price,
+					"id" 			=> $_item_id,
+					"price"			=> $_price,
 					"name"			=> $_field_info["name"],
 					"value"			=> $_field_info["value_list"][$_attr_id],
 					"product_id"	=> $_product_id,
@@ -992,7 +934,7 @@ exit; */
 	* Call sub_module method
 	*/
 	function _call_sub_method ($sub_module = "", $method_name = "", $params = array()) {
-		$OBJ = main()->init_class($sub_module, USER_MODULES_DIR. SHOP_CLASS_NAME."/");
+		$OBJ = main()->init_class($sub_module, USER_MODULES_DIR. "shop/");
 		if (!is_object($OBJ)) {
 			trigger_error("SHOP: Cant load sub_module \"".$sub_module."\"", E_USER_WARNING);
 			return false;
@@ -1015,14 +957,8 @@ exit; */
 		$menu = array(
 			array(
 				"name"	=> "Shopping cart",
-				"url" 		=> "./?object=".SHOP_CLASS_NAME."&action=cart",
+				"url" 		=> "./?object=shop&action=cart",
 			),
-/*
-			array(
-				"name"	=> "Shop settings",
-				"url" 	=> "./?object=".SHOP_CLASS_NAME."&action=settings",
-			),
-*/
 		);
 		return $menu;
 	}
@@ -1037,7 +973,7 @@ exit; */
 		$cases = array (
 			//$_GET["action"] => {string to replace}
 			"show"		=> "",
-			"cart"			=> t("Shopping Cart"),
+			"cart"		=> t("Shopping Cart"),
 			"order"		=> t("Checkout"),
 		);
 		if (isset($cases[$_GET["action"]])) {
@@ -1056,19 +992,15 @@ exit; */
 	function _site_title($title) {
 		$title = $this->COMPANY_INFO["company_title"] ? $this->COMPANY_INFO["company_title"] : $this->COMPANY_INFO["company_name"];
 		$subtitle = "";
-
 		if (in_array($_GET["action"], array("show","show_products")) && $_GET["id"]) {
-		
 			$subtitle .= $this->_shop_cats[$_GET["id"]];
 		} elseif (in_array($_GET["action"], array("product_details")) /* && $_GET["id"] */) {
-		
 			$man = $this->_manufacturer[$this->_product_info["manufacturer_id"]]["name"] ;
 			$subtitle .= $this->_product_info["name"]." - ". $man;
 		}
 		if ($subtitle) {
 			$title = $subtitle ." - ". $title;
 		}
-		//print_r ($this->_product_info);
 		return $title;
 	}
 	
@@ -1077,16 +1009,12 @@ exit; */
 	*/
 	function _hook_meta_tags ($meta) {
 		if (in_array($_GET["action"], array("show","show_products")) && $_GET["id"]) {
-		
 			$subtitle .= $this->_shop_cats[$_GET["id"]];
 		} elseif (in_array($_GET["action"], array("product_details")) /* && $_GET["id"] */) {
-		
-			$meta ["keywords"] = $this->_product_info["meta_keywords"];
-			$meta	["description"] = $this->_product_info["meta_desc"];
-			
+			$meta["keywords"] = $this->_product_info["meta_keywords"];
+			$meta["description"] = $this->_product_info["meta_desc"];
 		}
-	return $meta;	
-	
+		return $meta;	
 	}
 
 	/**
@@ -1102,5 +1030,4 @@ exit; */
 	function _nav_bar_items ($params = array()) {
 // TODO
 	}
-	
 }
