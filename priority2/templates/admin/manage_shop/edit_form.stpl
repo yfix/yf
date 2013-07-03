@@ -1,39 +1,11 @@
-<style type="text/css">
-table.attributes td {
-	margin-top: 0;
-	margin-bottom: 0;
-	padding-top: 0;
-	padding-bottom: 0;
-}
-</style>
-
-<div class="editform">
-
-<form action="{form_action}" enctype="multipart/form-data"  method="post">
-	<p class="first">
-		<label for="name">{t(Name)}</label>
-		<input type="text" name="name" id="name" value="{name}">
-	</p>
-	<p >
-		<label for="model">{t(Model)}</label>
-		<input type="text" name="model" id="model" value="{model}">
-	</p>
-	
-	<p>
-		<label for="category_box">{t(Category)}</label>
-		{category_box}
-	</p>
-	<p>
-		<label for="manufacturer_box">{t(Manufacturer)}</label>
-		{manufacturer_box}
-	</p>
-	<p>
-		<label for="featured_box">{t(Is Featured)}</label>
-		{featured_box}
-	</p>
+<form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
+	{form_row("text","name")}
+	{form_row("text","model")}
+	{form_row("box","category_box","Category")}
+	{form_row("box","manufacturer_box","Manufacturer")}
+	{form_row("box","featured_box","Is Featured")}
 	<p>
 		<label for="desc">{t(Description)}</label>
-	
 {if("use_editor_code" eq 0)}
 		<textarea id="desc" name="desc" cols="50" rows="20" class="editable">{desc}</textarea>
 {else}
@@ -42,7 +14,6 @@ table.attributes td {
 	</p>
 	<p>
 		<label for="meta_desc">{t(Тэг META description)}</label>
-	
 {if("use_editor_code" eq 0)}
 		<textarea id="meta_desc" name="meta_desc" cols="50" rows="5" >{meta_desc}</textarea>
 {else}
