@@ -205,7 +205,7 @@ class yf_gallery_settings {
 		}
 		$OBJ = main()->init_class("gallery_manage", GALLERY_MODULES_DIR);
 		// Process all photos
-		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".intval($this->USER_ID));
+		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".intval(main()->USER_ID));
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_restore_all_sizes($A, $format_name);
 		}

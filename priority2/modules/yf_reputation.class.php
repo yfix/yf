@@ -107,7 +107,7 @@ class yf_reputation {
 		// Sub modules folder
 		define("REPUT_MODULES_DIR", USER_MODULES_DIR. REPUT_CLASS_NAME."/");
 		// Do get reputation info about current user (if is a member)
-		if (!empty($this->USER_ID)) {
+		if (!empty(main()->USER_ID)) {
 			$this->_get_cur_user_reput_info();
 		}
 	}
@@ -186,7 +186,7 @@ class yf_reputation {
 			"top_voted_for"	=> $this->_show_stats_item($top_voted_for),
 			"top_by_votes"	=> $this->_show_stats_item($top_by_votes),
 			"latest_votes"	=> $this->_show_stats_latest_item($latest_votes),
-			"own_reput_link"=> $this->USER_ID ? "./?object=".$_GET["object"]."&action=view" : "",
+			"own_reput_link"=> main()->USER_ID ? "./?object=".$_GET["object"]."&action=view" : "",
 		);
 		return tpl()->parse($_GET["object"]."/stats_main", $replace);
 	}
@@ -241,7 +241,7 @@ class yf_reputation {
 	* @return	string
 	*/
 	function view () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Process template
@@ -275,7 +275,7 @@ class yf_reputation {
 		$LIMIT_LAST_VOTES = 10;
 		$Q = db()->query(
 			"SELECT * FROM ".db('reput_user_votes')." 
-			WHERE target_user_id=".intval($this->USER_ID)." 
+			WHERE target_user_id=".intval(main()->USER_ID)." 
 				AND object_name != '' 
 			ORDER BY add_date DESC 
 			LIMIT ".intval($LIMIT_LAST_VOTES)
@@ -332,7 +332,7 @@ class yf_reputation {
 		}
 		// Fast checking if popup link needed
 		$SHOW_LINK = false;
-		if (!empty($this->USER_ID) && $user_id != $this->USER_ID && !$HIDE_POPUP_LINK) {
+		if (!empty(main()->USER_ID) && $user_id != main()->USER_ID && !$HIDE_POPUP_LINK) {
 			$SHOW_LINK = true;
 		}
 		// Prepare object info if provided
@@ -351,7 +351,7 @@ class yf_reputation {
 	* Do vote for some user
 	*/
 	function vote () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -368,7 +368,7 @@ class yf_reputation {
 			_re(t("Missing target user ID!"));
 		}
 		// Check if user voting himself
-		if ($this->USER_ID == $target_user_id) {
+		if (main()->USER_ID == $target_user_id) {
 			_re(t("You are trying to vote for yourself!"));
 		}
 		if ($this->_user_info["ban_reput"]) {
@@ -420,12 +420,12 @@ class yf_reputation {
 			$this->CHEAT_DETECTED = false;
 			// Get unified items stats
 			$sql_array = array(
-				"negative_total_votes"		=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted < 0",
-				"positive_total_votes"		=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0",
-				"positive_single_user_votes"=> "SELECT MAX(2) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
-				"positive_voted_accounts"	=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
-				"total_voted_accounts"		=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." GROUP BY target_user_id) AS 1",
-				"single_voter_target_votes"	=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." AND user_id=".intval($this->USER_ID)." AND same_voter='1'",
+				"negative_total_votes"		=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval(main()->USER_ID)." AND counted < 0",
+				"positive_total_votes"		=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval(main()->USER_ID)." AND counted > 0",
+				"positive_single_user_votes"=> "SELECT MAX(2) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval(main()->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
+				"positive_voted_accounts"	=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval(main()->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
+				"total_voted_accounts"		=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval(main()->USER_ID)." GROUP BY target_user_id) AS 1",
+				"single_voter_target_votes"	=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." AND user_id=".intval(main()->USER_ID)." AND same_voter='1'",
 				"all_voters_target_votes"	=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id),
 			);
 			$_sql_keys = array_keys($sql_array);
@@ -478,7 +478,7 @@ class yf_reputation {
 				// Do remove points from cheater
 				db()->INSERT("reput_user_votes", array(
 					"user_id"		=> intval($target_user_id),
-					"target_user_id"=> intval($this->USER_ID),
+					"target_user_id"=> intval(main()->USER_ID),
 					"voted"			=> intval($VOTE_VALUE),
 					"comment"		=> _es($cheat_comment),
 					"same_voter"	=> 0,
@@ -493,11 +493,11 @@ class yf_reputation {
 			} else {
 				// Store log
 				db()->INSERT("reput_user_votes", array(
-					"user_id"		=> intval($this->USER_ID),
+					"user_id"		=> intval(main()->USER_ID),
 					"target_user_id"=> intval($target_user_id),
 					"voted"			=> intval($VOTE_VALUE),
 					"comment"		=> _es($_POST["comment"]),
-					"same_voter"	=> $last_voter_id == $this->USER_ID ? 1 : 0,
+					"same_voter"	=> $last_voter_id == main()->USER_ID ? 1 : 0,
 					"country_match"	=> $country_match,
 					"counted"		=> intval($VOTE_VALUE),
 					"penalty"		=> 0,
@@ -509,11 +509,11 @@ class yf_reputation {
 			}
 			$RECORD_ID = db()->INSERT_ID();
 			// Do update users reput info from raw table
-			$this->_update_user_reput_info($this->USER_ID);
+			$this->_update_user_reput_info(main()->USER_ID);
 			$this->_update_user_reput_info($target_user_id);
 			// Save activity log
 			if (!$this->CHEAT_DETECTED) {
-				common()->_add_activity_points($this->USER_ID, "rate_user", "", $RECORD_ID);
+				common()->_add_activity_points(main()->USER_ID, "rate_user", "", $RECORD_ID);
 			}
 			// Process template
 			$replace = array(
@@ -536,7 +536,7 @@ class yf_reputation {
 	* Show vote popup window
 	*/
 	function vote_popup () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$target_user_id = intval($_GET["id"]);
@@ -552,7 +552,7 @@ class yf_reputation {
 			_re(t("Missing target user ID!"));
 		}
 		// Check if user voting himself
-		if ($this->USER_ID == $target_user_id) {
+		if (main()->USER_ID == $target_user_id) {
 			_re(t("You are trying to vote for yourself!"));
 		}
 		if ($this->_user_info["ban_reput"]) {
@@ -607,7 +607,7 @@ class yf_reputation {
 	* Multi-accounts checks
 	*/
 	function _check_multi_accounts ($target_user_id = 0) {
-		if (empty($target_user_id) || empty($this->USER_ID)) {
+		if (empty($target_user_id) || empty(main()->USER_ID)) {
 			return false;
 		}
 		// Merge config
@@ -616,7 +616,7 @@ class yf_reputation {
 			"CHECK_MULTI_IPS"	=> $this->VOTE_CHECK_MULTI_IPS,
 			"MULTI_IP_TTL"		=> $this->VOTE_MULTI_IP_TTL,
 		)));
-		$MULTI_ACCOUNT_FOUND = common()->_check_multi_accounts($target_user_id, $this->USER_ID);
+		$MULTI_ACCOUNT_FOUND = common()->_check_multi_accounts($target_user_id, main()->USER_ID);
 		// Raise error message if we found multi-account
 		if ($MULTI_ACCOUNT_FOUND) {
 			_re(t("Sorry, your vote seems suspicious to our anti-cheat filter and can't be counted!"));
@@ -648,11 +648,11 @@ class yf_reputation {
 	*/
 	function _check_if_vote_allowed ($target_user_id = 0) {
 		// Fast checks
-		if (empty($target_user_id) || empty($this->USER_ID)) {
+		if (empty($target_user_id) || empty(main()->USER_ID)) {
 			_re(t("Missing required params for vote checking!"));
 			return false;
 		}
-		if (!empty($this->USER_ID) && $target_user_id == $this->USER_ID) {
+		if (!empty(main()->USER_ID) && $target_user_id == main()->USER_ID) {
 			_re(t("You are trying to vote for yourself!"));
 			return false;
 		}
@@ -669,14 +669,14 @@ class yf_reputation {
 			return false;
 		}
 		// min activity
-		$this->CUR_USER_ACTIVITY = $this->_get_user_activity_points($this->USER_ID);
+		$this->CUR_USER_ACTIVITY = $this->_get_user_activity_points(main()->USER_ID);
 		if (!empty($this->MIN_ACTIVITY) && 
 			$this->CUR_USER_ACTIVITY < $this->MIN_ACTIVITY) {
 			_re("You have too low site activity (".intval($this->CUR_USER_ACTIVITY).")!<br />\r\nYou need minimum ".intval($this->MIN_ACTIVITY)." activity points to be able to vote. Please be more active on our site and you will be able to vote soon!");
 			return false;
 		}
 		// clicks daily (for last 24 hours)
-		list($this->REPUT_VOTES_LAST_24H) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND add_date > ".(time() - 86400));
+		list($this->REPUT_VOTES_LAST_24H) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval(main()->USER_ID)." AND add_date > ".(time() - 86400));
 		if (!empty($this->MAX_REPUT_CLICKS_DAILY) && 
 			$this->REPUT_VOTES_LAST_24H >= $this->MAX_REPUT_CLICKS_DAILY) {
 			_re("You have already spent all allowed daily votes! (".intval($this->MAX_REPUT_CLICKS_DAILY).") Thanks for being so active! To prevent our voting system from abuse we restrict the daily number of votes.");
@@ -685,7 +685,7 @@ class yf_reputation {
 		// cast value
 		if (!empty($this->REPUT_CAST_VALUE)) {
 			// Get last target users from this user votes limited with $this->REPUT_CAST_VALUE
-			$Q = db()->query("SELECT id,target_user_id FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." ORDER BY add_date DESC LIMIT ".intval($this->REPUT_CAST_VALUE));
+			$Q = db()->query("SELECT id,target_user_id FROM ".db('reput_user_votes')." WHERE user_id=".intval(main()->USER_ID)." ORDER BY add_date DESC LIMIT ".intval($this->REPUT_CAST_VALUE));
 			while ($A = db()->fetch_assoc($Q)) $last_target_users[$A["id"]] = $A["target_user_id"];
 			if (in_array($target_user_id, (array)$last_target_users)) {
 				_re("You recently voted for this user. <br />\r\nSo to vote for him/her again you need to vote for at least ".intval($this->REPUT_CAST_VALUE)." other users first.");
@@ -697,7 +697,7 @@ class yf_reputation {
 			$voted_for_object = db()->query_num_rows(
 				"SELECT * 
 				FROM ".db('reput_user_votes')." 
-				WHERE user_id=".intval($this->USER_ID)." 
+				WHERE user_id=".intval(main()->USER_ID)." 
 					AND object_id = ".intval($this->_object_id)."
 					AND object_name = '"._es($this->_object_name)."' 
 				LIMIT 1"
@@ -801,7 +801,7 @@ class yf_reputation {
 		if (empty($user_id)) {
 			return false;
 		}
-		if (!empty($this->USER_ID) && $user_id == $this->USER_ID && !empty($this->CUR_USER_REPUT_ARRAY)) {
+		if (!empty(main()->USER_ID) && $user_id == main()->USER_ID && !empty($this->CUR_USER_REPUT_ARRAY)) {
 			return $this->CUR_USER_REPUT_ARRAY;
 		}
 		// Try to get user reput account info
@@ -840,7 +840,7 @@ class yf_reputation {
 	* Get reput info about current user
 	*/
 	function _get_cur_user_reput_info () {
-		$REPUT_INFO = $this->_get_user_reput_info($this->USER_ID);
+		$REPUT_INFO = $this->_get_user_reput_info(main()->USER_ID);
 		// Fill current user info
 		if (!empty($REPUT_INFO)) {
 			$this->CUR_USER_REPUT_POINTS	= intval($REPUT_INFO["points"]);

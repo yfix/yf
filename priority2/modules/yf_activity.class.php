@@ -44,11 +44,11 @@ class yf_activity {
 	* @return	string
 	*/
 	function view () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Try to count total user activity points
-		$total_points = $this->_get_user_total_points($this->USER_ID);
+		$total_points = $this->_get_user_total_points(main()->USER_ID);
 		// Process template
 		$replace = array(
 			"raw_log_link"	=> "./?object=".$_GET["object"]."&action=raw_log",
@@ -66,14 +66,14 @@ class yf_activity {
 	* @return	string
 	*/
 	function raw_log () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (!empty($_GET["id"])) {
 			$_GET["page"] = $_GET["id"];
 		}
 		// Connect pager
-		$sql = "SELECT * FROM ".db('activity_logs')." WHERE user_id=".intval($this->USER_ID);
+		$sql = "SELECT * FROM ".db('activity_logs')." WHERE user_id=".intval(main()->USER_ID);
 		$order_sql = " ORDER BY add_date DESC ";
 		$url = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url, null, $this->RAW_LOG_PER_PAGE);

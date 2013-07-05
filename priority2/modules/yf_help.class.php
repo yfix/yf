@@ -73,7 +73,7 @@ class yf_help extends yf_module {
 	// Default function
 	function show () {
 		$replace = array(
-			"add_link_url"	=> $this->USER_ID ? "./?object=links&action=account"._add_get() : "./?object=links&action=login",
+			"add_link_url"	=> main()->USER_ID ? "./?object=links&action=account"._add_get() : "./?object=links&action=login",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
@@ -81,8 +81,8 @@ class yf_help extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Form to contact with site admin
 	function email_form ($A = array()) {
-		if (!count($A) && $this->USER_ID) {
-			$A2 = user($this->USER_ID, array("name","email","nick"));
+		if (!count($A) && main()->USER_ID) {
+			$A2 = user(main()->USER_ID, array("name","email","nick"));
 		}
 		$A = array_merge((array)$A2, (array)$A);
 		// Process template
@@ -137,8 +137,8 @@ class yf_help extends yf_module {
 		// Save ticket
 		if (!common()->_error_exists()) {
 			// Try to find user id
-			if ($this->USER_ID) {
-				$user_id = $this->USER_ID;
+			if (main()->USER_ID) {
+				$user_id = main()->USER_ID;
 			} else {
 				// Check by email
 				$A = db()->query_fetch("SELECT id FROM ".db('user')." WHERE email='"._es($_POST["email"])."' LIMIT 1");
@@ -223,11 +223,11 @@ class yf_help extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Display requests sent by user
 	function view_tickets () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Connect pager
-		$sql = "SELECT * FROM ".db('help_tickets')." WHERE user_id=".intval($this->USER_ID);
+		$sql = "SELECT * FROM ".db('help_tickets')." WHERE user_id=".intval(main()->USER_ID);
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get tickets from db
 		$Q = db()->query($sql.$add_sql);
@@ -260,7 +260,7 @@ class yf_help extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Close given ticket
 	function close_ticket () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Try to decode ticket id
@@ -294,7 +294,7 @@ class yf_help extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Re-open given ticket
 	function reopen_ticket () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Try to decode ticket id
@@ -343,7 +343,7 @@ class yf_help extends yf_module {
 				"closed_date"	=> 0,
 			), "id=".intval($ticket_info["id"]));
 		}
-		if (!$this->USER_ID && !$_POST["user_name"]) {
+		if (!main()->USER_ID && !$_POST["user_name"]) {
 			$_POST["user_name"] = $ticket_info["name"];
 		}
 		$this->_comments_params["object_id"] = $ticket_info["id"];
@@ -359,7 +359,7 @@ class yf_help extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Delete given ticket
 	function delete_ticket () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Try to decode ticket id
@@ -376,7 +376,7 @@ class yf_help extends yf_module {
 			return _e("You are not allowed to delete own tickets!");
 		}
 		// Remove activity points
-		common()->_remove_activity_points($this->USER_ID, "bug_report", $ticket_info["id"]);
+		common()->_remove_activity_points(main()->USER_ID, "bug_report", $ticket_info["id"]);
 		// Do delete records
 		db()->query("DELETE FROM ".db('help_tickets')." WHERE id=".intval($ticket_info["id"]));
 		db()->query("DELETE FROM ".db('comments')." WHERE object_name='".$_GET["object"]."' AND object_id=".intval($ticket_info["id"]));
@@ -421,8 +421,8 @@ class yf_help extends yf_module {
 			"ticket_urls"			=> nl2br(_prepare_html($ticket_info["urls"])),
 			"ticket_status"			=> _prepare_html($ticket_info["status"]),
 			"ticket_is_closed"		=> intval($this->_ticket_is_closed),
-			"close_link"			=> $this->USER_ID && $this->ALLOW_CLOSE_OWN_TICKETS && !$this->_ticket_is_closed ? "./?object=".$_GET["object"]."&action=close_ticket&id=".$TICKET_ID : "",
-			"reopen_link"			=> $this->USER_ID && $this->ALLOW_REOPEN_OWN_TICKETS && $this->_ticket_is_closed ? "./?object=".$_GET["object"]."&action=reopen_ticket&id=".$TICKET_ID : "",
+			"close_link"			=> main()->USER_ID && $this->ALLOW_CLOSE_OWN_TICKETS && !$this->_ticket_is_closed ? "./?object=".$_GET["object"]."&action=close_ticket&id=".$TICKET_ID : "",
+			"reopen_link"			=> main()->USER_ID && $this->ALLOW_REOPEN_OWN_TICKETS && $this->_ticket_is_closed ? "./?object=".$_GET["object"]."&action=reopen_ticket&id=".$TICKET_ID : "",
 			"answers"				=> $this->_view_comments(),
 		);
 		return tpl()->parse($_GET["object"]."/view_answers_main", $replace);
@@ -464,7 +464,7 @@ class yf_help extends yf_module {
 	*/
 	function _comment_is_allowed ($params = array()) {
 		// Check for tickets opened by guests for guests
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			if (!empty($this->_cur_ticket_info["user_id"]) || $this->_ticket_is_closed) {
 				return false;
 			}
@@ -475,14 +475,14 @@ class yf_help extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Check if comment edit allowed
 	function _comment_edit_allowed ($params = array()) {
-		$edit_allowed	= $this->USER_ID && $this->ALLOW_EDIT_OWN_ANSWERS && $params["user_id"] && $params["user_id"] == $this->USER_ID;
+		$edit_allowed	= main()->USER_ID && $this->ALLOW_EDIT_OWN_ANSWERS && $params["user_id"] && $params["user_id"] == main()->USER_ID;
 		return (bool)$edit_allowed;
 	}
 
 	//-----------------------------------------------------------------------------
 	// Check if comment delete allowed
 	function _comment_delete_allowed ($params = array()) {
-		$delete_allowed	= $this->USER_ID && $this->ALLOW_DELETE_OWN_ANSWERS && $params["user_id"] && $params["user_id"] == $this->USER_ID;
+		$delete_allowed	= main()->USER_ID && $this->ALLOW_DELETE_OWN_ANSWERS && $params["user_id"] && $params["user_id"] == main()->USER_ID;
 		return (bool)$delete_allowed;
 	}
 

@@ -260,7 +260,7 @@ class yf_geo_content {
 		// Save data
 		if (!empty($_POST)) {
 			// Update user info
-			if (isset($_POST["update_2"]) && $this->USER_ID && !empty($_POST["update_profile"]) && !empty($sel_data["city_name"])) {
+			if (isset($_POST["update_2"]) && main()->USER_ID && !empty($_POST["update_profile"]) && !empty($sel_data["city_name"])) {
 				if ($sel_data["country_code"] != $this->_user_info["country"]
 					|| $sel_data["region_code"] != $this->_user_info["state"]
 					|| strtolower($sel_data["city_name"]) != strtolower($this->_user_info["city"])
@@ -275,7 +275,7 @@ class yf_geo_content {
 					if (!empty($sel_data["zip_code"]) && is_numeric($sel_data["zip_code"])) {
 						$sql_array["zip_code"]	= _es($sel_data["zip_code"]);
 					}
-					update_user($this->USER_ID, $sql_array);
+					update_user(main()->USER_ID, $sql_array);
 				}
 				return js_redirect("./?object=account");
 			}
@@ -433,7 +433,7 @@ class yf_geo_content {
 			return _e(t("Internal error #036. Please contact site admin."));
 		}
 		// Check if something has changed
-		if ($this->USER_ID && !empty($sel_data)) {
+		if (main()->USER_ID && !empty($sel_data)) {
 			if (($sel_data["country_code"] && $sel_data["country_code"] != $this->_user_info["country"])
 				|| ($sel_data["region_code"] && $sel_data["region_code"] != $this->_user_info["state"])
 				|| ($sel_data["city_name"] && strtolower($sel_data["city_name"]) != strtolower($this->_user_info["city"]))
@@ -445,7 +445,7 @@ class yf_geo_content {
 		// Prepare template
 		$replace2 = array(
 			"form_action"		=> "./?object=".GEO_CONTENT_CLASS_NAME."&action=change_location",
-			"show_update_form"	=> $this->USER_ID && $something_changed ? 1 : 0,
+			"show_update_form"	=> main()->USER_ID && $something_changed ? 1 : 0,
 			"city"				=> _prepare_html($sel_data["city_name"]),
 			"region"			=> _prepare_html(_region_name($sel_data["region_code"], $sel_data["country_code"])),
 			"country"			=> _prepare_html(_country_name($sel_data["country_code"])),

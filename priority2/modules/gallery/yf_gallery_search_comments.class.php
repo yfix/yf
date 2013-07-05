@@ -17,7 +17,7 @@ class yf_gallery_search_comments {
 	* Display users comments
 	*/
 	function search_comments(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (isset($_GET["id"]) && !isset($_GET["page"])) {
@@ -46,7 +46,7 @@ class yf_gallery_search_comments {
 			$WHERE = " AND folder_id=".$_SESSION["cats_select_box"];
 		}
 		
-		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".$this->USER_ID. $WHERE);
+		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".main()->USER_ID. $WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];
 			$posts[$A["id"]] = $A;
@@ -89,7 +89,7 @@ class yf_gallery_search_comments {
 		}
 
 		
-		$Q = db()->query("SELECT id,title FROM ".db('gallery_folders')." WHERE user_id=".$this->USER_ID);
+		$Q = db()->query("SELECT id,title FROM ".db('gallery_folders')." WHERE user_id=".main()->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$cats[$A["id"]] = $A["title"];
 		}
@@ -144,7 +144,7 @@ class yf_gallery_search_comments {
 	*/
 	function _delete(){
 		// Check if user is member
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -155,7 +155,7 @@ class yf_gallery_search_comments {
 			"SELECT * FROM ".db('comments')." 
 			WHERE object_name='".GALLERY_CLASS_NAME."' 
 				AND object_id IN(
-					SELECT id FROM ".db('gallery_photos')." WHERE user_id = ".intval($this->USER_ID)."
+					SELECT id FROM ".db('gallery_photos')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
 				AND id=".intval($_GET["id"])
 		);

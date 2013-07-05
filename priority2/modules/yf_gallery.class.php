@@ -239,12 +239,12 @@ class yf_gallery extends yf_module {
 		$this->HIDE_TOTAL_ID = main()->HIDE_TOTAL_ID;
 		if ($this->HIDE_TOTAL_ID && (
 			MAIN_TYPE_ADMIN || 
-			(empty($GLOBALS['HOSTING_ID']) && empty($this->USER_ID))
+			(empty($GLOBALS['HOSTING_ID']) && empty(main()->USER_ID))
 		)) {
 			$this->HIDE_TOTAL_ID = false;
 		}
 		// Remove geo customization for the guests
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			$this->ALLOW_GEO_FILTERING = false;
 		}
 		// Tagging
@@ -315,7 +315,7 @@ class yf_gallery extends yf_module {
 		if ($this->HIDE_TOTAL_ID && $GLOBALS['HOSTING_ID']) {
 			$user_id = $GLOBALS['HOSTING_ID'];
 		} else {
-			$user_id = !empty($_GET["id"]) ? $_GET["id"] : $this->USER_ID;
+			$user_id = !empty($_GET["id"]) ? $_GET["id"] : main()->USER_ID;
 		}
 		// Try to get given user info
 		if (!empty($user_id)) {
@@ -328,7 +328,7 @@ class yf_gallery extends yf_module {
 			$GLOBALS['user_info'] = $user_info;
 		}
 		if (MAIN_TYPE_USER) {
-			$this->is_own_gallery = intval(($_GET["id"] && $this->USER_ID == $_GET["id"]) || (!$_GET["id"] && !empty($this->USER_ID)));
+			$this->is_own_gallery = intval(($_GET["id"] && main()->USER_ID == $_GET["id"]) || (!$_GET["id"] && !empty(main()->USER_ID)));
 		} elseif (MAIN_TYPE_ADMIN) {
 			$this->is_own_gallery = true;
 		}
@@ -339,10 +339,10 @@ class yf_gallery extends yf_module {
 		$num_user_photos = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($user_id));
 		if (!empty($user_id) && empty($num_user_photos)) {
 			$replace = array(
-				"is_logged_in"	=> intval((bool) $this->USER_ID),
+				"is_logged_in"	=> intval((bool) main()->USER_ID),
 				"is_own_gallery"=> $this->is_own_gallery,
 				"start_link"	=> "./?object=".GALLERY_CLASS_NAME."&action=add_photo"._add_get(array("page")),
-				"user_id"		=> intval($this->USER_ID),
+				"user_id"		=> intval(main()->USER_ID),
 			);
 			$body = tpl()->parse(GALLERY_CLASS_NAME."/no_gallery_yet", $replace);
 		} else {
@@ -785,7 +785,7 @@ class yf_gallery extends yf_module {
 		$cur_folder_info = $this->_user_folders_infos[$FOLDER_ID];
 		if ($_GET["action"] == "show_medium_size") {
 			// Check if target user is ignored by owner
-			if (common()->_is_ignored($this->USER_ID, $photo_info["user_id"])) {
+			if (common()->_is_ignored(main()->USER_ID, $photo_info["user_id"])) {
 				return false;
 			}
 			return $this->_comment_allowed_check($cur_folder_info["allow_comments"], $photo_info["allow_comments"], $photo_info["user_id"]);
@@ -842,8 +842,8 @@ class yf_gallery extends yf_module {
 		if (!in_array($_GET["action"], array("show", "show_all_galleries"))) {
 			if (!empty($this->_author_name)) {
 				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html($this->_author_name), "./?object=".GALLERY_CLASS_NAME."&action=show_gallery&id=".$this->_author_id);
-			} elseif (!empty($this->USER_ID)) {
-				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name($this->_user_info)), "./?object=".GALLERY_CLASS_NAME."&action=show_gallery&id=".$this->USER_ID);
+			} elseif (!empty(main()->USER_ID)) {
+				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name($this->_user_info)), "./?object=".GALLERY_CLASS_NAME."&action=show_gallery&id=".main()->USER_ID);
 			}
 		}
 		if (in_array($_GET["action"], array("show_all_galleries"))) {
@@ -1032,7 +1032,7 @@ class yf_gallery extends yf_module {
 			return array("allow_cache" => 0, "object" => "gallery");
 		}
 // TODO: show for gallery owner
-		$_info = $this->_get_user_folders($this->USER_ID);
+		$_info = $this->_get_user_folders(main()->USER_ID);
 		if (!$_info) {
 			return "";
 		}

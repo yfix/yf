@@ -179,13 +179,13 @@ class yf_blog_posting {
 		}
 		
 		$OBJ = main()->init_class("community");
-		$community = is_object($OBJ) ? $OBJ->_get_community_with_allow_posting_for_user($this->USER_ID) : "";
+		$community = is_object($OBJ) ? $OBJ->_get_community_with_allow_posting_for_user(main()->USER_ID) : "";
 		
 		$first_element = array("0" => t("In my blog"));
 		$projects = my_array_merge($first_element, $community);
 		$community_select_box = common()->select_box("community_select_box", $projects, $_POST["community_select_box"], false, 2, "", false);	
 		
-		$friends_groups = $FRIENDS_OBJ->_get_friends_groups($this->USER_ID);
+		$friends_groups = $FRIENDS_OBJ->_get_friends_groups(main()->USER_ID);
 		
 		foreach ((array)$friends_groups as $friends_group){
 			$friends_group_box .= '<input type="checkbox" name="group['.$friends_group["id2"].']" value="'.$friends_group["id2"].'"> '.$friends_group["title"].'<br />';
@@ -248,7 +248,7 @@ class yf_blog_posting {
 		// Try to get given post info
 		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
 			$sql .= " id=".intval($_GET["id"]);
 		}
@@ -422,7 +422,7 @@ class yf_blog_posting {
 				$select_friends_groups = $FRIENDS_OBJ->_mask_to_ids($post_info["mask"]);
 			}
 			
-			$friends_groups = $FRIENDS_OBJ->_get_friends_groups($this->USER_ID);
+			$friends_groups = $FRIENDS_OBJ->_get_friends_groups(main()->USER_ID);
 			
 			foreach ((array)$friends_groups as $friends_group){
 				$friends_group_box .= '<input type="checkbox" name="group['.$friends_group["id2"].']" value="'.$friends_group["id2"].'" '.(in_array($friends_group["id2"], (array)$select_friends_groups)?'checked':'').'> '.$friends_group["title"].'<br />';
@@ -487,7 +487,7 @@ class yf_blog_posting {
 		// Get post info
 		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
 			$sql .= " id=".intval($_GET["id"]);
 		}
@@ -554,7 +554,7 @@ class yf_blog_posting {
 		// Get post info
 		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
 			$sql .= " id=".intval($_GET["id"]);
 		}
@@ -585,7 +585,7 @@ class yf_blog_posting {
 			unlink($attach_fs_path);
 		}
 		// Update post record
-		db()->query("UPDATE ".db('blog_posts')." SET attach_image='' WHERE id=".intval($post_info["id"])." AND user_id='".intval($this->USER_ID)."' LIMIT 1");
+		db()->query("UPDATE ".db('blog_posts')." SET attach_image='' WHERE id=".intval($post_info["id"])." AND user_id='".intval(main()->USER_ID)."' LIMIT 1");
 		// Last update
 		update_user($this->BLOG_OBJ->USER_ID, array("last_update"=>time()));
 		// Return user back

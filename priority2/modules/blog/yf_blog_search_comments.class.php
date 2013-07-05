@@ -19,7 +19,7 @@ class yf_blog_search_comments {
 	* Display comments posted in user's blog
 	*/
 	function search_comments(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (isset($_GET["id"]) && !isset($_GET["page"])) {
@@ -48,7 +48,7 @@ class yf_blog_search_comments {
 		}
 		
 		
-		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE user_id=".$this->USER_ID.$WHERE);
+		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE user_id=".main()->USER_ID.$WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];
 			$posts[$A["id"]] = $A;
@@ -147,7 +147,7 @@ class yf_blog_search_comments {
 	* Do delete comment
 	*/
 	function _delete(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -158,7 +158,7 @@ class yf_blog_search_comments {
 			"SELECT * FROM ".db('comments')." 
 			WHERE object_name='".BLOG_CLASS_NAME."' 
 				AND object_id IN(
-					SELECT id FROM ".db('blog_posts')." WHERE user_id = ".intval($this->USER_ID)."
+					SELECT id FROM ".db('blog_posts')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
 				AND id=".intval($_GET["id"])
 		);

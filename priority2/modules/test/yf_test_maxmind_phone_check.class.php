@@ -15,7 +15,7 @@ class yf_test_maxmind_phone_check {
 	/**
 	*/
 	function run_test () {
-		if ($this->USER_ID != 1) {
+		if (main()->USER_ID != 1) {
 			return "<b style='color:red;'>ACCESS DENIED!!!</b>";
 		}
 		$OBJ = main()->init_class("maxmind_phone_verify", "classes/");

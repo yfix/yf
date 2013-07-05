@@ -168,7 +168,7 @@ class yf_photo_rating extends yf_module {
 	function _show_photo () {
 		// Apply default filter
 		if (!isset($_SESSION[$this->_filter_name])) {
-			if ($this->USER_ID) {
+			if (main()->USER_ID) {
 				$_POST["sex"] = strtolower($this->_user_info["sex"]) == "female" ? "Male" : "Female";
 			} else {
 				$_POST["sex"] = "Female";
@@ -187,13 +187,13 @@ class yf_photo_rating extends yf_module {
 			SELECT photo_id 
 			FROM ".db('gallery_rate_views')." 
 			WHERE ".(
-				$this->USER_ID 
-				? " user_id = ".intval($this->USER_ID)." " 
+				main()->USER_ID 
+				? " user_id = ".intval(main()->USER_ID)." " 
 				: " sid = '"._es(session_id())."' AND date > ".(time() - $this->GUESTS_TIMEOUT)." "
 			)."
 		)";
-		if ($this->USER_ID) {
-			$view_check_sql .= " AND user_id != ".intval($this->USER_ID)." ";
+		if (main()->USER_ID) {
+			$view_check_sql .= " AND user_id != ".intval(main()->USER_ID)." ";
 		}
 
 // TODO: add more access level checks (ability to view also non-public photos if allowed)
@@ -256,7 +256,7 @@ class yf_photo_rating extends yf_module {
 			// Save photo view
 			db()->REPLACE("gallery_rate_views", array(
 				"sid"		=> _es(session_id()),
-				"user_id"	=> intval($this->USER_ID),
+				"user_id"	=> intval(main()->USER_ID),
 				"photo_id"	=> intval($photo_info["id"]),
 				"date"		=> time(),
 			));
@@ -318,7 +318,7 @@ class yf_photo_rating extends yf_module {
 			return print("No photo id");
 		}
 		// Do not allow to rate own photos
-		if ($this->USER_ID && $photo_info["user_id"] == $this->USER_ID) {
+		if (main()->USER_ID && $photo_info["user_id"] == main()->USER_ID) {
 			if (!$this->__TEST_MODE__) {
 				return print("You are not allowed to vote for own photo");
 			}
@@ -331,7 +331,7 @@ class yf_photo_rating extends yf_module {
 		// Check if vote allowed
 		$ALLOW_VOTE = false;
 		// Check if user is allowed to make vote here and now
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			$CHEAT_DETECTED = false;
 			list($total_votes) = db()->query_fetch(
 				"SELECT COUNT(*) AS `0` 
@@ -386,7 +386,7 @@ class yf_photo_rating extends yf_module {
 		if ($ALLOW_VOTE) {
 			$sql_array = array(
 				"photo_id"		=> intval($PHOTO_ID),
-				"user_id"		=> intval($this->USER_ID),
+				"user_id"		=> intval(main()->USER_ID),
 				"target_user_id"=> intval($photo_info["user_id"]),
 				"voted"			=> intval($VOTE_VALUE),
 				"counted"		=> intval($CHEAT_DETECTED ? 0 : $VOTE_VALUE),
@@ -398,7 +398,7 @@ class yf_photo_rating extends yf_module {
 			$cur_photo_vote = db()->query_fetch(
 				"SELECT * 
 				FROM ".db('gallery_rate_votes')." 
-				WHERE user_id = ".intval($this->USER_ID)." 
+				WHERE user_id = ".intval(main()->USER_ID)." 
 					AND photo_id = ".intval($PHOTO_ID)
 			);
 			// Set empty previous vote results to for this photo from current user
@@ -406,7 +406,7 @@ class yf_photo_rating extends yf_module {
 				db()->query(
 					"UPDATE ".db('gallery_rate_votes')." 
 					SET counted = 0 
-					WHERE user_id = ".intval($this->USER_ID)." 
+					WHERE user_id = ".intval(main()->USER_ID)." 
 						AND photo_id = ".intval($PHOTO_ID)
 				);
 			}
@@ -458,11 +458,11 @@ class yf_photo_rating extends yf_module {
 		$OWNER_USER_ID		= intval($params["user_id"]);
 		if (!$this->__TEST_MODE__) {
 			// Do not display vote box for guests
-			if (!$this->USER_ID) {
+			if (!main()->USER_ID) {
 				return false;
 			}
 			// Do not display vote box for the owner
-			if ($this->USER_ID && $OWNER_USER_ID && $OWNER_USER_ID == $this->USER_ID) {
+			if (main()->USER_ID && $OWNER_USER_ID && $OWNER_USER_ID == main()->USER_ID) {
 				return false;
 			}
 // TODO: add basic check for allow rating (including latest voted photos)
@@ -490,7 +490,7 @@ class yf_photo_rating extends yf_module {
 	function _show_last_voted () {
 		$info = $_SESSION["_photo_rating_last"];
 		// For guests
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			if (!empty($info["photo_id"])) {
 				$body = tpl()->parse(__CLASS__."/last_voted");
 				// Cleanup result if needed

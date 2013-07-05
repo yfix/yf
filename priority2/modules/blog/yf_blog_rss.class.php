@@ -112,7 +112,7 @@ class yf_blog_rss {
 		$_GET["id"] = intval($_GET["id"]);
 		$user_id = $_GET["id"];
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$user_id = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID;
+			$user_id = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID;
 		}
 		// Try to get given user info
 		if (!empty($user_id)) {

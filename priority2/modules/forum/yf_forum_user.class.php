@@ -491,7 +491,7 @@ class yf_forum_user {
 	* Auto create user's profile (if we are in "global" mode)
 	*
 	* @access	private
-	* @param	$this->USER_ID
+	* @param	main()->USER_ID
 	* @return	mixed	array if success, false otherwise
 	*/
 	function _auto_create_user_profile () {

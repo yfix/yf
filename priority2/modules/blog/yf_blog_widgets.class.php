@@ -132,7 +132,7 @@ class yf_blog_widgets {
 		if ($params["describe"]) {
 			return array("allow_cache" => 0);
 		}
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return "";
 		}
 		$OBJ = $this->BLOG_OBJ->_load_sub_module("blog_right_block");

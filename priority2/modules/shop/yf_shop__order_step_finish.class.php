@@ -60,7 +60,7 @@ class yf_shop__order_step_finish{
 			$total_price += $price * $quantity;
 		}
 		$total_price = $order_info["total_sum"];
-		if($this->USER_ID) {
+		if(main()->USER_ID) {
 			$order_info = my_array_merge(module('shop')->_user_info, $order_info);
 		}else {
 			$order_info ["email"]= $order_info["email"];

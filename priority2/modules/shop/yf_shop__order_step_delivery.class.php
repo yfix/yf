@@ -13,7 +13,7 @@ class yf_shop__order_step_delivery{
 				return module('shop')->_order_step_select_payment(true);
 			}
 		}
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			$order_info = module('shop')->_user_info;
 		}
 		// Fill fields

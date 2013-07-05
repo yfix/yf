@@ -40,11 +40,11 @@ class yf_user_profile extends yf_module {
 			if (!empty($GLOBALS['_agency_info'])) {
 				$this->_agency_info = &$GLOBALS['_agency_info'];
 			}
-			$this->USER_ID		= $_SESSION["edit_escort_id"];
-			$this->USER_GROUP	= 3;
+			main()->USER_ID		= $_SESSION["edit_escort_id"];
+			main()->USER_GROUP	= 3;
 		} else {
-			$this->USER_ID		= main()->USER_ID;
-			$this->USER_GROUP	= main()->USER_GROUP;
+			main()->USER_ID		= main()->USER_ID;
+			main()->USER_GROUP	= main()->USER_GROUP;
 		}
 		// Get user account type
 		$this->_account_types	= main()->get_data("account_types");
@@ -76,15 +76,15 @@ class yf_user_profile extends yf_module {
 			return "";
 		}
 		$_GET["id"] = intval($_GET["id"]);
-		if (!isset($_GET["profile_url"]) && !isset($_GET["id"]) && !empty($this->USER_ID)) {
-			$user_id = $this->USER_ID;
+		if (!isset($_GET["profile_url"]) && !isset($_GET["id"]) && !empty(main()->USER_ID)) {
+			$user_id = main()->USER_ID;
 		} elseif (isset($_GET["profile_url"])) {
 			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE profile_url='"._es($_GET["profile_url"])."' AND active='1'");
 			$user_id = $_GET["id"] = intval($user_info["id"]);
 			unset($_GET["profile_url"]);
 		} elseif (isset($_GET["id"])) {
 			$_GET["id"] = intval($_GET["id"]);
-			$user_id = !empty($_GET["id"]) ? $_GET["id"] : $this->USER_ID;
+			$user_id = !empty($_GET["id"]) ? $_GET["id"] : main()->USER_ID;
 		}
 		// Try to get user info
 		if (!empty($user_id) && empty($this->_user_info)) {
@@ -163,7 +163,7 @@ class yf_user_profile extends yf_module {
 			"page_link"			=> !empty($this->_user_info["profile_url"]) ? $this->_user_info["profile_url"] : "",
 			"comments"			=> $this->_show_comments(),
 			"custom_css"		=> ""/*$this->_show_custom_design_css ($this->_user_info)*/,
-			"add_review_link"	=> $this->_user_info["group"] == 3/* && ($this->_user_info["id"] != $this->USER_ID)*/ ? "./?object=reviews&action=add_for_user&id=".$this->_user_info["id"] : "./?object=login_form&go_url=reviews;add_for_user;id=".$this->_user_info["id"],
+			"add_review_link"	=> $this->_user_info["group"] == 3/* && ($this->_user_info["id"] != main()->USER_ID)*/ ? "./?object=reviews&action=add_for_user&id=".$this->_user_info["id"] : "./?object=login_form&go_url=reviews;add_for_user;id=".$this->_user_info["id"],
 			"stats_visit_url"	=> "./?object=".$_GET["object"]."&action=show_visits_stats",
 			"stats_friend_url"	=> "./?object=".$_GET["object"]."&action=show_friend_stats",
 		);
@@ -255,16 +255,16 @@ class yf_user_profile extends yf_module {
 			$body .= $this->_show_item($desc, $value);
 		}
 		$_login_link = tpl()->parse($_GET["object"]."/login_link", array("link" => "./?object=login_form&go_url=".$_GET["object"].";show;id=".$_GET["id"]));
-		$website	= $this->_show_contact_item("Web Site", ($this->_user_info['approved_recip'] && $this->_ad_info["url"]) ? ($this->USER_ID ? "./?object=".$_GET["object"]."&action=go&id=".$this->_ad_info["ad_id"] : "./?object=login_form&go_url=".$_GET["object"].";go;id=".$this->_ad_info["ad_id"]) : "");
-		$email		= $this->_show_contact_item("Email",	$this->USER_ID ? "./?object=email&action=send_form&id=".$this->_user_info["id"] : "./?object=login_form&go_url=email;send_form;id=".$this->_user_info["id"]);
-		$phone		= $this->_show_item("Phone",	$this->_user_info["phone"]	? ($this->USER_ID ? $this->_user_info["phone"]	: $_login_link) : "");
-		$fax		= $this->_show_item("Fax",		$this->_user_info["fax"]	? ($this->USER_ID ? $this->_user_info["fax"]	: $_login_link) : "");
-		$icq		= $this->_show_item("ICQ",		$this->_user_info["icq"]	? ($this->USER_ID ? $this->_user_info["icq"]	: $_login_link) : "");
-		$yahoo		= $this->_show_item("YIM",		$this->_user_info["yahoo"]	? ($this->USER_ID ? $this->_user_info["yahoo"]	: $_login_link) : "");
-		$aim		= $this->_show_item("AIM",		$this->_user_info["aim"]	? ($this->USER_ID ? $this->_user_info["aim"]	: $_login_link) : "");
-		$msn		= $this->_show_item("MSN",		$this->_user_info["msn"]	? ($this->USER_ID ? $this->_user_info["msn"]	: $_login_link) : "");
-		$jabber		= $this->_show_item("Jabber",	$this->_user_info["jabber"]	? ($this->USER_ID ? $this->_user_info["jabber"]	: $_login_link) : "");
-		$skype		= $this->_show_item("Skype",	$this->_user_info["skype"]	? ($this->USER_ID ? $this->_user_info["skype"]	: $_login_link) : "");
+		$website	= $this->_show_contact_item("Web Site", ($this->_user_info['approved_recip'] && $this->_ad_info["url"]) ? (main()->USER_ID ? "./?object=".$_GET["object"]."&action=go&id=".$this->_ad_info["ad_id"] : "./?object=login_form&go_url=".$_GET["object"].";go;id=".$this->_ad_info["ad_id"]) : "");
+		$email		= $this->_show_contact_item("Email",	main()->USER_ID ? "./?object=email&action=send_form&id=".$this->_user_info["id"] : "./?object=login_form&go_url=email;send_form;id=".$this->_user_info["id"]);
+		$phone		= $this->_show_item("Phone",	$this->_user_info["phone"]	? (main()->USER_ID ? $this->_user_info["phone"]	: $_login_link) : "");
+		$fax		= $this->_show_item("Fax",		$this->_user_info["fax"]	? (main()->USER_ID ? $this->_user_info["fax"]	: $_login_link) : "");
+		$icq		= $this->_show_item("ICQ",		$this->_user_info["icq"]	? (main()->USER_ID ? $this->_user_info["icq"]	: $_login_link) : "");
+		$yahoo		= $this->_show_item("YIM",		$this->_user_info["yahoo"]	? (main()->USER_ID ? $this->_user_info["yahoo"]	: $_login_link) : "");
+		$aim		= $this->_show_item("AIM",		$this->_user_info["aim"]	? (main()->USER_ID ? $this->_user_info["aim"]	: $_login_link) : "");
+		$msn		= $this->_show_item("MSN",		$this->_user_info["msn"]	? (main()->USER_ID ? $this->_user_info["msn"]	: $_login_link) : "");
+		$jabber		= $this->_show_item("Jabber",	$this->_user_info["jabber"]	? (main()->USER_ID ? $this->_user_info["jabber"]	: $_login_link) : "");
+		$skype		= $this->_show_item("Skype",	$this->_user_info["skype"]	? (main()->USER_ID ? $this->_user_info["skype"]	: $_login_link) : "");
 		// Process fields with links
 		foreach ((array)$link_fields as $name => $desc) {
 			if (!empty($this->_user_info[$name])) {
@@ -419,7 +419,7 @@ class yf_user_profile extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Check if comment delete allowed
 	function _comment_delete_allowed ($params = array()) {
-		$delete_allowed	= $this->USER_ID && (($params["user_id"] && $params["user_id"] == $this->USER_ID) || ($params["object_id"] && $this->USER_ID == $params["object_id"]));
+		$delete_allowed	= main()->USER_ID && (($params["user_id"] && $params["user_id"] == main()->USER_ID) || ($params["object_id"] && main()->USER_ID == $params["object_id"]));
 		return (bool)$delete_allowed;
 	}
 
@@ -462,18 +462,18 @@ class yf_user_profile extends yf_module {
 			$totals = main()->call_class_method("user_stats", "classes/", "_get_live_stats", array("user_id" => $this->_user_info["id"]));
 			// Check if this user is in favorites (also check if this is own profile)
 			$DISPLAY_CONTACT_ITEMS = 0;
-			if ($this->USER_ID && $this->_user_info["id"] != $this->USER_ID) {
+			if (main()->USER_ID && $this->_user_info["id"] != main()->USER_ID) {
 				if ($totals["favorite_users"]) {
-					$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM ".db('favorites')." WHERE user_id=".intval($this->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
+					$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM ".db('favorites')." WHERE user_id=".intval(main()->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 				}
 				if ($totals["ignored_users"]) {
-					$is_ignored			= db()->query_num_rows("SELECT 1 FROM ".db('ignore_list')." WHERE user_id=".intval($this->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
+					$is_ignored			= db()->query_num_rows("SELECT 1 FROM ".db('ignore_list')." WHERE user_id=".intval(main()->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 				}
 				// Check friendship
 				$FRIENDS_OBJ		= main()->init_class("friends");
-				$is_a_friend		= is_object($FRIENDS_OBJ) ? $FRIENDS_OBJ->_is_a_friend($this->USER_ID, $this->_user_info["id"]) : -1;
+				$is_a_friend		= is_object($FRIENDS_OBJ) ? $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $this->_user_info["id"]) : -1;
 				if (!empty($totals["try_friends"])) {
-					$is_friend_of		= $FRIENDS_OBJ->_is_a_friend($this->_user_info["id"], $this->USER_ID);
+					$is_friend_of		= $FRIENDS_OBJ->_is_a_friend($this->_user_info["id"], main()->USER_ID);
 				}
 				$is_mutual_friends	= $is_a_friend && $is_friend_of;
 				// Switch for contact items
@@ -525,7 +525,7 @@ class yf_user_profile extends yf_module {
 				"blog_link"				=> $totals["blog_posts"]	? process_url("./?object=blog&action=show_posts&id=".$this->_user_info["id"]._add_get($skip_get)) : "",
 				"articles_link"			=> $totals["articles"]		? process_url("./?object=articles&action=view_by_user&id=".$this->_user_info["id"]._add_get($skip_get)) : "",
 				"interests_link"		=> $totals["interests"]		? process_url("./?object=interests&action=view&id=".$this->_user_info["id"]._add_get($skip_get)) : "",
-				"contact_link"			=> $this->USER_ID && $this->USER_ID != $this->_user_info["id"] ? process_url($this->USER_ID ? "./?object=email&action=send_form&id=".$this->_user_info["id"] : "./?object=login_form&go_url=email;send_form;id=".$this->_user_info["id"]) : "",
+				"contact_link"			=> main()->USER_ID && main()->USER_ID != $this->_user_info["id"] ? process_url(main()->USER_ID ? "./?object=email&action=send_form&id=".$this->_user_info["id"] : "./?object=login_form&go_url=email;send_form;id=".$this->_user_info["id"]) : "",
 				"favorites_link"		=> !empty($is_in_favorites) ? process_url("./?object=account&action=favorite_delete&id=".$this->_user_info["id"]) : process_url("./?object=account&action=favorite_add&id=".$this->_user_info["id"]),
 				"is_in_favorites"		=> isset($is_in_favorites) ? intval((bool) $is_in_favorites) : "",
 				"ignore_link"			=> !empty($is_ignored) ? process_url("./?object=account&action=unignore_user&id=".$this->_user_info["id"]) : process_url("./?object=account&action=ignore_user&id=".$this->_user_info["id"]),
@@ -574,11 +574,11 @@ class yf_user_profile extends yf_module {
 	*/
 	function show_visits_stats () {
 
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
-		$_GET["id"] ? $_id = intval($_GET["id"]) : $_id = $this->USER_ID;
+		$_GET["id"] ? $_id = intval($_GET["id"]) : $_id = main()->USER_ID;
 		$sql = "SELECT * FROM ".db('log_user_action')." WHERE action_name='visit' AND owner_id=".intval($_id)." ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);		
 		$stats_array = db()->query_fetch_all($sql.$add_sql);
@@ -611,11 +611,11 @@ class yf_user_profile extends yf_module {
 	*/
 	function show_friend_stats () {
 
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
-		$_id = intval($this->USER_ID);
+		$_id = intval(main()->USER_ID);
 		$sql = "SELECT * FROM ".db('log_user_action')." WHERE action_name IN('add_friend', 'del_friend') AND owner_id=".$_id." ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);		
 		$stats_array = db()->query_fetch_all($sql.$add_sql);

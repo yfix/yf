@@ -60,7 +60,7 @@ class yf_poll {
 			return "";
 		}
 		// Currently only for members (for guests display)
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			if ($this->ALLOW_VIEW_FOR_GUESTS) {
 				return $this->view($params);
 			} else {
@@ -99,7 +99,7 @@ class yf_poll {
 			);
 		}
 		// Check if we do not need to display vote form because TTL is not expired yet
-		$last_vote = db()->query_fetch("SELECT * FROM ".db('poll_votes')." WHERE user_id = ".intval($this->USER_ID)." AND poll_id = ".intval($poll_info["id"])." ORDER BY date DESC");
+		$last_vote = db()->query_fetch("SELECT * FROM ".db('poll_votes')." WHERE user_id = ".intval(main()->USER_ID)." AND poll_id = ".intval($poll_info["id"])." ORDER BY date DESC");
 		if (!empty($last_vote)) {
 			if ($this->ONE_VOTE_FOR_USER || ($this->VOTE_TTL && (time() - $last_vote["date"]) < $this->VOTE_TTL)) {
 				$_GET["id"] = $poll_info["id"];
@@ -120,7 +120,7 @@ class yf_poll {
 			if (empty($_POST["choice"])) {
 				_re(t("Please select something"));
 			}
-			$_is_poll_owner = ($this->USER_ID && $this->USER_ID == $poll_info["user_id"]) ? 1 : 0;
+			$_is_poll_owner = (main()->USER_ID && main()->USER_ID == $poll_info["user_id"]) ? 1 : 0;
 			// Check if owner can vote
 			$_allow_vote = 1;
 			if (!$this->ALLOW_VOTE_FOR_OWNER && $_is_poll_owner) {
@@ -135,7 +135,7 @@ class yf_poll {
 					}
 					db()->INSERT("poll_votes", array(
 						"poll_id"	=> intval($poll_info["id"]),
-						"user_id"	=> intval($this->USER_ID),
+						"user_id"	=> intval(main()->USER_ID),
 						"date"		=> time(),
 						"value"		=> _es($choice),
 					));
@@ -201,7 +201,7 @@ class yf_poll {
 			$POLL_ID = $poll_info["id"];
 		}
 		// Currently only for members (for guests display)
-		if (empty($this->USER_ID) && !$this->ALLOW_VIEW_FOR_GUESTS) {
+		if (empty(main()->USER_ID) && !$this->ALLOW_VIEW_FOR_GUESTS) {
 			return !$params["silent"] ? _error_need_login() : false;
 		}
 		// Get poll info
@@ -347,7 +347,7 @@ class yf_poll {
 		db()->INSERT("polls", array(
 			"object_name"	=> _es($OBJECT_NAME),
 			"object_id"		=> intval($OBJECT_ID),
-			"user_id"		=> $IS_COMMON ? 0 : intval($this->USER_ID),
+			"user_id"		=> $IS_COMMON ? 0 : intval(main()->USER_ID),
 			"question"		=> _es($_POST["poll_question"]),
 			"add_date"		=> time(),
 			"choices"		=> _es(implode("\n", $choices)),
@@ -364,7 +364,7 @@ class yf_poll {
 	function delete ($params = array()) {
 		$POLL_ID = intval($_GET["id"]);
 		// Currently only for members (for guests display)
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (!empty($POLL_ID)) {
@@ -384,7 +384,7 @@ class yf_poll {
 			return _e(t("No such poll!"));
 		}
 		// Check owner
-		if ($this->USER_ID != $poll_info["user_id"]) {
+		if (main()->USER_ID != $poll_info["user_id"]) {
 			return _e(t("Not your poll"));
 		}
 		db()->query("DELETE FROM ".db('poll_votes')." WHERE poll_id = ".intval($poll_info["id"]));
@@ -407,11 +407,11 @@ class yf_poll {
 		// Check if poll exists for the given object
 		$sql = "SELECT * FROM ".db('polls')." WHERE object_name='"._es($object_name)."' AND object_id=".intval($object_id);
 		$poll_info = db()->query_fetch($sql);
-		$_is_poll_owner = ($this->USER_ID && $this->USER_ID == $poll_info["user_id"]) ? 1 : 0;
+		$_is_poll_owner = (main()->USER_ID && main()->USER_ID == $poll_info["user_id"]) ? 1 : 0;
 		// No poll yet, allow to add for "object_id" and "object_name" owner
 		if (empty($poll_info)) {
 			// Poll for the given object not exists. Prompt to create one if current user is owner of this object
-			if ($this->USER_ID && $this->_is_object_owner ($object_id, $object_name)) {
+			if (main()->USER_ID && $this->_is_object_owner ($object_id, $object_name)) {
 				// Create poll
 				$replace = array(
 					"create_poll_url"	=> "./?object=".$object_name."&action=create_poll&id=".$object_id,
@@ -439,7 +439,7 @@ class yf_poll {
 	* Check if current user is object owner
 	*/
 	function _is_object_owner ($object_id, $object_name = "") {
-		if (!$this->USER_ID || !$object_id || !$object_name) {
+		if (!main()->USER_ID || !$object_id || !$object_name) {
 			return false;
 		}
 		$object_id = intval($object_id);
@@ -454,7 +454,7 @@ class yf_poll {
 			$sql = "SELECT id, user_id FROM ".db('forum_posts')." WHERE id=".$object_id;
 		}
 		$B = db()->query_fetch($sql);
-		if ($this->USER_ID && $this->USER_ID == $B["user_id"]) {
+		if (main()->USER_ID && main()->USER_ID == $B["user_id"]) {
 			$is_owner = 1;
 		} else {
 			$is_owner = 0;

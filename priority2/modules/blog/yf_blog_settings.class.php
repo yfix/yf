@@ -92,7 +92,7 @@ class yf_blog_settings {
 			"max_custom_cats"	=> intval($this->BLOG_OBJ->MAX_BLOG_LINKS_NUM),
 			"blog_privacy_box"	=> $this->BLOG_OBJ->_box("privacy", $_POST["privacy"]),
 			"blog_comments_box"	=> $this->BLOG_OBJ->_box("allow_comments", $_POST["allow_comments"]),
-			"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>$this->USER_ID)) : "",
+			"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
 		);
 		return tpl()->parse(BLOG_CLASS_NAME."/start_blog", $replace);
 	}
@@ -186,7 +186,7 @@ class yf_blog_settings {
 				"blog_privacy_box"	=> $this->BLOG_OBJ->_box("privacy", $_POST["privacy"]),
 				"blog_comments_box"	=> $this->BLOG_OBJ->_box("allow_comments", $_POST["allow_comments"]),
 				"manage_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts"._add_get(array("page")),
-				"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>$this->USER_ID)) : "",
+				"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
 			);
 			$body = tpl()->parse(BLOG_CLASS_NAME."/edit_blog_settings", $replace);
 		}
@@ -205,7 +205,7 @@ class yf_blog_settings {
 			return false;
 		}
 		// Set global tags settings as defaults
-		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>$this->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
+		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
 		// Process SQL
 		$sql = "INSERT INTO ".db('blog_settings')." (
 				user_id,

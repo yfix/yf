@@ -119,7 +119,7 @@ class yf_interests {
 	* Manage own interests
 	*/
 	function manage ($FORCE_USER_ID = false) {
-		$USER_ID = $FORCE_USER_ID ? $FORCE_USER_ID : $this->USER_ID;
+		$USER_ID = $FORCE_USER_ID ? $FORCE_USER_ID : main()->USER_ID;
 		if (!$FORCE_USER_ID && empty($USER_ID)) {
 			return _error_need_login();
 		}

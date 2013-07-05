@@ -91,7 +91,7 @@ class yf_register {
 	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
-		if ($this->USER_ID && $this->DENY_FOR_LOGGED_IN) {
+		if (main()->USER_ID && $this->DENY_FOR_LOGGED_IN) {
 			return _e("You are already registered on our site!");
 		}
 		// Default step value
@@ -174,7 +174,7 @@ class yf_register {
 			// Dynamic info
 			if (main()->USER_INFO_DYNAMIC) {
 				$OBJ_DYNAMIC_INFO = &main()->init_class("dynamic_info", "classes/");
-				$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_edit($this->USER_ID, $_SESSION["register"]["dynamic_info"]);
+				$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_edit(main()->USER_ID, $_SESSION["register"]["dynamic_info"]);
 			}
 		
 			// Parse template contents

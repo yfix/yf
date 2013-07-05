@@ -47,25 +47,25 @@ class yf_mail {
 	*/
 	function __construct () {
 		// Current user ID
-		$this->USER_ID		= $_SESSION['user_id'];
-		$this->USER_GROUP	= $_SESSION["user_group"];
+		main()->USER_ID		= $_SESSION['user_id'];
+		main()->USER_GROUP	= $_SESSION["user_group"];
 		// Select user details
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			$this->_user_info = &main()->USER_INFO;
 			if (!$this->_user_info) {
-				$this->_user_info = user($this->USER_ID);
+				$this->_user_info = user(main()->USER_ID);
 			}
 		}
 		$this->_mail_folders = array();
 		// Stop here for guests
-		if (empty($this->USER_ID)) return false;
+		if (empty(main()->USER_ID)) return false;
 		// Get mail folders
 		$this->_mail_folders = main()->get_data("mail_folders");
 		// Cleanup mail folders for the current user
 		foreach ((array)$this->_mail_folders as $folder_id => $v) {
 			if (!empty($v["user_groups"])) {
 				$tmp_array = explode(",", $v["user_groups"]);
-				if (!in_array($this->USER_GROUP, $tmp_array)) unset($this->_mail_folders[$folder_id]);
+				if (!in_array(main()->USER_GROUP, $tmp_array)) unset($this->_mail_folders[$folder_id]);
 			}
 		}
 		// Init friends module
@@ -97,7 +97,7 @@ class yf_mail {
 			$_GET["page"] = intval($_GET["id"]);
 			unset($_GET["id"]);
 		}
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
@@ -108,7 +108,7 @@ class yf_mail {
 			return common()->_show_error_message();
 		}
 		// Divide pages
-		$sql = "SELECT * FROM ".db('mail')." WHERE active='1' AND folder_id=".intval($folder_id)." AND receiver_id=".intval($this->USER_ID)." ORDER BY add_date DESC";
+		$sql = "SELECT * FROM ".db('mail')." WHERE active='1' AND folder_id=".intval($folder_id)." AND receiver_id=".intval(main()->USER_ID)." ORDER BY add_date DESC";
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->MESSAGES_ON_PAGE);
 		// Get folder contents from db
@@ -131,7 +131,7 @@ class yf_mail {
 		}
 		// Process messages
 		foreach ((array)$messages_array as $msg_id => $msg_info) {
-			$target_user_id = $msg_info["sender_id"] != $this->USER_ID ? $msg_info["sender_id"] : $msg_info["receiver_id"];
+			$target_user_id = $msg_info["sender_id"] != main()->USER_ID ? $msg_info["sender_id"] : $msg_info["receiver_id"];
 			$replace2 = array(
 				"bg_class"			=> !(++$i % 2) ? "bg1" : "bg2",
 				"msg_id"			=> intval($msg_id),
@@ -201,13 +201,13 @@ class yf_mail {
 	*/
 	function view_full_msg () {
 		$_GET["id"] = intval($_GET["id"]);
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
 		// Try to get message info
 		if (!empty($_GET["id"])) {
-			$msg_info = db()->query_fetch("SELECT * FROM ".db('mail')." WHERE id=".intval($_GET["id"])." AND active='1' AND receiver_id=".intval($this->USER_ID));
+			$msg_info = db()->query_fetch("SELECT * FROM ".db('mail')." WHERE id=".intval($_GET["id"])." AND active='1' AND receiver_id=".intval(main()->USER_ID));
 		}
 		if (empty($msg_info["id"])) {
 			_re(t("No such message!"));
@@ -232,7 +232,7 @@ class yf_mail {
 			"user_avatar"		=> _show_avatar ($target_user_info["id"], $target_user_info["name"], 1, 1),
 			"folder_name"		=> $folder_name,
 			"folder_link"		=> "./?object=".$_GET["object"]."&action=view_".$folder_name,
-			"reply_link"		=> $msg_info["folder_id"] == $this->_get_folder_id("inbox") && $msg_info["receiver_id"] == $this->USER_ID ? "./?object=".$_GET["object"]."&action=reply&id=".$msg_info["id"] : "",
+			"reply_link"		=> $msg_info["folder_id"] == $this->_get_folder_id("inbox") && $msg_info["receiver_id"] == main()->USER_ID ? "./?object=".$_GET["object"]."&action=reply&id=".$msg_info["id"] : "",
 			"back_link"			=> $_SERVER["HTTP_REFERER"],
 		);
 		return tpl()->parse($_GET["object"]."/view_full_msg", $replace);
@@ -246,13 +246,13 @@ class yf_mail {
 	*/
 	function reply () {
 		$_GET["id"] = intval($_GET["id"]);
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
 		// Try to get message info
 		if (!empty($_GET["id"])) {
-			$msg_info = db()->query_fetch("SELECT * FROM ".db('mail')." WHERE id=".intval($_GET["id"])." AND folder_id=".intval($this->_get_folder_id("inbox"))." AND active='1' AND receiver_id=".intval($this->USER_ID));
+			$msg_info = db()->query_fetch("SELECT * FROM ".db('mail')." WHERE id=".intval($_GET["id"])." AND folder_id=".intval($this->_get_folder_id("inbox"))." AND active='1' AND receiver_id=".intval(main()->USER_ID));
 		}
 		if (empty($msg_info["id"])) {
 			_re(t("No such message!"));
@@ -284,7 +284,7 @@ class yf_mail {
 	*/
 	function send ($params = array()) {
 		$_GET["id"] = intval($_GET["id"]);
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
@@ -300,7 +300,7 @@ class yf_mail {
 			return common()->_show_error_message();
 		}
 		// Check if user is trying to send mail to himself
-		if ($target_user_info["id"] == $this->USER_ID) {
+		if ($target_user_info["id"] == main()->USER_ID) {
 			_re(t("You are trying to send mail to yourself!"));
 			return common()->_show_error_message();
 		}
@@ -327,7 +327,7 @@ class yf_mail {
 				// Store receiver mail (folder = "inbox")
 				db()->INSERT("mail", array(
 					"folder_id"		=> $this->_get_folder_id("inbox"),
-					"sender_id"		=> intval($this->USER_ID),
+					"sender_id"		=> intval(main()->USER_ID),
 					"receiver_id"	=> intval($target_user_info["id"]),
 					"subject"		=> _esf($_POST["subject"]),
 					"message"		=> _esf($_POST["msg"]),
@@ -340,7 +340,7 @@ class yf_mail {
 				db()->INSERT("mail", array(
 					"folder_id"		=> $this->_get_folder_id("sent"),
 					"sender_id"		=> intval($target_user_info["id"]),
-					"receiver_id"	=> intval($this->USER_ID),
+					"receiver_id"	=> intval(main()->USER_ID),
 					"subject"		=> _esf($_POST["subject"]),
 					"message"		=> _esf($_POST["msg"]),
 					"status"		=> 'sent',
@@ -349,7 +349,7 @@ class yf_mail {
 					"active"		=> 1,
 				));
 				// Add counter for sent and received emails for users
-				db()->query("UPDATE ".db('user')." SET emailssent=emailssent+1 WHERE id=".intval($this->USER_ID));
+				db()->query("UPDATE ".db('user')." SET emailssent=emailssent+1 WHERE id=".intval(main()->USER_ID));
 				db()->query("UPDATE ".db('user')." SET emails=emails+1 WHERE id=".intval($target_user_info["id"]));
 				// Send email notification
 				$replace3 = array(
@@ -385,7 +385,7 @@ class yf_mail {
 	*/
 	function delete_msg () {
 		$_GET["id"] = intval($_GET["id"]);
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
@@ -408,7 +408,7 @@ class yf_mail {
 		if (is_array($msg_ids)) {
 			$Q = db()->query("SELECT * FROM ".db('mail')." WHERE id IN(".implode(",",$msg_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
-				if ($A["receiver_id"] != $this->USER_ID) continue;
+				if ($A["receiver_id"] != main()->USER_ID) continue;
 				$msg_infos[$A["id"]] = $A;
 			}
 		}

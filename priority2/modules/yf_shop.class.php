@@ -66,7 +66,7 @@ class yf_shop extends yf_module {
 	public $_required_fields = array(
 		"name",
 		"phone",
-		);
+	);
 	/** @var @conf_skip */
 	public $_statuses = array(
 		"pending"			=> "pending",
@@ -79,25 +79,25 @@ class yf_shop extends yf_module {
 		1 => "Free",
 		2 => "Courier",
 		3 => "FedEX",
-		4 =>  "Post",
+		4 => "Post",
 	);
 	/** @var Shipping types */
 	public $_ship_types = array(
-		1	=> array(
+		1 => array(
 			"name"	=> "Free",
-			"price"		=> 0,
+			"price"	=> 0,
 		),
-		2	=> array(
+		2 => array(
 			"name"	=> "Courier",
-			"price"		=> 1,
+			"price"	=> 1,
 		),
-		3	=> array(
+		3 => array(
 			"name"	=> "FedEX",
-			"price"		=> 5,
+			"price"	=> 5,
 		),
-		4	=> array(
+		4 => array(
 			"name"	=> "Post",
-			"price"		=> 1,
+			"price"	=> 1,
 		),
 	);
 	/** @var Shipping types names (creating automatically inside "_init") @conf_skip */
@@ -111,7 +111,7 @@ class yf_shop extends yf_module {
 	);
 	/** @var Payment methods params */
 	public $_pay_method_params = array(
-		2	=> array( // Authorize.Net
+		2 => array( // Authorize.Net
 			"LOGIN_ID"			=> "7wYB5c6R",
 			"TRANSACTION_KEY"	=> "4px54kx6ZZ7489Gq",
 			"TEST_MODE"			=> 1,
@@ -123,7 +123,7 @@ class yf_shop extends yf_module {
 	/** @var Force payment method (Set to 0 to disable) */
 	public $FORCE_PAY_METHOD	= 0;
 	/** @var Inline registration */
-	public $INLINE_REGISTER	= true;
+	public $INLINE_REGISTER		= true;
 	/** @var */
 	public $ATTRIBUTES_CAT_ID	= 1;
 	/** @var Force ship method for user group (user_group => ship_type) */
@@ -145,12 +145,12 @@ class yf_shop extends yf_module {
 		$shop->_shop_cats				= _class('cats')->_get_items_names("shop_cats");
 		$shop->_shop_cats_all			= _class('cats')->_get_items_array("shop_cats");
 		$shop->_shop_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats");
-		// Get manufacturer
+
 		$sql_man = "SELECT * FROM ".db('shop_manufacturer')." ORDER BY name ASC";
 		$shop->_manufacturer = db()->query_fetch_all($sql_man);
-		// manufacturer for the select box
+
 		$shop->_man_for_select["none"] = "--NONE--";
-		foreach ((array)$shop->_manufacturer as $k =>$v) {
+		foreach ((array)$shop->_manufacturer as $k => $v) {
 			$shop->_man_for_select[$v["url"]] = $v["name"];
 		}
 		$shop->_man_id = "none";
@@ -159,19 +159,20 @@ class yf_shop extends yf_module {
 		if (!file_exists($shop->products_img_dir)) {
 			_mkdir_m($shop->products_img_dir);
 		}
-		// Array of select boxes to process
+
 		$shop->_boxes = array(
 			"ship_type"	=> 'select_box("ship_type", $shop->_ship_types_names, $selected, false, 2, "", false)',
 			"pay_type"	=> 'radio_box("pay_type", $shop->_pay_types, $selected, 1, 2, "", false)',
 		);
-		// Prepare shipping methods names
+
 		$shop->_ship_types_names = array();
 		foreach ((array)$shop->_ship_types as $_id => $_info) {
 			$_price_text = " (".($_info["price"] < 0 ? "-" : "+"). $shop->_format_price(abs($_info["price"])).")";
 			$shop->_ship_types_names[$_id] = $_info["name"]. ($_info["price"] ? $_price_text : "");
 		}
+
 		// Override pay type for group
-		$force_group_pay_type = $shop->FORCE_GROUP_PAY[$shop->USER_GROUP];
+		$force_group_pay_type = $shop->FORCE_GROUP_PAY[main()->USER_GROUP];
 		if ($force_group_pay_type/* && isset($shop->_pay_types[$force_group_pay_type])*/) {
 			$shop->FORCE_PAY_METHOD = $force_group_pay_type;
 		}
@@ -325,10 +326,6 @@ class yf_shop extends yf_module {
 		return _class('shop__categories_show', 'modules/shop/')->_categories_show();
 	}
 
-	function _manufacturer_show() {
-		return _class('shop__manufacturer_show', 'modules/shop/')->_manufacturer_show();
-	}
-
 	function _products_bestsellers() {
 		return _class('shop__products_bestsellers', 'modules/shop/')->_products_bestsellers();
 	}
@@ -377,4 +374,32 @@ class yf_shop extends yf_module {
 		return _class('shop__get_children_cat', 'modules/shop/')->_get_children_cat($id);
 	}
 
+	function _manufacturer_show() {
+# TODO: redo current manufacturers
+#		return _class('shop__manufacturer_show', 'modules/shop/')->_manufacturer_show();
+	}
+
+	function manufacturer() {
+// TODO: show products by given manufacturer
+	}
+
+	function manufacturers() {
+// TODO: show list of manufacturers
+	}
+
+	function supplier() {
+// TODO: show products by given supplier
+	}
+
+	function suppliers() {
+// TODO: show list of suppliers
+	}
+
+	function product_set() {
+// TODO: show details of given product set
+	}
+}
+	function product_sets() {
+// TODO: show list of product set
+	}
 }

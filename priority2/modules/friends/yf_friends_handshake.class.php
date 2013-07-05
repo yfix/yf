@@ -404,7 +404,7 @@ class yf_friends_handshake {
 	*/
 	function _account_suggests(){
 		// Check handshakes
-		$Q = db()->query("SELECT * FROM ".db('handshake')." WHERE receiver=".$this->USER_ID." AND status=1");
+		$Q = db()->query("SELECT * FROM ".db('handshake')." WHERE receiver=".main()->USER_ID." AND status=1");
 		while ($A = db()->fetch_assoc($Q)) {
 			$count_handshake++;
 		}

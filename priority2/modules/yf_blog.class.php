@@ -172,7 +172,7 @@ class yf_blog extends yf_module {
 		$this->HIDE_TOTAL_ID = main()->HIDE_TOTAL_ID;
 		if ($this->HIDE_TOTAL_ID && (
 			MAIN_TYPE_ADMIN || 
-			(empty($GLOBALS['HOSTING_ID']) && empty($this->USER_ID))
+			(empty($GLOBALS['HOSTING_ID']) && empty(main()->USER_ID))
 		)) {
 			$this->HIDE_TOTAL_ID = false;
 		}
@@ -278,7 +278,7 @@ class yf_blog extends yf_module {
 	*/
 	function show_posts () {
 		$_GET["id"] = intval($_GET["id"]);
-		$user_id = !empty($_GET["id"]) ? $_GET["id"] : $this->USER_ID;
+		$user_id = !empty($_GET["id"]) ? $_GET["id"] : main()->USER_ID;
 		if (isset($_GET["page"])) {
 			$_GET["page"] = intval($_GET["page"]);
 		}
@@ -293,10 +293,10 @@ class yf_blog extends yf_module {
 			$user_info = user($user_id);
 			$GLOBALS['user_info'] = $user_info;
 			$replace = array(
-				"is_logged_in"	=> intval((bool) $this->USER_ID),
-				"is_own_blog"	=> intval(($_GET["id"] && $this->USER_ID == $_GET["id"]) || (!$_GET["id"] && $this->USER_ID)),
+				"is_logged_in"	=> intval((bool) main()->USER_ID),
+				"is_own_blog"	=> intval(($_GET["id"] && main()->USER_ID == $_GET["id"]) || (!$_GET["id"] && main()->USER_ID)),
 				"start_link"	=> "./?object=".BLOG_CLASS_NAME."&action=start"._add_get(array("page")),
-				"user_id"		=> intval($this->USER_ID),
+				"user_id"		=> intval(main()->USER_ID),
 				"user_avatar"	=> _show_avatar($user_info["id"], _display_name($user_info), 1, 0),
 			);
 			$body = tpl()->parse(BLOG_CLASS_NAME."/no_blog_yet", $replace);
@@ -316,7 +316,7 @@ class yf_blog extends yf_module {
 		if ($this->HIDE_TOTAL_ID) {
 			list($this->CUR_YEAR, $this->CUR_MONTH, $this->CUR_DAY) = explode("-", $_GET["id"]);
 			$this->SOURCE_ARCHIVE_DATE = $_GET["id"];
-			$_GET["id"] = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID;
+			$_GET["id"] = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID;
 		} else {
 			list($_GET["id"], $this->CUR_YEAR, $this->CUR_MONTH, $this->CUR_DAY) = explode("-", $_GET["id"]);
 		}
@@ -422,7 +422,7 @@ class yf_blog extends yf_module {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($user_id);
 			$reput_text	= $REPUT_OBJ->_show_for_user($user_id, $reput_info);
 
-			if (!empty($this->USER_ID) && !empty($user_info["id"]) && $user_info["id"] != $this->USER_ID) {
+			if (!empty(main()->USER_ID) && !empty($user_info["id"]) && $user_info["id"] != main()->USER_ID) {
 				$this->SHOW_REPUT_LINK = true;
 			}
 		}
@@ -439,16 +439,16 @@ class yf_blog extends yf_module {
 			$archive_date = date((!empty($this->CUR_MONTH) ? "F " : "")."Y", strtotime($this->CUR_YEAR."-".($this->CUR_MONTH ? $this->CUR_MONTH : 01)."-01"));
 		}
 		// Log visit if not owner
-		if ($this->USER_ID !== $post_info["user_id"]) {
+		if (main()->USER_ID !== $post_info["user_id"]) {
 			common()->_log_user_action("visit", $post_info["user_id"], $_GET["object"]);
 		}
 		// Process main template
 		$replace = array(
 			"user_name"				=> _prepare_html(_display_name($user_info)),
 			"user_profile_link"		=> _profile_link($user_id),
-			"change_settings_link"	=> $user_id == $this->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")) : "",
-			"add_post_link"			=> $user_id == $this->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=add_post"._add_get(array("page")) : "",
-			"users_comments_link"	=> $user_id == $this->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=search_comments"._add_get(array("page")) : "",
+			"change_settings_link"	=> $user_id == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")) : "",
+			"add_post_link"			=> $user_id == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=add_post"._add_get(array("page")) : "",
+			"users_comments_link"	=> $user_id == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=search_comments"._add_get(array("page")) : "",
 			"posts"					=> $posts,
 			"page_link"				=> process_url("./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$_GET["id"])),
 			"latest_posts"			=> $this->_latest_posts,
@@ -536,7 +536,7 @@ class yf_blog extends yf_module {
 		// Try to get given user info
 		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->HIDE_TOTAL_ID) {
-			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
 			$sql .= " id=".intval($_GET["id"]);
 		}
@@ -574,8 +574,8 @@ class yf_blog extends yf_module {
 				$user_id = $this->_post_info["user_id"];
 			}
 			
-			if($user_id != $this->USER_ID){
-				$user_mask = db()->query_fetch("SELECT mask FROM ".db('friends_users')." WHERE user_id = ".$user_id." AND friend_id = ".$this->USER_ID);
+			if($user_id != main()->USER_ID){
+				$user_mask = db()->query_fetch("SELECT mask FROM ".db('friends_users')." WHERE user_id = ".$user_id." AND friend_id = ".main()->USER_ID);
 				$user_mask = $user_mask["mask"];
 				
 				$FRIENDS_OBJ = &main()->init_class("friends");
@@ -602,7 +602,7 @@ class yf_blog extends yf_module {
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($all_users_ids);
 			$reput_text			= $REPUT_OBJ->_show_for_user($user_info["id"], $users_reput_info[$user_info["id"]], false, array("blog_posts", $this->_post_info["id"]));
 
-			if (!empty($this->USER_ID) && !empty($this->_post_info["user_id"]) && $this->_post_info["user_id"] != $this->USER_ID) {
+			if (!empty(main()->USER_ID) && !empty($this->_post_info["user_id"]) && $this->_post_info["user_id"] != main()->USER_ID) {
 				$SHOW_REPUT_LINK = true;
 			}
 		}
@@ -615,23 +615,23 @@ class yf_blog extends yf_module {
 		$this->_tags = $this->_show_tags($_GET["id"]);
 
 		// Log visit and reading if not owner
-		if ($this->USER_ID !== $this->_post_info["user_id"]) {
+		if (main()->USER_ID !== $this->_post_info["user_id"]) {
 			common()->_log_user_action("visit", $this->_post_info["user_id"], $_GET["object"]);
 			common()->_log_user_action("review", $this->_post_info["user_id"], $_GET["object"], intval($_GET["id"]));
 		}
 		// Process main template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) $this->USER_ID),
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
 			"user_name"				=> _prepare_html(_display_name($user_info)),
 			"user_avatar"			=> _show_avatar($user_info["id"], $user_info, 1, 1),
 			"user_profile_link"		=> _profile_link($this->_post_info["user_id"]),
-			"change_settings_link"	=> $this->_post_info["user_id"] == $this->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")) : "",
-			"add_post_link"			=> $this->_post_info["user_id"] == $this->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=add_post"._add_get(array("page")) : "",
+			"change_settings_link"	=> $this->_post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")) : "",
+			"add_post_link"			=> $this->_post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=add_post"._add_get(array("page")) : "",
 			"post_info"				=> $this->_show_post_item($this->_post_info, count($comments_array), 0, BLOG_CLASS_NAME."/single_post_item"),
 			"user_blog_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]). _add_get(array("page")),
 			"back_url"				=> "./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]). _add_get(array("page")),
 			"page_link"				=> process_url("./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$_GET["id"])),
-			"user_id"				=> intval($this->USER_ID),
+			"user_id"				=> intval(main()->USER_ID),
 			"right_block"			=> $this->_show_right_block(),
 			"blog_title"			=> _prepare_html($this->BLOG_SETTINGS["blog_title"]),
 			"reput_text"			=> $reput_text,
@@ -715,14 +715,14 @@ class yf_blog extends yf_module {
 		$replace = array(
 			"counter"			=> $counter,
 			"post_active"		=> intval($post_info["active"]),
-			"own_blog"			=> intval($post_info["user_id"] == $this->USER_ID),
+			"own_blog"			=> intval($post_info["user_id"] == main()->USER_ID),
 			"title"				=> $this->_format_text($post_info["title"]),
 			"text"				=> $this->_format_text($post_info["text"]),
 			"add_date"			=> _format_date($post_info["add_date"], "long"),
 			"num_comments"		=> $cur_allow_comments < 9 ? intval($num_comments) : -1,
 			"show_post_link"	=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")),
-			"edit_post_link"	=> $post_info["user_id"] == $this->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=edit_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
-			"delete_post_link"	=> $post_info["user_id"] == $this->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=delete_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
+			"edit_post_link"	=> $post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=edit_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
+			"delete_post_link"	=> $post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=delete_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
 			"attach_image_src"	=> $attach_web_path,
 			"mood"				=> _prepare_html($this->_prepare_mood($post_info["mood"])),
 			"mode_text"			=> _prepare_html(!empty($post_info["mode_type"]) ? $post_info["mode_text"] : ""),
@@ -744,7 +744,7 @@ class yf_blog extends yf_module {
 	*/
 	function custom_category () {
 		if ($this->HIDE_TOTAL_ID) {
-			$user_id = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID;
+			$user_id = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID;
 			$custom_cat_id = $_GET["id"];
 		} else {
 			list($user_id, $custom_cat_id) = explode("-", $_GET["id"]);
@@ -877,7 +877,7 @@ class yf_blog extends yf_module {
 		if (empty($user_id)) {
 			return false;
 		}
-		if (!empty($this->USER_ID) && $user_id == $this->USER_ID && !empty($this->CUR_USER_BLOG_SETTINGS)) {
+		if (!empty(main()->USER_ID) && $user_id == main()->USER_ID && !empty($this->CUR_USER_BLOG_SETTINGS)) {
 			return $this->CUR_USER_BLOG_SETTINGS;
 		}
 		// Try to get settings from db
@@ -962,7 +962,7 @@ class yf_blog extends yf_module {
 		}
 		// Process template
 		$replace = array(
-			"is_logged_in"	=> intval((bool) $this->USER_ID),
+			"is_logged_in"	=> intval((bool) main()->USER_ID),
 			"user_blog_link"=> "./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")),
 			"items"			=> $items,
 		);
@@ -1027,7 +1027,7 @@ class yf_blog extends yf_module {
 	function _comment_is_allowed ($params = array()) {
 		if ($_GET["action"] == "show_single_post") {
 			// Check if target user is ignored by owner
-			if (common()->_is_ignored($this->USER_ID, $this->_post_info["user_id"])) {
+			if (common()->_is_ignored(main()->USER_ID, $this->_post_info["user_id"])) {
 				return false;
 			}
 			return $this->_comment_allowed_check ($this->BLOG_SETTINGS["allow_comments"], $this->_post_info["allow_comments"], $this->_post_info["user_id"]);
@@ -1044,7 +1044,7 @@ class yf_blog extends yf_module {
 	function _comment_on_update ($params = array()) {
 		// Remove activity points
 		if ($_GET["action"] == "delete_comment") {
-			common()->_remove_activity_points($this->USER_ID, "blog_comment");
+			common()->_remove_activity_points(main()->USER_ID, "blog_comment");
 		}
 		// Synchronize all blogs stats
 		$this->_update_all_stats();

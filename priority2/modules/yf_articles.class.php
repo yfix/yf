@@ -216,7 +216,7 @@ class yf_articles extends yf_module {
 		$IS_OWN_ARTICLE = false;
 		// Do get author info
 		if (!empty($article_info["user_id"])) {
-			if ($article_info["user_id"] == $this->USER_ID) {
+			if ($article_info["user_id"] == main()->USER_ID) {
 				$author_info = $this->_user_info;
 				$IS_OWN_ARTICLE = true;
 			} else {
@@ -246,7 +246,7 @@ class yf_articles extends yf_module {
 			$REPUT_INFO	= $REPUT_OBJ->_get_user_reput_info($article_info["user_id"]);
 			$reput_text	= $REPUT_OBJ->_show_for_user($article_info["user_id"], $REPUT_INFO, 1, array("articles_texts", $article_info["id"]));
 
-			if (!empty($this->USER_ID) && !empty($article_info["user_id"]) && !$IS_OWN_ARTICLE) {
+			if (!empty(main()->USER_ID) && !empty($article_info["user_id"]) && !$IS_OWN_ARTICLE) {
 				$SHOW_REPUT_LINK = true;
 			}
 		}
@@ -287,7 +287,7 @@ class yf_articles extends yf_module {
 	* Manage own articles
 	*/
 	function manage () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (isset($_GET["id"])) {
@@ -295,7 +295,7 @@ class yf_articles extends yf_module {
 			unset($_GET["id"]);
 		}
 		// Connect pager
-		$sql = "SELECT * FROM ".db('articles_texts')." WHERE user_id=".intval($this->USER_ID)." ORDER BY add_date DESC";
+		$sql = "SELECT * FROM ".db('articles_texts')." WHERE user_id=".intval(main()->USER_ID)." ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $add_sql);
@@ -350,7 +350,7 @@ class yf_articles extends yf_module {
 	* Edit article
 	*/
 	function edit () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -358,7 +358,7 @@ class yf_articles extends yf_module {
 			return _e(t("No id!"));
 		}
 		// Get article info
-		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval($this->USER_ID));
+		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(main()->USER_ID));
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
 		}
@@ -428,7 +428,7 @@ class yf_articles extends yf_module {
 					"short_url"		=> $this->_create_short_url($_POST["title"]),
 				), "id=".intval($_GET["id"]));
 				// Update user stats
-				_class("user_stats")->_update(array("user_id" => $this->USER_ID));
+				_class("user_stats")->_update(array("user_id" => main()->USER_ID));
 				// Return user back
 				return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=manage");
 			}
@@ -472,7 +472,7 @@ class yf_articles extends yf_module {
 	* Add new article
 	*/
 	function add () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Do save content
@@ -524,7 +524,7 @@ class yf_articles extends yf_module {
 					}
 				}
 				db()->INSERT("articles_texts", array(
-					"user_id"		=> intval($this->USER_ID),
+					"user_id"		=> intval(main()->USER_ID),
 					"cat_id"		=> intval($_POST["cat_id"]),
 					"author_name"	=> _es($_POST["author_name"]),
 					"is_own_article"=> intval(!$_POST["not_own_article"]),
@@ -537,7 +537,7 @@ class yf_articles extends yf_module {
 					"short_url"		=> $this->_create_short_url($_POST["title"]),
 				));
 				// Update user stats
-				_class("user_stats")->_update(array("user_id" => $this->USER_ID));
+				_class("user_stats")->_update(array("user_id" => main()->USER_ID));
 				// Return user back
 				return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=manage");
 			}
@@ -584,7 +584,7 @@ class yf_articles extends yf_module {
 	* Delete selected article
 	*/
 	function delete () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -592,7 +592,7 @@ class yf_articles extends yf_module {
 			return _e(t("No id!"));
 		}
 		// Get article info
-		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval($this->USER_ID));
+		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(main()->USER_ID));
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
 		}
@@ -605,7 +605,7 @@ class yf_articles extends yf_module {
 		// Do delete article
 		db()->query("DELETE FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		// Update user stats
-		_class("user_stats")->_update(array("user_id" => $this->USER_ID));
+		_class("user_stats")->_update(array("user_id" => main()->USER_ID));
 		// Return user back
 		return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=manage");
 	}
@@ -846,7 +846,7 @@ class yf_articles extends yf_module {
 			return;
 		}
 		
-		$Q = db()->query("SELECT id FROM ".db('articles_texts')." WHERE status = 'active' AND user_id != ".intval($this->USER_ID)." AND add_date > ".$this->_user_info["last_view"]);
+		$Q = db()->query("SELECT id FROM ".db('articles_texts')." WHERE status = 'active' AND user_id != ".intval(main()->USER_ID)." AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
@@ -866,7 +866,7 @@ class yf_articles extends yf_module {
 	*
 	*/
 	function view_unread () {
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 	

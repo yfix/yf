@@ -76,13 +76,13 @@ class yf_tags {
 			$this->CLOUD_ORDER_DIR = "ASC";
 		}
 		// Get settings for the curent user
-		if (!empty($this->USER_ID)) {
-			$A = db()->query_fetch("SELECT * FROM ".db('tags_settings')." WHERE user_id=".$this->USER_ID);
+		if (!empty(main()->USER_ID)) {
+			$A = db()->query_fetch("SELECT * FROM ".db('tags_settings')." WHERE user_id=".main()->USER_ID);
 			$this->ALLOWED_GROUP = $A["allowed_group"];
 			if (!isset($this->ALLOWED_GROUP)) {
 				// Set default settings
 				db()->INSERT("tags_settings", array(
-					"user_id"		=> $this->USER_ID,
+					"user_id"		=> main()->USER_ID,
 					"allowed_group"	=> 0,
 				));
 			}
@@ -408,14 +408,14 @@ class yf_tags {
 	* Manage user tags settings
 	*/
 	function settings () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			 return _error_need_login();
 		}
 		if (!empty($_POST) && $this->ALLOWED_GROUP != $_POST["allowed_group"]) {
 			// Saving new settings if changed
 			db()->UPDATE("tags_settings", array(
 					"allowed_group" => $_POST["allowed_group"]
-				), "user_id=".$this->USER_ID
+				), "user_id=".main()->USER_ID
 			);			
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
@@ -496,7 +496,7 @@ class yf_tags {
 		}
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			// Authors can edit tags in any case
-			if ($this->USER_ID == $A["user_id"]) {
+			if (main()->USER_ID == $A["user_id"]) {
 				$_allowed[$A["id"]]["allowed"] = 1;
 			}
 
@@ -505,13 +505,13 @@ class yf_tags {
 				$_allowed[$A["id"]]["allowed"] = 1;
 			}
 			// Only members can edit tags
-			if ($A["allowed_group"] == 2 && $this->USER_ID) {
+			if ($A["allowed_group"] == 2 && main()->USER_ID) {
 				$_allowed[$A["id"]]["allowed"] = 1;
 			}
 			// Only friends can edit tags
-			if ($A["allowed_group"] == 1 && $this->USER_ID) {
+			if ($A["allowed_group"] == 1 && main()->USER_ID) {
 				$FRIENDS_OBJ = main()->init_class("friends");
-				$friend_of_array = $FRIENDS_OBJ->_get_users_where_friend_of($this->USER_ID);
+				$friend_of_array = $FRIENDS_OBJ->_get_users_where_friend_of(main()->USER_ID);
 				if(in_array($A["user_id"], $friend_of_array)) {
 					$_allowed[$A["id"]]["allowed"] = 1;	
 				}

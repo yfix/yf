@@ -28,7 +28,7 @@ class yf_gallery_show_photos {
 		// Try to get given post info
 		$sql = "SELECT * FROM ".db('gallery_photos')." WHERE ";
 		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
-			$sql .= "id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= "id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
 			$sql .= "id=".intval($_GET["id"]);
 		}

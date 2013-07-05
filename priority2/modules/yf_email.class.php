@@ -70,7 +70,7 @@ class yf_email {
 	//-----------------------------------------------------------------------------
 	// View folder contents
 	function _view_folder ($folder_name) {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (isset($_GET["id"])) {
@@ -79,9 +79,9 @@ class yf_email {
 		}
 		// Connect to pager
 		if ($folder_name == "inbox") {
-			$sql = "SELECT * FROM ".db('mailarchive')." WHERE receiver=".intval($this->USER_ID)." AND r_folder_id=".intval($this->_get_folder_id($folder_name));
+			$sql = "SELECT * FROM ".db('mailarchive')." WHERE receiver=".intval(main()->USER_ID)." AND r_folder_id=".intval($this->_get_folder_id($folder_name));
 		} else { // Outbox (sent)
-			$sql = "SELECT * FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND s_folder_id=".intval($this->_get_folder_id($folder_name));
+			$sql = "SELECT * FROM ".db('mailarchive')." WHERE sender=".intval(main()->USER_ID)." AND s_folder_id=".intval($this->_get_folder_id($folder_name));
 		}
 		$order_by_sql = " ORDER BY time DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT id", $sql));
@@ -105,7 +105,7 @@ class yf_email {
 		}
 		// Process emails
 		foreach ((array)$emails as $mail_info) {
-			$_user_id = $mail_info["sender"] == $this->USER_ID ? $mail_info["receiver"] : $mail_info["sender"];
+			$_user_id = $mail_info["sender"] == main()->USER_ID ? $mail_info["receiver"] : $mail_info["sender"];
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
 				"from"			=> _display_name($users_infos[$mail_info["sender"]]),
@@ -148,7 +148,7 @@ class yf_email {
 	//-----------------------------------------------------------------------------
 	// View email
 	function view () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -157,11 +157,11 @@ class yf_email {
 		if (empty($mail_info["id"])) {
 			return _e("No such record!");
 		}
-		if ($mail_info["sender"] != $this->USER_ID && $mail_info["receiver"] != $this->USER_ID) {
+		if ($mail_info["sender"] != main()->USER_ID && $mail_info["receiver"] != main()->USER_ID) {
 			return _e("Not your email!");
 		}
 		// Set read time for receiver (if not yet and only if inside "inbox" folder)
-		if ($mail_info["receiver"] == $this->USER_ID && $mail_info["r_folder_id"] == 1 && empty($mail_info["r_read_time"])) {
+		if ($mail_info["receiver"] == main()->USER_ID && $mail_info["r_folder_id"] == 1 && empty($mail_info["r_read_time"])) {
 			db()->UPDATE("mailarchive", array("r_read_time" => time()), "id=".intval($mail_info["id"]));
 		}
 		// Process reputation
@@ -192,7 +192,7 @@ class yf_email {
 			"profile_url"	=> _profile_link($mail_info["sender"]),
 			"user_avatar"	=> _show_avatar ($mail_info["sender"], $sender_info, 1),
 			"reput_info"	=> $reput_text,
-			"folder_name"	=> $this->_mail_folders[$mail_info["sender"] == $this->USER_ID ? $mail_info["s_folder_id"] : $mail_info["r_folder_id"]],
+			"folder_name"	=> $this->_mail_folders[$mail_info["sender"] == main()->USER_ID ? $mail_info["s_folder_id"] : $mail_info["r_folder_id"]],
 		);
 		return tpl()->parse(__CLASS__."/view_message", $replace);
 	}
@@ -200,7 +200,7 @@ class yf_email {
 	//-----------------------------------------------------------------------------
 	// Reply form to the selected email
 	function reply () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if ($this->_user_info["ban_email"]) {
@@ -215,7 +215,7 @@ class yf_email {
 		if (empty($mail_info["id"])) {
 			return _e("No such record!");
 		}
-		if ($mail_info["sender"] != $this->USER_ID && $mail_info["receiver"] != $this->USER_ID) {
+		if ($mail_info["sender"] != main()->USER_ID && $mail_info["receiver"] != main()->USER_ID) {
 			return _e("Not your email!");
 		}
 		// Get sender info
@@ -224,18 +224,18 @@ class yf_email {
 			return _e("No such sender user in database!");
 		}
 		// Do not allow to send to myself
-		if ($receiver_info["id"] == $this->USER_ID) {
+		if ($receiver_info["id"] == main()->USER_ID) {
 			return _e("You are trying to send email to yourself!");
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval(main()->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
 		}
 		// Check if target user is ignored by owner
-		if (common()->_is_ignored($this->USER_ID, $receiver_info["id"])) {
+		if (common()->_is_ignored(main()->USER_ID, $receiver_info["id"])) {
 			return _e("You are ignored by the target user.");
 		}
 		// Process reputation
@@ -271,7 +271,7 @@ class yf_email {
 	//-----------------------------------------------------------------------------
 	// Form to send email
 	function send_form () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Check for email ban
@@ -288,18 +288,18 @@ class yf_email {
 			return _e("No such user in database!");
 		}
 		// Do not allow to send to myself
-		if ($receiver_info["id"] == $this->USER_ID) {
+		if ($receiver_info["id"] == main()->USER_ID) {
 			return _e("You are trying to send email to yourself!");
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval(main()->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
 		}
 		// Check if target user is ignored by owner
-		if (common()->_is_ignored($this->USER_ID, $receiver_info["id"])) {
+		if (common()->_is_ignored(main()->USER_ID, $receiver_info["id"])) {
 			return _e("You are ignored by the target user.");
 		}
 		$GLOBALS['user_info'] = $receiver_info;
@@ -330,7 +330,7 @@ class yf_email {
 	//-----------------------------------------------------------------------------
 	// Send internal mail
 	function send_mail () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Check user ban
@@ -347,18 +347,18 @@ class yf_email {
 			return _e("No such user!");
 		}
 		// Do not allow to send to myself
-		if ($receiver_info["id"] == $this->USER_ID) {
+		if ($receiver_info["id"] == main()->USER_ID) {
 			return _e("You are trying to send email to yourself!");
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval(main()->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
 		}
 		// Check if target user is ignored by owner
-		if (common()->_is_ignored($this->USER_ID, $receiver_info["id"])) {
+		if (common()->_is_ignored(main()->USER_ID, $receiver_info["id"])) {
 			return _e("You are ignored by the target user.");
 		}
 		// Validate captcha
@@ -435,7 +435,7 @@ class yf_email {
 	//-----------------------------------------------------------------------------
 	// Forward message to the target user
 	function forward () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -444,7 +444,7 @@ class yf_email {
 		if (empty($mail_info["id"])) {
 			return _e("No such record!");
 		}
-		if ($mail_info["sender"] != $this->USER_ID && $mail_info["receiver"] != $this->USER_ID) {
+		if ($mail_info["sender"] != main()->USER_ID && $mail_info["receiver"] != main()->USER_ID) {
 			return _e("Not your email!");
 		}
 		// Get recipient user info
@@ -454,7 +454,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval(main()->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -473,13 +473,13 @@ class yf_email {
 	//-----------------------------------------------------------------------------
 	// Delete email item
 	function delete () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get current mail info (also, checking for owner)
 		$mail_info = db()->query_fetch("SELECT id,s_folder_id,r_folder_id,sender,receiver FROM ".db('mailarchive')." WHERE id=".intval($_GET["id"]));
-		if ($mail_info["sender"] != $this->USER_ID && $mail_info["receiver"] != $this->USER_ID) {
+		if ($mail_info["sender"] != main()->USER_ID && $mail_info["receiver"] != main()->USER_ID) {
 			return _e("Not your email!");
 		}
 		if (empty($mail_info["id"])) {
@@ -487,7 +487,7 @@ class yf_email {
 		}
 		$need_to_delete_record = false;
 		// Check if another user already deleted this email, so we need to delete record
-		if ($mail_info["sender"] == $this->USER_ID) {
+		if ($mail_info["sender"] == main()->USER_ID) {
 
 			if ($mail_info["r_folder_id"] == 0) {
 				$need_to_delete_record = true;
@@ -497,7 +497,7 @@ class yf_email {
 				"s_folder_id"	=> $this->_get_folder_id("deleted"),
 			),"id=".$mail_info["id"]);
 
-		} elseif ($mail_info["receiver"] == $this->USER_ID) {
+		} elseif ($mail_info["receiver"] == main()->USER_ID) {
 
 			if ($mail_info["s_folder_id"] == 0) {
 				$need_to_delete_record = true;
@@ -516,8 +516,8 @@ class yf_email {
 			db()->query("DELETE FROM ".db('mailarchive')." WHERE id=".$mail_info["id"]);
 		}
 		// Remove activity points
-		if ($need_to_delete_record && $mail_info["sender"] == $this->USER_ID) {
-			common()->_remove_activity_points($this->USER_ID, "sent_mail", $_GET["id"]);
+		if ($need_to_delete_record && $mail_info["sender"] == main()->USER_ID) {
+			common()->_remove_activity_points(main()->USER_ID, "sent_mail", $_GET["id"]);
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=inbox"._add_get(array("page")));
@@ -544,7 +544,7 @@ class yf_email {
 			_re("Error sending mail!");
 			// Do ban user if found something bad
 			$NEW_ADMIN_COMMENTS = "\r\nAuto-banned on "._format_date(time())." (found scum words in email)";
-			db()->query("UPDATE ".db('user')." SET ban_email = '1', admin_comments=CONCAT(admin_comments, '"._es($NEW_ADMIN_COMMENTS)."') WHERE id=".intval($this->USER_ID));
+			db()->query("UPDATE ".db('user')." SET ban_email = '1', admin_comments=CONCAT(admin_comments, '"._es($NEW_ADMIN_COMMENTS)."') WHERE id=".intval(main()->USER_ID));
 		}
 		return $IS_BAD_EMAIL;
 	}
@@ -582,7 +582,7 @@ class yf_email {
 		$old_items = $params["items"];
 		// Create new items
 		$items = array();
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			$items[]	= $NAV_BAR_OBJ->_nav_item("My Account", "./?object=account");
 		}
 		$items[]	= $NAV_BAR_OBJ->_nav_item("Your Mail", "./?object=email");
@@ -619,7 +619,7 @@ class yf_email {
 		// Check number of unread emails
 		list($num_unread_emails) = db()->query_fetch(
 			"SELECT COUNT(id) AS `0` FROM ".db('mailarchive')." 
-			WHERE receiver=".intval($this->USER_ID)." 
+			WHERE receiver=".intval(main()->USER_ID)." 
 				AND r_folder_id=1 
 				AND r_read_time=0"
 		);
@@ -647,7 +647,7 @@ class yf_email {
 		// Check number of unread emails
 		list($num_unread_emails) = db()->query_fetch(
 			"SELECT COUNT(id) AS `0` FROM ".db('mailarchive')." 
-			WHERE receiver=".intval($this->USER_ID)." 
+			WHERE receiver=".intval(main()->USER_ID)." 
 				AND r_folder_id=1 
 				AND r_read_time=0"
 		);

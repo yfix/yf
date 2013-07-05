@@ -33,13 +33,13 @@ class yf_site_links {
 		$GLOBALS['no_page_header'] = true;
 		define("LINKS_CLASS_NAME", "site_links");
 
-		$this->USER_ID = ($_SESSION["user_group"] == 5) ? intval($_SESSION["user_id"]) : null;
+		main()->USER_ID = ($_SESSION["user_group"] == 5) ? intval($_SESSION["user_id"]) : null;
 		// Get user info
-		if (!empty($this->USER_ID)) {
-			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".intval($this->USER_ID));
+		if (!empty(main()->USER_ID)) {
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".intval(main()->USER_ID));
 			// Check user is valid
 			if (empty($this->_user_info["id"])) {
-				$this->USER_ID = null;
+				main()->USER_ID = null;
 			}
 		}
 		// Link priorities array
@@ -108,7 +108,7 @@ class yf_site_links {
 				"links"			=> $links,
 				"top_list_url"	=> "./?object=".LINKS_CLASS_NAME."&action=top_list",
 				"register_url"	=> "./?object=".LINKS_CLASS_NAME."&action=register",
-				"edit_url"		=> $this->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=account"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
+				"edit_url"		=> main()->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=account"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
 			);
 			$body = tpl()->parse(LINKS_CLASS_NAME."/main", $replace);
 
@@ -175,7 +175,7 @@ class yf_site_links {
 				$replace = array(
 					"cat_name"		=> $cat_info["name"],
 					"items"			=> !empty($items) ? $items : "<div align='center'>No links here.</div>",
-					"add_link_url"	=> $this->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=add_link"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
+					"add_link_url"	=> main()->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=add_link"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
 					"links_main_url"=> "./?object=".LINKS_CLASS_NAME,
 					"bottom"		=> $cat_info["bottom"],
 				);
@@ -324,11 +324,11 @@ class yf_site_links {
 	// Main user account
 	function account () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		// Get user links
-		$Q = db()->query("SELECT * FROM ".db('links_links')." WHERE user_id=".intval($this->USER_ID));
+		$Q = db()->query("SELECT * FROM ".db('links_links')." WHERE user_id=".intval(main()->USER_ID));
 		while ($A = db()->fetch_assoc($Q)) $links[$A["id"]] = $A;
 		// Process links
 		foreach ((array)$links as $link_id => $A) {
@@ -358,7 +358,7 @@ class yf_site_links {
 	// Show edit form
 	function edit_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -402,7 +402,7 @@ class yf_site_links {
 	// Show add form
 	function add_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$user_info = &$this->_user_info;
@@ -428,7 +428,7 @@ class yf_site_links {
 	// Insert new record
 	function insert_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		// Verify required vars
@@ -483,7 +483,7 @@ class yf_site_links {
 						email1_time,
 						".implode(",", $sites_sql_array1)."
 				) VALUES (
-						".$this->USER_ID.",
+						".main()->USER_ID.",
 						".intval($_POST["cat_id"]).",
 						0,
 						".intval($_POST["type"]).",
@@ -528,7 +528,7 @@ class yf_site_links {
 	// Update existsing record
 	function update_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -592,7 +592,7 @@ class yf_site_links {
 	// Do delete link
 	function delete_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$_GET["id"] = intval($_GET["id"]);

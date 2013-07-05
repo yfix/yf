@@ -171,7 +171,7 @@ class yf_news extends yf_module {
 	*
 	*/
 	function view_unread () {
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 	

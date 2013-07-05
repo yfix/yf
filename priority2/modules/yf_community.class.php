@@ -55,7 +55,7 @@ class yf_community {
 	}
 	
 	function create(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
@@ -88,7 +88,7 @@ class yf_community {
 				//add community
 				db()->INSERT("community", array(
 					"user_id"			=> $community_user_id,
-					"owner_id"			=> $this->USER_ID,
+					"owner_id"			=> main()->USER_ID,
 					"title"				=> _es($_POST["title"]),
 					"membership"		=> $_POST["membership"], 
 					"nonmember_posting"	=> $_POST["nonmember_posting"],
@@ -101,7 +101,7 @@ class yf_community {
 				$community_id = db()->INSERT_ID();
 				
 				db()->INSERT("community_users", array(
-					"user_id"		=> $this->USER_ID,
+					"user_id"		=> main()->USER_ID,
 					"community_id"	=> $community_id,
 					"member"		=> "1",
 					"post"			=> "1",
@@ -112,8 +112,8 @@ class yf_community {
 				
 				$OBJ_FRIENDS = main()->init_class("friends");
 				
-				$OBJ_FRIENDS->_add_user_friends_ids($this->USER_ID, $community_user_id);
-				$OBJ_FRIENDS->_add_user_friends_ids($community_user_id, $this->USER_ID);
+				$OBJ_FRIENDS->_add_user_friends_ids(main()->USER_ID, $community_user_id);
+				$OBJ_FRIENDS->_add_user_friends_ids($community_user_id, main()->USER_ID);
 				
 				$replace2 = array(
 					"form_action"		=> "./?object=".$_GET["object"]."&action=info&id=".$community_id,
@@ -149,9 +149,9 @@ class yf_community {
 		$join_link = "./?object=".$_GET["object"]."&action=join&id=".$community_info["id"];
 		$post_link = "";
 		
-		if (!empty($this->USER_ID)) {
+		if (!empty(main()->USER_ID)) {
 			$OBJ_FRIENDS = main()->init_class("friends");
-			$joined = $OBJ_FRIENDS->_is_a_friend($this->USER_ID, $community_info["user_id"]);
+			$joined = $OBJ_FRIENDS->_is_a_friend(main()->USER_ID, $community_info["user_id"]);
 			
 			if($joined){
 				$join_link = "";
@@ -190,14 +190,14 @@ class yf_community {
 	}
 	
 	function info(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
-		if($community_info["owner_id"] !== $this->USER_ID){
+		if($community_info["owner_id"] !== main()->USER_ID){
 			return _e(t("only for owner"));
 		}
 
@@ -231,11 +231,11 @@ class yf_community {
 	}
 	
 	function manage(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
-		$Q = db()->query("SELECT id,user_id,title FROM ".db('community')." WHERE owner_id=".$this->USER_ID);
+		$Q = db()->query("SELECT id,user_id,title FROM ".db('community')." WHERE owner_id=".main()->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$community[$A["id"]] = $A;
 			$users_ids[$A["user_id"]] = $A["user_id"];
@@ -265,7 +265,7 @@ class yf_community {
 	}
 	
 	function settings(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
@@ -273,7 +273,7 @@ class yf_community {
 		
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
-		if($community_info["owner_id"] !== $this->USER_ID){
+		if($community_info["owner_id"] !== main()->USER_ID){
 			return _e(t("only for owner"));
 		}
 		
@@ -302,7 +302,7 @@ class yf_community {
 	}
 	
 	function members(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -310,7 +310,7 @@ class yf_community {
 		
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
-		if($community_info["owner_id"] !== $this->USER_ID){
+		if($community_info["owner_id"] !== main()->USER_ID){
 			return _e(t("only for owner"));
 		}
 		
@@ -440,14 +440,14 @@ class yf_community {
 	}
 	
 	function handshake_request(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
-		if($community_info["owner_id"] !== $this->USER_ID){
+		if($community_info["owner_id"] !== main()->USER_ID){
 			return _e(t("only for owner"));
 		}
 
@@ -456,7 +456,7 @@ class yf_community {
 	}
 	
 	function handshake_request_to_you(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
@@ -464,7 +464,7 @@ class yf_community {
 		
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
-		if($community_info["owner_id"] !== $this->USER_ID){
+		if($community_info["owner_id"] !== main()->USER_ID){
 			return _e(t("only for owner"));
 		}
 
@@ -473,7 +473,7 @@ class yf_community {
 	}
 	
 	function delete_handshake(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -484,7 +484,7 @@ class yf_community {
 		if (!empty($handshake)) {
 			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["sender"]);
 		}
-		if ($this->USER_ID != $community["owner_id"]){
+		if (main()->USER_ID != $community["owner_id"]){
 			return _e(t("Only for owner"));
 		}
 		
@@ -495,7 +495,7 @@ class yf_community {
 	}
 	
 	function group_handshake_delete(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
@@ -506,7 +506,7 @@ class yf_community {
 			if (!empty($handshake)) {
 				$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["sender"]);
 			}
-			if ($this->USER_ID != $community["owner_id"]){
+			if (main()->USER_ID != $community["owner_id"]){
 				return _e("Only for owner");
 			}
 		
@@ -518,7 +518,7 @@ class yf_community {
 	}
 	
 	function accept_handshake(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -529,7 +529,7 @@ class yf_community {
 		if (!empty($handshake)) {
 			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 		}
-		if ($this->USER_ID != $community["owner_id"]){
+		if (main()->USER_ID != $community["owner_id"]){
 			return _e(t("Only for owner"));
 		}
 
@@ -564,7 +564,7 @@ class yf_community {
 	}
 	
 	function decline_handshake(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -575,7 +575,7 @@ class yf_community {
 		if (!empty($handshake)) {
 			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 		}
-		if ($this->USER_ID != $community["owner_id"]){
+		if (main()->USER_ID != $community["owner_id"]){
 			return _e(t("Only for owner"));
 		}
 		
@@ -609,7 +609,7 @@ class yf_community {
 	}
 	
 	function group_handshake_action(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -621,7 +621,7 @@ class yf_community {
 				if (!empty($handshake)) {
 					$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 				}
-				if ($this->USER_ID != $community["owner_id"]){
+				if (main()->USER_ID != $community["owner_id"]){
 					return _e(t("Only for owner"));
 				}
 
@@ -662,7 +662,7 @@ class yf_community {
 				if (!empty($handshake)) {
 					$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 				}
-				if ($this->USER_ID != $community["owner_id"]){
+				if (main()->USER_ID != $community["owner_id"]){
 					return _e(t("Only for owner!"));
 				}
 
@@ -684,7 +684,7 @@ class yf_community {
 	}
 	
 	function join(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
@@ -701,16 +701,16 @@ class yf_community {
 		if($community_info["membership"] == "open"){
 			// join to community
 			$OBJ_FRIENDS = main()->init_class("friends");
-			$OBJ_FRIENDS->_add_user_friends_ids($this->USER_ID, $community_info["user_id"]);
-			$OBJ_FRIENDS->_add_user_friends_ids($community_info["user_id"], $this->USER_ID);
+			$OBJ_FRIENDS->_add_user_friends_ids(main()->USER_ID, $community_info["user_id"]);
+			$OBJ_FRIENDS->_add_user_friends_ids($community_info["user_id"], main()->USER_ID);
 		}
 		
 		if($community_info["membership"] == "moderated"){
 			// send handshake request
 			$OBJ_FRIENDS = main()->init_class("friends");
 			$OBJ_HANDSHAKE = $OBJ_FRIENDS->_load_sub_module("friends_handshake");
-			$OBJ_HANDSHAKE->_add_handshake_request($this->USER_ID, $community_info["user_id"], "Please join me to community '".$community_info["title"]."'");
-			$OBJ_FRIENDS->_add_user_friends_ids($this->USER_ID, $community_info["user_id"]);
+			$OBJ_HANDSHAKE->_add_handshake_request(main()->USER_ID, $community_info["user_id"], "Please join me to community '".$community_info["title"]."'");
+			$OBJ_FRIENDS->_add_user_friends_ids(main()->USER_ID, $community_info["user_id"]);
 			
 			common()->set_notice("request sent");
 			return common()->show_notices();
@@ -722,11 +722,11 @@ class yf_community {
 	}
 	
 	function moderate(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
-		$moderated_community = $this->_get_moderated_community_for_user($this->USER_ID);
+		$moderated_community = $this->_get_moderated_community_for_user(main()->USER_ID);
 		
 		if(!empty($moderated_community)){
 			$community_id = array_flip($moderated_community);
@@ -768,7 +768,7 @@ class yf_community {
 	}
 	
 	function activate_post() {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 	
@@ -790,7 +790,7 @@ class yf_community {
 	}
 	
 	function delete_post(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -890,7 +890,7 @@ class yf_community {
 	function _account_suggests(){
 	
 		// for moderators
-		$moderated_community = $this->_get_moderated_community_for_user($this->USER_ID);
+		$moderated_community = $this->_get_moderated_community_for_user(main()->USER_ID);
 	
 		if(!empty($moderated_community)){
 			$Q = db()->query("SELECT id FROM ".db('blog_posts')." WHERE user_id IN(".implode(",", $moderated_community).") AND active = '0'");
@@ -904,7 +904,7 @@ class yf_community {
 		}
 		
 		// for owner, handshake for join to community
-		$Q = db()->query("SELECT user_id FROM ".db('community')." WHERE owner_id=".$this->USER_ID);
+		$Q = db()->query("SELECT user_id FROM ".db('community')." WHERE owner_id=".main()->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$community[$A["user_id"]] = $A["user_id"];
 		}

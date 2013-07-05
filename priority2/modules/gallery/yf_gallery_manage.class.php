@@ -801,7 +801,7 @@ class yf_gallery_manage {
 	*/
 	function _get_photo_folder_info ($photo_info = array(), $FOLDER_ID = 0) {
 		// Get current user folders
-		$user_folders = $this->GALLERY_OBJ->_get_user_folders($this->USER_ID);
+		$user_folders = $this->GALLERY_OBJ->_get_user_folders(main()->USER_ID);
 		// Try to find default folder
 		$def_folder_id = $this->GALLERY_OBJ->_get_def_folder_id($user_folders);
 		// Assign default folder if empty

@@ -138,7 +138,7 @@ class yf_gallery_tags {
 					db()->INSERT("tags", array(
 						"object_name"	=> "gallery",
 						"object_id"		=> intval($photo_id),
-						"user_id"		=> $this->USER_ID,
+						"user_id"		=> main()->USER_ID,
 						"text"			=> _es($_word),
 						"add_date"		=> time(),
 						"active"		=> 1,

@@ -97,8 +97,8 @@ class yf_rate {
 		// Check if vote allowed
 		$ALLOW_VOTE = false;
 		// Check if user is allowed to make vote here and now
-		if ($this->USER_ID) {
-			$num_latest_votes = db()->query_num_rows("SELECT id FROM ".db('rate_votes')." WHERE rate_id=".intval($RATE_INFO["id"])." AND user_id=".intval($this->USER_ID)." AND add_date>".intval(time() - $this->VOTE_DURATION));
+		if (main()->USER_ID) {
+			$num_latest_votes = db()->query_num_rows("SELECT id FROM ".db('rate_votes')." WHERE rate_id=".intval($RATE_INFO["id"])." AND user_id=".intval(main()->USER_ID)." AND add_date>".intval(time() - $this->VOTE_DURATION));
 			if (empty($num_latest_votes)) {
 				$ALLOW_VOTE = true;
 			}
@@ -107,7 +107,7 @@ class yf_rate {
 		if ($ALLOW_VOTE) {
 			// Save vote
 			db()->INSERT("rate_votes", array(
-				"user_id"	=> intval($this->USER_ID),
+				"user_id"	=> intval(main()->USER_ID),
 				"rate_id"	=> intval($RATE_ID),
 				"value"		=> intval($VOTE_VALUE),
 				"add_date"	=> time(),
@@ -180,12 +180,12 @@ class yf_rate {
 		}
 		$ALLOW_VOTE = false;
 		// Check if user is allowed to make vote here and now
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			// Try ot get from cache first
 			if (isset($GLOBALS['_RATE_LATEST_VOTES'][$OBJECT_NAME][$RATE_INFO["id"]])) {
 				$num_latest_votes = $GLOBALS['_RATE_LATEST_VOTES'][$OBJECT_NAME][$RATE_INFO["id"]];
 			} else {
-				$num_latest_votes = db()->query_num_rows("SELECT id FROM ".db('rate_votes')." WHERE rate_id=".intval($RATE_INFO["id"])." AND user_id=".intval($this->USER_ID)." AND add_date>".intval(time() - $this->VOTE_DURATION));
+				$num_latest_votes = db()->query_num_rows("SELECT id FROM ".db('rate_votes')." WHERE rate_id=".intval($RATE_INFO["id"])." AND user_id=".intval(main()->USER_ID)." AND add_date>".intval(time() - $this->VOTE_DURATION));
 			}
 			if (empty($num_latest_votes)) {
 				$ALLOW_VOTE = true;
@@ -290,7 +290,7 @@ class yf_rate {
 		// Store in global cache
 		$GLOBALS['_RATE_INFOS_CACHE'][$OBJECT_NAME] = $infos;
 		// Check if user is allowed to make vote here and now
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			// Collect rates ids
 			foreach ((array)$infos as $_info) {
 				$rates_ids[$_info["id"]] = $_info["id"];
@@ -303,7 +303,7 @@ class yf_rate {
 			$Q = db()->query(
 				"SELECT rate_id, COUNT(*) AS num
 				FROM ".db('rate_votes')." 
-				WHERE user_id=".intval($this->USER_ID)." 
+				WHERE user_id=".intval(main()->USER_ID)." 
 					AND rate_id IN(".implode(",", $rates_ids).")
 					AND add_date > ".intval(time() - $this->VOTE_DURATION)."
 				GROUP BY rate_id"
