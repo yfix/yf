@@ -1,10 +1,10 @@
 <?php
-class yf_shop_validate_order_data{
+class yf_shop_order_validate_data{
 
 	/**
 	* validate order data for view order
 	*/
-	function _validate_order_data () {
+	function _order_validate_data () {
 		if (empty($_POST["order_id"] )) {
 			_re(t("Order empty"));
 		}

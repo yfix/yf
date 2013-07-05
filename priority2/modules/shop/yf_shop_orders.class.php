@@ -4,7 +4,7 @@ class yf_shop_orders{
 	function orders() {
 		if (!main()->USER_ID) {
 			if (!empty($_POST)) {
-				module('shop')->validate_order_data();
+				module('shop')->order_validate_data();
 				// Display next form if we have no errors
 				if (!common()->_error_exists()) {
 					return module('shop')->view_order(true);

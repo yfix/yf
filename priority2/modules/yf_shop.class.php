@@ -233,8 +233,8 @@ class yf_shop extends yf_module {
 		return _class('shop_orders', 'modules/shop/')->orders($FORCE_DISPLAY_FORM);
 	}
 
-	function validate_order_data($FORCE_DISPLAY_FORM = false) {
-		return _class('shop_validate_order_data', 'modules/shop/')->validate_order_data($FORCE_DISPLAY_FORM);
+	function order_validate_data($FORCE_DISPLAY_FORM = false) {
+		return _class('shop_order_validate_data', 'modules/shop/')->order_validate_data($FORCE_DISPLAY_FORM);
 	}
 
 	function view_order($FORCE_DISPLAY_FORM = false) {
