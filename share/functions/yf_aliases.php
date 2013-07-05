@@ -44,14 +44,10 @@ if (!function_exists('db')) {
 	}
 }
 if (!function_exists('db_master')) {
-	function db_master($tbl_name = "") {
-		return db($tbl_name);
-	}
+	function db_master($tbl_name = "") { return db($tbl_name); }
 }
 if (!function_exists('db_slave')) {
-	function db_slave($tbl_name = "") {
-		return db($tbl_name);
-	}
+	function db_slave($tbl_name = "") { return db($tbl_name); }
 }
 // example: load("home_page", "framework")
 if (!function_exists('load')) {

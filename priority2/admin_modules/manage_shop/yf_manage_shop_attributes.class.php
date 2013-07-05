@@ -27,8 +27,8 @@ class yf_manage_shop_attributes {
 			);
 		}
 		$replace = array(
-			"add_url"		=> "./?object=manage_shop&action=attribute_add",
-			"items"			=> $items,
+			"add_url"	=> "./?object=manage_shop&action=attribute_add",
+			"items"		=> $items,
 		);
 		return tpl()->parse("manage_shop/attributes_main", $replace); 
 	}	
@@ -38,14 +38,11 @@ class yf_manage_shop_attributes {
 	*/
 	function attribute_add () {
 	
-		if(isset($_POST["go"])){
-		
-			if(empty($_POST["name"])){
+		if (isset($_POST["go"])){
+			if (empty($_POST["name"])){
 				_re(t("Name is required"));
 			}
-			
 			if(!common()->_error_exists()){
-			
 				$value_list	= explode("\n", $_POST["value_list"]);
 				$i=0;
 				foreach ((array)$value_list as $val){
@@ -62,15 +59,12 @@ class yf_manage_shop_attributes {
 					"order"			=> $_POST["order"],
 					"category_id"	=> intval(module('manage_shop')->ATTRIBUTES_CAT_ID),
 				);
-				
 				db()->INSERT("dynamic_fields_info", $sql_array); 
 
-				if (main()->USE_SYSTEM_CACHE)	{
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("dynamic_fields_info");
 				}
-
 				return js_redirect("./?object=manage_shop&action=attributes_manage");
-			
 			}
 		}
 	
@@ -90,23 +84,18 @@ class yf_manage_shop_attributes {
 	* 
 	*/
 	function attribute_edit () {
-	
-		if(empty($_GET["id"])){
+		if (empty($_GET["id"])) {
 			return _e(t("no id"));
 		}
-
 		$_GET["id"] = intval($_GET["id"]);
 		
 		$A = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_info')."` WHERE `id`=".$_GET["id"]);
 		
-		if(isset($_POST["go"])){
-		
+		if (isset($_POST["go"])) {
 			if (empty($_POST["name"])) {
 				_re(t("Name is required"));
 			}
-			
 			if (!common()->_error_exists()) {
-			
 				$value_list	= explode("\n", $_POST["value_list"]);
 				$i=0;
 				foreach ((array)$value_list as $val){
@@ -114,7 +103,6 @@ class yf_manage_shop_attributes {
 					$value_list_temp[$i] = $val;
 				}
 				$value_list = serialize($value_list_temp);
-			
 				// Save data
 				$sql_array = array(
 					"name"			=> _es($_POST["name"]),
@@ -124,11 +112,9 @@ class yf_manage_shop_attributes {
 					"order"			=> $_POST["order"],
 				);
 				db()->UPDATE("dynamic_fields_info", $sql_array, "`id`=".$_GET["id"]); 
-
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("dynamic_fields_info");
 				}
-
 				return js_redirect("./?object=manage_shop&action=attributes_manage");
 			}
 		}
@@ -152,18 +138,13 @@ class yf_manage_shop_attributes {
 	*/
 	function attribute_delete () {
 		$_GET["id"] = intval($_GET["id"]);
-		
 		$field_info = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_info')."` WHERE `id` = ".intval($_GET["id"]));
-		
-		if(empty($field_info)){
+		if (empty($field_info)) {
 			return _e(t("no field"));
 		}
-		
-		// Do delete record
 		if ($_GET["id"]) {
 			db()->query("DELETE FROM `".db('dynamic_fields_info')."` WHERE `id`=".$_GET["id"]);
 			db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `category_id` = ".module('manage_shop')->ATTRIBUTES_CAT_ID." AND `field_id` = ".$_GET["id"]);
-
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("dynamic_fields_info");
 			}
@@ -187,22 +168,17 @@ class yf_manage_shop_attributes {
 		$category_info = main()->get_data("dynamic_fields_categories");
 		$category_id = intval(module('manage_shop')->ATTRIBUTES_CAT_ID);
 
-		if(empty($category_id)){
+		if (empty($category_id)) {
 			return;
 		}
-
 		$attributes = $this->_get_attributes($category_id);
-
-		if(empty($attributes) || !is_array($attributes)){
+		if (empty($attributes) || !is_array($attributes)) {
 			return;
 		}
-
 		foreach ((array)$attributes as $key => $val){
 			$fields_ids[$key] = $key;
 		}
-
 		$fields_values = module('manage_shop')->_get_attributes_values ($category_id, $object_id, $fields_ids);
-
 		foreach ((array)$attributes as $_attr_id => $_info) {
 			$i++;
 			foreach ((array)$_info["value_list"] as $_val_id => $_value) {
@@ -236,26 +212,19 @@ class yf_manage_shop_attributes {
 			$_item_id = $_attr_id."_".$_sel_id;
 			$_POST["attributes_use"][$_item_id] = 1;
 		}
-		
 		$category_info = main()->get_data("dynamic_fields_categories");
 		$category_id = intval(module('manage_shop')->ATTRIBUTES_CAT_ID);
-		
-		if(empty($category_id)){
+		if (empty($category_id)) {
 			return;
 		}
-
 		$attributes = $this->_get_attributes($category_id);
-
 		if (empty($attributes) || !is_array($attributes)) {
 			return;
 		}
-
 		foreach ((array)$attributes as $key => $val){
 			$fields_ids[$key] = $key;
 		}
-
 		$fields_values = module('manage_shop')->_get_attributes_values ($category_id, $object_id, $fields_ids);
-
 		foreach ((array)$attributes as $_attr_id => $_info) {
 			$option_values	= array();
 			$value_prices	= array();
@@ -296,9 +265,7 @@ class yf_manage_shop_attributes {
 		if (empty($category_id)) {
 			return array();
 		}
-
 		$fields_info = main()->get_data("dynamic_fields_info");
-		
 		foreach ((array)$fields_info[$category_id] as $A){
 			$attributes[$A["id"]] = array(
 				"title"			=> $A["name"],
@@ -321,7 +288,6 @@ class yf_manage_shop_attributes {
 		if (empty($products_ids)) {
 			return array();
 		}
-
 		$fields_info = main()->get_data("dynamic_fields_info");
 
 		$Q = db()->query("SELECT * FROM `".db('dynamic_fields_values')."` WHERE `category_id`=1 AND `object_id` IN (".implode(",", $products_ids).")");

@@ -192,20 +192,19 @@ class yf_manage_shop_orders {
 			"password"		=> "", // Security!
 		));
 		// Prepare email template
-		$message = tpl()->parse(SHOP_CLASS_NAME."/invoice_email", $replace2);
+		$message = tpl()->parse("shop/invoice_email", $replace2);
 
 		common()->quick_send_mail($order_info["email"], "invoice #".$_GET["id"], $message); 
 
 		$SELF_METHOD_ID = substr(__FUNCTION__, strlen("_order_step_"));
 		$replace = my_array_merge($replace2, array(
 			"error_message"	=> _e(),
-			"products"				=> $products,
-			"ship_price"			=> module('manage_shop')->_format_price(module('manage_shop')->_ship_types_names[$order_info["ship_type"]]),
-			"total_price"			=> module('manage_shop')->_format_price($total_price),
-			"order_no"				=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
-			"hash"						=> _prepare_html($order_info["hash"]),
-			"back_link"				=> "./?object=manage_shop&action=show_orders",
-			
+			"products"		=> $products,
+			"ship_price"	=> module('manage_shop')->_format_price(module('manage_shop')->_ship_types_names[$order_info["ship_type"]]),
+			"total_price"	=> module('manage_shop')->_format_price($total_price),
+			"order_no"		=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
+			"hash"			=> _prepare_html($order_info["hash"]),
+			"back_link"		=> "./?object=manage_shop&action=show_orders",
 		));
 		return tpl()->parse("manage_shop/order_print_invoice", $replace);
 	}
@@ -238,31 +237,30 @@ class yf_manage_shop_orders {
 		$this->_filter_name	= "show_orders_filter";
 		// Array of select boxes to process
 		$this->_boxes = array(
-			"status"				=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
-			"sort_by"				=> 'select_box("sort_by",		 $this->_sort_by,			$selected, 0, 2, "", false)',
-			"sort_order"			=> 'select_box("sort_order", $this->_sort_orders,		$selected, 0, 2, "", false)',
-			"orders_by_date"	=> 'select_box("orders_by_date", $this->_orders_by_date,		$selected, 0, 2, "", false)',
+			"status"		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
+			"sort_by"		=> 'select_box("sort_by",		$this->_sort_by,			$selected, 0, 2, "", false)',
+			"sort_order"	=> 'select_box("sort_order", 	$this->_sort_orders,		$selected, 0, 2, "", false)',
+			"orders_by_date"=> 'select_box("orders_by_date",$this->_orders_by_date,		$selected, 0, 2, "", false)',
 		);
 		// Sort orders
 		$this->_sort_orders = array( "" =>"", "DESC" => "Descending", "ASC" => "Ascending");
 		// Sort fields
 		$this->_sort_by = array(
-			""					=> 	"",
-			"id"				=> "Order ID",
-			"user_id"		=> "User",
-			"total_sum" 	=> "SUM",
-			"quantity" 		=> "Quantity",
-			"date" 			=> "Date",
-			"status" 		=> "Status",
+			""			=> 	"",
+			"id"		=> "Order ID",
+			"user_id"	=> "User",
+			"total_sum" => "SUM",
+			"quantity" 	=> "Quantity",
+			"date" 		=> "Date",
+			"status" 	=> "Status",
 		);
 		$this->_orders_by_date = array(
-			""					=> 	"",
-			"0"				=> "Today",
+			""			=> 	"",
+			"0"			=> "Today",
 			"86400"		=> "Yesterday",
-			"604800"		=> "Week",
+			"604800"	=> "Week",
 			"2592000"	=> "month",
 			"31536000" 	=> "Year",
-			
 		);
 		// Fields in the filter
 		$this->_fields_in_filter = array(
@@ -285,43 +283,43 @@ class yf_manage_shop_orders {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		if ($SF["sum_min"]){
-			$sql .= " AND `total_sum` >= ".intval($SF["sum_min"])." \r\n";
+			$sql .= " AND `total_sum` >= ".intval($SF["sum_min"])." \n";
 		}
 		if ($SF["sum_max"])	{
-			$sql .= " AND `total_sum` <= ".intval($SF["sum_max"])." \r\n";
+			$sql .= " AND `total_sum` <= ".intval($SF["sum_max"])." \n";
 		}
 		if (strlen($SF["user"])){
-		$sql .= " AND `user` LIKE '"._es($SF["user"])."%' \r\n";
+		$sql .= " AND `user` LIKE '"._es($SF["user"])."%' \n";
 		}
 		if($SF["status"] ){
-			$sql .= " AND `status` = '".$SF["status"]."' \r\n";
+			$sql .= " AND `status` = '".$SF["status"]."' \n";
 		}  
 		$cur_date = time ();
 		$cur_date =	date("d F", ($cur_date));
 		$cur_date =	strtotime($cur_date);
-		if($SF["orders_by_date"] == "0"){
+		if ($SF["orders_by_date"] == "0") {
 			$SF["orders_by_date"];
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "86400"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "604800"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "2592000"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "31536000"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND `date` >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "86400") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND `date` >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "604800") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND `date` >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "2592000") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND `date` >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "31536000") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND `date` >= ".$date." \n";
 		}
 		// Sorting here
 		if ($SF["sort_by"])	{
-			$sql .= " ORDER BY  `" .$SF["sort_by"]."` \r\n";
+			$sql .= " ORDER BY  `" .$SF["sort_by"]."` \n";
 		}
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) {
-			$sql .= " ".$SF["sort_order"]." \r\n";
+			$sql .= " ".$SF["sort_order"]." \n";
 		}
 		return substr($sql, 0, -3);
 	}

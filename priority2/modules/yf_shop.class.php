@@ -145,8 +145,6 @@ class yf_shop extends yf_module {
 	* Constructor
 	*/
 	function _init () {
-		define("SHOP_CLASS_NAME", "shop");
-
 		$this->_shop_cats				= _class('cats')->_get_items_names("shop_cats");
 		$this->_shop_cats_all			= _class('cats')->_get_items_array("shop_cats");
 		$this->_shop_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats");
@@ -981,7 +979,7 @@ class yf_shop extends yf_module {
 			$subheader = $cases[$_GET["action"]];
 		}
 		return array(
-			"header"	=> $page_header ? _prepare_html($page_header) : t(_ucwords(SHOP_CLASS_NAME)),
+			"header"	=> $page_header ? _prepare_html($page_header) : t("shop"),
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
