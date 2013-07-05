@@ -2,10 +2,6 @@
 <?php
 
 /**
-* Source style auto-formatting HOWTO:
-*
-* pear upgrade
-* pear install channel://pear.php.net/PHP_Beautifier-0.1.15
 * php_beautifier --indent_tabs auto_refactoring_of_module2.php -o auto_refactoring_of_module3.php
 */
 
@@ -14,12 +10,12 @@ if ($argv[1]) {
 	$module = $argv[1];
 }
 $modules_dir = realpath("../../modules");
-$f = $modules_dir. "/". $module.".class.php"
+$f = $modules_dir. "/". $module.".class.php";
 if (file_exists($f)) {
 	$code = file_get_contents($f);
 } else {
 	$modules_dir = realpath("../../priority2/modules");
-	$f = $modules_dir. "/". $module.".class.php"
+	$f = $modules_dir. "/". $module.".class.php";
 	if (file_exists($f)) {
 		$code = file_get_contents($f);
 	} else {

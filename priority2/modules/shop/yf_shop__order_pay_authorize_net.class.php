@@ -1,13 +1,5 @@
 <?php
-
-/**
-* Shop payment methods
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
-*/
-class yf_shop_payment {
+class yf_shop__order_pay_authorize_net{
 
 	/**
 	* Order payment method by authorize.net
@@ -137,7 +129,6 @@ class yf_shop_payment {
 			$error		= curl_error($ch);
 			curl_close ($ch);
 			if ($error) {
-// TODO: potential security problem (error_logs.log is open for everyone)
 				trigger_error("SHOP: authorize.net response error: ".$error, E_USER_WARNING);
 				return _e("SHOP: Payment gateway error #1. Please <a href='".process_url("./?object=support")."'>contact</a> site admin");
 			}
@@ -156,7 +147,6 @@ class yf_shop_payment {
 		// with the appropriate error message
 		if ($gateway_response[0] != '1') {
 
-// TODO: potential security problem (error_logs.log is open for everyone)
 			trigger_error("SHOP: authorize.net not approved: ".$response, E_USER_WARNING);
 			return _e("SHOP: Payment gateway error #3. Please <a href='".process_url("./?object=support")."'>contact</a> site admin");
 
@@ -171,4 +161,5 @@ class yf_shop_payment {
 		$_GET["id"] = $order_info['id'];
 		return module('shop')->_order_step_finish();
 	}
+	
 }

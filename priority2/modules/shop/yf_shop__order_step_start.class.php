@@ -1,24 +1,14 @@
 <?php
-class yf_shop_cart{
+class yf_shop__order_step_start{
 
 	/**
-	* Display cart contents (save changes also here)
+	* Order step
 	*/
-	function cart($params = array()) {
-		$STPL_NAME = $params["STPL"] ? $params["STPL"] : "shop/cart";
-		/*
-		$_SESSION["SHOP_CART"][$product_id] = array(
-			"product_id"=> 1,
-			"quantity"	=> 1,
-		);
-		*/
+	function _order_step_start($FORCE_DISPLAY_FORM = false) {
 		$cart = &$_SESSION["SHOP_CART"];
-		// Save cart contents
-		if (!empty($_POST["quantity"]) && !module('shop')->_CART_PROCESSED) {
-			module('shop')->_save_cart_all();
-			return js_redirect("./?object=shop&action=".$_GET["action"]);
-		}
-		// Get products from db
+
+		module('shop')->_save_cart_all();
+
 		$products_ids = array();
 		foreach ((array)$cart as $_item_id => $_info) {
 			if ($_info["product_id"]) {
@@ -26,7 +16,7 @@ class yf_shop_cart{
 			}
 		}
 		if (!empty($products_ids)) {
-			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `active`='1' AND `id` IN(".implode(",", $products_ids).")");
+			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `id` IN(".implode(",", $products_ids).") AND `active`='1'");
 			$products_atts	= module('shop')->_get_products_attributes($products_ids);
 			$group_prices	= module('shop')->_get_group_prices($products_ids);
 		}
@@ -44,6 +34,7 @@ class yf_shop_cart{
 					$price += $_attr_info["price"];
 				}
 			}
+
 			$URL_PRODUCT_ID = module('shop')->_product_id_url($_info);
 
 			$products[$_info["id"]] = array(
@@ -51,7 +42,6 @@ class yf_shop_cart{
 				"price"			=> module('shop')->_format_price($price),
 				"currency"		=> _prepare_html(module('shop')->CURRENCY),
 				"quantity"		=> intval($quantity),
-				"delete_link"	=> "./?object=shop&action=clean_cart&id=".$URL_PRODUCT_ID,
 				"details_link"	=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"		=> _prepare_html(module('shop')->_shop_cats[$_info["cat_id"]]),
@@ -59,16 +49,15 @@ class yf_shop_cart{
 			);
 			$total_price += $price * $quantity;
 		}
-		return tpl()->parse($STPL_NAME, array(
-			"form_action"	=> "./?object=shop&action=".$_GET["action"],
+		$replace = array(
 			"products"		=> $products,
 			"total_price"	=> module('shop')->_format_price($total_price),
 			"currency"		=> _prepare_html(module('shop')->CURRENCY),
-			"clean_all_link"=> "./?object=shop&action=clean_cart",
-			"order_link"	=> "./?object=shop&action=order",
-			"back_link"		=> js_redirect($_SERVER["HTTP_REFERER"], false),
+			"back_link"		=> "./?object=shop&action=cart",
+			"next_link"		=> "./?object=shop&action=order&id=delivery",
 			"cats_block"	=> module('shop')->_show_shop_cats(),
-		));
+		);
+		return tpl()->parse("shop/order_start", $replace);
 	}
 	
 }
