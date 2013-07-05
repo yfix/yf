@@ -17,13 +17,13 @@ class yf_files_operation{
 			return false;
 		}
 		
-		$conf_info = db()->query_fetch("SELECT * FROM `".db('services_conf')."` WHERE `id` = ".intval($conf_id));
+		$conf_info = db()->query_fetch("SELECT * FROM ".db('services_conf')." WHERE id = ".intval($conf_id));
 		
 		if(empty($conf_info)){
 			return false;
 		}
 		
-		$Q = db()->query("SELECT * FROM `".db('services_conf_files')."` WHERE `conf_id` = ".$conf_id);
+		$Q = db()->query("SELECT * FROM ".db('services_conf_files')." WHERE conf_id = ".$conf_id);
 		while ($A = db()->fetch_assoc($Q)) {
 			$files[$A["id"]] = $A;
 		}

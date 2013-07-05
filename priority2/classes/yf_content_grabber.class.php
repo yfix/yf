@@ -3,11 +3,11 @@
 class yf_content_grabber {
 
 	function _run_grabber(){
-		$Q = db()->query("SELECT * FROM `".db('rss_items')."` WHERE `status`=0");
+		$Q = db()->query("SELECT * FROM ".db('rss_items')." WHERE status=0");
 		while ($A = db()->fetch_assoc($Q)) {
 			db()->UPDATE("rss_items", array(
 				"status"	=> 1,
-			), "`id`=".$A["id"]);	
+			), "id=".$A["id"]);	
 
 			$this->_grab($A["link"]);
 		}
@@ -28,7 +28,7 @@ class yf_content_grabber {
 			$content_original=iconv($charset_meta[1],"UTF-8",$content_original);
 		}
 				
-		$Q = db()->query("SELECT * FROM `".db('grab_patterns')."` ORDER BY `name` DESC");
+		$Q = db()->query("SELECT * FROM ".db('grab_patterns')." ORDER BY name DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$pattern_info[] = $A;
 		}

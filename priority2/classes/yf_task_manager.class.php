@@ -72,9 +72,9 @@ class yf_task_manager {
 			file_put_contents($this->LOCK_FILE_NAME, time());
 		}
 		if ($this->type == 'internal') {
-			$sql = "SELECT * FROM `".db('task_manager')."` WHERE `enabled` = 1 AND `next_run` <= ".intval($this->time_now)." ORDER BY `next_run` ASC LIMIT 1";
+			$sql = "SELECT * FROM ".db('task_manager')." WHERE enabled = 1 AND next_run <= ".intval($this->time_now)." ORDER BY next_run ASC LIMIT 1";
 		} else {
-			$sql = "SELECT * FROM `".db('task_manager')."` WHERE `cronkey`='"._es($this->cron_key)."' LIMIT 1";
+			$sql = "SELECT * FROM ".db('task_manager')." WHERE cronkey='"._es($this->cron_key)."' LIMIT 1";
 		}
 		$this_task = db()->query_fetch($sql);
 		// Process task
@@ -82,7 +82,7 @@ class yf_task_manager {
 			// Got it, now update row and run..
 			$new_date = $this->generate_next_run($this_task);
 			// Update next task run
-			db()->query("UPDATE `".db('task_manager')."` SET `next_run`=".intval($new_date)." WHERE `id`=".intval($this_task['id']));
+			db()->query("UPDATE ".db('task_manager')." SET next_run=".intval($new_date)." WHERE id=".intval($this_task['id']));
 			$this->save_next_run_stamp();
 			$this->_task_start_time[$this_task['id']]	= microtime(true);
 			// Use "php_code" field as source to eval as the job
@@ -123,7 +123,7 @@ class yf_task_manager {
 	* Update next run variable in the systemvars cache
 	*/
 	function save_next_run_stamp() {
-		$sql = "SELECT `next_run` FROM `".db('task_manager')."` WHERE `enabled` = 1 ORDER BY `next_run` ASC LIMIT 1";
+		$sql = "SELECT next_run FROM ".db('task_manager')." WHERE enabled = 1 ORDER BY next_run ASC LIMIT 1";
 		$this_task = db()->query_fetch($sql);
 		if (!$this_task['next_run']) {
 			// Fail safe...
@@ -131,10 +131,10 @@ class yf_task_manager {
 		}
 		// Update cache
 		$cache_array = array();
-		$cache = db()->query_fetch("SELECT * FROM `".db('cache')."` WHERE `key`='".$this->NEXT_RUN_CACHE_KEY."'");
+		$cache = db()->query_fetch("SELECT * FROM ".db('cache')." WHERE key='".$this->NEXT_RUN_CACHE_KEY."'");
 		$cache_array = unserialize(stripslashes($cache['value']));
 		$cache_array['task_next_run'] = $this_task['next_run'];
-		db()->query("REPLACE INTO `".db('cache')."` (`key`,`value`) VALUES ('"._es($this->NEXT_RUN_CACHE_KEY)."','"._es(serialize($cache_array))."')");
+		db()->query("REPLACE INTO ".db('cache')." (key,value) VALUES ('"._es($this->NEXT_RUN_CACHE_KEY)."','"._es(serialize($cache_array))."')");
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("db_cache");
 	}

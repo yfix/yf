@@ -51,7 +51,7 @@ class yf_related_content {
 	*		"field_date"	=> "add_date",
 	*		"field_title"	=> "title",
 	*		"field_text"	=> "text",
-	*		"where"			=> "`user_id`=".intval($post_info["user_id"]), // custom WHERE condition will be added to query
+	*		"where"			=> "user_id=".intval($post_info["user_id"]), // custom WHERE condition will be added to query
 	*	));
 	*
 	*/
@@ -164,35 +164,35 @@ class yf_related_content {
 
 		$sql = 
 			"SELECT *, ( 
-				`score_text`	* ".$WEIGHT_TEXT." 
-				".(strlen($keywords_title)	? " + `score_title`	* ".$WEIGHT_TITLE : "")."
-				".(strlen($keywords_add_1)	? " + `score_add_1`	* ".$WEIGHT_ADD_1 : "")."
-				".(strlen($keywords_add_2)	? " + `score_add_2`	* ".$WEIGHT_ADD_2 : "")."
-				".($tags					? " + `score_tag`	* ".$WEIGHT_TAG : "")."
-				".($cats					? " + `score_cat`	* ".$WEIGHT_CAT : "")."
-			) AS `".$FIELD_SCORE."` 
+				score_text	* ".$WEIGHT_TEXT." 
+				".(strlen($keywords_title)	? " + score_title	* ".$WEIGHT_TITLE : "")."
+				".(strlen($keywords_add_1)	? " + score_add_1	* ".$WEIGHT_ADD_1 : "")."
+				".(strlen($keywords_add_2)	? " + score_add_2	* ".$WEIGHT_ADD_2 : "")."
+				".($tags					? " + score_tag	* ".$WEIGHT_TAG : "")."
+				".($cats					? " + score_cat	* ".$WEIGHT_CAT : "")."
+			) AS ".$FIELD_SCORE." 
 
 			FROM ( 
 				SELECT ".($fields_to_return_sql ? $fields_to_return_sql : "1")."
-					, ".(strlen($keywords_text)	? "(MATCH (`".$FIELD_TEXT."`) AGAINST ('"._es($keywords_text)."' IN BOOLEAN MODE))" : "0")." AS `score_text` 
-					".(strlen($keywords_title)	? ", (MATCH (`".$FIELD_TITLE."`) AGAINST ('"._es($keywords_title)."' IN BOOLEAN MODE)) AS `score_title` " : "")."
-					".(strlen($keywords_add_1)	? ", (MATCH (`".$FIELD_ADD_1."`) AGAINST ('"._es($keywords_add_1)."' IN BOOLEAN MODE)) AS `score_add_1` " : "")."
-					".(strlen($keywords_add_2)	? ", (MATCH (`".$FIELD_ADD_2."`) AGAINST ('"._es($keywords_add_2)."' IN BOOLEAN MODE)) AS `score_add_2` " : "")."
-					".($tags ? ", IFNULL(0/*`score_tag`*/,0) AS `score_tag` " : "")."
-					".($cats ? ", IFNULL(0/*`score_cat`*/,0) as `score_cat` " : "")."
-				FROM `".$TABLE_NAME."` 
+					, ".(strlen($keywords_text)	? "(MATCH (".$FIELD_TEXT.") AGAINST ('"._es($keywords_text)."' IN BOOLEAN MODE))" : "0")." AS score_text 
+					".(strlen($keywords_title)	? ", (MATCH (".$FIELD_TITLE.") AGAINST ('"._es($keywords_title)."' IN BOOLEAN MODE)) AS score_title " : "")."
+					".(strlen($keywords_add_1)	? ", (MATCH (".$FIELD_ADD_1.") AGAINST ('"._es($keywords_add_1)."' IN BOOLEAN MODE)) AS score_add_1 " : "")."
+					".(strlen($keywords_add_2)	? ", (MATCH (".$FIELD_ADD_2.") AGAINST ('"._es($keywords_add_2)."' IN BOOLEAN MODE)) AS score_add_2 " : "")."
+					".($tags ? ", IFNULL(0/*score_tag*/,0) AS score_tag " : "")."
+					".($cats ? ", IFNULL(0/*score_cat*/,0) as score_cat " : "")."
+				FROM ".$TABLE_NAME." 
 				WHERE ".($WHERE_COND ? $WHERE_COND : "1")." 
-					AND `".$FIELD_ID."` != ".intval($SOURCE_ARRAY[$FIELD_ID])
-					.($PAST_ONLY ? " AND `".$FIELD_DATE."` <= '".$now."' " : ' ')
-			.") AS `rawscores` 
+					AND ".$FIELD_ID." != ".intval($SOURCE_ARRAY[$FIELD_ID])
+					.($PAST_ONLY ? " AND ".$FIELD_DATE." <= '".$now."' " : ' ')
+			.") AS rawscores 
 
 			WHERE ( 
-				`score_text`	* ".$WEIGHT_TEXT."
-				".(strlen($keywords_title)	? " + `score_title`	* ".$WEIGHT_TITLE : "")."
-				".(strlen($keywords_add_1)	? " + `score_add_1` * ".$WEIGHT_ADD_1 : "")."
-				".(strlen($keywords_add_2)	? " + `score_add_2` * ".$WEIGHT_ADD_2 : "")."
-				".($tags					? " + `score_tag`	* ".$WEIGHT_TAG : "")."
-				".($cats					? " + `score_cat`	* ".$WEIGHT_CAT : "")."
+				score_text	* ".$WEIGHT_TEXT."
+				".(strlen($keywords_title)	? " + score_title	* ".$WEIGHT_TITLE : "")."
+				".(strlen($keywords_add_1)	? " + score_add_1 * ".$WEIGHT_ADD_1 : "")."
+				".(strlen($keywords_add_2)	? " + score_add_2 * ".$WEIGHT_ADD_2 : "")."
+				".($tags					? " + score_tag	* ".$WEIGHT_TAG : "")."
+				".($cats					? " + score_cat	* ".$WEIGHT_CAT : "")."
 			) >= ".$THRESHOLD."
 
 			ORDER BY ".$ORDER_BY." 

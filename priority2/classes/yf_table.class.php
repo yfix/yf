@@ -83,7 +83,7 @@ class yf_table {
 		}
 		// Default query text (part of auto-parser)
 		if (!$this->sql) {
-			$this->sql = "SELECT * FROM `".$this->db_table."`";
+			$this->sql = "SELECT * FROM ".$this->db_table."";
 		}
 		// Default path (part of auto-parser)
 		if (!$this->path) {
@@ -110,7 +110,7 @@ class yf_table {
 		$table_columns	= db()->meta_columns($this->db_table);
 		// Catch empty columns and try to create such table
 		if (empty($table_columns)) {
-			db()->query("SELECT * FROM `".$this->db_table."`");
+			db()->query("SELECT * FROM ".$this->db_table."");
 			if (substr($this->db_table, 0, 4) == "dbt_") {
 				$this->db_table = DB_PREFIX. substr($this->db_table, 4);
 			}
@@ -362,7 +362,7 @@ class yf_table {
 	*/
 	function _generate_sort () {
 		if ($_GET['sort']) {
-			$sort_text = " ORDER BY `".$_GET['sort']."` ";
+			$sort_text = " ORDER BY ".$_GET['sort']." ";
 			if ($_GET['order'] == "a") {
 				$sort_text .= " ASC ";
 				$new_order = "d";

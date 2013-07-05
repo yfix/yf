@@ -38,7 +38,7 @@ return false;
 		if (empty($user_id)) {
 			return false;
 		}
-		list($result) = db()->query_fetch("SELECT `value` AS `0` FROM `".db('ban_status')."` WHERE `user_id`=".intval($user_id)." AND `action`='"._es($action_name)."'");
+		list($result) = db()->query_fetch("SELECT value AS 0 FROM ".db('ban_status')." WHERE user_id=".intval($user_id)." AND action='"._es($action_name)."'");
 		return $result;
 	}
 
@@ -58,7 +58,7 @@ return false;
 		}
 		$ban_infos = array();
 		// Do get records from db
-		$Q = db()->query("SELECT * FROM `".db('ban_status')."` WHERE `user_id` IN(".implode(",", $users_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('ban_status')." WHERE user_id IN(".implode(",", $users_ids).")");
 		while ($A = db()->fetch_assoc($Q)) $ban_infos[$A["user_id"]] = $A;
 		return $ban_infos;
 	}

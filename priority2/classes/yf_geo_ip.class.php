@@ -31,10 +31,10 @@ class yf_geo_ip {
 		$cur_ip = $FORCE_IP;
 		if (empty($cur_ip)) {
 			list($cur_ip) = db()->query_fetch(
-				"SELECT `ip` AS `0` 
-				FROM `".db('log_auth')."` 
-				WHERE `user_id`=".intval($user_id)." 
-				ORDER BY `date` DESC 
+				"SELECT ip AS 0 
+				FROM ".db('log_auth')." 
+				WHERE user_id=".intval($user_id)." 
+				ORDER BY date DESC 
 				LIMIT 1"
 			);
 		}
@@ -48,13 +48,13 @@ class yf_geo_ip {
 			$lon		= floatval($geo_data["latitude"]);
 			$lat		= floatval($geo_data["longitude"]);
 			$radius		= 3;
-			$zip_data	= db()->query_fetch("SELECT * FROM `".db('zip_data')."` WHERE (POW((69.1 * (`lon` - ".floatval($lon).") * cos(".floatval($lat)." / 57.3)), '2') + POW((69.1 * (`lat` - ".floatval($lat).")), '2')) < (".floatval($radius)." * ".floatval($radius).") LIMIT 1");
+			$zip_data	= db()->query_fetch("SELECT * FROM ".db('zip_data')." WHERE (POW((69.1 * (lon - ".floatval($lon).") * cos(".floatval($lat)." / 57.3)), '2') + POW((69.1 * (lat - ".floatval($lat).")), '2')) < (".floatval($radius)." * ".floatval($radius).") LIMIT 1");
 			if (!empty($zip_data)) {
 				$zip_code	= $zip_data["id"];
 			}
 		// Try to get lon, lat by zip_code
 		} elseif (!empty($user_info["zip_code"])) {
-			$zip_data	= db()->query_fetch("SELECT * FROM `".db('zip_data')."` WHERE `id`='"._es($user_info["zip_code"])."'");
+			$zip_data	= db()->query_fetch("SELECT * FROM ".db('zip_data')." WHERE id='"._es($user_info["zip_code"])."'");
 			$lon		= floatval($zip_data["lon"]);
 			$lat		= floatval($zip_data["lat"]);
 		}
@@ -64,16 +64,16 @@ class yf_geo_ip {
 				"lon"		=> floatval($lon),
 				"lat"		=> floatval($lat),
 				"zip_code"	=> _es(empty($user_info["zip_code"]) ? $zip_code : ""),
-			), "`id`=".intval($user_id));
+			), "id=".intval($user_id));
 		}
 		// Sync ads lon,lat with users
 		db()->query(
-			"UPDATE `".db('ads')."` AS `a`
-				, `".db('user')."` AS `u`
-			SET `a`.`lon` = `u`.`lon`
-				, `a`.`lat` = `u`.`lat`
-			WHERE `a`.`user_id` = `u`.`id`
-				AND `u`.`id` = ".intval($user_id)
+			"UPDATE ".db('ads')." AS a
+				, ".db('user')." AS u
+			SET a.lon = u.lon
+				, a.lat = u.lat
+			WHERE a.user_id = u.id
+				AND u.id = ".intval($user_id)
 		);
 	}
 }

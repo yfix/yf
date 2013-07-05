@@ -124,7 +124,7 @@ class yf_bb_codes {
 //			if (defined('SITE_BAD_WORD_FILTER') && SITE_BAD_WORD_FILTER == 1) {
 				// Load "bad words" array
 				if (!isset($GLOBALS["BAD_WORDS_ARRAY"])) {
-					$Q = db()->query("SELECT `word` FROM `".db('badwords')."`");
+					$Q = db()->query("SELECT word FROM ".db('badwords')."");
 					while ($A = db()->fetch_assoc($Q)) $GLOBALS["BAD_WORDS_ARRAY"] = $A["word"];
 				}
 				$body = str_replace($GLOBALS["BAD_WORDS_ARRAY"], "", $body);

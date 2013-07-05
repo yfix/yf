@@ -49,7 +49,7 @@ class yf_custom_design {
 		$css_table_main		= !empty($params["css_table_main"])		? $params["css_table_main"]		: "tbl";
 		$css_table_header	= !empty($params["css_table_header"])	? $params["css_table_header"]	: "tbl_h";
 		// Do get style from db
-		$style_info = db()->query_fetch("SELECT * FROM `".db('custom_style')."` WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."' LIMIT 1");
+		$style_info = db()->query_fetch("SELECT * FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
 		// Do get path to the user photos
 		$path = $this->DIR->_gen_dir_path($item_id, WEB_PATH.$photos_path);
 		// Process background
@@ -106,29 +106,29 @@ class yf_custom_design {
 		$delete_bg_link	= !empty($params["delete_bg_link"]) ? $params["delete_bg_link"] : "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=delete_background";
 		// Do revert design
 		if ($_GET["id"] == "revert") {
-			$A = db()->query_fetch("SELECT `background` FROM `".db('custom_style')."` WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."' LIMIT 1");
+			$A = db()->query_fetch("SELECT background FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
 			// Delete background image
 			if ($A["background"] != '') {
 				$path = $this->DIR->_gen_dir_path($item_id, INCLUDE_PATH.$photos_path);
 				@unlink($path.$A["background"]);
 			}
-			db()->query("DELETE FROM `".db('custom_style')."` WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."'");
+			db()->query("DELETE FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."'");
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		}
 		// Check if user already have record for cutom_design
-		$style_info = db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('custom_style')."` WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."' LIMIT 1");
+		$style_info = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
 		if ($style_info[0] == 0) {
-			db()->query("INSERT INTO `".db('custom_style')."` (`page`,`item_id`) VALUES ('"._es($page)."',".intval($item_id).")");
+			db()->query("INSERT INTO ".db('custom_style')." (page,item_id) VALUES ('"._es($page)."',".intval($item_id).")");
 		}
 		// Do delete background
 		if ($_GET["id"] == "delete_background") {
-			$style_info = db()->query_fetch("SELECT `background` FROM `".db('custom_style')."` WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."' LIMIT 1");
+			$style_info = db()->query_fetch("SELECT background FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
 			if ($style_info["background"] != '') {
 				$path = $this->DIR->_gen_dir_path($item_id, INCLUDE_PATH.$photos_path);
 				@unlink($path.$style_info["background"]);
 			}
-			db()->query("UPDATE `".db('custom_style')."` SET `background`='' WHERE `item_id` = ".intval($item_id)." AND `page`='"._es($page)."'");
+			db()->query("UPDATE ".db('custom_style')." SET background='' WHERE item_id = ".intval($item_id)." AND page='"._es($page)."'");
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		}
@@ -152,12 +152,12 @@ class yf_custom_design {
 				// Prepare path
 				$path = $this->DIR->_gen_dir_path($item_id, INCLUDE_PATH.$photos_path, true);
 				// Check if background already exists
-				$style_info = db()->query_fetch("SELECT `background` FROM `".db('custom_style')."` WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."' LIMIT 1");
+				$style_info = db()->query_fetch("SELECT background FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
 				if ($style_info["background"] != '') {
 					@unlink($path.$style_info["background"]);
 				}
 				copy($_FILES['back']['tmp_name'], $path.$back);
-				db()->query("UPDATE `".db('custom_style')."` SET `background`='$back' WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."'");
+				db()->query("UPDATE ".db('custom_style')." SET background='$back' WHERE item_id=".intval($item_id)." AND page='"._es($page)."'");
 				$_POST['background'] = $back;
 			}
 		}
@@ -180,11 +180,11 @@ class yf_custom_design {
 				"is_lightimg"		=> intval($_POST["is_lightimg"]),
 				"is_fliphorimg"		=> intval($_POST["is_fliphorimg"]),
 				"is_flipvertimg"	=> intval($_POST["is_flipvertimg"]),
-			), " `item_id`=".$item_id." AND `page`='".$page."'");
+			), " item_id=".$item_id." AND page='".$page."'");
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		} elseif (!common()->_error_exists()) {
-			$style_info = db()->query_fetch("SELECT * FROM `".db('custom_style')."` WHERE `item_id`=".intval($item_id)." AND `page`='"._es($page)."' LIMIT 1");
+			$style_info = db()->query_fetch("SELECT * FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
 			$_POST = $style_info;
 			$this->_unpack_text_style('main_text_style', $style_info['main_text_style']);
 			$this->_unpack_text_style('link_style', $style_info['link_style']);

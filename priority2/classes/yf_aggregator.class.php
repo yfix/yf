@@ -60,7 +60,7 @@ class yf_aggregator {
 		$hashes_by_feed = array();
 		$existed_hashes = array();
 		// Get feeds needed to be processed now
-		$Q = db()->query("SELECT * FROM `".db('rss_feeds')."` WHERE `active`='1'".($force_check ? "" : " AND `last_checked` + `ttl` < ".time()));
+		$Q = db()->query("SELECT * FROM ".db('rss_feeds')." WHERE active='1'".($force_check ? "" : " AND last_checked + ttl < ".time()));
 		while ($A = db()->fetch_assoc($Q)) {
 			$feeds_to_check[$A["id"]] = $A;
 			// Get and prepare aggregate info
@@ -87,7 +87,7 @@ class yf_aggregator {
 		}
 		// Check items in db
 		if (!empty($hashes_for_sql)) {
-			$Q = db()->query("SELECT `cache_md5` FROM `".db('rss_items')."` WHERE `cache_md5` IN('".implode("','",$hashes_for_sql)."')");
+			$Q = db()->query("SELECT cache_md5 FROM ".db('rss_items')." WHERE cache_md5 IN('".implode("','",$hashes_for_sql)."')");
 			while ($A = db()->fetch_assoc($Q)) {
 				$existed_hashes[$A["cache_md5"]] = $A["cache_md5"];
 			}
@@ -144,7 +144,7 @@ class yf_aggregator {
 			db()->UPDATE("rss_feeds", array(
 				"last_checked"	=> time(),
 				"last_modified"	=> strtotime($result["channel"]["last_modified"]),
-			), "`id`=".intval($feed_id));
+			), "id=".intval($feed_id));
 		}
 	}
 

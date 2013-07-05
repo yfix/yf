@@ -26,7 +26,7 @@ class yf_make_alphabet {
 	*										$char2 - second char
 	* @public
 	*/
-	function go($url, &$chars, $get_var_name = 'id', $q_var = '`id`') {
+	function go($url, &$chars, $get_var_name = 'id', $q_var = 'id') {
 		$nUrl = $url.'&'.$get_var_name.'=';
 		$chars = strtolower(substr($chars.'11', 0 , 2));
 		$sel_style = ' style="background-color:#ccc;"';

@@ -23,7 +23,7 @@ class yf_graphics_welcome {
 		$login_time = MAIN_TYPE_ADMIN ? $_SESSION['admin_login_time'] : $_SESSION['user_login_time'];
 		// For authorized admins only
 		if (MAIN_TYPE_ADMIN && $admin_id && $admin_group) {
-			$admin_info		= db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".$admin_id);
+			$admin_info		= db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".$admin_id);
 			$admin_groups	= main()->get_data("admin_groups");
 			$body .= tpl()->parse("system/admin_welcome", array(
 				"id"		=> intval($admin_id),

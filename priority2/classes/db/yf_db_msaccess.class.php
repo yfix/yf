@@ -76,7 +76,7 @@ class yf_db_msaccess extends yf_db_driver {
 				$this->in_transaction = TRUE;
 			}
 			$query = str_replace("LOWER(", "LCASE(", $query);
-			$query = str_replace("`", "", $query);
+			$query = str_replace("", "", $query);
 			if (preg_match("/^SELECT(.*?)(LIMIT ([0-9]+)[, ]*([0-9]+)*)?$/s", $query, $limits)) {
 				$query = $limits[1];
 				if (!empty($limits[2])) {

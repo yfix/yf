@@ -19,16 +19,16 @@ class yf_user_stats {
 		$this->_account_types	= main()->get_data("account_types");
 		// Get unified items stats
 		$this->_sql_array = array(
-			"gallery_photos"	=> "SELECT COUNT(`id`) AS `0` FROM `".db('gallery_photos')."` WHERE `user_id`={_USER_ID_}",
-			"blog_posts"		=> "SELECT COUNT(`id`) AS `0` FROM `".db('blog_posts')."` WHERE `user_id`={_USER_ID_}",
-			"articles"			=> "SELECT COUNT(`id`) AS `0` FROM `".db('articles_texts')."` WHERE `user_id`={_USER_ID_}",
-			"forum_posts"		=> "SELECT COUNT(`id`) AS `0` FROM `".db('forum_posts')."` WHERE `user_id`={_USER_ID_}",
-			"favorite_users"	=> "SELECT COUNT(`id`) AS `0` FROM `".db('favorites')."` WHERE `user_id`={_USER_ID_}",
-			"ignored_users"		=> "SELECT COUNT(*) AS `0` FROM `".db('ignore_list')."` WHERE `user_id`={_USER_ID_}",
-			"reput_points"		=> "SELECT `points` AS `0` FROM `".db('reput_total')."` WHERE `user_id`={_USER_ID_}",
-			"activity_points"	=> "SELECT `points` AS `0` FROM `".db('activity_total')."` WHERE `user_id`={_USER_ID_}",
-			"try_interests"		=> "SELECT LENGTH(REPLACE(`keywords`,';','')) AS `0` FROM `".db('interests')."` WHERE `user_id`={_USER_ID_}",
-			"try_friends"		=> "SELECT LENGTH(REPLACE(`friends_list`,',','')) AS `0` FROM `".db('friends')."` WHERE `user_id`={_USER_ID_}",
+			"gallery_photos"	=> "SELECT COUNT(id) AS 0 FROM ".db('gallery_photos')." WHERE user_id={_USER_ID_}",
+			"blog_posts"		=> "SELECT COUNT(id) AS 0 FROM ".db('blog_posts')." WHERE user_id={_USER_ID_}",
+			"articles"			=> "SELECT COUNT(id) AS 0 FROM ".db('articles_texts')." WHERE user_id={_USER_ID_}",
+			"forum_posts"		=> "SELECT COUNT(id) AS 0 FROM ".db('forum_posts')." WHERE user_id={_USER_ID_}",
+			"favorite_users"	=> "SELECT COUNT(id) AS 0 FROM ".db('favorites')." WHERE user_id={_USER_ID_}",
+			"ignored_users"		=> "SELECT COUNT(*) AS 0 FROM ".db('ignore_list')." WHERE user_id={_USER_ID_}",
+			"reput_points"		=> "SELECT points AS 0 FROM ".db('reput_total')." WHERE user_id={_USER_ID_}",
+			"activity_points"	=> "SELECT points AS 0 FROM ".db('activity_total')." WHERE user_id={_USER_ID_}",
+			"try_interests"		=> "SELECT LENGTH(REPLACE(keywords,';','')) AS 0 FROM ".db('interests')." WHERE user_id={_USER_ID_}",
+			"try_friends"		=> "SELECT LENGTH(REPLACE(friends_list,',','')) AS 0 FROM ".db('friends')." WHERE user_id={_USER_ID_}",
 		);
 		// Turn off inactive modules stats
 		$_active_modules = main()->get_data("user_modules");
@@ -136,7 +136,7 @@ class yf_user_stats {
 			unset($user_ids[""]);
 		}
 		// Get info from db
-		$Q = db()->query("SELECT * FROM `".db('user_stats')."` WHERE `user_id` IN(".implode(",", $user_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('user_stats')." WHERE user_id IN(".implode(",", $user_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$users_stats[$A["user_id"]] = $A;
 		}
@@ -162,7 +162,7 @@ class yf_user_stats {
 		if (!$this->STATS_ENABLED || !$this->ENABLE_REFRESH_STATS) {
 			return false;
 		}
-		db()->query("TRUNCATE TABLE `".db('user_stats')."`");
+		db()->query("TRUNCATE TABLE ".db('user_stats')."");
 	}
 
 	//-----------------------------------------------------------------------------

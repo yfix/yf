@@ -152,7 +152,7 @@ class yf_rss_data {
 		// Get array of available org types
 		$this->_rss_feeds = main()->get_data("rss_feeds");
 		// Get latest records from RSS items cache
-		$Q = db()->query("SELECT * FROM `".db('rss_items')."` ORDER BY `feed_id`,`add_date` DESC LIMIT ".intval(count($this->_rss_feeds) * $NUM_ITEMS));
+		$Q = db()->query("SELECT * FROM ".db('rss_items')." ORDER BY feed_id,add_date DESC LIMIT ".intval(count($this->_rss_feeds) * $NUM_ITEMS));
 		while ($A = db()->fetch_assoc($Q)) $this->_latest_cached_items[$A["feed_id"]][$A["cache_md5"]] = $A;
 		// Process feeds
 		foreach ((array) $this->_rss_feeds as $feed_id => $feed_info) {
