@@ -14,7 +14,7 @@ class yf_shop_basket{
 		*/
 		$basket = &$_SESSION["SHOP_basket"];
 		// Save basket contents
-		if (!empty($_POST["quantity"]) && !module('shop')->_basket_PROCESSED) {
+		if (!empty($_POST["quantity"]) && !module('shop')->_basket_is_processed) {
 			module('shop')->_basket_save();
 			return js_redirect("./?object=shop&action=".$_GET["action"]);
 		}

@@ -201,16 +201,20 @@ class yf_shop extends yf_module {
 		return _class('shop_products_similar_by_basket', 'modules/shop/')->products_similar_by_basket($id);
 	}
 
-	function basket_add() {
-		return _class('shop_basket_add', 'modules/shop/')->basket_add();
-	}
-
 	function basket($params = array()) {
 		return _class('shop_basket', 'modules/shop/')->basket($params);
 	}
 
 	function basket_main($params = array()) {
 		return _class('shop_basket_main', 'modules/shop/')->basket_main($params);
+	}
+
+	function basket_add() {
+		return _class('shop_basket_add', 'modules/shop/')->basket_add();
+	}
+
+	function basket_clean() {
+		return _class('shop_basket_clean', 'modules/shop/')->basket_clean();
 	}
 
 	function _basket_side() {
@@ -221,8 +225,8 @@ class yf_shop extends yf_module {
 		return _class('shop__basket_save', 'modules/shop/')->_basket_save();
 	}
 
-	function basket_clean() {
-		return _class('shop_basket_clean', 'modules/shop/')->basket_clean();
+	function _basket_api() {
+		return _class('shop__basket_api', 'modules/shop/')->_basket_api();
 	}
 
 	function order() {
