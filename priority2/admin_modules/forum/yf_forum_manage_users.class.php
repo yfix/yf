@@ -104,8 +104,8 @@ class yf_forum_manage_users {
 	* manage group
 	*/
 	function _manage_groups () {
-		// Get number of users by groups
-		$Q = db()->query("SELECT group, COUNT(*) AS num FROM ".db('forum_users')." GROUP BY group");
+		// Get number of users BY `group`s
+		$Q = db()->query("SELECT `group`, COUNT(*) AS num FROM ".db('forum_users')." GROUP BY `group`");
 		while ($A = db()->fetch_assoc($Q)) {
 			$users_by_groups[$A["group"]] = $A["num"];
 		}

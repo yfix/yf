@@ -137,7 +137,7 @@ class yf_friends_groups{
 	}
 	
 	function _get_friends_groups($user_id){
-		$Q = db()->query("SELECT * FROM ".db('friends_groups')." WHERE user_id=".$user_id." ORDER BY order ASC");
+		$Q = db()->query("SELECT * FROM ".db('friends_groups')." WHERE user_id=".$user_id." ORDER BY `order` ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$groups_info[$A["id2"]] = $A;
 		}

@@ -146,7 +146,7 @@ class yf_manage_dynamic_attributes{
 			return _e(t("no id"));
 		}
 	
-		$sql = "SELECT * FROM ".db('dynamic_fields_info')." WHERE category_id = ".intval($_GET["id"])." ORDER BY order";
+		$sql = "SELECT * FROM ".db('dynamic_fields_info')." WHERE category_id = ".intval($_GET["id"])." ORDER BY `order`";
 		
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$replace2 = array(

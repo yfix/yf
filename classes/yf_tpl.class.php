@@ -842,7 +842,7 @@ class yf_tpl {
 			}
 			$storage = "db";
 		} else {
-			// Storages are defined in specially crafted order, so do not change it unless you have strong reason
+			// Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
 			$storages = array();
 			$site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
 			$dev_path = ".dev/".main()->HOSTNAME."/";
@@ -884,7 +884,7 @@ class yf_tpl {
 				// user section from framework within admin priority2
 				$storages["framework_user_p2"]  = YF_PATH. "priority2/". $this->_THEMES_PATH. "user/". $file_name;
 			}
-			// Try storages one-by-one in inheritance order, stop when found
+			// Try storages one-by-one in inheritance `order`, stop when found
 			$storage = "";
 			foreach ((array)$storages as $_storage => $file_path) {
 				if (!$this->_stpl_path_exists($file_path, $stpl_name, $_storage)) {

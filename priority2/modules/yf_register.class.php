@@ -59,7 +59,7 @@ class yf_register {
 		);
 		// Array of dynamic info
 		if (main()->USER_INFO_DYNAMIC) {
-			$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY order, name";
+			$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY `order`, name";
 			$Q = db()->query($sql);
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->_dynamic_fields_info[$A["id"]] = $A;

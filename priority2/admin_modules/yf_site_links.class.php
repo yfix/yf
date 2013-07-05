@@ -82,7 +82,7 @@ class yf_site_links {
 		);
 		// Sites categories	
 		$this->_site_cats[" "] = "All";
-		$Q = db()->query("SELECT * FROM ".db('links_categories')." ORDER BY order1");
+		$Q = db()->query("SELECT * FROM ".db('links_categories')." ORDER BY `order`1");
 		while ($A = db()->fetch_assoc($Q)) $this->_site_cats[$A["id"]] = $A["name"];
 		// Get linkers
 		$this->_linkers[" "]	= "All";

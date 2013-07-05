@@ -73,7 +73,7 @@ class yf_manage_shop_orders {
 			return js_redirect("./?object=manage_shop&action=show_orders");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE order_id=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order`_id=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -146,7 +146,7 @@ class yf_manage_shop_orders {
 			return _e("No such order");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE order_id=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order`_id=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -220,7 +220,7 @@ class yf_manage_shop_orders {
 		// Do delete order
 		if (!empty($order_info["id"])) {
 			db()->query("DELETE FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM ".db('shop_order_items')." WHERE order_id=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('shop_order_items')." WHERE `order`_id=".intval($_GET["id"]));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {

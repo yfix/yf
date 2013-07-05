@@ -309,7 +309,7 @@ class Net_SFTP extends Net_SSH2 {
 			8 => 'NET_SFTP_STATUS_OP_UNSUPPORTED'
 		);
 		// http://tools.ietf.org/html/draft-ietf-secsh-filexfer-13#section-7.1
-		// the order, in this case, matters quite a lot - see Net_SFTP::_parseAttributes() to understand why
+		// the `order`, in this case, matters quite a lot - see Net_SFTP::_parseAttributes() to understand why
 		$this->attributes = array(
 			0x00000001 => 'NET_SFTP_ATTR_SIZE',
 			0x00000002 => 'NET_SFTP_ATTR_UIDGID', // defined in SFTPv3, removed in SFTPv4+

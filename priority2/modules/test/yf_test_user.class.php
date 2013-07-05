@@ -39,7 +39,7 @@ class yf_test_user {
 	*/
 	function _on_before_run () {
 /*
-INSERT INTO test_user_data_info_fields (id, name, type, value_list, default_value, comment, order, active) VALUES
+INSERT INTO test_user_data_info_fields (id, name, type, value_list, default_value, comment, `order`, active) VALUES
 (1, 'blabla', 'varchar', '', '', '', 0, '1'),
 (2, 'blabla2', 'varchar', '', '', '', 0, '1'),
 (3, 'blabla3', 'varchar', '', '', '', 0, '1');

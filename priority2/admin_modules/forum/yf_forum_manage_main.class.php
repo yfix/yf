@@ -25,7 +25,7 @@ class yf_forum_manage_main {
 						name = '"._es($_POST["name"])."',
 						desc = '"._es($_POST["description"])."',
 						status = '"._es($_POST["activity"])."',
-						order = ".intval($_POST["display_order"])."
+						`order` = ".intval($_POST["display_order"])."
 					WHERE id=".$_GET['id'];
 			db()->query($sql);
 			// Refresh system cache
@@ -56,7 +56,7 @@ class yf_forum_manage_main {
 					name,
 					desc,
 					status,
-					order
+					`order`
 				) VALUES (
 					'"._es($_POST["name"])."',
 					'"._es($_POST["description"])."',

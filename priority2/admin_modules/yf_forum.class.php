@@ -217,7 +217,7 @@ class yf_forum {
 		$_GET['id'] = intval($_GET['id']);
 		// If ID specified - then show only one category
 		if ($_GET['id']) {
-			$cat_info = db()->query_fetch("SELECT * FROM ".db('forum_categories')." WHERE id=".$_GET['id']." ORDER BY order");
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('forum_categories')." WHERE id=".$_GET['id']." ORDER BY `order`");
 			if ($cat_info['id']) {
 				$body = $this->_show_category_contents($cat_info['id']);
 			}

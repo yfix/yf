@@ -90,7 +90,7 @@ class yf_articles_search_comments {
 		}
 		
 		if (!empty($cats_ids)) {
-			$Q = db()->query("SELECT id,name FROM ".db('category_items')." WHERE cat_id = 1 AND id IN(".implode(",", $cats_ids).") ORDER BY order");
+			$Q = db()->query("SELECT id,name FROM ".db('category_items')." WHERE cat_id = 1 AND id IN(".implode(",", $cats_ids).") ORDER BY `order`");
 			while ($A = db()->fetch_assoc($Q)) {
 				$cats[$A["id"]] = $A["name"];
 			}

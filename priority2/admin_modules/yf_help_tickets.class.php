@@ -60,7 +60,7 @@ class yf_help_tickets {
 		// Get available admin groups
 		$this->_admin_groups	= main()->get_data("admin_groups");
 		// Get available admin users who have access to this module (currently administrators and support)
-		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group IN(1,4) ORDER BY group ASC, first_name ASC, last_name ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group IN(1,4) ORDER BY `group` ASC, first_name ASC, last_name ASC");
 		while ($A = db()->fetch_assoc($Q2)) {
 			$this->_admins_list[$A["id"]] = _prepare_html($A["first_name"]." ".$A["last_name"]." (".$this->_admin_groups[$A["group"]].")");
 		}

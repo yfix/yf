@@ -40,7 +40,7 @@ class Text_Wiki {
 
 	/**
 	*
-	* The default list of rules, in order, to apply to the source text.
+	* The default list of rules, in `order`, to apply to the source text.
 	*
 	* @access public
 	*
@@ -315,7 +315,7 @@ class Text_Wiki {
 
 	/**
 	*
-	* Array of paths to search, in order, for parsing and rendering rules.
+	* Array of paths to search, in `order`, for parsing and rendering rules.
 	*
 	* @access private
 	*

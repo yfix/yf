@@ -36,7 +36,7 @@ class yf_user_dynamic_info {
 	* Default method
 	*/
 	function show () {
-		$sql = "SELECT * FROM ".db('user_data_info_fields')." ORDER BY order";
+		$sql = "SELECT * FROM ".db('user_data_info_fields')." ORDER BY `order`";
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$replace2 = array(
 				"id"			=> intval($A["id"]),

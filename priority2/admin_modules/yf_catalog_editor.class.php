@@ -584,7 +584,7 @@ class yf_catalog_editor {
 	*/
 	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		if (!isset($this->_catalog_items_from_db)) {
-			$Q = db()->query("SELECT * FROM ".db('catalog_items')." WHERE cat_id=".intval($cat_id)." ORDER BY order ASC");
+			$Q = db()->query("SELECT * FROM ".db('catalog_items')." WHERE cat_id=".intval($cat_id)." ORDER BY `order` ASC");
 			while ($A = db()->fetch_assoc($Q)) $this->_catalog_items_from_db[$A["id"]] = $A;
 		}
 		if (empty($this->_catalog_items_from_db)) {

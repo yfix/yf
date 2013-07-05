@@ -838,7 +838,7 @@ class yf_menus_editor {
 			$Q = db()->query(
 				"SELECT * FROM ".db('menu_items')." 
 				WHERE menu_id=".intval($menu_id)." 
-				ORDER BY order ASC"
+				ORDER BY `order` ASC"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->_menu_items_from_db[$A["id"]] = $A;

@@ -23,7 +23,7 @@ class yf_shop__order_step_select_payment{
 			}
 			// Order id is required to continue, check it again
 			if (empty($ORDER_ID) && !common()->_error_exists()) {
-				_re("SHOP: Error while creating order, please <a href='".process_url("./?object=support")."'>contact</a> site admin");
+				_re("SHOP: Error while creating `order`, please <a href='".process_url("./?object=support")."'>contact</a> site admin");
 			}
 			// Display next form if we have no errors
 			if (!common()->_error_exists()) {

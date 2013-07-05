@@ -30,7 +30,7 @@ class yf_user_groups {
 	function show() {
 		// Get number of members of each group
 		if (defined("db('user')")) {
-			$Q = db()->query("SELECT group, COUNT(id) AS num_members FROM ".db('user')." WHERE 1=1 GROUP BY group");
+			$Q = db()->query("SELECT `group`, COUNT(id) AS num_members FROM ".db('user')." WHERE 1=1 GROUP BY `group`");
 			while ($A = db()->fetch_assoc($Q)) {
 				$num_group_members[$A["group"]] = $A["num_members"];
 			}

@@ -192,7 +192,7 @@ class yf_custom_replace {
 		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Connect pager
-		$sql = "SELECT * FROM ".db('custom_replace_rules')." WHERE tag_id=".intval($tag_info["id"])." ORDER BY methods ASC, order ASC";
+		$sql = "SELECT * FROM ".db('custom_replace_rules')." WHERE tag_id=".intval($tag_info["id"])." ORDER BY methods ASC, `order` ASC";
 		list($limit_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $limit_sql);
