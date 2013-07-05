@@ -18,7 +18,7 @@ class yf_shop__order_step_select_payment{
 			module('shop')->_order_validate_select_payment();
 			// Verify products
 			if (!common()->_error_exists()) {
-				$ORDER_ID = module('shop')->_create_order_record();
+				$ORDER_ID = module('shop')->_order_create();
 				$ORDER_ID = intval($ORDER_ID);
 			}
 			// Order id is required to continue, check it again
@@ -51,7 +51,7 @@ class yf_shop__order_step_select_payment{
 			"pay_type_box"	=> module('shop')->_box("pay_type", $DATA["pay_type"]),
 			"hidden_fields"	=> $hidden_fields,
 			"back_link"		=> "./?object=shop&action=order&id=delivery",
-			"cats_block"	=> module('shop')->_show_shop_cats(),
+			"cats_block"	=> module('shop')->_categories_show(),
 		);
 		return tpl()->parse("shop/order_select_payment", $replace);
 	}

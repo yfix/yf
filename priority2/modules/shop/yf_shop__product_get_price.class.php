@@ -1,7 +1,7 @@
 <?php
-class yf_shop__get_product_price{
+class yf_shop__product_get_price{
 
-	function _get_product_price ($product_info = array()) {
+	function _product_get_price ($product_info = array()) {
 		return $product_info["_group_price"] ? $product_info["_group_price"] : $product_info["price"];
 	}
 	

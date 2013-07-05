@@ -35,7 +35,7 @@ class yf_shop_basket{
 			$_product_id = $_info["id"];
 			$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
 			$quantity = $basket[$_info["id"]]["quantity"];
-			$price = module('shop')->_get_product_price($_info);
+			$price = module('shop')->_product_get_price($_info);
 
 			$dynamic_atts = array();
 			foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
@@ -67,7 +67,7 @@ class yf_shop_basket{
 			"clean_all_link"=> "./?object=shop&action=basket_clean",
 			"order_link"	=> "./?object=shop&action=order",
 			"back_link"		=> js_redirect($_SERVER["HTTP_REFERER"], false),
-			"cats_block"	=> module('shop')->_show_shop_cats(),
+			"cats_block"	=> module('shop')->_categories_show(),
 		));
 	}
 	

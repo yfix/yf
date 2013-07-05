@@ -265,8 +265,8 @@ class yf_shop extends yf_module {
 		return _class('shop__order_validate_select_payment', 'modules/shop/')->_order_validate_select_payment();
 	}
 
-	function _create_order_record() {
-		return _class('shop__create_order_record', 'modules/shop/')->_create_order_record();
+	function _order_create() {
+		return _class('shop__order_create', 'modules/shop/')->_order_create();
 	}
 
 	function _order_step_do_payment($FORCE_DISPLAY_FORM = false) {
@@ -301,32 +301,32 @@ class yf_shop extends yf_module {
 		return _class('shop__product_id_url', 'modules/shop/')->_product_id_url($product_info);
 	}
 
-	function _get_product_price($product_info = array()) {
-		return _class('shop__get_product_price', 'modules/shop/')->_get_product_price($product_info);
+	function _product_get_price($product_info = array()) {
+		return _class('shop__product_get_price', 'modules/shop/')->_product_get_price($product_info);
 	}
 
 	function _get_group_prices($product_ids = array()) {
 		return _class('shop__get_group_prices', 'modules/shop/')->_get_group_prices($product_ids);
 	}
 
-	function _short_search_form() {
-		return _class('shop__short_search_form', 'modules/shop/')->_short_search_form();
+	function _search_form_short() {
+		return _class('shop__search_form_short', 'modules/shop/')->_search_form_short();
 	}
 
 	function search() {
 		return _class('shop_search', 'modules/shop/')->search();
 	}
 
-	function _show_shop_cats() {
-		return _class('shop__show_shop_cats', 'modules/shop/')->_show_shop_cats();
+	function _categories_show() {
+		return _class('shop__categories_show', 'modules/shop/')->_categories_show();
 	}
 
-	function _show_shop_manufacturer() {
-		return _class('shop__show_shop_manufacturer', 'modules/shop/')->_show_shop_manufacturer();
+	function _manufacturer_show() {
+		return _class('shop__manufacturer_show', 'modules/shop/')->_manufacturer_show();
 	}
 
-	function _show_shop_best_sales() {
-		return _class('shop__show_shop_best_sales', 'modules/shop/')->_show_shop_best_sales();
+	function _products_bestsellers() {
+		return _class('shop__products_bestsellers', 'modules/shop/')->_products_bestsellers();
 	}
 
 	function _show_shop_last_viewed() {

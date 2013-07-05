@@ -1,10 +1,10 @@
 <?php
-class yf_shop__create_order_record{
+class yf_shop__order_create{
 
 	/**
 	* Create order record (1 db('shop_orders'), multiple db('shop_order_items'))
 	*/
-	function _create_order_record() {
+	function _order_create() {
 		$basket = &$_SESSION["SHOP_basket"];
 		if (empty($_POST)) {
 			return false;
@@ -53,7 +53,7 @@ class yf_shop__create_order_record{
 				$_product_id = $_info["id"];
 				$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
 				$quantity = $basket[$_info["id"]]["quantity"];
-				$price = module('shop')->_get_product_price($_info);
+				$price = module('shop')->_product_get_price($_info);
 
 				$dynamic_atts = array();
 				foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {

@@ -40,7 +40,7 @@ class yf_shop__order_step_delivery{
 			"error_message"	=> _e(),
 			"ship_type_box"	=> module('shop')->_box("ship_type", $force_ship_type ? $force_ship_type : $_POST["ship_type"]),
 			"back_link"		=> "./?object=shop&action=order",
-			"cats_block"	=> module('shop')->_show_shop_cats(),
+			"cats_block"	=> module('shop')->_categories_show(),
 		));
 		return tpl()->parse("shop/order_delivery", $replace);
 	}

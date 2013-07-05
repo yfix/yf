@@ -88,7 +88,7 @@ class yf_shop__order_step_finish{
 			"order_no"		=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
 			"hash"			=> _prepare_html($order_info["hash"]),
 			"back_link"		=> "./?object=shop&action=show",
-			"cats_block"	=> module('shop')->_show_shop_cats(),
+			"cats_block"	=> module('shop')->_categories_show(),
 		));
 		return tpl()->parse("shop/order_finish", $replace);
 	}

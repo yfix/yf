@@ -1,7 +1,7 @@
 <?php
-class yf_shop__show_shop_manufacturer{
+class yf_shop__manufacturer_show{
 
-	function _show_shop_manufacturer () {
+	function _manufacturer_show () {
 		// Prepare manufacturer
 		$replace = array(
 			"brand" 			=> module("shop")->_manufacturer,

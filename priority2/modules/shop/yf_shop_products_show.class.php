@@ -68,7 +68,7 @@ class yf_shop_products_show{
 				"name"				=> _prepare_html($v["name"]),
 				"desc"				=> _prepare_html($v["description"]),
 				"date"				=> _format_date($v["add_date"], "long"),
-				"price"				=> module("shop")->_format_price(module("shop")->_get_product_price($v)),
+				"price"				=> module("shop")->_format_price(module("shop")->_product_get_price($v)),
 				"currency"			=> _prepare_html(module("shop")->CURRENCY),
 				"thumb_path"		=> file_exists(module("shop")->products_img_dir.$mpath. $thumb_path)? module("shop")->products_img_webdir. $mpath.$thumb_path : "",
 				"img_path"			=> file_exists(module("shop")->products_img_dir. $mpath.$img_path)	? module("shop")->products_img_webdir.$mpath. $img_path : "",
@@ -95,7 +95,7 @@ class yf_shop_products_show{
 			"show_basket_url"	=> process_url("./?object=shop&action=basket"),
 			"cur_cat_id"	=> intval($_GET["id"]),
 			"cur_cat_name"	=> _prepare_html($cat_name),
-			"cats_block"	=> module("shop")->_show_shop_cats(),
+			"cats_block"	=> module("shop")->_categories_show(),
 		);
 		return tpl()->parse("shop/main", $replace);
 	}

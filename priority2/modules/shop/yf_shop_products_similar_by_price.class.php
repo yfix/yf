@@ -23,7 +23,7 @@ class yf_shop_products_similar_by_price{
 			$URL_PRODUCT_ID = module("shop")->_product_id_url($product_info);
 			$items[$product_info["id"]] = array(
 				"name"		=> _prepare_html($product_info["name"]),
-				"price"		=> module("shop")->_format_price(module("shop")->_get_product_price($product_info)),
+				"price"		=> module("shop")->_format_price(module("shop")->_product_get_price($product_info)),
 				"currency"	=> _prepare_html(module("shop")->CURRENCY),
 				"image"		=> file_exists(module("shop")->products_img_dir. $thumb_path)? module("shop")->products_img_webdir. $thumb_path : "",
 				"link"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
