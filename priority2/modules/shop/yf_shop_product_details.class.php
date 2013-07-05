@@ -73,7 +73,7 @@ class yf_shop_product_details{
 			"thumb_path"			=> file_exists(module("shop")->products_img_dir. $mpath. $img_path)	? module("shop")->products_img_webdir. $mpath. $img_path : "",
 			"img_path"				=> file_exists(module("shop")->products_img_dir. $mpath. $img_path)	? module("shop")->products_img_webdir. $mpath. $img_path : "",
 			"image"					=> $image,
-			"add_to_basket_url"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=add_to_basket&id=".$URL_PRODUCT_ID),
+			"basket_add_url"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=basket_add&id=".$URL_PRODUCT_ID),
 			"external_url"			=> intval((bool)$product_info["external_url"]),
 			"back_url"				=> process_url("./?object=shop"),
 			"show_basket_url"			=> process_url("./?object=shop&action=basket"),

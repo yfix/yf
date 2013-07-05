@@ -201,8 +201,8 @@ class yf_shop extends yf_module {
 		return _class('shop_products_similar_by_basket', 'modules/shop/')->products_similar_by_basket($id);
 	}
 
-	function add_to_basket() {
-		return _class('shop_add_to_basket', 'modules/shop/')->add_to_basket();
+	function basket_add() {
+		return _class('shop_basket_add', 'modules/shop/')->basket_add();
 	}
 
 	function basket($params = array()) {

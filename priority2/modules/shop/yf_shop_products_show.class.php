@@ -72,7 +72,7 @@ class yf_shop_products_show{
 				"currency"			=> _prepare_html(module("shop")->CURRENCY),
 				"thumb_path"		=> file_exists(module("shop")->products_img_dir.$mpath. $thumb_path)? module("shop")->products_img_webdir. $mpath.$thumb_path : "",
 				"img_path"			=> file_exists(module("shop")->products_img_dir. $mpath.$img_path)	? module("shop")->products_img_webdir.$mpath. $img_path : "",
-				"add_to_basket_url"	=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=shop&action=add_to_basket&id=".$URL_PRODUCT_ID),
+				"basket_add_url"	=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=shop&action=basket_add&id=".$URL_PRODUCT_ID),
 				"external_url"		=> intval((bool)$v["external_url"]),
 				"details_url"		=> ($v["external_url"]) ? $v["external_url"] : process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"counter"			=> $counter,

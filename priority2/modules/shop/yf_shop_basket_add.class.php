@@ -1,7 +1,7 @@
 <?php
-class yf_shop_add_to_basket{
+class yf_shop_basket_add{
 
-	function add_to_basket() {
+	function basket_add() {
 		$basket = &$_SESSION["SHOP_basket"];
 
 		$A = db()->query_fetch("SELECT id FROM ".db('shop_products')." WHERE active = '1' AND ".(is_numeric($_GET["id"]) ? "id=".intval($_GET["id"]) : "url='"._es($_GET['id'])."'"));
