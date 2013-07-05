@@ -193,8 +193,8 @@ class yf_shop extends yf_module {
 		return _class('shop_products_related', 'modules/shop/')->products_related($id);
 	}
 
-	function similar_price($price, $id) {
-		return _class('shop_similar_price', 'modules/shop/')->similar_price($price, $id);
+	function products_similar_by_price($price, $id) {
+		return _class('shop_products_similar_by_price', 'modules/shop/')->products_similar_by_price($price, $id);
 	}
 
 	function this_item_often_buy($id) {

@@ -36,7 +36,7 @@ class yf_shop_this_item_often_buy{
 			"items"	=> $items,
 			"title"	=> "Those who purchased this product also buy",
 		);
-		return tpl()->parse("shop/similar_price", $replace);
+		return tpl()->parse("shop/products_by_similar_price", $replace);
 	}
 	
 }

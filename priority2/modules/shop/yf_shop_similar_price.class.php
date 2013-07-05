@@ -1,7 +1,7 @@
 <?php
-class yf_shop_similar_price{
+class yf_shop_products_by_similar_price{
 
-	function similar_price ($price, $id) {
+	function products_by_similar_price ($price, $id) {
 		$price_min = floor($price - ($price  * 10 / 100));
 		$price_max = ceil($price + ($price * 10 / 100));
 		$sql1 = "SELECT category_id FROM ".db('shop_product_to_category')." WHERE product_id =  ".$id. "";
@@ -34,7 +34,7 @@ class yf_shop_similar_price{
 			"items"	=> $items,
 			"title"	=> "Similar price",
 		);
-		return  tpl()->parse("shop/similar_price", $replace);
+		return  tpl()->parse("shop/products_by_similar_price", $replace);
 	}
 	
 }

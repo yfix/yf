@@ -55,8 +55,8 @@ class yf_shop_product_details{
 		$URL_PRODUCT_ID = module("shop")->_product_id_url($product_info);
 		$sql_man = "SELECT * FROM ".db('shop_manufacturer')." WHERE id = ".$product_info["manufacturer_id"];
 		$manufacturer = db()->query_fetch($sql_man);
-		if (module("shop")->SHOW_SIMILAR_PRICE == true){
-			$similar_price = module("shop")->similar_price ( $product_info["price"],  $product_info["id"] );
+		if (module("shop")->SHOW_products_by_similar_price == true){
+			$products_by_similar_price = module("shop")->products_by_similar_price ( $product_info["price"],  $product_info["id"] );
 		}
 		if (module("shop")->THIS_ITEM_OFTEN_BUY == true){
 			$this_item_often_buy = module("shop")->this_item_often_buy ( $product_info["id"] );
@@ -83,7 +83,7 @@ class yf_shop_product_details{
 			"cat_url"				=> process_url("./?object=shop&action=product_details&id=".(module("shop")->_shop_cats_all[$product_info["cat_id"]]['url'])),
 			'comments'				=> module("shop")->_view_comments(),
 			"N"						=> $N,
-			"similar_price"			=> $similar_price,
+			"products_by_similar_price"			=> $products_by_similar_price,
 			"this_item_often_buy"	=> $this_item_often_buy,
 			"product_related"		=> module("shop")->products_related($product_info["id"]),
 		);
