@@ -1,10 +1,10 @@
 <?php
-class yf_shop_show_basket_main{
+class yf_shop_basket_main{
 
 	/**
-	* show_basket_main
+	* basket_main
 	*/
-	function show_basket_main() {
+	function basket_main() {
 		$basket = &$_SESSION["SHOP_basket"];
 
 		$products_ids = array();
@@ -42,7 +42,7 @@ class yf_shop_show_basket_main{
 			"basket_link"		=> "./?object=shop&action=basket",
 		
 		);
-		return tpl()->parse("shop/show_basket_main", $replace);
+		return tpl()->parse("shop/basket_main", $replace);
 	}
 	
 }

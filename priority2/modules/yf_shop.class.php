@@ -209,8 +209,8 @@ class yf_shop extends yf_module {
 		return _class('shop_basket', 'modules/shop/')->basket($params);
 	}
 
-	function show_basket_main($params = array()) {
-		return _class('shop_show_basket_main', 'modules/shop/')->show_basket_main($params);
+	function basket_main($params = array()) {
+		return _class('shop_basket_main', 'modules/shop/')->basket_main($params);
 	}
 
 	function _basket_side() {
