@@ -13,7 +13,7 @@ class yf_shop extends yf_module {
 	4007000000027 Visa Test Card
 	4012888818888 second Visa Test Card
 	3088000000000017 JCB 
-	38000000000006 Diners Club/ Carte Blanche
+	38000000000006 Diners Club/ baskete Blanche
 	*/
 
 	/** @var string Folder where product's images store */
@@ -201,28 +201,28 @@ class yf_shop extends yf_module {
 		return _class('shop_products_similar_by_basket', 'modules/shop/')->products_similar_by_basket($id);
 	}
 
-	function add_to_cart() {
-		return _class('shop_add_to_cart', 'modules/shop/')->add_to_cart();
+	function add_to_basket() {
+		return _class('shop_add_to_basket', 'modules/shop/')->add_to_basket();
 	}
 
-	function cart($params = array()) {
-		return _class('shop_cart', 'modules/shop/')->cart($params);
+	function basket($params = array()) {
+		return _class('shop_basket', 'modules/shop/')->basket($params);
 	}
 
-	function show_cart_main($params = array()) {
-		return _class('shop_show_cart_main', 'modules/shop/')->show_cart_main($params);
+	function show_basket_main($params = array()) {
+		return _class('shop_show_basket_main', 'modules/shop/')->show_basket_main($params);
 	}
 
-	function _cart_side() {
-		return _class('shop__cart_side', 'modules/shop/')->_cart_side();
+	function _basket_side() {
+		return _class('shop__basket_side', 'modules/shop/')->_basket_side();
 	}
 
-	function _save_cart_all() {
-		return _class('shop__save_cart_all', 'modules/shop/')->_save_cart_all();
+	function _save_basket_all() {
+		return _class('shop__save_basket_all', 'modules/shop/')->_save_basket_all();
 	}
 
-	function clean_cart() {
-		return _class('shop_clean_cart', 'modules/shop/')->clean_cart();
+	function clean_basket() {
+		return _class('shop_clean_basket', 'modules/shop/')->clean_basket();
 	}
 
 	function order() {

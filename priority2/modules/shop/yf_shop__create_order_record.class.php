@@ -5,7 +5,7 @@ class yf_shop__create_order_record{
 	* Create order record (1 db('shop_orders'), multiple db('shop_order_items'))
 	*/
 	function _create_order_record() {
-		$cart = &$_SESSION["SHOP_CART"];
+		$basket = &$_SESSION["SHOP_basket"];
 		if (empty($_POST)) {
 			return false;
 		}
@@ -13,7 +13,7 @@ class yf_shop__create_order_record{
 		if (!common()->_error_exists()) {
 			// Get products from db
 			$products_ids = array();
-			foreach ((array)$cart as $_item_id => $_info) {
+			foreach ((array)$basket as $_item_id => $_info) {
 				if ($_info["product_id"]) {
 					$products_ids[$_info["product_id"]] = $_info["product_id"];
 				}
@@ -52,12 +52,12 @@ class yf_shop__create_order_record{
 			foreach ((array)$products_infos as $_info) {
 				$_product_id = $_info["id"];
 				$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
-				$quantity = $cart[$_info["id"]]["quantity"];
+				$quantity = $basket[$_info["id"]]["quantity"];
 				$price = module('shop')->_get_product_price($_info);
 
 				$dynamic_atts = array();
 				foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
-					if ($cart[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
+					if ($basket[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
 						$dynamic_atts[$_attr_id] = "- ".$_attr_info["name"]." ".$_attr_info["value"];
 						$_atts_to_save[$_attr_id] = $_attr_id;
 						$price += $_attr_info["price"];

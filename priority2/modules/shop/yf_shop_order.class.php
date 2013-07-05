@@ -21,9 +21,9 @@ class yf_shop_order{
 		if (!$step || !in_array($step, $_avail_steps)) {
 			$step = "start";
 		}
-		// Prevent ordering with empty shopping cart
-		$cart = &$_SESSION["SHOP_CART"];
-		if (empty($cart) && in_array($step, array("start", "delivery", "select_payment"))) {
+		// Prevent ordering with empty shopping basket
+		$basket = &$_SESSION["SHOP_basket"];
+		if (empty($basket) && in_array($step, array("start", "delivery", "select_payment"))) {
 			return js_redirect("./?object=shop");
 		}
 		$func = "_order_step_". $step;

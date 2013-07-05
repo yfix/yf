@@ -8,7 +8,7 @@ class yf_shop__show_header{
 		$cases = array (
 			//$_GET["action"] => {string to replace}
 			"show"		=> "",
-			"cart"		=> t("Shopping Cart"),
+			"basket"		=> t("Shopping basket"),
 			"order"		=> t("Checkout"),
 		);
 		if (isset($cases[$_GET["action"]])) {

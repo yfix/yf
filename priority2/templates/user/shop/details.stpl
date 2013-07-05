@@ -1,6 +1,6 @@
 <!-- {cats_block} -->
 
-<form action="{add_to_cart_url}" method="post" name="product_details_form">
+<form action="{add_to_basket_url}" method="post" name="product_details_form">
 <div class="product_block">
 	<table style="width: 100%; border-collapse: collapse;">
 		<tr>
@@ -66,9 +66,9 @@
 				<td><b></b></td>
 				<td><div class="button_div">
 {if("external_url" ne "")}
-		<a href="{add_to_cart_url}" title="{t(Add to cart)}" target="_blank">{t(Add to cart)}</a>
+		<a href="{add_to_basket_url}" title="{t(Add to basket)}" target="_blank">{t(Add to basket)}</a>
 {else}
-		<a href="javascript:;" title="{t(Add to cart)}" onclick="document.forms['product_details_form'].submit();">{t(Add to cart)}</a>
+		<a href="javascript:;" title="{t(Add to basket)}" onclick="document.forms['product_details_form'].submit();">{t(Add to basket)}</a>
 {/if}
 		
 	</div></td>

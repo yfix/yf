@@ -5,9 +5,9 @@ class yf_shop__order_step_finish{
 	* Order step
 	*/
 	function _order_step_finish($FORCE_DISPLAY_FORM = false) {
-		$cart = &$_SESSION["SHOP_CART"];
-		// Do empty shopping cart
-		$cart = null;
+		$basket = &$_SESSION["SHOP_basket"];
+		// Do empty shopping basket
+		$basket = null;
 		if (isset($_GET["page"])) {
 			$_GET["id"] = intval($_GET["page"]);
 			unset($_GET["page"]);

@@ -1,14 +1,14 @@
 <?php
-class yf_shop_show_cart_main{
+class yf_shop_show_basket_main{
 
 	/**
-	* show_cart_main
+	* show_basket_main
 	*/
-	function show_cart_main() {
-		$cart = &$_SESSION["SHOP_CART"];
+	function show_basket_main() {
+		$basket = &$_SESSION["SHOP_basket"];
 
 		$products_ids = array();
-		foreach ((array)$cart as $_item_id => $_info) {
+		foreach ((array)$basket as $_item_id => $_info) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
 			}
@@ -22,11 +22,11 @@ class yf_shop_show_cart_main{
 		foreach ((array)$products_infos as $_info) {
 			$_product_id = $_info["id"];
 			$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
-			$quantity2 = $cart[$_info["id"]]["quantity"];
+			$quantity2 = $basket[$_info["id"]]["quantity"];
 			$price = module('shop')->_get_product_price($_info);
 			$dynamic_atts = array();
 			foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
-				if ($cart[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
+				if ($basket[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
 					$dynamic_atts[$_attr_id] = "- ".$_attr_info["name"]." ".$_attr_info["value"];
 					$price += $_attr_info["price"];
 				}
@@ -38,11 +38,11 @@ class yf_shop_show_cart_main{
 			"total_price"	=> module('shop')->_format_price($total_price),
 			"currency"		=> _prepare_html(module('shop')->CURRENCY),
 			"quantity"		=> $quantity,
-			"order_link"	=> "./?object=shop&action=cart",
-			"cart_link"		=> "./?object=shop&action=cart",
+			"order_link"	=> "./?object=shop&action=basket",
+			"basket_link"		=> "./?object=shop&action=basket",
 		
 		);
-		return tpl()->parse("shop/show_cart_main", $replace);
+		return tpl()->parse("shop/show_basket_main", $replace);
 	}
 	
 }

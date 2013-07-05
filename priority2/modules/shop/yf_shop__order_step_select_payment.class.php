@@ -5,7 +5,7 @@ class yf_shop__order_step_select_payment{
 	* Order step
 	*/
 	function _order_step_select_payment($FORCE_DISPLAY_FORM = false) {
-		$cart = &$_SESSION["SHOP_CART"];
+		$basket = &$_SESSION["SHOP_basket"];
 		// Show previous form if needed
 		if (common()->_error_exists() || empty($_POST)) {
 			return module('shop')->_order_step_delivery();

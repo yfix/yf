@@ -5,7 +5,7 @@ class yf_shop__order_step_do_payment{
 	* Order step
 	*/
 	function _order_step_do_payment($FORCE_DISPLAY_FORM = false) {
-		$cart = &$_SESSION["SHOP_CART"];
+		$basket = &$_SESSION["SHOP_basket"];
 
 		if (module('shop')->FORCE_PAY_METHOD) {
 			$_POST["pay_type"] = module('shop')->FORCE_PAY_METHOD;
@@ -25,15 +25,15 @@ class yf_shop__order_step_do_payment{
 		}
 		// Payment by courier, skip next step
 		if (!common()->_error_exists() && $_POST["pay_type"] == 1 or $_POST["pay_type"] == 3 or $_POST["pay_type"] == 4) {
-			// Do empty shopping cart
-			$cart = null;
+			// Do empty shopping basket
+			$basket = null;
 
 			return js_redirect("./?object=shop&action=".$_GET["action"]."&id=finish&page=".intval($ORDER_ID));
 		}
 		// Authorize.net payment type
 		if ($_POST["pay_type"] == 2) {
-			// Do empty shopping cart
-			$cart = null;
+			// Do empty shopping basket
+			$basket = null;
 			return module('shop')->_order_pay_authorize_net($order_info);
 		}
 	}

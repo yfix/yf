@@ -1,26 +1,26 @@
 <?php
-class yf_shop_cart{
+class yf_shop_basket{
 
 	/**
-	* Display cart contents (save changes also here)
+	* Display basket contents (save changes also here)
 	*/
-	function cart($params = array()) {
-		$STPL_NAME = $params["STPL"] ? $params["STPL"] : "shop/cart";
+	function basket($params = array()) {
+		$STPL_NAME = $params["STPL"] ? $params["STPL"] : "shop/basket";
 		/*
-		$_SESSION["SHOP_CART"][$product_id] = array(
+		$_SESSION["SHOP_basket"][$product_id] = array(
 			"product_id"=> 1,
 			"quantity"	=> 1,
 		);
 		*/
-		$cart = &$_SESSION["SHOP_CART"];
-		// Save cart contents
-		if (!empty($_POST["quantity"]) && !module('shop')->_CART_PROCESSED) {
-			module('shop')->_save_cart_all();
+		$basket = &$_SESSION["SHOP_basket"];
+		// Save basket contents
+		if (!empty($_POST["quantity"]) && !module('shop')->_basket_PROCESSED) {
+			module('shop')->_save_basket_all();
 			return js_redirect("./?object=shop&action=".$_GET["action"]);
 		}
 		// Get products from db
 		$products_ids = array();
-		foreach ((array)$cart as $_item_id => $_info) {
+		foreach ((array)$basket as $_item_id => $_info) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
 			}
@@ -34,12 +34,12 @@ class yf_shop_cart{
 		foreach ((array)$products_infos as $_info) {
 			$_product_id = $_info["id"];
 			$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
-			$quantity = $cart[$_info["id"]]["quantity"];
+			$quantity = $basket[$_info["id"]]["quantity"];
 			$price = module('shop')->_get_product_price($_info);
 
 			$dynamic_atts = array();
 			foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
-				if ($cart[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
+				if ($basket[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
 					$dynamic_atts[$_attr_id] = "- ".$_attr_info["name"]." ".$_attr_info["value"];
 					$price += $_attr_info["price"];
 				}
@@ -51,7 +51,7 @@ class yf_shop_cart{
 				"price"			=> module('shop')->_format_price($price),
 				"currency"		=> _prepare_html(module('shop')->CURRENCY),
 				"quantity"		=> intval($quantity),
-				"delete_link"	=> "./?object=shop&action=clean_cart&id=".$URL_PRODUCT_ID,
+				"delete_link"	=> "./?object=shop&action=clean_basket&id=".$URL_PRODUCT_ID,
 				"details_link"	=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"		=> _prepare_html(module('shop')->_shop_cats[$_info["cat_id"]]),
@@ -64,7 +64,7 @@ class yf_shop_cart{
 			"products"		=> $products,
 			"total_price"	=> module('shop')->_format_price($total_price),
 			"currency"		=> _prepare_html(module('shop')->CURRENCY),
-			"clean_all_link"=> "./?object=shop&action=clean_cart",
+			"clean_all_link"=> "./?object=shop&action=clean_basket",
 			"order_link"	=> "./?object=shop&action=order",
 			"back_link"		=> js_redirect($_SERVER["HTTP_REFERER"], false),
 			"cats_block"	=> module('shop')->_show_shop_cats(),
