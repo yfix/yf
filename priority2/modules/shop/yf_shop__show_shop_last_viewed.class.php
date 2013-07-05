@@ -2,7 +2,7 @@
 class yf_shop__show_shop_last_viewed{
 
 	function _show_shop_last_viewed () {
-		$sql_prod_id = "SELECT * FROM  `". db('shop_products') ."`  ORDER BY `last_viewed_date`  DESC LIMIT 5";	
+		$sql_prod_id = "SELECT * FROM  ". db('shop_products') ."  ORDER BY last_viewed_date  DESC LIMIT 5";	
 		$item_prod_id = db()->query_fetch_all($sql_prod_id);
 		$items = array();
 		foreach ((array)$item_prod_id as $k => $product_info){

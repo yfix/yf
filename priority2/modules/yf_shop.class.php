@@ -146,7 +146,7 @@ class yf_shop extends yf_module {
 		$shop->_shop_cats_all			= _class('cats')->_get_items_array("shop_cats");
 		$shop->_shop_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats");
 		// Get manufacturer
-		$sql_man = "SELECT * FROM `".db('shop_manufacturer')."` ORDER BY `name` ASC";
+		$sql_man = "SELECT * FROM ".db('shop_manufacturer')." ORDER BY name ASC";
 		$shop->_manufacturer = db()->query_fetch_all($sql_man);
 		// manufacturer for the select box
 		$shop->_man_for_select["none"] = "--NONE--";

@@ -19,7 +19,7 @@ class yf_shop__create_order_record{
 				}
 			}
 			if (!empty($products_ids)) {
-				$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `id` IN(".implode(",", $products_ids).") AND `active`='1'");
+				$products_infos = db()->query_fetch_all("SELECT * FROM ".db('shop_products')." WHERE id IN(".implode(",", $products_ids).") AND active='1'");
 				$products_atts	= module('shop')->_get_products_attributes($products_ids);
 				$group_prices	= module('shop')->_get_group_prices($products_ids);
 			}
@@ -80,7 +80,7 @@ class yf_shop__create_order_record{
 				"status"		=> "pending",
 				"total_sum"	=> floatval($total_price),
 				"hash"			=> md5(microtime(true)."#".module('shop')->USER_ID."#".$total_price),
-			), "`id`=".intval($ORDER_ID));
+			), "id=".intval($ORDER_ID));
 		}
 		if (!common()->_error_exists()) {
 			return $ORDER_ID;

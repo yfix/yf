@@ -2,14 +2,14 @@
 class yf_shop_this_item_often_buy{
 
 	function this_item_often_buy ($id) {
-		$sql_order_id = "SELECT `order_id` FROM `".db('shop_order_items')."` WHERE `product_id` =  ".$id;
+		$sql_order_id = "SELECT order_id FROM ".db('shop_order_items')." WHERE product_id =  ".$id;
 		$orders = db()->query($sql_order_id);
 		while ($A = db()->fetch_assoc($orders))	{
 			$order_id .= $A["order_id"].",";
 		}	
 		$order_id = rtrim($order_id, ",");
 		if (!empty($order_id)) {
-			$sql_product_id = "SELECT `product_id` FROM `".db('shop_order_items')."` WHERE  `order_id` IN (  ".$order_id.") AND `product_id` != ". $id;
+			$sql_product_id = "SELECT product_id FROM ".db('shop_order_items')." WHERE  order_id IN (  ".$order_id.") AND product_id != ". $id;
 			$products = db()->query($sql_product_id);
 			while ($A = db()->fetch_assoc($products)) {
 				$product_id .= $A["product_id"].",";
@@ -17,7 +17,7 @@ class yf_shop_this_item_often_buy{
 			$product_id = rtrim($product_id, ","); 
 		}
 		if (!empty($product_id)) {
-			$sql = "SELECT * FROM `".db('shop_products')."` WHERE  `id` in ( ".$product_id.")";
+			$sql = "SELECT * FROM ".db('shop_products')." WHERE  id in ( ".$product_id.")";
 			$product = db()->query_fetch_all($sql);
 			foreach ((array)$product as $k => $product_info){
 				$thumb_path = $product_info["url"]."_".$product_info["id"]."_1".module("shop")->THUMB_SUFFIX.".jpg";

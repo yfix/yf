@@ -11,7 +11,7 @@ class yf_shop_view_order{
 			$_GET["id"] = intval($_GET["id"]);
 		}
 		if ($_GET["id"]) {
-			$order_info = db()->query_fetch("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"]));
+			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($order_info)) {
 			return _e("No such order");
@@ -19,11 +19,11 @@ class yf_shop_view_order{
 		if (!empty($_POST["status"])) {
 			db()->UPDATE(db('shop_orders'), array(
 				"status"	=> _es($_POST["status"]),
-			), "`id`=".intval($_GET["id"]));
+			), "id=".intval($_GET["id"]));
 			return js_redirect("./?object=shop&action=show_orders");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE order_id=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -31,7 +31,7 @@ class yf_shop_view_order{
 			$order_items[$_info["product_id"]] = $_info;
 		}
 		if (!empty($products_ids)) {
-			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `id` IN(".implode(",", $products_ids).") AND `active`='1'");
+			$products_infos = db()->query_fetch_all("SELECT * FROM ".db('shop_products')." WHERE id IN(".implode(",", $products_ids).") AND active='1'");
 			$products_atts	= module('shop')->_get_products_attributes($products_ids);
 		}
 		foreach ((array)$order_items as $_info) {

@@ -14,13 +14,13 @@ class yf_shop__order_step_finish{
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			$order_info = db()->query_fetch("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"])." AND `user_id`=".intval(module('shop')->USER_ID));
+			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(module('shop')->USER_ID));
 		}
 		if (empty($order_info)) {
 			return _e("No such order");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE order_id=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -28,7 +28,7 @@ class yf_shop__order_step_finish{
 			$order_items[$_info["product_id"]] = $_info;
 		}
 		if (!empty($products_ids)) {
-			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `id` IN(".implode(",", $products_ids).") AND `active`='1'");
+			$products_infos = db()->query_fetch_all("SELECT * FROM ".db('shop_products')." WHERE id IN(".implode(",", $products_ids).") AND active='1'");
 			$products_atts	= module('shop')->_get_products_attributes($products_ids);
 		}
 		foreach ((array)$order_items as $_info) {

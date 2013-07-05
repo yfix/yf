@@ -15,7 +15,7 @@ class yf_shop_search{
 	/**
 	*/
 	function prepare_str($string) {
-		$patrn 	= "/([\[\}\]\{\%\"\'\<\>\~\!\@\#\$\%\&\*\(\)\s\-\_\`\:\;\+\=\|\?\№\.\\/\^\,])+/iu";
+		$patrn 	= "/([\[\}\]\{\%\"\'\<\>\~\!\@\#\$\%\&\*\(\)\s\-\_\\:\;\+\=\|\?\№\.\\/\^\,])+/iu";
 		$patrn2 	= array("<", ">");
 		$string 	= str_replace($patrn2, "", $string);
 		$string		= _strtolower(trim($string));
@@ -32,7 +32,7 @@ class yf_shop_search{
 		$str_search2 = implode(" ", $str_search);
 		$str_search = implode("%", $str_search);
 			
-		$sql = "SELECT `id` FROM  `".db('shop_products')."`  WHERE  `name` LIKE  ";
+		$sql = "SELECT id FROM  ".db('shop_products')."  WHERE  name LIKE  ";
 		$_sql = "";
 		$_sql =  $sql."'%".$str_search."%'";
 		$Q = db()->query($_sql);

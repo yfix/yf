@@ -114,7 +114,7 @@ class yf_shop__order_pay_authorize_net{
 
 		db()->UPDATE(db('shop_orders'), array(
 			"status"	=> "pending payment",
-		), "`id`=".intval($order_info['id']));
+		), "id=".intval($order_info['id']));
 
 		// Try to post data
 		$ch = curl_init();
@@ -154,7 +154,7 @@ class yf_shop__order_pay_authorize_net{
 
 			db()->UPDATE(db('shop_orders'), array(
 				"status"	=> "processed",
-			), "`id`=".intval($order_info['id']));
+			), "id=".intval($order_info['id']));
 		}
 
 		// Display order result

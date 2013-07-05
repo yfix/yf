@@ -7,11 +7,11 @@ class yf_shop_product_details{
 		}
 		// Get products from database
 		if (is_numeric($_GET["id"] )) {
-			$add_sql = "`id`= '".intval($_GET["id"]);
+			$add_sql = "id= '".intval($_GET["id"]);
 		} else {
-			$add_sql = "`url`='"._es($_GET['id']);
+			$add_sql = "url='"._es($_GET['id']);
 		}
-		$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1' AND ".$add_sql."'";
+		$sql = "SELECT * FROM ".db('shop_products')." WHERE active='1' AND ".$add_sql."'";
 		$product_info = db()->query_fetch($sql);
 		
 		// Required for comments
@@ -53,7 +53,7 @@ class yf_shop_product_details{
 			}
 		}	
 		$URL_PRODUCT_ID = module("shop")->_product_id_url($product_info);
-		$sql_man = "SELECT * FROM `".db('shop_manufacturer')."` WHERE `id` = ".$product_info["manufacturer_id"];
+		$sql_man = "SELECT * FROM ".db('shop_manufacturer')." WHERE id = ".$product_info["manufacturer_id"];
 		$manufacturer = db()->query_fetch($sql_man);
 		if (module("shop")->SHOW_SIMILAR_PRICE == true){
 			$similar_price = module("shop")->similar_price ( $product_info["price"],  $product_info["id"] );
@@ -70,8 +70,8 @@ class yf_shop_product_details{
 			"date"					=> _format_date($product_info["add_date"], "long"),
 			"price"					=> module("shop")->_format_price(module("shop")->_get_product_price($product_info)),
 			"currency"				=> _prepare_html(module("shop")->CURRENCY),
-			"thumb_path"			=> file_exists(module("shop")->products_img_dir.$mpath. $img_path)	? module("shop")->products_img_webdir. $mpath.$img_path : "",
-			"img_path"				=> file_exists(module("shop")->products_img_dir. $mpath.$img_path)	? module("shop")->products_img_webdir. $mpath.$img_path : "",
+			"thumb_path"			=> file_exists(module("shop")->products_img_dir. $mpath. $img_path)	? module("shop")->products_img_webdir. $mpath. $img_path : "",
+			"img_path"				=> file_exists(module("shop")->products_img_dir. $mpath. $img_path)	? module("shop")->products_img_webdir. $mpath. $img_path : "",
 			"image"					=> $image,
 			"add_to_cart_url"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=add_to_cart&id=".$URL_PRODUCT_ID),
 			"external_url"			=> intval((bool)$product_info["external_url"]),
@@ -80,14 +80,14 @@ class yf_shop_product_details{
 			"dynamic_atts"			=> module("shop")->_get_select_attributes($atts),
 			"cats_block"			=> module("shop")->_show_shop_cats(),
 			"cat_name"				=> _prepare_html(module("shop")->_shop_cats[$product_info["cat_id"]]),
-			"cat_url"				=> process_url("./?object=shop&action=".__FUNCTION__."&id=".(module("shop")->_shop_cats_all[$product_info["cat_id"]]['url'])),
+			"cat_url"				=> process_url("./?object=shop&action=product_details&id=".(module("shop")->_shop_cats_all[$product_info["cat_id"]]['url'])),
 			'comments'				=> module("shop")->_view_comments(),
 			"N"						=> $N,
 			"similar_price"			=> $similar_price,
 			"this_item_often_buy"	=> $this_item_often_buy,
 			"product_related"		=> module("shop")->products_related($product_info["id"]),
 		);
-		db()->query("UPDATE `".db('shop_products')."` SET `viewed` = `viewed`+1 , `last_viewed_date` = ".time()."  WHERE ".$add_sql."'");
+		db()->query("UPDATE ".db('shop_products')." SET viewed = viewed+1 , last_viewed_date = ".time()."  WHERE ".$add_sql."'");
 		return tpl()->parse("shop/details", $replace);
 	}
 

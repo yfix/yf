@@ -20,9 +20,9 @@ class yf_shop__get_group_prices{
 		$group_prices = array();
 		// Get prices per group
 		$Q = db()->query(
-			"SELECT * FROM `".db('shop_group_options')."` 
-			WHERE `product_id` IN (".implode(",", $product_ids).") 
-				AND `group_id` IN (".implode(",", array_keys($user_groups)).")"
+			"SELECT * FROM ".db('shop_group_options')." 
+			WHERE product_id IN (".implode(",", $product_ids).") 
+				AND group_id IN (".implode(",", array_keys($user_groups)).")"
 		);
 		while($A = db()->fetch_assoc($Q)) {
 			if (!isset($user_groups[$A["group_id"]])) {

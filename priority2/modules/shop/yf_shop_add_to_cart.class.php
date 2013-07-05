@@ -4,7 +4,7 @@ class yf_shop_add_to_cart{
 	function add_to_cart() {
 		$cart = &$_SESSION["SHOP_CART"];
 
-		$A = db()->query_fetch("SELECT `id` FROM `".db('shop_products')."` WHERE `active` = '1' AND ".(is_numeric($_GET["id"]) ? "`id`=".intval($_GET["id"]) : "`url`='"._es($_GET['id'])."'"));
+		$A = db()->query_fetch("SELECT id FROM ".db('shop_products')." WHERE active = '1' AND ".(is_numeric($_GET["id"]) ? "id=".intval($_GET["id"]) : "url='"._es($_GET['id'])."'"));
 
 		if (!empty($A)) {
 			$_GET['id'] = $A['id'];

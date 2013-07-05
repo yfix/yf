@@ -8,7 +8,7 @@ class yf_shop_validate_order_data{
 		if (empty($_POST["order_id"] )) {
 			_re(t("Order empty"));
 		}
-		$order_info = db()->query_fetch("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_POST["order_id"]));
+		$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_POST["order_id"]));
 		if (empty($order_info)) {
 			_re("No such order");
 		}
