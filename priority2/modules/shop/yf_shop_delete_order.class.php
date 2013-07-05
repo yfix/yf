@@ -20,7 +20,7 @@ class yf_shop_delete_order{
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
 		} else {
-			return js_redirect("./?object=shop&action=show_orders");
+			return js_redirect("./?object=shop&action=orders");
 		}
 	}
 	

@@ -1,7 +1,7 @@
 <?php
-class yf_shop_show_orders{
+class yf_shop_orders{
 
-	function show_orders() {
+	function orders() {
 		if (!main()->USER_ID) {
 			if (!empty($_POST)) {
 				module('shop')->validate_order_data();
@@ -13,7 +13,7 @@ class yf_shop_show_orders{
 			$items[] = array(
 				"order_id"		=> $_POST["order_id"],
 				"email"			=> $_POST["email"],
-				"form_action"	=> "./?object=shop&action=show_orders",
+				"form_action"	=> "./?object=shop&action=orders",
 				"back_link"		=> "./?object=shop",
 			);
 		} else {

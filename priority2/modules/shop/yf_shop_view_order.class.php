@@ -20,7 +20,7 @@ class yf_shop_view_order{
 			db()->UPDATE(db('shop_orders'), array(
 				"status"	=> _es($_POST["status"]),
 			), "id=".intval($_GET["id"]));
-			return js_redirect("./?object=shop&action=show_orders");
+			return js_redirect("./?object=shop&action=orders");
 		}
 		$products_ids = array();
 		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order`_id=".intval($order_info["id"]));
@@ -71,7 +71,7 @@ class yf_shop_view_order{
 			"pay_type"		=> module('shop')->_pay_types[$order_info["pay_type"]],
 			"date"			=> _format_date($order_info["date"], "long"),
 			"status_box"	=> module('shop')->_statuses[$order_info["status"]],
-			"back_url"		=> "./?object=shop&action=show_orders",
+			"back_url"		=> "./?object=shop&action=orders",
 		));
 		return tpl()->parse("shop/order_view", $replace);
 	}

@@ -17,7 +17,7 @@
 
 		<p class="price">{t(Price)}: {#.price}</p>
 		<div class="button_div">
-			<a href="{#.add_to_basket_url}" title="Add to basket" style="margin-left:0;" {if("#.external_url" ne "")} target="_blank" {/if} >{t(Add to basket)}</a>
+			<a href="{#.basket_add_url}" title="Add to basket" style="margin-left:0;" {if("#.external_url" ne "")} target="_blank" {/if} >{t(Add to basket)}</a>
 		</div>
 		<br style="clear:both;" />
 	</div>
