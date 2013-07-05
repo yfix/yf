@@ -42,17 +42,17 @@ class yf_email_page {
 		if (!empty($_POST["go"])) {
 			// Check if email is already registered for someone
 			if (!common()->email_verify($_POST["email"])) {
-				common()->_raise_error(t("Invalid e-mail, please check your spelling!"));
+				_re(t("Invalid e-mail, please check your spelling!"));
 			}
 			if (empty($_POST["name"])) {
-				common()->_raise_error(t("Friend name required!"));
+				_re(t("Friend name required!"));
 			}
 			if (empty($_POST["message"])) {
-				common()->_raise_error(t("Message text required!"));
+				_re(t("Message text required!"));
 			}
 			// Check for flood
 			if (!empty($_SESSION[$this->SESSION_TTL_NAME][$cur_page_md5]) && $_SESSION[$this->SESSION_TTL_NAME][$cur_page_md5] > (time() - $this->TTL)) {
-				common()->_raise_error("You are not allowed to send current page more than once in future ".($_SESSION[$this->SESSION_TTL_NAME][$cur_page_md5] + $this->TTL - time())." seconds!");
+				_re("You are not allowed to send current page more than once in future ".($_SESSION[$this->SESSION_TTL_NAME][$cur_page_md5] + $this->TTL - time())." seconds!");
 			}
 			// Try to send email
 			if (!common()->_error_exists()) {

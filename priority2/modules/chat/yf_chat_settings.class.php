@@ -48,24 +48,24 @@ class yf_chat_settings {
 		// Check colors
 		for ($i = 1; $i <= 4; $i++) {
 			if (!(preg_match('/^#[0-9a-f]{6}$/i', $_POST["chat_color_".$i]) || preg_match('/^[a-z]{3,16}$/i', $_POST["chat_color_".$i]))) {
-				common()->_raise_error(t("wrong_color")." : ".$i);
+				_re(t("wrong_color")." : ".$i);
 			}
 		}
 		if (!(preg_match('/^#[0-9a-f]{6}$/i', $_POST["chat_your_color"]) || preg_match('/^[a-z]{3,16}$/i', $_POST["chat_your_color"]))) {
-			common()->_raise_error(t("wrong_color"));
+			_re(t("wrong_color"));
 		}
 		// Chec other settings
 		$_POST["messages_time"]	= intval($_POST["messages_time"]);
 		if (!in_array($_POST["messages_time"], range(0,2))) {
-			common()->_raise_error(t("wrong_messages_time"));
+			_re(t("wrong_messages_time"));
 		}
 		$_POST["msg_filter"]	= intval($_POST["msg_filter"]);
 		if (!in_array($_POST["msg_filter"], range(0,1))) {
-			common()->_raise_error(t("wrong_messages_filter"));
+			_re(t("wrong_messages_filter"));
 		}
 		$_POST["refresh_time"]	= intval($_POST["refresh_time"]);
 		if (!in_array($_POST["refresh_time"], $this->CHAT_OBJ->_refresh_select_array)) {
-			common()->_raise_error(t("wrong_refresh_time"));
+			_re(t("wrong_refresh_time"));
 		}
 		// Continue if no errors occured
 		if (!common()->_error_exists()) {

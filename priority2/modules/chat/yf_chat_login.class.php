@@ -63,24 +63,24 @@ class yf_chat_login {
 		$_POST["color"]		= trim(strip_tags($_POST["color"]));
 		// Check allowed values
 		if (strlen($_POST["login"]) < 2 || strlen($_POST["login"]) > 32) {
-			common()->_raise_error("2 > ".t("login")." > 32");
+			_re("2 > ".t("login")." > 32");
 		}
 		if (strlen($_POST["password"]) < 4 || strlen($_POST["password"]) > 32) {
-			common()->_raise_error("4 > ".t("password")." > 32");
+			_re("4 > ".t("password")." > 32");
 		}
 		if (!preg_match("/^[\w\s\x7F-\xFF\._\-+=:;~!@#%\^&\*\(\)\{\}\[\]]{2,32}$/i", $_POST["login"])) {
-			common()->_raise_error(t("wrong_login")." \"".$_POST["login"]."\"");
+			_re(t("wrong_login")." \"".$_POST["login"]."\"");
 		}
 		if (!(preg_match('/^#[0-9a-f]{6}$/i', $_POST["color"]) || preg_match('/^[a-z]{3,16}$/i', $_POST["color"]))) {
-			common()->_raise_error(t("wrong_color"));
+			_re(t("wrong_color"));
 		}
 		if (!common()->_error_exists()) {
 			// Check if room exists in the database
 			$A3 = db()->query_fetch("SELECT `id` FROM `".db('chat_rooms')."` WHERE `id`=".intval($_POST["room_id"])." AND `active`='1' LIMIT 1");
-			if (!$A3["id"]) common()->_raise_error(t('no_such_room'));
+			if (!$A3["id"]) _re(t('no_such_room'));
 			// Check if user exists in the database
 			$A = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `login`='"._es(trim($_POST["login"]))."' AND `password`='".trim($_POST["password"])."' AND `active`='1' LIMIT 1");
-			if (!$A["id"]) common()->_raise_error(t('login_failed'));
+			if (!$A["id"]) _re(t('login_failed'));
 			// Check if user is already online
 			foreach ((array)$GLOBALS['chat_online'] as $A5) {
 				if ($A5['login'] == $_POST["login"]) {

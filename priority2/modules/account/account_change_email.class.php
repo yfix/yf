@@ -19,7 +19,7 @@ class account_change_email {
 		if (!empty($_POST["go"]) && !empty($_POST["new_email"])) {
 			// Check if such email already exists in the database
 			if (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `email`='"._es($_POST["new_email"])."'"))
-				common()->_raise_error(tpl()->parse(ACCOUNT_CLASS_NAME."/change_email/email_exists"));
+				_re(tpl()->parse(ACCOUNT_CLASS_NAME."/change_email/email_exists"));
 			// Check for errors
 			if (!common()->_error_exists()) {
 				$time = time();
@@ -68,7 +68,7 @@ class account_change_email {
 			$A = db()->query_fetch("SELECT * FROM `".db('email_change')."` WHERE `id`=".intval($record_id)." AND `user_id`=".intval($user_id)." AND `time`=".intval($add_time));
 			// Check required data
 			if (empty($record_id) || empty($user_id) || empty($add_time) || empty($A["id"]))
-				common()->_raise_error(tpl()->parse(ACCOUNT_CLASS_NAME."/change_email/confirm_error"));
+				_re(tpl()->parse(ACCOUNT_CLASS_NAME."/change_email/confirm_error"));
 			// Check for errors
 			if (!common()->_error_exists()) {
 				foreach ((array)$A as $k => $v) $A[$k] = stripslashes($v);

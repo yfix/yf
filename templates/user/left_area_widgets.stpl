@@ -1,4 +1,4 @@
-
+{{--
 {catch("_w_rss_button")}{execute(rss,_widget_button)}{/catch}
 
 {if("_w_rss_button" ne "")}
@@ -7,3 +7,4 @@
 {_w_rss_button}
 </div>
 {/if}
+--}}

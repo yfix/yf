@@ -42,7 +42,7 @@ class yf_manage_patterns{
 		// save pattern to data base
 		if (isset($_POST["save"])){
 		
-			if(empty($_POST["name"])) common()->_raise_error(t("Name is required!"));
+			if(empty($_POST["name"])) _re(t("Name is required!"));
 			
 			if(!common()->_error_exists()){
 			
@@ -74,7 +74,7 @@ class yf_manage_patterns{
 		// parse content
 		if (isset($_POST["parse"])) {
 		
-			if(empty($_POST["site_url"])) common()->_raise_error(t("Site url is required!"));		
+			if(empty($_POST["site_url"])) _re(t("Site url is required!"));		
 			
 			if(!common()->_error_exists()){
 				$content_original = file_get_contents($_POST["site_url"]);	

@@ -365,10 +365,10 @@ class yf_email {
 		$this->CAPTCHA->check("captcha");
 		// Check required fields
 		if (!strlen($_POST["subject"])) {
-			common()->_raise_error("Subject required");
+			_re("Subject required");
 		}
 		if (!strlen($_POST["message"])) {
-			common()->_raise_error("Message required");
+			_re("Message required");
 		}
 		// Try to find scum words in text
 		if (!common()->_error_exists()) {
@@ -541,7 +541,7 @@ class yf_email {
 			$IS_BAD_EMAIL = true;
 		}
 		if ($IS_BAD_EMAIL) {
-			common()->_raise_error("Error sending mail!");
+			_re("Error sending mail!");
 			// Do ban user if found something bad
 			$NEW_ADMIN_COMMENTS = "\r\nAuto-banned on "._format_date(time())." (found scum words in email)";
 			db()->query("UPDATE `".db('user')."` SET `ban_email` = '1', `admin_comments`=CONCAT(`admin_comments`, '"._es($NEW_ADMIN_COMMENTS)."') WHERE `id`=".intval($this->USER_ID));

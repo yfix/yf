@@ -175,22 +175,22 @@ class yf_chat_user_info {
 			"smoking"
 		);
 		if (strlen($_POST["password"]) < 4 || strlen($_POST["password"]) > 32) {
-			common()->_raise_error(t("4 > password > 32"));
+			_re(t("4 > password > 32"));
 		}
 		$_POST["birth"] = strtotime(intval($_POST["year"])."-".intval($_POST["month"])."-".intval($_POST["day"]));
 		// Try to upload photo
 		if ($_FILES["photo"]["name"]) {
 			// Check image file size
 			if ($_FILES["photo"]["size"] > $this->CHAT_OBJ->PHOTO_MAX_SIZE) {
-				common()->_raise_error(t("too_large_file").": size=".$_FILES["photo"]["size"]);
+				_re(t("too_large_file").": size=".$_FILES["photo"]["size"]);
 			} elseif (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
 				list($w, $h, $type,) = getimagesize($_FILES["photo"]["tmp_name"]);
 				// Check image dimensions and type
 				if ($type != 2) {
-					common()->_raise_error(t("only_JPEG_allowed"));
+					_re(t("only_JPEG_allowed"));
 				}
 				if ($w > $this->CHAT_OBJ->PHOTO_MAX_WIDTH || $h > $this->CHAT_OBJ->PHOTO_MAX_HEIGHT) {
-					common()->_raise_error(t("too_big_dimensions").": w=".$w.",h=".$h);
+					_re(t("too_big_dimensions").": w=".$w.",h=".$h);
 				}
 				// Upload file if everything is ok
 				if (!common()->_error_exists()) {

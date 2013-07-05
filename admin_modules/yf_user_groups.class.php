@@ -85,7 +85,7 @@ class yf_user_groups {
 		if (!empty($_POST)) {
 			// Name could not be empty
 			if (empty($_POST["name"])) {
-				common()->_raise_error(t("Name is empty"));
+				_re(t("Name is empty"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -133,7 +133,7 @@ class yf_user_groups {
 		if (!empty($_POST)) {
 			// Name could not be empty
 			if (empty($_POST["name"])) {
-				common()->_raise_error(t("Name is empty"));
+				_re(t("Name is empty"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {

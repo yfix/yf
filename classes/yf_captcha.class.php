@@ -213,7 +213,7 @@ class yf_captcha {
 		$VALID_CODE = false;
 
 		if (empty($_POST[$field_in_form])) {
-			common()->_raise_error(t("Please enter code"));
+			_re(t("Please enter code"));
 		} else {
 			$hash = md5($this->secret_key. $_POST[$field_in_form]);
 			if ($this->use_cookies) {
@@ -226,7 +226,7 @@ class yf_captcha {
 				}
 			}
 			if ($code_incorrect) {
-				common()->_raise_error(t("Code you entered is incorrect"));
+				_re(t("Code you entered is incorrect"));
 			} else {
 				$VALID_CODE = true;
 			}

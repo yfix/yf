@@ -77,7 +77,7 @@ class yf_admin_groups {
 		if (!empty($_POST)) {
 			// Name could not be empty
 			if (empty($_POST["name"])) {
-				common()->_raise_error(t("Name is empty"));
+				_re(t("Name is empty"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -133,10 +133,10 @@ class yf_admin_groups {
 		if (!empty($_POST)) {
 			// Name could not be empty
 			if (empty($_POST["name"])) {
-				common()->_raise_error(t("Name is empty"));
+				_re(t("Name is empty"));
 			}
 			if (!$_POST["active"] && $_GET["id"] == 1) {
-				common()->_raise_error(t("You can not disable root admin group"));
+				_re(t("You can not disable root admin group"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {

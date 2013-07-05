@@ -39,11 +39,11 @@ class yf_upload_image {
 		$MAX_IMAGE_SIZE = $max_image_size;
 		// Check image size (first attempt)
 		if (empty($PHOTO["size"]) || (!empty($MAX_IMAGE_SIZE) && $PHOTO["size"] > $MAX_IMAGE_SIZE)) {
-			common()->_raise_error(t("Invalid image size"));
+			_re(t("Invalid image size"));
 		}
 		// First mime type check (quick and simple)
 		if ($PHOTO["type"] && !isset($this->ALLOWED_MIME_TYPES[$PHOTO["type"]])) {
-			common()->_raise_error(t("Invalid image type"));
+			_re(t("Invalid image type"));
 		}
 		// Check for errors and stop if exists
 		if (common()->_error_exists()) {
@@ -68,14 +68,14 @@ class yf_upload_image {
 		}
 		// Check if file uploaded successfully
 		if (!$move_result || !file_exists($photo_path) || !filesize($photo_path) || !is_readable($photo_path)) {
-			common()->_raise_error("Uploading image error #001. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
+			_re("Uploading image error #001. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
 			trigger_error("Moving uploaded image error", E_USER_WARNING);
 			return false;
 		}
 		// Second image type check (using GD)
 		$real_image_info = @getimagesize($photo_path);
 		if (empty($real_image_info) || !$real_image_info["mime"] || !isset($this->ALLOWED_MIME_TYPES[$real_image_info["mime"]])) {
-			common()->_raise_error(t("Invalid image type"));
+			_re(t("Invalid image type"));
 			trigger_error("Invalid image type", E_USER_WARNING);
 			unlink($photo_path);
 			return false;
@@ -93,7 +93,7 @@ class yf_upload_image {
 				$c_func = "imagecreatefromgif";
 			}
 			if ($c_func && false === @$c_func($photo_path)) {
-				common()->_raise_error("Uploading image error #002. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
+				_re("Uploading image error #002. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
 				trigger_error("Image that crashes GD found", E_USER_WARNING);
 				unlink($photo_path);
 				return false;
@@ -101,7 +101,7 @@ class yf_upload_image {
 		}
 		// Second image size checking (from the real file)
 		if (!empty($MAX_IMAGE_SIZE) && filesize($photo_path) > $MAX_IMAGE_SIZE) {
-			common()->_raise_error(t("Invalid image size"));
+			_re(t("Invalid image size"));
 			trigger_error("Image size hacking attempt", E_USER_WARNING);
 			unlink($photo_path);
 			return false;

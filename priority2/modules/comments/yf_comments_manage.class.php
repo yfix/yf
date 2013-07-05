@@ -60,7 +60,7 @@ class yf_comments_manage {
 			if (!common()->_error_exists()) {
 				$_POST["text"]	= substr($_POST["text"], 0, $this->COMMENTS_OBJ->MAX_POST_TEXT_LENGTH);
 				if (empty($_POST["text"])) {
-					common()->_raise_error(t("Comment text required"));
+					_re(t("Comment text required"));
 				}
 			}
 			// Do check captcha (if needed)
@@ -103,7 +103,7 @@ class yf_comments_manage {
 					ORDER BY `add_date` DESC LIMIT 1"
 				);
 				if (!empty($FLOOD_DETECTED)) {
-					common()->_raise_error("Please wait ".intval($this->COMMENTS_OBJ->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED["add_date"]))." seconds before post comment.");
+					_re("Please wait ".intval($this->COMMENTS_OBJ->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED["add_date"]))." seconds before post comment.");
 				}
 			}
 			
@@ -117,7 +117,7 @@ class yf_comments_manage {
 			// Check valid email
 			if(!empty($_POST["user_email"])){
 				if (!preg_match('#^[0-9a-z]([-_.]?[0-9a-z])*@[0-9a-z]([-.]?[0-9a-z])*\.[a-z]{2,3}$#i', $_POST["user_email"])) {
-					common()->_raise_error(t("Invalid e-mail, please check your spelling"));
+					_re(t("Invalid e-mail, please check your spelling"));
 				}
 			}
 			
@@ -250,7 +250,7 @@ class yf_comments_manage {
 		if (count($_POST) > 0 && !isset($_POST["_not_for_comments"])) {
 			$_POST["text"] = substr($_POST["text"], 0, $this->COMMENTS_OBJ->MAX_POST_TEXT_LENGTH);
 			if (empty($_POST["text"])) {
-				common()->_raise_error(t("Comment text required"));
+				_re(t("Comment text required"));
 			}
 			// Do check captcha (if needed)
 			if (module($_GET["object"])->USE_CAPTCHA) {
@@ -278,7 +278,7 @@ class yf_comments_manage {
 			if (!common()->_error_exists() && $this->COMMENTS_OBJ->ANTI_FLOOD_TIME && MAIN_TYPE_USER) {
 				$FLOOD_DETECTED = db()->query_fetch("SELECT `id`,`add_date` FROM `".db('comments')."` WHERE ".($this->COMMENTS_OBJ->USER_ID ? "`user_id`=".intval($this->COMMENTS_OBJ->USER_ID) : "`ip`='"._es(common()->get_ip())."'")." AND `add_date` > ".(time() - $this->COMMENTS_OBJ->ANTI_FLOOD_TIME)." ORDER BY `add_date` DESC LIMIT 1");
 				if (!empty($FLOOD_DETECTED)) {
-					common()->_raise_error("Please wait ".intval($this->COMMENTS_OBJ->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED["add_date"]))." seconds before post comment.");
+					_re("Please wait ".intval($this->COMMENTS_OBJ->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED["add_date"]))." seconds before post comment.");
 				}
 			}
 			
@@ -449,11 +449,11 @@ class yf_comments_manage {
 		// user not logged in
 		if (empty($this->COMMENTS_OBJ->USER_ID)) {
 			if ($count_links > 1) {
-				common()->_raise_error(t("Too many links"));
+				_re(t("Too many links"));
 			}
 		} else {
 			if ($count_links > 3) {
-				common()->_raise_error(t("Too many links"));
+				_re(t("Too many links"));
 			}
 		}
 	}

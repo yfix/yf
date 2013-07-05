@@ -180,9 +180,11 @@ function cache_memcached_connect($params = array()) {
 		return $GLOBALS["memcache_obj"];
 	}
 	if (!$params) {
+		$conf_host = $GLOBALS['CONF']['MEMCACHED_HOST'];
+		$conf_port = $GLOBALS['CONF']['MEMCACHED_PORT'];
 		$params = array(
-			"host"	=> "127.0.0.1",
-			"port"	=> 11211,
+			"host"	=> $conf_host ? $conf_host : "127.0.0.1",
+			"port"	=> $conf_port ? $conf_port : 11211,
 		);
 	}
 	$GLOBALS["memcache_obj"] = null;

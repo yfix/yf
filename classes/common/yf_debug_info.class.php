@@ -151,9 +151,9 @@ class yf_debug_info {
 		if (is_object($obj) && in_array("_hook_debug", get_class_methods($obj))) {
 			$hook_result = $obj->_hook_debug();
 			if (is_array($hook_result)) {
-				$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t($_GET["object"])."</b><ol>\n";
+				$body .= "<div class='debug_allow_close'><h5>".t($_GET["object"])."</h5><ol>";
 				$_array_pairs = array(
-					" "				=> "	",
+					" "			=> "	",
 					"	=>	"	=> " => ",
 					"array	("	=> "array(",
 				);
@@ -163,11 +163,11 @@ class yf_debug_info {
 						$_prepared_text = str_replace(array_keys($_array_pairs), array_values($_array_pairs), var_export($text, 1));
 						$_prepared_text = preg_replace("#=>\s+array\(#i", "=> array(", $_prepared_text);
 					} else {
-						$_prepared_text = "\"".htmlspecialchars($text)."\"";
+						$_prepared_text = "'".htmlspecialchars($text)."'";
 					}
-					$body .= "[\"<b>".htmlspecialchars($id)."</b>\"] => <pre><small>".$_prepared_text."</small></pre>,<br />\n";
+					$body .= "['".htmlspecialchars($id)."'] => <pre><small>".$_prepared_text."</small></pre>,";
 				}
-				$body .= "</ol>\n</div>\n";
+				$body .= "</ol></div>";
 			} else {
 				$body .= $hook_result;
 			}
@@ -197,18 +197,18 @@ class yf_debug_info {
 		$i18n_vars = _class('i18n')->_I18N_VARS;
 		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {
 			// Prepare JS array
-			$body .= "<script type='text/javascript'>\n";
+			$body .= "<script type='text/javascript'>";
 
 			$body .= "var _i18n_for_page = {";
 			ksort($i18n_vars);
 			foreach ((array)$i18n_vars as $_var_name => $_var_value) {
 				$_var_name	= strtolower($_var_name);
 				$_var_name	= str_replace("_", " ", $_var_name);
-				$_var_name	= str_replace(array("\"","\r","\n"), array("\\\"","",""), $_var_name);
-				$_var_value	= str_replace(array("\"","\r","\n"), array("\\\"","",""), $_var_value);
+				$_var_name	= str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
+				$_var_value	= str_replace(array("\"","",""), array("\\\"","",""), $_var_value);
 				$body .= "\""._prepare_html($_var_name)."\":\""._prepare_html($_var_value)."\",";
 			}
-			$body .= "__dummy:null};\n";
+			$body .= "__dummy:null};";
 
 			$not_translated = _class('i18n')->_NOT_TRANSLATED;
 			if (!empty($not_translated)) {
@@ -217,19 +217,19 @@ class yf_debug_info {
 				foreach ((array)$not_translated as $_var_name => $_hits) {
 					$_var_name	= strtolower($_var_name);
 					$_var_name	= str_replace("_", " ", $_var_name);
-					$_var_name = str_replace(array("\"","\r","\n"), array("\\\"","",""), $_var_name);
+					$_var_name = str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
 					$body .= "\""._prepare_html($_var_name)."\":\"".intval($_hits)."\",";
 				}
-				$body .= "__dummy:null};\n";
+				$body .= "__dummy:null};";
 			}
 
-			$body .= "</script>\n";
+			$body .= "</script>";
 		}
 		// Add ability to slideup/slidedown different debug blocks and remeber selection in cookie
 		$body .= tpl()->parse("system/debug_info_js");
 
 		if ($this->ADD_ADMIN_LINKS) {
-			$body = "<a href='".process_url("./?object=test")."'>Test module</a>\n".$body;
+			$body = "<a href='".process_url("./?object=test")."'>Test module</a>".$body;
 		}
 		return $body;
 	}
@@ -284,7 +284,7 @@ class yf_debug_info {
 				$_query_text = trim($_query_text);
 				// Cut comment
 				if (substr($_query_text, 0, 2) == "--") {
-					$_query_text = substr($_query_text, strpos($_query_text, "\n"));
+					$_query_text = substr($_query_text, strpos($_query_text, ""));
 				}
 				$_query_text = preg_replace("/[\s]{2,}/ims", " ", str_replace("\t", " ", trim($_query_text)));
 				if (preg_match("/^[\(]*select/ims", $_query_text)) {
@@ -293,7 +293,7 @@ class yf_debug_info {
 			}
 		}
 		$total_queries_exec_time = 0;
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("QUERY_LOG")." &nbsp; ("
+		$body .= "<div class='debug_allow_close'><h5>".t("QUERY_LOG")."  ("
 			.($DB_CONNECTION->DB_SSL ? "SSL " : "")
 			.$DB_CONNECTION->DB_TYPE
 			."://".$DB_CONNECTION->DB_USER
@@ -302,15 +302,15 @@ class yf_debug_info {
 			."/".$DB_CONNECTION->DB_NAME
 			.($DB_CONNECTION->DB_CHARSET ? "?charset=".$DB_CONNECTION->DB_CHARSET : "")
 			.($DB_CONNECTION->DB_SOCKET ? "?socket=".$DB_CONNECTION->DB_SOCKET : "")
-			.")</b>";
-#		$body .= $connect_trace ? "<small style='color:blue;'>".$this->_admin_link("edit_file", $connect_trace["file"])." on line ".$connect_trace["line"]." (".$connect_trace["object"]."->".$connect_trace["function"].(!empty($connect_trace["inside_method"]) ? " inside ".$connect_trace["inside_method"] : "").")</small><br /><br />" : "";
-		$body .= $connect_trace2 ? "<small style='color:blue;'>"._prepare_html($connect_trace2)."</small><br /><br />" : "";
-		$body .= "<ol>\n";
+			.")</h5>";
+#		$body .= $connect_trace ? "<small>".$this->_admin_link("edit_file", $connect_trace["file"])." on line ".$connect_trace["line"]." (".$connect_trace["object"]."->".$connect_trace["function"].(!empty($connect_trace["inside_method"]) ? " inside ".$connect_trace["inside_method"] : "").")</small>" : "";
+		$body .= $connect_trace2 ? "<small>"._prepare_html($connect_trace2)."</small>" : "";
+		$body .= "<ol>";
 		foreach ((array)$db_queries_list as $id => $text) {
 			$text = trim($text);
 			// Cut comment
 			if (substr($text, 0, 2) == "--") {
-				$text = substr($text, strpos($text, "\n"));
+				$text = substr($text, strpos($text, ""));
 			}
 			$total_queries_exec_time += $DB_CONNECTION->QUERY_EXEC_TIME[$id];
 			$_cur_trace = $DB_CONNECTION->QUERY_BACKTRACE_LOG[$id];
@@ -333,22 +333,22 @@ class yf_debug_info {
 			}
 
 			$body .= "<li>"
-					."/* <small><b style='".($DB_CONNECTION->QUERY_EXEC_TIME[$id] >= $this->SLOW_QUERIES_TIME_LIMIT ? "color:red;" : "")."'>".$exec_time." sec</b></small>;&nbsp;*/ "
+					."/* <small><b style='".($DB_CONNECTION->QUERY_EXEC_TIME[$id] >= $this->SLOW_QUERIES_TIME_LIMIT ? "color:red;" : "")."'>".$exec_time." sec</small>;*/ "
 					.$text."; "
-					.(isset($DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql]) ? "<br /><small style='color:green;'># ".($_sql_type == "SELECT" ? "num" : "affected")." rows: ".intval($DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql])."</small>" : "")
-					.(!empty($_cur_trace2) ? "<br /><small style='color:blue;'><pre>"._prepare_html($_cur_trace2)."</pre></small>" : "")
-#					.(!empty($_cur_trace) ? "<br /><small style='padding-left:40px;color:blue;'># "/*.$this->_pretty_trace($_cur_trace)."#"*/.$this->_admin_link("edit_file", $_cur_trace["file"])." on line ".$_cur_trace["line"]." (db->".$_cur_trace["function"].(!empty($_cur_trace["inside_method"]) ? " inside ".$_cur_trace["inside_method"] : "").")</small>" : "")
-					.(!empty($_cur_explain) ? "<br /><div style='padding-left:40px;'>".$_cur_explain."</div>" : "")
-				."</li><br />\n";
+					.(isset($DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql]) ? "<small># ".($_sql_type == "SELECT" ? "num" : "affected")." rows: ".intval($DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql])."</small>" : "")
+					.(!empty($_cur_trace2) ? "<small><pre>"._prepare_html($_cur_trace2)."</pre></small>" : "")
+#					.(!empty($_cur_trace) ? "<small># "/*.$this->_pretty_trace($_cur_trace)."#"*/.$this->_admin_link("edit_file", $_cur_trace["file"])." on line ".$_cur_trace["line"]." (db->".$_cur_trace["function"].(!empty($_cur_trace["inside_method"]) ? " inside ".$_cur_trace["inside_method"] : "").")</small>" : "")
+					.(!empty($_cur_explain) ? "<div>".$_cur_explain."</div>" : "")
+				."</li>";
 		}
-		$body .= "</ol>\n";
+		$body .= "</ol>";
 		if (!$DB_CONNECTION->_tried_to_connect) {
-			$body .= t("db not used")."<br /><br />\n";
+			$body .= t("db not used")."";
 		} else {
-			$body .= "<i>".t("total_exec_time").":</i> <b>".common()->_format_time_value($total_queries_exec_time)."</b><span> sec<br /><br />\n";
-			$body .= "<i>".t("connect_time").":</i> <b>".common()->_format_time_value($DB_CONNECTION->_connection_time)."</b><span> sec<br /><br />\n";
+			$body .= "<i>".t("total_exec_time").": ".common()->_format_time_value($total_queries_exec_time)."<span> sec";
+			$body .= "<i>".t("connect_time").": ".common()->_format_time_value($DB_CONNECTION->_connection_time)."<span> sec";
 		}
-		$body .= "</span>\n</div>\n";
+		$body .= "</span></div>";
 		// Memory is useful
 		unset($db_explain_results);
 		unset($db_queries_list);
@@ -363,16 +363,16 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("SHUTDOWN QUERIES")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("SHUTDOWN QUERIES")."</h5><ol>";
 		foreach ((array)$DB_CONNECTION->_SHUTDOWN_QUERIES as $text) {
 			$text = trim($text);
 			// Cut comment
 			if (substr($text, 0, 2) == "--") {
-				$text = substr($text, strpos($text, "\n"));
+				$text = substr($text, strpos($text, ""));
 			}
-			$body .= "<li>".htmlspecialchars($text)."</li>\n";
+			$body .= "<li>".htmlspecialchars($text)."</li>";
 		}
-		$body .= "</ol>\n</div>\n";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -383,17 +383,19 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("CACHED QUERIES")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("CACHED QUERIES")."</h5><ol>";
 		foreach ((array)$DB_CONNECTION->_db_results_cache as $query => $data) {
-			$body .= "<li>".htmlspecialchars($query)."</li>\n";
+			$body .= "<li>".htmlspecialchars($query)."</li>";
 		}
-		$body .= "</ol>\n</div>\n";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
 	/**
 	*/
 	function _do_debug_db_session_stats ($DB_CONNECTION) {
+// Temporary disabled by Yuri due to rarely usage
+/*
 		if (!$this->_SHOW_DB_SESSION_STATS || (empty($DB_CONNECTION->QUERY_LOG) && empty($DB_CONNECTION->_SHUTDOWN_QUERIES))) {
 			return "";
 		}
@@ -421,6 +423,7 @@ class yf_debug_info {
 
 		$body .= $this->_show_table(t("QUERIES STATS"), $db_session_stats, $_items_in_column);
 		return $body;
+*/
 	}
 	
 	/**
@@ -435,10 +438,10 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Sphinx Search QL")."</b>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Sphinx Search QL")."</h5>";
 		$total_time = 0;
 
-		$body .= "<b>".SPHINX_HOST.":".SPHINX_PORT."</b>\n";
+		$body .= "".SPHINX_HOST.":".SPHINX_PORT."";
 		$sphinx_connect = common()->sphinx_connect;
 		if (!$sphinx_connect) {
 			$sphinx_connect = $GLOBALS["sphinx_connect"];
@@ -448,15 +451,15 @@ class yf_debug_info {
 		}
 		if ($sphinx_connect) {
 			$server_version = mysql_get_server_info($sphinx_connect);
-			$body .= ", SERVER VERSION: <b>".$server_version."</b>\n";
+			$body .= ", SERVER VERSION: ".$server_version."";
 		}
 
 		$body .= "<table border='1'>";
 		$body .= "<tr>";
 		$body .= "<td>#</td>";
-		$body .= "<td><b>Time</b></td>";
-		$body .= "<td><b>Rows</b></td>";
-		$body .= "<td><b>Query</b></td>";
+		$body .= "<td>Time</td>";
+		$body .= "<td>Rows</td>";
+		$body .= "<td>Query</td>";
 		$body .= "</tr>";
 
 
@@ -474,27 +477,27 @@ class yf_debug_info {
 			}
 
 			$body .= "<tr>";
-			$body .= "<td><i>".++$i."</i></td>";
-			$body .= "<td><b>".common()->_format_time_value($val["time"]). ($val['cached'] ? "<br /><small style='color:grey'>(CACHED)</small>" : "")."</b></td>";
-			$body .= "<td><i>".$val["count"]."</i></td>";
+			$body .= "<td><i>".++$i."</td>";
+			$body .= "<td>".common()->_format_time_value($val["time"]). ($val['cached'] ? "<small style='color:grey'>(CACHED)</small>" : "")."</td>";
+			$body .= "<td><i>".$val["count"]."</td>";
 			$body .= "<td ".(!empty($val['error']) ? " style='color:red;font-weight:bold;' " : "").">".str_replace(",", ", ", $val["query"])
-					.(!empty($val['error']) ? "<br /><small style='padding-left:40px;color:red;'># <b>ERROR:</b> ".print_r($val["error"], 1)."</small>" : "")
-					.(!empty($val['meta']) ? "<br /><small style='padding-left:40px;color:grey;'># <b>META:</b> ".print_r($val["meta"], 1)."</small>" : "")
-					.(!empty($desc) ? "<br /><small style='padding-left:40px;color:grey;'># <b>DESCRIBE INDEX:</b> ".print_r($desc, 1).")</small>" : "")
-#					.(!empty($_cur_trace) ? "<br /><small style='padding-left:40px;color:blue;'># ".$this->_admin_link("edit_file", $_cur_trace["file"])." on line ".$_cur_trace["line"]." (".($_cur_trace["object"] ? $_cur_trace["object"]."->" : "").$_cur_trace["function"].")</small>" : "")
-					.(!empty($_cur_trace) ? "<br /><pre style='padding-left:40px;color:blue;'><small>"._prepare_html($_cur_trace)."</small></pre>" : "")
+					.(!empty($val['error']) ? "<small style='color:red;'># ERROR: ".print_r($val["error"], 1)."</small>" : "")
+					.(!empty($val['meta']) ? "<small style='color:grey;'># META: ".print_r($val["meta"], 1)."</small>" : "")
+					.(!empty($desc) ? "<small style='color:grey;'># DESCRIBE INDEX: ".print_r($desc, 1).")</small>" : "")
+#					.(!empty($_cur_trace) ? "<small style='color:blue;'># ".$this->_admin_link("edit_file", $_cur_trace["file"])." on line ".$_cur_trace["line"]." (".($_cur_trace["object"] ? $_cur_trace["object"]."->" : "").$_cur_trace["function"].")</small>" : "")
+					.(!empty($_cur_trace) ? "<pre style='color:blue;'><small>"._prepare_html($_cur_trace)."</small></pre>" : "")
 					."</td>";
 			$body .= "</tr>";
 
 			$total_time += $val["time"];
 		}
 		$body .= "</table>";
-		$body .= "<br /><i>".t("Total time").":</i> <b>".common()->_format_time_value($total_time)."</b> secs<br />\n";
+		$body .= "<i>".t("Total time").": ".common()->_format_time_value($total_time)." secs";
 		$status = array();
 		foreach((array)common()->sphinx_query("SHOW STATUS") as $v) {
 			$status[$v['Variable_name']] = $v['Value'];
 		}
-		$body .= "<br />\n</div>\n";
+		$body .= "</div>";
 		if ($status) {
 			$body .= $this->_show_table(t("SPHINX STATUS"), $status, 5);
 		}
@@ -512,13 +515,13 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("SSH")."</b><ul>\n";
-		$body .= "connect_time: <b>".common()->_format_time_value($ssh_debug["connect_time"])."</b> secs<br /><br />";
+		$body .= "<div class='debug_allow_close'><h5>".t("SSH")."</h5><ul>";
+		$body .= "connect_time: ".common()->_format_time_value($ssh_debug["connect_time"])." secs";
 		foreach ((array)$ssh_debug["exec"] as $i => $val) {
-			$body .= "<li><i>".($i + 1).".</i> ".$val."</li>\n";
+			$body .= "<li><i>".($i + 1).". ".$val."</li>";
 		}
-		$body .= "<br /><i>".t("Total time").":</i> <b>".common()->_format_time_value($ssh_debug["time_sum"] + $ssh_debug["connect_time"])."</b> secs</b><br />\n";
-		$body .= "</ul><br />\n</div>\n";
+		$body .= "<i>".t("Total time").": ".common()->_format_time_value($ssh_debug["time_sum"] + $ssh_debug["connect_time"])." secs";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -529,11 +532,11 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("META Tags")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("META Tags")."</h5><ol>";
 		foreach ((array)debug('_DEBUG_META') as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'").",";
 		}
-		$body .= "</ol>\n</div>\n";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -600,14 +603,18 @@ class yf_debug_info {
 		$total_size = 0;
 		$counter	= 1;
 		$total_stpls_exec_time = 0;
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("simple_templates")."</b><br /><br />\n";
-		$body .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
-		$body .= "<tr><td>&nbsp;</td><td><i>".t("name")
-			."</i></td><td> &nbsp;<i>".t("storage")
-			."</i> &nbsp;</td><td> &nbsp;<i>".t("calls")
-			."</i> &nbsp;</td><td><i>".t("size")
-			."</i> &nbsp;</td><td><i>".t("exec_time_sum")
-			."</i></td></tr>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("simple_templates")."</h5>";
+		$body .= "<table class='table table-bordered table-striped table-hover'>";
+		$body .= 
+			"<thead>
+				<th></th>
+				<th>".t("name")."</th>
+				<th>".t("storage")."</th>
+				<th>".t("calls")."</th>
+				<td>".t("size")."</th>
+				<td>".t("exec_time_sum")."</th>
+				<td>".t("trace")."</th>
+			</thead>";
 		// Do sort templates by name if needed
 		if ($this->SORT_TEMPLATES_BY_NAME && !empty(tpl()->CACHE)) {
 			ksort(tpl()->CACHE);
@@ -625,63 +632,62 @@ class yf_debug_info {
 			$cur_size = strlen($v['string']);
 			$total_size += $cur_size;
 			$total_stpls_exec_time += (float)$v["exec_time"];
-			$body .= "<tr><td align='right'>".$counter++.". &nbsp;</td><td ".$stpl_inline_edit.">"
-				.$this->_admin_link("edit_stpl", $k)
-				."&nbsp;</td><td align=\"center\"><b><small>".$v["storage"]
-				."</small></b></td><td>&nbsp; ".$v['calls']."</td><td>&nbsp; <b>".$cur_size
-				."&nbsp;</b></td><td>&nbsp; <b>".common()->_format_time_value($v["exec_time"])
-				."</b></td></tr>\n";
-			// Display trace info (source) if available
-			$traces_info = "";
-			if (debug('STPL_TRACES::'.$k)) {
-				foreach ((array)debug('STPL_TRACES::'.$k) as $_cur_trace) {
-					// Ignore repeated sources
-					if (isset($_last_sources[$k][$_cur_trace["file"].":".$_cur_trace["line"]])) {
-						continue;
-					}
-					$_last_sources[$k][$_cur_trace["file"].":".$_cur_trace["line"]] = 1;
-					$traces_info .= $this->_admin_link("edit_file", $_cur_trace["file"])." on line ".$_cur_trace["line"].($_cur_trace["inside_method"] ? " (".$_cur_trace["inside_method"].")" : "")."<br />\n";
+			$cur_trace = "";
+			foreach ((array)debug('STPL_TRACES::'.$k) as $_cur_trace) {
+				if (isset($_last_sources[$k][$_cur_trace["file"].":".$_cur_trace["line"]])) {
+					continue;
 				}
-				if (!empty($traces_info)) {
-					$body .= "<tr><td>&nbsp;</td><td colspan=\"6\" style='color:blue;'><small>".$traces_info."</small></td></tr>\n";
-				}
+				$_last_sources[$k][$_cur_trace["file"].":".$_cur_trace["line"]] = 1;
+				$cur_trace .= $this->_admin_link("edit_file", $_cur_trace["file"])." on line ".$_cur_trace["line"].($_cur_trace["inside_method"] ? " (".$_cur_trace["inside_method"].")" : "")."";
 			}
+			$body .= 
+				"<tr>
+					<td>".$counter++."</td>
+					<td ".$stpl_inline_edit.">".$this->_admin_link("edit_stpl", $k)."</td>
+					<td>".$v["storage"]."</td>
+					<td>".$v['calls']."</td>
+					<td>".$cur_size."</td>
+					<td>".common()->_format_time_value($v["exec_time"])."</td>
+					<td>".$cur_trace."</td>
+				</tr>";
 		}
-		$body .= "</table><br />\n<i>".t("used_templates_size").":</i> <b>".$total_size
-			."&nbsp;</b> <span>bytes,</span> <i>".t("total_exec_time")
-			.":</i> <b>".common()->_format_time_value($total_stpls_exec_time)."</b><span> sec<br /><br /></span></div>\n";
+		$body .= "</table>
+			<div>".t("used_templates_size").": ".$total_size." bytes, 
+				".t("total_exec_time").": ".common()->_format_time_value($total_stpls_exec_time)." seconds
+			</div>
+		</div>";
 
 		// Display calls tree
 		if (debug('STPL_PARENTS')) {
-			$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("STPL Tree")."</b>\n<pre style='padding-left:20px;background:#eee;width:50%;'>";
-			$body .= " &bull; main\n";
+			$body .= "<div class='debug_allow_close'><h5>".t("STPL Tree")."</h5>";
+			$body .= "<ul><li>main</li><ul>";
 			$body .= $this->_show_stpls_tree();
-			$body .= "</pre></div>";
+			$body .= "</ul></ul></div>";
 		}
 
 		// Debug output of the template vars
 		if (debug('STPL_REPLACE_VARS')) {
-			$body .= "\n<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Templates vars")."</b>\n";
+			$body .= "<div class='debug_allow_close'><h5>".t("Templates vars")."</h5>";
 			foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
-				$body .= "<br /><b>".$stpl_name."</b><br />\n";
-				$body .= "<div>\n";
+				$body .= "".$stpl_name."";
+				$body .= "<div>";
 				foreach ((array)$calls as $num => $vars) {
 					ksort($vars);
-					$body .= "<div style='float:left; margin: 2px;'>\n";
+					$body .= "<div>";
 					if (count($calls) > 1) {
-						$body .= "<i>".$num."</i>";
+						$body .= "<i>".$num."";
 					}
-					$body .= "<table border='0' cellspacing='0' cellpadding='0' style='font-size:9px;line-height:10px;'>\n";
+					$body .= "<table class='table table-bordered table-striped table-hover'>";
 					foreach ((array)$vars as $n => $v) {
-						$body .= "<tr style='background:#eee;border:1px solid white;'><td><b>".$n."</b></td><td>".htmlspecialchars(print_r($v, 1))."</td></tr>\n";
+						$body .= "<tr><td>".$n."</td><td>".htmlspecialchars(print_r($v, 1))."</td></tr>";
 					}
-					$body .= "</table>\n";
-					$body .= "</div>\n";
+					$body .= "</table>";
+					$body .= "</div>";
 				}
 				$body .= "<br style='clear:both' />";
-				$body .= "</div>\n";
+				$body .= "</div>";
 			}
-			$body .= "<br /></div>\n";
+			$body .= "</div>";
 		}
 		return $body;
 	}
@@ -698,13 +704,13 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("rewrite_links_info")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("rewrite_links_info")."</h5><ol>";
 		$data["SOURCE"]		= array_unique($data["SOURCE"]);
 		$data["REWRITED"]	= array_unique($data["REWRITED"]);
 		foreach ((array)$data["SOURCE"] as $k => $v) {
-			$body .= "<li>".$v." =&gt; <b>".$this->_admin_link("link", $data["REWRITED"][$k])."</b></li>\n";
+			$body .= "<li>".$v." =&gt; ".$this->_admin_link("link", $data["REWRITED"][$k])."</li>";
 		}
-		$body .= "</ol><i>".t("Rewrite processing time").":</i> <b>".common()->_format_time_value($GLOBALS['rewrite_exec_time'])."</b> <span>sec<br /><br /></span></div>\n";
+		$body .= "</ol><i>".t("Rewrite processing time").": ".common()->_format_time_value($GLOBALS['rewrite_exec_time'])." <span>sec</span></div>";
 		return $body;
 	}
 
@@ -721,14 +727,14 @@ class yf_debug_info {
 		$_time = 0;
 		$body = "";
 
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("force get url")."</b>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("force get url")."</h5>";
 		$body .= $this->_build_wide_table($data, 1);
 		$total_time = 0;
 		foreach ((array)$data as $v) {
 			$total_time += $v["time"];
 		}
-		$body .= "<br />\n<i>".t("total_time").":</i> <b>".common()->_format_time_value($total_time)."</b> <span>sec<br /><br /></span>\n";
-		$body .= "\n</div>\n";
+		$body .= "<i>".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+		$body .= "</div>";
 		return $body;
 	}
 
@@ -739,18 +745,18 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("custom_replaced_items")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("custom_replaced_items")."</h5><ol>";
 		foreach ((array)$GLOBALS["CUSTOM_REPLACED_DEBUG"] as $k => $v) {
-			$body .= "<li><b>PATTERN:</b>&nbsp; &nbsp; \n"._prepare_html($v["pattern"])
-				."<br />\n <b>REPLACE_FIRST:</b>&nbsp; &nbsp; \n"._prepare_html($v["replace_first"])
-				."<br />\n <b>REPLACE_WORDS:</b>&nbsp; &nbsp; \n"._prepare_html($v["replace_words"])
-				."<br />\n <b>REPLACE_EVALED:</b>&nbsp; &nbsp; \n"._prepare_html($v["replace_evaled"])
-				."<br />\n <b>REPLACE_LAST:</b>&nbsp; &nbsp; \n"._prepare_html($v["replace_last"])
-			."</li>\n";
+			$body .= "<li>PATTERN:  "._prepare_html($v["pattern"])
+				." REPLACE_FIRST:  "._prepare_html($v["replace_first"])
+				." REPLACE_WORDS:  "._prepare_html($v["replace_words"])
+				." REPLACE_EVALED:  "._prepare_html($v["replace_evaled"])
+				." REPLACE_LAST:  "._prepare_html($v["replace_last"])
+			."</li>";
 		}
 		$body .= "</ol><i>".t("Custom Replace processing time")
-			.":</i> <b>".common()->_format_time_value($GLOBALS['custom_replace_exec_time'])
-			."</b> <span>sec<br /><br /></span></div>\n";
+			.": ".common()->_format_time_value($GLOBALS['custom_replace_exec_time'])
+			." <span>sec</span></div>";
 		return $body;
 	}
 
@@ -761,11 +767,11 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Resized images")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Resized images")."</h5><ol>";
 		foreach ((array)$GLOBALS['_RESIZED_IMAGES_LOG'] as $v) {
-			$body .= "<li><small>".nl2br(_prepare_html($v))."</small></li>\n";
+			$body .= "<li><small>".nl2br(_prepare_html($v))."</small></li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -780,10 +786,10 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Output cache info")."</b><ol>\n";
-		$body .= "<li><i>".t("Cache file size")."</i>: <b>".$output_cache_debug['size']."&nbsp;</b> bytes</li>\n";
-		$body .= "<li><i>".t("Cache processing time")."</i>: <b>".common()->_format_time_value($output_cache_debug['exec_time'])."</b> sec</li>\n";
-		$body .= "</ol></div>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Output cache info")."</h5><ol>";
+		$body .= "<li><i>".t("Cache file size").": ".$output_cache_debug['size']." bytes</li>";
+		$body .= "<li><i>".t("Cache processing time").": ".common()->_format_time_value($output_cache_debug['exec_time'])." sec</li>";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -794,36 +800,37 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("loaded_modules")."</b><br /><br />\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("loaded_modules")."</h5>";
 
 		$counter	= 1;
 		$total_size = 0;
 		$total_load_time = 0;
-		$body .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
-		$body .= "<tr>
-				<td>&nbsp;</td>
-				<td><i>".t("class_name")."</i></td>
-				<td><i>".t("loaded_class_name")."</i></td>
-				<td><i>".t("loaded_path")."</i></td>
-				<td><i>".t("storage")."</i></td>
-				<td><i>".t("size")."</i></td>
-				<td><i>".t("time")."</i></td>
-			</tr>\n";
+		$body .= "<table class='table table-bordered table-striped table-hover'>";
+		$body .= 
+			"<thead>
+				<th></th>
+				<th>".t("class_name")."</th>
+				<th>".t("loaded_class_name")."</th>
+				<th>".t("loaded_path")."</th>
+				<th>".t("storage")."</th>
+				<th>".t("size")."</th>
+				<th>".t("time")."</th>
+			</thead>";
 		foreach ((array)debug("_MAIN_LOAD_CLASS_DEBUG") as $data) {
 			$cur_size = file_exists($data["loaded_path"]) ? filesize($data["loaded_path"]) : "";
 			$total_size += $cur_size;
 			$total_load_time += (float)$data["time"];
 			$body .= "<tr>
-					<td align='right'>".$counter++.". &nbsp;</td>
-					<td>&nbsp; <b>".$data["class_name"]."&nbsp;</b></td>
-					<td>&nbsp; <b>".$data["loaded_class_name"]."&nbsp;</b></td>
-					<td nowrap>".$this->_admin_link("edit_file", $data["loaded_path"])."</td>
-					<td>&nbsp; <b>".$data["storage"]."&nbsp;</b></td>
-					<td>&nbsp; <b>".$cur_size."&nbsp;</b></td>
-					<td>&nbsp; <b>".common()->_format_time_value($data["time"])."</b></td>
-				</tr>\n";
+					<td >".$counter++.". </td>
+					<td> ".$data["class_name"]."</td>
+					<td> ".$data["loaded_class_name"]."</td>
+					<td >".$this->_admin_link("edit_file", $data["loaded_path"])."</td>
+					<td> ".$data["storage"]."</td>
+					<td> ".$cur_size."</td>
+					<td> ".common()->_format_time_value($data["time"])."</td>
+				</tr>";
 		}
-		$body .= "</table><br />\n<i>".t("total_included_size").":</i> <b>".$total_size."&nbsp;</b> <span>bytes,</span> <i>".t("total_time").":</i> <b>".common()->_format_time_value($total_load_time)."</b> <span>sec<br /><br /></span></div>\n";
+		$body .= "</table>".t("total_included_size").": ".$total_size." <span>bytes,</span> ".t("total_time").": ".common()->_format_time_value($total_load_time)." <span>sec</span></div>";
 		return $body;
 	}
 
@@ -834,14 +841,19 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("included_files")."</b><br /><br />\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("included_files")."</h5>";
 		$total_size = 0;
 		$counter	= 1;
 		$total_include_time = 0;
 		$included_files = get_included_files();
 		$exec_time = debug('include_files_exec_time');
-		$body .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
-		$body .= "<tr><td>&nbsp;</td><td><i>".t("name")."</i></td><td><i>".t("size")."</i></td><td><i>".t("time")."</i></td></tr>\n";
+		$body .= "<table class='table table-bordered table-striped table-hover'>";
+		$body .= "<thead>
+				<th></th>
+				<th>".t("name")."</th>
+				<th>".t("size")."</th>
+				<th>".t("time")."</th>
+			</thead>";
 		foreach ((array)$included_files as $file_name) {
 			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, "core_cache")) {
 				continue;
@@ -851,12 +863,14 @@ class yf_debug_info {
 			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, "/", $file_name));
 			$cur_include_time = isset($exec_time[$_fname]) ? $exec_time[$_fname] : 0;
 			$total_include_time += (float)$cur_include_time;
-			$body .= "<tr><td align='right'>".$counter++
-				.". &nbsp;</td><td nowrap>".$this->_admin_link("edit_file", $file_name)."</td><td>&nbsp; <b>".$cur_size
-				."&nbsp;</b></td><td>&nbsp; <b>".common()->_format_time_value($cur_include_time)
-				."</b></td></tr>\n";
+			$body .= "<tr>
+				<td >".$counter++.". </td>
+				<td >".$this->_admin_link("edit_file", $file_name)."</td>
+				<td> ".$cur_size."</td>
+				<td> ".common()->_format_time_value($cur_include_time)."</td>
+			</tr>";
 		}
-		$body .= "</table><br />\n<i>".t("total_included_size").":</i> <b>".$total_size."&nbsp;</b> <span>bytes,</span> <i>".t("total_include_time").":</i> <b>".common()->_format_time_value($total_include_time)."</b> <span>sec<br /><br /></span></div>\n";
+		$body .= "</table>".t("total_included_size").": ".$total_size." <span>bytes,</span> ".t("total_include_time").": ".common()->_format_time_value($total_include_time)." <span>sec</span></div>";
 		return $body;
 	}
 
@@ -867,12 +881,12 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("declared_classes")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("declared_classes")."</h5><ol>";
 		$classes = get_declared_classes();
 		foreach ((array)$classes as $name) {
-			$body .= "<li><b>".$name."&nbsp;</b></li>\n";
+			$body .= "<li>".$name."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -911,7 +925,7 @@ class yf_debug_info {
 		$t_calls = t("I18N CALLS");
 		$t_vars = t("I18N VARS");
 
-		$add_text = t("translate time").": <b>".common()->_format_time_value(_class('i18n')->_tr_total_time)."</b> sec<br /><br />";
+		$add_text = t("translate time").": ".common()->_format_time_value(_class('i18n')->_tr_total_time)." sec";
 
 		ksort($i18n_vars[$lang]);
 		$_num_items = count($i18n_vars[$lang]);
@@ -943,9 +957,9 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Memory Usage")."</b><ol>\n";
-		$body .= t("Used memory size").": <b>".$this->_get_mem_usage()."</b>";
-		$body .= "</ol></div>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Memory Usage")."</h5><ol>";
+		$body .= t("Used memory size").": ".$this->_get_mem_usage()."";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -956,11 +970,11 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Simple compress text")."</b><ol>\n";
-		$body .= "<li>".t("Main content size original").": <b>".debug('compress_output_size_1')."&nbsp;</b> bytes</li>\n";
-		$body .= "<li>".t("Main content size compressed").": <b>".debug('compress_output_size_2')."&nbsp;</b> bytes</li>\n";
-		$body .= "<li>".t("Compress ratio").": <b>".(debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0)."</b>%</li>\n";
-		$body .= "</ol></div>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Simple compress text")."</h5><ol>";
+		$body .= "<li>".t("Main content size original").": ".debug('compress_output_size_1')." bytes</li>";
+		$body .= "<li>".t("Main content size compressed").": ".debug('compress_output_size_2')." bytes</li>";
+		$body .= "<li>".t("Compress ratio").": ".(debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0)."%</li>";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -971,11 +985,11 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("GZIP is enabled")."</b><ol>\n";
-		$body .= "<li>".t("Main content size original").": <b>".debug('page_size_original')."&nbsp;</b> bytes</li>\n";
-		$body .= "<li>".t("Main content size gzipped approx").": <b>".debug('page_size_gzipped')."&nbsp;</b> bytes</li>\n";
-		$body .= "<li>".t("GZIP compress ratio approx").": <b>".round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0)."</b>%</li>\n";
-		$body .= "</ol></div>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("GZIP is enabled")."</h5><ol>";
+		$body .= "<li>".t("Main content size original").": ".debug('page_size_original')." bytes</li>";
+		$body .= "<li>".t("Main content size gzipped approx").": ".debug('page_size_gzipped')." bytes</li>";
+		$body .= "<li>".t("GZIP compress ratio approx").": ".round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0)."%</li>";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -987,7 +1001,7 @@ class yf_debug_info {
 		}
 		$body = "";
 		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", tpl()->CACHE["main"]["string"], $m)) {
-			$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Not processed STPL tags")."</b><ol>\n";
+			$body .= "<div class='debug_allow_close'><h5>".t("Not processed STPL tags")."</h5><ol>";
 			foreach ((array)$m[0] as $v) {
 				$v = str_replace(array("{","}"), "", $v);
 				$not_replaced[$v] = $v;
@@ -1003,16 +1017,16 @@ class yf_debug_info {
 						$stpls[] = $name;
 					}
 				}
-				$body .= "'".htmlspecialchars($v)."' (".implode(", ", $stpls).")<br />\n";
+				$body .= "'".htmlspecialchars($v)."' (".implode(", ", $stpls).")";
 			}
-			$body .= "</ol></div>\n";
+			$body .= "</ol></div>";
 		}
 		return $body;
 	}
 
 	/**
 	*/
-	function _my_wrap($str, $width=40, $break="\n") { 
+	function _my_wrap($str, $width=40, $break="") { 
 		return preg_replace('#(\S{'.$width.',})#e', "chunk_split('$1', ".$width.", '".$break."')", $str); 
 	}
 
@@ -1023,43 +1037,43 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<table border='0' cellspacing='0' cellpadding='1' style='font-size:9px;line-height:10px;background-color:#ddd;'>\n";
+		$body .= "<table class='table table-bordered table-striped table-hover'>";
 		// Header
-		$body .= "<td align='center' width='1%'>#</td>\n";
+		$body .= "<td  width='1%'>#</td>";
 		foreach ((array)$data[0] as $k => $v) {
-			$body .= "<td align='center' ".($k == "trace" ? " width='40%'" : "").">".$k."</td>\n";
+			$body .= "<td  ".($k == "trace" ? " width='40%'" : "").">".$k."</td>";
 		}
 		// Data
 		$i = 0;
 		foreach ((array)$data as $_num => $_data) {
-			$body .= "<tr>\n";
-			$body .= "<td style='border:1px solid white;'>".++$i."</td>\n";
+			$body .= "<tr>";
+			$body .= "<td>".++$i."</td>";
 			foreach ((array)$_data as $k => $v) {
 				if ($k == "time") {
 					$v = common()->_format_time_value($v, 5);
 				}
 				if ($k == "data") {
-					$v = $this->_my_wrap($v, 40, "<br />");
+					$v = $this->_my_wrap($v, 40, "");
 				}
 				if ($k == "trace") {
 					$_cur_trace		= $v[$trace_num];
 					$_prev_trace	= $v[$trace_num + 1];
 					if (!empty($_cur_trace)) {
-						$v = "<small style='color:blue;font-size:9px;line-height:10px;'>".$this->_admin_link("edit_file", $_cur_trace["file"]).":".$_cur_trace["line"]."(".$_prev_trace["function"].")</small>";
+						$v = "<small>".$this->_admin_link("edit_file", $_cur_trace["file"]).":".$_cur_trace["line"]."(".$_prev_trace["function"].")</small>";
 					}
 				}
 				if (is_array($v)) {
 					if (empty($v)) {
 						$v = "";
 					} else {
-						$v = str_replace("\n", "", var_export($v, 1));
+						$v = str_replace("", "", var_export($v, 1));
 					}
 				}
-				$body .= "<td style='border:1px solid white;'>".(strlen($v) ? $v : "&nbsp;")."</td>\n";
+				$body .= "<td>".(strlen($v) ? $v : "")."</td>";
 			}
-			$body .= "</tr>\n";
+			$body .= "</tr>";
 		}
-		$body .= "</table>\n";
+		$body .= "</table>";
 		return $body;
 	}
 
@@ -1072,14 +1086,14 @@ class yf_debug_info {
 		}
 		$body = "";
 
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Main Get Data")."</b>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Main Get Data")."</h5>";
 		$body .= $this->_build_wide_table($data);
 		$total_time = 0;
 		foreach ((array)$data as $v) {
 			$total_time += $v["time"];
 		}
-		$body .= "<br />\n<i>".t("total_time").":</i> <b>".common()->_format_time_value($total_time)."</b> <span>sec<br /><br /></span>\n";
-		$body .= "\n</div>\n";
+		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+		$body .= "</div>";
 
 		return $body;
 	}
@@ -1092,7 +1106,7 @@ class yf_debug_info {
 		}
 		$body = "";
 
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Core cache get")."</b>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Core cache get")."</h5>";
 		$cache_debug = debug("_core_cache_debug::get");
 		if ($cache_debug) {
 			$body .= $this->_build_wide_table($cache_debug);
@@ -1100,33 +1114,33 @@ class yf_debug_info {
 			foreach ((array)$cache_debug as $v) {
 				$total_time += $v["time"];
 			}
-			$body .= "<br />\n<i>".t("total_time").":</i> <b>".common()->_format_time_value($total_time)."</b> <span>sec<br /><br /></span>\n";
+			$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
 		}
-		$body .= "\n</div>\n";
+		$body .= "</div>";
 
 		$cache_debug = debug("_core_cache_debug::set");
 		if ($cache_debug) {
-			$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Core cache set")."</b>\n";
+			$body .= "<div class='debug_allow_close'><h5>".t("Core cache set")."</h5>";
 			$body .= $this->_build_wide_table($cache_debug);
 			$total_time = 0;
 			foreach ((array)$cache_debug as $v) {
 				$total_time += $v["time"];
 			}
-			$body .= "<br />\n<i>".t("total_time").":</i> <b>".common()->_format_time_value($total_time)."</b> <span>sec<br /><br /></span>\n";
-			$body .= "\n</div>\n";
+			$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+			$body .= "</div>";
 		}
 
 		$cache_debug = debug("_core_cache_debug::refresh");
 		if ($cache_debug) {
-			$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Core cache refresh")."</b>\n";
+			$body .= "<div class='debug_allow_close'><h5>".t("Core cache refresh")."</h5>";
 			$body .= $this->_build_wide_table($cache_debug);
 			$total_time = 0;
 			foreach ((array)$cache_debug as $v) {
 				$total_time += $v["time"];
 			}
-			$body .= "<br />\n<i>".t("total_time").":</i> <b>".common()->_format_time_value($total_time)."</b> <span>sec<br /><br /></span>\n";
+			$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
 
-			$body .= "\n</div>\n";
+			$body .= "</div>";
 		}
 		return $body;
 	}
@@ -1139,7 +1153,7 @@ class yf_debug_info {
 		}
 
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("Main execute")."</b>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("Main execute")."</h5>";
 		$times = debug('main_execute_block_time');
 		if (isset($times)) {
 			$body .= $this->_build_wide_table($times);
@@ -1148,9 +1162,9 @@ class yf_debug_info {
 			foreach ((array)$times as $v) {
 				$total_time += $v["time"];
 			}
-			$body .= "<br />\n<i>".t("total_time").":</i> <b>".common()->_format_time_value($total_time)."</b> <span>sec<br /><br /></span>\n";
+			$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
 		}
-		$body .= "\n</div>\n";
+		$body .= "</div>";
 		return $body;
 	}
 
@@ -1161,11 +1175,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_GET_DATA) {
 			return "";
 		}
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("GET data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("GET data")."</h5><ul>";
 		foreach ((array)$_GET as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1176,11 +1190,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_POST_DATA) {
 			return "";
 		}
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("POST data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("POST data")."</h5><ul>";
 		foreach ((array)$_POST as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1191,11 +1205,11 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("COOKIE data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("COOKIE data")."</h5><ul>";
 		foreach ((array)$_COOKIE as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1206,11 +1220,11 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("REQUEST data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("REQUEST data")."</h5><ul>";
 		foreach ((array)$_REQUEST as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1221,14 +1235,14 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("SESSION data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("SESSION data")."</h5><ul>";
 		if (is_array($_SESSION)) {
 			ksort($_SESSION);
 		}
 		foreach ((array)$_SESSION as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		// Additional session stats
 		foreach ((array)ini_get_all('session') as $_k => $_v) {
 			$_session_params[$_k] = $_v["local_value"];
@@ -1247,11 +1261,11 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("FILES data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("FILES data")."</h5><ul>";
 		foreach ((array)$_FILES as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1262,14 +1276,14 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("SERVER data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("SERVER data")."</h5><ul>";
 		if (is_array($_SERVER)) {
 			ksort($_SERVER);
 		}
 		foreach ((array)$_SERVER as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1280,14 +1294,14 @@ class yf_debug_info {
 			return "";
 		}
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("ENV data")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("ENV data")."</h5><ul>";
 		if (is_array($_ENV)) {
 			ksort($_ENV);
 		}
 		foreach ((array)$_ENV as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1314,11 +1328,11 @@ class yf_debug_info {
 			"IS_SPIDER"		=> (int)conf('IS_SPIDER'),
 		);
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("FRAMEWORK SETTINGS")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("FRAMEWORK SETTINGS")."</h5><ul>";
 		foreach ((array)$data as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => ".(is_array($text) ? print_r($text, 1) : "\"".htmlspecialchars($text)."\"").",<br />\n";
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ul></div>";
 		return $body;
 	}
 
@@ -1328,11 +1342,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_PHP_INI) {
 			return "";
 		}
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\"><b>".t("PHP INI")."</b><ol>\n";
+		$body .= "<div class='debug_allow_close'><h5>".t("PHP INI")."</h5><ol>";
 		foreach (ini_get_all() as $id => $text) {
-			$body .= "[\"".htmlspecialchars($id)."\"] => \"".htmlspecialchars($text["local_value"])."\",<br />\n";
+			$body .= "['".htmlspecialchars($id)."'] => '".htmlspecialchars($text["local_value"])."',";
 		}
-		$body .= "</ol></div>\n";
+		$body .= "</ol></div>";
 		return $body;
 	}
 
@@ -1385,7 +1399,7 @@ class yf_debug_info {
 			return memory_get_usage();
 		}
 		// No memory functionality available at all
-		return '<b style="color: red;">no value</b>';
+		return '<b style="color: red;">no value';
 	}
 
 	/**
@@ -1398,20 +1412,20 @@ class yf_debug_info {
 		if (empty($explain_result)) {
 			return false;
 		}
-		$body = "<table border='0' cellspacing='0' cellpadding='1' style='font-size:9px;line-height:10px;background-color:#ddd;'>\n";
+		$body = "<table class='table table-bordered table-striped table-hover'>";
 		// Header
 		foreach ((array)$explain_result[0] as $k => $v) {
-			$body .= "<td align='center'>".$k."</td>\n";
+			$body .= "<td>".$k."</td>";
 		}
 		// Data
 		foreach ((array)$explain_result as $_num => $_data) {
-			$body .= "<tr>\n";
+			$body .= "<tr>";
 			foreach ((array)$_data as $k => $v) {
-				$body .= "<td style='border:1px solid white;'>".(strlen($v) ? $v : "&nbsp;")."</td>\n";
+				$body .= "<td>".(strlen($v) ? $v : "")."</td>";
 			}
-			$body .= "</tr>\n";
+			$body .= "</tr>";
 		}
-		$body .= "</table>\n";
+		$body .= "</table>";
 		return $body;
 	}
 
@@ -1424,8 +1438,8 @@ class yf_debug_info {
 			if ($_stpl_parent != $parent) {
 				continue;
 			}
-			$body .= str_repeat("   ", $level)." &bull; ".$this->_admin_link("edit_stpl", $_name)."\n";
-			$body .= $this->_show_stpls_tree($_name, $level + 1);
+			$body .= "<li>".$this->_admin_link("edit_stpl", $_name)."</li>";
+			$body .= "<ul>".$this->_show_stpls_tree($_name, $level + 1)."</ul>";
 		}
 		return $body;
 	}
@@ -1434,34 +1448,35 @@ class yf_debug_info {
 	* Display data formatted as table
 	*/
 	function _show_table ($title = "", $data = array(), $_items_in_column = 0, $add_text = "") {
-		$_tbl_start	= "<table border='0' cellspacing='0' cellpadding='0' style='font-size:9px;line-height:10px;'>\n";
+		$_tbl_start	= "<table class='table table-bordered table-striped table-hover'>";
 
 		$body = "";
-		$body .= "<div align=\"left\" style=\"margin-left:10px;\" class=\"debug_allow_close\">\n"
-			."<b>".$title."</b>\n"
-			."<table border='0' cellspacing='0' cellpadding='5'>
+		$body .= "<div class='debug_allow_close'>"
+			."<h5>".$title."</h5>"
+			."<table>
 				<tr valign='top'>
-					<td>\n"
+					<td>"
 			.$_tbl_start;
 
 		$i = 0;
 		foreach ((array)$data as $_var_name => $_var_value) {
-			$body .= "<tr".(!(++$i % 2) ? " style='background:#ccc;'" : "").">
+			++$i;
+			$body .= "<tr>
 						<td>".$_var_name."</td>
 						<td>".$_var_value."</td>
-					</tr>\n";
+					</tr>";
 			if (!($i % $_items_in_column)) {
 				$body .= "</table>
 						</td>
-						<td>\n"
+						<td>"
 					.$_tbl_start;
 			}
 		}
 		$body .= "</table>
 				</td>
 			</tr>
-			</table>\n<br />".$add_text."
-			</div>\n";
+			</table>".$add_text."
+			</div>";
 		return $body;
 	}
 
@@ -1521,7 +1536,7 @@ Call Stack:
 #var_dump($trace);
 #		foreach ((array)$trace as $k => $v) {
 			$v["object"] = isset($v["object"]) && is_object($v["object"]) ? get_class($v["object"]) : null;
-			$body .= print_r($v, 1)."<br />";
+			$body .= print_r($v, 1)."";
 #		}
 		return $body;
 	}

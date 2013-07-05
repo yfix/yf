@@ -114,13 +114,13 @@ class yf_forum_manage_future {
 		if (!empty($_POST)) {
 			$_POST["user_id"] = intval($_POST["user_id"]);
 			if (empty($_POST["user_id"]) || !isset($_users_array[$_POST["user_id"]])) {
-				common()->_raise_error(t("User id required"));
+				_re(t("User id required"));
 			}
 			if (empty($_POST["name"])) {
-				common()->_raise_error(t("Topic name required"));
+				_re(t("Topic name required"));
 			}
 			if (empty($_POST["text"])) {
-				common()->_raise_error(t("Topic text required"));
+				_re(t("Topic text required"));
 			}
 			if (!common()->_error_exists()) {
 				db()->INSERT("forum_future_posts", array(

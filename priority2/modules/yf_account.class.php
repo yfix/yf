@@ -96,7 +96,7 @@ class yf_account {
 		// Try ot get message info
 		$message_info = db()->query_fetch("SELECT * FROM `".db('admin_messages')."` WHERE `id`=".intval($_GET["id"])." AND `user_id`=".intval($this->USER_ID));
 		if (empty($message_info["id"])) {
-			common()->_raise_error("No such admin message!");
+			_re("No such admin message!");
 			return _e();
 		}
 		// Update record

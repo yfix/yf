@@ -16,33 +16,32 @@ class yf_graphics_welcome {
 	* @return	string	Output
 	*/
 	function _show_welcome () {
+		$admin_id	= (int)$_SESSION['admin_id'];
+		$admin_group= (int)$_SESSION['admin_group'];
+		$user_id	= (int)main()->USER_ID;
+		$user_group	= (int)main()->ADMIN_ID;
+		$login_time = MAIN_TYPE_ADMIN ? $_SESSION['admin_login_time'] : $_SESSION['user_login_time'];
 		// For authorized admins only
-		if (MAIN_TYPE_ADMIN && $_SESSION['admin_id'] && $_SESSION['admin_group']) {
-			$user_info		= db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".$_SESSION['admin_id']);
+		if (MAIN_TYPE_ADMIN && $admin_id && $admin_group) {
+			$admin_info		= db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".$admin_id);
 			$admin_groups	= main()->get_data("admin_groups");
-			$group_name		= translate($admin_groups[$_SESSION['admin_group']]);
-			// Process template
-			$replace = array(
-				"id"		=> intval($user_info["id"]),
-				"name"		=> _prepare_html($user_info['first_name']." ".$user_info['last_name']),
-				"group"		=> _prepare_html($group_name),
-				"time"		=> _format_date($_SESSION['admin_login_time']),
-				"edit_link"	=> $_SESSION['admin_group'] == 1 ? "./?object=admin&action=edit&id=".intval($user_info["id"]) : "",
-			);
-			$body .= tpl()->parse("system/admin_welcome", $replace);
+			$body .= tpl()->parse("system/admin_welcome", array(
+				"id"		=> intval($admin_id),
+				"name"		=> _prepare_html($admin_info['first_name']." ".$admin_info['last_name']),
+				"group"		=> _prepare_html(t($admin_groups[$admin_group])),
+				"time"		=> _format_date($login_time),
+				"edit_link"	=> $admin_group == 1 ? "./?object=admin&action=edit&id=".intval($admin_id) : "",
+			));
 		// For authorized users only
-		} elseif (MAIN_TYPE_USER && $_SESSION['user_id'] && $_SESSION['user_group']) {
-			$user_info = user($_SESSION['user_id']);
+		} elseif (MAIN_TYPE_USER && $user_id && $user_group) {
+			$user_info = user($user_id);
 			$user_groups	= main()->get_data("user_groups");
-			$group_name 	= $user_groups[$_SESSION['user_group']];
-			// Process template
-			$replace = array(
+			$body .= tpl()->parse("system/user_welcome", array(
 				"id"	=> intval($user_info["id"]),
 				"name"	=> _prepare_html(_display_name($user_info)),
-				"group"	=> _prepare_html(translate($group_name)),
-				"time"	=> _format_date($_SESSION['user_login_time']),
-			);
-			$body .= tpl()->parse("system/user_welcome", $replace);
+				"group"	=> _prepare_html(t($user_groups[$user_group])),
+				"time"	=> _format_date($login_time),
+			));
 		}
 		return $body;
 	}

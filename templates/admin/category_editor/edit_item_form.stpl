@@ -1,51 +1,12 @@
-<h2>
-{if("for_edit" eq 1)}{t(Edit Category Item)}{/if}
-{if("for_edit" eq 0)}{t(Add Category Item)}{/if}
- {t(for)}  "{category_name}"
-</h2>
-
-<div class="editform">
-<form method="post" action="{form_action}">
-	<p class="first">
-		<label for="parent_id_box">{t(Parent Item)}</label>
-		{parent_id_box}
-	</p>
-	<p>
-		<label for="name">{t(Item Title)}</label>
-		<input type="text" id="name" name="name" value="{name}" size="30">
-	</p>
-	<p>
-		<label for="desc">{t(Description)}</label>
-		<textarea id="desc" name="desc" cols="50" rows="3">{desc}</textarea>
-	</p>
-	<p>
-		<label for="url">{t(URL Keywords)}</label>
-		<input type="text" id="url" name="url" value="{url}" size="30">
-	</p>
-<!--
-	<p>
-		<label for="icon">{t(Item Icon Path)}</label>
-		<input type="text" id="icon" name="icon" value="{icon}" size="30">
-	</p>
--->
-<!--
-	<p>
-		<label for="other_info">{t(Other Info)}</label>
-		<textarea id="other_info" name="other_info" cols="50" rows="3">{other_info}</textarea>
-	</p>
--->
-	<p>
-		<label for="featured_box">{t(Is Featured)}</label>
-		{featured_box}
-	</p>
-	<p>
-		<label for="item_order">{t(Display Order)}</label>
-		<input type="text" id="item_order" name="item_order" value="{order}" size="5">
-	</p>
-	<p>
-		<label for="active_box">{t(Active)}</label>
-		{active_box}
-	</p>
+<form method="post" action="{form_action}" class="form-horizontal">
+	{form_row("box","parent_id_box","Parent Item")}
+	{form_row("text","name")}
+	{form_row("text","desc","Description")}
+	{form_row("text","url","URL Keywords")}
+	{form_row("text","icon","Item Icon Path")}
+	{form_row("box","featured_box","Is Featured")}
+	{form_row("text","order","Display Order")}
+	{form_row("active_box")}
 {if("custom_fields" ne "")}
 	<p class="full_width">
 		<b style="color:grey;">Custom fields:</b>
@@ -57,12 +18,7 @@
 	</p>
 {/foreach}
 {/if}
-	<div class="button_div">
-		<input type="submit" value="  {t(Save)}  " name="go" />
-	</div>
+	<input type="submit" value="{t(Save)}" name="go" class="btn" />
+	<a href="{back_link}" class="btn">{t(Back)}</a>
 </form>
-</div>
 
-<br /><br />
-
-<div align="center"><a href="{back_link}">{t(Back)}</a></div>

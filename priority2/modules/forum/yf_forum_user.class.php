@@ -580,16 +580,16 @@ class yf_forum_user {
 		if (count($_POST) && !empty($_POST["login"])) {
 			// Check required fields
 			if (!empty($_POST["login"]) && (_strlen($_POST["login"]) > module('forum')->SETTINGS["MAX_USER_NAME"] || _strlen($_POST["login"]) < module('forum')->SETTINGS["MIN_USER_NAME"])) {
-				common()->_raise_error(t("Wrong login length"));
+				_re(t("Wrong login length"));
 			}
 			if (!empty($_POST["login"]) && db()->query_num_rows("SELECT `id` FROM `".db('forum_users')."` WHERE `name`='"._es($_POST["login"])."'")) {
-				common()->_raise_error(t("login_exists")." \"".$_POST["login"]."\"");
+				_re(t("login_exists")." \"".$_POST["login"]."\"");
 			}
 			if (!common()->email_verify($_POST["email"])) {
-				common()->_raise_error(t("wrong_email"));
+				_re(t("wrong_email"));
 			}
 			if (!strlen($_POST["pswd"]) || $_POST["pswd"] != $_POST["pswd2"]) {
-				common()->_raise_error(t("wrong_password"));
+				_re(t("wrong_password"));
 			}
 			// Validate captcha
 			if ($use_captcha) {
@@ -662,10 +662,10 @@ class yf_forum_user {
 			// Check required fields
 			if (strlen($created) && strlen($email) && strlen($login) && strlen($pswd)) {
 				if ($created < (time() - module('forum')->SETTINGS["REGISTRATION_TTL"])) {
-					common()->_raise_error(t("link_has_expired"));
+					_re(t("link_has_expired"));
 				}
 				if (db()->query_num_rows("SELECT `id` FROM `".db('forum_users')."` WHERE `name`='"._es($login)."'")) {
-					common()->_raise_error(t("login_exists")." \"".$login."\"");
+					_re(t("login_exists")." \"".$login."\"");
 				}
 				// Show error message if exists
 				if (!common()->_error_exists()) {

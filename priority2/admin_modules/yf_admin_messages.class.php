@@ -197,7 +197,7 @@ class yf_admin_messages {
 			$msg_info = db()->query_fetch("SELECT * FROM `".db('admin_messages')."` WHERE `id`=".intval($_GET["id"]));
 		}
 		if (empty($msg_info)) {
-			return common()->_raise_error("No such message!");
+			return _re("No such message!");
 		}
 		// Get user info
 		$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($msg_info["user_id"]));

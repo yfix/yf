@@ -408,7 +408,7 @@ class yf_db_manager {
 				$result = db()->query($item_info["query"]);
 				if (!$result) {
 					$db_error = db()->error();
-					common()->_raise_error(t("Error while executing the query<br />\r\n<br />\r\n @text1<br />\r\n<br />\r\nCAUSE: @text2", array("@text1" => nl2br(_prepare_html($item_info["query"], 0)), "@text2" => $db_error["message"])));
+					_re(t("Error while executing the query<br />\r\n<br />\r\n @text1<br />\r\n<br />\r\nCAUSE: @text2", array("@text1" => nl2br(_prepare_html($item_info["query"], 0)), "@text2" => $db_error["message"])));
 					break;
 				}
 			}
@@ -561,10 +561,10 @@ class yf_db_manager {
 			}
 			// Check for errors
 			if (empty($tables_to_export)) {
-				common()->_raise_error(t("No tables to export!"));
+				_re(t("No tables to export!"));
 			}
 			if (!isset($this->_export_types[$EXPORT_TYPE])) {
-				common()->_raise_error(t("Wrong export type!"));
+				_re(t("Wrong export type!"));
 			}
 			// Try mysqldump
 // checking

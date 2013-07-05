@@ -61,15 +61,15 @@ class yf_community {
 		
 		if(isset($_POST["go"])){
 			if($_POST["user"] == ""){
-				common()->_raise_error(t("Account name is required!"));
+				_re(t("Account name is required!"));
 			}else{
 				$name = db()->query_fetch("SELECT `id` FROM `".db('user')."` WHERE `login`='".$_POST["user"]."'");
 				if(!empty($name)){
-					common()->_raise_error(t("Account name")." (".$_POST["user"].") ".t("is already reserved. Please try another one."));
+					_re(t("Account name")." (".$_POST["user"].") ".t("is already reserved. Please try another one."));
 				}
 			}
 			if($_POST["title"] == ""){
-				common()->_raise_error(t("Community title is required!"));
+				_re(t("Community title is required!"));
 			}
 			
 			if(!common()->_error_exists()){
@@ -357,10 +357,10 @@ class yf_community {
 					$new_member = db()->query_fetch("SELECT `id`,`nick` FROM `".db('user')."` WHERE `nick`='"._es($member["name"])."' AND `group` != ".$this->COMMUNITY_GROUP);
 					
 					if(empty($new_member)){
-						common()->_raise_error(t("user with nick '".$member["name"]."' not found!"));
+						_re(t("user with nick '".$member["name"]."' not found!"));
 					}else{
 						if(isset($members_ids[$new_member["id"]])){
-							common()->_raise_error(t("user with nick '".$member["name"]."' is in community user list!"));
+							_re(t("user with nick '".$member["name"]."' is in community user list!"));
 						}else{
 							// add member to community
 							$OBJ_FRIENDS->_add_user_friends_ids($community_info["user_id"], $new_member["id"]);

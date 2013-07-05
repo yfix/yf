@@ -4,25 +4,23 @@
 <form action="{save_form_action}" method="post">
 <table class="table table-bordered table-striped table-hover">
 	<thead>
-		<th colspan="2">{t(Name)}</th>
+		<th>{t(Name)}</th>
 		<th>{t(Url)}</th>
 		<th>{t(Other)}</th>
-		<th>{t(Active)}</th>
 		<th>{t(Order)}</th>
-		<th width="5%">{t(Action)}</th>
+		<th>{t(Action)}</th>
 	</thead>
-	<tbody>
 {items}
-	</tbody>
 </table>
-{/if}
-{if("items" ne "")}<div align="center"><br /><input type="submit" name="go" value="{t(SAVE)}"></div>{/if}
+	<input type="submit" name="go" value="{t(SAVE)}" class="btn"></div>
 </form>
-{if("items" eq "")}<div align="center">{t(No items yet)}</div>{/if}
+{/if}
 
-{if("pages" ne "")}<div align="center">{pages}</div>{/if}
+{if("items" eq "")}<div class="alert alert-info">{t(No items yet)}</div>{/if}
 
-<div align="center">
-	<a href="{add_item_link}">{t(Add new item)}</a>
-	<a href="{back_link}">{t(Back)}</a>
+{pages}
+
+<div class="container">
+	<a href="{add_item_link}" class="btn">{t(Add new item)}</a>
+	<a href="{back_link}" class="btn">{t(Back)}</a>
 </div>

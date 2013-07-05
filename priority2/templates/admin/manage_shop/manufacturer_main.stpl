@@ -1,34 +1,27 @@
-<div align="center">
 {if("items" ne "")}
 <table class="table table-bordered table-striped table-hover">
-	<col align="left"><col><col align="left"><col align="left"><col><col>
 	<thead>
 		<th>{t(ID)}</th>
 		<th>{t(Name)}</th>
 		<th>{t(Sort order)}</th>
 		<th>{t(Action)}</th>
 	</thead>
-	<tbody>
 {foreach("items")}
 	<tr>
 		<td><b>{#.order_id}</b></td>
 		<td><a href="{#.view_url}">{#.name}</a></td>
 		<td>{#.sort_order}</td>
 		<td nowrap>
-			<a href="{#.edit_url}"><img height="16" width="16" border="0" src="images/links_edit.gif" alt="{t(Edit)} " /></a>&nbsp;
-			<a href="{#.delete_url}" onclick="return confirm('{t(Are you sure)} ?');"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)} " /></a>&nbsp;
+			<a href="{#.edit_url}"><i class="icon-edit" alt="{t(Edit)} "></i></a> 
+			<a href="{#.delete_url}" onclick="return confirm('{t(Are you sure)} ?');"><i class="icon-trash" alt="{t(Delete)} " /></i></a>
 		</td>
 	</tr>
 {/foreach}
-	</tbody>
 </table>
 {else}
-{t(No orders)}
+	<div class="alert alert-info">{t(No records)}</div>
 {/if}
-</div>
 
-{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}
+{pages}
 
-<br />
-	
-	<p><a href="{add_url}">{t(Add manufacturer)}</a></p>
+<a href="{add_url}" class="btn">{t(Add manufacturer)}</a>

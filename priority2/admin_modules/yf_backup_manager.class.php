@@ -107,7 +107,7 @@ class yf_backup_manager {
 	function backup () {
 
 		if (empty($this->files_list)) {
-			common()->_raise_error(t("Backup failed")."!");			
+			_re(t("Backup failed")."!");			
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
 
@@ -184,7 +184,7 @@ class yf_backup_manager {
 		$tar_file_path = $this->backup_folder_path;
 
 		if (!file_exists($full_fpath) || !$full_fpath) {
-			common()->_raise_error(t("Resotre failed")."!. " .t("No such file"));
+			_re(t("Resotre failed")."!. " .t("No such file"));
 			return false;
 		}
 /*
@@ -261,7 +261,7 @@ class yf_backup_manager {
 		if (file_exists($result_filepath)){
 			return $result_filepath;
 		} else {
-			common()->_raise_error(t("Backup failed")."!");
+			_re(t("Backup failed")."!");
 			return false;
 
 		}
@@ -277,7 +277,7 @@ class yf_backup_manager {
 
 		$tar_file_path = substr($full_fpath, 0, -strlen($fname));
 		if (!file_exists($full_fpath) || !$full_fpath) {
-			common()->_raise_error(t("Resotre failed")."!. " .t("No such file"));
+			_re(t("Resotre failed")."!. " .t("No such file"));
 			return false;
 		}
 

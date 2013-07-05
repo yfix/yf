@@ -166,7 +166,7 @@ class widgets_editor {
 	function add(){
 		if (isset($_POST["go"])) {
 			if (!$_POST["location"] && !$_POST["theme_select_box"]) {
-				common()->_raise_error(t("Please select something"));
+				_re(t("Please select something"));
 			}
 			
 			if (!common()->_error_exists()) {
@@ -216,7 +216,7 @@ class widgets_editor {
 		
 		if(isset($_POST["go"])){
 			if (!$_POST["location"] && !$_POST["theme_select_box"]) {
-				common()->_raise_error(t("Please select something"));
+				_re(t("Please select something"));
 			}
 			
 			if(!common()->_error_exists()){

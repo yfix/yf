@@ -140,6 +140,14 @@ class yf_rewrite {
 				$r_array[$v] = $rewrited_data[$k];
 			}
 			// Fix for bug with similar shorter links
+			function _sort_by_length ($a, $b) {
+				$sa = strlen($a);
+				$sb = strlen($b);
+				if ($sa == $sb) {
+					return 0;
+				}
+				return ($sa < $sb) ? +1 : -1;
+			}
 			uksort($r_array, array(&$this, "_sort_by_length"));
 			// DO NOT USE strtr() here!!!
 			$body = str_replace(array_keys($r_array), array_values($r_array), $body);
@@ -235,16 +243,66 @@ class yf_rewrite {
 		}
 		return $body;
 	}
-
-	/** 
-	* Used by uksort()
+	
+	/**
 	*/
-	function _sort_by_length ($a, $b) {
-		$sa = strlen($a);
-		$sb = strlen($b);
-		if ($sa == $sb) {
-			return 0;
+    function _force_get_url ($params = array(), $host = "", $url_str = "", $gen_cache = true) {
+		$time_start = microtime(true);
+		if(!is_array($params) && empty($url_str)){
+			return false;
 		}
-		return ($sa < $sb) ? +1 : -1;
-	}
+		if((isset($_GET["debug"]) && $_GET["debug"] == 57) || isset($_GET["no_cache"]) || isset($_GET["no_core_cache"])){
+			$params['debug'] = (isset($_GET["debug"]) && $_GET["debug"] == 57) ? 57 : "";
+			$params['no_cache'] = isset($_GET["no_cache"]) ? "y" : "";
+			$params['no_core_cache'] = isset($_GET["no_core_cache"]) ? "y" : "";
+		}
+
+		if(empty($url_str)){
+			if(isset($params["action"]) && empty($params["action"])){
+				$params["action"] = "show";
+			}
+		}
+		foreach((array)$params as $k => $v){
+			if(empty($v)){
+				unset($params[$k]);
+				continue;
+			}
+		}
+		// patterns support here
+		$params['host'] = !empty($host) ? $host : $_SERVER["HTTP_HOST"];
+		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1) {
+			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
+		} else {
+			foreach ((array)$params as $k => $v) {
+				if ($k == 'host') {
+					continue;
+				}
+				$arr_out[] = $k."=".$v;
+			}
+			if (!empty($arr_out)) {
+				$u .= "?".implode("&",$arr_out);
+			}
+			$link = $this->_correct_protocol("http://{$params[host]}/{$u}");
+		}
+		return $link;
+    }
+
+    /**
+	*
+    */
+    function _correct_protocol($url) {
+        if (empty($url)) {
+            return false;
+        }
+        if (empty(main()->HTTPS_ENABLED_FOR)) {
+            return $url;
+        }
+        // Return links to the http protocol
+        if (substr($url, 0, 8) == "https://" && !main()->USE_ONLY_HTTPS) {
+            $url = str_replace("https://", "http://", $url);
+        } else {
+            $url = str_replace("http://", "https://", $url);
+        }
+        return $url;
+    }
 }

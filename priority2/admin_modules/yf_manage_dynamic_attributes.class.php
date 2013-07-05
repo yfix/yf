@@ -62,7 +62,7 @@ class yf_manage_dynamic_attributes{
 	
 		if(isset($_POST["go"])){
 			if(empty($_POST["name"])){
-				common()->_raise_error(t("Name is required"));
+				_re(t("Name is required"));
 			}
 			
 			if(!common()->_error_exists()){
@@ -97,7 +97,7 @@ class yf_manage_dynamic_attributes{
 	
 		if(isset($_POST["go"])){
 			if(empty($_POST["name"])){
-				common()->_raise_error(t("Name is required"));
+				_re(t("Name is required"));
 			}
 			
 			if(!common()->_error_exists()){
@@ -181,7 +181,7 @@ class yf_manage_dynamic_attributes{
 		if(isset($_POST["go"])){
 		
 			if(empty($_POST["name"])){
-				common()->_raise_error(t("Name is required"));
+				_re(t("Name is required"));
 			}
 			
 			if(!common()->_error_exists()){
@@ -247,7 +247,7 @@ class yf_manage_dynamic_attributes{
 		if(isset($_POST["go"])){
 		
 			if(empty($_POST["name"])){
-					common()->_raise_error(t("Name is required"));
+					_re(t("Name is required"));
 			}
 			
 			if(!common()->_error_exists()){

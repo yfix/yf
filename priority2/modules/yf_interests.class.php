@@ -351,12 +351,12 @@ class yf_interests {
 		// Split by lines
 		$lines	= explode("\n", $source);
 		if (count($lines) > $this->MAX_KEYWORDS_NUM) {
-			common()->_raise_error("Too many keywords (".count($lines)."), allowed max=".$this->MAX_KEYWORDS_NUM);
+			_re("Too many keywords (".count($lines)."), allowed max=".$this->MAX_KEYWORDS_NUM);
 		}
 		// Last cleanup
 		foreach ((array)$lines as $cur_word) {
 			if (empty($cur_word) || (strlen($cur_word) * ($this->UTF8_MODE ? 2 : 1)) < $this->MIN_KEYWORD_LENGTH) {
-				common()->_raise_error("Keyword \""._prepare_html($cur_word)."\" is too short (min length=".$this->MIN_KEYWORD_LENGTH.")");
+				_re("Keyword \""._prepare_html($cur_word)."\" is too short (min length=".$this->MIN_KEYWORD_LENGTH.")");
 //				continue;
 			}
 			// Check max number of keywords
@@ -365,7 +365,7 @@ class yf_interests {
 			}
 			// Cut long keywords
 			if ($this->MAX_KEYWORD_LENGTH && strlen($cur_word) > $this->MAX_KEYWORD_LENGTH * ($this->UTF8_MODE ? 2 : 1)) {
-				common()->_raise_error("Keyword \""._prepare_html($cur_word)."\" is too long (max length=".$this->MAX_KEYWORD_LENGTH.")");
+				_re("Keyword \""._prepare_html($cur_word)."\" is too long (max length=".$this->MAX_KEYWORD_LENGTH.")");
 //				$cur_word = substr($cur_word, 0, $this->MAX_KEYWORD_LENGTH);
 			}
 			if (!isset($keywords_array[$cur_word])) {

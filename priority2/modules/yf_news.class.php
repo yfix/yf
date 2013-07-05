@@ -74,7 +74,7 @@ class yf_news extends yf_module {
 			);
 			return tpl()->parse($_GET["object"]."/full_news", $replace);
 		} else {
-			common()->_raise_error("No such news item!");
+			_re("No such news item!");
 			return _e();
 		}
 	}

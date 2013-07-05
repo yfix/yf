@@ -77,6 +77,10 @@ class yf_common {
 	*/
 	function bs_current_theme() {
 		$theme = "slate"; // Default
+		$conf_theme = conf('DEF_BOOTSTRAP_THEME');
+		if ($conf_theme) {
+			$theme = $conf_theme;
+		}
 		$avail_themes = $this->bs_get_avail_themes();
 		if ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
 			$theme = $_COOKIE['yf_theme'];

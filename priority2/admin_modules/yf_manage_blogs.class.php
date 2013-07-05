@@ -116,10 +116,10 @@ class yf_manage_blogs {
 		// Check posted data and save
 		if (count($_POST) > 0) {
 			if (empty($_POST["title"])) {
-				common()->_raise_error(t("Title required"));
+				_re(t("Title required"));
 			}
 			if (empty($_POST["text"])) {
-				common()->_raise_error(t("Text required"));
+				_re(t("Text required"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {

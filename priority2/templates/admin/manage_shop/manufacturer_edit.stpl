@@ -1,22 +1,7 @@
-<div class="editform">
-<form action="{form_action}" enctype="multipart/form-data" method="post">
-	<p class="first">
-		<label for="name">{t(Name)}</label>
-		<input type="text" name="name" id="name" value="{name}">
-	</p>
-	<p>
-		<label for="category_box">{t(Sort order)}</label>
-		<input type="text" name="sort_order" id="sort_order" value="{sort_order}">
-	</p>
-		<p>
-		<label for="desc">{t(Description)}</label>
-	
-{if("use_editor_code" eq 0)}
-		<textarea id="desc" name="desc" cols="50" rows="20" class="editable">{desc}</textarea>
-{else}
-		{#.body}
-{/if}
-	</p>
+<form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
+	{form_row("text","name")}
+	{form_row("text","sort_order")}
+	{form_row("textarea","desc","Description")}
 	<p>
 		<label for="image">{t(Product Image)}</label>
 {if("thumb_path" ne "")}
@@ -26,11 +11,8 @@
 		<input type="file" name="image" id="image" value="">
 {/if}
 	</p>
-
-	<div class="button_div">
-		<input type="submit" value="{t(Save)}">
-		<input type="button" value="{t(Back)}" onclick="window.location.href='{back_url}'">
+	<div class="container">
+		<input type="submit" value="{t(Save)}" class="btn">
+		<a href='{back_url}' class="btn">{t(Back)}</a>
 	</div>
-
 </form>
-</div>

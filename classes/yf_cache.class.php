@@ -31,7 +31,7 @@ class yf_cache {
 	/** @var string Cache driver enum("","auto","file","eaccelerator","apc","xcache","memcache") */
 	public $DRIVER					= "file";
 	/** @var string Namespace for drivers other than "file" */
-	public $CACHE_NS				= "sys_cache:";
+	public $CACHE_NS				= "";
 	/** @var array internal @conf_skip */
 	public $MEMCACHE_DEF_PARAMS	= array(
 		"port"		=> 11211,
@@ -62,9 +62,20 @@ class yf_cache {
 	* Framework constructor
 	*/
 	function _init ($params = array()) {
+		$conf_mc_host = conf('MEMCACHED_HOST');
+		if ($conf_mc_host) {
+			$this->MEMCACHE_DEF_PARAMS['host'] = $conf_mc_host;
+		}
+		$conf_mc_port = conf('MEMCACHED_PORT');
+		if ($conf_mc_host) {
+			$this->MEMCACHE_DEF_PARAMS['port'] = $conf_mc_port;
+		}
 		// Cache namespace need to be unique, especially when using memcached shared between several projects
-		$this->CACHE_NS = "core_".intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
-
+#		$this->CACHE_NS = "core_".intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
+		$conf_cache_ns = conf('CACHE_NS');
+		if ($conf_cache_ns) {
+			$this->CACHE_NS = $conf_cache_ns;
+		}
 		$this->_main_exists = (isset($GLOBALS['main']) && method_exists($GLOBALS['main'], "init_class"));
 		if (defined("DEBUG_MODE")) {
 			$this->DEBUG_MODE = DEBUG_MODE;
@@ -235,7 +246,12 @@ class yf_cache {
 		}
 		// All drivers except file need to eval content
 		if ($this->DRIVER != "file" && is_string($result)) {
-			$result = @eval("return ".$result.";");
+// TODO: testme
+			$try_unpack = unserialize($result);
+			if ($try_unpack || substr($result, 0, 2) == "a:") {
+				$result = $try_unpack;
+			}
+//			$result = @eval("return ".$result.";");
 		}
 		if ($this->DEBUG_MODE) {
 			$all_debug = debug("_core_cache_debug::get");
@@ -311,7 +327,9 @@ class yf_cache {
 		}
 
 		if ($this->DRIVER != "file") {
-			$data_to_put = "\$data = ".str_replace(" => \narray (", "=>array(", preg_replace('/^\s+/m', '', var_export($data, 1))).";";
+//			$data_to_put = "\$data = ".str_replace(" => \narray (", "=>array(", preg_replace('/^\s+/m', '', var_export($data, 1))).";";
+// TODO: testme
+			$data_to_put = is_array($data) ? serialize($data) : $data;
 		}
 		if ($this->DRIVER == 'memcache') {
 			if (isset($this->_memcache)) {
@@ -322,8 +340,9 @@ class yf_cache {
 						$result = $this->_memcache->set($key_name_ns, $data_to_put, $TTL);
 					}
 				} else {
-					if (!$this->_memcache->replace($key_name_ns, $data_to_put, MEMCACHE_COMPRESSED, $TTL)) {
-						$result = $this->_memcache->set($key_name_ns, $data_to_put, MEMCACHE_COMPRESSED, $TTL);
+// TODO: testme
+					if (!$this->_memcache->replace($key_name_ns, $data_to_put, /*MEMCACHE_COMPRESSED*/ null, $TTL)) {
+						$result = $this->_memcache->set($key_name_ns, $data_to_put, /*MEMCACHE_COMPRESSED*/null, $TTL);
 					}
 				}
 			} else {
