@@ -1,10 +1,10 @@
 <?php
-class yf_shop_clean_basket{
+class yf_shop_basket_clean{
 
 	/**
 	* Clean basket contents
 	*/
-	function clean_basket() {
+	function basket_clean() {
 		$basket = &$_SESSION["SHOP_basket"];
 		
 		// $_GET["id"] = intval($_GET["id"]);

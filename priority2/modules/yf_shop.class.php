@@ -221,8 +221,8 @@ class yf_shop extends yf_module {
 		return _class('shop__basket_save', 'modules/shop/')->_basket_save();
 	}
 
-	function clean_basket() {
-		return _class('shop_clean_basket', 'modules/shop/')->clean_basket();
+	function basket_clean() {
+		return _class('shop_basket_clean', 'modules/shop/')->basket_clean();
 	}
 
 	function order() {
