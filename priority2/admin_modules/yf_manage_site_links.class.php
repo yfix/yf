@@ -166,7 +166,7 @@ class yf_manage_site_links {
 	function admin_edit_link () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			common()->_raise_error("No ID!");
+			_re("No ID!");
 			return _e();
 		}
 		// Try to get link detailed info
@@ -346,7 +346,7 @@ class yf_manage_site_links {
 			}
 			js_redirect("./?object=".$_GET["object"]);
 		} else {
-			common()->_raise_error("Wrong link ID");
+			_re("Wrong link ID");
 			return _e();
 		}
 	}
@@ -456,44 +456,44 @@ class yf_manage_site_links {
 	function _verify_link_post() {
 		// Check required data
 		if (strlen($_POST["title"]) < 3) {
-			common()->_raise_error("Site title is too short!");
+			_re("Site title is too short!");
 		}
 		if (strlen($_POST["title"]) > 50) {
-			common()->_raise_error("Site title is too long! Maximum 50 characters allowed!");
+			_re("Site title is too long! Maximum 50 characters allowed!");
 		}
 		if (strlen($_POST["url"]) < 10) {
-			common()->_raise_error("Site URL is too short!");
+			_re("Site URL is too short!");
 		}
 		if (strlen($_POST["url"]) > 250) {
-			common()->_raise_error("Site URL is too long!");
+			_re("Site URL is too long!");
 		}
 		if (!common()->url_verify($_POST["url"])) {
-			common()->_raise_error("Invalid site URL!");
+			_re("Invalid site URL!");
 		}
 		if (strlen($_POST["link_url"]) < 10) {
-			common()->_raise_error("Link URL is too short!");
+			_re("Link URL is too short!");
 		}
 		if (strlen($_POST["link_url"]) > 250) {
-			common()->_raise_error("Link URL is too long!");
+			_re("Link URL is too long!");
 		}
 		if (!common()->url_verify($_POST["link_url"])) {
-			common()->_raise_error("Invalid link URL syntax!");
+			_re("Invalid link URL syntax!");
 		}
 		if (!$_POST["banner_url"] && $_POST["type"] == 1) {
-			common()->_raise_error("Banner URL is too short!");
+			_re("Banner URL is too short!");
 		}
 		if (strlen($_POST["banner_url"]) > 250 && $_POST["type"] == 1) {
-			common()->_raise_error("Banner URL is too long!");
+			_re("Banner URL is too long!");
 		}
 		if ($_POST["banner_url"] == "http://") {
 			$_POST["banner_url"] = "";
 		} elseif (!common()->url_verify($_POST["banner_url"]) && $_POST["type"] == 1) {
-			common()->_raise_error("Invalid banner URL!");
+			_re("Invalid banner URL!");
 		}
 		if (!$_POST["description"] && $_POST["type"] == 0) {
-			common()->_raise_error("Site description is too short!");
+			_re("Site description is too short!");
 		} elseif (strlen($_POST["description"]) > 512 && $_POST["type"] == 0) {
-			common()->_raise_error("Site description is too long!");
+			_re("Site description is too long!");
 		}
 		// Clean up description
 		$_POST["description"] = str_replace("'", "&#39;", htmlspecialchars(strip_tags($_POST["description"])));

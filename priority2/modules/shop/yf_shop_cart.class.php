@@ -20,7 +20,7 @@ class yf_shop_cart {
 		if (!empty($A)) {
 			$_GET['id'] = $A['id'];
 		}
-		$atts = $this->SHOP_OBJ->_get_products_attributes($A["id"]);
+		$atts = module('shop')->_get_products_attributes($A["id"]);
 		// Save cart contents
 		if ($_GET["id"]) {
 			$_GET["id"] = intval($_GET["id"]);
@@ -28,11 +28,11 @@ class yf_shop_cart {
 		}
 		// Display 
 		if (!empty($atts) && empty($_POST["atts"])) {
-			$this->SHOP_OBJ->_CART_PROCESSED = true;
+			module('shop')->_CART_PROCESSED = true;
 			return js_redirect("./?object=shop&action=product_details&id=".$_GET["id"]);
 		}
 		// Do save
-		if (!empty($_POST["quantity"]) && !$this->SHOP_OBJ->_CART_PROCESSED) {
+		if (!empty($_POST["quantity"]) && !module('shop')->_CART_PROCESSED) {
 			// Save new data into session
 			foreach ((array)$_POST["quantity"] as $_product_id => $_quantity) {
 				$_product_id	= intval($_product_id);
@@ -47,7 +47,7 @@ class yf_shop_cart {
 				}
 			}
 			// Prevent double processing
-			$this->SHOP_OBJ->_CART_PROCESSED = true;
+			module('shop')->_CART_PROCESSED = true;
 		}
 		return js_redirect("./?object=shop");
 	}
@@ -65,8 +65,8 @@ class yf_shop_cart {
 		*/
 		$cart = &$_SESSION["SHOP_CART"];
 		// Save cart contents
-		if (!empty($_POST["quantity"]) && !$this->SHOP_OBJ->_CART_PROCESSED) {
-			$this->SHOP_OBJ->_save_cart_all();
+		if (!empty($_POST["quantity"]) && !module('shop')->_CART_PROCESSED) {
+			module('shop')->_save_cart_all();
 			return js_redirect("./?object=shop&action=".$_GET["action"]);
 		}
 		// Get products from db
@@ -78,15 +78,15 @@ class yf_shop_cart {
 		}
 		if (!empty($products_ids)) {
 			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `active`='1' AND `id` IN(".implode(",", $products_ids).")");
-			$products_atts	= $this->SHOP_OBJ->_get_products_attributes($products_ids);
-			$group_prices	= $this->SHOP_OBJ->_get_group_prices($products_ids);
+			$products_atts	= module('shop')->_get_products_attributes($products_ids);
+			$group_prices	= module('shop')->_get_group_prices($products_ids);
 		}
 		$total_price = 0;
 		foreach ((array)$products_infos as $_info) {
 			$_product_id = $_info["id"];
-			$_info["_group_price"] = $group_prices[$_product_id][$this->SHOP_OBJ->USER_GROUP];
+			$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
 			$quantity = $cart[$_info["id"]]["quantity"];
-			$price = $this->SHOP_OBJ->_get_product_price($_info);
+			$price = module('shop')->_get_product_price($_info);
 
 			$dynamic_atts = array();
 			foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
@@ -96,30 +96,30 @@ class yf_shop_cart {
 				}
 			}
 
-			$URL_PRODUCT_ID = $this->SHOP_OBJ->_product_id_url($_info);
+			$URL_PRODUCT_ID = module('shop')->_product_id_url($_info);
 
 			$products[$_info["id"]] = array(
 				"name"				=> _prepare_html($_info["name"]),
-				"price"					=> $this->SHOP_OBJ->_format_price($price),
-				"currency"			=> _prepare_html($this->SHOP_OBJ->CURRENCY),
+				"price"					=> module('shop')->_format_price($price),
+				"currency"			=> _prepare_html(module('shop')->CURRENCY),
 				"quantity"			=> intval($quantity),
 				"delete_link"		=> "./?object=shop&action=clean_cart&id=".$URL_PRODUCT_ID,
 				"details_link"		=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
-				"cat_name"			=> _prepare_html($this->SHOP_OBJ->_shop_cats[$_info["cat_id"]]),
-				"cat_url"				=> process_url("./?object=shop&action=show_products&id=".($this->SHOP_OBJ->_shop_cats_all[$_info["cat_id"]]['url'])),
+				"cat_name"			=> _prepare_html(module('shop')->_shop_cats[$_info["cat_id"]]),
+				"cat_url"				=> process_url("./?object=shop&action=show_products&id=".(module('shop')->_shop_cats_all[$_info["cat_id"]]['url'])),
 			);
 			$total_price += $price * $quantity;
 		}
 		$replace = array(
 			"form_action"		=> "./?object=shop&action=".$_GET["action"],
 			"products"			=> $products,
-			"total_price"		=> $this->SHOP_OBJ->_format_price($total_price),
-			"currency"			=> _prepare_html($this->SHOP_OBJ->CURRENCY),
+			"total_price"		=> module('shop')->_format_price($total_price),
+			"currency"			=> _prepare_html(module('shop')->CURRENCY),
 			"clean_all_link"	=> "./?object=shop&action=clean_cart",
 			"order_link"			=> "./?object=shop&action=order",
 			"back_link"			=> js_redirect($_SERVER["HTTP_REFERER"], false),
-			"cats_block"		=> $this->SHOP_OBJ->_show_shop_cats(),
+			"cats_block"		=> module('shop')->_show_shop_cats(),
 		);
 		return tpl()->parse($STPL_NAME, $replace);
 	}
@@ -145,15 +145,15 @@ class yf_shop_cart {
 		}
 		if (!empty($products_ids)) {
 			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `active`='1' AND `id` IN(".implode(",", $products_ids).")");
-			$products_atts	= $this->SHOP_OBJ->_get_products_attributes($products_ids);
-			$group_prices	= $this->SHOP_OBJ->_get_group_prices($products_ids);
+			$products_atts	= module('shop')->_get_products_attributes($products_ids);
+			$group_prices	= module('shop')->_get_group_prices($products_ids);
 		}
 		$total_price = 0;
 		foreach ((array)$products_infos as $_info) {
 			$_product_id = $_info["id"];
-			$_info["_group_price"] = $group_prices[$_product_id][$this->SHOP_OBJ->USER_GROUP];
+			$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
 			$quantity2 = $cart[$_info["id"]]["quantity"];
-			$price = $this->SHOP_OBJ->_get_product_price($_info);
+			$price = module('shop')->_get_product_price($_info);
 			$dynamic_atts = array();
 			foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
 				if ($cart[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
@@ -165,8 +165,8 @@ class yf_shop_cart {
 			$quantity		+= intval($quantity2);
 		}
 		$replace = array(
-			"total_price"	=> $this->SHOP_OBJ->_format_price($total_price),
-			"currency"		=> _prepare_html($this->SHOP_OBJ->CURRENCY),
+			"total_price"	=> module('shop')->_format_price($total_price),
+			"currency"		=> _prepare_html(module('shop')->CURRENCY),
 			"quantity"		=> $quantity,
 			"order_link"	=> "./?object=shop&action=cart",
 			"cart_link"		=> "./?object=shop&action=cart",
@@ -181,7 +181,7 @@ class yf_shop_cart {
 	function _save_cart_all() {
 		$cart = &$_SESSION["SHOP_CART"];
 		// Save cart contents
-		if (!empty($_POST["quantity"]) && !$this->SHOP_OBJ->_CART_PROCESSED) {
+		if (!empty($_POST["quantity"]) && !module('shop')->_CART_PROCESSED) {
 			$cart = array();
 			// Save new data into session
 			$products_ids = array();
@@ -197,7 +197,7 @@ class yf_shop_cart {
 				}
 			}
 			// Prevent double processing
-			$this->SHOP_OBJ->_CART_PROCESSED = true;
+			module('shop')->_CART_PROCESSED = true;
 		}
 	}
 

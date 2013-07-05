@@ -370,30 +370,30 @@ class yf_articles extends yf_module {
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
-				common()->_raise_error(t("Author Name is required"));
+				_re(t("Author Name is required"));
 			}
 			// Article category, title, summary and full_text are required
 			if (empty($_POST["title"])) {
-				common()->_raise_error(t("Title is required"));
+				_re(t("Title is required"));
 			} elseif (!empty($this->MAX_TITLE_LENGTH) && strlen($_POST["title"]) > $this->MAX_TITLE_LENGTH) {
-				common()->_raise_error(t("Title length (@item1) is more than allowed length (@item2)", array("@item1" => strlen($_POST["title"]), "@item2" => intval($this->MAX_TITLE_LENGTH))));
+				_re(t("Title length (@item1) is more than allowed length (@item2)", array("@item1" => strlen($_POST["title"]), "@item2" => intval($this->MAX_TITLE_LENGTH))));
 			}
 			if (empty($_POST["summary"])) {
-				common()->_raise_error(t("Summary is required"));
+				_re(t("Summary is required"));
 			} elseif (!empty($this->MAX_SUMMARY_LENGTH) && strlen($_POST["summary"]) > $this->MAX_SUMMARY_LENGTH) {
-				common()->_raise_error("Summary length (".strlen($_POST["summary"]).") is more than allowed length (".intval($this->MAX_SUMMARY_LENGTH).")");
+				_re("Summary length (".strlen($_POST["summary"]).") is more than allowed length (".intval($this->MAX_SUMMARY_LENGTH).")");
 			}
 			if (empty($_POST["full_text"])) {
-				common()->_raise_error(t("Text is required"));
+				_re(t("Text is required"));
 			} elseif (!empty($this->MAX_FULL_TEXT_LENGTH) && strlen($_POST["full_text"]) > $this->MAX_FULL_TEXT_LENGTH) {
-				common()->_raise_error("Text length (".strlen($_POST["full_text"]).") is more than allowed length (".intval($this->MAX_FULL_TEXT_LENGTH).")");
+				_re("Text length (".strlen($_POST["full_text"]).") is more than allowed length (".intval($this->MAX_FULL_TEXT_LENGTH).")");
 			}
 			if (!empty($this->_articles_cats) && (empty($_POST["cat_id"])) || !isset($this->_articles_cats[$_POST["cat_id"]])) {
-				common()->_raise_error(t("Please select article category"));
+				_re(t("Please select article category"));
 			}
 			// Check credentials length
 			if (!empty($this->MAX_CREDENTIALS_LENGTH) && strlen($_POST["credentials"]) > $this->MAX_CREDENTIALS_LENGTH) {
-				common()->_raise_error("Credentials length (".strlen($_POST["credentials"]).") is more than allowed length (".intval($this->MAX_CREDENTIALS_LENGTH).")");
+				_re("Credentials length (".strlen($_POST["credentials"]).") is more than allowed length (".intval($this->MAX_CREDENTIALS_LENGTH).")");
 			}
 // TODO: add checking max number of articles
 			// Get new status
@@ -483,30 +483,30 @@ class yf_articles extends yf_module {
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
-				common()->_raise_error(t("Author Name is required"));
+				_re(t("Author Name is required"));
 			}
 			// Article category, title, summary and full_text are required
 			if (empty($_POST["title"])) {
-				common()->_raise_error(t("Title is required"));
+				_re(t("Title is required"));
 			} elseif (!empty($this->MAX_TITLE_LENGTH) && strlen($_POST["title"]) > $this->MAX_TITLE_LENGTH) {
-				common()->_raise_error("Title length (".strlen($_POST["title"]).") is more than allowed length (".intval($this->MAX_TITLE_LENGTH).")");
+				_re("Title length (".strlen($_POST["title"]).") is more than allowed length (".intval($this->MAX_TITLE_LENGTH).")");
 			}
 			if (empty($_POST["summary"])) {
-				common()->_raise_error(t("Summary is required"));
+				_re(t("Summary is required"));
 			} elseif (!empty($this->MAX_SUMMARY_LENGTH) && strlen($_POST["summary"]) > $this->MAX_SUMMARY_LENGTH) {
-				common()->_raise_error("Summary length (".strlen($_POST["summary"]).") is more than allowed length (".intval($this->MAX_SUMMARY_LENGTH).")");
+				_re("Summary length (".strlen($_POST["summary"]).") is more than allowed length (".intval($this->MAX_SUMMARY_LENGTH).")");
 			}
 			if (empty($_POST["full_text"])) {
-				common()->_raise_error(t("Text is required"));
+				_re(t("Text is required"));
 			} elseif (!empty($this->MAX_FULL_TEXT_LENGTH) && strlen($_POST["full_text"]) > $this->MAX_FULL_TEXT_LENGTH) {
-				common()->_raise_error("Text length (".strlen($_POST["full_text"]).") is more than allowed length (".intval($this->MAX_FULL_TEXT_LENGTH).")");
+				_re("Text length (".strlen($_POST["full_text"]).") is more than allowed length (".intval($this->MAX_FULL_TEXT_LENGTH).")");
 			}
 			if (!empty($this->_articles_cats) && (empty($_POST["cat_id"])) || !isset($this->_articles_cats[$_POST["cat_id"]])) {
-				common()->_raise_error(t("Please select article category"));
+				_re(t("Please select article category"));
 			}
 			// Check credentials length
 			if (!empty($this->MAX_CREDENTIALS_LENGTH) && strlen($_POST["credentials"]) > $this->MAX_CREDENTIALS_LENGTH) {
-				common()->_raise_error("Credentials length (".strlen($_POST["credentials"]).") is more than allowed length (".intval($this->MAX_CREDENTIALS_LENGTH).")");
+				_re("Credentials length (".strlen($_POST["credentials"]).") is more than allowed length (".intval($this->MAX_CREDENTIALS_LENGTH).")");
 			}
 // TODO: add checking max number of articles
 			// Get new status

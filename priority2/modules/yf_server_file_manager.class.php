@@ -227,7 +227,7 @@ class yf_server_file_manager {
 				$_SELECTED_FILES[] = $this->_prepare_path($path);
 			}
 		} else {
-			common()->_raise_error(t("File path missing"));
+			_re(t("File path missing"));
 		}
 		if (common()->_error_exists()) {
 			return js_redirect($_SERVER["HTTP_REFERER"]);
@@ -292,12 +292,12 @@ class yf_server_file_manager {
 			if (!empty($_POST["perms_octal"])) {
 				// Convert octal form to string form
 				if (strlen($_POST["perms_octal"]) != 3) {
-					common()->_raise_error(t("Wrong permission")."!");
+					_re(t("Wrong permission")."!");
 				}
 				$octal_array = str_split($_POST["perms_octal"]);
 				foreach ((array)$octal_array as $octal) {
 					if(intval($octal) > 7) {
-						common()->_raise_error(t("Wrong permission")."!");
+						_re(t("Wrong permission")."!");
 					}
 				}
 				if (!common()->_error_exists()) {

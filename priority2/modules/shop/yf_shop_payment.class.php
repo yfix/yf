@@ -17,7 +17,7 @@ class yf_shop_payment {
 		$params		= $params["params"];
 
 		$PAY_METHOD_ID = 2;
-		$PAY_METHOD_PARAMS = $this->SHOP_OBJ->_pay_method_params[$PAY_METHOD_ID];
+		$PAY_METHOD_PARAMS = module('shop')->_pay_method_params[$PAY_METHOD_ID];
 
 		$amount 		= $order_info["total_sum"];
 		$description 	= $params["DESCRIPTION"] ? $params["DESCRIPTION"] : $PAY_METHOD_PARAMS["DESCRIPTION"];
@@ -169,6 +169,6 @@ class yf_shop_payment {
 
 		// Display order result
 		$_GET["id"] = $order_info['id'];
-		return $this->SHOP_OBJ->_order_step_finish();
+		return module('shop')->_order_step_finish();
 	}
 }

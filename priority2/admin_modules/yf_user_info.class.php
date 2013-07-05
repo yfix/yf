@@ -354,24 +354,24 @@ class yf_user_info {
 		// Special for the agency name
 		if ($this->cur_account_type == "agency") {
 			if ($_POST["name"] == "") {
-				common()->_raise_error(t('Agency name required'));
+				_re(t('Agency name required'));
 			}
 		} else {
 			if ($_POST["nick"] == "") {
-				common()->_raise_error(t('User nick required'));
+				_re(t('User nick required'));
 			}
 		}
 		// Check other fields
 		if ($_POST["measurements"] != "") {
 			$_POST["measurements"] = strtoupper(trim($_POST["measurements"]));
 			if (!_check_measurements($_POST["measurements"])) {
-				common()->_raise_error(t('Invalid measurements (example, 36DD-27-32)!'));
+				_re(t('Invalid measurements (example, 36DD-27-32)!'));
 			}
 		}
 		if ($_POST["recip_url"] == "http://" || $_POST["recip_url"] == "") {
 			$_POST["recip_url"] = "";
 		} elseif (!preg_match('#^http://[_a-z0-9-]+\\.[_a-z0-9-]+#i', $_POST["recip_url"])) {
-			common()->_raise_error(t('Invalid reciprocal URL'));
+			_re(t('Invalid reciprocal URL'));
 		}
 	}
 
@@ -400,10 +400,10 @@ class yf_user_info {
 		$AVATAR = &$_FILES["avatar"];
 		$MAX_IMAGE_SIZE	= &$this->AVATAR_MAX_FILE_SIZE;
 		if (empty($AVATAR["size"]) || $AVATAR["size"] > $MAX_IMAGE_SIZE) {
-			common()->_raise_error(t("Invalid image size"));
+			_re(t("Invalid image size"));
 		}
 		if (!in_array($AVATAR["type"], array("image/pjpeg", "image/jpeg"))) {
-			common()->_raise_error(t("Invalid image type, JPEG only"));
+			_re(t("Invalid image type, JPEG only"));
 		}
 		// Check for errors and stop if exists
 		if (common()->_error_exists()) {
@@ -421,21 +421,21 @@ class yf_user_info {
 		$move_result = move_uploaded_file($AVATAR["tmp_name"], $avatar_file_path);
 		// Check if file uploaded successfully
 		if (!$move_result || !file_exists($avatar_file_path) || !filesize($avatar_file_path) || !is_readable($avatar_file_path)) {
-			common()->_raise_error("Uploading image error #001. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
+			_re("Uploading image error #001. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
 			trigger_error("Moving uploaded image error", E_USER_WARNING);
 			return false;
 		}
 		// Second image type check (using GD)
 		$real_image_info = getimagesize($avatar_file_path);
 		if (empty($real_image_info) || !in_array($real_image_info["mime"], array("image/pjpeg", "image/jpeg")) || $real_image_info[2] != 2) {
-			common()->_raise_error(t("Invalid image type, JPEG only"));
+			_re(t("Invalid image type, JPEG only"));
 			trigger_error("Invalid image type, JPEG only", E_USER_WARNING);
 			return false;
 		}
 		// Check for wrong photos that crashed GD (only if we do not have NETPBM)
 		if (!defined("NETPBM_PATH") || NETPBM_PATH == "") {
 			if (false === @imagecreatefromjpeg($avatar_file_path)) {
-				common()->_raise_error("Uploading image error #002. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
+				_re("Uploading image error #002. Please <a href='".process_url("./?object=help&action=email_form")."'>contact</a> site admin.");
 				trigger_error("Image that crashes GD found", E_USER_WARNING);
 				unlink($avatar_file_path);
 				return false;
@@ -443,7 +443,7 @@ class yf_user_info {
 		}
 		// Second image size checking (from the real file)
 		if (!empty($MAX_IMAGE_SIZE) && filesize($avatar_file_path) > $MAX_IMAGE_SIZE) {
-			common()->_raise_error(t("Invalid image size"));
+			_re(t("Invalid image size"));
 			trigger_error("Image size hacking attempt", E_USER_WARNING);
 			unlink($avatar_file_path);
 			return false;
@@ -455,7 +455,7 @@ class yf_user_info {
 			if (file_exists($avatar_file_path)) {
 				unlink($avatar_file_path);
 			}
-			common()->_raise_error("Cant resize avatar. Error #001");
+			_re("Cant resize avatar. Error #001");
 			return trigger_error("Cant resize avatar. Error #001", E_USER_WARNING);
 		}
 		// Check if avatar resized correctly, if not - then delete it
@@ -463,7 +463,7 @@ class yf_user_info {
 			list($_width, $_height, , ) = @getimagesize($avatar_file_path);
 			if ($_width > $this->AVATAR_MAX_WIDTH || $_height > $this->AVATAR_MAX_HEIGHT) {
 				unlink($avatar_file_path);
-				common()->_raise_error("Cant resize avatar. Error #002");
+				_re("Cant resize avatar. Error #002");
 				return false;
 			}
 		}

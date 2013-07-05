@@ -467,7 +467,7 @@ class yf_tags {
 		
 		$OBJECT_NAME = !empty($_object_name) ? $_object_name : $_GET["object"];
 		if (!isset($obj_id)) {
-			common()->_raise_error("No object ID to check rights!");
+			_re("No object ID to check rights!");
 			return false;
 		}
 

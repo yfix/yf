@@ -51,10 +51,10 @@ class yf_blog_posting {
 			$_POST["post_text"]		= substr($_POST["post_text"], 0, $this->BLOG_OBJ->MAX_POST_TEXT_LENGTH);
 			$_POST["mode_text"]		= substr($_POST["mode_text"], 0, $this->BLOG_OBJ->MAX_MODE_TEXT_LENGTH);
 			if (empty($_POST["post_title"])) {
-				common()->_raise_error(t("Post title required"));
+				_re(t("Post title required"));
 			}
 			if (empty($_POST["post_text"])) {
-				common()->_raise_error(t("Post text required"));
+				_re(t("Post text required"));
 			}
 			// Do check captcha (if needed)
 			if (module(BLOG_CLASS_NAME)->USE_CAPTCHA) {
@@ -293,10 +293,10 @@ class yf_blog_posting {
 			$_POST["post_text"]		= substr($_POST["post_text"], 0, $this->BLOG_OBJ->MAX_POST_TEXT_LENGTH);
 			$_POST["mode_text"]		= substr($_POST["mode_text"], 0, $this->BLOG_OBJ->MAX_MODE_TEXT_LENGTH);
 			if (empty($_POST["post_title"])) {
-				common()->_raise_error(t("Post title required"));
+				_re(t("Post title required"));
 			}
 			if (empty($_POST["post_text"])) {
-				common()->_raise_error(t("Post text required"));
+				_re(t("Post text required"));
 			}
 			// Do check captcha (if needed)
 			if (module(BLOG_CLASS_NAME)->USE_CAPTCHA) {
@@ -647,19 +647,19 @@ class yf_blog_posting {
 			$GLOBALS["community_info"] = $community_info;
 
 			if(empty($community_info)){
-				common()->_raise_error(t("No community"));
+				_re(t("No community"));
 			}
 			
 			$community_user_settings = db()->query_fetch("SELECT * FROM `".db('community_users')."` WHERE `community_id`=".intval($community_info["id"])." AND `user_id` = ".intval($this->BLOG_OBJ->USER_ID));
 			$GLOBALS["community_user_settings"] = $community_user_settings;
 					
 			if(empty($community_user_settings)){
-				common()->_raise_error(t("You not join to this community"));
+				_re(t("You not join to this community"));
 			}
 			
 			if($community_info["postlevel"] == "select"){
 				if(!$community_user_settings["post"]){
-					common()->_raise_error(t("You not allowed post in this community"));
+					_re(t("You not allowed post in this community"));
 				}
 			}
 			return true;

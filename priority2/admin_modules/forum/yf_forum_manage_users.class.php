@@ -65,7 +65,7 @@ class yf_forum_manage_users {
 		if (!empty($_POST)) {
 			// Group name is required
 			if (!isset(module("forum")->_forum_groups[$_POST["group"]])) {
-				common()->_raise_error(t("Wrong group"));
+				_re(t("Wrong group"));
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -147,7 +147,7 @@ class yf_forum_manage_users {
 		if (!empty($_POST)) {
 			// Group name is required
 			if (empty($_POST["title"])) {
-				common()->_raise_error(t("Title is required"));
+				_re(t("Title is required"));
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -204,7 +204,7 @@ class yf_forum_manage_users {
 		if (!empty($_POST)) {
 			// Group name is required
 			if (empty($_POST["title"])) {
-				common()->_raise_error(t("Title is required"));
+				_re(t("Title is required"));
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -343,7 +343,7 @@ class yf_forum_manage_users {
 			}
 			// Forums list is required
 			if (empty($_POST["forums_list"])) {
-				common()->_raise_error(t("Forums list is required"));
+				_re(t("Forums list is required"));
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -457,11 +457,11 @@ class yf_forum_manage_users {
 		if (!empty($_POST)) {
 			// User ID is required
 			if (empty($_POST["user_id"])) {
-				common()->_raise_error(t("User ID is required"));
+				_re(t("User ID is required"));
 			} else {
 				$member_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($_POST["user_id"]));
 				if (empty($member_info)) {
-					common()->_raise_error(t("No user with such ID"));
+					_re(t("No user with such ID"));
 				}
 			}
 			if (!empty($_POST["forums_list"])) {
@@ -478,7 +478,7 @@ class yf_forum_manage_users {
 			}
 			// Forums list is required
 			if (empty($_POST["forums_list"])) {
-				common()->_raise_error(t("Forums list is required"));
+				_re(t("Forums list is required"));
 			}
 			// Do save record
 			if (!common()->_error_exists()) {

@@ -73,7 +73,7 @@ class yf_gallery_folders {
 		$user_folders = $this->GALLERY_OBJ->_get_user_folders($this->GALLERY_OBJ->USER_ID);
 		// Check number of user folders
 		if (!empty($this->GALLERY_OBJ->MAX_TOTAL_FOLDERS) && count($user_folders) >= $this->GALLERY_OBJ->MAX_TOTAL_FOLDERS) {
-			common()->_raise_error("You can create max ".intval($this->GALLERY_OBJ->MAX_TOTAL_FOLDERS)." folders!");
+			_re("You can create max ".intval($this->GALLERY_OBJ->MAX_TOTAL_FOLDERS)." folders!");
 		}
 		// Warn user about photos will not displayed in ads
 		$WARN_USER = 0;
@@ -86,7 +86,7 @@ class yf_gallery_folders {
 			$_POST["password"]	= substr($_POST["password"], 0, 32);
 			// Folder title is required
 			if (!strlen($_POST["title"])) {
-				common()->_raise_error(t("Folder title is required"));
+				_re(t("Folder title is required"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -197,7 +197,7 @@ class yf_gallery_folders {
 			$_POST["password"]	= substr($_POST["password"], 0, 32);
 			// Folder title is required
 			if (!strlen($_POST["title"])) {
-				common()->_raise_error(t("Folder title is required"));
+				_re(t("Folder title is required"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -307,19 +307,19 @@ class yf_gallery_folders {
 			}
 			// Check if it's last folder
 			if (count($user_folders) <= 1) {
-				return common()->_raise_error("This is your last folder. You cannot delete it");
+				return _re("This is your last folder. You cannot delete it");
 			// Folder contains photos
 			} elseif (!empty($folder_photos)) {
 				// Check required data
 				if (empty($_POST["choose"])) {
-					common()->_raise_error("Please select action with folder photos: delete or move");
+					_re("Please select action with folder photos: delete or move");
 				}
 				// Check if we have where to move photos
 				if ($_POST["choose"] == "move") {
 					if (empty($NEW_FOLDER_ID)) {
-						common()->_raise_error("Please select folder to move photos into");
+						_re("Please select folder to move photos into");
 					} elseif ($NEW_FOLDER_ID == $FOLDER_ID) {
-						common()->_raise_error("Please select other folder");
+						_re("Please select other folder");
 					}
 				}
 			}
@@ -446,7 +446,7 @@ class yf_gallery_folders {
 			if (!empty($cur_folder_info["password"]) && $_POST["pswd"] == $cur_folder_info["password"]) {
 				$_SESSION[$this->GALLERY_OBJ->SESSION_PSWD_FIELD][$FOLDER_ID] = $cur_folder_info["password"];
 			} else {
-				common()->_raise_error(t("Wrong password!"));
+				_re(t("Wrong password!"));
 			}
 			// Return user back
 			if (!common()->_error_exists()) {

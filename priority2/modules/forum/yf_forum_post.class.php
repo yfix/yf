@@ -130,7 +130,7 @@ class yf_forum_post {
 				$forum_info = &module('forum')->_forums_array[$post_info["forum"]];
 				$topic_info	= db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($post_info["topic"])." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
 				if (empty($topic_info["id"])) {
-					common()->_raise_error(t("No such topic!"));
+					_re(t("No such topic!"));
 				}
 				// Check if forum or topic closed
 				if (!FORUM_IS_ADMIN) {
@@ -144,7 +144,7 @@ class yf_forum_post {
 					}
 				}
 			} else {
-				common()->_raise_error(t("No such post!"));
+				_re(t("No such post!"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -172,7 +172,7 @@ class yf_forum_post {
 	function _show_post_form ($post_info = array(), $topic_info = array(), $new_topic = false, $edit_post = false) {
 		// Disabling posting ability for guests
 		if (!FORUM_USER_ID && !module('forum')->SETTINGS["ALLOW_GUESTS_POSTS"]) {
-			common()->_raise_error(t("Guests are not allowed to make posts!"));
+			_re(t("Guests are not allowed to make posts!"));
 			return module('forum')->_show_error(_e(), 0);
 		}
 		$forum_id = $new_topic ? $_GET["id"] : $topic_info["forum"];
@@ -326,7 +326,7 @@ class yf_forum_post {
 	function _save_post () {
 		// Disabling posting ability for guests
 		if (!FORUM_USER_ID && !module('forum')->SETTINGS["ALLOW_GUESTS_POSTS"]) {
-			common()->_raise_error(t("Guests are not allowed to make posts!"));
+			_re(t("Guests are not allowed to make posts!"));
 		}
 		// Check if user in ban list
 		if (module('forum')->SETTINGS["USE_BAN_IP_FILTER"]) {
@@ -373,12 +373,12 @@ class yf_forum_post {
 		$cat_info = &module('forum')->_forum_cats_array[$forum_info["category"]];
 		// Check forum existance
 		if (empty($forum_info["id"])) {
-			common()->_raise_error(t("No such forum!"));
+			_re(t("No such forum!"));
 		}
 		// Get act name
 		$ACT = $_POST["act"];
 		if (empty($ACT) || !in_array($ACT, array("reply","new_post","new_topic","edit_post"))) {
-			common()->_raise_error(t("Dont know what to do!"));
+			_re(t("Dont know what to do!"));
 		}
 		// Reference to the cats array
 		if (!common()->_error_exists()) {
@@ -387,7 +387,7 @@ class yf_forum_post {
 			if ($ACT != "new_topic") {
 				$topic_id	= intval($_POST["topic_id"]);
 				$topic_info	= db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
-				if (empty($topic_info["id"])) common()->_raise_error(t("No such topic!"));
+				if (empty($topic_info["id"])) _re(t("No such topic!"));
 			}
 		}
 		// Check if forum or topic closed
@@ -428,7 +428,7 @@ class yf_forum_post {
 					}
 				}
 				if (empty($post_info["id"])) {
-					common()->_raise_error(t("No such post!"));
+					_re(t("No such post!"));
 				}
 			}
 		}
@@ -436,13 +436,13 @@ class yf_forum_post {
 		if (!common()->_error_exists()) {
 			$POSSIBLE_FLOOD	= db()->query_num_rows("SELECT `id` FROM `".db('forum_posts')."` WHERE `created` > ".(time() - module('forum')->SETTINGS["ANTISPAM_TIME"])." AND `poster_ip`='".common()->get_ip()."' LIMIT 1");
 			if ($POSSIBLE_FLOOD) {
-				common()->_raise_error(t("Possible flood detected! Try again later!"));
+				_re(t("Possible flood detected! Try again later!"));
 			}
 		}
 		// Check required fields
 		if (!common()->_error_exists()) {
 			if ($ACT == "new_topic" && empty($_POST["title"])) {
-				common()->_raise_error(t("Topic title required!"));
+				_re(t("Topic title required!"));
 			}
 			// Prepare text
 			$_POST["text"] = _substr(trim($_POST["text"]), 0, module('forum')->SETTINGS["MSG_TEXT_TRIM"]);
@@ -453,14 +453,14 @@ class yf_forum_post {
 				$_POST["text"] = $this->_text_filter($_POST["text"]);
 			}
 			if (empty($_POST["text"])) {
-				common()->_raise_error(t("Text required!"));
+				_re(t("Text required!"));
 			}
 		}
 		// Check if post is just quote without additions
 		if (!common()->_error_exists()) {
 			$QUOTE_SPAM = _substr($_POST["text"], 0, 6) == "[quote" && _substr($_POST["text"], -8) == "[/quote]";
 			if ($QUOTE_SPAM) {
-				common()->_raise_error(t("Possible quote spam! Please enter your text not just quote!"));
+				_re(t("Possible quote spam! Please enter your text not just quote!"));
 			}
 		}
 		// Do close BB Codes (if needed)
@@ -493,7 +493,7 @@ class yf_forum_post {
 				$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($new_topic_id)." LIMIT 1");
 				// Verify new topic
 				if (empty($topic_info)) {
-					common()->_raise_error(t("Error while creating new topic! Please contact site admin!"));
+					_re(t("Error while creating new topic! Please contact site admin!"));
 					trigger_error("Error while creating new topic!", E_USER_WARNING);
 				}
 			}
@@ -525,7 +525,7 @@ class yf_forum_post {
 				$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($new_post_id)." LIMIT 1");
 				// Verify new post
 				if (empty($post_info)) {
-					common()->_raise_error(t("Error while creating new post! Please contact site admin!"));
+					_re(t("Error while creating new post! Please contact site admin!"));
 					trigger_error("Error while creating new post!", E_USER_WARNING);
 				}
 			}

@@ -257,21 +257,21 @@ class yf_chat {
 		// Prepare text
 		$_POST["msg"] = substr(htmlspecialchars(stripslashes(trim($_POST["msg"]))), 0, $this->MESSAGE_MAX_LENGTH);
 		if (!strlen($_POST["msg"])) {
-			common()->_raise_error(t("no_message"));
+			_re(t("no_message"));
 			$this->_add_client_cmd("do_alert_msg", t("no_message"));
 		}
 		// Process private message
 		if (strlen($_POST["private_to"]) && !common()->_error_exists()) {
 			$SPAM_EXISTS = @$GLOBALS[db]->query_num_rows("SELECT `id` FROM `".db('chat_private')."` WHERE `add_date`>".(time() - $this->ANTISPAM_TIME)." AND `user_from`=".intval(CHAT_USER_ID)." AND `room_id`=".intval(CHAT_USER_ROOM_ID));
 			if ($SPAM_EXISTS) {
-				common()->_raise_error(t("spam_exists"));
+				_re(t("spam_exists"));
 				$this->_add_client_cmd("do_alert_msg", t("spam"));
 			}
 			$_POST["private_to"] = stripslashes($_POST["private_to"]);
 			// Try to select target user info
 			$A2 = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `login`='"._es($_POST["private_to"])."'");
 			if (!$A2["id"]) {
-				common()->_raise_error(t("no_such_user"));
+				_re(t("no_such_user"));
 				$this->_add_client_cmd("do_alert_msg", t("no_such_user"));
 			}
 			db()->INSERT("chat_private", array(
@@ -290,7 +290,7 @@ class yf_chat {
 			$SPAM_EXISTS = db()->query_num_rows("SELECT `id` FROM `".db('chat_messages')."` WHERE `add_date`>".(time() - $this->ANTISPAM_TIME)." AND `user_id`=".intval(CHAT_USER_ID)." AND `room_id`=".intval(CHAT_USER_ROOM_ID));
 			if ($SPAM_EXISTS) {
 				$this->_add_client_cmd("do_alert_msg", t("spam"));
-				common()->_raise_error(t("spam_exists"));
+				_re(t("spam_exists"));
 			}
 			db()->INSERT("chat_messages", array(
 				"user_id"	=> intval(CHAT_USER_ID),

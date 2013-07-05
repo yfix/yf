@@ -111,14 +111,14 @@ class yf_poll {
 		if (!empty($_POST) && $_POST["choice"]) {
 			if (!empty($last_vote)) {
 				if ($this->ONE_VOTE_FOR_USER) {
-					common()->_raise_error(t("You allowed to vote only one time in this poll"));
+					_re(t("You allowed to vote only one time in this poll"));
 				} elseif ($this->VOTE_TTL && (time() - $last_vote["date"]) < $this->VOTE_TTL) {
-					common()->_raise_error("Please wait ".ceil((time() - $last_vote["date"]) / 60)." minutes before you can vote for this poll again");
+					_re("Please wait ".ceil((time() - $last_vote["date"]) / 60)." minutes before you can vote for this poll again");
 				}
 			}
 			// Check if something selected
 			if (empty($_POST["choice"])) {
-				common()->_raise_error(t("Please select something"));
+				_re(t("Please select something"));
 			}
 			$_is_poll_owner = ($this->USER_ID && $this->USER_ID == $poll_info["user_id"]) ? 1 : 0;
 			// Check if owner can vote

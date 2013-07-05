@@ -203,7 +203,7 @@ class yf_gallery_manage {
 			$_POST["folder_id"]		= intval($_POST["folder_id"]);
 			// Load original photo
 			if (empty($_POST["folder_id"]) || !isset($user_folders[$_POST["folder_id"]])) {
-				common()->_raise_error(t("Wrong selected folder"));
+				_re(t("Wrong selected folder"));
 			}
 			// Cleanup wrong or incompleted photos from db
 			db()->query(
@@ -215,17 +215,17 @@ class yf_gallery_manage {
 			if (!empty($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS)) {
 				$num_photos = db()->query_num_rows("SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($NEW_USER_ID));
 				if ($num_photos >= $this->GALLERY_OBJ->MAX_TOTAL_PHOTOS) {
-					common()->_raise_error(t("You can upload max @num photos!", array("@num" => intval($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS))));
+					_re(t("You can upload max @num photos!", array("@num" => intval($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS))));
 				}
 			}
 			if ($num_photos_for_ads >= $this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS && $_POST["show_in_ads"] == 1) {
-				common()->_raise_error(t("You can use max @num photos in your ads!", array("@num" => intval($this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS))));
+				_re(t("You can use max @num photos in your ads!", array("@num" => intval($this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS))));
 			}
 			// Shortcut for the uploaded photo info
 			$_PHOTO = $_FILES[$this->GALLERY_OBJ->PHOTO_NAME_IN_FORM];
 			// Check for photo
 			if (empty($_PHOTO) || empty($_PHOTO["size"])) {
-				common()->_raise_error(t("Photo file required"));
+				_re(t("Photo file required"));
 			}
 			// Check for errors and try bulk mode
 			if (!common()->_error_exists()) {
@@ -264,7 +264,7 @@ class yf_gallery_manage {
 				// Get new record id
 				$PHOTO_RECORD_ID = intval(db()->INSERT_ID());
 				if (empty($PHOTO_RECORD_ID)) {
-					common()->_raise_error(t("Cant insert record into db"));
+					_re(t("Cant insert record into db"));
 				}
 				// Save tags 
 				if (isset($_POST["tags"])) {
@@ -433,7 +433,7 @@ class yf_gallery_manage {
 			// Get new record id
 			$PHOTO_RECORD_ID = intval(db()->INSERT_ID());
 			if (empty($PHOTO_RECORD_ID)) {
-				common()->_raise_error(t("Cant insert record into db"));
+				_re(t("Cant insert record into db"));
 			}
 			// Save tags 
 			if (isset($_POST["tags"])) {
@@ -552,11 +552,11 @@ class yf_gallery_manage {
 			$_POST["folder_id"]		= intval($_POST["folder_id"]);
 			// Load original photo
 			if (empty($_POST["folder_id"]) || !isset($user_folders[$_POST["folder_id"]])) {
-				common()->_raise_error(t("Wrong selected folder"));
+				_re(t("Wrong selected folder"));
 			}
 			// Check number of photos to show in ads
 			if ($num_photos_for_ads >= $this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS && $_POST["show_in_ads"] == 1) {
-				common()->_raise_error(t("You can use max @num photos in your ads!", array("@num" => intval($this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS))));
+				_re(t("You can use max @num photos in your ads!", array("@num" => intval($this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS))));
 			}
 			// Shortcut for the uploaded photo info
 			$_PHOTO = $_FILES[$this->GALLERY_OBJ->PHOTO_NAME_IN_FORM];
@@ -838,7 +838,7 @@ class yf_gallery_manage {
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			if (empty($_POST["params"])) {
-				common()->_raise_error("Missing required params for image cropper.");
+				_re("Missing required params for image cropper.");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -915,7 +915,7 @@ class yf_gallery_manage {
 		// Check number of photos to show in ads
 		$num_photos_for_ads = db()->query_num_rows("SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($this->GALLERY_OBJ->USER_ID)." AND `show_in_ads`='1'");
 		if ($num_photos_for_ads >= $this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS && $photo_info["show_in_ads"] == 0) {
-			common()->_raise_error(t("You can use max @num photos in your ads!", array("@num" => intval($this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS))));
+			_re(t("You can use max @num photos in your ads!", array("@num" => intval($this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS))));
 			return redirect("./?object=".GALLERY_CLASS_NAME."&action=show_gallery"._add_get(array("page")), 1, _e());
 		}
 		// Do update db record
@@ -1029,7 +1029,7 @@ class yf_gallery_manage {
 		if (!empty($orig_max_x) || !empty($orig_max_y)) {
 			$orig_result = common()->make_thumb($photo_path, $photo_path, $orig_max_x, $orig_max_y);
 			if (!$orig_result || !file_exists($photo_path) || !filesize($photo_path)) {
-				common()->_raise_error(t("Cant resize original image"));
+				_re(t("Cant resize original image"));
 				trigger_error("Cant resize original image \"".$photo_path."\"", E_USER_WARNING);
 				// Cleanup uploaded file
 				if (file_exists($photo_path)) {
@@ -1110,7 +1110,7 @@ class yf_gallery_manage {
 			}
 			// Check if file resized successfully
 			if (!$thumb_result || !file_exists($new_thumb_path) || !filesize($new_thumb_path)) {
-				common()->_raise_error("Cant resize image into format: ".$format_name);
+				_re("Cant resize image into format: ".$format_name);
 				trigger_error("Cant resize image with new name = \"".$new_thumb_path."\"", E_USER_WARNING);
 				return false;
 			}

@@ -130,7 +130,7 @@ class yf_register {
 	function _step_2 ($FORCE_DISPLAY_FORM = false) {
 /*
 		if (empty($_POST["account_type"]) || !in_array($_POST["account_type"], $this->_account_types)) {
-			common()->_raise_error(t('wrong_account_type'));
+			_re(t('wrong_account_type'));
 		}
 */
 		// If no errors - continue
@@ -247,7 +247,7 @@ class yf_register {
 		$this->_validate_form();
 		// Validate that user agreed with site terms and conditions
 		if ($this->CHECK_TERMS_AGREE && empty($_POST["terms_agree"])) {
-			common()->_raise_error(t("You must agree with site Terms of Service"));
+			_re(t("You must agree with site Terms of Service"));
 		}
 		// If no errors - continue
 		if (!common()->_error_exists()) {
@@ -376,7 +376,7 @@ class yf_register {
 /*
 		// Validate form information
 		if (!isset($_POST["account_type"]) || !in_array(strtolower($_POST["account_type"]), $this->_account_types)) {
-			common()->_raise_error(t('wrong_account_type'));
+			_re(t('wrong_account_type'));
 		}
 */
 		// Init default validator
@@ -385,47 +385,47 @@ class yf_register {
 		$VALIDATE_OBJ->_check_user_nick();
 		// Check if login is already registered by someone
 		if ($_POST["login"] == "") {
-			common()->_raise_error(t('Login required'));
+			_re(t('Login required'));
 		} elseif (!preg_match('/^[a-z0-9]+$/i', $_POST["login"])) {
-			common()->_raise_error(t("Login is wrong. Only english letters and digits are allowed, no symbols"));
+			_re(t("Login is wrong. Only english letters and digits are allowed, no symbols"));
 		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `login`='"._es($_POST['login'])."'") >= 1) {
-			common()->_raise_error(t("This login")." (".$_POST['login'].")".t("has already been registered with us!"));
+			_re(t("This login")." (".$_POST['login'].")".t("has already been registered with us!"));
 		}
 		// Check passowrds
 		if ($_POST["password"] == "") {
-			common()->_raise_error(t('Password is required!'));
+			_re(t('Password is required!'));
 		}
 		if ($_POST["password2"] == "") {
-			common()->_raise_error(t('Please re-enter your password again!'));
+			_re(t('Please re-enter your password again!'));
 		} elseif ($_POST["password"] != $_POST["password2"]) {
-			common()->_raise_error(t("Two passwords don't match!"));
+			_re(t("Two passwords don't match!"));
 		}
 		// Check if email is already registered for someone
 		if (!preg_match('#^[0-9a-z]([-_.]?[0-9a-z])*@[0-9a-z]([-.]?[0-9a-z])*\.[a-z]{2,3}$#ims', $_POST["email"])) {
-			common()->_raise_error(t('Invalid e-mail, please check your spelling!'));
+			_re(t('Invalid e-mail, please check your spelling!'));
 		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `email`='"._es($_POST['email'])."'") >= 1) {
-			common()->_raise_error(t("This e-mail")." (".$_POST['email'].") ".t("has already been registered with us")."!<br>".t("Use")." <a href='./?object=get_pswd'>".t("password reminder")."</a> ".t("in case you forgot your password")."!");
+			_re(t("This e-mail")." (".$_POST['email'].") ".t("has already been registered with us")."!<br>".t("Use")." <a href='./?object=get_pswd'>".t("password reminder")."</a> ".t("in case you forgot your password")."!");
 /*
 		} elseif ($this->CHECK_EMAIL_IN_DELETED) {
 			// Check if such email has been already registered in some account
 			// and then account was deleted
 			if (db()->query_num_rows("SELECT `id` FROM `".db('user_deleted')."` WHERE `email`='"._es($_POST['email'])."'") >= 1) {
-				common()->_raise_error("This e-mail (".$_POST['email'].") was registered with us and then account was deleted!<br /><a href='./?object=help&action=email_form'>Contact</a> site admin if you have any questions");
+				_re("This e-mail (".$_POST['email'].") was registered with us and then account was deleted!<br /><a href='./?object=help&action=email_form'>Contact</a> site admin if you have any questions");
 			}
 */
 		}
 		// Check other fields
 		if ($_POST["measurements"] != "" && !preg_match('#[0-9]{2}([A-G]{0,4})-([0-9]{2})-([0-9]{2})#', $_POST["measurements"])) {
-			common()->_raise_error(t('Invalid measurements (example, 36DD-27-32)!'));
+			_re(t('Invalid measurements (example, 36DD-27-32)!'));
 		}
 		if ($_POST["recip_url"] == "http://" || $_POST["recip_url"] == "") {
 			$_POST["recip_url"] = "";
 		} elseif (!preg_match('#^http://[_a-z0-9-]+\.[_a-z0-9-]+#i', $_POST["recip_url"])) {
-			common()->_raise_error(t('Invalid reciprocal URL'));
+			_re(t('Invalid reciprocal URL'));
 		}
 		foreach ((array)$this->_required_fields as $_field => $_name) {
 			if (!strlen($_POST[is_numeric($_field) ? $_name : $_field])) {
-				common()->_raise_error(t($_name)." ".t('required'));
+				_re(t($_name)." ".t('required'));
 			}
 		}
 		
@@ -463,13 +463,13 @@ class yf_register {
 		// Check if code is expired
 		if (!common()->_error_exists()) {
 			if (!empty($member_date) && (time() - $member_date) > $this->CONFIRM_TTL) {
-				common()->_raise_error(t("Confirmation code has expired."));
+				_re(t("Confirmation code has expired."));
 			}
 		}
 		if (!common()->_error_exists()) {
 			// Check whole code
 			if ($_GET["id"] != $target_user_info["verify_code"]) {
-				common()->_raise_error(t("Wrong confirmation code"));
+				_re(t("Wrong confirmation code"));
 			}
 		}
 		if (!common()->_error_exists()) {

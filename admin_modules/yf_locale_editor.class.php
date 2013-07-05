@@ -361,7 +361,7 @@ class yf_locale_editor {
 		// Get variable data
 		$var_info = db()->query_fetch("SELECT * FROM `".db('locale_vars')."` WHERE `id`=".intval($_GET["id"]));
 		if (empty($var_info["id"])) {
-			common()->_raise_error(t("No such var!"));
+			_re(t("No such var!"));
 			return _e();
 		}
 		// Get translations for the current variable
@@ -666,16 +666,16 @@ class yf_locale_editor {
 		if (isset($_POST["go"])) {
 			// Check if file is selected
 			if (empty($_FILES["import_file"]["name"])) {
-				common()->_raise_error(t("Please select file to process"));
+				_re(t("Please select file to process"));
 			}
 			// Check file format
 			if (empty($_POST["file_format"]) || !isset($this->_file_formats[$_POST["file_format"]])) {
-				common()->_raise_error(t("Please select file format"));
+				_re(t("Please select file format"));
 			}
 			$cur_locale = $_POST["lang_code"];
 			// Check file format
 			if (empty($cur_locale)) {
-				common()->_raise_error(t("Please select language"));
+				_re(t("Please select language"));
 			}
 			$raw_langs = $this->_get_iso639_list();
 			// Check for correct lang code
@@ -807,12 +807,12 @@ class yf_locale_editor {
 		if (isset($_POST["go"])) {
 			// Check file format
 			if (empty($_POST["file_format"]) || !isset($this->_file_formats[$_POST["file_format"]])) {
-				common()->_raise_error(t("Please select file format"));
+				_re(t("Please select file format"));
 			}
 			$IS_TEMPLATE = intval((bool)$_POST["is_template"]);
 			// Check language code
 			if (empty($_POST["lang_code"]) && !$IS_TEMPLATE) {
-				common()->_raise_error(t("Please select language to export"));
+				_re(t("Please select language to export"));
 			}
 			// Prepare lang info
 			$cur_locale = !empty($_POST["lang_code"]) ? $_POST["lang_code"] : "en";
@@ -889,7 +889,7 @@ class yf_locale_editor {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				if (empty($body)) {
-					common()->_raise_error(t("Error while exporting data"));
+					_re(t("Error while exporting data"));
 				}
 			}
 			// Check for errors

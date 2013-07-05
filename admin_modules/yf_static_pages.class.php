@@ -371,7 +371,7 @@ class yf_static_pages {
 		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
 		// Show error message
 		if (empty($page_info)) {
-			common()->_raise_error(t("No such page!"));
+			_re(t("No such page!"));
 			return _e();
 		}
 		// Process template
@@ -398,7 +398,7 @@ class yf_static_pages {
 		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
 		// Show error message
 		if (empty($page_info)) {
-			common()->_raise_error(t("No such page!"));
+			_re(t("No such page!"));
 			$body = _e();
 		} else {
 			$text = $this->ALLOW_HTML_IN_TEXT ? $page_info["text"] : _prepare_html($page_info["text"]);
@@ -419,7 +419,7 @@ class yf_static_pages {
 		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
 		// Show error message
 		if (empty($page_info)) {
-			common()->_raise_error(t("No such page!"));
+			_re(t("No such page!"));
 			$body = _e();
 		} else {
 			$text = $this->ALLOW_HTML_IN_TEXT ? $page_info["text"] : _prepare_html($page_info["text"]);
@@ -440,7 +440,7 @@ class yf_static_pages {
 		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
 		// Show error message
 		if (empty($page_info)) {
-			common()->_raise_error(t("No such page!"));
+			_re(t("No such page!"));
 			$body = _e();
 		} else {
 			$body = common()->email_page($page_info["text"]);

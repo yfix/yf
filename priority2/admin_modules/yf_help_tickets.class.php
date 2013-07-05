@@ -446,7 +446,7 @@ class yf_help_tickets {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				if (empty($_POST["text"])) {
-					common()->_raise_error("answer text required");
+					_re("answer text required");
 				}
 			}
 			// Prepare ticket id
@@ -549,13 +549,13 @@ class yf_help_tickets {
 		// Try to get given comment info
 		$answer_info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
 		if (empty($answer_info["id"])) {
-			common()->_raise_error("No such answer!");
+			_re("No such answer!");
 			return _e();
 		}
 		// Check posted data and save
 		if (count($_POST) > 0) {
 			if (empty($_POST["text"])) {
-				common()->_raise_error("answer text required");
+				_re("answer text required");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -603,7 +603,7 @@ class yf_help_tickets {
 		// Try to get given answer info
 		$answer_info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
 		if (empty($answer_info["id"])) {
-			common()->_raise_error("No such answer!");
+			_re("No such answer!");
 			return _e();
 		}
 		// Do delete answer

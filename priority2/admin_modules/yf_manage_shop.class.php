@@ -103,7 +103,7 @@ class yf_manage_shop {
 			$this->_prepare_filter_data();
 		}
 		// Sync company info with user section
-		$this->COMPANY_INFO = module("shop")->COMPANY_INFO;
+#		$this->COMPANY_INFO = _class("shop", "modules/")->COMPANY_INFO;
 	}
 
 	/**

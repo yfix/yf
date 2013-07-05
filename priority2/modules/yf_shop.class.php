@@ -186,7 +186,7 @@ class yf_shop extends yf_module {
 	* Default method
 	*/
 	function show() {
-		return $this->show_products();
+		return $this->show_products(1);
 	}
 
 	/**

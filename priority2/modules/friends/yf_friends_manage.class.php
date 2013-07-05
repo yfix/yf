@@ -77,7 +77,7 @@ class yf_friends_manage {
 			$target_user_info = user($_GET["id"], "full", array("WHERE" => array("active" => 1)));
 		}
 		if (empty($target_user_info["id"])) {
-			common()->_raise_error("No such user!");
+			_re("No such user!");
 			return _e();
 		}
 		// Do delete

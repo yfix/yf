@@ -17,10 +17,10 @@ class yf_confirm_reg {
 	//-----------------------------------------------------------------------------
 	//
 	function do_confirm () {
-		if (!strlen($_POST["login"]))	common()->_raise_error(t("Login required"));
+		if (!strlen($_POST["login"]))	_re(t("Login required"));
 		if (!common()->_error_exists()) {
 			$A = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `active`='0' AND `login`='"._es($_POST["login"])."'");
-			if (!$A["id"]) common()->_raise_error(t("Sorry, either someone has already confirmed membership or some important information has been missed. Please enter email below and submit"));
+			if (!$A["id"]) _re(t("Sorry, either someone has already confirmed membership or some important information has been missed. Please enter email below and submit"));
 		}
 		// Continue if check passed
 		if (!common()->_error_exists()) {

@@ -107,7 +107,7 @@ class yf_user_modules_install {
 		// Do import data
 		if (isset($_POST["go"])) {
 			if (empty($_FILES["import_file"]['tmp_name']) || empty($_FILES["import_file"]['size'])) {
-				common()->_raise_error(t("Error while uploading file"));
+				_re(t("Error while uploading file"));
 			}
 			// Move to the temporary folder
 			if (!common()->_error_exists()) {
@@ -123,7 +123,7 @@ class yf_user_modules_install {
 			}
 			// Check for uploaded file
 			if (!file_exists($uploaded_file_path) || !filesize($uploaded_file_path)) {
-				common()->_raise_error(t("Error while moving temporary file"));
+				_re(t("Error while moving temporary file"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -145,7 +145,7 @@ class yf_user_modules_install {
 				}
 				// Check if we found achive type
 				if (empty($ARCHIVE_TYPE)) {
-					common()->_raise_error(t("Unknown archive type"));
+					_re(t("Unknown archive type"));
 				}
 			}
 			// Try to extract file from archive
@@ -167,7 +167,7 @@ class yf_user_modules_install {
 					$result = $this->PARENT_OBJ->ZIP_OBJ->extract(PCLZIP_OPT_PATH, $extract_path);
 					// Check for extraction errors
 					if (!$result) {
-						common()->_raise_error(t("Error while extracting files from ZIP archive"));
+						_re(t("Error while extracting files from ZIP archive"));
 					}
 				} elseif (in_array($ARCHIVE_TYPE, array("gz","bz2"))) {
 					include (YF_PATH."libs/pear/Archive/Tar.php");
@@ -183,7 +183,7 @@ class yf_user_modules_install {
 					$result = !$this->PARENT_OBJ->TAR_OBJ->extractModify($extract_path, '');
 					// Check for extraction errors
 					if (!$result) {
-						common()->_raise_error(t("Error while extracting files from TAR @name archive", array("@name" => strtoupper($ARCHIVE_TYPE))));
+						_re(t("Error while extracting files from TAR @name archive", array("@name" => strtoupper($ARCHIVE_TYPE))));
 					}
 				}
 			}
@@ -195,7 +195,7 @@ class yf_user_modules_install {
 					break;
 				}
 				if (empty($package_desc_file_name)) {
-					common()->_raise_error(t("Can not find package description xml file"));
+					_re(t("Can not find package description xml file"));
 				}
 			}
 			// Try to parse description file
@@ -208,19 +208,19 @@ class yf_user_modules_install {
 				$xml_data = &$this->PARENT_OBJ->XML_OBJ->xml_array;
 				// Validate array parsed from package file
 				if (!isset($xml_data["yf_install"]) || !isset($xml_data["yf_install"]["ATTRIBUTES"]["type"])) {
-					common()->_raise_error(t("Cant find package info in XML data"));
+					_re(t("Cant find package info in XML data"));
 				} elseif ($xml_data["yf_install"]["ATTRIBUTES"]["type"] != "user_module") {
-					common()->_raise_error(t("Wrong package type"));
+					_re(t("Wrong package type"));
 				} elseif (empty($xml_data["yf_install"]["name"]["VALUE"]) || $PACKAGE_NAME != $xml_data["yf_install"]["name"]["VALUE"]) {
-					common()->_raise_error(t("Wrong package name"));
+					_re(t("Wrong package name"));
 				} elseif (empty($xml_data["yf_install"]["files"]["VALUE"])) {
-					common()->_raise_error(t("Empty package files list"));
+					_re(t("Empty package files list"));
 				}
 			}
 			// Check if such module exists
 			if (!common()->_error_exists()) {
 				if (isset($this->PARENT_OBJ->_modules[$PACKAGE_NAME])) {
-					common()->_raise_error(t("User module \"@name\" already exists. If you want to install current package - you need to uninstall old one first.", array("@name" => $PACKAGE_NAME)));
+					_re(t("User module \"@name\" already exists. If you want to install current package - you need to uninstall old one first.", array("@name" => $PACKAGE_NAME)));
 				}
 			}
 			// Process package contents
@@ -230,7 +230,7 @@ class yf_user_modules_install {
 					$cur_file_path = $extract_path.$file_info["VALUE"];
 					// Check if such file exists
 					if (!file_exists($cur_file_path)) {
-						common()->_raise_error(t("Package file name \"@name\" not exists", array("@name" => $file_info["VALUE"])));
+						_re(t("Package file name \"@name\" not exists", array("@name" => $file_info["VALUE"])));
 					}
 					// Fill required arrays
 					if ($file_info["ATTRIBUTES"]["type"] == "stpl") {
@@ -248,7 +248,7 @@ class yf_user_modules_install {
 				}
 				// Raise error only if we have templates in the package
 				if (!empty($templates_list) && empty($site_theme_name)) {
-					common()->_raise_error(t("Cannot get theme name from the current site"));
+					_re(t("Cannot get theme name from the current site"));
 				}
 			}
 			// Copy required files into current project
@@ -328,11 +328,11 @@ class yf_user_modules_install {
 		if (isset($_POST["go"])) {
 			// Check file format
 			if (empty($_POST["file_format"]) || !isset($this->PARENT_OBJ->_file_formats[$_POST["file_format"]])) {
-				common()->_raise_error(t("Please select file format"));
+				_re(t("Please select file format"));
 			}
 			// Check module name to export
 			if (empty($_POST["module"])) {
-				common()->_raise_error(t("Please select module to export"));
+				_re(t("Please select module to export"));
 			}
 			// Do export
 			if (!common()->_error_exists()) {
@@ -463,7 +463,7 @@ class yf_user_modules_install {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				if (empty($body)) {
-					common()->_raise_error(t("Error while exporting data"));
+					_re(t("Error while exporting data"));
 				}
 			}
 			// Check for errors

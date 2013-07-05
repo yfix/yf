@@ -365,14 +365,14 @@ class yf_reputation {
 		}
 		// Do check user id
 		if (empty($target_user_id)) {
-			common()->_raise_error(t("Missing target user ID!"));
+			_re(t("Missing target user ID!"));
 		}
 		// Check if user voting himself
 		if ($this->USER_ID == $target_user_id) {
-			common()->_raise_error(t("You are trying to vote for yourself!"));
+			_re(t("You are trying to vote for yourself!"));
 		}
 		if ($this->_user_info["ban_reput"]) {
-			common()->_raise_error(
+			_re(
 				"Sorry, you are not allowed to vote! Enjoy our site in some other way!"
 				."For more details <a href=\"".process_url("./?object=faq&action=view&id=16")."\">click here</a>"
 			);
@@ -381,14 +381,14 @@ class yf_reputation {
 		$user_info = user($target_user_id, "full", array("WHERE" => array("active" => 1)));
 
 		if (empty($user_info)) {
-			common()->_raise_error(t("No such user!"));
+			_re(t("No such user!"));
 		}
 		// Check voting changing direction (good / bad)
 		$_POST["vote_change"] = intval($_POST["vote_change"]);
 		$_vote_change = _my_range(-$this->CUR_USER_ALT_POWER, $this->CUR_USER_ALT_POWER);
 		unset($_vote_change[0]);
 		if (!in_array($_POST["vote_change"], $_vote_change)) {
-			common()->_raise_error(t("Please specify vote changing direction (good / bad)!"));
+			_re(t("Please specify vote changing direction (good / bad)!"));
 		}
 		// Check multi-accounts
 		if (!common()->_error_exists()) {
@@ -549,14 +549,14 @@ class yf_reputation {
 		}
 		// Do check user id
 		if (empty($target_user_id)) {
-			common()->_raise_error(t("Missing target user ID!"));
+			_re(t("Missing target user ID!"));
 		}
 		// Check if user voting himself
 		if ($this->USER_ID == $target_user_id) {
-			common()->_raise_error(t("You are trying to vote for yourself!"));
+			_re(t("You are trying to vote for yourself!"));
 		}
 		if ($this->_user_info["ban_reput"]) {
-			common()->_raise_error(
+			_re(
 				"Sorry, you are not allowed to vote! Enjoy our site in some other way!"
 				."For more details <a href=\"".process_url("./?object=faq&action=view&id=16")."\">click here</a>"
 			);
@@ -564,7 +564,7 @@ class yf_reputation {
 		// Check user info
 		$user_info = user($target_user_id, "full", array("WHERE" => array("active" => 1)));
 		if (empty($user_info)) {
-			common()->_raise_error(t("No such user!"));
+			_re(t("No such user!"));
 		}
 		// Check multi-accounts
 		if (!common()->_error_exists()) {
@@ -619,7 +619,7 @@ class yf_reputation {
 		$MULTI_ACCOUNT_FOUND = common()->_check_multi_accounts($target_user_id, $this->USER_ID);
 		// Raise error message if we found multi-account
 		if ($MULTI_ACCOUNT_FOUND) {
-			common()->_raise_error(t("Sorry, your vote seems suspicious to our anti-cheat filter and can't be counted!"));
+			_re(t("Sorry, your vote seems suspicious to our anti-cheat filter and can't be counted!"));
 		}
 	}
 
@@ -649,37 +649,37 @@ class yf_reputation {
 	function _check_if_vote_allowed ($target_user_id = 0) {
 		// Fast checks
 		if (empty($target_user_id) || empty($this->USER_ID)) {
-			common()->_raise_error(t("Missing required params for vote checking!"));
+			_re(t("Missing required params for vote checking!"));
 			return false;
 		}
 		if (!empty($this->USER_ID) && $target_user_id == $this->USER_ID) {
-			common()->_raise_error(t("You are trying to vote for yourself!"));
+			_re(t("You are trying to vote for yourself!"));
 			return false;
 		}
 		// Start more complex checks:
 		// alt power
 		if ($this->CUR_USER_ALT_POWER < 1) {
-			common()->_raise_error(t("Sorry, but you have no reputation altering power... Please be more active on our site and you will be able to vote soon!"));
+			_re(t("Sorry, but you have no reputation altering power... Please be more active on our site and you will be able to vote soon!"));
 			return false;
 		}
 		// min reputation
 		if (!empty($this->MIN_REPUT) && 
 			$this->CUR_USER_REPUT_POINTS < $this->MIN_REPUT) {
-			common()->_raise_error("You have too low site reputation (".intval($this->CUR_USER_REPUT_POINTS).")!<br />\r\nYou need at least ".intval($this->MIN_REPUT)."reputation points to be able to vote.");
+			_re("You have too low site reputation (".intval($this->CUR_USER_REPUT_POINTS).")!<br />\r\nYou need at least ".intval($this->MIN_REPUT)."reputation points to be able to vote.");
 			return false;
 		}
 		// min activity
 		$this->CUR_USER_ACTIVITY = $this->_get_user_activity_points($this->USER_ID);
 		if (!empty($this->MIN_ACTIVITY) && 
 			$this->CUR_USER_ACTIVITY < $this->MIN_ACTIVITY) {
-			common()->_raise_error("You have too low site activity (".intval($this->CUR_USER_ACTIVITY).")!<br />\r\nYou need minimum ".intval($this->MIN_ACTIVITY)." activity points to be able to vote. Please be more active on our site and you will be able to vote soon!");
+			_re("You have too low site activity (".intval($this->CUR_USER_ACTIVITY).")!<br />\r\nYou need minimum ".intval($this->MIN_ACTIVITY)." activity points to be able to vote. Please be more active on our site and you will be able to vote soon!");
 			return false;
 		}
 		// clicks daily (for last 24 hours)
 		list($this->REPUT_VOTES_LAST_24H) = db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." AND `add_date` > ".(time() - 86400));
 		if (!empty($this->MAX_REPUT_CLICKS_DAILY) && 
 			$this->REPUT_VOTES_LAST_24H >= $this->MAX_REPUT_CLICKS_DAILY) {
-			common()->_raise_error("You have already spent all allowed daily votes! (".intval($this->MAX_REPUT_CLICKS_DAILY).") Thanks for being so active! To prevent our voting system from abuse we restrict the daily number of votes.");
+			_re("You have already spent all allowed daily votes! (".intval($this->MAX_REPUT_CLICKS_DAILY).") Thanks for being so active! To prevent our voting system from abuse we restrict the daily number of votes.");
 			return false;
 		}
 		// cast value
@@ -688,7 +688,7 @@ class yf_reputation {
 			$Q = db()->query("SELECT `id`,`target_user_id` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." ORDER BY `add_date` DESC LIMIT ".intval($this->REPUT_CAST_VALUE));
 			while ($A = db()->fetch_assoc($Q)) $last_target_users[$A["id"]] = $A["target_user_id"];
 			if (in_array($target_user_id, (array)$last_target_users)) {
-				common()->_raise_error("You recently voted for this user. <br />\r\nSo to vote for him/her again you need to vote for at least ".intval($this->REPUT_CAST_VALUE)." other users first.");
+				_re("You recently voted for this user. <br />\r\nSo to vote for him/her again you need to vote for at least ".intval($this->REPUT_CAST_VALUE)." other users first.");
 				return false;
 			}
 		}
@@ -703,7 +703,7 @@ class yf_reputation {
 				LIMIT 1"
 			);
 			if (!empty($voted_for_object)) {
-				common()->_raise_error(t("You have already voted for this post!"));
+				_re(t("You have already voted for this post!"));
 				return false;
 			}
 		}

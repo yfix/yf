@@ -39,13 +39,13 @@ class yf_gallery_settings {
 		if (!empty($_POST["go"])) {
 			// Check required data
 			if (!isset($this->GALLERY_OBJ->_thumb_types[$_POST["thumb_type"]])) {
-				common()->_raise_error("Wrong thumb type");
+				_re("Wrong thumb type");
 			}
 			if (!isset($this->GALLERY_OBJ->MEDIUM_SIZES[$_POST["medium_size"]])) {
-				common()->_raise_error("Wrong medium photo size");
+				_re("Wrong medium photo size");
 			}
 			if (!isset($this->GALLERY_OBJ->_layout_types[$_POST["layout_type"]])) {
-				common()->_raise_error("Wrong layout type");
+				_re("Wrong layout type");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {

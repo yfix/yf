@@ -111,24 +111,24 @@ class yf_help extends yf_module {
 		foreach ((array)$_POST as $k => $v) trim($_POST[$k]);
 		// Check required fields
 		if (!strlen($_POST["name"])) {
-			common()->_raise_error(t("Please enter your name."));
+			_re(t("Please enter your name."));
 		}
 		if (!strlen($_POST["email"])) {
-			common()->_raise_error(t("Please enter contact email."));
+			_re(t("Please enter contact email."));
 		} elseif (!common()->email_verify($_POST["email"])) {
-			common()->_raise_error(t("That email address does not appear to be valid.<br>Please correct it and try again"));
+			_re(t("That email address does not appear to be valid.<br>Please correct it and try again"));
 		}
 		if (!strlen($_POST["message"])) {
-			common()->_raise_error(t("Please enter message."));
+			_re(t("Please enter message."));
 		}
 		if (!strlen($_POST["subject"])) {
-			common()->_raise_error(t("Please enter subject."));
+			_re(t("Please enter subject."));
 		}
 		if (empty($_POST["cat_id"]) || !isset($this->_help_cats[$_POST["cat_id"]])) {
-			common()->_raise_error(t("Please select request category."));
+			_re(t("Please select request category."));
 		}
 		if (empty($_POST["priority"]) || !isset($this->_priorities[$_POST["priority"]])) {
-			common()->_raise_error(t("Please select priority."));
+			_re(t("Please select priority."));
 		}
 		// Validate captcha
 		if (is_object($this->CAPTCHA)) {
@@ -183,7 +183,7 @@ class yf_help extends yf_module {
 				$result		= common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
 				// Check if email is sent - else show error
 				if (!$result) {
-					common()->_raise_error(t("Server mail error. Please try again"));
+					_re(t("Server mail error. Please try again"));
 				}
 			}
 			// Try to send mail to user
@@ -202,7 +202,7 @@ class yf_help extends yf_module {
 				$result		= common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
 				// Check if email is sent - else show error
 				if (!$result) {
-					common()->_raise_error(t("Server mail error. Please try again"));
+					_re(t("Server mail error. Please try again"));
 				}
 			}
 		} else {

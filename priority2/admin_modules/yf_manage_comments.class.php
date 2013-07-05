@@ -121,7 +121,7 @@ class yf_manage_comments {
 		// Check posted data and save
 		if (count($_POST) > 0) {
 			if (empty($_POST["text"])) {
-				common()->_raise_error(t("Comment text required"));
+				_re(t("Comment text required"));
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {

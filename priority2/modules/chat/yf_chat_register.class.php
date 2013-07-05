@@ -52,17 +52,17 @@ class yf_chat_register {
 	function _do() {
 		// Check allowed values
 		if (strlen($_POST["login"]) < 2 || strlen($_POST["login"]) > 32) {
-			common()->_raise_error(t("2 > login > 32"));
+			_re(t("2 > login > 32"));
 		}
 		$LOGIN_EXISTS = db()->query_num_rows("SELECT `id` FROM `".db('chat_users')."` WHERE `login`='"._es($_POST["login"])."'");
 		if ($LOGIN_EXISTS) {
-			common()->_raise_error(t('login_exists'));
+			_re(t('login_exists'));
 		}
 		if (strlen($_POST["password"]) < 4 || strlen($_POST["password"]) > 32) {
-			common()->_raise_error(t("4 > password > 32"));
+			_re(t("4 > password > 32"));
 		}
 		if (!preg_match("/^[\w\s\x7F-\xFF\._\-+=:;~!@#%\^&\*\(\)\{\}\[\]]{2,32}$/i", $_POST["login"])) {
-			common()->_raise_error(t("wrong_login")." \"".$_POST["login"]."\"");
+			_re(t("wrong_login")." \"".$_POST["login"]."\"");
 		}
 		if (!common()->_error_exists()) {
 			$sql = "INSERT INTO `".db('chat_users')."` (

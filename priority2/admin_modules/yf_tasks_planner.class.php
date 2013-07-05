@@ -146,13 +146,13 @@ class yf_tasks_planner {
 	function edit_task() {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			common()->_raise_error(t("No ID!"));
+			_re(t("No ID!"));
 			return _e();
 		}
 		// Try to get current task info
 		$task_info = db()->query_fetch("SELECT * FROM `".db('task_manager')."` WHERE `id`=".intval($_GET["id"]));
 		if (empty($task_info["id"])) {
-			common()->_raise_error(t("No such task!"));
+			_re(t("No such task!"));
 			return _e();
 		}
 		// Do save
@@ -222,13 +222,13 @@ class yf_tasks_planner {
 	function run_task() {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			common()->_raise_error(t("No ID!"));
+			_re(t("No ID!"));
 			return _e();
 		}
 		// Try to get current task info
 		$task_info = db()->query_fetch("SELECT * FROM `".db('task_manager')."` WHERE `id`=".intval($_GET["id"]));
 		if (empty($task_info["id"])) {
-			common()->_raise_error(t("No such task!"));
+			_re(t("No such task!"));
 			return _e();
 		}
 		$_GET["ck"] = $task_info["cronkey"];

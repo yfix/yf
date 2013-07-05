@@ -202,23 +202,23 @@ class yf_site_links {
 		} else {
 			// Verify required vars
 			if (empty($_POST["name"])) {
-				common()->_raise_error("Name is too short!");
+				_re("Name is too short!");
 			} elseif (strlen($_POST["name"]) > 40) {
-				common()->_raise_error("Name is too long! Maximum length allowed is 40 characters!");
+				_re("Name is too long! Maximum length allowed is 40 characters!");
 			}
 			if (!common()->email_verify($_POST["email"])) {
-				common()->_raise_error("Invalid E-mail!");
+				_re("Invalid E-mail!");
 			}
 			if (strlen($_POST["password"]) < 3) {
-				common()->_raise_error("Password is too short. Minimum length is 3 characters!");
+				_re("Password is too short. Minimum length is 3 characters!");
 			} elseif (strlen($_POST["password"]) > 12) {
-				common()->_raise_error("Password is too long.  Maximum length allowed is 12 characters!");
+				_re("Password is too long.  Maximum length allowed is 12 characters!");
 			}
 			if ($_POST["password"] != $_POST["password2"]) {
-				common()->_raise_error("Passwords do not match!");
+				_re("Passwords do not match!");
 			}
 			if (db()->query_num_rows("SELECT * FROM `".db('links_users')."` WHERE `email`='"._es(stripslashes($_POST["email"]))."'")) {
-				common()->_raise_error("User with this email already exsists! Please login with your account password. You can add multiple sites to your account.");
+				_re("User with this email already exsists! Please login with your account password. You can add multiple sites to your account.");
 			}
 			// Check if errors occured
 			if (!common()->_error_exists()) {
@@ -292,7 +292,7 @@ class yf_site_links {
 		if (!empty($_POST["email"])) {
 			$A = db()->query_fetch("SELECT * FROM `".db('links_users')."` WHERE `email`='"._es(trim($_POST["email"]))."' LIMIT 1");
 			if (empty($A['id'])) {
-				common()->_raise_error("User not found!");
+				_re("User not found!");
 			}
 			// Check errors
 			if (!common()->_error_exists()) {
@@ -372,7 +372,7 @@ class yf_site_links {
 		}
 		// Check for same site
 		if ($link_info["status"] == 4) {
-			common()->_raise_error("This site is suspended!");
+			_re("This site is suspended!");
 		}
 		// Check if errors occured
 		if (!common()->_error_exists()) {
@@ -437,7 +437,7 @@ class yf_site_links {
 		if (!common()->_error_exists()) {
 			// Check for same site
 			if (db()->query_num_rows("SELECT * FROM `".db('links_links')."` WHERE `url` LIKE '%"._es($_POST["url"])."%'")) {
-				common()->_raise_error("Site already exsist!");
+				_re("Site already exsist!");
 			}
 		}
 		// Check if errors occured
@@ -446,7 +446,7 @@ class yf_site_links {
 			$cat_info = $this->_site_cats_items[$_POST["cat_id"]];
 			// Check for same site
 			if (empty($cat_info["id"])) {
-				common()->_raise_error("Wrong category ID!");
+				_re("Wrong category ID!");
 			}
 		}
 		// Check if errors occured
@@ -548,7 +548,7 @@ class yf_site_links {
 			$cat_info = $this->_site_cats_items[$_POST["cat_id"]];
 			// Check for same site
 			if (empty($cat_info["id"])) {
-				common()->_raise_error("Wrong category ID!");
+				_re("Wrong category ID!");
 			}
 		}
 		// Check if errors occured
@@ -626,44 +626,44 @@ class yf_site_links {
 	function _verify_link_post() {
 		// Check required data
 		if (strlen($_POST["title"]) < 3) {
-			common()->_raise_error("Site title is too short!");
+			_re("Site title is too short!");
 		}
 		if (strlen($_POST["title"]) > 50) {
-			common()->_raise_error("Site title is too long! Maximum 50 characters allowed!");
+			_re("Site title is too long! Maximum 50 characters allowed!");
 		}
 		if (strlen($_POST["url"]) < 10) {
-			common()->_raise_error("Site URL is too short!");
+			_re("Site URL is too short!");
 		}
 		if (strlen($_POST["url"]) > 250) {
-			common()->_raise_error("Site URL is too long!");
+			_re("Site URL is too long!");
 		}
 		if (!common()->url_verify($_POST["url"])) {
-			common()->_raise_error("Invalid site URL!");
+			_re("Invalid site URL!");
 		}
 		if (strlen($_POST["link_url"]) < 10) {
-			common()->_raise_error("Link URL is too short!");
+			_re("Link URL is too short!");
 		}
 		if (strlen($_POST["link_url"]) > 250) {
-			common()->_raise_error("Link URL is too long!");
+			_re("Link URL is too long!");
 		}
 		if (!common()->url_verify($_POST["link_url"])) {
-			common()->_raise_error("Invalid link URL syntax!");
+			_re("Invalid link URL syntax!");
 		}
 		if (!$_POST["banner_url"] && $_POST["type"] == 1) {
-			common()->_raise_error("Banner URL is too short!");
+			_re("Banner URL is too short!");
 		}
 		if (strlen($_POST["banner_url"]) > 250 && $_POST["type"] == 1) {
-			common()->_raise_error("Banner URL is too long!");
+			_re("Banner URL is too long!");
 		}
 		if ($_POST["banner_url"] == "http://") {
 			$_POST["banner_url"] = "";
 		} elseif (!common()->url_verify($_POST["banner_url"]) && $_POST["type"] == 1) {
-			common()->_raise_error("Invalid banner URL!");
+			_re("Invalid banner URL!");
 		}
 		if (!$_POST["description"] && $_POST["type"] == 0) {
-			common()->_raise_error("Site description is too short!");
+			_re("Site description is too short!");
 		} elseif (strlen($_POST["description"]) > 512 && $_POST["type"] == 0) {
-			common()->_raise_error("Site description is too long!");
+			_re("Site description is too long!");
 		}
 		// Clean up description
 		$_POST["description"] = str_replace("'", "&#39;", htmlspecialchars(strip_tags(stripslashes($_POST["description"]))));

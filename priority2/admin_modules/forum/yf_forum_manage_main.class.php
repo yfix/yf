@@ -309,7 +309,7 @@ class yf_forum_manage_main {
 		if (!empty($_POST)) {
 			$_POST["forum"] = intval($_POST["forum"]);
 			if (empty($_POST["forum"])) {
-				common()->_raise_error(t("Forum id required"));
+				_re(t("Forum id required"));
 			}
 			if (!common()->_error_exists()) {
 				$sql = "UPDATE `".db('forum_topics')."` SET 

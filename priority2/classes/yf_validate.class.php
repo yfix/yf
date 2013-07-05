@@ -57,16 +57,16 @@ class yf_validate {
 		// Do check
 		$_nick_pattern = implode("", $this->NICK_ALLOWED_SYMBOLS);
 		if (empty($TEXT_TO_CHECK) || (strlen($TEXT_TO_CHECK) < $this->MIN_NICK_LENGTH)) {
-			common()->_raise_error(t("Nick must have at least @num symbols", array("@num" => $this->MIN_NICK_LENGTH)));
+			_re(t("Nick must have at least @num symbols", array("@num" => $this->MIN_NICK_LENGTH)));
 		} elseif (!preg_match("/^[".$_nick_pattern."]+\$/iu", $TEXT_TO_CHECK)) {
-			common()->_raise_error(t("Nick can contain only these characters: \"@text1\"", array("@text1" => _prepare_html(stripslashes(implode("\" , \"", $this->NICK_ALLOWED_SYMBOLS))))));
+			_re(t("Nick can contain only these characters: \"@text1\"", array("@text1" => _prepare_html(stripslashes(implode("\" , \"", $this->NICK_ALLOWED_SYMBOLS))))));
 			if (!$OVERRIDE_MODE) {
 				$_POST[$name_in_form] = preg_replace("/[^".$_nick_pattern."]+/iu", "", $_POST[$name_in_form]);
 			}
 		} elseif ($TEXT_TO_CHECK != $CUR_VALUE) {
 			$NICK_ALREADY_EXISTS = (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `nick`='"._es($TEXT_TO_CHECK)."'") >= 1);
 			if ($NICK_ALREADY_EXISTS) {
-				common()->_raise_error(t("Nick (\"@name\") is already reserved. Please try another one.", array("@name" => $TEXT_TO_CHECK)));
+				_re(t("Nick (\"@name\") is already reserved. Please try another one.", array("@name" => $TEXT_TO_CHECK)));
 			}
 		}
 	}
@@ -87,13 +87,13 @@ class yf_validate {
 		}
 		// Do check profile url
 		if (!empty($CUR_VALUE)) {
-			common()->_raise_error(t("You have already chosen your profile url. You are not allowed to change it!"));
+			_re(t("You have already chosen your profile url. You are not allowed to change it!"));
 		} elseif (!preg_match("/^[a-z0-9]{0,64}$/ims", $TEXT_TO_CHECK)) {
-			common()->_raise_error(t("Wrong Profile url format! (Letters or numbers only with no Spaces)"));
+			_re(t("Wrong Profile url format! (Letters or numbers only with no Spaces)"));
 		} elseif (in_array($TEXT_TO_CHECK, $this->reserved_words)) {
-			common()->_raise_error("This profile url (\"".$TEXT_TO_CHECK."\") is our site reserved name. Please try another one.");
+			_re("This profile url (\"".$TEXT_TO_CHECK."\") is our site reserved name. Please try another one.");
 		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `profile_url`='"._es($TEXT_TO_CHECK)."'") >= 1) {
-			common()->_raise_error("This profile url (\"".$TEXT_TO_CHECK."\") has already been registered with us! Please try another one.");
+			_re("This profile url (\"".$TEXT_TO_CHECK."\") has already been registered with us! Please try another one.");
 		}
 	}
 
@@ -103,9 +103,9 @@ class yf_validate {
 	function _check_login () {
 // TODO
 		if ($_POST["login"] == "") {
-			common()->_raise_error(t('Login required'));
+			_re(t('Login required'));
 		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `login`='"._es($_POST['login'])."'") >= 1) {
-			common()->_raise_error("This login (".$_POST["login"].") has already been registered with us!");
+			_re("This login (".$_POST["login"].") has already been registered with us!");
 		}
 	}
 
@@ -117,7 +117,7 @@ class yf_validate {
 		if ($_POST["recip_url"] == "http://" || $_POST["recip_url"] == "") {
 			$_POST["recip_url"] = "";
 		} elseif (!preg_match('#^http://[_a-z0-9-]+\\.[_a-z0-9-]+#ims', $_POST["recip_url"])) {
-			common()->_raise_error(t('Invalid reciprocal URL'));
+			_re(t('Invalid reciprocal URL'));
 		}
 //		return preg_match("!(http://|www|http://www)\\..+\\..+!", $url);
 //		return preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'.'((:[0-9]{1,5})?\/.*)?$/i', $url);
@@ -139,7 +139,7 @@ class yf_validate {
 	function _check_measurements () {
 // TODO
 		if ($_POST["measurements"] != "" && !preg_match("/[0-9]{2}(aaa|aa|a|b|c|d|dd|ddd|e|f|ff|g|gg|h|hh|j|jj|k|l)-([0-9]{2})-([0-9]{2})/i", $_POST["measurements"])) {
-			common()->_raise_error(t('Invalid measurements (example, 36DD-27-32)!'));
+			_re(t('Invalid measurements (example, 36DD-27-32)!'));
 		}
 	}
 
@@ -213,7 +213,7 @@ class yf_validate {
 		} else {
 			// Make birth date required field
 			if (in_array($_POST["account_type"], array("visitor","escort"))) {
-				common()->_raise_error(t('Please enter you date of birth!'));
+				_re(t('Please enter you date of birth!'));
 			}
 		}
 	}

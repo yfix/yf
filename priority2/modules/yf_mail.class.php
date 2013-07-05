@@ -98,13 +98,13 @@ class yf_mail {
 			unset($_GET["id"]);
 		}
 		if (empty($this->USER_ID)) {
-			common()->_raise_error(t("Only for members!"));
+			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
 		// Get folder id
 		$folder_id = $this->_get_folder_id($folder_name);
 		if (empty($folder_id)) {
-			common()->_raise_error(t("Missing folder id!"));
+			_re(t("Missing folder id!"));
 			return common()->_show_error_message();
 		}
 		// Divide pages
@@ -202,7 +202,7 @@ class yf_mail {
 	function view_full_msg () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($this->USER_ID)) {
-			common()->_raise_error(t("Only for members!"));
+			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
 		// Try to get message info
@@ -210,7 +210,7 @@ class yf_mail {
 			$msg_info = db()->query_fetch("SELECT * FROM `".db('mail')."` WHERE `id`=".intval($_GET["id"])." AND `active`='1' AND `receiver_id`=".intval($this->USER_ID));
 		}
 		if (empty($msg_info["id"])) {
-			common()->_raise_error(t("No such message!"));
+			_re(t("No such message!"));
 			return common()->_show_error_message();
 		}
 		// Get target user info
@@ -247,7 +247,7 @@ class yf_mail {
 	function reply () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($this->USER_ID)) {
-			common()->_raise_error(t("Only for members!"));
+			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
 		// Try to get message info
@@ -255,7 +255,7 @@ class yf_mail {
 			$msg_info = db()->query_fetch("SELECT * FROM `".db('mail')."` WHERE `id`=".intval($_GET["id"])." AND `folder_id`=".intval($this->_get_folder_id("inbox"))." AND `active`='1' AND `receiver_id`=".intval($this->USER_ID));
 		}
 		if (empty($msg_info["id"])) {
-			common()->_raise_error(t("No such message!"));
+			_re(t("No such message!"));
 			return common()->_show_error_message();
 		}
 		// Get target user info
@@ -263,7 +263,7 @@ class yf_mail {
 		$target_user_info = user($msg_info["sender_id"]);
 		// Update message status (change to "read")
 		if (empty($target_user_info["id"])) {
-			common()->_raise_error(t("No such user!"));
+			_re(t("No such user!"));
 			return common()->_show_error_message();
 		}
 		// Prepare message info for reply
@@ -285,7 +285,7 @@ class yf_mail {
 	function send ($params = array()) {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($this->USER_ID)) {
-			common()->_raise_error(t("Only for members!"));
+			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
 		// Try to get target user info
@@ -296,29 +296,29 @@ class yf_mail {
 		}
 		// Check for correct user id
 		if (empty($target_user_info["id"])) {
-			common()->_raise_error(t("Wrong user id!"));
+			_re(t("Wrong user id!"));
 			return common()->_show_error_message();
 		}
 		// Check if user is trying to send mail to himself
 		if ($target_user_info["id"] == $this->USER_ID) {
-			common()->_raise_error(t("You are trying to send mail to yourself!"));
+			_re(t("You are trying to send mail to yourself!"));
 			return common()->_show_error_message();
 		}
 		// Try to save mail
 		if (isset($_POST["go"])) {
 			// Check required data
 			if (empty($_POST["subject"])) {
-				common()->_raise_error(t("Subject is requred!"));
+				_re(t("Subject is requred!"));
 			}
 			if (empty($_POST["msg"])) {
-				common()->_raise_error(t("Message text is requred!"));
+				_re(t("Message text is requred!"));
 			}
 			if (!common()->_error_exists()) {
 				if (strlen($_POST["subject"]) > $this->MAX_LENGTH_SUBJECT) {
-					common()->_raise_error("Subject length must be less than ".$this->MAX_LENGTH_SUBJECT." symbols!");
+					_re("Subject length must be less than ".$this->MAX_LENGTH_SUBJECT." symbols!");
 				}
 				if (strlen($_POST["msg"]) > $this->MAX_LENGTH_MSG) {
-					common()->_raise_error("Message length must be less than ".$this->MAX_LENGTH_MSG." symbols!");
+					_re("Message length must be less than ".$this->MAX_LENGTH_MSG." symbols!");
 				}
 			}
 			// Do save mail
@@ -386,7 +386,7 @@ class yf_mail {
 	function delete_msg () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($this->USER_ID)) {
-			common()->_raise_error(t("Only for members!"));
+			_re(t("Only for members!"));
 			return common()->_show_error_message();
 		}
 		// Try to get fans ids
@@ -401,7 +401,7 @@ class yf_mail {
 		}
 		// Check again for message ids
 		if (empty($msg_ids)) {
-			common()->_raise_error(t("Message id is required!"));
+			_re(t("Message id is required!"));
 			return common()->_show_error_message();
 		}
 		// Get messages infos
