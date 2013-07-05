@@ -1,7 +1,7 @@
 <?php
-class yf_shop_this_item_often_buy{
+class yf_shop_products_similar_by_basket{
 
-	function this_item_often_buy ($id) {
+	function products_similar_by_basket ($id) {
 		$sql_order_id = "SELECT order_id FROM ".db('shop_order_items')." WHERE product_id =  ".$id;
 		$orders = db()->query($sql_order_id);
 		while ($A = db()->fetch_assoc($orders))	{
@@ -36,7 +36,7 @@ class yf_shop_this_item_often_buy{
 			"items"	=> $items,
 			"title"	=> "Those who purchased this product also buy",
 		);
-		return tpl()->parse("shop/products_by_similar_price", $replace);
+		return tpl()->parse("shop/products_similar_by_price", $replace);
 	}
 	
 }

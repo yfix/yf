@@ -197,8 +197,8 @@ class yf_shop extends yf_module {
 		return _class('shop_products_similar_by_price', 'modules/shop/')->products_similar_by_price($price, $id);
 	}
 
-	function this_item_often_buy($id) {
-		return _class('shop_this_item_often_buy', 'modules/shop/')->this_item_often_buy($id);
+	function products_similar_by_basket($id) {
+		return _class('shop_products_similar_by_basket', 'modules/shop/')->products_similar_by_basket($id);
 	}
 
 	function add_to_cart() {
