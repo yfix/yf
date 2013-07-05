@@ -433,10 +433,10 @@ class yf_forum_manage_future {
 		$WORK_DAYS	= floor((time() - $START_DATE) / 86400);
 		// Get number of posts and themes created by this poster
 		list($themes_total)	= db()->query_fetch(
-			"SELECT COUNT(*) AS 0 FROM ".db('forum_topics')." WHERE auto_poster_id=".intval($POSTER_ID)
+			"SELECT COUNT(*) AS `0` FROM ".db('forum_topics')." WHERE auto_poster_id=".intval($POSTER_ID)
 		);
 		list($posts_total)	= db()->query_fetch(
-			"SELECT COUNT(*) AS 0 FROM ".db('forum_posts')." WHERE new_topic != 1 AND auto_poster_id=".intval($POSTER_ID)
+			"SELECT COUNT(*) AS `0` FROM ".db('forum_posts')." WHERE new_topic != 1 AND auto_poster_id=".intval($POSTER_ID)
 		);
 		// Count number of words and symbols (without quotes)
 		$words_total	= 0;
@@ -457,7 +457,7 @@ class yf_forum_manage_future {
 		}
 		// Get number of responses by normal users
 		list($total_responses)	= db()->query_fetch(
-			"SELECT COUNT(*) AS 0 
+			"SELECT COUNT(*) AS `0` 
 			FROM ".db('forum_posts')." 
 			WHERE new_topic != 1 
 				AND auto_poster_id=0 

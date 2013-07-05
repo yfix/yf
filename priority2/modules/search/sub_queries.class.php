@@ -110,7 +110,7 @@ class sub_queries {
 		// Get unique user ids from ads
 		if (is_array($ads)) {
 			// Count total records
-			list($this->total) = db()->query_fetch("SELECT FOUND_ROWS() AS 0", false);
+			list($this->total) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 			$this->total = intval($this->total);
 		}
 		// Add city_priority_placement ads

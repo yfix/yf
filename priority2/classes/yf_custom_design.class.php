@@ -117,7 +117,7 @@ class yf_custom_design {
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		}
 		// Check if user already have record for cutom_design
-		$style_info = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
+		$style_info = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('custom_style')." WHERE item_id=".intval($item_id)." AND page='"._es($page)."' LIMIT 1");
 		if ($style_info[0] == 0) {
 			db()->query("INSERT INTO ".db('custom_style')." (page,item_id) VALUES ('"._es($page)."',".intval($item_id).")");
 		}

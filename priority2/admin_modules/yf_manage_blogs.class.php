@@ -44,7 +44,7 @@ class yf_manage_blogs {
 		// Prepare other info
 		if (!empty($blog_posts_ids)) {
 			// Prepare pages
-			list($num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS 0", false);
+			list($num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 			list(, $pages, ) = common()->divide_pages("", "./?object=".$_GET["object"], "", $per_page, $num_posts);
 			// Get posts infos
 			$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE id IN(".implode(",", $blog_posts_ids).")");

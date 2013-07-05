@@ -331,7 +331,7 @@ class yf_geo_content {
 				if (!empty($_POST["country"])) {
 					// Check if we have country without known regions
 					list($have_regions) = db()->query_fetch(
-						"SELECT COUNT(*) AS 0 
+						"SELECT COUNT(*) AS `0` 
 						FROM ".db('geo_regions')." 
 						WHERE country='"._es($_POST["country"])."'"
 					);

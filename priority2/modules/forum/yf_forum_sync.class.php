@@ -78,23 +78,23 @@ class yf_forum_sync {
 			return false;
 		}
 		list($total_posts) = db()->query_fetch(
-			"SELECT COUNT(*) AS 0 FROM ".db('forum_posts')." WHERE status='a'"
+			"SELECT COUNT(*) AS `0` FROM ".db('forum_posts')." WHERE status='a'"
 		);
 		if (module('forum')->SETTINGS["USE_GLOBAL_USERS"]) {
 			list($total_users) = db()->query_fetch(
-				"SELECT COUNT(*) AS 0 FROM ".db('user')." WHERE active='1'"
+				"SELECT COUNT(*) AS `0` FROM ".db('user')." WHERE active='1'"
 			);
 			list($last_user_id, $last_user_login) = db()->query_fetch(
-				"SELECT id AS 0,nick AS 1 FROM ".db('user')." WHERE id=( 
+				"SELECT id AS `0`,nick AS 1 FROM ".db('user')." WHERE id=( 
 					SELECT MAX(id) FROM ".db('user')." WHERE active='1'
 				) LIMIT 1"
 			);
 		} else {
 			list($total_users) = db()->query_fetch(
-				"SELECT COUNT(id) AS 0 FROM ".db('forum_users')." WHERE status='a'"
+				"SELECT COUNT(id) AS `0` FROM ".db('forum_users')." WHERE status='a'"
 			);
 			list($last_user_id, $last_user_login) = db()->query_fetch(
-				"SELECT id AS 0,name AS 1 
+				"SELECT id AS `0`,name AS 1 
 				FROM ".db('forum_users')." 
 				WHERE status='a' 
 				ORDER BY id DESC 
@@ -302,7 +302,7 @@ class yf_forum_sync {
 			return false;
 		}
 		// Prepare data for the topic record
-		$sql = "SELECT COUNT(id) AS 0 
+		$sql = "SELECT COUNT(id) AS `0` 
 				FROM ".db('forum_posts')." 
 				WHERE topic=".intval($topic_id)." 
 					AND status='a'";
@@ -339,13 +339,13 @@ class yf_forum_sync {
 		}
 		// Prepare data
 		list($forum_num_topics)	= db()->query_fetch(
-			"SELECT COUNT(id) AS 0 
+			"SELECT COUNT(id) AS `0` 
 			FROM ".db('forum_topics')." 
 			WHERE forum=".intval($forum_id)." 
 				AND approved=1"
 		);
 		list($forum_num_posts)	= db()->query_fetch(
-			"SELECT COUNT(id) AS 0 
+			"SELECT COUNT(id) AS `0` 
 			FROM ".db('forum_posts')." 
 			WHERE forum=".intval($forum_id)." 
 				AND status='a' 
@@ -419,7 +419,7 @@ class yf_forum_sync {
 		}
 		// Count number of users posts
 		list($user_num_posts) = db()->query_fetch(
-			"SELECT COUNT(id) AS 0 
+			"SELECT COUNT(id) AS `0` 
 			FROM ".db('forum_posts')." 
 			WHERE user_id=".intval($user_id)." 
 				AND status = 'a'"

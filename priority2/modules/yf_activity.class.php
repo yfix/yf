@@ -218,7 +218,7 @@ class yf_activity {
 		// Check period between the same actions
 		if (!empty($task_info["min_time"])) {
 			list($spam_result) = db()->query_fetch(
-				"SELECT id AS 0 FROM ".db('activity_logs')." 
+				"SELECT id AS `0` FROM ".db('activity_logs')." 
 				WHERE task_id=".intval($task_info["id"])." 
 					AND user_id=".intval($user_id)." 
 					AND add_date > ".(time() - $task_info["min_time"])." 
@@ -357,7 +357,7 @@ class yf_activity {
 		$points_sum = 0;
 		// Gather activity sum
 		$sql_array = $this->_sql_arrays_for_update();
-		$_sql_start		= "SELECT SUM(t2.activity) AS 0 FROM ";
+		$_sql_start		= "SELECT SUM(t2.activity) AS `0` FROM ";
 		foreach ((array)$sql_array as $_counter => $_value) {
 			$sql_array[$_counter] = $_sql_start. str_replace("{_USER_ID_}", $user_id, $_value);
 		}

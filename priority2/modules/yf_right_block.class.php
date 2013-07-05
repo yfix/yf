@@ -67,11 +67,11 @@ class yf_right_block {
 		}
 		// Check if user has escort referral records (visible only for escorts)
 		if ($this->_user_info["group"] == 2 && in_array($this->USER_GROUP, array(3,4))) {
-			list($has_escort_refs) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('referrals')." WHERE type='e' AND target_id=".intval($this->_user_info["id"]));
+			list($has_escort_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('referrals')." WHERE type='e' AND target_id=".intval($this->_user_info["id"]));
 		}
 		// Check if user has industry referral records (visible only for escorts)
 		if ($this->_user_info["group"] == 3/* && in_array($this->USER_GROUP, array(3,4))*/) {
-			list($has_industry_refs) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('referrals')." WHERE type='i' AND target_id=".intval($this->_user_info["id"]));
+			list($has_industry_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('referrals')." WHERE type='i' AND target_id=".intval($this->_user_info["id"]));
 		}
 		// Array of $_GET vars to skip
 		$skip_get = array("page","escort_id","q","show");

@@ -31,7 +31,7 @@ class yf_geo_ip {
 		$cur_ip = $FORCE_IP;
 		if (empty($cur_ip)) {
 			list($cur_ip) = db()->query_fetch(
-				"SELECT ip AS 0 
+				"SELECT ip AS `0` 
 				FROM ".db('log_auth')." 
 				WHERE user_id=".intval($user_id)." 
 				ORDER BY date DESC 

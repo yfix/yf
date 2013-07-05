@@ -14,7 +14,7 @@ class task_item {
 		if (!defined("INSIDE_TASK_MANAGER")) {
 			return false;
 		}
-		db()->query("DELETE FROM `".db('forum_sessions')."` WHERE `last_update` < ".(time() - module('forum')->SETTINGS["SESSION_EXPIRE_TIME"]));
+		db()->query("DELETE FROM ".db('forum_sessions')." WHERE last_update < ".(time() - module('forum')->SETTINGS["SESSION_EXPIRE_TIME"]));
 		// Log to log table - modify but dont delete
 		$this->class->append_task_log($this->task, 'Forum module: Old sessions, validations deleted');
 	}

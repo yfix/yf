@@ -169,7 +169,7 @@ class yf_site_link_checker {
 		// Start form
 		} else {
 			// Count info about users with links
-			list($num_users, $min_user_id, $max_user_id) = db()->query_fetch("SELECT COUNT(id) AS 0, MIN(id) AS 1, MAX(id) AS 2 FROM ".db('links_users')."");
+			list($num_users, $min_user_id, $max_user_id) = db()->query_fetch("SELECT COUNT(id) AS `0`, MIN(id) AS 1, MAX(id) AS 2 FROM ".db('links_users')."");
 			$replace = array(
 				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 				"status_box"	=> common()->select_box("only_status", array_merge(array("" => "All"), $this->_link_statuses), 2, null, 2, "", false),

@@ -1149,8 +1149,8 @@ class yf_log_exec_analyser {
 		$A = db()->fetch_assoc(db()->query("SELECT COUNT(id) AS count FROM ".db('counter')." WHERE date = NOW()"));
 		if ($A['count'] == 0) {
 			$cur_date = date("Y-m-d", time() - 60 * 60 * 24);
-			list($hits) = db()->fetch_assoc(db()->query("SELECT COUNT(id) AS 0 FROM ".db('counter')." WHERE date = '".$cur_date."'"));
-			list($hosts) = db()->fetch_assoc(db()->query("SELECT COUNT(DISTINCT(remote_addr)) AS 0 FROM ".db('counter')." WHERE date = '".$cur_date."'"));
+			list($hits) = db()->fetch_assoc(db()->query("SELECT COUNT(id) AS `0` FROM ".db('counter')." WHERE date = '".$cur_date."'"));
+			list($hosts) = db()->fetch_assoc(db()->query("SELECT COUNT(DISTINCT(remote_addr)) AS `0` FROM ".db('counter')." WHERE date = '".$cur_date."'"));
 			$sql = "INSERT INTO ".db('counter_days')." (
 					hits, 
 					hosts, 
@@ -1171,9 +1171,9 @@ class yf_log_exec_analyser {
 	function _show_counter() {
 // TODO
 		if (conf('counter_box')) {
-			list($hits) = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('counter')." WHERE date = NOW()");
-			list($hosts) = db()->query_fetch("SELECT COUNT(DISTINCT(remote_addr)) AS 0 FROM ".db('counter')." WHERE date = NOW()");
-			list($allvisit) = db()->query_fetch("SELECT COUNT(DISTINCT(remote_addr)) AS 0 FROM ".db('counter')." WHERE date = NOW()");
+			list($hits) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('counter')." WHERE date = NOW()");
+			list($hosts) = db()->query_fetch("SELECT COUNT(DISTINCT(remote_addr)) AS `0` FROM ".db('counter')." WHERE date = NOW()");
+			list($allvisit) = db()->query_fetch("SELECT COUNT(DISTINCT(remote_addr)) AS `0` FROM ".db('counter')." WHERE date = NOW()");
 			$A = db()->query_fetch("SELECT SUM(hosts) AS count FROM ".db('counter_days')."");
 			$allvisit += $A['count'];
 			return "<img src='".WEB_PATH."counter/index.php?h=".base64_encode($hosts)."&i=".base64_encode($hits)."&a=".base64_encode($allvisit)."&p=".base64_encode($this->fileID)."&f=".base64_encode("templates/".conf('theme')."/images/")."&n=".base64_encode($this->fileNameC)."' width='88' height='31' alt='".ucfirst(t("counter"))."' border=0>";

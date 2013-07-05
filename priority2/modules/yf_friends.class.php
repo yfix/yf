@@ -155,7 +155,7 @@ class yf_friends extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Check if one user if a friends to another
 	function _is_a_friend ($user_id_1, $user_id_2) {
-		list($IS_A_FRIEND) = db()->query_fetch("SELECT user_id AS 0 FROM ".db('friends')." WHERE user_id=".intval($user_id_1)." AND friends_list LIKE '%,".intval($user_id_2).",%' LIMIT 1");
+		list($IS_A_FRIEND) = db()->query_fetch("SELECT user_id AS `0` FROM ".db('friends')." WHERE user_id=".intval($user_id_1)." AND friends_list LIKE '%,".intval($user_id_2).",%' LIMIT 1");
 		return intval((bool) $IS_A_FRIEND);
 	}
 

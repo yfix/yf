@@ -43,7 +43,7 @@ class yf_stats {
 			$_GET["page"] = $_GET["id"];
 			unset($_GET["id"]);
 		}
-		list($total) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('online')."");
+		list($total) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('online')."");
 		// Connect pager
 		$sql = "SELECT * FROM ".db('online')." WHERE user_id !=0 AND type != 'admin' ORDER BY time DESC";
 		$url = "./?object=".$_GET["object"]."&action=".$_GET["action"];
@@ -119,8 +119,8 @@ class yf_stats {
 		$time_start = time() - 3600 * 24 * 365;
 		$time_end	= time();
 		// Get hosts
-//		list($total_hosts) = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('log_exec')." WHERE date >= ".intval($time_start)." AND date < ".intval($time_end)." GROUP BY user_id");
-		list($total_hosts) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM (SELECT COUNT(id) AS 0 FROM ".db('log_exec')." WHERE date >= ".intval($time_start)/*." AND date < ".intval($time_end)*/." GROUP BY ip) AS tmp");
+//		list($total_hosts) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('log_exec')." WHERE date >= ".intval($time_start)." AND date < ".intval($time_end)." GROUP BY user_id");
+		list($total_hosts) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM (SELECT COUNT(id) AS `0` FROM ".db('log_exec')." WHERE date >= ".intval($time_start)/*." AND date < ".intval($time_end)*/." GROUP BY ip) AS tmp");
 		// Get hits
 		$sql_1 = "SELECT COUNT(id) AS hits FROM ".db('log_exec')." WHERE date >= ".intval($time_start)/*." AND date < ".intval($time_end).""*/;
 		$sql = "(".$sql_1.") 

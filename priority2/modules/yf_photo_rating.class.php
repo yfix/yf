@@ -334,14 +334,14 @@ class yf_photo_rating extends yf_module {
 		if ($this->USER_ID) {
 			$CHEAT_DETECTED = false;
 			list($total_votes) = db()->query_fetch(
-				"SELECT COUNT(*) AS 0 
+				"SELECT COUNT(*) AS `0` 
 				FROM ".db('gallery_rate_votes')." 
 				WHERE user_id=".intval($photo_info["id"])
 			);
 			// More anti-cheat checks begin
 			if ($this->ANTICHEAT_CHECKING && $total_votes) {
 				list($num_target_users) = db()->query_fetch(
-					"SELECT COUNT(*) AS 0 
+					"SELECT COUNT(*) AS `0` 
 					FROM ".db('gallery_rate_votes')." 
 					WHERE user_id=".intval($photo_info["id"])." 
 					GROUP BY target_user_id"
@@ -349,14 +349,14 @@ class yf_photo_rating extends yf_module {
 				if ($num_target_users >= $this->ANTICHEAT_TARGET_USERS) {
 					// Cet total number of positive and negative votes
 					list($num_positive_targets) = db()->query_fetch(
-						"SELECT COUNT(*) AS 0 
+						"SELECT COUNT(*) AS `0` 
 						FROM ".db('gallery_rate_votes')." 
 						WHERE user_id=".intval($photo_info["id"])." 
 							AND voted >= ".intval($this->ANTICHEAT_POSITIVE_VOTE)."
 						GROUP BY target_user_id"
 					);
 					list($num_negative_targets) = db()->query_fetch(
-						"SELECT COUNT(*) AS 0 
+						"SELECT COUNT(*) AS `0` 
 						FROM ".db('gallery_rate_votes')." 
 						WHERE user_id=".intval($photo_info["id"])." 
 							AND voted <= ".intval($this->ANTICHEAT_NEGATIVE_VOTE)."
@@ -369,7 +369,7 @@ class yf_photo_rating extends yf_module {
 					}
 				}
 				list($num_negative_votes) = db()->query_fetch(
-					"SELECT COUNT(*) AS 0 
+					"SELECT COUNT(*) AS `0` 
 					FROM ".db('gallery_rate_votes')." 
 					WHERE user_id=".intval($photo_info["id"])." 
 						AND voted <= ".intval($this->ANTICHEAT_NEGATIVE_VOTE)
@@ -415,7 +415,7 @@ class yf_photo_rating extends yf_module {
 			if (!$CHEAT_DETECTED) {
 // TODO: needed to decide how to work without full log
 				list($votes_sum, $num_votes) = db()->query_fetch(
-					"SELECT SUM(counted) AS 0, COUNT(*) AS 1 
+					"SELECT SUM(counted) AS `0`, COUNT(*) AS 1 
 					FROM ".db('gallery_rate_votes')." 
 					WHERE photo_id=".intval($PHOTO_ID)." 
 						AND counted != 0"

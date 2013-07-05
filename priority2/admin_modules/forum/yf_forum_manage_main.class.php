@@ -366,7 +366,7 @@ class yf_forum_manage_main {
 		foreach ((array)module("forum")->_forums_array as $_forum_info) {
 			$forums_with_cats[$_forum_info['id']] = $categories[$_forum_info["category"]]." / ".$_forum_info["name"];
 		}
-		list($text) = db()->query_fetch("SELECT text AS 0 FROM ".db('forum_posts')." WHERE id=".$topic_info["first_post_id"]);
+		list($text) = db()->query_fetch("SELECT text AS `0` FROM ".db('forum_posts')." WHERE id=".$topic_info["first_post_id"]);
 		$replace = array(
 			"header_text"	=> t("edit_topic"),
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET['id']._add_get(),

@@ -55,7 +55,7 @@ class yf_online_users_manager {
 	* @return
 	*/
 	function show () {
-		list($guests_online) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('online')." WHERE user_id=0");
+		list($guests_online) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('online')." WHERE user_id=0");
 		$sql = "SELECT * FROM ".db('online')."" ;
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? "  WHERE user_id>0". $filter_sql : " WHERE user_id>0 ORDER BY time DESC";

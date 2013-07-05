@@ -389,7 +389,7 @@ class yf_blog_settings {
 		}
 		// Prepare curent max id
 		list($_max_id2) = db()->query_fetch(
-			"SELECT MAX(id2) AS 0 FROM ".db('blog_posts')." WHERE user_id=".intval($user_id)
+			"SELECT MAX(id2) AS `0` FROM ".db('blog_posts')." WHERE user_id=".intval($user_id)
 		);
 // TODO: fix that number 1 could be assigned, currently not
 		$_max_id2 = intval($_max_id2);

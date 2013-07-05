@@ -159,7 +159,7 @@ class yf_log_maxmind_phone_verify {
 					AND phone != '' 
 					AND active='1' 
 				";
-		list($total) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM (".$sql.") AS tmp");
+		list($total) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM (".$sql.") AS tmp");
 		$sql .= "ORDER BY id DESC 
 				LIMIT 1000";
 		$A = db()->query_fetch_all($sql);

@@ -229,7 +229,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -293,7 +293,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -352,7 +352,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -454,7 +454,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -618,7 +618,7 @@ class yf_email {
 	function _account_suggests(){
 		// Check number of unread emails
 		list($num_unread_emails) = db()->query_fetch(
-			"SELECT COUNT(id) AS 0 FROM ".db('mailarchive')." 
+			"SELECT COUNT(id) AS `0` FROM ".db('mailarchive')." 
 			WHERE receiver=".intval($this->USER_ID)." 
 				AND r_folder_id=1 
 				AND r_read_time=0"
@@ -646,7 +646,7 @@ class yf_email {
 
 		// Check number of unread emails
 		list($num_unread_emails) = db()->query_fetch(
-			"SELECT COUNT(id) AS 0 FROM ".db('mailarchive')." 
+			"SELECT COUNT(id) AS `0` FROM ".db('mailarchive')." 
 			WHERE receiver=".intval($this->USER_ID)." 
 				AND r_folder_id=1 
 				AND r_read_time=0"

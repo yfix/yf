@@ -120,7 +120,7 @@ class yf_forum_tracker {
 			$view_topic_url	= process_url("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$topic_info["id"]);
 			$dont_notify_url= process_url("./?object=".FORUM_CLASS_NAME."&action=notify_me&id=".$topic_info["id"]);
 			// Get users details
-			$Q6 = db()->query("SELECT user_email AS 0, name AS 1 FROM ".db('forum_users')." WHERE id IN(".implode(",", $notify_user_ids).") AND status='a'");
+			$Q6 = db()->query("SELECT user_email AS `0`, name AS 1 FROM ".db('forum_users')." WHERE id IN(".implode(",", $notify_user_ids).") AND status='a'");
 			while (list($notify_email, $user_login) = db()->fetch_assoc($Q6)) {
 				$replace = array(
 					"notify_email"		=> $notify_email,

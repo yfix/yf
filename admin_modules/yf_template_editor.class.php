@@ -446,7 +446,7 @@ class yf_template_editor {
 		if ($location == "project")	 $site_id = 0;
 
 		if ($location !="framework" && $theme_class !="project"){
-			list($site_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('sites')." WHERE name='".$location."'");
+			list($site_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('sites')." WHERE name='".$location."'");
 		}
 		$files = _class("dir")->scan_dir($this->_dir_array[$location].$theme_name);
 		if (!is_array($files)) continue;
@@ -463,7 +463,7 @@ class yf_template_editor {
 			$stpl_name	= _es(str_replace($this->_dir_array[$location].$theme_name."/", "", substr($file_name, 0, -5)));
 			$text		= _es(file_get_contents($file_name));
 			// Check if current template exists in the db
-			list($record_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('templates')." WHERE theme_name='".$theme_name."' AND name='".$stpl_name."' AND site_id='".$site_id."'");
+			list($record_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('templates')." WHERE theme_name='".$theme_name."' AND name='".$stpl_name."' AND site_id='".$site_id."'");
 			// Insert or update record
 			if ($record_id) {
 				db()->UPDATE("templates", array("text" => _es($text)), "id=".intval($record_id));
@@ -492,7 +492,7 @@ class yf_template_editor {
 		if ($location == "project")	 $site_id = 0;
 
 		if ($location !="framework" && $theme_class !="project"){
-			list($site_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('sites')." WHERE name='".$location."'");
+			list($site_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('sites')." WHERE name='".$location."'");
 		}
 
 		// Show execution progress
@@ -587,7 +587,7 @@ class yf_template_editor {
 	*/
 
 	function show_db_src () {
-		list($stpl_text) = db()->query_fetch("SELECT text AS 0 FROM ".db('templates')." WHERE id='".$_GET["id"]."'");
+		list($stpl_text) = db()->query_fetch("SELECT text AS `0` FROM ".db('templates')." WHERE id='".$_GET["id"]."'");
 		$replace = array(
 			"stpl_text"	=> trim($stpl_text),
 			"location"	=> "database",
@@ -621,7 +621,7 @@ class yf_template_editor {
 			if ($theme_class == "framework") $site_id = -1;
 			if ($theme_class == "project")	 $site_id = 0;
 			if ($theme_class !="framework" && $theme_class !="project"){
-				list($site_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('sites')." WHERE name='".$theme_class."'");
+				list($site_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('sites')." WHERE name='".$theme_class."'");
 			}
 			foreach ((array)$theme_attr as $theme_name) {
 				$files = _class("dir")->scan_dir($this->_dir_array[$theme_class].$theme_name);
@@ -636,7 +636,7 @@ class yf_template_editor {
 					$stpl_name	= _es(str_replace($this->_dir_array[$theme_class].$theme_name."/", "", substr($file_name, 0, -5)));
 					$text		= _es(file_get_contents($file_name));
 					// Check if current template exists in the db
-					list($record_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('templates')." WHERE theme_name='".$theme_name."' AND name='".$stpl_name."'");
+					list($record_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('templates')." WHERE theme_name='".$theme_name."' AND name='".$stpl_name."'");
 					// Insert or update record
 					if ($record_id) db()->query("UPDATE ".db('templates')." SET text='".$text."' WHERE id=".intval($record_id));
 					else db()->query("REPLACE INTO ".db('templates')." (theme_name,name,text, site_id) VALUES ('".$theme_name."','".$stpl_name."','".$text."','".$site_id."')");

@@ -255,7 +255,7 @@ class yf_se_keywords {
 		}
 		// Limit number of keywords
 		if (!empty($this->MAX_TOTAL_KEYWORDS)) {
-			list($current_keywords_num) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('search_keywords')."");
+			list($current_keywords_num) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('search_keywords')."");
 		}
 		if (!empty($this->MAX_TOTAL_KEYWORDS) && $current_keywords_num >= $this->MAX_TOTAL_KEYWORDS) {
 			db()->_add_shutdown_query(

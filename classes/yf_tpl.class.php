@@ -833,7 +833,7 @@ class yf_tpl {
 					$NOT_FOUND = true;
 				}
 			} else {
-				list($text) = db()->query_fetch("SELECT text AS 0 FROM ".db('templates')." WHERE theme_name='".conf('theme')."' AND name='"._es($stpl_name)."' AND active='1'");
+				list($text) = db()->query_fetch("SELECT text AS `0` FROM ".db('templates')." WHERE theme_name='".conf('theme')."' AND name='"._es($stpl_name)."' AND active='1'");
 				if (isset($text)) {
 					$string = stripslashes($text);
 				} else {

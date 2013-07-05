@@ -605,7 +605,7 @@ class yf_register {
 				$msg = t('Invalid e-mail, please check your spelling!');
 			} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE email='"._es($TEXT_TO_CHECK)."'") >= 1) {
 				// Check if account with such email was deleted and try to restore it
-				list($deleted_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('user')." WHERE email='"._es($TEXT_TO_CHECK)."' AND is_deleted='1'");
+				list($deleted_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('user')." WHERE email='"._es($TEXT_TO_CHECK)."' AND is_deleted='1'");
 				if (!empty($deleted_id) && $this->ALLOW_RESTORE_ACCOUNT) {
 					$this->_TRYING_RESTORE_ID = $deleted_id;
 				} else {

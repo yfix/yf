@@ -187,7 +187,7 @@ class yf_user_dynamic_info {
 	function activate () {
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			list($_active) = db()->query_fetch("SELECT active AS 0 FROM ".db('user_data_info_fields')." WHERE id=".intval($_GET["id"]));
+			list($_active) = db()->query_fetch("SELECT active AS `0` FROM ".db('user_data_info_fields')." WHERE id=".intval($_GET["id"]));
 			if ($_active == 0) {
 				$_set_active = 1;
 			} else {

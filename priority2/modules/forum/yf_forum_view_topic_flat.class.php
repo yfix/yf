@@ -102,7 +102,7 @@ class yf_forum_view_topic_flat {
 				// Get infos
 				if (!empty($this->_posts_array)) {
 					// Prepare pages
-					list($topic_num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS 0", false);
+					list($topic_num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 					$topic_num_posts = intval($topic_num_posts);
 					list(, $topic_pages, ) = common()->divide_pages(null, $path, null, $posts_per_page, $topic_num_posts, FORUM_CLASS_NAME."/pages_1/");
 					if (!empty($topic_num_posts)) {

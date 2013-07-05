@@ -400,7 +400,7 @@ class yf_forum_search {
 			$sql1_header = "SELECT id FROM ".db('forum_posts')." WHERE 1=1 ";
 			$sql2_header = "SELECT * FROM ".db('forum_posts')." WHERE 1=1 ";
 		} else {
-			$sql1_header = "SELECT COUNT(id) AS 0,topic AS 1 FROM ".db('forum_posts')." WHERE 1=1 ";
+			$sql1_header = "SELECT COUNT(id) AS `0`,topic AS 1 FROM ".db('forum_posts')." WHERE 1=1 ";
 			$sql2_header = "SELECT COUNT(id) AS num_records, topic FROM ".db('forum_posts')." WHERE 1=1 ";
 		}
 		// Show all posts for the admin
@@ -455,7 +455,7 @@ class yf_forum_search {
 				&& false !== strpos(db()->DB_TYPE, "mysql") 
 			) {
 				db()->query(str_replace("SELECT ", "SELECT SQL_CALC_FOUND_ROWS ", $sql1_header).$sql1." LIMIT 0");
-				list($matched_records) = db()->query_fetch("SELECT FOUND_ROWS() AS 0", false);
+				list($matched_records) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 			} else {
 				$matched_records = db()->query_num_rows($sql1_header.$sql1);
 			}

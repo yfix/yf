@@ -730,7 +730,7 @@ class yf_forum_post {
 	function _get_topic_last_page ($topic_id = 0) {
 		$posts_per_page = !empty(module('forum')->USER_SETTINGS["POSTS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["POSTS_PER_PAGE"] : module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"];
 		list($num_posts) = db()->query_fetch(
-			"SELECT COUNT(*) AS 0 FROM ".db('forum_posts')." WHERE topic=".intval($topic_id)
+			"SELECT COUNT(*) AS `0` FROM ".db('forum_posts')." WHERE topic=".intval($topic_id)
 		);
 		$last_page = $posts_per_page ? ceil($num_posts / $posts_per_page) : 1;
 		return $last_page ? $last_page : 1;

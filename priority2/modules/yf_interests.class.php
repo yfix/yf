@@ -405,7 +405,7 @@ class yf_interests {
 				$sql_for_keyword = "SUBSTR(".$sql_for_keyword.",1,".$this->MAX_KEYWORD_LENGTH.")";
 			}
 			$sql = "INSERT INTO ".db('interests_keywords')." (keyword) 
-					SELECT ".$sql_for_keyword." AS 0 
+					SELECT ".$sql_for_keyword." AS `0` 
 					FROM ".db('interests')." 
 					WHERE keywords NOT IN('', ';;') 
 					HAVING 0 != ''

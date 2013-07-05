@@ -458,7 +458,7 @@ class yf_forum {
 		// Count number of posts
 		$num_posts = intval(db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE forum=".$forum_id." AND status='a'"));
 		// Determine last post ID
-		list($last_post_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('forum_posts')." WHERE forum=".$forum_id." AND status='a' ORDER BY created DESC LIMIT 1");
+		list($last_post_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('forum_posts')." WHERE forum=".$forum_id." AND status='a' ORDER BY created DESC LIMIT 1");
 		// Update forum table
 		db()->query("UPDATE ".db('forum_forums')." SET num_topics=".$num_topics.",num_posts=".$num_posts.",last_post_id=".intval($last_post_id)." WHERE id=".$forum_id);
 	}
@@ -472,7 +472,7 @@ class yf_forum {
 		}
 		// Prepare data for the topic record
 		$num_posts = intval(db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE topic=".$topic_id." AND status='a'"));
-		list($last_post_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('forum_posts')." WHERE topic=".$topic_id." AND status='a' ORDER BY created DESC LIMIT 1");
+		list($last_post_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('forum_posts')." WHERE topic=".$topic_id." AND status='a' ORDER BY created DESC LIMIT 1");
 		// Update topic record
 		db()->query("UPDATE ".db('forum_topics')." SET num_posts=".$num_posts.",last_post_id=".intval($topic_last_post_id)."	WHERE id=".$topic_id);
 	}

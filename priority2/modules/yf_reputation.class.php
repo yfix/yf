@@ -402,7 +402,7 @@ class yf_reputation {
 			$VOTE_VALUE = $this->_calc_vote_value($target_user_id, $_POST["vote_change"]);
 		}
 		// Get last voter
-		list($last_voter_id) = db()->query_fetch("SELECT user_id AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." ORDER BY add_date DESC LIMIT 1");
+		list($last_voter_id) = db()->query_fetch("SELECT user_id AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." ORDER BY add_date DESC LIMIT 1");
 		// Check country (state) matching
 		$country_match = 0;
 		if (!empty($user_info["country"])) {
@@ -420,13 +420,13 @@ class yf_reputation {
 			$this->CHEAT_DETECTED = false;
 			// Get unified items stats
 			$sql_array = array(
-				"negative_total_votes"		=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted < 0",
-				"positive_total_votes"		=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0",
-				"positive_single_user_votes"=> "SELECT MAX(2) AS 0 FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
-				"positive_voted_accounts"	=> "SELECT COUNT(*) AS 0 FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
-				"total_voted_accounts"		=> "SELECT COUNT(*) AS 0 FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." GROUP BY target_user_id) AS 1",
-				"single_voter_target_votes"	=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." AND user_id=".intval($this->USER_ID)." AND same_voter='1'",
-				"all_voters_target_votes"	=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id),
+				"negative_total_votes"		=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted < 0",
+				"positive_total_votes"		=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0",
+				"positive_single_user_votes"=> "SELECT MAX(2) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
+				"positive_voted_accounts"	=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
+				"total_voted_accounts"		=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." GROUP BY target_user_id) AS 1",
+				"single_voter_target_votes"	=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." AND user_id=".intval($this->USER_ID)." AND same_voter='1'",
+				"all_voters_target_votes"	=> "SELECT COUNT(*) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id),
 			);
 			$_sql_keys = array_keys($sql_array);
 			// Get and assign unified data
@@ -676,7 +676,7 @@ class yf_reputation {
 			return false;
 		}
 		// clicks daily (for last 24 hours)
-		list($this->REPUT_VOTES_LAST_24H) = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND add_date > ".(time() - 86400));
+		list($this->REPUT_VOTES_LAST_24H) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND add_date > ".(time() - 86400));
 		if (!empty($this->MAX_REPUT_CLICKS_DAILY) && 
 			$this->REPUT_VOTES_LAST_24H >= $this->MAX_REPUT_CLICKS_DAILY) {
 			_re("You have already spent all allowed daily votes! (".intval($this->MAX_REPUT_CLICKS_DAILY).") Thanks for being so active! To prevent our voting system from abuse we restrict the daily number of votes.");
@@ -722,10 +722,10 @@ class yf_reputation {
 			return $this->_start_reput_account($user_id);
 		}
 		// Calculate user reput info from raw table
-		list($total_points)	= db()->query_fetch("SELECT SUM(counted) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($user_id));
+		list($total_points)	= db()->query_fetch("SELECT SUM(counted) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($user_id));
 		$total_points += $this->START_REPUT;
-		list($num_votes)	= db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($user_id));
-		list($num_voted)	= db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($user_id));
+		list($num_votes)	= db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($user_id));
+		list($num_voted)	= db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($user_id));
 		// Get user's activity
 		$ACTIVITY_OBJ = main()->init_class("activity");
 		if (is_object($ACTIVITY_OBJ)) {

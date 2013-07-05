@@ -243,7 +243,7 @@ class yf_log_user_errors_viewer {
 			$this->clear_filter(1);
 			return js_redirect("./?object=".$_GET["object"]._add_get());
 		} else {
-			$sql = "SELECT COUNT(*) AS 0 FROM ".db('log_user_errors')." WHERE 1=1 ".$this->_create_filter_sql();
+			$sql = "SELECT COUNT(*) AS `0` FROM ".db('log_user_errors')." WHERE 1=1 ".$this->_create_filter_sql();
 			$sql = preg_replace($p_replace, "", $sql);
 			list ($num_records) = db()->query_fetch($sql);
 			$replace = array(

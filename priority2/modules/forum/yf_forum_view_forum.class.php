@@ -145,7 +145,7 @@ class yf_forum_view_forum {
 			// Fill topics infos
 			if (!empty($topics_array)) {
 				// Prepare pages
-				list($forum_num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS 0", false);
+				list($forum_num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 				$forum_num_posts = intval($forum_num_posts);
 				list(, $forum_pages, ) = common()->divide_pages(null, $path, null, $topics_per_page, $forum_num_posts, FORUM_CLASS_NAME."/pages_1/");
 				if (!empty($forum_num_posts)) {

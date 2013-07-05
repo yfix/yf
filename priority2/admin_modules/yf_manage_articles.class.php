@@ -65,7 +65,7 @@ class yf_manage_articles extends yf_module {
 		unset($users_ids[""]);
 		// Prepare pages
 		if (!empty($articles_ids)) {
-			list($num_records) = db()->query_fetch("SELECT FOUND_ROWS() AS 0", false);
+			list($num_records) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 			list(, $pages, ) = common()->divide_pages("", "./?object=".$_GET["object"], "", $per_page, $num_records);
 			// Do get details
 			$Q = db()->query("SELECT * FROM ".db('articles_texts')." WHERE id IN(".implode(",", $articles_ids).")");

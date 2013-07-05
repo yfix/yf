@@ -52,7 +52,7 @@ class yf_forum_user {
 			// Some user stats
 			if (!empty($user_info["user_posts"])) {
 				// Get forum where user is most active
-				list($most_forum_id, $most_forum_posts) = db()->query_fetch("SELECT forum AS 0, COUNT(id) AS 1 FROM ".db('forum_posts')." WHERE user_id=".intval($user_info["id"])." AND status='a' GROUP BY forum ORDER BY 1 DESC LIMIT 1");
+				list($most_forum_id, $most_forum_posts) = db()->query_fetch("SELECT forum AS `0`, COUNT(id) AS 1 FROM ".db('forum_posts')." WHERE user_id=".intval($user_info["id"])." AND status='a' GROUP BY forum ORDER BY 1 DESC LIMIT 1");
 				$posts_per_day		= round($user_info["user_posts"] / (time() - $user_info["user_regdate"]) * 3600 * 24, 2);
 				$posts_percent		= $board_totals["total_posts"] ? round($user_info["user_posts"] / $board_totals["total_posts"] * 100, 2) : 0;
 				$most_forum_name	= module('forum')->_forums_array[$most_forum_id]["name"];

@@ -141,7 +141,7 @@ class yf_locale_editor {
 			$tr_vars[$A["locale"]] = $A["num"];
 		}
 		// Get total number of vars
-		list($total_vars) = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('locale_vars')."");
+		list($total_vars) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('locale_vars')."");
 		// Show languages form
 		foreach ((array)$this->_cur_langs_array as $A) {
 			$replace2 = array(

@@ -14,8 +14,8 @@ class task_item {
 		if (!defined("INSIDE_TASK_MANAGER")) {
 			return false;
 		}
-		db()->query("DELETE FROM `".db('search_keywords')."` WHERE `hits` <= 2");
-		db()->query("OPTIMIZE TABLE `".db('search_keywords')."`");
+		db()->query("DELETE FROM ".db('search_keywords')." WHERE hits <= 2");
+		db()->query("OPTIMIZE TABLE ".db('search_keywords')."");
 		// Log to log table - modify but dont delete
 		$this->class->append_task_log($this->task, 'SE keywords cleaned up');
 	}

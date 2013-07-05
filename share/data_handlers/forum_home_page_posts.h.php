@@ -12,7 +12,7 @@ foreach ((array)$forums_array as $forum_info) {
 }
 // Process last posts records
 if (!empty($last_posts_ids)) {
-	$Q = db()->query("SELECT `id`,`forum`,`topic`,`subject`,`user_id`,`user_name`,`created` FROM `".db("forum_posts")."` WHERE `id` IN(".implode(",",$last_posts_ids).")");
+	$Q = db()->query("SELECT id,forum,topic,subject,user_id,user_name,created FROM ".db("forum_posts")." WHERE id IN(".implode(",",$last_posts_ids).")");
 	while ($A = db()->fetch_assoc($Q)) {
 		$posts[$A["id"]] = $A;
 		$_topics_ids[$A["topic"]] = $A["topic"];
@@ -25,7 +25,7 @@ if (!empty($last_posts_ids)) {
 }
 // Get number of total posts inside topics
 if (!empty($_topics_ids)) {
-	$Q = db()->query("SELECT `id`,`num_posts` FROM `".db("forum_topics")."` WHERE `id` IN(".implode(",",$_topics_ids).")");
+	$Q = db()->query("SELECT id,num_posts FROM ".db("forum_topics")." WHERE id IN(".implode(",",$_topics_ids).")");
 	while ($A = db()->fetch_assoc($Q)) {
 		$topics_total_posts[$A["id"]] = $A["num_posts"];
 	}
