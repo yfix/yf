@@ -60,7 +60,7 @@ class yf_help_tickets {
 		// Get available admin groups
 		$this->_admin_groups	= main()->get_data("admin_groups");
 		// Get available admin users who have access to this module (currently administrators and support)
-		$Q = db()->query("SELECT * FROM `".db('admin')."` WHERE `group` IN(1,4) ORDER BY `group` ASC, `first_name` ASC, `last_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group IN(1,4) ORDER BY group ASC, first_name ASC, last_name ASC");
 		while ($A = db()->fetch_assoc($Q2)) {
 			$this->_admins_list[$A["id"]] = _prepare_html($A["first_name"]." ".$A["last_name"]." (".$this->_admin_groups[$A["group"]].")");
 		}
@@ -80,9 +80,9 @@ class yf_help_tickets {
 			$this->save_filter(1);
 		}
 		// Prepare SQL
-		$sql = "SELECT * FROM `".db('help_tickets')."` ";
+		$sql = "SELECT * FROM ".db('help_tickets')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `opened_date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY opened_date DESC ";
 
 		$per_page = $this->DEF_PER_PAGE;
 		if ($this->USE_FILTER && $_SESSION[$this->_filter_name]["per_page"]) {
@@ -102,10 +102,10 @@ class yf_help_tickets {
 			// Get data from db
 			$Q = db()->query(
 				"SELECT * 
-				FROM `".db('comments')."` 
-				WHERE `object_id` IN(".implode(",", $tickets_ids).") 
-					AND `object_name`='"._es($OBJECT_NAME)."' 
-				ORDER BY `add_date` ASC"
+				FROM ".db('comments')." 
+				WHERE object_id IN(".implode(",", $tickets_ids).") 
+					AND object_name='"._es($OBJECT_NAME)."' 
+				ORDER BY add_date ASC"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$last_comments[$A["object_id"]]	= $A;
@@ -115,11 +115,11 @@ class yf_help_tickets {
 			}
 			// COunt number of answers
 			$Q = db()->query(
-				"SELECT `object_id`, COUNT(*) AS `num_answers`
-				FROM `".db('comments')."` 
-				WHERE `object_id` IN(".implode(",", $tickets_ids).") 
-					AND `object_name`='"._es($OBJECT_NAME)."' 
-				GROUP BY `object_id`"
+				"SELECT object_id, COUNT(*) AS num_answers
+				FROM ".db('comments')." 
+				WHERE object_id IN(".implode(",", $tickets_ids).") 
+					AND object_name='"._es($OBJECT_NAME)."' 
+				GROUP BY object_id"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$num_answers[$A["object_id"]]	= $A["num_answers"];
@@ -127,7 +127,7 @@ class yf_help_tickets {
 		}
 		// Get users infos
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT `id`,`name`,`nick`,`login`,`password`,`email` FROM `".db('user')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT id,name,nick,login,password,email FROM ".db('user')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $users_infos[$A["id"]] = $A;
 		}
 		// Process users
@@ -188,17 +188,17 @@ class yf_help_tickets {
 			return _e("No id");
 		}
 		// Try to get record info
-		$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `id`=".intval($_GET["id"]));
+		$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE id=".intval($_GET["id"]));
 		if (empty($ticket_info)) {
 			return _e("No such ticket");
 		}
 		// Update ticket status to "read" if it's status was "new"
 		if ($ticket_info["status"] == "new") {
-			db()->query("UPDATE ".db('help_tickets')." SET `status` = 'read' WHERE `id`=".intval($ticket_info["id"]));
+			db()->query("UPDATE ".db('help_tickets')." SET status = 'read' WHERE id=".intval($ticket_info["id"]));
 			$ticket_info["status"] = "read";
 		}
 		// Try to get given user info
-		$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE ".(!empty($ticket_info["user_id"]) ? "`id`=".intval($ticket_info["user_id"]) : "`email`='"._es($ticket_info["email"])."'"));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE ".(!empty($ticket_info["user_id"]) ? "id=".intval($ticket_info["user_id"]) : "email='"._es($ticket_info["email"])."'"));
 		// Allow only to set "open" or "closed" status on save
 		unset($this->_ticket_statuses["new"]);
 		unset($this->_ticket_statuses["read"]);
@@ -212,7 +212,7 @@ class yf_help_tickets {
 					"closed_date"		=> intval($_POST["status"] == "closed" && $ticket_info["status"] != $_POST["status"] ? time() : $ticket_info["closed_date"]),
 					"status"			=> _es($_POST["status"]),
 					"assigned_to"		=> intval($_POST["assigned_to"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]);
 			}
@@ -282,20 +282,20 @@ class yf_help_tickets {
 			return false;
 		}
 		// Try to get record info
-		$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `id`=".intval($_GET["ticket_id"]));
+		$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE id=".intval($_GET["ticket_id"]));
 		if (empty($ticket_info)) {
 			echo common()->show_empty_page("No such ticket");
 			return false;
 		}
 		// Try to get given user info
-		$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE ".(!empty($ticket_info["user_id"]) ? "`id`=".intval($ticket_info["user_id"]) : "`email`='"._es($ticket_info["email"])."'"));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE ".(!empty($ticket_info["user_id"]) ? "id=".intval($ticket_info["user_id"]) : "email='"._es($ticket_info["email"])."'"));
 		if (empty($user_info["id"])) {
 			echo common()->show_empty_page("Cant find user with such data");
 			return false;
 		}
 		$success = 0;
 		// Do activate user's account
-		db()->query("UPDATE `".db('user')."` SET `active`='1' WHERE `id`=".intval($user_info["id"]));
+		db()->query("UPDATE ".db('user')." SET active='1' WHERE id=".intval($user_info["id"]));
 		// Prepare email
 		$replace = array(
 			"user_name"		=> _prepare_html(_display_name($user_info)),
@@ -306,7 +306,7 @@ class yf_help_tickets {
 		// Do send mail
 		$send_result = common()->send_mail(SITE_ADMIN_EMAIL_ADV, "Admin ".SITE_ADVERT_NAME, $user_info["email"], $user_info["email"], "Help ticket answer", $message, nl2br($message));
 		// Close ticket
-		db()->query("UPDATE `".db('help_tickets')."` SET `status`='closed' WHERE `id`=".intval($ticket_info["id"]));
+		db()->query("UPDATE ".db('help_tickets')." SET status='closed' WHERE id=".intval($ticket_info["id"]));
 		// Do not close ticket if we have troubles with sending email
 		if ($send_result) {
 			$success = 1;
@@ -340,12 +340,12 @@ class yf_help_tickets {
 		if (empty($_GET["id"])) {
 			return _e("No id");
 		}
-		$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `id`=".intval($_GET["id"]));
+		$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE id=".intval($_GET["id"]));
 		// Remove activity points
 		common()->_remove_activity_points($ticket_info["user_id"], "bug_report", $_GET["id"]);
 		// Do delete record
-		db()->query("DELETE FROM `".db('help_tickets')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-		db()->query("DELETE FROM `".db('comments')."` WHERE `object_id`=".intval($_GET["id"])." AND `object_name`='"._es($OBJECT_NAME)."'");
+		db()->query("DELETE FROM ".db('help_tickets')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('comments')." WHERE object_id=".intval($_GET["id"])." AND object_name='"._es($OBJECT_NAME)."'");
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]);
 	}
@@ -363,7 +363,7 @@ class yf_help_tickets {
 			return false;
 		}
 		// Do get number of ids from db
-		$Q = db()->query("SELECT COUNT(`id`) AS `num`,`object_id` FROM `".db('comments')."` WHERE `object_id` IN(".implode(",", $OBJECTS_IDS).") AND `object_name`='"._es($OBJECT_NAME)."' GROUP BY `object_id`");
+		$Q = db()->query("SELECT COUNT(id) AS num,object_id FROM ".db('comments')." WHERE object_id IN(".implode(",", $OBJECTS_IDS).") AND object_name='"._es($OBJECT_NAME)."' GROUP BY object_id");
 		while ($A = db()->fetch_assoc($Q)) $num_comments_by_object_id[$A["object_id"]] = $A["num"];
 		// Do return result
 		return $num_comments_by_object_id;
@@ -379,10 +379,10 @@ class yf_help_tickets {
 		$OBJECT_ID		= $_GET["id"];
 		$OBJECT_NAME	= "help";
 		// Prepare SQL
-		$sql		= "SELECT * FROM `".db('comments')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID);
-		$order_sql	= " ORDER BY `add_date` DESC";
+		$sql		= "SELECT * FROM ".db('comments')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID);
+		$order_sql	= " ORDER BY add_date DESC";
 		// Connect pager
-		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT `id`", $sql)/*, $PAGER_PATH, null, $this->NUM_PER_PAGE*/);
+		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT id", $sql)/*, $PAGER_PATH, null, $this->NUM_PER_PAGE*/);
 		// Process items
 		$Q = db()->query($sql.$order_sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -391,7 +391,7 @@ class yf_help_tickets {
 		}
 		// Try to get users names
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('user')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$users_names[$A["id"]] = _display_name($A);
 				$GLOBALS['verified_photos'][$A["id"]] = $A["photo_verified"];
@@ -437,7 +437,7 @@ class yf_help_tickets {
 		$OBJECT_ID		= $_GET["id"];
 		$OBJECT_NAME	= "help";
 		// Try to get record info
-		$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `id`=".intval($_GET["id"]));
+		$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE id=".intval($_GET["id"]));
 		if (empty($ticket_info)) {
 			return _e("No such ticket");
 		}
@@ -452,7 +452,7 @@ class yf_help_tickets {
 			// Prepare ticket id
 			$TICKET_ID = $ticket_info["ticket_key"];
 			// Do get current admin info
-			$admin_info = db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".intval($_SESSION["admin_id"]));
+			$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_SESSION["admin_id"]));
 			$admin_name = $admin_info["first_name"]." ".$admin_info["last_name"];
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -512,7 +512,7 @@ class yf_help_tickets {
 			if (!common()->_error_exists()) {
 				// Do close ticket if needed
 				if (!empty($_POST["close_ticket"])) {
-					db()->UPDATE("help_tickets", array("status" => "closed"), "`id`=".intval($_GET["id"]));
+					db()->UPDATE("help_tickets", array("status" => "closed"), "id=".intval($_GET["id"]));
 					// Return user to tickets list
 					return js_redirect("./?object=".$_GET["object"]);
 				}
@@ -547,7 +547,7 @@ class yf_help_tickets {
 		$OBJECT_ID		= $_GET["id"];
 		$OBJECT_NAME	= "help";
 		// Try to get given comment info
-		$answer_info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
+		$answer_info = db()->query_fetch("SELECT * FROM ".db('comments')." WHERE id=".intval($_GET["id"]));
 		if (empty($answer_info["id"])) {
 			_re("No such answer!");
 			return _e();
@@ -562,7 +562,7 @@ class yf_help_tickets {
 				// Do update record
 				db()->UPDATE("comments", array(
 					"text" 			=> _es($_POST["text"]),
-				), "`id`=".intval($answer_info["id"]));
+				), "id=".intval($answer_info["id"]));
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".$answer_info["object_id"], false);
 			}
@@ -601,13 +601,13 @@ class yf_help_tickets {
 		$OBJECT_ID		= $_GET["id"];
 		$OBJECT_NAME	= "help";
 		// Try to get given answer info
-		$answer_info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
+		$answer_info = db()->query_fetch("SELECT * FROM ".db('comments')." WHERE id=".intval($_GET["id"]));
 		if (empty($answer_info["id"])) {
 			_re("No such answer!");
 			return _e();
 		}
 		// Do delete answer
-		db()->query("DELETE FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('comments')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".$answer_info["object_id"], false);
 	}
@@ -622,7 +622,7 @@ class yf_help_tickets {
 			return false;
 		}
 		// Try to get record info
-		$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `id`=".intval($TICKET_ID));
+		$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE id=".intval($TICKET_ID));
 		if (empty($ticket_info)) {
 			echo _e("No such ticket");
 			return false;
@@ -664,7 +664,7 @@ class yf_help_tickets {
 		}
 		// Get tickets
 		if (!empty($items_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('help_tickets')."` WHERE `id` IN(".implode(",", $items_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('help_tickets')." WHERE id IN(".implode(",", $items_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$tickets_infos[$A["id"]]	= $A;
 				$emails[$A["email"]]		= _es($A["email"]);
@@ -672,27 +672,27 @@ class yf_help_tickets {
 		}
 		// Get users details
 		if (!empty($emails)) {
-			$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `email` IN('".implode("','", $emails)."')");
+			$Q = db()->query("SELECT * FROM ".db('user')." WHERE email IN('".implode("','", $emails)."')");
 			while ($A = db()->fetch_assoc($Q)) {
 				$users_infos[$A["email"]] = $A;
 			}
 		}
 		// Do get current admin info
-		$admin_info = db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".intval($_SESSION["admin_id"]));
+		$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_SESSION["admin_id"]));
 		$admin_name = $admin_info["first_name"]." ".$admin_info["last_name"];
 		// Switch between operation
 		// ###########################################
 		if ($CURRENT_OPERATION == "delete") {
 
 			if (!empty($items_ids)) {
-				db()->query("DELETE FROM `".db('help_tickets')."` WHERE `id` IN(".implode(",",$items_ids).")");
+				db()->query("DELETE FROM ".db('help_tickets')." WHERE id IN(".implode(",",$items_ids).")");
 			}
 
 		// ###########################################
 		} elseif ($CURRENT_OPERATION == "close") {
 
 			if (!empty($items_ids)) {
-				db()->query("UPDATE `".db('help_tickets')."` SET `status`='closed' WHERE `id` IN(".implode(",",$items_ids).")");
+				db()->query("UPDATE ".db('help_tickets')." SET status='closed' WHERE id IN(".implode(",",$items_ids).")");
 			}
 
 		// ###########################################
@@ -706,7 +706,7 @@ class yf_help_tickets {
 					continue;
 				}
 				// Do activate user's account
-				db()->query("UPDATE `".db('user')."` SET `active`='1' WHERE `id`=".intval($user_info["id"]));
+				db()->query("UPDATE ".db('user')." SET active='1' WHERE id=".intval($user_info["id"]));
 				// Prepare email
 				$replace = array(
 					"user_name"		=> _prepare_html(_display_name($user_info)),
@@ -718,7 +718,7 @@ class yf_help_tickets {
 				$from_name = $this->ADD_ADMIN_NAME ? "Admin ".SITE_ADVERT_NAME : SITE_ADMIN_NAME;
 				$send_result = common()->send_mail(SITE_ADMIN_EMAIL_ADV, $from_name, $_ticket_info["email"], $_ticket_info["email"], "Help ticket answer", $message, nl2br($message));
 				// Close ticket
-				db()->query("UPDATE `".db('help_tickets')."` SET `status`='closed' WHERE `id`=".intval($_ticket_info["id"]));
+				db()->query("UPDATE ".db('help_tickets')." SET status='closed' WHERE id=".intval($_ticket_info["id"]));
 				// Do not close ticket if we have troubles with sending email
 				if ($send_result) {
 				} else {
@@ -798,9 +798,9 @@ class yf_help_tickets {
 			// Mass change status on reply
 			if (!empty($processed_tickets_ids)) {
 				db()->query(
-					"UPDATE `".db('help_tickets')."` 
-					SET `status` = '".(!empty($_POST["reply_close"]) ? "closed" : "read")."' 
-					WHERE `id` IN(".implode(",", $processed_tickets_ids).")"
+					"UPDATE ".db('help_tickets')." 
+					SET status = '".(!empty($_POST["reply_close"]) ? "closed" : "read")."' 
+					WHERE id IN(".implode(",", $processed_tickets_ids).")"
 				);
 			}
 
@@ -913,37 +913,37 @@ class yf_help_tickets {
 		}
 		// Generate filter for the common fileds
 		if ($SF["category_id"])	{
-		 	$sql[] = " AND `category_id` = ".intval($SF["category_id"])." ";
+		 	$sql[] = " AND category_id = ".intval($SF["category_id"])." ";
 		}
 		if ($SF["user_id"])	{
-		 	$sql[] = " AND `user_id` = ".intval($SF["user_id"])." ";
+		 	$sql[] = " AND user_id = ".intval($SF["user_id"])." ";
 		}
 		if (strlen($SF["admin_priority"])) {
-		 	$sql[] = " AND `admin_priority` = ".intval($SF["admin_priority"])." ";
+		 	$sql[] = " AND admin_priority = ".intval($SF["admin_priority"])." ";
 		}
 		if ($this->DEF_VIEW_STATUS || $SF["status"]) {
 			$status = $SF["status"] ? $SF["status"] : $this->DEF_VIEW_STATUS;
 			if ($status == "not_closed") {
-			 	$sql[] = " AND `status` != 'closed' ";
+			 	$sql[] = " AND status != 'closed' ";
 			} else {
-			 	$sql[] = " AND `status` = '"._es($SF["status"])."' ";
+			 	$sql[] = " AND status = '"._es($SF["status"])."' ";
 			}
 		}
 		if (strlen($SF["subject"])) {
-			$sql[] = " AND `subject` LIKE '"._es($SF["subject"])."%' ";
+			$sql[] = " AND subject LIKE '"._es($SF["subject"])."%' ";
 		}
 		if (strlen($SF["message"])) {
-			$sql[] = " AND `message` LIKE '"._es($SF["message"])."%' ";
+			$sql[] = " AND message LIKE '"._es($SF["message"])."%' ";
 		}
 		if (!empty($SF["email"])) {
-			$sql[] = " AND `email` LIKE '"._es($SF["email"])."%' ";
+			$sql[] = " AND email LIKE '"._es($SF["email"])."%' ";
 		}
 		if ($SF["assigned_to"])	{
-		 	$sql[] = " AND `assigned_to` = ".intval($SF["assigned_to"])." ";
+		 	$sql[] = " AND assigned_to = ".intval($SF["assigned_to"])." ";
 		}
 		// Add subquery to users table
 		if (!empty($users_sql)) {
-			$sql[] = " AND `user_id` IN( SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$users_sql.") ";
+			$sql[] = " AND user_id IN( SELECT id FROM ".db('user')." WHERE 1=1 ".$users_sql.") ";
 		}
 		// Default sorting
 		if (!$SF["sort_by"]) {
@@ -952,7 +952,7 @@ class yf_help_tickets {
 		}
 		// Sorting here
 		if ($SF["sort_by"]) {
-		 	$sql[] = " ORDER BY `".($this->_sort_by[$SF["sort_by"]] ? $this->_sort_by[$SF["sort_by"]] : $SF["sort_by"])."` ";
+		 	$sql[] = " ORDER BY ".($this->_sort_by[$SF["sort_by"]] ? $this->_sort_by[$SF["sort_by"]] : $SF["sort_by"])." ";
 			if (strlen($SF["sort_order"])) {
 				$sql[] = " ".$SF["sort_order"]." ";
 			}

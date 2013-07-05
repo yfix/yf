@@ -44,9 +44,9 @@ class yf_activity_viewer {
 	* Default method
 	*/
 	function show () {
-		$sql = "SELECT * FROM `".db('activity_logs')."`";
+		$sql = "SELECT * FROM ".db('activity_logs')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `add_date` DESC";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$A = db()->query_fetch_all($sql.$add_sql);
 
@@ -57,7 +57,7 @@ class yf_activity_viewer {
 		// Get user infos
 		$this->_user_info = $this->_get_users_info($user_ids);
 		// Get user total activity points
-		$B = db()->query_fetch_all("SELECT `user_id`, `points` FROM `".db('activity_total')."` WHERE `user_id` IN(".implode(",", $user_ids).")");
+		$B = db()->query_fetch_all("SELECT user_id, points FROM ".db('activity_total')." WHERE user_id IN(".implode(",", $user_ids).")");
 		foreach ((array)$B as $V){
 			$this->total_activity[$V["user_id"]] = intval($V["points"]);
 		}
@@ -89,7 +89,7 @@ class yf_activity_viewer {
 	*/
 	function _get_users_info ($user_id = array()) {
 		if (!empty($user_id)) {
-			$A = db()->query_fetch_all("SELECT * FROM `".db('user')."` WHERE `id` IN ('".implode("','", $user_id)."')". (MAIN_TYPE_USER ? " AND `active`='1'" : ""));
+			$A = db()->query_fetch_all("SELECT * FROM ".db('user')." WHERE id IN ('".implode("','", $user_id)."')". (MAIN_TYPE_USER ? " AND active='1'" : ""));
 			foreach ((array)$A as $V){
 				$_user_info[$V["id"]] = $V;
 			}
@@ -137,10 +137,10 @@ class yf_activity_viewer {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["user_id"])		 							$sql .= " AND `user_id` = ".intval($SF["user_id"])." \r\n";
-		if ($SF["task_id"])									$sql .= " AND `task_id`=".intval($SF["task_id"])." \r\n";
+		if ($SF["user_id"])		 							$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
+		if ($SF["task_id"])									$sql .= " AND task_id=".intval($SF["task_id"])." \r\n";
 		// Sorting here
-		if ($SF["sort_by"])			 						$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 						$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

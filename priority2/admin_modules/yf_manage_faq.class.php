@@ -56,12 +56,12 @@ class yf_manage_faq extends yf_module {
 	*/
 	function show () {
 		// Get faqs
-		$Q = db()->query("SELECT * FROM `".db('faq_texts')."` ORDER BY `cat_id`,`priority` DESC");
+		$Q = db()->query("SELECT * FROM ".db('faq_texts')." ORDER BY cat_id,priority DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$faqs_texts[$A["id"]]	= $A;
 		}
 		// Do get number of comments for each faq record
-		$Q = db()->query("SELECT `object_id`, COUNT(`id`) AS `num_comments` FROM `".db('comments')."` WHERE `object_name`='faq' GROUP BY `object_id`");
+		$Q = db()->query("SELECT object_id, COUNT(id) AS num_comments FROM ".db('comments')." WHERE object_name='faq' GROUP BY object_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_comments[$A["object_id"]] = $A["num_comments"];
 		}
@@ -128,7 +128,7 @@ class yf_manage_faq extends yf_module {
 		}
 		// Get text info
 		if (empty($text_info)) {
-			$text_info = db()->query_fetch("SELECT * FROM `".db('faq_texts')."` WHERE `id`=".intval($_GET["id"]));
+			$text_info = db()->query_fetch("SELECT * FROM ".db('faq_texts')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($text_info)) {
 			return _e(t("No such text!"));
@@ -186,13 +186,13 @@ class yf_manage_faq extends yf_module {
 			return _e(t("No id"));
 		}
 		// Try to get record info
-		$text_info = db()->query_fetch("SELECT * FROM `".db('faq_texts')."` WHERE `id`=".intval($_GET["id"]));
+		$text_info = db()->query_fetch("SELECT * FROM ".db('faq_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($text_info)) {
 			return _e(t("No such record"));
 		}
 		// Try to get given user info
 		if (!empty($user_info["id"])) {
-			$user_info = db()->query_fetch("SELECT `id`,`name`,`nick` FROM `".db('user')."` WHERE `id`=".intval($text_info["user_id"]));
+			$user_info = db()->query_fetch("SELECT id,name,nick FROM ".db('user')." WHERE id=".intval($text_info["user_id"]));
 		}
 		// Check posted data and save
 		if (count($_POST) > 0) {
@@ -205,7 +205,7 @@ class yf_manage_faq extends yf_module {
 					"edit_date"		=> time(),
 					"status"		=> _es($_POST["status"]),
 					"priority"		=> intval($_POST["priority"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]);
 			}
@@ -299,9 +299,9 @@ class yf_manage_faq extends yf_module {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete record
 		if (!empty($_GET["id"])) {
-			db()->query("DELETE FROM `".db('faq_texts')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('faq_texts')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			// Delete linked comments
-			db()->query("DELETE FROM `".db('comments')."` WHERE `object_name`='faq' AND `object_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('comments')." WHERE object_name='faq' AND object_id=".intval($_GET["id"]));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {

@@ -36,10 +36,10 @@ class yf_log_maxmind_phone_verify {
 	* Default method
 	*/
 	function show () {
-		$sql = "SELECT `id`, `check_type`, `owner_id`, `phone_num`, `phone_type`, `verify_code`, `date`, `success` 
-				FROM `".db('log_maxmind_phone_verify')."`";
+		$sql = "SELECT id, check_type, owner_id, phone_num, phone_type, verify_code, date, success 
+				FROM ".db('log_maxmind_phone_verify')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$A = db()->query_fetch_all($sql.$add_sql);
 		if ($A){
@@ -50,7 +50,7 @@ class yf_log_maxmind_phone_verify {
 				$users_ids[$v["owner_id"]] = $v["owner_id"];
 			}
 			if (!empty($users_ids)) {
-				$B = db()->query_fetch_all("SELECT `id`, `nick` FROM `".db('user')."` WHERE `id` IN (".implode(",", $users_ids).")");
+				$B = db()->query_fetch_all("SELECT id, nick FROM ".db('user')." WHERE id IN (".implode(",", $users_ids).")");
 				foreach ((array)$B as $v){
 					$users_array[$v["id"]] = _prepare_html($v["nick"]);
 				}
@@ -97,8 +97,8 @@ class yf_log_maxmind_phone_verify {
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$A = db()->query_fetch("SELECT * FROM `".db('log_maxmind_phone_verify')."` WHERE `id`='".$_GET["id"]."'");
-		$B = db()->query_fetch("SELECT `nick` FROM `".db('user')."` WHERE `id`=".$A["owner_id"]);
+		$A = db()->query_fetch("SELECT * FROM ".db('log_maxmind_phone_verify')." WHERE id='".$_GET["id"]."'");
+		$B = db()->query_fetch("SELECT nick FROM ".db('user')." WHERE id=".$A["owner_id"]);
 		$replace = array(
 			"record_id"		=> $A["id"],
 			"user_id"		=> $A["owner_id"],
@@ -152,15 +152,15 @@ class yf_log_maxmind_phone_verify {
 				."Phone check result: ".($check_result ? "<b style='color:green;'>Good</b>" : "<b style='color:red;'>Bad</b>");
 		}
 		// Display form
-		$sql = "SELECT `id`, `nick`, `phone`, `country` 
-				FROM `".db('user')."` 
-				WHERE `country` IN ('".implode("','", $OBJ->_cc_to_verify)."') 
-					AND `group`='3' 
-					AND `phone` != '' 
-					AND `active`='1' 
+		$sql = "SELECT id, nick, phone, country 
+				FROM ".db('user')." 
+				WHERE country IN ('".implode("','", $OBJ->_cc_to_verify)."') 
+					AND group='3' 
+					AND phone != '' 
+					AND active='1' 
 				";
-		list($total) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM (".$sql.") AS `tmp`");
-		$sql .= "ORDER BY `id` DESC 
+		list($total) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM (".$sql.") AS tmp");
+		$sql .= "ORDER BY id DESC 
 				LIMIT 1000";
 		$A = db()->query_fetch_all($sql);
 		foreach ((array)$A as $B){
@@ -185,8 +185,8 @@ class yf_log_maxmind_phone_verify {
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$A = db()->query_fetch("SELECT * FROM `".db('log_maxmind_phone_verify')."` WHERE `id`='".$_GET["id"]."'");
-		$escort_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".$A["owner_id"]);
+		$A = db()->query_fetch("SELECT * FROM ".db('log_maxmind_phone_verify')." WHERE id='".$_GET["id"]."'");
+		$escort_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".$A["owner_id"]);
 		// Check if user's country is not allowed to verify phone
 		$OBJ = &main()->init_class("maxmind_phone_verify", "classes/");
 		if (!is_object($OBJ) || !$OBJ->_country_allowed($escort_info["country"])) {
@@ -212,10 +212,10 @@ class yf_log_maxmind_phone_verify {
 		}
 		// Check number of tries
 		$num_phone_checks = db()->query_num_rows(
-			"SELECT * FROM `".db('log_maxmind_phone_verify')."` 
-			WHERE `check_type`='v' 
-				AND `ref_id` != '' 
-				AND `owner_id`=".intval($escort_info["id"])
+			"SELECT * FROM ".db('log_maxmind_phone_verify')." 
+			WHERE check_type='v' 
+				AND ref_id != '' 
+				AND owner_id=".intval($escort_info["id"])
 		);
 		// Limit verifies reached, stop here
 		if ($num_phone_checks >= 3) {
@@ -300,15 +300,15 @@ class yf_log_maxmind_phone_verify {
 			$SF["phone_type"] = -1;
 		}
 		// Generate filter for the common fileds
-		if ($SF["user_id"])			 	$sql .= " AND `owner_id` = ".intval($SF["user_id"])." \r\n";
-		if ($SF["success"] != -1)		$sql .= " AND `success` = '".intval($SF["success"])."' \r\n";
-		if ($SF["check_type"])			$sql .= " AND `check_type` = '"._es($SF["check_type"])."' \r\n";
-		if (strlen($SF["verify_code"])) $sql .= " AND `verify_code`  LIKE '%".intval($SF["verify_code"])."%' \r\n";
+		if ($SF["user_id"])			 	$sql .= " AND owner_id = ".intval($SF["user_id"])." \r\n";
+		if ($SF["success"] != -1)		$sql .= " AND success = '".intval($SF["success"])."' \r\n";
+		if ($SF["check_type"])			$sql .= " AND check_type = '"._es($SF["check_type"])."' \r\n";
+		if (strlen($SF["verify_code"])) $sql .= " AND verify_code  LIKE '%".intval($SF["verify_code"])."%' \r\n";
 		if ($SF["phone_type"] && $SF["phone_type"] != -1) {
-			$sql .= " AND `phone_type` = '"._es($SF["phone_type"])."' \r\n";
+			$sql .= " AND phone_type = '"._es($SF["phone_type"])."' \r\n";
 		}
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

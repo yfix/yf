@@ -93,10 +93,10 @@ class yf_output_cache_editor {
 	* View available pages list
 	*/
 	function view () {
-		$sql = "SELECT * FROM `".db('cache_info')."`"/*." GROUP BY `query_string`"*/;
+		$sql = "SELECT * FROM ".db('cache_info').""/*." GROUP BY query_string"*/;
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : ""/*" ORDER BY `date` DESC "*/;
-		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT `id`", $sql), $path, null, $this->VIEW_PER_PAGE);
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : ""/*" ORDER BY date DESC "*/;
+		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT id", $sql), $path, null, $this->VIEW_PER_PAGE);
 		// Process users
 		$Q = db()->query($sql. $order_by_sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -148,10 +148,10 @@ class yf_output_cache_editor {
 	*/
 	function change_status () {
 		// Get current setting
-		$A = db()->query_fetch("SELECT * FROM `".db('settings')."` WHERE `item`='output_caching'");
+		$A = db()->query_fetch("SELECT * FROM ".db('settings')." WHERE item='output_caching'");
 		// Do update with new one
 		if (!empty($A["id"])) {
-			db()->UPDATE("settings", array("value" => $A["value"] ? 0 : 1), "`id`=".intval($A["id"]));
+			db()->UPDATE("settings", array("value" => $A["value"] ? 0 : 1), "id=".intval($A["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("settings");
@@ -165,7 +165,7 @@ class yf_output_cache_editor {
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (!empty($_GET["id"])) {
-			db()->query("DELETE FROM `".db('cache_info')."` WHERE `id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('cache_info')." WHERE id=".intval($_GET["id"]));
 			$_POST["ids"][$_GET["id"]] = 1;
 			// Do clean cache entries
 			$this->clean();
@@ -194,7 +194,7 @@ class yf_output_cache_editor {
 		}
 		// Get selected records from db
 		if (!empty($cache_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('cache_info')."` WHERE `id` IN(".implode(",", $cache_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('cache_info')." WHERE id IN(".implode(",", $cache_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $cache_infos[$A["id"]] = $A;
 		}
 		// Process records
@@ -292,13 +292,13 @@ class yf_output_cache_editor {
 		);
 		// Get unique objects
 		$this->_objects[""]	= t("-- All --");
-		$Q = db()->query("SELECT `object` FROM `".db('cache_info')."` WHERE `object` != '' GROUP BY `object` ORDER BY `object` ASC");
+		$Q = db()->query("SELECT object FROM ".db('cache_info')." WHERE object != '' GROUP BY object ORDER BY object ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_objects[strtolower($A["object"])]	= strtolower($A["object"]);
 		}
 		// Get unique actions
 		$this->_actions[""]	= t("-- All --");
-		$Q = db()->query("SELECT `action` FROM `".db('cache_info')."` WHERE `action` != '' GROUP BY `action` ORDER BY `action` ASC");
+		$Q = db()->query("SELECT action FROM ".db('cache_info')." WHERE action != '' GROUP BY action ORDER BY action ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_actions[strtolower($A["action"])]	= strtolower($A["action"]);
 		}
@@ -331,12 +331,12 @@ class yf_output_cache_editor {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["group"])			 		$sql .= " AND `group_id` = ".intval($SF["group"])." \r\n";
-		if ($SF["object"])			 		$sql .= " AND `object` = '"._es($SF["object"])."' \r\n";
-		if ($SF["action"])				 	$sql .= " AND `action` = '"._es($SF["action"])."' \r\n";
-		if (strlen($SF["query_string"]))	$sql .= " AND `query_string` LIKE '%"._es($SF["query_string"])."%' \r\n";
+		if ($SF["group"])			 		$sql .= " AND group_id = ".intval($SF["group"])." \r\n";
+		if ($SF["object"])			 		$sql .= " AND object = '"._es($SF["object"])."' \r\n";
+		if ($SF["action"])				 	$sql .= " AND action = '"._es($SF["action"])."' \r\n";
+		if (strlen($SF["query_string"]))	$sql .= " AND query_string LIKE '%"._es($SF["query_string"])."%' \r\n";
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

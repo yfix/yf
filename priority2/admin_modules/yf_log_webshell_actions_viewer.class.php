@@ -24,9 +24,9 @@ class yf_log_webshell_actions_viewer {
 	function show () {
 
 		// Prepare pager
-		$sql = "SELECT * FROM `".db('log_webshell_action')."`";
+		$sql = "SELECT * FROM ".db('log_webshell_action')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `microtime` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY microtime DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$records = db()->query_fetch_all($sql. $add_sql);
 
@@ -110,18 +110,18 @@ class yf_log_webshell_actions_viewer {
 			$SF[$k] = trim($v);
 		}
 		// Generate filter for the common fileds
-		if ($SF["time_from"])			$sql .= " AND `microtime` >= ".$SF["time_from"]." \r\n";
-		if ($SF["time_to"])				$sql .= " AND `microtime` <= ".(intval($SF["time_to"]) + 24*3600)." \r\n";
+		if ($SF["time_from"])			$sql .= " AND microtime >= ".$SF["time_from"]." \r\n";
+		if ($SF["time_to"])				$sql .= " AND microtime <= ".(intval($SF["time_to"]) + 24*3600)." \r\n";
 		if (!empty($SF["user_id"])) {
-			$sql .= " AND `user_id` IN('".implode("','", explode(",", $SF["user_id"]))."') \r\n";
+			$sql .= " AND user_id IN('".implode("','", explode(",", $SF["user_id"]))."') \r\n";
 		}
 		if (!empty($SF["server_id"])) {
-			$sql .= " AND `server_id` IN('".implode("','", explode(",", $SF["server_id"]))."') \r\n";
+			$sql .= " AND server_id IN('".implode("','", explode(",", $SF["server_id"]))."') \r\n";
 		}
-		if (strlen($SF["action"]))		$sql .= " AND `action` LIKE '"._es($SF["action"])."%' \r\n";
+		if (strlen($SF["action"]))		$sql .= " AND action LIKE '"._es($SF["action"])."%' \r\n";
 
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}
@@ -165,10 +165,10 @@ class yf_log_webshell_actions_viewer {
 				$_SESSION[$this->_filter_name]["user_id"] = intval($_POST["user"]);
 			} else {
 				$Q = db()->query("
-					SELECT `id` 
-					FROM `".db('user')."` 
-					WHERE `nick` LIKE '".$_POST["user"]."%' 
-						AND `id` IN(SELECT DISTINCT `user_id` FROM `".db('log_webshell_action')."`) 
+					SELECT id 
+					FROM ".db('user')." 
+					WHERE nick LIKE '".$_POST["user"]."%' 
+						AND id IN(SELECT DISTINCT user_id FROM ".db('log_webshell_action').") 
 					");
 				while ($A = db()->fetch_assoc($Q)) {
 					$_tmp_users[intval($A["id"])] = intval($A["id"]);
@@ -183,10 +183,10 @@ class yf_log_webshell_actions_viewer {
 				$_SESSION[$this->_filter_name]["server_id"] = intval($_POST["server"]);
 			} else {
 				$Q = db()->query("
-					SELECT `id` 
-					FROM `".db('servers')."` 
-					WHERE `name` LIKE '".$_POST["server"]."%' 
-						AND `id` IN(SELECT DISTINCT `server_id` FROM `".db('log_webshell_action')."`) 
+					SELECT id 
+					FROM ".db('servers')." 
+					WHERE name LIKE '".$_POST["server"]."%' 
+						AND id IN(SELECT DISTINCT server_id FROM ".db('log_webshell_action').") 
 				");
 				while ($A = db()->fetch_assoc($Q)) {
 					$_tmp_servers[intval($A["id"])] = intval($A["id"]);

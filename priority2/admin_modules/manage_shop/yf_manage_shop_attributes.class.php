@@ -9,7 +9,7 @@ class yf_manage_shop_attributes {
 	* Manage attributes
 	*/
 	function attributes_manage () {
-		$sql = "SELECT * FROM `".db('dynamic_fields_info')."` WHERE `category_id` = ".intval(module('manage_shop')->ATTRIBUTES_CAT_ID)." ORDER BY `order`";
+		$sql = "SELECT * FROM ".db('dynamic_fields_info')." WHERE category_id = ".intval(module('manage_shop')->ATTRIBUTES_CAT_ID)." ORDER BY order";
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$values =  (array)unserialize($A["value_list"]);
 
@@ -89,7 +89,7 @@ class yf_manage_shop_attributes {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$A = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_info')."` WHERE `id`=".$_GET["id"]);
+		$A = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_info')." WHERE id=".$_GET["id"]);
 		
 		if (isset($_POST["go"])) {
 			if (empty($_POST["name"])) {
@@ -111,7 +111,7 @@ class yf_manage_shop_attributes {
 					"default_value"	=> _es($_POST["default_value"]),
 					"order"			=> $_POST["order"],
 				);
-				db()->UPDATE("dynamic_fields_info", $sql_array, "`id`=".$_GET["id"]); 
+				db()->UPDATE("dynamic_fields_info", $sql_array, "id=".$_GET["id"]); 
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("dynamic_fields_info");
 				}
@@ -138,13 +138,13 @@ class yf_manage_shop_attributes {
 	*/
 	function attribute_delete () {
 		$_GET["id"] = intval($_GET["id"]);
-		$field_info = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_info')."` WHERE `id` = ".intval($_GET["id"]));
+		$field_info = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_info')." WHERE id = ".intval($_GET["id"]));
 		if (empty($field_info)) {
 			return _e(t("no field"));
 		}
 		if ($_GET["id"]) {
-			db()->query("DELETE FROM `".db('dynamic_fields_info')."` WHERE `id`=".$_GET["id"]);
-			db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `category_id` = ".module('manage_shop')->ATTRIBUTES_CAT_ID." AND `field_id` = ".$_GET["id"]);
+			db()->query("DELETE FROM ".db('dynamic_fields_info')." WHERE id=".$_GET["id"]);
+			db()->query("DELETE FROM ".db('dynamic_fields_values')." WHERE category_id = ".module('manage_shop')->ATTRIBUTES_CAT_ID." AND field_id = ".$_GET["id"]);
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("dynamic_fields_info");
 			}
@@ -250,7 +250,7 @@ class yf_manage_shop_attributes {
 				db()->UPDATE("dynamic_fields_values", array(
 					"value"			=> _es($option_values),
 					"add_value"		=> _es($value_prices),
-				), "`category_id` = ".$category_id." AND `object_id` = ".$object_id." AND `field_id` = ".intval($_attr_id));
+				), "category_id = ".$category_id." AND object_id = ".$object_id." AND field_id = ".intval($_attr_id));
 			}
 		}
 	}
@@ -290,7 +290,7 @@ class yf_manage_shop_attributes {
 		}
 		$fields_info = main()->get_data("dynamic_fields_info");
 
-		$Q = db()->query("SELECT * FROM `".db('dynamic_fields_values')."` WHERE `category_id`=1 AND `object_id` IN (".implode(",", $products_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('dynamic_fields_values')." WHERE category_id=1 AND object_id IN (".implode(",", $products_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$_product_id = $A["object_id"];
 
@@ -330,11 +330,11 @@ class yf_manage_shop_attributes {
 			return array();
 		}
 		$Q = db()->query(
-			"SELECT `field_id`,`value`,`add_value` 
-			FROM `".db('dynamic_fields_values')."`
-			WHERE `category_id` = ".$category_id." 
-				AND `object_id` = ".intval($object_id)." 
-				AND `field_id` IN(".implode(",", $fields_ids).")");
+			"SELECT field_id,value,add_value 
+			FROM ".db('dynamic_fields_values')."
+			WHERE category_id = ".$category_id." 
+				AND object_id = ".intval($object_id)." 
+				AND field_id IN(".implode(",", $fields_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$fields_values[$A["field_id"]] = array(
 				"is_selected"	=> (array)unserialize($A["value"]),

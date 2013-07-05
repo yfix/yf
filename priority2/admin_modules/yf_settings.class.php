@@ -32,9 +32,9 @@ class yf_settings {
 		// For constructor mode enabling some useful things
 		if ($this->CONSTRUCTOR_MODE) {
 			// Select all settings items even if they have no assigned category
-			$sql = "SELECT * FROM `".db('settings_category')."` ORDER BY `order` ASC";
+			$sql = "SELECT * FROM ".db('settings_category')." ORDER BY order ASC";
 		} else {
-			$sql = "SELECT * FROM `".db('settings_category')."` WHERE `order` > 0 ORDER BY `order` ASC";
+			$sql = "SELECT * FROM ".db('settings_category')." WHERE order > 0 ORDER BY order ASC";
 		}
 		// Insert settings categories into array
 		$Q = db()->query($sql);
@@ -59,21 +59,21 @@ class yf_settings {
 		// Groupping settings by category
 		if ($this->CONSTRUCTOR_MODE) {
 			foreach ((array)$categories2 as $k2 => $v2) {
-				$Q = db()->query("SELECT * FROM ".db('settings')." WHERE `category`=".$k2." AND `item` != 'constructor_mode' ORDER BY `order` ASC");
+				$Q = db()->query("SELECT * FROM ".db('settings')." WHERE category=".$k2." AND item != 'constructor_mode' ORDER BY order ASC");
 				// Category name
 				$items .= tpl()->parse("settings/cat_name", array("name" => t($v2)));
    				while ($A = db()->fetch_array($Q)) 
 					$items .= $this->_show_record($A);
 			}
 			// Try to find items with wrong or missed categories
-			$Q = db()->query("SELECT DISTINCT(`category`) AS `cat` FROM `".db('settings')."` WHERE `item`!='constructor_mode' ORDER BY `category` ASC");
+			$Q = db()->query("SELECT DISTINCT(category) AS cat FROM ".db('settings')." WHERE item!='constructor_mode' ORDER BY category ASC");
 			while ($A = db()->fetch_array($Q)) {
-				$sql = "SELECT * FROM `".db('settings_category')."` WHERE `id`=".$A['cat'];
+				$sql = "SELECT * FROM ".db('settings_category')." WHERE id=".$A['cat'];
 				if (!db()->query_num_rows($sql)) $missed[] = $A[cat];
 			}
 			// If there are lost categories - show them
 			if (count($missed)) {
-				$Q = db()->query("SELECT * FROM `".db('settings')."` WHERE `category` IN (".implode(",",$missed).") AND `item`!='constructor_mode' ORDER BY `order` ASC");
+				$Q = db()->query("SELECT * FROM ".db('settings')." WHERE category IN (".implode(",",$missed).") AND item!='constructor_mode' ORDER BY order ASC");
 				// If there are at least one lost item - show title
 				if (db()->num_rows($Q)) {
 					// Category name
@@ -83,7 +83,7 @@ class yf_settings {
 				}
 			}
 		} else {
-			$Q = db()->query("SELECT * FROM ".db('settings')." WHERE `category`=".intval($_GET['category'])." AND `order` > 0 AND `item`!='constructor_mode' ORDER BY `order` ASC");
+			$Q = db()->query("SELECT * FROM ".db('settings')." WHERE category=".intval($_GET['category'])." AND order > 0 AND item!='constructor_mode' ORDER BY order ASC");
 			while ($A = db()->fetch_array($Q)) {
 				// Hide constructor setting items if this mode is turned off
 //				if (!$this->CONSTRUCTOR_MODE) continue;
@@ -107,7 +107,7 @@ class yf_settings {
 	*/
 	function _add_form () {
 		// Total number of settings variables (not only in the specified category)
-		$num_rows = db()->query_num_rows("SELECT * FROM `".db('settings'));
+		$num_rows = db()->query_num_rows("SELECT * FROM ".db('settings'));
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=add",
 			"type"			=> common()->select_box("type", $this->types, "", false, 2),
@@ -193,8 +193,8 @@ class yf_settings {
 		$_GET['id'] = intval($_GET['id']);
 		// Checking admin rights and constructor mode
 		if ($_GET['id'] && $this->CONSTRUCTOR_MODE) {
-			$num_rows = db()->query_num_rows("SELECT `id` FROM `".db('settings')."`");
-			$A = db()->query_fetch("SELECT * FROM `".db('settings')."` WHERE `id`=".$_GET['id']);
+			$num_rows = db()->query_num_rows("SELECT id FROM ".db('settings')."");
+			$A = db()->query_fetch("SELECT * FROM ".db('settings')." WHERE id=".$_GET['id']);
 			// Stripping slashes from all fields
 			foreach ((array)$A as $k => $v) $A[$k] = stripslashes($v);
 			$replace = array(
@@ -216,14 +216,14 @@ class yf_settings {
 	* Update settings
 	*/
 	function update() {
-		$Q = db()->query("SELECT * FROM `".db('settings')."`");
+		$Q = db()->query("SELECT * FROM ".db('settings')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$item = $A['item'];
 			if (!isset($_POST[$item])) continue;
 			$_POST[$item] = str_replace(array('"', "'"), array('\"', "\'"), html_entity_decode(stripslashes($_POST[$item])));
-			$sql = "UPDATE `".db('settings')."` SET 
-					`value`='"._es($_POST[$item])."' 
-				WHERE `id`=".$A['id'];
+			$sql = "UPDATE ".db('settings')." SET 
+					value='"._es($_POST[$item])."' 
+				WHERE id=".$A['id'];
 			db()->query($sql);
 		}
 		// Refresh system cache
@@ -237,13 +237,13 @@ class yf_settings {
 	function add() {
 		// Checking admin rights and constructor mode
 		if ($this->CONSTRUCTOR_MODE) {
-			$sql = "INSERT INTO `".db('settings')."` (
-					`item`,
-					`value`,
-					`type`,
-					`size`,
-					`order`,
-					`category`
+			$sql = "INSERT INTO ".db('settings')." (
+					item,
+					value,
+					type,
+					size,
+					order,
+					category
 				) VALUES (
 					'"._es($_POST['item'])."',
 					'"._es($_POST['value'])."',
@@ -266,7 +266,7 @@ class yf_settings {
 		$_GET['id'] = intval($_GET['id']);
 		// Checking admin rights and constructor mode
 		if ($_GET['id'] && $this->CONSTRUCTOR_MODE) {
-			db()->query("DELETE FROM `".db('settings')."` WHERE `id`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('settings')." WHERE id=".$_GET['id']);
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("settings");
@@ -286,14 +286,14 @@ class yf_settings {
 		$_GET['id'] = intval($_GET['id']);
 		// Checking admin rights and constructor mode and non-empty ID 
 		if ($_GET['id'] && $this->CONSTRUCTOR_MODE) {
-			$sql = "UPDATE `".db('settings')."` SET
-					`item`		= '"._es($_POST['item'])."',
-					`value`		= '"._es($_POST['value'])."',
-					`type`		= '"._es($_POST['type'])."',
-					`size`		= '"._es($_POST['size'])."',
-					`order`		= "._es($_POST['order']).",
-					`category`	= "._es($_POST['category'])."
-				WHERE `id`=".$_GET['id'];
+			$sql = "UPDATE ".db('settings')." SET
+					item		= '"._es($_POST['item'])."',
+					value		= '"._es($_POST['value'])."',
+					type		= '"._es($_POST['type'])."',
+					size		= '"._es($_POST['size'])."',
+					order		= "._es($_POST['order']).",
+					category	= "._es($_POST['category'])."
+				WHERE id=".$_GET['id'];
 			db()->query($sql);
 		}
 		// Refresh system cache
@@ -307,7 +307,7 @@ class yf_settings {
 	function show_categories() {
 		// Checking admin rights and constructor mode
 		if ($this->CONSTRUCTOR_MODE) {
-			$Q = db()->query("SELECT * FROM `".db('settings_category')."` ORDER BY `order` ASC");
+			$Q = db()->query("SELECT * FROM ".db('settings_category')." ORDER BY order ASC");
 			$num_rows = db()->num_rows($Q);
 			while ($A = db()->fetch_assoc($Q)) {
 				$replace2 = array(
@@ -336,16 +336,16 @@ class yf_settings {
 	function update_category() {
 		// Checking admin rights and constructor mode
 		if ($this->CONSTRUCTOR_MODE) {
-			$Q = db()->query("SELECT * FROM `".db('settings_category')."`");
+			$Q = db()->query("SELECT * FROM ".db('settings_category')."");
 			while ($A = db()->fetch_assoc($Q)) {
 				$item = "name_".$A['id'];
 				// If item is empty - skip it
 				if (!strlen($_POST[$item])) continue;
 				$_POST[$item] = str_replace(array('"', "'"), array('\"', "\'"), html_entity_decode(stripslashes($_POST[$item])));
-				$sql = "UPDATE `".db('settings_category')."` SET 
-						`name`='"._es($_POST[$item])."', 
-						`order`=".$_POST["order_".$A['id']]." 
-					WHERE `id`=".$A['id'];
+				$sql = "UPDATE ".db('settings_category')." SET 
+						name='"._es($_POST[$item])."', 
+						order=".$_POST["order_".$A['id']]." 
+					WHERE id=".$A['id'];
 				db()->query($sql);
 			}
 		}
@@ -358,9 +358,9 @@ class yf_settings {
 	function add_category() {
 		// Checking admin rights and constructor mode
 		if ($this->CONSTRUCTOR_MODE) {
-			$sql = "INSERT INTO `".db('settings_category')."` (
-					`name`,
-					`order`
+			$sql = "INSERT INTO ".db('settings_category')." (
+					name,
+					order
 				) VALUES (
 					'"._es($_POST['name'])."',
 					".intval($_POST['order'])."
@@ -377,7 +377,7 @@ class yf_settings {
 		$_GET['id'] = intval($_GET['id']);
 		// Checking admin rights and constructor mode and non-empty ID
 		if ($_GET['id'] && $this->CONSTRUCTOR_MODE) {
-			db()->query("DELETE FROM `".db('settings_category')."` WHERE `id`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('settings_category')." WHERE id=".$_GET['id']);
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {

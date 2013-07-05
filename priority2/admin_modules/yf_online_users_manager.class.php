@@ -28,7 +28,7 @@ class yf_online_users_manager {
 		// Get info about sites vars
 		$this->_sites_info = main()->init_class("sites_info", "classes/");
 		// Get user groups
-		$A = db()->query_fetch_all("SELECT * FROM `".db('user_groups')."`");
+		$A = db()->query_fetch_all("SELECT * FROM ".db('user_groups')."");
 		foreach ((array)$A as $V) {
 			$this->_user_group[$V["id"]] = _prepare_html($V["name"]);			
 		}
@@ -55,10 +55,10 @@ class yf_online_users_manager {
 	* @return
 	*/
 	function show () {
-		list($guests_online) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('online')."` WHERE `user_id`=0");
-		$sql = "SELECT * FROM `".db('online')."`" ;
+		list($guests_online) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('online')." WHERE user_id=0");
+		$sql = "SELECT * FROM ".db('online')."" ;
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? "  WHERE `user_id`>0". $filter_sql : " WHERE `user_id`>0 ORDER BY `time` DESC";
+		$sql .= strlen($filter_sql) ? "  WHERE user_id>0". $filter_sql : " WHERE user_id>0 ORDER BY time DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$A = db()->query_fetch_all($sql.$add_sql);
 		$user_ids = array();
@@ -124,7 +124,7 @@ class yf_online_users_manager {
 	* @return
 	*/
 	function guests_online () { 
-		$sql = "SELECT * FROM `".db('online')."` WHERE `user_id`=0";
+		$sql = "SELECT * FROM ".db('online')." WHERE user_id=0";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$A = db()->query_fetch_all($sql.$add_sql);
 		foreach ((array)$A as $V) {
@@ -165,7 +165,7 @@ class yf_online_users_manager {
 	// Get user info
 	function _get_users_info ($user_id = array()) {
 		if (!empty($user_id)) {
-			$A = db()->query_fetch_all("SELECT * FROM `".db('user')."` WHERE `id` IN ('".implode("','", $user_id)."')". (MAIN_TYPE_USER ? " AND `active`='1'" : ""));
+			$A = db()->query_fetch_all("SELECT * FROM ".db('user')." WHERE id IN ('".implode("','", $user_id)."')". (MAIN_TYPE_USER ? " AND active='1'" : ""));
 			foreach ((array)$A as $V){
 				$_user_info[$V["id"]] = $V;
 			}
@@ -214,12 +214,12 @@ class yf_online_users_manager {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["user_group"] && intval($SF["user_group"]) != 1)	$sql .= " AND `user_group` = ".intval($SF["user_group"])." \r\n";
-		if ($SF["user_group"] && intval($SF["user_group"]) == 1)	$sql .= " AND `user_group` <= ".intval($SF["user_group"])." \r\n";
-		if (strlen($SF["nick"])) 									$sql .= " AND `user_id` IN(SELECT `id` FROM `".db('user')."` WHERE `nick` LIKE '%"._es($SF["nick"])."%') \r\n";
-		if (intval($SF["show_w_avatar"]) == 1)						$sql .= " AND `user_id` IN(SELECT `id` FROM `".db('user')."` WHERE `has_avatar`=1)  \r\n";
+		if ($SF["user_group"] && intval($SF["user_group"]) != 1)	$sql .= " AND user_group = ".intval($SF["user_group"])." \r\n";
+		if ($SF["user_group"] && intval($SF["user_group"]) == 1)	$sql .= " AND user_group <= ".intval($SF["user_group"])." \r\n";
+		if (strlen($SF["nick"])) 									$sql .= " AND user_id IN(SELECT id FROM ".db('user')." WHERE nick LIKE '%"._es($SF["nick"])."%') \r\n";
+		if (intval($SF["show_w_avatar"]) == 1)						$sql .= " AND user_id IN(SELECT id FROM ".db('user')." WHERE has_avatar=1)  \r\n";
 		// Sorting here
-		if ($SF["sort_by"])			 						$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 						$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

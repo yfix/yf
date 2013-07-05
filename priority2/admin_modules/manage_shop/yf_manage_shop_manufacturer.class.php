@@ -31,9 +31,9 @@ class yf_manage_shop_manufacturer {
 	*/
 	function manufacturers_manage() {
 	
-		$sql = "SELECT * FROM `".db('shop_manufacturer')."`";
+		$sql = "SELECT * FROM ".db('shop_manufacturer')."";
 		$filter_sql = module('manage_shop')->USE_FILTER ? module('manage_shop')->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `name` ASC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY name ASC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$orders_info = db()->query_fetch_all($sql.$add_sql);
 
@@ -123,7 +123,7 @@ class yf_manage_shop_manufacturer {
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$manufacturer_info = db()->query_fetch("SELECT * FROM `".db('shop_manufacturer')."` WHERE `id`=".$_GET["id"]);
+		$manufacturer_info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturer')." WHERE id=".$_GET["id"]);
 
 		if (!empty($_POST)) {
 			if (!$_POST["name"]) {
@@ -138,7 +138,7 @@ class yf_manage_shop_manufacturer {
 					"desc"		=> _es($_POST["desc"]),
 					"sort_order"=> intval($_POST["featured"]),
 				);
-				db()->UPDATE(db('shop_manufacturer'), $sql_array, "`id`=".$_GET["id"]);
+				db()->UPDATE(db('shop_manufacturer'), $sql_array, "id=".$_GET["id"]);
 				// Image upload
 				if (!empty($_FILES)) {
 					$man_id = $_GET["id"];
@@ -173,7 +173,7 @@ class yf_manage_shop_manufacturer {
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$manufacturer_info = db()->query_fetch("SELECT * FROM `".db('shop_manufacturer')."` WHERE `id`=".$_GET["id"]);
+		$manufacturer_info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturer')." WHERE id=".$_GET["id"]);
 		$img_path = $this->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].$this->FULL_IMG_SUFFIX. ".jpg";
 		if (!file_exists($img_path)) {
 			$img_path = "";
@@ -207,12 +207,12 @@ class yf_manage_shop_manufacturer {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current info
 		if (!empty($_GET["id"])) {
-			$order_info = db()->query_fetch("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"]));
+			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete order
 		if (!empty($order_info["id"])) {
-			db()->query("DELETE FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('shop_order_items')." WHERE order_id=".intval($_GET["id"]));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {

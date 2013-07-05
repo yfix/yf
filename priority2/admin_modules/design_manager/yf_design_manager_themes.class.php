@@ -97,7 +97,7 @@ class yf_design_manager_themes {
 	* Edit theme
 	*/
 	function _edit_theme () {
-		$theme_info = db()->query_fetch("SELECT * FROM `".db('user_themes')."` WHERE `id`=".intval($_GET["id"]));
+		$theme_info = db()->query_fetch("SELECT * FROM ".db('user_themes')." WHERE id=".intval($_GET["id"]));
 
 		$theme_content 	= $theme_info["html"];
 		$css_content 	= $theme_info["css"];
@@ -131,7 +131,7 @@ class yf_design_manager_themes {
 		$blocks_names = main()->get_data("blocks_names");
 		// Get blocks rules
 		$rules_items = array();
-		$Q = db()->query("SELECT * FROM `".db('block_rules')."` WHERE `themes` LIKE '%,".intval($_GET["id"]).",%'");
+		$Q = db()->query("SELECT * FROM ".db('block_rules')." WHERE themes LIKE '%,".intval($_GET["id"]).",%'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$rules_items[$A["id"]] = array(
 				"rule_id"		=> intval($A["id"]),
@@ -210,7 +210,7 @@ class yf_design_manager_themes {
 			"html"				=> $this->PARENT_OBJ->STORE_TO_DB ? _es($_POST["theme_content"]) : "",
 			"css"				=> $this->PARENT_OBJ->STORE_TO_DB ? _es($_POST["css_content"]) : "",
 			"css_ie"			=> $this->PARENT_OBJ->STORE_TO_DB ? _es($_POST["css_ie"]) : "",
-		), "`name`='".$old_theme_name."'");
+		), "name='".$old_theme_name."'");
 		// Upload preview image
 		$name_in_form = "preview_img";
 		if (!empty($_FILES[$name_in_form]["name"])) {
@@ -228,7 +228,7 @@ class yf_design_manager_themes {
 	*/
 	function _delete_theme () {
 		$theme_name = urldecode($_GET["id"]);
-		$theme_info = db()->query("SELECT `id` FROM `".db('user_themes')."` WHERE `name`='".$_GET["id"]."'");
+		$theme_info = db()->query("SELECT id FROM ".db('user_themes')." WHERE name='".$_GET["id"]."'");
 		if ($theme_info["id"] == main()->DEFAULT_THEME_ID) {
 			return js_redirect("./?object=".DESIGN_MGR_CLASS_NAME);
 		}
@@ -236,7 +236,7 @@ class yf_design_manager_themes {
 		$this->PARENT_OBJ->DIR_OBJ->delete_dir($this->PARENT_OBJ->USER_THEMES_DIR. $theme_name, 1);
 
 		// Delete record from DB
-		db()->query("DELETE FROM `".db('user_themes')."` WHERE `name`='".$theme_name."'");
+		db()->query("DELETE FROM ".db('user_themes')." WHERE name='".$theme_name."'");
 		// Refresh system cache
 		$this->PARENT_OBJ->_refresh_cache();
 
@@ -248,7 +248,7 @@ class yf_design_manager_themes {
 	*/
 	function _activate_theme () {
 		if ($_GET["id"]){
-			$A = db()->query_fetch("SELECT * FROM `".db('user_themes')."` WHERE `id`=".intval($_GET["id"]));
+			$A = db()->query_fetch("SELECT * FROM ".db('user_themes')." WHERE id=".intval($_GET["id"]));
 			if ($A["active"] == 1){
 				$active = 0;
 			} elseif ($A["active"] == 0) {
@@ -257,7 +257,7 @@ class yf_design_manager_themes {
 			db()->UPDATE("user_themes", array(
 				"active"		=> $active,
 			),
-			"`id`='".intval($_GET["id"])."'" 
+			"id='".intval($_GET["id"])."'" 
 			);
 		}
 		// Refresh system cache

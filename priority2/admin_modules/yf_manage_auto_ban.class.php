@@ -36,7 +36,7 @@ class yf_manage_auto_ban {
 	// Default function
 	function show () {
 		// Connect pager
-		$sql = "SELECT * FROM `".db('user_ban')."`";
+		$sql = "SELECT * FROM ".db('user_ban')."";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Do get data from db
 		$Q = db()->query($sql.$add_sql);
@@ -137,7 +137,7 @@ class yf_manage_auto_ban {
 			return _e("No id");
 		}
 		// Try ot get ban info
-		$ban_info = db()->query_fetch("SELECT * FROM `".db('user_ban')."` WHERE `id`=".intval($_GET["id"]));
+		$ban_info = db()->query_fetch("SELECT * FROM ".db('user_ban')." WHERE id=".intval($_GET["id"]));
 		if (empty($ban_info)) {
 			return _e("No such record!");
 		}
@@ -172,7 +172,7 @@ class yf_manage_auto_ban {
 				"ban_blog"			=> intval($DATA["ban_blog"]),
 				"ban_bad_contact"	=> intval($DATA["ban_bad_contact"]),
 				"ban_reput"			=> intval($DATA["ban_reput"]),
-			), "`id`=".intval($ban_info["id"]));
+			), "id=".intval($ban_info["id"]));
 			// Return user back
 			return js_redirect("./?object=".__CLASS__);
 		}
@@ -210,12 +210,12 @@ class yf_manage_auto_ban {
 			return _e("No id");
 		}
 		// Try ot get ban info
-		$ban_info = db()->query_fetch("SELECT * FROM `".db('user_ban')."` WHERE `id`=".intval($_GET["id"]));
+		$ban_info = db()->query_fetch("SELECT * FROM ".db('user_ban')." WHERE id=".intval($_GET["id"]));
 		if (empty($ban_info)) {
 			return _e("No such record!");
 		}
 		// Do delete record
-		db()->query("DELETE FROM `".db('user_ban')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('user_ban')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]);
 	}
@@ -247,7 +247,7 @@ class yf_manage_auto_ban {
 		if (empty($_GET["id"])) {
 			return "No id";
 		}
-		$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($_GET["id"]));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($_GET["id"]));
 		if (empty($user_info)) {
 			return "No such user";
 		}
@@ -260,7 +260,7 @@ class yf_manage_auto_ban {
 		// Save
 		if (!empty($_POST)) {
 			if (!common()->_error_exists()) {
-				$admin_info = db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".intval($_SESSION["admin_id"]));
+				$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_SESSION["admin_id"]));
 				$admin_name = $admin_info["first_name"]." ".$admin_info["last_name"];
 				$cur_date	= _format_date(time(), "long");
 				// Auto add admin comments
@@ -296,7 +296,7 @@ class yf_manage_auto_ban {
 					"ban_reput"			=> intval($DATA["ban_reput"]),
 					"active"			=> intval((bool)$DATA["active"]),
 					"admin_comments"	=> _es($user_info["admin_comments"].$NEW_ADMIN_COMMENTS),
-				), "`id`=".intval($user_info["id"]));
+				), "id=".intval($user_info["id"]));
 				// Add admin message
 				if (!empty($_POST["admin_message"])) {
 					db()->INSERT("admin_messages", array(

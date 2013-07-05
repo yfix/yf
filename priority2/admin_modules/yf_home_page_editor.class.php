@@ -56,7 +56,7 @@ class yf_home_page_editor {
 		$SITE_INFO	= $this->_sites_info->info[$_GET["id"]];
 		// Get home page template contents
 		$theme_name = $this->_sites_info->_get_site_current_theme($SITE_INFO);
-		list($record_id, $text) = db()->query_fetch("SELECT `id` AS `0`, `text` AS `1` FROM `".db('templates')."` WHERE `theme_name`='".$theme_name."' AND `name`='"._es($this->stpl_name)."' AND `site_id`=".intval($_GET["id"])." AND `active`='1'");
+		list($record_id, $text) = db()->query_fetch("SELECT id AS 0, text AS 1 FROM ".db('templates')." WHERE theme_name='".$theme_name."' AND name='"._es($this->stpl_name)."' AND site_id=".intval($_GET["id"])." AND active='1'");
 		// If record doesnt exists - get it from lib
 		if (empty($record_id)) {
 			$site_home_page_path	= $SITE_INFO["REAL_PATH"]. tpl()->_THEMES_PATH. $theme_name. "/". $this->stpl_name. tpl()->_STPL_EXT;
@@ -86,12 +86,12 @@ class yf_home_page_editor {
 		// Get home page template contents
 		$theme_name = $this->_sites_info->_get_site_current_theme($SITE_INFO);
 		// Check if current template exists in the db
-		list($record_id) = db()->query_fetch("SELECT `id` AS `0` FROM `".db('templates')."` WHERE `theme_name`='".$theme_name."' AND `name`='"._es($this->stpl_name)."' AND `site_id`=".intval($_GET["id"])." AND `active`='1'");
+		list($record_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('templates')." WHERE theme_name='".$theme_name."' AND name='"._es($this->stpl_name)."' AND site_id=".intval($_GET["id"])." AND active='1'");
 		// Save template contents
 		$text = $_POST["string"];
 		// Update db
-		if ($record_id) db()->query("UPDATE `".db('templates')."` SET `text`='"._es($text)."' WHERE `id`=".intval($record_id));
-		else db()->query("REPLACE INTO `".db('templates')."` (`theme_name`,`name`,`text`,`site_id`) VALUES ('".$theme_name."','".$this->stpl_name."','"._es($text)."',".intval($_GET["id"]).")");
+		if ($record_id) db()->query("UPDATE ".db('templates')." SET text='"._es($text)."' WHERE id=".intval($record_id));
+		else db()->query("REPLACE INTO ".db('templates')." (theme_name,name,text,site_id) VALUES ('".$theme_name."','".$this->stpl_name."','"._es($text)."',".intval($_GET["id"]).")");
 		// Create template entry in files
 		$site_home_page_path = $SITE_INFO["REAL_PATH"]. tpl()->_THEMES_PATH. $theme_name. "/". $this->stpl_name. tpl()->_STPL_EXT;
 		// Create template folder if it doesnt exists

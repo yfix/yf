@@ -24,9 +24,9 @@ class yf_log_auth_fails_viewer {
 	function show () {
 
 		// Prepare pager
-		$sql = "SELECT * FROM `".db('log_auth_fails')."`";
+		$sql = "SELECT * FROM ".db('log_auth_fails')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `time` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY time DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$records = db()->query_fetch_all($sql. $add_sql);
 
@@ -61,7 +61,7 @@ class yf_log_auth_fails_viewer {
 			return $_SERVER["HTTP_REFERER"];
 		}
 
-		$result = db()->query_fetch("SELECT * FROM `".db('log_auth_fails')."` WHERE `time`=".$_GET["id"]);
+		$result = db()->query_fetch("SELECT * FROM ".db('log_auth_fails')." WHERE time=".$_GET["id"]);
 		if (empty($result)) {
 			return _e(t("Wrong ID"));
 		}
@@ -132,13 +132,13 @@ class yf_log_auth_fails_viewer {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["time_from"]) 			$sql .= " AND `time` >= ".$SF["time_from"]." \r\n";
-		if ($SF["time_to"])				$sql .= " AND `time` <= ".(intval($SF["time_to"]) + 24*3600)." \r\n";
-		if (strlen($SF["ip"]))			$sql .= " AND `ip` LIKE '"._es($SF["ip"])."%' \r\n";
-		if (strlen($SF["login"]))		$sql .= " AND `login` LIKE '"._es($SF["login"])."%' \r\n";
-		if ($SF["reason"])				$sql .= " AND `reason` = '"._es($SF["reason"])."' \r\n";
+		if ($SF["time_from"]) 			$sql .= " AND time >= ".$SF["time_from"]." \r\n";
+		if ($SF["time_to"])				$sql .= " AND time <= ".(intval($SF["time_to"]) + 24*3600)." \r\n";
+		if (strlen($SF["ip"]))			$sql .= " AND ip LIKE '"._es($SF["ip"])."%' \r\n";
+		if (strlen($SF["login"]))		$sql .= " AND login LIKE '"._es($SF["login"])."%' \r\n";
+		if ($SF["reason"])				$sql .= " AND reason = '"._es($SF["reason"])."' \r\n";
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

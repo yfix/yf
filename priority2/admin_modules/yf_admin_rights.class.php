@@ -24,9 +24,9 @@ class yf_admin_rights {
 	function show() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$A2 = db()->query_fetch("SELECT * FROM `".db('admin_groups')."` WHERE `id`=".$_GET['id']);
+			$A2 = db()->query_fetch("SELECT * FROM ".db('admin_groups')." WHERE id=".$_GET['id']);
 			foreach ((array)$this->_admin_modules as $name) {
-				$A = db()->query_fetch("SELECT * FROM `".db('admin_rights')."` WHERE `group`=".$_GET['id']." AND `module`='".$name."'");
+				$A = db()->query_fetch("SELECT * FROM ".db('admin_rights')." WHERE group=".$_GET['id']." AND module='".$name."'");
 				$replace2 = array(
 					"text"		=> "<b>".$name."</b>".((conf('language') == "en") ? "" : "&nbsp; &nbsp;(".ucfirst(t($name)).")"),
 					"name"		=> $name,
@@ -62,7 +62,7 @@ class yf_admin_rights {
 		}
 		// Process collected tables
 		foreach ((array)$tables as $k => $name) {
-			$A = db()->query_fetch("SELECT * FROM `".db('db_parser_rights')."` WHERE `group`=".$_GET['id']." AND `table`='".$name."'");
+			$A = db()->query_fetch("SELECT * FROM ".db('db_parser_rights')." WHERE group=".$_GET['id']." AND table='".$name."'");
 			$replace2 = array(
 				"text"		=> "<b>".$name."</b>".((conf('language') == 1) ? "" : "&nbsp; &nbsp;(".ucfirst(t($name)).")"),
 				"name"		=> $name,
@@ -87,12 +87,12 @@ class yf_admin_rights {
 	function update() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id'] && $_SESSION[admin_id] && $_SESSION[admin_group] == 1) {
-			db()->query("DELETE FROM `".db('admin_rights')."` WHERE `group`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('admin_rights')." WHERE group=".$_GET['id']);
 			foreach ((array)$this->_admin_modules as $name) {
-				$sql = "INSERT INTO `".db('admin_rights')."` ( 
-						`group`,
-						`module`,
-						`allow`
+				$sql = "INSERT INTO ".db('admin_rights')." ( 
+						group,
+						module,
+						allow
 					) VALUES (
 						".$_GET['id'].",
 						'".$name."',
@@ -100,9 +100,9 @@ class yf_admin_rights {
 					)\r\n";
 				if (!empty($_POST[$name])) db()->query($sql);
 			}
-			if (!db()->query_num_rows("SELECT * FROM `".db('admin_groups')."` WHERE `id`=".$_GET['id'])) 
-				db()->query("INSERT INTO `".db('admin_groups')."` (`id`, `name`) VALUES (".$_GET['id'].", '".$_POST["admin_group_name"]."')");
-			else if ($_POST["admin_group_name"]) db()->query("UPDATE `".db('admin_groups')."` SET name='".$_POST["admin_group_name"]."' WHERE id=".$_GET['id']);
+			if (!db()->query_num_rows("SELECT * FROM ".db('admin_groups')." WHERE id=".$_GET['id'])) 
+				db()->query("INSERT INTO ".db('admin_groups')." (id, name) VALUES (".$_GET['id'].", '".$_POST["admin_group_name"]."')");
+			else if ($_POST["admin_group_name"]) db()->query("UPDATE ".db('admin_groups')." SET name='".$_POST["admin_group_name"]."' WHERE id=".$_GET['id']);
 		}
 		js_redirect("./?object=admin_groups");
 	}
@@ -113,7 +113,7 @@ class yf_admin_rights {
 	function update_tables() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id'] && $_SESSION['admin_id'] && $_SESSION['admin_group'] == 1) {
-			db()->query("DELETE FROM `".db('db_parser_rights')."` WHERE `group`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('db_parser_rights')." WHERE group=".$_GET['id']);
 			$tables_list = db()->meta_tables();
 			foreach ((array)$tables_list as $table_name) {
 				$name = substr(str_replace("sys_","",$table_name), strlen(DB_PREFIX));

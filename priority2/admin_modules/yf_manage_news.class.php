@@ -10,7 +10,7 @@ class yf_manage_news extends yf_news {
 	* Default method
 	*/
 	function show() {
-		$Q = db()->query("SELECT `id`,`title`,`head_text`,`add_date`,`active` FROM `".db('news')."` ORDER BY `add_date` DESC");
+		$Q = db()->query("SELECT id,title,head_text,add_date,active FROM ".db('news')." ORDER BY add_date DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -39,11 +39,11 @@ class yf_manage_news extends yf_news {
 	*/
 	function activate_item() {
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT `id`,`active` FROM `".db('news')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT id,active FROM ".db('news')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($item_info)) {
-			db()->UPDATE("news", array("active" => (int)!$item_info["active"]), "`id`=".intval($item_info["id"]));
+			db()->UPDATE("news", array("active" => (int)!$item_info["active"]), "id=".intval($item_info["id"]));
 		}
 
 		// Return user back
@@ -99,11 +99,11 @@ class yf_manage_news extends yf_news {
 				"head_text"	=> _es($_POST["head_text"]), 
 				"full_text"	=> _es($_POST["full_text"]), 
 				"active"	=> intval($_POST["active"]),
-			), "`id`=".intval($_GET["id"]));
+			), "id=".intval($_GET["id"]));
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 		
-		$news = db()->query_fetch("SELECT * FROM `".db('news')."` WHERE `id`=".intval($_GET["id"]));
+		$news = db()->query_fetch("SELECT * FROM ".db('news')." WHERE id=".intval($_GET["id"]));
 		
 		$replace = array(
 			"form_action"			=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
@@ -127,7 +127,7 @@ class yf_manage_news extends yf_news {
 		if (empty($_GET["id"])) {
 			return _e("No id");
 		}
-		db()->query("DELETE FROM `".db('news')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('news')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		return js_redirect("./?object=".$_GET["object"]);
 	}
 

@@ -16,14 +16,14 @@ class yf_revisions_manager {
 	* Default method
 	*/
 	function show () {
-		$sql = "SELECT `id`
-					, `object_name`
-					, `object_id`
-					, COUNT(`object_name`) AS num
-					, MAX(`date`) AS last_rev 
-				FROM `".db('revisions')."` 
-				GROUP BY `object_name`,`object_id` 
-				ORDER BY `object_name` ASC, last_rev DESC";
+		$sql = "SELECT id
+					, object_name
+					, object_id
+					, COUNT(object_name) AS num
+					, MAX(date) AS last_rev 
+				FROM ".db('revisions')." 
+				GROUP BY object_name,object_id 
+				ORDER BY object_name ASC, last_rev DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$records = db()->query_fetch_all($sql.$add_sql);
 		// Process data
@@ -51,11 +51,11 @@ class yf_revisions_manager {
 	* View item revisions information
 	*/
 	function view () {
-		$sql = "SELECT * FROM `".db('revisions')."` WHERE `object_name`=(
-			SELECT `object_name` FROM `".db('revisions')."` WHERE `id`=".intval($_GET["id"])." 
-		) AND `object_id`=(
-			SELECT `object_id` FROM `".db('revisions')."` WHERE `id`=".intval($_GET["id"])." 
-		) ORDER BY `date` DESC";	
+		$sql = "SELECT * FROM ".db('revisions')." WHERE object_name=(
+			SELECT object_name FROM ".db('revisions')." WHERE id=".intval($_GET["id"])." 
+		) AND object_id=(
+			SELECT object_id FROM ".db('revisions')." WHERE id=".intval($_GET["id"])." 
+		) ORDER BY date DESC";	
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$records = db()->query_fetch_all($sql.$add_sql);
 		$rev_quantity = count($records);
@@ -88,7 +88,7 @@ class yf_revisions_manager {
 	* Preview old and new versions of item as they will be showed to user
 	*/
 	function preview () {
-		$sql = "SELECT * FROM `".db('revisions')."` WHERE `id`=".intval($_GET["id"]);
+		$sql = "SELECT * FROM ".db('revisions')." WHERE id=".intval($_GET["id"]);
 		$A = db()->query_fetch($sql);
 		$replace = array(
 			"object_name"	=> _prepare_html($A["object_name"]),

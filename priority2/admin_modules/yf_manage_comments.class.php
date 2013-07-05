@@ -43,9 +43,9 @@ class yf_manage_comments {
 		$this->_sites_info = main()->init_class("sites_info", "classes/");
 		$FIRST_SITE_INFO = array_shift($this->_sites_info->info);
 		// Calling function to divide records per pages
-		$sql = "SELECT * FROM `".db('comments')."` ";
+		$sql = "SELECT * FROM ".db('comments')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `add_date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY add_date DESC ";
 		// Pager
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "./?object=".$_GET["object"]);
 		// Get ids
@@ -112,12 +112,12 @@ class yf_manage_comments {
 			return _e(t("No id"));
 		}
 		// Try to get record info
-		$info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
+		$info = db()->query_fetch("SELECT * FROM ".db('comments')." WHERE id=".intval($_GET["id"]));
 		if (empty($info)) {
 			return _e(t("No such record"));
 		}
 		// Try to get given user info
-		$user_info = db()->query_fetch("SELECT `id`,`name`,`nick`,`photo_verified` FROM `".db('user')."` WHERE `id`=".intval($info["user_id"]));
+		$user_info = db()->query_fetch("SELECT id,name,nick,photo_verified FROM ".db('user')." WHERE id=".intval($info["user_id"]));
 		// Check posted data and save
 		if (count($_POST) > 0) {
 			if (empty($_POST["text"])) {
@@ -128,7 +128,7 @@ class yf_manage_comments {
 				// Do update record
 				db()->UPDATE("comments", array(
 					"text" 			=> _es($_POST["text"]),
-				), "`id`=".intval($info["id"]));
+				), "id=".intval($info["id"]));
 				// Return user back
 				return js_redirect($RETURN_PATH, false);
 			}
@@ -164,7 +164,7 @@ class yf_manage_comments {
 		}
 		// Do delete ids
 		if (!empty($ids_to_delete)) {
-			db()->query("DELETE FROM `".db('comments')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('comments')." WHERE id IN(".implode(",",$ids_to_delete).")");
 		}
 		// Return user back
 //		return js_redirect("./?object=".$_GET["object"]);
@@ -177,7 +177,7 @@ class yf_manage_comments {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete record
 		if (!empty($_GET["id"])) {
-			db()->query("DELETE FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('comments')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -194,11 +194,11 @@ class yf_manage_comments {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get record info
 		if (!empty($_GET["id"])) {
-			$info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
+			$info = db()->query_fetch("SELECT * FROM ".db('comments')." WHERE id=".intval($_GET["id"]));
 		}
 		// Update record (invert active status)
 		if (!empty($info)) {
-			db()->UPDATE("comments", array("active" => (int)!$info["active"]), "`id`=".intval($_GET["id"]));
+			db()->UPDATE("comments", array("active" => (int)!$info["active"]), "id=".intval($_GET["id"]));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -239,7 +239,7 @@ class yf_manage_comments {
 		);
 		// Try to get object names from comments
 		$this->_object_names[""] = "-- ALL --";
-		$Q = db()->query("SELECT DISTINCT(`object_name`) FROM `".db('comments')."` WHERE `object_name` != ''");
+		$Q = db()->query("SELECT DISTINCT(object_name) FROM ".db('comments')." WHERE object_name != ''");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_object_names[$A["object_name"]] = $A["object_name"];
 		}
@@ -277,27 +277,27 @@ class yf_manage_comments {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["cid_min"]) 			$sql .= " AND `id` >= ".intval($SF["cid_min"])." \r\n";
-		if ($SF["cid_max"])			 	$sql .= " AND `id` <= ".intval($SF["cid_max"])." \r\n";
-		if ($SF["date_min"]) 			$sql .= " AND `add_date` >= ".strtotime($SF["date_min"])." \r\n";
-		if ($SF["date_max"])			$sql .= " AND `add_date` <= ".strtotime($SF["date_max"])." \r\n";
-		if ($SF["user_id"])			 	$sql .= " AND `user_id` = ".intval($SF["user_id"])." \r\n";
-		if ($SF["object_id"])		 	$sql .= " AND `object_id` = ".intval($SF["object_id"])." \r\n";
-		if ($SF["object_name"])		 	$sql .= " AND `object_name` = '"._es($SF["object_name"])."' \r\n";
-		if (strlen($SF["text"]))		$sql .= " AND `text` LIKE '"._es($SF["text"])."%' \r\n";
+		if ($SF["cid_min"]) 			$sql .= " AND id >= ".intval($SF["cid_min"])." \r\n";
+		if ($SF["cid_max"])			 	$sql .= " AND id <= ".intval($SF["cid_max"])." \r\n";
+		if ($SF["date_min"]) 			$sql .= " AND add_date >= ".strtotime($SF["date_min"])." \r\n";
+		if ($SF["date_max"])			$sql .= " AND add_date <= ".strtotime($SF["date_max"])." \r\n";
+		if ($SF["user_id"])			 	$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
+		if ($SF["object_id"])		 	$sql .= " AND object_id = ".intval($SF["object_id"])." \r\n";
+		if ($SF["object_name"])		 	$sql .= " AND object_name = '"._es($SF["object_name"])."' \r\n";
+		if (strlen($SF["text"]))		$sql .= " AND text LIKE '"._es($SF["text"])."%' \r\n";
 		if (in_array($SF["active"], array(1,-1))) {
-		 	$sql .= " AND `active` = '".intval($SF["active"] == 1 ? 1 : 0)."' \r\n";
+		 	$sql .= " AND active = '".intval($SF["active"] == 1 ? 1 : 0)."' \r\n";
 		}
 		if (strlen($SF["nick"]) || strlen($SF["account_type"])) {
-			if (strlen($SF["nick"])) 	$users_sql .= " AND `nick` LIKE '"._es($SF["nick"])."%' \r\n";
-			if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
+			if (strlen($SF["nick"])) 	$users_sql .= " AND nick LIKE '"._es($SF["nick"])."%' \r\n";
+			if ($SF["account_type"])	$users_sql .= " AND group = ".intval($SF["account_type"])." \r\n";
 		}
 		// Add subquery to users table
 		if (!empty($users_sql)) {
-			$sql .= " AND `user_id` IN( SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$users_sql.") \r\n";
+			$sql .= " AND user_id IN( SELECT id FROM ".db('user')." WHERE 1=1 ".$users_sql.") \r\n";
 		}
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

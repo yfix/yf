@@ -13,7 +13,7 @@ class yf_ban_editor {
 	* Default method
 	*/
 	function show () {
-		$sql = "SELECT * FROM `".db('banned_ips')."` ORDER BY `ip` ASC";
+		$sql = "SELECT * FROM ".db('banned_ips')." ORDER BY ip ASC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$Q = db()->query($sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -24,7 +24,7 @@ class yf_ban_editor {
 		}
 		// Get admins infos
 		if ($admins_ids) {
-			$Q = db()->query("SELECT * FROM `".db('admin')."` WHERE `id` IN(".implode(",",$admins_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('admin')." WHERE id IN(".implode(",",$admins_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $admins_names[$A["id"]] = $A["first_name"]." ".$A["last_name"];
 		}
 		// Process items
@@ -79,7 +79,7 @@ class yf_ban_editor {
 	function delete () {
 		$IP = trim(preg_replace("/[^0-9\.\/\*]/i", "", urldecode($_GET["id"])));
 		if ($IP) {
-			db()->query("DELETE FROM `".db('banned_ips')."` WHERE `ip` = '"._es($IP)."'");
+			db()->query("DELETE FROM ".db('banned_ips')." WHERE ip = '"._es($IP)."'");
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("banned_ips");

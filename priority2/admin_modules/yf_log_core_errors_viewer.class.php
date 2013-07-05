@@ -58,9 +58,9 @@ class yf_log_core_errors_viewer {
 	*/
 	function show () {
 		// Prepare pager
-		$sql = "SELECT * FROM `".db('log_core_errors')."`";
+		$sql = "SELECT * FROM ".db('log_core_errors')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get records from db
 		$Q = db()->query($sql.$add_sql);
@@ -70,7 +70,7 @@ class yf_log_core_errors_viewer {
 		}
 		// Get users infos
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT `id`,`group`,`login`,`nick`,`email`,`photo_verified` FROM `".db('user')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT id,group,login,nick,email,photo_verified FROM ".db('user')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $users_infos[$A["id"]] = $A;
 		}
 		// Process data
@@ -126,7 +126,7 @@ class yf_log_core_errors_viewer {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get record
 		if (!empty($_GET["id"])) {
-			$log_info = db()->query_fetch("SELECT * FROM `".db('log_core_errors')."` WHERE `id`=".intval($_GET["id"]));
+			$log_info = db()->query_fetch("SELECT * FROM ".db('log_core_errors')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($log_info)) {
 			return "No such record!";
@@ -134,7 +134,7 @@ class yf_log_core_errors_viewer {
 		$A = &$log_info;
 		// Get user info
 		if (!$A["is_admin"] && !empty($A["user_id"])) {
-			$cur_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id` =".intval($A["user_id"]));
+			$cur_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id =".intval($A["user_id"]));
 		}
 		// Process template
 		$replace = array(
@@ -177,7 +177,7 @@ class yf_log_core_errors_viewer {
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete record
-		db()->query("DELETE FROM `".db('log_core_errors')."` WHERE `id`=".intval($_GET["id"]));
+		db()->query("DELETE FROM ".db('log_core_errors')." WHERE id=".intval($_GET["id"]));
 		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -201,7 +201,7 @@ class yf_log_core_errors_viewer {
 		}
 		// Do delete ids
 		if (!empty($ids_to_delete)) {
-			db()->query("DELETE FROM `".db('log_core_errors')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('log_core_errors')." WHERE id IN(".implode(",",$ids_to_delete).")");
 		}
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
@@ -212,7 +212,7 @@ class yf_log_core_errors_viewer {
 	*/
 	function prune () {
 		if (isset($_POST["prune_days"])) {
-			db()->query("DELETE FROM `".db('log_core_errors')."`".(!empty($_POST["prune_days"]) ? " WHERE `date` <= ".intval(time() - $_POST["prune_days"] * 86400) : ""));
+			db()->query("DELETE FROM ".db('log_core_errors')."".(!empty($_POST["prune_days"]) ? " WHERE date <= ".intval(time() - $_POST["prune_days"] * 86400) : ""));
 		}
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
@@ -223,7 +223,7 @@ class yf_log_core_errors_viewer {
 	*/
 	function clean () {
 		// Do delete record
-		db()->query("TRUNCATE TABLE `".db('log_core_errors')."`");
+		db()->query("TRUNCATE TABLE ".db('log_core_errors')."");
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
@@ -257,13 +257,13 @@ class yf_log_core_errors_viewer {
 		// Prepare query for deleting
 		$p_replace = "/(ORDER BY)(.)+/ims";
 		if ($_POST["confirm"]){	
-			$sql = "DELETE FROM `".db('log_core_errors')."` WHERE 1=1 ".$this->_create_filter_sql();
+			$sql = "DELETE FROM ".db('log_core_errors')." WHERE 1=1 ".$this->_create_filter_sql();
 			$sql = preg_replace($p_replace, "", $sql);
 			$result = db()->query($sql);
 			$this->clear_filter(1);
 			return js_redirect("./?object=".$_GET["object"]._add_get());
 		} else {
-			$sql = "SELECT COUNT(*) AS `0` FROM `".db('log_core_errors')."` WHERE 1=1 ".$this->_create_filter_sql();
+			$sql = "SELECT COUNT(*) AS 0 FROM ".db('log_core_errors')." WHERE 1=1 ".$this->_create_filter_sql();
 			$sql = preg_replace($p_replace, "", $sql);
 			list ($num_records) = db()->query_fetch($sql);
 			$replace = array(
@@ -280,7 +280,7 @@ class yf_log_core_errors_viewer {
 	function top_of_errors () {
 		$GLOBALS['PROJECT_CONF']["divide_pages"]["SQL_COUNT_REWRITE"] = false;
 
-		$sql = "SELECT `id`, `error_level`, `error_text`, COUNT(`error_text`) AS num FROM `".db('log_core_errors')."` GROUP BY `error_text` ORDER BY num DESC";
+		$sql = "SELECT id, error_level, error_text, COUNT(error_text) AS num FROM ".db('log_core_errors')." GROUP BY error_text ORDER BY num DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$records = db()->query_fetch_all($sql.$add_sql);
 
@@ -353,15 +353,15 @@ class yf_log_core_errors_viewer {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["date_min"]) 			$sql .= " AND `date` >= ".strtotime($SF["date_min"])." \r\n";
-		if ($SF["date_max"])			$sql .= " AND `date` <= ".strtotime($SF["date_max"])." \r\n";
-		if ($SF["user_id"])			 	$sql .= " AND `user_id` = ".intval($SF["user_id"])." \r\n";
-		if (strlen($SF["ip"]))			$sql .= " AND `ip` LIKE '"._es($SF["ip"])."%' \r\n";
-		if (strlen($SF["user_agent"]))	$sql .= " AND `user_agent` LIKE '"._es($SF["user_agent"])."%' \r\n";
-		if (strlen($SF["referer"]))		$sql .= " AND `referer` LIKE '"._es($SF["referer"])."%' \r\n";
-		if (strlen($SF["error_text"]))	$sql .= " AND `error_text` LIKE '%"._es($SF["error_text"])."%' \r\n";
+		if ($SF["date_min"]) 			$sql .= " AND date >= ".strtotime($SF["date_min"])." \r\n";
+		if ($SF["date_max"])			$sql .= " AND date <= ".strtotime($SF["date_max"])." \r\n";
+		if ($SF["user_id"])			 	$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
+		if (strlen($SF["ip"]))			$sql .= " AND ip LIKE '"._es($SF["ip"])."%' \r\n";
+		if (strlen($SF["user_agent"]))	$sql .= " AND user_agent LIKE '"._es($SF["user_agent"])."%' \r\n";
+		if (strlen($SF["referer"]))		$sql .= " AND referer LIKE '"._es($SF["referer"])."%' \r\n";
+		if (strlen($SF["error_text"]))	$sql .= " AND error_text LIKE '%"._es($SF["error_text"])."%' \r\n";
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}
@@ -398,7 +398,7 @@ class yf_log_core_errors_viewer {
 		}
 		if (!$silent) {
 			if (!empty($_POST["delete_by_filter"])) {
-				$sql = "DELETE FROM `".db('log_core_errors')."` WHERE 1=1 ".$this->_create_filter_sql();
+				$sql = "DELETE FROM ".db('log_core_errors')." WHERE 1=1 ".$this->_create_filter_sql();
 				$sql = preg_replace("/(ORDER BY)(.)+/ims", "", $sql);
 				$result = db()->query($sql);
 				$this->clear_filter(1);

@@ -38,7 +38,7 @@ class yf_custom_bbcode_editor {
 	*/
 	function show () {
 		// Get data from database
-		$sql = "SELECT * FROM `".db('custom_bbcode')."`";
+		$sql = "SELECT * FROM ".db('custom_bbcode')."";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$result = db()->query_fetch_all($sql.$add_sql);
 		foreach ((array)$result as $A) {
@@ -80,7 +80,7 @@ class yf_custom_bbcode_editor {
 	* @return
 	*/
 	function edit () {
-		$A = db()->query_fetch("SELECT * FROM `".db('custom_bbcode')."` WHERE `id`='".$_GET["id"]."'");
+		$A = db()->query_fetch("SELECT * FROM ".db('custom_bbcode')." WHERE id='".$_GET["id"]."'");
 		$this->_select_yn = array(
 			"1" 	=> t("YES"),
 			"0" 	=> t("NO"),
@@ -157,7 +157,7 @@ class yf_custom_bbcode_editor {
 				"example" 	=> _es($_POST["example"]),
 				"useoption"	=> intval($_POST["useoption"]),
 				"active"	=> intval($_POST["active"]),
-			), "`id`=".$_GET["id"]);
+			), "id=".$_GET["id"]);
 		}								
 		else {
 			db()->INSERT("custom_bbcode", array(
@@ -186,7 +186,7 @@ class yf_custom_bbcode_editor {
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete record
-		db()->query("DELETE FROM `".db('custom_bbcode')."` WHERE `id`=".intval($_GET["id"]));
+		db()->query("DELETE FROM ".db('custom_bbcode')." WHERE id=".intval($_GET["id"]));
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_bbcode");
 		// Return user back
@@ -212,7 +212,7 @@ class yf_custom_bbcode_editor {
 		}
 		// Do delete ids
 		if (!empty($ids_to_delete)) {
-			db()->query("DELETE FROM `".db('custom_bbcode')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('custom_bbcode')." WHERE id IN(".implode(",",$ids_to_delete).")");
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_bbcode");

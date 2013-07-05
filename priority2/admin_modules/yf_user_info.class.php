@@ -19,7 +19,7 @@ class yf_user_info {
 		$this->USER_ID = $_GET['user_id'];
 		// Get current user details
 		if (!empty($this->USER_ID)) {
-			$this->_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($this->USER_ID));
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($this->USER_ID));
 		}
 		// Fill array of agencies
 		$this->_agencies[""] = "";
@@ -117,7 +117,7 @@ class yf_user_info {
 		// Get available admin groups
 		$this->_admin_groups	= main()->get_data("admin_groups");
 		// Get available agency managers
-		$Q = db()->query("SELECT * FROM `".db('admin')."`/* WHERE `group`=5*/ ORDER BY `group` ASC, `first_name` ASC, `last_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')."/* WHERE group=5*/ ORDER BY group ASC, first_name ASC, last_name ASC");
 		while ($A = db()->fetch_assoc($Q2)) {
 			$this->_managers[$A["id"]] = _prepare_html($A["first_name"]." ".$A["last_name"]." (".$this->_admin_groups[$A["group"]].")");
 		}
@@ -318,7 +318,7 @@ class yf_user_info {
 				// "ban_bad_contact"	=> intval($_POST["ban_bad_contact"]),
 				// "ban_reput"			=> intval($_POST["ban_reput"]),
 			));
-			db()->UPDATE("user", $sql_array, "`id` = ".intval($this->_user_info['id']));
+			db()->UPDATE("user", $sql_array, "id = ".intval($this->_user_info['id']));
 			// Try to update user's geo location
 			$GEO_OBJ = main()->init_class("geo_ip", "classes/");
 			if (is_object($GEO_OBJ)) {

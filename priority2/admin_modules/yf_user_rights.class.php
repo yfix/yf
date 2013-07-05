@@ -21,7 +21,7 @@ class yf_user_rights {
 	function show() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$GArray = db()->fetch_assoc(db()->query("SELECT * FROM `".db('user_groups')."` WHERE `id`=".$_GET['id']));
+			$GArray = db()->fetch_assoc(db()->query("SELECT * FROM ".db('user_groups')." WHERE id=".$_GET['id']));
 			$body .= "<h3>".ucfirst(t("access_rights_for"))." '".$GArray["name"]."'</h3>\r\n";
 			$body .= "<table align='center' cellspacing='0' cellpadding='2' border='0'>
 						<form action='./?object=".$_GET["object"]."&action=update&id=".$_GET['id']."&table=".$_GET["table"]."' method='post'>
@@ -30,7 +30,7 @@ class yf_user_rights {
 							<td align='center' style='color:green;'><b>".t('status')."</b><br><br></td>
 						  </tr>\r\n";
 			// Get user rights
-			$Q = db()->query("SELECT * FROM `".db('user_rights')."` WHERE `group`=".$_GET['id']);
+			$Q = db()->query("SELECT * FROM ".db('user_rights')." WHERE group=".$_GET['id']);
 			while ($A = db()->fetch_assoc($Q)) $user_rights[$A["module"]] = $A["allow"];
 			// Get available modules
 			$Modules = $this->get_modules();
@@ -59,7 +59,7 @@ class yf_user_rights {
 	* Form to add new user group
 	*/
 	function add() {
-		$GArray = db()->fetch_assoc(db()->query("SELECT MAX(`id`) AS `max` FROM `".db('user_groups')."`"));
+		$GArray = db()->fetch_assoc(db()->query("SELECT MAX(id) AS max FROM ".db('user_groups').""));
 		$id = $GArray['max'] + 1;
 
 		$body .= "<h3>".t('new')." '".ucfirst(t('group'))."'</h3>\r\n";
@@ -97,16 +97,16 @@ class yf_user_rights {
 	function update() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id'] && $_SESSION[admin_id] && $_SESSION[admin_group] == 1) {
-			db()->query("DELETE FROM `".db('user_rights')."` WHERE `group`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('user_rights')." WHERE group=".$_GET['id']);
 			$Modules = $this->get_modules();
 			foreach ((array)$Modules as $k => $Name) {
 				if (empty($_POST[$Name])) continue;
-				$sql = "INSERT INTO `".db('user_rights')."` (`group`,`module`,`allow`) VALUES (".$_GET['id'].",'".$Name."','".$_POST[$Name]."')";
+				$sql = "INSERT INTO ".db('user_rights')." (group,module,allow) VALUES (".$_GET['id'].",'".$Name."','".$_POST[$Name]."')";
 				db()->query($sql);
 			}
-			if (!db()->num_rows(db()->query("SELECT * FROM `".db('user_groups')."` WHERE `id`=".$_GET['id']))) 
-				db()->query("INSERT INTO `".db('user_groups')."` (id, name) VALUES (".$_GET['id'].", '".$_POST["user_group_name"]."')");
-			else if ($_POST["user_group_name"]) db()->query("UPDATE `".db('user_groups')."` SET name='".$_POST["user_group_name"]."' WHERE `id`=".$_GET['id']);
+			if (!db()->num_rows(db()->query("SELECT * FROM ".db('user_groups')." WHERE id=".$_GET['id']))) 
+				db()->query("INSERT INTO ".db('user_groups')." (id, name) VALUES (".$_GET['id'].", '".$_POST["user_group_name"]."')");
+			else if ($_POST["user_group_name"]) db()->query("UPDATE ".db('user_groups')." SET name='".$_POST["user_group_name"]."' WHERE id=".$_GET['id']);
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("user_rights");

@@ -20,7 +20,7 @@ class yf_site_links {
 		$this->USER_ID = intval($_GET["user_id"]);
 		// Get user info
 		if (!empty($this->USER_ID)) {
-			$this->_user_info = db()->query_fetch("SELECT * FROM `".db('links_users')."` WHERE `id`=".$this->USER_ID);
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".$this->USER_ID);
 		}
 		$this->_boxes = array(
 			"link_type"		=> 'radio_box("link_type",	$this->_link_types,		$selected, false, 2, "", false)',
@@ -82,12 +82,12 @@ class yf_site_links {
 		);
 		// Sites categories	
 		$this->_site_cats[" "] = "All";
-		$Q = db()->query("SELECT * FROM `".db('links_categories')."` ORDER BY `order1`");
+		$Q = db()->query("SELECT * FROM ".db('links_categories')." ORDER BY order1");
 		while ($A = db()->fetch_assoc($Q)) $this->_site_cats[$A["id"]] = $A["name"];
 		// Get linkers
 		$this->_linkers[" "]	= "All";
 		$this->_linkers2[" "]	= "  ";
-		$Q = db()->query("SELECT * FROM `".db('admin')."` WHERE `group`=2");
+		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group=2");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_linkers[$A["id"]]	= $A["first_name"]." ".$A["last_name"];
 			$this->_linkers2[$A["id"]]	= $A["first_name"]." ".$A["last_name"];
@@ -98,9 +98,9 @@ class yf_site_links {
 	// Default function
 	function show () {
 		// Calling function to divide records per pages
-		$sql = "SELECT * FROM `".db('links_links')."` ";
+		$sql = "SELECT * FROM ".db('links_links')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `add_date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY add_date DESC ";
 		$per_page = $_SESSION[$this->_filter_name]["per_page"] ? intval($_SESSION[$this->_filter_name]["per_page"]) : intval(conf('admin_per_page'));
 		list($add_sql, $pages, $num_items) = common()->divide_pages($sql, "./?object=".$_GET["object"],"blocks",$per_page);
 		// Process records
@@ -109,7 +109,7 @@ class yf_site_links {
 		// Get users infos
 		foreach ((array)$links as $A) $users_ids[$A["user_id"]] = $A["user_id"];
 		if (is_array($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('links_users')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('links_users')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $users_info[$A["id"]] = $A;
 		}
 		// Process records
@@ -161,7 +161,7 @@ class yf_site_links {
 			return _e();
 		}
 		// Try to get link detailed info
-		$A = db()->query_fetch("SELECT * FROM `".db('links_links')."` WHERE `id`=".$_GET["id"]);
+		$A = db()->query_fetch("SELECT * FROM ".db('links_links')." WHERE id=".$_GET["id"]);
 		if (empty($A["id"])) $body = "Wrong Link ID!";
 		else {
 			$this->cur_item_id = $A["id"];
@@ -176,7 +176,7 @@ class yf_site_links {
 	//
 	function _edit_link ($link_info = array()) {
 		if (!empty($link_info["id"])) {
-			$user_info = db()->query_fetch("SELECT * FROM `".db('links_users')."` WHERE `id`=".$link_info["user_id"]);
+			$user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".$link_info["user_id"]);
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=update_link&id=".$link_info["id"],
 				"users_list_url"	=> "./?object=".$_GET["object"]."&action=users_list",
@@ -206,7 +206,7 @@ class yf_site_links {
 	// Main user account
 	function account () {
 		// Get user links
-		$Q = db()->query("SELECT * FROM `".db('links_links')."` WHERE `user_id`=".$this->USER_ID);
+		$Q = db()->query("SELECT * FROM ".db('links_links')." WHERE user_id=".$this->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) $links[$A["id"]] = $A;
 		// Process links
 		foreach ((array)$links as $link_id => $A) {
@@ -264,7 +264,7 @@ class yf_site_links {
 	function delete_link () {
 		$_GET["id"]		= intval($_GET["id"]);
 		if ($_GET["id"]) {
-			db()->query("DELETE FROM `".db('links_links')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+			db()->query("DELETE FROM ".db('links_links')." WHERE id=".$_GET["id"]." LIMIT 1");
 		}
 		return js_redirect("./?object=".$_GET["object"]);
 	}
@@ -275,12 +275,12 @@ class yf_site_links {
 		$_GET["id"]			= intval($_GET["id"]);
 		$_POST["cat_id"]	= intval($_POST["cat_id"]);
 		// Get link info
-		if ($_GET["id"]) $link_info = db()->query_fetch("SELECT * FROM `".db('links_links')."` WHERE `id`=".$_GET["id"]);
+		if ($_GET["id"]) $link_info = db()->query_fetch("SELECT * FROM ".db('links_links')." WHERE id=".$_GET["id"]);
 		if ($link_info["id"]) {
 			// Get category info
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('links_categories')."` WHERE `id`=".$_POST["cat_id"]);
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('links_categories')." WHERE id=".$_POST["cat_id"]);
 			// Ge user info
-			$user_info = db()->query_fetch("SELECT * FROM `".db('links_users')."` WHERE `id`=".$link_info["user_id"]);
+			$user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".$link_info["user_id"]);
 			// Process banner
 			if (!empty($_POST["banner_url"]) && $_POST["get_banner"]) {
 				preg_match('#\.(jpg|jpeg|gif|png)$#i', $url, $ext);
@@ -301,7 +301,7 @@ class yf_site_links {
 				}
 			}
 			// Process sites
-			$Q = db()->query("SELECT * FROM `".db('links_sites')."`");
+			$Q = db()->query("SELECT * FROM ".db('links_sites')."");
 			while ($A = db()->fetch_array($Q)) {
 				$_POST["site"][$A["id"]] = intval($_POST["site"][$A["id"]]);
 				if (!empty($_POST["site"][$A["id"]])) {
@@ -310,21 +310,21 @@ class yf_site_links {
 			}
 			// Generate sites SQL
 			for ($i = 1; $i <= 30; $i++) {
-				$sites_sql_array[$i] = "\r\n `site".$i."` = ".intval($_POST["site"][$i])." ";
+				$sites_sql_array[$i] = "\r\n site".$i." = ".intval($_POST["site"][$i])." ";
 			}
 			// Generate SQL
-			$sql = "UPDATE `".db('links_links')."` SET 
-					`cat_id`		= ".intval($_POST["cat_id"]).",
-					`status`		= ".intval($_POST["status"]).",
-					`title`			= '"._es($_POST["title"])."',
-					`url`			= '"._es($_POST["url"])."',
-					`link_url`		= '"._es($_POST["link_url"])."',
-					`banner_url`	= '"._es($_POST["banner_url"])."',
-					`description`	= '"._es($_POST["description"])."',
-					`type`			= ".intval($_POST["link_type"]).",
-					`priority`		= ".intval($_POST["priority"]).",
+			$sql = "UPDATE ".db('links_links')." SET 
+					cat_id		= ".intval($_POST["cat_id"]).",
+					status		= ".intval($_POST["status"]).",
+					title			= '"._es($_POST["title"])."',
+					url			= '"._es($_POST["url"])."',
+					link_url		= '"._es($_POST["link_url"])."',
+					banner_url	= '"._es($_POST["banner_url"])."',
+					description	= '"._es($_POST["description"])."',
+					type			= ".intval($_POST["link_type"]).",
+					priority		= ".intval($_POST["priority"]).",
 					".implode(",", $sites_sql_array)."
-				 WHERE `id`=".$_GET["id"];
+				 WHERE id=".$_GET["id"];
 			db()->query($sql);
 			// If link is approved - then send email to the user
 			if ($_POST["status"] == 2 && $link_info["status"] != 2) {
@@ -346,7 +346,7 @@ class yf_site_links {
 	// Show users
 	function users_list () {
 		$i = 0;
-		$sql = "SELECT * FROM `".db('links_users')."` ORDER BY `time` DESC";
+		$sql = "SELECT * FROM ".db('links_users')." ORDER BY time DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -397,12 +397,12 @@ class yf_site_links {
 	function update_user () {
 		if (!empty($this->_user_info["id"])) {
 			foreach ((array)$_POST as $k => $v) $_POST[$k] = _es($v);
-			$sql = "UPDATE `".db('links_users')."` SET
-					`name`		= '".$_POST["name"]."',
-					`password`	= '".$_POST["password"]."',
-					`email`		= '".$_POST["email"]."',
-					`linker_id`	= ".intval($_POST["linker_id"])."
-				WHERE `id`=".intval($this->_user_info["id"]);
+			$sql = "UPDATE ".db('links_users')." SET
+					name		= '".$_POST["name"]."',
+					password	= '".$_POST["password"]."',
+					email		= '".$_POST["email"]."',
+					linker_id	= ".intval($_POST["linker_id"])."
+				WHERE id=".intval($this->_user_info["id"]);
 			db()->query($sql);
 		}
 		js_redirect($_SERVER["HTTP_REFERER"]);
@@ -412,8 +412,8 @@ class yf_site_links {
 	// Delete user account
 	function delete_user () {
 		if (!empty($this->_user_info["id"])) {
-			db()->query("DELETE FROM `".db('links_links')."` WHERE `user_id`=".intval($this->_user_info["id"]));
-			db()->query("DELETE FROM `".db('links_users')."` WHERE `id`=".intval($this->_user_info["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('links_links')." WHERE user_id=".intval($this->_user_info["id"]));
+			db()->query("DELETE FROM ".db('links_users')." WHERE id=".intval($this->_user_info["id"])." LIMIT 1");
 		}
 		js_redirect($_SERVER["HTTP_REFERER"]);
 	}
@@ -494,7 +494,7 @@ class yf_site_links {
 	// Show sites
 	function _show_links_sites ($link_info = array()) {
 		$items = "";
-		$Q = db()->query("SELECT * FROM `".db('links_sites')."`");
+		$Q = db()->query("SELECT * FROM ".db('links_sites')."");
 		while ($A = db()->fetch_array($Q)) {
 			$replace = array(
 				"site_id"		=> $A["id"],
@@ -515,13 +515,13 @@ class yf_site_links {
 		$LF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$LF as $k => $v) $LF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if (strlen($LF["status2"]))		$sql .= " AND `status` = ".intval($LF["status2"])." \r\n";
-		if ($LF["linker"])		$sql .= " AND `linker_id` = ".intval($LF["linker"])." \r\n";
-		if ($LF["cat_id"])		$sql .= " AND `cat_id` = ".intval($LF["cat_id"])." \r\n";
-		if ($LF["url"])			$sql .= " AND `url` LIKE '%"._es($LF["url"])."%' \r\n";
-		if ($LF["link_url"])	$sql .= " AND `link_url` LIKE '%"._es($LF["link_url"])."%' \r\n";
+		if (strlen($LF["status2"]))		$sql .= " AND status = ".intval($LF["status2"])." \r\n";
+		if ($LF["linker"])		$sql .= " AND linker_id = ".intval($LF["linker"])." \r\n";
+		if ($LF["cat_id"])		$sql .= " AND cat_id = ".intval($LF["cat_id"])." \r\n";
+		if ($LF["url"])			$sql .= " AND url LIKE '%"._es($LF["url"])."%' \r\n";
+		if ($LF["link_url"])	$sql .= " AND link_url LIKE '%"._es($LF["link_url"])."%' \r\n";
 		// Sorting here
-		if ($LF["sort_by"])		$sql .= " ORDER BY `".$this->_sort_by[$LF["sort_by"]]."` \r\n";
+		if ($LF["sort_by"])		$sql .= " ORDER BY ".$this->_sort_by[$LF["sort_by"]]." \r\n";
 		if ($LF["sort_by"] && strlen($LF["sort_order"])) 	$sql .= " ".$LF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

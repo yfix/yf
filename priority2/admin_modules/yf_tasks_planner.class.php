@@ -54,7 +54,7 @@ class yf_tasks_planner {
 	*/
 	function show() {
 		// Connect pager
-		$sql = "SELECT * FROM `".db('task_manager')."` ORDER BY `next_run` ASC";
+		$sql = "SELECT * FROM ".db('task_manager')." ORDER BY next_run ASC";
 		list($limit_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $limit_sql);
@@ -150,7 +150,7 @@ class yf_tasks_planner {
 			return _e();
 		}
 		// Try to get current task info
-		$task_info = db()->query_fetch("SELECT * FROM `".db('task_manager')."` WHERE `id`=".intval($_GET["id"]));
+		$task_info = db()->query_fetch("SELECT * FROM ".db('task_manager')." WHERE id=".intval($_GET["id"]));
 		if (empty($task_info["id"])) {
 			_re(t("No such task!"));
 			return _e();
@@ -170,7 +170,7 @@ class yf_tasks_planner {
 					"month_day"		=> intval($_POST["month_day"]),
 					"enabled"		=> intval((bool)$_POST["task_enabled"]),
 					"log"			=> intval((bool)$_POST["log_enabled"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -205,7 +205,7 @@ class yf_tasks_planner {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete
 		if (!empty($_GET["id"])) {
-			db()->query("DELETE FROM `".db('task_manager')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('task_manager')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -226,7 +226,7 @@ class yf_tasks_planner {
 			return _e();
 		}
 		// Try to get current task info
-		$task_info = db()->query_fetch("SELECT * FROM `".db('task_manager')."` WHERE `id`=".intval($_GET["id"]));
+		$task_info = db()->query_fetch("SELECT * FROM ".db('task_manager')." WHERE id=".intval($_GET["id"]));
 		if (empty($task_info["id"])) {
 			_re(t("No such task!"));
 			return _e();
@@ -247,7 +247,7 @@ class yf_tasks_planner {
 	*/
 	function view_logs() {
 		// Connect pager
-		$sql = "SELECT * FROM `".db('task_logs')."` ORDER BY `log_date` DESC";
+		$sql = "SELECT * FROM ".db('task_logs')." ORDER BY log_date DESC";
 		list($limit_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $limit_sql);
@@ -279,7 +279,7 @@ class yf_tasks_planner {
 // TODO
 //		$_GET["prune_days"] = 
 		// Do delete
-//		db()->query("DELETE FROM `".db('task_manager')."` WHERE `log_date` <= ".intval(time() - $_GET["prune_days"] * 86400));
+//		db()->query("DELETE FROM ".db('task_manager')." WHERE log_date <= ".intval(time() - $_GET["prune_days"] * 86400));
 		// Return user back
 		js_redirect("./?object=".$_GET["object"]."&action=view_logs");
 	}
@@ -293,11 +293,11 @@ class yf_tasks_planner {
 // TODO
 /*
 		// Generate filter for the common fileds
-		if ($MF["id_min"]) 				$sql .= " AND `id` >= ".intval($MF["id_min"])." \r\n";
-		if ($MF["id_max"])			 	$sql .= " AND `id` <= ".intval($MF["id_max"])." \r\n";
+		if ($MF["id_min"]) 				$sql .= " AND id >= ".intval($MF["id_min"])." \r\n";
+		if ($MF["id_max"])			 	$sql .= " AND id <= ".intval($MF["id_max"])." \r\n";
 */
 		// Sorting here
-		if ($MF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$MF["sort_by"]]."` \r\n";
+		if ($MF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$MF["sort_by"]]." \r\n";
 		if ($MF["sort_by"] && strlen($MF["sort_order"])) 	$sql .= " ".$MF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

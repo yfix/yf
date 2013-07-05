@@ -178,7 +178,7 @@ class yf_forum {
 		}
 		// Get all ranks into array
 		if ($this->SHOW_USER_RANKS && in_array($_GET["action"], array("view_topic"))) {
-			$Q = db()->query("SELECT * FROM `".db('forum_ranks')."`");// WHERE `special`=0
+			$Q = db()->query("SELECT * FROM ".db('forum_ranks')."");// WHERE special=0
 			while($A = db()->fetch_assoc($Q)) {
 				$this->user_ranks[$A['id']] = $A;
 			}
@@ -217,7 +217,7 @@ class yf_forum {
 		$_GET['id'] = intval($_GET['id']);
 		// If ID specified - then show only one category
 		if ($_GET['id']) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('forum_categories')."` WHERE `id`=".$_GET['id']." ORDER BY `order`");
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('forum_categories')." WHERE id=".$_GET['id']." ORDER BY order");
 			if ($cat_info['id']) {
 				$body = $this->_show_category_contents($cat_info['id']);
 			}
@@ -352,8 +352,8 @@ class yf_forum {
 	* Count topic view
 	*/
 	function _add_topic_view($topic_array = array()) {
-		db()->query("UPDATE `".db('forum_topics')."` SET `num_views`=`num_views`+1 WHERE `id`=".intval($topic_array['id']));
-		db()->query("UPDATE `".db('forum_forums')."` SET `num_views`=`num_views`+1 WHERE `id`=".intval($topic_array["forum"]));
+		db()->query("UPDATE ".db('forum_topics')." SET num_views=num_views+1 WHERE id=".intval($topic_array['id']));
+		db()->query("UPDATE ".db('forum_forums')." SET num_views=num_views+1 WHERE id=".intval($topic_array["forum"]));
 	}
 
 	/**
@@ -380,7 +380,7 @@ class yf_forum {
 			}
 		}
 		if (strlen($add_sql)) {
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".substr($add_sql, 0, -1).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".substr($add_sql, 0, -1).")");
 			while($post_info = db()->fetch_assoc($Q)) {
 				$user_name = $post_info["user_id"] ? (strlen($post_info["user_name"]) ? $post_info["user_name"] : $post_info["user_id"]) : (strlen($post_info["user_name"]) ? $post_info["user_name"] : t("Anonymous"));
 				$replace = array(
@@ -409,7 +409,7 @@ class yf_forum {
 			$add_sql .= $k.",";
 		}
 		if (strlen($add_sql)) {
-			$Q = db()->query("SELECT * FROM `".db('forum_users')."` WHERE `id` IN(".substr($add_sql, 0, -1).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_users')." WHERE id IN(".substr($add_sql, 0, -1).")");
 			while($A = db()->fetch_assoc($Q)) {
 				$this->users[$A['id']] = $A;
 			}
@@ -439,7 +439,7 @@ class yf_forum {
 		$this->USER_ID	= $_SESSION["admin_id"];
 		$this->GROUP_ID = $_SESSION["admin_group"];
 
-		$admin_info = db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".intval($this->USER_ID));
+		$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($this->USER_ID));
 
 		$this->USER_NAME = $admin_info["first_name"]." ".$admin_info["last_name"];
 		$admin_groups = main()->get_data("admin_groups");
@@ -454,13 +454,13 @@ class yf_forum {
 			return false;
 		}
 		// Count number of topics
-		$num_topics = intval(db()->query_num_rows("SELECT `id` FROM `".db('forum_topics')."` WHERE `forum`=".$forum_id." AND `status`='a'"));
+		$num_topics = intval(db()->query_num_rows("SELECT id FROM ".db('forum_topics')." WHERE forum=".$forum_id." AND status='a'"));
 		// Count number of posts
-		$num_posts = intval(db()->query_num_rows("SELECT `id` FROM `".db('forum_posts')."` WHERE `forum`=".$forum_id." AND `status`='a'"));
+		$num_posts = intval(db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE forum=".$forum_id." AND status='a'"));
 		// Determine last post ID
-		list($last_post_id) = db()->query_fetch("SELECT `id` AS `0` FROM `".db('forum_posts')."` WHERE `forum`=".$forum_id." AND `status`='a' ORDER BY `created` DESC LIMIT 1");
+		list($last_post_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('forum_posts')." WHERE forum=".$forum_id." AND status='a' ORDER BY created DESC LIMIT 1");
 		// Update forum table
-		db()->query("UPDATE `".db('forum_forums')."` SET `num_topics`=".$num_topics.",`num_posts`=".$num_posts.",`last_post_id`=".intval($last_post_id)." WHERE `id`=".$forum_id);
+		db()->query("UPDATE ".db('forum_forums')." SET num_topics=".$num_topics.",num_posts=".$num_posts.",last_post_id=".intval($last_post_id)." WHERE id=".$forum_id);
 	}
 
 	/**
@@ -471,10 +471,10 @@ class yf_forum {
 			return false;
 		}
 		// Prepare data for the topic record
-		$num_posts = intval(db()->query_num_rows("SELECT `id` FROM `".db('forum_posts')."` WHERE `topic`=".$topic_id." AND `status`='a'"));
-		list($last_post_id) = db()->query_fetch("SELECT `id` AS `0` FROM `".db('forum_posts')."` WHERE `topic`=".$topic_id." AND `status`='a' ORDER BY `created` DESC LIMIT 1");
+		$num_posts = intval(db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE topic=".$topic_id." AND status='a'"));
+		list($last_post_id) = db()->query_fetch("SELECT id AS 0 FROM ".db('forum_posts')." WHERE topic=".$topic_id." AND status='a' ORDER BY created DESC LIMIT 1");
 		// Update topic record
-		db()->query("UPDATE `".db('forum_topics')."` SET `num_posts`=".$num_posts.",`last_post_id`=".intval($topic_last_post_id)."	WHERE `id`=".$topic_id);
+		db()->query("UPDATE ".db('forum_topics')." SET num_posts=".$num_posts.",last_post_id=".intval($topic_last_post_id)."	WHERE id=".$topic_id);
 	}
 
 	/**
@@ -532,7 +532,7 @@ class yf_forum {
 	*/
 	function view_profile () {
 		$_GET['id'] = intval($_GET['id']);
-		$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".$_GET['id']);
+		$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".$_GET['id']);
 		if ($user_info['id'] && !$this->HIDE_USERS_INFO) {
 			$replace = $user_info;
 			$replace["user_regdate"] = date($this->format["date"], $replace["user_regdate"]);

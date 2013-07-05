@@ -30,7 +30,7 @@ class yf_site_link_checker {
 			set_time_limit(3600);
 			// Update all user's records where "link_url" is empty
 			if (!empty($_POST["auto_update_db"])) {
-				db()->query("UPDATE `".db('links_links')."` SET `status`=4 WHERE `link_url`=''");
+				db()->query("UPDATE ".db('links_links')." SET status=4 WHERE link_url=''");
 			}
 			// Max number of links to process
 			$LIMIT_LINKS_NUM = intval($_POST["limit_links_num"]);
@@ -45,16 +45,16 @@ class yf_site_link_checker {
 			}
 			$_POST["link_id_1"] = intval($_POST["link_id_1"]);
 			if (!empty($_POST["link_id_1"])) {
-				$add_sql .= " AND `id` >= ".intval($_POST["link_id_1"])." \r\n";
+				$add_sql .= " AND id >= ".intval($_POST["link_id_1"])." \r\n";
 			}
 			$_POST["link_id_2"] = intval($_POST["link_id_2"]);
 			if (!empty($_POST["link_id_2"])) {
-				$add_sql .= " AND `id` <= ".intval($_POST["link_id_2"])." \r\n";
+				$add_sql .= " AND id <= ".intval($_POST["link_id_2"])." \r\n";
 			}
 			if (!empty($_POST["only_status"])) {
-				$add_sql .= " AND `status` = ".intval($_POST["only_status"])." ";
+				$add_sql .= " AND status = ".intval($_POST["only_status"])." ";
 			}
-			$Q = db()->query("SELECT * FROM `".db('links_links')."` WHERE 1=1 ".$add_sql.(!empty($_POST["limit_links_num"]) ? " LIMIT ".$_POST["limit_links_num"] : ""));
+			$Q = db()->query("SELECT * FROM ".db('links_links')." WHERE 1=1 ".$add_sql.(!empty($_POST["limit_links_num"]) ? " LIMIT ".$_POST["limit_links_num"] : ""));
 			$total_links_to_check = db()->num_rows($Q);
 			$links_counter = 0;
 			// Process records
@@ -67,7 +67,7 @@ class yf_site_link_checker {
 					$links_users_ids[$item_info["user_id"]] = $item_info["user_id"];
 				}
 				if (!empty($links_users_ids)) {
-					$Q = db()->query("SELECT `id`,`name` FROM `".db('links_users')."` WHERE `id` IN(".implode(",", $links_users_ids).")");
+					$Q = db()->query("SELECT id,name FROM ".db('links_users')." WHERE id IN(".implode(",", $links_users_ids).")");
 					while ($A = db()->fetch_assoc($Q)) $links_users_infos[$A["id"]] = $A;
 				}
 			}
@@ -135,7 +135,7 @@ class yf_site_link_checker {
 				}
 				// Update user and set new status
 				if (!$total_result && !empty($_POST["auto_update_db"])) {
-					db()->query("UPDATE `".db('links_links')."` SET `status`=4 WHERE `id`=".intval($item_info["id"]));
+					db()->query("UPDATE ".db('links_links')." SET status=4 WHERE id=".intval($item_info["id"]));
 				}
 				// Display result
 				$replace2 = array(
@@ -169,7 +169,7 @@ class yf_site_link_checker {
 		// Start form
 		} else {
 			// Count info about users with links
-			list($num_users, $min_user_id, $max_user_id) = db()->query_fetch("SELECT COUNT(`id`) AS `0`, MIN(`id`) AS `1`, MAX(`id`) AS `2` FROM `".db('links_users')."`");
+			list($num_users, $min_user_id, $max_user_id) = db()->query_fetch("SELECT COUNT(id) AS 0, MIN(id) AS 1, MAX(id) AS 2 FROM ".db('links_users')."");
 			$replace = array(
 				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 				"status_box"	=> common()->select_box("only_status", array_merge(array("" => "All"), $this->_link_statuses), 2, null, 2, "", false),

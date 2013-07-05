@@ -23,7 +23,7 @@ class yf_se_keywords_manager {
 	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
-		$A = db()->query_fetch_all("SELECT * FROM `".db('search_engines')."` ORDER BY `id`");
+		$A = db()->query_fetch_all("SELECT * FROM ".db('search_engines')." ORDER BY id");
 		foreach ((array)$A as $V){
 			$this->engines[$V["id"]] = _prepare_html($V["name"]); 
 			$this->s_engines[$V["id"]] = $V; 
@@ -42,10 +42,10 @@ class yf_se_keywords_manager {
 	* @return
 	*/
 	function show () {
-		$sql = "SELECT `id`, `text`, `hits`, `engine` FROM `".db('search_keywords')."`";
+		$sql = "SELECT id, text, hits, engine FROM ".db('search_keywords')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : "";
-		$sql .= " ORDER BY `hits` DESC";
+		$sql .= " ORDER BY hits DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$A = db()->query_fetch_all($sql.$add_sql);
 
@@ -89,7 +89,7 @@ class yf_se_keywords_manager {
 		}
 		// Do delete ids
 		if (!empty($ids_to_delete)) {
-			db()->query("DELETE FROM `".db('search_keywords')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('search_keywords')." WHERE id IN(".implode(",",$ids_to_delete).")");
 		}
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"]);
@@ -101,7 +101,7 @@ class yf_se_keywords_manager {
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete record
-		db()->query("DELETE FROM `".db('search_keywords')."` WHERE `id`=".intval($_GET["id"]));
+		db()->query("DELETE FROM ".db('search_keywords')." WHERE id=".intval($_GET["id"]));
 		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -117,7 +117,7 @@ class yf_se_keywords_manager {
 	function delete_by_hits () {
 		if (intval($_POST["hits"])){
 			// Do delete record
-			db()->query("DELETE FROM `".db('search_keywords')."` WHERE `hits`<".intval($_POST["hits"]));
+			db()->query("DELETE FROM ".db('search_keywords')." WHERE hits<".intval($_POST["hits"]));
 		}
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
@@ -144,8 +144,8 @@ class yf_se_keywords_manager {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if (strlen($SF["text"]))		$sql .= " AND `text` LIKE '%"._es($SF["text"])."%' \r\n";
-		if (strlen($SF["engine"]))		$sql .= " AND `engine`=".intval($SF["engine"])." \r\n";
+		if (strlen($SF["text"]))		$sql .= " AND text LIKE '%"._es($SF["text"])."%' \r\n";
+		if (strlen($SF["engine"]))		$sql .= " AND engine=".intval($SF["engine"])." \r\n";
 		return substr($sql, 0, -3);
 	}
 

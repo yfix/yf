@@ -36,16 +36,16 @@ class yf_catalog_editor {
 		);
 
 		// Get node types
-		$Q = db()->query("SELECT * FROM `".db('catalog_node_types')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT * FROM ".db('catalog_node_types')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) $this->_node_types[$A['id']] = $A['name'];
 
 		// Get user groups
 		$this->_user_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) $this->_user_groups[$A['id']] = $A['name'];
 		// Get admin groups
 		$this->_admin_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('admin_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('admin_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) $this->_admin_groups[$A['id']] = $A['name'];
 	}
 
@@ -57,7 +57,7 @@ class yf_catalog_editor {
 	*/
 	function show() {
 		// Get catalogs
-		$Q = db()->query("SELECT * FROM `".db('catalogs')."` ORDER BY `type` DESC, `active` ASC");
+		$Q = db()->query("SELECT * FROM ".db('catalogs')." ORDER BY type DESC, active ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -139,7 +139,7 @@ class yf_catalog_editor {
 			return _e(t("No id!"));
 		}
 		// Get current catalog info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('catalogs')."` WHERE `id`=".intval($_GET["id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('catalogs')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info["id"])) {
 			return _e(t("No such catalog!"));
 		}
@@ -154,7 +154,7 @@ class yf_catalog_editor {
 					"stpl_name"		=> _es($_POST["stpl_name"]),
 					"method_name"	=> _es($_POST["method_name"]),
 					"active"		=> (int)((bool)$_POST["active"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	cache()->refresh("cats_blocks");
 				// Return user back
@@ -191,12 +191,12 @@ class yf_catalog_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current catalog info
 		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('catalogs')."` WHERE `id`=".intval($_GET["id"]));
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('catalogs')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete catalog and its items
 		if (!empty($cat_info["id"])) {
-			db()->query("DELETE FROM `".db('catalogs')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('catalog_items')."` WHERE `cat_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('catalogs')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('catalog_items')." WHERE cat_id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("cats_blocks");
@@ -219,11 +219,11 @@ class yf_catalog_editor {
 	function activate() {
 		// Try to find such catalog in db
 		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('catalogs')."` WHERE `id`=".intval($_GET["id"]));
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('catalogs')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($cat_info)) {
-			db()->UPDATE("catalogs", array("active" => (int)!$cat_info["active"]), "`id`=".intval($cat_info["id"]));
+			db()->UPDATE("catalogs", array("active" => (int)!$cat_info["active"]), "id=".intval($cat_info["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -247,7 +247,7 @@ class yf_catalog_editor {
 			return _e(t("No id!"));
 		}
 		// Get current catalog info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('catalogs')."` WHERE `id`=".intval($_GET["id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('catalogs')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info)) {
 			return _e(t("No such catalog!"));
 		}
@@ -325,7 +325,7 @@ class yf_catalog_editor {
 			return _e(t("No id!"));
 		}
 		// Get current catalog info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('catalogs')."` WHERE `id`=".intval($_GET["id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('catalogs')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info)) {
 			return _e(t("No such catalog!"));
 		}
@@ -340,7 +340,7 @@ class yf_catalog_editor {
 				"name"		=> _es($_POST["name"][$A["id"]]),
 				"url"		=> _es($_POST["url"][$A["id"]]),
 				"order"		=> intval($_POST["order"][$A["id"]]),
-			), "`id`=".intval($A["id"]));
+			), "id=".intval($A["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("catalog_items");
@@ -357,7 +357,7 @@ class yf_catalog_editor {
 			return _e(t("No id!"));
 		}
 		// Get current catalog info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('catalogs')."` WHERE `id`=".intval($_GET["id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('catalogs')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info["id"])) {
 			return _e(t("No such catalog!"));
 		}
@@ -436,12 +436,12 @@ class yf_catalog_editor {
 			return _e(t("No id!"));
 		}
 		// Get current item info
-		$item_info = db()->query_fetch("SELECT * FROM `".db('catalog_items')."` WHERE `id`=".intval($_GET["id"]));
+		$item_info = db()->query_fetch("SELECT * FROM ".db('catalog_items')." WHERE id=".intval($_GET["id"]));
 		if (empty($item_info["id"])) {
 			return _e(t("No such catalog item!"));
 		}
 		// Get current catalog info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('catalogs')."` WHERE `id`=".intval($item_info["cat_id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('catalogs')." WHERE id=".intval($item_info["cat_id"]));
 		if (empty($cat_info["id"])) {
 			return _e(t("No such catalog!"));
 		}
@@ -465,7 +465,7 @@ class yf_catalog_editor {
 				"type_id"		=> intval($_POST["type_id"]),
 				"order"			=> intval($_POST["item_order"]),
 				"active"		=> intval($_POST["active"]),
-			), "`id`=".intval($item_info["id"]));
+			), "id=".intval($item_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("catalog_items");
 			// Return user back
@@ -523,11 +523,11 @@ class yf_catalog_editor {
 	function activate_item() {
 		// Try to find such catalog item in db
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM `".db('catalog_items')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT * FROM ".db('catalog_items')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($item_info)) {
-			db()->UPDATE("catalog_items", array("active" => (int)!$item_info["active"]), "`id`=".intval($item_info["id"]));
+			db()->UPDATE("catalog_items", array("active" => (int)!$item_info["active"]), "id=".intval($item_info["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("catalog_items");
@@ -547,12 +547,12 @@ class yf_catalog_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to find such catalog item in db
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM `".db('catalog_items')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT * FROM ".db('catalog_items')." WHERE id=".intval($_GET["id"]));
 		}
 // FIXME: add recursive deletion of all children
 		// Do delete catalog and its items
 		if (!empty($item_info)) {
-			db()->query("DELETE FROM `".db('catalog_items')."` WHERE `id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('catalog_items')." WHERE id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("catalog_items");
@@ -584,7 +584,7 @@ class yf_catalog_editor {
 	*/
 	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		if (!isset($this->_catalog_items_from_db)) {
-			$Q = db()->query("SELECT * FROM `".db('catalog_items')."` WHERE `cat_id`=".intval($cat_id)." ORDER BY `order` ASC");
+			$Q = db()->query("SELECT * FROM ".db('catalog_items')." WHERE cat_id=".intval($cat_id)." ORDER BY order ASC");
 			while ($A = db()->fetch_assoc($Q)) $this->_catalog_items_from_db[$A["id"]] = $A;
 		}
 		if (empty($this->_catalog_items_from_db)) {
