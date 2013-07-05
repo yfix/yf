@@ -12,12 +12,12 @@ class yf_shop_products_show{
 		foreach ((array)module("shop")->_manufacturer as $_man_id => $_man_name) {
 			if ($_GET['id'] == "none") {
 				$_GET['id'] = "";
-				$_SESSION['man_id'] =   "none";
+				$_SESSION['man_id'] = "none";
 			}else if ($_GET['id'] == $_man_name['url']) {
 				$_GET['id'] = $_man_id;
 				$_show_by_man = 1;
 				$cat_name = $_man_name['name'];
-				$_SESSION['man_id'] =  $_man_name['url'];
+				$_SESSION['man_id'] = $_man_name['url'];
 			}
 		}
 		$_GET["id"] = intval($_GET["id"]);

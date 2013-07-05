@@ -5,7 +5,6 @@ class yf_shop__order_step_delivery{
 	* Order step
 	*/
 	function _order_step_delivery($FORCE_DISPLAY_FORM = false) {
-		$basket = &$_SESSION["SHOP_basket"];
 		// Validate previous form
 		if (!empty($_POST) && !$FORCE_DISPLAY_FORM) {
 			module('shop')->_order_validate_delivery();
@@ -14,7 +13,7 @@ class yf_shop__order_step_delivery{
 				return module('shop')->_order_step_select_payment(true);
 			}
 		}
-		if($this->USER_ID) {
+		if ($this->USER_ID) {
 			$order_info = module('shop')->_user_info;
 		}
 		// Fill fields

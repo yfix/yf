@@ -6,12 +6,7 @@ class yf_shop_basket{
 	*/
 	function basket($params = array()) {
 		$STPL_NAME = $params["STPL"] ? $params["STPL"] : "shop/basket";
-		/*
-		$_SESSION["SHOP_basket"][$product_id] = array(
-			"product_id"=> 1,
-			"quantity"	=> 1,
-		);
-		*/
+
 		$basket_contents = module('shop')->_basket_api()->get_all();
 		// Save basket contents
 		if (!empty($_POST["quantity"]) && !module('shop')->_basket_is_processed) {
