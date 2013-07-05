@@ -217,8 +217,8 @@ class yf_shop extends yf_module {
 		return _class('shop__basket_side', 'modules/shop/')->_basket_side();
 	}
 
-	function _save_basket_all() {
-		return _class('shop__save_basket_all', 'modules/shop/')->_save_basket_all();
+	function _basket_save() {
+		return _class('shop__basket_save', 'modules/shop/')->_basket_save();
 	}
 
 	function clean_basket() {

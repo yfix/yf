@@ -7,7 +7,7 @@ class yf_shop__order_step_start{
 	function _order_step_start($FORCE_DISPLAY_FORM = false) {
 		$basket = &$_SESSION["SHOP_basket"];
 
-		module('shop')->_save_basket_all();
+		module('shop')->_basket_save();
 
 		$products_ids = array();
 		foreach ((array)$basket as $_item_id => $_info) {

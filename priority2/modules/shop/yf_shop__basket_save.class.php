@@ -1,10 +1,10 @@
 <?php
-class yf_shop__save_basket_all{
+class yf_shop__basket_save{
 	
 	/**
 	* Save basket
 	*/
-	function _save_basket_all() {
+	function _basket_save() {
 		$basket = &$_SESSION["SHOP_basket"];
 		// Save basket contents
 		if (!empty($_POST["quantity"]) && !module('shop')->_basket_PROCESSED) {
