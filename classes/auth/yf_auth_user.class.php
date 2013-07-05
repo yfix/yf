@@ -167,7 +167,7 @@ class yf_auth_user {
 		// Delete expired users (expiration time for now 300 seconds == 5 minutes)
 		// make this to run randomly every ~10th page call
 		if ($this->STORE_ONLINE_USERS && $this->ONLINE_AUTO_CLEAN && rand(1,10) == 1) {
-			db()->_add_shutdown_query("DELETE FROM `".db('online')."` WHERE (".time()."-`time`) > ".intval($this->ONLINE_AUTO_CLEAN));
+			db()->_add_shutdown_query("DELETE FROM ".db('online')." WHERE (".time()."-time) > ".intval($this->ONLINE_AUTO_CLEAN));
 		}
 		// Remember last query string to process it after succesful login
 		if (empty($_SESSION[$this->VAR_USER_ID]) && isset($_GET["task"]) && $_GET["task"] == "login") {
@@ -210,8 +210,8 @@ class yf_auth_user {
 			if (!isset($MAIN->_online_users)) {
 				$MAIN->_online_users = array();
 				$Q = db()->query(
-					"SELECT `id`,`user_id` FROM `".db('online')."`"
-					.(MAIN_TYPE_USER ? " WHERE `type` != 'admin'" : "")
+					"SELECT id,user_id FROM ".db('online').""
+					.(MAIN_TYPE_USER ? " WHERE type != 'admin'" : "")
 					.($this->ONLINE_MAX_IDS ? " LIMIT ".intval($this->ONLINE_MAX_IDS) : "")
 				);
 				while ($A = db()->fetch_assoc($Q)) {
@@ -299,11 +299,11 @@ class yf_auth_user {
 			if ($this->BLOCK_FAILED_LOGINS) {
 				// Get number of failed logins with such account for the last time perios
 				list($_fails_by_login) = db()->query_fetch(
-					"SELECT COUNT(*) AS `0` FROM `".db('log_auth_fails')."` WHERE `time` > ".(time() - $this->BLOCK_FAILED_TTL)." AND `login`='"._es($AUTH_LOGIN)."'"
+					"SELECT COUNT(*) AS `0` FROM ".db('log_auth_fails')." WHERE time > ".(time() - $this->BLOCK_FAILED_TTL)." AND login='"._es($AUTH_LOGIN)."'"
 				);
 				// Get number of failed logins with such ip address for the last time perios
 				list($_fails_by_ip) = db()->query_fetch(
-					"SELECT COUNT(*) AS `0` FROM `".db('log_auth_fails')."` WHERE `time` > ".(time() - $this->BLOCK_FAILED_TTL)." AND `ip`='"._es(common()->get_ip())."'"
+					"SELECT COUNT(*) AS `0` FROM ".db('log_auth_fails')." WHERE time > ".(time() - $this->BLOCK_FAILED_TTL)." AND ip='"._es(common()->get_ip())."'"
 				);
 				if ($_fails_by_login >= 5 || $_fails_by_ip >= 10) {
 					$NEED_QUERY_DB = false;
@@ -352,7 +352,7 @@ class yf_auth_user {
 			return false;
 		}
 		$db_user_table = main()->USER_INFO_DYNAMIC ? db('user_data_main') : db('user');
-		return db()->query_fetch("SELECT * FROM `".$db_user_table."` WHERE `".$this->LOGIN_FIELD."`='".db()->es($login)."'");
+		return db()->query_fetch("SELECT * FROM ".$db_user_table." WHERE ".$this->LOGIN_FIELD."='".db()->es($login)."'");
 	}
 
 	/**
@@ -449,7 +449,7 @@ class yf_auth_user {
 	function _do_logout () {
 		// Process logout with session variables
 		if ($this->STORE_ONLINE_USERS) {
-			db()->_add_shutdown_query("DELETE FROM `".db('online')."` WHERE `user_id`=".intval($_SESSION[$this->VAR_USER_ID]));
+			db()->_add_shutdown_query("DELETE FROM ".db('online')." WHERE user_id=".intval($_SESSION[$this->VAR_USER_ID]));
 			$MAIN = &main();
 			if (isset($MAIN->_online_users[session_id()])) {
 				unset($MAIN->_online_users[session_id()]);
@@ -569,7 +569,7 @@ class yf_auth_user {
 			return false;
 		}
 		// Check if we have record for this user
-		$data = db()->query_fetch("SELECT * FROM `".db('check_multi_accounts')."` WHERE `user_id`=".intval($_SESSION[$this->VAR_USER_ID]));
+		$data = db()->query_fetch("SELECT * FROM ".db('check_multi_accounts')." WHERE user_id=".intval($_SESSION[$this->VAR_USER_ID]));
 		// Remove self user from array
 		if (isset($cookie_users[$_SESSION[$this->VAR_USER_ID]])) {
 			unset($cookie_users[$_SESSION[$this->VAR_USER_ID]]);
@@ -588,7 +588,7 @@ class yf_auth_user {
 				"matching_users"=> _es($matching_users),
 				"last_update"	=> time(),
 				"cookie_match"	=> 1,
-			), "`user_id`=".intval($_SESSION[$this->VAR_USER_ID]));
+			), "user_id=".intval($_SESSION[$this->VAR_USER_ID]));
 		}
 		// Set new cookie with new id added
 		$this->_set_special_cookie($_COOKIE[$_SPECIAL_NAME]."_".$_SESSION[$this->VAR_USER_ID]);

@@ -398,7 +398,7 @@ class yf_tpl {
 				}
 			}
 			if ($this->GET_STPLS_FROM_DB && $this->FROM_DB_GET_ALL) {
-				$Q = db()->query("SELECT `name`,`text` FROM `".db('templates')."` WHERE `theme_name`='".conf('theme')."' AND `active`='1'");
+				$Q = db()->query("SELECT name,text FROM ".db('templates')." WHERE theme_name='".conf('theme')."' AND active='1'");
 				while ($A = db()->fetch_assoc($Q)) {
 					$this->_TMP_FROM_DB[$A["name"]] = stripslashes($A["text"]);
 				}
@@ -833,7 +833,7 @@ class yf_tpl {
 					$NOT_FOUND = true;
 				}
 			} else {
-				list($text) = db()->query_fetch("SELECT `text` AS `0` FROM `".db('templates')."` WHERE `theme_name`='".conf('theme')."' AND `name`='"._es($stpl_name)."' AND `active`='1'");
+				list($text) = db()->query_fetch("SELECT text AS 0 FROM ".db('templates')." WHERE theme_name='".conf('theme')."' AND name='"._es($stpl_name)."' AND active='1'");
 				if (isset($text)) {
 					$string = stripslashes($text);
 				} else {

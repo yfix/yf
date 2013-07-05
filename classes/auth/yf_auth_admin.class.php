@@ -144,15 +144,15 @@ class yf_auth_admin {
 		if ($this->BLOCK_FAILED_LOGINS) {
 			// Get number of failed logins with such account for the last time perios
 			list($_fails_by_login) = db()->query_fetch(
-				"SELECT COUNT(*) AS `0` FROM `".db('log_admin_auth_fails')."` 
-				WHERE `time` > ".(time() - $this->BLOCK_FAILED_TTL)." 
-					AND `login`='"._es($AUTH_LOGIN)."'"
+				"SELECT COUNT(*) AS `0` FROM ".db('log_admin_auth_fails')." 
+				WHERE time > ".(time() - $this->BLOCK_FAILED_TTL)." 
+					AND login='"._es($AUTH_LOGIN)."'"
 			);
 			// Get number of failed logins with such ip address for the last time perios
 			list($_fails_by_ip) = db()->query_fetch(
-				"SELECT COUNT(*) AS `0` FROM `".db('log_admin_auth_fails')."` 
-				WHERE `time` > ".(time() - $this->BLOCK_FAILED_TTL)." 
-					AND `ip`='"._es(common()->get_ip())."'"
+				"SELECT COUNT(*) AS `0` FROM ".db('log_admin_auth_fails')." 
+				WHERE time > ".(time() - $this->BLOCK_FAILED_TTL)." 
+					AND ip='"._es(common()->get_ip())."'"
 			);
 			if ($_fails_by_login >= 5 || $_fails_by_ip >= 10) {
 				$NEED_QUERY_DB = false;
@@ -161,7 +161,7 @@ class yf_auth_admin {
 		}
 		// Try to get info from db
 		if ($NEED_QUERY_DB) {
-			$admin_info = db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `".$this->LOGIN_FIELD."`='"._es($AUTH_LOGIN)."' AND `password`='".md5(_es($AUTH_PSWD))."' AND `active`='1'");
+			$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE ".$this->LOGIN_FIELD."='"._es($AUTH_LOGIN)."' AND `password`='".md5(_es($AUTH_PSWD))."' AND active='1'");
 		}
 		if (!empty($admin_info["id"])) {
 			$groups = main()->get_data("admin_groups_details");

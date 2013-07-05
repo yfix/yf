@@ -90,7 +90,7 @@ class yf_i18n {
 		}
 		// Force to get all available vars (try to find and insert new ones)
 		if (DEBUG_MODE && $this->AUTO_FIND_VARS && $this->TRANSLATE_ENABLED) {
-			$Q = db()->query("SELECT `id`,`value` FROM `".db('locale_vars')."`");
+			$Q = db()->query("SELECT id,value FROM ".db('locale_vars')."");
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->TR_ALL_VARS[$A["value"]] = $A["id"];
 			}
@@ -164,12 +164,12 @@ class yf_i18n {
 		}
 		if (empty($this->TR_VARS[$lang])) {
 			$Q = db()->query(
-				"SELECT `v`.`value` AS `source`, `t`.`value` AS `translation` 
-				FROM `".db('locale_vars')."` AS `v`, `".db('locale_translate')."` AS `t` 
-				WHERE `t`.`var_id`=`v`.`id` 
-					AND `t`.`locale`='"._es($lang)."' 
-					AND `t`.`value` != '' 
-					AND `t`.`value` != `v`.`value`"
+				"SELECT v.value AS source, t.value AS translation 
+				FROM ".db('locale_vars')." AS v, ".db('locale_translate')." AS t 
+				WHERE t.var_id=v.id 
+					AND t.locale='"._es($lang)."' 
+					AND t.value != '' 
+					AND t.value != v.value"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->TR_VARS[$lang][$A["source"]] = $A["translation"];
@@ -214,12 +214,12 @@ class yf_i18n {
 		// Member-only translations
 		if ($this->ALLOW_USER_TRANSLATE && $this->USER_ID) {
 			$Q = db()->query(
-				"SELECT `name`, `translation` 
-				FROM `".db('locale_user_tr')."` 
-				WHERE `user_id`=".intval($this->USER_ID)." 
-					AND `locale`='"._es($lang)."' 
-					AND `translation` != '' 
-					AND `translation` != `name`"
+				"SELECT name, translation 
+				FROM ".db('locale_user_tr')." 
+				WHERE user_id=".intval($this->USER_ID)." 
+					AND locale='"._es($lang)."' 
+					AND translation != '' 
+					AND translation != name"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->TR_VARS[$lang][$A["name"]] = $A["translation"];

@@ -60,7 +60,7 @@ class yf_installer_db_mysql {
 					continue;
 				}
 				// Check if such index already exists
-				foreach ((array)$DB_CONNECTION->query_fetch_all("SHOW INDEX FROM `".$f_table."`", "Key_name") as $k => $v) {
+				foreach ((array)$DB_CONNECTION->query_fetch_all("SHOW INDEX FROM ".$f_table."", "Key_name") as $k => $v) {
 					if ($v["Column_name"] != $f_field) {
 						continue;
 					}
@@ -69,7 +69,7 @@ class yf_installer_db_mysql {
 						continue 2;
 					}
 				}
-				$DB_CONNECTION->query("ALTER TABLE `".$f_table."` ADD FULLTEXT KEY `".$f_field."` (`".$f_field."`)");
+				$DB_CONNECTION->query("ALTER TABLE ".$f_table." ADD FULLTEXT KEY ".$f_field." (".$f_field.")");
 			}
 			// Execute original query again
 			$result = $DB_CONNECTION->query($sql);
@@ -249,8 +249,8 @@ class yf_installer_db_mysql {
 			unset($column_struct["default"]);
 		}
 		// Generate "ALTER TABLE" query
-		$sql = "ALTER TABLE `".$DB_CONNECTION->DB_PREFIX.$table_name."`\r\n".
-			"\tADD `"._es($column_name)."` ".strtoupper($column_struct["type"]).
+		$sql = "ALTER TABLE ".$DB_CONNECTION->DB_PREFIX.$table_name."\r\n".
+			"\tADD "._es($column_name)." ".strtoupper($column_struct["type"]).
 			(!empty($column_struct["length"])	? "(".$column_struct["length"].")" : "").
 			(!empty($column_struct["attrib"])	? " ".$column_struct["attrib"]."" : "").
 			(!empty($column_struct["not_null"])	? " NOT NULL" : "").

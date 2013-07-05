@@ -499,7 +499,7 @@ class yf_common {
 	/**
 	* Create Alphabet search criteria.Make alphabet html and query limit for selected chars
 	*/
-	function make_alphabet($url, &$chars, $get_var_name = 'id', $q_var = '`id`') {
+	function make_alphabet($url, &$chars, $get_var_name = 'id', $q_var = 'id') {
 		return _class("make_alphabet", COMMON_LIB)->go($url, $chars, $get_var_name, $q_var);
 	}
 
@@ -912,7 +912,7 @@ class yf_common {
 			return false;
 		}
 		return (bool)db()->query_num_rows(
-			"SELECT * FROM `".db('ignore_list')."` WHERE `user_id`=".intval($owner_id)." AND `target_user_id`=".intval($target_user_id)
+			"SELECT * FROM ".db('ignore_list')." WHERE user_id=".intval($owner_id)." AND target_user_id=".intval($target_user_id)
 		);
 	}
 

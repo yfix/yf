@@ -96,10 +96,10 @@ class yf_logs {
 			return false;
 		}
 		// Prepare db record
-		$sql = "UPDATE `".db('user')."` SET 
-				`last_login`	= ".time().", 
-				`num_logins`	= `num_logins` + 1
-			WHERE `id`=".intval($A["id"]);
+		$sql = "UPDATE ".db('user')." SET 
+				last_login	= ".time().", 
+				num_logins	= num_logins + 1
+			WHERE id=".intval($A["id"]);
 		db()->_add_shutdown_query($sql);
 	}
 
@@ -113,10 +113,10 @@ class yf_logs {
 		}
 		if ($this->UPDATE_ADMIN_LAST_LOGIN) {
 			db()->query(
-				"UPDATE `".db('admin')."` SET 
-					`last_login`	= ".time().", 
-					`num_logins`	= `num_logins` + 1
-				WHERE `id`=".intval($A["id"])
+				"UPDATE ".db('admin')." SET 
+					last_login	= ".time().", 
+					num_logins	= num_logins + 1
+				WHERE id=".intval($A["id"])
 			);
 		}
 		// Prepare db record
