@@ -10,7 +10,7 @@ class yf_shop_get_product_related{
 		}
 		$product_related_id = rtrim($product_related_id, ",");
 		if ($product_related_id != "") {
-			$product_related = module("shop")->show_products($product_related_id); 
+			$product_related = module("shop")->products_show($product_related_id); 
 		}
 		return $product_related;
 	}	

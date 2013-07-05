@@ -181,8 +181,8 @@ class yf_shop extends yf_module {
 		return _class('shop_show', 'modules/shop/')->show();
 	}
 
-	function show_products($search = "", $str_search = "") {
-		return _class('shop_show_products', 'modules/shop/')->show_products($search, $str_search);
+	function products_show($search = "", $str_search = "") {
+		return _class('shop_products_show', 'modules/shop/')->products_show($search, $str_search);
 	}
 
 	function product_details() {

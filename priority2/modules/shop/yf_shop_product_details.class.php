@@ -66,7 +66,7 @@ class yf_shop_product_details{
 			"model"					=> _prepare_html($product_info["model"]),
 			"desc"					=> $product_info["description"],
 			"manufacturer"			=>	_prepare_html(module("shop")->_manufacturer[$product_info["manufacturer_id"]]["name"]),
-			"url_manufacturer"		=> process_url("./?object=shop&action=show_products&id=".module("shop")->_manufacturer[$product_info["manufacturer_id"]]["url"]),
+			"url_manufacturer"		=> process_url("./?object=shop&action=products_show&id=".module("shop")->_manufacturer[$product_info["manufacturer_id"]]["url"]),
 			"date"					=> _format_date($product_info["add_date"], "long"),
 			"price"					=> module("shop")->_format_price(module("shop")->_get_product_price($product_info)),
 			"currency"				=> _prepare_html(module("shop")->CURRENCY),

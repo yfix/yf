@@ -45,7 +45,7 @@ class yf_shop__order_step_start{
 				"details_link"	=> process_url("./?object=shop&action=product_details&id=".$URL_PRODUCT_ID),
 				"dynamic_atts"	=> !empty($dynamic_atts) ? implode("\n<br />", $dynamic_atts) : "",
 				"cat_name"		=> _prepare_html(module('shop')->_shop_cats[$_info["cat_id"]]),
-				"cat_url"		=> process_url("./?object=shop&action=show_products&id=".(module('shop')->_shop_cats_all[$_info["cat_id"]]['url'])),
+				"cat_url"		=> process_url("./?object=shop&action=products_show&id=".(module('shop')->_shop_cats_all[$_info["cat_id"]]['url'])),
 			);
 			$total_price += $price * $quantity;
 		}

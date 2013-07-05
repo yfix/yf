@@ -2,7 +2,7 @@
 class yf_shop_show{
 
 	function show() {
-		return module("shop")->show_products(1);
+		return module("shop")->products_show(1);
 	}
 	
 }

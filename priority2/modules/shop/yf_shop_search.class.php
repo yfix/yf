@@ -48,7 +48,7 @@ class yf_shop_search{
 			);
 			return tpl()->parse("shop/no_search_results", $replace);
 		} else {	
-			$replace = module('shop')->show_products($product_ids, $str_search2);
+			$replace = module('shop')->products_show($product_ids, $str_search2);
 		}
 		return $replace;	
 	}
