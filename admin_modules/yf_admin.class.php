@@ -15,7 +15,7 @@ class yf_admin {
 	function _init () {
 		$this->_admin_groups = array();
 		// Fill array of admin groups
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('admin_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('admin_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_admin_groups[$A['id']] = $A['name'];
 		}
@@ -35,7 +35,7 @@ class yf_admin {
 	* Show admin users
 	*/
 	function show() {
-		$sql = "SELECT * FROM `".db('admin')."`";
+		$sql = "SELECT * FROM ".db('admin')."";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$items = array();
@@ -99,7 +99,7 @@ class yf_admin {
 			return "No id!";
 		}
 		// Get current record
-		$admin_info = db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".intval($_GET["id"]));
+		$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_GET["id"]));
 		// Save posted data
 		if (!empty($_POST)) {
 			$_POST["login"] = preg_replace("/[^a-z0-9\_\-\.]/ims", "", $_POST["login"]);
@@ -120,7 +120,7 @@ class yf_admin {
 				if (strlen($_POST["password"])) {
 					$sql["password"] = md5($_new_pswd);
 				}
-				db()->UPDATE("admin", $sql, "`id`=".intval($_GET["id"]));
+				db()->UPDATE("admin", $sql, "id=".intval($_GET["id"]));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 	 		
@@ -236,7 +236,7 @@ class yf_admin {
 	function delete() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id'] && $_GET["id"] != 1 && $_GET["id"] != $_SESSION["admin_id"]) {
-			db()->query("DELETE FROM `".db('admin')."` WHERE `id`=".intval($_GET['id']));
+			db()->query("DELETE FROM ".db('admin')." WHERE id=".intval($_GET['id']));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -254,11 +254,11 @@ class yf_admin {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current rule info
 		if (!empty($_GET["id"])) {
-			$admin_info = db()->query_fetch("SELECT * FROM `".db('admin')."` WHERE `id`=".intval($_GET["id"]));
+			$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_GET["id"]));
 		}
 		// Change activity
 		if (!empty($admin_info["id"]) && $_GET["id"] != 1 && $_GET["id"] != $_SESSION["admin_id"]) {
-			db()->UPDATE("admin", array("active" => (int)!$admin_info["active"]), "`id`=".intval($_GET["id"]));
+			db()->UPDATE("admin", array("active" => (int)!$admin_info["active"]), "id=".intval($_GET["id"]));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {

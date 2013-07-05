@@ -63,7 +63,7 @@ class yf_manage_sphinx {
 			return $this->_countries;
 		}
 		$countries = array();
-		$Q = db()->query("SELECT DISTINCT(`country`) AS `code` FROM `".db('sites')."` WHERE `country` != '' AND `active`='1' ORDER BY `country` ASC");
+		$Q = db()->query("SELECT DISTINCT(country) AS code FROM ".db('sites')." WHERE country != '' AND active='1' ORDER BY country ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$countries[$A["code"]] = $A["code"];
 		}

@@ -50,7 +50,7 @@ class yf_static_pages {
 	*/
 	function show() {
 
-		$Q = db()->query("SELECT * FROM `".db('static_pages')."`". ($this->MULTILANG_MODE ? " GROUP BY `name`" : ""));
+		$Q = db()->query("SELECT * FROM ".db('static_pages')."". ($this->MULTILANG_MODE ? " GROUP BY name" : ""));
 		while ($page_info = db()->fetch_assoc($Q)) {
 
 			$replace2 = array(
@@ -133,7 +133,7 @@ class yf_static_pages {
 			"locale",
 			"active",
 		);
-		$Q = db()->query("SELECT * FROM `".db('static_pages')."` WHERE `name`='"._es(_strtolower(urldecode($_GET['id'])))."'");
+		$Q = db()->query("SELECT * FROM ".db('static_pages')." WHERE name='"._es(_strtolower(urldecode($_GET['id'])))."'");
 		while($A = db()->fetch_assoc($Q)) {
 			if (!$A["locale"]) {
 				$A["locale"] = $_def_locale;
@@ -193,7 +193,7 @@ class yf_static_pages {
 					// Do update record
 					if ($sql_array["text"]) {
 						if(!empty($page_info[$_locale]['id'])){
-							db()->UPDATE("static_pages", $sql_array, "`id`=".intval($page_info[$_locale]['id']));
+							db()->UPDATE("static_pages", $sql_array, "id=".intval($page_info[$_locale]['id']));
 						}else{
 							db()->INSERT("static_pages", $sql_array = my_array_merge($sql_array, array(
 								"name"		=> _es($name),
@@ -220,7 +220,7 @@ class yf_static_pages {
 				}
 				// Do update record
 				if ($sql_array["text"]) {
-					db()->UPDATE("static_pages", $sql_array, "`id`=".intval($page_info[$_def_locale]['id']));
+					db()->UPDATE("static_pages", $sql_array, "id=".intval($page_info[$_def_locale]['id']));
 				}
 			}
 			if (main()->USE_SYSTEM_CACHE)	{
@@ -318,7 +318,7 @@ class yf_static_pages {
 	*/
 	function delete() {
 		$page_name = urldecode($_GET['id']);
-		db()->query("DELETE FROM `".db('static_pages')."` WHERE `name`='".$page_name."'");
+		db()->query("DELETE FROM ".db('static_pages')." WHERE name='".$page_name."'");
 
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("static_pages_names");
@@ -338,11 +338,11 @@ class yf_static_pages {
 	function activate () {
 		// Get current info
 		if (isset($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM `".db('static_pages')."` WHERE `name`='"._es(_strtolower(urldecode($_GET['id'])))."'");
+			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE name='"._es(_strtolower(urldecode($_GET['id'])))."'");
 		}
 		// Change activity
 		if (!empty($page_info["id"])) {
-			db()->UPDATE("static_pages", array("active" => (int)!$page_info["active"]), "`name`='"._es($page_info["name"])."'");
+			db()->UPDATE("static_pages", array("active" => (int)!$page_info["active"]), "name='"._es($page_info["name"])."'");
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("static_pages_names");
 			}
@@ -362,7 +362,7 @@ class yf_static_pages {
 	function view() {
 // TODO
 		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM `".db('static_pages')."` WHERE `name`='"._es(_strtolower(urldecode($_GET["id"])))."'");
+			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE name='"._es(_strtolower(urldecode($_GET["id"])))."'");
 		}
 		if (empty($page_info["id"])) {
 			return _e("No id!");
@@ -392,7 +392,7 @@ class yf_static_pages {
 	function print_view () {
 		// Try to get page contents
 		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM `".db('static_pages')."` WHERE ".(is_numeric($_GET['id']) ? " `id`=".intval($_GET['id']) : " `name`='"._es(_strtolower($_GET["id"]))."'"));
+			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE ".(is_numeric($_GET['id']) ? " id=".intval($_GET['id']) : " name='"._es(_strtolower($_GET["id"]))."'"));
 		}
 		$this->PAGE_NAME	= _prepare_html($page_info["name"]);
 		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
@@ -413,7 +413,7 @@ class yf_static_pages {
 	function pdf_view () {
 		// Try to get page contents
 		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM `".db('static_pages')."` WHERE ".(is_numeric($_GET['id']) ? " `id`=".intval($_GET['id']) : " `name`='"._es(_strtolower($_GET["id"]))."'"));
+			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE ".(is_numeric($_GET['id']) ? " id=".intval($_GET['id']) : " name='"._es(_strtolower($_GET["id"]))."'"));
 		}
 		$this->PAGE_NAME	= _prepare_html($page_info["name"]);
 		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
@@ -434,7 +434,7 @@ class yf_static_pages {
 	function email_page () {
 		// Try to get page contents
 		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM `".db('static_pages')."` WHERE ".(is_numeric($_GET['id']) ? " `id`=".intval($_GET['id']) : " `name`='"._es(_strtolower($_GET["id"]))."'"));
+			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE ".(is_numeric($_GET['id']) ? " id=".intval($_GET['id']) : " name='"._es(_strtolower($_GET["id"]))."'"));
 		}
 		$this->PAGE_NAME	= _prepare_html($page_info["name"]);
 		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);

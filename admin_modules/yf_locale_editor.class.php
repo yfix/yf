@@ -69,7 +69,7 @@ class yf_locale_editor {
 			$this->_langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? " (".$lang_params[1].") " : "");
 		}
 		// Do get current languages from db
-		$Q = db()->query("SELECT * FROM `".db('locale_langs')."` ORDER BY `is_default` DESC, `locale` ASC");
+		$Q = db()->query("SELECT * FROM ".db('locale_langs')." ORDER BY is_default DESC, locale ASC");
 		while ($A = db()->fetch_assoc($Q)) $this->_cur_langs_array[$A["id"]] = $A;
 		// Check if no languages available (initial lang create)
 		if (empty($this->_cur_langs_array)) {
@@ -128,7 +128,7 @@ class yf_locale_editor {
 					"charset"		=> _es($_POST["charset_".$A["id"]]),
 					"active"		=> intval((bool)$_POST["active_".$A["id"]]),
 					"is_default"	=> intval($_POST["default"] == $A["id"]),
-				), "`id`=".intval($A["id"]));
+				), "id=".intval($A["id"]));
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_langs");
@@ -136,12 +136,12 @@ class yf_locale_editor {
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		}
 		// Count number of translated vars for languages
-		$Q = db()->query("SELECT COUNT(`var_id`) AS `num`,`locale` FROM `".db('locale_translate')."` WHERE `value` != '' GROUP BY `locale`");
+		$Q = db()->query("SELECT COUNT(var_id) AS num,locale FROM ".db('locale_translate')." WHERE value != '' GROUP BY locale");
 		while ($A = db()->fetch_assoc($Q)) {
 			$tr_vars[$A["locale"]] = $A["num"];
 		}
 		// Get total number of vars
-		list($total_vars) = db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('locale_vars')."`");
+		list($total_vars) = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('locale_vars')."");
 		// Show languages form
 		foreach ((array)$this->_cur_langs_array as $A) {
 			$replace2 = array(
@@ -228,9 +228,9 @@ class yf_locale_editor {
 	function delete_lang() {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete language
-		db()->query("DELETE FROM `".db('locale_langs')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('locale_langs')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		// Do delete translations
-		db()->query("DELETE FROM `".db('locale_translate')."` WHERE `locale`='"._es($this->_cur_langs_array[$_GET["id"]]["locale"])."'");
+		db()->query("DELETE FROM ".db('locale_translate')." WHERE locale='"._es($this->_cur_langs_array[$_GET["id"]]["locale"])."'");
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_langs");
 		// Return user back
@@ -248,7 +248,7 @@ class yf_locale_editor {
 	function show_vars() {
 		// Prepare SQL
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql = "SELECT * FROM `".db('locale_vars')."` AS `v` WHERE 1=1 ".$filter_sql." ORDER BY ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(`v`.`value` USING utf8), ' ', '_'))" : "`v`.`value`")." ASC";
+		$sql = "SELECT * FROM ".db('locale_vars')." AS v WHERE 1=1 ".$filter_sql." ORDER BY ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))" : "v.value")." ASC";
 		// Connect pager
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		$per_page = conf('admin_per_page');
@@ -261,7 +261,7 @@ class yf_locale_editor {
 		while ($A = db()->fetch_assoc($Q)) $vars_array[$A["id"]] = $A;
 		// Try to get available translations locales
 		if (!empty($vars_array)) {
-			$Q = db()->query("SELECT * FROM `".db('locale_translate')."` WHERE `var_id` IN(".implode(",", array_keys($vars_array)).")");
+			$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE var_id IN(".implode(",", array_keys($vars_array)).")");
 			while ($A = db()->fetch_assoc($Q)) $tr_vars[$A["var_id"]][$A["locale"]] = $A["value"];
 			// Prepare translated locales for vars
 			foreach ((array)$tr_vars as $var_id => $locales_array) {
@@ -322,7 +322,7 @@ class yf_locale_editor {
 		if (!empty($_POST["var_name"])) {
 			$_POST["var_name"] = _strtolower(str_replace(" ", "_", $_POST["var_name"]));
 			$var_info = db()->query_fetch(
-				"SELECT * FROM `".db('locale_vars')."` WHERE LOWER(REPLACE(CONVERT(`value` USING utf8), ' ', '_'))='"._es($_POST["var_name"])."'"
+				"SELECT * FROM ".db('locale_vars')." WHERE LOWER(REPLACE(CONVERT(value USING utf8), ' ', '_'))='"._es($_POST["var_name"])."'"
 			);
 		}
 		if (!empty($_POST["var_name"]) && empty($var_info)) {
@@ -346,7 +346,7 @@ class yf_locale_editor {
 		if (!empty($_GET["id"]) && !is_numeric($_GET["id"])) {
 			$_GET["id"] = urldecode($_GET["id"]);
 			$var_info = db()->query_fetch(
-				"SELECT * FROM `".db('locale_vars')."` WHERE LOWER(REPLACE(CONVERT(`value` USING utf8), ' ', '_'))='"._es($_GET["id"])."'"
+				"SELECT * FROM ".db('locale_vars')." WHERE LOWER(REPLACE(CONVERT(value USING utf8), ' ', '_'))='"._es($_GET["id"])."'"
 			);
 			if ($var_info) {
 				$_GET["id"] = $var_info["id"];
@@ -359,13 +359,13 @@ class yf_locale_editor {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Get variable data
-		$var_info = db()->query_fetch("SELECT * FROM `".db('locale_vars')."` WHERE `id`=".intval($_GET["id"]));
+		$var_info = db()->query_fetch("SELECT * FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"]));
 		if (empty($var_info["id"])) {
 			_re(t("No such var!"));
 			return _e();
 		}
 		// Get translations for the current variable
-		$Q = db()->query("SELECT * FROM `".db('locale_translate')."` WHERE `var_id`=".intval($var_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE var_id=".intval($var_info["id"]));
 		while ($A = db()->fetch_assoc($Q)) $var_tr[$A["locale"]] = $A["value"];
 		// Do save data
 		if (isset($_POST["go"])) {
@@ -382,7 +382,7 @@ class yf_locale_editor {
 					);
 					// Check if record is already exists
 					if (isset($var_tr[$lang_info["locale"]])) {
-						db()->UPDATE("locale_translate", $sql_data, "`var_id`=".intval($var_info["id"])." AND `locale`='"._es($lang_info["locale"])."'");
+						db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($lang_info["locale"])."'");
 					} else {
 						db()->INSERT("locale_translate", $sql_data);
 					}
@@ -430,8 +430,8 @@ class yf_locale_editor {
 		}
 		// Do delete ids
 		if (!empty($ids_to_delete)) {
-			db()->query("DELETE FROM `".db('locale_vars')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
-			db()->query("DELETE FROM `".db('locale_translate')."` WHERE `var_id` IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('locale_vars')." WHERE id IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('locale_translate')." WHERE var_id IN(".implode(",",$ids_to_delete).")");
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
@@ -444,11 +444,11 @@ class yf_locale_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get variable data
 		if (!empty($_GET["id"])) {
-			$var_info = db()->query_fetch("SELECT * FROM `".db('locale_vars')."` WHERE `id`=".intval($_GET["id"]));
+			$var_info = db()->query_fetch("SELECT * FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"]));
 		}
 		if (!empty($var_info["id"])) {
-			db()->query("DELETE FROM `".db('locale_vars')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('locale_translate')."` WHERE `var_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('locale_translate')." WHERE var_id=".intval($_GET["id"]));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -480,9 +480,9 @@ class yf_locale_editor {
 			return js_redirect("./?object=".$_GET["object"]."&action=user_vars". _add_get());
 		}
 
-		$sql = "SELECT * FROM `".db('locale_user_tr')."`";
+		$sql = "SELECT * FROM ".db('locale_user_tr')."";
 // TODO: add filter here with sorting selection, user id, etc
-		$sql .= strlen($filter_sql) ? " WHERE 1 ". $filter_sql : " ORDER BY `user_id` DESC, `name` ASC";
+		$sql .= strlen($filter_sql) ? " WHERE 1 ". $filter_sql : " ORDER BY user_id DESC, name ASC";
 
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", 100);
 
@@ -497,7 +497,7 @@ class yf_locale_editor {
 			}
 		}
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('user')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$users_names[$A["id"]] = $A["email"];
 			}
@@ -505,7 +505,7 @@ class yf_locale_editor {
 		// Check if var exists in the global table
 		$global_vars = array();
 		if (!empty($vars_names)) {
-			foreach ((array)db()->query_fetch_all("SELECT * FROM `".db('locale_vars')."` WHERE `value` IN('".implode("','", $vars_names)."')") as $A) {
+			foreach ((array)db()->query_fetch_all("SELECT * FROM ".db('locale_vars')." WHERE value IN('".implode("','", $vars_names)."')") as $A) {
 				$global_vars[$A["value"]] = $A["id"];
 			}
 		}
@@ -554,7 +554,7 @@ class yf_locale_editor {
 	*/
 	function user_var_edit() {
 		$_GET["id"] = intval($_GET["id"]);
-		$A = db()->query_fetch("SELECT * FROM `".db('locale_user_tr')."` WHERE `id`=".intval($_GET["id"]));
+		$A = db()->query_fetch("SELECT * FROM ".db('locale_user_tr')." WHERE id=".intval($_GET["id"]));
 		if (!$A) {
 			return _e("No id");
 		}
@@ -563,7 +563,7 @@ class yf_locale_editor {
 				"name"			=> _es($_POST["name"]),
 				"translation"	=> _es($_POST["translation"]),
 				"last_update"	=> time(),
-			), "`id`=".intval($_GET["id"]));
+			), "id=".intval($_GET["id"]));
 			return js_redirect("./?object=".$_GET["object"]."&action=user_vars");
 		}
 		$DATA = my_array_merge($A, $_POST);
@@ -589,7 +589,7 @@ class yf_locale_editor {
 	function user_var_delete() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			db()->query("DELETE FROM `".db('locale_user_tr')."` WHERE `id`=".intval($_GET['id']));
+			db()->query("DELETE FROM ".db('locale_user_tr')." WHERE id=".intval($_GET['id']));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -605,7 +605,7 @@ class yf_locale_editor {
 	*/
 	function user_var_push($FORCE_ID = false) {
 		$_GET["id"] = intval($FORCE_ID ? $FORCE_ID : $_GET["id"]);
-		$A = db()->query_fetch("SELECT * FROM `".db('locale_user_tr')."` WHERE `id`=".intval($_GET["id"]));
+		$A = db()->query_fetch("SELECT * FROM ".db('locale_user_tr')." WHERE id=".intval($_GET["id"]));
 		if (!$A) {
 			return _e("No id");
 		}
@@ -625,7 +625,7 @@ class yf_locale_editor {
 			return _e("Empty var translation");
 		}
 		// Get main translation var (if exists)
-		$var_info = db()->query_fetch("SELECT * FROM `".db('locale_vars')."` WHERE `value`='"._es($VAR_NAME)."'");
+		$var_info = db()->query_fetch("SELECT * FROM ".db('locale_vars')." WHERE value='"._es($VAR_NAME)."'");
 		if (!$var_info) {
 			$var_info = array(
 				"value"		=> _es($VAR_NAME),
@@ -646,12 +646,12 @@ class yf_locale_editor {
 			"locale"	=> _es($CUR_LOCALE),
 		);
 		// Get translation for the current locale
-		$Q = db()->query("SELECT * FROM `".db('locale_translate')."` WHERE `var_id`=".intval($var_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE var_id=".intval($var_info["id"]));
 		while ($A = db()->fetch_assoc($Q)) {
 			$var_tr[$A["locale"]] = $A["value"];
 		}
 		if (isset($var_tr[$CUR_LOCALE])) {
-			db()->UPDATE("locale_translate", $sql_data, "`var_id`=".intval($var_info["id"])." AND `locale`='"._es($CUR_LOCALE)."'");
+			db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'");
 		} else {
 			db()->INSERT("locale_translate", $sql_data);
 		}
@@ -738,10 +738,10 @@ class yf_locale_editor {
 					xml_parser_free($xml_parser);
 				}
 				// Get current source vars array
-				$Q = db()->query("SELECT `id`, ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(`value` USING utf8), ' ', '_'))" : "`value`")." AS `val` FROM `".db('locale_vars')."` ORDER BY `val` ASC");
+				$Q = db()->query("SELECT id, ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(value USING utf8), ' ', '_'))" : "value")." AS val FROM ".db('locale_vars')." ORDER BY val ASC");
 				while ($A = db()->fetch_assoc($Q)) $cur_vars_array[$A["id"]] = $A["val"];
 				// Get current locale translation
-				$Q = db()->query("SELECT * FROM `".db('locale_translate')."` WHERE `locale` = '"._es($cur_locale)."'");
+				$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE locale = '"._es($cur_locale)."'");
 				while ($A = db()->fetch_assoc($Q)) $cur_tr_vars[$A["var_id"]] = $A["value"];
 				// Process found vars
 				foreach ((array)$found_vars as $source => $translation) {
@@ -772,7 +772,7 @@ class yf_locale_editor {
 					if (isset($cur_tr_vars[$var_id])) {
 						// Do not update record if not needed
 						if ($IMPORT_MODE == 2 || $translation == $cur_tr_vars[$var_id]) continue;
-						db()->UPDATE("locale_translate", $sql_array, "`var_id`=".intval($var_id)." AND `locale`='"._es($cur_locale)."'");
+						db()->UPDATE("locale_translate", $sql_array, "var_id=".intval($var_id)." AND locale='"._es($cur_locale)."'");
 					} else {
 						db()->INSERT("locale_translate", $sql_array);
 					}
@@ -822,11 +822,11 @@ class yf_locale_editor {
 			);
 			// Get translations
 			if (!$IS_TEMPLATE) {
-				$Q = db()->query("SELECT * FROM `".db('locale_translate')."` WHERE `locale` = '"._es($cur_locale)."'");
+				$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE locale = '"._es($cur_locale)."'");
 				while ($A = db()->fetch_assoc($Q)) $tr_vars[$A["var_id"]] = $A["value"];
 			}
 			// Get vars
-			$Q = db()->query("SELECT * FROM `".db('locale_vars')."` ORDER BY `value` ASC");
+			$Q = db()->query("SELECT * FROM ".db('locale_vars')." ORDER BY value ASC");
 			while ($A = db()->fetch_assoc($Q)) {
 				$source			= $A["value"];
 				$translation	= $IS_TEMPLATE ? $A["value"] : $tr_vars[$A["id"]];
@@ -939,9 +939,9 @@ class yf_locale_editor {
 			$base_url = "http://ajax.googleapis.com/ajax/services/language/translate"."?v=1.0";
 			
 			$vars = db()->query_fetch_all(
-				"SELECT `id`,`value` FROM `".db('locale_vars')."` WHERE `id` NOT IN( 
-					SELECT `var_id` FROM `".db('locale_translate')."` 
-					WHERE `locale` = '".$LOCALE_RES."' AND `value` != '' 
+				"SELECT id,value FROM ".db('locale_vars')." WHERE id NOT IN( 
+					SELECT var_id FROM ".db('locale_translate')." 
+					WHERE locale = '".$LOCALE_RES."' AND value != '' 
 				)");
 			$_info = array();
 			$max_threads = 4;
@@ -969,9 +969,9 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 				}
 				if ($translated) {
 					$Q = db()->query(
-						"DELETE FROM `".db('locale_translate')."` 
-						WHERE `locale` = '"._es($LOCALE_RES)."' 
-							AND `var_id` IN(".implode(",", array_keys($translated)).")"
+						"DELETE FROM ".db('locale_translate')." 
+						WHERE locale = '"._es($LOCALE_RES)."' 
+							AND var_id IN(".implode(",", array_keys($translated)).")"
 					);
 				}
 				foreach ((array)$translated as $_id => $_value) {
@@ -992,7 +992,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 
-		$Q = db()->query("SELECT * FROM `".db('locale_langs')."` ORDER BY `name`");
+		$Q = db()->query("SELECT * FROM ".db('locale_langs')." ORDER BY name");
 		while($A = db()->fetch_assoc($Q)){
 			$locales[$A["locale"]] = $A["name"];
 		}
@@ -1010,7 +1010,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	*/
 	function _get_all_vars_locations() {
 		$used_locations = array();
-		$Q = db()->query("SELECT * FROM `".db('locale_vars')."`");
+		$Q = db()->query("SELECT * FROM ".db('locale_vars')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			foreach ((array)explode(";", $A["location"]) as $cur_location) {
 				$cur_location = trim(substr($cur_location, 0, strpos($cur_location, ":")));
@@ -1041,7 +1041,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	*/
 	function collect_vars () {
 		// Select all known variables from db
-		$Q = db()->query("SELECT * FROM `".db('locale_vars')."` ORDER BY `value` ASC");
+		$Q = db()->query("SELECT * FROM ".db('locale_vars')." ORDER BY value ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_locale_vars[$A["value"]] = $A;
 		}
@@ -1060,7 +1060,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 			);
 			// If variable exists - use update
 			if (isset($this->_locale_vars[$cur_var_name])) {
-				db()->UPDATE("locale_vars", $sql_array, "`id`=".intval($this->_locale_vars[$cur_var_name]['id']));
+				db()->UPDATE("locale_vars", $sql_array, "id=".intval($this->_locale_vars[$cur_var_name]['id']));
 			} else {
 				db()->INSERT("locale_vars", $sql_array);
 			}
@@ -1098,65 +1098,65 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	function cleanup_vars () {
 		// Find empty translations
 		db()->query(
-			"DELETE FROM `".db('locale_translate')."` WHERE `value`=''"
+			"DELETE FROM ".db('locale_translate')." WHERE value=''"
 		);
 		// Delete non-changed translations
 		$Q = db()->query(
-			"SELECT * FROM `".db('locale_vars')."` AS `v`
-				, `".db('locale_translate')."` AS `t` 
-			WHERE `t`.`var_id`=`v`.`id` 
-				AND (`t`.`value`=`v`.`value` OR `t`.`value` = '')"
+			"SELECT * FROM ".db('locale_vars')." AS v
+				, ".db('locale_translate')." AS t 
+			WHERE t.var_id=v.id 
+				AND (t.value=v.value OR t.value = '')"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			// Do delete found records
 			db()->query(
-				"DELETE FROM `".db('locale_translate')."` 
-				WHERE `var_id`=".intval($A["id"])." 
-					AND `locale`='"._es($A["locale"])."'"
+				"DELETE FROM ".db('locale_translate')." 
+				WHERE var_id=".intval($A["id"])." 
+					AND locale='"._es($A["locale"])."'"
 			);
 		}
 		// Special for the ignore case case
 		if ($this->VARS_IGNORE_CASE) {
 			// Delete non-changed translations
 			$Q = db()->query(
-				"SELECT * FROM `".db('locale_vars')."` AS `v`
-					, `".db('locale_translate')."` AS `t` 
-				WHERE `t`.`var_id`=`v`.`id` 
-					AND LOWER(REPLACE(CONVERT(`t`.`value` USING utf8), ' ', '_')) 
-						= LOWER(REPLACE(CONVERT(`v`.`value` USING utf8), ' ', '_'))"
+				"SELECT * FROM ".db('locale_vars')." AS v
+					, ".db('locale_translate')." AS t 
+				WHERE t.var_id=v.id 
+					AND LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) 
+						= LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))"
 			);
 			// Delete non-changed translations
 			while ($A = db()->fetch_assoc($Q)) {
 				db()->query(
-					"DELETE FROM `".db('locale_translate')."` 
-					WHERE `var_id`=".intval($A["id"])." 
-						AND `locale`='"._es($A["locale"])."'"
+					"DELETE FROM ".db('locale_translate')." 
+					WHERE var_id=".intval($A["id"])." 
+						AND locale='"._es($A["locale"])."'"
 				);
 			}
 			// Delete duplicated records
 			$Q = db()->query(
-				"SELECT `id` FROM `".db('locale_vars')."`
-				GROUP BY LOWER(REPLACE(CONVERT(`value` USING utf8), ' ', '_')) 
+				"SELECT id FROM ".db('locale_vars')."
+				GROUP BY LOWER(REPLACE(CONVERT(value USING utf8), ' ', '_')) 
 				HAVING COUNT(*) > 1"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				db()->query(
-					"DELETE FROM `".db('locale_vars')."` WHERE `id`=".intval($A["id"])
+					"DELETE FROM ".db('locale_vars')." WHERE id=".intval($A["id"])
 				);
 			}
 		}
 		// Delete translations without parents
 		db()->query(
-			"DELETE FROM `".db('locale_translate')."` 
-			WHERE `var_id` NOT IN( 
-				SELECT `id` FROM `".db('locale_vars')."` 
+			"DELETE FROM ".db('locale_translate')." 
+			WHERE var_id NOT IN( 
+				SELECT id FROM ".db('locale_vars')." 
 			)"
 		);
 		// Delete parents without translations
 		db()->query(
-			"DELETE FROM `".db('locale_vars')."` 
-			WHERE `id` NOT IN( 
-				SELECT `var_id` FROM `".db('locale_translate')."` 
+			"DELETE FROM ".db('locale_vars')." 
+			WHERE id NOT IN( 
+				SELECT var_id FROM ".db('locale_translate')." 
 			)"
 		);
 		// Return user back
@@ -1331,7 +1331,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Check if we found default locale
 		if (!empty($locale)) {
 			// Select all known variables from db
-			$Q = db()->query("SELECT * FROM `".db('locale_vars')."` WHERE `id` NOT IN(SELECT `var_id` FROM `".db('locale_translate')."` WHERE `locale`='"._es($locale)."')");
+			$Q = db()->query("SELECT * FROM ".db('locale_vars')." WHERE id NOT IN(SELECT var_id FROM ".db('locale_translate')." WHERE locale='"._es($locale)."')");
 			while ($A = db()->fetch_assoc($Q)) {
 				// Do create empty records
 				db()->INSERT("locale_translate", array(
@@ -1396,37 +1396,37 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		$string = str_replace("_", "\_", str_replace(" ", "_", $SF["search_string"]));
 		// Generate filter for the common fileds
 		if ($SF["search_lang"] && $SF["search_lang"] != "all") {
-			$tr_sql .= " AND `t`.`locale`='"._es($SF["search_lang"])."' \r\n";
+			$tr_sql .= " AND t.locale='"._es($SF["search_lang"])."' \r\n";
 		}
 		if ($SF["search_in"] && $SF["search_lang"] != "all") {
 			if ($SF["search_in"] == "translated") {
-				$tr_sql .= " AND `t`.`value` != '' \r\n";
+				$tr_sql .= " AND t.value != '' \r\n";
 			} elseif ($SF["search_in"] == "untranslated") {
-				$tr_sql .= " AND (`t`.`value` = '' OR LOWER(REPLACE(CONVERT(`t`.`value` USING utf8), ' ', '_')) = LOWER(REPLACE(CONVERT(`v`.`value` USING utf8), ' ', '_'))) \r\n";
+				$tr_sql .= " AND (t.value = '' OR LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) = LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))) \r\n";
 			}
 		}
 		// Search in transtions
 		if ($SF["search_string"] && $SF["search_type"] == "translations") {
 			if (!$SF["case_sens"]) {
-				$tr_sql .= " AND LOWER(REPLACE(CONVERT(`t`.`value` USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
+				$tr_sql .= " AND LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
 			} else {
-				$tr_sql .= " AND `t`.`value` LIKE '"._es($string)."%' \r\n";
+				$tr_sql .= " AND t.value LIKE '"._es($string)."%' \r\n";
 			}
 		}
 		if (!empty($tr_sql)) {
-			$sql .= " AND `v`.`id` IN( SELECT `t`.`var_id` FROM `".db('locale_translate')."` AS `t` WHERE 1=1 ".$tr_sql.") \r\n";
+			$sql .= " AND v.id IN( SELECT t.var_id FROM ".db('locale_translate')." AS t WHERE 1=1 ".$tr_sql.") \r\n";
 		}
 		// Search in vars
 		if ($SF["search_string"] && $SF["search_type"] != "translations") {
 			if (!$SF["case_sens"]) {
-				$sql .= " AND LOWER(REPLACE(CONVERT(`v`.`value` USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
+				$sql .= " AND LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
 			} else {
-				$sql .= " AND `v`.`value` LIKE '"._es($string)."%' \r\n";
+				$sql .= " AND v.value LIKE '"._es($string)."%' \r\n";
 			}
 		}
 		// Sorting here
 		if ($SF["sort_by"]) {
-		 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		}
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) {
 			$sql .= " ".$SF["sort_order"]." \r\n";
@@ -1693,7 +1693,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Do get current languages from db
 	*/
 	function _get_locales () {
-		$Q = db()->query("SELECT * FROM `".db('locale_langs')."` ORDER BY `is_default` DESC, `locale` ASC");
+		$Q = db()->query("SELECT * FROM ".db('locale_langs')." ORDER BY is_default DESC, locale ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[$A["locale"]] = $A["name"];
 		}

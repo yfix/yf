@@ -37,12 +37,12 @@ class yf_admin_groups {
 				break;
 			}
 		}
-		$Q = db()->query("SELECT * FROM `".db('menus')."` WHERE `type`='admin' AND `active`='1' LIMIT 1");
+		$Q = db()->query("SELECT * FROM ".db('menus')." WHERE type='admin' AND active='1' LIMIT 1");
 		while ($A = db()->fetch_assoc($Q)) {
 			$menu_id = $A["id"];
 		}
 
-		$sql = "SELECT * FROM `".db('admin_groups')."` ORDER BY `id` ASC";
+		$sql = "SELECT * FROM ".db('admin_groups')." ORDER BY id ASC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$Q = db()->query($sql. $add_sql);
@@ -125,7 +125,7 @@ class yf_admin_groups {
 			return _e(t("No id"));
 		}
 		// Get group info
-		$group_info = db()->query_fetch("SELECT * FROM `".db('admin_groups')."` WHERE `id`=".intval($_GET["id"]));
+		$group_info = db()->query_fetch("SELECT * FROM ".db('admin_groups')." WHERE id=".intval($_GET["id"]));
 		if (empty($group_info)) {
 			return _e(t("No such group"));
 		}
@@ -144,7 +144,7 @@ class yf_admin_groups {
 					"name" 			=> _es($_POST["name"]),
 					"active"		=> intval((bool)$_POST["active"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
-				), "`id`=".intval($_GET['id']));
+				), "id=".intval($_GET['id']));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("admin_groups");
@@ -188,7 +188,7 @@ class yf_admin_groups {
 		}
 		// Do delete records
 		if (!empty($_GET['id'])) {
-			db()->query("DELETE FROM `".db('admin_groups')."` WHERE `id`=".intval($_GET['id'])." LIMIT 1");
+			db()->query("DELETE FROM ".db('admin_groups')." WHERE id=".intval($_GET['id'])." LIMIT 1");
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -211,7 +211,7 @@ class yf_admin_groups {
 		$_GET['id'] = intval($_GET['id']);
 		// Get group info
 		if (!empty($_GET['id'])) {
-			$group_info = db()->query_fetch("SELECT * FROM `".db('admin_groups')."` WHERE `id`=".intval($_GET["id"]));
+			$group_info = db()->query_fetch("SELECT * FROM ".db('admin_groups')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do not allow disabling group 1
 		if ($_GET["id"] == 1) {
@@ -221,7 +221,7 @@ class yf_admin_groups {
 		if (!empty($group_info)) {
 			db()->UPDATE("admin_groups", array(
 				"active"	=> intval(!$group_info["active"]),
-			), "`id`=".intval($_GET['id']));
+			), "id=".intval($_GET['id']));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{

@@ -62,7 +62,7 @@ class yf_admin_modules {
 	*/
 	function show () {
 		// Connect pager
-		$sql = "SELECT * FROM `".db('admin_modules')."` ORDER BY `name` ASC";
+		$sql = "SELECT * FROM ".db('admin_modules')." ORDER BY name ASC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", $this->MODULES_PER_PAGE);
 		// Get records from db
 		$Q = db()->query($sql.$add_sql);
@@ -128,9 +128,9 @@ class yf_admin_modules {
 	function mass_action () {
 		if (!empty($_POST["names"])) {
 			if ($_POST["activate"]) {
-				db()->UPDATE("admin_modules", array("active" => 1), "`name` IN('".implode("','", _es($_POST["names"]))."')");
+				db()->UPDATE("admin_modules", array("active" => 1), "name IN('".implode("','", _es($_POST["names"]))."')");
 			} elseif ($_POST["deactivate"]) {
-				db()->UPDATE("admin_modules", array("active" => 0), "`name` IN('".implode("','", _es($_POST["names"]))."')");
+				db()->UPDATE("admin_modules", array("active" => 0), "name IN('".implode("','", _es($_POST["names"]))."')");
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
@@ -155,11 +155,11 @@ class yf_admin_modules {
 	function change_activity () {
 		// Try to find such module in db
 		if (!empty($_GET["id"])) {
-			$module_info = db()->query_fetch("SELECT * FROM `".db('admin_modules')."` WHERE `name`='"._es($_GET["id"])."' LIMIT 1");
+			$module_info = db()->query_fetch("SELECT * FROM ".db('admin_modules')." WHERE name='"._es($_GET["id"])."' LIMIT 1");
 		}
 		// Do change activity status
 		if (!empty($module_info)) {
-			db()->UPDATE("admin_modules", array("active" => (int)!$module_info["active"]), "`id`=".intval($module_info["id"]));
+			db()->UPDATE("admin_modules", array("active" => (int)!$module_info["active"]), "id=".intval($module_info["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("admin_modules");
@@ -179,20 +179,20 @@ class yf_admin_modules {
 	function refresh_modules_list () {
 		// Cleanup duplicate records
 		$Q = db()->query(
-			"SELECT `name`, COUNT(*) AS `num` 
-			FROM `".db('admin_modules')."` 
-			GROUP BY `name` 
-			HAVING `num` > 1"
+			"SELECT name, COUNT(*) AS num 
+			FROM ".db('admin_modules')." 
+			GROUP BY name 
+			HAVING num > 1"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			db()->query(
-				"DELETE FROM `".db('admin_modules')."` 
-				WHERE `name`='"._es($A["name"])."' 
+				"DELETE FROM ".db('admin_modules')." 
+				WHERE name='"._es($A["name"])."' 
 				LIMIT ".intval($A["num"] - 1)
 			);
 		}
 		// Get current modules list
-		$Q = db()->query("SELECT * FROM `".db('admin_modules')."`");
+		$Q = db()->query("SELECT * FROM ".db('admin_modules')."");
 		while ($A = db()->fetch_assoc($Q)) $all_admin_modules_array[$A["name"]] = $A["name"];
 		// Do parse modules dir
 		$refreshed_modules = $this->_get_modules_from_files(1);
@@ -211,7 +211,7 @@ class yf_admin_modules {
 		foreach ((array)$all_admin_modules_array as $cur_module_name) {
 			// Do delete missing modules records
 			if (!isset($refreshed_modules[$cur_module_name])) {
-				db()->query("DELETE FROM `".db('admin_modules')."` WHERE `name`='"._es($cur_module_name)."'");
+				db()->query("DELETE FROM ".db('admin_modules')." WHERE name='"._es($cur_module_name)."'");
 			}
 		}
 		// Refresh system cache
@@ -264,12 +264,12 @@ class yf_admin_modules {
 			// Do update table
 			if (!empty($sql_array)) {
 				ksort($sql_array);
-				db()->query("TRUNCATE TABLE `".db('admin_modules')."`");
-				db()->query("INSERT INTO `".db('admin_modules')."` (`name`,`active`) VALUES ".implode(",", $sql_array));
+				db()->query("TRUNCATE TABLE ".db('admin_modules')."");
+				db()->query("INSERT INTO ".db('admin_modules')." (name,active) VALUES ".implode(",", $sql_array));
 			}
 		// Do get installed modules list
 		} else {
-			$Q = db()->query("SELECT * FROM `".db('admin_modules')."` WHERE `active`='1'");
+			$Q = db()->query("SELECT * FROM ".db('admin_modules')." WHERE active='1'");
 			while ($A = db()->fetch_assoc($Q)) $admin_modules_array[$A["name"]] = $A["name"];
 		}
 		// Sort modules list

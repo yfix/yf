@@ -110,7 +110,7 @@ class yf_db_manager {
 	function structure () {
 		$table_name = DB_PREFIX.$_GET["table"];
 		
-		$Q = db()->query("SHOW FULL COLUMNS FROM `".$table_name."`");
+		$Q = db()->query("SHOW FULL COLUMNS FROM ".$table_name."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$table_info[] = $A;
 			
@@ -130,7 +130,7 @@ class yf_db_manager {
 		}
 		
 		// show index for table
-		$Q = db()->query("SHOW INDEX FROM `".$table_name."`");
+		$Q = db()->query("SHOW INDEX FROM ".$table_name."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$table_index[] = $A;
 		}
@@ -162,7 +162,7 @@ class yf_db_manager {
 		$tables = explode(",", $tables);
 		
 		foreach ((array)$tables as $table){
-			db()->query("TRUNCATE `".$table."`");
+			db()->query("TRUNCATE ".$table."");
 		}
 		
 		echo "<b>truncate <span style='color:green'>complete!</span></b>";
@@ -182,7 +182,7 @@ class yf_db_manager {
 		$tables = explode(",", $tables);
 		
 		foreach ((array)$tables as $table){
-			db()->query("DROP TABLE `".$table."`");
+			db()->query("DROP TABLE ".$table."");
 		}
 		
 		echo "<b>drop <span style='color:green'>complete!</span></b>";
@@ -340,7 +340,7 @@ class yf_db_manager {
 	*/
 	function show_create_table ($return_text = false) {
 		$table_name = DB_PREFIX.$_GET["table"];
-		$A = db()->query_fetch("SHOW CREATE TABLE `"._es($table_name)."`");
+		$A = db()->query_fetch("SHOW CREATE TABLE "._es($table_name)."");
 		$text = $A["Create Table"];
 		// Process template
 		$replace = array(
@@ -1026,7 +1026,7 @@ class yf_db_manager {
 					}
 					// Backquotes or no backslashes before quotes: it's indeed the
 					// end of the string -> exit the loop
-					else if ($string_start == '`' || $sql[$i-1] != '\\') {
+					else if ($string_start == '' || $sql[$i-1] != '\\') {
 						$string_start	  = '';
 						$in_string		 = FALSE;
 						break;
@@ -1078,7 +1078,7 @@ class yf_db_manager {
 				}
 			}
 			// ... then check for start of a string,...
-			else if (($char == '"') || ($char == '\'') || ($char == '`')) {
+			else if (($char == '"') || ($char == '\'') || ($char == '')) {
 				$in_string	= TRUE;
 				$nothing	  = FALSE;
 				$string_start = $char;
