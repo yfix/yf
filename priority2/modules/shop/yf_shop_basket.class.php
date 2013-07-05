@@ -12,7 +12,7 @@ class yf_shop_basket{
 			"quantity"	=> 1,
 		);
 		*/
-		$basket = &$_SESSION["SHOP_basket"];
+		$basket_contents = module('shop')->_basket_api()->get_all();
 		// Save basket contents
 		if (!empty($_POST["quantity"]) && !module('shop')->_basket_is_processed) {
 			module('shop')->_basket_save();
@@ -20,7 +20,7 @@ class yf_shop_basket{
 		}
 		// Get products from db
 		$products_ids = array();
-		foreach ((array)$basket as $_item_id => $_info) {
+		foreach ((array)$basket_contents as $_item_id => $_info) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
 			}
@@ -34,12 +34,12 @@ class yf_shop_basket{
 		foreach ((array)$products_infos as $_info) {
 			$_product_id = $_info["id"];
 			$_info["_group_price"] = $group_prices[$_product_id][module('shop')->USER_GROUP];
-			$quantity = $basket[$_info["id"]]["quantity"];
+			$quantity = $basket_contents[$_info["id"]]["quantity"];
 			$price = module('shop')->_product_get_price($_info);
 
 			$dynamic_atts = array();
 			foreach ((array)$products_atts[$_product_id] as $_attr_id => $_attr_info) {
-				if ($basket[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
+				if ($basket_contents[$_product_id]["atts"][$_attr_info["name"]] == $_attr_info["value"]) {
 					$dynamic_atts[$_attr_id] = "- ".$_attr_info["name"]." ".$_attr_info["value"];
 					$price += $_attr_info["price"];
 				}
