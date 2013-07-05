@@ -32,7 +32,7 @@ class yf_shop_order_view{
 		}
 		if (!empty($products_ids)) {
 			$products_infos = db()->query_fetch_all("SELECT * FROM ".db('shop_products')." WHERE id IN(".implode(",", $products_ids).") AND active='1'");
-			$products_atts	= module('shop')->_get_products_attributes($products_ids);
+			$products_atts	= module('shop')->_products_get_attributes($products_ids);
 		}
 		foreach ((array)$order_items as $_info) {
 			$_product = $products_infos[$_info["product_id"]];

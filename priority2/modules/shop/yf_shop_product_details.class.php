@@ -29,7 +29,7 @@ class yf_shop_product_details{
 		$group_prices = module("shop")->_get_group_prices($product_info["id"]);
 		$product_info["_group_price"] = $group_prices[module("shop")->USER_GROUP];
 		module("shop")->_product_info = $product_info;
-		$atts = module("shop")->_get_products_attributes($product_info["id"]);
+		$atts = module("shop")->_products_get_attributes($product_info["id"]);
 		$thumb_path = $product_info["url"]."_".$product_info["id"]."_".$product_info["image"].module("shop")->THUMB_SUFFIX.".jpg";
 		$img_path = $product_info["url"]."_".$product_info["id"]."_".$product_info["image"].module("shop")->FULL_IMG_SUFFIX.".jpg";
 		if ($product_info["image"] == 0) {

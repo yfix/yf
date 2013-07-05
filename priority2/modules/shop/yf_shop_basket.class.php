@@ -27,7 +27,7 @@ class yf_shop_basket{
 		}
 		if (!empty($products_ids)) {
 			$products_infos = db()->query_fetch_all("SELECT * FROM ".db('shop_products')." WHERE active='1' AND id IN(".implode(",", $products_ids).")");
-			$products_atts	= module('shop')->_get_products_attributes($products_ids);
+			$products_atts	= module('shop')->_products_get_attributes($products_ids);
 			$group_prices	= module('shop')->_get_group_prices($products_ids);
 		}
 		$total_price = 0;

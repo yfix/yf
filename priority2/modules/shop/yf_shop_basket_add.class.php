@@ -9,7 +9,7 @@ class yf_shop_basket_add{
 		if (!empty($A)) {
 			$_GET['id'] = $A['id'];
 		}
-		$atts = module('shop')->_get_products_attributes($A["id"]);
+		$atts = module('shop')->_products_get_attributes($A["id"]);
 		// Save basket contents
 		if ($_GET["id"]) {
 			$_GET["id"] = intval($_GET["id"]);

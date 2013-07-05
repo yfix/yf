@@ -329,12 +329,12 @@ class yf_shop extends yf_module {
 		return _class('shop__products_bestsellers', 'modules/shop/')->_products_bestsellers();
 	}
 
-	function _show_shop_last_viewed() {
-		return _class('shop__show_shop_last_viewed', 'modules/shop/')->_show_shop_last_viewed();
+	function _products_last_viewed() {
+		return _class('shop__products_last_viewed', 'modules/shop/')->_products_last_viewed();
 	}
 
-	function _get_products_attributes($products_ids = array()) {
-		return _class('shop__get_products_attributes', 'modules/shop/')->_get_products_attributes($products_ids);
+	function _products_get_attributes($products_ids = array()) {
+		return _class('shop__products_get_attributes', 'modules/shop/')->_products_get_attributes($products_ids);
 	}
 
 	function _get_select_attributes($atts = array()) {

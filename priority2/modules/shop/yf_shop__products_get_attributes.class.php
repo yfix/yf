@@ -1,7 +1,7 @@
 <?php
-class yf_shop__get_products_attributes{
+class yf_shop__products_get_attributes{
 
-	function _get_products_attributes($products_ids = array()) {
+	function _products_get_attributes($products_ids = array()) {
 		if (is_numeric($products_ids)) {
 			$return_single_id = $products_ids;
 			$products_ids = array($products_ids);
