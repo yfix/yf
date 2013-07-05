@@ -237,12 +237,12 @@ class yf_shop extends yf_module {
 		return _class('shop_order_validate_data', 'modules/shop/')->order_validate_data($FORCE_DISPLAY_FORM);
 	}
 
-	function view_order($FORCE_DISPLAY_FORM = false) {
-		return _class('shop_view_order', 'modules/shop/')->view_order($FORCE_DISPLAY_FORM);
+	function order_view($FORCE_DISPLAY_FORM = false) {
+		return _class('shop_order_view', 'modules/shop/')->order_view($FORCE_DISPLAY_FORM);
 	}
 
-	function delete_order($FORCE_DISPLAY_FORM = false) {
-		return _class('shop_delete_order', 'modules/shop/')->delete_order($FORCE_DISPLAY_FORM);
+	function order_delete($FORCE_DISPLAY_FORM = false) {
+		return _class('shop_order_delete', 'modules/shop/')->order_delete($FORCE_DISPLAY_FORM);
 	}
 
 	function _order_step_start($FORCE_DISPLAY_FORM = false) {

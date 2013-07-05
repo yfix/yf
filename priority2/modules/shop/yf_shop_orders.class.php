@@ -7,7 +7,7 @@ class yf_shop_orders{
 				module('shop')->order_validate_data();
 				// Display next form if we have no errors
 				if (!common()->_error_exists()) {
-					return module('shop')->view_order(true);
+					return module('shop')->order_view(true);
 				}
 			}
 			$items[] = array(
@@ -30,7 +30,7 @@ class yf_shop_orders{
 			}
 			foreach ((array)$orders_info as $v){
 				if ($v["status"] == "pending" or $v["status"] == "pending payment" ){
-					$del = "./?object=shop&action=delete_order&id=".$v["id"];
+					$del = "./?object=shop&action=order_delete&id=".$v["id"];
 				} else {
 					$del = "";
 				}
@@ -42,7 +42,7 @@ class yf_shop_orders{
 					"user_name"	=> _display_name($user_infos[$v["user_id"]]),
 					"status"	=> $v["status"],
 					"delete_url"=> $del,
-					"view_url"	=> "./?object=shop&action=view_order&id=".$v["id"],
+					"view_url"	=> "./?object=shop&action=order_view&id=".$v["id"],
 				);
 			}
 		}

@@ -1,10 +1,10 @@
 <?php
-class yf_shop_delete_order{
+class yf_shop_order_delete{
 
 	/**
 	* Delete order
 	*/
-	function _delete_order() {
+	function _order_delete() {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current info
 		if (!empty($_GET["id"])) {

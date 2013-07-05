@@ -1,10 +1,10 @@
 <?php
-class yf_shop_view_order{
+class yf_shop_order_view{
 
 	/**
 	* view orders
 	*/
-	function _view_order() {
+	function _order_view() {
 		if ($_POST["order_id"]) {
 			$_GET["id"] = intval($_POST["order_id"]);
 		} else {
