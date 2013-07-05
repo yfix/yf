@@ -14,7 +14,7 @@ class yf_user_stats {
 	//-----------------------------------------------------------------------------
 	// Framework constructor
 	function _init () {
-		$this->USER_ID = $_SESSION['user_id'];
+		main()->USER_ID = $_SESSION['user_id'];
 		// Get user account type
 		$this->_account_types	= main()->get_data("account_types");
 		// Get unified items stats
@@ -116,8 +116,8 @@ class yf_user_stats {
 			return false;
 		}
 		// Try to get user id from session
-		if (empty($user_id) && !empty($this->USER_ID)) {
-			$user_id = $this->USER_ID;
+		if (empty($user_id) && !empty(main()->USER_ID)) {
+			$user_id = main()->USER_ID;
 		}
 		$OBJ = main()->init_class("user_stats_refresh", "classes/user_stats/");
 		return is_object($OBJ) ? $OBJ->_update_user_stats($user_id, $force_user_info) : "";

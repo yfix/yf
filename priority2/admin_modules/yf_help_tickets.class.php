@@ -18,7 +18,7 @@ class yf_help_tickets {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function _init () {
-		$this->USER_ID = intval($_SESSION["admin_id"]);
+		main()->USER_ID = intval($_SESSION["admin_id"]);
 		// Array of boxes
 		$this->_boxes = array(
 			"admin_priority"	=> 'select_box("admin_priority",$this->_priorities,		$selected, "", 2, "", false)',
@@ -575,7 +575,7 @@ class yf_help_tickets {
 			$replace = array(
 				"answer_form_action"=> "./?object=".$_GET["object"]."&action=".__FUNCTION__."&id=".$answer_info["id"],
 				"error_message"		=> $error_message,
-				"user_id"			=> intval($this->USER_ID),
+				"user_id"			=> intval(main()->USER_ID),
 				"user_name"			=> _prepare_html(_display_name($user_info)),
 				"user_avatar"		=> _show_avatar($answer_info["user_id"], $user_info, 1, 1),
 				"user_profile_link"	=> $answer_info["user_id"] ? "./?object=account&user_id=".$answer_info["user_id"] : "",

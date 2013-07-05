@@ -230,7 +230,7 @@ $sql = db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["i
 _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 		// Save revision
 		db()->INSERT("revisions", array(
-			"user_id"		=> intval($this->USER_ID),
+			"user_id"		=> intval(main()->USER_ID),
 			"object_name"	=> _es("locale_var"),
 			"object_id"		=> _es($var_info["id"]),
 			"old_text"		=> _es($var_tr[$CUR_LOCALE]),
@@ -285,7 +285,7 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 				file_put_contents($locale_stpl_path, $_POST["text"]);
 				// Save revision
 				db()->INSERT("revisions", array(
-					"user_id"		=> intval($this->USER_ID),
+					"user_id"		=> intval(main()->USER_ID),
 					"object_name"	=> _es("locale_stpl"),
 					"object_id"		=> _es($STPL_NAME),
 					"old_text"		=> _es($text),
@@ -355,7 +355,7 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 	*/
 	function find_users() {
 		main()->NO_GRAPHICS = true;
-		if (!$_POST || !$this->USER_ID || IS_ADMIN != 1) {
+		if (!$_POST || !main()->USER_ID || IS_ADMIN != 1) {
 			echo "";
 		}
 		// Continue execution
@@ -375,7 +375,7 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 	*/
 	function find_ids() {
 		main()->NO_GRAPHICS = true;
-		if (!$_POST || !$this->USER_ID || IS_ADMIN != 1/* || !strlen($_POST["param"])*/) {
+		if (!$_POST || !main()->USER_ID || IS_ADMIN != 1/* || !strlen($_POST["param"])*/) {
 			echo "";
 			exit;
 		}

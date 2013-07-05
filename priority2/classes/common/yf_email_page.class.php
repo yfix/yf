@@ -29,7 +29,7 @@ class yf_email_page {
 	function yf_email_page () {
 		$this->_user_info = &main()->USER_INFO;
 		if (!$this->_user_info) {
-			$this->_user_info = user($this->USER_ID);
+			$this->_user_info = user(main()->USER_ID);
 		}
 	}
 

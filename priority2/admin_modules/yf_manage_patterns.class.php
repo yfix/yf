@@ -54,7 +54,7 @@ class yf_manage_patterns{
 						"desc"				=> _es($_POST["description"]),
 						"pattern"			=> _es($_POST["pattern"]),
 						"replace_pattern"	=> _es($_POST["replace_pattern"]),
-					//	"user_id"			=> $this->USER_ID,
+					//	"user_id"			=> main()->USER_ID,
 					));
 				}else{
 					db()->UPDATE("grab_patterns", array(

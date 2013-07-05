@@ -16,7 +16,7 @@ class yf_log_user_errors_viewer {
 	* Constructor (PHP 4.x)
 	*/
 	function _init () {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
 		// Get admin groups

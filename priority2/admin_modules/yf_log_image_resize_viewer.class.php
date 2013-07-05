@@ -26,7 +26,7 @@ class yf_log_image_resize_viewer {
 	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
 		// Prepare filter data

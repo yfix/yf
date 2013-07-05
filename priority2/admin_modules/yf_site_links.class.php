@@ -17,10 +17,10 @@ class yf_site_links {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function _init() {
-		$this->USER_ID = intval($_GET["user_id"]);
+		main()->USER_ID = intval($_GET["user_id"]);
 		// Get user info
-		if (!empty($this->USER_ID)) {
-			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".$this->USER_ID);
+		if (!empty(main()->USER_ID)) {
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".main()->USER_ID);
 		}
 		$this->_boxes = array(
 			"link_type"		=> 'radio_box("link_type",	$this->_link_types,		$selected, false, 2, "", false)',
@@ -206,7 +206,7 @@ class yf_site_links {
 	// Main user account
 	function account () {
 		// Get user links
-		$Q = db()->query("SELECT * FROM ".db('links_links')." WHERE user_id=".$this->USER_ID);
+		$Q = db()->query("SELECT * FROM ".db('links_links')." WHERE user_id=".main()->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) $links[$A["id"]] = $A;
 		// Process links
 		foreach ((array)$links as $link_id => $A) {
@@ -378,7 +378,7 @@ class yf_site_links {
 	//-----------------------------------------------------------------------------
 	// Edit user info form
 	function edit_user () {
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			$replace = array(
 				"form_action"	=> "./?object=".$_GET["object"]."&action=update_user"._add_get(),
 				"name"			=> _display_name($this->_user_info),

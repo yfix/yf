@@ -14,7 +14,7 @@ class yf_members {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function _init() {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		if (!$this->USE_FILTER) {
 			return true;
 		}

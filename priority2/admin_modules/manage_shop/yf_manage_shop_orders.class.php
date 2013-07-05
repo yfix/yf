@@ -177,7 +177,7 @@ class yf_manage_shop_orders {
 			$total_price += $_info["price"] * $quantity;
 		}
 		$total_price = $order_info["total_sum"];
-		if($this->USER_ID) {
+		if(main()->USER_ID) {
 			$order_info = my_array_merge(module('manage_shop')->_user_info, $order_info);
 		}else {
 			$order_info ["email"]= $order_info["email"];

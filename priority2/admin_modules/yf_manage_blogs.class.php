@@ -12,7 +12,7 @@ class yf_manage_blogs {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_manage_blogs() {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
 		// Array of boxes
@@ -139,7 +139,7 @@ class yf_manage_blogs {
 		$replace = array(
 			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".intval($_GET["id"]),
 			"error_message"		=> $error_message,
-			"user_id"			=> intval($this->USER_ID),
+			"user_id"			=> intval(main()->USER_ID),
 			"user_name"			=> _prepare_html(_display_name($user_info)),
 			"user_avatar"		=> _show_avatar($post_info["user_id"], $user_info, 1, 1),
 			"user_profile_link"	=> _profile_link($post_info["user_id"]),

@@ -323,7 +323,7 @@ class yf_forum {
 		elseif ($_GET["action"] == "view_topic")	$type = "topic";
 		// Prepare template
 		$replace = array(
-			"user_name"			=> $this->USER_ID ? $this->USER_NAME : t("Guest"),
+			"user_name"			=> main()->USER_ID ? $this->USER_NAME : t("Guest"),
 			"menu"				=> tpl()->parse("forum/menu_member"),
 			"items"				=> $items,
 			"version"			=> $this->VERSION,
@@ -421,7 +421,7 @@ class yf_forum {
 	*/
 	function _forum_new_msg ($forum_id) {
 // TODO: convert into new "track new msgs" system
-		return $this->USER_ID ? (is_array($this->topic_watch) && in_array($forum_id, $this->topic_watch) ? "N" : "-") : "-";
+		return main()->USER_ID ? (is_array($this->topic_watch) && in_array($forum_id, $this->topic_watch) ? "N" : "-") : "-";
 	}
 
 	/**
@@ -429,17 +429,17 @@ class yf_forum {
 	*/
 	function _topic_new_msg ($topic_id) {
 // TODO: convert into new "track new msgs" system
-		return $this->USER_ID ? (is_array($this->topic_watch) && array_key_exists($topic_id, $this->topic_watch) ? "N" : "-") : "-";
+		return main()->USER_ID ? (is_array($this->topic_watch) && array_key_exists($topic_id, $this->topic_watch) ? "N" : "-") : "-";
 	}
 
 	/**
 	* Verify session variables
 	*/
 	function _verify_session_vars () {
-		$this->USER_ID	= $_SESSION["admin_id"];
+		main()->USER_ID	= $_SESSION["admin_id"];
 		$this->GROUP_ID = $_SESSION["admin_group"];
 
-		$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($this->USER_ID));
+		$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval(main()->USER_ID));
 
 		$this->USER_NAME = $admin_info["first_name"]." ".$admin_info["last_name"];
 		$admin_groups = main()->get_data("admin_groups");

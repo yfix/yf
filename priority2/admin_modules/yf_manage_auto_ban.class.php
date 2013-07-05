@@ -10,7 +10,7 @@ class yf_manage_auto_ban {
 	//-----------------------------------------------------------------------------
 	// Framework constructor
 	function _init() {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Array of select boxes to process
 		$this->_boxes = array(
 			"ban_ads"			=> 'radio_box("ban_ads",		$this->_trigger,	$selected, false, 2, "", false)',

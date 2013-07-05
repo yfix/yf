@@ -19,7 +19,7 @@ class yf_manage_articles extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_manage_articles() {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
 		// Array of boxes

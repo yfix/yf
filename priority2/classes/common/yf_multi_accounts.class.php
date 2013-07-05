@@ -20,8 +20,8 @@ class yf_multi_accounts {
 	* Multi-accounts checks
 	*/
 	function _check ($target_user_id = 0, $source_user_id = 0) {
-		if (empty($source_user_id) && !empty($this->USER_ID)) {
-			$source_user_id = $this->USER_ID;
+		if (empty($source_user_id) && !empty(main()->USER_ID)) {
+			$source_user_id = main()->USER_ID;
 		}
 		if (empty($target_user_id) || empty($source_user_id)) {
 			return false;

@@ -10,7 +10,7 @@ class yf_admin_messages {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_admin_messages () {
-		$this->USER_ID = intval($_GET['user_id']);
+		main()->USER_ID = intval($_GET['user_id']);
 		// Get user account type
 		$this->_account_types	= main()->get_data("account_types");
 	}
@@ -19,7 +19,7 @@ class yf_admin_messages {
 	// Default method
 	function show () {
 		// Show all messages if no user selected
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return $this->_view_all_messages();
 		} else {
 			return $this->_show_for_user();
@@ -29,7 +29,7 @@ class yf_admin_messages {
 	//-----------------------------------------------------------------------------
 	// Display popup window for adding admin message to the specified user id
 	function show_popup () {
-		$user_id = $this->USER_ID;
+		$user_id = main()->USER_ID;
 		// Get user info
 		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($user_id));
 		if (empty($user_info)) {
@@ -50,10 +50,10 @@ class yf_admin_messages {
 	// Do add message for the specified user
 	function add () {
 		// Check for user_id
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _e("User ID is required");
 		}
-		$user_id = $this->USER_ID;
+		$user_id = main()->USER_ID;
 		// Get user info
 		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($user_id));
 		if (empty($user_info)) {
@@ -83,7 +83,7 @@ class yf_admin_messages {
 	// Display link to the popup URL to send message to the given user_id
 	function _popup_link ($user_id = 0) {
 		if (empty($user_id)) {
-			$user_id = $this->USER_ID;
+			$user_id = main()->USER_ID;
 		}
 		return process_url("./?object=".__CLASS__."&action=show_popup&user_id=".intval($user_id));
 	}
@@ -95,7 +95,7 @@ class yf_admin_messages {
 			$user_id = $user_id["user_id"];
 		}
 		if (empty($user_id)) {
-			$user_id = $this->USER_ID;
+			$user_id = main()->USER_ID;
 		}
 		if (empty($user_id)) {
 			return "User ID is required";

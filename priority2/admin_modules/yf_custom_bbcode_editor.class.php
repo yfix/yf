@@ -24,7 +24,7 @@ class yf_custom_bbcode_editor {
 	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Try to get info about sites vars
 		$this->_sites_info = main()->init_class("sites_info", "classes/");
 	}
