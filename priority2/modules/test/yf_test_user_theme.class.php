@@ -16,7 +16,7 @@ class yf_test_user_theme {
 	* Display sample page with selected user theme name
 	*/
 	function run_test () {
-		$_themes_infos = db()->query_fetch_all("SELECT * FROM `".db('user_themes')."` WHERE `active`='1'");
+		$_themes_infos = db()->query_fetch_all("SELECT * FROM ".db('user_themes')." WHERE active='1'");
 		foreach ((array)$_themes_infos as $v) {
 			$_themes[$v["id"]] = $v["name"];
 			$_themes_for_select[$v["id"]] = $v["name"]." (id=".$v["id"].")";

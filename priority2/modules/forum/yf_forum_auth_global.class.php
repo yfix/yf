@@ -121,7 +121,7 @@ class yf_forum_auth_global {
 		$cur_time = time();
 		// Cleanup expired users
 		if (!main()->USE_TASK_MANAGER) {
-			db()->query("DELETE FROM `".db('forum_sessions')."` WHERE `last_update` < ".(time() - $this->LASTUP_TTL));
+			db()->query("DELETE FROM ".db('forum_sessions')." WHERE last_update < ".(time() - $this->LASTUP_TTL));
 		}
 		// Try to recognize well-known spiders
 		if (module('forum')->SETTINGS["RECOGNIZE_SPIDERS"]) {
@@ -138,7 +138,7 @@ class yf_forum_auth_global {
 			$in_topic = intval($_GET["id"]);
 			// Get topic info
 			if (empty(module('forum')->_topic_info) && !empty($_GET["id"])) {
-				module('forum')->_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+				module('forum')->_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			}
 			$in_forum = intval(module('forum')->_topic_info["forum"]);
 		}
@@ -149,7 +149,7 @@ class yf_forum_auth_global {
 		// Current user session ID
 		$_session_id = session_id();
 		// Get all users online
-		$Q = db()->query("SELECT * FROM `".db('forum_sessions')."`");
+		$Q = db()->query("SELECT * FROM ".db('forum_sessions')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$online_array[$A["id"]] = $A;
 		}
@@ -185,7 +185,7 @@ class yf_forum_auth_global {
 		));
 		// Update member's record
 		if (FORUM_USER_ID) {
-//			db()->query("UPDATE `".db('forum_users')."` SET `user_lastvisit` = ".$cur_time." WHERE `id`=".intval(FORUM_USER_ID));
+//			db()->query("UPDATE ".db('forum_users')." SET user_lastvisit = ".$cur_time." WHERE id=".intval(FORUM_USER_ID));
 		}
 	}
 	
@@ -195,7 +195,7 @@ class yf_forum_auth_global {
 	function _check_user_ban () {
 		// Check if user in ban list
 		if (module('forum')->SETTINGS["USE_BAN_IP_FILTER"]) {
-			if (db()->query_num_rows("SELECT `ip` FROM `".db('bannedip')."` WHERE `ip`='"._es(common()->get_ip())."'")) {
+			if (db()->query_num_rows("SELECT ip FROM ".db('bannedip')." WHERE ip='"._es(common()->get_ip())."'")) {
 				module('forum')->BAN_REASONS[] = "Your IP address was found in ban list!";
 			}
 		}

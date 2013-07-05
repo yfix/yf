@@ -25,22 +25,22 @@ class yf_blog_stats {
 	function _show_stats() {
 		// Get latest posts
 		$sql = "SELECT 
-				`id` AS `post_id`,
-				`user_id`,
-				`title` AS `post_title`,
-				`add_date` AS `post_date`,
-				`privacy`,
-				`allow_comments`,
-				`num_reads`,
-				SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `privacy` NOT IN(9)";
+				id AS post_id,
+				user_id,
+				title AS post_title,
+				add_date AS post_date,
+				privacy,
+				allow_comments,
+				num_reads,
+				SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND privacy NOT IN(9)";
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$sql .= " HAVING `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$sql .= " HAVING user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
-		$order_by_sql = " ORDER BY `add_date` DESC";
+		$order_by_sql = " ORDER BY add_date DESC";
 		// Prepare pager
 		$path = "./?object=".BLOG_CLASS_NAME."&action=show_latest_posts";
 		$GLOBALS['PROJECT_CONF']["divide_pages"]["SQL_COUNT_REWRITE"] = false;
@@ -54,17 +54,17 @@ class yf_blog_stats {
 		// Get posts by categories	
 		$sql =
 			"SELECT 
-				COUNT(`id`) AS `num_posts`,
-				`cat_id` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `cat_id` NOT IN(0,1) 
-				AND `privacy` NOT IN(9)";
+				COUNT(id) AS num_posts,
+				cat_id 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND cat_id NOT IN(0,1) 
+				AND privacy NOT IN(9)";
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$sql .= " AND `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$sql .= " AND user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
-		$sql .= " GROUP BY `cat_id` ORDER BY `num_posts` DESC";
+		$sql .= " GROUP BY cat_id ORDER BY num_posts DESC";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_posts_by_cats[$A["cat_id"]] = $A["num_posts"];
@@ -150,29 +150,29 @@ class yf_blog_stats {
 		}
 		// Get most commented posts
 		$sql = "SELECT 
-				`c`.`object_id` AS `post_id`,
-				`b`.`user_id`,
-				`b`.`add_date` AS `post_date`,
-				`b`.`privacy`,
-				`b`.`allow_comments`,
-				`b`.`title` AS `post_title`, 
-				`b`.`num_reads`, 
-				COUNT(`c`.`id`) AS `num_comments`,
-				SUBSTRING(`b`.`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('comments')."` AS `c`,
-				`".db('blog_posts')."` AS `b` 
-			WHERE `c`.`object_name`='"._es(BLOG_CLASS_NAME)."' 
-				AND `b`.`active`=1 
-				AND `b`.`id`=`c`.`object_id` 
-				AND `b`.`privacy` NOT IN(9)
-				AND `b`.`allow_comments` NOT IN(9)
-			GROUP BY `c`.`object_id` 
+				c.object_id AS post_id,
+				b.user_id,
+				b.add_date AS post_date,
+				b.privacy,
+				b.allow_comments,
+				b.title AS post_title, 
+				b.num_reads, 
+				COUNT(c.id) AS num_comments,
+				SUBSTRING(b.text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('comments')." AS c,
+				".db('blog_posts')." AS b 
+			WHERE c.object_name='"._es(BLOG_CLASS_NAME)."' 
+				AND b.active=1 
+				AND b.id=c.object_id 
+				AND b.privacy NOT IN(9)
+				AND b.allow_comments NOT IN(9)
+			GROUP BY c.object_id 
 			";
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$sql .= " HAVING `b`.`user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$sql .= " HAVING b.user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
-		$order_by_sql = " ORDER BY `num_comments` DESC";
+		$order_by_sql = " ORDER BY num_comments DESC";
 		// Prepare pager
 		$path = "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"];
 		$GLOBALS['PROJECT_CONF']["divide_pages"]["SQL_COUNT_REWRITE"] = false;
@@ -228,23 +228,23 @@ class yf_blog_stats {
 		}
 		// Get most read posts
 		$sql = "SELECT 
-				`id` AS `post_id`,
-				`user_id`,
-				`title` AS `post_title`,
-				`add_date` AS `post_date`,
-				`privacy`,
-				`allow_comments`,
-				`num_reads`,
-				SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `privacy` NOT IN(9)
+				id AS post_id,
+				user_id,
+				title AS post_title,
+				add_date AS post_date,
+				privacy,
+				allow_comments,
+				num_reads,
+				SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND privacy NOT IN(9)
 			";
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$sql .= " HAVING `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$sql .= " HAVING user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
-		$order_by_sql = " ORDER BY `num_reads` DESC";
+		$order_by_sql = " ORDER BY num_reads DESC";
 		// Prepare pager
 		$path = "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"];
 		$GLOBALS['PROJECT_CONF']["divide_pages"]["SQL_COUNT_REWRITE"] = false;
@@ -290,22 +290,22 @@ class yf_blog_stats {
 		}
 		// Get latest posts
 		$sql = "SELECT 
-				`id` AS `post_id`,
-				`user_id`,
-				`title` AS `post_title`,
-				`add_date` AS `post_date`,
-				`privacy`,
-				`allow_comments`,
-				`num_reads`,
-				SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `privacy` NOT IN(9)";
+				id AS post_id,
+				user_id,
+				title AS post_title,
+				add_date AS post_date,
+				privacy,
+				allow_comments,
+				num_reads,
+				SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND privacy NOT IN(9)";
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$sql .= " HAVING `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$sql .= " HAVING user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
-		$order_by_sql = " ORDER BY `add_date` DESC";
+		$order_by_sql = " ORDER BY add_date DESC";
 		// Prepare pager
 		$path = "./?object=".BLOG_CLASS_NAME."&action=show_latest_posts";
 		$GLOBALS['PROJECT_CONF']["divide_pages"]["SQL_COUNT_REWRITE"] = false;

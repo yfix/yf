@@ -155,7 +155,7 @@ class yf_friends extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Check if one user if a friends to another
 	function _is_a_friend ($user_id_1, $user_id_2) {
-		list($IS_A_FRIEND) = db()->query_fetch("SELECT `user_id` AS `0` FROM `".db('friends')."` WHERE `user_id`=".intval($user_id_1)." AND `friends_list` LIKE '%,".intval($user_id_2).",%' LIMIT 1");
+		list($IS_A_FRIEND) = db()->query_fetch("SELECT user_id AS 0 FROM ".db('friends')." WHERE user_id=".intval($user_id_1)." AND friends_list LIKE '%,".intval($user_id_2).",%' LIMIT 1");
 		return intval((bool) $IS_A_FRIEND);
 	}
 
@@ -163,7 +163,7 @@ class yf_friends extends yf_module {
 	// Get all users where current one is in friends list
 	function _get_users_where_friend_of ($user_id_1) {
 		$users_ids = array();
-		$Q = db()->query("SELECT `user_id` FROM `".db('friends')."` WHERE `friends_list` LIKE '%,".intval($user_id_1).",%'");
+		$Q = db()->query("SELECT user_id FROM ".db('friends')." WHERE friends_list LIKE '%,".intval($user_id_1).",%'");
 		while ($A = db()->fetch_assoc($Q)) {
 			if (empty($A["user_id"])) {
 				continue;

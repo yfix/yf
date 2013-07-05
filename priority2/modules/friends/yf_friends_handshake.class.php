@@ -111,7 +111,7 @@ class yf_friends_handshake {
 			return _error_need_login();
 		}
 
-		$sql = "SELECT * FROM `".db('handshake')."` WHERE `sender`=".$this->PARENT_OBJ->USER_ID;
+		$sql = "SELECT * FROM ".db('handshake')." WHERE sender=".$this->PARENT_OBJ->USER_ID;
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$Q = db()->query($sql.$add_sql);
@@ -164,7 +164,7 @@ class yf_friends_handshake {
 			return _error_need_login();
 		}
 
-		$sql = "SELECT * FROM `".db('handshake')."` WHERE `receiver`=".$this->PARENT_OBJ->USER_ID." ORDER BY `status`";
+		$sql = "SELECT * FROM ".db('handshake')." WHERE receiver=".$this->PARENT_OBJ->USER_ID." ORDER BY status";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$Q = db()->query($sql.$add_sql);
@@ -213,7 +213,7 @@ class yf_friends_handshake {
 		$_GET["id"] = intval($_GET["id"]);
 
 		if (!empty($_GET["id"])) {
-			$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
 		if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
@@ -231,7 +231,7 @@ class yf_friends_handshake {
 			db()->UPDATE("handshake", array(
 				"action_date"	=> time(),
 				"status"		=> 3,
-			), "`id`=".intval($handshake["id"]));			
+			), "id=".intval($handshake["id"]));			
 			
 			// Check if user is already a friend
 			$IS_A_FRIEND = $this->PARENT_OBJ->_is_a_friend($this->PARENT_OBJ->USER_ID, $handshake["sender"]);
@@ -255,7 +255,7 @@ class yf_friends_handshake {
 		$_GET["id"] = intval($_GET["id"]);
 
 		if (!empty($_GET["id"])) {
-			$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
 		if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
@@ -279,7 +279,7 @@ class yf_friends_handshake {
 			db()->UPDATE("handshake", array(
 				"action_date"	=> time(),
 				"status"		=> 2,
-			), "`id`=".intval($handshake["id"]));			
+			), "id=".intval($handshake["id"]));			
 		}
 		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request_to_you");
 	}
@@ -295,7 +295,7 @@ class yf_friends_handshake {
 		if((isset($_POST["accept"])) and (!empty($_POST["item"]))){
 			foreach ((array)$_POST["item"] as $value_id){
 				if (!empty($value_id)) {
-					$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$value_id);
+					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
 				if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
 					return _e("Only for owner!");
@@ -313,7 +313,7 @@ class yf_friends_handshake {
 						db()->UPDATE("handshake", array(
 							"action_date"	=> time(),
 							"status"		=> 3,
-						), "`id`=".intval($handshake["id"]));
+						), "id=".intval($handshake["id"]));
 					}else{
 					// Do add user
 					$this->PARENT_OBJ->_add_user_friends_ids($this->PARENT_OBJ->USER_ID, $handshake["sender"]);
@@ -322,7 +322,7 @@ class yf_friends_handshake {
 						db()->UPDATE("handshake", array(
 							"action_date"	=> time(),
 							"status"		=> 3,
-						), "`id`=".intval($handshake["id"]));
+						), "id=".intval($handshake["id"]));
 					}
 				}
 			}
@@ -331,7 +331,7 @@ class yf_friends_handshake {
 		if((isset($_POST["decline"])) and (!empty($_POST["item"]))){
 			foreach ((array)$_POST["item"] as $value_id){
 				if (!empty($value_id)) {
-					$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$value_id);
+					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
 				if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
 					return _e("Only for owner!");
@@ -347,7 +347,7 @@ class yf_friends_handshake {
 					db()->UPDATE("handshake", array(
 						"action_date"	=> time(),
 						"status"		=> 2,
-					), "`id`=".intval($handshake["id"]));	
+					), "id=".intval($handshake["id"]));	
 				}
 			}
 		}
@@ -365,14 +365,14 @@ class yf_friends_handshake {
 		$_GET["id"] = intval($_GET["id"]);
 
 		if (!empty($_GET["id"])) {
-			$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
 		if ($this->PARENT_OBJ->USER_ID != $handshake["sender"]){
 			return _e("Only for owner!");
 		}
 		if (!empty($_GET["id"])){
-			db()->query("DELETE FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			db()->query("DELETE FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request");
 	}
@@ -386,14 +386,14 @@ class yf_friends_handshake {
 		}
 		foreach ((array)$_POST["item"] as $value_id){
 			if (!empty($value_id)) {
-				$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$value_id);
+				$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 			}
 
 			if ($this->PARENT_OBJ->USER_ID != $handshake["sender"]){
 				return _e("Only for owner!");
 			}
 			if (!empty($value_id)){
-				db()->query("DELETE FROM `".db('handshake')."` WHERE `id`=".$value_id);
+				db()->query("DELETE FROM ".db('handshake')." WHERE id=".$value_id);
 			}
 		}
 		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request");
@@ -404,7 +404,7 @@ class yf_friends_handshake {
 	*/
 	function _account_suggests(){
 		// Check handshakes
-		$Q = db()->query("SELECT * FROM `".db('handshake')."` WHERE `receiver`=".$this->USER_ID." AND `status`=1");
+		$Q = db()->query("SELECT * FROM ".db('handshake')." WHERE receiver=".$this->USER_ID." AND status=1");
 		while ($A = db()->fetch_assoc($Q)) {
 			$count_handshake++;
 		}

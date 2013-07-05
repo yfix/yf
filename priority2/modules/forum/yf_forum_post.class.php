@@ -58,9 +58,9 @@ class yf_forum_post {
 	function _reply () {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get replying post info
-		$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `status`='a' AND `id`=".intval($_GET["id"]));
+		$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE status='a' AND id=".intval($_GET["id"]));
 		if (!empty($post_info["id"])) {
-			$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$post_info["topic"]." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+			$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$post_info["topic"]." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 		}
 		return $post_info["id"] 
 			? module('forum')->_show_main_tpl($this->_show_post_form($post_info, $topic_info)) 
@@ -73,7 +73,7 @@ class yf_forum_post {
 	function _new_post () {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET["id"]." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET["id"]." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 		return $topic_info["id"] 
 			? module('forum')->_show_main_tpl($this->_show_post_form($post_info, $topic_info)) 
 			: module('forum')->_show_error("Wrong topic ID!");
@@ -86,7 +86,7 @@ class yf_forum_post {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get post info to edit
 		if (FORUM_USER_ID) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($_GET["id"]).(!FORUM_IS_ADMIN && !FORUM_IS_MODERATOR ? " AND `status`='a' " : ""));
+			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($_GET["id"]).(!FORUM_IS_ADMIN && !FORUM_IS_MODERATOR ? " AND status='a' " : ""));
 			// Check author
 			if (!FORUM_IS_ADMIN && $post_info["user_id"] != FORUM_USER_ID) {
 				if (FORUM_IS_MODERATOR) {
@@ -99,7 +99,7 @@ class yf_forum_post {
 			}
 			// Check if allowed
 			if (!empty($post_info["id"])) {
-				$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$post_info["topic"]."  ".(!FORUM_IS_ADMIN && !FORUM_IS_MODERATOR ? " AND `approved`=1 " : "")." LIMIT 1");
+				$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$post_info["topic"]."  ".(!FORUM_IS_ADMIN && !FORUM_IS_MODERATOR ? " AND approved=1 " : "")." LIMIT 1");
 			}
 		}
 		return $post_info["id"]
@@ -114,7 +114,7 @@ class yf_forum_post {
 		$POST_ID = intval($_FORCE_ID ? $_FORCE_ID : $_GET["id"]);
 		// Get post info to edit
 		if (FORUM_USER_ID) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE ".(!FORUM_IS_ADMIN ? " `status`='a' AND " : "")." `id`=".intval($POST_ID));
+			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE ".(!FORUM_IS_ADMIN ? " status='a' AND " : "")." id=".intval($POST_ID));
 			// Check author
 			if (!FORUM_IS_ADMIN && $post_info["user_id"] != FORUM_USER_ID) {
 				if (FORUM_IS_MODERATOR) {
@@ -128,7 +128,7 @@ class yf_forum_post {
 			// Check if allowed
 			if (!empty($post_info["id"]) && empty($post_info["new_topic"])) {
 				$forum_info = &module('forum')->_forums_array[$post_info["forum"]];
-				$topic_info	= db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($post_info["topic"])." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+				$topic_info	= db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($post_info["topic"])." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 				if (empty($topic_info["id"])) {
 					_re(t("No such topic!"));
 				}
@@ -149,7 +149,7 @@ class yf_forum_post {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				// Delete post
-				db()->query("DELETE FROM `".db('forum_posts')."` WHERE `id`=".intval($post_info["id"])." LIMIT 1");
+				db()->query("DELETE FROM ".db('forum_posts')." WHERE id=".intval($post_info["id"])." LIMIT 1");
 				// Synchronize forum and topic
 				$SYNC_OBJ = main()->init_class("forum_sync", FORUM_MODULES_DIR);
 				if (is_object($SYNC_OBJ)) {
@@ -214,7 +214,7 @@ class yf_forum_post {
 		}
 		// Get last posts for the given topic
 		if (!$new_topic && $topic_info["id"]) {
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".intval($topic_info["id"])." AND `status`='a' ORDER BY `created` DESC LIMIT 10");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE topic=".intval($topic_info["id"])." AND status='a' ORDER BY created DESC LIMIT 10");
 			while ($A = db()->fetch_assoc($Q)) {
 				$last_posts[$A["id"]] = array(
 					"user_name"		=> !empty($A["user_name"]) ? _prepare_html($A["user_name"]) : t("Anonymous"),
@@ -330,7 +330,7 @@ class yf_forum_post {
 		}
 		// Check if user in ban list
 		if (module('forum')->SETTINGS["USE_BAN_IP_FILTER"]) {
-			if (db()->query_num_rows("SELECT `ip` FROM `".db('bannedip')."` WHERE `ip`='"._es(common()->get_ip())."'")) {
+			if (db()->query_num_rows("SELECT ip FROM ".db('bannedip')." WHERE ip='"._es(common()->get_ip())."'")) {
 				return module('forum')->_show_error(
 					"Your IP address was banned!"
 					."For more details <a href=\"./?object=faq&action=view&id=16\">click here</a>"
@@ -386,7 +386,7 @@ class yf_forum_post {
 			// Get topic info
 			if ($ACT != "new_topic") {
 				$topic_id	= intval($_POST["topic_id"]);
-				$topic_info	= db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+				$topic_info	= db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 				if (empty($topic_info["id"])) _re(t("No such topic!"));
 			}
 		}
@@ -416,7 +416,7 @@ class yf_forum_post {
 		if (!common()->_error_exists()) {
 			// Get edited post info
 			if ($ACT == "edit_post") {
-				$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($_POST["post_id"])." LIMIT 1");
+				$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($_POST["post_id"])." LIMIT 1");
 				// Check if moderator is allowed here
 				if (FORUM_IS_MODERATOR) {
 					if (!module('forum')->_moderate_forum_allowed($post_info["forum"])) {
@@ -434,7 +434,7 @@ class yf_forum_post {
 		}
 		// Anti-flood filter
 		if (!common()->_error_exists()) {
-			$POSSIBLE_FLOOD	= db()->query_num_rows("SELECT `id` FROM `".db('forum_posts')."` WHERE `created` > ".(time() - module('forum')->SETTINGS["ANTISPAM_TIME"])." AND `poster_ip`='".common()->get_ip()."' LIMIT 1");
+			$POSSIBLE_FLOOD	= db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE created > ".(time() - module('forum')->SETTINGS["ANTISPAM_TIME"])." AND poster_ip='".common()->get_ip()."' LIMIT 1");
 			if ($POSSIBLE_FLOOD) {
 				_re(t("Possible flood detected! Try again later!"));
 			}
@@ -490,7 +490,7 @@ class yf_forum_post {
 			}
 			// Get new topic info
 			if (!empty($new_topic_id)) {
-				$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($new_topic_id)." LIMIT 1");
+				$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($new_topic_id)." LIMIT 1");
 				// Verify new topic
 				if (empty($topic_info)) {
 					_re(t("Error while creating new topic! Please contact site admin!"));
@@ -522,7 +522,7 @@ class yf_forum_post {
 			}
 			// Get new post info
 			if (!empty($new_post_id)) {
-				$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($new_post_id)." LIMIT 1");
+				$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($new_post_id)." LIMIT 1");
 				// Verify new post
 				if (empty($post_info)) {
 					_re(t("Error while creating new post! Please contact site admin!"));
@@ -541,7 +541,7 @@ class yf_forum_post {
 					"show_edit_by"	=> intval((bool) $_POST["enable_edit_by"]),
 					"use_sig"		=> intval((bool)(isset($_POST["enable_sig"]) ? $_POST["enable_sig"] : $this->DEF_USE_SIG)),
 					"use_emo"		=> intval((bool)(isset($_POST["enable_emo"]) ? $_POST["enable_emo"] : $this->DEF_USE_EMO)),
-				), "`id`=".intval($post_info["id"]));
+				), "id=".intval($post_info["id"]));
 			}
 			// Set first post for the topic
 			if ($ACT == "new_topic") {
@@ -551,13 +551,13 @@ class yf_forum_post {
 					"last_poster_id"	=> intval($post_info["user_id"]),
 					"last_poster_name"	=> _es($post_info["user_name"]),
 					"last_post_date"	=> time(),
-				), "`id`=".intval($topic_info["id"]));
+				), "id=".intval($topic_info["id"]));
 			}
 			// Update topic icon
 			if ($ACT == "edit_post" && $topic_info["first_post_id"] == $post_info["id"]) {
 				db()->UPDATE("forum_topics", array(
 					"icon_id"	=> intval($_POST["iconid"]),
-				), "`id`=".intval($topic_info["id"]));
+				), "id=".intval($topic_info["id"]));
 			}
 			// Refresh caches
 			if (main()->USE_SYSTEM_CACHE) {
@@ -588,7 +588,7 @@ class yf_forum_post {
 			if (in_array($ACT, array("reply","new_post","new_topic","new_poll")) && !module('forum')->SETTINGS["POSTS_NEED_APPROVE"] && !empty($new_post_id)) {
 				// Increment number of user posts
 				if (FORUM_USER_ID) {
-					db()->query("UPDATE `".db('forum_users')."` SET `user_posts`=`user_posts`+1 WHERE `id`=".intval(FORUM_USER_ID));
+					db()->query("UPDATE ".db('forum_users')." SET user_posts=user_posts+1 WHERE id=".intval(FORUM_USER_ID));
 				}
 				// Synchronize forum and topic
 				$SYNC_OBJ = main()->init_class("forum_sync", FORUM_MODULES_DIR);
@@ -630,7 +630,7 @@ class yf_forum_post {
 		if ((defined('SITE_BAD_WORD_FILTER') && SITE_BAD_WORD_FILTER == 1) || module('forum')->SETTINGS["POST_CUT_BAD_WORDS"]) {
 			if (!isset($GLOBALS["BAD_WORDS_ARRAY"])) {
 				$GLOBALS["BAD_WORDS_ARRAY"] = array();
-				$Q = db()->query("SELECT `word` FROM `".db('badwords')."`");
+				$Q = db()->query("SELECT word FROM ".db('badwords')."");
 				while ($A = db()->fetch_assoc($Q)) $GLOBALS["BAD_WORDS_ARRAY"] = $A["word"];
 			}
 			$str = str_replace($GLOBALS["BAD_WORDS_ARRAY"], "", $str);
@@ -684,7 +684,7 @@ class yf_forum_post {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get given user info
-		$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($_GET["id"]));
+		$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($_GET["id"]));
 		if (empty($post_info["id"])) {
 			return _e(t("No such post!"));
 		}
@@ -699,7 +699,7 @@ class yf_forum_post {
 		}
 /*
 		// Update post record
-		db()->query("UPDATE `".db('blog_posts')."` SET `attach_image`='' WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("UPDATE ".db('blog_posts')." SET attach_image='' WHERE id=".intval($_GET["id"])." LIMIT 1");
 */
 		// Last update
 		update_user(FORUM_USER_ID, array("last_update"=>time()));
@@ -730,7 +730,7 @@ class yf_forum_post {
 	function _get_topic_last_page ($topic_id = 0) {
 		$posts_per_page = !empty(module('forum')->USER_SETTINGS["POSTS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["POSTS_PER_PAGE"] : module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"];
 		list($num_posts) = db()->query_fetch(
-			"SELECT COUNT(*) AS `0` FROM `".db('forum_posts')."` WHERE `topic`=".intval($topic_id)
+			"SELECT COUNT(*) AS 0 FROM ".db('forum_posts')." WHERE topic=".intval($topic_id)
 		);
 		$last_page = $posts_per_page ? ceil($num_posts / $posts_per_page) : 1;
 		return $last_page ? $last_page : 1;

@@ -53,13 +53,13 @@ class yf_gallery_tags {
 		}
 		$_tags = array();
 		// Get current photo tags
-		$Q = db()->query("SELECT * FROM `".db('tags')."` WHERE `object_name`='gallery' AND `object_id`=".intval($photo_id));
+		$Q = db()->query("SELECT * FROM ".db('tags')." WHERE object_name='gallery' AND object_id=".intval($photo_id));
 		while ($A = db()->fetch_assoc($Q)) {
 			$_tags[$A["id"]] = $A["text"];
 		}
 		// Get photo details if not done yet
 		if (empty($this->GALLERY_OBJ->_photo_info)) {
-			$this->GALLERY_OBJ->_photo_info = db()->query_fetch("SELECT * FROM `".db('gallery_photos')."` WHERE `id`=".intval($photo_id));
+			$this->GALLERY_OBJ->_photo_info = db()->query_fetch("SELECT * FROM ".db('gallery_photos')." WHERE id=".intval($photo_id));
 			$photo_info = &$this->GALLERY_OBJ->_photo_info;
 		}
 		if (MAIN_TYPE_USER) {
@@ -123,7 +123,7 @@ class yf_gallery_tags {
 					$ids_to_delete = array_keys((array)$_new_tags);
 					// Delete old keywords
 					if (!empty($ids_to_delete)) {
-						db()->query("DELETE FROM `".db('tags')."` WHERE `object_name`='gallery' AND `object_id`=".intval($photo_id)." AND `id` IN(".implode(",", $ids_to_delete).")");
+						db()->query("DELETE FROM ".db('tags')." WHERE object_name='gallery' AND object_id=".intval($photo_id)." AND id IN(".implode(",", $ids_to_delete).")");
 					}
 				}
 				$num_tags = count($_tags);
@@ -206,7 +206,7 @@ class yf_gallery_tags {
 		}
 		// Get data from db
 		if (!empty($photos_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('tags')."` WHERE `object_name`='gallery' AND `object_id` IN(".implode(",", $photos_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('tags')." WHERE object_name='gallery' AND object_id IN(".implode(",", $photos_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$tags[$A["object_id"]][$A["text"]] = $A["text"];
 				$GLOBALS['_gallery_tags'][$A["object_id"]][$A["text"]] = $A["text"];

@@ -205,7 +205,7 @@ class yf_user_info {
 		}
 
 		// Last update
-//		db()->_add_shutdown_query("UPDATE `".db('user')."` SET `last_update`=".time()." WHERE `id`=".intval($this->USER_ID));
+//		db()->_add_shutdown_query("UPDATE ".db('user')." SET last_update=".time()." WHERE id=".intval($this->USER_ID));
 		update_user($this->USER_ID, array("last_update" => time()));
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {

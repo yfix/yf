@@ -68,7 +68,7 @@ class yf_gallery_settings {
 				if (isset($_POST["allow_rate"])) {
 					$sql["allow_rate"]		= _es($_POST["allow_rate"]);
 				}
-				db()->UPDATE("gallery_settings", $sql, "`user_id`=".intval($this->GALLERY_OBJ->USER_ID));
+				db()->UPDATE("gallery_settings", $sql, "user_id=".intval($this->GALLERY_OBJ->USER_ID));
 				// Update cache
 				$GLOBALS['_gal_settings'][$this->GALLERY_OBJ->USER_ID]["thumb_type"]	= $_POST["thumb_type"];
 				$GLOBALS['_gal_settings'][$this->GALLERY_OBJ->USER_ID]["medium_size"]	= $_POST["medium_size"];
@@ -134,7 +134,7 @@ class yf_gallery_settings {
 			}
 			if (!empty($get_user_ids)) {
 				// Get from db first
-				$Q = db()->query("SELECT * FROM `".db('gallery_settings')."` WHERE `user_id` IN(".implode(",", $get_user_ids).")");
+				$Q = db()->query("SELECT * FROM ".db('gallery_settings')." WHERE user_id IN(".implode(",", $get_user_ids).")");
 				while ($A = db()->fetch_assoc($Q)) {
 					$_user_id = $A["user_id"];
 					$users_settings[$_user_id] = $A;
@@ -161,7 +161,7 @@ class yf_gallery_settings {
 				return $GLOBALS['_gal_settings'][$user_id];
 			}
 			// Try to get settings from db
-			$GALLERY_SETTINGS = db()->query_fetch("SELECT * FROM `".db('gallery_settings')."` WHERE `user_id`=".intval($user_id));
+			$GALLERY_SETTINGS = db()->query_fetch("SELECT * FROM ".db('gallery_settings')." WHERE user_id=".intval($user_id));
 			// Do create user settings (if not done yet)
 			if (empty($GALLERY_SETTINGS)) {
 				$GALLERY_SETTINGS = $this->_start($user_id);
@@ -180,7 +180,7 @@ class yf_gallery_settings {
 		if (empty($user_id)) {
 			return false;
 		}
-		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT `user_id` FROM `".db('gallery_settings')."` WHERE `user_id`=".intval($user_id));
+		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT user_id FROM ".db('gallery_settings')." WHERE user_id=".intval($user_id));
 		if ($ACCOUNT_EXISTS) {
 			return false;
 		}
@@ -205,7 +205,7 @@ class yf_gallery_settings {
 		}
 		$OBJ = main()->init_class("gallery_manage", GALLERY_MODULES_DIR);
 		// Process all photos
-		$Q = db()->query("SELECT * FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($this->USER_ID));
+		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".intval($this->USER_ID));
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_restore_all_sizes($A, $format_name);
 		}

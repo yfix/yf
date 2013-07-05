@@ -20,7 +20,7 @@ class yf_account_ignore {
 		if (!$_GET['page'] && $_GET['id']) {
 			$_GET['page'] = $_GET['id'];
 		}
-		$sql = "SELECT `u`.* FROM `".db('ignore_list')."` AS `i`, `".db('user')."` AS `u` WHERE `i`.`user_id`='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND `i`.`target_user_id`=`u`.`id`";
+		$sql = "SELECT u.* FROM ".db('ignore_list')." AS i, ".db('user')." AS u WHERE i.user_id='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND i.target_user_id=u.id";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, null, null, $this->ACCOUNT_OBJ->num_per_page);
 		// Connect to category display module
 		// Process records
@@ -59,12 +59,12 @@ class yf_account_ignore {
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
 		// Chec if user is already ignored
-		$result = db()->query_fetch("SELECT 1 FROM `".db('ignore_list')."` WHERE `user_id`='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND `target_user_id`='".intval($_GET['id'])."'");
+		$result = db()->query_fetch("SELECT 1 FROM ".db('ignore_list')." WHERE user_id='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND target_user_id='".intval($_GET['id'])."'");
 		if (empty($result['id'])) {
-			$sql = "REPLACE INTO `".db('ignore_list')."` ( 
-					`user_id` , 
-					`target_user_id` , 
-					`add_date`  
+			$sql = "REPLACE INTO ".db('ignore_list')." ( 
+					user_id , 
+					target_user_id , 
+					add_date  
 				) VALUES (
 					'".intval($this->ACCOUNT_OBJ->USER_ID)."', 
 					'".intval($_GET['id'])."', 
@@ -96,7 +96,7 @@ class yf_account_ignore {
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
 		// Do delete
-		db()->query("DELETE FROM `".db('ignore_list')."` WHERE `user_id`='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND `target_user_id`='".intval($_GET['id'])."' LIMIT 1");
+		db()->query("DELETE FROM ".db('ignore_list')." WHERE user_id='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND target_user_id='".intval($_GET['id'])."' LIMIT 1");
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
 			_class("output_cache")->_exec_trigger(array(

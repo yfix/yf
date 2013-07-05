@@ -5,7 +5,7 @@ class yf_community {
 	public $COMMUNITY_GROUP = 99; 
 
 	function show(){
-		$sql = "SELECT * FROM `".db('community')."` WHERE `active`='1'";
+		$sql = "SELECT * FROM ".db('community')." WHERE active='1'";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$Q = db()->query($sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -14,7 +14,7 @@ class yf_community {
 		}
 
 		if(!empty($communitys_ids)){
-			$Q = db()->query("SELECT * FROM `".db('interests')."` WHERE `user_id` IN(".implode(",",$communitys_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('interests')." WHERE user_id IN(".implode(",",$communitys_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$output_array = array();
 				foreach ((array)explode(";", trim($A["keywords"])) as $cur_word) {
@@ -63,7 +63,7 @@ class yf_community {
 			if($_POST["user"] == ""){
 				_re(t("Account name is required!"));
 			}else{
-				$name = db()->query_fetch("SELECT `id` FROM `".db('user')."` WHERE `login`='".$_POST["user"]."'");
+				$name = db()->query_fetch("SELECT id FROM ".db('user')." WHERE login='".$_POST["user"]."'");
 				if(!empty($name)){
 					_re(t("Account name")." (".$_POST["user"].") ".t("is already reserved. Please try another one."));
 				}
@@ -140,7 +140,7 @@ class yf_community {
 			return _e(t("id emty"));
 		}
 		
-		$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `id`=".intval($_GET["id"]));
+		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".intval($_GET["id"]));
 		
 		if(empty($community_info)){
 			return _e(t("No search community"));
@@ -161,8 +161,8 @@ class yf_community {
 		
 		$community_name = user($community_info["user_id"],array("nick"));
 
-		$sql		= "SELECT `user_name`,`poster_id`,`id`,`title`,`add_date`,`text` FROM `".db('blog_posts')."` WHERE `user_id`=".$community_info["user_id"]." AND `active`='1'";
-		$order_sql	= " ORDER BY `add_date` DESC";
+		$sql		= "SELECT user_name,poster_id,id,title,add_date,text FROM ".db('blog_posts')." WHERE user_id=".$community_info["user_id"]." AND active='1'";
+		$order_sql	= " ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$Q = db()->query($sql.$order_sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -195,7 +195,7 @@ class yf_community {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `id`=".$_GET["id"]);
+		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== $this->USER_ID){
 			return _e(t("only for owner"));
@@ -207,7 +207,7 @@ class yf_community {
 			db()->UPDATE("community", array(
 				"about" 	=> _es($_POST["about"]),
 				"title" 	=> _es($_POST["title"]),
-			), "`id`=".$_GET["id"]);
+			), "id=".$_GET["id"]);
 
 			$OBJ_INTERESTS = main()->init_class("interests");
 			$OBJ_INTERESTS->manage($community_info["user_id"]);
@@ -215,7 +215,7 @@ class yf_community {
 			js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"]);
 		}
 		
-		$interests_info = db()->query_fetch("SELECT * FROM `".db('interests')."` WHERE `user_id`=".$community_info["user_id"]);
+		$interests_info = db()->query_fetch("SELECT * FROM ".db('interests')." WHERE user_id=".$community_info["user_id"]);
 		
 		$user_info = user($community_info["user_id"],array("login"));
 		
@@ -235,7 +235,7 @@ class yf_community {
 			return _error_need_login();
 		}
 		
-		$Q = db()->query("SELECT `id`,`user_id`,`title` FROM `".db('community')."` WHERE `owner_id`=".$this->USER_ID);
+		$Q = db()->query("SELECT id,user_id,title FROM ".db('community')." WHERE owner_id=".$this->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$community[$A["id"]] = $A;
 			$users_ids[$A["user_id"]] = $A["user_id"];
@@ -271,7 +271,7 @@ class yf_community {
 		
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `id`=".$_GET["id"]);
+		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== $this->USER_ID){
 			return _e(t("only for owner"));
@@ -284,7 +284,7 @@ class yf_community {
 				"postlevel"			=> $_POST["postlevel"],
 				"moderated"			=> $_POST["moderated"],
 				"adult"				=> $_POST["adult"],
-			), "`id`=".$_GET["id"]);
+			), "id=".$_GET["id"]);
 			
 			js_redirect("./?object=".$_GET["object"]."&action=manage");
 		}
@@ -308,7 +308,7 @@ class yf_community {
 
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `id`=".$_GET["id"]);
+		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== $this->USER_ID){
 			return _e(t("only for owner"));
@@ -324,7 +324,7 @@ class yf_community {
 		}
 		
 		if(isset($_POST["go"])){
-			$Q = db()->query("SELECT * FROM `".db('community_users')."` WHERE `community_id`=".$_GET["id"]."/* AND `member` = '1'*/");
+			$Q = db()->query("SELECT * FROM ".db('community_users')." WHERE community_id=".$_GET["id"]."/* AND member = '1'*/");
 			while ($A = db()->fetch_assoc($Q)) {
 				$user_in_community[$A["user_id"]] = $A;
 			}
@@ -344,7 +344,7 @@ class yf_community {
 				}
 			
 				if(isset($user_in_community[$user_id])){
-					db()->UPDATE("community_users", $data, "`id`=".$user_in_community[$user_id]["id"]);
+					db()->UPDATE("community_users", $data, "id=".$user_in_community[$user_id]["id"]);
 				}else{
 					db()->INSERT("community_users", $data);
 				}
@@ -354,7 +354,7 @@ class yf_community {
 			$OBJ_HANDSHAKE = $OBJ_FRIENDS->_load_sub_module("friends_handshake");
 			foreach ((array)$_POST["new_member"] as $member){
 				if(!empty($member["name"])){
-					$new_member = db()->query_fetch("SELECT `id`,`nick` FROM `".db('user')."` WHERE `nick`='"._es($member["name"])."' AND `group` != ".$this->COMMUNITY_GROUP);
+					$new_member = db()->query_fetch("SELECT id,nick FROM ".db('user')." WHERE nick='"._es($member["name"])."' AND group != ".$this->COMMUNITY_GROUP);
 					
 					if(empty($new_member)){
 						_re(t("user with nick '".$member["name"]."' not found!"));
@@ -376,7 +376,7 @@ class yf_community {
 							);
 							
 							if(isset($user_in_community[$new_member["id"]])){
-								db()->UPDATE("community_users", $data, "`id`=".$user_in_community[$new_member["id"]]["id"]);
+								db()->UPDATE("community_users", $data, "id=".$user_in_community[$new_member["id"]]["id"]);
 							}else{
 								db()->INSERT("community_users", $data);
 							}
@@ -393,7 +393,7 @@ class yf_community {
 		}
 		$members_name = user($members_ids, array("nick","name"));
 		
-		$Q = db()->query("SELECT * FROM `".db('community_users')."` WHERE `community_id` = ".$_GET["id"]." AND `user_id` IN(".implode(",",array_keys($members_name)).")");
+		$Q = db()->query("SELECT * FROM ".db('community_users')." WHERE community_id = ".$_GET["id"]." AND user_id IN(".implode(",",array_keys($members_name)).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$member_info[$A["user_id"]] = $A;
 		}
@@ -445,7 +445,7 @@ class yf_community {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `id`=".$_GET["id"]);
+		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== $this->USER_ID){
 			return _e(t("only for owner"));
@@ -462,7 +462,7 @@ class yf_community {
 		
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `id`=".$_GET["id"]);
+		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== $this->USER_ID){
 			return _e(t("only for owner"));
@@ -479,17 +479,17 @@ class yf_community {
 		$_GET["id"] = intval($_GET["id"]);
 		
 		if (!empty($_GET["id"])) {
-			$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 		if (!empty($handshake)) {
-			$community = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `user_id`=".$handshake["sender"]);
+			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["sender"]);
 		}
 		if ($this->USER_ID != $community["owner_id"]){
 			return _e(t("Only for owner"));
 		}
 		
 		if (!empty($_GET["id"])){
-			db()->query("DELETE FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			db()->query("DELETE FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=handshake_request&id=".$community["id"]);
 	}
@@ -501,17 +501,17 @@ class yf_community {
 		
 		foreach ((array)$_POST["item"] as $value_id){
 			if (!empty($value_id)) {
-				$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$value_id);
+				$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 			}
 			if (!empty($handshake)) {
-				$community = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `user_id`=".$handshake["sender"]);
+				$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["sender"]);
 			}
 			if ($this->USER_ID != $community["owner_id"]){
 				return _e("Only for owner");
 			}
 		
 			if (!empty($value_id)){
-				db()->query("DELETE FROM `".db('handshake')."` WHERE `id`=".$value_id);
+				db()->query("DELETE FROM ".db('handshake')." WHERE id=".$value_id);
 			}
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=handshake_request&id=".$community["id"]);
@@ -524,10 +524,10 @@ class yf_community {
 		$_GET["id"] = intval($_GET["id"]);
 
 		if (!empty($_GET["id"])) {
-			$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 		if (!empty($handshake)) {
-			$community = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `user_id`=".$handshake["receiver"]);
+			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 		}
 		if ($this->USER_ID != $community["owner_id"]){
 			return _e(t("Only for owner"));
@@ -553,11 +553,11 @@ class yf_community {
 			db()->UPDATE("handshake", array(
 				"action_date"	=> time(),
 				"status"		=> 3,
-			), "`id`=".intval($handshake["id"]));		
+			), "id=".intval($handshake["id"]));		
 
-			$Q = db()->query("SELECT * FROM `".db('handshake')."` WHERE `id`!=".$handshake["id"]." AND `sender`=".$handshake["sender"]." AND `receiver`=".$handshake["receiver"]);
+			$Q = db()->query("SELECT * FROM ".db('handshake')." WHERE id!=".$handshake["id"]." AND sender=".$handshake["sender"]." AND receiver=".$handshake["receiver"]);
 			while ($A = db()->fetch_assoc($Q)) {
-				db()->query("DELETE FROM `".db('handshake')."` WHERE `id`=".$A["id"]);
+				db()->query("DELETE FROM ".db('handshake')." WHERE id=".$A["id"]);
 			}
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=handshake_request_to_you&id=".$community["id"]);
@@ -570,10 +570,10 @@ class yf_community {
 		$_GET["id"] = intval($_GET["id"]);
 
 		if (!empty($_GET["id"])) {
-			$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$_GET["id"]);
+			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 		if (!empty($handshake)) {
-			$community = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `user_id`=".$handshake["receiver"]);
+			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 		}
 		if ($this->USER_ID != $community["owner_id"]){
 			return _e(t("Only for owner"));
@@ -597,11 +597,11 @@ class yf_community {
 			db()->UPDATE("handshake", array(
 				"action_date"	=> time(),
 				"status"		=> 2,
-			), "`id`=".intval($handshake["id"]));
+			), "id=".intval($handshake["id"]));
 			
-			$Q = db()->query("SELECT * FROM `".db('handshake')."` WHERE `id`!=".$handshake["id"]." AND `sender`=".$handshake["sender"]." AND `receiver`=".$handshake["receiver"]);
+			$Q = db()->query("SELECT * FROM ".db('handshake')." WHERE id!=".$handshake["id"]." AND sender=".$handshake["sender"]." AND receiver=".$handshake["receiver"]);
 			while ($A = db()->fetch_assoc($Q)) {
-				db()->query("DELETE FROM `".db('handshake')."` WHERE `id`=".$A["id"]);
+				db()->query("DELETE FROM ".db('handshake')." WHERE id=".$A["id"]);
 			}
 		}
 		
@@ -616,10 +616,10 @@ class yf_community {
 		if((isset($_POST["accept"])) and (!empty($_POST["item"]))){
 			foreach ((array)$_POST["item"] as $value_id){
 				if (!empty($value_id)) {
-					$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$value_id);
+					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
 				if (!empty($handshake)) {
-					$community = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `user_id`=".$handshake["receiver"]);
+					$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 				}
 				if ($this->USER_ID != $community["owner_id"]){
 					return _e(t("Only for owner"));
@@ -639,7 +639,7 @@ class yf_community {
 						db()->UPDATE("handshake", array(
 							"action_date"	=> time(),
 							"status"		=> 3,
-						), "`id`=".intval($handshake["id"]));
+						), "id=".intval($handshake["id"]));
 					}else{
 					// Do add user
 					$this->PARENT_OBJ->_add_user_friends_ids($community["user_id"], $handshake["sender"]);
@@ -648,7 +648,7 @@ class yf_community {
 						db()->UPDATE("handshake", array(
 							"action_date"	=> time(),
 							"status"		=> 3,
-						), "`id`=".intval($handshake["id"]));
+						), "id=".intval($handshake["id"]));
 					}
 				}
 			}
@@ -657,10 +657,10 @@ class yf_community {
 		if((isset($_POST["decline"])) and (!empty($_POST["item"]))){
 			foreach ((array)$_POST["item"] as $value_id){
 				if (!empty($value_id)) {
-					$handshake = db()->query_fetch("SELECT * FROM `".db('handshake')."` WHERE `id`=".$value_id);
+					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
 				if (!empty($handshake)) {
-					$community = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `user_id`=".$handshake["receiver"]);
+					$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 				}
 				if ($this->USER_ID != $community["owner_id"]){
 					return _e(t("Only for owner!"));
@@ -676,7 +676,7 @@ class yf_community {
 					db()->UPDATE("handshake", array(
 						"action_date"	=> time(),
 						"status"		=> 2,
-					), "`id`=".intval($handshake["id"]));	
+					), "id=".intval($handshake["id"]));	
 				}
 			}
 		}
@@ -692,7 +692,7 @@ class yf_community {
 			return _e(t("id emty"));
 		}
 		
-		$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `id`=".intval($_GET["id"]));
+		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".intval($_GET["id"]));
 		
 		if(empty($community_info)){
 			return _e(t("No search community"));
@@ -731,12 +731,12 @@ class yf_community {
 		if(!empty($moderated_community)){
 			$community_id = array_flip($moderated_community);
 			
-			$Q = db()->query("SELECT `id`,`user_id`,`title`,`user_name`,`poster_id`,`active` FROM `".db('blog_posts')."` WHERE `user_id` IN(".implode(",", $moderated_community).") AND `active` = '0'");
+			$Q = db()->query("SELECT id,user_id,title,user_name,poster_id,active FROM ".db('blog_posts')." WHERE user_id IN(".implode(",", $moderated_community).") AND active = '0'");
 			while ($A = db()->fetch_assoc($Q)) {
 				$posts[$A["id"]] = $A;
 			}
 			
-			$Q = db()->query("SELECT `id`,`nick` FROM `".db('user')."` WHERE `id` IN(".implode(",", $moderated_community).")");
+			$Q = db()->query("SELECT id,nick FROM ".db('user')." WHERE id IN(".implode(",", $moderated_community).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$community_name[$A["id"]] = $A["nick"];
 			}
@@ -773,11 +773,11 @@ class yf_community {
 		}
 	
 		if (!empty($_GET["id"])) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('blog_posts')."` WHERE `id`=".intval($_GET["id"]));
+			$post_info = db()->query_fetch("SELECT * FROM ".db('blog_posts')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($post_info)) {
-			db()->UPDATE("blog_posts", array("active" => (int)!$post_info["active"]), "`id`=".intval($post_info["id"]));
+			db()->UPDATE("blog_posts", array("active" => (int)!$post_info["active"]), "id=".intval($post_info["id"]));
 		}
 
 		// Return user back
@@ -798,19 +798,19 @@ class yf_community {
 			return _e(t("no id"));
 		}
 		
-		db()->query("DELETE FROM `".db('blog_posts')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('blog_posts')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		return js_redirect("./?object=".$_GET["object"]."&action=moderate");
 	}
 	
 	function _get_moderated_community_for_user($user_id){
 
-		$Q = db()->query("SELECT `id`,`user_id` FROM `".db('community')."` WHERE `active`='1' AND `moderated` = '1'");
+		$Q = db()->query("SELECT id,user_id FROM ".db('community')." WHERE active='1' AND moderated = '1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$community[$A["id"]] = $A["user_id"];
 		}
 		
 		if(!empty($community)){
-			$Q = db()->query("SELECT `community_id` FROM `".db('community_users')."` WHERE `community_id` IN(".implode(",", array_keys($community)).") AND `user_id` = ".$user_id." AND `moderator` = '1'");
+			$Q = db()->query("SELECT community_id FROM ".db('community_users')." WHERE community_id IN(".implode(",", array_keys($community)).") AND user_id = ".$user_id." AND moderator = '1'");
 			while ($A = db()->fetch_assoc($Q)) {
 				$moderated_community[$A["community_id"]] = $community[$A["community_id"]];
 			}
@@ -825,7 +825,7 @@ class yf_community {
 	
 	function _get_community_with_allow_posting_for_user($user_id){
 	
-		$Q = db()->query("SELECT `community_id` FROM `".db('community_users')."` WHERE `user_id`=".$user_id);
+		$Q = db()->query("SELECT community_id FROM ".db('community_users')." WHERE user_id=".$user_id);
 		while ($A = db()->fetch_assoc($Q)) {
 			$community_ids[$A["community_id"]] = $A["community_id"];
 		}
@@ -837,14 +837,14 @@ class yf_community {
 	
 	function _get_community_names($community_ids = array()){
 		if(!empty($community_ids)){
-			$Q = db()->query("SELECT `id`,`user_id` FROM `".db('community')."` WHERE `id` IN(".implode(",", $community_ids).") AND `active` = '1'");
+			$Q = db()->query("SELECT id,user_id FROM ".db('community')." WHERE id IN(".implode(",", $community_ids).") AND active = '1'");
 			while ($A = db()->fetch_assoc($Q)) {
 				$community_user_id[$A["id"]] = $A["user_id"];
 			}
 		}
 		
 		if(!empty($community_user_id)){
-			$Q = db()->query("SELECT `id`,`nick` FROM `".db('user')."` WHERE `id` IN(".implode(",", $community_user_id).")");
+			$Q = db()->query("SELECT id,nick FROM ".db('user')." WHERE id IN(".implode(",", $community_user_id).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$names[$A["id"]] = $A["nick"];
 			}
@@ -893,7 +893,7 @@ class yf_community {
 		$moderated_community = $this->_get_moderated_community_for_user($this->USER_ID);
 	
 		if(!empty($moderated_community)){
-			$Q = db()->query("SELECT `id` FROM `".db('blog_posts')."` WHERE `user_id` IN(".implode(",", $moderated_community).") AND `active` = '0'");
+			$Q = db()->query("SELECT id FROM ".db('blog_posts')." WHERE user_id IN(".implode(",", $moderated_community).") AND active = '0'");
 			while ($A = db()->fetch_assoc($Q)) {
 				$posts[$A["id"]] = $A;
 			}
@@ -904,13 +904,13 @@ class yf_community {
 		}
 		
 		// for owner, handshake for join to community
-		$Q = db()->query("SELECT `user_id` FROM `".db('community')."` WHERE `owner_id`=".$this->USER_ID);
+		$Q = db()->query("SELECT user_id FROM ".db('community')." WHERE owner_id=".$this->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$community[$A["user_id"]] = $A["user_id"];
 		}
 		
 		if(!empty($community)){
-			$Q = db()->query("SELECT `id` FROM `".db('handshake')."` WHERE `receiver` IN(".implode(",", $community).") AND `status` = '1'");
+			$Q = db()->query("SELECT id FROM ".db('handshake')." WHERE receiver IN(".implode(",", $community).") AND status = '1'");
 			while ($A = db()->fetch_assoc($Q)) {
 				$handshakes[$A["id"]] = $A["id"];
 			}

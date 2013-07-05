@@ -43,9 +43,9 @@ class yf_stats {
 			$_GET["page"] = $_GET["id"];
 			unset($_GET["id"]);
 		}
-		list($total) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('online')."`");
+		list($total) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('online')."");
 		// Connect pager
-		$sql = "SELECT * FROM `".db('online')."` WHERE `user_id` !=0 AND `type` != 'admin' ORDER BY `time` DESC";
+		$sql = "SELECT * FROM ".db('online')." WHERE user_id !=0 AND type != 'admin' ORDER BY time DESC";
 		$url = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $num_members) = common()->divide_pages($sql, $url, null, $this->ONLINE_PER_PAGE);
 		// Get number of guests
@@ -91,11 +91,11 @@ class yf_stats {
 	* Quick users stats
 	*/
 	function quick_users_stats () {
-		$sql = "(SELECT COUNT(*) AS `total` FROM `".db('user')."` WHERE `group`=2) 
+		$sql = "(SELECT COUNT(*) AS total FROM ".db('user')." WHERE group=2) 
 			UNION ALL 
-				(SELECT COUNT(*) AS `total` FROM `".db('user')."` WHERE `group`=3)
+				(SELECT COUNT(*) AS total FROM ".db('user')." WHERE group=3)
 			UNION ALL 
-				(SELECT COUNT(*) AS `total` FROM `".db('user')."` WHERE `group`=4)";
+				(SELECT COUNT(*) AS total FROM ".db('user')." WHERE group=4)";
 		$data = db()->query_fetch_all($sql);
 		$num_hobbyists	= $data[0]["total"];
 		$num_escorts	= $data[1]["total"];
@@ -119,17 +119,17 @@ class yf_stats {
 		$time_start = time() - 3600 * 24 * 365;
 		$time_end	= time();
 		// Get hosts
-//		list($total_hosts) = db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('log_exec')."` WHERE `date` >= ".intval($time_start)." AND `date` < ".intval($time_end)." GROUP BY `user_id`");
-		list($total_hosts) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM (SELECT COUNT(`id`) AS `0` FROM `".db('log_exec')."` WHERE `date` >= ".intval($time_start)/*." AND `date` < ".intval($time_end)*/." GROUP BY `ip`) AS `tmp`");
+//		list($total_hosts) = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('log_exec')." WHERE date >= ".intval($time_start)." AND date < ".intval($time_end)." GROUP BY user_id");
+		list($total_hosts) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM (SELECT COUNT(id) AS 0 FROM ".db('log_exec')." WHERE date >= ".intval($time_start)/*." AND date < ".intval($time_end)*/." GROUP BY ip) AS tmp");
 		// Get hits
-		$sql_1 = "SELECT COUNT(`id`) AS `hits` FROM `".db('log_exec')."` WHERE `date` >= ".intval($time_start)/*." AND `date` < ".intval($time_end).""*/;
+		$sql_1 = "SELECT COUNT(id) AS hits FROM ".db('log_exec')." WHERE date >= ".intval($time_start)/*." AND date < ".intval($time_end).""*/;
 		$sql = "(".$sql_1.") 
 					UNION ALL 
-				(".$sql_1." AND `user_group`=2) 
+				(".$sql_1." AND user_group=2) 
 					UNION ALL 
-				(".$sql_1." AND `user_group`=3) 
+				(".$sql_1." AND user_group=3) 
 					UNION ALL 
-				(".$sql_1." AND `user_group`=4)";
+				(".$sql_1." AND user_group=4)";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = $A["hits"];

@@ -34,13 +34,13 @@ class yf_gallery_stats {
 		// Create sql code for the access checks
 		// We want only clean, non-private, normal by content level photos on the main page
 		if (MAIN_TYPE_USER) {
-			$PHOTOS_ACCESS_SQL = " AND `is_public` = '1' ";
+			$PHOTOS_ACCESS_SQL = " AND is_public = '1' ";
 		}
-		$sql = "SELECT * FROM `".db('gallery_photos')."` WHERE 1 ".$PHOTOS_ACCESS_SQL;
+		$sql = "SELECT * FROM ".db('gallery_photos')." WHERE 1 ".$PHOTOS_ACCESS_SQL;
 		if ($this->GALLERY_OBJ->LATEST_GROUP_BY_USER) {
-			$sql .= " GROUP BY `user_id` ";
+			$sql .= " GROUP BY user_id ";
 		}
-		$order_by_sql = " ORDER BY `add_date` DESC ";
+		$order_by_sql = " ORDER BY add_date DESC ";
 		$url = "./?object=".GALLERY_CLASS_NAME."&action=latest";
 		list($add_sql, $latest_pages, $latest_total) = common()->divide_pages($sql, $url, null, $this->GALLERY_OBJ->STATS_NUM_LATEST * 2);
 		// Get top latest photos
@@ -76,25 +76,25 @@ class yf_gallery_stats {
 		// Geo latest photos
 		if (!empty($geo_data["country_code"])) {
 			if (GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "" && $geo_data["country_code"] != GEO_LIMIT_COUNTRY) {
-				$geo_filter_sql = " AND `geo_cc` = '"._es(GEO_LIMIT_COUNTRY)."' ";
+				$geo_filter_sql = " AND geo_cc = '"._es(GEO_LIMIT_COUNTRY)."' ";
 			} else {
-				$geo_filter_sql = " AND `geo_cc` = '"._es($geo_data["country_code"])."' ";
+				$geo_filter_sql = " AND geo_cc = '"._es($geo_data["country_code"])."' ";
 				if (strlen($geo_data["region_code"])) {
-					$geo_filter_sql .= " AND `geo_rc` = '"._es($geo_data["region_code"])."' ";
+					$geo_filter_sql .= " AND geo_rc = '"._es($geo_data["region_code"])."' ";
 				}
 			}
 			if ($this->GALLERY_OBJ->LATEST_GROUP_BY_USER) {
-				$group_by_sql = " GROUP BY `user_id` ";
+				$group_by_sql = " GROUP BY user_id ";
 			}
 			// Get top latest photos by geo
-			$sql = "SELECT * FROM `".db('gallery_photos')."` ".($this->GALLERY_OBJ->USE_SQL_FORCE_KEY ? "/*!40000 USE KEY (`user_id`) */" : "")." WHERE 1 "
+			$sql = "SELECT * FROM ".db('gallery_photos')." ".($this->GALLERY_OBJ->USE_SQL_FORCE_KEY ? "/*!40000 USE KEY (user_id) */" : "")." WHERE 1 "
 				.$PHOTOS_ACCESS_SQL
 				.$geo_filter_sql
 				.$group_by_sql;
-			$order_by_sql = " ORDER BY `add_date` DESC ";
+			$order_by_sql = " ORDER BY add_date DESC ";
 			$url = "./?object=".GALLERY_CLASS_NAME."&action=latest_geo";
 			_class('divide_pages', 'classes/common/')->SQL_COUNT_REWRITE = false;
-			list($add_sql, $geo_latest_pages, $geo_latest_total) = common()->divide_pages(str_replace("SELECT *", "SELECT `id`,`user_id`", $sql), $url, null, $this->GALLERY_OBJ->STATS_NUM_LATEST * 2);
+			list($add_sql, $geo_latest_pages, $geo_latest_total) = common()->divide_pages(str_replace("SELECT *", "SELECT id,user_id", $sql), $url, null, $this->GALLERY_OBJ->STATS_NUM_LATEST * 2);
 			// Get from db
 			$Q = db()->query($sql.$order_by_sql.$add_sql);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -189,26 +189,26 @@ class yf_gallery_stats {
 		// Create sql code for the access checks
 		// We want only clean, non-private, normal by content level photos on the main page
 		if (MAIN_TYPE_USER) {
-			$PHOTOS_ACCESS_SQL = " AND `p`.`is_public` = '1' ";
+			$PHOTOS_ACCESS_SQL = " AND p.is_public = '1' ";
 		}
 		// Turn off count rewrite for "divide_pages"
 //		$GLOBALS["PROJECT_CONF"]["divide_pages"]["SQL_COUNT_REWRITE"] = false;
 		// Get unique galleries
-		$sql = "SELECT `p`.`user_id`
-					, COUNT(`p`.`id`) AS `num_photos`
-				FROM `".db('gallery_photos')."` AS `p`
-					".($this->GALLERY_OBJ->USE_SQL_FORCE_KEY ? "/*!40000 USE KEY (`user_id`) */" : "")."
-					,`".db('user')."` AS `u`
-				WHERE `p`.`active`='1' 
-					AND `p`.`user_id` = `u`.`id`"
+		$sql = "SELECT p.user_id
+					, COUNT(p.id) AS num_photos
+				FROM ".db('gallery_photos')." AS p
+					".($this->GALLERY_OBJ->USE_SQL_FORCE_KEY ? "/*!40000 USE KEY (user_id) */" : "")."
+					,".db('user')." AS u
+				WHERE p.active='1' 
+					AND p.user_id = u.id"
 					.$PHOTOS_ACCESS_SQL
 					." /*__FILTER_SQL__*/ 
-				GROUP BY `p`.`user_id` 
+				GROUP BY p.user_id 
 					/*__SORT_SQL__*/";
 		if ($this->GALLERY_OBJ->USE_FILTER) {
 			$sql = $this->GALLERY_OBJ->_create_filter_sql($sql);
 		}
-//		$order_by_sql = " ORDER BY `p`.`priority` DESC, `num_photos` DESC ";
+//		$order_by_sql = " ORDER BY p.priority DESC, num_photos DESC ";
 		$path = "./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries&id=all";
 		list($add_sql, $pages, $total) = common()->divide_pages(preg_replace("/ORDER BY .*?\$/ims", "ORDER BY NULL", $sql), $path, null, $params["for_stats"] ? $this->GALLERY_OBJ->STATS_TOP_ON_PAGE : $this->GALLERY_OBJ->VIEW_ALL_ON_PAGE);
 		// Get contents from db
@@ -227,12 +227,12 @@ class yf_gallery_stats {
 		// Prepare photos
 		if (!empty($gallery_users_num_photos)) {
 			$Q = db()->query(
-				"SELECT `p`.* 
-				FROM `".db('gallery_photos')."` AS `p`
-				WHERE `p`.`user_id` IN(".implode(",", array_keys($gallery_users_num_photos)).") "
+				"SELECT p.* 
+				FROM ".db('gallery_photos')." AS p
+				WHERE p.user_id IN(".implode(",", array_keys($gallery_users_num_photos)).") "
 					.$PHOTOS_ACCESS_SQL." 
-				ORDER BY `p`.`show_in_ads` DESC 
-						,`p`.`add_date` DESC"
+				ORDER BY p.show_in_ads DESC 
+						,p.add_date DESC"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$photos_by_users[$A["user_id"]][$A["id"]]	= $A;
@@ -310,13 +310,13 @@ class yf_gallery_stats {
 		}
 		// Generate SQL for the access checks
 		if (MAIN_TYPE_USER) {
-			$PHOTOS_ACCESS_SQL = " AND `p`.`is_public` = '1' ";
+			$PHOTOS_ACCESS_SQL = " AND p.is_public = '1' ";
 		}
-		$sql = "SELECT `p`.* 
-				FROM `".db('gallery_photos')."` AS `p` 
-					,`".db('user')."` AS `u`
+		$sql = "SELECT p.* 
+				FROM ".db('gallery_photos')." AS p 
+					,".db('user')." AS u
 				WHERE 1 
-					AND `p`.`user_id` = `u`.`id` 
+					AND p.user_id = u.id 
 					".$PHOTOS_ACCESS_SQL." 
 					/*__FILTER_SQL__*/ 
 					/*__SORT_SQL__*/";
@@ -401,31 +401,31 @@ class yf_gallery_stats {
 			// Generate SQL for the access checks
 			if (!$this->GALLERY_OBJ->is_own_gallery) {
 				$PHOTOS_ACCESS_SQL = 
-					" AND `folder_id` IN( 
-						SELECT `id` 
-						FROM `".db('gallery_folders')."` 
-						WHERE `privacy`<=".intval($max_privacy)." 
-							/*AND `content_level`<=".intval($max_level)."*/ 
-							AND `active`='1' 
-							AND `password`='' 
-							AND `user_id`=".intval($user_info["id"])."
+					" AND folder_id IN( 
+						SELECT id 
+						FROM ".db('gallery_folders')." 
+						WHERE privacy<=".intval($max_privacy)." 
+							/*AND content_level<=".intval($max_level)."*/ 
+							AND active='1' 
+							AND password='' 
+							AND user_id=".intval($user_info["id"])."
 					)";
 			}
 			// Prepare SQL for featured photos
 			$featured_sql = "";
 			if ($only_featured) {
-				$featured_sql = " AND `is_featured` = '1' ";
+				$featured_sql = " AND is_featured = '1' ";
 			}
 			$_sort_id_field = $_GET["action"] == "view_folder" ? "folder_sort_id" : "general_sort_id";
 			// Get top latest posts
 			$Q = db()->query(
 				"SELECT * 
-				FROM `".db('gallery_photos')."` 
-				WHERE `active`=1 
-					AND `user_id`=".intval($user_info["id"])." 
+				FROM ".db('gallery_photos')." 
+				WHERE active=1 
+					AND user_id=".intval($user_info["id"])." 
 					".$featured_sql."
 					".$PHOTOS_ACCESS_SQL." 
-				ORDER BY `".$_sort_id_field."` ASC /*,`add_date` DESC*/ 
+				ORDER BY ".$_sort_id_field." ASC /*,add_date DESC*/ 
 				LIMIT ".intval($this->GALLERY_OBJ->STATS_NUM_LATEST * 2)
 			);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -461,7 +461,7 @@ class yf_gallery_stats {
 		}
 		// Generate SQL for the access checks
 		if (MAIN_TYPE_USER) {
-			$PHOTOS_ACCESS_SQL = " AND `is_public` = '1' ";
+			$PHOTOS_ACCESS_SQL = " AND is_public = '1' ";
 		}
 		// Check if we need to show geo latest photos
 		if ($this->GALLERY_OBJ->ALLOW_GEO_FILTERING) {
@@ -473,24 +473,24 @@ class yf_gallery_stats {
 		// Geo filtering
 		if ($USE_GEO) {
 			if (GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "" && $geo_data["country_code"] != GEO_LIMIT_COUNTRY) {
-				$geo_filter_sql = " AND `geo_cc` = '"._es(GEO_LIMIT_COUNTRY)."' ";
+				$geo_filter_sql = " AND geo_cc = '"._es(GEO_LIMIT_COUNTRY)."' ";
 			} else {
-				$geo_filter_sql = " AND `geo_cc` = '"._es($geo_data["country_code"])."' ";
+				$geo_filter_sql = " AND geo_cc = '"._es($geo_data["country_code"])."' ";
 				if (strlen($geo_data["region_code"])) {
-					$geo_filter_sql .= " AND `geo_rc` = '"._es($geo_data["region_code"])."' ";
+					$geo_filter_sql .= " AND geo_rc = '"._es($geo_data["region_code"])."' ";
 				}
 			}
 		}
 		if ($this->GALLERY_OBJ->LATEST_GROUP_BY_USER) {
-			$group_by_sql = " GROUP BY `user_id` ";
+			$group_by_sql = " GROUP BY user_id ";
 		}
-		$sql = "SELECT * FROM `".db('gallery_photos')."` "
-			.($USE_GEO && $this->GALLERY_OBJ->USE_SQL_FORCE_KEY ? "/*!40000 USE KEY (`user_id`) */" : "")
+		$sql = "SELECT * FROM ".db('gallery_photos')." "
+			.($USE_GEO && $this->GALLERY_OBJ->USE_SQL_FORCE_KEY ? "/*!40000 USE KEY (user_id) */" : "")
 			." WHERE 1 "
 			.$PHOTOS_ACCESS_SQL
 			.$geo_filter_sql
 			.$group_by_sql;
-		$order_by_sql = " ORDER BY `add_date` DESC ";
+		$order_by_sql = " ORDER BY add_date DESC ";
 		$url = "./?object=".GALLERY_CLASS_NAME."&action=latest";
 		list($add_sql, $latest_pages, $latest_total) = common()->divide_pages($sql, $url, null, $this->GALLERY_OBJ->STATS_NUM_LATEST * 2);
 		// Get top latest photos

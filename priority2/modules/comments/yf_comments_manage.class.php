@@ -97,10 +97,10 @@ class yf_comments_manage {
 			// Anti-flood check
 			if (!common()->_error_exists() && $this->COMMENTS_OBJ->ANTI_FLOOD_TIME && MAIN_TYPE_USER) {
 				$FLOOD_DETECTED = db()->query_fetch(
-					"SELECT `id`,`add_date` FROM `".db('comments')."` 
-					WHERE ".($this->COMMENTS_OBJ->USER_ID ? "`user_id`=".intval($this->COMMENTS_OBJ->USER_ID) : "`ip`='"._es(common()->get_ip())."'")
-						." AND `add_date` > ".(time() - $this->COMMENTS_OBJ->ANTI_FLOOD_TIME)." 
-					ORDER BY `add_date` DESC LIMIT 1"
+					"SELECT id,add_date FROM ".db('comments')." 
+					WHERE ".($this->COMMENTS_OBJ->USER_ID ? "user_id=".intval($this->COMMENTS_OBJ->USER_ID) : "ip='"._es(common()->get_ip())."'")
+						." AND add_date > ".(time() - $this->COMMENTS_OBJ->ANTI_FLOOD_TIME)." 
+					ORDER BY add_date DESC LIMIT 1"
 				);
 				if (!empty($FLOOD_DETECTED)) {
 					_re("Please wait ".intval($this->COMMENTS_OBJ->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED["add_date"]))." seconds before post comment.");
@@ -199,7 +199,7 @@ class yf_comments_manage {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get given comment info
-		$comment_info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
+		$comment_info = db()->query_fetch("SELECT * FROM ".db('comments')." WHERE id=".intval($_GET["id"]));
 		if (empty($comment_info["id"])) {
 			return _e(t("No such comment!"));
 		}
@@ -276,7 +276,7 @@ class yf_comments_manage {
 			}
 			// Anti-flood check
 			if (!common()->_error_exists() && $this->COMMENTS_OBJ->ANTI_FLOOD_TIME && MAIN_TYPE_USER) {
-				$FLOOD_DETECTED = db()->query_fetch("SELECT `id`,`add_date` FROM `".db('comments')."` WHERE ".($this->COMMENTS_OBJ->USER_ID ? "`user_id`=".intval($this->COMMENTS_OBJ->USER_ID) : "`ip`='"._es(common()->get_ip())."'")." AND `add_date` > ".(time() - $this->COMMENTS_OBJ->ANTI_FLOOD_TIME)." ORDER BY `add_date` DESC LIMIT 1");
+				$FLOOD_DETECTED = db()->query_fetch("SELECT id,add_date FROM ".db('comments')." WHERE ".($this->COMMENTS_OBJ->USER_ID ? "user_id=".intval($this->COMMENTS_OBJ->USER_ID) : "ip='"._es(common()->get_ip())."'")." AND add_date > ".(time() - $this->COMMENTS_OBJ->ANTI_FLOOD_TIME)." ORDER BY add_date DESC LIMIT 1");
 				if (!empty($FLOOD_DETECTED)) {
 					_re("Please wait ".intval($this->COMMENTS_OBJ->ANTI_FLOOD_TIME - (time() - $FLOOD_DETECTED["add_date"]))." seconds before post comment.");
 				}
@@ -305,7 +305,7 @@ class yf_comments_manage {
 				// Do update record
 				db()->UPDATE("comments", array(
 					"text" 			=> _es($_POST["text"]),
-				), "`id`=".intval($comment_info["id"]));
+				), "id=".intval($comment_info["id"]));
 				// Execute custom on_update trigger (if exists one)
 				$try_trigger_callback = array(module($_GET["object"]), $this->COMMENTS_OBJ->_on_update_trigger);
 				if (is_callable($try_trigger_callback)) {
@@ -352,7 +352,7 @@ class yf_comments_manage {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get given comment info
-		$comment_info = db()->query_fetch("SELECT * FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"]));
+		$comment_info = db()->query_fetch("SELECT * FROM ".db('comments')." WHERE id=".intval($_GET["id"]));
 		if (empty($comment_info["id"])) {
 			return _e(t("No such comment!"));
 		}
@@ -415,18 +415,18 @@ class yf_comments_manage {
 		// Do delete comment
 		if ($this->COMMENTS_OBJ->USE_TREE_MODE) {
 			//if comment not have follow-ups
-			$have_children = db()->query_fetch("SELECT `id` FROM `".db('comments')."` WHERE `object_name`='".$comment_info["object_name"]."' AND `object_id`=".$comment_info["object_id"]." AND `parent_id`=".$comment_info["id"]." LIMIT 1");
+			$have_children = db()->query_fetch("SELECT id FROM ".db('comments')." WHERE object_name='".$comment_info["object_name"]."' AND object_id=".$comment_info["object_id"]." AND parent_id=".$comment_info["id"]." LIMIT 1");
 
 			if ($have_children) {
 				db()->UPDATE("comments", array(
 					"text"		=> "__comment was deleted__",
 					"user_id"	=> 0,
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 			} else {
-				db()->query("DELETE FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+				db()->query("DELETE FROM ".db('comments')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			}
 		}  else {
-			db()->query("DELETE FROM `".db('comments')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('comments')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		}
 		// Execute custom on_update trigger (if exists one)
 		$try_trigger_callback = array(module($_GET["object"]), $this->COMMENTS_OBJ->_on_update_trigger);

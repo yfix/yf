@@ -26,7 +26,7 @@ class yf_forum_print {
 		$topic_id = intval($_GET["id"]);
 
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." LIMIT 1");
 		if (empty($topic_info)) {
 			return "";
 		}
@@ -65,8 +65,8 @@ td, p, div
 
 		echo "<a href='".process_url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".$topic_info["name"]."</b></a><br/>\r\n";
 		// Prepare SQL query
-		$sql = "SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".$topic_id;
-		$order_by = " ORDER BY `created` ASC ";
+		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$topic_id;
+		$order_by = " ORDER BY created ASC ";
 		list($add_sql, $pages, $topic_num_posts) = common()->divide_pages($sql, null, null, $_posts_per_page);
 
 		if (!empty($pages))

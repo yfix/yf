@@ -60,7 +60,7 @@ class yf_chat_arrays {
 			60	=> 60,
 		);
 		// Get ignore list for the current user
-		$Q = db()->query("SELECT * FROM `".db('chat_ignore')."` WHERE `user_id`=".intval(CHAT_USER_ID));
+		$Q = db()->query("SELECT * FROM ".db('chat_ignore')." WHERE user_id=".intval(CHAT_USER_ID));
 		while ($A = db()->fetch_assoc($Q)) {
 			if ($A["user_ignore"] != CHAT_USER_ID) {
 				$this->CHAT_OBJ->ignore_list[$A["user_ignore"]] = 1;

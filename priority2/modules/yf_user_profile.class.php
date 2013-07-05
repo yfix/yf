@@ -61,7 +61,7 @@ class yf_user_profile extends yf_module {
 		);
 		// Array of dynamic info
 		if (main()->USER_INFO_DYNAMIC) {
-			$sql = "SELECT * FROM `".db('user_data_info_fields')."` WHERE `active`=1 ORDER BY `order`, `name`";
+			$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY order, name";
 			$Q = db()->query($sql);
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->_dynamic_fields[$A["name"]] = $A;
@@ -79,7 +79,7 @@ class yf_user_profile extends yf_module {
 		if (!isset($_GET["profile_url"]) && !isset($_GET["id"]) && !empty($this->USER_ID)) {
 			$user_id = $this->USER_ID;
 		} elseif (isset($_GET["profile_url"])) {
-			$this->_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `profile_url`='"._es($_GET["profile_url"])."' AND `active`='1'");
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE profile_url='"._es($_GET["profile_url"])."' AND active='1'");
 			$user_id = $_GET["id"] = intval($user_info["id"]);
 			unset($_GET["profile_url"]);
 		} elseif (isset($_GET["id"])) {
@@ -103,7 +103,7 @@ class yf_user_profile extends yf_module {
 		}
 		
 		if ($this->_user_info["group"] == "99"){
-			$community_info = db()->query_fetch("SELECT `id` FROM `".db('community')."` WHERE `user_id`=".intval($this->_user_info["id"]));
+			$community_info = db()->query_fetch("SELECT id FROM ".db('community')." WHERE user_id=".intval($this->_user_info["id"]));
 			return js_redirect("./?object=community&action=view&id=".$community_info["id"]);
 		}
 		
@@ -452,7 +452,7 @@ class yf_user_profile extends yf_module {
 		}
 		if (empty($error_message)) {
 			// Try to get user info
-			$this->_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($USER_ID)." AND `active`='1'");
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($USER_ID)." AND active='1'");
 			if (empty($this->_user_info)) {
 				$error_message = "No info";
 			}
@@ -464,10 +464,10 @@ class yf_user_profile extends yf_module {
 			$DISPLAY_CONTACT_ITEMS = 0;
 			if ($this->USER_ID && $this->_user_info["id"] != $this->USER_ID) {
 				if ($totals["favorite_users"]) {
-					$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM `".db('favorites')."` WHERE `user_id`=".intval($this->USER_ID)." AND `target_user_id`=".intval($this->_user_info["id"]));
+					$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM ".db('favorites')." WHERE user_id=".intval($this->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 				}
 				if ($totals["ignored_users"]) {
-					$is_ignored			= db()->query_num_rows("SELECT 1 FROM `".db('ignore_list')."` WHERE `user_id`=".intval($this->USER_ID)." AND `target_user_id`=".intval($this->_user_info["id"]));
+					$is_ignored			= db()->query_num_rows("SELECT 1 FROM ".db('ignore_list')." WHERE user_id=".intval($this->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 				}
 				// Check friendship
 				$FRIENDS_OBJ		= main()->init_class("friends");
@@ -579,7 +579,7 @@ class yf_user_profile extends yf_module {
 		}
 
 		$_GET["id"] ? $_id = intval($_GET["id"]) : $_id = $this->USER_ID;
-		$sql = "SELECT * FROM `".db('log_user_action')."` WHERE `action_name`='visit' AND `owner_id`=".intval($_id)." ORDER BY `add_date` DESC";
+		$sql = "SELECT * FROM ".db('log_user_action')." WHERE action_name='visit' AND owner_id=".intval($_id)." ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);		
 		$stats_array = db()->query_fetch_all($sql.$add_sql);
 		foreach ((array)$stats_array as $A) {
@@ -616,7 +616,7 @@ class yf_user_profile extends yf_module {
 		}
 
 		$_id = intval($this->USER_ID);
-		$sql = "SELECT * FROM `".db('log_user_action')."` WHERE `action_name` IN('add_friend', 'del_friend') AND `owner_id`=".$_id." ORDER BY `add_date` DESC";
+		$sql = "SELECT * FROM ".db('log_user_action')." WHERE action_name IN('add_friend', 'del_friend') AND owner_id=".$_id." ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);		
 		$stats_array = db()->query_fetch_all($sql.$add_sql);
 		foreach ((array)$stats_array as $A) {

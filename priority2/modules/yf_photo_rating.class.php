@@ -91,12 +91,12 @@ class yf_photo_rating extends yf_module {
 	function top ($reverse_order = false) {
 		// Prepare query
 		$sql = "SELECT * 
-				FROM `".db('gallery_photos')."` 
-				WHERE `allow_rate`='1' 
-					AND `is_public`='1' 
-					AND `rating` != 0 
-					AND `num_votes` >= ".intval($this->TOP_MIN_VOTES)." ";
-		$order_by_sql = " ORDER BY `rating` ".($reverse_order ? "ASC" : "DESC")." ";
+				FROM ".db('gallery_photos')." 
+				WHERE allow_rate='1' 
+					AND is_public='1' 
+					AND rating != 0 
+					AND num_votes >= ".intval($this->TOP_MIN_VOTES)." ";
+		$order_by_sql = " ORDER BY rating ".($reverse_order ? "ASC" : "DESC")." ";
 		// Connect pager
 		list($add_sql, $pages, $total, $first) = common()->divide_pages($sql, "", $this->TOP_PER_PAGE);
 		// Get top photos from db
@@ -183,17 +183,17 @@ class yf_photo_rating extends yf_module {
 		$table_info = db()->query_fetch("SHOW TABLE STATUS LIKE '".db('gallery_photos')."'");
 		$rand_num = rand(1, $table_info["Auto_increment"] - 1);
 		// Prepare query
-		$view_check_sql = " AND `id` NOT IN( 
-			SELECT `photo_id` 
-			FROM `".db('gallery_rate_views')."` 
+		$view_check_sql = " AND id NOT IN( 
+			SELECT photo_id 
+			FROM ".db('gallery_rate_views')." 
 			WHERE ".(
 				$this->USER_ID 
-				? " `user_id` = ".intval($this->USER_ID)." " 
-				: " `sid` = '"._es(session_id())."' AND `date` > ".(time() - $this->GUESTS_TIMEOUT)." "
+				? " user_id = ".intval($this->USER_ID)." " 
+				: " sid = '"._es(session_id())."' AND date > ".(time() - $this->GUESTS_TIMEOUT)." "
 			)."
 		)";
 		if ($this->USER_ID) {
-			$view_check_sql .= " AND `user_id` != ".intval($this->USER_ID)." ";
+			$view_check_sql .= " AND user_id != ".intval($this->USER_ID)." ";
 		}
 
 // TODO: add more access level checks (ability to view also non-public photos if allowed)
@@ -204,11 +204,11 @@ class yf_photo_rating extends yf_module {
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$Q = db()->query(
 			"SELECT * 
-			FROM `".db('gallery_photos')."` 
-			WHERE `is_public`='1' 
-				AND `allow_rate`='1' 
-				AND `id` >= ".intval($rand_num)."
-				".($this->__TEST_MODE__ ? " AND `user_id` = 1 " : "")."
+			FROM ".db('gallery_photos')." 
+			WHERE is_public='1' 
+				AND allow_rate='1' 
+				AND id >= ".intval($rand_num)."
+				".($this->__TEST_MODE__ ? " AND user_id = 1 " : "")."
 				".$view_check_sql."
 				".$filter_sql."
 			LIMIT ".intval($this->RESERVE_PHOTOS)
@@ -304,10 +304,10 @@ class yf_photo_rating extends yf_module {
 		if (!empty($PHOTO_ID)) {
 			$photo_info = db()->query_fetch(
 				"SELECT * 
-				FROM `".db('gallery_photos')."` 
-				WHERE `id`=".intval($PHOTO_ID)." 
-					AND `allow_rate`='1' 
-					AND `is_public`='1'"
+				FROM ".db('gallery_photos')." 
+				WHERE id=".intval($PHOTO_ID)." 
+					AND allow_rate='1' 
+					AND is_public='1'"
 			);
 		}
 
@@ -334,33 +334,33 @@ class yf_photo_rating extends yf_module {
 		if ($this->USER_ID) {
 			$CHEAT_DETECTED = false;
 			list($total_votes) = db()->query_fetch(
-				"SELECT COUNT(*) AS `0` 
-				FROM `".db('gallery_rate_votes')."` 
-				WHERE `user_id`=".intval($photo_info["id"])
+				"SELECT COUNT(*) AS 0 
+				FROM ".db('gallery_rate_votes')." 
+				WHERE user_id=".intval($photo_info["id"])
 			);
 			// More anti-cheat checks begin
 			if ($this->ANTICHEAT_CHECKING && $total_votes) {
 				list($num_target_users) = db()->query_fetch(
-					"SELECT COUNT(*) AS `0` 
-					FROM `".db('gallery_rate_votes')."` 
-					WHERE `user_id`=".intval($photo_info["id"])." 
-					GROUP BY `target_user_id`"
+					"SELECT COUNT(*) AS 0 
+					FROM ".db('gallery_rate_votes')." 
+					WHERE user_id=".intval($photo_info["id"])." 
+					GROUP BY target_user_id"
 				);
 				if ($num_target_users >= $this->ANTICHEAT_TARGET_USERS) {
 					// Cet total number of positive and negative votes
 					list($num_positive_targets) = db()->query_fetch(
-						"SELECT COUNT(*) AS `0` 
-						FROM `".db('gallery_rate_votes')."` 
-						WHERE `user_id`=".intval($photo_info["id"])." 
-							AND `voted` >= ".intval($this->ANTICHEAT_POSITIVE_VOTE)."
-						GROUP BY `target_user_id`"
+						"SELECT COUNT(*) AS 0 
+						FROM ".db('gallery_rate_votes')." 
+						WHERE user_id=".intval($photo_info["id"])." 
+							AND voted >= ".intval($this->ANTICHEAT_POSITIVE_VOTE)."
+						GROUP BY target_user_id"
 					);
 					list($num_negative_targets) = db()->query_fetch(
-						"SELECT COUNT(*) AS `0` 
-						FROM `".db('gallery_rate_votes')."` 
-						WHERE `user_id`=".intval($photo_info["id"])." 
-							AND `voted` <= ".intval($this->ANTICHEAT_NEGATIVE_VOTE)."
-						GROUP BY `target_user_id`"
+						"SELECT COUNT(*) AS 0 
+						FROM ".db('gallery_rate_votes')." 
+						WHERE user_id=".intval($photo_info["id"])." 
+							AND voted <= ".intval($this->ANTICHEAT_NEGATIVE_VOTE)."
+						GROUP BY target_user_id"
 					);
 					$neg_to_pos		= $num_negative_targets ? $num_positive_targets / $num_negative_targets : 0;
 					// Check if user voted mostly positively
@@ -369,10 +369,10 @@ class yf_photo_rating extends yf_module {
 					}
 				}
 				list($num_negative_votes) = db()->query_fetch(
-					"SELECT COUNT(*) AS `0` 
-					FROM `".db('gallery_rate_votes')."` 
-					WHERE `user_id`=".intval($photo_info["id"])." 
-						AND `voted` <= ".intval($this->ANTICHEAT_NEGATIVE_VOTE)
+					"SELECT COUNT(*) AS 0 
+					FROM ".db('gallery_rate_votes')." 
+					WHERE user_id=".intval($photo_info["id"])." 
+						AND voted <= ".intval($this->ANTICHEAT_NEGATIVE_VOTE)
 				);
 				$neg_percent	= $total_votes ? $num_negative_votes / $total_votes : 0;
 				// Check if user voted mostly negatively
@@ -397,17 +397,17 @@ class yf_photo_rating extends yf_module {
 			// Check if user already voted for this photo
 			$cur_photo_vote = db()->query_fetch(
 				"SELECT * 
-				FROM `".db('gallery_rate_votes')."` 
-				WHERE `user_id` = ".intval($this->USER_ID)." 
-					AND `photo_id` = ".intval($PHOTO_ID)
+				FROM ".db('gallery_rate_votes')." 
+				WHERE user_id = ".intval($this->USER_ID)." 
+					AND photo_id = ".intval($PHOTO_ID)
 			);
 			// Set empty previous vote results to for this photo from current user
 			if (!empty($cur_photo_vote)) {
 				db()->query(
-					"UPDATE `".db('gallery_rate_votes')."` 
-					SET `counted` = 0 
-					WHERE `user_id` = ".intval($this->USER_ID)." 
-						AND `photo_id` = ".intval($PHOTO_ID)
+					"UPDATE ".db('gallery_rate_votes')." 
+					SET counted = 0 
+					WHERE user_id = ".intval($this->USER_ID)." 
+						AND photo_id = ".intval($PHOTO_ID)
 				);
 			}
 			db()->INSERT("gallery_rate_votes", $sql_array);
@@ -415,24 +415,24 @@ class yf_photo_rating extends yf_module {
 			if (!$CHEAT_DETECTED) {
 // TODO: needed to decide how to work without full log
 				list($votes_sum, $num_votes) = db()->query_fetch(
-					"SELECT SUM(`counted`) AS `0`, COUNT(*) AS `1` 
-					FROM `".db('gallery_rate_votes')."` 
-					WHERE `photo_id`=".intval($PHOTO_ID)." 
-						AND `counted` != 0"
+					"SELECT SUM(counted) AS 0, COUNT(*) AS 1 
+					FROM ".db('gallery_rate_votes')." 
+					WHERE photo_id=".intval($PHOTO_ID)." 
+						AND counted != 0"
 				);
 				db()->query(
-					"UPDATE `".db('gallery_photos')."` SET 
-						`votes_sum`	= ".intval($votes_sum)." 
-						,`num_votes`= ".intval($num_votes)." 
-						,`rating`	= `votes_sum` / `num_votes` 
-						,`last_vote_date`	= ".time()."
-					WHERE `id`=".intval($PHOTO_ID)
+					"UPDATE ".db('gallery_photos')." SET 
+						votes_sum	= ".intval($votes_sum)." 
+						,num_votes= ".intval($num_votes)." 
+						,rating	= votes_sum / num_votes 
+						,last_vote_date	= ".time()."
+					WHERE id=".intval($PHOTO_ID)
 				);
 			}
 		}
 		// Cleanup old views
 		db()->query(
-			"DELETE FROM `".db('gallery_rate_views')."` WHERE `date` < ".(time() - $this->VIEWS_TTL)
+			"DELETE FROM ".db('gallery_rate_views')." WHERE date < ".(time() - $this->VIEWS_TTL)
 		);
 		// Store last photo in session
 		$_SESSION["_photo_rating_last"] = array(
@@ -507,10 +507,10 @@ class yf_photo_rating extends yf_module {
 		// Get photo details
 		$photo_info = db()->query_fetch(
 			"SELECT * 
-			FROM `".db('gallery_photos')."` 
-			WHERE `id`=".intval($PHOTO_ID)." 
-				AND `allow_rate`='1' 
-				AND `is_public`='1'"
+			FROM ".db('gallery_photos')." 
+			WHERE id=".intval($PHOTO_ID)." 
+				AND allow_rate='1' 
+				AND is_public='1'"
 // TODO: add more complex access checks
 		);
 		if (empty($photo_info)) {
@@ -600,25 +600,25 @@ class yf_photo_rating extends yf_module {
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Prepare SQL
 		if (strlen($SF["race"])) {
-			$user_sql .= " AND `race` = '"._es($this->_races[$SF["race"]])."' \r\n";
+			$user_sql .= " AND race = '"._es($this->_races[$SF["race"]])."' \r\n";
 		}
 		if (strlen($SF["sex"])) {
-			$user_sql .= " AND `sex` ='"._es($SF["sex"])."' \r\n";
+			$user_sql .= " AND sex ='"._es($SF["sex"])."' \r\n";
 		}
-		$user_sql .= " AND `active` = '1'";
+		$user_sql .= " AND active = '1'";
 		// Create subquery for the user table
 		if (!empty($user_sql)) {
-			$sql .= " AND `user_id` IN(SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$user_sql.") \r\n";
+			$sql .= " AND user_id IN(SELECT id FROM ".db('user')." WHERE 1=1 ".$user_sql.") \r\n";
 		}
 		if (strlen($SF["country"])) {
-			$sql .= " AND `geo_cc` ='"._es($SF["country"])."' \r\n";
+			$sql .= " AND geo_cc ='"._es($SF["country"])."' \r\n";
 		}
 		if (strlen($SF["state"])) {
-			$sql .= " AND `geo_rc` = '"._es($SF["state"])."' \r\n";
+			$sql .= " AND geo_rc = '"._es($SF["state"])."' \r\n";
 		}
 		// Sorting here
 		if (!empty($SF["sort_by"]) && isset($this->_sort_by[$SF["sort_by"]])) {
-		 	$sql .= " ORDER BY `"._es($SF["sort_by"])."` \r\n";
+		 	$sql .= " ORDER BY "._es($SF["sort_by"])." \r\n";
 			if (strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		}
 		return substr($sql, 0, -3);

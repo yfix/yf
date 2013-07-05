@@ -45,7 +45,7 @@ class yf_faq extends yf_module {
 	*/
 	function show () {
 		// Get faqs
-		$Q = db()->query("SELECT * FROM `".db('faq_texts')."` WHERE `status`='active' ORDER BY `cat_id`,`priority` DESC");
+		$Q = db()->query("SELECT * FROM ".db('faq_texts')." WHERE status='active' ORDER BY cat_id,priority DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$faqs_texts[$A["id"]]	= $A;
 		}
@@ -106,7 +106,7 @@ class yf_faq extends yf_module {
 		}
 		// Get text info
 		if (empty($text_info)) {
-			$text_info = db()->query_fetch("SELECT * FROM `".db('faq_texts')."` WHERE `id`=".intval($_GET["id"]));
+			$text_info = db()->query_fetch("SELECT * FROM ".db('faq_texts')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($text_info)) {
 			return _e(t("No such text!"));
@@ -115,7 +115,7 @@ class yf_faq extends yf_module {
 		$GLOBALS['_faq_category'] = $this->_faqs_cats[$text_info["cat_id"]]["name"];
 		// Count number of views
 		if ($this->COUNT_VIEWS) {
-			db()->_add_shutdown_query("UPDATE `".db('faq_texts')."` SET `views`=`views`+1 WHERE `id`=".intval($text_info["id"]));
+			db()->_add_shutdown_query("UPDATE ".db('faq_texts')." SET views=views+1 WHERE id=".intval($text_info["id"]));
 		}
 		// Process template
 		$replace = array(
@@ -171,7 +171,7 @@ class yf_faq extends yf_module {
 			"url"	=> "./?object=faq",
 		));
 		// Single FAQ
-		$sql = "SELECT `id` FROM `".db('faq_texts')."`";
+		$sql = "SELECT id FROM ".db('faq_texts')."";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(

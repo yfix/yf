@@ -114,8 +114,8 @@ class yf_forum_low {
 		}
 		$body = "<a href='".module('forum')->_link_to_forum($forum_id)."'><b>".t("Full version")."</b></a><br />\r\n";
 		// Prepare SQL query
-		$sql = "SELECT * FROM `".db('forum_topics')."` WHERE `forum`=".intval($forum_id)." ";
-		$order_by_sql = " ORDER BY `last_post_date` DESC ";
+		$sql = "SELECT * FROM ".db('forum_topics')." WHERE forum=".intval($forum_id)." ";
+		$order_by_sql = " ORDER BY last_post_date DESC ";
 		$path = "./?object=forum&action=low&id=f".$forum_id;
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, "", $this->_topics_per_page);
 		if (!empty($pages)) {
@@ -139,14 +139,14 @@ class yf_forum_low {
 			return "";
 		}
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 		if (empty($topic_info)) {
 			return "";
 		}
 		$body = "<a href='".url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".t("Full version")."</b></a><br />\r\n";
 		// Prepare SQL query
-		$sql = "SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".$topic_id;
-		$order_by = " ORDER BY `created` ASC ";
+		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$topic_id;
+		$order_by = " ORDER BY created ASC ";
 		$path = "./?object=forum&action=low&id=t".$topic_id;
 		list($add_sql, $topic_pages, $topic_num_posts) = common()->divide_pages($sql, $path, null, $this->_posts_per_page);
 		if (!empty($pages)) {

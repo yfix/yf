@@ -29,7 +29,7 @@ class yf_gallery_compact {
 		}
 		$PHOTO_TYPE	= "medium";
 		// Try to get given photo info
-		$photo_info = db()->query_fetch("SELECT * FROM `".db('gallery_photos')."` WHERE `id`=".intval($PHOTO_ID));
+		$photo_info = db()->query_fetch("SELECT * FROM ".db('gallery_photos')." WHERE id=".intval($PHOTO_ID));
 		if (empty($photo_info["id"])) {
 			return _e(t("No such photo!"));
 		}

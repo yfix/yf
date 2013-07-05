@@ -287,7 +287,7 @@ class yf_blog extends yf_module {
 		}
 		// Check if user already have started blog
 		$num_user_posts = db()->query_num_rows(
-			"SELECT `id` FROM `".db('blog_posts')."` WHERE `user_id`=".intval($user_id)
+			"SELECT id FROM ".db('blog_posts')." WHERE user_id=".intval($user_id)
 		);
 		if (!empty($user_id) && empty($num_user_posts)) {
 			$user_info = user($user_id);
@@ -399,7 +399,7 @@ class yf_blog extends yf_module {
 		// Get selected posts details
 		if (is_array($posts_ids_to_show) && !empty($posts_ids_to_show)) {
 		
-			$Q = db()->query("SELECT * FROM `".db('blog_posts')."` WHERE `id` IN(".implode(",", $posts_ids_to_show).") ORDER BY `add_date` DESC");
+			$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE id IN(".implode(",", $posts_ids_to_show).") ORDER BY add_date DESC");
 			while ($post_info = db()->fetch_assoc($Q)) {
 				if ($this->PREVIEW_CUT_ON_SHOW_POSTS) {
 					$post_info["text"] = substr($post_info["text"], 0, $this->POST_TEXT_PREVIEW_LENGTH);
@@ -465,7 +465,7 @@ class yf_blog extends yf_module {
 		$body = tpl()->parse(BLOG_CLASS_NAME."/view_blog_main", $replace);
 		// Update number of reads
 		if (is_array($posts_ids) && empty($GLOBALS['blog_no_count_views'])) {
-			db()->query("UPDATE `".db('blog_posts')."` SET `num_reads` = `num_reads` + 1 WHERE `id` IN(".implode(",", $posts_ids).")");
+			db()->query("UPDATE ".db('blog_posts')." SET num_reads = num_reads + 1 WHERE id IN(".implode(",", $posts_ids).")");
 		}
 		return $body;
 	}
@@ -496,7 +496,7 @@ class yf_blog extends yf_module {
 			}
 		}
 		// Get all user posts short info
-		$Q = db()->query("SELECT `id`,`id2`,`add_date`,`custom_cat_id`,`title` FROM `".db('blog_posts')."` WHERE `user_id`=".intval($user_info["id"])." AND `active`=1 ORDER BY `add_date` DESC");
+		$Q = db()->query("SELECT id,id2,add_date,custom_cat_id,title FROM ".db('blog_posts')." WHERE user_id=".intval($user_info["id"])." AND active=1 ORDER BY add_date DESC");
 		while ($post_info = db()->fetch_assoc($Q)) {
 			$this->_all_posts_ids[$post_info["id"]] = $post_info["id"];
 			$this->_posts_ids_by_dates[date("Y-m", $post_info["add_date"])][$post_info["id"]] = $post_info["id"];
@@ -534,11 +534,11 @@ class yf_blog extends yf_module {
 	function show_single_post () {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get given user info
-		$sql = "SELECT * FROM `".db('blog_posts')."` WHERE ";
+		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->HIDE_TOTAL_ID) {
-			$sql .= " `id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
 		} else {
-			$sql .= " `id`=".intval($_GET["id"]);
+			$sql .= " id=".intval($_GET["id"]);
 		}
 		$this->_post_info = db()->query_fetch($sql);
 		if (empty($this->_post_info["id"])) {
@@ -575,7 +575,7 @@ class yf_blog extends yf_module {
 			}
 			
 			if($user_id != $this->USER_ID){
-				$user_mask = db()->query_fetch("SELECT `mask` FROM `".db('friends_users')."` WHERE `user_id` = ".$user_id." AND `friend_id` = ".$this->USER_ID);
+				$user_mask = db()->query_fetch("SELECT mask FROM ".db('friends_users')." WHERE user_id = ".$user_id." AND friend_id = ".$this->USER_ID);
 				$user_mask = $user_mask["mask"];
 				
 				$FRIENDS_OBJ = &main()->init_class("friends");
@@ -607,7 +607,7 @@ class yf_blog extends yf_module {
 			}
 		}
 		// Update number of posts reads
-		db()->query("UPDATE `".db('blog_posts')."` SET `num_reads` = `num_reads` + 1 WHERE `id`=".intval($this->_post_info["id"]));
+		db()->query("UPDATE ".db('blog_posts')." SET num_reads = num_reads + 1 WHERE id=".intval($this->_post_info["id"]));
 		// Comments block check
 		$comments_allowed = $this->_comment_allowed_check ($this->BLOG_SETTINGS["allow_comments"], $this->_post_info["allow_comments"], $this->_post_info["user_id"]);
 
@@ -665,7 +665,7 @@ class yf_blog extends yf_module {
 			"field_date"	=> "add_date",
 			"field_title"	=> "title",
 			"field_text"	=> "text",
-			"where"			=> "`user_id`=".intval($post_info["user_id"]), // custom WHERE condition will be added to query
+			"where"			=> "user_id=".intval($post_info["user_id"]), // custom WHERE condition will be added to query
 		));
 		if (empty($data) || !is_array($data)) {
 			return false;
@@ -777,9 +777,9 @@ class yf_blog extends yf_module {
 		}
 		// Check if user already have started blog
 		$num_user_posts = db()->query_num_rows(
-			"SELECT `id` FROM `".db('blog_posts')."` 
-			WHERE `user_id`=".intval($user_id)." 
-				AND `custom_cat_id`=".intval($custom_cat_id)
+			"SELECT id FROM ".db('blog_posts')." 
+			WHERE user_id=".intval($user_id)." 
+				AND custom_cat_id=".intval($custom_cat_id)
 		);
 		if (empty($num_user_posts)) {
 			return t("No posts inside this category");
@@ -881,12 +881,12 @@ class yf_blog extends yf_module {
 			return $this->CUR_USER_BLOG_SETTINGS;
 		}
 		// Try to get settings from db
-		$BLOG_SETTINGS = db()->query_fetch("SELECT * FROM `".db('blog_settings')."` WHERE `user_id`=".intval($user_id));
+		$BLOG_SETTINGS = db()->query_fetch("SELECT * FROM ".db('blog_settings')." WHERE user_id=".intval($user_id));
 		if (empty($BLOG_SETTINGS)) {
 			// Do create user blog settings (if not done yet)
 			$this->_start_blog_settings($user_id);
 			// Try again
-			$BLOG_SETTINGS = db()->query_fetch("SELECT * FROM `".db('blog_settings')."` WHERE `user_id`=".intval($user_id));
+			$BLOG_SETTINGS = db()->query_fetch("SELECT * FROM ".db('blog_settings')." WHERE user_id=".intval($user_id));
 		}
 		return $BLOG_SETTINGS;
 	}
@@ -898,7 +898,7 @@ class yf_blog extends yf_module {
 		if (!is_array($users_ids) || empty($users_ids)) {
 			return false;
 		}
-		$Q = db()->query("SELECT * FROM `".db('blog_settings')."` WHERE `user_id` IN(".implode(",", $users_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('blog_settings')." WHERE user_id IN(".implode(",", $users_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$users_blog_settings[$A["user_id"]] = $A;
 		}
@@ -946,7 +946,7 @@ class yf_blog extends yf_module {
 	*/
 	function _show_for_profile ($user_info = array()) {
 		// Get 10 latest posts
-		$Q = db()->query("SELECT `id`,`id2`,`title`,`add_date` FROM `".db('blog_posts')."` WHERE `user_id`=".intval($user_info["id"])." AND `active`=1 ORDER BY `add_date` DESC LIMIT ".intval($this->NUM_FOR_PROFILE));
+		$Q = db()->query("SELECT id,id2,title,add_date FROM ".db('blog_posts')." WHERE user_id=".intval($user_info["id"])." AND active=1 ORDER BY add_date DESC LIMIT ".intval($this->NUM_FOR_PROFILE));
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"post_link"	=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".($this->HIDE_TOTAL_ID ? $A["id2"] : $A["id"]). _add_get(array("page")),

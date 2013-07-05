@@ -57,7 +57,7 @@ class yf_rate {
 			return false;
 		}
 		// Get info from db
-		$Q = db()->query("SELECT * FROM `".db('rates')."` WHERE `object_name`='"._es($object_name)."' AND `object_id` IN(".implode(",", $objects_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('rates')." WHERE object_name='"._es($object_name)."' AND object_id IN(".implode(",", $objects_ids).")");
 		while ($A = db()->fetch_assoc($Q)) $rate_infos[$A["object_id"]] = $A;
 		// Return result data
 		return $rate_infos;
@@ -69,7 +69,7 @@ class yf_rate {
 	function _get_user_denied_rate_ids ($user_id = "", $rates_ids = array()) {
 		$denied_rate_ids = array();
 		// Get info from db
-		$Q = db()->query("SELECT `rate_id` FROM `".db('rate_votes')."` WHERE `user_id`=".intval($user_id)." AND `add_date`>".intval(time() - $this->VOTE_DURATION)." ".(!empty($rates_ids) ? " AND `rate_id` IN(".implode(",", $rates_ids).")" : ""));
+		$Q = db()->query("SELECT rate_id FROM ".db('rate_votes')." WHERE user_id=".intval($user_id)." AND add_date>".intval(time() - $this->VOTE_DURATION)." ".(!empty($rates_ids) ? " AND rate_id IN(".implode(",", $rates_ids).")" : ""));
 		while ($A = db()->fetch_assoc($Q)) $denied_rate_ids[$A["rate_id"]] = $A["rate_id"];
 		// Return result data
 		return $denied_rate_ids;
@@ -88,7 +88,7 @@ class yf_rate {
 		$VOTE_VALUE	= intval($_REQUEST["rate_value"]);
 		// Try to get rate info (it need to be created before to prevent flooding)
 		if (!empty($RATE_ID)) {
-			$RATE_INFO = db()->query_fetch("SELECT * FROM `".db('rates')."` WHERE `id`=".intval($RATE_ID)." AND `active`='1'");
+			$RATE_INFO = db()->query_fetch("SELECT * FROM ".db('rates')." WHERE id=".intval($RATE_ID)." AND active='1'");
 		}
 		// Last check for the vote record
 		if (empty($RATE_INFO["id"])) {
@@ -98,7 +98,7 @@ class yf_rate {
 		$ALLOW_VOTE = false;
 		// Check if user is allowed to make vote here and now
 		if ($this->USER_ID) {
-			$num_latest_votes = db()->query_num_rows("SELECT `id` FROM `".db('rate_votes')."` WHERE `rate_id`=".intval($RATE_INFO["id"])." AND `user_id`=".intval($this->USER_ID)." AND `add_date`>".intval(time() - $this->VOTE_DURATION));
+			$num_latest_votes = db()->query_num_rows("SELECT id FROM ".db('rate_votes')." WHERE rate_id=".intval($RATE_INFO["id"])." AND user_id=".intval($this->USER_ID)." AND add_date>".intval(time() - $this->VOTE_DURATION));
 			if (empty($num_latest_votes)) {
 				$ALLOW_VOTE = true;
 			}
@@ -115,11 +115,11 @@ class yf_rate {
 			));
 			// Update main rates table
 			db()->query(
-				"UPDATE `".db('rates')."` SET 
-					`num_votes`		= `num_votes` + 1, 
-					`votes_sum`		= `votes_sum` + ".intval($VOTE_VALUE).", 
-					`last_vote_date`= ".time()."
-				WHERE `id`=".intval($RATE_ID)
+				"UPDATE ".db('rates')." SET 
+					num_votes		= num_votes + 1, 
+					votes_sum		= votes_sum + ".intval($VOTE_VALUE).", 
+					last_vote_date= ".time()."
+				WHERE id=".intval($RATE_ID)
 			);
 			// Update array info
 			$RATE_INFO["num_votes"] += 1;
@@ -156,7 +156,7 @@ class yf_rate {
 			$RATE_INFO	= $GLOBALS['_RATE_INFOS_CACHE'][$OBJECT_NAME][$OBJECT_ID];
 		} elseif (!empty($OBJECT_ID) && !empty($OBJECT_NAME)) {
 			// Try to get rate info
-			$RATE_INFO = db()->query_fetch("SELECT * FROM `".db('rates')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID));
+			$RATE_INFO = db()->query_fetch("SELECT * FROM ".db('rates')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID));
 			// Do create rate info record
 			if (empty($RATE_INFO)) {
 				$RATE_INFO = array(
@@ -185,7 +185,7 @@ class yf_rate {
 			if (isset($GLOBALS['_RATE_LATEST_VOTES'][$OBJECT_NAME][$RATE_INFO["id"]])) {
 				$num_latest_votes = $GLOBALS['_RATE_LATEST_VOTES'][$OBJECT_NAME][$RATE_INFO["id"]];
 			} else {
-				$num_latest_votes = db()->query_num_rows("SELECT `id` FROM `".db('rate_votes')."` WHERE `rate_id`=".intval($RATE_INFO["id"])." AND `user_id`=".intval($this->USER_ID)." AND `add_date`>".intval(time() - $this->VOTE_DURATION));
+				$num_latest_votes = db()->query_num_rows("SELECT id FROM ".db('rate_votes')." WHERE rate_id=".intval($RATE_INFO["id"])." AND user_id=".intval($this->USER_ID)." AND add_date>".intval(time() - $this->VOTE_DURATION));
 			}
 			if (empty($num_latest_votes)) {
 				$ALLOW_VOTE = true;
@@ -258,9 +258,9 @@ class yf_rate {
 		// Get rates infos
 		$Q = db()->query(
 			"SELECT * 
-			FROM `".db('rates')."` 
-			WHERE `object_name`='"._es($OBJECT_NAME)."' 
-				AND `object_id` IN(".implode(",", $OBJECTS_IDS).")"
+			FROM ".db('rates')." 
+			WHERE object_name='"._es($OBJECT_NAME)."' 
+				AND object_id IN(".implode(",", $OBJECTS_IDS).")"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$infos[$A["object_id"]] = $A;
@@ -301,12 +301,12 @@ class yf_rate {
 			}
 			// Try to override num latest votes
 			$Q = db()->query(
-				"SELECT `rate_id`, COUNT(*) AS `num`
-				FROM `".db('rate_votes')."` 
-				WHERE `user_id`=".intval($this->USER_ID)." 
-					AND `rate_id` IN(".implode(",", $rates_ids).")
-					AND `add_date` > ".intval(time() - $this->VOTE_DURATION)."
-				GROUP BY `rate_id`"
+				"SELECT rate_id, COUNT(*) AS num
+				FROM ".db('rate_votes')." 
+				WHERE user_id=".intval($this->USER_ID)." 
+					AND rate_id IN(".implode(",", $rates_ids).")
+					AND add_date > ".intval(time() - $this->VOTE_DURATION)."
+				GROUP BY rate_id"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$num_latest_votes[$A["rate_id"]] = $A["num"];

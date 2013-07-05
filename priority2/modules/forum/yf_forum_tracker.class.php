@@ -94,9 +94,9 @@ class yf_forum_tracker {
 		$_GET["id"]		= intval($_GET["id"]);
 		$_GET["page"]	= intval($_GET["page"]);
 		if (FORUM_USER_ID) {
-			$EXISTS = db()->query_num_rows("SELECT * FROM `".db('forum_email_notify')."` WHERE `user_id`=".intval(FORUM_USER_ID)." AND `topic_id`=".intval($_GET["id"]));
-			if ($EXISTS) $sql = "DELETE FROM `".db('forum_email_notify')."` WHERE `user_id`=".intval(FORUM_USER_ID)." AND `topic_id`=".intval($_GET["id"]);
-			else $sql = "INSERT INTO `".db('forum_email_notify')."` VALUES (".intval(FORUM_USER_ID).", ".intval($_GET["id"]).", ".time().")";
+			$EXISTS = db()->query_num_rows("SELECT * FROM ".db('forum_email_notify')." WHERE user_id=".intval(FORUM_USER_ID)." AND topic_id=".intval($_GET["id"]));
+			if ($EXISTS) $sql = "DELETE FROM ".db('forum_email_notify')." WHERE user_id=".intval(FORUM_USER_ID)." AND topic_id=".intval($_GET["id"]);
+			else $sql = "INSERT INTO ".db('forum_email_notify')." VALUES (".intval(FORUM_USER_ID).", ".intval($_GET["id"]).", ".time().")";
 			db()->query($sql);
 			js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$_GET["id"]. ($_GET["page"] ? "&page=".$_GET["page"] : ""));
 		}
@@ -111,7 +111,7 @@ class yf_forum_tracker {
 /*
 		if (module('forum')->SETTINGS["SEND_NOTIFY_EMAILS"]) return false;
 		// Get emails to process
-		$Q5 = db()->query("SELECT * FROM `".db('forum_email_notify')."` WHERE `topic_id`=".intval($topic_info["id"]));
+		$Q5 = db()->query("SELECT * FROM ".db('forum_email_notify')." WHERE topic_id=".intval($topic_info["id"]));
 		while ($A5 = db()->fetch_assoc($Q5)) if (!FORUM_USER_ID || (FORUM_USER_ID != $A5["user_id"])) $notify_user_ids[$A5["user_id"]] = $A5["user_id"];
 		if (is_array($notify_user_ids) && count($notify_user_ids)) {
 			// Process users that wanted to receive notifications for this topic
@@ -120,7 +120,7 @@ class yf_forum_tracker {
 			$view_topic_url	= process_url("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$topic_info["id"]);
 			$dont_notify_url= process_url("./?object=".FORUM_CLASS_NAME."&action=notify_me&id=".$topic_info["id"]);
 			// Get users details
-			$Q6 = db()->query("SELECT `user_email` AS `0`, `name` AS `1` FROM `".db('forum_users')."` WHERE `id` IN(".implode(",", $notify_user_ids).") AND `status`='a'");
+			$Q6 = db()->query("SELECT user_email AS 0, name AS 1 FROM ".db('forum_users')." WHERE id IN(".implode(",", $notify_user_ids).") AND status='a'");
 			while (list($notify_email, $user_login) = db()->fetch_assoc($Q6)) {
 				$replace = array(
 					"notify_email"		=> $notify_email,
@@ -137,7 +137,7 @@ class yf_forum_tracker {
 		}
 		// Save user notification
 		if (FORUM_USER_ID && $_POST["email_notify"]) {
-			db()->query("REPLACE INTO `".db('forum_email_notify')."` VALUES (".intval(FORUM_USER_ID).", ".intval($topic_info["id"]).", ".time().")");
+			db()->query("REPLACE INTO ".db('forum_email_notify')." VALUES (".intval(FORUM_USER_ID).", ".intval($topic_info["id"]).", ".time().")");
 		}
 */
 	}

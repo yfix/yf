@@ -121,50 +121,50 @@ class yf_reputation {
 	*/
 	function show () {
 		// Get top users by reputation points
-		$Q = db()->query("SELECT * FROM `".db('reput_total')."` ORDER BY `points` DESC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('reput_total')." ORDER BY points DESC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$max_reput[$A["user_id"]]	= $A;
 			$users_ids[$A["user_id"]]	= $A["user_id"];
 		}
 		// Get bottom users by reputation points
-		$Q = db()->query("SELECT * FROM `".db('reput_total')."` ORDER BY `points` ASC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('reput_total')." ORDER BY points ASC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$min_reput[$A["user_id"]]	= $A;
 			$users_ids[$A["user_id"]]	= $A["user_id"];
 		}
 		// Get top users by altering power
-		$Q = db()->query("SELECT * FROM `".db('reput_total')."` ORDER BY `alt_power` DESC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('reput_total')." ORDER BY alt_power DESC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$max_alt[$A["user_id"]]		= $A;
 			$users_ids[$A["user_id"]]	= $A["user_id"];
 		}
 		// Get bottom users by altering power
-		$Q = db()->query("SELECT * FROM `".db('reput_total')."` ORDER BY `alt_power` ASC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('reput_total')." ORDER BY alt_power ASC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$min_alt[$A["user_id"]]		= $A;
 			$users_ids[$A["user_id"]]	= $A["user_id"];
 		}
 		// Get top users by num_voted
-		$Q = db()->query("SELECT * FROM `".db('reput_total')."` ORDER BY `num_voted` DESC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('reput_total')." ORDER BY num_voted DESC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$top_voted_for[$A["user_id"]]	= $A;
 			$users_ids[$A["user_id"]]		= $A["user_id"];
 		}
 		// Get top users by number of votes done
-		$Q = db()->query("SELECT * FROM `".db('reput_total')."` ORDER BY `num_votes` DESC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('reput_total')." ORDER BY num_votes DESC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$top_by_votes[$A["user_id"]]	= $A;
 			$users_ids[$A["user_id"]]		= $A["user_id"];
 		}
 		// Get latest reputation votes
-		$Q = db()->query("SELECT * FROM `".db('reput_user_votes')."` ORDER BY `add_date` DESC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('reput_user_votes')." ORDER BY add_date DESC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$latest_votes[$A["id"]]			= $A;
 			$users_ids[$A["user_id"]]		= $A["user_id"];
 			$users_ids[$A["target_user_id"]]= $A["target_user_id"];
 		}
 		// Get most active users
-		$Q = db()->query("SELECT * FROM `".db('activity_total')."` ORDER BY `points` DESC LIMIT 10");
+		$Q = db()->query("SELECT * FROM ".db('activity_total')." ORDER BY points DESC LIMIT 10");
 		while ($A = db()->fetch_assoc($Q)) {
 			$top_active[$A["user_id"]]		= $A;
 			$users_ids[$A["user_id"]]		= $A["user_id"];
@@ -274,10 +274,10 @@ class yf_reputation {
 	function _show_recent_votes() {
 		$LIMIT_LAST_VOTES = 10;
 		$Q = db()->query(
-			"SELECT * FROM `".db('reput_user_votes')."` 
-			WHERE `target_user_id`=".intval($this->USER_ID)." 
-				AND `object_name` != '' 
-			ORDER BY `add_date` DESC 
+			"SELECT * FROM ".db('reput_user_votes')." 
+			WHERE target_user_id=".intval($this->USER_ID)." 
+				AND object_name != '' 
+			ORDER BY add_date DESC 
 			LIMIT ".intval($LIMIT_LAST_VOTES)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -288,7 +288,7 @@ class yf_reputation {
 		}
 		// Get comments details
 		if (!empty($_comments_ids)) {
-			$Q = db()->query("SELECT `id`,`object_id`,`object_name` FROM `".db('comments')."` WHERE `id` IN(".implode(",", $_comments_ids).")");
+			$Q = db()->query("SELECT id,object_id,object_name FROM ".db('comments')." WHERE id IN(".implode(",", $_comments_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$_comments_details[$A["id"]] = $A;
 			}
@@ -402,7 +402,7 @@ class yf_reputation {
 			$VOTE_VALUE = $this->_calc_vote_value($target_user_id, $_POST["vote_change"]);
 		}
 		// Get last voter
-		list($last_voter_id) = db()->query_fetch("SELECT `user_id` AS `0` FROM `".db('reput_user_votes')."` WHERE `target_user_id`=".intval($target_user_id)." ORDER BY `add_date` DESC LIMIT 1");
+		list($last_voter_id) = db()->query_fetch("SELECT user_id AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." ORDER BY add_date DESC LIMIT 1");
 		// Check country (state) matching
 		$country_match = 0;
 		if (!empty($user_info["country"])) {
@@ -420,13 +420,13 @@ class yf_reputation {
 			$this->CHEAT_DETECTED = false;
 			// Get unified items stats
 			$sql_array = array(
-				"negative_total_votes"		=> "SELECT COUNT(*) AS `0` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." AND `counted` < 0",
-				"positive_total_votes"		=> "SELECT COUNT(*) AS `0` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." AND `counted` > 0",
-				"positive_single_user_votes"=> "SELECT MAX(`2`) AS `0` FROM (SELECT COUNT(*) AS `2` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." AND `counted` > 0 GROUP BY `target_user_id`) AS `1`",
-				"positive_voted_accounts"	=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS `2` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." AND `counted` > 0 GROUP BY `target_user_id`) AS `1`",
-				"total_voted_accounts"		=> "SELECT COUNT(*) AS `0` FROM (SELECT COUNT(*) AS `2` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." GROUP BY `target_user_id`) AS `1`",
-				"single_voter_target_votes"	=> "SELECT COUNT(*) AS `0` FROM `".db('reput_user_votes')."` WHERE `target_user_id`=".intval($target_user_id)." AND `user_id`=".intval($this->USER_ID)." AND `same_voter`='1'",
-				"all_voters_target_votes"	=> "SELECT COUNT(*) AS `0` FROM `".db('reput_user_votes')."` WHERE `target_user_id`=".intval($target_user_id),
+				"negative_total_votes"		=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted < 0",
+				"positive_total_votes"		=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0",
+				"positive_single_user_votes"=> "SELECT MAX(2) AS 0 FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
+				"positive_voted_accounts"	=> "SELECT COUNT(*) AS 0 FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND counted > 0 GROUP BY target_user_id) AS 1",
+				"total_voted_accounts"		=> "SELECT COUNT(*) AS 0 FROM (SELECT COUNT(*) AS 2 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." GROUP BY target_user_id) AS 1",
+				"single_voter_target_votes"	=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id)." AND user_id=".intval($this->USER_ID)." AND same_voter='1'",
+				"all_voters_target_votes"	=> "SELECT COUNT(*) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($target_user_id),
 			);
 			$_sql_keys = array_keys($sql_array);
 			// Get and assign unified data
@@ -676,7 +676,7 @@ class yf_reputation {
 			return false;
 		}
 		// clicks daily (for last 24 hours)
-		list($this->REPUT_VOTES_LAST_24H) = db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." AND `add_date` > ".(time() - 86400));
+		list($this->REPUT_VOTES_LAST_24H) = db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." AND add_date > ".(time() - 86400));
 		if (!empty($this->MAX_REPUT_CLICKS_DAILY) && 
 			$this->REPUT_VOTES_LAST_24H >= $this->MAX_REPUT_CLICKS_DAILY) {
 			_re("You have already spent all allowed daily votes! (".intval($this->MAX_REPUT_CLICKS_DAILY).") Thanks for being so active! To prevent our voting system from abuse we restrict the daily number of votes.");
@@ -685,7 +685,7 @@ class yf_reputation {
 		// cast value
 		if (!empty($this->REPUT_CAST_VALUE)) {
 			// Get last target users from this user votes limited with $this->REPUT_CAST_VALUE
-			$Q = db()->query("SELECT `id`,`target_user_id` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($this->USER_ID)." ORDER BY `add_date` DESC LIMIT ".intval($this->REPUT_CAST_VALUE));
+			$Q = db()->query("SELECT id,target_user_id FROM ".db('reput_user_votes')." WHERE user_id=".intval($this->USER_ID)." ORDER BY add_date DESC LIMIT ".intval($this->REPUT_CAST_VALUE));
 			while ($A = db()->fetch_assoc($Q)) $last_target_users[$A["id"]] = $A["target_user_id"];
 			if (in_array($target_user_id, (array)$last_target_users)) {
 				_re("You recently voted for this user. <br />\r\nSo to vote for him/her again you need to vote for at least ".intval($this->REPUT_CAST_VALUE)." other users first.");
@@ -696,10 +696,10 @@ class yf_reputation {
 		if ($this->TRACK_OBJECT_INFO && !empty($this->_object_name) && !empty($this->_object_id)) {
 			$voted_for_object = db()->query_num_rows(
 				"SELECT * 
-				FROM `".db('reput_user_votes')."` 
-				WHERE `user_id`=".intval($this->USER_ID)." 
-					AND `object_id` = ".intval($this->_object_id)."
-					AND `object_name` = '"._es($this->_object_name)."' 
+				FROM ".db('reput_user_votes')." 
+				WHERE user_id=".intval($this->USER_ID)." 
+					AND object_id = ".intval($this->_object_id)."
+					AND object_name = '"._es($this->_object_name)."' 
 				LIMIT 1"
 			);
 			if (!empty($voted_for_object)) {
@@ -717,15 +717,15 @@ class yf_reputation {
 		if (empty($user_id)) {
 			return false;
 		}
-		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT `user_id` FROM `".db('reput_total')."` WHERE `user_id`=".intval($user_id));
+		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT user_id FROM ".db('reput_total')." WHERE user_id=".intval($user_id));
 		if (!$ACCOUNT_EXISTS) {
 			return $this->_start_reput_account($user_id);
 		}
 		// Calculate user reput info from raw table
-		list($total_points)	= db()->query_fetch("SELECT SUM(`counted`) AS `0` FROM `".db('reput_user_votes')."` WHERE `target_user_id`=".intval($user_id));
+		list($total_points)	= db()->query_fetch("SELECT SUM(counted) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($user_id));
 		$total_points += $this->START_REPUT;
-		list($num_votes)	= db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('reput_user_votes')."` WHERE `user_id`=".intval($user_id));
-		list($num_voted)	= db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('reput_user_votes')."` WHERE `target_user_id`=".intval($user_id));
+		list($num_votes)	= db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('reput_user_votes')." WHERE user_id=".intval($user_id));
+		list($num_voted)	= db()->query_fetch("SELECT COUNT(id) AS 0 FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($user_id));
 		// Get user's activity
 		$ACTIVITY_OBJ = main()->init_class("activity");
 		if (is_object($ACTIVITY_OBJ)) {
@@ -745,12 +745,12 @@ class yf_reputation {
 			$ALT_POWER = 0;
 		}
 		// Do save current user reputation points
-		$sql = "UPDATE `".db('reput_total')."` SET 
-				`points`	= ".intval($total_points).", 
-				`alt_power`	= ".intval($ALT_POWER).", 
-				`num_votes`	= ".intval($num_votes).", 
-				`num_voted`	= ".intval($num_voted)."
-			WHERE `user_id`=".intval($user_id);
+		$sql = "UPDATE ".db('reput_total')." SET 
+				points	= ".intval($total_points).", 
+				alt_power	= ".intval($ALT_POWER).", 
+				num_votes	= ".intval($num_votes).", 
+				num_voted	= ".intval($num_voted)."
+			WHERE user_id=".intval($user_id);
 		db()->query($sql);
 	}
 
@@ -780,7 +780,7 @@ class yf_reputation {
 		if (!is_array($users_ids) || empty($users_ids)) {
 			return false;
 		}
-		$Q = db()->query("SELECT * FROM `".db('reput_total')."` WHERE `user_id` IN(".implode(",", $users_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('reput_total')." WHERE user_id IN(".implode(",", $users_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$reput_infos[$A["user_id"]] = $A;
 		}
@@ -805,12 +805,12 @@ class yf_reputation {
 			return $this->CUR_USER_REPUT_ARRAY;
 		}
 		// Try to get user reput account info
-		$REPUT_INFO = db()->query_fetch("SELECT * FROM `".db('reput_total')."` WHERE `user_id`=".intval($user_id));
+		$REPUT_INFO = db()->query_fetch("SELECT * FROM ".db('reput_total')." WHERE user_id=".intval($user_id));
 		if (empty($REPUT_INFO)) {
 			// Do create user reput info (if not done yet)
 			$this->_start_reput_account($user_id);
 			// Try again
-			$REPUT_INFO = db()->query_fetch("SELECT * FROM `".db('reput_total')."` WHERE `user_id`=".intval($user_id));
+			$REPUT_INFO = db()->query_fetch("SELECT * FROM ".db('reput_total')." WHERE user_id=".intval($user_id));
 		}
 		return $REPUT_INFO;
 	}
@@ -822,7 +822,7 @@ class yf_reputation {
 		if (empty($user_id)) {
 			return false;
 		}
-		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT `user_id` FROM `".db('reput_total')."` WHERE `user_id`=".intval($user_id));
+		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT user_id FROM ".db('reput_total')." WHERE user_id=".intval($user_id));
 		if ($ACCOUNT_EXISTS) {
 			return false;
 		}

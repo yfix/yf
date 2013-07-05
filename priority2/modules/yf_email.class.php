@@ -79,12 +79,12 @@ class yf_email {
 		}
 		// Connect to pager
 		if ($folder_name == "inbox") {
-			$sql = "SELECT * FROM `".db('mailarchive')."` WHERE `receiver`=".intval($this->USER_ID)." AND `r_folder_id`=".intval($this->_get_folder_id($folder_name));
+			$sql = "SELECT * FROM ".db('mailarchive')." WHERE receiver=".intval($this->USER_ID)." AND r_folder_id=".intval($this->_get_folder_id($folder_name));
 		} else { // Outbox (sent)
-			$sql = "SELECT * FROM `".db('mailarchive')."` WHERE `sender`=".intval($this->USER_ID)." AND `s_folder_id`=".intval($this->_get_folder_id($folder_name));
+			$sql = "SELECT * FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND s_folder_id=".intval($this->_get_folder_id($folder_name));
 		}
-		$order_by_sql = " ORDER BY `time` DESC";
-		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT `id`", $sql));
+		$order_by_sql = " ORDER BY time DESC";
+		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT id", $sql));
 		// Get info from database
 		$Q = db()->query($sql. $order_by_sql. $add_sql);
 		while ($mail_info = db()->fetch_assoc($Q)) {
@@ -153,7 +153,7 @@ class yf_email {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Get email info
-		$mail_info = db()->query_fetch("SELECT * FROM `".db('mailarchive')."` WHERE `id`=".intval($_GET["id"]));
+		$mail_info = db()->query_fetch("SELECT * FROM ".db('mailarchive')." WHERE id=".intval($_GET["id"]));
 		if (empty($mail_info["id"])) {
 			return _e("No such record!");
 		}
@@ -162,7 +162,7 @@ class yf_email {
 		}
 		// Set read time for receiver (if not yet and only if inside "inbox" folder)
 		if ($mail_info["receiver"] == $this->USER_ID && $mail_info["r_folder_id"] == 1 && empty($mail_info["r_read_time"])) {
-			db()->UPDATE("mailarchive", array("r_read_time" => time()), "`id`=".intval($mail_info["id"]));
+			db()->UPDATE("mailarchive", array("r_read_time" => time()), "id=".intval($mail_info["id"]));
 		}
 		// Process reputation
 		$reput_text = "";
@@ -211,7 +211,7 @@ class yf_email {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Get mail info
-		$mail_info = db()->query_fetch("SELECT * FROM `".db('mailarchive')."` WHERE `id`=".intval($_GET["id"]));
+		$mail_info = db()->query_fetch("SELECT * FROM ".db('mailarchive')." WHERE id=".intval($_GET["id"]));
 		if (empty($mail_info["id"])) {
 			return _e("No such record!");
 		}
@@ -229,7 +229,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('mailarchive')."` WHERE `sender`=".intval($this->USER_ID)." AND `time` >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -293,7 +293,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('mailarchive')."` WHERE `sender`=".intval($this->USER_ID)." AND `time` >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -352,7 +352,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('mailarchive')."` WHERE `sender`=".intval($this->USER_ID)." AND `time` >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -407,8 +407,8 @@ class yf_email {
 			));
 			$RECORD_ID = db()->INSERT_ID();
 			// Update number of emails for the users
-			db()->query("UPDATE `".db('user')."` SET `emails`=`emails`+1 WHERE `id`=".$receiver_info["id"]);
-			db()->query("UPDATE `".db('user')."` SET `emailssent`=`emailssent`+1 WHERE `id`=".$this->_user_info["id"]);
+			db()->query("UPDATE ".db('user')." SET emails=emails+1 WHERE id=".$receiver_info["id"]);
+			db()->query("UPDATE ".db('user')." SET emailssent=emailssent+1 WHERE id=".$this->_user_info["id"]);
 			// Show success message
 			$replace = array(
 				"receiver_name"		=> _prepare_html(_display_name($receiver_info)),
@@ -440,7 +440,7 @@ class yf_email {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Get mail info
-		$mail_info = db()->query_fetch("SELECT * FROM `".db('mailarchive')."` WHERE `id`=".intval($_GET["id"]));
+		$mail_info = db()->query_fetch("SELECT * FROM ".db('mailarchive')." WHERE id=".intval($_GET["id"]));
 		if (empty($mail_info["id"])) {
 			return _e("No such record!");
 		}
@@ -454,7 +454,7 @@ class yf_email {
 		}
 		// Check allowed number of sent emails per day
 		if (!empty($this->EMAILS_ALLOWED_DAILY)) {
-			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('mailarchive')."` WHERE `sender`=".intval($this->USER_ID)." AND `time` >= ".(time() - 86400));
+			list($num_emails_24h) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('mailarchive')." WHERE sender=".intval($this->USER_ID)." AND time >= ".(time() - 86400));
 			if ($num_emails_24h >= $this->EMAILS_ALLOWED_DAILY) {
 				return _e("Email quota exceeded! To prevent our site from misuse we limit the allowed daily number of email messages to ".intval($this->EMAILS_ALLOWED_DAILY)." per user.");
 			}
@@ -478,7 +478,7 @@ class yf_email {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get current mail info (also, checking for owner)
-		$mail_info = db()->query_fetch("SELECT `id`,`s_folder_id`,`r_folder_id`,`sender`,`receiver` FROM `".db('mailarchive')."` WHERE `id`=".intval($_GET["id"]));
+		$mail_info = db()->query_fetch("SELECT id,s_folder_id,r_folder_id,sender,receiver FROM ".db('mailarchive')." WHERE id=".intval($_GET["id"]));
 		if ($mail_info["sender"] != $this->USER_ID && $mail_info["receiver"] != $this->USER_ID) {
 			return _e("Not your email!");
 		}
@@ -495,7 +495,7 @@ class yf_email {
 
 			db()->UPDATE("mailarchive", array(
 				"s_folder_id"	=> $this->_get_folder_id("deleted"),
-			),"`id`=".$mail_info["id"]);
+			),"id=".$mail_info["id"]);
 
 		} elseif ($mail_info["receiver"] == $this->USER_ID) {
 
@@ -505,7 +505,7 @@ class yf_email {
 
 			db()->UPDATE("mailarchive", array(
 				"r_folder_id"	=> $this->_get_folder_id("deleted"),
-			),"`id`=".$mail_info["id"]);
+			),"id=".$mail_info["id"]);
 
 		}
 		// Do delete record if needed
@@ -513,7 +513,7 @@ class yf_email {
 			$need_to_delete_record = false;
 		}
 		if ($need_to_delete_record) {
-			db()->query("DELETE FROM `".db('mailarchive')."` WHERE `id`=".$mail_info["id"]);
+			db()->query("DELETE FROM ".db('mailarchive')." WHERE id=".$mail_info["id"]);
 		}
 		// Remove activity points
 		if ($need_to_delete_record && $mail_info["sender"] == $this->USER_ID) {
@@ -544,7 +544,7 @@ class yf_email {
 			_re("Error sending mail!");
 			// Do ban user if found something bad
 			$NEW_ADMIN_COMMENTS = "\r\nAuto-banned on "._format_date(time())." (found scum words in email)";
-			db()->query("UPDATE `".db('user')."` SET `ban_email` = '1', `admin_comments`=CONCAT(`admin_comments`, '"._es($NEW_ADMIN_COMMENTS)."') WHERE `id`=".intval($this->USER_ID));
+			db()->query("UPDATE ".db('user')." SET ban_email = '1', admin_comments=CONCAT(admin_comments, '"._es($NEW_ADMIN_COMMENTS)."') WHERE id=".intval($this->USER_ID));
 		}
 		return $IS_BAD_EMAIL;
 	}
@@ -618,10 +618,10 @@ class yf_email {
 	function _account_suggests(){
 		// Check number of unread emails
 		list($num_unread_emails) = db()->query_fetch(
-			"SELECT COUNT(`id`) AS `0` FROM `".db('mailarchive')."` 
-			WHERE `receiver`=".intval($this->USER_ID)." 
-				AND `r_folder_id`=1 
-				AND `r_read_time`=0"
+			"SELECT COUNT(id) AS 0 FROM ".db('mailarchive')." 
+			WHERE receiver=".intval($this->USER_ID)." 
+				AND r_folder_id=1 
+				AND r_read_time=0"
 		);
 		
 		if ($num_unread_emails) {
@@ -646,10 +646,10 @@ class yf_email {
 
 		// Check number of unread emails
 		list($num_unread_emails) = db()->query_fetch(
-			"SELECT COUNT(`id`) AS `0` FROM `".db('mailarchive')."` 
-			WHERE `receiver`=".intval($this->USER_ID)." 
-				AND `r_folder_id`=1 
-				AND `r_read_time`=0"
+			"SELECT COUNT(id) AS 0 FROM ".db('mailarchive')." 
+			WHERE receiver=".intval($this->USER_ID)." 
+				AND r_folder_id=1 
+				AND r_read_time=0"
 		);
 
 		$unread = array(

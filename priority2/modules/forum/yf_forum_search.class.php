@@ -229,7 +229,7 @@ class yf_forum_search {
 		}
 		// Get topics infos
 		if (is_array($topics_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE ".(!FORUM_IS_ADMIN ? "`approved`=1 AND" : "")." `id` IN(".implode(",", array_keys($topics_ids)).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE ".(!FORUM_IS_ADMIN ? "approved=1 AND" : "")." id IN(".implode(",", array_keys($topics_ids)).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$topic_is_read = module('forum')->SETTINGS["USE_READ_MESSAGES"] ? module('forum')->_get_topic_read($A) : 0;
 				if (!empty($AF["only_unread"]) && $topic_is_read) {
@@ -285,7 +285,7 @@ class yf_forum_search {
 			}
 			// Fetch topics infos
 			if (!empty($topics_ids)) {
-				$Q3 = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN (".implode(",",$topics_ids).")".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : ""));
+				$Q3 = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN (".implode(",",$topics_ids).")".(!FORUM_IS_ADMIN ? " AND approved=1 " : ""));
 				while ($A = db()->fetch_assoc($Q3)) {
 					$topics_array[$A["id"]] = $A;
 				}
@@ -373,7 +373,7 @@ class yf_forum_search {
 		// Process last posts records
 		if (!empty($last_posts_ids)) {
 			$last_posts = array();
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",",$last_posts_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",",$last_posts_ids).")");
 			while ($post_info = db()->fetch_assoc($Q)) {
 
 				$subject = strlen($post_info["subject"]) ? $post_info["subject"] : $post_info["text"];
@@ -397,42 +397,42 @@ class yf_forum_search {
 	*/
 	function _prepare_sql_and_pages ($AF = array()) {
 		if ($AF["result_type"] == "posts") {
-			$sql1_header = "SELECT `id` FROM `".db('forum_posts')."` WHERE 1=1 ";
-			$sql2_header = "SELECT * FROM `".db('forum_posts')."` WHERE 1=1 ";
+			$sql1_header = "SELECT id FROM ".db('forum_posts')." WHERE 1=1 ";
+			$sql2_header = "SELECT * FROM ".db('forum_posts')." WHERE 1=1 ";
 		} else {
-			$sql1_header = "SELECT COUNT(`id`) AS `0`,`topic` AS `1` FROM `".db('forum_posts')."` WHERE 1=1 ";
-			$sql2_header = "SELECT COUNT(`id`) AS `num_records`, `topic` FROM `".db('forum_posts')."` WHERE 1=1 ";
+			$sql1_header = "SELECT COUNT(id) AS 0,topic AS 1 FROM ".db('forum_posts')." WHERE 1=1 ";
+			$sql2_header = "SELECT COUNT(id) AS num_records, topic FROM ".db('forum_posts')." WHERE 1=1 ";
 		}
 		// Show all posts for the admin
-		$sql1 .= !FORUM_IS_ADMIN ? " AND `status`='a' " : "";
+		$sql1 .= !FORUM_IS_ADMIN ? " AND status='a' " : "";
 		// Process keywords
 		if (!empty($AF["keywords"])) {
-			$sql1 .= " AND (`subject` LIKE '%".$AF["keywords"]."%' ".($AF["search_in"] == "posts" ? " OR `text` LIKE '%".$AF["keywords"]."%' " : "").") ";
+			$sql1 .= " AND (subject LIKE '%".$AF["keywords"]."%' ".($AF["search_in"] == "posts" ? " OR text LIKE '%".$AF["keywords"]."%' " : "").") ";
 		}
 		// Filter by member
 		if (!empty($AF["user_name"])) {
-			$sql1 .= " AND `user_name` LIKE '".(!empty($AF["exact_name"]) ? $AF["user_name"] : "%".$AF["user_name"]."%")."' ";
+			$sql1 .= " AND user_name LIKE '".(!empty($AF["exact_name"]) ? $AF["user_name"] : "%".$AF["user_name"]."%")."' ";
 		} elseif (!empty($AF["user_id"])) {
-			$sql1 .= " AND `user_id`=".intval($AF["user_id"])." ";
+			$sql1 .= " AND user_id=".intval($AF["user_id"])." ";
 		}
 		// Add skip forums ids
 		if (!empty($this->_skip_forums)) {
-			$sql1 .= " AND `forum` NOT IN(".implode(",",$this->_skip_forums).") ";
+			$sql1 .= " AND forum NOT IN(".implode(",",$this->_skip_forums).") ";
 		}
 		// Process forums ids
 		if (!empty($AF["forums"])) {
-			$sql1 .= " AND `forum` IN(".$AF["forums"].") ";
+			$sql1 .= " AND forum IN(".$AF["forums"].") ";
 		// Process topic id
 		} elseif (!empty($AF["topic_id"])) {
-			$sql1 .= " AND `topic`=".intval($AF["topic_id"])." ";
+			$sql1 .= " AND topic=".intval($AF["topic_id"])." ";
 		}
 		// Process prune
 		if (!empty($AF["prune_days"])) {
-			$sql1 .= " AND `created` ".($AF["prune_type"] == "older" ? "<=" : ">=")." ".(time() - intval($AF["prune_days"]) * 24 * 3600)." ";
+			$sql1 .= " AND created ".($AF["prune_type"] == "older" ? "<=" : ">=")." ".(time() - intval($AF["prune_days"]) * 24 * 3600)." ";
 		}
 		// Groupping SQL
 		if ($AF["result_type"] == "topics") {
-			$sql1 .= " GROUP BY `topic` ";
+			$sql1 .= " GROUP BY topic ";
 		}
 		// Generate query text according to existing fields
 		foreach ((array)$AF as $k => $v) {
@@ -455,7 +455,7 @@ class yf_forum_search {
 				&& false !== strpos(db()->DB_TYPE, "mysql") 
 			) {
 				db()->query(str_replace("SELECT ", "SELECT SQL_CALC_FOUND_ROWS ", $sql1_header).$sql1." LIMIT 0");
-				list($matched_records) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
+				list($matched_records) = db()->query_fetch("SELECT FOUND_ROWS() AS 0", false);
 			} else {
 				$matched_records = db()->query_num_rows($sql1_header.$sql1);
 			}
@@ -476,7 +476,7 @@ class yf_forum_search {
 			elseif ($AF["sort_by"] == "num_posts")	$sort_by = "num_records";
 			elseif ($AF["sort_by"] == "user_name")	$sort_by = "user_name";
 			elseif ($AF["sort_by"] == "forum_id")	$sort_by = "forum";
-			if (!empty($sort_by)) $sql2 .= " ORDER BY `".$sort_by."` ".($AF["sort_order"] == "asc" ? "ASC" : "DESC")." ";
+			if (!empty($sort_by)) $sql2 .= " ORDER BY ".$sort_by." ".($AF["sort_order"] == "asc" ? "ASC" : "DESC")." ";
 		}
 		return $sql2_header. $sql1. $sql2. $limit_sql;
 	}

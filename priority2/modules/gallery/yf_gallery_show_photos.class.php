@@ -26,11 +26,11 @@ class yf_gallery_show_photos {
 		$TEMPLATE_NAME	= !empty($params["template_name"]) ? $params["template_name"] : GALLERY_CLASS_NAME."/show_medium_size";
 		$PHOTO_TYPE		= !empty($params["photo_type"]) ? $params["photo_type"] : "medium";
 		// Try to get given post info
-		$sql = "SELECT * FROM `".db('gallery_photos')."` WHERE ";
+		$sql = "SELECT * FROM ".db('gallery_photos')." WHERE ";
 		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
-			$sql .= "`id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= "id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
 		} else {
-			$sql .= "`id`=".intval($_GET["id"]);
+			$sql .= "id=".intval($_GET["id"]);
 		}
 		$this->GALLERY_OBJ->_photo_info = db()->query_fetch($sql);
 		$photo_info = &$this->GALLERY_OBJ->_photo_info;
@@ -195,16 +195,16 @@ class yf_gallery_show_photos {
 		$only_same_folder	= $this->GALLERY_OBJ->MINI_THUMBS_SAME_FOLDER;
 		// Generate SQL for the access checks
 		if (!$this->GALLERY_OBJ->is_own_gallery) {
-			$PHOTOS_ACCESS_SQL = " AND `is_public`='1' ";
+			$PHOTOS_ACCESS_SQL = " AND is_public='1' ";
 /*
 			$PHOTOS_ACCESS_SQL = 
-				" AND `folder_id` IN( 
-					SELECT `id` 
-					FROM `".db('gallery_folders')."` 
-					WHERE `privacy`<=".intval($max_privacy)." 
-						AND `active`='1' 
-						AND `password`='' 
-						AND `user_id`=".intval($user_info["id"])."
+				" AND folder_id IN( 
+					SELECT id 
+					FROM ".db('gallery_folders')." 
+					WHERE privacy<=".intval($max_privacy)." 
+						AND active='1' 
+						AND password='' 
+						AND user_id=".intval($user_info["id"])."
 				)";
 */
 		}
@@ -218,23 +218,23 @@ class yf_gallery_show_photos {
 				if ($_folder_pswd && $_entered_pswd == $_folder_pswd) {
 					$PHOTOS_ACCESS_SQL = "";
 				} else {
-					$PHOTOS_ACCESS_SQL = " AND `is_public`='1' ";
+					$PHOTOS_ACCESS_SQL = " AND is_public='1' ";
 				}
 			}
-			$PHOTOS_ACCESS_SQL .= " AND `folder_id`='".intval($cur_folder_id)."' ";
+			$PHOTOS_ACCESS_SQL .= " AND folder_id='".intval($cur_folder_id)."' ";
 		}
 		$cur_photo_type = "medium";
 		// First - get all user's photos info (skip protected photos)
 		$Q = db()->query(
 			"SELECT * 
-			FROM `".db('gallery_photos')."` 
-			WHERE `user_id`=".intval($this->GALLERY_OBJ->_photo_info["user_id"])." 
-				AND `active`='1' 
+			FROM ".db('gallery_photos')." 
+			WHERE user_id=".intval($this->GALLERY_OBJ->_photo_info["user_id"])." 
+				AND active='1' 
 				".$PHOTOS_ACCESS_SQL." 
-			ORDER BY `cat_id` ASC,`id` ASC"
+			ORDER BY cat_id ASC,id ASC"
 		);
 
-// TODO: global photos sorting		`general_sort_id` ASC, 
+// TODO: global photos sorting		general_sort_id ASC, 
 
 		while ($A = db()->fetch_assoc($Q)) {
 			$_fs_thumb_path = $this->GALLERY_OBJ->_photo_fs_path($A, $cur_photo_type);
@@ -521,29 +521,29 @@ class yf_gallery_show_photos {
 		$_show_featured = $this->GALLERY_OBJ->USER_GALLERY_HOME_SHOW == "featured" ? true : false;
 		$featured_sql = "";
 		if (empty($FOLDER_ID) && $_show_featured) {
-			$featured_sql = " AND `is_featured` = '1' ";
+			$featured_sql = " AND is_featured = '1' ";
 		}
 		// Generate SQL for the access checks
 		if (!$this->GALLERY_OBJ->is_own_gallery) {
 			$PHOTOS_ACCESS_SQL = 
-				" AND `folder_id` IN( 
-					SELECT `id` 
-					FROM `".db('gallery_folders')."` 
-					WHERE `privacy`<=".intval($max_privacy)." 
-						/*AND `content_level`<=".intval($max_level)."*/ 
-						".($PASSWORD_MATCHED ? "AND (`id`=".intval($FOLDER_ID)." OR `password`='')" : "AND `password`=''")."
-						AND `active`='1' 
-						AND `user_id`=".intval($user_info["id"])."
+				" AND folder_id IN( 
+					SELECT id 
+					FROM ".db('gallery_folders')." 
+					WHERE privacy<=".intval($max_privacy)." 
+						/*AND content_level<=".intval($max_level)."*/ 
+						".($PASSWORD_MATCHED ? "AND (id=".intval($FOLDER_ID)." OR password='')" : "AND password=''")."
+						AND active='1' 
+						AND user_id=".intval($user_info["id"])."
 				)";
 		}
 		$_sort_id_field = $_GET["action"] == "view_folder" ? "folder_sort_id" : "general_sort_id";
 		// Get all user photos
 		$Q = db()->query(
-			"SELECT * FROM `".db('gallery_photos')."` 
-			WHERE `user_id`=".intval($user_id)." "
+			"SELECT * FROM ".db('gallery_photos')." 
+			WHERE user_id=".intval($user_id)." "
 				.$PHOTOS_ACCESS_SQL
 				.$featured_sql
-				." ORDER BY `".$_sort_id_field."` ASC/*, `add_date` DESC*/"
+				." ORDER BY ".$_sort_id_field." ASC/*, add_date DESC*/"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$photos_array[$A["id"]] = $A;

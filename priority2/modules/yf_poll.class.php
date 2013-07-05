@@ -53,7 +53,7 @@ class yf_poll {
 
 		// Auto-find poll id
 		if ($params["object_name"] && $params["object_id"] && !$POLL_ID) {
-			$poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `object_name`='"._es($params["object_name"])."' AND `object_id`=".intval($params["object_id"]). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : ""));
+			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE object_name='"._es($params["object_name"])."' AND object_id=".intval($params["object_id"]). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 			$POLL_ID = $poll_info["id"];
 		}
 		if (empty($POLL_ID)) {
@@ -68,7 +68,7 @@ class yf_poll {
 			}
 		}
 		if (!empty($POLL_ID) && !$params["silent"]) {
-			$poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `id`=".intval($POLL_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : ""));
+			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE id=".intval($POLL_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 		}
 		// Check required params
 		if (empty($poll_info) && (empty($OBJECT_NAME) || empty($OBJECT_ID))) {
@@ -76,7 +76,7 @@ class yf_poll {
 		}
 		// Get poll info
 		if (empty($poll_info)) {
-			$poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : ""));
+			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 		}
 		if (empty($poll_info) && !empty($POLL_ID)) {
 			return !$params["silent"] ? _e(t("No such poll!")) : false;
@@ -99,7 +99,7 @@ class yf_poll {
 			);
 		}
 		// Check if we do not need to display vote form because TTL is not expired yet
-		$last_vote = db()->query_fetch("SELECT * FROM `".db('poll_votes')."` WHERE `user_id` = ".intval($this->USER_ID)." AND `poll_id` = ".intval($poll_info["id"])." ORDER BY `date` DESC");
+		$last_vote = db()->query_fetch("SELECT * FROM ".db('poll_votes')." WHERE user_id = ".intval($this->USER_ID)." AND poll_id = ".intval($poll_info["id"])." ORDER BY date DESC");
 		if (!empty($last_vote)) {
 			if ($this->ONE_VOTE_FOR_USER || ($this->VOTE_TTL && (time() - $last_vote["date"]) < $this->VOTE_TTL)) {
 				$_GET["id"] = $poll_info["id"];
@@ -140,10 +140,10 @@ class yf_poll {
 						"value"		=> _es($choice),
 					));
 					db()->_add_shutdown_query(
-						"UPDATE `".db('polls')."` SET `votes` = ( 
-							SELECT COUNT(`id`) FROM `".db('poll_votes')."` WHERE `poll_id` = ".intval($poll_info["id"])."
+						"UPDATE ".db('polls')." SET votes = ( 
+							SELECT COUNT(id) FROM ".db('poll_votes')." WHERE poll_id = ".intval($poll_info["id"])."
 						) 
-						WHERE `id` = ".intval($poll_info["id"])
+						WHERE id = ".intval($poll_info["id"])
 					);
 				}
 			}
@@ -197,7 +197,7 @@ class yf_poll {
 
 		// Auto-find poll id
 		if ($params["object_name"] && $params["object_id"] && !$params["poll_id"]) {
-			$poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `object_name`='"._es($params["object_name"])."' AND `object_id`=".intval($params["object_id"]). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : ""));
+			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE object_name='"._es($params["object_name"])."' AND object_id=".intval($params["object_id"]). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 			$POLL_ID = $poll_info["id"];
 		}
 		// Currently only for members (for guests display)
@@ -206,15 +206,15 @@ class yf_poll {
 		}
 		// Get poll info
 		if (!empty($POLL_ID) && empty($poll_info)) {
-			$poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `id`=".intval($POLL_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : ""));
+			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE id=".intval($POLL_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 		}
 		if (empty($poll_info)) {
 			$poll_info = db()->query_fetch(
 				"SELECT * 
-				FROM `".db('polls')."` 
-				WHERE `object_name`='"._es($OBJECT_NAME)."' 
-					AND `object_id`=".intval($OBJECT_ID). 
-					($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : "")
+				FROM ".db('polls')." 
+				WHERE object_name='"._es($OBJECT_NAME)."' 
+					AND object_id=".intval($OBJECT_ID). 
+					($this->PROCESS_STATUS_FIELD ? " AND active='1' " : "")
 			);
 		}
 		if (empty($poll_info)) {
@@ -230,7 +230,7 @@ class yf_poll {
 		$max_choice_votes = 0;
 		$num_votes = array();
 		// Prepare votes
-		$Q = db()->query("SELECT `value`, COUNT(`id`) AS `num` FROM `".db('poll_votes')."` WHERE `poll_id` = ".intval($poll_info["id"])." GROUP BY `value`");
+		$Q = db()->query("SELECT value, COUNT(id) AS num FROM ".db('poll_votes')." WHERE poll_id = ".intval($poll_info["id"])." GROUP BY value");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_votes[$A["value"]] = $A["num"];
 			// get max number of votes for the current choice
@@ -336,7 +336,7 @@ class yf_poll {
 			return false;
 		}
 
-		$exist_poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `user_id` !=0 AND `object_name`='".$OBJECT_NAME."' AND `object_id`=".$OBJECT_ID);
+		$exist_poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE user_id !=0 AND object_name='".$OBJECT_NAME."' AND object_id=".$OBJECT_ID);
 		if (!empty($exist_poll_info)) {
 			return _e("Poll for this object already exists!");
 		}
@@ -368,7 +368,7 @@ class yf_poll {
 			return _error_need_login();
 		}
 		if (!empty($POLL_ID)) {
-			$poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `id`=".intval($POLL_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : ""));
+			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE id=".intval($POLL_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 		}
 		$OBJECT_NAME	= !empty($params["object_name"])	? $params["object_name"] : $_GET["object"];
 		$OBJECT_ID		= !empty($params["object_id"])		? intval($params["object_id"]) : intval($_GET["id"]);
@@ -378,7 +378,7 @@ class yf_poll {
 		}
 		// Get poll info
 		if (empty($poll_info)) {
-			$poll_info = db()->query_fetch("SELECT * FROM `".db('polls')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : ""));
+			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 		}
 		if (empty($poll_info)) {
 			return _e(t("No such poll!"));
@@ -387,8 +387,8 @@ class yf_poll {
 		if ($this->USER_ID != $poll_info["user_id"]) {
 			return _e(t("Not your poll"));
 		}
-		db()->query("DELETE FROM `".db('poll_votes')."` WHERE `poll_id` = ".intval($poll_info["id"]));
-		db()->query("DELETE FROM `".db('polls')."` WHERE `id` = ".intval($poll_info["id"]));
+		db()->query("DELETE FROM ".db('poll_votes')." WHERE poll_id = ".intval($poll_info["id"]));
+		db()->query("DELETE FROM ".db('polls')." WHERE id = ".intval($poll_info["id"]));
 		// Return user back
 		if (!$params["silent"]) {
 			return js_redirect($_SERVER["HTTP_REFERER"], 1);
@@ -405,7 +405,7 @@ class yf_poll {
 		$object_id = intval($object_id);
 
 		// Check if poll exists for the given object
-		$sql = "SELECT * FROM `".db('polls')."` WHERE `object_name`='"._es($object_name)."' AND `object_id`=".intval($object_id);
+		$sql = "SELECT * FROM ".db('polls')." WHERE object_name='"._es($object_name)."' AND object_id=".intval($object_id);
 		$poll_info = db()->query_fetch($sql);
 		$_is_poll_owner = ($this->USER_ID && $this->USER_ID == $poll_info["user_id"]) ? 1 : 0;
 		// No poll yet, allow to add for "object_id" and "object_name" owner
@@ -445,13 +445,13 @@ class yf_poll {
 		$object_id = intval($object_id);
 		// Check owner
 		if ($object_name == "gallery") {
-			$sql = "SELECT `id`, `user_id` FROM `".db('gallery_photos')."` WHERE `id`=".$object_id;
+			$sql = "SELECT id, user_id FROM ".db('gallery_photos')." WHERE id=".$object_id;
 		} elseif ($object_name == "blog") {
-			$sql = "SELECT `id`, `user_id` FROM `".db('blog_posts')."` WHERE `id`=".$object_id;
+			$sql = "SELECT id, user_id FROM ".db('blog_posts')." WHERE id=".$object_id;
 		} elseif ($object_name == "articles") {
-			$sql = "SELECT `id`, `user_id` FROM `".db('articles_texts')."` WHERE `id`=".$object_id;
+			$sql = "SELECT id, user_id FROM ".db('articles_texts')." WHERE id=".$object_id;
 		} elseif ($object_name == "forum") {
-			$sql = "SELECT `id`, `user_id` FROM `".db('forum_posts')."` WHERE `id`=".$object_id;
+			$sql = "SELECT id, user_id FROM ".db('forum_posts')." WHERE id=".$object_id;
 		}
 		$B = db()->query_fetch($sql);
 		if ($this->USER_ID && $this->USER_ID == $B["user_id"]) {
@@ -478,7 +478,7 @@ class yf_poll {
 				"for_widgets"	=> 1,
 			));
 		} else {
-			$P = db()->query_fetch("SELECT `id` FROM `".db('polls')."` WHERE `user_id`=0 AND `active`=1 ORDER BY RAND() LIMIT 1");
+			$P = db()->query_fetch("SELECT id FROM ".db('polls')." WHERE user_id=0 AND active=1 ORDER BY RAND() LIMIT 1");
 			return $this->show(array(
 				"poll_id" 		=> $P["id"], 
 				"stpl_main" 	=> "poll/widgets_main",

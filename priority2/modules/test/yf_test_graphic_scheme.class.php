@@ -17,11 +17,11 @@ class yf_test_graphic_scheme {
 	*/
 	function run_test () {
 		$DEFAULT_THEME_ID = main()->DEFAULT_THEME_ID;
-		$_themes = db()->query_fetch_all("SELECT * FROM `".db('user_themes')."` WHERE `active`='1'");
+		$_themes = db()->query_fetch_all("SELECT * FROM ".db('user_themes')." WHERE active='1'");
 		$_theme_info = $_themes[$DEFAULT_THEME_ID];
 
 		$DEFAULT_DESIGN_ID = $_theme_info["default_design"];
-		$_designs = db()->query_fetch_all("SELECT * FROM `".db('designs')."` WHERE `active`='1'");
+		$_designs = db()->query_fetch_all("SELECT * FROM ".db('designs')." WHERE active='1'");
 		$_design_info = $_designs[$DEFAULT_DESIGN_ID];
 		// Check required params
 		if (empty($_theme_info) || empty($_design_info)) {

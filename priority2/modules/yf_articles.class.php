@@ -182,7 +182,7 @@ class yf_articles extends yf_module {
 			return _e(t("Missing article name"));
 		}
 		// Get article info
-		$article_info = db()->query_fetch("SELECT * FROM `".db('articles_texts')."` WHERE `short_url`='"._es($_GET["id"])."'");
+		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE short_url='"._es($_GET["id"])."'");
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
 		}
@@ -202,7 +202,7 @@ class yf_articles extends yf_module {
 		}
 		// Get article info
 		if (empty($article_info)) {
-			$article_info = db()->query_fetch("SELECT * FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"]));
+			$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
@@ -235,7 +235,7 @@ class yf_articles extends yf_module {
 		}
 		// Count number of views
 		if ($this->COUNT_VIEWS) {
-			db()->_add_shutdown_query("UPDATE `".db('articles_texts')."` SET `views`=`views`+1 WHERE `id`=".intval($article_info["id"]));
+			db()->_add_shutdown_query("UPDATE ".db('articles_texts')." SET views=views+1 WHERE id=".intval($article_info["id"]));
 		}
 		// Process user reputation
 		$reput_text = "";
@@ -295,7 +295,7 @@ class yf_articles extends yf_module {
 			unset($_GET["id"]);
 		}
 		// Connect pager
-		$sql = "SELECT * FROM `".db('articles_texts')."` WHERE `user_id`=".intval($this->USER_ID)." ORDER BY `add_date` DESC";
+		$sql = "SELECT * FROM ".db('articles_texts')." WHERE user_id=".intval($this->USER_ID)." ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $add_sql);
@@ -358,7 +358,7 @@ class yf_articles extends yf_module {
 			return _e(t("No id!"));
 		}
 		// Get article info
-		$article_info = db()->query_fetch("SELECT * FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"])." AND `user_id`=".intval($this->USER_ID));
+		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval($this->USER_ID));
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
 		}
@@ -426,7 +426,7 @@ class yf_articles extends yf_module {
 					"edit_date"		=> time(),
 					"status"		=> _es($NEW_STATUS),
 					"short_url"		=> $this->_create_short_url($_POST["title"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Update user stats
 				_class("user_stats")->_update(array("user_id" => $this->USER_ID));
 				// Return user back
@@ -592,7 +592,7 @@ class yf_articles extends yf_module {
 			return _e(t("No id!"));
 		}
 		// Get article info
-		$article_info = db()->query_fetch("SELECT * FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"])." AND `user_id`=".intval($this->USER_ID));
+		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval($this->USER_ID));
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
 		}
@@ -603,7 +603,7 @@ class yf_articles extends yf_module {
 		}
 		
 		// Do delete article
-		db()->query("DELETE FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		// Update user stats
 		_class("user_stats")->_update(array("user_id" => $this->USER_ID));
 		// Return user back
@@ -743,7 +743,7 @@ class yf_articles extends yf_module {
 		));
 
 		// Get articles categories from db
-		$sql = "SELECT `id` FROM `".db('category_items')."` WHERE `cat_id` IN (SELECT `id` FROM `".db('categories')."` WHERE `name`='articles_cats')";
+		$sql = "SELECT id FROM ".db('category_items')." WHERE cat_id IN (SELECT id FROM ".db('categories')." WHERE name='articles_cats')";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
@@ -752,7 +752,7 @@ class yf_articles extends yf_module {
 		}
 
 		// Single articles
-		$sql = "SELECT `id` FROM `".db('articles_texts')."`";
+		$sql = "SELECT id FROM ".db('articles_texts')."";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
@@ -846,7 +846,7 @@ class yf_articles extends yf_module {
 			return;
 		}
 		
-		$Q = db()->query("SELECT `id` FROM `".db('articles_texts')."` WHERE `status` = 'active' AND `user_id` != ".intval($this->USER_ID)." AND `add_date` > ".$this->_user_info["last_view"]);
+		$Q = db()->query("SELECT id FROM ".db('articles_texts')." WHERE status = 'active' AND user_id != ".intval($this->USER_ID)." AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
@@ -874,8 +874,8 @@ class yf_articles extends yf_module {
 		$ids = $OBJ->_get_unread("articles");
 		
 		if(!empty($ids)){
-			$sql		= "SELECT `id`,`title` FROM `".db('articles_texts')."` WHERE `id` IN(".implode(",", (array)$ids).")";
-			$order_sql	= " ORDER BY `add_date` DESC";
+			$sql		= "SELECT id,title FROM ".db('articles_texts')." WHERE id IN(".implode(",", (array)$ids).")";
+			$order_sql	= " ORDER BY add_date DESC";
 			list($add_sql, $pages, $total) = common()->divide_pages($sql);
 			$Q = db()->query($sql.$order_sql.$add_sql);
 			while ($A = db()->fetch_assoc($Q)) {

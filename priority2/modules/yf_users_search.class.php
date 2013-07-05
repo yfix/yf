@@ -25,27 +25,27 @@ class yf_users_search {
 	
 			
 		if (!empty($_POST["user_search_name"])){
-			$nick_sql = " AND `nick` LIKE '%".$_POST["user_search_name"]."%'";
+			$nick_sql = " AND nick LIKE '%".$_POST["user_search_name"]."%'";
 		}
 		
 		if (!empty($_POST["user_search_sex"])){
-			$sex_sql = " AND `sex`='".$_POST["user_search_sex"]."'";
+			$sex_sql = " AND sex='".$_POST["user_search_sex"]."'";
 		}
 		
 		if (!empty($_POST["user_search_interests"])){
-			$Q = db()->query("SELECT * FROM `".db('interests')."` WHERE `keywords` LIKE '%".$_POST["user_search_interests"]."%'");
+			$Q = db()->query("SELECT * FROM ".db('interests')." WHERE keywords LIKE '%".$_POST["user_search_interests"]."%'");
 			while ($A = db()->fetch_assoc($Q)) $interest_user_id[$A["user_id"]] = $A["keywords"];			
 			
-			$interest_user_id?$interest_sql = " AND `id` IN(".implode(",",array_keys($interest_user_id)).")":$interest_sql = " AND `id` = 0";			
+			$interest_user_id?$interest_sql = " AND id IN(".implode(",",array_keys($interest_user_id)).")":$interest_sql = " AND id = 0";			
 		}else{
-			$Q = db()->query("SELECT * FROM `".db('interests')."`");
+			$Q = db()->query("SELECT * FROM ".db('interests')."");
 			while ($A = db()->fetch_assoc($Q)) $interest_user_id[$A["user_id"]] = $A["keywords"];			
 		}
 		
-		$sql = "SELECT * FROM `".db('user')."` WHERE `active`='1'".$nick_sql.$sex_sql.$interest_sql;
+		$sql = "SELECT * FROM ".db('user')." WHERE active='1'".$nick_sql.$sex_sql.$interest_sql;
 		
 	
-		$order_by_sql = " ORDER BY `add_date` DESC";
+		$order_by_sql = " ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get users from db
 		$Q = db()->query($sql. $order_by_sql. $add_sql);

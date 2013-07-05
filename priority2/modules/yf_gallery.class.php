@@ -336,7 +336,7 @@ class yf_gallery extends yf_module {
 			$this->SKIP_NOT_FOUND_PHOTOS = false;
 		}
 		// Check if user already have started gallery
-		$num_user_photos = db()->query_num_rows("SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($user_id));
+		$num_user_photos = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($user_id));
 		if (!empty($user_id) && empty($num_user_photos)) {
 			$replace = array(
 				"is_logged_in"	=> intval((bool) $this->USER_ID),
@@ -732,7 +732,7 @@ class yf_gallery extends yf_module {
 			// Do update record
 			db()->UPDATE("gallery_photos", array(
 				"folder_id"	=> intval($def_folder_id),
-			), "`id`=".intval($photo_info["id"]));
+			), "id=".intval($photo_info["id"]));
 			$FOLDER_ID = $def_folder_id;
 		}
 		return $FOLDER_ID;
@@ -957,7 +957,7 @@ class yf_gallery extends yf_module {
 		if (empty($user_id)) {
 			return "No user id!";
 		}
-		db()->query("DELETE FROM `".db('tags')."` WHERE `user_id`=".intval($user_id));
+		db()->query("DELETE FROM ".db('tags')." WHERE user_id=".intval($user_id));
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
@@ -1052,15 +1052,15 @@ class yf_gallery extends yf_module {
 		// Try to get given photo info
 		$_photo_info = db()->query_fetch(
 			"SELECT r1.* 
-			FROM `".db('gallery_photos')."` AS r1 
+			FROM ".db('gallery_photos')." AS r1 
 			JOIN ( 
 				SELECT (RAND() * ( 
-					SELECT MAX(`id`) FROM `".db('gallery_photos')."` 
+					SELECT MAX(id) FROM ".db('gallery_photos')." 
 				)) AS id 
 			) AS r2 
 			WHERE r1.id >= r2.id 
-				AND r1.`is_public` = '1' 
-				AND r1.`active` = '1' 
+				AND r1.is_public = '1' 
+				AND r1.active = '1' 
 			ORDER BY r1.id ASC 
 			LIMIT 1"
 		);

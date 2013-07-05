@@ -34,7 +34,7 @@ class yf_gallery_utils {
 			);
 		}
 		// Update user photos with gathered info
-		db()->query("UPDATE `".db('gallery_photos')."` SET `other_info`='"._es(serialize($other_info_array))."' WHERE `id`=".intval($photo_info["id"]));
+		db()->query("UPDATE ".db('gallery_photos')." SET other_info='"._es(serialize($other_info_array))."' WHERE id=".intval($photo_info["id"]));
 		// Return other info
 		return $other_info_array;
 	}
@@ -215,36 +215,36 @@ class yf_gallery_utils {
 	*/
 	function _sync_public_photos ($user_id = 0) {
 		db()->query(
-			"UPDATE `".db('gallery_photos')."` SET `is_public` = '0'
-			".($user_id ? " WHERE `user_id` = ".intval($user_id) : "")
+			"UPDATE ".db('gallery_photos')." SET is_public = '0'
+			".($user_id ? " WHERE user_id = ".intval($user_id) : "")
 		);
 		$sql = 
-			"UPDATE `".db('gallery_photos')."` 
-			SET `is_public` = '1'
-			WHERE `active` = '1'
-				AND `folder_id` IN(
-					SELECT `id` 
-					FROM `".db('gallery_folders')."` 
-					WHERE `privacy`<=1 
-						AND `content_level`<=1 
-						AND `password`='' 
-						AND `active`='1' 
-						".($user_id ? " AND `user_id` = ".intval($user_id) : "")."
-				)".($user_id ? " AND `user_id` = ".intval($user_id) : "");
+			"UPDATE ".db('gallery_photos')." 
+			SET is_public = '1'
+			WHERE active = '1'
+				AND folder_id IN(
+					SELECT id 
+					FROM ".db('gallery_folders')." 
+					WHERE privacy<=1 
+						AND content_level<=1 
+						AND password='' 
+						AND active='1' 
+						".($user_id ? " AND user_id = ".intval($user_id) : "")."
+				)".($user_id ? " AND user_id = ".intval($user_id) : "");
 		db()->query($sql);
 		// Update gallery photos with geo location
 		db()->query(
-			"UPDATE `".db('gallery_photos')."` 
-			SET `geo_cc` = '', `geo_rc` = ''
-			".($user_id ? " WHERE `user_id` = ".intval($user_id) : "")
+			"UPDATE ".db('gallery_photos')." 
+			SET geo_cc = '', geo_rc = ''
+			".($user_id ? " WHERE user_id = ".intval($user_id) : "")
 		);
 		db()->query(
-			"UPDATE `".db('gallery_photos')."` AS `p`
-				, `".db('user')."` AS `u`
-			SET `p`.`geo_cc` = `u`.`country`
-				, `p`.`geo_rc` = `u`.`state`
-			WHERE `p`.`user_id` = `u`.`id`
-			".($user_id ? " AND `u`.`id` = ".intval($user_id) : "")
+			"UPDATE ".db('gallery_photos')." AS p
+				, ".db('user')." AS u
+			SET p.geo_cc = u.country
+				, p.geo_rc = u.state
+			WHERE p.user_id = u.id
+			".($user_id ? " AND u.id = ".intval($user_id) : "")
 		);
 	}
 
@@ -262,7 +262,7 @@ class yf_gallery_utils {
 		));
 
 		// Get medium size and full size photos list from db
-		$sql = "SELECT `id` FROM `".db('gallery_photos')."` WHERE `active`='1' AND `is_public`='1'";
+		$sql = "SELECT id FROM ".db('gallery_photos')." WHERE active='1' AND is_public='1'";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
@@ -274,7 +274,7 @@ class yf_gallery_utils {
 		}
 
 		// Get folders from db
-		$sql = "SELECT `id` FROM `".db('gallery_folders')."` WHERE `active`='1' AND `privacy`='0'";
+		$sql = "SELECT id FROM ".db('gallery_folders')." WHERE active='1' AND privacy='0'";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
@@ -283,7 +283,7 @@ class yf_gallery_utils {
 		}
 
 		// Get galleries from db
-		$sql = "SELECT DISTINCT `user_id` FROM `".db('gallery_photos')."` WHERE `active`='1' AND `is_public`='1'";
+		$sql = "SELECT DISTINCT user_id FROM ".db('gallery_photos')." WHERE active='1' AND is_public='1'";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
@@ -291,7 +291,7 @@ class yf_gallery_utils {
 			));
 		}
 
-		$sql = "SELECT COUNT(DISTINCT `user_id`) AS `num` FROM `".db('gallery_photos')."` WHERE `active`='1' AND `is_public`='1'";
+		$sql = "SELECT COUNT(DISTINCT user_id) AS num FROM ".db('gallery_photos')." WHERE active='1' AND is_public='1'";
 		$A = db()->query_fetch($sql);
 		$total_pages = ceil(intval($A["num"]) / intval($this->GALLERY_OBJ->VIEW_ALL_ON_PAGE));
 		// Process pages

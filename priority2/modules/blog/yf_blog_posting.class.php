@@ -80,7 +80,7 @@ class yf_blog_posting {
 				// if post in community
 				if(!empty($_POST["community_select_box"])){
 				
-					$community_info = db()->query_fetch("SELECT `id`,`user_id`,`moderated` FROM `".db('community')."` WHERE `id`=".intval($_POST["community_select_box"]));
+					$community_info = db()->query_fetch("SELECT id,user_id,moderated FROM ".db('community')." WHERE id=".intval($_POST["community_select_box"]));
 					
 					$this->_check_community_permissions($community_info["user_id"]);
 					
@@ -246,11 +246,11 @@ class yf_blog_posting {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get given post info
-		$sql = "SELECT * FROM `".db('blog_posts')."` WHERE ";
+		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$sql .= " `id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
 		} else {
-			$sql .= " `id`=".intval($_GET["id"]);
+			$sql .= " id=".intval($_GET["id"]);
 		}
 		$post_info = db()->query_fetch($sql);
 		if (empty($post_info["id"])) {
@@ -362,7 +362,7 @@ class yf_blog_posting {
 					$query_array["active"] = "0";
 				}
 
-				db()->UPDATE("blog_posts", $query_array, "`id`=".intval($post_info["id"]));
+				db()->UPDATE("blog_posts", $query_array, "id=".intval($post_info["id"]));
 				// Synchronize all blogs stats
 				$this->BLOG_OBJ->_update_all_stats();
 				// Last update
@@ -485,11 +485,11 @@ class yf_blog_posting {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Get post info
-		$sql = "SELECT * FROM `".db('blog_posts')."` WHERE ";
+		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$sql .= " `id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
 		} else {
-			$sql .= " `id`=".intval($_GET["id"]);
+			$sql .= " id=".intval($_GET["id"]);
 		}
 		// Try to get given post info
 		$post_info = db()->query_fetch($sql);
@@ -519,8 +519,8 @@ class yf_blog_posting {
 			unlink($attach_fs_path);
 		}
 		// Do delete post and its comments
-		db()->query("DELETE FROM `".db('blog_posts')."` WHERE `id`=".intval($post_info["id"])." AND `user_id`='".intval($post_info["user_id"])."' LIMIT 1");
-		db()->query("DELETE FROM `".db('comments')."` WHERE `object_name`='"._es(BLOG_CLASS_NAME)."' AND `object_id`=".intval($post_info["id"]));
+		db()->query("DELETE FROM ".db('blog_posts')." WHERE id=".intval($post_info["id"])." AND user_id='".intval($post_info["user_id"])."' LIMIT 1");
+		db()->query("DELETE FROM ".db('comments')." WHERE object_name='"._es(BLOG_CLASS_NAME)."' AND object_id=".intval($post_info["id"]));
 		// Last update
 		update_user($this->BLOG_OBJ->USER_ID, array("last_update"=>time()));
 		// Synchronize all blogs stats
@@ -552,11 +552,11 @@ class yf_blog_posting {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Get post info
-		$sql = "SELECT * FROM `".db('blog_posts')."` WHERE ";
+		$sql = "SELECT * FROM ".db('blog_posts')." WHERE ";
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$sql .= " `id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= " id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
 		} else {
-			$sql .= " `id`=".intval($_GET["id"]);
+			$sql .= " id=".intval($_GET["id"]);
 		}
 		// Try to get given user info
 		$post_info = db()->query_fetch($sql);
@@ -585,7 +585,7 @@ class yf_blog_posting {
 			unlink($attach_fs_path);
 		}
 		// Update post record
-		db()->query("UPDATE `".db('blog_posts')."` SET `attach_image`='' WHERE `id`=".intval($post_info["id"])." AND `user_id`='".intval($this->USER_ID)."' LIMIT 1");
+		db()->query("UPDATE ".db('blog_posts')." SET attach_image='' WHERE id=".intval($post_info["id"])." AND user_id='".intval($this->USER_ID)."' LIMIT 1");
 		// Last update
 		update_user($this->BLOG_OBJ->USER_ID, array("last_update"=>time()));
 		// Return user back
@@ -643,14 +643,14 @@ class yf_blog_posting {
 		
 		//if this post in community
 		if($user_info["group"] == "99"){
-			$community_info = db()->query_fetch("SELECT * FROM `".db('community')."` WHERE `user_id`=".intval($community_user_id));
+			$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".intval($community_user_id));
 			$GLOBALS["community_info"] = $community_info;
 
 			if(empty($community_info)){
 				_re(t("No community"));
 			}
 			
-			$community_user_settings = db()->query_fetch("SELECT * FROM `".db('community_users')."` WHERE `community_id`=".intval($community_info["id"])." AND `user_id` = ".intval($this->BLOG_OBJ->USER_ID));
+			$community_user_settings = db()->query_fetch("SELECT * FROM ".db('community_users')." WHERE community_id=".intval($community_info["id"])." AND user_id = ".intval($this->BLOG_OBJ->USER_ID));
 			$GLOBALS["community_user_settings"] = $community_user_settings;
 					
 			if(empty($community_user_settings)){

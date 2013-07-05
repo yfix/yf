@@ -47,7 +47,7 @@ class yf_server_file_manager {
 	*/
 	function _init () {
 		$this->SERVER_ID = intval($_GET["id"]);
-		$this->_server_info = db()->query_fetch("SELECT * FROM `".db('servers')."` WHERE `id`=".intval($_GET["id"]));
+		$this->_server_info = db()->query_fetch("SELECT * FROM ".db('servers')." WHERE id=".intval($_GET["id"]));
 		
 		// Init ssh class
 		$this->SSH_OBJ = main()->init_class("ssh", "classes/");
@@ -515,7 +515,7 @@ class yf_server_file_manager {
 			}
 			return $path;
 		}
-		$result = str_replace(array("`", "\"", "\'", "~", ".."), "", rtrim(str_replace(array("\\", "//", "///"), "/", trim($path)), "/"));
+		$result = str_replace(array("", "\"", "\'", "~", ".."), "", rtrim(str_replace(array("\\", "//", "///"), "/", trim($path)), "/"));
 		return strlen($result) ? $result : "/";
 	}
 

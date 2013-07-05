@@ -19,8 +19,8 @@ class yf_users {
 		$sql = search_user(array("WHERE" => array("active" => 1), "ORDER BY" => "add_date", "LIMIT" => -1), "full", true);
 /*
 		// Connect pager
-		$sql = "SELECT * FROM `".db('user')."` WHERE `active`='1'";
-		$order_by_sql = " ORDER BY `add_date` DESC";
+		$sql = "SELECT * FROM ".db('user')." WHERE active='1'";
+		$order_by_sql = " ORDER BY add_date DESC";
 */
 		$url = "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=all";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url);
@@ -63,8 +63,8 @@ return false;
 			return false;
 		}
 		// Connect pager
-		$sql = "SELECT `id` FROM `".db('user')."` WHERE `active`='1'";
-		$order_by_sql = " ORDER BY `add_date` DESC";
+		$sql = "SELECT id FROM ".db('user')." WHERE active='1'";
+		$order_by_sql = " ORDER BY add_date DESC";
 		$url = "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=all";
 		list($add_sql, $pages, $total, $_dummy, $total_pages) = common()->divide_pages($sql, $url);
 		// Process pages
@@ -88,7 +88,7 @@ return false;
 	*/
 	function _for_home_page($num = 5){
 		
-		$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `group`=2 AND `active`=1 ORDER BY `add_date` DESC LIMIT ".intval($num*3));
+		$Q = db()->query("SELECT * FROM ".db('user')." WHERE group=2 AND active=1 ORDER BY add_date DESC LIMIT ".intval($num*3));
 		while ($A = db()->fetch_assoc($Q)) {
 				
 			if (!_avatar_exists($A["id"], 0)) continue;

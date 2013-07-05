@@ -141,7 +141,7 @@ class yf_help extends yf_module {
 				$user_id = $this->USER_ID;
 			} else {
 				// Check by email
-				$A = db()->query_fetch("SELECT `id` FROM `".db('user')."` WHERE `email`='"._es($_POST["email"])."' LIMIT 1");
+				$A = db()->query_fetch("SELECT id FROM ".db('user')." WHERE email='"._es($_POST["email"])."' LIMIT 1");
 				$user_id = $A["id"];
 			}
 			// Prepare ticket id
@@ -227,7 +227,7 @@ class yf_help extends yf_module {
 			return _error_need_login();
 		}
 		// Connect pager
-		$sql = "SELECT * FROM `".db('help_tickets')."` WHERE `user_id`=".intval($this->USER_ID);
+		$sql = "SELECT * FROM ".db('help_tickets')." WHERE user_id=".intval($this->USER_ID);
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get tickets from db
 		$Q = db()->query($sql.$add_sql);
@@ -267,7 +267,7 @@ class yf_help extends yf_module {
 		$TICKET_ID		= $_GET["id"];
 		// Try to get ticket info
 		if (!empty($TICKET_ID)) {
-			$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `ticket_key`='"._es($TICKET_ID)."'");
+			$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE ticket_key='"._es($TICKET_ID)."'");
 		}
 		if (empty($ticket_info)) {
 			return _e("No such ticket!");
@@ -285,7 +285,7 @@ class yf_help extends yf_module {
 			db()->UPDATE("help_tickets", array(
 				"status"		=> "closed",
 				"closed_date"	=> time(),
-			), "`id`=".intval($ticket_info["id"]));
+			), "id=".intval($ticket_info["id"]));
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=view_answers&id=".$_GET["id"]);
@@ -301,7 +301,7 @@ class yf_help extends yf_module {
 		$TICKET_ID		= $_GET["id"];
 		// Get ticket info
 		if (!empty($TICKET_ID)) {
-			$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `ticket_key`='"._es($TICKET_ID)."'");
+			$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE ticket_key='"._es($TICKET_ID)."'");
 		}
 		if (empty($ticket_info)) {
 			return _e("No such ticket!");
@@ -315,7 +315,7 @@ class yf_help extends yf_module {
 			db()->UPDATE("help_tickets", array(
 				"status"		=> "open",
 				"closed_date"	=> 0,
-			), "`id`=".intval($ticket_info["id"]));
+			), "id=".intval($ticket_info["id"]));
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=view_answers&id=".$_GET["id"]);
@@ -332,7 +332,7 @@ class yf_help extends yf_module {
 		$TICKET_ID		= $_GET["id"];
 		// Get ticket info
 		if (!empty($TICKET_ID)) {
-			$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `ticket_key`='"._es($TICKET_ID)."'");
+			$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE ticket_key='"._es($TICKET_ID)."'");
 		}
 		if (empty($ticket_info)) {
 			return _e("No such ticket!");
@@ -341,7 +341,7 @@ class yf_help extends yf_module {
 			db()->UPDATE("help_tickets", array(
 				"status"		=> "open",
 				"closed_date"	=> 0,
-			), "`id`=".intval($ticket_info["id"]));
+			), "id=".intval($ticket_info["id"]));
 		}
 		if (!$this->USER_ID && !$_POST["user_name"]) {
 			$_POST["user_name"] = $ticket_info["name"];
@@ -366,7 +366,7 @@ class yf_help extends yf_module {
 		$TICKET_ID		= $_GET["id"];
 		// Get ticket info
 		if (!empty($TICKET_ID)) {
-			$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `ticket_key`='"._es($TICKET_ID)."'");
+			$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE ticket_key='"._es($TICKET_ID)."'");
 		}
 		if (empty($ticket_info)) {
 			return _e("No such ticket!");
@@ -378,8 +378,8 @@ class yf_help extends yf_module {
 		// Remove activity points
 		common()->_remove_activity_points($this->USER_ID, "bug_report", $ticket_info["id"]);
 		// Do delete records
-		db()->query("DELETE FROM `".db('help_tickets')."` WHERE `id`=".intval($ticket_info["id"]));
-		db()->query("DELETE FROM `".db('comments')."` WHERE `object_name`='".$_GET["object"]."' AND `object_id`=".intval($ticket_info["id"]));
+		db()->query("DELETE FROM ".db('help_tickets')." WHERE id=".intval($ticket_info["id"]));
+		db()->query("DELETE FROM ".db('comments')." WHERE object_name='".$_GET["object"]."' AND object_id=".intval($ticket_info["id"]));
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=view_tickets");
 	}
@@ -391,7 +391,7 @@ class yf_help extends yf_module {
 		$TICKET_ID		= $_GET["id"];
 		// Get ticket info
 		if (!empty($TICKET_ID)) {
-			$ticket_info = db()->query_fetch("SELECT * FROM `".db('help_tickets')."` WHERE `ticket_key`='"._es($TICKET_ID)."'");
+			$ticket_info = db()->query_fetch("SELECT * FROM ".db('help_tickets')." WHERE ticket_key='"._es($TICKET_ID)."'");
 		}
 		if (empty($ticket_info)) {
 			return _e("No such ticket!");

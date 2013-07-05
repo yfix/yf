@@ -115,8 +115,8 @@ class yf_forum_utils {
 		}
 
 		$_reports_per_page = 10;
-		$sql = "SELECT * FROM `".db('forum_reports')."`";
-		$order_by = " WHERE `active`=1 ORDER BY `id` ASC ";
+		$sql = "SELECT * FROM ".db('forum_reports')."";
+		$order_by = " WHERE active=1 ORDER BY id ASC ";
 		$url = "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=all";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url, null, $_reports_per_page);
 
@@ -132,7 +132,7 @@ class yf_forum_utils {
 
 		// Get post infos		 выбираем из постов id написавшего пост
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT `id` ,`user_id`, `user_name`, `text`, `forum`, `topic` FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", $post_ids).")");
+			$Q = db()->query("SELECT id ,user_id, user_name, text, forum, topic FROM ".db('forum_posts')." WHERE id IN(".implode(",", $post_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$post_infos[$A["id"]] = $A;
 				$users_ids[$A["user_id"]] = $A["user_id"];
@@ -141,7 +141,7 @@ class yf_forum_utils {
 		}
 		// Get topic infos
 		if (!empty($post_infos)){
-			$Q = db()->query("SELECT `id` ,`name` FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", $topic_ids).")");
+			$Q = db()->query("SELECT id ,name FROM ".db('forum_topics')." WHERE id IN(".implode(",", $topic_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$topic_infos[$A["id"]] = $A;
 			}
@@ -200,7 +200,7 @@ class yf_forum_utils {
 		if (!FORUM_IS_ADMIN && !FORUM_IS_MODERATOR) {
 			return module('forum')->_show_error("You are not allowed to do this action!");
 		}
-		$post_info	= db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($_GET["id"]));
+		$post_info	= db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($_GET["id"]));
 		if ($post_info) {
 			$need_del_topic = isset($_POST["delete_topic"][$post_info["topic"]]);
 			$need_del_post	= $need_del_topic || isset($_POST["delete_post"][$post_info["id"]]);
@@ -216,7 +216,7 @@ class yf_forum_utils {
 		// Close report record
 		db()->UPDATE("forum_reports", array(
 			"active" => 0
-		), "`post_id`=".intval($_GET["id"]));
+		), "post_id=".intval($_GET["id"]));
 		// Return user back
 		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_reports");
 	}
@@ -231,21 +231,21 @@ class yf_forum_utils {
 			return false;
 		}
 */
-		$Q = db()->query("SELECT * FROM `".db('forum_users')."` WHERE `status`='a'");
+		$Q = db()->query("SELECT * FROM ".db('forum_users')." WHERE status='a'");
 		while ($A = db()->fetch_assoc($Q)) {
-			$num_posts = db()->query_num_rows("SELECT `id` FROM `".db('forum_posts')."` WHERE `user_id`=".intval($A["id"]));
+			$num_posts = db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE user_id=".intval($A["id"]));
 			if ($num_posts > 0) {
 				$num_posts = intval($num_posts - 1);
 			}
-			db()->query("UPDATE `".db('forum_users')."` SET `user_posts`=".intval($num_posts)." WHERE `id`=".intval($A["id"]));
+			db()->query("UPDATE ".db('forum_users')." SET user_posts=".intval($num_posts)." WHERE id=".intval($A["id"]));
 		}
 	}
 
 	/**
-	* Update column `last_post_date` for all topics and forums
+	* Update column last_post_date for all topics and forums
 	*/
 	function _update_last_post_date () {
-		db()->query("UPDATE `".db('forum_topics')."` AS t, `".db('forum_posts')."` AS p SET t.`last_post_date`=p.`created` WHERE p.`id` = t.`last_post_id`");
-		db()->query("UPDATE `".db('forum_forums')."` AS f, `".db('forum_posts')."` AS p SET f.`last_post_date`=p.`created` WHERE p.`id` = f.`last_post_id`");
+		db()->query("UPDATE ".db('forum_topics')." AS t, ".db('forum_posts')." AS p SET t.last_post_date=p.created WHERE p.id = t.last_post_id");
+		db()->query("UPDATE ".db('forum_forums')." AS f, ".db('forum_posts')." AS p SET f.last_post_date=p.created WHERE p.id = f.last_post_id");
 	}
 }

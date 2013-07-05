@@ -43,17 +43,17 @@ class yf_gallery_manage {
 			$CUR_ACTION = str_replace("_in_folder", "", $CUR_ACTION);
 			// Here we will apply initial sort numbers
 			db()->query(
-				"UPDATE `".db('gallery_photos')."` SET `".$FIELD_NAME."` = `id` WHERE `".$FIELD_NAME."` = 0"
+				"UPDATE ".db('gallery_photos')." SET ".$FIELD_NAME." = id WHERE ".$FIELD_NAME." = 0"
 			);
 			// Get availiable list of photos where to sort
 			$_sort_ids = array();
 			$Q = db()->query(
-				"SELECT `id`,`".$FIELD_NAME."` AS `_sort_id` 
-				FROM `".db('gallery_photos')."` 
-				WHERE `user_id`=".intval($this->GALLERY_OBJ->USER_ID)." 
-					AND `active`='1'"
-					. ($IS_FOR_FOLDER ? " AND `folder_id`=".intval($photo_info["folder_id"]) : "")
-					. " ORDER BY `".$FIELD_NAME."` ASC"
+				"SELECT id,".$FIELD_NAME." AS _sort_id 
+				FROM ".db('gallery_photos')." 
+				WHERE user_id=".intval($this->GALLERY_OBJ->USER_ID)." 
+					AND active='1'"
+					. ($IS_FOR_FOLDER ? " AND folder_id=".intval($photo_info["folder_id"]) : "")
+					. " ORDER BY ".$FIELD_NAME." ASC"
 			);
 			$_sort_ids = array();
 			while ($A = db()->fetch_assoc($Q)) {
@@ -77,7 +77,7 @@ class yf_gallery_manage {
 			}
 			if (!empty($_ids_to_update)) {
 				db()->query(
-					"UPDATE `".db('gallery_photos')."` SET `".$FIELD_NAME."` = `id` WHERE `id` IN(".implode(",", $_ids_to_update).") AND `user_id`=".intval($this->GALLERY_OBJ->USER_ID)
+					"UPDATE ".db('gallery_photos')." SET ".$FIELD_NAME." = id WHERE id IN(".implode(",", $_ids_to_update).") AND user_id=".intval($this->GALLERY_OBJ->USER_ID)
 				);
 			}
 			asort($_sort_ids);
@@ -133,8 +133,8 @@ class yf_gallery_manage {
 		}
 		// Change order id for these elements
 		if (!empty($SECOND_PHOTO_ID)) {
-			db()->UPDATE("gallery_photos", array($FIELD_NAME => intval($_sort_ids[$SECOND_PHOTO_ID])), "`id`=".intval($photo_info["id"]));
-			db()->UPDATE("gallery_photos", array($FIELD_NAME => intval($photo_info[$FIELD_NAME])), "`id`=".intval($SECOND_PHOTO_ID));
+			db()->UPDATE("gallery_photos", array($FIELD_NAME => intval($_sort_ids[$SECOND_PHOTO_ID])), "id=".intval($photo_info["id"]));
+			db()->UPDATE("gallery_photos", array($FIELD_NAME => intval($photo_info[$FIELD_NAME])), "id=".intval($SECOND_PHOTO_ID));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -192,7 +192,7 @@ class yf_gallery_manage {
 		}
 		// Check number of photos to show in ads
 		$num_photos_for_ads = db()->query_num_rows(
-			"SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($NEW_USER_ID)." AND `show_in_ads`='1'"
+			"SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($NEW_USER_ID)." AND show_in_ads='1'"
 		);
 		// Fix second id
 		$_max_id2 = $this->_fix_id2($NEW_USER_ID);
@@ -207,13 +207,13 @@ class yf_gallery_manage {
 			}
 			// Cleanup wrong or incompleted photos from db
 			db()->query(
-				"DELETE FROM `".db('gallery_photos')."` 
-				WHERE `user_id`=".intval($NEW_USER_ID)." 
-					AND `active`='0'"
+				"DELETE FROM ".db('gallery_photos')." 
+				WHERE user_id=".intval($NEW_USER_ID)." 
+					AND active='0'"
 			);
 			// Check number of user photos
 			if (!empty($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS)) {
-				$num_photos = db()->query_num_rows("SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($NEW_USER_ID));
+				$num_photos = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($NEW_USER_ID));
 				if ($num_photos >= $this->GALLERY_OBJ->MAX_TOTAL_PHOTOS) {
 					_re(t("You can upload max @num photos!", array("@num" => intval($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS))));
 				}
@@ -296,7 +296,7 @@ class yf_gallery_manage {
 				// Set db record active
 				db()->UPDATE("gallery_photos", array(
 					"active"	=> 1,
-				), "`id`=".intval($PHOTO_RECORD_ID));
+				), "id=".intval($PHOTO_RECORD_ID));
 			} 
 			// Redirect user
 			if (!common()->_error_exists()) {
@@ -355,7 +355,7 @@ class yf_gallery_manage {
 		$ADD_PHOTOS_ALLOWED_NUM = 50;
 		// Count number of allowed photos to upload
 		if (!empty($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS)) {
-			$num_photos = db()->query_num_rows("SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($NEW_USER_ID));
+			$num_photos = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($NEW_USER_ID));
 			if ($num_photos >= $this->GALLERY_OBJ->MAX_TOTAL_PHOTOS) {
 				return _e(t("You can upload max @num photos!", array("@num" => intval($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS))));
 			} else {
@@ -469,7 +469,7 @@ class yf_gallery_manage {
 				// Set db record active
 				db()->UPDATE("gallery_photos", array(
 					"active"	=> 1,
-				), "`id`=".intval($PHOTO_RECORD_ID));
+				), "id=".intval($PHOTO_RECORD_ID));
 				// Commit transaction
 				db()->query("COMMIT");
 			} else {
@@ -520,7 +520,7 @@ class yf_gallery_manage {
 			// Do update record
 			db()->UPDATE("gallery_photos", array(
 				"folder_id"	=> intval($def_folder_id),
-			), "`id`=".intval($photo_info["id"]));
+			), "id=".intval($photo_info["id"]));
 		}
 		// Check for folder's owner
 		if (!empty($FOLDER_ID)) {
@@ -537,7 +537,7 @@ class yf_gallery_manage {
 		}
 		// Check number of photos to show in ads
 		$num_photos_for_ads = db()->query_num_rows(
-			"SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($this->GALLERY_OBJ->USER_ID)." AND `show_in_ads`='1'"
+			"SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($this->GALLERY_OBJ->USER_ID)." AND show_in_ads='1'"
 		);
 		// Fix second id
 		$_max_id2 = $this->_fix_id2($photo_info["user_id"]);
@@ -582,7 +582,7 @@ class yf_gallery_manage {
 				if (!empty($_PHOTO["size"])) {
 					$sql_array["img_name"]	= _es($SOURCE_PHOTO_NAME);
 				}
-				db()->UPDATE("gallery_photos", $sql_array, "`id`=".intval($photo_info["id"]));
+				db()->UPDATE("gallery_photos", $sql_array, "id=".intval($photo_info["id"]));
 			}
 			// Check for errors
 			if (!common()->_error_exists() && !empty($_PHOTO["size"])) {
@@ -733,7 +733,7 @@ class yf_gallery_manage {
 		$_max_id2++;
 		// Get all user photos
 		$Q = db()->query(
-			"SELECT `id`,`id2` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($user_id)." ORDER BY `id` ASC"
+			"SELECT id,id2 FROM ".db('gallery_photos')." WHERE user_id=".intval($user_id)." ORDER BY id ASC"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$photos[$A["id"]] = $A["id2"];
@@ -760,7 +760,7 @@ class yf_gallery_manage {
 
 			db()->UPDATE("gallery_photos", array(
 				"id2" => intval($_max_id2)
-			), "`id`=".intval($_photo_id));
+			), "id=".intval($_photo_id));
 		}
 		// Fix folders
 		$FOLDERS_OBJ = $this->GALLERY_OBJ->_load_sub_module("gallery_folders");
@@ -787,7 +787,7 @@ class yf_gallery_manage {
 			@unlink($thumb_path);
 		}
 		// Delete from database
-		db()->query("DELETE FROM `".db('gallery_photos')."` WHERE `id`=".intval($photo_info["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('gallery_photos')." WHERE id=".intval($photo_info["id"])." LIMIT 1");
 		// Update public photos
 		$this->GALLERY_OBJ->_sync_public_photos();
 		// Update user stats
@@ -913,16 +913,16 @@ class yf_gallery_manage {
 		}
 		$cur_folder_info = $this->_get_photo_folder_info($photo_info);
 		// Check number of photos to show in ads
-		$num_photos_for_ads = db()->query_num_rows("SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($this->GALLERY_OBJ->USER_ID)." AND `show_in_ads`='1'");
+		$num_photos_for_ads = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($this->GALLERY_OBJ->USER_ID)." AND show_in_ads='1'");
 		if ($num_photos_for_ads >= $this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS && $photo_info["show_in_ads"] == 0) {
 			_re(t("You can use max @num photos in your ads!", array("@num" => intval($this->GALLERY_OBJ->MAX_PHOTOS_FOR_ADS))));
 			return redirect("./?object=".GALLERY_CLASS_NAME."&action=show_gallery"._add_get(array("page")), 1, _e());
 		}
 		// Do update db record
 		db()->query(
-			"UPDATE `".db('gallery_photos')."` 
-			SET `show_in_ads`='".($photo_info["show_in_ads"] ? 0 : 1)."' 
-			WHERE `id`=".intval($photo_info["id"])
+			"UPDATE ".db('gallery_photos')." 
+			SET show_in_ads='".($photo_info["show_in_ads"] ? 0 : 1)."' 
+			WHERE id=".intval($photo_info["id"])
 		);
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -944,9 +944,9 @@ class yf_gallery_manage {
 		$cur_folder_info = $this->_get_photo_folder_info($photo_info);
 		// Do update db record
 		db()->query(
-			"UPDATE `".db('gallery_photos')."` 
-			SET `allow_rate`='".($photo_info["allow_rate"] ? 0 : 1)."' 
-			WHERE `id`=".intval($photo_info["id"])
+			"UPDATE ".db('gallery_photos')." 
+			SET allow_rate='".($photo_info["allow_rate"] ? 0 : 1)."' 
+			WHERE id=".intval($photo_info["id"])
 		);
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -968,9 +968,9 @@ class yf_gallery_manage {
 		$cur_folder_info = $this->_get_photo_folder_info($photo_info);
 		// Do update db record
 		db()->query(
-			"UPDATE `".db('gallery_photos')."` 
-			SET `allow_tagging`='".($photo_info["allow_tagging"] ? 0 : 1)."' 
-			WHERE `id`=".intval($photo_info["id"])
+			"UPDATE ".db('gallery_photos')." 
+			SET allow_tagging='".($photo_info["allow_tagging"] ? 0 : 1)."' 
+			WHERE id=".intval($photo_info["id"])
 		);
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -1187,11 +1187,11 @@ class yf_gallery_manage {
 			return $this->GALLERY_OBJ->_error_msg("ban_images");
 		}
 		// Try to get given photo info
-		$sql = "SELECT * FROM `".db('gallery_photos')."` WHERE ";
+		$sql = "SELECT * FROM ".db('gallery_photos')." WHERE ";
 		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID && $this->GALLERY_OBJ->USER_ID && !$force_photo_id) {
-			$sql .= " `id2`=".intval($PHOTO_ID)." AND `user_id`=".intval($this->GALLERY_OBJ->USER_ID);
+			$sql .= " id2=".intval($PHOTO_ID)." AND user_id=".intval($this->GALLERY_OBJ->USER_ID);
 		} else {
-			$sql .= " `id`=".intval($PHOTO_ID);
+			$sql .= " id=".intval($PHOTO_ID);
 		}
 		$photo_info = db()->query_fetch($sql);
 		if (empty($photo_info["id"])) {

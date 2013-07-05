@@ -30,46 +30,46 @@ class yf_articles_filter {
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Create qubquery for the user table
 		if ($SF["account_type"]) {
-			$user_sub_sql .= " AND `group` = ".intval($SF["account_type"])." ";
+			$user_sub_sql .= " AND group = ".intval($SF["account_type"])." ";
 		}
 		if (strlen($SF["gender"])) {
-			$user_sub_sql .= " AND `sex` ='"._es($SF["gender"])."' ";
+			$user_sub_sql .= " AND sex ='"._es($SF["gender"])."' ";
 		}
 		if (strlen($SF["race"])) {
-			$user_sub_sql .= " AND `race` ='"._es($SF["race"])."' ";
+			$user_sub_sql .= " AND race ='"._es($SF["race"])."' ";
 		}
 		if (strlen($SF["country"])) {
-			$user_sub_sql .= " AND `country` ='"._es($SF["country"])."' ";
+			$user_sub_sql .= " AND country ='"._es($SF["country"])."' ";
 		}
 		if (strlen($SF["nick"])) {
-			$user_sub_sql .= " AND `nick` LIKE '"._es($SF["nick"])."%' ";
+			$user_sub_sql .= " AND nick LIKE '"._es($SF["nick"])."%' ";
 		}
 		if (strlen($SF["state"])) {
-			$user_sub_sql .= " AND `state` LIKE '"._es($SF["state"])."%' ";
+			$user_sub_sql .= " AND state LIKE '"._es($SF["state"])."%' ";
 		}
 		if (strlen($SF["city"])) {
-			$user_sub_sql .= " AND `city` LIKE '"._es($SF["city"])."%' ";
+			$user_sub_sql .= " AND city LIKE '"._es($SF["city"])."%' ";
 		}
 		if (!empty($SF["user_id"])) {
-			$user_sub_sql .= " AND `id`=".intval($SF["user_id"])." ";
+			$user_sub_sql .= " AND id=".intval($SF["user_id"])." ";
 		}
 		if (!empty($user_sub_sql)) {
-			$sql .= " AND `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$user_sub_sql.") \r\n";
+			$sql .= " AND user_id IN (SELECT id FROM ".db('user')." WHERE 1=1 ".$user_sub_sql.") \r\n";
 		}
 		if (strlen($SF["title"])) {
-			$sql .= " AND `title` LIKE '"._es($SF["title"])."%' \r\n";
+			$sql .= " AND title LIKE '"._es($SF["title"])."%' \r\n";
 		}
 		if (strlen($SF["full_text"])) {
-			$sql .= " AND `full_text` LIKE '%"._es($SF["full_text"])."%' \r\n";
+			$sql .= " AND full_text LIKE '%"._es($SF["full_text"])."%' \r\n";
 		}
 		if (!empty($SF["cat_id"])) {
-			$sql .= " AND `cat_id`=".intval($SF["cat_id"])." \r\n";
+			$sql .= " AND cat_id=".intval($SF["cat_id"])." \r\n";
 		}
 		if (strlen($SF["author_name"])) {
-			$sql .= " AND `author_name` LIKE '"._es($SF["author_name"])."%' \r\n";
+			$sql .= " AND author_name LIKE '"._es($SF["author_name"])."%' \r\n";
 		}
 		// Sorting here
-		if ($SF["sort_by"])		$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])		$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

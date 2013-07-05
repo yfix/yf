@@ -26,13 +26,13 @@ class yf_test_maxmind_phone_check {
 			return $OBJ->_action_log. "<br /><br />Phone check result: ".($check_result ? "<b style='color:green;'>Good</b>" : "<b style='color:red;'>Bad</b>");
 		}
 		// Display form
-		$sql = "SELECT `id`, `nick`, `phone`, `country` 
+		$sql = "SELECT id, nick, phone, country 
 				FROM ".db('user')." 
-				WHERE `country` IN ('".implode("','", $OBJ->_cc_to_verify)."') 
-					AND `group`='3' 
-					AND `phone` != '' 
-					AND `active`='1' 
-				ORDER BY `id` DESC 
+				WHERE country IN ('".implode("','", $OBJ->_cc_to_verify)."') 
+					AND group='3' 
+					AND phone != '' 
+					AND active='1' 
+				ORDER BY id DESC 
 				LIMIT 100";
 		$A = db()->query_fetch_all($sql);
 		foreach ((array)$A as $B){

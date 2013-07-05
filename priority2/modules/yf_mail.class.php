@@ -108,7 +108,7 @@ class yf_mail {
 			return common()->_show_error_message();
 		}
 		// Divide pages
-		$sql = "SELECT * FROM `".db('mail')."` WHERE `active`='1' AND `folder_id`=".intval($folder_id)." AND `receiver_id`=".intval($this->USER_ID)." ORDER BY `add_date` DESC";
+		$sql = "SELECT * FROM ".db('mail')." WHERE active='1' AND folder_id=".intval($folder_id)." AND receiver_id=".intval($this->USER_ID)." ORDER BY add_date DESC";
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->MESSAGES_ON_PAGE);
 		// Get folder contents from db
@@ -121,7 +121,7 @@ class yf_mail {
 				$user_ids[$msg_info["receiver_id"]]	= $msg_info["receiver_id"];
 			}
 /*
-			$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `active`='1' AND `id` IN(".implode(",", $user_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('user')." WHERE active='1' AND id IN(".implode(",", $user_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $user_names[$A["id"]] = $A["name"];
 */
 			foreach (user($users_ids, "full", array("WHERE" => array("active" => 1))) as $A) {
@@ -207,18 +207,18 @@ class yf_mail {
 		}
 		// Try to get message info
 		if (!empty($_GET["id"])) {
-			$msg_info = db()->query_fetch("SELECT * FROM `".db('mail')."` WHERE `id`=".intval($_GET["id"])." AND `active`='1' AND `receiver_id`=".intval($this->USER_ID));
+			$msg_info = db()->query_fetch("SELECT * FROM ".db('mail')." WHERE id=".intval($_GET["id"])." AND active='1' AND receiver_id=".intval($this->USER_ID));
 		}
 		if (empty($msg_info["id"])) {
 			_re(t("No such message!"));
 			return common()->_show_error_message();
 		}
 		// Get target user info
-//		$target_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($msg_info["sender_id"]));
+//		$target_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($msg_info["sender_id"]));
 		$target_user_info = user($msg_info["sender_id"]);
 		// Update message status (change to "read")
 		if ($msg_info["status"] == "unread") {
-			db()->query("UPDATE `".db('mail')."` SET `status`='read' WHERE `id`=".$msg_info["id"]);
+			db()->query("UPDATE ".db('mail')." SET status='read' WHERE id=".$msg_info["id"]);
 		}
 		// Process template
 		$folder_name = $this->_mail_folders[$msg_info["folder_id"]]["name"];
@@ -252,14 +252,14 @@ class yf_mail {
 		}
 		// Try to get message info
 		if (!empty($_GET["id"])) {
-			$msg_info = db()->query_fetch("SELECT * FROM `".db('mail')."` WHERE `id`=".intval($_GET["id"])." AND `folder_id`=".intval($this->_get_folder_id("inbox"))." AND `active`='1' AND `receiver_id`=".intval($this->USER_ID));
+			$msg_info = db()->query_fetch("SELECT * FROM ".db('mail')." WHERE id=".intval($_GET["id"])." AND folder_id=".intval($this->_get_folder_id("inbox"))." AND active='1' AND receiver_id=".intval($this->USER_ID));
 		}
 		if (empty($msg_info["id"])) {
 			_re(t("No such message!"));
 			return common()->_show_error_message();
 		}
 		// Get target user info
-//		$target_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($msg_info["sender_id"]));
+//		$target_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($msg_info["sender_id"]));
 		$target_user_info = user($msg_info["sender_id"]);
 		// Update message status (change to "read")
 		if (empty($target_user_info["id"])) {
@@ -291,7 +291,7 @@ class yf_mail {
 		// Try to get target user info
 		$target_user_id = !empty($params["target_user_id"]) ? $params["target_user_id"] : $_GET["id"];
 		if ($target_user_id) {
-//			$target_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($target_user_id)." AND `active`='1'");
+//			$target_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($target_user_id)." AND active='1'");
 			$target_user_info = user($target_user_id, "full", array("WHERE"=>array("active"=>1)));
 		}
 		// Check for correct user id
@@ -349,8 +349,8 @@ class yf_mail {
 					"active"		=> 1,
 				));
 				// Add counter for sent and received emails for users
-				db()->query("UPDATE `".db('user')."` SET `emailssent`=`emailssent`+1 WHERE `id`=".intval($this->USER_ID));
-				db()->query("UPDATE `".db('user')."` SET `emails`=`emails`+1 WHERE `id`=".intval($target_user_info["id"]));
+				db()->query("UPDATE ".db('user')." SET emailssent=emailssent+1 WHERE id=".intval($this->USER_ID));
+				db()->query("UPDATE ".db('user')." SET emails=emails+1 WHERE id=".intval($target_user_info["id"]));
 				// Send email notification
 				$replace3 = array(
 					"nick"	=> _prepare_html(_display_name($this->_user_info)),
@@ -406,7 +406,7 @@ class yf_mail {
 		}
 		// Get messages infos
 		if (is_array($msg_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('mail')."` WHERE `id` IN(".implode(",",$msg_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('mail')." WHERE id IN(".implode(",",$msg_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				if ($A["receiver_id"] != $this->USER_ID) continue;
 				$msg_infos[$A["id"]] = $A;
@@ -416,10 +416,10 @@ class yf_mail {
 		foreach ((array)$msg_infos as $msg_info) {
 			// Move to trash first
 			if ($msg_info["folder_id"] != $this->_get_folder_id("trash")) {
-				db()->query("UPDATE `".db('mail')."` SET `folder_id`=".intval($this->_get_folder_id("trash"))." WHERE `id`=".intval($msg_info["id"]));
+				db()->query("UPDATE ".db('mail')." SET folder_id=".intval($this->_get_folder_id("trash"))." WHERE id=".intval($msg_info["id"]));
 			// Else - completely delete message
 			} else {
-				db()->query("DELETE FROM `".db('mail')."` WHERE `id`=".intval($msg_info["id"]));
+				db()->query("DELETE FROM ".db('mail')." WHERE id=".intval($msg_info["id"]));
 			}
 		}
 		// Return user back

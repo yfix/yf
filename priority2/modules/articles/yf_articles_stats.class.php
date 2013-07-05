@@ -25,18 +25,18 @@ class yf_articles_stats {
 		
 		$sql		= 	
 			"SELECT 
-				`id` AS `article_id`,
-				`user_id`,
-				`author_name`,
-				`is_own_article`,
-				`add_date`,
-				`views`,
-				`title`,
-				`summary` 
-			FROM `".db('articles_texts')."` 
-			WHERE `status` = 'active'";
+				id AS article_id,
+				user_id,
+				author_name,
+				is_own_article,
+				add_date,
+				views,
+				title,
+				summary 
+			FROM ".db('articles_texts')." 
+			WHERE status = 'active'";
 			
-		$order_sql	= " ORDER BY `add_date` DESC";
+		$order_sql	= " ORDER BY add_date DESC";
 		list($add_sql, $last_article_pages, $total) = common()->divide_pages($sql, "", "", intval($this->PARENT_OBJ->STATS_NUM_LATEST));
 		$Q = db()->query($sql.$order_sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -47,22 +47,22 @@ class yf_articles_stats {
 		// Get most commented articles
 		$Q = db()->query(
 			"SELECT 
-				`c`.`object_id` AS `article_id`,
-				`a`.`user_id`,
-				`a`.`author_name`,
-				`a`.`is_own_article`,
-				`a`.`add_date` AS `add_date`,
-				`a`.`title` AS `title`, 
-				`a`.`views`, 
-				COUNT(`c`.`id`) AS `num_comments`,
-				`a`.`summary` 
-			FROM `".db('comments')."` AS `c`,
-				`".db('articles_texts')."` AS `a` 
-			WHERE `c`.`object_name`='"._es(ARTICLES_CLASS_NAME)."' 
-				AND `a`.`status` = 'active' 
-				AND `a`.`id`=`c`.`object_id` 
-			GROUP BY `c`.`object_id` 
-			ORDER BY `num_comments` DESC 
+				c.object_id AS article_id,
+				a.user_id,
+				a.author_name,
+				a.is_own_article,
+				a.add_date AS add_date,
+				a.title AS title, 
+				a.views, 
+				COUNT(c.id) AS num_comments,
+				a.summary 
+			FROM ".db('comments')." AS c,
+				".db('articles_texts')." AS a 
+			WHERE c.object_name='"._es(ARTICLES_CLASS_NAME)."' 
+				AND a.status = 'active' 
+				AND a.id=c.object_id 
+			GROUP BY c.object_id 
+			ORDER BY num_comments DESC 
 			LIMIT ".intval($this->PARENT_OBJ->STATS_NUM_MOST_COMMENTED)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -72,17 +72,17 @@ class yf_articles_stats {
 		// Get most read articles
 		$Q = db()->query(
 			"SELECT 
-				`id` AS `article_id`,
-				`user_id`,
-				`author_name`,
-				`is_own_article`,
-				`title`,
-				`add_date`,
-				`views`,
-				`summary` 
-			FROM `".db('articles_texts')."` 
-			WHERE `status` = 'active' 
-			ORDER BY `views` DESC 
+				id AS article_id,
+				user_id,
+				author_name,
+				is_own_article,
+				title,
+				add_date,
+				views,
+				summary 
+			FROM ".db('articles_texts')." 
+			WHERE status = 'active' 
+			ORDER BY views DESC 
 			LIMIT ".intval($this->PARENT_OBJ->STATS_NUM_MOST_READ)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -92,13 +92,13 @@ class yf_articles_stats {
 		// Get most active authors
 		$Q = db()->query(
 			"SELECT 
-				COUNT(`id`) AS `num_articles`,
-				`author_name`,
-				`user_id` 
-			FROM `".db('articles_texts')."` 
-			WHERE `status` = 'active' 
-			GROUP BY `author_name` 
-			ORDER BY `num_articles` DESC 
+				COUNT(id) AS num_articles,
+				author_name,
+				user_id 
+			FROM ".db('articles_texts')." 
+			WHERE status = 'active' 
+			GROUP BY author_name 
+			ORDER BY num_articles DESC 
 			LIMIT ".intval($this->PARENT_OBJ->STATS_NUM_MOST_ACTIVE)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -108,13 +108,13 @@ class yf_articles_stats {
 		// Get articles by categories	
 		$Q = db()->query(
 			"SELECT 
-				COUNT(`id`) AS `num_articles`,
-				`cat_id` 
-			FROM `".db('articles_texts')."` 
-			WHERE `status` = 'active' 
-				AND `cat_id` != 0 
-			GROUP BY `cat_id` 
-			ORDER BY `num_articles` DESC"
+				COUNT(id) AS num_articles,
+				cat_id 
+			FROM ".db('articles_texts')." 
+			WHERE status = 'active' 
+				AND cat_id != 0 
+			GROUP BY cat_id 
+			ORDER BY num_articles DESC"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_articles_by_cats[$A["cat_id"]] = $A["num_articles"];

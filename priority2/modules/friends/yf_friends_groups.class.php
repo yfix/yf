@@ -108,7 +108,7 @@ class yf_friends_groups{
 				$friends_ids[$value["id"]] = $value["id"];
 			}
 		
-			$Q = db()->query("SELECT * FROM `".db('friends_users')."` WHERE `friend_id` IN(".implode(",", $friends_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('friends_users')." WHERE friend_id IN(".implode(",", $friends_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$friends_mask[$A["friend_id"]] = $A["mask"];
 			}
@@ -137,7 +137,7 @@ class yf_friends_groups{
 	}
 	
 	function _get_friends_groups($user_id){
-		$Q = db()->query("SELECT * FROM `".db('friends_groups')."` WHERE `user_id`=".$user_id." ORDER BY `order` ASC");
+		$Q = db()->query("SELECT * FROM ".db('friends_groups')." WHERE user_id=".$user_id." ORDER BY order ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$groups_info[$A["id2"]] = $A;
 		}
@@ -163,7 +163,7 @@ class yf_friends_groups{
 		if(empty($group)){
 			return;
 		}
-		db()->query("DELETE FROM `".db('friends_groups')."` WHERE `user_id`= ".$this->PARENT_OBJ->USER_ID." AND `id2` IN(".implode(",", $group).")");
+		db()->query("DELETE FROM ".db('friends_groups')." WHERE user_id= ".$this->PARENT_OBJ->USER_ID." AND id2 IN(".implode(",", $group).")");
 	}
 
 	function _reorder_group($group){
@@ -176,7 +176,7 @@ class yf_friends_groups{
 		foreach ((array)$group as $id2 => $order){
 			db()->UPDATE("friends_groups", array(
 				"order" => $order,
-			), "`id2`=".intval($id2)." AND `user_id`=".$this->PARENT_OBJ->USER_ID);
+			), "id2=".intval($id2)." AND user_id=".$this->PARENT_OBJ->USER_ID);
 		}
 	}
 	
@@ -190,12 +190,12 @@ class yf_friends_groups{
 		
 		foreach ((array)$group as $id2 => $title){
 		
-			$exist = db()->query_fetch("SELECT `id` FROM `".db('friends_groups')."` WHERE `id2`=".intval($id2)." AND `user_id`=".$this->PARENT_OBJ->USER_ID);
+			$exist = db()->query_fetch("SELECT id FROM ".db('friends_groups')." WHERE id2=".intval($id2)." AND user_id=".$this->PARENT_OBJ->USER_ID);
 
 			if(!empty($exist)){
 				db()->UPDATE("friends_groups", array(
 					"title" => $title,
-				), "`id2`=".intval($id2)." AND `user_id`=".$this->PARENT_OBJ->USER_ID);
+				), "id2=".intval($id2)." AND user_id=".$this->PARENT_OBJ->USER_ID);
 			}else{
 				db()->INSERT("friends_groups", array(
 					"id2"		=> $id2,
@@ -215,7 +215,7 @@ class yf_friends_groups{
 			return;
 		}
 
-		db()->query("DELETE FROM `".db('friends_users')."` WHERE `user_id`=".$user_id);
+		db()->query("DELETE FROM ".db('friends_users')." WHERE user_id=".$user_id);
 		
 		foreach ((array)$friends_ids as $friend => $mask){
 			db()->INSERT("friends_users", array(

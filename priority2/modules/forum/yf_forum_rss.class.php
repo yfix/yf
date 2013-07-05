@@ -18,7 +18,7 @@ class yf_forum_rss {
 			return module('forum')->_show_error("RSS export is disabled!");
 		}
 		// Get latest posts
-		$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `status`='a' ORDER BY `created` DESC LIMIT ".intval(!empty(module('forum')->SETTINGS["RSS_LATEST_IN_BOARD"]) ? module('forum')->SETTINGS["RSS_LATEST_IN_BOARD"] : 15));
+		$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE status='a' ORDER BY created DESC LIMIT ".intval(!empty(module('forum')->SETTINGS["RSS_LATEST_IN_BOARD"]) ? module('forum')->SETTINGS["RSS_LATEST_IN_BOARD"] : 15));
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				"title"			=> _prepare_html($A["subject"], 0),
@@ -53,7 +53,7 @@ class yf_forum_rss {
 			return false;
 		}
 		// Get latest posts
-		$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `forum`=".intval($forum_id)." AND `status`='a' ORDER BY `created` DESC LIMIT ".intval(!empty(module('forum')->SETTINGS["RSS_LATEST_IN_FORUM"]) ? module('forum')->SETTINGS["RSS_LATEST_IN_FORUM"] : 15));
+		$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE forum=".intval($forum_id)." AND status='a' ORDER BY created DESC LIMIT ".intval(!empty(module('forum')->SETTINGS["RSS_LATEST_IN_FORUM"]) ? module('forum')->SETTINGS["RSS_LATEST_IN_FORUM"] : 15));
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				"title"			=> _prepare_html($A["subject"], 0),
@@ -85,13 +85,13 @@ class yf_forum_rss {
 		}
 		$topic_id = intval($_GET["id"]);
 		// Check if such topic exists
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 		// Check topic existance
 		if (empty($topic_info["id"])) {
 			return module('forum')->_show_error("No such topic!");
 		}
 		// Get latest posts
-		$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".intval($forum_id)." AND `status`='a' ORDER BY `created` DESC LIMIT ".intval(!empty(module('forum')->SETTINGS["RSS_LATEST_IN_TOPIC"]) ? module('forum')->SETTINGS["RSS_LATEST_IN_TOPIC"] : 15));
+		$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE topic=".intval($forum_id)." AND status='a' ORDER BY created DESC LIMIT ".intval(!empty(module('forum')->SETTINGS["RSS_LATEST_IN_TOPIC"]) ? module('forum')->SETTINGS["RSS_LATEST_IN_TOPIC"] : 15));
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				"title"			=> _prepare_html($A["subject"], 0),

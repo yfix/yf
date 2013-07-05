@@ -34,7 +34,7 @@ class yf_account {
 		}
 
 		// Try to get unread messages from the admin
-		$Q = db()->query("SELECT * FROM `".db('admin_messages')."` WHERE `user_id`=".intval($this->USER_ID)." AND `read`='0' ORDER BY `time` DESC");
+		$Q = db()->query("SELECT * FROM ".db('admin_messages')." WHERE user_id=".intval($this->USER_ID)." AND read='0' ORDER BY time DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$admin_messages[] = array(
 				"message_id"	=> intval($A["id"]),
@@ -94,13 +94,13 @@ class yf_account {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try ot get message info
-		$message_info = db()->query_fetch("SELECT * FROM `".db('admin_messages')."` WHERE `id`=".intval($_GET["id"])." AND `user_id`=".intval($this->USER_ID));
+		$message_info = db()->query_fetch("SELECT * FROM ".db('admin_messages')." WHERE id=".intval($_GET["id"])." AND user_id=".intval($this->USER_ID));
 		if (empty($message_info["id"])) {
 			_re("No such admin message!");
 			return _e();
 		}
 		// Update record
-		db()->UPDATE("admin_messages", array("read" => 1), "`id`=".intval($_GET["id"]));
+		db()->UPDATE("admin_messages", array("read" => 1), "id=".intval($_GET["id"]));
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]);
 	}

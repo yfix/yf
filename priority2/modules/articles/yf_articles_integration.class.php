@@ -20,10 +20,10 @@ class yf_articles_integration {
 	* Code for home page
 	*/
 	function _for_home_page($NUM_NEWEST_ARTICLE_POST = 4){
-		$Q = db()->query("SELECT `id` AS `article_id`,`author_name`,`add_date`,`title`,`summary`,`user_id` 
-			FROM `".db('articles_texts')."` 
-			WHERE `status` = 'active' 
-			ORDER BY `add_date` DESC 
+		$Q = db()->query("SELECT id AS article_id,author_name,add_date,title,summary,user_id 
+			FROM ".db('articles_texts')." 
+			WHERE status = 'active' 
+			ORDER BY add_date DESC 
 			LIMIT ".intval($NUM_NEWEST_ARTICLE_POST)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -51,7 +51,7 @@ class yf_articles_integration {
 	* Code for user profile
 	*/
 	function _for_user_profile($id, $MAX_SHOW_ARTICLES){
-		$sql = "SELECT `id`,`user_id`,`title`,`add_date` FROM `".db('articles_texts')."` WHERE `user_id`=".intval($id)." AND `status`='active' ORDER BY `add_date` DESC";
+		$sql = "SELECT id,user_id,title,add_date FROM ".db('articles_texts')." WHERE user_id=".intval($id)." AND status='active' ORDER BY add_date DESC";
 		list($add_sql, $pages, $this->_num_articles_posts) = common()->divide_pages($sql, "", null, $MAX_SHOW_ARTICLES);
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -70,10 +70,10 @@ class yf_articles_integration {
 	}
 	
 	function _rss_general(){
-		$Q = db()->query("SELECT `id` AS `article_id`,`author_name`,`add_date`,`title`,`summary` 
-			FROM `".db('articles_texts')."` 
-			WHERE `status` = 'active' 
-			ORDER BY `add_date` DESC 
+		$Q = db()->query("SELECT id AS article_id,author_name,add_date,title,summary 
+			FROM ".db('articles_texts')." 
+			WHERE status = 'active' 
+			ORDER BY add_date DESC 
 			LIMIT ".intval($this->ARTICLES_OBJ->NUM_RSS)
 		);
 		

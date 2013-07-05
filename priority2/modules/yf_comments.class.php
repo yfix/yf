@@ -96,10 +96,10 @@ class yf_comments {
 			return "";
 		}
 		// Get current profile comments from db
-		$sql		= "SELECT * FROM `".db('comments')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : "");
-		$order_sql	= " ORDER BY `add_date` DESC";
+		$sql		= "SELECT * FROM ".db('comments')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : "");
+		$order_sql	= " ORDER BY add_date DESC";
 		// Connect pager
-		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT `id`", $sql), $PAGER_PATH, null, $this->NUM_PER_PAGE);
+		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT id", $sql), $PAGER_PATH, null, $this->NUM_PER_PAGE);
 		// Process items
 		$Q = db()->query($sql.$order_sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -234,8 +234,8 @@ class yf_comments {
 			return "";
 		}
 		// Get current profile comments from db
-		$sql		= "SELECT * FROM `".db('comments')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : "");
-		$order_sql	= " ORDER BY `add_date` ASC";
+		$sql		= "SELECT * FROM ".db('comments')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : "");
+		$order_sql	= " ORDER BY add_date ASC";
 		// Process items
 		$Q = db()->query($sql.$order_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -415,7 +415,7 @@ class yf_comments {
 			return false;
 		}
 		// Do get number of ids from db
-		$Q = db()->query("SELECT COUNT(`id`) AS `num`,`object_id` FROM `".db('comments')."` WHERE `object_id` IN(".implode(",", $OBJECTS_IDS).") AND `object_name`='"._es($OBJECT_NAME)."' GROUP BY `object_id`");
+		$Q = db()->query("SELECT COUNT(id) AS num,object_id FROM ".db('comments')." WHERE object_id IN(".implode(",", $OBJECTS_IDS).") AND object_name='"._es($OBJECT_NAME)."' GROUP BY object_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_comments_by_object_id[$A["object_id"]] = $A["num"];
 		}
@@ -519,7 +519,7 @@ class yf_comments {
 			return;
 		}
 		
-		$Q = db()->query("SELECT `id` FROM `".db('comments')."` WHERE `user_id` != ".intval($this->USER_ID)." AND `add_date` > ".$this->_user_info["last_view"]);
+		$Q = db()->query("SELECT id FROM ".db('comments')." WHERE user_id != ".intval($this->USER_ID)." AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
@@ -551,8 +551,8 @@ class yf_comments {
 		$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
 		
 		if(!empty($ids)){
-			$sql		= "SELECT `text`,`object_name`,`id`,`object_id` FROM `".db('comments')."` WHERE `id` IN(".implode(",", (array)$ids).")";
-			$order_sql	= " ORDER BY `add_date` DESC";
+			$sql		= "SELECT text,object_name,id,object_id FROM ".db('comments')." WHERE id IN(".implode(",", (array)$ids).")";
+			$order_sql	= " ORDER BY add_date DESC";
 			list($add_sql, $pages, $total) = common()->divide_pages($sql);
 			$Q = db()->query($sql.$order_sql.$add_sql);
 			while ($A = db()->fetch_assoc($Q)) {

@@ -23,7 +23,7 @@ class yf_chat_settings {
 	* Form to edit user settings
 	*/
 	function _edit() {
-		$user_info = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `id`=".intval(CHAT_USER_ID));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE id=".intval(CHAT_USER_ID));
 		$user_info["chat_refresh"] = intval($user_info["chat_refresh"]);
 		// Prepare template
 		$replace = array(
@@ -69,26 +69,26 @@ class yf_chat_settings {
 		}
 		// Continue if no errors occured
 		if (!common()->_error_exists()) {
-			$sql = "UPDATE `".db('chat_online')."` SET 
-					`chat_color_1` = '"._es($_POST["chat_color_1"])."',
-					`chat_color_2` = '"._es($_POST["chat_color_2"])."',
-					`chat_color_3` = '"._es($_POST["chat_color_3"])."',
-					`chat_color_4` = '"._es($_POST["chat_color_4"])."',
-					`text_color`='"._es($_POST["chat_your_color"])."',
-					`chat_show_time`=".$_POST["messages_time"].",
-					`chat_refresh`=".$_POST["refresh_time"].",
-					`chat_msg_filter` = ".$_POST["msg_filter"]."
-					WHERE `user_id`=".intval(CHAT_USER_ID);
+			$sql = "UPDATE ".db('chat_online')." SET 
+					chat_color_1 = '"._es($_POST["chat_color_1"])."',
+					chat_color_2 = '"._es($_POST["chat_color_2"])."',
+					chat_color_3 = '"._es($_POST["chat_color_3"])."',
+					chat_color_4 = '"._es($_POST["chat_color_4"])."',
+					text_color='"._es($_POST["chat_your_color"])."',
+					chat_show_time=".$_POST["messages_time"].",
+					chat_refresh=".$_POST["refresh_time"].",
+					chat_msg_filter = ".$_POST["msg_filter"]."
+					WHERE user_id=".intval(CHAT_USER_ID);
 			db()->query($sql);
-			$sql = "UPDATE `".db('chat_users')."` SET 
-					`chat_color_1` = '"._es($_POST["chat_color_1"])."',
-					`chat_color_2` = '"._es($_POST["chat_color_2"])."',
-					`chat_color_3` = '"._es($_POST["chat_color_3"])."',
-					`chat_color_4` = '"._es($_POST["chat_color_4"])."',
-					`chat_show_time` = ".$_POST["messages_time"].",
-					`chat_refresh` = ".$_POST["refresh_time"].",
-					`chat_msg_filter` = ".$_POST["msg_filter"]."
-				WHERE `id`=".intval(CHAT_USER_ID);
+			$sql = "UPDATE ".db('chat_users')." SET 
+					chat_color_1 = '"._es($_POST["chat_color_1"])."',
+					chat_color_2 = '"._es($_POST["chat_color_2"])."',
+					chat_color_3 = '"._es($_POST["chat_color_3"])."',
+					chat_color_4 = '"._es($_POST["chat_color_4"])."',
+					chat_show_time = ".$_POST["messages_time"].",
+					chat_refresh = ".$_POST["refresh_time"].",
+					chat_msg_filter = ".$_POST["msg_filter"]."
+				WHERE id=".intval(CHAT_USER_ID);
 			db()->query($sql);
 			// Special code for the Opera
 			if (IS_OPERA) {
@@ -116,7 +116,7 @@ class yf_chat_settings {
 	function _set_ignore() {
 		if (!empty($_GET["user_id"])) {
 			// Check if ignoring user exists
-			$A = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `id`=".intval($_GET["user_id"]));
+			$A = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE id=".intval($_GET["user_id"]));
 			// Check if user is online
 			if ($A["id"] && is_array($GLOBALS['chat_online'])) {
 				$A3 = $GLOBALS['chat_online'][$A["id"]];
@@ -124,18 +124,18 @@ class yf_chat_settings {
 		}
 		if (!empty($A['id']) && !empty($A3["user_id"])) {
 			// Check if user is already in ignore list
-			$A2 = db()->query_fetch("SELECT * FROM `".db('chat_ignore')."` WHERE `user_id`=".intval(CHAT_USER_ID)." AND `user_ignore`=".intval($A["id"]));
+			$A2 = db()->query_fetch("SELECT * FROM ".db('chat_ignore')." WHERE user_id=".intval(CHAT_USER_ID)." AND user_ignore=".intval($A["id"]));
 			// Delete user from ignore list if exists there
 			if ($A2['user_id']) {
-				$sql = "DELETE FROM `".db('chat_ignore')."` WHERE `user_id`=".intval(CHAT_USER_ID)." AND `user_ignore`=".intval($A["id"]);
+				$sql = "DELETE FROM ".db('chat_ignore')." WHERE user_id=".intval(CHAT_USER_ID)." AND user_ignore=".intval($A["id"]);
 				db()->query($sql);
 				$ignore = 0;
 			// Add user to ignore list
 			} else {
-				$sql = "INSERT INTO `".db('chat_ignore')."` (
-						`user_id`,
-						`user_ignore`,
-						`add_date`
+				$sql = "INSERT INTO ".db('chat_ignore')." (
+						user_id,
+						user_ignore,
+						add_date
 					) VALUES (
 						".intval(CHAT_USER_ID).",
 						".intval($A['id']).",

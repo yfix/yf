@@ -81,7 +81,7 @@ class yf_forum_user_details {
 		$users_array = array();
 		// Process users
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('forum_users')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_users')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($user_info = db()->fetch_assoc($Q)) $users_array[$user_info["id"]]	= $user_info;
 		}
 		return $users_array;

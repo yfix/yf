@@ -41,10 +41,10 @@ class yf_right_block {
 		$DISPLAY_CONTACT_ITEMS = 0;
 		if ($this->USER_ID && $this->_user_info["id"] != $this->USER_ID) {
 //			if ($totals["favorite_users"]) {
-				$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM `".db('favorites')."` WHERE `user_id`=".intval($this->USER_ID)." AND `target_user_id`=".intval($this->_user_info["id"]));
+				$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM ".db('favorites')." WHERE user_id=".intval($this->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 //			}
 //			if ($totals["ignored_users"]) {
-				$is_ignored			= db()->query_num_rows("SELECT 1 FROM `".db('ignore_list')."` WHERE `user_id`=".intval($this->USER_ID)." AND `target_user_id`=".intval($this->_user_info["id"]));
+				$is_ignored			= db()->query_num_rows("SELECT 1 FROM ".db('ignore_list')." WHERE user_id=".intval($this->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 //			}
 			// Check friendship
 			$FRIENDS_OBJ		= main()->init_class("friends");
@@ -67,11 +67,11 @@ class yf_right_block {
 		}
 		// Check if user has escort referral records (visible only for escorts)
 		if ($this->_user_info["group"] == 2 && in_array($this->USER_GROUP, array(3,4))) {
-			list($has_escort_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('referrals')."` WHERE `type`='e' AND `target_id`=".intval($this->_user_info["id"]));
+			list($has_escort_refs) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('referrals')." WHERE type='e' AND target_id=".intval($this->_user_info["id"]));
 		}
 		// Check if user has industry referral records (visible only for escorts)
 		if ($this->_user_info["group"] == 3/* && in_array($this->USER_GROUP, array(3,4))*/) {
-			list($has_industry_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('referrals')."` WHERE `type`='i' AND `target_id`=".intval($this->_user_info["id"]));
+			list($has_industry_refs) = db()->query_fetch("SELECT COUNT(*) AS 0 FROM ".db('referrals')." WHERE type='i' AND target_id=".intval($this->_user_info["id"]));
 		}
 		// Array of $_GET vars to skip
 		$skip_get = array("page","escort_id","q","show");
@@ -117,12 +117,12 @@ class yf_right_block {
 			if (empty($_GET["id"])) {
 				return false;
 			}
-			$GLOBALS['escort_ad_info'] = db()->query_fetch("SELECT `ad_id`,`user_id` FROM `".db('ads')."` WHERE `ad_id`=".intval($_GET["id"]));
+			$GLOBALS['escort_ad_info'] = db()->query_fetch("SELECT ad_id,user_id FROM ".db('ads')." WHERE ad_id=".intval($_GET["id"]));
 			if (empty($GLOBALS['escort_ad_info']["ad_id"])) {
 				return false;
 			}
 			// Prepare user info
-			$GLOBALS['user_info'] = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".$GLOBALS['escort_ad_info']["user_id"]." AND `active`='1'");
+			$GLOBALS['user_info'] = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".$GLOBALS['escort_ad_info']["user_id"]." AND active='1'");
 			// Cleanup input
 			if (isset($_GET["cat_id"])) {
 				unset($_GET["cat_id"]);

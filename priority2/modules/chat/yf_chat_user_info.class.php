@@ -26,7 +26,7 @@ class yf_chat_user_info {
 		$_GET["user_id"] = intval($_GET["user_id"]);
 		if ($_GET["user_id"]) return false;
 		// Get info
-		$A = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `id`=".intval($_GET["user_id"]));
+		$A = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE id=".intval($_GET["user_id"]));
 		$allowed_fields = array();
 		if (strlen($A["allowed_fields"])) {
 			$allowed_fields = explode(",",$A["allowed_fields"]);
@@ -86,8 +86,8 @@ class yf_chat_user_info {
 		if (!$A["id"]) {
 			return false;
 		}
-		$A2 = db()->query_fetch("SELECT MIN(`login_date`) AS `first_login`, MAX(`login_date`) AS `last_login` FROM `".db('chat_log_online')."` WHERE `user_id`=".intval($A['id']));
-		$A3 = db()->query_fetch("SELECT SUM(`logout_date` - `login_date`) AS `month_chat_time` FROM `".db('chat_log_online')."` WHERE `user_id`=".intval($A['id'])." AND `logout_date`!=0 AND `login_date`>".strtotime(date("Y-m-01")));
+		$A2 = db()->query_fetch("SELECT MIN(login_date) AS first_login, MAX(login_date) AS last_login FROM ".db('chat_log_online')." WHERE user_id=".intval($A['id']));
+		$A3 = db()->query_fetch("SELECT SUM(logout_date - login_date) AS month_chat_time FROM ".db('chat_log_online')." WHERE user_id=".intval($A['id'])." AND logout_date!=0 AND login_date>".strtotime(date("Y-m-01")));
 		$stats["first_visit"]		= $A2["first_login"] ? date("H:i:s d/m/Y", $A2["first_login"]) : "";
 		$stats["last_visit"]		= $A2["last_login"] ? date("H:i:s d/m/Y", $A2["last_login"]) : "";
 		$stats["month_chat_time"]	= $A3["month_chat_time"] ? $this->_format_seconds_as_hours($A3["month_chat_time"]) : t("no_data");
@@ -113,7 +113,7 @@ class yf_chat_user_info {
 	* Form to edit user info
 	*/
 	function _edit() {
-		$A = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `id`=".intval(CHAT_USER_ID));
+		$A = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE id=".intval(CHAT_USER_ID));
 		$replace = $A;
 		// Show moderator
 		if ($A["group_id"] == 1) {
@@ -201,29 +201,29 @@ class yf_chat_user_info {
 		}
 		// Continue if no errors occured
 		if (!common()->_error_exists()) {
-			$sql = "UPDATE `".db('chat_users')."` SET \r\n";
+			$sql = "UPDATE ".db('chat_users')." SET \r\n";
 			foreach ((array)$info_txt_fields as $name) {
-				if (isset($_POST[$name])) $sql .= "`".$name."`='"._es(trim(strip_tags($_POST[$name])))."',\r\n";
+				if (isset($_POST[$name])) $sql .= "".$name."='"._es(trim(strip_tags($_POST[$name])))."',\r\n";
 				if ($_POST["c_".$name]) $allowed_fields[] = $name;
 			}
 			foreach ((array)$info_int_fields as $name) {
-				if (isset($_POST[$name])) $sql .= "`".$name."`=".intval($_POST[$name]).",\r\n";
+				if (isset($_POST[$name])) $sql .= "".$name."=".intval($_POST[$name]).",\r\n";
 				if ($_POST["c_".$name]) $allowed_fields[] = $name;
 			}
 			if ($_POST["c_photo"]) {
 				$allowed_fields[] = "photo";
 			}
 			if (strlen($new_photo)) {
-				$sql .= "`photo`='".$new_photo."',\r\n";
+				$sql .= "photo='".$new_photo."',\r\n";
 			}
-			$sql .= "`info_add_date`=".time().",\r\n";
-			$sql .= "`allowed_fields`='".implode(",",$allowed_fields)."'\r\n";
-			$sql .= " WHERE `id`=".intval(CHAT_USER_ID);
+			$sql .= "info_add_date=".time().",\r\n";
+			$sql .= "allowed_fields='".implode(",",$allowed_fields)."'\r\n";
+			$sql .= " WHERE id=".intval(CHAT_USER_ID);
 			db()->query($sql);
 			// Update online table (user info status)
-			$A = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `id`=".intval(CHAT_USER_ID));
+			$A = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE id=".intval(CHAT_USER_ID));
 			$info_status = strlen($A["photo"]) ? 2 : ($A["info_add_date"] ? 1 : 0);
-			$sql = "UPDATE `".db('chat_online')."` SET `info_status`=".$info_status." WHERE `user_id`=".intval(CHAT_USER_ID);
+			$sql = "UPDATE ".db('chat_online')." SET info_status=".$info_status." WHERE user_id=".intval(CHAT_USER_ID);
 			db()->query($sql);
 			// Close window after saving
 			$body .= "<script>window.close();</script>\r\n";

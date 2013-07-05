@@ -47,17 +47,17 @@ class yf_blog_widgets {
 		// Get posts by categories	
 		$sql =
 			"SELECT 
-				COUNT(`id`) AS `num_posts`,
-				`cat_id` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `cat_id` NOT IN(0,1) 
-				AND `privacy` NOT IN(9)";
+				COUNT(id) AS num_posts,
+				cat_id 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND cat_id NOT IN(0,1) 
+				AND privacy NOT IN(9)";
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$sql .= " AND `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$sql .= " AND user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
-		$sql .= " GROUP BY `cat_id` ORDER BY `num_posts` DESC";
+		$sql .= " GROUP BY cat_id ORDER BY num_posts DESC";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_posts_by_cats[$A["cat_id"]] = $A["num_posts"];
