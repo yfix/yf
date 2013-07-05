@@ -85,7 +85,7 @@ class yf_shop_product_details{
 			"N"						=> $N,
 			"similar_price"			=> $similar_price,
 			"this_item_often_buy"	=> $this_item_often_buy,
-			"product_related"		=> module("shop")->get_product_related($product_info["id"]),
+			"product_related"		=> module("shop")->products_related($product_info["id"]),
 		);
 		db()->query("UPDATE `".db('shop_products')."` SET `viewed` = `viewed`+1 , `last_viewed_date` = ".time()."  WHERE ".$add_sql."'");
 		return tpl()->parse("shop/details", $replace);

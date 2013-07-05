@@ -189,12 +189,8 @@ class yf_shop extends yf_module {
 		return _class('shop_product_details', 'modules/shop/')->product_details();
 	}
 
-	function _get_children_cat($id) {
-		return _class('shop__get_children_cat', 'modules/shop/')->_get_children_cat($id);
-	}
-
-	function get_product_related($id = "") {
-		return _class('shop_get_product_related', 'modules/shop/')->get_product_related($id);
+	function products_related($id = "") {
+		return _class('shop_products_related', 'modules/shop/')->products_related($id);
 	}
 
 	function similar_price($price, $id) {
@@ -371,6 +367,10 @@ class yf_shop extends yf_module {
 
 	function _nav_bar_items($params = array()) {
 		return _class('shop__nav_bar_items', 'modules/shop/')->_nav_bar_items($params);
+	}
+
+	function _get_children_cat($id) {
+		return _class('shop__get_children_cat', 'modules/shop/')->_get_children_cat($id);
 	}
 
 }
