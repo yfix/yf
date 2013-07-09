@@ -37,7 +37,7 @@ class yf_manage_shop__attributes_save{
 			$option_values	= serialize($option_values);
 			$value_prices	= serialize($value_prices);
 			if (!isset($fields_values[$_attr_id])) {
-				db()->INSERT("dynamic_fields_values", array(
+				db()->INSERT("shop_product_attributes_values", array(
 					"category_id"	=> $category_id,
 					"object_id"		=> $object_id,
 					"field_id"		=> intval($_attr_id),
@@ -45,7 +45,7 @@ class yf_manage_shop__attributes_save{
 					"add_value"		=> _es($value_prices),
 				));
 			} else {
-				db()->UPDATE("dynamic_fields_values", array(
+				db()->UPDATE("shop_product_attributes_values", array(
 					"value"			=> _es($option_values),
 					"add_value"		=> _es($value_prices),
 				), "category_id = ".$category_id." AND object_id = ".$object_id." AND field_id = ".intval($_attr_id));

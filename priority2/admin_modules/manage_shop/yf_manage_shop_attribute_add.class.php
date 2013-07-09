@@ -23,10 +23,10 @@ class yf_manage_shop_attribute_add{
 					"order"			=> $_POST["order"],
 					"category_id"	=> intval(module('manage_shop')->ATTRIBUTES_CAT_ID),
 				);
-				db()->INSERT("dynamic_fields_info", $sql_array); 
+				db()->INSERT("shop_product_attributes_info", $sql_array); 
 
 				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("dynamic_fields_info");
+					cache()->refresh("shop_product_attributes_info");
 				}
 				return js_redirect("./?object=manage_shop&action=attributes");
 			}

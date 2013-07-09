@@ -8,7 +8,7 @@ class yf_manage_shop__get_attributes{
 		if (empty($category_id)) {
 			return array();
 		}
-		$fields_info = main()->get_data("dynamic_fields_info");
+		$fields_info = main()->get_data("shop_product_attributes_info");
 		foreach ((array)$fields_info[$category_id] as $A){
 			$attributes[$A["id"]] = array(
 				"title"			=> $A["name"],

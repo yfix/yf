@@ -11,7 +11,7 @@ class yf_manage_shop__get_attributes_values{
 		}
 		$Q = db()->query(
 			"SELECT field_id,value,add_value 
-			FROM ".db('dynamic_fields_values')."
+			FROM ".db('shop_product_attributes_values')."
 			WHERE category_id = ".$category_id." 
 				AND object_id = ".intval($object_id)." 
 				AND field_id IN(".implode(",", $fields_ids).")");

@@ -7,7 +7,7 @@ class yf_manage_shop_attribute_edit{
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$A = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_info')." WHERE id=".$_GET["id"]);
+		$A = db()->query_fetch("SELECT * FROM ".db('shop_product_attributes_info')." WHERE id=".$_GET["id"]);
 		if (isset($_POST["go"])) {
 			if (empty($_POST["name"])) {
 				_re(t("Name is required"));
@@ -28,9 +28,9 @@ class yf_manage_shop_attribute_edit{
 					"default_value"	=> _es($_POST["default_value"]),
 					"order"			=> $_POST["order"],
 				);
-				db()->UPDATE("dynamic_fields_info", $sql_array, "id=".$_GET["id"]); 
+				db()->UPDATE("shop_product_attributes_info", $sql_array, "id=".$_GET["id"]); 
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("dynamic_fields_info");
+					cache()->refresh("shop_product_attributes_info");
 				}
 				return js_redirect("./?object=manage_shop&action=attributes");
 			}

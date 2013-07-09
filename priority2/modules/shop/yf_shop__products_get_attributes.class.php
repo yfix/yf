@@ -9,9 +9,9 @@ class yf_shop__products_get_attributes{
 		if (empty($products_ids)) {
 			return array();
 		}
-		$fields_info = main()->get_data("dynamic_fields_info");
+		$fields_info = main()->get_data("shop_product_attributes_info");
 
-		$Q = db()->query("SELECT * FROM ".db('dynamic_fields_values')." WHERE category_id=1 AND object_id IN (".implode(",", $products_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('shop_product_attributes_values')." WHERE category_id=1 AND object_id IN (".implode(",", $products_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$_product_id = $A["object_id"];
 
