@@ -867,85 +867,6 @@ $data = my_array_merge((array)$data, array(
 	KEY `hits` (`hits`),
 	FULLTEXT KEY `text_2` (`text`)
 ",
-"shop_group_options"	=> "
-	`product_id` int(10) unsigned NOT NULL,
-	`group_id` int(10) unsigned NOT NULL,
-	`price` decimal(8,2) NOT NULL
-",
-"shop_product_related"	=> "
-	`product_id` int(11) unsigned NOT NULL,
-	`related_id` int(11) unsigned NOT NULL,
-	PRIMARY KEY  (`product_id`,`related_id`)
-",
-"shop_product_to_category" => "
-	`product_id` int(11) NOT NULL,
-	`category_id` int(11) NOT NULL,
-	PRIMARY KEY  (`product_id`,`category_id`)
-",
-"shop_products"	=> "
-	`id` int(10) unsigned NOT NULL auto_increment,
-	`name` varchar(255) collate utf8_unicode_ci NOT NULL default '',
-	`url` varchar(255) collate utf8_unicode_ci NOT NULL default '',
-	`image` enum('0','1') collate utf8_unicode_ci NOT NULL,
-	`description` text collate utf8_unicode_ci NOT NULL,
-	`meta_keywords` text collate utf8_unicode_ci NOT NULL,
-	`meta_desc` text collate utf8_unicode_ci NOT NULL,
-	`external_url` varchar(255) collate utf8_unicode_ci NOT NULL default '',
-	`cat_id` text collate utf8_unicode_ci NOT NULL,
-	`model` varchar(64) collate utf8_unicode_ci NOT NULL,
-	`sku` varchar(64) collate utf8_unicode_ci NOT NULL,
-	`quantity` int(4) NOT NULL default '0',
-	`stock_status_id` int(11) NOT NULL,
-	`manufacturer_id` int(11) NOT NULL,
-	`price` decimal(8,2) NOT NULL default '0.00',
-	`old_price` decimal(8,2) NOT NULL default '0.00',
-	`currency` int(10) unsigned NOT NULL default '0',
-	`add_date` int(10) unsigned NOT NULL default '0',
-	`last_viewed_date` int(10) NOT NULL,
-	`featured` enum('0','1') collate utf8_unicode_ci NOT NULL default '0',
-	`active` enum('0','1') collate utf8_unicode_ci NOT NULL,
-	`viewed` int(5) NOT NULL default '0',
-	PRIMARY KEY  (`id`)
-",
-"shop_manufacturer" => "
-	`id` int(11) NOT NULL auto_increment,
-	`name` varchar(64) collate utf8_unicode_ci NOT NULL default '',
-	`url` varchar(255) collate utf8_unicode_ci NOT NULL,
-	`desc` varchar(255) collate utf8_unicode_ci NOT NULL,
-	`meta_keywords` text collate utf8_unicode_ci NOT NULL,
-	`meta_desc` text collate utf8_unicode_ci NOT NULL,
-	`image` int(10) unsigned NOT NULL,
-	`sort_order` int(3) NOT NULL,
-	PRIMARY KEY  (`id`)
-",
-"shop_orders"	=> "
-	`id` int(10) unsigned NOT NULL auto_increment,
-	`user_id` int(11) unsigned NOT NULL default '0',
-	`date` int(11) unsigned NOT NULL default '0',
-	`ship_type` int(11) unsigned NOT NULL default '0',
-	`pay_type` int(11) unsigned NOT NULL default '0',
-	`total_sum` decimal(12,2) NOT NULL,
-	`card_num` varchar(50) NOT NULL,
-	`exp_date` varchar(4) NOT NULL,
-	`name` varchar(32) NOT NULL,
-	`email` varchar(50) NOT NULL,
-	`phone` varchar(40) NOT NULL,
-	`address` text NOT NULL,
-	`comment_c` text NOT NULL,
-	`comment_m` text NOT NULL,
-	`hash` varchar(128) NOT NULL,
-	`status` varchar(16) NOT NULL,
-	PRIMARY KEY  (`id`)
-",
-"shop_order_items" => "
-	`order_id` int(10) unsigned NOT NULL default '0',
-	`product_id` int(10) unsigned NOT NULL default '0',
-	`user_id` int(10) unsigned NOT NULL default '0',
-	`quantity` int(10) unsigned NOT NULL default '0',
-	`attributes` text NOT NULL default '',
-	`sum` decimal(12,2) NOT NULL,
-	KEY `order_id` (`order_id`)
-",
 "states"	=> "
 	`id` int(11) NOT NULL auto_increment,
 	`name` varchar(32) NOT NULL default '',
@@ -1246,14 +1167,16 @@ $data = my_array_merge((array)$data, array(
 	`user_id` int(11) NOT NULL default '0'
 ",
 ));
-// Try to load chat tables
 $chat_tables_structs_file = YF_PATH."share/installer_chat_tables_structs.php";
 if (file_exists($chat_tables_structs_file)) {
-include_once($chat_tables_structs_file);
+	include_once($chat_tables_structs_file);
 }
-// Try to load forum tables
 $forum_tables_structs_file = YF_PATH."share/installer_forum_tables_structs.php";
 if (file_exists($forum_tables_structs_file)) {
-include_once($forum_tables_structs_file);
+	include_once($forum_tables_structs_file);
+}
+$shop_tables_structs_file = YF_PATH."share/installer_shop_tables_structs.php";
+if (file_exists($shop_tables_structs_file)) {
+	include_once($shop_tables_structs_file);
 }
 ?>

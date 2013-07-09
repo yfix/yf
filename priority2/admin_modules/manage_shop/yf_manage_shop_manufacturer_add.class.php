@@ -15,7 +15,7 @@ class yf_manage_shop_manufacturer_add{
 					"desc"			=> $_POST["desc"],
 					"sort_order"	=> intval($_POST["featured"]),
 				);
-				db()->insert(db('shop_manufacturer'), db()->es($sql_array));
+				db()->insert(db('shop_manufacturers'), db()->es($sql_array));
 				if (!empty($_FILES)) {
 					$man_id = $_GET["id"];
 					module('manage_shop')->_upload_image ($man_id, $url);

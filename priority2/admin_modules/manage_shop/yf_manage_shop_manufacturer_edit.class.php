@@ -6,7 +6,7 @@ class yf_manage_shop_manufacturer_edit{
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$manufacturer_info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturer')." WHERE id=".$_GET["id"]);
+		$manufacturer_info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturers')." WHERE id=".$_GET["id"]);
 		if (!empty($_POST)) {
 			if (!$_POST["name"]) {
 				_re("Product name must be filled");
@@ -18,7 +18,7 @@ class yf_manage_shop_manufacturer_edit{
 					"desc"		=> $_POST["desc"],
 					"sort_order"=> intval($_POST["featured"]),
 				);
-				db()->UPDATE(db('shop_manufacturer'), db()->es($sql_array), "id=".$_GET["id"]);
+				db()->UPDATE(db('shop_manufacturers'), db()->es($sql_array), "id=".$_GET["id"]);
 				if (!empty($_FILES)) {
 					$man_id = $_GET["id"];
 					module('manage_shop')->_upload_image($man_id, $url);

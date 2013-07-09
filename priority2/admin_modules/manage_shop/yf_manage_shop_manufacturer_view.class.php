@@ -6,7 +6,7 @@ class yf_manage_shop_manufacturer_view{
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$manufacturer_info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturer')." WHERE id=".$_GET["id"]);
+		$manufacturer_info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturers')." WHERE id=".$_GET["id"]);
 		$img_path = module('manage_shop')->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].module('manage_shop')->FULL_IMG_SUFFIX. ".jpg";
 		if (!file_exists($img_path)) {
 			$img_path = "";

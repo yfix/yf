@@ -53,7 +53,7 @@ class yf_shop_product_details{
 			}
 		}	
 		$URL_PRODUCT_ID = module("shop")->_product_id_url($product_info);
-		$sql_man = "SELECT * FROM ".db('shop_manufacturer')." WHERE id = ".$product_info["manufacturer_id"];
+		$sql_man = "SELECT * FROM ".db('shop_manufacturers')." WHERE id = ".$product_info["manufacturer_id"];
 		$manufacturer = db()->query_fetch($sql_man);
 		if (module("shop")->SHOW_products_similar_by_price == true){
 			$products_similar_by_price = module("shop")->products_similar_by_price ( $product_info["price"],  $product_info["id"] );
@@ -76,15 +76,15 @@ class yf_shop_product_details{
 			"basket_add_url"		=> ($product_info["external_url"]) ? $product_info["external_url"] : process_url("./?object=shop&action=basket_add&id=".$URL_PRODUCT_ID),
 			"external_url"			=> intval((bool)$product_info["external_url"]),
 			"back_url"				=> process_url("./?object=shop"),
-			"show_basket_url"			=> process_url("./?object=shop&action=basket"),
+			"show_basket_url"		=> process_url("./?object=shop&action=basket"),
 			"dynamic_atts"			=> module("shop")->_get_select_attributes($atts),
 			"cats_block"			=> module("shop")->_categories_show(),
 			"cat_name"				=> _prepare_html(module("shop")->_shop_cats[$product_info["cat_id"]]),
 			"cat_url"				=> process_url("./?object=shop&action=product_details&id=".(module("shop")->_shop_cats_all[$product_info["cat_id"]]['url'])),
 			'comments'				=> module("shop")->_view_comments(),
 			"N"						=> $N,
-			"products_similar_by_price"			=> $products_similar_by_price,
-			"products_similar_by_basket"	=> $products_similar_by_basket,
+			"products_similar_by_price"	=> $products_similar_by_price,
+			"products_similar_by_basket"=> $products_similar_by_basket,
 			"product_related"		=> module("shop")->products_related($product_info["id"]),
 		);
 		db()->query("UPDATE ".db('shop_products')." SET viewed = viewed+1 , last_viewed_date = ".time()."  WHERE ".$add_sql."'");

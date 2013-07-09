@@ -76,7 +76,7 @@ class yf_manage_shop {
 	function _init() {
 		module("manage_shop")->_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats", 0);
 		
-		module("manage_shop")->man = db()->query_fetch_all("SELECT * FROM ".db('shop_manufacturer')." ORDER BY name ASC");
+		module("manage_shop")->man = db()->query_fetch_all("SELECT * FROM ".db('shop_manufacturers')." ORDER BY name ASC");
 		module("manage_shop")->_man_for_select[0] = "--NONE--";
 		foreach ((array)module("manage_shop")->man as $k =>$v) {
 			module("manage_shop")->_man_for_select[$v["id"]] = $v["name"];

@@ -198,4 +198,4 @@ $data = array_merge((array)$data, array(
 	UNIQUE KEY `login` (`login`)
 ",
 ));
-?>
+

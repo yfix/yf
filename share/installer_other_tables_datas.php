@@ -194,14 +194,16 @@ $data = my_array_merge((array)$data, array(
 	),
 ),
 ));
-// Try to load chat datas
 $chat_tables_datas_file = YF_PATH."share/installer_chat_tables_datas.php";
 if (file_exists($chat_tables_datas_file)) {
-include_once($chat_tables_datas_file);
+	include_once($chat_tables_datas_file);
 }
-// Try to load forum datas
 $forum_tables_datas_file = YF_PATH."share/installer_forum_tables_datas.php";
 if (file_exists($forum_tables_datas_file)) {
-include_once($forum_tables_datas_file);
+	include_once($forum_tables_datas_file);
+}
+$shop_tables_datas_file = YF_PATH."share/installer_shop_tables_datas.php";
+if (file_exists($shop_tables_datas_file)) {
+	include_once($shop_tables_datas_file);
 }
 ?>
