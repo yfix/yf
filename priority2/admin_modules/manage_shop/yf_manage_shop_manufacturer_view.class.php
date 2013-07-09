@@ -27,7 +27,7 @@ class yf_manage_shop_manufacturer_view{
 			"img_path"			=> $img_path,
 			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
 			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=manage_shop&action=manufacturers_manage",
+			"back_url"			=> "./?object=manage_shop&action=manufacturers",
 		);
 		return tpl()->parse("manage_shop/manufacturer_view", $replace);
 	}	

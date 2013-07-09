@@ -1,7 +1,7 @@
 <?php
-class yf_manage_shop_manufacturers_manage{
+class yf_manage_shop_manufacturers{
 
-	function manufacturers_manage () {
+	function manufacturers () {
 		$sql = "SELECT * FROM ".db('shop_manufacturer')."";
 		$filter_sql = module('manage_shop')->USE_FILTER ? module('manage_shop')->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY name ASC ";

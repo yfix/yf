@@ -13,7 +13,7 @@ class yf_manage_shop__quick_menu{
 			),
 			array(
 				"name"	=> "Manage attributes",
-				"url"	=> "./?object=manage_shop&action=attributes_manage",
+				"url"	=> "./?object=manage_shop&action=attributes",
 			),
 		);
 		return $menu;	

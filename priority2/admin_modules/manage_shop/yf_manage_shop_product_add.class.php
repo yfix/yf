@@ -91,7 +91,7 @@ class yf_manage_shop_product_add{
 			"form_action"		=> "./?object=manage_shop&action=product_add",
 			"back_url"			=> "./?object=manage_shop&action=products_manage",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
-			"manufacturers_url"	=> "./?object=manage_shop&action=manufacturers_manage",
+			"manufacturers_url"	=> "./?object=manage_shop&action=manufacturers",
 			"group_prices"		=> !empty($group_prices) ? $group_prices : "",
 		);
 		foreach ((array)module("manage_shop")->_boxes as $item_name => $v) {

@@ -17,7 +17,7 @@ class yf_manage_shop_manufacturer_delete{
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
 		} else {
-			return js_redirect("./?object=manage_shop&action=manufacturers_manage");
+			return js_redirect("./?object=manage_shop&action=manufacturers");
 		}
 	}	
 	

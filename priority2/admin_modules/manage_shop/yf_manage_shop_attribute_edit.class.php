@@ -32,7 +32,7 @@ class yf_manage_shop_attribute_edit{
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("dynamic_fields_info");
 				}
-				return js_redirect("./?object=manage_shop&action=attributes_manage");
+				return js_redirect("./?object=manage_shop&action=attributes");
 			}
 		}
 		$replace = array(
@@ -40,7 +40,7 @@ class yf_manage_shop_attribute_edit{
 			"value_list"	=> _prepare_html(implode("\n", (array)unserialize($A["value_list"]))),
 			"default_value"	=> _prepare_html($A["default_value"]),
 			"order"			=> $A["order"],
-			"back_url"		=> "./?object=manage_shop&action=attributes_manage",
+			"back_url"		=> "./?object=manage_shop&action=attributes",
 			"active"		=> 1,
 			"form_action"	=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$A["id"],
 			"error"			=> _e(),

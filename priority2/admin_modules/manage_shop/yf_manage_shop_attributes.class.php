@@ -1,7 +1,7 @@
 <?php
-class yf_manage_shop_attributes_manage{
+class yf_manage_shop_attributes{
 
-	function attributes_manage () {
+	function attributes () {
 		$sql = "SELECT * FROM ".db('dynamic_fields_info')." WHERE category_id = ".intval(module('manage_shop')->ATTRIBUTES_CAT_ID)." ORDER BY `order`";
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$values =  (array)unserialize($A["value_list"]);

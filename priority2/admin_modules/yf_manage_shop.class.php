@@ -76,8 +76,7 @@ class yf_manage_shop {
 	function _init() {
 		module("manage_shop")->_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats", 0);
 		
-		$sql = "SELECT * FROM ".db('shop_manufacturer')." ORDER BY name ASC";
-		module("manage_shop")->man = db()->query_fetch_all($sql);
+		module("manage_shop")->man = db()->query_fetch_all("SELECT * FROM ".db('shop_manufacturer')." ORDER BY name ASC");
 		module("manage_shop")->_man_for_select[0] = "--NONE--";
 		foreach ((array)module("manage_shop")->man as $k =>$v) {
 			module("manage_shop")->_man_for_select[$v["id"]] = $v["name"];
@@ -218,28 +217,12 @@ class yf_manage_shop {
 		return _class('manage_shop_view_order', 'admin_modules/manage_shop/')->view_order();
 	}
 
-	function save_filter_order() {
-		return _class('manage_shop_save_filter_order', 'admin_modules/manage_shop/')->save_filter_order();
-	}
-
-	function clear_filter_order() {
-		return _class('manage_shop_clear_filter_order', 'admin_modules/manage_shop/')->clear_filter_order();
-	}
-
-	function save_filter_report() {
-		return _class('manage_shop_save_filter_report', 'admin_modules/manage_shop/')->save_filter_report();
-	}
-
-	function clear_filter_report() {
-		return _class('manage_shop_clear_filter_report', 'admin_modules/manage_shop/')->clear_filter_report();
-	}
-
 	function delete_order() {
 		return _class('manage_shop_delete_order', 'admin_modules/manage_shop/')->delete_order();
 	}
 
-	function manufacturers_manage() {
-		return _class('manage_shop_manufacturers_manage', 'admin_modules/manage_shop/')->manufacturers_manage();
+	function manufacturers() {
+		return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->manufacturers();
 	}
 
 	function manufacturer_edit() {
@@ -258,8 +241,8 @@ class yf_manage_shop {
 		return _class('manage_shop_manufacturer_view', 'admin_modules/manage_shop/')->manufacturer_view();
 	}
 
-	function attributes_manage() {
-		return _class('manage_shop_attributes_manage', 'admin_modules/manage_shop/')->attributes_manage();
+	function attributes() {
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->attributes();
 	}
 
 	function attribute_add() {
@@ -340,6 +323,22 @@ class yf_manage_shop {
 
 	function clear_filter($silent = false) {
 		return _class('manage_shop_clear_filter', 'admin_modules/manage_shop/')->clear_filter($silent);
+	}
+
+	function save_filter_order() {
+		return _class('manage_shop_save_filter_order', 'admin_modules/manage_shop/')->save_filter_order();
+	}
+
+	function clear_filter_order() {
+		return _class('manage_shop_clear_filter_order', 'admin_modules/manage_shop/')->clear_filter_order();
+	}
+
+	function save_filter_report() {
+		return _class('manage_shop_save_filter_report', 'admin_modules/manage_shop/')->save_filter_report();
+	}
+
+	function clear_filter_report() {
+		return _class('manage_shop_clear_filter_report', 'admin_modules/manage_shop/')->clear_filter_report();
 	}
 
 }

@@ -28,13 +28,13 @@ class yf_manage_shop_attribute_add{
 				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("dynamic_fields_info");
 				}
-				return js_redirect("./?object=manage_shop&action=attributes_manage");
+				return js_redirect("./?object=manage_shop&action=attributes");
 			}
 		}
 		$form_fields = array("name","type","value_list","default_value","order", "comment");
 		$replace = array_fill_keys($form_fields, "");
 		$replace = my_array_merge($replace, array(
-			"back_url"		=> "./?object=manage_shop&action=attributes_manage",
+			"back_url"		=> "./?object=manage_shop&action=attributes",
 			"active"		=> 1,
 			"form_action"	=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$_GET["id"],
 			"error"			=> _e(),

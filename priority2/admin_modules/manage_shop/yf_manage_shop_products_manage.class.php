@@ -70,7 +70,7 @@ class yf_manage_shop_products_manage{
 			"filter"			=> module("manage_shop")->USE_FILTER ? module("manage_shop")->_show_filter() : "",
 			"add_url"			=> "./?object=manage_shop&action=product_add",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
-			"attributes_url"	=> "./?object=manage_shop&action=attributes_manage",
+			"attributes_url"	=> "./?object=manage_shop&action=attributes",
 			"orders_url"		=> "./?object=manage_shop&action=show_orders",
 		);
 		return tpl()->parse("manage_shop/products_main", $replace);

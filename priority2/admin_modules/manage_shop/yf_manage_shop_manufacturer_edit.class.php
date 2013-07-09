@@ -24,7 +24,7 @@ class yf_manage_shop_manufacturer_edit{
 					module('manage_shop')->_upload_image($man_id, $url);
 				} 
 			}
-			return js_redirect("./?object=manage_shop&action=manufacturers_manage");
+			return js_redirect("./?object=manage_shop&action=manufacturers");
 		}
 		$thumb_path = module('manage_shop')->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].module('manage_shop')->THUMB_SUFFIX. ".jpg";
 		if (!file_exists($thumb_path)) {
@@ -39,7 +39,7 @@ class yf_manage_shop_manufacturer_edit{
 			"thumb_path"		=> $thumb_path,
 			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
 			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
-			"back_url"			=> "./?object=manage_shop&action=manufacturers_manage",
+			"back_url"			=> "./?object=manage_shop&action=manufacturers",
 		);
 		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
 	}	
