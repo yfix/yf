@@ -114,4 +114,20 @@ $data = my_array_merge((array)$data, array(
 	`active` enum('1','0') NOT NULL default '1',
 	PRIMARY KEY	(`id`)
 ",
+"shop_product_sets"	=> "
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(32) NOT NULL DEFAULT '',
+	`desc` text NOT NULL,
+	`add_date` int(11) NOT NULL DEFAULT '0',
+	`active` enum('0','1') NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+",
+"shop_product_set_items"	=> "
+	`set_id` int(10) unsigned NOT NULL DEFAULT '0',
+	`product_id` int(10) unsigned NOT NULL DEFAULT '0',
+	`quantity` int(10) unsigned NOT NULL DEFAULT '0',
+	`attributes` text NOT NULL,
+	`sum` decimal(12,2) NOT NULL,
+	KEY `set_id_product_id` (`set_id`,`product_id`)
+",
 ));
