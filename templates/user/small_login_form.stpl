@@ -11,8 +11,8 @@
 	</label>
 	<div class="control-group">
 		<div class="controls">
-			<button type="submit" class="btn" value="Enter">{t(Log in)}</button>
-			<a href="{url(object=register)}" class="btn">{t(Sign up)}</a>
+			<button type="submit" class="btn" value="Enter" id="login">{t(Log in)}</button>
+			<a href="{url(object=register)}" class="btn" id="register">{t(Sign up)}</a>
 		</div>
 	</div>
 </form>
