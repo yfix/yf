@@ -104,10 +104,10 @@ class yf_static_pages {
 		}
 		// Try to get page contents
 		$page_info = db()->query_fetch(
-			"SELECT * FROM `".db('static_pages')."` 
-			WHERE `active`='1' 
-				AND ".(is_numeric($_GET['id']) ? " `id`=".intval($_GET['id']) : " `name`='"._es(_strtolower($_GET["id"]))."'")
-				. ($this->MULTILANG_MODE ? " AND `locale`='"._es(conf('language'))."'" : "")
+			"SELECT * FROM ".db('static_pages')." 
+			WHERE active='1' 
+				AND ".(is_numeric($_GET['id']) ? " id=".intval($_GET['id']) : " name='"._es(_strtolower($_GET["id"]))."'")
+				. ($this->MULTILANG_MODE ? " AND locale='"._es(conf('language'))."'" : "")
 		);
 		return $page_info;
 	}
@@ -199,7 +199,7 @@ class yf_static_pages {
 		if (!is_object($OBJ)) {
 			return false;
 		}
-		$Q = db()->query("SELECT * FROM `".db('static_pages')."` WHERE `active`='1'". ($this->MULTILANG_MODE ? " AND `locale`='"._es(conf('language'))."'" : ""));
+		$Q = db()->query("SELECT * FROM ".db('static_pages')." WHERE active='1'". ($this->MULTILANG_MODE ? " AND locale='"._es(conf('language'))."'" : ""));
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
 				"url"	=> "./?object=static_pages&action=show&id=".$A["id"],

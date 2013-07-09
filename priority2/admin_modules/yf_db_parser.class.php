@@ -57,7 +57,7 @@ class yf_db_parser {
 		$_GET["table"]	= _es($_GET["table"]);
 		// Check if table name passed through
 		if ($_GET["id"] && $_GET["table"]) {
-			$sql	= "UPDATE `".DB_PREFIX. $_GET["table"]."` SET \r\n";
+			$sql	= "UPDATE ".DB_PREFIX. $_GET["table"]." SET \r\n";
 			// Process table fields
 			$fields = db()->meta_columns(DB_PREFIX. $_GET["table"]);
 			// Process add_date
@@ -73,20 +73,20 @@ class yf_db_parser {
 					continue;
 				}
 				if ($field_type == "int") {
-					$sql .= "`".$field_name."` = ".intval($_POST[$field_name]).", \r\n";
+					$sql .= "".$field_name." = ".intval($_POST[$field_name]).", \r\n";
 				} else {
 					if ($field_name == "password" && $field_length >= 32) {
 						// Do not try to save not typed password
 						if (empty($_POST[$field_name])) {
 							continue;
 						}
-						$sql .= "`".$field_name."` = MD5('"._es($_POST[$field_name])."'), \r\n";
+						$sql .= "".$field_name." = MD5('"._es($_POST[$field_name])."'), \r\n";
 					} else {
-						$sql .= "`".$field_name."` = '"._es($_POST[$field_name])."', \r\n";
+						$sql .= "".$field_name." = '"._es($_POST[$field_name])."', \r\n";
 					}
 				}
 			}
-			$sql = substr($sql, 0, -4)." WHERE `id`=".$_GET["id"];
+			$sql = substr($sql, 0, -4)." WHERE id=".$_GET["id"];
 			db()->query($sql);
 			// Refresh ALL system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh_all();
@@ -102,7 +102,7 @@ class yf_db_parser {
 	*/
 	function insert() {
 		if ($_GET["table"]) {
-			$sql = "INSERT INTO `".DB_PREFIX.$_GET["table"]."` (\r\n";
+			$sql = "INSERT INTO ".DB_PREFIX.$_GET["table"]." (\r\n";
 			// Process table fields
 			$fields = db()->meta_columns(DB_PREFIX. $_GET["table"]);
 			// Process add_date
@@ -114,7 +114,7 @@ class yf_db_parser {
 				if ($A["name"] == "id") {
 					continue;
 				}
-				$sql .= "`".$A["name"]."`, \r\n";
+				$sql .= "".$A["name"].", \r\n";
 			}
 			$sql = substr($sql, 0, -4).") VALUES (";
 			foreach ((array)$fields as $A) {
@@ -158,7 +158,7 @@ class yf_db_parser {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete record
 		if ($_GET["id"] && $_GET["table"]) {
-			db()->query("DELETE FROM `".DB_PREFIX.$_GET["table"]."` WHERE `id`=".$_GET["id"]);
+			db()->query("DELETE FROM ".DB_PREFIX.$_GET["table"]." WHERE id=".$_GET["id"]);
 			// Refresh ALL system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh_all();
 		}
@@ -192,7 +192,7 @@ class yf_db_parser {
 				unset($IDS_TO_DELETE[""]);
 			}
 			if (!empty($IDS_TO_DELETE)) {
-				db()->query ("DELETE FROM `".DB_PREFIX.$_GET["table"]."` WHERE `id` IN(".implode(",", $IDS_TO_DELETE).")");
+				db()->query ("DELETE FROM ".DB_PREFIX.$_GET["table"]." WHERE id IN(".implode(",", $IDS_TO_DELETE).")");
 				// Refresh ALL system cache
 				if (main()->USE_SYSTEM_CACHE)	cache()->refresh_all();
 			}

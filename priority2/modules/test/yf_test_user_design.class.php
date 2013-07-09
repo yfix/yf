@@ -16,7 +16,7 @@ class yf_test_user_design {
 	* Display sample page with selected user design id
 	*/
 	function run_test () {
-		$_themes_infos = db()->query_fetch_all("SELECT * FROM `".db('user_themes')."` WHERE `active`='1'");
+		$_themes_infos = db()->query_fetch_all("SELECT * FROM ".db('user_themes')." WHERE active='1'");
 		foreach ((array)$_themes_infos as $v) {
 			$_themes[$v["id"]] = $v["name"];
 		}
@@ -24,7 +24,7 @@ class yf_test_user_design {
 			return "Sorry, no user themes availiable";
 		}
 		// Get design details (only by ID)
-		$design_infos = db()->query_fetch_all("SELECT * FROM `".db('designs')."`");
+		$design_infos = db()->query_fetch_all("SELECT * FROM ".db('designs')."");
 		foreach ((array)$design_infos as $v) {
 			if (!isset($_themes[$v["theme_id"]])) {
 				continue;

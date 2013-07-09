@@ -84,7 +84,7 @@ class widgets_editor {
 	*/
 	function show() {
 
-		$Q = db()->query("SELECT * FROM `".db('widgets')."`");
+		$Q = db()->query("SELECT * FROM ".db('widgets')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$modules[$A["id"]] = $A;
 		}
@@ -230,7 +230,7 @@ class widgets_editor {
 					"theme"		=> ";".implode(";", $_POST["theme_select_box"]).";",
 					"active"	=> $_POST["active"],
 					"comments"	=> _es($_POST["comments"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("widgets_override");
@@ -242,7 +242,7 @@ class widgets_editor {
 		}
 
 		
-		$widgets = db()->query_fetch("SELECT * FROM `".db('widgets')."` WHERE `id`=".intval($_GET["id"]));
+		$widgets = db()->query_fetch("SELECT * FROM ".db('widgets')." WHERE id=".intval($_GET["id"]));
 		
 		$methods_box = common()->select_box("methods", $this->_get_user_methods(), $_GET["id"], false, 2, "", false);	
 		
@@ -281,7 +281,7 @@ class widgets_editor {
 				"active"	=> 0,
 			);
 		} else {
-			$info = db()->query_fetch("SELECT * FROM `".db('widgets')."` WHERE `id`=".intval($_GET["id"]));
+			$info = db()->query_fetch("SELECT * FROM ".db('widgets')." WHERE id=".intval($_GET["id"]));
 		}
 		if (!$info) {
 			return _e("Record to clone not found!");
@@ -361,13 +361,13 @@ class widgets_editor {
 					foreach ((array)$ids as $id){
 						db()->UPDATE("widgets", array(
 							"columns"	=> _es(serialize($columns)),  // @unserialize
-						), "`id`=".intval($id));
+						), "id=".intval($id));
 					}
 				} else {
 				
 					db()->UPDATE("widgets", array(
 						"columns"	=> _es(serialize($columns)),  // @unserialize
-					), "`id`=".intval($_GET["id"]));
+					), "id=".intval($_GET["id"]));
 				}
 			}
 			// Refresh system cache
@@ -385,7 +385,7 @@ class widgets_editor {
 				$widget_id = $_GET["id"];
 			}
 			
-			$widget = db()->query_fetch("SELECT * FROM `".db('widgets')."` WHERE `id`=".intval($widget_id));
+			$widget = db()->query_fetch("SELECT * FROM ".db('widgets')." WHERE id=".intval($widget_id));
 		 }
 
 		// get settings		
@@ -465,10 +465,10 @@ class widgets_editor {
 
 
 		if (!empty($_GET["id"])) {
-			$widget = db()->query_fetch("SELECT * FROM `".db('widgets')."` WHERE `id`=".intval($_GET["id"]));
+			$widget = db()->query_fetch("SELECT * FROM ".db('widgets')." WHERE id=".intval($_GET["id"]));
 		}
 		if (!empty($widget["id"])) {
-			db()->query("DELETE FROM `".db('widgets')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('widgets')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -498,7 +498,7 @@ class widgets_editor {
 				}
 				
 				foreach ((array)$ids as $id){
-					$widget = db()->query_fetch("SELECT * FROM `".db('widgets')."` WHERE `id`=".intval($id));
+					$widget = db()->query_fetch("SELECT * FROM ".db('widgets')." WHERE id=".intval($id));
 
 					$content = unserialize($widget["columns"]);
 					
@@ -524,7 +524,7 @@ class widgets_editor {
 
 					db()->UPDATE("widgets", array(
 						"columns"		=> _es(serialize($columns)),
-					), "`id`=".intval($id));
+					), "id=".intval($id));
 				}
 				
 			}else{
@@ -552,7 +552,7 @@ class widgets_editor {
 				$widget_id = $_GET["id"];
 			}
 
-			$widget = db()->query_fetch("SELECT * FROM `".db('widgets')."` WHERE `id`=".intval($widget_id));
+			$widget = db()->query_fetch("SELECT * FROM ".db('widgets')." WHERE id=".intval($widget_id));
 			$text = unserialize($widget["columns"]);
 			$text = $text[$side];
 		} else {
@@ -591,11 +591,11 @@ class widgets_editor {
 	function activate_item() {
 		// Try to find such menu item in db
 		if (!empty($_GET["id"])) {
-			$widget = db()->query_fetch("SELECT * FROM `".db('widgets')."` WHERE `id`=".intval($_GET["id"]));
+			$widget = db()->query_fetch("SELECT * FROM ".db('widgets')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($widget)) {
-			db()->UPDATE("widgets", array("active" => (int)!$widget["active"]), "`id`=".intval($widget["id"]));
+			db()->UPDATE("widgets", array("active" => (int)!$widget["active"]), "id=".intval($widget["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{

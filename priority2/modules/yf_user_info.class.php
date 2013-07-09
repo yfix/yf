@@ -59,7 +59,7 @@ class yf_user_info {
 	//-----------------------------------------------------------------------------
 	// This function handle user personal info
 	function show () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Process correct steps
@@ -136,7 +136,7 @@ class yf_user_info {
 		// Dynamic info
 		if (main()->USER_INFO_DYNAMIC) {
 			$OBJ_DYNAMIC_INFO = &main()->init_class("dynamic_info", "classes/");
-			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_edit($this->USER_ID);
+			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_edit(main()->USER_ID);
 		}
 		
 		// Parse template contents
@@ -185,7 +185,7 @@ class yf_user_info {
 */		// Prepare SQL
 		$sql_array = array(
 			"nick"				=> $_POST["nick"],
-			"has_avatar"		=> _avatar_exists($this->USER_ID) ? 1 : 0,
+			"has_avatar"		=> _avatar_exists(main()->USER_ID) ? 1 : 0,
 			"contact_by_email"	=> intval(!$_POST["contact_by_email"]),
 		);
 		// Process new password
@@ -201,20 +201,20 @@ class yf_user_info {
 
 		if (main()->USER_INFO_DYNAMIC) {
 			$OBJ_DYNAMIC_INFO = &main()->init_class("dynamic_info", "classes/");
-			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_save($this->USER_ID);
+			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_save(main()->USER_ID);
 		}
 
 		// Last update
-//		db()->_add_shutdown_query("UPDATE `".db('user')."` SET `last_update`=".time()." WHERE `id`=".intval($this->USER_ID));
-		update_user($this->USER_ID, array("last_update" => time()));
+//		db()->_add_shutdown_query("UPDATE ".db('user')." SET last_update=".time()." WHERE id=".intval(main()->USER_ID));
+		update_user(main()->USER_ID, array("last_update" => time()));
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
 			main()->call_class_method("output_cache", "classes/", "_exec_trigger", array(
-				"user_id"	=> $this->USER_ID,
+				"user_id"	=> main()->USER_ID,
 			));
 		}
 		// Update user stats
-		main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->USER_ID));
+		main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => main()->USER_ID));
 		// Do update user info in session
 		if (isset($_SESSION["user_info"])) {
 			$_SESSION["user_info"] = "";
@@ -256,15 +256,15 @@ class yf_user_info {
 	//-----------------------------------------------------------------------------
 	// Delete avatar from server
 	function delete_avatar () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Init dir class
 		$DIR_OBJ = main()->init_class("dir", "classes/");
 		// Process image
-		$avatars_dir = $DIR_OBJ->_gen_dir_path($this->USER_ID, INCLUDE_PATH. SITE_AVATARS_DIR , 0, 0777);
-		$avatar_path_small	= $avatars_dir. $this->USER_ID. ".jpg";
-		$avatar_path_middle	= $avatars_dir. $this->USER_ID. "_m.jpg";
+		$avatars_dir = $DIR_OBJ->_gen_dir_path(main()->USER_ID, INCLUDE_PATH. SITE_AVATARS_DIR , 0, 0777);
+		$avatar_path_small	= $avatars_dir. main()->USER_ID. ".jpg";
+		$avatar_path_middle	= $avatars_dir. main()->USER_ID. "_m.jpg";
 		if (file_exists($avatar_path_small)) {
 			unlink($avatar_path_small);
 		}
@@ -273,7 +273,7 @@ class yf_user_info {
 		}
 		// Update db record
 		update_user($this->_user_info['id'], array(
-			"has_avatar"	=> _avatar_exists($this->USER_ID) ? 1 : 0,
+			"has_avatar"	=> _avatar_exists(main()->USER_ID) ? 1 : 0,
 		));
 		return js_redirect("./?object=".$_GET["object"]._add_get());
 	}
@@ -295,8 +295,8 @@ class yf_user_info {
 		}
 		// Init dir class
 		$DIR_OBJ = main()->init_class("dir", "classes/");
-		$avatars_dir = $DIR_OBJ->_gen_dir_path($this->USER_ID, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777);
-		$avatar_file_path	= $avatars_dir. $this->USER_ID. ".jpg";
+		$avatars_dir = $DIR_OBJ->_gen_dir_path(main()->USER_ID, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777);
+		$avatar_file_path	= $avatars_dir. main()->USER_ID. ".jpg";
 		// Do delete previous avatar (if existed one)
 		if (file_exists($avatar_file_path)) {
 			unlink($avatar_file_path);

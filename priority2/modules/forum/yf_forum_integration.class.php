@@ -14,13 +14,13 @@ class yf_forum_integration {
 	*/
 	function _for_home_page($NUM_NEWEST_FORUM_POSTS = 4, $NEWEST_FORUM_TEXT_LEN = 100, $params = array()){
 		$item_stpl_name = $params["for_widgets"] ? "widgets_last_post" : "for_home_page_item";
-		$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `status`='a' ORDER BY `created` DESC LIMIT ".intval($NUM_NEWEST_FORUM_POSTS));
+		$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE status='a' ORDER BY created DESC LIMIT ".intval($NUM_NEWEST_FORUM_POSTS));
 		while ($A = db()->fetch_assoc($Q)) {
 			$forum_posts[$A["id"]] = $A;	
 			$forum_topics_id[$A["topic"]] = $A["topic"];
 		}
 		if (!empty($forum_topics_id)){
-			$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",",array_keys($forum_topics_id)).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",",array_keys($forum_topics_id)).")");
 			while ($A = db()->fetch_assoc($Q)) {					
 				$forum_topics[$A["id"]] = $A["name"];				
 			}
@@ -55,7 +55,7 @@ class yf_forum_integration {
 	* User profile integration part
 	*/
 	function _for_user_profile($user_id, $MAX_SHOW_FORUM_POSTS){
-		$sql = "SELECT `id`,`topic`,`subject`,`user_id`,`user_name`,`created` FROM `".db('forum_posts')."` WHERE `status`='a' AND `user_id`=".intval($user_id);
+		$sql = "SELECT id,topic,subject,user_id,user_name,created FROM ".db('forum_posts')." WHERE status='a' AND user_id=".intval($user_id);
 		list($add_sql, $pages, $this->_num_forum_posts) = common()->divide_pages($sql, "", null, $MAX_SHOW_FORUM_POSTS);
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -79,13 +79,13 @@ class yf_forum_integration {
 	*/
 	function _rss_general(){
 	
-		$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `status`='a' ORDER BY `created` DESC LIMIT ".intval(module('forum')->NUM_RSS));
+		$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE status='a' ORDER BY created DESC LIMIT ".intval(module('forum')->NUM_RSS));
 		while ($A = db()->fetch_assoc($Q)) {
 			$forum_posts[$A["id"]] = $A;	
 			$forum_topics_id[$A["topic"]] = $A["topic"];
 		}
 		if (!empty($forum_topics_id)){
-			$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",",array_keys($forum_topics_id)).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",",array_keys($forum_topics_id)).")");
 			while ($A = db()->fetch_assoc($Q)) {					
 				$forum_topics[$A["id"]] = $A["name"];				
 			}
@@ -121,10 +121,10 @@ class yf_forum_integration {
 			"url"	=> "./?object=forum",
 		));
 		// Get forums from db and divide each by pages
-		$sql = "SELECT `id`, `name` FROM `".db('forum_forums')."` ORDER BY `id`";
+		$sql = "SELECT id, name FROM ".db('forum_forums')." ORDER BY id";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
-			$sql = "SELECT COUNT(`id`) AS `num` FROM `".db('forum_topics')."` WHERE `forum`='".$A["id"]."' AND `approved`=1 AND `pinned`=0";
+			$sql = "SELECT COUNT(id) AS num FROM ".db('forum_topics')." WHERE forum='".$A["id"]."' AND approved=1 AND pinned=0";
 			$B = db()->query_fetch($sql);
 			$total_pages = ceil(intval($B["num"]) / intval(module('forum')->SETTINGS["NUM_TOPICS_ON_PAGE"]));
 			// Process pages
@@ -141,10 +141,10 @@ class yf_forum_integration {
 			}
 		}
 		// Get topics from db and divide each by pages
-		$sql = "SELECT `id` FROM `".db('forum_topics')."` ORDER BY `id`";
+		$sql = "SELECT id FROM ".db('forum_topics')." ORDER BY id";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
-			$sql = "SELECT COUNT(`id`) AS `num` FROM `".db('forum_posts')."` WHERE `topic`='".$A["id"]."' AND `status`='a'";
+			$sql = "SELECT COUNT(id) AS num FROM ".db('forum_posts')." WHERE topic='".$A["id"]."' AND status='a'";
 			$B = db()->query_fetch($sql);
 			$total_pages = ceil(intval($B["num"]) / intval(module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"]));
 			// Process pages

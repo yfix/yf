@@ -32,7 +32,7 @@ class yf_user_ban {
 	*/
 	function __construct () {
 		// First we need to get all "user_ban" checks from db
-		$Q = db()->query("SELECT * FROM `".db('user_ban')."`");
+		$Q = db()->query("SELECT * FROM ".db('user_ban')."");
 		while ($A = db()->fetch_assoc($Q)) $this->BAN_CHECKS[$A["id"]] = $A;
 // TODO: need to move into sys cache
 	}
@@ -99,15 +99,15 @@ class yf_user_ban {
 				continue;
 			}
 			// Do add SQL for the update query
-			$sql3[] = " `"._es($ban_name)."`='1' ";
+			$sql3[] = " "._es($ban_name)."='1' ";
 		}
 		// Do update user's table (if needed)
 		if (!empty($sql3)) {
 			$NEW_ADMIN_COMMENTS = "\r\n==============\r\nAuto-banned on "._format_date(time())." (action: ".$_GET["object"]."->".$_GET["action"]."; ".implode(",", $ban_reasons).")";
-			$sql4 = "UPDATE `".db('user')."` SET 
+			$sql4 = "UPDATE ".db('user')." SET 
 					".implode(",", $sql3).", 
-					`admin_comments` = CONCAT(`admin_comments`, '"._es($NEW_ADMIN_COMMENTS)."')
-				WHERE `id`=".intval($input["user_id"]);
+					admin_comments = CONCAT(admin_comments, '"._es($NEW_ADMIN_COMMENTS)."')
+				WHERE id=".intval($input["user_id"]);
 			db()->query($sql4);
 		}
 		return $BANNED_STATUS;

@@ -286,18 +286,18 @@ class yf_friends_view {
 			return "<b>".t("No friends yet")."</b>";
 		}
 		
-		$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `id` IN(".$all_friends.")");
+		$Q = db()->query("SELECT * FROM ".db('user')." WHERE id IN(".$all_friends.")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$users_info[$A["id"]] = $A;
 			$author_select[$A["id"]] = _prepare_html(_display_name($A));
 		}
 		
 		$this->PARENT_OBJ->sql_array = array(
-			"blog"		=> "SELECT 'name' AS `name`, `id`, CONVERT(SUBSTRING(`title` FROM 1 FOR 100) USING utf8) AS `title`, `add_date`, `user_id` FROM `".db('blog_posts')."` WHERE `user_id` IN(".$friends_ids.")",
-			"forum"		=> "SELECT 'name' AS `name`, `id`, CONVERT(SUBSTRING(`text` FROM 1 FOR 100) USING utf8) AS `title`, `created` AS `add_date`, `user_id`  FROM `".db('forum_posts')."` WHERE `user_id` IN(".$friends_ids.")",
-			"articles"	=> "SELECT 'name' AS `name`, `id`, CONVERT(SUBSTRING(`title` FROM 1 FOR 100) USING utf8) AS `title`,`add_date`, `user_id` FROM `".db('articles_texts')."` WHERE `user_id` IN(".$friends_ids.")",
-			"gallery"	=> "SELECT 'name' AS `name`, `id`, CONVERT(SUBSTRING(`name` FROM 1 FOR 100) USING utf8) AS `title`,`add_date`, `user_id` FROM `".db('gallery_photos')."` WHERE `user_id` IN(".$friends_ids.")",
-			"comment"	=> "SELECT 'name' AS `name`, `id`, CONVERT(SUBSTRING(`text` FROM 1 FOR 100) USING utf8) AS `title`,`add_date`, `user_id` FROM `".db('comments')."` WHERE `user_id` IN(".$friends_ids.") AND `object_name` != 'help'",
+			"blog"		=> "SELECT 'name' AS name, id, CONVERT(SUBSTRING(title FROM 1 FOR 100) USING utf8) AS title, add_date, user_id FROM ".db('blog_posts')." WHERE user_id IN(".$friends_ids.")",
+			"forum"		=> "SELECT 'name' AS name, id, CONVERT(SUBSTRING(text FROM 1 FOR 100) USING utf8) AS title, created AS add_date, user_id  FROM ".db('forum_posts')." WHERE user_id IN(".$friends_ids.")",
+			"articles"	=> "SELECT 'name' AS name, id, CONVERT(SUBSTRING(title FROM 1 FOR 100) USING utf8) AS title,add_date, user_id FROM ".db('articles_texts')." WHERE user_id IN(".$friends_ids.")",
+			"gallery"	=> "SELECT 'name' AS name, id, CONVERT(SUBSTRING(name FROM 1 FOR 100) USING utf8) AS title,add_date, user_id FROM ".db('gallery_photos')." WHERE user_id IN(".$friends_ids.")",
+			"comment"	=> "SELECT 'name' AS name, id, CONVERT(SUBSTRING(text FROM 1 FOR 100) USING utf8) AS title,add_date, user_id FROM ".db('comments')." WHERE user_id IN(".$friends_ids.") AND object_name != 'help'",
 		);
 		
 		foreach ((array)$this->PARENT_OBJ->sql_array as $key => $value){
@@ -313,9 +313,9 @@ class yf_friends_view {
 		}
 		
 		if(!empty($_SESSION["post_type_select_box"])){
-			$sql = $sql." ORDER BY `add_date` ".$_SESSION["sort_type_select_box"]; 
+			$sql = $sql." ORDER BY add_date ".$_SESSION["sort_type_select_box"]; 
 		}else{
-			$sql = "SELECT * FROM ((".implode(") UNION ALL (", $sql).")) AS `tmp` ORDER BY `add_date` ".$_SESSION["sort_type_select_box"]; 
+			$sql = "SELECT * FROM ((".implode(") UNION ALL (", $sql).")) AS tmp ORDER BY add_date ".$_SESSION["sort_type_select_box"]; 
 		}
 		
 		if(!empty($_SESSION["post_type_select_box"])){
@@ -333,7 +333,7 @@ class yf_friends_view {
 		
 		// Get comments details
 		if (!empty($_comments_ids)) {
-			$Q = db()->query("SELECT `id`,`object_id`,`object_name` FROM `".db('comments')."` WHERE `id` IN(".implode(",", $_comments_ids).")");
+			$Q = db()->query("SELECT id,object_id,object_name FROM ".db('comments')." WHERE id IN(".implode(",", $_comments_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$_comments_details[$A["id"]] = $A;
 			}
@@ -357,7 +357,7 @@ class yf_friends_view {
 		
 		$title = array();
 		if (!empty($comments_in_articles)) {
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('articles_texts')."` WHERE `id` IN(".implode(",",$comments_in_articles).")");
+			$Q = db()->query("SELECT id,title FROM ".db('articles_texts')." WHERE id IN(".implode(",",$comments_in_articles).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$title[$A["id"]] = "Re: ".$A["title"];
 			}
@@ -368,7 +368,7 @@ class yf_friends_view {
 
 		$title = array();		
 		if (!empty($comments_in_blog)) {
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('blog_posts')."` WHERE `id` IN(".implode(",",$comments_in_blog).")");
+			$Q = db()->query("SELECT id,title FROM ".db('blog_posts')." WHERE id IN(".implode(",",$comments_in_blog).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$title[$A["id"]] = "Re: ".$A["title"];
 			}
@@ -379,7 +379,7 @@ class yf_friends_view {
 		
 		$title = array();
 		if ($comments_in_gallery) {
-			$Q = db()->query("SELECT `id`,`name` FROM `".db('gallery_photos')."` WHERE `id` IN(".implode(",",$comments_in_gallery).")");
+			$Q = db()->query("SELECT id,name FROM ".db('gallery_photos')." WHERE id IN(".implode(",",$comments_in_gallery).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				if(!empty($A["name"])){
 					$title[$A["id"]] = "Re: ".$A["name"];

@@ -96,17 +96,17 @@ class yf_log_exec_analyser {
 	function move_to_archive () {
 		$PRUNE_DAYS = intval(isset($_POST["days"]) ? $_POST["days"] : 7);
 		// Generate main SQL for transfer
-		$sql = "REPLACE DELAYED INTO `".db('log_hourly_exec')."` 
-					(`start_date`,`avg_exec_time`,`hits`,`hosts`,`traffic`) 
+		$sql = "REPLACE DELAYED INTO ".db('log_hourly_exec')." 
+					(start_date,avg_exec_time,hits,hosts,traffic) 
 				SELECT 
-					UNIX_TIMESTAMP(FROM_UNIXTIME(`date`, '%Y-%m-%d %H')) AS `start_hour`, 
-					ROUND(SUM(`exec_time`) / count(`id`) , 3) AS `exec_time` , 
-					COUNT(`id`) AS `hits`, 
-					COUNT(DISTINCT (`ip`)) AS `hosts`,
-					SUM(`page_size`) AS `traffic` 
-				FROM `".db('log_exec')."` 
-				WHERE `date` <= ".intval(time() - $PRUNE_DAYS * 86400)."
-				GROUP BY `start_hour` ";
+					UNIX_TIMESTAMP(FROM_UNIXTIME(date, '%Y-%m-%d %H')) AS start_hour, 
+					ROUND(SUM(exec_time) / count(id) , 3) AS exec_time , 
+					COUNT(id) AS hits, 
+					COUNT(DISTINCT (ip)) AS hosts,
+					SUM(page_size) AS traffic 
+				FROM ".db('log_exec')." 
+				WHERE date <= ".intval(time() - $PRUNE_DAYS * 86400)."
+				GROUP BY start_hour ";
 		db()->query($sql);
 		// Count number of created records
 		$num_new_records = db()->affected_rows();
@@ -118,11 +118,11 @@ class yf_log_exec_analyser {
 				$DIR_OBJ->mkdir_m($this->STATS_ARCHIVE_DIR, 0777);
 			}
 			// User agents
-			$sql = "SELECT COUNT( `id` ) AS `hits`, `user_agent` 
-					FROM `".db('log_exec')."` 
-					WHERE `date` <= ".intval(time() - $PRUNE_DAYS * 86400)."
-					GROUP BY `user_agent` 
-					ORDER BY `hits` DESC ";
+			$sql = "SELECT COUNT( id ) AS hits, user_agent 
+					FROM ".db('log_exec')." 
+					WHERE date <= ".intval(time() - $PRUNE_DAYS * 86400)."
+					GROUP BY user_agent 
+					ORDER BY hits DESC ";
 			// Do save CSV log
 			$log_name = "ua";
 			$file_name = $this->STATS_ARCHIVE_DIR.date("Y_m_d_H_i")."__".$log_name.".csv";
@@ -134,11 +134,11 @@ class yf_log_exec_analyser {
 				@fclose($fp);
 			}
 			// Referers
-			$sql = "SELECT COUNT( `id` ) AS `hits`, `referer` 
-					FROM `".db('log_exec')."` 
-					WHERE `date` <= ".intval(time() - $PRUNE_DAYS * 86400)."
-					GROUP BY `referer` 
-					ORDER BY `hits` DESC ";
+			$sql = "SELECT COUNT( id ) AS hits, referer 
+					FROM ".db('log_exec')." 
+					WHERE date <= ".intval(time() - $PRUNE_DAYS * 86400)."
+					GROUP BY referer 
+					ORDER BY hits DESC ";
 			// Do save CSV log
 			$log_name = "ref";
 			$file_name = $this->STATS_ARCHIVE_DIR.date("Y_m_d_H_i")."__".$log_name.".csv";
@@ -150,13 +150,13 @@ class yf_log_exec_analyser {
 				@fclose($fp);
 			}
 			// Max exec time
-			$sql = "SELECT ROUND(AVG(`exec_time`), 3) AS `exec_avg`, 
-						ROUND(MAX(`exec_time`), 3) AS `exec_max`, 
-						`query_string` 
-					FROM `".db('log_exec')."` 
-					WHERE `date` <= ".intval(time() - $PRUNE_DAYS * 86400)."
-					GROUP BY `query_string` 
-					ORDER BY `exec_max` DESC ";
+			$sql = "SELECT ROUND(AVG(exec_time), 3) AS exec_avg, 
+						ROUND(MAX(exec_time), 3) AS exec_max, 
+						query_string 
+					FROM ".db('log_exec')." 
+					WHERE date <= ".intval(time() - $PRUNE_DAYS * 86400)."
+					GROUP BY query_string 
+					ORDER BY exec_max DESC ";
 			// Do save CSV log
 			$log_name = "max_exec";
 			$file_name = $this->STATS_ARCHIVE_DIR.date("Y_m_d_H_i")."__".$log_name.".csv";
@@ -168,11 +168,11 @@ class yf_log_exec_analyser {
 				@fclose($fp);
 			}
 			// Unique IP addresses
-			$sql = "SELECT COUNT(`ip`) AS `hits`, `ip` 
-					FROM `".db('log_exec')."` 
-					WHERE `date` <= ".intval(time() - $PRUNE_DAYS * 86400)."
-					GROUP BY `ip` 
-					ORDER BY `hits` DESC ";
+			$sql = "SELECT COUNT(ip) AS hits, ip 
+					FROM ".db('log_exec')." 
+					WHERE date <= ".intval(time() - $PRUNE_DAYS * 86400)."
+					GROUP BY ip 
+					ORDER BY hits DESC ";
 			// Do save CSV log
 			$log_name = "ip";
 			$file_name = $this->STATS_ARCHIVE_DIR.date("Y_m_d_H_i")."__".$log_name.".csv";
@@ -185,7 +185,7 @@ class yf_log_exec_analyser {
 			}
 		}
 		// Do delete old records from the raw exec table
-		db()->query("DELETE FROM `".db('log_exec')."` WHERE `date` <= ".intval(time() - $PRUNE_DAYS * 86400));
+		db()->query("DELETE FROM ".db('log_exec')." WHERE date <= ".intval(time() - $PRUNE_DAYS * 86400));
 		// Count number of deleted records
 		$num_old_records = db()->affected_rows();
 		// Process template		
@@ -202,8 +202,8 @@ class yf_log_exec_analyser {
 	* Hourly archive stats (from hourly archive table)
 	*/
 	function hourly_archive_stats () {
-		$sql = "SELECT * FROM `".db('log_hourly_exec')."` ";
-		$order_by_sql = " ORDER BY `start_date` DESC ";
+		$sql = "SELECT * FROM ".db('log_hourly_exec')." ";
+		$order_by_sql = " ORDER BY start_date DESC ";
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->HOURLY_PER_PAGE);
 		// Process users
@@ -235,14 +235,14 @@ class yf_log_exec_analyser {
 	* Hourly latest stats (from raw log exec table)
 	*/
 	function hourly_latest_stats () {
-		$sql = "SELECT ROUND( SUM( `exec_time` ) / count( `id` ) , 3 ) AS `exec_time` , 
-					FROM_UNIXTIME( `date` , '%Y-%m-%d %H' ) AS `hour` , 
-					COUNT( `id` ) AS `hits`, 
-					COUNT(DISTINCT (`ip`)) AS `hosts`,
-					SUM( `page_size` ) AS `traffic` 
-				FROM `".db('log_exec')."`
-				GROUP BY `hour`";
-		$order_by_sql = " ORDER BY `hour` DESC ";
+		$sql = "SELECT ROUND( SUM( exec_time ) / count( id ) , 3 ) AS exec_time , 
+					FROM_UNIXTIME( date , '%Y-%m-%d %H' ) AS hour , 
+					COUNT( id ) AS hits, 
+					COUNT(DISTINCT (ip)) AS hosts,
+					SUM( page_size ) AS traffic 
+				FROM ".db('log_exec')."
+				GROUP BY hour";
+		$order_by_sql = " ORDER BY hour DESC ";
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->HOURLY_PER_PAGE);
 		// Process users
@@ -274,10 +274,10 @@ class yf_log_exec_analyser {
 	* User Agents stats
 	*/
 	function user_agents_stats () {
-		$sql = "SELECT COUNT( `id` ) AS `hits`, `user_agent` 
-				FROM `".db('log_exec')."` 
-				GROUP BY `user_agent`";
-		$order_by_sql = " ORDER BY `hits` DESC ";
+		$sql = "SELECT COUNT( id ) AS hits, user_agent 
+				FROM ".db('log_exec')." 
+				GROUP BY user_agent";
+		$order_by_sql = " ORDER BY hits DESC ";
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->UA_PER_PAGE);
 		// Process users
@@ -304,10 +304,10 @@ class yf_log_exec_analyser {
 	* Referers stats
 	*/
 	function referers_stats () {
-		$sql = "SELECT COUNT( `id` ) AS `hits`, `referer` 
-				FROM `".db('log_exec')."` 
-				GROUP BY `referer`";
-		$order_by_sql = " ORDER BY `hits` DESC ";
+		$sql = "SELECT COUNT( id ) AS hits, referer 
+				FROM ".db('log_exec')." 
+				GROUP BY referer";
+		$order_by_sql = " ORDER BY hits DESC ";
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->REFERERS_PER_PAGE);
 		// Process users
@@ -334,12 +334,12 @@ class yf_log_exec_analyser {
 	* Max Execution time pages
 	*/
 	function max_exec_stats () {
-		$sql = "SELECT ROUND(AVG(`exec_time`), 3) AS `exec_avg`, 
-					ROUND(MAX(`exec_time`), 3) AS `exec_max`, 
-					`query_string` 
-				FROM `".db('log_exec')."` 
-				GROUP BY `query_string`";
-		$order_by_sql = " ORDER BY `exec_max` DESC ";
+		$sql = "SELECT ROUND(AVG(exec_time), 3) AS exec_avg, 
+					ROUND(MAX(exec_time), 3) AS exec_max, 
+					query_string 
+				FROM ".db('log_exec')." 
+				GROUP BY query_string";
+		$order_by_sql = " ORDER BY exec_max DESC ";
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->MAX_EXEC_PER_PAGE);
 		// Process users
@@ -623,7 +623,7 @@ class yf_log_exec_analyser {
 			$hosts_by_interval[$i]	= 0;
 		}
 		// Get data from db
-		$Q = db()->query("SELECT `date`, `ip` FROM `".db('log_exec')."` WHERE `date` >= ".intval($time_start)." AND `date` < ".intval($time_end));
+		$Q = db()->query("SELECT date, ip FROM ".db('log_exec')." WHERE date >= ".intval($time_start)." AND date < ".intval($time_end));
 		while ($A = db()->fetch_assoc($Q)) {
 			$_interval_num = date($int_format, $A['date']);
 			$hits_by_interval[$_interval_num]++;
@@ -633,7 +633,7 @@ class yf_log_exec_analyser {
 // TODO: need to check more carefully how archive stats connect with live ones
 /*
 		// Get data from archive table
-		$Q = db()->query("SELECT `start_date`,`hits`,`hosts` FROM `".db('log_hourly_exec')."` WHERE `start_date` >= ".intval($time_start)." AND `start_date` <= ".intval($time_end));
+		$Q = db()->query("SELECT start_date,hits,hosts FROM ".db('log_hourly_exec')." WHERE start_date >= ".intval($time_start)." AND start_date <= ".intval($time_end));
 		while ($A = db()->fetch_assoc($Q)) {
 			$_interval_num = date($int_format, $A['date']);
 			if (!isset($hits_by_interval[$_interval_num])) {
@@ -667,8 +667,8 @@ class yf_log_exec_analyser {
 	*/
 	function _get_day_os_stat($cur_date) {
 // TODO
-		$dbResult = db()->query("SELECT `user_agent`,COUNT(`id`) as `count` FROM `".db('counter')."` WHERE `date` = '".$cur_date."' GROUP BY `user_agent` ASC");
-//		$dbResult = db()->query("SELECT `user_agent`,COUNT(`id`) as `count` FROM `".db('counter')."` WHERE `date` = '".$cur_date."' GROUP BY `user_agent` ASC");
+		$dbResult = db()->query("SELECT user_agent,COUNT(id) as count FROM ".db('counter')." WHERE date = '".$cur_date."' GROUP BY user_agent ASC");
+//		$dbResult = db()->query("SELECT user_agent,COUNT(id) as count FROM ".db('counter')." WHERE date = '".$cur_date."' GROUP BY user_agent ASC");
 		while ($dbAssoc = db()->fetch_assoc($dbResult)){
 			$arr[] = $dbAssoc;
 		}
@@ -716,7 +716,7 @@ class yf_log_exec_analyser {
 // TODO
 		list($y,$m,) = explode("-",$cur_date);
 		if (strlen($m)<2) $m = "0".$m;
-		$dbResult = db()->query("SELECT `user_agent`,COUNT(`id`) as `count` FROM `".db('counter')."` WHERE `date` >= '".$y."-".$m."-01' AND `date`<='".$y."-".$m."-31' GROUP BY `user_agent` ORDER BY `date` ASC");
+		$dbResult = db()->query("SELECT user_agent,COUNT(id) as count FROM ".db('counter')." WHERE date >= '".$y."-".$m."-01' AND date<='".$y."-".$m."-31' GROUP BY user_agent ORDER BY date ASC");
 		while ($dbAssoc = db()->fetch_assoc($dbResult)){
 			$arr[] = $dbAssoc;
 		}
@@ -763,7 +763,7 @@ class yf_log_exec_analyser {
 	function _get_year_os_stat($cur_date) {
 // TODO
 		list($y,,) = explode("-",$cur_date);
-		$dbResult = db()->query("SELECT `user_agent`,COUNT(`id`) as `count` FROM `".db('counter')."` WHERE `date` >= '".$y."-01-01' AND `date`<='".$y."-12-31' GROUP BY `user_agent` ASC");
+		$dbResult = db()->query("SELECT user_agent,COUNT(id) as count FROM ".db('counter')." WHERE date >= '".$y."-01-01' AND date<='".$y."-12-31' GROUP BY user_agent ASC");
 		while ($dbAssoc = db()->fetch_assoc($dbResult)){
 			$arr[] = $dbAssoc;
 		}
@@ -810,7 +810,7 @@ class yf_log_exec_analyser {
 	*/
 	function _get_day_browser_stat($cur_date) {
 // TODO
-		$dbResult = db()->query("SELECT `user_agent`,COUNT(`id`) as `count` FROM `".db('counter')."` WHERE `date` = '".$cur_date."' GROUP BY `user_agent` ASC");
+		$dbResult = db()->query("SELECT user_agent,COUNT(id) as count FROM ".db('counter')." WHERE date = '".$cur_date."' GROUP BY user_agent ASC");
 		while ($dbAssoc = db()->fetch_assoc($dbResult)){
 			$arr[] = $dbAssoc;
 		}
@@ -858,7 +858,7 @@ class yf_log_exec_analyser {
 // TODO
 		list($y,$m,) = explode("-",$cur_date);
 		if (strlen($m)<2) $m = "0".$m;
-		$dbResult = db()->query("SELECT `user_agent`,COUNT(`id`) as `count` FROM `".db('counter')."` WHERE `date` >= '".$y."-".$m."-01' AND `date`<='".$y."-".$m."-31' GROUP BY `user_agent` ASC");
+		$dbResult = db()->query("SELECT user_agent,COUNT(id) as count FROM ".db('counter')." WHERE date >= '".$y."-".$m."-01' AND date<='".$y."-".$m."-31' GROUP BY user_agent ASC");
 		while ($dbAssoc = db()->fetch_assoc($dbResult)){
 			$arr[] = $dbAssoc;
 		}
@@ -905,7 +905,7 @@ class yf_log_exec_analyser {
 	function _get_year_browser_stat($cur_date) {
 // TODO
 		list($y,,) = explode("-",$cur_date);
-		$dbResult = db()->query("SELECT `user_agent`,COUNT(`id`) as `count` FROM `".db('counter')."` WHERE `date` >= '".$y."-01-01' AND `date`<='".$y."-12-31' GROUP BY `user_agent` ASC");
+		$dbResult = db()->query("SELECT user_agent,COUNT(id) as count FROM ".db('counter')." WHERE date >= '".$y."-01-01' AND date<='".$y."-12-31' GROUP BY user_agent ASC");
 		while ($dbAssoc = db()->fetch_assoc($dbResult)){
 			$arr[] = $dbAssoc;
 		}
@@ -1061,21 +1061,21 @@ class yf_log_exec_analyser {
 		foreach ((array)$MF as $k => $v) $MF[$k] = trim($v);
 /*
 		// Generate filter for the common fileds
-		if ($MF["id_min"]) 				$sql .= " AND `id` >= ".intval($MF["id_min"])." \r\n";
-		if ($MF["id_max"])			 	$sql .= " AND `id` <= ".intval($MF["id_max"])." \r\n";
-		if (strlen($MF["nick"])) 		$sql .= " AND `display_name` LIKE '"._es($MF["nick"])."%' \r\n";
-		if (strlen($MF["email"])) 		$sql .= " AND `email` LIKE '"._es($MF["email"])."%' \r\n";
-		if (strlen($MF["login"])) 		$sql .= " AND `login` LIKE '"._es($MF["login"])."%' \r\n";
-		if (strlen($MF["password"])) 	$sql .= " AND `password` LIKE '"._es($MF["password"])."%' \r\n";
-		if ($MF["account_type"])		$sql .= " AND `group` = ".intval($MF["account_type"])." \r\n";
-		if (strlen($MF["state"]))		$sql .= " AND `state` = '".$MF["state"]."' \r\n";
-		if ($MF["country"])	 			$sql .= " AND `country` = '"._es($MF["country"])."' \r\n";
+		if ($MF["id_min"]) 				$sql .= " AND id >= ".intval($MF["id_min"])." \r\n";
+		if ($MF["id_max"])			 	$sql .= " AND id <= ".intval($MF["id_max"])." \r\n";
+		if (strlen($MF["nick"])) 		$sql .= " AND display_name LIKE '"._es($MF["nick"])."%' \r\n";
+		if (strlen($MF["email"])) 		$sql .= " AND email LIKE '"._es($MF["email"])."%' \r\n";
+		if (strlen($MF["login"])) 		$sql .= " AND login LIKE '"._es($MF["login"])."%' \r\n";
+		if (strlen($MF["password"])) 	$sql .= " AND password LIKE '"._es($MF["password"])."%' \r\n";
+		if ($MF["account_type"])		$sql .= " AND group = ".intval($MF["account_type"])." \r\n";
+		if (strlen($MF["state"]))		$sql .= " AND state = '".$MF["state"]."' \r\n";
+		if ($MF["country"])	 			$sql .= " AND country = '"._es($MF["country"])."' \r\n";
 		if (isset($MF["active"]) && $MF["active"] != -1) {
-			$sql .= " AND `active` = '".intval((bool) $MF["active"])."' \r\n";
+			$sql .= " AND active = '".intval((bool) $MF["active"])."' \r\n";
 		}
 */
 		// Sorting here
-		if ($MF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$MF["sort_by"]]."` \r\n";
+		if ($MF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$MF["sort_by"]]." \r\n";
 		if ($MF["sort_by"] && strlen($MF["sort_order"])) 	$sql .= " ".$MF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}
@@ -1146,15 +1146,15 @@ class yf_log_exec_analyser {
 		$this->imagesPath = WEB_PATH."templates/".conf('theme')."/images/";
 		$this->currentDate = date("Y-m-d");
 		$this->currentStamp = mktime(0,0,0,date("m"),date("d"),date("Y"));
-		$A = db()->fetch_assoc(db()->query("SELECT COUNT(`id`) AS `count` FROM `".db('counter')."` WHERE `date` = NOW()"));
+		$A = db()->fetch_assoc(db()->query("SELECT COUNT(id) AS count FROM ".db('counter')." WHERE date = NOW()"));
 		if ($A['count'] == 0) {
 			$cur_date = date("Y-m-d", time() - 60 * 60 * 24);
-			list($hits) = db()->fetch_assoc(db()->query("SELECT COUNT(`id`) AS `0` FROM `".db('counter')."` WHERE `date` = '".$cur_date."'"));
-			list($hosts) = db()->fetch_assoc(db()->query("SELECT COUNT(DISTINCT(`remote_addr`)) AS `0` FROM `".db('counter')."` WHERE `date` = '".$cur_date."'"));
-			$sql = "INSERT INTO `".db('counter_days')."` (
-					`hits`, 
-					`hosts`, 
-					`date` 
+			list($hits) = db()->fetch_assoc(db()->query("SELECT COUNT(id) AS `0` FROM ".db('counter')." WHERE date = '".$cur_date."'"));
+			list($hosts) = db()->fetch_assoc(db()->query("SELECT COUNT(DISTINCT(remote_addr)) AS `0` FROM ".db('counter')." WHERE date = '".$cur_date."'"));
+			$sql = "INSERT INTO ".db('counter_days')." (
+					hits, 
+					hosts, 
+					date 
 				) VALUES (
 					'".$hits."', 
 					'".$hosts."', 
@@ -1171,10 +1171,10 @@ class yf_log_exec_analyser {
 	function _show_counter() {
 // TODO
 		if (conf('counter_box')) {
-			list($hits) = db()->query_fetch("SELECT COUNT(`id`) AS `0` FROM `".db('counter')."` WHERE `date` = NOW()");
-			list($hosts) = db()->query_fetch("SELECT COUNT(DISTINCT(`remote_addr`)) AS `0` FROM `".db('counter')."` WHERE `date` = NOW()");
-			list($allvisit) = db()->query_fetch("SELECT COUNT(DISTINCT(`remote_addr`)) AS `0` FROM `".db('counter')."` WHERE `date` = NOW()");
-			$A = db()->query_fetch("SELECT SUM(`hosts`) AS `count` FROM `".db('counter_days')."`");
+			list($hits) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('counter')." WHERE date = NOW()");
+			list($hosts) = db()->query_fetch("SELECT COUNT(DISTINCT(remote_addr)) AS `0` FROM ".db('counter')." WHERE date = NOW()");
+			list($allvisit) = db()->query_fetch("SELECT COUNT(DISTINCT(remote_addr)) AS `0` FROM ".db('counter')." WHERE date = NOW()");
+			$A = db()->query_fetch("SELECT SUM(hosts) AS count FROM ".db('counter_days')."");
 			$allvisit += $A['count'];
 			return "<img src='".WEB_PATH."counter/index.php?h=".base64_encode($hosts)."&i=".base64_encode($hits)."&a=".base64_encode($allvisit)."&p=".base64_encode($this->fileID)."&f=".base64_encode("templates/".conf('theme')."/images/")."&n=".base64_encode($this->fileNameC)."' width='88' height='31' alt='".ucfirst(t("counter"))."' border=0>";
 		}

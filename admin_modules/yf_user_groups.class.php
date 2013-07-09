@@ -30,7 +30,7 @@ class yf_user_groups {
 	function show() {
 		// Get number of members of each group
 		if (defined("db('user')")) {
-			$Q = db()->query("SELECT `group`, COUNT(`id`) AS `num_members` FROM `".db('user')."` WHERE 1=1 GROUP BY `group`");
+			$Q = db()->query("SELECT `group`, COUNT(id) AS num_members FROM ".db('user')." WHERE 1=1 GROUP BY `group`");
 			while ($A = db()->fetch_assoc($Q)) {
 				$num_group_members[$A["group"]] = $A["num_members"];
 			}
@@ -43,12 +43,12 @@ class yf_user_groups {
 				break;
 			}
 		}
-		$Q = db()->query("SELECT * FROM `".db('menus')."` WHERE `type`='user' AND `active`='1' LIMIT 1");
+		$Q = db()->query("SELECT * FROM ".db('menus')." WHERE type='user' AND active='1' LIMIT 1");
 		while ($A = db()->fetch_assoc($Q)) {
 			$menu_id = $A["id"];
 		}
 		// Connect pager
-		$sql = "SELECT * FROM `".db('user_groups')."`";
+		$sql = "SELECT * FROM ".db('user_groups')."";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $add_sql);
@@ -125,7 +125,7 @@ class yf_user_groups {
 			return _e(t("No id"));
 		}
 		// Get group info
-		$group_info = db()->query_fetch("SELECT * FROM `".db('user_groups')."` WHERE `id`=".intval($_GET["id"]));
+		$group_info = db()->query_fetch("SELECT * FROM ".db('user_groups')." WHERE id=".intval($_GET["id"]));
 		if (empty($group_info)) {
 			return _e(t("No such group"));
 		}
@@ -140,7 +140,7 @@ class yf_user_groups {
 				db()->UPDATE("user_groups", array(
 					"name" 			=> _es($_POST["name"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
-				), "`id`=".intval($_GET['id']));
+				), "id=".intval($_GET['id']));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("user_groups");
@@ -171,7 +171,7 @@ class yf_user_groups {
 		$_GET['id'] = intval($_GET['id']);
 		// Do delete records
 		if (!empty($_GET['id'])) {
-			db()->query("DELETE FROM `".db('user_groups')."` WHERE `id`=".intval($_GET['id'])." LIMIT 1");
+			db()->query("DELETE FROM ".db('user_groups')." WHERE id=".intval($_GET['id'])." LIMIT 1");
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -194,13 +194,13 @@ class yf_user_groups {
 		$_GET['id'] = intval($_GET['id']);
 		// Get group info
 		if (!empty($_GET['id'])) {
-			$group_info = db()->query_fetch("SELECT * FROM `".db('user_groups')."` WHERE `id`=".intval($_GET["id"]));
+			$group_info = db()->query_fetch("SELECT * FROM ".db('user_groups')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do update record
 		if (!empty($group_info)) {
 			db()->UPDATE("user_groups", array(
 				"active"	=> intval(!$group_info["active"]),
-			), "`id`=".intval($_GET['id']));
+			), "id=".intval($_GET['id']));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{

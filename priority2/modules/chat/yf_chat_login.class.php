@@ -24,7 +24,7 @@ class yf_chat_login {
 	*/
 	function _form() {
 		// Get chat rooms from the db
-		$Q = db()->query("SELECT * FROM `".db('chat_rooms')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT * FROM ".db('chat_rooms')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) $chat_rooms[$A["id"]] = t($A["name"]);
 		// Get number of users in each room
 		if (is_array($chat_rooms)) {
@@ -76,10 +76,10 @@ class yf_chat_login {
 		}
 		if (!common()->_error_exists()) {
 			// Check if room exists in the database
-			$A3 = db()->query_fetch("SELECT `id` FROM `".db('chat_rooms')."` WHERE `id`=".intval($_POST["room_id"])." AND `active`='1' LIMIT 1");
+			$A3 = db()->query_fetch("SELECT id FROM ".db('chat_rooms')." WHERE id=".intval($_POST["room_id"])." AND active='1' LIMIT 1");
 			if (!$A3["id"]) _re(t('no_such_room'));
 			// Check if user exists in the database
-			$A = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `login`='"._es(trim($_POST["login"]))."' AND `password`='".trim($_POST["password"])."' AND `active`='1' LIMIT 1");
+			$A = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE login='"._es(trim($_POST["login"]))."' AND password='".trim($_POST["password"])."' AND active='1' LIMIT 1");
 			if (!$A["id"]) _re(t('login_failed'));
 			// Check if user is already online
 			foreach ((array)$GLOBALS['chat_online'] as $A5) {
@@ -89,7 +89,7 @@ class yf_chat_login {
 				}
 			}
 			if ($A2["user_id"]) {
-				db()->query("DELETE FROM `".db('chat_online')."` WHERE `user_id`=".$A2["user_id"]);
+				db()->query("DELETE FROM ".db('chat_online')." WHERE user_id=".$A2["user_id"]);
 				// Create log record
 				$this->CHAT_OBJ->_log_change_online_status($A2, $A2["add_date"]);
 			}
@@ -100,27 +100,27 @@ class yf_chat_login {
 			// Insert data into session
 			$_SESSION['chat_user_id'] = $A["id"];
 			// Insert user into online table
-			$sql = "INSERT INTO `".db('chat_online')."` (
-					`user_id`,
-					`group_id`,
-					`room_id`,
-					`add_date`,
-					`ip`,
-					`session_id`,
-					`user_agent`,
-					`referer`,
-					`text_color`,
-					`login`,
-					`gender`,
-					`chat_color_1`,
-					`chat_color_2`,
-					`chat_color_3`,
-					`chat_color_4`,
-					`chat_show_time`,
-					`chat_refresh`,
-					`chat_msg_filter`,
-					`info_status`,
-					`last_visit`
+			$sql = "INSERT INTO ".db('chat_online')." (
+					user_id,
+					group_id,
+					room_id,
+					add_date,
+					ip,
+					session_id,
+					user_agent,
+					referer,
+					text_color,
+					login,
+					gender,
+					chat_color_1,
+					chat_color_2,
+					chat_color_3,
+					chat_color_4,
+					chat_show_time,
+					chat_refresh,
+					chat_msg_filter,
+					info_status,
+					last_visit
 				) VALUES (
 					".intval($A["id"]).",
 					".intval($A["group_id"]).",

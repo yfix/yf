@@ -162,25 +162,25 @@ class yf_blog_right_block {
 		// Try to get latest friends posts
 		$Q = db()->query(
 			"SELECT 
-				`p`.`id` AS `post_id`,
-				`p`.`user_id`,
-				`p`.`title` AS `post_title`,
-				`p`.`add_date` AS `post_date`,
-				`p`.`privacy`,
-				`p`.`allow_comments`,
-				`p`.`num_reads`,
-				SUBSTRING(`p`.`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('blog_posts')."` AS `p`
-				, (SELECT MAX( `id` ) AS `max_id` 
-					FROM `".db('blog_posts')."` 
-					WHERE `user_id` IN (".implode(",", $friends_ids).") 
-						AND `active`=1 
-						AND `privacy` NOT IN(9)
-					GROUP BY `user_id` 
-					ORDER BY `add_date` DESC 
-				) AS `sub` 
-			WHERE `p`.`id` = `sub`.`max_id`
-			ORDER BY `p`.`add_date` DESC 
+				p.id AS post_id,
+				p.user_id,
+				p.title AS post_title,
+				p.add_date AS post_date,
+				p.privacy,
+				p.allow_comments,
+				p.num_reads,
+				SUBSTRING(p.text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('blog_posts')." AS p
+				, (SELECT MAX( id ) AS max_id 
+					FROM ".db('blog_posts')." 
+					WHERE user_id IN (".implode(",", $friends_ids).") 
+						AND active=1 
+						AND privacy NOT IN(9)
+					GROUP BY user_id 
+					ORDER BY add_date DESC 
+				) AS sub 
+			WHERE p.id = sub.max_id
+			ORDER BY p.add_date DESC 
 			LIMIT ".intval($this->BLOG_OBJ->STATS_NUM_FRIENDS_POSTS)
 		);
 		while ($post_info = db()->fetch_assoc($Q)) {

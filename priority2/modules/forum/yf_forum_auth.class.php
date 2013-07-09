@@ -57,7 +57,7 @@ class yf_forum_auth {
 			$posted_login		= _substr(trim($_POST["login"]), 0,	$this->MAX_LOGIN_LENGTH);
 			$posted_password 	= _substr(trim($_POST["pswd"]), 0,	$this->MAX_PSWD_LENGTH);
 			// Try to find forum user with given data
-			$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `name`='"._es($posted_login)."' AND `pswd`='".md5($posted_password)."' AND `status`='a' LIMIT 1");
+			$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE name='"._es($posted_login)."' AND pswd='".md5($posted_password)."' AND status='a' LIMIT 1");
 			// If user found - store its info inside session
 			if (!empty($user_info['id'])) {
 				// Insert data into session
@@ -124,7 +124,7 @@ class yf_forum_auth {
 			$user_time_zone	= $_SESSION[$this->VAR_NAME_TIME_ZONE];
 			// Try to get more detailed user info from db
 			if (!empty($user_id)) {
-				$user_info	= db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval($user_id));
+				$user_info	= db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($user_id));
 			}
 		// Process cookie
 		} elseif (!empty($_COOKIE[$this->COOKIE_NAME])) {
@@ -144,7 +144,7 @@ class yf_forum_auth {
 				$cookie_login		= _substr(trim($cookie_login), 0,	$this->MAX_LOGIN_LENGTH);
 				$cookie_password 	= _substr($cookie_password, 0, 32);
 				// Try to find forum user with given data
-				$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `name`='"._es($cookie_login)."' AND `pswd`='"._es($cookie_password)."' AND `status`='a' LIMIT 1");
+				$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE name='"._es($cookie_login)."' AND pswd='"._es($cookie_password)."' AND status='a' LIMIT 1");
 				// Check required values
 				if (!empty($user_info['id']) && ($user_info['id'] == $cookie_user_id) && (time() < ($cookie_created + $this->COOKIE_LIFE_TIME))) {
 					$user_id		= $user_info['id'];
@@ -218,7 +218,7 @@ class yf_forum_auth {
 		$cur_time = time();
 		// Cleanup expired users
 		if (!main()->USE_TASK_MANAGER) {
-			db()->query("DELETE FROM `".db('forum_sessions')."` WHERE `last_update` < ".(time() - $this->LASTUP_TTL));
+			db()->query("DELETE FROM ".db('forum_sessions')." WHERE last_update < ".(time() - $this->LASTUP_TTL));
 		}
 		// Try to recognize well-known spiders
 		if (module('forum')->SETTINGS["RECOGNIZE_SPIDERS"]) {
@@ -235,7 +235,7 @@ class yf_forum_auth {
 			$in_topic = intval($_GET["id"]);
 			// Get topic info
 			if (empty(module('forum')->_topic_info) && !empty($_GET["id"])) {
-				module('forum')->_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+				module('forum')->_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			}
 			$in_forum = intval(module('forum')->_topic_info["forum"]);
 		}
@@ -246,7 +246,7 @@ class yf_forum_auth {
 		// Current user session ID
 		$_session_id = session_id();
 		// Get all users online
-		$Q = db()->query("SELECT * FROM `".db('forum_sessions')."`");
+		$Q = db()->query("SELECT * FROM ".db('forum_sessions')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$online_array[$A["id"]] = $A;
 		}
@@ -282,7 +282,7 @@ class yf_forum_auth {
 		));
 		// Update member's record
 		if (FORUM_USER_ID) {
-			db()->query("UPDATE `".db('forum_users')."` SET `user_lastvisit` = ".$cur_time." WHERE `id`=".intval(FORUM_USER_ID));
+			db()->query("UPDATE ".db('forum_users')." SET user_lastvisit = ".$cur_time." WHERE id=".intval(FORUM_USER_ID));
 		}
 	}
 	
@@ -292,7 +292,7 @@ class yf_forum_auth {
 	function _check_user_ban () {
 		// Check if user in ban list
 		if (module('forum')->SETTINGS["USE_BAN_IP_FILTER"]) {
-			if (db()->query_num_rows("SELECT `ip` FROM `".db('bannedip')."` WHERE `ip`='"._es(common()->get_ip())."'")) {
+			if (db()->query_num_rows("SELECT ip FROM ".db('bannedip')." WHERE ip='"._es(common()->get_ip())."'")) {
 				module('forum')->BAN_REASONS[] = "Your IP address was found in ban list!";
 			}
 		}

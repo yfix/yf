@@ -121,30 +121,30 @@ class yf_gallery_filter {
 			$SF["country"] = GEO_LIMIT_COUNTRY;
 		}
 		if (strlen($SF["country"])) {
-			$sql[] = " AND `p`.`geo_cc` ='"._es($SF["country"])."' ";
+			$sql[] = " AND p.geo_cc ='"._es($SF["country"])."' ";
 		}
 		if (strlen($SF["state"])) {
-			$sql[] = " AND `p`.`geo_rc` = '"._es($SF["state"])."' ";
+			$sql[] = " AND p.geo_rc = '"._es($SF["state"])."' ";
 		}
 		if (strlen($SF["name"])) {
-			$sql[] = " AND `p`.`name` LIKE '"._es($SF["name"])."%' ";
+			$sql[] = " AND p.name LIKE '"._es($SF["name"])."%' ";
 			$SF["as_photos"] = 1;
 		}
 		// Create qubquery for the user table
 		if ($SF["account_type"]) {
-			$user_sub_sql[] = " AND `u`.`group` = ".intval($SF["account_type"])." ";
+			$user_sub_sql[] = " AND u.group = ".intval($SF["account_type"])." ";
 		}
 		if (strlen($SF["gender"])) {
-			$user_sub_sql[] = " AND `u`.`sex` ='"._es($SF["gender"])."' ";
+			$user_sub_sql[] = " AND u.sex ='"._es($SF["gender"])."' ";
 		}
 		if (strlen($SF["race"])) {
-			$user_sub_sql[] = " AND `u`.`race` ='"._es($SF["race"])."' ";
+			$user_sub_sql[] = " AND u.race ='"._es($SF["race"])."' ";
 		}
 		if (strlen($SF["nick"])) {
-			$user_sub_sql[] = " AND `u`.`nick` LIKE '"._es($SF["nick"])."%' ";
+			$user_sub_sql[] = " AND u.nick LIKE '"._es($SF["nick"])."%' ";
 		}
 		if (strlen($SF["city"])) {
-			$user_sub_sql[] = " AND `u`.`city` LIKE '"._es($SF["city"])."%' ";
+			$user_sub_sql[] = " AND u.city LIKE '"._es($SF["city"])."%' ";
 		}
 		// Search by ZIP code (US only)
 		if (!empty($SF['zip_code']) && (strlen($SF['zip_code']) == 5)) {
@@ -152,18 +152,18 @@ class yf_gallery_filter {
 			$radius = (intval($SF['miles']) > 0) ? intval($SF['miles']) : 20;
 			$sql_zip = $ZIP_CODES_OBJ->_generate_sql($SF['zip_code'], $radius);
 			if (strlen($sql_zip)) {
-				$user_sub_sql[] = " AND `u`.`zip_code` IN (".$sql_zip.") AND `country`='US' ";
+				$user_sub_sql[] = " AND u.zip_code IN (".$sql_zip.") AND country='US' ";
 			}
 		}
 		if (!empty($user_sub_sql)) {
 			$sql[] = implode("\r\n", $user_sub_sql);
-			$sql[] = " AND `p`.`user_id` = `u`.`id` ";
+			$sql[] = " AND p.user_id = u.id ";
 		}
 		if ($this->GALLERY_OBJ->ALLOW_TAGGING && strlen($SF["tag"])) {
-			$_source_sql = str_replace(" AS `p`", " AS `p`,`".db('tags')."` AS `t`", $_source_sql);
-			$sql[] = " AND `p`.`id` = `t`.`object_id` ";
-			$sql[] = " AND `t`.`object_name`='gallery' ";
-			$sql[] = " AND `t`.`text` = '"._es($SF["tag"])."' ";
+			$_source_sql = str_replace(" AS p", " AS p,".db('tags')." AS t", $_source_sql);
+			$sql[] = " AND p.id = t.object_id ";
+			$sql[] = " AND t.object_name='gallery' ";
+			$sql[] = " AND t.text = '"._es($SF["tag"])."' ";
 		}
 		$SQL_REPLACE = array();
 		// Sorting here
@@ -177,32 +177,32 @@ class yf_gallery_filter {
 			if ($SF["as_photos"]) {
 				$DISPLAY_THRESHOLD = 3;
 				if ($SF["sort_by"] == "date_added") {
-				 	$sort_sql .= " ORDER BY `p`.`add_date` ";
+				 	$sort_sql .= " ORDER BY p.add_date ";
 				} elseif ($SF["sort_by"] == "user_rating") {
-					$sort_sql .= " ORDER BY `p`.`priority` ";
+					$sort_sql .= " ORDER BY p.priority ";
 				} elseif ($SF["sort_by"] == "image_rating") {
-					$sort_sql .= " ORDER BY (`p`.`votes_sum` / `p`.`num_votes`) ";
+					$sort_sql .= " ORDER BY (p.votes_sum / p.num_votes) ";
 					if ($DISPLAY_THRESHOLD) {
-						$sql[] = " AND `p`.`num_votes` >= ".intval($DISPLAY_THRESHOLD)." ";
+						$sql[] = " AND p.num_votes >= ".intval($DISPLAY_THRESHOLD)." ";
 					}
 				}
 			// Search as galleries
 			} else {
 				if ($SF["sort_by"] == "date_added") {
-				 	$sort_sql .= " ORDER BY `u`.`add_date` ";
+				 	$sort_sql .= " ORDER BY u.add_date ";
 				} elseif ($SF["sort_by"] == "user_rating") {
-					$sort_sql .= " ORDER BY `p`.`priority` ";
+					$sort_sql .= " ORDER BY p.priority ";
 				} elseif ($SF["sort_by"] == "image_rating") {
-					$sort_sql .= " ORDER BY `avg_vote` ".($SF["sort_order"] ? $SF["sort_order"] : "").", `num_photos` ";
-					$sql[] = " AND `p`.`num_votes` > 0 ";
-					$SQL_REPLACE["AS `num_photos`"]	= "AS `num_photos`, SUM(`p`.`votes_sum`) / SUM(`p`.`num_votes`) AS `avg_vote` ";
+					$sort_sql .= " ORDER BY avg_vote ".($SF["sort_order"] ? $SF["sort_order"] : "").", num_photos ";
+					$sql[] = " AND p.num_votes > 0 ";
+					$SQL_REPLACE["AS num_photos"]	= "AS num_photos, SUM(p.votes_sum) / SUM(p.num_votes) AS avg_vote ";
 				}
 			}
 			if (strlen($SF["sort_order"]) && $sort_sql) {
 				$sort_sql .= " ".$SF["sort_order"]." ";
 			}
 		} else {
-			$sort_sql = " ORDER BY `p`.`priority` DESC, `num_photos` DESC ";
+			$sort_sql = " ORDER BY p.priority DESC, num_photos DESC ";
 		}
 		// Convert to string
 		$sql = implode("\r\n", (array)$sql);

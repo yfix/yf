@@ -513,17 +513,17 @@ p {
 	padding-left: 12px;
 	list-style: url('../image/bullet_2.png');
 }
-.cart {
+.basket {
 	border-collapse: collapse;
 	width: 100%;
 	border: 1px solid #EEEEEE;
 	margin-bottom: 10px;
 }
-.cart th {
+.basket th {
 	background: #EEEEEE;
 	padding: 5px;
 	font-weight: normal;
 }
-.cart td {
+.basket td {
 	padding: 5px;
 }

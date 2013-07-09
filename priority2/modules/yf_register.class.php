@@ -59,7 +59,7 @@ class yf_register {
 		);
 		// Array of dynamic info
 		if (main()->USER_INFO_DYNAMIC) {
-			$sql = "SELECT * FROM `".db('user_data_info_fields')."` WHERE `active`=1 ORDER BY `order`, `name`";
+			$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY `order`, name";
 			$Q = db()->query($sql);
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->_dynamic_fields_info[$A["id"]] = $A;
@@ -91,7 +91,7 @@ class yf_register {
 	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
-		if ($this->USER_ID && $this->DENY_FOR_LOGGED_IN) {
+		if (main()->USER_ID && $this->DENY_FOR_LOGGED_IN) {
 			return _e("You are already registered on our site!");
 		}
 		// Default step value
@@ -174,7 +174,7 @@ class yf_register {
 			// Dynamic info
 			if (main()->USER_INFO_DYNAMIC) {
 				$OBJ_DYNAMIC_INFO = &main()->init_class("dynamic_info", "classes/");
-				$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_edit($this->USER_ID, $_SESSION["register"]["dynamic_info"]);
+				$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_edit(main()->USER_ID, $_SESSION["register"]["dynamic_info"]);
 			}
 		
 			// Parse template contents
@@ -388,7 +388,7 @@ class yf_register {
 			_re(t('Login required'));
 		} elseif (!preg_match('/^[a-z0-9]+$/i', $_POST["login"])) {
 			_re(t("Login is wrong. Only english letters and digits are allowed, no symbols"));
-		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `login`='"._es($_POST['login'])."'") >= 1) {
+		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE login='"._es($_POST['login'])."'") >= 1) {
 			_re(t("This login")." (".$_POST['login'].")".t("has already been registered with us!"));
 		}
 		// Check passowrds
@@ -403,13 +403,13 @@ class yf_register {
 		// Check if email is already registered for someone
 		if (!preg_match('#^[0-9a-z]([-_.]?[0-9a-z])*@[0-9a-z]([-.]?[0-9a-z])*\.[a-z]{2,3}$#ims', $_POST["email"])) {
 			_re(t('Invalid e-mail, please check your spelling!'));
-		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `email`='"._es($_POST['email'])."'") >= 1) {
+		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE email='"._es($_POST['email'])."'") >= 1) {
 			_re(t("This e-mail")." (".$_POST['email'].") ".t("has already been registered with us")."!<br>".t("Use")." <a href='./?object=get_pswd'>".t("password reminder")."</a> ".t("in case you forgot your password")."!");
 /*
 		} elseif ($this->CHECK_EMAIL_IN_DELETED) {
 			// Check if such email has been already registered in some account
 			// and then account was deleted
-			if (db()->query_num_rows("SELECT `id` FROM `".db('user_deleted')."` WHERE `email`='"._es($_POST['email'])."'") >= 1) {
+			if (db()->query_num_rows("SELECT id FROM ".db('user_deleted')." WHERE email='"._es($_POST['email'])."'") >= 1) {
 				_re("This e-mail (".$_POST['email'].") was registered with us and then account was deleted!<br /><a href='./?object=help&action=email_form'>Contact</a> site admin if you have any questions");
 			}
 */
@@ -505,7 +505,7 @@ class yf_register {
 		// Process posted form
 		if (!empty($_POST["email"])) {
 			// Check if such user exists
-			$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `email`='"._es($_POST["email"])."'");
+			$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE email='"._es($_POST["email"])."'");
 			if (empty($user_info)) {
 				return _e("No such user");
 			}
@@ -590,22 +590,22 @@ class yf_register {
 				$msg = t("Nick must have at least")." ".$MIN_NICK_LENGTH." ".t("symbols");
 			} elseif (!preg_match("/^[".$_nick_pattern."]+\$/iu", $TEXT_TO_CHECK)) {
 				$msg = t("Nick can contain only these characters").": \"".stripslashes(implode("\" , \"", $this->NICK_ALLOWED_SYMBOLS))."\"";
-			} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `nick`='"._es($TEXT_TO_CHECK)."'") >= 1) {
+			} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE nick='"._es($TEXT_TO_CHECK)."'") >= 1) {
 				$msg = t("Nick")." (\"".$TEXT_TO_CHECK."\") ".t("is already reserved. Please try another one.");
 			}
 		} elseif ($FIELD_TO_CHECK == "login") {
 			if ($TEXT_TO_CHECK == "") {
 				$msg = t('Login required');
-			} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `login`='"._es($TEXT_TO_CHECK)."'") >= 1) {
+			} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE login='"._es($TEXT_TO_CHECK)."'") >= 1) {
 				$msg = t("This login")." (".$TEXT_TO_CHECK.") ".t("has already been registered with us")."!";
 			}
 		} elseif ($FIELD_TO_CHECK == "email") {
 			// Check if email is already registered for someone
 			if (!common()->email_verify($TEXT_TO_CHECK)) {
 				$msg = t('Invalid e-mail, please check your spelling!');
-			} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `email`='"._es($TEXT_TO_CHECK)."'") >= 1) {
+			} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE email='"._es($TEXT_TO_CHECK)."'") >= 1) {
 				// Check if account with such email was deleted and try to restore it
-				list($deleted_id) = db()->query_fetch("SELECT `id` AS `0` FROM `".db('user')."` WHERE `email`='"._es($TEXT_TO_CHECK)."' AND `is_deleted`='1'");
+				list($deleted_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('user')." WHERE email='"._es($TEXT_TO_CHECK)."' AND is_deleted='1'");
 				if (!empty($deleted_id) && $this->ALLOW_RESTORE_ACCOUNT) {
 					$this->_TRYING_RESTORE_ID = $deleted_id;
 				} else {
@@ -615,7 +615,7 @@ class yf_register {
 			// if restoring is "off" - just do simple check
 			} elseif ($this->CHECK_EMAIL_IN_DELETED && !$this->ALLOW_RESTORE_ACCOUNT) {
 				// Check if such email has been already registered in some account and then account was deleted
-				if (db()->query_num_rows("SELECT `id` FROM `".db('user_deleted')."` WHERE `email`='"._es($TEXT_TO_CHECK)."'") >= 1) {
+				if (db()->query_num_rows("SELECT id FROM ".db('user_deleted')." WHERE email='"._es($TEXT_TO_CHECK)."'") >= 1) {
 					$msg = "This e-mail (".$TEXT_TO_CHECK.") was registered with us and then account was deleted!<br /><a href='".process_url("./?object=help&action=email_form")."'>Contact</a> site admin if you have any questions";
 				}
 */

@@ -66,7 +66,7 @@ class yf_forum_user_details_global {
 			} 
 //		}
 		// Get user's forum specific info
-		$Q = db()->query("SELECT * FROM `".db('forum_users')."` WHERE `id` IN(".implode(",", $users_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('forum_users')." WHERE id IN(".implode(",", $users_ids).")");
 		while ($user_info = db()->fetch_assoc($Q)) {
 			// Merge forum settings with current ones (only non-existed ones)
 			foreach ((array)$user_info as $k => $v) {

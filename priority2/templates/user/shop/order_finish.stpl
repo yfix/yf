@@ -4,7 +4,7 @@
 	{error_message}
 {/if}
 
-<div class="cart">
+<div class="basket">
 <form method="post" action="{form_action}">
 
 <h3>{t(Order No)}: {order_no}</h3>

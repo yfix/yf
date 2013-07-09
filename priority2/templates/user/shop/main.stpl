@@ -17,7 +17,7 @@
 
 		<p class="price">{t(Price)}: {#.price}</p>
 		<div class="button_div">
-			<a href="{#.add_to_cart_url}" title="Add to cart" style="margin-left:0;" {if("#.external_url" ne "")} target="_blank" {/if} >{t(Add to cart)}</a>
+			<a href="{#.basket_add_url}" title="Add to basket" style="margin-left:0;" {if("#.external_url" ne "")} target="_blank" {/if} >{t(Add to basket)}</a>
 		</div>
 		<br style="clear:both;" />
 	</div>
@@ -29,7 +29,7 @@
 
 {if("items" eq "")}<div align="center">{t(No products found)}</div>{/if}
 
-{{--<div><br /><a href="{show_cart_url}">{t(Show cart)}</a></div>--}}
+{{--<div><br /><a href="{show_basket_url}">{t(Show basket)}</a></div>--}}
 
 {if("pages" ne "")}
 	<div align="center">{pages}</div>

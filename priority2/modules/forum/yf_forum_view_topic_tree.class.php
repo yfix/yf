@@ -29,7 +29,7 @@ class yf_forum_view_topic_tree {
 			unset($_GET["page"]);
 		}
 		if (empty(module('forum')->_topic_info) && !empty($_GET["id"])) {
-			$this->_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($_GET["id"])." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+			$this->_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($_GET["id"])." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 			module('forum')->_topic_info = $this->_topic_info;
 		} else {
 			$this->_topic_info = &module('forum')->_topic_info;
@@ -48,7 +48,7 @@ class yf_forum_view_topic_tree {
 		// Get current post info
 		$post_id = !empty($_GET["page"]) ? intval($_GET["page"]) : $this->_topic_info["first_post_id"];
 		if (!empty($post_id)) {
-			$this->_post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($post_id));
+			$this->_post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($post_id));
 		}
 		if (empty($this->_post_info["id"])) {
 			return module('forum')->_show_error("No such post!");
@@ -67,7 +67,7 @@ class yf_forum_view_topic_tree {
 			return module('forum')->_show_error("Private Forum!");
 		}
 		// Count user view
-		db()->_add_shutdown_query("UPDATE `".db('forum_topics')."` SET `num_views`=`num_views`+1 WHERE `id`=".intval($this->_topic_info["id"]));
+		db()->_add_shutdown_query("UPDATE ".db('forum_topics')." SET num_views=num_views+1 WHERE id=".intval($this->_topic_info["id"]));
 		// Add read topic record
 		if (FORUM_USER_ID && module('forum')->SETTINGS["USE_READ_MESSAGES"]) {
 			module('forum')->_set_topic_read($this->_topic_info);
@@ -184,7 +184,7 @@ class yf_forum_view_topic_tree {
 	*/
 	function _show_tree_view() {
 		// Get all posts for the topic
-		$Q = db()->query("SELECT `id`,`created`,`parent`,`subject`,`user_id`,`user_name` FROM `".db('forum_posts')."` WHERE `topic`=".intval($this->_topic_info["id"])." ORDER BY `created` DESC");
+		$Q = db()->query("SELECT id,created,parent,subject,user_id,user_name FROM ".db('forum_posts')." WHERE topic=".intval($this->_topic_info["id"])." ORDER BY created DESC");
 		while ($A = db()->fetch_assoc($Q)) $this->_posts_array[$A["id"]] = $A;
 		// First we need to build posts tree
 		$this->_posts_tree		= $this->_build_posts_tree();

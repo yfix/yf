@@ -19,7 +19,7 @@ class yf_forum_help {
 		$_GET["id"] = intval($_GET["id"]);
 		// Show topic item
 		if (!empty($_GET["id"])) {
-			$help_info = db()->query_fetch("SELECT * FROM `".db('faq')."` WHERE `id`=".intval($_GET["id"]));
+			$help_info = db()->query_fetch("SELECT * FROM ".db('faq')." WHERE id=".intval($_GET["id"]));
 			if (empty($help_info["id"])) {
 				return module('forum')->_show_error("No such help topic!");
 			}
@@ -30,7 +30,7 @@ class yf_forum_help {
 			$body = tpl()->parse(FORUM_CLASS_NAME."/help_item", $replace);
 		// Show items list
 		} else {
-			$Q = db()->query("SELECT * FROM `".db('faq')."` ORDER BY `title` ASC");
+			$Q = db()->query("SELECT * FROM ".db('faq')." ORDER BY title ASC");
 			while ($A = db()->fetch_assoc($Q)) {
 				$items[$A["id"]] = array(
 					"topic_link"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$A["id"],

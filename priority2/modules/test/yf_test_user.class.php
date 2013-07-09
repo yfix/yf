@@ -39,12 +39,12 @@ class yf_test_user {
 	*/
 	function _on_before_run () {
 /*
-INSERT INTO `test_user_data_info_fields` (`id`, `name`, `type`, `value_list`, `default_value`, `comment`, `order`, `active`) VALUES
+INSERT INTO test_user_data_info_fields (id, name, type, value_list, default_value, comment, `order`, active) VALUES
 (1, 'blabla', 'varchar', '', '', '', 0, '1'),
 (2, 'blabla2', 'varchar', '', '', '', 0, '1'),
 (3, 'blabla3', 'varchar', '', '', '', 0, '1');
 
-INSERT INTO `test_user_data_info_values` (`user_id`, `field_id`, `value`) VALUES
+INSERT INTO test_user_data_info_values (user_id, field_id, value) VALUES
 (1, 1, 'gdfgdfgdf'),
 (2, 1, 'ttttttttttt'),
 (1, 2, 'fsdsdfsdfsdfsf'),
@@ -139,8 +139,8 @@ INSERT INTO `test_user_data_info_values` (`user_id`, `field_id`, `value`) VALUES
 		$body .= "<br /><b>user(1, array(\"non_existent_field\", \"non_existent_field2\", \"non_existent_field2\"))</b><br /><p>".print_r(
 				user(1, array("non_existent_field", "non_existent_field2", "non_existent_field2"))
 			, 1)."</p>";
-		$body .= "<br /><b>user(1, array(\"non_existent_field\\'&^%\$-`\", \"non_existent_field2\\'&^%\$-`\", \"non_existent_field3\\'&^%\$-`\"))</b><br /><p>".print_r(
-				user(1, array("non_existent_field\\'&^%\$-`", "non_existent_field2\\'&^%\$-`", "non_existent_field2\\'&^%\$-`"))
+		$body .= "<br /><b>user(1, array(\"non_existent_field\\'&^%\$-\", \"non_existent_field2\\'&^%\$-\", \"non_existent_field3\\'&^%\$-\"))</b><br /><p>".print_r(
+				user(1, array("non_existent_field\\'&^%\$-", "non_existent_field2\\'&^%\$-", "non_existent_field2\\'&^%\$-"))
 			, 1)."</p>";
 		$body .= "<br /><b>user(array(1,2,3,4), array(\"login\", \"password\", \"nick\"), null, true)</b><br /><p>".print_r(
 				user(array(1,2,3,4), array("login", "password", "nick"), null, true)

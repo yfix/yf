@@ -114,7 +114,7 @@ class yf_friends_manage {
 	function _get_user_friends_ids ($target_user_id) {
 		$cur_friends_ids = array();
 		// Get friends from db
-		list($CUR_FRIENDS_LIST) = db()->query_fetch("SELECT `friends_list` AS `0` FROM `".db('friends')."` WHERE `user_id`=".intval($target_user_id));
+		list($CUR_FRIENDS_LIST) = db()->query_fetch("SELECT friends_list AS `0` FROM ".db('friends')." WHERE user_id=".intval($target_user_id));
 		// Convert string into array
 		if (!empty($CUR_FRIENDS_LIST)) {
 			$tmp_array = explode(",", $CUR_FRIENDS_LIST);
@@ -164,6 +164,6 @@ class yf_friends_manage {
 	// Save friends
 	function _save_user_friends_ids ($target_user_id, $friends_array = array()) {
 		// Save friends ids
-		db()->query("REPLACE INTO `".db('friends')."` (`user_id`,`friends_list`) VALUES (".intval($target_user_id).",',".implode(",",$friends_array).",')");
+		db()->query("REPLACE INTO ".db('friends')." (user_id,friends_list) VALUES (".intval($target_user_id).",',".implode(",",$friends_array).",')");
 	}
 }

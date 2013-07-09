@@ -43,8 +43,8 @@ class yf_dynamic_attributes {
 		}
 
 		
-		$Q = db()->query("SELECT `field_id`,`value` FROM `".db('dynamic_fields_values')."`
-		WHERE `category_id` = ".$category_id." AND `object_id` = ".intval($_GET["id"])." AND `field_id` IN(".implode(",", $fields_ids).")");
+		$Q = db()->query("SELECT field_id,value FROM ".db('dynamic_fields_values')."
+		WHERE category_id = ".$category_id." AND object_id = ".intval($_GET["id"])." AND field_id IN(".implode(",", $fields_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$fields_values[$A["field_id"]] = $A["value"];
 		}
@@ -157,8 +157,8 @@ class yf_dynamic_attributes {
 			$fields_ids[$key] = $key;
 		}
 
-		$Q = db()->query("SELECT `field_id` FROM `".db('dynamic_fields_values')."` 
-		WHERE `category_id` = ".$category_id." AND `object_id` = ".$object_id." AND `field_id` IN(".implode(",", $fields_ids).")");
+		$Q = db()->query("SELECT field_id FROM ".db('dynamic_fields_values')." 
+		WHERE category_id = ".$category_id." AND object_id = ".$object_id." AND field_id IN(".implode(",", $fields_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$field_info[$A["field_id"]] = $A["field_id"];
 		}
@@ -182,7 +182,7 @@ class yf_dynamic_attributes {
 			}else{
 				db()->UPDATE("dynamic_fields_values", array(
 					"value"				=> _es($val),
-				), "`object_id` = ".$object_id." AND `object_id` = ".$object_id." AND `field_id` = ".intval($key));
+				), "object_id = ".$object_id." AND object_id = ".$object_id." AND field_id = ".intval($key));
 			}
 			
 		}
@@ -218,8 +218,8 @@ class yf_dynamic_attributes {
 			$fields_ids[$key] = $key;
 		}
 		
-		$Q = db()->query("SELECT `field_id`,`value` FROM `".db('dynamic_fields_values')."`
-		WHERE `category_id` = ".$category_id." AND `object_id` = ".intval($object_id)." AND `field_id` IN(".implode(",", $fields_ids).")");
+		$Q = db()->query("SELECT field_id,value FROM ".db('dynamic_fields_values')."
+		WHERE category_id = ".$category_id." AND object_id = ".intval($object_id)." AND field_id IN(".implode(",", $fields_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$fields_values[$A["field_id"]] = $A["value"];
 		}

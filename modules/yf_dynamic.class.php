@@ -201,9 +201,9 @@ class yf_dynamic {
 		}
 		if ($this->VARS_IGNORE_CASE) {
 			$SOURCE_VAR_NAME = str_replace(" ", "_", _strtolower($SOURCE_VAR_NAME));
-			$sql = "SELECT * FROM `".db('locale_vars')."` WHERE REPLACE(CONVERT(`value` USING utf8), ' ', '_') = '"._es($SOURCE_VAR_NAME)."'";
+			$sql = "SELECT * FROM ".db('locale_vars')." WHERE REPLACE(CONVERT(value USING utf8), ' ', '_') = '"._es($SOURCE_VAR_NAME)."'";
 		} else {
-			$sql = "SELECT * FROM `".db('locale_vars')."` WHERE `value`='"._es($SOURCE_VAR_NAME)."'";
+			$sql = "SELECT * FROM ".db('locale_vars')." WHERE value='"._es($SOURCE_VAR_NAME)."'";
 		}
 		$var_info = db()->query_fetch($sql);
 		// Create variable record if not found
@@ -217,20 +217,20 @@ class yf_dynamic {
 			"locale"	=> _es($CUR_LOCALE),
 		);
 		// Check if record is already exists
-		$Q = db()->query("SELECT * FROM `".db('locale_translate')."` WHERE `var_id`=".intval($var_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE var_id=".intval($var_info["id"]));
 		while ($A = db()->fetch_assoc($Q)) {
 			$var_tr[$A["locale"]] = $A["value"];
 		}
 		if (isset($var_tr[$CUR_LOCALE])) {
-			db()->UPDATE("locale_translate", $sql_data, "`var_id`=".intval($var_info["id"])." AND `locale`='"._es($CUR_LOCALE)."'");
+			db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'");
 		} else {
 			db()->INSERT("locale_translate", $sql_data);
 		}
-$sql = db()->UPDATE("locale_translate", $sql_data, "`var_id`=".intval($var_info["id"])." AND `locale`='"._es($CUR_LOCALE)."'", true);
+$sql = db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'", true);
 _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 		// Save revision
 		db()->INSERT("revisions", array(
-			"user_id"		=> intval($this->USER_ID),
+			"user_id"		=> intval(main()->USER_ID),
 			"object_name"	=> _es("locale_var"),
 			"object_id"		=> _es($var_info["id"]),
 			"old_text"		=> _es($var_tr[$CUR_LOCALE]),
@@ -285,7 +285,7 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 				file_put_contents($locale_stpl_path, $_POST["text"]);
 				// Save revision
 				db()->INSERT("revisions", array(
-					"user_id"		=> intval($this->USER_ID),
+					"user_id"		=> intval(main()->USER_ID),
 					"object_name"	=> _es("locale_stpl"),
 					"object_id"		=> _es($STPL_NAME),
 					"old_text"		=> _es($text),
@@ -314,7 +314,7 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 		$CUR_LOCALE	= conf('language');
 
 		if (isset($_POST["text"]) && isset($_POST["name"])) {
-			$A = db()->query_fetch("SELECT * FROM `".db('tips')."` WHERE `name`='".$_POST["name"]."' AND `locale`='".$CUR_LOCALE."'");
+			$A = db()->query_fetch("SELECT * FROM ".db('tips')." WHERE name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
 			if (!$A) {
 				db()->INSERT("tips", array(
 					"name"		=> _es($_POST["name"]),
@@ -326,7 +326,7 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 			} else {
 				db()->UPDATE("tips", array(
 					"text"	=> _es($_POST["text"]),
-				), "`name`='".$_POST["name"]."' AND `locale`='".$CUR_LOCALE."'");
+				), "name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
 			}
 		}
 		// Refresh system cache
@@ -355,14 +355,14 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 	*/
 	function find_users() {
 		main()->NO_GRAPHICS = true;
-		if (!$_POST || !$this->USER_ID || IS_ADMIN != 1) {
+		if (!$_POST || !main()->USER_ID || IS_ADMIN != 1) {
 			echo "";
 		}
 		// Continue execution
 		$Q = db()->query(
-			"SELECT `id`, `nick` 
-			FROM `".db('user')."` 
-			WHERE `"._es($_POST["search_field"])."` LIKE '"._es($_POST["param"])."%' 
+			"SELECT id, nick 
+			FROM ".db('user')." 
+			WHERE "._es($_POST["search_field"])." LIKE '"._es($_POST["param"])."%' 
 			LIMIT ".intval($this->USER_RESULTS_LIMIT));
 		while($A = db()->fetch_assoc($Q)) {
 			$finded_users[$A["id"]] = $A["nick"];
@@ -375,7 +375,7 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 	*/
 	function find_ids() {
 		main()->NO_GRAPHICS = true;
-		if (!$_POST || !$this->USER_ID || IS_ADMIN != 1/* || !strlen($_POST["param"])*/) {
+		if (!$_POST || !main()->USER_ID || IS_ADMIN != 1/* || !strlen($_POST["param"])*/) {
 			echo "";
 			exit;
 		}
@@ -384,17 +384,17 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 		if ($_POST["search_table"] == "user"){
 			// Find account ids of this user
 			$Q = db()->query(
-				"SELECT a.`id`
-						, a.`account_name`
-						, a.`user_id`
-						, u.`nick`
-						, u.`id` AS 'uid' 
-				FROM `".db('host_accounts')."` AS a, `".db('user')."` AS u 
-				WHERE a.`user_id`=u.`id` 
-					AND u.`id` IN( 
-						SELECT `id` 
-						FROM `".db('user')."` 
-						WHERE `"._es($_POST["search_field"])."` LIKE '"._es($_POST["param"])."%'
+				"SELECT a.id
+						, a.account_name
+						, a.user_id
+						, u.nick
+						, u.id AS 'uid' 
+				FROM ".db('host_accounts')." AS a, ".db('user')." AS u 
+				WHERE a.user_id=u.id 
+					AND u.id IN( 
+						SELECT id 
+						FROM ".db('user')." 
+						WHERE "._es($_POST["search_field"])." LIKE '"._es($_POST["param"])."%'
 					) 
 				LIMIT ".intval($this->USER_RESULTS_LIMIT)
 			);
@@ -403,15 +403,15 @@ _debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 			}
 		} elseif ($_POST["search_table"] == "host_accounts") {
 			$Q = db()->query(
-				"SELECT a.`id`
-						, a.`account_name`
-						, a.`user_id`
-						, u.`nick`
-						, u.`id` AS 'uid' 
-				FROM `".db('host_accounts')."` AS a
-					, `".db('user')."` AS u 
-				WHERE a.`"._es($_POST["search_field"])."` LIKE '"._es($_POST["param"])."%' 
-					AND a.`user_id`=u.`id` 
+				"SELECT a.id
+						, a.account_name
+						, a.user_id
+						, u.nick
+						, u.id AS 'uid' 
+				FROM ".db('host_accounts')." AS a
+					, ".db('user')." AS u 
+				WHERE a."._es($_POST["search_field"])." LIKE '"._es($_POST["param"])."%' 
+					AND a.user_id=u.id 
 				LIMIT ".intval($this->USER_RESULTS_LIMIT)
 			);
 

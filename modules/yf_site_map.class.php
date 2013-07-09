@@ -109,7 +109,7 @@ class yf_site_map {
 			$this->MODULES_TO_INCLUDE = $this->_get_modules_from_files();
 		}
 		// Remove non-active modules
-		$Q = db()->query("SELECT * FROM `".db('user_modules')."` WHERE `active`='0'");
+		$Q = db()->query("SELECT * FROM ".db('user_modules')." WHERE active='0'");
 		while ($A = db()->fetch_assoc($Q)) {
 			if (in_array($A["name"], $this->MODULES_TO_INCLUDE)) {
 				unset($this->MODULES_TO_INCLUDE[$A["name"]]);

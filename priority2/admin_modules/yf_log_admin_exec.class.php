@@ -40,13 +40,13 @@ class yf_log_admin_exec{
 	*
 	*/
 	function show() {
-		$sql = "SELECT * FROM `".db('log_admin_exec')."`";
+		$sql = "SELECT * FROM ".db('log_admin_exec')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1 ". $filter_sql : " ORDER BY `date` ASC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1 ". $filter_sql : " ORDER BY date ASC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
-			$admin_info[$A["admin_id"]] = db()->query_fetch("SELECT `login` FROM `".db('admin')."` WHERE `id` = '".$A["admin_id"]."' ORDER BY `id` ASC ");
+			$admin_info[$A["admin_id"]] = db()->query_fetch("SELECT login FROM ".db('admin')." WHERE id = '".$A["admin_id"]."' ORDER BY id ASC ");
 			$items[] = array(
 				"ip_country"	=> strtolower(common()->_get_country_by_ip($A["ip"])),
 				"id"			=> $A["id"],
@@ -78,8 +78,8 @@ class yf_log_admin_exec{
 	*/
 	function prune () {
 		if (isset($_POST["prune_days"])) {
-			db()->query("DELETE FROM `".db('log_admin_exec')."`".(!empty($_POST["prune_days"]) ? " WHERE `date` <= ".intval(time() - $_POST["prune_days"] * 86400) : ""));
-			db()->query("OPTIMIZE TABLE `".db('log_admin_exec')."`");
+			db()->query("DELETE FROM ".db('log_admin_exec')."".(!empty($_POST["prune_days"]) ? " WHERE date <= ".intval(time() - $_POST["prune_days"] * 86400) : ""));
+			db()->query("OPTIMIZE TABLE ".db('log_admin_exec')."");
 		}
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
@@ -91,15 +91,15 @@ class yf_log_admin_exec{
 		$MF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$MF as $k => $v) $MF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($MF["ip"])							$sql .= " AND `ip` = '"._es($MF["ip"])."' \r\n";
+		if ($MF["ip"])							$sql .= " AND ip = '"._es($MF["ip"])."' \r\n";
 		if ($MF["admin"] && is_numeric($MF["admin"])){
-					$sql .= " AND `admin_id` = '".intval($MF["user"])."' \r\n";
+					$sql .= " AND admin_id = '".intval($MF["user"])."' \r\n";
 		}elseif($MF["admin"] && !is_numeric($MF["admin"])){
-					$admin_id = db()->query_fetch("SELECT `id` FROM `".db('admin')."` WHERE `login` = '".$MF["admin"]."' ORDER BY `id` ASC ");
-					$sql .= " AND `admin_id` = '".$admin_id["id"]."' \r\n";
+					$admin_id = db()->query_fetch("SELECT id FROM ".db('admin')." WHERE login = '".$MF["admin"]."' ORDER BY id ASC ");
+					$sql .= " AND admin_id = '".$admin_id["id"]."' \r\n";
 		}
 		// Sorting here
-		if ($MF["sort_by"])			 			$sql .= " ORDER BY `".$this->_sort_by[$MF["sort_by"]]."` \r\n";
+		if ($MF["sort_by"])			 			$sql .= " ORDER BY ".$this->_sort_by[$MF["sort_by"]]." \r\n";
 		if ($MF["sort_by"] && strlen($MF["sort_order"])) 	$sql .= " ".$MF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

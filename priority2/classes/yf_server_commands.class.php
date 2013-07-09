@@ -912,7 +912,7 @@ class yf_server_commands{
 		
 		
 		$sql = rtrim($sql, ";");
-		$sql = str_replace("`", "\`", $sql);
+		$sql = str_replace("", "\", $sql);
 		
 		if($human){
 			$human_str = "-H --verbose";
@@ -1630,8 +1630,8 @@ class yf_server_commands{
 	*/
 	function _get_param ($server_info, $param_name) {
 		
-		$param_info = db()->query_fetch("SELECT `id` FROM `".db('os_params')."` WHERE `name` = '".$param_name."'");
-		$param_value = db()->query_fetch("SELECT `value` FROM `".db('os_params_value')."` WHERE `param_id` = ".intval($param_info["id"])." AND `os_id` = ".intval($server_info["server_os"]));
+		$param_info = db()->query_fetch("SELECT id FROM ".db('os_params')." WHERE name = '".$param_name."'");
+		$param_value = db()->query_fetch("SELECT value FROM ".db('os_params_value')." WHERE param_id = ".intval($param_info["id"])." AND os_id = ".intval($server_info["server_os"]));
 		
 		return $param_value["value"];
 	}
@@ -1641,14 +1641,14 @@ class yf_server_commands{
 	*/
 	function _get_params_for_os ($os_id) {
 		
-		$param_info = db()->query_fetch("SELECT `id` FROM `".db('os_params')."` WHERE `name` = '".$param_name."'");
+		$param_info = db()->query_fetch("SELECT id FROM ".db('os_params')." WHERE name = '".$param_name."'");
 		
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('os_params')."`");
+		$Q = db()->query("SELECT id,name FROM ".db('os_params')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$params[$A["id"]] = $A["name"];
 		}
 		
-		$Q = db()->query("SELECT `param_id`,`value` FROM `".db('os_params_value')."` WHERE `os_id` = ".$os_id);
+		$Q = db()->query("SELECT param_id,value FROM ".db('os_params_value')." WHERE os_id = ".$os_id);
 		while ($A = db()->fetch_assoc($Q)) {
 			$result[$params[$A["param_id"]]] = $A["value"];
 		}

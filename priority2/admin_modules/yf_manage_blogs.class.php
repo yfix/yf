@@ -12,7 +12,7 @@ class yf_manage_blogs {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_manage_blogs() {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
 		// Array of boxes
@@ -28,9 +28,9 @@ class yf_manage_blogs {
 	// Default method (display blog posts)
 	function show () {
 		// Connect pager
-		$sql = "SELECT SQL_CALC_FOUND_ROWS `id` FROM `".db('blog_posts')."` ";
+		$sql = "SELECT SQL_CALC_FOUND_ROWS id FROM ".db('blog_posts')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `add_date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY add_date DESC ";
 		// Add current page limit
 		$per_page = conf('admin_per_page');
 		$first_record = intval(($_GET["page"] ? $_GET["page"] - 1 : 0) * $per_page);
@@ -47,7 +47,7 @@ class yf_manage_blogs {
 			list($num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 			list(, $pages, ) = common()->divide_pages("", "./?object=".$_GET["object"], "", $per_page, $num_posts);
 			// Get posts infos
-			$Q = db()->query("SELECT * FROM `".db('blog_posts')."` WHERE `id` IN(".implode(",", $blog_posts_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE id IN(".implode(",", $blog_posts_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$blog_posts_array[$A["id"]] = $A;
 				$users_ids[$A["user_id"]]	= $A["user_id"];
@@ -58,7 +58,7 @@ class yf_manage_blogs {
 			unset($users_ids[""]);
 		}
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('user')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $users_names[$A["id"]] = _display_name($A);
 		}
 		// Process posts
@@ -104,12 +104,12 @@ class yf_manage_blogs {
 			return _e(t("No id"));
 		}
 		// Try to get record info
-		$post_info = db()->query_fetch("SELECT * FROM `".db('blog_posts')."` WHERE `id`=".intval($_GET["id"]));
+		$post_info = db()->query_fetch("SELECT * FROM ".db('blog_posts')." WHERE id=".intval($_GET["id"]));
 		if (empty($post_info)) {
 			return _e(t("No such post"));
 		}
 		// Try to get given user info
-		$user_info = db()->query_fetch("SELECT `id`,`name`,`nick`,`photo_verified` FROM `".db('user')."` WHERE `id`=".intval($post_info["user_id"]));
+		$user_info = db()->query_fetch("SELECT id,name,nick,photo_verified FROM ".db('user')." WHERE id=".intval($post_info["user_id"]));
 		if (empty($user_info["id"])) {
 			return _e(t("No such user!"));
 		}
@@ -130,7 +130,7 @@ class yf_manage_blogs {
 				db()->UPDATE("blog_posts", array(
 					"title" 		=> _es($_POST["title"]),
 					"text" 			=> _es($_POST["text"]),
-				), "`id`=".intval($post_info["id"]));
+				), "id=".intval($post_info["id"]));
 				// Return user back
 				return js_redirect($RETURN_PATH, false);
 			}
@@ -139,7 +139,7 @@ class yf_manage_blogs {
 		$replace = array(
 			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".intval($_GET["id"]),
 			"error_message"		=> $error_message,
-			"user_id"			=> intval($this->USER_ID),
+			"user_id"			=> intval(main()->USER_ID),
 			"user_name"			=> _prepare_html(_display_name($user_info)),
 			"user_avatar"		=> _show_avatar($post_info["user_id"], $user_info, 1, 1),
 			"user_profile_link"	=> _profile_link($post_info["user_id"]),
@@ -158,11 +158,11 @@ class yf_manage_blogs {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get given user info
 		if (!empty($_GET["id"])) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('blog_posts')."` WHERE `id`=".intval($_GET["id"]));
+			$post_info = db()->query_fetch("SELECT * FROM ".db('blog_posts')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete record
 		if (!empty($post_info)) {
-			db()->query("DELETE FROM `".db('blog_posts')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('blog_posts')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			// Remove activity points
 			common()->_remove_activity_points($post_info["user_id"], "blog_post", $_GET["id"]);
 		}
@@ -188,7 +188,7 @@ class yf_manage_blogs {
 		}
 		// Do delete ids
 		if (!empty($ids_to_delete)) {
-			db()->query("DELETE FROM `".db('blog_posts')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('blog_posts')." WHERE id IN(".implode(",",$ids_to_delete).")");
 		}
 		// Return user back
 //		return js_redirect("./?object=".$_GET["object"]);
@@ -246,25 +246,25 @@ class yf_manage_blogs {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["date_min"]) 			$sql .= " AND `add_date` >= ".strtotime($SF["date_min"])." \r\n";
-		if ($SF["date_max"])			$sql .= " AND `add_date` <= ".strtotime($SF["date_max"])." \r\n";
-		if ($SF["user_id"])			 	$sql .= " AND `user_id` = ".intval($SF["user_id"])." \r\n";
-		if (strlen($SF["title"]))		$sql .= " AND `title` LIKE '"._es($SF["title"])."%' \r\n";
-		if (strlen($SF["text"]))		$sql .= " AND `text` LIKE '"._es($SF["text"])."%' \r\n";
+		if ($SF["date_min"]) 			$sql .= " AND add_date >= ".strtotime($SF["date_min"])." \r\n";
+		if ($SF["date_max"])			$sql .= " AND add_date <= ".strtotime($SF["date_max"])." \r\n";
+		if ($SF["user_id"])			 	$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
+		if (strlen($SF["title"]))		$sql .= " AND title LIKE '"._es($SF["title"])."%' \r\n";
+		if (strlen($SF["text"]))		$sql .= " AND text LIKE '"._es($SF["text"])."%' \r\n";
 		if (in_array($SF["active"], array(1,-1))) {
-		 	$sql .= " AND `active` = '".intval($SF["active"] == 1 ? 1 : 0)."' \r\n";
+		 	$sql .= " AND active = '".intval($SF["active"] == 1 ? 1 : 0)."' \r\n";
 		}
 		if (strlen($SF["nick"]) || strlen($SF["account_type"]) || $SF["plblog_only"]) {
-			if (strlen($SF["nick"])) 	$users_sql .= " AND `nick` LIKE '"._es($SF["nick"])."%' \r\n";
-			if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
-			if ($SF["plblog_only"])		$users_sql .= " AND `old_id` != 0 \r\n";
+			if (strlen($SF["nick"])) 	$users_sql .= " AND nick LIKE '"._es($SF["nick"])."%' \r\n";
+			if ($SF["account_type"])	$users_sql .= " AND group = ".intval($SF["account_type"])." \r\n";
+			if ($SF["plblog_only"])		$users_sql .= " AND old_id != 0 \r\n";
 		}
 		// Add subquery to users table
 		if (!empty($users_sql)) {
-			$sql .= " AND `user_id` IN( SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$users_sql.") \r\n";
+			$sql .= " AND user_id IN( SELECT id FROM ".db('user')." WHERE 1=1 ".$users_sql.") \r\n";
 		}
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

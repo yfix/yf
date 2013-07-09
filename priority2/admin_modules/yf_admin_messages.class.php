@@ -10,7 +10,7 @@ class yf_admin_messages {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_admin_messages () {
-		$this->USER_ID = intval($_GET['user_id']);
+		main()->USER_ID = intval($_GET['user_id']);
 		// Get user account type
 		$this->_account_types	= main()->get_data("account_types");
 	}
@@ -19,7 +19,7 @@ class yf_admin_messages {
 	// Default method
 	function show () {
 		// Show all messages if no user selected
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return $this->_view_all_messages();
 		} else {
 			return $this->_show_for_user();
@@ -29,9 +29,9 @@ class yf_admin_messages {
 	//-----------------------------------------------------------------------------
 	// Display popup window for adding admin message to the specified user id
 	function show_popup () {
-		$user_id = $this->USER_ID;
+		$user_id = main()->USER_ID;
 		// Get user info
-		$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($user_id));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($user_id));
 		if (empty($user_info)) {
 			return _e("No such user");
 		}
@@ -50,12 +50,12 @@ class yf_admin_messages {
 	// Do add message for the specified user
 	function add () {
 		// Check for user_id
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _e("User ID is required");
 		}
-		$user_id = $this->USER_ID;
+		$user_id = main()->USER_ID;
 		// Get user info
-		$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($user_id));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($user_id));
 		if (empty($user_info)) {
 			return _e("No such user");
 		}
@@ -83,7 +83,7 @@ class yf_admin_messages {
 	// Display link to the popup URL to send message to the given user_id
 	function _popup_link ($user_id = 0) {
 		if (empty($user_id)) {
-			$user_id = $this->USER_ID;
+			$user_id = main()->USER_ID;
 		}
 		return process_url("./?object=".__CLASS__."&action=show_popup&user_id=".intval($user_id));
 	}
@@ -95,13 +95,13 @@ class yf_admin_messages {
 			$user_id = $user_id["user_id"];
 		}
 		if (empty($user_id)) {
-			$user_id = $this->USER_ID;
+			$user_id = main()->USER_ID;
 		}
 		if (empty($user_id)) {
 			return "User ID is required";
 		}
 		// Connect pager
-		$sql = "SELECT * FROM `".db('admin_messages')."` WHERE `user_id`=".intval($user_id)." ORDER BY `time` DESC";
+		$sql = "SELECT * FROM ".db('admin_messages')." WHERE user_id=".intval($user_id)." ORDER BY time DESC";
 		list($add_sql, $pages, $total)	= common()->divide_pages($sql);
 		// Get messages from the database
 		$Q = db()->query($sql.$add_sql);
@@ -132,9 +132,9 @@ class yf_admin_messages {
 	function _view_all_messages () {
 // TODO: write templates, code is mostly done here
 		// Connect pager
-		$sql = "SELECT * FROM `".db('admin_messages')."`";
+		$sql = "SELECT * FROM ".db('admin_messages')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `time` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY time DESC ";
 		list($add_sql, $pages, $total)	= common()->divide_pages($sql);
 		// Get messages from the database
 		$Q = db()->query($sql.$add_sql);
@@ -147,14 +147,14 @@ class yf_admin_messages {
 		unset($admins_ids[""]);
 		// Get users names
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `id` IN(".implode(",",$users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('user')." WHERE id IN(".implode(",",$users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$users_infos[$A["id"]] = $A;
 			}
 		}
 		// Get admins names
 		if (!empty($admins_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('admin')."` WHERE `id` IN(".implode(",",$admins_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('admin')." WHERE id IN(".implode(",",$admins_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$admins_infos[$A["id"]] = $A;
 			}
@@ -194,13 +194,13 @@ class yf_admin_messages {
 	function view () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (!empty($_GET["id"])) {
-			$msg_info = db()->query_fetch("SELECT * FROM `".db('admin_messages')."` WHERE `id`=".intval($_GET["id"]));
+			$msg_info = db()->query_fetch("SELECT * FROM ".db('admin_messages')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($msg_info)) {
 			return _re("No such message!");
 		}
 		// Get user info
-		$user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($msg_info["user_id"]));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($msg_info["user_id"]));
 		// Process template
 		$replace = array(
 			"title"			=> _prepare_html($msg_info["title"]),
@@ -239,19 +239,19 @@ class yf_admin_messages {
 // TODO
 /*
 		// Generate filter for the common fileds
-		if ($F["id_min"]) 				$sql .= " AND `id` >= ".intval($F["id_min"])." \r\n";
-		if ($F["id_max"])			 	$sql .= " AND `id` <= ".intval($F["id_max"])." \r\n";
-		if (strlen($F["name"])) 		$sql .= " AND `name` LIKE '"._es($F["name"])."%' \r\n";
-		if (strlen($F["nick"])) 		$sql .= " AND `nick` LIKE '"._es($F["nick"])."%' \r\n";
-		if (strlen($F["email"])) 		$sql .= " AND `email` LIKE '"._es($F["email"])."%' \r\n";
-		if (strlen($F["login"])) 		$sql .= " AND `login` LIKE '"._es($F["login"])."%' \r\n";
-		if (strlen($F["password"])) 	$sql .= " AND `password` LIKE '"._es($F["password"])."%' \r\n";
-		if ($F["account_type"])		$sql .= " AND `group` = ".intval($F["account_type"])." \r\n";
-		if (strlen($F["state"]))		$sql .= " AND `state` = '".$F["state"]."' \r\n";
-		if ($F["country"])	 			$sql .= " AND `country` = '".$this->_countries[$F["country"]]."' \r\n";
+		if ($F["id_min"]) 				$sql .= " AND id >= ".intval($F["id_min"])." \r\n";
+		if ($F["id_max"])			 	$sql .= " AND id <= ".intval($F["id_max"])." \r\n";
+		if (strlen($F["name"])) 		$sql .= " AND name LIKE '"._es($F["name"])."%' \r\n";
+		if (strlen($F["nick"])) 		$sql .= " AND nick LIKE '"._es($F["nick"])."%' \r\n";
+		if (strlen($F["email"])) 		$sql .= " AND email LIKE '"._es($F["email"])."%' \r\n";
+		if (strlen($F["login"])) 		$sql .= " AND login LIKE '"._es($F["login"])."%' \r\n";
+		if (strlen($F["password"])) 	$sql .= " AND password LIKE '"._es($F["password"])."%' \r\n";
+		if ($F["account_type"])		$sql .= " AND group = ".intval($F["account_type"])." \r\n";
+		if (strlen($F["state"]))		$sql .= " AND state = '".$F["state"]."' \r\n";
+		if ($F["country"])	 			$sql .= " AND country = '".$this->_countries[$F["country"]]."' \r\n";
 */
 		// Sorting here
-		if ($F["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$F["sort_by"]]."` \r\n";
+		if ($F["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$F["sort_by"]]." \r\n";
 		if ($F["sort_by"] && strlen($F["sort_order"])) 	$sql .= " ".$F["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

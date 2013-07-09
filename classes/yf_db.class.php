@@ -804,19 +804,6 @@ class yf_db {
 	}
 
 	/**
-	* Return database-specific limit of returned rows
-	*/
-	function limit($count, $offset) {
-		if (!$this->_connected && !$this->connect()) {
-			return false;
-		}
-		if (!is_object($this->db)) {
-			return false;
-		}
-		return $this->db->limit($count, $offset);
-	}
-
-	/**
 	* Enclose field names
 	*/
 	function enclose_field_name($data) {
@@ -1179,5 +1166,116 @@ class yf_db {
 			}
 		}
 		return $query_header . "\n" . $query_sql;
+	}
+
+	/**
+	*/
+	function delete($table, $where) {
+		// Do not allow wide deletes, to prevent awful mistakes, use plain db()->query("DELETE ...") instead
+		if (!$where) {
+			return false;
+		}
+		$cond = "id=".$this->enclose_field_value($where);
+		if (is_array($where)) {
+			$cond = key($where)."=".$this->enclose_field_value(current($where));
+		}
+		$sql = "DELETE FROM ".$this->_real_name($table)." WHERE ".$cond;
+		return $this->query($sql);
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function select($fields = array()) {
+		if (is_array($fields)) {
+			$sql = "SELECT ".implode(",", $fields);
+		} elseif (empty($fields) || $fields == "*") {
+			$sql = "SELECT *";
+		}
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function from() {
+// TODO
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function join($table) {
+// TODO
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function where() {
+// TODO
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function group_by() {
+// TODO
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function order_by() {
+// TODO
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function having() {
+// TODO
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function limit($count, $offset) {
+// TODO: convert into query generation chain
+/*
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		if (!is_object($this->db)) {
+			return false;
+		}
+		return $this->db->limit($count, $offset);
+*/
+		return $this;
+	}
+
+	/**
+	* Execute generated query
+	*/
+	function exec() {
+		$sql = implode(" ", (array)$this->_sql);
+		if (empty($sql)) {
+			return false;
+		}
+		echo $sql;
+#		return $this->query($sql);
 	}
 }

@@ -17,7 +17,7 @@ class yf_articles_search_comments {
 	* Display comments posted in user's articles
 	*/
 	function search_comments(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (isset($_GET["id"]) && !isset($_GET["page"])) {
@@ -38,7 +38,7 @@ class yf_articles_search_comments {
 		}
 		
 		if(!empty($_SESSION["cats_select_box"])){
-			$WHERE = " AND `cat_id`=".$_SESSION["cats_select_box"];
+			$WHERE = " AND cat_id=".$_SESSION["cats_select_box"];
 		}
 		
 		if(empty($_SESSION["sort_type_select_box"])){
@@ -46,7 +46,7 @@ class yf_articles_search_comments {
 		}
 		
 		
-		$Q = db()->query("SELECT `id`,`title`,`cat_id` FROM `".db('articles_texts')."` WHERE `user_id`=".$this->USER_ID.$WHERE);
+		$Q = db()->query("SELECT id,title,cat_id FROM ".db('articles_texts')." WHERE user_id=".main()->USER_ID.$WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];
 			$posts[$A["id"]] = $A;
@@ -56,13 +56,13 @@ class yf_articles_search_comments {
 		if (!empty($posts_ids)) {
 		
 			if($this->PARENT_OBJ->SEARCH_ONLY_MEMBER){
-				$serch_only_member = " AND NOT (`user_id` = 0)";
+				$serch_only_member = " AND NOT (user_id = 0)";
 			}
 
 			$sql = "SELECT * 
-					FROM `".db('comments')."` 
-					WHERE `object_name`='articles' AND `object_id` IN(".implode(",", $posts_ids).")	".$serch_only_member;
-			$order_sql	= " ORDER BY `add_date` ".$_SESSION["sort_type_select_box"];
+					FROM ".db('comments')." 
+					WHERE object_name='articles' AND object_id IN(".implode(",", $posts_ids).")	".$serch_only_member;
+			$order_sql	= " ORDER BY add_date ".$_SESSION["sort_type_select_box"];
 			list($add_sql, $pages, $total) = common()->divide_pages($sql);
 			$Q = db()->query($sql.$order_sql.$add_sql);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -90,7 +90,7 @@ class yf_articles_search_comments {
 		}
 		
 		if (!empty($cats_ids)) {
-			$Q = db()->query("SELECT `id`,`name` FROM `".db('category_items')."` WHERE `cat_id` = 1 AND `id` IN(".implode(",", $cats_ids).") ORDER BY `order`");
+			$Q = db()->query("SELECT id,name FROM ".db('category_items')." WHERE cat_id = 1 AND id IN(".implode(",", $cats_ids).") ORDER BY `order`");
 			while ($A = db()->fetch_assoc($Q)) {
 				$cats[$A["id"]] = $A["name"];
 			}
@@ -146,7 +146,7 @@ class yf_articles_search_comments {
 	* Do delete comment
 	*/
 	function _delete(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -154,12 +154,12 @@ class yf_articles_search_comments {
 			return _e("Empty ID");
 		}
 		$comment_info = db()->query_fetch(
-			"SELECT * FROM `".db('comments')."` 
-			WHERE `object_name`='".ARTICLES_CLASS_NAME."' 
-				AND `object_id` IN(
-					SELECT `id` FROM `".db('articles_texts')."` WHERE `user_id` = ".intval($this->USER_ID)."
+			"SELECT * FROM ".db('comments')." 
+			WHERE object_name='".ARTICLES_CLASS_NAME."' 
+				AND object_id IN(
+					SELECT id FROM ".db('articles_texts')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
-				AND `id`=".intval($_GET["id"])
+				AND id=".intval($_GET["id"])
 		);
 		if (empty($comment_info)) {
 			return _e(t("You have no rights to delete this comment"));

@@ -36,7 +36,7 @@ class yf_gallery_cleanup {
 		$SLEEP_EVERY_NUM_CYCLES	= 1000;
 		$DELETE_WRONG_RECORDS	= 0;
 		// Delete all inactive gallery photos records
-		db()->query("DELETE FROM `".db('gallery_photos')."` WHERE `active`='0'");
+		db()->query("DELETE FROM ".db('gallery_photos')." WHERE active='0'");
 		// Start to cleanup "dead" photos
 		$path_to_photos = INCLUDE_PATH.$this->GALLERY_OBJ->GALLERY_DIR;
 		// ############ STEP 1 ###############
@@ -59,7 +59,7 @@ class yf_gallery_cleanup {
 				$USER_EXISTS = !empty($try_user_info["id"]) ? 1 : 0;
 				// Get user photos records
 				if ($USER_EXISTS) {
-					$Q = db()->query("SELECT * FROM `".db('gallery_photos')."` WHERE `user_id`=".intval($i));
+					$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".intval($i));
 					while ($A = db()->fetch_assoc($Q)) $user_known_photos[$A["id"]] = $A;
 				}
 				// Array of additional photos infos
@@ -128,7 +128,7 @@ class yf_gallery_cleanup {
 				}
 				// Update user photos with gathered info
 				foreach ((array)$user_photos_other_infos as $_photo_id => $_cur_photo_info) {
-					db()->query("UPDATE `".db('gallery_photos')."` SET `other_info`='"._es(serialize($_cur_photo_info))."' WHERE `id`=".intval($_photo_id));
+					db()->query("UPDATE ".db('gallery_photos')." SET other_info='"._es(serialize($_cur_photo_info))."' WHERE id=".intval($_photo_id));
 				}
 			}
 		}
@@ -139,7 +139,7 @@ class yf_gallery_cleanup {
 		if ($this->ALLOW_STEP_2) {
 			$have_netpbm = (!defined("NETPBM_PATH") || NETPBM_PATH == "");
 			$counter = 0;
-			$Q = db()->query("SELECT * FROM `".db('gallery_photos')."`");
+			$Q = db()->query("SELECT * FROM ".db('gallery_photos')."");
 			while ($A = db()->fetch_assoc($Q)) {
 				// Sleep if needed
 				if (!($counter++ % $SLEEP_EVERY_NUM_CYCLES)) {
@@ -213,12 +213,12 @@ class yf_gallery_cleanup {
 				// Deactivate record if photo is wrong
 				if ($PHOTO_CORRUPTED || $PHOTO_HAS_PROBLEMS) {
 					if ($DELETE_WRONG_RECORDS && !$PHOTO_HAS_PROBLEMS) {
-						db()->query("DELETE FROM `".db('gallery_photos')."` WHERE `id`=".intval($A["id"]));
+						db()->query("DELETE FROM ".db('gallery_photos')." WHERE id=".intval($A["id"]));
 					} else {
-						db()->query("UPDATE `".db('gallery_photos')."` SET `active`='0' WHERE `id`=".intval($A["id"]));
+						db()->query("UPDATE ".db('gallery_photos')." SET active='0' WHERE id=".intval($A["id"]));
 					}
 				} else {
-					db()->query("UPDATE `".db('gallery_photos')."` SET `active`='1' WHERE `id`=".intval($A["id"]));
+					db()->query("UPDATE ".db('gallery_photos')." SET active='1' WHERE id=".intval($A["id"]));
 				}
 			}
 		}
@@ -233,72 +233,72 @@ class yf_gallery_cleanup {
 			$creation_date	= time();
 			// Delete photos with missing users
 			db()->query(
-				"DELETE FROM `".db('gallery_photos')."` 
-					WHERE `user_id` NOT IN(
-						SELECT `id` FROM `".db('user')."`
+				"DELETE FROM ".db('gallery_photos')." 
+					WHERE user_id NOT IN(
+						SELECT id FROM ".db('user')."
 					)"
 			);
 			// Delete folders with missing users
 			db()->query(
-				"DELETE FROM `".db('gallery_folders')."` 
-					WHERE `user_id` NOT IN(
-						SELECT `id` FROM `".db('user')."`
+				"DELETE FROM ".db('gallery_folders')." 
+					WHERE user_id NOT IN(
+						SELECT id FROM ".db('user')."
 					)"
 			);
 			// Create temporary table
 			$tmp_table_name = db()->_get_unique_tmp_table_name();
 			db()->query(
-				"CREATE TEMPORARY TABLE `".$tmp_table_name."` ( 
-					`user_id`		int(10) unsigned NOT NULL, 
-					`def_folder_id`	int(10) unsigned NOT NULL, 
-					PRIMARY KEY (`user_id`),
-					KEY (`def_folder_id`)
+				"CREATE TEMPORARY TABLE ".$tmp_table_name." ( 
+					user_id		int(10) unsigned NOT NULL, 
+					def_folder_id	int(10) unsigned NOT NULL, 
+					PRIMARY KEY (user_id),
+					KEY (def_folder_id)
 				)"
 			);
 			// Save all users with folders
 			db()->query(
-				"REPLACE INTO `".$tmp_table_name."` (`user_id`) 
-					SELECT DISTINCT(`user_id`) 
-					FROM `".db('gallery_folders')."` 
-					WHERE `is_default`='1'"
+				"REPLACE INTO ".$tmp_table_name." (user_id) 
+					SELECT DISTINCT(user_id) 
+					FROM ".db('gallery_folders')." 
+					WHERE is_default='1'"
 			);
 			// First get all users without folders and create default folders
-			$sql = "INSERT INTO `".db('gallery_folders')."` ( 
-					`user_id`,
-					`title`,
-					`is_default`,
-					`add_date`
-				) SELECT DISTINCT(`p`.`user_id`), 
+			$sql = "INSERT INTO ".db('gallery_folders')." ( 
+					user_id,
+					title,
+					is_default,
+					add_date
+				) SELECT DISTINCT(p.user_id), 
 					'"._es($def_title)."',
 					'".$is_default."', 
 					'".intval($creation_date)."'
-				FROM `".db('gallery_photos')."` AS `p`
-				WHERE `p`.`user_id` NOT IN ( 
-						SELECT `user_id` FROM `".$tmp_table_name."`
+				FROM ".db('gallery_photos')." AS p
+				WHERE p.user_id NOT IN ( 
+						SELECT user_id FROM ".$tmp_table_name."
 					)";
 			db()->query($sql);
 			// Cleanup temp
-			db()->query("TRUNCATE TABLE `".$tmp_table_name."`");
+			db()->query("TRUNCATE TABLE ".$tmp_table_name."");
 			// Update (default folders ids <=> users ids)
 			db()->query(
-				"REPLACE INTO `".$tmp_table_name."` (`user_id`,`def_folder_id`) 
-					SELECT DISTINCT(`user_id`), `id`
-					FROM `".db('gallery_folders')."` 
-					WHERE `is_default`='1'"
+				"REPLACE INTO ".$tmp_table_name." (user_id,def_folder_id) 
+					SELECT DISTINCT(user_id), id
+					FROM ".db('gallery_folders')." 
+					WHERE is_default='1'"
 			);
 			// Then update default folders numbers for all photos where folder_id == 0
-			$sql = "UPDATE `".db('gallery_photos')."` AS `p`
-					SET `p`.`folder_id` = (
-						SELECT `f`.`def_folder_id` 
-						FROM `".$tmp_table_name."` AS `f` 
-						WHERE `f`.`user_id` = `p`.`user_id`
+			$sql = "UPDATE ".db('gallery_photos')." AS p
+					SET p.folder_id = (
+						SELECT f.def_folder_id 
+						FROM ".$tmp_table_name." AS f 
+						WHERE f.user_id = p.user_id
 					)
-					WHERE `p`.`folder_id` = 0";
+					WHERE p.folder_id = 0";
 			db()->query($sql);
 			// Cleanup temp
-			db()->query("DROP TEMPORARY TABLE `".$tmp_table_name."`");
+			db()->query("DROP TEMPORARY TABLE ".$tmp_table_name."");
 			// Optimize tables
-			db()->query("OPTIMIZE TABLE `".db('gallery_folders')."`");
+			db()->query("OPTIMIZE TABLE ".db('gallery_folders')."");
 		}
 		// Update public photos
 		$this->GALLERY_OBJ->_sync_public_photos();

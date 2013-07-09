@@ -21,7 +21,7 @@ class yf_admin_modules_install {
 			return _e(t("Wrong module id"));
 		}
 		// Try to find such module in db
-		$module_info = db()->query_fetch("SELECT * FROM `".db('admin_modules')."` WHERE `name`='"._es($_GET["id"])."' LIMIT 1");
+		$module_info = db()->query_fetch("SELECT * FROM ".db('admin_modules')." WHERE name='"._es($_GET["id"])."' LIMIT 1");
 		if (empty($module_info)) {
 			return _e(t("No such module"));
 		}
@@ -61,7 +61,7 @@ class yf_admin_modules_install {
 				}
 			}
 			// Do delete module db record
-			db()->query("DELETE FROM `".db('admin_modules')."` WHERE `id`=".intval($module_info["id"]));
+			db()->query("DELETE FROM ".db('admin_modules')." WHERE id=".intval($module_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("admin_modules");
 			// Return user back

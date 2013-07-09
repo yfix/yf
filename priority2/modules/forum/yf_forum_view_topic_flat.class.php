@@ -27,7 +27,7 @@ class yf_forum_view_topic_flat {
 		// Show only one post if specified
 		if (!empty($GLOBALS['show_only_post_id'])) {
 			if (!empty($_GET["id"])) {
-				$this->_post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($_GET["id"]));
+				$this->_post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($_GET["id"]));
 			}
 			// Check post existance
 			if (empty($this->_post_info["id"])) {
@@ -39,7 +39,7 @@ class yf_forum_view_topic_flat {
 		}
 		// Get topic info
 		if (!empty($topic_id)) {
-			$this->_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+			$this->_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 			module('forum')->_topic_info = $this->_topic_info;
 		}
 		// Check topic existance
@@ -67,7 +67,7 @@ class yf_forum_view_topic_flat {
 			return module('forum')->_show_error("Private Forum!");
 		}
 		// Count user view
-		db()->_add_shutdown_query("UPDATE `".db('forum_topics')."` SET `num_views`=`num_views`+1 WHERE `id`=".intval($this->_topic_info["id"]));
+		db()->_add_shutdown_query("UPDATE ".db('forum_topics')." SET num_views=num_views+1 WHERE id=".intval($this->_topic_info["id"]));
 		// Add read topic record
 		if (FORUM_USER_ID && module('forum')->SETTINGS["USE_READ_MESSAGES"]) {
 			module('forum')->_set_topic_read($this->_topic_info);
@@ -76,13 +76,13 @@ class yf_forum_view_topic_flat {
 		$posts_per_page = !empty(module('forum')->USER_SETTINGS["POSTS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["POSTS_PER_PAGE"] : module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"];
 		$path = "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$this->_topic_info["id"];
 		// Divide pages
-		$order_by = " ORDER BY `created` ASC ";
-		$sql = "SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".$this->_topic_info["id"];
+		$order_by = " ORDER BY created ASC ";
+		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$this->_topic_info["id"];
 		// For user hide unapproved topics
-		$sql .= !FORUM_IS_ADMIN ? " AND `status`='a' " : "";
+		$sql .= !FORUM_IS_ADMIN ? " AND status='a' " : "";
 		// Limit to display only one post
 		if (!empty($GLOBALS['show_only_post_id']) && !empty($this->_post_info["id"])) {
-			$sql .= " AND `id`=".intval($this->_post_info["id"])." ";
+			$sql .= " AND id=".intval($this->_post_info["id"])." ";
 			// Get posts info
 			$Q = db()->query($sql. $order_by. $add_sql);
 			while ($A = db()->fetch_assoc($Q)) $this->_posts_array[] = $A;
@@ -97,7 +97,7 @@ class yf_forum_view_topic_flat {
 				}
 				$sql .= $order_by." LIMIT ".intval($first_record).",".intval($posts_per_page);
 				// Get ids
-				$Q = db()->query(str_replace("SELECT *", "SELECT SQL_CALC_FOUND_ROWS `id`", $sql));
+				$Q = db()->query(str_replace("SELECT *", "SELECT SQL_CALC_FOUND_ROWS id", $sql));
 				while ($A = db()->fetch_assoc($Q)) $this->_posts_array[$A["id"]] = $A["id"];
 				// Get infos
 				if (!empty($this->_posts_array)) {
@@ -106,13 +106,13 @@ class yf_forum_view_topic_flat {
 					$topic_num_posts = intval($topic_num_posts);
 					list(, $topic_pages, ) = common()->divide_pages(null, $path, null, $posts_per_page, $topic_num_posts, FORUM_CLASS_NAME."/pages_1/");
 					if (!empty($topic_num_posts)) {
-						$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", array_keys($this->_posts_array)).")");
+						$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",", array_keys($this->_posts_array)).")");
 						while ($A = db()->fetch_assoc($Q)) $this->_posts_array[$A["id"]] = $A;
 					}
 				}
 			// Common version
 			} else {
-				list($add_sql, $topic_pages, $topic_num_posts) = common()->divide_pages(str_replace("SELECT * ", "SELECT `id` ", $sql), $path, null, $posts_per_page, null, FORUM_CLASS_NAME."/pages_1/");
+				list($add_sql, $topic_pages, $topic_num_posts) = common()->divide_pages(str_replace("SELECT * ", "SELECT id ", $sql), $path, null, $posts_per_page, null, FORUM_CLASS_NAME."/pages_1/");
 				// Get posts info
 				$Q = db()->query($sql. $order_by. $add_sql);
 				while ($A = db()->fetch_assoc($Q)) $this->_posts_array[] = $A;

@@ -97,8 +97,8 @@ class yf_maxmind_phone_verify {
 		// search phone number in log_ dbtable		
 		$DO_IDENTIFICATION 	= true;
 		$A = db()->query_fetch(
-			"SELECT * FROM `".db('log_maxmind_phone_verify')."` 
-			WHERE `phone_num`='".$phone_num."' AND `check_type`='i' AND `ref_id` != ''"
+			"SELECT * FROM ".db('log_maxmind_phone_verify')." 
+			WHERE phone_num='".$phone_num."' AND check_type='i' AND ref_id != ''"
 		);
 		if ($A) {
 			$this->_action_log .= "This phone already checked for identify (log id=".$A["id"].", result=".intval($A["success"]).", date="._format_date($A["date"], "long").", server answer: "._prepare_html($A["server_answer"]).")<br />";
@@ -192,8 +192,8 @@ class yf_maxmind_phone_verify {
 			 	$DO_VERIFICATION = false;
 			} else {
 				$B = db()->query_fetch(
-					"SELECT * FROM `".db('log_maxmind_phone_verify')."` 
-					WHERE `phone_num`='".$phone_num."' AND `check_type`='v' AND `ref_id` != ''"
+					"SELECT * FROM ".db('log_maxmind_phone_verify')." 
+					WHERE phone_num='".$phone_num."' AND check_type='v' AND ref_id != ''"
 				);
 			}
 			if ($B) {

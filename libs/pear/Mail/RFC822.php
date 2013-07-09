@@ -277,7 +277,7 @@ class Mail_RFC822 {
 		// is to account for the explode character.
 		$address = trim(substr($address, strlen($string) + 1));
 
-		// If the next char is a comma and this was a group, then
+		// If the next char is a comma and this was a `group`, then
 		// there are more addresses, otherwise, if there are any more
 		// chars, then there is another address.
 		if ($is_group && substr($address, 0, 1) == ','){

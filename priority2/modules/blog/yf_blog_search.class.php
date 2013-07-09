@@ -29,16 +29,16 @@ class yf_blog_search {
 		// Get unique blog posters
 		$filter_sql = $this->BLOG_OBJ->USE_FILTER ? $this->BLOG_OBJ->_create_filter_sql() : "";
 		if (empty($filter_sql)) {
-			$filter_sql = " ORDER BY `num_posts` DESC ";
+			$filter_sql = " ORDER BY num_posts DESC ";
 		}
 		// Give handling to the specific method if needed
 		if ($this->BLOG_OBJ->_SEARCH_AS_POSTS) {
 			return $this->_search_as_posts($filter_sql);
 		}
-		$sql = "SELECT * FROM `".db('blog_settings')."` AS `s` WHERE `num_posts` > 0 ".$filter_sql;
+		$sql = "SELECT * FROM ".db('blog_settings')." AS s WHERE num_posts > 0 ".$filter_sql;
 		$path = "./?object=".BLOG_CLASS_NAME."&action=show_all_blogs&id=all";
 		$per_page = !empty($params["per_page"]) ? $params["per_page"] : $this->BLOG_OBJ->VIEW_ALL_ON_PAGE;
-		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT `user_id`", $sql), $path, null, $per_page);
+		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT user_id", $sql), $path, null, $per_page);
 		// Get contents from db
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) $blogs_infos[$A["user_id"]] = $A;
@@ -93,9 +93,9 @@ class yf_blog_search {
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
 // TODO
 		}
-		$sql = "SELECT * FROM `".db('blog_posts')."` AS `p`, `".db('blog_settings')."` AS `s` WHERE `p`.`user_id`=`s`.`user_id` ".$filter_sql;
+		$sql = "SELECT * FROM ".db('blog_posts')." AS p, ".db('blog_settings')." AS s WHERE p.user_id=s.user_id ".$filter_sql;
 		$path = "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]."&id=all";
-		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT `id`", $sql), $path, null, $this->BLOG_OBJ->VIEW_ALL_ON_PAGE);
+		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT id", $sql), $path, null, $this->BLOG_OBJ->VIEW_ALL_ON_PAGE);
 		// Get contents from db
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -169,16 +169,16 @@ class yf_blog_search {
 		}
 		// Get posts in selected category
 		$sql = "SELECT 
-				`id` AS `post_id`,
-				`user_id`,
-				`add_date` AS `post_date`,
-				`title` AS `post_title`,
-				`num_reads`,
-				SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `cat_id`=".intval($_GET["id"]);
-		$order_sql	= " ORDER BY `add_date` DESC ";
+				id AS post_id,
+				user_id,
+				add_date AS post_date,
+				title AS post_title,
+				num_reads,
+				SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND cat_id=".intval($_GET["id"]);
+		$order_sql	= " ORDER BY add_date DESC ";
 		$path		= "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->BLOG_OBJ->SHOW_IN_CAT_ON_PAGE);
 		// Get contents from db
@@ -286,19 +286,19 @@ class yf_blog_search {
 			// Try to get latest friends posts
 			$sql = 
 				"SELECT 
-					`id` AS `post_id`,
-					`user_id`,
-					`title` AS `post_title`,
-					`add_date` AS `post_date`,
-					`privacy`,
-					`allow_comments`,
-					`num_reads`,
-					SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-				FROM `".db('blog_posts')."` 
-				WHERE `active`=1 
-					AND `user_id` IN (".implode(",", $friends_ids).")
-					AND `privacy` NOT IN(9)
-				ORDER BY `add_date` DESC ";
+					id AS post_id,
+					user_id,
+					title AS post_title,
+					add_date AS post_date,
+					privacy,
+					allow_comments,
+					num_reads,
+					SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+				FROM ".db('blog_posts')." 
+				WHERE active=1 
+					AND user_id IN (".implode(",", $friends_ids).")
+					AND privacy NOT IN(9)
+				ORDER BY add_date DESC ";
 			list($add_sql, $pages, $total, $counter) = common()->divide_pages($sql, null, null, $this->BLOG_OBJ->FRIENDS_POSTS_PER_PAGE);
 			$Q = db()->query($sql. $add_sql);
 			while ($A = db()->fetch_assoc($Q)) {

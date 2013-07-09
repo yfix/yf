@@ -53,29 +53,29 @@ class yf_other_common {
 		$STORE_UNKNOWN_IPS = true;
 		// Also check if IP is not recognized by our system and skip it
 		if ($STORE_UNKNOWN_IPS && db()->query_num_rows(
-			"SELECT * FROM `".db('geo_skip_ip')."` WHERE `ip` = INET_ATON('"._es($cur_ip)."')"
+			"SELECT * FROM ".db('geo_skip_ip')." WHERE ip = INET_ATON('"._es($cur_ip)."')"
 		)) {
 			return false;
 		}
 		// Prepare query
 		$sql = 
 			"SELECT * 
-			FROM `".db('geo_city_location')."` 
-			WHERE `loc_id` = ( 
-				SELECT `loc_id` FROM `".db('geo_city_blocks')."`
-				WHERE `start_ip` <= INET_ATON('"._es($cur_ip)."') 
-					AND `end_ip` >= INET_ATON('"._es($cur_ip)."') 
+			FROM ".db('geo_city_location')." 
+			WHERE loc_id = ( 
+				SELECT loc_id FROM ".db('geo_city_blocks')."
+				WHERE start_ip <= INET_ATON('"._es($cur_ip)."') 
+					AND end_ip >= INET_ATON('"._es($cur_ip)."') 
 				LIMIT 1 
 			)";
 		$A = db()->query_fetch($sql);
 		if (empty($A)) {
 			if ($STORE_UNKNOWN_IPS) {
 				db()->query(
-					"INSERT INTO `".db('geo_skip_ip')."` (
-						`ip`, `hits`
+					"INSERT INTO ".db('geo_skip_ip')." (
+						ip, hits
 					) VALUES (
 						INET_ATON('"._es($cur_ip)."'), 1
-					) ON DUPLICATE KEY UPDATE `hits` = `hits` + 1"
+					) ON DUPLICATE KEY UPDATE hits = hits + 1"
 				);
 			}
 			return false;

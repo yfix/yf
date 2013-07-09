@@ -45,7 +45,7 @@ class yf_analyze_engine_log {
 			"n" => "No Bots",
 		);
 
-		$Q = db()->query("SELECT * FROM `".db('sites')."` WHERE `active` = '1' AND `country` != '' ORDER BY `name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('sites')." WHERE active = '1' AND country != '' ORDER BY name ASC");
 		while($A = db()->fetch_assoc($Q)) {
 			$this->sys_sites[$A["id"]] = $A["name"];
 			$this->sys_sites_info[$A["id"]] = $A;
@@ -250,7 +250,7 @@ class yf_analyze_engine_log {
 			$body .= "<th>Cache hits</th>";
 			$body .= "</thead>";
 			// Sys sites
-			$Q = db()->query("SELECT * FROM `".db('log_exec_daily')."` WHERE `site_id` != '' AND `day`='"._es($_GET["id"])."' ORDER BY `site_id` ASC");
+			$Q = db()->query("SELECT * FROM ".db('log_exec_daily')." WHERE site_id != '' AND day='"._es($_GET["id"])."' ORDER BY site_id ASC");
 			while ($info = db()->fetch_assoc($Q)) {
 				$site_id = $info["site_id"];
 				$body .= "<tr>";
@@ -281,13 +281,13 @@ class yf_analyze_engine_log {
 			$body .= "</thead>";
 			// Days aggregated
 			$Q = db()->query(
-				"SELECT `day`, `site_id`, SUM(`hosts`) AS s_hosts, SUM(`spider_hosts`) AS s_spider_hosts, SUM(`member_hosts`) AS s_member_hosts, SUM(`hits`) AS s_hits, SUM(`spider_hits`) AS s_spider_hits, SUM(`cache_hits`) AS s_cache_hits, SUM(`member_hits`) AS s_member_hits
-				FROM `".db('log_exec_daily')."` 
-				WHERE `site_id` != '' 
-				AND `day` >= '"._es($str_date_from)."' 
-				AND `day` <= '"._es($str_date_to)."'
-				GROUP BY `day`
-				ORDER BY `day` DESC"
+				"SELECT day, site_id, SUM(hosts) AS s_hosts, SUM(spider_hosts) AS s_spider_hosts, SUM(member_hosts) AS s_member_hosts, SUM(hits) AS s_hits, SUM(spider_hits) AS s_spider_hits, SUM(cache_hits) AS s_cache_hits, SUM(member_hits) AS s_member_hits
+				FROM ".db('log_exec_daily')." 
+				WHERE site_id != '' 
+				AND day >= '"._es($str_date_from)."' 
+				AND day <= '"._es($str_date_to)."'
+				GROUP BY day
+				ORDER BY day DESC"
 			);
 			while ($info = db()->fetch_assoc($Q)) {
 				$day = $info["day"];
@@ -319,7 +319,7 @@ class yf_analyze_engine_log {
 	* 
 	*/
 	function refresh_stats() {
-		$Q = db()->query("SELECT `day` FROM `".db('log_exec_daily')."` WHERE `site_id` != '' GROUP BY `day`");
+		$Q = db()->query("SELECT day FROM ".db('log_exec_daily')." WHERE site_id != '' GROUP BY day");
 		while ($A = db()->fetch_assoc($Q)) {
 			$daily_stats[$A["day"]] = true;
 		}

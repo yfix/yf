@@ -1,4 +1,4 @@
-<div class="cart">
+<div class="basket">
 
 {if("products" ne "")}
 <table width="100%">

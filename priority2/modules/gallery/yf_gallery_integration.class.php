@@ -41,7 +41,7 @@ class yf_gallery_integration {
 	
 	function _rss_general(){
 
-		$Q = db()->query("SELECT `id`,`name`,`desc`,`user_id`,`add_date` FROM `".db('gallery_photos')."` WHERE `active`='1' AND `is_public`='1' LIMIT ".$this->GALLERY_OBJ->NUM_RSS);
+		$Q = db()->query("SELECT id,name,desc,user_id,add_date FROM ".db('gallery_photos')." WHERE active='1' AND is_public='1' LIMIT ".$this->GALLERY_OBJ->NUM_RSS);
 		while ($A = db()->fetch_assoc($Q)) {
 			$photo_info[$A["id"]] = $A;
 			$users_ids[$A["user_id"]] = $A["user_id"];

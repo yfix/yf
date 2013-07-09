@@ -117,14 +117,14 @@ class yf_forum_view_forum {
 		}
 		$topics_per_page = !empty(module('forum')->USER_SETTINGS["TOPICS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["TOPICS_PER_PAGE"] : module('forum')->SETTINGS["NUM_TOPICS_ON_PAGE"];
 		// Prepare SQL query
-		$sql = "SELECT * FROM `".db('forum_topics')."` WHERE `forum`=".intval($this->_forum_info["id"])." ";
+		$sql = "SELECT * FROM ".db('forum_topics')." WHERE forum=".intval($this->_forum_info["id"])." ";
 		// For user hide unapproved topics
-		$sql .= !FORUM_IS_ADMIN ? " AND `approved`=1 " : "";
-		$pinned_sql = $sql. " AND `pinned`=1 ";
-		$sql .= " AND `pinned`=0 ";
+		$sql .= !FORUM_IS_ADMIN ? " AND approved=1 " : "";
+		$pinned_sql = $sql. " AND pinned=1 ";
+		$sql .= " AND pinned=0 ";
 		// Add filter SQL
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? $filter_sql : " ORDER BY `last_post_date` DESC ";
+		$sql .= strlen($filter_sql) ? $filter_sql : " ORDER BY last_post_date DESC ";
 		// Prepare path for the pages
 		$path = module('forum')->_link_to_forum($this->_forum_info["id"]);
 		// Count number of rows
@@ -138,7 +138,7 @@ class yf_forum_view_forum {
 			}
 			$sql .= " LIMIT ".intval($first_record).",".intval($topics_per_page);
 			// Get topics ids
-			$Q = db()->query(str_replace("SELECT *", "SELECT SQL_CALC_FOUND_ROWS `id`", $sql));
+			$Q = db()->query(str_replace("SELECT *", "SELECT SQL_CALC_FOUND_ROWS id", $sql));
 			while ($A = db()->fetch_assoc($Q)) {
 				$topics_array[$A["id"]] = $A["id"];
 			}
@@ -149,7 +149,7 @@ class yf_forum_view_forum {
 				$forum_num_posts = intval($forum_num_posts);
 				list(, $forum_pages, ) = common()->divide_pages(null, $path, null, $topics_per_page, $forum_num_posts, FORUM_CLASS_NAME."/pages_1/");
 				if (!empty($forum_num_posts)) {
-					$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", array_keys($topics_array)).")");
+					$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",", array_keys($topics_array)).")");
 					while ($A = db()->fetch_assoc($Q)) {
 						$topics_array[$A["id"]] = $A;
 					}
@@ -157,7 +157,7 @@ class yf_forum_view_forum {
 			}
 		// Common version
 		} else {
-			list($add_sql, $forum_pages, $forum_num_posts) = common()->divide_pages(str_replace("SELECT *","SELECT `id`",$sql), $path, null, $topics_per_page, null, FORUM_CLASS_NAME."/pages_1/");
+			list($add_sql, $forum_pages, $forum_num_posts) = common()->divide_pages(str_replace("SELECT *","SELECT id",$sql), $path, null, $topics_per_page, null, FORUM_CLASS_NAME."/pages_1/");
 			// Get data from db
 			$Q = db()->query($sql. $order_by. $add_sql);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -282,7 +282,7 @@ class yf_forum_view_forum {
 		// Process last posts records
 		if (!empty($last_posts_ids)) {
 			$last_posts = array();
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",",$last_posts_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",",$last_posts_ids).")");
 			while ($post_info = db()->fetch_assoc($Q)) {
 
 				$subject = strlen($post_info["subject"]) ? $post_info["subject"] : $post_info["text"];
@@ -416,31 +416,31 @@ class yf_forum_view_forum {
 		}
 		// Process prune days
 		if (isset($this->_filter_prune_days[$F["prune_day"]])) {
-			$sql .= " AND `created` > ".(time() - $F["prune_day"] * 3600 * 24)." \r\n";
+			$sql .= " AND created > ".(time() - $F["prune_day"] * 3600 * 24)." \r\n";
 		}
 		// Process topics flag
 		if (isset($this->_filter_topics_flags[$F["topics_flag"]])) {
 			if ($F["topics_flag"] == "all") {
 				$sql .= "";
 			} elseif ($F["topics_flag"] == "open") {
-				$sql .= " AND `status` = 'a' \r\n";
+				$sql .= " AND status = 'a' \r\n";
 			} elseif ($F["topics_flag"] == "closed") {
-				$sql .= " AND `status` = 'c' \r\n";
+				$sql .= " AND status = 'c' \r\n";
 			} elseif ($F["topics_flag"] == "hot") {
-				$sql .= " AND `num_posts` >= ".intval(module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"])." \r\n";
+				$sql .= " AND num_posts >= ".intval(module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"])." \r\n";
 			} elseif ($F["topics_flag"] == "locked") {
-				$sql .= " AND `pinned` = 1 \r\n";
+				$sql .= " AND pinned = 1 \r\n";
 			} elseif ($F["topics_flag"] == "moved")	{
-				$sql .= " AND `moved_to` != '' \r\n";
+				$sql .= " AND moved_to != '' \r\n";
 			// Only for logged in users
 			} elseif ($F["topics_flag"] == "istarted" && FORUM_USER_ID) {
-				$sql .= " AND `user_id`=".intval(FORUM_USER_ID)." \r\n";
+				$sql .= " AND user_id=".intval(FORUM_USER_ID)." \r\n";
 			}
 		}
 		// Sorting here
 		if (isset($this->_filter_sort_by[$F["sort_by"]])) {
-			$sql .= " ORDER BY `".$F["sort_by"]."` ".($F["sort_order"] == "Z-A" ? "DESC" : "ASC")." \r\n";
-		} else $sql .= " ORDER BY `last_post_date` DESC \r\n";
+			$sql .= " ORDER BY ".$F["sort_by"]." ".($F["sort_order"] == "Z-A" ? "DESC" : "ASC")." \r\n";
+		} else $sql .= " ORDER BY last_post_date DESC \r\n";
 		return substr($sql, 0, -3);
 	}
 

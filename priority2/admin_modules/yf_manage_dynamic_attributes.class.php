@@ -26,7 +26,7 @@ class yf_manage_dynamic_attributes{
 	*/
 	function show () {
 	
-		$sql		= "SELECT * FROM `".db('dynamic_fields_categories')."`";
+		$sql		= "SELECT * FROM ".db('dynamic_fields_categories')."";
 		$order_sql	= " ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$Q = db()->query($sql.$order_sql.$add_sql);
@@ -89,7 +89,7 @@ class yf_manage_dynamic_attributes{
 	*/
 	function edit_category () {
 	
-		$category_info = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_categories')."` WHERE `id` = ".intval($_GET["id"]));
+		$category_info = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_categories')." WHERE id = ".intval($_GET["id"]));
 		
 		if(empty($category_info)){
 			return _e(t("No category"));
@@ -103,7 +103,7 @@ class yf_manage_dynamic_attributes{
 			if(!common()->_error_exists()){
 				db()->UPDATE("dynamic_fields_categories", array(
 					"name"		=> _es($_POST["name"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 			}
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("dynamic_fields_categories");
@@ -125,13 +125,13 @@ class yf_manage_dynamic_attributes{
 	*/
 	function delete_category () {
 		
-		$category_info = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_categories')."` WHERE `id` = ".intval($_GET["id"]));
+		$category_info = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_categories')." WHERE id = ".intval($_GET["id"]));
 		
 		if(empty($category_info)){
 			return _e(t("No category"));
 		}
 		
-		db()->query("DELETE FROM `".db('dynamic_fields_categories')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+		db()->query("DELETE FROM ".db('dynamic_fields_categories')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("dynamic_fields_categories");
@@ -146,7 +146,7 @@ class yf_manage_dynamic_attributes{
 			return _e(t("no id"));
 		}
 	
-		$sql = "SELECT * FROM `".db('dynamic_fields_info')."` WHERE `category_id` = ".intval($_GET["id"])." ORDER BY `order`";
+		$sql = "SELECT * FROM ".db('dynamic_fields_info')." WHERE category_id = ".intval($_GET["id"])." ORDER BY `order`";
 		
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$replace2 = array(
@@ -242,7 +242,7 @@ class yf_manage_dynamic_attributes{
 
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$A = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_info')."` WHERE `id`=".$_GET["id"]);
+		$A = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_info')." WHERE id=".$_GET["id"]);
 		
 		if(isset($_POST["go"])){
 		
@@ -268,7 +268,7 @@ class yf_manage_dynamic_attributes{
 					"default_value"	=> _es($_POST["default_value"]),
 					"order"			=> $_POST["order"],
 				);
-				db()->UPDATE("dynamic_fields_info", $sql_array, "`id`=".$_GET["id"]); 
+				db()->UPDATE("dynamic_fields_info", $sql_array, "id=".$_GET["id"]); 
 
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("dynamic_fields_info");
@@ -303,7 +303,7 @@ class yf_manage_dynamic_attributes{
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
 		
-		$field_info = db()->query_fetch("SELECT * FROM `".db('dynamic_fields_info')."` WHERE `id` = ".intval($_GET["id"]));
+		$field_info = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_info')." WHERE id = ".intval($_GET["id"]));
 		
 		if(empty($field_info)){
 			return _e(t("no field"));
@@ -311,8 +311,8 @@ class yf_manage_dynamic_attributes{
 		
 		// Do delete record
 		if ($_GET["id"]) {
-			db()->query("DELETE FROM `".db('dynamic_fields_info')."` WHERE `id`=".$_GET["id"]);
-			db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `category_id` = ".$field_info["category_id"]." AND `field_id` = ".$_GET["id"]);
+			db()->query("DELETE FROM ".db('dynamic_fields_info')." WHERE id=".$_GET["id"]);
+			db()->query("DELETE FROM ".db('dynamic_fields_values')." WHERE category_id = ".$field_info["category_id"]." AND field_id = ".$_GET["id"]);
 
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("dynamic_fields_info");
@@ -333,7 +333,7 @@ class yf_manage_dynamic_attributes{
 	function activate () {
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			list($_active) = db()->query_fetch("SELECT `active` AS `0` FROM `".db('dynamic_fields_info')."` WHERE `id`=".intval($_GET["id"]));
+			list($_active) = db()->query_fetch("SELECT active AS `0` FROM ".db('dynamic_fields_info')." WHERE id=".intval($_GET["id"]));
 			if ($_active == 0) {
 				$_set_active = 1;
 			} else {
@@ -342,7 +342,7 @@ class yf_manage_dynamic_attributes{
 			$sql_array = array(
 				"active" => $_set_active,
 			);
-			db()->UPDATE("dynamic_fields_info", $sql_array, "`id`=".intval($_GET["id"]));
+			db()->UPDATE("dynamic_fields_info", $sql_array, "id=".intval($_GET["id"]));
 
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("dynamic_fields_info");

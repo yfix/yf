@@ -17,7 +17,7 @@ class yf_gallery_search_comments {
 	* Display users comments
 	*/
 	function search_comments(){
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (isset($_GET["id"]) && !isset($_GET["page"])) {
@@ -43,10 +43,10 @@ class yf_gallery_search_comments {
 		}
 
 		if(!empty($_SESSION["cats_select_box"])){
-			$WHERE = " AND `folder_id`=".$_SESSION["cats_select_box"];
+			$WHERE = " AND folder_id=".$_SESSION["cats_select_box"];
 		}
 		
-		$Q = db()->query("SELECT * FROM `".db('gallery_photos')."` WHERE `user_id`=".$this->USER_ID. $WHERE);
+		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".main()->USER_ID. $WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];
 			$posts[$A["id"]] = $A;
@@ -55,13 +55,13 @@ class yf_gallery_search_comments {
 		if (!empty($posts_ids)) {
 		
 			if($this->GALLERY_OBJ->SEARCH_ONLY_MEMBER){
-				$serch_only_member = " AND NOT (`user_id` = 0)";
+				$serch_only_member = " AND NOT (user_id = 0)";
 			}
 
 			$sql = "SELECT * 
-					FROM `".db('comments')."` 
-					WHERE `object_name`='gallery' AND `object_id` IN(".implode(",", $posts_ids).") ".$serch_only_member;
-			$order_sql	= " ORDER BY `add_date` ".$_SESSION["sort_type_select_box"];
+					FROM ".db('comments')." 
+					WHERE object_name='gallery' AND object_id IN(".implode(",", $posts_ids).") ".$serch_only_member;
+			$order_sql	= " ORDER BY add_date ".$_SESSION["sort_type_select_box"];
 			list($add_sql, $pages, $total) = common()->divide_pages($sql);
 			$Q = db()->query($sql.$order_sql.$add_sql);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -89,7 +89,7 @@ class yf_gallery_search_comments {
 		}
 
 		
-		$Q = db()->query("SELECT `id`,`title` FROM `".db('gallery_folders')."` WHERE `user_id`=".$this->USER_ID);
+		$Q = db()->query("SELECT id,title FROM ".db('gallery_folders')." WHERE user_id=".main()->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$cats[$A["id"]] = $A["title"];
 		}
@@ -144,7 +144,7 @@ class yf_gallery_search_comments {
 	*/
 	function _delete(){
 		// Check if user is member
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -152,12 +152,12 @@ class yf_gallery_search_comments {
 			return _e("Empty ID");
 		}
 		$comment_info = db()->query_fetch(
-			"SELECT * FROM `".db('comments')."` 
-			WHERE `object_name`='".GALLERY_CLASS_NAME."' 
-				AND `object_id` IN(
-					SELECT `id` FROM `".db('gallery_photos')."` WHERE `user_id` = ".intval($this->USER_ID)."
+			"SELECT * FROM ".db('comments')." 
+			WHERE object_name='".GALLERY_CLASS_NAME."' 
+				AND object_id IN(
+					SELECT id FROM ".db('gallery_photos')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
-				AND `id`=".intval($_GET["id"])
+				AND id=".intval($_GET["id"])
 		);
 		if (empty($comment_info)) {
 			return _e("You have no rights to delete this comment");

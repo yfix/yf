@@ -24,7 +24,7 @@ class yf_news extends yf_module {
 	// Main function
 	function show () {
 		// Connect pager
-		$sql = "SELECT * FROM `".db('news')."` WHERE `active`='1' ORDER BY `add_date` DESC";
+		$sql = "SELECT * FROM ".db('news')." WHERE active='1' ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Do get news from db
 		$Q = db()->query($sql.$add_sql);
@@ -60,7 +60,7 @@ class yf_news extends yf_module {
 	// This function show full news text
 	function full_news () {
 		$_GET['id'] = intval($_GET['id']);
-		$news_info = db()->query_fetch("SELECT * FROM `".db('news')."` WHERE `id`=".intval($_GET['id'])." AND `active`='1'");
+		$news_info = db()->query_fetch("SELECT * FROM ".db('news')." WHERE id=".intval($_GET['id'])." AND active='1'");
 		if (!empty($news_info['id'])) {
 		
 			$OBJ = &main()->init_class("unread");
@@ -89,7 +89,7 @@ class yf_news extends yf_module {
 		$LIMIT_RECENT = isset($input["num_items"]) ? $input["num_items"] : 4;
 		$TRIM_LENGTH = isset($input["trim_length"]) ? $input["trim_length"] : $this->TRIM_LENGTH;
 		// Do get news from db
-		$Q = db()->query("SELECT `id`,`title`,`head_text`,`add_date` FROM `".db('news')."` WHERE `active`='1' ORDER BY `add_date` DESC LIMIT ".intval($LIMIT_RECENT));
+		$Q = db()->query("SELECT id,title,head_text,add_date FROM ".db('news')." WHERE active='1' ORDER BY add_date DESC LIMIT ".intval($LIMIT_RECENT));
 		while ($A = db()->fetch_assoc($Q)) $news_array[$A["id"]] = $A;
 		// Try to get info about comments
 /*		if (!empty($news_array)) {
@@ -121,7 +121,7 @@ class yf_news extends yf_module {
 	/**
 	*/
 	function _rss_general(){
-		$Q = db()->query("SELECT `id`,`title`,`add_date`,`head_text` FROM `".db('news')."` WHERE `active` = '1' ORDER BY `add_date` DESC LIMIT ".intval($this->NUM_RSS));
+		$Q = db()->query("SELECT id,title,add_date,head_text FROM ".db('news')." WHERE active = '1' ORDER BY add_date DESC LIMIT ".intval($this->NUM_RSS));
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				"title"			=> _prepare_html(t("News")." - ".$A["title"]),
@@ -151,7 +151,7 @@ class yf_news extends yf_module {
 			return;
 		}
 		
-		$Q = db()->query("SELECT `id` FROM `".db('news')."` WHERE `active` = '1' AND `add_date` > ".$this->_user_info["last_view"]);
+		$Q = db()->query("SELECT id FROM ".db('news')." WHERE active = '1' AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
@@ -171,7 +171,7 @@ class yf_news extends yf_module {
 	*
 	*/
 	function view_unread () {
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 	
@@ -179,8 +179,8 @@ class yf_news extends yf_module {
 		$ids = $OBJ->_get_unread("news");
 		
 		if(!empty($ids)){
-			$sql		= "SELECT `id`,`title` FROM `".db('news')."` WHERE `id` IN(".implode(",", (array)$ids).")";
-			$order_sql	= " ORDER BY `add_date` DESC";
+			$sql		= "SELECT id,title FROM ".db('news')." WHERE id IN(".implode(",", (array)$ids).")";
+			$order_sql	= " ORDER BY add_date DESC";
 			list($add_sql, $pages, $total) = common()->divide_pages($sql);
 			$Q = db()->query($sql.$order_sql.$add_sql);
 			while ($A = db()->fetch_assoc($Q)) {

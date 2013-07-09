@@ -12,7 +12,7 @@ class yf_unread {
 			return;
 		}
 	
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 	
@@ -46,7 +46,7 @@ class yf_unread {
 			$modules[$module] = "'".$module."'";
 		}
 		
-		$Q = db()->query("SELECT `module_name`,`object_id` FROM `".db('unread')."` WHERE `user_id` = ".intval($this->USER_ID)." AND `module_name` IN(".implode(",", $modules).")");
+		$Q = db()->query("SELECT module_name,object_id FROM ".db('unread')." WHERE user_id = ".intval(main()->USER_ID)." AND module_name IN(".implode(",", $modules).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$unread_count[$A["module_name"]][$A["object_id"]] = $A["object_id"];
 		}
@@ -87,7 +87,7 @@ class yf_unread {
 			return;
 		}
 
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 		
@@ -95,7 +95,7 @@ class yf_unread {
 			return;
 		}
 
-		$Q = db()->query("SELECT `object_id` FROM `".db('unread')."` WHERE `user_id` = ".intval($this->USER_ID)." AND `module_name` = '".$module."'");
+		$Q = db()->query("SELECT object_id FROM ".db('unread')." WHERE user_id = ".intval(main()->USER_ID)." AND module_name = '".$module."'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["object_id"]] = $A["object_id"];
 		}
@@ -111,7 +111,7 @@ class yf_unread {
 			return;
 		}
 		
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 		
@@ -119,7 +119,7 @@ class yf_unread {
 			return;
 		}
 		
-		db()->query("DELETE FROM `".db('unread')."`  WHERE `user_id` = ".intval($this->USER_ID)." AND `module_name` = '"._es($module)."' AND `object_id` IN(".implode(",", (array)$ids).")");
+		db()->query("DELETE FROM ".db('unread')."  WHERE user_id = ".intval(main()->USER_ID)." AND module_name = '"._es($module)."' AND object_id IN(".implode(",", (array)$ids).")");
 	}
 	
 	
@@ -131,7 +131,7 @@ class yf_unread {
 			return;
 		}
 		
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 
@@ -139,7 +139,7 @@ class yf_unread {
 			return;
 		}
 		
-		$Q = db()->query("SELECT `object_id` FROM `".db('unread')."` WHERE `user_id` = ".intval($this->USER_ID)." AND `module_name` = '"._es($module)."' AND `object_id` IN(".implode(",", (array)$ids).")");
+		$Q = db()->query("SELECT object_id FROM ".db('unread')." WHERE user_id = ".intval(main()->USER_ID)." AND module_name = '"._es($module)."' AND object_id IN(".implode(",", (array)$ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$exist_id[$A["object_id"]] = $A["object_id"];
 		}
@@ -150,7 +150,7 @@ class yf_unread {
 				db()->INSERT("unread", array(
 					"module_name"		=> _es($module),
 					"object_id"			=> intval($id),
-					"user_id"			=> intval($this->USER_ID),
+					"user_id"			=> intval(main()->USER_ID),
 				));
 			}
 		}
@@ -166,11 +166,11 @@ class yf_unread {
 			return;
 		}
 		
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
-		db()->query("DELETE FROM `".db('unread')."`  WHERE `user_id` = ".intval($this->USER_ID));
+		db()->query("DELETE FROM ".db('unread')."  WHERE user_id = ".intval(main()->USER_ID));
 		return js_redirect(WEB_PATH);
 	}
 	

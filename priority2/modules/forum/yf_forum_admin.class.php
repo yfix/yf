@@ -90,7 +90,7 @@ class yf_forum_admin {
 			// New status
 			$new_status = $_POST["t_act"] == "open" ? "a" : "c";
 			// Update database
-			db()->query("UPDATE `".db('forum_topics')."` SET `status`='".$new_status."' WHERE `forum`=".intval($forum_info["id"])." AND `id` IN(".implode(",", $selected_ids).")");
+			db()->query("UPDATE ".db('forum_topics')." SET status='".$new_status."' WHERE forum=".intval($forum_info["id"])." AND id IN(".implode(",", $selected_ids).")");
 		}
 		return js_redirect(module('forum')->_link_to_forum($_GET["id"]));
 	}
@@ -120,7 +120,7 @@ class yf_forum_admin {
 			// New status
 			$new_pinned = $_POST["t_act"] == "pin" ? 1 : 0;
 			// Update database
-			db()->query("UPDATE `".db('forum_topics')."` SET `pinned`=".$new_pinned." WHERE `forum`=".intval($forum_info["id"])." AND `id` IN(".implode(",", $selected_ids).")");
+			db()->query("UPDATE ".db('forum_topics')." SET pinned=".$new_pinned." WHERE forum=".intval($forum_info["id"])." AND id IN(".implode(",", $selected_ids).")");
 		}
 		return js_redirect(module('forum')->_link_to_forum($_GET["id"]));
 	}
@@ -151,8 +151,8 @@ class yf_forum_admin {
 			$new_approve		= $_POST["t_act"] == "approve" ? 1 : 0;
 			$new_posts_status	= $_POST["t_act"] == "approve" ? "a" : "u";
 			// Update database
-			db()->query("UPDATE `".db('forum_topics')."` SET `approved`=".$new_approve." WHERE `forum`=".intval($forum_info["id"])." AND `id` IN(".implode(",", $selected_ids).")");
-			db()->query("UPDATE `".db('forum_posts')."` SET `status`='".$new_posts_status."' WHERE `topic` IN(".implode(",", $selected_ids).")");
+			db()->query("UPDATE ".db('forum_topics')." SET approved=".$new_approve." WHERE forum=".intval($forum_info["id"])." AND id IN(".implode(",", $selected_ids).")");
+			db()->query("UPDATE ".db('forum_posts')." SET status='".$new_posts_status."' WHERE topic IN(".implode(",", $selected_ids).")");
 			// Update forum record
 			if (is_object($this->SYNC_OBJ)) {
 				$this->SYNC_OBJ->_update_forum_record($forum_info["id"]);
@@ -168,7 +168,7 @@ class yf_forum_admin {
 	function _topic_delete($SILENT_MODE = false, $_force_topic_id = array()) {
 		$FORUM_ID = intval($_GET["id"]);
 		if (!empty($_force_topic_id)) {
-			$force_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($_force_topic_id));
+			$force_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($_force_topic_id));
 		}
 		if ($force_topic_info["forum"]) {
 			$FORUM_ID = intval($force_topic_info["forum"]);
@@ -192,7 +192,7 @@ class yf_forum_admin {
 			}
 			// Check if any of selected topics is denied to delete by current user
 			if (!$ACCESS_DENIED) {
-				$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+				$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",", $selected_ids).")");
 				while ($topic_info = db()->fetch_assoc($Q)) {
 					if ((FORUM_USER_ID == $topic_info["user_id"] && !module('forum')->USER_RIGHTS["delete_own_topics"])
 						|| (FORUM_USER_ID != $topic_info["user_id"] && !module('forum')->USER_RIGHTS["delete_other_topics"])
@@ -208,9 +208,9 @@ class yf_forum_admin {
 		}
 		if (!empty($selected_ids)) {
 			// Delete topics
-			db()->query("DELETE FROM `".db('forum_topics')."` WHERE `forum`=".intval($forum_info["id"])." AND `id` IN(".implode(",", $selected_ids).")");
+			db()->query("DELETE FROM ".db('forum_topics')." WHERE forum=".intval($forum_info["id"])." AND id IN(".implode(",", $selected_ids).")");
 			// Delete posts
-			db()->query("DELETE FROM `".db('forum_posts')."` WHERE `topic` IN(".implode(",", $selected_ids).")");
+			db()->query("DELETE FROM ".db('forum_posts')." WHERE topic IN(".implode(",", $selected_ids).")");
 			// Update forum record
 			if (is_object($this->SYNC_OBJ)) {
 				$this->SYNC_OBJ->_update_forum_record($forum_info["id"]);
@@ -243,7 +243,7 @@ class yf_forum_admin {
 		if (empty($_POST["new_forum_id"]) && !empty($_POST["selected_ids"])) {
 			$selected_ids = explode(",", $_POST["selected_ids"]);
 			// Get selected topics names
-			$Q = db()->query("SELECT `id`,`name` FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+			$Q = db()->query("SELECT id,name FROM ".db('forum_topics')." WHERE id IN(".implode(",", $selected_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $topic_names[$A["id"]] = $A["name"];
 			// Create array for the template
 			foreach ((array)$selected_ids as $topic_id) {
@@ -276,7 +276,7 @@ class yf_forum_admin {
 					}
 				}
 				// Selected topics info
-				$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+				$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",", $selected_ids).")");
 				while ($A = db()->fetch_assoc($Q)) $topics_array[$A["id"]] = $A;
 				// Create new topics in the new forum
 				foreach ((array)$topics_array as $topic_id => $topic_info) {
@@ -304,17 +304,17 @@ class yf_forum_admin {
 				if (!empty($new_topics)) {
 					// Update posts
 					foreach ((array)$new_topics as $old_topic_id => $new_topic_id) {
-						db()->query("UPDATE `".db('forum_posts')."` SET `topic`=".intval($new_topic_id)." WHERE `topic`=".intval($old_topic_id));
+						db()->query("UPDATE ".db('forum_posts')." SET topic=".intval($new_topic_id)." WHERE topic=".intval($old_topic_id));
 					}
 					// If need to leave links in the old forum - do that
 					if ($leave_link) {
 						foreach ((array)$new_topics as $old_topic_id => $new_topic_id) {
-							db()->query("UPDATE `".db('forum_topics')."` SET `moved_to`='".intval($new_forum_id).",".intval($new_topic_id)."' WHERE `id`=".intval($old_topic_id));
+							db()->query("UPDATE ".db('forum_topics')." SET moved_to='".intval($new_forum_id).",".intval($new_topic_id)."' WHERE id=".intval($old_topic_id));
 						}
 					// Else delete old topics
 					} else {
 						// Delete other topics
-						db()->query("DELETE FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+						db()->query("DELETE FROM ".db('forum_topics')." WHERE id IN(".implode(",", $selected_ids).")");
 					}
 					// Update forum record
 					if (is_object($this->SYNC_OBJ)) {
@@ -356,9 +356,9 @@ class yf_forum_admin {
 			}
 			if (!empty($min_id) && is_array($selected_ids)) {
 				// Update posts
-				db()->query("UPDATE `".db('forum_posts')."` SET `topic`=".intval($min_id)." WHERE `topic` IN(".implode(",", $selected_ids).")");
+				db()->query("UPDATE ".db('forum_posts')." SET topic=".intval($min_id)." WHERE topic IN(".implode(",", $selected_ids).")");
 				// Delete other topics
-				db()->query("DELETE FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+				db()->query("DELETE FROM ".db('forum_topics')." WHERE id IN(".implode(",", $selected_ids).")");
 				// Update forum record
 				if (is_object($this->SYNC_OBJ)) {
 					$this->SYNC_OBJ->_update_forum_record($forum_info["id"]);
@@ -377,7 +377,7 @@ class yf_forum_admin {
 			return module('forum')->_show_error("No ID!");
 		}
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET["id"]." LIMIT 1");
 		if (empty($topic_info)) {
 			return module('forum')->_show_error("No such topic!");
 		}
@@ -399,7 +399,7 @@ class yf_forum_admin {
 			// New status
 			$new_approve = $_POST["p_act"] == "approve" ? "a" : "u";
 			// Update database
-			db()->query("UPDATE `".db('forum_posts')."` SET `status`='".$new_approve."' WHERE `topic`=".intval($topic_info["id"])." AND `id` IN(".implode(",", $selected_ids).")");
+			db()->query("UPDATE ".db('forum_posts')." SET status='".$new_approve."' WHERE topic=".intval($topic_info["id"])." AND id IN(".implode(",", $selected_ids).")");
 			// Update forum and topic
 			if (is_object($this->SYNC_OBJ)) {
 				$this->SYNC_OBJ->_update_topic_record($topic_info["id"]);
@@ -418,7 +418,7 @@ class yf_forum_admin {
 			return module('forum')->_show_error("No ID!");
 		}
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET["id"]." LIMIT 1");
 		if (empty($topic_info)) {
 			return module('forum')->_show_error("No such topic!");
 		}
@@ -441,7 +441,7 @@ class yf_forum_admin {
 				return module('forum')->_show_error("You cannot delete first post in the topic!");
 			}
 			// Delete posts
-			db()->query("DELETE FROM `".db('forum_posts')."` WHERE `topic`=".intval($topic_info["id"])." AND `id` IN(".implode(",", $selected_ids).")");
+			db()->query("DELETE FROM ".db('forum_posts')." WHERE topic=".intval($topic_info["id"])." AND id IN(".implode(",", $selected_ids).")");
 			// Update forum and topic
 			if (is_object($this->SYNC_OBJ)) {
 				$this->SYNC_OBJ->_update_topic_record($topic_info["id"]);
@@ -464,7 +464,7 @@ class yf_forum_admin {
 			return module('forum')->_show_error("You are not allowed to perform this action");
 		}
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET["id"]." LIMIT 1");
 		if (empty($topic_info)) {
 			return module('forum')->_show_error("No such topic!");
 		}
@@ -488,7 +488,7 @@ class yf_forum_admin {
 				return module('forum')->_show_error("You cannot move first post in the topic!");
 			}
 			// Get selected posts
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",", $selected_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $posts_array[$A["id"]] = $A;
 			// Create array for the template
 			foreach ((array)$selected_ids as $post_id) {
@@ -527,7 +527,7 @@ class yf_forum_admin {
 				return module('forum')->_show_error("Wrong topic ID!");
 			}
 			// Get new topic info
-			$new_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($new_topic_id)." LIMIT 1");
+			$new_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($new_topic_id)." LIMIT 1");
 			if (empty($new_topic_info["id"])) {
 				return module('forum')->_show_error("No such topic ID!");
 			}
@@ -548,12 +548,12 @@ class yf_forum_admin {
 						return module('forum')->_show_error("You cannot move first post in the topic!");
 					}
 					// Get selected posts
-					$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+					$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",", $selected_ids).")");
 					while ($A = db()->fetch_assoc($Q)) $posts_array[$A["id"]] = $A;
 				}
 				// Create new posts in the new topic
 				if (is_array($selected_ids)) {
-					db()->query("UPDATE `".db('forum_posts')."` SET `topic`=".intval($new_topic_id)." WHERE `id` IN(".implode(",", $selected_ids).")");
+					db()->query("UPDATE ".db('forum_posts')." SET topic=".intval($new_topic_id)." WHERE id IN(".implode(",", $selected_ids).")");
 				}
 				// Update forums and topics
 				if (is_object($this->SYNC_OBJ)) {
@@ -580,7 +580,7 @@ class yf_forum_admin {
 			return module('forum')->_show_error("You are not allowed to perform this action");
 		}
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET["id"]." LIMIT 1");
 		if (empty($topic_info)) {
 			return module('forum')->_show_error("No such topic!");
 		}
@@ -604,7 +604,7 @@ class yf_forum_admin {
 				return module('forum')->_show_error("You cannot move first post in the topic!");
 			}
 			// Get selected posts
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",", $selected_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $posts_array[$A["id"]] = $A;
 			// Create array for the template
 			foreach ((array)$selected_ids as $post_id) {
@@ -640,7 +640,7 @@ class yf_forum_admin {
 				// Check if post is the first topic post
 				if (in_array($topic_info["first_post_id"], $selected_ids)) return module('forum')->_show_error("You cannot move first post in the topic!");
 				// Get selected posts
-				$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+				$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",", $selected_ids).")");
 				while ($A = db()->fetch_assoc($Q)) $posts_array[$A["id"]] = $A;
 				// Set new topic first post id
 				$first_post_id = intval($selected_ids[0]);
@@ -668,13 +668,13 @@ class yf_forum_admin {
 				return module('forum')->_show_error("Wrong topic ID!");
 			}
 			// Get new topic info
-			$new_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($new_topic_id)." LIMIT 1");
+			$new_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($new_topic_id)." LIMIT 1");
 			if (empty($new_topic_info["id"])) {
 				return module('forum')->_show_error("No such topic ID!");
 			}
 			// Create new posts in the new topic
 			if (is_array($selected_ids)) {
-				db()->query("UPDATE `".db('forum_posts')."` SET `topic`=".intval($new_topic_id)." WHERE `id` IN(".implode(",", $selected_ids).")");
+				db()->query("UPDATE ".db('forum_posts')." SET topic=".intval($new_topic_id)." WHERE id IN(".implode(",", $selected_ids).")");
 			}
 			// Update forums and topics
 			if (is_object($this->SYNC_OBJ)) {
@@ -700,7 +700,7 @@ class yf_forum_admin {
 			return module('forum')->_show_error("You are not allowed to perform this action");
 		}
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET["id"]." LIMIT 1");
 		if (empty($topic_info)) {
 			return module('forum')->_show_error("No such topic!");
 		}
@@ -723,7 +723,7 @@ class yf_forum_admin {
 		}
 		// Get selected posts
 		if (!empty($selected_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", $selected_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",", $selected_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $posts_array[$A["id"]] = $A;
 		}
 		// Show form
@@ -762,12 +762,12 @@ class yf_forum_admin {
 			};
 			if (!empty($merged_post_id)) {
 				// Update post
-				$sql = "UPDATE `".db('forum_posts')."` SET 
-						`text`		= '"._es($_POST["new_text"])."', 
-						`user_name`	= '"._es($new_author_name)."', 
-						`user_id`	= ".intval($new_user_id).", 
-						`created`	= ".intval($_POST["new_date"])."
-					WHERE `id`=".intval($merged_post_id);
+				$sql = "UPDATE ".db('forum_posts')." SET 
+						text		= '"._es($_POST["new_text"])."', 
+						user_name	= '"._es($new_author_name)."', 
+						user_id	= ".intval($new_user_id).", 
+						created	= ".intval($_POST["new_date"])."
+					WHERE id=".intval($merged_post_id);
 				db()->query($sql);
 			}
 			// Delete other posts
@@ -778,7 +778,7 @@ class yf_forum_admin {
 				}
 			}
 			if (is_array($ids_to_delete)) {
-				db()->query("DELETE FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",", $ids_to_delete).")");
+				db()->query("DELETE FROM ".db('forum_posts')." WHERE id IN(".implode(",", $ids_to_delete).")");
 			}
 			// Update forums and topics
 			if (is_object($this->SYNC_OBJ)) {

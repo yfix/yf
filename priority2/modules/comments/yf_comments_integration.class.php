@@ -72,7 +72,7 @@ class yf_comments_integration {
 	function _get_comments($NUM_NEWEST_COMMENTS, $user_id = ""){
 	
 		foreach ((array)$this->COMMENTS_OBJ->COMMENT_LINKS as $key => $value){
-			$where .= "`object_name`='".$key."'";
+			$where .= "object_name='".$key."'";
 			
 			if($value !== end($this->COMMENTS_OBJ->COMMENT_LINKS)) {
 				$where .= " OR ";
@@ -80,10 +80,10 @@ class yf_comments_integration {
 		}
 		
 		if(!empty($user_id)){
-			$user = "AND `user_id`=".$user_id;
+			$user = "AND user_id=".$user_id;
 		}
 		
-		$Q = db()->query("SELECT * FROM `".db('comments')."` WHERE (".$where.") AND `active`='1' ".$user." ORDER BY `add_date` DESC LIMIT ".$NUM_NEWEST_COMMENTS);
+		$Q = db()->query("SELECT * FROM ".db('comments')." WHERE (".$where.") AND active='1' ".$user." ORDER BY add_date DESC LIMIT ".$NUM_NEWEST_COMMENTS);
 		while ($A = db()->fetch_assoc($Q)) {
 			$comments[$A["id"]] = $A;
 			$user_ids[$A["user_id"]] = $A["user_id"];
@@ -97,28 +97,28 @@ class yf_comments_integration {
 		$user_names = user($user_ids, array("nick"));
 		
 		if(!empty($articles_ids)){
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('articles_texts')."` WHERE `id` IN(".implode(",",$articles_ids).")");
+			$Q = db()->query("SELECT id,title FROM ".db('articles_texts')." WHERE id IN(".implode(",",$articles_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["articles".$A["id"]] = $A["title"];
 			}
 		}
 		
 		if(!empty($news_ids)){
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('news')."` WHERE `id` IN(".implode(",",$news_ids).")");
+			$Q = db()->query("SELECT id,title FROM ".db('news')." WHERE id IN(".implode(",",$news_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["news".$A["id"]] = $A["title"];
 			}
 		}
 		
 		if(!empty($blog_ids)){
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('blog_posts')."` WHERE `id` IN(".implode(",",$blog_ids).")");
+			$Q = db()->query("SELECT id,title FROM ".db('blog_posts')." WHERE id IN(".implode(",",$blog_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["blog".$A["id"]] = $A["title"];
 			}
 		}
 		
 		if(!empty($gallery_ids)){
-			$Q = db()->query("SELECT `id`,`name` FROM `".db('gallery_photos')."` WHERE `id` IN(".implode(",",$gallery_ids).")");
+			$Q = db()->query("SELECT id,name FROM ".db('gallery_photos')." WHERE id IN(".implode(",",$gallery_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["gallery".$A["id"]] = $A["name"] !== ""?$A["name"]:t("No title");
 			}
@@ -133,14 +133,14 @@ class yf_comments_integration {
 	*/
 	function _rss_general(){
 		foreach ((array)$this->COMMENTS_OBJ->COMMENT_LINKS as $key => $value){
-			$where .= "`object_name`='".$key."'";
+			$where .= "object_name='".$key."'";
 			
 			if($value !== end($this->COMMENTS_OBJ->COMMENT_LINKS)) {
 				$where .= " OR ";
 			}
 		}
 		
-		$Q = db()->query("SELECT * FROM `".db('comments')."` WHERE (".$where.") AND `active`='1' ORDER BY `add_date` DESC LIMIT ".$this->COMMENTS_OBJ->NUM_RSS);
+		$Q = db()->query("SELECT * FROM ".db('comments')." WHERE (".$where.") AND active='1' ORDER BY add_date DESC LIMIT ".$this->COMMENTS_OBJ->NUM_RSS);
 		while ($A = db()->fetch_assoc($Q)) {
 			$comments[$A["id"]] = $A;
 			$user_ids[$A["user_id"]] = $A["user_id"];
@@ -154,28 +154,28 @@ class yf_comments_integration {
 		$user_names = user($user_ids,array("nick"));
 		
 		if(!empty($articles_ids)){
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('articles_texts')."` WHERE `id` IN(".implode(",",$articles_ids).")");
+			$Q = db()->query("SELECT id,title FROM ".db('articles_texts')." WHERE id IN(".implode(",",$articles_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["articles".$A["id"]] = $A["title"];
 			}
 		}
 		
 		if(!empty($news_ids)){
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('news')."` WHERE `id` IN(".implode(",",$news_ids).")");
+			$Q = db()->query("SELECT id,title FROM ".db('news')." WHERE id IN(".implode(",",$news_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["news".$A["id"]] = $A["title"];
 			}
 		}
 		
 		if(!empty($blog_ids)){
-			$Q = db()->query("SELECT `id`,`title` FROM `".db('blog_posts')."` WHERE `id` IN(".implode(",",$blog_ids).")");
+			$Q = db()->query("SELECT id,title FROM ".db('blog_posts')." WHERE id IN(".implode(",",$blog_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["blog".$A["id"]] = $A["title"];
 			}
 		}
 		
 		if(!empty($gallery_ids)){
-			$Q = db()->query("SELECT `id`,`name` FROM `".db('gallery_photos')."` WHERE `id` IN(".implode(",",$gallery_ids).")");
+			$Q = db()->query("SELECT id,name FROM ".db('gallery_photos')." WHERE id IN(".implode(",",$gallery_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$titles["gallery".$A["id"]] = $A["name"] !== ""?$A["name"]:t("No title");
 			}

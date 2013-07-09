@@ -14,7 +14,7 @@ class yf_members {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function _init() {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		if (!$this->USE_FILTER) {
 			return true;
 		}
@@ -30,7 +30,7 @@ class yf_members {
 		);
 		$this->_user_groups = array();
 		// Fill array of admin groups
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			// Skip guest
 			if ($A['id'] == 1) {
@@ -118,12 +118,12 @@ class yf_members {
 	// Default function
 	function show () {
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql = "SELECT * FROM `".(main()->USER_INFO_DYNAMIC ? db('user_data_main') : db('user'))."`".$filter_sql;
+		$sql = "SELECT * FROM ".(main()->USER_INFO_DYNAMIC ? db('user_data_main') : db('user'))."".$filter_sql;
 // TODO: connect filter again
 //		$sql = search_user(array("WHERE" => array()), "full", true);
 		list($add_sql, $pages, $total) = common()->divide_pages(preg_replace("/ORDER BY .*\$/ims", "", $sql));
 		if (!$filter_sql) {
-			$sql .= " ORDER BY `id` DESC";
+			$sql .= " ORDER BY id DESC";
 		}
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -260,20 +260,20 @@ class yf_members {
 		$MF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$MF as $k => $v) $MF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($MF["id_min"]) 				$sql .= " AND `id` >= ".intval($MF["id_min"])." \r\n";
-		if ($MF["id_max"])			 	$sql .= " AND `id` <= ".intval($MF["id_max"])." \r\n";
-		if (strlen($MF["name"])) 		$sql .= " AND `name` LIKE '"._es($MF["name"])."%' \r\n";
-		if (strlen($MF["nick"])) 		$sql .= " AND `nick` LIKE '"._es($MF["nick"])."%' \r\n";
-		if (strlen($MF["email"])) 		$sql .= " AND `email` LIKE '"._es($MF["email"])."%' \r\n";
-		if (strlen($MF["login"])) 		$sql .= " AND `login` LIKE '"._es($MF["login"])."%' \r\n";
-		if (strlen($MF["password"])) 	$sql .= " AND `password` LIKE '"._es($MF["password"])."%' \r\n";
-		if ($MF["account_type"])		$sql .= " AND `group` = ".intval($MF["account_type"])." \r\n";
-		if (strlen($MF["state"]))		$sql .= " AND `state` = '".$MF["state"]."' \r\n";
-		if ($MF["country"])	 			$sql .= " AND `country` = '"._es($MF["country"])."' \r\n";
+		if ($MF["id_min"]) 				$sql .= " AND id >= ".intval($MF["id_min"])." \r\n";
+		if ($MF["id_max"])			 	$sql .= " AND id <= ".intval($MF["id_max"])." \r\n";
+		if (strlen($MF["name"])) 		$sql .= " AND name LIKE '"._es($MF["name"])."%' \r\n";
+		if (strlen($MF["nick"])) 		$sql .= " AND nick LIKE '"._es($MF["nick"])."%' \r\n";
+		if (strlen($MF["email"])) 		$sql .= " AND email LIKE '"._es($MF["email"])."%' \r\n";
+		if (strlen($MF["login"])) 		$sql .= " AND login LIKE '"._es($MF["login"])."%' \r\n";
+		if (strlen($MF["password"])) 	$sql .= " AND password LIKE '"._es($MF["password"])."%' \r\n";
+		if ($MF["account_type"])		$sql .= " AND group = ".intval($MF["account_type"])." \r\n";
+		if (strlen($MF["state"]))		$sql .= " AND state = '".$MF["state"]."' \r\n";
+		if ($MF["country"])	 			$sql .= " AND country = '"._es($MF["country"])."' \r\n";
 		if (strlen($MF["phone"]))		$sql .= " AND "._get_phone_search_sql($MF["phone"], "phone")." \r\n";
-		if ($MF["plblog_only"])			$sql .= " AND `old_id` != 0 \r\n";
+		if ($MF["plblog_only"])			$sql .= " AND old_id != 0 \r\n";
 		// Sorting here
-		if ($MF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$MF["sort_by"]]."` \r\n";
+		if ($MF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$MF["sort_by"]]." \r\n";
 		if ($MF["sort_by"] && strlen($MF["sort_order"])) 	$sql .= " ".$MF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}
@@ -371,7 +371,7 @@ class yf_members {
 		}
 
 		// Delete record from table 'users'
-		db()->query("DELETE FROM `".db('user')."` WHERE `id`=".$user_id);
+		db()->query("DELETE FROM ".db('user')." WHERE id=".$user_id);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
 

@@ -53,7 +53,7 @@ class yf_interests {
 	*/
 	function _show_stats () {
 		// Get most popular keywords
-		$A = db()->query_fetch_all("SELECT * FROM `".db('interests_keywords')."` ORDER BY `users` DESC LIMIT ".intval($this->DISPLAY_MOST_POPULAR));
+		$A = db()->query_fetch_all("SELECT * FROM ".db('interests_keywords')." ORDER BY users DESC LIMIT ".intval($this->DISPLAY_MOST_POPULAR));
 		foreach ((array)$A as $data) {
 			$cloud_data[$data["keyword"]] = $data["users"];
 		}
@@ -86,7 +86,7 @@ class yf_interests {
 			$GLOBALS['user_info'] = $user_info;
 		}
 		// Try to get data
-		$interests_info = db()->query_fetch("SELECT * FROM `".db('interests')."` WHERE `user_id`=".intval($_GET["id"]));
+		$interests_info = db()->query_fetch("SELECT * FROM ".db('interests')." WHERE user_id=".intval($_GET["id"]));
 		// Prepare keywords with links to search
 		foreach ((array)explode(";", trim($interests_info["keywords"])) as $cur_word) {
 			if (empty($cur_word)) {
@@ -119,14 +119,14 @@ class yf_interests {
 	* Manage own interests
 	*/
 	function manage ($FORCE_USER_ID = false) {
-		$USER_ID = $FORCE_USER_ID ? $FORCE_USER_ID : $this->USER_ID;
+		$USER_ID = $FORCE_USER_ID ? $FORCE_USER_ID : main()->USER_ID;
 		if (!$FORCE_USER_ID && empty($USER_ID)) {
 			return _error_need_login();
 		}
 		// Array of keywords
 		$this->_activities	= main()->get_data("locale:activities");
 		// Get activities
-		$act_info = db()->query_fetch("SELECT * FROM `".db('prof_keywords')."` WHERE `user_id`=".intval($USER_ID));
+		$act_info = db()->query_fetch("SELECT * FROM ".db('prof_keywords')." WHERE user_id=".intval($USER_ID));
 		if (empty($act_info)) {
 			db()->INSERT("prof_keywords", array(
 				"user_id"	=> intval($USER_ID),
@@ -152,7 +152,7 @@ class yf_interests {
 			);
 		}
 		// Try to get data
-		$interests_info = db()->query_fetch("SELECT * FROM `".db('interests')."` WHERE `user_id`=".intval($USER_ID));
+		$interests_info = db()->query_fetch("SELECT * FROM ".db('interests')." WHERE user_id=".intval($USER_ID));
 		// Save form
 		if (!empty($_POST)) {
 			// Cleanup keywords
@@ -168,7 +168,7 @@ class yf_interests {
 				// Update record
 				db()->UPDATE("interests", array(
 					"keywords"	=> _es($_POST["keywords"]),
-				), "`user_id`=".intval($USER_ID));
+				), "user_id=".intval($USER_ID));
 				// Update user stats
 				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $USER_ID));
 				// Execute re-count on shutdown
@@ -187,7 +187,7 @@ class yf_interests {
 //					if (!empty($ids_to_save)) {
 						db()->UPDATE("prof_keywords", array(
 							"keywords"	=> (";"._es(implode(";", $ids_to_save)).";"),
-						), "`user_id`=".intval($USER_ID));
+						), "user_id=".intval($USER_ID));
 //					}
 //				}
 			}
@@ -230,8 +230,8 @@ class yf_interests {
 			$EXACT_MATCH = 0;
 		}
 		// Do search
-		$sql = "SELECT * FROM `".db('interests')."` ".(!empty($KEYWORD) ? "WHERE `keywords` LIKE '%;"._es($KEYWORD). ($EXACT_MATCH ? ";" : "")."%'" : "");
-		$order_by_sql = " ORDER BY `user_id` ASC ";
+		$sql = "SELECT * FROM ".db('interests')." ".(!empty($KEYWORD) ? "WHERE keywords LIKE '%;"._es($KEYWORD). ($EXACT_MATCH ? ";" : "")."%'" : "");
+		$order_by_sql = " ORDER BY user_id ASC ";
 		$url = "./?object=".INTERESTS_CLASS_NAME."&action=".$_GET["action"]."&id=".(strlen($KEYWORD) ? $this->_prepare_keyword_for_url($KEYWORD) : "_");
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url);
 		// Get records
@@ -304,7 +304,7 @@ class yf_interests {
 			return $output_array;
 		}
 		// Try to get data
-		$interests_info = db()->query_fetch("SELECT * FROM `".db('interests')."` WHERE `user_id`=".intval($user_id));
+		$interests_info = db()->query_fetch("SELECT * FROM ".db('interests')." WHERE user_id=".intval($user_id));
 		if (empty($interests_info)) {
 			return $output_array;
 		}
@@ -392,29 +392,29 @@ class yf_interests {
 	*/
 	function _update_unique_keywords () {
 		// Optimize interests
-		db()->query("DELETE FROM `".db('interests')."` WHERE `keywords` IN('', ';;')");
-		db()->query("UPDATE `".db('interests')."` SET `keywords` = LOWER(`keywords`)");
-//		db()->query("OPTIMIZE TABLE `".db('interests')."`");
+		db()->query("DELETE FROM ".db('interests')." WHERE keywords IN('', ';;')");
+		db()->query("UPDATE ".db('interests')." SET keywords = LOWER(keywords)");
+//		db()->query("OPTIMIZE TABLE ".db('interests')."");
 		// Cleanup keywords
-		db()->query("TRUNCATE TABLE `".db('interests_keywords')."`");
+		db()->query("TRUNCATE TABLE ".db('interests_keywords')."");
 		// Collect unique words
 		for ($i = 0; $i < $this->MAX_KEYWORDS_NUM; $i++) {
-			$sql_for_keyword = "LOWER(SUBSTRING_INDEX(SUBSTRING_INDEX(`keywords`,';',".intval($i + 2)."),';',-1))";
+			$sql_for_keyword = "LOWER(SUBSTRING_INDEX(SUBSTRING_INDEX(keywords,';',".intval($i + 2)."),';',-1))";
 			// Fix very long keywords (if these possibly arrived)
 			if ($this->MAX_KEYWORD_LENGTH) {
 				$sql_for_keyword = "SUBSTR(".$sql_for_keyword.",1,".$this->MAX_KEYWORD_LENGTH.")";
 			}
-			$sql = "INSERT INTO ".db('interests_keywords')." (`keyword`) 
+			$sql = "INSERT INTO ".db('interests_keywords')." (keyword) 
 					SELECT ".$sql_for_keyword." AS `0` 
-					FROM `".db('interests')."` 
-					WHERE `keywords` NOT IN('', ';;') 
-					HAVING `0` != ''
-					ON DUPLICATE KEY UPDATE `users` = `users` + 1";
+					FROM ".db('interests')." 
+					WHERE keywords NOT IN('', ';;') 
+					HAVING 0 != ''
+					ON DUPLICATE KEY UPDATE users = users + 1";
 			db()->query($sql);
 		}
-		db()->query("UPDATE `".db('interests_keywords')."` SET `users` = `users` + 1");
-		db()->query("DELETE FROM `".db('interests_keywords')."` WHERE `keyword`=''");
-//		db()->query("OPTIMIZE TABLE `".db('interests_keywords')."`");
+		db()->query("UPDATE ".db('interests_keywords')." SET users = users + 1");
+		db()->query("DELETE FROM ".db('interests_keywords')." WHERE keyword=''");
+//		db()->query("OPTIMIZE TABLE ".db('interests_keywords')."");
 	}
 
 	/**
@@ -424,7 +424,7 @@ class yf_interests {
 		set_time_limit(600);
 		ignore_user_abort(1);
 		// First insert test interests
-		$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT * FROM ".db('user')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$rnd_data = "";
 			// Prepare random data
@@ -447,14 +447,14 @@ class yf_interests {
 				$rnd_data .= $A["hair_color"]."\r\n";
 			}
 			// Do insert values
-			db()->query("REPLACE INTO `".db('interests')."` (`user_id`,`keywords`) VALUES (".intval($A["id"]).",'"._es($this->_pack_for_db(strtolower($rnd_data)))."')");
+			db()->query("REPLACE INTO ".db('interests')." (user_id,keywords) VALUES (".intval($A["id"]).",'"._es($this->_pack_for_db(strtolower($rnd_data)))."')");
 			// Sleep some time
 			if (!(++$counter % 10000)) {
 				sleep(1);
 			}
 		}
-		db()->query("DELETE FROM `".db('interests')."` WHERE `keywords` IN('', ';;')");
-		db()->query("OPTIMIZE TABLE `".db('interests')."`");
+		db()->query("DELETE FROM ".db('interests')." WHERE keywords IN('', ';;')");
+		db()->query("OPTIMIZE TABLE ".db('interests')."");
 	}
 		
 	/**
@@ -467,7 +467,7 @@ class yf_interests {
 		$FONT_SIZE_STEP ? $this->FONT_SIZE_STEP = $FONT_SIZE_STEP:"";
 		$STATS_SORT_BY_NAME ? $this->STATS_SORT_BY_NAME = $STATS_SORT_BY_NAME:"";
 
-		$Q = db()->query("SELECT * FROM `".db('interests_keywords')."` ORDER BY `users` DESC LIMIT ".intval($this->NUM_MOST_POPULAR_INTERESTS));
+		$Q = db()->query("SELECT * FROM ".db('interests_keywords')." ORDER BY users DESC LIMIT ".intval($this->NUM_MOST_POPULAR_INTERESTS));
 		while ($A = db()->fetch_assoc($Q)) {
 			$top_keywords[$A["keyword"]]	= $A["users"];
 			$font_sizes[$A["keyword"]]		= round(($this->MIN_FONT_SIZE + $this->NUM_MOST_POPULAR_INTERESTS * $this->FONT_SIZE_STEP) - (++$k * $this->FONT_SIZE_STEP));
@@ -503,7 +503,7 @@ class yf_interests {
 		}
 		$cloud_data = array();
 		// Get most popular keywords
-		$A = db()->query_fetch_all("SELECT * FROM `".db('interests_keywords')."` ORDER BY `users` DESC LIMIT ".intval($this->DISPLAY_MOST_POPULAR));
+		$A = db()->query_fetch_all("SELECT * FROM ".db('interests_keywords')." ORDER BY users DESC LIMIT ".intval($this->DISPLAY_MOST_POPULAR));
 		foreach ((array)$A as $data) {
 			$cloud_data[$data["keyword"]] = $data["users"];
 		}

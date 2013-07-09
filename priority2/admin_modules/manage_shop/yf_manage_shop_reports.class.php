@@ -41,12 +41,12 @@ class yf_manage_shop_reports {
 	
 	
 	function show_reports_viewed () {
-		$sql = "SELECT * FROM `".db('shop_products')."`";
-		$sql .=   " ORDER BY `viewed` DESC ";
+		$sql = "SELECT * FROM ".db('shop_products')."";
+		$sql .=   " ORDER BY viewed DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", 100);
 		$products_info = db()->query_fetch_all($sql.$add_sql);
 		$this->_total_prod = $total;
-		$query = db()->query_fetch("SELECT SUM(viewed) AS `total` FROM `".db('shop_products')."`");
+		$query = db()->query_fetch("SELECT SUM(viewed) AS total FROM ".db('shop_products')."");
 		foreach ((array)$products_info as $v){
 			if ($v['viewed'] ) {
 				$percent = round(($v['viewed'] / $query["total"]) * 100, 2) . '%';
@@ -76,11 +76,11 @@ class yf_manage_shop_reports {
 		if ($name == "percent"){
 			$name = "viewed";
 		}
-		$sql = "SELECT * FROM `".db('shop_products')."` ORDER BY `".$name."` ".$sort_by." ";
+		$sql = "SELECT * FROM ".db('shop_products')." ORDER BY ".$name." ".$sort_by." ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", 100);
 		$products_info = db()->query_fetch_all($sql.$add_sql);
 		$this->_total_prod = $total;
-		$query = db()->query_fetch("SELECT SUM(viewed) AS `total` FROM `".db('shop_products')."`");
+		$query = db()->query_fetch("SELECT SUM(viewed) AS total FROM ".db('shop_products')."");
 		foreach ((array)$products_info as $v){
 			if ($v['viewed'] ) {
 				$percent = round(($v['viewed'] / $query["total"]) * 100, 2) . '%';
@@ -105,8 +105,8 @@ class yf_manage_shop_reports {
 	
 	function show_reports_purchased () {
 		
-		$sql_item_order = "SELECT * FROM `".db('shop_order_items')."` ORDER BY `sum` DESC";
-		$sql_order 	= "SELECT * FROM `".db('shop_orders')."`";
+		$sql_item_order = "SELECT * FROM ".db('shop_order_items')." ORDER BY sum DESC";
+		$sql_order 	= "SELECT * FROM ".db('shop_orders')."";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql_item_order, "", "", 100);
 		$item_order_info = db()->query_fetch_all($sql_item_order.$add_sql);
 		foreach ((array)$item_order_info as $v){
@@ -126,7 +126,7 @@ class yf_manage_shop_reports {
 		foreach ((array)$product as $k => $v){
 			$sum 				=  $product[$k]['sum'];
 			$quantity			= $product[$k]['quantity'];
-			$sql_product 	= "SELECT * FROM `".db('shop_products')."` WHERE `id` = ".$k;
+			$sql_product 	= "SELECT * FROM ".db('shop_products')." WHERE id = ".$k;
 			$item_product 	= db()->query_fetch($sql_product);
 			 $replace2 		= array(
 				"name"			=> _prepare_html($item_product["name"]),

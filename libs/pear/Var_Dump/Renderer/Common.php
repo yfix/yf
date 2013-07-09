@@ -48,7 +48,7 @@ class Var_Dump_Renderer_Common
 	var $defaultOptions = array();
 
 	/**
-	 * Array containing the element family : start/finish group, start/finish element
+	 * Array containing the element family : start/finish `group`, start/finish element
 	 *
 	 * @var array
 	 * @access public

@@ -53,21 +53,21 @@ class yf_widgets {
 				$theme_sql = "";
 				if ($user_theme_id) {
 					$theme_sql = "
-							SELECT `id`,`columns` FROM `".db('widgets')."` WHERE `theme` LIKE '%;".intval($user_theme_id).";%' AND `object` = '".$_GET["object"]."' AND `action` = '".$_GET["action"]."' AND `active` = '1'
+							SELECT id,columns FROM ".db('widgets')." WHERE theme LIKE '%;".intval($user_theme_id).";%' AND object = '".$_GET["object"]."' AND action = '".$_GET["action"]."' AND active = '1'
 						) UNION ALL	(
-							SELECT `id`,`columns` FROM `".db('widgets')."` WHERE `theme` LIKE '%;".intval($user_theme_id).";%' AND `object` = '".$_GET["object"]."' AND `action` = '' AND `active` = '1'
+							SELECT id,columns FROM ".db('widgets')." WHERE theme LIKE '%;".intval($user_theme_id).";%' AND object = '".$_GET["object"]."' AND action = '' AND active = '1'
 						) UNION ALL	(
-							SELECT `id`,`columns` FROM `".db('widgets')."` WHERE `theme` LIKE '%;".intval($user_theme_id).";%' AND `object` = '' AND `action` = '' AND `active` = '1'
+							SELECT id,columns FROM ".db('widgets')." WHERE theme LIKE '%;".intval($user_theme_id).";%' AND object = '' AND action = '' AND active = '1'
 						) UNION ALL	(
 					";
 				}
 				// Tricky query (selects top priority record for the current page)
 				$A = db()->query_fetch("
 					SELECT * FROM ((".$theme_sql."
-						SELECT `id`,`columns` FROM `".db('widgets')."` WHERE `object` = '".$_GET["object"]."' AND `action` = '".$_GET["action"]."' AND `active` = '1'
+						SELECT id,columns FROM ".db('widgets')." WHERE object = '".$_GET["object"]."' AND action = '".$_GET["action"]."' AND active = '1'
 					) UNION ALL	(
-						SELECT `id`,`columns` FROM `".db('widgets')."` WHERE `object` = '".$_GET["object"]."' AND `action` = '' AND `active` = '1'
-					)) AS `tmp` LIMIT 1"
+						SELECT id,columns FROM ".db('widgets')." WHERE object = '".$_GET["object"]."' AND action = '' AND active = '1'
+					)) AS tmp LIMIT 1"
 				);
 				if ($A["columns"]) {
 					$GLOBALS['_widgets_from_db'] = @unserialize($A["columns"]);

@@ -10,9 +10,9 @@ class yf_right_block {
 		// Get user account type
 		$this->_account_types	= main()->get_data("account_types");
 		// Fix user id
-		if (empty($this->USER_ID) && main()->USER_ID) {
-			$this->USER_ID		= main()->USER_ID;
-			$this->USER_GROUP	= main()->USER_GROUP;
+		if (empty(main()->USER_ID) && main()->USER_ID) {
+			main()->USER_ID		= main()->USER_ID;
+			main()->USER_GROUP	= main()->USER_GROUP;
 		}
 	}
 
@@ -39,18 +39,18 @@ class yf_right_block {
 		}
 		// Check if this user is in favorites (also check if this is own profile)
 		$DISPLAY_CONTACT_ITEMS = 0;
-		if ($this->USER_ID && $this->_user_info["id"] != $this->USER_ID) {
+		if (main()->USER_ID && $this->_user_info["id"] != main()->USER_ID) {
 //			if ($totals["favorite_users"]) {
-				$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM `".db('favorites')."` WHERE `user_id`=".intval($this->USER_ID)." AND `target_user_id`=".intval($this->_user_info["id"]));
+				$is_in_favorites	= db()->query_num_rows("SELECT 1 FROM ".db('favorites')." WHERE user_id=".intval(main()->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 //			}
 //			if ($totals["ignored_users"]) {
-				$is_ignored			= db()->query_num_rows("SELECT 1 FROM `".db('ignore_list')."` WHERE `user_id`=".intval($this->USER_ID)." AND `target_user_id`=".intval($this->_user_info["id"]));
+				$is_ignored			= db()->query_num_rows("SELECT 1 FROM ".db('ignore_list')." WHERE user_id=".intval(main()->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 //			}
 			// Check friendship
 			$FRIENDS_OBJ		= main()->init_class("friends");
-			$is_a_friend		= is_object($FRIENDS_OBJ) ? $FRIENDS_OBJ->_is_a_friend($this->USER_ID, $this->_user_info["id"]) : -1;
+			$is_a_friend		= is_object($FRIENDS_OBJ) ? $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $this->_user_info["id"]) : -1;
 			if (!empty($totals["try_friends"])) {
-				$is_friend_of		= $FRIENDS_OBJ->_is_a_friend($this->_user_info["id"], $this->USER_ID);
+				$is_friend_of		= $FRIENDS_OBJ->_is_a_friend($this->_user_info["id"], main()->USER_ID);
 			}
 			$is_mutual_friends	= $is_a_friend && $is_friend_of;
 			// Switch for contact items
@@ -66,12 +66,12 @@ class yf_right_block {
 			$reput_text	= $REPUT_OBJ->_show_for_user($this->_user_info["id"], $reput_info, 1);
 		}
 		// Check if user has escort referral records (visible only for escorts)
-		if ($this->_user_info["group"] == 2 && in_array($this->USER_GROUP, array(3,4))) {
-			list($has_escort_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('referrals')."` WHERE `type`='e' AND `target_id`=".intval($this->_user_info["id"]));
+		if ($this->_user_info["group"] == 2 && in_array(main()->USER_GROUP, array(3,4))) {
+			list($has_escort_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('referrals')." WHERE type='e' AND target_id=".intval($this->_user_info["id"]));
 		}
 		// Check if user has industry referral records (visible only for escorts)
-		if ($this->_user_info["group"] == 3/* && in_array($this->USER_GROUP, array(3,4))*/) {
-			list($has_industry_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('referrals')."` WHERE `type`='i' AND `target_id`=".intval($this->_user_info["id"]));
+		if ($this->_user_info["group"] == 3/* && in_array(main()->USER_GROUP, array(3,4))*/) {
+			list($has_industry_refs) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('referrals')." WHERE type='i' AND target_id=".intval($this->_user_info["id"]));
 		}
 		// Array of $_GET vars to skip
 		$skip_get = array("page","escort_id","q","show");
@@ -117,12 +117,12 @@ class yf_right_block {
 			if (empty($_GET["id"])) {
 				return false;
 			}
-			$GLOBALS['escort_ad_info'] = db()->query_fetch("SELECT `ad_id`,`user_id` FROM `".db('ads')."` WHERE `ad_id`=".intval($_GET["id"]));
+			$GLOBALS['escort_ad_info'] = db()->query_fetch("SELECT ad_id,user_id FROM ".db('ads')." WHERE ad_id=".intval($_GET["id"]));
 			if (empty($GLOBALS['escort_ad_info']["ad_id"])) {
 				return false;
 			}
 			// Prepare user info
-			$GLOBALS['user_info'] = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".$GLOBALS['escort_ad_info']["user_id"]." AND `active`='1'");
+			$GLOBALS['user_info'] = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".$GLOBALS['escort_ad_info']["user_id"]." AND active='1'");
 			// Cleanup input
 			if (isset($_GET["cat_id"])) {
 				unset($_GET["cat_id"]);

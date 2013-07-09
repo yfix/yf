@@ -27,7 +27,7 @@ class yf_zip_codes {
 			return false;
 		}
 		// Get info about these two zip codes
-		$Q = db()->query("SELECT * FROM `".db('zip_data')."` WHERE `id` IN('"._es($zip_1)."', '"._es($zip_2)."')");
+		$Q = db()->query("SELECT * FROM ".db('zip_data')." WHERE id IN('"._es($zip_1)."', '"._es($zip_2)."')");
 		while ($A = db()->fetch_assoc($Q)) {
 			// Get values in radians (Convert all the degrees to radians)
 			$lat[] = $this->_degrees_into_radians($A["lat"]);
@@ -83,7 +83,7 @@ class yf_zip_codes {
 	*/
 	function _generate_sql($zip_code, $radius) {
 		// Try ot get current zip code info in database
-		$CUR_ZIP_CODE = db()->query_fetch("SELECT * FROM `".db('zip_data')."` WHERE `id`='"._es($zip_code)."'");
+		$CUR_ZIP_CODE = db()->query_fetch("SELECT * FROM ".db('zip_data')." WHERE id='"._es($zip_code)."'");
 		// Check if zip code found
 		if (empty($CUR_ZIP_CODE["id"])) {
 			return false;
@@ -94,7 +94,7 @@ class yf_zip_codes {
 			$radius = $this->_kilometers_into_miles($radius);
 		}
 		// Try to get array of zip codes inside given radius
-		return "SELECT `id` FROM `".db('zip_data')."` WHERE (POW((69.1 * (`lon` - '"._es($CUR_ZIP_CODE["lon"])."') * cos("._es($CUR_ZIP_CODE["lat"])." / 57.3)), '2') + POW((69.1 * (`lat` - '"._es($CUR_ZIP_CODE["lat"])."')), '2')) < (".floatval($radius)." * ".floatval($radius).")";
+		return "SELECT id FROM ".db('zip_data')." WHERE (POW((69.1 * (lon - '"._es($CUR_ZIP_CODE["lon"])."') * cos("._es($CUR_ZIP_CODE["lat"])." / 57.3)), '2') + POW((69.1 * (lat - '"._es($CUR_ZIP_CODE["lat"])."')), '2')) < (".floatval($radius)." * ".floatval($radius).")";
 	}
 
 	/**

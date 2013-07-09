@@ -151,7 +151,7 @@ class yf_blog_utils {
 		));
 
 		// Get blog categories from db
-		$sql = "SELECT `id` FROM `".db('category_items')."` WHERE `cat_id` IN (SELECT `id` FROM `".db('categories')."` WHERE `name`='blog_cats')";
+		$sql = "SELECT id FROM ".db('category_items')." WHERE cat_id IN (SELECT id FROM ".db('categories')." WHERE name='blog_cats')";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
@@ -160,7 +160,7 @@ class yf_blog_utils {
 		}
 
 		// All blogs by pages
-		$sql = "SELECT COUNT(`id`) AS `num` FROM `".db('blog_posts')."` WHERE `active`='1' GROUP BY `user_id`";
+		$sql = "SELECT COUNT(id) AS num FROM ".db('blog_posts')." WHERE active='1' GROUP BY user_id";
 		$A = db()->query_fetch($sql);
 		$total_pages = ceil(intval($A["num"]) / intval($this->BLOG_OBJ->POSTS_PER_PAGE));
 		// Process pages
@@ -177,10 +177,10 @@ class yf_blog_utils {
 		}
 		
 		// User blogs by pages
-		$sql = "SELECT DISTINCT `user_id` FROM `".db('blog_posts')."` WHERE `active`='1' ORDER BY `user_id`";
+		$sql = "SELECT DISTINCT user_id FROM ".db('blog_posts')." WHERE active='1' ORDER BY user_id";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
-			$sql = "SELECT COUNT(`id`) AS `num` FROM `".db('blog_posts')."` WHERE `active`='1' AND `user_id`='".$A["user_id"]."'";
+			$sql = "SELECT COUNT(id) AS num FROM ".db('blog_posts')." WHERE active='1' AND user_id='".$A["user_id"]."'";
 			$B = db()->query_fetch($sql);
 			$total_pages = ceil(intval($B["num"]) / intval($this->BLOG_OBJ->POSTS_PER_PAGE));
 			// Process pages
@@ -198,7 +198,7 @@ class yf_blog_utils {
 		}
 
 		// Single posts
-		$sql = "SELECT `id`,`id2` FROM `".db('blog_posts')."` WHERE `active`='1'";
+		$sql = "SELECT id,id2 FROM ".db('blog_posts')." WHERE active='1'";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(

@@ -21,7 +21,7 @@ class yf_forum_compact_view {
 		}
 		// Try to get topic info
 		if (!empty($topic_id)) {
-			$this->_topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+			$this->_topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 			module('forum')->_topic_info = $this->_topic_info;
 		}
 		// Check if such topic exists
@@ -29,7 +29,7 @@ class yf_forum_compact_view {
 			return "";
 		}
 		// Do get repliers ids
-		$Q = db()->query("SELECT COUNT(`id`) AS `num_posts`,`user_id`,`user_name` FROM `".db('forum_posts')."` WHERE `topic`=".intval($topic_id)." AND `id`!=".intval($this->_topic_info["first_post_id"])." AND `user_id`!=0 ".(!FORUM_IS_ADMIN ? " AND `status`='a' " : "")." GROUP BY `user_id` ORDER BY `num_posts` DESC");
+		$Q = db()->query("SELECT COUNT(id) AS num_posts,user_id,user_name FROM ".db('forum_posts')." WHERE topic=".intval($topic_id)." AND id!=".intval($this->_topic_info["first_post_id"])." AND user_id!=0 ".(!FORUM_IS_ADMIN ? " AND status='a' " : "")." GROUP BY user_id ORDER BY num_posts DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$users_names[$A["user_id"]] = $A["user_name"];
 			$num_posts_by_users[$A["user_id"]] = $A["num_posts"];
@@ -56,7 +56,7 @@ class yf_forum_compact_view {
 		// Check input
 		$post_id = substr($_REQUEST["id"], 3);
 		if (!empty($post_id)) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($post_id));
+			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($post_id));
 		}
 		// Check post existance
 		if (empty($post_info)) {
@@ -66,7 +66,7 @@ class yf_forum_compact_view {
 		$topic_id = $post_info["topic"];
 		// Get topic info
 		if (!empty($topic_id)) {
-			$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : "")." LIMIT 1");
+			$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." ".(!FORUM_IS_ADMIN ? " AND approved=1 " : "")." LIMIT 1");
 		}
 		// Check topic existance
 		if (empty($topic_info["id"])) {

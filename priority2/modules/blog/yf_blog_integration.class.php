@@ -26,14 +26,14 @@ class yf_blog_integration {
 		
 		$stpl_name = $params["for_widgets"] ? "widgets_last_post" : "for_home_page_item2";
 
-		$Q = db()->query("SELECT * FROM `".db('blog_posts')."` WHERE `active`='1' ORDER BY `add_date` DESC LIMIT ".intval($NUM_NEWEST_BLOG_POSTS));
+		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE active='1' ORDER BY add_date DESC LIMIT ".intval($NUM_NEWEST_BLOG_POSTS));
 		while ($A = db()->fetch_assoc($Q)) {
 			$blog_posts[$A["id"]] = $A;	
 			$users_id[$A["user_id"]] = $A["user_id"];
 		}
 		
 		if(!empty($blog_posts)){
-			$Q = db()->query("SELECT * FROM `".db('blog_settings')."` WHERE `user_id` IN(".implode(",",array_keys($users_id)).")");
+			$Q = db()->query("SELECT * FROM ".db('blog_settings')." WHERE user_id IN(".implode(",",array_keys($users_id)).")");
 			while ($A = db()->fetch_assoc($Q)) {					
 				$blogs[$A["user_id"]] = $A;				
 			}
@@ -70,7 +70,7 @@ class yf_blog_integration {
 	* Code for user profile
 	*/
 	function _for_user_profile($id, $MAX_SHOW_BLOG_POSTS){
-		$sql = "SELECT `id`,`id2`,`user_id`,`title`,`add_date` FROM `".db('blog_posts')."` WHERE `user_id`=".intval($id)." AND `active`=1";
+		$sql = "SELECT id,id2,user_id,title,add_date FROM ".db('blog_posts')." WHERE user_id=".intval($id)." AND active=1";
 		list($add_sql, $pages, $this->_num_blog_posts) = common()->divide_pages($sql, "", null, $MAX_SHOW_BLOG_POSTS);
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -93,14 +93,14 @@ class yf_blog_integration {
 	*/
 	function _rss_general(){
 
-		$Q = db()->query("SELECT * FROM `".db('blog_posts')."` WHERE `active`='1' ORDER BY `add_date` DESC LIMIT ".intval($this->BLOG_OBJ->NUM_RSS));
+		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE active='1' ORDER BY add_date DESC LIMIT ".intval($this->BLOG_OBJ->NUM_RSS));
 		while ($A = db()->fetch_assoc($Q)) {
 			$blog_posts[$A["id"]] = $A;	
 			$users_id[$A["user_id"]] = $A["user_id"];
 		}
 		
 		if(!empty($blog_posts)){
-			$Q = db()->query("SELECT * FROM `".db('blog_settings')."` WHERE `user_id` IN(".implode(",",array_keys($users_id)).")");
+			$Q = db()->query("SELECT * FROM ".db('blog_settings')." WHERE user_id IN(".implode(",",array_keys($users_id)).")");
 			while ($A = db()->fetch_assoc($Q)) {					
 				$blogs[$A["user_id"]] = $A;				
 			}

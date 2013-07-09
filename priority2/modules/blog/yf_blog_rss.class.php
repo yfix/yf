@@ -32,24 +32,24 @@ class yf_blog_rss {
 		}
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$geo_filter_sql = " HAVING `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$geo_filter_sql = " HAVING user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
 		// Get latest posts
 		$Q = db()->query(
 			"SELECT 
-				`id` AS `post_id`,
-				`user_id`,
-				`title` AS `post_title`,
-				`add_date` AS `post_date`,
-				`privacy`,
-				`allow_comments`,
-				`num_reads`,
-				SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `privacy` NOT IN(9)
+				id AS post_id,
+				user_id,
+				title AS post_title,
+				add_date AS post_date,
+				privacy,
+				allow_comments,
+				num_reads,
+				SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND privacy NOT IN(9)
 				".$geo_filter_sql."
-			ORDER BY `add_date` DESC 
+			ORDER BY add_date DESC 
 			LIMIT ".intval($this->BLOG_OBJ->STATS_NUM_LATEST_POSTS)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -112,7 +112,7 @@ class yf_blog_rss {
 		$_GET["id"] = intval($_GET["id"]);
 		$user_id = $_GET["id"];
 		if ($this->BLOG_OBJ->HIDE_TOTAL_ID) {
-			$user_id = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID;
+			$user_id = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID;
 		}
 		// Try to get given user info
 		if (!empty($user_id)) {
@@ -129,10 +129,10 @@ class yf_blog_rss {
 		}
 		// Get latest posts
 		$Q = db()->query(
-			"SELECT * FROM `".db('blog_posts')."` 
-			WHERE `user_id`=".intval($user_info["id"])." 
-				AND `active`=1 
-			ORDER BY `add_date` DESC 
+			"SELECT * FROM ".db('blog_posts')." 
+			WHERE user_id=".intval($user_info["id"])." 
+				AND active=1 
+			ORDER BY add_date DESC 
 			LIMIT ".intval($this->BLOG_OBJ->STATS_NUM_LATEST_POSTS)
 		);
 		while ($post_info = db()->fetch_assoc($Q)) {
@@ -188,22 +188,22 @@ class yf_blog_rss {
 		}
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$geo_filter_sql = " HAVING `user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') ";
+			$geo_filter_sql = " HAVING user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
 		// Get posts in selected category
 		$Q = db()->query(
 			"SELECT 
-				`id` AS `post_id`,
-				`user_id`,
-				`add_date` AS `post_date`,
-				`title` AS `post_title`,
-				`num_reads`,
-				SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-			FROM `".db('blog_posts')."` 
-			WHERE `active`=1 
-				AND `cat_id`=".intval($_GET["id"])."
+				id AS post_id,
+				user_id,
+				add_date AS post_date,
+				title AS post_title,
+				num_reads,
+				SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+			FROM ".db('blog_posts')." 
+			WHERE active=1 
+				AND cat_id=".intval($_GET["id"])."
 				".$geo_filter_sql."
-			ORDER BY `add_date` DESC 
+			ORDER BY add_date DESC 
 			LIMIT ".intval($this->BLOG_OBJ->STATS_NUM_LATEST_POSTS)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -292,19 +292,19 @@ class yf_blog_rss {
 			// Try to get latest friends posts
 			$Q = db()->query(
 				"SELECT 
-					`id` AS `post_id`,
-					`user_id`,
-					`title` AS `post_title`,
-					`add_date` AS `post_date`,
-					`privacy`,
-					`allow_comments`,
-					`num_reads`,
-					SUBSTRING(`text` FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS `post_text` 
-				FROM `".db('blog_posts')."` 
-				WHERE `active`=1 
-					AND `user_id` IN (".implode(",", $friends_ids).")
-					AND `privacy` NOT IN(9)
-				ORDER BY `add_date` DESC 
+					id AS post_id,
+					user_id,
+					title AS post_title,
+					add_date AS post_date,
+					privacy,
+					allow_comments,
+					num_reads,
+					SUBSTRING(text FROM 1 FOR ".intval($this->BLOG_OBJ->POST_TEXT_PREVIEW_LENGTH).") AS post_text 
+				FROM ".db('blog_posts')." 
+				WHERE active=1 
+					AND user_id IN (".implode(",", $friends_ids).")
+					AND privacy NOT IN(9)
+				ORDER BY add_date DESC 
 				LIMIT ".intval($this->BLOG_OBJ->STATS_NUM_LATEST_POSTS)
 			);
 			while ($A = db()->fetch_assoc($Q)) {

@@ -324,7 +324,7 @@ class yf_debug_info {
 				','	=> ', ', 
 			);
 			$text = str_replace(array_keys($replace), array_values($replace), $text);
-			$text = preg_replace("#`(".$DB_CONNECTION->DB_PREFIX."[a-z0-9_]+)`#imse", "'`'.\$this->_admin_link('show_db_table', '\\1').'`'", $text);
+			$text = preg_replace("#(".$DB_CONNECTION->DB_PREFIX."[a-z0-9_]+)#imse", "''.\$this->_admin_link('show_db_table', '\\1').''", $text);
 
 			$exec_time = common()->_format_time_value($DB_CONNECTION->QUERY_EXEC_TIME[$id]);
 			$admin_link = $this->_admin_link("sql_query", rawurlencode($orig_sql), true);

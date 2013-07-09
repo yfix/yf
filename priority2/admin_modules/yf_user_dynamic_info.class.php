@@ -36,7 +36,7 @@ class yf_user_dynamic_info {
 	* Default method
 	*/
 	function show () {
-		$sql = "SELECT * FROM `".db('user_data_info_fields')."` ORDER BY `order`";
+		$sql = "SELECT * FROM ".db('user_data_info_fields')." ORDER BY `order`";
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$replace2 = array(
 				"id"			=> intval($A["id"]),
@@ -102,7 +102,7 @@ class yf_user_dynamic_info {
 	*/
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
-		$A = db()->query_fetch("SELECT * FROM `".db('user_data_info_fields')."` WHERE `id`=".$_GET["id"]);
+		$A = db()->query_fetch("SELECT * FROM ".db('user_data_info_fields')." WHERE id=".$_GET["id"]);
 		// Save data
 		if(!empty($_POST) && isset($_POST["name"]) && isset($_GET["id"])) {
 			$sql_array = array(
@@ -113,7 +113,7 @@ class yf_user_dynamic_info {
 				"order"			=> $_POST["order"],
 				"comment"		=> _es($_POST["comment"]),
 			);
-			db()->UPDATE("user_data_info_fields", $sql_array, "`id`=".$_GET["id"]); 
+			db()->UPDATE("user_data_info_fields", $sql_array, "id=".$_GET["id"]); 
 
 			$this->_refresh_cache();
 
@@ -144,8 +144,8 @@ class yf_user_dynamic_info {
 		$_GET["id"] = intval($_GET["id"]);
 		// Do delete record
 		if ($_GET["id"]) {
-			db()->query("DELETE FROM `".db('user_data_info_fields')."` WHERE `id`=".$_GET["id"]);
-			db()->query("DELETE FROM `".db('user_data_info_values')."` WHERE `field_id` =".$_GET["id"]);
+			db()->query("DELETE FROM ".db('user_data_info_fields')." WHERE id=".$_GET["id"]);
+			db()->query("DELETE FROM ".db('user_data_info_values')." WHERE field_id =".$_GET["id"]);
 
 			$this->_refresh_cache();
 		}
@@ -172,8 +172,8 @@ class yf_user_dynamic_info {
 		}
 		// Do delete ids
 		if (!empty($ids_to_delete)) {
-			db()->query("DELETE FROM `".db('user_data_info_fields')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
-			db()->query("DELETE FROM `".db('user_data_info_values')."` WHERE `field_id` IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('user_data_info_fields')." WHERE id IN(".implode(",",$ids_to_delete).")");
+			db()->query("DELETE FROM ".db('user_data_info_values')." WHERE field_id IN(".implode(",",$ids_to_delete).")");
 
 			$this->_refresh_cache();
 		}
@@ -187,7 +187,7 @@ class yf_user_dynamic_info {
 	function activate () {
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			list($_active) = db()->query_fetch("SELECT `active` AS `0` FROM `".db('user_data_info_fields')."` WHERE `id`=".intval($_GET["id"]));
+			list($_active) = db()->query_fetch("SELECT active AS `0` FROM ".db('user_data_info_fields')." WHERE id=".intval($_GET["id"]));
 			if ($_active == 0) {
 				$_set_active = 1;
 			} else {
@@ -196,7 +196,7 @@ class yf_user_dynamic_info {
 			$sql_array = array(
 				"active" => $_set_active,
 			);
-			db()->UPDATE("user_data_info_fields", $sql_array, "`id`=".intval($_GET["id"]));
+			db()->UPDATE("user_data_info_fields", $sql_array, "id=".intval($_GET["id"]));
 
 			$this->_refresh_cache();
 		}

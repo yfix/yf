@@ -19,7 +19,7 @@ class yf_manage_articles extends yf_module {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_manage_articles() {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
 		// Array of boxes
@@ -47,9 +47,9 @@ class yf_manage_articles extends yf_module {
 	// Default function
 	function show () {
 		// Calling function to divide records per pages
-		$sql = "SELECT SQL_CALC_FOUND_ROWS `id` FROM `".db('articles_texts')."` ";
+		$sql = "SELECT SQL_CALC_FOUND_ROWS id FROM ".db('articles_texts')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `add_date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY add_date DESC ";
 		// Add current page limit
 		$per_page = conf('admin_per_page');
 		$first_record = intval(($_GET["page"] ? $_GET["page"] - 1 : 0) * $per_page);
@@ -68,7 +68,7 @@ class yf_manage_articles extends yf_module {
 			list($num_records) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 			list(, $pages, ) = common()->divide_pages("", "./?object=".$_GET["object"], "", $per_page, $num_records);
 			// Do get details
-			$Q = db()->query("SELECT * FROM `".db('articles_texts')."` WHERE `id` IN(".implode(",", $articles_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('articles_texts')." WHERE id IN(".implode(",", $articles_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$articles_array[$A["id"]] = $A;
 				$users_ids[$A["user_id"]] = $A["user_id"];
@@ -76,7 +76,7 @@ class yf_manage_articles extends yf_module {
 		}
 		// Get users infos
 		if (!empty($users_ids)) {
-			$sql2 = "SELECT `id`,`name`,`nick`,`login`,`email`,`ip`,`add_date`,`photo_verified` FROM `".db('user')."` WHERE `id` IN(".implode(",", $users_ids).")";
+			$sql2 = "SELECT id,name,nick,login,email,ip,add_date,photo_verified FROM ".db('user')." WHERE id IN(".implode(",", $users_ids).")";
 			$Q = db()->query($sql2);
 			while ($A = db()->fetch_assoc($Q)) $users_array[$A["id"]] = $A;
 		}
@@ -132,13 +132,13 @@ class yf_manage_articles extends yf_module {
 			return _e(t("No id"));
 		}
 		// Try to get record info
-		$article_info = db()->query_fetch("SELECT * FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"]));
+		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($article_info)) {
 			return _e(t("No such record"));
 		}
 		// Try to get given user info
 		if (!empty($article_info["user_id"])) {
-			$user_info = db()->query_fetch("SELECT `id`,`name`,`nick` FROM `".db('user')."` WHERE `id`=".intval($article_info["user_id"]));
+			$user_info = db()->query_fetch("SELECT id,name,nick FROM ".db('user')." WHERE id=".intval($article_info["user_id"]));
 		}
 		// Check posted data and save
 		if (count($_POST) > 0) {
@@ -164,7 +164,7 @@ class yf_manage_articles extends yf_module {
 					"credentials"	=> _es($_POST["credentials"]),
 					"edit_date"		=> time(),
 					"status"		=> _es($_POST["status"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]);
 			}
@@ -275,13 +275,13 @@ class yf_manage_articles extends yf_module {
 			return _e(t("No id!"));
 		}
 		// Get article info
-		$article_info = db()->query_fetch("SELECT * FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"]));
+		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
 		}
 		$IS_OWN_ARTICLE = true;
 		// Do get author info
-		$author_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($article_info["user_id"]));
+		$author_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($article_info["user_id"]));
 		$author_name = !empty($article_info["author_name"]) ? $article_info["author_name"] : _display_name($author_info);
 		// Process template
 		$replace = array(
@@ -315,11 +315,11 @@ class yf_manage_articles extends yf_module {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get article info
 		if (!empty($_GET["id"])) {
-			$article_info = db()->query_fetch("SELECT * FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"]));
+			$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete record
 		if (!empty($article_info)) {
-			db()->query("DELETE FROM `".db('articles_texts')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -391,28 +391,28 @@ class yf_manage_articles extends yf_module {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["id_min"]) 				$sql .= " AND `id` >= ".intval($SF["id_min"])." \r\n";
-		if ($SF["id_max"])			 	$sql .= " AND `id` <= ".intval($SF["id_max"])." \r\n";
-		if ($SF["date_min"]) 			$sql .= " AND `add_date` >= ".strtotime($SF["date_min"])." \r\n";
-		if ($SF["date_max"])			$sql .= " AND `add_date` <= ".strtotime($SF["date_max"])." \r\n";
-		if ($SF["user_id"])			 	$sql .= " AND `user_id` = ".intval($SF["user_id"])." \r\n";
-		if ($SF["cat_id"])			 	$sql .= " AND `cat_id` = ".intval($SF["cat_id"])." \r\n";
-		if (strlen($SF["title"]))		$sql .= " AND `title` LIKE '"._es($SF["title"])."%' \r\n";
-		if (strlen($SF["summary"]))		$sql .= " AND `summary` LIKE '"._es($SF["summary"])."%' \r\n";
-		if (strlen($SF["text"]))		$sql .= " AND `full_text` LIKE '"._es($SF["text"])."%' \r\n";
+		if ($SF["id_min"]) 				$sql .= " AND id >= ".intval($SF["id_min"])." \r\n";
+		if ($SF["id_max"])			 	$sql .= " AND id <= ".intval($SF["id_max"])." \r\n";
+		if ($SF["date_min"]) 			$sql .= " AND add_date >= ".strtotime($SF["date_min"])." \r\n";
+		if ($SF["date_max"])			$sql .= " AND add_date <= ".strtotime($SF["date_max"])." \r\n";
+		if ($SF["user_id"])			 	$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
+		if ($SF["cat_id"])			 	$sql .= " AND cat_id = ".intval($SF["cat_id"])." \r\n";
+		if (strlen($SF["title"]))		$sql .= " AND title LIKE '"._es($SF["title"])."%' \r\n";
+		if (strlen($SF["summary"]))		$sql .= " AND summary LIKE '"._es($SF["summary"])."%' \r\n";
+		if (strlen($SF["text"]))		$sql .= " AND full_text LIKE '"._es($SF["text"])."%' \r\n";
 		if (!empty($SF["status"]) && isset($this->_articles_statuses[$SF["status"]])) {
-		 	$sql .= " AND `status` = '"._es($SF["status"])."' \r\n";
+		 	$sql .= " AND status = '"._es($SF["status"])."' \r\n";
 		}
 		if (strlen($SF["nick"]) || strlen($SF["account_type"])) {
-			if (strlen($SF["nick"])) 	$users_sql .= " AND `nick` LIKE '"._es($SF["nick"])."%' \r\n";
-			if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
+			if (strlen($SF["nick"])) 	$users_sql .= " AND nick LIKE '"._es($SF["nick"])."%' \r\n";
+			if ($SF["account_type"])	$users_sql .= " AND group = ".intval($SF["account_type"])." \r\n";
 		}
 		// Add subquery to users table
 		if (!empty($users_sql)) {
-			$sql .= " AND `user_id` IN( SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$users_sql.") \r\n";
+			$sql .= " AND user_id IN( SELECT id FROM ".db('user')." WHERE 1=1 ".$users_sql.") \r\n";
 		}
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

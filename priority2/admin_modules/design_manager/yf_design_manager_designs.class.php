@@ -17,7 +17,7 @@ class yf_design_manager_designs {
 	* Shows add design form
 	*/
 	function _add_design_form () {
-		$theme_info = db()->query_fetch("SELECT `id`, `name` FROM `".db('user_themes')."` WHERE `name`='".$_GET["id"]."'");		
+		$theme_info = db()->query_fetch("SELECT id, name FROM ".db('user_themes')." WHERE name='".$_GET["id"]."'");		
 		// Show insert design content form
 		$replace = array(
 			"record_id"		=> "",
@@ -47,10 +47,10 @@ class yf_design_manager_designs {
 		}
 
 		// Theme name for path
-		$theme_info = db()->query_fetch("SELECT `name` FROM `".db('user_themes')."` WHERE `id`=".intval($_GET["id"]));
+		$theme_info = db()->query_fetch("SELECT name FROM ".db('user_themes')." WHERE id=".intval($_GET["id"]));
 		$theme_name = $theme_info["name"];
 		// Array of design names
-		$A = db()->query_fetch_all("SELECT `id`, `name` FROM `".db('designs')."` WHERE `theme_id`=".intval($_GET["id"]));
+		$A = db()->query_fetch_all("SELECT id, name FROM ".db('designs')." WHERE theme_id=".intval($_GET["id"]));
 		foreach ((array)$A as $V) {
 			$exists_designs[] = $V["name"];
 		}
@@ -87,7 +87,7 @@ class yf_design_manager_designs {
 		if (!$theme_info["default_design"]) {
 			db()->UPDATE("user_themes", array(
 				"default_design" => $NEW_DESIGN_ID
-			), "`id`=".intval($theme_info["id"]));
+			), "id=".intval($theme_info["id"]));
 		}
 
 		// Create css file and Save css contents
@@ -118,8 +118,8 @@ class yf_design_manager_designs {
 	*/
 	function _delete_design () {
 		// Get design folder name
-		$design_info = db()->query_fetch("SELECT `id`,`name`, `theme_id` FROM `".db('designs')."` WHERE `id`='".intval($_GET["id"])."'");	
-		$theme_info = db()->query_fetch("SELECT `name`, `default_design` FROM `".db('user_themes')."` WHERE `id`=".intval($design_info["theme_id"]));
+		$design_info = db()->query_fetch("SELECT id,name, theme_id FROM ".db('designs')." WHERE id='".intval($_GET["id"])."'");	
+		$theme_info = db()->query_fetch("SELECT name, default_design FROM ".db('user_themes')." WHERE id=".intval($design_info["theme_id"]));
 
 		if ($design_info["id"] == $theme_info["default_design"]) {
 			return js_redirect($_SERVER["HTTP_REFERER"]);
@@ -142,7 +142,7 @@ class yf_design_manager_designs {
 		$this->PARENT_OBJ->DIR_OBJ->delete_dir($this->PARENT_OBJ->USER_THEMES_DIR. $theme_name. "/designs/". $design_info["id"], 1);
 
 		// Delete record from DB
-		db()->query("DELETE FROM `".db('designs')."` WHERE `id`='".intval($_GET["id"])."'");
+		db()->query("DELETE FROM ".db('designs')." WHERE id='".intval($_GET["id"])."'");
 		// Refresh system cache
 		$this->PARENT_OBJ->_refresh_cache();
 
@@ -154,8 +154,8 @@ class yf_design_manager_designs {
 	*/
 	function _edit_design () {
 
-		$design_info	= db()->query_fetch("SELECT * FROM `".db('designs')."` WHERE `id`=".intval($_GET["id"]));				
-		$theme_info		= db()->query_fetch("SELECT `name` FROM `".db('user_themes')."` WHERE `id`=".intval($design_info["theme_id"]));
+		$design_info	= db()->query_fetch("SELECT * FROM ".db('designs')." WHERE id=".intval($_GET["id"]));				
+		$theme_info		= db()->query_fetch("SELECT name FROM ".db('user_themes')." WHERE id=".intval($design_info["theme_id"]));
 
 		$css_content = $design_info["css"];
 		$_css_main_path = $this->PARENT_OBJ->USER_THEMES_DIR. $theme_info["name"]."/designs/".$design_info["id"].".css";
@@ -228,14 +228,14 @@ class yf_design_manager_designs {
 		$_POST["design_name"] = preg_replace("/[^0-9a-z\_\-\.]/", "", $_POST["design_name"]);
 
 		// Get design folder name
-		$design_info = db()->query_fetch("SELECT * FROM `".db('designs')."` WHERE `id`='".intval($_GET["id"])."'");	
-		$theme_info	= db()->query_fetch("SELECT `name` FROM `".db('user_themes')."` WHERE `id`=".intval($design_info["theme_id"]));
+		$design_info = db()->query_fetch("SELECT * FROM ".db('designs')." WHERE id='".intval($_GET["id"])."'");	
+		$theme_info	= db()->query_fetch("SELECT name FROM ".db('user_themes')." WHERE id=".intval($design_info["theme_id"]));
 		$theme_name = $theme_info["name"];
 
 		// Save into db
 		if ($design_info["owner_id"] || $this->PARENT_OBJ->STORE_TO_DB) {
 
-			db()->UPDATE("designs", array("css" => _es($_POST["design_content"])), "`id`=".intval($design_info["id"]));
+			db()->UPDATE("designs", array("css" => _es($_POST["design_content"])), "id=".intval($design_info["id"]));
 
 		// Common save into files
 		} else {
@@ -255,7 +255,7 @@ class yf_design_manager_designs {
 			"name"		=> _es($_POST["design_name"]),
 			"tags"		=> $tags_string,
 			"owner_id"	=> intval($_POST["owner_id"]),
-		),"`id`='".intval($_GET["id"])."'");
+		),"id='".intval($_GET["id"])."'");
 		// Upload preview image
 		$name_in_form = "preview_img";
 		if (!empty($_FILES[$name_in_form]["tmp_name"])) {
@@ -282,7 +282,7 @@ class yf_design_manager_designs {
 	*/
 	function _activate_design () {
 		if ($_GET["id"]){
-			$A = db()->query_fetch("SELECT * FROM `".db('designs')."` WHERE `id`=".intval($_GET["id"]));
+			$A = db()->query_fetch("SELECT * FROM ".db('designs')." WHERE id=".intval($_GET["id"]));
 			if ($A["active"] == 1){
 				$active = 0;
 			} elseif ($A["active"] == 0) {
@@ -291,7 +291,7 @@ class yf_design_manager_designs {
 			db()->UPDATE("designs", array(
 				"active"		=> $active,
 			),
-			"`id`='".intval($_GET["id"])."'" 
+			"id='".intval($_GET["id"])."'" 
 			);
 		}
 		// Refresh system cache

@@ -32,7 +32,7 @@ class yf_articles_search {
 		}
 		// Get unique blog posters
 		$filter_sql = $this->PARENT_OBJ->USE_FILTER ? $this->PARENT_OBJ->_create_filter_sql() : "";
-		$sql = "SELECT * FROM `".db('articles_texts')."` WHERE `status` = 'active' ".$filter_sql;
+		$sql = "SELECT * FROM ".db('articles_texts')." WHERE status = 'active' ".$filter_sql;
 		$path = "./?object=".ARTICLES_CLASS_NAME."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : "&q=results");
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $this->PARENT_OBJ->VIEW_ALL_ON_PAGE, 0, "", 0);
 		// Get contents from db

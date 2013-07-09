@@ -77,20 +77,20 @@ class yf_check_multi_accounts {
 		}
 		$ips_array = array();
 		// Connect pager
-		$sql = "SELECT * FROM `".db('check_multi_accounts')."` WHERE 1=1 ";
+		$sql = "SELECT * FROM ".db('check_multi_accounts')." WHERE 1=1 ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		if ($this->HIDE_NON_MATCHED_USERS) {
-			$sql .= " AND (`ip_match` = '1' OR `cookie_match` = '1') ";
+			$sql .= " AND (ip_match = '1' OR cookie_match = '1') ";
 		}
 		if ($this->SHOW_ONLY_COOKIE_MATCH) {
-			$sql .= " AND `cookie_match` = '1' ";
+			$sql .= " AND cookie_match = '1' ";
 		}
 		if (!empty($this->IGNORE_IPS)) {
 			foreach ((array)$this->IGNORE_IPS as $_ip_mask) {
-				$sql .= " AND `matching_ips` NOT LIKE '"._es(str_replace("*", "%", $_ip_mask))."'";
+				$sql .= " AND matching_ips NOT LIKE '"._es(str_replace("*", "%", $_ip_mask))."'";
 			}
 		}
-		$sql .= strlen($filter_sql) ? $filter_sql : " ORDER BY `user_id` ASC";
+		$sql .= strlen($filter_sql) ? $filter_sql : " ORDER BY user_id ASC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get data from db
 		$Q = db()->query($sql.$add_sql);
@@ -129,7 +129,7 @@ class yf_check_multi_accounts {
 		// Get matching users with these IPs
 		if (!empty($ips_array)) {
 			ksort($ips_array);
-			$Q = db()->query("SELECT * FROM `".db('check_multi_ips')."` WHERE `ip` IN('".implode("','",array_keys($ips_array))."')");
+			$Q = db()->query("SELECT * FROM ".db('check_multi_ips')." WHERE ip IN('".implode("','",array_keys($ips_array))."')");
 			while ($A = db()->fetch_assoc($Q)) {
 				$_tmp_matching_users = explode(",",$A["matching_users"]);
 				sort($_tmp_matching_users);
@@ -159,7 +159,7 @@ class yf_check_multi_accounts {
 		// Do get users infos
 		$users_infos = array();
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT `id`,`login`,`nick`,`photo_verified`, ".implode(",", $this->_known_ban_items)." FROM `".db('user')."` WHERE `id` IN(".implode(",",$users_ids).")");
+			$Q = db()->query("SELECT id,login,nick,photo_verified, ".implode(",", $this->_known_ban_items)." FROM ".db('user')." WHERE id IN(".implode(",",$users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$users_infos[$A["id"]] = $A;
 			}
@@ -168,8 +168,8 @@ class yf_check_multi_accounts {
 		$with_cookie_match	= array();
 		// Last get num_m_ips for all fetched users
 		if (!empty($users_infos)) {
-//			$_add_sql = " AND (`cookie_match` = '1' OR `ip_match` = '1') ";
-			$Q = db()->query("SELECT `user_id`, `num_m_ips`, `cookie_match`, `ip_match` FROM `".db('check_multi_accounts')."` WHERE `user_id` IN(".implode(",",array_keys($users_infos)).")".$_add_sql);
+//			$_add_sql = " AND (cookie_match = '1' OR ip_match = '1') ";
+			$Q = db()->query("SELECT user_id, num_m_ips, cookie_match, ip_match FROM ".db('check_multi_accounts')." WHERE user_id IN(".implode(",",array_keys($users_infos)).")".$_add_sql);
 			while ($A = db()->fetch_assoc($Q)) {
 				$num_m_ips_by_users[$A["user_id"]]		= $A["num_m_ips"];
 				if ($A["cookie_match"]) {
@@ -367,9 +367,9 @@ class yf_check_multi_accounts {
 		}
 		// Get data from db
 		if ($this->HIDE_NON_MATCHED_USERS) {
-			$add_sql = " AND (`ip_match` = '1' AND `cookie_match` = '1') ";
+			$add_sql = " AND (ip_match = '1' AND cookie_match = '1') ";
 		}
-		$Q = db()->query("SELECT `user_id` FROM `".db('check_multi_accounts')."` WHERE `user_id` IN(".implode(",",$users_ids).")".$add_sql);
+		$Q = db()->query("SELECT user_id FROM ".db('check_multi_accounts')." WHERE user_id IN(".implode(",",$users_ids).")".$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$links[$A["user_id"]] = "./?object=".CHECK_MULTI_ACCOUNTS_CLASS."&action=show_by_user&id=".$A["user_id"];
 		}
@@ -421,7 +421,7 @@ class yf_check_multi_accounts {
 		// Do delete record
 		if (!empty($ids_to_delete)) {
 // TODO: maybe we just need to set flag "ignore this user in results"
-//			db()->query("DELETE FROM `".db('check_multi_accounts')."` WHERE `user_id` IN(".implode(",", $ids_to_delete).")");
+//			db()->query("DELETE FROM ".db('check_multi_accounts')." WHERE user_id IN(".implode(",", $ids_to_delete).")");
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]);
@@ -436,7 +436,7 @@ class yf_check_multi_accounts {
 			return "No id";
 		}
 		// First get multi-account info about this user
-		$info = db()->query_fetch("SELECT * FROM `".db('check_multi_accounts')."` WHERE `user_id` = ".intval($_GET["id"]));
+		$info = db()->query_fetch("SELECT * FROM ".db('check_multi_accounts')." WHERE user_id = ".intval($_GET["id"]));
 		if (empty($info)) {
 			return "Not found in multi-accounts";
 		}
@@ -444,7 +444,7 @@ class yf_check_multi_accounts {
 		$matching_users = explode(",", $info["matching_users"]);
 		// Get possible callbacks from db
 		$found_users = array();
-		$Q = db()->query("SELECT `user_id`, `matching_users` FROM `".db('check_multi_accounts')."` WHERE `matching_users` != ''");
+		$Q = db()->query("SELECT user_id, matching_users FROM ".db('check_multi_accounts')." WHERE matching_users != ''");
 		while ($A = db()->fetch_assoc($Q)) {
 			$_tmp = array();
 			foreach (explode(",", $A["matching_users"]) as $_id) {
@@ -488,13 +488,13 @@ class yf_check_multi_accounts {
 			db()->UPDATE("check_multi_accounts", array(
 				"matching_users"	=> _es(!empty($_matches) ? implode(",", $_matches) : ""),
 				"cookie_match"		=> 0,
-			), "`user_id`=".intval($_user_id));
+			), "user_id=".intval($_user_id));
 		}
 		// Clean main user record
 		db()->UPDATE("check_multi_accounts", array(
 			"matching_users"	=> "",
 			"cookie_match"		=> 0,
-		), "`user_id`=".intval($_GET["id"]));
+		), "user_id=".intval($_GET["id"]));
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
@@ -549,20 +549,20 @@ class yf_check_multi_accounts {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["user_id"])			$sql .= " AND `user_id` = ".intval($SF["user_id"])." \r\n";
-		if ($SF["ip"])				$sql .= " AND `matching_ips` LIKE '%"._es($SF["ip"])."%' \r\n";
+		if ($SF["user_id"])			$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
+		if ($SF["ip"])				$sql .= " AND matching_ips LIKE '%"._es($SF["ip"])."%' \r\n";
 
-		if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
-		if (strlen($SF["nick"]))	$users_sql .= " AND `nick` LIKE'"._es($SF["nick"])."' \r\n";
+		if ($SF["account_type"])	$users_sql .= " AND group = ".intval($SF["account_type"])." \r\n";
+		if (strlen($SF["nick"]))	$users_sql .= " AND nick LIKE'"._es($SF["nick"])."' \r\n";
 		// Add subquery to users table
 		if (!empty($users_sql)) {
-			$sql .= " AND `user_id` IN( SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$users_sql.") \r\n";
+			$sql .= " AND user_id IN( SELECT id FROM ".db('user')." WHERE 1=1 ".$users_sql.") \r\n";
 		}
 		if (isset($SF["cookie_match"])) {
 			$this->SHOW_ONLY_COOKIE_MATCH = $SF["cookie_match"];
 		}
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}
@@ -628,118 +628,118 @@ class yf_check_multi_accounts {
 		// Prepare temporary table
 		$tmp_table_name = db()->_get_unique_tmp_table_name();
 		db()->query(
-			"CREATE TEMPORARY TABLE `".$tmp_table_name."` ( 
-				`user_id`	int(10) unsigned NOT NULL, 
-				`ips_list`	longtext NOT NULL default '', 
-				`num_ips`	int(10) NOT NULL default '0', 
-				PRIMARY KEY (`user_id`)
+			"CREATE TEMPORARY TABLE ".$tmp_table_name." ( 
+				user_id	int(10) unsigned NOT NULL, 
+				ips_list	longtext NOT NULL default '', 
+				num_ips	int(10) NOT NULL default '0', 
+				PRIMARY KEY (user_id)
 			)"
 		);
 		// Collect unique user_ids logged in from more than 1 IPs
 		db()->query(
-			"INSERT INTO `".$tmp_table_name."` ( 
-				`num_ips`
-				,`user_id`
-				,`ips_list`
+			"INSERT INTO ".$tmp_table_name." ( 
+				num_ips
+				,user_id
+				,ips_list
 			) 
 			SELECT 
-				COUNT(DISTINCT(`ip`)) AS `multi_ips`
-				, `user_id`
-				, CAST(GROUP_CONCAT(DISTINCT `ip` ORDER BY `ip` ASC) AS CHAR) AS `ips_list`
-			FROM `".db('log_auth')."` 
-			WHERE `user_id` IN (SELECT `id` FROM `".db('user')."`)
-			GROUP BY `user_id` 
-			HAVING `multi_ips` > 1
-			ORDER BY `multi_ips` DESC"
+				COUNT(DISTINCT(ip)) AS multi_ips
+				, user_id
+				, CAST(GROUP_CONCAT(DISTINCT ip ORDER BY ip ASC) AS CHAR) AS ips_list
+			FROM ".db('log_auth')." 
+			WHERE user_id IN (SELECT id FROM ".db('user').")
+			GROUP BY user_id 
+			HAVING multi_ips > 1
+			ORDER BY multi_ips DESC"
 		);
 		// Create missed records
 		db()->query(
-			"INSERT IGNORE INTO `".db('check_multi_accounts')."` ( 
-				`user_id`
-				,`matching_ips`
-				,`num_m_ips`
+			"INSERT IGNORE INTO ".db('check_multi_accounts')." ( 
+				user_id
+				,matching_ips
+				,num_m_ips
 			) 
 			SELECT 
-				`user_id`
-				, `ips_list` 
-				, `num_ips` 
-			FROM `".$tmp_table_name."` 
-			WHERE `user_id` NOT IN(
-				SELECT `user_id` FROM `".db('check_multi_accounts')."`
+				user_id
+				, ips_list 
+				, num_ips 
+			FROM ".$tmp_table_name." 
+			WHERE user_id NOT IN(
+				SELECT user_id FROM ".db('check_multi_accounts')."
 			)"
 		);
 		// Update cache table
 		db()->query(
-			"UPDATE `".db('check_multi_accounts')."` AS `t1`
-					, `".$tmp_table_name."` AS `tmp` 
-			SET `t1`.`matching_ips` = `tmp`.`ips_list`
-				, `t1`.`num_m_ips` = `tmp`.`num_ips`
-			WHERE `tmp`.`user_id` = `t1`.`user_id`"
+			"UPDATE ".db('check_multi_accounts')." AS t1
+					, ".$tmp_table_name." AS tmp 
+			SET t1.matching_ips = tmp.ips_list
+				, t1.num_m_ips = tmp.num_ips
+			WHERE tmp.user_id = t1.user_id"
 		);
 		// Drop temp table
-		db()->query("DROP TEMPORARY TABLE `".$tmp_table_name."`");
+		db()->query("DROP TEMPORARY TABLE ".$tmp_table_name."");
 
 		// ####### Get multi-IPs ##############
 
 		// Prepare temporary table
 		$tmp_table_name = db()->_get_unique_tmp_table_name();
 		db()->query(
-			"CREATE TEMPORARY TABLE `".$tmp_table_name."` ( 
-				`ip`			varchar(15) NOT NULL, 
-				`users_list`	longtext NOT NULL default '', 
-				`num_users`		int(10) NOT NULL default '0', 
-				INDEX (`ip`)
+			"CREATE TEMPORARY TABLE ".$tmp_table_name." ( 
+				ip			varchar(15) NOT NULL, 
+				users_list	longtext NOT NULL default '', 
+				num_users		int(10) NOT NULL default '0', 
+				INDEX (ip)
 			)"
 		);
 		// Collect unique IPs having used for log in for more than 1 user_id
 		db()->query(
-			"INSERT INTO `".$tmp_table_name."` ( 
-				`num_users`
-				,`ip`
-				,`users_list`
+			"INSERT INTO ".$tmp_table_name." ( 
+				num_users
+				,ip
+				,users_list
 			) 
 			SELECT 
-				COUNT(DISTINCT(`user_id`)) AS `unique_accounts`
-				, `ip`
-				, CAST(GROUP_CONCAT(DISTINCT `user_id` ORDER BY `user_id` ASC) AS CHAR) AS `users_list`
-			FROM `".db('log_auth')."` 
-			WHERE `user_id` IN (SELECT `id` FROM `".db('user')."`) 
-			GROUP BY `ip` 
-			HAVING `unique_accounts` > 1
-			ORDER BY `unique_accounts` DESC" 
+				COUNT(DISTINCT(user_id)) AS unique_accounts
+				, ip
+				, CAST(GROUP_CONCAT(DISTINCT user_id ORDER BY user_id ASC) AS CHAR) AS users_list
+			FROM ".db('log_auth')." 
+			WHERE user_id IN (SELECT id FROM ".db('user').") 
+			GROUP BY ip 
+			HAVING unique_accounts > 1
+			ORDER BY unique_accounts DESC" 
 		);
 		// Create missed records
 		db()->query(
-			"INSERT IGNORE INTO `".db('check_multi_ips')."` ( 
-				`ip`
-				,`matching_users`
-				,`num_m_users`
+			"INSERT IGNORE INTO ".db('check_multi_ips')." ( 
+				ip
+				,matching_users
+				,num_m_users
 			) 
 			SELECT 
-				`ip`
-				, `users_list` 
-				, `num_users` 
-			FROM `".$tmp_table_name."`
-			WHERE `ip` NOT IN(
-				SELECT `ip` FROM `".db('check_multi_ips')."`
+				ip
+				, users_list 
+				, num_users 
+			FROM ".$tmp_table_name."
+			WHERE ip NOT IN(
+				SELECT ip FROM ".db('check_multi_ips')."
 			)"
 		);
 		// Update cache table
 		db()->query(
-			"UPDATE `".db('check_multi_ips')."` AS `t1`
-					, `".$tmp_table_name."` AS `tmp` 
-			SET `t1`.`matching_users` = `tmp`.`users_list`
-				, `t1`.`num_m_users` = `tmp`.`num_users`
-			WHERE `tmp`.`ip` = `t1`.`ip`"
+			"UPDATE ".db('check_multi_ips')." AS t1
+					, ".$tmp_table_name." AS tmp 
+			SET t1.matching_users = tmp.users_list
+				, t1.num_m_users = tmp.num_users
+			WHERE tmp.ip = t1.ip"
 		);
 		// Drop temp table
-		db()->query("DROP TEMPORARY TABLE `".$tmp_table_name."`");
+		db()->query("DROP TEMPORARY TABLE ".$tmp_table_name."");
 
 		// ####### Sync cookie matched users ##############
 
 		$matched_accounts = array();
 
-		$Q = db()->query("SELECT * FROM `".db('check_multi_accounts')."` WHERE `cookie_match` = '1'");
+		$Q = db()->query("SELECT * FROM ".db('check_multi_accounts')." WHERE cookie_match = '1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$_tmp = array();
 			foreach (explode(",", $A["matching_users"]) as $_id) {
@@ -783,18 +783,18 @@ class yf_check_multi_accounts {
 				db()->UPDATE("check_multi_accounts", array(
 					"matching_users"	=> _es(implode(",", $_matches)),
 					"cookie_match"		=> 1,
-				), "`user_id`=".intval($_user_id));
+				), "user_id=".intval($_user_id));
 			}
 		}
 
 		// ####### Sync users with other users matched by IP ##############
 
 		db()->query(
-			"UPDATE `".db('check_multi_accounts')."` 
-			SET `ip_match` = '1'
+			"UPDATE ".db('check_multi_accounts')." 
+			SET ip_match = '1'
 			WHERE FIND_IN_SET(
-				`user_id` , 
-				(SELECT GROUP_CONCAT(`matching_users`) FROM `".db('check_multi_ips')."`)
+				user_id , 
+				(SELECT GROUP_CONCAT(matching_users) FROM ".db('check_multi_ips').")
 			) > 0"
 		);
 	}

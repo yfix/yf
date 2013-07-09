@@ -13,7 +13,7 @@ class yf_forum_manage_users {
 	* manage users
 	*/
 	function _manage_users () {
-		$sql = "SELECT * FROM `".db('forum_users')."`";
+		$sql = "SELECT * FROM ".db('forum_users')."";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$Q = db()->query($sql. $add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -55,7 +55,7 @@ class yf_forum_manage_users {
 	function _edit_user () {
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			$forum_user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval($_GET["id"]));
+			$forum_user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($_GET["id"]));
 		}
 		if (!$forum_user_info) {
 			return _e(t("No such user"));
@@ -71,7 +71,7 @@ class yf_forum_manage_users {
 			if (!common()->_error_exists()) {
 				db()->UPDATE("forum_users", array(
 					"group"	=> intval($_POST["group"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]."&action=manage_users"._add_get(array("id")));
 			}
@@ -104,8 +104,8 @@ class yf_forum_manage_users {
 	* manage group
 	*/
 	function _manage_groups () {
-		// Get number of users by groups
-		$Q = db()->query("SELECT `group`, COUNT(*) AS `num` FROM `".db('forum_users')."` GROUP BY `group`");
+		// Get number of users BY `group`s
+		$Q = db()->query("SELECT `group`, COUNT(*) AS num FROM ".db('forum_users')." GROUP BY `group`");
 		while ($A = db()->fetch_assoc($Q)) {
 			$users_by_groups[$A["group"]] = $A["num"];
 		}
@@ -161,7 +161,7 @@ class yf_forum_manage_users {
 				}
 				db()->UPDATE("forum_groups", 
 					$sql_array, 
-					"`id`=".intval($_GET["id"])
+					"id=".intval($_GET["id"])
 				);
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("forum_groups");
@@ -252,7 +252,7 @@ class yf_forum_manage_users {
 		if (!isset(module("forum")->_forum_groups[$_GET["id"]])) {
 			return _e(t("No such group"));
 		}
-		db()->query("DELETE FROM `".db('forum_groups')."` WHERE `id`=".intval($_GET["id"]));
+		db()->query("DELETE FROM ".db('forum_groups')." WHERE id=".intval($_GET["id"]));
 
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("forum_groups");
@@ -357,9 +357,9 @@ class yf_forum_manage_users {
 				}
 				db()->UPDATE("forum_moderators", 
 					$sql_array, 
-					"`id`=".intval($_GET["id"]));
+					"id=".intval($_GET["id"]));
 				// Update user's forum info
-				$forum_user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval($mod_info["member_id"]));
+				$forum_user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($mod_info["member_id"]));
 				if (empty($forum_user_info)) {
 					$forum_user_info = array(
 						"id"			=> intval($mod_info["member_id"]),
@@ -374,7 +374,7 @@ class yf_forum_manage_users {
 				if ($forum_user_info["group"] > 2) {
 					db()->UPDATE("forum_users", array(
 						"group"	 		=> 2, // Member
-					), "`id`=".intval($mod_info["member_id"]));
+					), "id=".intval($mod_info["member_id"]));
 				}
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("forum_moderators");
@@ -459,7 +459,7 @@ class yf_forum_manage_users {
 			if (empty($_POST["user_id"])) {
 				_re(t("User ID is required"));
 			} else {
-				$member_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($_POST["user_id"]));
+				$member_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($_POST["user_id"]));
 				if (empty($member_info)) {
 					_re(t("No user with such ID"));
 				}
@@ -495,7 +495,7 @@ class yf_forum_manage_users {
 				db()->INSERT("forum_moderators", $sql_array);
 				$mod_info = $sql_array;
 				// Update user's forum info
-				$forum_user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval($mod_info["member_id"]));
+				$forum_user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($mod_info["member_id"]));
 				if (empty($forum_user_info)) {
 					$forum_user_info = array(
 						"id"			=> intval($mod_info["member_id"]),
@@ -510,7 +510,7 @@ class yf_forum_manage_users {
 				if ($forum_user_info["group"] > 2) {
 					db()->UPDATE("forum_users", array(
 						"group"	 		=> 2, // Moderator
-					), "`id`=".intval($mod_info["member_id"]));
+					), "id=".intval($mod_info["member_id"]));
 				}
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("forum_moderators");
@@ -559,7 +559,7 @@ class yf_forum_manage_users {
 		if (!isset(module("forum")->_forum_moderators[$_GET["id"]])) {
 			return _e(t("No such moderator"));
 		}
-		db()->query("DELETE FROM `".db('forum_moderators')."` WHERE `id`=".intval($_GET["id"]));
+		db()->query("DELETE FROM ".db('forum_moderators')." WHERE id=".intval($_GET["id"]));
 
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("forum_moderators");

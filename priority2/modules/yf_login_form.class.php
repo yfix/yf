@@ -24,7 +24,7 @@ class yf_login_form {
 	*/
 	function _show_form () {
 		// Already logged in users not needed to login again
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			return js_redirect($this->DEF_REDIRECT_URL);
 		}
 		// Default resirect after login

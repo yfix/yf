@@ -44,11 +44,11 @@ class yf_activity {
 	* @return	string
 	*/
 	function view () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Try to count total user activity points
-		$total_points = $this->_get_user_total_points($this->USER_ID);
+		$total_points = $this->_get_user_total_points(main()->USER_ID);
 		// Process template
 		$replace = array(
 			"raw_log_link"	=> "./?object=".$_GET["object"]."&action=raw_log",
@@ -66,15 +66,15 @@ class yf_activity {
 	* @return	string
 	*/
 	function raw_log () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		if (!empty($_GET["id"])) {
 			$_GET["page"] = $_GET["id"];
 		}
 		// Connect pager
-		$sql = "SELECT * FROM `".db('activity_logs')."` WHERE `user_id`=".intval($this->USER_ID);
-		$order_sql = " ORDER BY `add_date` DESC ";
+		$sql = "SELECT * FROM ".db('activity_logs')." WHERE user_id=".intval(main()->USER_ID);
+		$order_sql = " ORDER BY add_date DESC ";
 		$url = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url, null, $this->RAW_LOG_PER_PAGE);
 		// Process items
@@ -218,10 +218,10 @@ class yf_activity {
 		// Check period between the same actions
 		if (!empty($task_info["min_time"])) {
 			list($spam_result) = db()->query_fetch(
-				"SELECT `id` AS `0` FROM `".db('activity_logs')."` 
-				WHERE `task_id`=".intval($task_info["id"])." 
-					AND `user_id`=".intval($user_id)." 
-					AND `add_date` > ".(time() - $task_info["min_time"])." 
+				"SELECT id AS `0` FROM ".db('activity_logs')." 
+				WHERE task_id=".intval($task_info["id"])." 
+					AND user_id=".intval($user_id)." 
+					AND add_date > ".(time() - $task_info["min_time"])." 
 				LIMIT 1"
 			);
 			if ($this->LOG_SPAM_TRIES && $spam_result) {
@@ -269,7 +269,7 @@ class yf_activity {
 		if (empty($user_id)) {
 			return false;
 		}
-		$A = db()->query_fetch("SELECT `points` FROM `".db('activity_total')."` WHERE `user_id`=".intval($user_id));
+		$A = db()->query_fetch("SELECT points FROM ".db('activity_total')." WHERE user_id=".intval($user_id));
 		if (empty($A)) {
 			$this->_start_activity_account($user_id);
 			$total_points = 0;
@@ -290,7 +290,7 @@ class yf_activity {
 			return false;
 		}
 		// Get from db
-		$activity_info = db()->query_fetch("SELECT * FROM `".db('activity_total')."` WHERE `user_id`=".intval($user_id));
+		$activity_info = db()->query_fetch("SELECT * FROM ".db('activity_total')." WHERE user_id=".intval($user_id));
 		if (empty($activity_info)) {
 			$this->_start_activity_account($user_id);
 			$activity_info = array(
@@ -312,7 +312,7 @@ class yf_activity {
 		if (empty($user_id)) {
 			return false;
 		}
-		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT `user_id` FROM `".db('activity_total')."` WHERE `user_id`=".intval($user_id));
+		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT user_id FROM ".db('activity_total')." WHERE user_id=".intval($user_id));
 		if ($ACCOUNT_EXISTS) {
 			return false;
 		}
@@ -340,7 +340,7 @@ class yf_activity {
 		}
 		db()->UPDATE($task_info["table_name"], array(
 			"activity"	=> intval($points),
-		), "`id`=".intval($record_id));
+		), "id=".intval($record_id));
 	}
 
 	/**
@@ -357,7 +357,7 @@ class yf_activity {
 		$points_sum = 0;
 		// Gather activity sum
 		$sql_array = $this->_sql_arrays_for_update();
-		$_sql_start		= "SELECT SUM(`t2`.`activity`) AS `0` FROM ";
+		$_sql_start		= "SELECT SUM(t2.activity) AS `0` FROM ";
 		foreach ((array)$sql_array as $_counter => $_value) {
 			$sql_array[$_counter] = $_sql_start. str_replace("{_USER_ID_}", $user_id, $_value);
 		}
@@ -368,10 +368,10 @@ class yf_activity {
 		}
 		$points_sum = array_sum($totals);
 		// Update total table for current user
-		$sql = "UPDATE `".db('activity_total')."` SET 
-				`points`		= ".intval($points_sum).", 
-				`last_update`	= ".time()." 
-			WHERE `user_id`=".intval($user_id);
+		$sql = "UPDATE ".db('activity_total')." SET 
+				points		= ".intval($points_sum).", 
+				last_update	= ".time()." 
+			WHERE user_id=".intval($user_id);
 		db()->_add_shutdown_query($sql);
 	}
 
@@ -385,27 +385,27 @@ class yf_activity {
 		// I put it here for purpose of "One point of failure" for changes
 		if ($for_cron_job) {
 			$sql_array = array(
-				"forum_post"		=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('forum_posts')."`			WHERE 1							GROUP BY `user_id`",
-				"sent_mail"			=> "SELECT `sender`, SUM(`activity`)		FROM `".db('mailarchive')."`			WHERE 1							GROUP BY `sender`",
-				"rate_user"			=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('reput_user_votes')."`		WHERE 1							GROUP BY `user_id`",
-				"blog_post"			=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('blog_posts')."` 			WHERE 1							GROUP BY `user_id`",
-				"site_login"		=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('log_auth')."` 			WHERE 1							GROUP BY `user_id`",
-				"blog_comment"		=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('comments')."` 			WHERE `object_name`='blog'		GROUP BY `user_id`",
-				"bug_report"		=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('help_tickets')."`			WHERE 1							GROUP BY `user_id`",
-				"article_posted"	=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('articles_texts')."`		WHERE 1							GROUP BY `user_id`",
-				"article_reposted"	=> "SELECT `user_id`, SUM(`activity`)		FROM `".db('articles_texts')."`		WHERE 1							GROUP BY `user_id`",
+				"forum_post"		=> "SELECT user_id, SUM(activity)		FROM ".db('forum_posts')."			WHERE 1							GROUP BY user_id",
+				"sent_mail"			=> "SELECT sender, SUM(activity)		FROM ".db('mailarchive')."			WHERE 1							GROUP BY sender",
+				"rate_user"			=> "SELECT user_id, SUM(activity)		FROM ".db('reput_user_votes')."		WHERE 1							GROUP BY user_id",
+				"blog_post"			=> "SELECT user_id, SUM(activity)		FROM ".db('blog_posts')." 			WHERE 1							GROUP BY user_id",
+				"site_login"		=> "SELECT user_id, SUM(activity)		FROM ".db('log_auth')." 			WHERE 1							GROUP BY user_id",
+				"blog_comment"		=> "SELECT user_id, SUM(activity)		FROM ".db('comments')." 			WHERE object_name='blog'		GROUP BY user_id",
+				"bug_report"		=> "SELECT user_id, SUM(activity)		FROM ".db('help_tickets')."			WHERE 1							GROUP BY user_id",
+				"article_posted"	=> "SELECT user_id, SUM(activity)		FROM ".db('articles_texts')."		WHERE 1							GROUP BY user_id",
+				"article_reposted"	=> "SELECT user_id, SUM(activity)		FROM ".db('articles_texts')."		WHERE 1							GROUP BY user_id",
 			);
 		} else {
 			$sql_array = array(
-				"forum_post"		=> "`".db('forum_posts')."` AS `t2`		WHERE `t2`.`user_id`={_USER_ID_}",
-				"sent_mail"			=> "`".db('mailarchive')."` AS `t2`		WHERE `t2`.`sender`={_USER_ID_}",
-				"rate_user"			=> "`".db('reput_user_votes')."` AS `t2`	WHERE `t2`.`user_id`={_USER_ID_}",
-				"blog_post"			=> "`".db('blog_posts')."` AS `t2` 		WHERE `t2`.`user_id`={_USER_ID_}",
-				"site_login"		=> "`".db('log_auth')."` AS `t2` 			WHERE `t2`.`user_id`={_USER_ID_}",
-				"blog_comment"		=> "`".db('comments')."` AS `t2` 			WHERE `t2`.`object_name`='blog' AND `t2`.`user_id`={_USER_ID_}",
-				"bug_report"		=> "`".db('help_tickets')."` AS `t2`		WHERE `t2`.`user_id`={_USER_ID_}",
-				"article_posted"	=> "`".db('articles_texts')."` AS `t2`	WHERE `t2`.`user_id`={_USER_ID_}",
-				"article_reposted"	=> "`".db('articles_texts')."` AS `t2`	WHERE `t2`.`user_id`={_USER_ID_}",
+				"forum_post"		=> "".db('forum_posts')." AS t2		WHERE t2.user_id={_USER_ID_}",
+				"sent_mail"			=> "".db('mailarchive')." AS t2		WHERE t2.sender={_USER_ID_}",
+				"rate_user"			=> "".db('reput_user_votes')." AS t2	WHERE t2.user_id={_USER_ID_}",
+				"blog_post"			=> "".db('blog_posts')." AS t2 		WHERE t2.user_id={_USER_ID_}",
+				"site_login"		=> "".db('log_auth')." AS t2 			WHERE t2.user_id={_USER_ID_}",
+				"blog_comment"		=> "".db('comments')." AS t2 			WHERE t2.object_name='blog' AND t2.user_id={_USER_ID_}",
+				"bug_report"		=> "".db('help_tickets')." AS t2		WHERE t2.user_id={_USER_ID_}",
+				"article_posted"	=> "".db('articles_texts')." AS t2	WHERE t2.user_id={_USER_ID_}",
+				"article_reposted"	=> "".db('articles_texts')." AS t2	WHERE t2.user_id={_USER_ID_}",
 			);
 		}
 		return $sql_array;
@@ -415,7 +415,7 @@ class yf_activity {
 	* Update activity for all users (use only when number of user is small !)
 	*/
 	function _sync_all_users_activity () {
-		$Q = db()->query("SELECT `id` FROM `".db('user')."`");
+		$Q = db()->query("SELECT id FROM ".db('user')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_update_user_activity(1, $A["id"]);
 		}

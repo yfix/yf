@@ -29,12 +29,12 @@ class yf_account {
 	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
 		// Try to get unread messages from the admin
-		$Q = db()->query("SELECT * FROM `".db('admin_messages')."` WHERE `user_id`=".intval($this->USER_ID)." AND `read`='0' ORDER BY `time` DESC");
+		$Q = db()->query("SELECT * FROM ".db('admin_messages')." WHERE user_id=".intval(main()->USER_ID)." AND read='0' ORDER BY time DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$admin_messages[] = array(
 				"message_id"	=> intval($A["id"]),
@@ -89,18 +89,18 @@ class yf_account {
 	//-----------------------------------------------------------------------------
 	// Set status "read" for the given admin message
 	function read_admin_message () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try ot get message info
-		$message_info = db()->query_fetch("SELECT * FROM `".db('admin_messages')."` WHERE `id`=".intval($_GET["id"])." AND `user_id`=".intval($this->USER_ID));
+		$message_info = db()->query_fetch("SELECT * FROM ".db('admin_messages')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(main()->USER_ID));
 		if (empty($message_info["id"])) {
 			_re("No such admin message!");
 			return _e();
 		}
 		// Update record
-		db()->UPDATE("admin_messages", array("read" => 1), "`id`=".intval($_GET["id"]));
+		db()->UPDATE("admin_messages", array("read" => 1), "id=".intval($_GET["id"]));
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]);
 	}
@@ -216,7 +216,7 @@ class yf_account {
 		$totals = main()->call_class_method("user_stats", "classes/", "_get_live_stats", array("user_id" => $this->_user_info["id"]));
 		
 		// Prepare suggests
-		if ($this->_active_modules["user_info"] && !_avatar_exists($this->USER_ID)) {
+		if ($this->_active_modules["user_info"] && !_avatar_exists(main()->USER_ID)) {
 			$suggests[] = '{t(You have not uploaded your avatar image yet.)} {t(If you wish to show other members yourself &#40;or some part of yourself&#41;, please, upload your photo)} <a href="./?object=user_info">{t(here)}</a>.';
 		} 
 		if ($this->_active_modules["blog"] && !$totals["blog_posts"]) {

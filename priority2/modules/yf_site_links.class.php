@@ -33,13 +33,13 @@ class yf_site_links {
 		$GLOBALS['no_page_header'] = true;
 		define("LINKS_CLASS_NAME", "site_links");
 
-		$this->USER_ID = ($_SESSION["user_group"] == 5) ? intval($_SESSION["user_id"]) : null;
+		main()->USER_ID = ($_SESSION["user_group"] == 5) ? intval($_SESSION["user_id"]) : null;
 		// Get user info
-		if (!empty($this->USER_ID)) {
-			$this->_user_info = db()->query_fetch("SELECT * FROM `".db('links_users')."` WHERE `id`=".intval($this->USER_ID));
+		if (!empty(main()->USER_ID)) {
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE id=".intval(main()->USER_ID));
 			// Check user is valid
 			if (empty($this->_user_info["id"])) {
-				$this->USER_ID = null;
+				main()->USER_ID = null;
 			}
 		}
 		// Link priorities array
@@ -84,11 +84,11 @@ class yf_site_links {
 			}
 			// Process featured links
 			$Q2 = db()->query(
-				"SELECT * FROM `".db('links_links')."` 
-				WHERE `status` IN(1,2) 
-					AND `priority` >= ".intval($this->PRIORITY)." 
-/*					AND `site".(int)conf('SITE_ID')."`=1 */
-				ORDER BY `email1_time` DESC"
+				"SELECT * FROM ".db('links_links')." 
+				WHERE status IN(1,2) 
+					AND priority >= ".intval($this->PRIORITY)." 
+/*					AND site".(int)conf('SITE_ID')."=1 */
+				ORDER BY email1_time DESC"
 			);
 			$num_links = db()->num_rows($Q2);
 			$i = 0;
@@ -108,7 +108,7 @@ class yf_site_links {
 				"links"			=> $links,
 				"top_list_url"	=> "./?object=".LINKS_CLASS_NAME."&action=top_list",
 				"register_url"	=> "./?object=".LINKS_CLASS_NAME."&action=register",
-				"edit_url"		=> $this->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=account"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
+				"edit_url"		=> main()->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=account"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
 			);
 			$body = tpl()->parse(LINKS_CLASS_NAME."/main", $replace);
 
@@ -129,11 +129,11 @@ class yf_site_links {
 				$GLOBALS['_links_cat_name'] = $cat_info["name"];
 				// Get links inside this category
 				$Q = db()->query(
-					"SELECT * FROM `".db('links_links')."` 
-					WHERE `cat_id`=".intval($cat_info["id"])." 
-						AND `status` IN(1,2) 
-/*						AND `site".(int)conf('SITE_ID')."`=1 */
-					ORDER BY `email1_time` DESC"
+					"SELECT * FROM ".db('links_links')." 
+					WHERE cat_id=".intval($cat_info["id"])." 
+						AND status IN(1,2) 
+/*						AND site".(int)conf('SITE_ID')."=1 */
+					ORDER BY email1_time DESC"
 				);
 				$num_links = db()->num_rows($Q);
 				$i = 0;
@@ -175,7 +175,7 @@ class yf_site_links {
 				$replace = array(
 					"cat_name"		=> $cat_info["name"],
 					"items"			=> !empty($items) ? $items : "<div align='center'>No links here.</div>",
-					"add_link_url"	=> $this->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=add_link"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
+					"add_link_url"	=> main()->USER_ID ? "./?object=".LINKS_CLASS_NAME."&action=add_link"._add_get() : "./?object=".LINKS_CLASS_NAME."&action=login",
 					"links_main_url"=> "./?object=".LINKS_CLASS_NAME,
 					"bottom"		=> $cat_info["bottom"],
 				);
@@ -217,16 +217,16 @@ class yf_site_links {
 			if ($_POST["password"] != $_POST["password2"]) {
 				_re("Passwords do not match!");
 			}
-			if (db()->query_num_rows("SELECT * FROM `".db('links_users')."` WHERE `email`='"._es(stripslashes($_POST["email"]))."'")) {
+			if (db()->query_num_rows("SELECT * FROM ".db('links_users')." WHERE email='"._es(stripslashes($_POST["email"]))."'")) {
 				_re("User with this email already exsists! Please login with your account password. You can add multiple sites to your account.");
 			}
 			// Check if errors occured
 			if (!common()->_error_exists()) {
-				$sql = "INSERT INTO `".db('links_users')."` (
-						`name`,
-						`email`,
-						`password`,
-						`time`
+				$sql = "INSERT INTO ".db('links_users')." (
+						name,
+						email,
+						password,
+						time
 					) VALUES (
 						'"._es($_POST["name"])."',
 						'"._es($_POST["email"])."',
@@ -260,7 +260,7 @@ class yf_site_links {
 	function login () {
 		// Process log in
 		if (!empty($_POST["go"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
-			$A = db()->query_fetch("SELECT * FROM `".db('links_users')."` WHERE `email`='"._es(trim($_POST["email"]))."' AND `password`='"._es(trim($_POST["password"]))."' LIMIT 1");
+			$A = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE email='"._es(trim($_POST["email"]))."' AND password='"._es(trim($_POST["password"]))."' LIMIT 1");
 			if ($A['id']) {
 				// Insert data into session
 				$_SESSION['user_id']	= $A["id"];
@@ -290,7 +290,7 @@ class yf_site_links {
 	function get_pswd () {
 		// Process retrieving password
 		if (!empty($_POST["email"])) {
-			$A = db()->query_fetch("SELECT * FROM `".db('links_users')."` WHERE `email`='"._es(trim($_POST["email"]))."' LIMIT 1");
+			$A = db()->query_fetch("SELECT * FROM ".db('links_users')." WHERE email='"._es(trim($_POST["email"]))."' LIMIT 1");
 			if (empty($A['id'])) {
 				_re("User not found!");
 			}
@@ -324,11 +324,11 @@ class yf_site_links {
 	// Main user account
 	function account () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		// Get user links
-		$Q = db()->query("SELECT * FROM `".db('links_links')."` WHERE `user_id`=".intval($this->USER_ID));
+		$Q = db()->query("SELECT * FROM ".db('links_links')." WHERE user_id=".intval(main()->USER_ID));
 		while ($A = db()->fetch_assoc($Q)) $links[$A["id"]] = $A;
 		// Process links
 		foreach ((array)$links as $link_id => $A) {
@@ -358,13 +358,13 @@ class yf_site_links {
 	// Show edit form
 	function edit_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get link detailed info
 		if (!empty($_GET["id"])) {
-			$link_info = db()->query_fetch("SELECT * FROM `".db('links_links')."` WHERE `id`=".intval($_GET["id"]));
+			$link_info = db()->query_fetch("SELECT * FROM ".db('links_links')." WHERE id=".intval($_GET["id"]));
 		}
 		// Check owner of the link
 		if (empty($link_info["id"])) {
@@ -402,7 +402,7 @@ class yf_site_links {
 	// Show add form
 	function add_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$user_info = &$this->_user_info;
@@ -428,7 +428,7 @@ class yf_site_links {
 	// Insert new record
 	function insert_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		// Verify required vars
@@ -436,7 +436,7 @@ class yf_site_links {
 		// Check if errors occured
 		if (!common()->_error_exists()) {
 			// Check for same site
-			if (db()->query_num_rows("SELECT * FROM `".db('links_links')."` WHERE `url` LIKE '%"._es($_POST["url"])."%'")) {
+			if (db()->query_num_rows("SELECT * FROM ".db('links_links')." WHERE url LIKE '%"._es($_POST["url"])."%'")) {
 				_re("Site already exsist!");
 			}
 		}
@@ -456,7 +456,7 @@ class yf_site_links {
 			// Process banner
 			$this->_get_remote_image();
 			// Process sites
-			$Q = db()->query("SELECT * FROM `".db('links_sites')."`");
+			$Q = db()->query("SELECT * FROM ".db('links_sites')."");
 			while ($A = db()->fetch_array($Q)) {
 				$_POST["site"][$A["id"]] = intval($_POST["site"][$A["id"]]);
 				if (!empty($_POST["site"][$A["id"]])) {
@@ -465,25 +465,25 @@ class yf_site_links {
 			}
 			// Generate sites SQL
 			for ($i = 1; $i <= 30; $i++) {
-				$sites_sql_array1[$i] = "\r\n `site".$i."` ";
+				$sites_sql_array1[$i] = "\r\n site".$i." ";
 				$sites_sql_array2[$i] = "\r\n".intval($_POST["site"][$i])." ";
 			}
 			// Generate SQL
-			$sql = "INSERT INTO `".db('links_links')."` (
-						`user_id`,
-						`cat_id`,
-						`status`,
-						`type`,
-						`title`,
-						`url`,
-						`link_url`,
-						`banner_url`,
-						`description`,
-						`priority`,
-						`email1_time`,
+			$sql = "INSERT INTO ".db('links_links')." (
+						user_id,
+						cat_id,
+						status,
+						type,
+						title,
+						url,
+						link_url,
+						banner_url,
+						description,
+						priority,
+						email1_time,
 						".implode(",", $sites_sql_array1)."
 				) VALUES (
-						".$this->USER_ID.",
+						".main()->USER_ID.",
 						".intval($_POST["cat_id"]).",
 						0,
 						".intval($_POST["type"]).",
@@ -528,13 +528,13 @@ class yf_site_links {
 	// Update existsing record
 	function update_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get link detailed info
 		if ($_GET["id"]) {
-			$link_info = db()->query_fetch("SELECT * FROM `".db('links_links')."` WHERE `id`=".$_GET["id"]);
+			$link_info = db()->query_fetch("SELECT * FROM ".db('links_links')." WHERE id=".$_GET["id"]);
 		}
 		// Check owner of the link
 		if (empty($link_info["id"])) {
@@ -558,7 +558,7 @@ class yf_site_links {
 			// Process banner
 			$this->_get_remote_image();
 			// Process sites
-			$Q = db()->query("SELECT * FROM `".db('links_sites')."`");
+			$Q = db()->query("SELECT * FROM ".db('links_sites')."");
 			while ($A = db()->fetch_array($Q)) {
 				$_POST["site"][$A["id"]] = intval($_POST["site"][$A["id"]]);
 				if (!empty($_POST["site"][$A["id"]])) {
@@ -567,19 +567,19 @@ class yf_site_links {
 			}
 			// Generate sites SQL
 			for ($i = 1; $i <= 30; $i++) {
-				$sites_sql_array[$i] = "\r\n `site".$i."` = ".intval($_POST["site"][$i])." ";
+				$sites_sql_array[$i] = "\r\n site".$i." = ".intval($_POST["site"][$i])." ";
 			}
 			// Generate SQL
-			$sql = "UPDATE `".db('links_links')."` SET 
-					`cat_id`		= ".intval($_POST["cat_id"]).",
-					`title`			= '"._es($_POST["title"])."',
-					`url`			= '"._es($_POST["url"])."',
-					`link_url`		= '"._es($_POST["link_url"])."',
-					`banner_url`	= '"._es($_POST["banner_url"])."',
-					`description`	= '"._es($_POST["description"])."',
-					`type`			= ".intval($_POST["link_type"]).",
+			$sql = "UPDATE ".db('links_links')." SET 
+					cat_id		= ".intval($_POST["cat_id"]).",
+					title			= '"._es($_POST["title"])."',
+					url			= '"._es($_POST["url"])."',
+					link_url		= '"._es($_POST["link_url"])."',
+					banner_url	= '"._es($_POST["banner_url"])."',
+					description	= '"._es($_POST["description"])."',
+					type			= ".intval($_POST["link_type"]).",
 					".implode(",", $sites_sql_array)."
-				 WHERE `id`=".$_GET["id"];
+				 WHERE id=".$_GET["id"];
 			db()->query($sql);
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=account"._add_get());
 		} else {
@@ -592,13 +592,13 @@ class yf_site_links {
 	// Do delete link
 	function delete_link () {
 		// Only for the authorized users
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=login");
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to get link detailed info
 		if ($_GET["id"]) {
-			$link_info = db()->query_fetch("SELECT * FROM `".db('links_links')."` WHERE `id`=".$_GET["id"]);
+			$link_info = db()->query_fetch("SELECT * FROM ".db('links_links')." WHERE id=".$_GET["id"]);
 		}
 		// Check owner of the link
 		if (empty($link_info["id"])) {
@@ -607,7 +607,7 @@ class yf_site_links {
 		// Do delete
 		if (!empty($_POST["go"])) {
 			// Do delete link
-			db()->query("DELETE FROM `".db('links_links')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+			db()->query("DELETE FROM ".db('links_links')." WHERE id=".$_GET["id"]." LIMIT 1");
 			return js_redirect("./?object=".LINKS_CLASS_NAME."&action=account"._add_get());
 		// Show confirmation dialog
 		} else {
@@ -700,7 +700,7 @@ class yf_site_links {
 	// Show sites
 	function _show_links_sites ($link_info = array()) {
 		$items = "";
-		$Q = db()->query("SELECT * FROM `".db('links_sites')."`");
+		$Q = db()->query("SELECT * FROM ".db('links_sites')."");
 		while ($A = db()->fetch_array($Q)) {
 			$replace = array(
 				"site_id"		=> $A["id"],

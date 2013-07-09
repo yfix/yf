@@ -160,7 +160,7 @@ class yf_test {
 	// Test current project mailing system
 	function mail () {
 		// Only for members!
-		if (!$this->USER_ID && !$_SESSION["admin_id"]) {
+		if (!main()->USER_ID && !$_SESSION["admin_id"]) {
 			return "Access denied. Only for members!";
 		}
 		if ($_POST["email"]) {

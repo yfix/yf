@@ -121,9 +121,9 @@ class yf_adodb_db {
 		if (DEBUG_MODE) {
 			$this->_query_time_start = microtime(true);
 		}
-		// Simple replacing backticks (`) into double quotes (") for all dbs other than MySQL
+		// Simple replacing backticks () into double quotes (") for all dbs other than MySQL
 		if (substr($this->DB_TYPE, 0, 5) != "mysql" && $REPLACE_QUOTES) {
-			$sql = str_replace("`", "\"", $sql);
+			$sql = str_replace("", "\"", $sql);
 		}
 		// Do execute SQL query
 		$result = &$this->db->Execute($sql);

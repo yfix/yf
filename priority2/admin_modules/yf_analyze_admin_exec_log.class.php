@@ -39,13 +39,13 @@ class yf_analyze_admin_exec_log{
 		);
 
 // check this
-		$Q = db()->query("SELECT * FROM `".db('sites')."` WHERE `active` = '1' AND `vertical` = '' ORDER BY `name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('sites')." WHERE active = '1' AND vertical = '' ORDER BY name ASC");
 		while($A = db()->fetch_assoc($Q)) {
 			$this->sys_sites[$A["id"]] = $A["name"];
 			$this->sys_sites_info[$A["id"]] = $A;
 		}
 
-		$Q1 = db()->query("SELECT * FROM `".db('servers')."` WHERE `active` = '1' ORDER BY `name` ASC");
+		$Q1 = db()->query("SELECT * FROM ".db('servers')." WHERE active = '1' ORDER BY name ASC");
 		while($A1 = db()->fetch_assoc($Q1)) {
 			$this->sys_servers[$A1["id"]] = $A1["name"];
 			$this->sys_servers_info[$A1["id"]] = $A1;

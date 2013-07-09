@@ -101,25 +101,25 @@ class yf_se_keywords {
 			if (!empty($search_words_array) && empty($array_from_db) && !is_array($array_from_db)) {
 				// use full text searching
 				if ($this->USE_FULLTEXT_SEARCH) {
-					$search_words_sql = " AND MATCH(`text`) AGAINST ('"._es(implode(" ", $search_words_array))."' IN BOOLEAN MODE) ";
+					$search_words_sql = " AND MATCH(text) AGAINST ('"._es(implode(" ", $search_words_array))."' IN BOOLEAN MODE) ";
 				} else {
 					foreach ((array)$search_words_array as $k => $v) {
 						$v = trim($v);
 						if (empty($v)) {
 							continue;
 						}
-						$tmp_array[$k] = " `text` LIKE '%"._es($v)."%' ";
+						$tmp_array[$k] = " text LIKE '%"._es($v)."%' ";
 					}
 					if (!empty($tmp_array)) {
 						$search_words_sql = " AND (".implode(" OR ", $tmp_array).") ";
 					}
 				}
 				$Q = db()->query(
-					"SELECT `site_url`,`text`,`hits` 
-					FROM `".db('search_keywords')."` 
+					"SELECT site_url,text,hits 
+					FROM ".db('search_keywords')." 
 					WHERE 1 ".(!empty($search_words_sql) ? $search_words_sql : "")." 
-					".($this->MIN_HITS_DISPLAY_LIMIT ? "HAVING `hits` > ".$this->MIN_HITS_DISPLAY_LIMIT : "")."
-					ORDER BY ".(/*$type == "most_popular" ? */"`hits` DESC"/* : "RAND()"*/)." 
+					".($this->MIN_HITS_DISPLAY_LIMIT ? "HAVING hits > ".$this->MIN_HITS_DISPLAY_LIMIT : "")."
+					ORDER BY ".(/*$type == "most_popular" ? */"hits DESC"/* : "RAND()"*/)." 
 					LIMIT ".intval($display_limit * $this->DATA_FROM_DB_MULTIPLY)
 				);
 				while ($A = db()->fetch_assoc($Q)) $array_from_db[$A["text"]] = $A["site_url"];
@@ -255,32 +255,32 @@ class yf_se_keywords {
 		}
 		// Limit number of keywords
 		if (!empty($this->MAX_TOTAL_KEYWORDS)) {
-			list($current_keywords_num) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM `".db('search_keywords')."`");
+			list($current_keywords_num) = db()->query_fetch("SELECT COUNT(*) AS `0` FROM ".db('search_keywords')."");
 		}
 		if (!empty($this->MAX_TOTAL_KEYWORDS) && $current_keywords_num >= $this->MAX_TOTAL_KEYWORDS) {
 			db()->_add_shutdown_query(
-				"UPDATE `".db('search_keywords')."` 
-				SET `hits` = `hits` + 1, 
-					`last_update` = ".time()."
-				WHERE `text`='"._es($search_query)."'"
+				"UPDATE ".db('search_keywords')." 
+				SET hits = hits + 1, 
+					last_update = ".time()."
+				WHERE text='"._es($search_query)."'"
 			);
 		} else {
 			// Check if such record already exists
-			$sql = "INSERT INTO `".db('search_keywords')."` (
-					`engine`,
-					`text`,
-					`ref_url`,
-					`site_url`,
-					`last_update`,
-					`hits`
+			$sql = "INSERT INTO ".db('search_keywords')." (
+					engine,
+					text,
+					ref_url,
+					site_url,
+					last_update,
+					hits
 				) VALUES (
 					".intval($this->_search_engines[$host]["id"]).",
 					'"._es($search_query)."',
 					'"._es($referer)."',
 					'"._es("http://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"])."',
 					".time().",
-					`hits` + 1 
-				) ON DUPLICATE KEY UPDATE `hits` = `hits` + 1\r\n";
+					hits + 1 
+				) ON DUPLICATE KEY UPDATE hits = hits + 1\r\n";
 			db()->_add_shutdown_query($sql);
 		}
 		// Check if we need to update most popular right now

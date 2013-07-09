@@ -34,12 +34,12 @@ class yf_forum_manage_future {
 			return "Access denied";
 		}
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM `".db('admin')."` /*WHERE `group`=6*/ ORDER BY `first_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE group=6*/ ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Connect pager
-		$sql = "SELECT * FROM `".db('forum_future_posts')."` ";
+		$sql = "SELECT * FROM ".db('forum_future_posts')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql("posts") : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `date` ASC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date ASC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get records
 		$Q = db()->query($sql.$add_sql);
@@ -51,11 +51,11 @@ class yf_forum_manage_future {
 			}
 		}
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('user')."` WHERE `id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('user')." WHERE id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $users_infos[$A["id"]] = $A;
 		}
 		if (!empty($topics_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", $topics_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",", $topics_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $topics_infos[$A["id"]] = $A;
 		}
 		// Process records
@@ -171,7 +171,7 @@ class yf_forum_manage_future {
 		$_GET["id"] = intval($_GET["id"]);
 		$TOPIC_ID = $_GET["id"];
 		if (!empty($_GET["id"])) {
-			$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET['id']." LIMIT 1");
+			$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET['id']." LIMIT 1");
 		}
 		if (empty($topic_info['id'])) {
 			return module("forum")->_show_error("No such topic");
@@ -256,7 +256,7 @@ class yf_forum_manage_future {
 // TODO: add checking for owner
 		$_GET["id"] = intval($_GET["id"]);
 		if (!empty($_GET["id"])) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('forum_future_posts')."` WHERE `id`='".intval($_GET["id"])."'");
+			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_future_posts')." WHERE id='".intval($_GET["id"])."'");
 		}
 		if (empty($post_info)) {
 			return "No such post";
@@ -273,11 +273,11 @@ class yf_forum_manage_future {
 		$forum_name = $_forum_info["name"];
 		$cat_name	= module("forum")->_forum_cats_array[$_forum_info["category"]]["name"];
 		if (!$is_new_topic) {
-			$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$post_info['topic_id']." LIMIT 1");
+			$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$post_info['topic_id']." LIMIT 1");
 			$topic_name = $topic_info["name"];
 		}
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM `".db('admin')."` ORDER BY `first_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Do save data
 		if (!empty($_POST)) {
@@ -289,7 +289,7 @@ class yf_forum_manage_future {
 				"subject"			=> _es($_POST["subject"]),
 				"text"				=> _es($_POST["text"]),
 				"topic_title"		=> _es($_POST["name"] ? $_POST["name"] : $post_info["topic_title"]),
-			), "`id`=".intval($_GET["id"]));
+			), "id=".intval($_GET["id"]));
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=show_future_posts");
 		}
@@ -337,15 +337,15 @@ class yf_forum_manage_future {
 			}
 			// Do delete ids
 			if (!empty($ids_to_delete)) {
-				db()->query("DELETE FROM `".db('forum_future_posts')."` WHERE `id` IN(".implode(",",$ids_to_delete).")");
+				db()->query("DELETE FROM ".db('forum_future_posts')." WHERE id IN(".implode(",",$ids_to_delete).")");
 			}
 		// Single delete
 		} else {
 			if (!empty($_GET["id"])) {
-				$post_info = db()->query_fetch("SELECT * FROM `".db('forum_future_posts')."` WHERE `id`='".intval($_GET["id"])."'");
+				$post_info = db()->query_fetch("SELECT * FROM ".db('forum_future_posts')." WHERE id='".intval($_GET["id"])."'");
 			}
 			if (!empty($post_info)) {
-				db()->query("DELETE FROM `".db('forum_future_posts')."` WHERE `id`=".intval($_GET["id"]));
+				db()->query("DELETE FROM ".db('forum_future_posts')." WHERE id=".intval($_GET["id"]));
 			}
 		}
 		// Return user back
@@ -367,7 +367,7 @@ class yf_forum_manage_future {
 		}
 		$POSTER_ID = intval($_GET["id"]);
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM `".db('admin')."` WHERE `group`=6 ORDER BY `first_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group=6 ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Get child accouts for the current poster
 		$all_posters_users = main()->get_data("forum_posters_users", 3600);
@@ -414,7 +414,7 @@ class yf_forum_manage_future {
 		$_GET["id"] = intval($_GET["id"]);
 		$POSTER_ID = $_GET["id"];
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM `".db('admin')."` /*WHERE `group`=6*/ ORDER BY `first_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE group=6*/ ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Check if such admin exists
 		$poster_info = $forum_posters[$POSTER_ID];
@@ -433,17 +433,17 @@ class yf_forum_manage_future {
 		$WORK_DAYS	= floor((time() - $START_DATE) / 86400);
 		// Get number of posts and themes created by this poster
 		list($themes_total)	= db()->query_fetch(
-			"SELECT COUNT(*) AS `0` FROM `".db('forum_topics')."` WHERE `auto_poster_id`=".intval($POSTER_ID)
+			"SELECT COUNT(*) AS `0` FROM ".db('forum_topics')." WHERE auto_poster_id=".intval($POSTER_ID)
 		);
 		list($posts_total)	= db()->query_fetch(
-			"SELECT COUNT(*) AS `0` FROM `".db('forum_posts')."` WHERE `new_topic` != 1 AND `auto_poster_id`=".intval($POSTER_ID)
+			"SELECT COUNT(*) AS `0` FROM ".db('forum_posts')." WHERE new_topic != 1 AND auto_poster_id=".intval($POSTER_ID)
 		);
 		// Count number of words and symbols (without quotes)
 		$words_total	= 0;
 		$symbols_total	= 0;
 		// Get data from db
 		$Q = db()->query(
-			"SELECT `text` FROM `".db('forum_posts')."` WHERE `auto_poster_id`=".intval($POSTER_ID)
+			"SELECT text FROM ".db('forum_posts')." WHERE auto_poster_id=".intval($POSTER_ID)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$cur_text = $this->_cleanup_text($A["text"]);
@@ -458,20 +458,20 @@ class yf_forum_manage_future {
 		// Get number of responses by normal users
 		list($total_responses)	= db()->query_fetch(
 			"SELECT COUNT(*) AS `0` 
-			FROM `".db('forum_posts')."` 
-			WHERE `new_topic` != 1 
-				AND `auto_poster_id`=0 
-				AND `topic` IN ( 
-					SELECT `id` FROM `".db('forum_topics')."` WHERE `auto_poster_id` = ".intval($POSTER_ID)."
+			FROM ".db('forum_posts')." 
+			WHERE new_topic != 1 
+				AND auto_poster_id=0 
+				AND topic IN ( 
+					SELECT id FROM ".db('forum_topics')." WHERE auto_poster_id = ".intval($POSTER_ID)."
 				)"
 		);
 		// Get posts inside other themes
 		$Q = db()->query(
-			"SELECT `text` FROM `".db('forum_posts')."` `".db('forum_posts')."` 
-			WHERE `new_topic` != 1 
-				AND `auto_poster_id` = ".intval($POSTER_ID)."
-				AND `topic` NOT IN ( 
-					SELECT `id` FROM `".db('forum_topics')."` WHERE `auto_poster_id` = ".intval($POSTER_ID)."
+			"SELECT text FROM ".db('forum_posts')." ".db('forum_posts')." 
+			WHERE new_topic != 1 
+				AND auto_poster_id = ".intval($POSTER_ID)."
+				AND topic NOT IN ( 
+					SELECT id FROM ".db('forum_topics')." WHERE auto_poster_id = ".intval($POSTER_ID)."
 				)"
 		);
 		$others_themes_posts	= 0;
@@ -545,7 +545,7 @@ class yf_forum_manage_future {
 		$_GET["id"] = intval($_GET["id"]);
 		$POSTER_ID = $_GET["id"];
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM `".db('admin')."` /*WHERE `group`=6*/ ORDER BY `first_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE group=6*/ ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Check if such admin exists
 		$poster_info = $forum_posters[$POSTER_ID];
@@ -584,7 +584,7 @@ class yf_forum_manage_future {
 				}
 				// Do remove this poster from old records
 				if (!empty($ids_to_delete)) {
-					db()->UPDATE("user", array("poster_id" => 0), "`id` IN(".implode(",", $ids_to_delete).")");
+					db()->UPDATE("user", array("poster_id" => 0), "id IN(".implode(",", $ids_to_delete).")");
 				}
 			}
 			// Get ids to add poster_id
@@ -601,7 +601,7 @@ class yf_forum_manage_future {
 				}
 				// Do add this poster to the selected accounts
 				if (!empty($ids_to_add)) {
-					db()->UPDATE("user", array("poster_id" => $POSTER_ID), "`id` IN(".implode(",", $ids_to_add).")");
+					db()->UPDATE("user", array("poster_id" => $POSTER_ID), "id IN(".implode(",", $ids_to_add).")");
 				}
 			}
 			// Refresh system cache
@@ -630,10 +630,10 @@ class yf_forum_manage_future {
 		// Get future records to be inserted now
 		$Q = db()->query(
 			"SELECT * 
-			FROM `".db('forum_future_posts')."` 
-			WHERE `date` < ".time()." 
-				AND `active`='1' 
-			ORDER BY `date` DESC"
+			FROM ".db('forum_future_posts')." 
+			WHERE date < ".time()." 
+				AND active='1' 
+			ORDER BY date DESC"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$NEW_POST_ID	= 0;
@@ -666,7 +666,7 @@ class yf_forum_manage_future {
 				$NEW_POST_ID = db()->INSERT_ID();
 				if (empty($NEW_POST_ID)) {
 					// Cleanup if failed
-					db()->query("DELETE FROM `".db('forum_topics')."` WHERE `id`=".intval($NEW_TOPIC_ID));
+					db()->query("DELETE FROM ".db('forum_topics')." WHERE id=".intval($NEW_TOPIC_ID));
 					continue;
 				}
 				// Update all other info in the created topic
@@ -684,7 +684,7 @@ class yf_forum_manage_future {
 					"last_poster_name"	=> _es($A["user_name"]),
 					"status"			=> "a",
 					"approved"			=> 1,
-				), "`id`=".intval($NEW_TOPIC_ID));
+				), "id=".intval($NEW_TOPIC_ID));
 
 			// Create new post
 			} else {
@@ -713,7 +713,7 @@ class yf_forum_manage_future {
 		// Delete future post records
 		if (!empty($ids_to_delete)) {
 			db()->query(
-				"DELETE FROM `".db('forum_future_posts')."` WHERE `id` IN(".implode(",", $ids_to_delete).")"
+				"DELETE FROM ".db('forum_future_posts')." WHERE id IN(".implode(",", $ids_to_delete).")"
 			);
 			// Re-synchronize board
 			$SYNC_OBJ = main()->init_class("forum_sync", USER_MODULES_DIR."forum/");
@@ -770,7 +770,7 @@ class yf_forum_manage_future {
 			);
 			// Get forum posters
 			$this->_forum_posters2[" "]	= t("-- All --");
-			$Q = db()->query("SELECT * FROM `".db('admin')."` WHERE `group`=6 ORDER BY `first_name` ASC");
+			$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group=6 ORDER BY first_name ASC");
 			while ($A = db()->fetch_assoc($Q)) $this->_forum_posters2[$A["id"]] = $A["first_name"]." ".$A["last_name"];
 			// Get child accouts for the current poster
 			$all_posters_users = main()->get_data("forum_posters_users", 3600);
@@ -809,18 +809,18 @@ class yf_forum_manage_future {
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
 		if ($filter_for == "posts") {
-			if ($SF["date_min"]) 	$sql .= " AND `date` >= ".strtotime($SF["date_min"])." \r\n";
-			if ($SF["date_max"])	$sql .= " AND `date` <= ".strtotime($SF["date_max"])." \r\n";
-			if ($SF["user_id"])		$sql .= " AND `user_id` = ".intval($SF["user_id"])." \r\n";
-			if ($SF["poster_id"])	$sql .= " AND `poster_id` = ".intval($SF["poster_id"])." \r\n";
-			if ($SF["post_type"])	$sql .= " AND `new_topic` ".($SF["post_type"] == "post" ? "=0 " : "!=0")." \r\n";
+			if ($SF["date_min"]) 	$sql .= " AND date >= ".strtotime($SF["date_min"])." \r\n";
+			if ($SF["date_max"])	$sql .= " AND date <= ".strtotime($SF["date_max"])." \r\n";
+			if ($SF["user_id"])		$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
+			if ($SF["poster_id"])	$sql .= " AND poster_id = ".intval($SF["poster_id"])." \r\n";
+			if ($SF["post_type"])	$sql .= " AND new_topic ".($SF["post_type"] == "post" ? "=0 " : "!=0")." \r\n";
 		} elseif ($filter_for == "posters") {
-			if ($SF["date_min"]) 	$posts_sql .= " AND `date` >= ".strtotime($SF["date_min"])." \r\n";
-			if ($SF["date_max"])	$posts_sql .= " AND `date` <= ".strtotime($SF["date_max"])." \r\n";
+			if ($SF["date_min"]) 	$posts_sql .= " AND date >= ".strtotime($SF["date_min"])." \r\n";
+			if ($SF["date_max"])	$posts_sql .= " AND date <= ".strtotime($SF["date_max"])." \r\n";
 // TODO
 		}
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

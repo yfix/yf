@@ -38,7 +38,7 @@ class yf_session_db {
 	* @return	bool
 	*/
 	function _read($ses_id) {
-		$SESSION_DATA = db()->query_fetch("SELECT * FROM `".db('sessions')."` WHERE `id` = '"._es($ses_id)."'");
+		$SESSION_DATA = db()->query_fetch("SELECT * FROM ".db('sessions')." WHERE id = '"._es($ses_id)."'");
 		return is_array($SESSION_DATA) && !empty($SESSION_DATA) ? $SESSION_DATA["data"] : "";
 	} 
 
@@ -49,7 +49,7 @@ class yf_session_db {
 	* @return	bool
 	*/
 	function _write($ses_id, $data) {
-		$SESSION_DATA = db()->query_fetch("SELECT * FROM `".db('sessions')."` WHERE `id` = '"._es($ses_id)."'");
+		$SESSION_DATA = db()->query_fetch("SELECT * FROM ".db('sessions')." WHERE id = '"._es($ses_id)."'");
 		if (is_array($SESSION_DATA) && !empty($SESSION_DATA)) {
 			db()->UPDATE("sessions", array(
 				"user_id"	=> intval($SESSION_DATA["user_id"]),
@@ -58,7 +58,7 @@ class yf_session_db {
 				"data"		=> _es($data),
 				"type"		=> _es(MAIN_TYPE),
 				"last_time"	=> time(),
-			), "`id`='"._es($ses_id)."'");
+			), "id='"._es($ses_id)."'");
 		} elseif ($data || count($_COOKIE)) {
 			// Only save session data when when the browser sends a cookie.	This keeps
 			// crawlers out of session table. This improves speed up queries, reduces
@@ -84,7 +84,7 @@ class yf_session_db {
 	* @return	bool
 	*/
 	function _destroy($ses_id) {
-		return db()->query("DELETE FROM `".db('sessions')."` WHERE `id` = '"._es($ses_id)."'");
+		return db()->query("DELETE FROM ".db('sessions')." WHERE id = '"._es($ses_id)."'");
 	}
 
 	/*
@@ -101,7 +101,7 @@ class yf_session_db {
 		// three weeks (1814400 seconds) will his/her session be removed.
 		$ses_life = strtotime("-5 minutes"); 
 // FIXME: need to implement max life time here instead of "-5 minutes"
-		db()->query("DELETE FROM `".db('sessions')."` WHERE `last_time` < ".intval(time() - $ses_life));
+		db()->query("DELETE FROM ".db('sessions')." WHERE last_time < ".intval(time() - $ses_life));
 		return true;
 	}
 }

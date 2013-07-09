@@ -44,7 +44,7 @@ class yf_forum_user {
 //			return module('forum')->_show_error("Disabled by the site admin!");
 		}
 		if (!empty($_GET["id"])) {
-			$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".$_GET["id"]);
+			$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".$_GET["id"]);
 		}
 		if (!empty($user_info["id"]) && !module('forum')->SETTINGS["HIDE_USERS_INFO"]) {
 			// Get forum totals
@@ -52,7 +52,7 @@ class yf_forum_user {
 			// Some user stats
 			if (!empty($user_info["user_posts"])) {
 				// Get forum where user is most active
-				list($most_forum_id, $most_forum_posts) = db()->query_fetch("SELECT `forum` AS `0`, COUNT(`id`) AS `1` FROM `".db('forum_posts')."` WHERE `user_id`=".intval($user_info["id"])." AND `status`='a' GROUP BY `forum` ORDER BY `1` DESC LIMIT 1");
+				list($most_forum_id, $most_forum_posts) = db()->query_fetch("SELECT forum AS `0`, COUNT(id) AS 1 FROM ".db('forum_posts')." WHERE user_id=".intval($user_info["id"])." AND status='a' GROUP BY forum ORDER BY 1 DESC LIMIT 1");
 				$posts_per_day		= round($user_info["user_posts"] / (time() - $user_info["user_regdate"]) * 3600 * 24, 2);
 				$posts_percent		= $board_totals["total_posts"] ? round($user_info["user_posts"] / $board_totals["total_posts"] * 100, 2) : 0;
 				$most_forum_name	= module('forum')->_forums_array[$most_forum_id]["name"];
@@ -118,7 +118,7 @@ class yf_forum_user {
 			return _error_need_login();
 		}
 		// Get user info
-		$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval(FORUM_USER_ID));
+		$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval(FORUM_USER_ID));
 		// Try to create user's account (if we are in "global mode")
 		if (empty($user_info["id"])) {
 			$user_info = $this->_auto_create_user_profile();
@@ -159,7 +159,7 @@ class yf_forum_user {
 		$user_id = FORUM_IS_ADMIN && !empty($_GET["id"]) ? $_GET["id"] : FORUM_USER_ID;
 		// Get user info from db
 		if (!empty($user_id)) {
-			$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval($user_id));
+			$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($user_id));
 		}
 		// Try to create user's account (if we are in "global mode")
 		if (empty($user_info["id"])) {
@@ -217,7 +217,7 @@ class yf_forum_user {
 			if (!empty($user_avatar)) {
 				$sql_array["user_avatar"]	= _es($user_avatar);
 			}
-			db()->UPDATE("forum_users", $sql_array, "`id`=".$user_info["id"]);
+			db()->UPDATE("forum_users", $sql_array, "id=".$user_info["id"]);
 			// Redirect user
 			return js_redirect(getenv("HTTP_REFERER"), false);
 		} else {
@@ -257,7 +257,7 @@ class yf_forum_user {
 		$user_id = FORUM_IS_ADMIN && !empty($_GET["id"]) ? $_GET["id"] : FORUM_USER_ID;
 		// Get user info from db
 		if (!empty($user_id)) {
-			$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval($user_id));
+			$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($user_id));
 		}
 		// Try to create user's account (if we are in "global mode")
 		if (empty($user_info["id"])) {
@@ -278,15 +278,15 @@ class yf_forum_user {
 		$TIME_ZONE_OBJ = main()->init_class("time_zone", "classes/");
 		// Do save user settings
 		if (count($_POST)) {
-			$sql = "UPDATE `".db('forum_users')."` SET
-					`view_sig`			= ".intval((bool) $_POST["view_sig"]).",
-					`view_images`		= ".intval((bool) $_POST["view_images"]).",
-					`view_avatars`		= ".intval((bool) $_POST["view_avatars"]).",
-					`dst_status`		= ".intval((bool) $_POST["dst_status"]).",
-					`posts_per_page`	= ".intval(in_array($_POST["posts_per_page"], $this->_posts_per_page) ? $_POST["posts_per_page"] : 0).",
-					`topics_per_page`	= ".intval(in_array($_POST["topics_per_page"], $this->_topics_per_page) ? $_POST["topics_per_page"] : 0).",
-					`user_timezone`		= '"._es(is_object($TIME_ZONE_OBJ) && array_key_exists($_POST["time_zone"], $TIME_ZONE_OBJ->_time_zones) ? $_POST["time_zone"] : 0)."'
-				WHERE `id`=".$user_info["id"];
+			$sql = "UPDATE ".db('forum_users')." SET
+					view_sig			= ".intval((bool) $_POST["view_sig"]).",
+					view_images		= ".intval((bool) $_POST["view_images"]).",
+					view_avatars		= ".intval((bool) $_POST["view_avatars"]).",
+					dst_status		= ".intval((bool) $_POST["dst_status"]).",
+					posts_per_page	= ".intval(in_array($_POST["posts_per_page"], $this->_posts_per_page) ? $_POST["posts_per_page"] : 0).",
+					topics_per_page	= ".intval(in_array($_POST["topics_per_page"], $this->_topics_per_page) ? $_POST["topics_per_page"] : 0).",
+					user_timezone		= '"._es(is_object($TIME_ZONE_OBJ) && array_key_exists($_POST["time_zone"], $TIME_ZONE_OBJ->_time_zones) ? $_POST["time_zone"] : 0)."'
+				WHERE id=".$user_info["id"];
 			db()->query($sql);
 			// Redirect user
 			js_redirect(getenv("HTTP_REFERER"), false);
@@ -337,13 +337,13 @@ class yf_forum_user {
 			}
 //_show_topic_item
 /*
-			$Q = db()->query("SELECT * FROM `".db('forum_topics_read')."` WHERE `user_id`=".intval(FORUM_USER_ID)." ORDER BY `read_date` DESC LIMIT 10");
+			$Q = db()->query("SELECT * FROM ".db('forum_topics_read')." WHERE user_id=".intval(FORUM_USER_ID)." ORDER BY read_date DESC LIMIT 10");
 			while ($A = db()->fetch_assoc($Q)) $topics_ids[$A["topic_id"]] = $A["read_date"];
 */
 		}
 		// Get topics infos
 		if (!empty($topics_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('forum_topics')."` WHERE `id` IN(".implode(",", array_keys($topics_ids)).") ".(!FORUM_IS_ADMIN ? " AND `approved`=1 " : ""));
+			$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",", array_keys($topics_ids)).") ".(!FORUM_IS_ADMIN ? " AND approved=1 " : ""));
 			while ($topic_info = db()->fetch_assoc($Q)) $topics_array[$topic_info["id"]] = $topic_info;
 		}
 		// Try to find last posts in the current forum topics
@@ -396,7 +396,7 @@ class yf_forum_user {
 		// Process last posts records
 		if (!empty($last_posts_ids)) {
 			$last_posts = array();
-			$Q = db()->query("SELECT * FROM `".db('forum_posts')."` WHERE `id` IN(".implode(",",$last_posts_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('forum_posts')." WHERE id IN(".implode(",",$last_posts_ids).")");
 			while ($post_info = db()->fetch_assoc($Q)) {
 
 				$subject = strlen($post_info["subject"]) ? $post_info["subject"] : $post_info["text"];
@@ -434,7 +434,7 @@ class yf_forum_user {
 		$user_id = FORUM_IS_ADMIN && !empty($_GET["id"]) ? $_GET["id"] : FORUM_USER_ID;
 		// Get user info from db
 		if (!empty($user_id)) {
-			$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval($user_id));
+			$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($user_id));
 		}
 		// Check user existance
 		if (empty($user_info["id"])) {
@@ -443,7 +443,7 @@ class yf_forum_user {
 		// Delete previous avatar image
 		if (!empty($user_info["user_avatar"])) {
 			@unlink(REAL_PATH. module('forum')->SETTINGS["AVATARS_DIR"]. $user_info["user_avatar"]);
-			db()->query("UPDATE `".db('forum_users')."` SET `user_avatar`='' WHERE `id`=".$user_info["id"]);
+			db()->query("UPDATE ".db('forum_users')." SET user_avatar='' WHERE id=".$user_info["id"]);
 		}
 		// Redirect user
 		js_redirect(getenv("HTTP_REFERER"), false);
@@ -462,11 +462,11 @@ class yf_forum_user {
 		}
 		// Get user info
 		if (!empty($user_id)) {
-			$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".$_GET["id"]);
+			$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".$_GET["id"]);
 		}
 		// Do delete (avoid deleting admin account)
 		if (!empty($user_info["id"]) && $user_info["group"] != 1) {
-			db()->query("DELETE FROM `".db('forum_users')."` WHERE `id`=".intval($user_info["id"]));
+			db()->query("DELETE FROM ".db('forum_users')." WHERE id=".intval($user_info["id"]));
 		}
 		// Redirect user
 		js_redirect("./?object=".FORUM_CLASS_NAME);
@@ -491,7 +491,7 @@ class yf_forum_user {
 	* Auto create user's profile (if we are in "global" mode)
 	*
 	* @access	private
-	* @param	$this->USER_ID
+	* @param	main()->USER_ID
 	* @return	mixed	array if success, false otherwise
 	*/
 	function _auto_create_user_profile () {
@@ -500,7 +500,7 @@ class yf_forum_user {
 			return false;
 		}
 		// Check if such user already exists
-		$user_info = db()->query_fetch("SELECT `id` FROM `".db('forum_users')."` WHERE `id`=".intval(main()->USER_ID));
+		$user_info = db()->query_fetch("SELECT id FROM ".db('forum_users')." WHERE id=".intval(main()->USER_ID));
 		if (!empty($user_info["id"])) {
 			return false;
 		}
@@ -514,7 +514,7 @@ class yf_forum_user {
 			"user_regdate"	=> time(),
 		));
 		// Return result array
-		return db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval(main()->USER_ID)." LIMIT 1");
+		return db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval(main()->USER_ID)." LIMIT 1");
 	}
 
 	/**
@@ -535,7 +535,7 @@ class yf_forum_user {
 			// Show error message if exists
 			if (!common()->_error_exists()) {
 /*
-				$user_info = db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `name`='"._es(trim($_POST["login"]))."' AND `user_email`='"._es(trim($_POST["email"]))."' AND `status`='a' LIMIT 1");
+				$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE name='"._es(trim($_POST["login"]))."' AND user_email='"._es(trim($_POST["email"]))."' AND status='a' LIMIT 1");
 				if (!empty($user_info['id'])) {
 					$replace = array(
 						"login"			=> $user_info["name"],
@@ -582,7 +582,7 @@ class yf_forum_user {
 			if (!empty($_POST["login"]) && (_strlen($_POST["login"]) > module('forum')->SETTINGS["MAX_USER_NAME"] || _strlen($_POST["login"]) < module('forum')->SETTINGS["MIN_USER_NAME"])) {
 				_re(t("Wrong login length"));
 			}
-			if (!empty($_POST["login"]) && db()->query_num_rows("SELECT `id` FROM `".db('forum_users')."` WHERE `name`='"._es($_POST["login"])."'")) {
+			if (!empty($_POST["login"]) && db()->query_num_rows("SELECT id FROM ".db('forum_users')." WHERE name='"._es($_POST["login"])."'")) {
 				_re(t("login_exists")." \"".$_POST["login"]."\"");
 			}
 			if (!common()->email_verify($_POST["email"])) {
@@ -664,7 +664,7 @@ class yf_forum_user {
 				if ($created < (time() - module('forum')->SETTINGS["REGISTRATION_TTL"])) {
 					_re(t("link_has_expired"));
 				}
-				if (db()->query_num_rows("SELECT `id` FROM `".db('forum_users')."` WHERE `name`='"._es($login)."'")) {
+				if (db()->query_num_rows("SELECT id FROM ".db('forum_users')." WHERE name='"._es($login)."'")) {
 					_re(t("login_exists")." \"".$login."\"");
 				}
 				// Show error message if exists

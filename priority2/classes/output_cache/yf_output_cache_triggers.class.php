@@ -29,7 +29,7 @@ class yf_output_cache_triggers {
 		$SEX		= $params["sex"];
 		// Triggers here
 		if ($OBJECT == "user_info") {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id` IN(".intval($USER_ID).")");
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id IN(".intval($USER_ID).")");
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "escort",
@@ -37,7 +37,7 @@ class yf_output_cache_triggers {
 				));
 			}
 		} elseif ($OBJECT == "friends" && in_array($ACTION, array("add","delete"))) {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id` IN(".intval($USER_ID).",".intval($USER_ID2).")");
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id IN(".intval($USER_ID).",".intval($USER_ID2).")");
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "escort",
@@ -45,7 +45,7 @@ class yf_output_cache_triggers {
 				));
 			}
 		} elseif ($OBJECT == "account" && in_array($ACTION, array("cancel_mship"))) {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id`=".intval($USER_ID));
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id=".intval($USER_ID));
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "category",
@@ -61,7 +61,7 @@ class yf_output_cache_triggers {
 				"object"	=> "recent",
 			));
 		} elseif ($OBJECT == "account" && in_array($ACTION, array("favorite_add","favorite_delete"))) {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id` IN(".intval($USER_ID).",".intval($USER_ID2).")");
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id IN(".intval($USER_ID).",".intval($USER_ID2).")");
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "escort",
@@ -69,7 +69,7 @@ class yf_output_cache_triggers {
 				));
 			}
 		} elseif ($OBJECT == "account" && in_array($ACTION, array("ignore_user","unignore_user"))) {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id` IN(".intval($USER_ID).",".intval($USER_ID2).")");
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id IN(".intval($USER_ID).",".intval($USER_ID2).")");
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "escort",
@@ -99,7 +99,7 @@ class yf_output_cache_triggers {
 				"object"	=> "recent",
 			));
 		} elseif ($OBJECT == "reviews" && in_array($ACTION, array("insert","update","delete"))) {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id` IN(".intval($USER_ID).")");
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id IN(".intval($USER_ID).")");
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "escort",
@@ -107,7 +107,7 @@ class yf_output_cache_triggers {
 				));
 			}
 		} elseif ($OBJECT == "user_info" && in_array($ACTION, array("insert","update","delete"))) {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id` IN(".intval($USER_ID).")");
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id IN(".intval($USER_ID).")");
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "escort",
@@ -122,7 +122,7 @@ class yf_output_cache_triggers {
 		} elseif (($OBJECT == "bad_contact_report" && in_array($ACTION, array("send")))
 				|| ($OBJECT == "manage_bad_contacts" && in_array($ACTION, array("edit","delete")))
 		) {
-			$Q = db()->query("SELECT `ad_id`,`cat_id` FROM `".db('ads')."` WHERE `user_id` IN(".intval($USER_ID).")");
+			$Q = db()->query("SELECT ad_id,cat_id FROM ".db('ads')." WHERE user_id IN(".intval($USER_ID).")");
 			while ($ad_info = db()->fetch_assoc($Q)) {
 				_class("output_cache")->_clean_by_params(array(
 					"object"	=> "escort",

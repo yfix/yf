@@ -117,7 +117,7 @@ class yf_user_data {
 				$this->_avail_dynamic_fields = cache()->get($cache_name);
 			}
 			if (empty($this->_avail_dynamic_fields)) {
-				$Q = db()->query("SELECT * FROM `".db('user_data_info_fields')."` WHERE `active`='1'");
+				$Q = db()->query("SELECT * FROM ".db('user_data_info_fields')." WHERE active='1'");
 				while ($A = db()->fetch_assoc($Q)) {
 					$this->_avail_dynamic_fields[$A["id"]] = $A["name"];
 				}
@@ -223,15 +223,15 @@ class yf_user_data {
 		$sql = "";
 		// Fields is just simple array
 		if (is_array($fields)) {
-			$sql = "SELECT `id`,`".implode("`,`", $fields)."` FROM `".db('user')."` WHERE 1 ".$add_sql;
+			$sql = "SELECT id,".implode(",", $fields)." FROM ".db('user')." WHERE 1 ".$add_sql;
 		// Fields is a group name
 		} elseif (is_string($fields)) {
 			// We do not need to enumerate fields in "full" mode, we could just pass * here
 			if ($fields == "full") {
-				$sql = "SELECT * FROM `".db('user')."` WHERE 1 ".$add_sql;
+				$sql = "SELECT * FROM ".db('user')." WHERE 1 ".$add_sql;
 			} else {
 				$_fields = $this->_fields_groups[$fields];
-				$sql = "SELECT `id`".($_fields ? ", `".implode("`,`", $_fields)."`" : "")." FROM `".db('user')."` WHERE 1 ".$add_sql;
+				$sql = "SELECT id".($_fields ? ", ".implode(",", $_fields)."" : "")." FROM ".db('user')." WHERE 1 ".$add_sql;
 			}
 		}
 		$sql = str_replace(array("WHERE 1 AND", "WHERE 1  AND"), "WHERE", $sql);
@@ -287,7 +287,7 @@ class yf_user_data {
 		$id_corresp		= array();
 		foreach ((array)$table_names as $_table_name => $_fields_array) {
 			foreach ((array)$_fields_array as $_cur_field) {
-				$fields_to_select[] = $tables_shorts[$_table_name].".`".$_cur_field."`";
+				$fields_to_select[] = $tables_shorts[$_table_name].".".$_cur_field."";
 			}
 		}
 /*
@@ -304,19 +304,19 @@ class yf_user_data {
 				continue;
 			}
 			// Id's in all tables must be equal
-			$id_corresp[$_table_name] = $tables_shorts[$_table_name].".`id`=".$tables_shorts[$first_table].".`id`"; 
+			$id_corresp[$_table_name] = $tables_shorts[$_table_name].".id=".$tables_shorts[$first_table].".id"; 
 		}
 
 		// Create common query
-		$sql = "SELECT ".$tables_shorts[$first_table].".`id`" 
+		$sql = "SELECT ".$tables_shorts[$first_table].".id" 
 					. ($fields_to_select ? ", ".implode(", ", $fields_to_select) : "")." 
-				FROM `".$first_table."` AS ".$tables_shorts[$first_table];
+				FROM ".$first_table." AS ".$tables_shorts[$first_table];
 
 		foreach ((array)$id_corresp as $_table_name => $v) {
 			if ($_table_name == $first_table) {
 				continue;
 			}
-			$sql .=	" NATURAL LEFT JOIN `".$_table_name."` AS ".$tables_shorts[$_table_name]." \n";
+			$sql .=	" NATURAL LEFT JOIN ".$_table_name." AS ".$tables_shorts[$_table_name]." \n";
 		}
 		if ($return_sql) {
 			$sql .= $result_dynamic;
@@ -359,15 +359,15 @@ class yf_user_data {
 		}
 		// Fields is just simple array
 		if (is_array($fields)) {
-			$sql = "SELECT `id`,`".implode("`,`", $fields)."` FROM `".db('user')."` WHERE `id` IN(".implode(",", $user_id).")";
+			$sql = "SELECT id,".implode(",", $fields)." FROM ".db('user')." WHERE id IN(".implode(",", $user_id).")";
 		// Fields is a group name
 		} elseif (is_string($fields)) {
 			// We do not need to enumerate fields in "full" mode, we could just pass * here
 			if ($fields == "full") {
-				$sql = "SELECT * FROM `".db('user')."` WHERE `id` IN(".implode(",", $user_id).")";
+				$sql = "SELECT * FROM ".db('user')." WHERE id IN(".implode(",", $user_id).")";
 			} else {
 				$_fields = $this->_fields_groups[$fields];
-				$sql = "SELECT `id`".($_fields ? ", `".implode("`,`", $_fields)."`" : "")." FROM `".db('user')."` WHERE `id` IN(".implode(",", $user_id).")";
+				$sql = "SELECT id".($_fields ? ", ".implode(",", $_fields)."" : "")." FROM ".db('user')." WHERE id IN(".implode(",", $user_id).")";
 			}
 		}
 		// Create additional SQL from "params" array
@@ -414,7 +414,7 @@ class yf_user_data {
 		$id_corresp		= array();
 		foreach ((array)$table_names as $_table_name => $_fields_array) {
 			foreach ((array)$_fields_array as $_cur_field) {
-				$fields_to_select[] = $tables_shorts[$_table_name].".`".$_cur_field."`";
+				$fields_to_select[] = $tables_shorts[$_table_name].".".$_cur_field."";
 			}
 		}
 		// Try to add dynamic fields
@@ -430,24 +430,24 @@ class yf_user_data {
 				continue;
 			}
 			// Id's in all tables must be equal
-			$id_corresp[$_table_name] = $tables_shorts[$_table_name].".`id`=".$tables_shorts[$first_table].".`id`"; 
+			$id_corresp[$_table_name] = $tables_shorts[$_table_name].".id=".$tables_shorts[$first_table].".id"; 
 		}
 
 		// Create common query
-		$sql = "SELECT ".$tables_shorts[$first_table].".`id`" 
+		$sql = "SELECT ".$tables_shorts[$first_table].".id" 
 					. ($fields_to_select ? ", ".implode(", ", $fields_to_select) : "")." 
-				FROM `".$first_table."` AS ".$tables_shorts[$first_table];
+				FROM ".$first_table." AS ".$tables_shorts[$first_table];
 
 		foreach ((array)$id_corresp as $_table_name => $v) {
 			if ($_table_name == $first_table) {
 				continue;
 			}
-			$sql .=	" NATURAL LEFT JOIN `".$_table_name."` AS ".$tables_shorts[$_table_name]." \n";
+			$sql .=	" NATURAL LEFT JOIN ".$_table_name." AS ".$tables_shorts[$_table_name]." \n";
 		}
 		if ($return_sql) {
 			$sql .= $result_dynamic;
 		}
-		$sql .= "\n WHERE ".$tables_shorts[$first_table].".`id` IN(".implode(",", (array)$user_id).")";
+		$sql .= "\n WHERE ".$tables_shorts[$first_table].".id IN(".implode(",", (array)$user_id).")";
 		$sql .= $add_sql;
 
 		if ($return_sql) {
@@ -491,7 +491,7 @@ class yf_user_data {
 		foreach ((array)$this->_avail_dynamic_fields as $_field_id => $_field_name) {
 			if (in_array($_field_name, $fields)) {
 				$_dynamic_fields[$_field_id] = $_field_name;
-				$this->_dynamic_fields_enum[$_field_name] = "IFNULL(`__d_".$_field_name."`.`".$_field_name."`,'') AS `".$_field_name."`";
+				$this->_dynamic_fields_enum[$_field_name] = "IFNULL(__d_".$_field_name.".".$_field_name.",'') AS ".$_field_name."";
 			}
 		}
 		$cache_name = "cache_dynamic_fields_all";
@@ -501,12 +501,12 @@ class yf_user_data {
 				$sql = "";
 				foreach ((array)$_dynamic_fields as $_field_id => $_field_name) {
 					$sql .= "\nNATURAL LEFT JOIN ( 
-						SELECT `user_id` AS `id`
-							, IFNULL(`value`, '') AS `".$_field_name."` 
-						FROM `".db('user_data_info_values')."` 
-						WHERE `field_id` = ".$_field_id." 
-							AND `user_id` IN(".implode(",", $user_id).")
-					) AS `__d_".$_field_name."`\n";
+						SELECT user_id AS id
+							, IFNULL(value, '') AS ".$_field_name." 
+						FROM ".db('user_data_info_values')." 
+						WHERE field_id = ".$_field_id." 
+							AND user_id IN(".implode(",", $user_id).")
+					) AS __d_".$_field_name."\n";
 				}
 				return $sql;
 			// Just get given fields values
@@ -515,12 +515,12 @@ class yf_user_data {
 
 				$result = false;
 
-				$sql = "SELECT `user_id` AS `id`
-							,`field_id`
-							, IFNULL(`value`, '') AS `value` 
-						FROM `".db('user_data_info_values')."` 
-						WHERE `field_id` IN(".implode(",", array_keys($_dynamic_fields)).") 
-							AND `user_id` IN(".implode(",", $user_id).")";
+				$sql = "SELECT user_id AS id
+							,field_id
+							, IFNULL(value, '') AS value 
+						FROM ".db('user_data_info_values')." 
+						WHERE field_id IN(".implode(",", array_keys($_dynamic_fields)).") 
+							AND user_id IN(".implode(",", $user_id).")";
 
 				// Get from cache
 				if ($this->CACHE_IN_MEMORY && isset($this->$cache_name[$sql])) {
@@ -560,8 +560,8 @@ class yf_user_data {
 		$add_sql = $this->_create_add_sql($params);
 
 		foreach ((array)$user_id as $_user_id) {
-			if (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `id`=".intval($_user_id))) {
-				db()->UPDATE("user", _es($data), "`id`=".intval($_user_id)." ".$add_sql);
+			if (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE id=".intval($_user_id))) {
+				db()->UPDATE("user", _es($data), "id=".intval($_user_id)." ".$add_sql);
 			} else {
 				$data_to_insert = $data;
 				$data_to_insert["id"] = $_user_id;
@@ -589,7 +589,7 @@ class yf_user_data {
 		if (!empty($users_not_in_cache)) {
 			$sql = array();
 			foreach ((array)$user_tables as $_table_name) {
-				$sql[$_table_name] = "SELECT `id`, '".$tables_shorts[$_table_name]."' AS `cur_table` FROM `".$_table_name."` WHERE `id` IN (".implode(",",(array)$users_not_in_cache).")";
+				$sql[$_table_name] = "SELECT id, '".$tables_shorts[$_table_name]."' AS cur_table FROM ".$_table_name." WHERE id IN (".implode(",",(array)$users_not_in_cache).")";
 			}
 			$sql = "( ". implode(" ) UNION ALL ( ", $sql). " )";
 
@@ -613,7 +613,7 @@ class yf_user_data {
 		}
 
 		// Get dynamic values
-		$sql = "SELECT `user_id`, `field_id`, `value` FROM `".db('user_data_info_values')."` WHERE `user_id` IN(".implode(",", (array)$user_id).")";
+		$sql = "SELECT user_id, field_id, value FROM ".db('user_data_info_values')." WHERE user_id IN(".implode(",", (array)$user_id).")";
 		$Q = db()->query($sql);			
 		while ($A = db()->fetch_assoc($Q)) {
 			$_user_avail_dynamic_fields[$A["user_id"]][$A["field_id"]] = $A["value"];
@@ -644,7 +644,7 @@ class yf_user_data {
 				if (!$curr_table_data) {
 					continue;
 				}
-				db()->UPDATE($_table_name, _es($curr_table_data), "`id` = ".intval($_user_id));
+				db()->UPDATE($_table_name, _es($curr_table_data), "id = ".intval($_user_id));
 			}
 		}
 
@@ -667,7 +667,7 @@ class yf_user_data {
 				}
 				db()->UPDATE(db('user_data_info_values'), array(
 					"value"	=> _es($val),
-				), "`user_id`=".intval($_user_id)." AND `field_id`='".$this->_avail_dynamic_fields_ids[$_field_name]."'");
+				), "user_id=".intval($_user_id)." AND field_id='".$this->_avail_dynamic_fields_ids[$_field_name]."'");
 			}
 		}
 		return true;
@@ -687,7 +687,7 @@ class yf_user_data {
 			$db_cols = cache()->get($cache_name);
 		}
 		if (empty($db_cols)) {
-			$Q = db()->query("SHOW COLUMNS FROM `".db('user')."`");
+			$Q = db()->query("SHOW COLUMNS FROM ".db('user')."");
 			while ($A = db()->fetch_assoc($Q)) {
 				if ($A["Field"] == "id") {
 					continue;
@@ -731,7 +731,7 @@ class yf_user_data {
 		if (empty($db_cols)) {
 			foreach ((array)$this->_user_tables as $_table_name) {
 
-				$Q = db()->query("SHOW COLUMNS FROM `".$_table_name."`");
+				$Q = db()->query("SHOW COLUMNS FROM ".$_table_name."");
 				while ($A = db()->fetch_assoc($Q)) {
 					if ($A["Field"] == "id") {
 						continue;
@@ -813,11 +813,11 @@ class yf_user_data {
 							}
 						}
 						if (strpos($v, " ")) {
-						// $v is a statement ("LIKE `value%`")
-							$add_sql .= " ".$tables_shorts[$table].".`".$fld."` ".$v." "; 
+						// $v is a statement ("LIKE value%")
+							$add_sql .= " ".$tables_shorts[$table].".".$fld." ".$v." "; 
 						} else {
 						// $v is the value
-							$add_sql .= " ".$tables_shorts[$table].".`".$fld."`='".$v."' ";
+							$add_sql .= " ".$tables_shorts[$table].".".$fld."='".$v."' ";
 						}
 						if (--$i) {
 							$add_sql .= "AND";
@@ -826,7 +826,7 @@ class yf_user_data {
 				} elseif (!$val) {
 					$add_sql .= "";
 				} else {
-				// for constructions like "ORDER BY `field`"
+				// for constructions like "ORDER BY field"
 					$table_names = $this->_arrange_fields($val, $this->_user_tables);
 					foreach ((array)$table_names as $_table_name => $fields) {
 						if (in_array($val, $fields)) {
@@ -834,18 +834,18 @@ class yf_user_data {
 							break;
 						}
 					}
-					$add_sql .= " ".$tables_shorts[$table].".`".$val."` ";
+					$add_sql .= " ".$tables_shorts[$table].".".$val." ";
 				}	
 			} else {
 				if (is_array($val)) {
 					$i = count($val);
 					foreach ((array)$val as $fld => $v) {
 						if (strpos($v, " ")) {
-						// $v is a statement ("LIKE `value%`")
-							$add_sql .= " `".$fld."` ".$v." "; 
+						// $v is a statement ("LIKE value%")
+							$add_sql .= " ".$fld." ".$v." "; 
 						} else {
 						// $v is the value
-							$add_sql .= " `".$fld."`='".$v."' ";
+							$add_sql .= " ".$fld."='".$v."' ";
 						}
 						if (--$i) {
 							$add_sql .= "AND";
@@ -854,8 +854,8 @@ class yf_user_data {
 				} elseif (!$val) {
 					$add_sql .= "";
 				} else {
-				// for constructions like "ORDER BY `field`"
-					$add_sql .= " `".$val."` ";
+				// for constructions like "ORDER BY field"
+					$add_sql .= " ".$val." ";
 				}	
 			}
 		}

@@ -25,22 +25,22 @@ class yf_chat_utils {
 	function _log_change_online_status ($A, $login_date = 0) {
 		$login_date = intval($login_date);
 		// Try to find record when user is logged in (to complete log with logout date)
-		if ($login_date) $A2 = db()->query_fetch("SELECT `id` FROM `".db('chat_log_online')."` WHERE `login_date`=".$login_date." AND `logout_date`=0");
+		if ($login_date) $A2 = db()->query_fetch("SELECT id FROM ".db('chat_log_online')." WHERE login_date=".$login_date." AND logout_date=0");
 		// Check if log record exists
 		if ($A2["id"]) {
-			$sql = "UPDATE `".db('chat_log_online')."` SET `logout_date` = ".time()."	WHERE `id`=".$A2["id"];
+			$sql = "UPDATE ".db('chat_log_online')." SET logout_date = ".time()."	WHERE id=".$A2["id"];
 		} else {
-			$sql = "INSERT INTO `".db('chat_log_online')."` (
-					`user_id`,
-					`room_id`,
-					`".($login_date ? "logout_date" : "login_date")."`,
-					`ip`,
-					`session_id`,
-					`user_agent`,
-					`referer`,
-					`text_color`,
-					`login`,
-					`gender`
+			$sql = "INSERT INTO ".db('chat_log_online')." (
+					user_id,
+					room_id,
+					".($login_date ? "logout_date" : "login_date").",
+					ip,
+					session_id,
+					user_agent,
+					referer,
+					text_color,
+					login,
+					gender
 				) VALUES (
 					".intval($A["user_id"]).",
 					".intval($A["room_id"]).",
@@ -62,21 +62,21 @@ class yf_chat_utils {
 	*/
 	function _move_old_records_to_archive ($old_days = 2) {
 		// Archive common messages
-		db()->query("REPLACE DELAYED INTO `".db('chat_archive_messages')."` SELECT * FROM `".db('chat_messages')."` WHERE `add_date` < ".(time() - $old_days*24*3600));
-		db()->query("DELETE LOW_PRIORITY FROM `".db('chat_messages')."` WHERE `add_date` < ".(time() - 2*24*3600));
+		db()->query("REPLACE DELAYED INTO ".db('chat_archive_messages')." SELECT * FROM ".db('chat_messages')." WHERE add_date < ".(time() - $old_days*24*3600));
+		db()->query("DELETE LOW_PRIORITY FROM ".db('chat_messages')." WHERE add_date < ".(time() - 2*24*3600));
 		// Archive private messages
-		db()->query("REPLACE DELAYED INTO `".db('chat_archive_private')."` SELECT * FROM `".db('chat_private')."` WHERE `add_date` < ".(time() - $old_days*24*3600));
-		db()->query("DELETE LOW_PRIORITY FROM `".db('chat_private')."` WHERE `add_date` < ".(time() - 2*24*3600));
+		db()->query("REPLACE DELAYED INTO ".db('chat_archive_private')." SELECT * FROM ".db('chat_private')." WHERE add_date < ".(time() - $old_days*24*3600));
+		db()->query("DELETE LOW_PRIORITY FROM ".db('chat_private')." WHERE add_date < ".(time() - 2*24*3600));
 		// Archive log_online db table
-		db()->query("REPLACE DELAYED INTO `".db('chat_archive_log_online')."` SELECT * FROM `".db('chat_log_online')."` WHERE `login_date` < ".(time() - 31*24*3600));
-		db()->query("DELETE LOW_PRIORITY FROM `".db('chat_log_online')."` WHERE `login_date` < ".(time() - 2*24*3600));
+		db()->query("REPLACE DELAYED INTO ".db('chat_archive_log_online')." SELECT * FROM ".db('chat_log_online')." WHERE login_date < ".(time() - 31*24*3600));
+		db()->query("DELETE LOW_PRIORITY FROM ".db('chat_log_online')." WHERE login_date < ".(time() - 2*24*3600));
 	}
 
 	/**
 	* All registered users list
 	*/
 	function _show_users_list() {
-		$Q = db()->query("SELECT * FROM `".db('chat_users')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT * FROM ".db('chat_users')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace = array(
 			);
@@ -95,7 +95,7 @@ class yf_chat_utils {
 		$start_date	= time() - 31*24*3600;
 		$end_date	= time();
 /*
-		$Q = db()->query("SELECT * FROM `".db('chat_messages')."` WHERE `add_date` BETWEEN ".intval($start_date)." AND ".intval($end_date));
+		$Q = db()->query("SELECT * FROM ".db('chat_messages')." WHERE add_date BETWEEN ".intval($start_date)." AND ".intval($end_date));
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace = array(
 			);

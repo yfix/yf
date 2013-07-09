@@ -43,7 +43,7 @@ class yf_custom_replace {
 		$this->_user_modules = main()->_execute("user_modules", "_get_modules");
 		// Get sites infos
 		$this->_sites_names[""] = "-- ALL --";
-		$Q = db()->query("SELECT * FROM `".db('sites')."` WHERE `active`='1' ORDER BY `id` ASC");
+		$Q = db()->query("SELECT * FROM ".db('sites')." WHERE active='1' ORDER BY id ASC");
 		while ($A = db()->fetch_assoc($Q)) $this->_sites_names[$A["id"]] = $A["name"];
 		// Get langs
 		$this->_langs[""] = "-- ALL --";
@@ -68,7 +68,7 @@ class yf_custom_replace {
 		}
 		// Get user groups
 		$this->_user_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) $this->_user_groups[$A['id']] = $A['name'];
 	}
 
@@ -76,7 +76,7 @@ class yf_custom_replace {
 	* Display available tags
 	*/
 	function show() {
-		$Q = db()->query("SELECT * FROM `".db('custom_replace_tags')."` ORDER BY `name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('custom_replace_tags')." ORDER BY name ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -104,7 +104,7 @@ class yf_custom_replace {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) return "No id!";
 		// Get current tag info
-		$tag_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_tags')."` WHERE `id`=".intval($_GET["id"]));
+		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Do save
 		if (isset($_POST["go"])) {
@@ -116,7 +116,7 @@ class yf_custom_replace {
 					"pattern_find"		=> _es($_POST["pattern_find"]),
 					"pattern_replace"	=> _es($_POST["pattern_replace"]),
 					"active"			=> intval((bool)$_POST["active"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_tags");
@@ -163,12 +163,12 @@ class yf_custom_replace {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current tag info
 		if (!empty($_GET["id"])) {
-			$tag_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_tags')."` WHERE `id`=".intval($_GET["id"]));
+			$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete tag and its rules
 		if (!empty($tag_info["id"])) {
-			db()->query("DELETE FROM `".db('custom_replace_tags')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('custom_replace_rules')."` WHERE `tag_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('custom_replace_rules')." WHERE tag_id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_tags");
@@ -189,10 +189,10 @@ class yf_custom_replace {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) return "No id!";
 		// Get current tag info
-		$tag_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_tags')."` WHERE `id`=".intval($_GET["id"]));
+		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Connect pager
-		$sql = "SELECT * FROM `".db('custom_replace_rules')."` WHERE `tag_id`=".intval($tag_info["id"])." ORDER BY `methods` ASC, `order` ASC";
+		$sql = "SELECT * FROM ".db('custom_replace_rules')." WHERE tag_id=".intval($tag_info["id"])." ORDER BY methods ASC, `order` ASC";
 		list($limit_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $limit_sql);
@@ -248,7 +248,7 @@ class yf_custom_replace {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) return "No id!";
 		// Get current tag info
-		$tag_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_tags')."` WHERE `id`=".intval($_GET["id"]));
+		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Do save
 		if (isset($_POST["go"])) {
@@ -315,12 +315,12 @@ class yf_custom_replace {
 			return _e(t("No id!"));
 		}
 		// Get current rule info
-		$rule_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_rules')."` WHERE `id`=".intval($_GET["id"]));
+		$rule_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_rules')." WHERE id=".intval($_GET["id"]));
 		if (empty($rule_info["id"])) {
 			return _e(t("No such rule!"));
 		}
 		// Get current tag info
-		$tag_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_tags')."` WHERE `id`=".intval($rule_info["tag_id"]));
+		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($rule_info["tag_id"]));
 		if (empty($tag_info["id"])) {
 			return _e(t("No such tag!"));
 		}
@@ -345,7 +345,7 @@ class yf_custom_replace {
 					"order"				=> intval($_POST["order"]),
 					"eval_code"			=> intval((bool) $_POST["eval_code"]),
 					"active"			=> intval((bool) $_POST["active"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_rules");
@@ -399,11 +399,11 @@ class yf_custom_replace {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current rule info
 		if (!empty($_GET["id"])) {
-			$rule_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_rules')."` WHERE `id`=".intval($_GET["id"]));
+			$rule_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_rules')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete rules
 		if (!empty($rule_info["id"])) {
-			db()->query("DELETE FROM `".db('custom_replace_rules')."` WHERE `id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('custom_replace_rules')." WHERE id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_rules");
@@ -421,7 +421,7 @@ class yf_custom_replace {
 	*/
 	function show_words() {
 		// Connect pager
-		$sql = "SELECT * FROM `".db('custom_replace_words')."` ORDER BY `key` ASC";
+		$sql = "SELECT * FROM ".db('custom_replace_words')." ORDER BY key ASC";
 		list($limit_sql, $pages, $total) = common()->divide_pages($sql);
 		// Process records
 		$Q = db()->query($sql. $limit_sql);
@@ -489,7 +489,7 @@ class yf_custom_replace {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) return "No id!";
 		// Get current rule info
-		$word_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_words')."` WHERE `id`=".intval($_GET["id"]));
+		$word_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_words')." WHERE id=".intval($_GET["id"]));
 		if (empty($word_info["id"])) return "No such word!";
 		// Do save
 		if (isset($_POST["go"])) {
@@ -500,7 +500,7 @@ class yf_custom_replace {
 					"desc"		=> _es($_POST["desc"]),
 					"value"		=> _es($_POST["value"]),
 					"active"	=> intval((bool) $_POST["active"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_words");
@@ -529,11 +529,11 @@ class yf_custom_replace {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current word info
 		if (!empty($_GET["id"])) {
-			$word_info = db()->query_fetch("SELECT * FROM `".db('custom_replace_words')."` WHERE `id`=".intval($_GET["id"]));
+			$word_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_words')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete
 		if (!empty($word_info["id"])) {
-			db()->query("DELETE FROM `".db('custom_replace_words')."` WHERE `id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('custom_replace_words')." WHERE id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_words");

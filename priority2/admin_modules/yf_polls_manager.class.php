@@ -21,7 +21,7 @@ class yf_polls_manager {
 	function __construct () {
 		$this->POLL_OBJ = main()->init_class("poll", "modules/");
 		$this->_polls_info = db()->query_fetch_all(
-			"SELECT * FROM `".db('polls')."` WHERE `user_id`=0 ORDER BY `add_date`,`votes` DESC"
+			"SELECT * FROM ".db('polls')." WHERE user_id=0 ORDER BY add_date,votes DESC"
 		);
 	}
 
@@ -63,8 +63,8 @@ class yf_polls_manager {
 	*/
 	function delete () {
 
-		if (db()->query("DELETE FROM `".db('polls')."` WHERE `id` = ".intval($_GET["id"])." AND `user_id`=0")) {
-			db()->query("DELETE FROM `".db('poll_votes')."` WHERE `poll_id` = ".intval($_GET["id"]));			
+		if (db()->query("DELETE FROM ".db('polls')." WHERE id = ".intval($_GET["id"])." AND user_id=0")) {
+			db()->query("DELETE FROM ".db('poll_votes')." WHERE poll_id = ".intval($_GET["id"]));			
 		}
 		return js_redirect("./?object=".$_GET["object"]);
 	}
@@ -86,7 +86,7 @@ class yf_polls_manager {
 			$sql_array = array(
 				"active"	=> $_active,
 			);
-			db()->UPDATE("polls", $sql_array, "`id`=".$_GET["id"]);
+			db()->UPDATE("polls", $sql_array, "id=".$_GET["id"]);
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {

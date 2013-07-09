@@ -19,7 +19,7 @@ class yf_confirm_reg {
 	function do_confirm () {
 		if (!strlen($_POST["login"]))	_re(t("Login required"));
 		if (!common()->_error_exists()) {
-			$A = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `active`='0' AND `login`='"._es($_POST["login"])."'");
+			$A = db()->query_fetch("SELECT * FROM ".db('user')." WHERE active='0' AND login='"._es($_POST["login"])."'");
 			if (!$A["id"]) _re(t("Sorry, either someone has already confirmed membership or some important information has been missed. Please enter email below and submit"));
 		}
 		// Continue if check passed
@@ -32,7 +32,7 @@ class yf_confirm_reg {
 			);
 			$message = tpl()->parse($_GET['object']."/email", $replace2);
 			// Set user confirmed
-			db()->query("UPDATE `".db('user')."` SET `active`='1' WHERE `id`=".intval($A["id"]));
+			db()->query("UPDATE ".db('user')." SET active='1' WHERE id=".intval($A["id"]));
 			common()->send_mail(SITE_ADVERT_NAME, SITE_ADMIN_EMAIL, $A["email"], _display_name($A), "Thank you for registering with us!", $message, nl2br($message));
 			$replace = array(
 				"name"	=> _display_name($A),

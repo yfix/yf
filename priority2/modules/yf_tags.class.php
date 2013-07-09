@@ -76,13 +76,13 @@ class yf_tags {
 			$this->CLOUD_ORDER_DIR = "ASC";
 		}
 		// Get settings for the curent user
-		if (!empty($this->USER_ID)) {
-			$A = db()->query_fetch("SELECT * FROM `".db('tags_settings')."` WHERE `user_id`=".$this->USER_ID);
+		if (!empty(main()->USER_ID)) {
+			$A = db()->query_fetch("SELECT * FROM ".db('tags_settings')." WHERE user_id=".main()->USER_ID);
 			$this->ALLOWED_GROUP = $A["allowed_group"];
 			if (!isset($this->ALLOWED_GROUP)) {
 				// Set default settings
 				db()->INSERT("tags_settings", array(
-					"user_id"		=> $this->USER_ID,
+					"user_id"		=> main()->USER_ID,
 					"allowed_group"	=> 0,
 				));
 			}
@@ -167,7 +167,7 @@ class yf_tags {
 		}
 		$this->_tags = array();
 		// Get current tags
-		$Q = db()->query("SELECT * FROM `".db('tags')."` WHERE `object_name`='".$_GET["object"]."' AND `object_id`=".intval($obj_id));
+		$Q = db()->query("SELECT * FROM ".db('tags')." WHERE object_name='".$_GET["object"]."' AND object_id=".intval($obj_id));
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_tags[$A["id"]] = $A["text"];
 		}
@@ -180,7 +180,7 @@ class yf_tags {
 
 		// Delete all tags if empty form submitted
 		if ($_POST["tags_edited"] && empty($_POST["tags"])) {
-			db()->query("DELETE FROM `".db('tags')."` WHERE `object_name`='".$_GET["object"]."' AND `object_id`=".intval($obj_id));	
+			db()->query("DELETE FROM ".db('tags')." WHERE object_name='".$_GET["object"]."' AND object_id=".intval($obj_id));	
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""));
 		}
 
@@ -248,21 +248,21 @@ class yf_tags {
 		$GLOBALS['site_title'] = $_tag;
 
 		if ($filter_user_id) {
-			$filter_sql = " AND `user_id`=".$filter_user_id;
+			$filter_sql = " AND user_id=".$filter_user_id;
 		} else {
 			$filter_sql = "";
 		}
 		if ($_GET["object"] != "tags" && in_array($_GET["object"], $this->avail_objects)) {
-			$filter_sql .= " AND `object_name`='"._es($_GET["object"])."'"; 
+			$filter_sql .= " AND object_name='"._es($_GET["object"])."'"; 
 		}
 		if (!empty($_obj_name_array)) {
-			$filter_sql .= " AND `object_name` IN('".implode("','", $_obj_name_array)."')";
+			$filter_sql .= " AND object_name IN('".implode("','", $_obj_name_array)."')";
 		}
 
-		$sql = "SELECT * FROM `".db('tags')."` 
-				WHERE `text`='"._es($_tag)."'
+		$sql = "SELECT * FROM ".db('tags')." 
+				WHERE text='"._es($_tag)."'
 				".$filter_sql." 
-				ORDER BY `add_date` ASC";
+				ORDER BY add_date ASC";
 
 		if ($filter_user_id) {
 			$_url_id = $_tag."-".$filter_user_id;
@@ -293,7 +293,7 @@ class yf_tags {
 				"objects_ids" => implode(",", $blog_ids_array),
 			));
 
-			$Q = db()->query("SELECT * FROM `".db('blog_posts')."` WHERE `id` IN(".implode(",", $blog_ids_array).")");
+			$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE id IN(".implode(",", $blog_ids_array).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$post_info[$A["id"]] = $A;
 			}
@@ -304,7 +304,7 @@ class yf_tags {
 
 		if (!empty($gallery_ids_array)) {
 			$GALLERY_OBJ = &main()->init_class("gallery");
-			$Q = db()->query("SELECT * FROM `".db('gallery_photos')."` WHERE `id` IN(".implode(",", $gallery_ids_array).")");
+			$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE id IN(".implode(",", $gallery_ids_array).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$_photo_infos[$A["id"]] = $A;
 			}
@@ -321,7 +321,7 @@ class yf_tags {
 				"objects_ids" => implode(",", $articles_ids_array),
 			));
 
-			$Q = db()->query("SELECT * FROM `".db('articles_texts')."` WHERE `id` IN(".implode(",", $articles_ids_array).")");
+			$Q = db()->query("SELECT * FROM ".db('articles_texts')." WHERE id IN(".implode(",", $articles_ids_array).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$_articles_infos[$A["id"]] = $A;
 			}
@@ -408,14 +408,14 @@ class yf_tags {
 	* Manage user tags settings
 	*/
 	function settings () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			 return _error_need_login();
 		}
 		if (!empty($_POST) && $this->ALLOWED_GROUP != $_POST["allowed_group"]) {
 			// Saving new settings if changed
 			db()->UPDATE("tags_settings", array(
 					"allowed_group" => $_POST["allowed_group"]
-				), "`user_id`=".$this->USER_ID
+				), "user_id=".main()->USER_ID
 			);			
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
@@ -437,10 +437,10 @@ class yf_tags {
 		if (!isset($allowed_group)) {
 			// Show box with current value selected
 			if ($params["module"] == "blog" && isset($params["object_id"])) {
-				$A = db()->query_fetch("SELECT `allow_tagging` FROM `".db('blog_settings')."` WHERE `user_id`=".$params["object_id"]);
+				$A = db()->query_fetch("SELECT allow_tagging FROM ".db('blog_settings')." WHERE user_id=".$params["object_id"]);
 				$allowed_box = common()->select_box("allowed_group", $this->GROUPS, $A["allow_tagging"], 0);		
 			} elseif ($params["module"] == "gallery" && isset($params["object_id"])) {
-				$A = db()->query_fetch("SELECT `allow_tagging` FROM `".db('gallery_folders')."` WHERE `id`=".$params["object_id"]);
+				$A = db()->query_fetch("SELECT allow_tagging FROM ".db('gallery_folders')." WHERE id=".$params["object_id"]);
 				$allowed_box = common()->select_box("allowed_group", $this->GROUPS, $A["allow_tagging"], 0);		
 			} else {
 				return $allowed_box = common()->select_box("allowed_group", $this->GROUPS, $this->ALLOWED_GROUP, 0); // default settings otherwise
@@ -451,7 +451,7 @@ class yf_tags {
 			if ($params["module"] == "blog" && isset($params["object_id"])) {
 				db()->UPDATE("blog_settings", array(	
 						"allow_tagging" => $allowed_group,
-					), "`user_id`=".$params["object_id"]
+					), "user_id=".$params["object_id"]
 				);			
 			} else {
 				return false;
@@ -481,22 +481,22 @@ class yf_tags {
 
 		// Custom settings for blog
 		if ($OBJECT_NAME == "blog") {
-			$sql = "SELECT bp.`id`, bs.`user_id`, bs.`allow_tagging` AS `allowed_group` 
-					FROM `".db('blog_settings')."` AS bs, `".db('blog_posts')."` AS bp 
-					WHERE bp.`id` IN('".implode("','",$obj_id)."') AND bs.`user_id`=bp.`user_id`";
+			$sql = "SELECT bp.id, bs.user_id, bs.allow_tagging AS allowed_group 
+					FROM ".db('blog_settings')." AS bs, ".db('blog_posts')." AS bp 
+					WHERE bp.id IN('".implode("','",$obj_id)."') AND bs.user_id=bp.user_id";
 		//Custom settings for gallery folder
 		} elseif ($OBJECT_NAME == "gallery") {
-			$sql = "SELECT gp.`id`, gp.`user_id`, gf.`allow_tagging` AS `allowed_group` 
-					FROM `".db('gallery_folders')."` AS gf, `".db('gallery_photos')."` AS gp 
-					WHERE gp.`id` IN('".implode("','",$obj_id)."') AND gp.`folder_id`=gf.`id`";
+			$sql = "SELECT gp.id, gp.user_id, gf.allow_tagging AS allowed_group 
+					FROM ".db('gallery_folders')." AS gf, ".db('gallery_photos')." AS gp 
+					WHERE gp.id IN('".implode("','",$obj_id)."') AND gp.folder_id=gf.id";
 		} else {
-			$sql = "SELECT obj.`id`, obj.`user_id`, s.`allowed_group` 
-					FROM `".DB_PREFIX. $this->_db_tables_for_object[$OBJECT_NAME]."` AS obj, `".db('tags_settings')."` AS s  
-					WHERE obj.`id` IN('".implode("','",$obj_id)."') AND s.`user_id`=obj.`user_id`";
+			$sql = "SELECT obj.id, obj.user_id, s.allowed_group 
+					FROM ".DB_PREFIX. $this->_db_tables_for_object[$OBJECT_NAME]." AS obj, ".db('tags_settings')." AS s  
+					WHERE obj.id IN('".implode("','",$obj_id)."') AND s.user_id=obj.user_id";
 		}
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			// Authors can edit tags in any case
-			if ($this->USER_ID == $A["user_id"]) {
+			if (main()->USER_ID == $A["user_id"]) {
 				$_allowed[$A["id"]]["allowed"] = 1;
 			}
 
@@ -505,13 +505,13 @@ class yf_tags {
 				$_allowed[$A["id"]]["allowed"] = 1;
 			}
 			// Only members can edit tags
-			if ($A["allowed_group"] == 2 && $this->USER_ID) {
+			if ($A["allowed_group"] == 2 && main()->USER_ID) {
 				$_allowed[$A["id"]]["allowed"] = 1;
 			}
 			// Only friends can edit tags
-			if ($A["allowed_group"] == 1 && $this->USER_ID) {
+			if ($A["allowed_group"] == 1 && main()->USER_ID) {
 				$FRIENDS_OBJ = main()->init_class("friends");
-				$friend_of_array = $FRIENDS_OBJ->_get_users_where_friend_of($this->USER_ID);
+				$friend_of_array = $FRIENDS_OBJ->_get_users_where_friend_of(main()->USER_ID);
 				if(in_array($A["user_id"], $friend_of_array)) {
 					$_allowed[$A["id"]]["allowed"] = 1;	
 				}
@@ -533,9 +533,9 @@ class yf_tags {
 	function _tags_cloud($object_name = "") {
 		// Select top of the tags for cloud creation
 		if (!$object_name) {
-			$sql = "SELECT `text` , COUNT(*) AS `num` FROM `".db('tags')."` GROUP BY `text` ORDER BY `".$this->CLOUD_ORDER."` ".$this->CLOUD_ORDER_DIR." LIMIT ". $this->CLOUD_TAGS_LIMIT;			
+			$sql = "SELECT text , COUNT(*) AS num FROM ".db('tags')." GROUP BY text ORDER BY ".$this->CLOUD_ORDER." ".$this->CLOUD_ORDER_DIR." LIMIT ". $this->CLOUD_TAGS_LIMIT;			
 		} else {
-			$sql = "SELECT `text` , COUNT(*) AS `num` FROM `".db('tags')."` WHERE `object_name`='".$object_name."' GROUP BY `text` ORDER BY `".$this->CLOUD_ORDER."` ".$this->CLOUD_ORDER_DIR." LIMIT ". $this->CLOUD_TAGS_LIMIT;			
+			$sql = "SELECT text , COUNT(*) AS num FROM ".db('tags')." WHERE object_name='".$object_name."' GROUP BY text ORDER BY ".$this->CLOUD_ORDER." ".$this->CLOUD_ORDER_DIR." LIMIT ". $this->CLOUD_TAGS_LIMIT;			
 		}
 
 		$tmp_cloud_data = db()->query_fetch_all($sql);
@@ -562,9 +562,9 @@ class yf_tags {
 		if (!empty($obj_ids)) {
 	   		// Get current object tags
 			$Q = db()->query(
-				"SELECT * FROM `".db('tags')."` 
-				WHERE `object_name`='"._es($obj_name)."' 
-					AND `object_id` IN(".implode(",",$obj_ids).")"
+				"SELECT * FROM ".db('tags')." 
+				WHERE object_name='"._es($obj_name)."' 
+					AND object_id IN(".implode(",",$obj_ids).")"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$GLOBALS['_tags_cache'][$obj_name][$A["object_id"]][$A["id"]] = $A;
@@ -607,7 +607,7 @@ class yf_tags {
 		}
 		if (empty($this->tags)) {
 			// Get current tags
-			$Q = db()->query("SELECT * FROM `".db('tags')."` WHERE `object_name`='".$_GET["object"]."' AND `object_id`=".intval($obj_id));
+			$Q = db()->query("SELECT * FROM ".db('tags')." WHERE object_name='".$_GET["object"]."' AND object_id=".intval($obj_id));
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->_tags[$A["id"]] = $A["text"];
 			}
@@ -657,7 +657,7 @@ class yf_tags {
 			$ids_to_delete = array_keys((array)$_new_tags);
 			// Delete old keywords
 			if (!empty($ids_to_delete)) {
-				db()->query("DELETE FROM `".db('tags')."` WHERE `object_name`='".$object_name."' AND `object_id`=".intval($obj_id)." AND `id` IN(".implode(",", $ids_to_delete).")");
+				db()->query("DELETE FROM ".db('tags')." WHERE object_name='".$object_name."' AND object_id=".intval($obj_id)." AND id IN(".implode(",", $ids_to_delete).")");
 			}
 
 			$num_tags = count($this->_tags);
@@ -705,7 +705,7 @@ class yf_tags {
 		}
 		if (empty($this->tags)) {
 			// Get current tags
-			$Q = db()->query("SELECT * FROM `".db('tags')."` WHERE `object_name`='".$object_name."' AND `object_id`=".intval($obj_id));
+			$Q = db()->query("SELECT * FROM ".db('tags')." WHERE object_name='".$object_name."' AND object_id=".intval($obj_id));
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->_tags[$A["id"]] = $A["text"];
 			}
@@ -779,6 +779,6 @@ class yf_tags {
 	*/
 	function _on_delete_account($params = array()) {
 		$USER_ID = intval($params["user_id"]);
-		db()->query("DELETE FROM `".db('tags_settings')."` WHERE `user_id`=".$USER_ID);
+		db()->query("DELETE FROM ".db('tags_settings')." WHERE user_id=".$USER_ID);
 	}	
 }

@@ -54,7 +54,7 @@ class yf_chat_register {
 		if (strlen($_POST["login"]) < 2 || strlen($_POST["login"]) > 32) {
 			_re(t("2 > login > 32"));
 		}
-		$LOGIN_EXISTS = db()->query_num_rows("SELECT `id` FROM `".db('chat_users')."` WHERE `login`='"._es($_POST["login"])."'");
+		$LOGIN_EXISTS = db()->query_num_rows("SELECT id FROM ".db('chat_users')." WHERE login='"._es($_POST["login"])."'");
 		if ($LOGIN_EXISTS) {
 			_re(t('login_exists'));
 		}
@@ -65,12 +65,12 @@ class yf_chat_register {
 			_re(t("wrong_login")." \"".$_POST["login"]."\"");
 		}
 		if (!common()->_error_exists()) {
-			$sql = "INSERT INTO `".db('chat_users')."` (
-					`login`,
-					`password`,
-					`gender`,
-					`email`,
-					`add_date`
+			$sql = "INSERT INTO ".db('chat_users')." (
+					login,
+					password,
+					gender,
+					email,
+					add_date
 				) VALUES (
 					'"._es($_POST["login"])."',
 					'"._es($_POST["password"])."',
@@ -108,7 +108,7 @@ class yf_chat_register {
 			return false;
 		}
 		// Check if such user already exists
-		$user_info = db()->query_fetch("SELECT `id` FROM `".db('forum_users')."` WHERE `id`=".intval(main()->USER_ID));
+		$user_info = db()->query_fetch("SELECT id FROM ".db('forum_users')." WHERE id=".intval(main()->USER_ID));
 		if (!empty($user_info["id"])) {
 			return false;
 		}
@@ -122,7 +122,7 @@ class yf_chat_register {
 			"user_regdate"	=> time(),
 		));
 		// Return result array
-		return db()->query_fetch("SELECT * FROM `".db('forum_users')."` WHERE `id`=".intval(main()->USER_ID)." LIMIT 1");
+		return db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval(main()->USER_ID)." LIMIT 1");
 	}
 */
 }

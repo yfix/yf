@@ -30,12 +30,12 @@ class yf_category_editor {
 			"1" => "<span class='positive'>YES</span>",
 		);
 		$this->_user_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_user_groups[$A['id']] = $A['name'];
 		}
 		$this->_admin_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('admin_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('admin_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_admin_groups[$A['id']] = $A['name'];
 		}
@@ -49,12 +49,12 @@ class yf_category_editor {
 	*/
 	function show() {
 		// Count number of items in categories
-		$Q = db()->query("SELECT `cat_id`, COUNT(*) AS `num` FROM `".db('category_items')."` GROUP BY `cat_id`");
+		$Q = db()->query("SELECT cat_id, COUNT(*) AS num FROM ".db('category_items')." GROUP BY cat_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_items[$A["cat_id"]] = $A["num"];
 		}
 		// Get categorys
-		$Q = db()->query("SELECT * FROM `".db('categories')."` ORDER BY `type` DESC, `active` ASC");
+		$Q = db()->query("SELECT * FROM ".db('categories')." ORDER BY type DESC, active ASC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -145,7 +145,7 @@ class yf_category_editor {
 			return _e(t("No id!"));
 		}
 		// Get current category info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info["id"])) {
 			return _e(t("No such category!"));
 		}
@@ -161,7 +161,7 @@ class yf_category_editor {
 					"method_name"	=> _es($_POST["method_name"]),
 					"custom_fields"	=> _es($_POST["custom_fields"]),
 					"active"		=> (int)((bool)$_POST["active"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("cats_blocks");
@@ -201,12 +201,12 @@ class yf_category_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current category info
 		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete category and its items
 		if (!empty($cat_info["id"])) {
-			db()->query("DELETE FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('category_items')."` WHERE `cat_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('categories')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('category_items')." WHERE cat_id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -229,7 +229,7 @@ class yf_category_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current category info
 		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete category and its items
 		if (empty($cat_info["id"])) {
@@ -271,11 +271,11 @@ class yf_category_editor {
 	function activate() {
 		// Try to find such category in db
 		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($cat_info)) {
-			db()->UPDATE("categories", array("active" => (int)!$cat_info["active"]), "`id`=".intval($cat_info["id"]));
+			db()->UPDATE("categories", array("active" => (int)!$cat_info["active"]), "id=".intval($cat_info["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -298,7 +298,7 @@ class yf_category_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to show category items by its name
 		if (!$_GET["id"] && $orig_id) {
-			$cat_info = db()->get("SELECT * FROM `".db('categories')."` WHERE `name`='".db()->es($orig_id)."'");
+			$cat_info = db()->get("SELECT * FROM ".db('categories')." WHERE name='".db()->es($orig_id)."'");
 			if ($cat_info) {
 				$_GET["id"] = $cat_info['id'];
 			}
@@ -308,7 +308,7 @@ class yf_category_editor {
 		}
 		// Get current category info
 		if (!$cat_info) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($cat_info)) {
 			return _e(t("No such category!"));
@@ -389,7 +389,7 @@ class yf_category_editor {
 			return _e(t("No id!"));
 		}
 		// Get current category info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info)) {
 			return _e(t("No such category!"));
 		}
@@ -405,7 +405,7 @@ class yf_category_editor {
 				"url"		=> _es($_POST["url"][$A["id"]]),
 				"other_info"=> _es($_POST["other_info"][$A["id"]]),
 				"order"		=> intval($_POST["order"][$A["id"]]),
-			), "`id`=".intval($A["id"]));
+			), "id=".intval($A["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -424,7 +424,7 @@ class yf_category_editor {
 			return _e(t("No id!"));
 		}
 		// Get current category info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info["id"])) {
 			return _e(t("No such category!"));
 		}
@@ -524,12 +524,12 @@ class yf_category_editor {
 			return _e(t("No id!"));
 		}
 		// Get current item info
-		$item_info = db()->query_fetch("SELECT * FROM `".db('category_items')."` WHERE `id`=".intval($_GET["id"]));
+		$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
 		if (empty($item_info["id"])) {
 			return _e(t("No such category item!"));
 		}
 		// Get current category info
-		$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($item_info["cat_id"]));
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($item_info["cat_id"]));
 		if (empty($cat_info["id"])) {
 			return _e(t("No such category!"));
 		}
@@ -561,7 +561,7 @@ class yf_category_editor {
 				"type_id"		=> intval($_POST["type_id"]),
 				"order"			=> intval($_POST["item_order"]),
 				"active"		=> intval($_POST["active"]),
-			), "`id`=".intval($item_info["id"]));
+			), "id=".intval($item_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("category_items");
@@ -632,7 +632,7 @@ class yf_category_editor {
 	*/
 	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		if (!isset($this->_category_items_from_db)) {
-			$Q = db()->query("SELECT * FROM `".db('category_items')."` WHERE `cat_id`=".intval($cat_id)." ORDER BY `order` ASC");
+			$Q = db()->query("SELECT * FROM ".db('category_items')." WHERE cat_id=".intval($cat_id)." ORDER BY `order` ASC");
 			while ($A = db()->fetch_assoc($Q)) $this->_category_items_from_db[$A["id"]] = $A;
 		}
 		if (empty($this->_category_items_from_db)) {
@@ -671,11 +671,11 @@ class yf_category_editor {
 	function activate_item() {
 		// Try to find such category item in db
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM `".db('category_items')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($item_info)) {
-			db()->UPDATE("category_items", array("active" => (int)!$item_info["active"]), "`id`=".intval($item_info["id"]));
+			db()->UPDATE("category_items", array("active" => (int)!$item_info["active"]), "id=".intval($item_info["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -697,12 +697,12 @@ class yf_category_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to find such category item in db
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM `".db('category_items')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
 		}
 // FIXME: add recursive deletion of all children
 		// Do delete category and its items
 		if (!empty($item_info)) {
-			db()->query("DELETE FROM `".db('category_items')."` WHERE `id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -724,7 +724,7 @@ class yf_category_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to find such category item in db
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM `".db('category_items')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
 		}
 		// Prepare SQL
 		$sql = $item_info;
@@ -746,7 +746,7 @@ class yf_category_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current cat info
 		if ($_GET["id"]) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('categories')."` WHERE `id`=".intval($_GET["id"]));
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		}
 		// Prepare db export params
 		$params = array(
@@ -759,8 +759,8 @@ class yf_category_editor {
 		);
 		if ($cat_info["id"]) {
 			$params["where"] = array(
-				db('categories')		=> "`id`=".intval($cat_info["id"]),
-				db('category_items')	=> "`cat_id`=".intval($cat_info["id"]),
+				db('categories')		=> "id=".intval($cat_info["id"]),
+				db('category_items')	=> "cat_id=".intval($cat_info["id"]),
 			);
 		}
 		$EXPORTED_SQL = module("db_manager")->export($params);

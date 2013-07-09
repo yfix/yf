@@ -45,7 +45,7 @@ class yf_calendar {
 		$this->HIDE_TOTAL_ID = main()->HIDE_TOTAL_ID;
 		if ($this->HIDE_TOTAL_ID && (
 			MAIN_TYPE_ADMIN || 
-			(empty($GLOBALS['HOSTING_ID']) && empty($this->USER_ID))
+			(empty($GLOBALS['HOSTING_ID']) && empty(main()->USER_ID))
 		)) {
 			$this->HIDE_TOTAL_ID = false;
 		}
@@ -54,7 +54,7 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Default method
 	function show () {
-		if ($this->USER_ID) {
+		if (main()->USER_ID) {
 			return $this->manage();
 		} else {
 			return $this->view();
@@ -67,7 +67,7 @@ class yf_calendar {
 		if ($this->HIDE_TOTAL_ID) {
 			$_GET["page"] = $_GET["id"];
 			unset($_GET["id"]);
-			$USER_ID = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID;
+			$USER_ID = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID;
 		} else {
 			$USER_ID = $_uid ? intval($_uid) : intval($_GET["id"]);
 		}
@@ -108,12 +108,12 @@ class yf_calendar {
 		$this->DATE_FORMAT_NUM = $cal_settings["date_format"];
 		// Get marked days from db (where status == "available")
 		$Q = db()->query(
-			"SELECT `date`,`title`,`status` 
-			FROM `".db('calendar_dates')."` 
-			WHERE `user_id` = ".intval($user_info["id"])." 
-				AND `status` IN(1,2,3)
-				AND `date` >= ".intval($prev_month_time)." 
-				AND `date` <= ".intval($next_3_month_time)
+			"SELECT date,title,status 
+			FROM ".db('calendar_dates')." 
+			WHERE user_id = ".intval($user_info["id"])." 
+				AND status IN(1,2,3)
+				AND date >= ".intval($prev_month_time)." 
+				AND date <= ".intval($next_3_month_time)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_marked_days[$A["date"]] = $A;
@@ -125,12 +125,12 @@ class yf_calendar {
 		);
 		// Get more precise max and min year
 		$Q = db()->query(
-			"SELECT FROM_UNIXTIME(`date`, '%Y-%m') AS `month_date` 
-			FROM `".db('calendar_dates')."` 
-			WHERE `user_id` = ".intval($user_info["id"])." 
-				AND `status` IN(1,2,3) 
-			GROUP BY FROM_UNIXTIME(`date`, '%Y-%m') 
-			ORDER BY FROM_UNIXTIME(`date`, '%Y-%m') ASC"
+			"SELECT FROM_UNIXTIME(date, '%Y-%m') AS month_date 
+			FROM ".db('calendar_dates')." 
+			WHERE user_id = ".intval($user_info["id"])." 
+				AND status IN(1,2,3) 
+			GROUP BY FROM_UNIXTIME(date, '%Y-%m') 
+			ORDER BY FROM_UNIXTIME(date, '%Y-%m') ASC"
 		);
 		$_min_year	= 0;
 		$_max_year	= 0;
@@ -222,7 +222,7 @@ class yf_calendar {
 			"next_month_link"	=> $need_next_link && $next_time ? "./?object=".$_GET["object"]."&action=".__FUNCTION__.($this->HIDE_TOTAL_ID ? "" : "&id=".intval($user_info["id"]))."&page=".gmdate("Y-m", $next_time) : "",
 			"cal_title"			=> _prepare_html($cal_settings["title"]),
 			"cal_desc"			=> _prepare_html($cal_settings["desc"]),
-			"manage_link"		=> !empty($this->USER_ID) && $this->USER_ID == $user_info["id"] ? "./?object=".$_GET["object"]."&action=manage&id=".gmdate("Y-m", $cur_month_time) : "",
+			"manage_link"		=> !empty(main()->USER_ID) && main()->USER_ID == $user_info["id"] ? "./?object=".$_GET["object"]."&action=manage&id=".gmdate("Y-m", $cur_month_time) : "",
 			"date_format_num"	=> intval($this->DATE_FORMAT_NUM),
 		);
 		return tpl()->parse("calendar/view_main", $replace);
@@ -234,7 +234,7 @@ class yf_calendar {
 		if ($this->HIDE_TOTAL_ID) {
 			$_GET["page"] = $_GET["id"];
 			unset($_GET["id"]);
-			$USER_ID = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID;
+			$USER_ID = $GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID;
 		} else {
 			$USER_ID = intval($_GET["id"]);
 		}
@@ -275,18 +275,18 @@ class yf_calendar {
 		$this->DATE_FORMAT_NUM = $cal_settings["date_format"];
 		// Get marked days from db (where status == "available")
 		$Q = db()->query(
-			"SELECT `date`,`title`,`status` 
-			FROM `".db('calendar_dates')."` 
-			WHERE `user_id` = ".intval($user_info["id"])." 
-				AND `status` IN(1,2,3) 
-				AND `date` >= ".intval($prev_month_time)." 
-				AND `date` <= ".intval($next_2_month_time)
+			"SELECT date,title,status 
+			FROM ".db('calendar_dates')." 
+			WHERE user_id = ".intval($user_info["id"])." 
+				AND status IN(1,2,3) 
+				AND date >= ".intval($prev_month_time)." 
+				AND date <= ".intval($next_2_month_time)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_marked_days[$A["date"]] = $A;
 		}
 		// Get day info
-		$day_info = db()->query_fetch("SELECT * FROM `".db('calendar_dates')."` WHERE `user_id`=".intval($user_info["id"])." AND `date`=".intval($cur_day_time), false);
+		$day_info = db()->query_fetch("SELECT * FROM ".db('calendar_dates')." WHERE user_id=".intval($user_info["id"])." AND date=".intval($cur_day_time), false);
 		// Preapre data to display
 		$hours_info		= !empty($day_info["hours"]) ? @unserialize($day_info["hours"]) : array();
 		@ksort($hours_info);
@@ -349,7 +349,7 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Edit calendar contents
 	function manage () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$user_info = $this->_user_info;
@@ -411,12 +411,12 @@ class yf_calendar {
 		$this->_marked_days = array();
 		// Get marked days from db (where status == "available")
 		$Q = db()->query(
-			"SELECT `date`,`title`,`status` 
-			FROM `".db('calendar_dates')."` 
-			WHERE `user_id` = ".intval($user_info["id"])." 
-				AND `status` IN(1,2,3) 
-				AND `date` >= ".intval($prev_month_time)." 
-				AND `date` <= ".intval($next_2_month_time)
+			"SELECT date,title,status 
+			FROM ".db('calendar_dates')." 
+			WHERE user_id = ".intval($user_info["id"])." 
+				AND status IN(1,2,3) 
+				AND date >= ".intval($prev_month_time)." 
+				AND date <= ".intval($next_2_month_time)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_marked_days[$A["date"]] = $A;
@@ -478,7 +478,7 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Edit day contents
 	function edit_day () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$user_info = $this->_user_info;
@@ -507,7 +507,7 @@ class yf_calendar {
 		$cal_settings = $this->_get_settings();
 		$this->DATE_FORMAT_NUM = $cal_settings["date_format"];
 		// Get day info
-		$day_info = db()->query_fetch("SELECT * FROM `".db('calendar_dates')."` WHERE `user_id`=".intval($user_info["id"])." AND `date`=".intval($cur_day_time), false);
+		$day_info = db()->query_fetch("SELECT * FROM ".db('calendar_dates')." WHERE user_id=".intval($user_info["id"])." AND date=".intval($cur_day_time), false);
 		// Save settings
 		if (isset($_POST["save"])) {
 			// Prepare hours
@@ -524,7 +524,7 @@ class yf_calendar {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				$sql = array(
-					"user_id"	=> intval($this->USER_ID),
+					"user_id"	=> intval(main()->USER_ID),
 					"date"		=> intval($cur_day_time),
 					"hours"		=> _es(!empty($_tmp_hours) ? serialize($_tmp_hours) : ""),
 					"title"		=> _es($_POST["title"]),
@@ -532,7 +532,7 @@ class yf_calendar {
 					"status"	=> !empty($_tmp_hours) ? (in_array(2, $_tmp_hours) ? 2 : 1) : intval($_POST["status"]),
 				);
 				if (!empty($day_info)) {
-					db()->UPDATE("calendar_dates", $sql, "`id`=".intval($day_info["id"]));
+					db()->UPDATE("calendar_dates", $sql, "id=".intval($day_info["id"]));
 				} else {
 					db()->INSERT("calendar_dates", $sql);
 				}
@@ -634,7 +634,7 @@ class yf_calendar {
 		}
 		// Get info if not done yet
 		if (empty($old_day_info)) {
-			$old_day_info = db()->query_fetch("SELECT * FROM `".db('calendar_dates')."` WHERE `user_id`=".intval($this->USER_ID)." AND `date`=".intval($date));
+			$old_day_info = db()->query_fetch("SELECT * FROM ".db('calendar_dates')." WHERE user_id=".intval(main()->USER_ID)." AND date=".intval($date));
 		}
 		// Merge hours and descriptions
 		if (!empty($old_day_info["hours"])) {
@@ -661,14 +661,14 @@ class yf_calendar {
 		$available	? $status = 2 : "";
 		// Prepare SQL
 		$sql = array(
-			"user_id"	=> intval($this->USER_ID),
+			"user_id"	=> intval(main()->USER_ID),
 			"date"		=> intval($date),
 			"hours"		=> _es(!empty($hours) ? serialize($hours) : ""),
 			"desc"		=> _es(!empty($desc) ? serialize($desc) : ""),
 			"status" 	=> intval($status),
 		);
 		if (!empty($old_day_info)) {
-			db()->UPDATE("calendar_dates", $sql, "`id`=".intval($old_day_info["id"]));
+			db()->UPDATE("calendar_dates", $sql, "id=".intval($old_day_info["id"]));
 		} else {
 			db()->INSERT("calendar_dates", $sql);
 		}
@@ -677,7 +677,7 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Do delete selected event
 	function delete_event() {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		list($day_time, $hour_start, $hour_end) = explode("-", $_GET["id"]);
@@ -685,7 +685,7 @@ class yf_calendar {
 		$hour_start = intval($hour_start);
 		$hour_end	= intval($hour_end);
 		// Get calendar info for selected day
-		$day_info = db()->query_fetch("SELECT * FROM `".db('calendar_dates')."` WHERE `user_id`=".intval($this->USER_ID)." AND `date`=".intval($day_time));
+		$day_info = db()->query_fetch("SELECT * FROM ".db('calendar_dates')." WHERE user_id=".intval(main()->USER_ID)." AND date=".intval($day_time));
 		if (!empty($day_info)) {
 			// Clean selected interval
 			for ($i = $hour_start; $i <= $hour_end; $i++) {
@@ -722,7 +722,7 @@ class yf_calendar {
 				"hours"		=> _es(!empty($hours) ? serialize($hours) : ""),	
 				"desc"		=> _es(!empty($desc) ? serialize($desc) : ""),
 			);
-			db()->UPDATE("calendar_dates", $sql, "`id`=".intval($day_info["id"]));
+			db()->UPDATE("calendar_dates", $sql, "id=".intval($day_info["id"]));
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_day&id=".gmdate("Y-m-d", $day_time));
 	}
@@ -730,7 +730,7 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Edit calendar default settings
 	function edit_defaults_settings () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Get calendar settings
@@ -774,7 +774,7 @@ class yf_calendar {
 
 				db()->UPDATE("calendar_settings", array(
 					"default"	=> _es(serialize($new_settings)),
-				), "`user_id`=".$this->USER_ID);
+				), "user_id=".main()->USER_ID);
 
 				return js_redirect("./?object=".$_GET["object"]."&action=".__FUNCTION__);
 			}
@@ -864,7 +864,7 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Delete default item
 	function delete_default () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Get calendar settings
@@ -888,7 +888,7 @@ class yf_calendar {
 		if (!empty($new_settings)) {
 			db()->UPDATE("calendar_settings", array(
 				"default"	=> _es(@serialize($new_settings)),
-			), "`user_id`=".$this->USER_ID);
+			), "user_id=".main()->USER_ID);
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_defaults_settings");
 	}
@@ -896,17 +896,17 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Clean default week days settings
 	function clean_default_settings () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
-		db()->UPDATE("calendar_settings", array("default"	=> ""), "`user_id`=".$this->USER_ID);
+		db()->UPDATE("calendar_settings", array("default"	=> ""), "user_id=".main()->USER_ID);
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_defaults_settings");
 	}
 	
 	//-----------------------------------------------------------------------------
 	// Apply default settings to the selected month
 	function apply_defaults_settings () {
-		if (empty($this->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Get calendar settings
@@ -1023,15 +1023,15 @@ class yf_calendar {
 	//-----------------------------------------------------------------------------
 	// Get calendar settings
 	function _get_settings ($user_id = 0) {
-		if (empty($user_id) && !empty($this->USER_ID)) {
-			$user_id = $this->USER_ID;
+		if (empty($user_id) && !empty(main()->USER_ID)) {
+			$user_id = main()->USER_ID;
 		}
 		if (empty($user_id)) {
 			return false;
 		}
 		// Get data from db
 		$cal_settings = db()->query_fetch(
-			"SELECT * FROM `".db('calendar_settings')."` WHERE `user_id`=".intval($user_id)
+			"SELECT * FROM ".db('calendar_settings')." WHERE user_id=".intval($user_id)
 		);
 		// Create default calendar settings if not done yet
 		if (empty($cal_settings)) {
@@ -1138,10 +1138,10 @@ class yf_calendar {
 		if ($params["describe"]) {
 			return array("allow_cache" => 0);
 		}
-		if (!$this->USER_ID) {
+		if (!main()->USER_ID) {
 			return "";
 		}
-		return $this->view($this->USER_ID, array("for_widgets" => 1));
+		return $this->view(main()->USER_ID, array("for_widgets" => 1));
 	}
 
 	/**
@@ -1159,7 +1159,7 @@ class yf_calendar {
 					"active"		=> isset($_POST["disable"]) ? 0 : 1,
 					"date_format"	=> intval(isset($this->_date_formats[$_POST["date_format"]]) ? $_POST["date_format"] : $this->DATE_FORMAT_NUM),
 				);
-				db()->UPDATE("calendar_settings", $sql, "`user_id`=".intval($this->USER_ID));
+				db()->UPDATE("calendar_settings", $sql, "user_id=".intval(main()->USER_ID));
 
 				// Synchronize blog title with site menu
 				$this->_callback_on_update(array("page_header" => $_POST["title"]));

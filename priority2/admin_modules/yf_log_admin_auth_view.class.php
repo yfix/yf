@@ -34,9 +34,9 @@ class yf_log_admin_auth_view {
 	*/
 	function show () {
 		// Calling function to divide records per pages
-		$sql = "SELECT * FROM `".db('log_admin_auth')."` ";
+		$sql = "SELECT * FROM ".db('log_admin_auth')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `date` ASC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date ASC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get records
 		$Q = db()->query($sql.$add_sql);
@@ -78,8 +78,8 @@ class yf_log_admin_auth_view {
 	*/
 	function prune () {
 		if (isset($_POST["prune_days"])) {
-			db()->query("DELETE FROM `".db('log_admin_auth')."`".(!empty($_POST["prune_days"]) ? " WHERE `date` <= ".intval(time() - $_POST["prune_days"] * 86400) : ""));
-			db()->query("OPTIMIZE TABLE `".db('log_admin_auth')."`");
+			db()->query("DELETE FROM ".db('log_admin_auth')."".(!empty($_POST["prune_days"]) ? " WHERE date <= ".intval(time() - $_POST["prune_days"] * 86400) : ""));
+			db()->query("OPTIMIZE TABLE ".db('log_admin_auth')."");
 		}
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
@@ -129,14 +129,14 @@ class yf_log_admin_auth_view {
 		}
 		// Get same ips
 		$Q = db()->query(
-			"SELECT COUNT(DISTINCT(`admin_id`)) AS `unique_accounts`, 
-				COUNT(*) AS `num_logins_from_this_ip`, 
-				`ip` 
-			FROM `".db('log_admin_auth')."` 
-			WHERE `admin_id` IN (".implode(",",$admin_ids).") 
-			GROUP BY `ip` 
-			HAVING `unique_accounts` > 1
-			ORDER BY `unique_accounts` DESC"
+			"SELECT COUNT(DISTINCT(admin_id)) AS unique_accounts, 
+				COUNT(*) AS num_logins_from_this_ip, 
+				ip 
+			FROM ".db('log_admin_auth')." 
+			WHERE admin_id IN (".implode(",",$admin_ids).") 
+			GROUP BY ip 
+			HAVING unique_accounts > 1
+			ORDER BY unique_accounts DESC"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$items[] = array(
@@ -192,12 +192,12 @@ class yf_log_admin_auth_view {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Generate filter for the common fileds
-		if ($SF["date_min"]) 			$sql .= " AND `date` >= ".strtotime($SF["date_min"])." \r\n";
-		if ($SF["date_max"])			$sql .= " AND `date` <= ".strtotime($SF["date_max"])." \r\n";
-		if ($SF["admin_id"])		 	$sql .= " AND `admin_id` = ".intval($SF["admin_id"])." \r\n";
-		if (strlen($SF["ip"]))			$sql .= " AND `ip` LIKE '"._es($SF["ip"])."%' \r\n";
+		if ($SF["date_min"]) 			$sql .= " AND date >= ".strtotime($SF["date_min"])." \r\n";
+		if ($SF["date_max"])			$sql .= " AND date <= ".strtotime($SF["date_max"])." \r\n";
+		if ($SF["admin_id"])		 	$sql .= " AND admin_id = ".intval($SF["admin_id"])." \r\n";
+		if (strlen($SF["ip"]))			$sql .= " AND ip LIKE '"._es($SF["ip"])."%' \r\n";
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

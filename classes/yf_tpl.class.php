@@ -398,7 +398,7 @@ class yf_tpl {
 				}
 			}
 			if ($this->GET_STPLS_FROM_DB && $this->FROM_DB_GET_ALL) {
-				$Q = db()->query("SELECT `name`,`text` FROM `".db('templates')."` WHERE `theme_name`='".conf('theme')."' AND `active`='1'");
+				$Q = db()->query("SELECT name,text FROM ".db('templates')." WHERE theme_name='".conf('theme')."' AND active='1'");
 				while ($A = db()->fetch_assoc($Q)) {
 					$this->_TMP_FROM_DB[$A["name"]] = stripslashes($A["text"]);
 				}
@@ -833,7 +833,7 @@ class yf_tpl {
 					$NOT_FOUND = true;
 				}
 			} else {
-				list($text) = db()->query_fetch("SELECT `text` AS `0` FROM `".db('templates')."` WHERE `theme_name`='".conf('theme')."' AND `name`='"._es($stpl_name)."' AND `active`='1'");
+				list($text) = db()->query_fetch("SELECT text AS `0` FROM ".db('templates')." WHERE theme_name='".conf('theme')."' AND name='"._es($stpl_name)."' AND active='1'");
 				if (isset($text)) {
 					$string = stripslashes($text);
 				} else {
@@ -842,7 +842,7 @@ class yf_tpl {
 			}
 			$storage = "db";
 		} else {
-			// Storages are defined in specially crafted order, so do not change it unless you have strong reason
+			// Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
 			$storages = array();
 			$site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
 			$dev_path = ".dev/".main()->HOSTNAME."/";
@@ -884,7 +884,7 @@ class yf_tpl {
 				// user section from framework within admin priority2
 				$storages["framework_user_p2"]  = YF_PATH. "priority2/". $this->_THEMES_PATH. "user/". $file_name;
 			}
-			// Try storages one-by-one in inheritance order, stop when found
+			// Try storages one-by-one in inheritance `order`, stop when found
 			$storage = "";
 			foreach ((array)$storages as $_storage => $file_path) {
 				if (!$this->_stpl_path_exists($file_path, $stpl_name, $_storage)) {

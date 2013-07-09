@@ -122,14 +122,14 @@ class sub_queries {
 			}
 			// Try to find paid orders for this city
 			if (!empty($cur_city_id)) {
-				$Q = db()->query("SELECT * FROM `".db('adv_orders')."` WHERE `service_id`=8 AND `city_id`=".intval($cur_city_id)." AND `status`=1 ORDER BY `add_date` DESC");
+				$Q = db()->query("SELECT * FROM ".db('adv_orders')." WHERE service_id=8 AND city_id=".intval($cur_city_id)." AND status=1 ORDER BY add_date DESC");
 				while ($A = db()->fetch_assoc($Q)) {
 					$paid_ads_ids[$A["ad_id"]] = $A["ad_id"];
 				}
 			}
 			// Get paid ads infos
 			if (!empty($paid_ads_ids)) {
-				$Q = db()->query("SELECT * FROM `".db('ads')."` WHERE `ad_id` IN(".implode(",", $paid_ads_ids).")");
+				$Q = db()->query("SELECT * FROM ".db('ads')." WHERE ad_id IN(".implode(",", $paid_ads_ids).")");
 				while ($A = db()->fetch_assoc($Q)) {
 					$paid_ads_infos[$A["ad_id"]] = $A;
 				}
@@ -160,10 +160,10 @@ class sub_queries {
 			}
 			// Try to count photos for the specified ads
 			$Q4 = db()->query(
-				"SELECT COUNT(`id`) AS `num_photos`,`user_id` 
-				FROM `".db('gallery_photos')."` 
-				WHERE `user_id` IN(".implode(",",$user_ids).") 
-				GROUP BY `user_id`"
+				"SELECT COUNT(id) AS num_photos,user_id 
+				FROM ".db('gallery_photos')." 
+				WHERE user_id IN(".implode(",",$user_ids).") 
+				GROUP BY user_id"
 			);
 			while ($A = db()->fetch_assoc($Q4)) {
 				$this->_users_num_photos[$A["user_id"]] = $A["num_photos"];
@@ -291,10 +291,10 @@ class sub_queries {
 	function _generate_sql_for_ads ($AF = array(), $query_ads = "", $query_users = "") {
 		// Create SQL for ads
 		$sql1 = "SELECT SQL_CALC_FOUND_ROWS 
-					`ad_id`,`cat_id`,`user_id`,`sex`,`subject`,`descript`,`url`,`add_date`".$add_sql." 
-				FROM `".db('ads')."` 
+					ad_id,cat_id,user_id,sex,subject,descript,url,add_date".$add_sql." 
+				FROM ".db('ads')." 
 				WHERE 1=1 ".
-					($this->PARENT_OBJ->DISPLAY_ONLY_ACTIVE ? " AND `status` IN('active'".($this->PARENT_OBJ->DISPLAY_EXPIRED ? ",'expired'" : "").")" : "");
+					($this->PARENT_OBJ->DISPLAY_ONLY_ACTIVE ? " AND status IN('active'".($this->PARENT_OBJ->DISPLAY_EXPIRED ? ",'expired'" : "").")" : "");
 		// Try to use query rewrite
 		if (!empty($query_ads) || !empty($query_users)) {
 			if (!empty($query_ads)) {
@@ -302,7 +302,7 @@ class sub_queries {
 			}
 			if (!empty($query_users)) {
 				// Create subquery for users
-				$sql1 .= " AND `user_id` IN (".$this->_generate_sql_for_users ($AF, "", true, $query_users).")";
+				$sql1 .= " AND user_id IN (".$this->_generate_sql_for_users ($AF, "", true, $query_users).")";
 			}
 		} else {
 			// Generate additional SQL query parts
@@ -316,18 +316,18 @@ class sub_queries {
 					if (empty($v)) {
 						continue;
 					}
-					$subject_array[]	= " `subject` LIKE '%"._es($v)."%' ";
-					$descript_array[]	= " `descript` LIKE '%"._es($v)."%' ";
+					$subject_array[]	= " subject LIKE '%"._es($v)."%' ";
+					$descript_array[]	= " descript LIKE '%"._es($v)."%' ";
 				}
 				if (is_array($subject_array)) {
 					$sql1 .= " AND ((".implode($condition, $subject_array).") OR (".implode($condition, $descript_array)."))";
 				}
 			}
 			if (!empty($AF["user_id"]))	{
-				$sql1 .= " AND `user_id` = ".intval($AF["user_id"]);
+				$sql1 .= " AND user_id = ".intval($AF["user_id"]);
 			}
 			if (!empty($AF["required_url"])) {
-				$sql1 .= " AND `url` != '' AND `url` != 'http://'";
+				$sql1 .= " AND url != '' AND url != 'http://'";
 			}
 			// Hack for the correct display inside cities
 			$obj = module('site_nav_bar');
@@ -335,30 +335,30 @@ class sub_queries {
 				$cur_city_id	= $obj->_get_city_id_by_name($AF["city"]);
 				$city_cat_id	= $GLOBALS['cities'][$cur_city_id]['cat_id'];
 				if (!empty($city_cat_id)) {
-					$sql1 .= " AND `cat_id` = ".intval($city_cat_id);
+					$sql1 .= " AND cat_id = ".intval($city_cat_id);
 				}
 			} elseif (!empty($AF["cat_id"])) {
-				$sql1 .= " AND `cat_id` = ".intval($AF["cat_id"]);
+				$sql1 .= " AND cat_id = ".intval($AF["cat_id"]);
 			}
 			// Process add date field
 			if (!empty($AF["before_date"])) {
-				$sql1 .= " AND `add_date` <= ".strtotime($AF["before_date"]);
+				$sql1 .= " AND add_date <= ".strtotime($AF["before_date"]);
 			}
 			if (!empty($AF["after_date"])) {
-				$sql1 .= " AND `add_date` > ".strtotime($AF["after_date"]);
+				$sql1 .= " AND add_date > ".strtotime($AF["after_date"]);
 			}
 			// Do not include expired ads
 			if (!$this->PARENT_OBJ->DISPLAY_EXPIRED) {
-				$sql1 .= " AND `exp_date` >= ".time();
+				$sql1 .= " AND exp_date >= ".time();
 			}
 			// Create subquery for users
 			$sql_for_users = $this->_generate_sql_for_users ($AF, "", true, $query_users);
 			if (!empty($sql_for_users)) {
-				$sql1 .= " AND `user_id` IN (".$sql_for_users.")";
+				$sql1 .= " AND user_id IN (".$sql_for_users.")";
 			}
 			// Subquery for photos
 			if (!empty($AF["required_photo"])) {
-				$sql1 .= " AND `user_id` IN (SELECT DISTINCT(`user_id`) FROM `".db('gallery_photos')."` WHERE `active`='1')";
+				$sql1 .= " AND user_id IN (SELECT DISTINCT(user_id) FROM ".db('gallery_photos')." WHERE active='1')";
 			}
 		}
 		// Process search limits if needed
@@ -369,11 +369,11 @@ class sub_queries {
 		}
 		// Limit parent category ID
 		if (!empty($GLOBALS["PARENT_CAT_LIMIT"])) {
-			$sql1 .= " AND `cat_id` IN (SELECT `id` FROM `".db('category')."` WHERE `parent_id`=".intval($GLOBALS["PARENT_CAT_LIMIT"]).")";
+			$sql1 .= " AND cat_id IN (SELECT id FROM ".db('category')." WHERE parent_id=".intval($GLOBALS["PARENT_CAT_LIMIT"]).")";
 		}
 		// Process state
 		if (!empty($AF["state"])) {
-			$sql1 .= " AND `cat_id` IN (SELECT `id` FROM `".db('category')."` WHERE `state_code` = '".$AF["state"]."')";
+			$sql1 .= " AND cat_id IN (SELECT id FROM ".db('category')." WHERE state_code = '".$AF["state"]."')";
 		}
 		// Process country
 		if (!empty($AF["country"])) {
@@ -399,33 +399,33 @@ class sub_queries {
 						$_cats_array[$_id] = $_id;
 					}
 					if (!empty($_cats_array)) {
-						$sql1 .= " AND `cat_id` IN(".implode(",",$_cats_array).")";
+						$sql1 .= " AND cat_id IN(".implode(",",$_cats_array).")";
 					}
 				} else {
-					$sql1 .= " AND `cat_id`=".intval($country_cat_id);
+					$sql1 .= " AND cat_id=".intval($country_cat_id);
 				}
 			} else {
-				$sql1 .= " AND `cat_id` IN (SELECT `id` FROM `".db('category')."` WHERE `country_code` = '".strtoupper($AF["country"])."')";
+				$sql1 .= " AND cat_id IN (SELECT id FROM ".db('category')." WHERE country_code = '".strtoupper($AF["country"])."')";
 			}
 		}
 		// Process activities
 		if (!empty($AF["activities"])) {
-			$sql1 .= " AND `user_id` IN (SELECT `user_id` FROM `".db('prof_keywords')."` WHERE `keywords` LIKE '%;".intval($AF["activities"]).";%')";
+			$sql1 .= " AND user_id IN (SELECT user_id FROM ".db('prof_keywords')." WHERE keywords LIKE '%;".intval($AF["activities"]).";%')";
 		}
 		// Process geo
 		$AF["geo_lon"] = floatval($AF["geo_lon"]);
 		$AF["geo_lat"] = floatval($AF["geo_lat"]);
 		if (!empty($AF["geo_lon"]) && !empty($AF["geo_lat"]) && !empty($AF["geo_radius"])) {
-			$geo_distance = "(POW((69.1 * (`lon` - ".floatval($AF["geo_lon"]).") * cos(".floatval($AF["geo_lat"])." / 57.3)), '2') + POW((69.1 * (`lat` - ".floatval($AF["geo_lat"]).")), '2'))";
-			$sql1 .= " AND `lon` != 0 AND ".$geo_distance." < (".floatval($AF["geo_radius"])." * ".floatval($AF["geo_radius"]).") ";
+			$geo_distance = "(POW((69.1 * (lon - ".floatval($AF["geo_lon"]).") * cos(".floatval($AF["geo_lat"])." / 57.3)), '2') + POW((69.1 * (lat - ".floatval($AF["geo_lat"]).")), '2'))";
+			$sql1 .= " AND lon != 0 AND ".$geo_distance." < (".floatval($AF["geo_radius"])." * ".floatval($AF["geo_radius"]).") ";
 		}
 		// Filter only ads from within same country as the owner
 		if (!empty($AF["same_country"])) {
-			$sql1 .= " AND `same_country` = 1 ";
+			$sql1 .= " AND same_country = 1 ";
 		}
 		// Filter only ads from within same location as the owner
 		if (!empty($AF["same_location"])) {
-			$sql1 .= " AND `same_location` = 1 ";
+			$sql1 .= " AND same_location = 1 ";
 		}
 		// Process sorting order
 		if (!empty($GLOBALS['search_force_order_by'])) {
@@ -437,18 +437,18 @@ class sub_queries {
 				$order_by_sql .= $geo_distance." ASC, ";
 			}
 			// Category priority priority
-			$order_by_sql .= "`cat_priority` DESC";
+			$order_by_sql .= "cat_priority DESC";
 			// Try to get custom sort order
 			if (isset($this->PARENT_OBJ->_order_by[$AF["order_by"]]) && isset($this->PARENT_OBJ->_order[$AF["order"]])) {
-				$order_by_sql .= " ,`".$AF["order_by"]."` ".$AF["order"];
+				$order_by_sql .= " ,".$AF["order_by"]." ".$AF["order"];
 				// Default sorting order
 			} else {
 				if (!empty($AF["cat_id"])) {
 					$cat_info = $GLOBALS['categories'][$AF["cat_id"]];
 				}
-				$order_by_sql .= " ,`same_country` DESC "
-					.($cat_info["state_code"] ? ",`same_location` DESC" : "")
-					.", `rnd` DESC";
+				$order_by_sql .= " ,same_country DESC "
+					.($cat_info["state_code"] ? ",same_location DESC" : "")
+					.", rnd DESC";
 			}
 		}
 		if (!empty($order_by_sql)) {
@@ -468,10 +468,10 @@ class sub_queries {
 	function _generate_sql_for_users ($AF = array(), $user_ids = array(), $for_subquery = false, $query_users = "") {
 		// Check if other params needed
 		if (!$for_subquery) {
-			$sql1 = "SELECT `id`,`nick`,`name`,`city`,`state`,`country`,`url`,`recip_url`,`sex`,`photo_verified` FROM `".db('user')."` WHERE `id` IN(".implode(",",$user_ids).")";
+			$sql1 = "SELECT id,nick,name,city,state,country,url,recip_url,sex,photo_verified FROM ".db('user')." WHERE id IN(".implode(",",$user_ids).")";
 			return $sql1;
 		} else {
-			$sql1 = "SELECT `id` FROM `".db('user')."` WHERE `id` != 0 ";
+			$sql1 = "SELECT id FROM ".db('user')." WHERE id != 0 ";
 			$start_sql = $sql1;
 		}
 		// Try to use query rewrite
@@ -480,7 +480,7 @@ class sub_queries {
 		} else {
 			// Process other elements
 			if (!empty($AF["user_id"]))	{
-				$sql1 .= " AND `id` = ".intval($AF["user_id"]);
+				$sql1 .= " AND id = ".intval($AF["user_id"]);
 			}
 			// Process several genders
 			if (!empty($AF["genders"]) && is_array($AF["genders"])) {
@@ -488,17 +488,17 @@ class sub_queries {
 					if (!in_array(strtolower($_cur_gender), $this->_allowed_genders)) {
 						continue;
 					}
-					$tmp_genders_array[] = " `sex`='"._es($_cur_gender)."' ";
+					$tmp_genders_array[] = " sex='"._es($_cur_gender)."' ";
 				}
 				if (!empty($tmp_genders_array)) {
 					$sql1 .= " AND (".implode(" OR ", $tmp_genders_array).") ";
 				}
 			// We checked sex field before, do not care here
 			} elseif (!empty($AF["sex"])) {
-				$sql1 .= " AND `sex` = '".$AF["sex"]."'";
+				$sql1 .= " AND sex = '".$AF["sex"]."'";
 			}
 			if (!empty($AF["user_name"])) {
-				$sql1 .= " AND `nick` LIKE '%".$AF["user_name"]."%'";
+				$sql1 .= " AND nick LIKE '%".$AF["user_name"]."%'";
 			}
 			// Hack for the correct display inside cities
 			$obj = module("site_nav_bar");
@@ -510,60 +510,60 @@ class sub_queries {
 				}
 			} else {
 				if (!empty($AF["city"])) {
-					$sql1 .= " AND `city`='".$AF["city"]."'";
+					$sql1 .= " AND city='".$AF["city"]."'";
 				}
 			}
 			if (!empty($AF["state"])) {
-				$sql1 .= " AND `state`='".$AF["state"]."'";
+				$sql1 .= " AND state='".$AF["state"]."'";
 			}
 			if (!empty($AF["country"])) {
-				$sql1 .= " AND `country`='".$AF["country"]."'";
+				$sql1 .= " AND country='".$AF["country"]."'";
 			}
 			if (!empty($AF["age1"]) && in_array($AF["age1"], $this->PARENT_OBJ->_ages)) {
-				$sql1 .= " AND `age`>=".$AF["age1"];
+				$sql1 .= " AND age>=".$AF["age1"];
 			}
 			if (!empty($AF["age2"]) && in_array($AF["age2"], $this->PARENT_OBJ->_ages)) {
-				$sql1 .= " AND `age`<=".$AF["age2"];
+				$sql1 .= " AND age<=".$AF["age2"];
 			}
 			if (!empty($AF["height1"]) && isset($this->PARENT_OBJ->_heights[$AF["height1"]]) && isset($this->PARENT_OBJ->_heights[$AF["height2"]])) {
-				$sql1 .= " AND `height` >= ".$AF["height1"]." AND `height` <= ".$AF["height2"];
+				$sql1 .= " AND height >= ".$AF["height1"]." AND height <= ".$AF["height2"];
 			}
 			if (!empty($AF["weight1"]) && isset($this->PARENT_OBJ->_weights[$AF["weight1"]]) && isset($this->PARENT_OBJ->_weights[$AF["weight2"]])) {
-				$sql1 .= " AND `weight` >= ".$AF["weight1"]." AND `weight` <= ".$AF["weight2"];
+				$sql1 .= " AND weight >= ".$AF["weight1"]." AND weight <= ".$AF["weight2"];
 			}
 			if (!empty($AF["hair_color"]) && isset($this->PARENT_OBJ->_hair_colors[$AF["hair_color"]])) {
-				$sql1 .= " AND `hair_color`='".$AF["hair_color"]."'";
+				$sql1 .= " AND hair_color='".$AF["hair_color"]."'";
 			}
 			if (!empty($AF["eye_color"]) && isset($this->PARENT_OBJ->_eye_colors[$AF["eye_color"]])) {
-				$sql1 .= " AND `eye_color`='".$AF["eye_color"]."'";
+				$sql1 .= " AND eye_color='".$AF["eye_color"]."'";
 			}
 			if (!empty($AF["orientation"]) && isset($this->PARENT_OBJ->_orientations[$AF["orientation"]])) {
-				$sql1 .= " AND `orientation`='".$AF["orientation"]."'";
+				$sql1 .= " AND orientation='".$AF["orientation"]."'";
 			}
 			if (!empty($AF["star_sign"]) && isset($this->PARENT_OBJ->_star_signs[$AF["star_sign"]])) {
-				$sql1 .= " AND `star_sign`='".$AF["star_sign"]."'";
+				$sql1 .= " AND star_sign='".$AF["star_sign"]."'";
 			}
 			if (!empty($AF["smoking"]) && isset($this->PARENT_OBJ->_smoking[$AF["smoking"]])) {
-				$sql1 .= " AND `smoking`='".$AF["smoking"]."'";
+				$sql1 .= " AND smoking='".$AF["smoking"]."'";
 			}
 			if (!empty($AF["race"]) && is_array($AF["race"])) {
 				foreach ((array)$AF["race"] as $cur_race) {
 					if (!isset($this->PARENT_OBJ->_races[$cur_race])) {
 						continue;
 					}
-					$tmp_races_array[] = " `race`='"._es($cur_race)."' ";
+					$tmp_races_array[] = " race='"._es($cur_race)."' ";
 				}
 				if (!empty($tmp_races_array)) {
 					$sql1 .= " AND (".implode(" OR ", $tmp_races_array).") ";
 				}
 			} elseif (!empty($AF["race"]) && isset($this->PARENT_OBJ->_races[$AF["race"]])) {
-				$sql1 .= " AND `race`='".$AF["race"]."'";
+				$sql1 .= " AND race='".$AF["race"]."'";
 			}
 			// Process agency status
 			$agency_statuses_sql = array(
-				1 => " `agency_id` = 0 AND `group` = 3 ", // Independent escort
-				2 => " `agency_id` != 0 AND `group` = 3 ", // Agency employee
-				3 => " `group` = 4", // Pure agency
+				1 => " agency_id = 0 AND group = 3 ", // Independent escort
+				2 => " agency_id != 0 AND group = 3 ", // Agency employee
+				3 => " group = 4", // Pure agency
 			);
 			if (!empty($AF["agency_status"]) && is_array($AF["agency_status"])) {
 				foreach ((array)$AF["agency_status"] as $cur_status) {
@@ -584,12 +584,12 @@ class sub_queries {
 				$radius = (intval($AF['miles']) > 0) ? intval($AF['miles']) : 20;
 				$sql_zip = $ZIP_CODES_OBJ->_generate_sql($AF['zip_code'], $radius);
 				if (strlen($sql_zip)) {
-					$sql1 .= " AND `zip_code` IN (".$sql_zip.") AND `country`='US'";
+					$sql1 .= " AND zip_code IN (".$sql_zip.") AND country='US'";
 				}
 			}
 			// Show only users with avatars
 			if (!empty($AF["w_avatars_only"])) {
-				$sql1 .= " AND `has_avatar` = '1' ";
+				$sql1 .= " AND has_avatar = '1' ";
 			}
 		}
 		// Process search limits if needed

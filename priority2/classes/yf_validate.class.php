@@ -34,7 +34,7 @@ class yf_validate {
 	*/
 	function _init () {
 		// Get available user section modules
-		$Q = db()->query("SELECT * FROM `".db('user_modules'));
+		$Q = db()->query("SELECT * FROM ".db('user_modules'));
 		while ($A = db()->fetch_assoc($Q)) {
 			$user_modules[$A["id"]] = $A["name"];
 		}
@@ -64,7 +64,7 @@ class yf_validate {
 				$_POST[$name_in_form] = preg_replace("/[^".$_nick_pattern."]+/iu", "", $_POST[$name_in_form]);
 			}
 		} elseif ($TEXT_TO_CHECK != $CUR_VALUE) {
-			$NICK_ALREADY_EXISTS = (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `nick`='"._es($TEXT_TO_CHECK)."'") >= 1);
+			$NICK_ALREADY_EXISTS = (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE nick='"._es($TEXT_TO_CHECK)."'") >= 1);
 			if ($NICK_ALREADY_EXISTS) {
 				_re(t("Nick (\"@name\") is already reserved. Please try another one.", array("@name" => $TEXT_TO_CHECK)));
 			}
@@ -92,7 +92,7 @@ class yf_validate {
 			_re(t("Wrong Profile url format! (Letters or numbers only with no Spaces)"));
 		} elseif (in_array($TEXT_TO_CHECK, $this->reserved_words)) {
 			_re("This profile url (\"".$TEXT_TO_CHECK."\") is our site reserved name. Please try another one.");
-		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `profile_url`='"._es($TEXT_TO_CHECK)."'") >= 1) {
+		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE profile_url='"._es($TEXT_TO_CHECK)."'") >= 1) {
 			_re("This profile url (\"".$TEXT_TO_CHECK."\") has already been registered with us! Please try another one.");
 		}
 	}
@@ -104,7 +104,7 @@ class yf_validate {
 // TODO
 		if ($_POST["login"] == "") {
 			_re(t('Login required'));
-		} elseif (db()->query_num_rows("SELECT `id` FROM `".db('user')."` WHERE `login`='"._es($_POST['login'])."'") >= 1) {
+		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE login='"._es($_POST['login'])."'") >= 1) {
 			_re("This login (".$_POST["login"].") has already been registered with us!");
 		}
 	}
@@ -168,7 +168,7 @@ class yf_validate {
 		}
 		// Verify region
 		if (!empty($_POST["region"])) {
-			$region_info = db()->query_fetch("SELECT * FROM `".db('geo_regions')."` WHERE `country` = '"._es($_POST["country"])."' AND `code`='"._es($_POST["region"])."'");
+			$region_info = db()->query_fetch("SELECT * FROM ".db('geo_regions')." WHERE country = '"._es($_POST["country"])."' AND code='"._es($_POST["region"])."'");
 			if (empty($region_info)) {
 				$_POST["region"]	= "";
 				$_POST["state"]		= "";
@@ -179,7 +179,7 @@ class yf_validate {
 		}
 		// Verify city
 		if (!empty($_POST["city"])) {
-			$city_info = db()->query_fetch("SELECT * FROM `".db('geo_city_location')."` WHERE `region` = '"._es($_POST["region"])."' AND `country` = '"._es($_POST["country"])."' AND `city`='"._es($_POST["city"])."'");
+			$city_info = db()->query_fetch("SELECT * FROM ".db('geo_city_location')." WHERE region = '"._es($_POST["region"])."' AND country = '"._es($_POST["country"])."' AND city='"._es($_POST["city"])."'");
 			if (empty($city_info)) {
 				$_POST["city"]		= "";
 			}

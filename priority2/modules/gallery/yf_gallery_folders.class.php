@@ -26,11 +26,11 @@ class yf_gallery_folders {
 			return _e(t("Missing folder id!"));
 		}
 		// Check if such folder exists
-		$sql = "SELECT * FROM `".db('gallery_folders')."` WHERE ";
+		$sql = "SELECT * FROM ".db('gallery_folders')." WHERE ";
 		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
-			$sql .= "`id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= "id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
-			$sql .= "`id`=".intval($_GET["id"]);
+			$sql .= "id=".intval($_GET["id"]);
 		}
 		$cur_folder_info = db()->query_fetch($sql);
 		if (empty($cur_folder_info)) {
@@ -163,11 +163,11 @@ class yf_gallery_folders {
 		// Fix second id
 		$_max_folder_id2 = $this->_fix_folder_id2($this->GALLERY_OBJ->USER_ID);
 		// Check if such folder exists
-		$sql = "SELECT * FROM `".db('gallery_folders')."` WHERE ";
+		$sql = "SELECT * FROM ".db('gallery_folders')." WHERE ";
 		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
-			$sql .= "`id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= "id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
-			$sql .= "`id`=".intval($_GET["id"]);
+			$sql .= "id=".intval($_GET["id"]);
 		}
 		$cur_folder_info = db()->query_fetch($sql);
 		if (empty($cur_folder_info)) {
@@ -185,7 +185,7 @@ class yf_gallery_folders {
 		$WARN_USER = 0;
 		if ($this->GALLERY_OBJ->WARN_NON_PUBLIC_PHOTOS) {
 			// Get number of photos inside this folder that will be displayed inside ads
-			$num_photos_in_ads = db()->query_num_rows("SELECT `id` FROM `".db('gallery_photos')."` WHERE `folder_id`=".intval($FOLDER_ID)." AND `show_in_ads`='1'");
+			$num_photos_in_ads = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE folder_id=".intval($FOLDER_ID)." AND show_in_ads='1'");
 			if ($num_photos_in_ads) {
 				$WARN_USER = 1;
 			}
@@ -203,7 +203,7 @@ class yf_gallery_folders {
 			if (!common()->_error_exists()) {
 				// Unplug photos from the private category from display in ads
 				if ($num_photos_in_ads && ($_POST["content_level"] > 1 || $_POST["privacy"] >= 1 || strlen($_POST["password"]))) {
-					db()->query("UPDATE `".db('gallery_photos')."` SET `show_in_ads`='0' WHERE `folder_id`=".intval($FOLDER_ID));
+					db()->query("UPDATE ".db('gallery_photos')." SET show_in_ads='0' WHERE folder_id=".intval($FOLDER_ID));
 				}
 				// Check text fields
 				$_POST["title"]		= $this->GALLERY_OBJ->_filter_text($_POST["title"]);
@@ -221,7 +221,7 @@ class yf_gallery_folders {
 					"password"		=> _es($_POST["password"]),
 					"active" 		=> 1,
 					"allow_tagging"	=> $_POST["allowed_group"] ? $_POST["allowed_group"] : $this->TAG_OBJ->ALLOWED_GROUP,
-				), "`id`=".intval($FOLDER_ID));
+				), "id=".intval($FOLDER_ID));
 				// Update public photos
 				$this->GALLERY_OBJ->_sync_public_photos();
 				// Update user stats
@@ -271,11 +271,11 @@ class yf_gallery_folders {
 		// Fix second id
 		$_max_folder_id2 = $this->_fix_folder_id2($this->GALLERY_OBJ->USER_ID);
 		// Check if such folder exists
-		$sql = "SELECT * FROM `".db('gallery_folders')."` WHERE ";
+		$sql = "SELECT * FROM ".db('gallery_folders')." WHERE ";
 		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
-			$sql .= "`id2`=".intval($_GET["id"])." AND `user_id`=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : $this->USER_ID);
+			$sql .= "id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
-			$sql .= "`id`=".intval($_GET["id"]);
+			$sql .= "id=".intval($_GET["id"]);
 		}
 		$cur_folder_info = db()->query_fetch($sql);
 		if (empty($cur_folder_info)) {
@@ -294,7 +294,7 @@ class yf_gallery_folders {
 		// Get default folder id
 		$def_folder_id = $this->_get_def_folder_id($user_folders);
 		// Get all photos inside folder
-		$Q = db()->query("SELECT * FROM `".db('gallery_photos')."` WHERE `folder_id`=".intval($FOLDER_ID));
+		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE folder_id=".intval($FOLDER_ID));
 		while ($A = db()->fetch_assoc($Q)) {
 			$folder_photos[$A["id"]] = $A;
 		}
@@ -339,12 +339,12 @@ class yf_gallery_folders {
 						}
 					}
 					// Delete photos from database
-					db()->query("DELETE FROM `".db('gallery_photos')."` WHERE `folder_id`=".intval($FOLDER_ID));
+					db()->query("DELETE FROM ".db('gallery_photos')." WHERE folder_id=".intval($FOLDER_ID));
 				} elseif ($NEW_FOLDER_ID) {
 					// Assign default folder id to photos from the deleting folder
 					db()->UPDATE("gallery_photos", array(
 						"folder_id" => intval($NEW_FOLDER_ID)
-					), "`folder_id`=".intval($FOLDER_ID));
+					), "folder_id=".intval($FOLDER_ID));
 				}
 				// Change default folder if needed
 				if ($FOLDER_ID == $def_folder_id) {
@@ -353,10 +353,10 @@ class yf_gallery_folders {
 					$def_folder_id = key($user_folders);
 					db()->UPDATE("gallery_folders", array(
 						"is_default" => 1
-					), "`id`=".intval($def_folder_id));
+					), "id=".intval($def_folder_id));
 				}
 				// Delete folder record from database
-				db()->query("DELETE FROM `".db('gallery_folders')."` WHERE `id`=".intval($FOLDER_ID)." LIMIT 1");
+				db()->query("DELETE FROM ".db('gallery_folders')." WHERE id=".intval($FOLDER_ID)." LIMIT 1");
 				// Update user stats
 				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->GALLERY_OBJ->USER_ID));
 				// Update public photos
@@ -395,7 +395,7 @@ class yf_gallery_folders {
 		$_max_folder_id2 = 0;
 		// Get all user folders
 		$Q = db()->query(
-			"SELECT `id`,`id2` FROM `".db('gallery_folders')."` WHERE `user_id`=".intval($user_id)." ORDER BY `id` ASC"
+			"SELECT id,id2 FROM ".db('gallery_folders')." WHERE user_id=".intval($user_id)." ORDER BY id ASC"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$folders[$A["id"]] = $A;
@@ -422,7 +422,7 @@ class yf_gallery_folders {
 
 			db()->UPDATE("gallery_folders", array(
 				"id2" => intval($_max_folder_id2)
-			), "`id`=".intval($_folder_id));
+			), "id=".intval($_folder_id));
 		}
 		return $_max_folder_id2;
 	}
@@ -475,7 +475,7 @@ class yf_gallery_folders {
 			$GLOBALS['_FOLDERS_CACHE'][$user_id] = array();
 		}
 		// Get data from db
-		$Q = db()->query("SELECT * FROM `".db('gallery_folders')."` WHERE `user_id`=".intval($user_id));
+		$Q = db()->query("SELECT * FROM ".db('gallery_folders')." WHERE user_id=".intval($user_id));
 		while ($A = db()->fetch_assoc($Q)) {
 			$folders_infos[$A["id"]] = $A;
 		}
@@ -497,7 +497,7 @@ class yf_gallery_folders {
 			// Get default folder id
 			if (!empty($new_folder_id)) {
 				$def_folder_id = $new_folder_id;
-				db()->query("UPDATE `".db('gallery_photos')."` SET `folder_id`=".intval($def_folder_id)." WHERE `user_id`=".intval($user_id));
+				db()->query("UPDATE ".db('gallery_photos')." SET folder_id=".intval($def_folder_id)." WHERE user_id=".intval($user_id));
 			}
 		}
 		// Put info to cache
@@ -523,7 +523,7 @@ class yf_gallery_folders {
 		}
 		// Get data from db
 		if (!empty($users_ids)) {
-			$Q = db()->query("SELECT * FROM `".db('gallery_folders')."` WHERE `user_id` IN(".implode(",", $users_ids).")");
+			$Q = db()->query("SELECT * FROM ".db('gallery_folders')." WHERE user_id IN(".implode(",", $users_ids).")");
 			while ($A = db()->fetch_assoc($Q)) $folders_infos[$A["user_id"]][$A["id"]] = $A;
 		}
 		// Process users

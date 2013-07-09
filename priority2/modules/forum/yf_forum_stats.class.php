@@ -24,7 +24,7 @@ class yf_forum_stats {
 		list($online_stats, $online_users) = $this->_get_online_stats();
 		// Get active users in the past 15 minutes 
 		if (module('forum')->SETTINGS["ONLINE_USERS_STATS"]) {
-			$num_active_users = db()->query_num_rows("SELECT COUNT(`user_id`) AS `0` FROM `".db('forum_posts')."` WHERE `created` >= ".intval(time() - $this->LAST_POSTS_TIME)." AND `status`='a' GROUP BY `user_id`");
+			$num_active_users = db()->query_num_rows("SELECT COUNT(user_id) AS `0` FROM ".db('forum_posts')." WHERE created >= ".intval(time() - $this->LAST_POSTS_TIME)." AND status='a' GROUP BY user_id");
 		}
 		// Get forum most number of users
 		$forum_most_users = $this->_get_most_users_array();
@@ -161,7 +161,7 @@ class yf_forum_stats {
 			// Some trick here:
 			// We need to store max number of users in db cache because 
 			// file cache will be deleted before we can remember it
-			list($most_array_from_db) = db()->query_fetch("SELECT `value` AS `0` FROM `".db('cache')."` WHERE `key`='".$this->MOST_USERS_CACHE_KEY."'");
+			list($most_array_from_db) = db()->query_fetch("SELECT value AS `0` FROM ".db('cache')." WHERE key='".$this->MOST_USERS_CACHE_KEY."'");
 			if (!empty($most_array_from_db)) {
 				$forum_most_users = unserialize($most_array_from_db);
 			} else {

@@ -14,19 +14,19 @@ class yf_forum_manage_main {
 	function _edit_category () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('forum_categories')."` WHERE `id`=".$_GET['id']);
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('forum_categories')." WHERE id=".$_GET['id']);
 		}
 		if (empty($cat_info)) {
 			return _e(t("No such category"));
 		}
 		// Save data
 		if (!empty($_POST)) {
-			$sql = "UPDATE `".db('forum_categories')."` SET 
-						`name` = '"._es($_POST["name"])."',
-						`desc` = '"._es($_POST["description"])."',
-						`status` = '"._es($_POST["activity"])."',
+			$sql = "UPDATE ".db('forum_categories')." SET 
+						name = '"._es($_POST["name"])."',
+						desc = '"._es($_POST["description"])."',
+						status = '"._es($_POST["activity"])."',
 						`order` = ".intval($_POST["display_order"])."
-					WHERE `id`=".$_GET['id'];
+					WHERE id=".$_GET['id'];
 			db()->query($sql);
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
@@ -52,10 +52,10 @@ class yf_forum_manage_main {
 	function _add_category () {
 		// Save data
 		if (!empty($_POST)) {
-			$sql = "INSERT INTO `".db('forum_categories')."` (
-					`name`,
-					`desc`,
-					`status`,
+			$sql = "INSERT INTO ".db('forum_categories')." (
+					name,
+					desc,
+					status,
 					`order`
 				) VALUES (
 					'"._es($_POST["name"])."',
@@ -88,18 +88,18 @@ class yf_forum_manage_main {
 	function _delete_category () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('forum_categories')."` WHERE `id`=".$_GET['id']);
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('forum_categories')." WHERE id=".$_GET['id']);
 		}
 		// Do delete
 		if (!empty($cat_info)) {
-			db()->query("DELETE FROM `".db('forum_categories')."` WHERE `id`=".$_GET['id']." LIMIT 1");
-			$Q = db()->query("SELECT * FROM `".db('forum_forums')."` WHERE `category`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('forum_categories')." WHERE id=".$_GET['id']." LIMIT 1");
+			$Q = db()->query("SELECT * FROM ".db('forum_forums')." WHERE category=".$_GET['id']);
 			while ($forum_info = db()->fetch_assoc($Q)) {
 // TODO: need to make recurse sub-forums deletion
-				db()->query("DELETE FROM `".db('forum_posts')."` WHERE `forum`=".$forum_info['id']);
-				db()->query("DELETE FROM `".db('forum_topics')."` WHERE `forum`=".$forum_info['id']);
+				db()->query("DELETE FROM ".db('forum_posts')." WHERE forum=".$forum_info['id']);
+				db()->query("DELETE FROM ".db('forum_topics')." WHERE forum=".$forum_info['id']);
 			}
-			db()->query("DELETE FROM `".db('forum_forums')."` WHERE `category`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('forum_forums')." WHERE category=".$_GET['id']);
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -124,7 +124,7 @@ class yf_forum_manage_main {
 		if (empty($_GET['id'])) {
 			return _e(t("No forum id"));
 		}
-		$forum_info = db()->query_fetch("SELECT * FROM `".db('forum_forums')."` WHERE `id`=".$_GET['id']);
+		$forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".$_GET['id']);
 		if (empty($forum_info)) {
 			return _e(t("No such forum"));
 		}
@@ -135,7 +135,7 @@ class yf_forum_manage_main {
 			if (substr($_POST["forum"], 0, 2) == "c_") {
 				$_cat_id = intval(substr($_POST["forum"], 2));
 			} elseif (!empty($_parent_forum_id)) {
-				$parent_forum_info = db()->query_fetch("SELECT * FROM `".db('forum_forums')."` WHERE `id`=".intval($_parent_forum_id));
+				$parent_forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".intval($_parent_forum_id));
 				$_cat_id = $parent_forum_info["category"];
 			}
 
@@ -162,7 +162,7 @@ class yf_forum_manage_main {
 					"parent"		=> intval($_parent_forum_id),
 					"options"		=> $_POST["postings"] == "2" ? "2" : "",
 					"user_groups"	=> _es($_POST["user_groups"]),
-				), "`id`=".intval($_GET['id']));
+				), "id=".intval($_GET['id']));
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
@@ -218,7 +218,7 @@ class yf_forum_manage_main {
 			if (substr($_POST["forum"], 0, 2) == "c_") {
 				$_cat_id = intval(substr($_POST["forum"], 2));
 			} elseif (!empty($_parent_forum_id)) {
-				$parent_forum_info = db()->query_fetch("SELECT * FROM `".db('forum_forums')."` WHERE `id`=".intval($_parent_forum_id));
+				$parent_forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".intval($_parent_forum_id));
 				$_cat_id = $parent_forum_info["category"];
 			}
 			if (!empty($_cat_id)) {
@@ -270,14 +270,14 @@ class yf_forum_manage_main {
 	function _delete_forum () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
-			$forum_info = db()->query_fetch("SELECT * FROM `".db('forum_forums')."` WHERE `id`=".$_GET['id']);
+			$forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".$_GET['id']);
 		}
 		// Do delete
 		if (!empty($forum_info)) {
 // TODO: need to make recurse sub-forums deletion
-			db()->query("DELETE FROM `".db('forum_posts')."` WHERE `forum`=".$forum_info['id']);
-			db()->query("DELETE FROM `".db('forum_topics')."` WHERE `forum`=".$forum_info['id']);
-			db()->query("DELETE FROM `".db('forum_forums')."` WHERE `id`=".$_GET['id']);
+			db()->query("DELETE FROM ".db('forum_posts')." WHERE forum=".$forum_info['id']);
+			db()->query("DELETE FROM ".db('forum_topics')." WHERE forum=".$forum_info['id']);
+			db()->query("DELETE FROM ".db('forum_forums')." WHERE id=".$_GET['id']);
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -301,7 +301,7 @@ class yf_forum_manage_main {
 		if (empty($_GET['id'])) {
 			return _e(t("No topic id"));
 		}
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET['id']);
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET['id']);
 		if (empty($topic_info)) {
 			return _e(t("No such topic"));
 		}
@@ -312,37 +312,37 @@ class yf_forum_manage_main {
 				_re(t("Forum id required"));
 			}
 			if (!common()->_error_exists()) {
-				$sql = "UPDATE `".db('forum_topics')."` SET 
-							`name`		= '"._es($_POST["name"])."',
-							`status`	= '"._es($_POST["activity"])."',
-							`forum`		= ".$_POST["forum"].",
-							`user_name`	= '"._es($_POST["user_name"])."',
-							`user_id`	= ".intval($_POST["user_id"]).",
-							`created`	= ".strtotime($_POST["created"])."
-						WHERE `id`=".$_GET['id'];
+				$sql = "UPDATE ".db('forum_topics')." SET 
+							name		= '"._es($_POST["name"])."',
+							status	= '"._es($_POST["activity"])."',
+							forum		= ".$_POST["forum"].",
+							user_name	= '"._es($_POST["user_name"])."',
+							user_id	= ".intval($_POST["user_id"]).",
+							created	= ".strtotime($_POST["created"])."
+						WHERE id=".$_GET['id'];
 				db()->query($sql);
-				$sql = "UPDATE `".db('forum_posts')."` SET 
-							`subject`	= '"._es($_POST["name"])."',
-							`status`	= '"._es($_POST["activity"])."',
-							`forum`		= ".$_POST["forum"].",
-							`text`		= '"._es($_POST["text"])."',
-							`user_name`	= '"._es($_POST["user_name"])."',
-							`user_id`	= ".intval($_POST["user_id"]).",
-							`created`	= ".strtotime($_POST["created"])."
-						WHERE `id`=".$topic_info["first_post_id"];
+				$sql = "UPDATE ".db('forum_posts')." SET 
+							subject	= '"._es($_POST["name"])."',
+							status	= '"._es($_POST["activity"])."',
+							forum		= ".$_POST["forum"].",
+							text		= '"._es($_POST["text"])."',
+							user_name	= '"._es($_POST["user_name"])."',
+							user_id	= ".intval($_POST["user_id"]).",
+							created	= ".strtotime($_POST["created"])."
+						WHERE id=".$topic_info["first_post_id"];
 				db()->query($sql);
 				$update_flag = false;
 				// If forum changed - need to update posts
 				if ($_POST["forum"] != $topic_info["forum"]) {
 					// Move posts from old forum to new one
-					db()->query("UPDATE `".db('forum_posts')."` SET `forum`=".$_POST["forum"]." WHERE `topic`=".$_GET['id']);
+					db()->query("UPDATE ".db('forum_posts')." SET forum=".$_POST["forum"]." WHERE topic=".$_GET['id']);
 					module("forum")->_update_forum_record($topic_info["forum"]);
 					$update_flag = true;
 				}
 				// If status changed - then need to update forum record (last_post_id, num_posts, num_topics)
 				if ($_POST["activity"] != $topic_info["status"]) {
 					// Update all posts for the current topic
-					db()->query("UPDATE `".db('forum_posts')."` SET `status`='"._es($_POST["activity"])."' WHERE `topic`=".$_GET['id']);
+					db()->query("UPDATE ".db('forum_posts')." SET status='"._es($_POST["activity"])."' WHERE topic=".$_GET['id']);
 					$update_flag = true;
 				}
 				// Update new forum ewcord
@@ -366,7 +366,7 @@ class yf_forum_manage_main {
 		foreach ((array)module("forum")->_forums_array as $_forum_info) {
 			$forums_with_cats[$_forum_info['id']] = $categories[$_forum_info["category"]]." / ".$_forum_info["name"];
 		}
-		list($text) = db()->query_fetch("SELECT `text` AS `0` FROM `".db('forum_posts')."` WHERE `id`=".$topic_info["first_post_id"]);
+		list($text) = db()->query_fetch("SELECT text AS `0` FROM ".db('forum_posts')." WHERE id=".$topic_info["first_post_id"]);
 		$replace = array(
 			"header_text"	=> t("edit_topic"),
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET['id']._add_get(),
@@ -387,17 +387,17 @@ class yf_forum_manage_main {
 	function _delete_topic () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
-			$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET['id']);
+			$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET['id']);
 		}
 		// Do delete
 		if (!empty($topic_info)) {
-			$Q = db()->query("SELECT `id` FROM `".db('forum_posts')."` WHERE `topic`=".$topic_info['id']);
+			$Q = db()->query("SELECT id FROM ".db('forum_posts')." WHERE topic=".$topic_info['id']);
 			while ($post_info = db()->fetch_assoc($Q)) {
 				// Remove activity points
 				common()->_remove_activity_points($post_info["user_id"], "forum_post", $post_info["id"]);
 			}
-			db()->query("DELETE FROM `".db('forum_posts')."` WHERE `topic`=".$topic_info['id']);
-			db()->query("DELETE FROM `".db('forum_topics')."` WHERE `id`=".$topic_info['id']);
+			db()->query("DELETE FROM ".db('forum_posts')." WHERE topic=".$topic_info['id']);
+			db()->query("DELETE FROM ".db('forum_topics')." WHERE id=".$topic_info['id']);
 
 			module("forum")->_update_forum_record($topic_info["forum"]);
 		}
@@ -430,22 +430,22 @@ class yf_forum_manage_main {
 			$POST_ID = $_GET['msg_id'];
 		}
 		if ($POST_ID) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".intval($POST_ID));
+			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($POST_ID));
 		}
 		if (empty($post_info)) {
 			return _e(t("No such post"));
 		}
 		// Save data
 		if (!empty($_POST)) {
-			$sql = "UPDATE `".db('forum_posts')."` SET 
-						`subject` = '"._es($_POST["subject"])."',
-						`status` = '"._es($_POST["activity"])."',
-						`text` = '"._es($_POST["text"])."',
-						`user_name` = '"._es($_POST["user_name"])."',
-						`poster_ip` = '"._es($_POST["poster_ip"])."',
-						`user_id` = ".intval($_POST["user_id"]).",
-						`created` = ".strtotime($_POST["created"])."
-					WHERE `id`=".intval($post_info["id"]);
+			$sql = "UPDATE ".db('forum_posts')." SET 
+						subject = '"._es($_POST["subject"])."',
+						status = '"._es($_POST["activity"])."',
+						text = '"._es($_POST["text"])."',
+						user_name = '"._es($_POST["user_name"])."',
+						poster_ip = '"._es($_POST["poster_ip"])."',
+						user_id = ".intval($_POST["user_id"]).",
+						created = ".strtotime($_POST["created"])."
+					WHERE id=".intval($post_info["id"]);
 			db()->query($sql);
 			// If status changed - then need to update forum and topic records (last_post_id, num_posts)
 			if ($_POST["activity"] != $post_info["status"]) {
@@ -482,8 +482,8 @@ class yf_forum_manage_main {
 		$_GET['id'] = intval($_GET['id']);
 		$_GET["msg_id"] = intval($_GET["msg_id"]);
 		if ($_GET['id'] && $_GET["msg_id"]) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".$_GET["msg_id"]);
-			db()->query("DELETE FROM `".db('forum_posts')."` WHERE `id`=".$_GET["msg_id"]);
+			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".$_GET["msg_id"]);
+			db()->query("DELETE FROM ".db('forum_posts')." WHERE id=".$_GET["msg_id"]);
 			module("forum")->_update_forum_record($post_info["forum"]);
 			module("forum")->_update_topic_record($post_info["topic"]);
 			// Remove activity points
@@ -511,11 +511,11 @@ class yf_forum_manage_main {
 	function _change_category_activity () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$cat_info = db()->query_fetch("SELECT * FROM `".db('forum_categories')."` WHERE `id`=".$_GET['id']);
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('forum_categories')." WHERE id=".$_GET['id']);
 		}
 		// Update
 		if (!empty($cat_info)) {
-			db()->UPDATE("forum_categories", array("status" => $cat_info["status"] == "a" ? "p" : "a"), "`id`=".intval($cat_info["id"]));
+			db()->UPDATE("forum_categories", array("status" => $cat_info["status"] == "a" ? "p" : "a"), "id=".intval($cat_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("forum_categories");
@@ -540,11 +540,11 @@ class yf_forum_manage_main {
 	function _change_forum_activity () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
-			$forum_info = db()->query_fetch("SELECT * FROM `".db('forum_forums')."` WHERE `id`=".$_GET['id']);
+			$forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".$_GET['id']);
 		}
 		// Update
 		if (!empty($forum_info)) {
-			db()->UPDATE("forum_forums", array("status" => $forum_info["status"] == "a" ? "p" : "a"), "`id`=".intval($forum_info["id"]));
+			db()->UPDATE("forum_forums", array("status" => $forum_info["status"] == "a" ? "p" : "a"), "id=".intval($forum_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("forum_forums");
@@ -568,11 +568,11 @@ class yf_forum_manage_main {
 	function _change_topic_activity () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
-			$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET['id']);
+			$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET['id']);
 		}
 		if (!empty($topic_info)) {
-			db()->UPDATE("forum_topics", array("status" => $topic_info["status"] == "a" ? "p" : "a"), "`id`=".intval($topic_info["id"]));
-			db()->UPDATE("forum_posts", array("status" => $topic_info["status"] == "a" ? "p" : "a"), "`topic`=".intval($topic_info["id"]));
+			db()->UPDATE("forum_topics", array("status" => $topic_info["status"] == "a" ? "p" : "a"), "id=".intval($topic_info["id"]));
+			db()->UPDATE("forum_posts", array("status" => $topic_info["status"] == "a" ? "p" : "a"), "topic=".intval($topic_info["id"]));
 			module("forum")->_update_forum_record($topic_info["forum"]);
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
@@ -597,11 +597,11 @@ class yf_forum_manage_main {
 	function _change_post_activity () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
-			$post_info = db()->query_fetch("SELECT * FROM `".db('forum_posts')."` WHERE `id`=".$_GET["id"]);
+			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".$_GET["id"]);
 		}
 		// Update
 		if (!empty($post_info)) {
-			db()->UPDATE("forum_posts", array("status" => $post_info["status"] == "a" ? "p" : "a"), "`id`=".intval($post_info["id"]));
+			db()->UPDATE("forum_posts", array("status" => $post_info["status"] == "a" ? "p" : "a"), "id=".intval($post_info["id"]));
 			module("forum")->_update_forum_record($post_info["forum"]);
 			module("forum")->_update_topic_record($post_info["topic"]);
 			// Refresh system cache

@@ -22,7 +22,7 @@ class yf_forum_announce {
 	*/
 	function _view_announce() {
 		$_GET["id"] = intval($_GET["id"]);
-		$announce_info = db()->query_fetch("SELECT * FROM `".db('forum_announce')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+		$announce_info = db()->query_fetch("SELECT * FROM ".db('forum_announce')." WHERE id=".$_GET["id"]." LIMIT 1");
 		// Check if anounce is expired or not need to show yet
 		if ($announce_info["start_time"] != 0 && time() < $announce_info["start_time"]) {
 			unset($announce_info);
@@ -108,7 +108,7 @@ class yf_forum_announce {
 	*/
 	function _list() {
 		// Get all announces from db
-		$Q = db()->query("SELECT * FROM `".db('forum_announce')."`");
+		$Q = db()->query("SELECT * FROM ".db('forum_announce')."");
 		while ($A = db()->fetch_assoc($Q)) $announces[$A["id"]] = $A;
 		// Get users infos
 		foreach ((array)$announces as $ann_info) {
@@ -205,7 +205,7 @@ class yf_forum_announce {
 		}
 		// Show form
 		if (empty($_POST["save"])) {
-			$announce_info = db()->query_fetch("SELECT * FROM `".db('forum_announce')."` WHERE `id`=".$_GET["id"]." LIMIT 1");
+			$announce_info = db()->query_fetch("SELECT * FROM ".db('forum_announce')." WHERE id=".$_GET["id"]." LIMIT 1");
 			$forum_selected = array();
 			if ($announce_info["forum"] != "*") {
 				$tmp = explode(",", $announce_info["forum"]);
@@ -229,14 +229,14 @@ class yf_forum_announce {
 			} else {
 				$forum = is_array($_POST["forum"]) ? implode(",", $_POST["forum"]) : intval($_POST["forum"]);
 			}
-			$sql = "UPDATE `".db('forum_announce')."` SET 
-					`title`		= '"._es($_POST["announce_title"])."', 
-					`post`		= '"._es($_POST["announce_post"])."', 
-					`forum`		= '"._es($forum)."', 
-					`start_time`= ".($_POST["announce_start"]	? strtotime($_POST["announce_start"]) : 0).", 
-					`end_time`	= ".($_POST["announce_end"]		? strtotime($_POST["announce_end"]) : 0).", 
-					`active`	= ".intval($_POST["announce_active"])."
-				WHERE `id`=".intval($_GET["id"]);
+			$sql = "UPDATE ".db('forum_announce')." SET 
+					title		= '"._es($_POST["announce_title"])."', 
+					post		= '"._es($_POST["announce_post"])."', 
+					forum		= '"._es($forum)."', 
+					start_time= ".($_POST["announce_start"]	? strtotime($_POST["announce_start"]) : 0).", 
+					end_time	= ".($_POST["announce_end"]		? strtotime($_POST["announce_end"]) : 0).", 
+					active	= ".intval($_POST["announce_active"])."
+				WHERE id=".intval($_GET["id"]);
 			db()->query($sql);
 			// Refresh cache
 			if (main()->USE_SYSTEM_CACHE) {
@@ -251,7 +251,7 @@ class yf_forum_announce {
 	*/
 	function _del() {
 		if (!empty($_GET["id"])) {
-			db()->query("DELETE FROM `".db('forum_announce')."` WHERE `id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('forum_announce')." WHERE id=".intval($_GET["id"]));
 		}
 		// Refresh cache
 		if (main()->USE_SYSTEM_CACHE) {
@@ -264,7 +264,7 @@ class yf_forum_announce {
 	* Set inactive expired announces
 	*/
 	function _retire_expired() {
-		db()->query("UPDATE `".db('forum_announce')."` SET `active`=0 WHERE `end_time` != 0 AND `end_time` < ".time());
+		db()->query("UPDATE ".db('forum_announce')." SET active=0 WHERE end_time != 0 AND end_time < ".time());
 		// Refresh announces cache
 		if (module('forum')->SETTINGS["ALLOW_ANNOUNCES"] && main()->USE_SYSTEM_CACHE) {
 			$cache = cache()->refresh("forum_announces");

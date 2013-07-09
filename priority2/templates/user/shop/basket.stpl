@@ -1,5 +1,5 @@
-<div class="cart">
-<form method="post" action="{form_action}" name="cart_form">
+<div class="basket">
+<form method="post" action="{form_action}" name="basket_form">
 
 {if("products" ne "")}
 <table width="100%">
@@ -33,7 +33,7 @@
 	<div class="button_div">
 		<a href="{back_link}" title="{t(Back)}">{t(Back)}</a>
 {if("products" ne "")}
-		<a href="javascript:;" title="{t(Submit)}" onclick="document.forms['cart_form'].submit();" style="margin-left: 50px;">{t(Update)}</a>
+		<a href="javascript:;" title="{t(Submit)}" onclick="document.forms['basket_form'].submit();" style="margin-left: 50px;">{t(Update)}</a>
 		<a href="{clean_all_link}" title="{t(Clean all)}" onclick="return confirm('{t(Are you sure)}?');">{t(Clean all)}</a>
 		<a href="{order_link}" title="{t(Checkout)}" style="margin-left: 50px;">{t(Checkout)}</a>
 {/if}

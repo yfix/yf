@@ -64,7 +64,7 @@ class yf_chat {
 		// Check user if exists in the ban list
 		if ($this->USE_BAN_LIST) {
 			// Stop execution here if current user exists is in  the ban list
-			$Q = db()->query("SELECT * FROM `".db('chat_ban_list')."` WHERE `expiration`=0 OR `expiration`>".time());
+			$Q = db()->query("SELECT * FROM ".db('chat_ban_list')." WHERE expiration=0 OR expiration>".time());
 			while ($A = db()->fetch_assoc($Q)) {
 				$this->_ban_list[$A["type"]][$A["value"]] = intval($A["expiration"]);
 			}
@@ -262,14 +262,14 @@ class yf_chat {
 		}
 		// Process private message
 		if (strlen($_POST["private_to"]) && !common()->_error_exists()) {
-			$SPAM_EXISTS = @$GLOBALS[db]->query_num_rows("SELECT `id` FROM `".db('chat_private')."` WHERE `add_date`>".(time() - $this->ANTISPAM_TIME)." AND `user_from`=".intval(CHAT_USER_ID)." AND `room_id`=".intval(CHAT_USER_ROOM_ID));
+			$SPAM_EXISTS = @$GLOBALS[db]->query_num_rows("SELECT id FROM ".db('chat_private')." WHERE add_date>".(time() - $this->ANTISPAM_TIME)." AND user_from=".intval(CHAT_USER_ID)." AND room_id=".intval(CHAT_USER_ROOM_ID));
 			if ($SPAM_EXISTS) {
 				_re(t("spam_exists"));
 				$this->_add_client_cmd("do_alert_msg", t("spam"));
 			}
 			$_POST["private_to"] = stripslashes($_POST["private_to"]);
 			// Try to select target user info
-			$A2 = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `login`='"._es($_POST["private_to"])."'");
+			$A2 = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE login='"._es($_POST["private_to"])."'");
 			if (!$A2["id"]) {
 				_re(t("no_such_user"));
 				$this->_add_client_cmd("do_alert_msg", t("no_such_user"));
@@ -287,7 +287,7 @@ class yf_chat {
 			));
 		// Process common message
 		} else {
-			$SPAM_EXISTS = db()->query_num_rows("SELECT `id` FROM `".db('chat_messages')."` WHERE `add_date`>".(time() - $this->ANTISPAM_TIME)." AND `user_id`=".intval(CHAT_USER_ID)." AND `room_id`=".intval(CHAT_USER_ROOM_ID));
+			$SPAM_EXISTS = db()->query_num_rows("SELECT id FROM ".db('chat_messages')." WHERE add_date>".(time() - $this->ANTISPAM_TIME)." AND user_id=".intval(CHAT_USER_ID)." AND room_id=".intval(CHAT_USER_ROOM_ID));
 			if ($SPAM_EXISTS) {
 				$this->_add_client_cmd("do_alert_msg", t("spam"));
 				_re(t("spam_exists"));
@@ -414,7 +414,7 @@ class yf_chat {
 		if (CHAT_USER_ID) {
 			unset($GLOBALS['chat_online'][CHAT_USER_ID]);
 			$this->_set_system_message (CHAT_USER_ROOM_ID, CHAT_USER_GENDER, CHAT_USER_LOGIN, CHAT_USER_TEXT_COLOR, 1);
-			db()->query("DELETE FROM `".db('chat_online')."` WHERE `user_id`=".intval(CHAT_USER_ID));
+			db()->query("DELETE FROM ".db('chat_online')." WHERE user_id=".intval(CHAT_USER_ID));
 			$A = $GLOBALS['chat_online'][CHAT_USER_ID];
 			$this->_log_change_online_status($A, $A["add_date"]);
 		}
@@ -457,7 +457,7 @@ class yf_chat {
 // TODO: add code here
 			if (!isset($GLOBALS['chat_online'])) {
 				$GLOBALS['chat_online'] = array();
-				$Q5 = db()->query("SELECT * FROM `".db('chat_online')."`");
+				$Q5 = db()->query("SELECT * FROM ".db('chat_online')."");
 				while ($A5 = db()->fetch_assoc($Q5)) {
 					$GLOBALS['chat_online'][$A5["user_id"]] = $A5;
 				}
@@ -472,7 +472,7 @@ class yf_chat {
 		} elseif (strlen($_SESSION["chat_user_id"])) {
 			if (!isset($GLOBALS['chat_online'])) {
 				$GLOBALS['chat_online'] = array();
-				$Q5 = db()->query("SELECT * FROM `".db('chat_online')."`");
+				$Q5 = db()->query("SELECT * FROM ".db('chat_online')."");
 				while ($A5 = db()->fetch_assoc($Q5)) {
 					$GLOBALS['chat_online'][$A5["user_id"]] = $A5;
 				}
@@ -526,7 +526,7 @@ class yf_chat {
 	function _clean_offline_users () {
 		if (!isset($GLOBALS['chat_online'])) {
 			$GLOBALS['chat_online'] = array();
-			$Q5 = db()->query("SELECT * FROM `".db('chat_online')."`");
+			$Q5 = db()->query("SELECT * FROM ".db('chat_online')."");
 			while ($A5 = db()->fetch_assoc($Q5)) $GLOBALS['chat_online'][$A5["user_id"]] = $A5;
 		}
 		if (is_array($GLOBALS['chat_online'])) foreach ((array)$GLOBALS['chat_online'] as $A5) {
@@ -538,7 +538,7 @@ class yf_chat {
 				$this->_set_system_message ($A["room_id"], $A["gender"], $A["login"], $A["text_color"], 2);
 				$this->_log_change_online_status($A, $A["add_date"]);
 			}
-			db()->query("DELETE FROM `".db('chat_online')."` WHERE `user_id` IN(".implode(",", array_keys($delete_ids)).")");
+			db()->query("DELETE FROM ".db('chat_online')." WHERE user_id IN(".implode(",", array_keys($delete_ids)).")");
 		}
 	}
 

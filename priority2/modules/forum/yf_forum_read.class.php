@@ -48,7 +48,7 @@ class yf_forum_read {
 			$_read_tmp = unserialize($_COOKIE[module('forum')->SETTINGS["_READ_MSGS_COOKIE"]]);
 		// Db-based tracker driver
 		} elseif (module('forum')->SETTINGS["READ_MSGS_DRIVER"] == "db") {
-			$_from_db = db()->query_fetch("SELECT `data` FROM `".db('forum_read_msgs')."` WHERE `user_id`=".intval(FORUM_USER_ID));
+			$_from_db = db()->query_fetch("SELECT data FROM ".db('forum_read_msgs')." WHERE user_id=".intval(FORUM_USER_ID));
 			// Check if needed to create db record instead of update
 			if (empty($_from_db)) {
 				$GLOBALS['forum_need_to_create_read_record'] = true;
@@ -69,9 +69,9 @@ class yf_forum_read {
 		if (in_array($_GET["action"], array("show","mark_read","unread"))) {
 			// Get last posts for last $cutoff_time
 			$Q = db()->query(
-				"SELECT `id`,`forum`,`last_post_date` 
-				FROM `".db('forum_topics')."` 
-				WHERE `last_post_date` > ".intval($cutoff_time)." 
+				"SELECT id,forum,last_post_date 
+				FROM ".db('forum_topics')." 
+				WHERE last_post_date > ".intval($cutoff_time)." 
 				LIMIT 200"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -224,7 +224,7 @@ class yf_forum_read {
 			} else {
 				db()->UPDATE("forum_read_msgs", array(
 					"data"		=> _es(serialize($GLOBALS['forum_read_array'])),
-				), "`user_id` = ".intval(FORUM_USER_ID));
+				), "user_id = ".intval(FORUM_USER_ID));
 			}
 		}
 	}

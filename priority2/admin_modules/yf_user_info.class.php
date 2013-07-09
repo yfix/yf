@@ -16,10 +16,10 @@ class yf_user_info {
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_user_info () {
-		$this->USER_ID = $_GET['user_id'];
+		main()->USER_ID = $_GET['user_id'];
 		// Get current user details
-		if (!empty($this->USER_ID)) {
-			$this->_user_info = db()->query_fetch("SELECT * FROM `".db('user')."` WHERE `id`=".intval($this->USER_ID));
+		if (!empty(main()->USER_ID)) {
+			$this->_user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval(main()->USER_ID));
 		}
 		// Fill array of agencies
 		$this->_agencies[""] = "";
@@ -117,7 +117,7 @@ class yf_user_info {
 		// Get available admin groups
 		$this->_admin_groups	= main()->get_data("admin_groups");
 		// Get available agency managers
-		$Q = db()->query("SELECT * FROM `".db('admin')."`/* WHERE `group`=5*/ ORDER BY `group` ASC, `first_name` ASC, `last_name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')."/* WHERE group=5*/ ORDER BY `group` ASC, first_name ASC, last_name ASC");
 		while ($A = db()->fetch_assoc($Q2)) {
 			$this->_managers[$A["id"]] = _prepare_html($A["first_name"]." ".$A["last_name"]." (".$this->_admin_groups[$A["group"]].")");
 		}
@@ -196,9 +196,9 @@ class yf_user_info {
 			"js_form_code"	=> $this->_JS_VALIDATION ? " onsubmit=\"return form_check(this);\" " : "",
 			"back"			=> tpl()->parse("system/back", $replace),
 			"home"			=> tpl()->parse("system/home", array("home_link" => WEB_PATH._add_get())),
-			"user_id"		=> $this->USER_ID,
+			"user_id"		=> main()->USER_ID,
 			"avatar"		=> tpl()->parse($_GET["object"]."/avatar_item", array("image" => $avatar_image)),
-			"admin_msgs"	=> main()->_execute("admin_messages", "_show_for_user", "user_id=".$this->USER_ID),
+			"admin_msgs"	=> main()->_execute("admin_messages", "_show_for_user", "user_id=".main()->USER_ID),
 			"city_select"	=> $city_select,
 		);
 		$A["agency"]	= $A["agency_id"];
@@ -318,7 +318,7 @@ class yf_user_info {
 				// "ban_bad_contact"	=> intval($_POST["ban_bad_contact"]),
 				// "ban_reput"			=> intval($_POST["ban_reput"]),
 			));
-			db()->UPDATE("user", $sql_array, "`id` = ".intval($this->_user_info['id']));
+			db()->UPDATE("user", $sql_array, "id = ".intval($this->_user_info['id']));
 			// Try to update user's geo location
 			$GEO_OBJ = main()->init_class("geo_ip", "classes/");
 			if (is_object($GEO_OBJ)) {
@@ -411,8 +411,8 @@ class yf_user_info {
 		}
 		// Init dir class
 		$DIR_OBJ = main()->init_class("dir", "classes/");
-		$avatars_dir = $DIR_OBJ->_gen_dir_path($this->USER_ID, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777);
-		$avatar_file_path	= $avatars_dir. $this->USER_ID. ".jpg";
+		$avatars_dir = $DIR_OBJ->_gen_dir_path(main()->USER_ID, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777);
+		$avatar_file_path	= $avatars_dir. main()->USER_ID. ".jpg";
 		// Do delete previous avatar (if existed one)
 		if (file_exists($avatar_file_path)) {
 			unlink($avatar_file_path);

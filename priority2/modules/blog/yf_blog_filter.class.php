@@ -34,46 +34,46 @@ class yf_blog_filter {
 		}
 		// Create qubquery for the user table
 		if ($SF["account_type"]) {
-			$user_sub_sql .= " AND `group` = ".intval($SF["account_type"])." ";
+			$user_sub_sql .= " AND group = ".intval($SF["account_type"])." ";
 		}
 		if (strlen($SF["gender"])) {
-			$user_sub_sql .= " AND `sex` ='"._es($SF["gender"])."' ";
+			$user_sub_sql .= " AND sex ='"._es($SF["gender"])."' ";
 		}
 		if (strlen($SF["race"])) {
-			$user_sub_sql .= " AND `race` ='"._es($SF["race"])."' ";
+			$user_sub_sql .= " AND race ='"._es($SF["race"])."' ";
 		}
 		if (strlen($SF["country"])) {
-			$user_sub_sql .= " AND `country` ='"._es($SF["country"])."' ";
+			$user_sub_sql .= " AND country ='"._es($SF["country"])."' ";
 		}
 		if (strlen($SF["nick"])) {
-			$user_sub_sql .= " AND `nick` LIKE '"._es($SF["nick"])."%' ";
+			$user_sub_sql .= " AND nick LIKE '"._es($SF["nick"])."%' ";
 		}
 		if (strlen($SF["state"])) {
-			$user_sub_sql .= " AND `state` LIKE '"._es($SF["state"])."%' ";
+			$user_sub_sql .= " AND state LIKE '"._es($SF["state"])."%' ";
 		}
 		if (strlen($SF["city"])) {
-			$user_sub_sql .= " AND `city` LIKE '"._es($SF["city"])."%' ";
+			$user_sub_sql .= " AND city LIKE '"._es($SF["city"])."%' ";
 		}
 		if (strlen($SF["blog_title"])) {
-			$sql .= " AND `s`.`blog_title` LIKE '%"._es($SF["blog_title"])."%' \r\n";
+			$sql .= " AND s.blog_title LIKE '%"._es($SF["blog_title"])."%' \r\n";
 		}
 		if (!empty($user_sub_sql)) {
-			$sql .= " AND `s`.`user_id` IN (SELECT `id` FROM `".db('user')."` WHERE 1=1 ".$user_sub_sql.") \r\n";
+			$sql .= " AND s.user_id IN (SELECT id FROM ".db('user')." WHERE 1=1 ".$user_sub_sql.") \r\n";
 		}
 		// Geo filter
 		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
-			$sql .= " AND `s`.`user_id` IN (SELECT `id` FROM `".db('user')."` WHERE `country` = '"._es(GEO_LIMIT_COUNTRY)."') \r\n";
+			$sql .= " AND s.user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') \r\n";
 		}
 		// Special processing for the seach_as_posts
 		if (strlen($SF["post_text"]) >= $this->BLOG_OBJ->MIN_SEARCH_TEXT_LENGTH) {
-			$sql .= " AND `p`.`text` LIKE '%"._es($SF["post_text"])."%' \r\n";
+			$sql .= " AND p.text LIKE '%"._es($SF["post_text"])."%' \r\n";
 			$this->BLOG_OBJ->_SEARCH_AS_POSTS = $SF["post_text"];
 		} else {
 			$SF["post_text"] = "";
 		}
 		// Sorting here
 		if (!empty($SF["sort_by"]) && isset($this->_sort_by[$SF["sort_by"]]))	{
-			$sql .= " ORDER BY `s`.`"._es($SF["sort_by"])."` \r\n";
+			$sql .= " ORDER BY s."._es($SF["sort_by"])." \r\n";
 			if (!empty($SF["sort_order"])) {
 				$sql .= " ".$SF["sort_order"]." \r\n";
 			}

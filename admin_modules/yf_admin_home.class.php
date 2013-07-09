@@ -71,7 +71,7 @@ class yf_admin_home {
 		if ($this->DISPLAY_STATS && empty($admin_statistics_array)) {
 			// General info
 			$db_size = 0;
-			$Q = db()->query("SHOW TABLE STATUS FROM `".DB_NAME."`");
+			$Q = db()->query("SHOW TABLE STATUS FROM ".DB_NAME."");
 			while ($A = db()->fetch_assoc($Q)) {
 				$db_size += $A["Data_length"];
 			}
@@ -79,17 +79,17 @@ class yf_admin_home {
 			$admin_statistics_array["project_dir_size"] =  common()->format_file_size(_class("dir")->dirsize(INCLUDE_PATH));
 
 			// Statistics 
-			$A = db()->query_fetch_all("SELECT * FROM `".db('user_groups')."` WHERE `active`='1'");
-			$sql_parts[] = "SELECT 'total_users' AS '0', COUNT(`id`) AS '1' FROM `".db('user')."` WHERE `active`='1'";
+			$A = db()->query_fetch_all("SELECT * FROM ".db('user_groups')." WHERE active='1'");
+			$sql_parts[] = "SELECT 'total_users' AS '0', COUNT(id) AS '1' FROM ".db('user')." WHERE active='1'";
 			foreach ((array)$A as $V1) {
-				$sql_parts[] = "SELECT 'total_".strtolower($V1["name"])."' AS '0', COUNT(`id`) AS '1' FROM `".db('user')."` WHERE `group`='".$V1["id"]."' AND `active`='1'";
+				$sql_parts[] = "SELECT 'total_".strtolower($V1["name"])."' AS '0', COUNT(id) AS '1' FROM ".db('user')." WHERE group='".$V1["id"]."' AND active='1'";
 			}
 			$sql_parts2 = array(
-				"SELECT 'forum_topics' AS '0', COUNT(`id`) AS '1' FROM `".db('forum_topics')."` WHERE 1=1",
-				"SELECT 'forum_posts' AS '0', COUNT(`id`) AS '1' FROM `".db('forum_posts')."` WHERE 1=1",
-				"SELECT 'gallery_photos' AS '0', COUNT(`id`) AS '1' FROM `".db('gallery_photos')."` WHERE 1=1",
-				"SELECT 'blog_posts' AS '0', COUNT(`id`) AS '1' FROM `".db('blog_posts')."` WHERE 1=1",
-				"SELECT 'articles' AS '0', COUNT(`id`) AS '1' FROM `".db('articles_texts')."` WHERE 1=1",
+				"SELECT 'forum_topics' AS '0', COUNT(id) AS '1' FROM ".db('forum_topics')." WHERE 1=1",
+				"SELECT 'forum_posts' AS '0', COUNT(id) AS '1' FROM ".db('forum_posts')." WHERE 1=1",
+				"SELECT 'gallery_photos' AS '0', COUNT(id) AS '1' FROM ".db('gallery_photos')." WHERE 1=1",
+				"SELECT 'blog_posts' AS '0', COUNT(id) AS '1' FROM ".db('blog_posts')." WHERE 1=1",
+				"SELECT 'articles' AS '0', COUNT(id) AS '1' FROM ".db('articles_texts')." WHERE 1=1",
 			);
 			$sql_parts = array_merge($sql_parts, $sql_parts2);
 			$sql = "(\r\n".implode("\r\n) UNION ALL (\r\n",$sql_parts)."\r\n)";
@@ -296,7 +296,7 @@ class yf_admin_home {
 		$INSTALLER_DB_OBJ = main()->init_class("installer_db", "classes/db/");
 		$INSTALLER_DB_OBJ->_create_struct_files(1);
 
-		db()->query("SELECT `name` FROM `".db('settings_category')."` WHERE `id`=1");
+		db()->query("SELECT name FROM ".db('settings_category')." WHERE id=1");
 
 //		$struct_array = $INSTALLER_DB_OBJ->_get_all_struct_array();
 //		echo $INSTALLER_DB_OBJ->_format_struct_array($struct_array);

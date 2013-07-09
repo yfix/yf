@@ -1,7 +1,7 @@
-<h2>{t(Shopping cart)}</h2>
+<h2>{t(Shopping basket)}</h2>
 
-<div class="cart">
-<form method="post" action="{form_action}" name="cart_form_side">
+<div class="basket">
+<form method="post" action="{form_action}" name="basket_form_side">
 
 {if("products" ne "")}
 <table width="100%">
@@ -28,7 +28,7 @@
 <hr />
 {t(Total)}: {total_price}
 	<div class="button_div">
-		<a href="javascript:;" title="{t(Submit)}" onclick="document.forms['cart_form_side'].submit();">{t(Update)}</a>&nbsp;
+		<a href="javascript:;" title="{t(Submit)}" onclick="document.forms['basket_form_side'].submit();">{t(Update)}</a>&nbsp;
 		<a href="{clean_all_link}" title="{t(Clean all)}" onclick="return confirm('{t(Are you sure)}?');">{t(Clean all)}</a>&nbsp;
 		<a href="{order_link}" title="{t(Checkout)}">{t(Checkout)}</a>&nbsp;
 	</div>

@@ -68,7 +68,7 @@ class yf_design_manager {
 		$this->DIR_OBJ 	= main()->init_class("dir", "classes/");
 		$this->TEST_OBJ = main()->init_class("test", "modules/");
 		// Array of theme names
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_themes')."`");
+		$Q = db()->query("SELECT id,name FROM ".db('user_themes')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_existed_themes[$A["id"]] = $A["name"];
 		}
@@ -88,19 +88,19 @@ class yf_design_manager {
 	*/
 	function show () {
 		// Get number of blocks rules
-		$Q = db()->query("SELECT `themes` FROM `".db('block_rules')."` WHERE `themes` != ''");
+		$Q = db()->query("SELECT themes FROM ".db('block_rules')." WHERE themes != ''");
 		while ($A = db()->fetch_assoc($Q)) {
 			foreach (explode(",",trim($A["themes"],",")) as $v) {
 				$blocks_rules[$v]++;
 			}
 		}
 		// Get number of designs by themes
-		$Q = db()->query("SELECT `theme_id`, COUNT(*) AS `num` FROM `".db('designs')."` WHERE 1 GROUP BY `theme_id`");
+		$Q = db()->query("SELECT theme_id, COUNT(*) AS num FROM ".db('designs')." WHERE 1 GROUP BY theme_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_designs[$A["theme_id"]] = $A["num"];
 		}
 		// Get 	user themes from db
-		$sql = "SELECT * FROM `".db('user_themes')."` ORDER BY `name`";
+		$sql = "SELECT * FROM ".db('user_themes')." ORDER BY name";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		foreach ((array)db()->query_fetch_all($sql.$add_sql) as $v) {
@@ -149,9 +149,9 @@ class yf_design_manager {
 	* Shows designs in theme
 	*/
 	function show_designs_in_theme () {
-		$theme_info = db()->query_fetch("SELECT `id`, `name`, `default_design` FROM `".db('user_themes')."` WHERE `id`=".intval($_GET["id"]));
+		$theme_info = db()->query_fetch("SELECT id, name, default_design FROM ".db('user_themes')." WHERE id=".intval($_GET["id"]));
 		// Get 	designs for the theme from db
-		$data = db()->query_fetch_all("SELECT * FROM `".db('designs')."` WHERE `theme_id`=".intval($_GET["id"]));
+		$data = db()->query_fetch_all("SELECT * FROM ".db('designs')." WHERE theme_id=".intval($_GET["id"]));
 		// Get owners ids
 		$owners_ids = array();
 		foreach ((array)$data as $A) {
@@ -351,7 +351,7 @@ class yf_design_manager {
 	*/
 	function color_schemes () {
 		// Get color schemes from db
-		$sql = "SELECT * FROM `".db('color_schemes')."` ORDER BY `name` ASC";
+		$sql = "SELECT * FROM ".db('color_schemes')." ORDER BY name ASC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$schemes_info = db()->query_fetch_all($sql);
 		foreach ((array)$schemes_info as $scheme) {
@@ -407,7 +407,7 @@ class yf_design_manager {
 
 			if ($_POST["record_id"]) {
 				// Update record
-				db()->UPDATE("color_schemes", $sql_array, "`id`=".intval($_POST["record_id"]));
+				db()->UPDATE("color_schemes", $sql_array, "id=".intval($_POST["record_id"]));
 			} else {
 				// Insert record
 				db()->INSERT("color_schemes", $sql_array);
@@ -432,7 +432,7 @@ class yf_design_manager {
 			return js_redirect("./?object=".DESIGN_MGR_CLASS_NAME."&action=color_schemes");
 		}
 
-		$col_scheme_info = db()->query_fetch("SELECT * FROM `".db('color_schemes')."` WHERE `id`=".$_GET["id"]);
+		$col_scheme_info = db()->query_fetch("SELECT * FROM ".db('color_schemes')." WHERE id=".$_GET["id"]);
 		foreach (explode(";", $col_scheme_info["designs"]) as $v) {
 			if (!empty($v)) {
 				$selected[$v] = $v;
@@ -481,7 +481,7 @@ class yf_design_manager {
 	function delete_color_scheme () {
 		$_GET["id"] = intval($_GET["id"]);		
 		
-		db()->query("DELETE FROM `".db('color_schemes')."` WHERE `id`=".$_GET["id"]);
+		db()->query("DELETE FROM ".db('color_schemes')." WHERE id=".$_GET["id"]);
 
 		$_path = $this->COLOR_SCHEMES_DIR. $_GET["id"];
 
@@ -499,7 +499,7 @@ class yf_design_manager {
 	*/
 	function graphic_schemes () {
 		// Get color schemes from db
-		$sql = "SELECT * FROM `".db('graphic_schemes')."` ORDER BY `name` ASC";
+		$sql = "SELECT * FROM ".db('graphic_schemes')." ORDER BY name ASC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$schemes_info = db()->query_fetch_all($sql);
 		foreach ((array)$schemes_info as $scheme) {
@@ -562,7 +562,7 @@ class yf_design_manager {
 
 			if ($_POST["record_id"]) {
 				// Update record
-				db()->UPDATE("graphic_schemes", $sql_array, "`id`=".intval($_POST["record_id"]));
+				db()->UPDATE("graphic_schemes", $sql_array, "id=".intval($_POST["record_id"]));
 			} else {
 				// Insert record
 				db()->INSERT("graphic_schemes", $sql_array);
@@ -587,7 +587,7 @@ class yf_design_manager {
 			return js_redirect("./?object=".DESIGN_MGR_CLASS_NAME."&action=graphic_schemes");
 		}
 
-		$graph_scheme_info = db()->query_fetch("SELECT * FROM `".db('graphic_schemes')."` WHERE `id`=".$_GET["id"]);
+		$graph_scheme_info = db()->query_fetch("SELECT * FROM ".db('graphic_schemes')." WHERE id=".$_GET["id"]);
 		foreach (explode(";", $graph_scheme_info["designs"]) as $v) {
 			if (!empty($v)) {
 				$selected_designs[$v] = $v;
@@ -600,7 +600,7 @@ class yf_design_manager {
 		}
 		$all_designs = my_array_merge(array("" => "All"), (array)$this->_get_designs());
 
-   		$A = db()->query_fetch_all("SELECT * FROM `".db('color_schemes')."` ORDER BY `name`");
+   		$A = db()->query_fetch_all("SELECT * FROM ".db('color_schemes')." ORDER BY name");
 		foreach ((array)$A as $v) {
 			$all_col_schemes[$v["id"]] = $v["name"];
 		}
@@ -652,7 +652,7 @@ class yf_design_manager {
 	function delete_graph_scheme () {
 		$_GET["id"] = intval($_GET["id"]);		
 		
-		db()->query("DELETE FROM `".db('graphic_schemes')."` WHERE `id`=".$_GET["id"]);
+		db()->query("DELETE FROM ".db('graphic_schemes')." WHERE id=".$_GET["id"]);
 		$_path = $this->GRAPH_SCHEMES_DIR. $_GET["id"];
 
 		$this->_delete_preview_imgs($_path);
@@ -730,7 +730,7 @@ class yf_design_manager {
 	*/
 	function _get_themes () {
 		// Get 	user themes from db
-		$Q = db()->query("SELECT * FROM `".db('user_themes')."` ORDER BY `name`");	
+		$Q = db()->query("SELECT * FROM ".db('user_themes')." ORDER BY name");	
 		while ($A = db()->fetch_assoc($Q)) {
 			$_themes_array[$A["id"]] = $A["name"];
 		}
@@ -742,9 +742,9 @@ class yf_design_manager {
 	*/
 	function _get_designs ($theme_id = 0) {
 		if (!$theme_id) {
-			$data = db()->query_fetch_all("SELECT * FROM `".db('designs')."` ORDER BY `name`");	
+			$data = db()->query_fetch_all("SELECT * FROM ".db('designs')." ORDER BY name");	
 		} else {
-			$data = db()->query_fetch_all("SELECT * FROM `".db('designs')."` WHERE `theme_id`=".intval($theme_id));	
+			$data = db()->query_fetch_all("SELECT * FROM ".db('designs')." WHERE theme_id=".intval($theme_id));	
 		}
 		if (empty($data)) {
 			return false;
@@ -926,18 +926,18 @@ class yf_design_manager {
 			$new_file_path = "";
 			// Get details by known type
 			if ($type == "design") {
-				$info = db()->query_fetch("SELECT * FROM `".db('designs')."` WHERE `id`=".intval($id));
+				$info = db()->query_fetch("SELECT * FROM ".db('designs')." WHERE id=".intval($id));
 				if ($info) {
 					$theme_name = $this->_existed_themes[$info["theme_id"]];
 					$new_file_path = $this->USER_THEMES_DIR. $theme_name. "/designs/". $info["id"]. "/";
 				}
 			} elseif ($type == "color") {
-				$info = db()->query_fetch("SELECT * FROM `".db('color_schemes')."` WHERE `id`=".intval($id));
+				$info = db()->query_fetch("SELECT * FROM ".db('color_schemes')." WHERE id=".intval($id));
 				if ($info) {
 					$new_file_path = $this->COLOR_SCHEMES_DIR. $info["id"]. "/";
 				}
 			} elseif ($type == "graph") {
-				$info = db()->query_fetch("SELECT * FROM `".db('graphic_schemes')."` WHERE `id`=".intval($id));
+				$info = db()->query_fetch("SELECT * FROM ".db('graphic_schemes')." WHERE id=".intval($id));
 				if ($info) {
 					$new_file_path = $this->GRAPH_SCHEMES_DIR. $info["id"]. "/";
 				}
@@ -998,18 +998,18 @@ class yf_design_manager {
 			$new_file_path = "";
 			// Get details by known type
 			if ($type == "design") {
-				$design_info = db()->query_fetch("SELECT * FROM `".db('designs')."` WHERE `id`=".intval($id));
+				$design_info = db()->query_fetch("SELECT * FROM ".db('designs')." WHERE id=".intval($id));
 				if ($design_info) {
 					$theme_name = $this->_existed_themes[$design_info["theme_id"]];
 					$new_file_path = $this->USER_THEMES_DIR. $theme_name. "/designs/". $design_info["id"]. "/";
 				}
 			} elseif ($type == "color") {
-				$colot_info = db()->query_fetch("SELECT * FROM `".db('color_schemes')."` WHERE `id`=".intval($id));
+				$colot_info = db()->query_fetch("SELECT * FROM ".db('color_schemes')." WHERE id=".intval($id));
 				if ($color_info) {
 					$new_file_path = $this->COLOR_SCHEMES_DIR. $color_info["id"]. "/";
 				}
 			} elseif ($type == "graph") {
-				$graph_info = db()->query_fetch("SELECT * FROM `".db('graphic_schemes')."` WHERE `id`=".intval($id));
+				$graph_info = db()->query_fetch("SELECT * FROM ".db('graphic_schemes')." WHERE id=".intval($id));
 				if ($graph_info) {
 					$new_file_path = $this->GRAPH_SCHEMES_DIR. $graph_info["id"]. "/";
 				}
@@ -1060,20 +1060,20 @@ class yf_design_manager {
 			$new_file_path = "";
 			// Get details by known type
 			if ($type == "design") {
-				$info = db()->query_fetch("SELECT * FROM `".db('designs')."` WHERE `id`=".intval($id));
+				$info = db()->query_fetch("SELECT * FROM ".db('designs')." WHERE id=".intval($id));
 				if ($info) {
 					$theme_name = $this->_existed_themes[$info["theme_id"]];
 					$new_file_path = $this->USER_THEMES_DIR. $theme_name. "/designs/";
 					$screenshot_url = $this->SERVICE_WEB_PATH."user_design/".$info["id"];
 				}
 			} elseif ($type == "color") {
-				$info = db()->query_fetch("SELECT * FROM `".db('color_schemes')."` WHERE `id`=".intval($id));
+				$info = db()->query_fetch("SELECT * FROM ".db('color_schemes')." WHERE id=".intval($id));
 				if ($info) {
 					$new_file_path = $this->COLOR_SCHEMES_DIR;
 					$screenshot_url = $this->SERVICE_WEB_PATH."color_scheme/".$info["id"];
 				}
 			} elseif ($type == "graph") {
-				$info = db()->query_fetch("SELECT * FROM `".db('graphic_schemes')."` WHERE `id`=".intval($id));
+				$info = db()->query_fetch("SELECT * FROM ".db('graphic_schemes')." WHERE id=".intval($id));
 				if ($info) {
 					$new_file_path = $this->GRAPH_SCHEMES_DIR;
 					$screenshot_url = $this->SERVICE_WEB_PATH."graphic_scheme/".$info["id"];
@@ -1099,17 +1099,17 @@ class yf_design_manager {
 			return false;
 		}	
 		// Processing designs
-		$designs_info = db()->query_fetch_all("SELECT * FROM `".db('designs')."`");
+		$designs_info = db()->query_fetch_all("SELECT * FROM ".db('designs')."");
 		foreach ((array)$designs_info as $design) {
 			$this->generate_preview_img ("design", $design["id"]);
 		}
 		// Processing color schemes
-		$schemes_info = db()->query_fetch_all("SELECT * FROM `".db('color_schemes')."`");
+		$schemes_info = db()->query_fetch_all("SELECT * FROM ".db('color_schemes')."");
 		foreach ((array)$schemes_info as $scheme) {
 			$this->generate_preview_img ("color", $scheme["id"]);
 		}
 		// Processing graphic schemes
-		$graph_schemes_info = db()->query_fetch_all("SELECT * FROM `".db('graphic_schemes')."`");
+		$graph_schemes_info = db()->query_fetch_all("SELECT * FROM ".db('graphic_schemes')."");
 		foreach ((array)$graph_schemes_info as $scheme) {
 			$this->generate_preview_img ("graph", $scheme["id"]);
 		}

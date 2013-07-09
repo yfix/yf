@@ -6,7 +6,7 @@ class yf_dynamic_info {
 	*/
 	function _edit ($user_id, $default_values = "") {
 
-		$sql = "SELECT * FROM `".db('user_data_info_fields')."` WHERE `active`=1 ORDER BY `order`, `name`";
+		$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY `order`, name";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_dynamic_fields[$A["name"]] = $A;
@@ -101,7 +101,7 @@ class yf_dynamic_info {
 			$_POST = $values_array;
 		}
 		
-		$sql = "SELECT * FROM `".db('user_data_info_fields')."` WHERE `active`=1 ORDER BY `order`, `name`";
+		$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY `order`, name";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_dynamic_fields[$A["name"]] = $A;
@@ -130,7 +130,7 @@ class yf_dynamic_info {
 			return;
 		}
 	
-		$sql = "SELECT * FROM `".db('user_data_info_fields')."` WHERE `active`=1 ORDER BY `order`, `name`";
+		$sql = "SELECT * FROM ".db('user_data_info_fields')." WHERE active=1 ORDER BY `order`, name";
 		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_dynamic_fields[$A["name"]] = $A;

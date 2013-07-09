@@ -18,9 +18,9 @@ class yf_manage_shop_orders {
 	*/
 	function show_orders() {
 	
-		$sql = "SELECT * FROM `".db('shop_orders')."`";
+		$sql = "SELECT * FROM ".db('shop_orders')."";
 		$filter_sql = module('manage_shop')->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$orders_info = db()->query_fetch_all($sql.$add_sql);
 		if (!empty($orders_info)) {
@@ -57,7 +57,7 @@ class yf_manage_shop_orders {
 	function view_order() {
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			$order_info = db()->query_fetch("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"]));
+			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($order_info)) {
 			return _e("No such order");
@@ -69,11 +69,11 @@ class yf_manage_shop_orders {
 				"comment_c"	=> _es($_POST["comment_c"]),
 				"address"	=> _es($_POST["address"]),
 				"phone"	=> _es($_POST["phone"]),
-			), "`id`=".intval($_GET["id"]));
+			), "id=".intval($_GET["id"]));
 			return js_redirect("./?object=manage_shop&action=show_orders");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order`_id=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -81,7 +81,7 @@ class yf_manage_shop_orders {
 			$order_items[$_info["product_id"]] = $_info;
 		}
 		if (!empty($products_ids)) {
-			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `id` IN(".implode(",", $products_ids).") AND `active`='1'");
+			$products_infos = db()->query_fetch_all("SELECT * FROM ".db('shop_products')." WHERE id IN(".implode(",", $products_ids).") AND active='1'");
 			$products_atts	= module('manage_shop')->_get_products_attributes($products_ids);
 		}
 		foreach ((array)$order_items as $_info) {
@@ -140,13 +140,13 @@ class yf_manage_shop_orders {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			$order_info = db()->query_fetch("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"])." AND `user_id`=".intval(module('manage_shop')->USER_ID));
+			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(module('manage_shop')->USER_ID));
 		}
 		if (empty($order_info)) {
 			return _e("No such order");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order`_id=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -154,7 +154,7 @@ class yf_manage_shop_orders {
 			$order_items[$_info["product_id"]] = $_info;
 		}
 		if (!empty($products_ids)) {
-			$products_infos = db()->query_fetch_all("SELECT * FROM `".db('shop_products')."` WHERE `id` IN(".implode(",", $products_ids).") AND `active`='1'");
+			$products_infos = db()->query_fetch_all("SELECT * FROM ".db('shop_products')." WHERE id IN(".implode(",", $products_ids).") AND active='1'");
 			$products_atts	= module('manage_shop')->_get_products_attributes($products_ids);
 		}
 		foreach ((array)$order_items as $_info) {
@@ -177,7 +177,7 @@ class yf_manage_shop_orders {
 			$total_price += $_info["price"] * $quantity;
 		}
 		$total_price = $order_info["total_sum"];
-		if($this->USER_ID) {
+		if(main()->USER_ID) {
 			$order_info = my_array_merge(module('manage_shop')->_user_info, $order_info);
 		}else {
 			$order_info ["email"]= $order_info["email"];
@@ -192,20 +192,19 @@ class yf_manage_shop_orders {
 			"password"		=> "", // Security!
 		));
 		// Prepare email template
-		$message = tpl()->parse(SHOP_CLASS_NAME."/invoice_email", $replace2);
+		$message = tpl()->parse("shop/invoice_email", $replace2);
 
 		common()->quick_send_mail($order_info["email"], "invoice #".$_GET["id"], $message); 
 
 		$SELF_METHOD_ID = substr(__FUNCTION__, strlen("_order_step_"));
 		$replace = my_array_merge($replace2, array(
 			"error_message"	=> _e(),
-			"products"				=> $products,
-			"ship_price"			=> module('manage_shop')->_format_price(module('manage_shop')->_ship_types_names[$order_info["ship_type"]]),
-			"total_price"			=> module('manage_shop')->_format_price($total_price),
-			"order_no"				=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
-			"hash"						=> _prepare_html($order_info["hash"]),
-			"back_link"				=> "./?object=manage_shop&action=show_orders",
-			
+			"products"		=> $products,
+			"ship_price"	=> module('manage_shop')->_format_price(module('manage_shop')->_ship_types_names[$order_info["ship_type"]]),
+			"total_price"	=> module('manage_shop')->_format_price($total_price),
+			"order_no"		=> str_pad($order_info["id"], 8, "0", STR_PAD_LEFT),
+			"hash"			=> _prepare_html($order_info["hash"]),
+			"back_link"		=> "./?object=manage_shop&action=show_orders",
 		));
 		return tpl()->parse("manage_shop/order_print_invoice", $replace);
 	}
@@ -216,12 +215,12 @@ class yf_manage_shop_orders {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current info
 		if (!empty($_GET["id"])) {
-			$order_info = db()->query_fetch("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"]));
+			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete order
 		if (!empty($order_info["id"])) {
-			db()->query("DELETE FROM `".db('shop_orders')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('shop_order_items')." WHERE `order`_id=".intval($_GET["id"]));
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -238,31 +237,30 @@ class yf_manage_shop_orders {
 		$this->_filter_name	= "show_orders_filter";
 		// Array of select boxes to process
 		$this->_boxes = array(
-			"status"				=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
-			"sort_by"				=> 'select_box("sort_by",		 $this->_sort_by,			$selected, 0, 2, "", false)',
-			"sort_order"			=> 'select_box("sort_order", $this->_sort_orders,		$selected, 0, 2, "", false)',
-			"orders_by_date"	=> 'select_box("orders_by_date", $this->_orders_by_date,		$selected, 0, 2, "", false)',
+			"status"		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
+			"sort_by"		=> 'select_box("sort_by",		$this->_sort_by,			$selected, 0, 2, "", false)',
+			"sort_order"	=> 'select_box("sort_order", 	$this->_sort_orders,		$selected, 0, 2, "", false)',
+			"orders_by_date"=> 'select_box("orders_by_date",$this->_orders_by_date,		$selected, 0, 2, "", false)',
 		);
 		// Sort orders
 		$this->_sort_orders = array( "" =>"", "DESC" => "Descending", "ASC" => "Ascending");
 		// Sort fields
 		$this->_sort_by = array(
-			""					=> 	"",
-			"id"				=> "Order ID",
-			"user_id"		=> "User",
-			"total_sum" 	=> "SUM",
-			"quantity" 		=> "Quantity",
-			"date" 			=> "Date",
-			"status" 		=> "Status",
+			""			=> 	"",
+			"id"		=> "Order ID",
+			"user_id"	=> "User",
+			"total_sum" => "SUM",
+			"quantity" 	=> "Quantity",
+			"date" 		=> "Date",
+			"status" 	=> "Status",
 		);
 		$this->_orders_by_date = array(
-			""					=> 	"",
-			"0"				=> "Today",
+			""			=> 	"",
+			"0"			=> "Today",
 			"86400"		=> "Yesterday",
-			"604800"		=> "Week",
+			"604800"	=> "Week",
 			"2592000"	=> "month",
 			"31536000" 	=> "Year",
-			
 		);
 		// Fields in the filter
 		$this->_fields_in_filter = array(
@@ -285,43 +283,43 @@ class yf_manage_shop_orders {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		if ($SF["sum_min"]){
-			$sql .= " AND `total_sum` >= ".intval($SF["sum_min"])." \r\n";
+			$sql .= " AND total_sum >= ".intval($SF["sum_min"])." \n";
 		}
 		if ($SF["sum_max"])	{
-			$sql .= " AND `total_sum` <= ".intval($SF["sum_max"])." \r\n";
+			$sql .= " AND total_sum <= ".intval($SF["sum_max"])." \n";
 		}
 		if (strlen($SF["user"])){
-		$sql .= " AND `user` LIKE '"._es($SF["user"])."%' \r\n";
+		$sql .= " AND user LIKE '"._es($SF["user"])."%' \n";
 		}
 		if($SF["status"] ){
-			$sql .= " AND `status` = '".$SF["status"]."' \r\n";
+			$sql .= " AND status = '".$SF["status"]."' \n";
 		}  
 		$cur_date = time ();
 		$cur_date =	date("d F", ($cur_date));
 		$cur_date =	strtotime($cur_date);
-		if($SF["orders_by_date"] == "0"){
+		if ($SF["orders_by_date"] == "0") {
 			$SF["orders_by_date"];
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "86400"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "604800"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "2592000"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
-		}elseif ($SF["orders_by_date"] == "31536000"){
-			$date = $cur_date - $SF["orders_by_date"] ;
-			$sql .= " AND `date` >= ".$date." \r\n";
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND date >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "86400") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND date >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "604800") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND date >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "2592000") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND date >= ".$date." \n";
+		} elseif ($SF["orders_by_date"] == "31536000") {
+			$date = $cur_date - $SF["orders_by_date"];
+			$sql .= " AND date >= ".$date." \n";
 		}
 		// Sorting here
 		if ($SF["sort_by"])	{
-			$sql .= " ORDER BY  `" .$SF["sort_by"]."` \r\n";
+			$sql .= " ORDER BY  " .$SF["sort_by"]." \n";
 		}
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) {
-			$sql .= " ".$SF["sort_order"]." \r\n";
+			$sql .= " ".$SF["sort_order"]." \n";
 		}
 		return substr($sql, 0, -3);
 	}

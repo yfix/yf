@@ -51,7 +51,7 @@ class yf_blocks {
 		}
 		// Get user groups
 		$this->_user_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_user_groups[$A['id']] = $A['name'];
 		}
@@ -72,7 +72,7 @@ class yf_blocks {
 		}
 		// Get admin groups
 		$this->_admin_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('admin_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('admin_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_admin_groups[$A['id']] = $A['name'];
 		}
@@ -94,7 +94,7 @@ class yf_blocks {
 		$this->_sites = array(
 			"" => "-- ALL --",
 		);
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('sites')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('sites')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_sites[$A['id']] = $A['name'];
 		}
@@ -102,7 +102,7 @@ class yf_blocks {
 		$this->_servers = array(
 			"" => "-- ALL --",
 		);
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('core_servers')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('core_servers')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_servers[$A['id']] = $A['name'];
 		}
@@ -113,12 +113,12 @@ class yf_blocks {
 	*/
 	function show () {
 		// Get rules groupped by block_id
-		$Q = db()->query("SELECT `block_id`, COUNT(*) AS `num` FROM `".db('block_rules')."` GROUP BY `block_id`");
+		$Q = db()->query("SELECT block_id, COUNT(*) AS num FROM ".db('block_rules')." GROUP BY block_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_rules[$A["block_id"]] = $A["num"];
 		}
 		// Get available blocks from db
-		$Q = db()->query("SELECT * FROM `".db('blocks')."`");
+		$Q = db()->query("SELECT * FROM ".db('blocks')."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -161,7 +161,7 @@ class yf_blocks {
 				_re(t("BLock name can not be empty"));
 			}
 			if (!common()->_error_exists()) {
-				if (db()->query_num_rows("SELECT `id` FROM `".db('blocks')."` WHERE `type`='"._es($_POST["type"])."' AND `name`='"._es($_POST["name"])."'")) {
+				if (db()->query_num_rows("SELECT id FROM ".db('blocks')." WHERE type='"._es($_POST["type"])."' AND name='"._es($_POST["name"])."'")) {
 					_re(t("BLock name already reserved for type=@name", array("@name" => $_POST["type"])));
 				}
 			}
@@ -209,7 +209,7 @@ class yf_blocks {
 			return _e(t("No id!"));
 		}
 		// Get current block info
-		$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"]));
+		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		if (empty($block_info["id"])) {
 			return _e(t("No such block!"));
 		}
@@ -227,7 +227,7 @@ class yf_blocks {
 				_re(t("BLock name can not be empty"));
 			}
 			if (!common()->_error_exists()) {
-				if (db()->query_num_rows("SELECT `id` FROM `".db('blocks')."` WHERE `type`='"._es($_POST["type"])."' AND `name`='"._es($_POST["name"])."'")) {
+				if (db()->query_num_rows("SELECT id FROM ".db('blocks')." WHERE type='"._es($_POST["type"])."' AND name='"._es($_POST["name"])."'")) {
 					_re(t("BLock name already reserved for type=@name", array("@name" => $_POST["type"])));
 				}
 			}
@@ -240,7 +240,7 @@ class yf_blocks {
 					"stpl_name"		=> _es($_POST["stpl_name"]),
 					"method_name"	=> _es($_POST["method_name"]),
 					"active"		=> intval($_POST["active"])
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("blocks_names");
@@ -287,12 +287,12 @@ class yf_blocks {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current block info
 		if (!empty($_GET["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"]));
+			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete block and its rules
 		if (!empty($block_info["id"])) {
-			db()->query("DELETE FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('block_rules')."` WHERE `block_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('blocks')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -316,7 +316,7 @@ class yf_blocks {
 		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
 		}
-		$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"]));
+		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		// Prepare SQL
 		$sql = $block_info;
 		unset($sql["id"]);
@@ -325,7 +325,7 @@ class yf_blocks {
 		db()->INSERT("blocks", $sql);
 		$NEW_BLOCK_ID = db()->INSERT_ID();
 		// Do clone rules
-		$Q = db()->query("SELECT * FROM `".db('block_rules')."` WHERE `block_id`=".intval($_GET["id"]));
+		$Q = db()->query("SELECT * FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			unset($_info["id"]);
 			$_info["block_id"] = $NEW_BLOCK_ID;
@@ -349,11 +349,11 @@ class yf_blocks {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current rule info
 		if (!empty($_GET["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"]));
+			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		}
 		// Change activity
 		if (!empty($block_info["id"])) {
-			db()->UPDATE("blocks", array("active" => (int)!$block_info["active"]), "`id`=".intval($_GET["id"]));
+			db()->UPDATE("blocks", array("active" => (int)!$block_info["active"]), "id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -378,7 +378,7 @@ class yf_blocks {
 			return _e(t("No id!"));
 		}
 		// Get current block info
-		$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"]));
+		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		if (empty($block_info["id"])) {
 			return _e(t("No such block!"));
 		}
@@ -391,7 +391,7 @@ class yf_blocks {
 			$this->_methods = &$this->_user_methods;
 		}
 		// Get rules for the current block
-		$Q = db()->query("SELECT * FROM `".db('block_rules')."` WHERE `block_id`=".intval($_GET["id"]));
+		$Q = db()->query("SELECT * FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
 		while ($A = db()->fetch_assoc($Q)) {
 			// Process template
 			$replace2 = array(
@@ -439,7 +439,7 @@ class yf_blocks {
 			return _e(t("No id!"));
 		}
 		// Get current block info
-		$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"]));
+		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		if (empty($block_info["id"])) {
 			return _e(t("No such block!"));
 		}
@@ -522,12 +522,12 @@ class yf_blocks {
 			return _e(t("No id!"));
 		}
 		// Get current rule info
-		$rule_info = db()->query_fetch("SELECT * FROM `".db('block_rules')."` WHERE `id`=".intval($_GET["id"]));
+		$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
 		if (empty($rule_info["id"])) {
 			return _e(t("No such rule!"));
 		}
 		// Get current block info
-		$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($rule_info["block_id"]));
+		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
 		if (empty($block_info["id"])) {
 			return _e(t("No such block!"));
 		}
@@ -554,7 +554,7 @@ class yf_blocks {
 					"server_ids"	=> _es($this->_multi_html_to_db($_POST["server_ids"])),
 					"order"			=> intval($_POST["order"]),
 					"active"		=> intval($_POST["active"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("blocks_rules");
@@ -608,15 +608,15 @@ class yf_blocks {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current rule info
 		if (!empty($_GET["id"])) {
-			$rule_info = db()->query_fetch("SELECT * FROM `".db('block_rules')."` WHERE `id`=".intval($_GET["id"]));
+			$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
 		}
 		// Get current block info
 		if (!empty($rule_info["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($rule_info["block_id"]));
+			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
 		}
 		// Do delete rule
 		if (!empty($block_info["id"])) {
-			db()->query("DELETE FROM `".db('block_rules')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('block_rules')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -638,11 +638,11 @@ class yf_blocks {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current rule info
 		if (!empty($_GET["id"])) {
-			$rule_info = db()->query_fetch("SELECT * FROM `".db('block_rules')."` WHERE `id`=".intval($_GET["id"]));
+			$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
 		}
 		// Get current block info
 		if (!empty($rule_info["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($rule_info["block_id"]));
+			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
 		}
 		if (!$block_info) {
 			return _e("No such rule or block");
@@ -668,15 +668,15 @@ class yf_blocks {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current rule info
 		if (!empty($_GET["id"])) {
-			$rule_info = db()->query_fetch("SELECT * FROM `".db('block_rules')."` WHERE `id`=".intval($_GET["id"]));
+			$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
 		}
 		// Get current block info
 		if (!empty($rule_info["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($rule_info["block_id"]));
+			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
 		}
 		// Change rule activity
 		if (!empty($block_info["id"])) {
-			db()->UPDATE("block_rules", array("active" => (int)!$rule_info["active"]), "`id`=".intval($_GET["id"]));
+			db()->UPDATE("block_rules", array("active" => (int)!$rule_info["active"]), "id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -699,7 +699,7 @@ class yf_blocks {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current block info
 		if ($_GET["id"]) {
-			$block_info = db()->query_fetch("SELECT * FROM `".db('blocks')."` WHERE `id`=".intval($_GET["id"]));
+			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		}
 		// Prepare db export params
 		$params = array(
@@ -712,8 +712,8 @@ class yf_blocks {
 		);
 		if ($block_info["id"]) {
 			$params["where"] = array(
-				db('blocks')		=> "`id`=".intval($block_info["id"]),
-				db('block_rules')	=> "`block_id`=".intval($block_info["id"]),
+				db('blocks')		=> "id=".intval($block_info["id"]),
+				db('block_rules')	=> "block_id=".intval($block_info["id"]),
 			);
 		}
 		$EXPORTED_SQL = module("db_manager")->export($params);

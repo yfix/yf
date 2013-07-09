@@ -63,7 +63,7 @@ class yf_manage_shop {
 	function _init () {
 		$this->_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats", 0);
 		
-		$sql = "SELECT * FROM `".db('shop_manufacturer')."` ORDER BY `name` ASC";
+		$sql = "SELECT * FROM ".db('shop_manufacturer')." ORDER BY name ASC";
 		$this->man = db()->query_fetch_all($sql);
 		$this->_man_for_select[0] = "--NONE--";
 		foreach ((array)$this->man as $k =>$v) {
@@ -133,16 +133,16 @@ class yf_manage_shop {
 	/**
 	*/
 	function statistic () {
-		$total_sum = db()->query_fetch("SELECT SUM(`total_sum`) FROM `".db('shop_orders')."`");
-		$total_order = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_orders')."`");
-		$total_prod = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_products')."`");
-		$total_order_pending = db()->query_fetch("SELECT COUNT(*) FROM `".db('shop_orders')."` WHERE `status` = 'pending'");
-		$total_sum_shipped = db()->query_fetch("SELECT SUM(`total_sum`) FROM `".db('shop_orders')."` WHERE `status` = 'shipped'");
+		$total_sum = db()->query_fetch("SELECT SUM(total_sum) FROM ".db('shop_orders')."");
+		$total_order = db()->query_fetch("SELECT COUNT(*) FROM ".db('shop_orders')."");
+		$total_prod = db()->query_fetch("SELECT COUNT(*) FROM ".db('shop_products')."");
+		$total_order_pending = db()->query_fetch("SELECT COUNT(*) FROM ".db('shop_orders')." WHERE status = 'pending'");
+		$total_sum_shipped = db()->query_fetch("SELECT SUM(total_sum) FROM ".db('shop_orders')." WHERE status = 'shipped'");
 		$replace = array(
-			"summ"					=> $this->_format_price($total_sum["SUM(`total_sum`)"]),
+			"summ"					=> $this->_format_price($total_sum["SUM(total_sum)"]),
 			"total_order"			=> intval($total_order["COUNT(*)"]),
 			"total_order_pending"	=> intval($total_order_pending["COUNT(*)"]),
-			"total_sum_shipped"		=> $this->_format_price($total_sum_shipped["SUM(`total_sum`)"]),
+			"total_sum_shipped"		=> $this->_format_price($total_sum_shipped["SUM(total_sum)"]),
 			"total_prod"			=> intval($total_prod["COUNT(*)"]),
 		);
 		return tpl()->parse("manage_shop/stat_main", $replace);
@@ -191,9 +191,9 @@ class yf_manage_shop {
 			$this->clear_filter(1);
 			$this->save_filter(1);
 		}
-		$sql = "SELECT * FROM `".db('shop_products')."`";
+		$sql = "SELECT * FROM ".db('shop_products')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `add_date` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY add_date DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", 100);
 		$products_info = db()->query_fetch_all($sql.$add_sql);
 		$this->_total_prod = $total;
@@ -338,7 +338,7 @@ class yf_manage_shop {
 		if (!$_def_locale) {
 			$_def_locale = "en";
 		}
-		$product_info = db()->query_fetch("SELECT * FROM `".db('shop_products')."` WHERE `id`=".$_GET["id"]);
+		$product_info = db()->query_fetch("SELECT * FROM ".db('shop_products')." WHERE id=".$_GET["id"]);
 		if (!empty($_POST)) {
 			if (!$_POST["name"]) {
 				_re("Product name must be filled");
@@ -373,8 +373,8 @@ class yf_manage_shop {
 						"image"	=> 1,
 					);
 				} 
-				db()->UPDATE(db('shop_products'), $sql_array, "`id`=".$_GET["id"]);
-				db()->query("DELETE FROM  `".db('shop_product_to_category')."` WHERE `product_id` = ".$_GET["id"]);
+				db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]);
+				db()->query("DELETE FROM  ".db('shop_product_to_category')." WHERE product_id = ".$_GET["id"]);
 				foreach ((array)$_POST["category"] as $k => $v){
 					$cat_id["product_id"] = $_GET["id"];
 					$cat_id["category_id"] = $v;
@@ -452,7 +452,7 @@ class yf_manage_shop {
 				"price"		=> $_group_price ? number_format($_group_price, 2, '.', ' ') : "",
 			);
 		}
-		$sql1 = "SELECT `category_id` FROM `".db('shop_product_to_category')."` WHERE `product_id` = ". $_GET["id"];
+		$sql1 = "SELECT category_id FROM ".db('shop_product_to_category')." WHERE product_id = ". $_GET["id"];
 		$products = db()->query($sql1);
 		while ($A = db()->fetch_assoc($products)) {
 			$cat_id[$A["category_id"]] .= $A["category_id"];
@@ -494,7 +494,7 @@ class yf_manage_shop {
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$product_info = db()->query_fetch("SELECT * FROM `".db('shop_products')."` WHERE `id`=".$_GET["id"]);
+		$product_info = db()->query_fetch("SELECT * FROM ".db('shop_products')." WHERE id=".$_GET["id"]);
 		if ($product_info["image"] == 0) {
 			$thumb_path = "";
 		} else {
@@ -518,7 +518,7 @@ class yf_manage_shop {
 			}
 		}	
 		$dyn_fields = $this->_attributes_view($_GET["id"]);
-		$sql1 = "SELECT `category_id` FROM `".db('shop_product_to_category')."` WHERE `product_id` = ". $_GET["id"];
+		$sql1 = "SELECT category_id FROM ".db('shop_product_to_category')." WHERE product_id = ". $_GET["id"];
 		$products = db()->query($sql1);
 		while ($A = db()->fetch_assoc($products)) {
 			$cat_id[$A["category_id"]] .= $A["category_id"];
@@ -550,9 +550,9 @@ class yf_manage_shop {
 			return "Empty ID!";
 		}
 		$this->_image_delete($_GET["id"]);
-		db()->query("DELETE FROM `".db('dynamic_fields_values')."` WHERE `object_id`=".$_GET["id"]);
-		db()->query("DELETE FROM `".db('shop_group_options')."` WHERE `product_id`=".$_GET["id"]);		
-		db()->query("DELETE FROM `".db('shop_products')."` WHERE `id`=".$_GET["id"]);
+		db()->query("DELETE FROM ".db('dynamic_fields_values')." WHERE object_id=".$_GET["id"]);
+		db()->query("DELETE FROM ".db('shop_group_options')." WHERE product_id=".$_GET["id"]);		
+		db()->query("DELETE FROM ".db('shop_products')." WHERE id=".$_GET["id"]);
 		return js_redirect("./?object=manage_shopaction=products_manage");
 	}
 
@@ -560,13 +560,13 @@ class yf_manage_shop {
 	*/
 	function product_activate () {
 		if ($_GET["id"]){
-			$A = db()->query_fetch("SELECT * FROM `".db('shop_products')."` WHERE `id`=".intval($_GET["id"]));
+			$A = db()->query_fetch("SELECT * FROM ".db('shop_products')." WHERE id=".intval($_GET["id"]));
 			if ($A["active"] == 1) {
 				$active = 0;
 			} elseif ($A["active"] == 0) {
 				$active = 1;
 			}
-			db()->UPDATE(db('shop_products'), array("active" => $active), "`id`='".intval($_GET["id"])."'");
+			db()->UPDATE(db('shop_products'), array("active" => $active), "id='".intval($_GET["id"])."'");
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -640,7 +640,7 @@ class yf_manage_shop {
 			$sql_array = array(
 				"image"	=> 0,
 			);
-			db()->UPDATE(db('shop_products'), $sql_array, "`id`=".$_GET["id"]); 
+			db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]); 
 		}
 		return true;
 	}
@@ -662,14 +662,14 @@ class yf_manage_shop {
 	function show_product_by_category ($cat = "") {
 		main()->NO_GRAPHICS = true;
 		$cat_id =  $_GET["cat_id"];
-		$sql1 = "SELECT `product_id` FROM `".db('shop_product_to_category')."` WHERE `category_id` =". $cat_id ;
+		$sql1 = "SELECT product_id FROM ".db('shop_product_to_category')." WHERE category_id =". $cat_id ;
 			$products = db()->query($sql1);
 			while ($A = db()->fetch_assoc($products)) {
 				$product_info .= $A["product_id"].",";
 			}	
 			$product_info = rtrim($product_info, ",");
 			
-		$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1'  AND `id` IN (".$product_info .")  ORDER BY `name`";
+		$sql = "SELECT * FROM ".db('shop_products')." WHERE active='1'  AND id IN (".$product_info .")  ORDER BY name";
 		$product = db()->query_fetch_all($sql);
 		$products = array();
 		foreach ((array)$product as $v) {
@@ -685,14 +685,14 @@ class yf_manage_shop {
 	*/
 	function get_product_related ($id = "") {
 		$product_related_data = array();
-		$sql = "SELECT * FROM `".db('shop_product_related') . "` WHERE `product_id` = ". $id;
+		$sql = "SELECT * FROM ".db('shop_product_related') . " WHERE product_id = ". $id;
 		$product = db()->query($sql);
 		while ($A = db()->fetch_assoc($product)){
 			$product_related_id .= $A['related_id'].",";
 		}
 		$product_related_id = rtrim($product_related_id, ",");
 		if ($product_related_id != "") {
-			$sql = "SELECT * FROM `".db('shop_products')."` WHERE `active`='1'  AND `id` IN (".$product_related_id .")  ORDER BY `name`";
+			$sql = "SELECT * FROM ".db('shop_products')." WHERE active='1'  AND id IN (".$product_related_id .")  ORDER BY name";
 			$product = db()->query_fetch_all($sql);
 			$products = array();
 			foreach ((array)$product as $v) {
@@ -903,9 +903,9 @@ class yf_manage_shop {
 		if (!empty($product_id)) {
 			// Get prices per group
 			$Q = db()->query(
-				"SELECT * FROM `".db('shop_group_options')."` 
-				WHERE `product_id`=".$product_id." 
-					AND `group_id` IN (".implode(",", array_keys($user_groups)).")"
+				"SELECT * FROM ".db('shop_group_options')." 
+				WHERE product_id=".$product_id." 
+					AND group_id IN (".implode(",", array_keys($user_groups)).")"
 			);
 			while($A = db()->fetch_assoc($Q)) {
 				if (!$A["group_id"] || !isset($user_groups[$A["group_id"]])) {
@@ -937,9 +937,9 @@ class yf_manage_shop {
 		}
 		// Get prices per group
 		$Q = db()->query(
-			"SELECT * FROM `".db('shop_group_options')."` 
-			WHERE `product_id`=".$product_id." 
-				AND `group_id` IN (".implode(",", array_keys($user_groups)).")"
+			"SELECT * FROM ".db('shop_group_options')." 
+			WHERE product_id=".$product_id." 
+				AND group_id IN (".implode(",", array_keys($user_groups)).")"
 		);
 		while($A = db()->fetch_assoc($Q)) {
 			if (!isset($user_groups[$A["group_id"]])) {
@@ -955,7 +955,7 @@ class yf_manage_shop {
 				"price"		=> floatval($new_group_price),
 			);
 			if (isset($group_prices[$_group_id])) {
-				db()->UPDATE("shop_group_options", $sql, "`product_id`=".intval($product_id)." AND `group_id`=".intval($_group_id));
+				db()->UPDATE("shop_group_options", $sql, "product_id=".intval($product_id)." AND group_id=".intval($_group_id));
 			} else {
 				db()->INSERT("shop_group_options", $sql);
 			}
@@ -1036,28 +1036,28 @@ class yf_manage_shop {
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		if ($SF["price_min"]){
-			$sql .= " AND `price` >= ".intval($SF["price_min"])." \r\n";
+			$sql .= " AND price >= ".intval($SF["price_min"])." \r\n";
 		}
 		if ($SF["price_max"])	{
-			$sql .= " AND `price` <= ".intval($SF["price_max"])." \r\n";
+			$sql .= " AND price <= ".intval($SF["price_max"])." \r\n";
 		}
 		if ($SF["quantity_min"]){
-			$sql .= " AND `quantity` >= ".intval($SF["quantity_min"])." \r\n";
+			$sql .= " AND quantity >= ".intval($SF["quantity_min"])." \r\n";
 		}
 		if ($SF["quantity_max"])	{
-			$sql .= " AND `quantity` <= ".intval($SF["quantity_max"])." \r\n";
+			$sql .= " AND quantity <= ".intval($SF["quantity_max"])." \r\n";
 		}
 		if (strlen($SF["name"])){
-			$sql .= " AND `name` LIKE '"._es($SF["name"])."%' \r\n";
+			$sql .= " AND name LIKE '"._es($SF["name"])."%' \r\n";
 		}
 		 if($SF["status_prod"] == '0'){
-			$sql .= " AND `active` = '".intval($SF["status_prod"])."' \r\n";
+			$sql .= " AND active = '".intval($SF["status_prod"])."' \r\n";
 		}elseif($SF["status_prod"] == '1'){
-			$sql .= " AND `active` = '".intval($SF["status_prod"])."' \r\n";
+			$sql .= " AND active = '".intval($SF["status_prod"])."' \r\n";
 		} 
 		// Sorting here
 		if ($SF["sort_by"])	{
-			$sql .= " ORDER BY  `" .$SF["sort_by"]."` \r\n";
+			$sql .= " ORDER BY  " .$SF["sort_by"]." \r\n";
 		}
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) {
 			$sql .= " ".$SF["sort_order"]." \r\n";

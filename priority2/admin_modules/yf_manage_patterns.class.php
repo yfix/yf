@@ -3,7 +3,7 @@
 class yf_manage_patterns{
 
 	function show(){
-		$Q = db()->query("SELECT * FROM `".db('grab_patterns')."` ORDER BY `name` DESC");
+		$Q = db()->query("SELECT * FROM ".db('grab_patterns')." ORDER BY name DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 		
 			$pattern = unserialize($A["pattern"]);
@@ -54,7 +54,7 @@ class yf_manage_patterns{
 						"desc"				=> _es($_POST["description"]),
 						"pattern"			=> _es($_POST["pattern"]),
 						"replace_pattern"	=> _es($_POST["replace_pattern"]),
-					//	"user_id"			=> $this->USER_ID,
+					//	"user_id"			=> main()->USER_ID,
 					));
 				}else{
 					db()->UPDATE("grab_patterns", array(
@@ -62,7 +62,7 @@ class yf_manage_patterns{
 						"desc"				=> _es($_POST["description"]),
 						"pattern"			=> _es($_POST["pattern"]),
 						"replace_pattern"	=> _es($_POST["replace_pattern"]),
-					), "`id`=".$_GET["id"]);			
+					), "id=".$_GET["id"]);			
 			
 				
 				}
@@ -105,7 +105,7 @@ class yf_manage_patterns{
 		
 		// view pattern_info 
 		if ((!empty($_GET["id"])) and (!isset($_POST["parse"]))){
-			$pattern_info = db()->query_fetch("SELECT * FROM `".db('grab_patterns')."` WHERE `id`=".$_GET["id"]);			
+			$pattern_info = db()->query_fetch("SELECT * FROM ".db('grab_patterns')." WHERE id=".$_GET["id"]);			
 			$_POST["name"] = _prepare_html($pattern_info["name"]);
 			$_POST["description"] = _prepare_html($pattern_info["desc"]);
 			//$pattern = unserialize($pattern_info["pattern"]);
@@ -140,14 +140,14 @@ class yf_manage_patterns{
 			return _e(t("No id!"));
 		}	
 		
-		$pattern_info = db()->query_fetch("SELECT * FROM `".db('grab_patterns')."` WHERE `id`=".$_GET["id"]);
+		$pattern_info = db()->query_fetch("SELECT * FROM ".db('grab_patterns')." WHERE id=".$_GET["id"]);
 			
 		if (empty($pattern_info["id"])) {
 			return _e(t("No such pattern!"));
 		}	
 		
 		if (!empty($pattern_info["id"])) {
-			db()->query("DELETE FROM `".db('grab_patterns')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");			
+			db()->query("DELETE FROM ".db('grab_patterns')." WHERE id=".intval($_GET["id"])." LIMIT 1");			
 		}
 		
 		return js_redirect("./?object=".$_GET["object"]);

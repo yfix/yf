@@ -69,15 +69,15 @@ class yf_forum_manage_view {
 	// Main function
 	function _view_forum () {
 		$_GET['id'] = intval($_GET['id']);
-		$forum_info = db()->query_fetch("SELECT * FROM `".db('forum_forums')."` WHERE `id`=".$_GET['id']." LIMIT 1");
+		$forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".$_GET['id']." LIMIT 1");
 		if (empty($forum_info['id'])) {
 			return module("forum")->_show_error("No such forum");
 		}
 		$forum_name = module("forum")->_forums_array[$forum_info['id']]["name"];
 		$cat_name = $forum_info["category"] ? module("forum")->_forum_cats_array[$forum_info["category"]]["name"] : "";
 		//-----------------------------------------------------------------------------
-		$order_by = " ORDER BY `created` DESC, `num_posts` DESC ";
-		$sql = "SELECT * FROM `".db('forum_topics')."` WHERE `forum`=".$_GET['id'];
+		$order_by = " ORDER BY created DESC, num_posts DESC ";
+		$sql = "SELECT * FROM ".db('forum_topics')." WHERE forum=".$_GET['id'];
 		$path = "./?object=".$_GET["object"]."&action=view_forum&id=".$_GET['id'];
 		list($add_sql, $pages, $num_rows) = common()->divide_pages($sql, $path);
 		//-----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ class yf_forum_manage_view {
 			$topic_pages = "";
 			// Try to show topic pages
 			if (module("forum")->SHOW_TOPIC_PAGES && ($_topic_info["num_posts"] > module("forum")->posts_on_page)) {
-				$sql = "SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".$_topic_info['id']." ORDER BY `created` DESC ";
+				$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$_topic_info['id']." ORDER BY created DESC ";
 				$path = "./?object=".$_GET["object"]."&action=view_topic&id=".$_topic_info['id'];
 				list(,$topic_pages,) = common()->divide_pages($sql, $path, "topic_pages");
 			}
@@ -157,7 +157,7 @@ class yf_forum_manage_view {
 	// Process template
 	function _view_topic () {
 		$_GET['id'] = intval($_GET['id']);
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET['id']." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET['id']." LIMIT 1");
 		if (empty($topic_info['id'])) {
 			return module("forum")->_show_error("No such topic");
 		}
@@ -168,8 +168,8 @@ class yf_forum_manage_view {
 		$cat_name	= module("forum")->_forum_cats_array[module("forum")->_forums_array[$topic_info["forum"]]["category"]]["name"];
 		$topic_name = $topic_info["name"];
 		//-----------------------------------------------------------------------------
-		$order_by = " ORDER BY `created` ASC ";
-		$sql = "SELECT * FROM `".db('forum_posts')."` WHERE `topic`=".$_GET['id'];
+		$order_by = " ORDER BY created ASC ";
+		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$_GET['id'];
 		$path = "./?object=".$_GET["object"]."&action=view_topic&id=".$_GET['id'];
 		list($add_sql, $pages, $num_rows) = common()->divide_pages($sql, $path);
 		// Insert all required topics into array
@@ -262,7 +262,7 @@ class yf_forum_manage_view {
 	// New topic creation form
 	function _new_topic () {
 		$_GET['id'] = intval($_GET['id']);
-		$forum_info = db()->query_fetch("SELECT * FROM `".db('forum_forums')."` WHERE `id`=".$_GET['id']." LIMIT 1");
+		$forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".$_GET['id']." LIMIT 1");
 		$parent_forum_id = $forum_info['parent'];
 		if (empty($forum_info['id'])) {
 			return module("forum")->_show_error("No such forum");
@@ -271,15 +271,15 @@ class yf_forum_manage_view {
 		$cat_name	= $forum_info["category"] ? module("forum")->_forum_cats_array[$forum_info["category"]]["name"] : module("forum")->_forum_cats_array[module("forum")->_forums_array[$forum_info["forum"]]["category"]]["name"];
 		// Save data
 		if (!empty($_POST)) {
-			$SPAM_EXISTS = false;//db()->query_num_rows("SELECT `id` FROM `".db('forum_posts')."` WHERE `created`>".(time() - module("forum")->ANTISPAM_TIME)." AND `poster_ip`='".common()->get_ip()."' LIMIT 1");
+			$SPAM_EXISTS = false;//db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE created>".(time() - module("forum")->ANTISPAM_TIME)." AND poster_ip='".common()->get_ip()."' LIMIT 1");
 			if (!$SPAM_EXISTS) {
-				$sql = "INSERT INTO `".db('forum_topics')."` (
-						`forum`,
-						`name`,
-						`user_id`,
-						`user_name`,
-						`created`,
-						`status`
+				$sql = "INSERT INTO ".db('forum_topics')." (
+						forum,
+						name,
+						user_id,
+						user_name,
+						created,
+						status
 					) VALUES (
 						".intval($forum_info['id']).",
 						'"._es($_POST["title"])."',
@@ -290,17 +290,17 @@ class yf_forum_manage_view {
 					)\r\n";
 				db()->query($sql);
 				$new_topic_id = db()->insert_id();
-				$sql = "INSERT INTO `".db('forum_posts')."` (
-						`parent`,
-						`forum`,
-						`topic`,
-						`subject`,
-						`text`,
-						`user_id`,
-						`user_name`,
-						`created`,
-						`poster_ip`,
-						`status`
+				$sql = "INSERT INTO ".db('forum_posts')." (
+						parent,
+						forum,
+						topic,
+						subject,
+						text,
+						user_id,
+						user_name,
+						created,
+						poster_ip,
+						status
 					) VALUES (
 						".intval($parent).",
 						".intval($forum_info['id']).",
@@ -317,17 +317,17 @@ class yf_forum_manage_view {
 				$new_post_id = db()->insert_id();
 				// Update forum, topic, topic_watch, user tables
 				if (!module("forum")->APPROVE) {
-					$sql = "UPDATE `".db('forum_topics')."` SET 
-								`num_posts` = `num_posts` + 1,
-								`first_post_id` = ".intval($new_post_id).",
-								`last_post_id` = ".intval($new_post_id)."
-							WHERE `id`=".$new_topic_id;
+					$sql = "UPDATE ".db('forum_topics')." SET 
+								num_posts = num_posts + 1,
+								first_post_id = ".intval($new_post_id).",
+								last_post_id = ".intval($new_post_id)."
+							WHERE id=".$new_topic_id;
 					db()->query($sql);
-					$sql = "UPDATE `".db('forum_forums')."` SET 
-								`num_posts` = `num_posts` + 1,
-								`num_topics` = `num_topics` + 1,
-								`last_post_id` = ".intval($new_post_id)."
-							WHERE `id`=".$_GET['id'];
+					$sql = "UPDATE ".db('forum_forums')." SET 
+								num_posts = num_posts + 1,
+								num_topics = num_topics + 1,
+								last_post_id = ".intval($new_post_id)."
+							WHERE id=".$_GET['id'];
 					db()->query($sql);
 				}
 			}
@@ -366,7 +366,7 @@ class yf_forum_manage_view {
 	// Reply to the existing topic (post message)
 	function _reply () {
 		$_GET['id'] = intval($_GET['id']);
-		$topic_info = db()->query_fetch("SELECT * FROM `".db('forum_topics')."` WHERE `id`=".$_GET['id']." LIMIT 1");
+		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET['id']." LIMIT 1");
 		$parent_forum_id = module("forum")->_forums_array[$topic_info['forum']]["parent"];
 		if (empty($topic_info['id'])) {
 			return module("forum")->_show_error();
@@ -375,12 +375,12 @@ class yf_forum_manage_view {
 		$topic_name = $topic_info["name"];
 		$cat_name	= $topic_info["category"] ? module("forum")->_forum_cats_array[$topic_info["category"]]["name"] : module("forum")->_forum_cats_array[module("forum")->_forums_array[$topic_info["forum"]]["category"]]["name"];
 		if ($_GET["msg_id"]) {
-			$post_info = db()->query_fetch("SELECT `text`, `user_name` FROM `".db('forum_posts')."` WHERE `id`=".intval($_GET["msg_id"]));
+			$post_info = db()->query_fetch("SELECT text, user_name FROM ".db('forum_posts')." WHERE id=".intval($_GET["msg_id"]));
 			$text = "[quote=\"".$post_info["user_name"]."\"]".$post_info["text"]."[/quote]";
 		}
 		// Save data
 		if (!empty($_POST)) {
-			$SPAM_EXISTS = false;//db()->query_num_rows("SELECT `id` FROM `".db('forum_posts')."` WHERE `created`>".(time() - module("forum")->ANTISPAM_TIME)." AND `poster_ip`='".common()->get_ip()."' LIMIT 1");
+			$SPAM_EXISTS = false;//db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE created>".(time() - module("forum")->ANTISPAM_TIME)." AND poster_ip='".common()->get_ip()."' LIMIT 1");
 			if ($topic_info['id'] && !$SPAM_EXISTS) {
 				db()->INSERT("forum_posts", array(
 					"parent"	=> intval($parent),
@@ -397,15 +397,15 @@ class yf_forum_manage_view {
 				$new_post_id = db()->insert_id();
 				// Update forum, topic, topic_watch, user tables
 				if (!module("forum")->APPROVE) {
-					$sql = "UPDATE `".db('forum_topics')."` SET 
-								`num_posts` = `num_posts` + 1,
-								`last_post_id` = ".intval($new_post_id)."
-							WHERE `id`=".$_GET['id'];
+					$sql = "UPDATE ".db('forum_topics')." SET 
+								num_posts = num_posts + 1,
+								last_post_id = ".intval($new_post_id)."
+							WHERE id=".$_GET['id'];
 					db()->query($sql);
-					$sql = "UPDATE `".db('forum_forums')."` SET 
-								`num_posts` = `num_posts` + 1,
-								`last_post_id` = ".intval($new_post_id)."
-							WHERE `id`=".$topic_info["forum"];
+					$sql = "UPDATE ".db('forum_forums')." SET 
+								num_posts = num_posts + 1,
+								last_post_id = ".intval($new_post_id)."
+							WHERE id=".$topic_info["forum"];
 					db()->query($sql);
 				}
 			}

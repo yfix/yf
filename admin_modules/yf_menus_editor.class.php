@@ -55,7 +55,7 @@ class yf_menus_editor {
 		}
 		// Get user groups
 		$this->_user_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('user_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_user_groups[$A['id']] = $A['name'];
 		}
@@ -76,7 +76,7 @@ class yf_menus_editor {
 		}
 		// Get admin groups
 		$this->_admin_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('admin_groups')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('admin_groups')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_admin_groups[$A['id']] = $A['name'];
 		}
@@ -84,7 +84,7 @@ class yf_menus_editor {
 		$this->_sites = array(
 			"" => "-- ALL --",
 		);
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('sites')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('sites')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_sites[$A['id']] = $A['name'];
 		}
@@ -92,7 +92,7 @@ class yf_menus_editor {
 		$this->_servers = array(
 			"" => "-- ALL --",
 		);
-		$Q = db()->query("SELECT `id`,`name` FROM `".db('core_servers')."` WHERE `active`='1'");
+		$Q = db()->query("SELECT id,name FROM ".db('core_servers')." WHERE active='1'");
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_servers[$A['id']] = $A['name'];
 		}
@@ -103,12 +103,12 @@ class yf_menus_editor {
 	*/
 	function show() {
 		// Get num items 
-		$Q = db()->query("SELECT `menu_id`, COUNT(*) AS `num` FROM `".db('menu_items')."` GROUP BY `menu_id`");
+		$Q = db()->query("SELECT menu_id, COUNT(*) AS num FROM ".db('menu_items')." GROUP BY menu_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_items[$A["menu_id"]] = $A["num"];
 		}
 		// Get menus
-		$Q = db()->query("SELECT * FROM `".db('menus')."` ORDER BY `type` DESC");
+		$Q = db()->query("SELECT * FROM ".db('menus')." ORDER BY type DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -190,7 +190,7 @@ class yf_menus_editor {
 			return _e(t("No id!"));
 		}
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
@@ -205,7 +205,7 @@ class yf_menus_editor {
 					"stpl_name"		=> _es($_POST["stpl_name"]),
 					"method_name"	=> _es($_POST["method_name"]),
 					"active"		=> (int)((bool)$_POST["active"]),
-				), "`id`=".intval($_GET["id"]));
+				), "id=".intval($_GET["id"]));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("menus");
@@ -258,7 +258,7 @@ class yf_menus_editor {
 			return _e(t("No id!"));
 		}
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
@@ -293,7 +293,7 @@ class yf_menus_editor {
 			}
 			$_new_parent_id = intval($_old_to_new[$_old_parent_id]);
 
-			db()->UPDATE("menu_items", array("parent_id" => $_new_parent_id), "`id`=".intval($_new_id));
+			db()->UPDATE("menu_items", array("parent_id" => $_new_parent_id), "id=".intval($_new_id));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -311,12 +311,12 @@ class yf_menus_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current menu info
 		if (!empty($_GET["id"])) {
-			$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+			$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete menu and its items
 		if (!empty($menu_info["id"])) {
-			db()->query("DELETE FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM `".db('menu_items')."` WHERE `menu_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('menus')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('menu_items')." WHERE menu_id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -337,11 +337,11 @@ class yf_menus_editor {
 	function activate_menu() {
 		// Try to find such menu in db
 		if (!empty($_GET["id"])) {
-			$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+			$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($menu_info)) {
-			db()->UPDATE("menus", array("active" => (int)!$menu_info["active"]), "`id`=".intval($menu_info["id"]));
+			db()->UPDATE("menus", array("active" => (int)!$menu_info["active"]), "id=".intval($menu_info["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -365,7 +365,7 @@ class yf_menus_editor {
 			return _e(t("No id!"));
 		}
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info)) {
 			return _e(t("No such menu!"));
 		}
@@ -469,17 +469,17 @@ class yf_menus_editor {
 			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
 		}
 
-		$query = "UPDATE `".db('menu_items')."` SET ";
+		$query = "UPDATE ".db('menu_items')." SET ";
 
 		if (!empty($_POST["type_id"])) {
-			$query.= "`type_id`='".$_POST["type_id"]."'";
+			$query.= "type_id='".$_POST["type_id"]."'";
 		}
 
 		if (intval($_POST["parent_id"]) != -1) {
 			if(!empty($_POST["type_id"])) {
 				$query.=",";
 			}
-			$query.= " `parent_id`='".$_POST["parent_id"]."'";
+			$query.= " parent_id='".$_POST["parent_id"]."'";
 		}
 
 		if (!empty($_POST["active"])) {
@@ -487,7 +487,7 @@ class yf_menus_editor {
 			if( (!empty($_POST["type_id"])) || (intval($_POST["parent_id"]) != -1) ) {
 				$query.=",";
 			}
-			$query.= " `active`='".$_POST["active"]."'";
+			$query.= " active='".$_POST["active"]."'";
 		}
 
 		if (!empty($_POST["groups"])) {
@@ -499,10 +499,10 @@ class yf_menus_editor {
 			if( (!empty($_POST["type_id"])) || (intval($_POST["parent_id"]) != -1) || (!empty($_POST["active"])) ) {
 				$query.=",";
 			}
-			$query.= " `user_groups`='"._es($_POST["groups"])."'";
+			$query.= " user_groups='"._es($_POST["groups"])."'";
 		}
 
-		$query.=  " WHERE `id` IN(".implode(",", $_POST["item"]).")";
+		$query.=  " WHERE id IN(".implode(",", $_POST["item"]).")";
 
 	   	db()->query($query);
 
@@ -529,7 +529,7 @@ class yf_menus_editor {
 			return $this->group_save_items();
 		}
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info)) {
 			return _e(t("No such menu!"));
 		}
@@ -547,7 +547,7 @@ class yf_menus_editor {
 				"location"	=> _es($_POST["location"][$A["id"]]),
 				"order"		=> intval($_POST["order"][$A["id"]]),
 				"icon"		=> _es($_POST["icon"][$A["id"]]),
-			), "`id`=".intval($A["id"]));
+			), "id=".intval($A["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -563,13 +563,13 @@ class yf_menus_editor {
 	function _multi_delete_items () {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info)) {
 			return _e(t("No such menu!"));
 		}
 		foreach ((array)$_POST["item"] as $_item_id) {
-			db()->query("DELETE FROM `".db('menu_items')."` WHERE `id`=".intval($_item_id));
-			db()->UPDATE("menu_items", array("parent_id" => 0), "`parent_id`=".intval($_item_id));
+			db()->query("DELETE FROM ".db('menu_items')." WHERE id=".intval($_item_id));
+			db()->UPDATE("menu_items", array("parent_id" => 0), "parent_id=".intval($_item_id));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -588,7 +588,7 @@ class yf_menus_editor {
 			return _e(t("No id!"));
 		}
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
@@ -673,7 +673,7 @@ class yf_menus_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current menu info
 		if (!empty($_GET["id"])) {
-			$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+			$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($menu_info["id"]) || empty($_POST)) {
 			return js_redirect($_SERVER["HTTP_REFERER"], 0);
@@ -710,12 +710,12 @@ class yf_menus_editor {
 			return _e(t("No id!"));
 		}
 		// Get current item info
-		$item_info = db()->query_fetch("SELECT * FROM `".db('menu_items')."` WHERE `id`=".intval($_GET["id"]));
+		$item_info = db()->query_fetch("SELECT * FROM ".db('menu_items')." WHERE id=".intval($_GET["id"]));
 		if (empty($item_info["id"])) {
 			return _e(t("No such menu item!"));
 		}
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($item_info["menu_id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($item_info["menu_id"]));
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
@@ -734,7 +734,7 @@ class yf_menus_editor {
 				"type_id"		=> intval($_POST["type_id"]),
 				"order"			=> intval($_POST["item_order"]),
 				"active"		=> intval($_POST["active"]),
-			), "`id`=".intval($item_info["id"]));
+			), "id=".intval($item_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
 				cache()->refresh("menu_items");
@@ -810,12 +810,12 @@ class yf_menus_editor {
 			return _e(t("No id!"));
 		}
 		// Get current item info
-		$item_info = db()->query_fetch("SELECT * FROM `".db('menu_items')."` WHERE `id`=".intval($_GET["id"]));
+		$item_info = db()->query_fetch("SELECT * FROM ".db('menu_items')." WHERE id=".intval($_GET["id"]));
 		if (empty($item_info["id"])) {
 			return _e(t("No such menu item!"));
 		}
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($item_info["menu_id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($item_info["menu_id"]));
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
@@ -836,8 +836,8 @@ class yf_menus_editor {
 	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		if (!isset($this->_menu_items_from_db)) {
 			$Q = db()->query(
-				"SELECT * FROM `".db('menu_items')."` 
-				WHERE `menu_id`=".intval($menu_id)." 
+				"SELECT * FROM ".db('menu_items')." 
+				WHERE menu_id=".intval($menu_id)." 
 				ORDER BY `order` ASC"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -880,11 +880,11 @@ class yf_menus_editor {
 	function activate_item() {
 		// Try to find such menu item in db
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM `".db('menu_items')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT * FROM ".db('menu_items')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do change activity status
 		if (!empty($item_info)) {
-			db()->UPDATE("menu_items", array("active" => (int)!$item_info["active"]), "`id`=".intval($item_info["id"]));
+			db()->UPDATE("menu_items", array("active" => (int)!$item_info["active"]), "id=".intval($item_info["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -906,12 +906,12 @@ class yf_menus_editor {
 		$_GET["id"] = intval($_GET["id"]);
 		// Try to find such menu item in db
 		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM `".db('menu_items')."` WHERE `id`=".intval($_GET["id"]));
+			$item_info = db()->query_fetch("SELECT * FROM ".db('menu_items')." WHERE id=".intval($_GET["id"]));
 		}
 		// Do delete menu and its items
 		if (!empty($item_info)) {
-			db()->query("DELETE FROM `".db('menu_items')."` WHERE `id`=".intval($_GET["id"]));
-			db()->UPDATE("menu_items", array("parent_id" => 0), "`parent_id`=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('menu_items')." WHERE id=".intval($_GET["id"]));
+			db()->UPDATE("menu_items", array("parent_id" => 0), "parent_id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
@@ -933,7 +933,7 @@ class yf_menus_editor {
 		// If no ID set - mean that simply export all menus with items
 		$_GET["id"] = intval($_GET["id"]);
 		// Get current menu info
-		$menu_info = db()->query_fetch("SELECT * FROM `".db('menus')."` WHERE `id`=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		// Prepare db export params
 		$params = array(
 			"single_table"	=> "",
@@ -945,8 +945,8 @@ class yf_menus_editor {
 		);
 		if ($menu_info["id"]) {
 			$params["where"] = array(
-				db('menus')		=> "`id`=".intval($menu_info["id"]),
-				db('menu_items')	=> "`menu_id`=".intval($menu_info["id"]),
+				db('menus')		=> "id=".intval($menu_info["id"]),
+				db('menu_items')	=> "menu_id=".intval($menu_info["id"]),
 			);
 		}
 		$EXPORTED_SQL = module("db_manager")->export($params);

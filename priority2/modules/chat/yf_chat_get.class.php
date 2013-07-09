@@ -24,7 +24,7 @@ class yf_chat_get {
 	*/
 	function _show_commands() {
 		// Update lst user visit
-		db()->query("UPDATE `".db('chat_online')."` SET `last_visit`=".time()." WHERE `user_id`=".intval(CHAT_USER_ID));
+		db()->query("UPDATE ".db('chat_online')." SET last_visit=".time()." WHERE user_id=".intval(CHAT_USER_ID));
 		// USERS
 		$k_users_string = trim(!empty($_POST["known_users"]) ? $_POST["known_users"] : $_GET["known_users"]);
 		if (!empty($k_users_string)) {
@@ -99,12 +99,12 @@ class yf_chat_get {
 		}
 		// Create additional condition for the not first time query
 		if ($first_time) {
-			$add_sql = " ORDER BY `add_date` DESC LIMIT ".intval($this->CHAT_OBJ->FIRST_SHOW_MSGS);
+			$add_sql = " ORDER BY add_date DESC LIMIT ".intval($this->CHAT_OBJ->FIRST_SHOW_MSGS);
 		} else {
-			$add_sql = " AND `add_date`>".intval(CHAT_USER_LAST_VISIT - $this->CHAT_OBJ->REFRESH_TIME - $this->CHAT_OBJ->OFFLINE_TTL)." ORDER BY `add_date` DESC";
+			$add_sql = " AND add_date>".intval(CHAT_USER_LAST_VISIT - $this->CHAT_OBJ->REFRESH_TIME - $this->CHAT_OBJ->OFFLINE_TTL)." ORDER BY add_date DESC";
 		}
 		// Select messages from db
-		$Q = db()->query("SELECT * FROM `".db('chat_messages')."` WHERE `room_id`=".intval(CHAT_USER_ROOM_ID)." ".$add_sql);
+		$Q = db()->query("SELECT * FROM ".db('chat_messages')." WHERE room_id=".intval(CHAT_USER_ROOM_ID)." ".$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			// Skip messages if user is ignored
 			if ($this->CHAT_OBJ->ignore_list[$A["user_from"]]) {
@@ -150,12 +150,12 @@ class yf_chat_get {
 		}
 		// Create additional condition for the not first time query
 		if ($first_time) {
-			$add_sql = " AND `add_date` > ".(time() - $this->CHAT_OBJ->FIRST_PRIVATE_TTL)." ORDER BY `add_date` DESC LIMIT ".intval($this->CHAT_OBJ->FIRST_SHOW_MSGS);
+			$add_sql = " AND add_date > ".(time() - $this->CHAT_OBJ->FIRST_PRIVATE_TTL)." ORDER BY add_date DESC LIMIT ".intval($this->CHAT_OBJ->FIRST_SHOW_MSGS);
 		} else {
-			$add_sql =  " AND `add_date`>".intval(CHAT_USER_LAST_VISIT - $this->CHAT_OBJ->REFRESH_TIME - $this->CHAT_OBJ->OFFLINE_TTL)." ORDER BY `add_date` DESC";
+			$add_sql =  " AND add_date>".intval(CHAT_USER_LAST_VISIT - $this->CHAT_OBJ->REFRESH_TIME - $this->CHAT_OBJ->OFFLINE_TTL)." ORDER BY add_date DESC";
 		}
 		// Select messages from db
-		$Q = db()->query("SELECT * FROM `".db('chat_private')."` WHERE (`user_from`=".intval(CHAT_USER_ID)." OR `user_to`=".intval(CHAT_USER_ID).") AND `room_id`=".intval(CHAT_USER_ROOM_ID)." ".$add_sql);
+		$Q = db()->query("SELECT * FROM ".db('chat_private')." WHERE (user_from=".intval(CHAT_USER_ID)." OR user_to=".intval(CHAT_USER_ID).") AND room_id=".intval(CHAT_USER_ROOM_ID)." ".$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			// Skip messages if user is ignored
 			if ($this->CHAT_OBJ->ignore_list[$A["user_from"]]) {

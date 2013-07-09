@@ -72,9 +72,9 @@ class yf_comments {
 	function _init () {
 		define("COMMENTS_CLASS_NAME", "comments");
 		define("COMMENTS_MODULES_DIR", "modules/". COMMENTS_CLASS_NAME."/");
-		// Fix for the case when skipping auto-assignment of $this->USER_ID in main class
-		if (!$this->USER_ID && main()->USER_ID) {
-			$this->USER_ID = main()->USER_ID;
+		// Fix for the case when skipping auto-assignment of main()->USER_ID in main class
+		if (!main()->USER_ID && main()->USER_ID) {
+			main()->USER_ID = main()->USER_ID;
 		}
 	}
 
@@ -96,10 +96,10 @@ class yf_comments {
 			return "";
 		}
 		// Get current profile comments from db
-		$sql		= "SELECT * FROM `".db('comments')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : "");
-		$order_sql	= " ORDER BY `add_date` DESC";
+		$sql		= "SELECT * FROM ".db('comments')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : "");
+		$order_sql	= " ORDER BY add_date DESC";
 		// Connect pager
-		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT `id`", $sql), $PAGER_PATH, null, $this->NUM_PER_PAGE);
+		list($add_sql, $pages, $total) = common()->divide_pages(str_replace("SELECT *", "SELECT id", $sql), $PAGER_PATH, null, $this->NUM_PER_PAGE);
 		// Process items
 		$Q = db()->query($sql.$order_sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -109,7 +109,7 @@ class yf_comments {
 			}
 		}
 		// set comments read
-		if(!empty($this->USER_ID) && !empty($comments_array)){
+		if(!empty(main()->USER_ID) && !empty($comments_array)){
 			$OBJ = &main()->init_class("unread");
 			if (is_object($OBJ)) {
 				$OBJ->_set_read("comments", array_keys($comments_array));
@@ -151,7 +151,7 @@ class yf_comments {
 					"object_id"	=> $comment_info["object_id"],
 				));
 			} else {
-				$edit_allowed	= $this->USER_ID && $comment_info["user_id"] == $this->USER_ID;
+				$edit_allowed	= main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
 			// Check if delete comment allowed
 			if ($delete_allowed_check_method) {
@@ -160,7 +160,7 @@ class yf_comments {
 					"object_id" => $comment_info["object_id"]
 				));
 			} else {
-				$delete_allowed = $this->USER_ID && $comment_info["user_id"] == $this->USER_ID;
+				$delete_allowed = main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
 			
 			// Hack for use from the admin section
@@ -194,7 +194,7 @@ class yf_comments {
 		$items .= tpl()->parse($STPL_NAME_ITEM, $replace2);
 		}
 		
-		if(!empty($this->USER_ID)){
+		if(!empty(main()->USER_ID)){
 			$add_comment_form = $this->_add($params);
 		}else{
 			$add_comment_form = "";
@@ -210,7 +210,7 @@ class yf_comments {
 			"comments_pages"	=> $pages,
 			"num_comments"		=> intval($total),
 			"add_comment_form"	=> $add_comment_form,
-			"login_link"		=> empty($this->USER_ID) && MAIN_TYPE_USER ? "./?object=login_form&go_url=".$OBJECT_NAME.";".$_GET["action"].";id=".$OBJECT_ID : "",
+			"login_link"		=> empty(main()->USER_ID) && MAIN_TYPE_USER ? "./?object=login_form&go_url=".$OBJECT_NAME.";".$_GET["action"].";id=".$OBJECT_ID : "",
 		);
 		return tpl()->parse($STPL_NAME_MAIN, $replace);
 	}
@@ -234,8 +234,8 @@ class yf_comments {
 			return "";
 		}
 		// Get current profile comments from db
-		$sql		= "SELECT * FROM `".db('comments')."` WHERE `object_name`='"._es($OBJECT_NAME)."' AND `object_id`=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND `active`='1' " : "");
-		$order_sql	= " ORDER BY `add_date` ASC";
+		$sql		= "SELECT * FROM ".db('comments')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : "");
+		$order_sql	= " ORDER BY add_date ASC";
 		// Process items
 		$Q = db()->query($sql.$order_sql);
 		while ($A = db()->fetch_assoc($Q)) {
@@ -244,7 +244,7 @@ class yf_comments {
 			$users_ids[$A["user_id"]] = $A["user_id"];
 		}
 		// set comments read
-		if(!empty($this->USER_ID) && !empty($comments_array)){
+		if(!empty(main()->USER_ID) && !empty($comments_array)){
 			$OBJ = &main()->init_class("unread");
 			if (is_object($OBJ)) {
 				$ids = $OBJ->_set_read("comments", array_keys($comments_array));
@@ -303,7 +303,7 @@ class yf_comments {
 					"object_id" => $comment_info["object_id"]
 				));
 			} else {
-				$edit_allowed	= $this->USER_ID && $comment_info["user_id"] == $this->USER_ID;
+				$edit_allowed	= main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
 			// Check if delete comment allowed
 			if ($delete_allowed_check_method) {
@@ -312,7 +312,7 @@ class yf_comments {
 					"object_id" => $comment_info["object_id"]
 				));
 			} else {
-				$delete_allowed = $this->USER_ID && $comment_info["user_id"] == $this->USER_ID;
+				$delete_allowed = main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
 			// Hack for use from the admin section
 			if (MAIN_TYPE_ADMIN) {
@@ -346,7 +346,7 @@ class yf_comments {
 			$items .= tpl()->parse($STPL_NAME_ITEM, $replace2);
 		}
 		
-		if(!empty($this->USER_ID)){
+		if(!empty(main()->USER_ID)){
 			$add_comment_form = $this->_add($params);
 		}else{
 			$add_comment_form = "";
@@ -362,7 +362,7 @@ class yf_comments {
 			"comments_pages"		=> $pages,
 			"num_comments"			=> intval($total),
 			"add_comment_form"		=> $add_comment_form,
-			"login_link"			=> empty($this->USER_ID) && MAIN_TYPE_USER ? "./?object=login_form&go_url=".$OBJECT_NAME.";".$_GET["action"].";id=".$OBJECT_ID : "",
+			"login_link"			=> empty(main()->USER_ID) && MAIN_TYPE_USER ? "./?object=login_form&go_url=".$OBJECT_NAME.";".$_GET["action"].";id=".$OBJECT_ID : "",
 			"add_comment_action"	=> $FORM_ACTION,
 		);
 		return tpl()->parse($STPL_NAME_MAIN, $replace);
@@ -415,7 +415,7 @@ class yf_comments {
 			return false;
 		}
 		// Do get number of ids from db
-		$Q = db()->query("SELECT COUNT(`id`) AS `num`,`object_id` FROM `".db('comments')."` WHERE `object_id` IN(".implode(",", $OBJECTS_IDS).") AND `object_name`='"._es($OBJECT_NAME)."' GROUP BY `object_id`");
+		$Q = db()->query("SELECT COUNT(id) AS num,object_id FROM ".db('comments')." WHERE object_id IN(".implode(",", $OBJECTS_IDS).") AND object_name='"._es($OBJECT_NAME)."' GROUP BY object_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_comments_by_object_id[$A["object_id"]] = $A["num"];
 		}
@@ -519,7 +519,7 @@ class yf_comments {
 			return;
 		}
 		
-		$Q = db()->query("SELECT `id` FROM `".db('comments')."` WHERE `user_id` != ".intval($this->USER_ID)." AND `add_date` > ".$this->_user_info["last_view"]);
+		$Q = db()->query("SELECT id FROM ".db('comments')." WHERE user_id != ".intval(main()->USER_ID)." AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
@@ -539,7 +539,7 @@ class yf_comments {
 	*
 	*/
 	function view_unread () {
-		if(empty($this->USER_ID)){
+		if(empty(main()->USER_ID)){
 			return;
 		}
 	
@@ -551,8 +551,8 @@ class yf_comments {
 		$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
 		
 		if(!empty($ids)){
-			$sql		= "SELECT `text`,`object_name`,`id`,`object_id` FROM `".db('comments')."` WHERE `id` IN(".implode(",", (array)$ids).")";
-			$order_sql	= " ORDER BY `add_date` DESC";
+			$sql		= "SELECT text,object_name,id,object_id FROM ".db('comments')." WHERE id IN(".implode(",", (array)$ids).")";
+			$order_sql	= " ORDER BY add_date DESC";
 			list($add_sql, $pages, $total) = common()->divide_pages($sql);
 			$Q = db()->query($sql.$order_sql.$add_sql);
 			while ($A = db()->fetch_assoc($Q)) {

@@ -113,7 +113,7 @@ class yf_form {
 		}
 		// If SQL query or $_GET['id'] exists - try to grab values for the record
 		if ($_GET['id'] && !$this->sql) {
-			$this->sql = "SELECT * FROM `".$this->db_table."` WHERE `id`=".$_GET['id'];
+			$this->sql = "SELECT * FROM ".$this->db_table." WHERE id=".$_GET['id'];
 			$A = db()->fetch_assoc(db()->query($this->sql));
 		}
 		// Get all database tables
@@ -130,7 +130,7 @@ class yf_form {
 			$_short_table_name = substr($_short_table_name, strlen("sys_"));
 		}
 		// Process all table fields
-		$dq = db()->query("DESCRIBE `".$this->db_table."`");
+		$dq = db()->query("DESCRIBE ".$this->db_table."");
 		while ($da = db()->fetch_assoc($dq)) {
 			// Field name
 			$name = $da['Field'];
@@ -182,7 +182,7 @@ class yf_form {
 					// If parser has found database table - parse it contents
 					if (!empty($auto_found_table)) {
 						$type = "s";
-						$Q1 = db()->query("SELECT * FROM `".$auto_found_table."`");
+						$Q1 = db()->query("SELECT * FROM ".$auto_found_table."");
 						while ($A1 = db()->fetch_assoc($Q1))	$auto_values[$A1['id']] = translate($A1['name']);
 						$props['selected'] = $A[$name];
 						$A[$name] = serialize($auto_values);
@@ -468,7 +468,7 @@ class yf_form {
 	*  Find Table
 	*/
 	function _find_table ($tbl_name = "") {
-		if (db()->query_num_rows("SHOW COLUMNS FROM `".$tbl_name."` LIKE 'name'"))
+		if (db()->query_num_rows("SHOW COLUMNS FROM ".$tbl_name." LIKE 'name'"))
 			return $tbl_name;
 		else return false;
 	}

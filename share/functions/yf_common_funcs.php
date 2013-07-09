@@ -19,7 +19,7 @@ if (!function_exists("t")) {
 if (!function_exists("show_text")) {
 	function show_text ($text = "") {
 		$text_l = str_replace(" ", "_", strtolower($text));
-		list($value) = db()->query_fetch("SELECT `value` AS `0` FROM `".db('texts')."` WHERE `name`='".db()->es($text_l)."' AND `active`='1' AND `language`='".db()->es(conf('language'))."'");
+		list($value) = db()->query_fetch("SELECT value AS `0` FROM ".db('texts')." WHERE name='".db()->es($text_l)."' AND active='1' AND language='".db()->es(conf('language'))."'");
 		$text = strlen($value) ? stripslashes($value) : $text_l;
 		return str_replace("_", " ", $text);
 	}
@@ -111,7 +111,7 @@ if (!function_exists("text_filter")) {
 		if (defined('SITE_BAD_WORD_FILTER') && SITE_BAD_WORD_FILTER == 1) {
 			$bad_words = conf("BAD_WORDS_ARRAY");
 			if (is_null($bad_words)) {
-				$Q = db()->query("SELECT `word` FROM `".db('badwords')."`");
+				$Q = db()->query("SELECT word FROM ".db('badwords')."");
 				while ($A = db()->fetch_assoc($Q)) {
 					$bad_words[] = $A["word"];
 				}
@@ -675,7 +675,7 @@ if (!function_exists('_server_info')) {
 				return false;
 			}
 			if (!$cached_server_info[$server_id]) {
-				$cached_server_info[$server_id] = db()->query_fetch("SELECT * FROM `".db('servers')."` WHERE `id`=".$server_id);
+				$cached_server_info[$server_id] = db()->query_fetch("SELECT * FROM ".db('servers')." WHERE id=".$server_id);
 			}
 			$server_info = $cached_server_info[$server_id];
 		} elseif (is_array($server_id) && !empty($server_id)) {
@@ -685,7 +685,7 @@ if (!function_exists('_server_info')) {
 					$ids_to_get_info[] = $_id;
 				}
 			}
-			$Q = db()->query("SELECT * FROM `".db('servers')."` WHERE `id` IN(".implode(",", $ids_to_get_info).")");
+			$Q = db()->query("SELECT * FROM ".db('servers')." WHERE id IN(".implode(",", $ids_to_get_info).")");
 			while($A = db()->fetch_assoc($Q)) {
 				$cached_server_info[$A["id"]] = $A;
 			}
@@ -709,7 +709,7 @@ if (!function_exists('_account_info')) {
 				return false;
 			}
 			if (!$cached_account_info[$account_id]) {
-				$cached_account_info[$account_id] = db()->query_fetch("SELECT * FROM `".db('host_accounts')."` WHERE `id`=".$account_id);
+				$cached_account_info[$account_id] = db()->query_fetch("SELECT * FROM ".db('host_accounts')." WHERE id=".$account_id);
 			}
 			$account_info = $cached_account_info[$account_id];
 		} elseif (is_array($account_id)) {
@@ -719,7 +719,7 @@ if (!function_exists('_account_info')) {
 					$ids_to_get_info[] = $_id;
 				}
 			}
-			$Q = db()->query("SELECT * FROM `".db('host_accounts')."` WHERE `id` IN(".implode(",", $ids_to_get_info).")");
+			$Q = db()->query("SELECT * FROM ".db('host_accounts')." WHERE id IN(".implode(",", $ids_to_get_info).")");
 			while($A = db()->fetch_assoc($Q)) {
 				$cached_account_info[$A["id"]] = $A;
 			}

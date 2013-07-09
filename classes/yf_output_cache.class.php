@@ -514,47 +514,47 @@ class yf_output_cache {
 	* Refreshing cache files (by given array of params)
 	*/
 	function _clean_by_params ($params = array()) {
-		$sql = "SELECT `hash` FROM `".db('cache_info')."` WHERE 1=1 ";
+		$sql = "SELECT hash FROM ".db('cache_info')." WHERE 1=1 ";
 		if (!empty($params["object"])) {
-			$add_sql .= " AND `object` IN('"._es(is_array($params["object"]) ? implode("','", $params["object"]) : $params["object"])."') ";
+			$add_sql .= " AND object IN('"._es(is_array($params["object"]) ? implode("','", $params["object"]) : $params["object"])."') ";
 		}
 		if (!empty($params["action"])) {
-			$add_sql .= " AND `action` IN('"._es(is_array($params["action"]) ? implode("','", $params["action"]) : $params["action"])."') ";
+			$add_sql .= " AND action IN('"._es(is_array($params["action"]) ? implode("','", $params["action"]) : $params["action"])."') ";
 		}
 		if (!empty($params["site_id"])) {
-			$add_sql .= " AND `site_id`=".intval($params["site_id"])." ";
+			$add_sql .= " AND site_id=".intval($params["site_id"])." ";
 		}
 		if (!empty($params["group"])) {
-			$add_sql .= " AND `group`=".intval($params["group"])." ";
+			$add_sql .= " AND group=".intval($params["group"])." ";
 		}
 		if (!empty($params["query_string"])) {
-			$add_sql .= " AND `query_string` LIKE '%"._es($params["query_string"])."%' ";
+			$add_sql .= " AND query_string LIKE '%"._es($params["query_string"])."%' ";
 		} else {
 			if (!empty($params["id"])) {
-				$add_sql .= " AND `query_string` LIKE '%&id=".intval($params["id"])."%' ";
+				$add_sql .= " AND query_string LIKE '%&id=".intval($params["id"])."%' ";
 			}
 			if (!empty($params["cat_id"])) {
 				_get_categories();
 				$try_cat_name = conf('categories::'.$params["cat_id"].'::name');
 				if (!empty($try_cat_name)) {
-					$add_sql .= " AND `query_string` LIKE '%&cat_name="._es(strtolower(str_replace(" ", "_", $try_cat_name)))."%' ";
+					$add_sql .= " AND query_string LIKE '%&cat_name="._es(strtolower(str_replace(" ", "_", $try_cat_name)))."%' ";
 				}
 			}
 			if (!empty($params["cat_name"])) {
-				$add_sql .= " AND `query_string` LIKE '%&cat_name="._es(strtolower($params["cat_name"]))."%' ";
+				$add_sql .= " AND query_string LIKE '%&cat_name="._es(strtolower($params["cat_name"]))."%' ";
 			}
 			if (!empty($params["city_name"])) {
-				$add_sql .= " AND `query_string` LIKE '%&city="._es(strtolower($params["city_name"]))."%' ";
+				$add_sql .= " AND query_string LIKE '%&city="._es(strtolower($params["city_name"]))."%' ";
 			}
 			if (!empty($params["city_id"])) {
 				_get_cities();
 				$try_city_name = conf('cities::'.$params["cat_id"].'::phrase');
 				if (!empty($try_city_name)) {
-					$add_sql .= " AND `query_string` LIKE '%&city="._es(strtolower(str_replace(" ", "_", $try_city_name)))."%' ";
+					$add_sql .= " AND query_string LIKE '%&city="._es(strtolower(str_replace(" ", "_", $try_city_name)))."%' ";
 				}
 			}
 			if (!empty($params["sex"])) {
-				$add_sql .= " AND `query_string` LIKE '%&sex="._es(strtolower($params["sex"]))."%' ";
+				$add_sql .= " AND query_string LIKE '%&sex="._es(strtolower($params["sex"]))."%' ";
 			}
 		}
 		// Check if no params processed

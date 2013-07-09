@@ -456,7 +456,7 @@ class yf_db_mysql41 extends yf_db_driver {
 		}
 		// $where contains numeric id
 		if (is_numeric($where)) {
-			$where = "`id`=".intval($where);
+			$where = "id=".intval($where);
 		}
 		// Prepare column names and values
 		$tmp_data = array();

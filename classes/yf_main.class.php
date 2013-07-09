@@ -950,7 +950,7 @@ class yf_main {
 		}
 		// Try to load classes from db
 		if (empty($loaded_class_name) && $this->ALLOW_SOURCE_FROM_DB && is_object($this->db)) {
-			$result_from_db = $this->db->query_fetch("SELECT * FROM `".db('code_source')."` WHERE `keyword`='"._es($class_name)."'");
+			$result_from_db = $this->db->query_fetch("SELECT * FROM ".db('code_source')." WHERE keyword='"._es($class_name)."'");
 			if (!empty($result_from_db)) {
 				eval($result_from_db["source"]);
 			}

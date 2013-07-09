@@ -20,8 +20,8 @@ class yf_multi_accounts {
 	* Multi-accounts checks
 	*/
 	function _check ($target_user_id = 0, $source_user_id = 0) {
-		if (empty($source_user_id) && !empty($this->USER_ID)) {
-			$source_user_id = $this->USER_ID;
+		if (empty($source_user_id) && !empty(main()->USER_ID)) {
+			$source_user_id = main()->USER_ID;
 		}
 		if (empty($target_user_id) || empty($source_user_id)) {
 			return false;
@@ -37,11 +37,11 @@ class yf_multi_accounts {
 		);
 		// Try to get multi-accounts infos
 		$Q = db()->query(
-			"SELECT `user_id`, `ip_match`, `cookie_match`, `matching_users` 
-			FROM `".db('check_multi_accounts')."` 
-			WHERE `user_id` IN(".implode(",",$users_ids).")"
+			"SELECT user_id, ip_match, cookie_match, matching_users 
+			FROM ".db('check_multi_accounts')." 
+			WHERE user_id IN(".implode(",",$users_ids).")"
 			// Here we check fast if more detailed investigation needed
-			.(" AND (`ip_match` = '1' OR `cookie_match` = '1') ")
+			.(" AND (ip_match = '1' OR cookie_match = '1') ")
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$multi_infos[$A["user_id"]] = $A;
@@ -68,15 +68,15 @@ class yf_multi_accounts {
 		) {
 			$Q = db()->query(
 				"SELECT 
-					COUNT(DISTINCT(`ip`)) AS `multi_ips`
-					, `user_id`
-					, CAST(GROUP_CONCAT(DISTINCT `ip` ORDER BY `ip` ASC) AS CHAR) AS `ips_list`
-				FROM `".db('log_auth')."` 
-				WHERE `user_id` IN (".implode(",",$users_ids).") 
-					".($this->MULTI_IP_TTL ? " AND `date` >= ".intval(time() - $this->MULTI_IP_TTL * 86400) : "")."
-				GROUP BY `user_id` 
-				HAVING `multi_ips` > 1 
-				ORDER BY `multi_ips` DESC"
+					COUNT(DISTINCT(ip)) AS multi_ips
+					, user_id
+					, CAST(GROUP_CONCAT(DISTINCT ip ORDER BY ip ASC) AS CHAR) AS ips_list
+				FROM ".db('log_auth')." 
+				WHERE user_id IN (".implode(",",$users_ids).") 
+					".($this->MULTI_IP_TTL ? " AND date >= ".intval(time() - $this->MULTI_IP_TTL * 86400) : "")."
+				GROUP BY user_id 
+				HAVING multi_ips > 1 
+				ORDER BY multi_ips DESC"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$last_multi_ips[$A["user_id"]] = explode(",", $A["ips_list"]);

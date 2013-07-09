@@ -63,7 +63,7 @@ class yf_blog_settings {
 					$sql["blog_title"]	= _es($_POST["blog_title"]);
 				}
 				// Generate SQL
-				db()->UPDATE("blog_settings", $sql, "`user_id`=".intval($this->BLOG_OBJ->USER_ID));
+				db()->UPDATE("blog_settings", $sql, "user_id=".intval($this->BLOG_OBJ->USER_ID));
 
 				$this->BLOG_OBJ->_callback_on_update(array("page_header" => $_POST["blog_title"]));
 
@@ -92,7 +92,7 @@ class yf_blog_settings {
 			"max_custom_cats"	=> intval($this->BLOG_OBJ->MAX_BLOG_LINKS_NUM),
 			"blog_privacy_box"	=> $this->BLOG_OBJ->_box("privacy", $_POST["privacy"]),
 			"blog_comments_box"	=> $this->BLOG_OBJ->_box("allow_comments", $_POST["allow_comments"]),
-			"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>$this->USER_ID)) : "",
+			"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
 		);
 		return tpl()->parse(BLOG_CLASS_NAME."/start_blog", $replace);
 	}
@@ -143,7 +143,7 @@ class yf_blog_settings {
 
 					$sql["blog_title"]	= _es($_POST["blog_title"]);
 				}
-				db()->UPDATE("blog_settings", $sql, "`user_id`=".intval($this->BLOG_OBJ->USER_ID));
+				db()->UPDATE("blog_settings", $sql, "user_id=".intval($this->BLOG_OBJ->USER_ID));
 				// Synchronize blog title with site menu
 				$this->BLOG_OBJ->_callback_on_update(array("page_header" => $_POST["blog_title"]));
 				// Synchronize all blogs stats
@@ -186,7 +186,7 @@ class yf_blog_settings {
 				"blog_privacy_box"	=> $this->BLOG_OBJ->_box("privacy", $_POST["privacy"]),
 				"blog_comments_box"	=> $this->BLOG_OBJ->_box("allow_comments", $_POST["allow_comments"]),
 				"manage_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts"._add_get(array("page")),
-				"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>$this->USER_ID)) : "",
+				"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
 			);
 			$body = tpl()->parse(BLOG_CLASS_NAME."/edit_blog_settings", $replace);
 		}
@@ -200,16 +200,16 @@ class yf_blog_settings {
 		if (empty($user_id)) {
 			return false;
 		}
-		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT `user_id` FROM `".db('blog_settings')."` WHERE `user_id`=".intval($user_id));
+		$ACCOUNT_EXISTS = db()->query_num_rows("SELECT user_id FROM ".db('blog_settings')." WHERE user_id=".intval($user_id));
 		if ($ACCOUNT_EXISTS) {
 			return false;
 		}
 		// Set global tags settings as defaults
-		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>$this->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
+		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
 		// Process SQL
-		$sql = "INSERT INTO `".db('blog_settings')."` (
-				`user_id`,
-				`allow_tagging`
+		$sql = "INSERT INTO ".db('blog_settings')." (
+				user_id,
+				allow_tagging
 			) VALUES ( 
 				".intval($user_id).",
 				".intval($default_tags_settings)."
@@ -284,97 +284,97 @@ class yf_blog_settings {
 	function _update_all_stats () {
 		// Set blog stats to initial values
 		db()->query(
-			"UPDATE `".db('blog_settings')."` 
-			SET `num_posts` = 0,
-				`num_views` = 0,
-				`num_comments` = 0"
+			"UPDATE ".db('blog_settings')." 
+			SET num_posts = 0,
+				num_views = 0,
+				num_comments = 0"
 		);
 		// We need to create blog settings tables for all blog posts
 		db()->query(
-			"REPLACE INTO `".db('blog_settings')."`
-					(`user_id`,`user_nick`) 
-				SELECT `u`.`id`,`u`.`nick` 
-				FROM `".db('user')."` AS `u`,
-					`".db('blog_posts')."` AS `b`
-				WHERE `b`.`user_id` = `u`.`id` 
-					AND `u`.`id` NOT IN ( 
-						SELECT `s`.`user_id` FROM `".db('blog_settings')."` AS `s`
+			"REPLACE INTO ".db('blog_settings')."
+					(user_id,user_nick) 
+				SELECT u.id,u.nick 
+				FROM ".db('user')." AS u,
+					".db('blog_posts')." AS b
+				WHERE b.user_id = u.id 
+					AND u.id NOT IN ( 
+						SELECT s.user_id FROM ".db('blog_settings')." AS s
 					)
-/*			ON DUPLICATE KEY UPDATE `user_nick` = VALUES(`user_nick`)*/"
+/*			ON DUPLICATE KEY UPDATE user_nick = VALUES(user_nick)*/"
 		);
 		// Update user_nick in stats
 		db()->query(
-			"UPDATE `".db('blog_settings')."` AS `s`,
-					`".db('user')."` AS `u`
-			SET `s`.`user_nick` = `u`.`nick`
-			WHERE `s`.`user_id` = `u`.`id`"
+			"UPDATE ".db('blog_settings')." AS s,
+					".db('user')." AS u
+			SET s.user_nick = u.nick
+			WHERE s.user_id = u.id"
 		);
 		// Create temporary table
 		$tmp_table_name = db()->_get_unique_tmp_table_name();
 		db()->query(
-			"CREATE TEMPORARY TABLE `".$tmp_table_name."` ( 
-				`user_id`		int(10) unsigned NOT NULL, 
-				`num_posts`		int(10) unsigned NOT NULL, 
-				`num_views`		int(10) unsigned NOT NULL, 
-				`num_comments`	int(10) unsigned NOT NULL, 
-				PRIMARY KEY (`user_id`)
+			"CREATE TEMPORARY TABLE ".$tmp_table_name." ( 
+				user_id		int(10) unsigned NOT NULL, 
+				num_posts		int(10) unsigned NOT NULL, 
+				num_views		int(10) unsigned NOT NULL, 
+				num_comments	int(10) unsigned NOT NULL, 
+				PRIMARY KEY (user_id)
 			)"
 		);
 		// Update blog num posts and views
 		db()->query(
-			"INSERT INTO `".$tmp_table_name."` 
-				(`user_id`,`num_posts`,`num_views`) 
-				SELECT `user_id`, 
-					COUNT(`id`) AS `num_posts`, 
-					SUM(`num_reads`) AS `num_views` 
-				FROM `".db('blog_posts')."` 
-				WHERE `active`=1 
-				GROUP BY `user_id`"
+			"INSERT INTO ".$tmp_table_name." 
+				(user_id,num_posts,num_views) 
+				SELECT user_id, 
+					COUNT(id) AS num_posts, 
+					SUM(num_reads) AS num_views 
+				FROM ".db('blog_posts')." 
+				WHERE active=1 
+				GROUP BY user_id"
 		);
 		// Create temporary table for num comments
 		$tmp_table_name2 = db()->_get_unique_tmp_table_name();
 		db()->query(
-			"CREATE TEMPORARY TABLE `".$tmp_table_name2."` ( 
-				`user_id`		int(10) unsigned NOT NULL, 
-				`num_comments`	int(10) unsigned NOT NULL, 
-				PRIMARY KEY (`user_id`)
+			"CREATE TEMPORARY TABLE ".$tmp_table_name2." ( 
+				user_id		int(10) unsigned NOT NULL, 
+				num_comments	int(10) unsigned NOT NULL, 
+				PRIMARY KEY (user_id)
 			)"
 		);
 		// Update num_comments for blog posts
 		db()->query(
-			"INSERT INTO `".$tmp_table_name2."` 
-				(`user_id`,`num_comments`) 
+			"INSERT INTO ".$tmp_table_name2." 
+				(user_id,num_comments) 
 				SELECT 
-					`b`.`user_id` AS `blog_user_id`,
-					COUNT(`c`.`id`) AS `num_comments`
-				FROM `".db('comments')."` AS `c`,
-					`".db('blog_posts')."` AS `b` 
-				WHERE `c`.`object_name`='"._es(BLOG_CLASS_NAME)."' 
-					AND `b`.`id`=`c`.`object_id` 
-					AND `b`.`active`=1 
-					AND `b`.`privacy` NOT IN(9)
-					AND `b`.`allow_comments` NOT IN(9)
-				GROUP BY `b`.`user_id`"
+					b.user_id AS blog_user_id,
+					COUNT(c.id) AS num_comments
+				FROM ".db('comments')." AS c,
+					".db('blog_posts')." AS b 
+				WHERE c.object_name='"._es(BLOG_CLASS_NAME)."' 
+					AND b.id=c.object_id 
+					AND b.active=1 
+					AND b.privacy NOT IN(9)
+					AND b.allow_comments NOT IN(9)
+				GROUP BY b.user_id"
 		);
 		// Syncronize temporary tables
 		db()->query(
-			"UPDATE `".$tmp_table_name."` AS `tmp1`,
-					`".$tmp_table_name2."` AS `tmp2`
-				SET `tmp1`.`num_comments` = `tmp2`.`num_comments` 
-			WHERE `tmp1`.`user_id` = `tmp2`.`user_id`"
+			"UPDATE ".$tmp_table_name." AS tmp1,
+					".$tmp_table_name2." AS tmp2
+				SET tmp1.num_comments = tmp2.num_comments 
+			WHERE tmp1.user_id = tmp2.user_id"
 		);
 		// Update stats table
 		db()->query(
-			"UPDATE `".db('blog_settings')."` AS `s`,
-					`".$tmp_table_name."` AS `tmp`
-			SET `s`.`num_posts` = `tmp`.`num_posts`,
-				`s`.`num_views` = `tmp`.`num_views`,
-				`s`.`num_comments` = `tmp`.`num_comments`
-			WHERE `s`.`user_id` = `tmp`.`user_id`"
+			"UPDATE ".db('blog_settings')." AS s,
+					".$tmp_table_name." AS tmp
+			SET s.num_posts = tmp.num_posts,
+				s.num_views = tmp.num_views,
+				s.num_comments = tmp.num_comments
+			WHERE s.user_id = tmp.user_id"
 		);
 		// Cleanup temp
-		db()->query("DROP TEMPORARY TABLE `".$tmp_table_name."`");
-		db()->query("DROP TEMPORARY TABLE `".$tmp_table_name2."`");
+		db()->query("DROP TEMPORARY TABLE ".$tmp_table_name."");
+		db()->query("DROP TEMPORARY TABLE ".$tmp_table_name2."");
 	}
 	
 	/**
@@ -389,7 +389,7 @@ class yf_blog_settings {
 		}
 		// Prepare curent max id
 		list($_max_id2) = db()->query_fetch(
-			"SELECT MAX(`id2`) AS `0` FROM `".db('blog_posts')."` WHERE `user_id`=".intval($user_id)
+			"SELECT MAX(id2) AS `0` FROM ".db('blog_posts')." WHERE user_id=".intval($user_id)
 		);
 // TODO: fix that number 1 could be assigned, currently not
 		$_max_id2 = intval($_max_id2);
@@ -399,24 +399,24 @@ class yf_blog_settings {
 		$posts_to_update	= array();
 		// Get all user posts without assigned id2
 		$Q = db()->query(
-			"SELECT `id`,`id2` 
-			FROM `".db('blog_posts')."` 
-			WHERE `user_id`=".intval($user_id)." 
-				AND `id2`='0' 
-			ORDER BY `id` ASC"
+			"SELECT id,id2 
+			FROM ".db('blog_posts')." 
+			WHERE user_id=".intval($user_id)." 
+				AND id2='0' 
+			ORDER BY id ASC"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_to_update[$A["id"]] = $A["id2"];
 		}
 		// Check duplicates or empty ids
 		$Q = db()->query(
-			"SELECT `id`,`id2`,
-				COUNT(`id2`) AS `num` 
-			FROM `".db('blog_posts')."` 
-			WHERE `user_id`=".intval($user_id)." 
-				AND `id2` != '0' 
-			GROUP BY `id2` 
-			HAVING `num` > 1"
+			"SELECT id,id2,
+				COUNT(id2) AS num 
+			FROM ".db('blog_posts')." 
+			WHERE user_id=".intval($user_id)." 
+				AND id2 != '0' 
+			GROUP BY id2 
+			HAVING num > 1"
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_to_update[$A["id"]] = $A["id2"];
@@ -426,7 +426,7 @@ class yf_blog_settings {
 
 			db()->UPDATE("blog_posts", array(
 				"id2" => intval($_max_id2)
-			), "`id`=".intval($_post_id));
+			), "id=".intval($_post_id));
 		}
 		return $_max_id2;
 	}

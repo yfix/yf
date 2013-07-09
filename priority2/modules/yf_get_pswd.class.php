@@ -37,7 +37,7 @@ class yf_get_pswd {
 		}
 		// Check if user with such login exists
 		if (!empty($_POST['login'])) {
-			$A = db()->query_fetch("SELECT `id`,`name`,`login`,`password`,`email`,`nick` FROM `".db('user')."` WHERE `login`='"._es($_POST['login'])."'");
+			$A = db()->query_fetch("SELECT id,name,login,password,email,nick FROM ".db('user')." WHERE login='"._es($_POST['login'])."'");
 			if (empty($A["id"])) {
 				_re(t("Login was not found"));
 			}
@@ -51,7 +51,7 @@ class yf_get_pswd {
 			}
 			// Check if user with such login exists
 		} elseif (!empty($_POST['email'])) {
-			$Q = db()->query("SELECT `id`,`name`,`login`,`password`,`email`,`nick` FROM `".db('user')."` WHERE `email`='"._es($_POST['email'])."'");
+			$Q = db()->query("SELECT id,name,login,password,email,nick FROM ".db('user')." WHERE email='"._es($_POST['email'])."'");
 			if (!db()->num_rows($Q)) {
 				_re(t("Email was not found"));
 			}

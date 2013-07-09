@@ -25,7 +25,7 @@ class yf_chat_moderator {
 	function _edit_ban_list() {
 //		if (!CHAT_USER_ID || CHAT_USER_GROUP_ID != 1) return $this->_logout_redirect();
 		// Get full ban list from db
-		$Q = db()->query("SELECT * FROM `".db('chat_ban_list')."`");
+		$Q = db()->query("SELECT * FROM ".db('chat_ban_list')."");
 		while ($A = db()->fetch_assoc($Q)) $ban_list[$A["id"]] = $A;
 		// Get moderators and users detailed info
 		if (!empty($ban_list)) {
@@ -35,10 +35,10 @@ class yf_chat_moderator {
 			}
 			if (!empty($users_ids)) {
 				// Get moderators
-				$Q2 = db()->query("SELECT * FROM `".db('chat_users')."` WHERE `id` IN (".implode(",",$moderators_ids).")");
+				$Q2 = db()->query("SELECT * FROM ".db('chat_users')." WHERE id IN (".implode(",",$moderators_ids).")");
 				while ($A2 = db()->fetch_assoc($Q2)) $moderators[$A2["id"]] = "<a href='./?object=".CHAT_CLASS_NAME."&action=show_user_info&user_id=".$A2["id"]."' target='_blank'>"._prepare_html($A2["login"])."</a>";
 				// Get users
-				$Q3 = db()->query("SELECT * FROM `".db('chat_users')."` WHERE `login` IN ('".implode("','",$users_ids)."')");
+				$Q3 = db()->query("SELECT * FROM ".db('chat_users')." WHERE login IN ('".implode("','",$users_ids)."')");
 				while ($A3 = db()->fetch_assoc($Q3)) $users[$A3["login"]] = "<a href='./?object=".CHAT_CLASS_NAME."&action=show_user_info&user_id=".$A3["id"]."' target='_blank'>"._prepare_html($A3["login"])."</a>";
 			}
 		}
@@ -71,7 +71,7 @@ class yf_chat_moderator {
 	function _delete_ban_item() {
 //		if (!CHAT_USER_ID || CHAT_USER_GROUP_ID != 1) return $this->_logout_redirect();
 		$_GET["id"] = intval($_GET["id"]);
-		if ($_GET["id"]) db()->query("DELETE FROM `".db('chat_ban_list')."` WHERE `id`=".$_GET["id"]);
+		if ($_GET["id"]) db()->query("DELETE FROM ".db('chat_ban_list')." WHERE id=".$_GET["id"]);
 		js_redirect("./?object=".CHAT_CLASS_NAME."&action=edit_ban_list");
 	}
 	
@@ -95,7 +95,7 @@ class yf_chat_moderator {
 			} else $error = true;
 		} elseif ($_GET['user_id']) {
 			$_GET["minutes"] = intval($_GET["minutes"]);
-			$A = db()->query_fetch("SELECT * FROM `".db('chat_users')."` WHERE `id`=".intval($_GET["user_id"]));
+			$A = db()->query_fetch("SELECT * FROM ".db('chat_users')." WHERE id=".intval($_GET["user_id"]));
 			if ($A["id"]) {
 				$type		= "user";
 				$value		= _prepare_html($A["login"]);
@@ -105,12 +105,12 @@ class yf_chat_moderator {
 		} else $error = true;
 		// If no errors - continue
 		if (!$error) {
-			$sql = "INSERT INTO `".db('chat_ban_list')."` (
-					`type`,
-					`value`,
-					`expiration`,
-					`moderator`,
-					`add_date`
+			$sql = "INSERT INTO ".db('chat_ban_list')." (
+					type,
+					value,
+					expiration,
+					moderator,
+					add_date
 				) VALUES (
 					'".$type."',
 					'"._es($value)."',
@@ -129,9 +129,9 @@ class yf_chat_moderator {
 //		if (!CHAT_USER_ID || CHAT_USER_GROUP_ID != 1) return $this->_logout_redirect();
 		$_GET["msg_id"] = intval($_GET["msg_id"]);
 		if ($_GET['msg_id']) {
-			$A = db()->query_fetch("SELECT `id` FROM `".db('chat_messages')."` WHERE `id`=".$_GET["msg_id"]);
+			$A = db()->query_fetch("SELECT id FROM ".db('chat_messages')." WHERE id=".$_GET["msg_id"]);
 			if ($A["id"]) {
-				db()->query("DELETE FROM `".db('chat_messages')."` WHERE `id`=".$_GET["msg_id"]);
+				db()->query("DELETE FROM ".db('chat_messages')." WHERE id=".$_GET["msg_id"]);
 				echo "<script>alert('Deleted message with ID = ".$A['id']."');</script>\r\n";
 			}
 		}

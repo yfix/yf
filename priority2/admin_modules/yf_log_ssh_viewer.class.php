@@ -30,9 +30,9 @@ class yf_log_ssh_viewer {
 		}
 
 		// Prepare pager
-		$sql = "SELECT * FROM `".db('log_ssh_action')."`";
+		$sql = "SELECT * FROM ".db('log_ssh_action')."";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY `microtime` DESC ";
+		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY microtime DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$records = db()->query_fetch_all($sql. $add_sql);
 
@@ -79,7 +79,7 @@ class yf_log_ssh_viewer {
 			return $_SERVER["HTTP_REFERER"];
 		}
 
-		$result = db()->query_fetch("SELECT * FROM `".db('log_ssh_action')."` WHERE `microtime`=".$_GET["id"]);
+		$result = db()->query_fetch("SELECT * FROM ".db('log_ssh_action')." WHERE microtime=".$_GET["id"]);
 		if (empty($result)) {
 			return _e(t("Wrong ID"));
 		}
@@ -116,7 +116,7 @@ class yf_log_ssh_viewer {
 			$CALENDAR_OBJ = main()->init_class("js_calendar", "classes/");
 		}
 		// Prepare boxes
-		$Q = db()->query("SELECT * FROM `".db('servers')."` WHERE `active` = '1' ORDER BY `name` ASC");
+		$Q = db()->query("SELECT * FROM ".db('servers')." WHERE active = '1' ORDER BY name ASC");
 		while($A = db()->fetch_assoc($Q)) {
 			$this->_servers[$A["base_ip"]] = $A["name"];
 		}
@@ -162,15 +162,15 @@ class yf_log_ssh_viewer {
 			$SF[$k] = trim($v);
 		}
 		// Generate filter for the common fileds
-		if ($SF["time_from"])			$sql .= " AND `microtime` >= ".intval(strtotime($SF["time_from"]))." \r\n";
-		if ($SF["time_to"])				$sql .= " AND `microtime` <= ".(intval(strtotime($SF["time_to"])) + 24*3600)." \r\n";
-		if (strlen($SF["action"]))		$sql .= " AND `action` LIKE '"._es($SF["action"])."%' \r\n";
-		if (strlen($SF["server"]))		$sql .= " AND `server_id` LIKE '"._es($SF["server"])."%' \r\n";
-		if (strlen($SF["ip"]))			$sql .= " AND `ip` LIKE '"._es($SF["ip"])."%' \r\n";
-		if (strlen($SF["comment"]))		$sql .= " AND `comment` LIKE '"._es($SF["comment"])."%' \r\n";
+		if ($SF["time_from"])			$sql .= " AND microtime >= ".intval(strtotime($SF["time_from"]))." \r\n";
+		if ($SF["time_to"])				$sql .= " AND microtime <= ".(intval(strtotime($SF["time_to"])) + 24*3600)." \r\n";
+		if (strlen($SF["action"]))		$sql .= " AND action LIKE '"._es($SF["action"])."%' \r\n";
+		if (strlen($SF["server"]))		$sql .= " AND server_id LIKE '"._es($SF["server"])."%' \r\n";
+		if (strlen($SF["ip"]))			$sql .= " AND ip LIKE '"._es($SF["ip"])."%' \r\n";
+		if (strlen($SF["comment"]))		$sql .= " AND comment LIKE '"._es($SF["comment"])."%' \r\n";
 
 		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY `".$this->_sort_by[$SF["sort_by"]]."` \r\n";
+		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
 	}

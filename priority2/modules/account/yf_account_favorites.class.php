@@ -20,7 +20,7 @@ class yf_account_favorites {
 		if (!$_GET['page'] && $_GET['id']) {
 			$_GET['page'] = $_GET['id'];
 		}
-		$sql = "SELECT `u`.* FROM `".db('favorites')."` AS `f`, `".db('user')."` AS `u` WHERE `f`.`user_id`='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND `f`.`target_user_id`=`u`.`id`";
+		$sql = "SELECT u.* FROM ".db('favorites')." AS f, ".db('user')." AS u WHERE f.user_id='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND f.target_user_id=u.id";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, null, null, $this->ACCOUNT_OBJ->num_per_page);
 		// Connect to category display module
 		if (!empty($total)) {
@@ -61,12 +61,12 @@ class yf_account_favorites {
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
 		// Check if user is already in favorites
-		$result = db()->query_fetch("SELECT `id` FROM `".db('favorites')."` WHERE `user_id`='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND `target_user_id`='".intval($_GET['id'])."'");
+		$result = db()->query_fetch("SELECT id FROM ".db('favorites')." WHERE user_id='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND target_user_id='".intval($_GET['id'])."'");
 		if (empty($result['id'])) {
-			$sql = "REPLACE INTO `".db('favorites')."` ( 
-					`user_id` , 
-					`target_user_id` , 
-					`add_date` 
+			$sql = "REPLACE INTO ".db('favorites')." ( 
+					user_id , 
+					target_user_id , 
+					add_date 
 				) VALUES (
 					'".intval($this->ACCOUNT_OBJ->USER_ID)."', 
 					'".intval($_GET['id'])."', 
@@ -99,7 +99,7 @@ class yf_account_favorites {
 			return js_redirect($_SERVER["HTTP_REFERER"]);
 		}
 		// Do delete user from favorites table
-		db()->query("DELETE FROM `".db('favorites')."` WHERE `user_id`='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND `target_user_id`='".intval($_GET["id"])."' LIMIT 1");
+		db()->query("DELETE FROM ".db('favorites')." WHERE user_id='".intval($this->ACCOUNT_OBJ->USER_ID)."' AND target_user_id='".intval($_GET["id"])."' LIMIT 1");
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
 			_class("output_cache")->_exec_trigger(array(
