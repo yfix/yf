@@ -9,19 +9,28 @@ $module = "programs";
 if ($argv[1]) {
 	$module = $argv[1];
 }
-$modules_dir = realpath("../../modules");
-$f = $modules_dir. "/". $module.".class.php";
-if (file_exists($f)) {
-	$code = file_get_contents($f);
-} else {
-	$modules_dir = realpath("../../priority2/modules");
-	$f = $modules_dir. "/". $module.".class.php";
-	if (file_exists($f)) {
-		$code = file_get_contents($f);
-	} else {
-		exit('Cannot find module');
+$exists = false;
+$modules_dir = "";
+$f = "";
+$paths = array(
+	"../../modules",
+	"../../priority2/modules",
+	"../../admin_modules",
+	"../../priority2/admin_modules",
+);
+foreach($paths as $path) {
+	$f = $path. "/". $module.".class.php";
+	$exists = file_exists($f);
+	if (!$exists) {
+		continue;
 	}
+	$modules_dir = $path;
+	break;
 }
+if (!$exists) {
+	exit('Cannot find module');
+}
+$code = file_get_contents($f);
 
 # First we get list of good function names within module
 preg_match_all("/function[\s\t]+(?P<fname>[a-z0-9_]+)[\s\t]*\((?P<fparam>.*?)\)[\s\t]*\{/ims", $code, $m);

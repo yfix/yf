@@ -398,7 +398,7 @@ class yf_shop extends yf_module {
 	function product_set() {
 // TODO: show details of given product set
 	}
-}
+
 	function product_sets() {
 // TODO: show list of product set
 	}
