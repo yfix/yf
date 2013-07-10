@@ -35,6 +35,21 @@ class yf_admin {
 	* Show admin users
 	*/
 	function show() {
+		return common()->table2("SELECT * FROM ".db('admin'))
+			->text("login")
+			->text("first_name")
+			->text("last_name")
+			->link("group", "./?object=admin_groups&action=edit&id=%d", $this->_admin_groups)
+			->date("add_date")
+			->link("go_after_login")
+			->btn_active()
+			->btn_edit()
+			->btn_delete()
+			->btn("log_auth", "./?object=log_admin_auth_view&action=show_for_admin&id=%d")
+			->footer_link("Failed auth log", "./?object=log_admin_auth_fails_viewer")
+			->footer_link("Add", "./?object=".$_GET["object"]."action=add")
+			->render();
+/*
 		$sql = "SELECT * FROM ".db('admin')."";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
@@ -68,26 +83,8 @@ class yf_admin {
 			"add_link"			=> "./?object=".$_GET["object"]."&action=add",
 			"failed_log_link"	=> "./?object=log_admin_auth_fails_viewer",
 		);
-/*
-		return common()->table2($replace)
-			->table_header(array(
-				"id" 			=> "#",
-				"first_name"	=> "",
-				"last_name"		=> "",
-				"login"			=> "",
-				"group_name"	=> array("edit_group_link","Group"),
-				"add_date"		=> "",
-				"go_after_login"=> "Url after login",
-				"__buttons__"	=> "Actions",
-			))
-			->button_active("active_link")
-			->button("admin_auth_link", "Log auth")
-			->button_edit("edit_group_link")
-			->button_del("delete_link")
-			->items($replace[$items])
-			->table_end()
-*/
 		return tpl()->parse($_GET["object"]."/main", $replace);
+*/
 	}
 
 	/**
