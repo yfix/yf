@@ -65,7 +65,7 @@ class yf_manage_shop_product_edit{
 				module("manage_shop")->_attributes_save($_GET["id"]);
 				module("manage_shop")->_save_group_prices($_GET["id"]);
 			}
-			return js_redirect("./?object=manage_shop&action=products_manage");
+			return js_redirect("./?object=manage_shop&action=products");
 		}
 		if ($product_info["image"] == 0) {
 			$thumb_path = "";
@@ -147,7 +147,7 @@ class yf_manage_shop_product_edit{
 			"category_select_box"	=> common()->select_box("category_select", module("manage_shop")->_cats_for_select, $cat_id, false, 2),
 			"featured_box"			=> module("manage_shop")->_box("featured", $product_info["featured"]),
 			"form_action"			=> "./?object=manage_shop&action=product_edit&id=".$product_info["id"],
-			"back_url"				=> "./?object=manage_shop&action=products_manage",
+			"back_url"				=> "./?object=manage_shop&action=products",
 			"image"					=> $items,
 			"categories_url"		=> "./?object=category_editor&action=show_items&id=shop_cats",
 			"manufacturers_url"		=> "./?object=manage_shop&action=manufacturers",

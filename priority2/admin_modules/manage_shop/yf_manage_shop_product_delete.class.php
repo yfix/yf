@@ -10,7 +10,7 @@ class yf_manage_shop_product_delete{
 		db()->query("DELETE FROM ".db('shop_product_attributes_values')." WHERE object_id=".$_GET["id"]);
 		db()->query("DELETE FROM ".db('shop_group_options')." WHERE product_id=".$_GET["id"]);		
 		db()->query("DELETE FROM ".db('shop_products')." WHERE id=".$_GET["id"]);
-		return js_redirect("./?object=manage_shopaction=products_manage");
+		return js_redirect("./?object=manage_shopaction=products");
 	}
 	
 }

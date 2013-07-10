@@ -9,7 +9,7 @@ class yf_manage_shop_clear_filter{
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=manage_shop&action=products_manage"._add_get());
+			js_redirect("./?object=manage_shop&action=products"._add_get());
 		}
 */
 	}

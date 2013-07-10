@@ -48,7 +48,7 @@ class yf_manage_shop_product_add{
 				module("manage_shop")->_attributes_save($product_id);
 				module("manage_shop")->_save_group_prices($product_id);
 			}
-			return js_redirect("./?object=manage_shop&action=products_manage");
+			return js_redirect("./?object=manage_shop&action=products");
 		}
 		// 1-st type of assigning attributes
 		$fields = module("manage_shop")->_attributes_html(0);
@@ -89,7 +89,7 @@ class yf_manage_shop_product_add{
 			"manufacturer_box"	=> common()->select_box("manufacturer", module("manage_shop")->_man_for_select, $man_id, false, 2),
 			"category_box"		=> common()->multi_select("category", module("manage_shop")->_cats_for_select, $cat_id, false, 2, " size=15 ", false),
 			"form_action"		=> "./?object=manage_shop&action=product_add",
-			"back_url"			=> "./?object=manage_shop&action=products_manage",
+			"back_url"			=> "./?object=manage_shop&action=products",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
 			"manufacturers_url"	=> "./?object=manage_shop&action=manufacturers",
 			"group_prices"		=> !empty($group_prices) ? $group_prices : "",

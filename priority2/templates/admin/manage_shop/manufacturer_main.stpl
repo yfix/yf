@@ -9,7 +9,7 @@
 {foreach("items")}
 	<tr>
 		<td><b>{#.order_id}</b></td>
-		<td><a href="{#.view_url}">{#.name}</a></td>
+		<td><a href="{#.edit_url}">{#.name}</a></td>
 		<td>{#.sort_order}</td>
 		<td nowrap>
 			<a href="{#.edit_url}"><i class="icon-edit" alt="{t(Edit)} "></i></a> 

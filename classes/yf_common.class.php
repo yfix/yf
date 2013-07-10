@@ -178,20 +178,6 @@ class yf_common {
 	function multi_select_box ($name, $values, $selected = "", $show_text = false, $type = 2, $add_str = "", $translate = 0, $level = 0, $disabled = false) {
 		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
-	
-	/**
-	* This function generate date box
-	*/
-	function date_box ($selected_date = "", $years = "", $name_postfix = "", $add_str = "", $order = "ymd", $show_text = 1, $translate = 1) {
-		return _class("html", COMMON_LIB)->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate);
-	}
-
-	/**
-	* This function generate time box
-	*/
-	function time_box ($selected_time = "", $name_postfix = "", $add_str = "", $show_text = 1, $translate = 1) {
-		return _class("html", COMMON_LIB)->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
-	}
 
 	/**
 	* Processing radio buttons
@@ -212,6 +198,36 @@ class yf_common {
 	*/
 	function multi_check_box ($box_name, $values, $selected = array(), $flow_vertical = false, $type = 2, $add_str = "", $translate = 0, $name_as_array = false) {
 		return _class("html", COMMON_LIB)->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
+	}
+	
+	/**
+	*/
+	function date_box ($selected_date = "", $years = "", $name_postfix = "", $add_str = "", $order = "ymd", $show_text = 1, $translate = 1) {
+		return _class("html", COMMON_LIB)->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function time_box ($selected_time = "", $name_postfix = "", $add_str = "", $show_text = 1, $translate = 1) {
+		return _class("html", COMMON_LIB)->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
+	}
+	
+	/**
+	*/
+	function date_box2 ($name = "", $selected = "", $range = "", $add_str = "", $show_what = "ymd", $show_text = 1, $translate = 1) {
+		return _class("html", COMMON_LIB)->date_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function datetime_box2 ($name = "", $selected = "", $range = "", $add_str = "", $show_what = "ymdhis", $show_text = 1, $translate = 1) {
+		return _class("html", COMMON_LIB)->datetime_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function time_box2 ($name = "", $selected = "", $add_str = "", $show_text = 1, $translate = 1) {
+		return _class("html", COMMON_LIB)->time_box2($name, $selected, $add_str, $show_text, $translate);
 	}
 
 	/**

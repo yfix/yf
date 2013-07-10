@@ -5,7 +5,7 @@ class yf_manage_shop_home{
 		$items = module("manage_shop")->statistic();
 		$replace = array(
 			"items"				=> $items,
-			"products_url"		=> "./?object=manage_shop&action=products_manage",
+			"products_url"		=> "./?object=manage_shop&action=products",
 			"manufacturer_url"	=> "./?object=manage_shop&action=manufacturers",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
 			"attributes_url"	=> "./?object=manage_shop&action=attributes", 

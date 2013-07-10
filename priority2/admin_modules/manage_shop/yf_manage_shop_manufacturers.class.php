@@ -20,7 +20,7 @@ class yf_manage_shop_manufacturers{
 				"order_id"			=> $v["id"],
 				"name"				=> $v["name"],
 				"sort_order"		=> $v["sort_order"],
-				"view_url"			=> "./?object=manage_shop&action=manufacturer_view&id=".$v["id"],
+				"view_url"			=> "./?object=manage_shop&action=manufacturer_edit&id=".$v["id"],
 				"delete_url"		=> "./?object=manage_shop&action=manufacturer_delete&id=".$v["id"],
 				"edit_url"			=> "./?object=manage_shop&action=manufacturer_edit&id=".$v["id"],
 			);
