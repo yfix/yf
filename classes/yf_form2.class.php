@@ -547,23 +547,25 @@ class yf_form2 {
 
 	/**
 	*/
-//	function date_box ($selected_date = "", $years = "", $name_postfix = "", $add_str = "", $order = "ymd", $show_text = 1, $translate = 1) {
 	function date_box($name, $values, $extra = array(), $replace = array()) {
-// TODO
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-/*		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
-*/
-// TODO: need to put first param $name instead of name_postfix (compare html: date[year],date[month],date[day] with year_postfix,month_postfix,day_postfix)
+		$years = isset($extra["years"]) ? $extra["years"] : "";
+		$show_what = isset($extra["show_what"]) ? $extra["show_what"] : "ymd";
+		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$translate = isset($extra["translate"]) ? $extra["translate"] : 1;
+
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'.common()->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate).'</div>
+				<div class="controls">'.common()->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate).'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -575,23 +577,23 @@ class yf_form2 {
 
 	/**
 	*/
-//	function time_box ($selected_time = "", $name_postfix = "", $add_str = "", $show_text = 1, $translate = 1) {
 	function time_box($name, $values, $extra = array(), $replace = array()) {
-// TODO
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-/*		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
-*/
-// TODO: need to put first param $name instead of name_postfix (compare: time[hour],time[minute],time[second] with hour_postfix,minute_postfix,second_postfix)
+		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$translate = isset($extra["translate"]) ? $extra["translate"] : 1;
+
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'.common()->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate).'</div>
+				<div class="controls">'.common()->time_box2($name, $selected, $add_str, $show_text, $translate).'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -603,14 +605,17 @@ class yf_form2 {
 
 	/**
 	*/
-	function datetime_box() {
-// TODO
+	function datetime_box($name, $values, $extra = array(), $replace = array()) {
+		if (!isset($extra['show_what'])) {
+			$extra['show_what'] = 'ymdhis';
+		}
+		return $this->date_box($name, $values, $extra, $replace);
 	}
 
 	/**
 	*/
-	function birth_box() {
-// TODO
+	function birth_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->date_box($name, $values, $extra, $replace);
 	}
 
 	/**
