@@ -9,6 +9,23 @@
 */
 class yf_table2 {
 
+	/* Example:
+		return common()->table2("SELECT * FROM ".db('admin'))
+			->text("login")
+			->text("first_name")
+			->text("last_name")
+			->link("group", "./?object=admin_groups&action=edit&id=%d", $this->_admin_groups)
+			->date("add_date")
+			->text("go_after_login")
+			->btn_active()
+			->btn_edit()
+			->btn_delete()
+			->btn("log_auth")
+			->footer_link("Failed auth log", "./?object=log_admin_auth_fails_viewer")
+			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
+			->render();
+	*/
+
 	/**
 	* Catch missing method call
 	*/
@@ -20,58 +37,59 @@ class yf_table2 {
 	/**
 	* Render result table html, gathered by row functions
 	*/
-	function render() {
+	function render($params = array()) {
 		$sql = $this->_sql;
-		list($add_sql, $pages, $total) = common()->divide_pages($sql);
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$pager_path = $params['pager_path'] ? $params['pager_path'] : "";
+		$pager_type = $params['pager_type'] ? $params['pager_type'] : "blocks";
+		$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : 0;
+		$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
+		$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : "";
+		$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
+
+		list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
+
 		$items = array();
-		$q = db()->query($sql. $add_sql);
-		while ($a = db()->fetch_assoc($q)) {
+		$q = $db->query($sql. $add_sql);
+		while ($a = $db->fetch_assoc($q)) {
 			$data[] = $a;
 		}
-		$body = '<table class="table table-bordered table-striped table-hover">';
-		$body .= '<thead>';
-		foreach ($this->_fields as $name => $info) {
-			$body .= '<th>'.t($info['desc']).'</th>';
-		}
-		$body .= '<th>'.t('Actions').'</th>';
-		$body .= '</thead>';
-		foreach ($data as $row) {
-			$body .= '<tr>';
-			foreach ($this->_fields as $name => $field_info) {
-				if (!isset($row[$name])) {
-					continue;
+		if ($data) {
+			$body = '<table class="table table-bordered table-striped table-hover">'.PHP_EOL;
+			$body .= '<thead>'.PHP_EOL;
+			foreach ((array)$this->_fields as $name => $info) {
+				$body .= '<th>'.t($info['desc']).'</th>'.PHP_EOL;
+			}
+			$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
+			$body .= '</thead>'.PHP_EOL;
+			foreach ((array)$data as $row) {
+				$body .= '<tr>'.PHP_EOL;
+				foreach ((array)$this->_fields as $name => $info) {
+					if (!isset($row[$name])) {
+						continue;
+					}
+					$func = $info['func'];
+					$body .= '<td>'.$func($row[$name], $info).'</td>'.PHP_EOL;
 				}
-				$func = $field_info['func'];
-				$body .= '<td>'.$func($row[$name], $field_info).'</td>';
+				$body .= '<td>';
+				foreach ((array)$this->_buttons as $name => $info) {
+					$func = $info['func'];
+					$body .= $func($row, $info).PHP_EOL;
+				}
+				$body .= '</td>'.PHP_EOL;
+				$body .= '</tr>'.PHP_EOL;
 			}
-			$body .= '<td>';
-			foreach ($this->_buttons as $name => $btn_info) {
-				$func = $btn_info['func'];
-				$body .= $func($row, $btn_info);
-			}
-			$body .= '</td>';
-			$body .= '</tr>';
+#			$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
+			$body .= '</table>'.PHP_EOL;
+		} else {
+			$body .= '<div class="alert alert-info">'.t('No records').'</div>'.PHP_EOL;
 		}
-		$body .= '</table>';
-		foreach ($this->_footer as $name => $info) {
+		foreach ($this->_footer_links as $name => $info) {
+			$func = $info['func'];
+			$body .= $func($info).PHP_EOL;
 		}
+		$body .= $pages.PHP_EOL;
 		return $body;
-/*
-		return common()->table2("SELECT * FROM ".db('admin'))
-			->text("login")
-			->text("first_name")
-			->text("last_name")
-			->link("group", "./?object=admin_groups&action=edit&id=%d", $this->_admin_groups)
-			->date("add_date")
-			->link("go_after_login")
-			->btn_active()
-			->btn_edit()
-			->btn_delete()
-			->btn("log_auth")
-			->footer_link("Failed auth log", "./?object=log_admin_auth_fails_viewer")
-			->footer_link("Add", "./?object=".$_GET["object"]."action=add")
-			->render();
-*/
 		return implode("\n", $this->_body);
 	}
 
@@ -82,17 +100,17 @@ class yf_table2 {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
 // TODO: need to change API to create new class instance on every chained request
-// TODO: test how this will work with several forms
 		return $this;
 	}
 
 	/**
 	* Wrapper for template engine
 	*/
-	function tpl_row($type = "input", $replace = array(), $name, $desc = "", $extra = array()) {
+	function tpl_row($type = "input", $name, $desc = "", $extra = array()) {
+// TODO: integrate with tpl engine
 // TODO: integrate with named errors
 #		$errors = array();
-		return $this->$type($name, $desc, $extra, $replace);
+		return $this->$type($name, $desc, $extra);
 	}
 
 	/**
@@ -125,7 +143,7 @@ class yf_table2 {
 			"link"	=> $link,
 			"data"	=> $data,
 			"func"	=> function($field, $params) {
-				return '<a href="'.str_replace('%d', $field, $params['link']).'">'.(isset($params['data']) ? $params['data'][$field] : $field).'</a>';
+				return '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.(isset($params['data']) ? $params['data'][$field] : $field).'</a>';
 			}
 		);
 		return $this;
@@ -201,7 +219,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_active($name = "Active", $desc = "", $extra = array()) {
+	function btn_active($name = "Active", $link = "", $extra = array()) {
 		if (!$link) {
 			$link = "./?object=".$_GET["object"]."&action=active&id=%d";
 		}
@@ -221,17 +239,14 @@ class yf_table2 {
 
 	/**
 	*/
-	function footer_link($name, $desc = "", $extra = array()) {
-		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
-		}
-		$this->_footer[$name] = array(
+	function footer_link($name, $link, $extra = array()) {
+		$this->_footer_links[$name] = array(
 			"type"	=> __FUNCTION__,
 			"extra"	=> $extra,
-			"desc"	=> $desc,
+			"name"	=> $name,
+			"link"	=> $link,
 			"func"	=> function($params) {
-// TODO
-				return '__TODO__';
+				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		return $this;

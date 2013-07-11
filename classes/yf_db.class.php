@@ -1185,6 +1185,15 @@ class yf_db {
 
 	/**
 	* Part of query-generation chain
+
+	db()
+	->select("id,name")
+	->from("users")
+	->inner_join("groups","group_id")
+	->order_by("add_date")
+	->group_by("id")
+	->limit(10)
+
 	*/
 	function select($fields = array()) {
 		if (is_array($fields)) {
@@ -1199,7 +1208,28 @@ class yf_db {
 	/**
 	* Part of query-generation chain
 	*/
-	function from() {
+	function from($table) {
+		$sql = "FROM ".$this->_real_name($table);
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function join($table, $on) {
+		$on_conds = array();
+#		foreach ((array)$on) {
+#		}
+		$sql = "JOIN ".$this->_real_name($table)." ON ".implode(",", $on_conds);
+		$this->_sql[] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function left_join($table) {
 // TODO
 		$this->_sql[] = $sql;
 		return $this;
@@ -1208,7 +1238,7 @@ class yf_db {
 	/**
 	* Part of query-generation chain
 	*/
-	function join($table) {
+	function inner_join($table) {
 // TODO
 		$this->_sql[] = $sql;
 		return $this;

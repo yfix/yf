@@ -41,7 +41,7 @@ class yf_admin {
 			->text("last_name")
 			->link("group", "./?object=admin_groups&action=edit&id=%d", $this->_admin_groups)
 			->date("add_date")
-			->link("go_after_login")
+			->text("go_after_login")
 			->btn_active()
 			->btn_edit()
 			->btn_delete()

@@ -44,7 +44,6 @@ class yf_form2 {
 		$this->_chained_mode = true;
 		$this->_replace = $replace;
 // TODO: need to change API to create new class instance on every chained request
-// TODO: test how this will work with several forms
 		return $this;
 	}
 
@@ -63,15 +62,37 @@ class yf_form2 {
 	*	{form_row("save_and_back")}
 	*	{form_row("form_end")}
 	*/
-	function tpl_row($type = "input", $replace = array(), $name, $desc = "", $extra = array()) {
+	function tpl_row($type = "input", $replace = array(), $name, $desc = '', $extra = array()) {
 // TODO: integrate with named errors
 #		$errors = array();
 		return $this->$type($name, $desc, $extra, $replace);
 	}
 
 	/**
+	* Just hidden input
 	*/
-	function text($name, $desc = "", $extra = array(), $replace = array()) {
+	function hidden($name, $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$id = $extra["id"] ? $extra["id"] : $name;
+		$value = isset($extra["value"]) ? $extra["value"] : $replace[$name];
+
+		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'.($extra["data"] ? ' data="'.$extra["data"].'"' : '').'>';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* General input
+	*/
+	function input($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -84,17 +105,23 @@ class yf_form2 {
 		$id = $extra["id"] ? $extra["id"] : $name;
 		$placeholder = isset($extra["placeholder"]) ? $extra["placeholder"] : $desc;
 		$value = isset($extra["value"]) ? $extra["value"] : $replace[$name];
+		$input_type = isset($extra["type"]) ? $extra["type"] : "text";
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+#		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
+#		$append = $extra['append'] ? $extra['append'] : '';
 
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
 				<div class="controls">
-					<input type="text" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'
+					<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'
 					.($extra["class"] ? ' class="'.$extra["class"].'"' : '')
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
+					.($extra["disabled"] ? ' disabled' : '')
+					.($extra["required"] ? ' required' : '')
 					.'>'
-					.(isset($errors[$name]) ? '<span class="help-inline">'.$errors[$name].'</span>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
 			</div>
 		';
@@ -107,7 +134,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function textarea($name, $desc = "", $extra = array(), $replace = array()) {
+	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -120,6 +147,7 @@ class yf_form2 {
 		$id = $extra["id"] ? $extra["id"] : $name;
 		$placeholder = isset($extra["placeholder"]) ? $extra["placeholder"] : $desc;
 		$value = isset($extra["value"]) ? $extra["value"] : $replace[$name];
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
@@ -132,7 +160,7 @@ class yf_form2 {
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
 					.'>'.htmlspecialchars($value, ENT_QUOTES).'</textarea>'
-					.(isset($errors[$name]) ? '<span class="help-inline">'.$errors[$name].'</span>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
 			</div>
 		';
@@ -145,7 +173,67 @@ class yf_form2 {
 
 	/**
 	*/
-	function active_box($name = "", $desc = "", $extra = array(), $replace = array()) {
+	function text($name, $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'text';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function password($name, $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'password';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function file($name, $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'file';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function email($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: prepend icon
+		$extra['type'] = 'text';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function integer($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: input size
+		$extra['type'] = 'text';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function money($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: prepend icon, input styling
+		$extra['type'] = 'text';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function url($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: prepend icon
+		$extra['type'] = 'text';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* Image upload
+	*/
+	function image($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: show already uploaded image, link to delete it, input to upload new
+	}
+
+	/**
+	*/
+	function active_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -158,16 +246,19 @@ class yf_form2 {
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}
-		$_statuses = array(
-			'0' => '<span class="label label-warning">'.t('Disabled').'</span>',
-			'1' => '<span class="label label-success">'.t('Active').'</span>',
-		);
+		if (!$extra['items']) {
+			$extra['items'] = array(
+				'0' => '<span class="label label-warning">'.t('Disabled').'</span>',
+				'1' => '<span class="label label-success">'.t('Active').'</span>',
+			);
+		}
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$selected = $replace[$name];
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->radio_box($name, $_statuses, $selected, false, 2, "", false)
+					.common()->radio_box($name, $extra['items'], $selected, false, 2, '', false)
 					.(isset($errors[$name]) ? '<span class="help-inline">'.$errors[$name].'</span>' : '')
 				.'</div>
 			</div>
@@ -181,43 +272,17 @@ class yf_form2 {
 
 	/**
 	*/
-	function allow_deny_box($name = "", $desc = "", $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		if (!$name) {
-			$name = "active";
-		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
-		}
-		$_statuses = array(
+	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['items'] = array(
 			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
 			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
 		);
-		$selected = $replace[$name];
-		$body = '
-			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
-				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'
-					.common()->radio_box($name, $_statuses, $selected, false, 2, "", false)
-					.(isset($errors[$name]) ? '<span class="help-inline">'.$errors[$name].'</span>' : '')
-				.'</div>
-			</div>
-		';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->active_box($name, $desc, $extra, $replace) {
 	}
 
 	/**
 	*/
-	function save($name = "", $desc = "", $extra = array(), $replace = array()) {
+	function submit($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -226,14 +291,17 @@ class yf_form2 {
 		}
 		$id = $extra["id"] ? $extra["id"] : $name;
 		$value = isset($extra["value"]) ? $extra["value"] : 'Save';
+		$link_url = $extra["link_url"] ? (isset($replace[$extra["link_url"]]) ? $replace[$extra["link_url"]] : $extra["link_url"]) : '';
+		$link_name = $extra["link_name"] ? $extra["link_name"] : '';
 
 		$body = '
 			<div class="control-group">
 				<div class="controls">
-					<input type="submit" value="'.t($value).'" class="btn'.($extra["class"] ? ' '.$extra["class"] : '').'"'
+					<input type="submit" value="'.t($value).'" class="btn btn-primary'.($extra["class"] ? ' '.$extra["class"] : '').'"'
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
 					.'>'
+					.($link_url ? ' <a href="'.$link_url.'" class="btn">'.t($link_name).'</a>' : '')
 				.'</div>
 			</div>
 		';
@@ -246,73 +314,41 @@ class yf_form2 {
 
 	/**
 	*/
-	function save_and_back($name = "", $desc = "", $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
+	function save($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return $this->submit($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function save_and_back($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!$name) {
 			$name = 'back_link';
 		}
-		$id = $extra["id"] ? $extra["id"] : $name;
-		$value = isset($extra["value"]) ? $extra["value"] : 'Save';
-
-		$body = '
-			<div class="control-group">
-				<div class="controls">
-					<input type="submit" value="'.t('Save').'" class="btn'.($extra["class"] ? ' '.$extra["class"] : '').'"'
-					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
-					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
-					.'>'
-					.($replace[$name] ? ' <a href="'.$replace[$name].'" class="btn">'.t('Back').'</a>' : '')
-				.'</div>
-			</div>
-		';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
+		if (!$desc) {
+			$desc = 'Back';
 		}
-		return $body;
+		$extra['link_url'] = $name;
+		$extra['link_name'] = $desc;
+		return $this->submit($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
-	function save_and_clear($name = "", $desc = "", $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
+	function save_and_clear($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!$name) {
 			$name = 'clear_link';
 		}
-		$id = $extra["id"] ? $extra["id"] : $name;
-		$value = isset($extra["value"]) ? $extra["value"] : 'Save';
-
-		$body = '
-			<div class="control-group">
-				<div class="controls">
-					<input type="submit" value="'.t($value).'" class="btn'.($extra["class"] ? ' '.$extra["class"] : '').'"'
-					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
-					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
-					.'>'
-					.($replace[$name] ? ' <a href="'.$replace[$name].'" class="btn">'.t('Clear').'</a>' : '')
-				.'</div>
-			</div>
-		';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
+		if (!$desc) {
+			$desc = 'Clear';
 		}
-		return $body;
+		$extra['link_url'] = $name;
+		$extra['link_name'] = $desc;
+		return $this->submit($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
-	function info($name, $desc = "", $extra = array(), $replace = array()) {
+	function info($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -337,17 +373,22 @@ class yf_form2 {
 
 	/**
 	*/
-	function box($name, $desc = "", $extra = array(), $replace = array()) {
+	function box($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
+		$edit_link = $extra['edit_link'] ? (isset($replace[$extra['edit_link']]) ? $replace[$extra['edit_link']] : $extra['edit_link']) : '';
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'.$replace[$name].'</div>
+				<div class="controls">'
+					.$replace[$name]
+					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -359,36 +400,14 @@ class yf_form2 {
 
 	/**
 	*/
-	function box_with_link($name, $desc = "", $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (is_string($extra)) {
-			$extra = array(
-				"edit_link" => $extra,
-			);
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$edit_link = $replace[$extra["edit_link"]];
-		$body = '
-			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'.$replace[$name].' <a href="'.$edit_link.'"><i class="icon-edit"></i></a></div>
-			</div>
-		';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+	function box_with_link($name, $desc = '', $link = '', $replace = array()) {
+		return $this->box($name, $desc, array("edit_link" => $link), $replace);
 	}
 
 	/**
 	* Just html wrapper for any custom content inside
 	*/
-	function container($text, $desc = "", $extra = array(), $replace = array()) {
+	function container($text, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -418,13 +437,18 @@ class yf_form2 {
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
 		$level = isset($extra["level"]) ? $extra["level"] : 0;
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level).'</div>
+				<div class="controls">'
+					.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level)
+					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -447,14 +471,19 @@ class yf_form2 {
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
 		$level = isset($extra["level"]) ? $extra["level"] : 0;
 		$disabled = isset($extra["disabled"]) ? $extra["disabled"] : false;
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'.common()->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled).'</div>
+				<div class="controls">'
+					.common()->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
+					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -475,6 +504,8 @@ class yf_form2 {
 		}
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
@@ -500,10 +531,12 @@ class yf_form2 {
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
 		$flow_vertical = isset($extra["flow_vertical"]) ? $extra["flow_vertical"] : false;
 		$name_as_array = isset($extra["name_as_array"]) ? $extra["name_as_array"] : false;
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
@@ -529,9 +562,11 @@ class yf_form2 {
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
 		$flow_vertical = isset($extra["flow_vertical"]) ? $extra["flow_vertical"] : false;
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="group_box">'.t($desc).'</label>
@@ -556,11 +591,12 @@ class yf_form2 {
 		}
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
-		$years = isset($extra["years"]) ? $extra["years"] : "";
+		$years = isset($extra["years"]) ? $extra["years"] : '';
 		$show_what = isset($extra["show_what"]) ? $extra["show_what"] : "ymd";
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 1;
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
 			<div class="control-group">
@@ -587,8 +623,9 @@ class yf_form2 {
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $replace[$name];
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : "";
+		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 1;
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
 			<div class="control-group">
@@ -615,26 +652,37 @@ class yf_form2 {
 	/**
 	*/
 	function birth_box($name, $values, $extra = array(), $replace = array()) {
+// TODO: customize for birth input needs
 		return $this->date_box($name, $values, $extra, $replace);
 	}
 
 	/**
-	* Input type=file
 	*/
-	function file() {
-// TODO
-	}
-
-	/**
-	* Image upload
-	*/
-	function image() {
-// TODO
+	function country_box($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: nice select box with data
 	}
 
 	/**
 	*/
-	function form_begin($name = "", $desc = "", $extra = array(), $replace = array()) {
+	function currency_box($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: nice select box with data
+	}
+
+	/**
+	*/
+	function language_box($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: nice select box with data
+	}
+
+	/**
+	*/
+	function timezone_box($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: nice select box with data
+	}
+
+	/**
+	*/
+	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -642,10 +690,23 @@ class yf_form2 {
 			$extra = array();
 		}
 		if (!$name) {
-			$name = "form_action";
+			$name = 'form_action';
 		}
-// TODO: enctype="multipart/form-data"
-		$body = '<form method="post" action="'.$replace[$name].'" class="form-horizontal">';
+		if (!$method) {
+			$method = 'post';
+		}
+		$enctype = '';
+		if ($extra['enctype']) {
+			$enctype = $extra['enctype'];
+		} elseif ($extra['for_upload']) {
+			$enctype = 'multipart/form-data';
+		}
+		$body = '<form method="'.$method.'" action="'.$replace[$name].'" class="form-horizontal'.($extra['class'] ? ' '.$extra['class'] : '').'"'
+			.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
+			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
+			.($extra['name'] ? ' name="'.$extra['name'].'"' : '')
+			.($extra['enctype'] ? ' enctype="'.$extra['enctype'].'"' : '')
+			.'>';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -655,7 +716,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function form_end($name = "", $desc = "", $extra = array(), $replace = array()) {
+	function form_end($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -669,10 +730,18 @@ class yf_form2 {
 		}
 		return $body;
 	}
+/*
+				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-edit"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="change_active">'
+						.($row['active'] ? '<span class="label label-success">'.t('ACTIVE').'</span>' : '<span class="label label-warning">'.t('INACTIVE').'</span>')
+					.'</a> ';
+*/
 
 	/**
 	*/
-	function tbl_link($name, $desc = "", $extra = array(), $replace = array()) {
+	function tbl_link($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -687,7 +756,7 @@ $body = 'TODO';
 
 	/**
 	*/
-	function tbl_link_edit($name, $desc = "", $extra = array(), $replace = array()) {
+	function tbl_link_edit($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -702,7 +771,7 @@ $body = 'TODO';
 
 	/**
 	*/
-	function tbl_link_del($name, $desc = "", $extra = array(), $replace = array()) {
+	function tbl_link_del($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -717,12 +786,12 @@ $body = 'TODO';
 
 	/**
 	*/
-	function tbl_link_active($name = "", $desc = "", $extra = array(), $replace = array()) {
+	function tbl_link_active($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
 		if (!$name) {
-			$name = "active_link";
+			$name = 'active_link';
 		}
 		$active_link = $replace[$name];
 // TODO
