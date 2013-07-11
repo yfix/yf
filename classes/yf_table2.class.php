@@ -84,7 +84,7 @@ class yf_table2 {
 		} else {
 			$body .= '<div class="alert alert-info">'.t('No records').'</div>'.PHP_EOL;
 		}
-		foreach ($this->_footer_links as $name => $info) {
+		foreach ((array)$this->_footer_links as $name => $info) {
 			$func = $info['func'];
 			$body .= $func($info).PHP_EOL;
 		}
@@ -175,7 +175,8 @@ class yf_table2 {
 			"name"	=> $name,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
+				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
 			},
 		);
 		return $this;
@@ -193,7 +194,8 @@ class yf_table2 {
 			"name"	=> $name,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-edit"></i> '.t($params['name']).'</a> ';
+				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini"><i class="icon-edit"></i> '.t($params['name']).'</a> ';
 			},
 		);
 		return $this;
@@ -211,7 +213,8 @@ class yf_table2 {
 			"name"	=> $name,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($params['name']).'</a> ';
+				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($params['name']).'</a> ';
 			},
 		);
 		return $this;
@@ -229,7 +232,8 @@ class yf_table2 {
 			"name"	=> $name,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="change_active">'
+				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="change_active">'
 						.($row['active'] ? '<span class="label label-success">'.t('ACTIVE').'</span>' : '<span class="label label-warning">'.t('INACTIVE').'</span>')
 					.'</a> ';
 			},
@@ -246,7 +250,8 @@ class yf_table2 {
 			"name"	=> $name,
 			"link"	=> $link,
 			"func"	=> function($params) {
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
+				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		return $this;
