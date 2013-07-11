@@ -7,8 +7,6 @@ class yf_manage_shop_manufacturer_add{
 				_re("Product name must be filled");
 			}
 			if (!common()->_error_exists()) {
-				// Save data
-				$url = ;
 				$sql_array = array(
 					"name"			=> $_POST["name"],
 					"url"			=> common()->_propose_url_from_name($_POST["name"]),

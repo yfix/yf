@@ -5,6 +5,7 @@
 	{form_row("text","model")}
 	{form_row("box_with_link","category_box","Category","categories_url")}
 	{form_row("box_with_link","manufacturer_box","Manufacturer","manufacturers_url")}
+	{form_row("box_with_link","supplier_box","Supplier","suppliers_url")}
 	{form_row("box","featured_box","Is Featured")}
 	{form_row("textarea","desc","Description")}
 	{form_row("text","meta_desc")}

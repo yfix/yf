@@ -33,6 +33,7 @@ class yf_manage_shop_product_edit{
 					"price"				=> floatval(str_replace(",", ".", $_POST["price"])),
 					"old_price"			=> floatval(str_replace(",", ".", $_POST["old_price"])),
 					"manufacturer_id"	=> intval($_POST["manufacturer"]),
+					"supplier_id"		=> intval($_POST["supplier"]),
 					"quantity"			=> intval($_POST["quantity"]),
 					"featured"			=> intval((bool)$_POST["featured"]),
 				);
@@ -143,6 +144,7 @@ class yf_manage_shop_product_edit{
 			"single_atts"			=> $single_atts,
 			"ext_url"				=> $product_info["external_url"],
 			"manufacturer_box"		=> common()->select_box("manufacturer", module("manage_shop")->_man_for_select, $product_info["manufacturer_id"], false, 2),
+			"supplier_box"			=> common()->select_box("supplier", module("manage_shop")->_suppliers_for_select, $product_info["supplier_id"], false, 2),
 			"category_box"			=> common()->multi_select("category", module("manage_shop")->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
 			"category_select_box"	=> common()->select_box("category_select", module("manage_shop")->_cats_for_select, $cat_id, false, 2),
 			"featured_box"			=> module("manage_shop")->_box("featured", $product_info["featured"]),
@@ -151,6 +153,7 @@ class yf_manage_shop_product_edit{
 			"image"					=> $items,
 			"categories_url"		=> "./?object=category_editor&action=show_items&id=shop_cats",
 			"manufacturers_url"		=> "./?object=manage_shop&action=manufacturers",
+			"suppliers_url"			=> "./?object=manage_shop&action=suppliers",
 			"manage_attrs_url"		=> "./?object=manage_shop&action=attributes",
 			"group_prices"			=> !empty($group_prices) ? $group_prices : "",
 			"link_get_product"		=>  process_url("./?object=manage_shop&action=show_product_by_category&cat_id="),

@@ -74,39 +74,45 @@ class yf_manage_shop {
 	* Constructor
 	*/
 	function _init() {
-		module("manage_shop")->_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats", 0);
+		$manage_shop = module('manage_shop');
+
+		$manage_shop->_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats", 0);
 		
-		module("manage_shop")->man = db()->query_fetch_all("SELECT * FROM ".db('shop_manufacturers')." ORDER BY name ASC");
-
-		$tmp[0] = "--NONE--";
-		foreach ((array)module("manage_shop")->man as $k => $v) {
-			$tmp[$v["id"]] = $v["name"];
+		$manage_shop->man = db()->query_fetch_all("SELECT * FROM ".db('shop_manufacturers')." ORDER BY name ASC");
+		$manage_shop->_man_for_select[0] = "--NONE--";
+		foreach ((array)$manage_shop->man as $k => $v) {
+			$manage_shop->_man_for_select[$v["id"]] = $v["name"];
 		}
-		module("manage_shop")->_man_for_select = $tmp;
 
-		module("manage_shop")->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. module("manage_shop")->PROD_IMG_DIR;
-		module("manage_shop")->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. module("manage_shop")->PROD_IMG_DIR;
-		if (!file_exists(module("manage_shop")->products_img_dir)) {
-			_mkdir_m(module("manage_shop")->products_img_dir);
+		$manage_shop->_suppliers = db()->query_fetch_all("SELECT * FROM ".db('shop_suppliers')." ORDER BY name ASC");
+		$manage_shop->_suppliers_for_select[0] = "--NONE--";
+		foreach ((array)$manage_shop->_suppliers as $k => $v) {
+			$manage_shop->_suppliers_for_select[$v["id"]] = $v["name"];
 		}
-		module("manage_shop")->_boxes = array(
+
+		$manage_shop->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $manage_shop->PROD_IMG_DIR;
+		$manage_shop->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $manage_shop->PROD_IMG_DIR;
+		if (!file_exists($manage_shop->products_img_dir)) {
+			_mkdir_m($manage_shop->products_img_dir);
+		}
+		$manage_shop->_boxes = array(
 			"status"		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
 			"featured"		=> 'radio_box("featured",		module("manage_shop")->_featured,	$selected, false, 2, "", false)',
 			"status_prod"	=> 'select_box("status_prod",	module("manage_shop")->_status_prod,$selected, 0, 2, "", false)',
 			"sort_by"		=> 'select_box("sort_by",		module("manage_shop")->_sort_by,	$selected, 0, 2, "", false)',
 			"sort_order"	=> 'select_box("sort_order", 	module("manage_shop")->_sort_orders,$selected, 0, 2, "", false)',
 		);
-		module("manage_shop")->_featured = array(
+		$manage_shop->_featured = array(
 			"0" => "<span class='negative'>NO</span>",
 			"1" => "<span class='positive'>YES</span>",
 		);
-		module("manage_shop")->_status_prod = array(
+		$manage_shop->_status_prod = array(
 			""		=> "",
 			"1"	=> "Active",
 			"0"	=> "Inacive",
 		);
-		module("manage_shop")->_sort_orders = array(""	=> "", "DESC" => "Descending", "ASC" => "Ascending");
-		module("manage_shop")->_sort_by = array(
+		$manage_shop->_sort_orders = array(""	=> "", "DESC" => "Descending", "ASC" => "Ascending");
+		$manage_shop->_sort_by = array(
 			""			=> "",
 			"name"		=> "Name",
 			"price" 	=> "Price",
@@ -114,11 +120,11 @@ class yf_manage_shop {
 			"add_date" 	=> "Date",
 			"active" 	=> "Status",
 		);
-		if (module("manage_shop")->USE_FILTER) {
-			module("manage_shop")->_prepare_filter_data();
+		if ($manage_shop->USE_FILTER) {
+			$manage_shop->_prepare_filter_data();
 		}
 		// Sync company info with user section
-#		module("manage_shop")->COMPANY_INFO = _class("shop", "modules/")->COMPANY_INFO;
+#		$manage_shop->COMPANY_INFO = _class("shop", "modules/")->COMPANY_INFO;
 
 //		$this->manufacturer_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->MAN_IMG_DIR;
 //		$this->manufacturer_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->MAN_IMG_DIR;
@@ -236,6 +242,22 @@ class yf_manage_shop {
 		return _class('manage_shop_manufacturer_delete', 'admin_modules/manage_shop/')->manufacturer_delete();
 	}
 
+	function suppliers() {
+		return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->suppliers();
+	}
+
+	function supplier_edit() {
+		return _class('manage_shop_supplier_edit', 'admin_modules/manage_shop/')->supplier_edit();
+	}
+
+	function supplier_add() {
+		return _class('manage_shop_supplier_add', 'admin_modules/manage_shop/')->supplier_add();
+	}
+
+	function supplier_delete() {
+		return _class('manage_shop_supplier_delete', 'admin_modules/manage_shop/')->supplier_delete();
+	}
+
 	function attributes() {
 		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->attributes();
 	}
@@ -274,6 +296,22 @@ class yf_manage_shop {
 
 	function _get_attributes_values($category_id = 0, $object_id = 0, $fields_ids = 0) {
 		return _class('manage_shop__get_attributes_values', 'admin_modules/manage_shop/')->_get_attributes_values($category_id, $object_id, $fields_ids);
+	}
+
+	function product_sets() {
+		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->product_sets();
+	}
+
+	function product_set_edit() {
+		return _class('manage_shop_product_set_edit', 'admin_modules/manage_shop/')->product_set_edit();
+	}
+
+	function product_set_add() {
+		return _class('manage_shop_product_set_add', 'admin_modules/manage_shop/')->product_set_add();
+	}
+
+	function product_set_delete() {
+		return _class('manage_shop_product_set_delete', 'admin_modules/manage_shop/')->product_set_delete();
 	}
 
 	function _format_price($price = 0) {
@@ -334,37 +372,5 @@ class yf_manage_shop {
 
 	function clear_filter_report() {
 #		return _class('manage_shop_clear_filter_report', 'admin_modules/manage_shop/')->clear_filter_report();
-	}
-
-	function suppliers() {
-#		return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->suppliers();
-	}
-
-	function supplier_edit() {
-#		return _class('manage_shop_supplier_edit', 'admin_modules/manage_shop/')->supplier_edit();
-	}
-
-	function supplier_add() {
-#		return _class('manage_shop_supplier_add', 'admin_modules/manage_shop/')->supplier_add();
-	}
-
-	function supplier_delete() {
-#		return _class('manage_shop_supplier_delete', 'admin_modules/manage_shop/')->supplier_delete();
-	}
-
-	function product_sets() {
-#		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->product_sets();
-	}
-
-	function product_set_edit() {
-#		return _class('manage_shop_product_set_edit', 'admin_modules/manage_shop/')->product_set_edit();
-	}
-
-	function product_set_add() {
-#		return _class('manage_shop_product_set_add', 'admin_modules/manage_shop/')->product_set_add();
-	}
-
-	function product_set_delete() {
-#		return _class('manage_shop_product_set_delete', 'admin_modules/manage_shop/')->product_set_delete();
 	}
 }

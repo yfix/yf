@@ -1,5 +1,3 @@
-{filter}
-
 {if("items" ne "")}
 <table class="table table-bordered table-striped table-hover">
 	<thead>

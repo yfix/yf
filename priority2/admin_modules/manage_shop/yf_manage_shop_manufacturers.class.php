@@ -2,37 +2,16 @@
 class yf_manage_shop_manufacturers{
 
 	function manufacturers () {
-		$sql = "SELECT * FROM ".db('shop_manufacturers')."";
-		$filter_sql = module('manage_shop')->USE_FILTER ? module('manage_shop')->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY name ASC ";
-		list($add_sql, $pages, $total) = common()->divide_pages($sql);
-		$orders_info = db()->query_fetch_all($sql.$add_sql);
-
-		if (!empty($orders_info)) {
-			foreach ((array)$orders_info as $v){
-				$user_ids[] = $v["user_id"];
-			}
-			$user_infos = user($user_ids);
-		}
-
-		foreach ((array)$orders_info as $v){
-			$items[] = array(
-				"order_id"			=> $v["id"],
-				"name"				=> $v["name"],
-				"sort_order"		=> $v["sort_order"],
-				"view_url"			=> "./?object=manage_shop&action=manufacturer_edit&id=".$v["id"],
-				"delete_url"		=> "./?object=manage_shop&action=manufacturer_delete&id=".$v["id"],
-				"edit_url"			=> "./?object=manage_shop&action=manufacturer_edit&id=".$v["id"],
-			);
-		}
-		$replace = array(
-			"items"		=> (array)$items,
-			"pages"		=> $pages,
-			"total"		=> intval($total),
-			"filter"	=> module('manage_shop')->USE_FILTER ? module('manage_shop')->_show_filter() : "",
-			"add_url"	=> "./?object=manage_shop&action=manufacturer_add",
-		);
-		return tpl()->parse("manage_shop/manufacturer_main", $replace); 
+		return common()->table2("SELECT * FROM ".db('shop_manufacturers'))
+#			->image("name")
+			->text("name")
+			->text("url")
+			->text("meta_keywords")
+			->text("meta_desc")
+			->btn_edit("", "./?object=manage_shop&action=manufacturer_edit&id=%d")
+			->btn_delete("", "./?object=manage_shop&action=manufacturer_delete&id=%d")
+			->footer_link("Add", "./?object=manage_shop&action=manufacturer_add")
+			->render();
 	}	
 	
 /*

@@ -193,7 +193,10 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_edit($name = "Edit", $link = "", $extra = array()) {
+	function btn_edit($name = "", $link = "", $extra = array()) {
+		if (!$name) {
+			$name = "Edit";
+		}
 		if (!$link) {
 			$link = "./?object=".$_GET["object"]."&action=edit&id=%d";
 		}
@@ -212,7 +215,10 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_delete($name = "Delete", $link = "", $extra = array()) {
+	function btn_delete($name = "", $link = "", $extra = array()) {
+		if (!$name) {
+			$name = "Delete";
+		}
 		if (!$link) {
 			$link = "./?object=".$_GET["object"]."&action=delete&id=%d";
 		}
@@ -231,7 +237,10 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_active($name = "Active", $link = "", $extra = array()) {
+	function btn_active($name = "", $link = "", $extra = array()) {
+		if (!$name) {
+			$name = "Active";
+		}
 		if (!$link) {
 			$link = "./?object=".$_GET["object"]."&action=active&id=%d";
 		}
