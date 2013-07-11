@@ -86,7 +86,7 @@ class yf_tpl {
 		'/\{url\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
 			=> 'tpl()->_generate_url_wrapper(\'$1\')',
 		// EXAMPLE:	 {form_row("text","password","New Password")}
-		'/\{form_row\(["\']{1}([\s\w\-]+)["\']{1}(,["\']{1}([\s\w\-]*)["\']{1})?(,["\']{1}([\s\w\-]*)["\']{1})?(,["\']{1}([\s\w\-]*)["\']{1})?\)\}/imse'
+		'/\{form_row\(["\']{1}([\s\w\-]+)["\']{1}([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?\)\}/imse'
 			=> '_class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\')',
 	);
 	/** @var array @conf_skip Show custom class method output pattern */
