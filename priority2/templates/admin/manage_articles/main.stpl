@@ -1,8 +1,4 @@
 <h3>({t(Total)} {total})</h3>
-<div align="center"> 
-{filter}
-</div>
-<br />
 {if("items" ne "")}
 <table class="table table-bordered table-striped table-hover">
 	<thead>

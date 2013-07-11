@@ -30,6 +30,7 @@
 			</ul>
 		</div>
 	</div>
+{execute(graphics,_show_block;name=left_area)}
 	<div class="container">
 {execute(graphics,_show_block;name=center_area)}
 	</div>

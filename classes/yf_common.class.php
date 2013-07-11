@@ -1434,6 +1434,18 @@ class yf_common {
 		}
 		return $results;
 	}
+	
+	/**
+	*/
+	function show_left_filter(){
+		$obj = module($_GET["object"]);
+		$method = "_show_filter";
+		if (method_exists($obj, $method) 
+			&& $obj->USE_FILTER) {
+			return $obj->$method();
+		}	
+	}
+
 
 	/**
 	* Sphinx-related

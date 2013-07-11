@@ -1,4 +1,11 @@
 <style type="text/css">
+.left_area {
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 410px;
+	float:left;
+	word-wrap: break-word;
+}
 .sidebar-nav {
     padding: 9px 0;
 }
