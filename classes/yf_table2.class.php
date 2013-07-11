@@ -60,7 +60,9 @@ class yf_table2 {
 			foreach ((array)$this->_fields as $name => $info) {
 				$body .= '<th>'.t($info['desc']).'</th>'.PHP_EOL;
 			}
-			$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
+			if ($this->_buttons) {
+				$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
+			}
 			$body .= '</thead>'.PHP_EOL;
 			foreach ((array)$data as $row) {
 				$body .= '<tr>'.PHP_EOL;
@@ -71,12 +73,14 @@ class yf_table2 {
 					$func = $info['func'];
 					$body .= '<td>'.$func($row[$name], $info).'</td>'.PHP_EOL;
 				}
-				$body .= '<td>';
-				foreach ((array)$this->_buttons as $name => $info) {
-					$func = $info['func'];
-					$body .= $func($row, $info).PHP_EOL;
+				if ($this->_buttons) {
+					$body .= '<td>';
+					foreach ((array)$this->_buttons as $name => $info) {
+						$func = $info['func'];
+						$body .= $func($row, $info).PHP_EOL;
+					}
+					$body .= '</td>'.PHP_EOL;
 				}
-				$body .= '</td>'.PHP_EOL;
 				$body .= '</tr>'.PHP_EOL;
 			}
 #			$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
@@ -143,7 +147,12 @@ class yf_table2 {
 			"link"	=> $link,
 			"data"	=> $data,
 			"func"	=> function($field, $params) {
-				return '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.(isset($params['data']) ? $params['data'][$field] : $field).'</a>';
+				if (is_string($params['data'])) {
+					$text = $params['data'];
+				} else {
+					$text = (isset($params['data']) ? $params['data'][$field] : $field);
+				}
+				return '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.$text.'</a>';
 			}
 		);
 		return $this;
@@ -160,7 +169,7 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"func"	=> function($field, $params) {
-				return _format_date($field);
+				return _format_date($field, $params['desc']);
 			}
 		);
 		return $this;

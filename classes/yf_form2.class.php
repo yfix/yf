@@ -348,6 +348,16 @@ class yf_form2 {
 
 	/**
 	*/
+	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['items'] = array(
+			'1' => '<span class="label label-success">'.t('YES').'</span>',
+			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
+		);
+		return $this->active_box($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
 	function submit($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
