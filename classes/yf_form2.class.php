@@ -69,19 +69,49 @@ class yf_form2 {
 	}
 
 	/**
-	* Just hidden input
 	*/
-	function hidden($name, $desc = '', $extra = array(), $replace = array()) {
+	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$id = $extra["id"] ? $extra["id"] : $name;
-		$value = isset($extra["value"]) ? $extra["value"] : $replace[$name];
+		if (!$name) {
+			$name = 'form_action';
+		}
+		if (!$method) {
+			$method = 'post';
+		}
+		$enctype = '';
+		if ($extra['enctype']) {
+			$enctype = $extra['enctype'];
+		} elseif ($extra['for_upload']) {
+			$enctype = 'multipart/form-data';
+		}
+		$body = '<form method="'.$method.'" action="'.$replace[$name].'" class="form-horizontal'.($extra['class'] ? ' '.$extra['class'] : '').'"'
+			.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
+			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
+			.($extra['name'] ? ' name="'.$extra['name'].'"' : '')
+			.($extra['enctype'] ? ' enctype="'.$extra['enctype'].'"' : '')
+			.'>';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
 
-		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'.($extra["data"] ? ' data="'.$extra["data"].'"' : '').'>';
+	/**
+	*/
+	function form_end($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$body = '</form>';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -107,20 +137,29 @@ class yf_form2 {
 		$value = isset($extra["value"]) ? $extra["value"] : $replace[$name];
 		$input_type = isset($extra["type"]) ? $extra["type"] : "text";
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-#		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
-#		$append = $extra['append'] ? $extra['append'] : '';
-
+		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
+		$append = $extra['append'] ? $extra['append'] : '';
+		// Supported: mini, small, medium, large, xlarge, xxlarge
+		if ($extra['sizing']) {
+			$extra['class'] .= ' input-'.$extra['sizing'];
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
-				<div class="controls">
-					<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'
+				<div class="controls">'
+					.(($prepend || $append) ? '<div class="'.($prepend ? 'input-prepend' : '').($append ? ' input-append' : '').'">' : '')
+					.($prepend ? '<span class="add-on">'.$prepend.'</span>' : '')
+					.'<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'
 					.($extra["class"] ? ' class="'.$extra["class"].'"' : '')
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
+					.($extra["size"] ? ' size="'.$extra["size"].'"' : '')
+					.($extra["maxlength"] ? ' maxlength="'.$extra["maxlength"].'"' : '')
 					.($extra["disabled"] ? ' disabled' : '')
 					.($extra["required"] ? ' required' : '')
 					.'>'
+					.($append ? '<span class="add-on">'.$append.'</span>' : '')
+					.(($prepend || $append) ? '</div>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
 			</div>
@@ -172,6 +211,27 @@ class yf_form2 {
 	}
 
 	/**
+	* Just hidden input
+	*/
+	function hidden($name, $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$id = $extra["id"] ? $extra["id"] : $name;
+		$value = isset($extra["value"]) ? $extra["value"] : $replace[$name];
+
+		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'.($extra["data"] ? ' data="'.$extra["data"].'"' : '').'>';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
 	*/
 	function text($name, $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'text';
@@ -180,8 +240,11 @@ class yf_form2 {
 
 	/**
 	*/
-	function password($name, $desc = '', $extra = array(), $replace = array()) {
+	function password($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'password';
+		if (!$name) {
+			$name = 'password';
+		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -194,41 +257,44 @@ class yf_form2 {
 
 	/**
 	*/
-	function email($name, $desc = '', $extra = array(), $replace = array()) {
-// TODO: prepend icon
-		$extra['type'] = 'text';
+	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'email';
+		$extra['prepend'] = '@';
+		if (!$name) {
+			$name = 'email';
+		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
 	function integer($name, $desc = '', $extra = array(), $replace = array()) {
-// TODO: input size
-		$extra['type'] = 'text';
+		$extra['type'] = 'number';
+		$extra['sizing'] = 'small';
+		$extra['maxlength'] = '10';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
-// TODO: prepend icon, input styling
 		$extra['type'] = 'text';
+		$extra['prepend'] = '$';
+		$extra['append'] = '.00';
+		$extra['sizing'] = 'small';
+		$extra['maxlength'] = '8';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
-	function url($name, $desc = '', $extra = array(), $replace = array()) {
-// TODO: prepend icon
-		$extra['type'] = 'text';
+	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'url';
+		$extra['prepend'] = 'url';
+		if (!$name) {
+			$name = 'url';
+		}
 		return $this->input($name, $desc, $extra, $replace);
-	}
-
-	/**
-	* Image upload
-	*/
-	function image($name, $desc = '', $extra = array(), $replace = array()) {
-// TODO: show already uploaded image, link to delete it, input to upload new
 	}
 
 	/**
@@ -277,7 +343,7 @@ class yf_form2 {
 			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
 			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
 		);
-		return $this->active_box($name, $desc, $extra, $replace) {
+		return $this->active_box($name, $desc, $extra, $replace);
 	}
 
 	/**
@@ -650,6 +716,100 @@ class yf_form2 {
 	}
 
 	/**
+	* For use inside table item template
+	*/
+	function tbl_link($name, $link, $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		$link_url = isset($replace[$link]) ? $replace[$link] : $link;
+		$body = ' <a href="'.$link.'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($name).'</a> ';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!$name) {
+			$name = 'Edit';
+		}
+		if (!$link) {
+			$link = 'edit_link';
+			if (!isset($replace['edit_link']) && isset($replace['edit_url'])) {
+				$link = 'edit_url';
+			}
+		}
+		$link_url = isset($replace[$link]) ? $replace[$link] : $link;
+		$body = ' <a href="'.$link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t($name).'</a> ';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_del($name = '', $link = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!$name) {
+			$name = 'Delete';
+		}
+		if (!$link) {
+			$link = 'delete_link';
+			if (!isset($replace['delete_link']) && isset($replace['delete_url'])) {
+				$link = 'delete_url';
+			}
+		}
+		$link_url = isset($replace[$link]) ? $replace[$link] : $link;
+		$body = ' <a href="'.$link.'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($name).'</a> ';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!$name) {
+			$name = 'active';
+		}
+		if (!$link) {
+			$link = 'active_link';
+			if (!isset($replace['active_link']) && isset($replace['active_url'])) {
+				$link = 'active_url';
+			}
+		}
+		$link_url = isset($replace[$link]) ? $replace[$link] : $link;
+		$is_active = $replace[$name];
+		$body = ' <a href="'.$link.'" class="change_active">'
+			.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
+			.'</a> ';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
 	*/
 	function birth_box($name, $values, $extra = array(), $replace = array()) {
 // TODO: customize for birth input needs
@@ -680,126 +840,13 @@ class yf_form2 {
 // TODO: nice select box with data
 	}
 
-	/**
-	*/
-	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		if (!$name) {
-			$name = 'form_action';
-		}
-		if (!$method) {
-			$method = 'post';
-		}
-		$enctype = '';
-		if ($extra['enctype']) {
-			$enctype = $extra['enctype'];
-		} elseif ($extra['for_upload']) {
-			$enctype = 'multipart/form-data';
-		}
-		$body = '<form method="'.$method.'" action="'.$replace[$name].'" class="form-horizontal'.($extra['class'] ? ' '.$extra['class'] : '').'"'
-			.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
-			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
-			.($extra['name'] ? ' name="'.$extra['name'].'"' : '')
-			.($extra['enctype'] ? ' enctype="'.$extra['enctype'].'"' : '')
-			.'>';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-	}
+// TODO: add support to these HTML5 controls: color, date, datetime, datetime-local, month, range, search, tel, time, week
+// http://www.w3schools.com/html/html5_form_input_types.asp
 
 	/**
+	* Image upload
 	*/
-	function form_end($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$body = '</form>';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-	}
-/*
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini"><i class="icon-edit"></i> '.t($params['name']).'</a> ';
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($params['name']).'</a> ';
-				return '<a href="'.str_replace('%d', $row['id'], $params['link']).'" class="change_active">'
-						.($row['active'] ? '<span class="label label-success">'.t('ACTIVE').'</span>' : '<span class="label label-warning">'.t('INACTIVE').'</span>')
-					.'</a> ';
-*/
-
-	/**
-	*/
-	function tbl_link($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-// TODO
-$body = 'TODO';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function tbl_link_edit($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-// TODO
-$body = 'TODO';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function tbl_link_del($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-// TODO
-$body = 'TODO';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function tbl_link_active($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!$name) {
-			$name = 'active_link';
-		}
-		$active_link = $replace[$name];
-// TODO
-$body = 'TODO';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+	function image($name, $desc = '', $extra = array(), $replace = array()) {
+// TODO: show already uploaded image, link to delete it, input to upload new
 	}
 }

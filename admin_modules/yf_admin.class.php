@@ -154,6 +154,12 @@ class yf_admin {
 			->active_box()
 			->info("add_date","Added")
 			->save_and_back()
+/*
+			->email()
+			->integer("int")
+			->money("price")
+			->url()
+*/
 			->form_end()
 			->render();
 //		return tpl()->parse($_GET["object"]."/edit", $replace);
