@@ -1213,10 +1213,10 @@ class yf_db {
 		$tt = array();
 		if (is_array($table)) {
 			foreach ((array)$table as $t => $_as) {
-				$tt[] = $this->_real_name($t). ($_as ? " AS ".$this->enclose_field_name($_as));
+				$tt[] = $this->_real_name($t). ($_as ? " AS ".$this->enclose_field_name($_as) : "");
 			}
 		} else {
-			$tt[] = $this->_real_name($table). ($as ? " AS ".$this->enclose_field_name($as));
+			$tt[] = $this->_real_name($table). ($as ? " AS ".$this->enclose_field_name($as) : "");
 		}
 		$sql = "FROM ".implode(",", $tt);
 		$this->_sql[__FUNCTION__] = $sql;
@@ -1244,6 +1244,13 @@ class yf_db {
 	*/
 	function left_join($table, $as, $items) {
 		return $this->join($table, $as, $items, "LEFT JOIN");
+	}
+
+	/**
+	* Part of query-generation chain
+	*/
+	function right_join($table, $as, $items) {
+		return $this->join($table, $as, $items, "RIGHT JOIN");
 	}
 
 	/**
