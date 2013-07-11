@@ -319,7 +319,7 @@ class yf_form2 {
 			);
 		}
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-		$selected = $replace[$name];
+		$selected = isset($extra['selected']) ? $extra['selected'] : $replace[$name];
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
