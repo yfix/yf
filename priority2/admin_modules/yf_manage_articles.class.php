@@ -118,7 +118,6 @@ class yf_manage_articles extends yf_module {
 			"total"		=> intval($num_records),
 			"items"		=> $items,
 			"pages"		=> $pages,
-			"filter"	=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"add_link"	=> "./?object=".$_GET["object"]."&action=add",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);

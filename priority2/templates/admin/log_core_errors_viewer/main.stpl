@@ -1,8 +1,4 @@
 <h3>{t(Total)} ({total})</h3>
-<div align="center">
-	{filter}
-</div>
-<br />
 
 {if("items" ne "")}
 <div align="center"><a href="{top}">{t(TOP OF ERRORS)}</a></div><br />
