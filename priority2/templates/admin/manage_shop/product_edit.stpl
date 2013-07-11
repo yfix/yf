@@ -12,6 +12,9 @@
 	{form_row("text","meta_keywords")}
 	{form_row("text","ext_url","External Url")}
 	{form_row("text","price")}
+	{form_row("text","price_promo")}
+	{form_row("text","price_partner")}
+	{form_row("text","price_raw")}
 	{form_row("text","quantity")}
 {if("group_prices" ne "")}
 {foreach("group_prices")}
