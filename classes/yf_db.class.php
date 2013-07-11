@@ -1169,6 +1169,7 @@ class yf_db {
 	}
 
 	/**
+	* Helper
 	*/
 	function delete($table, $where) {
 		// Do not allow wide deletes, to prevent awful mistakes, use plain db()->query("DELETE ...") instead
@@ -1185,15 +1186,14 @@ class yf_db {
 
 	/**
 	* Part of query-generation chain
-
-	db()
-	->select("id,name")
-	->from("users")
-	->inner_join("groups","group_id")
-	->order_by("add_date")
-	->group_by("id")
-	->limit(10)
-
+	* Examples:
+	*	db()
+	*	->select(array("id","name"))
+	*	->from("users","u")
+	*	->inner_join("groups","g",array("u.group_id"=>"g.id"))
+	*	->order_by("add_date")
+	*	->group_by("id")
+	*	->limit(10)
 	*/
 	function select($fields = array()) {
 		if (is_array($fields)) {
@@ -1201,111 +1201,156 @@ class yf_db {
 		} elseif (empty($fields) || $fields == "*") {
 			$sql = "SELECT *";
 		}
-		$this->_sql[] = $sql;
+		$this->_sql[__FUNCTION__] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	* Examples: from("users"), from("users", "u"), from(array("users" => "u", "suppliers" => "s"))
+	*/
+	function from($table, $as = "") {
+		$tt = array();
+		if (is_array($table)) {
+			foreach ((array)$table as $t => $_as) {
+				$tt[] = $this->_real_name($t). ($_as ? " AS ".$this->enclose_field_name($_as));
+			}
+		} else {
+			$tt[] = $this->_real_name($table). ($as ? " AS ".$this->enclose_field_name($as));
+		}
+		$sql = "FROM ".implode(",", $tt);
+		$this->_sql[__FUNCTION__] = $sql;
+		return $this;
+	}
+
+	/**
+	* Part of query-generation chain
+	* Examples: join("suppliers", array("u.supplier_id" => "s.id"))
+	*/
+	function join($table, $as, $items, $join_type = "JOIN") {
+		$on = array();
+		foreach ((array)$items as $k => $v) {
+			list($t1_as, $t1_field) = explode(".", $k);
+			list($t2_as, $t2_field) = explode(".", $v);
+			$on[] = $this->enclose_field_name($t1_as).".".$this->enclose_field_name($t1_field)." = ".$this->enclose_field_name($t2_as).".".$this->enclose_field_name($t2_field);
+		}
+		$sql = $join_type." ".$this->_real_name($table)." AS ".$this->enclose_field_name($as)." ON ".implode(",", $on);
+		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
 
 	/**
 	* Part of query-generation chain
 	*/
-	function from($table) {
-		$sql = "FROM ".$this->_real_name($table);
-		$this->_sql[] = $sql;
-		return $this;
+	function left_join($table, $as, $items) {
+		return $this->join($table, $as, $items, "LEFT JOIN");
 	}
 
 	/**
 	* Part of query-generation chain
 	*/
-	function join($table, $on) {
-		$on_conds = array();
-#		foreach ((array)$on) {
-#		}
-		$sql = "JOIN ".$this->_real_name($table)." ON ".implode(",", $on_conds);
-		$this->_sql[] = $sql;
+	function inner_join($table, $as, $items) {
+		return $this->join($table, $as, $items, "INNER JOIN");
+	}
+
+	/**
+	* Part of query-generation chain
+	* Example: where(array("id",">","1"),array("name","!=","peter"))
+	*/
+	function where($items) {
+		$where = array();
+		foreach ((array)$items as $v) {
+			$where[] = $this->enclose_field_name($v[0]). $v[1]. $this->enclose_field_value($v[2]);
+		}
+		$sql = "WHERE ".implode(" AND ", $where);
+		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
 
 	/**
 	* Part of query-generation chain
+	* Examples: group_by("user_group"), group_by(array("supplier","manufacturer"))
 	*/
-	function left_join($table) {
-// TODO
-		$this->_sql[] = $sql;
+	function group_by($items) {
+		if (is_array($items)) {
+			$by = array();
+			foreach ((array)$items as $v) {
+				$by[] = $this->enclose_field_name($v);
+			}
+		} else {
+			$by = array($this->enclose_field_name($items));
+		}
+		$sql = "GROUP BY ".implode(",", $by);
+		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
 
 	/**
 	* Part of query-generation chain
+	* Examples: order_by("user_group"), order_by(array("supplier","manufacturer"))
 	*/
-	function inner_join($table) {
-// TODO
-		$this->_sql[] = $sql;
+	function order_by($items) {
+		if (is_array($items)) {
+			$by = array();
+			foreach ((array)$items as $v) {
+				$by[] = $this->enclose_field_name($v);
+			}
+		} else {
+			$by = array($this->enclose_field_name($items));
+		}
+		$sql = "ORDER BY ".implode(",", $by);
+		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
 
 	/**
 	* Part of query-generation chain
+	* Examples: having(array("COUNT(*)",">","1"))
 	*/
-	function where() {
-// TODO
-		$this->_sql[] = $sql;
+	function having($items) {
+		$where = array();
+		foreach ((array)$items as $v) {
+			$where[] = $this->enclose_field_name($v[0]). $v[1]. $this->enclose_field_value($v[2]);
+		}
+		$sql = "HAVING ".implode(" AND ", $where);
+		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
 
 	/**
 	* Part of query-generation chain
+	* Examples: limit(10), limit(10,100)
 	*/
-	function group_by() {
-// TODO
-		$this->_sql[] = $sql;
-		return $this;
-	}
-
-	/**
-	* Part of query-generation chain
-	*/
-	function order_by() {
-// TODO
-		$this->_sql[] = $sql;
-		return $this;
-	}
-
-	/**
-	* Part of query-generation chain
-	*/
-	function having() {
-// TODO
-		$this->_sql[] = $sql;
-		return $this;
-	}
-
-	/**
-	* Part of query-generation chain
-	*/
-	function limit($count, $offset) {
-// TODO: convert into query generation chain
-/*
+	function limit($count, $offset = null) {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
 		if (!is_object($this->db)) {
 			return false;
 		}
-		return $this->db->limit($count, $offset);
-*/
+		$sql = $this->db->limit($count, $offset);
+		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
 
 	/**
 	* Execute generated query
 	*/
-	function exec() {
-		$sql = implode(" ", (array)$this->_sql);
+	function exec($as_sql = true) {
+		$a = array();
+		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
+		foreach (array("select","from","join","left_join","right_join","inner_join","where","group_by","having","order_by","limit") as $name) {
+			if ($this->_sql[$name]) {
+				$a[] = $this->_sql[$name];
+			}
+		}
+		$sql = implode(" ", $a);
 		if (empty($sql)) {
 			return false;
 		}
-		echo $sql;
+		if ($as_sql) {
+			return $sql;
+		}
 #		return $this->query($sql);
 	}
 }
