@@ -51,28 +51,4 @@ class yf_manage_shop_supplier_edit{
 			->save_and_back()
 			->render();
 	}	
-/*	
-	function upload_image () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return "Empty ID!";
-		}
-		$this->_upload_image($_GET["id"]);
-		return js_redirect($_SERVER["HTTP_REFERER"]);
-	}
-
-	function _upload_image ($man_id, $url) {
-		$img_properties = getimagesize($_FILES['image']['tmp_name']);
-		if (empty($img_properties) || !$man_id) {
-			return false;
-		}
-		$img_path = module('manage_shop')->supplier_img_dir.$url."_".$man_id.module('manage_shop')->FULL_IMG_SUFFIX. ".jpg";
-		$thumb_path = module('manage_shop')->supplier_img_dir.$url."_".$man_id.module('manage_shop')->THUMB_SUFFIX. ".jpg";
-		$upload_result = common()->upload_image($img_path);
-		if ($upload_result) {
-			$resize_result = common()->make_thumb($img_path, $thumb_path, module('manage_shop')->THUMB_X, module('manage_shop')->THUMB_Y);
-		}
-		return true;
-	}
-*/
 }

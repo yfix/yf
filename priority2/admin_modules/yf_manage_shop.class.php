@@ -198,6 +198,10 @@ class yf_manage_shop {
 		return _class('manage_shop_orders_manage', 'admin_modules/manage_shop/')->orders_manage();
 	}
 
+	function orders() {
+		return js_redirect("./?object=manage_shop&action=orders_manage");
+	}
+
 	function show_reports() {
 		return _class('manage_shop_show_reports', 'admin_modules/manage_shop/')->show_reports();
 	}
@@ -372,5 +376,13 @@ class yf_manage_shop {
 
 	function clear_filter_report() {
 #		return _class('manage_shop_clear_filter_report', 'admin_modules/manage_shop/')->clear_filter_report();
+	}
+
+	function categories() {
+		return js_redirect("./?object=category_editor&action=show_items&id=shop_cats");
+	}
+
+	function config() {
+		return js_redirect("./?object=manage_conf&category=shop");
 	}
 }

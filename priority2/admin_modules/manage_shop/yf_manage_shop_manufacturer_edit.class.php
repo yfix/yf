@@ -41,8 +41,16 @@ class yf_manage_shop_manufacturer_edit{
 			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
 			"back_url"			=> "./?object=manage_shop&action=manufacturers",
 		);
-		return tpl()->parse("manage_shop/manufacturer_edit", $replace);
-	}	
+		return common()->form2($replace)
+			->text("name")
+			->textarea("desc","Description")
+			->text("url")
+			->text("meta_keywords")
+			->text("meta_desc")
+			->integer("sort_order")
+			->save_and_back()
+			->render();
+	}
 	
 	function upload_image () {
 		$_GET["id"] = intval($_GET["id"]);
