@@ -402,4 +402,8 @@ class yf_shop extends yf_module {
 	function product_sets() {
 // TODO: show list of product set
 	}
+
+	function category() {
+// TODO: show category contents
+	}
 }

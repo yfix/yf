@@ -627,10 +627,6 @@ class yf_tpl {
 			if ($this->COMPILE_TEMPLATES) {
 				$this->_compile($name, $replace, $string);
 			}
-			$string = $this->_process_executes($string, $replace, $name);
-#		   $string = $this->_replace_std_patterns($string, $name, $replace, $params);
-			$string = $this->_process_catches($string, $replace, $name);
-			$string = $this->_replace_std_patterns($string, $name, $replace, $params);
 			if (isset($params["no_cache"]) && !$params["no_cache"]) {
 				$this->CACHE[$name]['string']   = $string;
 				$this->CACHE[$name]['calls']	= 1;
@@ -638,7 +634,6 @@ class yf_tpl {
 		}
 		$string = $this->_process_executes($string, $replace, $name);
 		$string = $this->_process_catches($string, $replace, $name);
-		// Process std replaces again (if left some unprocessed tags)
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
 		$string = $this->_process_cycles($string, $replace, $name);
 		$string = $this->_process_conditions($string, $replace, $name);
@@ -646,7 +641,6 @@ class yf_tpl {
 			$string = preg_replace(array_keys($this->_PATTERN_INCLUDE), array_values($this->_PATTERN_INCLUDE), $string);
 			$string = $this->_process_executes($string, $replace, $name);
 		}
-		// Do not allow empty tags
 		if (isset($replace[""])) {
 			unset($replace[""]);
 		}

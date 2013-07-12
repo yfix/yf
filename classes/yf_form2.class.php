@@ -775,7 +775,7 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link.'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($name).'</a> ';
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -801,7 +801,7 @@ class yf_form2 {
 			}
 		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t($name).'</a> ';
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini"><i class="icon-edit"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -812,7 +812,7 @@ class yf_form2 {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_del($name = '', $link = '', $extra = array(), $replace = array()) {
+	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -827,7 +827,7 @@ class yf_form2 {
 			}
 		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link.'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($name).'</a> ';
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -854,7 +854,7 @@ class yf_form2 {
 		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
 		$is_active = $r[$name];
-		$body = ' <a href="'.$link.'" class="change_active">'
+		$body = ' <a href="'.$link_url.'" class="change_active">'
 			.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
 			.'</a> ';
 		if ($this->_chained_mode) {

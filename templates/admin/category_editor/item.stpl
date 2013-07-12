@@ -1,17 +1,14 @@
-<tr class="{bg_class}">
-	<td><a href="{items_link}">{name}</a></td>
+<tr>
+	<td><a href="{items_link}" class="btn btn-mini">{name}</a></td>
 	<td>{desc}</td>
 	<td>{type}</td>
 	<td>{num_items}</td>
-	<td><a href="{active_link}" class="change_active">
-{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}
-{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a>
-	</td>
 	<td nowrap>
-		<a href="{items_link}" title="{t(Edit Items)}"><i class="icon-eye-open"></i></a>&nbsp;
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
-		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-trash"></i></a>&nbsp;
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>&nbsp;
-		<a href="{export_link}" title="{t(Export)}"><i class="icon-plus-sign"></i></a>&nbsp;
+{form_row("tbl_link_active")}
+{form_row("tbl_link","Items","items_link")}
+{form_row("tbl_link_edit")}
+{form_row("tbl_link_delete")}
+{form_row("tbl_link","Clone","clone_link")}
+{form_row("tbl_link","Export","export_link")}
 	</td>
 </tr>

@@ -1,15 +1,15 @@
 <tr>
 	<td nowrap>
-		{if("level_pad" ne "")}<span>&#9492;</span>{/if}
+		{if("level_pad" ne "")}<span style="font-size:20px;line-height:14px;">&#9492;</span>{/if}
 		<input type="text" name="name[{item_id}]" value="{name}">
 	</td>
 	<td><input type="text" name="url[{item_id}]" value="{url}"></td>
 	<td><input type="text" name="other_info[{item_id}]" value="{other_info}"></td>
-	<td><input type="text" name="order[{item_id}]" value="{order}"></td>
+	<td><input type="text" name="order[{item_id}]" value="{order}" class="input-mini"></td>
 	<td nowrap>
-		<a href="{active_link}" class="change_active">{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}</a>
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a> 
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a> 
-		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)} ?');" title="{t(Delete)}"><i class="icon-trash"></i></a> 
+{form_row("tbl_link_edit")}
+{form_row("tbl_link_delete")}
+{form_row("tbl_link","Clone","clone_link")}
+{form_row("tbl_link_active")}
 	</td>
 </tr>

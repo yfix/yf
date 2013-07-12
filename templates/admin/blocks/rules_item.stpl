@@ -11,14 +11,9 @@
 	<td>{site_ids}&nbsp;</td>
 	<td>{server_ids}&nbsp;</td>
 	<td>
-{if("active_link" ne "")}<a href="{active_link}" class="change_active">{/if}
-{if("active" eq 0)}<span class="label label-warning">{t(INACTIVE)}</span>{/if}
-{if("active" eq 1)}<span class="label label-success">{t(ACTIVE)}</span>{/if}
-{if("active_link" ne "")}</a>{/if}
-	</td>
-	<td>
-		<a href="{edit_link}" title="{t(Edit Block)}"><i class="icon-edit"></i></a>
-		<a href="{clone_link}" title="{t(Clone)}" onclick="return confirm('{t(Are you sure?)}');"><i class="icon-random"></i></a>
-		<a href="{delete_link}" onclick="return confirm('{t(Are you sure)}?');" title="{t(Delete)}"><i class="icon-trash"></i></a>
+{form_row("tbl_link_active")}
+{form_row("tbl_link_edit")}
+{form_row("tbl_link_delete")}
+{form_row("tbl_link","Clone","clone_link")}
 	</td>
 </tr>

@@ -1,9 +1,9 @@
 <script>
 $(function(){
-	var _t_active = "{t(ACTIVE)}";
-	var _t_inactive = "{t(INACTIVE)}";
-	var _t_yes = "{t(YES)}";
-	var _t_no = "{t(NO)}";
+	var _t_active = "{t(Active)}";
+	var _t_inactive = "{t(Disabled)}";
+	var _t_yes = "{t(Yes)}";
+	var _t_no = "{t(No)}";
 	var _t_are_you_sure = "{t(Are you sure)}?";
 
 	// Change activity status of different elemts without page refresh

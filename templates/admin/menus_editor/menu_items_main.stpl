@@ -12,7 +12,6 @@
 		<th>{t(Location)}</th>
 		<th nowrap>{t(Item Type)}</th>
 		<th>{t(Groups)}</th>
-		<th>{t(Active)}</th>
 		<th>{t(Order)}</th>
 		<th>{t(Action)}</th>
 	</tr>
@@ -21,7 +20,7 @@
 {items}				 
 		<tr class="{bg_class}" id="del_row_{item_id}">
 			<td colspan="2"><input type="checkbox" name='check_all' onclick="my_toggle_boxes(this.form)" id="my_check_all"></td>
-			<td colspan="7" style="padding-left:{level_pad}px;" nowrap><label for="my_check_all"><b>Select all</b></label></td>
+			<td colspan="6" style="padding-left:{level_pad}px;" nowrap><label for="my_check_all"><b>Select all</b></label></td>
 		</tr>
 	</tbody>
 </table>

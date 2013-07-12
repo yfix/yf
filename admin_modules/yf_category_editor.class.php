@@ -306,14 +306,12 @@ class yf_category_editor {
 		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
 		}
-		// Get current category info
 		if (!$cat_info) {
 			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($cat_info)) {
 			return _e(t("No such category!"));
 		}
-		// Get items for the current category
 		$cat_items = $this->_recursive_get_cat_items($_GET["id"]);
 		// Slice items according to the current page
 		$total = count($cat_items);
@@ -323,31 +321,29 @@ class yf_category_editor {
 		if (count($cat_items) > $PER_PAGE) {
 			$cat_items = array_slice($cat_items, (empty($_GET["page"]) ? 0 : intval($_GET["page"]) - 1) * $PER_PAGE, $PER_PAGE);
 		}
-		// Switch between arrays for admin or user
 		if ($cat_info["type"] == "admin") {
-			$this->_groups	= &$this->_admin_groups;
-			$this->_methods = &$this->_admin_methods;
+			$this->_groups	= $this->_admin_groups;
+			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= &$this->_user_groups;
-			$this->_methods = &$this->_user_methods;
+			$this->_groups	= $this->_user_groups;
+			$this->_methods = $this->_user_methods;
 		}
-		// Process items
 		foreach ((array)$cat_items as $A) {
 			if (empty($A)) {
 				continue;
 			}
-			// Propose short URL for category
 			if (empty($A["url"]) && $this->PROPOSE_SHORT_URL) {
 				$A["url"] = common()->_propose_url_from_name($A["name"]);
 			}
-			// Prepare data
 			$groups = array();
 			foreach (explode(",",$A["user_groups"]) as $k => $v) {
-				if (empty($this->_groups[$v])) continue;
+				if (empty($this->_groups[$v])) {
+					continue;
+				}
 				$groups[] = $this->_groups[$v];
 			}
 			$groups = implode("<br />",$groups);
-			// Process template
+
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
 				"item_id"		=> intval($A["id"]),
@@ -501,12 +497,12 @@ class yf_category_editor {
 			"url"				=> _prepare_html($DATA["url"]),
 			"icon"				=> _prepare_html($DATA["icon"]),
 			"order"				=> intval($DATA["order"]),
-			"type_id_box"		=> $this->_box("type_id",	""),
+			"type_id_box"		=> $this->_box("type_id", ""),
 			"parent_id_box"		=> $this->_box("parent_id", ""),
-			"groups_box"		=> $this->_box("groups",	array(""=>"-- ALL --")),
-			"methods_box"		=> $this->_box("methods",	""),
-			"active_box"		=> $this->_box("active", 	$DATA["active"]),
-			"featured_box"		=> $this->_box("featured",	""),
+			"groups_box"		=> $this->_box("groups", array(""=>"-- ALL --")),
+			"methods_box"		=> $this->_box("methods", ""),
+			"active_box"		=> $this->_box("active", $DATA["active"]),
+			"featured_box"		=> $this->_box("featured", ""),
 			"back_link"			=> "./?object=".$_GET["object"]."&action=show_items&id=".intval($cat_info["id"]),
 			"for_edit"			=> 0,
 			"edit_modules_link"	=> "./?object=".$cat_info["type"]."_modules",

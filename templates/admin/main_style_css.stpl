@@ -42,4 +42,7 @@
     top: 11px;
     left: -6px;
 }
+td input[type=text], td textarea {
+	margin-bottom: 0;
+}
 </style>

@@ -1,15 +1,15 @@
-<tr class="{bg_class}" id="dbt_{name}">
+<tr id="dbt_{name}">
 	<td>
 		<input class="group_action" type="checkbox" name="item[]" value="{name}">
 	</td>
-	<td width="90%"><a href="{view_link}"><b>{name}</b></a></td>
+	<td width="90%"><a href="{view_link}" class="btn btn-mini">{name}</a></td>
 	<td>{engine}</td>
 	<td>{collation}</td>
 	<td>{num_rows}</td>
 	<td nowrap>{data_size}</td>
 	<td nowrap>
-		<a href="{view_link}" title="{t(View)}"><i class="icon-eye-open"></i></a>
-		<a href="{structure_link}" title="{t(Structure)}"><i class="icon-list"></i></a>
-		<a href="{export_link}" title="{t(Export)}"><i class="icon-plus-sign"></i></a>&nbsp;
+{form_row("tbl_link","View","view_link")}
+{form_row("tbl_link","Structure","structure_link")}
+{form_row("tbl_link","Export","export_link")}
 	</td>
 </tr>
