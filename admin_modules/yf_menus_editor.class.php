@@ -529,7 +529,7 @@ class yf_menus_editor {
 				"user_groups"	=> _es($this->_multi_html_to_db($_POST["groups"])),
 				"site_ids"		=> _es($this->_multi_html_to_db($_POST["site_ids"])),
 				"server_ids"	=> _es($this->_multi_html_to_db($_POST["server_ids"])),
-				"order"			=> intval($_POST["item_order"]),
+				"order"			=> intval($_POST["order"]),
 				"active"		=> intval($_POST["active"]),
 			));
 			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("menu_items");
@@ -607,7 +607,7 @@ class yf_menus_editor {
 				"location"		=> _es($_POST["location"]),
 				"icon"			=> _es($_POST["icon"]),
 				"user_groups"	=> "",
-				"order"			=> intval($_POST["item_order"]),
+				"order"			=> intval($_POST["order"]),
 				"active"		=> intval($_POST["active"]),
 			));
 		}
@@ -644,7 +644,7 @@ class yf_menus_editor {
 				"server_ids"	=> _es($this->_multi_html_to_db($_POST["server_ids"])),
 				"cond_code"		=> _es($_POST["cond_code"]),
 				"type_id"		=> intval($_POST["type_id"]),
-				"order"			=> intval($_POST["item_order"]),
+				"order"			=> intval($_POST["order"]),
 				"active"		=> intval($_POST["active"]),
 			), "id=".intval($item_info["id"]));
 			if (main()->USE_SYSTEM_CACHE)	{

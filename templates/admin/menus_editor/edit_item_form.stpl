@@ -23,7 +23,7 @@
 	{form_row("box","site_ids_box","Sites","sites_link")}
 	{form_row("box","server_ids_box","Servers","servers_link")}
 	{form_row("text","cond_code","PHP condition")}
-	{form_row("number","item_ordeer","Display Order")}
+	{form_row("number","order","Display Order")}
 	{form_row("active_box")}
 	{form_row("save_and_back")}
 {form_row("form_end")}
