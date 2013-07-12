@@ -935,4 +935,117 @@ class yf_form2 {
 	function image($name, $desc = '', $extra = array(), $replace = array()) {
 // TODO: show already uploaded image, link to delete it, input to upload new
 	}
+
+	/**
+	*/
+	function method_select_box($name, $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+/*
+	<div class="control-group">
+		<label class="control-label" for="method_name">{t(Custom class Method)}</label>
+		<div class="controls">
+			<input type="text" id="method_name" name="method_name" value="{method_name}">
+			{methods_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.methods.options[this.form.methods.selectedIndex].value, '', true, 'method_name');" title="{t(Insert Selected Word)}">
+			<a href="{modules_link}"><i class="icon-edit"></i></a>
+			{itip("Class method will be used to process block. Example: main.tasks")} 
+		</div>
+	</div>
+*/
+/*
+		$r = $replace ? $replace : $this->_replace;
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		$body = '
+			<div class="control-group">
+				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<div class="controls">'
+					.$r[$name]
+					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.'</div>
+			</div>
+		';
+*/
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function template_select_box($name, $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+/*
+	<div class="control-group">
+		<label class="control-label" for="stpl_name">{t(Custom Template)}</label>
+		<div class="controls">
+			<input type="text" id="stpl_name" name="stpl_name" value="{stpl_name}">
+			{stpls_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.stpls.options[this.form.stpls.selectedIndex].value, '', true, 'stpl_name');" title="{t(Insert Selected Word)}">
+			<a href="{stpls_link}"><i class="icon-edit"></i></a>
+			{itip("Template will be forced to use when processing block. Example: right_area/main")} 
+		</div>
+	</div>
+*/
+/*
+		$r = $replace ? $replace : $this->_replace;
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		$body = '
+			<div class="control-group">
+				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<div class="controls">'
+					.$r[$name]
+					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.'</div>
+			</div>
+		';
+*/
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function icon_select_box($name, $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+/*
+	<div class="control-group">
+		<label class="control-label" for="icon">{t(Item Icon)}</label>
+		<div class="controls">
+			<span class="icon_preview">{if("icon_src" ne "")}<img src="{icon_src}" />{/if}</span>
+			<input type="text" id="icon" name="icon" value="{icon}" />
+			<input type="button" value="V" id="icon_selector" style="display:none;" class="btn" />
+		</div>
+	</div>
+*/
+/*
+		$r = $replace ? $replace : $this->_replace;
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		$body = '
+			<div class="control-group">
+				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<div class="controls">'
+					.$r[$name]
+					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.'</div>
+			</div>
+		';
+*/
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
 }
