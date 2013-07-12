@@ -46,5 +46,27 @@ $(function(){
 	$("form input[type=checkbox].yf_toggle_all_checkboxes").click(function(){
 		$("input[type=checkbox]", $(this).parents("form")).not(".yf_toggle_all_checkboxes").prop("checked", $(this).is(":checked"))
 	});
+	// Modal edit form via AJAX
+	$(".ajax_edit").click(function(){
+		var _obj = $(this);
+		$.get(_obj.attr("href"), function(data) {
+			$('<div class="modal hide fade" id="edit_link_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></div>' + data + '</div>').modal({
+				keyboard: true,
+				backdrop: true,
+				show: true
+			});
+		}).success(function() {
+			$('#edit_link_modal input:text:visible:first').focus();
+		});
+		return false; // Do not allow new page
+	});
+	$(document).on("submit", '#edit_link_modal form', function(e){
+		e.preventDefault();
+		var _form = $(this);
+		$.post(_form.attr("action"), _form.serialize(), function(data){
+			$('#edit_link_modal').modal('hide').remove();
+		})
+		return false;
+	});
 });
 </script>

@@ -1,6 +1,6 @@
 <tr>
 	<td nowrap>
-		{if("level_pad" ne "")}<span style="font-size:20px;line-height:14px;">&#9492;</span>{/if}
+		{if("level_pad" ne "")}<span style="padding-left:{level_pad}px;">&#9492;</span>{/if}
 		<input type="text" name="name[{item_id}]" value="{name}">
 	</td>
 	<td><input type="text" name="url[{item_id}]" value="{url}"></td>

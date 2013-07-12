@@ -1,6 +1,3 @@
-{if("for_edit" eq 1)}<h2>{t(Edit Rule for block)}: "{block_name}"</h2>{/if}
-{if("for_edit" eq 0)}<h2>{t(Add Rule for block)}: "{block_name}"</h2>{/if}
-
 {if("error_message" ne "")}<div class="alert">{error_message}</div>{/if}
 
 <form action="{form_action}" method="post" class="form-horizontal">
