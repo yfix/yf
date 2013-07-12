@@ -1489,7 +1489,7 @@ class yf_main {
 			}
 		}
 		// Check if current page is called via AJAX call from javascript
-		define("IS_AJAX", $this->_server("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest" ? 1 : 0);
+		conf("IS_AJAX", ($this->_server("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest" || !empty($_GET["ajax_mode"])) ? 1 : 0);
 
 		define('USER_MODULES_DIR', "modules/");
 		define('ADMIN_MODULES_DIR', "admin_modules/");

@@ -1391,6 +1391,11 @@ class yf_graphics {
 		}
 		// Do not touch !!!
 		tpl()->_CENTER_RESULT = (string)$body;
+		// Output only center content, when we are inside AJAX_MODE
+		if (conf('IS_AJAX')) {
+			main()->NO_GRAPHICS = true;
+			print $body;
+		}
 		return $body;
 	}
 
