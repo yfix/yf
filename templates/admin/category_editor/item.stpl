@@ -1,7 +1,10 @@
 <tr>
 	<td><a href="{items_link}" class="btn btn-mini">{name}</a></td>
 	<td>{desc}</td>
-	<td>{type}</td>
+	<td>{custom_fields}</td>
+	<td>{stpl_name}</td>
+	<td>{method_name}</td>
+	<td style="text-transform:uppercase">{type}</td>
 	<td>{num_items}</td>
 	<td nowrap>
 {form_row("tbl_link_active")}

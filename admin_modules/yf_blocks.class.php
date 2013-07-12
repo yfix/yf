@@ -384,11 +384,11 @@ class yf_blocks {
 		}
 		// Switch between arrays for admin or user
 		if ($block_info["type"] == "admin") {
-			$this->_groups	= &$this->_admin_groups;
-			$this->_methods = &$this->_admin_methods;
+			$this->_groups	= $this->_admin_groups;
+			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= &$this->_user_groups;
-			$this->_methods = &$this->_user_methods;
+			$this->_groups	= $this->_user_groups;
+			$this->_methods = $this->_user_methods;
 		}
 		// Get rules for the current block
 		$Q = db()->query("SELECT * FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
@@ -445,11 +445,11 @@ class yf_blocks {
 		}
 		// Switch between arrays for admin or user
 		if ($block_info["type"] == "admin") {
-			$this->_groups	= &$this->_admin_groups;
-			$this->_methods = &$this->_admin_methods;
+			$this->_groups	= $this->_admin_groups;
+			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= &$this->_user_groups;
-			$this->_methods = &$this->_user_methods;
+			$this->_groups	= $this->_user_groups;
+			$this->_methods = $this->_user_methods;
 		}
 		// Save form
 		if (!empty($_POST)) {
@@ -533,11 +533,11 @@ class yf_blocks {
 		}
 		// Switch between arrays for admin or user
 		if ($block_info["type"] == "admin") {
-			$this->_groups	= &$this->_admin_groups;
-			$this->_methods = &$this->_admin_methods;
+			$this->_groups	= $this->_admin_groups;
+			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= &$this->_user_groups;
-			$this->_methods = &$this->_user_methods;
+			$this->_groups	= $this->_user_groups;
+			$this->_methods = $this->_user_methods;
 		}
 		// Save form
 		if (!empty($_POST)) {

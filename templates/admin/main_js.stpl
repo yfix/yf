@@ -33,6 +33,15 @@ $(function(){
 		});
 		return false; // Do not allow new page
 	});
+	// Clone current TR, containing clicked element
+	$(".ajax_clone").click(function(){
+		var _obj = $(this);
+		var _row = _obj.closest('tr')[0];
+		$.post(_obj.attr("href") || _obj.attr("yf:href"), {ajax_mode: 1}, function() {
+			$(_row).clone().insertAfter(_row);
+		});
+		return false; // Do not allow new page
+	});
 	// Toggle checkboxes inside form, ruled by one with special class, limiting to only self form for checkbox, not touch outside
 	$("form input[type=checkbox].yf_toggle_all_checkboxes").click(function(){
 		$("input[type=checkbox]", $(this).parents("form")).not(".yf_toggle_all_checkboxes").prop("checked", $(this).is(":checked"))

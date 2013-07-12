@@ -1,24 +1,19 @@
-<form method="post" action="{form_action}" class="form-horizontal">
+{form_row("form_begin")}
 	{form_row("box","parent_id_box","Parent Item")}
 	{form_row("text","name")}
-	{form_row("text","desc","Description")}
-	{form_row("text","url","URL Keywords")}
+	{form_row("textarea","desc","Description")}
+	{form_row("text","url","Pretty url")}
+	{form_row("text","meta_keywords")}
+	{form_row("textarea","meta_desc")}
 	{form_row("text","icon","Item Icon Path")}
 	{form_row("box","featured_box","Is Featured")}
-	{form_row("text","order","Display Order")}
-	{form_row("active_box")}
-{if("custom_fields" ne "")}
-	<p class="full_width">
-		<b style="color:grey;">Custom fields:</b>
-	</p>
+	{form_row("number","order","Display Order")}
 {foreach("custom_fields")}
-	<p>
-		<label for="custom__{#.name}">{#.name}</label>
-		<input type="text" id="custom__{#.name}" name="custom__{#.name}" value="{#.value}" size="30">
-	</p>
+	<div class="control-group">
+		<label class="control-label" for="custom__{#.name}">{#.name} ({t(Custom)})</label>
+		<div class="controls"><input type="text" id="custom__{#.name}" name="custom__{#.name}" value="{#.value}"></div>
+	</div>
 {/foreach}
-{/if}
-	<input type="submit" value="{t(Save)}" name="go" class="btn" />
-	<a href="{back_link}" class="btn">{t(Back)}</a>
-</form>
-
+	{form_row("active_box")}
+	{form_row("save_and_back")}
+{form_row("form_end")}

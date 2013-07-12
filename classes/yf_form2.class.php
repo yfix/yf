@@ -19,11 +19,12 @@ class yf_form2 {
 
 	/**
 	* Render result form html, gathered by row functions
+	* Params here not required, but if provided - will be passed to form_begin()
 	*/
-	function render() {
+	function render($name = '', $method = '', $extra = array(), $replace = array()) {
 		// Call these methods, if not done yet, save 2 api calls
 		if (!isset($this->_body['form_begin'])) {
-			$this->form_begin();
+			$this->form_begin($name, $method, $extra, $replace);
 		}
 		if (!isset($this->_body['form_end'])) {
 			$this->form_end();
@@ -40,7 +41,6 @@ class yf_form2 {
 	* Wrapper for template engine
 	* Example:
 	*	return common()->form2($replace)
-	*		->form_begin()
 	*		->text("login","Login")
 	*		->text("password","Password")
 	*		->text("first_name","First Name")
@@ -49,7 +49,6 @@ class yf_form2 {
 	*		->box_with_link("group_box","Group","groups_link")
 	*		->active("active","Active")
 	*		->info("add_date","Added")
-	*		->form_end()
 	*		->render();
 	*/
 	function chained_wrapper($replace = array()) {
@@ -801,7 +800,7 @@ class yf_form2 {
 			}
 		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini"><i class="icon-edit"></i> '.t($name).'</a> ';
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_edit"><i class="icon-edit"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -827,7 +826,34 @@ class yf_form2 {
 			}
 		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($name).'</a> ';
+//		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_delete" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($name).'</a> ';
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_delete"><i class="icon-trash"></i> '.t($name).'</a> ';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_clone($name = '', $link = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!$name) {
+			$name = 'Clone';
+		}
+		$r = $replace ? $replace : $this->_replace;
+		if (!$link) {
+			$link = 'clone_link';
+			if (!isset($r['clone_link']) && isset($r['clone_url'])) {
+				$link = 'clone_url';
+			}
+		}
+		$link_url = isset($r[$link]) ? $r[$link] : $link;
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_clone"><i class="icon-plus"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;

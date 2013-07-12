@@ -374,11 +374,11 @@ class yf_menus_editor {
 		$num_items = count($menu_items);
 		// Switch between arrays for admin or user
 		if ($menu_info["type"] == "admin") {
-			$this->_groups	= &$this->_admin_groups;
-			$this->_methods = &$this->_admin_methods;
+			$this->_groups	= $this->_admin_groups;
+			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= &$this->_user_groups;
-			$this->_methods = &$this->_user_methods;
+			$this->_groups	= $this->_user_groups;
+			$this->_methods = $this->_user_methods;
 		}
 
 		// Get items for the parent_id menu
@@ -623,11 +623,11 @@ class yf_menus_editor {
 		}
 		// Switch between arrays for admin or user
 		if ($menu_info["type"] == "admin") {
-			$this->_groups	= &$this->_admin_groups;
-			$this->_methods = &$this->_admin_methods;
+			$this->_groups	= $this->_admin_groups;
+			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= &$this->_user_groups;
-			$this->_methods = &$this->_user_methods;
+			$this->_groups	= $this->_user_groups;
+			$this->_methods = $this->_user_methods;
 		}
 		$icon_src = "";
 		if ($item_info["icon"] && file_exists(INCLUDE_PATH. $this->ICONS_PATH. $item_info["icon"])) {
@@ -758,11 +758,11 @@ class yf_menus_editor {
 		$item_info["user_groups"] = $tmp;
 		// Switch between arrays for admin or user
 		if ($menu_info["type"] == "admin") {
-			$this->_groups	= &$this->_admin_groups;
-			$this->_methods = &$this->_admin_methods;
+			$this->_groups	= $this->_admin_groups;
+			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= &$this->_user_groups;
-			$this->_methods = &$this->_user_methods;
+			$this->_groups	= $this->_user_groups;
+			$this->_methods = $this->_user_methods;
 		}
 		$icon_src = "";
 		if ($item_info["icon"] && file_exists(INCLUDE_PATH. $this->ICONS_PATH. $item_info["icon"])) {
