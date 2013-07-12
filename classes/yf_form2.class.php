@@ -486,7 +486,12 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
