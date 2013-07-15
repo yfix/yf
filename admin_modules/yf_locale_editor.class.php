@@ -309,7 +309,6 @@ class yf_locale_editor {
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"total"				=> intval($total),
-			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
 		);
 		return tpl()->parse($_GET["object"]."/vars_main", $replace);
 	}

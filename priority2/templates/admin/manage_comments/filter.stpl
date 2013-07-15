@@ -1,28 +1,17 @@
-<form action='{save_action}' method='post' class='form-inline'>
 <legend>{t(Filter)}</legend>
-	<label for="object_name_box">{t(Object Name)}</label>
-	{object_name_box}
-
-	<input type="text" id="object_id" name="object_id" value="{object_id}" placeholder="{t(Object ID)}" class="input-mini">
-	<input type="text" id="cid_min" name="cid_min" value="{cid_min}"" placeholder="{t(Comment ID Min)}" class="input-small">
-	<input type="text" id="cid_max" name="cid_max" value="{cid_max}" placeholder="{t(Comment ID Max)}" class="input-small">
-	<input type="text" id="date_min" name="date_min" value="{date_min}" placeholder="{t(Date From)}" class="input-small">
-	<input type="text" id="date_max" name="date_max" value="{date_max}" placeholder="{t(Data To)}" class="input-small">
-	<input type="text" id="text" name="text" value="{text}" placeholder="{t(Text)}" class="input-small">
-	<input type="text" id="nick" name="nick" value="{nick}" placeholder="{t(User Nick)}" class="input-small">
-	<input type="text" id="user_id" name="user_id" value="{user_id}" placeholder="{t(User ID)}" class="input-small">
-
-	<label for="account_type_box">{t(Account type)}</label>
-	{account_type_box}
-
-	<label for="active_box">{t(Message Status)}</label>
-	{active_box}
-
-	<label for="sort_by_box">{t(Sort By Field)}</label>
-	{sort_by_box}
-
-	<label for="sort_order_box">{t(Sort order)}</label>
-	{sort_order_box}
-
+<form action='{save_action}' method='post' class='form-horizontal'>
+	{form_row("box","object_name_box","Object name")}
+	{form_row("text","object_id","Object ID")}
+	{form_row("text","cid_min","Comment ID Min")}
+	{form_row("text","cid_max","Comment ID Max")}
+	{form_row("text","date_min","Date From")}
+	{form_row("text","date_max","Date To")}
+	{form_row("text","text","Text")}
+	{form_row("text","nick","User Nick")}
+	{form_row("text","user_id","User ID")}
+	{form_row("box","account_type_box","Account type")}
+	{form_row("box","active_box","Message status")}
+	{form_row("box","sort_by_box","Sort by field")}
+	{form_row("box","sort_order_box","Sort Order")}
 	{form_row("save_and_clear")}
 </form>

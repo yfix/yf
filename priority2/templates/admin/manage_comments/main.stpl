@@ -1,9 +1,4 @@
 <h2>{t(Comments List)} ({total})</h2>
-<div align="center"> 
-{filter}
-</div>
-<br />
-
 <form action='{form_action}' method='post' name='comments_form'>
 <table class="table table-bordered table-striped table-hover">
 	<thead>
