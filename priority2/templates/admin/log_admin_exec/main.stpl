@@ -1,9 +1,5 @@
 <style type="text/css">@import url("{const(WEB_PATH)}uploads/icons/flags.css")</style>
 <div>
-<div align="center"> 
-{filter}
-</div>
-<br />
 {if("items" ne "")}
 <form action="{form_action}" method="post"  name="log_exec">
 <div align="center">

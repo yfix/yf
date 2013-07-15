@@ -66,7 +66,6 @@ class yf_log_admin_auth_view {
 			"total"				=> intval($total),
 			"items"				=> $items,
 			"pages"				=> $pages,
-			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"prune_action"		=> "./?object=".$_GET["object"]."&action=prune",
 			"same_ips_action"	=> "./?object=".$_GET["object"]."&action=show_same_ips",
 		);

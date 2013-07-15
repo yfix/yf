@@ -1,8 +1,4 @@
 <h3>{t(Total)} ({total})</h3>
-<div align="center">
-	{filter}
-</div>
-<br />
 <table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="5%">UID</th>

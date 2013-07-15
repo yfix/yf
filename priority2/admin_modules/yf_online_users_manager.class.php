@@ -105,7 +105,6 @@ class yf_online_users_manager {
 			}
 		}
 		$replace = array(
-			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"total"				=> $total, 

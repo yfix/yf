@@ -1,10 +1,4 @@
 <h2>{t(List available output cache pages)} ({total})</h2>
-
-<div align="center">
-	{filter}
-</div>
-
-<br />
 {if("items" ne "")}
 <form action="{form_action}" method="post" name="my_form">
 <table class="table table-bordered table-striped table-hover">

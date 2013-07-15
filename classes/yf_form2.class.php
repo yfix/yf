@@ -616,6 +616,9 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
+			if (!empty($extra) && is_string($extra)) {
+				$desc = $extra;
+			}
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
