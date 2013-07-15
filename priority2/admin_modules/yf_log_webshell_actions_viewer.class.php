@@ -57,7 +57,6 @@ class yf_log_webshell_actions_viewer {
 			"total"			=> $total,
 			"pages"			=> $pages,
 			"items"			=> $items,
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}

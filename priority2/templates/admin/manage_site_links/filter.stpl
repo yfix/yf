@@ -1,57 +1,13 @@
-<table cellspacing="0" cellpadding="0" align="center" border="0">
-	<form action='{save_action}' method='post'>
-	<tr valign="top">
-		<td>
-			<table width="250" cellspacing="0" cellpadding="3" align="left">
-				<tr>
-					<td nowrap><b>Status</b></td>
-					<td>{status2_box}</td>
-				</tr>
-				<tr>
-					<td nowrap><b>Linkers</b></td>
-					<td>{linker_box}</td>
-				</tr>
-				<tr>
-					<td nowrap><b>Site URL</b></td>
-					<td><input type="text" name="url" size="30" value="{url}"></td>
-				</tr>
-				<tr>
-					<td nowrap><b>Reciprocal URL</b></td>
-					<td><input type="text" name="link_url" size="30" value="{link_url}"></td>
-				</tr>
-			</table>
-		</td>
-		<td>
-			<table width="250" cellspacing="0" cellpadding="3">
-				<tr>
-					<td nowrap><b>Sort By Field</b></td>
-					<td nowrap>{sort_by_box} {sort_order_box}</td>
-				</tr>
-				<tr>
-					<td nowrap><b>Per Page</b></td>
-					<td>{per_page_box}</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr valign="top">
-		<td>
-			<table cellspacing="0" cellpadding="3">
-				<tr>
-					<td nowrap><b>Category</b></td>
-					<td>{cat_id_box}</td>
-				</tr>
-			</table>
-		</td>
-		<td>
-			<table cellspacing="0" cellpadding="3">
-				<tr>
-					<td class="nb" align="center" colspan="2">
-						<input type="submit" value="SAVE"><input type="button" onclick="window.location.href='{clear_url}'" value="CLEAR">
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	</form>
-</table>
+<div>
+<label>Filter</label>
+<form action='{save_action}' method='post' class="form-horizontal"> 
+	{form_row("box","status2_box","Status")}	
+	{form_row("box","linker_box","Linkers")}	
+	{form_row("text","url","Site URL")}	
+	{form_row("text","link_url","Reciprocal URL")}	
+	{form_row("box","sort_by_box","Sort by field")}	
+	{form_row("box","per_page_box","Per Page")}	
+	{form_row("box","cat_id_box","Category")}	
+	{form_row("save_and_clear")}	
+</form>
+</div>

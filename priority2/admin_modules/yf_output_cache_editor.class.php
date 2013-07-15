@@ -137,7 +137,6 @@ class yf_output_cache_editor {
 			"total"			=> intval($total),
 			"pages"			=> $pages,
 			"main_link"		=> "./?object=".$_GET["object"]."&action=show",
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"form_action"	=> "./?object=".$_GET["object"]."&action=clean",
 		);
 		return tpl()->parse($_GET["object"]."/view_main", $replace);

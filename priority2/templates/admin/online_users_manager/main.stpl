@@ -6,10 +6,6 @@
 <meta http-equiv="refresh" content="{refresh_timeout}" />
 {/if}
 <br />
-<div align="center">
-	{filter}
-</div>
-<br />
 {if("guests" ne "0")}<div align="center"><a href="{show_guests_link}">{t(Show online guests)}</a></div>
 <br />
 {/if}

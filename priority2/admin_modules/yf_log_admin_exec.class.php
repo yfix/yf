@@ -64,7 +64,6 @@ class yf_log_admin_exec{
 		$replace = array(
 			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
 			"error"				=> _e(),
-			"filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"total"				=> $total,

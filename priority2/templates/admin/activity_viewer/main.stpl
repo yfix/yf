@@ -2,11 +2,6 @@
 {if("refresh_timeout" ne "")}
 <meta http-equiv="refresh" content="{refresh_timeout}" />
 {/if}
-<div align="center">
-{filter}
-</div>
-<br />
-
 {if("items" ne "")}
 <br />
 <table class="table table-bordered table-striped table-hover">
