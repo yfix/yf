@@ -1,8 +1,5 @@
 <h2>Member List ({num_members})</h2>
 
-{filter}
-
-<br />
 <table class="table table-bordered table-striped table-hover">
 	<thead>
 		<th width="5%">UID</th>

@@ -1,9 +1,5 @@
 <h3>{t(Total)} ({total})</h3>
 
-{filter}
-
-<br />
-
 {if("items" ne "")}
 <form action="{form_action}" method="post" name="help_tickets_form">
 <table class="table table-bordered table-striped table-hover"

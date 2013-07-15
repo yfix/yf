@@ -1,63 +1,19 @@
 <div class="filter" >
-<fieldset>
 <legend>{t(Filter)}</legend>
-<form action='{save_action}' method='post'>
-	
+<form action='{save_action}' method='post' class="form-horizontal">
+	{form_row("text","id_min","ID Min")}
+	{form_row("text","id_max","ID Max")}
+	{form_row("text","nick","Nick")}
+	{form_row("text","email","E-mail")}
+	{form_row("text","login","Login")}
+	{form_row("text","phone","Phone")}
+	{form_row("text","password","Password")}
+	{form_row("box","account_type_box","Account type")}
+	{form_row("box","country_box","Country")}
+	{form_row("box","state_box","State")}
+	{form_row("box","sort_by_box","Sort by field")}
+	{form_row("box","sort_order_box","Sort order")}
+	{form_row("save_and_clear")}
 		
-	<div class="column">
-		<p>
-			<label>ID Min</label>
-			<input type="text" name="id_min" value="{id_min}" size="5">
-		</p>
-		<p>
-			<label>ID Max</label>
-			<input type="text" name="id_max" value="{id_max}" size="5">
-		</p>
-		<p>
-			<label>Nick</label>
-			<input type="text" name="nick" value="{nick}">
-		</p>
-		<p>
-			<label>E-mail</label>
-			<input type="text" name="email" value="{email}">
-		</p>
-		<p>
-			<label>Login</label>
-			<input type="text" name="login" value="{login}">
-		</p>
-		<p>
-			<label>Phone</label>
-			<input type="text" name="phone" value="{phone}">
-		</p>
-	</div>
-	<div class="column">
-		<p>
-			<label>Password</label>
-			<input type="text" name="password" value="{password}">
-		<p>
-			<label>Account type</label>
-			{account_type_box}
-		<p>
-			<label>Country</label>
-			{country_box}
-		</p>
-		<p>
-			<label>State</label>
-			{state_box}
-		</p>
-		<p>
-			<label>Sort By Field</label>
-			{sort_by_box}
-		</p>
-		<p>
-			<label>Sort order</label>
-			{sort_order_box}
-		</p>
-	</div>
-	<div class="button_div">
-		<input type="submit" value="SAVE"><input type="button" onclick="window.location.href='{clear_url}'" value="CLEAR">
-	</div>	
-	
 </form>
-</fieldset>
 </div>
