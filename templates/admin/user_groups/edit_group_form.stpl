@@ -1,9 +1,0 @@
-<form action="{form_action}" method="post" class="form-horizontal">
-{if("for_edit" eq 1)}
-	{form_row("info","group_id")}
-{/if}
-	{form_row("text","name","Group name")}
-	{form_row("text","go_after_login","Url after login")}
-	{form_row("active_box")}
-	{form_row("save_and_back")}
-</form>

@@ -10,14 +10,11 @@
 class yf_user_groups {
 
 	/**
-	* Framework constructor
 	*/
 	function _init () {
-		// Array of select boxes to process
 		$this->_boxes = array(
 			"active"		=> 'radio_box("active",			$this->_statuses,		$selected, false, 2, "", false)',
 		);
-		// Array of statuses
 		$this->_statuses = array(
 			"0" => "<span class='negative'>NO</span>", 
 			"1" => "<span class='positive'>YES</span>",
@@ -28,14 +25,6 @@ class yf_user_groups {
 	* Show admin groups
 	*/
 	function show() {
-		// Get number of members of each group
-		if (defined("db('user')")) {
-			$Q = db()->query("SELECT `group`, COUNT(id) AS num_members FROM ".db('user')." WHERE 1=1 GROUP BY `group`");
-			while ($A = db()->fetch_assoc($Q)) {
-				$num_group_members[$A["group"]] = $A["num_members"];
-			}
-		}
-		// Try to get admin "center_area" block id
 		$blocks = main()->get_data("blocks_names");
 		foreach ((array)$blocks as $_id => $_info) {
 			if ($_info["type"] == "user" && $_info["name"] == "center_area") {
@@ -47,59 +36,35 @@ class yf_user_groups {
 		while ($A = db()->fetch_assoc($Q)) {
 			$menu_id = $A["id"];
 		}
-		// Connect pager
-		$sql = "SELECT * FROM ".db('user_groups')."";
-		list($add_sql, $pages, $total) = common()->divide_pages($sql);
-		// Process records
-		$Q = db()->query($sql. $add_sql);
-		while ($A = db()->fetch_assoc($Q)) {
-			$replace2 = array(
-				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
-				"name"			=> _prepare_html($A["name"]),
-				"active"		=> (int)$A["active"],
-				"num_members"	=> (int)$num_group_members[$A["id"]],
-				"go_after_login"=> _prepare_html($A["go_after_login"]),
-				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit&id=".$A["id"],
-				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$A["id"],
-				"active_link"	=> "./?object=".$_GET["object"]."&action=activity&id=".$A["id"],
-			);
-			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
-		}
-		// Process template
-		$replace = array(
-			"items"			=> $items,
-			"pages"			=> $pages,
-			"total"			=> intval($total),
-			"add_link"		=> "./?object=".$_GET["object"]."&action=add",
-			"blocks_link"	=> $block_center_id ? "./?object=blocks&action=show_rules&id=".$block_center_id : "",
-			"menu_link"		=> $menu_id ? "./?object=menus_editor&action=show_items&id=".$menu_id : "",
-		);
-		return tpl()->parse($_GET["object"]."/main", $replace);
+		return common()->table2("SELECT * FROM ".db('admin_groups')." ORDER BY id ASC")
+			->text("name")
+			->text("go_after_login")
+			->btn_edit()
+			->btn_delete()
+			->btn_active()
+			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
+			->footer_link("Blocks", "./?object=blocks&action=show_rules&id=".$block_center_id)
+			->footer_link("Menu", "./?object=menus_editor&action=show_items&id=".$menu_id)
+			->render();
 	}
 
 	/**
-	* Add groups
 	*/
 	function add() {
-		// Do save data
 		if (!empty($_POST)) {
-			// Name could not be empty
 			if (empty($_POST["name"])) {
 				_re(t("Name is empty"));
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->INSERT("user_groups", array(
 					"name"			=> _es($_POST["name"]),
 					"active"		=> intval((bool)$_POST["active"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
 				));
-				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("user_groups");
 					cache()->refresh("user_groups_details");
 				}
-				// Return user back
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -113,40 +78,40 @@ class yf_user_groups {
 			"error_message"		=> _e(),
 			"for_edit"			=> 0,
 		);
-		return tpl()->parse($_GET["object"]."/edit_group_form", $replace);
+		return common()->form2($replace)
+			->form_begin()
+			->text("name","Group name")
+			->text("go_after_login","Url after login")
+			->active_box()
+			->save_and_back()
+			->form_end()
+			->render();
 	}
 
 	/**
-	* Edit groups
 	*/
 	function edit() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
 			return _e(t("No id"));
 		}
-		// Get group info
 		$group_info = db()->query_fetch("SELECT * FROM ".db('user_groups')." WHERE id=".intval($_GET["id"]));
 		if (empty($group_info)) {
 			return _e(t("No such group"));
 		}
-		// Do save data
 		if (!empty($_POST)) {
-			// Name could not be empty
 			if (empty($_POST["name"])) {
 				_re(t("Name is empty"));
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("user_groups", array(
 					"name" 			=> _es($_POST["name"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
 				), "id=".intval($_GET['id']));
-				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("user_groups");
 					cache()->refresh("user_groups_details");
 				}
-				// Return user back
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -161,24 +126,27 @@ class yf_user_groups {
 			"error_message"		=> _e(),
 			"for_edit"			=> 1,
 		);
-		return tpl()->parse($_GET["object"]."/edit_group_form", $replace);
+		return common()->form2($replace)
+			->form_begin()
+			->text("name","Group name")
+			->text("go_after_login","Url after login")
+			->active_box()
+			->save_and_back()
+			->form_end()
+			->render();
 	}
 
 	/**
-	* Delete
 	*/
 	function delete() {
 		$_GET['id'] = intval($_GET['id']);
-		// Do delete records
 		if (!empty($_GET['id'])) {
 			db()->query("DELETE FROM ".db('user_groups')." WHERE id=".intval($_GET['id'])." LIMIT 1");
 		}
-		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("user_groups");
 			cache()->refresh("user_groups_details");
 		}
-		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -188,26 +156,21 @@ class yf_user_groups {
 	}
 
 	/**
-	* Change group activity
 	*/
 	function activity() {
 		$_GET['id'] = intval($_GET['id']);
-		// Get group info
 		if (!empty($_GET['id'])) {
 			$group_info = db()->query_fetch("SELECT * FROM ".db('user_groups')." WHERE id=".intval($_GET["id"]));
 		}
-		// Do update record
 		if (!empty($group_info)) {
 			db()->UPDATE("user_groups", array(
 				"active"	=> intval(!$group_info["active"]),
 			), "id=".intval($_GET['id']));
 		}
-		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("user_groups");
 			cache()->refresh("user_groups_details");
 		}
-		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo ($group_info["active"] ? 0 : 1);
@@ -220,52 +183,10 @@ class yf_user_groups {
 	* Process custom box
 	*/
 	function _box ($name = "", $selected = "") {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval("return common()->".$this->_boxes[$name].";");
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Add group",
-				"url"	=> "./?object=".$_GET["object"]."&action=add",
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
-		return $menu;	
-	}
-
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("User groups");
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"					=> "",
-		);			 		
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
+		if (empty($name) || empty($this->_boxes[$name])) {
+			return false;
+		} else {
+			return eval("return common()->".$this->_boxes[$name].";");
 		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
 	}
 }
