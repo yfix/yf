@@ -46,6 +46,7 @@ class yf_manage_shop_attribute_edit{
 		return common()->form2($replace)
 			->text("name")
 			->textarea("value_list")
+			->select_box("category_id", module('manage_shop')->_cats_for_select, array("selected" => $A["category_id"]))
 			->save_and_back()
 			->render();
 	}

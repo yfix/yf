@@ -550,6 +550,7 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
 		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
@@ -585,6 +586,7 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
 		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
 		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';

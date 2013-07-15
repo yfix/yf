@@ -21,16 +21,19 @@ class yf_manage_shop_product_edit{
 				}
 			}
 			if (!common()->_error_exists()) {
-				// Save data
 				$sql_array = array(
 					"name"				=> _es($_POST["name"]),
 					"model"				=> _es($_POST["model"]),
+					"cat_id"			=> _es($_POST["cat_id"]),
 					"url"				=> _es(common()->_propose_url_from_name($_POST["name"])),
 					"description"		=> _es($_POST["desc"]),
 					"meta_keywords"		=> _es($_POST["meta_keywords"]),
 					"meta_desc"			=> _es($_POST["meta_desc"]),
 					"external_url"		=> _es($_POST["ext_url"]),
 					"price"				=> floatval(str_replace(",", ".", $_POST["price"])),
+					"price_promo"		=> floatval(str_replace(",", ".", $_POST["price_promo"])),
+					"price_partner"		=> floatval(str_replace(",", ".", $_POST["price_partner"])),
+					"price_raw"			=> floatval(str_replace(",", ".", $_POST["price_raw"])),
 					"old_price"			=> floatval(str_replace(",", ".", $_POST["old_price"])),
 					"manufacturer_id"	=> intval($_POST["manufacturer"]),
 					"supplier_id"		=> intval($_POST["supplier"]),
@@ -138,6 +141,9 @@ class yf_manage_shop_product_edit{
 			"meta_desc"				=> $product_info["meta_desc"],
 			"use_editor_code"		=> intval(module("manage_shop")->_EDITOR_EXISTS && !empty($_body)),
 			"price"					=> $product_info["price"],
+			"price_promo"			=> $product_info["price_promo"],
+			"price_partner"			=> $product_info["price_partner"],
+			"price_raw"				=> $product_info["price_raw"],
 			"old_price"				=> $product_info["old_price"],
 			"quantity"				=> $product_info["quantity"],
 			"dynamic_fields"		=> $fields,
@@ -145,9 +151,10 @@ class yf_manage_shop_product_edit{
 			"ext_url"				=> $product_info["external_url"],
 			"manufacturer_box"		=> common()->select_box("manufacturer", module("manage_shop")->_man_for_select, $product_info["manufacturer_id"], false, 2),
 			"supplier_box"			=> common()->select_box("supplier", module("manage_shop")->_suppliers_for_select, $product_info["supplier_id"], false, 2),
-			"category_box"			=> common()->multi_select("category", module("manage_shop")->_cats_for_select, $cat_id, false, 2, " size=15 class=small_for_select ", false),
-			"category_select_box"	=> common()->select_box("category_select", module("manage_shop")->_cats_for_select, $cat_id, false, 2),
+			"category_box"			=> common()->multi_select("category", module("manage_shop")->_cats_for_select, $cat_id, false, 2, " size=5 ", false),
+			"cat_id_box"			=> common()->select_box("cat_id", module("manage_shop")->_cats_for_select, $product_info["cat_id"], false, 2),
 			"featured_box"			=> module("manage_shop")->_box("featured", $product_info["featured"]),
+			"featured"				=> $product_info["featured"],
 			"form_action"			=> "./?object=manage_shop&action=product_edit&id=".$product_info["id"],
 			"back_url"				=> "./?object=manage_shop&action=products",
 			"image"					=> $items,

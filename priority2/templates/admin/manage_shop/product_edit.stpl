@@ -2,113 +2,70 @@
 
 <form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
 	{form_row("text","name")}
+{{--
 	{form_row("text","model")}
-	{form_row("box_with_link","category_box","Category","categories_url")}
-	{form_row("box_with_link","manufacturer_box","Manufacturer","manufacturers_url")}
-	{form_row("box_with_link","supplier_box","Supplier","suppliers_url")}
-	{form_row("box","featured_box","Is Featured")}
+--}}
+	{form_row("box","cat_id_box","Main category","categories_url")}
+	{form_row("box","category_box","Secondary categories","categories_url")}
+	{form_row("box","manufacturer_box","Manufacturer","manufacturers_url")}
+	{form_row("box","supplier_box","Supplier","suppliers_url")}
+{{--
+	{form_row("yes_no_box","featured","Is Featured")}
+--}}
 	{form_row("textarea","desc","Description")}
+{{--
 	{form_row("text","meta_desc")}
 	{form_row("text","meta_keywords")}
 	{form_row("text","ext_url","External Url")}
-	{form_row("text","price")}
-	{form_row("text","price_promo")}
-	{form_row("text","price_partner")}
-	{form_row("text","price_raw")}
-	{form_row("text","quantity")}
-{if("group_prices" ne "")}
-{foreach("group_prices")}
-	<p>
-		<label for="group_prices_{#.group_id}">{t(Price for)} {#.group_name}</label>
-		<input type="text" name="group_prices[{#.group_id}]" id="group_prices_{#.group_id}" value="{#.price}" style="width:auto;" />
-	</p>
-{/foreach}
-{/if}
-	<p>
-		<label for="image">{t(Product Images)}</label>
-{if("image" ne "")}
-		{image}
-{/if}
-		<a class="button" onclick="addImage();"><span>Add Image</span></a>	
-		<p id="images"></p>	
-	</p>
-
-<p>
-	<label for="relate_products">{t(Related Products)}:</label>
-	<table>
-		<tr>
-			<td colspan="3">{category_select_box}</td>
-		</tr>
-		<tr>
-			<td>
-				<select multiple="multiple" id="product" size="10" style="width: 200px;">
-				</select>
-			</td>
-			<td style="vertical-align: middle;">
-				<input type="button" value="--&gt;" onclick="addRelated();" class="btn" />
-				<input type="button" value="&lt;--" onclick="removeRelated();" class="btn" />
-			</td>
-			<td>
-				<select multiple="multiple" id="related" size="10" style="width: 200px;">
-{foreach("product_related")}
-		<option value="{#.related_id}">{#.name}</option>
-{/foreach}
-				</select>
-			</td>
-		</tr>
-	</table>
-	<div id="product_related">
-{foreach("product_related")}
-		<input type="hidden" name="product_related[]" value="{#.related_id}" />
-{/foreach}
-	</div>
-</p>
-
-{{--
-{foreach("single_atts")}
-	<p>
-		<label for="{#.name}">{#.title}</label>
-		{#.box}
-	</p>
-{/foreach}
 --}}
+	{form_row("money","price")}
+	{form_row("money","price_promo")}
+	{form_row("money","price_partner")}
+	{form_row("money","price_raw")}
+	{form_row("number","quantity")}
 
-	<div class="button_div">
-		<input type="submit" value="{t(Save)}" class="btn">
-		<a href='{back_url}' class="btn">{t(Back)}</a>
+{foreach("group_prices")}
+	<div class="control-group">
+		<label class="control-label" for="group_prices_{#.group_id}">{t(Price for)} {#.group_name}</label>
+		<input type="text" name="group_prices[{#.group_id}]" id="group_prices_{#.group_id}" value="{#.price}" style="width:auto;" />
 	</div>
-
-{if("dynamic_fields" ne "")}
-<p>
-	<h3>{t(Product Attributes)}</h3>
-
-	<div align="center">
-	<table width="300" class="attributes">
-		<col align="left" />
-		<col align="left" />
-		<col align="left" />
-		<thead>
-			<th width="5%">#</th>
-			<th>{t(Attribute Name)}</th>
-			<th width="20%">{t(Value Price)}</th>
-		</thead>
-{foreach("dynamic_fields")}
-		<tr class="{#.bg_class}">
-			<td><input type="checkbox" name="attributes_use[{#.id}]" value="1" {if("#.attr_checked" eq "1")}checked{/if} /></td>
-			<td><b>{#.attr_name}</b> {#.attr_value}</td>
-			<td><input type="text" name="attributes_price[{#.id}]" value="{#.attr_price}" size="5" style="width:auto;"></td>
-		</tr>
 {/foreach}
-	</table>
-
-	<br /><a href="{manage_attrs_url}">{t(Manage Product Attributes)}</a>
-
-	</div>
-
-	<div class="button_div">
-		<input type="submit" value="{t(Save)}" class="btn">
-		<a href='{back_url}' class="btn">{t(Back)}</a>
-	</div>
-	</p>
+	<div class="control-group">
+		<label class="control-label" for="image">{t(Product Images)}</label>
+{if("image" ne "")}
+	{image}
 {/if}
+		<a class="button" onclick="addImage();"><span>Add Image</span></a>
+		<div id="images"></div>
+	</div>
+{foreach("single_atts")}
+	<div class="control-group">
+		<label class="control-label" for="{#.name}">{#.title}</label>
+		{#.box}
+	</div>
+{/foreach}
+{if("dynamic_fields" ne "")}
+	<div class="control-group">
+		<label class="control-label">{t(Product Attributes)}</label>
+		<div align="center">
+			<table width="300" class="attributes">
+				<thead>
+					<th width="5%">#</th>
+					<th>{t(Attribute Name)}</th>
+					<th width="20%">{t(Value Price)}</th>
+				</thead>
+{foreach("dynamic_fields")}
+				<tr>
+					<td><input type="checkbox" name="attributes_use[{#.id}]" value="1" {if("#.attr_checked" eq "1")}checked{/if} /></td>
+					<td><b>{#.attr_name}</b> {#.attr_value}</td>
+					<td><input type="text" name="attributes_price[{#.id}]" value="{#.attr_price}" size="5" style="width:auto;"></td>
+				</tr>
+{/foreach}
+			</table>
+			<br /><a href="{manage_attrs_url}">{t(Manage Product Attributes)}</a>
+		</div>
+	</div>
+{/if}
+
+	{form_row("save_and_back")}
 </form>

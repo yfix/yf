@@ -158,6 +158,10 @@ class yf_manage_shop {
 		return _class('manage_shop_product_delete', 'admin_modules/manage_shop/')->product_delete();
 	}
 
+	function product_clone() {
+		return _class('manage_shop_product_clone', 'admin_modules/manage_shop/')->product_clone();
+	}
+
 	function product_activate() {
 		return _class('manage_shop_product_activate', 'admin_modules/manage_shop/')->product_activate();
 	}

@@ -3,7 +3,7 @@ class yf_manage_shop_attributes{
 
 	function attributes () {
 		return common()->table2("SELECT * FROM ".db('shop_product_attributes_info')." ORDER BY `order` ASC")
-//			->link("category", "./?object=category_editor&action=edit&&id=%d", $shop_categories)
+			->link("category_id", "./?object=category_editor&action=show_items&&id=%d", _class('cats')->_get_items_names("shop_cats"))
 			->text("name")
 			->text("value_list")
 			->text("default_value")

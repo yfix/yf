@@ -74,7 +74,7 @@ class yf_table2 {
 					$body .= '<td>'.$func($row[$name], $info).'</td>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
-					$body .= '<td>';
+					$body .= '<td nowrap>';
 					foreach ((array)$this->_buttons as $name => $info) {
 						$func = $info['func'];
 						$body .= $func($row, $info).PHP_EOL;
@@ -274,7 +274,7 @@ class yf_table2 {
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
 				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="change_active">'
-						.($row['active'] ? '<span class="label label-success">'.t('ACTIVE').'</span>' : '<span class="label label-warning">'.t('INACTIVE').'</span>')
+						.($row['active'] ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
 					.'</a> ';
 			},
 		);

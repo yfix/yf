@@ -45,4 +45,7 @@
 td input[type=text], td textarea {
 	margin-bottom: 0;
 }
+.modal.fade.in {
+	top: 30px;
+}
 </style>

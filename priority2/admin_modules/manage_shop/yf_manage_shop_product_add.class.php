@@ -15,6 +15,7 @@ class yf_manage_shop_product_add{
 				$sql_array = array(
 					"name"				=> _es($_POST["name"]),
 					"model"				=> _es($_POST["model"]),
+					"cat_id"			=> _es($_POST["cat_id"]),
 					"url"				=> _es(common()->_propose_url_from_name($_POST["name"])),
 					"description"		=> _es($_POST["desc"]),
 					"meta_keywords"		=> _es($_POST["meta_keywords"]),
@@ -24,6 +25,9 @@ class yf_manage_shop_product_add{
 					"manufacturer_id"	=> intval($_POST["manufacturer"]),
 					"supplier_id"		=> intval($_POST["supplier"]),
 					"price"				=> floatval(str_replace(",", ".", $_POST["price"])),
+					"price_promo"		=> floatval(str_replace(",", ".", $_POST["price_promo"])),
+					"price_partner"		=> floatval(str_replace(",", ".", $_POST["price_partner"])),
+					"price_raw"			=> floatval(str_replace(",", ".", $_POST["price_raw"])),
 					"old_price"			=> floatval(str_replace(",", ".", $_POST["price"])),
 					"featured"			=> intval((bool)$_POST["featured"]),
 					"currency"			=> "",// TODO
@@ -76,6 +80,7 @@ class yf_manage_shop_product_add{
 			);
 		}
 		$replace = array(
+			"form_action"		=> "./?object=manage_shop&action=product_add",
 			"name"				=> "",
 			"model"				=> "",
 			"desc"				=> "",
@@ -83,14 +88,17 @@ class yf_manage_shop_product_add{
 			"meta_desc"			=> "",
 			"ext_url"			=> "",
 			"price"				=> "",
+			"price_promo"		=> "",
+			"price_partner"		=> "",
+			"price_raw"			=> "",
 			"old_price"			=> "",
 			"quantity"			=> "",
 			"dynamic_fields"	=> $fields,
 			"single_atts"		=> $single_atts,
 			"manufacturer_box"	=> common()->select_box("manufacturer", module("manage_shop")->_man_for_select, $man_id, false, 2),
 			"supplier_box"		=> common()->select_box("supplier", module("manage_shop")->_suppliers_for_select, $man_id, false, 2),
-			"category_box"		=> common()->multi_select("category", module("manage_shop")->_cats_for_select, $cat_id, false, 2, " size=15 ", false),
-			"form_action"		=> "./?object=manage_shop&action=product_add",
+			"category_box"		=> common()->multi_select("category", module("manage_shop")->_cats_for_select, $cat_id, false, 2, " size=5 ", false),
+			"cat_id_box"		=> common()->select_box("cat_id", module("manage_shop")->_cats_for_select, $cat_id, false, 2),
 			"back_url"			=> "./?object=manage_shop&action=products",
 			"categories_url"	=> "./?object=category_editor&action=show_items&id=shop_cats",
 			"manufacturers_url"	=> "./?object=manage_shop&action=manufacturers",

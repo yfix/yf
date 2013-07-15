@@ -11,18 +11,18 @@ class yf_manage_shop__get_products_attributes{
 		}
 		$fields_info = main()->get_data("shop_product_attributes_info");
 
-		$Q = db()->query("SELECT * FROM ".db('shop_product_attributes_values')." WHERE category_id=1 AND object_id IN (".implode(",", $products_ids).")");
+		$Q = db()->query("SELECT * FROM ".db('shop_product_attributes_values')." WHERE object_id IN (".implode(",", $products_ids).")");
 		while ($A = db()->fetch_assoc($Q)) {
 			$_product_id = $A["object_id"];
 
-			$A["value"]		= strlen($A["value"]) ? unserialize($A["value"]) : array();
-			$A["add_value"] = strlen($A["add_value"]) ? unserialize($A["add_value"]) : array();
+			$A["value"]		= explode("\n", $A["value"]);
+			$A["add_value"] = explode("\n", $A["add_value"]);
 
 			foreach ((array)$A["value"] as $_attr_id => $_dummy) {
 				$_price = $A["add_value"][$_attr_id];
 				$_item_id = $A["field_id"]."_".$_attr_id;
-				$_field_info = $fields_info[module('manage_shop')->ATTRIBUTES_CAT_ID][$A["field_id"]];
-				$_field_info["value_list"] = strlen($_field_info["value_list"]) ? unserialize($_field_info["value_list"]) : array();
+				$_field_info = $fields_info[$A["field_id"]];
+				$_field_info["value_list"] = explode("\n", $_field_info["value_list"]);
 
 				$data[$_product_id][$_item_id] = array(
 					"id" 			=> $_item_id,
