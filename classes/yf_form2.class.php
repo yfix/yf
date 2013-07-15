@@ -959,6 +959,7 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+// TODO: load methods select box right here, to be able to more easily embed this into other places
 
 		$body = '
 			<div class="control-group">
@@ -1000,6 +1001,7 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+// TODO: load templates select box right here, to be able to more easily embed this into other places
 
 		$body = '
 			<div class="control-group">
