@@ -34,12 +34,16 @@ class yf_manage_shop_attribute_add{
 		$form_fields = array("name","type","value_list","default_value","order", "comment");
 		$replace = array_fill_keys($form_fields, "");
 		$replace = my_array_merge($replace, array(
-			"back_url"		=> "./?object=manage_shop&action=attributes",
-			"active"		=> 1,
 			"form_action"	=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$_GET["id"],
 			"error"			=> _e(),
+			"back_url"		=> "./?object=manage_shop&action=attributes",
+			"active"		=> 1,
 		));
-		return tpl()->parse("manage_shop/attributes_edit", $replace);
+		return common()->form2($replace)
+			->text("name")
+			->textarea("value_list")
+			->save_and_back()
+			->render();
 	}
 	
 }

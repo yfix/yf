@@ -395,8 +395,8 @@ class yf_menus_editor {
 			"icons_web_path"	=> WEB_PATH. $this->ICONS_PATH,
 			"edit_menu_link"	=> "./?object=".$_GET["object"]."&action=edit&id=".$_GET["id"],
 			"js_redir_frame"	=> $_SESSION["_menu_js_refresh_frameset"] ? 1 : 0,
-			"sites_link"		=> "./?object=db_parser&table=sys_sites",
-			"servers_link"		=> "./?object=db_parser&table=sys_core_servers",
+			"sites_link"		=> "./?object=manage_sites",
+			"servers_link"		=> "./?object=manage_servers",
 		);
 		if (isset($_SESSION["_menu_js_refresh_frameset"])) {
 			unset($_SESSION["_menu_js_refresh_frameset"]);
@@ -580,8 +580,8 @@ class yf_menus_editor {
 			"icon_src"			=> $icon_src,
 			"edit_menu_link"	=> "./?object=".$_GET["object"]."&action=edit&id=".$menu_info["id"],
 			"cond_code"			=> _prepare_html($DATA["cond_code"], 0),
-			"sites_link"		=> "./?object=db_parser&table=sys_sites",
-			"servers_link"		=> "./?object=db_parser&table=sys_core_servers",
+			"sites_link"		=> "./?object=manage_sites",
+			"servers_link"		=> "./?object=manage_servers",
 		);
 		return tpl()->parse($_GET["object"]."/edit_item_form", $replace);
 	}
@@ -702,8 +702,8 @@ class yf_menus_editor {
 			"icon_src"			=> $icon_src,
 			"edit_menu_link"	=> "./?object=".$_GET["object"]."&action=edit&id=".$menu_info["id"],
 			"cond_code"			=> _prepare_html($item_info["cond_code"], 0),
-			"sites_link"		=> "./?object=db_parser&table=sys_sites",
-			"servers_link"		=> "./?object=db_parser&table=sys_core_servers",
+			"sites_link"		=> "./?object=manage_sites",
+			"servers_link"		=> "./?object=manage_servers",
 		);
 		return tpl()->parse($_GET["object"]."/edit_item_form", $replace);
 	}

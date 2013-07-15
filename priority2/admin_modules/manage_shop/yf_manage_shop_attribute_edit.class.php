@@ -36,16 +36,20 @@ class yf_manage_shop_attribute_edit{
 			}
 		}
 		$replace = array(
+			"form_action"	=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$A["id"],
+			"error"			=> _e(),
 			"name"			=> _prepare_html($A["name"]),
 			"value_list"	=> _prepare_html(implode("\n", (array)unserialize($A["value_list"]))),
 			"default_value"	=> _prepare_html($A["default_value"]),
 			"order"			=> $A["order"],
 			"back_url"		=> "./?object=manage_shop&action=attributes",
 			"active"		=> 1,
-			"form_action"	=> "./?object=manage_shop&action=".$_GET["action"]."&id=".$A["id"],
-			"error"			=> _e(),
 		);
-		return tpl()->parse("manage_shop/attributes_edit", $replace);
+		return common()->form2($replace)
+			->text("name")
+			->textarea("value_list")
+			->save_and_back()
+			->render();
 	}
 	
 }

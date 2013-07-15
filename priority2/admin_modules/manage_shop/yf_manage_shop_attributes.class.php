@@ -2,7 +2,17 @@
 class yf_manage_shop_attributes{
 
 	function attributes () {
-		$sql = "SELECT * FROM ".db('shop_product_attributes_info')." WHERE category_id = ".intval(module('manage_shop')->ATTRIBUTES_CAT_ID)." ORDER BY `order`";
+		return common()->table2("SELECT * FROM ".db('shop_product_attributes_info')." ORDER BY `order` ASC")
+//			->link("category", "")
+			->text("name")
+			->text("value_list")
+			->text("default_value")
+			->btn_edit("", "./?object=manage_shop&action=attribute_edit&id=%d")
+			->btn_delete("", "./?object=manage_shop&action=attribute_delete&id=%d")
+			->btn_active("", "./?object=manage_shop&action=activate_attribute&id=%d")
+			->footer_link("Add","./?object=manage_shop&action=attribute_add")
+			->render();
+/*
 		foreach ((array)db()->query_fetch_all($sql) as $A) {
 			$values =  (array)unserialize($A["value_list"]);
 
@@ -24,6 +34,7 @@ class yf_manage_shop_attributes{
 			"items"		=> $items,
 		);
 		return tpl()->parse("manage_shop/attributes_main", $replace); 
+*/
 	}	
 	
 }
