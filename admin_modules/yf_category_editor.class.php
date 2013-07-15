@@ -90,7 +90,7 @@ class yf_category_editor {
 	* @return	string
 	*/
 	function add() {
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (!common()->_error_exists()) {
 				db()->INSERT("categories", array(
 					"name"			=> _es($_POST["name"]),
@@ -404,7 +404,7 @@ class yf_category_editor {
 		if (empty($cat_info["id"])) {
 			return _e(t("No such category!"));
 		}
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (is_array($_POST["groups"]))	{
 				$_POST["groups"] = implode(",",$_POST["groups"]);
 			}

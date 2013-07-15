@@ -60,7 +60,7 @@ class yf_user_modules_install {
 			}
 		}
 		// Do delete data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Process posted files
 			foreach ((array)$_POST["files_to_delete"] as $cur_file_path) {
 				if (!isset($files[INCLUDE_PATH.$cur_file_path])) {
@@ -76,7 +76,7 @@ class yf_user_modules_install {
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			// Process items			
 			foreach ((array)$files as $file_path) {
 				$replace2 = array(
@@ -105,7 +105,7 @@ class yf_user_modules_install {
 	*/
 	function _import () {
 		// Do import data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (empty($_FILES["import_file"]['tmp_name']) || empty($_FILES["import_file"]['size'])) {
 				_re(t("Error while uploading file"));
 			}
@@ -310,7 +310,7 @@ class yf_user_modules_install {
 			}
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 				"back_link"			=> "./?object=".$_GET["object"],
@@ -325,7 +325,7 @@ class yf_user_modules_install {
 	*/
 	function _export () {
 		// Do save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check file format
 			if (empty($_POST["file_format"]) || !isset($this->PARENT_OBJ->_file_formats[$_POST["file_format"]])) {
 				_re(t("Please select file format"));
@@ -499,7 +499,7 @@ class yf_user_modules_install {
 			}
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 				"modules_box"		=> $this->PARENT_OBJ->_box("module"),

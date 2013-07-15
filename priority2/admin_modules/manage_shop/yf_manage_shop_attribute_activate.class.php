@@ -1,7 +1,7 @@
 <?php
-class yf_manage_shop_attributes_activate{
+class yf_manage_shop_attribute_activate{
 
-	function attributes_activate () {
+	function attribute_activate () {
 		if ($_GET["id"]){
 			$A = db()->query_fetch("SELECT * FROM ".db('shop_product_attributes_info')." WHERE id=".intval($_GET["id"]));
 			if ($A["active"] == 1) {

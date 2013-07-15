@@ -522,7 +522,7 @@ class yf_dev{
 			}
 		}
 		
-		if(isset($_POST["go"]) || $internal_request == true){
+		if($_POST || $internal_request == true){
 			$OBJ_DIR = main()->init_class("dir", "classes/");
 			
 			if($internal_request){

@@ -120,7 +120,7 @@ class yf_locale_editor {
 	*/
 	function show() {
 		// Do save data (if needed)
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Process langs
 			foreach ((array)$this->_cur_langs_array as $A) {
 				db()->UPDATE("locale_langs", array(
@@ -180,7 +180,7 @@ class yf_locale_editor {
 			if (isset($this->_langs[$A["locale"]])) unset($this->_langs[$A["locale"]]);
 		}
 		// Do save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (empty($_POST["lang_code"])) {
 				common()->_error_exists("Please select language to add");
 			}
@@ -211,7 +211,7 @@ class yf_locale_editor {
 			}
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 				"langs_box"			=> $this->_box("lang_code",	-1),
@@ -368,7 +368,7 @@ class yf_locale_editor {
 		$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE var_id=".intval($var_info["id"]));
 		while ($A = db()->fetch_assoc($Q)) $var_tr[$A["locale"]] = $A["value"];
 		// Do save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
@@ -403,7 +403,7 @@ class yf_locale_editor {
 			);
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 				"back_link"		=> "./?object=".$_GET["object"]."&action=show_vars",
@@ -663,7 +663,7 @@ class yf_locale_editor {
 	*/
 	function import_vars() {
 		// Do save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check if file is selected
 			if (empty($_FILES["import_file"]["name"])) {
 				_re(t("Please select file to process"));
@@ -786,7 +786,7 @@ class yf_locale_editor {
 			}
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 				"back_link"			=> "./?object=".$_GET["object"],
@@ -804,7 +804,7 @@ class yf_locale_editor {
 	*/
 	function export_vars() {
 		// Do save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check file format
 			if (empty($_POST["file_format"]) || !isset($this->_file_formats[$_POST["file_format"]])) {
 				_re(t("Please select file format"));
@@ -907,7 +907,7 @@ class yf_locale_editor {
 			}
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			// Get locations
 			$this->_used_locations[""] = t("-- ALL --");
 			foreach ((array)$this->_get_all_vars_locations() as $cur_location => $num_vars) {

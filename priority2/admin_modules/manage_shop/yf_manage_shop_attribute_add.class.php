@@ -2,29 +2,23 @@
 class yf_manage_shop_attribute_add{
 
 	function attribute_add () {
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (empty($_POST["name"])) {
 				_re(t("Name is required"));
 			}
 			if (!common()->_error_exists()) {
-				$value_list	= explode("\n", $_POST["value_list"]);
-				$i=0;
-				foreach ((array)$value_list as $val){
-					$i++;
-					$value_list_temp[$i] = $val;
+				$value_list = array();
+				foreach ((array)explode("\n", $_POST["value_list"]) as $val){
+					$value_list[$val] = $val;
 				}
-				$value_list = serialize($value_list_temp);
-			
-				$sql_array = array(
-					"name"			=> _es($_POST["name"]),
+				db()->INSERT("shop_product_attributes_info", db()->es(array(
+					"name"			=> $_POST["name"],
 					"type"			=> $_POST["type"],
 					"value_list"	=> $value_list,
-					"default_value"	=> _es($_POST["default_value"]),
+					"default_value"	=> $_POST["default_value"],
 					"order"			=> $_POST["order"],
-					"category_id"	=> intval(module('manage_shop')->ATTRIBUTES_CAT_ID),
-				);
-				db()->INSERT("shop_product_attributes_info", $sql_array); 
-
+					"category_id"	=> $_POST["category_id"],
+				)));
 				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("shop_product_attributes_info");
 				}

@@ -28,7 +28,7 @@ class yf_friends_groups{
 
 		$groups_info = $this->_get_friends_groups($this->PARENT_OBJ->USER_ID);
 		
-		if(isset($_POST["go"])){
+		if($_POST){
 			// save mask
 			foreach ((array)$_POST["editfriend_groupmask_"] as $key => $value){
 					$friends[$key] = $value - 1;

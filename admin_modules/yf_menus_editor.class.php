@@ -125,7 +125,7 @@ class yf_menus_editor {
 	* Add new menu block
 	*/
 	function add() {
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (!common()->_error_exists()) {
 				db()->INSERT("menus", array(
 					"name"			=> _es($_POST["name"]),
@@ -171,7 +171,7 @@ class yf_menus_editor {
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (!common()->_error_exists()) {
 				db()->UPDATE("menus", array(
 					"name"			=> _es($_POST["name"]),
@@ -518,7 +518,7 @@ class yf_menus_editor {
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			db()->INSERT("menu_items", array(
 				"menu_id"		=> intval($_GET["id"]),
 				"type_id"		=> intval($_POST["type_id"]),
@@ -633,7 +633,7 @@ class yf_menus_editor {
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			db()->UPDATE("menu_items", array(
 				"parent_id"		=> intval($_POST["parent_id"]),
 				"name"			=> _es($_POST["name"]),
