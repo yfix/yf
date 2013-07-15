@@ -71,7 +71,7 @@ class yf_table2 {
 						continue;
 					}
 					$func = $info['func'];
-					$body .= '<td>'.$func($row[$name], $info).'</td>'.PHP_EOL;
+					$body .= '<td>'.$func($row[$name], $info, $row).'</td>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<td nowrap>';
@@ -152,7 +152,7 @@ class yf_table2 {
 				} else {
 					$text = (isset($params['data']) ? $params['data'][$field] : $field);
 				}
-				return '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.$text.'</a>';
+				return '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
 			}
 		);
 		return $this;
@@ -292,6 +292,39 @@ class yf_table2 {
 			"func"	=> function($params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
 				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
+			}
+		);
+		return $this;
+	}
+
+	/**
+	*/
+	function image($path, $link = "", $extra = array()) {
+		$name = 'image';
+		$this->_fields[$name] = array(
+			"type"	=> __FUNCTION__,
+			"extra"	=> $extra,
+			"name"	=> $name,
+			"path"	=> $path,
+			"link"	=> $link,
+			"func"	=> function($field, $params, $row) {
+				$id = $row['id'];
+				// Make 3-level dir path
+				$d = sprintf("%09s", $id);
+				$replace = array(
+					'{subdir1}'	=> substr($d, 0, -6),
+					'{subdir2}'	=> substr($d, -6, 3),
+					'{subdir3}'	=> substr($d, -3, 3),
+					'%d'		=> $id,
+				);
+				$img_path = str_replace(array_keys($replace), array_values($replace), $params['path']);
+				if (!file_exists(PROJECT_PATH. $img_path)) {
+					return '';
+				}
+				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
+				return ($link_url ? '<a href="'.$link_url.'">' : '')
+					.'<img src="'.WEB_PATH. $img_path.'">'
+					.($link_url ? '</a>' : '');
 			}
 		);
 		return $this;

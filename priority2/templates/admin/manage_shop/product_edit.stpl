@@ -2,70 +2,44 @@
 
 <form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
 	{form_row("text","name")}
-{{--
-	{form_row("text","model")}
---}}
+{{--	{form_row("text","model")} --}}
 	{form_row("box","cat_id_box","Main category","categories_url")}
 	{form_row("box","category_box","Secondary categories","categories_url")}
 	{form_row("box","manufacturer_box","Manufacturer","manufacturers_url")}
 	{form_row("box","supplier_box","Supplier","suppliers_url")}
-{{--
-	{form_row("yes_no_box","featured","Is Featured")}
---}}
+{{--	{form_row("yes_no_box","featured","Is Featured")} --}}
 	{form_row("textarea","desc","Description")}
-{{--
-	{form_row("text","meta_desc")}
-	{form_row("text","meta_keywords")}
-	{form_row("text","ext_url","External Url")}
---}}
+{{--	{form_row("text","meta_desc")}	{form_row("text","meta_keywords")}	{form_row("text","ext_url","External Url")} --}}
 	{form_row("money","price")}
 	{form_row("money","price_promo")}
 	{form_row("money","price_partner")}
 	{form_row("money","price_raw")}
 	{form_row("number","quantity")}
 
+	<div class="control-group">
+		<label class="control-label" for="image">{t(Images)}</label>
+		<div class="controls">
+{if("image" ne "")}
+	{image}
+{/if}
+			<a class="btn btn-mini" onclick="addImage();"><span>{t(Add Image)}</span></a>
+		</div>
+		<div id="images"></div>
+	</div>
+
+{foreach("dynamic_fields")}
+	<div class="control-group">
+		<input type="checkbox" name="attributes_use[{#.id}]" value="1" {if("#.attr_checked" eq "1")}checked{/if} />
+		<b>{#.attr_name}</b> {#.attr_value}
+		<input type="text" name="attributes_price[{#.id}]" value="{#.attr_price}" size="5" style="width:auto;">
+	</div>
+{/foreach}
 {foreach("group_prices")}
 	<div class="control-group">
 		<label class="control-label" for="group_prices_{#.group_id}">{t(Price for)} {#.group_name}</label>
 		<input type="text" name="group_prices[{#.group_id}]" id="group_prices_{#.group_id}" value="{#.price}" style="width:auto;" />
 	</div>
 {/foreach}
-	<div class="control-group">
-		<label class="control-label" for="image">{t(Product Images)}</label>
-{if("image" ne "")}
-	{image}
-{/if}
-		<a class="button" onclick="addImage();"><span>Add Image</span></a>
-		<div id="images"></div>
-	</div>
-{foreach("single_atts")}
-	<div class="control-group">
-		<label class="control-label" for="{#.name}">{#.title}</label>
-		{#.box}
-	</div>
-{/foreach}
-{if("dynamic_fields" ne "")}
-	<div class="control-group">
-		<label class="control-label">{t(Product Attributes)}</label>
-		<div align="center">
-			<table width="300" class="attributes">
-				<thead>
-					<th width="5%">#</th>
-					<th>{t(Attribute Name)}</th>
-					<th width="20%">{t(Value Price)}</th>
-				</thead>
-{foreach("dynamic_fields")}
-				<tr>
-					<td><input type="checkbox" name="attributes_use[{#.id}]" value="1" {if("#.attr_checked" eq "1")}checked{/if} /></td>
-					<td><b>{#.attr_name}</b> {#.attr_value}</td>
-					<td><input type="text" name="attributes_price[{#.id}]" value="{#.attr_price}" size="5" style="width:auto;"></td>
-				</tr>
-{/foreach}
-			</table>
-			<br /><a href="{manage_attrs_url}">{t(Manage Product Attributes)}</a>
-		</div>
-	</div>
-{/if}
 
 	{form_row("save_and_back")}
 </form>

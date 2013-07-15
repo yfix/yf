@@ -3,6 +3,7 @@ class yf_manage_shop_products{
 
 	function products () {
 		return common()->table2("SELECT * FROM ".db('shop_products'))
+			->image("uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_small.jpg", WEB_PATH."uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_full.jpg")
 			->text("name")
 			->link("cat_id", "./?object=category_editor&action=show_items&&id=%d", _class('cats')->_get_items_names("shop_cats"))
 			->text("price")

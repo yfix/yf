@@ -26,7 +26,7 @@ function image_upload(field, preview) {
 var image_row = 0;
 function addImage() {
 	html = '<div id="image_row' + image_row + '"><input type="file" name="image[' + image_row + ']"  value="">';
-	html += '<a onclick="$(\'#image_row' + image_row  + '\').remove();" class="button">Remove</a>';
+	html += '<a onclick="$(\'#image_row' + image_row  + '\').remove();" class="btn btn-mini">Remove</a>';
 	html += '<br /></div>'; 
 	$('#images').append(html);
 	image_row++;
