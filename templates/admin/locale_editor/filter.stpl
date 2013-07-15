@@ -1,45 +1,13 @@
 <div class="filter" >
-<fieldset>
 <legend>{t(Filter)}</legend>
-<form action="{save_action}" method="post" name="filter_form">
-	<div class="column">
-		<p>
-			<label for="search_string">{t(Search for)}: </label>
-			<input type="text" maxlength="30" name="search_string" id="search_string" size="28" value="{search_string}" class="span4"/>
-		</p>
-		<p>
-			<label for="case_sens_box">{t(Case sensivity)}:</label> 
-			{case_sens_box}
-			{{--<br/><small>{t(Leave blank to show all strings.)}</small>
-			<small>{t(If you want to search for word in whole sentence, then type something like: %word)}</small>--}}
-		</p>
-		<p>
-			<label for="per_page_box">{t(Records per page)}:</label>
-			{per_page_box}
-		</p>
-		<p>
-			<label>{search_type_box}</label>
-		</p>
-	</div>
-	<div class="column">
-
-		<p>
-			<label>{t(Search in)}:</label>
-			{search_in_box}
-		</p>
-		<p>
-			<label>{t(Show locations)}:</label>
-			{show_locs_box}
-		</p>
-		<p>
-			<label>{t(Language)}:</label>
-			{search_lang_box}
-		</p>
-	</div>
-	<div class="button_div">
-		<input type="submit" name="go" value="{t(Search)}" />
-		<input type="button" value="{t(Clear)}" onclick="window.location.href='{clear_url}'" />
-	</div>
+<form action="{save_action}" method="post" name="filter_form" class="form-horizontal">
+	{form_row("text","search_string","Search for")}
+	{form_row("box","case_sens_box","Case sensivity")}
+	{form_row("box","per_page_box","Records per page")}
+	{form_row("box","search_type_box","Search type")}
+	{form_row("box","search_in_box","Search in")}
+	{form_row("box","show_locs_box","Show locations")}
+	{form_row("box","search_lang_box","Language")}
+	{form_row("save_and_clear")}
 </form>
-</fieldset>
 </div>

@@ -99,7 +99,6 @@ class yf_manage_comments {
 			"total"			=> intval($total),
 			"items"			=> $items,
 			"pages"			=> $pages,
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}

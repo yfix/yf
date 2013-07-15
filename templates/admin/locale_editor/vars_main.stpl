@@ -1,9 +1,5 @@
 <h3>{t(Total)} ({total})</h3>
 
-<div align="center">
-	{filter}
-</div>
-<br />
 {if("items" ne "")}
 <form action="{mass_delete_link}" method="post" name="locale_vars_form">
 <table>
