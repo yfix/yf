@@ -159,7 +159,6 @@ class yf_members {
 			"num_members"	=> intval($total),
 			"items"			=> $items,
 			"pages"			=> $pages,
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 		);
 		$body = tpl()->parse($_GET["object"]."/main", $replace);
 		return $body;

@@ -1,53 +1,16 @@
-<table cellspacing="0" cellpadding="0" align="center">
-	<form action='{save_action}' method='post'>
-	<tr valign="top">
-		<td>
-			<table width="200" cellspacing="0" cellpadding="3" align="center">
-				<tr>
-					<td height="15" nowrap><b>Category</b></td>
-					<td>{category_id_box}</td>
-				</tr>
-				<tr>
-					<td nowrap><b>Email</b></td>
-					<td><input type="text" name="email" value="{email}"></td>
-				</tr>
-				<tr>
-					<td nowrap><b>Subject</b></td>
-					<td><input type="text" name="subject" value="{subject}"></td>
-				</tr>
-				<tr>
-					<td nowrap><b>Message</b></td>
-					<td><input type="text" name="message" value="{message}"></td>
-				</tr>
-				<tr>
-					<td height="15" nowrap><b>Assigned to</b></td>
-					<td>{assigned_to_box}</td>
-				</tr>
-			</table>
-		</td>
-		<td>
-			<table width="200" cellspacing="0" cellpadding="3" align="center">
-				<tr>
-					<td height="15" nowrap><b>Ticket Status</b></td>
-					<td>{status_box}</td>
-				</tr>
-				<tr>
-					<td height="15" nowrap><b>Admin Priority</b></td>
-					<td>{admin_priority_box}</td>
-				</tr>
-				<tr>
-					<td nowrap><b>Sort By</b></td>
-					<td nowrap>{sort_by_box} {sort_order_box}</td>
-				</tr>
-				<tr>
-					<td nowrap><b>{t(Results per Page)}:</b></td>
-					<td>{per_page_box}</td>
-				</tr>
-				<td class="nb" align="center" colspan="2">
-					<input type="submit" value="SAVE"><input type="button" onclick="window.location.href='{clear_url}'" value="CLEAR">
-				</td>
-			</table>
-		</td>
-	</tr>
-	</form>
-</table>
+<div>
+<legend>Filter</legend>
+<form action='{save_action}' method='post' class="form-horizontal">
+	{form_row("box","category_id_box","Category")}
+	{form_row("text","email","Email")}
+	{form_row("text","subject","Subject")}
+	{form_row("text","message","Message")}
+	{form_row("box","assigned_to_box","Assigned to")}
+	{form_row("box","status_box","Ticket Status")}
+	{form_row("box","admin_priority_box","Admin Priority")}
+	{form_row("box","sort_order_box","Sort Order")}
+	{form_row("box","per_page_box","Results per Page")}
+	{form_row("save_and_clean")}
+
+</form>
+</div>

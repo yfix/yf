@@ -103,7 +103,6 @@ class yf_log_emails_viewer {
 			"items"			=> $items,
 			"pages"			=> $pages,
 			"total"			=> intval($total),
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"prune_action"	=> "./?object=".$_GET["object"]."&action=prune",
 			"form_action"	=> "./?object=".$_GET["object"]."&action=multi_delete",
 			"top"			=> "./?object=".$_GET["object"]."&action=top_of_errors",

@@ -173,7 +173,6 @@ class yf_help_tickets {
 			"pages"			=> $pages,
 			"total"			=> intval($total),
 			"add_link"		=> "./?object=".$_GET["object"]."&action=add"._add_get(array("page")),
-			"filter"		=> $this->_show_filter(),
 			"ajax_link"		=> process_url("./?object=".$_GET["object"]."&action=ajax_ticket_source"),
 			"form_action"	=> "./?object=".$_GET["object"]."&action=mass_actions",
 		);
