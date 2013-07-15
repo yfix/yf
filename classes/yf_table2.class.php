@@ -207,7 +207,7 @@ class yf_table2 {
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini"><i class="icon-edit"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini ajax_edit"><i class="icon-edit"></i> '.t($params['name']).'</a> ';
 			},
 		);
 		return $this;
@@ -229,7 +229,29 @@ class yf_table2 {
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini ajax_delete"><i class="icon-trash"></i> '.t($params['name']).'</a> ';
+			},
+		);
+		return $this;
+	}
+
+	/**
+	*/
+	function btn_clone($name = "", $link = "", $extra = array()) {
+		if (!$name) {
+			$name = "Clone";
+		}
+		if (!$link) {
+			$link = "./?object=".$_GET["object"]."&action=clone&id=%d";
+		}
+		$this->_buttons[$name] = array(
+			"type"	=> __FUNCTION__,
+			"extra"	=> $extra,
+			"name"	=> $name,
+			"link"	=> $link,
+			"func"	=> function($row, $params) {
+				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini ajax_clone"><i class="icon-plus"></i> '.t($params['name']).'</a> ';
 			},
 		);
 		return $this;

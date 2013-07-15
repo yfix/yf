@@ -60,7 +60,7 @@ class yf_manage_dynamic_attributes{
 	*/
 	function add_category () {
 	
-		if(isset($_POST["go"])){
+		if($_POST){
 			if(empty($_POST["name"])){
 				_re(t("Name is required"));
 			}
@@ -95,7 +95,7 @@ class yf_manage_dynamic_attributes{
 			return _e(t("No category"));
 		}
 	
-		if(isset($_POST["go"])){
+		if($_POST){
 			if(empty($_POST["name"])){
 				_re(t("Name is required"));
 			}
@@ -178,7 +178,7 @@ class yf_manage_dynamic_attributes{
 	*/
 	function add () {
 	
-		if(isset($_POST["go"])){
+		if($_POST){
 		
 			if(empty($_POST["name"])){
 				_re(t("Name is required"));
@@ -244,7 +244,7 @@ class yf_manage_dynamic_attributes{
 		
 		$A = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_info')." WHERE id=".$_GET["id"]);
 		
-		if(isset($_POST["go"])){
+		if($_POST){
 		
 			if(empty($_POST["name"])){
 					_re(t("Name is required"));

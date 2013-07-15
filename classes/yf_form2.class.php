@@ -831,7 +831,6 @@ class yf_form2 {
 			}
 		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
-//		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_delete" onclick="return confirm(\''.t('Are you sure').'?\');"><i class="icon-trash"></i> '.t($name).'</a> ';
 		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_delete"><i class="icon-trash"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;

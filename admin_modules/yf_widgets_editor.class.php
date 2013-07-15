@@ -164,7 +164,7 @@ class widgets_editor {
 	* Add new override option
 	*/
 	function add(){
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (!$_POST["location"] && !$_POST["theme_select_box"]) {
 				_re(t("Please select something"));
 			}
@@ -214,7 +214,7 @@ class widgets_editor {
 			return _e("id empty");
 		}
 		
-		if(isset($_POST["go"])){
+		if($_POST){
 			if (!$_POST["location"] && !$_POST["theme_select_box"]) {
 				_re(t("Please select something"));
 			}
@@ -305,7 +305,7 @@ class widgets_editor {
 	*/
 	function visual_edit(){
 		// Save form
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// get left block names
 			$left_blocks = explode("&",$_POST["sidebar-1order"]);
 			$new_blocks_name = array();
@@ -488,7 +488,7 @@ class widgets_editor {
 			return _e("error side");
 		}
 
-		if(isset($_POST["go"])){
+		if($_POST){
 			if(($_GET["id"] != "-1")){
 			
 				if($_GET["id"] == "group"){

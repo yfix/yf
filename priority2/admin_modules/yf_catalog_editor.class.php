@@ -89,7 +89,7 @@ class yf_catalog_editor {
 	*/
 	function add() {
 		// Do save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				// Save data
@@ -144,7 +144,7 @@ class yf_catalog_editor {
 			return _e(t("No such catalog!"));
 		}
 		// Do save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				// Save data
@@ -362,7 +362,7 @@ class yf_catalog_editor {
 			return _e(t("No such catalog!"));
 		}
 		// Save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Cleanup user_groups
 			if (is_array($_POST["groups"]))	{
 				$_POST["groups"] = implode(",",$_POST["groups"]);
@@ -446,7 +446,7 @@ class yf_catalog_editor {
 			return _e(t("No such catalog!"));
 		}
 		// Save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Cleanup user_groups
 			if (is_array($_POST["groups"]))	{
 				$_POST["groups"] = implode(",",$_POST["groups"]);

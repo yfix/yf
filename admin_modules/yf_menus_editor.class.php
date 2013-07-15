@@ -125,7 +125,7 @@ class yf_menus_editor {
 	* Add new menu block
 	*/
 	function add() {
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (!common()->_error_exists()) {
 				db()->INSERT("menus", array(
 					"name"			=> _es($_POST["name"]),
@@ -171,7 +171,7 @@ class yf_menus_editor {
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			if (!common()->_error_exists()) {
 				db()->UPDATE("menus", array(
 					"name"			=> _es($_POST["name"]),
@@ -395,8 +395,8 @@ class yf_menus_editor {
 			"icons_web_path"	=> WEB_PATH. $this->ICONS_PATH,
 			"edit_menu_link"	=> "./?object=".$_GET["object"]."&action=edit&id=".$_GET["id"],
 			"js_redir_frame"	=> $_SESSION["_menu_js_refresh_frameset"] ? 1 : 0,
-			"sites_link"		=> "./?object=db_parser&table=sys_sites",
-			"servers_link"		=> "./?object=db_parser&table=sys_core_servers",
+			"sites_link"		=> "./?object=manage_sites",
+			"servers_link"		=> "./?object=manage_servers",
 		);
 		if (isset($_SESSION["_menu_js_refresh_frameset"])) {
 			unset($_SESSION["_menu_js_refresh_frameset"]);
@@ -518,7 +518,7 @@ class yf_menus_editor {
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			db()->INSERT("menu_items", array(
 				"menu_id"		=> intval($_GET["id"]),
 				"type_id"		=> intval($_POST["type_id"]),
@@ -580,8 +580,8 @@ class yf_menus_editor {
 			"icon_src"			=> $icon_src,
 			"edit_menu_link"	=> "./?object=".$_GET["object"]."&action=edit&id=".$menu_info["id"],
 			"cond_code"			=> _prepare_html($DATA["cond_code"], 0),
-			"sites_link"		=> "./?object=db_parser&table=sys_sites",
-			"servers_link"		=> "./?object=db_parser&table=sys_core_servers",
+			"sites_link"		=> "./?object=manage_sites",
+			"servers_link"		=> "./?object=manage_servers",
 		);
 		return tpl()->parse($_GET["object"]."/edit_item_form", $replace);
 	}
@@ -633,7 +633,7 @@ class yf_menus_editor {
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
 		}
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			db()->UPDATE("menu_items", array(
 				"parent_id"		=> intval($_POST["parent_id"]),
 				"name"			=> _es($_POST["name"]),
@@ -702,8 +702,8 @@ class yf_menus_editor {
 			"icon_src"			=> $icon_src,
 			"edit_menu_link"	=> "./?object=".$_GET["object"]."&action=edit&id=".$menu_info["id"],
 			"cond_code"			=> _prepare_html($item_info["cond_code"], 0),
-			"sites_link"		=> "./?object=db_parser&table=sys_sites",
-			"servers_link"		=> "./?object=db_parser&table=sys_core_servers",
+			"sites_link"		=> "./?object=manage_sites",
+			"servers_link"		=> "./?object=manage_servers",
 		);
 		return tpl()->parse($_GET["object"]."/edit_item_form", $replace);
 	}

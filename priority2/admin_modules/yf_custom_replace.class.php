@@ -107,7 +107,7 @@ class yf_custom_replace {
 		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Do save
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("custom_replace_tags", array(
@@ -124,7 +124,7 @@ class yf_custom_replace {
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 				"name"				=> _prepare_html($tag_info["name"]),
@@ -251,7 +251,7 @@ class yf_custom_replace {
 		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Do save
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Cleanup methods
 			$_POST["methods"]	= $this->_cleanup_methods_for_save($_POST["methods"]);
 			// Cleanup user_groups
@@ -298,7 +298,7 @@ class yf_custom_replace {
 			"back_link"			=> "./?object=".$_GET["object"]."&action=show_rules&id=".intval($tag_info["id"]),
 			"words_link"		=> "./?object=".$_GET["object"]."&action=show_words",
 			"edit_tag_link"		=> "./?object=".$_GET["object"]."&action=edit_tag&id=".$tag_info["id"],
-			"edit_sites_link"	=> "./?object=db_parser&table=sys_sites",
+			"edit_sites_link"	=> "./?object=manage_sites",
 			"edit_langs_link"	=> "./?object=locale_editor",
 			"edit_methods_link"	=> "./?object=user_modules",
 			"edit_groups_link"	=> "./?object=user_groups",
@@ -325,7 +325,7 @@ class yf_custom_replace {
 			return _e(t("No such tag!"));
 		}
 		// Do save
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Cleanup methods
 			$_POST["methods"]	= $this->_cleanup_methods_for_save($_POST["methods"]);
 			// Cleanup user_groups
@@ -384,7 +384,7 @@ class yf_custom_replace {
 			"back_link"			=> "./?object=".$_GET["object"]."&action=show_rules&id=".intval($tag_info["id"]),
 			"words_link"		=> "./?object=".$_GET["object"]."&action=show_words",
 			"edit_tag_link"		=> "./?object=".$_GET["object"]."&action=edit_tag&id=".$tag_info["id"],
-			"edit_sites_link"	=> "./?object=db_parser&table=sys_sites",
+			"edit_sites_link"	=> "./?object=manage_sites",
 			"edit_langs_link"	=> "./?object=locale_editor",
 			"edit_methods_link"	=> "./?object=user_modules",
 			"edit_groups_link"	=> "./?object=user_groups",
@@ -452,7 +452,7 @@ class yf_custom_replace {
 	*/
 	function add_word () {
 		// Do save
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->INSERT("custom_replace_words", array(
@@ -468,7 +468,7 @@ class yf_custom_replace {
 			js_redirect("./?object=".$_GET["object"]."&action=show_words");
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"for_edit"			=> 0,
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
@@ -492,7 +492,7 @@ class yf_custom_replace {
 		$word_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_words')." WHERE id=".intval($_GET["id"]));
 		if (empty($word_info["id"])) return "No such word!";
 		// Do save
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("custom_replace_words", array(
@@ -508,7 +508,7 @@ class yf_custom_replace {
 			js_redirect("./?object=".$_GET["object"]."&action=show_words");
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"for_edit"			=> 1,
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$word_info["id"],

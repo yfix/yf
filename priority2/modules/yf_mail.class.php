@@ -267,7 +267,7 @@ class yf_mail {
 			return common()->_show_error_message();
 		}
 		// Prepare message info for reply
-		if (!isset($_POST["go"])) {
+		if (!$_POST) {
 			$_POST["subject"]	= "Re: ".$msg_info["subject"];
 			$_POST["msg"]		= preg_replace("/([^\r\n]+[\r\n])/ims", "> \$1", $msg_info["message"]);
 		}
@@ -305,7 +305,7 @@ class yf_mail {
 			return common()->_show_error_message();
 		}
 		// Try to save mail
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check required data
 			if (empty($_POST["subject"])) {
 				_re(t("Subject is requred!"));
@@ -361,7 +361,7 @@ class yf_mail {
 			}
 		}
 		// Show form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 				"error_message"		=> common()->_show_error_message(),

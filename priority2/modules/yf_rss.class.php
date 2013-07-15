@@ -78,7 +78,7 @@ class yf_rss {
 		$rss_object_select = $rss_module_name;
 		$rss_url = process_url("./?object=rss");
 		
-		if(isset($_POST["go"])){
+		if($_POST){
 			foreach ((array)$rss_module_name as $key => $value){
 				if(isset($_POST["rss_manage_box_".$key])){
 					$rss_module_name_new[$key] = $value;

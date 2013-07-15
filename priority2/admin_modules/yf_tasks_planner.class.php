@@ -97,7 +97,7 @@ class yf_tasks_planner {
 	*/
 	function add_task() {
 		// Do save
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->INSERT("task_manager", array(
@@ -117,7 +117,7 @@ class yf_tasks_planner {
 			}
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 				"for_edit"			=> 0,
@@ -156,7 +156,7 @@ class yf_tasks_planner {
 			return _e();
 		}
 		// Do save
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("task_manager", array(
@@ -175,7 +175,7 @@ class yf_tasks_planner {
 			}
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 				"for_edit"			=> 1,

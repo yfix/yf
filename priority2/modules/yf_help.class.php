@@ -281,7 +281,7 @@ class yf_help extends yf_module {
 			return _e("This ticket is already closed!");
 		}
 		// Save data
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			db()->UPDATE("help_tickets", array(
 				"status"		=> "closed",
 				"closed_date"	=> time(),
@@ -311,7 +311,7 @@ class yf_help extends yf_module {
 			return _e("You are not allowed to re-open tickets!");
 		}
 		// Save data
-		if (isset($_POST["go"]) && $ticket_info["status"] == "closed") {
+		if ($_POST && $ticket_info["status"] == "closed") {
 			db()->UPDATE("help_tickets", array(
 				"status"		=> "open",
 				"closed_date"	=> 0,

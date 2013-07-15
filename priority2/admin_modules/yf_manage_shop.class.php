@@ -278,6 +278,10 @@ class yf_manage_shop {
 		return _class('manage_shop_attribute_delete', 'admin_modules/manage_shop/')->attribute_delete();
 	}
 
+	function attribute_activate() {
+		return _class('manage_shop_attribute_activate', 'admin_modules/manage_shop/')->attribute_activate();
+	}
+
 	function _attributes_view($object_id = 0) {
 		return _class('manage_shop__attributes_view', 'admin_modules/manage_shop/')->_attributes_view($object_id);
 	}

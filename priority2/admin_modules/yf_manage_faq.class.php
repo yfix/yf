@@ -219,7 +219,7 @@ class yf_manage_faq extends yf_module {
 		// Prepare text
 		$text_to_edit = $this->_EDITOR_EXISTS ? $this->TEXT_EDITOR_OBJ->_display_code($DATA["answer_text"]) : _prepare_html($DATA["answer_text"], 0);
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"for_edit"			=> 1,
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
@@ -270,7 +270,7 @@ class yf_manage_faq extends yf_module {
 		// Prepare text
 		$text_to_edit = $this->_EDITOR_EXISTS ? $this->TEXT_EDITOR_OBJ->_display_code($DATA["answer_text"]) : _prepare_html($DATA["answer_text"], 0);
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"for_edit"			=> 0,
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],

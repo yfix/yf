@@ -363,7 +363,7 @@ class yf_articles extends yf_module {
 			return _e(t("No such article!"));
 		}
 		// Do save content
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Do check captcha (if needed)
 			if (module(ARTICLES_CLASS_NAME)->USE_CAPTCHA) {
 				main()->_execute(ARTICLES_CLASS_NAME, "_captcha_check");
@@ -438,7 +438,7 @@ class yf_articles extends yf_module {
 			$DATA[$k] = isset($_POST[$k]) ? $_POST[$k] : $v;
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"	=> "./?object=".ARTICLES_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"],
 				"error_message"	=> _e(),
@@ -476,7 +476,7 @@ class yf_articles extends yf_module {
 			return _error_need_login();
 		}
 		// Do save content
-		if (isset($_POST["go"])) {
+		if ($_POST) {
 			// Do check captcha (if needed)
 			if (module(ARTICLES_CLASS_NAME)->USE_CAPTCHA) {
 				main()->_execute(ARTICLES_CLASS_NAME, "_captcha_check");
@@ -544,11 +544,11 @@ class yf_articles extends yf_module {
 		}
 		// Fill POST data
 		$DATA = $_POST;
-		if (!isset($_POST["go"])) {
+		if (!$_POST) {
 			$DATA["author_name"] = _display_name($this->_user_info);
 		}
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"	=> "./?object=".ARTICLES_CLASS_NAME."&action=".$_GET["action"],
 				"error_message"	=> _e(),

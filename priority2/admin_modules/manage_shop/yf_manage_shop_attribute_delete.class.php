@@ -14,7 +14,6 @@ class yf_manage_shop_attribute_delete{
 				cache()->refresh("shop_product_attributes_info");
 			}
 		}
-		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];

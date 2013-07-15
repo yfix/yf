@@ -140,7 +140,7 @@ class yf_manage_articles extends yf_module {
 			$user_info = db()->query_fetch("SELECT id,name,nick FROM ".db('user')." WHERE id=".intval($article_info["user_id"]));
 		}
 		// Check posted data and save
-		if (count($_POST) > 0) {
+		if ($_POST) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				// Add activity points to user when approved
@@ -176,7 +176,7 @@ class yf_manage_articles extends yf_module {
 		unset($this->_articles_cats[" "]);
 		unset($this->_articles_statuses2[" "]);
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"for_edit"		=> 1,
 				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
@@ -238,7 +238,7 @@ class yf_manage_articles extends yf_module {
 		unset($this->_articles_cats[" "]);
 		unset($this->_articles_statuses2[" "]);
 		// Display form
-		if (!isset($_POST["go"]) || common()->_error_exists()) {
+		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"for_edit"		=> 0,
 				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],

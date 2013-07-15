@@ -747,7 +747,7 @@ class yf_template_editor {
 	*  Import STPLs from file to the filesystem
 	*/
 	function import() {
-		if (isset($_POST["go"])){
+		if ($_POST){
 			// Check if file is selected
 			if (!empty($_FILES["import_file"]["name"])) {
 				$new_file_name = $_FILES["import_file"]["name"];
