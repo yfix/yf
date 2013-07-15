@@ -4,52 +4,18 @@
 <link rel='stylesheet' type='text/css' href='{const(WEB_PATH)}js/jquery/ui/date_picker/ui.theme.css'>
 
 <div class="filter">
-<fieldset>
 <legend>{t(Filter)}</legend>
-<form action='{save_action}' method='post'>
-	<div class="column">
-		<p>
-			<label for="server">{t(Server)}</label>
-			{server_box}
-		</p>
-		<p>
-			<label for="ip">IP</label>
-			<input type="text" id="ip" name="ip" value="{ip}">
-		</p>
-		<p>
-			<label for="comment">{t(Comment)}</label>
-			<input type="text" id="comment" name="comment" value="{comment}">
-		</p>
-		<p>
-			<label for="action">{t(Action)}</label>
-			<input type="text" id="action" name="action" value="{action}">
-		</p>
-	</div>
-	<div class="column">
-		<p>
-			<label for="sort_by_box">{t(Sort By Field)}</label>
-			{sort_by_box}
-		</p>
-		<p>
-			<label for="sort_order_box">{t(Sort order)}</label>
-			{sort_order_box}
-		</p>
-		<p>
-			<label>{t(Period from)}</label>
-			<input name="time_from" id="time_from" class="date-pick" style="width:80px" value="{time_from}">&nbsp;&nbsp;&nbsp;
-   		</p>
-		<p>
-			<label>{t(Period to)}</label>
-			<input name="time_to" id="time_to" class="date-pick" style="width:80px" value="{time_to}">&nbsp;&nbsp;&nbsp;
-   		</p>
-	</div>
-	<div class="button_div">
-		<input type="submit" value="{t(SAVE)}">
-		<input type="button" onclick="window.location.href='{clear_url}'" value="{t(CLEAR)}">
-{{--		<input type="button" onclick="window.location.href='{delete_sel}'" value="{t(DELETE ALL FILTERED)}">--}}
-	</div>
+<form action='{save_action}' method='post' class="form-horizontal">
+	{form_row("box","server_box","Server")}
+	{form_row("text","ip","IP")}
+	{form_row("text","comment","Comment")}
+	{form_row("text","action","Action")}
+	{form_row("box","sort_by_box","Sort by field")}
+	{form_row("box","sort_order_box","Sort order")}
+	{form_row("text","time_from","Period from")}
+	{form_row("text","time_to","Period to")}
+	{form_row("save_and_clear")}
 </form>
-</fieldset>
 </div>
 <script type="text/javascript">
 $(document).ready(function() {

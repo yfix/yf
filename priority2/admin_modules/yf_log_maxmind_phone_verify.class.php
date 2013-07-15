@@ -79,7 +79,6 @@ class yf_log_maxmind_phone_verify {
 			"items"			=> $items,
 			"pages"			=> $pages,
 			"total"			=> intval($total),
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"identify_link"	=> "./?object=".$_GET["object"]."&action=force_identify",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
