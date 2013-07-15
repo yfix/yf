@@ -1,8 +1,5 @@
 <h2>Links List ({num_items})</h2>
 
-{filter}
-
-<br />
 <a href="{users_list_url}">User List</a><br />
 <br />
 

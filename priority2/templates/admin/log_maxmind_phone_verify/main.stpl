@@ -1,10 +1,5 @@
 <h3>{t(Total)} ({total})</h3>
 
-<div align="center">
-{filter}
-</div>
-
-<br />
 <div align="left">
 	<a href="{identify_link}">Identify Phone</a>
 </div>

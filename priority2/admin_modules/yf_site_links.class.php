@@ -147,7 +147,6 @@ class yf_site_links {
 			"num_items"		=> intval($num_items),
 			"items"			=> $items,
 			"pages"			=> $pages,
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}

@@ -65,7 +65,6 @@ class yf_log_ssh_viewer {
 			"total"			=> $total,
 			"pages"			=> $pages,
 			"items"			=> $items,
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
