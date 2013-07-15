@@ -3,11 +3,8 @@
 // jQuery on DOM ready
 $(function(){
 	var _icons_loaded	= false;
-
 	$("input#icon_selector").show().click(function(){
-		$("div.icon_external_box")
-			.css("display", "block")
-
+		$("div.icon_external_box").css("display", "block")
 		// Cache content
 		if (_icons_loaded) {
 			return true;
@@ -15,14 +12,10 @@ $(function(){
 		// Get from server
 		$.get(_icons_list_link, function(data){
 			var _new_data = [];
-
 			$.each(data.split("\n"), function(i, v){
 				_new_data[i] = "<div class='icon_item'><img src='" + _icons_web_path + v + "' width='16' height='16' /></div>";
 			});
-
-			$("div.icon_external_box")
-				.html("<div align='center'><a href='javascript:_icon_external_close();'><b>Close dialog</b></a></div>" + _new_data.join("\n"));
-
+			$("div.icon_external_box").html("<div align='center'><a href='javascript:_icon_external_close();'><b>Close dialog</b></a></div>" + _new_data.join("\n"));
 			$("div.icon_item img").click(function(){
 				$("#icon").val($(this).attr("src").replace(_icons_web_path, ""));
 				_icon_external_close();
@@ -32,7 +25,6 @@ $(function(){
 			_icons_loaded = true;
 		})
 	})
-
 	// Catch keyboard buttons
 	$(document).bind("keyup", function(e){
 		if (e.keyCode != 27) {
@@ -44,16 +36,13 @@ $(function(){
 		}
 		return false;
 	});
-
 })
-
 function _icon_external_close(){
 	jQuery("div.icon_external_box").css("display", "none");
 }
 
 // Full HTML plugin
 (function() {
-
 jQuery.fn.fullhtml = function() {
 	var tagName = this[0].tagName.toLowerCase()
 	var attribs = this[0].attributes

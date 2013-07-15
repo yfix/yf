@@ -68,5 +68,10 @@ $(function(){
 		})
 		return false;
 	});
+	$('.insert_selected_word').click(function(){
+		var _sel_box = $(this).prev('select');
+		var _input = $(_sel_box).prev('input[type=text]');
+		_input.val($('option:selected', _sel_box).val())
+	})
 });
 </script>

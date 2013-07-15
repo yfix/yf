@@ -3,24 +3,8 @@
 <form method="post" action="{form_action}" class="form-horizontal">
 	{form_row("text","name","Block name")}
 	{form_row("textarea","desc","Block Description")}
-	<div class="control-group">
-		<label class="control-label" for="stpl_name">{t(Custom Template)}</label>
-		<div class="controls">
-			<input type="text" id="stpl_name" name="stpl_name" value="{stpl_name}">
-			{stpls_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.stpls.options[this.form.stpls.selectedIndex].value, '', true, 'stpl_name');" title="{t(Insert Selected Word)}">
-			<a href="{stpls_link}"><i class="icon-edit"></i></a>
-			{itip("Template will be forced to use when processing block. Example: right_area/main")} 
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="method_name">{t(Custom class Method)}</label>
-		<div class="controls">
-			<input type="text" id="method_name" name="method_name" value="{method_name}">
-			{methods_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.methods.options[this.form.methods.selectedIndex].value, '', true, 'method_name');" title="{t(Insert Selected Word)}">
-			<a href="{modules_link}"><i class="icon-edit"></i></a>
-			{itip("Class method will be used to process block. Example: main.tasks")} 
-		</div>
-	</div>
+	{form_row("template_select_box","stpl_name","Custom template")}
+	{form_row("method_select_box","method_name","Custom class method")}
 	{form_row("active_box")}
 	{form_row("save_and_back")}
 </form>

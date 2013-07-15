@@ -498,7 +498,7 @@ class yf_form2 {
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
 					.$r[$name]
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
@@ -527,7 +527,7 @@ class yf_form2 {
 		}
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label">'.t($desc).'</label>
 				<div class="controls">'.$text.'</div>
 			</div>
 		';
@@ -559,7 +559,7 @@ class yf_form2 {
 
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
 					.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
@@ -595,7 +595,7 @@ class yf_form2 {
 
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
 					.common()->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
@@ -625,7 +625,7 @@ class yf_form2 {
 
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'.common()->check_box($name, $values, $selected).'</div>
 			</div>
 		';
@@ -657,7 +657,7 @@ class yf_form2 {
 
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'.common()->multi_check_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array).'</div>
 			</div>
 		';
@@ -688,7 +688,7 @@ class yf_form2 {
 
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'.common()->select_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate).'</div>
 			</div>
 		';
@@ -720,7 +720,7 @@ class yf_form2 {
 
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'.common()->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate).'</div>
 			</div>
 		';
@@ -750,7 +750,7 @@ class yf_form2 {
 
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'.common()->time_box2($name, $selected, $add_str, $show_text, $translate).'</div>
 			</div>
 		';
@@ -942,31 +942,34 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
-/*
-	<div class="control-group">
-		<label class="control-label" for="method_name">{t(Custom class Method)}</label>
-		<div class="controls">
-			<input type="text" id="method_name" name="method_name" value="{method_name}">
-			{methods_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.methods.options[this.form.methods.selectedIndex].value, '', true, 'method_name');" title="{t(Insert Selected Word)}">
-			<a href="{modules_link}"><i class="icon-edit"></i></a>
-			{itip("Class method will be used to process block. Example: main.tasks")} 
-		</div>
-	</div>
-*/
-/*
+		if (!$name) {
+			$name = 'method_name';
+		}
+		if (!$desc) {
+			$desc = 'Custom class method';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if (!$extra['edit_link']) {
+			$extra['edit_link'] = 'modules_link';
+		}
+		if (!$extra['box_name']) {
+			$extra['box_name'] = 'methods_box';
+		}
 		$r = $replace ? $replace : $this->_replace;
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'
-					.$r[$name]
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
+				<div class="controls">
+					<input type="text" id="'.$name.'" name="'.$name.'" value="'.$r[$name].'">
+					'.$r[$extra['box_name']].' <input type="button" class="btn btn-mini insert_selected_word" value="&lt;&lt;" title="'.t('Insert Selected Word').'">'
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 				.'</div>
 			</div>
 		';
-*/
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -980,31 +983,34 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
-/*
-	<div class="control-group">
-		<label class="control-label" for="stpl_name">{t(Custom Template)}</label>
-		<div class="controls">
-			<input type="text" id="stpl_name" name="stpl_name" value="{stpl_name}">
-			{stpls_box} <input type="button" class="btn" value="Put" onclick="insert_word(this.form.stpls.options[this.form.stpls.selectedIndex].value, '', true, 'stpl_name');" title="{t(Insert Selected Word)}">
-			<a href="{stpls_link}"><i class="icon-edit"></i></a>
-			{itip("Template will be forced to use when processing block. Example: right_area/main")} 
-		</div>
-	</div>
-*/
-/*
+		if (!$name) {
+			$name = 'stpl_name';
+		}
+		if (!$desc) {
+			$desc = 'Custom template';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if (!$extra['edit_link']) {
+			$extra['edit_link'] = 'stpls_link';
+		}
+		if (!$extra['box_name']) {
+			$extra['box_name'] = 'stpls_box';
+		}
 		$r = $replace ? $replace : $this->_replace;
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
 			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'
-					.$r[$name]
+				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
+				<div class="controls">
+					<input type="text" id="'.$name.'" name="'.$name.'" value="'.$r[$name].'">
+					'.$r[$extra['box_name']].' <input type="button" class="btn btn-mini insert_selected_word" value="&lt;&lt;" title="'.t('Insert Selected Word').'">'
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 				.'</div>
 			</div>
 		';
-*/
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -1027,20 +1033,6 @@ class yf_form2 {
 			<input type="button" value="V" id="icon_selector" style="display:none;" class="btn" />
 		</div>
 	</div>
-*/
-/*
-		$r = $replace ? $replace : $this->_replace;
-		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-		$body = '
-			<div class="control-group">
-				<label class="control-label" for="group_box">'.t($desc).'</label>
-				<div class="controls">'
-					.$r[$name]
-					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
-				.'</div>
-			</div>
-		';
 */
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
