@@ -57,7 +57,8 @@ class yf_table2 {
 		if ($data) {
 			$body = '<table class="table table-bordered table-striped table-hover">'.PHP_EOL;
 			$body .= '<thead>'.PHP_EOL;
-			foreach ((array)$this->_fields as $name => $info) {
+			foreach ((array)$this->_fields as $info) {
+				$name = $info['name'];
 				$body .= '<th>'.t($info['desc']).'</th>'.PHP_EOL;
 			}
 			if ($this->_buttons) {
@@ -66,7 +67,8 @@ class yf_table2 {
 			$body .= '</thead>'.PHP_EOL;
 			foreach ((array)$data as $row) {
 				$body .= '<tr>'.PHP_EOL;
-				foreach ((array)$this->_fields as $name => $info) {
+				foreach ((array)$this->_fields as $info) {
+					$name = $info['name'];
 					if (!isset($row[$name])) {
 						continue;
 					}
@@ -75,7 +77,8 @@ class yf_table2 {
 				}
 				if ($this->_buttons) {
 					$body .= '<td nowrap>';
-					foreach ((array)$this->_buttons as $name => $info) {
+					foreach ((array)$this->_buttons as $info) {
+						$name = $info['name'];
 						$func = $info['func'];
 						$body .= $func($row, $info).PHP_EOL;
 					}
@@ -88,7 +91,8 @@ class yf_table2 {
 		} else {
 			$body .= '<div class="alert alert-info">'.t('No records').'</div>'.PHP_EOL;
 		}
-		foreach ((array)$this->_footer_links as $name => $info) {
+		foreach ((array)$this->_footer_links as $info) {
+			$name = $info['name'];
 			$func = $info['func'];
 			$body .= $func($info).PHP_EOL;
 		}
@@ -125,6 +129,7 @@ class yf_table2 {
 		}
 		$this->_fields[$name] = array(
 			"type"	=> __FUNCTION__,
+			"name"	=> $name,
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"func"	=> function($field, $params) {
@@ -142,6 +147,7 @@ class yf_table2 {
 		}
 		$this->_fields[$name] = array(
 			"type"	=> __FUNCTION__,
+			"name"	=> $name,
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"link"	=> $link,
@@ -166,11 +172,31 @@ class yf_table2 {
 		}
 		$this->_fields[$name] = array(
 			"type"	=> __FUNCTION__,
+			"name"	=> $name,
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"func"	=> function($field, $params) {
-				return _format_date($field, $params['desc']);
+				return str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
 			}
+		);
+		return $this;
+	}
+
+	/**
+	*/
+	function func($name, $func, $extra = array()) {
+		if (!$desc && isset($extra['desc'])) {
+			$desc = $extra['desc'];
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace("_", " ", $name));
+		}
+		$this->_fields[] = array(
+			"type"	=> __FUNCTION__,
+			"name"	=> $name,
+			"extra"	=> $extra,
+			"desc"	=> $desc,
+			"func"	=> $func,
 		);
 		return $this;
 	}
@@ -180,8 +206,8 @@ class yf_table2 {
 	function btn($name, $link, $extra = array()) {
 		$this->_buttons[$name] = array(
 			"type"	=> __FUNCTION__,
-			"extra"	=> $extra,
 			"name"	=> $name,
+			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
@@ -202,8 +228,8 @@ class yf_table2 {
 		}
 		$this->_buttons[$name] = array(
 			"type"	=> __FUNCTION__,
-			"extra"	=> $extra,
 			"name"	=> $name,
+			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
@@ -224,8 +250,8 @@ class yf_table2 {
 		}
 		$this->_buttons[$name] = array(
 			"type"	=> __FUNCTION__,
-			"extra"	=> $extra,
 			"name"	=> $name,
+			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
@@ -246,8 +272,8 @@ class yf_table2 {
 		}
 		$this->_buttons[$name] = array(
 			"type"	=> __FUNCTION__,
-			"extra"	=> $extra,
 			"name"	=> $name,
+			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
@@ -268,8 +294,8 @@ class yf_table2 {
 		}
 		$this->_buttons[$name] = array(
 			"type"	=> __FUNCTION__,
-			"extra"	=> $extra,
 			"name"	=> $name,
+			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
@@ -286,8 +312,8 @@ class yf_table2 {
 	function footer_link($name, $link, $extra = array()) {
 		$this->_footer_links[$name] = array(
 			"type"	=> __FUNCTION__,
-			"extra"	=> $extra,
 			"name"	=> $name,
+			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
@@ -303,8 +329,8 @@ class yf_table2 {
 		$name = 'image';
 		$this->_fields[$name] = array(
 			"type"	=> __FUNCTION__,
-			"extra"	=> $extra,
 			"name"	=> $name,
+			"extra"	=> $extra,
 			"path"	=> $path,
 			"link"	=> $link,
 			"func"	=> function($field, $params, $row) {
