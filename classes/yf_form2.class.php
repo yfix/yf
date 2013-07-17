@@ -101,7 +101,8 @@ class yf_form2 {
 			$enctype = 'multipart/form-data';
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$body = '<form method="'.$method.'" action="'.$r[$name].'" class="form-horizontal'.($extra['class'] ? ' '.$extra['class'] : '').'"'
+		$form_action = isset($r[$name]) ? $r[$name] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : '');
+		$body = '<form method="'.$method.'" action="'.$form_action.'" class="form-horizontal'.($extra['class'] ? ' '.$extra['class'] : '').'"'
 			.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
 			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
 			.($extra['name'] ? ' name="'.$extra['name'].'"' : '')
@@ -156,13 +157,16 @@ class yf_form2 {
 		if ($extra['sizing']) {
 			$extra['class'] .= ' input-'.$extra['sizing'];
 		}
+		if (!isset($extra["no_escape"])) {
+			$value = htmlspecialchars($value, ENT_QUOTES);
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
 				<div class="controls">'
 					.(($prepend || $append) ? '<div class="'.($prepend ? 'input-prepend' : '').($append ? ' input-append' : '').'">' : '')
 					.($prepend ? '<span class="add-on">'.$prepend.'</span>' : '')
-					.'<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'
+					.'<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.$value.'"'
 					.($extra["class"] ? ' class="'.$extra["class"].'"' : '')
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
@@ -201,7 +205,9 @@ class yf_form2 {
 		$placeholder = isset($extra["placeholder"]) ? $extra["placeholder"] : $desc;
 		$value = isset($extra["value"]) ? $extra["value"] : $r[$name];
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-
+		if (!isset($extra["no_escape"])) {
+			$value = htmlspecialchars($value, ENT_QUOTES);
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
@@ -212,7 +218,7 @@ class yf_form2 {
 					.($extra["class"] ? ' class="'.$extra["class"].'"' : '')
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
-					.'>'.htmlspecialchars($value, ENT_QUOTES).'</textarea>'
+					.'>'.$value.'</textarea>'
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
 			</div>
@@ -237,8 +243,10 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$id = $extra["id"] ? $extra["id"] : $name;
 		$value = isset($extra["value"]) ? $extra["value"] : $r[$name];
-
-		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.htmlspecialchars($value, ENT_QUOTES).'"'.($extra["data"] ? ' data="'.$extra["data"].'"' : '').'>';
+		if (!isset($extra["no_escape"])) {
+			$value = htmlspecialchars($value, ENT_QUOTES);
+		}
+		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.$value.'"'.($extra["data"] ? ' data="'.$extra["data"].'"' : '').'>';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -466,10 +474,14 @@ class yf_form2 {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}
 		$r = $replace ? $replace : $this->_replace;
+		$value = $r[$name];
+		if (!isset($extra["no_escape"])) {
+			$value = htmlspecialchars($value, ENT_QUOTES);
+		}
 		$body = '
 			<div class="control-group">
 				<label class="control-label">'.t($desc).'</label>
-				<div class="controls"><span class="label label-info">'.htmlspecialchars($r[$name], ENT_QUOTES).'</span></div>
+				<div class="controls"><span class="label label-info">'.$value.'</span></div>
 			</div>
 		';
 		if ($this->_chained_mode) {
