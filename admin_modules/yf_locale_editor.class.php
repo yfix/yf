@@ -1436,6 +1436,9 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	//-----------------------------------------------------------------------------
 	// Session - based filter
 	function _show_filter () {
+		if ($_GET["action"] != "show_vars") {
+			return false;
+		}
 		$replace = array(
 			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
 			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
