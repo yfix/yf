@@ -1,6 +1,6 @@
 <form method="post" action="{form_action}" enctype="multipart/form-data" class="form-horizontal">
 	{form_row("number","author_id","Author Id","members_link")}
-{{--{form_row("check_box","is_own_article","","Associate article with user's account")}--}}
+	{form_row("check_box","is_own_article","","Associate article with user account")}
 	{form_row("text","author_name","Author Name")}
 	{form_row("text","title","Title")}
 	{form_row("box","cats_box","Category","edit_cats_link")}
