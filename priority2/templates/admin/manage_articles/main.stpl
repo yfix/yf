@@ -16,7 +16,7 @@
 </table>
 {/if}
 {if("items" eq "")}
-<div align="center">{t(No articles)}</div>
+<div class="alert">{t(No articles)}</div>
 {/if}
 {if("pages" ne "")}
 <br />
@@ -24,5 +24,5 @@
 {/if}
 {if("add_link" ne "")}
 <br />
-	<div align="center"><a href="{add_link}">{t(Add new Article)}</a></div>
+	<div align="center"><a href="{add_link}" class="btn">{t(Add new Article)}</a></div>
 {/if}

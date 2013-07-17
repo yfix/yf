@@ -1,32 +1,7 @@
-<form method="post" action="{form_action}">
-<div class="editform">
-	<p class="first">
-		<label for="name">{t(Title)}</label>
-		<input type="text" id="title" name="title" value="{title}">
-	</p>
-	<p>
-		<label for="name">{t(Head text)}</label>
-		<textarea id="head_text" name="head_text" cols="50" rows="10" class="editable">{head_text}</textarea>
-	</p>
-	<p>
-		<label for="name">{t(Full text)}</label>
-		{if("bb_codes_full_text" ne "")}
-			{bb_codes_full_text}
-		{/if}
-		<textarea id="full_text" name="full_text" cols="50" rows="10" class="editable">{full_text}</textarea>
-	</p>
-	<p>
-		<label>active</label>
-		<input type="radio" name="active" class="check" value="0" id="radio_active_0" {if("active" eq "0")}checked{/if}>
-		<label class="simple" for="radio_active_0"><b style="color:red;">no</b></label>
-		<input type="radio" name="active" class="check" value="1" id="radio_active_1" {if("active" eq "1")}checked{/if}>
-		<label class="simple" for="radio_active_1"><b style="color:green;">yes</b></label>
-	</p>
-	<div class="button_div">
-		<input type="submit" name="go" value="{t(Save)}" />
-	</div>
-</div>
+<form method="post" action="{form_action}" class="form-horizontal">
+	{form_row("text","title","Title")}
+	{form_row("textarea","head_text","Head text")}
+	{form_row("textarea","full_text","Full text")}
+	{form_row("active_box")}
+	{form_row("save_and_back")}
 </form>
-<br /><br />
-
-<div align="center"><a href="{back_link}">{t(Back)}</a></div>

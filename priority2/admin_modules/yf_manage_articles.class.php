@@ -121,6 +121,7 @@ class yf_manage_articles extends yf_module {
 			"add_link"	=> "./?object=".$_GET["object"]."&action=add",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
+		}
 	}
 
 	//-----------------------------------------------------------------------------
@@ -201,7 +202,6 @@ class yf_manage_articles extends yf_module {
 				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($article_info["user_id"])),
 			);
 			return tpl()->parse($_GET["object"]."/edit", $replace);
-		}
 	}
 
 	//-----------------------------------------------------------------------------

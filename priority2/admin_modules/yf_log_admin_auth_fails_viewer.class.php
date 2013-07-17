@@ -23,33 +23,17 @@ class yf_log_admin_auth_fails_viewer {
 	*/
 	function show () {
 
-		// Prepare pager
-		$sql = "SELECT * FROM ".db('log_admin_auth_fails')."";
-		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY time ASC ";
-		list($add_sql, $pages, $total) = common()->divide_pages($sql);
-		$records = db()->query_fetch_all($sql. $add_sql);
-
-		foreach ((array)$records as $result) {
-			$replace2 = array(
-				"login"			=> _prepare_html($result["login"]),
-				"ip"			=> $result["ip"],
-				"date"			=> _format_date($result["time"], "long"),
-				"reason"		=> $result["reason"],
-				"details_link"	=> "./?object=".$_GET["object"]."&action=view&id=".floatval($result["time"]),
-			);
-			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
-		}
-
-		// Prepare template
-		$replace = array(
-			"total"			=> $total,
-			"pages"			=> $pages,
-			"items"			=> $items,
-		);
-		return tpl()->parse($_GET["object"]."/main", $replace);
+		return common()->table2("SELECT * FROM ".db('log_admin_auth_fails'))
+			->text("login")
+			->text("ip")
+			->date("time", "Date")
+			->func("reason", function($field, $params) { 
+				if($field == "w") $reason = "Wrong login";
+				if($field == "b") $reason = "Blocked";
+				return $reason;})
+			->btn('View', './?object='.$_GET["object"].'&action=view&id=%d', array('id' => 'time'))
+			->render();
 	}
-
 
 	/**
 	* Single record detailed view

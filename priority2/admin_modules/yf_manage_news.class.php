@@ -10,28 +10,15 @@ class yf_manage_news extends yf_news {
 	* Default method
 	*/
 	function show() {
-		$Q = db()->query("SELECT id,title,head_text,add_date,active FROM ".db('news')." ORDER BY add_date DESC");
-		while ($A = db()->fetch_assoc($Q)) {
-			$replace2 = array(
-				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
-				"title"			=> $A["title"],
-				"head_text"		=> nl2br($A["head_text"]),
-				"add_date"		=> _format_date($A["add_date"]),
-				"active"		=> $A["active"],
-				"active_link"	=> "./?object=".$_GET["object"]."&action=activate_item&id=".$A["id"],
-				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit&id=".$A["id"],
-				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$A["id"],
-			);
-			
-			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
-		}
-		
-		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=add",
-			"items"			=> $items,
-		);
-		
-		return tpl()->parse($_GET["object"]."/main", $replace);
+		return common()->table2("SELECT * FROM ".db('news')." ORDER BY add_date DESC")
+			->text("title")
+			->text("head_text")
+			->date("add_date")
+			->btn_edit()
+			->btn_delete()
+			->btn_active()
+			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
+			->render();
 	}
 
 	/**

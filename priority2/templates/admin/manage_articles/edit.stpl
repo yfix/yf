@@ -1,64 +1,27 @@
-<div align="center">{error_message}</div>
-
+{if("error_message" ne "")}<div class="alert alert-error">{error_message}</div>{/if}
 <div class="editform">
-<form method="post" action="{form_action}" enctype="multipart/form-data" name="REPLIER">
-		<p class="first">
-			<label for="author_id">{t(Author Id)}</label>
-			<input type="text" id="author_id" name="author_id" value="{author_id}" maxlength="10" size="10">
-			{if("members_link" ne "")}<a href="{members_link}">{t(Manage Members)} </a>{/if}
-		</p>
-		<p>
-			<input type="checkbox" id="is_own_article" name="is_own_article" value="1" {if("is_own_article" eq 1)}checked{/if}>&nbsp;
-			<label class="simple" for="is_own_article">{t(Associate article with user's account)}</label>
-			
-		</p>
-		<p>
-			<label for="author_name">{t(Author Name)}</label>
-			<input type="text" id="author_name" name="author_name" value="{author_name}" maxlength="255">
-			<br /><small>(max 255 characters)</small>
-		</p>
-		<p>
-			<label for="title">{t(Title)}</label>
-			<input type="text" id="title" name="title" value="{title}">
-		</p>
-		<p>
-			<label for="cats_box">{t(Category)}</label>
-			{cats_box}
-			{if("edit_cats_link" ne "")}<a href="{edit_cats_link}">{t(Manage Categories)}</a>{/if}
-		</p>
-		<p>
-			<label for="summary">{t(Summary)}</label>
-			<textarea id="summary" name="summary" cols="50" rows="5">{summary}</textarea>
-		</p>
-		<p>
-			<label for="text">{t(Text)}</label>
-			<textarea name="full_text" id="text" cols="50" rows="20">{full_text}</textarea>
-		</p>
-		<p>
-			<label for="credentials">{t(Credentials)}</label>
-			<textarea id="credentials" name="credentials" cols="50" rows="5">{credentials}</textarea>
-		</p>
-		<p>
-			<label for="statuses_box">{t(Status)}</label>
-			{statuses_box}
-		</p>
+<form method="post" action="{form_action}" enctype="multipart/form-data" name="REPLIER" class="form-horizontal">
+	{form_row("number","author_id","Author Id")}
+{if("members_link" ne "")}
+	<a href="{members_link}">{t(Manage Members)}</a>
+{/if}
+	{form_row("check_box","is_own_article","","Associate article with user's account")}
+	{form_row("text","author_name","Author Name")}
+	{form_row("text","title","Title")}
+	{form_row("box","cats_box","Category")}
+{if("edit_cats_link" ne "")}
+	<a href="{edit_cats_link}">{t(Manage Categories)}</a>
+{/if}
+	{form_row("textarea","summmary","Summary")}
+	{form_row("textarea","full_text","Text")}
+	{form_row("textarea","credentials","Credentials")}
+	{form_row("box","statuses_box","Status")}
 {if("add_date" ne "")}
-		<p>
-			<label>{t(Add Date)}</label>
-			{add_date}
-		</p>
+	{form_row("info","add_date")}
 {/if}
 {if("edit_date" ne "")}
-		<p>
-			<label>{t(Edit Date)}</label>
-			{edit_date}
-		</p>
+	{form_row("info","edit_date")}
 {/if}
-		<div class="button_div">
-			<input type="submit" name="go" value="{t(Post)}" />
-		</div>
+	{form_row("save_and_back")}
 </form>
 </div>
-
-<br />
-<div align="center"><a href="{back_link}">{t(Back)} </a></div>
