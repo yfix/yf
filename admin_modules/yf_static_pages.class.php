@@ -11,11 +11,6 @@ class yf_static_pages {
 
 	/**
 	*/
-	function _init() {
-	}
-
-	/**
-	*/
 	function show() {
 		$sql = "SELECT * FROM ".db('static_pages');
 		return common()->table2($sql)
@@ -41,7 +36,7 @@ class yf_static_pages {
 		$name = str_replace(array("__", "___"), "_", $name);
 		if (strlen($name)) {
 			db()->INSERT("static_pages", array(
-				"name"		=> _es($name),
+				"name"	=> _es($name),
 			));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
@@ -132,7 +127,7 @@ class yf_static_pages {
 
 	/**
 	*/
-	function activate () {
+	function active () {
 		if (isset($_GET['id'])) {
 			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE name='"._es(_strtolower(urldecode($_GET['id'])))."' OR id=".intval($_GET['id']));
 		}
@@ -160,66 +155,6 @@ class yf_static_pages {
 			return _e('No such page!');
 		}
 		return stripslashes($page_info["text"]);
-	}
-
-	/**
-	*/
-	function print_view () {
-		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE name='"._es(_strtolower($_GET["id"]))."' OR id=".intval($_GET['id']));
-		}
-		$this->PAGE_NAME	= _prepare_html($page_info["name"]);
-		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
-		if (empty($page_info)) {
-			_re(t("No such page!"));
-			$body = _e();
-		} else {
-			$text = $this->ALLOW_HTML_IN_TEXT ? $page_info["text"] : _prepare_html($page_info["text"]);
-			$body = common()->print_page($text);
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function pdf_view () {
-		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE name='"._es(_strtolower($_GET["id"]))."' OR id=".intval($_GET['id']));
-		}
-		$this->PAGE_NAME	= _prepare_html($page_info["name"]);
-		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
-		if (empty($page_info)) {
-			_re(t("No such page!"));
-			$body = _e();
-		} else {
-			$text = $this->ALLOW_HTML_IN_TEXT ? $page_info["text"] : _prepare_html($page_info["text"]);
-			$body = common()->pdf_page($text, "page_".$page_info["name"]);
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function email_page () {
-		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch("SELECT * FROM ".db('static_pages')." WHERE name='"._es(_strtolower($_GET["id"]))."' OR id=".intval($_GET['id']));
-		}
-		$this->PAGE_NAME	= _prepare_html($page_info["name"]);
-		$this->PAGE_TITLE	= _prepare_html($page_info["title"]);
-		if (empty($page_info)) {
-			_re(t("No such page!"));
-			$body = _e();
-		} else {
-			$body = common()->email_page($page_info["text"]);
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function _box ($name = "", $selected = "") {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
 	/**
