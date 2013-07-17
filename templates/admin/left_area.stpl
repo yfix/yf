@@ -1,7 +1,3 @@
-<style>
-.left_area{left: -450px;position: absolute;}
-body > .container{position: relative;}
-</style>
 <div class="left_area">
 	{execute(common,show_left_filter)}
 </div>
