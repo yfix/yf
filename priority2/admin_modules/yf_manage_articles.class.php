@@ -1,7 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
-// Comments management module
+// Articles management
 class yf_manage_articles extends yf_module {
 
 	/** @var int Text preview cutoff */
@@ -16,34 +15,28 @@ class yf_manage_articles extends yf_module {
 		"object_name"	=> "articles",
 	);
 
-	//-----------------------------------------------------------------------------
 	// Constructor
-	function yf_manage_articles() {
+	function _init() {
 		main()->USER_ID = $_GET['user_id'];
-		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
-		// Array of boxes
 		$this->_boxes = array(
-			"cat_id"	=> 'select_box("cat_id", $this->_articles_cats, $selected, false, 2, "style=\"width:100%;\"", false)',
+			"cat_id"	=> 'select_box("cat_id", $this->_articles_cats, $selected, false, 2, "", false)',
 		);
-		// Array of available article statuses
 		$this->_articles_statuses = array(
 			"new"		=> t("new"),
 			"edited"	=> t("edited"),
 			"suspended"	=> t("suspended"),
 			"active"	=> t("active"),
 		);
-		// Prepare categories
-		$this->CATS_OBJ = main()->init_class("cats", "classes/");
+		$this->CATS_OBJ = _class("cats", "classes/");
 		$this->CATS_OBJ->_default_cats_block = "articles_cats";
 		$this->_articles_cats	= $this->CATS_OBJ->_prepare_for_box();
-		// Prepare filter data
+
 		if ($this->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
 		// Calling function to divide records per pages
@@ -121,37 +114,29 @@ class yf_manage_articles extends yf_module {
 			"add_link"	=> "./?object=".$_GET["object"]."&action=add",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
-		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Edit record
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return _e(t("No id"));
 		}
-		// Try to get record info
 		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($article_info)) {
 			return _e(t("No such record"));
 		}
-		// Try to get given user info
 		if (!empty($article_info["user_id"])) {
 			$user_info = db()->query_fetch("SELECT id,name,nick FROM ".db('user')." WHERE id=".intval($article_info["user_id"]));
 		}
-		// Check posted data and save
 		if ($_POST) {
-			// Check for errors
 			if (!common()->_error_exists()) {
-				// Add activity points to user when approved
 				if (!empty($article_info["user_id"]) && $_POST["status"] == "active") {
 					$RECORD_ID	= $_GET["id"];
 					$act_name	= $_POST["is_own_article"] ? "article_posted" : "article_reposted";
 					common()->_add_activity_points($article_info["user_id"], $act_name, strlen($_POST["full_text"]), $RECORD_ID);
 				}
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("articles_texts", array(
 					"cat_id"		=> intval($_POST["cat_id"]),
@@ -165,51 +150,43 @@ class yf_manage_articles extends yf_module {
 					"edit_date"		=> time(),
 					"status"		=> _es($_POST["status"]),
 				), "id=".intval($_GET["id"]));
-				// Return user back
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
-		// Fill POST data
 		foreach ((array)$article_info as $k => $v) {
 			$DATA[$k] = isset($_POST[$k]) ? $_POST[$k] : $v;
 		}
-		// Cleanup data arrays
 		unset($this->_articles_cats[" "]);
 		unset($this->_articles_statuses2[" "]);
-		// Display form
-		if (!$_POST || common()->_error_exists()) {
-			$replace = array(
-				"for_edit"		=> 1,
-				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-				"error_message"	=> _e(),
-				"statuses_box"	=> $this->_box("status", $DATA["status"]),
-				"cats_box"		=> $this->_box("cat_id", $DATA["cat_id"]),
-				"cat_name"		=> _prepare_html($this->_articles_cats[$DATA["cat_id"]]),
-				"author_name"	=> _prepare_html($DATA["author_name"], 0),
-				"author_id"		=> intval($DATA["user_id"]),
-				"is_own_article"=> intval((bool)$DATA["is_own_article"]),
-				"title"			=> _prepare_html($DATA["title"], 0),
-				"summary"		=> _prepare_html($DATA["summary"], 0),
-				"full_text"		=> _prepare_html($DATA["full_text"], 0),
-				"credentials"	=> _prepare_html($DATA["credentials"], 0),
-				"views"			=> intval($DATA["views"]),
-				"status"		=> $this->_articles_statuses[$DATA["status"]],
-				"add_date"		=> !empty($DATA["add_date"]) ? _format_date($DATA["add_date"], "long") : "",
-				"edit_date"		=> !empty($DATA["edit_date"]) ? _format_date($DATA["edit_date"], "long") : "",
-				"members_link"	=> "./?object=members",
-				"edit_cats_link"=> "./?object=category_editor&action=show_items&id=".$this->CATS_OBJ->_get_cat_id_by_name(),
-				"back_link"		=> "./?object=".$_GET["object"],
-				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($article_info["user_id"])),
-			);
-			return tpl()->parse($_GET["object"]."/edit", $replace);
+		$replace = array(
+			"for_edit"		=> 1,
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
+			"error_message"	=> _e(),
+			"statuses_box"	=> $this->_box("status", $DATA["status"]),
+			"cats_box"		=> $this->_box("cat_id", $DATA["cat_id"]),
+			"cat_name"		=> _prepare_html($this->_articles_cats[$DATA["cat_id"]]),
+			"author_name"	=> _prepare_html($DATA["author_name"], 0),
+			"author_id"		=> intval($DATA["user_id"]),
+			"is_own_article"=> intval((bool)$DATA["is_own_article"]),
+			"title"			=> _prepare_html($DATA["title"], 0),
+			"summary"		=> _prepare_html($DATA["summary"], 0),
+			"full_text"		=> _prepare_html($DATA["full_text"], 0),
+			"credentials"	=> _prepare_html($DATA["credentials"], 0),
+			"views"			=> intval($DATA["views"]),
+			"status"		=> $this->_articles_statuses[$DATA["status"]],
+			"add_date"		=> !empty($DATA["add_date"]) ? _format_date($DATA["add_date"], "long") : "",
+			"edit_date"		=> !empty($DATA["edit_date"]) ? _format_date($DATA["edit_date"], "long") : "",
+			"members_link"	=> "./?object=members",
+			"edit_cats_link"=> "./?object=category_editor&action=show_items&id=".$this->CATS_OBJ->_get_cat_id_by_name(),
+			"back_link"		=> "./?object=".$_GET["object"],
+			"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($article_info["user_id"])),
+		);
+		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Add record
 	function add () {
-		// Check posted data and save
 		if (!empty($_POST)) {
-			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->INSERT("articles_texts", array(
 					"cat_id"		=> intval($_POST["cat_id"]),
@@ -228,41 +205,35 @@ class yf_manage_articles extends yf_module {
 					$act_name	= $_POST["is_own_article"] ? "article_posted" : "article_reposted";
 					common()->_add_activity_points($article_info["user_id"], $act_name, strlen($_POST["full_text"]), $RECORD_ID);
 				}
-				// Return user back
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
-		// Fill POST data
 		$DATA = &$_POST;
-		// Cleanup data arrays
 		unset($this->_articles_cats[" "]);
 		unset($this->_articles_statuses2[" "]);
-		// Display form
-		if (!$_POST || common()->_error_exists()) {
-			$replace = array(
-				"for_edit"		=> 0,
-				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-				"error_message"	=> _e(),
-				"statuses_box"	=> $this->_box("status", $DATA["status"]),
-				"cats_box"		=> $this->_box("cat_id", $DATA["cat_id"]),
-				"cat_name"		=> _prepare_html($this->_articles_cats[$DATA["cat_id"]]),
-				"author_name"	=> _prepare_html($DATA["author_name"], 0),
-				"author_id"		=> intval($DATA["user_id"]),
-				"is_own_article"=> intval((bool)$DATA["is_own_article"]),
-				"title"			=> _prepare_html($DATA["title"], 0),
-				"summary"		=> _prepare_html($DATA["summary"], 0),
-				"full_text"		=> _prepare_html($DATA["full_text"], 0),
-				"credentials"	=> _prepare_html($DATA["credentials"], 0),
-				"views"			=> intval($DATA["views"]),
-				"status"		=> $this->_articles_statuses[$DATA["status"]],
-				"add_date"		=> "",
-				"edit_date"		=> "",
-				"members_link"	=> "./?object=members",
-				"edit_cats_link"=> "./?object=category_editor&action=show_items&id=".$this->CATS_OBJ->_get_cat_id_by_name(),
-				"back_link"		=> "./?object=".$_GET["object"],
-			);
-			return tpl()->parse($_GET["object"]."/edit", $replace);
-		}
+		$replace = array(
+			"for_edit"		=> 0,
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
+			"error_message"	=> _e(),
+			"statuses_box"	=> $this->_box("status", $DATA["status"]),
+			"cats_box"		=> $this->_box("cat_id", $DATA["cat_id"]),
+			"cat_name"		=> _prepare_html($this->_articles_cats[$DATA["cat_id"]]),
+			"author_name"	=> _prepare_html($DATA["author_name"], 0),
+			"author_id"		=> intval($DATA["user_id"]),
+			"is_own_article"=> intval((bool)$DATA["is_own_article"]),
+			"title"			=> _prepare_html($DATA["title"], 0),
+			"summary"		=> _prepare_html($DATA["summary"], 0),
+			"full_text"		=> _prepare_html($DATA["full_text"], 0),
+			"credentials"	=> _prepare_html($DATA["credentials"], 0),
+			"views"			=> intval($DATA["views"]),
+			"status"		=> $this->_articles_statuses[$DATA["status"]],
+			"add_date"		=> "",
+			"edit_date"		=> "",
+			"members_link"	=> "./?object=members",
+			"edit_cats_link"=> "./?object=category_editor&action=show_items&id=".$this->CATS_OBJ->_get_cat_id_by_name(),
+			"back_link"		=> "./?object=".$_GET["object"],
+		);
+		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
 	/**
@@ -273,16 +244,15 @@ class yf_manage_articles extends yf_module {
 		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
 		}
-		// Get article info
 		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($article_info)) {
 			return _e(t("No such article!"));
 		}
 		$IS_OWN_ARTICLE = true;
-		// Do get author info
+
 		$author_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($article_info["user_id"]));
 		$author_name = !empty($article_info["author_name"]) ? $article_info["author_name"] : _display_name($author_info);
-		// Process template
+
 		$replace = array(
 			"id"				=> intval($article_info["id"]),
 			"user_id"			=> intval($article_info["user_id"]),
@@ -308,19 +278,15 @@ class yf_manage_articles extends yf_module {
 		return tpl()->parse($_GET["object"]."/view", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
-		// Get article info
 		if (!empty($_GET["id"])) {
 			$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		}
-		// Do delete record
 		if (!empty($article_info)) {
 			db()->query("DELETE FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 		}
-		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -329,7 +295,6 @@ class yf_manage_articles extends yf_module {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -384,7 +349,6 @@ class yf_manage_articles extends yf_module {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -416,7 +380,6 @@ class yf_manage_articles extends yf_module {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -433,7 +396,6 @@ class yf_manage_articles extends yf_module {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -448,7 +410,6 @@ class yf_manage_articles extends yf_module {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -459,7 +420,6 @@ class yf_manage_articles extends yf_module {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
@@ -485,27 +445,6 @@ class yf_manage_articles extends yf_module {
 			$body = nl2br(_prepare_html($body, 0));
 		}
 		return $body;
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Add article",
-				"url"	=> "./?object=".$_GET["object"]."&action=add",
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
-		return $menu;	
 	}
 
 	/**

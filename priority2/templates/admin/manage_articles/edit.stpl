@@ -1,17 +1,9 @@
-{if("error_message" ne "")}<div class="alert alert-error">{error_message}</div>{/if}
-<div class="editform">
-<form method="post" action="{form_action}" enctype="multipart/form-data" name="REPLIER" class="form-horizontal">
-	{form_row("number","author_id","Author Id")}
-{if("members_link" ne "")}
-	<a href="{members_link}">{t(Manage Members)}</a>
-{/if}
-	{form_row("check_box","is_own_article","","Associate article with user's account")}
+<form method="post" action="{form_action}" enctype="multipart/form-data" class="form-horizontal">
+	{form_row("number","author_id","Author Id","members_link")}
+{{--{form_row("check_box","is_own_article","","Associate article with user's account")}--}}
 	{form_row("text","author_name","Author Name")}
 	{form_row("text","title","Title")}
-	{form_row("box","cats_box","Category")}
-{if("edit_cats_link" ne "")}
-	<a href="{edit_cats_link}">{t(Manage Categories)}</a>
-{/if}
+	{form_row("box","cats_box","Category","edit_cats_link")}
 	{form_row("textarea","summmary","Summary")}
 	{form_row("textarea","full_text","Text")}
 	{form_row("textarea","credentials","Credentials")}
@@ -24,4 +16,3 @@
 {/if}
 	{form_row("save_and_back")}
 </form>
-</div>

@@ -9,7 +9,7 @@ class yf_site_nav_bar {
 	// Display navigation bar
 	function _show () {
 		$items = array();
-		// Switch between specific actions
+
 		if (in_array($_GET["object"], array())) {
 
 		} else {
@@ -23,27 +23,22 @@ class yf_site_nav_bar {
 		if (empty($items)) {
 			return false;
 		}
-		// Add first item to all valid items
 		array_unshift($items, $this->_nav_item("Home", "./?object=admin_home"));
-		// Try to get items from hook "_nav_bar_items"
 		if (!empty($this->HOOK_NAME)) {
 			$CUR_OBJ = module($_GET["object"]);
 		}
-		if (is_object($CUR_OBJ)) {
+		if (is_object($CUR_OBJ) && method_exists($CUR_OBJ, $this->HOOK_NAME)) {
 			$hook_params = array(
 				"nav_bar_obj"	=> &$this,
 				"items"			=> $items,
 			);
-			$try_array = array(&$CUR_OBJ, $this->HOOK_NAME);
-			if (is_callable($try_array)) {
-				$hooked_items = call_user_func($try_array, $hook_params);
-			}
+			$func = $this->HOOK_NAME;
+			$hooked_items = $CUR_OBJ->$func($hook_params);
 		}
 		// Hook have max priority
 		if (!empty($hooked_items)) {
 			$items = $hooked_items;
 		}
-		// Process template
 		$replace = array(
 			"items"			=> is_array($items) ? implode(tpl()->parse("site_nav_bar/div"), $items) : "",
 			"is_logged_in"	=> intval((bool) $_SESSION["user_id"]),

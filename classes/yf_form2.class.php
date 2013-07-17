@@ -140,7 +140,12 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
 		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
@@ -150,6 +155,7 @@ class yf_form2 {
 		$placeholder = isset($extra["placeholder"]) ? $extra["placeholder"] : $desc;
 		$value = isset($extra["value"]) ? $extra["value"] : $r[$name];
 		$input_type = isset($extra["type"]) ? $extra["type"] : "text";
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
 		$append = $extra['append'] ? $extra['append'] : '';
@@ -177,6 +183,7 @@ class yf_form2 {
 					.'>'
 					.($append ? '<span class="add-on">'.$append.'</span>' : '')
 					.(($prepend || $append) ? '</div>' : '')
+					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
 			</div>
@@ -195,7 +202,12 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
 		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
@@ -204,6 +216,7 @@ class yf_form2 {
 		$id = $extra["id"] ? $extra["id"] : $name;
 		$placeholder = isset($extra["placeholder"]) ? $extra["placeholder"] : $desc;
 		$value = isset($extra["value"]) ? $extra["value"] : $r[$name];
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		if (!isset($extra["no_escape"])) {
 			$value = htmlspecialchars($value, ENT_QUOTES);
@@ -219,6 +232,7 @@ class yf_form2 {
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
 					.'>'.$value.'</textarea>'
+					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
 			</div>
@@ -257,6 +271,14 @@ class yf_form2 {
 	/**
 	*/
 	function text($name, $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
 		$extra['type'] = 'text';
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -264,6 +286,14 @@ class yf_form2 {
 	/**
 	*/
 	function password($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
 		$extra['type'] = 'password';
 		if (!$name) {
 			$name = 'password';
@@ -274,6 +304,14 @@ class yf_form2 {
 	/**
 	*/
 	function file($name, $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
 		$extra['type'] = 'file';
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -281,6 +319,14 @@ class yf_form2 {
 	/**
 	*/
 	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
 		$extra['type'] = 'email';
 		$extra['prepend'] = '@';
 		if (!$name) {
@@ -292,6 +338,14 @@ class yf_form2 {
 	/**
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
 		$extra['type'] = 'number';
 		$extra['sizing'] = 'small';
 		$extra['maxlength'] = '10';
@@ -307,6 +361,14 @@ class yf_form2 {
 	/**
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
 		$extra['type'] = 'text';
 		$extra['prepend'] = '$';
 		$extra['append'] = '.00';
@@ -318,6 +380,14 @@ class yf_form2 {
 	/**
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
 		$extra['type'] = 'url';
 		$extra['prepend'] = 'url';
 		if (!$name) {
@@ -468,7 +538,12 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
 		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
@@ -537,11 +612,21 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$body = '
 			<div class="control-group">
 				<label class="control-label">'.t($desc).'</label>
-				<div class="controls">'.$text.'</div>
-			</div>
+				<div class="controls">'.$text.'</div>'
+				.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+			.'</div>
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
@@ -557,7 +642,12 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
@@ -593,7 +683,12 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
-			$extra = array();
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required

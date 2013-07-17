@@ -44,8 +44,8 @@ class yf_site_nav_bar {
 					"nav_bar_obj"	=> $this,
 					"items"			=> $items,
 				);
-				$try_array = array($CUR_OBJ, $this->HOOK_NAME);
-				$hooked_items = call_user_func($try_array, $hook_params);
+				$func = $this->HOOK_NAME;
+				$hooked_items = $OBJ->$func($hook_params);
 			}
 		}
 		// Do not show nav bar if hooked code set that
