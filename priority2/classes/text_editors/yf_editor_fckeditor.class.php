@@ -18,8 +18,8 @@ class yf_editor_fckeditor {
 	/** @var string */
 	public $Height				= '400';
 	/** @var string */
-//	public $ToolbarSet			= 'Default';
-	public $ToolbarSet			= 'yfnet';
+	public $ToolbarSet			= 'Default';
+//	public $ToolbarSet			= 'yfnet';
 	/** @var string @conf_skip */
 	public $value				= '';
 	/** @var array */
@@ -68,24 +68,18 @@ class yf_editor_fckeditor {
 	*/
 	function _create_code($text_to_edit = "") {
 		setcookie("TRY_WEB_PATH", WEB_PATH);
-		// Override text to edit (if exists one)
 		if (!empty($text_to_edit)) {
 			$this->value = $text_to_edit;
 		}
-		// Set default text field name
 		$Htmlvalue = htmlspecialchars($this->value);
-//		$Htmlvalue = _prepare_html($this->value, 0);
 		$Html = '<div>';
 		if ($this->_IsCompatible()) {
 			$Link = $this->BasePath."editor/fckeditor.html?InstanceName=".$this->text_field_name;
 			if ($this->ToolbarSet != '') {
 				$Link .= "&amp;Toolbar=".$this->ToolbarSet;
 			}
-			// Render the linked hidden field.
 			$Html .= "<input type='hidden' id='".$this->text_field_name."' name='".$this->text_field_name."' value=\"".$Htmlvalue."\" style=\"display:none\" />";
-			// Render the configurations hidden field.
 			$Html .= "<input type='hidden' id='".$this->text_field_name."___Config' value=\"".$this->_GetConfigFieldString()."\" style=\"display:none\" />";
-			// Render the editor IFRAME.
 			$Html .= "<iframe id='".$this->text_field_name."___Frame' src='".$Link."' width='".$this->Width."' height='".$this->Height."' frameborder='no' scrolling='no'></iframe>";
 		} else {
 			if (strpos($this->Width, '%') === false) {

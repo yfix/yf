@@ -20,9 +20,6 @@ class yf_text_editor {
 	);
 	/** @var string */
 	public $_CUR_EDITOR		= "fckeditor";
-//	public $_CUR_EDITOR		= "tinymce";
-//	public $_CUR_EDITOR		= "xinha";
-//	public $_CUR_EDITOR		= "htmlarea3";
 	/** @var array @conf_skip */
 	public $_editor_params		= array(
 		"CustomConfigurationsPath"	=> "editor/plugins/bbcode/_sample/sample.config.js",
@@ -36,16 +33,10 @@ class yf_text_editor {
 	* Framework contructor
 	*/
 	function _init () {
-		// Quick check
 		if (empty($this->_CUR_EDITOR) || !in_array($this->_CUR_EDITOR, $this->_avail_editors)) {
 			return false;
 		}
-		// Try to load selected editor (if exists one)
-		$SUB_EDITOR_OBJ = main()->init_class("editor_".$this->_CUR_EDITOR, "classes/text_editors/");
-		if (!is_object($SUB_EDITOR_OBJ)) {
-			return false;
-		}
-		$this->EDITOR_EXISTS = $SUB_EDITOR_OBJ->_check_if_editor_exists();
+		$this->EDITOR_EXISTS = _class("editor_".$this->_CUR_EDITOR, "classes/text_editors/")->_check_if_editor_exists();
 	}
 
 	/**
@@ -55,21 +46,17 @@ class yf_text_editor {
 	* @return	string
 	*/
 	function _display_code ($text_to_edit = "", $force_text_name = "", $style = "") {
-		// Quick check
 		if (empty($this->_CUR_EDITOR) || !in_array($this->_CUR_EDITOR, $this->_avail_editors)) {
 			return false;
 		}
-		// Try to load selected editor (if exists one)
-		$SUB_EDITOR_OBJ = main()->init_class("editor_".$this->_CUR_EDITOR, "classes/text_editors/");
-		if (!is_object($SUB_EDITOR_OBJ)) {
+		$obj = _class("editor_".$this->_CUR_EDITOR, "classes/text_editors/");
+		if (!is_object($obj)) {
 			return false;
 		}
-		// Set editor's configuration
-		$SUB_EDITOR_OBJ->text_field_name = $force_text_name ? $force_text_name : $this->TEXT_FIELD_NAME;
-		if($style == "bbcode"){
-			$SUB_EDITOR_OBJ->_set_config($this->_editor_params);
+		$obj->text_field_name = $force_text_name ? $force_text_name : $this->TEXT_FIELD_NAME;
+		if ($style == "bbcode") {
+			$obj->_set_config($this->_editor_params);
 		}
-		// Display editor's code
-		return $SUB_EDITOR_OBJ->_create_code($text_to_edit);
+		return $obj->_create_code($text_to_edit);
 	}
 }

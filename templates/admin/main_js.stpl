@@ -14,6 +14,7 @@ $(function(){
 		});
 		return false; // Do not allow new page
 	});
+
 	// Change activity status of different elemts without page refresh
 	$("a.change_yes_no").click(function(){
 		var _obj = this;
@@ -22,6 +23,7 @@ $(function(){
 		});
 		return false; // Do not allow new page
 	});
+
 	// Delete record and delete interface row related to that record
 	$(".ajax_delete").click(function(){
 		if (!confirm( _t_are_you_sure )) {
@@ -33,6 +35,7 @@ $(function(){
 		});
 		return false; // Do not allow new page
 	});
+
 	// Clone current TR, containing clicked element
 	$(".ajax_clone").click(function(){
 		var _obj = $(this);
@@ -42,14 +45,23 @@ $(function(){
 		});
 		return false; // Do not allow new page
 	});
+
 	// Toggle checkboxes inside form, ruled by one with special class, limiting to only self form for checkbox, not touch outside
 	$("form input[type=checkbox].yf_toggle_all_checkboxes").click(function(){
 		$("input[type=checkbox]", $(this).parents("form")).not(".yf_toggle_all_checkboxes").prop("checked", $(this).is(":checked"))
 	});
-//	$("body").append('<iframe id="ifh" width="0" height="0" src="' + document.location.href + '&ajax_mode=1" frameborder="0"></iframe>')
+
+	// Any pressed number or letter [0-9a-z] will case avoiding ajax action (edit)
+	$(document).bind('keydown', function(e){ if (e.keyCode >= 48 && e.keyCode <= 90) { document.skip_ajax_pressed = true; }	})
+	$(document).bind('keyup', function(e){ if (e.keyCode >= 48 && e.keyCode <= 90) { document.skip_ajax_pressed = false; } })
+
 	// Modal edit form via AJAX
 	$(".ajax_edit").click(function(){
 		var _obj = $(this);
+		// Avoid AJAX edit form
+		if (document.skip_ajax_pressed) {
+			return true;
+		}
 		$.get(_obj.attr("href"), function(data) {
 			$('<div class="modal hide fade" id="edit_link_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></div>' + data + '</div>').modal({
 				keyboard: true,
@@ -61,14 +73,17 @@ $(function(){
 		});
 		return false; // Do not allow new page
 	});
+
 	$(document).on("submit", '#edit_link_modal form', function(e){
 		e.preventDefault();
 		var _form = $(this);
+// TODO: fix bug when images are not uploaded from ajax form, due serialize() not supports this, maybe use jquery.form plugin?
 		$.post(_form.attr("action"), _form.serialize(), function(data){
 			$('#edit_link_modal').modal('hide').remove();
 		})
 		return false;
 	});
+
 	$('.insert_selected_word').click(function(){
 		var _sel_box = $(this).prev('select');
 		var _input = $(_sel_box).prev('input[type=text]');
