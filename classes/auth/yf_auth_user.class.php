@@ -381,11 +381,14 @@ class yf_auth_user {
 
 		} else {
 
-			main()->_LOGGED_IN_USER_INFO			= $user_info;
 			$_SESSION[$this->VAR_USER_ID]			= $user_info['id'];
 			$_SESSION[$this->VAR_USER_GROUP_ID]		= $user_info["group"];
 			$_SESSION[$this->VAR_USER_LOGIN_TIME]	= time();
 			$_SESSION[$this->VAR_LOCK_IP]			= common()->get_ip();
+			$main = main();
+			$main->_init_cur_user_info($main);
+			$main->USER_INFO = &$main->_user_info;
+			$main->_LOGGED_IN_USER_INFO	= &$main->_user_info;
 
 			if ($this->DO_LOG_LOGINS) {
 				_class("logs")->store_user_auth($user_info);
@@ -469,6 +472,11 @@ class yf_auth_user {
 				unset($_SESSION[$k]);
 			}
 		}
+		$main = main();
+		$main->_init_cur_user_info($main);
+		$main->USER_INFO = &$main->_user_info;
+		$main->_LOGGED_IN_USER_INFO	= &$main->_user_info;
+
 		$this->_cleanup_cookie();
 		session_destroy();
 

@@ -178,6 +178,11 @@ class yf_auth_admin {
 			$_SESSION[$this->VAR_ADMIN_ID]			= $admin_info['id'];
 			$_SESSION[$this->VAR_ADMIN_GROUP_ID]	= $admin_info["group"];
 			$_SESSION[$this->VAR_ADMIN_LOGIN_TIME]	= time();
+
+			$main = main();
+			$main->_init_admin_info($main);
+			$main->ADMIN_INFO = &$main->_admin_info;
+
 			// Auto-redirect to the page before login form if needed
 			if (!empty($_SESSION[$this->VAR_ADMIN_GO_URL])) {
 				$REDIRECT_URL = (substr($_SESSION[$this->VAR_ADMIN_GO_URL], 0, 2) != "./" ? "./?" : "").$_SESSION[$this->VAR_ADMIN_GO_URL];
@@ -240,6 +245,14 @@ class yf_auth_admin {
 				unset($_SESSION[$k]);
 			}
 		}
+
+		$main = main();
+		$main->_admin_info = null;
+		$main->ADMIN_ID = null;
+		$main->ADMIN_GROUP = null;
+//		$main->_init_admin_info($main);
+		$main->ADMIN_INFO = &$main->_admin_info;
+
 		session_destroy();
 		// Redirect user
 		if (!empty($this->URL_AFTER_LOGOUT)) {
