@@ -180,7 +180,11 @@ class yf_auth_admin {
 			$_SESSION[$this->VAR_ADMIN_LOGIN_TIME]	= time();
 
 			$main = main();
-			$main->_init_admin_info($main);
+// TODO: add this method
+//			$main->_init_admin_info($main);
+			$main->_admin_info = $admin_info;
+			$main->ADMIN_ID = $admin_info['id'];
+			$main->ADMIN_GROUP = $admin_info['group'];
 			$main->ADMIN_INFO = &$main->_admin_info;
 
 			// Auto-redirect to the page before login form if needed
