@@ -1,15 +1,8 @@
 <p>Automatically translate untranslated vars by google translate</p>
-<br />
-<div class="editform">
-<form method="post" action="{form_action}" >
-	<p class="first">
-		<label for="locale">{t(Locale)}</label>
-		{locale_box}
-	</p>
+<form method="post" action="{form_action}" class="form-horizontal">
+	{form_row("box","locale_box","Locale")}
 	<div class="button_div">
 		<input type="submit" value="{t(Translate)}" name="translate">
 	</div>
 </form>
-</div>
-<br />
 <div align="center"><a href="{locale_editor_url}">{t(Back)}</a></div>

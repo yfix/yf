@@ -1,34 +1,36 @@
-<div class="displayform">
-	<p class="first">
-		<label>{t(Login)}</label>
-		{login}
-	</p>
-	<p>
-		<label>{t(Password)}</label>
-		{pswd}
-	</p>
-	<p>
-		<label>{t(IP Address)}</label>
-		{ip}
-	</p>
-	<p>
-		<label>{t(Date)}</label>
-		{date}
-	</p>
-	<p>
-		<label>{t(Reason)}</label>
+<table class="table table-bordered table-striped table-hover">
+	<tbody>
+		<tr>
+			<td>{t(Login)}</td>
+			<td>{login}</td>
+		</tr>
+		<tr>
+			<td>{t(Password)}</td>
+			<td>{pswd}</td>
+		</tr>
+		<tr>
+			<td>{t(IP Address)}</td>
+			<td>{ip}</td>
+		</tr>
+		<tr>
+			<td>{t(Date)}</td>
+			<td>{date}</td>
+		</tr>
+		<tr>
+			<td>{t(Reason)}</td>
+			<td>
 {if("reason" eq "w")}
 	{t(Wrong login)}
 {/if}
 {if("reason" eq "b")}
 	{t(Blocked)}
 {/if}
-	</p>
-</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
 
-<br />
-
-<div align="center"><a href="{back_url}">{t(Back)}</a></div>
+<div align="center"><a href="{back_url}" class="btn">{t(Back)}</a></div>
 
 {{--
 <script type="text/javascript">

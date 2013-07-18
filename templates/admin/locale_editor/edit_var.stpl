@@ -1,29 +1,16 @@
-<div class="editform">
-<form method="post" action="{form_action}">
-	<p class="first">
-		<label>{t(Original Text)}:</label>
-		{var_value}
-	</p>
+<form method="post" action="{form_action}" class="form-horizontal">
+	{form_row("info","var_value","Original Text")}
 {foreach("langs")}
 	<p>
 		<label for="{#.locale}">{#.name}: </label>
 		<textarea id="{#.locale}" name="{#.locale}" cols="50" rows="3">{#.tr_value}</textarea>
 	</p>
 {/foreach}
-<br />
 {if("location" ne "")}
-	<p>
-		<label>{t(Location)}:</label>
-		<small>{location}</small>
-	</p>
+	{form_row("info","location","Location")}
 {/if}
-	<div class="button_div">
-		<input type="submit" value="  {t(SAVE)}  " name="go" />
-	</div>
+	{form_row("save_and_back")}
 </form>
-</div>
-<br />
-<br />
 <p class="alert alert-info">
 	<b>NOTE:</b> Here we allow several translation variants depending on number<br />
 	<b>Sample:</b><br /><i> В процессе поиска {Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}</i>
@@ -32,5 +19,4 @@
 	{&lt;source variable&gt;|[&lt;last_number&gt;:&lt;translation variant for this case&gt;]|&lt;default translation&gt;}<br />
 	<b>source variable</b> : must contain string for replace starting with "%"<br />
 	<b>last_number</b> : can be int, list(2,3,4) or range (10-12). if before it we have "#" it will be processed as exact value ("#1" means case only for "1", not for "11", "21","31" etc.)<br />
-	</p>
-<div align="center"><a href="{back_link}">{t(Back to vars list)}</a></div>
+</p>
