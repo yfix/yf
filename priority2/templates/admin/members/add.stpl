@@ -1,49 +1,13 @@
-{if("error_message" ne "")}
-	<div align="center">{error_message}</div>
-{/if}
-
-<div class="editform">
-<form method="post" action="{form_action}">
-	<p>
-		<label for="login">{t(Login)}</label>
-		<input type="text" id="login" name="login" value="{login}">
-	</p>
-	<p>
-		<label for="password">{t(Password)} <small>(Type here new password)</small></label>
-		<input type="text" id="password" name="password" value="{password}">
-	</p>
-	<p>
-		<label for="name">{t(Name)}</label>
-		<input type="text" id="name" name="name" value="{name}">
-	</p>
-	<p>
-		<label for="nick">{t(Nick)}</label>
-		<input type="text" id="nick" name="nick" value="{nick}">
-	</p>
-	<p>
-		<label for="go_after_login">{t(URL after login)}</label>
-		<input type='text' id="go_after_login" name='go_after_login' size='30' value='{go_after_login}'>
-	</p>
-	<p>
-		<label for="group_box">{t(Group)}</label>
-		{group_box} <a href="{groups_link}">User groups</a>
-	</p>
-	<p>
-		<label for="active_box">{t(Active)}</label>
-		{active_box}
-	</p>
+<form method="post" action="{form_action}" class="form-horizontal">
+	{form_row("text","login","Login")}
+	{form_row("text","password","Password")}
+	{form_row("text","name","Name")}
+	{form_row("text","nick","Nick")}
+	{form_row("text","go_after_login","URL after login")}
+	{form_row("box","group_box","Group","groups_link")}
+	{form_row("active_box")}
 {if("for_edit" eq 1)}
-	<p>
-		<label for="add_date_box">{t(Added)}</label>
-		{add_date}
-	</p>
+	{form_row("info","add_date","Added")}
 {/if}
-	<div class="button_div">
-		<input type="submit" value="  {t(Save)}  " />
-	</div>
+	{form_row("save_and_back")}
 </form>
-</div>
-
-<br /><br />
-
-<div align="center"><a href="{back_link}">{t(Back)}</a></div>

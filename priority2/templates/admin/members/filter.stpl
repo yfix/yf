@@ -14,6 +14,5 @@
 	{form_row("box","sort_by_box","Sort by field")}
 	{form_row("box","sort_order_box","Sort order")}
 	{form_row("save_and_clear")}
-		
 </form>
 </div>
