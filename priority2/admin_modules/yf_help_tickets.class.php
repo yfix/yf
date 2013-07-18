@@ -19,7 +19,6 @@ class yf_help_tickets {
 	// Constructor
 	function _init () {
 		main()->USER_ID = intval($_SESSION["admin_id"]);
-		// Array of boxes
 		$this->_boxes = array(
 			"admin_priority"	=> 'select_box("admin_priority",$this->_priorities,		$selected, "", 2, "", false)',
 			"user_priority"		=> 'select_box("user_priority",	$this->_priorities,		$selected, "", 2, "", false)',
@@ -27,20 +26,17 @@ class yf_help_tickets {
 			"status"			=> 'select_box("status",		$this->_ticket_statuses,$selected, "", 2, "", false)',
 			"assigned_to"		=> 'select_box("assigned_to",	$this->_admins_list2,	$selected, "", 2, "", false)',
 		);
-		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
-		// Priorities array
 		$this->_priorities = array(
 			4	=> t("Urgent"),
 			3	=> t("High"),
 			2	=> t("Medium"),
 			1	=> t("Low"),
 		);
-		// Prepare categories
 		$this->CATS_OBJ		= main()->init_class("cats", "classes/");
 		$this->CATS_OBJ->_default_cats_block = "help_cats";
 		$this->_help_cats	= $this->CATS_OBJ->_prepare_for_box("", 0);
-		// Array of statuses
+
 		$this->_ticket_statuses = array(
 			"new"		=> t("new"),
 			"read"		=> t("read"),
@@ -48,19 +44,16 @@ class yf_help_tickets {
 			"closed"	=> t("closed"),
 			"not_closed"=> t("not_closed"),
 		);
-		// Prepare filter data
 		if ($this->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
-		// Try to get info about sites vars
 		$this->_sites_info = main()->init_class("sites_info", "classes/");
 		foreach ((array)$this->_sites_info->info as $site_id => $site_info) {
 			$this->_sites_names[$site_id] = $site_info["name"];
 		}
-		// Get available admin groups
 		$this->_admin_groups	= main()->get_data("admin_groups");
-		// Get available admin users who have access to this module (currently administrators and support)
-		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group IN(1,4) ORDER BY `group` ASC, first_name ASC, last_name ASC");
+
+		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE `group` IN(1,4) ORDER BY `group` ASC, first_name ASC, last_name ASC");
 		while ($A = db()->fetch_assoc($Q2)) {
 			$this->_admins_list[$A["id"]] = _prepare_html($A["first_name"]." ".$A["last_name"]." (".$this->_admin_groups[$A["group"]].")");
 		}
@@ -70,16 +63,13 @@ class yf_help_tickets {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default method
 	function show () {
-		// Do save filter if needed
 		if (!empty($_GET["email"])) {
 			$_REQUEST["email"] = $_GET["email"];
 			$this->clear_filter(1);
 			$this->save_filter(1);
 		}
-		// Prepare SQL
 		$sql = "SELECT * FROM ".db('help_tickets')." ";
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY opened_date DESC ";

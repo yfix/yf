@@ -1,4 +1,3 @@
-<div>
 <legend>Filter</legend>
 <form action='{save_action}' method='post' class="form-horizontal">
 	{form_row("box","category_id_box","Category")}
@@ -10,7 +9,5 @@
 	{form_row("box","admin_priority_box","Admin Priority")}
 	{form_row("box","sort_order_box","Sort Order")}
 	{form_row("box","per_page_box","Results per Page")}
-	{form_row("save_and_clean")}
-
+	{form_row("save_and_clear")}
 </form>
-</div>

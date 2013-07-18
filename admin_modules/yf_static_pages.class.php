@@ -154,7 +154,35 @@ class yf_static_pages {
 		if (empty($page_info)) {
 			return _e('No such page!');
 		}
-		return stripslashes($page_info["text"]);
+		$body .= '<script src="'.WEB_PATH.'ckeditor/ckeditor.js"></script>';
+		$body .= "
+	<script>
+CKEDITOR.appendTo( 'container_id',
+{ /* Configuration options to be used. */ }
+'Editor content to be used.'
+);
+		CKEDITOR.on( 'instanceCreated', function( event ) {
+			var editor = event.editor,	element = editor.element;
+				editor.on( 'configLoaded', function() {
+					// Remove unnecessary plugins to make the editor simpler.
+//					editor.config.removePlugins = 'colorbutton,find,flash,font,' +
+//						'forms,iframe,image,newpage,removeformat,' +
+//						'smiley,specialchar,stylescombo,templates';
+
+					// Rearrange the layout of the toolbar.
+					editor.config.toolbarGroups = [
+						{ name: 'editing',		groups: [ 'basicstyles', 'links' ] },
+						{ name: 'undo' },
+						{ name: 'clipboard',	groups: [ 'selection', 'clipboard' ] },
+						{ name: 'about' }
+					];
+				});
+		});
+	</script>
+		";
+// TODO: embed visual editor code
+		$body .= '<div id="text_content" contenteditable="true">'.stripslashes($page_info["text"]).'</div>';
+		return $body;
 	}
 
 	/**
