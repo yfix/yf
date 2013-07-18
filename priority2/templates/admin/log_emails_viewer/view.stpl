@@ -1,113 +1,112 @@
 <h2>{t(View email)} #{record_id}</h2>
-
-<div class="displayform">
-	<p>
-		<label>{t(Sent Successful)}</label>
-		{if("success" eq 1)}<span class="label label-success">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="label label-warning">{t(NO)}</span>{/if}
-	</p>
+<table class="table table-bordered table-striped table-hover">
+	<tbody>
+	<tr>
+		<td>{t(Sent Successful)}</td>
+		<td>{if("success" eq 1)}<span class="label label-success">{t(YES)}</span>{/if}{if("success" eq 0)}<span class="label label-warning">{t(NO)}</span>{/if}</td>
+	</tr>
 {if("error_text" ne "")}
-	<p>
-		<label>{t(Error Text)}</label>
-		<small class="label label-warning">{error_text}</small>
-	</p>
+	<tr>
+		<td>{t(Error Text)}</td>
+		<td><small class="label label-warning">{error_text}</small></td>
+	</tr>
 {/if}
-	<p>
-		<label>{t(Spent Time)}</label>
-		{send_time}
-	</p>
-	<p>
-		<label>{t(Email From)}</label>
-		{email_from}
-	</p>
-	<p>
-		<label>{t(User Group)}</label>
-		{user_group}
-	</p>
-	<p>
-		<label>{t(User ID)}</label>
-		{if("user_id" gt 0)}<a href="{member_url}">{user_name}</a> (ID: {user_id}){/if}
-	</p>
-	<p>
-		<label>{t(Section)}</label>
-		{section_name}
-	</p>
-	<p>
-		<label>{t(Name From)}</label>
-		{name_from}
-	</p>
-	<p>
-		<label>{t(Email To)}</label>
-		<a href="mailto:{email_to}" target="_blank">{email_to}</a>
-	</p>
-	<p>
-		<label>{t(Name To)}</label>
-		{name_to}
-	</p>
-	<p>
-		<label>{t(Subject)}</label>
-		{subject}
-	</p>
-	<p>
-		<label>{t(Message)}</label>
-		<small>{message}</small>
-	</p>
-	<p>
-		<label>{t(Date)}</label>
-		{date}
-	</p>
-	<p>
-		<label>{t(Query String)}</label>
-		<a href="{query_string}">{query_string}</a>
-	</p>
-	<p>
-		<label>{t(Request URI)}</label>
-		<a href="{request_uri}">{request_uri}</a>
-	</p>
-	<p>
-		<label>{t(Site)}</label>
-		<a href="{site_link}">{site_name}</a>
-	</p>
-	<p>
-		<label>{t(IP Address)}</label>
-		{log_ip}
-	</p>
-	<p>
-		<label>{t(Referer)}</label>
-		<a href="{log_referer}">{log_referer}</a>
-	</p>
-	<p>
-		<label>{t(User Agent)}</label>
-		{log_browser}
-	</p>
-	<p>
-		<label>{t(Source)}</label>
-		<a href="{edit_source_link}">{source_file}</a> {t(on line)} {source_line}
-	</p>
-	<p>
-		<label>{t(Mail Debug used)}</label>
-		{if("mail_debug" eq 1)}<span class="label label-success">YES</span>{/if}{if("mail_debug" eq 0)}<span class="label label-warning">NO</span>{/if}
-	</p>
-	<p>
-		<label>{t(Used Mailer)}</label>
-		{used_mailer}
-	</p>
+	<tr>
+		<td>{t(Spent Time)}</td>
+		<td>{send_time}</td>
+	</tr>
+	<tr>
+		<td>{t(Email From)}</td>
+		<td>{email_from}</td>
+	</tr>
+	<tr>
+		<td>{t(User Group)}</td>
+		<td>{user_group}</td>
+	</tr>
+	<tr>
+		<td>{t(User ID)}</td>
+		<td>{if("user_id" gt 0)}<a href="{member_url}">{user_name}</a> (ID: {user_id}){/if}</td>
+	</tr>
+	<tr>
+		<td>{t(Section)}</td>
+		<td>{section_name}</td>
+	</tr>
+	<tr>
+		<td>{t(Name From)}</td>
+		<td>{name_from}</td>
+	</tr>
+	<tr>
+		<td>{t(Email To)}</td>
+		<td><a href="mailto:{email_to}" target="_blank">{email_to}</a></td>
+	</tr>
+	<tr>
+		<td>{t(Name To)}</td>
+		<td>{name_to}</td>
+	</tr>
+	<tr>
+		<td>{t(Subject)}</td>
+		<td>{subject}</td>
+	</tr>
+	<tr>
+		<td>{t(Message)}</td>
+		<td>{message}</td>
+	</tr>
+	<tr>
+		<td>{t(Date)}</td>
+		<td>{date}</td>
+	</tr>
+	<tr>
+		<td>{t(Query String)}</td>
+		<td><a href="{query_string}">{query_string}</a></td>
+	</tr>
+	<tr>
+		<td>{t(Request URI)}</td>
+		<td><a href="{request_uri}">{request_uri}</a></td>
+	</tr>
+	<tr>
+		<td>{t(Site)}</td>
+		<td><a href="{site_link}">{site_name}</a></td>
+	</tr>
+	<tr>
+		<td>{t(IP Address)}</td>
+		<td>{log_ip}</td>
+	</tr>
+	<tr>
+		<td>{t(Referer)}</td>
+		<td><a href="{log_referer}">{log_referer}</a></td>
+	</tr>
+	<tr>
+	<td>{t(User Agent)}</td>
+		<td>{log_browser}</td>
+	</tr>
+	<tr>
+		<td>{t(Source)}</td>
+		<td><a href="{edit_source_link}">{source_file}</a> {t(on line)} {source_line}</td>
+	</tr>
+	<tr>
+		<td>{t(Mail Debug used)}</td>
+		<td>{if("mail_debug" eq 1)}<span class="label label-success">YES</span>{/if}{if("mail_debug" eq 0)}<span class="label label-warning">NO</span>{/if}</td>
+	</tr>
+	<tr>
+		<td>{t(Used Mailer)}</td>
+		<td>{used_mailer}</td>
+	</tr>
 {if("other_options" ne "")}
-	<p>
-		<label>{t(Other Options)}</label>
-		{other_options}
-	</p>
+	<tr>
+		<td>{t(Other Options)}</td>
+		<td>{other_options}</td>
+	</tr>
 {/if}
 {if("env_data" ne "")}
-	<p>
-		<label>{t(Env data)}</label>
-		{env_data}
-	</p>
+	<tr>
+		<td>{t(Env data)}</td>
+		<td>{env_data}</td>
+	</tr>
 {/if}
-</div>
+	</tbody>
+</table>
 
-<br /><br />
-
-<div align="center"><a href="{back_link}">{t(Back)}</a></div>
+<div align="center"><a href="{back_link}" class="btn">{t(Back)}</a></div>
 
 {{--
 <script type="text/javascript">

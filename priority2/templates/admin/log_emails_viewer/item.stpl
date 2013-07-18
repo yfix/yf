@@ -7,7 +7,7 @@
 	<td>{if("success" eq 1)}<span class="label label-success">YES</span>{/if}{if("success" eq 0)}<span class="label label-warning">NO</span>{/if}</td>
 	<td>{send_time}</td>
 	<td nowrap>
-		<a href="{details_link}"><img height="16" width="16" border="0" src="images/details.gif" alt="{t(Details)}" /></a>&nbsp;
-		<a href="{delete_link}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete Record)}" /></a>&nbsp;
+		{form_row("tbl_link","View","details_link")}
+		{form_row("tbl_link_delete")}
 	</td>
 </tr>

@@ -1,27 +1,6 @@
-{if("error_message" ne "")}
-	<div align="center">{error_message}</div>
-{/if}
-
-<div class="editform">
-<form method="post" action="{form_action}">
-	<p>
-		<label for="login">{t(Login)}</label>
-		<b>{login}</b>
-	</p>
-	<p>
-		<label for="group_box">{t(Group)}</label>
-		{group_box} <a href="{groups_link}">User groups</a>
-	</p>
-	<p>
-		<label for="go_after_login">{t(URL after login)}</label>
-		<input type='text' id="go_after_login" name='go_after_login' size='30' value='{go_after_login}'>
-	</p>
-	<div class="button_div">
-		<input type="submit" value="  {t(Save)}  " />
-	</div>
+<form method="post" action="{form_action}" class="form-horizontal">
+	{form_row("info","login","Login")}
+	{form_row("box","group_box","Group","groups_link")}
+	{form_row("text","go_after_login","URL after login")}
+	{form_row("save_and_back")}
 </form>
-</div>
-
-<br /><br />
-
-<div align="center"><a href="{back_link}">{t(Back)}</a></div>

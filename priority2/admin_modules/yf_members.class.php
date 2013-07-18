@@ -280,6 +280,9 @@ class yf_members {
 	//-----------------------------------------------------------------------------
 	// Session - based members filter form stored in $_SESSION[$this->_filter_name][...]
 	function _show_filter () {
+		if($_GET["action"] != "show"){
+			return false;
+		}
 		$replace = array(
 			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
 			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),

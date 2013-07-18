@@ -2,20 +2,19 @@
 
 <table class="table table-bordered table-striped table-hover">
 	<thead>
-		<th width="5%">UID</th>
+		<th>UID</th>
 		<th>Login</th>
 		<th>Nick</th>
-		<th width="25%">E-mail</th>
+		<th>E-mail</th>
 		<!--<th width="20">IP</th>-->
-		<th width="20">Add date</th>
-		<th width="20">Status</th>
-		<th width="5%">Action</th>
+		<th>Add date</th>
+		<th>Action</th>
 	</thead>
 {items}
 </table>
-<br />
+{if("add_link" ne "")}
+	{form_row("tbl_link","Add","add_link")}	
+{/if}
 {if("pages" ne "")}
 	<div align="center">Pages: {pages}</div>
 {/if}
-
-{if("add_link" ne "")}<br /><div align="center"><a href="{add_link}">Add</a></div>{/if}
