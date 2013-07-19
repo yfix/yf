@@ -139,7 +139,7 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"func"	=> function($field, $params) {
-				return $this->_apply_badges($field, $params['extra']);
+				return _class('table2')->_apply_badges($field, $params['extra']);
 			}
 		);
 		return $this;
@@ -170,14 +170,14 @@ class yf_table2 {
 			"desc"	=> $desc,
 			"link"	=> $link,
 			"data"	=> $data,
-			"func"	=> function($field, $params) {
+			"func"	=> function($field, $params, $row) {
 				if (is_string($params['data'])) {
 					$text = $params['data'];
 				} else {
 					$text = (isset($params['data']) ? $params['data'][$field] : $field);
 				}
 				$text = '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
-				return $this->_apply_badges($text, $params['extra']);
+				return _class('table2')->_apply_badges($text, $params['extra']);
 			}
 		);
 		return $this;
@@ -194,9 +194,9 @@ class yf_table2 {
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"desc"	=> $desc,
-			"func"	=> function($field, $params) {
+			"func"	=> function($field, $params, $row) {
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
-				return $this->_apply_badges($text, $params['extra']);
+				return _class('table2')->_apply_badges($text, $params['extra']);
 			}
 		);
 		return $this;
