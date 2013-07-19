@@ -39,20 +39,26 @@ class yf_table2 {
 	*/
 	function render($params = array()) {
 		$sql = $this->_sql;
-		$db = is_object($params['db']) ? $params['db'] : db();
-		$pager_path = $params['pager_path'] ? $params['pager_path'] : "";
-		$pager_type = $params['pager_type'] ? $params['pager_type'] : "blocks";
-		$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : 0;
-		$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
-		$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : "";
-		$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
+		if (is_array($sql)) {
+			$data = $sql;
+			$pages = "";
+			$total = count($data);
+		} else {
+			$db = is_object($params['db']) ? $params['db'] : db();
+			$pager_path = $params['pager_path'] ? $params['pager_path'] : "";
+			$pager_type = $params['pager_type'] ? $params['pager_type'] : "blocks";
+			$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : 0;
+			$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
+			$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : "";
+			$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
 
-		list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
+			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
 
-		$items = array();
-		$q = $db->query($sql. $add_sql);
-		while ($a = $db->fetch_assoc($q)) {
-			$data[] = $a;
+			$items = array();
+			$q = $db->query($sql. $add_sql);
+			while ($a = $db->fetch_assoc($q)) {
+				$data[] = $a;
+			}
 		}
 		if ($data) {
 			$body = '<table class="table table-bordered table-striped table-hover">'.PHP_EOL;
