@@ -71,8 +71,8 @@ class yf_table2 {
 				$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
 			}
 			$body .= '</thead>'.PHP_EOL;
-			foreach ((array)$data as $row) {
-				$body .= '<tr>'.PHP_EOL;
+			foreach ((array)$data as $_id => $row) {
+				$body .= '<tr'.(isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '').'>'.PHP_EOL;
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
 					if (!isset($row[$name])) {
