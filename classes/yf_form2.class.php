@@ -225,17 +225,103 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
 				<div class="controls">
-					<textarea id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'"'
+					<textarea id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" contenteditable="true"'
 					.($extra["cols"] ? ' cols="'.$extra["cols"].'"' : '')
 					.($extra["rows"] ? ' rows="'.$extra["rows"].'"' : '')
-					.($extra["class"] ? ' class="'.$extra["class"].'"' : '')
+					.($extra["class"] ? ' class="ckeditor '.$extra["class"].'"' : '')
 					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
 					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
 					.'>'.$value.'</textarea>'
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
 				.'</div>
 			</div>
+		';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* Embedding ckeditor. To include it into project: place folder PROJECT_PATH."ckeditor/" with latest version from git:
+	* cd PROJECT_PATH && git clone https://github.com/ckeditor/ckeditor-releases.git ckeditor/ && cd ckeditor/ && git checkout latest/full
+	* or use outer CDN: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
+	*/
+	function _ckeditor_html($extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			return '';
+		}
+		$params = $extra['ckeditor'];
+		if (!is_array($params)) {
+			$params = array();
+		}
+		if ($this->_ckeditor_scripts_included) {
+			return '';
+		}
+		$ck_path = $params['ck_path'] ? $params['ck_path'] : 'ckeditor/ckeditor.js';
+		$fs_ck_path = PROJECT_PATH. $ck_path;
+		$web_ck_path = WEB_PATH. $ck_path;
+		if (!file_exists($fs_ck_path)) {
+			return '';
+		}
+		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
+		$hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
+
+		$body .= '<script type="text/javascript">
+			$(function(){
+				var _content_id = "#'.$content_id.'";
+				var _hidden_id = "#'.$hidden_id.'";
+				$(_content_id).parents("form").submit(function(){
+					$("input[type=hidden]" + _hidden_id).val( $(_content_id).html() );
+				})
+			})
+			</script>';
+
+		// Main ckeditor script
+		$body .= '<script src="'.$web_ck_path.'" type="text/javascript"></script>'.PHP_EOL;
+
+		// Theme-wide ckeditor config inside stpl (so any engine vars can be processed or included there)
+		$stpl_name = 'ckeditor_config'; // Example filesystem location: PROJECT_PATH.'templates/admin/ckeditor_config.stpl'
+		if (!isset($replace['content_id'])) {
+			$replace['content_id'] = $content_id;
+		}
+		$body .= tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, my_array_merge($extra, $replace)) : '';
+
+		// Avoid including ckeditor scripts several times on same page
+		$this->_ckeditor_scripts_included = true;
+
+		return $body;
+	}
+
+	/**
+	* Just html wrapper for any custom content inside
+	*/
+	function container($text, $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
+		$body = '
+			<div class="control-group">'
+				.($desc ? '<label class="control-label">'.t($desc).'</label>' : '')
+				.(isset($extra['ckeditor']) ? '<div contenteditable="true" id="'.$content_id.'">' : '')
+				.(!$extra['wide'] ? '<div class="controls">'.$text.'</div>' : $text)
+				.(isset($extra['ckeditor']) ? '</div>' : '')
+				.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
+			.'</div>
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
@@ -603,36 +689,6 @@ class yf_form2 {
 	*/
 	function box_with_link($name, $desc = '', $link = '', $replace = array()) {
 		return $this->box($name, $desc, array("edit_link" => $link), $replace);
-	}
-
-	/**
-	* Just html wrapper for any custom content inside
-	*/
-	function container($text, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
-			} else {
-				$extra = array();
-			}
-		}
-		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$body = '
-			<div class="control-group">
-				<label class="control-label">'.t($desc).'</label>
-				<div class="controls">'.$text.'</div>'
-				.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
-			.'</div>
-		';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
 	}
 
 	/**

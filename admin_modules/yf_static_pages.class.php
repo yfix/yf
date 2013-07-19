@@ -35,15 +35,14 @@ class yf_static_pages {
 		$name = preg_replace("/[^a-z0-9\_\-]/i", "_", _strtolower($_POST['name']));
 		$name = str_replace(array("__", "___"), "_", $name);
 		if (strlen($name)) {
-			db()->INSERT("static_pages", array(
-				"name"	=> _es($name),
-			));
+			db()->insert("static_pages", _es(array("name" => $name)));
+			$page_id = db()->insert_id();
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("static_pages_names");
 		}
-		if (!empty($name)) {
-			return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".urlencode($name));
+		if (!empty($page_id)) {
+			return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".$page_id);
 		} else {
 			return _e(t("Can't insert record!"));
 		}
@@ -64,17 +63,23 @@ class yf_static_pages {
 				$_POST['name'] = preg_replace("/[^a-z0-9\_\-]/i", "_", _strtolower($_POST['name']));
 				$_POST['name'] = str_replace(array("__", "___"), "_", $_POST['name']);
 			}
-			$sql_array = array(
-				"name"			=> $_POST["name"],
-				"text"			=> $_POST["text"],
-				"page_title"	=> $_POST["page_title"],
-				"page_heading"	=> $_POST["page_heading"],
-				"meta_keywords"	=> $_POST["meta_keywords"],
-				"meta_desc"		=> $_POST["meta_desc"],
-				"active"		=> intval((bool)$_POST['active']),
+			$sql = array();
+			$fields = array(
+				"name",
+				"text",
+				"page_title",
+				"page_heading",
+				"meta_keywords",
+				"meta_desc",
+				"active",
 			);
-			if ($sql_array["text"]) {
-				db()->UPDATE("static_pages", db()->es($sql_array), "id=".intval($page_info['id']));
+			foreach ((array)$fields as $field) {
+				if (isset($_POST[$field])) {
+					$sql[$field] = $_POST[$field];
+				}
+			}
+			if ($sql["text"]) {
+				db()->update("static_pages", db()->es($sql), "id=".intval($page_info['id']));
 			}
 			if (main()->USE_SYSTEM_CACHE) {
 				cache()->refresh("static_pages_names");
@@ -86,7 +91,7 @@ class yf_static_pages {
 			$DATA[$k] = $v;
 		}
 		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".urlencode($page_name),
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$page_info['id'],
 			"name"			=> $DATA["name"],
 			"text"			=> $DATA["text"],
 			"page_title"	=> $DATA["page_title"],
@@ -98,7 +103,7 @@ class yf_static_pages {
 		);
 		return common()->form2($replace)
 			->text("name")
-			->textarea("text","",array('class' => 'span4','rows' => '10'))
+			->textarea("text","",array('class' => 'span4','rows' => '10','ckeditor' => true, 'id' => 'text'))
 			->text("page_title")
 			->text("page_heading")
 			->text("meta_keywords")
@@ -154,35 +159,23 @@ class yf_static_pages {
 		if (empty($page_info)) {
 			return _e('No such page!');
 		}
-		$body .= '<script src="'.WEB_PATH.'ckeditor/ckeditor.js"></script>';
-		$body .= "
-	<script>
-CKEDITOR.appendTo( 'container_id',
-{ /* Configuration options to be used. */ }
-'Editor content to be used.'
-);
-		CKEDITOR.on( 'instanceCreated', function( event ) {
-			var editor = event.editor,	element = editor.element;
-				editor.on( 'configLoaded', function() {
-					// Remove unnecessary plugins to make the editor simpler.
-//					editor.config.removePlugins = 'colorbutton,find,flash,font,' +
-//						'forms,iframe,image,newpage,removeformat,' +
-//						'smiley,specialchar,stylescombo,templates';
-
-					// Rearrange the layout of the toolbar.
-					editor.config.toolbarGroups = [
-						{ name: 'editing',		groups: [ 'basicstyles', 'links' ] },
-						{ name: 'undo' },
-						{ name: 'clipboard',	groups: [ 'selection', 'clipboard' ] },
-						{ name: 'about' }
-					];
-				});
-		});
-	</script>
-		";
-// TODO: embed visual editor code
-		$body .= '<div id="text_content" contenteditable="true">'.stripslashes($page_info["text"]).'</div>';
-		return $body;
+		$body = stripslashes($page_info["text"]);
+		$replace = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=edit&id='.$page_info['id'],
+			'back_link'		=> './?object='.$_GET['object'],
+			'body'			=> $body,
+		);
+		return common()->form2($replace)
+			->container($body, '', array(
+				'id'	=> 'content_editable',
+				'wide'	=> 1,
+				'ckeditor' => array(
+					'hidden_id'	=> 'text',
+				),
+			))
+			->hidden('text')
+			->save_and_back()
+			->render();
 	}
 
 	/**

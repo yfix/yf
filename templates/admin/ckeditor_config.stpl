@@ -1,0 +1,30 @@
+<script type="text/javascript">
+var ck_config = {
+	toolbarGroups: [
+	    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+//		{ name: 'document', items: [ 'Source', '-', 'NewPage', 'Preview', '-', 'Templates' ] },
+//	    { name: 'source', items: ['Source'] },
+{ name: 'insert' },
+    	{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+		{ name: 'styles' },
+	],
+	filebrowserBrowseUrl: '/kcfinder/browse.php?type=files',
+	filebrowserImageBrowseUrl: '/kcfinder/browse.php?type=images',
+	filebrowserFlashBrowseUrl: '/kcfinder/browse.php?type=flash',
+	filebrowserUploadUrl: '/kcfinder/upload.php?type=files',
+	filebrowserImageUploadUrl: '/kcfinder/upload.php?type=images',
+	filebrowserFlashUploadUrl: '/kcfinder/upload.php?type=flash',
+}
+var _ck_content_id = '{content_id}';
+if (!_ck_content_id) {
+	_ck_content_id = 'content_editable';
+}
+
+try {
+	CKEDITOR.replace( 'text', ck_config)
+} catch(e) { }
+
+try {
+	CKEDITOR.inline( _ck_content_id, ck_config);
+} catch(e) { }
+</script>
