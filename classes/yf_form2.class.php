@@ -185,6 +185,7 @@ class yf_form2 {
 					.(($prepend || $append) ? '</div>' : '')
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
 				.'</div>
 			</div>
 		';
@@ -246,9 +247,14 @@ class yf_form2 {
 	}
 
 	/**
-	* Embedding ckeditor. To include it into project: place folder PROJECT_PATH."ckeditor/" with latest version from git:
-	* cd PROJECT_PATH && git clone https://github.com/ckeditor/ckeditor-releases.git ckeditor/ && cd ckeditor/ && git checkout latest/full
-	* or use outer CDN: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
+	* Embedding ckeditor (http://ckeditor.com/) with kcfinder (http://kcfinder.sunhater.com/).
+	* Best way to include it into project: 
+	*
+	* git submodule add https://github.com/ckeditor/ckeditor-releases.git www/ckeditor/ && cd www/ckeditor/ && git checkout latest/full
+	* git submodule add git@github.com:yfix/yf_kcfinder.git www/kcfinder
+	* 
+	* "www/" usually means PROJECT_PATH inside project working copy.
+	* P.S. You can use free CDN for ckeditor as alternate solution: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
 	*/
 	function _ckeditor_html($extra = array(), $replace = array()) {
 		if (!is_array($extra)) {
@@ -297,7 +303,8 @@ class yf_form2 {
 	}
 
 	/**
-	* Just html wrapper for any custom content inside
+	* Bootstrap-compatible html wrapper for any custom content inside.
+	* Can be used for inline rich editor editing with ckeditor, enable with: $extra = array('ckeditor' => true)
 	*/
 	function container($text, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
