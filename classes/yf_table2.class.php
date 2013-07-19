@@ -139,10 +139,22 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"func"	=> function($field, $params) {
-				return $field;
+				return $this->_apply_badges($field, $params['extra']);
 			}
 		);
 		return $this;
+	}
+
+	/**
+	*/
+	function _apply_badges($text, $extra = array()) {
+		// Supported: success, warning, important, info, inverse
+		if ($extra['badge']) {
+			$text = '<span class="badge badge-'.$extra['badge'].'">'.$text.'</span>';
+		} elseif ($extra['label']) {
+			$text = '<span class="label label-'.$extra['label'].'">'.$text.'</span>';
+		}
+		return $text;
 	}
 
 	/**
@@ -164,7 +176,8 @@ class yf_table2 {
 				} else {
 					$text = (isset($params['data']) ? $params['data'][$field] : $field);
 				}
-				return '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
+				$text = '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
+				return $this->_apply_badges($text, $params['extra']);
 			}
 		);
 		return $this;
@@ -182,7 +195,8 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"func"	=> function($field, $params) {
-				return str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
+				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
+				return $this->_apply_badges($text, $params['extra']);
 			}
 		);
 		return $this;
