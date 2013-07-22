@@ -74,8 +74,8 @@ $(function(){
 	$(document).bind('keydown', function(e){ if (e.keyCode >= 48 && e.keyCode <= 90) { document.skip_ajax_pressed = true; }	})
 	$(document).bind('keyup', function(e){ if (e.keyCode >= 48 && e.keyCode <= 90) { document.skip_ajax_pressed = false; } })
 
-	// Modal edit form via AJAX
-	$(".ajax_edit").click(function(){
+	// Modal edit/add form via AJAX
+	$(".ajax_edit, .ajax_add").click(function(){
 		var _obj = $(this);
 		// Avoid AJAX edit form
 		if (document.skip_ajax_pressed) {

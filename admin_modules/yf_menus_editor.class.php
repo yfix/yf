@@ -93,32 +93,20 @@ class yf_menus_editor {
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_items[$A["menu_id"]] = $A["num"];
 		}
-		$Q = db()->query("SELECT * FROM ".db('menus')." ORDER BY type DESC");
-		while ($A = db()->fetch_assoc($Q)) {
-			$replace2 = array(
-				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
-				"name"			=> _prepare_html($A["name"]),
-				"desc"			=> _prepare_html($A["desc"]),
-				"type"			=> _prepare_html($A["type"]),
-				"stpl_name"		=> _prepare_html($A["stpl_name"]),
-				"method_name"	=> _prepare_html($A["method_name"]),
-				"active"		=> intval($A["active"]),
-				"num_items"		=> intval($num_items[$A["id"]]),
-				"active_link"	=> "./?object=".$_GET["object"]."&action=activate_menu&id=".$A["id"],
-				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit&id=".$A["id"],
-				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$A["id"],
-				"items_link"	=> "./?object=".$_GET["object"]."&action=show_items&id=".$A["id"],
-				"clone_link"	=> "./?object=".$_GET["object"]."&action=clone_menu&id=".$A["id"],
-				"export_link"	=> "./?object=".$_GET["object"]."&action=export&id=".$A["id"],
-			);
-			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
-		}
-		$replace = array(
-			"items"				=> $items,
-			"form_action"		=> "./?object=".$_GET["object"]."&action=add",
-			"full_export_link"	=> "./?object=".$_GET["object"]."&action=export",
-		);
-		return tpl()->parse($_GET["object"]."/main", $replace);
+		return common()->table2("SELECT * FROM ".db('menus')." ORDER BY type DESC")
+			->link('name', './?object='.$_GET["object"].'&action=show_items&id=%d')
+			->text('stpl_name')
+			->text('method_name')
+			->text('type')
+			->text('id', 'Num Items', array('data' => $num_items))
+			->btn('Items', './?object='.$_GET["object"].'&action=show_items&id=%d')
+			->btn_edit()
+			->btn_delete()
+			->btn_clone('', './?object='.$_GET["object"].'&action=clone_menu&id=%d')
+			->btn('Export', './?object='.$_GET["object"].'&action=export&id=%d')
+			->btn_active()
+			->footer_add()
+			->render();
 	}
 
 	/**
@@ -135,7 +123,7 @@ class yf_menus_editor {
 					"active"		=> (int)((bool)$_POST["active"]),
 					"type"			=> _es($_POST["type"]),
 				));
-				if (main()->USE_SYSTEM_CACHE)	{
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("menus");
 				}
 				return js_redirect("./?object=".$_GET["object"]);
@@ -155,6 +143,8 @@ class yf_menus_editor {
 			"active"		=> $DATA["active"],
 			"back_link"		=> "./?object=".$_GET["object"]."&action=show",
 			"for_edit"		=> 0,
+			"modules_link"	=> "./?object=".($DATA["type"] ? $DATA["type"] : "user")."_modules",
+			"stpls_link"	=> "./?object=template_editor",
 		);
 		return tpl()->parse($_GET["object"]."/edit_menu", $replace);
 	}
@@ -295,7 +285,7 @@ class yf_menus_editor {
 	/**
 	* Change menu block activity
 	*/
-	function activate_menu() {
+	function active() {
 		if (!empty($_GET["id"])) {
 			$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		}
@@ -317,14 +307,14 @@ class yf_menus_editor {
 	* Display menu items for the given block
 	*/
 	function show_items() {
-		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
 		}
-		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"])." OR name='".db()->es($_GET["id"])."'");
 		if (empty($menu_info)) {
 			return _e(t("No such menu!"));
 		}
+		$_GET["id"] = intval($menu_info["id"]);
 		$menu_items = $this->_recursive_get_menu_items($_GET["id"]);
 		$num_items = count($menu_items);
 		if ($menu_info["type"] == "admin") {

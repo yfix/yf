@@ -79,6 +79,7 @@ class yf_table2 {
 						continue;
 					}
 					$func = $info['func'];
+					unset($info['func']); // Save resources
 					$body .= '<td>'.$func($row[$name], $info, $row).'</td>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
@@ -86,6 +87,7 @@ class yf_table2 {
 					foreach ((array)$this->_buttons as $info) {
 						$name = $info['name'];
 						$func = $info['func'];
+						unset($info['func']); // Save resources
 						$body .= $func($row, $info).PHP_EOL;
 					}
 					$body .= '</td>'.PHP_EOL;
@@ -100,6 +102,7 @@ class yf_table2 {
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];
 			$func = $info['func'];
+			unset($info['func']); // Save resources
 			$body .= $func($info).PHP_EOL;
 		}
 		$body .= $pages.PHP_EOL;
@@ -121,28 +124,9 @@ class yf_table2 {
 	* Wrapper for template engine
 	*/
 	function tpl_row($type = "input", $name, $desc = "", $extra = array()) {
-// TODO: integrate with tpl engine
 // TODO: integrate with named errors
 #		$errors = array();
 		return $this->$type($name, $desc, $extra);
-	}
-
-	/**
-	*/
-	function text($name, $desc = "", $extra = array()) {
-		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
-		}
-		$this->_fields[$name] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"desc"	=> $desc,
-			"func"	=> function($field, $params) {
-				return _class('table2')->_apply_badges($field, $params['extra']);
-			}
-		);
-		return $this;
 	}
 
 	/**
@@ -153,17 +137,53 @@ class yf_table2 {
 			$text = '<span class="badge badge-'.$extra['badge'].'">'.$text.'</span>';
 		} elseif ($extra['label']) {
 			$text = '<span class="label label-'.$extra['label'].'">'.$text.'</span>';
+		} elseif ($extra['class']) {
+			$text = '<span class="'.$extra['class'].'">'.$text.'</span>';
 		}
 		return $text;
 	}
 
 	/**
 	*/
-	function link($name, $link = "", $data = "", $extra = array()) {
+	function text($name, $desc = "", $extra = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}
-		$this->_fields[$name] = array(
+		$this->_fields[] = array(
+			"type"	=> __FUNCTION__,
+			"name"	=> $name,
+			"extra"	=> $extra,
+			"desc"	=> $desc,
+			"data"	=> $extra['data'],
+			"func"	=> function($field, $params, $row) {
+				if (!$params['data']) {
+					$text = (isset($row[$field]) ? $row[$field] : $field);
+				} else {
+					if (is_string($params['data'])) {
+						$text = $params['data'];
+					} else {
+						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
+					}
+				}
+				return _class('table2')->_apply_badges($text, $params['extra']);
+			}
+		);
+		return $this;
+	}
+
+	/**
+	*/
+	function link($name, $link = "", $data = "", $extra = array()) {
+		if (isset($extra['desc'])) {
+			$desc = $extra['desc'];
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace("_", " ", $name));
+		}
+		$this->_fields[] = array(
 			"type"	=> __FUNCTION__,
 			"name"	=> $name,
 			"extra"	=> $extra,
@@ -171,13 +191,17 @@ class yf_table2 {
 			"link"	=> $link,
 			"data"	=> $data,
 			"func"	=> function($field, $params, $row) {
-				if (is_string($params['data'])) {
-					$text = $params['data'];
+				if (!$params['data']) {
+					$text = (isset($row[$field]) ? $row[$field] : $field);
 				} else {
-					$text = (isset($params['data']) ? $params['data'][$field] : $field);
+					if (is_string($params['data'])) {
+						$text = $params['data'];
+					} else {
+						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
+					}
 				}
-				$text = '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
-				return _class('table2')->_apply_badges($text, $params['extra']);
+				$body = '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
+				return _class('table2')->_apply_badges($body, $params['extra']);
 			}
 		);
 		return $this;
@@ -189,7 +213,7 @@ class yf_table2 {
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}
-		$this->_fields[$name] = array(
+		$this->_fields[] = array(
 			"type"	=> __FUNCTION__,
 			"name"	=> $name,
 			"extra"	=> $extra,
@@ -197,6 +221,39 @@ class yf_table2 {
 			"func"	=> function($field, $params, $row) {
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
 				return _class('table2')->_apply_badges($text, $params['extra']);
+			}
+		);
+		return $this;
+	}
+
+	/**
+	*/
+	function image($path, $link = "", $extra = array()) {
+		$name = 'image';
+		$this->_fields[] = array(
+			"type"	=> __FUNCTION__,
+			"name"	=> $name,
+			"extra"	=> $extra,
+			"path"	=> $path,
+			"link"	=> $link,
+			"func"	=> function($field, $params, $row) {
+				$id = $row['id'];
+				// Make 3-level dir path
+				$d = sprintf("%09s", $id);
+				$replace = array(
+					'{subdir1}'	=> substr($d, 0, -6),
+					'{subdir2}'	=> substr($d, -6, 3),
+					'{subdir3}'	=> substr($d, -3, 3),
+					'%d'		=> $id,
+				);
+				$img_path = str_replace(array_keys($replace), array_values($replace), $params['path']);
+				if (!file_exists(PROJECT_PATH. $img_path)) {
+					return '';
+				}
+				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
+				return ($link_url ? '<a href="'.$link_url.'">' : '')
+					.'<img src="'.WEB_PATH. $img_path.'">'
+					.($link_url ? '</a>' : '');
 			}
 		);
 		return $this;
@@ -224,14 +281,16 @@ class yf_table2 {
 	/**
 	*/
 	function btn($name, $link, $extra = array()) {
-		$this->_buttons[$name] = array(
+		$this->_buttons[] = array(
 			"type"	=> __FUNCTION__,
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
+				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
+				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			},
 		);
 		return $this;
@@ -246,17 +305,12 @@ class yf_table2 {
 		if (!$link) {
 			$link = "./?object=".$_GET["object"]."&action=edit&id=%d";
 		}
-		$this->_buttons[$name] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"link"	=> $link,
-			"func"	=> function($row, $params) {
-				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini ajax_edit"><i class="icon-edit"></i> '.t($params['name']).'</a> ';
-			},
-		);
-		return $this;
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['a_class'] .= ' ajax_edit';
+		$extra['icon'] .= 'icon-edit';
+		return $this->btn($name, $link, $extra);
 	}
 
 	/**
@@ -268,17 +322,12 @@ class yf_table2 {
 		if (!$link) {
 			$link = "./?object=".$_GET["object"]."&action=delete&id=%d";
 		}
-		$this->_buttons[$name] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"link"	=> $link,
-			"func"	=> function($row, $params) {
-				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini ajax_delete"><i class="icon-trash"></i> '.t($params['name']).'</a> ';
-			},
-		);
-		return $this;
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['a_class'] .= ' ajax_delete';
+		$extra['icon'] .= 'icon-trash';
+		return $this->btn($name, $link, $extra);
 	}
 
 	/**
@@ -288,19 +337,14 @@ class yf_table2 {
 			$name = "Clone";
 		}
 		if (!$link) {
-			$link = "./?object=".$_GET["object"]."&action=clone&id=%d";
+			$link = "./?object=".$_GET["object"]."&action=clone_item&id=%d";
 		}
-		$this->_buttons[$name] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"link"	=> $link,
-			"func"	=> function($row, $params) {
-				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini ajax_clone"><i class="icon-plus"></i> '.t($params['name']).'</a> ';
-			},
-		);
-		return $this;
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['a_class'] .= ' ajax_add';
+		$extra['icon'] .= 'icon-arrow-down';
+		return $this->btn($name, $link, $extra);
 	}
 
 	/**
@@ -312,7 +356,7 @@ class yf_table2 {
 		if (!$link) {
 			$link = "./?object=".$_GET["object"]."&action=active&id=%d";
 		}
-		$this->_buttons[$name] = array(
+		$this->_buttons[] = array(
 			"type"	=> __FUNCTION__,
 			"name"	=> $name,
 			"extra"	=> $extra,
@@ -330,14 +374,16 @@ class yf_table2 {
 	/**
 	*/
 	function footer_link($name, $link, $extra = array()) {
-		$this->_footer_links[$name] = array(
+		$this->_footer_links[] = array(
 			"type"	=> __FUNCTION__,
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($params['name']).'</a> ';
+				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
+				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
+				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		return $this;
@@ -345,34 +391,18 @@ class yf_table2 {
 
 	/**
 	*/
-	function image($path, $link = "", $extra = array()) {
-		$name = 'image';
-		$this->_fields[$name] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"path"	=> $path,
-			"link"	=> $link,
-			"func"	=> function($field, $params, $row) {
-				$id = $row['id'];
-				// Make 3-level dir path
-				$d = sprintf("%09s", $id);
-				$replace = array(
-					'{subdir1}'	=> substr($d, 0, -6),
-					'{subdir2}'	=> substr($d, -6, 3),
-					'{subdir3}'	=> substr($d, -3, 3),
-					'%d'		=> $id,
-				);
-				$img_path = str_replace(array_keys($replace), array_values($replace), $params['path']);
-				if (!file_exists(PROJECT_PATH. $img_path)) {
-					return '';
-				}
-				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
-				return ($link_url ? '<a href="'.$link_url.'">' : '')
-					.'<img src="'.WEB_PATH. $img_path.'">'
-					.($link_url ? '</a>' : '');
-			}
-		);
-		return $this;
+	function footer_add($name = "", $link = "", $extra = array()) {
+		if (!$name) {
+			$name = "add";
+		}
+		if (!$link) {
+			$link = "./?object=".$_GET["object"]."&action=add";
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['a_class'] .= ' ajax_add';
+		$extra['icon'] .= 'icon-plus';
+		return $this->footer_link($name, $link, $extra);
 	}
 }
