@@ -382,7 +382,7 @@ class yf_table2 {
 			"func"	=> function($params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
 				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
-				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
+				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
 				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);

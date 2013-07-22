@@ -1,5 +1,11 @@
 {form_row("form_begin")}
+
+{if("for_edit" eq "1")}
 	{form_row("info","type","Menu type")}
+{else}
+	{form_row("box","menu_type_box","Menu type")}
+{/if}
+
 	{form_row("text","name")}
 	{form_row("textarea","desc","Description")}
 	{form_row("template_select_box","stpl_name","Custom template")}

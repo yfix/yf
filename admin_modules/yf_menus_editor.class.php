@@ -17,6 +17,7 @@ class yf_menus_editor {
 	*/
 	function _init () {
 		$this->_boxes = array(
+			"menu_type"		=> 'radio_box("type",			$this->_menu_types,			$selected, false, 2, "", false)',
 			"active"		=> 'radio_box("active",			$this->_statuses,			$selected, false, 2, "", false)',
 			"type_id"		=> 'select_box("type_id",		$this->_item_types,			$selected, false, 2, "", false)',
 			"parent_id"		=> 'select_box("parent_id",		$this->_items_for_parent,	$selected, false, 2, "", false)',
@@ -25,6 +26,10 @@ class yf_menus_editor {
 			"groups"		=> 'multi_select("groups",		$this->_groups,				$selected, false, 2, " size=5 class=small_for_select ", false)',
 			"site_ids"		=> 'multi_select("site_ids",	$this->_sites,				$selected, false, 2, " size=5 class=small_for_select ", false)',
 			"server_ids"	=> 'multi_select("server_ids",	$this->_servers,			$selected, false, 2, " size=5 class=small_for_select ", false)',
+		);
+		$this->_menu_types = array(
+			"user"	=> "user",
+			"admin"	=> "admin",
 		);
 		$this->_statuses = array(
 			"0" => "<span class='negative'>NO</span>",
@@ -89,16 +94,16 @@ class yf_menus_editor {
 	* Display menus blocks
 	*/
 	function show() {
-		$Q = db()->query("SELECT menu_id, COUNT(*) AS num FROM ".db('menu_items')." GROUP BY menu_id");
-		while ($A = db()->fetch_assoc($Q)) {
-			$num_items[$A["menu_id"]] = $A["num"];
+		$q = db()->query("SELECT m.id, COUNT(i.id) AS num FROM ".db('menus')." AS m LEFT JOIN ".db('menu_items')." AS i ON m.id = i.menu_id GROUP BY m.id");
+		while ($a = db()->fetch_assoc($q)) {
+			$num_items[$a["id"]] = $a["num"];
 		}
 		return common()->table2("SELECT * FROM ".db('menus')." ORDER BY type DESC")
 			->link('name', './?object='.$_GET["object"].'&action=show_items&id=%d')
+			->text('id', 'Num Items', array('data' => $num_items))
+			->text('type')
 			->text('stpl_name')
 			->text('method_name')
-			->text('type')
-			->text('id', 'Num Items', array('data' => $num_items))
 			->btn('Items', './?object='.$_GET["object"].'&action=show_items&id=%d')
 			->btn_edit()
 			->btn_delete()
@@ -140,6 +145,7 @@ class yf_menus_editor {
 			"stpl_name"		=> _prepare_html($DATA["stpl_name"]),
 			"method_name"	=> _prepare_html($DATA["method_name"]),
 			"active_box"	=> $this->_box("active", $DATA["active"]),
+			"menu_type_box"	=> $this->_box("menu_type", $DATA["type"]),
 			"active"		=> $DATA["active"],
 			"back_link"		=> "./?object=".$_GET["object"]."&action=show",
 			"for_edit"		=> 0,
