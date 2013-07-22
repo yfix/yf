@@ -354,6 +354,7 @@ class yf_category_editor {
 		}
 		$replace = array(
 			"save_form_action"	=> "./?object=".$_GET["object"]."&action=save_items&id=".$_GET["id"],
+			"sortable_action"	=> "./?object=".$_GET["object"]."&action=sortable_save&id=".$_GET["id"],
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"num_items"			=> intval($total),
@@ -362,6 +363,38 @@ class yf_category_editor {
 			"back_link"			=> "./?object=".$_GET["object"],
 		);
 		return tpl()->parse($_GET["object"]."/category_items_main", $replace);
+	}
+
+	/**
+	* Enpoint for AJAX when doing drag/drop sorting of items
+	*/
+	function sortable_save() {
+		main()->NO_GRAPHICS = true;
+		$_GET["id"] = intval($_GET["id"]);
+		if (empty($_GET["id"])) {
+			return _e(t("No id!"));
+		}
+		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+		if (empty($cat_info)) {
+			return _e(t("No such category!"));
+		}
+// TODO
+/*
+		$cat_items = $this->_recursive_get_cat_items($_GET["id"]);
+		foreach ((array)$cat_items as $A) {
+			if (!isset($_POST["name"][$A["id"]])) continue;
+			db()->UPDATE("category_items", array(
+				"name"		=> _es($_POST["name"][$A["id"]]),
+				"url"		=> _es($_POST["url"][$A["id"]]),
+				"other_info"=> _es($_POST["other_info"][$A["id"]]),
+				"order"		=> intval($_POST["order"][$A["id"]]),
+			), "id=".intval($A["id"]));
+		}
+*/
+		if (main()->USE_SYSTEM_CACHE)	{
+			cache()->refresh("category_items");
+		}
+		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
 	}
 
 	/**

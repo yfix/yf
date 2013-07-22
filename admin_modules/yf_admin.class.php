@@ -101,7 +101,6 @@ class yf_admin {
 			"add_date"		=> _format_date($admin_info["add_date"], "full"),
 		);
 		return common()->form2($replace)
-			->form_begin()
 			->text("login")
 			->text("password")
 			->text("first_name")
@@ -111,7 +110,6 @@ class yf_admin {
 			->active_box()
 			->info("add_date","Added")
 			->save_and_back()
-			->form_end()
 			->render();
 	}
 
@@ -164,7 +162,6 @@ class yf_admin {
 			"groups_link"	=> "./?object=admin_groups",
 		);
 		return common()->form2($replace)
-			->form_begin()
 			->text("login")
 			->text("password")
 			->text("first_name")
@@ -173,7 +170,6 @@ class yf_admin {
 			->box_with_link("group_box","Group","groups_link")
 			->active_box()
 			->save_and_back()
-			->form_end()
 			->render();
 	}
 

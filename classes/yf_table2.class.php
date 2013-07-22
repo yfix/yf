@@ -35,6 +35,13 @@ class yf_table2 {
 	}
 
 	/**
+	* Need to avoid calling render() without params
+	*/
+	function __toString() {
+		return $this->render();
+	}
+
+	/**
 	* Render result table html, gathered by row functions
 	*/
 	function render($params = array()) {

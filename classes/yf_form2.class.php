@@ -18,6 +18,13 @@ class yf_form2 {
 	}
 
 	/**
+	* Need to avoid calling render() without params
+	*/
+	function __toString() {
+		return $this->render();
+	}
+
+	/**
 	* Render result form html, gathered by row functions
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/

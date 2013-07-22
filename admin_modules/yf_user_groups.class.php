@@ -79,12 +79,10 @@ class yf_user_groups {
 			"for_edit"			=> 0,
 		);
 		return common()->form2($replace)
-			->form_begin()
 			->text("name","Group name")
 			->text("go_after_login","Url after login")
 			->active_box()
 			->save_and_back()
-			->form_end()
 			->render();
 	}
 
@@ -127,12 +125,10 @@ class yf_user_groups {
 			"for_edit"			=> 1,
 		);
 		return common()->form2($replace)
-			->form_begin()
 			->text("name","Group name")
 			->text("go_after_login","Url after login")
 			->active_box()
 			->save_and_back()
-			->form_end()
 			->render();
 	}
 

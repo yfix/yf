@@ -17,6 +17,25 @@ $(function(){
 <script src="{const(WEB_PATH)}js/tablecloth/assets/js/jquery.tablesorter.min.js"></script>
 --}}
 
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+$(function() {
+	$( ".sortable" ).sortable({
+        update: function(event, ui) {
+			var ajax_url = $(ui.item[0]).closest('.sortable').attr('data-sortable-url')
+			if (!ajax_url) {
+				return false;
+			}
+            var first = ui.item[0].id;
+            var second = ui.item.prev()[0].id;
+			$.post(ajax_url, {"first": first, "second": second}, function(data){ })
+//			console.log(ajax_url, first, second)
+        }
+	});
+//	$( ".sortable" ).disableSelection();
+});
+</script>
+
 <script type="text/javascript">
 $(function(){
 	var _t_active = "{t(Active)}";

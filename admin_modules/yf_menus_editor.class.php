@@ -379,6 +379,7 @@ class yf_menus_editor {
 		$replace = array(
 			"save_form_action"	=> "./?object=".$_GET["object"]."&action=save_items&id=".$_GET["id"],
 			"multi_add_action"	=> "./?object=".$_GET["object"]."&action=multi_add_items&id=".$_GET["id"],
+			"sortable_action"	=> "./?object=".$_GET["object"]."&action=sortable_save&id=".$_GET["id"],
 			"items"				=> $items,
 			"num_items"			=> intval($num_items),
 			"menu_name"			=> _prepare_html($menu_info["name"]),
@@ -398,6 +399,40 @@ class yf_menus_editor {
 			unset($_SESSION["_menu_js_refresh_frameset"]);
 		}
 		return tpl()->parse($_GET["object"]."/menu_items_main", $replace);
+	}
+
+	/**
+	* Enpoint for AJAX when doing drag/drop sorting of items
+	*/
+	function sortable_save() {
+		main()->NO_GRAPHICS = true;
+		$_GET["id"] = intval($_GET["id"]);
+		if (empty($_GET["id"])) {
+			return _e(t("No id!"));
+		}
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
+		if (empty($menu_info)) {
+			return _e(t("No such menu!"));
+		}
+// TODO
+/*
+		$menu_items = $this->_recursive_get_menu_items($_GET["id"]);
+		foreach ((array)$menu_items as $A) {
+			if (!isset($_POST["name"][$A["id"]])) {
+				continue;
+			}
+			db()->UPDATE("menu_items", array(
+				"name"		=> _es($_POST["name"][$A["id"]]),
+				"location"	=> _es($_POST["location"][$A["id"]]),
+				"order"		=> intval($_POST["order"][$A["id"]]),
+				"icon"		=> _es($_POST["icon"][$A["id"]]),
+			), "id=".intval($A["id"]));
+		}
+*/
+		if (main()->USE_SYSTEM_CACHE) {
+			cache()->refresh("menu_items");
+		}
+		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
 	}
 
 	/**

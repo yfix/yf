@@ -1,5 +1,3 @@
-<h2>{t(Edit items for category)}: "{category_name}"</h2>
-
 {if("items" ne "")}
 <form action="{save_form_action}" method="post">
 <table class="table table-bordered table-striped table-hover">
@@ -10,7 +8,9 @@
 		<th>{t(Order)}</th>
 		<th>{t(Action)}</th>
 	</thead>
+	<tbody class="sortable" data-sortable-url="{sortable_action}">
 {items}
+	</tbody>
 </table>
 	<input type="submit" name="go" value="{t(SAVE)}" class="btn"></div>
 </form>

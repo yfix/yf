@@ -140,6 +140,12 @@ $data = my_array_merge((array)$data, array(
 	`source` text NOT NULL,
 	PRIMARY KEY  (`id`)
 ",
+"conf"		=> "
+	`name` varchar(255) NOT NULL,
+	`value` text NOT NULL default '',
+	`desc` text NOT NULL default '',
+	PRIMARY KEY  (`name`)
+",
 "conf_items"		=> "
 	`id` int(10) NOT NULL auto_increment,
 	`title` text NOT NULL,

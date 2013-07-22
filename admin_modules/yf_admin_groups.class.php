@@ -136,13 +136,11 @@ class yf_admin_groups {
 			"for_edit"			=> 1,
 		);
 		return common()->form2($replace)
-			->form_begin()
 			->info("group_id")
 			->text("name","Group name")
 			->text("go_after_login","Url after login")
 			->active_box()
 			->save_and_back()
-			->form_end()
 			->render();
 	}
 
