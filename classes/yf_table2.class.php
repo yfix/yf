@@ -120,10 +120,13 @@ class yf_table2 {
 	/**
 	* Wrapper for chained mode call from common()->table2()
 	*/
-	function chained_wrapper($sql = "") {
+	function chained_wrapper($sql = "", $params = array()) {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
+		$this->_params = $params;
 // TODO: need to change API to create new class instance on every chained request
+// TODO: integrate with named errors
+#		$errors = array();
 		return $this;
 	}
 
@@ -131,8 +134,6 @@ class yf_table2 {
 	* Wrapper for template engine
 	*/
 	function tpl_row($type = "input", $name, $desc = "", $extra = array()) {
-// TODO: integrate with named errors
-#		$errors = array();
 		return $this->$type($name, $desc, $extra);
 	}
 

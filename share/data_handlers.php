@@ -47,6 +47,7 @@ conf("data_handlers", my_array_merge((array)conf("data_handlers"), array(
 	"lit_direction" => 'include(H_PATH."lit_direction.h.php");',
 	"lit_genre"	=> 'include(H_PATH."lit_genre.h.php");',
 	"locale_langs"	=> 'include(H_PATH."locale_langs.h.php");',
+	"languages"	=> 'include(H_PATH."locale_langs.h.php");',
 	"maxmind_phone_id_code"	=> 'include(H_PATH."maxmind_phone_id_code.h.php");',
 	"menu_items"	=> 'include(H_PATH."menu_items.h.php");',
 	"menus"	=> 'include(H_PATH."menus.h.php");',

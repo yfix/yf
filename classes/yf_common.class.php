@@ -56,15 +56,15 @@ class yf_common {
 	/**
 	* Form2 chained wrapper
 	*/
-	function form2($replace = array()) {
-		return _class("form2")->chained_wrapper($replace);
+	function form2($replace = array(), $params = array()) {
+		return _class("form2")->chained_wrapper($replace, $params);
 	}
 
 	/**
 	* Table2 chained wrapper
 	*/
-	function table2($replace = array()) {
-		return _class("table2")->chained_wrapper($replace);
+	function table2($data = array(), $params = array()) {
+		return _class("table2")->chained_wrapper($data, $params);
 	}
 	
 	/**

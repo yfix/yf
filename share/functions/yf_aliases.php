@@ -59,6 +59,12 @@ if (!function_exists("_force_get_url")) {
 if (!function_exists("_generate_url")) {
 	function _generate_url($params = array(), $host = "") { return module("rewrite")->_generate_url($params, $host); }
 }
+if (!function_exists("form2")) {
+	function form2($replace = array(), $params = array()) { return _class("form2")->chained_wrapper($replace, $params); }
+}
+if (!function_exists("table2")) {
+	function table2($data = array(), $params = array()) { return _class("table2")->chained_wrapper($data, $params); }
+}
 if (!function_exists("getmicrotime")) {
 	function getmicrotime() { return microtime(true); }
 }

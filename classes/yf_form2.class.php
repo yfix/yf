@@ -58,10 +58,13 @@ class yf_form2 {
 	*		->info("add_date","Added")
 	*		->render();
 	*/
-	function chained_wrapper($replace = array()) {
+	function chained_wrapper($replace = array(), $params = array()) {
 		$this->_chained_mode = true;
 		$this->_replace = $replace;
+		$this->_params = $params;
 // TODO: need to change API to create new class instance on every chained request
+// TODO: integrate with named errors
+#		$errors = array();
 		return $this;
 	}
 
@@ -81,8 +84,6 @@ class yf_form2 {
 	*	{form_row("form_end")}
 	*/
 	function tpl_row($type = "input", $replace = array(), $name, $desc = '', $extra = array()) {
-// TODO: integrate with named errors
-#		$errors = array();
 		return $this->$type($name, $desc, $extra, $replace);
 	}
 
@@ -417,6 +418,7 @@ class yf_form2 {
 	}
 
 	/**
+	* HTML5
 	*/
 	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!is_array($extra)) {
@@ -436,6 +438,7 @@ class yf_form2 {
 	}
 
 	/**
+	* HTML5
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
 		if (!is_array($extra)) {
@@ -478,6 +481,7 @@ class yf_form2 {
 	}
 
 	/**
+	* HTML5
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!is_array($extra)) {
@@ -492,6 +496,116 @@ class yf_form2 {
 		$extra['prepend'] = 'url';
 		if (!$name) {
 			$name = 'url';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function color($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'color';
+		if (!$name) {
+			$name = 'color';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function date($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'date';
+		if (!$name) {
+			$name = 'date';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function datetime($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'datetime';
+		if (!$name) {
+			$name = 'datetime';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function datetime_local($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'datetime-local';
+		if (!$name) {
+			$name = 'datetime_local';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function month($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'month';
+		if (!$name) {
+			$name = 'month';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function range($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'range';
+		if (!$name) {
+			$name = 'range';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function search($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'search';
+		if (!$name) {
+			$name = 'search';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function tel($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'tel';
+		if (!$name) {
+			$name = 'tel';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function time($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'time';
+		if (!$name) {
+			$name = 'time';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* HTML5
+	*/
+	function week($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['type'] = 'week';
+		if (!$name) {
+			$name = 'week';
 		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -1086,29 +1200,37 @@ class yf_form2 {
 	/**
 	*/
 	function country_box($name, $desc = '', $extra = array(), $replace = array()) {
+		$countries = main()->get_data('countries');
+// TODO: nice select box with data
+	}
+
+	/**
+	*/
+	function region_box($name, $desc = '', $extra = array(), $replace = array()) {
+		$regions = main()->get_data('regions');
 // TODO: nice select box with data
 	}
 
 	/**
 	*/
 	function currency_box($name, $desc = '', $extra = array(), $replace = array()) {
+		$currencies = main()->get_data('currencies');
 // TODO: nice select box with data
 	}
 
 	/**
 	*/
 	function language_box($name, $desc = '', $extra = array(), $replace = array()) {
+		$languages = main()->get_data('languages');
 // TODO: nice select box with data
 	}
 
 	/**
 	*/
 	function timezone_box($name, $desc = '', $extra = array(), $replace = array()) {
+		$timezones = main()->get_data('timezones');
 // TODO: nice select box with data
 	}
-
-// TODO: add support to these HTML5 controls: color, date, datetime, datetime-local, month, range, search, tel, time, week
-// http://www.w3schools.com/html/html5_form_input_types.asp
 
 	/**
 	* Image upload
