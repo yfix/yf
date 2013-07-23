@@ -78,6 +78,11 @@ class yf_table2 {
 				$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
 			}
 			$body .= '</thead>'.PHP_EOL;
+			$sortable_url = $this->_params['sortable'];
+			if ($sortable_url && strlen($sortable_url) <= 5) {
+				$sortable_url = './?object='.$_GET['object'].'&action=sortable';
+			}
+			$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 			foreach ((array)$data as $_id => $row) {
 				$body .= '<tr'.(isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '').'>'.PHP_EOL;
 				foreach ((array)$this->_fields as $info) {
@@ -101,6 +106,7 @@ class yf_table2 {
 				}
 				$body .= '</tr>'.PHP_EOL;
 			}
+			$body .= '</tbody>'.PHP_EOL;
 #			$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
 			$body .= '</table>'.PHP_EOL;
 		} else {
@@ -114,7 +120,6 @@ class yf_table2 {
 		}
 		$body .= $pages.PHP_EOL;
 		return $body;
-		return implode("\n", $this->_body);
 	}
 
 	/**

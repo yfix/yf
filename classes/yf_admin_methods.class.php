@@ -18,13 +18,6 @@ class yf_admin_methods {
 	}
 
 	/**
-	* Need to avoid calling render() without params
-	*/
-//	function __toString() {
-//		return $this->render();
-//	}
-
-	/**
 	*/
 	function add($params = array()) {
 		if (!is_array($params)) {
@@ -66,13 +59,16 @@ class yf_admin_methods {
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
 		$a = db()->get("SELECT * FROM ".$table." WHERE '".db()->es($primary_field)."'='".db()->es($_GET['id']).'"');
+		if (!$a) {
+			return _e('Wrong id');
+		}
 		if (!empty($_POST)) {
 			if (!common()->_error_exists()) {
 				$sql = array();
 				foreach ((array)$fields as $f) {
 					$sql[$f] = $_POST[$f];
 				}
-				db()->update($table, db()->es($sql), "`".$primary_field."`='".db()->es($_GET["id"])."'");
+				db()->update($table, db()->es($sql), "`".db()->es($primary_field)."`='".db()->es($_GET["id"])."'");
 				return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".urlencode($_GET["id"]));
 			}
 		}
@@ -101,77 +97,94 @@ class yf_admin_methods {
 		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
-/*
-		$_GET['id'] = intval($_GET['id']);
-		if ($_GET['id'] && $_GET["id"] != 1 && $_GET["id"] != $_SESSION["admin_id"]) {
-			db()->query("DELETE FROM ".db('admin')." WHERE id=".intval($_GET['id']));
+
+		if (!empty($_GET["id"])) {
+			db()->query("DELETE FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_GET['id'])."' LIMIT 1");
 		}
-		if ($_POST["ajax_mode"]) {
-			main()->NO_GRAPHICS = true;
+		if (conf('IS_AJAX')) {
 			echo $_GET["id"];
 		} else {
 			return js_redirect("./?object=".$_GET["object"]. _add_get());
 		}
-*/
 	}
 
 	/**
 	*/
-	function active ($params = array()) {
+	function active($params = array()) {
 		if (!is_array($params)) {
 			return false;
 		}
 		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
-/*
-		$_GET["id"] = intval($_GET["id"]);
+
 		if (!empty($_GET["id"])) {
-			$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_GET["id"]));
+			$info = db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_GET['id'])."' LIMIT 1");
 		}
-		if (!empty($admin_info["id"]) && $_GET["id"] != 1 && $_GET["id"] != $_SESSION["admin_id"]) {
-			db()->UPDATE("admin", array("active" => (int)!$admin_info["active"]), "id=".intval($_GET["id"]));
+		if ($info) {
+			db()->update($table, array(
+				"active" => (int)!$info["active"],
+			), db()->es($primary_field)."='".db()->es($_GET['id'])."'");
 		}
-		if ($_POST["ajax_mode"]) {
-			main()->NO_GRAPHICS = true;
-			echo ($admin_info["active"] ? 0 : 1);
+		if (conf('IS_AJAX')) {
+			echo ($info["active"] ? 0 : 1);
 		} else {
-			return js_redirect("./?object=".$_GET["object"]);
+			return js_redirect("./?object=".$_GET["object"]. _add_get());
 		}
-*/
 	}
 
 	/**
 	*/
-	function clone_item ($params = array()) {
+	function clone_item($params = array()) {
+		if (!is_array($params)) {
+			return false;
+		}
+		$table	= $params['table'];
+		$fields	= $params['fields'];
+		$primary_field = $params['id'] ? $params['id'] : 'id';
+
+		if (!empty($_GET["id"])) {
+			$info = db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_GET['id'])."' LIMIT 1");
+		}
+		if ($info) {
+			$sql = $info;
+			unset($sql[$primary_field]);
+
+			db()->insert($table, db()->es($sql));
+			$new_id = db()->insert_id();
+		}
+		if (conf('IS_AJAX')) {
+			echo ($new_id ? 1 : 0);
+		} else {
+			return js_redirect("./?object=".$_GET["object"]. _add_get());
+		}
+	}
+
+	/**
+	*/
+	function sortable($params = array()) {
+		if (!is_array($params)) {
+			return false;
+		}
+		$table	= $params['table'];
+		$fields	= $params['fields'];
+		$primary_field = $params['id'] ? $params['id'] : 'id';
+		if ($_POST['first'] && $_POST['second']) {
+			$first	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_POST['first'])."' LIMIT 1");
+			$second	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_POST['second'])."' LIMIT 1");
+		}
+		if (!$first || !$second) {
+			return _e('Wrong first or second id to swap');
+		}
 // TODO
 /*
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
-		}
-		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
-		$sql = $block_info;
-		unset($sql["id"]);
-		$sql["name"] = $sql["name"]."_clone";
+			$sql = $info;
+			unset($sql[$primary_field]);
 
-		db()->INSERT("blocks", $sql);
-		$NEW_BLOCK_ID = db()->INSERT_ID();
-
-		$Q = db()->query("SELECT * FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
-		while ($_info = db()->fetch_assoc($Q)) {
-			unset($_info["id"]);
-			$_info["block_id"] = $NEW_BLOCK_ID;
-
-			db()->INSERT("block_rules", $_info);
-
-			$NEW_ITEM_ID = db()->INSERT_ID();
-		}
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("blocks_names");
-			cache()->refresh("blocks_rules");
-		}
-		return js_redirect("./?object=".$_GET["object"]);
+			db()->insert($table, db()->es($sql));
+			$new_id = db()->insert_id();
 */
+		}
+		return js_redirect("./?object=".$_GET["object"]. _add_get());
 	}
 }

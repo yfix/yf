@@ -6,19 +6,21 @@ class yf_manage_conf {
 	*/
 	function _init() {
 		$this->_table = array(
-			'table'		=> db('conf'),
-			'fields'	=> array(
-				'name', 'value', 'desc'
+			'table' => db('conf'),
+			'fields' => array(
+				'name',
+				'value',
+				'desc'
 			),
-			'id'		=> 'name',
+			'id' => 'name',
 		);
 	}
 
 	/**
 	*/
 	function show() {
-		return common()->table2('SELECT * FROM '.db('conf').' ORDER BY `name` ASC', array(
-				'sortable' => 1,
+		return table2('SELECT * FROM '.db('conf').' ORDER BY `name` ASC', array(
+				'sortable' => true,
 				'id' => 'name'
 			))
 			->text('name')
@@ -33,7 +35,7 @@ class yf_manage_conf {
 	*/
 	function add() {
 		$replace = _class('admin_methods')->add($this->_table);
-		return common()->form2($replace)
+		return form2($replace)
 			->text('name')
 			->text('value')
 			->textarea('desc')
@@ -44,7 +46,7 @@ class yf_manage_conf {
 	*/
 	function edit() {
 		$replace = _class('admin_methods')->edit($this->_table);
-		return common()->form2($replace)
+		return form2($replace)
 			->text('name')
 			->text('value')
 			->textarea('desc')
@@ -61,5 +63,11 @@ class yf_manage_conf {
 	*/
 	function clone_item() {
 		return _class('admin_methods')->clone_item($this->_table);
+	}
+
+	/**
+	*/
+	function sortable() {
+		return _class('admin_methods')->sortable($this->_table);
 	}
 }

@@ -118,6 +118,7 @@ $(function(){
 // TODO: fix bug when images are not uploaded from ajax form, due serialize() not supports this, maybe use jquery.form plugin?
 		$.post(_form.attr("action"), _form.serialize(), function(data){
 			$('#edit_link_modal').modal('hide').remove();
+			window.location.reload();
 		})
 		return false;
 	});
