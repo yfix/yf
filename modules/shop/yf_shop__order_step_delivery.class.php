@@ -22,14 +22,14 @@ class yf_shop__order_step_delivery{
 					
 		}
 		// Fill shipping from billing
-	/* 	foreach ((array)module('shop')->_s_fields as $_field) {
+	 	foreach ((array)module('shop')->_s_fields as $_field) {
 			if (module('shop')->_user_info["shipping_same"] && !isset($_POST[$_field])) {
 				$s_field = "b_".substr($_field, 2);
 				$replace[$_field] = _prepare_html(isset($_POST[$s_field]) ? $_POST[$s_field] : module('shop')->_user_info[$s_field]);
 			} else {
 				$replace[$_field] = _prepare_html(isset($_POST[$_field]) ? $_POST[$_field] : module('shop')->_user_info[$_field]);
 			}
-		} */
+		}
 		$force_ship_type = module('shop')->FORCE_GROUP_SHIP[module('shop')->USER_GROUP];
 
 		$SELF_METHOD_ID = substr(__FUNCTION__, strlen("_order_step_"));

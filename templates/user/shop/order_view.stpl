@@ -1,5 +1,4 @@
-<div class="editform">
-<form method="post" action="{form_action}">
+<form method="post" action="{form_action}" class="form-horizontal">
 	<p class="first">
 		<label>{t(Order ID)}:</label>
 		<b>{order_id}</b>
@@ -28,7 +27,7 @@
 		<label>{t(Payment Type)}</label>
 		{pay_type}
 	</p>
-<fieldset>
+
 	<legend>{t(Billing address)}</legend>
 	<p class="first">
 		<label>{t(First Name)}</label>
@@ -58,11 +57,7 @@
 		<label>{t(Zip code)}</label>
 		{b_zip_code}
 	</p>
-</fieldset>
 
-<br />
-
-<fieldset>
 	<legend>{t(Shipping address)}</legend>
 	<p class="first">
 		<label>{t(First Name)}</label>
@@ -92,7 +87,7 @@
 		<label>{t(Zip code)}</label>
 		{s_zip_code}
 	</p>
-</fieldset>
+
 	<div class="button_div">
 		<input type="button" value="Back" onclick="window.location.href='{back_url}'">
 	</div>
@@ -126,7 +121,5 @@
 
 <hr />
 {if("products" ne "")}
-{t(Total)}: {total_price}
+<h3>{t(Total)}: {total_price}</h3>
 {/if}
-
-</div>

@@ -2,15 +2,11 @@
 
 <p>{t(The fields marked with)} <b style="color:red;">*</b> {t(are mandatory)}.</p>
 
-<br />
-
 {if("error_message" ne "")}
 	{error_message}
 {/if}
 
-<div class="editform">
-<form method="post" action="{form_action}" id="checkout_form">
-
+<form method="post" action="{form_action}" id="checkout_form" class="form-horizontal">
 	<p>
 		<label for="ship_type">{t(Shipping Type)}</label>
 		<b style="color:red;">*</b>{ship_type_box}
@@ -175,11 +171,10 @@
 </fieldset>
 
 	<div class="button_div">
-		<a href="{back_link}" title="{t(Back)}">{t(Back)}</a>
-		<a href="javascript:;" title="{t(Next)}" onclick="document.forms['checkout_form'].submit();" style="float: right;">{t(Next)}</a>
+		<a href="{back_link}" class="btn" title="{t(Back)}">{t(Back)}</a>
+		<a href="javascript:;" class="btn btn-primary" title="{t(Next)}" onclick="document.forms['checkout_form'].submit();">{t(Next)}</a>
 	</div>
 </form>
-</div>
 
 <script type="text/javascript">
 <!--

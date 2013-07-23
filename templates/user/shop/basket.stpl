@@ -2,8 +2,7 @@
 <form method="post" action="{form_action}" name="basket_form">
 
 {if("products" ne "")}
-<table width="100%">
-	<col><col width="60%"><col>
+<table class="table table-bordered table-striped table-hover">
 	<th>{t(Quantity)}</th>
 	<th>{t(Name)}</th>
 	<th>{t(Price)}</th>
@@ -31,11 +30,11 @@
 <h3>{t(Total)}: {total_price}</h3>
 {/if}
 	<div class="button_div">
-		<a href="{back_link}" title="{t(Back)}">{t(Back)}</a>
+		<a href="{back_link}" class="btn" title="{t(Back)}">{t(Back)}</a>
 {if("products" ne "")}
-		<a href="javascript:;" title="{t(Submit)}" onclick="document.forms['basket_form'].submit();" style="margin-left: 50px;">{t(Update)}</a>
-		<a href="{clean_all_link}" title="{t(Clean all)}" onclick="return confirm('{t(Are you sure)}?');">{t(Clean all)}</a>
-		<a href="{order_link}" title="{t(Checkout)}" style="margin-left: 50px;">{t(Checkout)}</a>
+		<a href="javascript:;" class="btn" title="{t(Submit)}" onclick="document.forms['basket_form'].submit();" style="margin-left: 50px;">{t(Update)}</a>
+		<a href="{clean_all_link}" class="btn" title="{t(Clean all)}" onclick="return confirm('{t(Are you sure)}?');">{t(Clean all)}</a>
+		<a href="{order_link}" class="btn btn-primary" title="{t(Checkout)}" style="margin-left: 50px;">{t(Checkout)}</a>
 {/if}
 	</div>
 </form>

@@ -1,8 +1,7 @@
 <div class="basket">
 
 {if("products" ne "")}
-<table width="100%">
-	<col><col width="60%"><col>
+<table class="table table-bordered table-striped table-hover">
 	<th>{t(Quantity)}</th>
 	<th>{t(Name)}</th>
 	<th>{t(Price)}</th>
@@ -25,10 +24,10 @@
 
 <hr />
 {if("products" ne "")}
-{t(Total)}: {total_price}
+<h3>{t(Total)}: {total_price}</h3>
 {/if}
 	<div class="button_div">
-		<a href="{back_link}" title="{t(Back)}">{t(Back)}</a>
-		<a href="{next_link}" title="{t(Next)}" style="float: right;">{t(Next)}</a>
+		<a href="{back_link}" class="btn" title="{t(Back)}">{t(Back)}</a>
+		<a href="{next_link}" class="btn btn-primary" title="{t(Next)}">{t(Next)}</a>
 	</div>
 </div>

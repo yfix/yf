@@ -42,11 +42,17 @@ class yf_shop extends yf_module {
 	);
 	/** @var Billing info */
 	public $_b_fields = array(
-		"name",
-		"email",
-		"phone",
-		"address",
-		"comment_c",
+		"b_first_name",
+		"b_last_name",
+		"b_email",
+		"b_phone",
+		"b_address",
+		"b_address2",
+		"b_zip_code",
+		"b_city",
+		"b_state",
+		"b_country",
+		"b_company",
 	);
 	/** @var Shipping info */
 	public $_s_fields = array(
