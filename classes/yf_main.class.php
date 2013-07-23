@@ -601,6 +601,10 @@ class yf_main {
 		foreach ((array)$this->get_data("settings") as $k => $v) {
 			conf($k, $v);
 		}
+		// Overriding default settings with the values stored in database
+		foreach ((array)$this->get_data('conf') as $k => $v) {
+			conf($k, $v);
+		}
 		$output_caching = conf('output_caching');
 		if (isset($output_caching)) {
 			$this->OUTPUT_CACHING = $output_caching;

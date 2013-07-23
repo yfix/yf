@@ -20,6 +20,7 @@ conf("data_handlers", my_array_merge((array)conf("data_handlers"), array(
 	"cat_items"	=> 'include(H_PATH."cat_items.h.php");',
 	"cats_blocks"	=> 'include(H_PATH."cats_blocks.h.php");',
 	"chat_smilies"	=> 'include(H_PATH."chat_smilies.h.php");',
+	"conf"	=> 'include(H_PATH."conf.h.php");',
 	"continents"	=> 'include(H_PATH."continents.h.php");',
 	"countries"	=> 'include(H_PATH."countries.h.php");',
 	"currencies"	=> 'include(H_PATH."currencies.h.php");',
