@@ -30,7 +30,9 @@ class yf_admin_methods {
 			if (!common()->_error_exists()) {
 				$sql = array();
 				foreach ((array)$fields as $f) {
-					$sql[$f] = $_POST[$f];
+					if (isset($_POST[$f])) {
+						$sql[$f] = $_POST[$f];
+					}
 				}
 				db()->insert($table, db()->es($sql));
 				$NEW_ID = db()->insert_id();
@@ -58,7 +60,7 @@ class yf_admin_methods {
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
-		$a = db()->get("SELECT * FROM ".$table." WHERE '".db()->es($primary_field)."'='".db()->es($_GET['id']).'"');
+		$a = db()->get("SELECT * FROM ".$table." WHERE `".db()->es($primary_field)."`='".db()->es($_GET['id'])."'");
 		if (!$a) {
 			return _e('Wrong id');
 		}
@@ -66,7 +68,9 @@ class yf_admin_methods {
 			if (!common()->_error_exists()) {
 				$sql = array();
 				foreach ((array)$fields as $f) {
-					$sql[$f] = $_POST[$f];
+					if (isset($_POST[$f])) {
+						$sql[$f] = $_POST[$f];
+					}
 				}
 				db()->update($table, db()->es($sql), "`".db()->es($primary_field)."`='".db()->es($_GET["id"])."'");
 				return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".urlencode($_GET["id"]));
@@ -82,8 +86,10 @@ class yf_admin_methods {
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".urlencode($_GET["id"]),
 			"back_link"		=> "./?object=".$_GET["object"],
 		);
-		foreach ((array)$fields as $f) {
-			$replace[$f] = $DATA[$f];
+		foreach ((array)$a as $k => $v) {
+			if (!isset($replace[$k])) {
+				$replace[$k] = $DATA[$k];
+			}
 		}
 		return $replace;
 	}
@@ -99,7 +105,7 @@ class yf_admin_methods {
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
 		if (!empty($_GET["id"])) {
-			db()->query("DELETE FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_GET['id'])."' LIMIT 1");
+			db()->query("DELETE FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_GET['id'])."' LIMIT 1");
 		}
 		if (conf('IS_AJAX')) {
 			echo $_GET["id"];
@@ -119,7 +125,7 @@ class yf_admin_methods {
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
 		if (!empty($_GET["id"])) {
-			$info = db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_GET['id'])."' LIMIT 1");
+			$info = db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_GET['id'])."' LIMIT 1");
 		}
 		if ($info) {
 			db()->update($table, array(
@@ -144,7 +150,7 @@ class yf_admin_methods {
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
 		if (!empty($_GET["id"])) {
-			$info = db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_GET['id'])."' LIMIT 1");
+			$info = db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_GET['id'])."' LIMIT 1");
 		}
 		if ($info) {
 			$sql = $info;
@@ -170,21 +176,16 @@ class yf_admin_methods {
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 		if ($_POST['first'] && $_POST['second']) {
-			$first	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_POST['first'])."' LIMIT 1");
-			$second	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE ".db()->es($primary_field)."='".db()->es($_POST['second'])."' LIMIT 1");
+			$first	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_POST['first'])."' LIMIT 1");
+			$second	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_POST['second'])."' LIMIT 1");
 		}
 		if (!$first || !$second) {
 			return _e('Wrong first or second id to swap');
 		}
 // TODO
-/*
-			$sql = $info;
-			unset($sql[$primary_field]);
+//		db()->update($table, array("order" => $new_order_first), db()->es($primary_field)."='".db()->es($first[$primary_field])."'");
+//		db()->update($table, array("order" => $new_order_second), db()->es($primary_field)."='".db()->es($second[$primary_field])."'");
 
-			db()->insert($table, db()->es($sql));
-			$new_id = db()->insert_id();
-*/
-		}
 		return js_redirect("./?object=".$_GET["object"]. _add_get());
 	}
 }

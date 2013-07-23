@@ -213,7 +213,7 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
-				$body = '<a href="'.str_replace('%d', $field, $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
+				$body = '<a href="'.str_replace('%d', urlencode($field), $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
 				return _class('table2')->_apply_badges($body, $params['extra']);
 			}
 		);
@@ -300,10 +300,17 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
-				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				$override_id = "";
+				if (isset($params['extra']['id'])) {
+					$override_id = $params['extra']['id'];
+				}
+				if (isset(_class('table2')->_params['id'])) {
+					$override_id = _class('table2')->_params['id'];
+				}
+				$id = $override_id ? $override_id : 'id';
 				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
 				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			},
 		);
 		return $this;
@@ -355,7 +362,7 @@ class yf_table2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['a_class'] .= ' ajax_add';
+		$extra['a_class'] .= ' ajax_clone';
 		$extra['icon'] .= 'icon-arrow-down';
 		return $this->btn($name, $link, $extra);
 	}
@@ -376,7 +383,7 @@ class yf_table2 {
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="change_active">'
+				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="change_active">'
 						.($row['active'] ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
 					.'</a> ';
 			},
@@ -396,7 +403,7 @@ class yf_table2 {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
 				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
 				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
-				return '<a href="'.str_replace('%d', $row[$id], $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		return $this;
