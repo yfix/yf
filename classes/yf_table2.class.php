@@ -173,7 +173,8 @@ class yf_table2 {
 			"data"	=> $extra['data'],
 			"func"	=> function($field, $params, $row) {
 				if (!$params['data']) {
-					$text = (isset($row[$field]) ? $row[$field] : $field);
+//					$text = (isset($row[$field]) ? $row[$field] : $field);
+					$text = $field;
 				} else {
 					if (is_string($params['data'])) {
 						$text = $params['data'];
