@@ -308,7 +308,7 @@ if (!function_exists('_format_date')) {
 		if (empty($date_to_show)) {
 			return "";
 		}
-		$output = gmstrftime($date_format, $date_to_show);
+		$output = strftime($date_format, $date_to_show);
 		// Try to catch and replace some basic dates before 1970 year
 		if (empty($output) && preg_match("/([0-9]{4})-([0-9]{2})-([0-9]{2})/", $input_date, $m)) {
 			if (empty($type) || in_array($type, array("short"))) {
