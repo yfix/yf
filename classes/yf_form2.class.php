@@ -764,13 +764,33 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$value = $r[$name];
+		$css_class = 'label label-info';
+		if ($extra['badge']) {
+			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
+			if ($badge) {
+				$css_class = 'badge badge-'.$badge;
+			}
+		} elseif ($extra['label']) {
+			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
+			if ($label) {
+				$css_class = 'label label-'.$label;
+			}
+		} elseif ($extra['class']) {
+			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
+			if ($_css_class) {
+				$css_class = $_css_class;
+			}
+		}
+		if (is_array($extra['data']) && isset($extra['data'][$value])) {
+			$value = $extra['data'][$value];
+		}
 		if (!isset($extra["no_escape"])) {
 			$value = htmlspecialchars($value, ENT_QUOTES);
 		}
 		$body = '
 			<div class="control-group">
 				<label class="control-label">'.t($desc).'</label>
-				<div class="controls"><span class="label label-info">'.$value.'</span></div>
+				<div class="controls"><span class="'.$css_class.'">'.$value.'</span></div>
 			</div>
 		';
 		if ($this->_chained_mode) {

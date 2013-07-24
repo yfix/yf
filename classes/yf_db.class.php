@@ -509,6 +509,24 @@ class yf_db {
 	}
 
 	/**
+	* Alias, return 2d array, where key is first field and value is the second, 
+	* Example: "SELECT id, name FROM p_static_pages" => array('1' => 'page1', '2' => 'page2')
+	*/
+	function get_2d($query, $use_cache = true) {
+		$result = $this->query_fetch_all($query, $use_cache, true);
+		// Get 1st and 2nd keys from first sub-array
+		$keys = array_keys((array)current($result));
+		if (!$keys) {
+			return false;
+		}
+		$out = array();
+		foreach ((array)$result as $id => $data) {
+			$out[$data[$keys[0]]] = $data[$keys[1]];
+		}
+		return $out;
+	}
+
+	/**
 	* Alias
 	*/
 	function query_fetch_assoc($query, $use_cache = true) {

@@ -143,15 +143,25 @@ class yf_table2 {
 	}
 
 	/**
+	* Supported: success, warning, important, info, inverse
+	* Also support array of badges/labels/classes where will try to find match for a field value
 	*/
-	function _apply_badges($text, $extra = array()) {
-		// Supported: success, warning, important, info, inverse
+	function _apply_badges($text, $extra = array(), $field = null) {
 		if ($extra['badge']) {
-			$text = '<span class="badge badge-'.$extra['badge'].'">'.$text.'</span>';
+			$badge = is_array($extra['badge']) && isset($extra['badge'][$field]) ? $extra['badge'][$field] : $extra['badge'];
+			if ($badge) {
+				$text = '<span class="badge badge-'.$badge.'">'.$text.'</span>';
+			}
 		} elseif ($extra['label']) {
-			$text = '<span class="label label-'.$extra['label'].'">'.$text.'</span>';
+			$label = is_array($extra['label']) && isset($extra['label'][$field]) ? $extra['label'][$field] : $extra['label'];
+			if ($label) {
+				$text = '<span class="label label-'.$label.'">'.$text.'</span>';
+			}
 		} elseif ($extra['class']) {
-			$text = '<span class="'.$extra['class'].'">'.$text.'</span>';
+			$css_class = is_array($extra['class']) && isset($extra['class'][$field]) ? $extra['class'][$field] : $extra['class'];
+			if ($css_class) {
+				$text = '<span class="'.$css_class.'">'.$text.'</span>';
+			}
 		}
 		return $text;
 	}
@@ -182,7 +192,7 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
-				return _class('table2')->_apply_badges($text, $params['extra']);
+				return _class('table2')->_apply_badges($text, $params['extra'], $field);
 			}
 		);
 		return $this;
@@ -215,7 +225,7 @@ class yf_table2 {
 					}
 				}
 				$body = '<a href="'.str_replace('%d', urlencode($field), $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
-				return _class('table2')->_apply_badges($body, $params['extra']);
+				return _class('table2')->_apply_badges($body, $params['extra'], $field);
 			}
 		);
 		return $this;
@@ -234,7 +244,7 @@ class yf_table2 {
 			"desc"	=> $desc,
 			"func"	=> function($field, $params, $row) {
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
-				return _class('table2')->_apply_badges($text, $params['extra']);
+				return _class('table2')->_apply_badges($text, $params['extra'], $field);
 			}
 		);
 		return $this;
