@@ -1139,6 +1139,9 @@ class yf_graphics {
 		$items_array	= array();
 		// Get items from the current level
 		foreach ((array)$this->_menu_items[$menu_id] as $item_info) {
+			if (!is_array($item_info)) {
+				continue;
+			}
 			// Skip items from other parents
 			if ($item_info["parent_id"] != $parent_id) {
 				continue;
