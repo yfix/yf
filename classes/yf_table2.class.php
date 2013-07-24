@@ -165,7 +165,7 @@ class yf_table2 {
 			if (!strlen($k) || !strlen($v)) {
 				continue;
 			}
-			$sql[] = '`'.db()->es($k).'`='.(is_numeric($v) ? intval($v) : db()->es($v));
+			$sql[] = '`'.db()->es($k).'`='.(is_numeric($v) ? intval($v) : '"'.db()->es($v).'"');
 		}
 		$filter_sql = implode(" AND ", $sql);
 		if ($filter_data['order_by']) {
