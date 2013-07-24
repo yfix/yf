@@ -59,6 +59,12 @@ class yf_table2 {
 			$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : "";
 			$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
 
+			if ($this->_params['filter']) {
+				$filter_sql = $this->_filter_sql_prepare($this->_params['filter']);
+			}
+			if ($filter_sql) {
+				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? " WHERE " : "")." ".$filter_sql;
+			}
 			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
 
 			$items = array();
@@ -140,6 +146,38 @@ class yf_table2 {
 	*/
 	function tpl_row($type = "input", $name, $desc = "", $extra = array()) {
 		return $this->$type($name, $desc, $extra);
+	}
+
+	/**
+	*/
+	function _filter_sql_prepare($filter_data = array()) {
+		if (!$filter_data) {
+			return "";
+		}
+		$special_fields = array(
+			'order_by',
+			'order_direction',
+		);
+		foreach((array)$filter_data as $k => $v) {
+			if (in_array($k, $special_fields)) {
+				continue;
+			}
+			if (!strlen($k) || !strlen($v)) {
+				continue;
+			}
+			$sql[] = '`'.db()->es($k).'`='.(is_numeric($v) ? intval($v) : db()->es($v));
+		}
+		$filter_sql = implode(" AND ", $sql);
+		if ($filter_data['order_by']) {
+			$filter_sql .= ' ORDER BY `'.db()->es($filter_data['order_by']).'` ';
+			if ($filter_data['order_direction']) {
+				$direction = strtoupper($filter_data['order_direction']);
+			}
+			if ($direction && in_array($direction, array('ASC','DESC'))) {
+				$filter_sql .= ' '.$direction;
+			}
+		}
+		return $filter_sql;
 	}
 
 	/**

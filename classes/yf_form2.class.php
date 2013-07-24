@@ -633,7 +633,12 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-		$selected = isset($extra['selected']) ? $extra['selected'] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
@@ -855,7 +860,12 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
-		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
 		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
@@ -896,7 +906,12 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
-		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
 		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
@@ -936,7 +951,13 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
-		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
+		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
@@ -963,7 +984,13 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
-		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
+		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
 		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
@@ -995,7 +1022,13 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
-		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
+		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$type = isset($extra["type"]) ? $extra["type"] : 2;
 		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
@@ -1026,7 +1059,13 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
-		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
+		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$years = isset($extra["years"]) ? $extra["years"] : '';
 		$show_what = isset($extra["show_what"]) ? $extra["show_what"] : "ymd";
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
@@ -1058,7 +1097,13 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
-		$selected = isset($extra["selected"]) ? $extra["selected"] : $r[$name];
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
+		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
 		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
 		$translate = isset($extra["translate"]) ? $extra["translate"] : 1;
