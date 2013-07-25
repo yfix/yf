@@ -74,7 +74,7 @@ class yf_table2 {
 			}
 		}
 		if ($data) {
-			$body = '<table class="table table-bordered table-striped table-hover">'.PHP_EOL;
+			$body = '<table class="table table-bordered table-striped table-hover'.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			$body .= '<thead>'.PHP_EOL;
 			foreach ((array)$this->_fields as $info) {
 				$name = $info['name'];
