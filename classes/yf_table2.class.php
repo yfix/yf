@@ -218,7 +218,7 @@ class yf_table2 {
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"desc"	=> $desc,
-			"data"	=> $extra['data'],
+			"data"	=> t($extra['data']),
 			"func"	=> function($field, $params, $row) {
 				if (!$params['data']) {
 //					$text = (isset($row[$field]) ? $row[$field] : $field);
@@ -251,7 +251,7 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"link"	=> $link,
-			"data"	=> $data,
+			"data"	=> t($data),
 			"func"	=> function($field, $params, $row) {
 				if (!$params['data']) {
 					$text = (isset($row[$field]) ? $row[$field] : $field);
