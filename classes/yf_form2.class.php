@@ -878,7 +878,7 @@ class yf_form2 {
 			<div class="control-group">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level)
+					.common()->select_box($name, t($values), $selected, $show_text, $type, $add_str, $translate, $level)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 				.'</div>
 			</div>
@@ -925,7 +925,7 @@ class yf_form2 {
 			<div class="control-group">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
+					.common()->multi_select_box($name, t($values), $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 				.'</div>
 			</div>
@@ -963,7 +963,7 @@ class yf_form2 {
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->check_box($name, $values, $selected).'</div>
+				<div class="controls">'.common()->check_box($name, t($values), $selected).'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -1001,7 +1001,7 @@ class yf_form2 {
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->multi_check_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array).'</div>
+				<div class="controls">'.common()->multi_check_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array).'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -1038,7 +1038,7 @@ class yf_form2 {
 		$body = '
 			<div class="control-group">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->select_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate).'</div>
+				<div class="controls">'.common()->select_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate).'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
