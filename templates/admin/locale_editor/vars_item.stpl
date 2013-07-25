@@ -1,9 +1,9 @@
-<tr class="{bg_class}" id="del_row_{id}">
-	<td width="1%"><input type="checkbox" name="items[]" value="{id}"></td>
-	<td width="90%"><b>{value}</b>{if("location" ne "")}<br /><small>{location}</small>{/if}</td>
-	<td nowrap>{locales}&nbsp;</td>
-	<td nowrap>
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>
-		<a href="{delete_link}" class="ajax_delete" title="{t(Delete)}"><i class="icon-trash"></i></a>
+<tr id="del_row_{id}">
+	<td><input type="checkbox" name="items[]" value="{id}"></td>
+	<td>{value} {if("location" ne "")}<br /><small>{location}</small>{/if}</td>
+	<td>{locales}</td>
+	<td>
+{form_row("tbl_link_edit")}
+{form_row("tbl_link_delete")}
 	</td>
 </tr>

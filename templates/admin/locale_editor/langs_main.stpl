@@ -16,9 +16,9 @@
 </table>
 	<input type="submit" value="{t(SAVE)}" name="go" class="btn btn-primary">
 </form>
+{else}
+	<div class="alert">{t(No languages yet)}</div>
 {/if}
-
-{if("items" eq "")}<div class="alert">{t(No languages yet)}</div>{/if}
 
 <div align="center">
 	<a href="{add_lang_link}" class="btn">{t(Add language)}</a> 

@@ -36,7 +36,6 @@ class yf_locale_editor {
 			"1" => "<span class='positive'>YES</span>",
 			"0" => "<span class='negative'>NO</span>",
 		);
-		// Array of select boxes to process
 		$this->_boxes = array(
 			"lang_code"		=> 'select_box("lang_code",		$this->_langs,			$selected, false, 2, "", false)',
 			"cur_langs"		=> 'select_box("lang_code",		$this->_cur_langs,		$selected, false, 2, "", false)',
@@ -46,9 +45,8 @@ class yf_locale_editor {
 			"location"		=> 'select_box("location",		$this->_used_locations,	$selected, false, 2, "", false)',
 			"module"		=> 'select_box("module",		$this->_modules,		$selected, false, 2, "", false)',
 		);
-		// Get user modules
 		$this->_user_modules	= main()->_execute("user_modules", "_get_modules", array("with_sub_modules" => 1));
-		// Get admin modules
+
 		$tmp_admin_modules		= main()->_execute("admin_modules", "_get_modules", array("with_sub_modules" => 1));
 		$this->_admin_modules_prefix = "admin___";
 		foreach ((array)$tmp_admin_modules as $module_name) {
@@ -56,7 +54,7 @@ class yf_locale_editor {
 		}
 		$tmp_user_modules = $this->_user_modules;
 		unset($tmp_user_modules[""]);
-		// Prepare modules array for select
+
 		$this->_modules[""] = t("-- ALL --");
 		if (!empty($this->_admin_modules)) {
 			$this->_modules["admin"] = $this->_admin_modules;
@@ -64,14 +62,14 @@ class yf_locale_editor {
 		if (!empty($tmp_user_modules)) {
 			$this->_modules["user"] = $tmp_user_modules;
 		}
-		// Get available list of languages
+
 		foreach ((array)$this->_get_iso639_list() as $lang_code => $lang_params) {
 			$this->_langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? " (".$lang_params[1].") " : "");
 		}
-		// Do get current languages from db
+
 		$Q = db()->query("SELECT * FROM ".db('locale_langs')." ORDER BY is_default DESC, locale ASC");
 		while ($A = db()->fetch_assoc($Q)) $this->_cur_langs_array[$A["id"]] = $A;
-		// Check if no languages available (initial lang create)
+
 		if (empty($this->_cur_langs_array)) {
 			db()->INSERT("locale_langs", array(
 				"locale"	=> "en",
@@ -82,34 +80,29 @@ class yf_locale_editor {
 			));
 			js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		}
-		// Prepare current languages for search form
+
 		$this->_langs_for_search["all"] = t("All languages");
 		foreach ((array)$this->_cur_langs_array as $A) {
 			$this->_langs_for_search[$A["locale"]] = t($A["name"]);
 			$this->_cur_langs[$A["locale"]] = t($A["name"]);
 		}
-		// Prepare "search_in" box
 		$this->_search_in = array(
 			"all"			=> t('All strings in that language'),
 			"translated"	=> t('Only translated strings'),
 			"untranslated"	=> t('Only untranslated strings'),
 		);
-		// Prepare "file_formats" box
 		$this->_file_formats = array(
 			"csv"	=> t('CSV, compatible with MS Excel'),
 			"xml"	=> t('XML'),
 		);
-		// Prepare "modes" box
 		$this->_modes = array(
 			1	=> t('Strings in the uploaded file replace existing ones, new ones are added'),
 			2	=> t('Existing strings are kept, only new strings are added'),
 		);
-		// Search type (search in vars or in translations)
 		$this->_search_types = array(
 			"vars"			=> t('Vars'),
 			"translations"	=> t('Translations'),
 		);
-		// Prepare filter data
 		if ($this->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
@@ -119,9 +112,7 @@ class yf_locale_editor {
 	* Display all project languages
 	*/
 	function show() {
-		// Do save data (if needed)
 		if ($_POST) {
-			// Process langs
 			foreach ((array)$this->_cur_langs_array as $A) {
 				db()->UPDATE("locale_langs", array(
 					"name"			=> _es($_POST["name_".$A["id"]]),
@@ -130,19 +121,16 @@ class yf_locale_editor {
 					"is_default"	=> intval($_POST["default"] == $A["id"]),
 				), "id=".intval($A["id"]));
 			}
-			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_langs");
-			// Return user back
+			if (main()->USE_SYSTEM_CACHE) {
+				cache()->refresh("locale_langs");
+			}
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		}
-		// Count number of translated vars for languages
 		$Q = db()->query("SELECT COUNT(var_id) AS num,locale FROM ".db('locale_translate')." WHERE value != '' GROUP BY locale");
 		while ($A = db()->fetch_assoc($Q)) {
 			$tr_vars[$A["locale"]] = $A["num"];
 		}
-		// Get total number of vars
 		list($total_vars) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('locale_vars')."");
-		// Show languages form
 		foreach ((array)$this->_cur_langs_array as $A) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -159,7 +147,6 @@ class yf_locale_editor {
 			);
 			$items .= tpl()->parse($_GET["object"]."/langs_item", $replace2);
 		}
-		// Process template
 		$replace = array(
 			"items"				=> $items,
 			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
@@ -172,28 +159,22 @@ class yf_locale_editor {
 	}
 
 	/**
-	* Add language
 	*/
 	function add_lang() {
-		// Unset already added languages
 		foreach ((array)$this->_cur_langs_array as $A) {
 			if (isset($this->_langs[$A["locale"]])) unset($this->_langs[$A["locale"]]);
 		}
-		// Do save data
 		if ($_POST) {
 			if (empty($_POST["lang_code"])) {
 				common()->_error_exists("Please select language to add");
 			}
-			// Check if such language is already added
 			if (!empty($_POST["lang_code"]) && isset($this->_langs[$_POST["lang_code"]])) {
 				common()->_error_exists("This language has been added already");
 			}
 			$raw_langs = $this->_get_iso639_list();
-			// Check for correct lang code
 			if (!isset($raw_langs[$_POST["lang_code"]])) {
 				common()->_error_exists("Wrong language code");
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->INSERT("locale_langs", array(
 					"locale"		=> _es($_POST["lang_code"]),
@@ -202,38 +183,31 @@ class yf_locale_editor {
 					"active"		=> 1,
 					"is_default"	=> 0,
 				));
-				// Do create empty vars for the new language
 				$this->_create_empty_vars_for_locale($_POST["lang_code"]);
-				// Refresh system cache
-				if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_langs");
-				// Return user back
+				if (main()->USE_SYSTEM_CACHE) {
+					cache()->refresh("locale_langs");
+				}
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
-		// Display form
-		if (!$_POST || common()->_error_exists()) {
-			$replace = array(
-				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-				"langs_box"			=> $this->_box("lang_code",	-1),
-				"back_link"			=> "./?object=".$_GET["object"],
-				"error_message"		=> _e(),
-			);
-			return tpl()->parse($_GET["object"]."/add_lang", $replace);
-		}
+		$replace = array(
+			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
+			"langs_box"			=> $this->_box("lang_code",	-1),
+			"back_link"			=> "./?object=".$_GET["object"],
+			"error_message"		=> _e(),
+		);
+		return tpl()->parse($_GET["object"]."/add_lang", $replace);
 	}
 
 	/**
-	* Delete language
 	*/
 	function delete_lang() {
 		$_GET["id"] = intval($_GET["id"]);
-		// Do delete language
 		db()->query("DELETE FROM ".db('locale_langs')." WHERE id=".intval($_GET["id"])." LIMIT 1");
-		// Do delete translations
 		db()->query("DELETE FROM ".db('locale_translate')." WHERE locale='"._es($this->_cur_langs_array[$_GET["id"]]["locale"])."'");
-		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_langs");
-		// Return user back
+		if (main()->USE_SYSTEM_CACHE) {
+			cache()->refresh("locale_langs");
+		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -243,31 +217,27 @@ class yf_locale_editor {
 	}
 
 	/**
-	* Display all project vars
 	*/
 	function show_vars() {
-		// Prepare SQL
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$sql = "SELECT * FROM ".db('locale_vars')." AS v WHERE 1=1 ".$filter_sql." ORDER BY ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))" : "v.value")." ASC";
-		// Connect pager
+
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		$per_page = conf('admin_per_page');
 		if ($this->USE_FILTER && !empty($_SESSION[$this->_filter_name]["per_page"])) {
 			$per_page = $_SESSION[$this->_filter_name]["per_page"];
 		}
 		list($limit_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $per_page);
-		// Process records
+
 		$Q = db()->query($sql. $limit_sql);
 		while ($A = db()->fetch_assoc($Q)) $vars_array[$A["id"]] = $A;
-		// Try to get available translations locales
+
 		if (!empty($vars_array)) {
 			$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE var_id IN(".implode(",", array_keys($vars_array)).")");
 			while ($A = db()->fetch_assoc($Q)) $tr_vars[$A["var_id"]][$A["locale"]] = $A["value"];
-			// Prepare translated locales for vars
 			foreach ((array)$tr_vars as $var_id => $locales_array) {
 				$body_array = array();
 				foreach ((array)$locales_array as $locale_name => $tr_text) {
-					// Hide not translated locales from list
 					if (empty($tr_text)) {
 						continue;
 					}
@@ -282,9 +252,7 @@ class yf_locale_editor {
 		if (isset($_SESSION[$this->_filter_name]["show_locs"]) && !$_SESSION[$this->_filter_name]["show_locs"]) {
 			$this->DISPLAY_VARS_LOCATIONS = false;
 		}
-		// Display vars
 		foreach ((array)$vars_array as $A) {
-			// Process template
 			$replace2 = array(
 				"id"			=> $A["id"],
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -296,7 +264,6 @@ class yf_locale_editor {
 			);
 			$items .= tpl()->parse($_GET["object"]."/vars_item", $replace2);
 		}
-		// Prepare template
 		$replace = array(
 			"mass_delete_link"	=> "./?object=".$_GET["object"]."&action=mass_delete_vars",
 			"back_link"			=> "./?object=".$_GET["object"],
@@ -314,10 +281,8 @@ class yf_locale_editor {
 	}
 
 	/**
-	* Add variable
 	*/
 	function add_var() {
-		// Check if such variable exists
 		if (!empty($_POST["var_name"])) {
 			$_POST["var_name"] = _strtolower(str_replace(" ", "_", $_POST["var_name"]));
 			$var_info = db()->query_fetch(
@@ -337,7 +302,6 @@ class yf_locale_editor {
 	}
 
 	/**
-	* Edit variable
 	*/
 	function edit_var() {
 		$_GET["id"] = trim($_GET["id"]);
@@ -357,18 +321,17 @@ class yf_locale_editor {
 			}
 		}
 		$_GET["id"] = intval($_GET["id"]);
-		// Get variable data
+
 		$var_info = db()->query_fetch("SELECT * FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"]));
 		if (empty($var_info["id"])) {
 			_re(t("No such var!"));
 			return _e();
 		}
-		// Get translations for the current variable
+
 		$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE var_id=".intval($var_info["id"]));
 		while ($A = db()->fetch_assoc($Q)) $var_tr[$A["locale"]] = $A["value"];
-		// Do save data
+
 		if ($_POST) {
-			// Check for errors
 			if (!common()->_error_exists()) {
 				foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
 					if (!isset($_POST[$lang_info["locale"]])) {
@@ -379,19 +342,18 @@ class yf_locale_editor {
 						"value"		=> _es($_POST[$lang_info["locale"]]),
 						"locale"	=> _es($lang_info["locale"]),
 					);
-					// Check if record is already exists
 					if (isset($var_tr[$lang_info["locale"]])) {
 						db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($lang_info["locale"])."'");
 					} else {
 						db()->INSERT("locale_translate", $sql_data);
 					}
-					// Refresh system cache
-					if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_translate_".$lang_info["locale"]);
+					if (main()->USE_SYSTEM_CACHE) {
+						cache()->refresh("locale_translate_".$lang_info["locale"]);
+					}
 				}
 				return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
 			}
 		}
-		// Prepare language vars
 		foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
 			// Paste default value for the english locale (if translation is absent)
 			$tr_value = !isset($var_tr[$lang_info["locale"]]) && $lang_info["locale"] == "en" ? $var_info["value"] : $var_tr[$lang_info["locale"]];
@@ -401,47 +363,38 @@ class yf_locale_editor {
 				"tr_value"	=> _prepare_html(trim($tr_value)),
 			);
 		}
-		// Display form
-		if (!$_POST || common()->_error_exists()) {
-			$replace = array(
-				"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-				"back_link"		=> "./?object=".$_GET["object"]."&action=show_vars",
-				"error_message"	=> _e(),
-				"langs"			=> $langs,
-				"var_value"		=> _prepare_html($var_info["value"]),
-				"location"		=> $this->DISPLAY_VARS_LOCATIONS ? $this->_prepare_locations($var_info["location"]) : "",
-			);
-			return tpl()->parse($_GET["object"]."/edit_var", $replace);
-		}
+		$replace = array(
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
+			"back_link"		=> "./?object=".$_GET["object"]."&action=show_vars",
+			"error_message"	=> _e(),
+			"langs"			=> $langs,
+			"var_value"		=> _prepare_html($var_info["value"]),
+			"location"		=> $this->DISPLAY_VARS_LOCATIONS ? $this->_prepare_locations($var_info["location"]) : "",
+		);
+		return tpl()->parse($_GET["object"]."/edit_var", $replace);
 	}
 
 	/**
-	* Mass delete variables
 	*/
 	function mass_delete_vars() {
 		$ids_to_delete = array();
-		// Prepare ids to delete
 		foreach ((array)$_POST["items"] as $_cur_id) {
 			if (empty($_cur_id)) {
 				continue;
 			}
 			$ids_to_delete[$_cur_id] = $_cur_id;
 		}
-		// Do delete ids
 		if (!empty($ids_to_delete)) {
 			db()->query("DELETE FROM ".db('locale_vars')." WHERE id IN(".implode(",",$ids_to_delete).")");
 			db()->query("DELETE FROM ".db('locale_translate')." WHERE var_id IN(".implode(",",$ids_to_delete).")");
 		}
-		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
 	}
 
 	/**
-	* Delete variable
 	*/
 	function delete_var() {
 		$_GET["id"] = intval($_GET["id"]);
-		// Get variable data
 		if (!empty($_GET["id"])) {
 			$var_info = db()->query_fetch("SELECT * FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"]));
 		}
@@ -449,7 +402,6 @@ class yf_locale_editor {
 			db()->query("DELETE FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			db()->query("DELETE FROM ".db('locale_translate')." WHERE var_id=".intval($_GET["id"]));
 		}
-		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -658,7 +610,6 @@ class yf_locale_editor {
 	}
 
 	/**
-	* Import vars
 	*/
 	function import_vars() {
 		// Do save data
@@ -885,46 +836,42 @@ class yf_locale_editor {
 					$file_name = $cur_lang_info["locale"]."_translation.xml";
 				}
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
 				if (empty($body)) {
 					_re(t("Error while exporting data"));
 				}
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
 				main()->NO_GRAPHICS = true;
-				// Throw headers
+
 				header("Content-Type: application/force-download; name=\"".$file_name."\"");
 				header("Content-Type: text/".$_POST["file_format"].";charset=utf-8");
 				header("Content-Transfer-Encoding: binary");
 				header("Content-Length: ".strlen($body));
 				header("Content-Disposition: attachment; filename=\"".$file_name."\"");
-				// Throw content
+
 				echo $body;
 				exit();
 			}
 		}
-		// Display form
-		if (!$_POST || common()->_error_exists()) {
-			// Get locations
-			$this->_used_locations[""] = t("-- ALL --");
-			foreach ((array)$this->_get_all_vars_locations() as $cur_location => $num_vars) {
-				if (empty($num_vars)) continue;
-				$this->_used_locations[$cur_location] = $cur_location." (".intval($num_vars).")";
+
+		$this->_used_locations[""] = t("-- ALL --");
+		foreach ((array)$this->_get_all_vars_locations() as $cur_location => $num_vars) {
+			if (empty($num_vars)) {
+				continue;
 			}
-			// Process template
-			$replace = array(
-				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-				"back_link"			=> "./?object=".$_GET["object"],
-				"error_message"		=> _e(),
-				"langs_box"			=> $this->_box("cur_langs",		-1),
-				"file_formats_box"	=> $this->_box("file_format",	"csv"),
-				"location_box"		=> $this->_box("location",		-1),
-				"modules_box"		=> $this->_box("module",		-1),
-			);
-			return tpl()->parse($_GET["object"]."/export_vars", $replace);
+			$this->_used_locations[$cur_location] = $cur_location." (".intval($num_vars).")";
 		}
+		$replace = array(
+			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
+			"back_link"			=> "./?object=".$_GET["object"],
+			"error_message"		=> _e(),
+			"langs_box"			=> $this->_box("cur_langs",		-1),
+			"file_formats_box"	=> $this->_box("file_format",	"csv"),
+			"location_box"		=> $this->_box("location",		-1),
+			"modules_box"		=> $this->_box("module",		-1),
+		);
+		return tpl()->parse($_GET["object"]."/export_vars", $replace);
 	}
 
 	/**
@@ -951,7 +898,6 @@ _debug_log("LOCALE_NUM_VARS: ".count($vars));
 				$translated = array();
 				$url = $base_url."&q=".urlencode(str_replace("_", " ", $A["value"]))."&langpair=en%7C".$LOCALE_RES;
 				$_temp[$url] = $A["id"];
-				// Fill the buffer
 				if (count($buffer) < $max_threads) {
 					$buffer[$url] = $url;
 					continue;
@@ -980,12 +926,10 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 						"locale"	=> _es($LOCALE_RES),
 					));
 				}
-				// Clean the buffer
 				$buffer = array();
 				$_temp = array();
 			}
-			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	{
+			if (main()->USE_SYSTEM_CACHE) {
 				cache()->refresh("locale_translate_".$LOCALE_RES);
 			}
 			return js_redirect("./?object=".$_GET["object"]);
