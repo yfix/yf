@@ -1,5 +1,5 @@
 <li class="dropdown">
-	<a class="dropdown-toggle" data-toggle="dropdown">Select theme <b class="caret"></b></a>
+	<a class="dropdown-toggle" data-toggle="dropdown">{t(Select theme)} <b class="caret"></b></a>
 	<ul class="dropdown-menu theme-selector">
 {foreach("themes")}
 		<li><a href="#" id="theme_id_{_val}">{_val}</a></li>
