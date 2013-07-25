@@ -188,6 +188,7 @@ class yf_form2 {
 					.($extra["maxlength"] ? ' maxlength="'.$extra["maxlength"].'"' : '')
 					.($extra["disabled"] ? ' disabled' : '')
 					.($extra["required"] ? ' required' : '')
+					.($extra["attr"] ? ' '.$this->_prepare_custom_attr($extra["attr"]) : '')
 					.'>'
 					.($append ? '<span class="add-on">'.$append.'</span>' : '')
 					.(($prepend || $append) ? '</div>' : '')
@@ -202,6 +203,16 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function _prepare_custom_attr($attr = array()) {
+		$body = array();
+		foreach ((array)$attr as $k => $v) {
+			$body[] = '"'.htmlspecialchars($k, ENT_QUOTES).'"="'.htmlspecialchars($v, ENT_QUOTES).'"';
+		}
+		return implode(" ", $body);
 	}
 
 	/**
@@ -448,6 +459,18 @@ class yf_form2 {
 			} else {
 				$extra = array();
 			}
+		}
+		if ($extra['min']) {
+			$extra['attr']['min'] = $extra['min'];
+			unset($extra['min']);
+		}
+		if ($extra['max']) {
+			$extra['attr']['max'] = $extra['max'];
+			unset($extra['max']);
+		}
+		if ($extra['step']) {
+			$extra['attr']['step'] = $extra['step'];
+			unset($extra['step']);
 		}
 		$extra['type'] = 'number';
 		$extra['sizing'] = 'small';
