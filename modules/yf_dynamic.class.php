@@ -189,8 +189,8 @@ class yf_dynamic {
 		if (!DEBUG_MODE && !$_SESSION['locale_vars_edit']) {
 			return print("Access denied");
 		}
-		$SOURCE_VAR_NAME	= trim($_POST["source_var"]);
-		$EDITED_VALUE		= trim($_POST["edited_value"]);
+		$SOURCE_VAR_NAME	= str_replace('%20', ' ',trim($_POST["source_var"]));
+		$EDITED_VALUE		= str_replace('%20', ' ',trim($_POST["edited_value"]));
 		$CUR_LOCALE			= conf('language');
 		// First we need to check if such var exists
 		if (!strlen($SOURCE_VAR_NAME)) {
@@ -208,7 +208,9 @@ class yf_dynamic {
 		$var_info = db()->query_fetch($sql);
 		// Create variable record if not found
 		if (empty($var_info["id"])) {
-			db()->INSERT("locale_vars", array("value"	=> _es($SOURCE_VAR_NAME)));
+			$sql = array("value"	=> _es($SOURCE_VAR_NAME));
+			db()->INSERT("locale_vars", $sql);
+//_debug_log($sql_data);
 			$var_info["id"] = db()->INSERT_ID();
 		}
 		$sql_data = array(
@@ -223,11 +225,13 @@ class yf_dynamic {
 		}
 		if (isset($var_tr[$CUR_LOCALE])) {
 			db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'");
+//_debug_log($sql_data);
 		} else {
 			db()->INSERT("locale_translate", $sql_data);
+//_debug_log($sql_data);
 		}
-$sql = db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'", true);
-_debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
+		$sql = db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'", true);
+//_debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
 		// Save revision
 		db()->INSERT("revisions", array(
 			"user_id"		=> intval(main()->USER_ID),
