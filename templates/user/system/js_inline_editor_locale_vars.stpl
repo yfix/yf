@@ -1,0 +1,137 @@
+<script type="text/javascript">
+// Inline locale editor
+$(function(){
+
+	$(document).on("dblclick", function(e){
+		_my_save_var();
+		return false;
+	});
+
+	$("span.locale_tr").on("contextmenu", function(e) {
+		$(this).attr("s_var", $(this).attr("s_var").replace("%20", " "));
+		// Special for the hyperlinks
+		$(this).parent().on("click", function(){ return false; });
+
+		_my_save_var();
+
+		// Save last edited element
+		_last_tr_item = $(this);
+		_last_tr_html = $(this).html();
+		$(this).html(
+			"<input type='text' value='" + $(this).text().replace(/\'/, '&#39;') + "' class='editable_tr' s_var='" + $(this).attr("s_var").replace(/\'/, '&#39;') + "' />" 
+			+ " <span class='var_old_value'>" + $(this).attr("s_var") + "</span>"
+		);
+
+		// Set current field focused and selected
+		$(this).find("input.editable_tr").focus().select();
+
+		return false;
+	});
+
+	// Catch keyboard keys Enter and Esc
+	$(document).on("keyup", "input", function(e){
+		if (e.keyCode != 13 && e.keyCode != 27) {
+			return true;
+		}
+		e.stopPropagation(); e.preventDefault();
+		if (e.keyCode == 13) { // "Enter" (13)
+			_my_save_var();
+		}
+		if (e.keyCode == 27) { // "Esc" key (27) - cancel editing
+			if (_last_tr_item != null) {
+				_last_tr_item.html(_last_tr_html);
+				_last_tr_item.parent().off("click");
+				_last_tr_item = null;
+			}
+			// Hide stpl edit div
+			if (_old_text != "" && _old_text != $("#inline_edit_text").val()) {
+				if (!confirm("Text has changed, are you sure you wan't to quit editing?")) {
+					return false;
+				}
+			}
+			$("#inline_edit_stpl").css({"display" : "none"});
+			_old_text = "";
+		}
+		return false;
+
+	});
+
+	// Fix "input" fields
+	$("input[value*='locale_tr']").not("[type=text]").each(function(){
+		var _old_val = $(this).val();
+		$(this).val(_old_val.replace(/<span class=['"]?locale_tr['"]?[^>]*>|<\/span>/ig, ''))
+			.after(_old_val);
+	});
+
+	// Add special class for the all elements that have template names attributes
+	$("[stpl_name]").each(function(i) {
+		var _stpl_name	= $(this).attr("stpl_name");
+		var _tag_name	= $(this).get(0).tagName.toLowerCase();
+		try {
+			$(this).prepend("<span class='stpl_name_inline'>" + _stpl_name + "</span> ");
+		} catch (e) {}
+	});
+
+	// Revert last state of the previous element
+	function _my_save_var () {
+		if (_last_tr_item == null || typeof _i18n_for_page == "undefined") {
+			return false;
+		}
+		var _edited_value = _last_tr_item.find("input.editable_tr").val();
+		// Try to find source var
+		var _source_var = "";
+		if (_last_tr_html != "") {
+			_source_var = _last_tr_item.find("input.editable_tr").attr("s_var");
+		}
+		if (typeof _edited_value != "undefined" 
+			&& _edited_value != "" 
+			&& typeof _source_var != "undefined"
+			&& _source_var != ""
+			&& $.trim(_last_tr_html) != $.trim(_edited_value)
+			&& confirm("Are you sure you wan't to save your changes?")
+		) {
+			// JQuery AJAX post
+			$.post(_form_action, { "source_var": _source_var, "edited_value":_edited_value }, function(data) {
+				// Translate all same elements on page
+				$("span.locale_tr").each(function(i){
+					if (_last_tr_html != "" && $(this).html() == _last_tr_html) {
+						$(this).html(_edited_value);
+					}
+				});
+				alert("NEW:\n\n" + _edited_value + "\n\nOLD:\n\n" + _last_tr_html + "\n\nSERVER SAID:\n\n" + data);
+				_last_tr_html = "";
+				// Allow further edit this var without page refresh
+				_i18n_for_page[_edited_value] = _source_var;
+			});
+			_last_tr_item.html(_edited_value);
+		} else {
+			if (_last_tr_html != "") {
+				_last_tr_item.html(_last_tr_html);
+			}
+		}
+		_last_tr_item.parent().off("click");
+		_last_tr_item = null;
+	}
+
+	// Highlight not translated vars
+// TODO: check if working
+	if (typeof _i18n_not_translated != "undefined") {
+		$("span.locale_tr").each(function(){
+			if (_i18n_not_translated[($(this).html()).toLowerCase()]) {
+				$(this).addClass("locale_not_tr");
+			}
+		});
+	}
+
+	_inline_editor_loaded = true;
+
+})
+
+// Do not touch! Needed to prevent double init of the inline editor
+var _inline_editor_loaded = false;
+
+// Catch ajax tooltip
+function _debug_catch(obj) {
+	$("span.locale_tr", $(obj)).on("click", _locale_tr_click_handle);
+}
+</script>

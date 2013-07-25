@@ -1,0 +1,85 @@
+<style type="text/css">
+span.locale_tr {
+	background: yellow;
+	color: black;
+	font-weight: bold;
+	z-index: 1000;
+	margin: 1px;
+}
+span.locale_not_tr {
+	background: #F19AF4;
+	z-index: 1000;
+	margin: 1px;
+}
+span.stpl_name_inline {
+	border:1px dashed black;
+	font-size: 9px;
+	color:black;
+	font-weight: bold;
+	background:#E8CD92;
+	z-index: 1000;
+}
+#inline_edit_stpl {
+	width:800px;
+	height:570px;
+	position:absolute;
+	left:20px;
+	top:20px;
+	z-index:1000;
+	background:#ddd;
+	border: 2px ridge black;
+	display: none;
+}
+#inline_edit_header {
+	width:800px;
+	height: 20px;
+	border-bottom: 2px ridge black;
+	background:yellow;
+	font-weight: bold;
+}
+textarea#inline_edit_text {
+	overflow:scroll;
+	width:98%;
+	height:505px;
+}
+span.var_old_value {
+	background:black;
+	color: white;
+/*	font-weight: normal;*/
+	font-size: 10px;
+}
+span.tooltip_edit_inline {
+	background:blue;
+	color: white;
+	font-weight: bold;
+	font-size: 10px;
+	cursor: hand;
+}
+
+#inline_edit_tip {
+	width:500px;
+	height:250px;
+	position:absolute;
+	left:20px;
+	top:20px;
+	z-index:1000;
+	background:#ddd;
+	border: 2px ridge black;
+	display: none;
+}
+#inline_edit_tip_header {
+	width:99%;
+	height: 20px;
+	padding-top: 5px;
+	padding-left: 5px;
+	border-bottom: 2px ridge black;
+	background:blue;
+	color:white;
+	font-weight: bold;
+}
+#inline_edit_tip_text {
+	overflow:scroll;
+	width:99%;
+	height:200px;
+}
+</style>
