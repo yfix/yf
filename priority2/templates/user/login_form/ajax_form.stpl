@@ -1,7 +1,5 @@
-<div style="text-align:center;">
-
-<form method="post" action="{form_action}" target="_parent">
-<table border="0" cellpadding="3" cellspacing="3" style="margin:0 auto;" >
+<form method="post" action="{form_action}" target="_parent" class="form-horizontal">
+<table>
 	<tr>
 		<td><label>Username</label> :</td>
 		<td><input name="login" type="text" size="20"></td>
@@ -10,14 +8,12 @@
 		<td><label>Password</label> :</td>
 		<td><input name="password" type="password" size="20"></td>
 	</tr>
-	<tr align="right">
+	<tr>
 		<td colspan="2">
 			<input type="hidden" name="action" value="login" />
-			<input type="submit" id="Login" value="  Login  ">&nbsp;
-			<input type="button" id="Login" value="  Cancel  " onclick="tb_remove()">
+			<input type="submit" id="login" value="{t(Login)}" class="btn btn-primary">
+			<input type="button" id="cancel" value="{t(Cancel)}" class="btn">
 		</td>
 	</tr>
 </table>
 </form>
-
-</div>

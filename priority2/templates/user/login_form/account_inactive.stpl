@@ -1,8 +1,6 @@
 <h1>{t(Account activation)}</h1>
 
-<p>
-{t(account_activation_info)}
-</p>
+<p>{t(account_activation_info)}</p>
 
 <div style="margin: 10px;">
 <h4>{t(Enter activation code)}</h4>
