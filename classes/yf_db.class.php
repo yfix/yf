@@ -515,7 +515,9 @@ class yf_db {
 	function get_2d($query, $use_cache = true) {
 		$result = $this->query_fetch_all($query, $use_cache, true);
 		// Get 1st and 2nd keys from first sub-array
-		$keys = array_keys((array)current($result));
+		if (is_array($result) && $result) {
+			$keys = array_keys(current($result));
+		}
 		if (!$keys) {
 			return false;
 		}

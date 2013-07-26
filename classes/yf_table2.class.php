@@ -46,10 +46,12 @@ class yf_table2 {
 	*/
 	function render($params = array()) {
 		$sql = $this->_sql;
+		$ids = array();
 		if (is_array($sql)) {
 			$data = $sql;
 			$pages = "";
 			$total = count($data);
+			$ids = array_keys($data);
 		} else {
 			$db = is_object($params['db']) ? $params['db'] : db();
 			$pager_path = $params['pager_path'] ? $params['pager_path'] : "";
@@ -70,10 +72,30 @@ class yf_table2 {
 			$items = array();
 			$q = $db->query($sql. $add_sql);
 			while ($a = $db->fetch_assoc($q)) {
-				$data[] = $a;
+				if (isset($a["id"])) {
+					$data[$a["id"]] = $a;
+					$ids[$a["id"]] = $a["id"];
+				} else {
+					$data[] = $a;
+				}
+			}
+		}
+		// Fill data array with custom fields, also fitting slots with empty strings where no custom data
+		if ($data && $ids && $this->_params['custom_fields']) {
+			$ids_sql = implode(',', $ids);
+			foreach ((array)$this->_params['custom_fields'] as $custom_name => $custom_sql) {
+				$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
+			}
+			foreach ((array)$data as $_id => $row) {
+				foreach ((array)$this->_data_sql_names as $custom_name => $custom_data) {
+					$data[$_id][$custom_name] = strval($custom_data[$_id]);
+				}
 			}
 		}
 		if ($data) {
+			if ($this->_params['form']) {
+				$body .= '<form class="form-horizontal">';
+			}
 			$body = '<table class="table table-bordered table-striped table-hover'.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			$body .= '<thead>'.PHP_EOL;
 			foreach ((array)$this->_fields as $info) {
@@ -115,6 +137,9 @@ class yf_table2 {
 			$body .= '</tbody>'.PHP_EOL;
 #			$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
 			$body .= '</table>'.PHP_EOL;
+			if ($this->_params['form']) {
+				$body .= '</form>';
+			}
 		} else {
 			$body .= '<div class="alert alert-info">'.t('No records').'</div>'.PHP_EOL;
 		}
@@ -206,6 +231,13 @@ class yf_table2 {
 
 	/**
 	*/
+	function form_item($obj) {
+// TODO
+		return $this->func('id', function($field, $params, $row) { return $obj; } );
+	}
+
+	/**
+	*/
 	function text($name, $desc = "", $extra = array()) {
 		if (!is_array($extra)) {
 			$extra = array();
@@ -220,6 +252,9 @@ class yf_table2 {
 			"desc"	=> $desc,
 			"data"	=> t($extra['data']),
 			"func"	=> function($field, $params, $row) {
+				if (!$params['data'] && $params['extra']['data_name']) {
+					$params['data'] = _class('table2')->_data_sql_names[$params['extra']['data_name']];
+				}
 				if (!$params['data']) {
 //					$text = (isset($row[$field]) ? $row[$field] : $field);
 					$text = $field;
