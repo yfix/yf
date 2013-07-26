@@ -1,3 +1,0 @@
-{if("name" eq "delete_link")}
-	<a href="{delete_link}" class="ajax_delete"><img height="16" width="16" border="0" src="images/links_delete.gif" alt="{t(Delete)}" /></a>&nbsp;
-{/if}

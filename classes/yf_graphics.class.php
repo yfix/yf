@@ -1114,7 +1114,6 @@ class yf_graphics {
 		if (empty($menu_id) || empty($this->_menu_items[$menu_id])) {
 			return false;
 		}
-		// Get current user group
 		if (MAIN_TYPE_ADMIN) {
 			$CUR_USER_GROUP = $_SESSION["admin_group"];
 		} elseif (MAIN_TYPE_USER) {
@@ -1128,20 +1127,16 @@ class yf_graphics {
 
 		$items_ids		= array();
 		$items_array	= array();
-		// Get items from the current level
 		foreach ((array)$this->_menu_items[$menu_id] as $item_info) {
 			if (!is_array($item_info)) {
 				continue;
 			}
-			// Skip items from other parents
 			if ($item_info["parent_id"] != $parent_id) {
 				continue;
 			}
-			// Skip item if needed (and all its children)
 			if ($skip_item_id == $item_info["id"]) {
 				continue;
 			}
-			// Process user groups
 			$user_groups = array();
 			if (!empty($item_info["user_groups"])) {
 				foreach (explode(",",$item_info["user_groups"]) as $v) {
@@ -1167,7 +1162,6 @@ class yf_graphics {
 			if (!empty($site_ids) && !isset($site_ids[$CUR_SITE])) {
 				continue;
 			}
-			// Process servers
 			$server_ids = array();
 			if (!empty($item_info["server_ids"])) {
 				foreach (explode(",",$item_info["server_ids"]) as $v) {
@@ -1180,10 +1174,9 @@ class yf_graphics {
 			if (!empty($server_ids) && !isset($server_ids[$CUR_SERVER])) {
 				continue;
 			}
-			// Add item to the result array
 			$items_array[$item_info["id"]] = $item_info;
 			$items_array[$item_info["id"]]["level"] = $level;
-			// Try to find sub items
+
 			$tmp_array = $this->_recursive_get_menu_items($menu_id, $skip_item_id, $item_info["id"], $level + 1);
 			foreach ((array)$tmp_array as $sub_item_info) {
 				if ($sub_item_info["id"] == $item_info["id"]) {
@@ -1196,31 +1189,17 @@ class yf_graphics {
 	}
 
 	/**
-	* Show Zapatec menu items
-	*
-	* @access	private
-	* @return	string	Meta tags
-	*/
-	function show_zp_menu ($input = array()) {
-		return _class("graphics_zp_menu", $this->SUB_MODULES_PATH)->_show($input);
-	}
-
-	/**
 	* Show help tip block
 	*
 	* @access	private
 	* @return	string	Help tip code
 	*/
 	function _show_help_tip ($params = array()) {
-		// Tip id could be number or string
 		$tip_id		= $params["tip_id"];
-		// Tip type is a number
 		$tip_type	= !empty($params["tip_type"]) ? intval($params["tip_type"]) : 1;
-		// Tip id is required
 		if (empty($tip_id)) {
 			return false;
 		}
-		// Prepare template
 		$replace = array(
 			"tip_id"	=> _prepare_html($tip_id),
 			"tip_type"	=> intval($tip_type),
@@ -1236,11 +1215,9 @@ class yf_graphics {
 	*/
 	function _show_inline_tip ($params = array()) {
 		$text = isset($params["text"]) ? $params["text"] : strval($params);
-		// Tip text is required
 		if (empty($text)) {
 			return false;
 		}
-		// Prepare template
 		$replace = array(
 			"text"	=> $text,
 		);
@@ -1492,7 +1469,6 @@ class yf_graphics {
 		if (empty($geo_data)) {
 			return false;
 		}
-		// Process template
 		$replace = array(
 			"country_name"			=> _prepare_html($geo_data["country_name"]),
 			"country_code_lower"	=> strtolower($geo_data["country_code"]),
@@ -1576,7 +1552,6 @@ class yf_graphics {
 			$items .= tpl()->parse("system/quick_menu_item", $replace2);
 
 		}
-		// Display nothing if no items
 		if (!$items) {
 			return false;
 		}

@@ -50,6 +50,17 @@ class yf_table2 {
 	}
 
 	/**
+	* Setup form2 class instance to share its methods for form-related components like checkbox, input, etc
+	*/
+	function _init_form() {
+		if (!isset($this->_form)) {
+			$this->_form = clone _class('form2');
+			$this->_form->_chained_mode = false;
+		}
+		return $this->_form;
+	}
+
+	/**
 	* Render result table html, gathered by row functions
 	*/
 	function render($params = array()) {
@@ -111,7 +122,9 @@ class yf_table2 {
 		}
 		if ($data) {
 			if ($this->_params['form']) {
-				$body .= '<form class="form-horizontal">';
+				$fparams = $this->_params['form'];
+				$form = $this->_init_form();
+				$body .= $form->form_begin($fparams['name'], $fparams['method'], $fparams, $fparams['replace']);
 			}
 			$body = '<table class="table table-bordered table-striped table-hover'.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			$body .= '<thead>'.PHP_EOL;
@@ -520,8 +533,9 @@ class yf_table2 {
 
 	/**
 	*/
-	function form_item($obj) {
+	function checkbox($extra = array()) {
 // TODO
-		return $this->func('id', function($field, $params, $row) { return $obj; } );
+//		$form = $this->_init_form();
+//		return $this->func('id', function($field, $params, $row) { return $obj; } );
 	}
 }

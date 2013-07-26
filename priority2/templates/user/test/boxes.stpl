@@ -1,5 +1,0 @@
-{box("country")}
-
-{box("state","type=multi_select")}
-{box("country","type=select")}
-{box("active","type=radio")}

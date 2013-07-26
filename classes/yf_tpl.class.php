@@ -62,21 +62,13 @@ class yf_tpl {
 		'/\{tip\(["\']{0,1}([\w\-\.]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
 			=> 'main()->_execute("graphics", "_show_help_tip", array("tip_id"=>"$1","tip_type"=>"$2"))',
 		// Display help tooltip inline
-		// EXAMPLE:	 {tip('register.login')} or {tip('form.some_field',2)}
+		// EXAMPLE:	 {itip('register.login')}
 		'/\{itip\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
 			=> 'main()->_execute("graphics", "_show_inline_tip", array("text"=>"$1"))',
 		// Display user level single (inline) error message by its name (keyword)
 		// EXAMPLE:	 {e('login')} or {user_error('name_field')}
 		'/\{(e|user_error)\(["\']{0,1}([\w\-\.]+)["\']{0,1}\)\}/imse'
 			=> 'common()->_show_error_inline(\'$2\')',
-		// Display result of macro substitution
-		// EXAMPLE:	 {macro('delete_button')}
-		'/\{macro\(["\']{0,1}([\w\-\.]+)["\']{0,1}\)\}/ie'
-			=> 'tpl()->_process_macro(\'$1\')',
-		// Common box implementation
-		// EXAMPLE:	 {box('country','type=radio')}
-		'/\{box\(["\']{0,1}([\w\-\.]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ie'
-			=> 'tpl()->_process_box(\'$1\',\'$2\')',
 		// Advertising
 		// EXAMPLE:	 {ad('AD_ID')}
 		'/\{ad\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
@@ -1395,13 +1387,6 @@ class yf_tpl {
 			//print_r($replace);
 			//$replace["recent_ads"] = "";
 		}
-	}
-
-	/**
-	* Display macro substitution result
-	*/
-	function _process_macro ($name = "") {
-		return tpl()->parse("system/macro", array('name' => $name));
 	}
 
 	/**
