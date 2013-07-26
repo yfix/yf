@@ -56,7 +56,7 @@ class yf_form2 {
 	/**
 	* Wrapper for template engine
 	* Example:
-	*	return common()->form2($replace)
+	*	return form2($replace)
 	*		->text("login","Login")
 	*		->text("password","Password")
 	*		->text("first_name","First Name")
@@ -64,8 +64,7 @@ class yf_form2 {
 	*		->text("go_after_login","Url after login")
 	*		->box_with_link("group_box","Group","groups_link")
 	*		->active("active","Active")
-	*		->info("add_date","Added")
-	*		->render();
+	*		->info("add_date","Added");
 	*/
 	function chained_wrapper($replace = array(), $params = array()) {
 		$this->_chained_mode = true;

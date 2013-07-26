@@ -912,11 +912,9 @@ class yf_graphics {
 			trigger_error("GRAPHICS: Given empty menu name to display", E_USER_WARNING);
 			return false;
 		}
-		// Try to get available menus infos
 		if (!isset($this->_menus_infos)) {
 			$this->_menus_infos = main()->get_data("menus");
 		}
-		// Check if such menu exists
 		if (empty($this->_menus_infos)) {
 			if (!$this->_error_no_menus_raised) {
 				trigger_error("GRAPHICS: Menus info not loaded", E_USER_WARNING);
@@ -926,11 +924,9 @@ class yf_graphics {
 		}
 		$MENU_EXISTS = false;
 		foreach ((array)$this->_menus_infos as $menu_info) {
-			// Skip menus from other init type ("admin" or "user")
 			if ($menu_info["type"] != MAIN_TYPE) {
 				continue;
 			}
-			// Found!
 			if ($menu_info["name"] == $menu_name) {
 				$MENU_EXISTS = true;
 				$menu_id = $menu_info["id"];
@@ -942,11 +938,9 @@ class yf_graphics {
 			return false;
 		}
 		$cur_menu_info	= &$this->_menus_infos[$menu_id];
-		// Check if current menu is inactive
 		if (!$cur_menu_info["active"]) {
 			return false;
 		}
-		// Try to get available menus items
 		if (!isset($this->_menu_items)) {
 			$this->_menu_items = main()->get_data("menu_items");
 		}
@@ -955,6 +949,7 @@ class yf_graphics {
 			return false;
 		}
 		$center_block_id = $this->_get_center_block_id();
+
 		// Check if we need to call special menu handler
 		$special_class_name = "";
 		$special_method_name = "";
@@ -965,23 +960,20 @@ class yf_graphics {
 			"menu_name"	=> $menu_name,
 			"menu_id"	=> $menu_id,
 		);
-		// Prepare items
 		$menu_items = array();
 		if (!empty($special_class_name) && !empty($special_method_name)) {
 			$menu_items = _class($special_class_name, $special_path)->$special_method_name($special_params);
 		} else {
 			$menu_items = $this->_recursive_get_menu_items($menu_id);
 		}
-		// Force template prefix
 		if ($force_stpl_name) {
 			$cur_menu_info["stpl_name"] = $force_stpl_name;
 		}
-		// Process menu with template
 		$STPL_MENU_ITEM		= !empty($cur_menu_info["stpl_name"]) ? $cur_menu_info["stpl_name"]."_item" : "system/menu_item";
 		$STPL_MENU_MAIN 	= !empty($cur_menu_info["stpl_name"]) ? $cur_menu_info["stpl_name"] : "system/menu_main";
 		$STPL_MENU_PAD		= !empty($cur_menu_info["stpl_name"]) ? $cur_menu_info["stpl_name"]."_pad" : "system/menu_pad";
 		$level_pad_text		= tpl()->parse($STPL_MENU_PAD);
-		// Process menu items
+
 		$menu_items_to_display = array();
 		foreach ((array)$menu_items as $item_id => $item_info) {
 			if (empty($item_info)) {
@@ -1002,11 +994,9 @@ class yf_graphics {
 						$cl_name = MAIN_TYPE_USER ? "user_modules" : "admin_modules";
 						$this->_active_modules = _class($cl_name, "admin_modules/")->_get_modules();
 					}
-					// Skip menu item if object is inactive
 					if ($_item_parts["object"] && !isset($this->_active_modules[$_item_parts["object"]])) {
 						continue;
 					}
-					// Skip if target is denied to display
 					if ($center_block_id && !$this->_check_block_rights($center_block_id, $_item_parts["object"], $_item_parts["action"]) && $_item_parts["task"] != "logout") {
 						continue;
 					}
@@ -1025,7 +1015,6 @@ class yf_graphics {
 				}
 			}
 		}
-		// Display menu items
 		$num_menu_items = count($menu_items_to_display);
 		$_prev_level = 0;
 		$_next_level = 0;
@@ -1036,12 +1025,10 @@ class yf_graphics {
 			$_next_info	= isset($menu_items_to_display[$i + 1]) ? $menu_items_to_display[$i + 1] : array();
 			$_next_level = isset($_next_info["level"]) ? (int)$_next_info["level"] : 0;
 			$is_cur_page = false;
-			// Prepare item link
 			$item_link = "";
 			// Internal link
 			if ($item_info["type_id"] == 1 && strlen($item_info['location']) > 0) {
 				parse_str($item_info['location'], $_item_parts);
-
 				$item_link = "./?".$item_info['location'];
 				// Check if we are on the current page
 				if (isset($_item_parts["object"]) && $_item_parts["object"] && $_item_parts["object"] == $_GET["object"]) {
@@ -1068,7 +1055,11 @@ class yf_graphics {
 			if ($item_info["icon"] && file_exists(PROJECT_PATH. $this->ICONS_PATH. $item_info["icon"])) {
 				$icon_path = $this->MEDIA_PATH. $this->ICONS_PATH. $item_info["icon"];
 			}
-			// Process template
+			// Icon class from bootstrap icon class names 
+			$icon_class = "";
+			if ($item_info["icon"] && (strpos($item_info["icon"], ".") === false)) {
+				$icon_class = $item_info["icon"];
+			}
 			$replace2 = array(
 				"item_id"		=> intval($item_info['id']),
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -1080,6 +1071,7 @@ class yf_graphics {
 				"next_level"	=> intval($_next_level),
 				"type_id"		=> $item_info["type_id"],
 				"icon_path"		=> $icon_path,
+				"icon_class"	=> $icon_class,
 				"is_first_item"	=> (int)($item_counter == 1),
 				"is_last_item"	=> (int)($item_counter == $num_menu_items),
 				"is_cur_page"	=> (int)$is_cur_page,
@@ -1093,7 +1085,6 @@ class yf_graphics {
 		if ($RETURN_ARRAY) {
 			return $items;
 		}
-		// Process items through template
 		foreach ((array)$items as $id => $item) {
 			$items[$id] = tpl()->parse($STPL_MENU_ITEM, $item);
 		}

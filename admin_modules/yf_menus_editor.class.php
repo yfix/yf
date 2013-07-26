@@ -355,6 +355,11 @@ class yf_menus_editor {
 					$icon_src = WEB_PATH. $_icon_path;
 				}
 			}
+			// Icon class from bootstrap icon class names 
+			$icon_class = "";
+			if ($A["icon"] && (strpos($A["icon"], ".") === false)) {
+				$icon_class = $A["icon"];
+			}
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
 				"item_id"		=> intval($A["id"]),
@@ -369,6 +374,7 @@ class yf_menus_editor {
 				"level_pad"		=> $A["level"] * 20,
 				"icon_src"		=> $icon_src,
 				"icon_value"	=> _prepare_html($A["icon"]),
+				"icon_class"	=> $icon_class,
 				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit_item&id=".$A["id"],
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_item&id=".$A["id"],
 				"active_link"	=> "./?object=".$_GET["object"]."&action=activate_item&id=".$A["id"],

@@ -10,7 +10,7 @@
 class yf_table2 {
 
 	/* Example:
-		return common()->table2("SELECT * FROM ".db('admin'))
+		return table2("SELECT * FROM ".db('admin'))
 			->text("login")
 			->text("first_name")
 			->text("last_name")
@@ -22,8 +22,7 @@ class yf_table2 {
 			->btn_delete()
 			->btn("log_auth")
 			->footer_link("Failed auth log", "./?object=log_admin_auth_fails_viewer")
-			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
-			->render();
+			->footer_link("Add", "./?object=".$_GET["object"]."&action=add");
 	*/
 
 	/**
@@ -89,7 +88,16 @@ class yf_table2 {
 				}
 			}
 		}
-		// Fill data array with custom fields, also fitting slots with empty strings where no custom data
+		/*
+		* Fill data array with custom fields, also fitting slots with empty strings where no custom data. Example:
+		* 	table2('SELECT * FROM '.db('user'), array('custom_fields'	=> array(
+		*		'num_logins' => 'SELECT user_id, COUNT(*) AS num FROM '.db('log_user_auth').' WHERE user_id IN(%ids) GROUP BY user_id'
+		*		'num_auth_fails' => 'SELECT user_id, COUNT(*) AS num FROM '.db('log_user_auth_fails').' WHERE user_id IN(%ids) GROUP BY user_id'
+		* 	)))
+		*	->text('name')
+		*	->text('num_logins')
+		*	->text('num_auth_fails')
+		*/
 		if ($data && $ids && $this->_params['custom_fields']) {
 			$ids_sql = implode(',', $ids);
 			foreach ((array)$this->_params['custom_fields'] as $custom_name => $custom_sql) {
@@ -144,7 +152,9 @@ class yf_table2 {
 				$body .= '</tr>'.PHP_EOL;
 			}
 			$body .= '</tbody>'.PHP_EOL;
-#			$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
+			if ($this->_params['caption']) {
+				$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
+			}
 			$body .= '</table>'.PHP_EOL;
 			if ($this->_params['form']) {
 				$body .= '</form>';
@@ -169,9 +179,6 @@ class yf_table2 {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
 		$this->_params = $params;
-// TODO: need to change API to create new class instance on every chained request
-// TODO: integrate with named errors
-#		$errors = array();
 		return $this;
 	}
 
@@ -240,13 +247,6 @@ class yf_table2 {
 
 	/**
 	*/
-	function form_item($obj) {
-// TODO
-		return $this->func('id', function($field, $params, $row) { return $obj; } );
-	}
-
-	/**
-	*/
 	function text($name, $desc = "", $extra = array()) {
 		if (!is_array($extra)) {
 			$extra = array();
@@ -265,7 +265,6 @@ class yf_table2 {
 					$params['data'] = _class('table2')->_data_sql_names[$params['extra']['data_name']];
 				}
 				if (!$params['data']) {
-//					$text = (isset($row[$field]) ? $row[$field] : $field);
 					$text = $field;
 				} else {
 					if (is_string($params['data'])) {
@@ -517,5 +516,12 @@ class yf_table2 {
 		$extra['a_class'] .= ' ajax_add';
 		$extra['icon'] .= 'icon-plus';
 		return $this->footer_link($name, $link, $extra);
+	}
+
+	/**
+	*/
+	function form_item($obj) {
+// TODO
+		return $this->func('id', function($field, $params, $row) { return $obj; } );
 	}
 }
