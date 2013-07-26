@@ -57,14 +57,16 @@ class yf_common {
 	* Form2 chained wrapper
 	*/
 	function form2($replace = array(), $params = array()) {
-		return _class("form2")->chained_wrapper($replace, $params);
+		$form = clone _class("form2");
+		return $form->chained_wrapper($replace, $params);
 	}
 
 	/**
 	* Table2 chained wrapper
 	*/
 	function table2($data = array(), $params = array()) {
-		return _class("table2")->chained_wrapper($data, $params);
+		$table = clone _class("table2");
+		return $table->chained_wrapper($data, $params);
 	}
 	
 	/**

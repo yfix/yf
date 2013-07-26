@@ -35,6 +35,15 @@ class yf_table2 {
 	}
 
 	/**
+	* We cleanup object properties when cloning
+	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			$this->$k = null;
+		}
+	}
+
+	/**
 	* Need to avoid calling render() without params
 	*/
 	function __toString() {

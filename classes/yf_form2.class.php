@@ -18,6 +18,15 @@ class yf_form2 {
 	}
 
 	/**
+	* We cleanup object properties when cloning
+	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			$this->$k = null;
+		}
+	}
+
+	/**
 	* Need to avoid calling render() without params
 	*/
 	function __toString() {
@@ -62,7 +71,6 @@ class yf_form2 {
 		$this->_chained_mode = true;
 		$this->_replace = $replace;
 		$this->_params = $params;
-// TODO: need to change API to create new class instance on every chained request
 // TODO: integrate with named errors
 #		$errors = array();
 		return $this;

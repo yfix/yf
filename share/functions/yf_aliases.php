@@ -60,10 +60,10 @@ if (!function_exists("_generate_url")) {
 	function _generate_url($params = array(), $host = "") { return module("rewrite")->_generate_url($params, $host); }
 }
 if (!function_exists("form2")) {
-	function form2($replace = array(), $params = array()) { return _class("form2")->chained_wrapper($replace, $params); }
+	function form2($replace = array(), $params = array()) { $form = clone _class("form2"); return $form->chained_wrapper($replace, $params); }
 }
 if (!function_exists("table2")) {
-	function table2($data = array(), $params = array()) { return _class("table2")->chained_wrapper($data, $params); }
+	function table2($data = array(), $params = array()) { $table = clone _class("table2"); return $table->chained_wrapper($data, $params); }
 }
 if (!function_exists("getmicrotime")) {
 	function getmicrotime() { return microtime(true); }
