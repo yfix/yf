@@ -43,7 +43,7 @@ class yf_admin {
 			->btn_delete()
 			->btn("log_auth", "./?object=log_admin_auth_view&action=show_for_admin&id=%d")
 			->footer_link("Failed auth log", "./?object=log_admin_auth_fails_viewer")
-			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
+			->footer_add()
 			->render();
 	}
 

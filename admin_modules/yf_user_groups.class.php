@@ -42,7 +42,7 @@ class yf_user_groups {
 			->btn_edit()
 			->btn_delete()
 			->btn_active()
-			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
+			->footer_add()
 			->footer_link("Blocks", "./?object=blocks&action=show_rules&id=".$block_center_id)
 			->footer_link("Menu", "./?object=menus_editor&action=show_items&id=".$menu_id)
 			->render();

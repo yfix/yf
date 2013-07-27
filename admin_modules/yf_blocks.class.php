@@ -159,7 +159,7 @@ class yf_blocks {
 					"type"		=> _es($_POST["type"] == "admin" ? "admin" : "user"),
 					"active"	=> intval($_POST["active"]),
 				));
-				if (main()->USE_SYSTEM_CACHE)	{
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("blocks_names");
 				}
 				return js_redirect("./?object=".$_GET["object"]);
@@ -183,8 +183,7 @@ class yf_blocks {
 			->template_select_box("stpl_name","Custom template")
 			->method_select_box("method_name","Custom class method")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
