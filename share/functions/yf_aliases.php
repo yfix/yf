@@ -88,7 +88,7 @@ if (!function_exists('_e')) {
 	function _e($text = "", $clear_error = true) { return common()->_show_error_message($text, $clear_error); }
 }
 if (!function_exists('_re')) {
-	function _re($text = "") { return common()->_raise_error($text); }
+	function _re($text = "", $error_key = "") { return common()->_raise_error($text, $error_key); }
 }
 if (!function_exists('_ee')) {
 	function _ee() { return common()->_error_exists(); }

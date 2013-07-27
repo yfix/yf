@@ -40,7 +40,7 @@ class yf_manage_sites {
 		$info = db()->query_fetch("SELECT * FROM ".db('sites')." WHERE id=".intval($_GET["id"]));
 		if (!empty($_POST)) {
 			if (!$_POST["name"]) {
-				_re("Name required!");
+				_re("Name required", "name");
 			}
 			if (!common()->_error_exists()) {
 				$sql = array(
@@ -80,7 +80,7 @@ class yf_manage_sites {
 	function add() {
 		if (!empty($_POST)) {
 			if (!$_POST["name"]) {
-				_re("Name required!");
+				_re("Name required", "name");
 			}
 			if (!common()->_error_exists()) {
 				$sql = array(

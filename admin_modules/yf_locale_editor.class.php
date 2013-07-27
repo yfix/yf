@@ -324,7 +324,7 @@ class yf_locale_editor {
 
 		$var_info = db()->query_fetch("SELECT * FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"]));
 		if (empty($var_info["id"])) {
-			_re(t("No such var!"));
+			_re("No such var!", "id");
 			return _e();
 		}
 
@@ -616,16 +616,16 @@ class yf_locale_editor {
 		if ($_POST) {
 			// Check if file is selected
 			if (empty($_FILES["import_file"]["name"])) {
-				_re(t("Please select file to process"));
+				_re("Please select file to process", "name");
 			}
 			// Check file format
 			if (empty($_POST["file_format"]) || !isset($this->_file_formats[$_POST["file_format"]])) {
-				_re(t("Please select file format"));
+				_re("Please select file format", "file_format");
 			}
 			$cur_locale = $_POST["lang_code"];
 			// Check file format
 			if (empty($cur_locale)) {
-				_re(t("Please select language"));
+				_re("Please select language", "lang");
 			}
 			$raw_langs = $this->_get_iso639_list();
 			// Check for correct lang code

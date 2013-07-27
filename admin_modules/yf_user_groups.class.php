@@ -53,7 +53,7 @@ class yf_user_groups {
 	function add() {
 		if (!empty($_POST)) {
 			if (empty($_POST["name"])) {
-				_re(t("Name is empty"));
+				_re("Name is empty", "name");
 			}
 			if (!common()->_error_exists()) {
 				db()->INSERT("user_groups", array(
@@ -75,8 +75,6 @@ class yf_user_groups {
 			"active"			=> $group_info["active"],
 			"active_box"		=> $this->_box("active", $group_info["active"]),
 			"back_link"			=> "./?object=".$_GET["object"],
-			"error_message"		=> _e(),
-			"for_edit"			=> 0,
 		);
 		return common()->form2($replace)
 			->text("name","Group name")
@@ -91,15 +89,15 @@ class yf_user_groups {
 	function edit() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t("No id"));
+			return _e("No id");
 		}
 		$group_info = db()->query_fetch("SELECT * FROM ".db('user_groups')." WHERE id=".intval($_GET["id"]));
 		if (empty($group_info)) {
-			return _e(t("No such group"));
+			return _e("No such group");
 		}
 		if (!empty($_POST)) {
 			if (empty($_POST["name"])) {
-				_re(t("Name is empty"));
+				_re("Name is empty", "name");
 			}
 			if (!common()->_error_exists()) {
 				db()->UPDATE("user_groups", array(
@@ -121,8 +119,6 @@ class yf_user_groups {
 			"active"			=> $group_info["active"],
 			"active_box"		=> $this->_box("active", $group_info["active"]),
 			"back_link"			=> "./?object=".$_GET["object"],
-			"error_message"		=> _e(),
-			"for_edit"			=> 1,
 		);
 		return common()->form2($replace)
 			->text("name","Group name")

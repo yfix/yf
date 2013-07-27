@@ -35,12 +35,10 @@ class yf_admin_modules {
 	* Framework constructor
 	*/
 	function _init () {
-		// Array of select boxes to process
 		$this->_boxes = array(
 			"file_format"		=> 'radio_box("file_format",$this->_file_formats,		$selected, true, 2, "", false)',
 			"module"			=> 'select_box("module",	$this->_modules,			$selected, false, 2, "", false)',
 		);
-		// Prepare "file_formats" box
 		$this->_file_formats = array(
 			"zip"	=> t('Zip'),
 		);
@@ -52,7 +50,7 @@ class yf_admin_modules {
 		if ($this->_bz2_extension_loaded) {
 			$this->_file_formats["bz2"] = t("Tar BZ");
 		}
-		// Get list of available modules
+
 		$this->_modules = $this->_get_modules();
 		unset($this->_modules[""]);
 	}
@@ -512,35 +510,6 @@ class yf_admin_modules {
 	*/
 	function _load_sub_module ($module_name = "") {
 		return _class($module_name, "admin_modules/admin_modules/");
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Refresh modules list",
-				"url"	=> "./?object=".$_GET["object"]."&action=refresh_modules_list",
-			),
-			array(
-				"name"	=> "Install",
-				"url"	=> "./?object=".$_GET["object"]."&action=import",
-			),
-			array(
-				"name"	=> "Export",
-				"url"	=> "./?object=".$_GET["object"]."&action=export",
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
-		return $menu;	
 	}
 
 	/**

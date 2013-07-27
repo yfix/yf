@@ -562,4 +562,13 @@ class yf_table2 {
 //		$form = $this->_init_form();
 //		return $this->func('id', function($field, $params, $row) { return $obj; } );
 	}
+
+	/**
+	*/
+	function _show_tip($value = "", $extra = array()) {
+		return _class('graphics')->_show_help_tip(array(
+			"tip_id"	=> $value,
+//			"replace"	=> $extra[],
+		));
+	}
 }

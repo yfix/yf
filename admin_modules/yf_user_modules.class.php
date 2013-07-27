@@ -36,12 +36,10 @@ class yf_user_modules {
 	* Framework constructor
 	*/
 	function _init () {
-		// Array of select boxes to process
 		$this->_boxes = array(
 			"file_format"		=> 'radio_box("file_format",$this->_file_formats,		$selected, true, 2, "", false)',
 			"module"			=> 'select_box("module",	$this->_modules,			$selected, false, 2, "", false)',
 		);
-		// Prepare "file_formats" box
 		$this->_file_formats = array(
 			"zip"	=> t('Zip'),
 		);
@@ -53,7 +51,7 @@ class yf_user_modules {
 		if ($this->_bz2_extension_loaded) {
 			$this->_file_formats["bz2"] = t("Tar BZ");
 		}
-		// Get list of available modules
+
 		$this->_modules = $this->_get_modules();
 		unset($this->_modules[""]);
 	}
@@ -62,10 +60,9 @@ class yf_user_modules {
 	* Default method
 	*/
 	function show () {
-		// Connect pager
 		$sql = "SELECT * FROM ".db('user_modules')." ORDER BY name ASC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", $this->MODULES_PER_PAGE);
-		// Get records from db
+
 		$Q = db()->query($sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 // TODO: need to add "site__" and "adm__" functionality
@@ -111,7 +108,6 @@ class yf_user_modules {
 			);
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
-		// Process template
 		$replace = array(
 			"items"			=> $items,
 			"total"			=> intval($total),
@@ -155,17 +151,15 @@ class yf_user_modules {
 	* 
 	*/
 	function change_activity () {
-		// Try to find such module in db
 		if (!empty($_GET["id"])) {
 			$module_info = db()->query_fetch("SELECT * FROM ".db('user_modules')." WHERE name='"._es($_GET["id"])."' LIMIT 1");
 		}
-		// Do change activity status
 		if (!empty($module_info)) {
 			db()->UPDATE("user_modules", array("active" => (int)!$module_info["active"]), "id=".intval($module_info["id"]));
 		}
-		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("user_modules");
-		// Return user back
+		if (main()->USE_SYSTEM_CACHE) {
+			cache()->refresh("user_modules");
+		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo ($module_info["active"] ? 0 : 1);
@@ -193,17 +187,14 @@ class yf_user_modules {
 				LIMIT ".intval($A["num"] - 1)
 			);
 		}
-		// Get current user modules
 		$Q = db()->query("SELECT * FROM ".db('user_modules')."");
 		while ($A = db()->fetch_assoc($Q)) $all_user_modules_array[$A["name"]] = $A["name"];
-		// Do parse modules dir
+
 		$refreshed_modules = $this->_get_modules_from_files(1);
-		// Try to find new modules
 		foreach ((array)$refreshed_modules as $cur_module_name) {
 			if (isset($all_user_modules_array[$cur_module_name])) {
 				continue;
 			}
-			// Add record to db
 			db()->INSERT("user_modules", array(
 				"name"		=> _es($cur_module_name),
 				"active"	=> 0,
@@ -216,9 +207,9 @@ class yf_user_modules {
 				db()->query("DELETE FROM ".db('user_modules')." WHERE name='"._es($cur_module_name)."'");
 			}
 		}
-		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("user_modules");
-		// Return user back
+		if (main()->USE_SYSTEM_CACHE) {
+			cache()->refresh("user_modules");
+		}
 		return js_redirect("./?object=".$_GET["object"]);
 	}
 
@@ -255,13 +246,10 @@ class yf_user_modules {
 		}
 		// If auto-find is turned off - then get modules from db
 		if ($this->AUTO_FIND_MODULES) {
-			// Do get modules list from source dir
 			$user_modules_array = $this->_get_modules_from_files();
-			// Prepare sql
 			foreach ((array)$user_modules_array as $cur_module_name) {
 				$sql_array[$cur_module_name] = "('"._es($cur_module_name)."','1')";
 			}
-			// Do update table
 			if (!empty($sql_array)) {
 				ksort($sql_array);
 				db()->query("TRUNCATE TABLE ".db('user_modules')."");
@@ -272,7 +260,6 @@ class yf_user_modules {
 			$Q = db()->query("SELECT * FROM ".db('user_modules')." WHERE active='1'");
 			while ($A = db()->fetch_assoc($Q)) $user_modules_array[$A["name"]] = $A["name"];
 		}
-		// Sort modules list
 		ksort($user_modules_array);
 		$GLOBALS['user_modules_array'] = $user_modules_array;
 		unset($GLOBALS['user_modules_array'][""]);
@@ -393,7 +380,6 @@ class yf_user_modules {
 				if ($method_name == $user_module_name) {
 					continue;
 				}
-				// Add into array
 				$methods_by_modules[$user_module_name][$method_name] = $method_name;
 			}
 		}
@@ -434,7 +420,6 @@ class yf_user_modules {
 				if ($method_name == $user_module_name) {
 					continue;
 				}
-				// Add into array
 				$methods[$method_name] = $method_name;
 			}
 			// Try to find extends other module
@@ -443,7 +428,6 @@ class yf_user_modules {
 					$methods[$method_name] = $method_name;
 				}
 			}
-			// Garbage collect
 			$extends_file_text = "";
 		}
 		ksort($methods);
@@ -492,35 +476,6 @@ class yf_user_modules {
 			return false;
 		}
 		return $OBJ;
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Refresh modules list",
-				"url"	=> "./?object=".$_GET["object"]."&action=refresh_modules_list",
-			),
-			array(
-				"name"	=> "Install",
-				"url"	=> "./?object=".$_GET["object"]."&action=import",
-			),
-			array(
-				"name"	=> "Export",
-				"url"	=> "./?object=".$_GET["object"]."&action=export",
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
-		return $menu;	
 	}
 
 	/**

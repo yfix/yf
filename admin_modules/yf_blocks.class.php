@@ -142,14 +142,14 @@ class yf_blocks {
 	function add () {
 		if (!empty($_POST)) {
 			if (empty($_POST["type"]) || !in_array($_POST["type"], array("user","admin"))) {
-				_re(t("Wrong block type"));
+				_re("Wrong block type", "type");
 			}
 			if (empty($_POST["name"])) {
-				_re(t("BLock name can not be empty"));
+				_re("BLock name can not be empty", "name");
 			}
 			if (!common()->_error_exists()) {
 				if (db()->query_num_rows("SELECT id FROM ".db('blocks')." WHERE type='"._es($_POST["type"])."' AND name='"._es($_POST["name"])."'")) {
-					_re(t("BLock name already reserved for type=@name", array("@name" => $_POST["type"])));
+					_re("BLock name already reserved", "name");
 				}
 			}
 			if (!common()->_error_exists()) {
@@ -169,7 +169,6 @@ class yf_blocks {
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 			"for_edit"		=> 0,
-			"error_message"	=> _e(),
 			"name"			=> _prepare_html($DATA["name"]),
 			"desc"			=> _prepare_html($DATA["desc"]),
 			"stpl_name"		=> _prepare_html($DATA["stpl_name"]),
@@ -208,11 +207,11 @@ class yf_blocks {
 		}
 		if (!empty($_POST)) {
 			if (empty($_POST["name"])) {
-				_re(t("BLock name can not be empty"));
+				_re("BLock name can not be empty", "name");
 			}
 			if (!common()->_error_exists()) {
 				if (db()->query_num_rows("SELECT id FROM ".db('blocks')." WHERE type='"._es($_POST["type"])."' AND name='"._es($_POST["name"])."'")) {
-					_re(t("BLock name already reserved for type=@name", array("@name" => $_POST["type"])));
+					_re("Block name already reserved", "name");
 				}
 			}
 			if (!common()->_error_exists()) {
@@ -236,7 +235,6 @@ class yf_blocks {
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 			"for_edit"		=> 1,
-			"error_message"	=> _e(),
 			"name"			=> _prepare_html($block_info["name"]),
 			"desc"			=> _prepare_html($block_info["desc"]),
 			"stpl_name"		=> _prepare_html($block_info["stpl_name"]),

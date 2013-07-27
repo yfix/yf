@@ -70,8 +70,6 @@ class yf_form2 {
 		$this->_chained_mode = true;
 		$this->_replace = $replace;
 		$this->_params = $params;
-// TODO: integrate with named errors
-#		$errors = array();
 		return $this;
 	}
 
@@ -122,6 +120,7 @@ class yf_form2 {
 			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
 			.($extra['name'] ? ' name="'.$extra['name'].'"' : '')
 			.($extra['enctype'] ? ' enctype="'.$extra['enctype'].'"' : '')
+			.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
 			.'>';
 		if ($this->_chained_mode) {
 			$this->_body[__FUNCTION__] = $body;
@@ -166,19 +165,21 @@ class yf_form2 {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$id = $extra["id"] ? $extra["id"] : $name;
-		$placeholder = isset($extra["placeholder"]) ? $extra["placeholder"] : $desc;
-		$value = isset($extra["value"]) ? $extra["value"] : $r[$name];
-		$input_type = isset($extra["type"]) ? $extra["type"] : "text";
+		$errors = common()->_get_error_messages();
+		$id = $extra['id'] ? $extra['id'] : $name;
+		$placeholder = isset($extra['placeholder']) ? $extra['placeholder'] : $desc;
+		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
+		$input_type = isset($extra['type']) ? $extra['type'] : "text";
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
 		$append = $extra['append'] ? $extra['append'] : '';
+		$css_class = $this->_prepare_css_class('', $r[$name], $extra);
 		// Supported: mini, small, medium, large, xlarge, xxlarge
 		if ($extra['sizing']) {
 			$extra['class'] .= ' input-'.$extra['sizing'];
 		}
-		if (!isset($extra["no_escape"])) {
+		if (!isset($extra['no_escape'])) {
 			$value = htmlspecialchars($value, ENT_QUOTES);
 		}
 		$body = '
@@ -188,19 +189,73 @@ class yf_form2 {
 					.(($prepend || $append) ? '<div class="'.($prepend ? 'input-prepend' : '').($append ? ' input-append' : '').'">' : '')
 					.($prepend ? '<span class="add-on">'.$prepend.'</span>' : '')
 					.'<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.$value.'"'
-					.($extra["class"] ? ' class="'.$extra["class"].'"' : '')
-					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
-					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
-					.($extra["size"] ? ' size="'.$extra["size"].'"' : '')
-					.($extra["maxlength"] ? ' maxlength="'.$extra["maxlength"].'"' : '')
-					.($extra["disabled"] ? ' disabled' : '')
-					.($extra["required"] ? ' required' : '')
-					.($extra["attr"] ? ' '.$this->_prepare_custom_attr($extra["attr"]) : '')
+					.($css_class ? ' class="'.$css_class.'"' : '')
+					.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
+					.($extra['data'] ? ' data="'.$extra['data'].'"' : '')
+					.($extra['size'] ? ' size="'.$extra['size'].'"' : '')
+					.($extra['maxlength'] ? ' maxlength="'.$extra['maxlength'].'"' : '')
+					.($extra['disabled'] ? ' disabled' : '')
+					.($extra['required'] ? ' required' : '')
+					.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
 					.'>'
 					.($append ? '<span class="add-on">'.$append.'</span>' : '')
 					.(($prepend || $append) ? '</div>' : '')
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
+				.'</div>
+			</div>
+		';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace("_", " ", $name));
+		}
+		$r = $replace ? $replace : $this->_replace;
+		$errors = common()->_get_error_messages();
+		$id = $extra['id'] ? $extra['id'] : $name;
+		$placeholder = isset($extra['placeholder']) ? $extra['placeholder'] : $desc;
+		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
+		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		if (!isset($extra['no_escape'])) {
+			$value = htmlspecialchars($value, ENT_QUOTES);
+		}
+		$body = '
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
+				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
+				<div class="controls">
+					<textarea id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" contenteditable="true"'
+					.($extra['cols'] ? ' cols="'.$extra['cols'].'"' : '')
+					.($extra['rows'] ? ' rows="'.$extra['rows'].'"' : '')
+					.' class="ckeditor '.$this->_prepare_css_class('', $r[$name], $extra).'"'
+					.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
+					.($extra['data'] ? ' data="'.$extra['data'].'"' : '')
+					.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
+					.'>'.$value.'</textarea>'
+					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
 				.'</div>
 			</div>
@@ -224,52 +279,34 @@ class yf_form2 {
 
 	/**
 	*/
-	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
-			} else {
-				$extra = array();
+	function _show_tip($value = "", $extra = array(), $replace = array()) {
+		return _class('graphics')->_show_help_tip(array(
+			"tip_id"	=> $value,
+			"replace"	=> $replace,
+		));
+	}
+
+	/**
+	*/
+	function _prepare_css_class($default_class = '', $value = '', $extra = array()) {
+		$css_class = $default_class;
+		if ($extra['badge']) {
+			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
+			if ($badge) {
+				$css_class = 'badge badge-'.$badge;
+			}
+		} elseif ($extra['label']) {
+			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
+			if ($label) {
+				$css_class = 'label label-'.$label;
+			}
+		} elseif ($extra['class']) {
+			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
+			if ($_css_class) {
+				$css_class = $_css_class;
 			}
 		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
-		}
-		$r = $replace ? $replace : $this->_replace;
-		$id = $extra["id"] ? $extra["id"] : $name;
-		$placeholder = isset($extra["placeholder"]) ? $extra["placeholder"] : $desc;
-		$value = isset($extra["value"]) ? $extra["value"] : $r[$name];
-		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-		if (!isset($extra["no_escape"])) {
-			$value = htmlspecialchars($value, ENT_QUOTES);
-		}
-		$body = '
-			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
-				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
-				<div class="controls">
-					<textarea id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" contenteditable="true"'
-					.($extra["cols"] ? ' cols="'.$extra["cols"].'"' : '')
-					.($extra["rows"] ? ' rows="'.$extra["rows"].'"' : '')
-					.($extra["class"] ? ' class="ckeditor '.$extra["class"].'"' : '')
-					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
-					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
-					.'>'.$value.'</textarea>'
-					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
-					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
-					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-				.'</div>
-			</div>
-		';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $css_class;
 	}
 
 	/**
@@ -347,12 +384,13 @@ class yf_form2 {
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
 		$body = '
-			<div class="control-group">'
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">'
 				.($desc ? '<label class="control-label">'.t($desc).'</label>' : '')
 				.(isset($extra['ckeditor']) ? '<div contenteditable="true" id="'.$content_id.'">' : '')
 				.(!$extra['wide'] ? '<div class="controls">'.$text.'</div>' : $text)
 				.(isset($extra['ckeditor']) ? '</div>' : '')
 				.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+				.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
 			.'</div>
 		';
@@ -374,12 +412,12 @@ class yf_form2 {
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$id = $extra["id"] ? $extra["id"] : $name;
-		$value = isset($extra["value"]) ? $extra["value"] : $r[$name];
-		if (!isset($extra["no_escape"])) {
+		$id = $extra['id'] ? $extra['id'] : $name;
+		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
+		if (!isset($extra['no_escape'])) {
 			$value = htmlspecialchars($value, ENT_QUOTES);
 		}
-		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.$value.'"'.($extra["data"] ? ' data="'.$extra["data"].'"' : '').'>';
+		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.$value.'"'.($extra['data'] ? ' data="'.$extra['data'].'"' : '').'>';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -662,6 +700,7 @@ class yf_form2 {
 			);
 		}
 		$r = $replace ? $replace : $this->_replace;
+		$errors = common()->_get_error_messages();
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
@@ -674,7 +713,8 @@ class yf_form2 {
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
 					.common()->radio_box($name, $extra['items'], $selected, false, 2, '', false)
-					.(isset($errors[$name]) ? '<span class="help-inline">'.$errors[$name].'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
 			</div>
 		';
@@ -715,19 +755,26 @@ class yf_form2 {
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$id = $extra["id"] ? $extra["id"] : $name;
-		$value = isset($extra["value"]) ? $extra["value"] : 'Save';
-		$link_url = $extra["link_url"] ? (isset($r[$extra["link_url"]]) ? $r[$extra["link_url"]] : $extra["link_url"]) : '';
-		$link_name = $extra["link_name"] ? $extra["link_name"] : '';
+		$errors = common()->_get_error_messages();
+		$id = $extra['id'] ? $extra['id'] : $name;
+		$value = isset($extra['value']) ? $extra['value'] : 'Save';
+		$link_url = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
+		$link_name = $extra['link_name'] ? $extra['link_name'] : '';
+		$css_class = $this->_prepare_css_class('', $r[$name], $extra);
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<div class="controls">
-					<input type="submit" value="'.t($value).'" class="btn btn-primary'.($extra["class"] ? ' '.$extra["class"] : '').'"'
-					.($extra["style"] ? ' style="'.$extra["style"].'"' : '')
-					.($extra["data"] ? ' data="'.$extra["data"].'"' : '')
+					<input type="submit" value="'.t($value).'" class="btn btn-primary'.($extra['class'] ? ' '.$extra['class'] : '').'"'
+					.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
+					.($extra['data'] ? ' data="'.$extra['data'].'"' : '')
+					.($css_class ? ' class="'.$css_class.'"' : '')
+					.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
 					.'>'
 					.($link_url ? ' <a href="'.$link_url.'" class="btn">'.t($link_name).'</a>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
 			</div>
 		';
@@ -798,34 +845,24 @@ class yf_form2 {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}
 		$r = $replace ? $replace : $this->_replace;
+		$errors = common()->_get_error_messages();
 		$value = $r[$name];
-		$css_class = 'label label-info';
-		if ($extra['badge']) {
-			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
-			if ($badge) {
-				$css_class = 'badge badge-'.$badge;
-			}
-		} elseif ($extra['label']) {
-			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
-			if ($label) {
-				$css_class = 'label label-'.$label;
-			}
-		} elseif ($extra['class']) {
-			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
-			if ($_css_class) {
-				$css_class = $_css_class;
-			}
-		}
 		if (is_array($extra['data']) && isset($extra['data'][$value])) {
 			$value = $extra['data'][$value];
 		}
-		if (!isset($extra["no_escape"])) {
+		if (!isset($extra['no_escape'])) {
 			$value = htmlspecialchars($value, ENT_QUOTES);
 		}
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label">'.t($desc).'</label>
-				<div class="controls"><span class="'.$css_class.'">'.$value.'</span></div>
+				<div class="controls">
+					<span class="'.$this->_prepare_css_class('label label-info', $r[$name], $extra).'">'.$value.'</span>'
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -850,14 +887,18 @@ class yf_form2 {
 			}
 		}
 		$r = $replace ? $replace : $this->_replace;
+		$errors = common()->_get_error_messages();
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
 					.$r[$name]
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
 			</div>
 		';
@@ -889,27 +930,30 @@ class yf_form2 {
 			}
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$errors = common()->_get_error_messages();
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
-		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
-		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
-		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
-		$level = isset($extra["level"]) ? $extra["level"] : 0;
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
+		$type = isset($extra['type']) ? $extra['type'] : 2;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		$level = isset($extra['level']) ? $extra['level'] : 0;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
 					.common()->select_box($name, t($values), $selected, $show_text, $type, $add_str, $translate, $level)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
 			</div>
 		';
@@ -935,28 +979,31 @@ class yf_form2 {
 			}
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$errors = common()->_get_error_messages();
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
-		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
-		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
-		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
-		$level = isset($extra["level"]) ? $extra["level"] : 0;
-		$disabled = isset($extra["disabled"]) ? $extra["disabled"] : false;
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
+		$type = isset($extra['type']) ? $extra['type'] : 2;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		$level = isset($extra['level']) ? $extra['level'] : 0;
+		$disabled = isset($extra['disabled']) ? $extra['disabled'] : false;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
 					.common()->multi_select_box($name, t($values), $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
 			</div>
 		';
@@ -980,20 +1027,25 @@ class yf_form2 {
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$errors = common()->_get_error_messages();
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->check_box($name, t($values), $selected).'</div>
+				<div class="controls">'
+					.common()->check_box($name, t($values), $selected)
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -1013,25 +1065,30 @@ class yf_form2 {
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$errors = common()->_get_error_messages();
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
-		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
-		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
-		$flow_vertical = isset($extra["flow_vertical"]) ? $extra["flow_vertical"] : false;
-		$name_as_array = isset($extra["name_as_array"]) ? $extra["name_as_array"] : false;
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$type = isset($extra['type']) ? $extra['type'] : 2;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
+		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->multi_check_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array).'</div>
+				<div class="controls">'
+					.common()->multi_check_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array)
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -1051,24 +1108,29 @@ class yf_form2 {
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$errors = common()->_get_error_messages();
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
-		$type = isset($extra["type"]) ? $extra["type"] : 2;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
-		$translate = isset($extra["translate"]) ? $extra["translate"] : 0;
-		$flow_vertical = isset($extra["flow_vertical"]) ? $extra["flow_vertical"] : false;
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$type = isset($extra['type']) ? $extra['type'] : 2;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->select_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate).'</div>
+				<div class="controls">'
+					.common()->select_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate)
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -1088,25 +1150,30 @@ class yf_form2 {
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$errors = common()->_get_error_messages();
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
-		$years = isset($extra["years"]) ? $extra["years"] : '';
-		$show_what = isset($extra["show_what"]) ? $extra["show_what"] : "ymd";
-		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
-		$translate = isset($extra["translate"]) ? $extra["translate"] : 1;
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$years = isset($extra['years']) ? $extra['years'] : '';
+		$show_what = isset($extra['show_what']) ? $extra['show_what'] : "ymd";
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate).'</div>
+				<div class="controls">'
+					.common()->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate)
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -1126,23 +1193,28 @@ class yf_form2 {
 			$extra = array();
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$values = isset($extra["values"]) ? $extra["values"] : (array)$values; // Required
+		$errors = common()->_get_error_messages();
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra["desc"]) ? $extra["desc"] : ucfirst(str_replace("_", " ", $name));
-		$show_text = isset($extra["show_text"]) ? $extra["show_text"] : 1;
-		$add_str = isset($extra["add_str"]) ? $extra["add_str"] : '';
-		$translate = isset($extra["translate"]) ? $extra["translate"] : 1;
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'.common()->time_box2($name, $selected, $add_str, $show_text, $translate).'</div>
+				<div class="controls">'
+					.common()->time_box2($name, $selected, $add_str, $show_text, $translate)
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+				.'</div>
 			</div>
 		';
 		if ($this->_chained_mode) {
@@ -1356,16 +1428,20 @@ class yf_form2 {
 			$extra['box_name'] = 'methods_box';
 		}
 		$r = $replace ? $replace : $this->_replace;
+		$errors = common()->_get_error_messages();
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 // TODO: load methods select box right here, to be able to more easily embed this into other places
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">
 					<input type="text" id="'.$name.'" name="'.$name.'" value="'.$r[$name].'">
 					'.$r[$extra['box_name']].' <input type="button" class="btn btn-mini insert_selected_word" value="&lt;&lt;" title="'.t('Insert Selected Word').'">'
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
 			</div>
 		';
@@ -1398,16 +1474,20 @@ class yf_form2 {
 			$extra['box_name'] = 'stpls_box';
 		}
 		$r = $replace ? $replace : $this->_replace;
+		$errors = common()->_get_error_messages();
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 // TODO: load templates select box right here, to be able to more easily embed this into other places
 
 		$body = '
-			<div class="control-group">
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">
 					<input type="text" id="'.$name.'" name="'.$name.'" value="'.$r[$name].'">
 					'.$r[$extra['box_name']].' <input type="button" class="btn btn-mini insert_selected_word" value="&lt;&lt;" title="'.t('Insert Selected Word').'">'
 					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
 			</div>
 		';
@@ -1425,7 +1505,7 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 /*
-	<div class="control-group">
+	<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 		<label class="control-label" for="icon">{t(Item Icon)}</label>
 		<div class="controls">
 			<span class="icon_preview">{if("icon_src" ne "")}<img src="{icon_src}" />{/if}</span>

@@ -53,7 +53,7 @@ class yf_admin_groups {
 	function add() {
 		if (!empty($_POST)) {
 			if (empty($_POST["name"])) {
-				_re(t("Name is empty"));
+				_re("Name is empty", "name");
 			}
 			if (!common()->_error_exists()) {
 				db()->INSERT("admin_groups", array(
@@ -75,7 +75,6 @@ class yf_admin_groups {
 			"active"			=> $group_info["active"],
 			"active_box"		=> $this->_box("active", $group_info["active"]),
 			"back_link"			=> "./?object=".$_GET["object"],
-			"error_message"		=> _e(),
 			"for_edit"			=> 0,
 		);
 		return common()->form2($replace)
@@ -103,10 +102,10 @@ class yf_admin_groups {
 		if (!empty($_POST)) {
 			// Name could not be empty
 			if (empty($_POST["name"])) {
-				_re(t("Name is empty"));
+				_re("Name is empty", "name");
 			}
 			if (!$_POST["active"] && $_GET["id"] == 1) {
-				_re(t("You can not disable root admin group"));
+				_re("You can not disable root admin group", "active");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -132,7 +131,6 @@ class yf_admin_groups {
 			"active"			=> $group_info["active"],
 			"active_box"		=> $this->_box("active", $group_info["active"]),
 			"back_link"			=> "./?object=".$_GET["object"],
-			"error_message"		=> _e(),
 			"for_edit"			=> 1,
 		);
 		return common()->form2($replace)

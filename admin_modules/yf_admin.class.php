@@ -43,7 +43,7 @@ class yf_admin {
 			->btn_delete()
 			->btn("log_auth", "./?object=log_admin_auth_view&action=show_for_admin&id=%d")
 			->footer_link("Failed auth log", "./?object=log_admin_auth_fails_viewer")
-			->footer_link("Add", "./?object=".$_GET["object"]."action=add")
+			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
 			->render();
 	}
 
@@ -55,10 +55,10 @@ class yf_admin {
 			return "No id!";
 		}
 		$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_GET["id"]));
-		if (!empty($_POST)) {
+		if ($_POST) {
 			$_POST["login"] = preg_replace("/[^a-z0-9\_\-\.]/ims", "", $_POST["login"]);
 			if (!$_POST["login"]) {
-				_re("Login required!");
+				_re("Login required!", "login");
 			}
 			if (!common()->_error_exists()) {
 				$_new_pswd = $_POST["password"];
@@ -86,7 +86,6 @@ class yf_admin {
 		$DATA = _prepare_html($DATA);
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"error_message"	=> _e(),
 			"for_edit"		=> 1,
 			"login"			=> $DATA["login"],
 			"password"		=> "",
@@ -109,20 +108,19 @@ class yf_admin {
 			->box_with_link("group_box","Group","groups_link")
 			->active_box()
 			->info("add_date","Added")
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
 	*/
 	function add() {
-		if (!empty($_POST)) {
+		if ($_POST) {
 			$_POST["login"] = preg_replace("/[^a-z0-9\_\-\.]/ims", "", $_POST["login"]);
 			if (!$_POST["login"]) {
-				_re("Login required!");
+				_re("Login required!", "login");
 			}
 			if (!strlen($_POST["password"])) {
-				_re("Password required!");
+				_re("Password required!", "password");
 			}
 			if (!common()->_error_exists()) {
 				$_new_pswd = md5($_POST["password"]);
@@ -148,7 +146,6 @@ class yf_admin {
 		$_POST = _prepare_html($_POST);
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-			"error_message"	=> _e(),
 			"for_edit"		=> 0,
 			"login"			=> $_POST["login"],
 			"password"		=> $_POST["password"],
@@ -169,8 +166,7 @@ class yf_admin {
 			->text("go_after_login","Url after login")
 			->box_with_link("group_box","Group","groups_link")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

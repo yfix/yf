@@ -419,7 +419,7 @@ class yf_common {
 	* Raise user error
 	*/
 	function _raise_error ($text = "", $error_key = "") {
-		$text		= (string)$text;
+		$text		= t((string)$text);
 		$error_key	= (string)$error_key;
 		if (!$text) {
 			return false;
@@ -445,10 +445,20 @@ class yf_common {
 	/**
 	* Show formatted contents of user errors
 	*/
+	function _get_error_messages ($key = "") {
+		if (!$this->USER_ERRORS) {
+			return false;
+		}
+		return $key ? $this->USER_ERRORS[$key] : $this->USER_ERRORS;
+	}
+
+	/**
+	* Show formatted contents of user errors
+	*/
 	function _show_error_message ($cur_error_msg = "", $clear_error = true) {
 		// Prevent recursive display
 		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, "<!--YF_ERROR_MESSAGE_START-->")) {
-			return $cur_error_msg;
+			return t($cur_error_msg);
 		}
 		if (!isset($this->USER_ERRORS)) {
 			$this->USER_ERRORS = array();
