@@ -74,7 +74,7 @@ class yf_admin {
 				if (strlen($_POST["password"])) {
 					$sql["password"] = md5($_new_pswd);
 				}
-				db()->UPDATE("admin", $sql, "id=".intval($_GET["id"]));
+				db()->update("admin", $sql, "id=".intval($_GET["id"]));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 	 		
@@ -135,9 +135,8 @@ class yf_admin {
 					"active"		=> intval($_POST["active"]),
 					"add_date"		=> time(),
 				);
-				db()->INSERT("admin", $sql);
-				$NEW_ID = db()->INSERT_ID();
-				return js_redirect("./?object=".$_GET["object"].($NEW_ID ? "&action=edit&id=".$NEW_ID : ""));
+				db()->insert("admin", $sql);
+				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
 		if (!isset($_POST["active"])) {
