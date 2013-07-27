@@ -84,7 +84,7 @@ class yf_tpl_compile {
 			'/(\{execute\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\');'.$_php_end,
 
-			'/\{tip\(["\']{0,1}([\w\-\.]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ims'
+			'/\{tip\(["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ims'
 				=> $_php_start.'echo main()->_execute("graphics", "_show_help_tip", array("tip_id"=>\'$1\',"tip_type"=>\'$2\'));'.$_php_end,
 
 			'/\{itip\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ims'
@@ -104,12 +104,6 @@ class yf_tpl_compile {
 
 			'/\{cleanup\(\)\}(.*?)\{\/cleanup\}/ims'
 				=> $_php_start. 'echo trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')));'. $_php_end,
-
-			'/\{macro\(["\']{0,1}([\w\-\.]+)["\']{0,1}\)\}/i'
-				=> $_php_start. 'echo $this->_process_macro(\'$1\');'. $_php_end,
-
-			'/\{box\(["\']{0,1}([\w\-\.]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/i'
-				=> $_php_start. 'echo $this->_process_box(\'$1\',\'$2\');'. $_php_end,
 
    			'/\{ad\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ims'
 				=> $_php_start. 'echo main()->_execute("advertising", "_show", array("ad"=>\'$1\'));'. $_php_end,

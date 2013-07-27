@@ -533,7 +533,31 @@ class yf_table2 {
 
 	/**
 	*/
-	function checkbox($extra = array()) {
+	function check_box($extra = array()) {
+// TODO
+//		$form = $this->_init_form();
+//		return $this->func('id', function($field, $params, $row) { return $obj; } );
+	}
+
+	/**
+	*/
+	function select_box($extra = array()) {
+// TODO
+//		$form = $this->_init_form();
+//		return $this->func('id', function($field, $params, $row) { return $obj; } );
+	}
+
+	/**
+	*/
+	function radio_box($extra = array()) {
+// TODO
+//		$form = $this->_init_form();
+//		return $this->func('id', function($field, $params, $row) { return $obj; } );
+	}
+
+	/**
+	*/
+	function input($extra = array()) {
 // TODO
 //		$form = $this->_init_form();
 //		return $this->func('id', function($field, $params, $row) { return $obj; } );

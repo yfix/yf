@@ -109,9 +109,6 @@ class yf_graphics {
 
 	/**
 	* Show CSS
-	*
-	* @access	private
-	* @return	string	CSS style or code to load it
 	*/
 	function show_css () {
 		$body = "";
@@ -315,9 +312,6 @@ class yf_graphics {
 
 	/**
 	* Common javascript loader
-	*
-	* @access	private
-	* @return	string	Output
 	*/
 	function show_javascript () {
 		if (conf("no_js")) {
@@ -394,9 +388,6 @@ class yf_graphics {
 
 	/**
 	* Show site title
-	*
-	* @access	private
-	* @return	string	Formatted site title
 	*/
 	function show_site_title () {
 		if (defined("SITE_ADVERT_NAME")) {
@@ -438,9 +429,6 @@ class yf_graphics {
 
 	/**
 	* Show metatags
-	*
-	* @access	private
-	* @return	string	Meta tags
 	*/
 	function show_metatags () {
 		$charset = conf('charset');
@@ -486,9 +474,6 @@ class yf_graphics {
 
 	/**
 	* Display main "center" block contents
-	*
-	* @access	private
-	* @return	string	Block output
 	*/
 	function show_center () {
 		if ($this->USE_SE_KEYWORDS) {
@@ -533,10 +518,6 @@ class yf_graphics {
 
 	/**
 	* Show custom block contents
-	*
-	* @access	private
-	* @param	array	$input		Array with key "name" - name of block to show here
-	* @return	string	Output
 	*/
 	function _show_block ($input = array()) {
 		$block_name = $input["name"];
@@ -623,9 +604,6 @@ class yf_graphics {
 
 	/**
 	* Action to on denied block
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _action_on_block_denied ($block_name = "") {
 		if (MAIN_TYPE_USER && !main()->USER_ID && $block_name == "center_area") {
@@ -665,9 +643,6 @@ class yf_graphics {
 
 	/**
 	* Load array of blocks rules
-	*
-	* @access	private
-	* @return	array		Array of rules for blocks
 	*/
 	function _load_blocks_rules () {
 		// Prevent muliple calls
@@ -698,10 +673,6 @@ class yf_graphics {
 
 	/**
 	* Check rights for blocks
-	*
-	* @access	private
-	* @param	string	$block_name		Name of block to check
-	* @return	bool					Access result for given block
 	*/
 	function _check_block_rights ($block_id = 0, $OBJECT = "", $ACTION = "") {
 		if (empty($block_id) || empty($OBJECT)) {
@@ -806,9 +777,6 @@ class yf_graphics {
 
 	/**
 	* Task loader image
-	*
-	* @access	private
-	* @return	string	Code to load task manager
 	*/
 	function _show_task_loader_image () {
 		if (!main()->USE_TASK_MANAGER) {
@@ -830,10 +798,6 @@ class yf_graphics {
 
 	/**
 	* Old style Translation function
-	*
-	* @access	private
-	* @param	array	$input	Array of params passed from template
-	* @return	string	Output
 	*/
 	function translate ($input = "") {
 		if (in_array($input['extra'], array("ucfirst","ucwords","strtoupper","strtolower"))) {
@@ -847,9 +811,6 @@ class yf_graphics {
 
 	/**
 	* Welcome message method
-	*
-	* @access	private
-	* @return	string	Output
 	*/
 	function show_welcome () {
 		return _class("graphics_welcome", $this->SUB_MODULES_PATH)->_show_welcome();
@@ -857,9 +818,6 @@ class yf_graphics {
 
 	/**
 	* Welcome message for the admin section
-	*
-	* @access	private
-	* @return	string	Output
 	*/
 	function _show_welcome2 () {
 		return _class("graphics_welcome", $this->SUB_MODULES_PATH)->_show_welcome2();
@@ -867,9 +825,6 @@ class yf_graphics {
 
 	/**
 	* Show SE Keywords
-	*
-	* @access	private
-	* @return	string	Output
 	*/
 	function _show_se_keywords ($input = "") {
 		if (!$this->USE_SE_KEYWORDS) {
@@ -880,9 +835,6 @@ class yf_graphics {
 
 	/**
 	* Set SE Keywords
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _set_se_keywords () {
 		if (!$this->USE_SE_KEYWORDS) {
@@ -893,9 +845,6 @@ class yf_graphics {
 
 	/**
 	* Show menu
-	*
-	* @access	private
-	* @return	string	Formatted HTML menu contents
 	*/
 	function _show_menu ($input = array()) {
 		/*
@@ -1190,9 +1139,6 @@ class yf_graphics {
 
 	/**
 	* Show help tip block
-	*
-	* @access	private
-	* @return	string	Help tip code
 	*/
 	function _show_help_tip ($params = array()) {
 		$tip_id		= $params["tip_id"];
@@ -1200,28 +1146,40 @@ class yf_graphics {
 		if (empty($tip_id)) {
 			return false;
 		}
-		$replace = array(
+		if (!isset($this->_avail_tips)) {
+			$this->_avail_tips = (array)main()->get_data('tips');
+		}
+		$r = $params["replace"];
+		$legend = "";
+		$var = $tip_id[0] == "#" ? substr($tip_id, 1) : "";
+		if ($var && isset($r[$var])) {
+			$legend = $r[$var];
+		} elseif (!isset($this->_avail_tips[$tip_id])) {
+			$legend = $tip_id;
+		}
+		return tpl()->parse("system/help_tip", array(
 			"tip_id"	=> _prepare_html($tip_id),
 			"tip_type"	=> intval($tip_type),
-		);
-		return tpl()->parse("system/help_tip", $replace);
+			"legend"	=> _prepare_html($legend),
+		));
 	}
 
 	/**
 	* Show inline tip block
-	*
-	* @access	private
-	* @return	string	Inline tip code
 	*/
 	function _show_inline_tip ($params = array()) {
+		$params['tip_id'] = $params['text'];
+		return $this->_show_help_tip($params);
+/*
 		$text = isset($params["text"]) ? $params["text"] : strval($params);
 		if (empty($text)) {
 			return false;
 		}
-		$replace = array(
+		$r = $params["replace"];
+		return tpl()->parse("system/inline_tip", array(
 			"text"	=> $text,
-		);
-		return tpl()->parse("system/inline_tip", $replace);
+		));
+*/
 	}
 
 	/**
@@ -1261,9 +1219,6 @@ class yf_graphics {
 
 	/**
 	* Main $_GET tasks handler
-	*
-	* @access	public
-	* @return	string	$body	Output content
 	*/
 	function tasks($CHECK_IF_ALLOWED = false) {
 		// Singleton
@@ -1405,10 +1360,6 @@ class yf_graphics {
 
 	/**
 	* Send main headers
-	*
-	* @access	private
-	* @param	$content_length		int		Length of the content to output
-	* @return	void
 	*/
 	function _send_main_headers($content_length = 0) {
 		// Stop if some headers are sent

@@ -1,0 +1,9 @@
+<script type="text/javascript">
+$(function(){
+	$('.yf_tip').popover({
+		'trigger' : 'hover',
+		'delay'   : { 'show' : 100, 'hide' : 500 }
+	})
+})
+</script>
+

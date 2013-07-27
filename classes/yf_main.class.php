@@ -161,12 +161,7 @@ class yf_main {
 
 	/**
 	* Engine constructor
-	*
 	* Depends on type that is given to it initialize user section or administrative backend
-	*
-	* @access	public
-	* @param	string  $type	Initialization type ("user" or "admin")
-	* @return	void
 	*/
 	function __construct ($type = "user", $no_db_connect = false, $auto_init_all = false) {
 		if (!isset($this->_time_start)) {
@@ -225,9 +220,6 @@ class yf_main {
 
 	/**
 	* Fast init
-	*
-	* @access	private
-	* @return	void
 	*/
 	function try_fast_init () {
 		// Only for user section
@@ -309,9 +301,6 @@ class yf_main {
 
 	/**
 	* Initialization of required files
-	*
-	* @access	private
-	* @return	void
 	*/
 	function init_files () {
 		$include_files = array();
@@ -450,9 +439,6 @@ class yf_main {
 
 	/**
 	* FirePHP connection
-	*
-	* @access	private
-	* @return	void
 	*/
 	function init_firephp () {
 		if (!$this->FIREPHP_ENABLE) {
@@ -470,9 +456,6 @@ class yf_main {
 
 	/**
 	* Try to detect spider
-	*
-	* @access	private
-	* @return	void
 	*/
 	function spider_detection () {
 		if (!$this->SPIDERS_DETECTION) {
@@ -497,9 +480,6 @@ class yf_main {
 
 	/**
 	* Initialize session
-	*
-	* @access	private
-	* @return	void
 	*/
 	function init_session () {
 		if (isset($this->_session_init_complete) || $this->CONSOLE_MODE) {
@@ -591,9 +571,6 @@ class yf_main {
 
 	/**
 	* Initialization settings stored in the database
-	*
-	* @access	private
-	* @return	void
 	*/
 	function init_settings() {
 		$this->set_default_settings();
@@ -634,9 +611,6 @@ class yf_main {
 
 	/**
 	* Default settings container
-	*
-	* @access	private
-	* @return	void
 	*/
 	function set_default_settings() {
 		$lang = "en"; // default lang
@@ -687,9 +661,6 @@ class yf_main {
 
 	/**
 	* Starting language engine
-	*
-	* @access	private
-	* @return	void
 	*/
 	function init_locale () {
 		if ($this->_get('no_lang') || conf('no_locale')) {
@@ -700,9 +671,6 @@ class yf_main {
 
 	/**
 	* Init authentication
-	*
-	* @access	public
-	* @return	void
 	*/
 	function init_auth () {
 		if (defined("SITE_DEFAULT_PAGE")) {
@@ -741,10 +709,6 @@ class yf_main {
 
 	/**
 	* Include module file
-	*
-	* @access	private
-	* @param	string  $path_to_module		Path to the file to include
-	* @return	void
 	*/
 	function include_module($path_to_module = "", $is_required = false) {
 		if (DEBUG_MODE) {
@@ -775,14 +739,7 @@ class yf_main {
 
 	/**
 	* Module class loader
-	*
 	* Initialize new class object or return reference to existing one
-	*
-	* @access	public
-	* @param	string  $class_name		Name of the class to init
-	* @param	string  $custom_path	Custom path to the loading module (must be with "/" at the end)
-	* @param	mixed	$params			Params for the target class constructor
-	* @return	mixed					Reference to the loaded module or false otherwise
 	*/
 	function &init_class ($class_name, $custom_path = "", $params = "") {
 		if (empty($class_name)) {
@@ -839,10 +796,6 @@ class yf_main {
 
 	/**
 	* Load module file
-	*
-	* @access	private
-	* @param	string  $path_to_module		Path to the file to include
-	* @return	string	Class name that was included
 	*/
 	function load_class_file($class_name = "", $custom_path = "", $force_storage = "") {
 		if (empty($class_name) || $class_name == "main") {
@@ -979,9 +932,6 @@ class yf_main {
 
 	/**
 	* Main $_GET tasks handler
-	*
-	* @access	public
-	* @return	string	$body	Output content
 	*/
 	function tasks($CHECK_IF_ALLOWED = false) {
 		if ($this->CONSOLE_MODE) {
@@ -1009,14 +959,6 @@ class yf_main {
 
 	/**
 	* Try to return class method output
-	*
-	* @access	public
-	* @param	$class_name		string	Module name
-	* @param	$custom_path	string  Custom path to the loading module (must be with "/" at the end)
-	* @param	$method_name	string	Method name
-	* @param	$method_params	mixed	Params need to be passed to the module (string or array)
-	* @param	$tpl_name		string	Template name this method is called from
-	* @return	string	Output content of the found module
 	*/
 	function call_class_method ($class_name = "", $custom_path = "", $method_name = "", $method_params = "", $tpl_name = "", $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = "") {
 		// Check required params
@@ -1080,13 +1022,6 @@ class yf_main {
 
 	/**
 	* Try to return class method output (usually from templates)
-	*
-	* @access	private
-	* @param	$class_name		string	Module name
-	* @param	$method_name	string	Method name
-	* @param	$method_params	mixed	Params need to be passed to the module (string or array)
-	* @param	$tpl_name		string	Template name this method is called from
-	* @return	string	Output content of the found module
 	*/
 	function _execute ($class_name = "", $method_name = "", $method_params = "", $tpl_name = "", $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = "") {
 		if (DEBUG_MODE) {
@@ -1163,9 +1098,6 @@ class yf_main {
 
 	/**
 	* Set module properties from project conf array
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _set_module_conf($module_name = "", &$MODULE_OBJ, $params = "") {
 		// Stop here if project config not set or some other things missing
@@ -1266,9 +1198,6 @@ class yf_main {
 
 	/**
 	* Load common data handlers array from file
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _load_data_handlers () {
 		if (conf("data_handlers")) {
@@ -1312,9 +1241,6 @@ class yf_main {
 
 	/**
 	* Search for sites configuration overrides (in subfolder ./sites/)
-	*
-	* @access	private
-	* @return	array
 	*/
 	function _find_site($sites_dir = "") {
 		if (empty($sites_dir)) {
@@ -1349,9 +1275,6 @@ class yf_main {
 	* Trying to find site matching current environment
 	* Examples: 127.0.0.1  192.168.  192.168.1.5  :443  :81  example.com  .example.com  .dev  .example.dev  .example.dev:443  .example.dev:81
 	*	 subdomain. subdomain.:443 sub1.sub2. sub1.sub2.:443
-	*
-	* @access	private
-	* @return	string
 	*/
 	function _find_site_path_best_match($sites, $server_ip, $server_port, $server_host) {
 		$sip = explode(".", $server_ip);
@@ -1386,9 +1309,6 @@ class yf_main {
 
 	/**
 	* Check and try to fix required constants
-	*
-	* @access	private
-	* @return	void
 	*/
 	function fix_required_constants() {
 		// Save current working directory (to restore it later when execute shutdown functions)
@@ -1544,9 +1464,6 @@ class yf_main {
 
 	/**
 	* Try to set required PHP runtime params
-	*
-	* @access	private
-	* @return	void
 	*/
 	function set_required_php_params() {
 		error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
@@ -1569,10 +1486,6 @@ class yf_main {
 
 	/**
 	* Send main headers
-	*
-	* @access	private
-	* @param	$content_length		int		Length of the content to output
-	* @return	void
 	*/
 	function _send_main_headers($content_length = 0) {
 		$G_OBJ = $this->init_class("graphics", "classes/");
@@ -1581,9 +1494,6 @@ class yf_main {
 
 	/**
 	* Recursive method for stripping quotes from given data (string or array)
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _strip_quotes_recursive($mixed) {
 		if (is_array($mixed)) {
@@ -1595,9 +1505,6 @@ class yf_main {
 
 	/**
 	* Init user info
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _init_cur_user_info(&$OBJ) {
 		if (in_array($this->_get("object"), (array)$this->_auto_info_skip_modules)) {
@@ -1626,11 +1533,6 @@ class yf_main {
 
 	/**
 	* Evaluate given code as PHP code
-	*
-	* @access	private
-	* @param	$code_text	string	Text need to be eval'ed
-	* @param	$as_string	boolean	Switch between interpret as single string or whole expression
-	* @return	string	Error message with template line number
 	*/
 	function _eval_code ($code_text = "", $as_string = 1) {
 		return eval("return ".($as_string ? "\"".$code_text."\"" : $code_text)." ;");
@@ -1638,9 +1540,6 @@ class yf_main {
 
 	/**
 	* Adds code to execute on shutdown
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _add_shutdown_code($code = "") {
 		if (!empty($code)) {
@@ -1650,9 +1549,6 @@ class yf_main {
 
 	/**
 	* Framework destructor handler
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _framework_destruct() {
 		// Restore startup working directory
@@ -1674,9 +1570,6 @@ class yf_main {
 
 	/**
 	* PHP code compression
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _pack_php_code () {
 		if (!$this->AUTO_PACK_PHP_CODE || MAIN_TYPE_ADMIN) {

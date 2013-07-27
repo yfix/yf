@@ -131,7 +131,7 @@ $(function(){
 
 	$('.yf_tip').popover({
 		'trigger' : 'hover',
-		'delay'   : { 'show' : 100, 'hide' : 500 }
+		'delay'   : { 'show' : 0, 'hide' : 0 }
 	})
 });
 </script>

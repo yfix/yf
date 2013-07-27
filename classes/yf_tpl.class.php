@@ -4,7 +4,7 @@
 * Stadard Framework template engine
 *
 * @package	  YF
-* @author	   YFix Team <yfix.dev@gmail.com>
+* @author	  YFix Team <yfix.dev@gmail.com>
 * @version	  1.0
 */
 class yf_tpl {
@@ -59,12 +59,12 @@ class yf_tpl {
 			=> 'trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')))',
 		// Display help tooltip
 		// EXAMPLE:	 {tip('register.login')} or {tip('form.some_field',2)}
-		'/\{tip\(["\']{0,1}([\w\-\.]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
-			=> 'main()->_execute("graphics", "_show_help_tip", array("tip_id"=>"$1","tip_type"=>"$2"))',
+		'/\{tip\(["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
+			=> 'main()->_execute("graphics", "_show_help_tip", array("tip_id"=>"$1","tip_type"=>"$2","replace"=>$replace))',
 		// Display help tooltip inline
 		// EXAMPLE:	 {itip('register.login')}
 		'/\{itip\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
-			=> 'main()->_execute("graphics", "_show_inline_tip", array("text"=>"$1"))',
+			=> 'main()->_execute("graphics", "_show_inline_tip", array("text"=>"$1","replace"=>$replace))',
 		// Display user level single (inline) error message by its name (keyword)
 		// EXAMPLE:	 {e('login')} or {user_error('name_field')}
 		'/\{(e|user_error)\(["\']{0,1}([\w\-\.]+)["\']{0,1}\)\}/imse'
@@ -197,9 +197,6 @@ class yf_tpl {
 
 	/**
 	* Constructor
-	*
-	* @access   public
-	* @return   void
 	*/
 	function __construct () {
 		if (defined("IS_FRONT")) {
@@ -256,10 +253,7 @@ class yf_tpl {
 	}
 
 	/**
-	* Hook "_init"
-	*
-	* @access   private
-	* @return   void
+	* Framework constructor
 	*/
 	function _init () {
 		// Directory where themes are stored
@@ -323,9 +317,6 @@ class yf_tpl {
 
 	/**
 	* Global scope tags
-	*
-	* @access   public
-	* @return   void
 	*/
 	function _init_global_tags () {
 		$data = array(
@@ -344,11 +335,7 @@ class yf_tpl {
 
 	/**
 	* Initialization of the main content
-	*
 	* Throws one "echo" at the end
-	*
-	* @access   public
-	* @return   void
 	*/
 	function init_graphics () {
 		$init_type = MAIN_TYPE;
@@ -462,16 +449,13 @@ class yf_tpl {
 			// Throw generated output to user
 			echo $output;
 		}
-		// Only while debugging (for non-standard content)
 		if (main()->NO_GRAPHICS && DEBUG_MODE) {
 			common()->show_debug_info();
 		}
 		// Output cache for "no graphics" content
-		// Put output into cache
 		if (main()->NO_GRAPHICS && main()->OUTPUT_CACHING && $init_type == "user" && $_SERVER["REQUEST_METHOD"] == "GET") {
 			_class('output_cache')->_put_page_to_output_cache(ob_get_contents());
 		}
-		// Do log execution info (if needed)
 		if ($this->LOG_EXEC_INFO) {
 			common()->log_exec();
 		}
@@ -484,9 +468,6 @@ class yf_tpl {
 
 	/**
 	* Try to run center block module/method if allowed
-	*
-	* @private
-	* @return   string
 	*/
 	function prefetch_center ($CHECK_IF_ALLOWED = false) {
 		// Skip security checks for console mode
@@ -498,10 +479,6 @@ class yf_tpl {
 
 	/**
 	* Process output filters for the given text
-	*
-	* @private
-	* @param	string  Text needed to apply filters
-	* @return   string
 	*/
 	function _apply_output_filters ($text = "") {
 		foreach ((array)$this->_OUTPUT_FILTERS as $cur_filter) {
@@ -514,12 +491,7 @@ class yf_tpl {
 
 	/**
 	* Initialization of the main template in the theme (could be overwritten to match design)
-	*
 	* Return contents of the main template
-	*
-	* @private
-	* @param	$tpl_name   string  Desired template name (you can change it in method code by some conditions)
-	* @return   string
 	*/
 	function _init_main_stpl ($tpl_name = "") {
 		return $this->parse($tpl_name);
@@ -527,12 +499,6 @@ class yf_tpl {
 
 	/**
 	* Simple template parser (*.stpl)
-	*
-	* @public
-	* @param	string  Name of the template to process
-	* @param	array   Array of pairs "match => replace"
-	* @param	array   Array of params
-	* @return   mixed   Return contents of the processed template or false if it doesn't exists
 	*/
 	function parse($name, $replace = array(), $params = array()) {
 		$name = strtolower($name);
@@ -711,11 +677,6 @@ class yf_tpl {
 
 	/**
 	* Wrapper to parse given template string
-	*
-	* @param	$name		   string  Name of the template to process
-	* @param	$replace		array   Array of pairs "match => replace"
-	* @param	$string		 string  Force to use this string for processing
-	* @return   mixed   Return processed string
 	*/
 	function parse_string($name = "", $replace = array(), $string = "", $params = array()) {
 		if (!strlen($string)) {
@@ -727,10 +688,6 @@ class yf_tpl {
 
 	/**
 	* Replace "{execute" patterns
-	*
-	* @param	$string	 string  String where need to replace
-	* @param	$name	   string  Name of the template to process
-	* @return   mixed   Return processed string
 	*/
 	function _process_executes($string, $replace = array(), $name = "", $params = array()) {
 		if (false === strpos($string, "{execute(") || empty($string)) {
@@ -741,10 +698,6 @@ class yf_tpl {
 
 	/**
 	* Replace standard patterns
-	*
-	* @param	$string	 string  String where need to replace
-	* @param	$name	   string  Name of the template to process
-	* @return   mixed   Return processed string
 	*/
 	function _replace_std_patterns($string, $name = "", $replace = array(), $params = array()) {
 		return preg_replace(array_keys($this->_STPL_PATTERNS), str_replace("{tpl_name}", $name.$this->_STPL_EXT, array_values($this->_STPL_PATTERNS)), $string, --$this->STPL_REPLACE_LIMIT > 0 ? $this->STPL_REPLACE_LIMIT : -1);
@@ -752,11 +705,6 @@ class yf_tpl {
 
 	/**
 	* Process "catch" template statements
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @param	array   Pairs "match => replace"
-	* @return   string  Processed text
 	*/
 	function _process_catches ($string = "", &$replace, $stpl_name = "") {
 		if (false === strpos($string, "{/catch}") || empty($string)) {
@@ -779,23 +727,27 @@ class yf_tpl {
 
 	/**
 	* Check if template exists (simple wrapper for the "_get_template_file")
-	*
-	* @access   private
-	* @param	$stpl_name	  string  Template name to get
-	* @param	$get_from_db	boolean Switch between template from db source or from files source
-	* @return   bool		Return result if template exists
 	*/
 	function _stpl_exists ($stpl_name = "", $get_from_db = false) {
 		return (bool)$this->_get_template_file($stpl_name, $get_from_db, 1);
 	}
 
 	/**
+	* Alias
+	*/
+	function exists ($stpl_name = "", $get_from_db = false) {
+		return (bool)$this->_stpl_exists($stpl_name, $get_from_db);
+	}
+
+	/**
+	* Alias
+	*/
+	function get ($file_name = "", $get_from_db = false, $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
+		return $this->_get_template_file($file_name, $get_from_db, $JUST_CHECK_IF_EXISTS, $RETURN_TEMPLATE_PATH);
+	}
+
+	/**
 	* Read template file contents (or get it from DB)
-	*
-	* @access   private
-	* @param	$file_name	  string  Template name to get
-	* @param	$get_from_db	boolean Switch between template from db source or from files source
-	* @return   string  Return template contetns
 	*/
 	function _get_template_file ($file_name = "", $get_from_db = false, $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
 		$string	 = false;
@@ -999,18 +951,11 @@ class yf_tpl {
 
 	/**
 	* Conditional execution
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @param	array   Pairs "match => replace"
-	* @return   string  Processed text
 	*/
 	function _process_conditions ($string = "", $replace = array(), $stpl_name = "") {
-		// Fast check for the patterns, also check for the resurse level
 		if (false === strpos($string, "{/if}") || empty($string)) {
 			return $string;
 		}
-		// Start processing
 		if (!preg_match_all($this->_PATTERN_IF, $string, $m)) {
 			return $string;
 		}
@@ -1053,12 +998,12 @@ class yf_tpl {
 		}
 		$string = str_replace("{else}", "<"."?p"."hp } else { ?".">", $string);
 		$string = str_replace("{/if}", "<"."?p"."hp } ?".">", $string);
-		// Evaluate and catch result
+
 		ob_start();
 		$result = eval("?>".$string."<"."?p"."hp return 1;");
 		$string = ob_get_contents();
 		ob_clean();
-		// Throw warning if result is wrong
+
 		if (!$result) {
 			trigger_error("STPL: ERROR: wrong condition in template \"".$stpl_name."\"", E_USER_WARNING);
 		}
@@ -1072,7 +1017,6 @@ class yf_tpl {
 		if (!preg_match($this->_PATTERN_MULTI_COND, $cond_text, $m)) {
 			return "";
 		}
-		// Process matches
 		$part_left	  = $this->_prepare_cond_text($m[1], $replace);
 		$cur_operator   = $this->_cond_operators[strtolower($m[2])];
 		$part_right	 = $m[3];
@@ -1090,15 +1034,9 @@ class yf_tpl {
 
 	/**
 	* Prepare text for "_process_conditions" method
-	*
-	* @access   private
-	* @param	string  Text to process (usually left or right part of condition)
-	* @param	array   Pairs "match => replace"
-	* @return   string  Processed text
 	*/
 	function _prepare_cond_text ($cond_text = "", $replace = array()) {
 		$prepared_array = array();
-		// Try to prepare left part
 		foreach (explode(" ", str_replace("\t","",$cond_text)) as $tmp_k => $tmp_v) {
 			$res_v = "";
 			// Value from $replace array (DO NOT replace "array_key_exists()" with "isset()" !!!)
@@ -1148,18 +1086,11 @@ class yf_tpl {
 
 	/**
 	* Cycled execution
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @param	array   Pairs "match => replace"
-	* @return   string  Processed text
 	*/
 	function _process_cycles ($string = "", $replace = array(), $stpl_name = "") {
-		// Fast check for the patterns
 		if (false === strpos($string, "{/foreach}") || empty($string)) {
 			return $string;
 		}
-		// Start processing and quick exit if nothing found
 		if (!preg_match_all($this->_PATTERN_FOREACH, $string, $m)) {
 			return $string;
 		}
@@ -1171,7 +1102,6 @@ class yf_tpl {
 			}
 			$non_array_replace[$k5] = $v5;
 		}
-		// Process matches
 		foreach ((array)$m[0] as $match_id => $matched_string) {
 			$output		 = "";
 			$sub_array	  = array();
@@ -1181,7 +1111,6 @@ class yf_tpl {
 			$sub_template   = str_replace("#.", $key_to_cycle.".", $sub_template);
 			// Needed here for graceful quick exit from cycle
 			$a_for[$matched_string] = "";
-			// Skip empty keys
 			if (empty($key_to_cycle)) {
 				continue;
 			}
@@ -1192,7 +1121,6 @@ class yf_tpl {
 			} elseif (!isset($replace[$key_to_cycle]) && is_numeric($key_to_cycle)) {
 				$sub_array = range(1, $key_to_cycle);
 			}
-			// Skip empty arrays
 			if (empty($sub_array)) {
 				continue;
 			}
@@ -1256,11 +1184,6 @@ class yf_tpl {
 
 	/**
 	* Wrapper for "_PATTERN_INCLUDE", allows you to include stpl, optionally pass $replace params to it
-	*
-	* @access   private
-	* @param	string  STPL name to include
-	* @param	string  params like "var1=value1;var2=value2"
-	* @return   string  Processed text
 	*/
 	function _include_stpl ($stpl_name = "", $params = "") {
 		$replace = array();
@@ -1278,9 +1201,6 @@ class yf_tpl {
 
 	/**
 	* Registers custom function to be used in templates
-	*
-	* @param string $function the name of the template function
-	* @param string $function_impl the name of the PHP function to register
 	*/
 	function register_output_filter($callback_impl, $filter_name = "") {
 		if (empty($filter_name)) {
@@ -1291,10 +1211,6 @@ class yf_tpl {
 
 	/**
 	* Simple cleanup (compress) output
-	*
-	* @access   private
-	* @param	string  Text to cleanup (compress)
-	* @return   string  Processed text
 	*/
 	function _simple_cleanup_callback ($text = "") {
 		if (DEBUG_MODE) {
@@ -1312,10 +1228,6 @@ class yf_tpl {
 
 	/**
 	* Custom text replacing method
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @return   string  Processed text
 	*/
 	function _custom_replace_callback ($text = "") {
 		return _class("custom_meta_info")->_process($text);
@@ -1323,10 +1235,6 @@ class yf_tpl {
 
 	/**
 	* Replace method for "IFRAME in center" mode
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @return   string  Processed text
 	*/
 	function _replace_for_iframe_callback ($text = "") {
 		return module("rewrite")->_replace_links_for_iframe($text);
@@ -1334,10 +1242,6 @@ class yf_tpl {
 
 	/**
 	* Rewrite links callback method
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @return   string  Processed text
 	*/
 	function _rewrite_links_callback ($text = "") {
 		return module("rewrite")->_rewrite_replace_links($text);
@@ -1345,10 +1249,6 @@ class yf_tpl {
 
 	/**
 	* Clenup HTML output with Tidy
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @return   string  Processed text
 	*/
 	function _tidy_cleanup_callback ($text = "") {
 		if (!class_exists('tidy') || !extension_loaded('tidy')) {
@@ -1376,10 +1276,6 @@ class yf_tpl {
 
 	/**
 	* Custom filter (Inherit this method and customize anything you want)
-	*
-	* @access   private
-	* @param	string  Text to process
-	* @return   string  Processed text
 	*/
 	function _custom_filter ($stpl_name = "", &$replace) {
 		if ($stpl_name == "home_page/main") {
@@ -1387,32 +1283,6 @@ class yf_tpl {
 			//print_r($replace);
 			//$replace["recent_ads"] = "";
 		}
-	}
-
-	/**
-	* Display common box
-	*/
-	function _process_box ($name = "", $params = "") {
-		// Try to process method params (string like attrib1=value1;attrib2=value2)
-		if (is_string($params) && strlen($params)) {
-			$tmp_params = explode(";", $params);
-			$params	 = array();
-			// Convert params string into array
-			foreach ((array)$tmp_params as $v) {
-				$attrib_name = "";
-				$attrib_value = "";
-				if (false !== strpos($v, "=")) {
-					list($attrib_name, $attrib_value) = explode("=", trim($v));
-				}
-				$params[trim($attrib_name)] = trim($attrib_value);
-			}
-		}
-		// Ability to override name in params
-		if (empty($params["name"])) {
-			$params["name"] = $name;
-		}
-		$params["selected"] = $_POST[$params["name"]];
-		return common()->box($params);
 	}
 
 	/**

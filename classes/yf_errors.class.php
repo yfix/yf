@@ -387,9 +387,6 @@ class yf_errors {
 
 	/**
 	* Track user error message
-	*
-	* @param	string
-	* @return	void
 	*/
 	function _prepare_env () {
 		$this->ENV_ARRAYS = strtoupper($this->ENV_ARRAYS);

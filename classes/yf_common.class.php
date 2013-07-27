@@ -668,10 +668,6 @@ class yf_common {
 
 	/**
 	* Encode given address to prevent spam-bots harvesting
-	* 
-	* @access	public
-	* @param	string	an email address to encode
-	* @return	string
 	*/
 	function encode_email($addr = "", $as_html_link = false) {
 		return _class("html", COMMON_LIB)->encode_email($addr, $as_html_link);
@@ -690,13 +686,6 @@ class yf_common {
 
 	/**
 	* Search template for the string that caused an error
-	*
-	* @access	private
-	* @param	$class_name		string	Module name
-	* @param	$method_name	string	Method name
-	* @param	$method_params	mixed	Params need to be passed to the module (string or array)
-	* @param	$tpl_name		string	Template name this method is called from
-	* @return	string	Error message with template line number
 	*/
 	function _search_stpl_line ($class_name, $method_name, $method_params = "", $tpl_name) {
 		// Search in site
@@ -717,11 +706,6 @@ class yf_common {
 
 	/**
 	* Wrapper for translation method (for call from templates or other)
-	*
-	* @access	private
-	* @param	$string string	Text to translate
-	* @param	$args	string	(string like attrib1=value1;attrib2=value2) Optional array of items to replace after translation
-	* @return string Translation result
 	*/
 	function _translate_for_stpl ($string = "", $args_from_tpl = "", $lang = "") {
 		$args = array();
@@ -746,10 +730,6 @@ class yf_common {
 
 	/**
 	* Replace paths to images
-	*
-	* @access	private
-	* @param	$string	string	Text to process
-	* @return	string	Text with replaced paths
 	*/
 	function _replace_images_paths ($string = "") {
 		$web_path		= (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH);
@@ -767,7 +747,6 @@ class yf_common {
 
 	/**
 	* Get file using HTTP request (grabbed from drupal 5.1)
-	*
 	*/
 	function http_request ($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {
 		return _class("remote_files", COMMON_LIB)->http_request($url, $headers, $method, $data, $retry);
@@ -775,7 +754,6 @@ class yf_common {
 
 	/**
 	* Get file using HTTP request (grabbed from drupal 5.1)
-	*
 	*/
 	function get_whois_info ($url, $server = "") {
 		return _class("other_common", COMMON_LIB)->get_whois_info ($url, $server);
