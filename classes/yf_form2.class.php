@@ -1142,13 +1142,16 @@ class yf_form2 {
 
 	/**
 	*/
-	function date_box($name, $values, $extra = array(), $replace = array()) {
+	function date_box($name, $values = array(), $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
+//		if (!$values) {
+//			$values = array();
+//		}
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
 		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
@@ -1185,7 +1188,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function time_box($name, $values, $extra = array(), $replace = array()) {
+	function time_box($name, $values = array(), $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -1226,7 +1229,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function datetime_box($name, $values, $extra = array(), $replace = array()) {
+	function datetime_box($name, $values = array(), $extra = array(), $replace = array()) {
 		if (!isset($extra['show_what'])) {
 			$extra['show_what'] = 'ymdhis';
 		}
@@ -1359,43 +1362,66 @@ class yf_form2 {
 
 	/**
 	*/
-	function birth_box($name, $values, $extra = array(), $replace = array()) {
+	function birth_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'birth';
+		}
 // TODO: customize for birth input needs
 		return $this->date_box($name, $values, $extra, $replace);
 	}
 
 	/**
 	*/
-	function country_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function country_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'country';
+		}
 		$countries = main()->get_data('countries');
+		return $this->select_box($name, $countries, $extra, $replace);
 // TODO: nice select box with data
 	}
 
 	/**
 	*/
-	function region_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function region_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'region';
+		}
 		$regions = main()->get_data('regions');
+		return $this->select_box($name, $regions, $extra, $replace);
 // TODO: nice select box with data
 	}
 
 	/**
 	*/
-	function currency_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function currency_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'currency';
+		}
 		$currencies = main()->get_data('currencies');
+		return $this->select_box($name, $currencies, $extra, $replace);
 // TODO: nice select box with data
 	}
 
 	/**
 	*/
-	function language_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'language';
+		}
 		$languages = main()->get_data('languages');
+		return $this->select_box($name, $languages, $extra, $replace);
 // TODO: nice select box with data
 	}
 
 	/**
 	*/
-	function timezone_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'timezone';
+		}
 		$timezones = main()->get_data('timezones');
+		return $this->select_box($name, $timezones, $extra, $replace);
 // TODO: nice select box with data
 	}
 
@@ -1404,11 +1430,12 @@ class yf_form2 {
 	*/
 	function image($name, $desc = '', $extra = array(), $replace = array()) {
 // TODO: show already uploaded image, link to delete it, input to upload new
+		return $this;
 	}
 
 	/**
 	*/
-	function method_select_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -1454,7 +1481,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function template_select_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -1500,7 +1527,10 @@ class yf_form2 {
 
 	/**
 	*/
-	function icon_select_box($name, $desc = '', $extra = array(), $replace = array()) {
+	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'icon';
+		}
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
