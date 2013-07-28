@@ -1,4 +1,0 @@
-	<tr>
-		<td width="100%">{our_site_name}</td>
-		<td>&nbsp;<nobr>{check_result}</nobr></td>
-	</tr>

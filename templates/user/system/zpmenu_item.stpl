@@ -1,4 +1,0 @@
-<li>
-	{if("type_id" ne 3)}<a href="{link}">{/if}{name}{if("type_id" ne 3)}</a>{/if}<br />
-{if("sub_items" ne "")}<ul>{sub_items}</ul>{/if}
-</li>
