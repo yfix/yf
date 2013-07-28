@@ -132,13 +132,15 @@ class yf_locale_editor {
 		}
 		list($total_vars) = db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('locale_vars')."");
 		foreach ((array)$this->_cur_langs_array as $A) {
+			$tr_stats = !empty($total_vars) && !empty($tr_vars[$A["locale"]]) ? round(100 * $tr_vars[$A["locale"]] / $total_vars, 2) : 0;
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
 				"id"			=> intval($A["id"]),
 				"code"			=> _prepare_html($A["locale"]),
 				"name"			=> _prepare_html($A["name"]),
 				"charset"		=> _prepare_html($A["charset"]),
-				"tr_stats"		=> !empty($total_vars) && !empty($tr_vars[$A["locale"]]) ? round(100 * $tr_vars[$A["locale"]] / $total_vars, 2) : 0,
+				"tr_stats"		=> $tr_stats,
+				"tr_stats_int"	=> intval($tr_stats),
 				"tr_vars"		=> intval($tr_vars[$A["locale"]]),
 				"total_vars"	=> intval($total_vars),
 				"active"		=> intval($A["active"]),
