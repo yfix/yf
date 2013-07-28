@@ -3,15 +3,15 @@
 <style>
 	.portlet { padding: 15px; margin-bottom: 20px; border: 1px solid #dddddd; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
 	.portlet-header { padding: 10px 15px; margin: -15px -15px 15px; border-bottom: 1px solid #dddddd; border-top-right-radius: 3px; border-top-left-radius: 3px; }
-	.portlet-content { padding: 9px 14px; }
+	.portlet-content { }
 	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
 </style>
 <script>
 $(function() {
-    $( ".column" ).sortable({
-      connectWith: ".column"
+    $(".column").sortable({
+		connectWith: ".column"
     });
-    $( ".column" ).disableSelection();
+    $(".column").disableSelection();
 });
 </script>
 

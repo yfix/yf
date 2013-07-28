@@ -35,6 +35,12 @@ class yf_admin_home {
 
 	/**
 	*/
+	function _hook_side_column() {
+		return tpl()->parse(__CLASS__.'/new_home_side');
+	}
+
+	/**
+	*/
 	function show_old () {
 		// Path to project.conf.php
 		$proj_conf_path = INCLUDE_PATH."project_conf.php";

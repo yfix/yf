@@ -1435,7 +1435,16 @@ class yf_common {
 			return $obj->$method();
 		}	
 	}
-
+	
+	/**
+	*/
+	function show_side_column_hooked(){
+		$obj = module($_GET["object"]);
+		$method = "_hook_side_column";
+		if (method_exists($obj, $method)) {
+			return $obj->$method();
+		}	
+	}
 
 	/**
 	* Sphinx-related

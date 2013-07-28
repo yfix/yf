@@ -1,3 +1,4 @@
 <div class="left_area">
 	{execute(common,show_left_filter)}
+	{execute(common,show_side_column_hooked)}
 </div>
