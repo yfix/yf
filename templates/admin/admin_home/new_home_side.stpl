@@ -1,4 +1,5 @@
 <div class="portlets-side-column">
+	<h4 align="center">Available widgets <a href="{edit_exit_link}" class="btn btn-mini">{t(Save layout)}</a></h4>
 	<div class="column span4">
 	  <div class="portlet">
 	    <div class="portlet-header">Feeds</div>
