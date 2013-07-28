@@ -1,4 +1,0 @@
-<input name="site[{site_id}]" {check} type="checkbox" value="1" /> 
-&nbsp;<a href="{site_url}">{site_name}</a> 
-<a href="{links_url}">Links</a>
-<a href="{banners_url}">Banners</a><br /> 

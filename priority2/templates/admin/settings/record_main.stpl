@@ -1,4 +1,0 @@
-<p>
-	<label>{item}</label>
-	{value}
-</p>

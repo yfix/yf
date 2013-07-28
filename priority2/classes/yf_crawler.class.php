@@ -28,7 +28,6 @@ class yf_crawler {
 		}
 // TODO: ability to change it dynamically
 		$GLOBALS['_CRAWLER']['WEB_PATH'] = WEB_PATH;
-//		$GLOBALS['_CRAWLER']['WEB_PATH'] = "http://of.dev/bereginya-rodu.org/";
 
 		$this->DIR_OBJ = main()->init_class("dir", "classes/");
 

@@ -1,9 +1,0 @@
-<h3>Delete Link</h3>
-
-	<form action="{form_action}" method="post">
-		<p align="center">
-			Are you sure you want to delete <b>{title}</b>?<br />
-			<input type="submit" name="go" value="Yes">&nbsp;&nbsp;&nbsp;
-			<input type="button" onclick="window.location.href='{cancel_url}'" value="Cancel">
-		</p>
-	</form>

@@ -1,9 +1,0 @@
-	<tr class="{bg_class}">
-		<td height="25" style="padding-left:10px;">{name}</td>
-		<td><a href="mailto:{email}">{email}</a></td>
-		<td>{password}</td>
-		<td style="padding-right:10px;" nowrap>{date}</td>
-		<td><a href="{login_url}">login</a></td>
-		<td><a href="{edit_url}">edit</a></td>
-		<td><a href="{del_url}" onclick="return confirm('Are you sure?')">delete</a></td>
-	</tr>

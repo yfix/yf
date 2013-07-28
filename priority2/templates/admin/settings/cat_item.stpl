@@ -1,5 +1,0 @@
-<tr>
-	<td class="td"><input type="text" name="name_{id}" value="{name}"></td>
-	<td class="td">{order}</td>
-	<td class="td"><input type="button" value="{t(delete)}" onclick="if(confirm('{t(are_you_sure)}?')) window.location.href='{del_link}'"></td>
-</tr>

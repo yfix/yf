@@ -1,6 +1,0 @@
-<div align="center">
-<form action="{form_action}" method="post">
-	{t(Settings Category)}: {select_box}
-</form>
-</div>
-<br /><hr /><br />
