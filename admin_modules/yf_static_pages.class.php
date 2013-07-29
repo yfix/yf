@@ -209,12 +209,13 @@ class yf_static_pages {
 			return $meta;
 		}
 		$config = $params['configurable'];
-		return common()->table2("SELECT * FROM ".db('static_pages'). (in_array($config['order_by'], $meta['configurable']['order_by']) ? ' ORDER BY '.db()->es($config['order_by']) : '') )
-			->text("name")
+		$sql = "SELECT * FROM ".db('static_pages'). (in_array($config['order_by'], $meta['configurable']['order_by']) ? ' ORDER BY '.db()->es($config['order_by']) : '');
+		return common()->table2($sql, array('no_header' => 1))
+			->link("name", './?object='.$_GET['object'].'&action=view&id=%d')
 			->btn_edit()
-			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
-			->btn_active()
-			->footer_link('Add', './?object='.$_GET['object'].'&action=add')
+//			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
+//			->btn_active()
+//			->footer_link('Add', './?object='.$_GET['object'].'&action=add')
 		;
 	}
 

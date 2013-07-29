@@ -13,21 +13,9 @@ class yf_manage_dashboards {
 	* Framework constructor
 	*/
 	function _init () {
-		$this->_admin_modules = module("admin_modules")->_get_modules();
-	}
-
-	/**
-	* Designed to be used by other modules to show configured dashboard
-	*/
-	function display() {
-// TODO
-	}
-
-	/**
-	* Similar to "display", but for usage inside this module (action links and more)
-	*/
-	function view() {
-// TODO
+// TODO: add ability to use user module dashboards also
+// TODO: implement widgets settings edit
+// TODO: implement auto-sizing grid if one of columns is empty
 	}
 
 	/**
@@ -43,9 +31,79 @@ class yf_manage_dashboards {
 	}
 
 	/**
+	* Designed to be used by other modules to show configured dashboard
+	*/
+	function display() {
+// TODO
+	}
+
+	/**
+	* Similar to "display", but for usage inside this module (action links and more)
+	*/
+	function view() {
+		$dashboard = $this->_get_dashboard_data($_GET['id']);
+		if (!$dashboard['id']) {
+			return _e('No such record');
+		}
+		$replace = array();
+		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
+			$replace['items_'.$column_id] = $this->_view_widget_items($name_ids);
+		}
+		return tpl()->parse(__CLASS__.'/view_main', $replace);
+	}
+
+	/**
+	*/
+	function _view_widget_items ($name_ids = array()) {
+		$list_of_hooks = $this->_get_available_widgets_hooks();
+
+		$_orig_object = $_GET['object'];
+		$_orig_action = $_GET['action'];
+
+		foreach ((array)$name_ids as $name_id) {
+			$info = $list_of_hooks[$name_id];
+			if (!$info) {
+				continue;
+			}
+			list($module_name, $method_name) = explode('::', $info['full_name']);
+
+			// This is needed to correctly execute widget (maybe not nicest method, I know...)
+			$_GET['object'] = $module_name;
+			$_GET['action'] = $module_name;
+			$content = module($module_name)->$method_name(/*$info['configurable']*/);
+			$_GET['object'] = $_orig_object;
+			$_GET['action'] = $_orig_action;
+
+			$items[$info['auto_id']] = array(
+				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
+				'name'		=> _prepare_html($info['name']),
+				'desc'		=> $content,
+				'has_config'=> $info['configurable'] ? 1 : 0,
+				'config'	=> json_encode($info['configurable']),
+			);
+		}
+		return $items;
+	}
+
+	/**
 	*/
 	function add () {
-// TODO
+		if ($_POST) {
+			if (!_ee()) {
+				db()->insert('dashboards', db()->es(array(
+					'name'	=> $_POST['name'],
+				)));
+				$new_id = db()->insert_id();
+				return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.$new_id);
+			}
+		}
+		$replace = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+			'back_link'		=> './?object='.$_GET['object'],
+		);
+		return form2($replace)
+			->text('name')
+			->save_and_back();
 	}
 
 	/**
@@ -59,26 +117,31 @@ class yf_manage_dashboards {
 // TODO: carefully validate POST data, ensuring it is in correct format
 			if (!_ee()) {
 				db()->update('dashboards', db()->es(array(
-					'name'	=> 'admin_home',
 					'data'	=> json_encode($_POST['ds_data']),
 				)), 'id='.intval($dashboard['id']));
 				return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['object']);
 			}
 		}
-		$replace = array();
+		$replace = array(
+			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
+		);
 		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
-			$replace['items_'.$column_id] = $this->_show_widget_items($name_ids);
+			$replace['items_'.$column_id] = $this->_show_edit_widget_items($name_ids);
 		}
 		return tpl()->parse(__CLASS__.'/edit_main', $replace);
 	}
 
 	/**
+	* This will be showed in side (left) area, catched by hooks functionality
 	*/
 	function _hook_side_column () {
 		if ($_GET['object'] != 'manage_dashboards' || !in_array($_GET['action'], array('edit','add'))) {
 			return false;
 		}
 		$dashboard = $this->_get_dashboard_data();
+		if (!$dashboard) {
+			return false;
+		}
 		$avail_hooks = $this->_get_available_widgets_hooks();
 		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
 			foreach ((array)$name_ids as $auto_id) {
@@ -86,8 +149,8 @@ class yf_manage_dashboards {
 			}
 		}
 		$replace = array(
-			'items' 		=> $this->_show_widget_items(array_keys($avail_hooks)),
-			'save_link'		=> './?object='.$_GET['object'].'&action=edit',
+			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
+			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
 		);
 		return tpl()->parse(__CLASS__.'/edit_side', $replace);
 	}
@@ -95,16 +158,16 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function _get_dashboard_data ($id = "") {
-		if (isset($this->_dashboard_data[$id])) {
-			return $this->_dashboard_data[$id];
-		}
 		if (!$id) {
 			$id = $_GET['id'];
 		}
 		if (!$id) {
 			return false;
 		}
-		$dashboard = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($name).'" OR id='.intval($id));
+		if (isset($this->_dashboard_data[$id])) {
+			return $this->_dashboard_data[$id];
+		}
+		$dashboard = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
 		if ($dashboard) {
 			$dashboard['data'] = (array)json_decode($dashboard['data']);
 		}
@@ -114,7 +177,7 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _show_widget_items ($name_ids = array()) {
+	function _show_edit_widget_items ($name_ids = array()) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 		foreach ((array)$name_ids as $name_id) {
 			$info = $list_of_hooks[$name_id];
@@ -144,12 +207,13 @@ class yf_manage_dashboards {
 			'_' => '',
 			':' => '',
 		);
+// TODO: add ability to use user module dashboards also
 		foreach ((array)module("admin_modules")->_get_methods(array("private" => "1")) as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
 				if (substr($method_name, 0, strlen($method_prefix)) != $method_prefix) {
 					continue;
 				}
-				$full_name = $module_name."::".$method_name;
+				$full_name = $module_name.'::'.$method_name;
 				$auto_id = str_replace(array_keys($r), array_values($r), $full_name);
 				$widgets[$auto_id] = module($module_name)->$method_name(array('describe_self' => true));
 				$widgets[$auto_id]['full_name'] = $full_name;

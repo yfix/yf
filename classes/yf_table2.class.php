@@ -127,15 +127,17 @@ class yf_table2 {
 				$body .= $form->form_begin($fparams['name'], $fparams['method'], $fparams, $fparams['replace']);
 			}
 			$body = '<table class="table table-bordered table-striped table-hover'.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
-			$body .= '<thead>'.PHP_EOL;
-			foreach ((array)$this->_fields as $info) {
-				$name = $info['name'];
-				$body .= '<th>'.t($info['desc']).'</th>'.PHP_EOL;
+			if (!$this->_params['no_header']) {
+				$body .= '<thead>'.PHP_EOL;
+				foreach ((array)$this->_fields as $info) {
+					$name = $info['name'];
+					$body .= '<th>'.t($info['desc']).'</th>'.PHP_EOL;
+				}
+				if ($this->_buttons) {
+					$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
+				}
+				$body .= '</thead>'.PHP_EOL;
 			}
-			if ($this->_buttons) {
-				$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
-			}
-			$body .= '</thead>'.PHP_EOL;
 			$sortable_url = $this->_params['sortable'];
 			if ($sortable_url && strlen($sortable_url) <= 5) {
 				$sortable_url = './?object='.$_GET['object'].'&action=sortable';

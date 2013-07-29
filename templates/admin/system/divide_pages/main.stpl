@@ -1,3 +1,4 @@
+{if("pages" ne "")}
 <div class="pagination">
 	<ul>
 {page_first}
@@ -9,3 +10,4 @@
 {page_last}
 	</ul>
 </div>
+{/if}
