@@ -1,37 +1,13 @@
 <div class="portlets-side-column">
-	<h4 align="center">Available widgets <a href="{edit_exit_link}" class="btn btn-mini">{t(Save layout)}</a></h4>
+	<form action="{save_link}" method="post" id="yf_save_layout">
+		<h4 align="center">Available widgets <input type="submit" class="btn btn-mini" value="{t(Save layout)}"></h4>
+	</form>
 	<div class="column span4">
-	  <div class="portlet">
-	    <div class="portlet-header">Feeds</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
+{foreach("items")}
+	  <div class="portlet" id="{#.id}">
+	    <div class="portlet-header">{#.name}</div>
+    	<div class="portlet-content">{#.desc}</div>
 	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
+{/foreach}
 	</div>
 </div>

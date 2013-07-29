@@ -196,4 +196,26 @@ class yf_static_pages {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__static_pages_list ($params = array()) {
+		$meta = array(
+			'name' => 'Static pages quick access',
+			'desc' => 'List of static pages with quick links to edit/preview',
+			'configurable' => array(
+				'order_by' => array('id','name','active'),
+			),
+		);
+		if ($params['describe_self']) {
+			return $meta;
+		}
+		$config = $params['configurable'];
+		return common()->table2("SELECT * FROM ".db('static_pages'). (in_array($config['order_by'], $meta['configurable']['order_by']) ? ' ORDER BY '.db()->es($config['order_by']) : '') )
+			->text("name")
+			->btn_edit()
+			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
+			->btn_active()
+			->footer_link('Add', './?object='.$_GET['object'].'&action=add')
+		;
+	}
+
 }

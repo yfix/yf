@@ -1,5 +1,5 @@
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<style>
+<style type="text/css">
 	.portlet { padding: 10px; margin-bottom: 20px; border: 1px solid #dddddd; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
 	.portlet-header { padding: 5px 10px; margin: -10px -10px 10px; border-bottom: 1px solid #dddddd; border-top-right-radius: 3px; border-top-left-radius: 3px; }
 	.portlet-content { }
@@ -8,42 +8,54 @@
 	.portlets-side-column .portlet-content { display: none; }
 	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
 </style>
-<script>
+<script type="text/javascript">
 $(function() {
     $(".column").sortable({
 		connectWith: ".column"
     });
     $(".column").disableSelection();
+
+	$("form#yf_save_layout").on("submit", function(e){
+		var ds_data = "";
+		$("#yf_dashboard .column[id^=yf_ds_column]").each(function(){
+			var column_id = $(this).attr("id").substring("yf_ds_column".length + 1)
+			ds_data += "&" + $(this).sortable("serialize", { key: "ds_data[" + column_id + "][]" })
+		})
+		console.log(ds_data);
+		$.post($(this).attr("action"), ds_data, function(data){
+			//alert(data)
+			window.location.reload()
+		})
+		return false;
+	})
 });
 </script>
 
-<div class="container-fluid">
+<div class="container-fluid" id="yf_dashboard">
   <div class="row-fluid">
-	<div class="column span4">
-	  <div class="portlet">
-	    <div class="portlet-header">Feeds</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
+	<div class="column span4" id="yf_ds_column_1">
+{foreach("items_1")}
+	  <div class="portlet" id="{#.id}">
+	    <div class="portlet-header">{#.name}</div>
+    	<div class="portlet-content">{#.desc}</div>
 	  </div>
- 	  <div class="portlet">
-	    <div class="portlet-header">News</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
+{/foreach}
 	</div>
-	<div class="column span4">
-	  <div class="portlet">
-    	<div class="portlet-header">Shopping</div>
-	    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
+	<div class="column span4" id="yf_ds_column_2">
+{foreach("items_2")}
+	  <div class="portlet" id="{#.id}">
+	    <div class="portlet-header">{#.name}</div>
+    	<div class="portlet-content">{#.desc}</div>
 	  </div>
+{/foreach}
 	</div>
-	<div class="column span4">
-	  <div class="portlet">
-	    <div class="portlet-header">Links</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
+	<div class="column span4" id="yf_ds_column_3">
+{foreach("items_3")}
+	  <div class="portlet" id="{#.id}">
+	    <div class="portlet-header">{#.name}</div>
+    	<div class="portlet-content">{#.desc}</div>
 	  </div>
-	  <div class="portlet">
-	    <div class="portlet-header">Images</div>
-    	<div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-	  </div>
+{/foreach}
 	</div>
   </div>
 </div>

@@ -393,4 +393,90 @@ class yf_manage_shop {
 	function config() {
 		return js_redirect("./?object=manage_conf&category=shop");
 	}
+
+	function _hook_widget__new_products ($params = array()) {
+		if ($params['describe_self']) {
+			return array(
+				'name'	=> 'Shop: new products',
+				'desc'	=> 'List of latest products added to shop database',
+				'configurable'	=> array(
+					'in_stock'		=> array(true, false),
+//					'top_category'	=> array_keys(),
+				),
+			);
+		}
+// TODO
+//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function _hook_widget__latest_sold_products ($params = array()) {
+		if ($params['describe_self']) {
+			return array(
+				'name'	=> 'Shop: latest sold products',
+				'desc'	=> 'List of latest sold products',
+				'configurable'	=> array(
+					'in_stock'		=> array(true, false),
+				),
+			);
+		}
+// TODO
+//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function _hook_widget__top_sold_products ($params = array()) {
+		if ($params['describe_self']) {
+			return array(
+				'name'	=> 'Shop: most popular products',
+				'desc'	=> 'List of most popular products',
+				'configurable'	=> array(
+					'in_stock'		=> array(true, false),
+					'period'		=> array('minutely','hourly','daily','weekly','monthly')
+				),
+			);
+		}
+// TODO
+//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function _hook_widget__latest_orders ($params = array()) {
+		if ($params['describe_self']) {
+			return array(
+				'name'	=> 'Shop: latest orders',
+				'desc'	=> 'List of latest orders added to shop database',
+				'configurable'	=> array(
+					'period'		=> array('minutely','hourly','daily','weekly','monthly')
+				),
+			);
+		}
+// TODO
+//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function _hook_widget__top_customers ($params = array()) {
+		if ($params['describe_self']) {
+			return array(
+				'name'	=> 'Shop: most active customers',
+				'desc'	=> 'List of most active customers',
+				'configurable'	=> array(
+					'period'		=> array('minutely','hourly','daily','weekly','monthly')
+				),
+			);
+		}
+// TODO
+//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function _hook_widget__latest_customers ($params = array()) {
+		if ($params['describe_self']) {
+			return array(
+				'name'	=> 'Shop: new customers',
+				'desc'	=> 'List of latest customers, who bought something',
+				'configurable'	=> array(
+					'period'		=> array('minutely','hourly','daily','weekly','monthly')
+				),
+			);
+		}
+// TODO
+//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+	}
 }

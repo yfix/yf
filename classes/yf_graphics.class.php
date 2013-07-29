@@ -1154,7 +1154,9 @@ class yf_graphics {
 		$var = $tip_id[0] == "#" ? substr($tip_id, 1) : "";
 		if ($var && isset($r[$var])) {
 			$legend = $r[$var];
-		} elseif (!isset($this->_avail_tips[$tip_id])) {
+		} elseif (isset($this->_avail_tips[$tip_id])) {
+			$legend = $this->_avail_tips[$tip_id];
+		} else {
 			$legend = $tip_id;
 		}
 		return tpl()->parse("system/help_tip", array(

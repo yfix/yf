@@ -232,6 +232,13 @@ $data = my_array_merge((array)$data, array(
 	`table_bordercolor` varchar(16) NOT NULL default '',
 	PRIMARY KEY	(`id`)
 ",
+"dashboards" => "
+	`id` int(11) NOT NULL auto_increment,
+	`name` varchar(50) NOT NULL default '',
+	`data` text NOT NULL default '',
+	PRIMARY KEY  (`id`),
+	UNIQUE KEY  (`id`)
+",
 "designs"	=> "
 	`id` int(10) unsigned NOT NULL auto_increment,
 	`name` varchar(32) NOT NULL,
