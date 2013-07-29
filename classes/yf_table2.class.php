@@ -424,6 +424,9 @@ class yf_table2 {
 	/**
 	*/
 	function btn_edit($name = "", $link = "", $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+		}
 		if (!$name) {
 			$name = "Edit";
 		}
@@ -433,7 +436,9 @@ class yf_table2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['a_class'] .= ' ajax_edit';
+		if (!$extra['no_ajax']) {
+			$extra['a_class'] .= ' ajax_edit';
+		}
 		$extra['icon'] .= 'icon-edit';
 		return $this->btn($name, $link, $extra);
 	}
@@ -441,6 +446,9 @@ class yf_table2 {
 	/**
 	*/
 	function btn_delete($name = "", $link = "", $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+		}
 		if (!$name) {
 			$name = "Delete";
 		}
@@ -450,7 +458,9 @@ class yf_table2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['a_class'] .= ' ajax_delete';
+		if (!$extra['no_ajax']) {
+			$extra['a_class'] .= ' ajax_delete';
+		}
 		$extra['icon'] .= 'icon-trash';
 		return $this->btn($name, $link, $extra);
 	}
@@ -458,6 +468,9 @@ class yf_table2 {
 	/**
 	*/
 	function btn_clone($name = "", $link = "", $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+		}
 		if (!$name) {
 			$name = "Clone";
 		}
@@ -467,14 +480,41 @@ class yf_table2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['a_class'] .= ' ajax_clone';
+		if (!$extra['no_ajax']) {
+			$extra['a_class'] .= ' ajax_clone';
+		}
 		$extra['icon'] .= 'icon-arrow-down';
 		return $this->btn($name, $link, $extra);
 	}
 
 	/**
 	*/
+	function btn_view($name = "", $link = "", $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+		}
+		if (!$name) {
+			$name = "View";
+		}
+		if (!$link) {
+			$link = "./?object=".$_GET["object"]."&action=view&id=%d";
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if (!$extra['no_ajax']) {
+			$extra['a_class'] .= ' ajax_view';
+		}
+		$extra['icon'] .= 'icon-eye-open';
+		return $this->btn($name, $link, $extra);
+	}
+
+	/**
+	*/
 	function btn_active($name = "", $link = "", $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+		}
 		if (!$name) {
 			$name = "Active";
 		}
@@ -517,6 +557,9 @@ class yf_table2 {
 	/**
 	*/
 	function footer_add($name = "", $link = "", $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+		}
 		if (!$name) {
 			$name = "add";
 		}
@@ -566,6 +609,8 @@ class yf_table2 {
 	/**
 	*/
 	function _show_tip($value = "", $extra = array()) {
+// TODO: connect 2 kind of tips args to all funcs: "tip" - near field value, "header_tip" - for table header, 
+// TODO: also add ability to pass tips array into table2() params like "data"
 		return _class('graphics')->_show_help_tip(array(
 			"tip_id"	=> $value,
 //			"replace"	=> $extra[],

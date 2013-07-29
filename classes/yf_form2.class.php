@@ -1257,6 +1257,7 @@ class yf_form2 {
 	* For use inside table item template
 	*/
 	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array()) {
+// TODO: unify with tbl_link
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -1283,6 +1284,7 @@ class yf_form2 {
 	* For use inside table item template
 	*/
 	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array()) {
+// TODO: unify with tbl_link
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -1309,6 +1311,7 @@ class yf_form2 {
 	* For use inside table item template
 	*/
 	function tbl_link_clone($name = '', $link = '', $extra = array(), $replace = array()) {
+// TODO: unify with tbl_link
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
 		}
@@ -1324,6 +1327,33 @@ class yf_form2 {
 		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
 		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_clone"><i class="icon-plus"></i> '.t($name).'</a> ';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_view($name = '', $link = '', $extra = array(), $replace = array()) {
+// TODO: unify with tbl_link
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!$name) {
+			$name = 'View';
+		}
+		$r = $replace ? $replace : $this->_replace;
+		if (!$link) {
+			$link = 'view_link';
+			if (!isset($r['view_link']) && isset($r['view_url'])) {
+				$link = 'view_url';
+			}
+		}
+		$link_url = isset($r[$link]) ? $r[$link] : $link;
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_view"><i class="icon-eye-open"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;

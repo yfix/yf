@@ -1,0 +1,13 @@
+<div class="portlets-side-column">
+	<form action="{save_link}" method="post" id="yf_save_layout">
+		<h4 align="center">Available widgets <input type="submit" class="btn btn-mini" value="{t(Save layout)}"></h4>
+	</form>
+	<div class="column span4">
+{foreach("items")}
+	  <div class="portlet" id="{#.id}">
+	    <div class="portlet-header">{#.name}</div>
+    	<div class="portlet-content">{#.desc}</div>
+	  </div>
+{/foreach}
+	</div>
+</div>
