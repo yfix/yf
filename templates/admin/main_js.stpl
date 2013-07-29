@@ -1,24 +1,14 @@
-{{--
-<script type="text/javascript" src="{const(WEB_PATH)}js/chosen/chosen.jquery.min.js"></script>
-<link href="{const(WEB_PATH)}js/chosen/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css" rel="stylesheet">
+
 <script type="text/javascript">
 $(function(){
 	$('select').chosen();
 });
 </script>
---}}
-
-{{--
-<script type="text/javascript" charset="utf-8">
-$(function(){
-	$("table").tablesorter()
-});
-</script>
-<script src="{const(WEB_PATH)}js/tablecloth/assets/js/jquery.tablesorter.min.js"></script>
---}}
 
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script>
+<script type="text/javascript">
 $(function() {
 	$( ".sortable" ).sortable({
         update: function(event, ui) {
