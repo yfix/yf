@@ -107,6 +107,16 @@ class yf_table2 {
 				}
 			}
 		}
+		// Automatically get fields from results
+		if ($params['auto']) {
+			$field_names = array_keys(current($data));
+			foreach ((array)$field_names as $f) {
+				$this->text($f);
+			}
+			$this->btn_edit();
+			$this->btn_delete();
+			$this->footer_add();
+		}
 		/*
 		* Fill data array with custom fields, also fitting slots with empty strings where no custom data. Example:
 		* 	table2('SELECT * FROM '.db('user'), array('custom_fields'	=> array(
@@ -638,5 +648,10 @@ class yf_table2 {
 			"tip_id"	=> $value,
 //			"replace"	=> $extra[],
 		));
+	}
+
+	function auto() {
+		$this->_params['auto'] = true;
+		return $this;
 	}
 }
