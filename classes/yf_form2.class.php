@@ -1625,4 +1625,14 @@ class yf_form2 {
 		}
 		return $body;
 	}
+
+	function auto($table, $id, $params = array()) {
+		$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
+		$this->_replace = $info;
+		foreach((array)$info as $name => $v) {
+			$this->text($name);
+		}
+		$this->save_and_back();
+		return $this;
+	}
 }

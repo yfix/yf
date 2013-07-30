@@ -16,10 +16,7 @@ class yf_db_parser {
 		if (empty($_GET["table"])) {
 			return js_redirect("./?object=db_manager");
 		}
-		$T = &main()->init_class("table", "classes/", "db_table = ".DB_PREFIX.$_GET["table"]."~auto_parser=1");
-		$T->show_add_button = true;
-		$body .= $T->create();
-		return $body;
+		return table2('SELECT * FROM '.db($_GET['table']))->auto();
 	}
 
 	/**
@@ -27,13 +24,14 @@ class yf_db_parser {
 	*/
 	function edit() {
 		$_GET["id"] = intval($_GET["id"]);
-		if ($_GET["id"] && $_GET["table"]) {
-			$F = &main()->init_class("form", "classes/", "db_table=".DB_PREFIX.$_GET["table"]." ~ action = ./?object=".$_GET["object"]."&action=update&id=".$_GET["id"]."&table=".$_GET["table"]."~auto_parser=1");
-			$body .= $F->create();
- 		} else {
-			$body .= error_back();
+		if (!$_GET["id"] || !$_GET["table"]) {
+			return _e('Wrong params');
+//			$F = main()->init_class("form", "classes/", "db_table=".DB_PREFIX.$_GET["table"]." ~ action = ./?object=".$_GET["object"]."&action=update&id=".$_GET["id"]."&table=".$_GET["table"]."~auto_parser=1");
+//			$body .= $F->create();
+// 		} else {
+//			$body .= error_back();
 		}
-		return $body;
+		return form2()->auto(db($_GET['table']), $_GET['id']);
 	}
 
 	/**
@@ -41,7 +39,7 @@ class yf_db_parser {
 	*/
 	function add() {
 		if ($_GET["table"]) {
-			$F = &main()->init_class("form", "classes/", "db_table=".DB_PREFIX.$_GET["table"]." ~ action = ./?object=".$_GET["object"]."&action=insert&table=".$_GET["table"]." ~ auto_parser=1");
+			$F = main()->init_class("form", "classes/", "db_table=".DB_PREFIX.$_GET["table"]." ~ action = ./?object=".$_GET["object"]."&action=insert&table=".$_GET["table"]." ~ auto_parser=1");
 			$body .= $F->create();
 		} else {
 			$body .= error_back();
