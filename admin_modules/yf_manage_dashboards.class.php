@@ -33,19 +33,21 @@ class yf_manage_dashboards {
 	/**
 	* Designed to be used by other modules to show configured dashboard
 	*/
-	function display() {
+	function display($params = array()) {
 // TODO
+		return $this->view();
 	}
 
 	/**
 	* Similar to "display", but for usage inside this module (action links and more)
 	*/
-	function view() {
+	function view($params = array()) {
 		$dashboard = $this->_get_dashboard_data($_GET['id']);
 		if (!$dashboard['id']) {
 			return _e('No such record');
 		}
-		$replace = array();
+		$replace = array(
+		);
 		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
 			$replace['items_'.$column_id] = $this->_view_widget_items($name_ids);
 		}

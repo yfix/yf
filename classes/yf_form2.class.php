@@ -932,6 +932,9 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
 		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		if (!$extra['no_translate']) {
+			$values = t($values);
+		}
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
@@ -950,7 +953,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->select_box($name, t($values), $selected, $show_text, $type, $add_str, $translate, $level)
+					.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
@@ -981,6 +984,9 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
 		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		if (!$extra['no_translate']) {
+			$values = t($values);
+		}
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
@@ -1000,7 +1006,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->multi_select_box($name, t($values), $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
+					.common()->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
@@ -1029,6 +1035,9 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
 		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		if (!$extra['no_translate']) {
+			$values = t($values);
+		}
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
@@ -1042,7 +1051,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->check_box($name, t($values), $selected)
+					.common()->check_box($name, $values, $selected)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -1067,6 +1076,9 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
 		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		if (!$extra['no_translate']) {
+			$values = t($values);
+		}
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
@@ -1085,7 +1097,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->multi_check_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array)
+					.common()->multi_check_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -1110,6 +1122,9 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
 		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		if (!$extra['no_translate']) {
+			$values = t($values);
+		}
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
@@ -1127,7 +1142,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->select_box($name, t($values), $selected, $flow_vertical, $type, $add_str, $translate)
+					.common()->select_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
