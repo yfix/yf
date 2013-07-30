@@ -64,6 +64,14 @@ class yf_table2 {
 	* Render result table html, gathered by row functions
 	*/
 	function render($params = array()) {
+		// Merge params passed to table2() and params passed here, with params here have more priority:
+		$tmp = $this->_params;
+		foreach ((array)$params as $k => $v) {
+			$tmp[$k] = $v;
+		}
+		$params = $tmp;
+		unset($tmp);
+
 		$sql = $this->_sql;
 		$ids = array();
 		if (is_array($sql)) {
@@ -80,8 +88,8 @@ class yf_table2 {
 			$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : "";
 			$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
 
-			if ($this->_params['filter']) {
-				$filter_sql = $this->_filter_sql_prepare($this->_params['filter']);
+			if ($params['filter']) {
+				$filter_sql = $this->_filter_sql_prepare($params['filter']);
 			}
 			if ($filter_sql) {
 				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? " WHERE " : "")." ".$filter_sql;
@@ -109,9 +117,9 @@ class yf_table2 {
 		*	->text('num_logins')
 		*	->text('num_auth_fails')
 		*/
-		if ($data && $ids && $this->_params['custom_fields']) {
+		if ($data && $ids && $params['custom_fields']) {
 			$ids_sql = implode(',', $ids);
-			foreach ((array)$this->_params['custom_fields'] as $custom_name => $custom_sql) {
+			foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
 				$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
 			}
 			foreach ((array)$data as $_id => $row) {
@@ -121,28 +129,28 @@ class yf_table2 {
 			}
 		}
 		if ($data) {
-			if ($this->_params['form']) {
-				$fparams = $this->_params['form'];
+			if ($params['form']) {
+				$fparams = $params['form'];
 				$form = $this->_init_form();
 				$body .= $form->form_begin($fparams['name'], $fparams['method'], $fparams, $fparams['replace']);
 			}
 			$body = '<table class="table table-bordered table-striped table-hover'.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
-			if (!$this->_params['no_header']) {
+			if (!$params['no_header']) {
 				$body .= '<thead>'.PHP_EOL;
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
-					$body .= '<th>'
-							.($this->_params['th_icon_prepend'] ? '<i class="icon icon-'.$this->_params['th_icon_prepend'].'"></i> ' : '')
-							.t($info['desc'])
-							.($this->_params['th_icon_append'] ? ' <i class="icon icon-'.$this->_params['th_icon_append'].'"></i>' : '')
-						.'</th>'.PHP_EOL;
+					$th_width = ($info['extra']['width'] ? ' width="'.$info['extra']['width'].'"' : '');
+					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
+					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
+
+					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($info['desc']). $th_icon_prepend. '</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
 				}
 				$body .= '</thead>'.PHP_EOL;
 			}
-			$sortable_url = $this->_params['sortable'];
+			$sortable_url = $params['sortable'];
 			if ($sortable_url && strlen($sortable_url) <= 5) {
 				$sortable_url = './?object='.$_GET['object'].'&action=sortable';
 			}
@@ -156,7 +164,9 @@ class yf_table2 {
 					}
 					$func = $info['func'];
 					unset($info['func']); // Save resources
-					$body .= '<td>'.$func($row[$name], $info, $row).'</td>'.PHP_EOL;
+					$td_width = ($info['extra']['width'] ? ' width="'.$info['extra']['width'].'"' : '');
+
+					$body .= '<td'.$td_width.'>'.$func($row[$name], $info, $row).'</td>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<td nowrap>';
@@ -164,6 +174,7 @@ class yf_table2 {
 						$name = $info['name'];
 						$func = $info['func'];
 						unset($info['func']); // Save resources
+
 						$body .= $func($row, $info).PHP_EOL;
 					}
 					$body .= '</td>'.PHP_EOL;
@@ -171,11 +182,11 @@ class yf_table2 {
 				$body .= '</tr>'.PHP_EOL;
 			}
 			$body .= '</tbody>'.PHP_EOL;
-			if ($this->_params['caption']) {
+			if ($params['caption']) {
 				$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
 			}
 			$body .= '</table>'.PHP_EOL;
-			if ($this->_params['form']) {
+			if ($params['form']) {
 				$body .= '</form>';
 			}
 		} else {
@@ -281,6 +292,7 @@ class yf_table2 {
 			"data"	=> t($extra['data']),
 			"func"	=> function($field, $params, $row) {
 				if (!$params['data'] && $params['extra']['data_name']) {
+// TODO: fixme
 					$params['data'] = _class('table2')->_data_sql_names[$params['extra']['data_name']];
 				}
 				if (!$params['data']) {
@@ -415,13 +427,18 @@ class yf_table2 {
 				if (isset($params['extra']['id'])) {
 					$override_id = $params['extra']['id'];
 				}
+// TODO: fixme
 				if (isset(_class('table2')->_params['id'])) {
 					$override_id = _class('table2')->_params['id'];
+				}
+// TODO: fixme
+				if (_class('table2')->_params['btn_no_text']) {
+					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
 				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
 				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
-				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 			},
 		);
 		return $this;
