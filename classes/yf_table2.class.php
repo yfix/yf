@@ -132,9 +132,9 @@ class yf_table2 {
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
 					$body .= '<th>'
-							.($this->_params['th_icon_prepend'] ? '<i class="icon icon-'.$this->_params['th_icon_prepend'].'"> ' : '')
+							.($this->_params['th_icon_prepend'] ? '<i class="icon icon-'.$this->_params['th_icon_prepend'].'"></i> ' : '')
 							.t($info['desc'])
-							.($this->_params['th_icon_append'] ? ' <i class="icon icon-'.$this->_params['th_icon_append'].'">' : '')
+							.($this->_params['th_icon_append'] ? ' <i class="icon icon-'.$this->_params['th_icon_append'].'"></i>' : '')
 						.'</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
