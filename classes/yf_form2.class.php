@@ -1580,4 +1580,34 @@ class yf_form2 {
 		}
 		return $body;
 	}
+
+	/**
+	*/
+	function captcha($var_name = '', $desc = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = $this->_replace;
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if (!$desc) {
+			$desc = 'CAPTCHA Image';
+		}
+		if (!$var_name) {
+			$var_name = 'captcha_block';
+		}
+		$text = $replace[$var_name];
+		$body = '
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">'
+				.($desc ? '<label class="control-label">'.t($desc).'</label>' : '')
+				.'<div class="controls">'.$text.'</div>'
+				.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+			.'</div>
+		';
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
 }

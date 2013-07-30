@@ -292,7 +292,7 @@ class yf_table2 {
 			"data"	=> t($extra['data']),
 			"func"	=> function($field, $params, $row) {
 				if (!$params['data'] && $params['extra']['data_name']) {
-// TODO: fixme
+// TODO: fixme (replace _class('table2') with object passing, currently this is used due to PHP 5.3 troubles, in 5.4+ works fine with $this inside lambda functions)
 					$params['data'] = _class('table2')->_data_sql_names[$params['extra']['data_name']];
 				}
 				if (!$params['data']) {
@@ -427,11 +427,11 @@ class yf_table2 {
 				if (isset($params['extra']['id'])) {
 					$override_id = $params['extra']['id'];
 				}
-// TODO: fixme
+// TODO: fixme (replace _class('table2') with object passing, currently this is used due to PHP 5.3 troubles, in 5.4+ works fine with $this inside lambda functions)
 				if (isset(_class('table2')->_params['id'])) {
 					$override_id = _class('table2')->_params['id'];
 				}
-// TODO: fixme
+// TODO: fixme (replace _class('table2') with object passing, currently this is used due to PHP 5.3 troubles, in 5.4+ works fine with $this inside lambda functions)
 				if (_class('table2')->_params['btn_no_text']) {
 					$no_text = 1;
 				}

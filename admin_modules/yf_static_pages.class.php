@@ -213,9 +213,6 @@ class yf_static_pages {
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1))
 			->link("name", './?object='.$_GET['object'].'&action=view&id=%d', '', array('width' => '100%'))
 			->btn_edit()
-//			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
-//			->btn_active()
-//			->footer_link('Add', './?object='.$_GET['object'].'&action=add')
 		;
 	}
 

@@ -54,39 +54,6 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _view_widget_items ($name_ids = array()) {
-		$list_of_hooks = $this->_get_available_widgets_hooks();
-
-		$_orig_object = $_GET['object'];
-		$_orig_action = $_GET['action'];
-
-		foreach ((array)$name_ids as $name_id) {
-			$info = $list_of_hooks[$name_id];
-			if (!$info) {
-				continue;
-			}
-			list($module_name, $method_name) = explode('::', $info['full_name']);
-
-			// This is needed to correctly execute widget (maybe not nicest method, I know...)
-			$_GET['object'] = $module_name;
-			$_GET['action'] = $module_name;
-			$content = module($module_name)->$method_name(/*$info['configurable']*/);
-			$_GET['object'] = $_orig_object;
-			$_GET['action'] = $_orig_action;
-
-			$items[$info['auto_id']] = array(
-				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
-				'name'		=> _prepare_html($info['name']),
-				'desc'		=> $content,
-				'has_config'=> $info['configurable'] ? 1 : 0,
-				'config'	=> json_encode($info['configurable']),
-			);
-		}
-		return $items;
-	}
-
-	/**
-	*/
 	function add () {
 		if ($_POST) {
 			if (!_ee()) {
@@ -157,6 +124,59 @@ class yf_manage_dashboards {
 
 	/**
 	*/
+	function _view_widget_items ($name_ids = array()) {
+		$list_of_hooks = $this->_get_available_widgets_hooks();
+
+		$_orig_object = $_GET['object'];
+		$_orig_action = $_GET['action'];
+
+		foreach ((array)$name_ids as $name_id) {
+			$info = $list_of_hooks[$name_id];
+			if (!$info) {
+				continue;
+			}
+			list($module_name, $method_name) = explode('::', $info['full_name']);
+
+			// This is needed to correctly execute widget (maybe not nicest method, I know...)
+			$_GET['object'] = $module_name;
+			$_GET['action'] = $module_name;
+			$content = module($module_name)->$method_name(/*$info['configurable']*/);
+			$_GET['object'] = $_orig_object;
+			$_GET['action'] = $_orig_action;
+
+			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
+				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
+				'name'		=> _prepare_html($info['name']),
+				'desc'		=> $content,
+				'has_config'=> $info['configurable'] ? 1 : 0,
+				'config'	=> json_encode($info['configurable']),
+			));
+		}
+		return implode("\n", $items);
+	}
+
+	/**
+	*/
+	function _show_edit_widget_items ($name_ids = array()) {
+		$list_of_hooks = $this->_get_available_widgets_hooks();
+		foreach ((array)$name_ids as $name_id) {
+			$info = $list_of_hooks[$name_id];
+			if (!$info) {
+				continue;
+			}
+			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
+				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
+				'name'		=> _prepare_html($info['name']),
+				'desc'		=> _prepare_html($info['desc']),
+				'has_config'=> $info['configurable'] ? 1 : 0,
+				'config'	=> json_encode($info['configurable']),
+			));
+		}
+		return implode("\n", $items);
+	}
+
+	/**
+	*/
 	function _get_dashboard_data ($id = "") {
 		if (!$id) {
 			$id = $_GET['id'];
@@ -173,26 +193,6 @@ class yf_manage_dashboards {
 		}
 		$this->_dashboard_data[$id] = $dashboard;
 		return $dashboard;
-	}
-
-	/**
-	*/
-	function _show_edit_widget_items ($name_ids = array()) {
-		$list_of_hooks = $this->_get_available_widgets_hooks();
-		foreach ((array)$name_ids as $name_id) {
-			$info = $list_of_hooks[$name_id];
-			if (!$info) {
-				continue;
-			}
-			$items[$info['auto_id']] = array(
-				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
-				'name'		=> _prepare_html($info['name']),
-				'desc'		=> _prepare_html($info['desc']),
-				'has_config'=> $info['configurable'] ? 1 : 0,
-				'config'	=> json_encode($info['configurable']),
-			);
-		}
-		return $items;
 	}
 
 	/**
