@@ -264,23 +264,23 @@ class yf_manage_shop {
 	}
 
 	function attributes() {
-		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->attributes();
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function attribute_add() {
-		return _class('manage_shop_attribute_add', 'admin_modules/manage_shop/')->attribute_add();
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function attribute_edit() {
-		return _class('manage_shop_attribute_edit', 'admin_modules/manage_shop/')->attribute_edit();
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function attribute_delete() {
-		return _class('manage_shop_attribute_delete', 'admin_modules/manage_shop/')->attribute_delete();
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function attribute_activate() {
-		return _class('manage_shop_attribute_activate', 'admin_modules/manage_shop/')->attribute_activate();
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function _attributes_view($object_id = 0) {
@@ -308,19 +308,19 @@ class yf_manage_shop {
 	}
 
 	function product_sets() {
-		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->product_sets();
+		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_set_edit() {
-		return _class('manage_shop_product_set_edit', 'admin_modules/manage_shop/')->product_set_edit();
+		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_set_add() {
-		return _class('manage_shop_product_set_add', 'admin_modules/manage_shop/')->product_set_add();
+		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_set_delete() {
-		return _class('manage_shop_product_set_delete', 'admin_modules/manage_shop/')->product_set_delete();
+		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function _format_price($price = 0) {
@@ -339,50 +339,8 @@ class yf_manage_shop {
 		return _class('manage_shop__box', 'admin_modules/manage_shop/')->_box($name, $selected);
 	}
 
-	function _quick_menu() {
-#		return _class('manage_shop__quick_menu', 'admin_modules/manage_shop/')->_quick_menu();
-	}
-
 	function _show_header() {
 #		return _class('manage_shop__show_header', 'admin_modules/manage_shop/')->_show_header();
-	}
-
-	/**
-	*/
-	function _show_filter() {
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save',
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear',
-		);
-		$fields = array(
-			'name',	'cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date'
-		);
-		foreach ((array)$fields as $v) {
-			$order_fields[$v] = $v;
-		}
-		return form2($replace, array(
-				'selected' => $_SESSION['manage_shop']
-			))
-			->text('name')
-			->money('price', '', array('class' => 'span1'))
-			->money('price__and', '', array('class' => 'span1'))
-			->select_box('cat_id', _class('cats')->_get_items_names("shop_cats"), array('desc' => 'Main category'))
-			->radio_box('image', array(0 => 'No image', 1 => 'Have image'))
-			->select_box('order_by', $order_fields)
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-			->save_and_clear()
-		;
-	}
-
-	/**
-	*/
-	function filter_save() {
-		if ($_GET['sub'] == 'clear') {
-			$_SESSION['manage_shop'] = array();
-		} else {
-			$_SESSION['manage_shop'] = $_POST;
-		}
-		return js_redirect('./?object='.$_GET['object'].'&action=products');
 	}
 
 	function categories() {
@@ -393,110 +351,39 @@ class yf_manage_shop {
 		return js_redirect("./?object=manage_conf&category=shop");
 	}
 
+	function _show_filter($params = array()) {
+		$func = __FUNCTION__; return _class('manage_shop_filter', 'admin_modules/manage_shop/')->$func($params);
+	}
+
+	function filter_save($params = array()) {
+		$func = __FUNCTION__; return _class('manage_shop_filter', 'admin_modules/manage_shop/')->$func($params);
+	}
+
 	function _hook_widget__new_products ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: new products',
-				'desc'	=> 'List of latest products added to shop database',
-				'configurable'	=> array(
-					'in_stock'		=> array(true, false),
-//					'top_category'	=> array_keys(),
-				),
-			);
-		}
-		return 'TODO';
-// TODO
-//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
 
 	function _hook_widget__latest_sold_products ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: latest sold products',
-				'desc'	=> 'List of latest sold products',
-				'configurable'	=> array(
-					'in_stock'		=> array(true, false),
-				),
-			);
-		}
-		return 'TODO';
-// TODO
-//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
 
 	function _hook_widget__top_sold_products ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: most popular products',
-				'desc'	=> 'List of most popular products',
-				'configurable'	=> array(
-					'in_stock'		=> array(true, false),
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
-		}
-		return 'TODO';
-// TODO
-//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
 
 	function _hook_widget__latest_orders ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: latest orders',
-				'desc'	=> 'List of latest orders added to shop database',
-				'configurable'	=> array(
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
-		}
-		return 'TODO';
-// TODO
-//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
 
 	function _hook_widget__top_customers ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: most active customers',
-				'desc'	=> 'List of most active customers',
-				'configurable'	=> array(
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
-		}
-		return 'TODO';
-// TODO
-//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
 
 	function _hook_widget__latest_customers ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: new customers',
-				'desc'	=> 'List of latest customers, who bought something',
-				'configurable'	=> array(
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
-		}
-		return 'TODO';
-// TODO
-//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
 
 	function _hook_widget__stats ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: overall stats',
-				'desc'	=> 'Overall shop stats numbers',
-				'configurable'	=> array(
-					'period' => array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
-		}
-		return 'TODO';
-// TODO
-//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
 }
