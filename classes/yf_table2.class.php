@@ -117,7 +117,7 @@ class yf_table2 {
 				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params']);
 			}
 			if ($filter_sql) {
-				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? " WHERE " : "")." ".$filter_sql;
+				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? " WHERE 1 " : "")." ".$filter_sql;
 			}
 			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
 
@@ -293,7 +293,9 @@ class yf_table2 {
 			}
 			$sql[] = '`'.db()->es($k).'`'.$part_on_the_right;
 		}
-		$filter_sql = implode(" AND ", $sql);
+		if ($sql) {
+			$filter_sql = " AND ".implode(" AND ", $sql);
+		}
 		if ($filter_data['order_by']) {
 			$filter_sql .= ' ORDER BY `'.db()->es($filter_data['order_by']).'` ';
 			if ($filter_data['order_direction']) {
