@@ -1,7 +1,7 @@
 <?php
-class yf_manage_shop_statistic{
+class yf_manage_shop_stats{
 
-	function statistic () {
+	function stats () {
 		$total_sum = db()->query_fetch("SELECT SUM(total_sum) FROM ".db('shop_orders')."");
 		$total_order = db()->query_fetch("SELECT COUNT(*) FROM ".db('shop_orders')."");
 		$total_prod = db()->query_fetch("SELECT COUNT(*) FROM ".db('shop_products')."");

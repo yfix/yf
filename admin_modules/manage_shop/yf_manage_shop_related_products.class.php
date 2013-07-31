@@ -1,7 +1,7 @@
 <?php
-class yf_manage_shop_get_product_related{
+class yf_manage_shop_related_products{
 
-	function get_product_related ($id = "") {
+	function related_products ($id = "") {
 		$product_related_data = array();
 		$sql = "SELECT * FROM ".db('shop_product_related') . " WHERE product_id = ". $id;
 		$product = db()->query($sql);

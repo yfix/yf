@@ -86,8 +86,6 @@ class yf_manage_shop {
 			"status"		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
 			"featured"		=> 'radio_box("featured",		module("manage_shop")->_featured,	$selected, false, 2, "", false)',
 			"status_prod"	=> 'select_box("status_prod",	module("manage_shop")->_status_prod,$selected, 0, 2, "", false)',
-			"sort_by"		=> 'select_box("sort_by",		module("manage_shop")->_sort_by,	$selected, 0, 2, "", false)',
-			"sort_order"	=> 'select_box("sort_order", 	module("manage_shop")->_sort_orders,$selected, 0, 2, "", false)',
 		);
 		$manage_shop->_featured = array(
 			"0" => "<span class='negative'>NO</span>",
@@ -98,15 +96,6 @@ class yf_manage_shop {
 			"1"	=> "Active",
 			"0"	=> "Inacive",
 		);
-		$manage_shop->_sort_orders = array(""	=> "", "DESC" => "Descending", "ASC" => "Ascending");
-		$manage_shop->_sort_by = array(
-			""			=> "",
-			"name"		=> "Name",
-			"price" 	=> "Price",
-			"quantity" 	=> "Quantity",
-			"add_date" 	=> "Date",
-			"active" 	=> "Status",
-		);
 		// Sync company info with user section
 #		$manage_shop->COMPANY_INFO = _class("shop", "modules/")->COMPANY_INFO;
 
@@ -114,16 +103,28 @@ class yf_manage_shop {
 //		$this->manufacturer_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->MAN_IMG_DIR;
 	}
 
+	function _box($name = "", $selected = "") {
+		if (empty($name) || empty(module("manage_shop")->_boxes[$name])) {
+			return false;
+		} else {
+			return eval("return common()->".module("manage_shop")->_boxes[$name].";");
+		}
+	}
+
+	function _format_price($price = 0) {
+		if (module("manage_shop")->CURRENCY == "\$") {
+			return module("manage_shop")->CURRENCY."&nbsp;".$price;
+		} else {
+			return $price."&nbsp;".module("manage_shop")->CURRENCY;
+		}
+	}
+
 	function show() {
-		return _class('manage_shop_show', 'admin_modules/manage_shop/')->show();
+		return _class('manage_shop_dashboard', 'admin_modules/manage_shop/')->dashboard();
 	}
 
-	function home() {
-		return _class('manage_shop_home', 'admin_modules/manage_shop/')->home();
-	}
-
-	function statistic() {
-		return _class('manage_shop_statistic', 'admin_modules/manage_shop/')->statistic();
+	function stats() {
+		return _class('manage_shop_stats', 'admin_modules/manage_shop/')->stats();
 	}
 
 	function products() {
@@ -166,12 +167,12 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func();
 	}
 
-	function show_product_by_category($cat = "") {
-		return _class('manage_shop_show_product_by_category', 'admin_modules/manage_shop/')->show_product_by_category($cat);
+	function products_by_category($cat = "") {
+		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func($cat);
 	}
 
-	function get_product_related($id = "") {
-		return _class('manage_shop_get_product_related', 'admin_modules/manage_shop/')->get_product_related($id);
+	function related_products($id = "") {
+		$func = __FUNCTION__; return _class('manage_shop_get_product_related', 'admin_modules/manage_shop/')->$func($id);
 	}
 
 	function orders() {
@@ -198,16 +199,12 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
 	}
 
-	function show_reports() {
-		return _class('manage_shop_reports', 'admin_modules/manage_shop/')->show_reports();
+	function reports() {
+		$func = __FUNCTION__; return _class('manage_shop_reports', 'admin_modules/manage_shop/')->$func();
 	}
 
-	function show_reports_viewed() {
-		return _class('manage_shop_reports', 'admin_modules/manage_shop/')->show_reports_viewed();
-	}
-
-	function sort() {
-		return _class('manage_shop_products', 'admin_modules/manage_shop/')->products_sort();
+	function reports_viewed() {
+		$func = __FUNCTION__; return _class('manage_shop_reports', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function manufacturers() {
@@ -302,16 +299,8 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
 	}
 
-	function _format_price($price = 0) {
-		return _class('manage_shop__format_price', 'admin_modules/manage_shop/')->_format_price($price);
-	}
-
-	function _box($name = "", $selected = "") {
-		return _class('manage_shop__box', 'admin_modules/manage_shop/')->_box($name, $selected);
-	}
-
 	function _show_header() {
-#		return _class('manage_shop__show_header', 'admin_modules/manage_shop/')->_show_header();
+		return _class('manage_shop__show_header', 'admin_modules/manage_shop/')->_show_header();
 	}
 
 	function categories() {

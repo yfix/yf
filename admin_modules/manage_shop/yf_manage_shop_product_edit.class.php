@@ -163,7 +163,7 @@ class yf_manage_shop_product_edit{
 			"manage_attrs_url"		=> "./?object=manage_shop&action=attributes",
 			"group_prices"			=> !empty($group_prices) ? $group_prices : "",
 			"link_get_product"		=>  process_url("./?object=manage_shop&action=show_product_by_category&cat_id="),
-			"product_related"		=>  module("manage_shop")->get_product_related($product_info["id"]),
+			"product_related"		=>  module("manage_shop")->related_products($product_info["id"]),
 		);
 		return tpl()->parse("manage_shop/product_edit", $replace);
 	}

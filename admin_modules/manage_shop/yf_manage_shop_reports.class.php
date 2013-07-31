@@ -1,28 +1,29 @@
 <?php
 class yf_manage_shop_reports{
 
-	function show_reports() {
+	function reports() {
 		if ($_GET["id"] == "viewed") {
-			$items = module('manage_shop')->show_reports_viewed ();
+			$items = module('manage_shop')->reports_viewed ();
 			$active = "viewed";
 		} elseif ($_GET["id"] == "sales") {
-			$items = module('manage_shop')->show_reports_sales ();
+			$items = module('manage_shop')->reports_sales ();
 			$active = "sales";
 		} elseif ($_GET["id"] == "purchased") {
-			$items = module('manage_shop')->show_reports_purchased ();
+			$items = module('manage_shop')->reports_purchased ();
 			$active = "purchased";
 		}
 		$replace = array(
 			"items"			=>	$items,
 			"active"		=>	$active,
-			"viewed_url"	=> "./?object=manage_shop&action=show_reports&id=viewed",
-			"sales_url"		=> "./?object=manage_shop&action=show_reports&id=sales",
-			"purchased_url"	=> "./?object=manage_shop&action=show_reports&id=purchased",
+			"viewed_url"	=> "./?object=manage_shop&action=reports&id=viewed",
+			"sales_url"		=> "./?object=manage_shop&action=reports&id=sales",
+			"purchased_url"	=> "./?object=manage_shop&action=reports&id=purchased",
 		);
 		return tpl()->parse("manage_shop/report_main", $replace);
 	}
 
-	function show_reports_viewed() {
+	function reports_viewed() {
+/*
 		$sql = "SELECT * FROM ".db('shop_products')."";
 		$sql .=   " ORDER BY viewed DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", 100);
@@ -50,6 +51,7 @@ class yf_manage_shop_reports{
 			"sort_url"	=> "./?object=manage_shop&action=sort",
 		);
 		return tpl()->parse("manage_shop/reports_viewed", $replace);
+*/
 	}
 	
 }
