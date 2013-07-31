@@ -12,7 +12,7 @@ class yf_manage_shop_attributes{
 			->btn_edit("", "./?object=manage_shop&action=attribute_edit&id=%d")
 			->btn_delete("", "./?object=manage_shop&action=attribute_delete&id=%d")
 			->btn_active("", "./?object=manage_shop&action=attribute_activate&id=%d")
-			->footer_link("Add","./?object=manage_shop&action=attribute_add")
+			->footer_add("","./?object=manage_shop&action=attribute_add")
 		;
 	}	
 

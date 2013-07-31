@@ -12,8 +12,8 @@ class yf_manage_shop_manufacturers{
 			->text("meta_desc")
 			->btn_edit("", "./?object=manage_shop&action=manufacturer_edit&id=%d")
 			->btn_delete("", "./?object=manage_shop&action=manufacturer_delete&id=%d")
-			->footer_link("Add", "./?object=manage_shop&action=manufacturer_add")
-			->render();
+			->footer_add("", "./?object=manage_shop&action=manufacturer_add")
+		;
 	}	
 
 	/**

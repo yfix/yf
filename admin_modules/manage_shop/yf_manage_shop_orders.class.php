@@ -1,5 +1,5 @@
 <?php
-class yf_manage_shop_show_orders{
+class yf_manage_shop_orders{
 
 	/**
 	*/
@@ -10,8 +10,15 @@ class yf_manage_shop_show_orders{
 	/**
 	*/
 	function show_orders() {
+		return table2('SELECT * FROM '.db('shop_orders'))
+			->text('order_id')
+			->date('date')
+			->text('user_id')
+			->text('sum')
+			->btn_view('', './?object=manage_shop&action=view_order&id=%d')
+			;
+/*
 		$sql = "SELECT * FROM ".db('shop_orders')."";
-		$filter_sql = module('manage_shop')->USE_FILTER ? module('manage_shop')->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		$orders_info = db()->query_fetch_all($sql.$add_sql);
@@ -42,6 +49,7 @@ class yf_manage_shop_show_orders{
 			"filter"=> module('manage_shop')->USE_FILTER ? module('manage_shop')->_show_filter() : "",
 		);
 		return tpl()->parse("manage_shop/order_main", $replace);
+*/
 	}
 
 	/**

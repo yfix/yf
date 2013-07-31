@@ -64,6 +64,10 @@ class yf_manage_dashboards {
 		}
 		$replace = array(
 		);
+		// Fill empty template vars for columns
+		foreach (range(1,10) as $n) {
+			$replace['items_'.$n] = "";
+		}
 		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
 			$replace['items_'.$column_id] = $this->_view_widget_items($name_ids);
 		}
