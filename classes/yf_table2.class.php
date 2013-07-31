@@ -114,7 +114,7 @@ class yf_table2 {
 			$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
 
 			if ($params['filter']) {
-				$filter_sql = $this->_filter_sql_prepare($params['filter']);
+				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params']);
 			}
 			if ($filter_sql) {
 				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? " WHERE " : "")." ".$filter_sql;
@@ -241,7 +241,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array()) {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array()) {
 		if (!$filter_data) {
 			return "";
 		}
@@ -256,9 +256,10 @@ class yf_table2 {
 			"gte"		=> function($a){ return ' >= "'._es($a['value']).'"'; }, // "greater or equal than",
 			"lt"		=> function($a){ return ' < "'._es($a['value']).'"'; }, // "less than",
 			"lte"		=> function($a){ return ' <= "'._es($a['value']).'"'; }, // "lower or equal than"
-			"like"		=> function($a){ return ' LIKE "%'._es($a['value']).'"%'; }, // LIKE '%'.$value.'%'
+			"like"		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
 			"rlike"		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
-			"between"	=> function($a){ return ' BETWEEN "'._es($a['min']).'" AND "'._es($a['max']).'"'; }, // BETWEEN $min AND $max
+// TODO: test and make API to pass "and", example: "price__and" or similar
+			"between"	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (in_array($k, $special_fields)) {
@@ -270,11 +271,11 @@ class yf_table2 {
 			$part_on_the_right = "";
 			// Here we support complex filtering conditions, examples:
 			// 'price' => array('gt', 'value' => '100')
-			// 'price' => array('between', 'min' => '1', 'max' => '10')
+			// 'price' => array('between', 'value' => '1', 'and' => '10')
 			// 'name' => array('like', 'value' => 'john')
 			if (is_array($v)) {
 				$cond = $v[0];
-				if (!in_array($cond, $supported_conds)) {
+				if (!isset($supported_conds[$cond])) {
 					continue;
 				}
 				$part_on_the_right = $supported_conds[$cond]($v);
@@ -282,7 +283,13 @@ class yf_table2 {
 				if (!strlen($v)) {
 					continue;
 				}
-				$part_on_the_right = $supported_conds['eq'](array('value' => $v));
+				$cond = 'eq';
+				// Here we can override default "eq" condition with custom one by passing additional param to table2. 
+				// example: table2($sql, array('filter_params' => array('name' => 'gt', 'price' => 'between'), 'filter' => $_SESSION[__CLASS__]))
+				if (isset($filter_params[$k]) && isset($supported_conds[$filter_params[$k]])) {
+					$cond = $filter_params[$k];
+				}
+				$part_on_the_right = $supported_conds[$cond](array('value' => $v));
 			}
 			$sql[] = '`'.db()->es($k).'`'.$part_on_the_right;
 		}

@@ -193,6 +193,14 @@ class yf_form2 {
 		$id = $extra['id'] ? $extra['id'] : $name;
 		$placeholder = isset($extra['placeholder']) ? $extra['placeholder'] : $desc;
 		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
+		// Compatibility with filter
+		if (!strlen($value)) {
+			if (isset($extra['selected'])) {
+				$value = $extra['selected'];
+			} elseif (isset($this->_params['selected'])) {
+				$value = $this->_params['selected'][$name];
+			}
+		}
 		$input_type = isset($extra['type']) ? $extra['type'] : "text";
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
@@ -260,6 +268,14 @@ class yf_form2 {
 		$id = $extra['id'] ? $extra['id'] : $name;
 		$placeholder = isset($extra['placeholder']) ? $extra['placeholder'] : $desc;
 		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
+		// Compatibility with filter
+		if (!strlen($value)) {
+			if (isset($extra['selected'])) {
+				$value = $extra['selected'];
+			} elseif (isset($this->_params['selected'])) {
+				$value = $this->_params['selected'][$name];
+			}
+		}
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		if (!isset($extra['no_escape'])) {
