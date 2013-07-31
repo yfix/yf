@@ -364,6 +364,8 @@ class yf_manage_shop {
 				'selected' => $_SESSION['manage_shop']
 			))
 			->text('name')
+			->money('price', '', array('class' => 'span1'))
+			->money('price__and', '', array('class' => 'span1'))
 			->select_box('cat_id', _class('cats')->_get_items_names("shop_cats"), array('desc' => 'Main category'))
 			->radio_box('image', array(0 => 'No image', 1 => 'Have image'))
 			->select_box('order_by', $order_fields)

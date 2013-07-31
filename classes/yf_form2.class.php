@@ -558,8 +558,8 @@ class yf_form2 {
 			unset($extra['step']);
 		}
 		$extra['type'] = 'number';
-		$extra['sizing'] = 'small';
-		$extra['maxlength'] = '10';
+		if (!isset($extra['sizing'])) { $extra['sizing'] = 'small'; }
+		if (!isset($extra['maxlength'])) { $extra['maxlength'] = '10'; }
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -581,10 +581,10 @@ class yf_form2 {
 			}
 		}
 		$extra['type'] = 'text';
-		$extra['prepend'] = '$';
-		$extra['append'] = '.00';
-		$extra['sizing'] = 'small';
-		$extra['maxlength'] = '8';
+		if (!isset($extra['prepend'])) { $extra['prepend'] = '$'; }
+		if (!isset($extra['append'])) { $extra['append'] = '.00'; }
+		if (!isset($extra['sizing'])) { $extra['sizing'] = 'small'; }
+		if (!isset($extra['maxlength'])) { $extra['maxlength'] = '8'; }
 		return $this->input($name, $desc, $extra, $replace);
 	}
 

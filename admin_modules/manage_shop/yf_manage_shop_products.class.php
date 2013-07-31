@@ -6,6 +6,7 @@ class yf_manage_shop_products{
 				'filter' => $_SESSION['manage_shop'],
 				'filter_params' => array(
 					'name'	=> 'like',
+					'price' => 'between',
 				),
 			))
 			->image("uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_small.jpg", WEB_PATH."uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_full.jpg")

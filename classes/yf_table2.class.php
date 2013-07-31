@@ -258,14 +258,17 @@ class yf_table2 {
 			"lte"		=> function($a){ return ' <= "'._es($a['value']).'"'; }, // "lower or equal than"
 			"like"		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
 			"rlike"		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
-// TODO: test and make API to pass "and", example: "price__and" or similar
 			"between"	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
 		);
 		foreach((array)$filter_data as $k => $v) {
+			if (!strlen($k)) {
+				continue;
+			}
 			if (in_array($k, $special_fields)) {
 				continue;
 			}
-			if (!strlen($k)) {
+			// Special field for BETWEEN second value
+			if (substr($k, -strlen('__and')) == '__and') {
 				continue;
 			}
 			$part_on_the_right = "";
@@ -278,6 +281,9 @@ class yf_table2 {
 				if (!isset($supported_conds[$cond])) {
 					continue;
 				}
+				if (!isset($v['and'])) {
+					$v['and'] == $filter_data[$k.'__and'];
+				}
 				$part_on_the_right = $supported_conds[$cond]($v);
 			} else {
 				if (!strlen($v)) {
@@ -289,7 +295,8 @@ class yf_table2 {
 				if (isset($filter_params[$k]) && isset($supported_conds[$filter_params[$k]])) {
 					$cond = $filter_params[$k];
 				}
-				$part_on_the_right = $supported_conds[$cond](array('value' => $v));
+				// Field with __and on the end of its name is special one for "between" condition
+				$part_on_the_right = $supported_conds[$cond](array('value' => $v, 'and' => $filter_data[$k.'__and']));
 			}
 			$sql[] = '`'.db()->es($k).'`'.$part_on_the_right;
 		}
