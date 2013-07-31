@@ -61,6 +61,14 @@ class yf_table2 {
 	}
 
 	/**
+	* Enabling automatic fields parsing mode
+	*/
+	function auto() {
+		$this->_params['auto'] = true;
+		return $this;
+	}
+
+	/**
 	* Render result table html, gathered by row functions
 	*/
 	function render($params = array()) {
@@ -137,6 +145,8 @@ class yf_table2 {
 					$data[$_id][$custom_name] = strval($custom_data[$_id]);
 				}
 			}
+			// Needed to correctly pass inside $instance_params to each function
+			$params['data_sql_names'] = $this->_data_sql_names;
 		}
 		if ($data) {
 			if ($params['form']) {
@@ -176,7 +186,7 @@ class yf_table2 {
 					unset($info['func']); // Save resources
 					$td_width = ($info['extra']['width'] ? ' width="'.$info['extra']['width'].'"' : '');
 
-					$body .= '<td'.$td_width.'>'.$func($row[$name], $info, $row).'</td>'.PHP_EOL;
+					$body .= '<td'.$td_width.'>'.$func($row[$name], $info, $row, $params).'</td>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<td nowrap>';
@@ -185,7 +195,7 @@ class yf_table2 {
 						$func = $info['func'];
 						unset($info['func']); // Save resources
 
-						$body .= $func($row, $info).PHP_EOL;
+						$body .= $func($row, $info, $params).PHP_EOL;
 					}
 					$body .= '</td>'.PHP_EOL;
 				}
@@ -206,7 +216,7 @@ class yf_table2 {
 			$name = $info['name'];
 			$func = $info['func'];
 			unset($info['func']); // Save resources
-			$body .= $func($info).PHP_EOL;
+			$body .= $func($info, $params).PHP_EOL;
 		}
 		$body .= $pages.PHP_EOL;
 		return $body;
@@ -300,10 +310,9 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"desc"	=> $desc,
 			"data"	=> t($extra['data']),
-			"func"	=> function($field, $params, $row) {
+			"func"	=> function($field, $params, $row, $instance_params) {
 				if (!$params['data'] && $params['extra']['data_name']) {
-// TODO: fixme (replace _class('table2') with object passing, currently this is used due to PHP 5.3 troubles, in 5.4+ works fine with $this inside lambda functions)
-					$params['data'] = _class('table2')->_data_sql_names[$params['extra']['data_name']];
+					$params['data'] = $instance_params['data_sql_names'][$params['extra']['data_name']];
 				}
 				if (!$params['data']) {
 					$text = $field;
@@ -336,7 +345,7 @@ class yf_table2 {
 			"desc"	=> $desc,
 			"link"	=> $link,
 			"data"	=> t($data),
-			"func"	=> function($field, $params, $row) {
+			"func"	=> function($field, $params, $row, $instance_params) {
 				if (!$params['data']) {
 					$text = (isset($row[$field]) ? $row[$field] : $field);
 				} else {
@@ -346,7 +355,8 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
-				$body = '<a href="'.str_replace('%d', urlencode($field), $params['link']).'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
+				$link = str_replace('%d', urlencode($field), $params['link']). $instance_params['links_add'];
+				$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
 				return _class('table2')->_apply_badges($body, $params['extra'], $field);
 			}
 		);
@@ -364,7 +374,7 @@ class yf_table2 {
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"desc"	=> $desc,
-			"func"	=> function($field, $params, $row) {
+			"func"	=> function($field, $params, $row, $instance_params) {
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
 				return _class('table2')->_apply_badges($text, $params['extra'], $field);
 			}
@@ -382,7 +392,7 @@ class yf_table2 {
 			"extra"	=> $extra,
 			"path"	=> $path,
 			"link"	=> $link,
-			"func"	=> function($field, $params, $row) {
+			"func"	=> function($field, $params, $row, $instance_params) {
 				$id = $row['id'];
 				// Make 3-level dir path
 				$d = sprintf("%09s", $id);
@@ -432,23 +442,22 @@ class yf_table2 {
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"link"	=> $link,
-			"func"	=> function($row, $params) {
+			"func"	=> function($row, $params, $instance_params) {
 				$override_id = "";
 				if (isset($params['extra']['id'])) {
 					$override_id = $params['extra']['id'];
 				}
-// TODO: fixme (replace _class('table2') with object passing, currently this is used due to PHP 5.3 troubles, in 5.4+ works fine with $this inside lambda functions)
-				if (isset(_class('table2')->_params['id'])) {
-					$override_id = _class('table2')->_params['id'];
+				if (isset($instance_params['id'])) {
+					$override_id = $instance_params['id'];
 				}
-// TODO: fixme (replace _class('table2') with object passing, currently this is used due to PHP 5.3 troubles, in 5.4+ works fine with $this inside lambda functions)
-				if (_class('table2')->_params['btn_no_text']) {
+				if ($instance_params['btn_no_text']) {
 					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
 				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
 				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
-				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 			},
 		);
 		return $this;
@@ -561,9 +570,12 @@ class yf_table2 {
 			"link"	=> $link,
 			"func"	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
-				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="change_active">'
-						.($row['active'] ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
-					.'</a> ';
+				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				$values = array(
+					1 => '<span class="label label-success">'.t('Active').'</span>',
+					0 => '<span class="label label-warning">'.t('Disabled').'</span>',
+				);
+				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
 			},
 		);
 		return $this;
@@ -577,11 +589,12 @@ class yf_table2 {
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"link"	=> $link,
-			"func"	=> function($params) {
+			"func"	=> function($params, $instance_params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
 				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
-				return '<a href="'.str_replace('%d', urlencode($row[$id]), $params['link']).'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		return $this;
@@ -648,10 +661,5 @@ class yf_table2 {
 			"tip_id"	=> $value,
 //			"replace"	=> $extra[],
 		));
-	}
-
-	function auto() {
-		$this->_params['auto'] = true;
-		return $this;
 	}
 }

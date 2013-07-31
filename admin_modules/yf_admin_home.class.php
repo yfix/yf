@@ -30,7 +30,7 @@ class yf_admin_home {
 	/**
 	*/
 	function show () {
-		module("manage_dashboards")->display("admin_home");
+		return module("manage_dashboards")->display("admin_home");
 	}
 
 	/**

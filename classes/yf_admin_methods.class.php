@@ -20,12 +20,27 @@ class yf_admin_methods {
 	/**
 	*/
 	function add($params = array()) {
+		if (is_string($params)) {
+			$params = array(
+				'table' => $params,
+			);
+		}
 		if (!is_array($params)) {
+			$params = array();
+		}
+		$table = db($params['table']);
+		if (!$table) {
 			return false;
 		}
-		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
+		if (!$fields) {
+			$columns = db()->meta_columns($table);
+			if (isset($columns[$primary_field])) {
+				unset($columns[$primary_field]);
+			}
+			$fields = array_keys($columns);
+		}
 		if (!empty($_POST)) {
 			if (!common()->_error_exists()) {
 				$sql = array();
@@ -36,13 +51,13 @@ class yf_admin_methods {
 				}
 				db()->insert($table, db()->es($sql));
 				$NEW_ID = db()->insert_id();
-				return js_redirect("./?object=".$_GET["object"]. ($NEW_ID ? "&action=edit&id=".$NEW_ID : ""));
+				return js_redirect("./?object=".$_GET["object"]. ($NEW_ID ? "&action=edit&id=".$NEW_ID : ""). $params['links_add']);
 			}
 		}
 		$DATA = _prepare_html($_POST);
 		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-			"back_link"		=> "./?object=".$_GET["object"],
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]. $params['links_add'],
+			"back_link"		=> "./?object=".$_GET["object"]. $params['links_add'],
 		);
 		foreach ((array)$fields as $f) {
 			$replace[$f] = $DATA[$f];
@@ -53,14 +68,28 @@ class yf_admin_methods {
 	/**
 	*/
 	function edit($params = array()) {
+		if (is_string($params)) {
+			$params = array(
+				'table' => $params,
+			);
+		}
 		if (!is_array($params)) {
+			$params = array();
+		}
+		$table = db($params['table']);
+		if (!$table) {
 			return false;
 		}
-		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
-
-		$a = db()->get("SELECT * FROM ".$table." WHERE `".db()->es($primary_field)."`='".db()->es($_GET['id'])."'");
+		if (!$fields) {
+			$columns = db()->meta_columns($table);
+			if (isset($columns[$primary_field])) {
+				unset($columns[$primary_field]);
+			}
+			$fields = array_keys($columns);
+		}
+		$a = db()->get("SELECT * FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_GET['id'])."'");
 		if (!$a) {
 			return _e('Wrong id');
 		}
@@ -73,7 +102,7 @@ class yf_admin_methods {
 					}
 				}
 				db()->update($table, db()->es($sql), "`".db()->es($primary_field)."`='".db()->es($_GET["id"])."'");
-				return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".urlencode($_GET["id"]));
+				return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".urlencode($_GET["id"]). $params['links_add']);
 			}
 		}
 		$DATA = $a;
@@ -83,8 +112,8 @@ class yf_admin_methods {
 			}
 		}
 		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".urlencode($_GET["id"]),
-			"back_link"		=> "./?object=".$_GET["object"],
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".urlencode($_GET["id"]). $params['links_add'],
+			"back_link"		=> "./?object=".$_GET["object"]. $params['links_add'],
 		);
 		foreach ((array)$a as $k => $v) {
 			if (!isset($replace[$k])) {
@@ -97,10 +126,18 @@ class yf_admin_methods {
 	/**
 	*/
 	function delete($params = array()) {
+		if (is_string($params)) {
+			$params = array(
+				'table' => $params,
+			);
+		}
 		if (!is_array($params)) {
+			$params = array();
+		}
+		$table = db($params['table']);
+		if (!$table) {
 			return false;
 		}
-		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
@@ -110,17 +147,25 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo $_GET["id"];
 		} else {
-			return js_redirect("./?object=".$_GET["object"]. _add_get());
+			return js_redirect("./?object=".$_GET["object"]. _add_get(). $params['links_add']);
 		}
 	}
 
 	/**
 	*/
 	function active($params = array()) {
+		if (is_string($params)) {
+			$params = array(
+				'table' => $params,
+			);
+		}
 		if (!is_array($params)) {
+			$params = array();
+		}
+		$table = db($params['table']);
+		if (!$table) {
 			return false;
 		}
-		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
@@ -135,17 +180,25 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo ($info["active"] ? 0 : 1);
 		} else {
-			return js_redirect("./?object=".$_GET["object"]. _add_get());
+			return js_redirect("./?object=".$_GET["object"]. _add_get(). $params['links_add']);
 		}
 	}
 
 	/**
 	*/
 	function clone_item($params = array()) {
+		if (is_string($params)) {
+			$params = array(
+				'table' => $params,
+			);
+		}
 		if (!is_array($params)) {
+			$params = array();
+		}
+		$table = db($params['table']);
+		if (!$table) {
 			return false;
 		}
-		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
@@ -162,19 +215,28 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo ($new_id ? 1 : 0);
 		} else {
-			return js_redirect("./?object=".$_GET["object"]. _add_get());
+			return js_redirect("./?object=".$_GET["object"]. _add_get(). $params['links_add']);
 		}
 	}
 
 	/**
 	*/
 	function sortable($params = array()) {
+		if (is_string($params)) {
+			$params = array(
+				'table' => $params,
+			);
+		}
 		if (!is_array($params)) {
+			$params = array();
+		}
+		$table = db($params['table']);
+		if (!$table) {
 			return false;
 		}
-		$table	= $params['table'];
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
+
 		if ($_POST['first'] && $_POST['second']) {
 			$first	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_POST['first'])."' LIMIT 1");
 			$second	= db()->query_fetch("SELECT * FROM ".db()->es($table)." WHERE `".db()->es($primary_field)."`='".db()->es($_POST['second'])."' LIMIT 1");
@@ -186,6 +248,6 @@ class yf_admin_methods {
 //		db()->update($table, array("order" => $new_order_first), db()->es($primary_field)."='".db()->es($first[$primary_field])."'");
 //		db()->update($table, array("order" => $new_order_second), db()->es($primary_field)."='".db()->es($second[$primary_field])."'");
 
-		return js_redirect("./?object=".$_GET["object"]. _add_get());
+		return js_redirect("./?object=".$_GET["object"]. _add_get(). $params['links_add']);
 	}
 }

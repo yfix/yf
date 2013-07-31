@@ -7,6 +7,7 @@ class yf_manage_tips {
 	function _init() {
 		$this->_table = array(
 			'table' => db('tips'),
+/*
 			'fields' => array(
 				'name',
 				'text',
@@ -14,6 +15,7 @@ class yf_manage_tips {
 				'active',
 				'locale',
 			),
+*/
 		);
 	}
 

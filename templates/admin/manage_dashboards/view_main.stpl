@@ -4,7 +4,7 @@
 	.portlet-content { max-height: 300px; overflow-y:auto; }
 	.portlet-content table { margin-bottom: 0; }
 	.portlet-content table td { padding: 3px; }
-/*	.container { width: 100%; } */
+	.container { width: 100%; } 
 </style>
 
 <div class="container-fluid" id="yf_dashboard">

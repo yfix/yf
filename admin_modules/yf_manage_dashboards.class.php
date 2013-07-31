@@ -34,15 +34,31 @@ class yf_manage_dashboards {
 	* Designed to be used by other modules to show configured dashboard
 	*/
 	function display($params = array()) {
-// TODO
-		return $this->view();
+		if (is_string($params)) {
+			$name = $params;
+		}
+		if (!is_array($params)) {
+			$params = array();
+		}
+		if (!$params['name'] && $name) {
+			$params['name'] = $name;
+		}
+		if (!$params['name']) {
+			return _e('Empty dashboard name');
+		}
+		$this->_name = $params['name'];
+		return $this->view($params);
 	}
 
 	/**
 	* Similar to "display", but for usage inside this module (action links and more)
 	*/
 	function view($params = array()) {
-		$dashboard = $this->_get_dashboard_data($_GET['id']);
+		if (!is_array($params)) {
+			$params = array();
+		}
+		$ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
+		$dashboard = $this->_get_dashboard_data($ds_name);
 		if (!$dashboard['id']) {
 			return _e('No such record');
 		}
@@ -52,6 +68,31 @@ class yf_manage_dashboards {
 			$replace['items_'.$column_id] = $this->_view_widget_items($name_ids);
 		}
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
+	}
+
+	/**
+	* This will be showed in side (left) area, catched by hooks functionality
+	*/
+	function _hook_side_column () {
+		if ($_GET['object'] != 'manage_dashboards' || !in_array($_GET['action'], array('edit','add'))) {
+			return false;
+		}
+		$dashboard = $this->_get_dashboard_data();
+		if (!$dashboard) {
+			return false;
+		}
+		$avail_hooks = $this->_get_available_widgets_hooks();
+		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
+			foreach ((array)$name_ids as $auto_id) {
+				unset($avail_hooks[$auto_id]);
+			}
+		}
+		$replace = array(
+			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
+			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
+			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$dashboard['id'],
+		);
+		return tpl()->parse(__CLASS__.'/edit_side', $replace);
 	}
 
 	/**
@@ -98,30 +139,6 @@ class yf_manage_dashboards {
 			$replace['items_'.$column_id] = $this->_show_edit_widget_items($name_ids);
 		}
 		return tpl()->parse(__CLASS__.'/edit_main', $replace);
-	}
-
-	/**
-	* This will be showed in side (left) area, catched by hooks functionality
-	*/
-	function _hook_side_column () {
-		if ($_GET['object'] != 'manage_dashboards' || !in_array($_GET['action'], array('edit','add'))) {
-			return false;
-		}
-		$dashboard = $this->_get_dashboard_data();
-		if (!$dashboard) {
-			return false;
-		}
-		$avail_hooks = $this->_get_available_widgets_hooks();
-		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
-			foreach ((array)$name_ids as $auto_id) {
-				unset($avail_hooks[$auto_id]);
-			}
-		}
-		$replace = array(
-			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
-			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
-		);
-		return tpl()->parse(__CLASS__.'/edit_side', $replace);
 	}
 
 	/**
@@ -181,7 +198,7 @@ class yf_manage_dashboards {
 	*/
 	function _get_dashboard_data ($id = "") {
 		if (!$id) {
-			$id = $_GET['id'];
+			$id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
 		}
 		if (!$id) {
 			return false;

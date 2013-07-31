@@ -405,6 +405,7 @@ class yf_manage_shop {
 				),
 			);
 		}
+		return 'TODO';
 // TODO
 //		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
 	}
@@ -419,6 +420,7 @@ class yf_manage_shop {
 				),
 			);
 		}
+		return 'TODO';
 // TODO
 //		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
 	}
@@ -434,6 +436,7 @@ class yf_manage_shop {
 				),
 			);
 		}
+		return 'TODO';
 // TODO
 //		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
 	}
@@ -448,6 +451,7 @@ class yf_manage_shop {
 				),
 			);
 		}
+		return 'TODO';
 // TODO
 //		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
 	}
@@ -462,6 +466,7 @@ class yf_manage_shop {
 				),
 			);
 		}
+		return 'TODO';
 // TODO
 //		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
 	}
@@ -476,6 +481,7 @@ class yf_manage_shop {
 				),
 			);
 		}
+		return 'TODO';
 // TODO
 //		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
 	}

@@ -28,6 +28,11 @@ $(function() {
 		})
 		return false;
 	})
+
+	$(".yf_ds_options, .yf_ds_minimize").on("click",function(){
+alert("TODO");
+		return false;
+	})
 });
 </script>
 

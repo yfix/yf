@@ -34,6 +34,30 @@ class yf_form2 {
 	}
 
 	/**
+	* Enable automatic fields parsing mode
+	*/
+	function auto($table, $id, $params = array()) {
+		if ($params['links_add']) {
+			$this->_params['links_add'] = $params['links_add'];
+		}
+		$columns = db()->meta_columns($table);
+		$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
+		foreach ((array)$info as $k => $v) {
+			$this->_replace[$k] = $v;
+		}
+		foreach((array)$columns as $name => $details) {
+			$type = strtoupper($details['type']);
+			if (strpos($type, 'TEXT') !== false) {
+				$this->textarea($name);
+			} else {
+				$this->text($name);
+			}
+		}
+		$this->save_and_back();
+		return $this;
+	}
+
+	/**
 	* Render result form html, gathered by row functions
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/
@@ -114,7 +138,7 @@ class yf_form2 {
 			$enctype = 'multipart/form-data';
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$form_action = isset($r[$name]) ? $r[$name] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : '');
+		$form_action = isset($r[$name]) ? $r[$name] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $this->_params['links_add'];
 		$body = '<form method="'.$method.'" action="'.$form_action.'" class="form-horizontal'.($extra['class'] ? ' '.$extra['class'] : '').'"'
 			.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
 			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
@@ -1624,15 +1648,5 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
-	}
-
-	function auto($table, $id, $params = array()) {
-		$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
-		$this->_replace = $info;
-		foreach((array)$info as $name => $v) {
-			$this->text($name);
-		}
-		$this->save_and_back();
-		return $this;
 	}
 }
