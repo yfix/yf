@@ -1174,10 +1174,6 @@ $data = my_array_merge((array)$data, array(
 	`user_id` int(11) NOT NULL default '0'
 ",
 ));
-$chat_tables_structs_file = YF_PATH."share/installer_chat_tables_structs.php";
-if (file_exists($chat_tables_structs_file)) {
-	include_once($chat_tables_structs_file);
-}
 $forum_tables_structs_file = YF_PATH."share/installer_forum_tables_structs.php";
 if (file_exists($forum_tables_structs_file)) {
 	include_once($forum_tables_structs_file);
