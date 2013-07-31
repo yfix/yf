@@ -72,7 +72,7 @@ class yf_common {
 	/**
 	*/
 	function bs_get_avail_themes() {
-		return array("amelia","cerulean","cosmo","cyborg","flatly","journal","readable","simplex","slate","spacelab","spruce","superhero","united");
+		return array("amelia","cerulean","cosmo","cyborg","flatly","journal","readable","simplex","slate","spacelab","spruce","superhero","united","bootstrap");
 	}
 
 	/**
