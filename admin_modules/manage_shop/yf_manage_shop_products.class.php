@@ -26,6 +26,34 @@ class yf_manage_shop_products{
 			->render();
 	}
 
+	function products_sort() {
+		main()->NO_GRAPHICS = true;
+		list ($name, $sort_by) = split ('[-]', $_POST["id"]);
+		if ($name == "percent"){
+			$name = "viewed";
+		}
+		$sql = "SELECT * FROM ".db('shop_products')." ORDER BY ".$name." ".$sort_by." ";
+		list($add_sql, $pages, $total) = common()->divide_pages($sql, "", "", 100);
+		$products_info = db()->query_fetch_all($sql.$add_sql);
+		module('manage_shop')->_total_prod = $total;
+		$query = db()->query_fetch("SELECT SUM(viewed) AS total FROM ".db('shop_products')."");
+		foreach ((array)$products_info as $v){
+			if ($v['viewed'] ) {
+				$percent = round(($v['viewed'] / $query["total"]) * 100, 2) . '%';
+			} else {
+				$percent = '0%';
+			}
+			$replace2 = array(
+				"name"		=> _prepare_html($v["name"]),
+				"model"		=> _prepare_html($v["model"]),
+				"viewed"	=> _prepare_html($v["viewed"]),
+				"percent"	=> $percent,
+			);
+			$items .= tpl()->parse("manage_shop/item_reports_viewed", $replace2); 
+		}
+		echo $items;
+	}
+
 	function product_activate () {
 		if ($_GET["id"]){
 			$A = db()->query_fetch("SELECT * FROM ".db('shop_products')." WHERE id=".intval($_GET["id"]));
@@ -49,7 +77,7 @@ class yf_manage_shop_products{
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		module("manage_shop")->_image_delete($_GET["id"]);
+		module("manage_shop")->_product_image_delete($_GET["id"]);
 		db()->query("DELETE FROM ".db('shop_product_attributes_values')." WHERE object_id=".$_GET["id"]);
 		db()->query("DELETE FROM ".db('shop_group_options')." WHERE product_id=".$_GET["id"]);		
 		db()->query("DELETE FROM ".db('shop_products')." WHERE id=".$_GET["id"]);

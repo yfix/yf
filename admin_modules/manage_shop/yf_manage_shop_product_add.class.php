@@ -38,7 +38,7 @@ class yf_manage_shop_product_add{
 				if (!empty($_FILES)) {
 					$product_id = $_GET["id"];
 					$product_name = _es(common()->_propose_url_from_name($_POST["name"]));
-					$rez_upload = module("manage_shop")->_image_upload ($product_id, $product_name);
+					$rez_upload = module("manage_shop")->_product_image_upload ($product_id, $product_name);
 					$sql_array = array(
 						"image"	=> 1,
 					);
@@ -51,7 +51,6 @@ class yf_manage_shop_product_add{
 				}
 				$product_id = db()->INSERT_ID();
 				module("manage_shop")->_attributes_save($product_id);
-				module("manage_shop")->_save_group_prices($product_id);
 			}
 			return js_redirect("./?object=manage_shop&action=products");
 		}
@@ -67,16 +66,6 @@ class yf_manage_shop_product_add{
 				"title"			=> _prepare_html($_attr_info["title"]),
 				"name_in_form"	=> _prepare_html($_name_in_form),
 				"box"			=> common()->select_box($_name_in_form, $_attr_info["value_list"], $_selected, false, 2, "", false),
-			);
-		}
-		// Group prices here
-		$group_prices = array();
-		$user_groups = main()->get_data("user_groups");
-		foreach ((array)module("manage_shop")->_get_group_prices(0) as $_group_id => $_group_price) {
-			$group_prices[$_group_id] = array(
-				"group_id"		=> intval($_group_id),
-				"group_name"	=> _prepare_html($user_groups[$_group_id]),
-				"price"			=> $_group_price ? number_format($_group_price, 2, '.', ' ') : "",
 			);
 		}
 		$replace = array(
