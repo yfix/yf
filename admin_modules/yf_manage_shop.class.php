@@ -172,7 +172,7 @@ class yf_manage_shop {
 	}
 
 	function related_products($id = "") {
-		$func = __FUNCTION__; return _class('manage_shop_get_product_related', 'admin_modules/manage_shop/')->$func($id);
+		$func = __FUNCTION__; return _class('manage_shop_related_products', 'admin_modules/manage_shop/')->$func($id);
 	}
 
 	function orders() {
