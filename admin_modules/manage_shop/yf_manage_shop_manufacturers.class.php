@@ -1,6 +1,8 @@
 <?php
 class yf_manage_shop_manufacturers{
 
+	/**
+	*/
 	function manufacturers () {
 		return common()->table2("SELECT * FROM ".db('shop_manufacturers'))
 #			->image("name")
@@ -13,18 +15,140 @@ class yf_manage_shop_manufacturers{
 			->footer_link("Add", "./?object=manage_shop&action=manufacturer_add")
 			->render();
 	}	
+
+	/**
+	*/
+	function manufacturer_add () {
+		if (!empty($_POST)) {
+			if (!$_POST["name"]) {
+				_re("Product name must be filled");
+			}
+			if (!common()->_error_exists()) {
+				$sql_array = array(
+					"name"			=> $_POST["name"],
+					"url"			=> common()->_propose_url_from_name($_POST["name"]),
+					"desc"			=> $_POST["desc"],
+					"sort_order"	=> intval($_POST["featured"]),
+				);
+				db()->insert(db('shop_manufacturers'), db()->es($sql_array));
+				if (!empty($_FILES)) {
+					$man_id = $_GET["id"];
+					module('manage_shop')->_upload_image ($man_id, $url);
+				} 
+			}
+			return js_redirect("./?object=manage_shop&action=manufacturers");
+		}
+
+		$thumb_path = module('manage_shop')->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].module('manage_shop')->THUMB_SUFFIX. ".jpg";
+		if (!file_exists($thumb_path)) {
+			$thumb_path = "";
+		} else {
+			$thumb_path = module('manage_shop')->manufacturer_img_webdir.$manufacturer_info["url"]."_".$manufacturer_info["id"].module('manage_shop')->THUMB_SUFFIX. ".jpg";
+		}
+		$replace = array(
+			"name"				=> "",
+			"sort_order"		=> "",
+			"desc"				=> "",
+			"thumb_path"		=> "",
+			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=manage_shop&action=manufacturer_add",
+			"back_url"			=> "./?object=manage_shop&action=manufacturers",
+		);
+		return common()->form2($replace)
+			->text("name")
+			->textarea("desc","Description")
+			->text("url")
+			->text("meta_keywords")
+			->text("meta_desc")
+			->integer("sort_order")
+			->save_and_back()
+			->render();
+	}	
+
+	/**
+	*/
+	function manufacturer_edit () {
+		$_GET["id"] = intval($_GET["id"]);
+		if (empty($_GET["id"])) {
+			return "Empty ID!";
+		}
+		$manufacturer_info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturers')." WHERE id=".$_GET["id"]);
+		if (!empty($_POST)) {
+			if (!$_POST["name"]) {
+				_re("Product name must be filled");
+			}
+			if (!common()->_error_exists()) {
+				$sql_array = array(
+					"name"		=> $_POST["name"],
+					"url"		=> common()->_propose_url_from_name($_POST["name"]),
+					"desc"		=> $_POST["desc"],
+					"sort_order"=> intval($_POST["featured"]),
+				);
+				db()->update('shop_manufacturers', db()->es($sql_array), "id=".$_GET["id"]);
+				if (!empty($_FILES)) {
+					$man_id = $_GET["id"];
+					$this->_upload_image($man_id, $url);
+				} 
+			}
+			return js_redirect("./?object=manage_shop&action=manufacturers");
+		}
+		$thumb_path = module('manage_shop')->manufacturer_img_dir.$manufacturer_info["url"]."_".$manufacturer_info["id"].module('manage_shop')->THUMB_SUFFIX. ".jpg";
+		if (!file_exists($thumb_path)) {
+			$thumb_path = "";
+		} else {
+			$thumb_path = module('manage_shop')->manufacturer_img_webdir.$manufacturer_info["url"]."_".$manufacturer_info["id"].module('manage_shop')->THUMB_SUFFIX. ".jpg";
+		}
+		$replace = array(
+			"name"				=> $manufacturer_info["name"],
+			"sort_order"		=> $manufacturer_info["sort_order"],
+			"desc"				=> $manufacturer_info["desc"],
+			"thumb_path"		=> $thumb_path,
+			"delete_image_url"	=> "./?object=manage_shop&action=delete_image&id=".$manufacturer_info["id"],
+			"form_action"		=> "./?object=manage_shop&action=manufacturer_edit&id=".$manufacturer_info["id"],
+			"back_url"			=> "./?object=manage_shop&action=manufacturers",
+		);
+		return common()->form2($replace)
+			->text("name")
+			->textarea("desc","Description")
+			->text("url")
+			->text("meta_keywords")
+			->text("meta_desc")
+			->integer("sort_order")
+			->save_and_back()
+			->render();
+	}
+
+	/**
+	*/
+	function manufacturer_delete () {
+		$_GET["id"] = intval($_GET["id"]);
+		if (!empty($_GET["id"])) {
+			$info = db()->query_fetch("SELECT * FROM ".db('shop_manufacturers')." WHERE id=".intval($_GET["id"]));
+		}
+		if (!empty($info["id"])) {
+			db()->query("DELETE FROM ".db('shop_manufacturers')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+		}
+		if ($_POST["ajax_mode"]) {
+			main()->NO_GRAPHICS = true;
+			echo $_GET["id"];
+		} else {
+			return js_redirect("./?object=manage_shop&action=manufacturers");
+		}
+	}	
 	
-/*
+	/**
+	*/
 	function upload_image () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-
-		module('manage_shop')->_upload_image($_GET["id"]);
+		$this->_upload_image($_GET["id"]);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
 
+	/**
+	*/
 	function _upload_image ($man_id, $url) {
 		$img_properties = getimagesize($_FILES['image']['tmp_name']);
 		if (empty($img_properties) || !$man_id) {
@@ -32,32 +156,11 @@ class yf_manage_shop_manufacturers{
 		}
 		$img_path = module('manage_shop')->manufacturer_img_dir.$url."_".$man_id.module('manage_shop')->FULL_IMG_SUFFIX. ".jpg";
 		$thumb_path = module('manage_shop')->manufacturer_img_dir.$url."_".$man_id.module('manage_shop')->THUMB_SUFFIX. ".jpg";
-		// Do upload image
 		$upload_result = common()->upload_image($img_path);
 		if ($upload_result) {
-			// Make thumb
 			$resize_result = common()->make_thumb($img_path, $thumb_path, module('manage_shop')->THUMB_X, module('manage_shop')->THUMB_Y);
 		}
-		
 		return true;
 	}
 
-	function _delete_image ($man_id) {
-		$image_files = _class('dir')->scan_dir(module('manage_shop')->manufacturer_img_dir, true, "/".module('manage_shop')->IMG_PREFIX.$man_id."_/img");
-		foreach((array)$image_files as $filepath) {
-			unlink($filepath);
-		}
-		return true;
-	}
-
-	function delete_image () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return "Empty ID!";
-		}
-
-		module('manage_shop')->_delete_image($_GET["id"]);
-		return js_redirect($_SERVER["HTTP_REFERER"]);
-	}
-*/
 }

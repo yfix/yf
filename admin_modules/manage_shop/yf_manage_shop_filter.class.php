@@ -4,6 +4,9 @@ class yf_manage_shop_filter{
 	/**
 	*/
 	function _show_filter() {
+		if (!in_array($_GET['action'], array('products'))) {
+			return false;
+		}
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save',
 			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear',

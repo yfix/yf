@@ -140,27 +140,27 @@ class yf_manage_shop {
 	}
 
 	function products() {
-		return _class('manage_shop_products', 'admin_modules/manage_shop/')->products();
+		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_add() {
-		return _class('manage_shop_product_add', 'admin_modules/manage_shop/')->product_add();
+		$func = __FUNCTION__; return _class('manage_shop_product_add', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_edit() {
-		return _class('manage_shop_product_edit', 'admin_modules/manage_shop/')->product_edit();
+		$func = __FUNCTION__; return _class('manage_shop_product_edit', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_delete() {
-		return _class('manage_shop_product_delete', 'admin_modules/manage_shop/')->product_delete();
+		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_clone() {
-		return _class('manage_shop_product_clone', 'admin_modules/manage_shop/')->product_clone();
+		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function product_activate() {
-		return _class('manage_shop_product_activate', 'admin_modules/manage_shop/')->product_activate();
+		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function image_upload() {
@@ -232,35 +232,35 @@ class yf_manage_shop {
 	}
 
 	function manufacturers() {
-		return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->manufacturers();
+		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function manufacturer_edit() {
-		return _class('manage_shop_manufacturer_edit', 'admin_modules/manage_shop/')->manufacturer_edit();
+		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function manufacturer_add() {
-		return _class('manage_shop_manufacturer_add', 'admin_modules/manage_shop/')->manufacturer_add();
+		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function manufacturer_delete() {
-		return _class('manage_shop_manufacturer_delete', 'admin_modules/manage_shop/')->manufacturer_delete();
+		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function suppliers() {
-		return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->suppliers();
+		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function supplier_edit() {
-		return _class('manage_shop_supplier_edit', 'admin_modules/manage_shop/')->supplier_edit();
+		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function supplier_add() {
-		return _class('manage_shop_supplier_add', 'admin_modules/manage_shop/')->supplier_add();
+		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function supplier_delete() {
-		return _class('manage_shop_supplier_delete', 'admin_modules/manage_shop/')->supplier_delete();
+		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function attributes() {
@@ -284,27 +284,27 @@ class yf_manage_shop {
 	}
 
 	function _attributes_view($object_id = 0) {
-		return _class('manage_shop__attributes_view', 'admin_modules/manage_shop/')->_attributes_view($object_id);
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($object_id);
 	}
 
 	function _attributes_html($object_id = 0, $only_selected = false) {
-		return _class('manage_shop__attributes_html', 'admin_modules/manage_shop/')->_attributes_html($object_id, $only_selected);
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($object_id, $only_selected);
 	}
 
 	function _attributes_save($object_id = 0) {
-		return _class('manage_shop__attributes_save', 'admin_modules/manage_shop/')->_attributes_save($object_id);
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($object_id);
 	}
 
 	function _get_attributes($category_id = 0) {
-		return _class('manage_shop__get_attributes', 'admin_modules/manage_shop/')->_get_attributes($category_id);
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($category_id);
 	}
 
 	function _get_products_attributes($products_ids = array()) {
-		return _class('manage_shop__get_products_attributes', 'admin_modules/manage_shop/')->_get_products_attributes($products_ids);
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($products_ids);
 	}
 
 	function _get_attributes_values($category_id = 0, $object_id = 0, $fields_ids = 0) {
-		return _class('manage_shop__get_attributes_values', 'admin_modules/manage_shop/')->_get_attributes_values($category_id, $object_id, $fields_ids);
+		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($category_id, $object_id, $fields_ids);
 	}
 
 	function product_sets() {
