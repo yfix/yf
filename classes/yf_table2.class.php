@@ -61,6 +61,23 @@ class yf_table2 {
 	}
 
 	/**
+	* Wrapper for chained mode call from common()->table2()
+	*/
+	function chained_wrapper($sql = "", $params = array()) {
+		$this->_chained_mode = true;
+		$this->_sql = $sql;
+		$this->_params = $params;
+		return $this;
+	}
+
+	/**
+	* Wrapper for template engine
+	*/
+	function tpl_row($type = "input", $name, $desc = "", $extra = array()) {
+		return $this->$type($name, $desc, $extra);
+	}
+
+	/**
 	* Enabling automatic fields parsing mode
 	*/
 	function auto() {
@@ -220,23 +237,6 @@ class yf_table2 {
 		}
 		$body .= $pages.PHP_EOL;
 		return $body;
-	}
-
-	/**
-	* Wrapper for chained mode call from common()->table2()
-	*/
-	function chained_wrapper($sql = "", $params = array()) {
-		$this->_chained_mode = true;
-		$this->_sql = $sql;
-		$this->_params = $params;
-		return $this;
-	}
-
-	/**
-	* Wrapper for template engine
-	*/
-	function tpl_row($type = "input", $name, $desc = "", $extra = array()) {
-		return $this->$type($name, $desc, $extra);
 	}
 
 	/**

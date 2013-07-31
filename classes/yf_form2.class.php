@@ -34,6 +34,45 @@ class yf_form2 {
 	}
 
 	/**
+	* Wrapper for template engine
+	* Example:
+	*	return form2($replace)
+	*		->text("login","Login")
+	*		->text("password","Password")
+	*		->text("first_name","First Name")
+	*		->text("last_name","Last Name")
+	*		->text("go_after_login","Url after login")
+	*		->box_with_link("group_box","Group","groups_link")
+	*		->active("active","Active")
+	*		->info("add_date","Added");
+	*/
+	function chained_wrapper($replace = array(), $params = array()) {
+		$this->_chained_mode = true;
+		$this->_replace = $replace;
+		$this->_params = $params;
+		return $this;
+	}
+
+	/**
+	* Wrapper for template engine
+	* Example template:
+	*	{form_row("form_begin")}
+	*	{form_row("text","login")}
+	*	{form_row("text","password")}
+	*	{form_row("text","first_name")}
+	*	{form_row("text","last_name")}
+	*	{form_row("text","go_after_login","Url after login")}
+	*	{form_row("box_with_link","group_box","Group","groups_link")}
+	*	{form_row("active_box")}
+	*	{form_row("info","add_date","Added")}
+	*	{form_row("save_and_back")}
+	*	{form_row("form_end")}
+	*/
+	function tpl_row($type = "input", $replace = array(), $name, $desc = '', $extra = array()) {
+		return $this->$type($name, $desc, $extra, $replace);
+	}
+
+	/**
 	* Enable automatic fields parsing mode
 	*/
 	function auto($table, $id, $params = array()) {
@@ -75,45 +114,6 @@ class yf_form2 {
 		$form_end = $this->_body['form_end'];
 		unset($this->_body['form_end']);
 		return $form_begin. "\n". implode("\n", $this->_body). "\n". $form_end;
-	}
-
-	/**
-	* Wrapper for template engine
-	* Example:
-	*	return form2($replace)
-	*		->text("login","Login")
-	*		->text("password","Password")
-	*		->text("first_name","First Name")
-	*		->text("last_name","Last Name")
-	*		->text("go_after_login","Url after login")
-	*		->box_with_link("group_box","Group","groups_link")
-	*		->active("active","Active")
-	*		->info("add_date","Added");
-	*/
-	function chained_wrapper($replace = array(), $params = array()) {
-		$this->_chained_mode = true;
-		$this->_replace = $replace;
-		$this->_params = $params;
-		return $this;
-	}
-
-	/**
-	* Wrapper for template engine
-	* Example template:
-	*	{form_row("form_begin")}
-	*	{form_row("text","login")}
-	*	{form_row("text","password")}
-	*	{form_row("text","first_name")}
-	*	{form_row("text","last_name")}
-	*	{form_row("text","go_after_login","Url after login")}
-	*	{form_row("box_with_link","group_box","Group","groups_link")}
-	*	{form_row("active_box")}
-	*	{form_row("info","add_date","Added")}
-	*	{form_row("save_and_back")}
-	*	{form_row("form_end")}
-	*/
-	function tpl_row($type = "input", $replace = array(), $name, $desc = '', $extra = array()) {
-		return $this->$type($name, $desc, $extra, $replace);
 	}
 
 	/**
