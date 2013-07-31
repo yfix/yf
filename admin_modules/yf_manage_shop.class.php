@@ -120,9 +120,6 @@ class yf_manage_shop {
 			"add_date" 	=> "Date",
 			"active" 	=> "Status",
 		);
-		if ($manage_shop->USE_FILTER) {
-			$manage_shop->_prepare_filter_data();
-		}
 		// Sync company info with user section
 #		$manage_shop->COMPANY_INFO = _class("shop", "modules/")->COMPANY_INFO;
 
@@ -350,40 +347,40 @@ class yf_manage_shop {
 #		return _class('manage_shop__show_header', 'admin_modules/manage_shop/')->_show_header();
 	}
 
-	function _prepare_filter_data() {
-#		return _class('manage_shop__prepare_filter_data', 'admin_modules/manage_shop/')->_prepare_filter_data();
-	}
-
-	function _create_filter_sql() {
-#		return _class('manage_shop__create_filter_sql', 'admin_modules/manage_shop/')->_create_filter_sql();
-	}
-
+	/**
+	*/
 	function _show_filter() {
-#		return _class('manage_shop__show_filter', 'admin_modules/manage_shop/')->_show_filter();
+		$replace = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save',
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear',
+		);
+		$fields = array(
+			'name',	'cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date'
+		);
+		foreach ((array)$fields as $v) {
+			$order_fields[$v] = $v;
+		}
+		return form2($replace, array(
+				'selected' => $_SESSION['manage_shop']
+			))
+			->text('name')
+			->select_box('cat_id', _class('cats')->_get_items_names("shop_cats"), array('desc' => 'Main category'))
+			->radio_box('image', array(0 => 'No image', 1 => 'Have image'))
+			->select_box('order_by', $order_fields)
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear()
+		;
 	}
 
-	function save_filter($silent = false) {
-#		return _class('manage_shop_save_filter', 'admin_modules/manage_shop/')->save_filter($silent);
-	}
-
-	function clear_filter($silent = false) {
-#		return _class('manage_shop_clear_filter', 'admin_modules/manage_shop/')->clear_filter($silent);
-	}
-
-	function save_filter_order() {
-#		return _class('manage_shop_save_filter_order', 'admin_modules/manage_shop/')->save_filter_order();
-	}
-
-	function clear_filter_order() {
-#		return _class('manage_shop_clear_filter_order', 'admin_modules/manage_shop/')->clear_filter_order();
-	}
-
-	function save_filter_report() {
-#		return _class('manage_shop_save_filter_report', 'admin_modules/manage_shop/')->save_filter_report();
-	}
-
-	function clear_filter_report() {
-#		return _class('manage_shop_clear_filter_report', 'admin_modules/manage_shop/')->clear_filter_report();
+	/**
+	*/
+	function filter_save() {
+		if ($_GET['sub'] == 'clear') {
+			$_SESSION['manage_shop'] = array();
+		} else {
+			$_SESSION['manage_shop'] = $_POST;
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action=products');
 	}
 
 	function categories() {
@@ -478,6 +475,21 @@ class yf_manage_shop {
 				'desc'	=> 'List of latest customers, who bought something',
 				'configurable'	=> array(
 					'period'		=> array('minutely','hourly','daily','weekly','monthly')
+				),
+			);
+		}
+		return 'TODO';
+// TODO
+//		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function _hook_widget__stats ($params = array()) {
+		if ($params['describe_self']) {
+			return array(
+				'name'	=> 'Shop: overall stats',
+				'desc'	=> 'Overall shop stats numbers',
+				'configurable'	=> array(
+					'period' => array('minutely','hourly','daily','weekly','monthly')
 				),
 			);
 		}

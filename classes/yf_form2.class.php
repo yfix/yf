@@ -1166,7 +1166,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->select_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate)
+					.common()->radio_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>

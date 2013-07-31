@@ -249,14 +249,42 @@ class yf_table2 {
 			'order_by',
 			'order_direction',
 		);
+		$supported_conds = array(
+			"eq"		=> function($a){ return ' = "'._es($a['value']).'"'; }, // "equal"
+			"ne"		=> function($a){ return ' != "'._es($a['value']).'"'; }, // "not equal"
+			"gt"		=> function($a){ return ' > "'._es($a['value']).'"'; }, // "greater than",
+			"gte"		=> function($a){ return ' >= "'._es($a['value']).'"'; }, // "greater or equal than",
+			"lt"		=> function($a){ return ' < "'._es($a['value']).'"'; }, // "less than",
+			"lte"		=> function($a){ return ' <= "'._es($a['value']).'"'; }, // "lower or equal than"
+			"like"		=> function($a){ return ' LIKE "%'._es($a['value']).'"%'; }, // LIKE '%'.$value.'%'
+			"rlike"		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
+			"between"	=> function($a){ return ' BETWEEN "'._es($a['min']).'" AND "'._es($a['max']).'"'; }, // BETWEEN $min AND $max
+		);
 		foreach((array)$filter_data as $k => $v) {
 			if (in_array($k, $special_fields)) {
 				continue;
 			}
-			if (!strlen($k) || !strlen($v)) {
+			if (!strlen($k)) {
 				continue;
 			}
-			$sql[] = '`'.db()->es($k).'`='.(is_numeric($v) ? intval($v) : '"'.db()->es($v).'"');
+			$part_on_the_right = "";
+			// Here we support complex filtering conditions, examples:
+			// 'price' => array('gt', 'value' => '100')
+			// 'price' => array('between', 'min' => '1', 'max' => '10')
+			// 'name' => array('like', 'value' => 'john')
+			if (is_array($v)) {
+				$cond = $v[0];
+				if (!in_array($cond, $supported_conds)) {
+					continue;
+				}
+				$part_on_the_right = $supported_conds[$cond]($v);
+			} else {
+				if (!strlen($v)) {
+					continue;
+				}
+				$part_on_the_right = $supported_conds['eq'](array('value' => $v));
+			}
+			$sql[] = '`'.db()->es($k).'`'.$part_on_the_right;
 		}
 		$filter_sql = implode(" AND ", $sql);
 		if ($filter_data['order_by']) {
