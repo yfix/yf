@@ -1,4 +1,4 @@
-	  <div class="portlet" id="{id}">
+	  <div class="portlet well" id="{id}">
 	    <div class="portlet-header">
 			{name}
 {if("show_buttons" eq "1")}

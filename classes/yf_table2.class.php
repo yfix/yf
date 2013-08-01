@@ -171,7 +171,12 @@ class yf_table2 {
 				$form = $this->_init_form();
 				$body .= $form->form_begin($fparams['name'], $fparams['method'], $fparams, $fparams['replace']);
 			}
-			$body = '<table class="table table-bordered table-striped table-hover'.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
+			if ($params['condensed']) {
+				$params['table_class'] .= ' table-condensed';
+			}
+			$body = '<table class="table table-bordered table-striped table-hover'
+				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
+				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			if (!$params['no_header']) {
 				$body .= '<thead>'.PHP_EOL;
 				foreach ((array)$this->_fields as $info) {
@@ -353,6 +358,7 @@ class yf_table2 {
 			"name"	=> $name,
 			"extra"	=> $extra,
 			"desc"	=> $desc,
+			"link"	=> $extra['link'],
 			"data"	=> t($extra['data']),
 			"func"	=> function($field, $params, $row, $instance_params) {
 				if (!$params['data'] && $params['extra']['data_name']) {
@@ -367,7 +373,13 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
-				return _class('table2')->_apply_badges($text, $params['extra'], $field);
+				if ($params['link']) {
+					$link = str_replace('%d', urlencode($field), $params['link']). $instance_params['links_add'];
+					$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
+				} else {
+					$body = $text;
+				}
+				return _class('table2')->_apply_badges($body, $params['extra'], $field);
 			}
 		);
 		return $this;
@@ -376,35 +388,9 @@ class yf_table2 {
 	/**
 	*/
 	function link($name, $link = "", $data = "", $extra = array()) {
-		if (isset($extra['desc'])) {
-			$desc = $extra['desc'];
-		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
-		}
-		$this->_fields[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"desc"	=> $desc,
-			"link"	=> $link,
-			"data"	=> t($data),
-			"func"	=> function($field, $params, $row, $instance_params) {
-				if (!$params['data']) {
-					$text = (isset($row[$field]) ? $row[$field] : $field);
-				} else {
-					if (is_string($params['data'])) {
-						$text = $params['data'];
-					} else {
-						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
-					}
-				}
-				$link = str_replace('%d', urlencode($field), $params['link']). $instance_params['links_add'];
-				$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
-				return _class('table2')->_apply_badges($body, $params['extra'], $field);
-			}
-		);
-		return $this;
+		$extra['link'] = $link;
+		$extra['data'] = $data;
+		return $this->text($name, $extra['desc'], $extra);
 	}
 
 	/**
