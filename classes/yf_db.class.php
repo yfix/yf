@@ -511,6 +511,7 @@ class yf_db {
 	/**
 	* Alias, return 2d array, where key is first field and value is the second, 
 	* Example: "SELECT id, name FROM p_static_pages" => array('1' => 'page1', '2' => 'page2')
+	* Example: "SELECT name FROM p_static_pages" => array('page1', 'page2')
 	*/
 	function get_2d($query, $use_cache = true) {
 		$result = $this->query_fetch_all($query, $use_cache, true);
@@ -523,7 +524,11 @@ class yf_db {
 		}
 		$out = array();
 		foreach ((array)$result as $id => $data) {
-			$out[$data[$keys[0]]] = $data[$keys[1]];
+			if (isset($keys[1])) {
+				$out[$data[$keys[0]]] = $data[$keys[1]];
+			} else {
+				$out[] = $data[$keys[0]];
+			}
 		}
 		return $out;
 	}

@@ -69,7 +69,7 @@ class yf_manage_dashboards {
 			$replace['items_'.$n] = "";
 		}
 		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
-			$replace['items_'.$column_id] = $this->_view_widget_items($name_ids);
+			$replace['items_'.$column_id] = $this->_view_widget_items($name_ids, array('no_buttons' => 1));
 		}
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
 	}
@@ -147,7 +147,7 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _view_widget_items ($name_ids = array()) {
+	function _view_widget_items ($name_ids = array(), $params = array()) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
 		$_orig_object = $_GET['object'];
@@ -173,6 +173,7 @@ class yf_manage_dashboards {
 				'desc'		=> $content,
 				'has_config'=> $info['configurable'] ? 1 : 0,
 				'config'	=> json_encode($info['configurable']),
+				'show_buttons' => $params['no_buttons'] ? 0 : 1,
 			));
 		}
 		return implode("\n", $items);
