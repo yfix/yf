@@ -320,8 +320,10 @@ class yf_menus_editor {
 		if (empty($menu_info)) {
 			return _e(t("No such menu!"));
 		}
+
 		$_GET["id"] = intval($menu_info["id"]);
-		$menu_items = $this->_recursive_get_menu_items($_GET["id"]);
+		$menu_items = $this->_auto_update_items_orders($menu_info);
+//		$menu_items = $this->_recursive_get_menu_items($_GET["id"]);
 		$num_items = count($menu_items);
 		if ($menu_info["type"] == "admin") {
 			$this->_groups	= $this->_admin_groups;
@@ -414,31 +416,128 @@ class yf_menus_editor {
 		main()->NO_GRAPHICS = true;
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
+			return _e("No id");
+		}
+		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
+		if (empty($menu_info)) {
+			return _e("No such menu");
+		}
+		// Examples of posted data: del_row_12345, rowid_123456
+		if ($_POST['first']) {
+			$_POST['first'] = trim($_POST['first']);
+			$first_id = (int)substr($_POST['first'], strrpos($_POST['first'], '_') + 1);
+		}
+		if ($_POST['next']) {
+			$_POST['next'] = trim($_POST['next']);
+			$next_id = (int)substr($_POST['next'], strrpos($_POST['next'], '_') + 1);
+		}
+		if ($_POST['prev']) {
+			$_POST['prev'] = trim($_POST['prev']);
+			$prev_id = (int)substr($_POST['prev'], strrpos($_POST['prev'], '_') + 1);
+		}
+		$menu_items = $this->_auto_update_items_orders($menu_info);
+		if (!$menu_items) {
+			return _e("No menu items");
+		}
+		if (!$first_id || !isset($menu_items[$first_id])) {
+			return _e("Wrong first id");
+		}
+		if (!$next_id || !isset($menu_items[$next_id])) {
+			return _e("Wrong next id");
+		}
+		if (!$prev_id || !isset($menu_items[$prev_id])) {
+			return _e("Wrong prev id");
+		}
+		if ($next_id == $first_id) {
+			return _e("First and next ids are the same");
+		}
+		$first_info = $menu_items[$first_id];
+		$next_info = $menu_items[$next_id];
+		$prev_info = $menu_items[$prev_id];
+
+//		$new_first_parent_id = $next_info['parent_id'];
+		$new_first_parent_id = $prev_info['parent_id'];
+		$new_first_order = $next_info['order'];
+//		$new_next_order = $next_info['order'] + 1;
+
+		$sql1 = db()->update('menu_items', array(
+			'parent_id' => (int)$new_first_parent_id,
+			'order'		=> (int)$new_first_order
+		), 'id='.intval($first_id), true);
+		$sql2 = db()->update('menu_items', array(
+			'order'		=> (int)$new_next_order
+		), 'id='.intval($next_id), true);
+
+//db()->query($sql1);
+//db()->query($sql2);
+
+		if (main()->USE_SYSTEM_CACHE) {
+			cache()->refresh("menu_items");
+		}
+		return "OK\n".str_replace("\n", "", print_r($first_info,1))."\n".$sql1."\n".str_replace("\n", "", print_r($next_info,1))."\n".$sql2;
+	}
+
+	/**
+	* Save menu items (several at one time)
+	*/
+	function save_items() {
+		$_GET["id"] = intval($_GET["id"]);
+		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
+		}
+		if (isset($_POST["multi-delete"])) {
+			return $this->_multi_delete_items();
+		}
+		if (isset($_POST["item"])) {
+			return $this->group_save_items();
 		}
 		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info)) {
 			return _e(t("No such menu!"));
 		}
-// TODO
-/*
+
+//		$menu_items = $this->_auto_update_items_orders($menu_info);
 		$menu_items = $this->_recursive_get_menu_items($_GET["id"]);
+
 		foreach ((array)$menu_items as $A) {
 			if (!isset($_POST["name"][$A["id"]])) {
 				continue;
 			}
-			db()->UPDATE("menu_items", array(
-				"name"		=> _es($_POST["name"][$A["id"]]),
-				"location"	=> _es($_POST["location"][$A["id"]]),
-				"order"		=> intval($_POST["order"][$A["id"]]),
-				"icon"		=> _es($_POST["icon"][$A["id"]]),
-			), "id=".intval($A["id"]));
+			$current = array(
+				"name"		=> $A["name"],
+				"location"	=> $A["location"],
+				"order"		=> $A["order"],
+				"icon"		=> $A["icon"],
+			);
+			$sql = array(
+				"name"		=> $_POST["name"][$A["id"]],
+				"location"	=> $_POST["location"][$A["id"]],
+				"order"		=> (int)$_POST["order"][$A["id"]],
+				"icon"		=> $_POST["icon"][$A["id"]],
+			);
+			if ($current != $sql) {
+				db()->update("menu_items", _es($sql), "id=".intval($A["id"]));
+			}
 		}
-*/
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("menu_items");
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
+	}
+
+	/**
+	*/
+	function _auto_update_items_orders($menu_info) {
+		$menu_items = $this->_recursive_get_menu_items($menu_info["id"]);
+		$new_order = 1;
+		foreach ((array)$menu_items as $item_id => $info) {
+			if ($info['order'] != $new_order) {
+				db()->update('menu_items', array('order' => $new_order), 'id='.$item_id);
+				$menu_items[$item_id]['order'] = $new_order;
+			}
+			$new_order += 2;
+		}
+		return $menu_items;
 	}
 
 	/**
@@ -483,42 +582,6 @@ class yf_menus_editor {
 	   	db()->query($query);
 
 		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("menu_items");
-		}
-		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
-	}
-
-	/**
-	* Save menu items (several at one time)
-	*/
-	function save_items() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
-		}
-		if (isset($_POST["multi-delete"])) {
-			return $this->_multi_delete_items();
-		}
-		if (isset($_POST["item"])) {
-			return $this->group_save_items();
-		}
-		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
-		if (empty($menu_info)) {
-			return _e(t("No such menu!"));
-		}
-		$menu_items = $this->_recursive_get_menu_items($_GET["id"]);
-		foreach ((array)$menu_items as $A) {
-			if (!isset($_POST["name"][$A["id"]])) {
-				continue;
-			}
-			db()->UPDATE("menu_items", array(
-				"name"		=> _es($_POST["name"][$A["id"]]),
-				"location"	=> _es($_POST["location"][$A["id"]]),
-				"order"		=> intval($_POST["order"][$A["id"]]),
-				"icon"		=> _es($_POST["icon"][$A["id"]]),
-			), "id=".intval($A["id"]));
-		}
-		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("menu_items");
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
@@ -958,23 +1021,6 @@ class yf_menus_editor {
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> "All Menus",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Export",
-				"url"	=> "./?object=".$_GET["object"]."&action=export",
-			),
-		);
-		return $menu;	
 	}
 
 	/**

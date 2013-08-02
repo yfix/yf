@@ -9,6 +9,7 @@ $(function(){
 
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script type="text/javascript">
+/*
 $(function() {
 	$( ".sortable" ).sortable({
         update: function(event, ui) {
@@ -17,13 +18,17 @@ $(function() {
 				return false;
 			}
             var first = ui.item[0].id;
-            var second = ui.item.prev()[0].id;
-			$.post(ajax_url, {"first": first, "second": second}, function(data){ })
-//			console.log(ajax_url, first, second)
+            var next = ui.item.next()[0].id;
+            var prev = ui.item.prev()[0].id;
+//			$.post(ajax_url, {"first": first, "next": next, "prev" : prev}, function(data){ 
+//console.log(data)
+//			})
+			console.log(ajax_url, first, next, prev)
         }
 	});
 //	$( ".sortable" ).disableSelection();
 });
+*/
 </script>
 
 <script type="text/javascript">
@@ -59,7 +64,7 @@ $(function(){
 		}
 		var _obj = $(this);
 		$.post(_obj.attr("href") || _obj.attr("yf:href"), {ajax_mode: 1}, function() {
-			_obj.parents("tr").remove();
+			_obj.closest("tr").remove();
 		});
 		return false; // Do not allow new page
 	});
