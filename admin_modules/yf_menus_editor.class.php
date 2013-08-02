@@ -312,7 +312,13 @@ class yf_menus_editor {
 	/**
 	* Display menu items for the given block
 	*/
-	function show_items() {
+	function show_items($params = array()) {
+		if (!is_array($params)) {
+			$params = array();
+		}
+		if (!isset($params['tpl_name'])) {
+			$params['tpl_name'] = 'menu_items';
+		}
 		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
 		}
@@ -382,7 +388,7 @@ class yf_menus_editor {
 				"active_link"	=> "./?object=".$_GET["object"]."&action=activate_item&id=".$A["id"],
 				"clone_link"	=> "./?object=".$_GET["object"]."&action=clone_item&id=".$A["id"],
 			);
-			$items .= tpl()->parse($_GET["object"]."/menu_items_item", $replace2);
+			$items .= tpl()->parse($_GET["object"]."/".$params['tpl_name']."_item", $replace2);
 		}
 		$replace = array(
 			"save_form_action"	=> "./?object=".$_GET["object"]."&action=save_items&id=".$_GET["id"],
@@ -406,7 +412,13 @@ class yf_menus_editor {
 		if (isset($_SESSION["_menu_js_refresh_frameset"])) {
 			unset($_SESSION["_menu_js_refresh_frameset"]);
 		}
-		return tpl()->parse($_GET["object"]."/menu_items_main", $replace);
+		return tpl()->parse($_GET["object"]."/".$params['tpl_name']."_main", $replace);
+	}
+
+	/**
+	*/
+	function show_items2() {
+		return $this->show_items(array('tpl_name' => 'menu_items2'));
 	}
 
 	/**
