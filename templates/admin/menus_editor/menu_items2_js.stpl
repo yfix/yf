@@ -1,10 +1,10 @@
 <style>
 .draggable_menu li { list-style-type: none; }
 .draggable_menu dl { position: relative; display: block; margin:0;/* border-bottom: 1px solid #eee;*/ }
-.draggable_menu dl.over { background-color: #ccc; }
+.draggable_menu dl.over { background-color: #ccc !important; }
 .draggable_menu dt { }
 .draggable_menu .dropzone { background-color: transparent; height: 4px; }
-.draggable_menu .dropzone.over { background-color: #aaa; }
+.draggable_menu .dropzone.over { background-color: #aaa !important; }
 .draggable_menu .menu-container { }
 .draggable_menu .closed ul { display: none; }
 .draggable_menu .opened ul { display: block; }
@@ -40,6 +40,18 @@ var draggable_history = {
 }
 //init functions
 $(function() {
+	// This is needed to get current BS theme colors for even and odd elements
+	var fake_table = $('<table class="table-striped"><tr><td></td></tr><tr><td></td></tr></table>').hide().appendTo("body");
+	var bg_color_bs1 = fake_table.find("tr:even td").css('background-color');
+	var bg_color_bs2 = fake_table.find("tr:odd td").css('background-color');
+	fake_table.remove();
+
+	function _set_dl_colors() {
+		$('dl:even', '.draggable_menu').css('background-color', bg_color_bs1)
+		$('dl:odd', '.draggable_menu').css('background-color', bg_color_bs2)
+	}
+	_set_dl_colors()
+
 	$('li', '.draggable_menu').prepend('<div class="dropzone"></div>');
 
 	$('dl, .dropzone', '.draggable_menu').droppable({
@@ -66,6 +78,9 @@ $(function() {
 		},
 		out: function() {
 			$(this).filter('dl, .dropzone').removeClass("over");
+		},
+		update: function() {
+			_set_dl_colors()
 		}
 	});
 	$('li','.draggable_menu').draggable({

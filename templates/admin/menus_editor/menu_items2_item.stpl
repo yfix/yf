@@ -2,8 +2,8 @@
 		<dl>
 			<dt>
 				<a href="#" class="expander"><i class="icon"></i></a>
-				<a href="{link}">{name}</a>
-				<span class="move" title="Move"><i class="icon icon-move"></i></span>
+				<a href="{link}">{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}{name}</a>
+				<span class="move" title="{t(Move)}"><i class="icon icon-move"></i></span>
 			</dt>
 		</dl>
 {if("have_children" eq "1")}

@@ -419,11 +419,11 @@ class yf_menus_editor {
 	*/
 	function show_items2() {
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']).' OR name="'.db()->es($_GET['id']).'"');
 		if (empty($menu_info)) {
-			return _e(t('No such menu!'));
+			return _e('No such menu!');
 		}
 		$items = _class('graphics')->_show_menu(array(
 			'force_stpl_name'	=> $_GET['object'].'/menu_items2',
