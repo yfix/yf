@@ -434,6 +434,11 @@ class yf_menus_editor {
 // TODO
 		}
 		foreach ((array)$items as $id => $item) {
+			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
+			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
+			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
+			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
+			$item['active']			= 1;
 			$items[$id] = tpl()->parse($_GET['object'].'/menu_items2_item', $item);
 		}
 		$replace = array(

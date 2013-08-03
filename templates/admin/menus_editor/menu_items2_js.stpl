@@ -1,4 +1,5 @@
 <style>
+.draggable_menu { width:70%; }
 .draggable_menu li { list-style-type: none; }
 .draggable_menu dl { position: relative; display: block; margin:0;/* border-bottom: 1px solid #eee;*/ }
 .draggable_menu dl.over { background-color: #ccc !important; }
@@ -8,6 +9,7 @@
 .draggable_menu .menu-container { }
 .draggable_menu .closed ul { display: none; }
 .draggable_menu .opened ul { display: block; }
+.draggable_menu .controls_over { display: none; }
 </style>
 
 <script>
@@ -103,6 +105,16 @@ $(function() {
 		$(this).closest('ul').toggleClass('opened').toggleClass('closed');
 		return false;
 	});
+
+	$('.controls_over', '.draggable_menu').hide();
+
+	$(".draggable_menu").on('mouseover', 'dl', function() {
+		$(this).find('.controls_over').show();
+	});
+	$(".draggable_menu").on('mouseout', 'dl', function() {
+		$(this).find('.controls_over').hide();
+	});
+
 });
 
 </script>
