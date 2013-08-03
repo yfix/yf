@@ -16,7 +16,7 @@
 	</tr>
 	</thead>
 	<tbody class="sortable" data-sortable-url="{sortable_action}">
-{items}				 
+{__items__}
 	</tbody>
 </table>
 
@@ -30,6 +30,11 @@
 {/if}
 --}}
 
+<ul class="draggable_menu">
+{items}
+</ul>
+
+<!--
 		<ul class="draggable_menu">
 			<li>
 				<dl>
@@ -146,7 +151,7 @@
 				</ul>
 			</li>
 		</ul>
-
+-->
 
 </form>
 

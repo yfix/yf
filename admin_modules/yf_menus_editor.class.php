@@ -418,7 +418,29 @@ class yf_menus_editor {
 	/**
 	*/
 	function show_items2() {
-		return $this->show_items(array('tpl_name' => 'menu_items2'));
+		if (empty($_GET['id'])) {
+			return _e(t('No id!'));
+		}
+		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']).' OR name="'.db()->es($_GET['id']).'"');
+		if (empty($menu_info)) {
+			return _e(t('No such menu!'));
+		}
+		$items = _class('graphics')->_show_menu(array(
+			'force_stpl_name'	=> $_GET['object'].'/menu_items2',
+			'name'				=> $menu_info['name'],
+			'return_array'		=> 1,
+		));
+		if ($_POST) {
+// TODO
+		}
+		foreach ((array)$items as $id => $item) {
+			$items[$id] = tpl()->parse($_GET['object'].'/menu_items2_item', $item);
+		}
+		$replace = array(
+			'items' 			=> implode("\n", (array)$items),
+			'save_form_action'	=> './?object='.$_GET['object'].'&action=show_items2&id='.$_GET['id'],
+		);
+		return tpl()->parse($_GET['object'].'/menu_items2_main', $replace);
 	}
 
 	/**

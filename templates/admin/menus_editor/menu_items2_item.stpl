@@ -1,15 +1,16 @@
-<tr id="del_row_{item_id}">
-	<td></td>
-	<td>{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i>{/if}</td>
-	<td>{name}</td>
-	<td>{location}</td>
-	<td><small><b>{item_type}</b></small></td>
-	<td><small>{foreach("groups")}<b>{_val}</b><br />{/foreach}</small></td>
-	<td></td>
-	<td nowrap>
-{form_row("tbl_link_edit")}
-{form_row("tbl_link_delete")}
-{form_row("tbl_link","Clone","clone_link")}
-{form_row("tbl_link_active")}
-	</td>
-</tr>
+	<li>
+		<dl>
+			<dt>
+				<a href="#" class="expander"><i class="icon"></i></a>
+				<a href="{link}">{name}</a>
+				<span class="move" title="Move"><i class="icon icon-move"></i></span>
+			</dt>
+		</dl>
+{if("have_children" eq "1")}
+		<ul>
+{else}
+	</li>
+	{if("next_level_diff" ne "0")}
+		</ul>
+	{/if}
+{/if}
