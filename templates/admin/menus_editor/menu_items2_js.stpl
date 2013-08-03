@@ -1,0 +1,93 @@
+<style>
+.draggable_menu li { list-style-type: none; }
+.draggable_menu dl { position: relative; display: block; margin:0;/* border-bottom: 1px solid #eee;*/ }
+.draggable_menu dl.over { background-color: #ccc; }
+.draggable_menu dt { }
+.draggable_menu .dropzone { background-color: transparent; height: 4px; }
+.draggable_menu .dropzone.over { background-color: #aaa; }
+.draggable_menu .menu-container { }
+.draggable_menu .closed ul { display: none; }
+.draggable_menu .opened ul { display: block; }
+</style>
+
+<script>
+var draggable_history = {
+	stack: new Array(),
+	temp: null,
+	//takes an element and saves it's position in the sitemap.
+	//note: doesn't commit the save until commit() is called!
+	//this is because we might decide to cancel the move
+	save_state: function(item) {
+		draggable_history.temp = { item: $(item), itemParent: $(item).parent(), itemAfter: $(item).prev() };
+	},
+	commit: function() {
+		if (draggable_history.temp != null) draggable_history.stack.push(draggable_history.temp);
+	},
+	//restores the state of the last moved item.
+	restore_state: function() {
+		var h = draggable_history.stack.pop();
+		if (h == null) return;
+		if (h.itemAfter.length > 0) {
+			h.itemAfter.after(h.item);
+		}
+		else {
+			h.itemParent.prepend(h.item);
+		}
+		//checks the classes on the lists
+		$('.draggable_menu li.opened').not(':has(li)').removeClass('opened');
+		$('.draggable_menu li:has(ul li):not(.closed)').addClass('opened');
+	}
+}
+//init functions
+$(function() {
+	$('li', '.draggable_menu').prepend('<div class="dropzone"></div>');
+
+	$('dl, .dropzone', '.draggable_menu').droppable({
+		accept: '.draggable_menu li',
+		tolerance: 'pointer',
+		drop: function(e, ui) {
+			var _this = $(this)
+			var li = _this.closest('li');
+			var child = !_this.hasClass('dropzone');
+			if (child && li.children('ul').length == 0) {
+				li.append('<ul/>');
+			}
+			if (child) {
+				li.addClass('opened').removeClass('closed').children('ul').append(ui.draggable);
+			} else {
+				li.before(ui.draggable);
+			}
+			$('li.opened', '.draggable_menu').not(':has(li:not(.ui-draggable-dragging))').removeClass('opened');
+			_this.filter('.over').removeClass('over');
+			draggable_history.commit();
+		},
+		over: function() {
+			$(this).filter('dl, .dropzone').addClass("over");
+		},
+		out: function() {
+			$(this).filter('dl, .dropzone').removeClass("over");
+		}
+	});
+	$('li','.draggable_menu').draggable({
+		handle: ' > dl',
+		opacity: .8,
+		addClasses: false,
+		helper: 'clone',
+		zIndex: 100,
+		start: function(e, ui) {
+			draggable_history.save_state(this);
+		}
+	});
+	$('.sitemap_undo').click(draggable_history.restore_state);
+	$(document).bind('keypress', function(e) {
+		if (e.ctrlKey && (e.which == 122 || e.which == 26)) {
+			draggable_history.restore_state();
+		}
+	});
+	$(".draggable_menu").on('click', '.expander', function() {
+		$(this).closest('ul').toggleClass('opened').toggleClass('closed');
+		return false;
+	});
+});
+
+</script>

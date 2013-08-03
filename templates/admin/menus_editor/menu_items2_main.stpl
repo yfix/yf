@@ -1,5 +1,7 @@
-{if("items" ne "")}
 <form action="{save_form_action}" method="post" name="menu_form">
+
+{{--
+{if("items" ne "")}
 <table class="table table-bordered table-striped table-hover table-condensed">
 	<thead>
 	<tr>
@@ -26,5 +28,128 @@
 {else}
 	<div class="alert">{t(No items yet)}</div>
 {/if}
+--}}
+
+		<ul class="draggable_menu">
+			<li>
+				<dl>
+					<dt>
+						<a href="#" class="expander"><i class="icon"></i></a>
+						<a class="sm2_title" href="#">Home</a>
+						 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+					</dt>
+				</dl>
+			</li>
+			<li>
+				<dl>
+					<dt>
+						<a href="#" class="expander"><i class="icon"></i></a>
+						<a class="sm2_title" href="#">About us</a>
+						 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+					</dt>
+				</dl>
+				<ul>
+					<li>
+						<dl>
+							<dt>
+								<a href="#" class="expander"><i class="icon"></i></a>
+								<a class="sm2_title" href="#">Things we do</a>
+								 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+							</dt>
+						</dl>
+						<ul>
+							<li>
+								<dl>
+									<dt>
+										<a href="#" class="expander"><i class="icon"></i></a>
+										<a class="sm2_title" href="#">Our projects</a>
+										 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+									</dt>
+								</dl>
+							</li>
+							<li>
+								<dl>
+									<dt>
+										<a href="#" class="expander"><i class="icon"></i></a>
+										<a class="sm2_title" href="#">Our goals</a>
+										 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+									</dt>
+								</dl>
+							</li>
+							<li>
+								<dl>
+									<dt>
+										<a href="#" class="expander"><i class="icon"></i></a>
+										<a class="sm2_title" href="#">Our people</a>
+										 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+									</dt>
+								</dl>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<dl>
+							<dt>
+								<a href="#" class="expander"><i class="icon"></i></a>
+								<a class="sm2_title" href="#">Our Mission</a>
+								 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+							</dt>
+						</dl>
+					</li>
+					<li>
+						<dl>
+							<dt>
+								<a href="#" class="expander"><i class="icon"></i></a>
+								<a class="sm2_title" href="#">Contact us</a>
+								 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+							</dt>
+						</dl>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<dl>
+					<dt>
+						<a href="#" class="expander"><i class="icon"></i></a>
+						<a class="sm2_title" href="#">Case studies</a>
+						 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+					</dt>
+				</dl>
+				<ul>
+					<li>
+						<dl>
+							<dt>
+								<a href="#" class="expander"><i class="icon"></i></a>
+								<a class="sm2_title" href="#">Case study 1</a>
+								 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+							</dt>
+						</dl>
+					</li>
+					<li>
+						<dl>
+							<dt>
+								<a href="#" class="expander"><i class="icon"></i></a>
+								<a class="sm2_title" href="#">Case study 2</a>
+								 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+							</dt>
+						</dl>
+					</li>
+					<li>
+						<dl>
+							<dt>
+								<a href="#" class="expander"><i class="icon"></i></a>
+								<a class="sm2_title" href="#">Case study 3</a>
+								 <span class="move" title="Move"><i class="icon icon-move"></i></span>
+							</dt>
+						</dl>
+					</li>
+				</ul>
+			</li>
+		</ul>
+
+
+</form>
 
 {pages}
+
+{include("menus_editor/menu_items2_js")}
