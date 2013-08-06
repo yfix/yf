@@ -408,6 +408,7 @@ class yf_menus_editor {
 			"js_redir_frame"	=> $_SESSION["_menu_js_refresh_frameset"] ? 1 : 0,
 			"sites_link"		=> "./?object=manage_sites",
 			"servers_link"		=> "./?object=manage_servers",
+			"visual_edit_link"	=> "./?object=".$_GET["object"]."&action=show_items2&id=".$_GET["id"],
 		);
 		if (isset($_SESSION["_menu_js_refresh_frameset"])) {
 			unset($_SESSION["_menu_js_refresh_frameset"]);
@@ -431,7 +432,31 @@ class yf_menus_editor {
 			'return_array'		=> 1,
 		));
 		if ($_POST) {
-// TODO
+			foreach ((array)$_POST["items"] as $order_id => $info) {
+				$item_id = (int)$info["item_id"];
+				if (!$item_id || !isset($items[$item_id])) {
+					continue;
+				}
+				$parent_id = (int)$info["parent_id"];
+				$new_data[$item_id] = array(
+					"order"		=> $order_id * 2,
+					"parent_id"	=> $parent_id,
+				);
+				db()->update('menu_items', $new_data[$item_id], 'id='.$item_id);
+			}
+/*
+			// Remove unchanged values
+			$cur_order = 1;
+			foreach ((array)$items as $item_id => $info) {
+				$new_info = $new_data[$item_id];
+				if ($new_info && $new_info["order"] == $cur_order && $new_info["parent_id"] == $info["parent_id"]) {
+					unset($new_data[$item_id]);
+				}
+				$cur_order++;
+			}
+*/
+			main()->NO_GRAPHICS = true;
+			return false;
 		}
 		foreach ((array)$items as $id => $item) {
 			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;

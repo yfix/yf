@@ -1,4 +1,7 @@
 {if("items" ne "")}
+
+<a href="{visual_edit_link}" class="btn">{t(Drag drop items)}</a>
+
 <form action="{save_form_action}" method="post" name="menu_form">
 
 <table class="table table-bordered table-striped table-hover table-condensed">

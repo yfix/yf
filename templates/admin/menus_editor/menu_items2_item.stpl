@@ -1,4 +1,4 @@
-	<li>
+	<li id="item_{item_id}">
 		<dl>
 			<dt>
 				<a href="#" class="expander"><i class="icon"></i></a>
@@ -17,6 +17,11 @@
 {else}
 	</li>
 	{if("next_level_diff" ne "0")}
-		</ul>
+		{if("next_level_diff" eq "1")}</ul>{/if}
+		{if("next_level_diff" eq "2")}</ul></ul>{/if}
+		{if("next_level_diff" eq "3")}</ul></ul></ul>{/if}
+		{if("next_level_diff" eq "4")}</ul></ul></ul></ul>{/if}
+		{if("next_level_diff" eq "5")}</ul></ul></ul></ul></ul>{/if}
+		{if("next_level_diff" eq "6")}</ul></ul></ul></ul></ul></ul>{/if}
 	{/if}
 {/if}

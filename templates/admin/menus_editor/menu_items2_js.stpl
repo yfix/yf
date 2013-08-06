@@ -13,6 +13,27 @@
 </style>
 
 <script>
+$(function(){
+	$("#draggable_form").on("submit", function(){
+		var _form = $(this);
+		var items = {};
+		var i = 0;
+		$("li", ".draggable_menu").each(function(){
+			items[++i] = {
+				"item_id" : +$(this).attr("id").substring("item_".length),
+				"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
+			}
+		})
+		$.post(_form.attr("action"), {"items" : items}, function(data){
+//console.log(data)
+			window.location.reload();
+		})
+		return false;
+	})
+})
+</script>
+
+<script>
 var draggable_history = {
 	stack: new Array(),
 	temp: null,
@@ -116,5 +137,4 @@ $(function() {
 	});
 
 });
-
 </script>

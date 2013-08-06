@@ -1011,6 +1011,7 @@ class yf_graphics {
 			}
 			$replace2 = array(
 				"item_id"		=> intval($item_info['id']),
+				"parent_id"		=> intval($item_info['parent_id']),
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
 				"link"			=> !empty($IN_OUTPUT_CACHE) ? process_url($item_link) : $item_link,
 				"name"			=> _prepare_html(translate($item_info['name'])),
