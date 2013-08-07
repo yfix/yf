@@ -122,7 +122,7 @@ class yf_tpl {
 	/** @var string @conf_skip pattern for multi-conditions */
 	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern */
-	// EXAMPLE: {foreach ("lala")}<li>{lala.value1}</li>{/foreach}
+	// EXAMPLE: {foreach ("var")}<li>{var.value1}</li>{/foreach}
 	public $_PATTERN_FOREACH   = '/\{foreach\(["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}((?![^\{]*?\{foreach\(["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var array @conf_skip For "_process_conditions" */
 	public $_cond_operators	= array("eq"=>"==","ne"=>"!=","gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=");
@@ -1115,11 +1115,17 @@ class yf_tpl {
 				continue;
 			}
 			// Standard iteration by array
-			if (is_array($replace[$key_to_cycle])) {
-				$sub_array  = $replace[$key_to_cycle];
+			if (isset($replace[$key_to_cycle])) {
+				if (is_array($replace[$key_to_cycle])) {
+					$sub_array  = $replace[$key_to_cycle];
+				} elseif (is_numeric($replace[$key_to_cycle])) {
+					$sub_array = range(1, $replace[$key_to_cycle]);
+				}
 			// Simple iteration within template
-			} elseif (!isset($replace[$key_to_cycle]) && is_numeric($key_to_cycle)) {
-				$sub_array = range(1, $key_to_cycle);
+			} else {
+				if (is_numeric($key_to_cycle)) {
+					$sub_array = range(1, $key_to_cycle);
+				}
 			}
 			if (empty($sub_array)) {
 				continue;

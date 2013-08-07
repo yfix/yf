@@ -1,5 +1,0 @@
-{if("as_link" eq 1)}
-	<li><a href="{link}">{name}</a></li>
-{else}
-	<li class="active"><a>{name}</a></li>
-{/if}

@@ -17,11 +17,6 @@
 {else}
 	</li>
 	{if("next_level_diff" ne "0")}
-		{if("next_level_diff" eq "1")}</ul>{/if}
-		{if("next_level_diff" eq "2")}</ul></ul>{/if}
-		{if("next_level_diff" eq "3")}</ul></ul></ul>{/if}
-		{if("next_level_diff" eq "4")}</ul></ul></ul></ul>{/if}
-		{if("next_level_diff" eq "5")}</ul></ul></ul></ul></ul>{/if}
-		{if("next_level_diff" eq "6")}</ul></ul></ul></ul></ul></ul>{/if}
+		{foreach("next_level_diff")}</ul>{/foreach}
 	{/if}
 {/if}

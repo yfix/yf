@@ -1,9 +1,9 @@
 <form action="{save_form_action}" method="post" id="draggable_form">
 
-<div class="controls">
-	<input type="submit" class="btn btn-primary" value="{t(Save)}">
-	<a href="{add_item_link}" class="btn">{t(Add)}</a>
-	<a href="{back_link}" class="btn">{t(Back)}</a>
+<div class="form-actions">
+	<input type="submit" class="btn btn-primary btn-mini" value="{t(Save)}">
+	<a href="{add_item_link}" class="btn btn-mini">{t(Add)}</a>
+	<a href="{back_link}" class="btn btn-mini">{t(Back)}</a>
 </div>
 
 <ul class="draggable_menu">
@@ -12,12 +12,4 @@
 
 </form>
 
-{{--
-<div class="controls">
-	<!--input type="submit" class="btn btn-primary" value="{t(Save)}"-->
-	<a href="{add_item_link}" class="btn">{t(Add)}</a>
-	<a href="{back_link}" class="btn">{t(Back)}</a>
-</div>
---}}
-
-{include("menus_editor/menu_items2_js")}
+{include("draggable_menu_js")}

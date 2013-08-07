@@ -1,21 +1,12 @@
-{if("have_children" eq "0")}
-<li>
-	<a href="{link}">
-		<span>{if("icon_path" ne "")}<img src="{icon_path}" width="16" height="16" border="0" />&nbsp;{/if}{name}</span>
+<li class="dropdown">
+	<a class="dropdown-toggle" data-toggle="dropdown" href="{link}">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}
+		{name} {if("have_children" eq "1")} <b class="caret"></b>{/if}
 	</a>
-</li>
-	{if("next_level_diff" eq "1")}</ul></li>{/if}
-	{if("next_level_diff" eq "2")}</ul></li></ul></li>{/if}
-	{if("next_level_diff" eq "3")}</ul></li></ul></li></ul></li>{/if}
-	{if("next_level_diff" eq "4")}</ul></li></ul></li></ul></li></ul></li>{/if}
-	{if("next_level_diff" eq "5")}</ul></li></ul></li></ul></li></ul></li></ul></li>{/if}
-	{if("next_level_diff" eq "6")}</ul></li></ul></li></ul></li></ul></li></ul></li></ul></li>{/if}
-{/if}
-
-{if("have_children" ne "0")}
-<li>
-	<span><a href="javascript:;" {{--style="position:relative;"--}}>
-	<span style="margin-right:1em;">{if("icon_path" ne "")}<img src="{icon_path}" width="16" height="16" border="0" />&nbsp;{/if}{name}</span>
-	</a></span>
-	<ul class="level_{next_level}">
+{if("have_children" eq "1")}
+	<ul class="dropdown-menu sub-menu">
+{else}
+	</li>
+	{if("next_level_diff" ne "0")}
+		{foreach("next_level_diff")}</ul>{/foreach}
+	{/if}
 {/if}

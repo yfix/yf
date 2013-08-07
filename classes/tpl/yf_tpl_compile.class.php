@@ -10,12 +10,6 @@
 class yf_tpl_compile {
 
 	/**
-	* YF constructor
-	*/
-	function _init () {
-	}
-
-	/**
 	* Compile given template into pure PHP code
 	*/
 	function _compile($name, $replace = array(), $string = "") {
@@ -50,9 +44,6 @@ class yf_tpl_compile {
 			'/\{(else)\}/i'
 				=> $_php_start. '} else {'. $_php_end,
 
-			// !!! This pattern also consists of \{\} symbols matching comparing to the original one
-#			'/\{(t|translate|i18n)\(["\']{0,1}(.*?)["\']{0,1}\)\}/imse'
-#				=> 'tpl()->_i18n_wrapper(\'$2\', $replace)',
 			"/(\{(t|translate|i18n)\([\"']{0,1})([\s\w\-\.\,\:\;\%\&\#\/\<\>\!\?\{\}]*)[\"']{0,1}[,]{0,1}([^\)]*?)(\)\})/ie"
 				=> "'".$_php_start."echo common()->_translate_for_stpl(\''.\$this->_prepare_translate2('\\3').'\',\''.\$this->_prepare_translate2('\\4', 1).'\');".$_php_end."'",
 
@@ -79,7 +70,7 @@ class yf_tpl_compile {
 
 			// !!! This is a completely written from scratch pattern for compilation only
 			'/\{foreach\(["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}/is'
-				=> $_php_start.'$__f_total = count($replace[\'$1\']); foreach ((array)$replace[\'$1\'] as $_k => $_v) {$__f_counter++;'.$_php_end,
+				=> $_php_start.'$__f_total = count($replace[\'$1\']); foreach (is_array($replace[\'$1\']) ? $replace[\'$1\'] : range(1, (int)$replace[\'$1\']) as $_k => $_v) {$__f_counter++;'.$_php_end,
 
 			'/(\{execute\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\');'.$_php_end,
@@ -132,8 +123,7 @@ class yf_tpl_compile {
 
 		$string = "<"."?p"."hp /* ".
 			"date: ".gmdate("Y-m-d H:i:s")." GMT; ".
-			"compile_time: ".common()->_format_time_value(microtime(true)
- - $_time_start)."; ".
+			"compile_time: ".common()->_format_time_value(microtime(true) - $_time_start)."; ".
 			"name: ".$name."; ".
 			" */ ".
 			"?".">\n".$string;

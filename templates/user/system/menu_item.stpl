@@ -1,24 +1,12 @@
-<li {if("level_num" eq 0)} class="level0"{/if}>
-	<a href="{link}"{if("is_cur_page" eq "1")} class="menu_cur_page"{/if} {if("type_id" eq 2)} target="_blank"{/if}>
-		<span>{name}</span>
+<li class="dropdown">
+	<a class="dropdown-toggle" data-toggle="dropdown" href="{link}">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}
+		{name} {if("have_children" eq "1")} <b class="caret"></b>{/if}
 	</a>
-{if("next_level_diff" eq 1)}
-{if("next_level" eq 1)}
-	<ul class="level1">
-{/if}
-{/if}
-
-{if("next_level_diff" eq 1)}
-{if("next_level" eq 0)}
-		</li>
-	</ul>
+{if("have_children" eq "1")}
+	<ul class="dropdown-menu sub-menu">
+{else}
 	</li>
-{/if}
-{/if}
-
-{if("next_level_diff" ne 1)}
-</li>
-{/if}
-{if("is_last_item" eq 1)}
-	<div style="clear: both;"></div>
+	{if("next_level_diff" ne "0")}
+		{foreach("next_level_diff")}</ul>{/foreach}
+	{/if}
 {/if}
