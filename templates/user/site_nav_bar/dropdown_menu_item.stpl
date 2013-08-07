@@ -1,11 +1,22 @@
 {if("next_level" gt "#level_num")}
 	<li class="dropdown">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="{link}">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}{name} <b class="caret"></b></a>
+	{if("has_children" ne "0")}
 		<ul class="dropdown-menu">
+	{/if}
 {else}
-			<li><a href="{link}">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}{name}</a></li>
+	<li><a href="{link}">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}{name}</a></li>
 {/if}
+	{if("next_level_diff" eq "1")}</ul></li>{/if}
+	{if("next_level_diff" eq "2")}</ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "3")}</ul></li></ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "4")}</ul></li></ul></li></ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "5")}</ul></li></ul></li></ul></li></ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "6")}</ul></li></ul></li></ul></li></ul></li></ul></li></ul></li>{/if}
+
+{{--
 {if("next_level" lt "#level_num")}
 		</ul>
 	</li>
 {/if}
+--}}

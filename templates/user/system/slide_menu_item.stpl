@@ -4,8 +4,12 @@
 		<span>{if("icon_path" ne "")}<img src="{icon_path}" width="16" height="16" border="0" />&nbsp;{/if}{name}</span>
 	</a>
 </li>
-{{-- Close opened before UL tags (in upper levels) --}}
-{foreach("next_level_diff")}</ul></li>{/foreach}
+	{if("next_level_diff" eq "1")}</ul></li>{/if}
+	{if("next_level_diff" eq "2")}</ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "3")}</ul></li></ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "4")}</ul></li></ul></li></ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "5")}</ul></li></ul></li></ul></li></ul></li></ul></li>{/if}
+	{if("next_level_diff" eq "6")}</ul></li></ul></li></ul></li></ul></li></ul></li></ul></li>{/if}
 {/if}
 
 {if("have_children" ne "0")}
