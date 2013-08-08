@@ -1,4 +1,6 @@
 {if("items" ne "")}
+<a href="{drag_link}" class="btn">{t(Drag items)}</a>
+
 <form action="{save_form_action}" method="post">
 <table class="table table-bordered table-striped table-hover">
 	<thead>

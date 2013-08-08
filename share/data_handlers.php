@@ -17,8 +17,10 @@ conf("data_handlers", my_array_merge((array)conf("data_handlers"), array(
 	"blocks_names"	=> 'include(H_PATH."blocks_names.h.php");',
 	"blocks_rules"	=> 'include(H_PATH."blocks_rules.h.php");',
 	"call_codes"	=> 'include(H_PATH."call_codes.h.php");',
-	"cat_items"	=> 'include(H_PATH."cat_items.h.php");',
-	"cats_blocks"	=> 'include(H_PATH."cats_blocks.h.php");',
+	"cat_items"	=> 'include(H_PATH."cat_items.h.php");', // Deprecated, use "category_items" instead
+	"category_items"	=> 'include(H_PATH."cat_items.h.php");',
+	"cats_blocks"	=> 'include(H_PATH."cats_blocks.h.php");', // Deprecated, use "category_sets" instead
+	"category_sets"	=> 'include(H_PATH."cats_blocks.h.php");',
 	"chat_smilies"	=> 'include(H_PATH."chat_smilies.h.php");',
 	"conf"	=> 'include(H_PATH."conf.h.php");',
 	"continents"	=> 'include(H_PATH."continents.h.php");',

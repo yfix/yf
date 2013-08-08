@@ -15,7 +15,6 @@ class yf_category_editor {
 	public $PROPOSE_SHORT_URL	= 1;
 
 	/**
-	* Framework constructor
 	*/
 	function _init () {
 		$this->_boxes = array(
@@ -42,19 +41,14 @@ class yf_category_editor {
 	}
 
 	/**
-	* Display categories blocks
-	* 
-	* @access	public
-	* @return	string
 	*/
 	function show() {
-		// Count number of items in categories
 		$Q = db()->query("SELECT cat_id, COUNT(*) AS num FROM ".db('category_items')." GROUP BY cat_id");
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_items[$A["cat_id"]] = $A["num"];
 		}
-		// Get categorys
-		$Q = db()->query("SELECT * FROM ".db('categories')." ORDER BY type DESC, active ASC");
+		$sql = "SELECT * FROM ".db('categories')." ORDER BY type DESC, active ASC";
+		$Q = db()->query($sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
@@ -75,19 +69,29 @@ class yf_category_editor {
 			);
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
-		// Process template
 		$replace = array(
 			"items"			=> $items,
 			"form_action"	=> "./?object=".$_GET["object"]."&action=add",
 		);
-		return tpl()->parse($_GET["object"]."/main", $replace);
+		$body .= tpl()->parse($_GET["object"]."/main", $replace);
+/*
+		$body .= table2($sql)
+			->link('name', './?object='.$_GET['object'].'&action=show_items&id=%d')
+			->text('desc')
+			->text('custom_fields')
+			->text('type')
+			->text('items')
+			->btn_edit()
+			->btn_delete()
+			->btn_clone('', './?object='.$_GET['object'].'&action=clone_cat&id=%d')
+			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
+			->btn_active()
+			->footer_add();
+*/
+		return $body;
 	}
 
 	/**
-	* Add new category block
-	* 
-	* @access	public
-	* @return	string
 	*/
 	function add() {
 		if ($_POST) {
@@ -101,7 +105,7 @@ class yf_category_editor {
 					"active"		=> (int)((bool)$_POST["active"]),
 					"type"			=> _es($_POST["type"]),
 				));
-				if (main()->USE_SYSTEM_CACHE)	{
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("categories");
 				}
 				return js_redirect("./?object=".$_GET["object"]);
@@ -123,23 +127,17 @@ class yf_category_editor {
 			"for_edit"		=> 0,
 		);
 		return common()->form2($replace)
-			->info("type")
+			->radio_box("type", array('user' => 'User', 'admin' => 'Admin'))
 			->text("name")
 			->textarea("desc", "Description")
 			->text("stpl_name")
 			->text("method_name")
-			->text("custom_fields")
+//			->text("custom_fields")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
-	* Edit category block
-	* 
-	* @access	public
-	* @param	int		$_GET["id"]
-	* @return	string
 	*/
 	function edit() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -161,7 +159,7 @@ class yf_category_editor {
 					"active"		=> (int)((bool)$_POST["active"]),
 				), "id=".intval($_GET["id"]));
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("cats_blocks");
+					cache()->refresh("category_sets");
 				}
 				return js_redirect("./?object=".$_GET["object"]);
 			}
@@ -195,11 +193,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Delete category block and all sub items
-	* 
-	* @access	public
-	* @param	int		$_GET["id"]
-	* @return	string
 	*/
 	function delete() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -211,7 +204,7 @@ class yf_category_editor {
 			db()->query("DELETE FROM ".db('category_items')." WHERE cat_id=".intval($_GET["id"]));
 		}
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("cats_blocks");
+			cache()->refresh("category_sets");
 			cache()->refresh("category_items");
 		}
 		if ($_POST["ajax_mode"]) {
@@ -223,7 +216,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Clone category block and all sub items
 	*/
 	function clone_cat() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -239,27 +231,36 @@ class yf_category_editor {
 
 		db()->INSERT("categories", $sql);
 		$NEW_CAT_ID = db()->INSERT_ID();
-		$cat_items = $this->_recursive_get_cat_items($_GET["id"]);
-		foreach ((array)$cat_items as $_info) {
+
+		$old_items = $this->_recursive_get_cat_items($cat_info["id"]);
+		foreach ((array)$old_items as $_id => $_info) {
 			unset($_info["id"]);
 			unset($_info["level"]);
 			$_info["cat_id"] = $NEW_CAT_ID;
 
 			db()->INSERT("category_items", $_info);
+			$NEW_ITEM_ID = db()->INSERT_ID();
+
+			$_old_to_new[$_id] = $NEW_ITEM_ID;
+			$_new_to_old[$NEW_ITEM_ID] = $_id;
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("cats_blocks");
+		foreach ((array)$_new_to_old as $_new_id => $_old_id) {
+			$_old_info = $old_items[$_old_id];
+			$_old_parent_id = $_old_info["parent_id"];
+			if (!$_old_parent_id) {
+				continue;
+			}
+			$_new_parent_id = intval($_old_to_new[$_old_parent_id]);
+			db()->UPDATE("category_items", array("parent_id" => $_new_parent_id), "id=".intval($_new_id));
+		}
+		if (main()->USE_SYSTEM_CACHE) {
+			cache()->refresh("category_sets");
 			cache()->refresh("category_items");
 		}
 		return js_redirect("./?object=".$_GET["object"]);
 	}
 
 	/**
-	* Change category block activity
-	* 
-	* @access	public
-	* @param	int		$_GET["id"]
-	* @return	string
 	*/
 	function activate() {
 		if (!empty($_GET["id"])) {
@@ -269,7 +270,7 @@ class yf_category_editor {
 			db()->UPDATE("categories", array("active" => (int)!$cat_info["active"]), "id=".intval($cat_info["id"]));
 		}
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("cats_blocks");
+			cache()->refresh("category_sets");
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -280,12 +281,11 @@ class yf_category_editor {
 	}
 
 	/**
-	* Display category items for the given block
 	*/
 	function show_items() {
 		$orig_id = $_GET["id"];
 		$_GET["id"] = intval($_GET["id"]);
-		// Try to show category items by its name
+
 		if (!$_GET["id"] && $orig_id) {
 			$cat_info = db()->get("SELECT * FROM ".db('categories')." WHERE name='".db()->es($orig_id)."'");
 			if ($cat_info) {
@@ -354,51 +354,66 @@ class yf_category_editor {
 		}
 		$replace = array(
 			"save_form_action"	=> "./?object=".$_GET["object"]."&action=save_items&id=".$_GET["id"],
-			"sortable_action"	=> "./?object=".$_GET["object"]."&action=sortable_save&id=".$_GET["id"],
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"num_items"			=> intval($total),
 			"category_name"		=> _prepare_html($cat_info["name"]),
 			"add_item_link"		=> "./?object=".$_GET["object"]."&action=add_item&id=".$_GET["id"],
 			"back_link"			=> "./?object=".$_GET["object"],
+			"drag_link"			=> "./?object=".$_GET["object"]."&action=drag_items&id=".$_GET["id"],
 		);
 		return tpl()->parse($_GET["object"]."/category_items_main", $replace);
 	}
 
 	/**
-	* Enpoint for AJAX when doing drag/drop sorting of items
 	*/
-	function sortable_save() {
-		main()->NO_GRAPHICS = true;
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+	function drag_items() {
+		if (empty($_GET['id'])) {
+			return _e('No id!');
 		}
-		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
-		if (empty($cat_info)) {
-			return _e(t("No such category!"));
-		}
-// TODO
 /*
-		$cat_items = $this->_recursive_get_cat_items($_GET["id"]);
-		foreach ((array)$cat_items as $A) {
-			if (!isset($_POST["name"][$A["id"]])) continue;
-			db()->UPDATE("category_items", array(
-				"name"		=> _es($_POST["name"][$A["id"]]),
-				"url"		=> _es($_POST["url"][$A["id"]]),
-				"other_info"=> _es($_POST["other_info"][$A["id"]]),
-				"order"		=> intval($_POST["order"][$A["id"]]),
-			), "id=".intval($A["id"]));
+		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']).' OR name="'.db()->es($_GET['id']).'"');
+		if (empty($menu_info)) {
+			return _e('No such menu!');
 		}
+		$items = _class('graphics')->_show_menu(array(
+			'force_stpl_name'	=> $_GET['object'].'/menu_items_drag',
+			'name'				=> $menu_info['name'],
+			'return_array'		=> 1,
+		));
+		if ($_POST) {
+			foreach ((array)$_POST["items"] as $order_id => $info) {
+				$item_id = (int)$info["item_id"];
+				if (!$item_id || !isset($items[$item_id])) {
+					continue;
+				}
+				$parent_id = (int)$info["parent_id"];
+				$new_data[$item_id] = array(
+					"order"		=> $order_id * 2,
+					"parent_id"	=> $parent_id,
+				);
+				db()->update('menu_items', $new_data[$item_id], 'id='.$item_id);
+			}
+			main()->NO_GRAPHICS = true;
+			return false;
+		}
+		foreach ((array)$items as $id => $item) {
+			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
+			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
+			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
+			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
+			$item['active']			= 1;
+			$items[$id] = tpl()->parse($_GET['object'].'/menu_items2_item', $item);
+		}
+		$replace = array(
+			'items' 			=> implode("\n", (array)$items),
+			'save_form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+		);
+		return tpl()->parse($_GET['object'].'/menu_items_drag_main', $replace);
 */
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("category_items");
-		}
-		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
 	}
 
 	/**
-	* Save category items (several at one time)
 	*/
 	function save_items() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -426,7 +441,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Add new category item
 	*/
 	function add_item() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -516,7 +530,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Edit category item
 	*/
 	function edit_item() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -617,7 +630,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Convert string attributes (from field "other_info") into array
 	*/
 	function _convert_atts_string_into_array($string = "") {
 		$output_array = array();
@@ -633,7 +645,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Get category items ordered array (recursively)
 	*/
 	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		if (!isset($this->_category_items_from_db)) {
@@ -667,7 +678,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Change category item activity
 	*/
 	function activate_item() {
 		if (!empty($_GET["id"])) {
@@ -688,7 +698,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Delete item
 	*/
 	function delete_item() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -710,7 +719,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Clone item
 	*/
 	function clone_item() {
 		$_GET["id"] = intval($_GET["id"]);
@@ -727,7 +735,6 @@ class yf_category_editor {
 	}
 
 	/**
-	* Export category items
 	*/
 	function export() {
 		// If no ID set - mean that simply export all categories with items
@@ -759,49 +766,9 @@ class yf_category_editor {
 	}
 
 	/**
-	* Process custom box
 	*/
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
-		return $menu;	
-	}
-
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("Category editor");
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"					=> "All categories blocks list",
-			"show_items"			=> "",
-			"edit_item"				=> "",
-			"edit"					=> "Edit category block",
-		);			  		
-		if (isset($cases[$_GET["action"]])) {
-			$subheader = $cases[$_GET["action"]];
-		}
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
 	}
 }

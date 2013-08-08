@@ -224,7 +224,6 @@ class yf_menus_editor {
 		if (empty($_GET["id"])) {
 			return _e(t("No id!"));
 		}
-		// Get current menu info
 		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
 		if (empty($menu_info["id"])) {
 			return _e(t("No such menu!"));
@@ -245,7 +244,6 @@ class yf_menus_editor {
 			db()->INSERT("menu_items", $_info);
 			$NEW_ITEM_ID = db()->INSERT_ID();
 
-			// Save old and new chains
 			$_old_to_new[$_id] = $NEW_ITEM_ID;
 			$_new_to_old[$NEW_ITEM_ID] = $_id;
 		}
@@ -258,7 +256,7 @@ class yf_menus_editor {
 			$_new_parent_id = intval($_old_to_new[$_old_parent_id]);
 			db()->UPDATE("menu_items", array("parent_id" => $_new_parent_id), "id=".intval($_new_id));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
+		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("menus");
 			cache()->refresh("menu_items");
 		}
@@ -408,7 +406,7 @@ class yf_menus_editor {
 			"js_redir_frame"	=> $_SESSION["_menu_js_refresh_frameset"] ? 1 : 0,
 			"sites_link"		=> "./?object=manage_sites",
 			"servers_link"		=> "./?object=manage_servers",
-			"visual_edit_link"	=> "./?object=".$_GET["object"]."&action=show_items2&id=".$_GET["id"],
+			"drag_link"			=> "./?object=".$_GET["object"]."&action=drag_items&id=".$_GET["id"],
 		);
 		if (isset($_SESSION["_menu_js_refresh_frameset"])) {
 			unset($_SESSION["_menu_js_refresh_frameset"]);
@@ -418,7 +416,7 @@ class yf_menus_editor {
 
 	/**
 	*/
-	function show_items2() {
+	function drag_items() {
 		if (empty($_GET['id'])) {
 			return _e('No id!');
 		}
@@ -427,7 +425,7 @@ class yf_menus_editor {
 			return _e('No such menu!');
 		}
 		$items = _class('graphics')->_show_menu(array(
-			'force_stpl_name'	=> $_GET['object'].'/menu_items2',
+			'force_stpl_name'	=> $_GET['object'].'/menu_items_drag',
 			'name'				=> $menu_info['name'],
 			'return_array'		=> 1,
 		));
@@ -444,17 +442,6 @@ class yf_menus_editor {
 				);
 				db()->update('menu_items', $new_data[$item_id], 'id='.$item_id);
 			}
-/*
-			// Remove unchanged values
-			$cur_order = 1;
-			foreach ((array)$items as $item_id => $info) {
-				$new_info = $new_data[$item_id];
-				if ($new_info && $new_info["order"] == $cur_order && $new_info["parent_id"] == $info["parent_id"]) {
-					unset($new_data[$item_id]);
-				}
-				$cur_order++;
-			}
-*/
 			main()->NO_GRAPHICS = true;
 			return false;
 		}
@@ -468,77 +455,9 @@ class yf_menus_editor {
 		}
 		$replace = array(
 			'items' 			=> implode("\n", (array)$items),
-			'save_form_action'	=> './?object='.$_GET['object'].'&action=show_items2&id='.$_GET['id'],
+			'save_form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 		);
-		return tpl()->parse($_GET['object'].'/menu_items2_main', $replace);
-	}
-
-	/**
-	* Enpoint for AJAX when doing drag/drop sorting of items
-	*/
-	function sortable_save() {
-		main()->NO_GRAPHICS = true;
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e("No id");
-		}
-		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
-		if (empty($menu_info)) {
-			return _e("No such menu");
-		}
-		// Examples of posted data: del_row_12345, rowid_123456
-		if ($_POST['first']) {
-			$_POST['first'] = trim($_POST['first']);
-			$first_id = (int)substr($_POST['first'], strrpos($_POST['first'], '_') + 1);
-		}
-		if ($_POST['next']) {
-			$_POST['next'] = trim($_POST['next']);
-			$next_id = (int)substr($_POST['next'], strrpos($_POST['next'], '_') + 1);
-		}
-		if ($_POST['prev']) {
-			$_POST['prev'] = trim($_POST['prev']);
-			$prev_id = (int)substr($_POST['prev'], strrpos($_POST['prev'], '_') + 1);
-		}
-		$menu_items = $this->_auto_update_items_orders($menu_info);
-		if (!$menu_items) {
-			return _e("No menu items");
-		}
-		if (!$first_id || !isset($menu_items[$first_id])) {
-			return _e("Wrong first id");
-		}
-		if (!$next_id || !isset($menu_items[$next_id])) {
-			return _e("Wrong next id");
-		}
-		if (!$prev_id || !isset($menu_items[$prev_id])) {
-			return _e("Wrong prev id");
-		}
-		if ($next_id == $first_id) {
-			return _e("First and next ids are the same");
-		}
-		$first_info = $menu_items[$first_id];
-		$next_info = $menu_items[$next_id];
-		$prev_info = $menu_items[$prev_id];
-
-//		$new_first_parent_id = $next_info['parent_id'];
-		$new_first_parent_id = $prev_info['parent_id'];
-		$new_first_order = $next_info['order'];
-//		$new_next_order = $next_info['order'] + 1;
-
-		$sql1 = db()->update('menu_items', array(
-			'parent_id' => (int)$new_first_parent_id,
-			'order'		=> (int)$new_first_order
-		), 'id='.intval($first_id), true);
-		$sql2 = db()->update('menu_items', array(
-			'order'		=> (int)$new_next_order
-		), 'id='.intval($next_id), true);
-
-//db()->query($sql1);
-//db()->query($sql2);
-
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("menu_items");
-		}
-		return "OK\n".str_replace("\n", "", print_r($first_info,1))."\n".$sql1."\n".str_replace("\n", "", print_r($next_info,1))."\n".$sql2;
+		return tpl()->parse($_GET['object'].'/menu_items_drag_main', $replace);
 	}
 
 	/**

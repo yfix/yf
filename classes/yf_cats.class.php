@@ -10,7 +10,7 @@
 class yf_cats {
 
 	/** @var mixed @conf_skip */
-	public $_cats_blocks			= null;
+	public $_category_sets			= null;
 	/** @var mixed @conf_skip */
 	public $_items_cache			= null;
 	/** @var mixed @conf_skip */
@@ -25,7 +25,7 @@ class yf_cats {
 	*/
 	function _init () {
 		// Get available cats blocks
-		$this->_cats_blocks = main()->get_data("cats_blocks");
+		$this->_category_sets = main()->get_data("category_sets");
 		// Try to get default callback for the current $_GET["object"]
 		if (!empty($_GET["object"])) {
 			$try_callback = array(module($_GET["object"]), "_callback_cat_link");
@@ -212,7 +212,7 @@ class yf_cats {
 			return false;
 		}
 		$cat_id = 0;
-		foreach ((array)$this->_cats_blocks as $cur_cat_id => $cur_cat_info) {
+		foreach ((array)$this->_category_sets as $cur_cat_id => $cur_cat_info) {
 			if ($cur_cat_info["name"] == $cat_name) {
 				$cat_id = $cur_cat_id;
 				break;
@@ -228,7 +228,7 @@ class yf_cats {
 		if (empty($cat_id)) {
 			return false;
 		}
-		return $this->_cats_blocks[$cat_id]["name"];
+		return $this->_category_sets[$cat_id]["name"];
 	}
 
 	/**
