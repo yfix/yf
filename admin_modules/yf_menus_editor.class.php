@@ -484,7 +484,7 @@ class yf_menus_editor {
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
 			$item['active']			= 1;
-			$items[$id] = tpl()->parse($_GET['object'].'/menu_items2_item', $item);
+			$items[$id] = tpl()->parse($_GET['object'].'/menu_items_drag_item', $item);
 		}
 		$replace = array(
 			'items' 			=> implode("\n", (array)$items),

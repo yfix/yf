@@ -403,8 +403,10 @@ class yf_category_editor {
 		}
 		$items = $this->_show_category_contents(array(
 			'force_stpl_name'	=> $_GET['object'].'/category_items_drag',
-			'name'				=> $cat_info['name'],
+//			'name'				=> $cat_info['name'],
 			'return_array'		=> 1,
+			'cat_id'			=> $cat_info['id'],
+			'cat_info'			=> $cat_info,
 		));
 		if ($_POST) {
 			foreach ((array)$_POST["items"] as $order_id => $info) {
@@ -428,13 +430,112 @@ class yf_category_editor {
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
 			$item['active']			= 1;
-			$items[$id] = tpl()->parse($_GET['object'].'/menu_items2_item', $item);
+			$items[$id] = tpl()->parse($_GET['object'].'/category_items_drag_item', $item);
 		}
 		$replace = array(
 			'items' 			=> implode("\n", (array)$items),
 			'save_form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 		);
 		return tpl()->parse($_GET['object'].'/category_items_drag_main', $replace);
+	}
+
+	/**
+	*/
+	function _show_category_contents ($input = array()) {
+		$force_stpl_name= isset($input["force_stpl_name"]) ? $input["force_stpl_name"] : false;
+		$STPL_MAIN 		= !empty($force_stpl_name) ? $force_stpl_name : "system/menu_main";
+		$STPL_ITEM		= !empty($force_stpl_name) ? $force_stpl_name."_item" : "system/menu_item";
+		$STPL_PAD		= !empty($force_stpl_name) ? $force_stpl_name."_pad" : "system/menu_pad";
+		$level_pad_text	= tpl()->parse($STPL_PAD);
+		$ICONS_PATH		= "uploads/icons/";
+		$MEDIA_PATH		= WEB_PATH;
+
+		$cat_id			= $input["cat_id"];
+		$cat_info		= $input["cat_info"];
+		if (empty($cat_id)) {
+			return _e("No id");
+		}
+		$cat_items = $this->_recursive_get_cat_items($cat_id);
+		if (empty($cat_items)) {
+			return false;
+		}
+		$cat_items_to_display = array_values($cat_items);
+		$num_cat_items = count($cat_items_to_display);
+
+		$_prev_level = 0;
+		$_next_level = 0;
+		$item_counter = 0;
+		foreach ((array)$cat_items_to_display as $i => $item_info) {
+			$item_counter++;
+			$_next_info	= isset($cat_items_to_display[$i + 1]) ? $cat_items_to_display[$i + 1] : array();
+			$_next_level = isset($_next_info["level"]) ? (int)$_next_info["level"] : 0;
+			$is_cur_page = false;
+			// Prepare icon path = WEB_PATH. $this->ICONS_PATH. $item_info["icon"];
+			$icon_path = "";
+			if ($item_info["icon"] && file_exists(PROJECT_PATH. $ICONS_PATH. $item_info["icon"])) {
+				$icon_path = $MEDIA_PATH. $ICONS_PATH. $item_info["icon"];
+			}
+			// Icon class from bootstrap icon class names 
+			$icon_class = "";
+			if ($item_info["icon"] && (strpos($item_info["icon"], ".") === false)) {
+				$icon_class = $item_info["icon"];
+			}
+			$replace2 = array(
+				"item_id"		=> intval($item_info['id']),
+				"parent_id"		=> intval($item_info['parent_id']),
+				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
+				"name"			=> _prepare_html(t($item_info['name'])),
+				"level_pad"		=> str_repeat($level_pad_text, $item_info["level"]),
+				"level_num"		=> intval($item_info["level"]),
+				"prev_level"	=> intval($_prev_level),
+				"next_level"	=> intval($_next_level),
+				"type_id"		=> $item_info["type_id"],
+				"icon_path"		=> $icon_path,
+				"icon_class"	=> $icon_class,
+				"is_first_item"	=> (int)($item_counter == 1),
+				"is_last_item"	=> (int)($item_counter == $num_cat_items),
+				"is_cur_page"	=> (int)$is_cur_page,
+				"have_children"	=> intval((bool)$item_info["have_children"]),
+				"next_level_diff"=> intval(abs($item_info["level"] - $_next_level)),
+			);
+			$items[$item_info["id"]] = $replace2;
+			// Save current level for the next iteration
+			$_prev_level = $item_info["level"];
+		}
+		return $items;
+	}
+
+	/**
+	*/
+	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
+		if (!isset($this->_category_items_from_db)) {
+			$Q = db()->query("SELECT * FROM ".db('category_items')." WHERE cat_id=".intval($cat_id)." ORDER BY `order` ASC");
+			while ($A = db()->fetch_assoc($Q)) $this->_category_items_from_db[$A["id"]] = $A;
+		}
+		if (empty($this->_category_items_from_db)) {
+			return "";
+		}
+		$items_ids		= array();
+		$items_array	= array();
+		foreach ((array)$this->_category_items_from_db as $item_info) {
+			if ($item_info["parent_id"] != $parent_id) {
+				continue;
+			}
+			if ($skip_item_id == $item_info["id"]) {
+				continue;
+			}
+			$items_array[$item_info["id"]] = $item_info;
+			$items_array[$item_info["id"]]["level"] = $level;
+
+			$tmp_array = $this->_recursive_get_cat_items($cat_id, $skip_item_id, $item_info["id"], $level + 1);
+			foreach ((array)$tmp_array as $sub_item_info) {
+				if ($sub_item_info["id"] == $item_info["id"]) {
+					continue;
+				}
+				$items_array[$sub_item_info["id"]] = $sub_item_info;
+			}
+		}
+		return $items_array;
 	}
 
 	/**
@@ -545,7 +646,7 @@ class yf_category_editor {
 			if (is_array($_POST["groups"]))	{
 				$_POST["groups"] = implode(",",$_POST["groups"]);
 			}
-			$_POST["groups"]	= str_replace(array(" ","\t","\r","\n"), "", $_POST["groups"]);
+			$_POST["groups"] = str_replace(array(" ","\t","\r","\n"), "", $_POST["groups"]);
 
 			$OTHER_INFO = array();
 			foreach (explode(",", $cat_info["custom_fields"]) as $cur_field_name) {
@@ -639,39 +740,6 @@ class yf_category_editor {
 			}
 		}
 		return $output_array;
-	}
-
-	/**
-	*/
-	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		if (!isset($this->_category_items_from_db)) {
-			$Q = db()->query("SELECT * FROM ".db('category_items')." WHERE cat_id=".intval($cat_id)." ORDER BY `order` ASC");
-			while ($A = db()->fetch_assoc($Q)) $this->_category_items_from_db[$A["id"]] = $A;
-		}
-		if (empty($this->_category_items_from_db)) {
-			return "";
-		}
-		$items_ids		= array();
-		$items_array	= array();
-		foreach ((array)$this->_category_items_from_db as $item_info) {
-			if ($item_info["parent_id"] != $parent_id) {
-				continue;
-			}
-			if ($skip_item_id == $item_info["id"]) {
-				continue;
-			}
-			$items_array[$item_info["id"]] = $item_info;
-			$items_array[$item_info["id"]]["level"] = $level;
-
-			$tmp_array = $this->_recursive_get_cat_items($cat_id, $skip_item_id, $item_info["id"], $level + 1);
-			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info["id"] == $item_info["id"]) {
-					continue;
-				}
-				$items_array[$sub_item_info["id"]] = $sub_item_info;
-			}
-		}
-		return $items_array;
 	}
 
 	/**
