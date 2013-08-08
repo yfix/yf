@@ -1,4 +1,5 @@
 	<li id="item_{item_id}">
+		<div class="dropzone"></div>
 		<dl>
 			<dt>
 				<a href="#" class="expander"><i class="icon"></i></a>

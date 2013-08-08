@@ -22,7 +22,7 @@ class yf_user_groups {
 	}
 
 	/**
-	* Show admin groups
+	* Show user groups
 	*/
 	function show() {
 		$blocks = main()->get_data("blocks_names");
@@ -36,7 +36,7 @@ class yf_user_groups {
 		while ($A = db()->fetch_assoc($Q)) {
 			$menu_id = $A["id"];
 		}
-		return common()->table2("SELECT * FROM ".db('admin_groups')." ORDER BY id ASC")
+		return common()->table2("SELECT * FROM ".db('user_groups')." ORDER BY id ASC")
 			->text("name")
 			->text("go_after_login")
 			->btn_edit()

@@ -458,7 +458,7 @@ class yf_menus_editor {
 			return _e('No such menu!');
 		}
 		$items = _class('graphics')->_show_menu(array(
-			'force_stpl_name'	=> $_GET['object'].'/menu_items_drag',
+			'force_stpl_name'	=> $_GET['object'].'/drag',
 			'name'				=> $menu_info['name'],
 			'return_array'		=> 1,
 		));
@@ -484,13 +484,13 @@ class yf_menus_editor {
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
 			$item['active']			= 1;
-			$items[$id] = tpl()->parse($_GET['object'].'/menu_items_drag_item', $item);
+			$items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
 		$replace = array(
 			'items' 			=> implode("\n", (array)$items),
 			'save_form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 		);
-		return tpl()->parse($_GET['object'].'/menu_items_drag_main', $replace);
+		return tpl()->parse($_GET['object'].'/drag_main', $replace);
 	}
 
 	/**
