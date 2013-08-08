@@ -9,13 +9,11 @@
 				{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}{name}
 {/if}
 				<span class="move" title="{t(Move)}"><i class="icon icon-move"></i></span>
-				<div style="float:right;" class="controls_over">
-{{--
+				<div style="float:right;display:none;" class="controls_over">
 {form_row("tbl_link_edit")}
 {form_row("tbl_link_delete")}
 {form_row("tbl_link_clone")}
 {form_row("tbl_link_active")}
---}}
 				</div>
 			</dt>
 		</dl>
