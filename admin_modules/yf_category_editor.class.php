@@ -106,7 +106,7 @@ class yf_category_editor {
 					"type"			=> _es($_POST["type"]),
 				));
 				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("categories");
+					cache()->refresh("category_sets");
 				}
 				return js_redirect("./?object=".$_GET["object"]);
 			}
@@ -142,11 +142,11 @@ class yf_category_editor {
 	function edit() {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		if (empty($cat_info["id"])) {
-			return _e(t("No such category!"));
+			return _e("No such category!");
 		}
 		if ($_POST) {
 			if (!common()->_error_exists()) {
@@ -158,7 +158,7 @@ class yf_category_editor {
 					"custom_fields"	=> _es($_POST["custom_fields"]),
 					"active"		=> (int)((bool)$_POST["active"]),
 				), "id=".intval($_GET["id"]));
-				if (main()->USE_SYSTEM_CACHE)	{
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("category_sets");
 				}
 				return js_redirect("./?object=".$_GET["object"]);
@@ -203,7 +203,7 @@ class yf_category_editor {
 			db()->query("DELETE FROM ".db('categories')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			db()->query("DELETE FROM ".db('category_items')." WHERE cat_id=".intval($_GET["id"]));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
+		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("category_sets");
 			cache()->refresh("category_items");
 		}
@@ -269,7 +269,7 @@ class yf_category_editor {
 		if (!empty($cat_info)) {
 			db()->UPDATE("categories", array("active" => (int)!$cat_info["active"]), "id=".intval($cat_info["id"]));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
+		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("category_sets");
 		}
 		if ($_POST["ajax_mode"]) {
@@ -285,7 +285,6 @@ class yf_category_editor {
 	function show_items() {
 		$orig_id = $_GET["id"];
 		$_GET["id"] = intval($_GET["id"]);
-
 		if (!$_GET["id"] && $orig_id) {
 			$cat_info = db()->get("SELECT * FROM ".db('categories')." WHERE name='".db()->es($orig_id)."'");
 			if ($cat_info) {
@@ -293,15 +292,32 @@ class yf_category_editor {
 			}
 		}
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		if (!$cat_info) {
 			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($cat_info)) {
-			return _e(t("No such category!"));
+			return _e("No such category!");
 		}
 		$cat_items = $this->_recursive_get_cat_items($_GET["id"]);
+		if ($_POST) {
+			foreach ((array)$cat_items as $A) {
+				if (!isset($_POST["name"][$A["id"]])) {
+					continue;
+				}
+				db()->update("category_items", array(
+					"name"		=> _es($_POST["name"][$A["id"]]),
+					"url"		=> _es($_POST["url"][$A["id"]]),
+					"other_info"=> _es($_POST["other_info"][$A["id"]]),
+					"order"		=> intval($_POST["order"][$A["id"]]),
+				), "id=".intval($A["id"]));
+			}
+			if (main()->USE_SYSTEM_CACHE) {
+				cache()->refresh("category_items");
+			}
+			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
+		}
 		// Slice items according to the current page
 		$total = count($cat_items);
 		$PER_PAGE = !empty($this->ITEMS_PER_PAGE) ? $this->ITEMS_PER_PAGE : conf('admin_per_page');
@@ -353,7 +369,7 @@ class yf_category_editor {
 			$items .= tpl()->parse($_GET["object"]."/category_items_item", $replace2);
 		}
 		$replace = array(
-			"save_form_action"	=> "./?object=".$_GET["object"]."&action=save_items&id=".$_GET["id"],
+			"save_form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 			"items"				=> $items,
 			"pages"				=> $pages,
 			"num_items"			=> intval($total),
@@ -368,17 +384,26 @@ class yf_category_editor {
 	/**
 	*/
 	function drag_items() {
-		if (empty($_GET['id'])) {
-			return _e('No id!');
+		$orig_id = $_GET["id"];
+		$_GET["id"] = intval($_GET["id"]);
+		if (!$_GET["id"] && $orig_id) {
+			$cat_info = db()->get("SELECT * FROM ".db('categories')." WHERE name='".db()->es($orig_id)."'");
+			if ($cat_info) {
+				$_GET["id"] = $cat_info['id'];
+			}
 		}
-/*
-		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']).' OR name="'.db()->es($_GET['id']).'"');
-		if (empty($menu_info)) {
-			return _e('No such menu!');
+		if (empty($_GET["id"])) {
+			return _e("No id!");
 		}
-		$items = _class('graphics')->_show_menu(array(
-			'force_stpl_name'	=> $_GET['object'].'/menu_items_drag',
-			'name'				=> $menu_info['name'],
+		if (!$cat_info) {
+			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+		}
+		if (empty($cat_info)) {
+			return _e("No such category!");
+		}
+		$items = $this->_show_category_contents(array(
+			'force_stpl_name'	=> $_GET['object'].'/category_items_drag',
+			'name'				=> $cat_info['name'],
 			'return_array'		=> 1,
 		));
 		if ($_POST) {
@@ -392,7 +417,7 @@ class yf_category_editor {
 					"order"		=> $order_id * 2,
 					"parent_id"	=> $parent_id,
 				);
-				db()->update('menu_items', $new_data[$item_id], 'id='.$item_id);
+				db()->update('category_items', $new_data[$item_id], 'id='.$item_id);
 			}
 			main()->NO_GRAPHICS = true;
 			return false;
@@ -409,35 +434,7 @@ class yf_category_editor {
 			'items' 			=> implode("\n", (array)$items),
 			'save_form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 		);
-		return tpl()->parse($_GET['object'].'/menu_items_drag_main', $replace);
-*/
-	}
-
-	/**
-	*/
-	function save_items() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
-		}
-		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
-		if (empty($cat_info)) {
-			return _e(t("No such category!"));
-		}
-		$cat_items = $this->_recursive_get_cat_items($_GET["id"]);
-		foreach ((array)$cat_items as $A) {
-			if (!isset($_POST["name"][$A["id"]])) continue;
-			db()->UPDATE("category_items", array(
-				"name"		=> _es($_POST["name"][$A["id"]]),
-				"url"		=> _es($_POST["url"][$A["id"]]),
-				"other_info"=> _es($_POST["other_info"][$A["id"]]),
-				"order"		=> intval($_POST["order"][$A["id"]]),
-			), "id=".intval($A["id"]));
-		}
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("category_items");
-		}
-		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
+		return tpl()->parse($_GET['object'].'/category_items_drag_main', $replace);
 	}
 
 	/**

@@ -337,6 +337,39 @@ class yf_menus_editor {
 			$this->_methods = $this->_user_methods;
 		}
 
+		if ($_POST) {
+			if (isset($_POST["multi-delete"])) {
+				return $this->_multi_delete_items();
+			}
+			if (isset($_POST["item"])) {
+				return $this->group_save_items();
+			}
+			foreach ((array)$menu_items as $A) {
+				if (!isset($_POST["name"][$A["id"]])) {
+					continue;
+				}
+				$current = array(
+					"name"		=> $A["name"],
+					"location"	=> $A["location"],
+					"order"		=> $A["order"],
+					"icon"		=> $A["icon"],
+				);
+				$sql = array(
+					"name"		=> $_POST["name"][$A["id"]],
+					"location"	=> $_POST["location"][$A["id"]],
+					"order"		=> (int)$_POST["order"][$A["id"]],
+					"icon"		=> $_POST["icon"][$A["id"]],
+				);
+				if ($current != $sql) {
+					db()->update("menu_items", _es($sql), "id=".intval($A["id"]));
+				}
+			}
+			if (main()->USE_SYSTEM_CACHE) {
+				cache()->refresh("menu_items");
+			}
+			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
+		}
+
 		$this->_items_for_parent[-1] = "Not selected";
 		$this->_items_for_parent[0] = "-- TOP --";
 		foreach ((array)$this->_recursive_get_menu_items($menu_info["id"], $_GET["id"]) as $cur_item_id => $cur_item_info) {
@@ -458,54 +491,6 @@ class yf_menus_editor {
 			'save_form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 		);
 		return tpl()->parse($_GET['object'].'/menu_items_drag_main', $replace);
-	}
-
-	/**
-	* Save menu items (several at one time)
-	*/
-	function save_items() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
-		}
-		if (isset($_POST["multi-delete"])) {
-			return $this->_multi_delete_items();
-		}
-		if (isset($_POST["item"])) {
-			return $this->group_save_items();
-		}
-		$menu_info = db()->query_fetch("SELECT * FROM ".db('menus')." WHERE id=".intval($_GET["id"]));
-		if (empty($menu_info)) {
-			return _e(t("No such menu!"));
-		}
-
-//		$menu_items = $this->_auto_update_items_orders($menu_info);
-		$menu_items = $this->_recursive_get_menu_items($_GET["id"]);
-
-		foreach ((array)$menu_items as $A) {
-			if (!isset($_POST["name"][$A["id"]])) {
-				continue;
-			}
-			$current = array(
-				"name"		=> $A["name"],
-				"location"	=> $A["location"],
-				"order"		=> $A["order"],
-				"icon"		=> $A["icon"],
-			);
-			$sql = array(
-				"name"		=> $_POST["name"][$A["id"]],
-				"location"	=> $_POST["location"][$A["id"]],
-				"order"		=> (int)$_POST["order"][$A["id"]],
-				"icon"		=> $_POST["icon"][$A["id"]],
-			);
-			if ($current != $sql) {
-				db()->update("menu_items", _es($sql), "id=".intval($A["id"]));
-			}
-		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("menu_items");
-		}
-		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
 	}
 
 	/**
