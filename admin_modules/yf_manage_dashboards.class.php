@@ -189,11 +189,12 @@ class yf_manage_dashboards {
 				continue;
 			}
 			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
-				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
-				'name'		=> _prepare_html($info['name']),
-				'desc'		=> _prepare_html($info['desc']),
-				'has_config'=> $info['configurable'] ? 1 : 0,
-				'config'	=> json_encode($info['configurable']),
+				'id'			=> $info['auto_id'].'_'.$info['auto_id'],
+				'name'			=> _prepare_html($info['name']),
+				'desc'			=> _prepare_html($info['desc']),
+				'has_config'	=> $info['configurable'] ? 1 : 0,
+				'config'		=> json_encode($info['configurable']),
+				'show_buttons'	=> 1,
 			));
 		}
 		return implode("\n", $items);

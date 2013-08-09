@@ -1,12 +1,34 @@
 <style type="text/css">
 	.portlet { padding: 10px; margin-bottom: 20px; border: 1px solid #dddddd; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
 	.portlet-header { padding: 5px 10px; margin: -10px -10px 10px; border-bottom: 1px solid #dddddd; border-top-right-radius: 3px; border-top-left-radius: 3px; }
+	.portlet-options { border-bottom: 1px solid #dddddd; margin: -10px -10px 10px; padding: 5px 10px;}
 	.portlet-content { }
 	.portlets-side-column .portlet { padding: 5px; margin-bottom: 10px; }
-	.portlets-side-column .portlet-header { margin: 0; padding: 0 5px; border-bottom: transparent; }
+	.portlets-side-column .portlet-header { margin: -5px; padding: 0 5px; border-bottom: transparent; }
 	.portlets-side-column .portlet-content { display: none; }
 	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
+	ul.colors li { width: 20px; height: 20px; border: 1px solid #EEE; float: left; display: inline; margin: 0 5px 0 0; cursor: pointer; }
+	.color-yellow { background: #f2bc00; }
+	.color-red { background: #dd0000; }
+	.color-blue { background: #148ea4; }
+	.color-white { background: #dfdfdf; }
+	.color-orange { background: #f66e00; }
+	.color-green { background: #8dc100; }
 </style>
+
+<script type="text/javascript">
+$(function() {
+	$('.portlet').css({
+		'background-color' : $(".dropdown-menu>li>a").css('background-color')
+	})
+	$('.portlet-header').css({
+		'background-image' : $(".navbar-inner").css('background-image'),
+		'color' : $(".navbar a").css('color'),
+		'font-weight' : $(".navbar a").css('font-weight'),
+	})
+});
+</script>
+
 <script type="text/javascript">
 $(function() {
     $(".column").sortable({
@@ -28,8 +50,19 @@ $(function() {
 		return false;
 	})
 
-	$(".yf_ds_options, .yf_ds_minimize").on("click",function(){
-alert("TODO");
+	$(".yf_ds_options").on("click",function(){
+		var _portlet = $(this).closest('.portlet');
+		if (!_portlet.find('.portlet-options').length) {
+			_portlet.find('.portlet-content').before($('.options-tpl').find('.portlet-options'))
+		}
+		_portlet.find('.portlet-options').toggle()
+		
+//alert("TODO");
+		return false;
+	})
+
+	$(".yf_ds_minimize").on("click",function(){
+		$(this).closest('.portlet').find('.portlet-content').toggle()
 		return false;
 	})
 });
@@ -47,4 +80,18 @@ alert("TODO");
 {items_3}
 	</div>
   </div>
+</div>
+
+<div class="options-tpl">
+<div class="portlet-options" style="display:none;">
+	<ul class="colors">
+		<li class="color-yellow"></li>
+		<li class="color-red"></li>
+		<li class="color-blue"></li>
+		<li class="color-white"></li>
+		<li class="color-orange"></li>
+		<li class="color-green"></li>
+	</ul>
+	<br class="clearfix" />
+</div>
 </div>
