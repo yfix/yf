@@ -405,17 +405,25 @@ class yf_category_editor {
 			'cat_info' => $cat_info,
 		));
 		if ($_POST) {
+			$cur_items = $this->_auto_update_items_orders($cat_info["id"]);
 			foreach ((array)$_POST["items"] as $order_id => $info) {
 				$item_id = (int)$info["item_id"];
 				if (!$item_id || !isset($items[$item_id])) {
 					continue;
 				}
-				$parent_id = (int)$info["parent_id"];
-				$new_data[$item_id] = array(
-					"order"		=> $order_id * 2,
-					"parent_id"	=> $parent_id,
+				$parent_id = (int)$info['parent_id'];
+				$new_data = array(
+					"order"		=> intval($order_id),
+					"parent_id"	=> intval($parent_id),
 				);
-				db()->update('category_items', $new_data[$item_id], 'id='.$item_id);
+				$old_info = $cur_items[$item_id];
+				$old_data = array(
+					"order"		=> intval($old_info['order']),
+					"parent_id"	=> intval($old_info['parent_id']),
+				);
+				if ($new_data != $old_data) {
+					db()->update('category_items', $new_data, 'id='.$item_id);
+				}
 			}
 			main()->NO_GRAPHICS = true;
 			return false;
@@ -428,8 +436,10 @@ class yf_category_editor {
 			$items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
 		$replace = array(
-			'items' 			=> implode("\n", (array)$items),
-			'save_form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'items' 		=> implode("\n", (array)$items),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
 		);
 		return tpl()->parse($_GET['object'].'/drag_main', $replace);
 	}
@@ -495,6 +505,7 @@ class yf_category_editor {
 				"next_level_diff"=> intval(abs($item_info["level"] - $_next_level)),
 				"link"			=> "",
 				"active"		=> intval($item_info["active"]),
+				"order"			=> intval($item_info['order']),
 			);
 			// Save current level for the next iteration
 			$_prev_level = $item_info["level"];
@@ -512,7 +523,7 @@ class yf_category_editor {
 				db()->update('category_items', array('order' => $new_order), 'id='.$item_id);
 				$cat_items[$item_id]['order'] = $new_order;
 			}
-			$new_order += 2;
+			$new_order++;
 		}
 		return $cat_items;
 	}

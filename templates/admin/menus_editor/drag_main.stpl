@@ -1,8 +1,8 @@
-<form action="{save_form_action}" method="post" id="draggable_form">
+<form action="{form_action}" method="post" id="draggable_form">
 
-<div class="form-actions">
+<div class="controls">
 	<input type="submit" class="btn btn-primary btn-mini" value="{t(Save)}">
-	<a href="{add_item_link}" class="btn btn-mini">{t(Add)}</a>
+	<a href="{add_link}" class="btn btn-mini ajax_add">{t(Add)}</a>
 	<a href="{back_link}" class="btn btn-mini">{t(Back)}</a>
 </div>
 

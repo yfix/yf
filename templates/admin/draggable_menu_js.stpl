@@ -1,9 +1,8 @@
 <style>
 .draggable_menu { width:70%; }
 .draggable_menu li { list-style-type: none; }
-.draggable_menu dl { position: relative; display: block; margin:0; border-top: 1px solid #444; }
+.draggable_menu dl { font-weight:bold; position: relative; display: block; margin:0; border-top: 1px solid #444; }
 .draggable_menu dl.over { background-color: #ccc !important; }
-.draggable_menu dt { }
 .draggable_menu .dropzone { background-color: transparent; height: 4px; }
 .draggable_menu .dropzone.over { background-color: #aaa !important; }
 .draggable_menu .menu-container { }
@@ -26,7 +25,7 @@ $(function(){
 			}
 		})
 		$.post(_form.attr("action"), {"items" : items}, function(data){
-			window.location.reload();
+//			window.location.reload();
 		})
 		return false;
 	})
