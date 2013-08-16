@@ -173,7 +173,6 @@ class yf_manage_dashboards {
 				'desc'		=> $content,
 				'has_config'=> $info['configurable'] ? 1 : 0,
 				'config'	=> json_encode($info['configurable']),
-				'show_buttons' => $params['no_buttons'] ? 0 : 1,
 			));
 		}
 		return implode("\n", $items);
@@ -188,13 +187,18 @@ class yf_manage_dashboards {
 			if (!$info) {
 				continue;
 			}
-			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
-				'id'			=> $info['auto_id'].'_'.$info['auto_id'],
-				'name'			=> _prepare_html($info['name']),
-				'desc'			=> _prepare_html($info['desc']),
-				'has_config'	=> $info['configurable'] ? 1 : 0,
-				'config'		=> json_encode($info['configurable']),
-				'show_buttons'	=> 1,
+			$css_classes = array('color-default','color-yellow','color-red','color-blue','color-white','color-orange','color-green');
+			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/edit_item', array(
+				'id'				=> $info['auto_id'].'_'.$info['auto_id'],
+				'name'				=> _prepare_html($info['name']),
+				'desc'				=> _prepare_html($info['desc']),
+				'has_config'		=> $info['configurable'] ? 1 : 0,
+				'config_json'		=> json_encode($info['configurable']),
+				'config_encoded'	=> htmlspecialchars(json_encode($info['configurable']), ENT_QUOTES),
+#				'css_class'			=> '',
+				'css_class'			=> $css_classes[array_rand($css_classes)],
+				'options_available'	=> '',
+				'options_current'	=> '',
 			));
 		}
 		return implode("\n", $items);

@@ -8,26 +8,22 @@
 	.portlets-side-column .portlet-content { display: none; }
 	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
 	ul.colors li { width: 20px; height: 20px; border: 1px solid #EEE; float: left; display: inline; margin: 0 5px 0 0; cursor: pointer; }
-	.color-yellow { background: #f2bc00; }
-	.color-red { background: #dd0000; }
-	.color-blue { background: #148ea4; }
-	.color-white { background: #dfdfdf; }
-	.color-orange { background: #f66e00; }
-	.color-green { background: #8dc100; }
-</style>
 
-<script type="text/javascript">
-$(function() {
-	$('.portlet').css({
-		'background-color' : $(".dropdown-menu>li>a").css('background-color')
-	})
-	$('.portlet-header').css({
-		'background-image' : $(".navbar-inner").css('background-image'),
-		'color' : $(".navbar a").css('color'),
-		'font-weight' : $(".navbar a").css('font-weight'),
-	})
-});
-</script>
+	li.color-default { background: #272b30; }
+	.color-default.portlet, .color-default div { border-color: #dddddd; }  .color-default .portlet-header, .color-default i { background-color: #151719; font-weight:bold; color: #dddddd; }
+	li.color-yellow { background: #f2bc00; }
+	.color-yellow.portlet, .color-yellow div { border-color: #f2bc00; }  .color-yellow .portlet-header, .color-yellow i { background-color: #f2bc00; font-weight:bold; color: #151719; }
+	li.color-red { background: #dd0000; }
+	.color-red.portlet, .color-red div { border-color: #dd0000; }  .color-red .portlet-header, .color-red i { background-color: #dd0000; font-weight:bold; color: #151719; }
+	li.color-blue { background: #148ea4; }
+	.color-blue.portlet, .color-blue div { border-color: #148ea4; } .color-blue .portlet-header, .color-blue i { background-color: #148ea4; font-weight:bold; color: #151719; }
+	li.color-white { background: #dfdfdf; }
+	.color-white.portlet, .color-white div { border-color: #dfdfdf; }  .color-white .portlet-header, .color-white i { background-color: #dfdfdf; font-weight:bold; color: #151719; }
+	li.color-orange { background: #f66e00; }
+	.color-orange.portlet, .color-orange div { border-color: #f66e00; }  .color-orange .portlet-header, .color-orange i { background-color: #f66e00; font-weight:bold; color: #151719; }
+	li.color-green { background: #8dc100; }
+	.color-green.portlet, .color-green div { border-color: #8dc100; }  .color-green .portlet-header, .color-green i { background-color: #8dc100; font-weight:bold; color: #151719; }
+</style>
 
 <script type="text/javascript">
 $(function() {
@@ -53,7 +49,7 @@ $(function() {
 	$(".yf_ds_options").on("click",function(){
 		var _portlet = $(this).closest('.portlet');
 		if (!_portlet.find('.portlet-options').length) {
-			_portlet.find('.portlet-content').before($('.options-tpl').find('.portlet-options'))
+			_portlet.find('.portlet-content').before($('.options-tpl').find('.portlet-options').clone())
 		}
 		_portlet.find('.portlet-options').toggle()
 		

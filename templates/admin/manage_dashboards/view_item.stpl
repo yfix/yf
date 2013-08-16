@@ -1,12 +1,6 @@
-	  <div class="portlet" id="{id}">
+	  <div class="portlet {css_class}" id="{id}">
 	    <div class="portlet-header">
 			{name}
-{if("show_buttons" eq "1")}
-			<div style="float:right;">
-				<a href="javascript:void();" class="yf_ds_options"><i class="icon icon-wrench"></i></a>&nbsp;
-<!--				<a href="javascript:void();" class="yf_ds_minimize"><i class="icon icon-chevron-sign-down"></i></a> -->
-			</div>
-{/if}
 		</div>
     	<div class="portlet-content">{desc}</div>
 	  </div>
