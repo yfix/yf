@@ -3,33 +3,11 @@
 
 <script type="text/javascript">
 $(function(){
-	$('select').chosen();
+	$('select').not('.portlet select').chosen();
 });
 </script>
 
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script type="text/javascript">
-/*
-$(function() {
-	$( ".sortable" ).sortable({
-        update: function(event, ui) {
-			var ajax_url = $(ui.item[0]).closest('.sortable').attr('data-sortable-url')
-			if (!ajax_url) {
-				return false;
-			}
-            var first = ui.item[0].id;
-            var next = ui.item.next()[0].id;
-            var prev = ui.item.prev()[0].id;
-//			$.post(ajax_url, {"first": first, "next": next, "prev" : prev}, function(data){ 
-//console.log(data)
-//			})
-			console.log(ajax_url, first, next, prev)
-        }
-	});
-//	$( ".sortable" ).disableSelection();
-});
-*/
-</script>
 
 <script type="text/javascript">
 $(function(){

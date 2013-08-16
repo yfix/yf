@@ -75,6 +75,39 @@ class yf_manage_dashboards {
 	}
 
 	/**
+	*/
+	function _view_widget_items ($name_ids = array(), $params = array()) {
+		$list_of_hooks = $this->_get_available_widgets_hooks();
+
+		$_orig_object = $_GET['object'];
+		$_orig_action = $_GET['action'];
+
+		foreach ((array)$name_ids as $name_id) {
+			$info = $list_of_hooks[$name_id];
+			if (!$info) {
+				continue;
+			}
+			list($module_name, $method_name) = explode('::', $info['full_name']);
+
+			// This is needed to correctly execute widget (maybe not nicest method, I know...)
+			$_GET['object'] = $module_name;
+			$_GET['action'] = $module_name;
+			$content = module($module_name)->$method_name(/*$info['configurable']*/);
+			$_GET['object'] = $_orig_object;
+			$_GET['action'] = $_orig_action;
+
+			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
+				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
+				'name'		=> _prepare_html($info['name']),
+				'desc'		=> $content,
+				'has_config'=> $info['configurable'] ? 1 : 0,
+				'config'	=> json_encode($info['configurable']),
+			));
+		}
+		return implode("\n", $items);
+	}
+
+	/**
 	* This will be showed in side (left) area, catched by hooks functionality
 	*/
 	function _hook_side_column () {
@@ -139,55 +172,30 @@ class yf_manage_dashboards {
 		$replace = array(
 			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
 		);
-		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
-			$replace['items_'.$column_id] = $this->_show_edit_widget_items($name_ids);
+		$items_configs = $dashboard['data']['items_configs'];
+		// Fill empty vars first
+		foreach (range(1,10) as $n) {
+			$replace['items_'.$n] = "";
+		}
+		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+			$replace['items_'.$column_id] = $this->_show_edit_widget_items($column_items, $items_configs);
 		}
 		return tpl()->parse(__CLASS__.'/edit_main', $replace);
 	}
 
 	/**
 	*/
-	function _view_widget_items ($name_ids = array(), $params = array()) {
+	function _show_edit_widget_items ($column_items = array(), $items_configs = array()) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
-		$_orig_object = $_GET['object'];
-		$_orig_action = $_GET['action'];
+$css_classes = array('color-default','color-yellow','color-red','color-blue','color-white','color-orange','color-green');
 
-		foreach ((array)$name_ids as $name_id) {
+		foreach ((array)$column_items as $name_id) {
 			$info = $list_of_hooks[$name_id];
 			if (!$info) {
 				continue;
 			}
-			list($module_name, $method_name) = explode('::', $info['full_name']);
-
-			// This is needed to correctly execute widget (maybe not nicest method, I know...)
-			$_GET['object'] = $module_name;
-			$_GET['action'] = $module_name;
-			$content = module($module_name)->$method_name(/*$info['configurable']*/);
-			$_GET['object'] = $_orig_object;
-			$_GET['action'] = $_orig_action;
-
-			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
-				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
-				'name'		=> _prepare_html($info['name']),
-				'desc'		=> $content,
-				'has_config'=> $info['configurable'] ? 1 : 0,
-				'config'	=> json_encode($info['configurable']),
-			));
-		}
-		return implode("\n", $items);
-	}
-
-	/**
-	*/
-	function _show_edit_widget_items ($name_ids = array()) {
-		$list_of_hooks = $this->_get_available_widgets_hooks();
-		foreach ((array)$name_ids as $name_id) {
-			$info = $list_of_hooks[$name_id];
-			if (!$info) {
-				continue;
-			}
-			$css_classes = array('color-default','color-yellow','color-red','color-blue','color-white','color-orange','color-green');
+			$saved_config = $items_configs[$name_id];
 			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/edit_item', array(
 				'id'				=> $info['auto_id'].'_'.$info['auto_id'],
 				'name'				=> _prepare_html($info['name']),
@@ -199,7 +207,7 @@ class yf_manage_dashboards {
 				'css_class'			=> $css_classes[array_rand($css_classes)],
 				'options_available'	=> '',
 				'options_current'	=> '',
-				'options_container'	=> $this->_options_container($info),
+				'options_container'	=> $this->_options_container($info, $saved_config),
 			));
 		}
 		return implode("\n", $items);
@@ -207,9 +215,15 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _options_container($info = array()) {
+	function _options_container($info = array(), $saved = array()) {
+		$form = form($replace, array(
+//			'class' => 'form-inline',
+		));
+		foreach ((array)$info['configurable'] as $k => $v) {
+			$form->select_box($k, $v);
+		}
 		return tpl()->parse(__CLASS__.'/ds_options', array(
-			'form_items'	=> form()->country_box(),
+			'form_items' => $form,
 		));
 	}
 
@@ -228,6 +242,8 @@ class yf_manage_dashboards {
 		$dashboard = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
 		if ($dashboard) {
 			$dashboard['data'] = (array)json_decode($dashboard['data']);
+			$dashboard['data']['columns'] = (array)$dashboard['data']['columns'];
+			$dashboard['data']['items_configs'] = (array)$dashboard['data']['items_configs'];
 		}
 		$this->_dashboard_data[$id] = $dashboard;
 		return $dashboard;
