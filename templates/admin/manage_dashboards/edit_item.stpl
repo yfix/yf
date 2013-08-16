@@ -6,5 +6,6 @@
 <!--				<a href="javascript:void();" class="yf_ds_minimize"><i class="icon icon-chevron-sign-down"></i></a> -->
 			</div>
 		</div>
+{options_container}
     	<div class="portlet-content">{desc}</div>
 	  </div>

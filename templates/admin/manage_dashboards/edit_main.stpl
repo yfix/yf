@@ -79,15 +79,5 @@ $(function() {
 </div>
 
 <div class="options-tpl">
-<div class="portlet-options" style="display:none;">
-	<ul class="colors">
-		<li class="color-yellow"></li>
-		<li class="color-red"></li>
-		<li class="color-blue"></li>
-		<li class="color-white"></li>
-		<li class="color-orange"></li>
-		<li class="color-green"></li>
-	</ul>
-	<br class="clearfix" />
-</div>
+{include("manage_dashboards/ds_options")}
 </div>

@@ -199,9 +199,18 @@ class yf_manage_dashboards {
 				'css_class'			=> $css_classes[array_rand($css_classes)],
 				'options_available'	=> '',
 				'options_current'	=> '',
+				'options_container'	=> $this->_options_container($info),
 			));
 		}
 		return implode("\n", $items);
+	}
+
+	/**
+	*/
+	function _options_container($info = array()) {
+		return tpl()->parse(__CLASS__.'/ds_options', array(
+			'form_items'	=> form()->country_box(),
+		));
 	}
 
 	/**
