@@ -14,7 +14,6 @@ class yf_manage_dashboards {
 	*/
 	function _init () {
 // TODO: add ability to use user module dashboards also
-// TODO: implement widgets settings edit
 // TODO: implement auto-sizing grid if one of columns is empty
 	}
 
@@ -95,7 +94,7 @@ class yf_manage_dashboards {
 			// This is needed to correctly execute widget (maybe not nicest method, I know...)
 			$_GET['object'] = $module_name;
 			$_GET['action'] = $module_name;
-			$content = module($module_name)->$method_name(/*$info['configurable']*/);
+			$content = module($module_name)->$method_name($saved_config);
 			$_GET['object'] = $_orig_object;
 			$_GET['action'] = $_orig_action;
 
@@ -105,9 +104,10 @@ class yf_manage_dashboards {
 				'desc'		=> $content,
 				'has_config'=> $info['configurable'] ? 1 : 0,
 				'css_class'	=> $saved_config['color'],
-//				'config'	=> json_encode($info['configurable']),
-//				'options_container'	=> $this->_options_container($info, $saved_config),
 			));
+		}
+		if (!$items) {
+			return '';
 		}
 		return implode("\n", $items);
 	}
@@ -124,9 +124,11 @@ class yf_manage_dashboards {
 			return false;
 		}
 		$avail_hooks = $this->_get_available_widgets_hooks();
-		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
-			foreach ((array)$name_ids as $auto_id) {
-				unset($avail_hooks[$auto_id]);
+		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+			foreach ((array)$column_items as $auto_id) {
+				if (isset($avail_hooks[$auto_id])) {
+					unset($avail_hooks[$auto_id]);
+				}
 			}
 		}
 		$replace = array(
@@ -206,6 +208,9 @@ class yf_manage_dashboards {
 				'css_class'			=> $saved_config['color'],
 				'options_container'	=> $this->_options_container($info, $saved_config),
 			));
+		}
+		if (!$items) {
+			return '';
 		}
 		return implode("\n", $items);
 	}

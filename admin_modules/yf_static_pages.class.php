@@ -197,19 +197,29 @@ class yf_static_pages {
 		);
 	}
 
+	/**
+	*/
 	function _hook_widget__static_pages_list ($params = array()) {
 		$meta = array(
 			'name' => 'Static pages quick access',
 			'desc' => 'List of static pages with quick links to edit/preview',
 			'configurable' => array(
-				'order_by' => array('id','name','active'),
+				'order_by'	=> array('id','name','active'),
 			),
 		);
 		if ($params['describe_self']) {
 			return $meta;
 		}
-		$config = $params['configurable'];
-		$sql = "SELECT * FROM ".db('static_pages'). (in_array($config['order_by'], $meta['configurable']['order_by']) ? ' ORDER BY '.db()->es($config['order_by']) : '');
+		$config = $params;
+		$avail_orders = $meta['configurable']['order_by'];
+		if (isset($avail_orders[$config['order_by']])) {
+			$order_by_sql = ' ORDER BY '.db()->es($avail_orders[$config['order_by']].'');
+		}
+		$avail_limits = $meta['configurable']['limit'];
+		if (isset($avail_limits[$config['limit']])) {
+			$limit_records = (int)$avail_limits[$config['limit']];
+		}
+		$sql = "SELECT * FROM ".db('static_pages'). $order_by_sql;
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1))
 			->link("name", './?object='.$_GET['object'].'&action=view&id=%d', '', array('width' => '100%'))
 			->btn_edit()
