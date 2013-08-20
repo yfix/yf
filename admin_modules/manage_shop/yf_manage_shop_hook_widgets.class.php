@@ -1,130 +1,178 @@
 <?php
+
 class yf_manage_shop_hook_widgets{
+
+	/**
+	*/
 	function _hook_widget__new_products ($params = array()) {
-		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: new products',
-				'desc'	=> 'List of latest products added to shop database',
-				'configurable'	=> array(
-					'in_stock'		=> array(true, false),
-//					'top_category'	=> array_keys(),
-				),
-			);
-		}
-		return 'TODO';
-/*
-	function _hook_widget__static_pages_list ($params = array()) {
 		$meta = array(
-			'name' => 'Static pages quick access',
-			'desc' => 'List of static pages with quick links to edit/preview',
-			'configurable' => array(
-				'order_by'	=> array('id','name','active'),
+			'name'	=> 'Shop: new products',
+			'desc'	=> 'List of latest products added to shop database',
+			'configurable'	=> array(
+//				'in_stock'		=> array(true, false),
+//				'top_category'	=> array_keys(),
 			),
 		);
 		if ($params['describe_self']) {
 			return $meta;
 		}
 		$config = $params;
-		$avail_orders = $meta['configurable']['order_by'];
-		if (isset($avail_orders[$config['order_by']])) {
-			$order_by_sql = ' ORDER BY '.db()->es($avail_orders[$config['order_by']].'');
-		}
-		$avail_limits = $meta['configurable']['limit'];
-		if (isset($avail_limits[$config['limit']])) {
-			$limit_records = (int)$avail_limits[$config['limit']];
-		}
-		$sql = "SELECT * FROM ".db('static_pages'). $order_by_sql;
-		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1))
-			->link("name", './?object='.$_GET['object'].'&action=view&id=%d', '', array('width' => '100%'))
+		$sql = 'SELECT * FROM '.db('shop_products').' ORDER BY add_date DESC';
+		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->link("name", './?object=manage_stop&action=product_edit&id=%d', '', array('width' => '100%'))
 			->btn_edit()
 		;
 	}
-*/
-// TODO
-	}
 
+	/**
+	*/
 	function _hook_widget__latest_sold_products ($params = array()) {
+		$meta = array(
+			'name'	=> 'Shop: latest sold products',
+			'desc'	=> 'List of latest sold products',
+			'configurable'	=> array(
+				'in_stock'		=> array(true, false),
+			),
+		);
 		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: latest sold products',
-				'desc'	=> 'List of latest sold products',
-				'configurable'	=> array(
-					'in_stock'		=> array(true, false),
-				),
-			);
+			return $meta;
 		}
-		return 'TODO';
-// TODO
+		$config = $params;
+		$sql = 'SELECT p.* FROM '.db('shop_products').' AS p 
+			INNER JOIN '.db('shop_order_items').' AS i ON i.product_id = p.id
+			INNER JOIN '.db('shop_orders').' AS o ON o.id = i.order_id
+			GROUP BY p.id
+			ORDER BY o.date DESC';
+		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->link("name", './?object=manage_stop&action=product_edit&id=%d', '', array('width' => '100%'))
+			->btn_edit()
+		;
 	}
 
+	/**
+	*/
 	function _hook_widget__top_sold_products ($params = array()) {
+		$meta = array(
+			'name'	=> 'Shop: most popular products',
+			'desc'	=> 'List of most popular products',
+			'configurable'	=> array(
+				'in_stock'		=> array(true, false),
+				'period'		=> array('minutely','hourly','daily','weekly','monthly')
+			),
+		);
 		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: most popular products',
-				'desc'	=> 'List of most popular products',
-				'configurable'	=> array(
-					'in_stock'		=> array(true, false),
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
+			return $meta;
 		}
-		return 'TODO';
-// TODO
+		$config = $params;
+		$sql = 'SELECT p.*, COUNT(*) AS num FROM '.db('shop_products').' AS p 
+			INNER JOIN '.db('shop_order_items').' AS i ON i.product_id = p.id
+			INNER JOIN '.db('shop_orders').' AS o ON o.id = i.order_id
+			GROUP BY p.id
+			ORDER BY COUNT(*) DESC';
+		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->link("name", './?object=manage_stop&action=product_edit&id=%d', '', array('width' => '100%'))
+			->btn_edit()
+		;
 	}
 
+	/**
+	*/
 	function _hook_widget__latest_orders ($params = array()) {
+		$meta = array(
+			'name'	=> 'Shop: latest orders',
+			'desc'	=> 'List of latest orders added to shop database',
+			'configurable'	=> array(
+				'period'		=> array('minutely','hourly','daily','weekly','monthly')
+			),
+		);
 		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: latest orders',
-				'desc'	=> 'List of latest orders added to shop database',
-				'configurable'	=> array(
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
+			return $meta;
 		}
-		return 'TODO';
-// TODO
+		$config = $params;
+		$sql = 'SELECT * FROM '.db('shop_orders').' ORDER BY `date` DESC';
+		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->link("name", './?object=manage_stop&action=order_view&id=%d', '', array('width' => '100%'))
+			->btn_edit()
+		;
 	}
 
+	/**
+	*/
 	function _hook_widget__top_customers ($params = array()) {
+		$meta = array(
+			'name'	=> 'Shop: most active customers',
+			'desc'	=> 'List of most active customers',
+			'configurable'	=> array(
+				'period'		=> array('minutely','hourly','daily','weekly','monthly')
+			),
+		);
 		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: most active customers',
-				'desc'	=> 'List of most active customers',
-				'configurable'	=> array(
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
+			return $meta;
 		}
-		return 'TODO';
-// TODO
+		$config = $params;
+		$sql = 'SELECT u.*, COUNT(*) AS num FROM '.db('user').' AS u
+			INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id
+			GROUP BY u.id
+			ORDER BY COUNT(*) DESC';
+		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->link("name", './?object=manage_users&action=edit&id=%d', '', array('width' => '100%'))
+			->btn_edit()
+		;
 	}
 
+	/**
+	*/
 	function _hook_widget__latest_customers ($params = array()) {
+		$meta = array(
+			'name'	=> 'Shop: new customers',
+			'desc'	=> 'List of latest customers, who bought something',
+			'configurable'	=> array(
+				'period'		=> array('minutely','hourly','daily','weekly','monthly')
+			),
+		);
 		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: new customers',
-				'desc'	=> 'List of latest customers, who bought something',
-				'configurable'	=> array(
-					'period'		=> array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
+			return $meta;
 		}
-		return 'TODO';
-// TODO
+		$config = $params;
+		$sql = 'SELECT u.* FROM '.db('user').' AS u
+			INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id
+			GROUP BY u.id
+			ORDER BY u.add_date DESC';
+		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->link("name", './?object=manage_users&action=edit&id=%d', '', array('width' => '100%'))
+			->btn_edit()
+		;
 	}
 
+	/**
+	*/
 	function _hook_widget__stats ($params = array()) {
+		$meta = array(
+			'name'	=> 'Shop: overall stats',
+			'desc'	=> 'Overall shop stats numbers',
+			'configurable'	=> array(
+				'period' => array('minutely','hourly','daily','weekly','monthly')
+			),
+		);
 		if ($params['describe_self']) {
-			return array(
-				'name'	=> 'Shop: overall stats',
-				'desc'	=> 'Overall shop stats numbers',
-				'configurable'	=> array(
-					'period' => array('minutely','hourly','daily','weekly','monthly')
-				),
-			);
+			return $meta;
 		}
-		return 'TODO';
-// TODO
+
+		$config = $params;
+		$sql = array(
+			'SELECT "products total" AS `name`, COUNT(*) AS num FROM '.db('shop_products').'',
+			'SELECT "products in stock" AS `name`, COUNT(*) AS num FROM '.db('shop_products').' WHERE quantity > 0',
+			'SELECT "products ordered" AS `name`, COUNT(*) AS num FROM (SELECT p.id FROM '.db('shop_products').' AS p INNER JOIN '.db('shop_order_items').' AS i ON i.product_id = p.id GROUP BY p.id) AS __tmp_products_ordered',
+			'SELECT "products total price" AS `name`, SUM(price) AS num FROM '.db('shop_products').'',
+			'SELECT "customers number" AS `name`, COUNT(*) AS num FROM (SELECT u.id FROM '.db('user').' AS u INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id GROUP BY u.id) AS __tmp_customers_number',
+			'SELECT "orders number" AS `name`, COUNT(*) AS num FROM '.db('shop_orders').'',
+			'SELECT "orders total amount" AS `name`, SUM(total_sum) AS num FROM '.db('shop_orders').' AS o',
+		);
+		$sql = '('.implode(') UNION ALL (', $sql).')';
+		$data = db()->get_all($sql);
+		return common()->table2($data, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->text("name", array('width' => '100%'))
+			->text("num")
+		;
 	}
 }

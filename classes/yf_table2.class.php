@@ -232,7 +232,7 @@ class yf_table2 {
 				$body .= '</form>';
 			}
 		} else {
-			$body .= '<div class="alert alert-info">'.t('No records').'</div>'.PHP_EOL;
+			$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
 		}
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];
@@ -240,7 +240,7 @@ class yf_table2 {
 			unset($info['func']); // Save resources
 			$body .= $func($info, $params).PHP_EOL;
 		}
-		$body .= $pages.PHP_EOL;
+		$body .= ($params['no_pages'] ? '' : $pages).PHP_EOL;
 		return $body;
 	}
 
