@@ -1,12 +1,8 @@
 <div class="portlets-side-column">
-	<form action="{save_link}" method="post" id="yf_save_layout">
-		<div style="float:right;">
-			<input type="submit" class="btn btn-mini" value="{t(Save layout)}">
-			<br>
-			<a href="{view_link}" class="btn btn-mini">{t(View layout)}</a>
-		</div>
-		<h4 align="center">Available widgets</h4>
-	</form>
+	<h4 align="center">Available widgets
+		<a href="javascript:void();" id="ds_save_layout" class="btn btn-mini"><i class="icon icon-save"></i> {t(Save)}</a>
+		<a href="{view_link}" class="btn btn-mini"><i class="icon icon-eye-open"></i> {t(View)}</a>
+	</h4>
 	<div class="column span4">
 {items}
 	</div>

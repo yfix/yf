@@ -5,7 +5,7 @@ $(function() {
     });
     $(".column").disableSelection();
 
-	$("form#yf_save_layout").on("submit", function(e){
+	$("#ds_save_layout").on("click", function(e){
 		var ds_data = "";
 		$("#yf_dashboard .column[id^=yf_ds_column]").each(function(){
 			var column_id = $(this).attr("id").substring("yf_ds_column".length + 1)
