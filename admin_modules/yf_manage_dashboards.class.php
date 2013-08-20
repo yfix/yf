@@ -9,6 +9,8 @@
 */
 class yf_manage_dashboards {
 
+	var $css_classes = array('color-default','color-yellow','color-red','color-blue','color-white','color-orange','color-green');
+
 	/**
 	* Framework constructor
 	*/
@@ -188,8 +190,6 @@ class yf_manage_dashboards {
 	function _show_edit_widget_items ($column_items = array(), $items_configs = array()) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
-$css_classes = array('color-default','color-yellow','color-red','color-blue','color-white','color-orange','color-green');
-
 		foreach ((array)$column_items as $name_id) {
 			$info = $list_of_hooks[$name_id];
 			if (!$info) {
@@ -204,7 +204,7 @@ $css_classes = array('color-default','color-yellow','color-red','color-blue','co
 				'config_json'		=> json_encode($info['configurable']),
 				'config_encoded'	=> htmlspecialchars(json_encode($info['configurable']), ENT_QUOTES),
 #				'css_class'			=> '',
-				'css_class'			=> $css_classes[array_rand($css_classes)],
+				'css_class'			=> $this->css_classes[array_rand($this->css_classes)],
 				'options_available'	=> '',
 				'options_current'	=> '',
 				'options_container'	=> $this->_options_container($info, $saved_config),

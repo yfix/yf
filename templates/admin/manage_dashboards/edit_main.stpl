@@ -11,7 +11,7 @@
 	.portlets-side-column .portlet-header { margin: -5px; padding: 0 5px; border-bottom: transparent; }
 	.portlets-side-column .portlet-content { display: none; }
 	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
-	ul.colors { margin-left: 0; }
+	ul.colors { margin-left: 0; padding-top: 10px; }
 	ul.colors li { width: 20px; height: 20px; border: 1px solid #EEE; float: left; display: inline; margin: 0 5px 0 0; cursor: pointer; }
 
 	li.color-default { background: #272b30; }
@@ -59,14 +59,18 @@ $(function() {
 		return false;
 	})
 
+	$(".portlet-options ul.colors li").on("click", function(){
+		var _portlet = $(this).closest('.portlet');
+		$(this).closest('ul.colors').find('li').each(function(){
+			_portlet.removeClass($(this).attr('class'))
+		})
+		_portlet.addClass($(this).attr('class'))
+		return false;
+	})
+
 	$(".yf_ds_options").on("click",function(){
 		var _portlet = $(this).closest('.portlet');
-//		if (!_portlet.find('.portlet-options').length) {
-//			_portlet.find('.portlet-content').before($('.options-tpl').find('.portlet-options').clone())
-//		}
 		_portlet.find('.portlet-options').toggle()
-		
-// alert("TODO");
 		return false;
 	})
 

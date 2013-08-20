@@ -143,28 +143,23 @@ class yf_logs {
 	* Save debug log
 	*/
 	function _save_debug_log($text = "", $log_level = E_NOTICE, $trace = array(), $simple = false) {
-		// Prepare log level
 		if (empty($log_level) || !isset($this->_error_levels_names[$log_level])) {
 			$log_level = E_NOTICE;
 		}
-		// Decide if error level is accepted for logging
 		if (empty($this->CUR_LOG_LEVEL) || $log_level > $this->CUR_LOG_LEVEL) {
 			return false;
 		}
-		// Prepare logs dir
 		$LOGS_DIR = INCLUDE_PATH."logs/";
 		_mkdir_m($LOGS_DIR);
-		// Prepare log data
+
 		$log_data = "";
 		$log_data .= !$simple ? date("Y-m-d H:i:s")." [".$this->_error_levels_names[$log_level]."] " : "";
 		$log_data .= $text;
-		$log_data .= !$simple ? "  (".$trace["file"]." on line ".$trace["line"].")" : "";
-		$log_data .= "\r\n";
-		// Save info to file
-		if ($fh = @fopen($LOGS_DIR."debug_logs.log", "a")) {
-			@fwrite($fh, $log_data);
-			@fclose($fh);
-		}
+//		$log_data .= !$simple ? "  (".$trace["file"]." on line ".$trace["line"].")" : "";
+		$log_data .= !$simple ? " | ".str_replace("\n", " ", main()->trace_string()) : "";
+		$log_data .= "\n";
+
+		file_put_contents($LOGS_DIR."debug_logs.log", $log_data, FILE_APPEND);
 	}
 
 	/**

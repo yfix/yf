@@ -450,7 +450,7 @@ if (!function_exists('_debug_log')) {
 		if (!$log_level || !is_numeric($log_level)) {
 			$log_level = E_NOTICE;
 		}
-		return _class("logs")->_save_debug_log($text, $log_level, array_shift(debug_backtrace()), $simple);
+		return _class("logs")->_save_debug_log($text, $log_level, array()/*array_shift(debug_backtrace())*/, $simple);
 	}
 }
 
