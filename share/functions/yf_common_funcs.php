@@ -765,3 +765,28 @@ if (!function_exists('_exec_in_background')) {
 		}
 	}
 }
+
+if (!function_exists('object_to_array')) {
+	function object_to_array($d) {
+		if (is_object($d)) {
+			$d = get_object_vars($d);
+		}
+		if (is_array($d)) {
+			return array_map(__FUNCTION__, $d);
+		} else {
+			// Return array
+			return $d;
+		}
+	}
+}
+
+if (!function_exists('array_to_object')) {
+	function array_to_object($d) {
+		if (is_array($d)) {
+			return (object) array_map(__FUNCTION__, $d);
+		} else {
+			// Return object
+			return $d;
+		}
+	}
+}

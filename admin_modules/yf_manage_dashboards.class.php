@@ -9,8 +9,6 @@
 */
 class yf_manage_dashboards {
 
-	var $css_classes = array('color-default','color-yellow','color-red','color-blue','color-white','color-orange','color-green');
-
 	/**
 	* Framework constructor
 	*/
@@ -66,19 +64,20 @@ class yf_manage_dashboards {
 		}
 		$replace = array(
 		);
-		// Fill empty template vars for columns
+		$items_configs = $dashboard['data']['items_configs'];
+		// Fill empty vars first
 		foreach (range(1,10) as $n) {
 			$replace['items_'.$n] = "";
 		}
-		foreach ((array)$dashboard['data'] as $column_id => $name_ids) {
-			$replace['items_'.$column_id] = $this->_view_widget_items($name_ids, array('no_buttons' => 1));
+		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+			$replace['items_'.$column_id] = $this->_view_widget_items($column_items, $items_configs);
 		}
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
 	}
 
 	/**
 	*/
-	function _view_widget_items ($name_ids = array(), $params = array()) {
+	function _view_widget_items ($name_ids = array(), $items_configs = array()) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
 		$_orig_object = $_GET['object'];
@@ -90,6 +89,8 @@ class yf_manage_dashboards {
 				continue;
 			}
 			list($module_name, $method_name) = explode('::', $info['full_name']);
+
+			$saved_config = $items_configs[$name_id."_".$name_id];
 
 			// This is needed to correctly execute widget (maybe not nicest method, I know...)
 			$_GET['object'] = $module_name;
@@ -103,7 +104,9 @@ class yf_manage_dashboards {
 				'name'		=> _prepare_html($info['name']),
 				'desc'		=> $content,
 				'has_config'=> $info['configurable'] ? 1 : 0,
-				'config'	=> json_encode($info['configurable']),
+				'css_class'	=> $saved_config['color'],
+//				'config'	=> json_encode($info['configurable']),
+//				'options_container'	=> $this->_options_container($info, $saved_config),
 			));
 		}
 		return implode("\n", $items);
@@ -163,7 +166,6 @@ class yf_manage_dashboards {
 			return _e('No such record');
 		}
 		if ($_POST) {
-// TODO: carefully validate POST data, ensuring it is in correct format
 			if (!_ee()) {
 				db()->update('dashboards', db()->es(array(
 					'data'	=> json_encode($_POST['ds_data']),
@@ -195,18 +197,13 @@ class yf_manage_dashboards {
 			if (!$info) {
 				continue;
 			}
-			$saved_config = $items_configs[$name_id];
+			$saved_config = $items_configs[$name_id."_".$name_id];
 			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/edit_item', array(
-				'id'				=> $info['auto_id'].'_'.$info['auto_id'],
+				'id'				=> _prepare_html($info['auto_id'].'_'.$info['auto_id']),
 				'name'				=> _prepare_html($info['name']),
 				'desc'				=> _prepare_html($info['desc']),
 				'has_config'		=> $info['configurable'] ? 1 : 0,
-				'config_json'		=> json_encode($info['configurable']),
-				'config_encoded'	=> htmlspecialchars(json_encode($info['configurable']), ENT_QUOTES),
-#				'css_class'			=> '',
-				'css_class'			=> $this->css_classes[array_rand($this->css_classes)],
-				'options_available'	=> '',
-				'options_current'	=> '',
+				'css_class'			=> $saved_config['color'],
 				'options_container'	=> $this->_options_container($info, $saved_config),
 			));
 		}
@@ -216,14 +213,14 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function _options_container($info = array(), $saved = array()) {
-		$form = form($replace, array(
-//			'class' => 'form-inline',
-		));
+		$form = form();
 		foreach ((array)$info['configurable'] as $k => $v) {
-			$form->select_box($k, $v);
+			$form->select_box($k, $v, array('selected' => $saved[$k]));
 		}
 		return tpl()->parse(__CLASS__.'/ds_options', array(
-			'form_items' => $form,
+			'form_items'	=> $form,
+			'color'			=> $saved['color'],
+			'item_id'		=> _prepare_html($info['auto_id']),
 		));
 	}
 
@@ -241,9 +238,7 @@ class yf_manage_dashboards {
 		}
 		$dashboard = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
 		if ($dashboard) {
-			$dashboard['data'] = (array)json_decode($dashboard['data']);
-			$dashboard['data']['columns'] = (array)$dashboard['data']['columns'];
-			$dashboard['data']['items_configs'] = (array)$dashboard['data']['items_configs'];
+			$dashboard['data'] = object_to_array(json_decode($dashboard['data']));
 		}
 		$this->_dashboard_data[$id] = $dashboard;
 		return $dashboard;

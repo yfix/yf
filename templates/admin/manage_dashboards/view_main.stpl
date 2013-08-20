@@ -1,13 +1,9 @@
-<style type="text/css">
-	.portlet { padding: 0; margin-bottom: 20px; border: 1px solid #dddddd; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
-	.portlet-header { padding: 5px 10px; margin: 0; border-bottom: 1px solid #dddddd; border-top-right-radius: 3px; border-top-left-radius: 3px; }
-	.portlet-content { max-height: 300px; overflow-y:auto; }
-	.portlet-content table { margin-bottom: 0; }
-	.portlet-content table td { padding: 3px; }
-	.container { width: 100%; } 
+{include("manage_dashboards/ds_css")}
+<style>
+ 	.container { width: 100%; }
 </style>
 
-<div class="container-fluid" id="yf_dashboard">
+<div class="container-fluid ds_view" id="yf_dashboard">
   <div class="row-fluid">
 	<div class="column span4" id="yf_ds_column_1">
 {items_1}

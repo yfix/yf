@@ -8,7 +8,7 @@
 		<li class="color-green"></li>
 		<li class="color-default"></li>
 	</ul>
-	<input type="hidden" name="{item_id}_color" value="{color}">
+	<input type="hidden" name="color_item_{item_id}" value="{color}">
 	<br class="clearfix" />
 	{form_items}
 </div>
