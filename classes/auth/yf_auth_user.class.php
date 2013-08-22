@@ -17,6 +17,8 @@ class yf_auth_user {
 	public $ONLINE_MAX_IDS			= 1000; // Max number of online records (to prevent server flooding)
 	/** @var string Login field name to use @conf_skip */
 	public $LOGIN_FIELD			= "login";
+	/** @var string Alternative login field name to use @conf_skip */
+	public $LOGIN_ALIAS			= "";
 	/** @var string Password field name to use @conf_skip */
 	public $PSWD_FIELD				= "password";
 	/** @var string Remeber field name to use @conf_skip */
@@ -352,7 +354,7 @@ class yf_auth_user {
 			return false;
 		}
 		$db_user_table = main()->USER_INFO_DYNAMIC ? db('user_data_main') : db('user');
-		return db()->query_fetch("SELECT * FROM ".$db_user_table." WHERE ".$this->LOGIN_FIELD."='".db()->es($login)."'");
+		return db()->query_fetch("SELECT * FROM ".$db_user_table." WHERE ".$this->LOGIN_FIELD."='".db()->es($login)."' ".($this->LOGIN_ALIAS !="" ? " OR ".$this->LOGIN_ALIAS."='".db()->es($login)."'" : "") );
 	}
 
 	/**
