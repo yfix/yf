@@ -106,6 +106,15 @@ class yf_auth_admin {
 		} elseif ($_GET['task'] == "logout") {
 			$this->_do_logout();
 		}
+		// Store admin info inside the main module
+		if (!empty($_SESSION[$this->VAR_ADMIN_ID]) && !empty($_SESSION[$this->VAR_ADMIN_GROUP_ID])) {
+			$main = main();
+			$main->ADMIN_ID = $_SESSION[$this->VAR_ADMIN_ID];
+			$main->ADMIN_GROUP = $_SESSION[$this->VAR_ADMIN_GROUP_ID];
+			if ($this->ADMIN_INFO_IN_SESSION && !empty($_SESSION[$this->VAR_ADMIN_INFO])) {
+				main()->ADMIN_INFO = &$_SESSION[$this->VAR_ADMIN_INFO];
+			}
+		}
 	}
 
 	/**
@@ -179,13 +188,6 @@ class yf_auth_admin {
 			$_SESSION[$this->VAR_ADMIN_GROUP_ID]	= $admin_info["group"];
 			$_SESSION[$this->VAR_ADMIN_LOGIN_TIME]	= time();
 
-			$main = main();
-// TODO: add this method
-//			$main->_init_admin_info($main);
-			$main->_admin_info = $admin_info;
-			$main->ADMIN_ID = $admin_info['id'];
-			$main->ADMIN_GROUP = $admin_info['group'];
-			$main->ADMIN_INFO = &$main->_admin_info;
 
 			// Auto-redirect to the page before login form if needed
 			if (!empty($_SESSION[$this->VAR_ADMIN_GO_URL])) {

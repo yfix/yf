@@ -60,10 +60,11 @@ class yf_admin_groups {
 					"active"		=> intval((bool)$_POST["active"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
 				));
-				if (main()->USE_SYSTEM_CACHE)	{
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("admin_groups");
 					cache()->refresh("admin_groups_details");
 				}
+				common()->admin_wall_add(array('admin group added: '.$_POST['name'].'', main()->ADMIN_ID, db()->insert_id()));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -92,33 +93,28 @@ class yf_admin_groups {
 		if (empty($_GET['id'])) {
 			return _e(t("No id"));
 		}
-		// Get group info
 		$group_info = db()->query_fetch("SELECT * FROM ".db('admin_groups')." WHERE id=".intval($_GET["id"]));
 		if (empty($group_info)) {
 			return _e(t("No such group"));
 		}
-		// Do save data
 		if (!empty($_POST)) {
-			// Name could not be empty
 			if (empty($_POST["name"])) {
 				_re("Name is empty", "name");
 			}
 			if (!$_POST["active"] && $_GET["id"] == 1) {
 				_re("You can not disable root admin group", "active");
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("admin_groups", array(
 					"name" 			=> _es($_POST["name"]),
 					"active"		=> intval((bool)$_POST["active"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
 				), "id=".intval($_GET['id']));
-				// Refresh system cache
-				if (main()->USE_SYSTEM_CACHE)	{
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("admin_groups");
 					cache()->refresh("admin_groups_details");
 				}
-				// Return user back
+				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', main()->ADMIN_ID, $_GET['id']));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -150,8 +146,9 @@ class yf_admin_groups {
 		}
 		if (!empty($_GET['id'])) {
 			db()->query("DELETE FROM ".db('admin_groups')." WHERE id=".intval($_GET['id'])." LIMIT 1");
+			common()->admin_wall_add(array('admin group deleted', main()->ADMIN_ID, $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
+		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("admin_groups");
 			cache()->refresh("admin_groups_details");
 		}
@@ -177,8 +174,9 @@ class yf_admin_groups {
 			db()->UPDATE("admin_groups", array(
 				"active"	=> intval(!$group_info["active"]),
 			), "id=".intval($_GET['id']));
+			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info["active"] ? 'inactivated' : 'activated'), main()->ADMIN_ID, $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
+		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("admin_groups");
 			cache()->refresh("admin_groups_details");
 		}
