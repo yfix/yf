@@ -1451,7 +1451,7 @@ class yf_common {
 		return db()->insert('admin_walls', db()->es(array(
 			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
 			'user_id'	=> isset($data['user_id']) ? $data['user_id'] : (isset($data[1]) ? $data[1] : main()->ADMIN_ID),
-			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
+			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[2]) ? $data[2] : ''),
 			'object'	=> isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
 			'action'	=> isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
 			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),

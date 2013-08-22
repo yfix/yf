@@ -28,7 +28,7 @@ class yf_admin_wall {
 	function view() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$msg = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' AND id='.intval($_GET['id']).' LIMIT 1';
+			$msg = db()->get('SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' AND id='.intval($_GET['id']).' LIMIT 1');
 		}
 		if (!$msg['id']) {
 			return _e('Wrong message id');

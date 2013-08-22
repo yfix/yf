@@ -197,4 +197,11 @@ class yf_admin_groups {
 			return eval("return common()->".$this->_boxes[$name].";");
 		}
 	}
+
+	/**
+	*/
+	function _hook_wall_link($msg = array()) {
+		$action = $msg["action"] == "delete" ? "show" : "edit";
+		return "./?object=admin_groups&action=".$action."&id=".$msg['object_id'];
+	}
 }
