@@ -1,0 +1,10 @@
+	  <div class="portlet {css_class}" id="{id}">
+	    <div class="portlet-header">
+			{name}
+			<div style="float:right;">
+				<a href="javascript:void();" class="yf_ds_options"><i class="icon icon-wrench"></i></a>&nbsp;
+			</div>
+		</div>
+{options_container}
+    	<div class="portlet-content">{desc}</div>
+	  </div>

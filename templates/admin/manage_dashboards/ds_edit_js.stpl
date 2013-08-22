@@ -1,0 +1,52 @@
+<script type="text/javascript">
+$(function() {
+    $(".column").sortable({
+		connectWith: ".column"
+    });
+    $(".column").disableSelection();
+
+	$("#ds_save_layout").on("click", function(e){
+		var ds_data = "";
+		$("#yf_dashboard .column[id^=yf_ds_column]").each(function(){
+			var column_id = $(this).attr("id").substring("yf_ds_column".length + 1)
+			ds_data += "&" + $(this).sortable("serialize", { key: "ds_data[columns][" + column_id + "][]" })
+		})
+		$("#yf_dashboard .portlet .portlet-options form").each(function(){
+			var _form = $(this)
+			var _portlet = _form.closest('.portlet')
+			var item_id = _portlet.attr("id")
+			var _cur_color = _portlet.find("input[name^=color_item_]").val()
+			ds_data += "&" + "ds_data[items_configs][" + item_id + "][color]=" + _cur_color
+			$("select", _form).each(function(){
+				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).find("option:selected").val()
+			})
+		})
+		$.post($(this).attr("action"), ds_data, function(data){
+			window.location.reload()
+		})
+		return false;
+	})
+
+	$(".portlet-options ul.colors li").on("click", function(){
+		var _portlet = $(this).closest('.portlet');
+		$(this).closest('ul.colors').find('li').each(function(){
+			_portlet.removeClass($(this).attr('class'))
+		})
+		var _cur_color = $(this).attr('class')
+		_portlet.addClass(_cur_color)
+		_portlet.find('input[name^=color_item_]').val(_cur_color)
+		return false;
+	})
+
+	$(".yf_ds_options").on("click",function(){
+		var _portlet = $(this).closest('.portlet');
+		_portlet.find('.portlet-options').toggle()
+		return false;
+	})
+
+	$(".yf_ds_minimize").on("click",function(){
+		$(this).closest('.portlet').find('.portlet-content').toggle()
+		return false;
+	})
+});
+</script>

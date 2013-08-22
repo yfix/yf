@@ -125,6 +125,15 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
+
+		// Merge params passed to table2() and params passed here, with params here have more priority:
+		$tmp = $this->_params;
+		foreach ((array)$extra as $k => $v) {
+			$tmp[$k] = $v;
+		}
+		$extra = $tmp;
+		unset($tmp);
+
 		if (!$name) {
 			$name = 'form_action';
 		}
@@ -139,7 +148,8 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$form_action = isset($r[$name]) ? $r[$name] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $this->_params['links_add'];
-		$body = '<form method="'.$method.'" action="'.$form_action.'" class="form-horizontal'.($extra['class'] ? ' '.$extra['class'] : '').'"'
+		$form_class = $extra['class'] ? $extra['class'] : 'form-horizontal';
+		$body = '<form method="'.$method.'" action="'.$form_action.'" class="'.$form_class.'"'
 			.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
 			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
 			.($extra['name'] ? ' name="'.$extra['name'].'"' : '')

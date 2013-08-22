@@ -450,7 +450,7 @@ if (!function_exists('_debug_log')) {
 		if (!$log_level || !is_numeric($log_level)) {
 			$log_level = E_NOTICE;
 		}
-		return _class("logs")->_save_debug_log($text, $log_level, array_shift(debug_backtrace()), $simple);
+		return _class("logs")->_save_debug_log($text, $log_level, array()/*array_shift(debug_backtrace())*/, $simple);
 	}
 }
 
@@ -762,6 +762,31 @@ if (!function_exists('_exec_in_background')) {
 			pclose(popen("start /B ". $cmd, "r"));
 		} else {
 			exec($cmd . " > /dev/null &");
+		}
+	}
+}
+
+if (!function_exists('object_to_array')) {
+	function object_to_array($d) {
+		if (is_object($d)) {
+			$d = get_object_vars($d);
+		}
+		if (is_array($d)) {
+			return array_map(__FUNCTION__, $d);
+		} else {
+			// Return array
+			return $d;
+		}
+	}
+}
+
+if (!function_exists('array_to_object')) {
+	function array_to_object($d) {
+		if (is_array($d)) {
+			return (object) array_map(__FUNCTION__, $d);
+		} else {
+			// Return object
+			return $d;
 		}
 	}
 }
