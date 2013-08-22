@@ -1454,7 +1454,7 @@ class yf_common {
 			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
 			'object'	=> isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
 			'action'	=> isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
-			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0)
+			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),
 			'add_date'	=> date('Y-m-d H:i:s'),
 			'server_id'	=> (int)main()->SERVER_ID,
 			'site_id'	=> (int)main()->SITE_ID,
@@ -1470,7 +1470,7 @@ class yf_common {
 			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[2]) ? $data[2] : ''),
 			'object'	=> isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
 			'action'	=> isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
-			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0)
+			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),
 			'add_date'	=> date('Y-m-d H:i:s'),
 			'server_id'	=> (int)main()->SERVER_ID,
 			'site_id'	=> (int)main()->SITE_ID,
