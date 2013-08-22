@@ -159,7 +159,7 @@ class yf_blocks {
 					"type"		=> _es($_POST["type"] == "admin" ? "admin" : "user"),
 					"active"	=> intval($_POST["active"]),
 				));
-				common()->admin_wall_add(array('block added: '.$_POST['name'].'', main()->ADMIN_ID, db()->insert_id()));
+				common()->admin_wall_add(array('block added: '.$_POST['name'].'', db()->insert_id()));
 				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("blocks_names");
 				}
@@ -222,7 +222,7 @@ class yf_blocks {
 					"method_name"	=> _es($_POST["method_name"]),
 					"active"		=> intval($_POST["active"])
 				), "id=".intval($_GET["id"]));
-				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', main()->ADMIN_ID, $_GET['id']));
+				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', $_GET['id']));
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("blocks_names");
 				}
@@ -276,7 +276,7 @@ class yf_blocks {
 		if (!empty($block_info["id"])) {
 			db()->query("DELETE FROM ".db('blocks')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			db()->query("DELETE FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
-			common()->admin_wall_add(array('block deleted: '.$block_info['name'].'', main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('block deleted: '.$block_info['name'].'', $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("blocks_names");
@@ -315,7 +315,7 @@ class yf_blocks {
 
 			$NEW_ITEM_ID = db()->INSERT_ID();
 		}
-		common()->admin_wall_add(array('block cloned: '.$_info['name'].' from '.$block_info['name'], main()->ADMIN_ID, $NEW_ITEM_ID));
+		common()->admin_wall_add(array('block cloned: '.$_info['name'].' from '.$block_info['name'], $NEW_ITEM_ID));
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("blocks_names");
 			cache()->refresh("blocks_rules");
@@ -333,7 +333,7 @@ class yf_blocks {
 		}
 		if (!empty($block_info["id"])) {
 			db()->UPDATE("blocks", array("active" => (int)!$block_info["active"]), "id=".intval($_GET["id"]));
-			common()->admin_wall_add(array('block '.$block_info['name'].' '.($block_info['active'] ? 'inactivated' : 'activated'), main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('block '.$block_info['name'].' '.($block_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("blocks_names");
@@ -435,7 +435,7 @@ class yf_blocks {
 					"order"			=> intval($_POST["order"]),
 					"active"		=> intval($_POST["active"]),
 				));
-				common()->admin_wall_add(array('block rule added for '.$block_info['name'], main()->ADMIN_ID, $_GET['id']));
+				common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
 				if (main()->USE_SYSTEM_CACHE)	{
 					cache()->refresh("blocks_rules");
 				}
@@ -520,7 +520,7 @@ class yf_blocks {
 					"order"			=> intval($_POST["order"]),
 					"active"		=> intval($_POST["active"]),
 				), "id=".intval($_GET["id"]));
-				common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], main()->ADMIN_ID, $_GET['id']));
+				common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
 				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("blocks_rules");
 				}
@@ -587,7 +587,7 @@ class yf_blocks {
 		}
 		if (!empty($block_info["id"])) {
 			db()->query("DELETE FROM ".db('block_rules')." WHERE id=".intval($_GET["id"])." LIMIT 1");
-			common()->admin_wall_add(array('block rule deleted for: '.$block_info['name'], main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('block rule deleted for: '.$block_info['name'], $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("blocks_rules");
@@ -620,7 +620,7 @@ class yf_blocks {
 		db()->INSERT("block_rules", $sql);
 		$NEW_RULE_ID = db()->INSERT_ID();
 
-		common()->admin_wall_add(array('block rule cloned for block '.$block_info['name'], main()->ADMIN_ID, $NEW_RULE_ID));
+		common()->admin_wall_add(array('block rule cloned for block '.$block_info['name'], $NEW_RULE_ID));
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("blocks_names");
 			cache()->refresh("blocks_rules");
@@ -641,7 +641,7 @@ class yf_blocks {
 		}
 		if (!empty($block_info["id"])) {
 			db()->UPDATE("block_rules", array("active" => (int)!$rule_info["active"]), "id=".intval($_GET["id"]));
-			common()->admin_wall_add(array('block rule for '.$block_info['name'].' '.($rule_info['active'] ? 'inactivated' : 'activated'), main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('block rule for '.$block_info['name'].' '.($rule_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("blocks_rules");

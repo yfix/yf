@@ -105,7 +105,7 @@ class yf_category_editor {
 					"active"		=> (int)((bool)$_POST["active"]),
 					"type"			=> _es($_POST["type"]),
 				));
-				common()->admin_wall_add(array('category added: '.$_POST['name'], main()->ADMIN_ID, db()->insert_id()));
+				common()->admin_wall_add(array('category added: '.$_POST['name'], db()->insert_id()));
 				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("category_sets");
 				}
@@ -159,7 +159,7 @@ class yf_category_editor {
 					"custom_fields"	=> _es($_POST["custom_fields"]),
 					"active"		=> (int)((bool)$_POST["active"]),
 				), "id=".intval($_GET["id"]));
-				common()->admin_wall_add(array('category updated: '.$cat_info['name'], main()->ADMIN_ID, $_GET['id']));
+				common()->admin_wall_add(array('category updated: '.$cat_info['name'], $_GET['id']));
 				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("category_sets");
 				}
@@ -204,7 +204,7 @@ class yf_category_editor {
 		if (!empty($cat_info["id"])) {
 			db()->query("DELETE FROM ".db('categories')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			db()->query("DELETE FROM ".db('category_items')." WHERE cat_id=".intval($_GET["id"]));
-			common()->admin_wall_add(array('category deleted: '.$cat_info['name'], main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('category deleted: '.$cat_info['name'], $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("category_sets");
@@ -256,7 +256,7 @@ class yf_category_editor {
 			$_new_parent_id = intval($_old_to_new[$_old_parent_id]);
 			db()->UPDATE("category_items", array("parent_id" => $_new_parent_id), "id=".intval($_new_id));
 		}
-		common()->admin_wall_add(array('category cloned: from '.$cat_info['name'].' into '.$sql['name'], main()->ADMIN_ID, $_GET['id']));
+		common()->admin_wall_add(array('category cloned: from '.$cat_info['name'].' into '.$sql['name'], $_GET['id']));
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("category_sets");
 			cache()->refresh("category_items");
@@ -272,7 +272,7 @@ class yf_category_editor {
 		}
 		if (!empty($cat_info)) {
 			db()->UPDATE("categories", array("active" => (int)!$cat_info["active"]), "id=".intval($cat_info["id"]));
-			common()->admin_wall_add(array('category '.$cat_info['name'].' '.($cat_info['active'] ? 'inactivated' : 'activated'), main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('category '.$cat_info['name'].' '.($cat_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("category_sets");
@@ -428,7 +428,7 @@ class yf_category_editor {
 				);
 				if ($new_data != $old_data) {
 					db()->update('category_items', $new_data, 'id='.$item_id);
-					common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], main()->ADMIN_ID, $cat_info['id']));
+					common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
 				}
 			}
 			main()->NO_GRAPHICS = true;
@@ -607,7 +607,7 @@ class yf_category_editor {
 				"order"			=> intval($_POST["item_order"]),
 				"active"		=> intval($_POST["active"]),
 			));
-			common()->admin_wall_add(array('category item added: '.$cat_info['name'], main()->ADMIN_ID, $cat_info['id']));
+			common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
 			if (main()->USE_SYSTEM_CACHE) {
 				cache()->refresh("category_items");
 			}
@@ -700,7 +700,7 @@ class yf_category_editor {
 				"order"			=> intval($_POST["item_order"]),
 				"active"		=> intval($_POST["active"]),
 			), "id=".intval($item_info["id"]));
-			common()->admin_wall_add(array('category item updated: '.$cat_info['name'], main()->ADMIN_ID, $cat_info['id']));
+			common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
 			if (main()->USE_SYSTEM_CACHE) {
 				cache()->refresh("category_items");
 			}
@@ -783,7 +783,7 @@ class yf_category_editor {
 		}
 		if (!empty($item_info)) {
 			db()->UPDATE("category_items", array("active" => (int)!$item_info["active"]), "id=".intval($item_info["id"]));
-			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("category_items");
@@ -805,7 +805,7 @@ class yf_category_editor {
 		}
 		if (!empty($item_info)) {
 			db()->query("DELETE FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
-			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("category_items");
@@ -828,7 +828,7 @@ class yf_category_editor {
 		$sql = $item_info;
 		unset($sql["id"]);
 		db()->INSERT("category_items", $sql);
-		common()->admin_wall_add(array('category item cloned from '.$item_info['id'].' into '.$item_info['id'], main()->ADMIN_ID, $_GET['id']));
+		common()->admin_wall_add(array('category item cloned from '.$item_info['id'].' into '.$item_info['id'], $_GET['id']));
 		if (main()->USE_SYSTEM_CACHE)	{
 			cache()->refresh("category_items");
 		}

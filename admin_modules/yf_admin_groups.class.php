@@ -64,7 +64,7 @@ class yf_admin_groups {
 					cache()->refresh("admin_groups");
 					cache()->refresh("admin_groups_details");
 				}
-				common()->admin_wall_add(array('admin group added: '.$_POST['name'].'', main()->ADMIN_ID, db()->insert_id()));
+				common()->admin_wall_add(array('admin group added: '.$_POST['name'].'', db()->insert_id()));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -114,7 +114,7 @@ class yf_admin_groups {
 					cache()->refresh("admin_groups");
 					cache()->refresh("admin_groups_details");
 				}
-				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', main()->ADMIN_ID, $_GET['id']));
+				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', $_GET['id']));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -146,7 +146,7 @@ class yf_admin_groups {
 		}
 		if (!empty($_GET['id'])) {
 			db()->query("DELETE FROM ".db('admin_groups')." WHERE id=".intval($_GET['id'])." LIMIT 1");
-			common()->admin_wall_add(array('admin group deleted', main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('admin group deleted', $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("admin_groups");
@@ -174,7 +174,7 @@ class yf_admin_groups {
 			db()->UPDATE("admin_groups", array(
 				"active"	=> intval(!$group_info["active"]),
 			), "id=".intval($_GET['id']));
-			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info["active"] ? 'inactivated' : 'activated'), main()->ADMIN_ID, $_GET['id']));
+			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info["active"] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("admin_groups");

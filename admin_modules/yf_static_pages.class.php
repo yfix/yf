@@ -37,6 +37,7 @@ class yf_static_pages {
 		if (strlen($name)) {
 			db()->insert("static_pages", _es(array("name" => $name)));
 			$page_id = db()->insert_id();
+			common()->admin_wall_add(array('statis page added: '.$name, $page_id));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("static_pages_names");
@@ -80,6 +81,7 @@ class yf_static_pages {
 			}
 			if ($sql["text"]) {
 				db()->update("static_pages", db()->es($sql), "id=".intval($page_info['id']));
+				common()->admin_wall_add(array('statis page updated: '.$page_info['name'], $page_info['id']));
 			}
 			if (main()->USE_SYSTEM_CACHE) {
 				cache()->refresh("static_pages_names");
@@ -118,6 +120,7 @@ class yf_static_pages {
 	function delete() {
 		if (isset($_GET['id'])) {
 			db()->query("DELETE FROM ".db('static_pages')." WHERE name='"._es(urldecode($_GET['id']))."' OR id=".intval($_GET['id']));
+			common()->admin_wall_add(array('static page deleted: '.$_GET['id'], $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("static_pages_names");
@@ -138,6 +141,7 @@ class yf_static_pages {
 		}
 		if (!empty($page_info["id"])) {
 			db()->UPDATE("static_pages", array("active" => (int)!$page_info["active"]), "id=".intval($page_info["id"]));
+			common()->admin_wall_add(array('static page: '.$page_info['name'].' '.($page_info['active'] ? 'inactivated' : 'activated'), $page_info['id']));
 			if (main()->USE_SYSTEM_CACHE) {
 				cache()->refresh("static_pages_names");
 			}
