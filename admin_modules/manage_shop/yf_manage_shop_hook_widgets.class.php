@@ -19,8 +19,9 @@ class yf_manage_shop_hook_widgets{
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('shop_products').' ORDER BY add_date DESC';
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->link("name", './?object=manage_stop&action=product_edit&id=%d', '', array('width' => '100%'))
-			->btn_edit()
+			->text("name")
+			->text("price")
+			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')
 		;
 	}
 
@@ -44,8 +45,9 @@ class yf_manage_shop_hook_widgets{
 			GROUP BY p.id
 			ORDER BY o.date DESC';
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->link("name", './?object=manage_stop&action=product_edit&id=%d', '', array('width' => '100%'))
-			->btn_edit()
+			->text("name")
+			->text("price")
+			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')
 		;
 	}
 
@@ -70,8 +72,10 @@ class yf_manage_shop_hook_widgets{
 			GROUP BY p.id
 			ORDER BY COUNT(*) DESC';
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->link("name", './?object=manage_stop&action=product_edit&id=%d', '', array('width' => '100%'))
-			->btn_edit()
+			->text("name")
+			->text("price")
+			->text("num")
+			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')
 		;
 	}
 
@@ -91,8 +95,10 @@ class yf_manage_shop_hook_widgets{
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('shop_orders').' ORDER BY `date` DESC';
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->link("name", './?object=manage_stop&action=order_view&id=%d', '', array('width' => '100%'))
-			->btn_edit()
+			->text("total_sum")
+			->text("email")
+			->date("date")
+			->btn_edit('', './?object=manage_shop&action=view_order&id=%d')
 		;
 	}
 
@@ -115,8 +121,10 @@ class yf_manage_shop_hook_widgets{
 			GROUP BY u.id
 			ORDER BY COUNT(*) DESC';
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->link("name", './?object=manage_users&action=edit&id=%d', '', array('width' => '100%'))
-			->btn_edit()
+			->text("login")
+			->text("email")
+			->text("num")
+			->btn_edit('', './?object=members&action=edit&id=%d')
 		;
 	}
 
@@ -134,13 +142,15 @@ class yf_manage_shop_hook_widgets{
 			return $meta;
 		}
 		$config = $params;
-		$sql = 'SELECT u.* FROM '.db('user').' AS u
+		$sql = 'SELECT u.*, o.* FROM '.db('user').' AS u
 			INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id
 			GROUP BY u.id
 			ORDER BY u.add_date DESC';
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->link("name", './?object=manage_users&action=edit&id=%d', '', array('width' => '100%'))
-			->btn_edit()
+			->text("login")
+			->text("email")
+			->date("date")
+			->btn_edit('', './?object=members&action=edit&id=%d')
 		;
 	}
 
@@ -171,7 +181,7 @@ class yf_manage_shop_hook_widgets{
 		$sql = '('.implode(') UNION ALL (', $sql).')';
 		$data = db()->get_all($sql);
 		return common()->table2($data, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->text("name", array('width' => '100%'))
+			->text("name", '', array('width' => '100%'))
 			->text("num")
 		;
 	}
