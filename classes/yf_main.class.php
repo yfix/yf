@@ -1514,6 +1514,8 @@ class yf_main {
 			return false;
 		}
 		if (MAIN_TYPE_ADMIN) {
+			$OBJ->ADMIN_ID	= (int)$this->_session('admin_id');
+			$OBJ->ADMIN_GROUP= (int)$this->_session('admin_group');
 			$OBJ->USER_ID = $this->_get("user_id");
 		} elseif (MAIN_TYPE_USER && isset($_SESSION)) {
 			$OBJ->USER_ID	= (int)$this->_session('user_id');

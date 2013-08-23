@@ -61,7 +61,8 @@ class yf_user_groups {
 					"active"		=> intval((bool)$_POST["active"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
 				));
-				if (main()->USE_SYSTEM_CACHE)	{
+				common()->admin_wall_add(array('user group added: '.$_POST['name'].'', db()->insert_id()));
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("user_groups");
 					cache()->refresh("user_groups_details");
 				}
@@ -104,7 +105,8 @@ class yf_user_groups {
 					"name" 			=> _es($_POST["name"]),
 					"go_after_login"=> _es($_POST["go_after_login"]),
 				), "id=".intval($_GET['id']));
-				if (main()->USE_SYSTEM_CACHE)	{
+				common()->admin_wall_add(array('user group updated: '.$_POST['name'].'', $_GET['id']));
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("user_groups");
 					cache()->refresh("user_groups_details");
 				}
@@ -134,8 +136,9 @@ class yf_user_groups {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			db()->query("DELETE FROM ".db('user_groups')." WHERE id=".intval($_GET['id'])." LIMIT 1");
+			common()->admin_wall_add(array('user group deleted: '.$_GET['id'].'', $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
+		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("user_groups");
 			cache()->refresh("user_groups_details");
 		}
@@ -158,8 +161,9 @@ class yf_user_groups {
 			db()->UPDATE("user_groups", array(
 				"active"	=> intval(!$group_info["active"]),
 			), "id=".intval($_GET['id']));
+			common()->admin_wall_add(array('user group: '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $group_info['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
+		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("user_groups");
 			cache()->refresh("user_groups_details");
 		}

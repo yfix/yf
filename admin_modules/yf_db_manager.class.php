@@ -72,8 +72,6 @@ class yf_db_manager {
 			);
 			$tables .= tpl()->parse($_GET["object"]."/table_item", $replace2);
 		}
-		
-		
 		$actions = array(
 			"truncate"	=> "truncate",
 			"drop"		=> "drop",
@@ -81,11 +79,9 @@ class yf_db_manager {
 			"optimize"	=> "optimize",
 			"repair"	=> "repair",
 		);
-		
 		$first_element = array("0" => t(" - select - "));
 		$actions = my_array_merge($first_element, $actions);
 		$actions_select_box = common()->select_box("group_action_select", $actions, $_GET["id"], false, 2, "onchange='group_action();'", false);
-		
 		
 		// Process template
 		$replace = array(
@@ -146,8 +142,6 @@ class yf_db_manager {
 		return tpl()->parse($_GET["object"]."/structure_main", $replace);
 	}
 	
-	
-	
 	/**
 	*
 	*/
@@ -187,7 +181,6 @@ class yf_db_manager {
 		
 		echo "<b>drop <span style='color:green'>complete!</span></b>";
 	}
-	
 	
 	/**
 	*

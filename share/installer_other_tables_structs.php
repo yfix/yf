@@ -1166,6 +1166,33 @@ $data = my_array_merge((array)$data, array(
 	`site_ids` varchar(255) NOT NULL,
 	`server_ids` varchar(255) NOT NULL,
 	`active` enum('1','0') NOT NULL default '1',
+	`data` text NOT NULL,
+	PRIMARY KEY  (`id`)
+",
+"user_walls" => "
+	`id` int(10) unsigned NOT NULL auto_increment,
+	`user_id` int(11) unsigned NOT NULL default '0',
+	`message` text NOT NULL default '',
+	`object` varchar(255) NOT NULL default '',
+	`action` varchar(255) NOT NULL default '',
+	`object_id` int(11) unsigned NOT NULL default '0',
+	`server_id` int(11) unsigned NOT NULL default '0',
+	`site_id` int(11) unsigned NOT NULL default '0',
+	`important` int(11) unsigned NOT NULL default '0',
+	`add_date` datetime NOT NULL,
+	PRIMARY KEY  (`id`)
+",
+"admin_walls" => "
+	`id` int(10) unsigned NOT NULL auto_increment,
+	`user_id` int(11) unsigned NOT NULL default '0',
+	`message` text NOT NULL default '',
+	`object` varchar(255) NOT NULL default '',
+	`action` varchar(255) NOT NULL default '',
+	`object_id` int(11) unsigned NOT NULL default '0',
+	`server_id` int(11) unsigned NOT NULL default '0',
+	`site_id` int(11) unsigned NOT NULL default '0',
+	`important` int(11) unsigned NOT NULL default '0',
+	`add_date` datetime NOT NULL,
 	PRIMARY KEY  (`id`)
 ",
 "unread"	=> "
