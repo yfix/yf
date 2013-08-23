@@ -1321,8 +1321,16 @@ class yf_form2 {
 			$replace = $this->_replace;
 		}
 		$r = $replace ? $replace : $this->_replace;
+		if (!$link && $extra['link_variants']) {
+			foreach((array)$extra['link_variants'] as $link_variant) {
+				if (isset($r[$link_variant])) {
+					$link = $link_variant;
+				}
+			}
+		}
 		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini"><i class="icon-tasks"></i> '.t($name).'</a> ';
+		$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($name).'</a> ';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -1334,108 +1342,52 @@ class yf_form2 {
 	* For use inside table item template
 	*/
 	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array()) {
-// TODO: unify with tbl_link
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
 		if (!$name) {
 			$name = 'Edit';
 		}
-		$r = $replace ? $replace : $this->_replace;
-		if (!$link) {
-			$link = 'edit_link';
-			if (!isset($r['edit_link']) && isset($r['edit_url'])) {
-				$link = 'edit_url';
-			}
-		}
-		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_edit"><i class="icon-edit"></i> '.t($name).'</a> ';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		$extra['link_variants'] = array('edit_link','edit_url');
+		$extra['icon'] = 'icon-edit';
+		$extra['class'] = 'ajax_edit';
+		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
 	/**
 	* For use inside table item template
 	*/
 	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array()) {
-// TODO: unify with tbl_link
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
 		if (!$name) {
 			$name = 'Delete';
 		}
-		$r = $replace ? $replace : $this->_replace;
-		if (!$link) {
-			$link = 'delete_link';
-			if (!isset($r['delete_link']) && isset($r['delete_url'])) {
-				$link = 'delete_url';
-			}
-		}
-		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_delete"><i class="icon-trash"></i> '.t($name).'</a> ';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		$extra['link_variants'] = array('delete_link','delete_url');
+		$extra['icon'] = 'icon-trash';
+		$extra['class'] = 'ajax_delete';
+		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
 	/**
 	* For use inside table item template
 	*/
 	function tbl_link_clone($name = '', $link = '', $extra = array(), $replace = array()) {
-// TODO: unify with tbl_link
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
 		if (!$name) {
 			$name = 'Clone';
 		}
-		$r = $replace ? $replace : $this->_replace;
-		if (!$link) {
-			$link = 'clone_link';
-			if (!isset($r['clone_link']) && isset($r['clone_url'])) {
-				$link = 'clone_url';
-			}
-		}
-		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_clone"><i class="icon-plus"></i> '.t($name).'</a> ';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		$extra['link_variants'] = array('clone_link','clone_url');
+		$extra['icon'] = 'icon-plus';
+		$extra['class'] = 'ajax_clone';
+		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
 	/**
 	* For use inside table item template
 	*/
 	function tbl_link_view($name = '', $link = '', $extra = array(), $replace = array()) {
-// TODO: unify with tbl_link
-		if ($this->_chained_mode) {
-			$replace = $this->_replace;
-		}
 		if (!$name) {
 			$name = 'View';
 		}
-		$r = $replace ? $replace : $this->_replace;
-		if (!$link) {
-			$link = 'view_link';
-			if (!isset($r['view_link']) && isset($r['view_url'])) {
-				$link = 'view_url';
-			}
-		}
-		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini ajax_view"><i class="icon-eye-open"></i> '.t($name).'</a> ';
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		$extra['link_variants'] = array('view_link','view_url');
+		$extra['icon'] = 'icon-eye-open';
+		$extra['class'] = 'ajax_view';
+		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
 	/**
@@ -1485,7 +1437,6 @@ class yf_form2 {
 		}
 		$countries = main()->get_data('countries');
 		return $this->select_box($name, $countries, $extra, $replace);
-// TODO: nice select box with data
 	}
 
 	/**
@@ -1496,7 +1447,6 @@ class yf_form2 {
 		}
 		$regions = main()->get_data('regions');
 		return $this->select_box($name, $regions, $extra, $replace);
-// TODO: nice select box with data
 	}
 
 	/**
@@ -1507,7 +1457,6 @@ class yf_form2 {
 		}
 		$currencies = main()->get_data('currencies');
 		return $this->select_box($name, $currencies, $extra, $replace);
-// TODO: nice select box with data
 	}
 
 	/**
@@ -1518,7 +1467,6 @@ class yf_form2 {
 		}
 		$languages = main()->get_data('languages');
 		return $this->select_box($name, $languages, $extra, $replace);
-// TODO: nice select box with data
 	}
 
 	/**
@@ -1529,7 +1477,6 @@ class yf_form2 {
 		}
 		$timezones = main()->get_data('timezones');
 		return $this->select_box($name, $timezones, $extra, $replace);
-// TODO: nice select box with data
 	}
 
 	/**
