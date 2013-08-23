@@ -153,6 +153,7 @@ class yf_form2 {
 			.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
 			.($extra['id'] ? ' id="'.$extra['id'].'"' : '')
 			.($extra['name'] ? ' name="'.$extra['name'].'"' : '')
+			.($extra['autocomplete'] ? ' autocomplete="'.$extra['autocomplete'].'"' : '')			
 			.($extra['enctype'] ? ' enctype="'.$extra['enctype'].'"' : '')
 			.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
 			.'>';
