@@ -151,15 +151,44 @@ class yf_table2 {
 		*	->text('name')
 		*	->text('num_logins')
 		*	->text('num_auth_fails')
+		*
+		*	table2('SELECT * FROM '.db('shop_orders'), array('custom_fields' => array(
+		*		'user' => array('SELECT id, CONCAT(login," ",email) AS name FROM '.db('user').' WHERE id IN(%ids)', 'user_id'),
+		*	)))
+		*	->text('user')
 		*/
 		if ($data && $ids && $params['custom_fields']) {
 			$ids_sql = implode(',', $ids);
+			$custom_foreign_fields = array();
 			foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
-				$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
+				// In this case we can override name of the field used in virtual foreign key, used for custom field.
+				// good example is "user_id" instead of "id"
+				if (is_array($custom_sql)) {
+					$tmp = $custom_sql;
+					$custom_sql = $tmp[0];
+					$foreign_field = $tmp[1];
+					unset($tmp);
+					if ($foreign_field != "id") {
+						$_ids = array();
+						foreach((array)$data as $k => $v) {
+							$_ids[$v[$foreign_field]] = $v[$foreign_field];
+						}
+						$_ids_sql = implode(',', $_ids);
+					}
+					$custom_foreign_fields[$custom_name] = $foreign_field;
+					$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
+				} else {
+					$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
+				}
 			}
 			foreach ((array)$data as $_id => $row) {
 				foreach ((array)$this->_data_sql_names as $custom_name => $custom_data) {
-					$data[$_id][$custom_name] = strval($custom_data[$_id]);
+					if ($custom_foreign_fields[$custom_name]) {
+						$_custom_id = $row[$custom_foreign_fields[$custom_name]];
+					} else {
+						$_custom_id = $_id;
+					}
+					$data[$_id][$custom_name] = strval($custom_data[$_custom_id]);
 				}
 			}
 			// Needed to correctly pass inside $instance_params to each function
@@ -374,7 +403,9 @@ class yf_table2 {
 					}
 				}
 				if ($params['link']) {
-					$link = str_replace('%d', urlencode($field), $params['link']). $instance_params['links_add'];
+					$link_field_name = $params['extra']['link_field_name'];
+					$link_id = $link_field_name ? $row[$link_field_name] : $field;
+					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
 					$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
 				} else {
 					$body = $text;
@@ -391,6 +422,21 @@ class yf_table2 {
 		$extra['link'] = $link;
 		$extra['data'] = $data;
 		return $this->text($name, $extra['desc'], $extra);
+	}
+
+	/**
+	* Currently designed only for admin usage
+	*/
+	function user($name = "", $link = "", $data = "", $extra = array()) {
+		if (!$name) {
+			$name = 'user_id';
+		}
+		$_name = 'user';
+		$extra['link'] = $link ? $link : './?object=members&action=edit&id=%d';
+		$extra['link_field_name'] = $name;
+		$extra['data'] = $data;
+		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
+		return $this->text($_name, $extra['desc'], $extra);
 	}
 
 	/**
