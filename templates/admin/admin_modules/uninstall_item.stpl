@@ -1,4 +1,0 @@
-	<tr class="{bg_class}">
-		<td width="5%"><input type="checkbox" checked="1" name="files_to_delete[]" value="{file_path}"></td>
-		<td width="95%" align="left" nowrap="nowrap">{if("edit_link" ne "")}<a href="{edit_link}">{/if}<small><b>{file_path}</b></small>{if("edit_link" ne "")}</a>{/if}</td>
-	</tr>

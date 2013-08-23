@@ -11,10 +11,10 @@ class yf_manage_shop_orders{
 	*/
 	function show_orders() {
 		return table2('SELECT * FROM '.db('shop_orders'))
-			->text('order_id')
+			->text('id')
 			->date('date')
-			->text('user_id')
-			->text('sum')
+			->user('user_id')
+			->text('total_sum')
 			->btn_view('', './?object=manage_shop&action=view_order&id=%d')
 			;
 /*

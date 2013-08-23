@@ -1,5 +1,9 @@
 <h3>{t(Modules List)} ({total})</h3>
 
+<div align="center">
+	<a href="{refresh_link}" class="btn">{t(Refresh List)}</a> 
+</div>
+
 {if("items" ne "")}
 <form action="{form_action}" method="post" onsubmit="return confirm('{t(Are you sure)}?');" name='modules_form'>
 <table class="table table-bordered table-striped table-hover">
@@ -35,8 +39,6 @@
 
 <div align="center">
 	<a href="{refresh_link}" class="btn">{t(Refresh List)}</a> 
-	<a href="{import_link}" class="btn">{t(Install)}</a> 
-	<a href="{export_link}" class="btn">{t(Export)}</a> 
 </div>
 
 <br />
