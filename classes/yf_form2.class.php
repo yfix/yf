@@ -238,6 +238,7 @@ class yf_form2 {
 					.($extra['maxlength'] ? ' maxlength="'.$extra['maxlength'].'"' : '')
 					.($extra['disabled'] ? ' disabled' : '')
 					.($extra['required'] ? ' required' : '')
+					.($extra['autocomplete'] ? ' autocomplete="'.$extra['autocomplete'].'"' : '')
 					.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
 					.'>'
 					.($append ? '<span class="add-on">'.$append.'</span>' : '')
