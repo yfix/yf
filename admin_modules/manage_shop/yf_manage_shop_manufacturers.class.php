@@ -31,6 +31,7 @@ class yf_manage_shop_manufacturers{
 					"sort_order"	=> intval($_POST["featured"]),
 				);
 				db()->insert(db('shop_manufacturers'), db()->es($sql_array));
+				common()->admin_wall_add(array('shop manufacturer added: '.$_POST['name'], db()->insert_id()));
 				if (!empty($_FILES)) {
 					$man_id = $_GET["id"];
 					module('manage_shop')->_upload_image ($man_id, $url);
@@ -85,6 +86,7 @@ class yf_manage_shop_manufacturers{
 					"sort_order"=> intval($_POST["featured"]),
 				);
 				db()->update('shop_manufacturers', db()->es($sql_array), "id=".$_GET["id"]);
+				common()->admin_wall_add(array('shop manufacturer updated: '.$_POST['name'], $_GET['id']));
 				if (!empty($_FILES)) {
 					$man_id = $_GET["id"];
 					$this->_upload_image($man_id, $url);
@@ -127,6 +129,7 @@ class yf_manage_shop_manufacturers{
 		}
 		if (!empty($info["id"])) {
 			db()->query("DELETE FROM ".db('shop_manufacturers')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			common()->admin_wall_add(array('shop manufacturer deleted: '.$_GET['id'], $_GET['id']));
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;

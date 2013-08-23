@@ -205,8 +205,11 @@ class yf_locale_editor {
 	*/
 	function delete_lang() {
 		$_GET["id"] = intval($_GET["id"]);
-		db()->query("DELETE FROM ".db('locale_langs')." WHERE id=".intval($_GET["id"])." LIMIT 1");
-		db()->query("DELETE FROM ".db('locale_translate')." WHERE locale='"._es($this->_cur_langs_array[$_GET["id"]]["locale"])."'");
+		if ($_GET["id"]) {
+			db()->query("DELETE FROM ".db('locale_langs')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+			db()->query("DELETE FROM ".db('locale_translate')." WHERE locale='"._es($this->_cur_langs_array[$_GET["id"]]["locale"])."'");
+			common()->admin_wall_add(array('locale language deleted: '.$this->_cur_langs_array[$_GET["id"]]["locale"], $_GET['id']));
+		}
 		if (main()->USE_SYSTEM_CACHE) {
 			cache()->refresh("locale_langs");
 		}
@@ -296,6 +299,7 @@ class yf_locale_editor {
 				"value"	=> _es($_POST["var_name"])
 			));
 			$INSERT_ID = db()->INSERT_ID();
+			common()->admin_wall_add(array('locale var added: '.$_POST['var_name'], $INSERT_ID));
 		}
 		if (empty($INSERT_ID) && !empty($var_info)) {
 			$INSERT_ID = $var_info["id"];
@@ -353,6 +357,7 @@ class yf_locale_editor {
 						cache()->refresh("locale_translate_".$lang_info["locale"]);
 					}
 				}
+				common()->admin_wall_add(array('locale var updated: '.$var_info['value'], $_GET['id']));
 				return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
 			}
 		}
@@ -389,6 +394,7 @@ class yf_locale_editor {
 		if (!empty($ids_to_delete)) {
 			db()->query("DELETE FROM ".db('locale_vars')." WHERE id IN(".implode(",",$ids_to_delete).")");
 			db()->query("DELETE FROM ".db('locale_translate')." WHERE var_id IN(".implode(",",$ids_to_delete).")");
+			common()->admin_wall_add(array('locale vars mass deletion: '.implode(",",$ids_to_delete)));
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
 	}
@@ -403,6 +409,7 @@ class yf_locale_editor {
 		if (!empty($var_info["id"])) {
 			db()->query("DELETE FROM ".db('locale_vars')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			db()->query("DELETE FROM ".db('locale_translate')." WHERE var_id=".intval($_GET["id"]));
+			common()->admin_wall_add(array('locale var deleted: '.$var_info['value'], $_GET['id']));
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;

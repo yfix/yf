@@ -148,6 +148,7 @@ class yf_manage_dashboards {
 					'name'	=> $_POST['name'],
 				)));
 				$new_id = db()->insert_id();
+				common()->admin_wall_add(array('dashboard added: '.$_POST['name'], $new_id));
 				return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.$new_id);
 			}
 		}
@@ -172,6 +173,7 @@ class yf_manage_dashboards {
 				db()->update('dashboards', db()->es(array(
 					'data'	=> json_encode($_POST['ds_data']),
 				)), 'id='.intval($dashboard['id']));
+				common()->admin_wall_add(array('dashboard updated: '.$dashboard['name'], $_GET['id']));
 				return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['object']);
 			}
 		}

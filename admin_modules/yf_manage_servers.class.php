@@ -10,12 +10,6 @@
 class yf_manage_servers {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-	}
-
-	/**
 	* Show admin users
 	*/
 	function show() {
@@ -52,6 +46,7 @@ class yf_manage_servers {
 					"active"	=> intval($_POST["active"]),
 				);
 				db()->UPDATE('core_servers', db()->es($sql), "id=".intval($_GET["id"]));
+				common()->admin_wall_add(array('server updated: '.$info['name'], $info['id']));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -95,6 +90,7 @@ class yf_manage_servers {
 				);
 				db()->INSERT('core_servers', db()->es($sql));
 				$NEW_ID = db()->INSERT_ID();
+				common()->admin_wall_add(array('server added: '.$_POST['name'], $NEW_ID));
 				return js_redirect("./?object=".$_GET["object"].($NEW_ID ? "&action=edit&id=".$NEW_ID : ""));
 			}
 		}
@@ -126,6 +122,7 @@ class yf_manage_servers {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
 			db()->query("DELETE FROM ".db('core_servers')." WHERE id=".intval($_GET['id']));
+			common()->admin_wall_add(array('server deleted '.$_GET['id'], $info['id']));
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -144,6 +141,7 @@ class yf_manage_servers {
 		}
 		if (!empty($info["id"])) {
 			db()->UPDATE('core_servers', array("active" => (int)!$info["active"]), "id=".intval($_GET["id"]));
+			common()->admin_wall_add(array('server '.$info['name'].' '.($info['active'] ? 'inactivated' : 'activated'), $info['id']));
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;

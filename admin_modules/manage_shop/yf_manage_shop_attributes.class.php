@@ -36,6 +36,7 @@ class yf_manage_shop_attributes{
 					"order"			=> $_POST["order"],
 					"category_id"	=> $_POST["category_id"],
 				)));
+				common()->admin_wall_add(array('shop product attribute added: '.$_POST['name'], db()->insert_id()));
 				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("shop_product_attributes_info");
 				}
@@ -85,7 +86,8 @@ class yf_manage_shop_attributes{
 					"order"			=> $_POST["order"],
 					"category_id"	=> $_POST["category_id"],
 				)), "id=".$_GET["id"]); 
-				if (main()->USE_SYSTEM_CACHE)	{
+				common()->admin_wall_add(array('shop product attribute updated: '.$_POST['name'], $_GET['id']));
+				if (main()->USE_SYSTEM_CACHE) {
 					cache()->refresh("shop_product_attributes_info");
 				}
 				return js_redirect("./?object=manage_shop&action=attributes");
@@ -105,8 +107,7 @@ class yf_manage_shop_attributes{
 			->text("name")
 			->textarea("value_list")
 			->select_box("category_id", module('manage_shop')->_cats_for_select, array("selected" => $A["category_id"]))
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -120,7 +121,8 @@ class yf_manage_shop_attributes{
 		if ($_GET["id"]) {
 			db()->query("DELETE FROM ".db('shop_product_attributes_info')." WHERE id=".$_GET["id"]);
 			db()->query("DELETE FROM ".db('shop_product_attributes_values')." WHERE category_id = ".module('manage_shop')->ATTRIBUTES_CAT_ID." AND field_id = ".$_GET["id"]);
-			if (main()->USE_SYSTEM_CACHE)	{
+			common()->admin_wall_add(array('shop product attribute deleted: '.$_GET['id'], $_GET['id']));
+			if (main()->USE_SYSTEM_CACHE) {
 				cache()->refresh("shop_product_attributes_info");
 			}
 		}
@@ -136,13 +138,14 @@ class yf_manage_shop_attributes{
 	*/	
 	function attribute_activate () {
 		if ($_GET["id"]){
-			$A = db()->query_fetch("SELECT * FROM ".db('shop_product_attributes_info')." WHERE id=".intval($_GET["id"]));
-			if ($A["active"] == 1) {
+			$info = db()->query_fetch("SELECT * FROM ".db('shop_product_attributes_info')." WHERE id=".intval($_GET["id"]));
+			if ($info["active"] == 1) {
 				$active = 0;
-			} elseif ($A["active"] == 0) {
+			} elseif ($info["active"] == 0) {
 				$active = 1;
 			}
 			db()->UPDATE(db('shop_product_attributes_info'), array("active" => $active), "id='".intval($_GET["id"])."'");
+			common()->admin_wall_add(array('shop product attribute: '.$_GET['id'].' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;

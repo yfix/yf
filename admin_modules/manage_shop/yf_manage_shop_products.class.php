@@ -81,6 +81,7 @@ class yf_manage_shop_products{
 		db()->query("DELETE FROM ".db('shop_product_attributes_values')." WHERE object_id=".$_GET["id"]);
 		db()->query("DELETE FROM ".db('shop_group_options')." WHERE product_id=".$_GET["id"]);		
 		db()->query("DELETE FROM ".db('shop_products')." WHERE id=".$_GET["id"]);
+		common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
 		return js_redirect("./?object=manage_shopaction=products");
 	}
 
@@ -101,6 +102,7 @@ class yf_manage_shop_products{
 
 		db()->insert('shop_products', $sql);
 		$new_product_id = db()->insert_id();
+		common()->admin_wall_add(array('shop product cloned: '.$info['name'], $new_product_id));
 /*
 		db()->query("DELETE FROM ".db('shop_product_attributes_values')." WHERE object_id=".$_GET["id"]);
 		db()->query("DELETE FROM ".db('shop_group_options')." WHERE product_id=".$_GET["id"]);		

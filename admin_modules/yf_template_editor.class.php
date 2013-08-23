@@ -598,7 +598,6 @@ class yf_template_editor {
 	/**
 	* Show STPL template's content stored in file
 	*/
-
 	function show_file_src () {
 		$path = base64_decode($_GET["path"]);
 		$stpl_text = file_get_contents($path);
@@ -651,7 +650,6 @@ class yf_template_editor {
 	/**
 	* Get STPL templates from db table and put them into files
 	*/
-
 // TODO check and finish
 // TODO replace old function _mkdir_m_with_indexhtm() with  _class("dir")->mkdir_m() 
 	function _all_stpls_into_files () {
@@ -697,6 +695,7 @@ class yf_template_editor {
 //		ksort($themes);
 		return $themes;
 	}
+
 	/**
 	* Get themes only names
 	*/
@@ -718,7 +717,6 @@ class yf_template_editor {
 		while ($A = db()->fetch_assoc($Q)) if (strlen($A["theme"])) $themes[$A["site_id"]][$A["theme"]] = $A["theme"];
 		return $themes;
 	}
-
 
 	/**
 	*  Get Stpls In Theme
@@ -876,23 +874,6 @@ class yf_template_editor {
 			$body .= tpl()->parse($_GET["object"]."/user_dialog_main", $replace);				
 		}
 		return $body;
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
-		return $menu;	
 	}
 
 	/**

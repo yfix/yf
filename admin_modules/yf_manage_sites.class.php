@@ -10,12 +10,6 @@
 class yf_manage_sites {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-	}
-
-	/**
 	* Show admin users
 	*/
 	function show() {
@@ -50,6 +44,7 @@ class yf_manage_sites {
 					"active"		=> intval($_POST["active"]),
 				);
 				db()->UPDATE('sites', db()->es($sql), "id=".intval($_GET["id"]));
+				common()->admin_wall_add(array('site updated: '.$info['name'].'', $info['id']));
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -91,6 +86,7 @@ class yf_manage_sites {
 				);
 				db()->INSERT('sites', db()->es($sql));
 				$NEW_ID = db()->INSERT_ID();
+				common()->admin_wall_add(array('site added: '.$_POST['name'], $NEW_ID));
 				return js_redirect("./?object=".$_GET["object"].($NEW_ID ? "&action=edit&id=".$NEW_ID : ""));
 			}
 		}
@@ -121,6 +117,7 @@ class yf_manage_sites {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
 			db()->query("DELETE FROM ".db('sites')." WHERE id=".intval($_GET['id']));
+			common()->admin_wall_add(array('site deleted: '.$_GET['id'].'', $_GET['id']));
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -139,6 +136,7 @@ class yf_manage_sites {
 		}
 		if (!empty($info["id"])) {
 			db()->UPDATE('sites', array("active" => (int)!$info["active"]), "id=".intval($_GET["id"]));
+			common()->admin_wall_add(array('site '.$info['name'].' '.($info['active'] ? 'inactivated' : 'activated'), $info['id']));
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;

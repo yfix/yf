@@ -28,12 +28,6 @@ class yf_file_manager {
 	public $_default_chmod		= 0777;
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-	}
-
-	/**
 	* Function shows directory contents
 	*/
 	function show() {

@@ -50,6 +50,7 @@ class yf_manage_shop_product_edit{
 					);
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]);
+				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
 				db()->query("DELETE FROM  ".db('shop_product_to_category')." WHERE product_id = ".$_GET["id"]);
 				foreach ((array)$_POST["category"] as $k => $v){
 					$cat_id["product_id"] = $_GET["id"];

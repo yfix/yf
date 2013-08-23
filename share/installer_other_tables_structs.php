@@ -1179,6 +1179,8 @@ $data = my_array_merge((array)$data, array(
 	`server_id` int(11) unsigned NOT NULL default '0',
 	`site_id` int(11) unsigned NOT NULL default '0',
 	`important` int(11) unsigned NOT NULL default '0',
+	`old_data` text NOT NULL default '',
+	`new_data` text NOT NULL default '',
 	`add_date` datetime NOT NULL,
 	PRIMARY KEY  (`id`)
 ",
@@ -1192,6 +1194,8 @@ $data = my_array_merge((array)$data, array(
 	`server_id` int(11) unsigned NOT NULL default '0',
 	`site_id` int(11) unsigned NOT NULL default '0',
 	`important` int(11) unsigned NOT NULL default '0',
+	`old_data` text NOT NULL default '',
+	`new_data` text NOT NULL default '',
 	`add_date` datetime NOT NULL,
 	PRIMARY KEY  (`id`)
 ",

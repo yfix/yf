@@ -41,6 +41,7 @@ class yf_manage_shop_product_images{
 				"image"	=> 0,
 			);
 			db()->UPDATE('shop_products', $sql_array, "id=".$_GET["id"]); 
+			common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
 		}
 		return true;
 	}

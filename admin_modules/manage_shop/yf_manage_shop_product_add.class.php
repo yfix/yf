@@ -50,6 +50,7 @@ class yf_manage_shop_product_add{
 					db()->INSERT(db('shop_product_to_category'), $cat_id);
 				}
 				$product_id = db()->INSERT_ID();
+				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
 				module("manage_shop")->_attributes_save($product_id);
 			}
 			return js_redirect("./?object=manage_shop&action=products");

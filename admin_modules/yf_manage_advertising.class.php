@@ -63,47 +63,43 @@ class yf_manage_advertising {
 		if (!empty($_POST)) {
 			// Position could not be empty
 			if (empty($_POST["ad"])) {
-				common()->_raise_error(t("Place is empty"));
+				_re("Place is empty");
 			}
-			//Content html could not be empty
+			// Content html could not be empty
 			if (empty($_POST["html"])) {
-				common()->_raise_error(t("Html is empty"));
+				_re("Html is empty");
 			}
-			if(!common()->_error_exists()){
-				$this->save();
+			if (!_ee()) {
+				return $this->save();
 			}
 		}
-		// Display form
-		if (empty($_POST) || common()->_error_exists()) {
-
-			$info = db()->query_fetch("SELECT * FROM ".db('advertising')." WHERE id=".$_GET['id']);
-			$editor =  db()->query_fetch("SELECT * FROM ".db('sys_admin')." WHERE id=".$info["edit_user_id"]);
-			$replace = array(
-				'form_action' 	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-				'ad'			=> $info["ad"],
-				'editor'		=> $editor["first_name"]." ".$editor["last_name"],
-				'edit_date'		=> date("d/m/Y",$info["edit_date"]),
-				'customer'		=> $info["customer"],
-				'date_start'	=> $info["date_start"] ? $info["date_start"] : time(),
-				'date_end'		=> $info["date_end"] ? $info["date_end"] : time(),
-				'cur_date'		=> time(),
-				'html'			=> stripslashes($info["html"]),
-				'active'		=> $info["active"],
-				'error_message'	=> _e(),
-				'back_link'		=> "./?object=".$_GET['object']."&action=listing",
-			);
-			return form2($replace)
-				->info("ad","Placeholder")
-				->info("editor","Last editor")
-				->info("edit_date","Edit date")
-				->text("customer","Customer")
-				->text("ad","Placeholder")
-				->textarea("html", "Content")
-				->date_box("date_start","", array("desc" => "Date start"))
-				->date_box("date_end","", array("desc" => "Date end"))
-				->active_box()
-				->save_and_back();
-		}
+		$info = db()->query_fetch("SELECT * FROM ".db('advertising')." WHERE id=".$_GET['id']);
+		$editor =  db()->query_fetch("SELECT * FROM ".db('sys_admin')." WHERE id=".$info["edit_user_id"]);
+		$replace = array(
+			'form_action' 	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
+			'ad'			=> $info["ad"],
+			'editor'		=> $editor["first_name"]." ".$editor["last_name"],
+			'edit_date'		=> date("d/m/Y",$info["edit_date"]),
+			'customer'		=> $info["customer"],
+			'date_start'	=> $info["date_start"] ? $info["date_start"] : time(),
+			'date_end'		=> $info["date_end"] ? $info["date_end"] : time(),
+			'cur_date'		=> time(),
+			'html'			=> stripslashes($info["html"]),
+			'active'		=> $info["active"],
+			'error_message'	=> _e(),
+			'back_link'		=> "./?object=".$_GET['object']."&action=listing",
+		);
+		return form2($replace)
+			->info("ad","Placeholder")
+			->info("editor","Last editor")
+			->info("edit_date","Edit date")
+			->text("customer","Customer")
+			->text("ad","Placeholder")
+			->textarea("html", "Content")
+			->date_box("date_start","", array("desc" => "Date start"))
+			->date_box("date_end","", array("desc" => "Date end"))
+			->active_box()
+			->save_and_back();
 	}
 
 	/**
@@ -112,7 +108,8 @@ class yf_manage_advertising {
 		$_GET['id'] = intval($_GET['id']);
 		// Do delete records
 		if (!empty($_GET['id'])) {
-			db()->unbuffered_query("DELETE FROM `".db('advertising')."` WHERE `id`=".$_GET['id']." LIMIT 1");
+			db()->query("DELETE FROM `".db('advertising')."` WHERE `id`=".$_GET['id']." LIMIT 1");
+			common()->admin_wall_add(array('advertising deleted: '.$_GET['id'], $_GET['id']));
 		}
 		$log = array(
 			"ads_id" 	=>	$_GET['id'],
@@ -127,7 +124,6 @@ class yf_manage_advertising {
 	/**
 	*/
 	function listing(){
-	
 		if($_GET['ad']){
 			$sql = "SELECT * FROM ".db('advertising')." WHERE ad='"._es($_GET['ad'])."'";
 		} else {
@@ -179,6 +175,7 @@ class yf_manage_advertising {
 			'action'		=> $_GET['id'] ? "edit" : "add",
 		);
 		db()->INSERT("log_ads_changes", $log);
+		common()->admin_wall_add(array('advertising updated: '.$_GET['id'], $_GET['id']));
 		// Return user back
 		return js_redirect("./?object=".$_GET['object']."&action=listing&ad=".$_POST['ad']);
 	} 
