@@ -47,4 +47,27 @@ class yf_admin_wall {
 		}
 		return js_redirect($link);
 	}
+
+	/**
+	*/
+	function _hook_widget__admin_wall ($params = array()) {
+		$meta = array(
+			'name' => 'Admin wall',
+			'desc' => 'Latest events for admin',
+			'configurable' => array(
+//				'order_by'	=> array('id','name','active'),
+			),
+		);
+		if ($params['describe_self']) {
+			return $meta;
+		}
+		$config = $params;
+		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
+		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1))
+			->date("add_date")
+			->text("message")
+			->btn_view()
+		;
+	}
+
 }

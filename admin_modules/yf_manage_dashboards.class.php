@@ -62,6 +62,7 @@ class yf_manage_dashboards {
 			return _e('No such record');
 		}
 		$replace = array(
+			'edit_link'	=> './?object=manage_dashboards&action=edit&id='.$dashboard['id'],
 		);
 		$items_configs = $dashboard['data']['items_configs'];
 		// Fill empty vars first

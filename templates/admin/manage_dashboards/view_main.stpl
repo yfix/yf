@@ -16,3 +16,5 @@
 	</div>
   </div>
 </div>
+
+<a href="{edit_link}" class="btn btn-mini"><i class="icon-edit"></i> {t(Edit)}</a>
