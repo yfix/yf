@@ -910,8 +910,8 @@ class yf_form2 {
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label">'.t($desc).'</label>
-				<div class="controls">
-					<span class="'.$this->_prepare_css_class('label label-info', $r[$name], $extra).'">'.$value.'</span>'
+				<div class="controls">'
+					.($extra['link'] ? '<a href="'.$extra['link'].'" class="btn btn-mini">'.$value.'</a>' : '<span class="'.$this->_prepare_css_class('label label-info', $r[$name], $extra).'">'.$value.'</span>')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -922,6 +922,16 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function user_info($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$name = 'user_name';
+		$user_id = $this->_replace['user_id'];
+		$this->_replace[$name] = db()->get_one('SELECT CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
+		$extra['link'] = './?object=members&action=edit&id='.$user_id;
+		return $this->info($name, $desc, $extra, $replace);
 	}
 
 	/**

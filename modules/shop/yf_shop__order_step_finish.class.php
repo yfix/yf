@@ -19,7 +19,7 @@ class yf_shop__order_step_finish{
 			return _e("No such order");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order`_id=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order_id`=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];

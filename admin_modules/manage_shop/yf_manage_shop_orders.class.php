@@ -16,7 +16,7 @@ class yf_manage_shop_orders{
 			->user('user_id')
 			->text('total_sum')
 			->text('num_items')
-			->btn_view('', './?object=manage_shop&action=view_order&id=%d')
+			->btn_edit('', './?object=manage_shop&action=view_order&id=%d')
 		;
 	}
 
@@ -41,7 +41,7 @@ class yf_manage_shop_orders{
 			return js_redirect("./?object=manage_shop&action=show_orders");
 		}
 		$products_ids = array();
-		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order`_id=".intval($order_info["id"]));
+		$Q = db()->query("SELECT * FROM ".db('shop_order_items')." WHERE `order_id`=".intval($order_info["id"]));
 		while ($_info = db()->fetch_assoc($Q)) {
 			if ($_info["product_id"]) {
 				$products_ids[$_info["product_id"]] = $_info["product_id"];
@@ -63,6 +63,7 @@ class yf_manage_shop_orders{
 				}
 			}
 			$products[$_info["product_id"]] = array(
+				"product_id"	=> intval($_info["product_id"]),
 				"name"			=> _prepare_html($_product["name"]),
 				"price"			=> module('manage_shop')->_format_price($_info["sum"]),
 				"currency"		=> _prepare_html(module('manage_shop')->CURRENCY),
@@ -90,7 +91,22 @@ class yf_manage_shop_orders{
 			"back_url"		=> "./?object=manage_shop&action=show_orders",
 			"print_url"		=> "./?object=manage_shop&action=show_print&id=".$order_info["id"],
 		));
-		return tpl()->parse("manage_shop/order_view", $replace);
+		return form2($replace)
+			->info('id')
+			->info('total_sum', '', array('no_escape' => 1))
+			->info('date')
+			->user_info('user_id')
+			->container(
+			table2($products)
+				->link('product_id', './?object=manage_shop&action=product_edit&id=%d')
+				->text('quantity')
+				->text('price')
+				->text('name')
+			, '', array('wide' => 1))
+			->box('status_box', 'Status', array('selected' => $order_info["status"]))
+			->save_and_back()
+		;
+		return $form;
 	}
 
 	/**
@@ -102,7 +118,7 @@ class yf_manage_shop_orders{
 		}
 		if (!empty($order_info["id"])) {
 			db()->query("DELETE FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM ".db('shop_order_items')." WHERE `order`_id=".intval($_GET["id"]));
+			db()->query("DELETE FROM ".db('shop_order_items')." WHERE `order_id`=".intval($_GET["id"]));
 			common()->admin_wall_add(array('shop order deleted: '.$_GET['id'], $_GET['id']));
 		}
 		if ($_POST["ajax_mode"]) {
