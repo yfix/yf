@@ -48,5 +48,10 @@ $(function() {
 		$(this).closest('.portlet').find('.portlet-content').toggle()
 		return false;
 	})
+
+
+	$("#ds_view_settings").on("click", function(e){
+	})
+
 });
 </script>
