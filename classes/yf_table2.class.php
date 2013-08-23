@@ -484,7 +484,10 @@ class yf_table2 {
 				}
 				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
 				return ($link_url ? '<a href="'.$link_url.'">' : '')
-					.'<img src="'.WEB_PATH. $img_path.'">'
+					.'<img src="'.WEB_PATH. $img_path.'" style="'
+						.($params['extra']['width'] ? 'width:'.$params['extra']['width'].';' : '')
+						.($params['extra']['height'] ? 'height:'.$params['extra']['height'].';' : '')
+					.'">'
 					.($link_url ? '</a>' : '');
 			}
 		);
