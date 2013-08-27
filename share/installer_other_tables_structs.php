@@ -1182,7 +1182,10 @@ $data = my_array_merge((array)$data, array(
 	`old_data` text NOT NULL default '',
 	`new_data` text NOT NULL default '',
 	`add_date` datetime NOT NULL,
+    `read` tinyint(1) NOT NULL DEFAULT '0',
+	`type` varchar(100) NOT NULL,
 	PRIMARY KEY  (`id`)
+	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ",
 "admin_walls" => "
 	`id` int(10) unsigned NOT NULL auto_increment,
