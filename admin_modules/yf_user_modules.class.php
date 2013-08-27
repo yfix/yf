@@ -503,4 +503,8 @@ class yf_user_modules {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__user_modules ($params = array()) {
+// TODO
+	}
 }

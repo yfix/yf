@@ -1005,4 +1005,16 @@ class yf_help_tickets {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
+
+	function _hook_widget__latest_tickets ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__assigned_tickets ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__unresolved_tickets ($params = array()) {
+// TODO
+	}
 }

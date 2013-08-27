@@ -454,4 +454,8 @@ class yf_log_image_resize_viewer {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__image_resize_log ($params = array()) {
+// TODO
+	}
 }

@@ -431,4 +431,8 @@ class yf_log_user_errors_viewer {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__user_errors_log ($params = array()) {
+// TODO
+	}
 }

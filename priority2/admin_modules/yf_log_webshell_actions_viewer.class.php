@@ -231,4 +231,7 @@ class yf_log_webshell_actions_viewer {
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
+	function _hook_widget__webshell_log ($params = array()) {
+// TODO
+	}
 }

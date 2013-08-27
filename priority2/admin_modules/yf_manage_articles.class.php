@@ -475,4 +475,17 @@ class yf_manage_articles extends yf_module {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__articles_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__latest_articles ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__top_article_authors ($params = array()) {
+// TODO
+	}
+
 }

@@ -418,4 +418,12 @@ class yf_members {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__members_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__members_latest ($params = array()) {
+// TODO
+	}
 }

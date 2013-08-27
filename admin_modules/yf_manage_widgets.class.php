@@ -70,4 +70,8 @@ class yf_manage_widgets {
 	function view() {
 // TODO: visual edit here
 	}
+
+	function _hook_widget__widget_areas ($params = array()) {
+// TODO
+	}
 }

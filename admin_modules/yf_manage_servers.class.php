@@ -150,4 +150,8 @@ class yf_manage_servers {
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 	}
+
+	function _hook_widget__servers_list ($params = array()) {
+// TODO
+	}
 }

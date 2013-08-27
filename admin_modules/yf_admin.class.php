@@ -213,4 +213,8 @@ class yf_admin {
 			return eval("return common()->".$this->_boxes[$name].";");
 		}
 	}
+
+	function _hook_widget__admin_accounts ($params = array()) {
+// TODO
+	}
 }

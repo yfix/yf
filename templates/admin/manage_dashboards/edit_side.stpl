@@ -1,7 +1,8 @@
 <div class="portlets-side-column">
-	<h4 align="center">Available widgets
+	<h4 align="center">Available widgets<br>
+		<a href="javascript:void();" id="ds_save_layout" class="btn btn-mini"><i class="icon icon-save"></i> {t(Save global)}</a>
+		<a href="javascript:void();" id="ds_save_layout_mine" class="btn btn-mini"><i class="icon icon-save"></i> {t(Save personal)}</a>
 		<a href="javascript:void();" id="ds_view_settings" class="btn btn-mini"><i class="icon icon-cogs"></i> {t(Options)}</a>
-		<a href="javascript:void();" id="ds_save_layout" class="btn btn-mini"><i class="icon icon-save"></i> {t(Save)}</a>
 		<a href="{view_link}" class="btn btn-mini"><i class="icon icon-eye-open"></i> {t(View)}</a>
 	</h4>
 

@@ -872,4 +872,12 @@ class yf_category_editor {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
+
+	function _hook_widget__categories ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__category_items ($params = array()) {
+// TODO
+	}
 }

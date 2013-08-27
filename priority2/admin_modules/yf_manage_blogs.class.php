@@ -359,4 +359,20 @@ class yf_manage_blogs {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__blogs_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__blogs_top_authors ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__blogs_most_popular ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__blogs_latest ($params = array()) {
+// TODO
+	}
 }

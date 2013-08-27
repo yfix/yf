@@ -194,4 +194,7 @@ class yf_log_admin_auth_fails_viewer {
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
+	function _hook_widget__admin_auth_fails ($params = array()) {
+// TODO
+	}
 }

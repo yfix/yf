@@ -145,4 +145,8 @@ class yf_manage_sites {
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 	}
+
+	function _hook_widget__sites_list ($params = array()) {
+// TODO
+	}
 }

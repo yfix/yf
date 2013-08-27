@@ -649,4 +649,8 @@ class yf_file_manager {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__file_manager ($params = array()) {
+// TODO
+	}
 }

@@ -369,4 +369,8 @@ class yf_manage_faq extends yf_module {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__faq_list ($params = array()) {
+// TODO
+	}
 }

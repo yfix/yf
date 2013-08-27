@@ -162,4 +162,12 @@ class yf_manage_news extends yf_news {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__news_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__news_latest ($params = array()) {
+// TODO
+	}
 }

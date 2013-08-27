@@ -473,4 +473,8 @@ class yf_log_emails_viewer {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__emails_log ($params = array()) {
+// TODO
+	}
 }

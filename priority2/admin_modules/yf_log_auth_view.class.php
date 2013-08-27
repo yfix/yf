@@ -286,4 +286,7 @@ class yf_log_auth_view {
 		);
 	}
 
+	function _hook_widget__user_auth_log ($params = array()) {
+// TODO
+	}
 }

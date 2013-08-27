@@ -409,5 +409,8 @@ class yf_analyze_engine_log {
 		return  $localized;
 	}
 	
+	function _hook_widget__latest_engine_log ($params = array()) {
+// TODO
+	}
 }
 	

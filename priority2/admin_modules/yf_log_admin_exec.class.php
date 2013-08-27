@@ -149,5 +149,8 @@ class yf_log_admin_exec{
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
+	function _hook_widget__admin_access_log ($params = array()) {
+// TODO
+	}
 
 }

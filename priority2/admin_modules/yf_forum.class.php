@@ -997,4 +997,28 @@ class yf_forum {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__forum_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__forums_list ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__latest_topics ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__latest_posts ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__latest_posters ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__top_users ($params = array()) {
+// TODO
+	}
 }

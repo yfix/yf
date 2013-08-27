@@ -261,4 +261,7 @@ class yf_log_admin_auth_view {
 		);
 	}
 
+	function _hook_widget__admin_auth_successes ($params = array()) {
+// TODO
+	}
 }

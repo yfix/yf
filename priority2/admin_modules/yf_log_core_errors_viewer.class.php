@@ -475,4 +475,8 @@ class yf_log_core_errors_viewer {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__core_errors_log ($params = array()) {
+// TODO
+	}
 }

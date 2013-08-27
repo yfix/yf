@@ -273,6 +273,12 @@ class yf_manage_dashboards {
 				$full_name = $module_name.'::'.$method_name;
 				$auto_id = str_replace(array_keys($r), array_values($r), $full_name);
 				$widgets[$auto_id] = module($module_name)->$method_name(array('describe_self' => true));
+				if (!$widgets[$auto_id]['name']) {
+					$widgets[$auto_id]['name'] = str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
+				}
+				if (!$widgets[$auto_id]['desc']) {
+					$widgets[$auto_id]['name'] = $module_name.":".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
+				}
 				$widgets[$auto_id]['full_name'] = $full_name;
 				$widgets[$auto_id]['auto_id'] = $auto_id;
 			}
@@ -280,5 +286,13 @@ class yf_manage_dashboards {
 		ksort($widgets);
 		$this->_avail_widgets = $widgets;
 		return $widgets;
+	}
+
+	function _hook_widget__dashboards_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__dashboards_list ($params = array()) {
+// TODO
 	}
 }

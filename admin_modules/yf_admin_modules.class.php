@@ -535,4 +535,8 @@ class yf_admin_modules {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__admin_modules ($params = array()) {
+// TODO
+	}
 }

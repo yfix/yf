@@ -1720,4 +1720,17 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__installed_locales ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__locale_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__latest_locale_vars ($params = array()) {
+// TODO
+	}
+
 }

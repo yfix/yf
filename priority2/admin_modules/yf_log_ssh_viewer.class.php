@@ -231,4 +231,7 @@ class yf_log_ssh_viewer {
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
+	function _hook_widget__ssh_actions_log ($params = array()) {
+// TODO
+	}
 }

@@ -204,4 +204,9 @@ class yf_admin_groups {
 		$action = $msg["action"] == "delete" ? "show" : "edit";
 		return "./?object=admin_groups&action=".$action."&id=".$msg['object_id'];
 	}
+
+	function _hook_widget__admin_groups ($params = array()) {
+// TODO
+	}
+
 }

@@ -1222,4 +1222,8 @@ class yf_db_manager {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__db_tables ($params = array()) {
+// TODO
+	}
 }

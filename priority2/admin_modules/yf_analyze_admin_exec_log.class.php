@@ -183,4 +183,7 @@ class yf_analyze_admin_exec_log{
 		return tpl()->parse($_GET["object"]."/realtime", $replace);
 	}
 
+	function _hook_widget__latest_admin_log ($params = array()) {
+// TODO
+	}
 }

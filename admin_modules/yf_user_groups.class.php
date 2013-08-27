@@ -185,4 +185,8 @@ class yf_user_groups {
 			return eval("return common()->".$this->_boxes[$name].";");
 		}
 	}
+
+	function _hook_widget__user_groups ($params = array()) {
+// TODO
+	}
 }

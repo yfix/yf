@@ -391,4 +391,12 @@ class yf_manage_comments {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__comments_stats ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__comments_latest ($params = array()) {
+// TODO
+	}
 }

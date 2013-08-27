@@ -1045,4 +1045,12 @@ class yf_menus_editor {
 			$_SESSION["_menu_js_refresh_frameset"] = true;
 		}
 	}
+
+	function _hook_widget__menus ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__menu_items ($params = array()) {
+// TODO
+	}
 }

@@ -160,6 +160,9 @@ echo $path." ".$items."<br />";
 		}
 	}
 
-	
+	function _hook_widget__system_errors_log ($params = array()) {
+// TODO
 	}
+	
+}
 	

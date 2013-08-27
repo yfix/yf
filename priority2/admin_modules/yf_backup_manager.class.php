@@ -308,4 +308,8 @@ class yf_backup_manager {
 		}
 		return $this->STRING;
 	}
+
+	function _hook_widget__latest_backups ($params = array()) {
+// TODO
+	}
 }

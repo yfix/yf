@@ -79,4 +79,9 @@ class yf_manage_tips {
 	function sortable() {
 		return _class('admin_methods')->sortable($this->_table);
 	}
+
+	function _hook_widget__tips ($params = array()) {
+// TODO
+	}
+
 }

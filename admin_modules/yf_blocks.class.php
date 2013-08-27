@@ -765,4 +765,12 @@ class yf_blocks {
 			return eval("return common()->".$this->_boxes[$name].";");
 		}
 	}
+
+	function _hook_widget__user_blocks ($params = array()) {
+// TODO
+	}
+
+	function _hook_widget__admin_blocks ($params = array()) {
+// TODO
+	}
 }

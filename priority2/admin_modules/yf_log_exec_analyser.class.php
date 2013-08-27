@@ -1325,4 +1325,8 @@ class yf_log_exec_analyser {
 			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
+
+	function _hook_widget__user_access_log ($params = array()) {
+// TODO
+	}
 }
