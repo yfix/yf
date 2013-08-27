@@ -22,9 +22,7 @@ class yf_manage_tips {
 	/**
 	*/
 	function show() {
-		return table2('SELECT * FROM '.db('tips').' ORDER BY `name` ASC', array(
-//				'sortable' => true,
-			))
+		return table2('SELECT * FROM '.db('tips').' ORDER BY `name` ASC')
 			->text('name','',array('badge' => 'info'))
 			->text('text')
 			->text('locale')

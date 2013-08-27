@@ -3,12 +3,12 @@
 	<td>{stpl_name}</td>
 	<td>{method_name}</td>
 	<td>{num_rules}</td>
-	<td>
-{form_row("tbl_link_active")}
+	<td nowrap>
 {form_row("tbl_link","Rules","rules_link")}
 {form_row("tbl_link_edit")}
 {form_row("tbl_link_delete")}
 {form_row("tbl_link","Clone","clone_link")}
 {form_row("tbl_link","Export","export_link")}
+{form_row("tbl_link_active")}
 	</td>
 </tr>

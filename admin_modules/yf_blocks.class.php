@@ -766,6 +766,13 @@ class yf_blocks {
 		}
 	}
 
+	/**
+	*/
+	function _hook_wall_link($msg = array()) {
+		$action = $msg["action"] == "activate_block" ? "edit" : "show";
+		return "./?object=blocks&action=".$action."&id=".$msg['object_id'];
+	}
+
 	function _hook_widget__user_blocks ($params = array()) {
 // TODO
 	}
