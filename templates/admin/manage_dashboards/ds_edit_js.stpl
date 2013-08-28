@@ -9,11 +9,13 @@ $(function() {
 		stop: function(e,ui) {
 			copyHelper && copyHelper.remove();
 			var _item = $(ui.item[0])
+			var _auto_id = "auto_id_" + Math.floor(Math.random() * 100000)
 			// Singleton for draggable available items
 			if ($(".portlets-side-column .column #" + ui.item[0].id).length > 1) {
 				_item.remove()
-//			} elseif (_item.hasClass('drag-clone-needed')) {
-//				_item.data("auto")
+			}
+			if (_item.hasClass('drag-clone-needed')) {
+				_item.data("auto_id", _auto_id)
 			}
 		},
 		receive: function(e,ui) {
@@ -36,12 +38,18 @@ $(function() {
 			var _form = $(this)
 			var _portlet = _form.closest('.portlet')
 			var item_id = _portlet.attr("id")
+			var auto_id = _portlet.data("auto_id")
+			// used in case when custom widgets are cloned
+			if (auto_id) {
+				ds_data += "&" + "ds_data[auto_items][" + auto_id + "][type]=" + item_id
+				item_id = auto_id
+			}
 			var _cur_color = _portlet.find("input[name^=color_item_]").val()
 			ds_data += "&" + "ds_data[items_configs][" + item_id + "][color]=" + _cur_color
 			$("select", _form).each(function(){
 				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).find(":selected").val()
 			})
-			$(":radio:checked", _form).each(function(){
+			$(":radio:checked, input", _form).each(function(){
 				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).val()
 			})
 		})
