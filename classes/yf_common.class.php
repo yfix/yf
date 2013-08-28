@@ -1478,6 +1478,8 @@ class yf_common {
 			'add_date'	=> date('Y-m-d H:i:s'),
 			'server_id'	=> (int)main()->SERVER_ID,
 			'site_id'	=> (int)main()->SITE_ID,
+			'read'		=> isset($data['read']) ? $data['read'] : 0,
+			'type'      => isset($data['type']) ? $data['type'] : '',
 		)));
 	}
 
