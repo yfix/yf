@@ -1,10 +1,30 @@
 <script type="text/javascript">
 $(function() {
-    $(".column").sortable({
-		connectWith: ".column"
-    });
-    $(".column").disableSelection()
-		.find('.portlet').css('cursor', 'move');
+	$(".column").sortable({
+		connectWith: ".column",
+		helper: function(e,li) {
+			copyHelper = li.clone().insertAfter(li);
+			return li.clone();
+		},
+		stop: function(e,ui) {
+			copyHelper && copyHelper.remove();
+			var _item = $(ui.item[0])
+			// Singleton for draggable available items
+			if ($(".portlets-side-column .column #" + ui.item[0].id).length > 1) {
+				_item.remove()
+//			} elseif (_item.hasClass('drag-clone-needed')) {
+//				_item.data("auto")
+			}
+		},
+		receive: function(e,ui) {
+			var _item = $(ui.item[0])
+			if (_item.hasClass('drag-clone-needed')) {
+				copyHelper = null;
+			}
+		}
+	});
+
+	$(".portlet").css("cursor", "move")
 
 	$("#ds_save_layout").on("click", function(e){
 		var ds_data = "";
@@ -49,13 +69,22 @@ $(function() {
 		return false;
 	})
 
-	$(".yf_ds_options").on("click",function(){
+	$("#yf_dashboard").on("click", ".yf_ds_options", function(){
 		var _portlet = $(this).closest('.portlet');
 		_portlet.find('.portlet-options').toggle()
 		return false;
 	})
 
-	$(".yf_ds_minimize").on("click",function(){
+	$("#yf_dashboard").on("click", ".yf_ds_delete", function(e){
+		var _portlet = $(this).closest('.portlet');
+		if (!_portlet.hasClass('drag-clone-needed')) {
+			_portlet.clone().appendTo(".portlets-side-column .column")
+		}
+		_portlet.remove()
+		return false;
+	})
+
+	$("#yf_dashboard").on("click", ".yf_ds_minimize", function(){
 		$(this).closest('.portlet').find('.portlet-content').toggle()
 		return false;
 	})

@@ -10,6 +10,7 @@
 	.portlets-side-column .portlet { padding: 5px; margin-bottom: 10px; }
 	.portlets-side-column .portlet-header { margin: -5px; padding: 0 5px; border-bottom: transparent; }
 	.portlets-side-column .portlet-content { display: none; }
+	.portlets-side-column .yf_ds_delete { display: none; }
 	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
 
 	.ds_view .portlet { padding: 0; margin-bottom: 20px; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }

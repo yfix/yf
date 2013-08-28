@@ -14,7 +14,7 @@ class yf_manage_dashboards {
 		2 => 'span6',
 		3 => 'span4',
 		4 => 'span3',
-		5 => 'span2',
+//		5 => 'span2',
 		6 => 'span2',
 		12 => 'span1',
 	);
@@ -166,6 +166,24 @@ class yf_manage_dashboards {
 			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
 			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$dashboard['id'],
 			'settings_items'=> $this->_show_ds_settings_items($dashboard),
+			'php_item'		=> tpl()->parse(__CLASS__.'/edit_item', array(
+				'id'				=> _prepare_html('php_item'),
+				'name'				=> _prepare_html('CLONEABLE: php item name'),
+				'desc'				=> _prepare_html('CLONEABLE: php item desc'),
+//				'has_config'		=> $info['configurable'] ? 1 : 0,
+				'css_class'			=> 'drag-clone-needed custom_widget_template_php '.$saved_config['color'],
+// TODO
+				'options_container'	=> $this->_options_container($info, $saved_config),
+			)),
+			'stpl_item'		=> tpl()->parse(__CLASS__.'/edit_item', array(
+				'id'				=> _prepare_html('stpl_item'),
+				'name'				=> _prepare_html('CLONEABLE: stpl item name'),
+				'desc'				=> _prepare_html('CLONEABLE: stpl item desc'),
+//				'has_config'		=> $info['configurable'] ? 1 : 0,
+				'css_class'			=> 'drag-clone-needed custom_widget_template_stpl '.$saved_config['color'],
+// TODO
+				'options_container'	=> $this->_options_container($info, $saved_config),
+			)),
 		);
 		return tpl()->parse(__CLASS__.'/edit_side', $replace);
 	}
@@ -174,8 +192,9 @@ class yf_manage_dashboards {
 	*/
 	function _show_ds_settings_items($ds = array()) {
 		$settings = $ds['data']['settings'];
+		$columns_values = array_combine(array_keys($this->_col_classes), array_keys($this->_col_classes));
 		return form()
-			->select_box('columns', _range(1,6), array('class' => 'no-chosen', 'style'=>'width:auto;', 'selected' => (int)$settings['columns']))
+			->select_box('columns', $columns_values, array('class' => 'no-chosen', 'style'=>'width:auto;', 'selected' => (int)$settings['columns']))
 			->yes_no_box('full_width', '', array('selected' => (int)$settings['full_width']))
 		;
 	}
@@ -227,6 +246,16 @@ class yf_manage_dashboards {
 				'class'	=> $this->_col_classes[$num_columns],
 				'items'	=> $this->_show_edit_widget_items($column_items, $items_configs, $ds_settings),
 			);
+		}
+		// Fix empty drag places
+		foreach (range(1, $num_columns) as $num) {
+			if (!$columns[$num]) {
+				$columns[$num] = array(
+					'num'	=> $num,
+					'class'	=> $this->_col_classes[$num_columns],
+					'items'	=> '',
+				);
+			}
 		}
 		$replace = array(
 			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
@@ -323,6 +352,8 @@ class yf_manage_dashboards {
 				$auto_id = str_replace(array_keys($r), array_values($r), $full_name);
 				$widgets[$auto_id] = module($module_name)->$method_name(array('describe_self' => true));
 				if (!$widgets[$auto_id]['name']) {
+unset($widgets[$auto_id]);
+continue;
 //					$widgets[$auto_id]['name'] = "TODO: ".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 					$widgets[$auto_id]['name'] = str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 				}

@@ -10,7 +10,3 @@
 {/foreach}
   </div>
 </div>
-
-<div class="options-tpl">
-{include("manage_dashboards/ds_options")}
-</div>
