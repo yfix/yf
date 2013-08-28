@@ -6,8 +6,8 @@
 		<a href="{view_link}" class="btn btn-mini"><i class="icon icon-eye-open"></i> {t(View)}</a>
 	</h4>
 
-<div class="portlet-options" id="ds-settings-container" style="display:none;">
-	<ul class="colors">
+<div id="ds-settings-container" style="display:none;">
+	<ul class="colors" style="margin-left:30%;">
 		<li class="color-yellow"></li>
 		<li class="color-red"></li>
 		<li class="color-blue"></li>

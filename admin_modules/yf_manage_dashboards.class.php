@@ -9,6 +9,16 @@
 */
 class yf_manage_dashboards {
 
+	private $_col_classes = array(
+		1 => 'span12',
+		2 => 'span6',
+		3 => 'span4',
+		4 => 'span3',
+		5 => 'span2',
+		6 => 'span2',
+		12 => 'span1',
+	);
+
 	/**
 	* Framework constructor
 	*/
@@ -61,17 +71,36 @@ class yf_manage_dashboards {
 		if (!$dashboard['id']) {
 			return _e('No such record');
 		}
-		$replace = array(
-			'edit_link'	=> './?object=manage_dashboards&action=edit&id='.$dashboard['id'],
-		);
 		$items_configs = $dashboard['data']['items_configs'];
-		// Fill empty vars first
-		foreach (range(1,10) as $n) {
-			$replace['items_'.$n] = "";
+		$ds_settings = $dashboard['data']['settings'];
+		$num_columns = isset($this->_col_classes[$ds_settings['columns']]) ? $ds_settings['columns'] : 3;
+		if ($ds_settings['full_width']) {
+			$filled_columns = 0;
+			foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+				$empty_items = true;
+				foreach ((array)$column_items as $name_id) {
+					if ($name_id) {
+						$empty_items = false;
+						break;
+					}
+				}
+				if (!$empty_items) {
+					$filled_columns++;
+				}
+			}
+			$num_columns = $filled_columns;
 		}
 		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
-			$replace['items_'.$column_id] = $this->_view_widget_items($column_items, $items_configs);
+			$columns[$column_id] = array(
+				'num'	=> $column_id,
+				'class'	=> $this->_col_classes[$num_columns],
+				'items'	=> $this->_view_widget_items($column_items, $items_configs, $ds_settings),
+			);
 		}
+		$replace = array(
+			'edit_link'	=> './?object=manage_dashboards&action=edit&id='.$dashboard['id'],
+			'columns'	=> $columns,
+		);
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
 	}
 
@@ -144,9 +173,10 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function _show_ds_settings_items($ds = array()) {
-// TODO
+		$settings = $ds['data']['settings'];
 		return form()
-			->select_box('columns', _range(1,6), array('class' => 'no-chosen'))
+			->select_box('columns', _range(1,6), array('class' => 'no-chosen', 'style'=>'width:auto;', 'selected' => (int)$settings['columns']))
+			->yes_no_box('full_width', '', array('selected' => (int)$settings['full_width']))
 		;
 	}
 
@@ -188,23 +218,26 @@ class yf_manage_dashboards {
 				return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['object']);
 			}
 		}
+		$items_configs = $dashboard['data']['items_configs'];
+		$ds_settings = $dashboard['data']['settings'];
+		$num_columns = isset($this->_col_classes[$ds_settings['columns']]) ? $ds_settings['columns'] : 3;
+		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+			$columns[$column_id] = array(
+				'num'	=> $column_id,
+				'class'	=> $this->_col_classes[$num_columns],
+				'items'	=> $this->_show_edit_widget_items($column_items, $items_configs, $ds_settings),
+			);
+		}
 		$replace = array(
 			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
+			'columns'	=> $columns,
 		);
-		$items_configs = $dashboard['data']['items_configs'];
-		// Fill empty vars first
-		foreach (range(1,10) as $n) {
-			$replace['items_'.$n] = "";
-		}
-		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
-			$replace['items_'.$column_id] = $this->_show_edit_widget_items($column_items, $items_configs);
-		}
 		return tpl()->parse(__CLASS__.'/edit_main', $replace);
 	}
 
 	/**
 	*/
-	function _show_edit_widget_items ($column_items = array(), $items_configs = array()) {
+	function _show_edit_widget_items ($column_items = array(), $items_configs = array(), $ds_settings = array()) {
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
 		foreach ((array)$column_items as $name_id) {
@@ -275,19 +308,27 @@ class yf_manage_dashboards {
 			':' => '',
 		);
 // TODO: add ability to use user module dashboards also
+		$_widgets = array();
 		foreach ((array)module("admin_modules")->_get_methods(array("private" => "1")) as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
 				if (substr($method_name, 0, strlen($method_prefix)) != $method_prefix) {
 					continue;
 				}
 				$full_name = $module_name.'::'.$method_name;
+				$_widgets[$module_name][$method_name] = $full_name;
+			}
+		}
+		foreach ((array)$_widgets as $module_name => $module_widgets) {
+			foreach ((array)$module_widgets as $method_name => $full_name) {
 				$auto_id = str_replace(array_keys($r), array_values($r), $full_name);
 				$widgets[$auto_id] = module($module_name)->$method_name(array('describe_self' => true));
 				if (!$widgets[$auto_id]['name']) {
+//					$widgets[$auto_id]['name'] = "TODO: ".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 					$widgets[$auto_id]['name'] = str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 				}
 				if (!$widgets[$auto_id]['desc']) {
-					$widgets[$auto_id]['name'] = $module_name.":".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
+//					$widgets[$auto_id]['name'] = $module_name.":".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
+					$widgets[$auto_id]['name'] = "TODO: ".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 				}
 				$widgets[$auto_id]['full_name'] = $full_name;
 				$widgets[$auto_id]['auto_id'] = $auto_id;

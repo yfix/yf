@@ -3,15 +3,11 @@
 
 <div class="container-fluid" id="yf_dashboard">
   <div class="row-fluid">
-	<div class="column span4" id="yf_ds_column_1">
-{items_1}
+{foreach("columns")}
+	<div class="column {#.class}" id="yf_ds_column_{#.num}">
+{#.items}
 	</div>
-	<div class="column span4" id="yf_ds_column_2">
-{items_2}
-	</div>
-	<div class="column span4" id="yf_ds_column_3">
-{items_3}
-	</div>
+{/foreach}
   </div>
 </div>
 

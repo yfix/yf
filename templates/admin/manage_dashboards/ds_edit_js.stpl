@@ -3,7 +3,8 @@ $(function() {
     $(".column").sortable({
 		connectWith: ".column"
     });
-    $(".column").disableSelection();
+    $(".column").disableSelection()
+		.find('.portlet').css('cursor', 'move');
 
 	$("#ds_save_layout").on("click", function(e){
 		var ds_data = "";
@@ -18,8 +19,18 @@ $(function() {
 			var _cur_color = _portlet.find("input[name^=color_item_]").val()
 			ds_data += "&" + "ds_data[items_configs][" + item_id + "][color]=" + _cur_color
 			$("select", _form).each(function(){
-				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).find("option:selected").val()
+				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).find(":selected").val()
 			})
+			$(":radio:checked", _form).each(function(){
+				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).val()
+			})
+		})
+		var _ds_settings_form = $("#ds-settings-container form")
+		$("select", _ds_settings_form).each(function(){
+			ds_data += "&" + "ds_data[settings][" + $(this).attr("name") + "]=" + $(this).find(":selected").val()
+		})
+		$(":radio:checked", _ds_settings_form).each(function(){
+			ds_data += "&" + "ds_data[settings][" + $(this).attr("name") + "]=" + $(this).val()
 		})
 		$.post($(this).attr("action"), ds_data, function(data){
 			window.location.reload()
