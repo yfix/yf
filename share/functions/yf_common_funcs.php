@@ -609,8 +609,8 @@ if (!function_exists("_prepare_members_link")) {
 	}
 }
 
-if (!function_exists("_my_range")) {
-	function _my_range ($_start = 0, $_end = 10) {
+if (!function_exists("_range")) {
+	function _range ($_start = 0, $_end = 10) {
 		$data = array();
 		for ($i = $_start; $i <= $_end; $i++) {
 			$data[$i] = $i;

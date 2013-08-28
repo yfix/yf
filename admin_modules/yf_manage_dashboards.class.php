@@ -136,8 +136,18 @@ class yf_manage_dashboards {
 			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
 			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
 			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$dashboard['id'],
+			'settings_items'=> $this->_show_ds_settings_items($dashboard),
 		);
 		return tpl()->parse(__CLASS__.'/edit_side', $replace);
+	}
+
+	/**
+	*/
+	function _show_ds_settings_items($ds = array()) {
+// TODO
+		return form()
+			->select_box('columns', _range(1,6), array('class' => 'no-chosen'))
+		;
 	}
 
 	/**

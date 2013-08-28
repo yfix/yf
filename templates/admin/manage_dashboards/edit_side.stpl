@@ -6,7 +6,7 @@
 		<a href="{view_link}" class="btn btn-mini"><i class="icon icon-eye-open"></i> {t(View)}</a>
 	</h4>
 
-<div class="portlet-options" style="display:none;">
+<div class="portlet-options" id="ds-settings-container" style="display:none;">
 	<ul class="colors">
 		<li class="color-yellow"></li>
 		<li class="color-red"></li>
@@ -18,7 +18,7 @@
 	</ul>
 	<input type="hidden" name="color_item_global" value="{color}">
 	<br class="clearfix" />
-	{form_items}
+	{settings_items}
 </div>
 
 	<div class="column span4">

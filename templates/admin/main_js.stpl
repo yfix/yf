@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
 $(function(){
-	$('select').not('.portlet select').chosen();
+	$('select').not('.portlet select').not('.no-chosen').chosen();
 });
 </script>
 

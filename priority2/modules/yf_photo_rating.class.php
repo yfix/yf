@@ -71,7 +71,7 @@ class yf_photo_rating extends yf_module {
 		$this->_boxes = array(
 			"rate_value"	=> 'radio_box("rate_value",	$this->_rate_values, $selected, false, 2, "", false)',
 		);
-		$this->_rate_values = _my_range(1, $this->NUM_STARS);
+		$this->_rate_values = _range(1, $this->NUM_STARS);
 		// Initialize filter
 		if ($this->USE_FILTER) {
 			$this->_prepare_filter_data();

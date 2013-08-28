@@ -385,7 +385,7 @@ class yf_reputation {
 		}
 		// Check voting changing direction (good / bad)
 		$_POST["vote_change"] = intval($_POST["vote_change"]);
-		$_vote_change = _my_range(-$this->CUR_USER_ALT_POWER, $this->CUR_USER_ALT_POWER);
+		$_vote_change = _range(-$this->CUR_USER_ALT_POWER, $this->CUR_USER_ALT_POWER);
 		unset($_vote_change[0]);
 		if (!in_array($_POST["vote_change"], $_vote_change)) {
 			_re(t("Please specify vote changing direction (good / bad)!"));

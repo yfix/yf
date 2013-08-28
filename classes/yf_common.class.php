@@ -191,8 +191,8 @@ class yf_common {
 	/**
 	* Simple check box
 	*/
-	function check_box ($box_name, $values, $selected = "") {
-		return _class("html", COMMON_LIB)->check_box($box_name, $values, $selected);
+	function check_box ($box_name, $values, $selected = "", $add_str = "") {
+		return _class("html", COMMON_LIB)->check_box($box_name, $values, $selected, $add_str);
 	}
 
 	/**

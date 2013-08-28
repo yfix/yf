@@ -110,7 +110,7 @@ class yf_html {
 	/**
 	* Simple check box
 	*/
-	function check_box ($box_name, $value, $selected = '') {
+	function check_box ($box_name, $value, $selected = '', $add_str = '') {
 		$selected = strval($selected);
 		$value_to_display = '';
 		if (is_string($value)) {
@@ -119,7 +119,7 @@ class yf_html {
 		if ($translate) {
 			$value_to_display = t($value_to_display);
 		}
-		$body .= '<label class="checkbox"><input type="checkbox" name="'.$box_name.'" id="'.$box_name.'_box" value="1" '.($selected ? 'checked' : '').'>'.$value_to_display. "</label>";
+		$body .= '<label class="checkbox"><input type="checkbox" name="'.$box_name.'" id="'.$box_name.'_box" value="1" '.($selected ? 'checked' : '').' '.$add_str.'>'.$value_to_display. "</label>";
 		return $body;
 	}
 

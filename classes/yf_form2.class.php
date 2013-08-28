@@ -1006,16 +1006,22 @@ class yf_form2 {
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
 		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$level = isset($extra['level']) ? $extra['level'] : 0;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
 
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level)
+					.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
@@ -1058,11 +1064,17 @@ class yf_form2 {
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
 		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$level = isset($extra['level']) ? $extra['level'] : 0;
 		$disabled = isset($extra['disabled']) ? $extra['disabled'] : false;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
 
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
@@ -1108,12 +1120,18 @@ class yf_form2 {
 		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->check_box($name, $values, $selected)
+					.common()->check_box($name, $values, $selected, $add_str)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -1149,12 +1167,17 @@ class yf_form2 {
 		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
 		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
 		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
@@ -1195,11 +1218,16 @@ class yf_form2 {
 		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
 		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
@@ -1242,9 +1270,15 @@ class yf_form2 {
 		$years = isset($extra['years']) ? $extra['years'] : '';
 		$show_what = isset($extra['show_what']) ? $extra['show_what'] : "ymd";
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
 
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
@@ -1283,9 +1317,15 @@ class yf_form2 {
 		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
 
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">

@@ -49,9 +49,9 @@ $(function() {
 		return false;
 	})
 
-//	$("#ds_view_settings").on("click",function(){
-//		$(this).closest('.portlet-side-column').find('.portlet-options').toggle()
-//	})
+	$("#ds_view_settings").on("click",function(){
+		$('#ds-settings-container').toggle()
+	})
 
 });
 </script>
