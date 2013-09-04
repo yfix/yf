@@ -693,6 +693,14 @@ class yf_tpl {
 		if (false === strpos($string, "{execute(") || empty($string)) {
 			return $string;
 		}
+		// Replace template vars, marked with '#' sign, before do execute pattern
+		if (false !== strpos($string, '#') && !empty($replace)) {
+			$pairs = array();
+			foreach ((array)$replace as $k => $v) {
+				$pairs['#'.$k] = $v;
+			}
+			$string = str_replace(array_keys($pairs), array_values($pairs), $string);
+		}
 		return preg_replace(array_keys($this->_PATTERN_EXECUTE), str_replace("{tpl_name}", $name.$this->_STPL_EXT, array_values($this->_PATTERN_EXECUTE)), $string, --$this->STPL_REPLACE_LIMIT > 0 ? $this->STPL_REPLACE_LIMIT : -1);
 	}
 
