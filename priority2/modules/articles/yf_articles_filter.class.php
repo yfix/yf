@@ -30,7 +30,7 @@ class yf_articles_filter {
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Create qubquery for the user table
 		if ($SF["account_type"]) {
-			$user_sub_sql .= " AND group = ".intval($SF["account_type"])." ";
+			$user_sub_sql .= " AND `group` = ".intval($SF["account_type"])." ";
 		}
 		if (strlen($SF["gender"])) {
 			$user_sub_sql .= " AND sex ='"._es($SF["gender"])."' ";

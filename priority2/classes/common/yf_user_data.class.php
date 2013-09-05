@@ -984,7 +984,7 @@ class yf_user_data {
 		if (is_numeric($params)) {
 			return false;
 		}
-		// Allows params as comma-separated pairs ("active = 1, group = 2")
+		// Allows params as comma-separated pairs ("active = 1, `group` = 2")
 		// Allowed symbols: "=" "!=" ">" "<"
 		if (is_string($params)) {
 			$_tmp = array();

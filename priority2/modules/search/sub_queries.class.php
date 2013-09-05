@@ -561,9 +561,9 @@ class sub_queries {
 			}
 			// Process agency status
 			$agency_statuses_sql = array(
-				1 => " agency_id = 0 AND group = 3 ", // Independent escort
-				2 => " agency_id != 0 AND group = 3 ", // Agency employee
-				3 => " group = 4", // Pure agency
+				1 => " agency_id = 0 AND `group` = 3 ", // Independent escort
+				2 => " agency_id != 0 AND `group` = 3 ", // Agency employee
+				3 => " `group` = 4", // Pure agency
 			);
 			if (!empty($AF["agency_status"]) && is_array($AF["agency_status"])) {
 				foreach ((array)$AF["agency_status"] as $cur_status) {

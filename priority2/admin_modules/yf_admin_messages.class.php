@@ -246,7 +246,7 @@ class yf_admin_messages {
 		if (strlen($F["email"])) 		$sql .= " AND email LIKE '"._es($F["email"])."%' \r\n";
 		if (strlen($F["login"])) 		$sql .= " AND login LIKE '"._es($F["login"])."%' \r\n";
 		if (strlen($F["password"])) 	$sql .= " AND password LIKE '"._es($F["password"])."%' \r\n";
-		if ($F["account_type"])		$sql .= " AND group = ".intval($F["account_type"])." \r\n";
+		if ($F["account_type"])		$sql .= " AND `group` = ".intval($F["account_type"])." \r\n";
 		if (strlen($F["state"]))		$sql .= " AND state = '".$F["state"]."' \r\n";
 		if ($F["country"])	 			$sql .= " AND country = '".$this->_countries[$F["country"]]."' \r\n";
 */

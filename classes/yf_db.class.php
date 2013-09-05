@@ -1579,11 +1579,4 @@ class yf_db {
 		}
 		return $this;
 	}
-
-	/**
-	*/
-	function insert_batch() {
-//		SHOW VARIABLES LIKE 'max_allowed_packet'
-// TODO
-	}
 }

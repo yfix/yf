@@ -256,7 +256,7 @@ class yf_manage_blogs {
 		}
 		if (strlen($SF["nick"]) || strlen($SF["account_type"]) || $SF["plblog_only"]) {
 			if (strlen($SF["nick"])) 	$users_sql .= " AND nick LIKE '"._es($SF["nick"])."%' \r\n";
-			if ($SF["account_type"])	$users_sql .= " AND group = ".intval($SF["account_type"])." \r\n";
+			if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
 			if ($SF["plblog_only"])		$users_sql .= " AND old_id != 0 \r\n";
 		}
 		// Add subquery to users table

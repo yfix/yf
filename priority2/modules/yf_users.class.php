@@ -88,7 +88,7 @@ return false;
 	*/
 	function _for_home_page($num = 5){
 		
-		$Q = db()->query("SELECT * FROM ".db('user')." WHERE group=2 AND active=1 ORDER BY add_date DESC LIMIT ".intval($num*3));
+		$Q = db()->query("SELECT * FROM ".db('user')." WHERE `group`=2 AND active=1 ORDER BY add_date DESC LIMIT ".intval($num*3));
 		while ($A = db()->fetch_assoc($Q)) {
 				
 			if (!_avatar_exists($A["id"], 0)) continue;

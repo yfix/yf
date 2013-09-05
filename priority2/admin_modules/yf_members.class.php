@@ -265,8 +265,8 @@ class yf_members {
 		if (strlen($MF["nick"])) 		$sql .= " AND nick LIKE '"._es($MF["nick"])."%' \r\n";
 		if (strlen($MF["email"])) 		$sql .= " AND email LIKE '"._es($MF["email"])."%' \r\n";
 		if (strlen($MF["login"])) 		$sql .= " AND login LIKE '"._es($MF["login"])."%' \r\n";
-		if (strlen($MF["password"])) 	$sql .= " AND password LIKE '"._es($MF["password"])."%' \r\n";
-		if ($MF["account_type"])		$sql .= " AND group = ".intval($MF["account_type"])." \r\n";
+		if (strlen($MF["password"])) 	$sql .= " AND `password` LIKE '"._es($MF["password"])."%' \r\n";
+		if ($MF["account_type"])		$sql .= " AND `group` = ".intval($MF["account_type"])." \r\n";
 		if (strlen($MF["state"]))		$sql .= " AND state = '".$MF["state"]."' \r\n";
 		if ($MF["country"])	 			$sql .= " AND country = '"._es($MF["country"])."' \r\n";
 		if (strlen($MF["phone"]))		$sql .= " AND "._get_phone_search_sql($MF["phone"], "phone")." \r\n";

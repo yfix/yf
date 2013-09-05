@@ -368,7 +368,7 @@ class yf_manage_articles extends yf_module {
 		}
 		if (strlen($SF["nick"]) || strlen($SF["account_type"])) {
 			if (strlen($SF["nick"])) 	$users_sql .= " AND nick LIKE '"._es($SF["nick"])."%' \r\n";
-			if ($SF["account_type"])	$users_sql .= " AND group = ".intval($SF["account_type"])." \r\n";
+			if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
 		}
 		// Add subquery to users table
 		if (!empty($users_sql)) {

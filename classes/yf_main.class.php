@@ -1580,6 +1580,15 @@ class yf_main {
 		$OBJ = $this->init_class("project_packer", "classes/");
 	}
 
+	/**
+	*/
+	function no_graphics($new_val = null) {
+		if (isset($new_val)) {
+			$this->NO_GRAPHICS = (bool) $new_val;
+		}
+		return $this->NO_GRAPHICS;
+	}
+
 # TODO: in DEBUG_MODE log/cleanup/catch reads/writes to these methods
 
 	/**

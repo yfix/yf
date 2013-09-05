@@ -525,7 +525,7 @@ class yf_output_cache {
 			$add_sql .= " AND site_id=".intval($params["site_id"])." ";
 		}
 		if (!empty($params["group"])) {
-			$add_sql .= " AND group=".intval($params["group"])." ";
+			$add_sql .= " AND `group`=".intval($params["group"])." ";
 		}
 		if (!empty($params["query_string"])) {
 			$add_sql .= " AND query_string LIKE '%"._es($params["query_string"])."%' ";

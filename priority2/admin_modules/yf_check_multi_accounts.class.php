@@ -552,7 +552,7 @@ class yf_check_multi_accounts {
 		if ($SF["user_id"])			$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
 		if ($SF["ip"])				$sql .= " AND matching_ips LIKE '%"._es($SF["ip"])."%' \r\n";
 
-		if ($SF["account_type"])	$users_sql .= " AND group = ".intval($SF["account_type"])." \r\n";
+		if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
 		if (strlen($SF["nick"]))	$users_sql .= " AND nick LIKE'"._es($SF["nick"])."' \r\n";
 		// Add subquery to users table
 		if (!empty($users_sql)) {

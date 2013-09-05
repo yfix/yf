@@ -226,8 +226,8 @@ INSERT INTO test_user_data_info_values (user_id, field_id, value) VALUES
 		$body .= "<br /><b>search_user(array(\"WHERE\" => array(\"active\" => 1)), array(\"login\",\"nick\"))</b><br /><p>".print_r(
 				search_user(array("WHERE" => array("active" => 1)), array("login","nick"))
 			, 1)."</p>";
-		$body .= "<br /><b>search_user(\"active = 1, group = 2\")</b><br /><p>".print_r(
-				search_user("active = 1, group = 2")
+		$body .= "<br /><b>search_user(\"active = 1, `group` = 2\")</b><br /><p>".print_r(
+				search_user("active = 1, `group` = 2")
 			, 1)."</p>";
 		$body .= "<br /><b>search_user(array(\"WHERE\" => array(\"\" => \"\")))</b><br /><p>".print_r(
 				search_user(array("WHERE" => array("" => "")))

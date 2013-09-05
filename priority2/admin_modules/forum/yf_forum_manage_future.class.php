@@ -34,7 +34,7 @@ class yf_forum_manage_future {
 			return "Access denied";
 		}
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE group=6*/ ORDER BY first_name ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE `group`=6*/ ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Connect pager
 		$sql = "SELECT * FROM ".db('forum_future_posts')." ";
@@ -367,7 +367,7 @@ class yf_forum_manage_future {
 		}
 		$POSTER_ID = intval($_GET["id"]);
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group=6 ORDER BY first_name ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." WHERE `group`=6 ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Get child accouts for the current poster
 		$all_posters_users = main()->get_data("forum_posters_users", 3600);
@@ -414,7 +414,7 @@ class yf_forum_manage_future {
 		$_GET["id"] = intval($_GET["id"]);
 		$POSTER_ID = $_GET["id"];
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE group=6*/ ORDER BY first_name ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE `group`=6*/ ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Check if such admin exists
 		$poster_info = $forum_posters[$POSTER_ID];
@@ -545,7 +545,7 @@ class yf_forum_manage_future {
 		$_GET["id"] = intval($_GET["id"]);
 		$POSTER_ID = $_GET["id"];
 		// Get forum posters
-		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE group=6*/ ORDER BY first_name ASC");
+		$Q = db()->query("SELECT * FROM ".db('admin')." /*WHERE `group`=6*/ ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Check if such admin exists
 		$poster_info = $forum_posters[$POSTER_ID];
@@ -770,7 +770,7 @@ class yf_forum_manage_future {
 			);
 			// Get forum posters
 			$this->_forum_posters2[" "]	= t("-- All --");
-			$Q = db()->query("SELECT * FROM ".db('admin')." WHERE group=6 ORDER BY first_name ASC");
+			$Q = db()->query("SELECT * FROM ".db('admin')." WHERE `group`=6 ORDER BY first_name ASC");
 			while ($A = db()->fetch_assoc($Q)) $this->_forum_posters2[$A["id"]] = $A["first_name"]." ".$A["last_name"];
 			// Get child accouts for the current poster
 			$all_posters_users = main()->get_data("forum_posters_users", 3600);

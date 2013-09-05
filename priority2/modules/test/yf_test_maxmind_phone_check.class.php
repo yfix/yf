@@ -29,7 +29,7 @@ class yf_test_maxmind_phone_check {
 		$sql = "SELECT id, nick, phone, country 
 				FROM ".db('user')." 
 				WHERE country IN ('".implode("','", $OBJ->_cc_to_verify)."') 
-					AND group='3' 
+					AND `group`='3' 
 					AND phone != '' 
 					AND active='1' 
 				ORDER BY id DESC 

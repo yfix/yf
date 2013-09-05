@@ -91,11 +91,11 @@ class yf_stats {
 	* Quick users stats
 	*/
 	function quick_users_stats () {
-		$sql = "(SELECT COUNT(*) AS total FROM ".db('user')." WHERE group=2) 
+		$sql = "(SELECT COUNT(*) AS total FROM ".db('user')." WHERE `group`=2) 
 			UNION ALL 
-				(SELECT COUNT(*) AS total FROM ".db('user')." WHERE group=3)
+				(SELECT COUNT(*) AS total FROM ".db('user')." WHERE `group`=3)
 			UNION ALL 
-				(SELECT COUNT(*) AS total FROM ".db('user')." WHERE group=4)";
+				(SELECT COUNT(*) AS total FROM ".db('user')." WHERE `group`=4)";
 		$data = db()->query_fetch_all($sql);
 		$num_hobbyists	= $data[0]["total"];
 		$num_escorts	= $data[1]["total"];

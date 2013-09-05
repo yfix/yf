@@ -88,7 +88,7 @@ class yf_admin_home {
 			$A = db()->query_fetch_all("SELECT * FROM ".db('user_groups')." WHERE active='1'");
 			$sql_parts[] = "SELECT 'total_users' AS '0', COUNT(id) AS '1' FROM ".db('user')." WHERE active='1'";
 			foreach ((array)$A as $V1) {
-				$sql_parts[] = "SELECT 'total_".strtolower($V1["name"])."' AS '0', COUNT(id) AS '1' FROM ".db('user')." WHERE group='".$V1["id"]."' AND active='1'";
+				$sql_parts[] = "SELECT 'total_".strtolower($V1["name"])."' AS '0', COUNT(id) AS '1' FROM ".db('user')." WHERE `group`='".$V1["id"]."' AND active='1'";
 			}
 			$sql_parts2 = array(
 				"SELECT 'forum_topics' AS '0', COUNT(id) AS '1' FROM ".db('forum_topics')." WHERE 1=1",
