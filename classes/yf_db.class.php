@@ -1494,7 +1494,7 @@ class yf_db {
 
 	/**
 	*/
-	function update_batch($table, $data, $index = null) {
+	function update_batch($table, $data, $index = null, $only_sql = false) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
@@ -1512,23 +1512,32 @@ class yf_db {
 			return false;
 		}
 		$this->_set_update_batch($data, $index);
-		if (count($this->qb_set) === 0)
+		if (count($this->qb_set) === 0) {
 			return false;
 		}
 		$affected_rows = 0;
 		$records_at_once = 100;
+		$out = '';
 		for ($i = 0, $total = count($this->qb_set); $i < $total; $i += $records_at_once) {
 			$sql = $this->_update_batch($table, array_slice($this->qb_set, $i, $records_at_once), $index);
-			$this->query($sql);
-			$affected_rows += $this->affected_rows();
+			if ($only_sql) {
+				$out .= $sql.";\n";
+			} else {
+				$this->query($sql);
+				$affected_rows += $this->affected_rows();
+			}
 		}
 		$this->qb_set = array();
-		return $affected_rows;
+		if ( ! $only_sql) {
+			$out = $affected_rows;
+		}
+		return $out;
 	}
 
 	/**
 	*/
 	function _update_batch($table, $values, $index) {
+		$index = $this->enclose_field_name($index);
 		$ids = array();
 		foreach ($values as $key => $val) {
 			$ids[] = $val[$index];
@@ -1544,7 +1553,7 @@ class yf_db {
 				.implode("\n", $v)."\n"
 				.'ELSE '.$k.' END, ';
 		}
-		return 'UPDATE '.$this->enclose_field_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$this->enclose_field_name($index).' IN('.implode(',', $ids).')';
+		return 'UPDATE '.$this->enclose_field_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
 	}
 
 	/**
@@ -1574,7 +1583,7 @@ class yf_db {
 	/**
 	*/
 	function insert_batch() {
-		
+//		SHOW VARIABLES LIKE 'max_allowed_packet'
 // TODO
 	}
 }
