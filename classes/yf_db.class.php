@@ -36,13 +36,17 @@ class yf_db {
 	/** @var string Folder where databases drivers are stored */
 	public $DB_DRIVERS_DIR			= "classes/db/";
 	/** @var int Num tries to reconnect (will be useful if db server is overloaded) (Set to "0" for disabling) */
-	public $RECONNECT_NUM_TRIES		= 2;
+	public $RECONNECT_NUM_TRIES		= 100;
 	/** @var int Time to wait between reconnects (in seconds) */
 	public $RECONNECT_DELAY			= 1;
 	/** @var bool Use logarithmic increase or reconnect time */
 	public $RECONNECT_DELAY_LOG_INC	= 1;
 	/** @var bool Use locking for reconnects or not */
-	public $RECONNECT_USE_LOCKING	= 1;
+	public $RECONNECT_USE_LOCKING	= 0;
+	/** @var array List of mysql error codes to use for reconnect tries. See also http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html */
+	public $RECONNECT_MYSQL_ERRORS	= array(
+		1053, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
+	);
 	/** @var string */
 	public $RECONNECT_LOCK_FILE_NAME	= "uploads/db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock";
 	/** @var int Time in seconds between unlock reconnect */
@@ -310,10 +314,7 @@ class yf_db {
 		}
 		if (!$result && $query_allowed && $db_error) {
 			// Try to reconnect if we see some these errors: http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html
-			$error_codes_to_reconnect = array(
-				2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
-			);
-			if (false !== strpos($this->DB_TYPE, "mysql") && in_array($db_error["code"], $error_codes_to_reconnect)) {
+			if (false !== strpos($this->DB_TYPE, "mysql") && in_array($db_error["code"], $this->RECONNECT_MYSQL_ERRORS)) {
 				$this->db = null;
 				$reconnect_successful = $this->connect($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, true, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET, $this->ALLOW_AUTO_CREATE_DB);
 				if ($reconnect_successful) {
@@ -581,6 +582,9 @@ class yf_db {
 	*/
 	function get_one($query, $use_cache = true) {
 		$result = $this->query_fetch($query, $use_cache, true);
+		if (!$result) {
+			return false;
+		}
 		// Foreach needed here as we do not know first key name
 		foreach (array_keys($result) as $key) {
 			return $result[$key];
@@ -625,7 +629,13 @@ class yf_db {
 	function get_deep_array($query, $levels = 1, $use_cache = true) {
 		$out = array();
 		$q = $this->query($sql);
+		if (!$q) {
+			return false;
+		}
 		$row = $this->fetch_assoc($q);
+		if (!$row) {
+			return false;
+		}
 		$k = array_keys( $row );
 		do {
 			if ($levels == 1) {
@@ -992,7 +1002,6 @@ class yf_db {
 	* "Silent" mode (logging off, tracing off, debugging off)
 	*/
 	function enable_silent_mode() {
- 		$this->ALLOW_CACHE_QUERIES	= false;
 		$this->ALLOW_CACHE_QUERIES	= false;
 		$this->GATHER_AFFECTED_ROWS	= false;
 		$this->USE_SHUTDOWN_QUERIES = false;
