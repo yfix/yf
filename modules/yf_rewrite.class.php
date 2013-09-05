@@ -139,16 +139,14 @@ class yf_rewrite {
 			foreach ((array)$links as $k => $v) {
 				$r_array[$v] = $rewrited_data[$k];
 			}
-			// Fix for bug with similar shorter links
-			function _sort_by_length ($a, $b) {
+			uksort($r_array, function($a, $b) {
 				$sa = strlen($a);
 				$sb = strlen($b);
 				if ($sa == $sb) {
 					return 0;
 				}
 				return ($sa < $sb) ? +1 : -1;
-			}
-			uksort($r_array, array(&$this, "_sort_by_length"));
+			});
 			// DO NOT USE strtr() here!!!
 			$body = str_replace(array_keys($r_array), array_values($r_array), $body);
 
@@ -270,7 +268,7 @@ class yf_rewrite {
 		}
 		// patterns support here
 		$params['host'] = !empty($host) ? $host : $_SERVER["HTTP_HOST"];
-		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1) {
+		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1 && is_object($this->REWRITE_PATTERNS['yf'])) {
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
 			foreach ((array)$params as $k => $v) {
