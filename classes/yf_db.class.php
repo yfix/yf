@@ -614,6 +614,34 @@ class yf_db {
 	}
 
 	/**
+	* Generate multi-level (up to 4) array from incoming query, useful to save some code on generating this often.
+	* Example: get_deep_array("SELECT department_id, user_id, name FROM t_personal", 2)  => 
+	*	[ 25 => [ 654 => [
+	*		'department_id' => 25,
+	*		'user_id' => 654,
+	*		'name' => 'Peter',
+	*	]]]
+	*/
+	function get_deep_array($query, $levels = 1, $use_cache = true) {
+		$out = array();
+		$q = $this->query($sql);
+		$row = $this->fetch_assoc($q);
+		$k = array_keys( $row );
+		do {
+			if ($levels == 1) {
+				@$a[ $row[$k[0]] ] = $row;
+			} elseif ($levels == 2) {
+				@$a[ $row[$k[0]] ][ $row[$k[1]] ] = $row;
+			} elseif ($levels == 3) {
+				@$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ] = $row;
+			} elseif ($levels == 4) {
+				@$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ][ $row[$k[3]] ] = $row;
+			}
+		} while ($row = $this->fetch_assoc($result));
+		return $out;
+	}
+
+	/**
 	* Alias
 	*/
 	function query_fetch_assoc($query, $use_cache = true) {
@@ -1466,9 +1494,7 @@ class yf_db {
 
 	/**
 	*/
-	function update_batch() {
-// TODO
-/*
+	function update_batch($table, $data, $index = null) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
@@ -1479,16 +1505,76 @@ class yf_db {
 			return false;
 		}
 		$table = $this->_fix_table_name($table);
-		if (!strlen($table)) {
+		if (!$index) {
+			$index = 'id';
+		}
+		if (!strlen($table) || !$data || !is_array($data) || !$index) {
 			return false;
 		}
-		return $this->db->update($table, $data, $where, $only_sql, $this);
-*/
+		$this->_set_update_batch($data, $index);
+		if (count($this->qb_set) === 0)
+			return false;
+		}
+		$affected_rows = 0;
+		$records_at_once = 100;
+		for ($i = 0, $total = count($this->qb_set); $i < $total; $i += $records_at_once) {
+			$sql = $this->_update_batch($table, array_slice($this->qb_set, $i, $records_at_once), $index);
+			$this->query($sql);
+			$affected_rows += $this->affected_rows();
+		}
+		$this->qb_set = array();
+		return $affected_rows;
+	}
+
+	/**
+	*/
+	function _update_batch($table, $values, $index) {
+		$ids = array();
+		foreach ($values as $key => $val) {
+			$ids[] = $val[$index];
+			foreach (array_keys($val) as $field) {
+				if ($field !== $index) {
+					$final[$field][] = 'WHEN '.$index.' = '.$val[$index].' THEN '.$val[$field];
+				}
+			}
+		}
+		$cases = '';
+		foreach ($final as $k => $v) {
+			$cases .= $k." = CASE \n"
+				.implode("\n", $v)."\n"
+				.'ELSE '.$k.' END, ';
+		}
+		return 'UPDATE '.$this->enclose_field_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$this->enclose_field_name($index).' IN('.implode(',', $ids).')';
+	}
+
+	/**
+	*/
+	function _set_update_batch($key, $index = '') {
+		if ( ! is_array($key)) {
+			return false;
+		}
+		foreach ($key as $k => $v) {
+			$index_set = FALSE;
+			$clean = array();
+			foreach ($v as $k2 => $v2) {
+				if ($k2 === $index)	{
+					$index_set = TRUE;
+				}
+				$clean[$this->enclose_field_name($k2)] = $this->enclose_field_value($v2);
+			}
+			if ($index_set === FALSE) {
+				//return $this->display_error('db_batch_missing_index');
+				return false;
+			}
+			$this->qb_set[] = $clean;
+		}
+		return $this;
 	}
 
 	/**
 	*/
 	function insert_batch() {
+		
 // TODO
 	}
 }
