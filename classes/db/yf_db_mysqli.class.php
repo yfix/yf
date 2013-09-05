@@ -17,25 +17,29 @@ class yf_db_mysqli extends yf_db_driver {
 	/** @var @conf_skip */
 	public $query_result		= null;
 	/** @var @conf_skip */
-	public $num_queries		= 0;
+	public $num_queries			= 0;
 	/** @var @conf_skip */
-	public $in_transaction		= 0;
-	/** @var @conf_skip */
-	public $mTrxLevel			= 0;
-	/** @var @conf_skip */
-	public $META_TABLES_SQL	= "SHOW TABLES";	
+	public $META_TABLES_SQL		= "SHOW TABLES";	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
 	/** @var @conf_skip */
-	public $DEF_CHARSET		= "utf8";
+	public $DEF_CHARSET			= "utf8";
 	/** @var @conf_skip */
-	public $DEF_PORT		   = 3306;
+	public $DEF_PORT			= 3306;
 	/** @var @conf_skip */
 	public $SQL_NO_CACHE		= false;
+	/** @var @conf_skip */
+	public $ALLOW_AUTO_CREATE_DB= false;
+	/** @var @conf_skip */
+	public $HAS_MULTI_QUERY		= true;
 
 	/**
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "") {
+	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "", $allow_auto_create_db = false) {
+		if (is_array($server)) {
+// TODO: pass config params as array
+			$params = $server;
+		}
 		$this->persistency	= $persistency;
 		$this->user			= $user;
 		$this->password		= $password;
@@ -43,15 +47,16 @@ class yf_db_mysqli extends yf_db_driver {
 		$this->dbname		= $database;
 		$this->port			= $port ? $port : $DEF_PORT;
 		$this->socket		= $socket;
-
-		$this->db_connect_id = mysqli_init();
-		if (!$this->db_connect_id) {
-			return false;
+		if (!file_exists($socket)) {
+			$this->socket = "";
 		}
-		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
+		$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
+		ini_set('mysqli.reconnect', true);
 
-		$connected = mysqli_real_connect($this->db_connect_id, $this->server, $this->user, $this->password, $this->dbname, $this->port, $this->socket, $use_ssl ? MYSQL_CLIENT_SSL : 0);
-		if (!$connected) {
+		$this->connect();
+
+		if (!$this->db_connect_id) {
+			conf_add('http_headers::X-Details','ME=(-1) MySqli connection error');
 			return false;
 		}
 		if (empty($charset)) {
@@ -64,15 +69,43 @@ class yf_db_mysqli extends yf_db_driver {
 	}
 
 	/**
+	*/
+	function connect() {
+		$this->db_connect_id = mysqli_init();
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		if ($this->socket) {
+			$connect_host = $this->socket;
+		} else {
+			$connect_port = $this->port && $this->port != $this->DEF_PORT ? $this->port : "";
+			$connect_host = ($this->persistency ? "p:" : "").$this->server. ($connect_port ? ":".$connect_port : "");
+		}
+		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
+		$is_connected = mysqli_real_connect($this->db_connect_id, $this->server, $this->user, $this->password, ''/*$this->dbname*/, $this->port, $this->socket, $use_ssl ? MYSQLI_CLIENT_SSL : 0);
+		if (!$is_connected) {
+			$this->_connect_error = true;
+			return false;
+		}
+		if ($this->dbname != "") {
+			$dbselect = mysqli_select_db($this->db_connect_id, $this->dbname);
+			// Try to create database, if not exists and if allowed
+			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->dbname)) {
+				mysqli_query("CREATE DATABASE IF NOT EXISTS ".$this->dbname, $this->db_connect_id);
+			}
+			$dbselect = mysqli_select_db($this->db_connect_id, $this->dbname);
+			if (!$dbselect) {
+				mysqli_close($this->db_connect_id);
+			}
+		}
+	}
+
+	/**
 	* Close transaction
 	*/
 	function close() {
 		if (!$this->db_connect_id) {
 			return false;
-		}
-		// Commit any remaining transactions
-		if ($this->in_transaction) {
-			mysqli_query($this->db_connect_id, "COMMIT");
 		}
 		return mysqli_close($this->db_connect_id);
 	}
@@ -80,7 +113,7 @@ class yf_db_mysqli extends yf_db_driver {
 	/**
 	* Base query method
 	*/
-	function query($query = "", $transaction = false) {
+	function query($query = "") {
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		if ($query == "") {
@@ -94,6 +127,20 @@ class yf_db_mysqli extends yf_db_driver {
 			conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
 		}
 		return $this->query_result;
+	}
+
+	/**
+	* Very simple emulation of the mysqli multi_query
+	*/
+	function multi_query($queries = array()) {
+/*
+		$result = array();
+		foreach((array)$queries as $k => $sql) {
+			$result[$k] = $this->query($sql);
+		}
+		return $result;
+*/
+// TODO
 	}
 
 	/**
@@ -290,132 +337,24 @@ class yf_db_mysqli extends yf_db_driver {
 	}
 
 	/**
-	* Begin a transaction, or if a transaction has already started, continue it
+	* Begin a transaction
 	*/
-	function begin( $fname = 'Database::begin' ) {
-		if ( !$this->mTrxLevel ) {
-			$this->immediateBegin( $fname );
-		} else {
-			$this->mTrxLevel++;
-		}
+	function begin() {
+		return $this->query("START TRANSACTION");
 	}
 
 	/**
-	* End a transaction, or decrement the nest level if transactions are nested
+	* End a transaction
 	*/
-	function commit( $fname = 'Database::commit' ) {
-		if ( $this->mTrxLevel ) {
-			$this->mTrxLevel--;
-		}
-		if ( !$this->mTrxLevel ) {
-			$this->immediateCommit( $fname );
-		}
+	function commit() {
+		return $this->query("COMMIT");
 	}
 
 	/**
 	* Rollback a transaction
 	*/
-	function rollback( $fname = 'Database::rollback' ) {
-		$this->query( 'ROLLBACK', $fname );
-		$this->mTrxLevel = 0;
-	}
-
-	/**
-	* Begin a transaction, committing any previously open transaction
-	*/
-	function immediateBegin( $fname = 'Database::immediateBegin' ) {
-		$this->query( 'BEGIN', $fname );
-		$this->mTrxLevel = 1;
-	}
-	
-	/**
-	* Commit transaction, if one is open
-	*/
-	function immediateCommit( $fname = 'Database::immediateCommit' ) {
-		$this->query( 'COMMIT', $fname );
-		$this->mTrxLevel = 0;
-	}
-
-	/**
-	* Insert array of values into table
-	*/
-	function insert($table, $data, $only_sql = false, $replace = false, $DB_CONNECTION, $ignore = false) {
-		if (empty($table) || empty($data)) {
-			return false;
-		}
-		if (is_string($replace)) {
-			$replace = false;
-		}
-		$values_array = array();
-		// Try to check if array is two-dimensional
-		foreach ((array)$data as $cur_row) {
-			$is_multiple = is_array($cur_row) ? 1 : 0;
-			break;
-		}
-		// Prepare column names and values
-		if ($is_multiple) {
-			foreach ((array)$data as $cur_row) {
-				if (empty($cols)) {
-					$cols	= array_keys($cur_row);
-				}
-				$cur_values = array_values($cur_row);
-				foreach ((array)$cur_values as $k => $v) {
-					$cur_values[$k] = $this->enclose_field_value($v);
-				}
-				$values_array[] = "(".implode(', ', $cur_values)."\r\n)";
-			}
-		} else {
-			$cols	= array_keys($data);
-			$values = array_values($data);
-			foreach ((array)$values as $k => $v) {
-				$values[$k] = $this->enclose_field_value($v);
-			}
-			$values_array[] = "(".implode(', ', $values)."\r\n)";
-		}
-		foreach ((array)$cols as $k => $v) {
-			$cols[$k] = $this->enclose_field_name($v);
-		}
-		// build the query
-		$sql = ($replace ? "REPLACE" : "INSERT"). ($ignore ? " IGNORE" : "")." INTO ".
-			$this->enclose_field_name(eval("return dbt_".$table.";")).
-			" \r\n(".implode(', ', $cols).") VALUES \r\n".
-			implode(", ", $values_array);
-		// Return SQL text
-		if ($only_sql) {
-			return $sql;
-		}
-		// execute the query
-		return $DB_CONNECTION->query($sql);
-	}
-
-	/**
-	* Replace array of values into table
-	*/
-	function replace($table, $data, $only_sql = false, $DB_CONNECTION) {
-		return $this->insert($table, $data, $only_sql, true, $DB_CONNECTION);
-	}
-
-	/**
-	* Update table with given values
-	*/
-	function update($table, $data, $where, $only_sql = false, $DB_CONNECTION) {
-		if (empty($table) || empty($data) || empty($where)) {
-			return false;
-		}
-		// Prepare column names and values
-		$tmp_data = array();
-		foreach ((array)$data as $k => $v) {
-			$tmp_data[$k] = $this->enclose_field_name($k)." = ".$this->enclose_field_value($v);
-		}
-		// build the query
-		$sql = "UPDATE ".$this->enclose_field_name(@eval("return dbt_".$table.";")).
-			" SET ".implode(', ', $tmp_data). (!empty($where) ? " WHERE ".$where : '');
-		// Return SQL text
-		if ($only_sql) {
-			return $sql;
-		}
-		// execute the query
-		return $DB_CONNECTION->query($sql);
+	function rollback() {
+		return $this->query("ROLLBACK");
 	}
 
 	/**

@@ -19,10 +19,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	/** @var @conf_skip */
 	public $num_queries			= 0;
 	/** @var @conf_skip */
-	public $in_transaction		= 0;
-	/** @var @conf_skip */
-	public $mTrxLevel			= 0;
-	/** @var @conf_skip */
 	public $META_TABLES_SQL		= "SHOW TABLES";	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
@@ -34,9 +30,10 @@ class yf_db_mysql41 extends yf_db_driver {
 	public $SQL_NO_CACHE		= false;
 	/** @var @conf_skip */
 	public $ALLOW_AUTO_CREATE_DB= false;
+	/** @var @conf_skip */
+	public $HAS_MULTI_QUERY		= false;
 
 	/**
-	* Constructor
 	*/
 	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "", $allow_auto_create_db = false) {
 		$this->persistency	= $persistency;
@@ -88,7 +85,7 @@ class yf_db_mysql41 extends yf_db_driver {
 			$dbselect = mysql_select_db($this->dbname, $this->db_connect_id);
 			// Try to create database, if not exists and if allowed
 			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->dbname)) {
-				mysql_query("CREATE DATABASE IF NOT EXISTS ".$this->dbname);
+				mysql_query("CREATE DATABASE IF NOT EXISTS ".$this->dbname, $this->db_connect_id);
 			}
 			$dbselect = mysql_select_db($this->dbname, $this->db_connect_id);
 			if (!$dbselect) {
@@ -99,72 +96,51 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Close transaction
 	*/
 	function close() {
 		if ($this->db_connect_id) {
-			// Commit any remaining transactions
-			if ($this->in_transaction) {
-				mysql_query("COMMIT", $this->db_connect_id);
-			}
 			return mysql_close($this->db_connect_id);
 		}
 		return false;
 	}
 
 	/**
-	* Base query method
 	*/
-	function query($query = "", $transaction = false) {
+	function query($query = "") {
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		if ($query != "") {
-
 			$this->num_queries++;
-			if ($transaction == BEGIN_TRANSACTION && !$this->in_transaction) {
-				$result = mysql_query("BEGIN", $this->db_connect_id);
-				if (!$result) return false;
-				$this->in_transaction = TRUE;
-			}
 			$this->query_result = mysql_query($query, $this->db_connect_id);
-
-		} elseif ($transaction == END_TRANSACTION && $this->in_transaction)
-
-			$result = mysql_query("COMMIT", $this->db_connect_id);
-
+		}
 		if ($this->query_result) {
-
-			if ($transaction == END_TRANSACTION && $this->in_transaction) {
-				$this->in_transaction = false;
-				if (!mysql_query("COMMIT", $this->db_connect_id)) {
-					mysql_query("ROLLBACK", $this->db_connect_id);
-					return false;
-				}
-			}
 			return $this->query_result;
-
 		} else {
 			$query_error_code = mysql_errno($this->db_connect_id);
 			$query_error = mysql_error($this->db_connect_id);
 			conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
-
-			if ($this->in_transaction) {
-				mysql_query("ROLLBACK", $this->db_connect_id);
-				$this->in_transaction = false;
-			}
 			return false;
 		}
 	}
 
 	/**
-	* Unbuffered query method
+	* Very simple emulation of the mysqli multi_query
+	*/
+	function multi_query($queries = array()) {
+		$result = array();
+		foreach((array)$queries as $k => $sql) {
+			$result[$k] = $this->query($sql);
+		}
+		return $result;
+	}
+
+	/**
 	*/
 	function unbuffered_query($query = "") {
 		mysql_unbuffered_query($query, $this->db_connect_id);
 	}
 
 	/**
-	* Other query methods
 	*/
 	function num_rows($query_id = 0) {
 		if (!$query_id) {
@@ -174,21 +150,18 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Affected Rows
 	*/
 	function affected_rows() {
 		return $this->db_connect_id ? mysql_affected_rows($this->db_connect_id) : false;
 	}
 
 	/**
-	* Insert Id
 	*/
 	function insert_id() {
 		return $this->db_connect_id ? mysql_insert_id($this->db_connect_id) : false;
 	}
 
 	/**
-	* Fetch Row
 	*/
 	function fetch_row($query_id = 0) {
 		if (!$query_id) {
@@ -201,7 +174,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Fetch Assoc
 	*/
 	function fetch_assoc($query_id = 0) {
 		if (!$query_id) {
@@ -214,7 +186,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Fetch Array
 	*/
 	function fetch_array($query_id = 0) {
 		if (!$query_id) {
@@ -227,14 +198,12 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Real Escape String
 	*/
 	function real_escape_string($string) {
 		return mysql_real_escape_string($string, $this->db_connect_id);
 	}
 
 	/**
-	* Free Result
 	*/
 	function free_result($query_id = 0) {
 		if (!$query_id) {
@@ -248,7 +217,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Error
 	*/
 	function error() {
 		if ($this->db_connect_id) {
@@ -266,7 +234,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Meta Columns
 	*/
 	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
 		$retarr = array();
@@ -327,7 +294,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Meta Tables
 	*/
 	function meta_tables($DB_PREFIX = "") {
 		$Q = $this->query($this->META_TABLES_SQL);
@@ -342,140 +308,24 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Begin a transaction, or if a transaction has already started, continue it
+	* Begin a transaction
 	*/
-	function begin( $fname = 'Database::begin' ) {
-		if ( !$this->mTrxLevel ) {
-			$this->immediateBegin( $fname );
-		} else {
-			$this->mTrxLevel++;
-		}
+	function begin() {
+		return $this->query("START TRANSACTION");
 	}
 
 	/**
-	* End a transaction, or decrement the nest level if transactions are nested
+	* End a transaction
 	*/
-	function commit( $fname = 'Database::commit' ) {
-		if ( $this->mTrxLevel ) {
-			$this->mTrxLevel--;
-		}
-		if ( !$this->mTrxLevel ) {
-			$this->immediateCommit( $fname );
-		}
+	function commit() {
+		return $this->query("COMMIT");
 	}
 
 	/**
 	* Rollback a transaction
 	*/
-	function rollback( $fname = 'Database::rollback' ) {
-		$this->query( 'ROLLBACK', $fname );
-		$this->mTrxLevel = 0;
-	}
-
-	/**
-	* Begin a transaction, committing any previously open transaction
-	*/
-	function immediateBegin( $fname = 'Database::immediateBegin' ) {
-		$this->query( 'BEGIN', $fname );
-		$this->mTrxLevel = 1;
-	}
-	
-	/**
-	* Commit transaction, if one is open
-	*/
-	function immediateCommit( $fname = 'Database::immediateCommit' ) {
-		$this->query( 'COMMIT', $fname );
-		$this->mTrxLevel = 0;
-	}
-
-	/**
-	* Insert array of values into table
-	*/
-	function insert($table, $data, $only_sql = false, $replace = false, $DB_CONNECTION, $ignore = false) {
-		if (empty($table) || empty($data)) {
-			return false;
-		}
-		if (is_string($replace)) {
-			$replace = false;
-		}
-		$values_array = array();
-		// Try to check if array is two-dimensional
-		foreach ((array)$data as $cur_row) {
-			$is_multiple = is_array($cur_row) ? 1 : 0;
-			break;
-		}
-		// Prepare column names and values
-		if ($is_multiple) {
-			foreach ((array)$data as $cur_row) {
-				if (empty($cols)) {
-					$cols	= array_keys($cur_row);
-				}
-				$cur_values = array_values($cur_row);
-				foreach ((array)$cur_values as $k => $v) {
-					$cur_values[$k] = $this->enclose_field_value($v);
-				}
-				$values_array[] = "(".implode(', ', $cur_values)."\r\n)";
-			}
-		} else {
-			$cols	= array_keys($data);
-			$values = array_values($data);
-			foreach ((array)$values as $k => $v) {
-				$values[$k] = $this->enclose_field_value($v);
-			}
-			$values_array[] = "(".implode(', ', $values)."\r\n)";
-		}
-		foreach ((array)$cols as $k => $v) {
-			$cols[$k] = $this->enclose_field_name($v);
-		}
-		// build the query
-		$sql = ($replace ? "REPLACE" : "INSERT"). ($ignore ? " IGNORE" : "")." INTO ".
-			$this->enclose_field_name($table).
-			" \r\n(".implode(', ', $cols).") VALUES \r\n".
-			implode(", ", $values_array);
-		// Return SQL text
-		if ($only_sql) {
-			return $sql;
-		}
-		// execute the query
-		return $DB_CONNECTION->query($sql);
-	}
-
-	/**
-	* Replace array of values into table
-	*/
-	function replace($table, $data, $only_sql = false, $DB_CONNECTION) {
-		return $this->insert($table, $data, $only_sql, true, $DB_CONNECTION);
-	}
-
-	/**
-	* Update table with given values
-	*/
-	function update($table, $data, $where, $only_sql = false, $DB_CONNECTION) {
-		if (empty($table) || empty($data) || empty($where)) {
-			return false;
-		}
-		// $where contains numeric id
-		if (is_numeric($where)) {
-			$where = "id=".intval($where);
-		}
-		// Prepare column names and values
-		$tmp_data = array();
-		foreach ((array)$data as $k => $v) {
-			if (empty($k)) {
-				continue;
-			}
-			$tmp_data[$k] = $this->enclose_field_name($k)." = ".$this->enclose_field_value($v);
-		}
-		// build the query
-		$sql = "UPDATE ".$this->enclose_field_name($table)
-			." SET ".implode(', ', $tmp_data)
-			.(!empty($where) ? " WHERE ".$where : '');
-		// Return SQL text
-		if ($only_sql) {
-			return $sql;
-		}
-		// execute the query
-		return $DB_CONNECTION->query($sql);
+	function rollback() {
+		return $this->query("ROLLBACK");
 	}
 
 	/**
@@ -490,7 +340,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Enclose field names
 	*/
 	function enclose_field_name($data) {
 		$data = "`".$data."`";
@@ -498,7 +347,6 @@ class yf_db_mysql41 extends yf_db_driver {
 	}
 
 	/**
-	* Enclose field values
 	*/
 	function enclose_field_value($data) {
 		$data = "'".$data."'";

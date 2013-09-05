@@ -67,6 +67,17 @@ class yf_db_sqlite extends yf_db_driver {
 	}
 
 	/**
+	* Very simple emulation of the mysqli multi_query
+	*/
+	function multi_query($queries = array()) {
+		$result = array();
+		foreach((array)$queries as $k => $sql) {
+			$result[$k] = $this->query($sql);
+		}
+		return $result;
+	}
+
+	/**
 	* Unbuffered query
 	*/
 	function unbuffered_query($query = '') {

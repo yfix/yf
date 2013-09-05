@@ -121,7 +121,7 @@ class yf_db {
 	*/
 	function __construct($db_type = "", $no_parse_tables = 0, $db_prefix = null, $db_replication_slave = null) {
 		$this->_no_parse_tables = $no_parse_tables;
-		// Type of database server
+		// Type/driver of database server
 		$this->DB_TYPE = !empty($db_type) ? $db_type : DB_TYPE;
 		if (!defined("DB_PREFIX") && empty($db_prefix)) {
 			define("DB_PREFIX", "");
@@ -150,8 +150,6 @@ class yf_db {
 		if (!is_object($GLOBALS['main'])) {
 			$GLOBALS['main'] = new StdClass();
 		}
-		define("BEGIN_TRANSACTION",	2);
-		define("END_TRANSACTION",	4);
 	}
 
 	/**
@@ -287,10 +285,8 @@ class yf_db {
 			return false;
 		}
 		$this->NUM_QUERIES++;
-		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			$this->_query_time_start = microtime(true);
-		}
 		if (DEBUG_MODE) {
+			$this->_query_time_start = microtime(true);
 			if ($this->SQL_NO_CACHE && false !== strpos($this->DB_TYPE, "mysql")) {
 				$q = strtoupper(substr(ltrim($sql), 0, 100));
 				if (substr($q, 0, 6) == "SELECT" && false === strpos($q, "SQL_NO_CACHE")) {
@@ -313,8 +309,11 @@ class yf_db {
 			$db_error = $this->db->error();
 		}
 		if (!$result && $query_allowed && $db_error) {
-			// Try to reconnect if we see error "MySQL server has gone away" (2006)
-			if (false !== strpos($this->DB_TYPE, "mysql") && $db_error["code"] == 2006) {
+			// Try to reconnect if we see some these errors: http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html
+			$error_codes_to_reconnect = array(
+				2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
+			);
+			if (false !== strpos($this->DB_TYPE, "mysql") && in_array($db_error["code"], $error_codes_to_reconnect)) {
 				$this->db = null;
 				$reconnect_successful = $this->connect($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, true, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET, $this->ALLOW_AUTO_CREATE_DB);
 				if ($reconnect_successful) {
@@ -322,64 +321,83 @@ class yf_db {
 				}
 			}
 		}
-		// On error check if we can repair tables structure
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
 			$result = $this->_repair_table($sql, $db_error);
 		}
-		// Try to backtrace error
 		if (!$result && $db_error) {
-			// Try to get new error message and code
-			$old_db_error = $db_error;
-			$db_error = $this->db->error();
-			if (empty($db_error) || empty($db_error["message"])) {
-				$db_error = $old_db_error;
-			}
-			if (DEBUG_MODE && $this->ERROR_BACKTRACE) {
-				$_trace	= $this->_trace();
-				$back_step	= $_trace[1]["class"] != "db" ? 1 : 2;
-				$trace_text	= " (<i> in \"".$_trace[$back_step]["file"]."\" on line ".$_trace[$back_step]["line"]."</i>) ";
-			}
-			trigger_error("DB: QUERY ERROR: ".$sql."<br />\r\n<b>CAUSE</b>: ".$db_error["message"]. ($db_error["code"] ? " (code:".$db_error["code"].")" : ""). ($db_error["offset"] ? " (offset:".$db_error["offset"].")" : ""). $trace_text."<br />\r\n", E_USER_WARNING);
+			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace() : array());
 		}
 		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			$_log_allowed = true;
-			// Save memory on high number of query log entries
-			if ($this->LOGGED_QUERIES_LIMIT && count($this->QUERY_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
-				$_log_allowed = false;
-			}
-			if ($_log_allowed) {
-				$this->QUERY_LOG[] = $sql;
-				$this->QUERY_EXEC_TIME[] = (float)microtime(true) - (float)$this->_query_time_start;
-				if ($this->USE_QUERY_BACKTRACE) {
-					$_trace = $this->_trace();
-					$_cur_trace_id = 0;
-					$_db_class_name1 = "db.class.php";
-					// Try to skip back trace for "query" function
-					for ($i = 0; $i < 5; $i++) {
-						if (in_array(strtolower($_trace[$i]["class"]), array("db", YF_PREFIX."db")) 
-							&& in_array(strtolower($_trace[$i]["function"]), array("query", "unbuffered_query", "insert", "update", "replace")) 
-							&& (substr($_trace[$i]["file"], -strlen($_db_class_name1)) == $_db_class_name1)
-						) {
-							continue;
-						}
-						$_cur_trace_id = $i;
-						break;
-					}
-					$_trace[$_cur_trace_id]["inside_method"] = (!empty($_trace[$_cur_trace_id + 1]["class"]) ? $_trace[$_cur_trace_id + 1]["class"]. $_trace[$_cur_trace_id + 1]["type"] : ""). $_trace[$_cur_trace_id + 1]["function"];
-					$this->QUERY_BACKTRACE_LOG[] = $_trace[$_cur_trace_id];
-					$this->QUERY_BACKTRACE_LOG2[] = $this->_trace_string();
-				}
-				if ($this->GATHER_AFFECTED_ROWS) {
-					$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
-					if (in_array($_sql_type, array("INSERT", "UPDATE", "REPLACE", "DELETE"))) {
-						$this->QUERY_AFFECTED_ROWS[$sql] = $this->affected_rows();
-					} elseif ($_sql_type == "SELECT") {
-						$this->QUERY_AFFECTED_ROWS[$sql] = $this->num_rows($result);
-					}
-				}
-			}
+			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace() : array());
 		}
 		return $result;
+	}
+
+	/**
+	*/
+	function _query_show_error($sql, $db_error, $_trace = array()) {
+		$old_db_error = $db_error;
+		$db_error = $this->db->error();
+		if (empty($db_error) || empty($db_error["message"])) {
+			$db_error = $old_db_error;
+		}
+		if ($_trace) {
+			$back_step	= $_trace[1]["class"] != "db" ? 1 : 2;
+			$trace_text	= " (<i> in \"".$_trace[$back_step]["file"]."\" on line ".$_trace[$back_step]["line"]."</i>) ";
+		}
+		$msg = "DB: QUERY ERROR: ".$sql."<br />\n<b>CAUSE</b>: ".$db_error["message"]
+			. ($db_error["code"] ? " (code:".$db_error["code"].")" : "")
+			. ($db_error["offset"] ? " (offset:".$db_error["offset"].")" : "")
+			. $trace_text."<br />\n";
+		trigger_error($msg, E_USER_WARNING);
+	}
+
+	/**
+	*/
+	function _query_log($sql, $_trace = array()) {
+		$_log_allowed = false;
+		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
+			$_log_allowed = true;
+		}
+		if (!$_log_allowed) {
+			return false;
+		}
+		// Save memory on high number of query log entries
+		if ($this->LOGGED_QUERIES_LIMIT && count($this->QUERY_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
+			$_log_allowed = false;
+		}
+		if (!$_log_allowed) {
+			return false;
+		}
+		$this->QUERY_LOG[] = $sql;
+		$this->QUERY_EXEC_TIME[] = (float)microtime(true) - (float)$this->_query_time_start;
+		if (is_array($_trace) && !empty($_trace)) {
+// TODO: convert to much more powerful method   main()->trace_string()
+			$_cur_trace_id = 0;
+			$_db_class_name1 = "db.class.php";
+			// Try to skip back trace for "query" function
+			for ($i = 0; $i < 5; $i++) {
+				if (in_array(strtolower($_trace[$i]["class"]), array("db", YF_PREFIX."db")) 
+					&& in_array(strtolower($_trace[$i]["function"]), array("query", "unbuffered_query", "insert", "update", "replace")) 
+					&& (substr($_trace[$i]["file"], -strlen($_db_class_name1)) == $_db_class_name1)
+				) {
+					continue;
+				}
+				$_cur_trace_id = $i;
+				break;
+			}
+			$_trace[$_cur_trace_id]["inside_method"] = (!empty($_trace[$_cur_trace_id + 1]["class"]) ? $_trace[$_cur_trace_id + 1]["class"]. $_trace[$_cur_trace_id + 1]["type"] : ""). $_trace[$_cur_trace_id + 1]["function"];
+			$this->QUERY_BACKTRACE_LOG[] = $_trace[$_cur_trace_id];
+			$this->QUERY_BACKTRACE_LOG2[] = $this->_trace_string();
+		}
+		if ($this->GATHER_AFFECTED_ROWS) {
+			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+			if (in_array($_sql_type, array("INSERT", "UPDATE", "REPLACE", "DELETE"))) {
+				$this->QUERY_AFFECTED_ROWS[$sql] = $this->affected_rows();
+			} elseif ($_sql_type == "SELECT") {
+				$this->QUERY_AFFECTED_ROWS[$sql] = $this->num_rows($result);
+			}
+		}
 	}
 
 	/**
@@ -409,7 +427,45 @@ class yf_db {
 		if (!strlen($table)) {
 			return false;
 		}
-		return $this->db->insert($table, $data, $only_sql, $replace, $this, $ignore);
+		if (is_string($replace)) {
+			$replace = false;
+		}
+		$values_array = array();
+		// Try to check if array is two-dimensional
+		foreach ((array)$data as $cur_row) {
+			$is_multiple = is_array($cur_row) ? 1 : 0;
+			break;
+		}
+		if ($is_multiple) {
+			foreach ((array)$data as $cur_row) {
+				if (empty($cols)) {
+					$cols	= array_keys($cur_row);
+				}
+				$cur_values = array_values($cur_row);
+				foreach ((array)$cur_values as $k => $v) {
+					$cur_values[$k] = $this->enclose_field_value($v);
+				}
+				$values_array[] = "(".implode(', ', $cur_values)."\n)";
+			}
+		} else {
+			$cols	= array_keys($data);
+			$values = array_values($data);
+			foreach ((array)$values as $k => $v) {
+				$values[$k] = $this->enclose_field_value($v);
+			}
+			$values_array[] = "(".implode(', ', $values)."\n)";
+		}
+		foreach ((array)$cols as $k => $v) {
+			$cols[$k] = $this->enclose_field_name($v);
+		}
+		$sql = ($replace ? "REPLACE" : "INSERT"). ($ignore ? " IGNORE" : "")." INTO ".
+			$this->enclose_field_name($table).
+			" \n(".implode(', ', $cols).") VALUES \n".
+			implode(", ", $values_array);
+		if ($only_sql) {
+			return $sql;
+		}
+		return $this->query($sql);
 	}
 
 	/**
@@ -423,20 +479,7 @@ class yf_db {
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false) {
-		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
-			return false;
-		}
-		if (!$this->_connected && !$this->connect()) {
-			return false;
-		}
-		if (!is_object($this->db)) {
-			return false;
-		}
-		$table = $this->_fix_table_name($table);
-		if (!strlen($table)) {
-			return false;
-		}
-		return $this->db->replace($table, $data, $only_sql, $this);
+		return $this->insert($table, $data, $only_sql, true);
 	}
 
 	/**
@@ -453,10 +496,27 @@ class yf_db {
 			return false;
 		}
 		$table = $this->_fix_table_name($table);
-		if (!strlen($table)) {
+		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
-		return $this->db->update($table, $data, $where, $only_sql, $this);
+		// $where contains numeric id
+		if (is_numeric($where)) {
+			$where = "id=".intval($where);
+		}
+		$tmp_data = array();
+		foreach ((array)$data as $k => $v) {
+			if (empty($k)) {
+				continue;
+			}
+			$tmp_data[$k] = $this->enclose_field_name($k)." = ".$this->enclose_field_value($v);
+		}
+		$sql = "UPDATE ".$this->enclose_field_name($table)
+			." SET ".implode(', ', $tmp_data)
+			.(!empty($where) ? " WHERE ".$where : '');
+		if ($only_sql) {
+			return $sql;
+		}
+		return $this->query($sql);
 	}
 
 	/**
@@ -1011,9 +1071,9 @@ class yf_db {
 					mkdir(dirname($cache_path), 0777);
 				}
 				foreach ((array)$tables as $k => $v) {
-					$file_text .= "define('".$k."','".$v."');\r\n";
+					$file_text .= "define('".$k."','".$v."');\n";
 				}
-				file_put_contents($cache_path, "<?php\r\n".$file_text."?>");
+				file_put_contents($cache_path, "<?php\n".$file_text."?>");
 			}
 
 		}
@@ -1095,15 +1155,13 @@ class yf_db {
 	* Trying to repair given table structure (and possibly data)
 	*/
 	function _repair_table($sql, $db_error) {
-		// On error check if we can repair tables structure
 		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
 			return false;
 		}
-		if (!$GLOBALS['main']->type) {
+		if (!function_exists('main')) {
 			return false;
 		}
-		$INSTALLER_DB_OBJ = $GLOBALS['main']->init_class("installer_db", "classes/db/");
-		return is_object($INSTALLER_DB_OBJ) ? $INSTALLER_DB_OBJ->_auto_repair_table($sql, $db_error, $this) : false;
+		return _class('installer_db', 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
 	}
 
 	/**
@@ -1384,5 +1442,54 @@ class yf_db {
 			return $sql;
 		}
 #		return $this->query($sql);
+	}
+
+	/**
+	*/
+	function multi_query($sql = array()) {
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		if (!is_object($this->db)) {
+			return false;
+		}
+		if (!$this->db->multi_query_exists) {
+			$result = array();
+			foreach ((array)$sql as $k => $_sql) {
+				$result[$k] = $this->query($_sql);
+			}
+			return $result;
+		} else {
+// TODO: implement me, returning full results
+			return $this->db->multi_query($sql);
+		}
+	}
+
+	/**
+	*/
+	function update_batch() {
+// TODO
+/*
+		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
+			return false;
+		}
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		if (!is_object($this->db)) {
+			return false;
+		}
+		$table = $this->_fix_table_name($table);
+		if (!strlen($table)) {
+			return false;
+		}
+		return $this->db->update($table, $data, $where, $only_sql, $this);
+*/
+	}
+
+	/**
+	*/
+	function insert_batch() {
+// TODO
 	}
 }

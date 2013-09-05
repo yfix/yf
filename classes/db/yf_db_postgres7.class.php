@@ -119,6 +119,17 @@ class yf_db_postgres7 extends yf_db_driver {
 	}
 
 	/**
+	* Very simple emulation of the mysqli multi_query
+	*/
+	function multi_query($queries = array()) {
+		$result = array();
+		foreach((array)$queries as $k => $sql) {
+			$result[$k] = $this->query($sql);
+		}
+		return $result;
+	}
+
+	/**
 	* Unbuffered query method
 	*/
 	function unbuffered_query($query = "") {
@@ -297,86 +308,6 @@ class yf_db_postgres7 extends yf_db_driver {
 			$tables[$A['0']] = $A['0'];
 		}
 		return $tables;
-	}
-
-	/**
-	* Insert array of values into table
-	*/
-	function insert($table, $data, $only_sql = false, $DB_CONNECTION) {
-		if (empty($table) || empty($data)) {
-			return false;
-		}
-		$values_array = array();
-		// Try to check if array is two-dimensional
-		foreach ((array)$data as $cur_row) {
-			$is_multiple = is_array($cur_row) ? 1 : 0;
-			break;
-		}
-		// Prepare column names and values
-		if ($is_multiple) {
-			foreach ((array)$data as $cur_row) {
-				if (empty($cols)) {
-					$cols	= array_keys($cur_row);
-				}
-				$cur_values = array_values($cur_row);
-				foreach ((array)$cur_values as $k => $v) {
-					$cur_values[$k] = $this->enclose_field_value($v);
-				}
-				$values_array[] = "(".implode(', ', $cur_values)."\r\n)";
-			}
-		} else {
-			$cols	= array_keys($data);
-			$values = array_values($data);
-			foreach ((array)$values as $k => $v) {
-				$values[$k] = $this->enclose_field_value($v);
-			}
-			$values_array[] = "(".implode(', ', $values)."\r\n)";
-		}
-		foreach ((array)$cols as $k => $v) {
-			$cols[$k] = $this->enclose_field_name($v);
-		}
-		// build the query
-		$sql = "INSERT INTO ".
-			$this->enclose_field_name(eval("return dbt_".$table.";")).
-			" \r\n(".implode(', ', $cols).") VALUES \r\n".
-			implode(", ", $values_array);
-		// Return SQL text
-		if ($only_sql) {
-			return $sql;
-		}
-		// execute the query
-		return $DB_CONNECTION->query($sql);
-	}
-
-	/**
-	* Replace array of values into table
-	*/
-	function replace($table, $data, $only_sql = false, $DB_CONNECTION) {
-// TODO: add code here
-//		return $this->insert($table, $data, $only_sql, true, $DB_CONNECTION);
-	}
-
-	/**
-	* Update table with given values
-	*/
-	function update($table, $data, $where, $only_sql = false, $DB_CONNECTION) {
-		if (empty($table) || empty($data) || empty($where)) {
-			return false;
-		}
-		// Prepare column names and values
-		$tmp_data = array();
-		foreach ((array)$data as $k => $v) {
-			$tmp_data[$k] = $this->enclose_field_name($k)." = ".$this->enclose_field_value($v);
-		}
-		// build the query
-		$sql = "UPDATE ".$this->enclose_field_name(@eval("return dbt_".$table.";")).
-			" SET ".implode(', ', $tmp_data). (!empty($where) ? " WHERE ".$where : '');
-		// Return SQL text
-		if ($only_sql) {
-			return $sql;
-		}
-		// execute the query
-		return $DB_CONNECTION->query($sql);
 	}
 
 	/**
