@@ -133,14 +133,30 @@ class yf_db_mysqli extends yf_db_driver {
 	* Very simple emulation of the mysqli multi_query
 	*/
 	function multi_query($queries = array()) {
+// TODO: check and implement this:
 /*
+$query  = "SELECT CURRENT_USER();";
+$query .= "SELECT Name FROM City ORDER BY ID LIMIT 20, 5";
+
+if ($mysqli->multi_query($query)) {
+    do {
+        if ($result = $mysqli->store_result()) {
+            while ($row = $result->fetch_row()) {
+                printf("%s\n", $row[0]);
+            }
+            $result->free();
+        }
+        if ($mysqli->more_results()) {
+            printf("-----------------\n");
+        }
+    } while ($mysqli->next_result());
+}
+*/
 		$result = array();
 		foreach((array)$queries as $k => $sql) {
 			$result[$k] = $this->query($sql);
 		}
 		return $result;
-*/
-// TODO
 	}
 
 	/**

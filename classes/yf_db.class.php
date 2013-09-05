@@ -411,6 +411,26 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function multi_query($sql = array()) {
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		if (!is_object($this->db)) {
+			return false;
+		}
+		if (!$this->db->HAS_MULTI_QUERY) {
+			$result = array();
+			foreach ((array)$sql as $k => $_sql) {
+				$result[$k] = $this->query($_sql);
+			}
+			return $result;
+		} else {
+			return $this->db->multi_query($sql);
+		}
+	}
+
+	/**
 	* Insert array of values into table
 	*/
 	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false) {
@@ -1442,27 +1462,6 @@ class yf_db {
 			return $sql;
 		}
 #		return $this->query($sql);
-	}
-
-	/**
-	*/
-	function multi_query($sql = array()) {
-		if (!$this->_connected && !$this->connect()) {
-			return false;
-		}
-		if (!is_object($this->db)) {
-			return false;
-		}
-		if (!$this->db->multi_query_exists) {
-			$result = array();
-			foreach ((array)$sql as $k => $_sql) {
-				$result[$k] = $this->query($_sql);
-			}
-			return $result;
-		} else {
-// TODO: implement me, returning full results
-			return $this->db->multi_query($sql);
-		}
 	}
 
 	/**
