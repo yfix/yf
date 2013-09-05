@@ -107,6 +107,9 @@ class yf_db_mysql41 extends yf_db_driver {
 	/**
 	*/
 	function query($query = "") {
+		if (!$this->db_connect_id) {
+			return false;
+		}
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		if ($query != "") {

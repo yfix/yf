@@ -36,10 +36,6 @@ class yf_db_mysqli extends yf_db_driver {
 	/**
 	*/
 	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "", $allow_auto_create_db = false) {
-		if (is_array($server)) {
-// TODO: pass config params as array
-			$params = $server;
-		}
 		$this->persistency	= $persistency;
 		$this->user			= $user;
 		$this->password		= $password;
@@ -73,6 +69,7 @@ class yf_db_mysqli extends yf_db_driver {
 	function connect() {
 		$this->db_connect_id = mysqli_init();
 		if (!$this->db_connect_id) {
+			$this->db_connect_id = null;
 			return false;
 		}
 		if ($this->socket) {
@@ -85,6 +82,7 @@ class yf_db_mysqli extends yf_db_driver {
 		$is_connected = mysqli_real_connect($this->db_connect_id, $this->server, $this->user, $this->password, ''/*$this->dbname*/, $this->port, $this->socket, $use_ssl ? MYSQLI_CLIENT_SSL : 0);
 		if (!$is_connected) {
 			$this->_connect_error = true;
+			$this->db_connect_id = null;
 			return false;
 		}
 		if ($this->dbname != "") {
@@ -114,6 +112,13 @@ class yf_db_mysqli extends yf_db_driver {
 	* Base query method
 	*/
 	function query($query = "") {
+		if (!mysqli_ping($this->db_connect_id)) {
+			$this->db_connect_id = null;
+			unset($this);
+		}
+		if (!$this->db_connect_id) {
+			return false;
+		}
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		if ($query == "") {
