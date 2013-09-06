@@ -29,6 +29,7 @@ abstract class yf_db_driver {
 	abstract protected function meta_tables($DB_PREFIX = "");
 	abstract protected function multi_query($queries = array());
 	abstract protected function num_rows($query_id = 0);
+	abstract protected function ping();
 	abstract protected function query($query = "");
 	abstract protected function real_escape_string($string);
 	abstract protected function rollback();

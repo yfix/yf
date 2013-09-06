@@ -36,7 +36,7 @@ class yf_db {
 	/** @var string Folder where databases drivers are stored */
 	public $DB_DRIVERS_DIR			= "classes/db/";
 	/** @var int Num tries to reconnect (will be useful if db server is overloaded) (Set to "0" for disabling) */
-	public $RECONNECT_NUM_TRIES		= 100;
+	public $RECONNECT_NUM_TRIES		= 1000;
 	/** @var int Time to wait between reconnects (in seconds) */
 	public $RECONNECT_DELAY			= 1;
 	/** @var bool Use logarithmic increase or reconnect time */
@@ -250,7 +250,8 @@ class yf_db {
 					if ($this->RECONNECT_DELAY_LOG_INC) {
 						$multiplier = $i + ($this->RECONNECT_DELAY <= 1 ? 1 : 0);
 					}
-					sleep($this->RECONNECT_DELAY * $multiplier);
+					$sleep_time = $this->RECONNECT_DELAY * $multiplier;
+					sleep($sleep_time);
 				}
 			}
 			// Put lock file

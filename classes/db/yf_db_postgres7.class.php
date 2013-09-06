@@ -356,6 +356,17 @@ class yf_db_postgres7 extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return false;
 		}
+// TODO
+		return "";
+	}
+
+	/**
+	*/
+	function ping() {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+// TODO
 		return "";
 	}
 }

@@ -203,6 +203,9 @@ class yf_db_mysql41 extends yf_db_driver {
 	/**
 	*/
 	function real_escape_string($string) {
+		if (!$this->db_connect_id) {
+			return addslashes($string);
+		}
 		return mysql_real_escape_string($string, $this->db_connect_id);
 	}
 
@@ -372,5 +375,14 @@ class yf_db_mysql41 extends yf_db_driver {
 			return false;
 		}
 		return mysql_get_host_info($this->db_connect_id);
+	}
+
+	/**
+	*/
+	function ping() {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		return mysql_ping($this->db_connect_id);
 	}
 }

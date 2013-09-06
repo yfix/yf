@@ -17,8 +17,6 @@ class yf_db_mysqli extends yf_db_driver {
 	/** @var @conf_skip */
 	public $query_result		= null;
 	/** @var @conf_skip */
-	public $num_queries			= 0;
-	/** @var @conf_skip */
 	public $META_TABLES_SQL		= "SHOW TABLES";	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
@@ -47,7 +45,7 @@ class yf_db_mysqli extends yf_db_driver {
 			$this->socket = "";
 		}
 		$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
-		ini_set('mysqli.reconnect', true);
+#		ini_set('mysqli.reconnect', true);
 
 		$this->connect();
 
@@ -79,7 +77,7 @@ class yf_db_mysqli extends yf_db_driver {
 			$connect_host = ($this->persistency ? "p:" : "").$this->server. ($connect_port ? ":".$connect_port : "");
 		}
 		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
-		$is_connected = mysqli_real_connect($this->db_connect_id, $this->server, $this->user, $this->password, ''/*$this->dbname*/, $this->port, $this->socket, $use_ssl ? MYSQLI_CLIENT_SSL : 0);
+		$is_connected = mysqli_real_connect($this->db_connect_id, $this->server, $this->user, $this->password, '', $this->port, $this->socket, $use_ssl ? MYSQLI_CLIENT_SSL : 0);
 		if (!$is_connected) {
 			$this->_connect_error = true;
 			$this->db_connect_id = null;
@@ -99,12 +97,9 @@ class yf_db_mysqli extends yf_db_driver {
 	}
 
 	/**
-	* Close transaction
+	* Close connection
 	*/
 	function close() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
 		return mysqli_close($this->db_connect_id);
 	}
 
@@ -112,19 +107,14 @@ class yf_db_mysqli extends yf_db_driver {
 	* Base query method
 	*/
 	function query($query = "") {
-		if (!mysqli_ping($this->db_connect_id)) {
-			$this->db_connect_id = null;
-			unset($this);
-		}
+		// Remove any pre-existing queries
+		unset($this->query_result);
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		// Remove any pre-existing queries
-		unset($this->query_result);
 		if ($query == "") {
 			return false;
 		}
-		$this->num_queries++;
 		$this->query_result = mysqli_query($this->db_connect_id, $query);
 		$query_error = mysqli_error($this->db_connect_id);
 		if ($query_error) {
@@ -165,21 +155,20 @@ if ($mysqli->multi_query($query)) {
 	}
 
 	/**
-	* Unbuffered query method
-	*/
-	function unbuffered_query($query = "") {
-		mysqli_unbuffered_query($this->db_connect_id, $query);
-	}
-
-	/**
 	* Multi query method (specific for this driver)
 	*/
 	function _multi_query($query = "") {
 		if ($query == "") {
 			return false;
 		}
-		$this->num_queries++;
 		return mysqli_multi_query($this->db_connect_id, $query);
+	}
+
+	/**
+	* Unbuffered query method
+	*/
+	function unbuffered_query($query = "") {
+		mysqli_unbuffered_query($this->db_connect_id, $query);
 	}
 
 	/**
@@ -461,5 +450,11 @@ if ($mysqli->multi_query($query)) {
 			return false;
 		}
 		return mysqli_get_host_info($this->db_connect_id);
+	}
+
+	/**
+	*/
+	function ping() {
+		return mysqli_ping($this->db_connect_id);
 	}
 }

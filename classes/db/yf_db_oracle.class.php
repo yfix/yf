@@ -369,6 +369,7 @@ class yf_db_oracle extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return false;
 		}
+// TODO
 		return "";
 	}
 
@@ -378,6 +379,17 @@ class yf_db_oracle extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return false;
 		}
+// TODO
+		return "";
+	}
+
+	/**
+	*/
+	function ping() {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+// TODO
 		return "";
 	}
 }

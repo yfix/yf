@@ -18,8 +18,11 @@ class test_mysql_reconnect {
 		}
 
 		echo "<pre>";
+		echo db()->DB_TYPE;
+
 		foreach(range(1,1000) as $n) {
 			echo "\n".$n.") ";
+#			db()->query("SET wait_timeout=1");
 			print_r(db()->get_one("show tables"));
 			sleep(1);
 		}
