@@ -506,10 +506,7 @@ class yf_main {
 		}
 		@ini_set('session.use_trans_sid',	0); // We need @ here to avoid error when session already started
 		ini_set('url_rewriter.tags',		"");
-		if (!empty($this->SESSION_LIFE_TIME)) {
-			ini_set('session.gc_maxlifetime',	$this->SESSION_LIFE_TIME);
-			ini_set('session.cookie_lifetime',	$this->SESSION_LIFE_TIME);
-		}
+		ini_set('session.cookie_lifetime',	0); // 0 means "until the browser is closed." Defaults to 0
 		ini_set('session.use_cookies',		1);
 		ini_set('session.use_only_cookies',	1);
 		if ($this->SESSION_COOKIE_PATH) {
@@ -565,6 +562,23 @@ class yf_main {
 		// Instruct bots to totally ignore current page
 		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
+		}
+		$now = gmmktime();
+		$last_update = $this->_session('last_update');
+		if ($last_update) {
+			$diff = $now - $last_update;
+			$percent = $diff / $this->SESSION_LIFE_TIME * 100;
+			// Session expired
+			if ($percent > 100) {
+				session_destroy();
+				session_start();
+			// Session need to be regenerated
+			} elseif ($percent > 10) {
+				session_regenerate_id();
+				$this->_session('last_update', $now);
+			}
+		} else {
+			$this->_session('last_update', $now);
 		}
 		$this->_session_init_complete = true;
 	}

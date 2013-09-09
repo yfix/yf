@@ -596,7 +596,9 @@ class yf_tpl {
 		$string = $this->_process_cycles($string, $replace, $name);
 		$string = $this->_process_conditions($string, $replace, $name);
 		if (!$params["no_include"]) {
-			$string = preg_replace(array_keys($this->_PATTERN_INCLUDE), array_values($this->_PATTERN_INCLUDE), $string);
+			$include_regex = key($this->_PATTERN_INCLUDE);
+			$include_replace = current($this->_PATTERN_INCLUDE);
+			$string = preg_replace($include_regex, $include_replace, $string);
 			$string = $this->_process_executes($string, $replace, $name);
 		}
 		if (isset($replace[""])) {
