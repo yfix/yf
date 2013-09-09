@@ -210,20 +210,19 @@ class yf_installer_db {
 		if (!$table_found || empty($TABLE_STRUCTURE)) {
 			return false;
 		}
-		// Load sub-module
 		if (empty($this->db_type)) {
 			return false;
 		}
-		// Try to create table
+		$TABLE_STRUCTURE = $this->create_table_pre_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION);
 		$result = _class("installer_db_".$this->db_type, "classes/db/")->_do_create_table($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION);
 		if (!$result) {
 			return false;
 		}
+		$this->create_table_post_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION);
 		// Temporary hack for the insert actions
 		define("dbt_".$table_name, $full_table_name);
 		// Check if we also need to insert some data into new system table
 		foreach ((array)$TABLE_DATAS as $query_array) {
-			// Prepare data for sql
 			foreach ((array)$query_array as $k => $v) {
 				$query_array[$k] = _es($v);
 			}
@@ -246,32 +245,25 @@ class yf_installer_db {
 		if (substr($table_name, 0, strlen($DB_CONNECTION->DB_PREFIX)) == $DB_CONNECTION->DB_PREFIX) {
 			$table_name = substr($table_name, strlen($DB_CONNECTION->DB_PREFIX));
 		}
-		// Get available tables names
 		$avail_tables = $DB_CONNECTION->meta_tables();
-		// Unrecognized table name
 		if (!in_array($DB_CONNECTION->DB_PREFIX.$table_name, $avail_tables)) {
 			return false;
 		}
-		// Check if this table is a system one
 		$IS_SYS_TABLE = (substr($table_name, 0, strlen("sys_")) == "sys_");
 		// Try to get table "model" from the framework "share" folder
 		clearstatcache();
 		$file_path = PROJECT_PATH."core_cache/installer_".($IS_SYS_TABLE ? "sys" : "other")."_tables_structs_arrays.php";
-		// Refresh old file
 		if (file_exists($file_path) && (filemtime($this->_cache_tables_file) < (time() - $this->CACHE_TTL))) {
 			unlink($file_path);
 			clearstatcache();
 		}
-		// Try to convert strings structure into arrays (if not done yet)
 		if (!file_exists($file_path)) {
 			$this->_create_struct_files(1);
 		}
-		// Last check for file existance
 		if (!file_exists($file_path)) {
 			return false;
 		}
 		@eval(" ?>".file_get_contents($file_path)."<?php ");
-		// Check if we successfully loaded data
 		if (!isset($data)) {
 			return false;
 		}
@@ -312,16 +304,75 @@ class yf_installer_db {
 		if (!isset($table_struct[$column_name])) {
 			return false;
 		}
-		// Load sub-module
 		if (empty($this->db_type)) {
 			return false;
 		}
-		// Do alter table structure
+		$table_struct = $this->alter_table_pre_hook($table_name, $column_name, $table_struct, $DB_CONNECTION);
 		$result = _class("installer_db_".$this->db_type, "classes/db/")->_do_alter_table($table_name, $column_name, $table_struct, $DB_CONNECTION);
+		$this->alter_table_post_hook($table_name, $column_name, $table_struct, $DB_CONNECTION);
+
 		if ($this->USE_LOCKING) {
 			$this->_release_lock();
 		}
 		return $result;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside.
+	* Or use array or pattern callbacks. Example:
+	*	$this->create_table_pre_callbacks = array(
+	*		'^b_bets.*' => function($table, $struct, $db, $m) {
+	*			return $struct;
+	*		}
+	*	);
+	*/
+	function create_table_pre_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION) {
+		foreach ((array)$this->create_table_pre_callbacks as $regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
+				continue;
+			}
+			$TABLE_STRUCTURE = $func($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION, $m);
+		}
+		return $TABLE_STRUCTURE;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside.
+	*/
+	function create_table_post_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION) {
+		foreach ((array)$this->create_table_post_callbacks as $regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
+				continue;
+			}
+			$results[$regex] = $func($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION, $m);
+		}
+		return $results;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside
+	*/
+	function alter_table_pre_hook($table_name, $column_name, $table_struct, $DB_CONNECTION) {
+		foreach ((array)$this->alter_table_pre_callbacks as $table_regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
+				continue;
+			}
+			$table_struct = $func($table_name, $column_name, $table_struct, $DB_CONNECTION, $m);
+		}
+		return $table_struct;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside
+	*/
+	function alter_table_post_hook($table_name, $column_name, $table_struct, $DB_CONNECTION) {
+		foreach ((array)$this->alter_table_post_callbacks as $table_regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
+				continue;
+			}
+			$results[$regex] = $func($table_name, $column_name, $table_struct, $DB_CONNECTION, $m);
+		}
+		return $results;
 	}
 
 	/**
