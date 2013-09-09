@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(dirname(dirname(__FILE__))).'/share/functions/yf_conf.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/share/functions/yf_conf.php';
 
 class conf_test extends PHPUnit_Framework_TestCase {
 

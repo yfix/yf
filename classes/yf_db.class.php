@@ -45,7 +45,7 @@ class yf_db {
 	public $RECONNECT_USE_LOCKING	= 0;
 	/** @var array List of mysql error codes to use for reconnect tries. See also http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html */
 	public $RECONNECT_MYSQL_ERRORS	= array(
-		1053, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
+		1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
 	);
 	/** @var string */
 	public $RECONNECT_LOCK_FILE_NAME	= "uploads/db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock";

@@ -1,6 +1,6 @@
 <?php
 
-define("YF_PATH", dirname(dirname(dirname(__FILE__)))."/");
+define("YF_PATH", dirname(dirname(dirname(dirname(__FILE__))))."/");
 require YF_PATH."classes/yf_main.class.php";
 $GLOBALS['main'] = new yf_main("user", 1, 0);
 
