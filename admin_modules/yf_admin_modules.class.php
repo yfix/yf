@@ -371,7 +371,6 @@ class yf_admin_modules {
 				$user_module_name = substr($user_module_name, strlen(ADMIN_CLASS_PREFIX));
 			}
 			$file_text = "";
-			$_with_admin_prefix = false;
 			$file_names = array();
 			$tmp = ADMIN_REAL_PATH. ADMIN_MODULES_DIR. $user_module_name. CLASS_EXT;
 			if (file_exists($tmp)) {

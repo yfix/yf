@@ -354,34 +354,45 @@ class yf_user_modules {
 		}
 		$methods_by_modules = array();
 		foreach ((array)$GLOBALS['user_modules_array'] as $user_module_name) {
-			$file_text = "";
-			$file_name = INCLUDE_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
-			// Try to get file from teh framework
-			if (!file_exists($file_name)) {
-				$file_name = YF_PATH. USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
-			}
-			if (!file_exists($file_name)) {
-				$file_name = YF_PATH. "priority2/". USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
-			}
-			if (!file_exists($file_name)) {
-				continue;
-			}
-			$file_text = file_get_contents($file_name);
 			// Remove site prefix from module name here
 			if (substr($user_module_name, 0, strlen(SITE_CLASS_PREFIX)) == SITE_CLASS_PREFIX) {
 				$user_module_name = substr($user_module_name, strlen(SITE_CLASS_PREFIX));
 			}
-			// Try to get methods from parent classes (if exist one)
-			$methods_by_modules[$user_module_name] = $this->_recursive_get_methods_from_extends($file_text, $user_module_name, $ONLY_PRIVATE_METHODS);
-			// Try to match methods in the current file
-			foreach ((array)$this->_get_methods_names_from_text($file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
-				$method_name = str_replace(YF_PREFIX, "", $method_name);
-				// Skip constructors in PHP4 style
-				if ($method_name == $user_module_name) {
-					continue;
-				}
-				$methods_by_modules[$user_module_name][$method_name] = $method_name;
+			$file_text = "";
+			$tmp = INCLUDE_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['user'] = $tmp;
 			}
+			$tmp = YF_PATH. USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['yf'] = $tmp;
+			}
+			$tmp = YF_PATH. "priority2/". USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['yf_p2'] = $tmp;
+			}
+			if (!$file_names) {
+				continue;
+			}
+			foreach ((array)$file_names as $location => $file_name) {
+				$file_text = file_get_contents($file_name);
+				// Try to get methods from parent classes (if exist one)
+				$_methods = $this->_recursive_get_methods_from_extends($file_text, $user_module_name, $ONLY_PRIVATE_METHODS);
+				foreach ($_methods as $method_name) {
+					$method_name = str_replace(YF_PREFIX, "", $method_name);
+					$methods_by_modules[$user_module_name][$method_name] = $method_name;
+				}
+				// Try to match methods in the current file
+				foreach ((array)$this->_get_methods_names_from_text($file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
+					$method_name = str_replace(YF_PREFIX, "", $method_name);
+					// Skip constructors in PHP4 style
+					if ($method_name == $user_module_name) {
+						continue;
+					}
+					$methods_by_modules[$user_module_name][$method_name] = $method_name;
+				}
+			}
+			ksort($methods_by_modules[$user_module_name]);
 		}
 		ksort($methods_by_modules);
 		return $methods_by_modules;
