@@ -387,7 +387,7 @@ class yf_menus_editor {
 				continue;
 			}
 			$groups = array();
-			foreach (explode(",",$A["user_groups"]) as $k => $v) {
+			foreach (explode(",", trim(trim($A["user_groups"],","))) as $k => $v) {
 				if (empty($this->_groups[$v])) {
 					continue;
 				}
