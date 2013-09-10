@@ -1,2 +1,2 @@
-{if("edit_link" ne "")}<a href="{edit_link}">{/if}{name}{if("edit_link" ne "")}</a>{/if} 
+<a{if("edit_link" ne "")} href="{edit_link}"{/if}>{name}</a> 
 
