@@ -128,6 +128,9 @@ class yf_db_mysqli extends yf_db_driver {
 	* Very simple emulation of the mysqli multi_query
 	*/
 	function multi_query($queries = array()) {
+		if (is_string($queries)) {
+			return $this->_multi_query($queries);
+		}
 // TODO: check and implement this:
 /*
 $query  = "SELECT CURRENT_USER();";

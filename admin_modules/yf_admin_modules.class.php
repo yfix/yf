@@ -367,42 +367,50 @@ class yf_admin_modules {
 		}
 		$methods_by_modules = array();
 		foreach ((array)$GLOBALS['admin_modules_array'] as $user_module_name) {
-			// Remove admin prefix from module name here
 			if (substr($user_module_name, 0, strlen(ADMIN_CLASS_PREFIX)) == ADMIN_CLASS_PREFIX) {
 				$user_module_name = substr($user_module_name, strlen(ADMIN_CLASS_PREFIX));
 			}
 			$file_text = "";
 			$_with_admin_prefix = false;
-			$file_name = ADMIN_REAL_PATH. ADMIN_MODULES_DIR. $user_module_name. CLASS_EXT;
-			// Try to get file from the framework
-			if (!file_exists($file_name)) {
-				$file_name = YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			$file_names = array();
+			$tmp = ADMIN_REAL_PATH. ADMIN_MODULES_DIR. $user_module_name. CLASS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['admin'] = $tmp;
 			}
-			if (!file_exists($file_name)) {
-				$file_name = YF_PATH. "priority2/". ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			$tmp = YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['yf'] = $tmp;
 			}
-			// Try with ADMIN_CLASS_PREFIX
-			if (!file_exists($file_name)) {
-				$file_name = ADMIN_REAL_PATH. ADMIN_MODULES_DIR. ADMIN_CLASS_PREFIX. $user_module_name. CLASS_EXT;
-				$_with_admin_prefix = true;
+			$tmp = YF_PATH. "priority2/". ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['yf_p2'] = $tmp;
 			}
-			// Give up
-			if (!file_exists($file_name)) {
+			$tmp = ADMIN_REAL_PATH. ADMIN_MODULES_DIR. ADMIN_CLASS_PREFIX. $user_module_name. CLASS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['admin_with_prefix'] = $tmp;
+			}
+			if (!$file_names) {
 				continue;
 			}
-			$file_text = file_get_contents($file_name);
-			// Try to get methods from parent classes (if exist one)
-			$methods_by_modules[$user_module_name] = $this->_recursive_get_methods_from_extends($file_text, ($_with_admin_prefix ? ADMIN_CLASS_PREFIX : ""). $user_module_name, $ONLY_PRIVATE_METHODS);
-			// Try to match methods in the current file
-			foreach ((array)$this->_get_methods_names_from_text($file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
-				$method_name = str_replace(YF_PREFIX, "", $method_name);
-				// Skip constructors in PHP4 style
-				if ($method_name == $user_module_name) {
-					continue;
+			foreach ((array)$file_names as $location => $file_name) {
+				$file_text = file_get_contents($file_name);
+				// Try to get methods from parent classes (if exist one)
+				$_methods = $this->_recursive_get_methods_from_extends($file_text, ($location == 'admin_with_prefix' ? ADMIN_CLASS_PREFIX : ""). $user_module_name, $ONLY_PRIVATE_METHODS);
+				foreach ($_methods as $method_name) {
+					$method_name = str_replace(YF_PREFIX, "", $method_name);
+					$methods_by_modules[$user_module_name][$method_name] = $method_name;
 				}
-				// Add into array
-				$methods_by_modules[$user_module_name][$method_name] = $method_name;
+				// Try to match methods in the current file
+				foreach ((array)$this->_get_methods_names_from_text($file_text, $ONLY_PRIVATE_METHODS) as $method_name) {
+					$method_name = str_replace(YF_PREFIX, "", $method_name);
+					// Skip constructors in PHP4 style
+					if ($method_name == $user_module_name) {
+						continue;
+					}
+					$methods_by_modules[$user_module_name][$method_name] = $method_name;
+				}
 			}
+			ksort($methods_by_modules[$user_module_name]);
 		}
 		ksort($methods_by_modules);
 		return $methods_by_modules;

@@ -100,10 +100,10 @@ class yf_form2 {
 	* Render result form html, gathered by row functions
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/
-	function render($name = '', $method = '', $extra = array(), $replace = array()) {
+	function render($extra = array(), $replace = array()) {
 		// Call these methods, if not done yet, save 2 api calls
 		if (!isset($this->_body['form_begin'])) {
-			$this->form_begin($name, $method, $extra, $replace);
+			$this->form_begin('', '', $extra, $replace);
 		}
 		if (!isset($this->_body['form_end'])) {
 			$this->form_end();
@@ -125,7 +125,6 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-
 		// Merge params passed to table2() and params passed here, with params here have more priority:
 		$tmp = $this->_params;
 		foreach ((array)$extra as $k => $v) {
@@ -135,10 +134,10 @@ class yf_form2 {
 		unset($tmp);
 
 		if (!$name) {
-			$name = 'form_action';
+			$name = $extra['name'] ? $extra['name']: 'form_action';
 		}
 		if (!$method) {
-			$method = 'post';
+			$method = $extra['method'] ? $extra['method']: 'post';
 		}
 		$enctype = '';
 		if ($extra['enctype']) {
