@@ -435,7 +435,7 @@ class yf_db {
 	/**
 	* Insert array of values into table
 	*/
-	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false) {
+	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
@@ -458,16 +458,17 @@ class yf_db {
 			$is_multiple = is_array($cur_row) ? 1 : 0;
 			break;
 		}
+		$cols = array();
 		if ($is_multiple) {
 			foreach ((array)$data as $cur_row) {
 				if (empty($cols)) {
-					$cols	= array_keys($cur_row);
+					$cols = array_keys($cur_row);
 				}
 				$cur_values = array_values($cur_row);
 				foreach ((array)$cur_values as $k => $v) {
 					$cur_values[$k] = $this->enclose_field_value($v);
 				}
-				$values_array[] = "(".implode(', ', $cur_values)."\n)";
+				$values_array[] = '('.implode(', ', $cur_values)."\n)";
 			}
 		} else {
 			$cols	= array_keys($data);
@@ -478,12 +479,24 @@ class yf_db {
 			$values_array[] = "(".implode(', ', $values)."\n)";
 		}
 		foreach ((array)$cols as $k => $v) {
-			$cols[$k] = $this->enclose_field_name($v);
+			unset($cols[$k]);
+			$cols[$v] = $this->enclose_field_name($v);
 		}
-		$sql = ($replace ? "REPLACE" : "INSERT"). ($ignore ? " IGNORE" : "")." INTO ".
+		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : "").' INTO '.
 			$this->enclose_field_name($table).
 			" \n(".implode(', ', $cols).") VALUES \n".
 			implode(", ", $values_array);
+		if ($on_duplicate_key_update) {
+			$sql .= "\n ON DUPLICATE KEY UPDATE ";
+			$tmp = array();
+			foreach ((array)$cols as $col => $col_escaped) {
+				if ($col == "id") {
+					continue;
+				}
+				$tmp[] = $col_escaped.' = VALUES('.$col_escaped.')';
+			}
+			$sql .= implode(', ', $tmp);
+		}
 		if ($only_sql) {
 			return $sql;
 		}
@@ -495,6 +508,13 @@ class yf_db {
 	*/
 	function insert_ignore($table, $data, $only_sql = false, $replace = false) {
 		return $this->insert($table, $data, $only_sql, $replace, $ignore = true);
+	}
+
+	/**
+	* Alias, forced to add INSERT ... ON DUPLICATE KEY UPDATE
+	*/
+	function insert_on_duplicate_key_update($table, $data, $only_sql = false, $replace = false) {
+		return $this->insert($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = true);
 	}
 
 	/**

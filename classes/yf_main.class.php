@@ -38,7 +38,7 @@ class yf_main {
 	/** @var string Custom session save dir (leave ampty to skip), example: "session_data/" */
 	public $SESSION_SAVE_DIR		= "";
 	/** @var int Session life time (in seconds) */
-	public $SESSION_LIFE_TIME		= 7200; // 2 hours
+	public $SESSION_LIFE_TIME		= 18000; // 5 hours
 	/** @var string */
 	public $SESSION_DOMAIN			= ""; // Default empty, means current domain
 	/** @var string */
