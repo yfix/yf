@@ -427,4 +427,10 @@ class yf_dynamic {
 
 		echo $finded_ids ? common()->json_encode($finded_ids) : "*";
 	}
+
+	/**
+	*/
+	function captcha_image() {
+		return _class("captcha")->show_image();
+	}
 }

@@ -12,7 +12,7 @@ class yf_captcha {
 	/** @var string Secret key (will be added to hash) */
 	public $secret_key		= "";
 	/** @var bool Use cookies or session vars */
-	public $use_cookies	= false;
+	public $use_cookies		= false;
 	/** @var string Cookie var name */
 	public $var_name		= "image_hash";
 	/** @var int Cookie time-to-live (in seconds) */
@@ -20,9 +20,9 @@ class yf_captcha {
 	/** @var string Path to the True Type Font to use (could be array) */
 	public $ttf_font_path	= "";
 	/** @var int Result image width (in pixels) */
-	public $image_width	= 120;
+	public $image_width		= 110;
 	/** @var int Result image height (in pixels) */
-	public $image_height	= 50;
+	public $image_height	= 30;
 	/** @var array Allowed symbols to use in randomizer */
 	var	$symbols_array	= array();
 	/** @var int Number of symbols to generate */

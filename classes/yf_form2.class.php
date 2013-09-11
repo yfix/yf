@@ -1654,12 +1654,16 @@ class yf_form2 {
 			$extra = array();
 		}
 		if (!$desc) {
-			$desc = 'CAPTCHA Image';
+			$desc = 'Captcha';
 		}
 		if (!$var_name) {
 			$var_name = 'captcha_block';
 		}
-		$text = $replace[$var_name];
+		if (isset($replace[$var_name])) {
+			$text = $replace[$var_name];
+		} else {
+			$text = _class("captcha")->show_block("./?object=dynamic&action=captcha_image");
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">'
 				.($desc ? '<label class="control-label">'.t($desc).'</label>' : '')

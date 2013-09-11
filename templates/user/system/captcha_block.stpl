@@ -1,31 +1,23 @@
-<span id="captcha">
-<img src="{img_src}" border="1" id="captcha_img" />   {tip('general.captcha')}<br /><a href="javascript:void(0)" onclick="return captcha_reload_img();" class="actionlink">{t(Cannot read the code)}?</a>
-<br />
-<input type="text" id="captcha_input" name="captcha" size="{num_symbols}" maxlength="{num_symbols}" value="" /> &nbsp;
-<br />
-<small>{t(Please, confirm your action by entering the digital code you see on the image above)}</small>
-</span>
+<img src="{img_src}" id="captcha_img" class="captcha_img img-rounded" />
+<input type="text" id="captcha_input" name="captcha" size="{num_symbols}" maxlength="{num_symbols}" class="input-small" value="" />
+{itip('Please, confirm your action by entering the digital code you see on the image')}
+<small><br /><a href="javascript:void(0)" id="captcha_reload_img">{t(Get new image)}</a></small>
 
 <script type="text/javascript">
-<!--
 var captcha_img_src = '{img_src}';
-var ci_obj = document.getElementById("captcha_input");
-if (ci_obj != null) {
-	ci_obj.onkeyup			= check_captcha_input;
-	ci_obj.onchange			= check_captcha_input;
-}
-function check_captcha_input () {
-	var text = ci_obj.value;
-	if (text.length > 0 && !text.match(/^[0-9]+$/)) {
-		ci_obj.value = text.replace(/[^0-9]/, "");
-		alert('CAPTCHA code should consist of digits only!');
-		return false;
-	}
-	return true;
-}
-function captcha_reload_img () {
-	var new_img_src = captcha_img_src.replace(/__captcha_id__([^\/]*?)/, "__captcha_id__" + (1000000 * Math.random()).toString().replace(/[^0-9]/, ""));
-	document.getElementById('captcha_img').src = new_img_src;
-}
--->
+$(function(){
+	$("#captcha_input").on("keyup", function(e){
+		var _val = $(this).val();
+		if (_val.length > 0 && !_val.match(/^[0-9]+$/)) {
+			$(this).val(_val.replace(/[^0-9]/, ""));
+			e.preventDefault();
+			return false;
+		}
+		return true;
+	})
+	$("#captcha_reload_img").on("click", function(){
+		var _new_img_src = captcha_img_src.replace(/__captcha_id__([^\/]*?)/, "__captcha_id__" + (1000000 * Math.random()).toString().replace(/[^0-9]/, ""));
+		$('#captcha_img').attr("src",  _new_img_src);
+	})
+})
 </script>
