@@ -285,6 +285,47 @@ class yf_main {
 
 	/**
 	*/
+    function _do_rewrite() {
+        $host = $_SERVER["HTTP_HOST"];
+		// Override by WEB_PATH
+		if (defined('WEB_PATH') && ! $this->web_path_was_not_defined) {
+			$w_host = parse_url(WEB_PATH, PHP_URL_HOST);
+			$w_port = parse_url(WEB_PATH, PHP_URL_PORT);
+			$w_path = parse_url(WEB_PATH, PHP_URL_PATH);
+#			$host = $w_host. (strlen($w_port) > 1 ? ':'.$w_port : ''). (strlen($w_path) > 1 ? $w_path : '');
+// TODO: fix me or change me to make this work in REWRITE_MODE
+		}
+        if (isset($_GET["host"]) && !empty($_GET["host"])) {
+            $host = $_GET["host"];
+        }
+
+        list($u,) = explode('?', trim($_SERVER['REQUEST_URI'], "/"));
+        $u = preg_replace("/\.htm.*/", "", $u);
+        $u_arr = explode("/", $u);
+
+        unset($_GET['object']);
+        unset($_GET['action']);
+
+        $arr = module('rewrite')->REWRITE_PATTERNS['yf']->_parse($host, $u_arr, $_GET);
+
+        foreach ((array)$arr as $k => $v) {
+            if ($k != '%redirect_url%') {
+                $_GET[$k] = $v;
+            }
+        }
+        foreach ((array)$_GET as $k => $v) {
+			if ($v == '') {
+				unset($_GET[$k]);
+			}
+		}
+		if (!isset($_GET['action'])) {
+			$_GET['action'] = 'show';
+		}
+        $_SERVER['QUERY_STRING'] = http_build_query((array)$_GET);
+    }
+
+	/**
+	*/
 	function init_conf_functions () {
 		// conf(), module_conf() wrappers
 		$fwork_conf_path = dirname(dirname(__FILE__))."/share/functions/yf_conf.php";
@@ -1392,6 +1433,7 @@ class yf_main {
 			} else {
 				$host = "127.0.0.1";
 			}
+			$this->web_path_was_not_defined = true;
 			define('WEB_PATH',
 				(($this->_server("HTTPS") || $this->_server("SSL_PROTOCOL")) ? "https://" : "http://")
 				.$host
@@ -1634,32 +1676,5 @@ class yf_main {
 		}
 		return $key === null ? $_COOKIE : $_COOKIE[$key];
 	}
-	
-    function _do_rewrite() {
-        $host = $_SERVER["HTTP_HOST"];
-        if (isset($_GET["host"]) && !empty($_GET["host"])) {
-            $host = $_GET["host"];
-        }
-
-        list($u,) = explode('?',trim($_SERVER['REQUEST_URI'],"/"));
-        $u = preg_replace("/\.htm.*/","",$u);
-        $u_arr = explode("/",$u);
-
-        unset($_GET['object']);
-        unset($_GET['action']);
-
-        $arr = module('rewrite')->REWRITE_PATTERNS['yf']->_parse($host,$u_arr,$_GET);
-
-        foreach ((array)$arr as $k=>$v) {
-            if ($k!='%redirect_url%') {
-                $_GET[$k] = $v;
-            }
-        }
-        foreach ((array)$_GET as $k=>$v)  if ($v == '') unset($_GET[$k]);
-		if (!isset($_GET['action'])) {
-			$_GET['action'] = 'show';
-		}
-        $_SERVER['QUERY_STRING'] = http_build_query((array)$_GET);
-    }
 	
 }

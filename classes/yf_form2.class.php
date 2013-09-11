@@ -119,31 +119,104 @@ class yf_form2 {
 	/**
 	*/
 	function validate($post = array(), $validate_rules = array()) {
+		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
+// TODO: decide order of importance or merge if element exists
+		foreach ((array)$form_global_validate as $name => $rules) {
+			$this->_validate_rules[$name] = $rules;
+		}
+// TODO: decide order of importance or merge if element exists
 		foreach ((array)$validate_rules as $name => $rules) {
-//			$this->_validate_rules[$name] = $rules;
+			$this->_validate_rules[$name] = $rules;
 		}
-		// Merge params passed to table2() and params passed here, with params here have more priority:
-		$tmp = $this->_params;
-		foreach ((array)$extra as $k => $v) {
-			$tmp[$k] = $v;
+		// Cleanup rules before we start
+		$tmp = array();
+		foreach ((array)$this->_validate_rules as $name => $rules) {
+			if (empty($rules)) {
+				continue;
+			}
+			$_rules = array();
+			foreach ((array)$rules as $rule) {
+				if (is_callable($rule)) {
+					$_rules[] = $rule;
+				} elseif (is_string($rule)) {
+					foreach (explode("|", $rule) as $r2) {
+						$r2 = trim($r2);
+						$r_param = null;
+						// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
+						$pos = strpos($r2, '[');
+						if ($pos !== false) {
+							$r_param = trim(trim(substr($r2, $pos), ']['));
+							$r2 = trim(substr($r2, 0, $pos));
+						}
+						$_rules[] = array($r2, $r_param);
+#						$_rules[] = 'function($in) { return $r2($in, $r_param); }';
+					}
+				}
+			}
+			if ($_rules) {
+				$tmp[$name] = $_rules;
+			}
 		}
-		$extra = $tmp;
+#print_r($tmp);
+		$this->_validate_rules = $tmp;
 		unset($tmp);
+
+		
+#		foreach ((array)$this->_validate_rules as $name => $rules) {
+#			_class('form_validate')->$func
+#		}
+
+		//$this->_validate_ok
+		//$this->_validated_fields
 // TODO
 		return $this;
 	}
 
 	/**
 	*/
-	function db_insert_if_ok() {
-// TODO
+	function db_insert_if_ok($table, $fields = array()) {
+		if (!$this->_validate_ok || !$table) {
+			return $this;
+		}
+		$data = array();
+		foreach ((array)$fields as $k => $name) {
+			// Example $fields = array('login','email');
+			if (is_numeric($k)) {
+				$db_field_name = $name;
+			// Example $fields = array('pswd' => 'password');
+			} else {
+				$db_field_name = $name;
+				$name = $k;
+			}
+			$data[$db_field_name] = $this->_validated_fields[$name];
+		}
+		if ($data && $table) {
+			db()->insert($table, $data);
+		}
 		return $this;
 	}
 
 	/**
 	*/
-	function db_update_if_ok() {
-// TODO
+	function db_update_if_ok($table, $where_id, $fields = array()) {
+		if (!$this->_validate_ok || !$table) {
+			return $this;
+		}
+		$data = array();
+		foreach ((array)$fields as $k => $name) {
+			// Example $fields = array('login','email');
+			if (is_numeric($k)) {
+				$db_field_name = $name;
+			// Example $fields = array('pswd' => 'password');
+			} else {
+				$db_field_name = $name;
+				$name = $k;
+			}
+			$data[$db_field_name] = $this->_validated_fields[$name];
+		}
+		if ($data && $table) {
+			db()->update($table, $data, $where_id);
+		}
 		return $this;
 	}
 

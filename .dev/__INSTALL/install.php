@@ -303,6 +303,10 @@ define("DB_CHARSET","utf8");';
 	}
 	function write_user_index_php() {
 		$index_file_content = '<?php
+$dev_settings = dirname(__FILE__)."/.dev/override.php";
+if (file_exists($dev_settings)) {
+    require_once $dev_settings;
+}
 define("DEBUG_MODE", false);
 define("YF_PATH", "'.YF_PATH.'");
 define("WEB_PATH", "'.$_POST['install_web_path'].'");
@@ -324,6 +328,10 @@ new yf_main("user", $no_db_connect = false, $auto_init_all = true);';
 	}
 	function write_admin_index_php() {
 		$admin_index_file_content = '<?php
+$dev_settings = dirname(dirname(__FILE__))."/.dev/override.php";
+if (file_exists($dev_settings)) {
+    require_once $dev_settings;
+}
 define("DEBUG_MODE", false);
 define("YF_PATH", "'.YF_PATH.'");
 define("SITE_DEFAULT_PAGE", "./?object=admin_home");

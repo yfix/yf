@@ -19,7 +19,7 @@ class register {
 			->captcha()
 			->save()
 		;
-		if ($_POST) {
+		if (isset($_POST)) {
 			$form->validate(/*$_POST, $validate_rules*/)
 				->db_insert_if_ok('user', array('login','email','password'));
 		}
