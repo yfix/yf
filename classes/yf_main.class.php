@@ -38,7 +38,7 @@ class yf_main {
 	/** @var string Custom session save dir (leave ampty to skip), example: "session_data/" */
 	public $SESSION_SAVE_DIR		= "";
 	/** @var int Session life time (in seconds) */
-	public $SESSION_LIFE_TIME		= 18000; // 5 hours
+	public $SESSION_LIFE_TIME		= 7200; // 2 hours
 	/** @var string */
 	public $SESSION_DOMAIN			= ""; // Default empty, means current domain
 	/** @var string */
@@ -253,6 +253,10 @@ class yf_main {
 	* Allows to call code here before we begin with graphics
 	*/
 	function _after_init_hook () {
+		if (!main()->CONSOLE_MODE && $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1) {
+			$this->_do_rewrite();
+		}		
+		
 		$this->_init_cur_user_info($this);
 
 		if ($this->TRACK_USER_PAGE_VIEWS && $this->USER_ID) {
@@ -506,7 +510,10 @@ class yf_main {
 		}
 		@ini_set('session.use_trans_sid',	0); // We need @ here to avoid error when session already started
 		ini_set('url_rewriter.tags',		"");
-		ini_set('session.cookie_lifetime',	0); // 0 means "until the browser is closed." Defaults to 0
+		if (!empty($this->SESSION_LIFE_TIME)) {
+			ini_set('session.gc_maxlifetime',	$this->SESSION_LIFE_TIME);
+			ini_set('session.cookie_lifetime',	$this->SESSION_LIFE_TIME);
+		}
 		ini_set('session.use_cookies',		1);
 		ini_set('session.use_only_cookies',	1);
 		if ($this->SESSION_COOKIE_PATH) {
@@ -562,23 +569,6 @@ class yf_main {
 		// Instruct bots to totally ignore current page
 		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
-		}
-		$now = gmmktime();
-		$last_update = $this->_session('last_update');
-		if ($last_update) {
-			$diff = $now - $last_update;
-			$percent = $diff / $this->SESSION_LIFE_TIME * 100;
-			// Session expired
-			if ($percent > 100) {
-				session_destroy();
-				session_start();
-			// Session need to be regenerated
-			} elseif ($percent > 10) {
-				session_regenerate_id();
-				$this->_session('last_update', $now);
-			}
-		} else {
-			$this->_session('last_update', $now);
 		}
 		$this->_session_init_complete = true;
 	}
@@ -1528,8 +1518,6 @@ class yf_main {
 			return false;
 		}
 		if (MAIN_TYPE_ADMIN) {
-			$OBJ->ADMIN_ID	= (int)$this->_session('admin_id');
-			$OBJ->ADMIN_GROUP= (int)$this->_session('admin_group');
 			$OBJ->USER_ID = $this->_get("user_id");
 		} elseif (MAIN_TYPE_USER && isset($_SESSION)) {
 			$OBJ->USER_ID	= (int)$this->_session('user_id');
@@ -1594,15 +1582,6 @@ class yf_main {
 		$OBJ = $this->init_class("project_packer", "classes/");
 	}
 
-	/**
-	*/
-	function no_graphics($new_val = null) {
-		if (isset($new_val)) {
-			$this->NO_GRAPHICS = (bool) $new_val;
-		}
-		return $this->NO_GRAPHICS;
-	}
-
 # TODO: in DEBUG_MODE log/cleanup/catch reads/writes to these methods
 
 	/**
@@ -1655,4 +1634,32 @@ class yf_main {
 		}
 		return $key === null ? $_COOKIE : $_COOKIE[$key];
 	}
+	
+    function _do_rewrite() {
+        $host = $_SERVER["HTTP_HOST"];
+        if (isset($_GET["host"]) && !empty($_GET["host"])) {
+            $host = $_GET["host"];
+        }
+
+        list($u,) = explode('?',trim($_SERVER['REQUEST_URI'],"/"));
+        $u = preg_replace("/\.htm.*/","",$u);
+        $u_arr = explode("/",$u);
+
+        unset($_GET['object']);
+        unset($_GET['action']);
+
+        $arr = module('rewrite')->REWRITE_PATTERNS['yf']->_parse($host,$u_arr,$_GET);
+
+        foreach ((array)$arr as $k=>$v) {
+            if ($k!='%redirect_url%') {
+                $_GET[$k] = $v;
+            }
+        }
+        foreach ((array)$_GET as $k=>$v)  if ($v == '') unset($_GET[$k]);
+		if (!isset($_GET['action'])) {
+			$_GET['action'] = 'show';
+		}
+        $_SERVER['QUERY_STRING'] = http_build_query((array)$_GET);
+    }
+	
 }
