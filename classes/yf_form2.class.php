@@ -118,6 +118,37 @@ class yf_form2 {
 
 	/**
 	*/
+	function validate($post = array(), $validate_rules = array()) {
+		foreach ((array)$validate_rules as $name => $rules) {
+//			$this->_validate_rules[$name] = $rules;
+		}
+		// Merge params passed to table2() and params passed here, with params here have more priority:
+		$tmp = $this->_params;
+		foreach ((array)$extra as $k => $v) {
+			$tmp[$k] = $v;
+		}
+		$extra = $tmp;
+		unset($tmp);
+// TODO
+		return $this;
+	}
+
+	/**
+	*/
+	function db_insert_if_ok() {
+// TODO
+		return $this;
+	}
+
+	/**
+	*/
+	function db_update_if_ok() {
+// TODO
+		return $this;
+	}
+
+	/**
+	*/
 	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = $this->_replace;
@@ -252,6 +283,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -313,6 +345,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -471,6 +504,7 @@ class yf_form2 {
 		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.$value.'"'.($extra['data'] ? ' data="'.$extra['data'].'"' : '').'>';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -503,6 +537,7 @@ class yf_form2 {
 			}
 		}
 		$extra['type'] = 'password';
+		$extra['prepend'] = '<i class="icon-key"></i>';
 		if (!$name) {
 			$name = 'password';
 		}
@@ -521,6 +556,26 @@ class yf_form2 {
 			}
 		}
 		$extra['type'] = 'file';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* Custom
+	*/
+	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array("edit_link" => $extra);
+			} else {
+				$extra = array();
+			}
+		}
+		$extra['type'] = 'text';
+		$extra['prepend'] = '<i class="icon-user"></i>';
+		if (!$name) {
+			$name = 'login';
+		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -771,6 +826,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -831,6 +887,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -965,6 +1022,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1029,6 +1087,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1088,6 +1147,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1138,6 +1198,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1189,6 +1250,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1239,6 +1301,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1291,6 +1354,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1338,6 +1402,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1567,6 +1632,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1613,6 +1679,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1639,6 +1706,7 @@ class yf_form2 {
 */
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1673,6 +1741,7 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
+			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;

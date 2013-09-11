@@ -134,16 +134,6 @@ class yf_validate {
 	}
 
 	/**
-	* 
-	*/
-	function _check_measurements () {
-// TODO
-		if ($_POST["measurements"] != "" && !preg_match("/[0-9]{2}(aaa|aa|a|b|c|d|dd|ddd|e|f|ff|g|gg|h|hh|j|jj|k|l)-([0-9]{2})-([0-9]{2})/i", $_POST["measurements"])) {
-			_re(t('Invalid measurements (example, 36DD-27-32)!'));
-		}
-	}
-
-	/**
 	* Check selected location (country, region, city)
 	*/
 	function _check_location ($cur_country = "", $cur_region = "", $cur_city = "") {
