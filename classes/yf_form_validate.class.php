@@ -3,91 +3,88 @@
 /**
 */
 class yf_form_validate {
-	function required($in) {
+	function required($in, $params = array(), $fields = array()) {
 		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
 	}
-	function matches($in) {
+	function matches($in, $params = array(), $fields = array()) {
+		$field = $params['field'];
+		return isset($this->_fields[$field], $_POST[$field])
+			? ($in === $_POST[$field])
+			: FALSE;
+	}
+	function is_unique($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function is_unique($in) {
+	function min_length($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function min_length($in) {
+	function max_length($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function max_length($in) {
+	function exact_length($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function exact_length($in) {
+	function greater_than($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function greater_than($in) {
+	function less_than($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function less_than($in) {
+	function alpha($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function alpha($in) {
+	function alpha_numeric($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function alpha_numeric($in) {
+	function alpha_dash($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function alpha_dash($in) {
+	function numeric($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function numeric($in) {
+	function integer($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function integer($in) {
+	function decimal($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function decimal($in) {
+	function is_natural($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function is_natural($in) {
+	function is_natural_no_zero($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function is_natural_no_zero($in) {
+	function valid_email($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function valid_email($in) {
+	function valid_emails($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function valid_emails($in) {
+	function valid_ip($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function valid_ip($in) {
+	function valid_base64($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function valid_base64($in) {
+	function xss_clean($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function xss_clean($in) {
+	function prep_for_form($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function prep_for_form($in) {
+	function prep_url($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function prep_url($in) {
+	function strip_image_tags($in, $params = array(), $fields = array()) {
 // TODO
 	}
-	function strip_image_tags($in) {
-// TODO
-	}
-	function encode_php_tags($in) {
+	function encode_php_tags($in, $params = array(), $fields = array()) {
 // TODO
 	}
 /*
 	public function regex_match($in, $regex)
 	{
 		return (bool) preg_match($regex, $in);
-	}
-	public function matches($in, $field)
-	{
-		return isset($this->_field_data[$field], $this->_field_data[$field]['postdata'])
-			? ($in === $this->_field_data[$field]['postdata'])
-			: FALSE;
 	}
 	public function differs($in, $field)
 	{

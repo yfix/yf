@@ -119,6 +119,8 @@ class yf_form2 {
 	/**
 	*/
 	function validate($post = array(), $validate_rules = array()) {
+		$data = $post;
+
 		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 // TODO: decide order of importance or merge if element exists
 		foreach ((array)$form_global_validate as $name => $rules) {
@@ -161,10 +163,22 @@ class yf_form2 {
 		$this->_validate_rules = $tmp;
 		unset($tmp);
 
-		
-#		foreach ((array)$this->_validate_rules as $name => $rules) {
-#			_class('form_validate')->$func
-#		}
+#		$form_validate = _class('form_validate');
+		foreach ((array)$this->_validate_rules as $name => $rule) {
+			if (is_callable($rule)) {
+				$result = $rule($data[$name], null, $data);
+			} else {
+				$func = $rule[0];
+				$r_param = $rule[1];
+#				$result = _class('form_validate')->$func($data[$name], null, $data);
+#				if (function_exists($func)) {
+#				}
+			}
+			if (!$result) {
+				_re('Wrong '.$name, $name);
+			}
+#			_class('form_validate')->$func();
+		}
 
 		//$this->_validate_ok
 		//$this->_validated_fields
