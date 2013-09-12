@@ -392,9 +392,15 @@ class yf_user_modules {
 					$methods_by_modules[$user_module_name][$method_name] = $method_name;
 				}
 			}
-			ksort($methods_by_modules[$user_module_name]);
 		}
-		ksort($methods_by_modules);
+		if (is_array($methods_by_modules)) {
+			ksort($methods_by_modules);
+			foreach ((array)$methods_by_modules as $user_module_name => $methods) {
+				if (is_array($methods)) {
+					ksort($methods_by_modules[$user_module_name]);
+				}
+			}
+		}
 		return $methods_by_modules;
 	}
 
