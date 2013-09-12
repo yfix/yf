@@ -11,18 +11,16 @@ class register {
 			'captcha'	=> 'trim|captcha',
 		);
 		$form = form(array(), array('validate' => $validate_rules))
+			->validate(/*$validate_rules*/)
+			->db_insert_if_ok('user', array('login','email','password'))
 			->login()
 			->email()
 			->email('emailconf')
 			->password()
-			->password('pswdconf'/*, '', array('validate' => 'trim|required|md5')*/)
+			->password('pswdconf')
 			->captcha()
 			->save()
 		;
-		if (isset($_POST)) {
-			$form->validate(/*$_POST, $validate_rules*/)
-				->db_insert_if_ok('user', array('login','email','password'));
-		}
 		return $form;
 	}
 

@@ -1338,10 +1338,11 @@ class yf_db {
 			return false;
 		}
 		$cond = "id=".$this->enclose_field_value($where);
+// TODO: add support for several fields in where
 		if (is_array($where)) {
 			$cond = key($where)."=".$this->enclose_field_value(current($where));
 		}
-		$sql = "DELETE FROM ".$this->_real_name($table)." WHERE ".$cond;
+		$sql = "DELETE FROM ".$this->_real_name($table)." WHERE ".$cond." LIMIT 1";
 		return $this->query($sql);
 	}
 

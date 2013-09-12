@@ -1,5 +1,5 @@
 <tr>
-	<td><a href="{rules_link}" class="btn btn-mini">{type} :: {name}</a>{if("desc" ne "")}<br /><small>{desc}</small>{/if}</td>
+	<td><a href="{rules_link}" class="btn btn-mini">{type}&nbsp;::&nbsp;{name}</a>{if("desc" ne "")}<br /><small>{desc}</small>{/if}</td>
 	<td>{stpl_name}</td>
 	<td>{method_name}</td>
 	<td>{num_rules}</td>

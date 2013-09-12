@@ -30,6 +30,20 @@ class yf_admin_home {
 	/**
 	*/
 	function show () {
+		if (main()->ADMIN_GROUP != 1) {
+			$admin_user = db()->get('SELECT * FROM '.db('admin').' WHERE id='.(int)main()->ADMIN_ID);
+			if ($admin_user['go_after_login']) {
+				$url = $admin_user['go_after_login'];
+			} else {
+				$admin_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)main()->ADMIN_GROUP);
+				if ($admin_group['go_after_login']) {
+					$url = $admin_group['go_after_login'];
+				}
+			}
+			if ($url) {
+				return js_redirect($url);
+			}
+		}
 		return module("manage_dashboards")->display("admin_home");
 //		return module("admin_wall")->show();
 	}

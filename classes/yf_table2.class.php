@@ -379,6 +379,11 @@ class yf_table2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}
@@ -442,6 +447,11 @@ class yf_table2 {
 	/**
 	*/
 	function date($name, $desc = "", $extra = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace("_", " ", $name));
 		}

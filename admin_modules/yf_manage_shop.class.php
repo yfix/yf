@@ -63,6 +63,7 @@ class yf_manage_shop {
 	function _init() {
 		$manage_shop = module('manage_shop');
 
+		$manage_shop->_category_names	= _class('cats')->_get_items_names("shop_cats");
 		$manage_shop->_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats", 0);
 		
 		$manage_shop->man = db()->query_fetch_all("SELECT * FROM ".db('shop_manufacturers')." ORDER BY name ASC");

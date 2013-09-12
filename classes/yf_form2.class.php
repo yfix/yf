@@ -118,9 +118,11 @@ class yf_form2 {
 
 	/**
 	*/
-	function validate($post = array(), $validate_rules = array()) {
-		$data = $post;
-
+	function validate($validate_rules = array(), $post = array()) {
+		$data = (array)(!empty($post) ? $post : $_POST);
+		if (empty($data)) {
+			return $this;
+		}
 		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 // TODO: decide order of importance or merge if element exists
 		foreach ((array)$form_global_validate as $name => $rules) {
@@ -151,7 +153,6 @@ class yf_form2 {
 							$r2 = trim(substr($r2, 0, $pos));
 						}
 						$_rules[] = array($r2, $r_param);
-#						$_rules[] = 'function($in) { return $r2($in, $r_param); }';
 					}
 				}
 			}
@@ -159,37 +160,46 @@ class yf_form2 {
 				$tmp[$name] = $_rules;
 			}
 		}
-#print_r($tmp);
 		$this->_validate_rules = $tmp;
 		unset($tmp);
 
-#		$form_validate = _class('form_validate');
-		foreach ((array)$this->_validate_rules as $name => $rule) {
-			if (is_callable($rule)) {
-				$result = $rule($data[$name], null, $data);
-			} else {
-				$func = $rule[0];
-				$r_param = $rule[1];
-#				$result = _class('form_validate')->$func($data[$name], null, $data);
-#				if (function_exists($func)) {
-#				}
+		foreach ((array)$this->_validate_rules as $name => $rules) {
+			foreach ((array)$rules as $rule) {
+				$is_ok = true;
+				$rule_name = "";
+				if (is_callable($rule)) {
+					$is_ok = $rule($data[$name], null, $data);
+				} else {
+					$func = $rule[0];
+					$r_param = $rule[1];
+					if (function_exists($func)) {
+						$rule_name = $func;
+						$data[$name] = $func($data[$name]);
+					} else {
+// TODO: test me
+						$is_ok = _class('form_validate')->$func($data[$name], null, $data);
+					}
+				}
+				if (!$is_ok) {
+					_re('Wrong '.$name. ($rule_name ? ' by rule: '.$rule_name : ''), $name);
+				}
 			}
-			if (!$result) {
-				_re('Wrong '.$name, $name);
-			}
-#			_class('form_validate')->$func();
+		}
+		if ( ! common()->_error_exists()) {
+			$this->_validate_ok = true;
+		} else {
+			$this->_validate_ok = false;
 		}
 
-		//$this->_validate_ok
-		//$this->_validated_fields
-// TODO
+		$this->_validated_fields = $data;
+
 		return $this;
 	}
 
 	/**
 	*/
-	function db_insert_if_ok($table, $fields = array()) {
-		if (!$this->_validate_ok || !$table) {
+	function db_insert_if_ok($table, $fields, $add_fields = array(), $extra = array()) {
+		if (!$this->_validate_ok || !$table || !$fields) {
 			return $this;
 		}
 		$data = array();
@@ -202,18 +212,30 @@ class yf_form2 {
 				$db_field_name = $name;
 				$name = $k;
 			}
-			$data[$db_field_name] = $this->_validated_fields[$name];
+			if (isset($this->_validated_fields[$name])) {
+				$data[$db_field_name] = $this->_validated_fields[$name];
+			}
+		}
+		// This is non-validated list of fields to add to the insert array
+		foreach ((array)$add_fields as $db_field_name => $value) {
+			$data[$db_field_name] = $value;
 		}
 		if ($data && $table) {
 			db()->insert($table, $data);
+
+			$redirect_link = $this->_replace['back_link'];
+			if (!$redirect_link) {
+				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? $_GET['action'] : ''). ($_GET['id'] ? $_GET['id'] : '');
+			}
+			js_redirect($redirect_link);
 		}
 		return $this;
 	}
 
 	/**
 	*/
-	function db_update_if_ok($table, $where_id, $fields = array()) {
-		if (!$this->_validate_ok || !$table) {
+	function db_update_if_ok($table, $fields, $where_id, $extra = array()) {
+		if (!$this->_validate_ok || !$table || !$fields || !$where_id) {
 			return $this;
 		}
 		$data = array();
@@ -226,10 +248,18 @@ class yf_form2 {
 				$db_field_name = $name;
 				$name = $k;
 			}
-			$data[$db_field_name] = $this->_validated_fields[$name];
+			if (isset($this->_validated_fields[$name])) {
+				$data[$db_field_name] = $this->_validated_fields[$name];
+			}
 		}
 		if ($data && $table) {
 			db()->update($table, $data, $where_id);
+
+			$redirect_link = $this->_replace['back_link'];
+			if (!$redirect_link) {
+				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? $_GET['action'] : ''). ($_GET['id'] ? $_GET['id'] : '');
+			}
+			js_redirect($redirect_link);
 		}
 		return $this;
 	}
@@ -1082,7 +1112,10 @@ class yf_form2 {
 		$errors = common()->_get_error_messages();
 		$id = $extra['id'] ? $extra['id'] : $name;
 		$value = isset($extra['value']) ? $extra['value'] : 'Save';
-		$link_url = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
+		$link_url = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : '') : '';
+		if (preg_match('~^[a-z0-9_-]+$~ims', $link_url)) {
+			$link_url = '';
+		}
 		$link_name = $extra['link_name'] ? $extra['link_name'] : '';
 		$css_class = $this->_prepare_css_class('', $r[$name], $extra);
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
@@ -1187,8 +1220,12 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
 		$value = $r[$name];
-		if (is_array($extra['data']) && isset($extra['data'][$value])) {
-			$value = $extra['data'][$value];
+		if (is_array($extra['data'])) {
+			if (isset($extra['data'][$value])) {
+				$value = $extra['data'][$value];
+			} elseif (isset($extra['data'][$name])) {
+				$value = $extra['data'][$name];
+			}
 		}
 		if (!isset($extra['no_escape'])) {
 			$value = htmlspecialchars($value, ENT_QUOTES);

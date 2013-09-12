@@ -3,83 +3,122 @@
 /**
 */
 class yf_form_validate {
+
+	/***/
 	function required($in, $params = array(), $fields = array()) {
 		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
 	}
+
+	/***/
 	function matches($in, $params = array(), $fields = array()) {
 		$field = $params['field'];
 		return isset($this->_fields[$field], $_POST[$field])
 			? ($in === $_POST[$field])
 			: FALSE;
 	}
+
+	/***/
+	function exists($in, $params = array(), $fields = array()) {
+// TODO
+		return true;
+	}
+
+	/***/
+	function captcha($in, $params = array(), $fields = array()) {
+// TODO
+		return true;
+	}
+
 	function is_unique($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function min_length($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function max_length($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function exact_length($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function greater_than($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function less_than($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function alpha($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function alpha_numeric($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function alpha_dash($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function numeric($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function integer($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function decimal($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function is_natural($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function is_natural_no_zero($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function valid_email($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function valid_emails($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function valid_ip($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function valid_base64($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function xss_clean($in, $params = array(), $fields = array()) {
 // TODO
 	}
 	function prep_for_form($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function prep_url($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function strip_image_tags($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 	function encode_php_tags($in, $params = array(), $fields = array()) {
 // TODO
+		return true;
 	}
 /*
 	public function regex_match($in, $regex)
