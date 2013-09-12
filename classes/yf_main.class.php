@@ -254,7 +254,7 @@ class yf_main {
 	*/
 	function _after_init_hook () {
 		if (!main()->CONSOLE_MODE && $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1) {
-			$this->_do_rewrite();
+#			$this->_do_rewrite();
 		}		
 		
 		$this->_init_cur_user_info($this);
