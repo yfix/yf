@@ -110,30 +110,6 @@ class yf_validate {
 	}
 
 	/**
-	* 
-	*/
-	function _check_url () {
-// TODO
-		if ($_POST["recip_url"] == "http://" || $_POST["recip_url"] == "") {
-			$_POST["recip_url"] = "";
-		} elseif (!preg_match('#^http://[_a-z0-9-]+\\.[_a-z0-9-]+#ims', $_POST["recip_url"])) {
-			_re(t('Invalid reciprocal URL'));
-		}
-//		return preg_match("!(http://|www|http://www)\\..+\\..+!", $url);
-//		return preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'.'((:[0-9]{1,5})?\/.*)?$/i', $url);
-	}
-
-	/**
-	* 
-	*/
-	function _check_email () {
-// TODO
-
-//		$pattern = '/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/ims';
-//		return preg_match($pattern, $email);
-	}
-
-	/**
 	* Check selected location (country, region, city)
 	*/
 	function _check_location ($cur_country = "", $cur_region = "", $cur_city = "") {
