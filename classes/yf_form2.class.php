@@ -2027,6 +2027,8 @@ class yf_form2 {
 				}
 				if (!$is_ok) {
 					_re('Wrong '.$name. ($rule_name ? ' by rule: '.$rule_name : ''), $name);
+					// In case when we see any validation rule is not OK - we stop checking further for this field
+					continue 2;
 				}
 			}
 		}

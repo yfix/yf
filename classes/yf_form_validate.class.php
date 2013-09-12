@@ -12,7 +12,7 @@ class yf_form_validate {
 	/***/
 	function matches($in, $params = array(), $fields = array()) {
 		$field = $params['field'];
-		return isset($this->_fields[$field], $_POST[$field])
+		return isset($fields[$field], $_POST[$field])
 			? ($in === $_POST[$field])
 			: FALSE;
 	}
