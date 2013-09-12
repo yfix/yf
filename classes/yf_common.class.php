@@ -1430,7 +1430,7 @@ class yf_common {
 	function show_left_filter(){
 		$obj = module($_GET["object"]);
 		$method = "_show_filter";
-		if (method_exists($obj, $method) && $obj->USE_FILTER) {
+		if (method_exists($obj, $method) && !(isset($obj->USE_FILTER) && !$obj->USE_FILTER)) {
 			return $obj->$method();
 		}	
 	}

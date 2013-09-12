@@ -238,7 +238,7 @@ class yf_form2 {
 	*/
 	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -285,7 +285,7 @@ class yf_form2 {
 	*/
 	function form_end($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -303,7 +303,7 @@ class yf_form2 {
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -380,7 +380,7 @@ class yf_form2 {
 	*/
 	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -542,7 +542,7 @@ class yf_form2 {
 	*/
 	function container($text, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -577,7 +577,7 @@ class yf_form2 {
 	*/
 	function hidden($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -875,7 +875,7 @@ class yf_form2 {
 	*/
 	function active_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -943,7 +943,7 @@ class yf_form2 {
 	*/
 	function submit($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1026,7 +1026,7 @@ class yf_form2 {
 	*/
 	function info($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -1051,9 +1051,9 @@ class yf_form2 {
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 
 		$body = '
-			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
-				<label class="control-label">'.t($desc).'</label>
-				<div class="controls">'
+			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">'
+				.(!$extra['no_label'] ? '<label class="control-label">'.t($desc).'</label>' : '')
+				.'<div class="controls">'
 					.($extra['link'] ? '<a href="'.$extra['link'].'" class="btn btn-mini">'.$value.'</a>' : '<span class="'.$this->_prepare_css_class('label label-info', $r[$name], $extra).'">'.$value.'</span>')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
@@ -1079,9 +1079,18 @@ class yf_form2 {
 
 	/**
 	*/
+	function link($name = '', $link = '', $extra = array(), $replace = array()) {
+		$extra['link'] = $link;
+		$replace[$name] = $name;
+		$extra['no_label'] = 1;
+		return $this->info($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -1125,7 +1134,7 @@ class yf_form2 {
 	*/
 	function select_box($name, $values, $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -1184,7 +1193,7 @@ class yf_form2 {
 	*/
 	function multi_select_box($name, $values, $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -1244,7 +1253,7 @@ class yf_form2 {
 	*/
 	function check_box($name, $values, $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			if (!empty($extra) && is_string($extra)) {
@@ -1295,7 +1304,7 @@ class yf_form2 {
 	*/
 	function multi_check_box($name, $values, $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1347,7 +1356,7 @@ class yf_form2 {
 	*/
 	function radio_box($name, $values, $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1398,7 +1407,7 @@ class yf_form2 {
 	*/
 	function date_box($name, $values = array(), $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1451,7 +1460,7 @@ class yf_form2 {
 	*/
 	function time_box($name, $values = array(), $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1509,7 +1518,7 @@ class yf_form2 {
 	*/
 	function tbl_link($name, $link, $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		$r = $replace ? $replace : $this->_replace;
 		if (!$link && $extra['link_variants']) {
@@ -1586,7 +1595,7 @@ class yf_form2 {
 	*/
 	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!$name) {
 			$name = 'active';
@@ -1682,7 +1691,7 @@ class yf_form2 {
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!$name) {
 			$name = 'method_name';
@@ -1729,7 +1738,7 @@ class yf_form2 {
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!$name) {
 			$name = 'stpl_name';
@@ -1779,7 +1788,7 @@ class yf_form2 {
 			$name = 'icon';
 		}
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 /*
 	<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
@@ -1803,7 +1812,7 @@ class yf_form2 {
 	*/
 	function captcha($var_name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
-			$replace = $this->_replace;
+			$replace = $this->_replace + $replace;
 		}
 		if (!is_array($extra)) {
 			$extra = array();
