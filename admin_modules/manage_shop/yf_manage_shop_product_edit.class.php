@@ -6,10 +6,6 @@ class yf_manage_shop_product_edit{
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		$_def_locale = module("manage_shop")->PROJ_DEFAULT_LOCALE;
-		if (!$_def_locale) {
-			$_def_locale = "en";
-		}
 		$product_info = db()->query_fetch("SELECT * FROM ".db('shop_products')." WHERE id=".$_GET["id"]);
 		if (!empty($_POST)) {
 			if (!$_POST["name"]) {
@@ -45,9 +41,7 @@ class yf_manage_shop_product_edit{
 					$product_id = $_GET["id"];
 					$product_name = _es(common()->_propose_url_from_name($_POST["name"]));
 					$rez_upload = module("manage_shop")->_product_image_upload($product_id, $product_name);
-					$sql_array = array(
-						"image"	=> 1,
-					);
+					$sql_array['image'] = 1;
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]);
 				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
@@ -139,7 +133,6 @@ class yf_manage_shop_product_edit{
 			"desc"					=> $product_info["description"],
 			"meta_keywords"			=> $product_info["meta_keywords"],
 			"meta_desc"				=> $product_info["meta_desc"],
-			"use_editor_code"		=> intval(module("manage_shop")->_EDITOR_EXISTS && !empty($_body)),
 			"price"					=> $product_info["price"],
 			"price_promo"			=> $product_info["price_promo"],
 			"price_partner"			=> $product_info["price_partner"],

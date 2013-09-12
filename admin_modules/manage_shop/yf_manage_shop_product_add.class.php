@@ -34,15 +34,6 @@ class yf_manage_shop_product_add{
 					"add_date"			=> time(),
 					"active"			=> 1,
 				);
-				// Image upload
-				if (!empty($_FILES)) {
-					$product_id = $_GET["id"];
-					$product_name = _es(common()->_propose_url_from_name($_POST["name"]));
-					$rez_upload = module("manage_shop")->_product_image_upload ($product_id, $product_name);
-					$sql_array = array(
-						"image"	=> 1,
-					);
-				} 
 				db()->INSERT(db('shop_products'), $sql_array);
 				foreach ((array)$_POST["category"] as $k => $v){
 					$cat_id ["product_id"] = $_GET["id"];
@@ -50,6 +41,13 @@ class yf_manage_shop_product_add{
 					db()->INSERT(db('shop_product_to_category'), $cat_id);
 				}
 				$product_id = db()->INSERT_ID();
+				// Image upload
+				if (!empty($_FILES)) {
+					$product_id = $_GET["id"];
+					$product_name = _es(common()->_propose_url_from_name($_POST["name"]));
+					$rez_upload = module("manage_shop")->_product_image_upload ($product_id, $product_name);
+					$sql_array['image'] = 1;
+				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
 				module("manage_shop")->_attributes_save($product_id);
 			}
