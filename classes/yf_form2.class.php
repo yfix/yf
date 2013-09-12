@@ -2016,16 +2016,17 @@ class yf_form2 {
 					$is_ok = $rule($data[$name], null, $data);
 				} else {
 					$func = $rule[0];
-					$r_param = $rule[1];
+					$param = $rule[1];
 					if (function_exists($func)) {
 						$rule_name = $func;
 						$data[$name] = $func($data[$name]);
 					} else {
 // TODO: test me
-						$is_ok = _class('form_validate')->$func($data[$name], array('r_param' => $r_param), $data);
+						$is_ok = _class('form_validate')->$func($data[$name], array('param' => $param), $data);
 					}
 				}
 				if (!$is_ok) {
+// TODO: customized error messages
 					_re('Wrong '.$name. ($rule_name ? ' by rule: '.$rule_name : ''), $name);
 					// In case when we see any validation rule is not OK - we stop checking further for this field
 					continue 2;
@@ -2046,7 +2047,21 @@ class yf_form2 {
 	/**
 	*/
 	function db_insert_if_ok($table, $fields, $add_fields = array(), $extra = array()) {
-		if (!$this->_validate_ok || !$table || !$fields) {
+		$extra['add_fields'] = $add_fields;
+		return $this->_db_change_if_ok($table, $fields, 'insert', $extra);
+	}
+
+	/**
+	*/
+	function db_update_if_ok($table, $fields, $where_id, $extra = array()) {
+		$extra['where_id'] = $where_id;
+		return $this->_db_change_if_ok($table, $fields, 'update', $extra);
+	}
+
+	/**
+	*/
+	function _db_change_if_ok($table, $fields, $type, $extra = array()) {
+		if (!$this->_validate_ok || !$table || !$fields || !$type) {
 			return $this;
 		}
 		$data = array();
@@ -2064,46 +2079,15 @@ class yf_form2 {
 			}
 		}
 		// This is non-validated list of fields to add to the insert array
-		foreach ((array)$add_fields as $db_field_name => $value) {
+		foreach ((array)$extra['add_fields'] as $db_field_name => $value) {
 			$data[$db_field_name] = $value;
 		}
 		if ($data && $table) {
-			db()->insert($table, $data);
-
-			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : $this->_replace['back_link'];
-			if (!$redirect_link) {
-				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? $_GET['action'] : ''). ($_GET['id'] ? $_GET['id'] : '');
+			if ($type == 'update') {
+				db()->update($table, $data, $extra['where_id']);
+			} elseif ($type == 'insert') {
+				db()->insert($table, $data);
 			}
-			if (!$extra['no_redirect']) {
-				js_redirect($redirect_link);
-			}
-		}
-		return $this;
-	}
-
-	/**
-	*/
-	function db_update_if_ok($table, $fields, $where_id, $extra = array()) {
-		if (!$this->_validate_ok || !$table || !$fields || !$where_id) {
-			return $this;
-		}
-		$data = array();
-		foreach ((array)$fields as $k => $name) {
-			// Example $fields = array('login','email');
-			if (is_numeric($k)) {
-				$db_field_name = $name;
-			// Example $fields = array('pswd' => 'password');
-			} else {
-				$db_field_name = $name;
-				$name = $k;
-			}
-			if (isset($this->_validated_fields[$name])) {
-				$data[$db_field_name] = $this->_validated_fields[$name];
-			}
-		}
-		if ($data && $table) {
-			db()->update($table, $data, $where_id);
-
 			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : $this->_replace['back_link'];
 			if (!$redirect_link) {
 				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? $_GET['action'] : ''). ($_GET['id'] ? $_GET['id'] : '');
