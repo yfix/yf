@@ -18,18 +18,43 @@ class yf_form_validate {
 	}
 
 	/***/
-	function exists($in, $params = array(), $fields = array()) {
-// TODO
+	function is_unique($in, $params = array(), $fields = array()) {
+		if (!$in) {
+			return true;
+		}
+		$r_param = $params['r_param'];
+		if ($r_param) {
+			list($check_table, $check_field) = explode('.', $r_param);
+		}
+		if ($check_table && $check_field && $in) {
+			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'"');
+			if ($exists == $in) {
+				return false;
+			}
+		}
 		return true;
 	}
 
 	/***/
-	function captcha($in, $params = array(), $fields = array()) {
-// TODO
-		return true;
+	function exists($in, $params = array(), $fields = array()) {
+		if (!$in) {
+			return false;
+		}
+		$r_param = $params['r_param'];
+		if ($r_param) {
+			list($check_table, $check_field) = explode('.', $r_param);
+		}
+		if ($check_table && $check_field && $in) {
+			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'"');
+			if ($exists == $in) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	function is_unique($in, $params = array(), $fields = array()) {
+	/***/
+	function captcha($in, $params = array(), $fields = array()) {
 // TODO
 		return true;
 	}
