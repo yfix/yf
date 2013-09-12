@@ -305,6 +305,11 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -381,6 +386,11 @@ class yf_form2 {
 	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -544,6 +554,11 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -579,6 +594,11 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -600,6 +620,11 @@ class yf_form2 {
 	/**
 	*/
 	function text($name, $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -615,6 +640,11 @@ class yf_form2 {
 	/**
 	*/
 	function password($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -634,6 +664,11 @@ class yf_form2 {
 	/**
 	*/
 	function file($name, $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -650,6 +685,11 @@ class yf_form2 {
 	* Custom
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -670,6 +710,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -690,6 +735,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -725,6 +775,11 @@ class yf_form2 {
 	/**
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -745,6 +800,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -765,6 +825,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function color($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'color';
 		if (!$name) {
 			$name = 'color';
@@ -776,6 +841,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function date($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'date';
 		if (!$name) {
 			$name = 'date';
@@ -787,6 +857,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function datetime($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'datetime';
 		if (!$name) {
 			$name = 'datetime';
@@ -798,6 +873,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function datetime_local($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'datetime-local';
 		if (!$name) {
 			$name = 'datetime_local';
@@ -809,6 +889,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function month($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'month';
 		if (!$name) {
 			$name = 'month';
@@ -820,6 +905,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function range($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'range';
 		if (!$name) {
 			$name = 'range';
@@ -831,6 +921,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function search($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'search';
 		if (!$name) {
 			$name = 'search';
@@ -842,6 +937,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function tel($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'tel';
 		if (!$name) {
 			$name = 'tel';
@@ -853,6 +953,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function time($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'time';
 		if (!$name) {
 			$name = 'time';
@@ -864,6 +969,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function week($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'week';
 		if (!$name) {
 			$name = 'week';
@@ -876,6 +986,11 @@ class yf_form2 {
 	function active_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -922,6 +1037,11 @@ class yf_form2 {
 	/**
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['items'] = array(
 			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
 			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
@@ -932,6 +1052,11 @@ class yf_form2 {
 	/**
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['items'] = array(
 			'1' => '<span class="label label-success">'.t('YES').'</span>',
 			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
@@ -944,6 +1069,11 @@ class yf_form2 {
 	function submit($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -996,6 +1126,11 @@ class yf_form2 {
 				$name = 'back_url';
 			}
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!$desc) {
 			$desc = 'Back';
 		}
@@ -1014,6 +1149,11 @@ class yf_form2 {
 				$name = 'clear_url';
 			}
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!$desc) {
 			$desc = 'Clear';
 		}
@@ -1027,6 +1167,11 @@ class yf_form2 {
 	function info($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -1073,6 +1218,11 @@ class yf_form2 {
 		$name = 'user_name';
 		$user_id = $this->_replace['user_id'];
 		$this->_replace[$name] = db()->get_one('SELECT CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$extra['link'] = './?object=members&action=edit&id='.$user_id;
 		return $this->info($name, $desc, $extra, $replace);
 	}
@@ -1080,8 +1230,13 @@ class yf_form2 {
 	/**
 	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
-		$extra['link'] = $link;
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$replace[$name] = $name;
+		$extra['link'] = $link;
 		$extra['no_label'] = 1;
 		return $this->info($name, $desc, $extra, $replace);
 	}
@@ -1091,6 +1246,11 @@ class yf_form2 {
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -1653,6 +1813,11 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'country';
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$countries = main()->get_data('countries');
 		return $this->select_box($name, $countries, $extra, $replace);
 	}
@@ -1662,6 +1827,11 @@ class yf_form2 {
 	function region_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!$name) {
 			$name = 'region';
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		$regions = main()->get_data('regions');
 		return $this->select_box($name, $regions, $extra, $replace);
@@ -1673,6 +1843,11 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'currency';
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$currencies = main()->get_data('currencies');
 		return $this->select_box($name, $currencies, $extra, $replace);
 	}
@@ -1682,6 +1857,11 @@ class yf_form2 {
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!$name) {
 			$name = 'language';
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		$languages = main()->get_data('languages');
 		return $this->select_box($name, $languages, $extra, $replace);
@@ -1693,6 +1873,11 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'timezone';
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		$timezones = main()->get_data('timezones');
 		return $this->select_box($name, $timezones, $extra, $replace);
 	}
@@ -1701,6 +1886,11 @@ class yf_form2 {
 	* Image upload
 	*/
 	function image($name, $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 // TODO: show already uploaded image, link to delete it, input to upload new
 		return $this;
 	}
@@ -1713,6 +1903,11 @@ class yf_form2 {
 		}
 		if (!$name) {
 			$name = 'method_name';
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		if (!$desc) {
 			$desc = 'Custom class method';
@@ -1761,6 +1956,11 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'stpl_name';
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!$desc) {
 			$desc = 'Custom template';
 		}
@@ -1808,6 +2008,11 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 /*
 	<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 		<label class="control-label" for="icon">{t(Item Icon)}</label>
@@ -1831,6 +2036,11 @@ class yf_form2 {
 	function captcha($var_name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
+		}
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
