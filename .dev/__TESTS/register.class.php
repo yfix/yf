@@ -20,6 +20,7 @@ class register {
 			->email('emailconf')
 			->password()
 			->password('pswdconf')
+#			->birth()
 			->captcha()
 			->save();
 	}

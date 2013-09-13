@@ -1148,6 +1148,8 @@ class yf_form2 {
 		return $this->info($name, $desc, $extra, $replace);
 	}
 
+// TODO: need BS div-based select-box emulation, will be needed for several methods
+
 	/**
 	*/
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
@@ -1199,6 +1201,7 @@ class yf_form2 {
 	/**
 	*/
 	function select_box($name, $values, $extra = array(), $replace = array()) {
+// TODO: unify with box()
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1257,6 +1260,7 @@ class yf_form2 {
 	/**
 	*/
 	function multi_select_box($name, $values, $extra = array(), $replace = array()) {
+// TODO: unify with box()
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1316,6 +1320,7 @@ class yf_form2 {
 	/**
 	*/
 	function check_box($name, $values, $extra = array(), $replace = array()) {
+// TODO: unify with box()
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1366,6 +1371,7 @@ class yf_form2 {
 	/**
 	*/
 	function multi_check_box($name, $values, $extra = array(), $replace = array()) {
+// TODO: unify with box()
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1417,6 +1423,7 @@ class yf_form2 {
 	/**
 	*/
 	function radio_box($name, $values, $extra = array(), $replace = array()) {
+// TODO: unify with box()
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1467,6 +1474,7 @@ class yf_form2 {
 	/**
 	*/
 	function date_box($name, $values = array(), $extra = array(), $replace = array()) {
+// TODO: unify with box()
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1519,6 +1527,7 @@ class yf_form2 {
 	/**
 	*/
 	function time_box($name, $values = array(), $extra = array(), $replace = array()) {
+// TODO: unify with box()
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1797,6 +1806,8 @@ class yf_form2 {
 	/**
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+// TODO: unify with select_box(), maybe need to add something there
+/*
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1826,6 +1837,8 @@ class yf_form2 {
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 // TODO: load methods select box right here, to be able to more easily embed this into other places
 
+		$modules = main()->get_data(MAIN_TYPE_USER ? 'user_modules' : 'admin_modules');
+
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
@@ -1843,11 +1856,14 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+*/
 	}
 
 	/**
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+// TODO: unify with select_box(), maybe need to add something there
+/*
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1876,6 +1892,7 @@ class yf_form2 {
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 // TODO: load templates select box right here, to be able to more easily embed this into other places
+		// _class('template_editor')->_get_stpls_for_type(MAIN_TYPE)
 
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
@@ -1894,6 +1911,7 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+*/
 	}
 
 	/**
@@ -1910,6 +1928,7 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
+// TODO
 /*
 	<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 		<label class="control-label" for="icon">{t(Item Icon)}</label>
