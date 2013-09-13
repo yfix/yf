@@ -246,7 +246,8 @@ class yf_form2 {
 		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
 		if ($vr['min_length'] && !isset($extra['pattern'])) {
 			$extra['pattern'] = '.{'.$vr['min_length'][1].','.($vr['max_length'] ? $vr['max_length'][1] : '').'}';
-		} elseif ($vr['max_length'] && !isset($extra['maxlength'])) {
+		}
+		if ($vr['max_length'] && !isset($extra['maxlength'])) {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
 		$body = '
@@ -1981,8 +1982,28 @@ class yf_form2 {
 			$this->_validate_rules[$name] = $rules;
 		}
 		// Cleanup rules before we start
-		$tmp = array();
-		foreach ((array)$this->_validate_rules as $name => $rules) {
+		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
+		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
+		$data = (array)(!empty($post) ? $post : $_POST);
+		if (empty($data)) {
+			return $this;
+		}
+		// Processing of prepared rules
+		$validate_ok = $this->_validate_rules_process($this->_validate_rules, $data);
+		if ($validate_ok) {
+			$this->_validate_ok = true;
+		} else {
+			$this->_validate_ok = false;
+		}
+		$this->_validated_fields = $data;
+		return $this;
+	}
+
+	/**
+	*/
+	function _validate_rules_cleanup($validate_rules = array()) {
+		$out = array();
+		foreach ((array)$validate_rules as $name => $rules) {
 			if (empty($rules)) {
 				continue;
 			}
@@ -2006,20 +2027,17 @@ class yf_form2 {
 				}
 			}
 			if ($_rules) {
-				$tmp[$name] = $_rules;
+				$out[$name] = $_rules;
 			}
 		}
-		$this->_validate_rules = $tmp;
-		unset($tmp);
+		return $out;
+	}
 
-		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
-		$data = (array)(!empty($post) ? $post : $_POST);
-		if (empty($data)) {
-			return $this;
-		}
-
-		// Processing of prepared rules
-		foreach ((array)$this->_validate_rules as $name => $rules) {
+	/**
+	*/
+	function _validate_rules_process($validate_rules = array(), $data = array()) {
+		$validate_ok = true;
+		foreach ((array)$validate_rules as $name => $rules) {
 			foreach ((array)$rules as $rule) {
 				$is_ok = true;
 				$error_msg = '';
@@ -2040,6 +2058,7 @@ class yf_form2 {
 					}
 				}
 				if (!$is_ok) {
+					$validate_ok = false;
 					if (!$error_msg) {
 						$error_msg = 'Wrong field '.$name;
 					}
@@ -2049,15 +2068,7 @@ class yf_form2 {
 				}
 			}
 		}
-		if ( ! common()->_error_exists()) {
-			$this->_validate_ok = true;
-		} else {
-			$this->_validate_ok = false;
-		}
-
-		$this->_validated_fields = $data;
-
-		return $this;
+		return $validate_ok;
 	}
 
 	/**
