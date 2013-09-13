@@ -958,18 +958,16 @@ class yf_common {
 	/**
 	* Show formatted contents of notices for user
 	*/
-	function show_notices ($force_text = '') {
-		// Do set message
+	function show_notices ($keep = false, $force_text = '') {
 		if ($force_text) {
 			$this->set_notice($force_text);
 		}
 		$name_in_session = '_user_notices';
-		// Get notice items
 		$items = $_SESSION[$name_in_session];
-		// Cleanup messages container
-		$_SESSION[$name_in_session] = array();
-		unset($_SESSION[$name_in_session]);
-		// Display output
+		if (!$keep) {
+			$_SESSION[$name_in_session] = array();
+			unset($_SESSION[$name_in_session]);
+		}
 		return $items ? tpl()->parse('system/user_notices', array('items' => $items)) : '';
 	}
 

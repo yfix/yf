@@ -3,7 +3,7 @@
 class register {
 	function show () {
 		$validate_rules = array(
-			'login'		=> array( 'trim|required|min_length[5]|max_length[12]|is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
+			'login'		=> array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
 			'email'		=> array( 'trim|required|valid_email|matches[emailconf]|is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
 			'emailconf'	=> 'trim|required|valid_email',
 			'password'	=> 'trim|required|matches[pswdconf]', //|md5

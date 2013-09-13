@@ -2100,12 +2100,12 @@ class yf_form2 {
 			if ($type == 'update') {
 				db()->update($table, db()->es($data), $extra['where_id']);
 			} elseif ($type == 'insert') {
-				db()->insert($table, db()->es($data));
+#				db()->insert($table, db()->es($data));
 			}
 			if ($extra['on_success_text']) {
 				common()->set_notice($extra['on_success_text']);
 			}
-			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : $this->_replace['back_link'];
+			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : ($this->_replace['redirect_link'] ? $this->_replace['redirect_link'] : $this->_replace['back_link']);
 			if (!$redirect_link) {
 				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? $_GET['action'] : ''). ($_GET['id'] ? $_GET['id'] : '');
 			}

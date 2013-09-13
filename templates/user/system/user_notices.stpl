@@ -1,9 +1,6 @@
-<div align="center">
-<fieldset class="success">
-	<legend align="center">{t(Notice)}</legend>
-	<br />
 {foreach("items")}
-	<li>{_val}</li>
+	<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		{_val}
+	</div>
 {/foreach}
-</fieldset>
-</div>
