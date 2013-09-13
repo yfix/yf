@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Unicode methods (grabbed from drupal 6.2)
+* Unicode methods (inspired by drupal 6.2)
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -9,12 +9,8 @@
 */
 class yf_unicode_funcs {
 
-	// Indicates an error during check for PHP unicode support.
-	public $UNICODE_ERROR = -1;
-	// Indicates that standard PHP (emulated) unicode support is being used.
-	public $UNICODE_SINGLEBYTE = 0;
-	// Indicates that full unicode support with the PHP mbstring extension is being
-	public $UNICODE_MULTIBYTE = 1;
+	/** @var @conf_skip Result of unicode checks, 1 -> fine, everything else - not */
+	public $MULTIBYTE = false;
 
 	/**
 	* Constructor
@@ -23,7 +19,6 @@ class yf_unicode_funcs {
 	* @return	void
 	*/
 	function __construct () {
-		// Do check unicode support
 		list($this->MULTIBYTE) = $this->unicode_check();
 	}
 
@@ -31,7 +26,7 @@ class yf_unicode_funcs {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -52,61 +47,39 @@ class yf_unicode_funcs {
 		if (!$is_dev) {
 			setlocale(LC_CTYPE, 'C');
 		}
+		// Indicates an error during check for PHP unicode support.
+		$UNICODE_ERROR = -1;
+		// Indicates that standard PHP (emulated) unicode support is being used.
+		$UNICODE_SINGLEBYTE = 0;
+		// Indicates that full unicode support with the PHP mbstring extension is being
+		$UNICODE_MULTIBYTE = 1;
+
 		// Check for outdated PCRE library
 		// Note: we check if U+E2 is in the range U+E0 - U+E1. This test returns TRUE on old PCRE versions.
 		if (preg_match('/[à-á]/u', 'â')) {
-			return array($this->UNICODE_ERROR, t('The PCRE library in your PHP installation is outdated. This will cause problems when handling Unicode text. If you are running PHP 4.3.3 or higher, make sure you are using the PCRE library supplied by PHP. Please refer to the <a href="@url">PHP PCRE documentation</a> for more information.', array('@url' => 'http://www.php.net/pcre')));
+			return array($UNICODE_ERROR, t('The PCRE library in your PHP installation is outdated. This will cause problems when handling Unicode text. If you are running PHP 4.3.3 or higher, make sure you are using the PCRE library supplied by PHP. Please refer to the <a href="@url">PHP PCRE documentation</a> for more information.', array('@url' => 'http://www.php.net/pcre')));
 		}
 		// Check for mbstring extension
 		if (!function_exists('mb_strlen')) {
-			return array($this->UNICODE_SINGLEBYTE, t('Operations on Unicode strings are emulated on a best-effort basis. Install the <a href="@url">PHP mbstring extension</a> for improved Unicode support.', array('@url' => 'http://www.php.net/mbstring')));
+			return array($UNICODE_SINGLEBYTE, t('Operations on Unicode strings are emulated on a best-effort basis. Install the <a href="@url">PHP mbstring extension</a> for improved Unicode support.', array('@url' => 'http://www.php.net/mbstring')));
 		}
 		// Check mbstring configuration
 		if (ini_get('mbstring.func_overload') != 0) {
-			return array($this->UNICODE_ERROR, t('Multibyte string function overloading in PHP is active and must be disabled. Check the php.ini <em>mbstring.func_overload</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+			return array($UNICODE_ERROR, t('Multibyte string function overloading in PHP is active and must be disabled. Check the php.ini <em>mbstring.func_overload</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
 		}
 		if (ini_get('mbstring.encoding_translation') != 0) {
-			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.encoding_translation</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+			return array($UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.encoding_translation</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
 		}
 		if (ini_get('mbstring.http_input') != 'pass') {
-			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_input</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+			return array($UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_input</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
 		}
 		if (ini_get('mbstring.http_output') != 'pass') {
-			return array($this->UNICODE_ERROR, t('Multibyte string output conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_output</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+			return array($UNICODE_ERROR, t('Multibyte string output conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_output</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
 		}
 		// Set appropriate configuration
 		mb_internal_encoding('utf-8');
 		mb_language('uni');
-		return array($this->UNICODE_MULTIBYTE, '');
-	}
-
-	/**
-	* Return Unicode library status and errors.
-	*/
-	function unicode_requirements() {
-		$libraries = array();
-		$libraries[$this->UNICODE_SINGLEBYTE]	= t('Standard PHP');
-		$libraries[$this->UNICODE_MULTIBYTE]	= t('PHP Mbstring Extension');
-		$libraries[$this->UNICODE_ERROR]		= t('Error');
-
-		$severities = array();
-		$severities[$this->UNICODE_SINGLEBYTE]	= "REQUIREMENT_WARNING";
-		$severities[$this->UNICODE_MULTIBYTE]	= "REQUIREMENT_OK";
-		$severities[$this->UNICODE_ERROR]		= "REQUIREMENT_ERROR";
-
-		list($library, $description) = $this->unicode_check();
-
-		$requirements['unicode'] = array(
-			'title' => t('Unicode library'),
-			'value' => $libraries[$library],
-		);
-		if ($description) {
-			$requirements['unicode']['description'] = $description;
-		}
-
-		$requirements['unicode']['severity'] = $severities[$library];
-
-		return $requirements;
+		return array($UNICODE_MULTIBYTE, '');
 	}
 
 	/**
@@ -133,7 +106,7 @@ class yf_unicode_funcs {
 		$bom = FALSE;
 
 		// Check for UTF-8 byte order mark (PHP5's XML parser doesn't handle it).
-		if (!strncmp($data, "\xEF\xBB\xBF", 3)) {
+		if (!strncmp($data, '\xEF\xBB\xBF', 3)) {
 			$bom = TRUE;
 			$data = substr($data, 3);
 		}
@@ -149,7 +122,7 @@ class yf_unicode_funcs {
 				$encoding = 'utf-8';
 				$data = preg_replace('#^(<\?xml[^>]+encoding)="([^"]+)"#', '\\1="utf-8"', $out);
 			} else {
-				_debug_log(t("Can not convert XML encoding %s to UTF-8.", array('%s' => $encoding)));
+				_debug_log(t('Can not convert XML encoding %s to UTF-8.', array('%s' => $encoding)));
 				return 0;
 			}
 		}
@@ -179,7 +152,7 @@ class yf_unicode_funcs {
 		} else if (function_exists('recode_string')) {
 			$out = @recode_string($encoding .'..utf-8', $data);
 		} else {
-			_debug_log(t("Unsupported encoding %s. Please install iconv, GNU recode or mbstring for PHP.", array('%s' => $encoding)));
+			_debug_log(t('Unsupported encoding %s. Please install iconv, GNU recode or mbstring for PHP.', array('%s' => $encoding)));
 			return FALSE;
 		}
 		return $out;
@@ -288,9 +261,9 @@ class yf_unicode_funcs {
 	*/
 	function mime_header_decode($header) {
 		// First step: encoded chunks followed by other encoded chunks (need to collapse whitespace)
-		$header = preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=\s+(?==\?)/', array($this, "_mime_header_decode"), $header);
+		$header = preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=\s+(?==\?)/', array($this, '_mime_header_decode'), $header);
 		// Second step: remaining chunks (do not collapse whitespace)
-		return preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=/', array($this, "_mime_header_decode"), $header);
+		return preg_replace_callback('/=\?([^?]+)\?(Q|B)\?([^?]+|\?(?!=))\?=/', array($this, '_mime_header_decode'), $header);
 	}
 
 	/**
@@ -392,7 +365,7 @@ class yf_unicode_funcs {
 			return mb_strlen($text);
 		} else {
 			// Do not count UTF-8 continuation bytes.
-			return strlen(preg_replace("/[\x80-\xBF]/", '', $text));
+			return strlen(preg_replace('/[\x80-\xBF]/', '', $text));
 		}
 	}
 
@@ -412,7 +385,7 @@ class yf_unicode_funcs {
 			// Use C-locale for ASCII-only uppercase
 			$text = strtoupper($text);
 			// Case flip Latin-1 accented letters
-			$text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', array($this, "_unicode_caseflip"), $text);
+			$text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', array($this, '_unicode_caseflip'), $text);
 			return $text;
 		}
 	}
@@ -433,7 +406,7 @@ class yf_unicode_funcs {
 			// Use C-locale for ASCII-only lowercase
 			$text = strtolower($text);
 			// Case flip Latin-1 accented letters
-			$text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', array($this, "_unicode_caseflip"), $text);
+			$text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', array($this, '_unicode_caseflip'), $text);
 			return $text;
 		}
 	}

@@ -544,7 +544,7 @@ class yf_main {
 		if ($this->USE_UNIQUE_SESSION_NAME) {
 			$force_name_path = conf('_SESSION_FORCE_NAME_PATH');
 			$_name_path = isset($force_name_path) ? $force_name_path : (MAIN_TYPE_ADMIN ? ADMIN_SITE_PATH : SITE_PATH);
-			$_name_path = str_replace('\\', '/', OS_WINDOWS ? strtolower($_name_path) : $_name_path);
+			$_name_path = str_replace("\\", '/', OS_WINDOWS ? strtolower($_name_path) : $_name_path);
 			$this->SESSION_NAME = 'sid_'.intval(abs(crc32($_name_path)));
 			session_name($this->SESSION_NAME);
 		} else {
@@ -781,7 +781,7 @@ class yf_main {
 // TODO: log E_USER_NOTICE when module not found
 		}
 		if (DEBUG_MODE) {
-			$path_prepared = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', str_replace('\\', '/', $path_to_module)));
+			$path_prepared = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', str_replace("\\", '/', $path_to_module)));
 			debug('include_files_exec_time::'.$path_prepared, microtime(true) - $_time_start);
 		}
 	}
@@ -1396,7 +1396,7 @@ class yf_main {
 				define('INCLUDE_PATH', (MAIN_TYPE_ADMIN ? dirname($_path) : $_path).'/');
 			} else {
 				$cur_script_path = dirname(realpath(getenv('SCRIPT_FILENAME')));
-				define('INCLUDE_PATH', str_replace(array('\\','//'), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_script_path) : $cur_script_path).'/'));
+				define('INCLUDE_PATH', str_replace(array("\\",'//'), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_script_path) : $cur_script_path).'/'));
 			}
 		}
 		// Alias
@@ -1441,7 +1441,7 @@ class yf_main {
 			define('WEB_PATH',
 				(($this->_server('HTTPS') || $this->_server('SSL_PROTOCOL')) ? 'https://' : 'http://')
 				.$host
-				.str_replace(array('\\','//'), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
+				.str_replace(array("\\",'//'), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
 			);
 		}
 		// Should be different that WEB_PATH to distribute static content from other subdomain

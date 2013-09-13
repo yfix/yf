@@ -801,13 +801,6 @@ class yf_tpl {
 				}
 				$storages["dev_project"]	= PROJECT_PATH. $dev_path. $this->TPL_PATH. $file_name;
 			}
-			// Special for the "mass hosting" mode
-			if ($this->IS_FRONT) {
-				// User folder
-				$storages["hosting_user"]   = PROJECT_PATH."users/".conf("HOSTING_NAME").".".conf("HOSTING_DOMAIN")."/templates/user/". $file_name;
-				// Custom user theme
-				$storages["hosting_custom_theme"] = PROJECT_PATH."user_themes/".FRONT_THEME_NAME."/templates/user/". $file_name;
-			}
 			if ($this->ALLOW_LANG_BASED_STPLS) {
 				$storages["lang_project"]   = $this->_lang_theme_path. $file_name;
 			}
@@ -923,7 +916,7 @@ class yf_tpl {
 			if (MAIN_TYPE_ADMIN) {
 				$def_user_theme = $this->_get_def_user_theme();
 				$paths = array(
-					"framework"	 => YF_PATH. $this->_THEMES_PATH. "admin". "/",
+					"framework"	 	=> YF_PATH. $this->_THEMES_PATH. "admin". "/",
 					"framework_user"=> YF_PATH. $this->_THEMES_PATH. "user". "/",
 					"user_section"  => INLCUDE_PATH. $this->_THEMES_PATH. $def_user_theme. "/",
 				);
@@ -931,7 +924,7 @@ class yf_tpl {
 				$paths = array(
 					"site"		 		=> SITE_PATH. $this->_THEMES_PATH. conf('theme'). "/",
 					"project"	  		=> PROJECT_PATH. $this->_THEMES_PATH. conf('theme'). "/",
-					"framework"	 	=> YF_PATH. $this->_THEMES_PATH. "user". "/",
+					"framework"		 	=> YF_PATH. $this->_THEMES_PATH. "user". "/",
 					"inherit_project"	=> $this->_INHERITED_SKIN ? PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. "/". $file_name : "",
 					"inherit_project2"	=> $this->_INHERITED_SKIN2 ? PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. "/". $file_name : "",
 				);

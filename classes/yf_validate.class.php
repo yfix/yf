@@ -1,15 +1,15 @@
 <?php
 
 /**
+* Validation common methods, part of this was inspired by codeigniter 2.1 form_validate
 */
 class yf_validate {
 
 	/** @var int Minimal nick length */
-#	public $MIN_NICK_LENGTH		= 2;
+	public $MIN_NICK_LENGTH		= 2;
 	/** @var array Allowed nick symbols (display for user) */
-#	public $NICK_ALLOWED_SYMBOLS	= array("a-z","0-9","_","\-","@","#"," ");
+	public $NICK_ALLOWED_SYMBOLS	= array("a-z","0-9","_","\-","@","#"," ");
 	/** @var array Reserved words for the profile url (default) */
-/*
 	public $reserved_words = array(
 		"login",
 		"logout",
@@ -24,18 +24,16 @@ class yf_validate {
 		"core_cache",
 		"templates"
 	);
-*/
 
 	/***/
 	function _init() {
-/*
 		$user_modules = main()->get_data("user_modules");
 		// Merge them with default ones
 		if (is_array($user_modules)) {
 			$this->reserved_words = array_merge($this->reserved_words, $user_modules);
 		}
-*/
-		$this->MB_ENABLED = function_exists('mb_strlen');
+#		$this->MB_ENABLED = function_exists('mb_strlen');
+		$this->MB_ENABLED = _class('unicode_funcs')->MULTIBYTE;
 	}
 
 	/***/

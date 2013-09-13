@@ -1972,11 +1972,9 @@ class yf_form2 {
 			return $this;
 		}
 		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
-// TODO: decide order of importance or merge if element exists
 		foreach ((array)$form_global_validate as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
 		}
-// TODO: decide order of importance or merge if element exists
 		foreach ((array)$validate_rules as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
 		}
@@ -2011,6 +2009,7 @@ class yf_form2 {
 		$this->_validate_rules = $tmp;
 		unset($tmp);
 
+		// Processing of prepared rules
 		foreach ((array)$this->_validate_rules as $name => $rules) {
 			foreach ((array)$rules as $rule) {
 				$is_ok = true;
@@ -2024,9 +2023,8 @@ class yf_form2 {
 					if (function_exists($func)) {
 						$rule_name = $func;
 						$data[$name] = $func($data[$name]);
-					// Validate class method
+					// Method from 'validate'
 					} else {
-// TODO: test me
 						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data);
 					}
 				}
