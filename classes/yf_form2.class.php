@@ -2100,7 +2100,7 @@ class yf_form2 {
 			if ($type == 'update') {
 				db()->update($table, db()->es($data), $extra['where_id']);
 			} elseif ($type == 'insert') {
-#				db()->insert($table, db()->es($data));
+				db()->insert($table, db()->es($data));
 			}
 			if ($extra['on_success_text']) {
 				common()->set_notice($extra['on_success_text']);

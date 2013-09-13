@@ -12,7 +12,7 @@ class register {
 		);
 		$a = $_POST;
 		$a['redirect_link'] = './?object='.$_GET['object'].'&action=success';
-		$form = form($a)
+		return form($a)
 			->validate($validate_rules)
 			->db_insert_if_ok('user', array('login','email','password'), null, array('on_success_text' => 'Your account was created successfully!'))
 			->login()
@@ -21,9 +21,7 @@ class register {
 			->password()
 			->password('pswdconf')
 			->captcha()
-			->save()
-		;
-		return $form;
+			->save();
 	}
 
 	function success() {

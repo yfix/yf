@@ -1,10 +1,20 @@
 {if("conf._login_form_displayed" ne "1")}
 <form method="post" action="./?task=login">
 	<div class="control-group">
-		<div class="controls"><input type="text" id="input_login" maxlength="50" placeholder="{t(Login)}" name="login" value=""></div>
+		<div class="controls">
+			<div class="input-prepend">
+				<span class="add-on"><i class="icon-user"></i></span>
+				<input type="text" id="input_login" class="input-medium" maxlength="50" placeholder="{t(Login)}" name="login" value="">
+			</div>
+		</div>
 	</div>
 	<div class="control-group">
-		<div class="controls"><input type="password" id="input_password" maxlength="50" placeholder="{t(Password)}" name="password" value=""></div>
+		<div class="controls">
+			<div class="input-prepend">
+				<span class="add-on"><i class="icon-key"></i></span>
+				<input type="password" id="input_password" class="input-medium" maxlength="50" placeholder="{t(Password)}" name="password" value="">
+			</div>
+		</div>
 	</div>
 	<label class="checkbox">
 		<input type="checkbox" name="remember_me" id="remember_me" value="1" /> {t(Remember me)}
