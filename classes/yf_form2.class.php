@@ -1973,10 +1973,6 @@ class yf_form2 {
 	/**
 	*/
 	function validate($validate_rules = array(), $post = array()) {
-		$data = (array)(!empty($post) ? $post : $_POST);
-		if (empty($data)) {
-			return $this;
-		}
 		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 		foreach ((array)$form_global_validate as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
@@ -2015,6 +2011,12 @@ class yf_form2 {
 		}
 		$this->_validate_rules = $tmp;
 		unset($tmp);
+
+		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
+		$data = (array)(!empty($post) ? $post : $_POST);
+		if (empty($data)) {
+			return $this;
+		}
 
 		// Processing of prepared rules
 		foreach ((array)$this->_validate_rules as $name => $rules) {
