@@ -108,6 +108,16 @@ class yf_form2 {
 		if (!isset($this->_body['form_end'])) {
 			$this->form_end();
 		}
+		if ($this->_params['show_alerts']) {
+			$errors = common()->_get_error_messages();
+			if ($errors) {
+				$e = array();
+				foreach ((array)$errors as $msg) {
+					$e[] = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
+				}
+				array_unshift($this->_body, implode("\n", $e));
+			}
+		}
 		// Ensure that form begin and ending will be in the right place of the output
 		$form_begin = $this->_body['form_begin'];
 		unset($this->_body['form_begin']);
