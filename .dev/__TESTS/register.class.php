@@ -3,16 +3,18 @@
 class register {
 	function show () {
 		$validate_rules = array(
-			'login'		=> array( 'trim|required|min_length[5]|max_length[12]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
-			'email'		=> array( 'trim|required|valid_email|matches[emailconf]', function($in){ return module('register')->_email_not_exists($in); } ),
+			'login'		=> array( 'trim|required|min_length[5]|max_length[12]|is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
+			'email'		=> array( 'trim|required|valid_email|matches[emailconf]|is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
 			'emailconf'	=> 'trim|required|valid_email',
 			'password'	=> 'trim|required|matches[pswdconf]', //|md5
 			'pswdconf'	=> 'trim|required', // |md5
 			'captcha'	=> 'trim|captcha',
 		);
-		$form = form($_POST)
+		$a = $_POST;
+		$a['redirect_link'] = './?object='.$_GET['object'].'&action=success';
+		$form = form($a)
 			->validate($validate_rules)
-			->db_insert_if_ok('user', array('login','email','password'))
+			->db_insert_if_ok('user', array('login','email','password'), null, array('on_success_text' => 'Your account was created successfully!'))
 			->login()
 			->email()
 			->email('emailconf')
@@ -22,6 +24,10 @@ class register {
 			->save()
 		;
 		return $form;
+	}
+
+	function success() {
+		return common()->show_notices();
 	}
 
 	function _login_not_exists($in = "") {

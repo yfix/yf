@@ -1928,7 +1928,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function captcha($var_name = '', $desc = '', $extra = array(), $replace = array()) {
+	function captcha($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
@@ -1943,11 +1943,11 @@ class yf_form2 {
 		if (!$desc) {
 			$desc = 'Captcha';
 		}
-		if (!$var_name) {
-			$var_name = 'captcha_block';
+		if (!$name) {
+			$name = 'captcha';
 		}
-		if (isset($replace[$var_name])) {
-			$text = $replace[$var_name];
+		if (isset($replace[$name])) {
+			$text = $replace[$name];
 		} else {
 			$text = _class('captcha')->show_block('./?object=dynamic&action=captcha_image');
 		}
@@ -1956,9 +1956,11 @@ class yf_form2 {
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">'
 				.($desc ? '<label class="control-label">'.t($desc).'</label>' : '')
-				.'<div class="controls">'.$text.'</div>'
+				.'<div class="controls">'
+				.$text
 				.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+				.'</div>'
 			.'</div>
 		';
 		if ($this->_chained_mode) {
@@ -2099,6 +2101,9 @@ class yf_form2 {
 				db()->update($table, db()->es($data), $extra['where_id']);
 			} elseif ($type == 'insert') {
 				db()->insert($table, db()->es($data));
+			}
+			if ($extra['on_success_text']) {
+				common()->set_notice($extra['on_success_text']);
 			}
 			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : $this->_replace['back_link'];
 			if (!$redirect_link) {

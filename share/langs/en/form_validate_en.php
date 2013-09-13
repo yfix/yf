@@ -28,4 +28,5 @@ $data = array(
   'form_validate_less_than_equal_to'	=> 'The %field field must contain a number less than or equal to %param.',
   'form_validate_greater_than'			=> 'The %field field must contain a number greater than %param.',
   'form_validate_greater_than_equal_to'	=> 'The %field field must contain a number greater than or equal to %param.',
+  'form_validate_captcha'				=> 'The %field is incorrect.',
 );
