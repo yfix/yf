@@ -10,7 +10,7 @@
 class yf_tpl {
 
 	/** @var string @conf_skip Path to the templates (including current theme path) */
-	public $TPL_PATH			   = "";
+	public $TPL_PATH			   = '';
 	/** @var bool Compressing output by cutting "\t","\r","\n","  ","   " */
 	public $COMPRESS_OUTPUT		= false;
 	/** @var bool Using SEO - friendly URLs (All links need to be absolute) */
