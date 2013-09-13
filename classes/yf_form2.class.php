@@ -13,7 +13,7 @@ class yf_form2 {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -37,14 +37,14 @@ class yf_form2 {
 	* Wrapper for template engine
 	* Example:
 	*	return form2($replace)
-	*		->text("login","Login")
-	*		->text("password","Password")
-	*		->text("first_name","First Name")
-	*		->text("last_name","Last Name")
-	*		->text("go_after_login","Url after login")
-	*		->box_with_link("group_box","Group","groups_link")
-	*		->active("active","Active")
-	*		->info("add_date","Added");
+	*		->text('login','Login')
+	*		->text('password','Password')
+	*		->text('first_name','First Name')
+	*		->text('last_name','Last Name')
+	*		->text('go_after_login','Url after login')
+	*		->box_with_link('group_box','Group','groups_link')
+	*		->active('active','Active')
+	*		->info('add_date','Added');
 	*/
 	function chained_wrapper($replace = array(), $params = array()) {
 		$this->_chained_mode = true;
@@ -56,19 +56,19 @@ class yf_form2 {
 	/**
 	* Wrapper for template engine
 	* Example template:
-	*	{form_row("form_begin")}
-	*	{form_row("text","login")}
-	*	{form_row("text","password")}
-	*	{form_row("text","first_name")}
-	*	{form_row("text","last_name")}
-	*	{form_row("text","go_after_login","Url after login")}
-	*	{form_row("box_with_link","group_box","Group","groups_link")}
-	*	{form_row("active_box")}
-	*	{form_row("info","add_date","Added")}
-	*	{form_row("save_and_back")}
-	*	{form_row("form_end")}
+	*	{form_row('form_begin')}
+	*	{form_row('text','login')}
+	*	{form_row('text','password')}
+	*	{form_row('text','first_name')}
+	*	{form_row('text','last_name')}
+	*	{form_row('text','go_after_login','Url after login')}
+	*	{form_row('box_with_link','group_box','Group','groups_link')}
+	*	{form_row('active_box')}
+	*	{form_row('info','add_date','Added')}
+	*	{form_row('save_and_back')}
+	*	{form_row('form_end')}
 	*/
-	function tpl_row($type = "input", $replace = array(), $name, $desc = '', $extra = array()) {
+	function tpl_row($type = 'input', $replace = array(), $name, $desc = '', $extra = array()) {
 		return $this->$type($name, $desc, $extra, $replace);
 	}
 
@@ -195,13 +195,13 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
+			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
@@ -216,7 +216,7 @@ class yf_form2 {
 				$value = $this->_params['selected'][$name];
 			}
 		}
-		$input_type = isset($extra['type']) ? $extra['type'] : "text";
+		$input_type = isset($extra['type']) ? $extra['type'] : 'text';
 		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
@@ -277,13 +277,13 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
+			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
@@ -342,10 +342,10 @@ class yf_form2 {
 
 	/**
 	*/
-	function _show_tip($value = "", $extra = array(), $replace = array()) {
+	function _show_tip($value = '', $extra = array(), $replace = array()) {
 		return _class('graphics')->_show_help_tip(array(
-			"tip_id"	=> $value,
-			"replace"	=> $replace,
+			'tip_id'	=> $value,
+			'replace'	=> $replace,
 		));
 	}
 
@@ -379,7 +379,7 @@ class yf_form2 {
 	* git submodule add https://github.com/ckeditor/ckeditor-releases.git www/ckeditor/ && cd www/ckeditor/ && git checkout latest/full
 	* git submodule add git@github.com:yfix/yf_kcfinder.git www/kcfinder
 	* 
-	* "www/" usually means PROJECT_PATH inside project working copy.
+	* 'www/' usually means PROJECT_PATH inside project working copy.
 	* P.S. You can use free CDN for ckeditor as alternate solution: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
 	*/
 	function _ckeditor_html($extra = array(), $replace = array()) {
@@ -445,7 +445,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -511,7 +511,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -531,7 +531,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -555,7 +555,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -576,7 +576,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -601,7 +601,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -626,7 +626,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -666,7 +666,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -691,7 +691,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -879,10 +879,10 @@ class yf_form2 {
 			$extra = array();
 		}
 		if (!$name) {
-			$name = "active";
+			$name = 'active';
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
+			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		if (!$extra['items']) {
 			$extra['items'] = array(
@@ -1062,13 +1062,13 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
+			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$errors = common()->_get_error_messages();
@@ -1145,7 +1145,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -1177,7 +1177,7 @@ class yf_form2 {
 	/**
 	*/
 	function box_with_link($name, $desc = '', $link = '', $replace = array()) {
-		return $this->box($name, $desc, array("edit_link" => $link), $replace);
+		return $this->box($name, $desc, array('edit_link' => $link), $replace);
 	}
 
 	/**
@@ -1189,7 +1189,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -1206,7 +1206,7 @@ class yf_form2 {
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
 		$type = isset($extra['type']) ? $extra['type'] : 2;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
@@ -1248,7 +1248,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
-				$extra = array("edit_link" => $extra);
+				$extra = array('edit_link' => $extra);
 			} else {
 				$extra = array();
 			}
@@ -1265,7 +1265,7 @@ class yf_form2 {
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
 		$type = isset($extra['type']) ? $extra['type'] : 2;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
@@ -1323,7 +1323,7 @@ class yf_form2 {
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		if ($extra['class']) {
@@ -1371,7 +1371,7 @@ class yf_form2 {
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$type = isset($extra['type']) ? $extra['type'] : 2;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
@@ -1423,7 +1423,7 @@ class yf_form2 {
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$type = isset($extra['type']) ? $extra['type'] : 2;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
@@ -1474,9 +1474,9 @@ class yf_form2 {
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$years = isset($extra['years']) ? $extra['years'] : '';
-		$show_what = isset($extra['show_what']) ? $extra['show_what'] : "ymd";
+		$show_what = isset($extra['show_what']) ? $extra['show_what'] : 'ymd';
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
@@ -1524,7 +1524,7 @@ class yf_form2 {
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace("_", " ", $name));
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
@@ -1944,7 +1944,7 @@ class yf_form2 {
 		if (isset($replace[$var_name])) {
 			$text = $replace[$var_name];
 		} else {
-			$text = _class("captcha")->show_block("./?object=dynamic&action=captcha_image");
+			$text = _class('captcha')->show_block('./?object=dynamic&action=captcha_image');
 		}
 		$errors = common()->_get_error_messages();
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
@@ -1991,7 +1991,7 @@ class yf_form2 {
 				if (is_callable($rule)) {
 					$_rules[] = $rule;
 				} elseif (is_string($rule)) {
-					foreach (explode("|", $rule) as $r2) {
+					foreach (explode('|', $rule) as $r2) {
 						$r2 = trim($r2);
 						$r_param = null;
 						// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
@@ -2014,7 +2014,7 @@ class yf_form2 {
 		foreach ((array)$this->_validate_rules as $name => $rules) {
 			foreach ((array)$rules as $rule) {
 				$is_ok = true;
-				$rule_name = "";
+				$rule_name = '';
 				if (is_callable($rule)) {
 					$is_ok = $rule($data[$name], null, $data);
 				} else {
