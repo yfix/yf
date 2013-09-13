@@ -2013,7 +2013,7 @@ class yf_form2 {
 		foreach ((array)$this->_validate_rules as $name => $rules) {
 			foreach ((array)$rules as $rule) {
 				$is_ok = true;
-				$rule_name = '';
+				$error_msg = '';
 				if (is_callable($rule)) {
 					$is_ok = $rule($data[$name], null, $data);
 				} else {
@@ -2021,16 +2021,20 @@ class yf_form2 {
 					$param = $rule[1];
 					// PHP pure function, from core or user
 					if (function_exists($func)) {
-						$rule_name = $func;
 						$data[$name] = $func($data[$name]);
 					// Method from 'validate'
 					} else {
 						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data);
+						if (!$is_ok) {
+							$error_msg = t('form_validate_'.$func, array('%field' => $name));
+						}
 					}
 				}
 				if (!$is_ok) {
-// TODO: customized error messages
-					_re('Wrong '.$name. ($rule_name ? ' by rule: '.$rule_name : ''), $name);
+					if (!$error_msg) {
+						$error_msg = 'Wrong field '.$name;
+					}
+					_re($error_msg, $name);
 					// In case when we see any validation rule is not OK - we stop checking further for this field
 					continue 2;
 				}

@@ -8,6 +8,7 @@ class register {
 			'emailconf'	=> 'trim|required|valid_email',
 			'passsword'	=> 'trim|required|matches[pswdconf]|md5',
 			'pswdconf'	=> 'trim|required|md5',
+			'pswdconf2'	=> 'trim|required|md5',
 			'captcha'	=> 'trim|captcha',
 		);
 		$form = form()

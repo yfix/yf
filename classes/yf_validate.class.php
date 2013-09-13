@@ -32,7 +32,6 @@ class yf_validate {
 		if (is_array($user_modules)) {
 			$this->reserved_words = array_merge($this->reserved_words, $user_modules);
 		}
-#		$this->MB_ENABLED = function_exists('mb_strlen');
 		$this->MB_ENABLED = _class('unicode_funcs')->MULTIBYTE;
 	}
 
@@ -304,6 +303,7 @@ class yf_validate {
 	* Check user nick
 	*/
 	function _check_user_nick ($CUR_VALUE = "", $force_value_to_check = null, $name_in_form = "nick") {
+// TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		// Override value to check
 		if (!is_null($force_value_to_check)) {
@@ -331,6 +331,7 @@ class yf_validate {
 	* Check user profile url
 	*/
 	function _check_profile_url ($CUR_VALUE = "", $force_value_to_check = null, $name_in_form = "profile_url") {
+// TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		// Override value to check
 		if (!is_null($force_value_to_check)) {
@@ -369,6 +370,7 @@ class yf_validate {
 	* Check selected location (country, region, city)
 	*/
 	function _check_location ($cur_country = "", $cur_region = "", $cur_city = "") {
+// TODO: rewrite me
 		// Process featured countries
 		if (FEATURED_COUNTRY_SELECT && !empty($_POST["country"]) && substr($_POST["country"], 0, 2) == "f_") {
 			$_POST["country"] = substr($_POST["country"], 2);
@@ -412,6 +414,7 @@ class yf_validate {
 	* Check user birth date
 	*/
 	function _check_birth_date ($CUR_VALUE = "") {
+// TODO: rewrite me
 		// Validate birth date
 		$_POST["birth_date"]	= $CUR_VALUE;
 
