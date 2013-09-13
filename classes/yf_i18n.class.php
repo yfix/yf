@@ -171,11 +171,10 @@ class yf_i18n {
 	* Default storage of translations
 	*/
 	function _load_lang_get_vars_from_db($lang) {
-		// Try to get from cache
-#		if (main()->USE_SYSTEM_CACHE) {
-#			$CACHE_NAME = 'locale_translate_'.$lang;
-#			$this->TR_VARS[$lang] = cache()->get($CACHE_NAME);
-#		}
+		$CACHE_NAME = 'locale_translate_'.$lang;
+		if (main()->USE_SYSTEM_CACHE) {
+			$this->TR_VARS[$lang] = cache()->get($CACHE_NAME);
+		}
 		if (empty($this->TR_VARS[$lang])) {
 			$q = db()->query(
 				'SELECT v.value AS source, t.value AS translation 
@@ -189,9 +188,9 @@ class yf_i18n {
 				$this->TR_VARS[$lang][$a['source']] = $a['translation'];
 			}
 		}
-#		if (main()->USE_SYSTEM_CACHE) {
-#			cache()->put($CACHE_NAME, $this->TR_VARS[$lang]);
-#		}
+		if (main()->USE_SYSTEM_CACHE) {
+			cache()->put($CACHE_NAME, $this->TR_VARS[$lang]);
+		}
 	}
 
 	/**
@@ -218,57 +217,61 @@ class yf_i18n {
 	* Load language varas from files
 	*/
 	function _load_lang_get_vars_from_files($lang) {
+		$lang_files = array();
 		// Auto-find shared language vars. They will be connected in order of file system
-		// Names can be any, but better to include lang name into file name.
-		// Examples: 
+		// Names can be any, but better to include lang name into file name. Examples: 
 		// share/langs/ru/001_other.php
 		// share/langs/ru/002_other2.php
 		// share/langs/ru/other.php
 		// share/langs/ru/ru_shop.php
 		// share/langs/ru/ru_user_register.php
 		if ($this->ALLOW_SHARED_LANG_FILES) {
-			$project_lang_dir	= PROJECT_PATH.'share/langs/';
-			$fwork_lang_dir		= YF_PATH.'share/langs/';
+			$dirs = array(
+				'fwork'		=> YF_PATH.'share/langs/'.$lang.'/',
+				'project'	=> PROJECT_PATH.'share/langs/'.$lang.'/',
+			);
+			if (SITE_PATH != PROJECT_PATH) {
+				$dirs['site'] = SITE_PATH.'share/langs/'.$lang.'/';
+			}
+			// Order matters! Project vars will have ability to override vars from franework
+			foreach ($dirs as $dir) {
+				if (!file_exists($dir)) {
+					continue;
+				}
+				$lang_files += (array)glob($dir.'*.php');
+			}
 		}
 		// Auto-find vars for user modules. They will be connected in order of file system
-		// Names must begin with __locale__{lang} and then any name
-		// Examples: 
+		// Names must begin with __locale__{lang} and then any name. Examples: 
 		// modules/shop/__locale__ru.php
 		// modules/shop/__locale__ru_orders.php
 		// modules/shop/__locale__ru_products.php
-		if ($this->ALLOW_MODULE_FILES && MAIN_TYPE_USER) {
-/*
-			// Try to find module translations
-			$_module_locale_paths = array();
-			$modules = main()->get_data('user_modules');
-			// Add current module searching if not set
-			$modules[$_GET['object']] = $_GET['object'];
-			// Process found modules
-			foreach ((array)$modules as $module_name) {
-				$_module_locale_path = 'modules/'.$module_name.'/__locale__'.$lang.'.php';
-				// Framework level
-				if (file_exists(YF_PATH. $_module_locale_path)) {
-					$_module_locale_paths[$module_name.'_fwork'] = YF_PATH. $_module_locale_path;
-				}
-				// Project level
-				if (file_exists(PROJECT_PATH. $_module_locale_path)) {
-					$_module_locale_paths[$module_name] = PROJECT_PATH. $_module_locale_path;
-				}
+		if ($this->ALLOW_MODULE_FILES) {
+			$m_dir = (MAIN_TYPE_USER ? 'modules/' : 'admin_modules/');
+			$dirs = array(
+				'fwork'		=> YF_PATH. $m_dir,
+				'project'	=> PROJECT_PATH. $m_dir,
+			);
+			if (MAIN_TYPE_USER && SITE_PATH != PROJECT_PATH) {
+				$dirs['site'] = SITE_PATH. $m_dir;
 			}
-			// Iterate over found paths
-			foreach ((array)$_module_locale_paths as $_path) {
-				if (!file_exists($_path)) {
+			// Order matters! Project vars will have ability to override vars from franework
+			foreach ($dirs as $dir) {
+				if (!file_exists($dir)) {
 					continue;
 				}
-				// Use include here instead of file_get_contents + eval to allow easy tracking connected files
-				include ($_path);
-
-				foreach ((array)$data as $_source => $_trans) {
-					$_source = str_replace(' ', '_', strtolower($_source));
-					$this->TR_VARS[$lang][$_source] = $_trans;
-				}
+				$lang_files += (array)glob($dir.'*.php');
 			}
-*/
+		}
+		//
+		// Inside each file $data array will be searched for
+		//
+		foreach ((array)$lang_files as $path) {
+			include $path;
+			foreach ((array)$data as $_source => $_trans) {
+				$_source = str_replace(' ', '_', strtolower($_source));
+				$this->TR_VARS[$lang][$_source] = $_trans;
+			}
 		}
 	}
 
@@ -309,7 +312,6 @@ class yf_i18n {
 		if (DEBUG_MODE) {
 			$_start_time = microtime(true);
 		}
-		// Language loading
 		$lang = strval($lang);
 		if (!$lang) {
 			$lang = $this->_get_current_lang();
@@ -320,11 +322,9 @@ class yf_i18n {
 		if (!$lang || !$this->_loaded[$lang]) {
 			return $input_string;
 		}
-		// Fix for empty args items
 		if (is_array($args) && isset($args[''])) {
 			unset($args['']);
 		}
-		// Helper for arrays
 		if (is_array($input_string)) {
 			foreach ((array)$input_string as $k => $v) {
 				$input_string[$k] = $this->translate_string($v, $args, $lang);
@@ -334,7 +334,6 @@ class yf_i18n {
 		if (!$input_string) {
 			return $input_string;
 		}
-		// Try to get from cache
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
 			$CACHE_NAME = $lang.'#____#'.$input_string;
 			if (isset($this->_LOCALE_CACHE[$CACHE_NAME])) {
@@ -420,9 +419,7 @@ class yf_i18n {
 			$first_t = _substr($output_string, 0, 1);
 			$first_s_lower = strtolower($first_s) == $first_s;
 			$first_t_lower = _strtolower($first_t) == $first_t;
-			if ($first_s_lower && !$first_t_lower) {
-		//		$output_string = _strtolower($first_t). _substr($output_string, 1);
-			} elseif (!$first_s_lower && $first_t_lower) {
+			if (!$first_s_lower && $first_t_lower) {
 				$output_string = _strtoupper($first_t). _substr($output_string, 1);
 			}
 		}

@@ -72,6 +72,13 @@ class yf_dir {
 	}
 
 	/**
+	* Alias
+	*/
+	function scan ($start_dir, $FLAT_MODE = true, $pattern_include = "", $pattern_exclude = "", $level = null) {
+		return $this->scan_dir($start_dir, $FLAT_MODE, $pattern_include, $pattern_exclude, $level);
+	}
+
+	/**
 	* Recursively scanning directory structure (including subdirectories) //
 	*/
 	function scan_dir ($start_dir, $FLAT_MODE = true, $pattern_include = "", $pattern_exclude = "", $level = null) {
@@ -121,6 +128,13 @@ class yf_dir {
 			ksort($files);
 		}
 		return $files;
+	}
+
+	/**
+	* Alias
+	*/
+	function size($start_dir, $pattern_include = "", $pattern_exclude = "") {
+		return $this->dirsize($start_dir, $pattern_include, $pattern_exclude);
 	}
 
 	/**
@@ -186,6 +200,13 @@ class yf_dir {
 	}
 
 	/**
+	* Alias
+	*/
+	function copy($path1, $path2, $pattern_include = "", $pattern_exclude = "", $level = null) {
+		return $this->copy_dir($path1, $path2, $pattern_include, $pattern_exclude, $level);
+	}
+
+	/**
 	* This function recursively copies contents of source directory to destination
 	*/
 	function copy_dir($path1, $path2, $pattern_include = "", $pattern_exclude = "", $level = null) {
@@ -223,6 +244,13 @@ class yf_dir {
 			}
 		}
 		umask($old_mask);
+	}
+
+	/**
+	* Alias
+	*/
+	function move($path1, $path2, $pattern_include = "", $pattern_exclude = "") {
+		return $this->move_dir($path1, $path2, $pattern_include, $pattern_exclude);
 	}
 
 	/**
@@ -283,6 +311,13 @@ class yf_dir {
 	}
 
 	/**
+	* Alias
+	*/
+	function delete($start_dir, $delete_start_dir = false) {
+		return $this->delete_dir($start_dir, $delete_start_dir);
+	}
+
+	/**
 	* Recursively delete directory structure (including subdirectories)
 	*/
 	function delete_dir($start_dir, $delete_start_dir = false) {
@@ -328,6 +363,13 @@ class yf_dir {
 	}
 
 	/**
+	* Alias
+	*/
+	function chmod($start_dir, $new_mode = 0755, $pattern_include = "", $pattern_exclude = "") {
+		return $this->chmod_dir($start_dir, $new_mode, $pattern_include, $pattern_exclude);
+	}
+
+	/**
 	* Recursively chmod directory structure (including subdirectories)
 	*/
 	function chmod_dir($start_dir, $new_mode = 0755, $pattern_include = "", $pattern_exclude = "") {
@@ -352,6 +394,13 @@ class yf_dir {
 				$this->chmod_dir ($item_name, $new_mode);
 			}
 		}
+	}
+
+	/**
+	* Alias
+	*/
+	function mkdir($dir_name, $dir_mode = 0755, $create_index_htmls = 0, $start_folder = "") {
+		return $this->mkdir_m($dir_name, $dir_mode, $create_index_htmls, $start_folder);
 	}
 
 	/**
