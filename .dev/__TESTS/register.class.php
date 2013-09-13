@@ -10,8 +10,8 @@ class register {
 			'pswdconf'	=> 'trim|required|md5',
 			'captcha'	=> 'trim|captcha',
 		);
-		$form = form(array(), array('validate' => $validate_rules))
-			->validate(/*$validate_rules*/)
+		$form = form()
+			->validate($validate_rules)
 			->db_insert_if_ok('user', array('login','email','password'))
 			->login()
 			->email()

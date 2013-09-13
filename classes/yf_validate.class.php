@@ -29,11 +29,7 @@ class yf_validate {
 	/***/
 	function _init() {
 /*
-		// Get available user section modules
-		$Q = db()->query("SELECT * FROM ".db('user_modules'));
-		while ($A = db()->fetch_assoc($Q)) {
-			$user_modules[$A["id"]] = $A["name"];
-		}
+		$user_modules = main()->get_data("user_modules");
 		// Merge them with default ones
 		if (is_array($user_modules)) {
 			$this->reserved_words = array_merge($this->reserved_words, $user_modules);

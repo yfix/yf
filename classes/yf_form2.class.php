@@ -1946,10 +1946,13 @@ class yf_form2 {
 		} else {
 			$text = _class("captcha")->show_block("./?object=dynamic&action=captcha_image");
 		}
+		$errors = common()->_get_error_messages();
+		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">'
 				.($desc ? '<label class="control-label">'.t($desc).'</label>' : '')
 				.'<div class="controls">'.$text.'</div>'
+				.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 			.'</div>
 		';
@@ -2017,9 +2020,11 @@ class yf_form2 {
 				} else {
 					$func = $rule[0];
 					$param = $rule[1];
+					// PHP pure function, from core or user
 					if (function_exists($func)) {
 						$rule_name = $func;
 						$data[$name] = $func($data[$name]);
+					// Validate class method
 					} else {
 // TODO: test me
 						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data);
