@@ -10,26 +10,26 @@
 class yf_table2 {
 
 	/* Example:
-		return table2("SELECT * FROM ".db('admin'))
-			->text("login")
-			->text("first_name")
-			->text("last_name")
-			->link("group", "./?object=admin_groups&action=edit&id=%d", $this->_admin_groups)
-			->date("add_date")
-			->text("go_after_login")
+		return table2('SELECT * FROM '.db('admin'))
+			->text('login')
+			->text('first_name')
+			->text('last_name')
+			->link('group', './?object=admin_groups&action=edit&id=%d', $this->_admin_groups)
+			->date('add_date')
+			->text('go_after_login')
 			->btn_active()
 			->btn_edit()
 			->btn_delete()
-			->btn("log_auth")
-			->footer_link("Failed auth log", "./?object=log_admin_auth_fails_viewer")
-			->footer_link("Add", "./?object=".$_GET["object"]."&action=add");
+			->btn('log_auth')
+			->footer_link('Failed auth log', './?object=log_admin_auth_fails_viewer')
+			->footer_link('Add', './?object='.$_GET['object'].'&action=add');
 	*/
 
 	/**
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -63,7 +63,7 @@ class yf_table2 {
 	/**
 	* Wrapper for chained mode call from common()->table2()
 	*/
-	function chained_wrapper($sql = "", $params = array()) {
+	function chained_wrapper($sql = '', $params = array()) {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
 		$this->_params = $params;
@@ -73,7 +73,7 @@ class yf_table2 {
 	/**
 	* Wrapper for template engine
 	*/
-	function tpl_row($type = "input", $name, $desc = "", $extra = array()) {
+	function tpl_row($type = 'input', $name, $desc = '', $extra = array()) {
 		return $this->$type($name, $desc, $extra);
 	}
 
@@ -101,32 +101,32 @@ class yf_table2 {
 		$ids = array();
 		if (is_array($sql)) {
 			$data = $sql;
-			$pages = "";
+			$pages = '';
 			$total = count($data);
 			$ids = array_keys($data);
 		} else {
 			$db = is_object($params['db']) ? $params['db'] : db();
-			$pager_path = $params['pager_path'] ? $params['pager_path'] : "";
-			$pager_type = $params['pager_type'] ? $params['pager_type'] : "blocks";
+			$pager_path = $params['pager_path'] ? $params['pager_path'] : '';
+			$pager_type = $params['pager_type'] ? $params['pager_type'] : 'blocks';
 			$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : 0;
 			$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
-			$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : "";
+			$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : '';
 			$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
 
 			if ($params['filter']) {
 				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params']);
 			}
 			if ($filter_sql) {
-				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? " WHERE 1 " : "")." ".$filter_sql;
+				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? ' WHERE 1 ' : '').' '.$filter_sql;
 			}
 			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
 
 			$items = array();
 			$q = $db->query($sql. $add_sql);
 			while ($a = $db->fetch_assoc($q)) {
-				if (isset($a["id"])) {
-					$data[$a["id"]] = $a;
-					$ids[$a["id"]] = $a["id"];
+				if (isset($a['id'])) {
+					$data[$a['id']] = $a;
+					$ids[$a['id']] = $a['id'];
 				} else {
 					$data[] = $a;
 				}
@@ -162,13 +162,13 @@ class yf_table2 {
 			$custom_foreign_fields = array();
 			foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
 				// In this case we can override name of the field used in virtual foreign key, used for custom field.
-				// good example is "user_id" instead of "id"
+				// good example is 'user_id' instead of 'id'
 				if (is_array($custom_sql)) {
 					$tmp = $custom_sql;
 					$custom_sql = $tmp[0];
 					$foreign_field = $tmp[1];
 					unset($tmp);
-					if ($foreign_field != "id") {
+					if ($foreign_field != 'id') {
 						$_ids = array();
 						foreach((array)$data as $k => $v) {
 							$_ids[$v[$foreign_field]] = $v[$foreign_field];
@@ -277,22 +277,22 @@ class yf_table2 {
 	*/
 	function _filter_sql_prepare($filter_data = array(), $filter_params = array()) {
 		if (!$filter_data) {
-			return "";
+			return '';
 		}
 		$special_fields = array(
 			'order_by',
 			'order_direction',
 		);
 		$supported_conds = array(
-			"eq"		=> function($a){ return ' = "'._es($a['value']).'"'; }, // "equal"
-			"ne"		=> function($a){ return ' != "'._es($a['value']).'"'; }, // "not equal"
-			"gt"		=> function($a){ return ' > "'._es($a['value']).'"'; }, // "greater than",
-			"gte"		=> function($a){ return ' >= "'._es($a['value']).'"'; }, // "greater or equal than",
-			"lt"		=> function($a){ return ' < "'._es($a['value']).'"'; }, // "less than",
-			"lte"		=> function($a){ return ' <= "'._es($a['value']).'"'; }, // "lower or equal than"
-			"like"		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
-			"rlike"		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
-			"between"	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
+			'eq'		=> function($a){ return ' = "'._es($a['value']).'"'; }, // "equal"
+			'ne'		=> function($a){ return ' != "'._es($a['value']).'"'; }, // "not equal"
+			'gt'		=> function($a){ return ' > "'._es($a['value']).'"'; }, // "greater than",
+			'gte'		=> function($a){ return ' >= "'._es($a['value']).'"'; }, // "greater or equal than",
+			'lt'		=> function($a){ return ' < "'._es($a['value']).'"'; }, // "less than",
+			'lte'		=> function($a){ return ' <= "'._es($a['value']).'"'; }, // "lower or equal than"
+			'like'		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
+			'rlike'		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
+			'between'	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -305,7 +305,7 @@ class yf_table2 {
 			if (substr($k, -strlen('__and')) == '__and') {
 				continue;
 			}
-			$part_on_the_right = "";
+			$part_on_the_right = '';
 			// Here we support complex filtering conditions, examples:
 			// 'price' => array('gt', 'value' => '100')
 			// 'price' => array('between', 'value' => '1', 'and' => '10')
@@ -324,18 +324,18 @@ class yf_table2 {
 					continue;
 				}
 				$cond = 'eq';
-				// Here we can override default "eq" condition with custom one by passing additional param to table2. 
+				// Here we can override default 'eq' condition with custom one by passing additional param to table2. 
 				// example: table2($sql, array('filter_params' => array('name' => 'gt', 'price' => 'between'), 'filter' => $_SESSION[__CLASS__]))
 				if (isset($filter_params[$k]) && isset($supported_conds[$filter_params[$k]])) {
 					$cond = $filter_params[$k];
 				}
-				// Field with __and on the end of its name is special one for "between" condition
+				// Field with __and on the end of its name is special one for 'between' condition
 				$part_on_the_right = $supported_conds[$cond](array('value' => $v, 'and' => $filter_data[$k.'__and']));
 			}
 			$sql[] = '`'.db()->es($k).'`'.$part_on_the_right;
 		}
 		if ($sql) {
-			$filter_sql = " AND ".implode(" AND ", $sql);
+			$filter_sql = ' AND '.implode(' AND ', $sql);
 		}
 		if ($filter_data['order_by']) {
 			$filter_sql .= ' ORDER BY `'.db()->es($filter_data['order_by']).'` ';
@@ -375,7 +375,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function text($name, $desc = "", $extra = array()) {
+	function text($name, $desc = '', $extra = array()) {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -385,16 +385,16 @@ class yf_table2 {
 			$desc = '';
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
+			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$this->_fields[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"desc"	=> $desc,
-			"link"	=> $extra['link'],
-			"data"	=> t($extra['data']),
-			"func"	=> function($field, $params, $row, $instance_params) {
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'desc'	=> $desc,
+			'link'	=> $extra['link'],
+			'data'	=> t($extra['data']),
+			'func'	=> function($field, $params, $row, $instance_params) {
 				if (!$params['data'] && $params['extra']['data_name']) {
 					$params['data'] = $instance_params['data_sql_names'][$params['extra']['data_name']];
 				}
@@ -411,7 +411,7 @@ class yf_table2 {
 					$link_field_name = $params['extra']['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
-					$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(" ", "&nbsp;", $text).'</a>';
+					$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(' ', '&nbsp;', $text).'</a>';
 				} else {
 					$body = $text;
 				}
@@ -423,7 +423,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function link($name, $link = "", $data = "", $extra = array()) {
+	function link($name, $link = '', $data = '', $extra = array()) {
 		$extra['link'] = $link;
 		$extra['data'] = $data;
 		return $this->text($name, $extra['desc'], $extra);
@@ -432,7 +432,7 @@ class yf_table2 {
 	/**
 	* Currently designed only for admin usage
 	*/
-	function user($name = "", $link = "", $data = "", $extra = array()) {
+	function user($name = '', $link = '', $data = '', $extra = array()) {
 		if (!$name) {
 			$name = 'user_id';
 		}
@@ -446,21 +446,21 @@ class yf_table2 {
 
 	/**
 	*/
-	function date($name, $desc = "", $extra = array()) {
+	function date($name, $desc = '', $extra = array()) {
 		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
+			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$this->_fields[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"desc"	=> $desc,
-			"func"	=> function($field, $params, $row, $instance_params) {
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'desc'	=> $desc,
+			'func'	=> function($field, $params, $row, $instance_params) {
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
 				return _class('table2')->_apply_badges($text, $params['extra'], $field);
 			}
@@ -470,18 +470,18 @@ class yf_table2 {
 
 	/**
 	*/
-	function image($path, $link = "", $extra = array()) {
+	function image($path, $link = '', $extra = array()) {
 		$name = 'image';
 		$this->_fields[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"path"	=> $path,
-			"link"	=> $link,
-			"func"	=> function($field, $params, $row, $instance_params) {
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'path'	=> $path,
+			'link'	=> $link,
+			'func'	=> function($field, $params, $row, $instance_params) {
 				$id = $row['id'];
 				// Make 3-level dir path
-				$d = sprintf("%09s", $id);
+				$d = sprintf('%09s', $id);
 				$replace = array(
 					'{subdir1}'	=> substr($d, 0, -6),
 					'{subdir2}'	=> substr($d, -6, 3),
@@ -511,14 +511,14 @@ class yf_table2 {
 			$desc = $extra['desc'];
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace("_", " ", $name));
+			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$this->_fields[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"desc"	=> $desc,
-			"func"	=> $func,
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'desc'	=> $desc,
+			'func'	=> $func,
 		);
 		return $this;
 	}
@@ -527,12 +527,12 @@ class yf_table2 {
 	*/
 	function btn($name, $link, $extra = array()) {
 		$this->_buttons[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"link"	=> $link,
-			"func"	=> function($row, $params, $instance_params) {
-				$override_id = "";
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'link'	=> $link,
+			'func'	=> function($row, $params, $instance_params) {
+				$override_id = '';
 				if (isset($params['extra']['id'])) {
 					$override_id = $params['extra']['id'];
 				}
@@ -554,15 +554,15 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_edit($name = "", $link = "", $extra = array()) {
+	function btn_edit($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
 		}
 		if (!$name) {
-			$name = "Edit";
+			$name = 'Edit';
 		}
 		if (!$link) {
-			$link = "./?object=".$_GET["object"]."&action=edit&id=%d";
+			$link = './?object='.$_GET['object'].'&action=edit&id=%d';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -576,15 +576,15 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_delete($name = "", $link = "", $extra = array()) {
+	function btn_delete($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
 		}
 		if (!$name) {
-			$name = "Delete";
+			$name = 'Delete';
 		}
 		if (!$link) {
-			$link = "./?object=".$_GET["object"]."&action=delete&id=%d";
+			$link = './?object='.$_GET['object'].'&action=delete&id=%d';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -598,15 +598,15 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_clone($name = "", $link = "", $extra = array()) {
+	function btn_clone($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
 		}
 		if (!$name) {
-			$name = "Clone";
+			$name = 'Clone';
 		}
 		if (!$link) {
-			$link = "./?object=".$_GET["object"]."&action=clone_item&id=%d";
+			$link = './?object='.$_GET['object'].'&action=clone_item&id=%d';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -620,15 +620,15 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_view($name = "", $link = "", $extra = array()) {
+	function btn_view($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
 		}
 		if (!$name) {
-			$name = "View";
+			$name = 'View';
 		}
 		if (!$link) {
-			$link = "./?object=".$_GET["object"]."&action=view&id=%d";
+			$link = './?object='.$_GET['object'].'&action=view&id=%d';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -642,22 +642,22 @@ class yf_table2 {
 
 	/**
 	*/
-	function btn_active($name = "", $link = "", $extra = array()) {
+	function btn_active($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
 		}
 		if (!$name) {
-			$name = "Active";
+			$name = 'Active';
 		}
 		if (!$link) {
-			$link = "./?object=".$_GET["object"]."&action=active&id=%d";
+			$link = './?object='.$_GET['object'].'&action=active&id=%d';
 		}
 		$this->_buttons[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"link"	=> $link,
-			"func"	=> function($row, $params) {
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'link'	=> $link,
+			'func'	=> function($row, $params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$values = array(
@@ -674,11 +674,11 @@ class yf_table2 {
 	*/
 	function footer_link($name, $link, $extra = array()) {
 		$this->_footer_links[] = array(
-			"type"	=> __FUNCTION__,
-			"name"	=> $name,
-			"extra"	=> $extra,
-			"link"	=> $link,
-			"func"	=> function($params, $instance_params) {
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'link'	=> $link,
+			'func'	=> function($params, $instance_params) {
 				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
@@ -691,15 +691,15 @@ class yf_table2 {
 
 	/**
 	*/
-	function footer_add($name = "", $link = "", $extra = array()) {
+	function footer_add($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
 		}
 		if (!$name) {
-			$name = "add";
+			$name = 'add';
 		}
 		if (!$link) {
-			$link = "./?object=".$_GET["object"]."&action=add";
+			$link = './?object='.$_GET['object'].'&action=add';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -743,12 +743,12 @@ class yf_table2 {
 
 	/**
 	*/
-	function _show_tip($value = "", $extra = array()) {
-// TODO: connect 2 kind of tips args to all funcs: "tip" - near field value, "header_tip" - for table header, 
-// TODO: also add ability to pass tips array into table2() params like "data"
+	function _show_tip($value = '', $extra = array()) {
+// TODO: connect 2 kind of tips args to all funcs: 'tip' - near field value, 'header_tip' - for table header, 
+// TODO: also add ability to pass tips array into table2() params like 'data'
 		return _class('graphics')->_show_help_tip(array(
-			"tip_id"	=> $value,
-//			"replace"	=> $extra[],
+			'tip_id'	=> $value,
+//			'replace'	=> $extra[],
 		));
 	}
 }
