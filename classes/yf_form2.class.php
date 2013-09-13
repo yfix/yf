@@ -239,6 +239,13 @@ class yf_form2 {
 		if (!isset($extra['no_escape'])) {
 			$value = htmlspecialchars($value, ENT_QUOTES);
 		}
+		$vr = $this->_validate_rules[$name];
+		if ($vr['required']) {
+			$extra['required'] = 1;
+		}
+		if ($vr['max_length']) {
+			$extra['maxlength'] = $vr['max_length'][1];
+		}
 		$body = '
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
@@ -267,7 +274,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -334,7 +340,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -504,7 +509,6 @@ class yf_form2 {
 		$body = '<input type="hidden" id="'.$id.'" name="'.$name.'" value="'.$value.'"'.($extra['data'] ? ' data="'.$extra['data'].'"' : '').'>';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -921,7 +925,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1000,7 +1003,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1178,7 +1180,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1243,7 +1244,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1303,7 +1303,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1354,7 +1353,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1406,7 +1404,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1457,7 +1454,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1510,7 +1506,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1558,7 +1553,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1841,7 +1835,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1893,7 +1886,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1925,7 +1917,6 @@ class yf_form2 {
 */
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -1968,7 +1959,6 @@ class yf_form2 {
 		';
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
-			$this->_validate_rules[$name] = $extra['validate'];
 			return $this;
 		}
 		return $body;
@@ -2008,7 +1998,8 @@ class yf_form2 {
 							$r_param = trim(trim(substr($r2, $pos), ']['));
 							$r2 = trim(substr($r2, 0, $pos));
 						}
-						$_rules[] = array($r2, $r_param);
+						// Ensure we will not call duplicate rules on same field
+						$_rules[$r2] = array($r2, $r_param);
 					}
 				}
 			}
