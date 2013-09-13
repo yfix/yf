@@ -243,7 +243,10 @@ class yf_form2 {
 		if ($vr['required']) {
 			$extra['required'] = 1;
 		}
-		if ($vr['max_length']) {
+		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
+		if ($vr['min_length'] && !isset($extra['pattern'])) {
+			$extra['pattern'] = '.{'.$vr['min_length'][1].','.($vr['max_length'] ? $vr['max_length'][1] : '').'}';
+		} elseif ($vr['max_length'] && !isset($extra['maxlength'])) {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
 		$body = '
@@ -258,6 +261,7 @@ class yf_form2 {
 					.($extra['data'] ? ' data="'.$extra['data'].'"' : '')
 					.($extra['size'] ? ' size="'.$extra['size'].'"' : '')
 					.($extra['maxlength'] ? ' maxlength="'.$extra['maxlength'].'"' : '')
+					.($extra['pattern'] ? ' pattern="'.$extra['pattern'].'"' : '')
 					.($extra['disabled'] ? ' disabled' : '')
 					.($extra['required'] ? ' required' : '')
 					.($extra['autocomplete'] ? ' autocomplete="'.$extra['autocomplete'].'"' : '')
@@ -2027,7 +2031,7 @@ class yf_form2 {
 					} else {
 						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data);
 						if (!$is_ok) {
-							$error_msg = t('form_validate_'.$func, array('%field' => $name));
+							$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
 						}
 					}
 				}
@@ -2092,9 +2096,9 @@ class yf_form2 {
 		}
 		if ($data && $table) {
 			if ($type == 'update') {
-				db()->update($table, $data, $extra['where_id']);
+				db()->update($table, db()->es($data), $extra['where_id']);
 			} elseif ($type == 'insert') {
-				db()->insert($table, $data);
+				db()->insert($table, db()->es($data));
 			}
 			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : $this->_replace['back_link'];
 			if (!$redirect_link) {

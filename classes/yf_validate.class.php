@@ -43,9 +43,7 @@ class yf_validate {
 	/***/
 	function matches($in, $params = array(), $fields = array()) {
 		$field = $params['param'];
-		return isset($fields[$field], $_POST[$field])
-			? ($in === $_POST[$field])
-			: FALSE;
+		return isset($fields[$field], $_POST[$field]) ? ($in === $_POST[$field]) : false;
 	}
 
 	/***/
@@ -284,6 +282,7 @@ class yf_validate {
 	function xss_clean($in, $params = array(), $fields = array()) {
 // TODO
 //		return $this->CI->security->xss_clean($in);
+		return true;
 	}
 
 	/***/
@@ -295,8 +294,7 @@ class yf_validate {
 
 	/***/
 	function captcha($in, $params = array(), $fields = array()) {
-// TODO
-		return true;
+		return _class('captcha')->check('captcha');
 	}
 
 	/**

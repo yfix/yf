@@ -10,15 +10,15 @@
 class yf_captcha {
 
 	/** @var string Secret key (will be added to hash) */
-	public $secret_key		= "";
+	public $secret_key		= '';
 	/** @var bool Use cookies or session vars */
 	public $use_cookies		= false;
 	/** @var string Cookie var name */
-	public $var_name		= "image_hash";
+	public $var_name		= 'image_hash';
 	/** @var int Cookie time-to-live (in seconds) */
 	public $cookie_ttl		= 86400; // @var 24 * 3600 == 1 day
 	/** @var string Path to the True Type Font to use (could be array) */
-	public $ttf_font_path	= "";
+	public $ttf_font_path	= '';
 	/** @var int Result image width (in pixels) */
 	public $image_width		= 110;
 	/** @var int Result image height (in pixels) */
@@ -80,7 +80,7 @@ class yf_captcha {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -93,17 +93,17 @@ class yf_captcha {
 			return false;
 		}
 		$this->set_secret_key();
-		$lib_path	= PROJECT_PATH. "fonts/";
-		$fwork_path	= YF_PATH. "share/captcha_fonts/";
+		$lib_path	= PROJECT_PATH. 'fonts/';
+		$fwork_path	= YF_PATH. 'share/captcha_fonts/';
 		$path = file_exists($lib_path) ? $lib_path : $fwork_path;
-		$this->set_font_path(array($path."pioneer.ttf", $path."banco.ttf", $path."glast.ttf"));
+		$this->set_font_path(array($path.'pioneer.ttf', $path.'banco.ttf', $path.'glast.ttf'));
 		$this->set_symbols_array(1);
 	}
 
 	/**
 	* Set secret key
 	*/
-	function set_secret_key($input = "") {
+	function set_secret_key($input = '') {
 		if (empty($input)) {
 			$this->secret_key = substr(md5(REAL_PATH), 8, -8);
 		} else {
@@ -114,7 +114,7 @@ class yf_captcha {
 	/**
 	* Set font path ($input could be array or string)
 	*/
-	function set_font_path($input = "") {
+	function set_font_path($input = '') {
 		if (!empty($input)) {
 			$this->ttf_font_path = $input;
 		}
@@ -130,8 +130,8 @@ class yf_captcha {
 		// Try to assign predefined arrays
 		if (is_numeric($input)) {
 			if ($input == 1)	 $this->symbols_array = range(0, 9);
-			elseif ($input == 2) $this->symbols_array = array_flip(range("A", "Z"));
-			elseif ($input == 3) $this->symbols_array = array_merge(array_flip(range(0, 9)), array_flip(range("a", "z")));
+			elseif ($input == 2) $this->symbols_array = array_flip(range('A', 'Z'));
+			elseif ($input == 3) $this->symbols_array = array_merge(array_flip(range(0, 9)), array_flip(range('a', 'z')));
 		// Try to set custom array
 		} elseif (is_array($input)) {
 			$this->symbols_array = $input;
@@ -141,16 +141,16 @@ class yf_captcha {
 	/**
 	* Set colors
 	*/
-	function set_colors($name = "", $input = "") {
-		if (!empty($input) && in_array("text","rect","line","ellipse","pixel")) {
-			$this->{$name."_colors"} = $input;
+	function set_colors($name = '', $input = '') {
+		if (!empty($input) && in_array('text','rect','line','ellipse','pixel')) {
+			$this->{$name.'_colors'} = $input;
 		}
 	}
 
 	/**
 	* Set image size
 	*/
-	function set_image_size($width = "", $height = "") {
+	function set_image_size($width = '', $height = '') {
 		if (!empty($width) && !empty($height)) {
 			$this->image_width	= $width;
 			$this->image_height	= $height;
@@ -160,7 +160,7 @@ class yf_captcha {
 	/**
 	* Set new var name to use in session or in cookie
 	*/
-	function set_var_name($new_name = "") {
+	function set_var_name($new_name = '') {
 		if (!empty($new_name)) {
 			$this->var_name = $new_name;
 		}
@@ -169,36 +169,36 @@ class yf_captcha {
 	/**
 	* Show HTML code for the CAPTCHA image
 	*/
-	function show_html($location = "", $add_style = " border=\"1\" ") {
+	function show_html($location = '', $add_style = ' border="1" ') {
 		if (!$this->ENABLED) {
 			return false;
 		}
 		if (empty($location)) {
-			$location = process_url("./?object=".__CLASS__."&action=show_image");
+			$location = process_url('./?object='.__CLASS__.'&action=show_image');
 		}
-		return "<img src=\"".$location."\" ".$add_style." />";
+		return '<img src="'.$location.'" '.$add_style.' />';
 	}
 
 	/**
 	* Show HTML block for the CAPTCHA image (complete, with input and it's validation)
 	*/
-	function show_block($location = "", $stpl_name = "") {
+	function show_block($location = '', $stpl_name = '') {
 		if (!$this->ENABLED) {
 			return false;
 		}
 		if (empty($location)) {
-			$location = "./?object=".$_GET["object"]."&action=show_image";
+			$location = './?object='.$_GET['object'].'&action=show_image';
 		}
-		$uid = "__captcha_id__";
+		$uid = '__captcha_id__';
 		if (false === strpos($location, $uid)) {
-			$location .= "&id=".$uid;
+			$location .= '&id='.$uid;
 		}
 		if (empty($stpl_name)) {
-			$stpl_name = "system/captcha_block";
+			$stpl_name = 'system/captcha_block';
 		}
 		$replace = array(
-			"img_src"		=> process_url($location),
-			"num_symbols"	=> intval($this->num_symbols),
+			'img_src'		=> process_url($location),
+			'num_symbols'	=> intval($this->num_symbols),
 		);
 		return tpl()->parse($stpl_name, $replace);
 	}
@@ -206,14 +206,14 @@ class yf_captcha {
 	/**
 	* Show image with text
 	*/
-	function check($field_in_form = "image_numbers") {
+	function check($field_in_form = 'image_numbers') {
 		if (!$this->ENABLED) {
 			return true;
 		}
 		$VALID_CODE = false;
 
 		if (empty($_POST[$field_in_form])) {
-			_re(t("Please enter code"));
+			_re('Please enter code');
 		} else {
 			$hash = md5($this->secret_key. $_POST[$field_in_form]);
 			if ($this->use_cookies) {
@@ -226,13 +226,13 @@ class yf_captcha {
 				}
 			}
 			if ($code_incorrect) {
-				_re(t("Code you entered is incorrect"));
+				_re('Code you entered is incorrect');
 			} else {
 				$VALID_CODE = true;
 			}
 		}
 		if ($this->use_cookies) {
-			setcookie($this->var_name, "", time());
+			setcookie($this->var_name, '', time());
 		} else {
 			unset($_SESSION[$this->var_name]);
 		}
@@ -287,7 +287,7 @@ class yf_captcha {
 			$_SESSION[$this->var_name] = $hash;
 		}
 		// Throw image to the user
-		header("Content-type: image/png");
+		header('Content-type: image/png');
 		imagepng($image);
 		// Cleanup
 		imagedestroy($image);
