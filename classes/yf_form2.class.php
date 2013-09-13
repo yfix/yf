@@ -2022,7 +2022,7 @@ class yf_form2 {
 						$data[$name] = $func($data[$name]);
 					} else {
 // TODO: test me
-						$is_ok = _class('form_validate')->$func($data[$name], array('param' => $param), $data);
+						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data);
 					}
 				}
 				if (!$is_ok) {
