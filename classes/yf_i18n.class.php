@@ -260,7 +260,7 @@ class yf_i18n {
 				if (!file_exists($dir)) {
 					continue;
 				}
-				$lang_files += (array)glob($dir.'*.php');
+				$lang_files += (array)glob($dir.'/*/__locale__'.$lang.'*.php');
 			}
 		}
 		//
