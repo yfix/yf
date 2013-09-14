@@ -45,6 +45,11 @@ if ($_GET["object"] == "help" && $_GET["action"] == "show_tip") {
 
 	$done = _call_fast_func("dynamic_image");
 
+// Fast captcha image
+} elseif ($_GET["object"] == "dynamic" && $_GET['action'] == "captcha_image") {
+
+	$done = _call_fast_func("captcha_image");
+
 // Fast low forum
 } elseif ($_GET["object"] == "forum" && $_GET['action'] == "low") {
 
