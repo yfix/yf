@@ -1,14 +1,7 @@
 <?php  
 
-$link = mysql_connect('192.168.1.5', 'root', '123456');
-if (!$link) {
-	die('Could not connect: ' . mysql_error());
-}
-
-require dirname(dirname(__FILE__)).'/share/functions/yf_cache.php';
 
 class get_ip_test extends PHPUnit_Framework_TestCase {
-
 
 	function _get_servers_ips(){
 		$ip_list = cache_get('ip_servers_list');
@@ -16,9 +9,8 @@ class get_ip_test extends PHPUnit_Framework_TestCase {
 			return $ip_list;
 		}
 
-		$sql = 'SELECT `base_ip`, `ip_aliases`  FROM `pf_admin`.`pf_servers`;';
-		$query = mysql_query($sql);
-		while($result = mysql_fetch_assoc($query)){
+		$query = db()->query('SELECT base_ip, ip_aliases  FROM '.db('servers'));
+		while($result = db()->fetch_assoc($query)){
 			$ip_list[$result['base_ip']] = $result['base_ip'];
 			if(!empty($result['ip_aliases'])){
 				$aliases = explode("\n", $result['ip_aliases']);

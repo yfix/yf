@@ -28,3 +28,10 @@ class test_mysql_reconnect {
 		}
 	}
 }
+
+#define('SITE_DEFAULT_PAGE', './?object=test_mysql_reconnect');
+define("YF_PATH", dirname(dirname(dirname(__FILE__)))."/");
+require YF_PATH."classes/yf_main.class.php";
+new yf_main("user", 1, 0);
+
+_class('test_mysql_reconnect')->show();
