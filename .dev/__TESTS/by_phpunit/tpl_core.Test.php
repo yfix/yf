@@ -2,7 +2,7 @@
 
 define("YF_PATH", dirname(dirname(dirname(dirname(__FILE__))))."/");
 require YF_PATH."classes/yf_main.class.php";
-$GLOBALS['main'] = new yf_main("user", 1, 0);
+new yf_main("user", 1, 0);
 
 function _tpl($stpl_text = "", $replace = array(), $name = "") {
 	return tpl()->parse_string($name, $replace, $stpl_text);
