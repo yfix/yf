@@ -18,6 +18,16 @@ function require_packages {
 	if [ ! -z "$to_install" ]; then
 		(echo "y" | apt-get install -q -m -y $to_install)
 	fi
+	if [ ! $? -eq 0 ]; then
+		echo "Catched error, trying one by one"
+		installed_packages="@"$(dpkg-query -W -f "\${status} \${package}\n" $packages 2>/dev/null | grep "install ok installed" | cut -c 22- | tr "\n" "@")"@"
+		for package in $to_install; do
+			exists=$(echo $installed_packages | fgrep "@$package@")
+			if [ -z "$exists" ]; then
+				(echo "y" | apt-get install -q -m -y $package)
+			fi
+		done
+	fi
 }
 
 # Example usage of programs that were installed automatically by require_packages:
