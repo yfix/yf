@@ -17,7 +17,7 @@ $required = array(
 );
 $sphinxsearch_host = "127.0.0.1:3308";
 $mysql_user = "root";
-$mysql_pswd = "nYbtcq9SmXn";
+$mysql_pswd = "";
 
 foreach ((array)$required as $name) {
 	$is_alive = false;
