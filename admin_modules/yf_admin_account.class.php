@@ -23,9 +23,13 @@ class yf_admin_account {
 		$on_before_update_func = function(&$data, &$table, &$fields, &$type, &$extra) {
 			$fname = 'password';
 			$posted = trim($_POST[$fname]);
-			if ($fields[$fname]) {
+			if (in_array($fname, $fields)) {
 				if (!strlen($posted)) {
-					unset($fields[$fname]);
+					foreach ((array)$fields as $k => $v) {
+						if ($v == $fname) {
+							unset($fields[$k]);
+						}
+					}
 				} else {
 					$data[$fname] = md5($posted);
 #					common()->set_notice('Password updated');

@@ -74,7 +74,7 @@ class yf_validate {
 			list($check_table, $check_field, $check_id) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $check_id && $in) {
-			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'" AND id != `'.db()->es($check_id).'`');
+			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'" AND id != "'.db()->es($check_id).'"');
 			if ($exists == $in) {
 				return false;
 			}
