@@ -1136,6 +1136,16 @@ class yf_form2 {
 
 	/**
 	*/
+	function info_date($name = '', $format = '', $extra = array(), $replace = array()) {
+		$r = $replace ? $replace : $this->_replace;
+		$replace[$name] = _format_date($r[$name], $format);
+// TODO: create nicer solution
+		$this->_replace[$name] = $replace[$name];
+		return $this->info($name, $format, $extra, $replace);
+	}
+
+	/**
+	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
 		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
@@ -2107,7 +2117,7 @@ class yf_form2 {
 	/**
 	*/
 	function _db_change_if_ok($table, $fields, $type, $extra = array()) {
-		if (!$this->_validate_ok || !$table || !$fields || !$type) {
+		if (!$this->_validate_ok || !$table || !$type) {
 			return $this;
 		}
 		$data = array();
@@ -2128,7 +2138,17 @@ class yf_form2 {
 		foreach ((array)$extra['add_fields'] as $db_field_name => $value) {
 			$data[$db_field_name] = $value;
 		}
+
+if ($extra['on_before_update']) {
+	$func = $extra['on_before_update'];
+	$func($data, $table, $fields, $type, $extra);
+}
+
 		if ($data && $table) {
+#			if ($extra['on_before_update']) {
+#				$func = $extra['on_before_update'];
+#				$func($data, $table, $fields, $type, $extra);
+#			}
 			if ($type == 'update') {
 				db()->update($table, db()->es($data), $extra['where_id']);
 			} elseif ($type == 'insert') {

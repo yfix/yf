@@ -65,6 +65,42 @@ class yf_validate {
 	}
 
 	/***/
+	function is_unique_without($in, $params = array(), $fields = array()) {
+		if (!$in) {
+			return true;
+		}
+		$param = $params['param'];
+		if ($param) {
+			list($check_table, $check_field, $check_id) = explode('.', $param);
+		}
+		if ($check_table && $check_field && $check_id && $in) {
+			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'" AND id != `'.db()->es($check_id).'`');
+			if ($exists == $in) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/***/
+	function password_update($in, $params = array(), $fields = array()) {
+// TODO
+/*
+		$fname = 'password';
+		$posted = trim($_POST[$fname]);
+		if ($fields[$fname]) {
+			if (!strlen($posted)) {
+				unset($fields[$fname]);
+			} else {
+				$data[$fname] = md5($posted);
+#				common()->set_notice('Password updated');
+			}
+		}
+*/
+		return false;
+	}
+
+	/***/
 	function exists($in, $params = array(), $fields = array()) {
 		if (!$in) {
 			return false;

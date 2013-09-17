@@ -6,6 +6,7 @@ $data = my_array_merge((array)$data, array(
 	`first_name` varchar(64) NOT NULL default '',
 	`last_name` varchar(64) NOT NULL default '',
 	`login` varchar(64) NOT NULL default '',
+	`email` varchar(255) NOT NULL default '',
 	`password` varchar(64) NOT NULL default '',
 	`group` int(10) unsigned NOT NULL default '0',
 	`active` enum('0','1') NOT NULL default '0',
