@@ -273,23 +273,17 @@ class yf_validate {
 
 	/***/
 	function valid_ip($in, $params = array(), $fields = array()) {
-// TODO
-//		return $this->CI->input->valid_ip($ip, $which);
-		return true;
+		return _class('input')->valid_ip($ip, $which);
 	}
 
 	/***/
 	function xss_clean($in, $params = array(), $fields = array()) {
-// TODO
-//		return $this->CI->security->xss_clean($in);
-		return true;
+		return _class('security')->xss_clean($in);
 	}
 
 	/***/
 	function strip_image_tags($in, $params = array(), $fields = array()) {
-// TODO
-//		return $this->CI->security->strip_image_tags($in);
-		return true;
+		return _class('security')->strip_image_tags($in);
 	}
 
 	/***/
