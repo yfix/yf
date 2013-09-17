@@ -182,27 +182,4 @@ class conf_test extends PHPUnit_Framework_TestCase {
 		);
 	   	$this->assertEquals(debug("key2::sub4::ss1::sss2"), "val2412");
 	}
-/*
-	public function test_27() {
-		debug(array(
-			"key2::sub4::ss1::"	=> "val0",
-			"key2::sub4::ss1::"	=> "val1",
-			"key2::sub4::ss1::"	=> "val2",
-#			"key2::sub4::ss1::5"=> "val5",
-		));
-		$_conf_should_be = array(
-			"key2"	=> array(
-				"sub4"	=> array(
-					"ss1"	=> array(
-						0 => "val0",
-						1 => "val1",
-						2 => "val2",
-#						5 => "val5",
-					),
-				),
-			),
-		);
-	   	$this->assertEquals($GLOBALS["DEBUG"], $_conf_should_be);
-	}
-*/
 }

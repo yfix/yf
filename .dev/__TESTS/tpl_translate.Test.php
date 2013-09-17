@@ -79,17 +79,4 @@ class tpl_translate_test extends PHPUnit_Framework_TestCase {
 			_tpl( '{catch("eula-toggle")} href="javascript:void(0);" onclick="external.BrowseUrl(\'#\');"  {/catch}{t("::installer::<a @eula-toggle>License Agreement</a>")}'
 		));
 	}
-/*
-	public function test_47() {
-		$this->assertEquals('__TODO__', 
-			_tpl( '{catch("eula_toggle")} href="javascript:void(0);" onclick="external.BrowseUrl(\'#\');"  {/catch}	
-{catch("terms_toolbar")} href="javascript:void(0);" onclick="external.BrowseUrl(\'http://www.babylon.com/toolbar\');" {/catch}
-{catch("privacy_toolbar")} href="javascript:void(0);" onclick="external.BrowseUrl(\'http://www.babylon.com/info/privacy.html\');" {/catch}
-{catch("coupish")}href="javascript:void(0);" onclick="external.BrowseUrl(\'http://www.coupish.com/terms.php\');"  {/catch}
-{t("::installer::By clicking on \'Accept & Download\', you accept the toggle Downloader <a @eula_toggle>License Agreement</a>, the legal <a  @terms_toolbar>Terms and Conditions</a> and Privacy Policy of <a @privacy_toolbar >Babylon toolbar</a> and <a @coupish>Coupish</a>.")}'
-		));
-	}
-*/
-#	public function setUp(){ }
-#	public function tearDown(){ }
 }

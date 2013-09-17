@@ -222,20 +222,6 @@ class tpl_core_test extends PHPUnit_Framework_TestCase {
 		_tpl( 'Inherited var: {key1}, passed var: {var2}', array(), 'unittest_include' );
 		$this->assertEquals("Inherited var: val1, passed var: 42", _tpl( '{include("unittest_include",var2=42)}', array("key1" => "val1") ));
 	}
-/*
-	public function test_113() {
-		_tpl( 'Inherited var: {key1}, passed var: {var2}', array(), 'unittest_include' );
-		$this->assertEquals("Inherited var: val1, passed var: 42", _tpl( '{include("unittest_include",var2="42")}', array("key1" => "val1") ));
-	}
-	public function test_114() {
-		_tpl( 'Inherited var: {key1}, passed var: {var2}', array(), 'unittest_include' );
-		$this->assertEquals("Inherited var: val1, passed var: 42", _tpl( '{include("unittest_include",var2={key2})}', array("key1" => "val1", "key2" => "42") ));
-	}
-	public function test_115() {
-		_tpl( 'Inherited var: {key1}, passed var: {var2}', array(), 'unittest_include' );
-		$this->assertEquals("Inherited var: val1, passed var: 42", _tpl( '{include("unittest_include",var2="{key2}")}', array("key1" => "val1", "key2" => "42") ));
-	}
-*/
 	public function test_116() {
 		_tpl( 'Included: {var1} {var2} {var3} {var4}', array(), 'unittest_include' );
 		$this->assertEquals("Included: v1 v2 v3 v4", _tpl( '{include("unittest_include",var1=v1;var2=v2;var3=v3;var4=v4)}' ));
@@ -253,12 +239,4 @@ class tpl_core_test extends PHPUnit_Framework_TestCase {
 	public function test_123() {
 		$this->assertEquals("GOOD", _tpl( '{if("%string" eq "string")}GOOD{else}BAD{/if}' ));
 	}
-/*
-	public function test_124() {
-		$this->assertEquals("GOOD", _tpl( '{if("%val1" eq "%key1")}GOOD{else}BAD{/if}', array("key1" => "val1") ));
-	}
-	public function test_125() {
-		$this->assertEquals("GOOD", _tpl( '{if("%42" eq "%key1")}GOOD{else}BAD{/if}', array("key1" => "42") ));
-	}
-*/
 }
