@@ -4,11 +4,9 @@ class test2 {
 
 	function show () {
 		$threads = _class("threads");
-
 		for ($i = 0; $i < 10; $i++) {
 			$threads->new_framework_thread($_GET["object"], "console", array('id' => $i));
 		}
-
 		$results = array();
 		while (false !== ($result = $threads->iteration())) {
 			if (!empty($result)) {

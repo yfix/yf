@@ -3,7 +3,6 @@ require '../share/functions/yf_common_funcs.php';
 
 class highlight_text extends PHPUnit_Framework_TestCase {
 
-
 	var	$LANGS_TEST = array(
 		'photoshop cs2 download' => '<b>photoshop</b> <b>cs2</b> <b>download</b>',//English
 		'Quien esté familiarizado' => '<b>Quien</b> <b>esté</b> <b>familiarizado</b>',//Spanish
@@ -25,7 +24,6 @@ class highlight_text extends PHPUnit_Framework_TestCase {
 		'möjligt för dig att hålla' => '<b>möjligt</b> <b>för</b> <b>dig</b> <b>att</b> <b>hålla</b>',//Swedish
 	);
 
-
 	public function test_1() {
 		foreach ((array)$this->LANGS_TEST as $test_item => $result_item){
 			$this->assertEquals($result_item, highlight($test_item, $test_item, 'b', ''));
@@ -35,17 +33,4 @@ class highlight_text extends PHPUnit_Framework_TestCase {
 	public function test_2(){
 		$this->assertEquals('OK', highlight('photoshop cs2 download', 'download dow', 'b'));
 	}
-/*
-	public function test_3() {
-		$big_text = file_get_contents('big_test_text.txt');
-		$search_words = 'метро андрей';
-		$result = highlight($big_text, $search_words);
-		file_put_contents('big_result_text.txt', $result);
-		$result = file_get_contents('big_result_text.txt');
-
-		$start_time = microtime(true);
-		$this->assertEquals($result, highlight($big_text, $search_words));
-		echo microtime(true) - $start_time;
-	}
- */
 }
