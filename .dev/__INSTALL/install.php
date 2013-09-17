@@ -480,7 +480,7 @@ new yf_main("admin", $no_db_connect = false, $auto_init_all = true);';
 		return installer();
 	}
 	function copy_project_skeleton() {
-		_class("dir")->copy_dir(INSTALLER_PATH.'data/', PROJECT_PATH, '', '/\.(svn|git)/');
+		_class("dir")->copy_dir(INSTALLER_PATH.'skel/', PROJECT_PATH, '', '/\.(svn|git)/');
 		return installer();
 	}
 }
