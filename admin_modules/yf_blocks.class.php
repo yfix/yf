@@ -254,8 +254,7 @@ class yf_blocks {
 			->template_select_box("stpl_name","Custom template")
 			->method_select_box("method_name","Custom class method")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -480,8 +479,7 @@ class yf_blocks {
 			->box("server_ids_box","Servers","servers_link")
 			->number("order","Rule Processing Order")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -570,8 +568,7 @@ class yf_blocks {
 			->box("server_ids_box","Servers","servers_link")
 			->number("order","Rule Processing Order")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

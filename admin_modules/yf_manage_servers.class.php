@@ -21,8 +21,7 @@ class yf_manage_servers {
 			->btn_active()
 			->btn_edit()
 			->btn_delete()
-			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
-			->render();
+			->footer_link("Add", "./?object=".$_GET["object"]."&action=add");
 	}
 
 	/**
@@ -69,8 +68,7 @@ class yf_manage_servers {
 			->text("hostname")
 			->text("ip")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -112,8 +110,7 @@ class yf_manage_servers {
 			->text("hostname")
 			->text("ip")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

@@ -190,8 +190,7 @@ class yf_category_editor {
 			->text("method_name")
 			->text("custom_fields")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

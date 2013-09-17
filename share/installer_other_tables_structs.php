@@ -1207,6 +1207,36 @@ $data = my_array_merge((array)$data, array(
 	`object_id` int(11) NOT NULL default '0',
 	`user_id` int(11) NOT NULL default '0'
 ",
+"advertising" => "
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`ad` varchar(64) NOT NULL,
+	`langs` varchar(255) NOT NULL DEFAULT '',
+	`cat_ids` text NOT NULL,
+	`program_ids` text NOT NULL,
+	`customer` text NOT NULL,
+	`module_names` varchar(255) NOT NULL DEFAULT '',
+	`user_countries` text NOT NULL,
+	`is_logged_in` int(11) NOT NULL DEFAULT '0',
+	`date_start` int(11) NOT NULL DEFAULT '0',
+	`date_end` int(11) NOT NULL DEFAULT '0',
+	`html` text NOT NULL,
+	`user_id` int(11) NOT NULL DEFAULT '0',
+	`edit_user_id` int(11) NOT NULL DEFAULT '0',
+	`add_date` int(11) NOT NULL DEFAULT '0',
+	`edit_date` int(11) NOT NULL DEFAULT '0',
+	`active` tinyint(4) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+	// ENGINE=MyISAM DEFAULT CHARSET=utf8 
+",
+"log_ads_changes" => "
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`ads_id` int(10) unsigned NOT NULL DEFAULT '0',
+	`author_id` int(10) unsigned NOT NULL DEFAULT '0',
+	`action` text NOT NULL,
+	`date` int(10) unsigned NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+	// ENGINE=InnoDB DEFAULT CHARSET=utf8;
+",
 ));
 $forum_tables_structs_file = YF_PATH."share/installer_forum_tables_structs.php";
 if (file_exists($forum_tables_structs_file)) {

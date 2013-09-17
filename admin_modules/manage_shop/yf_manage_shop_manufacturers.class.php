@@ -1,4 +1,5 @@
 <?php
+
 class yf_manage_shop_manufacturers{
 
 	/**
@@ -62,8 +63,7 @@ class yf_manage_shop_manufacturers{
 			->text("meta_keywords")
 			->text("meta_desc")
 			->integer("sort_order")
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}	
 
 	/**
@@ -116,8 +116,7 @@ class yf_manage_shop_manufacturers{
 			->text("meta_keywords")
 			->text("meta_desc")
 			->integer("sort_order")
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

@@ -20,8 +20,7 @@ class yf_manage_sites {
 			->btn_active()
 			->btn_edit()
 			->btn_delete()
-			->footer_link("Add", "./?object=".$_GET["object"]."&action=add")
-			->render();
+			->footer_link("Add", "./?object=".$_GET["object"]."&action=add");
 	}
 
 	/**
@@ -66,8 +65,7 @@ class yf_manage_sites {
 			->text("web_path")
 			->text("real_path")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -107,8 +105,7 @@ class yf_manage_sites {
 			->text("web_path")
 			->text("real_path")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

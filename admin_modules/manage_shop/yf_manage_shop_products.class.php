@@ -22,8 +22,7 @@ class yf_manage_shop_products{
 			->footer_add("Add product", "./?object=manage_shop&action=product_add")
 			->footer_link("Attributes", "./?object=manage_shop&action=attributes")
 			->footer_link("Categories", "./?object=category_editor&action=show_items&id=shop_cats")
-			->footer_link("Orders", "./?object=manage_shop&action=show_orders")
-			->render();
+			->footer_link("Orders", "./?object=manage_shop&action=show_orders");
 	}
 
 	function products_sort() {

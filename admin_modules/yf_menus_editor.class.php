@@ -110,8 +110,7 @@ class yf_menus_editor {
 			->btn_clone('', './?object='.$_GET["object"].'&action=clone_menu&id=%d')
 			->btn('Export', './?object='.$_GET["object"].'&action=export&id=%d')
 			->btn_active()
-			->footer_add()
-			->render();
+			->footer_add();
 	}
 
 	/**

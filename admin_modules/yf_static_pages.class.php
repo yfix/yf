@@ -19,8 +19,7 @@ class yf_static_pages {
 			->btn_delete()
 			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
 			->btn_active()
-			->footer_link('Add', './?object='.$_GET['object'].'&action=add')
-			->render();
+			->footer_link('Add', './?object='.$_GET['object'].'&action=add');
 	}
 
 	/**
@@ -29,8 +28,7 @@ class yf_static_pages {
 		if (empty($_POST['name'])) {
 			return common()->form2(array('back_link' => './?object='.$_GET['object']))
 				->text('name')
-				->save_and_back()
-				->render();
+				->save_and_back();
 		}
 		$name = preg_replace("/[^a-z0-9\_\-]/i", "_", _strtolower($_POST['name']));
 		$name = str_replace(array("__", "___"), "_", $name);
@@ -45,7 +43,7 @@ class yf_static_pages {
 		if (!empty($page_id)) {
 			return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".$page_id);
 		} else {
-			return _e(t("Can't insert record!"));
+			return _e("Can't insert record!");
 		}
 	}
 
@@ -111,8 +109,7 @@ class yf_static_pages {
 			->text("meta_keywords")
 			->text("meta_desc")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -178,8 +175,7 @@ class yf_static_pages {
 				),
 			))
 			->hidden('text')
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

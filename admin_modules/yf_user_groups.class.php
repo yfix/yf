@@ -44,8 +44,7 @@ class yf_user_groups {
 			->btn_active()
 			->footer_add()
 			->footer_link("Blocks", "./?object=blocks&action=show_rules&id=".$block_center_id)
-			->footer_link("Menu", "./?object=menus_editor&action=show_items&id=".$menu_id)
-			->render();
+			->footer_link("Menu", "./?object=menus_editor&action=show_items&id=".$menu_id);
 	}
 
 	/**
@@ -81,8 +80,7 @@ class yf_user_groups {
 			->text("name","Group name")
 			->text("go_after_login","Url after login")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -126,8 +124,7 @@ class yf_user_groups {
 			->text("name","Group name")
 			->text("go_after_login","Url after login")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**

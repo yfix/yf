@@ -81,8 +81,7 @@ class yf_admin_groups {
 			->text("name","Group name")
 			->text("go_after_login","Url after login")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
@@ -133,8 +132,7 @@ class yf_admin_groups {
 			->text("name","Group name")
 			->text("go_after_login","Url after login")
 			->active_box()
-			->save_and_back()
-			->render();
+			->save_and_back();
 	}
 
 	/**
