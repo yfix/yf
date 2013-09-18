@@ -104,7 +104,7 @@ class yf_table2 {
 			$pages = '';
 			$total = count($data);
 			$ids = array_keys($data);
-		} else {
+		} elseif (strlen($sql)) {
 			$db = is_object($params['db']) ? $params['db'] : db();
 			$pager_path = $params['pager_path'] ? $params['pager_path'] : '';
 			$pager_type = $params['pager_type'] ? $params['pager_type'] : 'blocks';

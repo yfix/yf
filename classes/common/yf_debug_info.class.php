@@ -259,6 +259,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_QUERY_LOG || !is_object($DB_CONNECTION) || !is_array($DB_CONNECTION->QUERY_LOG)) {
 			return "";
 		}
+		$items = array();
 		$db_queries_list = $DB_CONNECTION->QUERY_LOG;
 		if ($this->_SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($DB_CONNECTION->DB_TYPE, 0, 5) == "mysql") {
 			foreach ((array)$db_queries_list as $id => $_query_text) {
@@ -313,7 +314,7 @@ class yf_debug_info {
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
 				$exec_time = "<a href='".$admin_link."'>".$exec_time."</a>";
 			}
-			$data[] = array(
+			$items[] = array(
 				'id'		=> ($id + 1),
 				'exec_time'	=> strval($exec_time),
 				'sql'		=> $text,
@@ -331,7 +332,7 @@ class yf_debug_info {
 		}
 
 // TODO: show connection info and totals inside 'caption'
-		return table($data, array('table_class' => 'debug_item table-condensed'))
+		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
 			->text('id')
 			->text('exec_time')
 			->text('sql', array('hidden_data' => array('%explain', '%trace')))
@@ -383,6 +384,7 @@ class yf_debug_info {
 		if ($this->SORT_TEMPLATES_BY_NAME && !empty(tpl()->CACHE)) {
 			ksort(tpl()->CACHE);
 		}
+		$items = array();
 		foreach ((array)tpl()->CACHE as $k => $v) {
 			if (empty($v['calls'])) {
 				continue;
@@ -397,7 +399,7 @@ class yf_debug_info {
 
 			$cur_trace = debug('STPL_TRACES::'.$k);
 
-			$data[] = array(
+			$items[] = array(
 				'id'		=> ++$counter,
 				'exec_time'	=> strval(common()->_format_time_value($v["exec_time"])),
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link("edit_stpl", $k),
@@ -408,7 +410,7 @@ class yf_debug_info {
 			);
 		}
 // TODO: show connection info and totals inside 'caption'
-		return table($data, array('table_class' => 'debug_item table-condensed'))
+		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
 			->text('id')
 			->text('exec_time')
 			->text('name', array('hidden_data' => array('%trace')))
@@ -473,6 +475,7 @@ class yf_debug_info {
 		if (empty($data)) {
 			return "";
 		}
+		$items = array();
 /*
 		$body = "";
 		$body .= "<div class='debug_allow_close'><h5>".t("rewrite_links_info")."</h5><ol>";
@@ -487,7 +490,7 @@ class yf_debug_info {
 		$data["SOURCE"]		= array_unique($data["SOURCE"]);
 		$data["REWRITED"]	= array_unique($data["REWRITED"]);
 		foreach ((array)$data["SOURCE"] as $k => $v) {
-			$data[] = array(
+			$items[] = array(
 				'id'		=> ++$counter,
 #				'exec_time'	=> strval(common()->_format_time_value($v["exec_time"])),
 				'source'	=> strval($v),
@@ -497,7 +500,7 @@ class yf_debug_info {
 		}
 //		$body .= "</ol><i>".t("Rewrite processing time").": ".common()->_format_time_value($GLOBALS['rewrite_exec_time'])." <span>sec</span></div>";
 // TODO: show connection info and totals inside 'caption'
-		return table($data, array('table_class' => 'debug_item table-condensed'))
+		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
 			->text('id')
 #			->text('exec_time')
 			->text('source')
