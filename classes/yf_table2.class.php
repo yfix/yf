@@ -395,8 +395,9 @@ class yf_table2 {
 			'link'	=> $extra['link'],
 			'data'	=> t($extra['data']),
 			'func'	=> function($field, $params, $row, $instance_params) {
-				if (!$params['data'] && $params['extra']['data_name']) {
-					$params['data'] = $instance_params['data_sql_names'][$params['extra']['data_name']];
+				$extra = $params['extra'];
+				if (!$params['data'] && $extra['data_name']) {
+					$params['data'] = $instance_params['data_sql_names'][$extra['data_name']];
 				}
 				if (!$params['data']) {
 					$text = $field;
@@ -408,14 +409,14 @@ class yf_table2 {
 					}
 				}
 				if ($params['link']) {
-					$link_field_name = $params['extra']['link_field_name'];
+					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
 					$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(' ', '&nbsp;', $text).'</a>';
 				} else {
 					$body = $text;
 				}
-				return _class('table2')->_apply_badges($body, $params['extra'], $field);
+				return _class('table2')->_apply_badges($body, $extra, $field);
 			}
 		);
 		return $this;
@@ -461,8 +462,9 @@ class yf_table2 {
 			'extra'	=> $extra,
 			'desc'	=> $desc,
 			'func'	=> function($field, $params, $row, $instance_params) {
+				$extra = $params['extra'];
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
-				return _class('table2')->_apply_badges($text, $params['extra'], $field);
+				return _class('table2')->_apply_badges($text, $extra, $field);
 			}
 		);
 		return $this;
@@ -479,6 +481,7 @@ class yf_table2 {
 			'path'	=> $path,
 			'link'	=> $link,
 			'func'	=> function($field, $params, $row, $instance_params) {
+				$extra = $params['extra'];
 				$id = $row['id'];
 				// Make 3-level dir path
 				$d = sprintf('%09s', $id);
@@ -495,8 +498,8 @@ class yf_table2 {
 				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
 				return ($link_url ? '<a href="'.$link_url.'">' : '')
 					.'<img src="'.WEB_PATH. $img_path.'" style="'
-						.($params['extra']['width'] ? 'width:'.$params['extra']['width'].';' : '')
-						.($params['extra']['height'] ? 'height:'.$params['extra']['height'].';' : '')
+						.($extra['width'] ? 'width:'.$extra['width'].';' : '')
+						.($extra['height'] ? 'height:'.$extra['height'].';' : '')
 					.'">'
 					.($link_url ? '</a>' : '');
 			}
@@ -532,9 +535,10 @@ class yf_table2 {
 			'extra'	=> $extra,
 			'link'	=> $link,
 			'func'	=> function($row, $params, $instance_params) {
+				$extra = $params['extra'];
 				$override_id = '';
-				if (isset($params['extra']['id'])) {
-					$override_id = $params['extra']['id'];
+				if (isset($extra['id'])) {
+					$override_id = $extra['id'];
 				}
 				if (isset($instance_params['id'])) {
 					$override_id = $instance_params['id'];
@@ -543,10 +547,12 @@ class yf_table2 {
 					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
-				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
-				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
+				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> '
+#					. ($extra['data'] ? '<pre>'.htmlspecialchars($extra['data']).'</pre>')
+					;
 			},
 		);
 		return $this;
@@ -658,7 +664,8 @@ class yf_table2 {
 			'extra'	=> $extra,
 			'link'	=> $link,
 			'func'	=> function($row, $params) {
-				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				$extra = $params['extra'];
+				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$values = array(
 					1 => '<span class="label label-success">'.t('Active').'</span>',
@@ -679,10 +686,11 @@ class yf_table2 {
 			'extra'	=> $extra,
 			'link'	=> $link,
 			'func'	=> function($params, $instance_params) {
-				$id = isset($params['extra']['id']) ? $params['extra']['id'] : 'id';
+				$extra = $params['extra'];
+				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				$icon = ($params['extra']['icon'] ? ' '.$params['extra']['icon'] : 'icon-tasks');
-				$a_class = ($params['extra']['a_class'] ? ' '.$params['extra']['a_class'] : '');
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
+				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
 				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
