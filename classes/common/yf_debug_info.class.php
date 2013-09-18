@@ -509,4 +509,418 @@ class yf_debug_info {
 		;
 		return $body;
 	}
+
+	/*
+	*/
+	function _debug_force_get_url () {
+		if (!debug("_force_get_url")) {
+			return "";
+		}
+		$data = debug("_force_get_url");
+		if (empty($data)) {
+			return "";
+		}
+#		$_time = 0;
+#		$body = "";
+
+#		$body .= "<div class='debug_allow_close'><h5>".t("force get url")."</h5>";
+#		$body .= $this->_build_wide_table($data, 1);
+#		$total_time = 0;
+#		foreach ((array)$data as $v) {
+#			$total_time += $v["time"];
+#		}
+#		$body .= "<i>".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+#		$body .= "</div>";
+// TODO: check me and fix
+#print_r($data);
+		return table((array)$data, array('table_class' => 'debug_item table-condensed'))
+			->text('id')
+#			->text('exec_time')
+			->text('source')
+			->text('result')
+		;
+	}
+
+	/**
+	*/
+	function _debug_loaded_modules () {
+		if (!$this->_SHOW_LOADED_MODULES) {
+			return "";
+		}
+		$items = array();
+		foreach ((array)debug("_MAIN_LOAD_CLASS_DEBUG") as $data) {
+			$cur_size = file_exists($data["loaded_path"]) ? filesize($data["loaded_path"]) : "";
+			$total_size += $cur_size;
+			$total_load_time += (float)$data["time"];
+			$items[] = array(
+				'id'			=> ++$counter,
+				'exec_time'		=> common()->_format_time_value($data["time"]),
+				'path'			=> $this->_admin_link("edit_file", $data["loaded_path"]),
+				'module'		=> $data["class_name"],
+				'loaded_class'	=> $data["loaded_class_name"],
+				'size'			=> $cur_size,
+				'storage'		=> $data["storage"],
+			);
+		}
+#		$body .= "</table>".t("total_included_size").": ".$total_size." <span>bytes,</span> ".t("total_time").": ".common()->_format_time_value($total_load_time)." <span>sec</span></div>";
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_included_files () {
+		if (!$this->_SHOW_INCLUDED_FILES) {
+			return "";
+		}
+		$items = array();
+		foreach ((array)$included_files as $file_name) {
+			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, "core_cache")) {
+				continue;
+			}
+			$cur_size = file_exists($file_name) ? filesize($file_name) : "";
+			$total_size += $cur_size;
+			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, "/", $file_name));
+			$cur_include_time = isset($exec_time[$_fname]) ? $exec_time[$_fname] : 0;
+			$total_include_time += (float)$cur_include_time;
+			$items[] = array(
+				'id'			=> ++$counter,
+				'exec_time'		=> common()->_format_time_value($cur_include_time),
+				'name'			=> $this->_admin_link("edit_file", $file_name),
+				'size'			=> $cur_size,
+			);
+		}
+#		$body .= "</table>".t("total_included_size").": ".$total_size." <span>bytes,</span> ".t("total_include_time").": ".common()->_format_time_value($total_include_time)." <span>sec</span></div>";
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_get_data () {
+		$data = debug("_main_get_data_debug");
+		if (!$this->_SHOW_MAIN_GET_DATA || !$data) {
+			return "";
+		}
+#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+		$items = $data;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_core_cache_get () {
+		if (!$this->_SHOW_CORE_CACHE) {
+			return "";
+		}
+		$items = debug("_core_cache_debug::get");
+#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_core_cache_set () {
+		if (!$this->_SHOW_CORE_CACHE) {
+			return "";
+		}
+		$items = debug("_core_cache_debug::set");
+#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_core_cache_refresh () {
+		if (!$this->_SHOW_CORE_CACHE) {
+			return "";
+		}
+		$items = debug("_core_cache_debug::refresh");
+#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+	/**
+	*/
+	function _debug_main_execute () {
+		if (!$this->_SHOW_MAIN_EXECUTE) {
+			return "";
+		}
+		$items = debug('main_execute_block_time');
+#			$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_input_get () {
+		if (!$this->_SHOW_GET_DATA) {
+			return "";
+		}
+/*
+		foreach ((array)$_GET as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+*/
+		$items = $_GET;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_input_post () {
+		if (!$this->_SHOW_POST_DATA) {
+			return "";
+		}
+/*
+		foreach ((array)$_POST as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+*/
+		$items = $_POST;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_cookie () {
+		if (!$this->_SHOW_COOKIE_DATA) {
+			return "";
+		}
+/*
+		foreach ((array)$_COOKIE as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+*/
+		$items = $_COOKIE;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_input_request () {
+		if (!$this->_SHOW_REQUEST_DATA) {
+			return "";
+		}
+/*
+		foreach ((array)$_REQUEST as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+*/
+		$items = $_REQUEST;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_input_files () {
+		if (!$this->_SHOW_FILES_DATA) {
+			return "";
+		}
+/*
+		foreach ((array)$_FILES as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+*/
+		$items = $_FILES;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_server () {
+		if (!$this->_SHOW_SERVER_DATA) {
+			return "";
+		}
+/*
+		foreach ((array)$_SERVER as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+*/
+		if (is_array($_SERVER)) {
+			ksort($_SERVER);
+		}
+		$items = $_SERVER;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_env () {
+		if (!$this->_SHOW_ENV_DATA) {
+			return "";
+		}
+		if (is_array($_ENV)) {
+			ksort($_ENV);
+		}
+/*
+		foreach ((array)$_ENV as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+*/
+		$items = $_ENV;
+		if (!$items) {
+			return false;
+		}
+		return table((array)$items, array(
+				'table_class' 		=> 'debug_item table-condensed', 
+				'auto_no_buttons' 	=> 1,
+			))->auto();
+	}
+
+	/**
+	*/
+	function _debug_session () {
+		if (!$this->_SHOW_SESSION_DATA) {
+			return "";
+		}
+/*
+		$body = "";
+		$body .= "<div class='debug_allow_close'><h5>".t("SESSION data")."</h5><ul>";
+		if (is_array($_SESSION)) {
+			ksort($_SESSION);
+		}
+		foreach ((array)$_SESSION as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+		$body .= "</ul></div>";
+		// Additional session stats
+		foreach ((array)ini_get_all('session') as $_k => $_v) {
+			$_session_params[$_k] = $_v["local_value"];
+		}
+		$_num_stats = count($_session_params);
+		$_num_cols	= 3;
+		$_items_in_column	= ceil($_num_stats / $_num_cols);
+		$body .= $this->_show_table(t("SESSION PARAMS"), $_session_params, $_items_in_column);
+*/
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_settings () {
+		if (!$this->_SHOW_SETTINGS) {
+			return "";
+		}
+/*
+		$data = array(
+			"DEBUG_MODE"	=> DEBUG_MODE,
+			"DEV_MODE"		=> (int)conf('DEV_MODE'),
+			"MAIN_TYPE"		=> MAIN_TYPE,
+			"USE_CACHE"		=> (int)conf('USE_CACHE'),
+			"HOSTNAME"		=> main()->HOSTNAME,
+			"SITE_ID"		=> (int)conf('SITE_ID'),
+			"SERVER_ID"		=> (int)conf('SERVER_ID'),
+			"@LANG"			=> conf("language"),
+			"SITE_PATH"		=> SITE_PATH,
+			"PROJECT_PATH"	=> PROJECT_PATH,
+			"YF_PATH"		=> YF_PATH,
+			"WEB_PATH"		=> WEB_PATH,
+			"MEDIA_PATH"	=> MEDIA_PATH,
+			"IS_SPIDER"		=> (int)conf('IS_SPIDER'),
+		);
+		$body = "";
+		$body .= "<div class='debug_allow_close'><h5>".t("FRAMEWORK SETTINGS")."</h5><ul>";
+		foreach ((array)$data as $id => $text) {
+			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
+		}
+		$body .= "</ul></div>";
+*/
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_php_ini () {
+		if (!$this->_SHOW_PHP_INI) {
+			return "";
+		}
+/*
+		$body .= "<div class='debug_allow_close'><h5>".t("PHP INI")."</h5><ol>";
+		foreach (ini_get_all() as $id => $text) {
+			$body .= "['".htmlspecialchars($id)."'] => '".htmlspecialchars($text["local_value"])."',";
+		}
+		$body .= "</ol></div>";
+*/
+		return $body;
+	}
 }

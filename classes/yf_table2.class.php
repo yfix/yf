@@ -80,8 +80,11 @@ class yf_table2 {
 	/**
 	* Enabling automatic fields parsing mode
 	*/
-	function auto() {
+	function auto($params = array()) {
 		$this->_params['auto'] = true;
+		foreach ((array)$params as $k => $v) {
+			$this->_params[$k] = $v;
+		}
 		return $this;
 	}
 
@@ -133,14 +136,16 @@ class yf_table2 {
 			}
 		}
 		// Automatically get fields from results
-		if ($params['auto']) {
-			$field_names = array_keys(current($data));
+		if ($params['auto'] && $data) {
+			$field_names = array_keys((array)current((array)$data));
 			foreach ((array)$field_names as $f) {
 				$this->text($f);
 			}
-			$this->btn_edit();
-			$this->btn_delete();
-			$this->footer_add();
+			if (!$params['auto_no_buttons']) {
+				$this->btn_edit();
+				$this->btn_delete();
+				$this->footer_add();
+			}
 		}
 		/*
 		* Fill data array with custom fields, also fitting slots with empty strings where no custom data. Example:
