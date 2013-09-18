@@ -176,19 +176,23 @@ class yf_debug_info {
 		}
 		$body .= '<div id="debug_console">';
 
-		$body .= '<ul class="nav nav-tabs">';
-		$body .= '  <li><a class="brand" href="javascript:void(0)">DEBUG</a></li>';
 		$i = 0;
 		foreach ((array)$debug_contents as $name => $content) {
-			$body .= '  <li'.(++$i == 1 ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
+			if (empty($content)) {
+				continue;
+			}
+			$is_first = (++$i == 1);
+			$contents[$name] = '  <div class="tab-pane fade in'.($is_first ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
+			$links[$name] = '  <li'.($is_first ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
 		}
+
+		$body .= '<ul class="nav nav-tabs">';
+		$body .= '  <li><a class="brand" href="javascript:void(0)">DEBUG</a></li>';
+		$body .= implode(PHP_EOL, $links);
 		$body .= '</ul>';
 
 		$body .= '<div class="tab-content">';
-		$i = 0;
-		foreach ((array)$debug_contents as $name => $content) {
-			$body .= '  <div class="tab-pane fade in'.(++$i == 1 ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
-		}
+		$body .= implode(PHP_EOL, $contents);
 		$body .= '</div>';
 
 		// DO NOT REMOVE!!! Needed to correct display template tags in debug output
@@ -271,7 +275,7 @@ class yf_debug_info {
 		}
 		$total_queries_exec_time = 0;
 /*
-		$body .= "<div class='debug_allow_close'><h5>".t("QUERY_LOG")."  ("
+		$body .= "<h5>".t("QUERY_LOG")."  ("
 			.($DB_CONNECTION->DB_SSL ? "SSL " : "")
 			.$DB_CONNECTION->DB_TYPE
 			."://".$DB_CONNECTION->DB_USER
@@ -281,6 +285,7 @@ class yf_debug_info {
 			.($DB_CONNECTION->DB_CHARSET ? "?charset=".$DB_CONNECTION->DB_CHARSET : "")
 			.($DB_CONNECTION->DB_SOCKET ? "?socket=".$DB_CONNECTION->DB_SOCKET : "")
 			.")</h5>";
+// TODO: fixme with trace
 		$body .= $connect_trace2 ? "<small>"._prepare_html($connect_trace2)."</small>" : "";
 */
 		foreach ((array)$db_queries_list as $id => $text) {
@@ -310,9 +315,9 @@ class yf_debug_info {
 			}
 			$data[] = array(
 				'id'		=> ($id + 1),
-				'exec_time'	=> $exec_time,
+				'exec_time'	=> strval($exec_time),
 				'sql'		=> $text,
-				'rows'		=> $DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql],
+				'rows'		=> strval($DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql]),
 				'trace'		=> '<pre><small>'.$_cur_trace2.'</small></pre>',
 				'explain'	=> $_cur_explain,
 			);
@@ -325,6 +330,7 @@ class yf_debug_info {
 #			$body .= "<i>".t("connect_time").": ".common()->_format_time_value($DB_CONNECTION->_connection_time)."<span> sec";
 		}
 
+// TODO: show connection info and totals inside 'caption'
 		return table($data, array('table_class' => 'debug_item table-condensed'))
 			->text('id')
 			->text('exec_time')
@@ -365,6 +371,139 @@ class yf_debug_info {
 			}
 */
 		}
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_stpls () {
+		if (!$this->_SHOW_STPLS || !count(tpl()->CACHE)) {
+			return "";
+		}
+		if ($this->SORT_TEMPLATES_BY_NAME && !empty(tpl()->CACHE)) {
+			ksort(tpl()->CACHE);
+		}
+		foreach ((array)tpl()->CACHE as $k => $v) {
+			if (empty($v['calls'])) {
+				continue;
+			}
+			$stpl_inline_edit = "";
+			if (MAIN_TYPE_USER && tpl()->ALLOW_INLINE_DEBUG) {
+				$stpl_inline_edit = " stpl_name='".$k."' ";
+			}
+			$cur_size = strlen($v['string']);
+			$total_size += $cur_size;
+			$total_stpls_exec_time += (float)$v["exec_time"];
+
+			$cur_trace = debug('STPL_TRACES::'.$k);
+
+			$data[] = array(
+				'id'		=> ++$counter,
+				'exec_time'	=> strval(common()->_format_time_value($v["exec_time"])),
+				'name'		=> /*$stpl_inline_edit. */$this->_admin_link("edit_stpl", $k),
+				'storage'	=> strval($v['storage']),
+				'calls'		=> strval($v['calls']),
+				'size'		=> strval($cur_size),
+				'trace'		=> '<pre><small>'.$cur_trace.'</small></pre>',
+			);
+		}
+// TODO: show connection info and totals inside 'caption'
+		return table($data, array('table_class' => 'debug_item table-condensed'))
+			->text('id')
+			->text('exec_time')
+			->text('name', array('hidden_data' => array('%trace')))
+			->text('storage')
+			->text('calls')
+			->text('size')
+			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
+		;
+/*
+		$body .= "</table>
+			<div>".t("used_templates_size").": ".$total_size." bytes, 
+				".t("total_exec_time").": ".common()->_format_time_value($total_stpls_exec_time)." seconds
+			</div>
+		</div>";
+*/
+/*
+		// Display calls tree
+		if (debug('STPL_PARENTS')) {
+			$body .= "<div class='debug_allow_close'><h5>".t("STPL Tree")."</h5>";
+			$body .= "<ul><li>main</li><ul>";
+			$body .= $this->_show_stpls_tree();
+			$body .= "</ul></ul></div>";
+		}
+*/
+/*
+		// Debug output of the template vars
+		if (debug('STPL_REPLACE_VARS')) {
+			$body .= "<div class='debug_allow_close'><h5>".t("Templates vars")."</h5>";
+			foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
+				$body .= "".$stpl_name."";
+				$body .= "<div>";
+				foreach ((array)$calls as $num => $vars) {
+					ksort($vars);
+					$body .= "<div>";
+					if (count($calls) > 1) {
+						$body .= "<i>".$num."";
+					}
+					$body .= "<table class='table table-bordered table-striped table-hover'>";
+					foreach ((array)$vars as $n => $v) {
+						$body .= "<tr><td>".$n."</td><td>".htmlspecialchars(print_r($v, 1))."</td></tr>";
+					}
+					$body .= "</table>";
+					$body .= "</div>";
+				}
+				$body .= "<br style='clear:both' />";
+				$body .= "</div>";
+			}
+			$body .= "</div>";
+		}
+*/
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_rewrite () {
+		if (!$this->_SHOW_REWRITE_INFO) {
+			return "";
+		}
+#		$data = debug('rewrite') || $GLOBALS["REWRITE_DEBUG"];
+		$data = $GLOBALS["REWRITE_DEBUG"];
+		if (empty($data)) {
+			return "";
+		}
+/*
+		$body = "";
+		$body .= "<div class='debug_allow_close'><h5>".t("rewrite_links_info")."</h5><ol>";
+		$data["SOURCE"]		= array_unique($data["SOURCE"]);
+		$data["REWRITED"]	= array_unique($data["REWRITED"]);
+		foreach ((array)$data["SOURCE"] as $k => $v) {
+			$body .= "<li>".$v." =&gt; ".$this->_admin_link("link", $data["REWRITED"][$k])."</li>";
+		}
+		$body .= "</ol><i>".t("Rewrite processing time").": ".common()->_format_time_value($GLOBALS['rewrite_exec_time'])." <span>sec</span></div>";
+*/
+
+		$data["SOURCE"]		= array_unique($data["SOURCE"]);
+		$data["REWRITED"]	= array_unique($data["REWRITED"]);
+		foreach ((array)$data["SOURCE"] as $k => $v) {
+			$data[] = array(
+				'id'		=> ++$counter,
+#				'exec_time'	=> strval(common()->_format_time_value($v["exec_time"])),
+				'source'	=> strval($v),
+				'result'	=> strval($this->_admin_link("link", $data["REWRITED"][$k])),
+#				'trace'		=> '<pre><small>'.$cur_trace.'</small></pre>',
+			);
+		}
+//		$body .= "</ol><i>".t("Rewrite processing time").": ".common()->_format_time_value($GLOBALS['rewrite_exec_time'])." <span>sec</span></div>";
+// TODO: show connection info and totals inside 'caption'
+		return table($data, array('table_class' => 'debug_item table-condensed'))
+			->text('id')
+#			->text('exec_time')
+			->text('source')
+			->text('result')
+#			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
+		;
 		return $body;
 	}
 }
