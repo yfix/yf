@@ -374,6 +374,37 @@ class yf_table2 {
 	}
 
 	/**
+	* Used to embed hidden data blocks, that can be later displayed.
+	*/
+	function _hidden_data_container($row, $params, $instance_params) {
+		$extra = $params['extra'];
+		$hidden_data = $extra['hidden_data'];
+		if (empty($hidden_data)) {
+			return '';
+		}
+		if (!is_array($hidden_data)) {
+			$hidden_data = array($hidden_data);
+		}
+		$body = '';
+		foreach ((array)$hidden_data as $data) {
+			if (!$data) {
+				continue;
+			}
+			// Linking data from row element, example: %explain
+			if ($data[0] == '%') {
+				$name = substr($data, 1);
+				$data = isset($row[$name]) ? $row[$name] : $data;
+			} else {
+				$name = $params['name'];
+			}
+			if ($data) {
+				$body .= '<div style="display:none;" data-hidden-name="'.$name.'">'.$data.'</div>';
+			}
+		}
+		return $body;
+	}
+
+	/**
 	*/
 	function text($name, $desc = '', $extra = array()) {
 		if (!is_array($extra)) {
@@ -412,10 +443,14 @@ class yf_table2 {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
-					$body = '<a href="'.$link.'" class="btn btn-mini">'.str_replace(' ', '&nbsp;', $text).'</a>';
+					if ($extra['hidden_toggle']) {
+						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
+					}
+					$body = '<a href="'.$link.'" class="btn btn-mini"'.$a_class. $attrs. '>'.str_replace(' ', '&nbsp;', $text).'</a>';
 				} else {
 					$body = $text;
 				}
+				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
 				return _class('table2')->_apply_badges($body, $extra, $field);
 			}
 		);
@@ -548,11 +583,16 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
+				if ($extra['hidden_toggle']) {
+					$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
+				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> '
-#					. ($extra['data'] ? '<pre>'.htmlspecialchars($extra['data']).'</pre>')
-					;
+
+				$body = '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+
+				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
+				return $body;
 			},
 		);
 		return $this;
