@@ -1525,7 +1525,8 @@ class yf_main {
 			$_REQUEST	= array_merge((array)$_GET, (array)$_POST, (array)$_COOKIE);
 		}
 		if (function_exists('date_default_timezone_set') && function_exists('date_default_timezone_get')) {
-			date_default_timezone_set(date_default_timezone_get());
+// TODO: wtf?
+//			date_default_timezone_set(date_default_timezone_get());
 		}
 	}
 
