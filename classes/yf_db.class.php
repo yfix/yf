@@ -372,24 +372,8 @@ class yf_db {
 		}
 		$this->QUERY_LOG[] = $sql;
 		$this->QUERY_EXEC_TIME[] = (float)microtime(true) - (float)$this->_query_time_start;
-		if (is_array($_trace) && !empty($_trace)) {
-// TODO: convert to much more powerful method   main()->trace_string()
-			$_cur_trace_id = 0;
-			$_db_class_name1 = "db.class.php";
-			// Try to skip back trace for "query" function
-			for ($i = 0; $i < 5; $i++) {
-				if (in_array(strtolower($_trace[$i]["class"]), array("db", YF_PREFIX."db")) 
-					&& in_array(strtolower($_trace[$i]["function"]), array("query", "unbuffered_query", "insert", "update", "replace")) 
-					&& (substr($_trace[$i]["file"], -strlen($_db_class_name1)) == $_db_class_name1)
-				) {
-					continue;
-				}
-				$_cur_trace_id = $i;
-				break;
-			}
-			$_trace[$_cur_trace_id]["inside_method"] = (!empty($_trace[$_cur_trace_id + 1]["class"]) ? $_trace[$_cur_trace_id + 1]["class"]. $_trace[$_cur_trace_id + 1]["type"] : ""). $_trace[$_cur_trace_id + 1]["function"];
-			$this->QUERY_BACKTRACE_LOG[] = $_trace[$_cur_trace_id];
-			$this->QUERY_BACKTRACE_LOG2[] = $this->_trace_string();
+		if (!empty($_trace)) {
+			$this->QUERY_BACKTRACE_LOG[] = $_trace;
 		}
 		if ($this->GATHER_AFFECTED_ROWS) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
