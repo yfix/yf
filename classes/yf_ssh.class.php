@@ -33,6 +33,8 @@ class yf_ssh {
 	public $MAX_RECONNECTS		= 1;
 	/** @var bool */
 	public $LOG_FULL_EXEC		= 0;
+	/** @var bool */
+	public $_debug			= array();
 
 	/**
 	* Catch missing method call
