@@ -524,6 +524,7 @@ installer()
 #installer()->import_base_db_structure();
 if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
+	_class('dir')->copy_dir(INSTALLER_PATH.'install/demo_skel/', PROJECT_PATH, '', '/\.(svn|git)/');
 }
 $debug_info = $_POST['install_checkbox_debug_info'] ? common()->show_debug_info() : '';
 $vars = installer()->prepare_vars();
