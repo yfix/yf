@@ -425,7 +425,7 @@ unset($item[$k]);
 				$connect_trace = $instances_trace[$k][0];
 			}
 // TODO
-			$body .= $this->_do_debug_db_shutdown_queries($v, $connect_trace);
+#			$body .= $this->_do_debug_db_shutdown_queries($v, $connect_trace);
 		}
 		return $body;
 	}
@@ -444,7 +444,7 @@ unset($item[$k]);
 				$connect_trace = $instances_trace[$k][0];
 			}
 // TODO
-			$body .= $this->_do_debug_db_cached_queries($v, $connect_trace);
+#			$body .= $this->_do_debug_db_cached_queries($v, $connect_trace);
 		}
 		return $body;
 	}
@@ -463,7 +463,7 @@ unset($item[$k]);
 				$connect_trace = $instances_trace[$k][0];
 			}
 // TODO
-			$body .= $this->_do_debug_db_session_stats($v, $connect_trace);
+#			$body .= $this->_do_debug_db_session_stats($v, $connect_trace);
 		}
 		return $body;
 	}
