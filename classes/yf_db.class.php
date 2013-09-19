@@ -1261,8 +1261,7 @@ class yf_db {
 	*/
 	function _trace_string() {
 		$e = new Exception();
-		$data = implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
-		return $data;
+		return implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
 	}
 
 	/**

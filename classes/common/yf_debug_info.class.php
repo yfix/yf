@@ -280,8 +280,8 @@ class yf_debug_info {
 		$instances_trace = debug('db_instances_trace');
 		foreach ((array)debug('db_instances') as $k => $v) {
 			$connect_trace = array();
-			if (isset($instances_trace[$k][0])) {
-				$connect_trace = $instances_trace[$k][0];
+			if (isset($instances_trace[$k])) {
+				$connect_trace = $instances_trace[$k];
 			}
 			$body .= $this->_do_debug_db_connection_queries($v, $connect_trace);
 		}
@@ -325,7 +325,7 @@ class yf_debug_info {
 			.($db->DB_CHARSET ? '?charset='.$db->DB_CHARSET : '')
 			.($db->DB_SOCKET ? '?socket='.$db->DB_SOCKET : '')
 			.')</b>';
-#		$body .= $connect_trace ? '<small>'._prepare_html($connect_trace).'</small>' : '';
+		$body .= $connect_trace ? ' <a href="javascript:void(0)" class="btn btn-mini">Trace</a><pre style="display:none;"><small>'._prepare_html($connect_trace).'</small></pre>' : '';
 
 		foreach ((array)$db_queries_list as $id => $text) {
 			$text = trim($text);

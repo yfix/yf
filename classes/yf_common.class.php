@@ -1083,8 +1083,7 @@ class yf_common {
 	*/
 	function trace_string() {
 		$e = new Exception();
-		$data = implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
-		return $data;
+		return implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
 	}
 
 	/**

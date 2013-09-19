@@ -329,9 +329,9 @@ class yf_main {
     }
 
 	/**
+	* conf(), module_conf() wrappers
 	*/
 	function init_conf_functions () {
-		// conf(), module_conf() wrappers
 		$fwork_conf_path = dirname(dirname(__FILE__)).'/share/functions/yf_conf.php';
 		if (file_exists($fwork_conf_path)) {
 			$this->include_module($fwork_conf_path, 1);
@@ -339,9 +339,9 @@ class yf_main {
 	}
 
 	/**
+	* cache_set(), cache_get(), cache_del() wrappers
 	*/
 	function init_cache_functions () {
-		// cache_set(), cache_get(), cache_del() wrappers
 		$fwork_cache_path	= dirname(dirname(__FILE__)).'/share/functions/yf_cache.php';
 		if (file_exists($fwork_cache_path)) {
 			$this->include_module($fwork_cache_path, 1);
@@ -986,8 +986,7 @@ class yf_main {
 		if ($this->CONSOLE_MODE) {
 			$this->NO_GRAPHICS = true;
 		}
-		$G_OBJ = $this->init_class('graphics', 'classes/');
-		return $G_OBJ->tasks($CHECK_IF_ALLOWED);
+		return $this->init_class('graphics', 'classes/')->tasks($CHECK_IF_ALLOWED);
 	}
 
 	/**
@@ -1157,7 +1156,6 @@ class yf_main {
 		if (isset($project_conf[MAIN_TYPE.':'.$module_name])) {
 			$module_conf_name = MAIN_TYPE.':'.$module_name;
 		}
-		// Set config vars
 		if (isset($project_conf[$module_conf_name])) {
 			foreach ((array)$project_conf[$module_conf_name] as $k => $v) {
 				$MODULE_OBJ->$k = $v;
@@ -1176,7 +1174,6 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		// Try to load data handlers array
 		if (!conf('data_handlers')) {
 			$this->_load_data_handlers();
 		}
@@ -1184,14 +1181,12 @@ class yf_main {
 		if (empty($handler_name)) {
 			return $data_to_return;
 		}
-		// Try to get from cache
 		$cache_obj_available = is_object($this->modules['cache']);
 		if (!empty($this->USE_SYSTEM_CACHE) && $cache_obj_available) {
 			$data_to_return = $this->modules['cache']->get($handler_name, $force_ttl, $params);
 		}
 		$no_cache = false;
 		if (empty($data_to_return) && !is_array($data_to_return)) {
-			// Check if handler is locale-specific
 			$locale_handler_name = '';
 			if (strpos($handler_name, 'locale:') === 0) {
 				$handler_name = substr($handler_name, 7);
@@ -1220,7 +1215,7 @@ class yf_main {
 			$next = is_array($d) ? count($d) : 0;
 			debug('_main_get_data_debug::'.$next, array(
 				'name'		=> $handler_name,
-				'time'		=> $time_end - $time_start,
+				'time'		=> round($time_end - $time_start, 5),
 				'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. _prepare_html(substr($_debug_data, $_pos + 1)) : $_debug_data,
 				'trace'		=> $this->trace_string(),
 				'params'	=> $params,
@@ -1250,15 +1245,17 @@ class yf_main {
 		if (conf('data_handlers')) {
 			return false;
 		}
-		// Load from the framework
 		$framework_rules_file_path = YF_PATH. 'share/data_handlers.php';
 		if (file_exists($framework_rules_file_path)) {
-			include($framework_rules_file_path);
+			include ($framework_rules_file_path);
 		}
-		// Load current rules set
+		$rules_file_path = PROJECT_PATH. 'share/data_handlers.php';
+		if (file_exists($rules_file_path)) {
+			include ($rules_file_path);
+		}
 		$rules_file_path = PROJECT_PATH. 'cache_rules.php';
 		if (file_exists($rules_file_path)) {
-			include($rules_file_path);
+			include ($rules_file_path);
 		}
 	}
 
@@ -1282,8 +1279,7 @@ class yf_main {
 	*/
 	function trace_string() {
 		$e = new Exception();
-		$data = implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
-		return $data;
+		return implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
 	}
 
 	/**
@@ -1461,7 +1457,7 @@ class yf_main {
 			}
 		}
 		// Check if current page is called via AJAX call from javascript
-		conf('IS_AJAX', ($this->_server('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' || !empty($_GET['ajax_mode'])) ? 1 : 0);
+		conf('IS_AJAX', (strtolower($this->_server('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest' || !empty($_GET['ajax_mode'])) ? 1 : 0);
 
 		define('USER_MODULES_DIR', 'modules/');
 		define('ADMIN_MODULES_DIR', 'admin_modules/');
@@ -1516,7 +1512,8 @@ class yf_main {
 	function set_required_php_params() {
 		error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
 		// Set path to PEAR
-		set_include_path (YF_PATH.'libs/pear/'. PATH_SEPARATOR. get_include_path());
+// TODO: do we need this always here?
+#		set_include_path (YF_PATH.'libs/pear/'. PATH_SEPARATOR. get_include_path());
 		ini_set('url_rewriter.tags', '');
 		ini_set('magic_quotes_runtime',	0);
 		ini_set('magic_quotes_sybase', 0);
@@ -1536,8 +1533,7 @@ class yf_main {
 	* Send main headers
 	*/
 	function _send_main_headers($content_length = 0) {
-		$G_OBJ = $this->init_class('graphics', 'classes/');
-		return $G_OBJ->_send_main_headers($content_length);
+		return $this->init_class('graphics', 'classes/')->_send_main_headers($content_length);
 	}
 
 	/**
@@ -1627,6 +1623,7 @@ class yf_main {
 	}
 
 # TODO: in DEBUG_MODE log/cleanup/catch reads/writes to these methods
+// TODO: move them into separate class (input ?) and create shortcut ( ex: input()->get() )
 
 	/**
 	* Helper to get/set GET vars
