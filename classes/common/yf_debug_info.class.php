@@ -141,70 +141,6 @@ class yf_debug_info {
 	}
 
 	/**
-	*/
-	function _show_key_val_table ($a) {
-		if (!$a) {
-			return false;
-		}
-		if (is_array($a)) {
-			ksort($a);
-		}
-		$items = array();
-		foreach ((array)$a as $k => $v) {
-			$items[] = array(
-				'key'	=> $k,
-				'value'	=> is_array($v) ? print_r($v, 1) : $v,
-			);
-		}
-		if (!$items) {
-			return false;
-		}
-		return $this->_show_auto_table($items);
-	}
-
-	/**
-	*/
-	function _show_auto_table ($items = array(), $params = array()) {
-		if (!is_array($items)) {
-			$items = array();
-		}
-		foreach ($items as &$item) {
-			foreach ($item as $k => &$v) {
-				if (is_array($v)) {
-					$v = !empty($v) ? print_r($v, 1) : '';
-				}
-				if ($k == 'trace') {
-unset($item[$k]);
-				}
-			}
-		}
-#		if ($params['total_sum']) {
-#		}
-		if (!$items) {
-			return false;
-		}
-#		$caption .= 'items: '.count($items);
-
-		$table = table((array)$items, array(
-			'table_class' 		=> 'debug_item table-condensed', 
-			'auto_no_buttons' 	=> 1,
-			'caption'			=> $caption,
-		))->auto();
-/*
-		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
-			->text('id')
-			->text('exec_time')
-			->text('name', array('hidden_data' => array('%trace')))
-			->text('storage')
-			->text('calls')
-			->text('size')
-			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
-		;
-*/
-		return $table;
-	}
-
-	/**
 	* Create simple table with debug info
 	*/
 	function go () {
@@ -295,7 +231,6 @@ unset($item[$k]);
 		if ($this->ADD_ADMIN_LINKS) {
 			$body = "<a href='".process_url("./?object=test")."'>Test module</a>".$body;
 		}
-		return $body;
 */
 		$methods = array();
 		$class_name = get_class($this);
@@ -337,185 +272,6 @@ unset($item[$k]);
 
 	/**
 	*/
-	function _my_wrap($str, $width=40, $break="") { 
-// TODO
-		return preg_replace('#(\S{'.$width.',})#e', "chunk_split('$1', ".$width.", '".$break."')", $str); 
-	}
-
-	/**
-	* Collect unique not translated vars into log file
-	*/
-	function _log_not_translated_to_file () {
-// TODO
-		$f = $this->_NOT_TRANSLATED_FILE;
-		$existed_vars = array();
-		if (file_exists($f)) {
-			$existed_vars = eval('return '.substr(file_get_contents($f), strlen($this->_auto_header), -strlen($this->_auto_footer)).';');
-		}
-		$something_changed = false;
-		$lang = conf('language');
-		foreach ((array)_class('i18n')->_NOT_TRANSLATED[$lang] as $var_name => $_hits) {
-			$var_name = addslashes(stripslashes(str_replace(' ','_',strtolower(trim($var_name)))));
-			if (empty($var_name)) {
-				continue;
-			}
-			if (!isset($existed_vars[$var_name])) {
-				$existed_vars[$var_name] = $var_name;
-				$something_changed = true;
-			}
-		}
-		if (!$something_changed) {
-			return false;
-		}
-		if (is_array($existed_vars)) {
-			ksort($existed_vars);
-		}
-		$_dir = dirname($this->_NOT_TRANSLATED_FILE);
-		if (!file_exists($_dir)) {
-			_mkdir_m($_dir);
-		}
-		file_put_contents($f, $this->_auto_header. "\$data = ".var_export($existed_vars, 1).";". $this->_auto_footer);
-	}
-
-	/**
-	*/
-	function _format_db_explain_result($explain_result = array()) {
-		if (empty($explain_result)) {
-			return false;
-		}
-		$body = '<table class="table table-bordered table-striped table-hover table-condensed">';
-		// Header
-		foreach ((array)$explain_result[0] as $k => $v) {
-			$body .= '<td>'.$k.'</td>';
-		}
-		// Data
-		foreach ((array)$explain_result as $_num => $_data) {
-			$body .= '<tr>';
-			foreach ((array)$_data as $k => $v) {
-				$body .= '<td>'.(strlen($v) ? $v : '').'</td>';
-			}
-			$body .= '</tr>';
-		}
-		$body .= '</table>';
-		return $body;
-	}
-
-	/**
-	* Process through admin link or just return text if links disabled
-	*/
-	function _admin_link ($type, $text = '', $just_link = false) {
-		if (!$this->ADD_ADMIN_LINKS || !isset($this->ADMIN_PATHS[$type])) {
-			return $text;
-		}
-		if ($type == 'link') {
-			return '<a href="'.$text.'">'.$text.'</a>';
-		}
-		$id = $text;
-		if ($type == 'show_db_table') {
-			$id = str_replace(db()->DB_PREFIX, '', $id);
-		}
-		$replace = array(
-			'{{ID}}'	=> urlencode(str_replace("\\", '/', $id)),
-			'{{THEME}}'	=> conf('theme'),
-		);
-		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
-		$link = WEB_PATH. 'admin/?'. $url;
-		if ($just_link) {
-			return $link;
-		}
-		return '<a href="'.$link.'">'.$text.'</a>';
-	}
-
-	/**
-	*/
-	function _do_debug_db_connection_queries ($DB_CONNECTION, $connect_trace = array()) {
-		if (!$this->_SHOW_QUERY_LOG || !is_object($DB_CONNECTION) || !is_array($DB_CONNECTION->QUERY_LOG)) {
-			return '';
-		}
-		$items = array();
-		$db_queries_list = $DB_CONNECTION->QUERY_LOG;
-		if ($this->_SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($DB_CONNECTION->DB_TYPE, 0, 5) == 'mysql') {
-			foreach ((array)$db_queries_list as $id => $_query_text) {
-				$_query_text = trim($_query_text);
-				// Cut comment
-				if (substr($_query_text, 0, 2) == '--') {
-					$_query_text = substr($_query_text, strpos($_query_text, ''));
-				}
-				$_query_text = preg_replace('/[\s]{2,}/ims', ' ', str_replace("\t", ' ', trim($_query_text)));
-				if (preg_match('/^[\(]*select/ims', $_query_text)) {
-					$db_explain_results[$id] = $DB_CONNECTION->query_fetch_all('EXPLAIN '.$_query_text, -1);
-				}
-			}
-		}
-		$total_queries_exec_time = 0;
-/*
-		$body .= '<h5>'.t('QUERY_LOG').'  ('
-			.($DB_CONNECTION->DB_SSL ? 'SSL ' : '')
-			.$DB_CONNECTION->DB_TYPE
-			.'://'.$DB_CONNECTION->DB_USER
-			.'@'.$DB_CONNECTION->DB_HOST
-			.($DB_CONNECTION->DB_PORT ? ':'.$DB_CONNECTION->DB_PORT : '')
-			.'/'.$DB_CONNECTION->DB_NAME
-			.($DB_CONNECTION->DB_CHARSET ? '?charset='.$DB_CONNECTION->DB_CHARSET : '')
-			.($DB_CONNECTION->DB_SOCKET ? '?socket='.$DB_CONNECTION->DB_SOCKET : '')
-			.')</h5>';
-// TODO: fixme with trace
-		$body .= $connect_trace ? '<small>'._prepare_html($connect_trace).'</small>' : '';
-*/
-		foreach ((array)$db_queries_list as $id => $text) {
-			$text = trim($text);
-			// Cut comment
-			if (substr($text, 0, 2) == '--') {
-				$text = substr($text, strpos($text, ''));
-			}
-			$total_queries_exec_time += $DB_CONNECTION->QUERY_EXEC_TIME[$id];
-			$_cur_trace = $DB_CONNECTION->QUERY_BACKTRACE_LOG[$id];
-			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
-			$_sql_type = strtoupper(rtrim(substr(ltrim($text), 0, 7)));
-
-			$orig_sql = $text;
-			$text = htmlspecialchars($text);
-			$replace = array(
-				','	=> ', ', 
-			);
-			$text = str_replace(array_keys($replace), array_values($replace), $text);
-			$text = preg_replace('#('.$DB_CONNECTION->DB_PREFIX.'[a-z0-9_]+)#imse', "''.\$this->_admin_link('show_db_table', '\\1').''", $text);
-
-			$exec_time = common()->_format_time_value($DB_CONNECTION->QUERY_EXEC_TIME[$id]);
-			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
-			if ($admin_link && $this->ADD_ADMIN_LINKS) {
-				$exec_time = '<a href="'.$admin_link.'">'.$exec_time.'</a>';
-			}
-			$items[] = array(
-				'id'		=> ($id + 1),
-				'exec_time'	=> strval($exec_time),
-				'sql'		=> $text,
-				'rows'		=> strval($DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql]),
-				'trace'		=> '<pre><small>'.$_cur_trace.'</small></pre>',
-				'explain'	=> $_cur_explain,
-			);
-		}
-
-		if (!$DB_CONNECTION->_tried_to_connect) {
-#			$body .= t('db not used').'';
-		} else {
-#			$body .= '<i>'.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
-#			$body .= '<i>'.t('connect_time').': '.common()->_format_time_value($DB_CONNECTION->_connection_time).'<span> sec';
-		}
-
-// TODO: show connection info and totals inside 'caption'
-		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
-			->text('id')
-			->text('exec_time')
-			->text('sql', array('hidden_data' => array('%explain', '%trace')))
-			->text('rows')
-			->btn('explain', 'javascript:void(0)', array('hidden_toggle' => 'explain'))
-			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
-		;
-	}
-
-	/**
-	*/
 	function _debug_db_queries () {
 		if (!$this->_SHOW_QUERY_LOG) {
 			return false;
@@ -534,97 +290,89 @@ unset($item[$k]);
 
 	/**
 	*/
-	function _debug_db_shutdown_queries () {
-		if (!$this->_SHOW_SHUTDOWN_QUERIES) {
+	function _do_debug_db_connection_queries ($db, $connect_trace = array()) {
+		if (!$this->_SHOW_QUERY_LOG) {
+			return '';
+		}
+		if (!is_object($db) || !is_array($db->QUERY_LOG) || !$db->_tried_to_connect) {
 			return false;
 		}
-		$body = '';
-		$instances_trace = debug('db_instances_trace');
-		foreach ((array)debug('db_instances') as $k => $v) {
-			$connect_trace = array();
-			if (isset($instances_trace[$k][0])) {
-				$connect_trace = $instances_trace[$k][0];
+		$items = array();
+		$db_queries_list = $db->QUERY_LOG;
+		if ($this->_SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
+			foreach ((array)$db_queries_list as $id => $_query_text) {
+				$_query_text = trim($_query_text);
+				// Cut comment
+				if (substr($_query_text, 0, 2) == '--') {
+					$_query_text = substr($_query_text, strpos($_query_text, ''));
+				}
+				$_query_text = preg_replace('/[\s]{2,}/ims', ' ', str_replace("\t", ' ', trim($_query_text)));
+				if (preg_match('/^[\(]*select/ims', $_query_text)) {
+					$db_explain_results[$id] = $db->query_fetch_all('EXPLAIN '.$_query_text, -1);
+				}
 			}
-// TODO
-#			$body .= $this->_do_debug_db_shutdown_queries($v, $connect_trace);
 		}
-		return $body;
-	}
+		$total_queries_exec_time = 0;
 
-	/**
-	*/
-	function _debug_db_cached_queries () {
-		if (!$this->_SHOW_CACHED_QUERIES) {
-			return false;
-		}
-		$body = '';
-		$instances_trace = debug('db_instances_trace');
-		foreach ((array)debug('db_instances') as $k => $v) {
-			$connect_trace = array();
-			if (isset($instances_trace[$k][0])) {
-				$connect_trace = $instances_trace[$k][0];
-			}
-// TODO
-#			$body .= $this->_do_debug_db_cached_queries($v, $connect_trace);
-		}
-		return $body;
-	}
+// TODO: insert as caption into table
+		$body .= '<b>'.t('QUERY_LOG').'  ('
+			.($db->DB_SSL ? 'SSL ' : '')
+			.$db->DB_TYPE
+			.'://'.$db->DB_USER
+			.'@'.$db->DB_HOST
+			.($db->DB_PORT ? ':'.$db->DB_PORT : '')
+			.'/'.$db->DB_NAME
+			.($db->DB_CHARSET ? '?charset='.$db->DB_CHARSET : '')
+			.($db->DB_SOCKET ? '?socket='.$db->DB_SOCKET : '')
+			.')</b>';
+#		$body .= $connect_trace ? '<small>'._prepare_html($connect_trace).'</small>' : '';
 
-	/**
-	*/
-	function _do_debug_db_shutdown_queries ($DB_CONNECTION) {
-/*
-		if (!$this->_SHOW_SHUTDOWN_QUERIES || empty($DB_CONNECTION->_SHUTDOWN_QUERIES)) {
-			return "";
-		}
-		$body = "";
-		$body .= "<div class='debug_allow_close'><h5>".t("SHUTDOWN QUERIES")."</h5><ol>";
-		foreach ((array)$DB_CONNECTION->_SHUTDOWN_QUERIES as $text) {
+		foreach ((array)$db_queries_list as $id => $text) {
 			$text = trim($text);
 			// Cut comment
-			if (substr($text, 0, 2) == "--") {
-				$text = substr($text, strpos($text, ""));
+			if (substr($text, 0, 2) == '--') {
+				$text = substr($text, strpos($text, ''));
 			}
-			$body .= "<li>".htmlspecialchars($text)."</li>";
-		}
-		$body .= "</ol></div>";
-		return $body;
-*/
-	}
+			$total_queries_exec_time += $db->QUERY_EXEC_TIME[$id];
+			$_cur_trace = $db->QUERY_BACKTRACE_LOG[$id];
+			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
+			$_sql_type = strtoupper(rtrim(substr(ltrim($text), 0, 7)));
 
-	/**
-	*/
-	function _do_debug_db_cached_queries ($DB_CONNECTION) {
-/*
-		if (!$this->_SHOW_CACHED_QUERIES || empty($DB_CONNECTION->_db_results_cache)) {
-			return "";
-		}
-		$body = "";
-		$body .= "<div class='debug_allow_close'><h5>".t("CACHED QUERIES")."</h5><ol>";
-		foreach ((array)$DB_CONNECTION->_db_results_cache as $query => $data) {
-			$body .= "<li>".htmlspecialchars($query)."</li>";
-		}
-		$body .= "</ol></div>";
-		return $body;
-*/
-	}
+			$orig_sql = $text;
+			$text = htmlspecialchars($text);
+			$replace = array(
+				','	=> ', ', 
+			);
+			$text = str_replace(array_keys($replace), array_values($replace), $text);
+			$text = preg_replace('#('.$db->DB_PREFIX.'[a-z0-9_]+)#imse', "''.\$this->_admin_link('show_db_table', '\\1').''", $text);
 
-	/**
-	*/
-	function _debug_db_session_stats () {
-		if (!$this->_SHOW_DB_SESSION_STATS) {
-			return false;
-		}
-		$body = '';
-		$instances_trace = debug('db_instances_trace');
-		foreach ((array)debug('db_instances') as $k => $v) {
-			$connect_trace = array();
-			if (isset($instances_trace[$k][0])) {
-				$connect_trace = $instances_trace[$k][0];
+			$exec_time = common()->_format_time_value($db->QUERY_EXEC_TIME[$id]);
+			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
+			if ($admin_link && $this->ADD_ADMIN_LINKS) {
+				$exec_time = '<a href="'.$admin_link.'">'.$exec_time.'</a>';
 			}
-// TODO
-#			$body .= $this->_do_debug_db_session_stats($v, $connect_trace);
+			$items[] = array(
+				'id'		=> ($id + 1),
+				'exec_time'	=> strval($exec_time),
+				'sql'		=> $text,
+				'rows'		=> strval($db->QUERY_AFFECTED_ROWS[$orig_sql]),
+				'trace'		=> '<pre><small>'.$_cur_trace.'</small></pre>',
+				'explain'	=> $_cur_explain,
+			);
 		}
+
+// TODO: show connection info and totals inside 'caption'
+		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
+		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
+
+		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed'))
+			->text('id')
+			->text('exec_time')
+			->text('sql', array('hidden_data' => array('%explain', '%trace')))
+			->text('rows')
+			->btn('explain', 'javascript:void(0)', array('hidden_toggle' => 'explain'))
+			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
+		;
 		return $body;
 	}
 
@@ -648,8 +396,8 @@ unset($item[$k]);
 				$stpl_inline_edit = " stpl_name='".$k."' ";
 			}
 			$cur_size = strlen($v['string']);
-#			$total_size += $cur_size;
-#			$total_stpls_exec_time += (float)$v['exec_time'];
+			$total_size += $cur_size;
+			$total_stpls_exec_time += (float)$v['exec_time'];
 
 			$items[] = array(
 				'id'		=> ++$counter,
@@ -662,7 +410,11 @@ unset($item[$k]);
 			);
 		}
 // TODO: show connection info and totals inside 'caption'
-		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
+
+		$body .= t('used_templates_size').': '.$total_size.' bytes';
+		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
+
+		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed'))
 			->text('id')
 			->text('exec_time')
 			->text('name', array('hidden_data' => array('%trace')))
@@ -671,13 +423,6 @@ unset($item[$k]);
 			->text('size')
 			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
 		;
-/*
-		$body .= '</table>
-			<div>'.t('used_templates_size').': '.$total_size.' bytes, 
-				'.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds
-			</div>
-		</div>';
-*/
 		return $body;
 	}
 
@@ -687,7 +432,6 @@ unset($item[$k]);
 		if (!$this->_SHOW_STPLS) {
 			return '';
 		}
-// TODO
 		if (debug('STPL_PARENTS')) {
 			$body .= '<ul>
 						<li>main</li>
@@ -1198,6 +942,7 @@ unset($item[$k]);
 		$body .= $this->_show_key_val_table($data);
 
 #		$add_text = t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec';
+
 		$tmp = array();
 		$tr_time	= _class('i18n')->_tr_time;
 		$tr_calls	= _class('i18n')->_tr_calls;
@@ -1284,5 +1029,151 @@ unset($item[$k]);
 			$body .= $this->_show_key_val_table($status);
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function _format_db_explain_result($explain_result = array()) {
+		if (empty($explain_result)) {
+			return false;
+		}
+		$body = '<table class="table table-bordered table-striped table-hover table-condensed">';
+		// Header
+		foreach ((array)$explain_result[0] as $k => $v) {
+			$body .= '<td>'.$k.'</td>';
+		}
+		// Data
+		foreach ((array)$explain_result as $_num => $_data) {
+			$body .= '<tr>';
+			foreach ((array)$_data as $k => $v) {
+				$body .= '<td>'.(strlen($v) ? $v : '').'</td>';
+			}
+			$body .= '</tr>';
+		}
+		$body .= '</table>';
+		return $body;
+	}
+
+	/**
+	* Process through admin link or just return text if links disabled
+	*/
+	function _admin_link ($type, $text = '', $just_link = false) {
+		if (!$this->ADD_ADMIN_LINKS || !isset($this->ADMIN_PATHS[$type])) {
+			return $text;
+		}
+		if ($type == 'link') {
+			return '<a href="'.$text.'">'.$text.'</a>';
+		}
+		$id = $text;
+		if ($type == 'show_db_table') {
+			$id = str_replace(db()->DB_PREFIX, '', $id);
+		}
+		$replace = array(
+			'{{ID}}'	=> urlencode(str_replace("\\", '/', $id)),
+			'{{THEME}}'	=> conf('theme'),
+		);
+		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
+		$link = WEB_PATH. 'admin/?'. $url;
+		if ($just_link) {
+			return $link;
+		}
+		return '<a href="'.$link.'">'.$text.'</a>';
+	}
+
+	/**
+	* Collect unique not translated vars into log file
+	*/
+	function _log_not_translated_to_file () {
+// TODO
+/*
+		$f = $this->_NOT_TRANSLATED_FILE;
+		$existed_vars = array();
+		if (file_exists($f)) {
+			$existed_vars = eval('return '.substr(file_get_contents($f), strlen($this->_auto_header), -strlen($this->_auto_footer)).';');
+		}
+		$something_changed = false;
+		$lang = conf('language');
+		foreach ((array)_class('i18n')->_NOT_TRANSLATED[$lang] as $var_name => $_hits) {
+			$var_name = addslashes(stripslashes(str_replace(' ','_',strtolower(trim($var_name)))));
+			if (empty($var_name)) {
+				continue;
+			}
+			if (!isset($existed_vars[$var_name])) {
+				$existed_vars[$var_name] = $var_name;
+				$something_changed = true;
+			}
+		}
+		if (!$something_changed) {
+			return false;
+		}
+		if (is_array($existed_vars)) {
+			ksort($existed_vars);
+		}
+		$_dir = dirname($this->_NOT_TRANSLATED_FILE);
+		if (!file_exists($_dir)) {
+			_mkdir_m($_dir);
+		}
+		file_put_contents($f, $this->_auto_header. "\$data = ".var_export($existed_vars, 1).";". $this->_auto_footer);
+*/
+	}
+
+	/**
+	*/
+	function _show_key_val_table ($a) {
+		if (!$a) {
+			return false;
+		}
+		if (is_array($a)) {
+			ksort($a);
+		}
+		$items = array();
+		foreach ((array)$a as $k => $v) {
+			$items[] = array(
+				'key'	=> $k,
+				'value'	=> is_array($v) ? print_r($v, 1) : $v,
+			);
+		}
+		if (!$items) {
+			return false;
+		}
+		return $this->_show_auto_table($items);
+	}
+
+	/**
+	*/
+	function _show_auto_table ($items = array(), $params = array()) {
+		if (!is_array($items)) {
+			$items = array();
+		}
+		foreach ($items as &$item) {
+			foreach ($item as $k => &$v) {
+				if (is_array($v)) {
+					$v = !empty($v) ? print_r($v, 1) : '';
+				}
+// TODO: auto-assign hidden trace container and button
+				if ($k == 'trace') {
+					unset($item[$k]);
+				}
+			}
+		}
+#		if ($params['total_sum']) {
+#		}
+		if (!$items) {
+			return false;
+		}
+#		$caption .= 'items: '.count($items);
+
+		$table = table((array)$items, array(
+			'table_class' 		=> 'debug_item table-condensed', 
+			'auto_no_buttons' 	=> 1,
+			'caption'			=> $caption,
+		))->auto();
+/*
+		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
+			->text('name', array('hidden_data' => array('%trace')))
+			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
+		;
+*/
+		return $table;
 	}
 }
