@@ -1079,6 +1079,15 @@ class yf_common {
 	}
 
 	/**
+	* Print nice 
+	*/
+	function trace_string() {
+		$e = new Exception();
+		$data = implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
+		return $data;
+	}
+
+	/**
 	* Convert URL to absolute form
 	*/
 	function url_to_absolute($base_url, $relative_url) {

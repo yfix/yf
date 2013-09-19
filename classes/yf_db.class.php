@@ -147,8 +147,7 @@ class yf_db {
 		// Track db class instances
 		$GLOBALS["DEBUG"]["db_instances"][$debug_index] = &$this;
 		if (defined('DEBUG_MODE') && DEBUG_MODE) {
-			$GLOBALS["DEBUG"]["db_instances_trace"][$debug_index] = $this->_trace();
-			$GLOBALS["DEBUG"]["db_instances_trace2"][$debug_index] = $this->_trace_string();
+			$GLOBALS["DEBUG"]["db_instances_trace"][$debug_index] = $this->_trace_string();
 		}
 		// Compatibility with standalone mode (when main() instance is not present)
 		if (!is_object($GLOBALS['main'])) {
@@ -327,10 +326,10 @@ class yf_db {
 			$result = $this->_repair_table($sql, $db_error);
 		}
 		if (!$result && $db_error) {
-			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace() : array());
+			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : array());
 		}
 		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace() : array());
+			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array());
 		}
 		return $result;
 	}

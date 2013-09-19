@@ -244,21 +244,17 @@ class yf_cache {
 		} elseif ($this->DRIVER == 'xcache') {
 			$result = xcache_get($key_name_ns);
 		}
-		// All drivers except file need to eval content
 		if ($this->DRIVER != "file" && is_string($result)) {
-// TODO: testme
 			$try_unpack = unserialize($result);
 			if ($try_unpack || substr($result, 0, 2) == "a:") {
 				$result = $try_unpack;
 			}
-//			$result = @eval("return ".$result.";");
 		}
 		if ($this->DEBUG_MODE) {
 			$all_debug = debug("_core_cache_debug::get");
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				$_time = microtime(true) - $time_start;
-				$_trace = $this->_trace();
 
 				ob_start();
 				var_dump($result);
@@ -268,9 +264,9 @@ class yf_cache {
 
 				debug("_core_cache_debug::get::".$debug_index, array(
 					"name"		=> $cache_name,
-					"time"		=> $_time,
+					"time"		=> round($_time, 5),
 					"data"		=> $_pos ? "<b>".substr($_debug_data, 0, $_pos + 1). "</b>". $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
-					"trace"		=> $_trace,
+					"trace"		=> $this->trace_string(),
 					"driver"	=> $this->DRIVER,
 					"params"	=> $params,
 					"force_ttl"	=> $force_ttl,
@@ -325,10 +321,7 @@ class yf_cache {
 		if ($this->_no_cache[$cache_name]) {
 			return true;
 		}
-
 		if ($this->DRIVER != "file") {
-//			$data_to_put = "\$data = ".str_replace(" => \narray (", "=>array(", preg_replace('/^\s+/m', '', var_export($data, 1))).";";
-// TODO: testme
 			$data_to_put = is_array($data) ? serialize($data) : $data;
 		}
 		if ($this->DRIVER == 'memcache') {
@@ -340,7 +333,6 @@ class yf_cache {
 						$result = $this->_memcache->set($key_name_ns, $data_to_put, $TTL);
 					}
 				} else {
-// TODO: testme
 					if (!$this->_memcache->replace($key_name_ns, $data_to_put, /*MEMCACHE_COMPRESSED*/ null, $TTL)) {
 						$result = $this->_memcache->set($key_name_ns, $data_to_put, /*MEMCACHE_COMPRESSED*/null, $TTL);
 					}
@@ -363,7 +355,6 @@ class yf_cache {
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				$_time = microtime(true) - $time_start;
-				$_trace = $this->_trace();
 
 				ob_start();
 				var_dump($data);
@@ -373,9 +364,9 @@ class yf_cache {
 
 				debug("_core_cache_debug::set::".$debug_index, array(
 					"name"		=> $cache_name,
-					"time"		=> $_time,
+					"time"		=> round($_time, 5),
 					"data"		=> $_pos ? "<b>".substr($_debug_data, 0, $_pos + 1). "</b>". $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
-					"trace"		=> $_trace,
+					"trace"		=> $this->trace_string(),
 					"driver"	=> $this->DRIVER,
 				));
 			}
@@ -647,17 +638,11 @@ class yf_cache {
 	}
 
 	/**
-	* Simple trace without dumping whole objects
+	* Print nice 
 	*/
-	function _trace() {
-		$trace = array();
-		foreach (debug_backtrace() as $k => $v) {
-			if (!$k) {
-				continue;
-			}
-			$v["object"] = isset($v["object"]) && is_object($v["object"]) ? get_class($v["object"]) : null;
-			$trace[$k - 1] = $v;
-		}
-		return $trace;
+	function trace_string() {
+		$e = new Exception();
+		$data = implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
+		return $data;
 	}
 }

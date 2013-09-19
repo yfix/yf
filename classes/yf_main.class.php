@@ -1116,15 +1116,13 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$d = debug('main_execute_block_time');
 			$next = is_array($d) ? count($d) : 0;
-			$_trace = $this->trace();
-			$_time = microtime(true) - $_time_start;
 			debug('main_execute_block_time::'.$next, array(
 				'tpl_name'	=> $tpl_name,
-				'time'		=> round($_time, 5),
+				'time'		=> round(microtime(true) - $_time_start, 5),
 				'class'		=> $class_name,
 				'method'	=> $method_name,
 				'params'	=> $method_params,
-				'trace'		=> $_trace,
+				'trace'		=> $this->trace_string(),
 				'silent'	=> (int)$silent,
 			));
 		}
@@ -1224,7 +1222,7 @@ class yf_main {
 				'name'		=> $handler_name,
 				'time'		=> $time_end - $time_start,
 				'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. _prepare_html(substr($_debug_data, $_pos + 1)) : $_debug_data,
-				'trace'		=> $this->trace(),
+				'trace'		=> $this->trace_string(),
 				'params'	=> $params,
 				'force_ttl'	=> $force_ttl,
 			));

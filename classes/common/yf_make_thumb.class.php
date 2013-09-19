@@ -244,32 +244,32 @@ class yf_make_thumb {
 			// Save log data
 			if ($this->LOG_TO_FILE) {
 				$log_data = "## ".date("Y-m-d H:i:s")."; ##";
-				$log_data .= "\r\n";
+				$log_data .= "\n";
 				$log_data .= "user_id: ".main()->USER_ID."; ";
 				$log_data .= "user_group: ".main()->USER_GROUP."; ";
 				$log_data .= "referer: \"".$_SERVER["HTTP_REFERER"]."\"; ";
-				$log_data .= "\r\n";
+				$log_data .= "\n";
 				$log_data .= "source_path: \"".$source_file_path."\"; ";
-				$log_data .= "\r\n";
+				$log_data .= "\n";
 				$log_data .= "source_file_size: ".intval($source_size)."; ";
 				$log_data .= "source_x: \"".intval($_source_width)."\"; source_y: \"".intval($_source_height)."\"; ";
-				$log_data .= "\r\n";
+				$log_data .= "\n";
 				$log_data .= "result_path: \"".$dest_file_path."\"; ";
-				$log_data .= "\r\n";
+				$log_data .= "\n";
 				$log_data .= "result_file_size: ".intval($result_file_size)."; ";
 				$log_data .= "result_x: \"".intval($_result_width)."\"; result_y: \"".intval($_result_height)."\"; ";
-				$log_data .= "\r\n";
+				$log_data .= "\n";
 				$log_data .= "result_success: \"".($resize_success ? "yes" : "no")."\"; ";
 				$log_data .= "time_spent: ".common()->_format_time_value($_exec_time)."; ";
 				$log_data .= "tried libs: \"".implode(",", $tried_libs)."\"; ";
 				$log_data .= "used lib: \"".$USED_LIB."\"; ";
 				$log_data .= "limit_x: \"".intval($LIMIT_X)."\"; limit_y: \"".intval($LIMIT_Y)."\"; ";
 				if (!empty($tried_cmds) && $this->LOG_EXEC_CMDS) {
-					$log_data .= "\r\n";
+					$log_data .= "\n";
 					$log_data .= "tried cmds (exec):  ".implode(";", $tried_cmds)."; ";
 				}
-				$log_data .= "\r\n";
-				$log_data .= "\r\n";
+				$log_data .= "\n";
+				$log_data .= "\n";
 				if ($fh = @fopen($log_file_path, "a")) {
 					fwrite($fh, $log_data);
 					@fclose($fh);

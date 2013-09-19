@@ -161,6 +161,58 @@ class yf_debug_info {
 	}
 
 	/**
+	*/
+	function _show_key_val_table ($a) {
+		if (!$a) {
+			return false;
+		}
+		if (is_array($a)) {
+			ksort($a);
+		}
+		$items = array();
+		foreach ((array)$a as $k => $v) {
+			$items[] = array(
+				'key'	=> $k,
+				'value'	=> is_array($v) ? print_r($v, 1) : $v,
+			);
+		}
+		if (!$items) {
+			return false;
+		}
+		return $this->_show_auto_table($items);
+	}
+
+	/**
+	*/
+	function _show_auto_table ($items = array(), $params = array()) {
+		if (!is_array($items)) {
+			$items = array();
+		}
+		foreach ($items as &$item) {
+			foreach ($item as $k => &$v) {
+				if (is_array($v)) {
+					$v = !empty($v) ? print_r($v, 1) : '';
+				}
+				if ($k == 'trace') {
+unset($item[$k]);
+				}
+			}
+		}
+#		if ($params['total_sum']) {
+#		}
+		if (!$items) {
+			return false;
+		}
+#		$caption .= 'items: '.count($items);
+
+		return table((array)$items, array(
+			'table_class' 		=> 'debug_item table-condensed', 
+			'auto_no_buttons' 	=> 1,
+			'caption'			=> $caption,
+		))->auto();
+	}
+
+	/**
 	* Create simple table with debug info
 	*/
 	function go () {
@@ -255,7 +307,7 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _do_debug_db_connection_queries ($DB_CONNECTION, $connect_trace = array(), $connect_trace2 = "") {
+	function _do_debug_db_connection_queries ($DB_CONNECTION, $connect_trace = array()) {
 		if (!$this->_SHOW_QUERY_LOG || !is_object($DB_CONNECTION) || !is_array($DB_CONNECTION->QUERY_LOG)) {
 			return "";
 		}
@@ -287,7 +339,7 @@ class yf_debug_info {
 			.($DB_CONNECTION->DB_SOCKET ? "?socket=".$DB_CONNECTION->DB_SOCKET : "")
 			.")</h5>";
 // TODO: fixme with trace
-		$body .= $connect_trace2 ? "<small>"._prepare_html($connect_trace2)."</small>" : "";
+		$body .= $connect_trace ? "<small>"._prepare_html($connect_trace)."</small>" : "";
 */
 		foreach ((array)$db_queries_list as $id => $text) {
 			$text = trim($text);
@@ -297,7 +349,6 @@ class yf_debug_info {
 			}
 			$total_queries_exec_time += $DB_CONNECTION->QUERY_EXEC_TIME[$id];
 			$_cur_trace = $DB_CONNECTION->QUERY_BACKTRACE_LOG[$id];
-			$_cur_trace2 = $DB_CONNECTION->QUERY_BACKTRACE_LOG2[$id];
 			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : "";
 			$_sql_type = strtoupper(rtrim(substr(ltrim($text), 0, 7)));
 
@@ -319,7 +370,7 @@ class yf_debug_info {
 				'exec_time'	=> strval($exec_time),
 				'sql'		=> $text,
 				'rows'		=> strval($DB_CONNECTION->QUERY_AFFECTED_ROWS[$orig_sql]),
-				'trace'		=> '<pre><small>'.$_cur_trace2.'</small></pre>',
+				'trace'		=> '<pre><small>'.$_cur_trace.'</small></pre>',
 				'explain'	=> $_cur_explain,
 			);
 		}
@@ -345,32 +396,74 @@ class yf_debug_info {
 	/**
 	*/
 	function _debug_db_queries () {
+		if (!$this->_SHOW_QUERY_LOG) {
+			return false;
+		}
 		$body = "";
 		$instances_trace = debug('db_instances_trace');
-		$instances_trace = debug('db_instances_trace2');
 		foreach ((array)debug('db_instances') as $k => $v) {
 			$connect_trace = array();
 			if (isset($instances_trace[$k][0])) {
 				$connect_trace = $instances_trace[$k][0];
 			}
-			$connect_trace2 = array();
-			if (isset($instances_trace2[$k][0])) {
-				$connect_trace2 = $instances_trace2[$k][0];
+			$body .= $this->_do_debug_db_connection_queries($v, $connect_trace);
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_db_shutdown_queries () {
+		if (!$this->_SHOW_SHUTDOWN_QUERIES) {
+			return false;
+		}
+		$body = "";
+		$instances_trace = debug('db_instances_trace');
+		foreach ((array)debug('db_instances') as $k => $v) {
+			$connect_trace = array();
+			if (isset($instances_trace[$k][0])) {
+				$connect_trace = $instances_trace[$k][0];
 			}
-			if ($this->_SHOW_QUERY_LOG) {
-				$body .= $this->_do_debug_db_connection_queries($v, $connect_trace, $connect_trace2);
+// TODO
+			$body .= $this->_do_debug_db_shutdown_queries($v, $connect_trace);
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_db_cached_queries () {
+		if (!$this->_SHOW_CACHED_QUERIES) {
+			return false;
+		}
+		$body = "";
+		$instances_trace = debug('db_instances_trace');
+		foreach ((array)debug('db_instances') as $k => $v) {
+			$connect_trace = array();
+			if (isset($instances_trace[$k][0])) {
+				$connect_trace = $instances_trace[$k][0];
 			}
-/*
-			if ($this->_SHOW_SHUTDOWN_QUERIES) {
-				$body .= $this->_do_debug_db_shutdown_queries($v, $connect_trace, $connect_trace2);
+// TODO
+			$body .= $this->_do_debug_db_cached_queries($v, $connect_trace);
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_db_session_stats () {
+		if (!$this->_SHOW_DB_SESSION_STATS) {
+			return false;
+		}
+		$body = "";
+		$instances_trace = debug('db_instances_trace');
+		foreach ((array)debug('db_instances') as $k => $v) {
+			$connect_trace = array();
+			if (isset($instances_trace[$k][0])) {
+				$connect_trace = $instances_trace[$k][0];
 			}
-			if ($this->_SHOW_CACHED_QUERIES) {
-				$body .= $this->_do_debug_db_cached_queries($v, $connect_trace, $connect_trace2);
-			}
-			if ($this->_SHOW_DB_SESSION_STATS) {
-				$body .= $this->_do_debug_db_session_stats($v, $connect_trace, $connect_trace2);
-			}
-*/
+// TODO
+			$body .= $this->_do_debug_db_session_stats($v, $connect_trace);
 		}
 		return $body;
 	}
@@ -435,31 +528,40 @@ class yf_debug_info {
 			$body .= "</ul></ul></div>";
 		}
 */
-/*
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_stpl_replace_vars () {
+		$data = debug('STPL_REPLACE_VARS');
 		// Debug output of the template vars
-		if (debug('STPL_REPLACE_VARS')) {
-			$body .= "<div class='debug_allow_close'><h5>".t("Templates vars")."</h5>";
-			foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
-				$body .= "".$stpl_name."";
+		if (!$data) {
+			return false;
+		}
+// TODO
+/*
+		$body .= "<div class='debug_allow_close'><h5>".t("Templates vars")."</h5>";
+		foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
+			$body .= "".$stpl_name."";
+			$body .= "<div>";
+			foreach ((array)$calls as $num => $vars) {
+				ksort($vars);
 				$body .= "<div>";
-				foreach ((array)$calls as $num => $vars) {
-					ksort($vars);
-					$body .= "<div>";
-					if (count($calls) > 1) {
-						$body .= "<i>".$num."";
-					}
-					$body .= "<table class='table table-bordered table-striped table-hover'>";
-					foreach ((array)$vars as $n => $v) {
-						$body .= "<tr><td>".$n."</td><td>".htmlspecialchars(print_r($v, 1))."</td></tr>";
-					}
-					$body .= "</table>";
-					$body .= "</div>";
+				if (count($calls) > 1) {
+					$body .= "<i>".$num."";
 				}
-				$body .= "<br style='clear:both' />";
+				$body .= "<table class='table table-bordered table-striped table-hover'>";
+				foreach ((array)$vars as $n => $v) {
+					$body .= "<tr><td>".$n."</td><td>".htmlspecialchars(print_r($v, 1))."</td></tr>";
+				}
+				$body .= "</table>";
 				$body .= "</div>";
 			}
+			$body .= "<br style='clear:both' />";
 			$body .= "</div>";
 		}
+		$body .= "</div>";
 */
 		return $body;
 	}
@@ -513,32 +615,10 @@ class yf_debug_info {
 	/*
 	*/
 	function _debug_force_get_url () {
-		if (!debug("_force_get_url")) {
+		if (!$this->_SHOW_REWRITE_INFO) {
 			return "";
 		}
-		$data = debug("_force_get_url");
-		if (empty($data)) {
-			return "";
-		}
-#		$_time = 0;
-#		$body = "";
-
-#		$body .= "<div class='debug_allow_close'><h5>".t("force get url")."</h5>";
-#		$body .= $this->_build_wide_table($data, 1);
-#		$total_time = 0;
-#		foreach ((array)$data as $v) {
-#			$total_time += $v["time"];
-#		}
-#		$body .= "<i>".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
-#		$body .= "</div>";
-// TODO: check me and fix
-#print_r($data);
-		return table((array)$data, array('table_class' => 'debug_item table-condensed'))
-			->text('id')
-#			->text('exec_time')
-			->text('source')
-			->text('result')
-		;
+		return $this->_show_key_val_table(debug("_force_get_url"));
 	}
 
 	/**
@@ -549,27 +629,17 @@ class yf_debug_info {
 		}
 		$items = array();
 		foreach ((array)debug("_MAIN_LOAD_CLASS_DEBUG") as $data) {
-			$cur_size = file_exists($data["loaded_path"]) ? filesize($data["loaded_path"]) : "";
-			$total_size += $cur_size;
-			$total_load_time += (float)$data["time"];
 			$items[] = array(
 				'id'			=> ++$counter,
 				'exec_time'		=> common()->_format_time_value($data["time"]),
 				'path'			=> $this->_admin_link("edit_file", $data["loaded_path"]),
 				'module'		=> $data["class_name"],
 				'loaded_class'	=> $data["loaded_class_name"],
-				'size'			=> $cur_size,
+				'size'			=> file_exists($data["loaded_path"]) ? filesize($data["loaded_path"]) : "",
 				'storage'		=> $data["storage"],
 			);
 		}
-#		$body .= "</table>".t("total_included_size").": ".$total_size." <span>bytes,</span> ".t("total_time").": ".common()->_format_time_value($total_load_time)." <span>sec</span></div>";
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_auto_table($items);
 	}
 
 	/**
@@ -584,43 +654,24 @@ class yf_debug_info {
 				continue;
 			}
 			$cur_size = file_exists($file_name) ? filesize($file_name) : "";
-			$total_size += $cur_size;
 			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, "/", $file_name));
-			$cur_include_time = isset($exec_time[$_fname]) ? $exec_time[$_fname] : 0;
-			$total_include_time += (float)$cur_include_time;
 			$items[] = array(
 				'id'			=> ++$counter,
-				'exec_time'		=> common()->_format_time_value($cur_include_time),
+				'exec_time'		=> common()->_format_time_value(isset($exec_time[$_fname]) ? $exec_time[$_fname] : 0),
 				'name'			=> $this->_admin_link("edit_file", $file_name),
 				'size'			=> $cur_size,
 			);
 		}
-#		$body .= "</table>".t("total_included_size").": ".$total_size." <span>bytes,</span> ".t("total_include_time").": ".common()->_format_time_value($total_include_time)." <span>sec</span></div>";
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_auto_table($items);
 	}
 
 	/**
 	*/
-	function _debug_get_data () {
-		$data = debug("_main_get_data_debug");
-		if (!$this->_SHOW_MAIN_GET_DATA || !$data) {
+	function _debug_main_get_data () {
+		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return "";
 		}
-#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
-		$items = $data;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_auto_table(debug('_main_get_data_debug'));
 	}
 
 	/**
@@ -629,15 +680,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return "";
 		}
-		$items = debug("_core_cache_debug::get");
-#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_auto_table(debug('_core_cache_debug::get'));
 	}
 
 	/**
@@ -646,15 +689,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return "";
 		}
-		$items = debug("_core_cache_debug::set");
-#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_auto_table(debug('_core_cache_debug::set'));
 	}
 
 	/**
@@ -663,15 +698,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return "";
 		}
-		$items = debug("_core_cache_debug::refresh");
-#		$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_auto_table(debug('_core_cache_debug::refresh'));
 	}
 	/**
 	*/
@@ -679,209 +706,99 @@ class yf_debug_info {
 		if (!$this->_SHOW_MAIN_EXECUTE) {
 			return "";
 		}
-		$items = debug('main_execute_block_time');
-#			$body .= "".t("total_time").": ".common()->_format_time_value($total_time)." <span>sec</span>";
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_auto_table(debug('main_execute_block_time'));
 	}
 
 	/**
 	*/
-	function _debug_input_get () {
+	function _debug__get () {
 		if (!$this->_SHOW_GET_DATA) {
 			return "";
 		}
-/*
-		foreach ((array)$_GET as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-*/
-		$items = $_GET;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
-		return $body;
+		return $this->_show_key_val_table($_GET);
 	}
 
 	/**
 	*/
-	function _debug_input_post () {
+	function _debug__post () {
 		if (!$this->_SHOW_POST_DATA) {
 			return "";
 		}
-/*
-		foreach ((array)$_POST as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-*/
-		$items = $_POST;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
-		return $body;
+		return $this->_show_key_val_table($_POST);
 	}
 
 	/**
 	*/
-	function _debug_cookie () {
+	function _debug__cookie () {
 		if (!$this->_SHOW_COOKIE_DATA) {
 			return "";
 		}
-/*
-		foreach ((array)$_COOKIE as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-*/
-		$items = $_COOKIE;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
-		return $body;
+		return $this->_show_key_val_table($_COOKIE);
 	}
 
 	/**
 	*/
-	function _debug_input_request () {
+	function _debug__request () {
 		if (!$this->_SHOW_REQUEST_DATA) {
 			return "";
 		}
-/*
-		foreach ((array)$_REQUEST as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-*/
-		$items = $_REQUEST;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
-		return $body;
+		return $this->_show_key_val_table($_REQUEST);
 	}
 
 	/**
 	*/
-	function _debug_input_files () {
+	function _debug__files () {
 		if (!$this->_SHOW_FILES_DATA) {
 			return "";
 		}
-/*
-		foreach ((array)$_FILES as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-*/
-		$items = $_FILES;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
+		return $this->_show_key_val_table($_FILES);
 	}
 
 	/**
 	*/
-	function _debug_server () {
-		if (!$this->_SHOW_SERVER_DATA) {
-			return "";
-		}
-/*
-		foreach ((array)$_SERVER as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-*/
-		if (is_array($_SERVER)) {
-			ksort($_SERVER);
-		}
-		$items = $_SERVER;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
-	}
-
-	/**
-	*/
-	function _debug_env () {
-		if (!$this->_SHOW_ENV_DATA) {
-			return "";
-		}
-		if (is_array($_ENV)) {
-			ksort($_ENV);
-		}
-/*
-		foreach ((array)$_ENV as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-*/
-		$items = $_ENV;
-		if (!$items) {
-			return false;
-		}
-		return table((array)$items, array(
-				'table_class' 		=> 'debug_item table-condensed', 
-				'auto_no_buttons' 	=> 1,
-			))->auto();
-	}
-
-	/**
-	*/
-	function _debug_session () {
+	function _debug__session () {
 		if (!$this->_SHOW_SESSION_DATA) {
 			return "";
 		}
-/*
-		$body = "";
-		$body .= "<div class='debug_allow_close'><h5>".t("SESSION data")."</h5><ul>";
-		if (is_array($_SESSION)) {
-			ksort($_SESSION);
-		}
-		foreach ((array)$_SESSION as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-		$body .= "</ul></div>";
-		// Additional session stats
-		foreach ((array)ini_get_all('session') as $_k => $_v) {
-			$_session_params[$_k] = $_v["local_value"];
-		}
-		$_num_stats = count($_session_params);
-		$_num_cols	= 3;
-		$_items_in_column	= ceil($_num_stats / $_num_cols);
-		$body .= $this->_show_table(t("SESSION PARAMS"), $_session_params, $_items_in_column);
-*/
-		return $body;
+		return $this->_show_key_val_table($_SESSION);
 	}
 
 	/**
 	*/
-	function _debug_settings () {
+	function _debug_session_ini () {
+		if (!$this->_SHOW_SESSION_DATA) {
+			return "";
+		}
+		foreach ((array)ini_get_all('session') as $k => $v) {
+			$items[$k] = $v['local_value'];
+		}
+		return $this->_show_key_val_table($items);
+	}
+
+	/**
+	*/
+	function _debug__server () {
+		if (!$this->_SHOW_SERVER_DATA) {
+			return "";
+		}
+		return $this->_show_key_val_table($_SERVER);
+	}
+
+	/**
+	*/
+	function _debug__env () {
+		if (!$this->_SHOW_ENV_DATA) {
+			return "";
+		}
+		return $this->_show_key_val_table($_ENV);
+	}
+
+	/**
+	*/
+	function _debug_yf_settings () {
 		if (!$this->_SHOW_SETTINGS) {
 			return "";
 		}
-/*
 		$data = array(
 			"DEBUG_MODE"	=> DEBUG_MODE,
 			"DEV_MODE"		=> (int)conf('DEV_MODE'),
@@ -898,14 +815,7 @@ class yf_debug_info {
 			"MEDIA_PATH"	=> MEDIA_PATH,
 			"IS_SPIDER"		=> (int)conf('IS_SPIDER'),
 		);
-		$body = "";
-		$body .= "<div class='debug_allow_close'><h5>".t("FRAMEWORK SETTINGS")."</h5><ul>";
-		foreach ((array)$data as $id => $text) {
-			$body .= "<li>['".htmlspecialchars($id)."'] => ".(is_array($text) ? print_r($text, 1) : "'".htmlspecialchars($text)."'")."</li>";
-		}
-		$body .= "</ul></div>";
-*/
-		return $body;
+		return $this->_show_key_val_table($data);
 	}
 
 	/**
@@ -914,13 +824,6 @@ class yf_debug_info {
 		if (!$this->_SHOW_PHP_INI) {
 			return "";
 		}
-/*
-		$body .= "<div class='debug_allow_close'><h5>".t("PHP INI")."</h5><ol>";
-		foreach (ini_get_all() as $id => $text) {
-			$body .= "['".htmlspecialchars($id)."'] => '".htmlspecialchars($text["local_value"])."',";
-		}
-		$body .= "</ol></div>";
-*/
-		return $body;
+		return $this->_show_key_val_table(ini_get_all());
 	}
 }

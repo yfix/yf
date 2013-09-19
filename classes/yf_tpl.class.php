@@ -640,24 +640,7 @@ class yf_tpl {
 				debug('STPL_REPLACE_VARS::'.$name.'::'.$next, $replace);
 			}
 			if ($this->USE_SOURCE_BACKTRACE) {
-/*
-				$trace = debug_backtrace();
-				foreach ((array)$trace as $_cur_trace_id => $_cur_trace) {
-					if ($_cur_trace["function"] != "parse"
-						|| !in_array($_cur_trace["class"], array("yf_tpl", "tpl"))
-						|| $_cur_trace["args"][0] != $name) {
-						continue;
-					}
-					$_cur_trace["inside_method"] = (!empty($trace[$_cur_trace_id + 1]["class"]) ? $trace[$_cur_trace_id + 1]["class"].$trace[$_cur_trace_id + 1]["type"] : "").$trace[$_cur_trace_id + 1]["function"];
-					// Do save trace for debug
-					$d = debug('STPL_TRACES::'.$name);
-					$next = is_array($d) ? count($d) : 0;
-					debug('STPL_TRACES::'.$name.'::'.$next, $_cur_trace);
-					break;
-				}
-*/
 				debug('STPL_TRACES::'.$name, main()->trace_string());
-
 				// Prepare calls tree
 				foreach ((array)$trace as $A) {
 					if ((isset($A["class"]) && $A["class"] != __CLASS__) || (isset($A["function"]) && $A["function"] != __FUNCTION__) || $A["args"][0] == $name) {

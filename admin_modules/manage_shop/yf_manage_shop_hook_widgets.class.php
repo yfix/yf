@@ -143,7 +143,7 @@ class yf_manage_shop_hook_widgets{
 			return $meta;
 		}
 		$config = $params;
-		$sql = 'SELECT u.*, o.* FROM '.db('user').' AS u
+		$sql = 'SELECT u.*, o.user_id FROM '.db('user').' AS u
 			INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id
 			GROUP BY u.id
 			ORDER BY u.add_date DESC';
