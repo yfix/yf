@@ -9,4 +9,18 @@
 *	Pure CSS		http://purecss.io/
 */
 class yf_html {
+
+#define('CSS_FRAMEWORK',			'bootstrap2');
+	function form_start () {
+// TODO
+	}
+	function form_row () {
+// TODO
+	}
+	function table_start () {
+// TODO
+	}
+	function table_row () {
+// TODO
+	}
 }

@@ -2029,19 +2029,81 @@ class yf_form2 {
 	}
 
 	/**
+	* Examples of validate rules setting:
+	* 	'name1' => 'trim|required',
+	* 	'name2' => array('trim', 'required'),
+	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
+	* 	'name4' => array('trim|required', function() { return true; } ),
+	* 	'name5' => array('trim', 'required', function() { return true; } ),
+	* 	'__all_before__' => 'trim',
+	* 	'__all_after__' => 'some_method2|some_method3',
 	*/
 	function _validate_rules_cleanup($validate_rules = array()) {
+		// Add these rules to all validation rules, before them
+		$_name = '__before__';
+		$all_before = '';
+		if (isset($validate_rules[$_name])) {
+			$all_before = $validate_rules[$_name];
+			if (!is_array($all_before)) {
+				$all_before = explode('|', $all_before);
+			}
+			unset($validate_rules[$_name]);
+		}
+
+		// Add these rules to all validation rules, after them
+		$_name = '__after__';
+		$all_after = '';
+		if (isset($validate_rules[$_name])) {
+			$all_after = $validate_rules[$_name];
+			if (!is_array($all_after)) {
+				$all_after = explode('|', $all_after);
+			}
+			unset($validate_rules[$_name]);
+		}
+		unset($_name);
+
 		$out = array();
 		foreach ((array)$validate_rules as $name => $rules) {
 			if (empty($rules)) {
 				continue;
 			}
 			$_rules = array();
+			if (is_array($rules)) {
+				if ($all_before) {
+// TODO: fix me
+#					$tmp = $all_before;
+#					foreach ($rules as $v) {
+#						$tmp[] = $v;
+#					}
+#					$rules = $tmp;
+#					unset($tmp);
+#					$rules = $all_before + $rules;
+				}
+				if ($all_after) {
+#					$rules = $rules + $all_after;
+				}
+			} else {
+				if ($all_before) {
+#					$rules = array($all_before, $rules);
+				}
+				if ($all_after) {
+#					$rules = array($rules, $all_after);
+				}
+			}
 			foreach ((array)$rules as $rule) {
 				if (is_callable($rule)) {
 					$_rules[] = $rule;
 				} elseif (is_string($rule)) {
-					foreach (explode('|', $rule) as $r2) {
+					$rule = explode('|', $rule);
+				}
+#				if (is_array($rule)) {
+#					foreach ($rule as $r2) {
+#						if (false !== strpos($r2, '|')) {
+#						}
+#					}
+#				}
+				if (is_array($rule)) {
+					foreach ($rule as $r2) {
 						$r2 = trim($r2);
 						$r_param = null;
 						// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
@@ -2059,12 +2121,13 @@ class yf_form2 {
 				$out[$name] = $_rules;
 			}
 		}
+#echo '<pre>'.print_r($out, 1).'</pre>';
 		return $out;
 	}
 
 	/**
 	*/
-	function _validate_rules_process($validate_rules = array(), $data = array()) {
+	function _validate_rules_process($validate_rules = array(), &$data) {
 		$validate_ok = true;
 		foreach ((array)$validate_rules as $name => $rules) {
 			foreach ((array)$rules as $rule) {
@@ -2080,8 +2143,8 @@ class yf_form2 {
 						$data[$name] = $func($data[$name]);
 					// Method from 'validate'
 					} else {
-						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data);
-						if (!$is_ok) {
+						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+						if (!$is_ok && empty($error_msg)) {
 							$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
 						}
 					}
@@ -2138,21 +2201,21 @@ class yf_form2 {
 		foreach ((array)$extra['add_fields'] as $db_field_name => $value) {
 			$data[$db_field_name] = $value;
 		}
-
-if ($extra['on_before_update']) {
-	$func = $extra['on_before_update'];
-	$func($data, $table, $fields, $type, $extra);
-}
-
+		// Callback/hook function implementation
+		if ($data && $table && $extra['on_before_update']) {
+			$func = $extra['on_before_update'];
+			$func($data, $table, $fields, $type, $extra);
+		}
 		if ($data && $table) {
-#			if ($extra['on_before_update']) {
-#				$func = $extra['on_before_update'];
-#				$func($data, $table, $fields, $type, $extra);
-#			}
 			if ($type == 'update') {
 				db()->update($table, db()->es($data), $extra['where_id']);
 			} elseif ($type == 'insert') {
 				db()->insert($table, db()->es($data));
+			}
+			// Callback/hook function implementation
+			if ($extra['on_after_update']) {
+				$func = $extra['on_after_update'];
+				$func($data, $table, $fields, $type, $extra);
 			}
 			if ($extra['on_success_text']) {
 				common()->set_notice($extra['on_success_text']);

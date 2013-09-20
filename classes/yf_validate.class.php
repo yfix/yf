@@ -36,7 +36,25 @@ class yf_validate {
 	}
 
 	/***/
-	function required($in, $params = array(), $fields = array()) {
+	function password_update(&$in) {
+		if (!strlen($in)) {
+			$in = null; // Somehow unset($in) not working here...
+		} else {
+			$in = md5($in);
+		}
+		return true;
+	}
+
+	/***/
+	function md5_not_empty(&$in) {
+		if (strlen($in)) {
+			$in = md5($in);
+		}
+		return true;
+	}
+
+	/***/
+	function required($in) {
 		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
 	}
 
@@ -47,7 +65,7 @@ class yf_validate {
 	}
 
 	/***/
-	function is_unique($in, $params = array(), $fields = array()) {
+	function is_unique($in, $params = array()) {
 		if (!$in) {
 			return true;
 		}
@@ -65,7 +83,7 @@ class yf_validate {
 	}
 
 	/***/
-	function is_unique_without($in, $params = array(), $fields = array()) {
+	function is_unique_without($in, $params = array()) {
 		if (!$in) {
 			return true;
 		}
@@ -83,25 +101,7 @@ class yf_validate {
 	}
 
 	/***/
-	function password_update($in, $params = array(), $fields = array()) {
-// TODO
-/*
-		$fname = 'password';
-		$posted = trim($_POST[$fname]);
-		if ($fields[$fname]) {
-			if (!strlen($posted)) {
-				unset($fields[$fname]);
-			} else {
-				$data[$fname] = md5($posted);
-#				common()->set_notice('Password updated');
-			}
-		}
-*/
-		return false;
-	}
-
-	/***/
-	function exists($in, $params = array(), $fields = array()) {
+	function exists($in, $params = array()) {
 		if (!$in) {
 			return false;
 		}
@@ -119,7 +119,7 @@ class yf_validate {
 	}
 
 	/***/
-	function regex_match($in, $params = array(), $fields = array()) {
+	function regex_match($in, $params = array()) {
 		$regex = $params['param'];
 		return (bool) preg_match($regex, $in);
 	}
@@ -131,7 +131,7 @@ class yf_validate {
 	}
 
 	/***/
-	function valid_url($in, $params = array(), $fields = array()) {
+	function valid_url($in, $params = array()) {
 		if (empty($in)) {
 			return FALSE;
 		} elseif (preg_match('/^(?:([^:]*)\:)?\/\/(.+)$/', $in, $matches)) {
@@ -147,7 +147,7 @@ class yf_validate {
 	}
 	
 	/***/
-	function min_length($in, $params = array(), $fields = array()) {
+	function min_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
 			return FALSE;
@@ -160,7 +160,7 @@ class yf_validate {
 	}
 
 	/***/
-	function max_length($in, $params = array(), $fields = array()) {
+	function max_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
 			return FALSE;
@@ -173,7 +173,7 @@ class yf_validate {
 	}
 
 	/***/
-	function exact_length($in, $params = array(), $fields = array()) {
+	function exact_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
 			return FALSE;
@@ -186,86 +186,86 @@ class yf_validate {
 	}
 
 	/***/
-	function greater_than($in, $params = array(), $fields = array()) {
+	function greater_than($in, $params = array()) {
 		$min = $params['param'];
 		return is_numeric($in) ? ($in > $min) : FALSE;
 	}
 
 	/***/
-	function less_than($in, $params = array(), $fields = array()) {
+	function less_than($in, $params = array()) {
 		$max = $params['param'];
 		return is_numeric($in) ? ($in < $max) : FALSE;
 	}
 
 	/***/
-	function greater_than_equal_to($in, $params = array(), $fields = array()) {
+	function greater_than_equal_to($in, $params = array()) {
 		$min = $params['param'];
 		return is_numeric($in) ? ($in >= $min) : FALSE;
 	}
 
 	/***/
-	function less_than_equal_to($in, $params = array(), $fields = array()) {
+	function less_than_equal_to($in, $params = array()) {
 		$max = $params['param'];
 		return is_numeric($in) ? ($in <= $max) : FALSE;
 	}
 
 	/***/
-	function alpha($in, $params = array(), $fields = array()) {
+	function alpha($in) {
 		return ctype_alpha($in);
 	}
 
 	/***/
-	function alpha_numeric($in, $params = array(), $fields = array()) {
+	function alpha_numeric($in) {
 		return ctype_alnum((string) $in);
 	}
 
 	/***/
-	function alpha_numeric_spaces($in, $params = array(), $fields = array()) {
+	function alpha_numeric_spaces($in) {
 		return (bool) preg_match('/^[A-Z0-9 ]+$/i', $in);
 	}
 
 	/***/
-	function alpha_dash($in, $params = array(), $fields = array()) {
+	function alpha_dash($in) {
 		return (bool) preg_match('/^[a-z0-9_-]+$/i', $in);
 	}
 
 	/***/
-	function numeric($in, $params = array(), $fields = array()) {
+	function numeric($in) {
 		return (bool) preg_match('/^[\-+]?[0-9]*\.?[0-9]+$/', $in);
 	}
 
 	/***/
-	function integer($in, $params = array(), $fields = array()) {
+	function integer($in) {
 		return (bool) preg_match('/^[\-+]?[0-9]+$/', $in);
 	}
 
 	/***/
-	function decimal($in, $params = array(), $fields = array()) {
+	function decimal($in) {
 		return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $in);
 	}
 
 	/***/
-	function is_natural($in, $params = array(), $fields = array()) {
+	function is_natural($in) {
 		return ctype_digit((string) $in);
 	}
 
 	/***/
-	function is_natural_no_zero($in, $params = array(), $fields = array()) {
+	function is_natural_no_zero($in) {
 		return ($in != 0 && ctype_digit((string) $in));
 	}
 
 	/***/
-	function valid_email($in, $params = array(), $fields = array()) {
+	function valid_email($in) {
 		return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
 	}
 
 	/***/
-	function valid_emails($in, $params = array(), $fields = array()) {
+	function valid_emails($in) {
 		if (strpos($in, ',') === FALSE) {
-			return $this->valid_email(trim($in), $params, $fields);
+			return $this->valid_email(trim($in));
 		}
 		foreach (explode(',', $in) as $email) {
-			if (trim($email) !== '' && $this->valid_email(trim($email), $params, $fields) === FALSE) {
+			if (trim($email) !== '' && $this->valid_email(trim($email)) === FALSE) {
 				return FALSE;
 			}
 		}
@@ -273,26 +273,12 @@ class yf_validate {
 	}
 
 	/***/
-	function valid_base64($in, $params = array(), $fields = array()) {
+	function valid_base64($in) {
 		return (base64_encode(base64_decode($in)) === $in);
 	}
 
 	/***/
-	function prep_for_form($in, $params = array(), $fields = array()) {
-		if ($this->_safe_form_data === FALSE OR empty($data)) {
-			return $data;
-		}
-		if (is_array($data)) {
-			foreach ($data as $key => $val) {
-				$data[$key] = $this->prep_for_form($val, $params, $fields);
-			}
-			return $data;
-		}
-		return str_replace(array("'", '"', '<', '>'), array('&#39;', '&quot;', '&lt;', '&gt;'), stripslashes($data));
-	}
-
-	/***/
-	function prep_url($in, $params = array(), $fields = array()) {
+	function prep_url($in) {
 		if ($in === 'http://' OR $in === '') {
 			return '';
 		}
@@ -303,22 +289,23 @@ class yf_validate {
 	}
 
 	/***/
-	function encode_php_tags($in, $params = array(), $fields = array()) {
+	function encode_php_tags($in) {
 		return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $in);
 	}
 
 	/***/
-	function valid_ip($in, $params = array(), $fields = array()) {
+	function valid_ip($in, $params = array()) {
+		$which = $params['param'];
 		return _class('input')->valid_ip($ip, $which);
 	}
 
 	/***/
-	function xss_clean($in, $params = array(), $fields = array()) {
+	function xss_clean($in) {
 		return _class('security')->xss_clean($in);
 	}
 
 	/***/
-	function strip_image_tags($in, $params = array(), $fields = array()) {
+	function strip_image_tags($in) {
 		return _class('security')->strip_image_tags($in);
 	}
 
@@ -386,7 +373,7 @@ class yf_validate {
 	* 
 	*/
 	function _check_login () {
-// TODO
+// TODO: rewrite me
 		if ($_POST["login"] == "") {
 			_re(t('Login required'));
 		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE login='"._es($_POST['login'])."'") >= 1) {

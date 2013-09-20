@@ -1454,6 +1454,10 @@ class yf_common {
 	/**
 	*/
 	function admin_wall_add($data = array()) {
+# TODO: check this and enable
+#		if (!is_array($data)) {
+#			$data = func_get_args();
+#		}
 		return db()->insert('admin_walls', db()->es(array(
 			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
 			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
@@ -1472,6 +1476,10 @@ class yf_common {
 	/**
 	*/
 	function user_wall_add($data = array()) {
+# TODO: check this and enable
+#		if (!is_array($data)) {
+#			$data = func_get_args();
+#		}
 		return db()->insert('user_walls', db()->es(array(
 			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
 			'user_id'	=> isset($data['user_id']) ? $data['user_id'] : (isset($data[1]) ? $data[1] : ''),

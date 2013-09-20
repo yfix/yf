@@ -1,4 +1,5 @@
 <?php
+define('CSS_FRAMEWORK',			'bootstrap2');
 // UPLOADS PATHS
 define('SITE_UPLOADS_DIR',			'uploads/');				// Root folder for all uploads
 define('SITE_AVATARS_DIR',			'uploads/avatars/');		// avatars folder
