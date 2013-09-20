@@ -567,6 +567,15 @@ class yf_table2 {
 	}
 
 	/**
+	* Currently designed only for admin usage
+	* Show multiple selected data items
+	*/
+	function data($name, $data = array(), $extra = array()) {
+#		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
+		return $this->text($name, $extra['desc'], $extra);
+	}
+
+	/**
 	*/
 	function btn($name, $link, $extra = array()) {
 		$this->_buttons[] = array(

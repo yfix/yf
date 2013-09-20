@@ -118,6 +118,7 @@ class yf_blocks {
 			->btn_clone()
 			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
 			->btn_active()
+			->footer_add('', './?object='.$_GET['object'].'&action=add')
 		;
 	}
 
@@ -272,6 +273,7 @@ class yf_blocks {
 			$this->_methods = $this->_user_methods;
 		}
 		$Q = db()->query('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
+
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
@@ -305,6 +307,22 @@ class yf_blocks {
 			'servers_link'	=> './?object=manage_servers',
 		);
 		return tpl()->parse($_GET['object'].'/rules_main', $replace);
+/*
+		return table('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']))
+			->text('order')
+			->text('rule_type')
+			->data('methods', db()->get_2d())
+			->data('themes', db()->get_2d())
+			->data('locales', db()->get_2d())
+			->data('site_ids', db()->get_2d())
+			->data('server_ids', db()->get_2d())
+			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d')
+			->btn_delete('', './?object='.$_GET['object'].'&action=delete_rule&id=%d')
+			->btn_clone('', './?object='.$_GET['object'].'&action=clone_rule&id=%d')
+			->btn_active('', './?object='.$_GET['object'].'&action=activate_rule&id=%d')
+			->footer_add('', './?object='.$_GET['object'].'&action=add_rule&id=%d')
+		;
+*/
 	}
 
 	/**
