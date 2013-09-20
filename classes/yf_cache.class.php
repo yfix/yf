@@ -416,7 +416,7 @@ class yf_cache {
 	function refresh ($cache_name = "", $force_clean = false) {
 		if (is_array($cache_name)) {
 			foreach ((array)$cache_name as $name) {
-				$result[$name] = $this->_refresh($cache_name, $force_clean);
+				$result[$name] = $this->_refresh($name, $force_clean);
 			}
 		} else {
 			$result = $this->_refresh($cache_name, $force_clean);
