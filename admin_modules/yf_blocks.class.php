@@ -104,35 +104,21 @@ class yf_blocks {
 	/**
 	*/
 	function show () {
-		$Q = db()->query('SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id');
-		while ($A = db()->fetch_assoc($Q)) {
-			$num_rules[$A['block_id']] = $A['num'];
-		}
-		$Q = db()->query('SELECT * FROM '.db('blocks').'');
-		while ($A = db()->fetch_assoc($Q)) {
-			$replace2 = array(
-				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'name'			=> _prepare_html($A['name']),
-				'desc'			=> _prepare_html($A['desc']),
-				'type'			=> _prepare_html($A['type']),
-				'stpl_name'		=> _prepare_html($A['stpl_name']),
-				'method_name'	=> _prepare_html($A['method_name']),
-				'active'		=> intval($A['active']),
-				'num_rules'		=> intval($num_rules[$A['id']]),
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$A['id'],
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete&id='.$A['id'],
-				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_block&id='.$A['id'],
-				'active_link'	=> './?object='.$_GET['object'].'&action=activate_block&id='.$A['id'],
-				'rules_link'	=> './?object='.$_GET['object'].'&action=show_rules&id='.$A['id'],
-				'export_link'	=> './?object='.$_GET['object'].'&action=export&id='.$A['id'],
-			);
-			$items .= tpl()->parse($_GET['object'].'/item', $replace2);
-		}
-		$replace = array(
-			'items'			=> $items,
-			'form_action'	=> './?object='.$_GET['object'].'&action=add',
-		);
-		return tpl()->parse($_GET['object'].'/main', $replace);
+		return table('SELECT * FROM '.db('blocks'), array('custom_fields' => array(
+				'num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'
+			)))
+			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d')
+			->text('type')
+			->text('stpl_name', 'Template')
+			->text('method_name', 'Method')
+			->text('num_rules')
+			->btn('Rules', './?object='.$_GET['object'].'&action=show_rules&id=%d')
+			->btn_edit()
+			->btn_delete()
+			->btn_clone()
+			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
+			->btn_active()
+		;
 	}
 
 	/**
@@ -208,10 +194,7 @@ class yf_blocks {
 			db()->query('DELETE FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block deleted: '.$block_info['name'].'', $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh('blocks_names');
-			cache()->refresh('blocks_rules');
-		}
+		cache()->refresh(array('blocks_names', 'blocks_rules'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -222,7 +205,7 @@ class yf_blocks {
 
 	/**
 	*/
-	function clone_block () {
+	function clone_item () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
 			return _e(t('No id!'));
@@ -245,16 +228,13 @@ class yf_blocks {
 			$NEW_ITEM_ID = db()->INSERT_ID();
 		}
 		common()->admin_wall_add(array('block cloned: '.$_info['name'].' from '.$block_info['name'], $NEW_ITEM_ID));
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh('blocks_names');
-			cache()->refresh('blocks_rules');
-		}
+		cache()->refresh(array('blocks_names', 'blocks_rules'));
 		return js_redirect('./?object='.$_GET['object']);
 	}
 
 	/**
 	*/
-	function activate_block () {
+	function active () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
@@ -263,10 +243,7 @@ class yf_blocks {
 			db()->UPDATE('blocks', array('active' => (int)!$block_info['active']), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block '.$block_info['name'].' '.($block_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh('blocks_names');
-			cache()->refresh('blocks_rules');
-		}
+		cache()->refresh(array('blocks_names', 'blocks_rules'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($block_info['active'] ? 0 : 1);
