@@ -32,10 +32,7 @@ class yf_admin_groups {
 				break;
 			}
 		}
-		$Q = db()->query("SELECT * FROM ".db('menus')." WHERE type='admin' AND active='1' LIMIT 1");
-		while ($A = db()->fetch_assoc($Q)) {
-			$menu_id = $A["id"];
-		}
+		$menu_id = db()->get_one("SELECT id FROM ".db('menus')." WHERE type='admin' AND active='1' LIMIT 1");
 		return common()->table2("SELECT * FROM ".db('admin_groups')." ORDER BY id ASC")
 			->text("name")
 			->text("go_after_login")

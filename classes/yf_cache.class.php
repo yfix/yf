@@ -414,6 +414,19 @@ class yf_cache {
 	* Update selected cache entry
 	*/
 	function refresh ($cache_name = "", $force_clean = false) {
+		if (is_array($cache_name)) {
+			foreach ((array)$cache_name as $name) {
+				$result[$name] = $this->_refresh($cache_name, $force_clean);
+			}
+		} else {
+			$result = $this->_refresh($cache_name, $force_clean);
+		}
+		return $result;
+	}
+
+	/**
+	*/
+	function _refresh ($cache_name = "", $force_clean = false) {
 		if ($this->DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
