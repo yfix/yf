@@ -132,6 +132,11 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
+		// Shortcut: use second param as $extra
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -543,7 +548,10 @@ class yf_form2 {
 	*/
 	function password($name = '', $desc = '', $extra = array(), $replace = array()) {
 		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
@@ -2222,7 +2230,7 @@ class yf_form2 {
 			}
 			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : ($this->_replace['redirect_link'] ? $this->_replace['redirect_link'] : $this->_replace['back_link']);
 			if (!$redirect_link) {
-				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? $_GET['action'] : ''). ($_GET['id'] ? $_GET['id'] : '');
+				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
 			}
 			if (!$extra['no_redirect']) {
 				js_redirect($redirect_link);
