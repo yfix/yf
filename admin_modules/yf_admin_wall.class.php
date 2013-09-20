@@ -13,11 +13,11 @@ class yf_admin_wall {
 	*/
 	function show() {
 		return common()->table2('SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC')
-			->date("add_date")
-			->text("message")
-			->text("object")
-			->text("action")
-			->text("object_id")
+			->date('add_date')
+			->text('message')
+			->text('object')
+			->text('action')
+			->text('object_id')
 			->btn_view()
 		;
 	}
@@ -33,17 +33,17 @@ class yf_admin_wall {
 		if (!$msg['id']) {
 			return _e('Wrong message id');
 		}
-		$link = "";
+		$link = '';
 		$object = $msg['object'];
 		$action = $msg['action'];
 		$object_id = $msg['object_id'];
 		$module = module($object);
-		$hook_name = "_hook_wall_link";
+		$hook_name = '_hook_wall_link';
 		if (is_object($module) && method_exists($module, $hook_name)) {
 			$link = $module->$hook_name($msg);
 		}
 		if (!$link) {
-			$link = "./?object=".$object."&action=".$action."&id=".$object_id;
+			$link = './?object='.$object.'&action='.$action.'&id='.$object_id;
 		}
 		return js_redirect($link);
 	}
@@ -64,8 +64,8 @@ class yf_admin_wall {
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
 		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1))
-			->date("add_date")
-			->text("message")
+			->date('add_date')
+			->text('message')
 			->btn_view()
 		;
 	}

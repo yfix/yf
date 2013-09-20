@@ -1825,10 +1825,10 @@ class yf_form2 {
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 // TODO: unify with select_box(), maybe need to add something there
-/*
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
+/*
 		if (!$name) {
 			$name = 'method_name';
 		}
@@ -1869,22 +1869,22 @@ class yf_form2 {
 				.'</div>
 			</div>
 		';
+*/
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
 		}
 		return $body;
-*/
 	}
 
 	/**
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 // TODO: unify with select_box(), maybe need to add something there
-/*
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
+/*
 		if (!$name) {
 			$name = 'stpl_name';
 		}
@@ -1924,12 +1924,12 @@ class yf_form2 {
 				.'</div>
 			</div>
 		';
+*/
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
 		}
 		return $body;
-*/
 	}
 
 	/**

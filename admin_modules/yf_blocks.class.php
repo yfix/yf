@@ -102,157 +102,88 @@ class yf_blocks {
 	}
 
 	/**
-	* Default method
 	*/
 	function show () {
-		$Q = db()->query("SELECT block_id, COUNT(*) AS num FROM ".db('block_rules')." GROUP BY block_id");
+		$Q = db()->query('SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id');
 		while ($A = db()->fetch_assoc($Q)) {
-			$num_rules[$A["block_id"]] = $A["num"];
+			$num_rules[$A['block_id']] = $A['num'];
 		}
-		$Q = db()->query("SELECT * FROM ".db('blocks')."");
+		$Q = db()->query('SELECT * FROM '.db('blocks').'');
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
-				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
-				"name"			=> _prepare_html($A["name"]),
-				"desc"			=> _prepare_html($A["desc"]),
-				"type"			=> _prepare_html($A["type"]),
-				"stpl_name"		=> _prepare_html($A["stpl_name"]),
-				"method_name"	=> _prepare_html($A["method_name"]),
-				"active"		=> intval($A["active"]),
-				"num_rules"		=> intval($num_rules[$A["id"]]),
-				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit&id=".$A["id"],
-				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$A["id"],
-				"clone_link"	=> "./?object=".$_GET["object"]."&action=clone_block&id=".$A["id"],
-				"active_link"	=> "./?object=".$_GET["object"]."&action=activate_block&id=".$A["id"],
-				"rules_link"	=> "./?object=".$_GET["object"]."&action=show_rules&id=".$A["id"],
-				"export_link"	=> "./?object=".$_GET["object"]."&action=export&id=".$A["id"],
+				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
+				'name'			=> _prepare_html($A['name']),
+				'desc'			=> _prepare_html($A['desc']),
+				'type'			=> _prepare_html($A['type']),
+				'stpl_name'		=> _prepare_html($A['stpl_name']),
+				'method_name'	=> _prepare_html($A['method_name']),
+				'active'		=> intval($A['active']),
+				'num_rules'		=> intval($num_rules[$A['id']]),
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$A['id'],
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete&id='.$A['id'],
+				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_block&id='.$A['id'],
+				'active_link'	=> './?object='.$_GET['object'].'&action=activate_block&id='.$A['id'],
+				'rules_link'	=> './?object='.$_GET['object'].'&action=show_rules&id='.$A['id'],
+				'export_link'	=> './?object='.$_GET['object'].'&action=export&id='.$A['id'],
 			);
-			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
+			$items .= tpl()->parse($_GET['object'].'/item', $replace2);
 		}
 		$replace = array(
-			"items"			=> $items,
-			"form_action"	=> "./?object=".$_GET["object"]."&action=add",
+			'items'			=> $items,
+			'form_action'	=> './?object='.$_GET['object'].'&action=add',
 		);
-		return tpl()->parse($_GET["object"]."/main", $replace);
+		return tpl()->parse($_GET['object'].'/main', $replace);
 	}
 
 	/**
-	* Edit block info
 	*/
 	function add () {
-		if (!empty($_POST)) {
-			if (empty($_POST["type"]) || !in_array($_POST["type"], array("user","admin"))) {
-				_re("Wrong block type", "type");
-			}
-			if (empty($_POST["name"])) {
-				_re("BLock name can not be empty", "name");
-			}
-			if (!common()->_error_exists()) {
-				if (db()->query_num_rows("SELECT id FROM ".db('blocks')." WHERE type='"._es($_POST["type"])."' AND name='"._es($_POST["name"])."'")) {
-					_re("BLock name already reserved", "name");
-				}
-			}
-			if (!common()->_error_exists()) {
-				db()->INSERT("blocks", array(
-					"name"		=> _es($_POST["name"]),
-					"desc"		=> _es($_POST["desc"]),
-					"type"		=> _es($_POST["type"] == "admin" ? "admin" : "user"),
-					"active"	=> intval($_POST["active"]),
-				));
+		$a = $_POST;
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name'	=> 'trim|required|alpha_numeric|is_unique[blocks.name]',
+				'type'	=> 'trim|required',
+			))
+			->db_insert_if_ok('blocks', array('type','name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('block added: '.$_POST['name'].'', db()->insert_id()));
-				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("blocks_names");
-				}
-				return js_redirect("./?object=".$_GET["object"]);
-			}
-		}
-		$DATA = $_POST;
-		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-			"for_edit"		=> 0,
-			"name"			=> _prepare_html($DATA["name"]),
-			"desc"			=> _prepare_html($DATA["desc"]),
-			"stpl_name"		=> _prepare_html($DATA["stpl_name"]),
-			"method_name"	=> _prepare_html($DATA["method_name"]),
-			"active"		=> $DATA["active"],
-			"active_box"	=> $this->_box("active", $DATA["active"]),
-			"back_link"		=> "./?object=".$_GET["object"],
-		);
-		return common()->form2($replace)
-			->text("name","Block name")
-			->textarea("desc","Block Description")
-			->template_select_box("stpl_name","Custom template")
-			->method_select_box("method_name","Custom class method")
+				cache()->refresh('blocks_names');
+			}))
+			->select_box('type', array('admin' => 'admin', 'user' => 'user'))
+			->text('name','Block name')
+			->text('desc','Block Description')
+#			->template_select_box('stpl_name','Custom template')
+#			->method_select_box('method_name','Custom class method')
+			->text('stpl_name','Custom template')
+			->text('method_name','Custom class method')
 			->active_box()
 			->save_and_back();
 	}
 
 	/**
-	* Edit block info
 	*/
 	function edit () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+		$id = intval($_GET['id']);
+		if (empty($id)) {
+			return _e('No id!');
 		}
-		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
-		if (empty($block_info["id"])) {
-			return _e(t("No such block!"));
-		}
-		$DATA = $block_info;
-		foreach ((array)$_POST as $k => $v) {
-			if (isset($DATA[$k])) {
-				$DATA[$k] = $v;
-			}
-		}
-		if (!empty($_POST)) {
-			if (empty($_POST["name"])) {
-				_re("BLock name can not be empty", "name");
-			}
-			if (!common()->_error_exists()) {
-				if (db()->query_num_rows("SELECT id FROM ".db('blocks')." WHERE type='"._es($_POST["type"])."' AND name='"._es($_POST["name"])."'")) {
-					_re("Block name already reserved", "name");
-				}
-			}
-			if (!common()->_error_exists()) {
-				db()->UPDATE("blocks", array(
-					"name"			=> _es($_POST["name"]),
-					"desc"			=> _es($_POST["desc"]),
-					"stpl_name"		=> _es($_POST["stpl_name"]),
-					"method_name"	=> _es($_POST["method_name"]),
-					"active"		=> intval($_POST["active"])
-				), "id=".intval($_GET["id"]));
-				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', $_GET['id']));
-				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("blocks_names");
-				}
-				return js_redirect("./?object=".$_GET["object"]);
-			}
-		}
-		$methods_for_select = $block_info["type"] == "admin" ? $this->_admin_methods : $this->_user_methods;
-		if (isset($methods_for_select[""])) {
-			unset($methods_for_select[""]);
-		}
-		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"for_edit"		=> 1,
-			"name"			=> _prepare_html($block_info["name"]),
-			"desc"			=> _prepare_html($block_info["desc"]),
-			"stpl_name"		=> _prepare_html($block_info["stpl_name"]),
-			"method_name"	=> _prepare_html($block_info["method_name"]),
-			"active"		=> $block_info["active"],
-			"active_box"	=> $this->_box("active", $block_info["active"]),
-			"methods_box"	=> common()->select_box("methods", $methods_for_select, "", true, 2, "class=small_for_select", false),
-			"stpls_box"		=> common()->select_box("stpls", $this->_get_stpls($block_info["type"]), "", true, 2, "class=small_for_select", false),
-			"modules_link"	=> "./?object=".$block_info["type"]."_modules",
-			"stpls_link"	=> "./?object=template_editor",
-			"back_link"		=> "./?object=".$_GET["object"],
-		);
-		return common()->form2($replace)
-			->text("name","Block name")
-			->textarea("desc","Block Description")
-			->template_select_box("stpl_name","Custom template")
-			->method_select_box("method_name","Custom class method")
+		$a = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.$id);
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a)
+			->validate(array(
+				'name'	=> 'trim|required|alpha_numeric|is_unique[blocks.name]',
+				'type'	=> 'trim|required',
+			))
+			->db_update_if_ok('blocks', array('name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
+				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', $id));
+				cache()->refresh('blocks_names');
+			}))
+			->text('name','Block name')
+			->text('desc','Block Description')
+//			->template_select_box('stpl_name','Custom template')
+//			->method_select_box('method_name','Custom class method')
+			->text('stpl_name','Custom template')
+			->text('method_name','Custom class method')
 			->active_box()
 			->save_and_back();
 	}
@@ -260,32 +191,32 @@ class yf_blocks {
 	/**
 	* Get array of templates for the given init type
 	*/
-	function _get_stpls ($type = "user") {
-		return module("template_editor")->_get_stpls_for_type($type);
+	function _get_stpls ($type = 'user') {
+		return module('template_editor')->_get_stpls_for_type($type);
 	}
 
 	/**
 	* Delete block and its rules
 	*/
 	function delete () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
 		}
-		if (!empty($block_info["id"])) {
-			db()->query("DELETE FROM ".db('blocks')." WHERE id=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
+		if (!empty($block_info['id'])) {
+			db()->query('DELETE FROM '.db('blocks').' WHERE id='.intval($_GET['id']).' LIMIT 1');
+			db()->query('DELETE FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block deleted: '.$block_info['name'].'', $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("blocks_names");
-			cache()->refresh("blocks_rules");
+			cache()->refresh('blocks_names');
+			cache()->refresh('blocks_rules');
 		}
-		if ($_POST["ajax_mode"]) {
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo $_GET["id"];
+			echo $_GET['id'];
 		} else {
-			return js_redirect("./?object=".$_GET["object"]);
+			return js_redirect('./?object='.$_GET['object']);
 		}
 	}
 
@@ -293,56 +224,56 @@ class yf_blocks {
 	* Clone block
 	*/
 	function clone_block () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return _e(t('No id!'));
 		}
-		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
+		$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
 		$sql = $block_info;
-		unset($sql["id"]);
-		$sql["name"] = $sql["name"]."_clone";
+		unset($sql['id']);
+		$sql['name'] = $sql['name'].'_clone';
 
-		db()->INSERT("blocks", $sql);
+		db()->INSERT('blocks', $sql);
 		$NEW_BLOCK_ID = db()->INSERT_ID();
 
-		$Q = db()->query("SELECT * FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
+		$Q = db()->query('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
 		while ($_info = db()->fetch_assoc($Q)) {
-			unset($_info["id"]);
-			$_info["block_id"] = $NEW_BLOCK_ID;
+			unset($_info['id']);
+			$_info['block_id'] = $NEW_BLOCK_ID;
 
-			db()->INSERT("block_rules", $_info);
+			db()->INSERT('block_rules', $_info);
 
 			$NEW_ITEM_ID = db()->INSERT_ID();
 		}
 		common()->admin_wall_add(array('block cloned: '.$_info['name'].' from '.$block_info['name'], $NEW_ITEM_ID));
 		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("blocks_names");
-			cache()->refresh("blocks_rules");
+			cache()->refresh('blocks_names');
+			cache()->refresh('blocks_rules');
 		}
-		return js_redirect("./?object=".$_GET["object"]);
+		return js_redirect('./?object='.$_GET['object']);
 	}
 
 	/**
 	* Change block activity status
 	*/
 	function activate_block () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
 		}
-		if (!empty($block_info["id"])) {
-			db()->UPDATE("blocks", array("active" => (int)!$block_info["active"]), "id=".intval($_GET["id"]));
+		if (!empty($block_info['id'])) {
+			db()->UPDATE('blocks', array('active' => (int)!$block_info['active']), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block '.$block_info['name'].' '.($block_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("blocks_names");
-			cache()->refresh("blocks_rules");
+			cache()->refresh('blocks_names');
+			cache()->refresh('blocks_rules');
 		}
-		if ($_POST["ajax_mode"]) {
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo ($block_info["active"] ? 0 : 1);
+			echo ($block_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect("./?object=".$_GET["object"]);
+			return js_redirect('./?object='.$_GET['object']);
 		}
 	}
 
@@ -350,55 +281,55 @@ class yf_blocks {
 	* Rules list for given block id
 	*/
 	function show_rules () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return _e(t('No id!'));
 		}
-		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
-		if (empty($block_info["id"])) {
-			return _e(t("No such block!"));
+		$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
+		if (empty($block_info['id'])) {
+			return _e(t('No such block!'));
 		}
-		if ($block_info["type"] == "admin") {
+		if ($block_info['type'] == 'admin') {
 			$this->_groups	= $this->_admin_groups;
 			$this->_methods = $this->_admin_methods;
 		} else {
 			$this->_groups	= $this->_user_groups;
 			$this->_methods = $this->_user_methods;
 		}
-		$Q = db()->query("SELECT * FROM ".db('block_rules')." WHERE block_id=".intval($_GET["id"]));
+		$Q = db()->query('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
-				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
-				"rule_type"		=> _prepare_html($A["rule_type"]),
-				"user_groups"	=> $this->_multi_db_to_show($A["user_groups"],	$this->_groups),
-				"methods"		=> $this->_multi_db_to_show($A["methods"],		$this->_methods),
-				"themes"		=> $this->_multi_db_to_show($A["themes"],		$this->_themes),
-				"locales"		=> $this->_multi_db_to_show($A["locales"],		$this->_locales),
-				"site_ids"		=> $this->_multi_db_to_show($A["site_ids"],		$this->_sites),
-				"server_ids"	=> $this->_multi_db_to_show($A["server_ids"],	$this->_servers),
-				"active"		=> intval($A["active"]),
-				"order"			=> intval($A["order"]),
-				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit_rule&id=".$A["id"],
-				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_rule&id=".$A["id"],
-				"clone_link"	=> "./?object=".$_GET["object"]."&action=clone_rule&id=".$A["id"],
-				"active_link"	=> $block_info["name"] == "center_area" && $block_info["type"] == "admin" ? "" : "./?object=".$_GET["object"]."&action=activate_rule&id=".$A["id"],
+				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
+				'rule_type'		=> _prepare_html($A['rule_type']),
+				'user_groups'	=> $this->_multi_db_to_show($A['user_groups'],	$this->_groups),
+				'methods'		=> $this->_multi_db_to_show($A['methods'],		$this->_methods),
+				'themes'		=> $this->_multi_db_to_show($A['themes'],		$this->_themes),
+				'locales'		=> $this->_multi_db_to_show($A['locales'],		$this->_locales),
+				'site_ids'		=> $this->_multi_db_to_show($A['site_ids'],		$this->_sites),
+				'server_ids'	=> $this->_multi_db_to_show($A['server_ids'],	$this->_servers),
+				'active'		=> intval($A['active']),
+				'order'			=> intval($A['order']),
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_rule&id='.$A['id'],
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_rule&id='.$A['id'],
+				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_rule&id='.$A['id'],
+				'active_link'	=> $block_info['name'] == 'center_area' && $block_info['type'] == 'admin' ? '' : './?object='.$_GET['object'].'&action=activate_rule&id='.$A['id'],
 			);
-			$items .= tpl()->parse($_GET["object"]."/rules_item", $replace2);
+			$items .= tpl()->parse($_GET['object'].'/rules_item', $replace2);
 		}
 		$replace = array(
-			"items"			=> $items,
-			"block_name"	=> $block_info["name"],
-			"block_type"	=> $block_info["type"] == "admin" ? "admin" : "user",
-			"add_rule_link"	=> "./?object=".$_GET["object"]."&action=add_rule&id=".$_GET["id"],
-			"back_link"		=> "./?object=".$_GET["object"]."&action=show",
-			"modules_link"	=> "./?object=".($block_info["type"] == "admin" ? "admin_modules" : "user_modules"),
-			"groups_link"	=> "./?object=".($block_info["type"] == "admin" ? "admin_groups" : "user_groups"),
-			"themes_link"	=> "./?object=template_editor",
-			"locales_link"	=> "./?object=locale_editor",
-			"sites_link"	=> "./?object=manage_sites",
-			"servers_link"	=> "./?object=manage_servers",
+			'items'			=> $items,
+			'block_name'	=> $block_info['name'],
+			'block_type'	=> $block_info['type'] == 'admin' ? 'admin' : 'user',
+			'add_rule_link'	=> './?object='.$_GET['object'].'&action=add_rule&id='.$_GET['id'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=show',
+			'modules_link'	=> './?object='.($block_info['type'] == 'admin' ? 'admin_modules' : 'user_modules'),
+			'groups_link'	=> './?object='.($block_info['type'] == 'admin' ? 'admin_groups' : 'user_groups'),
+			'themes_link'	=> './?object=template_editor',
+			'locales_link'	=> './?object=locale_editor',
+			'sites_link'	=> './?object=manage_sites',
+			'servers_link'	=> './?object=manage_servers',
 		);
-		return tpl()->parse($_GET["object"]."/rules_main", $replace);
+		return tpl()->parse($_GET['object'].'/rules_main', $replace);
 	}
 
 	/**

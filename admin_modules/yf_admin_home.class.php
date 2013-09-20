@@ -147,8 +147,8 @@ class yf_admin_home {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 	
-	
-	// Display suggesting messages
+	/**
+	*/
 	function _show_suggesting_messages () {
 		$user_modules_methods = main()->call_class_method("admin_modules", "admin_modules/", "_get_methods", array("private" => "1")); 
 
@@ -174,13 +174,6 @@ class yf_admin_home {
 			);
 			return tpl()->parse(__CLASS__."/suggests", $replace);
 		}
-	}
-	
-	/**
-	* 
-	*/
-	function edit_account () {
-		return js_redirect("./?object=admin&action=edit&id=".$_SESSION["admin_id"]);
 	}
 
 	/**
@@ -233,26 +226,6 @@ class yf_admin_home {
 	}
 
 	/**
-	* Custom content specific only for this project (designed to be inherited)
-	*/
-	function _custom_content () {
-	}
-
-	/**
-	* Hook for the site_nav_bar module
-	*/
-	function _nav_bar_items ($params = array()) {
-		$OBJ = $params["nav_bar_obj"];
-		if (!is_object($OBJ)) {
-			return false;
-		}
-		$items = array();
-//		$items[]	= $OBJ->_nav_item($OBJ->_decode_from_url($_GET["action"]));
-		$items[]	= $OBJ->_nav_item("Administration home");
-		return $items;
-	}
-
-	/**
 	* Helper method
 	*/
 	function clear_core_cache () {
@@ -264,161 +237,6 @@ class yf_admin_home {
 	}
 
 	/**
-	* Helper method
-	*/
-	function clear_output_cache () {
-		// Init dir obj
-		$DIR_OBJ = main()->init_class("dir", "classes/");
-		// Init output cache class
-		$OC_OBJ = main()->init_class("output_cache", "classes/");
-		// Switch between separate sites dirs or storing cache in one dir
-		if ($OC_OBJ->USE_SITES_DIRS) {
-			// Try to get info about sites vars
-			$this->_sites_info = main()->init_class("sites_info", "classes/");
-			foreach ((array)$this->_sites_info->info as $_site_id => $_site_info) {
-				$site_cache_dir = $_site_info["REAL_PATH"].$OC_OBJ->OUTPUT_CACHE_DIR;
-				// Check if cache dir exists
-				if (!file_exists($site_cache_dir)) {
-					continue;
-				}
-				// Check if we can read contents
-				if (!($dh = opendir($site_cache_dir))) {
-					continue;
-				}
-				// Do clear cache
-				while (($f = readdir($dh)) !== false) {
-					if (in_array($f, array(".","..",".svn",".git","index.html"))) {
-						continue;
-					}
-					$cur_path = $site_cache_dir.$f;
-					// If this is a file - just unlink it
-					if (is_file($cur_path)) {
-						unlink($cur_path);
-					} elseif (is_dir($cur_path)) {
-						$DIR_OBJ->delete_dir($cur_path, true);
-					}
-				}
-				closedir($dh);
-			}
-		} else {
-// TODO
-			echo "Not done yet";
-		}
-		return js_redirect("./?object=".$_GET["object"]);
-	}
-
-	/**
-	* Helper method
-	*/
-	function prepare_installer_db_files () {
-		$struct_array = array();
-
-		$INSTALLER_DB_OBJ = main()->init_class("installer_db", "classes/db/");
-		$INSTALLER_DB_OBJ->_create_struct_files(1);
-
-		db()->query("SELECT name FROM ".db('settings_category')." WHERE id=1");
-
-//		$struct_array = $INSTALLER_DB_OBJ->_get_all_struct_array();
-//		echo $INSTALLER_DB_OBJ->_format_struct_array($struct_array);
-
-//printr($struct_array);
-// TODO
-//		return js_redirect("./?object=".$_GET["object"]);
-	}
-
-	/**
-	* Helper method
-	*/
-	function check_graphic_libs () {
-// TODO
-	}
-
-	/**
-	* Helper method
-	*/
-	function clear_temp_dir () {
-// TODO
-	}
-
-	/**
-	* List all available email templates with links to edit them
-	*/
-	function show_email_templates () {
-		$email_stpls = array(
-			// Init type
-			"admin"	=> array(
-				// Theme name
-				"admin"	=> array(
-					"advert/admin/order_email",
-					"approve_recip/email_approve",
-					"approve_recip/email_suspend",
-					"confirm_reg/email",
-					"email/send_mail",
-					"help_tickets/email_to_user",
-					"links/email_approve",
-				),
-			),
-			// Init type
-			"user"	=> array(
-				// Theme name
-				"new_1"	=> array(
-					"account/change_email/email_to_old",
-					"account/change_email/email_to_new",
-					"account/change_email/email_changed",
-					"account/notify/email_admin",
-					"account/notify/user_email",
-					"account/link_recip/email_admin",
-					"email/send_mail",
-					"forum/register/confirm_email",
-					"friends/email_when_added",
-					"friends/email_when_deleted",
-					"get_pswd/email",
-					"help/email_to_user",
-					"links/email_register",
-					"links/email_get_pswd",
-					"links/email_add_link",
-					"register/email_confirm_agency",
-					"register/email_confirm_escort",
-					"register/email_confirm_visitor",
-					"register/email_success_agency",
-					"register/email_success_escort",
-					"register/email_success_visitor",
-				),
-			),
-		);
-		// Process templates
-		foreach ((array)$email_stpls as $_init_type => $_themes) {
-			foreach ((array)$_themes as $_theme_name => $_stpls) {
-				foreach ((array)$_stpls as $_stpl_name) {
-					$items[] = array(
-						"bg_class"			=> !(++$i % 2) ? "bg1" : "bg2",
-						"stpl_edit_link"	=> "./?object=template_editor&action=edit_stpl&name=".$_stpl_name."&theme=".$_theme_name,
-						"theme_edit_link"	=> "./?object=template_editor&action=show_stpls_in_theme&theme=".$_theme_name,
-						"stpl_name"			=> $_stpl_name,
-						"init_type"			=> $_init_type,
-						"theme_name"		=> $_theme_name,
-					);
-				}
-			}
-		}
-		// Prepare template
-		$replace = array(
-			"items"	=> $items,
-		);
-		return tpl()->parse(__CLASS__."/email_templates", $replace);
-	}
-
-	/**
-	* Re-build packed code
-	*/
-	function rebuild_packed_code () {
-		return "Sorry, this feature is currently disabled";
-
-//		$PP_OBJ = main()->init_class("project_packer");
-//		return $PP_OBJ->go();
-	}
-
-	/**
 	* Display php info
 	*/
 	function show_php_info () {
@@ -427,27 +245,8 @@ class yf_admin_home {
 	}
 
 	/**
-	* Page header hook
+	* Custom content specific only for this project (designed to be inherited)
 	*/
-	function _show_header() {
-		$pheader = _ucfirst(t("Administration home"));
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"					=> "",
-		);
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
-		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
+	function _custom_content () {
 	}
-
 }

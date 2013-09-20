@@ -40,12 +40,10 @@ class yf_admin_groups {
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
 			))
-			->db_insert_if_ok('admin_groups', array('name','go_after_login','active'), array(), array(
-				'on_after_update' => function() {
-					cache()->refresh(array('admin_groups', 'admin_groups_details'));
-					common()->admin_wall_add(array('admin group added: '.$_POST['name'].'', db()->insert_id()));
-				},
-			))
+			->db_insert_if_ok('admin_groups', array('name','go_after_login','active'), array(), array('on_after_update' => function() {
+				cache()->refresh(array('admin_groups', 'admin_groups_details'));
+				common()->admin_wall_add(array('admin group added: '.$_POST['name'].'', db()->insert_id()));
+			}))
 			->text('name','Group name')
 			->text('go_after_login','Url after login')
 			->active_box()
@@ -66,12 +64,10 @@ class yf_admin_groups {
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
 			))
-			->db_update_if_ok('admin_groups', array('name','go_after_login'), 'id='.$id, array(
-				'on_after_update' => function() {
-					cache()->refresh(array('admin_groups', 'admin_groups_details'));
-					common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', $id));
-				},
-			))
+			->db_update_if_ok('admin_groups', array('name','go_after_login'), 'id='.$id, array('on_after_update' => function() {
+				cache()->refresh(array('admin_groups', 'admin_groups_details'));
+				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', $id));
+			}))
 			->text('name','Group name')
 			->text('go_after_login','Url after login')
 			->save_and_back();

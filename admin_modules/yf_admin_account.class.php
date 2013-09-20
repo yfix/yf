@@ -19,9 +19,9 @@ class yf_admin_account {
 				'last_name'		=> 'required|alpha_numeric_spaces',
 				'password'		=> 'password_update',
 			))
-			->db_update_if_ok('admin', array('email','first_name','last_name','go_after_login','password'), 'id='.(int)main()->ADMIN_ID, array(
-				'on_after_update' => function() { common()->admin_wall_add(array('admin account details updated', main()->ADMIN_ID)); },
-			))
+			->db_update_if_ok('admin', array('email','first_name','last_name','go_after_login','password'), 'id='.(int)main()->ADMIN_ID, array('on_after_update' => function() {
+				common()->admin_wall_add(array('admin account details updated', main()->ADMIN_ID));
+			}))
 			->info('login')
 			->info('group', array('data' => main()->get_data('admin_groups')))
 			->password(array('value' => ''))
