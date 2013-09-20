@@ -30,7 +30,7 @@ class yf_graphics_welcome {
 				"name"		=> _prepare_html($admin_info['first_name']." ".$admin_info['last_name']),
 				"group"		=> _prepare_html(t($admin_groups[$admin_group])),
 				"time"		=> _format_date($login_time),
-				"edit_link"	=> $admin_group == 1 ? "./?object=admin&action=edit&id=".intval($admin_id) : "",
+				"edit_link"	=> "./?object=admin_account",
 			));
 		// For authorized users only
 		} elseif (MAIN_TYPE_USER && $user_id && $user_group) {
