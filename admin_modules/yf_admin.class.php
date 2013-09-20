@@ -74,10 +74,10 @@ class yf_admin {
 				'email'			=> 'required|valid_email|is_unique[admin.email]',
 				'first_name'	=> 'required|alpha_numeric_spaces',
 				'last_name'		=> 'required|alpha_numeric_spaces',
-				'password'		=> 'password_update',
+				'password'		=> 'required|md5',
 				'group'			=> 'required|exists[admin_groups.id]',
 			))
-			->db_insert_if_ok('admin', array('login','email','first_name','last_name','go_after_login','password','group','add_date'), array(
+			->db_insert_if_ok('admin', array('login','email','first_name','last_name','go_after_login','password','group','active'), array('add_date' => time()), array(
 				'on_after_update' => function() { common()->admin_wall_add(array('admin account added: '.$_POST['login'].'', main()->ADMIN_ID)); },
 			))
 			->login()
@@ -88,7 +88,6 @@ class yf_admin {
 			->text('go_after_login', 'Url after login')
 			->select_box('group', main()->get_data('admin_groups'), array('selected' => $a['group']))
 			->active_box()
-			->hidden('add_date', array('value' => time()))
 			->save_and_back();
 	}
 
@@ -110,7 +109,7 @@ class yf_admin {
 
 	/**
 	*/
-	function activate () {
+	function active () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			$admin_info = db()->query_fetch('SELECT * FROM '.db('admin').' WHERE id='.intval($_GET['id']));
