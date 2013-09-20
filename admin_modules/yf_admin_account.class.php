@@ -9,6 +9,8 @@
 */
 class yf_admin_account {
 
+	/**
+	*/
 	function show() {
 		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.(int)main()->ADMIN_ID);
 		return form($a, array('autocomplete' => 'off'))

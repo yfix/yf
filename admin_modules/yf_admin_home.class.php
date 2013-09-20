@@ -21,7 +21,6 @@ class yf_admin_home {
 	public $SHOW_GENERAL_INFO		= true;
 
 	/**
-	* Framework constructor
 	*/
 	function _init () {
 		$this->_admin_modules = module("admin_modules")->_get_modules();

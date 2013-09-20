@@ -221,7 +221,6 @@ class yf_blocks {
 	}
 
 	/**
-	* Clone block
 	*/
 	function clone_block () {
 		$_GET['id'] = intval($_GET['id']);
@@ -254,7 +253,6 @@ class yf_blocks {
 	}
 
 	/**
-	* Change block activity status
 	*/
 	function activate_block () {
 		$_GET['id'] = intval($_GET['id']);

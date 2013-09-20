@@ -51,7 +51,6 @@ class yf_admin_groups {
 	}
 
 	/**
-	* Edit groups
 	*/
 	function edit() {
 		$id = intval($_GET['id']);
