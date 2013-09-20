@@ -60,7 +60,7 @@ class yf_auth_admin {
 	/**
 	* Initialize auth
 	*/
-	private function init () {
+	public function init () {
 		// Chanined config rule
 		if ($this->BLOCK_FAILED_LOGINS) {
 			$this->LOG_FAILED_LOGINS = true;
