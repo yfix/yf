@@ -89,6 +89,13 @@ class yf_table2 {
 		$params = $tmp;
 		unset($tmp);
 
+		$pager_path = $params['pager_path'] ? $params['pager_path'] : '';
+		$pager_type = $params['pager_type'] ? $params['pager_type'] : 'blocks';
+		$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : 0;
+		$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
+		$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : '';
+		$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
+
 		$sql = $this->_sql;
 		$ids = array();
 		if (is_array($sql)) {
@@ -98,13 +105,6 @@ class yf_table2 {
 			$ids = array_keys($data);
 		} elseif (strlen($sql)) {
 			$db = is_object($params['db']) ? $params['db'] : db();
-			$pager_path = $params['pager_path'] ? $params['pager_path'] : '';
-			$pager_type = $params['pager_type'] ? $params['pager_type'] : 'blocks';
-			$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : 0;
-			$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
-			$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : '';
-			$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
-
 			if ($params['filter']) {
 				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params']);
 			}
@@ -192,6 +192,12 @@ class yf_table2 {
 			$body = '';
 			if ($this->_form_params) {
 				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
+			}
+			foreach ((array)$this->_header_links as $info) {
+				$name = $info['name'];
+				$func = $info['func'];
+				unset($info['func']); // Save resources
+				$body .= $func($info, $params).PHP_EOL;
 			}
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
@@ -546,6 +552,7 @@ class yf_table2 {
 	}
 
 	/**
+	* Callback function will be populated with these params: function($field, $params, $row, $instance_params) {}
 	*/
 	function func($name, $func, $extra = array()) {
 		if (!$desc && isset($extra['desc'])) {
@@ -731,8 +738,15 @@ class yf_table2 {
 
 	/**
 	*/
+	function header_link($name, $link, $extra = array()) {
+		$extra['display_in'] = 'header';
+		return $this->footer_link($name, $link, $extra);
+	}
+
+	/**
+	*/
 	function footer_link($name, $link, $extra = array()) {
-		$this->_footer_links[] = array(
+		$item = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -746,7 +760,23 @@ class yf_table2 {
 				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
+		if (!$extra['display_in']) {
+			$extra['display_in'] = 'footer';
+		}
+		if ($extra['display_in'] == 'header' || $extra['copy_to_header']) {
+			$this->_header_links[] = $item;
+		}
+		if ($extra['display_in'] == 'footer' || $extra['copy_to_footer']) {
+			$this->_footer_links[] = $item;
+		}
 		return $this;
+	}
+
+	/**
+	*/
+	function header_add($name = '', $link = '', $extra = array()) {
+		$extra['display_in'] = 'header';
+		return $this->footer_add($name, $link, $extra);
 	}
 
 	/**
@@ -771,8 +801,15 @@ class yf_table2 {
 
 	/**
 	*/
+	function header_submit($name = '', $extra = array()) {
+		$extra['display_in'] = 'header';
+		return $this->footer_submit($name, $extra);
+	}
+
+	/**
+	*/
 	function footer_submit($name = '', $extra = array()) {
-		$this->_footer_links[] = array(
+		$item = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -788,6 +825,15 @@ class yf_table2 {
 				return '<input type="submit" name="'.$value.'" value="'.$value.'" class="btn btn-mini">';
 			}
 		);
+		if (!$extra['display_in']) {
+			$extra['display_in'] = 'footer';
+		}
+		if ($extra['display_in'] == 'header' || $extra['copy_to_header']) {
+			$this->_header_links[] = $item;
+		}
+		if ($extra['display_in'] == 'footer' || $extra['copy_to_footer']) {
+			$this->_footer_links[] = $item;
+		}
 		return $this;
 	}
 
