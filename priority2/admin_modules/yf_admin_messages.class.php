@@ -4,9 +4,6 @@
 // Admin messages handling class
 class yf_admin_messages {
 
-	// Filter on/off
-	public $USE_FILTER = true;
-
 	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_admin_messages () {
@@ -133,7 +130,7 @@ class yf_admin_messages {
 // TODO: write templates, code is mostly done here
 		// Connect pager
 		$sql = "SELECT * FROM ".db('admin_messages')."";
-		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
+#		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY time DESC ";
 		list($add_sql, $pages, $total)	= common()->divide_pages($sql);
 		// Get messages from the database
@@ -228,77 +225,6 @@ class yf_admin_messages {
 	function read () {
 // TODO
 	}
-
-	//-----------------------------------------------------------------------------
-	// Generate filter SQL query
-	function _create_filter_sql () {
-		$MF = &$_SESSION[$this->_filter_name];
-		foreach ((array)$MF as $k => $v) {
-			$F[$k] = trim($v);
-		}
-// TODO
-/*
-		// Generate filter for the common fileds
-		if ($F["id_min"]) 				$sql .= " AND id >= ".intval($F["id_min"])." \r\n";
-		if ($F["id_max"])			 	$sql .= " AND id <= ".intval($F["id_max"])." \r\n";
-		if (strlen($F["name"])) 		$sql .= " AND name LIKE '"._es($F["name"])."%' \r\n";
-		if (strlen($F["nick"])) 		$sql .= " AND nick LIKE '"._es($F["nick"])."%' \r\n";
-		if (strlen($F["email"])) 		$sql .= " AND email LIKE '"._es($F["email"])."%' \r\n";
-		if (strlen($F["login"])) 		$sql .= " AND login LIKE '"._es($F["login"])."%' \r\n";
-		if (strlen($F["password"])) 	$sql .= " AND password LIKE '"._es($F["password"])."%' \r\n";
-		if ($F["account_type"])		$sql .= " AND `group` = ".intval($F["account_type"])." \r\n";
-		if (strlen($F["state"]))		$sql .= " AND state = '".$F["state"]."' \r\n";
-		if ($F["country"])	 			$sql .= " AND country = '".$this->_countries[$F["country"]]."' \r\n";
-*/
-		// Sorting here
-		if ($F["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$F["sort_by"]]." \r\n";
-		if ($F["sort_by"] && strlen($F["sort_order"])) 	$sql .= " ".$F["sort_order"]." \r\n";
-		return substr($sql, 0, -3);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Session - based filter form stored in $_SESSION[$this->_filter_name][...]
-	function _show_filter () {
-		$replace = array(
-			"save_action"	=> "./?object=".__CLASS__."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".__CLASS__."&action=clear_filter"._add_get(),
-		);
-		foreach ((array)$this->_fields_in_filter as $name) {
-			$replace[$name] = $_SESSION[$this->_filter_name][$name];
-		}
-		// Process boxes
-		foreach ((array)$this->_boxes as $item_name => $v) {
-			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
-		}
-		return tpl()->parse(__CLASS__."/filter", $replace);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Filter save method
-	function save_filter ($silent = false) {
-		// Process featured countries
-		if (FEATURED_COUNTRY_SELECT && !empty($_POST["country"]) && substr($_POST["country"], 0, 2) == "f_") {
-			$_POST["country"] = substr($_POST["country"], 2);
-		}
-		if (is_array($this->_fields_in_filter)) {
-			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_POST[$name];
-		}
-		if (!$silent) {
-			return js_redirect($_SERVER["HTTP_REFERER"]);
-		}
-	}
-
-	//-----------------------------------------------------------------------------
-	// Clear filter
-	function clear_filter ($silent = false) {
-		if (is_array($_SESSION[$this->_filter_name])) {
-			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
-		}
-		if (!$silent) {
-			return js_redirect("./?object=".__CLASS__._add_get());
-		}
-	}
-
 	//-----------------------------------------------------------------------------
 	// Process custom box
 	function _box ($name = "", $selected = "") {
