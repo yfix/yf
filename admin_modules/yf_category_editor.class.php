@@ -216,7 +216,7 @@ class yf_category_editor {
 			cache()->refresh('category_items');
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
-		return table($cat_items, array('pager_records_on_page' => $this->ITEMS_PER_PAGE))
+		return table($cat_items, array('pager_records_on_page' => $this->ITEMS_PER_PAGE, 'condensed' => 1))
 			->form()
 			->func('name', function($field, $params, $row) {
 				$padding = $row['level'] ? '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>' : '';
