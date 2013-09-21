@@ -91,7 +91,7 @@ class yf_table2 {
 
 		$pager_path = $params['pager_path'] ? $params['pager_path'] : '';
 		$pager_type = $params['pager_type'] ? $params['pager_type'] : 'blocks';
-		$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : 0;
+		$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : (MAIN_TYPE_USER ? conf('user_per_page') : conf('admin_per_page'));
 		$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
 		$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : '';
 		$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
@@ -100,7 +100,13 @@ class yf_table2 {
 		$ids = array();
 		if (is_array($sql)) {
 			$data = $sql;
-			$pages = '';
+			unset($sql);
+			list(,$pages,) = common()->divide_pages(null, null, null, $pager_records_on_page, count($data));
+			if (count($data) > $pager_records_on_page) {
+				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager_records_on_page;
+				$slice_end = $pager_records_on_page;
+				$data = array_slice($data, $slice_start, $slice_end, $preserve_keys = true);
+			}
 			$total = count($data);
 			$ids = array_keys($data);
 		} elseif (strlen($sql)) {
@@ -816,13 +822,13 @@ class yf_table2 {
 			'link'	=> $link,
 			'func'	=> function($params, $instance_params) {
 				$extra = $params['extra'];
-				$value = $params['name'];
+				$value = $params['name'] ? $params['name'] : 'Submit';
 				if (is_array($value) && empty($extra)) {
 					$extra = $value;
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				return '<input type="submit" name="'.$value.'" value="'.$value.'" class="btn btn-mini">';
+				return '<input type="submit" name="'.$value.'" value="'.t($value).'" class="btn btn-mini">';
 			}
 		);
 		if (!$extra['display_in']) {
@@ -841,6 +847,9 @@ class yf_table2 {
 	* Simply tells that current table should consist of form inside
 	*/
 	function form($action = '', $method = '', $extra = array()) {
+		if (isset($this->_form_params) && !$extra['force']) {
+			return $this;
+		}
 		if (is_array($action)) {
 			$extra = $action;
 			$action = '';
@@ -860,6 +869,7 @@ class yf_table2 {
 	/**
 	*/
 	function input($name, $extra = array()) {
+		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {
@@ -879,6 +889,7 @@ class yf_table2 {
 	/**
 	*/
 	function check_box($name, $extra = array()) {
+		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {
@@ -898,6 +909,7 @@ class yf_table2 {
 	/**
 	*/
 	function radio_box($name, $extra = array()) {
+		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {
@@ -918,6 +930,7 @@ class yf_table2 {
 	/**
 	*/
 	function select_box($name, $extra = array()) {
+		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {

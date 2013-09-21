@@ -2,7 +2,7 @@
 class yf_manage_shop_products{
 
 	function products () {
-		return common()->table2("SELECT * FROM ".db('shop_products'), array(
+		return table("SELECT * FROM ".db('shop_products'), array(
 				'filter' => $_SESSION['manage_shop'],
 				'filter_params' => array(
 					'name'	=> 'like',

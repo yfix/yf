@@ -48,9 +48,9 @@ class yf_category_editor {
 				'items' => 'SELECT cat_id, COUNT(*) AS num FROM '.db('category_items').' GROUP BY cat_id',
 			)))
 			->link('name', './?object='.$_GET['object'].'&action=show_items&id=%d')
+			->text('type')
 			->text('desc')
 			->text('custom_fields')
-			->text('type')
 			->text('items')
 			->btn_edit()
 			->btn_delete()
@@ -197,141 +197,83 @@ class yf_category_editor {
 	/**
 	*/
 	function show_items() {
-		$orig_id = $_GET["id"];
-		$_GET["id"] = intval($_GET["id"]);
-		if (!$_GET["id"] && $orig_id) {
-			$cat_info = db()->get("SELECT * FROM ".db('categories')." WHERE name='".db()->es($orig_id)."'");
-			if ($cat_info) {
-				$_GET["id"] = $cat_info['id'];
-			}
-		}
-		if (empty($_GET["id"])) {
-			return _e("No id!");
-		}
+		$cat_info = db()->get('SELECT * FROM '.db('categories').' WHERE name="'.db()->es($_GET['id']).'" OR id='.intval($_GET['id']));
 		if (!$cat_info) {
-			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+			return _e('No such category');
 		}
-		if (empty($cat_info)) {
-			return _e("No such category!");
-		}
-		$cat_items = $this->_recursive_get_cat_items($_GET["id"]);
+		$_GET['id'] = $cat_info['id'];
+		$cat_items = $this->_recursive_get_cat_items($_GET['id']);
 		if ($_POST) {
-			foreach ((array)$cat_items as $A) {
-				if (!isset($_POST["name"][$A["id"]])) {
+			foreach ((array)$cat_items as $a) {
+				if (!isset($_POST['name'][$a['id']])) {
 					continue;
 				}
-				db()->update("category_items", array(
-					"name"		=> _es($_POST["name"][$A["id"]]),
-					"url"		=> _es($_POST["url"][$A["id"]]),
-					"other_info"=> _es($_POST["other_info"][$A["id"]]),
-					"order"		=> intval($_POST["order"][$A["id"]]),
-				), "id=".intval($A["id"]));
+				db()->update('category_items', db()->es(array(
+					'name'	=> $_POST['name'][$a['id']],
+					'url'	=> $_POST['url'][$a['id']],
+				)), 'id='.intval($a['id']));
 			}
-			cache()->refresh(array("category_sets", "category_items"));
-			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
+			cache()->refresh('category_items');
+			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
-		// Slice items according to the current page
-		$total = count($cat_items);
-		$PER_PAGE = !empty($this->ITEMS_PER_PAGE) ? $this->ITEMS_PER_PAGE : conf('admin_per_page');
-		list(,$pages,) = common()->divide_pages(null, null, null, $PER_PAGE, $total);
-		// Get a slice from the whole array
-		if (count($cat_items) > $PER_PAGE) {
-			$cat_items = array_slice($cat_items, (empty($_GET["page"]) ? 0 : intval($_GET["page"]) - 1) * $PER_PAGE, $PER_PAGE);
-		}
-		if ($cat_info["type"] == "admin") {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
-		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
-		}
-		foreach ((array)$cat_items as $A) {
-			if (empty($A)) {
-				continue;
-			}
-			if (empty($A["url"]) && $this->PROPOSE_SHORT_URL) {
-				$A["url"] = common()->_propose_url_from_name($A["name"]);
-			}
-			$groups = array();
-			foreach (explode(",",$A["user_groups"]) as $k => $v) {
-				if (empty($this->_groups[$v])) {
-					continue;
-				}
-				$groups[] = $this->_groups[$v];
-			}
-			$groups = implode("<br />",$groups);
-
-			$replace2 = array(
-				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
-				"item_id"		=> intval($A["id"]),
-				"name"			=> _prepare_html($A["name"]),
-				"desc"			=> _prepare_html($A["desc"]),
-				"url"			=> _prepare_html($A["url"]),
-				"other_info"	=> _prepare_html($A["other_info"]),
-				"item_type"		=> $this->_item_types[$A["type_id"]],
-				"groups"		=> $groups,
-				"active"		=> intval($A["active"]),
-				"order"			=> intval($A["order"]),
-				"level_pad"		=> $A["level"] * 20,
-				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit_item&id=".$A["id"],
-				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_item&id=".$A["id"],
-				"active_link"	=> "./?object=".$_GET["object"]."&action=activate_item&id=".$A["id"],
-				"clone_link"	=> "./?object=".$_GET["object"]."&action=clone_item&id=".$A["id"],
-			);
-			$items .= tpl()->parse($_GET["object"]."/category_items_item", $replace2);
-		}
-		$replace = array(
-			"save_form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"items"				=> $items,
-			"pages"				=> $pages,
-			"num_items"			=> intval($total),
-			"category_name"		=> _prepare_html($cat_info["name"]),
-			"add_item_link"		=> "./?object=".$_GET["object"]."&action=add_item&id=".$_GET["id"],
-			"back_link"			=> "./?object=".$_GET["object"],
-			"drag_link"			=> "./?object=".$_GET["object"]."&action=drag_items&id=".$_GET["id"],
-		);
-		return tpl()->parse($_GET["object"]."/category_items_main", $replace);
+		return table($cat_items, array('pager_records_on_page' => $this->ITEMS_PER_PAGE))
+			->form()
+			->func('name', function($field, $params, $row) {
+				$padding = $row['level'] ? '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>' : '';
+				return $padding. _class('html_controls')->input(array(
+					'id'	=> 'input_'.$params['name'].'_'.$row['id'],
+					'name'	=> $params['name'].'['.$row['id'].']',
+					'desc'	=> $params['name'],
+					'value'	=> $field,
+				));
+			})
+			->func('url', function($field, $params, $row) {
+				return _class('html_controls')->input(array(
+					'id'	=> 'input_'.$params['name'].'_'.$row['id'],
+					'name'	=> $params['name'].'['.$row['id'].']',
+					'desc'	=> $params['name'],
+					'value'	=> $field ? $field : common()->_propose_url_from_name($row['name']),
+				));
+			})
+			->text('other_info')
+			->text('order')
+			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
+			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
+			->btn_clone('', './?object='.$_GET['object'].'&action=clone_item&id=%d')
+			->btn_active('', './?object='.$_GET['object'].'&action=activate_item&id=%d')
+			->footer_add('Add item', './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'], array('copy_to_header' => 1))
+			->footer_link('Drag items', './?object='.$_GET['object'].'&action=drag_items&id='.$_GET['id'], array('icon' => 'icon-move', 'copy_to_header' => 1))
+			->footer_submit()
+		;
 	}
 
 	/**
 	*/
 	function drag_items() {
-		$orig_id = $_GET["id"];
-		$_GET["id"] = intval($_GET["id"]);
-		if (!$_GET["id"] && $orig_id) {
-			$cat_info = db()->get("SELECT * FROM ".db('categories')." WHERE name='".db()->es($orig_id)."'");
-			if ($cat_info) {
-				$_GET["id"] = $cat_info['id'];
-			}
-		}
-		if (empty($_GET["id"])) {
-			return _e("No id!");
-		}
+		$cat_info = db()->get('SELECT * FROM '.db('categories').' WHERE name="'.db()->es($_GET['id']).'" OR id='.intval($_GET['id']));
 		if (!$cat_info) {
-			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+			return _e('No such category');
 		}
-		if (empty($cat_info)) {
-			return _e("No such category!");
-		}
+		$_GET['id'] = $cat_info['id'];
 		$items = $this->_show_category_contents(array(
 			'cat_info' => $cat_info,
 		));
 		if ($_POST) {
-			$cur_items = $this->_auto_update_items_orders($cat_info["id"]);
-			foreach ((array)$_POST["items"] as $order_id => $info) {
-				$item_id = (int)$info["item_id"];
+			$cur_items = $this->_auto_update_items_orders($cat_info['id']);
+			foreach ((array)$_POST['items'] as $order_id => $info) {
+				$item_id = (int)$info['item_id'];
 				if (!$item_id || !isset($items[$item_id])) {
 					continue;
 				}
 				$parent_id = (int)$info['parent_id'];
 				$new_data = array(
-					"order"		=> intval($order_id),
-					"parent_id"	=> intval($parent_id),
+					'order'		=> intval($order_id),
+					'parent_id'	=> intval($parent_id),
 				);
 				$old_info = $cur_items[$item_id];
 				$old_data = array(
-					"order"		=> intval($old_info['order']),
-					"parent_id"	=> intval($old_info['parent_id']),
+					'order'		=> intval($old_info['order']),
+					'parent_id'	=> intval($old_info['parent_id']),
 				);
 				if ($new_data != $old_data) {
 					db()->update('category_items', $new_data, 'id='.$item_id);
@@ -349,7 +291,7 @@ class yf_category_editor {
 			$items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
 		$replace = array(
-			'items' 		=> implode("\n", (array)$items),
+			'items' 		=> implode('\n', (array)$items),
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
@@ -360,16 +302,16 @@ class yf_category_editor {
 	/**
 	*/
 	function _show_category_contents ($params = array()) {
-		$ICONS_PATH		= "uploads/icons/";
+		$ICONS_PATH		= 'uploads/icons/';
 		$MEDIA_PATH		= WEB_PATH;
-		$force_stpl_name= isset($params["force_stpl_name"]) ? $params["force_stpl_name"] : false;
+		$force_stpl_name= isset($params['force_stpl_name']) ? $params['force_stpl_name'] : false;
 		$STPL_MAIN 		= !empty($force_stpl_name) ? $force_stpl_name : $_GET['object'].'/drag_main';
 		$STPL_ITEM		= !empty($force_stpl_name) ? $force_stpl_name.'_item' : $_GET['object'].'/drag_item';
 
-		$cat_info		= $params["cat_info"];
-		$cat_id			= $cat_info["id"];
+		$cat_info		= $params['cat_info'];
+		$cat_id			= $cat_info['id'];
 		if (empty($cat_id)) {
-			return _e("No id");
+			return _e('No id');
 		}
 		$cat_items = $this->_auto_update_items_orders($cat_id);
 		if (empty($cat_items)) {
@@ -392,36 +334,36 @@ class yf_category_editor {
 		foreach ((array)$cat_items_to_display as $i => $item_info) {
 			$item_counter++;
 			$_next_info	= isset($cat_items_to_display[$i + 1]) ? $cat_items_to_display[$i + 1] : array();
-			$_next_level = isset($_next_info["level"]) ? (int)$_next_info["level"] : 0;
-			// Prepare icon path = WEB_PATH. $this->ICONS_PATH. $item_info["icon"];
-			$icon_path = "";
-			if ($item_info["icon"] && file_exists(PROJECT_PATH. $ICONS_PATH. $item_info["icon"])) {
-				$icon_path = $MEDIA_PATH. $ICONS_PATH. $item_info["icon"];
+			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
+			// Prepare icon path = WEB_PATH. $this->ICONS_PATH. $item_info['icon'];
+			$icon_path = '';
+			if ($item_info['icon'] && file_exists(PROJECT_PATH. $ICONS_PATH. $item_info['icon'])) {
+				$icon_path = $MEDIA_PATH. $ICONS_PATH. $item_info['icon'];
 			}
 			// Icon class from bootstrap icon class names 
-			$icon_class = "";
-			if ($item_info["icon"] && (strpos($item_info["icon"], ".") === false)) {
-				$icon_class = $item_info["icon"];
+			$icon_class = '';
+			if ($item_info['icon'] && (strpos($item_info['icon'], '.') === false)) {
+				$icon_class = $item_info['icon'];
 			}
-			$items[$item_info["id"]] = array(
-				"item_id"		=> intval($item_info['id']),
-				"parent_id"		=> intval($item_info['parent_id']),
-				"name"			=> _prepare_html(t($item_info['name'])),
-				"level_num"		=> intval($item_info["level"]),
-				"prev_level"	=> intval($_prev_level),
-				"next_level"	=> intval($_next_level),
-				"icon_path"		=> $icon_path,
-				"icon_class"	=> $icon_class,
-				"is_first_item"	=> (int)($item_counter == 1),
-				"is_last_item"	=> (int)($item_counter == $num_cat_items),
-				"have_children"	=> intval((bool)$item_info["have_children"]),
-				"next_level_diff"=> intval(abs($item_info["level"] - $_next_level)),
-				"link"			=> "",
-				"active"		=> intval($item_info["active"]),
-				"order"			=> intval($item_info['order']),
+			$items[$item_info['id']] = array(
+				'item_id'		=> intval($item_info['id']),
+				'parent_id'		=> intval($item_info['parent_id']),
+				'name'			=> _prepare_html(t($item_info['name'])),
+				'level_num'		=> intval($item_info['level']),
+				'prev_level'	=> intval($_prev_level),
+				'next_level'	=> intval($_next_level),
+				'icon_path'		=> $icon_path,
+				'icon_class'	=> $icon_class,
+				'is_first_item'	=> (int)($item_counter == 1),
+				'is_last_item'	=> (int)($item_counter == $num_cat_items),
+				'have_children'	=> intval((bool)$item_info['have_children']),
+				'next_level_diff'=> intval(abs($item_info['level'] - $_next_level)),
+				'link'			=> '',
+				'active'		=> intval($item_info['active']),
+				'order'			=> intval($item_info['order']),
 			);
 			// Save current level for the next iteration
-			$_prev_level = $item_info["level"];
+			$_prev_level = $item_info['level'];
 		}
 		return $items;
 	}
@@ -429,7 +371,7 @@ class yf_category_editor {
 	/**
 	*/
 	function _auto_update_items_orders($cat_info) {
-		$cat_items = $this->_recursive_get_cat_items($cat_info["id"]);
+		$cat_items = $this->_recursive_get_cat_items($cat_info['id']);
 		$new_order = 1;
 		foreach ((array)$cat_items as $item_id => $info) {
 			if ($info['order'] != $new_order) {
@@ -445,32 +387,32 @@ class yf_category_editor {
 	*/
 	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		if (!isset($this->_category_items_from_db)) {
-			$Q = db()->query("SELECT * FROM ".db('category_items')." WHERE cat_id=".intval($cat_id)." ORDER BY `order` ASC");
+			$Q = db()->query('SELECT * FROM '.db('category_items').' WHERE cat_id='.intval($cat_id).' ORDER BY `order` ASC');
 			while ($A = db()->fetch_assoc($Q)) {
-				$this->_category_items_from_db[$A["id"]] = $A;
+				$this->_category_items_from_db[$A['id']] = $A;
 			}
 		}
 		if (empty($this->_category_items_from_db)) {
-			return "";
+			return '';
 		}
 		$items_ids		= array();
 		$items_array	= array();
 		foreach ((array)$this->_category_items_from_db as $item_info) {
-			if ($item_info["parent_id"] != $parent_id) {
+			if ($item_info['parent_id'] != $parent_id) {
 				continue;
 			}
-			if ($skip_item_id == $item_info["id"]) {
+			if ($skip_item_id == $item_info['id']) {
 				continue;
 			}
-			$items_array[$item_info["id"]] = $item_info;
-			$items_array[$item_info["id"]]["level"] = $level;
+			$items_array[$item_info['id']] = $item_info;
+			$items_array[$item_info['id']]['level'] = $level;
 
-			$tmp_array = $this->_recursive_get_cat_items($cat_id, $skip_item_id, $item_info["id"], $level + 1);
+			$tmp_array = $this->_recursive_get_cat_items($cat_id, $skip_item_id, $item_info['id'], $level + 1);
 			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info["id"] == $item_info["id"]) {
+				if ($sub_item_info['id'] == $item_info['id']) {
 					continue;
 				}
-				$items_array[$sub_item_info["id"]] = $sub_item_info;
+				$items_array[$sub_item_info['id']] = $sub_item_info;
 			}
 		}
 		return $items_array;
@@ -479,196 +421,198 @@ class yf_category_editor {
 	/**
 	*/
 	function add_item() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return _e(t('No id!'));
 		}
-		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
-		if (empty($cat_info["id"])) {
-			return _e(t("No such category!"));
+		$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
+		if (empty($cat_info['id'])) {
+			return _e(t('No such category!'));
 		}
 		if ($_POST) {
-			if (is_array($_POST["groups"]))	{
-				$_POST["groups"] = implode(",",$_POST["groups"]);
+			if (is_array($_POST['groups']))	{
+				$_POST['groups'] = implode(',',$_POST['groups']);
 			}
-			$_POST["groups"]	= str_replace(array(" ","\t","\r","\n"), "", $_POST["groups"]);
+			$_POST['groups']	= str_replace(array(' ',"\t","\r","\n"), '', $_POST['groups']);
 
 			$OTHER_INFO = array();
-			foreach (explode(",", $cat_info["custom_fields"]) as $cur_field_name) {
+			foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
 				if (!strlen($cur_field_name)) {
 					continue;
 				}
-				$OTHER_INFO[] =	$cur_field_name."=".$_POST["custom__".$cur_field_name];
+				$OTHER_INFO[] =	$cur_field_name.'='.$_POST['custom__'.$cur_field_name];
 			}
-			db()->INSERT("category_items", array(
-				"cat_id"		=> intval($_GET["id"]),
-				"type_id"		=> intval($_POST["type_id"]),
-				"parent_id"		=> intval($_POST["parent_id"]),
-				"name"			=> _es($_POST["name"]),
-				"desc"			=> _es($_POST["desc"]),
-				"url"			=> _es($_POST["url"]),
-				"icon"			=> _es($_POST["icon"]),
-				"user_groups"	=> _es($_POST["groups"]),
-				"other_info"	=> _es(implode(";", $OTHER_INFO)),
-				"featured"		=> intval($_POST["featured"]),
-				"order"			=> intval($_POST["item_order"]),
-				"active"		=> intval($_POST["active"]),
+			db()->INSERT('category_items', array(
+				'cat_id'		=> intval($_GET['id']),
+				'type_id'		=> intval($_POST['type_id']),
+				'parent_id'		=> intval($_POST['parent_id']),
+				'name'			=> _es($_POST['name']),
+				'desc'			=> _es($_POST['desc']),
+				'url'			=> _es($_POST['url']),
+				'icon'			=> _es($_POST['icon']),
+				'user_groups'	=> _es($_POST['groups']),
+				'other_info'	=> _es(implode(';', $OTHER_INFO)),
+				'featured'		=> intval($_POST['featured']),
+				'order'			=> intval($_POST['item_order']),
+				'active'		=> intval($_POST['active']),
 			));
 			common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
-			cache()->refresh(array("category_sets", "category_items"));
-			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$cat_info["id"]);
+			cache()->refresh(array('category_sets', 'category_items'));
+			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id']);
 		}
-		$this->_items_for_parent[0] = "-- TOP --";
-		foreach ((array)$this->_recursive_get_cat_items($_GET["id"]) as $cur_item_id => $cur_item_info) {
+		$this->_items_for_parent[0] = '-- TOP --';
+		foreach ((array)$this->_recursive_get_cat_items($_GET['id']) as $cur_item_id => $cur_item_info) {
 			if (empty($cur_item_id)) continue;
-			$this->_items_for_parent[$cur_item_id] = str_repeat("&nbsp;", $cur_item_info["level"] * 6)." &#9492; ".$cur_item_info["name"];
+			$this->_items_for_parent[$cur_item_id] = str_repeat('&nbsp;', $cur_item_info['level'] * 6).' &#9492; '.$cur_item_info['name'];
 		}
-		if ($cat_info["type"] == "admin") {
+		if ($cat_info['type'] == 'admin') {
 			$this->_groups	= $this->_admin_groups;
 			$this->_methods = $this->_admin_methods;
 		} else {
 			$this->_groups	= $this->_user_groups;
 			$this->_methods = $this->_user_methods;
 		}
-		$other_info_array = $this->_convert_atts_string_into_array($item_info["other_info"]);
-		foreach (explode(",", $cat_info["custom_fields"]) as $cur_field_name) {
+		$other_info_array = $this->_convert_atts_string_into_array($item_info['other_info']);
+		foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
 			if (empty($cur_field_name)) {
 				continue;
 			}
 			$CUSTOM_FIELDS[] = array(
-				"name"	=> _prepare_html($cur_field_name),
-				"value"	=> _prepare_html($other_info_array[$cur_field_name]),
+				'name'	=> _prepare_html($cur_field_name),
+				'value'	=> _prepare_html($other_info_array[$cur_field_name]),
 			);
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"category_name"		=> _prepare_html($cat_info["name"]),
-			"name"				=> _prepare_html($DATA["name"]),
-			"desc"				=> nl2br(_prepare_html($DATA["desc"])),
-			"other_info"		=> _prepare_html($DATA["other_info"]),
-			"custom_fields"		=> $CUSTOM_FIELDS,
-			"url"				=> _prepare_html($DATA["url"]),
-			"icon"				=> _prepare_html($DATA["icon"]),
-			"order"				=> intval($DATA["order"]),
-			"type_id_box"		=> $this->_box("type_id", ""),
-			"parent_id_box"		=> $this->_box("parent_id", ""),
-			"groups_box"		=> $this->_box("groups", array(""=>"-- ALL --")),
-			"methods_box"		=> $this->_box("methods", ""),
-			"active_box"		=> $this->_box("active", $DATA["active"]),
-			"featured_box"		=> $this->_box("featured", ""),
-			"back_link"			=> "./?object=".$_GET["object"]."&action=show_items&id=".intval($cat_info["id"]),
-			"for_edit"			=> 0,
-			"edit_modules_link"	=> "./?object=".$cat_info["type"]."_modules",
-			"edit_groups_link"	=> "./?object=".$cat_info["type"]."_groups",
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'category_name'		=> _prepare_html($cat_info['name']),
+			'name'				=> _prepare_html($DATA['name']),
+			'desc'				=> nl2br(_prepare_html($DATA['desc'])),
+			'other_info'		=> _prepare_html($DATA['other_info']),
+			'custom_fields'		=> $CUSTOM_FIELDS,
+			'url'				=> _prepare_html($DATA['url']),
+			'icon'				=> _prepare_html($DATA['icon']),
+			'order'				=> intval($DATA['order']),
+			'type_id_box'		=> $this->_box('type_id', ''),
+			'parent_id_box'		=> $this->_box('parent_id', ''),
+			'groups_box'		=> $this->_box('groups', array(''=>'-- ALL --')),
+			'methods_box'		=> $this->_box('methods', ''),
+			'active_box'		=> $this->_box('active', $DATA['active']),
+			'featured_box'		=> $this->_box('featured', ''),
+			'back_link'			=> './?object='.$_GET['object'].'&action=show_items&id='.intval($cat_info['id']),
+			'for_edit'			=> 0,
+			'edit_modules_link'	=> './?object='.$cat_info['type'].'_modules',
+			'edit_groups_link'	=> './?object='.$cat_info['type'].'_groups',
 		);
-		return tpl()->parse($_GET["object"]."/edit_item_form", $replace);
+		return tpl()->parse($_GET['object'].'/edit_item_form', $replace);
 	}
 
 	/**
 	*/
 	function edit_item() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return _e(t('No id!'));
 		}
-		$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
-		if (empty($item_info["id"])) {
-			return _e(t("No such category item!"));
+		$item_info = db()->query_fetch('SELECT * FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
+		if (empty($item_info['id'])) {
+			return _e(t('No such category item!'));
 		}
-		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($item_info["cat_id"]));
-		if (empty($cat_info["id"])) {
-			return _e(t("No such category!"));
+		$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($item_info['cat_id']));
+		if (empty($cat_info['id'])) {
+			return _e(t('No such category!'));
 		}
 		if ($_POST) {
-			if (is_array($_POST["groups"]))	{
-				$_POST["groups"] = implode(",",$_POST["groups"]);
+			if (is_array($_POST['groups']))	{
+				$_POST['groups'] = implode(',',$_POST['groups']);
 			}
-			$_POST["groups"] = str_replace(array(" ","\t","\r","\n"), "", $_POST["groups"]);
+			$_POST['groups'] = str_replace(array(' ',"\t","\r","\n"), '', $_POST['groups']);
 
 			$OTHER_INFO = array();
-			foreach (explode(",", $cat_info["custom_fields"]) as $cur_field_name) {
+			foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
 				if (!strlen($cur_field_name)) {
 					continue;
 				}
-				$OTHER_INFO[] =	$cur_field_name."=".$_POST["custom__".$cur_field_name];
+				$OTHER_INFO[] =	$cur_field_name.'='.$_POST['custom__'.$cur_field_name];
 			}
-			db()->UPDATE("category_items", array(
-				"parent_id"		=> intval($_POST["parent_id"]),
-				"name"			=> _es($_POST["name"]),
-				"desc"			=> _es($_POST["desc"]),
-				"url"			=> _es($_POST["url"]),
-				"icon"			=> _es($_POST["icon"]),
-				"user_groups"	=> _es($_POST["groups"]),
-				"other_info"	=> _es(implode(";", $OTHER_INFO)),
-				"featured"		=> intval($_POST["featured"]),
-				"type_id"		=> intval($_POST["type_id"]),
-				"order"			=> intval($_POST["item_order"]),
-				"active"		=> intval($_POST["active"]),
-			), "id=".intval($item_info["id"]));
+			db()->UPDATE('category_items', array(
+				'parent_id'		=> intval($_POST['parent_id']),
+				'name'			=> _es($_POST['name']),
+				'desc'			=> _es($_POST['desc']),
+				'url'			=> _es($_POST['url']),
+				'icon'			=> _es($_POST['icon']),
+				'user_groups'	=> _es($_POST['groups']),
+				'other_info'	=> _es(implode(';', $OTHER_INFO)),
+				'featured'		=> intval($_POST['featured']),
+				'type_id'		=> intval($_POST['type_id']),
+				'order'			=> intval($_POST['item_order']),
+				'active'		=> intval($_POST['active']),
+			), 'id='.intval($item_info['id']));
 			common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
-			cache()->refresh(array("category_sets", "category_items"));
-			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$cat_info["id"]);
+			cache()->refresh(array('category_sets', 'category_items'));
+			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id']);
 		}
-		$this->_items_for_parent[0] = "-- TOP --";
-		foreach ((array)$this->_recursive_get_cat_items($cat_info["id"], $_GET["id"]) as $cur_item_id => $cur_item_info) {
-			if (empty($cur_item_id)) continue;
-			$this->_items_for_parent[$cur_item_id] = str_repeat("&nbsp; &nbsp; &nbsp; ", $cur_item_info["level"])." &#9492; &nbsp; ".$cur_item_info["name"];
+		$this->_items_for_parent[0] = '-- TOP --';
+		foreach ((array)$this->_recursive_get_cat_items($cat_info['id'], $_GET['id']) as $cur_item_id => $cur_item_info) {
+			if (empty($cur_item_id)) {
+				continue;
+			}
+			$this->_items_for_parent[$cur_item_id] = str_repeat('&nbsp; &nbsp; &nbsp; ', $cur_item_info['level']).' &#9492; &nbsp; '.$cur_item_info['name'];
 		}
-		$item_info["user_groups"]	= explode(",",str_replace(array(" ","\t","\r","\n"), "", $item_info["user_groups"]));
-		foreach ((array)$item_info["user_groups"] as $v) $tmp[$v] = $v;
-		$item_info["user_groups"] = $tmp;
+		$item_info['user_groups']	= explode(',',str_replace(array(' ',"\t","\r","\n"), '', $item_info['user_groups']));
+		foreach ((array)$item_info['user_groups'] as $v) $tmp[$v] = $v;
+		$item_info['user_groups'] = $tmp;
 
-		if ($cat_info["type"] == "admin") {
+		if ($cat_info['type'] == 'admin') {
 			$this->_groups	= $this->_admin_groups;
 			$this->_methods = $this->_admin_methods;
 		} else {
 			$this->_groups	= $this->_user_groups;
 			$this->_methods = $this->_user_methods;
 		}
-		if (empty($item_info["url"]) && $this->PROPOSE_SHORT_URL) {
-			$item_info["url"] = common()->_propose_url_from_name($item_info["name"]);
+		if (empty($item_info['url']) && $this->PROPOSE_SHORT_URL) {
+			$item_info['url'] = common()->_propose_url_from_name($item_info['name']);
 		}
-		$other_info_array = $this->_convert_atts_string_into_array($item_info["other_info"]);
-		foreach (explode(",", $cat_info["custom_fields"]) as $cur_field_name) {
+		$other_info_array = $this->_convert_atts_string_into_array($item_info['other_info']);
+		foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
 			if (empty($cur_field_name)) {
 				continue;
 			}
 			$CUSTOM_FIELDS[] = array(
-				"name"	=> _prepare_html($cur_field_name),
-				"value"	=> _prepare_html($other_info_array[$cur_field_name]),
+				'name'	=> _prepare_html($cur_field_name),
+				'value'	=> _prepare_html($other_info_array[$cur_field_name]),
 			);
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"category_name"		=> _prepare_html($cat_info["name"]),
-			"name"				=> _prepare_html($item_info["name"]),
-			"desc"				=> nl2br(_prepare_html($item_info["desc"])),
-			"other_info"		=> _prepare_html($item_info["other_info"]),
-			"custom_fields"		=> $CUSTOM_FIELDS,
-			"url"				=> _prepare_html($item_info["url"]),
-			"icon"				=> _prepare_html($item_info["icon"]),
-			"order"				=> intval($item_info["order"]),
-			"active"			=> $item_info["active"],
-			"type_id_box"		=> $this->_box("type_id",	$item_info["type_id"]),
-			"parent_id_box"		=> $this->_box("parent_id", $item_info["parent_id"]),
-			"groups_box"		=> $this->_box("groups",	$item_info["user_groups"]),
-			"methods_box"		=> $this->_box("methods",	""),
-			"active_box"		=> $this->_box("active", 	$item_info["active"]),
-			"featured_box"		=> $this->_box("featured",	$item_info["featured"]),
-			"back_link"			=> "./?object=".$_GET["object"]."&action=show_items&id=".intval($cat_info["id"]),
-			"for_edit"			=> 1,
-			"edit_modules_link"	=> "./?object=".$cat_info["type"]."_modules",
-			"edit_groups_link"	=> "./?object=".$cat_info["type"]."_groups",
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'category_name'		=> _prepare_html($cat_info['name']),
+			'name'				=> _prepare_html($item_info['name']),
+			'desc'				=> nl2br(_prepare_html($item_info['desc'])),
+			'other_info'		=> _prepare_html($item_info['other_info']),
+			'custom_fields'		=> $CUSTOM_FIELDS,
+			'url'				=> _prepare_html($item_info['url']),
+			'icon'				=> _prepare_html($item_info['icon']),
+			'order'				=> intval($item_info['order']),
+			'active'			=> $item_info['active'],
+			'type_id_box'		=> $this->_box('type_id',	$item_info['type_id']),
+			'parent_id_box'		=> $this->_box('parent_id', $item_info['parent_id']),
+			'groups_box'		=> $this->_box('groups',	$item_info['user_groups']),
+			'methods_box'		=> $this->_box('methods',	''),
+			'active_box'		=> $this->_box('active', 	$item_info['active']),
+			'featured_box'		=> $this->_box('featured',	$item_info['featured']),
+			'back_link'			=> './?object='.$_GET['object'].'&action=show_items&id='.intval($cat_info['id']),
+			'for_edit'			=> 1,
+			'edit_modules_link'	=> './?object='.$cat_info['type'].'_modules',
+			'edit_groups_link'	=> './?object='.$cat_info['type'].'_groups',
 		);
-		return tpl()->parse($_GET["object"]."/edit_item_form", $replace);
+		return tpl()->parse($_GET['object'].'/edit_item_form', $replace);
 	}
 
 	/**
 	*/
-	function _convert_atts_string_into_array($string = "") {
+	function _convert_atts_string_into_array($string = '') {
 		$output_array = array();
-		foreach (explode(";", trim($string)) as $tmp_string) {
-			list($try_key, $try_value) = explode("=", trim($tmp_string));
+		foreach (explode(';', trim($string)) as $tmp_string) {
+			list($try_key, $try_value) = explode('=', trim($tmp_string));
 			$try_key = trim(trim(trim($try_key), '"'));
 			$try_value = trim(trim(trim($try_value), '"'));
 			if (strlen($try_key) && strlen($try_value)) {
@@ -681,93 +625,93 @@ class yf_category_editor {
 	/**
 	*/
 	function activate_item() {
-		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
+		if (!empty($_GET['id'])) {
+			$item_info = db()->query_fetch('SELECT * FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($item_info)) {
-			db()->UPDATE("category_items", array("active" => (int)!$item_info["active"]), "id=".intval($item_info["id"]));
+			db()->UPDATE('category_items', array('active' => (int)!$item_info['active']), 'id='.intval($item_info['id']));
 			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		cache()->refresh(array("category_sets", "category_items"));
-		if ($_POST["ajax_mode"]) {
+		cache()->refresh(array('category_sets', 'category_items'));
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo ($item_info["active"] ? 0 : 1);
+			echo ($item_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$item_info["cat_id"]);
+			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['cat_id']);
 		}
 	}
 
 	/**
 	*/
 	function delete_item() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$item_info = db()->query_fetch('SELECT * FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($item_info)) {
-			db()->query("DELETE FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
+			db()->query('DELETE FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
 			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
 		}
-		cache()->refresh(array("category_sets", "category_items"));
-		if ($_POST["ajax_mode"]) {
+		cache()->refresh(array('category_sets', 'category_items'));
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo $_GET["id"];
+			echo $_GET['id'];
 		} else {
-			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$item_info["cat_id"]);
+			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['cat_id']);
 		}
 	}
 
 	/**
 	*/
 	function clone_item() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$item_info = db()->query_fetch("SELECT * FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$item_info = db()->query_fetch('SELECT * FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
 		}
 		$sql = $item_info;
-		unset($sql["id"]);
-		db()->INSERT("category_items", $sql);
+		unset($sql['id']);
+		db()->INSERT('category_items', $sql);
 		common()->admin_wall_add(array('category item cloned from '.$item_info['id'].' into '.$item_info['id'], $_GET['id']));
-		cache()->refresh(array("category_sets", "category_items"));
-		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$item_info["cat_id"]);
+		cache()->refresh(array('category_sets', 'category_items'));
+		return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['cat_id']);
 	}
 
 	/**
 	*/
 	function export() {
 		// If no ID set - mean that simply export all categories with items
-		$_GET["id"] = intval($_GET["id"]);
-		if ($_GET["id"]) {
-			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if ($_GET['id']) {
+			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
 		}
 		$params = array(
-			"single_table"	=> "",
-			"tables"		=> array(db('categories'), db('category_items')),
-			"full_inserts"	=> 1,
-			"ext_inserts"	=> 1,
-			"export_type"	=> "insert",
-			"silent_mode"	=> true,
+			'single_table'	=> '',
+			'tables'		=> array(db('categories'), db('category_items')),
+			'full_inserts'	=> 1,
+			'ext_inserts'	=> 1,
+			'export_type'	=> 'insert',
+			'silent_mode'	=> true,
 		);
-		if ($cat_info["id"]) {
-			$params["where"] = array(
-				db('categories')		=> "id=".intval($cat_info["id"]),
-				db('category_items')	=> "cat_id=".intval($cat_info["id"]),
+		if ($cat_info['id']) {
+			$params['where'] = array(
+				db('categories')		=> 'id='.intval($cat_info['id']),
+				db('category_items')	=> 'cat_id='.intval($cat_info['id']),
 			);
 		}
-		$EXPORTED_SQL = module("db_manager")->export($params);
+		$EXPORTED_SQL = module('db_manager')->export($params);
 
 		$replace = array(
-			"sql_text"	=> _prepare_html($EXPORTED_SQL, 0),
-			"back_link"	=> "./?object=".$_GET["object"],
+			'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
+			'back_link'	=> './?object='.$_GET['object'],
 		);
-		return tpl()->parse("db_manager/export_text_result", $replace);
+		return tpl()->parse('db_manager/export_text_result', $replace);
 	}
 
 	/**
 	*/
-	function _box ($name = "", $selected = "") {
+	function _box ($name = '', $selected = '') {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval("return common()->".$this->_boxes[$name].";");
+		else return eval('return common()->'.$this->_boxes[$name].';');
 	}
 
 	function _hook_widget__categories ($params = array()) {
