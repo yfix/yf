@@ -21,8 +21,6 @@ class yf_user_modules {
 	public $_method_pattern	= '/function ([a-zA-Z_][a-zA-Z0-9_]+)/is';
 	/** @var string @conf_skip Class extends pattern */
 	public $_extends_pattern	= '/class (\w+)? extends (\w+)? \{/';
-	/** @var int Number of modules to display on one page */
-	public $MODULES_PER_PAGE	= 200;
 	/** @var bool Parse core 'module' class in get_methods */
 	public $PARSE_YF_MODULE	= 0;
 
@@ -38,80 +36,61 @@ class yf_user_modules {
 	* Default method
 	*/
 	function show () {
-		$sql = 'SELECT * FROM '.db('user_modules').' ORDER BY name ASC';
-		list($add_sql, $pages, $total) = common()->divide_pages($sql, '', '', $this->MODULES_PER_PAGE);
+		$this->refresh_modules_list($silent = true);
 
-		$Q = db()->query($sql.$add_sql);
-		while ($A = db()->fetch_assoc($Q)) {
-// TODO: need to add 'site__' and 'adm__' functionality
-			$is_in_project		= file_exists(INCLUDE_PATH. USER_MODULES_DIR. $A['name']. CLASS_EXT);
-			$is_in_project2		= file_exists(INCLUDE_PATH. 'priority2/'. USER_MODULES_DIR. $A['name']. CLASS_EXT);
-			$is_in_framework	= file_exists(YF_PATH. USER_MODULES_DIR. YF_PREFIX. $A['name']. CLASS_EXT);
-			$is_in_framework2	= file_exists(YF_PATH. 'priority2/'. USER_MODULES_DIR. YF_PREFIX. $A['name']. CLASS_EXT);
+		if ($_POST) {
+			if (is_array($_POST['name']) && !empty($_POST['name'])) {
+				$where = 'name IN("'.implode('","', _es(array_keys($_POST['name']))).'")';
+			}
+			if ($_POST['activate_selected']) {
+				$active = 1;
+			} elseif ($_POST['disable_selected']) {
+				$active = 0;
+			}
+			if (isset($active) && $where) {
+				db()->update('user_modules', array('active' => $active), $where);
+				cache()->refresh('user_modules');
+			}
+			return js_redirect('./?object='.$_GET['object']);
+		}
+
+		$items = array();
+		foreach ((array)db()->get_all('SELECT * FROM '.db('user_modules').' ORDER BY name ASC') as $a) {
 			$locations = array();
-			if ($is_in_project) {
-				$locations[] = array(
-					'name'	=> 'project',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.$A['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'modules'),
-				);
+			if (file_exists(PROJECT_PATH. USER_MODULES_DIR. $a['name']. CLASS_EXT)) {
+				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(PROJECT_PATH. 'modules');
 			}
-			if ($is_in_project2) {
-				$locations[] = array(
-					'name'	=> 'project',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.$A['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'priority2/modules'),
-				);
+			if (file_exists(PROJECT_PATH. 'priority2/'. USER_MODULES_DIR. $a['name']. CLASS_EXT)) {
+				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(PROJECT_PATH. 'priority2/modules');
 			}
-			if ($is_in_framework) {
-				$locations[] = array(
-					'name'	=> 'framework',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.'yf_'.$A['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules'),
-				);
+			if (file_exists(YF_PATH. USER_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules');
 			}
-			if ($is_in_framework2) {
-				$locations[] = array(
-					'name'	=> 'framework',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.'yf_'.$A['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules'),
-				);
+			if (file_exists(YF_PATH. 'priority2/'. USER_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules');
 			}
-			$replace2 = array(
-				'bg_class'			=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'name'				=> _prepare_html($A['name']),
-				'pretty_name'		=> _prepare_html(_ucwords(str_replace('_', ' ', $A['name']))),
-				'desc'				=> _prepare_html($A['description']),
-				'active'			=> intval((bool) $A['active']),
-				'locations'			=> $locations,
-				'active_link'		=> './?object='.$_GET['object'].'&action=active&id='.$A['name'],
-				'uninstall_link'	=> $is_in_project ? './?object='.$_GET['object'].'&action=uninstall&id='.$A['name'] : '',
-				'settings_link'		=> './?object=conf_editor&action=user_modules&id='.$A['name'],
+			$items[] = array(
+				'name'		=> $a['name'],
+				'active'	=> $a['active'],
+				'locations'	=> $locations,
 			);
-			$items .= tpl()->parse($_GET['object'].'/item', $replace2);
 		}
-		$replace = array(
-			'items'			=> $items,
-			'total'			=> intval($total),
-			'pages'			=> $pages,
-			'form_action'	=> './?object='.$_GET['object'].'&action=mass_action',
-			'import_link'	=> './?object='.$_GET['object'].'&action=import',
-			'export_link'	=> './?object='.$_GET['object'].'&action=export',
-			'refresh_link'	=> './?object='.$_GET['object'].'&action=refresh_modules_list',
-		);
-		return tpl()->parse($_GET['object'].'/main', $replace);
-	}
-
-	/**
-	* Delete module (uninstall)
-	*/
-	function mass_action () {
-		if (!empty($_POST['names'])) {
-			$in = '"'.implode('","', _es($_POST['names'])).'"';
-			if ($_POST['activate']) {
-				db()->UPDATE('user_modules', array('active' => 1), 'name IN('.$in.')');
-			} elseif ($_POST['deactivate']) {
-				db()->UPDATE('user_modules', array('active' => 0), 'name IN('.$in.')');
-			}
-			cache()->refresh('user_modules');
-		}
-		return js_redirect('./?object='.$_GET['object']);
+		return table($items)
+			->form()
+			->check_box('name', array('field_desc' => '#'))
+			->text('name')
+			->func('locations', function($field, $params, $row) {
+				foreach ((array)$field as $loc => $link) {
+					$out[] = '<a href="'.$link.'" class="btn btn-mini">'.$loc.'</a>';
+				}
+				return implode(PHP_EOL, (array)$out);
+			})
+			->btn('conf', './?object=conf_editor&action=user_modules&id=%d', array('id' => 'name'))
+			->btn_active(array('id' => 'name'))
+			->footer_submit(array('value' => 'activate selected'))
+			->footer_submit(array('value' => 'disable selected'))
+			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh'))
+		;
 	}
 
 	/**
@@ -135,7 +114,7 @@ class yf_user_modules {
 	/**
 	* Refresh modules list (try to find modules automatically)
 	*/
-	function refresh_modules_list () {
+	function refresh_modules_list ($silent = false) {
 		// Cleanup duplicate records
 		$Q = db()->query('SELECT name, COUNT(*) AS num FROM '.db('user_modules').' GROUP BY name HAVING num > 1');
 		while ($A = db()->fetch_assoc($Q)) {
@@ -162,7 +141,9 @@ class yf_user_modules {
 			}
 		}
 		cache()->refresh('user_modules');
-		return js_redirect('./?object='.$_GET['object']);
+		if (!$silent) {
+			return js_redirect('./?object='.$_GET['object']);
+		}
 	}
 
 	/**
@@ -196,7 +177,7 @@ class yf_user_modules {
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
 		$user_modules_array = array();
-		$dir_to_scan = INCLUDE_PATH. USER_MODULES_DIR;
+		$dir_to_scan = PROJECT_PATH. USER_MODULES_DIR;
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
 			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
@@ -212,7 +193,7 @@ class yf_user_modules {
 			}
 			$user_modules_array[$module_name] = $module_name;
 		}
-		$dir_to_scan = INCLUDE_PATH. 'priority2/'. USER_MODULES_DIR;
+		$dir_to_scan = PROJECT_PATH. 'priority2/'. USER_MODULES_DIR;
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
 			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
@@ -284,7 +265,7 @@ class yf_user_modules {
 				$user_module_name = substr($user_module_name, strlen(SITE_CLASS_PREFIX));
 			}
 			$file_text = '';
-			$tmp = INCLUDE_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
+			$tmp = PROJECT_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['user'] = $tmp;
 			}

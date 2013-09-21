@@ -118,7 +118,7 @@ class yf_html_controls {
 			$extra = array();
 		}
 		$name = $extra['name'] ? $extra['name'] : 'checkbox';
-		$value = $extra['value'] ? $extra['value'] : $value;
+		$value = $extra['value'] ? $extra['value'] : (strlen($value) ? $value : "1");
 		$selected = $extra['selected'] ? $extra['selected'] : $selected;
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
 		$id = $extra['id'] ? $extra['id'] : $name;

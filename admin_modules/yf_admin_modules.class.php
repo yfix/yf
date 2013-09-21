@@ -35,18 +35,20 @@ class yf_admin_modules {
 	*/
 	function show () {
 		$this->refresh_modules_list($silent = true);
+
 		if ($_POST) {
-/*
-			if (!empty($_POST['names'])) {
-				$in = '"'.implode('","', _es($_POST['names'])).'"';
-				if ($_POST['activate']) {
-					db()->UPDATE('admin_modules', array('active' => 1), 'name IN('.$in.')');
-				} elseif ($_POST['deactivate']) {
-					db()->UPDATE('admin_modules', array('active' => 0), 'name IN('.$in.')');
-				}
+			if (is_array($_POST['name']) && !empty($_POST['name'])) {
+				$where = 'name IN("'.implode('","', _es(array_keys($_POST['name']))).'")';
+			}
+			if ($_POST['activate_selected']) {
+				$active = 1;
+			} elseif ($_POST['disable_selected']) {
+				$active = 0;
+			}
+			if (isset($active) && $where) {
+				db()->update('admin_modules', array('active' => $active), $where);
 				cache()->refresh('admin_modules');
 			}
-*/
 			return js_redirect('./?object='.$_GET['object']);
 		}
 
@@ -82,10 +84,10 @@ class yf_admin_modules {
 				return implode(PHP_EOL, (array)$out);
 			})
 			->btn('conf', './?object=conf_editor&action=admin_modules&id=%d', array('id' => 'name'))
-			->btn_active()
+			->btn_active(array('id' => 'name'))
 			->footer_submit(array('value' => 'activate selected'))
 			->footer_submit(array('value' => 'disable selected'))
-			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list')
+			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh'))
 		;
 	}
 

@@ -249,9 +249,6 @@ class yf_table2 {
 				$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
 			}
 			$body .= '</table>'.PHP_EOL;
-			if ($this->_form_params) {
-				$body .= '</form>';
-			}
 		} else {
 			$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
 		}
@@ -260,6 +257,9 @@ class yf_table2 {
 			$func = $info['func'];
 			unset($info['func']); // Save resources
 			$body .= $func($info, $params).PHP_EOL;
+		}
+		if ($data && $this->_form_params) {
+			$body .= '</form>';
 		}
 		$body .= ($params['no_pages'] ? '' : $pages).PHP_EOL;
 		return $body;
@@ -569,7 +569,7 @@ class yf_table2 {
 	* Show multiple selected data items
 	*/
 	function data($name, $data = array(), $extra = array()) {
-#		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
+		// $this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
 		return $this->text($name, $extra['desc'], $extra);
 	}
 
@@ -785,10 +785,7 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				return '<input type="submit" value="'.$value.'" class="btn btn-mini">';
-#				$_form = clone _class('form2');
-#				$_form->_chained_mode = false;
-#				return $_form->submit($params['name'], $params['desc'], $extra);
+				return '<input type="submit" name="'.$value.'" value="'.$value.'" class="btn btn-mini">';
 			}
 		);
 		return $this;
@@ -867,7 +864,7 @@ class yf_table2 {
 				$extra['name'] .= '['.$field.']';
 			}
 			$extra['id'] = 'radiobox_'.$field;
-// TODO: test me
+// TODO: test me and maybe upgrade _class('html_controls')->radio_box()
 			return _class('html_controls')->radio_box($extra);
 		});
 	}
@@ -887,7 +884,7 @@ class yf_table2 {
 				$extra['name'] .= '['.$field.']';
 			}
 			$extra['id'] = 'selectbox_'.$field;
-// TODO: test me
+// TODO: test me and maybe upgrade _class('html_controls')->select_box()
 			return _class('html_controls')->select_box($extra);
 		});
 	}
