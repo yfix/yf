@@ -1,9 +1,0 @@
-
-{catch("{var_name}")}{execute({execute_text})%%##%%{/catch%%##%%
-
-{if("{var_name}" ne "")%%##%%
-<div class="widget">
-<div class="title">{display_name}</div>
-{{var_name}%%##%%
-</div>
-{/if%%##%%

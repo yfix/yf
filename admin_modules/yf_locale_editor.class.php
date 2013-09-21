@@ -24,7 +24,9 @@ class yf_locale_editor {
 	/** @var bool Display links to edit source files (in location) */
 	public $LOCATIONS_EDIT_LINKS	= true;
 	/** @var bool Filter on/off */
-	public $USE_FILTER				= true;
+// TODO: implement new filters, based on form2/table2
+#	public $USE_FILTER				= true;
+	public $USE_FILTER				= false;
 	/** @var bool Ignore case on import/export */
 	public $VARS_IGNORE_CASE		= true;
 
@@ -103,9 +105,9 @@ class yf_locale_editor {
 			"vars"			=> t('Vars'),
 			"translations"	=> t('Translations'),
 		);
-		if ($this->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
+#		if ($this->USE_FILTER) {
+#			$this->_prepare_filter_data();
+#		}
 	}
 
 	/**
@@ -224,14 +226,14 @@ class yf_locale_editor {
 	/**
 	*/
 	function show_vars() {
-		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
+#		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$sql = "SELECT * FROM ".db('locale_vars')." AS v WHERE 1=1 ".$filter_sql." ORDER BY ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))" : "v.value")." ASC";
 
 		$path = "./?object=".$_GET["object"]."&action=".$_GET["action"];
 		$per_page = conf('admin_per_page');
-		if ($this->USE_FILTER && !empty($_SESSION[$this->_filter_name]["per_page"])) {
-			$per_page = $_SESSION[$this->_filter_name]["per_page"];
-		}
+#		if ($this->USE_FILTER && !empty($_SESSION[$this->_filter_name]["per_page"])) {
+#			$per_page = $_SESSION[$this->_filter_name]["per_page"];
+#		}
 		list($limit_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $per_page);
 
 		$Q = db()->query($sql. $limit_sql);
@@ -254,9 +256,9 @@ class yf_locale_editor {
 				$used_locales[$var_id] = !empty($body_array) ? nl2br(implode("\r\n", $body_array)) : "";
 			}
 		}
-		if (isset($_SESSION[$this->_filter_name]["show_locs"]) && !$_SESSION[$this->_filter_name]["show_locs"]) {
-			$this->DISPLAY_VARS_LOCATIONS = false;
-		}
+#		if (isset($_SESSION[$this->_filter_name]["show_locs"]) && !$_SESSION[$this->_filter_name]["show_locs"]) {
+#			$this->DISPLAY_VARS_LOCATIONS = false;
+#		}
 		foreach ((array)$vars_array as $A) {
 			$replace2 = array(
 				"id"			=> $A["id"],
@@ -975,20 +977,6 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	}
 
 	/**
-	* Insert langusge vars from files into db
-	*/
-	function lang_vars_into_db () {
-// TODO
-	}
-
-	/**
-	* Get language vars from db and insert them into files
-	*/
-	function lang_vars_into_files () {
-// TODO
-	}
-
-	/**
 	* Collect vars from source files (Framework included)
 	*/
 	function collect_vars () {
@@ -1295,159 +1283,6 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		}
 	}
 
-	//-----------------------------------------------------------------------------
-	// Prepare required data for filter
-	function _prepare_filter_data () {
-		// Filter session array name
-		$this->_filter_name	= $_GET["object"]."_filter";
-		// Prepare boxes
-		$this->_boxes = array_merge((array)$this->_boxes, array(
-			"show_locs"			=> 'radio_box("show_locs",		$this->_std_trigger,		$selected, 0, 2, "", false)',
-			"search_lang"		=> 'radio_box("search_lang",	$this->_langs_for_search,	$selected, true, 2, "", false)',
-			"search_in"			=> 'radio_box("search_in",		$this->_search_in,			$selected, true, 2, "", false)',
-			"sort_by"			=> 'select_box("sort_by",		$this->_sort_by,			$selected, 0, 2, "", false)',
-			"sort_order"		=> 'select_box("sort_order",	$this->_sort_orders,		$selected, 0, 2, "", false)',
-			"per_page"			=> 'select_box("per_page",		$this->_per_page,			$selected, 0, 2, "", false)',
-			"case_sens"			=> 'radio_box("case_sens",		$this->_std_trigger,		$selected, 0, 2, "", false)',
-		));
-		$this->_std_trigger = array(
-			"1" => "<span class='positive'>YES</span>",
-			"0" => "<span class='negative'>NO</span>",
-		);
-		// Sort orders
-		$this->_sort_orders = array("DESC" => "Descending", "ASC" => "Ascending");
-		// Sort fields
-		$this->_sort_by = array(
-			"",
-			"value",
-		);
-		// Number per page
-		$this->_per_page = array("" => "", 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500);
-		// Fields in the filter
-		$this->_fields_in_filter = array(
-			"search_lang",
-			"search_in",
-			"search_string",
-			"search_type",
-			"show_locs",
-			"per_page",
-			"case_sens",
-			"sort_by",
-			"sort_order",
-		);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Generate filter SQL query
-	function _create_filter_sql () {
-		$SF = &$_SESSION[$this->_filter_name];
-		foreach ((array)$SF as $k => $v) {
-			$SF[$k] = trim($v);
-		}
-		// Do not allow "_" pattern for LIKE
-		$string = str_replace("_", "\_", str_replace(" ", "_", $SF["search_string"]));
-		// Generate filter for the common fileds
-		if ($SF["search_lang"] && $SF["search_lang"] != "all") {
-			$tr_sql .= " AND t.locale='"._es($SF["search_lang"])."' \r\n";
-		}
-		if ($SF["search_in"] && $SF["search_lang"] != "all") {
-			if ($SF["search_in"] == "translated") {
-				$tr_sql .= " AND t.value != '' \r\n";
-			} elseif ($SF["search_in"] == "untranslated") {
-				$tr_sql .= " AND (t.value = '' OR LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) = LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))) \r\n";
-			}
-		}
-		// Search in transtions
-		if ($SF["search_string"] && $SF["search_type"] == "translations") {
-			if (!$SF["case_sens"]) {
-				$tr_sql .= " AND LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
-			} else {
-				$tr_sql .= " AND t.value LIKE '"._es($string)."%' \r\n";
-			}
-		}
-		if (!empty($tr_sql)) {
-			$sql .= " AND v.id IN( SELECT t.var_id FROM ".db('locale_translate')." AS t WHERE 1=1 ".$tr_sql.") \r\n";
-		}
-		// Search in vars
-		if ($SF["search_string"] && $SF["search_type"] != "translations") {
-			if (!$SF["case_sens"]) {
-				$sql .= " AND LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
-			} else {
-				$sql .= " AND v.value LIKE '"._es($string)."%' \r\n";
-			}
-		}
-		// Sorting here
-		if ($SF["sort_by"]) {
-		 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
-		}
-		if ($SF["sort_by"] && strlen($SF["sort_order"])) {
-			$sql .= " ".$SF["sort_order"]." \r\n";
-		}
-		return substr($sql, 0, -3);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Session - based filter
-	function _show_filter () {
-		if ($_GET["action"] != "show_vars") {
-			return false;
-		}
-		$replace = array(
-			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
-		);
-		// Default values
-		if (!isset($_SESSION[$this->_filter_name]["search_lang"])) {
-			$_SESSION[$this->_filter_name]["search_lang"] = "all";
-		}
-		if (!isset($_SESSION[$this->_filter_name]["search_in"])) {
-			$_SESSION[$this->_filter_name]["search_in"] = "all";
-		}
-		if (!isset($_SESSION[$this->_filter_name]["search_type"])) {
-			$_SESSION[$this->_filter_name]["search_type"] = "vars";
-		}
-		if (!isset($_SESSION[$this->_filter_name]["show_locs"])) {
-			$_SESSION[$this->_filter_name]["show_locs"] = 1;
-		}
-		if (!isset($_SESSION[$this->_filter_name]["case_sens"])) {
-			$_SESSION[$this->_filter_name]["case_sens"] = 0;
-		}
-		foreach ((array)$this->_fields_in_filter as $name) {
-			$replace[$name] = $_SESSION[$this->_filter_name][$name];
-		}
-		// Process boxes
-		foreach ((array)$this->_boxes as $item_name => $v) {
-			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
-		}
-		return tpl()->parse($_GET["object"]."/filter", $replace);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Filter save method
-	function save_filter ($silent = false) {
-		// Process featured countries
-		if (FEATURED_COUNTRY_SELECT && !empty($_REQUEST["country"]) && substr($_REQUEST["country"], 0, 2) == "f_") {
-			$_REQUEST["country"] = substr($_REQUEST["country"], 2);
-		}
-		if (is_array($this->_fields_in_filter)) {
-			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_REQUEST[$name];
-		}
-		if (!$silent) {
-			js_redirect($_SERVER["HTTP_REFERER"], 0);
-		}
-	}
-
-	//-----------------------------------------------------------------------------
-	// Clear filter
-	function clear_filter ($silent = false) {
-		if (is_array($_SESSION[$this->_filter_name])) {
-			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
-		}
-		if (!$silent) {
-			js_redirect($_SERVER["HTTP_REFERER"], 0);
-		}
-	}
-
 	/**
 	* Some of the common languages with their English and native names
 	*
@@ -1654,81 +1489,170 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		}
 		return $data;
 	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Add language",
-				"url"	=> "./?object=".$_GET["object"]."&action=add_lang",
-			),
-			array(
-				"name"	=> "Manage vars",
-				"url"	=> "./?object=".$_GET["object"]."&action=show_vars",
-			),
-			array(
-				"name"	=> "Import",
-				"url"	=> "./?object=".$_GET["object"]."&action=import_vars",
-			),
-			array(
-				"name"	=> "Export",
-				"url"	=> "./?object=".$_GET["object"]."&action=export_vars",
-			),
-			array(
-				"name"	=> "Autotranslate",
-				"url"	=> "./?object=".$_GET["object"]."&action=autotranslate",
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
+/*
+	// Prepare required data for filter
+	function _prepare_filter_data () {
+		// Filter session array name
+		$this->_filter_name	= $_GET["object"]."_filter";
+		// Prepare boxes
+		$this->_boxes = array_merge((array)$this->_boxes, array(
+			"show_locs"			=> 'radio_box("show_locs",		$this->_std_trigger,		$selected, 0, 2, "", false)',
+			"search_lang"		=> 'radio_box("search_lang",	$this->_langs_for_search,	$selected, true, 2, "", false)',
+			"search_in"			=> 'radio_box("search_in",		$this->_search_in,			$selected, true, 2, "", false)',
+			"sort_by"			=> 'select_box("sort_by",		$this->_sort_by,			$selected, 0, 2, "", false)',
+			"sort_order"		=> 'select_box("sort_order",	$this->_sort_orders,		$selected, 0, 2, "", false)',
+			"per_page"			=> 'select_box("per_page",		$this->_per_page,			$selected, 0, 2, "", false)',
+			"case_sens"			=> 'radio_box("case_sens",		$this->_std_trigger,		$selected, 0, 2, "", false)',
+		));
+		$this->_std_trigger = array(
+			"1" => "<span class='positive'>YES</span>",
+			"0" => "<span class='negative'>NO</span>",
 		);
-		return $menu;	
+		// Sort orders
+		$this->_sort_orders = array("DESC" => "Descending", "ASC" => "Ascending");
+		// Sort fields
+		$this->_sort_by = array(
+			"",
+			"value",
+		);
+		// Number per page
+		$this->_per_page = array("" => "", 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500);
+		// Fields in the filter
+		$this->_fields_in_filter = array(
+			"search_lang",
+			"search_in",
+			"search_string",
+			"search_type",
+			"show_locs",
+			"per_page",
+			"case_sens",
+			"sort_by",
+			"sort_order",
+		);
 	}
 
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("Locale editor");
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"				=> "",
-			"edit"				=> "",
-			"add_lang"			=> "Add language",
-			"import_vars"		=> "Import variables",
-			"export_vars"		=> "Export variables",
-			"autotranslate"		=> "Autotranslate",
-		);			  		
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
+	// Generate filter SQL query
+	function _create_filter_sql () {
+		$SF = &$_SESSION[$this->_filter_name];
+		foreach ((array)$SF as $k => $v) {
+			$SF[$k] = trim($v);
 		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
+		// Do not allow "_" pattern for LIKE
+		$string = str_replace("_", "\_", str_replace(" ", "_", $SF["search_string"]));
+		// Generate filter for the common fileds
+		if ($SF["search_lang"] && $SF["search_lang"] != "all") {
+			$tr_sql .= " AND t.locale='"._es($SF["search_lang"])."' \r\n";
+		}
+		if ($SF["search_in"] && $SF["search_lang"] != "all") {
+			if ($SF["search_in"] == "translated") {
+				$tr_sql .= " AND t.value != '' \r\n";
+			} elseif ($SF["search_in"] == "untranslated") {
+				$tr_sql .= " AND (t.value = '' OR LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) = LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))) \r\n";
+			}
+		}
+		// Search in transtions
+		if ($SF["search_string"] && $SF["search_type"] == "translations") {
+			if (!$SF["case_sens"]) {
+				$tr_sql .= " AND LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
+			} else {
+				$tr_sql .= " AND t.value LIKE '"._es($string)."%' \r\n";
+			}
+		}
+		if (!empty($tr_sql)) {
+			$sql .= " AND v.id IN( SELECT t.var_id FROM ".db('locale_translate')." AS t WHERE 1=1 ".$tr_sql.") \r\n";
+		}
+		// Search in vars
+		if ($SF["search_string"] && $SF["search_type"] != "translations") {
+			if (!$SF["case_sens"]) {
+				$sql .= " AND LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
+			} else {
+				$sql .= " AND v.value LIKE '"._es($string)."%' \r\n";
+			}
+		}
+		// Sorting here
+		if ($SF["sort_by"]) {
+		 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
+		}
+		if ($SF["sort_by"] && strlen($SF["sort_order"])) {
+			$sql .= " ".$SF["sort_order"]." \r\n";
+		}
+		return substr($sql, 0, -3);
 	}
 
+	// Session - based filter
+	function _show_filter () {
+		if ($_GET["action"] != "show_vars") {
+			return false;
+		}
+		$replace = array(
+			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
+			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
+		);
+		// Default values
+		if (!isset($_SESSION[$this->_filter_name]["search_lang"])) {
+			$_SESSION[$this->_filter_name]["search_lang"] = "all";
+		}
+		if (!isset($_SESSION[$this->_filter_name]["search_in"])) {
+			$_SESSION[$this->_filter_name]["search_in"] = "all";
+		}
+		if (!isset($_SESSION[$this->_filter_name]["search_type"])) {
+			$_SESSION[$this->_filter_name]["search_type"] = "vars";
+		}
+		if (!isset($_SESSION[$this->_filter_name]["show_locs"])) {
+			$_SESSION[$this->_filter_name]["show_locs"] = 1;
+		}
+		if (!isset($_SESSION[$this->_filter_name]["case_sens"])) {
+			$_SESSION[$this->_filter_name]["case_sens"] = 0;
+		}
+		foreach ((array)$this->_fields_in_filter as $name) {
+			$replace[$name] = $_SESSION[$this->_filter_name][$name];
+		}
+		// Process boxes
+		foreach ((array)$this->_boxes as $item_name => $v) {
+			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
+		}
+		return tpl()->parse($_GET["object"]."/filter", $replace);
+	}
+
+	// Filter save method
+	function save_filter ($silent = false) {
+		// Process featured countries
+		if (FEATURED_COUNTRY_SELECT && !empty($_REQUEST["country"]) && substr($_REQUEST["country"], 0, 2) == "f_") {
+			$_REQUEST["country"] = substr($_REQUEST["country"], 2);
+		}
+		if (is_array($this->_fields_in_filter)) {
+			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_REQUEST[$name];
+		}
+		if (!$silent) {
+			js_redirect($_SERVER["HTTP_REFERER"], 0);
+		}
+	}
+
+	// Clear filter
+	function clear_filter ($silent = false) {
+		if (is_array($_SESSION[$this->_filter_name])) {
+			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
+		}
+		if (!$silent) {
+			js_redirect($_SERVER["HTTP_REFERER"], 0);
+		}
+	}
+*/
+
+	/**
+	*/
 	function _hook_widget__installed_locales ($params = array()) {
 // TODO
 	}
 
+	/**
+	*/
 	function _hook_widget__locale_stats ($params = array()) {
 // TODO
 	}
 
+	/**
+	*/
 	function _hook_widget__latest_locale_vars ($params = array()) {
 // TODO
 	}

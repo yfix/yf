@@ -1,6 +1,0 @@
-<form method="post" action="{form_action}" class="form-horizontal">
-	{form_row("info","login","Login")}
-	{form_row("box","group_box","Group","groups_link")}
-	{form_row("text","go_after_login","URL after login")}
-	{form_row("save_and_back")}
-</form>

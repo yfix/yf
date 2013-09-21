@@ -607,49 +607,7 @@ class yf_file_manager {
 	}
 
 	/**
-	* Quick menu auto create
 	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-
-		);
-		return $menu;	
-	}
-
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("File Manager");
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"				=> "",
-			"view_item"			=> "View File",
-			"edit_item"			=> "Edit File",
-		);			  		
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
-		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
-	}
-
 	function _hook_widget__file_manager ($params = array()) {
 // TODO
 	}
