@@ -189,15 +189,14 @@ class yf_table2 {
 			$params['data_sql_names'] = $this->_data_sql_names;
 		}
 		if ($data) {
-			if ($params['form']) {
-				$fparams = $params['form'];
-				$form = $this->_init_form();
-				$body .= $form->form_begin($fparams['name'], $fparams['method'], $fparams, $fparams['replace']);
+			$body = '';
+			if ($this->_form_params) {
+				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
 			}
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
 			}
-			$body = '<table class="table table-bordered table-striped table-hover'
+			$body .= '<table class="table table-bordered table-striped table-hover'
 				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
 				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			if (!$params['no_header']) {
@@ -207,7 +206,6 @@ class yf_table2 {
 					$th_width = ($info['extra']['width'] ? ' width="'.$info['extra']['width'].'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
-
 					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($info['desc']). $th_icon_prepend. '</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
@@ -251,7 +249,7 @@ class yf_table2 {
 				$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
 			}
 			$body .= '</table>'.PHP_EOL;
-			if ($params['form']) {
+			if ($this->_form_params) {
 				$body .= '</form>';
 			}
 		} else {
@@ -341,6 +339,17 @@ class yf_table2 {
 			}
 		}
 		return $filter_sql;
+	}
+
+	/**
+	* Setup form2 class instance to share its methods for form-related components like checkbox, input, etc
+	*/
+	function _init_form() {
+		if (!isset($this->_form)) {
+			$this->_form = clone _class('form2');
+			$this->_form->_chained_mode = false;
+		}
+		return $this->_form;
 	}
 
 	/**
@@ -761,21 +770,34 @@ class yf_table2 {
 	}
 
 	/**
-	* Setup form2 class instance to share its methods for form-related components like checkbox, input, etc
 	*/
-	function _init_form() {
-#		if (!isset($this->_form)) {
-#			$this->_form = clone _class('form2');
-#			$this->_form->_chained_mode = false;
-#		}
-#		return $this->_form;
+	function footer_submit($name = '', $extra = array()) {
+		$this->_footer_links[] = array(
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'link'	=> $link,
+			'func'	=> function($params, $instance_params) {
+				$extra = $params['extra'];
+				$value = $params['name'];
+				if (is_array($value) && empty($extra)) {
+					$extra = $value;
+					$value = '';
+				}
+				$value = $extra['value'] ? $extra['value'] : $value;
+				return '<input type="submit" value="'.$value.'" class="btn btn-mini">';
+#				$_form = clone _class('form2');
+#				$_form->_chained_mode = false;
+#				return $_form->submit($params['name'], $params['desc'], $extra);
+			}
+		);
+		return $this;
 	}
 
 	/**
 	* Simply tells that current table should consist of form inside
 	*/
 	function form($action = '', $method = '', $extra = array()) {
-// TODO: connect me
 		if (is_array($action)) {
 			$extra = $action;
 			$action = '';
@@ -784,12 +806,31 @@ class yf_table2 {
 			$extra = $method;
 			$method = '';
 		}
-		$this->_form = array(
+		$this->_form_params = array(
 			'action'=> $action ? $action : './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : ''),
 			'method'=> $method ? $method : 'POST',
 			'extra'	=> (array)$extra,
 		);
 		return $this;
+	}
+
+	/**
+	*/
+	function input($name, $extra = array()) {
+		return $this->func($name, function($field, $params, $row) {
+			$extra = $params['extra'];
+			if (!is_array($extra)) {
+				$extra = array();
+			}
+			if (!$extra['name']) {
+				$extra['name'] = $params['name'];
+			}
+			if (false === strpos($extra['name'], '[')) {
+				$extra['name'] .= '['.$field.']';
+			}
+			$extra['id'] = 'input_'.$field;
+			return _class('html_controls')->input($extra);
+		});
 	}
 
 	/**
@@ -806,7 +847,7 @@ class yf_table2 {
 			if (false === strpos($extra['name'], '[')) {
 				$extra['name'] .= '['.$field.']';
 			}
-			$extra['id'] = $field;
+			$extra['id'] = 'checkbox_'.$field;
 			return _class('html_controls')->check_box($extra);
 		});
 	}
@@ -825,34 +866,15 @@ class yf_table2 {
 			if (false === strpos($extra['name'], '[')) {
 				$extra['name'] .= '['.$field.']';
 			}
-			$extra['id'] = $field;
+			$extra['id'] = 'radiobox_'.$field;
+// TODO: test me
 			return _class('html_controls')->radio_box($extra);
 		});
 	}
 
 	/**
 	*/
-	function input($name, $extra = array()) {
-		return $this->func($name, function($field, $params, $row) {
-			$extra = $params['extra'];
-			if (!is_array($extra)) {
-				$extra = array();
-			}
-			if (!$extra['name']) {
-				$extra['name'] = $params['name'];
-			}
-			if (false === strpos($extra['name'], '[')) {
-				$extra['name'] .= '['.$field.']';
-			}
-			$extra['id'] = $field;
-			return _class('html_controls')->input($extra);
-		});
-	}
-
-	/**
-	*/
 	function select_box($name, $extra = array()) {
-/*
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			if (!is_array($extra)) {
@@ -864,10 +886,10 @@ class yf_table2 {
 			if (false === strpos($extra['name'], '[')) {
 				$extra['name'] .= '['.$field.']';
 			}
-			$extra['id'] = $field;
+			$extra['id'] = 'selectbox_'.$field;
+// TODO: test me
 			return _class('html_controls')->select_box($extra);
 		});
-*/
 	}
 
 	/**

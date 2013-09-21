@@ -19,8 +19,6 @@ class yf_admin_modules {
 	public $_method_pattern	= '/function ([a-zA-Z_][a-zA-Z0-9_]+)/is';
 	/** @var string @conf_skip Class extends pattern */
 	public $_extends_pattern	= '/class (\w+)? extends (\w+)? \{/';
-	/** @var int Number of modules to display on one page */
-	public $MODULES_PER_PAGE	= 200;
 	/** @var bool Parse core 'module' class in get_methods */
 	public $PARSE_YF_MODULE	= false;
 
@@ -36,97 +34,59 @@ class yf_admin_modules {
 	* Default method
 	*/
 	function show () {
-#		$this->refresh_modules_list($silent = true);
-
-		$sql = 'SELECT * FROM '.db('admin_modules').' ORDER BY name ASC';
-		list($add_sql, $pages, $total) = common()->divide_pages($sql, '', '', $this->MODULES_PER_PAGE);
-
-		$Q = db()->query($sql. $add_sql);
-		while ($A = db()->fetch_assoc($Q)) {
-			$is_in_project		= file_exists(ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $A['name']. CLASS_EXT);
-			$is_in_project2		= file_exists(ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR. $A['name']. CLASS_EXT);
-			$is_in_framework	= file_exists(YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $A['name']. CLASS_EXT);
-			$is_in_framework2	= file_exists(YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. YF_PREFIX. $A['name']. CLASS_EXT);
-			$locations = array();
-			if ($is_in_project) {
-				$locations[] = array(
-					'name'	=> 'project',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.$A['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'modules'),
-				);
-			}
-			if ($is_in_project2) {
-				$locations[] = array(
-					'name'	=> 'project_p2',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.$A['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'priority2/modules'),
-				);
-			}
-			if ($is_in_framework) {
-				$locations[] = array(
-					'name'	=> 'framework',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.'yf_'.$A['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules'),
-				);
-			}
-			if ($is_in_framework2) {
-				$locations[] = array(
-					'name'	=> 'framework_p2',
-					'link'	=> './?object=file_manager&action=edit_item&f_='.'yf_'.$A['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules'),
-				);
-			}
-			$item = array(
-				'name'				=> _prepare_html($A['name']),
-				'pretty_name'		=> _prepare_html(ucwords(str_replace('_', ' ', $A['name']))),
-				'desc'				=> _prepare_html($A['description']),
-				'active'			=> intval((bool) $A['active']),
-				'locations'			=> $locations,
-				'active_link'		=> './?object='.$_GET['object'].'&action=active&id='.$A['name'],
-				'settings_link'		=> './?object=conf_editor&action=admin_modules&id='.$A['name'],
-			);
-//			$items .= tpl()->parse($_GET['object'].'/item', $item);
-#			$item['locations'] = implode(PPH_EOL, $item['locations'])
-			$items[] = $item;
-		}
+		$this->refresh_modules_list($silent = true);
+		if ($_POST) {
 /*
-		$replace = array(
-			'items'			=> $items,
-			'total'			=> intval($total),
-			'pages'			=> $pages,
-			'form_action'	=> './?object='.$_GET['object'].'&action=mass_action',
-			'refresh_link'	=> './?object='.$_GET['object'].'&action=refresh_modules_list',
-		);
-		return tpl()->parse($_GET['object'].'/main', $replace);
+			if (!empty($_POST['names'])) {
+				$in = '"'.implode('","', _es($_POST['names'])).'"';
+				if ($_POST['activate']) {
+					db()->UPDATE('admin_modules', array('active' => 1), 'name IN('.$in.')');
+				} elseif ($_POST['deactivate']) {
+					db()->UPDATE('admin_modules', array('active' => 0), 'name IN('.$in.')');
+				}
+				cache()->refresh('admin_modules');
+			}
 */
+			return js_redirect('./?object='.$_GET['object']);
+		}
+
+		$items = array();
+		foreach ((array)db()->get_all('SELECT * FROM '.db('admin_modules').' ORDER BY name ASC') as $a) {
+			$locations = array();
+			if (file_exists(ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $a['name']. CLASS_EXT)) {
+				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'modules');
+			}
+			if (file_exists(ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR. $a['name']. CLASS_EXT)) {
+				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'priority2/modules');
+			}
+			if (file_exists(YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules');
+			}
+			if (file_exists(YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules');
+			}
+			$items[] = array(
+				'name'		=> $a['name'],
+				'active'	=> $a['active'],
+				'locations'	=> $locations,
+			);
+		}
 		return table($items)
-			->form('./?object='.$_GET['object'].'&action=mass_action')
+			->form()
 			->check_box('name', array('field_desc' => '#'))
 			->text('name')
 			->func('locations', function($field, $params, $row) {
-				foreach ((array)$field as $v) {
-					$out[] = '<a href="'.$v['link'].'" class="btn btn-mini">'.$v['name'].'</a>';
+				foreach ((array)$field as $loc => $link) {
+					$out[] = '<a href="'.$link.'" class="btn btn-mini">'.$loc.'</a>';
 				}
 				return implode(PHP_EOL, (array)$out);
 			})
 			->btn('conf', './?object=conf_editor&action=admin_modules&id=%d', array('id' => 'name'))
 			->btn_active()
+			->footer_submit(array('value' => 'activate selected'))
+			->footer_submit(array('value' => 'disable selected'))
 			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list')
 		;
-	}
-
-	/**
-	* Delete module (uninstall)
-	*/
-	function mass_action () {
-/*
-		if (!empty($_POST['names'])) {
-			$in = '"'.implode('","', _es($_POST['names'])).'"';
-			if ($_POST['activate']) {
-				db()->UPDATE('admin_modules', array('active' => 1), 'name IN('.$in.')');
-			} elseif ($_POST['deactivate']) {
-				db()->UPDATE('admin_modules', array('active' => 0), 'name IN('.$in.')');
-			}
-			cache()->refresh('admin_modules');
-		}
-*/
-		return js_redirect('./?object='.$_GET['object']);
 	}
 
 	/**

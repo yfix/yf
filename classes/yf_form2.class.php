@@ -115,7 +115,7 @@ class yf_form2 {
 				foreach ((array)$errors as $msg) {
 					$e[] = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
 				}
-				array_unshift($this->_body, implode("\n", $e));
+				array_unshift($this->_body, implode(PHP_EOL, $e));
 			}
 		}
 		// Ensure that form begin and ending will be in the right place of the output
@@ -123,7 +123,7 @@ class yf_form2 {
 		unset($this->_body['form_begin']);
 		$form_end = $this->_body['form_end'];
 		unset($this->_body['form_end']);
-		return $form_begin. "\n". implode("\n", $this->_body). "\n". $form_end;
+		return $form_begin. PHP_EOL. implode(PHP_EOL, $this->_body). PHP_EOL. $form_end;
 	}
 
 	/**
@@ -979,7 +979,11 @@ class yf_form2 {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
 		}
-		// Shortcut: use second param as $extra
+		// Shortcut: use first or second param as $extra
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
