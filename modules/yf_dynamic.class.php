@@ -1,7 +1,7 @@
 <?php
 
-//-----------------------------------------------------------------------------
-// 
+/**
+*/
 class yf_dynamic {
 
 	/** @var bool */
@@ -210,7 +210,6 @@ class yf_dynamic {
 		if (empty($var_info["id"])) {
 			$sql = array("value"	=> _es($SOURCE_VAR_NAME));
 			db()->INSERT("locale_vars", $sql);
-//_debug_log($sql_data);
 			$var_info["id"] = db()->INSERT_ID();
 		}
 		$sql_data = array(
@@ -225,14 +224,10 @@ class yf_dynamic {
 		}
 		if (isset($var_tr[$CUR_LOCALE])) {
 			db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'");
-//_debug_log($sql_data);
 		} else {
 			db()->INSERT("locale_translate", $sql_data);
-//_debug_log($sql_data);
 		}
 		$sql = db()->UPDATE("locale_translate", $sql_data, "var_id=".intval($var_info["id"])." AND locale='"._es($CUR_LOCALE)."'", true);
-//_debug_log((isset($var_tr[$CUR_LOCALE]) ? "UPDATE" : "INSERT")."\n".$sql);
-		// Save revision
 		db()->INSERT("revisions", array(
 			"user_id"		=> intval(main()->USER_ID),
 			"object_name"	=> _es("locale_var"),
@@ -243,11 +238,7 @@ class yf_dynamic {
 			"ip"			=> common()->get_ip(),
 			"comment"		=> _es("locale: ".$CUR_LOCALE),
 		));
-		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("locale_translate_".$CUR_LOCALE);
-		}
-		// Success
+		cache()->refresh("locale_translate_".$CUR_LOCALE);
 		return print("Save OK");
 	}
 
@@ -333,10 +324,7 @@ class yf_dynamic {
 				), "name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
 			}
 		}
-		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("locale:tips");
-		}
+		cache()->refresh("locale:tips");
 		echo "Saved successfully";
 	}
 
