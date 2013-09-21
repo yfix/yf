@@ -84,7 +84,7 @@ class yf_admin_home {
 			$general_info = tpl()->parse($_GET["object"]."/general_info", $replace3);
 		}
 
-		if ($this->DISPLAY_STATS && main()->USE_SYSTEM_CACHE) {
+		if ($this->DISPLAY_STATS) {
 			$admin_statistics_array = cache()->get($this->CACHE_NAME, $this->ADMIN_HOME_CACHE_TIME);
 		}
 		if ($this->DISPLAY_STATS && empty($admin_statistics_array)) {
@@ -117,18 +117,13 @@ class yf_admin_home {
 			foreach ((array)$B as $V) {
 				$admin_statistics_array[$V[0]] = $V[1];
 			}
-
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->put($this->CACHE_NAME, $admin_statistics_array);
-			}
+			cache()->put($this->CACHE_NAME, $admin_statistics_array);
 		}
 
-		// Statistics
 	   	if ($this->DISPLAY_STATS) {
 			$statistics = tpl()->parse($_GET["object"]."/statistics", $admin_statistics_array);
 		}
 
-		// Process main template
 		$replace = array(
 			"proj_conf_link"	=> file_exists($proj_conf_path) ? "./?object=file_manager&action=edit_item&f_=".basename($proj_conf_path)."&dir_name=".urlencode(dirname($proj_conf_path)) : "",
 			"current_date"		=> _format_date(time(), "long"),

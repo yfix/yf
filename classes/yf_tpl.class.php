@@ -893,11 +893,8 @@ class yf_tpl {
 			return false;
 		}
 		$stpls_paths = array();
-		// Get from cache
 		$CACHE_NAME = "stpls_paths_".(MAIN_TYPE_ADMIN ? "admin" : "site_".conf('SITE_ID'));
-		if (main()->USE_SYSTEM_CACHE) {
-			$stpls_paths = cache()->get($CACHE_NAME);
-		}
+		$stpls_paths = cache()->get($CACHE_NAME);
 		// Create full array (cache is empty or turned off)
 		if (empty($stpls_paths)) {
 			if (MAIN_TYPE_ADMIN) {
@@ -931,10 +928,7 @@ class yf_tpl {
 				}
 			}
 			ksort($stpls_paths);
-			// Put into cache
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->put($CACHE_NAME, $stpls_paths);
-			}
+			cache()->put($CACHE_NAME, $stpls_paths);
 		}
 		$this->_stpls_paths_cache = $stpls_paths;
 	}

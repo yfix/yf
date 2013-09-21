@@ -110,9 +110,7 @@ class yf_spider_detection {
 		}
 
 		$CACHE_CORE_NAME_IP	= "spiders_ip";
-		if (main()->USE_SYSTEM_CACHE) {
-			$this->_cache_ip = cache()->get($CACHE_CORE_NAME_IP);
-		}
+		$this->_cache_ip = cache()->get($CACHE_CORE_NAME_IP);
 
 		foreach ((array)_class("dir")->scan_dir(INCLUDE_PATH. "share/spiders/", true, "/[a-z\_\-]\.txt\$/i") as $path) {
 			$name = substr(basename($path), 0, -strlen(".txt"));
@@ -132,9 +130,7 @@ class yf_spider_detection {
 				}
 			}
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->put($CACHE_CORE_NAME_IP, $this->_cache_ip);
-		}
+		cache()->put($CACHE_CORE_NAME_IP, $this->_cache_ip);
 	}
 
 	/**
@@ -146,9 +142,7 @@ class yf_spider_detection {
 		}
 
 		$CACHE_CORE_NAME_UA	= "spiders_ua";
-		if (main()->USE_SYSTEM_CACHE) {
-			$this->_cache_ua = cache()->get($CACHE_CORE_NAME_UA);
-		}
+		$this->_cache_ua = cache()->get($CACHE_CORE_NAME_UA);
 
 		foreach ((array)_class("dir")->scan_dir(INCLUDE_PATH. "share/spiders/", true, "/[a-z\_\-]\.txt\$/i") as $path) {
 			$name = substr(basename($path), 0, -strlen(".txt"));
@@ -173,9 +167,7 @@ class yf_spider_detection {
 				}
 			}
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->put($CACHE_CORE_NAME_UA, $this->_cache_ua);
-		}
+		cache()->put($CACHE_CORE_NAME_UA, $this->_cache_ua);
 	}
 
 	/**

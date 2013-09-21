@@ -37,9 +37,7 @@ class yf_manage_shop_attributes{
 					"category_id"	=> $_POST["category_id"],
 				)));
 				common()->admin_wall_add(array('shop product attribute added: '.$_POST['name'], db()->insert_id()));
-				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("shop_product_attributes_info");
-				}
+				cache()->refresh("shop_product_attributes_info");
 				return js_redirect("./?object=manage_shop&action=attributes");
 			}
 		}
@@ -87,9 +85,7 @@ class yf_manage_shop_attributes{
 					"category_id"	=> $_POST["category_id"],
 				)), "id=".$_GET["id"]); 
 				common()->admin_wall_add(array('shop product attribute updated: '.$_POST['name'], $_GET['id']));
-				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("shop_product_attributes_info");
-				}
+				cache()->refresh("shop_product_attributes_info");
 				return js_redirect("./?object=manage_shop&action=attributes");
 			}
 		}
@@ -122,9 +118,7 @@ class yf_manage_shop_attributes{
 			db()->query("DELETE FROM ".db('shop_product_attributes_info')." WHERE id=".$_GET["id"]);
 			db()->query("DELETE FROM ".db('shop_product_attributes_values')." WHERE category_id = ".module('manage_shop')->ATTRIBUTES_CAT_ID." AND field_id = ".$_GET["id"]);
 			common()->admin_wall_add(array('shop product attribute deleted: '.$_GET['id'], $_GET['id']));
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh("shop_product_attributes_info");
-			}
+			cache()->refresh("shop_product_attributes_info");
 		}
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;

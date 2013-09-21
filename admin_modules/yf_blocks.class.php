@@ -359,9 +359,7 @@ class yf_blocks {
 					"active"		=> intval($_POST["active"]),
 				));
 				common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
-				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("blocks_rules");
-				}
+				cache()->refresh("blocks_rules");
 				return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
 			}
 		}
@@ -443,9 +441,7 @@ class yf_blocks {
 					"active"		=> intval($_POST["active"]),
 				), "id=".intval($_GET["id"]));
 				common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
-				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("blocks_rules");
-				}
+				cache()->refresh("blocks_rules");
 				return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
 			}
 		}
@@ -510,9 +506,7 @@ class yf_blocks {
 			db()->query("DELETE FROM ".db('block_rules')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 			common()->admin_wall_add(array('block rule deleted for: '.$block_info['name'], $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("blocks_rules");
-		}
+		cache()->refresh("blocks_rules");
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -542,10 +536,7 @@ class yf_blocks {
 		$NEW_RULE_ID = db()->INSERT_ID();
 
 		common()->admin_wall_add(array('block rule cloned for block '.$block_info['name'], $NEW_RULE_ID));
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("blocks_names");
-			cache()->refresh("blocks_rules");
-		}
+		cache()->refresh(array("blocks_names", "blocks_rules"));
 		return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
 	}
 
@@ -564,9 +555,7 @@ class yf_blocks {
 			db()->UPDATE("block_rules", array("active" => (int)!$rule_info["active"]), "id=".intval($_GET["id"]));
 			common()->admin_wall_add(array('block rule for '.$block_info['name'].' '.($rule_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("blocks_rules");
-		}
+		cache()->refresh(array("blocks_names", "blocks_rules"));
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo ($rule_info["active"] ? 0 : 1);

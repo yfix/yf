@@ -56,18 +56,14 @@ class yf_template_editor {
 	function _show_themes () {
 		$themes = $this->_get_themes();
 
-		if (main()->USE_SYSTEM_CACHE) {
-			$num_stpls_array = cache()->get($this->CACHE_NAME, 60);
-		}
+		$num_stpls_array = cache()->get($this->CACHE_NAME, 60);
 		if (empty($num_stpls_array)) {
 			foreach ((array)$themes as $theme_class => $theme_attr) {
 				foreach ((array)$theme_attr as $theme_path => $theme_name) {
 					$num_stpls_array[$theme_name][$this->_dir_array[$theme_class]] = count($this->_get_stpls_in_theme($theme_name, $this->_dir_array[$theme_class]));
 				}
 			}
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->put($this->CACHE_NAME, $num_stpls_array);
-			}
+			cache()->put($this->CACHE_NAME, $num_stpls_array);
 		}
 		// Process records
 		foreach ((array)$themes as $theme_class => $theme_attr) {
@@ -218,9 +214,7 @@ class yf_template_editor {
 
 		$CACHE_NAME = "stpls_list_for_".$type;
 		$TTL = 600;
-		if (main()->USE_SYSTEM_CACHE) {
-			$items = cache()->get($CACHE_NAME, $TTL);
-		}
+		$items = cache()->get($CACHE_NAME, $TTL);
 		if (!empty($items)) {
 			return $items;
 		}
@@ -268,9 +262,7 @@ class yf_template_editor {
 			unset($items[""]);
 		}
 		ksort($items);
-		if (main()->USE_SYSTEM_CACHE) {
-			$items = cache()->put($CACHE_NAME, $items);
-		}
+		cache()->put($CACHE_NAME, $items);
 		return $items;
 	}
 

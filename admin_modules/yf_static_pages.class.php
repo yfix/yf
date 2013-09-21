@@ -37,9 +37,7 @@ class yf_static_pages {
 			$page_id = db()->insert_id();
 			common()->admin_wall_add(array('statis page added: '.$name, $page_id));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh('static_pages_names');
-		}
+		cache()->refresh('static_pages_names');
 		if (!empty($page_id)) {
 			return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.$page_id);
 		} else {
@@ -81,9 +79,7 @@ class yf_static_pages {
 				db()->update('static_pages', db()->es($sql), 'id='.intval($page_info['id']));
 				common()->admin_wall_add(array('statis page updated: '.$page_info['name'], $page_info['id']));
 			}
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh('static_pages_names');
-			}
+			cache()->refresh('static_pages_names');
 			return js_redirect('./?object='.$_GET['object']);
 		}
 		$DATA = $page_info;
@@ -119,9 +115,7 @@ class yf_static_pages {
 			db()->query('DELETE FROM '.db('static_pages').' WHERE name="'._es(urldecode($_GET['id'])).'" OR id='.intval($_GET['id']));
 			common()->admin_wall_add(array('static page deleted: '.$_GET['id'], $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh('static_pages_names');
-		}
+		cache()->refresh('static_pages_names');
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $page_name;
@@ -139,9 +133,7 @@ class yf_static_pages {
 		if (!empty($page_info['id'])) {
 			db()->UPDATE('static_pages', array('active' => (int)!$page_info['active']), 'id='.intval($page_info['id']));
 			common()->admin_wall_add(array('static page: '.$page_info['name'].' '.($page_info['active'] ? 'inactivated' : 'activated'), $page_info['id']));
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh('static_pages_names');
-			}
+			cache()->refresh('static_pages_names');
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;

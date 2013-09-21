@@ -123,9 +123,7 @@ class yf_locale_editor {
 					"is_default"	=> intval($_POST["default"] == $A["id"]),
 				), "id=".intval($A["id"]));
 			}
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh("locale_langs");
-			}
+			cache()->refresh("locale_langs");
 			return js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]);
 		}
 		$Q = db()->query("SELECT COUNT(var_id) AS num,locale FROM ".db('locale_translate')." WHERE value != '' GROUP BY locale");
@@ -188,9 +186,7 @@ class yf_locale_editor {
 					"is_default"	=> 0,
 				));
 				$this->_create_empty_vars_for_locale($_POST["lang_code"]);
-				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("locale_langs");
-				}
+				cache()->refresh("locale_langs");
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -212,9 +208,7 @@ class yf_locale_editor {
 			db()->query("DELETE FROM ".db('locale_translate')." WHERE locale='"._es($this->_cur_langs_array[$_GET["id"]]["locale"])."'");
 			common()->admin_wall_add(array('locale language deleted: '.$this->_cur_langs_array[$_GET["id"]]["locale"], $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("locale_langs");
-		}
+		cache()->refresh("locale_langs");
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -355,9 +349,7 @@ class yf_locale_editor {
 					} else {
 						db()->INSERT("locale_translate", $sql_data);
 					}
-					if (main()->USE_SYSTEM_CACHE) {
-						cache()->refresh("locale_translate_".$lang_info["locale"]);
-					}
+					cache()->refresh("locale_translate_".$lang_info["locale"]);
 				}
 				common()->admin_wall_add(array('locale var updated: '.$var_info['value'], $_GET['id']));
 				return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
@@ -623,29 +615,22 @@ class yf_locale_editor {
 	/**
 	*/
 	function import_vars() {
-		// Do save data
 		if ($_POST) {
-			// Check if file is selected
 			if (empty($_FILES["import_file"]["name"])) {
 				_re("Please select file to process", "name");
 			}
-			// Check file format
 			if (empty($_POST["file_format"]) || !isset($this->_file_formats[$_POST["file_format"]])) {
 				_re("Please select file format", "file_format");
 			}
 			$cur_locale = $_POST["lang_code"];
-			// Check file format
 			if (empty($cur_locale)) {
 				_re("Please select language", "lang");
 			}
 			$raw_langs = $this->_get_iso639_list();
-			// Check for correct lang code
 			if (!isset($raw_langs[$cur_locale])) {
 				common()->_error_exists("Wrong language code");
 			}
-			// Check if such language not initialized yet
 			if (!common()->_error_exists() && !isset($this->_cur_langs[$cur_locale])) {
-				// Check for errors
 				if (!common()->_error_exists()) {
 					db()->INSERT("locale_langs", array(
 						"locale"		=> _es($cur_locale),
@@ -654,22 +639,16 @@ class yf_locale_editor {
 						"active"		=> 1,
 						"is_default"	=> 0,
 					));
-					// Do create empty vars for the new language
 					$this->_create_empty_vars_for_locale($cur_locale);
-					// Refresh system cache
-					if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_langs");
+					cache()->refresh("locale_langs");
 				}
 			}
-			// Get file format
 			$file_format = $_POST["file_format"];
-			// Default mode
 			$IMPORT_MODE = !empty($_POST["mode"]) ? intval($_POST["mode"]) : 1;
-			// Check for errors
 			if (!common()->_error_exists()) {
 				$new_file_name = $_FILES["import_file"]["name"];
 				$new_file_path = INCLUDE_PATH.$new_file_name;
 				move_uploaded_file($_FILES["import_file"]["tmp_name"], $new_file_path);
-				// Process file according to its format
 				if ($file_format == "csv") {
 					$handle = fopen($new_file_path, "r");
 					while (($data = fgetcsv($handle, 2048, ";", "\"")) !== false) {
@@ -681,7 +660,6 @@ class yf_locale_editor {
 					$xml_parser = xml_parser_create();
 					xml_parse_into_struct($xml_parser, file_get_contents($new_file_path), $xml_values);
 					foreach ((array)$xml_values as $k => $v) {
-						// Skip other tags
 						if ($v["type"] != "complete") continue;
 						if ($v["tag"] == "SOURCE") {
 							$source = $v["value"];
@@ -689,7 +667,6 @@ class yf_locale_editor {
 						if ($v["tag"] == "TRANSLATION") {
 							$translation = $v["value"];
 						}
-						// Add new found variable
 						if (!empty($source) && !empty($translation)) {
 							$found_vars[trim($source)] = trim($translation);
 							$source			= "";
@@ -698,55 +675,44 @@ class yf_locale_editor {
 					}
 					xml_parser_free($xml_parser);
 				}
-				// Get current source vars array
 				$Q = db()->query("SELECT id, ".($this->VARS_IGNORE_CASE ? "LOWER(REPLACE(CONVERT(value USING utf8), ' ', '_'))" : "value")." AS val FROM ".db('locale_vars')." ORDER BY val ASC");
 				while ($A = db()->fetch_assoc($Q)) $cur_vars_array[$A["id"]] = $A["val"];
-				// Get current locale translation
+
 				$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE locale = '"._es($cur_locale)."'");
 				while ($A = db()->fetch_assoc($Q)) $cur_tr_vars[$A["var_id"]] = $A["value"];
-				// Process found vars
+
 				foreach ((array)$found_vars as $source => $translation) {
 					$var_id = 0;
 					if ($this->VARS_IGNORE_CASE) {
 						$source = str_replace(" ", "_", strtolower($source));
 					}
-					// Try to find var_id
 					foreach ((array)$cur_vars_array as $cur_var_id => $cur_var_value) {
 						if ($cur_var_value == $source) {
 							$var_id = intval($cur_var_id);
 							break;
 						}
 					}
-					// Variable not exists
 					if (empty($var_id)) {
-						// Create variable record
 						db()->INSERT("locale_vars", array("value"	=> _es($source)));
 						$var_id = db()->INSERT_ID();
 					}
-					// Prepare SQL
 					$sql_array = array(
 						"var_id"	=> intval($var_id),
 						"locale"	=> _es($cur_locale),
 						"value"		=> _es($translation),
 					);
-					// Check if record need to be inserted or updated
 					if (isset($cur_tr_vars[$var_id])) {
-						// Do not update record if not needed
 						if ($IMPORT_MODE == 2 || $translation == $cur_tr_vars[$var_id]) continue;
 						db()->UPDATE("locale_translate", $sql_array, "var_id=".intval($var_id)." AND locale='"._es($cur_locale)."'");
 					} else {
 						db()->INSERT("locale_translate", $sql_array);
 					}
 				}
-				// Remove downloaded file after processing
 				unlink($new_file_path);
-				// Refresh system cache
-				if (main()->USE_SYSTEM_CACHE)	cache()->refresh("locale_translate_".$cur_locale);
-				// Return user back
+				cache()->refresh("locale_translate_".$cur_locale);
 				return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
 			}
 		}
-		// Display form
 		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
 				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
@@ -940,9 +906,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 				$buffer = array();
 				$_temp = array();
 			}
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh("locale_translate_".$LOCALE_RES);
-			}
+			cache()->refresh("locale_translate_".$LOCALE_RES);
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 
