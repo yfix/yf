@@ -17,11 +17,14 @@
 
 {back}
 
-<script type="text/javascript" src="{const(WEB_PATH)}js/edit_area/edit_area_full.js"></script>
-<script type="text/javascript">
-	editAreaLoader.init({
-		id: "source"
-		,start_highlight: true
-		,syntax: "{file_ext}"	
-	});
+<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+/*
+// TODO: working here http://jsfiddle.net/yfix/z8pvp/, but somehow not on this page
+// Inspired from: http://ace.c9.io/build/kitchen-sink.html
+        var editor = ace.edit("source");
+        editor.getSession().setUseWorker(false);
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/javascript");
+*/
 </script>
