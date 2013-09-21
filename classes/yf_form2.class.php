@@ -930,7 +930,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->radio_box($name, $extra['items'], $selected, false, 2, '', false)
+					._class('html_controls')->radio_box($name, $extra['items'], $selected, false, 2, '', false)
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 				.'</div>
@@ -1261,7 +1261,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate)
+					._class('html_controls')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
@@ -1321,7 +1321,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
+					._class('html_controls')->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled)
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
@@ -1373,7 +1373,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->check_box($name, $values, $selected, $add_str)
+					._class('html_controls')->check_box($name, $values, $selected, $add_str)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -1425,7 +1425,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->multi_check_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array)
+					._class('html_controls')->multi_check_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -1476,7 +1476,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->radio_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate)
+					._class('html_controls')->radio_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -1529,7 +1529,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate)
+					._class('html_controls')->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
@@ -1577,7 +1577,7 @@ class yf_form2 {
 			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
 				<div class="controls">'
-					.common()->time_box2($name, $selected, $add_str, $show_text, $translate)
+					._class('html_controls')->time_box2($name, $selected, $add_str, $show_text, $translate)
 					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>

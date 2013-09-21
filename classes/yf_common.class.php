@@ -164,14 +164,14 @@ class yf_common {
 	* This function generate select box with tree hierarhy inside
 	*/
 	function select_box ($name, $values, $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
-		return _class('html', COMMON_LIB)->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level);
+		return _class('html_controls')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level);
 	}
 
 	/**
 	* Generate multi-select box
 	*/
 	function multi_select ($name, $values, $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
-		return _class('html', COMMON_LIB)->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
+		return _class('html_controls')->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
@@ -185,58 +185,51 @@ class yf_common {
 	* Processing radio buttons
 	*/
 	function radio_box ($box_name, $values, $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
-		return _class('html', COMMON_LIB)->radio_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate);
+		return _class('html_controls')->radio_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate);
 	}
 
 	/**
 	* Simple check box
 	*/
 	function check_box ($box_name, $values, $selected = '', $add_str = '') {
-		return _class('html', COMMON_LIB)->check_box($box_name, $values, $selected, $add_str);
+		return _class('html_controls')->check_box($box_name, $values, $selected, $add_str);
 	}
 
 	/**
 	* Processing many checkboxes at one time
 	*/
 	function multi_check_box ($box_name, $values, $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
-		return _class('html', COMMON_LIB)->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
+		return _class('html_controls')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
 	}
 	
 	/**
 	*/
 	function date_box ($selected_date = '', $years = '', $name_postfix = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
-		return _class('html', COMMON_LIB)->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate);
+		return _class('html_controls')->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate);
 	}
 
 	/**
 	*/
 	function time_box ($selected_time = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
-		return _class('html', COMMON_LIB)->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
+		return _class('html_controls')->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
 	}
 	
 	/**
 	*/
 	function date_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
-		return _class('html', COMMON_LIB)->date_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
+		return _class('html_controls')->date_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
 	function datetime_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymdhis', $show_text = 1, $translate = 1) {
-		return _class('html', COMMON_LIB)->datetime_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
+		return _class('html_controls')->datetime_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
 	function time_box2 ($name = '', $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
-		return _class('html', COMMON_LIB)->time_box2($name, $selected, $add_str, $show_text, $translate);
-	}
-
-	/**
-	* General box abstraction layer
-	*/
-	function box ($params = array()) {
-		return _class('boxes', COMMON_LIB)->box($params);
+		return _class('html_controls')->time_box2($name, $selected, $add_str, $show_text, $translate);
 	}
 
 	/**
@@ -680,7 +673,7 @@ class yf_common {
 	* Encode given address to prevent spam-bots harvesting
 	*/
 	function encode_email($addr = '', $as_html_link = false) {
-		return _class('html', COMMON_LIB)->encode_email($addr, $as_html_link);
+		return _class('html_controls')->encode_email($addr, $as_html_link);
 	}
 
 	/**

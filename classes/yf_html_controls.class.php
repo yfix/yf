@@ -7,18 +7,17 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
  */
-class yf_html {
+class yf_html_controls {
 
 	/** @var bool */
 	public $AUTO_ASSIGN_IDS = true;
-// TODO: check ids for uniqueness
 
 	/**
 	* This function generate select box with tree hierarhy inside
 	*/
 	function select_box ($name, $values, $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		$selected = strval($selected);
-		// (example: $add_str = "size=6")
+		// (example: $add_str = 'size=6')
 		$body = $level == 0 ? "\n".'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.">\n" : '';
 		if ($show_text && $level == 0) {
 			$body .= "\t".'<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text)."</option>\n";
@@ -46,11 +45,11 @@ class yf_html {
 			$selected = strval($selected);
 		}
 		if ($disabled  == 1) {
-			$disabled = "disabled";
+			$disabled = 'disabled';
 		} else {
 			$disabled = '';
 		}
-		// (example: $add_str = "size=6") disabled
+		// (example: $add_str = 'size=6') disabled
 		$body = $level == 0 ? "\n".'<select '.$disabled.' multiple name="'.$name.'[]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.">\n" : '';
 		if ($show_text && $level == 0) {
 			$body .= "\t".'<option value="">-'.t('select').' '.t($name)."-</option>\n";
@@ -91,14 +90,14 @@ class yf_html {
 			if (common()->BOXES_USE_STPL) { 
 				$_what_compare = strval($type == 1 ? $name : $value);
 				$replace = array(
-					"name"		=> $box_name,
-					"value"		=> $value,
-					"selected"	=> $_what_compare == $selected ? 'checked="true"' : '',
-					"add_str"	=> $add_str,
-					"label"		=> $translate ? t($name) : $name,
-					"divider"	=> $flow_vertical ? '<br />' : '&nbsp;',
+					'name'		=> $box_name,
+					'value'		=> $value,
+					'selected'	=> $_what_compare == $selected ? 'checked="true"' : '',
+					'add_str'	=> $add_str,
+					'label'		=> $translate ? t($name) : $name,
+					'divider'	=> $flow_vertical ? '<br />' : '&nbsp;',
 				);
-				$body .= tpl()->parse("system/common/radio_box_item", $replace);
+				$body .= tpl()->parse('system/common/radio_box_item', $replace);
 			} else {
 				$body .= '<label class="radio"><input type="radio" name="'.$box_name.'" id="check_'.$box_name.'" value="'.$value.'" '.$add_str.' '
 					.((strval($value) == $selected) ? 'checked' : '').'>'.t($name)."</label>\n";
@@ -146,26 +145,26 @@ class yf_html {
 				$sel_text = '';
 			}
 			
-			if($name_as_array){
-				$name = $box_name."[".$key."]";
-			}else{
-				$name = $box_name."_".$key;
+			if ($name_as_array) {
+				$name = $box_name.'['.$key.']';
+			} else {
+				$name = $box_name.'_'.$key;
 			}
-			
 			if (common()->BOXES_USE_STPL) {
-			
 				$replace = array(
-					"name"		=> $name,
-					"value"		=> $key,
-					"selected"	=> $sel_text,
-					"add_str"	=> $add_str,
-					"label"		=> $translate ? t($value) : $value,
-					"divider"	=> $flow_vertical ? '<br />' : '&nbsp;',
+					'name'		=> $name,
+					'value'		=> $key,
+					'selected'	=> $sel_text,
+					'add_str'	=> $add_str,
+					'label'		=> $translate ? t($value) : $value,
+					'divider'	=> $flow_vertical ? '<br />' : '&nbsp;',
 				);
-				$body .= tpl()->parse("system/common/check_box_item", $replace);
+				$body .= tpl()->parse('system/common/check_box_item', $replace);
 			} else {
 // TODO: auto ID
-				$body .= '<input type="checkbox" name="'.$name.'" class="check" value="'.$key.'" '.$sel_text.' '.$add_str.'>'.($translate ? t($value) : $value). ($flow_vertical ? "<br />" : "&nbsp;"). "\n";
+				$body .= '<input type="checkbox" name="'.$name.'" class="check" value="'.$key.'" '.$sel_text.' '.$add_str.'>'
+					.($translate ? t($value) : $value)
+					.($flow_vertical ? '<br />' : '&nbsp;'). "\n";
 			}
 		}
 		return $body;
@@ -174,16 +173,16 @@ class yf_html {
 	/**
 	* This function generate date box
 	*/
-	function date_box ($selected = '', $years = '', $name_postfix = '', $add_str = '', $order = "ymd", $show_text = 1, $translate = 1) {
+	function date_box ($selected = '', $years = '', $name_postfix = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
 		if (strlen($selected))	{
-			// Process timestamp (convert it to the "Y-m-d" pattern)
+			// Process timestamp (convert it to the 'Y-m-d' pattern)
 			if (is_numeric($selected)) {
-				$selected = gmdate("Y-m-d", $selected);
+				$selected = gmdate('Y-m-d', $selected);
 			}
-			list($year, $month, $day) = explode("-", $selected);
+			list($year, $month, $day) = explode('-', $selected);
 		}
 		if (strlen($years)) {
-			list($start_year, $end_year) = explode("-", $years);
+			list($start_year, $end_year) = explode('-', $years);
 		} else {
 			$start_year = 1900;
 			$end_year = gmdate('Y');
@@ -208,12 +207,12 @@ class yf_html {
 		$d .= "</select>\n";
 		// Process order
 		$tmp_array = array(
-			"y"	=> '{%year%}',
-			"m"	=> '{%month%}',
-			"d"	=> '{%day%}',
+			'y'	=> '{%year%}',
+			'm'	=> '{%month%}',
+			'd'	=> '{%day%}',
 		);
 		if (empty($order)) {
-			$order = "ymd";
+			$order = 'ymd';
 		}
 		$order = str_replace(array_keys($tmp_array), array_values($tmp_array), $order);
 		return str_replace(array_values($tmp_array), array($y,$m,$d), $order);
@@ -224,9 +223,9 @@ class yf_html {
 	*/
 	function time_box ($selected = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
 		if (strlen($selected))	{
-			// Process timestamp (convert it to the "Y-m-d" pattern)
+			// Process timestamp (convert it to the 'Y-m-d' pattern)
 			if (is_numeric($selected)) {
-				$selected = gmdate("H:i:s", $selected);
+				$selected = gmdate('H:i:s', $selected);
 			}
 			list ($hour, $minute, $second) = explode(":", $selected);
 		}
@@ -254,20 +253,20 @@ class yf_html {
 	/**
 	* Month name
 	*/
-	function month ($num, $lang = "") {
+	function month ($num, $lang = '') {
 		$m_array = array(
-			"January",
-			"February",
-			"March",
-			"April",
-			"May",
-			"June",
-			"July",
-			"August",
-			"September",
-			"October",
-			"November",
-			"December",
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
 		);
 		$num--;
 		return (($num > 12) || ($num < 0)) ? $num : $m_array[$num];
@@ -289,16 +288,16 @@ class yf_html {
 	* @param	bool	switch between returning HTML link or just encode text
 	* @return	string
 	*/
-	function encode_email($addr = "", $as_html_link = false) {
+	function encode_email($addr = '', $as_html_link = false) {
 		if ($as_html_link) {
-			$addr = "mailto:" . $addr;
+			$addr = 'mailto:' . $addr;
 		}
 		$length = strlen($addr);
 		// leave ':' alone (to spot mailto: later)
 		$addr = preg_replace_callback('/([^\:])/', array($this, '_encode_email_address_callback'), $addr);
 		// Convert into HTML anchor link
 		if ($as_html_link) {
-			$addr = "<a href=\"".$addr."\">".$addr."</a>";
+			$addr = '<a href="'.$addr.'">'.$addr.'</a>';
 		}
 		// strip the mailto: from the visible part
 		$addr = preg_replace('/">.+?:/', '">', $addr);
@@ -306,7 +305,7 @@ class yf_html {
 	}
 
 	/**
-	* Callback internal method for "encode_email"
+	* Callback internal method for 'encode_email'
 	*
 	* @private
 	* @param	array	matches
@@ -331,24 +330,24 @@ class yf_html {
 	*/
 	function hyperlink(&$text) {
 		// match protocol://address/path/file.extension?some=variable&another=asf%
-		$text = preg_replace("/\s(([a-zA-Z]+:\/\/)([a-z][a-z0-9_\..-]*[a-z]{2,6})([a-zA-Z0-9\/*-?&%]*))\s/i", " <a href=\"$1\">$3</a> ", $text);
+		$text = preg_replace('/\s(([a-zA-Z]+:\/\/)([a-z][a-z0-9_\..-]*[a-z]{2,6})([a-zA-Z0-9\/*-?&%]*))\s/i', ' <a href="$1">$3</a> ', $text);
 		// match www.something.domain/path/file.extension?some=variable&another=asf%
-		$text = preg_replace("/\s(www\.([a-z][a-z0-9_\..-]*[a-z]{2,6})([a-zA-Z0-9\/*-?&%]*))\s/i", " <a href=\"http://$1\">$2</a> ", $text);
+		$text = preg_replace('/\s(www\.([a-z][a-z0-9_\..-]*[a-z]{2,6})([a-zA-Z0-9\/*-?&%]*))\s/i', ' <a href="http://$1">$2</a> ', $text);
 		return $text;
 	}
 
 	/**
 	*/
-	function date_box2 ($name, $selected = "", $years = "", $add_str = "", $order = "ymd", $show_text = 1, $translate = 1) {
+	function date_box2 ($name, $selected = '', $years = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
 		if (strlen($selected))	{
-			// Process timestamp (convert it to the "Y-m-d" pattern)
+			// Process timestamp (convert it to the 'Y-m-d' pattern)
 			if (is_numeric($selected)) {
-				$selected = gmdate("Y-m-d", $selected);
+				$selected = gmdate('Y-m-d', $selected);
 			}
-			list($year, $month, $day) = explode("-", $selected);
+			list($year, $month, $day) = explode('-', $selected);
 		}
 		if (strlen($years)) {
-			list($start_year, $end_year) = explode("-", $years);
+			list($start_year, $end_year) = explode('-', $years);
 		} else {
 			$start_year = 1900;
 			$end_year = gmdate('Y');
@@ -372,12 +371,12 @@ class yf_html {
 		}
 		$d .= "</select>\n";
 		$tmp_array = array(
-			"y"	=> '{%year%}',
-			"m"	=> '{%month%}',
-			"d"	=> '{%day%}',
+			'y'	=> '{%year%}',
+			'm'	=> '{%month%}',
+			'd'	=> '{%day%}',
 		);
 		if (empty($order)) {
-			$order = "ymd";
+			$order = 'ymd';
 		}
 		$order = str_replace(array_keys($tmp_array), array_values($tmp_array), $order);
 		return str_replace(array_values($tmp_array), array($y,$m,$d), $order);
@@ -385,13 +384,13 @@ class yf_html {
 
 	/**
 	*/
-	function time_box2 ($name, $selected = "", $add_str = "", $show_text = 1, $translate = 1) {
+	function time_box2 ($name, $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
 		if (strlen($selected))	{
-			// Process timestamp (convert it to the "Y-m-d" pattern)
+			// Process timestamp (convert it to the 'Y-m-d' pattern)
 			if (is_numeric($selected)) {
-				$selected = gmdate("H:i:s", $selected);
+				$selected = gmdate('H:i:s', $selected);
 			}
-			list ($hour, $minute, $second) = explode(":", $selected);
+			list ($hour, $minute, $second) = explode(':', $selected);
 		}
 		$body .= "\n".'<select name="'.$name.'"[hour]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_hour_box"' : '').">\n";
 		$body .= $show_text ? "\t<option ".($hour == "" ? 'selected="selected"' : "").' value="">-'.($translate ? t('hour') : 'hour')."-</option>\n" : "";
@@ -416,7 +415,7 @@ class yf_html {
 
 	/**
 	*/
-	function datetime_box2 ($name, $selected = "", $years = "", $add_str = "", $order = "ymd", $show_text = 1, $translate = 1) {
+	function datetime_box2 ($name, $selected = '', $years = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
 		return $this->date_box2($name, $selected, $years, $add_str, $order, $show_text, $translate)
 			.$this->time_box2($name, $selected, $add_str, $show_text, $translate);
 	}

@@ -72,29 +72,43 @@ class yf_admin_modules {
 					'link'	=> './?object=file_manager&action=edit_item&f_='.'yf_'.$A['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules'),
 				);
 			}
-			$replace2 = array(
-				'bg_class'			=> !(++$i % 2) ? 'bg1' : 'bg2',
+			$item = array(
 				'name'				=> _prepare_html($A['name']),
 				'pretty_name'		=> _prepare_html(ucwords(str_replace('_', ' ', $A['name']))),
 				'desc'				=> _prepare_html($A['description']),
 				'active'			=> intval((bool) $A['active']),
 				'locations'			=> $locations,
 				'active_link'		=> './?object='.$_GET['object'].'&action=active&id='.$A['name'],
-				'uninstall_link'	=> $is_in_project ? './?object='.$_GET['object'].'&action=uninstall&id='.$A['name'] : '',
 				'settings_link'		=> './?object=conf_editor&action=admin_modules&id='.$A['name'],
 			);
-			$items .= tpl()->parse($_GET['object'].'/item', $replace2);
+//			$items .= tpl()->parse($_GET['object'].'/item', $item);
+#			$item['locations'] = implode(PPH_EOL, $item['locations'])
+			$items[] = $item;
 		}
+/*
 		$replace = array(
 			'items'			=> $items,
 			'total'			=> intval($total),
 			'pages'			=> $pages,
 			'form_action'	=> './?object='.$_GET['object'].'&action=mass_action',
-			'import_link'	=> './?object='.$_GET['object'].'&action=import',
-			'export_link'	=> './?object='.$_GET['object'].'&action=export',
 			'refresh_link'	=> './?object='.$_GET['object'].'&action=refresh_modules_list',
 		);
 		return tpl()->parse($_GET['object'].'/main', $replace);
+*/
+		return table($items)
+			->form('./?object='.$_GET['object'].'&action=mass_action')
+			->check_box('name')
+			->text('name')
+			->func('locations', function($field, $params, $row) {
+				foreach ((array)$field as $v) {
+					$out[] = '<a href="'.$v['link'].'" class="btn btn-mini">'.$v['name'].'</a>';
+				}
+				return implode(PHP_EOL, (array)$out);
+			})
+			->btn('conf', './?object=conf_editor&action=admin_modules&id=%d', array('id' => 'name'))
+			->btn_active()
+			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list')
+		;
 	}
 
 	/**

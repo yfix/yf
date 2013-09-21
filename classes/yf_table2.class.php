@@ -50,17 +50,6 @@ class yf_table2 {
 	}
 
 	/**
-	* Setup form2 class instance to share its methods for form-related components like checkbox, input, etc
-	*/
-	function _init_form() {
-		if (!isset($this->_form)) {
-			$this->_form = clone _class('form2');
-			$this->_form->_chained_mode = false;
-		}
-		return $this->_form;
-	}
-
-	/**
 	* Wrapper for chained mode call from common()->table2()
 	*/
 	function chained_wrapper($sql = '', $params = array()) {
@@ -772,35 +761,69 @@ class yf_table2 {
 	}
 
 	/**
+	* Setup form2 class instance to share its methods for form-related components like checkbox, input, etc
 	*/
-	function check_box($extra = array()) {
-// TODO
-//		$form = $this->_init_form();
-//		return $this->func('id', function($field, $params, $row) { return $obj; } );
+	function _init_form() {
+#		if (!isset($this->_form)) {
+#			$this->_form = clone _class('form2');
+#			$this->_form->_chained_mode = false;
+#		}
+#		return $this->_form;
+	}
+
+	/**
+	* Simply tells that current table should consist of form inside
+	*/
+	function form($action = '', $method = '', $extra = array()) {
+// TODO: connect me
+		if (is_array($action)) {
+			$extra = $action;
+			$action = '';
+		}
+		if (is_array($method)) {
+			$extra = $method;
+			$method = '';
+		}
+		$this->_form = array(
+			'action'=> $action ? $action : './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : ''),
+			'method'=> $method ? $method : 'POST',
+			'extra'	=> (array)$extra,
+		);
+		return $this;
 	}
 
 	/**
 	*/
-	function select_box($extra = array()) {
+	function check_box($name, $extra = array()) {
 // TODO
 //		$form = $this->_init_form();
-//		return $this->func('id', function($field, $params, $row) { return $obj; } );
+		return $this->func($name, function($field, $params, $row) {
+			return $obj;
+		});
 	}
 
 	/**
 	*/
-	function radio_box($extra = array()) {
+	function select_box($name, $extra = array()) {
 // TODO
 //		$form = $this->_init_form();
-//		return $this->func('id', function($field, $params, $row) { return $obj; } );
+		return $this->func($name, function($field, $params, $row) { return $obj; } );
 	}
 
 	/**
 	*/
-	function input($extra = array()) {
+	function radio_box($name, $extra = array()) {
 // TODO
 //		$form = $this->_init_form();
-//		return $this->func('id', function($field, $params, $row) { return $obj; } );
+		return $this->func($name, function($field, $params, $row) { return $obj; } );
+	}
+
+	/**
+	*/
+	function input($name, $extra = array()) {
+// TODO
+//		$form = $this->_init_form();
+		return $this->func($name, function($field, $params, $row) { return $obj; } );
 	}
 
 	/**
