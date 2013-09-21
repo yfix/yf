@@ -104,14 +104,14 @@ class yf_blocks {
 	/**
 	*/
 	function show () {
-		return table('SELECT * FROM '.db('blocks'), array('custom_fields' => array(
+		return table('SELECT * FROM '.db('blocks').' ORDER BY type DESC, name ASC', array('custom_fields' => array(
 				'num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'
 			)))
 			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d')
 			->text('type')
+			->text('num_rules')
 			->text('stpl_name', 'Template')
 			->text('method_name', 'Method')
-			->text('num_rules')
 			->btn('Rules', './?object='.$_GET['object'].'&action=show_rules&id=%d')
 			->btn_edit()
 			->btn_delete()
