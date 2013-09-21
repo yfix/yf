@@ -71,10 +71,6 @@ class yf_conf_editor {
 				$this->_auto_conf_array = @eval("return array(".$_tmp_string.");");
 			}
 		}
-
-		$this->_vars_to_skip = array(
-//			"forum" => "SETTINGS",
-		);
 	}
 
 	/**
@@ -361,11 +357,6 @@ class yf_conf_editor {
 		if ($module_name) {
 			$config_content = $this->_show_module_conf($module_name);
 		}
-/*
-		if ($module_name == "forum") {
-			$config_content .= $this->_forum_settings();
-		}
-*/
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 			"use_js_convert"	=> $this->JS_ARRAYS_CONVERT ? 1 : 0,
@@ -451,7 +442,6 @@ class yf_conf_editor {
 			$items .= tpl()->parse($_GET["object"]."/config_item", $replace2);
 		}
 		$replace = array(
-//			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
 			"conf_items"	=> $items,
 			"module_name"	=> ucfirst(str_replace("_", " ", $module_name)),
 			"module_id"		=> $module_name,
@@ -651,11 +641,6 @@ class yf_conf_editor {
 		foreach ((array)$this->_get_group_conf_array("classes") as $k => $v) {
 			$conf_array[$k] = my_array_merge((array)$conf_array[$k], (array)$v);
 		}
-/*
-		foreach ((array)$this->_get_group_conf_array("forum") as $k => $v) {
-			$conf_array[$k] = my_array_merge((array)$conf_array[$k], (array)$v);
-		}
-*/
 		// Correctly merge auto conf with new posted ones
 		$merged_conf = $this->_auto_conf_array;
 		foreach ((array)$_POST as $_var_name => $posted_value) {
@@ -689,15 +674,6 @@ class yf_conf_editor {
 			// Store for saving
 			$merged_conf[$module_name][$_var_name] = $posted_value;
 		}
-// TODO: forum settings and forum rights
-/*
-		if (!empty($_POST["_forum"])) {
-//print_R($conf_array);
-print_R($merged_conf);
-//print_r($conf_array);
-//			print_r($this->_get_group_conf_array("forum"));
-		}
-*/
 		ksort($merged_conf);
 		// Do prepare data for saving
 		$data = "<?p"."hp\n";
@@ -778,16 +754,6 @@ print_R($merged_conf);
 		// Return user back
 		return redirect($_SERVER["HTTP_REFERER"], 0);
 	}
-/*
-	function _show_header () {
-		// Count total number of settings in this group
-		$total = 0;
-		foreach ((array)$this->conf_array[0] as $v) {
-			$total += count($v);
-		}
-// TODO
-	}
-*/
 	
 	/**
 	* Type defining function

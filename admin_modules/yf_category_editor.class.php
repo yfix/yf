@@ -18,23 +18,23 @@ class yf_category_editor {
 	*/
 	function _init () {
 		$this->_boxes = array(
-			"active"		=> 'radio_box("active",			$this->_statuses,			$selected, false, 2, "", false)',
-			"featured"		=> 'radio_box("featured",		$this->_statuses,			$selected, false, 2, "", false)',
-			"parent_id"		=> 'select_box("parent_id",		$this->_items_for_parent,	$selected, false, 2, "", false)',
-			"item_order"	=> 'select_box("item_order",	$this->_item_orders,		$selected, false, 2, "", false)',
-			"groups"		=> 'multi_select("groups",		$this->_groups,				$selected, false, 2, " size=7 ", false)',
+			'active'		=> 'radio_box("active",			$this->_statuses,			$selected, false, 2, "", false)',
+			'featured'		=> 'radio_box("featured",		$this->_statuses,			$selected, false, 2, "", false)',
+			'parent_id'		=> 'select_box("parent_id",		$this->_items_for_parent,	$selected, false, 2, "", false)',
+			'item_order'	=> 'select_box("item_order",	$this->_item_orders,		$selected, false, 2, "", false)',
+			'groups'		=> 'multi_select("groups",		$this->_groups,				$selected, false, 2, " size=7 ", false)',
 		);
 		$this->_statuses = array(
-			"0" => "<span class='negative'>NO</span>",
-			"1" => "<span class='positive'>YES</span>",
+			'0' => '<span class="negative">NO</span>',
+			'1' => '<span class="positive">YES</span>',
 		);
-		$this->_user_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
+		$this->_user_groups[''] = '-- ALL --';
+		$Q = db()->query('SELECT id, name FROM '.db('user_groups').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_user_groups[$A['id']] = $A['name'];
 		}
-		$this->_admin_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT id,name FROM ".db('admin_groups')." WHERE active='1'");
+		$this->_admin_groups[''] = '-- ALL --';
+		$Q = db()->query('SELECT id, name FROM '.db('admin_groups').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_admin_groups[$A['id']] = $A['name'];
 		}
@@ -43,39 +43,10 @@ class yf_category_editor {
 	/**
 	*/
 	function show() {
-		$Q = db()->query("SELECT cat_id, COUNT(*) AS num FROM ".db('category_items')." GROUP BY cat_id");
-		while ($A = db()->fetch_assoc($Q)) {
-			$num_items[$A["cat_id"]] = $A["num"];
-		}
-		$sql = "SELECT * FROM ".db('categories')." ORDER BY type DESC, active ASC";
-		$Q = db()->query($sql);
-		while ($A = db()->fetch_assoc($Q)) {
-			$replace2 = array(
-				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
-				"name"			=> _prepare_html($A["name"]),
-				"desc"			=> _prepare_html($A["desc"]),
-				"type"			=> _prepare_html($A["type"]),
-				"stpl_name"		=> _prepare_html($A["stpl_name"]),
-				"method_name"	=> _prepare_html($A["method_name"]),
-				"custom_fields"	=> _prepare_html($A["custom_fields"]),
-				"active"		=> intval($A["active"]),
-				"num_items"		=> intval($num_items[$A["id"]]),
-				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit&id=".$A["id"],
-				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$A["id"],
-				"active_link"	=> "./?object=".$_GET["object"]."&action=activate&id=".$A["id"],
-				"clone_link"	=> "./?object=".$_GET["object"]."&action=clone_cat&id=".$A["id"],
-				"items_link"	=> "./?object=".$_GET["object"]."&action=show_items&id=".$A["id"],
-				"export_link"	=> "./?object=".$_GET["object"]."&action=export&id=".$A["id"],
-			);
-			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
-		}
-		$replace = array(
-			"items"			=> $items,
-			"form_action"	=> "./?object=".$_GET["object"]."&action=add",
-		);
-		$body .= tpl()->parse($_GET["object"]."/main", $replace);
-/*
-		$body .= table2($sql)
+		$sql = 'SELECT * FROM '.db('categories').' ORDER BY type DESC, active ASC';
+		return table($sql, array('custom_fields' => array(
+				'items' => 'SELECT cat_id, COUNT(*) AS num FROM '.db('category_items').' GROUP BY cat_id',
+			)))
 			->link('name', './?object='.$_GET['object'].'&action=show_items&id=%d')
 			->text('desc')
 			->text('custom_fields')
@@ -87,51 +58,28 @@ class yf_category_editor {
 			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
 			->btn_active()
 			->footer_add();
-*/
-		return $body;
 	}
 
 	/**
 	*/
 	function add() {
-		if ($_POST) {
-			if (!common()->_error_exists()) {
-				db()->INSERT("categories", array(
-					"name"			=> _es($_POST["name"]),
-					"desc"			=> _es($_POST["desc"]),
-					"stpl_name"		=> _es($_POST["stpl_name"]),
-					"method_name"	=> _es($_POST["method_name"]),
-					"custom_fields"	=> _es($_POST["custom_fields"]),
-					"active"		=> (int)((bool)$_POST["active"]),
-					"type"			=> _es($_POST["type"]),
-				));
+		$a = $_POST;
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name'	=> 'trim|required|is_unique[categories.name]',
+				'type'	=> 'trim|required',
+			))
+			->db_insert_if_ok('categories', array('type','name','desc','stpl_name','method_name','custom_fields','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('category added: '.$_POST['name'], db()->insert_id()));
-				cache()->refresh("category_sets");
-				return js_redirect("./?object=".$_GET["object"]);
-			}
-		}
-		foreach ((array)$cat_info as $k => $v) {
-			$DATA[$k] = isset($_POST[$k]) ? $_POST[$k] : $v;
-		}
-		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-			"name"			=> _prepare_html($DATA["name"]),
-			"desc"			=> _prepare_html($DATA["desc"]),
-			"type"			=> _prepare_html($DATA["type"]),
-			"stpl_name"		=> _prepare_html($DATA["stpl_name"]),
-			"method_name"	=> _prepare_html($DATA["method_name"]),
-			"custom_fields"	=> _prepare_html($DATA["custom_fields"]),
-			"active_box"	=> $this->_box("active", $DATA["active"]),
-			"back_link"		=> "./?object=".$_GET["object"]."&action=show",
-			"for_edit"		=> 0,
-		);
-		return common()->form2($replace)
-			->radio_box("type", array('user' => 'User', 'admin' => 'Admin'))
-			->text("name")
-			->textarea("desc", "Description")
-			->text("stpl_name")
-			->text("method_name")
-//			->text("custom_fields")
+				cache()->refresh('category_sets');
+			}))
+			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
+			->text('name')
+			->text('desc', 'Description')
+			->text('stpl_name')
+			->text('method_name')
+			->text('custom_fields')
 			->active_box()
 			->save_and_back();
 	}
@@ -139,52 +87,26 @@ class yf_category_editor {
 	/**
 	*/
 	function edit() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e("No id!");
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('No id');
 		}
-		$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
-		if (empty($cat_info["id"])) {
-			return _e("No such category!");
-		}
-		if ($_POST) {
-			if (!common()->_error_exists()) {
-				db()->UPDATE("categories", array(
-					"name"			=> _es($_POST["name"]),
-					"desc"			=> _es($_POST["desc"]),
-					"stpl_name"		=> _es($_POST["stpl_name"]),
-					"method_name"	=> _es($_POST["method_name"]),
-					"custom_fields"	=> _es($_POST["custom_fields"]),
-					"active"		=> (int)((bool)$_POST["active"]),
-				), "id=".intval($_GET["id"]));
-				common()->admin_wall_add(array('category updated: '.$cat_info['name'], $_GET['id']));
-				cache()->refresh("category_sets");
-				return js_redirect("./?object=".$_GET["object"]);
-			}
-		}
-		foreach ((array)$cat_info as $k => $v) {
-			$DATA[$k] = isset($_POST[$k]) ? $_POST[$k] : $v;
-		}
-		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"name"			=> _prepare_html($DATA["name"]),
-			"desc"			=> _prepare_html($DATA["desc"]),
-			"type"			=> _prepare_html($DATA["type"]),
-			"stpl_name"		=> _prepare_html($DATA["stpl_name"]),
-			"method_name"	=> _prepare_html($DATA["method_name"]),
-			"custom_fields"	=> _prepare_html($DATA["custom_fields"]),
-			"active"		=> $DATA["active"],
-			"active_box"	=> $this->_box("active", $DATA["active"]),
-			"back_link"		=> "./?object=".$_GET["object"]."&action=show",
-			"for_edit"		=> 1,
-		);
-		return common()->form2($replace)
-			->info("type")
-			->text("name")
-			->textarea("desc", "Description")
-			->text("stpl_name")
-			->text("method_name")
-			->text("custom_fields")
+		$a = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name'	=> 'trim|required|is_unique[categories.name]',
+			))
+			->db_update_if_ok('categories', array('name','desc','stpl_name','method_name','custom_fields','active'), 'id='.$id, array('on_after_update' => function() {
+				common()->admin_wall_add(array('category updated: '.$a['name'], $id));
+				cache()->refresh('category_sets');
+			}))
+			->info('type')
+			->text('name')
+			->text('desc', 'Description')
+			->text('stpl_name')
+			->text('method_name')
+			->text('custom_fields')
 			->active_box()
 			->save_and_back();
 	}
@@ -192,48 +114,48 @@ class yf_category_editor {
 	/**
 	*/
 	function delete() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
 		}
-		if (!empty($cat_info["id"])) {
-			db()->query("DELETE FROM ".db('categories')." WHERE id=".intval($_GET["id"])." LIMIT 1");
-			db()->query("DELETE FROM ".db('category_items')." WHERE cat_id=".intval($_GET["id"]));
+		if (!empty($cat_info['id'])) {
+			db()->query('DELETE FROM '.db('categories').' WHERE id='.intval($_GET['id']).' LIMIT 1');
+			db()->query('DELETE FROM '.db('category_items').' WHERE cat_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('category deleted: '.$cat_info['name'], $_GET['id']));
 		}
-		cache()->refresh(array("category_sets", "category_items"));
-		if ($_POST["ajax_mode"]) {
+		cache()->refresh(array('category_sets', 'category_items'));
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo $_GET["id"];
+			echo $_GET['id'];
 		} else {
-			return js_redirect("./?object=".$_GET["object"]);
+			return js_redirect('./?object='.$_GET['object']);
 		}
 	}
 
 	/**
 	*/
 	function clone_cat() {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
 		}
-		if (empty($cat_info["id"])) {
-			return _e("No such category!");
+		if (empty($cat_info['id'])) {
+			return _e('No such category!');
 		}
 		$sql = $cat_info;
-		unset($sql["id"]);
-		$sql["name"] = $sql["name"]."_clone";
+		unset($sql['id']);
+		$sql['name'] = $sql['name'].'_clone';
 
-		db()->INSERT("categories", $sql);
+		db()->INSERT('categories', $sql);
 		$NEW_CAT_ID = db()->INSERT_ID();
 
-		$old_items = $this->_recursive_get_cat_items($cat_info["id"]);
+		$old_items = $this->_recursive_get_cat_items($cat_info['id']);
 		foreach ((array)$old_items as $_id => $_info) {
-			unset($_info["id"]);
-			unset($_info["level"]);
-			$_info["cat_id"] = $NEW_CAT_ID;
+			unset($_info['id']);
+			unset($_info['level']);
+			$_info['cat_id'] = $NEW_CAT_ID;
 
-			db()->INSERT("category_items", $_info);
+			db()->INSERT('category_items', $_info);
 			$NEW_ITEM_ID = db()->INSERT_ID();
 
 			$_old_to_new[$_id] = $NEW_ITEM_ID;
@@ -241,34 +163,34 @@ class yf_category_editor {
 		}
 		foreach ((array)$_new_to_old as $_new_id => $_old_id) {
 			$_old_info = $old_items[$_old_id];
-			$_old_parent_id = $_old_info["parent_id"];
+			$_old_parent_id = $_old_info['parent_id'];
 			if (!$_old_parent_id) {
 				continue;
 			}
 			$_new_parent_id = intval($_old_to_new[$_old_parent_id]);
-			db()->UPDATE("category_items", array("parent_id" => $_new_parent_id), "id=".intval($_new_id));
+			db()->UPDATE('category_items', array('parent_id' => $_new_parent_id), 'id='.intval($_new_id));
 		}
 		common()->admin_wall_add(array('category cloned: from '.$cat_info['name'].' into '.$sql['name'], $_GET['id']));
-		cache()->refresh(array("category_sets", "category_items"));
-		return js_redirect("./?object=".$_GET["object"]);
+		cache()->refresh(array('category_sets', 'category_items'));
+		return js_redirect('./?object='.$_GET['object']);
 	}
 
 	/**
 	*/
 	function activate() {
-		if (!empty($_GET["id"])) {
-			$cat_info = db()->query_fetch("SELECT * FROM ".db('categories')." WHERE id=".intval($_GET["id"]));
+		if (!empty($_GET['id'])) {
+			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($cat_info)) {
-			db()->UPDATE("categories", array("active" => (int)!$cat_info["active"]), "id=".intval($cat_info["id"]));
+			db()->UPDATE('categories', array('active' => (int)!$cat_info['active']), 'id='.intval($cat_info['id']));
 			common()->admin_wall_add(array('category '.$cat_info['name'].' '.($cat_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		cache()->refresh(array("category_sets", "category_items"));
-		if ($_POST["ajax_mode"]) {
+		cache()->refresh(array('category_sets', 'category_items'));
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo ($cat_info["active"] ? 0 : 1);
+			echo ($cat_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect("./?object=".$_GET["object"]);
+			return js_redirect('./?object='.$_GET['object']);
 		}
 	}
 
