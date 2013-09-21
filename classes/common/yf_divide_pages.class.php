@@ -28,42 +28,46 @@ class yf_divide_pages {
 	/**
 	* Divide pages
 	*/
-	function go ($sql = "", $path = "", $type = "", $records_on_page = 0, $num_records = 0, $TPLS_PATH = "", $add_get_vars = 1) {
-		// Default path
+	function go ($sql = '', $path = '', $type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
+		if (is_array($path)) {
+			$extra = $path;
+			$path = '';
+		}
 		if (empty($path)) {
-			$path = "./?object=".$_GET["object"]."&action=".$_GET["action"]
-			.(isset($_GET["id"]) ? "&id=".$_GET["id"] : "");
+			$path = isset($extra['path']) ? $extra['path'] : './?object='.$_GET['object'].'&action='.$_GET['action'].(isset($_GET['id']) ? '&id='.$_GET['id'] : '');
 		}
-		// Set default type
 		if (!strlen($type)) {
-			$type = "blocks";
+			$type = isset($extra['type']) ? $extra['type'] : 'blocks';
 		}
-		// Set default templates path (MUST be with trailing slash)
-		if (!strlen($TPLS_PATH)) {
-			$TPLS_PATH = "system/divide_pages/";
+		$records_on_page= isset($extra['records_on_page']) ? $extra['records_on_page'] : ($records_on_page ? $records_on_page : 0);
+		$num_records	= isset($extra['num_records']) ? $extra['num_records'] : ($num_records ? $num_records : 0);
+		$tpls_path		= isset($extra['tpls_path']) ? $extra['tpls_path'] : ($tpls_path ? $tpls_path : ''); 
+		$add_get_vars	= isset($extra['add_get_vars']) ? $extra['add_get_vars'] : ($add_get_vars ? $add_get_vars : 1);
+		if (!strlen($tpls_path)) {
+			$tpls_path = 'system/divide_pages/';
 		}
-		// Total number of records
 		$total_records = 0;
-		if (empty($num_records) && !empty($sql)) {
+		if (is_array($sql)) {
+			$total_records = count($sql);
+		} elseif (empty($num_records) && !empty($sql)) {
 			$sql = trim($sql);
 			$_need_std_num_rows		= true;
 			// Try to rewrite query for more speed
 			if ($this->SQL_COUNT_REWRITE) {
 				$modified_sql = $sql;
-				if (preg_match("/\sGROUP\s+BY\s/ims", $sql)) {
-					$modified_sql = "SELECT COUNT(*) AS `0` FROM (".$sql.") AS __tmp";
-				} elseif (false === strpos($sql, " JOIN ")) {
-					$modified_sql = preg_replace("/^SELECT\s+.*?\s+FROM/i", "SELECT COUNT(*) AS `0` FROM", $sql);
+				if (preg_match('/\sGROUP\s+BY\s/ims', $sql)) {
+					$modified_sql = 'SELECT COUNT(*) AS `0` FROM ('.$sql.') AS __tmp';
+				} elseif (false === strpos($sql, ' JOIN ')) {
+					$modified_sql = preg_replace('/^SELECT\s+.*?\s+FROM/i', 'SELECT COUNT(*) AS `0` FROM', $sql);
 				}
 				if ($modified_sql != $sql) {
 					$_need_std_num_rows = false;
 				}
-				$modified_sql = preg_replace("/\sORDER BY .*? (ASC|DESC)\$/i", "", $modified_sql);
+				$modified_sql = preg_replace('/\sORDER BY .*? (ASC|DESC)$/i', '', $modified_sql);
 			}
 			if ($_need_std_num_rows) {
 				if (!empty($this->OVERRIDE_DB_OBJECT)) {
 					$obj = $this->OVERRIDE_DB_OBJECT;
-					
 	 				$total_records = $obj->query_num_rows($sql);
 				} else {
 	 				$total_records = db()->query_num_rows($sql);
@@ -96,7 +100,7 @@ class yf_divide_pages {
 		// NUmber of pages to show in one block
 		$pages_per_block = $this->PAGES_PER_BLOCK;
 		// Divide numbers of pages into blocks inside forum
-		if ($type == "blocks") {
+		if ($type == 'blocks') {
 			$items = array();
 			$total_pages= 0;
 			$curr_page	= 0;
@@ -131,50 +135,50 @@ class yf_divide_pages {
 				if ($end_page > $total_pages) {
 					$end_page = $total_pages + 1;
 				}
-				$_path = $path. ($add_get_vars ? _add_get(array("page")) : "");
+				$_path = $path. ($add_get_vars ? _add_get(array('page')) : '');
 				// Show link to first page
 				if ($curr_page > 1) {
-					$items["page_first"] = tpl()->parse($TPLS_PATH."page_first", array(
-						"link"	=> $_path. "&page=1",
+					$items['page_first'] = tpl()->parse($tpls_path.'page_first', array(
+						'link'	=> $_path. '&page=1',
 					));
 				}
 				// Show link to the previous block (if needed)
 				if ($curr_block > 1) {
-					$items["block_prev"] = tpl()->parse($TPLS_PATH."block_prev", array(
-						"link"				=> $_path. "&page=".(($curr_block - 1) * $pages_per_block),
-						"pages_per_block"	=> $pages_per_block,
+					$items['block_prev'] = tpl()->parse($tpls_path.'block_prev', array(
+						'link'				=> $_path. '&page='.(($curr_block - 1) * $pages_per_block),
+						'pages_per_block'	=> $pages_per_block,
 					));
 				}
 				// Show link to previous page
 				if ($curr_page > 1) {
-					$items["page_prev"] = tpl()->parse($TPLS_PATH."page_prev", array(
-						"link"	=> $_path. "&page=".intval($curr_page - 1),
+					$items['page_prev'] = tpl()->parse($tpls_path.'page_prev', array(
+						'link'	=> $_path. '&page='.intval($curr_page - 1),
 					));
 				}
 				// Process current block of pages
 				for ($k = $start_page; $k < $end_page; $k++) {
-					$items["pages"] .= tpl()->parse($TPLS_PATH.($curr_page == $k ? "page_current" : "page_other"), array(
-						"link"		=> $_path. "&page=".$k,
-						"page_num"	=> $k,
+					$items['pages'] .= tpl()->parse($tpls_path.($curr_page == $k ? 'page_current' : 'page_other'), array(
+						'link'		=> $_path. '&page='.$k,
+						'page_num'	=> $k,
 					));
 				}
 				// Show link to next page
 				if ($curr_page < $total_pages) {
-					$items["page_next"] = tpl()->parse($TPLS_PATH."page_next", array(
-						"link"	=> $_path. "&page=".($curr_page + 1),
+					$items['page_next'] = tpl()->parse($tpls_path.'page_next', array(
+						'link'	=> $_path. '&page='.($curr_page + 1),
 					));
 				}
 				// Show link to the next block (if needed)
 				if ($curr_block < $total_blocks) {
-					$items["block_next"] = tpl()->parse($TPLS_PATH."block_next", array(
-						"link"				=> $_path. "&page=".$k,
-						"pages_per_block"	=> $pages_per_block,
+					$items['block_next'] = tpl()->parse($tpls_path.'block_next', array(
+						'link'				=> $_path. '&page='.$k,
+						'pages_per_block'	=> $pages_per_block,
 					));
 				}
 				// Show link to last page
 				if ($total_pages > $pages_per_block && $curr_page < $total_pages) {
-					$items["page_last"] = tpl()->parse($TPLS_PATH."page_last", array(
-						"link"	=> $_path. "&page=".$total_pages,
+					$items['page_last'] = tpl()->parse($tpls_path.'page_last', array(
+						'link'	=> $_path. '&page='.$total_pages,
 					));
 				}
 				// Set first value for the database query
@@ -182,20 +186,20 @@ class yf_divide_pages {
 			}
 			// Process pages main template
 			$replace = array (
-				"total_pages"	=> intval($total_pages),
-				"total_records"	=> intval($total_records),
-				"record_first"	=> intval($first + 1),
-				"record_last"	=> intval($curr_page * $per_page),
-				"page_first"	=> isset($items["page_first"])	? $items["page_first"] : "",
-				"block_prev"	=> isset($items["block_prev"])	? $items["block_prev"] : "",
-				"page_prev"		=> isset($items["page_prev"])	? $items["page_prev"] : "",
-				"pages"			=> isset($items["pages"])		? $items["pages"] : "",
-				"page_next"		=> isset($items["page_next"])	? $items["page_next"] : "",
-				"block_next"	=> isset($items["block_next"])	? $items["block_next"] : "",
-				"page_last"		=> isset($items["page_last"])	? $items["page_last"] : "",
-				"current_page"	=> $curr_page,
+				'total_pages'	=> intval($total_pages),
+				'total_records'	=> intval($total_records),
+				'record_first'	=> intval($first + 1),
+				'record_last'	=> intval($curr_page * $per_page),
+				'page_first'	=> isset($items['page_first'])	? $items['page_first'] : '',
+				'block_prev'	=> isset($items['block_prev'])	? $items['block_prev'] : '',
+				'page_prev'		=> isset($items['page_prev'])	? $items['page_prev'] : '',
+				'pages'			=> isset($items['pages'])		? $items['pages'] : '',
+				'page_next'		=> isset($items['page_next'])	? $items['page_next'] : '',
+				'block_next'	=> isset($items['block_next'])	? $items['block_next'] : '',
+				'page_last'		=> isset($items['page_last'])	? $items['page_last'] : '',
+				'current_page'	=> $curr_page,
 			);
-			$pages = tpl()->parse($TPLS_PATH."main", $replace);
+			$pages = tpl()->parse($tpls_path.'main', $replace);
 		}
 		// First record could be only positive
 		if ($first < 0) {
@@ -207,21 +211,21 @@ class yf_divide_pages {
 			$total_pages = $old_total_pages;
 		}
 		// Generate SQL string to limit output
-		return array(
-			" LIMIT ".intval($first).", ".intval($per_page),
-			trim($pages),
-			intval($total_records),
-			intval($first), // Counter start value for the current page
-			intval($total_pages),
-			intval($limited_pages),
+		$result = array(
+			'limit_sql'		=> ' LIMIT '.intval($first).', '.intval($per_page),
+			'pages_html'	=> trim($pages),
+			'total_records'	=> intval($total_records),
+			'first_record'	=> intval($first), // Counter start value for the current page
+			'total_pages'	=> intval($total_pages),
+			'limited_pages' => intval($limited_pages),
 		);
+		return array_values($result); // Needed for compatibility with tons of legacy code, that using list(...) = divide_pages(...)
 	}
 
 	/**
 	* Divide pages using given array
 	*/
-	function go_with_array ($items_array = array(), $path = "", $type = "", $records_on_page = 0, $num_records = 0, $TPLS_PATH = "", $add_get_vars = 1) {
-		// Get total number of records
+	function go_with_array ($items_array = array(), $path = '', $type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1) {
 		$total = count($items_array);
 		// Number of records to show on one page
 		$records_on_page = intval($records_on_page);
@@ -229,10 +233,9 @@ class yf_divide_pages {
 		if (empty($per_page)) {
 			$per_page = 20;
 		}
-		// Do connect common pager
 		list(,$pages,) = $this->go(null, null, null, $per_page, $total);
 		if (count($items_array) > $per_page) {
-			$items_array = array_slice($items_array, (empty($_GET["page"]) ? 0 : intval($_GET["page"]) - 1) * $per_page, $per_page, true);
+			$items_array = array_slice($items_array, (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $per_page, $per_page, true);
 		}
 		return array(
 			$items_array,
