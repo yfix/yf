@@ -377,7 +377,7 @@ class yf_gallery_manage {
 		// Init zip object
 		main()->load_class_file("pclzip", "classes/");
 		if (class_exists("pclzip")) {
-			$this->ZIP_OBJ = &new pclzip($_archive_uploaded_path);
+			$this->ZIP_OBJ = new pclzip($_archive_uploaded_path);
 		}
 		// Check if library loaded
 		if (!is_object($this->ZIP_OBJ)) {

@@ -15,14 +15,6 @@ class yf_online_users_manager {
 	public $COLUMNS		= 4;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_online_users_manager () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		// Get info about sites vars

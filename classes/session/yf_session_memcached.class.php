@@ -15,13 +15,6 @@ class yf_session_memcached {
 	public $ITEMS_PREFIX		= "sess:";
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_session_memcached () {
-		return $this->__construct();
-	}
-
-	/**
 	* Constructor (PHP 5.x)
 	*/
 	function __construct () {

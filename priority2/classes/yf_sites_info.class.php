@@ -29,20 +29,6 @@ class yf_sites_info {
 	public $info = array();
 
 	/**
-	* Constructor (PHP 4.x)
-	*
-	* @access	public
-	* @return	void
-	*/
-	function yf_sites_info ($skip_files_info = false) {
-		return $this->__construct($skip_files_info);
-	}
-
-	/**
-	* Constructor (PHP 5.x)
-	*
-	* @access	public
-	* @return	void
 	*/
 	function __construct ($skip_files_info = false) {
 		$this->_get_info_from_db ();

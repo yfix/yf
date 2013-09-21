@@ -10,14 +10,6 @@
 class yf_custom_replace {
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_custom_replace () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		$this->_std_trigger = array(

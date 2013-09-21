@@ -203,18 +203,10 @@ class yf_forum {
 	/** @var int */
 	public $NUM_RSS 	= 10;
 
-
 	/**
-	* Constructor (PHP 4.x)
+	* YF module constructor
 	*/
-	function yf_forum ($INTERNAL_CALL = false) {
-		return $this->__construct($INTERNAL_CALL);
-	}
-
-	/**
-	* Constructor (PHP 5.x)
-	*/
-	function __construct ($INTERNAL_CALL = false) {
+	function _init () {
 		$GLOBALS['no_page_header'] = true;
 		// Forum class name (to allow changing only in one place)
 		define("FORUM_CLASS_NAME", "forum");
@@ -222,12 +214,6 @@ class yf_forum {
 		define("FORUM_MODULES_DIR", USER_MODULES_DIR.FORUM_CLASS_NAME."/");
 		// Internal super-admin mode
 		define("FORUM_INTERNAL_CALL", intval($INTERNAL_CALL));
-	}
-
-	/**
-	* YF module constructor
-	*/
-	function _init () {
 		// Set config vars (special name "_forum")
 		foreach ((array)$GLOBALS["PROJECT_CONF"]["_forum"] as $k => $v) {
 			$this->SETTINGS[$k] = $v;

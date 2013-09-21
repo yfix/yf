@@ -21,11 +21,11 @@ class yf_test_smtp_swift {
 		require_once YF_PATH. "libs/swift/lib/Swift.php";
 		require_once YF_PATH. "libs/swift/lib/Swift/Connection/SMTP.php";
 
-		$conn =& new Swift_Connection_SMTP($this->TEST_OBJ->SMTP_OPTIONS["smtp_host"], $this->TEST_OBJ->SMTP_OPTIONS["smtp_port"], $this->TEST_OBJ->SMTP_OPTIONS["smtp_secure"] == "tls" ? SWIFT_SMTP_ENC_TLS : false);
+		$conn = new Swift_Connection_SMTP($this->TEST_OBJ->SMTP_OPTIONS["smtp_host"], $this->TEST_OBJ->SMTP_OPTIONS["smtp_port"], $this->TEST_OBJ->SMTP_OPTIONS["smtp_secure"] == "tls" ? SWIFT_SMTP_ENC_TLS : false);
 		$conn->setUsername($this->TEST_OBJ->SMTP_OPTIONS["smtp_user_name"]);
 		$conn->setPassword($this->TEST_OBJ->SMTP_OPTIONS["smtp_password"]);
 
-		$swift	=& new Swift($conn);
+		$swift	= new Swift($conn);
 		$result = $swift->send(
 			new Swift_Message($this->TEST_OBJ->TEST_MAIL["subject"]." by swift", $this->TEST_OBJ->TEST_MAIL["text"])
 			, new Swift_Address($this->TEST_OBJ->TEST_MAIL["email_from"], $this->TEST_OBJ->TEST_MAIL["name_from"])

@@ -10,22 +10,10 @@
 class yf_pdf_page {
 
 	/**
-	* Constructor for PHP 4.x
-	* 
-	* @private
-	*/
-	function yf_pdf_page() {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor for PHP 5.x
-	* 
-	* @private
 	*/
 	function __construct() {
 		require_once (YF_PATH."libs/html2fpdf/html2fpdf.php");
-		$this->pdf_obj =& new html2fpdf();
+		$this->pdf_obj = new html2fpdf();
 	}
 
 	/**

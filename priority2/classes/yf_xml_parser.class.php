@@ -580,7 +580,7 @@ class xml_lite_parse {
 	
 	// CDATA element
 	function my_cdata_element( &$parser_obj, $data ) {
-		$this->my_data_element( &$parser_obj, $data );
+		$this->my_data_element( $parser_obj, $data );
 	}
 	
 	// Free memory

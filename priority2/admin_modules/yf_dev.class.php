@@ -898,7 +898,7 @@ class yf_dev{
 			// Init zip object
 			main()->load_class_file("pclzip", "classes/");
 			if (class_exists("pclzip")) {
-				$ZIP_OBJ = &new pclzip($archive_path);
+				$ZIP_OBJ = new pclzip($archive_path);
 				$result = $ZIP_OBJ->extract(PCLZIP_OPT_PATH, $extract_path); 
 			} 
 

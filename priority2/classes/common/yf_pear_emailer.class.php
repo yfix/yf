@@ -98,7 +98,7 @@ class yf_pear_emailer {
 			$this->set_options($options);
 		}
 		// Init mail mime class
-		$mime = & new Mail_mime($this->options['crlf']);
+		$mime = new Mail_mime($this->options['crlf']);
 		$mime->setHTMLBody($this->_html);
 		// Add attachment (currently only one allowed)
 		if (!empty($this->options['file_path'])) {
@@ -116,7 +116,7 @@ class yf_pear_emailer {
 			'head_charset' => $charset,
 		));
 		$hdrs = $mime->headers($this->headers);
-		$mail = & yf_pear_emailer::factory();
+		$mail = yf_pear_emailer::factory();
 		return $mail->send($this->options['to_email'], $hdrs, $body);
 	}
 

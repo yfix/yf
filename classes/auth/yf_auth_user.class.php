@@ -120,17 +120,8 @@ class yf_auth_user {
 	public $USER_PASSWORD_SALT		= "";
 
 	/**
-	* Constructor
-	*/
-	function yf_auth_user () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
-		// Get some settings
 		$cookie_life_time = conf('cookie_life_time');
 		if (isset($cookie_life_time)) {
 			$this->VAR_COOKIE_LIFE_TIME = 86400 * $cookie_life_time;

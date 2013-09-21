@@ -106,9 +106,7 @@ class yf_category_editor {
 					"type"			=> _es($_POST["type"]),
 				));
 				common()->admin_wall_add(array('category added: '.$_POST['name'], db()->insert_id()));
-				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("category_sets");
-				}
+				cache()->refresh("category_sets");
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -160,9 +158,7 @@ class yf_category_editor {
 					"active"		=> (int)((bool)$_POST["active"]),
 				), "id=".intval($_GET["id"]));
 				common()->admin_wall_add(array('category updated: '.$cat_info['name'], $_GET['id']));
-				if (main()->USE_SYSTEM_CACHE) {
-					cache()->refresh("category_sets");
-				}
+				cache()->refresh("category_sets");
 				return js_redirect("./?object=".$_GET["object"]);
 			}
 		}
@@ -205,10 +201,7 @@ class yf_category_editor {
 			db()->query("DELETE FROM ".db('category_items')." WHERE cat_id=".intval($_GET["id"]));
 			common()->admin_wall_add(array('category deleted: '.$cat_info['name'], $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("category_sets");
-			cache()->refresh("category_items");
-		}
+		cache()->refresh(array("category_sets", "category_items"));
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -256,10 +249,7 @@ class yf_category_editor {
 			db()->UPDATE("category_items", array("parent_id" => $_new_parent_id), "id=".intval($_new_id));
 		}
 		common()->admin_wall_add(array('category cloned: from '.$cat_info['name'].' into '.$sql['name'], $_GET['id']));
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("category_sets");
-			cache()->refresh("category_items");
-		}
+		cache()->refresh(array("category_sets", "category_items"));
 		return js_redirect("./?object=".$_GET["object"]);
 	}
 
@@ -273,9 +263,7 @@ class yf_category_editor {
 			db()->UPDATE("categories", array("active" => (int)!$cat_info["active"]), "id=".intval($cat_info["id"]));
 			common()->admin_wall_add(array('category '.$cat_info['name'].' '.($cat_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("category_sets");
-		}
+		cache()->refresh(array("category_sets", "category_items"));
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo ($cat_info["active"] ? 0 : 1);
@@ -317,9 +305,7 @@ class yf_category_editor {
 					"order"		=> intval($_POST["order"][$A["id"]]),
 				), "id=".intval($A["id"]));
 			}
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh("category_items");
-			}
+			cache()->refresh(array("category_sets", "category_items"));
 			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$_GET["id"]);
 		}
 		// Slice items according to the current page
@@ -607,9 +593,7 @@ class yf_category_editor {
 				"active"		=> intval($_POST["active"]),
 			));
 			common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh("category_items");
-			}
+			cache()->refresh(array("category_sets", "category_items"));
 			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$cat_info["id"]);
 		}
 		$this->_items_for_parent[0] = "-- TOP --";
@@ -700,9 +684,7 @@ class yf_category_editor {
 				"active"		=> intval($_POST["active"]),
 			), "id=".intval($item_info["id"]));
 			common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
-			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh("category_items");
-			}
+			cache()->refresh(array("category_sets", "category_items"));
 			return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$cat_info["id"]);
 		}
 		$this->_items_for_parent[0] = "-- TOP --";
@@ -784,9 +766,7 @@ class yf_category_editor {
 			db()->UPDATE("category_items", array("active" => (int)!$item_info["active"]), "id=".intval($item_info["id"]));
 			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh("category_items");
-		}
+		cache()->refresh(array("category_sets", "category_items"));
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo ($item_info["active"] ? 0 : 1);
@@ -806,9 +786,7 @@ class yf_category_editor {
 			db()->query("DELETE FROM ".db('category_items')." WHERE id=".intval($_GET["id"]));
 			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
 		}
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("category_items");
-		}
+		cache()->refresh(array("category_sets", "category_items"));
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET["id"];
@@ -828,9 +806,7 @@ class yf_category_editor {
 		unset($sql["id"]);
 		db()->INSERT("category_items", $sql);
 		common()->admin_wall_add(array('category item cloned from '.$item_info['id'].' into '.$item_info['id'], $_GET['id']));
-		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("category_items");
-		}
+		cache()->refresh(array("category_sets", "category_items"));
 		return js_redirect("./?object=".$_GET["object"]."&action=show_items&id=".$item_info["cat_id"]);
 	}
 

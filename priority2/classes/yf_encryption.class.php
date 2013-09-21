@@ -43,14 +43,6 @@ class yf_encryption {
 	public $_iv			= null;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_encryption () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		$crypto_use_mcrypt = conf('crypto_use_mcrypt');
@@ -79,7 +71,7 @@ class yf_encryption {
 			// Try Create new instanse of the driver class
 			$driver_loaded_class_name = main()->load_class_file($driver_name, "classes/crypto/");
 			if ($driver_loaded_class_name) {
-				$this->_cur_cipher = &new $driver_loaded_class_name();
+				$this->_cur_cipher = new $driver_loaded_class_name();
 			}
 			if (!is_object($this->_cur_cipher)) {
 				trigger_error("Wrong Cipher number \"".$this->USE_CIPHER."\"", E_USER_ERROR);

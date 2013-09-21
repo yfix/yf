@@ -912,7 +912,6 @@ class yf_server_commands{
 		
 		
 		$sql = rtrim($sql, ";");
-		$sql = str_replace("", "\", $sql);
 		
 		if($human){
 			$human_str = "-H --verbose";

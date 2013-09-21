@@ -234,7 +234,7 @@ class yf_send_mail {
 			$conn->setUsername($this->SMTP_OPTIONS["smtp_user_name"]);
 			$conn->setPassword($this->SMTP_OPTIONS["smtp_password"]);
 
-			$swift	=& new Swift($conn);
+			$swift	= new Swift($conn);
 			$result = $swift->send(
 				new Swift_Message($subject, $text)
 				, new Swift_Address($email_from, $name_from)

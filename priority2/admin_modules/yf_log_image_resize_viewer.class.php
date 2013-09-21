@@ -11,19 +11,10 @@ class yf_log_image_resize_viewer {
 
 	/** @var bool Filter on/off */
 	public $USE_FILTER		= true;
-
 	/** @var int Image size limit */
 	public $image_size_limit = 150000;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_log_image_resize_viewer () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		main()->USER_ID = $_GET['user_id'];

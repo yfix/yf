@@ -13,17 +13,8 @@ class yf_custom_design {
 	public $MAX_BG_IMAGE_SIZE = 512000;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_custom_design () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
-		// Init dir module
 		$this->DIR = main()->init_class("dir", "classes/");
 		// Do get font size and font types
 		$this->_font_sizes = main()->get_data("font_size");

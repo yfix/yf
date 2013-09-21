@@ -1,32 +1,18 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // User account management
 class yf_account {
 
-	//-----------------------------------------------------------------------------
-	// Constructor (PHP 4.x)
-	function yf_account () {
-		return $this->__construct();
-	}
-
-	//-----------------------------------------------------------------------------
-	// Constructor (PHP 5.x)
-	function __construct () {
+	// YF module constructor
+	function _init () {
 		// Account class name (to allow changing only in one place)
 		define("ACCOUNT_CLASS_NAME", "account");
 		// Sub modules folder
 		define("ACCOUNT_MODULES_DIR", USER_MODULES_DIR.ACCOUNT_CLASS_NAME."/");
-	}
 
-
-	//-----------------------------------------------------------------------------
-	// YF module constructor
-	function _init () {
 		$this->_active_modules = main()->get_data("user_modules");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
 		if (empty(main()->USER_ID)) {
@@ -55,7 +41,6 @@ class yf_account {
 		return tpl()->parse(__CLASS__."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display suggesting messages
 	function _show_suggesting_messages () {
 		$user_modules_methods = main()->call_class_method("user_modules", "admin_modules/", "_get_methods", array("private" => "1")); 
@@ -86,7 +71,6 @@ class yf_account {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Set status "read" for the given admin message
 	function read_admin_message () {
 		if (empty(main()->USER_ID)) {
@@ -116,56 +100,48 @@ class yf_account {
 	}
 
 	
-	//-----------------------------------------------------------------------------
 	// 
 	function favorite_add () {
 		$OBJ = $this->_load_sub_module("account_favorites");
 		return is_object($OBJ) ? $OBJ->_add() : "";
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function favorite_delete () {
 		$OBJ = $this->_load_sub_module("account_favorites");
 		return is_object($OBJ) ? $OBJ->_delete() : "";
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function edit_favorites () {
 		$OBJ = $this->_load_sub_module("account_favorites");
 		return is_object($OBJ) ? $OBJ->_edit() : "";
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function ignore_user () {
 		$OBJ = $this->_load_sub_module("account_ignore");
 		return is_object($OBJ) ? $OBJ->_ignore() : "";
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function unignore_user () {
 		$OBJ = $this->_load_sub_module("account_ignore");
 		return is_object($OBJ) ? $OBJ->_unignore() : "";
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function edit_ignored () {
 		$OBJ = $this->_load_sub_module("account_ignore");
 		return is_object($OBJ) ? $OBJ->_edit() : "";
 	}
 
-	//-----------------------------------------------------------------------------
 	// Firt step of auto changing email
 	function change_email () {
 		$OBJ = $this->_load_sub_module("account_change_email");
 		return is_object($OBJ) ? $OBJ->_first_step() : "";
 	}
 
-	//-----------------------------------------------------------------------------
 	// Email change confirmation step
 	function confirm_change_email () {
 		$OBJ = $this->_load_sub_module("account_change_email");

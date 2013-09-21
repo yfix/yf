@@ -13,14 +13,6 @@ class yf_se_keywords_manager {
 	public $USE_FILTER		= true;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_se_keywords_manager () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		$A = db()->query_fetch_all("SELECT * FROM ".db('search_engines')." ORDER BY id");

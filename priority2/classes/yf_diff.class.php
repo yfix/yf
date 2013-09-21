@@ -36,16 +36,8 @@ class yf_diff {
 	* @var int
 	*/
 	public $post_process = 1;
-	
-	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_diff () {
-		return $this->__construct();
-	}
 
 	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		// Server?

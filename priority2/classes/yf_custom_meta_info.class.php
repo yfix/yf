@@ -17,20 +17,6 @@ class yf_custom_meta_info {
 	public $AUTO_ADD_QUOTES	= true;
 
 	/**
-	* Constructor (PHP 4.x)
-	*
-	* @access	public
-	* @return	void
-	*/
-	function yf_custom_meta_info () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
-	*
-	* @access	public
-	* @return	void
 	*/
 	function __construct () {
 		// Get available replacement tags

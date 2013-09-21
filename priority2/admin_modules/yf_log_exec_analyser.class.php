@@ -59,14 +59,6 @@ class yf_log_exec_analyser {
 	public $STATS_ARCHIVE_DIR = "__logs/exec_stats_archive/";
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_log_exec_analyser () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		$this->_analyser_image_path = "./?object=".$_GET["object"]."&action=analyser_image";

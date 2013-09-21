@@ -54,7 +54,7 @@ class yf_convert_charset {
 			$text = iconv($string_char_set, $destination_char_set, $string);
 		} else {
 			require_once (YF_PATH. "libs/convertcharset/ConvertCharset.class.php");
-			$convert	=& new ConvertCharset();
+			$convert	= new ConvertCharset();
 			$text		= $convert->Convert($string, $string_char_set, $destination_char_set, false);
 		}
 		return $text ? $text : $t;

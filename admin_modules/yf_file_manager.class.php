@@ -419,7 +419,7 @@ class yf_file_manager {
 		// Initialize zip library
 		main()->load_class_file("pclzip", "classes/");
 		if (class_exists("pclzip")) {
-			$this->ZIP_OBJ = &new pclzip($new_zip_name);
+			$this->ZIP_OBJ = new pclzip($new_zip_name);
 		}
 		// Check if library loaded
 		if (!is_object($this->ZIP_OBJ)) {
@@ -467,7 +467,7 @@ class yf_file_manager {
 			// Initialize zip library
 			main()->load_class_file("pclzip", "classes/");
 			if (class_exists("pclzip")) {
-				$this->ZIP_OBJ = &new pclzip($file_name);
+				$this->ZIP_OBJ = new pclzip($file_name);
 			}
 			// Check if library loaded
 			if (!is_object($this->ZIP_OBJ)) {

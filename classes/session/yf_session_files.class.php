@@ -17,17 +17,8 @@ class yf_session_files {
 	public $FILES_PREFIX		= "sess_";
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_session_files () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
-		// Set absolute path to the session files
 		$this->SESSION_FILES_DIR = INCLUDE_PATH. $this->SESSION_FILES_DIR;
 	}
 

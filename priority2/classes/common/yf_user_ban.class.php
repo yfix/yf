@@ -15,20 +15,6 @@ class yf_user_ban {
 	public $BAN_CHECKS		= array();
 
 	/**
-	* Constructor (PHP 4.x)
-	* 
-	* @access	private
-	* @return	void
-	*/
-	function yf_user_ban () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
-	* 
-	* @access	private
-	* @return	void
 	*/
 	function __construct () {
 		// First we need to get all "user_ban" checks from db

@@ -9,14 +9,6 @@ class yf_polls_manager {
 //	public $USE_FILTER		= true;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_polls_manager () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		$this->POLL_OBJ = main()->init_class("poll", "modules/");

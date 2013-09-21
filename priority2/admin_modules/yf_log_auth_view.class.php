@@ -13,14 +13,6 @@ class yf_log_auth_view {
 	public $USE_FILTER		= true;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_log_auth_view () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
 		main()->USER_ID = $_GET['user_id'];
