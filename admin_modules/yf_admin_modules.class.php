@@ -97,7 +97,7 @@ class yf_admin_modules {
 */
 		return table($items)
 			->form('./?object='.$_GET['object'].'&action=mass_action')
-			->check_box('name')
+			->check_box('name', array('field_desc' => '#'))
 			->text('name')
 			->func('locations', function($field, $params, $row) {
 				foreach ((array)$field as $v) {
@@ -115,6 +115,7 @@ class yf_admin_modules {
 	* Delete module (uninstall)
 	*/
 	function mass_action () {
+/*
 		if (!empty($_POST['names'])) {
 			$in = '"'.implode('","', _es($_POST['names'])).'"';
 			if ($_POST['activate']) {
@@ -124,6 +125,7 @@ class yf_admin_modules {
 			}
 			cache()->refresh('admin_modules');
 		}
+*/
 		return js_redirect('./?object='.$_GET['object']);
 	}
 

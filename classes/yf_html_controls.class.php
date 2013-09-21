@@ -109,17 +109,30 @@ class yf_html_controls {
 	/**
 	* Simple check box
 	*/
-	function check_box ($box_name, $value, $selected = '', $add_str = '') {
-		$selected = strval($selected);
-		$value_to_display = '';
-		if (is_string($value)) {
-			$value_to_display = $value;
+	function check_box ($name = '', $value = '', $selected = '', $add_str = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+			$name = '';
 		}
-		if ($translate) {
-			$value_to_display = t($value_to_display);
+		if (!is_array($extra)) {
+			$extra = array();
 		}
-		$body .= '<label class="checkbox"><input type="checkbox" name="'.$box_name.'" id="'.$box_name.'_box" value="1" '.($selected ? 'checked' : '').' '.$add_str.'>'.$value_to_display. "</label>";
-		return $body;
+		$name = $extra['name'] ? $extra['name'] : 'checkbox';
+		$value = $extra['value'] ? $extra['value'] : $value;
+		$selected = $extra['selected'] ? $extra['selected'] : $selected;
+		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
+		$id = $extra['id'] ? $extra['id'] : $name;
+		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$translate = $extra['translate'] ? $extra['translate'] : true;
+
+		return '<label class="checkbox">'
+				.'<input type="checkbox" name="'.$name.'" id="'.$id.'" value="'.$value.'"'
+					.($selected ? ' checked="checked"' : '')
+					.($add_str ? ' '.$add_str : '')
+#					.($attrs ? $attrs : '')
+				.'>'
+				.($translate ? t($extra['desc']) : $extra['desc'])
+			.'</label>';
 	}
 
 	/**
@@ -418,5 +431,25 @@ class yf_html_controls {
 	function datetime_box2 ($name, $selected = '', $years = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
 		return $this->date_box2($name, $selected, $years, $add_str, $order, $show_text, $translate)
 			.$this->time_box2($name, $selected, $add_str, $show_text, $translate);
+	}
+
+	/**
+	* Simple input form control
+	*/
+	function input ($name = '', $value = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+			$name = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$name = $extra['name'] ? $extra['name'] : 'text';
+		$value = $extra['value'] ? $extra['value'] : $value;
+		$id = $extra['id'] ? $extra['id'] : $name;
+		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$type = $extra['type'] ? $extra['type'] : 'text';
+
+		return '<input type="'.$type.'" name="'.$name.'" id="'.$id.'" value="'.$value.'" placeholder="'.$desc.'"'.($attrs ? ' '.implode(' ', $attrs) : '').'>';
 	}
 }

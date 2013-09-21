@@ -795,35 +795,79 @@ class yf_table2 {
 	/**
 	*/
 	function check_box($name, $extra = array()) {
-// TODO
-//		$form = $this->_init_form();
 		return $this->func($name, function($field, $params, $row) {
-			return $obj;
+			$extra = $params['extra'];
+			if (!is_array($extra)) {
+				$extra = array();
+			}
+			if (!$extra['name']) {
+				$extra['name'] = $params['name'];
+			}
+			if (false === strpos($extra['name'], '[')) {
+				$extra['name'] .= '['.$field.']';
+			}
+			$extra['id'] = $field;
+			return _class('html_controls')->check_box($extra);
+		});
+	}
+
+	/**
+	*/
+	function radio_box($name, $extra = array()) {
+		return $this->func($name, function($field, $params, $row) {
+			$extra = $params['extra'];
+			if (!is_array($extra)) {
+				$extra = array();
+			}
+			if (!$extra['name']) {
+				$extra['name'] = $params['name'];
+			}
+			if (false === strpos($extra['name'], '[')) {
+				$extra['name'] .= '['.$field.']';
+			}
+			$extra['id'] = $field;
+			return _class('html_controls')->radio_box($extra);
+		});
+	}
+
+	/**
+	*/
+	function input($name, $extra = array()) {
+		return $this->func($name, function($field, $params, $row) {
+			$extra = $params['extra'];
+			if (!is_array($extra)) {
+				$extra = array();
+			}
+			if (!$extra['name']) {
+				$extra['name'] = $params['name'];
+			}
+			if (false === strpos($extra['name'], '[')) {
+				$extra['name'] .= '['.$field.']';
+			}
+			$extra['id'] = $field;
+			return _class('html_controls')->input($extra);
 		});
 	}
 
 	/**
 	*/
 	function select_box($name, $extra = array()) {
-// TODO
-//		$form = $this->_init_form();
-		return $this->func($name, function($field, $params, $row) { return $obj; } );
-	}
-
-	/**
-	*/
-	function radio_box($name, $extra = array()) {
-// TODO
-//		$form = $this->_init_form();
-		return $this->func($name, function($field, $params, $row) { return $obj; } );
-	}
-
-	/**
-	*/
-	function input($name, $extra = array()) {
-// TODO
-//		$form = $this->_init_form();
-		return $this->func($name, function($field, $params, $row) { return $obj; } );
+/*
+		return $this->func($name, function($field, $params, $row) {
+			$extra = $params['extra'];
+			if (!is_array($extra)) {
+				$extra = array();
+			}
+			if (!$extra['name']) {
+				$extra['name'] = $params['name'];
+			}
+			if (false === strpos($extra['name'], '[')) {
+				$extra['name'] .= '['.$field.']';
+			}
+			$extra['id'] = $field;
+			return _class('html_controls')->select_box($extra);
+		});
+*/
 	}
 
 	/**
