@@ -370,13 +370,13 @@ class yf_menus_editor {
 			->text('type_id', 'Item type', array('data' => $this->_item_types))
 			->func('user_groups', function($field, $params, $row) {
 				$extra = $params['extra'];
-				$groups = array();
+				$out = array();
 				foreach (explode(',', trim(trim($field,','))) as $k => $v) {
 					if (!empty($extra['data'][$v])) {
-						$groups[$v] = $extra['data'][$v];
+						$out[$v] = $extra['data'][$v];
 					}
 				}
-				return $groups ? implode('<br />', $groups) : t('--All--');
+				return $out ? implode('<br />', $out) : t('--All--');
 			}, array(
 				'desc' => 'Groups',
 				'data' => $menu_info['type'] == 'admin' ? $this->admin_groups : $this->user_groups
