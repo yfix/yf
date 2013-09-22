@@ -454,6 +454,12 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
+				if (!isset($extra['nowrap'])) {
+					$extra['nowrap'] = true;
+				}
+				if ($extra['nowrap']) {
+					$text = str_replace(' ', '&nbsp;', $text);
+				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
@@ -461,7 +467,7 @@ class yf_table2 {
 					if ($extra['hidden_toggle']) {
 						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 					}
-					$body = '<a href="'.$link.'" class="btn btn-mini"'.$a_class. $attrs. '>'.str_replace(' ', '&nbsp;', $text).'</a>';
+					$body = '<a href="'.$link.'" class="btn btn-mini"'.$a_class. $attrs. '>'.$text.'</a>';
 				} else {
 					$body = $text;
 				}

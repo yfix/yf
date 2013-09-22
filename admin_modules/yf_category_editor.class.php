@@ -204,16 +204,21 @@ class yf_category_editor {
 		$_GET['id'] = $cat_info['id'];
 		$cat_items = $this->_recursive_get_cat_items($_GET['id']);
 		if ($_POST) {
+			$batch = array();
 			foreach ((array)$cat_items as $a) {
 				if (!isset($_POST['name'][$a['id']])) {
 					continue;
 				}
-				db()->update('category_items', db()->es(array(
+				$batch[$a['id']] = array(
+					'id'	=> $a['id'],
 					'name'	=> $_POST['name'][$a['id']],
 					'url'	=> $_POST['url'][$a['id']],
-				)), 'id='.intval($a['id']));
+				);
 			}
-			cache()->refresh('category_items');
+			if ($batch) {
+				db()->update_batch('category_items', db()->es($batch));
+				cache()->refresh('category_items');
+			}
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
 		return table($cat_items, array('pager_records_on_page' => $this->ITEMS_PER_PAGE, 'condensed' => 1))
@@ -236,7 +241,6 @@ class yf_category_editor {
 				));
 			})
 			->text('other_info')
-			->text('order')
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_item&id=%d')
@@ -260,6 +264,7 @@ class yf_category_editor {
 		));
 		if ($_POST) {
 			$cur_items = $this->_auto_update_items_orders($cat_info['id']);
+			$batch = array();
 			foreach ((array)$_POST['items'] as $order_id => $info) {
 				$item_id = (int)$info['item_id'];
 				if (!$item_id || !isset($items[$item_id])) {
@@ -267,18 +272,23 @@ class yf_category_editor {
 				}
 				$parent_id = (int)$info['parent_id'];
 				$new_data = array(
+					'id'		=> $item_id,
 					'order'		=> intval($order_id),
 					'parent_id'	=> intval($parent_id),
 				);
 				$old_info = $cur_items[$item_id];
 				$old_data = array(
+					'id'		=> $item_id,
 					'order'		=> intval($old_info['order']),
 					'parent_id'	=> intval($old_info['parent_id']),
 				);
 				if ($new_data != $old_data) {
-					db()->update('category_items', $new_data, 'id='.$item_id);
-					common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
+					$batch[$item_id] = $new_data;
 				}
+			}
+			if ($batch) {
+				db()->update_batch('category_items', db()->es($batch));
+				common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
 			}
 			main()->NO_GRAPHICS = true;
 			return false;
