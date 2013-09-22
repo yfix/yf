@@ -594,6 +594,22 @@ class yf_table2 {
 
 	/**
 	*/
+	function data_array($name, $extra = array()) {
+		$this->form();
+		return $this->func($name, function($field, $params, $row) {
+			$extra = $params['extra'];
+			$out = array();
+			foreach (explode(',', trim(trim($field,','))) as $k => $v) {
+				if (!empty($extra['data'][$v])) {
+					$out[$v] = $extra['data'][$v];
+				}
+			}
+			return $out ? implode('<br />', $out) : t('--All--');
+		}, $extra);
+	}
+
+	/**
+	*/
 	function btn($name, $link, $extra = array()) {
 		$this->_buttons[] = array(
 			'type'	=> __FUNCTION__,
@@ -878,18 +894,40 @@ class yf_table2 {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
-			if (!is_array($extra)) {
-				$extra = array();
+			if ($extra['padding'] && $row['level']) {
+				$padding = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>';
 			}
-			if (!$extra['name']) {
-				$extra['name'] = $params['name'];
+			return $padding. _class('html_controls')->input(array(
+				'id'	=> 'input_'.$params['name'].'_'.$row['id'],
+				'name'	=> $params['name'].'['.$row['id'].']',
+				'desc'	=> $params['name'],
+				'value'	=> $field,
+			) + (array)$extra);
+		}, $extra);
+	}
+
+	/**
+	*/
+	function icon($name, $extra = array()) {
+		$this->form();
+		return $this->func($name, function($field, $params, $row) {
+// TODO: finish with icons
+/*
+			$icon_src = '';
+			if ($A['icon']) {
+				$_icon_path = $this->ICONS_PATH. $A['icon'];
+				if (file_exists(INCLUDE_PATH. $_icon_path)) {
+					$icon_src = WEB_PATH. $_icon_path;
+				}
 			}
-			if (false === strpos($extra['name'], '[')) {
-				$extra['name'] .= '['.$field.']';
+			// Icon class from bootstrap icon class names 
+			$icon_class = '';
+			if ($A['icon'] && (strpos($A['icon'], '.') === false)) {
+				$icon_class = $A['icon'];
 			}
-			$extra['id'] = 'input_'.$field;
-			return _class('html_controls')->input($extra);
-		});
+*/
+			return $out;
+		}, $extra);
 	}
 
 	/**
@@ -909,7 +947,7 @@ class yf_table2 {
 			}
 			$extra['id'] = 'checkbox_'.$field;
 			return _class('html_controls')->check_box($extra);
-		});
+		}, $extra);
 	}
 
 	/**
@@ -930,7 +968,7 @@ class yf_table2 {
 			$extra['id'] = 'radiobox_'.$field;
 // TODO: test me and maybe upgrade _class('html_controls')->radio_box()
 			return _class('html_controls')->radio_box($extra);
-		});
+		}, $extra);
 	}
 
 	/**
@@ -951,7 +989,7 @@ class yf_table2 {
 			$extra['id'] = 'selectbox_'.$field;
 // TODO: test me and maybe upgrade _class('html_controls')->select_box()
 			return _class('html_controls')->select_box($extra);
-		});
+		}, $extra);
 	}
 
 	/**

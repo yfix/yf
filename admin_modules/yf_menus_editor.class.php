@@ -332,52 +332,11 @@ class yf_menus_editor {
 		}
 		return table($menu_items, array('pager_records_on_page' => 10000, 'condensed' => 1))
 			->form()
-			->func('icon', function($field, $params, $row){
-// TODO: finish with icons
-/*
-				$icon_src = '';
-				if ($A['icon']) {
-					$_icon_path = $this->ICONS_PATH. $A['icon'];
-					if (file_exists(INCLUDE_PATH. $_icon_path)) {
-						$icon_src = WEB_PATH. $_icon_path;
-					}
-				}
-				// Icon class from bootstrap icon class names 
-				$icon_class = '';
-				if ($A['icon'] && (strpos($A['icon'], '.') === false)) {
-					$icon_class = $A['icon'];
-				}
-*/
-				return $out;
-			})
-			->func('name', function($field, $params, $row) {
-				$padding = $row['level'] ? '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>' : '';
-				return $padding. _class('html_controls')->input(array(
-					'id'	=> 'input_'.$params['name'].'_'.$row['id'],
-					'name'	=> $params['name'].'['.$row['id'].']',
-					'desc'	=> $params['name'],
-					'value'	=> $field,
-				));
-			})
-			->func('location', function($field, $params, $row) {
-				return _class('html_controls')->input(array(
-					'id'	=> 'input_'.$params['name'].'_'.$row['id'],
-					'name'	=> $params['name'].'['.$row['id'].']',
-					'desc'	=> $params['name'],
-					'value'	=> $field,
-				));
-			})
+			->icon('icon')
+			->input('name', array('padding' => true))
+			->input('location')
 			->text('type_id', 'Item type', array('data' => $this->_item_types))
-			->func('user_groups', function($field, $params, $row) {
-				$extra = $params['extra'];
-				$out = array();
-				foreach (explode(',', trim(trim($field,','))) as $k => $v) {
-					if (!empty($extra['data'][$v])) {
-						$out[$v] = $extra['data'][$v];
-					}
-				}
-				return $out ? implode('<br />', $out) : t('--All--');
-			}, array(
+			->data_array('user_groups', array(
 				'desc' => 'Groups',
 				'data' => $menu_info['type'] == 'admin' ? $this->admin_groups : $this->user_groups
 			))
