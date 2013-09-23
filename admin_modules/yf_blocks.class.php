@@ -259,49 +259,7 @@ class yf_blocks {
 			return _e('No such block!');
 		}
 		$_GET['id'] = $block_info['id'];
-/*
-		if ($block_info['type'] == 'admin') {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
-		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
-		}
-		$Q = db()->query('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
-		while ($A = db()->fetch_assoc($Q)) {
-			$replace2 = array(
-				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'rule_type'		=> _prepare_html($A['rule_type']),
-				'user_groups'	=> $this->_multi_db_to_show($A['user_groups'],	$this->_groups),
-				'methods'		=> $this->_multi_db_to_show($A['methods'],		$this->_methods),
-				'themes'		=> $this->_multi_db_to_show($A['themes'],		$this->_themes),
-				'locales'		=> $this->_multi_db_to_show($A['locales'],		$this->_locales),
-				'site_ids'		=> $this->_multi_db_to_show($A['site_ids'],		$this->_sites),
-				'server_ids'	=> $this->_multi_db_to_show($A['server_ids'],	$this->_servers),
-				'active'		=> intval($A['active']),
-				'order'			=> intval($A['order']),
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_rule&id='.$A['id'],
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_rule&id='.$A['id'],
-				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_rule&id='.$A['id'],
-				'active_link'	=> $block_info['name'] == 'center_area' && $block_info['type'] == 'admin' ? '' : './?object='.$_GET['object'].'&action=activate_rule&id='.$A['id'],
-			);
-			$items .= tpl()->parse($_GET['object'].'/rules_item', $replace2);
-		}
-		$replace = array(
-			'items'			=> $items,
-			'block_name'	=> $block_info['name'],
-			'block_type'	=> $block_info['type'] == 'admin' ? 'admin' : 'user',
-			'add_rule_link'	=> './?object='.$_GET['object'].'&action=add_rule&id='.$_GET['id'],
-			'back_link'		=> './?object='.$_GET['object'].'&action=show',
-			'modules_link'	=> './?object='.($block_info['type'] == 'admin' ? 'admin_modules' : 'user_modules'),
-			'groups_link'	=> './?object='.($block_info['type'] == 'admin' ? 'admin_groups' : 'user_groups'),
-			'themes_link'	=> './?object=template_editor',
-			'locales_link'	=> './?object=locale_editor',
-			'sites_link'	=> './?object=manage_sites',
-			'servers_link'	=> './?object=manage_servers',
-		);
-		return tpl()->parse($_GET['object'].'/rules_main', $replace);
-*/
+
 		$methods = $this->{'_'.$block_info['type'].'_methods'};
 		$groups = $this->{'_'.$block_info['type'].'_groups'};
 
@@ -323,18 +281,17 @@ class yf_blocks {
 	}
 
 	/**
-	* Add rule form
 	*/
 	function add_rule () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e("No id!");
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return _e('No id!');
 		}
-		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
-		if (empty($block_info["id"])) {
-			return _e("No such block!");
+		$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
+		if (empty($block_info['id'])) {
+			return _e('No such block!');
 		}
-		if ($block_info["type"] == "admin") {
+		if ($block_info['type'] == 'admin') {
 			$this->_groups	= $this->_admin_groups;
 			$this->_methods = $this->_admin_methods;
 		} else {
@@ -343,81 +300,80 @@ class yf_blocks {
 		}
 		if (!empty($_POST)) {
 			if (!common()->_error_exists()) {
-				db()->INSERT("block_rules", array(
-					"block_id"		=> intval($_GET["id"]),
-					"rule_type"		=> $_POST["rule_type"] == "ALLOW" ? "ALLOW" : "DENY",
-					"methods"		=> _es($this->_multi_html_to_db($_POST["methods"])),
-					"user_groups"	=> _es($this->_multi_html_to_db($_POST["user_groups"])),
-					"themes"		=> _es($this->_multi_html_to_db($_POST["themes"])),
-					"locales"		=> _es($this->_multi_html_to_db($_POST["locales"])),
-					"site_ids"		=> _es($this->_multi_html_to_db($_POST["site_ids"])),
-					"server_ids"	=> _es($this->_multi_html_to_db($_POST["server_ids"])),
-					"order"			=> intval($_POST["order"]),
-					"active"		=> intval($_POST["active"]),
+				db()->INSERT('block_rules', array(
+					'block_id'		=> intval($_GET['id']),
+					'rule_type'		=> $_POST['rule_type'] == 'ALLOW' ? 'ALLOW' : 'DENY',
+					'methods'		=> _es($this->_multi_html_to_db($_POST['methods'])),
+					'user_groups'	=> _es($this->_multi_html_to_db($_POST['user_groups'])),
+					'themes'		=> _es($this->_multi_html_to_db($_POST['themes'])),
+					'locales'		=> _es($this->_multi_html_to_db($_POST['locales'])),
+					'site_ids'		=> _es($this->_multi_html_to_db($_POST['site_ids'])),
+					'server_ids'	=> _es($this->_multi_html_to_db($_POST['server_ids'])),
+					'order'			=> intval($_POST['order']),
+					'active'		=> intval($_POST['active']),
 				));
 				common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
-				cache()->refresh("blocks_rules");
-				return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
+				cache()->refresh('blocks_rules');
+				return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
 			}
 		}
 		$DATA = $_POST;
-		foreach (array("methods", "user_groups", "themes", "locales", "site_ids", "server_ids") as $k) {
+		foreach (array('methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids') as $k) {
 			$DATA[$k] = $this->_multi_db_to_html($DATA[$k]);
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"for_edit"			=> 0,
-			"error_message"		=> _e(),
-			"block_name"		=> _prepare_html($block_info["name"]),
-			"order"				=> intval($DATA["order"]),
-			"rule_type"			=> $DATA["rule_type"],
-			"rule_type_box"		=> $this->_box("rule_type",		"DENY"),
-			"methods_box"		=> $this->_box("methods",		"-- ALL --"),
-			"user_groups_box"	=> $this->_box("user_groups",	array(""=>"-- ALL --")),
-			"themes_box"		=> $this->_box("themes",		array(""=>"-- ALL --")),
-			"locales_box"		=> $this->_box("locales",		array(""=>"-- ALL --")),
-			"site_ids_box"		=> $this->_box("site_ids",		array(""=>"-- ALL --")),
-			"server_ids_box"	=> $this->_box("server_ids",	array(""=>"-- ALL --")),
-			"active_box"		=> $this->_box("active", 		$DATA["active"]),
-			"active"			=> $DATA["active"],
-			"back_link"			=> "./?object=".$_GET["object"]."&action=show_rules&id=".intval($block_info["id"]),
-			"modules_link"		=> "./?object=".($block_info["type"] == "admin" ? "admin_modules" : "user_modules"),
-			"groups_link"		=> "./?object=".($block_info["type"] == "admin" ? "admin_groups" : "user_groups"),
-			"themes_link"		=> "./?object=template_editor",
-			"locales_link"		=> "./?object=locale_editor",
-			"sites_link"		=> "./?object=manage_sites",
-			"servers_link"		=> "./?object=manage_servers",
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'for_edit'			=> 0,
+			'error_message'		=> _e(),
+			'block_name'		=> _prepare_html($block_info['name']),
+			'order'				=> intval($DATA['order']),
+			'rule_type'			=> $DATA['rule_type'],
+			'rule_type_box'		=> $this->_box('rule_type',		'DENY'),
+			'methods_box'		=> $this->_box('methods',		'-- ALL --'),
+			'user_groups_box'	=> $this->_box('user_groups',	array(''=>'-- ALL --')),
+			'themes_box'		=> $this->_box('themes',		array(''=>'-- ALL --')),
+			'locales_box'		=> $this->_box('locales',		array(''=>'-- ALL --')),
+			'site_ids_box'		=> $this->_box('site_ids',		array(''=>'-- ALL --')),
+			'server_ids_box'	=> $this->_box('server_ids',	array(''=>'-- ALL --')),
+			'active_box'		=> $this->_box('active', 		$DATA['active']),
+			'active'			=> $DATA['active'],
+			'back_link'			=> './?object='.$_GET['object'].'&action=show_rules&id='.intval($block_info['id']),
+			'modules_link'		=> './?object='.($block_info['type'] == 'admin' ? 'admin_modules' : 'user_modules'),
+			'groups_link'		=> './?object='.($block_info['type'] == 'admin' ? 'admin_groups' : 'user_groups'),
+			'themes_link'		=> './?object=template_editor',
+			'locales_link'		=> './?object=locale_editor',
+			'sites_link'		=> './?object=manage_sites',
+			'servers_link'		=> './?object=manage_servers',
 		);
 		return common()->form2($replace)
-			->allow_deny_box("rule_type")
-			->box("methods_box","Methods","modules_link")
-			->box("user_groups_box","User Groups","groups_link")
-			->box("themes_box","Themes","themes_link")
-			->box("locales_box","Locales","locales_link")
-			->box("site_ids_box","Sites","sites_link")
-			->box("server_ids_box","Servers","servers_link")
-			->number("order","Rule Processing Order")
+			->allow_deny_box('rule_type')
+			->box('methods_box','Methods','modules_link')
+			->box('user_groups_box','User Groups','groups_link')
+			->box('themes_box','Themes','themes_link')
+			->box('locales_box','Locales','locales_link')
+			->box('site_ids_box','Sites','sites_link')
+			->box('server_ids_box','Servers','servers_link')
+			->number('order','Rule Processing Order')
 			->active_box()
 			->save_and_back();
 	}
 
 	/**
-	* Edit rule form
 	*/
 	function edit_rule () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return _e("No id!");
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return _e('No id!');
 		}
-		$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
-		if (empty($rule_info["id"])) {
-			return _e("No such rule!");
+		$rule_info = db()->query_fetch('SELECT * FROM '.db('block_rules').' WHERE id='.intval($_GET['id']));
+		if (empty($rule_info['id'])) {
+			return _e('No such rule!');
 		}
-		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
-		if (empty($block_info["id"])) {
-			return _e("No such block!");
+		$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($rule_info['block_id']));
+		if (empty($block_info['id'])) {
+			return _e('No such block!');
 		}
-		if ($block_info["type"] == "admin") {
+		if ($block_info['type'] == 'admin') {
 			$this->_groups	= $this->_admin_groups;
 			$this->_methods = $this->_admin_methods;
 		} else {
@@ -426,20 +382,20 @@ class yf_blocks {
 		}
 		if (!empty($_POST)) {
 			if (!common()->_error_exists()) {
-				db()->UPDATE("block_rules", array(
-					"rule_type"		=> $_POST["rule_type"] == "ALLOW" ? "ALLOW" : "DENY",
-					"methods"		=> _es($this->_multi_html_to_db($_POST["methods"])),
-					"user_groups"	=> _es($this->_multi_html_to_db($_POST["user_groups"])),
-					"themes"		=> _es($this->_multi_html_to_db($_POST["themes"])),
-					"locales"		=> _es($this->_multi_html_to_db($_POST["locales"])),
-					"site_ids"		=> _es($this->_multi_html_to_db($_POST["site_ids"])),
-					"server_ids"	=> _es($this->_multi_html_to_db($_POST["server_ids"])),
-					"order"			=> intval($_POST["order"]),
-					"active"		=> intval($_POST["active"]),
-				), "id=".intval($_GET["id"]));
+				db()->UPDATE('block_rules', array(
+					'rule_type'		=> $_POST['rule_type'] == 'ALLOW' ? 'ALLOW' : 'DENY',
+					'methods'		=> _es($this->_multi_html_to_db($_POST['methods'])),
+					'user_groups'	=> _es($this->_multi_html_to_db($_POST['user_groups'])),
+					'themes'		=> _es($this->_multi_html_to_db($_POST['themes'])),
+					'locales'		=> _es($this->_multi_html_to_db($_POST['locales'])),
+					'site_ids'		=> _es($this->_multi_html_to_db($_POST['site_ids'])),
+					'server_ids'	=> _es($this->_multi_html_to_db($_POST['server_ids'])),
+					'order'			=> intval($_POST['order']),
+					'active'		=> intval($_POST['active']),
+				), 'id='.intval($_GET['id']));
 				common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
-				cache()->refresh("blocks_rules");
-				return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
+				cache()->refresh('blocks_rules');
+				return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
 			}
 		}
 		$DATA = $rule_info;
@@ -448,116 +404,113 @@ class yf_blocks {
 				$DATA[$k] = $v;
 			}
 		}
-		foreach (array("methods", "user_groups", "themes", "locales", "site_ids", "server_ids") as $k) {
+		foreach (array('methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids') as $k) {
 			$DATA[$k] = $this->_multi_db_to_html($DATA[$k]);
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"],
-			"for_edit"			=> 1,
-			"error_message"		=> _e(),
-			"block_name"		=> _prepare_html($block_info["name"]),
-			"order"				=> intval($DATA["order"]),
-			"rule_type"			=> $DATA["rule_type"],
-			"rule_type_box"		=> $this->_box("rule_type",		$DATA["rule_type"]),
-			"methods_box"		=> $this->_box("methods",		$DATA["methods"]),
-			"user_groups_box"	=> $this->_box("user_groups",	$DATA["user_groups"]),
-			"themes_box"		=> $this->_box("themes",		$DATA["themes"]),
-			"locales_box"		=> $this->_box("locales",		$DATA["locales"]),
-			"site_ids_box"		=> $this->_box("site_ids",		$DATA["site_ids"]),
-			"server_ids_box"	=> $this->_box("server_ids",	$DATA["server_ids"]),
-			"active_box"		=> $this->_box("active", 		$DATA["active"]),
-			"active"			=> $DATA["active"],
-			"back_link"			=> "./?object=".$_GET["object"]."&action=show_rules&id=".intval($block_info["id"]),
-			"modules_link"		=> "./?object=".($block_info["type"] == "admin" ? "admin_modules" : "user_modules"),
-			"groups_link"		=> "./?object=".($block_info["type"] == "admin" ? "admin_groups" : "user_groups"),
-			"themes_link"		=> "./?object=template_editor",
-			"locales_link"		=> "./?object=locale_editor",
-			"sites_link"		=> "./?object=manage_sites",
-			"servers_link"		=> "./?object=manage_servers",
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'for_edit'			=> 1,
+			'error_message'		=> _e(),
+			'block_name'		=> _prepare_html($block_info['name']),
+			'order'				=> intval($DATA['order']),
+			'rule_type'			=> $DATA['rule_type'],
+			'rule_type_box'		=> $this->_box('rule_type',		$DATA['rule_type']),
+			'methods_box'		=> $this->_box('methods',		$DATA['methods']),
+			'user_groups_box'	=> $this->_box('user_groups',	$DATA['user_groups']),
+			'themes_box'		=> $this->_box('themes',		$DATA['themes']),
+			'locales_box'		=> $this->_box('locales',		$DATA['locales']),
+			'site_ids_box'		=> $this->_box('site_ids',		$DATA['site_ids']),
+			'server_ids_box'	=> $this->_box('server_ids',	$DATA['server_ids']),
+			'active_box'		=> $this->_box('active', 		$DATA['active']),
+			'active'			=> $DATA['active'],
+			'back_link'			=> './?object='.$_GET['object'].'&action=show_rules&id='.intval($block_info['id']),
+			'modules_link'		=> './?object='.($block_info['type'] == 'admin' ? 'admin_modules' : 'user_modules'),
+			'groups_link'		=> './?object='.($block_info['type'] == 'admin' ? 'admin_groups' : 'user_groups'),
+			'themes_link'		=> './?object=template_editor',
+			'locales_link'		=> './?object=locale_editor',
+			'sites_link'		=> './?object=manage_sites',
+			'servers_link'		=> './?object=manage_servers',
 		);
 		return common()->form2($replace)
-			->allow_deny_box("rule_type")
-			->box("methods_box","Methods","modules_link")
-			->box("user_groups_box","User Groups","groups_link")
-			->box("themes_box","Themes","themes_link")
-			->box("locales_box","Locales","locales_link")
-			->box("site_ids_box","Sites","sites_link")
-			->box("server_ids_box","Servers","servers_link")
-			->number("order","Rule Processing Order")
+			->allow_deny_box('rule_type')
+			->box('methods_box','Methods','modules_link')
+			->box('user_groups_box','User Groups','groups_link')
+			->box('themes_box','Themes','themes_link')
+			->box('locales_box','Locales','locales_link')
+			->box('site_ids_box','Sites','sites_link')
+			->box('server_ids_box','Servers','servers_link')
+			->number('order','Rule Processing Order')
 			->active_box()
 			->save_and_back();
 	}
 
 	/**
-	* Delete single rule
 	*/
 	function delete_rule () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$rule_info = db()->query_fetch('SELECT * FROM '.db('block_rules').' WHERE id='.intval($_GET['id']));
 		}
-		if (!empty($rule_info["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
+		if (!empty($rule_info['id'])) {
+			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($rule_info['block_id']));
 		}
-		if (!empty($block_info["id"])) {
-			db()->query("DELETE FROM ".db('block_rules')." WHERE id=".intval($_GET["id"])." LIMIT 1");
+		if (!empty($block_info['id'])) {
+			db()->query('DELETE FROM '.db('block_rules').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			common()->admin_wall_add(array('block rule deleted for: '.$block_info['name'], $_GET['id']));
 		}
-		cache()->refresh("blocks_rules");
-		if ($_POST["ajax_mode"]) {
+		cache()->refresh('blocks_rules');
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo $_GET["id"];
+			echo $_GET['id'];
 		} else {
-			return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
+			return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
 		}
 	}
 
 	/**
-	* Clone block rule
 	*/
 	function clone_rule () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$rule_info = db()->query_fetch('SELECT * FROM '.db('block_rules').' WHERE id='.intval($_GET['id']));
 		}
-		if (!empty($rule_info["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
+		if (!empty($rule_info['id'])) {
+			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($rule_info['block_id']));
 		}
 		if (!$block_info) {
-			return _e("No such rule or block");
+			return _e('No such rule or block');
 		}
 		$sql = $rule_info;
-		unset($sql["id"]);
+		unset($sql['id']);
 
-		db()->INSERT("block_rules", $sql);
+		db()->INSERT('block_rules', $sql);
 		$NEW_RULE_ID = db()->INSERT_ID();
 
 		common()->admin_wall_add(array('block rule cloned for block '.$block_info['name'], $NEW_RULE_ID));
-		cache()->refresh(array("blocks_names", "blocks_rules"));
-		return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
+		cache()->refresh(array('blocks_names', 'blocks_rules'));
+		return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
 	}
 
 	/**
-	* Change rule activity status
 	*/
 	function activate_rule () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (!empty($_GET["id"])) {
-			$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$rule_info = db()->query_fetch('SELECT * FROM '.db('block_rules').' WHERE id='.intval($_GET['id']));
 		}
-		if (!empty($rule_info["id"])) {
-			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
+		if (!empty($rule_info['id'])) {
+			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($rule_info['block_id']));
 		}
-		if (!empty($block_info["id"])) {
-			db()->UPDATE("block_rules", array("active" => (int)!$rule_info["active"]), "id=".intval($_GET["id"]));
+		if (!empty($block_info['id'])) {
+			db()->UPDATE('block_rules', array('active' => (int)!$rule_info['active']), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block rule for '.$block_info['name'].' '.($rule_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		cache()->refresh(array("blocks_names", "blocks_rules"));
-		if ($_POST["ajax_mode"]) {
+		cache()->refresh(array('blocks_names', 'blocks_rules'));
+		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo ($rule_info["active"] ? 0 : 1);
+			echo ($rule_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$block_info["id"]);
+			return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
 		}
 	}
 
@@ -565,34 +518,33 @@ class yf_blocks {
 	* Export blocks items
 	*/
 	function export() {
-		$_GET["id"] = intval($_GET["id"]);
-		if ($_GET["id"]) {
-			$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
+		$_GET['id'] = intval($_GET['id']);
+		if ($_GET['id']) {
+			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
 		}
 		$params = array(
-			"single_table"	=> "",
-			"tables"		=> array(db('blocks'), db('block_rules')),
-			"full_inserts"	=> 1,
-			"ext_inserts"	=> 1,
-			"export_type"	=> "insert",
-			"silent_mode"	=> true,
+			'single_table'	=> '',
+			'tables'		=> array(db('blocks'), db('block_rules')),
+			'full_inserts'	=> 1,
+			'ext_inserts'	=> 1,
+			'export_type'	=> 'insert',
+			'silent_mode'	=> true,
 		);
-		if ($block_info["id"]) {
-			$params["where"] = array(
-				db('blocks')		=> "id=".intval($block_info["id"]),
-				db('block_rules')	=> "block_id=".intval($block_info["id"]),
+		if ($block_info['id']) {
+			$params['where'] = array(
+				db('blocks')		=> 'id='.intval($block_info['id']),
+				db('block_rules')	=> 'block_id='.intval($block_info['id']),
 			);
 		}
-		$EXPORTED_SQL = module("db_manager")->export($params);
+		$EXPORTED_SQL = module('db_manager')->export($params);
 		$replace = array(
-			"sql_text"	=> _prepare_html($EXPORTED_SQL, 0),
-			"back_link"	=> "./?object=".$_GET["object"],
+			'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
+			'back_link'	=> './?object='.$_GET['object'],
 		);
-		return tpl()->parse("db_manager/export_text_result", $replace);
+		return tpl()->parse('db_manager/export_text_result', $replace);
 	}
 
 	/**
-	* Cleanup methods for save them in db
 	*/
 	function _cleanup_methods_for_save ($methods_array = array()) {
 		if (!is_array($methods_array) || empty($methods_array)) {
@@ -605,33 +557,33 @@ class yf_blocks {
 			if (empty($method_full_name) || !isset($this->_methods[$method_full_name])) {
 				continue;
 			}
-			if (false === strpos($method_full_name, ".")) {
+			if (false === strpos($method_full_name, '.')) {
 				$cur_top_level_methods[$method_full_name] = $method_full_name;
 			}
-			if ((false !== strpos($method_full_name, ".")) && isset($cur_top_level_methods[substr($method_full_name, 0, strrpos($method_full_name, "."))])) {
+			if ((false !== strpos($method_full_name, '.')) && isset($cur_top_level_methods[substr($method_full_name, 0, strrpos($method_full_name, '.'))])) {
 				continue;
 			}
 			$methods_for_save[$method_full_name] = $method_full_name;
 		}
 		ksort($methods_for_save);
-		$methods_array	= implode(",", (array)$methods_for_save);
-		return str_replace(array(" ","\t","\r","\n"), "", $methods_array);
+		$methods_array	= implode(',', (array)$methods_for_save);
+		return str_replace(array(' ',"\t","\r","\n"), '', $methods_array);
 	}
 
 	/**
 	*/
 	function _multi_html_to_db($input = array()) {
 		if (is_array($input)) {
-			$input = ",".implode(",", $input).",";
+			$input = ','.implode(',', $input).',';
 		}
-		return (string)str_replace(array(" ","\t","\r","\n",",,"), "", $input);
+		return (string)str_replace(array(' ',"\t","\r","\n",',,'), '', $input);
 	}
 
 	/**
 	*/
-	function _multi_db_to_html($input = "") {
+	function _multi_db_to_html($input = '') {
 		if (!is_array($input)) {
-			$input	= explode(",",str_replace(array(" ","\t","\r","\n",",,"), "", $input));
+			$input	= explode(',',str_replace(array(' ',"\t","\r","\n",',,'), '', $input));
 		}
 		$output = array();
 		foreach ((array)$input as $v) {
@@ -644,46 +596,49 @@ class yf_blocks {
 
 	/**
 	*/
-	function _multi_db_to_show($input = "", $names = array()) {
+	function _multi_db_to_show($input = '', $names = array()) {
 		$output = array();
 		if (is_array($input)) {
-			$input = ",".implode(",", $input).",";
+			$input = ','.implode(',', $input).',';
 		}
-		foreach (explode(",",trim($input,",")) as $k => $v) {
+		foreach (explode(',',trim($input,',')) as $k => $v) {
 			if (empty($names[$v])) {
 				continue;
 			}
 			$output[$v] = $names[$v];
 		}
-		$output = implode("<br />\n", $output);
+		$output = implode('<br />'.PHP_EOL, $output);
 		if (empty($output)) {
-			$output	= "-- ALL --";
+			$output	= '-- ALL --';
 		}
 		return $output;
 	}
 
 	/**
-	* Process custom box
 	*/
-	function _box ($name = "", $selected = "") {
+	function _box ($name = '', $selected = '') {
 		if (empty($name) || empty($this->_boxes[$name])) {
 			return false;
 		} else {
-			return eval("return common()->".$this->_boxes[$name].";");
+			return eval('return common()->'.$this->_boxes[$name].';');
 		}
 	}
 
 	/**
 	*/
 	function _hook_wall_link($msg = array()) {
-		$action = $msg["action"] == "activate_block" ? "edit" : "show";
-		return "./?object=blocks&action=".$action."&id=".$msg['object_id'];
+		$action = $msg['action'] == 'activate_block' ? 'edit' : 'show';
+		return './?object=blocks&action='.$action.'&id='.$msg['object_id'];
 	}
 
+	/**
+	*/
 	function _hook_widget__user_blocks ($params = array()) {
 // TODO
 	}
 
+	/**
+	*/
 	function _hook_widget__admin_blocks ($params = array()) {
 // TODO
 	}

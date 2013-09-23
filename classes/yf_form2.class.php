@@ -1988,11 +1988,7 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'captcha';
 		}
-#		if (isset($replace[$name])) {
-#			$text = $replace[$name];
-#		} else {
-			$text = _class('captcha')->show_block('./?object=dynamic&action=captcha_image');
-#		}
+		$text = _class('captcha')->show_block('./?object=dynamic&action=captcha_image');
 		$errors = common()->_get_error_messages();
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$body = '
