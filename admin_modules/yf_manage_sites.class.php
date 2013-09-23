@@ -143,6 +143,8 @@ class yf_manage_sites {
 		}
 	}
 
+	/**
+	*/
 	function _hook_widget__sites_list ($params = array()) {
 // TODO
 	}

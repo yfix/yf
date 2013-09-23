@@ -13,38 +13,11 @@ class yf_blocks {
 	*/
 	function _init () {
 		$array_all = array('' => '-- ALL --');
-
-		$this->_methods['user'] = $array_all;
-		foreach ((array)module('user_modules')->_get_methods() as $module_name => $module_methods) {
-			$this->_user_methods[$module_name] = $module_name.' -> -- ALL --';
-			foreach ((array)$module_methods as $method_name) {
-				if ($method_name == $module_name) {
-					continue;
-				}
-				$this->_methods['user'][$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
-			}
-		}
-
-		$this->_methods['admin'] = $array_all;
-		foreach ((array)module('admin_modules')->_get_methods() as $module_name => $module_methods) {
-			$this->_admin_methods[$module_name] = $module_name.' -> -- ALL --';
-			foreach ((array)$module_methods as $method_name) {
-				if ($method_name == $module_name) {
-					continue;
-				}
-				$this->_methods['admin'][$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
-			}
-		}
-
-		$this->_themes = $array_all;
-		foreach ((array)module('template_editor')->_get_themes_names() as $_location => $_themes) {
-			foreach ((array)$_themes as $_theme) {
-				$this->_themes[$_theme] = $_theme;
-			}
-		}
-
+		$this->_methods['user'] = $array_all + (array)module('user_modules')->_get_methods_for_select();
+		$this->_methods['admin'] = $array_all + (array)module('admin_modules')->_get_methods_for_select();
 		$this->_groups['user'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');
 		$this->_groups['admin'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('admin_groups').' WHERE active="1"');
+		$this->_themes = $array_all + (array)module('template_editor')->_get_themes_for_select();
 		$this->_locales = $array_all + (array)module('locale_editor')->_get_locales();
 		$this->_sites = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('sites').' WHERE active="1"');
 		$this->_servers = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('core_servers').' WHERE active="1"');
@@ -256,8 +229,8 @@ class yf_blocks {
 			->multi_select_box('user_groups', $this->_groups[$block_info['type']], array('edit_link' => './?object='.$block_info['type'].'_groups', 'desc' => 'Groups'))
 			->multi_select_box('themes', $this->_themes, array('edit_link' => './?object=template_editor'))
 			->multi_select_box('locales', $this->_locales, array('edit_link' => './?object=locale_editor'))
-			->multi_select_box('site_ids', $this->_site_ids, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
-			->multi_select_box('server_ids', $this->_server_ids, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
+			->multi_select_box('site_ids', $this->_sites, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
+			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
 			->number('order', 'Rule Processing Order')
 			->active_box()
 			->save_and_back();
@@ -306,8 +279,8 @@ class yf_blocks {
 			->multi_select_box('user_groups', $this->_groups[$block_info['type']], array('edit_link' => './?object='.$block_info['type'].'_groups', 'desc' => 'Groups'))
 			->multi_select_box('themes', $this->_themes, array('edit_link' => './?object=template_editor'))
 			->multi_select_box('locales', $this->_locales, array('edit_link' => './?object=locale_editor'))
-			->multi_select_box('site_ids', $this->_site_ids, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
-			->multi_select_box('server_ids', $this->_server_ids, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
+			->multi_select_box('site_ids', $this->_sites, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
+			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
 			->number('order', 'Rule Processing Order')
 			->active_box()
 			->save_and_back();

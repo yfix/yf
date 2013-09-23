@@ -382,6 +382,23 @@ class yf_user_modules {
 	}
 
 	/**
+	* Get methods names for usage inside select boxes
+	*/
+	function _get_methods_for_select ($params = array()) {
+		$out = array('' => '-- All --');
+		foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
+			$out[$module_name] = $module_name.' -> -- All --';
+			foreach ((array)$module_methods as $method_name) {
+				if ($method_name == $module_name) {
+					continue;
+				}
+				$out[$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
+			}
+		}
+		return $out;
+	}
+
+	/**
 	*/
 	function _hook_widget__user_modules ($params = array()) {
 // TODO

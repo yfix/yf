@@ -28,32 +28,24 @@ class yf_file_manager {
 	public $_default_chmod		= 0777;
 
 	/**
-	* Function shows directory contents
 	*/
 	function show() {
-		// Current path info
 		$path_info = pathinfo($_SERVER["SCRIPT_FILENAME"]);
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
-		// If directory name comes from GET array
 		if ($_GET['dir_name']) {
 			$dir_name = urldecode($_GET['dir_name']);
 			chdir($dir_name);
 		} else {
 			$dir_name = $path_info["dirname"];
 		}
-		// Up dir path info
 		$path_info_up = pathinfo($dir_name);
-		// Current directory contents
 		$cur_dir_name		= str_replace("\\", "/", getcwd());
 		$encoded_cur_dir	= urlencode($cur_dir_name);
 		$dir_contents		= $this->_get_dir_contents($cur_dir_name);
-		// Return to base dir
 		chdir($_old_dir_name);
-		// Process directory items
+
 		if (!empty($dir_contents["dirs"]) || !empty($dir_contents["files"])) {
-			// Show subdirs in the current directory
 			foreach ((array)$dir_contents["dirs"] as $k => $v) {
-				// Process template
 				$replace2 = array(
 					"encoded_name"	=> urlencode($v),
 					"name"			=> $v,
@@ -67,18 +59,14 @@ class yf_file_manager {
 				);
 				$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 			}
-			// Show files in the current directory
 			foreach ((array)$dir_contents["files"] as $k => $v) {
-				// Show ZIP archives with another color
 				if (substr($v, -3) == "zip") {
 					$color = $this->color_zip;
 				} else {
 					$color = $this->color_file;
 				}
-				// Count file size
 				$file_size = filesize($cur_dir_name. "/". $v);
 				$total_files_size += $file_size;
-				// Process template
 				$replace2 = array(
 					"encoded_name"	=> urlencode($v),
 					"name"			=> $v,
@@ -94,7 +82,7 @@ class yf_file_manager {
 			}
 		}
 		clearstatcache();
-		// More useful navigation
+
 		$_tmp_path = "";
 		$_tmp_array = array();
 		foreach ((array)explode("/", $cur_dir_name) as $_folder) {
@@ -104,7 +92,6 @@ class yf_file_manager {
 		if ($_tmp_array) {
 			$cur_dir_name = implode("/", $_tmp_array);
 		}
-		// Process template
 		$replace = array(
 			"form_action"			=> "./?object=".$_GET["object"]._add_get(array("dir_name"))."&action=",
 			"upload_form_action"	=> "./?object=".$_GET["object"]."&action=upload_file&dir_name=".$encoded_cur_dir._add_get(array("dir_name")),
@@ -137,11 +124,9 @@ class yf_file_manager {
 			if ($tmp_file == "." || $tmp_file == "..") {
 				continue;
 			}
-			// Include files only if they match the mask
 			if (!empty($this->_include_pattern)) {
 				if (!preg_match($this->_include_pattern."ims", $tmp_file)) continue;
 			}
-			// Exclude files from list by mask
 			if (!empty($this->_exclude_pattern)) {
 				if (preg_match($this->_exclude_pattern."ims", $tmp_file)) continue;
 			}
@@ -157,7 +142,6 @@ class yf_file_manager {
 	}
 
 	/**
-	* Read file contents
 	*/
 	function view_item() {
 		foreach ((array)$_POST as $k => $v) {
@@ -170,7 +154,7 @@ class yf_file_manager {
 		$dir_name	= urldecode($_POST['dir_name']);
 		$file_name	= str_replace("\\", "/", $dir_name."/".$name);
 		$file_path	= $file_name;
-		// More useful navigation
+
 		$_tmp_path = "";
 		$_tmp_array = array();
 		foreach ((array)explode("/", dirname($file_name)) as $_folder) {
@@ -180,7 +164,6 @@ class yf_file_manager {
 		if ($_tmp_array) {
 			$file_name = implode("/", $_tmp_array)."/"._prepare_html($name, 0);
 		}
-		// Process template
 		$replace = array(
 			"file_name"	=> $file_name,
 			"text"		=> highlight_file($file_path, true),
@@ -191,7 +174,6 @@ class yf_file_manager {
 	}
 
 	/**
-	* Form to edit given file
 	*/
 	function edit_item() {
 		if (!empty($_GET["id"])) {
@@ -210,7 +192,6 @@ class yf_file_manager {
 			$file_name	= str_replace("\\", "/", $dir_name."/".$name);
 			$file_path	= $file_name;
 		}
-		// More useful navigation
 		$_tmp_path = "";
 		$_tmp_array = array();
 		foreach ((array)explode("/", dirname($file_name)) as $_folder) {
@@ -220,7 +201,6 @@ class yf_file_manager {
 		if ($_tmp_array) {
 			$file_name = implode("/", $_tmp_array)."/"._prepare_html($name, 0);
 		}
-		// Process template
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=save_file&dir_name=".$_REQUEST['dir_name']."&file_name=".urlencode($file_path)._add_get(array("dir_name")),
 			"file_name"		=> $file_name,
@@ -232,14 +212,10 @@ class yf_file_manager {
 	}
 
 	/**
-	* Save edited file
 	*/
 	function save_file() {
-		// Decode file name
 		$file_name = urldecode($_GET["file_name"]);
-		// Do save file contents
 		file_put_contents($file_name, $_POST["source"]);
-		// Return user to the file folder
 		return js_redirect("./?object=".$_GET["object"]."&dir_name=".$_GET['dir_name']._add_get(array("dir_name")));
 	}
 
@@ -257,7 +233,6 @@ class yf_file_manager {
 
 		foreach ((array)$dir_contents["dirs"] as $cur_name) {
 			$dir_next = $dir_name."/".$cur_name;
-			// Process template
 			$replace = array(
 				"color"			=> $this->color_dir,
 				"name"			=> $cur_name,
@@ -265,7 +240,6 @@ class yf_file_manager {
 				"padding"		=> ($level - 1) * 30,
 			);
 			$body .= tpl()->parse($_GET["object"]."/copy_dir_item", $replace);
-			// Try to show sub dirs
 			if ($level < $this->_copy_dir_deepness) {
 				$body .= $this->_get_all_dirs($dir_next, $level + 1);
 			}
@@ -274,7 +248,6 @@ class yf_file_manager {
 	}
 
 	/**
-	* Copy selected items
 	*/
 	function copy_item() {
 		$dir_name = urldecode($_POST['dir_name']);
@@ -299,7 +272,6 @@ class yf_file_manager {
 			);
 			$items .= tpl()->parse($_GET["object"]."/copy_item", $replace2);
 		}
-		// Process template
 		$replace = array(
 			"form_action"	=> "./?object=".$_GET["object"]."&action=copy_item2&dir_name=".$_POST['dir_name']._add_get(array("dir_name")),
 			"items"			=> $items,
@@ -314,24 +286,20 @@ class yf_file_manager {
 	* Copy selected items into selected destination folders
 	*/
 	function copy_item2() {
-// TODO
 		if ($_POST['items_to_copy']) {
 			$items = unserialize(urldecode($_POST['items_to_copy']));
-			// Try to find items to copy within decoded array
 			foreach ((array)$items as $k => $v) {
 				$tmp = substr($v, 0, 2);
 				if ($tmp == "d_" || $tmp == "f_") {
 					$items_to_copy[] = substr($v, 2);
 				}
 			}
-			// Try to find destination folders
 			foreach ((array)$_POST as $k => $v) {
 				$tmp = substr($k, 0, 2);
 				if ($tmp == "d_" || $tmp == "f_") {
 					$dest_folders[] = urldecode(substr($k, 2));
 				}
 			}		
-			// Verify decoded arrays of source and destination items
 			if (count($items_to_copy)) {
 				if (count($dest_folders)) {
 					foreach ((array)$items_to_copy as $k => $v) {
@@ -362,7 +330,6 @@ class yf_file_manager {
 	}
 
 	/**
-	* Delete selected items
 	*/
 	function delete_item() {
 		$dir_name = urldecode($_POST['dir_name']);
@@ -370,28 +337,30 @@ class yf_file_manager {
 			$file_name	= str_replace("\\", "/", $dir_name."/".$v);
 
 			$tmp = substr($k, 0, 2);
-			if ($tmp != "d_" && $tmp != "f_") continue;
-			if (!file_exists($file_name)) continue;
-
+			if ($tmp != "d_" && $tmp != "f_") {
+				continue;
+			}
+			if (!file_exists($file_name)) {
+				continue;
+			}
 			if (is_dir($file_name)) {
 				_class("dir")->delete_dir($file_name);
 				@closedir($file_name);
 				@rmdir($file_name);
-			} else @unlink($file_name);
+			} else {
+				@unlink($file_name);
+			}
 		}
 		return js_redirect("./?object=".$_GET["object"]."&dir_name=".$_POST['dir_name']._add_get(array("dir_name")));
 	}
 
 	/**
-	* Chmod for selected items
 	*/
 	function chmod_item() {
 		$dir_name = urldecode($_POST['dir_name']);
-		// Default value
 		if (!$_POST['new_chmod']) {
 			$_POST['new_chmod'] = "755";
 		}
-		// Change current working directory
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		chdir($dir_name);
 		foreach ((array)$_POST as $k => $v) {
@@ -407,29 +376,25 @@ class yf_file_manager {
 	}
 
 	/**
-	* Make zip
 	*/
 	function make_zip_item() {
 		$dir_name = urldecode($_POST['dir_name']);
 		if (!$_POST['new_zip_name']) {
 			$_POST['new_zip_name'] = "tmp_1234";
 		}
-		// Name of new zip archive
 		$new_zip_name = $dir_name."/".$_POST['new_zip_name'].".zip";
-		// Initialize zip library
+
 		main()->load_class_file("pclzip", "classes/");
 		if (class_exists("pclzip")) {
 			$this->ZIP_OBJ = new pclzip($new_zip_name);
 		}
-		// Check if library loaded
 		if (!is_object($this->ZIP_OBJ)) {
 			trigger_error("FILE_MANAGER: Cant init PclZip module", E_USER_ERROR);
 			return false;
 		}
-		// Change current directory
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		chdir($dir_name);
-		// List of items to be zipped together
+
 		$item_list = array();
 		foreach ((array)$_POST as $k => $v) {
 			$tmp = substr($k, 0, 2);
@@ -443,13 +408,11 @@ class yf_file_manager {
 		}
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		chdir($_old_dir_name);
-		// Create zip archive including specified files
 		$this->ZIP_OBJ->create($item_list);
 		return js_redirect("./?object=".$_GET["object"]."&dir_name=".$_POST['dir_name']._add_get(array("dir_name")));
 	}
 
 	/**
-	* Unzip files from archive
 	*/
 	function unzip_item() {
 		$dir_name = urldecode($_POST['dir_name']);
@@ -459,32 +422,24 @@ class yf_file_manager {
 			if ($tmp != "d_" && $tmp != "f_") {
 				continue;
 			}
-			// Check file extension (must be "zip")
 			$ext = array_pop(explode(".",$name));
 			if ($ext != "zip") continue;
 
 			$file_name	= str_replace("\\", "/", $dir_name."/".$name);
-			// Initialize zip library
 			main()->load_class_file("pclzip", "classes/");
 			if (class_exists("pclzip")) {
 				$this->ZIP_OBJ = new pclzip($file_name);
 			}
-			// Check if library loaded
 			if (!is_object($this->ZIP_OBJ)) {
 				trigger_error("FILE_MANAGER: Cant init PclZip module", E_USER_ERROR);
 				return false;
 			}
-			// Rewrite file target aerchive to be extracted
 			$this->ZIP_OBJ->pclzip($file_name);
-			// Directory where files will be extracted
 			$extraction_dir = $dir_name."/".substr($name, 0, -4);
-			// Create directory to extract files
 			if (!file_exists($extraction_dir)) {
 				mkdir($extraction_dir, 0777);
 			}
-			// Change working directory to the new one
 			chdir($extraction_dir);
-			// Extract files from specified zip archive
 			$this->ZIP_OBJ->extract();
 		}
 		chdir($_old_dir_name);
@@ -492,20 +447,19 @@ class yf_file_manager {
 	}
 
 	/**
-	* Download file
 	*/
 	function download_item() {
 		$dir_name = urldecode($_POST['dir_name']);
-		// Change current working directory
+
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		chdir($dir_name);
+
 		foreach ((array)$_POST as $k => $v) {
 			$file_name	= str_replace("\\", "/", $dir_name."/".$v);
 
 			$tmp = substr($k, 0, 2);
 			if ($tmp != "d_" && $tmp != "f_") continue;
 
-			// Check if given item is file and it can be read
 			if (is_readable($file_name) && is_file($file_name)) {
 				clearstatcache();
 				header("Content-Type: application/force-download; name=\"".$v."\"");
@@ -524,14 +478,13 @@ class yf_file_manager {
 	}
 
 	/**
-	* Email file
 	*/
 	function email_item() {
 		$dir_name = urldecode($_POST['dir_name']);
-		// Change current working directory
+
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		chdir($dir_name);
-		// Create empty array
+
 		$attach = array();
 		foreach ((array)$_POST as $k => $v) {
 			$file_name	= str_replace("\\", "/", $dir_name."/".$v);
@@ -540,17 +493,14 @@ class yf_file_manager {
 			if ($tmp != "d_" && $tmp != "f_") {
 				continue;
 			}
-			// Check if given item is file and it can be read
 			if (file_exists($file_name) && is_readable($file_name)) {
 				$attach[] = $v;
 			}
 		}
-		// If there is at least one file to send - then continue with sending
 		if (count($attach)) {
-// TODO: Add config vars here
 			$email_from = "yfix.dev auto-sender";
 			if (!$_POST['target_email']) {
-				$email_to = "ph@mail.zp.ua";
+				$email_to = "admin@yfix.net";
 			} else {
 				$email_to = $_POST['target_email'];
 			}
@@ -565,7 +515,6 @@ class yf_file_manager {
 	}
 
 	/**
-	* Function that uploads file to the specified directory name
 	*/
 	function upload_file() {
 		if ($_POST['verify']) {
@@ -586,7 +535,6 @@ class yf_file_manager {
 	}
 
 	/**
-	* Make new directory
 	*/
 	function make_dir() {
 		if ($_POST['verify'] && $_POST['name']) {
@@ -600,7 +548,6 @@ class yf_file_manager {
 	}
 
 	/**
-	* Show permissions for UNIX server
 	*/
 	function _get_perms ($file_name) {
 		return substr(sprintf('%o', fileperms($file_name)), -3);

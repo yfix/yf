@@ -28,16 +28,9 @@ class yf_category_editor {
 			'0' => '<span class="negative">NO</span>',
 			'1' => '<span class="positive">YES</span>',
 		);
-		$this->_user_groups[''] = '-- ALL --';
-		$Q = db()->query('SELECT id, name FROM '.db('user_groups').' WHERE active="1"');
-		while ($A = db()->fetch_assoc($Q)) {
-			$this->_user_groups[$A['id']] = $A['name'];
-		}
-		$this->_admin_groups[''] = '-- ALL --';
-		$Q = db()->query('SELECT id, name FROM '.db('admin_groups').' WHERE active="1"');
-		while ($A = db()->fetch_assoc($Q)) {
-			$this->_admin_groups[$A['id']] = $A['name'];
-		}
+		$array_all = array('' => '-- ALL --');
+		$this->_groups['user'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');
+		$this->_groups['admin'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('admin_groups').' WHERE active="1"');
 	}
 
 	/**
@@ -471,13 +464,8 @@ class yf_category_editor {
 			if (empty($cur_item_id)) continue;
 			$this->_items_for_parent[$cur_item_id] = str_repeat('&nbsp;', $cur_item_info['level'] * 6).' &#9492; '.$cur_item_info['name'];
 		}
-		if ($cat_info['type'] == 'admin') {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
-		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
-		}
+		$this->_groups	= $this->_groups[$cat_info['type']];
+
 		$other_info_array = $this->_convert_atts_string_into_array($item_info['other_info']);
 		foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
 			if (empty($cur_field_name)) {
@@ -568,13 +556,8 @@ class yf_category_editor {
 		foreach ((array)$item_info['user_groups'] as $v) $tmp[$v] = $v;
 		$item_info['user_groups'] = $tmp;
 
-		if ($cat_info['type'] == 'admin') {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
-		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
-		}
+		$this->_groups	= $this->_groups[$cat_info['type']];
+
 		if (empty($item_info['url']) && $this->PROPOSE_SHORT_URL) {
 			$item_info['url'] = common()->_propose_url_from_name($item_info['name']);
 		}

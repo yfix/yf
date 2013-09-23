@@ -24,12 +24,9 @@ class yf_db_manager {
 	/** @var int Max number of backups files to store */
 	public $MAX_BACKUP_FILES			= 5;
 
-
 	/**
-	* Constructor
 	*/
 	function _init () {
-		// Array of select boxes to process
 		$this->_boxes = array(
 			"tables"		=> 'multi_select("tables",		$this->_tables_names,	$selected, false, 2, " size=10 class=small_for_select ", false)',
 			"export_type"	=> 'radio_box("export_type",	$this->_export_types,	$selected ? $selected : "insert", false, 2, "", false)',
@@ -46,7 +43,6 @@ class yf_db_manager {
 	}
 
 	/**
-	* Default method
 	*/
 	function show () {
 		$total_rows = 0;
@@ -83,7 +79,6 @@ class yf_db_manager {
 		$actions = my_array_merge($first_element, $actions);
 		$actions_select_box = common()->select_box("group_action_select", $actions, $_GET["id"], false, 2, "onchange='group_action();'", false);
 		
-		// Process template
 		$replace = array(
 			"tables"			=> $tables,
 			"total"				=> intval($i),
@@ -101,7 +96,6 @@ class yf_db_manager {
 	}
 	
 	/**
-	*
 	*/
 	function structure () {
 		$table_name = DB_PREFIX.$_GET["table"];
@@ -120,30 +114,22 @@ class yf_db_manager {
 				"extra"		=> $A["Extra"],
 				"bg_class"	=> !(++$i % 2) ? "bg1" : "bg2",
 			);
-			
-			
 			$items .= tpl()->parse($_GET["object"]."/structure_item", $replace2);
 		}
-		
-		// show index for table
 		$Q = db()->query("SHOW INDEX FROM ".$table_name."");
 		while ($A = db()->fetch_assoc($Q)) {
 			$table_index[] = $A;
 		}
-		
-		
 		$replace = array(
 			"items"				=> $items,
 			"table_index"		=> $table_index,
 			"show_create_table"		=> $table_index,
 			"show_create_table"		=> $this->show_create_table(true),
 		);
-		
 		return tpl()->parse($_GET["object"]."/structure_main", $replace);
 	}
 	
 	/**
-	*
 	*/
 	function truncate () {
 		main()->NO_GRAPHICS = true;
@@ -151,19 +137,16 @@ class yf_db_manager {
 		if(empty($_POST["tables"])){
 			return false;
 		}
-		
 		$tables = rtrim($_POST["tables"], ",");
 		$tables = explode(",", $tables);
 		
 		foreach ((array)$tables as $table){
 			db()->query("TRUNCATE ".$table."");
 		}
-		
 		echo "<b>truncate <span style='color:green'>complete!</span></b>";
 	}
 	
 	/**
-	*
 	*/
 	function drop () {
 		main()->NO_GRAPHICS = true;
@@ -183,7 +166,6 @@ class yf_db_manager {
 	}
 	
 	/**
-	*
 	*/
 	function optimize () {
 		main()->NO_GRAPHICS = true;
@@ -191,7 +173,6 @@ class yf_db_manager {
 		if(empty($_POST["tables"])){
 			return false;
 		}
-		
 		$tables = rtrim($_POST["tables"], ",");
 		
 		$text .= "<table>";
@@ -204,12 +185,10 @@ class yf_db_manager {
 			$text .= "</tr>";
 		}
 		$text .= "</table>";
-		
 		echo $text;
 	}
 	
 	/**
-	*
 	*/
 	function check () {
 		main()->NO_GRAPHICS = true;
@@ -217,7 +196,6 @@ class yf_db_manager {
 		if(empty($_POST["tables"])){
 			return false;
 		}
-		
 		$tables = rtrim($_POST["tables"], ",");
 
 		$text .= "<table>";
@@ -230,13 +208,10 @@ class yf_db_manager {
 			$text .= "</tr>";
 		}
 		$text .= "</table>";
-		
-		
 		echo $text;
 	}
 	
 	/**
-	*
 	*/
 	function repair () {
 		main()->NO_GRAPHICS = true;
@@ -244,7 +219,6 @@ class yf_db_manager {
 		if(empty($_POST["tables"])){
 			return false;
 		}
-		
 		$tables = rtrim($_POST["tables"], ",");
 		
 		$text .= "<table>";
@@ -260,12 +234,8 @@ class yf_db_manager {
 		
 		echo $text;
 	}
-	
-	
-	
 
 	/**
-	* AJAX based tables status
 	*/
 	function ajax_status () {
 		main()->NO_GRAPHICS = true;
@@ -286,10 +256,8 @@ class yf_db_manager {
 	}
 
 	/**
-	* Get tables info
 	*/
 	function _get_tables_infos () {
-		// Get detailed tables info
 		if ($this->AUTO_GET_TABLES_STATUS) {
 			$Q = db()->query("SHOW TABLE STATUS LIKE '".DB_PREFIX."%'");
 			while ($A = db()->fetch_assoc($Q)) {
@@ -305,10 +273,7 @@ class yf_db_manager {
 					"collation"	=> $A["Collation"],
 				);
 			}
-
 		} else {
-
-			// Get just tables names
 			$Q = db()->query("SHOW TABLES LIKE '".DB_PREFIX."%'");
 			while ($A = db()->fetch_row($Q)) {
 				$table_name = $A[0];
@@ -323,7 +288,6 @@ class yf_db_manager {
 					"collation"	=> "",
 				);
 			}
-
 		}
 		return $tables_infos;
 	}
@@ -335,17 +299,14 @@ class yf_db_manager {
 		$table_name = DB_PREFIX.$_GET["table"];
 		$A = db()->query_fetch("SHOW CREATE TABLE "._es($table_name)."");
 		$text = $A["Create Table"];
-		// Process template
+
 		$replace = array(
 			"table_name"	=> _prepare_html($table_name),
 			"text"			=> nl2br(_prepare_html($text, 0)),
 		);
-		
-		
 		if($return_text){
 			return $replace["text"];
 		}
-		
 		return tpl()->parse($_GET["object"]."/show_create_table", $replace);
 	}
 
@@ -359,7 +320,6 @@ class yf_db_manager {
 
 // FIXME: add ability to parse ZIP files
 
-			//Decompress
 			if ($_FILES['sql_file']["type"] == "application/x-gzip") {
 				if (@function_exists('gzopen')) {
 					$file = @gzopen($path, 'rb');
@@ -387,13 +347,13 @@ class yf_db_manager {
 
 		$exec_success = false;
 		$splitted_sql = array();
-		// Process SQL
+
 		$POSTED_SQL = $_POST["sql"] ? $_POST["sql"] : urldecode($_GET["id"]);
 		if (!empty($POSTED_SQL)) {
 			$_query_time_start = microtime(true);
 //			$_POST["sql"] = preg_replace("/^#[^\n]+\$/ims", "", $_POST["sql"]);
 			$this->_split_sql($splitted_sql, $POSTED_SQL);
-			// Execute SQL
+
 			foreach ((array)$splitted_sql as $item_info) {
 				if ($item_info["empty"] == 1) {
 					continue;
@@ -408,12 +368,11 @@ class yf_db_manager {
 			if (!empty($splitted_sql) && !empty($result) && !common()->_error_exists()) {
 				$exec_success = true;
 			}
-// TODO: display number of affected rows on each query even if debug_mode is turned off
 			$_query_exec_time = microtime(true) - $_query_time_start;
 		}
 		$sql = &$_POST["sql"];
 		$num_queries = count($splitted_sql);
-		// Try to fetch last result (if the last query type is "SELECT")
+
 		$fetch_result = "";
 		if ($num_queries && $num_queries < 100) {
 			$last_query = end($splitted_sql);
@@ -421,7 +380,7 @@ class yf_db_manager {
 			$last_query = preg_replace("/[\n]{2,}/ims", "\n", $last_query);
 		}
 		$last_query_total = 0;
-		// Check if we on the right way
+
 		$data = array();
 		if ($last_query) {
 			$tmp_last_query = preg_replace("#/\*.*?\*/#ms", "", preg_replace("#\s+#", " ", str_replace(array("\r","\n","\t"), " ", trim($last_query))));
@@ -462,7 +421,6 @@ class yf_db_manager {
 			}
 			$fetch_result .= "</table>\n";
 		}
-		// Show form
 		$replace = array(
 			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
 			"error_message"		=> _e(),
@@ -481,9 +439,7 @@ class yf_db_manager {
 	*/
 	function export ($params = array()) {
 		$SINGLE_TABLE = !empty($_GET["table"]) ? DB_PREFIX. $_GET["table"] : "";
-		// Gather some statistics
 		if ($SINGLE_TABLE) {
-			// Get detailed tables info
 			$A = db()->query_fetch("SHOW TABLE STATUS LIKE '".$SINGLE_TABLE."'");
 			$_single_table_info = array(
 				"name"		=> $A["Name"],
@@ -493,7 +449,6 @@ class yf_db_manager {
 				"collation"	=> $A["Collation"],
 			);
 		}
-		// Prepare tables list
 		if (!isset($this->_tables_names)) {
 			foreach ((array)db()->meta_tables() as $cur_table_name) {
 				$this->_tables_names[$cur_table_name] = $cur_table_name;
@@ -504,16 +459,13 @@ class yf_db_manager {
 		if (!$SINGLE_TABLE || $_single_table_info["rows"] >= 10000 || $_single_table_info["size"] >= 1000000) {
 			$USE_TEMP_FILE = true;
 		}
-// check for uses
 		if(!empty($params["where"])){
 			$USE_TEMP_FILE = false;
 		}
-		// Do export SQL
 		if (!empty($_POST["go"]) || $SILENT_MODE) {
 
 			set_time_limit(600);
 
-			// Prepare params
 			if ($params["single_table"]) {
 				$SINGLE_TABLE = $params["single_table"];
 			}
@@ -535,11 +487,10 @@ class yf_db_manager {
 			}
 			$EXPORTED_SQL		= "";
 			$tables_to_export = array();
-			// Do export single table
+
 			if (!empty($SINGLE_TABLE)) {
 				$tables_to_export[$SINGLE_TABLE] = $params["where"][$SINGLE_TABLE];
 			} elseif (!empty($TABLES)) {
-				// Do export multiple tables
 				foreach ((array)$TABLES as $cur_table_name) {
 					if (!isset($this->_tables_names[$cur_table_name])) {
 						continue;
@@ -547,19 +498,16 @@ class yf_db_manager {
 					$tables_to_export[$cur_table_name] = $params["where"][$cur_table_name];
 				}
 			} else {
-				// By default we exporting all tables datas
 				foreach ((array)$this->_tables_names as $v) {
 					$tables_to_export[$v] = $params["where"][$v];
 				}
 			}
-			// Check for errors
 			if (empty($tables_to_export)) {
 				_re(t("No tables to export!"));
 			}
 			if (!isset($this->_export_types[$EXPORT_TYPE])) {
 				_re(t("Wrong export type!"));
 			}
-			// Try mysqldump
 // checking
 			if ($USE_TEMP_FILE) {
 				$_temp_file_path = $this->_quick_export_with_mysqldump($tables_to_export);
@@ -567,10 +515,8 @@ class yf_db_manager {
 					$QUICK_DUMPED = true;
 				}
 			}
-				// Set defence from overloading
 // TODO
 //				$tables_infos $this->_get_tables_infos();
-			// Do process exporting
 			if (!common()->_error_exists() && !$QUICK_DUMPED) {
 
 				if ($USE_TEMP_FILE) {
@@ -579,7 +525,6 @@ class yf_db_manager {
 					_mkdir_m(dirname($_temp_file_path));
 					if (file_exists(dirname($_temp_file_path))) {
 						$fh = fopen($_temp_file_path, "w");
-						// Second temp file
 						$_temp_file_name2	= $_temp_file_name.".tmp";
 						$_temp_file_path2	= $_temp_file_path.".tmp";
 					} else {
@@ -594,7 +539,6 @@ class yf_db_manager {
 						$EXPORTED_SQL	= $_add_create_table;
 					}
 				}
-				// Process selected tables
 				foreach ((array)$tables_to_export as $cur_table_name => $WHERE_COND) {
 					$sql_1 = $sql_2 = $sql_3 = $sql_4 = "";
 					$cols_names_array = array();
@@ -609,7 +553,6 @@ class yf_db_manager {
 							$EXPORTED_SQL	.= $_table_sql_header;
 						}
 					}
-					// Get colums for the current table
 					$meta_columns = db()->meta_columns($cur_table_name);
 					foreach ((array)$meta_columns as $cur_col_name => $cur_col_info) {
 						$cols_names_array[$cur_col_name] = db()->enclose_field_name($cur_col_name);
@@ -617,7 +560,6 @@ class yf_db_manager {
 					$sql_1	= ($EXPORT_TYPE == "insert" ? "INSERT" : "REPLACE")." INTO ".db()->enclose_field_name($cur_table_name)." ";
 					$sql_2	= $INSERT_FULL ? "(".implode(", ", $cols_names_array).") " : "";
 					$sql_3	= "VALUES \n";
-					// Get data for the current table
 					$Q = db()->query(
 						"SELECT * FROM ".db()->enclose_field_name(_es($cur_table_name))
 						.($WHERE_COND ? " WHERE ".$WHERE_COND : "")
@@ -625,7 +567,6 @@ class yf_db_manager {
 					if (!db()->num_rows($Q)) {
 						continue;
 					}
-					// Write into temporary file
 					if ($USE_TEMP_FILE) {
 						$fh2 = fopen($_temp_file_path2, "w");
 						if ($INSERT_EXTENDED) {
@@ -650,20 +591,17 @@ class yf_db_manager {
 						$sql_4_tmp .= "(".implode(", ", $cols_values_array).")";
 						$sql_4_tmp .= $INSERT_EXTENDED ? "," : ";";
 						$sql_4_tmp .= "\n";
-						// Break counter
 						if ($need_break) {
 							$counter = 0;
 						} else {
 							$counter++;
 						}
-						// Write into temporary file
 						if ($USE_TEMP_FILE && $fh2) {
 							fwrite($fh2, $sql_4_tmp);
 						} else {
 							$sql_4 .= $sql_4_tmp;
 						}
 					}
-					// Cut trailing comma
 					if ($INSERT_EXTENDED) {
 						$sql_4 = substr($sql_4, 0, -2).";";
 						if ($USE_TEMP_FILE && $fh2) {
@@ -671,7 +609,6 @@ class yf_db_manager {
 							fwrite($fh2, ";");
 						}
 					}
-					// Write into temporary file
 					if ($USE_TEMP_FILE && $fh2) {
 						fclose($fh2);
 					}
@@ -690,7 +627,6 @@ class yf_db_manager {
 			$EXPORTED_SQL = trim($EXPORTED_SQL);
 			// Compress SQL and throw as file
 			if ($_POST["compress"]) {
-				// Create temporary name
 				$_exported_name = "export".($SINGLE_TABLE ? "__".$SINGLE_TABLE : "").".sql";
 
 				if ($USE_TEMP_FILE) {
@@ -727,15 +663,12 @@ class yf_db_manager {
 						$_exported_file_path	.= ".gz";
 					}
 				}
-				// Throw headers
 				main()->NO_GRAPHICS = true;
 				header("Content-Type: application/force-download; name=\"".$_exported_name."\"");
 				header("Content-Disposition: attachment; filename=\"".$_exported_name."\"");
 				header("Content-Transfer-Encoding: binary");
 				header("Content-Length: ".intval(filesize($_exported_file_path)));
-				// Throw content
 				readfile($_exported_file_path);
-				// Cleanup temp
 				unlink($_exported_file_path);
 				exit();
 				return false; // Not needed with exit(), but leave it here :-)
@@ -744,11 +677,9 @@ class yf_db_manager {
 				$EXPORTED_SQL = file_get_contents($_temp_file_path);
 				unlink($_temp_file_path);
 			}
-			// Silently return output
 			if ($SILENT_MODE) {
 				return $EXPORTED_SQL;
 			}
-			// Text mode export
 			if (!common()->_error_exists()) {
 				$replace2 = array(
 					"sql_text"	=> _prepare_html($EXPORTED_SQL, 0),
@@ -757,7 +688,6 @@ class yf_db_manager {
 				return tpl()->parse($_GET["object"]."/export_text_result", $replace2);
 			}
 		}
-		// Show form
 		$replace = array(
 			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]._add_get(),
 			"error_message"		=> _e(),
@@ -854,7 +784,6 @@ class yf_db_manager {
 		);
 		return tpl()->parse($_GET["object"]."/backup", $replace);
 	}
-
 
 	/**
 	* Delete backup file
@@ -1181,48 +1110,7 @@ class yf_db_manager {
 	}
 
 	/**
-	* Quick menu auto create
 	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Create Backup",
-				"url"	=> "./?object=".$_GET["object"]."&action=show_backup",
-			),
-		);
-		return $menu;	
-	}
-
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("Database Manager");
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"				=> "",
-			"export"			=> "Export SQL",
-			"show_create_table" => "",
-		);			  		
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
-		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
-	}
-
 	function _hook_widget__db_tables ($params = array()) {
 // TODO
 	}
