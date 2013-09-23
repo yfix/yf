@@ -716,7 +716,7 @@ class yf_table2 {
 		if (!$extra['no_ajax']) {
 			$extra['a_class'] .= ' ajax_clone';
 		}
-		$extra['icon'] .= 'icon-arrow-down';
+		$extra['icon'] .= 'icon-code-fork';
 		return $this->btn($name, $link, $extra);
 	}
 

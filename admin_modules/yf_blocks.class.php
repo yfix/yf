@@ -107,7 +107,7 @@ class yf_blocks {
 		return table('SELECT * FROM '.db('blocks').' ORDER BY type DESC, name ASC', array('custom_fields' => array(
 				'num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'
 			)))
-			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d')
+			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d', '', array('link_field_name' => 'id'))
 			->text('type')
 			->text('num_rules')
 			->text('stpl_name', 'Template')
@@ -254,7 +254,7 @@ class yf_blocks {
 	* Rules list for given block id
 	*/
 	function show_rules () {
-		$block_info = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']).' OR name="'._es($_GET['id']).'"');
+		$block_info = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
 		$_GET['id'] = $block_info['id'];
 		if (empty($block_info['id'])) {
 			return _e('No such block!');
