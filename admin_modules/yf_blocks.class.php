@@ -150,11 +150,8 @@ class yf_blocks {
 	/**
 	*/
 	function edit () {
-		$id = intval($_GET['id']);
-		if (empty($id)) {
-			return _e('No id!');
-		}
-		$a = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.$id);
+		$a = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']).' OR name="'._es($_GET['id']).'"');
+		$_GET['id'] = $a['id'];
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a)
 			->validate(array(
@@ -209,7 +206,7 @@ class yf_blocks {
 	function clone_item () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
 		$sql = $block_info;
@@ -257,13 +254,10 @@ class yf_blocks {
 	* Rules list for given block id
 	*/
 	function show_rules () {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
-		}
-		$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
+		$block_info = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']).' OR name="'._es($_GET['id']).'"');
+		$_GET['id'] = $block_info['id'];
 		if (empty($block_info['id'])) {
-			return _e(t('No such block!'));
+			return _e('No such block!');
 		}
 		if ($block_info['type'] == 'admin') {
 			$this->_groups	= $this->_admin_groups;
@@ -331,11 +325,11 @@ class yf_blocks {
 	function add_rule () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($_GET["id"]));
 		if (empty($block_info["id"])) {
-			return _e(t("No such block!"));
+			return _e("No such block!");
 		}
 		if ($block_info["type"] == "admin") {
 			$this->_groups	= $this->_admin_groups;
@@ -410,15 +404,15 @@ class yf_blocks {
 	function edit_rule () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		$rule_info = db()->query_fetch("SELECT * FROM ".db('block_rules')." WHERE id=".intval($_GET["id"]));
 		if (empty($rule_info["id"])) {
-			return _e(t("No such rule!"));
+			return _e("No such rule!");
 		}
 		$block_info = db()->query_fetch("SELECT * FROM ".db('blocks')." WHERE id=".intval($rule_info["block_id"]));
 		if (empty($block_info["id"])) {
-			return _e(t("No such block!"));
+			return _e("No such block!");
 		}
 		if ($block_info["type"] == "admin") {
 			$this->_groups	= $this->_admin_groups;

@@ -194,8 +194,10 @@ class yf_table2 {
 			// Needed to correctly pass inside $instance_params to each function
 			$params['data_sql_names'] = $this->_data_sql_names;
 		}
+		$body = '';
+		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $pages : '').PHP_EOL;
+
 		if ($data) {
-			$body = '';
 			if ($this->_form_params) {
 				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
 			}
@@ -215,7 +217,7 @@ class yf_table2 {
 				$body .= '<thead>'.PHP_EOL;
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
-					$th_width = ($info['extra']['width'] ? ' width="'.$info['extra']['width'].'"' : '');
+					$th_width = ($info['extra']['width'] ? ' width="'.intval($info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
 					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($info['desc']). $th_icon_prepend. '</th>'.PHP_EOL;
@@ -239,7 +241,7 @@ class yf_table2 {
 					}
 					$func = $info['func'];
 					unset($info['func']); // Save resources
-					$td_width = ($info['extra']['width'] ? ' width="'.$info['extra']['width'].'"' : '');
+					$td_width = ($info['extra']['width'] ? ' width="'.intval($info['extra']['width']).'"' : '');
 
 					$body .= '<td'.$td_width.'>'.$func($row[$name], $info, $row, $params).'</td>'.PHP_EOL;
 				}
@@ -273,7 +275,10 @@ class yf_table2 {
 		if ($data && $this->_form_params) {
 			$body .= '</form>';
 		}
-		$body .= ($params['no_pages'] ? '' : $pages).PHP_EOL;
+		if (!isset($params['pages_on_bottom'])) {
+			$params['pages_on_bottom'] = true;
+		}
+		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $pages : '').PHP_EOL;
 		return $body;
 	}
 
@@ -457,15 +462,16 @@ class yf_table2 {
 				if (!isset($extra['nowrap'])) {
 					$extra['nowrap'] = true;
 				}
-				if ($extra['nowrap']) {
-					$text = str_replace(' ', '&nbsp;', $text);
-				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
 					if ($extra['hidden_toggle']) {
 						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
+					}
+					// It is intentionally placed only here, because if apply nowrap by default to simple text too - will produce strange UI bugs
+					if ($extra['nowrap']) {
+						$text = str_replace(' ', '&nbsp;', $text);
 					}
 					$body = '<a href="'.$link.'" class="btn btn-mini"'.$a_class. $attrs. '>'.$text.'</a>';
 				} else {
@@ -534,6 +540,7 @@ class yf_table2 {
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
+			'desc'	=> $extra['desc'] ? $extra['desc'] : 'Image',
 			'path'	=> $path,
 			'link'	=> $link,
 			'func'	=> function($field, $params, $row, $instance_params) {
@@ -553,7 +560,10 @@ class yf_table2 {
 				}
 				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
 				return ($link_url ? '<a href="'.$link_url.'">' : '')
-					.'<img src="'.WEB_PATH. $img_path.'" style="'
+					.'<img src="'.WEB_PATH. $img_path.'"'
+						.($extra['width'] ? ' width="'.intval($extra['width']).'"' : '')
+						.($extra['height'] ? ' height="'.intval($extra['height']).'"' : '')
+					.' style="'
 						.($extra['width'] ? 'width:'.$extra['width'].';' : '')
 						.($extra['height'] ? 'height:'.$extra['height'].';' : '')
 					.'">'
