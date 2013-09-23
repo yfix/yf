@@ -255,10 +255,11 @@ class yf_blocks {
 	*/
 	function show_rules () {
 		$block_info = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
-		$_GET['id'] = $block_info['id'];
 		if (empty($block_info['id'])) {
 			return _e('No such block!');
 		}
+		$_GET['id'] = $block_info['id'];
+/*
 		if ($block_info['type'] == 'admin') {
 			$this->_groups	= $this->_admin_groups;
 			$this->_methods = $this->_admin_methods;
@@ -267,7 +268,6 @@ class yf_blocks {
 			$this->_methods = $this->_user_methods;
 		}
 		$Q = db()->query('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
-
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
 				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
@@ -301,22 +301,25 @@ class yf_blocks {
 			'servers_link'	=> './?object=manage_servers',
 		);
 		return tpl()->parse($_GET['object'].'/rules_main', $replace);
-/*
+*/
+		$methods = $this->{'_'.$block_info['type'].'_methods'};
+		$groups = $this->{'_'.$block_info['type'].'_groups'};
+
 		return table('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']))
 			->text('order')
-			->text('rule_type')
-			->data('methods', db()->get_2d())
-			->data('themes', db()->get_2d())
-			->data('locales', db()->get_2d())
-			->data('site_ids', db()->get_2d())
-			->data('server_ids', db()->get_2d())
+			->allow_deny('rule_type')
+			->data('methods', $methods)
+			->data('groups', $groups)
+			->data('themes', $this->_themes)
+			->data('locales', $this->_locales)
+			->data('site_ids', $this->_sites)
+			->data('server_ids', $this->_servers)
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_rule&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_rule&id=%d')
 			->btn_active('', './?object='.$_GET['object'].'&action=activate_rule&id=%d')
-			->footer_add('', './?object='.$_GET['object'].'&action=add_rule&id=%d')
+			->footer_add('', './?object='.$_GET['object'].'&action=add_rule&id='.$block_info['id'])
 		;
-*/
 	}
 
 	/**

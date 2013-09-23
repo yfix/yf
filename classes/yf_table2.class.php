@@ -217,6 +217,7 @@ class yf_table2 {
 				$body .= '<thead>'.PHP_EOL;
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
+					$info['extra'] = (array)$info['extra'];
 					$th_width = ($info['extra']['width'] ? ' width="'.intval($info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
@@ -593,18 +594,40 @@ class yf_table2 {
 	}
 
 	/**
-	* Currently designed only for admin usage
-	* Show multiple selected data items
 	*/
-	function data($name, $data = array(), $extra = array()) {
-		// $this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
-		return $this->text($name, $extra['desc'], $extra);
+	function allow_deny($name, $extra = array()) {
+		$extra['data'] = array(
+			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
+			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
+		);
+		return $this->func($name, function($field, $params, $row) {
+			$extra = (array)$params['extra'];
+			$extra['data'] = (array)$extra['data'];
+			return $extra['data'][$field];
+		}, $extra);
 	}
 
 	/**
 	*/
-	function data_array($name, $extra = array()) {
+	function yes_no($name = '', $extra = array()) {
+		$extra['data'] = array(
+			'1' => '<span class="label label-success">'.t('YES').'</span>',
+			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
+		);
+		return $this->func($name, function($field, $params, $row) {
+			$extra = (array)$params['extra'];
+			$extra['data'] = (array)$extra['data'];
+			return $extra['data'][$field];
+		}, $extra);
+	}
+
+	/**
+	* Show multiple selected data items
+	* Example of data: $this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
+	*/
+	function data($name, $data = array(), $extra = array()) {
 		$this->form();
+		$extra['data'] = $data;
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			$out = array();
@@ -613,7 +636,8 @@ class yf_table2 {
 					$out[$v] = $extra['data'][$v];
 				}
 			}
-			return $out ? implode('<br />', $out) : t('--All--');
+			$body = $out ? implode('<br>', $out) : t('--All--');
+			return '<small>'.str_replace(array(' ', "\t"), '&nbsp;', $body).'</small>';
 		}, $extra);
 	}
 

@@ -330,16 +330,14 @@ class yf_menus_editor {
 			}
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
+		$groups = $this->{'_'.$menu_info['type'].'_groups'};
 		return table($menu_items, array('pager_records_on_page' => 10000, 'condensed' => 1))
 			->form()
 			->icon('icon')
 			->input_padded('name')
 			->input('location')
 			->text('type_id', 'Item type', array('data' => $this->_item_types, 'nowrap' => 1))
-			->data_array('user_groups', array(
-				'desc' => 'Groups',
-				'data' => $this->{'_'.$menu_info['type'].'_groups'}
-			))
+			->data('user_groups', $groups, array('desc' => 'Groups'))
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_item&id=%d')
