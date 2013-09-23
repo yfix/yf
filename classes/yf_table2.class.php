@@ -261,7 +261,8 @@ class yf_table2 {
 			}
 			$body .= '</tbody>'.PHP_EOL;
 			if ($params['caption']) {
-				$body .= '<caption>'.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
+				$body .= '<caption>'.$params['caption'].'</caption>'.PHP_EOL;
+#				$body .= '<caption>'.$params['caption'].' '.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
 			}
 			$body .= '</table>'.PHP_EOL;
 		} else {

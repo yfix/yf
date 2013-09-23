@@ -38,6 +38,13 @@ class yf_html_controls {
 	}
 
 	/**
+	* Alias
+	*/
+	function multi_select_box($name, $values, $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
+	}
+
+	/**
 	* Generate multi-select box
 	*/
 	function multi_select($name, $values, $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {

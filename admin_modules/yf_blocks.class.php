@@ -158,7 +158,7 @@ class yf_blocks {
 				'name'	=> 'trim|required|alpha_numeric|is_unique[blocks.name]',
 				'type'	=> 'trim|required',
 			))
-			->db_update_if_ok('blocks', array('name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
+			->db_update_if_ok('blocks', array('name','desc','stpl_name','method_name','active'), 'id='.$_GET['id'], array('on_after_update' => function() {
 				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', $id));
 				cache()->refresh('blocks_names');
 			}))
@@ -260,18 +260,18 @@ class yf_blocks {
 		}
 		$_GET['id'] = $block_info['id'];
 
-		$methods = $this->{'_'.$block_info['type'].'_methods'};
-		$groups = $this->{'_'.$block_info['type'].'_groups'};
+		$methods = (array)$this->{'_'.$block_info['type'].'_methods'};
+		$groups = (array)$this->{'_'.$block_info['type'].'_groups'};
 
-		return table('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']))
+		return table('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']), array('caption' => ''/*$block_info['type'].'::'.$block_info['name']*/))
 			->text('order')
 			->allow_deny('rule_type')
 			->data('methods', $methods)
-			->data('groups', $groups)
+			->data('user_groups', $groups, array('desc' => 'Groups'))
 			->data('themes', $this->_themes)
 			->data('locales', $this->_locales)
-			->data('site_ids', $this->_sites)
-			->data('server_ids', $this->_servers)
+			->data('site_ids', $this->_sites, array('desc' => 'Sites'))
+			->data('server_ids', $this->_servers, array('desc' => 'Servers'))
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_rule&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_rule&id=%d')
@@ -291,13 +291,9 @@ class yf_blocks {
 		if (empty($block_info['id'])) {
 			return _e('No such block!');
 		}
-		if ($block_info['type'] == 'admin') {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
-		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
-		}
+		$this->_methods = (array)$this->{'_'.$block_info['type'].'_methods'};
+		$this->_groups = (array)$this->{'_'.$block_info['type'].'_groups'};
+
 		if (!empty($_POST)) {
 			if (!common()->_error_exists()) {
 				db()->INSERT('block_rules', array(
@@ -361,85 +357,50 @@ class yf_blocks {
 	/**
 	*/
 	function edit_rule () {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('No id!');
-		}
-		$rule_info = db()->query_fetch('SELECT * FROM '.db('block_rules').' WHERE id='.intval($_GET['id']));
+		$rule_info = db()->get('SELECT * FROM '.db('block_rules').' WHERE id='.intval($_GET['id']));
 		if (empty($rule_info['id'])) {
 			return _e('No such rule!');
 		}
-		$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($rule_info['block_id']));
+		$_GET['id'] = $rule_info['id'];
+
+		$block_info = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($rule_info['block_id']));
 		if (empty($block_info['id'])) {
 			return _e('No such block!');
 		}
-		if ($block_info['type'] == 'admin') {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
+		$methods = (array)$this->{'_'.$block_info['type'].'_methods'};
+		$groups = (array)$this->{'_'.$block_info['type'].'_groups'};
+
+		$a = $rule_info;
+
+		$multi_selects = array('methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids');
+		if ($_POST) {
+			foreach ($multi_selects as $k) {
+				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
+			}
 		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
-		}
-		if (!empty($_POST)) {
-			if (!common()->_error_exists()) {
-				db()->UPDATE('block_rules', array(
-					'rule_type'		=> $_POST['rule_type'] == 'ALLOW' ? 'ALLOW' : 'DENY',
-					'methods'		=> _es($this->_multi_html_to_db($_POST['methods'])),
-					'user_groups'	=> _es($this->_multi_html_to_db($_POST['user_groups'])),
-					'themes'		=> _es($this->_multi_html_to_db($_POST['themes'])),
-					'locales'		=> _es($this->_multi_html_to_db($_POST['locales'])),
-					'site_ids'		=> _es($this->_multi_html_to_db($_POST['site_ids'])),
-					'server_ids'	=> _es($this->_multi_html_to_db($_POST['server_ids'])),
-					'order'			=> intval($_POST['order']),
-					'active'		=> intval($_POST['active']),
-				), 'id='.intval($_GET['id']));
-				common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
-				cache()->refresh('blocks_rules');
-				return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
+			foreach ($multi_selects as $k) {
+				$a[$k] = $this->_multi_db_to_html($a[$k]);
 			}
 		}
-		$DATA = $rule_info;
-		foreach ((array)$_POST as $k => $v) {
-			if (isset($DATA[$k])) {
-				$DATA[$k] = $v;
-			}
-		}
-		foreach (array('methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids') as $k) {
-			$DATA[$k] = $this->_multi_db_to_html($DATA[$k]);
-		}
-		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'for_edit'			=> 1,
-			'error_message'		=> _e(),
-			'block_name'		=> _prepare_html($block_info['name']),
-			'order'				=> intval($DATA['order']),
-			'rule_type'			=> $DATA['rule_type'],
-			'rule_type_box'		=> $this->_box('rule_type',		$DATA['rule_type']),
-			'methods_box'		=> $this->_box('methods',		$DATA['methods']),
-			'user_groups_box'	=> $this->_box('user_groups',	$DATA['user_groups']),
-			'themes_box'		=> $this->_box('themes',		$DATA['themes']),
-			'locales_box'		=> $this->_box('locales',		$DATA['locales']),
-			'site_ids_box'		=> $this->_box('site_ids',		$DATA['site_ids']),
-			'server_ids_box'	=> $this->_box('server_ids',	$DATA['server_ids']),
-			'active_box'		=> $this->_box('active', 		$DATA['active']),
-			'active'			=> $DATA['active'],
-			'back_link'			=> './?object='.$_GET['object'].'&action=show_rules&id='.intval($block_info['id']),
-			'modules_link'		=> './?object='.($block_info['type'] == 'admin' ? 'admin_modules' : 'user_modules'),
-			'groups_link'		=> './?object='.($block_info['type'] == 'admin' ? 'admin_groups' : 'user_groups'),
-			'themes_link'		=> './?object=template_editor',
-			'locales_link'		=> './?object=locale_editor',
-			'sites_link'		=> './?object=manage_sites',
-			'servers_link'		=> './?object=manage_servers',
-		);
-		return common()->form2($replace)
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a)
+			->validate(array(
+				'rule_type'	=> 'trim|required',
+			))
+			->db_update_if_ok('block_rules', array('rule_type','methods','user_groups','themes','locales','site_ids','server_ids','order','active'), 'id='.$rule_info['id'], array(
+				'on_after_update' => function() {
+					common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
+					cache()->refresh('blocks_rules');
+				}
+			))
 			->allow_deny_box('rule_type')
-			->box('methods_box','Methods','modules_link')
-			->box('user_groups_box','User Groups','groups_link')
-			->box('themes_box','Themes','themes_link')
-			->box('locales_box','Locales','locales_link')
-			->box('site_ids_box','Sites','sites_link')
-			->box('server_ids_box','Servers','servers_link')
-			->number('order','Rule Processing Order')
+			->multi_select_box('methods', $methods, array('edit_link' => './?object='.$block_info['type'].'_modules'))
+			->multi_select_box('user_groups', $groups, array('edit_link' => './?object='.$block_info['type'].'_groups', 'desc' => 'Groups'))
+			->multi_select_box('themes', $this->_themes, array('edit_link' => './?object=template_editor'))
+			->multi_select_box('locales', $this->_locales, array('edit_link' => './?object=locale_editor'))
+			->multi_select_box('site_ids', $this->_site_ids, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
+			->multi_select_box('server_ids', $this->_server_ids, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
+			->number('order', 'Rule Processing Order')
 			->active_box()
 			->save_and_back();
 	}

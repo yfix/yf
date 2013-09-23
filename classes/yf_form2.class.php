@@ -1248,7 +1248,7 @@ class yf_form2 {
 			$selected = $this->_params['selected'][$name];
 		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
 		$type = isset($extra['type']) ? $extra['type'] : 2;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$level = isset($extra['level']) ? $extra['level'] : 0;
@@ -1281,6 +1281,12 @@ class yf_form2 {
 
 	/**
 	*/
+	function multi_select($name, $values, $extra = array(), $replace = array()) {
+		return $this->multi_select_box($name, $values, $extra, $replace);
+	}
+
+	/**
+	*/
 	function multi_select_box($name, $values, $extra = array(), $replace = array()) {
 // TODO: unify with box()
 		if ($this->_chained_mode) {
@@ -1307,7 +1313,7 @@ class yf_form2 {
 			$selected = $this->_params['selected'][$name];
 		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
 		$type = isset($extra['type']) ? $extra['type'] : 2;
 		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 		$level = isset($extra['level']) ? $extra['level'] : 0;
