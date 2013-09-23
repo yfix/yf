@@ -1835,111 +1835,14 @@ class yf_form2 {
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 // TODO: unify with select_box(), maybe need to add something there
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-/*
-		if (!$name) {
-			$name = 'method_name';
-		}
-		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
-		if (!$desc) {
-			$desc = 'Custom class method';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		if (!$extra['edit_link']) {
-			$extra['edit_link'] = 'modules_link';
-		}
-		if (!$extra['box_name']) {
-			$extra['box_name'] = 'methods_box';
-		}
-		$r = $replace ? $replace : $this->_replace;
-		$errors = common()->_get_error_messages();
-		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-// TODO: load methods select box right here, to be able to more easily embed this into other places
-
-		$modules = main()->get_data(MAIN_TYPE_USER ? 'user_modules' : 'admin_modules');
-
-		$body = '
-			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
-				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">
-					<input type="text" id="'.$name.'" name="'.$name.'" value="'.$r[$name].'">
-					'.$r[$extra['box_name']].' <input type="button" class="btn btn-mini insert_selected_word" value="&lt;&lt;" title="'.t('Insert Selected Word').'">'
-					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
-					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
-					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
-				.'</div>
-			</div>
-		';
-*/
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->text($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 // TODO: unify with select_box(), maybe need to add something there
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-/*
-		if (!$name) {
-			$name = 'stpl_name';
-		}
-		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
-		if (!$desc) {
-			$desc = 'Custom template';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		if (!$extra['edit_link']) {
-			$extra['edit_link'] = 'stpls_link';
-		}
-		if (!$extra['box_name']) {
-			$extra['box_name'] = 'stpls_box';
-		}
-		$r = $replace ? $replace : $this->_replace;
-		$errors = common()->_get_error_messages();
-		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-// TODO: load templates select box right here, to be able to more easily embed this into other places
-		// _class('template_editor')->_get_stpls_for_type(MAIN_TYPE)
-
-		$body = '
-			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
-				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">
-					<input type="text" id="'.$name.'" name="'.$name.'" value="'.$r[$name].'">
-					'.$r[$extra['box_name']].' <input type="button" class="btn btn-mini insert_selected_word" value="&lt;&lt;" title="'.t('Insert Selected Word').'">'
-					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
-					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
-					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
-				.'</div>
-			</div>
-		';
-*/
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->text($name, $desc, $extra, $replace);
 	}
 
 	/**
