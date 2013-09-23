@@ -338,7 +338,7 @@ class yf_menus_editor {
 			->text('type_id', 'Item type', array('data' => $this->_item_types, 'nowrap' => 1))
 			->data_array('user_groups', array(
 				'desc' => 'Groups',
-				'data' => $menu_info['type'] == 'admin' ? $this->admin_groups : $this->user_groups
+				'data' => $this->{'_'.$menu_info['type'].'_groups'}
 			))
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
@@ -374,7 +374,7 @@ class yf_menus_editor {
 					continue;
 				}
 				$parent_id = (int)$info['parent_id'];
-				$new_data[$item_id] = array(
+				$new_data = array(
 					'id'		=> $item_id,
 					'order'		=> intval($order_id),
 					'parent_id'	=> intval($parent_id),
@@ -386,12 +386,13 @@ class yf_menus_editor {
 					'parent_id'	=> intval($old_info['parent_id']),
 				);
 				if ($new_data != $old_data) {
-					$batch[$item_id] = $new_data[$item_id];
+					$batch[$item_id] = $new_data;
 				}
 			}
 			if ($batch) {
 				db()->update_batch('menu_items', db()->es($batch));
 				common()->admin_wall_add(array('menu items dragged: '.$menu_info['name'].'', $menu_info['id']));
+				cache()->refresh(array('menus', 'menu_items'));
 			}
 			main()->NO_GRAPHICS = true;
 			return false;

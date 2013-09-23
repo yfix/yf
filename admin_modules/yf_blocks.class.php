@@ -14,65 +14,65 @@ class yf_blocks {
 	*/
 	function _init () {
 		$this->_boxes = array(
-			"active"		=> 'radio_box("active",			$this->_statuses,		$selected, false, 2, "", false)',
-			"rule_type"		=> 'radio_box("rule_type",		$this->_rule_types,		$selected, false, 2, "", false)',
-			"methods"		=> 'multi_select("methods",		$this->_methods,		$selected, false, 2, " size=20 class=small_for_select ", false)',
-			"user_groups"	=> 'multi_select("user_groups",	$this->_groups,			$selected, false, 2, " size=5 class=small_for_select ", false)',
-			"themes"		=> 'multi_select("themes",		$this->_themes,			$selected, false, 2, " size=5 class=small_for_select ", false)',
-			"locales"		=> 'multi_select("locales",		$this->_locales,		$selected, false, 2, " size=5 class=small_for_select ", false)',
-			"site_ids"		=> 'multi_select("site_ids",	$this->_sites,			$selected, false, 2, " size=5 class=small_for_select ", false)',
-			"server_ids"	=> 'multi_select("server_ids",	$this->_servers,		$selected, false, 2, " size=5 class=small_for_select ", false)',
+			'active'		=> 'radio_box("active",			$this->_statuses,		$selected, false, 2, "", false)',
+			'rule_type'		=> 'radio_box("rule_type",		$this->_rule_types,		$selected, false, 2, "", false)',
+			'methods'		=> 'multi_select("methods",		$this->_methods,		$selected, false, 2, " size=20 class=small_for_select ", false)',
+			'user_groups'	=> 'multi_select("user_groups",	$this->_groups,			$selected, false, 2, " size=5 class=small_for_select ", false)',
+			'themes'		=> 'multi_select("themes",		$this->_themes,			$selected, false, 2, " size=5 class=small_for_select ", false)',
+			'locales'		=> 'multi_select("locales",		$this->_locales,		$selected, false, 2, " size=5 class=small_for_select ", false)',
+			'site_ids'		=> 'multi_select("site_ids",	$this->_sites,			$selected, false, 2, " size=5 class=small_for_select ", false)',
+			'server_ids'	=> 'multi_select("server_ids",	$this->_servers,		$selected, false, 2, " size=5 class=small_for_select ", false)',
 		);
 		$this->_statuses = array(
-			"0" => "<span class='negative'>NO</span>",
-			"1" => "<span class='positive'>YES</span>",
+			'0' => '<span class="negative">NO</span>',
+			'1' => '<span class="positive">YES</span>',
 		);
 		$this->_rule_types = array(
-			"DENY"	=> "<span class='negative'>DENY</span>",
-			"ALLOW"	=> "<span class='positive'>ALLOW</span>",
+			'DENY'	=> '<span class="negative">DENY</span>',
+			'ALLOW'	=> '<span class="positive">ALLOW</span>',
 		);
-		$this->_user_modules = main()->_execute("user_modules", "_get_modules");
-		$this->_user_modules_methods = main()->_execute("user_modules", "_get_methods");
+		$this->_user_modules = main()->_execute('user_modules', '_get_modules');
+		$this->_user_modules_methods = main()->_execute('user_modules', '_get_methods');
 
-		$this->_user_methods[""] = "-- ALL --";
+		$this->_user_methods[''] = '-- ALL --';
 		foreach ((array)$this->_user_modules_methods as $module_name => $module_methods) {
-			$this->_user_methods[$module_name] = $module_name." -> -- ALL --";
+			$this->_user_methods[$module_name] = $module_name.' -> -- ALL --';
 			foreach ((array)$module_methods as $method_name) {
 				if ($method_name == $module_name) {
 					continue;
 				}
-				$this->_user_methods[$module_name.".".$method_name] = _prepare_html($module_name." -> ".$method_name);
+				$this->_user_methods[$module_name.'.'.$method_name] = _prepare_html($module_name.' -> '.$method_name);
 			}
 		}
 
-		$this->_user_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT id,name FROM ".db('user_groups')." WHERE active='1'");
+		$this->_user_groups[''] = '-- ALL --';
+		$Q = db()->query('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_user_groups[$A['id']] = $A['name'];
 		}
 
-		$this->_admin_modules = main()->_execute("admin_modules", "_get_modules");
-		$this->_admin_modules_methods = main()->_execute("admin_modules", "_get_methods");
-		$this->_admin_methods[""] = "-- ALL --";
+		$this->_admin_modules = main()->_execute('admin_modules', '_get_modules');
+		$this->_admin_modules_methods = main()->_execute('admin_modules', '_get_methods');
+		$this->_admin_methods[''] = '-- ALL --';
 
 		foreach ((array)$this->_admin_modules_methods as $module_name => $module_methods) {
-			$this->_admin_methods[$module_name] = $module_name." -> -- ALL --";
+			$this->_admin_methods[$module_name] = $module_name.' -> -- ALL --';
 			foreach ((array)$module_methods as $method_name) {
 				if ($method_name == $module_name) {
 					continue;
 				}
-				$this->_admin_methods[$module_name.".".$method_name] = _prepare_html($module_name." -> ".$method_name);
+				$this->_admin_methods[$module_name.'.'.$method_name] = _prepare_html($module_name.' -> '.$method_name);
 			}
 		}
-		$this->_admin_groups[""] = "-- ALL --";
-		$Q = db()->query("SELECT id,name FROM ".db('admin_groups')." WHERE active='1'");
+		$this->_admin_groups[''] = '-- ALL --';
+		$Q = db()->query('SELECT id,name FROM '.db('admin_groups').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_admin_groups[$A['id']] = $A['name'];
 		}
 
-		$this->_themes = array("" => "-- ALL --");
-		if ($this->_admin_modules["template_editor"]) {
-			foreach ((array)main()->_execute("template_editor", "_get_themes_names") as $_location => $_themes) {
+		$this->_themes = array('' => '-- ALL --');
+		if ($this->_admin_modules['template_editor']) {
+			foreach ((array)main()->_execute('template_editor', '_get_themes_names') as $_location => $_themes) {
 				foreach ((array)$_themes as $_theme) {
 					$this->_themes[$_theme] = $_theme;
 				}
@@ -80,22 +80,22 @@ class yf_blocks {
 		}
 
 		$this->_locales = my_array_merge(
-			array("" => "-- ALL --")
-			,$this->_admin_modules["locale_editor"] ? main()->_execute("locale_editor", "_get_locales") : array()
+			array('' => '-- ALL --')
+			,$this->_admin_modules['locale_editor'] ? main()->_execute('locale_editor', '_get_locales') : array()
 		);
 
 		$this->_sites = array(
-			"" => "-- ALL --",
+			'' => '-- ALL --',
 		);
-		$Q = db()->query("SELECT id,name FROM ".db('sites')." WHERE active='1'");
+		$Q = db()->query('SELECT id,name FROM '.db('sites').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_sites[$A['id']] = $A['name'];
 		}
 
 		$this->_servers = array(
-			"" => "-- ALL --",
+			'' => '-- ALL --',
 		);
-		$Q = db()->query("SELECT id,name FROM ".db('core_servers')." WHERE active='1'");
+		$Q = db()->query('SELECT id,name FROM '.db('core_servers').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$this->_servers[$A['id']] = $A['name'];
 		}
