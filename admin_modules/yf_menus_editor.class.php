@@ -310,7 +310,7 @@ class yf_menus_editor {
 		}
 		$_GET['id'] = intval($menu_info['id']);
 
-		$menu_items = $this->_auto_update_items_orders($menu_info);
+		$menu_items = $this->_auto_update_items_orders($menu_info['id']);
 		if ($_POST) {
 			$batch = array();
 			foreach ((array)$menu_items as $a) {
@@ -333,7 +333,7 @@ class yf_menus_editor {
 		return table($menu_items, array('pager_records_on_page' => 10000, 'condensed' => 1))
 			->form()
 			->icon('icon')
-			->input('name', array('padding' => true))
+			->input_padded('name')
 			->input('location')
 			->text('type_id', 'Item type', array('data' => $this->_item_types))
 			->data_array('user_groups', array(
@@ -348,7 +348,6 @@ class yf_menus_editor {
 			->footer_link('Drag items', './?object='.$_GET['object'].'&action=drag_items&id='.$_GET['id'], array('icon' => 'icon-move', 'copy_to_header' => 1))
 			->footer_submit()
 		;
-
 	}
 
 	/**
@@ -367,7 +366,7 @@ class yf_menus_editor {
 			'return_array'		=> 1,
 		));
 		if ($_POST) {
-			$old_info = $this->_auto_update_items_orders($menu_info);
+			$old_info = $this->_auto_update_items_orders($menu_info['id']);
 			$batch = array();
 			foreach ((array)$_POST['items'] as $order_id => $info) {
 				$item_id = (int)$info['item_id'];
@@ -416,15 +415,25 @@ class yf_menus_editor {
 
 	/**
 	*/
-	function _auto_update_items_orders($menu_info) {
-		$menu_items = $this->_recursive_get_menu_items($menu_info['id']);
+	function _auto_update_items_orders($menu_id) {
+		if (!$menu_id) {
+			return false;
+		}
+		$menu_items = $this->_recursive_get_menu_items($menu_id);
 		$new_order = 1;
+		$batch = array();
 		foreach ((array)$menu_items as $item_id => $info) {
 			if ($info['order'] != $new_order) {
-				db()->update('menu_items', array('order' => $new_order), 'id='.$item_id);
+				$batch[$item_id] = array(
+					'id'	=> $item_id,
+					'order' => $new_order,
+				);
 				$menu_items[$item_id]['order'] = $new_order;
 			}
 			$new_order++;
+		}
+		if ($batch) {
+			db()->update_batch('menu_items', $batch);
 		}
 		return $menu_items;
 	}
@@ -805,7 +814,6 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Process custom box
 	*/
 	function _box ($name = '', $selected = '') {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
@@ -821,10 +829,14 @@ class yf_menus_editor {
 		}
 	}
 
+	/**
+	*/
 	function _hook_widget__menus ($params = array()) {
 // TODO
 	}
 
+	/**
+	*/
 	function _hook_widget__menu_items ($params = array()) {
 // TODO
 	}

@@ -10,7 +10,7 @@
 class yf_category_editor {
 
 	/** @var int */
-	public $ITEMS_PER_PAGE		= 50;
+	public $ITEMS_PER_PAGE		= 100;
 	/** @var bool */
 	public $PROPOSE_SHORT_URL	= 1;
 
@@ -217,29 +217,15 @@ class yf_category_editor {
 			}
 			if ($batch) {
 				db()->update_batch('category_items', db()->es($batch));
+				common()->admin_wall_add(array('category items updated: '.$cat_info['name'], $cat_info['id']));
 				cache()->refresh('category_items');
 			}
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
 		return table($cat_items, array('pager_records_on_page' => $this->ITEMS_PER_PAGE, 'condensed' => 1))
 			->form()
-			->func('name', function($field, $params, $row) {
-				$padding = $row['level'] ? '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>' : '';
-				return $padding. _class('html_controls')->input(array(
-					'id'	=> 'input_'.$params['name'].'_'.$row['id'],
-					'name'	=> $params['name'].'['.$row['id'].']',
-					'desc'	=> $params['name'],
-					'value'	=> $field,
-				));
-			})
-			->func('url', function($field, $params, $row) {
-				return _class('html_controls')->input(array(
-					'id'	=> 'input_'.$params['name'].'_'.$row['id'],
-					'name'	=> $params['name'].'['.$row['id'].']',
-					'desc'	=> $params['name'],
-					'value'	=> $field ? $field : common()->_propose_url_from_name($row['name']),
-				));
-			})
+			->input_padded('name')
+			->input('url', array('propose_url_from' => $this->PROPOSE_SHORT_URL ? 'name' : false))
 			->text('other_info')
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
@@ -301,7 +287,7 @@ class yf_category_editor {
 			$items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
 		$replace = array(
-			'items' 		=> implode('\n', (array)$items),
+			'items' 		=> implode(PHP_EOL, (array)$items),
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
@@ -380,15 +366,25 @@ class yf_category_editor {
 
 	/**
 	*/
-	function _auto_update_items_orders($cat_info) {
-		$cat_items = $this->_recursive_get_cat_items($cat_info['id']);
+	function _auto_update_items_orders($cat_id) {
+		if (!$cat_id) {
+			return false;
+		}
+		$cat_items = $this->_recursive_get_cat_items($cat_id);
 		$new_order = 1;
+		$batch = array();
 		foreach ((array)$cat_items as $item_id => $info) {
 			if ($info['order'] != $new_order) {
-				db()->update('category_items', array('order' => $new_order), 'id='.$item_id);
+				$batch[$item_id] = array(
+					'id'	=> $item_id,
+					'order' => $new_order,
+				);
 				$cat_items[$item_id]['order'] = $new_order;
 			}
 			$new_order++;
+		}
+		if ($batch) {
+			db()->update_batch('category_items', $batch);
 		}
 		return $cat_items;
 	}
@@ -724,10 +720,14 @@ class yf_category_editor {
 		else return eval('return common()->'.$this->_boxes[$name].';');
 	}
 
+	/**
+	*/
 	function _hook_widget__categories ($params = array()) {
 // TODO
 	}
 
+	/**
+	*/
 	function _hook_widget__category_items ($params = array()) {
 // TODO
 	}

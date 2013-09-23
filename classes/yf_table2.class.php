@@ -907,13 +907,24 @@ class yf_table2 {
 			if ($extra['padding'] && $row['level']) {
 				$padding = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>';
 			}
+			$value = $field;
+			if ($extra['propose_url_from'] && !strlen($value)) {
+				$value = common()->_propose_url_from_name($row[$extra['propose_url_from']]);
+			}
 			return $padding. _class('html_controls')->input(array(
 				'id'	=> 'input_'.$params['name'].'_'.$row['id'],
 				'name'	=> $params['name'].'['.$row['id'].']',
 				'desc'	=> $params['name'],
-				'value'	=> $field,
+				'value'	=> $value,
 			) + (array)$extra);
 		}, $extra);
+	}
+
+	/**
+	*/
+	function input_padded($name, $extra = array()) {
+		$extra['padding'] = true;
+		return $this->input($name, $extra);
 	}
 
 	/**
