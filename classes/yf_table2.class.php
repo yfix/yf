@@ -459,9 +459,6 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
-				if (!isset($extra['nowrap'])) {
-					$extra['nowrap'] = true;
-				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
@@ -469,12 +466,14 @@ class yf_table2 {
 					if ($extra['hidden_toggle']) {
 						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 					}
-					// It is intentionally placed only here, because if apply nowrap by default to simple text too - will produce strange UI bugs
-					if ($extra['nowrap']) {
+					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
 					$body = '<a href="'.$link.'" class="btn btn-mini"'.$a_class. $attrs. '>'.$text.'</a>';
 				} else {
+					if (isset($extra['nowrap']) && $extra['nowrap']) {
+						$text = str_replace(' ', '&nbsp;', $text);
+					}
 					$body = $text;
 				}
 				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';

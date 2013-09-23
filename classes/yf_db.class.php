@@ -336,15 +336,11 @@ class yf_db {
 
 	/**
 	*/
-	function _query_show_error($sql, $db_error, $_trace = array()) {
+	function _query_show_error($sql, $db_error, $_trace = '') {
 		$old_db_error = $db_error;
 		$db_error = $this->db->error();
 		if (empty($db_error) || empty($db_error["message"])) {
 			$db_error = $old_db_error;
-		}
-		if ($_trace) {
-			$back_step	= $_trace[1]["class"] != "db" ? 1 : 2;
-			$trace_text	= " (<i> in \"".$_trace[$back_step]["file"]."\" on line ".$_trace[$back_step]["line"]."</i>) ";
 		}
 		$msg = "DB: QUERY ERROR: ".$sql."<br />\n<b>CAUSE</b>: ".$db_error["message"]
 			. ($db_error["code"] ? " (code:".$db_error["code"].")" : "")

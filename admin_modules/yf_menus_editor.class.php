@@ -335,7 +335,7 @@ class yf_menus_editor {
 			->icon('icon')
 			->input_padded('name')
 			->input('location')
-			->text('type_id', 'Item type', array('data' => $this->_item_types))
+			->text('type_id', 'Item type', array('data' => $this->_item_types, 'nowrap' => 1))
 			->data_array('user_groups', array(
 				'desc' => 'Groups',
 				'data' => $menu_info['type'] == 'admin' ? $this->admin_groups : $this->user_groups
