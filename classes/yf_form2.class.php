@@ -236,7 +236,7 @@ class yf_form2 {
 		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
 		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
 		$append = $extra['append'] ? $extra['append'] : '';
-		$css_class = $this->_prepare_css_class('', $r[$name], $extra);
+		$css_class = 'form-control '.$this->_prepare_css_class('', $r[$name], $extra);
 		// Supported: mini, small, medium, large, xlarge, xxlarge
 		if ($extra['sizing']) {
 			$extra['class'] .= ' input-'.$extra['sizing'];
@@ -256,9 +256,9 @@ class yf_form2 {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
 		$body = '
-			<div class="control-group'.(isset($errors[$name]) ? ' error' : '').'">
+			<div class="control-group form-group'.(isset($errors[$name]) ? ' error' : '').'">
 				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
-				<div class="controls">'
+				<div class="controls col-lg-10">'
 					.(($prepend || $append) ? '<div class="'.($prepend ? 'input-prepend' : '').($append ? ' input-append' : '').'">' : '')
 					.($prepend ? '<span class="add-on">'.$prepend.'</span>' : '')
 					.'<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.$value.'"'
