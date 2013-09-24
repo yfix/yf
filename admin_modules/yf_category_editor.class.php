@@ -159,7 +159,7 @@ class yf_category_editor {
 
 	/**
 	*/
-	function activate() {
+	function active() {
 		if (!empty($_GET['id'])) {
 			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
 		}
