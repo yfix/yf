@@ -9,13 +9,17 @@
 {execute(graphics,show_metatags)}
 </head>
 <body>
-	<div class="navbar navbar-inverse">
-		<div class="navbar-inner">
-			<ul class="nav">
+{if("conf.css_framework" eq "bs3")}
+	<div class="navbar navbar-default">
+{else}
+	<div class="navbar navbar-default navbar-inverse">
+{/if}
+		<div class="navbar-inner navbar-header">
+			<ul class="nav navbar-nav">
 {execute(site_nav_bar,_show)}
 			</ul>
 {execute(site_nav_bar,_show_dropdown_menu)}
-			<ul class="nav pull-right">
+			<ul class="nav pull-right navbar-nav">
 {execute(common,bs_theme_changer)}
 				<li>{execute(graphics,show_welcome)}</li>
 				<li><a href="./?task=logout" target="_parent">{t(Logout)}</a></li>
