@@ -1879,54 +1879,6 @@ class yf_form2 {
 
 	/**
 	*/
-	function custom_fields($name = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		$sub_array = $extra['sub_array'] ?: 'custom';
-		$custom_fields = $extra['fields'];
-		$custom_info = $this->_convert_atts_string_into_array($replace[$name]);
-		$fields = array();
-		foreach (explode(',', $custom_fields) as $field_name) {
-			if (empty($field_name)) {
-				continue;
-			}
-/*
-			return _class('html_controls')->input(array(
-				'id'	=> 'custom_'.$params['name'].'_'.$row['id'],
-				'name'	=> $params['name'].'['.$row['id'].']',
-				'desc'	=> $params['name'],
-				'value'	=> $value,
-			) + (array)$extra);
-
-#			$body .= _class('html_controls')->input(array(
-#			));
-*/
-		}
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function _convert_atts_string_into_array($string = '') {
-		$output_array = array();
-		foreach (explode(';', trim($string)) as $tmp_string) {
-			list($try_key, $try_value) = explode('=', trim($tmp_string));
-			$try_key = trim(trim(trim($try_key), '"'));
-			$try_value = trim(trim(trim($try_value), '"'));
-			if (strlen($try_key) && strlen($try_value)) {
-				$output_array[$try_key] = $try_value;
-			}
-		}
-		return $output_array;
-	}
-
-	/**
-	*/
 	function captcha($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
@@ -1963,6 +1915,57 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function custom_fields($name, $custom_fields, $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = (array)$this->_replace + (array)$replace;
+		}
+		$custom_fields = explode(',', $custom_fields);
+		$restore_mode = $this->_chained_mode;
+		$sub_array_name = $extra['sub_array'] ?: 'custom';
+		$custom_info = $this->_convert_atts_string_into_array($replace[$name]);
+
+		$body = array();
+		$this->_chained_mode = false;
+		foreach ((array)$custom_fields as $field_name) {
+			if (empty($field_name)) {
+				continue;
+			}
+			$str = _class('html_controls')->input(array(
+				'id'	=> 'custom_'.$field_name.'_'.$replace['id'],
+				'name'	=> $sub_array_name.'['.$field_name.']', // Example: custom[color]
+				'desc'	=> $field_name,
+				'value'	=> $custom_info[$field_name],
+			));
+			$desc = ucfirst(str_replace('_', ' ', $field_name)).' [Custom]';
+			$body[] = $this->container($str, $desc);
+		}
+		$body = implode(PHP_EOL, $body);
+		$this->_chained_mode = $restore_mode;
+
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function _convert_atts_string_into_array($string = '') {
+		$output_array = array();
+		foreach (explode(';', trim($string)) as $tmp_string) {
+			list($try_key, $try_value) = explode('=', trim($tmp_string));
+			$try_key = trim(trim(trim($try_key), '"'));
+			$try_value = trim(trim(trim($try_value), '"'));
+			if (strlen($try_key) && strlen($try_value)) {
+				$output_array[$try_key] = $try_value;
+			}
+		}
+		return $output_array;
 	}
 
 	/**

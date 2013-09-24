@@ -409,86 +409,49 @@ class yf_category_editor {
 	/**
 	*/
 	function add_item() {
-/*
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('No id!');
-		}
 		$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
 		if (empty($cat_info['id'])) {
 			return _e('No such category!');
 		}
+		$_GET['id'] = intval($cat_info['id']);
+
 		if ($_POST) {
-			if (is_array($_POST['groups']))	{
-				$_POST['groups'] = implode(',',$_POST['groups']);
-			}
-			$_POST['groups']	= str_replace(array(' ',"\t","\r","\n"), '', $_POST['groups']);
-
-			$OTHER_INFO = array();
-			foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
-				if (!strlen($cur_field_name)) {
-					continue;
+			$tmp = array();
+			foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
+				if ($field_name && $_POST['custom'][$field_name]) {
+					$tmp[$field_name] = $field_name.'='.$_POST['custom'][$field_name];
 				}
-				$OTHER_INFO[] =	$cur_field_name.'='.$_POST['custom__'.$cur_field_name];
 			}
-			db()->INSERT('category_items', array(
-				'cat_id'		=> intval($_GET['id']),
-				'type_id'		=> intval($_POST['type_id']),
-				'parent_id'		=> intval($_POST['parent_id']),
-				'name'			=> _es($_POST['name']),
-				'desc'			=> _es($_POST['desc']),
-				'url'			=> _es($_POST['url']),
-				'icon'			=> _es($_POST['icon']),
-				'user_groups'	=> _es($_POST['groups']),
-				'other_info'	=> _es(implode(';', $OTHER_INFO)),
-				'featured'		=> intval($_POST['featured']),
-				'order'			=> intval($_POST['item_order']),
-				'active'		=> intval($_POST['active']),
-			));
-			common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
-			cache()->refresh(array('category_sets', 'category_items'));
-			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id']);
-		}
-		$this->_items_for_parent[0] = '-- TOP --';
-		foreach ((array)$this->_recursive_get_cat_items($_GET['id']) as $cur_item_id => $cur_item_info) {
-			if (empty($cur_item_id)) continue;
-			$this->_items_for_parent[$cur_item_id] = str_repeat('&nbsp;', $cur_item_info['level'] * 6).' &#9492; '.$cur_item_info['name'];
-		}
-		$this->_groups	= $this->_groups[$cat_info['type']];
+			$_POST['other_info'] = implode(';', $tmp);
 
-		$other_info_array = $this->_convert_atts_string_into_array($item_info['other_info']);
-		foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
-			if (empty($cur_field_name)) {
-				continue;
+			if (empty($_POST['url']) && $this->PROPOSE_SHORT_URL) {
+				$_POST['url'] = common()->_propose_url_from_name($_POST['name']);
 			}
-			$CUSTOM_FIELDS[] = array(
-				'name'	=> _prepare_html($cur_field_name),
-				'value'	=> _prepare_html($other_info_array[$cur_field_name]),
-			);
 		}
-		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'category_name'		=> _prepare_html($cat_info['name']),
-			'name'				=> _prepare_html($DATA['name']),
-			'desc'				=> nl2br(_prepare_html($DATA['desc'])),
-			'other_info'		=> _prepare_html($DATA['other_info']),
-			'custom_fields'		=> $CUSTOM_FIELDS,
-			'url'				=> _prepare_html($DATA['url']),
-			'icon'				=> _prepare_html($DATA['icon']),
-			'order'				=> intval($DATA['order']),
-			'type_id_box'		=> $this->_box('type_id', ''),
-			'parent_id_box'		=> $this->_box('parent_id', ''),
-			'groups_box'		=> $this->_box('groups', array(''=>'-- ALL --')),
-			'methods_box'		=> $this->_box('methods', ''),
-			'active_box'		=> $this->_box('active', $DATA['active']),
-			'featured_box'		=> $this->_box('featured', ''),
-			'back_link'			=> './?object='.$_GET['object'].'&action=show_items&id='.intval($cat_info['id']),
-			'for_edit'			=> 0,
-			'edit_modules_link'	=> './?object='.$cat_info['type'].'_modules',
-			'edit_groups_link'	=> './?object='.$cat_info['type'].'_groups',
-		);
-		return tpl()->parse($_GET['object'].'/edit_item_form', $replace);
-*/
+
+		$a = $_POST;
+		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name'	=> 'trim|required',
+			))
+			->db_insert_if_ok('category_items', array(
+				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
+			), array('cat_id' => $cat_info['id']), array('on_after_update' => function() {
+				common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
+				cache()->refresh(array('category_sets', 'category_items'));
+			}))
+			->select_box('parent_id', $this->_get_parents_for_select($cat_info['id']), array('desc' => 'Parent item'))
+			->text('name')
+			->textarea('desc', 'Description')
+			->text('url', 'Pretty url')
+			->text('meta_keywords')
+			->text('meta_desc')
+			->text('icon')
+			->yes_no_box('featured')
+			->active_box()
+			->custom_fields('other_info', $cat_info['custom_fields'])
+			->save_and_back();
 	}
 
 	/**
@@ -507,7 +470,7 @@ class yf_category_editor {
 		if ($_POST) {
 			$tmp = array();
 			foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
-				if ($cur_field_name) {
+				if ($field_name && $_POST['custom'][$field_name]) {
 					$tmp[$field_name] = $field_name.'='.$_POST['custom'][$field_name];
 				}
 			}
@@ -518,19 +481,19 @@ class yf_category_editor {
 			}
 		}
 
-		$a = $item_info;
+		$a = $item_info + $_POST;
 		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required',
 			))
 			->db_update_if_ok('category_items', array(
-				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','other_info','featured','type_id','order','active'
+				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
 			), 'id='.$item_info['id'], array('on_after_update' => function() {
 				common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
 				cache()->refresh(array('category_sets', 'category_items'));
 			}))
-			->select_box('parent_id', $this->_get_parents_for_select($item_info['cat_id']), array('desc' => 'Parent item'))
+			->select_box('parent_id', $this->_get_parents_for_select($cat_info['id']), array('desc' => 'Parent item'))
 			->text('name')
 			->textarea('desc', 'Description')
 			->text('url', 'Pretty url')
@@ -538,9 +501,8 @@ class yf_category_editor {
 			->text('meta_desc')
 			->text('icon')
 			->yes_no_box('featured')
-			->number('order', 'Display order')
-			->custom_fields('other_info', array('fields' => $cat_info['custom_fields'], 'sub_array' => 'custom'))
 			->active_box()
+			->custom_fields('other_info', $cat_info['custom_fields'])
 			->save_and_back();
 	}
 
