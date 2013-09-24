@@ -219,30 +219,25 @@ class yf_form2 {
 			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$errors = common()->_get_error_messages();
-		$id = $extra['id'] ? $extra['id'] : $name;
-		$placeholder = isset($extra['placeholder']) ? $extra['placeholder'] : $desc;
-		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
+		$extra['errors'] = common()->_get_error_messages();
+		$extra['id'] = $extra['id'] ?: $name;
+		$extra['placeholder'] = t($extra['placeholder'] ?: $desc);
+		$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$name];
 		// Compatibility with filter
-		if (!strlen($value)) {
+		if (!strlen($extra['value'])) {
 			if (isset($extra['selected'])) {
-				$value = $extra['selected'];
+				$extra['value'] = $extra['selected'];
 			} elseif (isset($this->_params['selected'])) {
-				$value = $this->_params['selected'][$name];
+				$extra['value'] = $this->_params['selected'][$name];
 			}
 		}
-		$input_type = isset($extra['type']) ? $extra['type'] : 'text';
-		$edit_link = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$inline_help = isset($errors[$name]) ? $errors[$name] : $extra['inline_help'];
-		$prepend = $extra['prepend'] ? $extra['prepend'] : '';
-		$append = $extra['append'] ? $extra['append'] : '';
-		$css_class = 'form-control '.$this->_prepare_css_class('', $r[$name], $extra);
+		$extra['type'] = $extra['type'] ?: 'text';
+		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
+		$extra['class'] = 'form-control '.$this->_prepare_css_class('', $r[$name], $extra);
 		// Supported: mini, small, medium, large, xlarge, xxlarge
 		if ($extra['sizing']) {
 			$extra['class'] .= ' input-'.$extra['sizing'];
-		}
-		if (!isset($extra['no_escape'])) {
-			$value = htmlspecialchars($value, ENT_QUOTES);
 		}
 		$vr = $this->_validate_rules[$name];
 		if ($vr['required']) {
@@ -255,38 +250,108 @@ class yf_form2 {
 		if ($vr['max_length'] && !isset($extra['maxlength'])) {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
-		$body = '
-			<div class="control-group form-group'.(isset($errors[$name]) ? ' error' : '').'">
-				<label class="control-label" for="'.$id.'">'.t($desc).'</label>
-				<div class="controls col-lg-10">'
-					.(($prepend || $append) ? '<div class="'.($prepend ? 'input-prepend' : '').($append ? ' input-append' : '').'">' : '')
-					.($prepend ? '<span class="add-on">'.$prepend.'</span>' : '')
-					.'<input type="'.$input_type.'" id="'.$id.'" name="'.$name.'" placeholder="'.t($placeholder).'" value="'.$value.'"'
-					.($css_class ? ' class="'.$css_class.'"' : '')
-					.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
-					.($extra['data'] ? ' data="'.$extra['data'].'"' : '')
-					.($extra['size'] ? ' size="'.$extra['size'].'"' : '')
-					.($extra['maxlength'] ? ' maxlength="'.$extra['maxlength'].'"' : '')
-					.($extra['pattern'] ? ' pattern="'.$extra['pattern'].'"' : '')
-					.($extra['disabled'] ? ' disabled' : '')
-					.($extra['required'] ? ' required' : '')
-					.($extra['autocomplete'] ? ' autocomplete="'.$extra['autocomplete'].'"' : '')
-					.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
-					.'>'
-					.($append ? '<span class="add-on">'.$append.'</span>' : '')
-					.(($prepend || $append) ? '</div>' : '')
-					.($edit_link ? ' <a href="'.$edit_link.'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
-					.($inline_help ? '<span class="help-inline">'.$inline_help.'</span>' : '')
-					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-				.'</div>
-			</div>
-		';
+		$extra['name'] = $name;
+		$extra['desc'] = $desc;
+
+		$attrs_names = array(
+			'type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete'
+		);
+		$body = $this->_row_html('<input name="'.$name.'" '.$this->_attrs($extra, $attrs_names).'>', $extra, $replace);
+
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function _row_html($content, $extra = array(), $replace = array()) {
+		return '
+			<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">
+				<label class="control-label" for="'.$extra['id'].'">'.t($extra['desc']).'</label>
+				<div class="controls col-lg-10">'
+
+					.(($extra['prepend'] || $extra['append']) ? '<div class="'.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">' : '')
+					.($extra['prepend'] ? '<span class="add-on">'.$extra['prepend'].'</span>' : '')
+
+					.$content
+
+					.($extra['append'] ? '<span class="add-on">'.$extra['append'].'</span>' : '')
+					.(($extra['prepend'] || $extra['append']) ? '</div>' : '')
+
+					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
+
+					.($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>' : '')
+					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
+
+				.'</div>
+			</div>
+		';
+	}
+
+	/**
+	*/
+	function _attrs($extra = array(), $names = array()) {
+		$body = array();
+		foreach ((array)$names as $name) {
+			if (!$name || !isset($extra[$name])) {
+				continue;
+			}
+			$val = $extra[$name];
+			$body[$name] = htmlspecialchars($name, ENT_QUOTES).'="'.htmlspecialchars($val, ENT_QUOTES).'"';
+		}
+		foreach ((array)$extra['attr'] as $name => $val) {
+			if (!$name || !isset($val)) {
+				continue;
+			}
+			$body[$name] = htmlspecialchars($name, ENT_QUOTES).'="'.htmlspecialchars($val, ENT_QUOTES).'"';
+		}
+		return ' '.implode(' ', $body).' ';
+	}
+
+	/**
+	*/
+	function _prepare_custom_attr($attr = array()) {
+		$body = array();
+		foreach ((array)$attr as $k => $v) {
+			$body[] = htmlspecialchars($k, ENT_QUOTES).'="'.htmlspecialchars($v, ENT_QUOTES).'"';
+		}
+		return implode(" ", $body);
+	}
+
+	/**
+	*/
+	function _show_tip($value = '', $extra = array(), $replace = array()) {
+		return _class('graphics')->_show_help_tip(array(
+			'tip_id'	=> $value,
+			'replace'	=> $replace,
+		));
+	}
+
+	/**
+	*/
+	function _prepare_css_class($default_class = '', $value = '', $extra = array()) {
+		$css_class = $default_class;
+		if ($extra['badge']) {
+			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
+			if ($badge) {
+				$css_class = 'badge badge-'.$badge;
+			}
+		} elseif ($extra['label']) {
+			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
+			if ($label) {
+				$css_class = 'label label-'.$label;
+			}
+		} elseif ($extra['class']) {
+			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
+			if ($_css_class) {
+				$css_class = $_css_class;
+			}
+		}
+		return $css_class;
 	}
 
 	/**
@@ -354,49 +419,6 @@ class yf_form2 {
 		}
 		return $body;
 	}
-
-	/**
-	*/
-	function _prepare_custom_attr($attr = array()) {
-		$body = array();
-		foreach ((array)$attr as $k => $v) {
-			$body[] = '"'.htmlspecialchars($k, ENT_QUOTES).'"="'.htmlspecialchars($v, ENT_QUOTES).'"';
-		}
-		return implode(" ", $body);
-	}
-
-	/**
-	*/
-	function _show_tip($value = '', $extra = array(), $replace = array()) {
-		return _class('graphics')->_show_help_tip(array(
-			'tip_id'	=> $value,
-			'replace'	=> $replace,
-		));
-	}
-
-	/**
-	*/
-	function _prepare_css_class($default_class = '', $value = '', $extra = array()) {
-		$css_class = $default_class;
-		if ($extra['badge']) {
-			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
-			if ($badge) {
-				$css_class = 'badge badge-'.$badge;
-			}
-		} elseif ($extra['label']) {
-			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
-			if ($label) {
-				$css_class = 'label label-'.$label;
-			}
-		} elseif ($extra['class']) {
-			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
-			if ($_css_class) {
-				$css_class = $_css_class;
-			}
-		}
-		return $css_class;
-	}
-
 	/**
 	* Embedding ckeditor (http://ckeditor.com/) with kcfinder (http://kcfinder.sunhater.com/).
 	* Best way to include it into project: 
