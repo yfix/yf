@@ -60,7 +60,7 @@ class yf_manage_shop_attributes{
 	*/
 	function attribute_edit () {
 		if (empty($_GET["id"])) {
-			return _e(t("no id"));
+			return _e("no id");
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		$A = db()->query_fetch("SELECT * FROM ".db('shop_product_attributes_info')." WHERE id=".$_GET["id"]);
@@ -112,7 +112,7 @@ class yf_manage_shop_attributes{
 		$_GET["id"] = intval($_GET["id"]);
 		$field_info = db()->query_fetch("SELECT * FROM ".db('shop_product_attributes_info')." WHERE id = ".intval($_GET["id"]));
 		if (empty($field_info)) {
-			return _e(t("no field"));
+			return _e("no field");
 		}
 		if ($_GET["id"]) {
 			db()->query("DELETE FROM ".db('shop_product_attributes_info')." WHERE id=".$_GET["id"]);

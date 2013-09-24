@@ -49,7 +49,7 @@ class yf_user_modules {
 			}
 			if (isset($active) && $where) {
 				db()->update('user_modules', array('active' => $active), $where);
-				cache()->refresh('user_modules');
+				cache()->refresh(array('user_modules','user_modules_for_select'));
 			}
 			return js_redirect('./?object='.$_GET['object']);
 		}
@@ -102,7 +102,7 @@ class yf_user_modules {
 		if (!empty($module_info)) {
 			db()->UPDATE('user_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
 		}
-		cache()->refresh('user_modules');
+		cache()->refresh(array('user_modules','user_modules_for_select'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($module_info['active'] ? 0 : 1);
@@ -140,7 +140,7 @@ class yf_user_modules {
 				db()->query('DELETE FROM '.db('user_modules').' WHERE name="'._es($cur_module_name).'"');
 			}
 		}
-		cache()->refresh('user_modules');
+		cache()->refresh(array('user_modules','user_modules_for_select'));
 		if (!$silent) {
 			return js_redirect('./?object='.$_GET['object']);
 		}
@@ -385,17 +385,22 @@ class yf_user_modules {
 	* Get methods names for usage inside select boxes
 	*/
 	function _get_methods_for_select ($params = array()) {
-		$out = array('' => '-- All --');
-		foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
-			$out[$module_name] = $module_name.' -> -- All --';
-			foreach ((array)$module_methods as $method_name) {
-				if ($method_name == $module_name) {
-					continue;
+		$cache_name = 'user_modules_for_select';
+		$data = cache_get($cache_name);
+		if (!$data) {
+			$data = array('' => '-- All --');
+			foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
+				$data[$module_name] = $module_name.' -> -- All --';
+				foreach ((array)$module_methods as $method_name) {
+					if ($method_name == $module_name) {
+						continue;
+					}
+					$data[$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
 				}
-				$out[$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
 			}
+			cache_set($cache_name, $data);
 		}
-		return $out;
+		return $data;
 	}
 
 	/**

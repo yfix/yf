@@ -91,7 +91,7 @@ class yf_manage_shop_products{
 		}
 		$info = db()->query_fetch("SELECT * FROM ".db('shop_products')." WHERE id=".intval($_GET["id"]));
 		if (empty($info["id"])) {
-			return _e(t("No such product!"));
+			return _e("No such product!");
 		}
 		$sql = $info;
 		$old_product_id = $sql["id"];

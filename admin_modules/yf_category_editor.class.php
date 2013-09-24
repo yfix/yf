@@ -17,17 +17,6 @@ class yf_category_editor {
 	/**
 	*/
 	function _init () {
-		$this->_boxes = array(
-			'active'		=> 'radio_box("active",			$this->_statuses,			$selected, false, 2, "", false)',
-			'featured'		=> 'radio_box("featured",		$this->_statuses,			$selected, false, 2, "", false)',
-			'parent_id'		=> 'select_box("parent_id",		$this->_items_for_parent,	$selected, false, 2, "", false)',
-			'item_order'	=> 'select_box("item_order",	$this->_item_orders,		$selected, false, 2, "", false)',
-			'groups'		=> 'multi_select("groups",		$this->_groups,				$selected, false, 2, " size=7 ", false)',
-		);
-		$this->_statuses = array(
-			'0' => '<span class="negative">NO</span>',
-			'1' => '<span class="positive">YES</span>',
-		);
 		$array_all = array('' => '-- ALL --');
 		$this->_groups['user'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');
 		$this->_groups['admin'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('admin_groups').' WHERE active="1"');
@@ -420,13 +409,14 @@ class yf_category_editor {
 	/**
 	*/
 	function add_item() {
+/*
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
 		if (empty($cat_info['id'])) {
-			return _e(t('No such category!'));
+			return _e('No such category!');
 		}
 		if ($_POST) {
 			if (is_array($_POST['groups']))	{
@@ -498,102 +488,73 @@ class yf_category_editor {
 			'edit_groups_link'	=> './?object='.$cat_info['type'].'_groups',
 		);
 		return tpl()->parse($_GET['object'].'/edit_item_form', $replace);
+*/
 	}
 
 	/**
 	*/
 	function edit_item() {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
-		}
 		$item_info = db()->query_fetch('SELECT * FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
-		if (empty($item_info['id'])) {
-			return _e(t('No such category item!'));
+		if (!$item_info['id']) {
+			return _e('No such item!');
 		}
 		$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($item_info['cat_id']));
 		if (empty($cat_info['id'])) {
-			return _e(t('No such category!'));
+			return _e('No such category!');
 		}
-		if ($_POST) {
-			if (is_array($_POST['groups']))	{
-				$_POST['groups'] = implode(',',$_POST['groups']);
-			}
-			$_POST['groups'] = str_replace(array(' ',"\t","\r","\n"), '', $_POST['groups']);
+		$_GET['id'] = intval($item_info['id']);
 
-			$OTHER_INFO = array();
-			foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
-				if (!strlen($cur_field_name)) {
-					continue;
+		if ($_POST) {
+			$tmp = array();
+			foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
+				if ($cur_field_name) {
+					$tmp[$field_name] = $field_name.'='.$_POST['custom'][$field_name];
 				}
-				$OTHER_INFO[] =	$cur_field_name.'='.$_POST['custom__'.$cur_field_name];
 			}
-			db()->UPDATE('category_items', array(
-				'parent_id'		=> intval($_POST['parent_id']),
-				'name'			=> _es($_POST['name']),
-				'desc'			=> _es($_POST['desc']),
-				'url'			=> _es($_POST['url']),
-				'icon'			=> _es($_POST['icon']),
-				'user_groups'	=> _es($_POST['groups']),
-				'other_info'	=> _es(implode(';', $OTHER_INFO)),
-				'featured'		=> intval($_POST['featured']),
-				'type_id'		=> intval($_POST['type_id']),
-				'order'			=> intval($_POST['item_order']),
-				'active'		=> intval($_POST['active']),
-			), 'id='.intval($item_info['id']));
-			common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
-			cache()->refresh(array('category_sets', 'category_items'));
-			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id']);
+			$_POST['other_info'] = implode(';', $tmp);
+		} else {
+			if (empty($item_info['url']) && $this->PROPOSE_SHORT_URL) {
+				$item_info['url'] = common()->_propose_url_from_name($item_info['name']);
+			}
 		}
-		$this->_items_for_parent[0] = '-- TOP --';
-		foreach ((array)$this->_recursive_get_cat_items($cat_info['id'], $_GET['id']) as $cur_item_id => $cur_item_info) {
+
+		$a = $item_info;
+		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name'	=> 'trim|required',
+			))
+			->db_update_if_ok('category_items', array(
+				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','other_info','featured','type_id','order','active'
+			), 'id='.$item_info['id'], array('on_after_update' => function() {
+				common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
+				cache()->refresh(array('category_sets', 'category_items'));
+			}))
+			->select_box('parent_id', $this->_get_parents_for_select($item_info['cat_id']), array('desc' => 'Parent item'))
+			->text('name')
+			->textarea('desc', 'Description')
+			->text('url', 'Pretty url')
+			->text('meta_keywords')
+			->text('meta_desc')
+			->text('icon')
+			->yes_no_box('featured')
+			->number('order', 'Display order')
+			->custom_fields('other_info', array('fields' => $cat_info['custom_fields'], 'sub_array' => 'custom'))
+			->active_box()
+			->save_and_back();
+	}
+
+	/**
+	*/
+	function _get_parents_for_select($cat_id) {
+		$data = array(0 => '-- TOP --');
+		foreach ((array)$this->_recursive_get_cat_items($cat_id, $_GET['id']) as $cur_item_id => $cur_item_info) {
 			if (empty($cur_item_id)) {
 				continue;
 			}
-			$this->_items_for_parent[$cur_item_id] = str_repeat('&nbsp; &nbsp; &nbsp; ', $cur_item_info['level']).' &#9492; &nbsp; '.$cur_item_info['name'];
+			$data[$cur_item_id] = str_repeat('&nbsp; &nbsp; &nbsp; ', $cur_item_info['level']).' &#9492; &nbsp; '.$cur_item_info['name'];
 		}
-		$item_info['user_groups']	= explode(',',str_replace(array(' ',"\t","\r","\n"), '', $item_info['user_groups']));
-		foreach ((array)$item_info['user_groups'] as $v) $tmp[$v] = $v;
-		$item_info['user_groups'] = $tmp;
-
-		$this->_groups	= $this->_groups[$cat_info['type']];
-
-		if (empty($item_info['url']) && $this->PROPOSE_SHORT_URL) {
-			$item_info['url'] = common()->_propose_url_from_name($item_info['name']);
-		}
-		$other_info_array = $this->_convert_atts_string_into_array($item_info['other_info']);
-		foreach (explode(',', $cat_info['custom_fields']) as $cur_field_name) {
-			if (empty($cur_field_name)) {
-				continue;
-			}
-			$CUSTOM_FIELDS[] = array(
-				'name'	=> _prepare_html($cur_field_name),
-				'value'	=> _prepare_html($other_info_array[$cur_field_name]),
-			);
-		}
-		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'category_name'		=> _prepare_html($cat_info['name']),
-			'name'				=> _prepare_html($item_info['name']),
-			'desc'				=> nl2br(_prepare_html($item_info['desc'])),
-			'other_info'		=> _prepare_html($item_info['other_info']),
-			'custom_fields'		=> $CUSTOM_FIELDS,
-			'url'				=> _prepare_html($item_info['url']),
-			'icon'				=> _prepare_html($item_info['icon']),
-			'order'				=> intval($item_info['order']),
-			'active'			=> $item_info['active'],
-			'type_id_box'		=> $this->_box('type_id',	$item_info['type_id']),
-			'parent_id_box'		=> $this->_box('parent_id', $item_info['parent_id']),
-			'groups_box'		=> $this->_box('groups',	$item_info['user_groups']),
-			'methods_box'		=> $this->_box('methods',	''),
-			'active_box'		=> $this->_box('active', 	$item_info['active']),
-			'featured_box'		=> $this->_box('featured',	$item_info['featured']),
-			'back_link'			=> './?object='.$_GET['object'].'&action=show_items&id='.intval($cat_info['id']),
-			'for_edit'			=> 1,
-			'edit_modules_link'	=> './?object='.$cat_info['type'].'_modules',
-			'edit_groups_link'	=> './?object='.$cat_info['type'].'_groups',
-		);
-		return tpl()->parse($_GET['object'].'/edit_item_form', $replace);
+		return $data;
 	}
 
 	/**
@@ -694,13 +655,6 @@ class yf_category_editor {
 			'back_link'	=> './?object='.$_GET['object'],
 		);
 		return tpl()->parse('db_manager/export_text_result', $replace);
-	}
-
-	/**
-	*/
-	function _box ($name = '', $selected = '') {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval('return common()->'.$this->_boxes[$name].';');
 	}
 
 	/**

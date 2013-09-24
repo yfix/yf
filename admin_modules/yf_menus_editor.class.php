@@ -159,11 +159,11 @@ class yf_menus_editor {
 	function edit() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
 		if (empty($menu_info['id'])) {
-			return _e(t('No such menu!'));
+			return _e('No such menu!');
 		}
 		if ($_POST) {
 			if (!common()->_error_exists()) {
@@ -219,11 +219,11 @@ class yf_menus_editor {
 	function clone_menu() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
 		if (empty($menu_info['id'])) {
-			return _e(t('No such menu!'));
+			return _e('No such menu!');
 		}
 		$sql = $menu_info;
 		unset($sql['id']);
@@ -306,7 +306,7 @@ class yf_menus_editor {
 	function show_items() {
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']).' OR name="'.db()->es($_GET['id']).'"');
 		if (empty($menu_info)) {
-			return _e(t('No such menu!'));
+			return _e('No such menu!');
 		}
 		$_GET['id'] = intval($menu_info['id']);
 
@@ -443,11 +443,11 @@ class yf_menus_editor {
 	function add_item() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
 		if (empty($menu_info['id'])) {
-			return _e(t('No such menu!'));
+			return _e('No such menu!');
 		}
 		if ($_POST) {
 			db()->INSERT('menu_items', array(
@@ -524,15 +524,15 @@ class yf_menus_editor {
 	function edit_item() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$item_info = db()->query_fetch('SELECT * FROM '.db('menu_items').' WHERE id='.intval($_GET['id']));
 		if (empty($item_info['id'])) {
-			return _e(t('No such menu item!'));
+			return _e('No such menu item!');
 		}
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($item_info['menu_id']));
 		if (empty($menu_info['id'])) {
-			return _e(t('No such menu!'));
+			return _e('No such menu!');
 		}
 		if ($_POST) {
 			db()->UPDATE('menu_items', array(
@@ -614,15 +614,15 @@ class yf_menus_editor {
 	function clone_item() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t('No id!'));
+			return _e('No id!');
 		}
 		$item_info = db()->query_fetch('SELECT * FROM '.db('menu_items').' WHERE id='.intval($_GET['id']));
 		if (empty($item_info['id'])) {
-			return _e(t('No such menu item!'));
+			return _e('No such menu item!');
 		}
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($item_info['menu_id']));
 		if (empty($menu_info['id'])) {
-			return _e(t('No such menu!'));
+			return _e('No such menu!');
 		}
 		$sql = $item_info;
 		unset($sql['id']);

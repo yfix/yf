@@ -38,7 +38,6 @@ class yf_blocks {
 			->btn_edit()
 			->btn_delete()
 			->btn_clone()
-			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
 			->btn_active()
 			->footer_add('', './?object='.$_GET['object'].'&action=add')
 		;
@@ -354,36 +353,6 @@ class yf_blocks {
 		} else {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
 		}
-	}
-
-	/**
-	* Export blocks items
-	*/
-	function export() {
-		$_GET['id'] = intval($_GET['id']);
-		if ($_GET['id']) {
-			$block_info = db()->query_fetch('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']));
-		}
-		$params = array(
-			'single_table'	=> '',
-			'tables'		=> array(db('blocks'), db('block_rules')),
-			'full_inserts'	=> 1,
-			'ext_inserts'	=> 1,
-			'export_type'	=> 'insert',
-			'silent_mode'	=> true,
-		);
-		if ($block_info['id']) {
-			$params['where'] = array(
-				db('blocks')		=> 'id='.intval($block_info['id']),
-				db('block_rules')	=> 'block_id='.intval($block_info['id']),
-			);
-		}
-		$EXPORTED_SQL = module('db_manager')->export($params);
-		$replace = array(
-			'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
-			'back_link'	=> './?object='.$_GET['object'],
-		);
-		return tpl()->parse('db_manager/export_text_result', $replace);
 	}
 
 	/**

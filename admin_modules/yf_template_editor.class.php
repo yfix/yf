@@ -379,11 +379,16 @@ class yf_template_editor {
 	/**
 	*/
 	function _get_themes_for_select() {
-		foreach ((array)$this->_get_themes_names() as $_location => $_themes) {
-			foreach ((array)$_themes as $_theme) {
-				$out[$_theme] = $_theme;
+		$cache_name = 'themes_for_select';
+		$data = cache_get($cache_name);
+		if (!$data) {
+			foreach ((array)$this->_get_themes_names() as $_location => $_themes) {
+				foreach ((array)$_themes as $_theme) {
+					$data[$_theme] = $_theme;
+				}
 			}
+			cache_set($cache_name, $data);
 		}
-		return $out;
+		return $data;
 	}
 }

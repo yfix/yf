@@ -402,17 +402,22 @@ class yf_admin_modules {
 	* Get methods names for usage inside select boxes
 	*/
 	function _get_methods_for_select ($params = array()) {
-		$out = array('' => '-- All --');
-		foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
-			$out[$module_name] = $module_name.' -> -- All --';
-			foreach ((array)$module_methods as $method_name) {
-				if ($method_name == $module_name) {
-					continue;
+		$cache_name = 'admin_modules_for_select';
+		$data = cache_get($cache_name);
+		if (!$data) {
+			$data = array('' => '-- All --');
+			foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
+				$data[$module_name] = $module_name.' -> -- All --';
+				foreach ((array)$module_methods as $method_name) {
+					if ($method_name == $module_name) {
+						continue;
+					}
+					$data[$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
 				}
-				$out[$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
 			}
+			cache_set($cache_name, $data);
 		}
-		return $out;
+		return $data;
 	}
 
 	/**
