@@ -16,12 +16,8 @@ class yf_menus_editor {
 	*/
 	function _init () {
 		$array_all = array('' => '-- ALL --');
-		$this->_methods['user'] = $array_all + (array)module('user_modules')->_get_methods_for_select();
-		$this->_methods['admin'] = $array_all + (array)module('admin_modules')->_get_methods_for_select();
 		$this->_groups['user'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');
 		$this->_groups['admin'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('admin_groups').' WHERE active="1"');
-		$this->_themes = $array_all + (array)module('template_editor')->_get_themes_for_select();
-		$this->_locales = $array_all + (array)module('locale_editor')->_get_locales();
 		$this->_sites = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('sites').' WHERE active="1"');
 		$this->_servers = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('core_servers').' WHERE active="1"');
 		$this->_menu_types = array(
