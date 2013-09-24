@@ -77,7 +77,7 @@ class yf_category_editor {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name'	=> 'trim|required|is_unique[categories.name]',
+				'name'	=> 'trim|required',
 			))
 			->db_update_if_ok('categories', array('name','desc','stpl_name','method_name','custom_fields','active'), 'id='.$id, array('on_after_update' => function() {
 				common()->admin_wall_add(array('category updated: '.$a['name'], $id));

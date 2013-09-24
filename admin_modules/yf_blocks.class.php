@@ -50,14 +50,14 @@ class yf_blocks {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name'	=> 'trim|required|alpha_numeric|is_unique[blocks.name]',
+				'name'	=> 'trim|required|alpha_dash|is_unique[blocks.name]',
 				'type'	=> 'trim|required',
 			))
 			->db_insert_if_ok('blocks', array('type','name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('block added: '.$_POST['name'].'', db()->insert_id()));
 				cache()->refresh('blocks_names');
 			}))
-			->select_box('type', array('admin' => 'admin', 'user' => 'user'))
+			->radio_box('type', array('admin' => 'admin', 'user' => 'user'))
 			->text('name','Block name')
 			->text('desc','Block Description')
 			->template_select_box('stpl_name','Custom template')
@@ -74,8 +74,7 @@ class yf_blocks {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a)
 			->validate(array(
-				'name'	=> 'trim|required|alpha_numeric|is_unique[blocks.name]',
-				'type'	=> 'trim|required',
+				'name'	=> 'trim|required|alpha_dash',
 			))
 			->db_update_if_ok('blocks', array('name','desc','stpl_name','method_name','active'), 'id='.$_GET['id'], array('on_after_update' => function() {
 				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', $id));

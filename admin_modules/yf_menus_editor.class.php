@@ -88,7 +88,7 @@ class yf_menus_editor {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name'	=> 'trim|required|is_unique[menus.name]',
+				'name'	=> 'trim|required',
 			))
 			->db_update_if_ok('menus', array('name','desc','stpl_name','method_name','active'), 'id='.$id, array('on_after_update' => function() {
 				common()->admin_wall_add(array('menu updated: '.$_POST['name'].'', $menu_info['id']));
