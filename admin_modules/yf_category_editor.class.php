@@ -59,8 +59,8 @@ class yf_category_editor {
 			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
 			->text('name')
 			->text('desc', 'Description')
-			->text('stpl_name')
-			->text('method_name')
+			->template_select_box('stpl_name')
+			->method_select_box('method_name')
 			->text('custom_fields')
 			->active_box()
 			->save_and_back();
@@ -86,8 +86,8 @@ class yf_category_editor {
 			->info('type')
 			->text('name')
 			->text('desc', 'Description')
-			->text('stpl_name')
-			->text('method_name')
+			->template_select_box('stpl_name')
+			->method_select_box('method_name')
 			->text('custom_fields')
 			->active_box()
 			->save_and_back();
@@ -356,6 +356,9 @@ class yf_category_editor {
 		$new_order = 1;
 		$batch = array();
 		foreach ((array)$cat_items as $item_id => $info) {
+			if (!$info) {
+				continue;
+			}
 			if ($info['order'] != $new_order) {
 				$batch[$item_id] = array(
 					'id'	=> $item_id,
@@ -447,7 +450,7 @@ class yf_category_editor {
 			->text('url', 'Pretty url')
 			->text('meta_keywords')
 			->text('meta_desc')
-			->text('icon')
+			->icon_select_box('icon')
 			->yes_no_box('featured')
 			->active_box()
 			->custom_fields('other_info', $cat_info['custom_fields'])
@@ -499,7 +502,7 @@ class yf_category_editor {
 			->text('url', 'Pretty url')
 			->text('meta_keywords')
 			->text('meta_desc')
-			->text('icon')
+			->icon_select_box('icon')
 			->yes_no_box('featured')
 			->active_box()
 			->custom_fields('other_info', $cat_info['custom_fields'])

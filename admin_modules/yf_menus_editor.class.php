@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Menu's editor
+* System-wide menus editor
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -13,85 +13,30 @@ class yf_menus_editor {
 	public $ICONS_PATH = 'uploads/icons/';
 
 	/**
-	* Constructor
 	*/
 	function _init () {
-		$this->_boxes = array(
-			'menu_type'		=> 'radio_box("type",			$this->_menu_types,			$selected, false, 2, "", false)',
-			'active'		=> 'radio_box("active",			$this->_statuses,			$selected, false, 2, "", false)',
-			'type_id'		=> 'select_box("type_id",		$this->_item_types,			$selected, false, 2, "", false)',
-			'parent_id'		=> 'select_box("parent_id",		$this->_items_for_parent,	$selected, false, 2, "", false)',
-			'item_order'	=> 'select_box("item_order",	$this->_item_orders,		$selected, false, 2, "", false)',
-			'methods'		=> 'select_box("methods",		$this->_methods,			$selected, false, 2, "", false)',
-			'groups'		=> 'multi_select("groups",		$this->_groups,				$selected, false, 2, " size=5 class=small_for_select ", false)',
-			'site_ids'		=> 'multi_select("site_ids",	$this->_sites,				$selected, false, 2, " size=5 class=small_for_select ", false)',
-			'server_ids'	=> 'multi_select("server_ids",	$this->_servers,			$selected, false, 2, " size=5 class=small_for_select ", false)',
-		);
+		$array_all = array('' => '-- ALL --');
+		$this->_methods['user'] = $array_all + (array)module('user_modules')->_get_methods_for_select();
+		$this->_methods['admin'] = $array_all + (array)module('admin_modules')->_get_methods_for_select();
+		$this->_groups['user'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');
+		$this->_groups['admin'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('admin_groups').' WHERE active="1"');
+		$this->_themes = $array_all + (array)module('template_editor')->_get_themes_for_select();
+		$this->_locales = $array_all + (array)module('locale_editor')->_get_locales();
+		$this->_sites = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('sites').' WHERE active="1"');
+		$this->_servers = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('core_servers').' WHERE active="1"');
 		$this->_menu_types = array(
 			'user'	=> 'user',
 			'admin'	=> 'admin',
 		);
-		$this->_statuses = array(
-			'0' => '<span class="negative">NO</span>',
-			'1' => '<span class="positive">YES</span>',
-		);
 		$this->_item_types = array(
-			1 => t('Internal link'),
-			2 => t('External link'),
-			3 => t('Spacer'),
+			1 => 'Internal link',
+			2 => 'External link',
+			3 => 'Spacer',
 		);
-		$this->_user_modules = main()->_execute('user_modules', '_get_modules');
-		$this->_user_modules_methods = main()->_execute('user_modules', '_get_methods');
-		$this->_user_methods[''] = '-- ALL --';
-		foreach ((array)$this->_user_modules_methods as $module_name => $module_methods) {
-			$this->_user_methods['object='.$module_name] = $module_name.' -> -- ALL --';
-			foreach ((array)$module_methods as $method_name) {
-				if ($method_name == $module_name) {
-					continue;
-				}
-				$this->_user_methods['object='.$module_name.'&action='.$method_name] = _prepare_html($module_name.' -> '.$method_name);
-			}
-		}
-		$this->_user_groups[''] = '-- ALL --';
-		$Q = db()->query('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');
-		while ($A = db()->fetch_assoc($Q)) {
-			$this->_user_groups[$A['id']] = $A['name'];
-		}
-		$this->_admin_modules = main()->_execute('admin_modules', '_get_modules');
-		$this->_admin_modules_methods = main()->_execute('admin_modules', '_get_methods');
-		$this->_admin_methods[''] = '-- ALL --';
-		foreach ((array)$this->_admin_modules_methods as $module_name => $module_methods) {
-			$this->_admin_methods['object='.$module_name] = $module_name.' -> -- ALL --';
-			foreach ((array)$module_methods as $method_name) {
-				if ($method_name == $module_name) {
-					continue;
-				}
-				$this->_admin_methods['object='.$module_name.'&action='.$method_name] = _prepare_html($module_name.' -> '.$method_name);
-			}
-		}
-		$this->_admin_groups[''] = '-- ALL --';
-		$Q = db()->query('SELECT id,name FROM '.db('admin_groups').' WHERE active="1"');
-		while ($A = db()->fetch_assoc($Q)) {
-			$this->_admin_groups[$A['id']] = $A['name'];
-		}
-		$this->_sites = array(
-			'' => '-- ALL --',
-		);
-		$Q = db()->query('SELECT id,name FROM '.db('sites').' WHERE active="1"');
-		while ($A = db()->fetch_assoc($Q)) {
-			$this->_sites[$A['id']] = $A['name'];
-		}
-		$this->_servers = array(
-			'' => '-- ALL --',
-		);
-		$Q = db()->query('SELECT id,name FROM '.db('core_servers').' WHERE active="1"');
-		while ($A = db()->fetch_assoc($Q)) {
-			$this->_servers[$A['id']] = $A['name'];
-		}
 	}
 
 	/**
-	* Display menus blocks
+	* Display menus
 	*/
 	function show() {
 		$q = db()->query('SELECT m.id, COUNT(i.id) AS num FROM '.db('menus').' AS m LEFT JOIN '.db('menu_items').' AS i ON m.id = i.menu_id GROUP BY m.id');
@@ -114,96 +59,52 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Add new menu block
 	*/
 	function add() {
-		if ($_POST) {
-			if (!common()->_error_exists()) {
-				db()->INSERT('menus', array(
-					'name'			=> _es($_POST['name']),
-					'desc'			=> _es($_POST['desc']),
-					'stpl_name'		=> _es($_POST['stpl_name']),
-					'method_name'	=> _es($_POST['method_name']),
-					'active'		=> (int)((bool)$_POST['active']),
-					'type'			=> _es($_POST['type']),
-				));
+		$a = $_POST;
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name'	=> 'trim|required|is_unique[menus.name]',
+				'type'	=> 'trim|required',
+			))
+			->db_insert_if_ok('menus', array('type','name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('menu added: '.$_POST['name'].'', db()->insert_id()));
 				cache()->refresh('menus');
-				return js_redirect('./?object='.$_GET['object']);
-			}
-		}
-		foreach ((array)$menu_info as $k => $v) {
-			$DATA[$k] = isset($_POST[$k]) ? $_POST[$k] : $v;
-		}
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-			'name'			=> _prepare_html($DATA['name']),
-			'desc'			=> _prepare_html($DATA['desc']),
-			'type'			=> _prepare_html($DATA['type']),
-			'stpl_name'		=> _prepare_html($DATA['stpl_name']),
-			'method_name'	=> _prepare_html($DATA['method_name']),
-			'active_box'	=> $this->_box('active', $DATA['active']),
-			'menu_type_box'	=> $this->_box('menu_type', $DATA['type']),
-			'active'		=> $DATA['active'],
-			'back_link'		=> './?object='.$_GET['object'].'&action=show',
-			'for_edit'		=> 0,
-			'modules_link'	=> './?object='.($DATA['type'] ? $DATA['type'] : 'user').'_modules',
-			'stpls_link'	=> './?object=template_editor',
-		);
-		return tpl()->parse($_GET['object'].'/edit_menu', $replace);
+			}))
+			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
+			->text('name')
+			->text('desc', 'Description')
+			->template_select_box('stpl_name')
+			->method_select_box('method_name')
+			->active_box()
+			->save_and_back();
 	}
 
 	/**
-	* Edit menu block
 	*/
 	function edit() {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('No id!');
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('No id');
 		}
-		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
-		if (empty($menu_info['id'])) {
-			return _e('No such menu!');
-		}
-		if ($_POST) {
-			if (!common()->_error_exists()) {
-				db()->UPDATE('menus', array(
-					'name'			=> _es($_POST['name']),
-					'desc'			=> _es($_POST['desc']),
-					'stpl_name'		=> _es($_POST['stpl_name']),
-					'method_name'	=> _es($_POST['method_name']),
-					'active'		=> (int)((bool)$_POST['active']),
-				), 'id='.intval($_GET['id']));
+		$a = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name'	=> 'trim|required|is_unique[menus.name]',
+			))
+			->db_update_if_ok('menus', array('name','desc','stpl_name','method_name','active'), 'id='.$id, array('on_after_update' => function() {
 				common()->admin_wall_add(array('menu updated: '.$_POST['name'].'', $menu_info['id']));
 				cache()->refresh('menus');
-				return js_redirect('./?object='.$_GET['object']);
-			}
-		}
-		foreach ((array)$menu_info as $k => $v) {
-			$DATA[$k] = isset($_POST[$k]) ? $_POST[$k] : $v;
-		}
-		$methods_for_select = $block_info['type'] == 'admin' ? $this->_admin_methods : $this->_user_methods;
-		if (isset($methods_for_select[''])) {
-			unset($methods_for_select['']);
-		}
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'name'			=> _prepare_html($DATA['name']),
-			'desc'			=> _prepare_html($DATA['desc']),
-			'type'			=> _prepare_html($DATA['type']),
-			'stpl_name'		=> _prepare_html($DATA['stpl_name']),
-			'method_name'	=> _prepare_html($DATA['method_name']),
-			'active_box'	=> $this->_box('active', $DATA['active']),
-			'active'		=> $DATA['active'],
-			'back_link'		=> './?object='.$_GET['object'].'&action=show',
-			'for_edit'		=> 1,
-			'items_link'	=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
-			'methods_box'	=> common()->select_box('methods', $methods_for_select, '', true, 2, 'class=small_for_select', false),
-			'stpls_box'		=> common()->select_box('stpls', $this->_get_stpls($menu_info['type']), '', true, 2, 'class=small_for_select', false),
-			'modules_link'	=> './?object='.$menu_info['type'].'_modules',
-			'stpls_link'	=> './?object=template_editor',
-		);
-		return tpl()->parse($_GET['object'].'/edit_menu', $replace);
+			}))
+			->info('type')
+			->text('name')
+			->text('desc', 'Description')
+			->template_select_box('stpl_name')
+			->method_select_box('method_name')
+			->active_box()
+			->save_and_back();
 	}
 
 	/**
@@ -214,7 +115,7 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Clone menus block
+	* Clone menus
 	*/
 	function clone_menu() {
 		$_GET['id'] = intval($_GET['id']);
@@ -259,7 +160,7 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Delete menu block and all sub items
+	* Delete menu and all sub items
 	*/
 	function delete() {
 		$_GET['id'] = intval($_GET['id']);
@@ -281,7 +182,7 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Change menu block activity
+	* Change menu activity
 	*/
 	function active() {
 		if (!empty($_GET['id'])) {
@@ -301,7 +202,7 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Display menu items for the given block
+	* Display menu items for the given
 	*/
 	function show_items() {
 		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']).' OR name="'.db()->es($_GET['id']).'"');
@@ -422,6 +323,9 @@ class yf_menus_editor {
 		$new_order = 1;
 		$batch = array();
 		foreach ((array)$menu_items as $item_id => $info) {
+			if (!$info) {
+				continue;
+			}
 			if ($info['order'] != $new_order) {
 				$batch[$item_id] = array(
 					'id'	=> $item_id,
@@ -438,174 +342,110 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Add new menu item
 	*/
 	function add_item() {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('No id!');
-		}
-		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
+		$menu_info = db()->get('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
 		if (empty($menu_info['id'])) {
 			return _e('No such menu!');
 		}
+		$_GET['id'] = intval($menu_info['id']);
+
+		$multi_selects = array('user_groups','site_ids','server_ids');
 		if ($_POST) {
-			db()->INSERT('menu_items', array(
-				'menu_id'		=> intval($_GET['id']),
-				'type_id'		=> intval($_POST['type_id']),
-				'parent_id'		=> intval($_POST['parent_id']),
-				'name'			=> _es($_POST['name']),
-				'location'		=> _es($_POST['location']),
-				'icon'			=> _es($_POST['icon']),
-				'user_groups'	=> _es($this->_multi_html_to_db($_POST['groups'])),
-				'site_ids'		=> _es($this->_multi_html_to_db($_POST['site_ids'])),
-				'server_ids'	=> _es($this->_multi_html_to_db($_POST['server_ids'])),
-				'order'			=> intval($_POST['order']),
-				'active'		=> intval($_POST['active']),
-			));
-			common()->admin_wall_add(array('menu item added: '.$_POST['name'].'', db()->insert_id()));
-			cache()->refresh(array('menus', 'menu_items'));
-			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$menu_info['id']);
-		}
-		$this->_items_for_parent[0] = '-- TOP --';
-		foreach ((array)$this->_recursive_get_menu_items($_GET['id']) as $cur_item_id => $cur_item_info) {
-			if (empty($cur_item_id)) {
-				continue;
+			foreach ($multi_selects as $k) {
+				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
-			$this->_items_for_parent[$cur_item_id] = str_repeat('&nbsp;', $cur_item_info['level'] * 6).' &#9492; '.$cur_item_info['name'];
-		}
-		if ($menu_info['type'] == 'admin') {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
 		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
+			foreach ($multi_selects as $k) {
+				$a[$k] = $this->_multi_db_to_html($a[$k]);
+			}
 		}
-		$icon_src = '';
-		if ($item_info['icon'] && file_exists(INCLUDE_PATH. $this->ICONS_PATH. $item_info['icon'])) {
-			$icon_src = WEB_PATH. $this->ICONS_PATH. $item_info['icon'];
-		}
-		foreach (array('groups', 'methods', 'site_ids', 'server_ids') as $k) {
-			$DATA[$k] = $this->_multi_db_to_html($DATA[$k]);
-		}
-		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'menu_name'			=> _prepare_html($menu_info['name']),
-			'name'				=> _prepare_html($DATA['name']),
-			'location'			=> _prepare_html($DATA['location']),
-			'icon'				=> _prepare_html($DATA['icon']),
-			'order'				=> intval($DATA['order']),
-			'type_id_box'		=> $this->_box('type_id',	''),
-			'parent_id_box'		=> $this->_box('parent_id', ''),
-			'groups_box'		=> $this->_box('groups',	array(''=>'-- ALL --')),
-			'methods_box'		=> $this->_box('methods',	''),
-			'site_ids_box'		=> $this->_box('site_ids',	''),
-			'server_ids_box'	=> $this->_box('server_ids',''),
-			'active_box'		=> $this->_box('active', 	$DATA['active']),
-			'active'			=> $DATA['active'],
-			'back_link'			=> './?object='.$_GET['object'].'&action=show_items&id='.intval($menu_info['id']),
-			'for_edit'			=> 0,
-			'edit_modules_link'	=> './?object='.$menu_info['type'].'_modules',
-			'edit_groups_link'	=> './?object='.$menu_info['type'].'_groups',
-			'icons_list_link'	=> './?object='.$_GET['object'].'&action=icons_list',
-			'icons_web_path'	=> WEB_PATH. $this->ICONS_PATH,
-			'icon_src'			=> $icon_src,
-			'edit_menu_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$menu_info['id'],
-			'cond_code'			=> _prepare_html($DATA['cond_code'], 0),
-			'sites_link'		=> './?object=manage_sites',
-			'servers_link'		=> './?object=manage_servers',
-		);
-		return tpl()->parse($_GET['object'].'/edit_item_form', $replace);
+		$a = $_POST;
+		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$menu_info['id'];
+		return form($a)
+			->validate(array(
+				'name'	=> 'trim|required',
+			))
+			->db_insert_if_ok('menu_items', array(
+				'type_id','parent_id','name','location','icon','user_groups','site_ids','server_ids','active'
+			), array('menu_id' => $menu_info['id']), array(
+				'on_after_update' => function() {
+					common()->admin_wall_add(array('menu item added: '.$_POST['name'].'', db()->insert_id()));
+					cache()->refresh(array('menus', 'menu_items'));
+				}
+			))
+			->select_box('type_id', $this->_item_types)
+			->select_box('parent_id', $this->_get_parents_for_select($menu_info['id']), array('desc' => 'Parent item'))
+			->text('name')
+			->location_select_box('location')
+			->multi_select_box('user_groups', $this->_groups[$menu_info['type']], array('edit_link' => './?object='.$menu_info['type'].'_groups', 'desc' => 'Groups'))
+			->multi_select_box('site_ids', $this->_sites, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
+			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
+			->icon_select_box('icon')
+			->active_box()
+			->save_and_back();
 	}
 
 	/**
-	* Edit menu item
 	*/
 	function edit_item() {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('No id!');
-		}
 		$item_info = db()->query_fetch('SELECT * FROM '.db('menu_items').' WHERE id='.intval($_GET['id']));
 		if (empty($item_info['id'])) {
 			return _e('No such menu item!');
 		}
-		$menu_info = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($item_info['menu_id']));
+		$menu_info = db()->get('SELECT * FROM '.db('menus').' WHERE id='.intval($item_info['menu_id']));
 		if (empty($menu_info['id'])) {
 			return _e('No such menu!');
 		}
+		$_GET['id'] = intval($item_info['id']);
+
+		$multi_selects = array('user_groups','site_ids','server_ids');
 		if ($_POST) {
-			db()->UPDATE('menu_items', array(
-				'parent_id'		=> intval($_POST['parent_id']),
-				'name'			=> _es($_POST['name']),
-				'location'		=> _es($_POST['location']),
-				'icon'			=> _es($_POST['icon']),
-				'user_groups'	=> _es($this->_multi_html_to_db($_POST['groups'])),
-				'site_ids'		=> _es($this->_multi_html_to_db($_POST['site_ids'])),
-				'server_ids'	=> _es($this->_multi_html_to_db($_POST['server_ids'])),
-				'cond_code'		=> _es($_POST['cond_code']),
-				'type_id'		=> intval($_POST['type_id']),
-				'order'			=> intval($_POST['order']),
-				'active'		=> intval($_POST['active']),
-			), 'id='.intval($item_info['id']));
-			common()->admin_wall_add(array('menu item updated: '.$_POST['name'].'', $item_info['id']));
-			cache()->refresh(array('menus', 'menu_items'));
-			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$menu_info['id']);
+			foreach ($multi_selects as $k) {
+				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
+			}
+		} else {
+			foreach ($multi_selects as $k) {
+				$a[$k] = $this->_multi_db_to_html($a[$k]);
+			}
 		}
-		$this->_items_for_parent[0] = '-- TOP --';
-		foreach ((array)$this->_recursive_get_menu_items($menu_info['id'], $_GET['id']) as $cur_item_id => $cur_item_info) {
+		$a = $item_info;
+		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$menu_info['id'];
+		return form($a)
+			->validate(array(
+				'name'	=> 'trim|required',
+			))
+			->db_update_if_ok('menu_items', array(
+				'type_id','parent_id','name','location','icon','user_groups','site_ids','server_ids','active'
+			), 'id='.$item_info['id'], array(
+				'on_after_update' => function() {
+					common()->admin_wall_add(array('menu item updated: '.$_POST['name'].'', $item_info['id']));
+					cache()->refresh(array('menus', 'menu_items'));
+				}
+			))
+			->select_box('type_id', $this->_item_types)
+			->select_box('parent_id', $this->_get_parents_for_select($menu_info['id']), array('desc' => 'Parent item'))
+			->text('name')
+			->location_select_box('location')
+			->multi_select_box('user_groups', $this->_groups[$menu_info['type']], array('edit_link' => './?object='.$menu_info['type'].'_groups', 'desc' => 'Groups'))
+			->multi_select_box('site_ids', $this->_sites, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
+			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
+			->icon_select_box('icon')
+			->active_box()
+			->save_and_back();
+	}
+
+	/**
+	*/
+	function _get_parents_for_select($menu_id) {
+		$data = array(0 => '-- TOP --');
+		foreach ((array)$this->_recursive_get_menu_items($menu_id, $_GET['id']) as $cur_item_id => $cur_item_info) {
 			if (empty($cur_item_id)) {
 				continue;
 			}
-			$this->_items_for_parent[$cur_item_id] = str_repeat('&nbsp; &nbsp; &nbsp; ', $cur_item_info['level']).' &#9492; &nbsp; '.$cur_item_info['name'];
+			$data[$cur_item_id] = str_repeat('&nbsp; &nbsp; &nbsp; ', $cur_item_info['level']).' &#9492; &nbsp; '.$cur_item_info['name'];
 		}
-		$item_info['user_groups']	= explode(',',str_replace(array(' ',"\t","\r","\n"), '', $item_info['user_groups']));
-		foreach ((array)$item_info['user_groups'] as $v) {
-			$tmp[$v] = $v;
-		}
-		$item_info['user_groups'] = $tmp;
-		if ($menu_info['type'] == 'admin') {
-			$this->_groups	= $this->_admin_groups;
-			$this->_methods = $this->_admin_methods;
-		} else {
-			$this->_groups	= $this->_user_groups;
-			$this->_methods = $this->_user_methods;
-		}
-		$icon_src = '';
-		if ($item_info['icon'] && file_exists(INCLUDE_PATH. $this->ICONS_PATH. $item_info['icon'])) {
-			$icon_src = WEB_PATH. $this->ICONS_PATH. $item_info['icon'];
-		}
-		foreach (array('groups', 'methods', 'site_ids', 'server_ids') as $k) {
-			$item_info[$k] = $this->_multi_db_to_html($item_info[$k]);
-		}
-		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'menu_name'			=> _prepare_html($menu_info['name']),
-			'name'				=> _prepare_html($item_info['name']),
-			'location'			=> _prepare_html($item_info['location']),
-			'icon'				=> _prepare_html($item_info['icon']),
-			'order'				=> intval($item_info['order']),
-			'type_id_box'		=> $this->_box('type_id',		$item_info['type_id']),
-			'parent_id_box'		=> $this->_box('parent_id', 	$item_info['parent_id']),
-			'groups_box'		=> $this->_box('groups',		$item_info['user_groups']),
-			'methods_box'		=> $this->_box('methods',		$item_info['methods']),
-			'site_ids_box'		=> $this->_box('site_ids',		$item_info['site_ids']),
-			'server_ids_box'	=> $this->_box('server_ids',	$item_info['server_ids']),
-			'active_box'		=> $this->_box('active', 		$item_info['active']),
-			'active'			=> $item_info['active'],
-			'back_link'			=> './?object='.$_GET['object'].'&action=show_items&id='.intval($menu_info['id']),
-			'for_edit'			=> 1,
-			'edit_modules_link'	=> './?object='.$menu_info['type'].'_modules',
-			'edit_groups_link'	=> './?object='.$menu_info['type'].'_groups',
-			'icons_list_link'	=> './?object='.$_GET['object'].'&action=icons_list',
-			'icons_web_path'	=> WEB_PATH. $this->ICONS_PATH,
-			'icon_src'			=> $icon_src,
-			'edit_menu_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$menu_info['id'],
-			'cond_code'			=> _prepare_html($item_info['cond_code'], 0),
-			'sites_link'		=> './?object=manage_sites',
-			'servers_link'		=> './?object=manage_servers',
-		);
-		return tpl()->parse($_GET['object'].'/edit_item_form', $replace);
+		return $data;
 	}
 
 	/**
@@ -672,7 +512,6 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Change menu item activity
 	*/
 	function activate_item() {
 		if (!empty($_GET['id'])) {
@@ -692,7 +531,6 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Delete item
 	*/
 	function delete_item() {
 		$_GET['id'] = intval($_GET['id']);
@@ -742,30 +580,6 @@ class yf_menus_editor {
 	}
 
 	/**
-	* Choose icon visaul
-	*/
-	function icons_list() {
-		main()->NO_GRAPHICS = true;
-
-		$icons_dir = INCLUDE_PATH. $this->ICONS_PATH;
-
-		$cut_length = 0;
-		foreach ((array)_class('dir')->scan_dir($icons_dir, true, '', '/\.(svn|git)/i') as $_icon_path) {
-			$_icon_path = str_replace("\\", '/', strtolower($_icon_path));
-			if (empty($cut_length)) {
-				$cut_length = strpos($_icon_path, str_replace("\\", '/', strtolower($this->ICONS_PATH))) + strlen($this->ICONS_PATH);
-			}
-			$_icon_path = substr($_icon_path, $cut_length);
-
-			$body[$_icon_path] = $_icon_path;
-		}
-		if (is_array($body)) {
-			ksort($body);
-		}
-		echo implode(PHP_EOL, $body);
-	}
-
-	/**
 	*
 	*/
 	function _multi_html_to_db($input = array()) {
@@ -789,34 +603,6 @@ class yf_menus_editor {
 			}
 		}
 		return (array)$output;
-	}
-
-	/**
-	*
-	*/
-	function _multi_db_to_show($input = '', $names = array()) {
-		$output = array();
-		if (is_array($input)) {
-			$input = ','.implode(',', $input).',';
-		}
-		foreach (explode(',',trim($input,',')) as $k => $v) {
-			if (empty($names[$v])) {
-				continue;
-			}
-			$output[] = $names[$v];
-		}
-		$output = implode('<br />'.PHP_EOL, $output);
-		if (empty($output)) {
-			$output	= '-- ALL --';
-		}
-		return $output;
-	}
-
-	/**
-	*/
-	function _box ($name = '', $selected = '') {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval('return common()->'.$this->_boxes[$name].';');
 	}
 
 	/**
