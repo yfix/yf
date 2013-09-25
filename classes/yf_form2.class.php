@@ -1169,6 +1169,52 @@ class yf_form2 {
 
 	/**
 	*/
+	function _get_selected($name, $extra, $replace) {
+		$r = $replace ?: $this->_replace;
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
+		return $selected;
+	}
+
+	/**
+	*/
+	function _html_control($name, $values, $extra = array(), $replace = array(), $func) {
+		if ($this->_chained_mode) {
+			$replace = (array)$this->_replace + (array)$replace;
+		}
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array('edit_link' => $extra);
+			} else {
+				$extra = array();
+			}
+		}
+		$r = $replace ?: $this->_replace;
+		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
+		$extra['errors'] = common()->_get_error_messages();
+		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
+		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$extra['selected'] = $this->_get_selected($name, $extra, $replace);
+		$extra['id'] = $name;
+		$extra['name'] = $name;
+
+		$body = $this->_row_html(_class('html_controls')->$func($extra), $extra, $replace);
+
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	*/
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
 		if ($this->_chained_mode) {
 			$replace = (array)$this->_replace + (array)$replace;
@@ -1187,9 +1233,12 @@ class yf_form2 {
 			}
 		}
 		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
 		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
+		$extra['errors'] = common()->_get_error_messages();
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
+		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$extra['selected'] = $this->_get_selected($name, $extra, $replace);
 		$extra['id'] = $name;
 		$extra['name'] = $name;
 		$extra['desc'] = $desc;
@@ -1212,352 +1261,49 @@ class yf_form2 {
 	/**
 	*/
 	function select_box($name, $values, $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
-// TODO: IDEA: we can save a lot of code by adding ability to pass $extra directly to _class('html_controls')->select_box($extra)
-		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		if (!$extra['no_translate']) {
-			$values = t($values);
-		}
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
-		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-		$level = isset($extra['level']) ? $extra['level'] : 0;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
-
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html(_class('html_controls')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->_html_control($name, $values, $extra, $replace, 'select_box');
 	}
 
 	/**
 	*/
 	function multi_select($name, $values, $extra = array(), $replace = array()) {
-		return $this->multi_select_box($name, $values, $extra, $replace);
+		return $this->_html_control($name, $values, $extra, $replace, 'multi_select_box');
 	}
 
 	/**
 	*/
 	function multi_select_box($name, $values, $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
-		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		if (!$extra['no_translate']) {
-			$values = t($values);
-		}
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
-		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-		$level = isset($extra['level']) ? $extra['level'] : 0;
-		$disabled = isset($extra['disabled']) ? $extra['disabled'] : false;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
-
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html(_class('html_controls')->multi_select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->_html_control($name, $values, $extra, $replace, 'multi_select_box');
 	}
 
 	/**
 	*/
 	function check_box($name, $values, $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			if (!empty($extra) && is_string($extra)) {
-				$desc = $extra;
-			}
-			$extra = array();
-		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
-		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		if (!$extra['no_translate']) {
-			$values = t($values);
-		}
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
-
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html(_class('html_controls')->check_box($name, $values, $selected, $add_str), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->_html_control($name, $values, $extra, $replace, 'check_box');
 	}
 
 	/**
 	*/
 	function multi_check_box($name, $values, $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
-		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		if (!$extra['no_translate']) {
-			$values = t($values);
-		}
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
-		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
-
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html(_class('html_controls')->multi_check_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->_html_control($name, $values, $extra, $replace, 'multi_check_box');
 	}
 
 	/**
 	*/
 	function radio_box($name, $values, $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
-		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		if (!$extra['no_translate']) {
-			$values = t($values);
-		}
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		$type = isset($extra['type']) ? $extra['type'] : 2;
-		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
-
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html(_class('html_controls')->radio_box($name, $values, $selected, $flow_vertical, $type, $add_str, $translate), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->_html_control($name, $values, $extra, $replace, 'radio_box');
 	}
 
 	/**
 	*/
 	function date_box($name, $values = array(), $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
-		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		$years = isset($extra['years']) ? $extra['years'] : '';
-		$show_what = isset($extra['show_what']) ? $extra['show_what'] : 'ymd';
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
-		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
-
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html(_class('html_controls')->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->_html_control($name, $values, $extra, $replace, 'date_box2');
 	}
 
 	/**
 	*/
 	function time_box($name, $values = array(), $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
-		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : 1;
-		$translate = isset($extra['translate']) ? $extra['translate'] : 1;
-		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
-
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html(_class('html_controls')->time_box2($name, $selected, $add_str, $show_text, $translate), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
+		return $this->_html_control($name, $values, $extra, $replace, 'time_box2');
 	}
 
 	/**
@@ -1567,136 +1313,6 @@ class yf_form2 {
 			$extra['show_what'] = 'ymdhis';
 		}
 		return $this->date_box($name, $values, $extra, $replace);
-	}
-
-	/**
-	* For use inside table item template
-	*/
-	function tbl_link($name, $link, $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$r = $replace ? $replace : $this->_replace;
-		if (!$link && $extra['link_variants']) {
-			foreach((array)$extra['link_variants'] as $link_variant) {
-				if (isset($r[$link_variant])) {
-					$link = $link_variant;
-				}
-			}
-		}
-		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
-
-// TODO: use CSS abstraction layer
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($name).'</a> ';
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-	}
-
-	/**
-	* For use inside table item template
-	*/
-	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'Edit';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['link_variants'] = array('edit_link','edit_url');
-		$extra['icon'] = 'icon-edit';
-		$extra['class'] = 'ajax_edit';
-		return $this->tbl_link($name, $link, $extra, $replace);
-	}
-
-	/**
-	* For use inside table item template
-	*/
-	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'Delete';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['link_variants'] = array('delete_link','delete_url');
-		$extra['icon'] = 'icon-trash';
-		$extra['class'] = 'ajax_delete';
-		return $this->tbl_link($name, $link, $extra, $replace);
-	}
-
-	/**
-	* For use inside table item template
-	*/
-	function tbl_link_clone($name = '', $link = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'Clone';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['link_variants'] = array('clone_link','clone_url');
-		$extra['icon'] = 'icon-plus';
-		$extra['class'] = 'ajax_clone';
-		return $this->tbl_link($name, $link, $extra, $replace);
-	}
-
-	/**
-	* For use inside table item template
-	*/
-	function tbl_link_view($name = '', $link = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'View';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['link_variants'] = array('view_link','view_url');
-		$extra['icon'] = 'icon-eye-open';
-		$extra['class'] = 'ajax_view';
-		return $this->tbl_link($name, $link, $extra, $replace);
-	}
-
-	/**
-	* For use inside table item template
-	*/
-	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!$name) {
-			$name = 'active';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$r = $replace ? $replace : $this->_replace;
-		if (!$link) {
-			$link = 'active_link';
-			if (!isset($r['active_link']) && isset($r['active_url'])) {
-				$link = 'active_url';
-			}
-		}
-		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$is_active = $r[$name];
-
-// TODO: use CSS abstraction layer
-		$body = ' <a href="'.$link_url.'" class="change_active">'
-			.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
-			.'</a> ';
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
 	}
 
 	/**
@@ -1953,6 +1569,136 @@ class yf_form2 {
 			}
 		}
 		return $output_array;
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link($name, $link, $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = (array)$this->_replace + (array)$replace;
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$r = $replace ? $replace : $this->_replace;
+		if (!$link && $extra['link_variants']) {
+			foreach((array)$extra['link_variants'] as $link_variant) {
+				if (isset($r[$link_variant])) {
+					$link = $link_variant;
+				}
+			}
+		}
+		$link_url = isset($r[$link]) ? $r[$link] : $link;
+		$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
+
+// TODO: use CSS abstraction layer
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($name).'</a> ';
+
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'Edit';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['link_variants'] = array('edit_link','edit_url');
+		$extra['icon'] = 'icon-edit';
+		$extra['class'] = 'ajax_edit';
+		return $this->tbl_link($name, $link, $extra, $replace);
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'Delete';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['link_variants'] = array('delete_link','delete_url');
+		$extra['icon'] = 'icon-trash';
+		$extra['class'] = 'ajax_delete';
+		return $this->tbl_link($name, $link, $extra, $replace);
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_clone($name = '', $link = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'Clone';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['link_variants'] = array('clone_link','clone_url');
+		$extra['icon'] = 'icon-plus';
+		$extra['class'] = 'ajax_clone';
+		return $this->tbl_link($name, $link, $extra, $replace);
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_view($name = '', $link = '', $extra = array(), $replace = array()) {
+		if (!$name) {
+			$name = 'View';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['link_variants'] = array('view_link','view_url');
+		$extra['icon'] = 'icon-eye-open';
+		$extra['class'] = 'ajax_view';
+		return $this->tbl_link($name, $link, $extra, $replace);
+	}
+
+	/**
+	* For use inside table item template
+	*/
+	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array()) {
+		if ($this->_chained_mode) {
+			$replace = (array)$this->_replace + (array)$replace;
+		}
+		if (!$name) {
+			$name = 'active';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$r = $replace ? $replace : $this->_replace;
+		if (!$link) {
+			$link = 'active_link';
+			if (!isset($r['active_link']) && isset($r['active_url'])) {
+				$link = 'active_url';
+			}
+		}
+		$link_url = isset($r[$link]) ? $r[$link] : $link;
+		$is_active = $r[$name];
+
+// TODO: use CSS abstraction layer
+		$body = ' <a href="'.$link_url.'" class="change_active">'
+			.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
+			.'</a> ';
+
+		if ($this->_chained_mode) {
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
 	}
 
 	/**

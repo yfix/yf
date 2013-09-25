@@ -2,6 +2,61 @@
 
 class yf_utils {
 
+	/**
+	* Encode given address to prevent spam-bots harvesting
+	*
+	*	Output: the email address as a mailto link, with each character
+	*		of the address encoded as either a decimal or hex entity, in
+	*		the hopes of foiling most address harvesting spam bots. E.g.:
+	*
+	*	  <a href="&#x6D;&#97;&#105;&#108;&#x74;&#111;:&#102;&#111;&#111;&#64;&#101;
+	*		x&#x61;&#109;&#x70;&#108;&#x65;&#x2E;&#99;&#111;&#109;">&#102;&#111;&#111;
+	*		&#64;&#101;x&#x61;&#109;&#x70;&#108;&#x65;&#x2E;&#99;&#111;&#109;</a>
+	*
+	* @public
+	* @param	string	an email address to encode, e.g. "foo@example.com"
+	* @param	bool	switch between returning HTML link or just encode text
+	* @return	string
+	*/
+	function encode_email($addr = '', $as_html_link = false) {
+		if ($as_html_link) {
+			$addr = 'mailto:' . $addr;
+		}
+		$length = strlen($addr);
+		// leave ':' alone (to spot mailto: later)
+		$addr = preg_replace_callback('/([^\:])/', function($matches) {
+			$char = $matches[1];
+			$r = rand(0, 100);
+			// roughly 10% raw, 45% hex, 45% dec
+			// '@' *must* be encoded. I insist.
+			if ($r > 90 && $char != '@') {
+				return $char;
+			}
+			if ($r < 45) {
+				return '&#x'.dechex(ord($char)).';';
+			}
+			return '&#'.ord($char).';';
+		}, $addr);
+		// Convert into HTML anchor link
+		if ($as_html_link) {
+			$addr = '<a href="'.$addr.'">'.$addr.'</a>';
+		}
+		// strip the mailto: from the visible part
+		$addr = preg_replace('/">.+?:/', '">', $addr);
+		return $addr;
+	}
+
+	/**
+	* Creates hyperlink from text
+	*/
+	function hyperlink(&$text) {
+		// match protocol://address/path/file.extension?some=variable&another=asf%
+		$text = preg_replace('/\s(([a-zA-Z]+:\/\/)([a-z][a-z0-9_\..-]*[a-z]{2,6})([a-zA-Z0-9\/*-?&%]*))\s/i', ' <a href="$1">$3</a> ', $text);
+		// match www.something.domain/path/file.extension?some=variable&another=asf%
+		$text = preg_replace('/\s(www\.([a-z][a-z0-9_\..-]*[a-z]{2,6})([a-zA-Z0-9\/*-?&%]*))\s/i', ' <a href="http://$1">$2</a> ', $text);
+		return $text;
+	}
+
 	// Show custom text message (fetch it from db)
 	function show_text ($text = "") {
 		$text_l = str_replace(" ", "_", strtolower($text));

@@ -163,42 +163,42 @@ class yf_common {
 	/**
 	* This function generate select box with tree hierarhy inside
 	*/
-	function select_box ($name, $values, $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+	function select_box ($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		return _class('html_controls')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level);
 	}
 
 	/**
 	* Generate multi-select box
 	*/
-	function multi_select ($name, $values, $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		return _class('html_controls')->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
 	* Alias for the multi_select
 	*/
-	function multi_select_box ($name, $values, $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select_box ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
 	* Processing radio buttons
 	*/
-	function radio_box ($box_name, $values, $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
+	function radio_box ($box_name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
 		return _class('html_controls')->radio_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate);
 	}
 
 	/**
 	* Simple check box
 	*/
-	function check_box ($box_name, $values, $selected = '', $add_str = '') {
+	function check_box ($box_name, $values = array(), $selected = '', $add_str = '') {
 		return _class('html_controls')->check_box($box_name, $values, $selected, $add_str);
 	}
 
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box ($box_name, $values, $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+	function multi_check_box ($box_name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		return _class('html_controls')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
 	}
 	
@@ -673,7 +673,7 @@ class yf_common {
 	* Encode given address to prevent spam-bots harvesting
 	*/
 	function encode_email($addr = '', $as_html_link = false) {
-		return _class('html_controls')->encode_email($addr, $as_html_link);
+		return _class('utils')->encode_email($addr, $as_html_link);
 	}
 
 	/**
