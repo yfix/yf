@@ -188,7 +188,7 @@ class yf_html_controls {
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
-			$value = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+#			$value = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		}
 		if (!is_array($extra)) {
 			$extra = array();
