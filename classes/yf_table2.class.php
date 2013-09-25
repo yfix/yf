@@ -218,7 +218,7 @@ class yf_table2 {
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
 					$info['extra'] = (array)$info['extra'];
-					$th_width = ($info['extra']['width'] ? ' width="'.intval($info['extra']['width']).'"' : '');
+					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
 					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($info['desc']). $th_icon_prepend. '</th>'.PHP_EOL;
@@ -242,7 +242,7 @@ class yf_table2 {
 					}
 					$func = $info['func'];
 					unset($info['func']); // Save resources
-					$td_width = ($info['extra']['width'] ? ' width="'.intval($info['extra']['width']).'"' : '');
+					$td_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 
 					$body .= '<td'.$td_width.'>'.$func($row[$name], $info, $row, $params).'</td>'.PHP_EOL;
 				}
@@ -562,8 +562,8 @@ class yf_table2 {
 				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
 				return ($link_url ? '<a href="'.$link_url.'">' : '')
 					.'<img src="'.WEB_PATH. $img_path.'"'
-						.($extra['width'] ? ' width="'.intval($extra['width']).'"' : '')
-						.($extra['height'] ? ' height="'.intval($extra['height']).'"' : '')
+						.($extra['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $extra['width']).'"' : '')
+						.($extra['height'] ? ' height="'.preg_replace('~[^[0-9]%]~ims', '', $extra['height']).'"' : '')
 					.' style="'
 						.($extra['width'] ? 'width:'.$extra['width'].';' : '')
 						.($extra['height'] ? 'height:'.$extra['height'].';' : '')
