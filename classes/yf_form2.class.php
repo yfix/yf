@@ -1163,12 +1163,6 @@ class yf_form2 {
 
 	/**
 	*/
-	function div_box() {
-// TODO: need BS div-based select-box emulation, will be needed for several methods
-	}
-
-	/**
-	*/
 	function _get_selected($name, $extra, $replace) {
 		$r = $replace ?: $this->_replace;
 		$selected = $r[$name];
@@ -1483,6 +1477,12 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function div_box() {
+// TODO: need BS div-based select-box emulation, will be needed for several methods
 	}
 
 	/**

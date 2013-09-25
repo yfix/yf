@@ -365,7 +365,7 @@ class yf_debug_info {
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
 
-		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed'))
+		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed', 'pager_records_on_page' => 10000))
 			->text('id')
 			->text('exec_time')
 			->text('sql', array('hidden_data' => array('%explain', '%trace')))
@@ -414,7 +414,7 @@ class yf_debug_info {
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
 
-		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed'))
+		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed', 'pager_records_on_page' => 10000))
 			->text('id')
 			->text('exec_time')
 			->text('name', array('hidden_data' => array('%trace')))
@@ -562,7 +562,7 @@ class yf_debug_info {
 		}
 //		$body .= '</ol><i>'.t('Rewrite processing time').': '.common()->_format_time_value($GLOBALS['rewrite_exec_time']).' <span>sec</span></div>';
 // TODO: show connection info and totals inside 'caption'
-		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
+		return table((array)$items, array('table_class' => 'debug_item table-condensed', 'pager_records_on_page' => 10000))
 			->text('id')
 #			->text('exec_time')
 			->text('source')
@@ -1167,9 +1167,10 @@ class yf_debug_info {
 			'table_class' 		=> 'debug_item table-condensed', 
 			'auto_no_buttons' 	=> 1,
 			'caption'			=> $caption,
+			'pager_records_on_page' => 10000,
 		))->auto();
 /*
-		return table((array)$items, array('table_class' => 'debug_item table-condensed'))
+		return table((array)$items, array('table_class' => 'debug_item table-condensed','pager_records_on_page' => 10000))
 			->text('name', array('hidden_data' => array('%trace')))
 			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
 		;
