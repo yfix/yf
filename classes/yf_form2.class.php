@@ -513,11 +513,13 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$extra['id'] = $extra['id'] ? $extra['id'] : $name;
-		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
-		if (!isset($extra['no_escape'])) {
-			$value = htmlspecialchars($value, ENT_QUOTES);
-		}
-		$body = '<input type="hidden" id="'.$extra['id'].'" name="'.$name.'" value="'.$value.'"'.($extra['data'] ? ' data="'.$extra['data'].'"' : '').'>';
+		$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$name];
+		$extra['name'] = $name;
+		$extra['type'] = 'hidden';
+
+		$attrs_names = array('type','id','name','value','data');
+		$body = '<input '.$this->_attrs($extra, $attrs_names).'>';
+
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -672,12 +674,8 @@ class yf_form2 {
 			unset($extra['step']);
 		}
 		$extra['type'] = 'number';
-		if (!isset($extra['sizing'])) {
-			$extra['sizing'] = 'small';
-		}
-		if (!isset($extra['maxlength'])) {
-			$extra['maxlength'] = '10';
-		}
+		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
+		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '10';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -704,10 +702,10 @@ class yf_form2 {
 			}
 		}
 		$extra['type'] = 'text';
-		if (!isset($extra['prepend'])) { $extra['prepend'] = '$'; }
-		if (!isset($extra['append'])) { $extra['append'] = '.00'; }
-		if (!isset($extra['sizing'])) { $extra['sizing'] = 'small'; }
-		if (!isset($extra['maxlength'])) { $extra['maxlength'] = '8'; }
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '$';
+		$extra['append'] = isset($extra['append']) ? $extra['append'] : '.00';
+		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
+		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -925,22 +923,19 @@ class yf_form2 {
 		$r = $replace ? $replace : $this->_replace;
 		$extra['errors'] = common()->_get_error_messages();
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
+		$extra['name'] = $name;
+		$extra['desc'] = $desc;
+		$extra['id'] = $name;
+
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
 		} elseif (isset($this->_params['selected'])) {
 			$selected = $this->_params['selected'][$name];
 		}
-		$body = '
-			<div class="control-group'.(isset($extra['errors'][$name]) ? ' error' : '').'">
-				<label class="control-label" for="'.$name.'">'.t($desc).'</label>
-				<div class="controls">'
-					._class('html_controls')->radio_box($name, $extra['items'], $selected, false, 2, '', false)
-					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
-					.($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>' : '')
-				.'</div>
-			</div>
-		';
+
+		$body = $this->_row_html(_class('html_controls')->radio_box($name, $extra['items'], $selected, false, 2, '', false), $extra, $replace);
+
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
@@ -1007,22 +1002,25 @@ class yf_form2 {
 		$link_name = $extra['link_name'] ? $extra['link_name'] : '';
 		$css_class = $this->_prepare_css_class('', $r[$name], $extra);
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-
+/*
 		$body = '
 			<div class="control-group'.(isset($extra['errors'][$name]) ? ' error' : '').'">
 				<div class="controls">
+
 					<input type="submit" value="'.t($value).'" class="btn btn-primary'.($extra['class'] ? ' '.$extra['class'] : '').'"'
 					.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
 					.($extra['data'] ? ' data="'.$extra['data'].'"' : '')
 					.($css_class ? ' class="'.$css_class.'"' : '')
 					.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
 					.'>'
+
 					.($link_url ? ' <a href="'.$link_url.'" class="btn">'.t($link_name).'</a>' : '')
 					.($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>' : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
 				.'</div>
 			</div>
 		';
+*/
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
