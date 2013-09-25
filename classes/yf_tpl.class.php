@@ -511,9 +511,6 @@ class yf_tpl {
 		if (DEBUG_MODE) {
 			$stpl_time_start = microtime(true);
 		}
-//	  if (conf('FORCE_LOCALE') && !isset($params['no_cache'])) {
-//		  $params['no_cache'] = 1;
-//	  }
 		$replace = my_array_merge((array)$this->_global_tags, (array)$replace);
 		// User error message
 		if (!isset($replace['error'])) {
@@ -641,6 +638,7 @@ class yf_tpl {
 			}
 			if ($this->USE_SOURCE_BACKTRACE) {
 				debug('STPL_TRACES::'.$name, main()->trace_string());
+/*
 				// Prepare calls tree
 				foreach ((array)$trace as $A) {
 					if ((isset($A['class']) && $A['class'] != __CLASS__) || (isset($A['function']) && $A['function'] != __FUNCTION__) || $A['args'][0] == $name) {
@@ -652,6 +650,7 @@ class yf_tpl {
 				if ($name != 'main' && !debug('STPL_PARENTS::'.$name)) {
 					debug('STPL_PARENTS::'.$name, 'main');
 				}
+*/
 			}
 			if ($this->ALLOW_INLINE_DEBUG && strlen($string) > 20
 				&& !in_array($name, array('main', 'system/debug_info', 'system/js_inline_editor'))
@@ -1050,7 +1049,7 @@ class yf_tpl {
 			// Global array element or sub array
 			} elseif (false !== strpos($tmp_v, '.')) {
 				$try_elm = substr($tmp_v, 0, strpos($tmp_v, '.'));
-				$try_elm2 = "['".str_replace(".","']['",substr($tmp_v, strpos($tmp_v, ".") + 1))."']";
+				$try_elm2 = "['".str_replace('.',"']['",substr($tmp_v, strpos($tmp_v, '.') + 1))."']";
 				// Global array
 				if (isset($this->_avail_arrays[$try_elm])) {
 					$res_v = '$'.$this->_avail_arrays[$try_elm].$try_elm2;

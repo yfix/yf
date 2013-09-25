@@ -4,9 +4,9 @@
 function _fast_forum_low () {
 
 	// Internal function
-	function _get_cache ($cache_name = "") {
+	function _get_cache ($cache_name = '') {
 		// Reference to the categories array
-		$cache_file = INCLUDE_PATH."core_cache/cache_".$cache_name.".php";
+		$cache_file = INCLUDE_PATH.'core_cache/cache_'.$cache_name.'.php';
 		if (!file_exists($cache_file)) {
 			return false;
 		}
@@ -21,27 +21,27 @@ function _fast_forum_low () {
 			return false;
 		}
 		// Get data from file
-		return eval("return ".substr(file_get_contents($cache_file), 7, -4).";");
+		return eval('return '.substr(file_get_contents($cache_file), 7, -4).';');
 	}
 
 	// Get type of display
-	$TYPE	= "main";
-	$_type	= $_GET["id"]{0};
-	if (strlen($_GET["id"]) && in_array($_type, array("f","t"))) {
-		if ($_type == "f") {
-			$TYPE	= "forum";
-		} elseif ($_type == "t") {
-			$TYPE	= "topic";
+	$TYPE	= 'main';
+	$_type	= $_GET['id']{0};
+	if (strlen($_GET['id']) && in_array($_type, array('f','t'))) {
+		if ($_type == 'f') {
+			$TYPE	= 'forum';
+		} elseif ($_type == 't') {
+			$TYPE	= 'topic';
 		}
 	}
-	$ID = intval(substr($_GET["id"], 1));
+	$ID = intval(substr($_GET['id'], 1));
 	// Default low page
-	$body = "";
-	if ($TYPE == "main" || empty($ID)) {
+	$body = '';
+	if ($TYPE == 'main' || empty($ID)) {
 		$cat_id = $ID;
 
-		$cats_array		= _get_cache("forum_categories");
-		$forums_array	= _get_cache("forum_forums");
+		$cats_array		= _get_cache('forum_categories');
+		$forums_array	= _get_cache('forum_forums');
 		if (empty($cats_array) || empty($forums_array)) {
 			return false;
 		}
