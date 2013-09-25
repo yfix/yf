@@ -11,13 +11,13 @@ if (!function_exists('my_array_merge')) {
 
 // Abstraction layer for any configuration, that was previously set in GLOBALS arrays. 
 // Examples:
-// conf("key1"); => get conf data
-// conf("key1", "value1"); => set conf data
-// conf("key2", array("k2" => "v2")); => set conf data array
-// conf("key2::k2"); => get conf data subarray item
-// conf("key2::k2", "v2"); => set conf data subarray item
-// conf(array("key2" => "v2","key3" => "v3")); => set conf data array
-if (!function_exists("conf")) {
+// conf('key1'); => get conf data
+// conf('key1', 'value1'); => set conf data
+// conf('key2', array('k2' => 'v2')); => set conf data array
+// conf('key2::k2'); => get conf data subarray item
+// conf('key2::k2', 'v2'); => set conf data subarray item
+// conf(array('key2' => 'v2','key3' => 'v3')); => set conf data array
+if (!function_exists('conf')) {
 	function conf ($name = null, $new_value = null) {
 		$value = null;
 		// If no first params passed - we return whole structure
@@ -32,8 +32,8 @@ if (!function_exists("conf")) {
 					continue;
 				}
 				$a = false;
-				if (false !== strpos($_key, "::")) {
-					$a = explode("::", $_key);
+				if (false !== strpos($_key, '::')) {
+					$a = explode('::', $_key);
 				}
 				if (is_array($a) && !empty($a)) {
 					$_key = $a[0];
@@ -48,8 +48,8 @@ if (!function_exists("conf")) {
 			return true;
 		}
 		$a = false;
-		if (false !== strpos($name, "::")) {
-			$a = explode("::", $name);
+		if (false !== strpos($name, '::')) {
+			$a = explode('::', $name);
 		}
 		if (is_array($a) && !empty($a)) {
 			$name = $a[0];
@@ -79,7 +79,7 @@ if (!function_exists("conf")) {
 	}
 }
 
-if (!function_exists("conf_add")) {
+if (!function_exists('conf_add')) {
 	function conf_add($name = null, $new_value = null) {
 		if (!is_null($new_value)) {
 			$actual_error = conf($name) ? conf($name) . ';' : '';
@@ -89,13 +89,13 @@ if (!function_exists("conf_add")) {
 }		
 // Useful short function to call PROJECT_CONF. 
 // Examples:
-// module_conf("home_page", "SETTING1");
-// module_conf("home_page", "SETTING1", "new_value");
-// module_conf("home_page", "key2::k2"); => get module conf data subarray item
-// module_conf("home_page", "key2::k2", "v2"); => set module conf data subarray item
-// module_conf("home_page", array("k1" => "v1", "k2" => "v2")); => set module conf data subarray item
-if (!function_exists("module_conf")) {
-	function module_conf ($module = "", $name = "", $new_value = null) {
+// module_conf('home_page', 'SETTING1');
+// module_conf('home_page', 'SETTING1', 'new_value');
+// module_conf('home_page', 'key2::k2'); => get module conf data subarray item
+// module_conf('home_page', 'key2::k2', 'v2'); => set module conf data subarray item
+// module_conf('home_page', array('k1' => 'v1', 'k2' => 'v2')); => set module conf data subarray item
+if (!function_exists('module_conf')) {
+	function module_conf ($module = '', $name = '', $new_value = null) {
 // TODO: add/merge real value of module($module)->$property (maybe be slow due to module init);
 		$value = null;
 		if (!$module && !$name) {
@@ -115,8 +115,8 @@ if (!function_exists("module_conf")) {
 					continue;
 				}
 				$a = false;
-				if (false !== strpos($_key, "::")) {
-					$a = explode("::", $_key);
+				if (false !== strpos($_key, '::')) {
+					$a = explode('::', $_key);
 				}
 				if (is_array($a) && !empty($a)) {
 					$_key = $a[0];
@@ -131,8 +131,8 @@ if (!function_exists("module_conf")) {
 			return true;
 		}
 		$a = false;
-		if (false !== strpos($name, "::")) {
-			$a = explode("::", $name);
+		if (false !== strpos($name, '::')) {
+			$a = explode('::', $name);
 		}
 		if (is_array($a) && !empty($a)) {
 			$name = $a[0];
@@ -162,13 +162,13 @@ if (!function_exists("module_conf")) {
 
 // Abstraction layer for debug logging, that was previously set in different GLOBALS arrays. 
 // Examples:
-// debug("key1"); => get debug data
-// debug("key1", "value1"); => set debug data
-// debug("key2", array("k2" => "v2")); => set debug data array
-// debug("key2::k2"); => get debug data subarray item
-// debug("key2::k2", "v2"); => set debug data subarray item
-// debug(array("key2" => "v2","key3" => "v3")); => set debug data array
-if (!function_exists("debug")) {
+// debug('key1'); => get debug data
+// debug('key1', 'value1'); => set debug data
+// debug('key2', array('k2' => 'v2')); => set debug data array
+// debug('key2::k2'); => get debug data subarray item
+// debug('key2::k2', 'v2'); => set debug data subarray item
+// debug(array('key2' => 'v2','key3' => 'v3')); => set debug data array
+if (!function_exists('debug')) {
 	function debug ($name = null, $new_value = null) {
 		$value = null;
 		// If no first params passed - we return whole structure
@@ -183,8 +183,8 @@ if (!function_exists("debug")) {
 					continue;
 				}
 				$a = false;
-				if (false !== strpos($_key, "::")) {
-					$a = explode("::", $_key);
+				if (false !== strpos($_key, '::')) {
+					$a = explode('::', $_key);
 				}
 				if (is_array($a) && !empty($a)) {
 					$_key = $a[0];
@@ -206,8 +206,8 @@ if (!function_exists("debug")) {
 			return true;
 		}
 		$a = false;
-		if (false !== strpos($name, "::")) {
-			$a = explode("::", $name);
+		if (false !== strpos($name, '::')) {
+			$a = explode('::', $name);
 		}
 		if (is_array($a) && !empty($a)) {
 			$name = $a[0];

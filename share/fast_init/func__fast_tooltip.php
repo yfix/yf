@@ -4,14 +4,14 @@
 function _fast_tooltip () {
 	$tip_info = array();
 	// Try to get tip id
-	$TIP_ID = substr($_REQUEST["id"], strlen("help_"));
+	$TIP_ID = substr($_REQUEST['id'], strlen('help_'));
 	if (empty($TIP_ID) && !main()->USE_SYSTEM_CACHE) {
 		return false;
 	}
 	if (main()->USE_SYSTEM_CACHE && empty($tip_info)) {
 		clearstatcache();
-		$locale_specific = "___".(DEFAULT_LANG != "DEFAULT_LANG" ? DEFAULT_LANG : "en");
-		$cache_file = INCLUDE_PATH."core_cache/cache_tips".$locale_specific.".php";
+		$locale_specific = '___'.(DEFAULT_LANG != 'DEFAULT_LANG' ? DEFAULT_LANG : 'en');
+		$cache_file = INCLUDE_PATH.'core_cache/cache_tips'.$locale_specific.'.php';
 		if (!file_exists($cache_file)) {
 			return false;
 		}
@@ -26,15 +26,15 @@ function _fast_tooltip () {
 			return false;
 		}
 		// Get data from file
-		$tips_array = eval("return ".substr(file_get_contents($cache_file), 7, -4).";");
+		$tips_array = eval('return '.substr(file_get_contents($cache_file), 7, -4).';');
 		$tip_info = $tips_array[$TIP_ID];
 	}
 	main()->NO_GRAPHICS = true;
 	// Display data
 	if (empty($tip_info)) {
-		$body = "No info";
+		$body = 'No info';
 	} else {
-		$body = nl2br(stripslashes($tip_info["text"]));
+		$body = nl2br(stripslashes($tip_info['text']));
 	}
 	echo $body;
 

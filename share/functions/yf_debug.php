@@ -3,10 +3,10 @@
 $debug_users = array(
 	'central_test' => 'central_5555_test',
 );
-$debug_code = "57";
-$debug_salt = "_5555_";
+$debug_code = '57';
+$debug_salt = '_5555_';
 // TODO: need to check exact robots meta tag/header contents for SEO (maybe use: noindex, follow ?)
-$robots_options = "noindex, nofollow, noarchive, nosnippet";
+$robots_options = 'noindex, nofollow, noarchive, nosnippet';
 
 $console_mode = (!empty($_SERVER['argc']) && !array_key_exists('REQUEST_METHOD', $_SERVER));
 $debug_request = (isset($_GET['debug']) ? $_GET['debug'] : (isset($_POST['debug']) ? $_POST['debug'] : false));
@@ -17,22 +17,22 @@ if ($console_mode && $need_debug_auth) {
 } elseif (!$console_mode && $need_debug_auth) {
 	$is_bot = preg_match('/(wget|curl|bot|spider|crawler|yandexbot|googlebot|slurp|baidu|cyscon|mcafee|scanalert|httpclient|mediapartners|ia\-archiver|ips\-agent)/ims', $_SERVER['HTTP_USER_AGENT']);
 	if ($is_bot || $debug_request != $debug_code) {
-		header(($_SERVER["SERVER_PROTOCOL"] ? $_SERVER["SERVER_PROTOCOL"] : "HTTP/1.1")." 301 Moved Permanently");
-		header("Location: "._debug_remove_from_url());
+		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 301 Moved Permanently');
+		header('Location: '._debug_remove_from_url());
 		exit();
 	}
-	header("Expires: Tue, 03 Jul 2001 06:00:00 GMT"); // Date far in the past
-	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-	header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-	header("Cache-Control: post-check=0, pre-check=0", false);
-	header("Pragma: no-cache");
-	header("X-Robots-Tag: ".$robots_options);
+	header('Expires: Tue, 03 Jul 2001 06:00:00 GMT'); // Date far in the past
+	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+	header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+	header('Cache-Control: post-check=0, pre-check=0', false);
+	header('Pragma: no-cache');
+	header('X-Robots-Tag: '.$robots_options);
 
-	$hash = substr(md5($debug_salt. gmdate("Y-m-d")), 6, 16);
+	$hash = substr(md5($debug_salt. gmdate('Y-m-d')), 6, 16);
 	$cookie_name = '_debug_authorized_'.$hash;
 	if (_debug_auth_check($debug_users) || !empty($_COOKIE[$cookie_name])) {
-		$h = array_reverse(explode(".", $_SERVER["HTTP_HOST"]));
-		setcookie($cookie_name, '1', 0, '/', $h[1].".".$h[0]); // Live for session, set for TLD
+		$h = array_reverse(explode('.', $_SERVER['HTTP_HOST']));
+		setcookie($cookie_name, '1', 0, '/', $h[1].'.'.$h[0]); // Live for session, set for TLD
 		define('DEBUG_MODE', 1);
 	} else {
 		header('WWW-Authenticate: Basic realm="Restricted area"');
@@ -42,23 +42,23 @@ if ($console_mode && $need_debug_auth) {
 		exit();
 	}
 }
-function _debug_remove_from_url($uri = "", $qs = "") {
-	if (empty($uri)) { $uri = $_SERVER["REQUEST_URI"]; }
-	if (empty($uri)) { $uri = "/"; }
-	if (empty($qs))  { $qs = $_SERVER["QUERY_STRING"]; }
-	if (empty($qs))  { $qs = ""; }
+function _debug_remove_from_url($uri = '', $qs = '') {
+	if (empty($uri)) { $uri = $_SERVER['REQUEST_URI']; }
+	if (empty($uri)) { $uri = '/'; }
+	if (empty($qs))  { $qs = $_SERVER['QUERY_STRING']; }
+	if (empty($qs))  { $qs = ''; }
 	if (strlen($qs)) {
 		$uri = substr($uri, 0, -strlen($qs) - 1);
 	}
 	parse_str($qs, $p);
 	if (!$p) {
-		return $uri. ($qs ? "?".$qs : "");
+		return $uri. ($qs ? '?'.$qs : '');
 	}
-	if (isset($p["debug"])) {
-		unset($p["debug"]);
+	if (isset($p['debug'])) {
+		unset($p['debug']);
 	}
 	$qs = http_build_query($p);
-	return $uri. ($qs ? "?".$qs : "");
+	return $uri. ($qs ? '?'.$qs : '');
 }
 function _debug_auth_check($users = array()) {
 	$auth_user = trim($_SERVER['PHP_AUTH_USER']);

@@ -7,73 +7,73 @@ function _fast_output_cache () {
 		conf('language', 'en');
 	}
 	// Do not use cache for members
-	if (!empty($_COOKIE["member_id"])) {
+	if (!empty($_COOKIE['member_id'])) {
 		return false;
 	}
 	// Stop here
-	if (false !== strpos($_SERVER["REQUEST_URI"], "?no_cache") || false !== strpos($_SERVER["REQUEST_URI"], "?refresh_cache")) {
+	if (false !== strpos($_SERVER['REQUEST_URI'], '?no_cache') || false !== strpos($_SERVER['REQUEST_URI'], '?refresh_cache')) {
 		return false;
 	}
-	// Special for the "share on facebook" feature
-	if (false !== strpos($_SERVER["HTTP_USER_AGENT"], "facebookexternalhit")) {
+	// Special for the 'share on facebook' feature
+	if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit')) {
 		return false;
 	}
-	// Check "white" list first
-	$w = $MODULE_CONF["WHITE_LIST_PATTERN"];
+	// Check 'white' list first
+	$w = $MODULE_CONF['WHITE_LIST_PATTERN'];
 	if (!empty($w)) {
-		// Array like: "search" => array(), "static_pages" => array("show")
+		// Array like: 'search' => array(), 'static_pages' => array('show')
 		if (is_array($w)) {
-			if (defined("SITE_DEFAULT_PAGE")) {
+			if (defined('SITE_DEFAULT_PAGE')) {
 				@parse_str(substr(SITE_DEFAULT_PAGE, 3), $_tmp);
 			}
-			$_object = $_GET["object"] ? $_GET["object"] : $_tmp["object"];
-			$_action = $_GET["action"] ? $_GET["action"] : "show";
+			$_object = $_GET['object'] ? $_GET['object'] : $_tmp['object'];
+			$_action = $_GET['action'] ? $_GET['action'] : 'show';
 			if (!isset($w[$_object])) {
 				$NO_NEED_TO_CACHE = true;
 			} elseif (!empty($w[$_object]) && !in_array($_action, (array)$w[$_object])) {
 				$NO_NEED_TO_CACHE = true;
 			}
-		} elseif (!preg_match('/'.$w.'/i', $_SERVER["QUERY_STRING"])) {
+		} elseif (!preg_match('/'.$w.'/i', $_SERVER['QUERY_STRING'])) {
 			$NO_NEED_TO_CACHE = true;
 		}
 	} else {
 		// Try to search current query string in the stop list
-		foreach ((array)$MODULE_CONF["_OC_STOP_LIST"] as $pattern) {
-			if (preg_match('/'.$pattern.'/i', $_SERVER["QUERY_STRING"])) {
+		foreach ((array)$MODULE_CONF['_OC_STOP_LIST'] as $pattern) {
+			if (preg_match('/'.$pattern.'/i', $_SERVER['QUERY_STRING'])) {
 				$NO_NEED_TO_CACHE = true;
 			}
 		}
 	}
-	if ($_SERVER["REQUEST_METHOD"] != "GET" || MAIN_TYPE_ADMIN || $NO_NEED_TO_CACHE) {
+	if ($_SERVER['REQUEST_METHOD'] != 'GET' || MAIN_TYPE_ADMIN || $NO_NEED_TO_CACHE) {
 		return false;
 	}
 	// Prepare path to the current page cache
-	$locale_id = defined("DEFAULT_LANG") ? DEFAULT_LANG : conf('language');
+	$locale_id = defined('DEFAULT_LANG') ? DEFAULT_LANG : conf('language');
 	$cur_cache_name = md5(
-		$_SERVER["HTTP_HOST"].
-		"/".$_SERVER["SCRIPT_NAME"].
-		"?".$_SERVER["QUERY_STRING"].
-		"---".$locale_id.
-		"---".(int)conf('SITE_ID').
-		"---".($_SESSION["user_group"] <= 1 ? "guest" : "member")
+		$_SERVER['HTTP_HOST'].
+		'/'.$_SERVER['SCRIPT_NAME'].
+		'?'.$_SERVER['QUERY_STRING'].
+		'---'.$locale_id.
+		'---'.(int)conf('SITE_ID').
+		'---'.($_SESSION['user_group'] <= 1 ? 'guest' : 'member')
 	);
-	$CACHE_CONTENTS = "";
+	$CACHE_CONTENTS = '';
 	// Memcached code
-	if ($MODULE_CONF["USE_MEMCACHED"]) {
+	if ($MODULE_CONF['USE_MEMCACHED']) {
 		$params = conf('MEMCACHED_PARAMS');
 		$failed = true;
 		if (isset($PARAMS) && is_array($PARAMS)) {
 			$mc_obj = null;
-			if (class_exists("Memcached")) {
+			if (class_exists('Memcached')) {
 				$mc_obj = new Memcached();
-			} elseif (class_exists("Memcache")) {
+			} elseif (class_exists('Memcache')) {
 				$mc_obj = new Memcache();
 			} else {
-				$client_path = YF_PATH."libs/memcached/memcached_client.class.php";
+				$client_path = YF_PATH.'libs/memcached/memcached_client.class.php';
 				if (file_exists($client_path)) {
 					include $client_path;
 				}
-				if (class_exists("memcached_client")) {
+				if (class_exists('memcached_client')) {
 					$mc_obj = new memcached_client();
 				}
 			}
@@ -95,17 +95,17 @@ function _fast_output_cache () {
 			}
 		}
 		if (!$failed) {
-			$CACHE_CONTENTS = $_memcache->get("oc:".$cur_cache_name);
+			$CACHE_CONTENTS = $_memcache->get('oc:'.$cur_cache_name);
 		}
 	}
 	// File-based method
 	if (!$CACHE_CONTENTS) {
-		$cache_dir	= REAL_PATH. "pages_cache/";
-		$sub_dir	= $cur_cache_name[0]."/".$cur_cache_name[1]."/";
-		if ($MODULE_CONF["SITE_ID_SUBDIR"]) {
-			$sub_dir = conf('SITE_ID')."/".$sub_dir;
+		$cache_dir	= REAL_PATH. 'pages_cache/';
+		$sub_dir	= $cur_cache_name[0].'/'.$cur_cache_name[1].'/';
+		if ($MODULE_CONF['SITE_ID_SUBDIR']) {
+			$sub_dir = conf('SITE_ID').'/'.$sub_dir;
 		}
-		$CACHE_FILE_PATH = $cache_dir. $sub_dir. $cur_cache_name .".cache.php";
+		$CACHE_FILE_PATH = $cache_dir. $sub_dir. $cur_cache_name .'.cache.php';
 		// Try to process output cache file
 		if (!file_exists($CACHE_FILE_PATH)) {
 			return false;
@@ -120,7 +120,7 @@ function _fast_output_cache () {
 			}
 			return false;
 		}
-		$OUTPUT_CACHE_TTL = $MODULE_CONF["OUTPUT_CACHE_TTL"];
+		$OUTPUT_CACHE_TTL = $MODULE_CONF['OUTPUT_CACHE_TTL'];
 		// Remove old page from cache
 		if (($OUTPUT_CACHE_TTL != 0 && $cache_last_modified_time < (time() - $OUTPUT_CACHE_TTL)) || conf('refresh_output_cache')) {
 			unlink($CACHE_FILE_PATH);
@@ -131,27 +131,26 @@ function _fast_output_cache () {
 	if (!$CACHE_CONTENTS) {
 		return false;
 	}
-	$MAIN = &main();
 	// Output cache contents
-	$MAIN->NO_GRAPHICS = true;
-	$MAIN->_IN_OUTPUT_CACHE = true;
+	main()->NO_GRAPHICS = true;
+	main()->_IN_OUTPUT_CACHE = true;
 	// GZIP compression
-	if ($MAIN->OUTPUT_GZIP_COMPRESS && extension_loaded('zlib') && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== false) {
+	if (main()->OUTPUT_GZIP_COMPRESS && extension_loaded('zlib') && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
 		ini_set('zlib.output_compression_level', 3);
 		ob_start('ob_gzhandler');
-		conf("GZIP_ENABLED", true);
+		conf('GZIP_ENABLED', true);
 	}
-	echo preg_replace("/<\?php.+?\?>/ms", "", $CACHE_CONTENTS);
+	echo preg_replace('/<\?php.+?\?>/ms', '', $CACHE_CONTENTS);
 
-	$t = $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-	$t .= "#".$_SERVER["REQUEST_TIME"];
-	$t .= "#".$_SERVER["HTTP_REFERER"];
-	$t .= "#".conf('SITE_ID');
-	$t .= "#".$_SERVER["REMOTE_ADDR"];
-	$t .= "#1"; // means page from output cache
-	$t .= "#0"; // guest
-	$t .= "\n";
-	@file_put_contents(INCLUDE_PATH."logs/query_log/query.log", $t, FILE_APPEND);
+	$t = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	$t .= '#'.$_SERVER['REQUEST_TIME'];
+	$t .= '#'.$_SERVER['HTTP_REFERER'];
+	$t .= '#'.conf('SITE_ID');
+	$t .= '#'.$_SERVER['REMOTE_ADDR'];
+	$t .= '#1'; // means page from output cache
+	$t .= '#0'; // guest
+	$t .= PHP_EOL;
+	@file_put_contents(INCLUDE_PATH.'logs/query_log/query.log', $t, FILE_APPEND);
 
 	return true; // Means success
 }
