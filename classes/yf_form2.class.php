@@ -271,6 +271,7 @@ class yf_form2 {
 					.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '')
 
 					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '')
+					.(($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '')
 
 					.($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '')
 					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
@@ -991,36 +992,24 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
+		$value = isset($extra['value']) ? $extra['value'] : 'Save';
 		$r = $replace ? $replace : $this->_replace;
 		$extra['errors'] = common()->_get_error_messages();
 		$extra['id'] = $extra['id'] ?: $name;
-		$value = isset($extra['value']) ? $extra['value'] : 'Save';
-		$link_url = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : '') : '';
-		if (preg_match('~^[a-z0-9_-]+$~ims', $link_url)) {
-			$link_url = '';
+		$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : '') : '';
+		if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
+			$extra['link_url'] = '';
 		}
-		$link_name = $extra['link_name'] ? $extra['link_name'] : '';
-		$css_class = $this->_prepare_css_class('', $r[$name], $extra);
+		$extra['link_name'] = $extra['link_name'] ?: '';
+		$extra['class'] = 'btn btn-primary '.$this->_prepare_css_class('', $r[$name], $extra);
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-/*
-		$body = '
-			<div class="control-group'.(isset($extra['errors'][$name]) ? ' error' : '').'">
-				<div class="controls">
+		$extra['value'] = t($value);
+		$extra['desc'] = ''; // We do not need label here
+		$extra['type'] = 'submit';
 
-					<input type="submit" value="'.t($value).'" class="btn btn-primary'.($extra['class'] ? ' '.$extra['class'] : '').'"'
-					.($extra['style'] ? ' style="'.$extra['style'].'"' : '')
-					.($extra['data'] ? ' data="'.$extra['data'].'"' : '')
-					.($css_class ? ' class="'.$css_class.'"' : '')
-					.($extra['attr'] ? ' '.$this->_prepare_custom_attr($extra['attr']) : '')
-					.'>'
+		$attrs_names = array('type','name','id','class','style','value','disabled');
+		$body = $this->_row_html('<input '.$this->_attrs($extra, $attrs_names).'>', $extra, $replace);
 
-					.($link_url ? ' <a href="'.$link_url.'" class="btn">'.t($link_name).'</a>' : '')
-					.($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>' : '')
-					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
-				.'</div>
-			</div>
-		';
-*/
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
 			return $this;
