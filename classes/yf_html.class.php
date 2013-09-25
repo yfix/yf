@@ -10,17 +10,30 @@
 */
 class yf_html {
 
-#define('CSS_FRAMEWORK',			'bootstrap2');
-	function form_start () {
+	/**
+	*/
+	function form_row ($content, $extra = array(), $replace = array(), $obj) {
+		$css_framework = conf('css_framework');
+		if ($css_framework) {
+			return _class('html_'.$css_framework, 'classes/html/')->form_row($content, $extra, $replace, $obj);
+		}
+	}
+
+	/**
+	*/
+	function table_header () {
 // TODO
 	}
-	function form_row () {
+
+	/**
+	*/
+	function navbar () {
 // TODO
 	}
-	function table_start () {
-// TODO
-	}
-	function table_row () {
+
+	/**
+	*/
+	function breadcrumbs () {
 // TODO
 	}
 }

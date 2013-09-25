@@ -29,12 +29,15 @@ class yf_html_controls {
 			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 			$level = isset($extra['level']) ? $extra['level'] : 0;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+			$extra['class'] .= ' form-control';
 			if ($extra['class']) {
 				$add_str .= ' class="'.$extra['class'].'" ';
 			}
 			if ($extra['style']) {
 				$add_str .= ' style="'.$extra['style'].'" ';
 			}
+		} else {
+			$add_str .= ' class="form-control" ';
 		}
 		if (!$values) {
 			return false;
@@ -85,12 +88,15 @@ class yf_html_controls {
 			$level = isset($extra['level']) ? $extra['level'] : 0;
 			$disabled = isset($extra['disabled']) ? $extra['disabled'] : false;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+			$extra['class'] .= ' form-control';
 			if ($extra['class']) {
 				$add_str .= ' class="'.$extra['class'].'" ';
 			}
 			if ($extra['style']) {
 				$add_str .= ' style="'.$extra['style'].'" ';
 			}
+		} else {
+			$add_str .= ' class="form-control" ';
 		}
 		if (!$values) {
 			return false;

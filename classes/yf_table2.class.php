@@ -471,7 +471,7 @@ class yf_table2 {
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$body = '<a href="'.$link.'" class="btn btn-mini"'.$a_class. $attrs. '>'.$text.'</a>';
+					$body = '<a href="'.$link.'" class="btn btn-mini btn-xs"'.$a_class. $attrs. '>'.$text.'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -670,7 +670,7 @@ class yf_table2 {
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 
-				$body = '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.$a_class.'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
 				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
@@ -819,7 +819,7 @@ class yf_table2 {
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
-				return '<a href="'.$link.'" class="btn btn-mini'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.$link.'" class="btn btn-mini btn-xs'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		if (!$extra['display_in']) {
@@ -884,7 +884,7 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				return '<input type="submit" name="'.$value.'" value="'.t($value).'" class="btn btn-mini">';
+				return '<input type="submit" name="'.$value.'" value="'.t($value).'" class="btn btn-mini btn-xs">';
 			}
 		);
 		if (!$extra['display_in']) {

@@ -257,20 +257,24 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
+		$css_framework = conf('css_framework');
+		if ($css_framework) {
+#			return _class('html')->form_row($content, $extra, $replace, $this);
+		}
 		return '
 			<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
-				.($extra['desc'] ? '<label class="control-label" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="controls col-lg-10">'.PHP_EOL : '')
+				.($extra['desc'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
+				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '')
 
-					.(($extra['prepend'] || $extra['append']) ? '<div class="'.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
-					.($extra['prepend'] ? '<span class="add-on">'.$extra['prepend'].'</span>'.PHP_EOL : '')
+					.(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
+					.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '')
 
 					.$content.PHP_EOL
 
-					.($extra['append'] ? '<span class="add-on">'.$extra['append'].'</span>'.PHP_EOL : '')
+					.($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
 					.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '')
 
-					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '')
+					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '')
 					.(($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '')
 
 					.($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '')
@@ -427,7 +431,7 @@ class yf_form2 {
 		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
 		$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
-		$extra['class'] = 'ckeditor '.$this->_prepare_css_class('', $r[$extra['name']], $extra);
+		$extra['class'] = 'ckeditor form-control '.$this->_prepare_css_class('', $r[$extra['name']], $extra);
 		$extra['name'] = $name;
 		$extra['desc'] = $desc;
 
@@ -1110,7 +1114,7 @@ class yf_form2 {
 
 		$content = '';
 		if ($extra['link']) {
-			$content = '<a href="'.$extra['link'].'" class="btn btn-mini">'.$value.'</a>';
+			$content = '<a href="'.$extra['link'].'" class="btn btn-mini btn-xs">'.$value.'</a>';
 		} else {
 			$content = '<span class="'.$this->_prepare_css_class('label label-info', $r[$name], $extra).'">'.$value.'</span>';
 		}
@@ -1593,7 +1597,7 @@ class yf_form2 {
 		$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
 
 // TODO: use CSS abstraction layer
-		$body = ' <a href="'.$link_url.'" class="btn btn-mini'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($name).'</a> ';
+		$body = ' <a href="'.$link_url.'" class="btn btn-mini btn-xs'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($name).'</a> ';
 
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
