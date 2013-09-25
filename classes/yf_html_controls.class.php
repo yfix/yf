@@ -41,22 +41,22 @@ class yf_html_controls {
 		}
 		$selected = strval($selected);
 		// (example: $add_str = 'size=6')
-		$body = $level == 0 ? "\n".'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.">\n" : '';
+		$body = $level == 0 ? PHP_EOL.'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.">".PHP_EOL : '';
 		if ($show_text && $level == 0) {
-			$body .= "\t".'<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text)."</option>\n";
+			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
 		}
 		$self_func = __FUNCTION__;
 		foreach ((array)$values as $key => $cur_value) {
 			if (is_array($cur_value)) {
-				$body .= "\t".'<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'."\n";
+				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
 				$body .= $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
-				$body .= "\t</optgroup>\n";
+				$body .= '</optgroup>'.PHP_EOL;
 			} else {
 				$_what_compare = strval($type == 1 ? $cur_value : $key);
-				$body .= "\t".'<option value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value)."</option>\n";
+				$body .= '<option value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
 			}
 		}
-		$body .= $level == 0 ? "</select>\n" : '';
+		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
 		return $body;
 	}
 
@@ -104,16 +104,16 @@ class yf_html_controls {
 			$disabled = '';
 		}
 		// (example: $add_str = 'size=6') disabled
-		$body = $level == 0 ? "\n".'<select '.$disabled.' multiple name="'.$name.'[]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.">\n" : '';
+		$body = $level == 0 ? PHP_EOL.'<select '.$disabled.' multiple name="'.$name.'[]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.'>'.PHP_EOL : '';
 		if ($show_text && $level == 0) {
-			$body .= "\t".'<option value="">-'.t('select').' '.t($name)."-</option>\n";
+			$body .= '<option value="">-'.t('select').' '.t($name).'-</option>'.PHP_EOL;
 		}
 		$self_func = __FUNCTION__;
 		foreach ((array)$values as $key => $value) {
 			if (is_array($value)) {
-				$body .= "\t".'<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'."\n";
+				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
 				$body .= $this->$self_func($name, $value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
-				$body .= "\t</optgroup>\n";
+				$body .= '</optgroup>'.PHP_EOL;
 			} else {
 				// Selected value could be an array
 				if (is_array($selected)) {
@@ -128,10 +128,10 @@ class yf_html_controls {
 				} else {
 					$sel_text = '';
 				}
-				$body .= "\t".'<option value="'.$key.'" '.$sel_text.'>'.($translate ? t($value) : $value)."</option>\n";
+				$body .= '<option value="'.$key.'" '.$sel_text.'>'.($translate ? t($value) : $value).'</option>'.PHP_EOL;
 			}
 		}
-		$body .= $level == 0 ? "</select>\n" : '';
+		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
 		return $body;
 	}
 
@@ -175,7 +175,7 @@ class yf_html_controls {
 				$body .= tpl()->parse('system/common/radio_box_item', $replace);
 			} else {
 				$body .= '<label class="radio"><input type="radio" name="'.$name.'" id="check_'.$name.'" value="'.$value.'" '.$add_str.' '
-					.((strval($value) == $selected) ? 'checked' : '').'>'.t($val_name)."</label>\n";
+					.((strval($value) == $selected) ? 'checked' : '').'>'.t($val_name).'</label>'.PHP_EOL;
 			}
 		}
 		return $body;
@@ -194,7 +194,7 @@ class yf_html_controls {
 			$extra = array();
 		}
 		$name = $extra['name'] ? $extra['name'] : 'checkbox';
-		$value = $extra['value'] ? $extra['value'] : (strlen($value) ? $value : "1");
+		$value = $extra['value'] ? $extra['value'] : (strlen($value) ? $value : '1');
 		$selected = $extra['selected'] ? $extra['selected'] : $selected;
 		$id = $extra['id'] ? $extra['id'] : $name;
 		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
@@ -281,7 +281,7 @@ class yf_html_controls {
 // TODO: auto ID
 				$body .= '<input type="checkbox" name="'.$val_name.'" class="check" value="'.$key.'" '.$sel_text.' '.$add_str.'>'
 					.($translate ? t($value) : $value)
-					.($flow_vertical ? '<br />' : '&nbsp;'). "\n";
+					.($flow_vertical ? '<br />' : '&nbsp;'). PHP_EOL;
 			}
 		}
 		return $body;
@@ -322,24 +322,24 @@ class yf_html_controls {
 			$start_year = 1900;
 			$end_year = gmdate('Y');
 		}
-		$y .= "\n<select name=\"year".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"year_".$name_postfix."_box\"" : "").">\n";
-		$y .= $show_text ? "\t<option ".(!$year ? 'selected="selected"' : "")." value=\"\">-".($translate ? t('year') : 'year')."-</option>\n" : "";
+		$y .= '<select name="year'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="year_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$y .= $show_text ? '<option '.(!$year ? 'selected="selected"' : '').' value="">-'.($translate ? t('year') : 'year').'-</option>'.PHP_EOL : '';
 		for ($a = $start_year; $a <= $end_year; $a++) {
-			$y .= "\t\t\t<option ".(($year == $a) ? 'selected="selected"' : "")." value=\"".$a."\">".$a."</option>\n";
+			$y .= '<option '.(($year == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$y .= "</select>\n";
-		$m .= "<select name=\"month".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"month_".$name_postfix."_box\"" : "").">\n";
-		$m .= $show_text ? "\t<option ".(!$month ? 'selected="selected"' : "")." value=\"\">-".($translate ? t('month') : 'month')."-</option>\n" : "";
+		$y .= '</select>'.PHP_EOL;
+		$m .= '<select name="month'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="month_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$m .= $show_text ? '<option '.(!$month ? 'selected="selected"' : '').' value="">-'.($translate ? t('month') : 'month').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 12; $a++) {
-			$m .= "\t<option ".(($month == $a) ? 'selected="selected"' : "")." value=\"".$a."\">".($translate ? t($this->month($a)) : $this->month($a)) ."</option>\n";
+			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->month($a)) : $this->month($a)) .'</option>'.PHP_EOL;
 		}
-		$m .= "</select>\n";
-		$d .= "<select name=\"day".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"day_".$name_postfix."_box\"" : "").">\n";
-		$d .= $show_text ? "\t<option ".(!$day ? 'selected="selected"' : "")." value=\"\">-".($translate ? t('day') : 'day')."-</option>\n" : "";
+		$m .= '</select>'.PHP_EOL;
+		$d .= '<select name="day'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="day_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$d .= $show_text ? '<option '.(!$day ? 'selected="selected"' : '').' value="">-'.($translate ? t('day') : 'day').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 31; $a++) {
-			$d .= "\t<option ".(($day == $a) ? 'selected="selected"' : "")." value=\"".$a."\">".$a."</option>\n";
+			$d .= '<option '.(($day == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$d .= "</select>\n";
+		$d .= '</select>'.PHP_EOL;
 		// Process order
 		$tmp_array = array(
 			'y'	=> '{%year%}',
@@ -376,26 +376,26 @@ class yf_html_controls {
 			if (is_numeric($selected)) {
 				$selected = gmdate('H:i:s', $selected);
 			}
-			list ($hour, $minute, $second) = explode(":", $selected);
+			list ($hour, $minute, $second) = explode(':', $selected);
 		}
-		$body .= "\n<select name=\"hour".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"hour_".$name_postfix."_box\"" : "").">\n";
-		$body .= $show_text ? "\t<option ".($hour == "" ? 'selected="selected"' : "")." value=\"\">-".($translate ? t('hour') : 'hour')."-</option>\n" : "";
+		$body .= '<select name="hour'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="hour_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$body .= $show_text ? '<option '.($hour == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('hour') : 'hour').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 23; $a++) {
-			$body .= "\t<option ".(($hour == $a && $hour != "") ? 'selected="selected"' : "")." value=\"".$a."\">".$a."</option>\n";
+			$body .= '<option '.(($hour == $a && $hour != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$body .= "</select>\n";
-		$body .= "<select name=\"minute".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"minute_".$name_postfix."_box\"" : "").">\n";
-		$body .= $show_text ? "\t<option ".($minute == "" ? 'selected="selected"' : "")." value=''>-".($translate ? t('minute') : 'minute')."-</option>\n" : "";
+		$body .= '</select>'.PHP_EOL;
+		$body .= '<select name="minute'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="minute_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$body .= $show_text ? '<option '.($minute == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('minute') : 'minute').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
-			$body .= "\t<option ".(($minute == $a && $minute != "") ? 'selected="selected"' : "")." value=\"".$a."\">".$a."</option>\n";
+			$body .= '<option '.(($minute == $a && $minute != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$body .= "</select>\n";
-		$body .= "<select name=\"second".$name_postfix."\"".($this->AUTO_ASSIGN_IDS ? " id=\"second_".$name_postfix."_box\"" : "").">\n";
-		$body .= $show_text ? "\t<option ".($second == "" ? 'selected="selected"' : "")." value=''>-".($translate ? t('second') : 'second')."-</option>\n" : "";
+		$body .= '</select>'.PHP_EOL;
+		$body .= '<select name="second'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="second_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$body .= $show_text ? '<option '.($second == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('second') : 'second').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
-			$body .= "\t<option ".(($second == $a && $second != "") ? 'selected="selected"' : "")." value=\"".$a."\">".$a."</option>\n";
+			$body .= '<option '.(($second == $a && $second != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$body .= "</select>\n";
+		$body .= '</select>'.PHP_EOL;
 		return $body;
 	}
 
@@ -432,24 +432,24 @@ class yf_html_controls {
 			$start_year = 1900;
 			$end_year = gmdate('Y');
 		}
-		$y .= "\n".'<select name="'.$name.'[year]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_year_box"' : '').">\n";
-		$y .= $show_text ? "\t".'<option '.(!$year ? 'selected="selected"' : '').' value="">-'.($translate ? t('year') : 'year')."-</option>\n" : '';
+		$y .= PHP_EOL.'<select name="'.$name.'[year]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_year_box"' : '').'>'.PHP_EOL;
+		$y .= $show_text ? '<option '.(!$year ? 'selected="selected"' : '').' value="">-'.($translate ? t('year') : 'year').'-</option>'.PHP_EOL : '';
 		for ($a = $start_year; $a <= $end_year; $a++) {
-			$y .= "\t\t\t<option ".(($year == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a."</option>\n";
+			$y .= '<option '.(($year == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$y .= "</select>\n";
-		$m .= '<select name="'.$name.'[month]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_month_box"' : '').">\n";
-		$m .= $show_text ? "\t<option ".(!$month ? 'selected="selected"' : '').' value="">-'.($translate ? t('month') : 'month')."-</option>\n" : "";
+		$y .= '</select>'.PHP_EOL;
+		$m .= '<select name="'.$name.'[month]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_month_box"' : '').'>'.PHP_EOL;
+		$m .= $show_text ? '<option '.(!$month ? 'selected="selected"' : '').' value="">-'.($translate ? t('month') : 'month').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 12; $a++) {
-			$m .= "\t<option ".(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->month($a)) : $this->month($a)) ."</option>\n";
+			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->month($a)) : $this->month($a)) .'</option>'.PHP_EOL;
 		}
-		$m .= "</select>\n";
-		$d .= '<select name="'.$name.'[day]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_day_box"' : '').">\n";
-		$d .= $show_text ? "\t<option ".(!$day ? 'selected="selected"' : '').' value="">-'.($translate ? t('day') : 'day')."-</option>\n" : '';
+		$m .= '</select>'.PHP_EOL;
+		$d .= '<select name="'.$name.'[day]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_day_box"' : '').'>'.PHP_EOL;
+		$d .= $show_text ? '<option '.(!$day ? 'selected="selected"' : '').' value="">-'.($translate ? t('day') : 'day').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 31; $a++) {
-			$d .= "\t<option ".(($day == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a."</option>\n";
+			$d .= '<option '.(($day == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$d .= "</select>\n";
+		$d .= '</select>'.PHP_EOL;
 		$tmp_array = array(
 			'y'	=> '{%year%}',
 			'm'	=> '{%month%}',
@@ -487,24 +487,24 @@ class yf_html_controls {
 			}
 			list ($hour, $minute, $second) = explode(':', $selected);
 		}
-		$body .= "\n".'<select name="'.$name.'"[hour]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_hour_box"' : '').">\n";
-		$body .= $show_text ? "\t<option ".($hour == "" ? 'selected="selected"' : "").' value="">-'.($translate ? t('hour') : 'hour')."-</option>\n" : "";
+		$body .= PHP_EOL.'<select name="'.$name.'"[hour]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_hour_box"' : '').'>'.PHP_EOL;
+		$body .= $show_text ? '<option '.($hour == "" ? 'selected="selected"' : '').' value="">-'.($translate ? t('hour') : 'hour').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 23; $a++) {
-			$body .= "\t<option ".(($hour == $a && $hour != "") ? 'selected="selected"' : "").' value="'.$a.'">'.$a."</option>\n";
+			$body .= '<option '.(($hour == $a && $hour != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$body .= "</select>\n";
-		$body .= '<select name="'.$name.'"[minute]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_minute_box"' : "").">\n";
-		$body .= $show_text ? "\t<option ".($minute == "" ? 'selected="selected"' : "").' value="">-'.($translate ? t('minute') : 'minute')."-</option>\n" : "";
+		$body .= '</select>'.PHP_EOL;
+		$body .= '<select name="'.$name.'"[minute]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_minute_box"' : '').'>'.PHP_EOL;
+		$body .= $show_text ? '<option '.($minute == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('minute') : 'minute').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
-			$body .= "\t<option ".(($minute == $a && $minute != "") ? 'selected="selected"' : "").' value="'.$a.'">'.$a."</option>\n";
+			$body .= '<option '.(($minute == $a && $minute != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$body .= "</select>\n";
-		$body .= '<select name="'.$name.'"[second]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_second_box"' : "").">\n";
-		$body .= $show_text ? "\t<option ".($second == "" ? 'selected="selected"' : "").' value="">-'.($translate ? t('second') : 'second')."-</option>\n" : "";
+		$body .= '</select>'.PHP_EOL;
+		$body .= '<select name="'.$name.'"[second]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_second_box"' : '').'>'.PHP_EOL;
+		$body .= $show_text ? '<option '.($second == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('second') : 'second').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
-			$body .= "\t<option ".(($second == $a && $second != "") ? 'selected="selected"' : "").' value="'.$a.'">'.$a."</option>\n";
+			$body .= '<option '.(($second == $a && $second != '') ? 'selected="selected"' : "").' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
-		$body .= "</select>\n";
+		$body .= '</select>'.PHP_EOL;
 		return $body;
 	}
 
