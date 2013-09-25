@@ -304,21 +304,11 @@ class yf_form2 {
 			}
 		}
 		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
+		$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
+		$extra['id'] = $extra['id'] ?: 'content_editable';
 
-		$body = '
-			<div class="control-group'.(isset($extra['errors'][$name]) ? ' error' : '').'">'
-				.($desc ? '<label class="control-label">'.t($desc).'</label>' : '')
-
-				.(isset($extra['ckeditor']) ? '<div contenteditable="true" id="'.$content_id.'">' : '')
-				.(!$extra['wide'] ? '<div class="controls">'.$text.'</div>' : $text)
-				.(isset($extra['ckeditor']) ? '</div>' : '')
-
-				.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini"><i class="icon-edit"></i> '.t('Edit').'</a>' : '')
-				.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
-				.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-			.'</div>
-		';
+		$attrs_names = array('id','contenteditable','style','class');
+		$body = $this->_row_html(isset($extra['ckeditor']) ? '<div '.$this->_attrs($extra, $attrs_names).'>'.$text.'</div>' : $text, $extra, $replace);
 
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
@@ -682,8 +672,12 @@ class yf_form2 {
 			unset($extra['step']);
 		}
 		$extra['type'] = 'number';
-		if (!isset($extra['sizing'])) { $extra['sizing'] = 'small'; }
-		if (!isset($extra['maxlength'])) { $extra['maxlength'] = '10'; }
+		if (!isset($extra['sizing'])) {
+			$extra['sizing'] = 'small';
+		}
+		if (!isset($extra['maxlength'])) {
+			$extra['maxlength'] = '10';
+		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
