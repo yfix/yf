@@ -15,7 +15,11 @@ class yf_shop_supplier_panel_orders {
 				WHERE 
 					m.admin_id='.intval(main()->ADMIN_ID).'
 				GROUP BY o.id';
-		return table2($sql)
+
+		$filter_name = $_GET['object'].'__orders';
+		return table2($sql, array(
+				'filter' => $_SESSION[$filter_name],
+			))
 			->text('id')
 			->date('date')
 			->user('user_id')

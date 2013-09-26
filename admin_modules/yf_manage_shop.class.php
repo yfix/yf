@@ -124,10 +124,6 @@ class yf_manage_shop {
 		return _class('manage_shop_dashboard', 'admin_modules/manage_shop/')->dashboard();
 	}
 
-	function stats() {
-		return _class('manage_shop_stats', 'admin_modules/manage_shop/')->stats();
-	}
-
 	function products() {
 		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
 	}
@@ -198,14 +194,6 @@ class yf_manage_shop {
 
 	function delete_order() {
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
-	}
-
-	function reports() {
-		$func = __FUNCTION__; return _class('manage_shop_reports', 'admin_modules/manage_shop/')->$func();
-	}
-
-	function reports_viewed() {
-		$func = __FUNCTION__; return _class('manage_shop_reports', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function manufacturers() {

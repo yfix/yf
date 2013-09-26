@@ -10,7 +10,12 @@ class yf_manage_shop_orders{
 	/**
 	*/
 	function show_orders() {
-		return table2('SELECT o.*, COUNT(*) AS num_items FROM '.db('shop_orders').' AS o INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id GROUP BY o.id')
+		$sql = 'SELECT o.*, COUNT(*) AS num_items 
+				FROM '.db('shop_orders').' AS o 
+				INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
+				GROUP BY o.id';
+		$filter_name = $_GET['object'].'__orders';
+		return table($sql, array('filter' => $_SESSION[$filter_name]))
 			->text('id')
 			->date('date')
 			->user('user_id')

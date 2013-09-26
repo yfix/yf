@@ -12,7 +12,9 @@ class yf_manage_shop_attributes{
 			$items[$A['id']] = $A;
 			$items[$A['id']]['options'] = trim(implode(' | ',$A1));
 		}
-		return table($items)
+// TODO: rewrite this into pure table() with custom func to support filter
+		$filter_name = $_GET['object'].'__attributes';
+		return table($items, array('filter' => $_SESSION[$filter_name]))
 			->text('title')
 			->text('options')				
 			->btn_edit('', './?object=manage_shop&action=attribute_edit&id=%d')

@@ -2,76 +2,145 @@
 
 class yf_manage_shop_filter{
 
-	/**
-	*/
-	function _show_filter() {
-		if (!in_array($_GET['action'], array('products','users'))) {
-			return false;
-		}
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save',
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear',
-		);
-		if ($_GET['action'] == 'users') {
-			$fields = array(
-				'id','name','email','phone'
-			);
-			foreach ((array)$fields as $v) {
-				$order_fields[$v] = $v;
-			}
-			return form2($replace, array(
-					'selected' => $_SESSION['manage_users']
-				))
-				->text('id')
-				->text('name')
-				->text('email')
-				->text('phone')
-				->text('address')
-				->select_box('order_by', $order_fields)
-				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-				->save_and_clear()
-			;			
-		} elseif ($_GET['action'] == 'products') {
-			$fields = array(
-				'name',	'cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date'
-			);
-			foreach ((array)$fields as $v) {
-				$order_fields[$v] = $v;
-			}
-			return form2($replace, array(
-					'selected' => $_SESSION['manage_shop']
-				))
-				->text('name')
-				->money('price', '', array('class' => 'span1'))
-				->money('price__and', '', array('class' => 'span1'))
-				->select_box('cat_id', _class('cats')->_get_items_names("shop_cats"), array('desc' => 'Main category'))
-				->radio_box('image', array(0 => 'No image', 1 => 'Have image'))
-				->select_box('order_by', $order_fields)
-				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-				->save_and_clear()
-			;
-		}
-	}
+	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes');
 
 	/**
 	*/
 	function filter_save() {
-		$arr = parse_url($_SERVER['HTTP_REFERER']);
-		parse_str($arr['query'],$query);
-		if ($query['action'] == 'users') {
-			if ($_GET['sub'] == 'clear') {
-				$_SESSION['manage_users'] = array();
-			} else {
-				$_SESSION['manage_users'] = $_POST;
-			}
-			return js_redirect('./?object='.$_GET['object'].'&action=users');
-		} elseif ($query['action'] == 'products') {
-			if ($_GET['sub'] == 'clear') {
-				$_SESSION['manage_shop'] = array();
-			} else {
-				$_SESSION['manage_shop'] = $_POST;
-			}
-			return js_redirect('./?object='.$_GET['object'].'&action=products');
+		$_GET['id'] = preg_replace('~[^0-9a-z_]+~ims', '', $_GET['id']);
+		if ($_GET['id'] && false !== strpos($_GET['id'], $_GET['object'].'__')) {
+			$filter_name = $_GET['id'];
+			list(,$action) = explode('__', $filter_name);
 		}
+		if (!in_array($action, $this->_avail_filters)) {
+			return js_redirect('./?object='.$_GET['object']);
+		}
+		if ($_GET['sub'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action='.$action);
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], $this->_avail_filters)) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$replace = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
+		);
+		$filters = array(
+			'products'	=> function($filter_name, $replace) {
+
+				$fields = array('name','cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name]))
+					->text('name')
+					->money('price', array('class' => 'span1'))
+					->money('price__and', array('class' => 'span1'))
+					->select_box('cat_id', _class('cats')->_get_items_names('shop_cats'), array('desc' => 'Main category'))
+					->radio_box('image', array(0 => 'No image', 1 => 'Have image'))
+					->select_box('order_by', $order_fields)
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->save_and_clear();
+
+			},
+			'users' => function($filter_name, $replace) {
+
+				$fields = array('id','name','email','phone');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name]))
+					->number('id', array('class' => 'span1'))
+					->text('name')
+					->text('email')
+					->text('phone')
+					->text('address')
+					->select_box('order_by', $order_fields)
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->save_and_clear();
+
+			},
+			'orders' => function($filter_name, $replace) {
+
+				$fields = array('id','add_date');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name]))
+					->number('id', array('class' => 'span1'))
+					->number('id__and', array('class' => 'span1'))
+					->select_box('order_by', $order_fields)
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->save_and_clear();
+
+			},
+			'manufacturers' => function($filter_name, $replace) {
+
+				$fields = array('id','name','add_date');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name]))
+					->text('name')
+					->select_box('order_by', $order_fields)
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->save_and_clear();
+
+			},
+			'suppliers' => function($filter_name, $replace) {
+
+				$fields = array('id','name','add_date');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name]))
+					->text('name')
+					->select_box('order_by', $order_fields)
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->save_and_clear();
+
+			},
+			'product_sets' => function($filter_name, $replace) {
+
+				$fields = array('id','name','cat_id','add_date');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name]))
+					->text('name')
+					->select_box('cat_id', _class('cats')->_get_items_names('shop_cats'), array('desc' => 'Main category'))
+					->select_box('order_by', $order_fields)
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->save_and_clear();
+
+			},
+			'attributes' => function($filter_name, $replace) {
+
+				$fields = array('id','title','add_date');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name]))
+					->text('title')
+					->select_box('order_by', $order_fields)
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->save_and_clear();
+
+			},
+		);
+		$action = $_GET['action'];
+		if (isset($filters[$action])) {
+			return $filters[$action]($filter_name, $replace);
+		}
+		return false;
 	}
 }
