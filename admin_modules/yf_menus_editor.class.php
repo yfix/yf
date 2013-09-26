@@ -39,7 +39,7 @@ class yf_menus_editor {
 		while ($a = db()->fetch_assoc($q)) {
 			$num_items[$a['id']] = $a['num'];
 		}
-		return common()->table2('SELECT * FROM '.db('menus').' ORDER BY type DESC')
+		return table('SELECT * FROM '.db('menus').' ORDER BY type DESC')
 			->link('name', './?object='.$_GET['object'].'&action=show_items&id=%d')
 			->text('id', 'Num Items', array('data' => $num_items))
 			->text('type')

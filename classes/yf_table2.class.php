@@ -535,8 +535,17 @@ class yf_table2 {
 
 	/**
 	*/
-	function image($path, $link = '', $extra = array()) {
-		$name = 'image';
+	function image($name, $path, $link = '', $extra = array()) {
+		if (is_array($link) && empty($extra)) {
+			$extra = $link;
+			$link = '';
+		}
+		if (!$link) {
+			$link = $extra['link'] ?: WEB_PATH. $path;
+		}
+		if (!isset($extra['width'])) {
+			$extra['width'] = '50px';
+		}
 		$this->_fields[] = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,

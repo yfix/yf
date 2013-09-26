@@ -12,7 +12,7 @@ class yf_admin {
 	/**
 	*/
 	function show() {
-		return common()->table2('SELECT * FROM '.db('admin'))
+		return table('SELECT * FROM '.db('admin'))
 			->text('login')
 			->text('email')
 			->link('group', './?object=admin_groups&action=edit&id=%d', main()->get_data('admin_groups'))

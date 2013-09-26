@@ -13,7 +13,7 @@ class yf_manage_servers {
 	* Show admin users
 	*/
 	function show() {
-		return common()->table2("SELECT * FROM ".db('core_servers'))
+		return table("SELECT * FROM ".db('core_servers'))
 			->text("name")
 			->text("comment")
 			->text("hostname")
@@ -62,7 +62,7 @@ class yf_manage_servers {
 			"active"		=> $DATA["active"],
 			"back_link"		=> "./?object=".$_GET["object"],
 		);
-		return common()->form2($replace)
+		return form($replace)
 			->text("name")
 			->textarea("comment")
 			->text("hostname")
@@ -104,7 +104,7 @@ class yf_manage_servers {
 			"active"		=> $DATA["active"],
 			"back_link"		=> "./?object=".$_GET["object"],
 		);
-		return common()->form2($replace)
+		return form($replace)
 			->text("name")
 			->textarea("comment")
 			->text("hostname")

@@ -13,7 +13,7 @@ class yf_static_pages {
 	*/
 	function show() {
 		$sql = 'SELECT * FROM '.db('static_pages');
-		return common()->table2($sql)
+		return table($sql)
 			->text('name')
 			->btn_edit()
 			->btn_delete()
@@ -26,7 +26,7 @@ class yf_static_pages {
 	*/
 	function add() {
 		if (empty($_POST['name'])) {
-			return common()->form2(array('back_link' => './?object='.$_GET['object']))
+			return form(array('back_link' => './?object='.$_GET['object']))
 				->text('name')
 				->save_and_back();
 		}
@@ -97,7 +97,7 @@ class yf_static_pages {
 			'active'		=> $DATA['active'],
 			'back_url'		=> './?object='.$_GET['object'],
 		);
-		return common()->form2($replace)
+		return form($replace)
 			->text('name')
 			->textarea('text','',array('class' => 'span4','rows' => '10','ckeditor' => true, 'id' => 'text'))
 			->text('page_title')
@@ -158,7 +158,7 @@ class yf_static_pages {
 			'back_link'		=> './?object='.$_GET['object'],
 			'body'			=> $body,
 		);
-		return common()->form2($replace)
+		return form($replace)
 			->container($body, '', array(
 				'id'	=> 'content_editable',
 				'wide'	=> 1,
@@ -212,7 +212,7 @@ class yf_static_pages {
 			$limit_records = (int)$avail_limits[$config['limit']];
 		}
 		$sql = 'SELECT * FROM '.db('static_pages'). $order_by_sql;
-		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1))
+		return table($sql, array('no_header' => 1, 'btn_no_text' => 1))
 			->link('name', './?object='.$_GET['object'].'&action=view&id=%d', '', array('width' => '100%'))
 			->btn_edit()
 		;

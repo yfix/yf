@@ -13,7 +13,7 @@ class yf_manage_sites {
 	* Show admin users
 	*/
 	function show() {
-		return common()->table2("SELECT * FROM ".db('sites'))
+		return table("SELECT * FROM ".db('sites'))
 			->text("name")
 			->text("web_path")
 			->text("real_path")
@@ -60,7 +60,7 @@ class yf_manage_sites {
 			"active"		=> $DATA["active"],
 			"back_link"		=> "./?object=".$_GET["object"],
 		);
-		return common()->form2($replace)
+		return form($replace)
 			->text("name")
 			->text("web_path")
 			->text("real_path")
@@ -100,7 +100,7 @@ class yf_manage_sites {
 			"active"		=> $DATA["active"],
 			"back_link"		=> "./?object=".$_GET["object"],
 		);
-		return common()->form2($replace)
+		return form($replace)
 			->text("name")
 			->text("web_path")
 			->text("real_path")

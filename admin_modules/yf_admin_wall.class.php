@@ -12,7 +12,7 @@ class yf_admin_wall {
 	/**
 	*/
 	function show() {
-		return common()->table2('SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC')
+		return table('SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC')
 			->date('add_date')
 			->text('message')
 			->text('object')
@@ -63,7 +63,7 @@ class yf_admin_wall {
 		}
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
-		return common()->table2($sql, array('no_header' => 1, 'btn_no_text' => 1))
+		return table($sql, array('no_header' => 1, 'btn_no_text' => 1))
 			->date('add_date')
 			->text('message')
 			->btn_view()
