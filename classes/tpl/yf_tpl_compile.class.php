@@ -44,59 +44,59 @@ class yf_tpl_compile {
 			'/\{(else)\}/i'
 				=> $_php_start. '} else {'. $_php_end,
 
-			"/(\{(t|translate|i18n)\([\"']{0,1})([\s\w\-\.\,\:\;\%\&\#\/\<\>\!\?\{\}]*)[\"']{0,1}[,]{0,1}([^\)]*?)(\)\})/ie"
+			"/(\{(t|translate|i18n)\(\s*[\"']{0,1})([\s\w\-\.\,\:\;\%\&\#\/\<\>\!\?\{\}]*)[\"']{0,1}[,]{0,1}([^\)]*?)(\s*\)\})/ie"
 				=> "'".$_php_start."echo common()->_translate_for_stpl(\''.\$this->_prepare_translate2('\\3').'\',\''.\$this->_prepare_translate2('\\4', 1).'\');".$_php_end."'",
 
-			'/(\{const\(["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\)\})/i'
+			'/(\{const\(\s*["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo (defined("$2") ? $2 : "");'. $_php_end,
 
-			'/(\{conf\(["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\)\})/i'
+			'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo conf("$2");'. $_php_end,
 
 			// Common replace tags
 			'/\{([a-z0-9\-\_]+)\}/i'
-				=> $_php_start. 'echo $replace["$1"];'. $_php_end,
+				=> $_php_start. 'echo $replace[\'$1\'];'. $_php_end,
 
 			// tags inside foreach
 			'/\{\#\.([a-z0-9\-\_]+)\}/i'
-				=> $_php_start. 'echo $_v["$1"];'. $_php_end,
+				=> $_php_start. 'echo $_v[\'$1\'];'. $_php_end,
 
 			'/\{\/(if|foreach)\}/i'
 				=> $_php_start. '}'. $_php_end,
 
 			// !!! This pattern also differs from original adding \#\. symbols
-			'/\{if\(["\']{0,1}([\w\s\.\-\+\%\#\.]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\)\}/imse'
+			'/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%\#\.]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/imse'
 				=> "'". $_php_start. 'if (\'.$this->_compile_prepare_condition(\'$1\',\'$2\',\'$3\',\'$4\').\') {'. $_php_end. "'",
 
 			// !!! This is a completely written from scratch pattern for compilation only
-			'/\{foreach\(["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}/is'
+			'/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}/is'
 				=> $_php_start.'$__f_total = count($replace[\'$1\']); foreach (is_array($replace[\'$1\']) ? $replace[\'$1\'] : range(1, (int)$replace[\'$1\']) as $_k => $_v) {$__f_counter++;'.$_php_end,
 
-			'/(\{execute\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/i'
+			'/(\{execute\(\s*["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\');'.$_php_end,
 
-			'/\{tip\(["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ims'
+			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo main()->_execute("graphics", "_show_help_tip", array("tip_id"=>\'$1\',"tip_type"=>\'$2\'));'.$_php_end,
 
-			'/\{itip\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ims'
+			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo main()->_execute("graphics", "_show_inline_tip", array("text"=>\'$1\'));'.$_php_end,
 
-			'/\{(e|user_error)\(["\']{0,1}([\w\-\.]+)["\']{0,1}\)\}/ims'
+			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo common()->_show_error_inline(\'$2\');'.$_php_end,
 
-			'/(\{include\(["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/i'
+			'/(\{include\(\s*["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\');'. $_php_end,
 
 			'/(\{eval_code\()([^\}]+?)(\)\})/i'
 				=> $_php_start. 'echo $2;'. $_php_end,
 
-			'/\{catch\(["\']{0,1}([a-z0-9_]+?)["\']{0,1}\)\}(.*?)\{\/catch\}/ims'
+			'/\{catch\(\s*["\']{0,1}([a-z0-9_]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims'
 				=> $_php_start. 'ob_start();'. $_php_end. '$2'. $_php_start. '$replace["$1"] = ob_get_contents(); ob_end_clean();'. $_php_end,
 
-			'/\{cleanup\(\)\}(.*?)\{\/cleanup\}/ims'
+			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims'
 				=> $_php_start. 'echo trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')));'. $_php_end,
 
-   			'/\{ad\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/ims'
+   			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start. 'echo main()->_execute("advertising", "_show", array("ad"=>\'$1\'));'. $_php_end,
 
 			// DEBUG_MODE patterns

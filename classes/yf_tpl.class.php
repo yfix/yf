@@ -43,42 +43,42 @@ class yf_tpl {
 	public $_STPL_PATTERNS	 = array(
 		// Insert constant here (cutoff for eval_code)
 		// EXAMPLE:	 {const("SITE_NAME")}
-		'/(\{const\(["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\)\})/ie'
+		'/(\{const\(\s*["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\s*\)\})/ie'
 			=> 'defined(\'$2\') ? main()->_eval_code(\'$2\', 0) : ""',
 		// Configuration item
 		// EXAMPLE:	 {conf("TEST_DOMAIN")}
-		'/(\{conf\(["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\)\})/ie'
+		'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/ie'
 			=> 'conf(\'$2\')',
 		// Translate some items if needed
 		// EXAMPLE:	 {t("Welcome")}
-		'/\{(t|translate|i18n)\(["\']{0,1}(.*?)["\']{0,1}\)\}/imse'
+		'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/imse'
 			=> 'tpl()->_i18n_wrapper(\'$2\', $replace)',
 		// Trims whitespaces, removes
 		// EXAMPLE:	 {cleanup()}some content here{/cleanup}
-		'/\{cleanup\(\)\}(.*?)\{\/cleanup\}/imse'
+		'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/imse'
 			=> 'trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')))',
 		// Display help tooltip
 		// EXAMPLE:	 {tip('register.login')} or {tip('form.some_field',2)}
-		'/\{tip\(["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
+		'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> 'main()->_execute("graphics", "_show_help_tip", array("tip_id"=>"$1","tip_type"=>"$2","replace"=>$replace))',
 		// Display help tooltip inline
 		// EXAMPLE:	 {itip('register.login')}
-		'/\{itip\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
+		'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> 'main()->_execute("graphics", "_show_inline_tip", array("text"=>"$1","replace"=>$replace))',
 		// Display user level single (inline) error message by its name (keyword)
 		// EXAMPLE:	 {e('login')} or {user_error('name_field')}
-		'/\{(e|user_error)\(["\']{0,1}([\w\-\.]+)["\']{0,1}\)\}/imse'
+		'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/imse'
 			=> 'common()->_show_error_inline(\'$2\')',
 		// Advertising
 		// EXAMPLE:	 {ad('AD_ID')}
-		'/\{ad\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
+		'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> 'main()->_execute("advertising", "_show", array("ad"=>\'$1\'))',
 		// Url generation with params
 		// EXAMPLE:	 {url(object=home_page;action=test)}
-		'/\{url\(["\']{0,1}([^"\'\)\}]*)["\']{0,1}\)\}/imse'
+		'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> 'tpl()->_generate_url_wrapper(\'$1\')',
 		// EXAMPLE:	 {form_row("text","password","New Password")}
-		'/\{form_row\(["\']{1}([\s\w\-]+)["\']{1}([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?\)\}/imse'
+		'/\{form_row\(\s*["\']{1}([\s\w\-]+)["\']{1}([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?\s*\)\}/imse'
 			=> '_class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\')',
 	);
 	/** @var array @conf_skip Show custom class method output pattern */
@@ -112,18 +112,18 @@ class yf_tpl {
 	);
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// EXAMPLE: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
-	public $_PATTERN_CATCH	 = '/\{catch\(["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\)\}(.*?)\{\/catch\}/ims';
+	public $_PATTERN_CATCH	 = '/\{catch\(\s*["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\)\}(.*?)\{\/catch\}/ims';
 	/** @var array @conf_skip STPL internal comment pattern */
 	// EXAMPLE:	 {{-- some content you want to comment inside template only --}}
 	public $_PATTERN_COMMENT   = '/(\{\{--.*?--\}\})/ims';
 	/** @var string @conf_skip Conditional pattern */
 	// EXAMPLE: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-	public $_PATTERN_IF		= '/\{if\(["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\)\}/ims';
+	public $_PATTERN_IF		= '/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
 	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern */
 	// EXAMPLE: {foreach ("var")}<li>{var.value1}</li>{/foreach}
-	public $_PATTERN_FOREACH   = '/\{foreach\(["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}((?![^\{]*?\{foreach\(["\']{0,1}?).*?)\{\/foreach\}/is';
+	public $_PATTERN_FOREACH   = '/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}((?![^\{]*?\{foreach\(["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var array @conf_skip For "_process_conditions" */
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
 	/** @var array @conf_skip For '_process_conditions' */
