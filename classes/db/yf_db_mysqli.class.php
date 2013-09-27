@@ -1,7 +1,7 @@
 <?php
 
-#load("yf_db_driver.abstract", "classes/db/");
-require dirname(__FILE__)."/yf_db_driver.abstract.class.php";
+#load('yf_db_driver.abstract', 'classes/db/');
+require dirname(__FILE__).'/yf_db_driver.abstract.class.php';
 
 /**
 * MySQL4.1.x db class
@@ -17,11 +17,11 @@ class yf_db_mysqli extends yf_db_driver {
 	/** @var @conf_skip */
 	public $query_result		= null;
 	/** @var @conf_skip */
-	public $META_TABLES_SQL		= "SHOW TABLES";	
+	public $META_TABLES_SQL		= 'SHOW TABLES';	
 	/** @var @conf_skip */
-	public $META_COLUMNS_SQL	= "SHOW COLUMNS FROM %s";
+	public $META_COLUMNS_SQL	= 'SHOW COLUMNS FROM %s';
 	/** @var @conf_skip */
-	public $DEF_CHARSET			= "utf8";
+	public $DEF_CHARSET			= 'utf8';
 	/** @var @conf_skip */
 	public $DEF_PORT			= 3306;
 	/** @var @conf_skip */
@@ -33,7 +33,7 @@ class yf_db_mysqli extends yf_db_driver {
 
 	/**
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = "", $socket = "", $charset = "", $allow_auto_create_db = false) {
+	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
 		$this->persistency	= $persistency;
 		$this->user			= $user;
 		$this->password		= $password;
@@ -42,7 +42,7 @@ class yf_db_mysqli extends yf_db_driver {
 		$this->port			= $port ? $port : $DEF_PORT;
 		$this->socket		= $socket;
 		if (!file_exists($socket)) {
-			$this->socket = "";
+			$this->socket = '';
 		}
 		$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
 #		ini_set('mysqli.reconnect', true);
@@ -54,10 +54,10 @@ class yf_db_mysqli extends yf_db_driver {
 			return false;
 		}
 		if (empty($charset)) {
-			$charset = defined("DB_CHARSET") ? DB_CHARSET : $this->DEF_CHARSET;
+			$charset = defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET;
 		}
 		if ($charset) {
-			$this->query("SET NAMES ". $charset);
+			$this->query('SET NAMES '. $charset);
 		}
 		return $this->db_connect_id;
 	}
@@ -73,8 +73,8 @@ class yf_db_mysqli extends yf_db_driver {
 		if ($this->socket) {
 			$connect_host = $this->socket;
 		} else {
-			$connect_port = $this->port && $this->port != $this->DEF_PORT ? $this->port : "";
-			$connect_host = ($this->persistency ? "p:" : "").$this->server. ($connect_port ? ":".$connect_port : "");
+			$connect_port = $this->port && $this->port != $this->DEF_PORT ? $this->port : '';
+			$connect_host = ($this->persistency ? 'p:' : '').$this->server. ($connect_port ? ':'.$connect_port : '');
 		}
 		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
 		$is_connected = mysqli_real_connect($this->db_connect_id, $this->server, $this->user, $this->password, '', $this->port, $this->socket, $use_ssl ? MYSQLI_CLIENT_SSL : 0);
@@ -83,11 +83,11 @@ class yf_db_mysqli extends yf_db_driver {
 			$this->db_connect_id = null;
 			return false;
 		}
-		if ($this->dbname != "") {
+		if ($this->dbname != '') {
 			$dbselect = mysqli_select_db($this->db_connect_id, $this->dbname);
 			// Try to create database, if not exists and if allowed
 			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->dbname)) {
-				mysqli_query("CREATE DATABASE IF NOT EXISTS ".$this->dbname, $this->db_connect_id);
+				mysqli_query('CREATE DATABASE IF NOT EXISTS '.$this->dbname, $this->db_connect_id);
 			}
 			$dbselect = mysqli_select_db($this->db_connect_id, $this->dbname);
 			if (!$dbselect) {
@@ -106,13 +106,13 @@ class yf_db_mysqli extends yf_db_driver {
 	/**
 	* Base query method
 	*/
-	function query($query = "") {
+	function query($query = '') {
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		if ($query == "") {
+		if ($query == '') {
 			return false;
 		}
 		$this->query_result = mysqli_query($this->db_connect_id, $query);
@@ -133,19 +133,19 @@ class yf_db_mysqli extends yf_db_driver {
 		}
 // TODO: check and implement this:
 /*
-$query  = "SELECT CURRENT_USER();";
-$query .= "SELECT Name FROM City ORDER BY ID LIMIT 20, 5";
+$query  = 'SELECT CURRENT_USER();';
+$query .= 'SELECT Name FROM City ORDER BY ID LIMIT 20, 5';
 
 if ($mysqli->multi_query($query)) {
     do {
         if ($result = $mysqli->store_result()) {
             while ($row = $result->fetch_row()) {
-                printf("%s\n", $row[0]);
+                printf('%s\n', $row[0]);
             }
             $result->free();
         }
         if ($mysqli->more_results()) {
-            printf("-----------------\n");
+            printf('-----------------\n');
         }
     } while ($mysqli->next_result());
 }
@@ -160,8 +160,8 @@ if ($mysqli->multi_query($query)) {
 	/**
 	* Multi query method (specific for this driver)
 	*/
-	function _multi_query($query = "") {
-		if ($query == "") {
+	function _multi_query($query = '') {
+		if ($query == '') {
 			return false;
 		}
 		return mysqli_multi_query($this->db_connect_id, $query);
@@ -170,7 +170,7 @@ if ($mysqli->multi_query($query)) {
 	/**
 	* Unbuffered query method
 	*/
-	function unbuffered_query($query = "") {
+	function unbuffered_query($query = '') {
 		mysqli_unbuffered_query($this->db_connect_id, $query);
 	}
 
@@ -283,44 +283,44 @@ if ($mysqli->multi_query($query)) {
 		while ($A = $this->fetch_row($Q)) {
 			$fld = array();
 
-			$fld["name"]= $A[0];
+			$fld['name']= $A[0];
 			$type		= $A[1];
 
 			// split type into type(length):
 			if ($FULL_INFO) {
-				$fld["scale"] = null;
+				$fld['scale'] = null;
 			}
-			if (preg_match("/^(.+)\((\d+),(\d+)/", $type, $query_array)) {
-				$fld["type"] = $query_array[1];
-				$fld["max_length"] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
 				if ($FULL_INFO) {
-					$fld["scale"] = is_numeric($query_array[3]) ? $query_array[3] : -1;
+					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
 				}
-			} elseif (preg_match("/^(.+)\((\d+)/", $type, $query_array)) {
-				$fld["type"] = $query_array[1];
-				$fld["max_length"] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match("/^(enum)\((.*)\)$/i", $type, $query_array)) {
-				$fld["type"] = $query_array[1];
-				$fld["max_length"] = max(array_map("strlen",explode(",",$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld["max_length"] = ($fld["max_length"] == 0 ? 1 : $fld["max_length"]);
+			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			} elseif (preg_match('/^(enum)\((.*)\)$/i', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
+				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
 			} else {
-				$fld["type"] = $type;
-				$fld["max_length"] = -1;
+				$fld['type'] = $type;
+				$fld['max_length'] = -1;
 			}
 
 			if ($FULL_INFO) {
-				$fld["not_null"]		= ($A[2] != 'YES');
-				$fld["primary_key"]		= ($A[3] == 'PRI');
-				$fld["auto_increment"]	= (strpos($A[5], 'auto_increment') !== false);
-				$fld["binary"]			= (strpos($type,'blob') !== false);
-				$fld["unsigned"]		= (strpos($type,'unsigned') !== false);
-				if (!$fld["binary"]) {
+				$fld['not_null']		= ($A[2] != 'YES');
+				$fld['primary_key']		= ($A[3] == 'PRI');
+				$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
+				$fld['binary']			= (strpos($type,'blob') !== false);
+				$fld['unsigned']		= (strpos($type,'unsigned') !== false);
+				if (!$fld['binary']) {
 					$d = $A[4];
 					if ($d != '' && $d != 'NULL') {
-						$fld["has_default"] = true;
-						$fld["default_value"] = $d;
+						$fld['has_default'] = true;
+						$fld['default_value'] = $d;
 					} else {
-						$fld["has_default"] = false;
+						$fld['has_default'] = false;
 					}
 				}
 			}
@@ -328,7 +328,7 @@ if ($mysqli->multi_query($query)) {
 			if ($KEYS_NUMERIC) {
 				$retarr[] = $fld;
 			} else {
-				$retarr[strtolower($fld["name"])] = $fld;
+				$retarr[strtolower($fld['name'])] = $fld;
 			}
 		}
 		return $retarr;
@@ -337,7 +337,7 @@ if ($mysqli->multi_query($query)) {
 	/**
 	* Meta Tables
 	*/
-	function meta_tables($DB_PREFIX = "") {
+	function meta_tables($DB_PREFIX = '') {
 		$Q = $this->query($this->META_TABLES_SQL);
 		while ($A = $this->fetch_row($Q)) {
 			// Skip tables without prefix of current connection
@@ -353,21 +353,21 @@ if ($mysqli->multi_query($query)) {
 	* Begin a transaction
 	*/
 	function begin() {
-		return $this->query("START TRANSACTION");
+		return $this->query('START TRANSACTION');
 	}
 
 	/**
 	* End a transaction
 	*/
 	function commit() {
-		return $this->query("COMMIT");
+		return $this->query('COMMIT');
 	}
 
 	/**
 	* Rollback a transaction
 	*/
 	function rollback() {
-		return $this->query("ROLLBACK");
+		return $this->query('ROLLBACK');
 	}
 
 	/**
@@ -376,7 +376,7 @@ if ($mysqli->multi_query($query)) {
 	function limit($count, $offset) {
 		if ($count > 0) {
 			$offset = ($offset > 0) ? $offset : 0;
-			$sql .= "LIMIT ".$offset.", ".$count;
+			$sql .= 'LIMIT '.$offset.', '.$count;
 		}
 		return $sql;
 	}
@@ -385,7 +385,7 @@ if ($mysqli->multi_query($query)) {
 	* Enclose field names
 	*/
 	function enclose_field_name($data) {
-		$data = "`".$data."`";
+		$data = '`'.$data.'`';
 		return $data;
 	}
 
@@ -393,7 +393,7 @@ if ($mysqli->multi_query($query)) {
 	* Enclose field values
 	*/
 	function enclose_field_value($data) {
-		$data = "'".$data."'";
+		$data = '\''.$data.'\'';
 		return $data;
 	}
 
@@ -412,9 +412,9 @@ if ($mysqli->multi_query($query)) {
 			$var_type = substr($k, 0, 1);
 			$var_name = substr($k, 2);
 			$types_string .= $var_type;
-			$params[]	= "\$data['".$k."']";
+			$params[]	= '$data[\''.$k.'\']';
 		}
-		return eval("return mysqli_stmt_bind_param(\$stmt, \"".$types_string."\", ".implode(",", $params).");");
+		return eval('return mysqli_stmt_bind_param($stmt, \''.$types_string.'\', '.implode(',', $params).');');
 	}
 
 	/**

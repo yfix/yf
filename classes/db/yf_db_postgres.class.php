@@ -1,7 +1,7 @@
 <?php
 
-#load("yf_db_postgres7", "classes/db/");
-require_once dirname(__FILE__)."/yf_db_postgres7.class.php";
+#load('yf_db_postgres7', 'classes/db/');
+require_once dirname(__FILE__).'/yf_db_postgres7.class.php';
 
 /**
 * PostgreSQL db class

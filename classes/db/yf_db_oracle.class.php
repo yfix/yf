@@ -1,7 +1,7 @@
 <?php
 
-#load("yf_db_driver.abstract", "classes/db/");
-require dirname(__FILE__)."/yf_db_driver.abstract.class.php";
+#load('yf_db_driver.abstract', 'classes/db/');
+require dirname(__FILE__).'/yf_db_driver.abstract.class.php';
 
 /**
 * Oracle db class
@@ -25,25 +25,25 @@ class yf_db_oracle extends yf_db_driver {
 	/** @var @conf_skip */
 	public $num_queries		= 0;
 	/** @var @conf_skip */
-	public $last_query_text	= "";
+	public $last_query_text	= '';
 	/** @var @conf_skip */
 	public $replace_quote		= "''";
 	/** @var @conf_skip */
 	public $no_null_strings	= 1;
 
 	/** @var @conf_skip */
-	public $META_TABLES_SQL	= "select table_name,table_type from cat where table_type in ('TABLE','VIEW')";
+	public $META_TABLES_SQL	= "select table_name,table_type from cat where table_type in (\'TABLE\',\'VIEW\')";
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= "select cname,coltype,width from col where tname='%s' order by colno";
 	/** @var @conf_skip */
 	public $META_DATABASES_SQL	= "SELECT USERNAME FROM ALL_USERS WHERE USERNAME NOT IN ('SYS','SYSTEM','DBSNMP','OUTLN') ORDER BY 1";
 	/** @var @conf_skip */
-	public $_genIDSQL			= "SELECT (%s.nextval) FROM DUAL";
+	public $_genIDSQL			= 'SELECT (%s.nextval) FROM DUAL';
 
 	/**
 	* Constructor
 	*/
-	function __construct($sqlserver, $sqluser, $sqlpassword, $database="", $persistency = false) {
+	function __construct($sqlserver, $sqluser, $sqlpassword, $database='', $persistency = false) {
 		$this->persistency = $persistency;
 		$this->user = $sqluser;
 		$this->password = $sqlpassword;
@@ -83,14 +83,14 @@ class yf_db_oracle extends yf_db_driver {
 	/**
 	* Base query method
 	*/
-	function query($query = "") {
+	function query($query = '') {
 		if (!$this->db_connect_id) {
 			return false;
 		}
 // FIXME: make this more accurate
 		// Remove MySQL-style quotes
-		$query = str_replace("`","\"",$query);
-		$query = str_replace(" AS "," ",$query);
+		$query = str_replace('`','"',$query);
+		$query = str_replace(' AS ',' ',$query);
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		$this->query_result = @OCIParse($this->db_connect_id, $query);
@@ -117,7 +117,7 @@ class yf_db_oracle extends yf_db_driver {
 	/**
 	* Unbuffered query method
 	*/
-	function unbuffered_query($query = "") {
+	function unbuffered_query($query = '') {
 		return $this->query($query);
 	}
 
@@ -164,9 +164,9 @@ class yf_db_oracle extends yf_db_driver {
 		if (!$query_id) {
 			return false;
 		}
-		$result_row = "";
+		$result_row = '';
 		$result = @OCIFetchInto($query_id, $result_row, OCI_ASSOC + OCI_RETURN_NULLS);
-		if ($result_row == "") {
+		if ($result_row == '') {
 			return false;
 		}
 		for ($i = 0; $i < count($result_row); $i++) {
@@ -200,9 +200,9 @@ class yf_db_oracle extends yf_db_driver {
 		if (!$query_id) {
 			$query_id = $this->query_result;
 		}
-		if ($query_id && $this->last_query_text[$query_id] != "") {
+		if ($query_id && $this->last_query_text[$query_id] != '') {
 			if (preg_match('#^(INSERT{1}|^INSERT INTO{1})[[:space:]]["]?([a-zA-Z0-9\_\-]+)["]?#i', $this->last_query_text[$query_id], $tablename)) {
-				$query = "SELECT ".$tablename[2]."_id_seq.currval FROM DUAL";
+				$query = 'SELECT '.$tablename[2].'_id_seq.currval FROM DUAL';
 				$stmt = @OCIParse($this->db_connect_id, $query);
 				@OCIExecute($stmt,OCI_DEFAULT );
 				$temp_result = @OCIFetchInto($stmt, $temp_result, OCI_ASSOC+OCI_RETURN_NULLS);
@@ -227,7 +227,7 @@ class yf_db_oracle extends yf_db_driver {
 #		if ($this->replace_quote[0] == '\\') {
 #			$string = str_replace('\\', '\\\\', $string);
 #		}
-#		return str_replace("'", $this->replace_quote, $string);
+#		return str_replace('\'', $this->replace_quote, $string);
 	}
 
 	/**
@@ -260,7 +260,7 @@ class yf_db_oracle extends yf_db_driver {
 	/**
 	* Meta Tables
 	*/
-	function meta_tables($DB_PREFIX = "") {
+	function meta_tables($DB_PREFIX = '') {
 		$Q = $this->query($this->META_TABLES_SQL);
 		while ($A = $this->fetch_row($Q)) {
 			// Skip tables without prefix of current connection
@@ -282,44 +282,44 @@ class yf_db_oracle extends yf_db_driver {
 		while ($A = $this->fetch_row($Q)) {
 			$fld = array();
 
-			$fld["name"]= $A[0];
+			$fld['name']= $A[0];
 			$type		= $A[1];
 
 			// split type into type(length):
 			if ($FULL_INFO) {
-				$fld["scale"] = null;
+				$fld['scale'] = null;
 			}
-			if (preg_match("/^(.+)\((\d+),(\d+)/", $type, $query_array)) {
-				$fld["type"] = $query_array[1];
-				$fld["max_length"] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
 				if ($FULL_INFO) {
-					$fld["scale"] = is_numeric($query_array[3]) ? $query_array[3] : -1;
+					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
 				}
-			} elseif (preg_match("/^(.+)\((\d+)/", $type, $query_array)) {
-				$fld["type"] = $query_array[1];
-				$fld["max_length"] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match("/^(enum)\((.*)\)$/i", $type, $query_array)) {
-				$fld["type"] = $query_array[1];
-				$fld["max_length"] = max(array_map("strlen",explode(",",$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld["max_length"] = ($fld["max_length"] == 0 ? 1 : $fld["max_length"]);
+			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			} elseif (preg_match('/^(enum)\((.*)\)$/i', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
+				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
 			} else {
-				$fld["type"] = $type;
-				$fld["max_length"] = -1;
+				$fld['type'] = $type;
+				$fld['max_length'] = -1;
 			}
 
 			if ($FULL_INFO) {
-				$fld["not_null"]		= ($A[2] != 'YES');
-				$fld["primary_key"]		= ($A[3] == 'PRI');
-				$fld["auto_increment"]	= (strpos($A[5], 'auto_increment') !== false);
-				$fld["binary"]			= (strpos($type,'blob') !== false);
-				$fld["unsigned"]		= (strpos($type,'unsigned') !== false);
-				if (!$fld["binary"]) {
+				$fld['not_null']		= ($A[2] != 'YES');
+				$fld['primary_key']		= ($A[3] == 'PRI');
+				$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
+				$fld['binary']			= (strpos($type,'blob') !== false);
+				$fld['unsigned']		= (strpos($type,'unsigned') !== false);
+				if (!$fld['binary']) {
 					$d = $A[4];
 					if ($d != '' && $d != 'NULL') {
-						$fld["has_default"] = true;
-						$fld["default_value"] = $d;
+						$fld['has_default'] = true;
+						$fld['default_value'] = $d;
 					} else {
-						$fld["has_default"] = false;
+						$fld['has_default'] = false;
 					}
 				}
 			}
@@ -327,7 +327,7 @@ class yf_db_oracle extends yf_db_driver {
 			if ($KEYS_NUMERIC) {
 				$retarr[] = $fld;
 			} else {
-				$retarr[strtolower($fld["name"])] = $fld;
+				$retarr[strtolower($fld['name'])] = $fld;
 			}
 		}
 		return $retarr;
@@ -341,7 +341,7 @@ class yf_db_oracle extends yf_db_driver {
 /*
 		if ($count > 0) {
 			$offset = ($offset > 0) ? $offset : 0;
-			$sql .= "LIMIT ".$offset.", ".$count;
+			$sql .= 'LIMIT '.$offset.', '.$count;
 		}
 		return $sql;
 */
@@ -351,7 +351,7 @@ class yf_db_oracle extends yf_db_driver {
 	* Enclose field names
 	*/
 	function enclose_field_name($data) {
-		$data = "\"".$data."\"";
+		$data = '"'.$data.'"';
 		return $data;
 	}
 
@@ -359,7 +359,7 @@ class yf_db_oracle extends yf_db_driver {
 	* Enclose field values
 	*/
 	function enclose_field_value($data) {
-		$data = "'".$data."'";
+		$data = '\''.$data.'\'';
 		return $data;
 	}
 
@@ -370,7 +370,7 @@ class yf_db_oracle extends yf_db_driver {
 			return false;
 		}
 // TODO
-		return "";
+		return '';
 	}
 
 	/**
@@ -380,7 +380,7 @@ class yf_db_oracle extends yf_db_driver {
 			return false;
 		}
 // TODO
-		return "";
+		return '';
 	}
 
 	/**
@@ -390,6 +390,6 @@ class yf_db_oracle extends yf_db_driver {
 			return false;
 		}
 // TODO
-		return "";
+		return '';
 	}
 }

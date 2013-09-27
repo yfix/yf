@@ -1,7 +1,7 @@
 <?php
 
-#load("yf_db_driver.abstract", "classes/db/");
-require dirname(__FILE__)."/yf_db_driver.abstract.class.php";
+#load('yf_db_driver.abstract', 'classes/db/');
+require dirname(__FILE__).'/yf_db_driver.abstract.class.php';
 
 /**
 * Sqlite abstraction layer
@@ -18,9 +18,9 @@ class yf_db_sqlite extends yf_db_driver {
 	public $query_result		= null;
 
 	/** @var @conf_skip */
-	public $META_TABLES_SQL	= "";	
+	public $META_TABLES_SQL	= '';	
 	/** @var @conf_skip */
-	public $META_COLUMNS_SQL	= "";
+	public $META_COLUMNS_SQL	= '';
 
 	/**
 	*/
@@ -184,7 +184,7 @@ class yf_db_sqlite extends yf_db_driver {
 		if ($total == 0) {
 			$total = -1;
 		}
-		$query .= "\n LIMIT " . ((!empty($offset)) ? $offset . ', ' . $total : $total);
+		$query .= PHP_EOL.' LIMIT ' . ((!empty($offset)) ? $offset . ', ' . $total : $total);
 		return $this->sql_query($query, $cache_ttl); 
 	}
 
@@ -222,7 +222,7 @@ class yf_db_sqlite extends yf_db_driver {
 			return false;
 		}
 // TODO
-		return "";
+		return '';
 	}
 
 	/**
@@ -232,7 +232,7 @@ class yf_db_sqlite extends yf_db_driver {
 			return false;
 		}
 // TODO
-		return "";
+		return '';
 	}
 
 	/**
@@ -242,6 +242,6 @@ class yf_db_sqlite extends yf_db_driver {
 			return false;
 		}
 // TODO
-		return "";
+		return '';
 	}
 }
