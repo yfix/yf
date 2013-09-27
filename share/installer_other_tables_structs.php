@@ -37,6 +37,7 @@ $data = my_array_merge((array)$data, array(
 	`read` enum('0','1') NOT NULL,
 	`time` int(10) unsigned NOT NULL,
 	PRIMARY KEY  (`id`)
+	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ",
 "auto_connected"	=> "
 	`user_id` int(10) unsigned NOT NULL default '0',
@@ -208,6 +209,7 @@ $data = my_array_merge((array)$data, array(
 	`cont` char(1) NOT NULL default '',
 	`call_code` char(4) NOT NULL default '',
 	PRIMARY KEY  (`c`)
+	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ",
 "custom_style"	=> "
 	`id` int(11) NOT NULL,
@@ -976,6 +978,7 @@ $data = my_array_merge((array)$data, array(
 	KEY `has_avatar` (`has_avatar`),
 	KEY `priority` (`priority`),
 	KEY `country` (`country`)
+	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ",
 "user_ban"	=> "
 	`id` mediumint(6) unsigned NOT NULL auto_increment,
