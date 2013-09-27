@@ -702,7 +702,7 @@ class yf_ssh {
 			$_merged_contents = array();
 			foreach ((array)$start_dir as $_start_dir) {
 				$_cur_contents = (array)$this->scan_dir ($server_info, $_start_dir, $pattern_include, $pattern_exclude, $level, $single_file);
-				$_merged_contents = my_array_merge($_merged_contents, $_cur_contents);
+				$_merged_contents += (array)$_cur_contents;
 			}
 			return $_merged_contents;
 		}

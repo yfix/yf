@@ -55,7 +55,7 @@ class yf_module {
 	* @return	void
 	*/
 	function _view_comments ($params = array()) {
-		return module("comments")->_show_for_object(my_array_merge((array)$this->_comments_params, (array)$params));
+		return module("comments")->_show_for_object( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class yf_module {
 		if (!is_array($params)) {
 			$params = array("objects_ids" => $params);
 		}
-		return module("comments")->_get_num_comments(my_array_merge((array)$this->_comments_params, (array)$params));
+		return module("comments")->_get_num_comments( (array)$this->_comments_params, (array)$params );
 	}
 
 	/**
@@ -113,7 +113,7 @@ class yf_module {
 		if ($_POST["submit"] == 'Preview') {
 			return module("preview")->_display_preview(array('text' => $_POST["text"]));
 		}
-		return module("comments")->_add(my_array_merge((array)$this->_comments_params, (array)$params));
+		return module("comments")->_add( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
@@ -123,7 +123,7 @@ class yf_module {
 	* @return	void
 	*/
 	function edit_comment ($params = array()) {
-		return module("comments")->_edit(my_array_merge((array)$this->_comments_params, (array)$params));
+		return module("comments")->_edit( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
@@ -133,7 +133,7 @@ class yf_module {
 	* @return	void
 	*/
 	function delete_comment ($params = array()) {
-		return module("comments")->_delete(my_array_merge((array)$this->_comments_params, (array)$params));
+		return module("comments")->_delete( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
@@ -286,7 +286,7 @@ class yf_module {
 	* @return	void
 	*/
 	function _show_tags ($ids = array(), $params = array()) {
-		return module("tags")->_show($ids, my_array_merge((array)$this->_tags_params, (array)$params));
+		return module("tags")->_show($ids, (array)$this->_tags_params + (array)$params );
 	}
 
 	/**

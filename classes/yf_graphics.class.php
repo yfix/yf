@@ -1472,7 +1472,7 @@ class yf_graphics {
 		if (method_exists($obj, $method_name)) {
 			$data2 = $obj->$method_name();
 		}
-		$data = my_array_merge((array)$data2, (array)$data);
+		$data = (array)$data2 + (array)$data;
 		if (empty($data)) {
 			return false;
 		}

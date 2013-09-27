@@ -493,7 +493,7 @@ class yf_form2 {
 		if (!isset($replace['content_id'])) {
 			$replace['content_id'] = $content_id;
 		}
-		$body .= tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, my_array_merge($extra, $replace)) : '';
+		$body .= tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace ) : '';
 
 		// Avoid including ckeditor scripts several times on same page
 		$this->_ckeditor_scripts_included = true;

@@ -502,90 +502,34 @@ class yf_tpl {
 	*/
 	function parse($name, $replace = array(), $params = array()) {
 		$name = strtolower($name);
-		if (!is_array($params))				 { $params = array(); }
-		if (isset($params['string']))		   { $string = $params['string']; }
-		if (!isset($params['replace_images']))  { $params['replace_images'] = true; }
-		if (!isset($params['no_cache']))		{ $params['no_cache'] = false; }
-		if (!isset($params['get_from_db']))	 { $params['get_from_db'] = false; }
-		if (!isset($params['no_include']))	  { $params['no_include'] = false; }
+		// Support for the framework calls
+		$yf_prefix = 'yf_';
+		$yfp_len = strlen($yf_prefix);
+		if (substr($name, 0, $yfp_len) == $yf_prefix) {
+			$name = substr($name, $yfp_len);
+		}
+		if (!is_array($params)) {
+			$params = array();
+		}
+		if (!isset($params['replace_images'])) {
+			$params['replace_images'] = true;
+		}
+		$string = $params['string'] ?: false;
 		if (DEBUG_MODE) {
 			$stpl_time_start = microtime(true);
 		}
-		$replace = my_array_merge((array)$this->_global_tags, (array)$replace);
-		// User error message
-		if (!isset($replace['error'])) {
-			$replace['error'] = '';
-			if ($name != 'main' && common()->_error_exists() && !isset($replace['error'])) {
-				if (!isset($this->_user_error_msg)) {
-					$this->_user_error_msg = common()->_show_error_message('', false);
-				}
-				$replace['error'] = $this->_user_error_msg;
-			}
-		}
+		$replace = (array)$this->_global_tags + (array)$replace;
+		$replace['error'] = $this->_parse_get_user_errors($name, $replace['error']);
 		if ($this->ALLOW_CUSTOM_FILTER) {
 			$this->_custom_filter($name, $replace);
 		}
-		// Support for the framework calls
-		if (substr($name, 0, 6) == 'yf_') {
-			$name = substr($name, 6);
+		$compiled = $this->_parse_get_compiled($name, $replace, $params);
+		if (isset($compiled)) {
+			return $compiled;
 		}
-		if ($this->COMPILE_TEMPLATES) {
-# TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
-			$compiled_path = PROJECT_PATH. $this->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
-			if (file_exists($compiled_path) && ($_compiled_mtime = filemtime($compiled_path)) > (time() - $this->COMPILE_TTL)) {
-				$_compiled_ok = true;
-
-				ob_start();
-				include ($compiled_path);
-				$string = ob_get_contents();
-				ob_end_clean();
-
-				if ($this->COMPILE_CHECK_STPL_CHANGED) {
-					$_stpl_path = $this->_get_template_file($name, $params['get_from_db'], 0, 1);
-					if ($_stpl_path) {
-						$_source_mtime = filemtime($_stpl_path);
-					}
-					if (!$_stpl_path || $_source_mtime > $_compiled_mtime) {
-						$_compiled_ok = false;
-						$string = false;
-					}
-				}
-				if ($_compiled_ok) {
-					$this->CACHE[$name]['calls']++;
-					if (!isset($this->CACHE[$name]['string'])) {
-						$this->CACHE[$name]['string']   = $string;
-					}
-					if (!isset($this->CACHE[$name]['s_length'])) {
-						$this->CACHE[$name]['s_length'] = strlen($string);
-					}
-					if (DEBUG_MODE && MAIN_TYPE_USER) {
-						$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
-					}
-					return $string;
-				}
-			}
-		}
-		if (isset($this->CACHE[$name]) && !$params['no_cache']) {
-			$string = $this->CACHE[$name]['string'];
-			$this->CACHE[$name]['calls']++;
-			if (DEBUG_MODE) {
-				$this->CACHE[$name]['s_length'] = strlen($string);
-			}
-		} else {
-			if (empty($string) && !isset($params['string'])) {
-				$string = $this->_get_template_file($name, $params['get_from_db']);
-			}
-			if ($string === false) {
-				return false;
-			}
-			$string = preg_replace($this->_PATTERN_COMMENT, '', $string);
-			if ($this->COMPILE_TEMPLATES) {
-				$this->_compile($name, $replace, $string);
-			}
-			if (isset($params['no_cache']) && !$params['no_cache']) {
-				$this->CACHE[$name]['string']   = $string;
-				$this->CACHE[$name]['calls']	= 1;
-			}
+		$string = $this->_parse_get_cached($name, $replace, $params, $string);
+		if ($string === false) {
+			return false;
 		}
 		$string = $this->_process_executes($string, $replace, $name);
 		$string = $this->_process_catches($string, $replace, $name);
@@ -619,48 +563,130 @@ class yf_tpl {
 			$string = preg_replace('/\{[\w_]+\}/i', '', $string);
 		}
 		if (isset($params['eval_content'])) {
-			eval("\$string = \"".str_replace('"', '\"', $string)."\";");
+			eval('$string = "'.str_replace('"', '\"', $string).'";');
 		}
 		// Replace "images/" and "uploads/" to their full web paths
 		if ($params['replace_images']) {
 			$string = common()->_replace_images_paths($string);
 		}
 		if (DEBUG_MODE) {
-			if (!isset($this->CACHE[$name]['exec_time'])) {
-				$this->CACHE[$name]['exec_time'] = 0;
-			}
-			$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
-			// For debug store information about variables used while processing template
-			if ($this->DEBUG_STPL_VARS) {
-				$d = debug('STPL_REPLACE_VARS::'.$name);
-				$next = is_array($d) ? count($d) : 0;
-				debug('STPL_REPLACE_VARS::'.$name.'::'.$next, $replace);
-			}
-			if ($this->USE_SOURCE_BACKTRACE) {
-				debug('STPL_TRACES::'.$name, main()->trace_string());
-/*
-				// Prepare calls tree
-				foreach ((array)$trace as $A) {
-					if ((isset($A['class']) && $A['class'] != __CLASS__) || (isset($A['function']) && $A['function'] != __FUNCTION__) || $A['args'][0] == $name) {
-						continue;
-					}
-					debug('STPL_PARENTS::'.$name, $A['args'][0]);
-					break;
+			$this->_parse_set_debug_info($name, $replace, $params, $string, $stpl_time_start);
+		}
+		return $string;
+	}
+
+	/**
+	*/
+	function _parse_get_compiled($name, $replace = array(), $params = array()) {
+		if (!$this->COMPILE_TEMPLATES) {
+			return null;
+		}
+# TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
+		$compiled_path = PROJECT_PATH. $this->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
+		if (file_exists($compiled_path) && ($_compiled_mtime = filemtime($compiled_path)) > (time() - $this->COMPILE_TTL)) {
+			$_compiled_ok = true;
+
+			ob_start();
+			include ($compiled_path);
+			$string = ob_get_contents();
+			ob_end_clean();
+
+			if ($this->COMPILE_CHECK_STPL_CHANGED) {
+				$_stpl_path = $this->_get_template_file($name, $params['get_from_db'], 0, 1);
+				if ($_stpl_path) {
+					$_source_mtime = filemtime($_stpl_path);
 				}
-				if ($name != 'main' && !debug('STPL_PARENTS::'.$name)) {
-					debug('STPL_PARENTS::'.$name, 'main');
+				if (!$_stpl_path || $_source_mtime > $_compiled_mtime) {
+					$_compiled_ok = false;
+					$string = false;
 				}
-*/
 			}
-			if ($this->ALLOW_INLINE_DEBUG && strlen($string) > 20
-				&& !in_array($name, array('main', 'system/debug_info', 'system/js_inline_editor'))
-			) {
-				if (preg_match('/^<([^>]*?)>/ims', ltrim($string), $m)) {
-					$string = '<'.$m[1].' stpl_name="'.$name.'">'.substr(ltrim($string), strlen($m[0]));
+			if ($_compiled_ok) {
+				$this->CACHE[$name]['calls']++;
+				if (!isset($this->CACHE[$name]['string'])) {
+					$this->CACHE[$name]['string']   = $string;
 				}
+				if (!isset($this->CACHE[$name]['s_length'])) {
+					$this->CACHE[$name]['s_length'] = strlen($string);
+				}
+				if (DEBUG_MODE && MAIN_TYPE_USER) {
+					$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
+				}
+				return $string;
+			}
+		}
+		return null;
+	}
+
+	/**
+	*/
+	function _parse_get_cached($name, $replace = array(), $params = array(), $string = false) {
+		if (isset($this->CACHE[$name]) && !$params['no_cache']) {
+			$string = $this->CACHE[$name]['string'];
+			$this->CACHE[$name]['calls']++;
+			if (DEBUG_MODE) {
+				$this->CACHE[$name]['s_length'] = strlen($string);
+			}
+		} else {
+			if (empty($string) && !isset($params['string'])) {
+				$string = $this->_get_template_file($name, $params['get_from_db']);
+			}
+			if ($string === false) {
+				return false;
+			}
+			$string = preg_replace($this->_PATTERN_COMMENT, '', $string);
+			if ($this->COMPILE_TEMPLATES) {
+				$this->_compile($name, $replace, $string);
+			}
+			if (isset($params['no_cache']) && !$params['no_cache']) {
+				$this->CACHE[$name]['string']   = $string;
+				$this->CACHE[$name]['calls']	= 1;
 			}
 		}
 		return $string;
+	}
+
+	/**
+	*/
+	function _parse_get_user_errors($name, $err) {
+		if (isset($err)) {
+			return $err;
+		}
+		$err = '';
+		if ($name != 'main' && common()->_error_exists()) {
+			if (!isset($this->_user_error_msg)) {
+				$this->_user_error_msg = common()->_show_error_message('', false);
+			}
+			$err = $this->_user_error_msg;
+		}
+		return $err;
+	}
+
+	/**
+	*/
+	function _parse_debug($name = '', $replace = array(), $params = array(), $string = '', $stpl_time_start) {
+		if (!DEBUG_MODE) {
+			return false;
+		}
+		if (!isset($this->CACHE[$name]['exec_time'])) {
+			$this->CACHE[$name]['exec_time'] = 0;
+		}
+		$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
+		// For debug store information about variables used while processing template
+		if ($this->DEBUG_STPL_VARS) {
+			$d = debug('STPL_REPLACE_VARS::'.$name);
+			$next = is_array($d) ? count($d) : 0;
+			debug('STPL_REPLACE_VARS::'.$name.'::'.$next, $replace);
+		}
+		if ($this->USE_SOURCE_BACKTRACE) {
+			debug('STPL_TRACES::'.$name, main()->trace_string());
+		}
+		if ($this->ALLOW_INLINE_DEBUG && strlen($string) > 20 && !in_array($name, array('main', 'system/debug_info', 'system/js_inline_editor')) ) {
+			if (preg_match('/^<([^>]*?)>/ims', ltrim($string), $m)) {
+				$string = '<'.$m[1].' stpl_name="'.$name.'">'.substr(ltrim($string), strlen($m[0]));
+			}
+		}
+		return true;
 	}
 
 	/**
