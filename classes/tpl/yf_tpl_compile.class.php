@@ -44,14 +44,15 @@ class yf_tpl_compile {
 			'/\{(else)\}/i'
 				=> $_php_start. '} else {'. $_php_end,
 
-			"/(\{(t|translate|i18n)\(\s*[\"']{0,1})([\s\w\-\.\,\:\;\%\&\#\/\<\>\!\?\{\}]*)[\"']{0,1}[,]{0,1}([^\)]*?)(\s*\)\})/ie"
-				=> "'".$_php_start."echo common()->_translate_for_stpl(\''.\$this->_prepare_translate2('\\3').'\',\''.\$this->_prepare_translate2('\\4', 1).'\');".$_php_end."'",
+// TODO: better execute some wrapper that will convert this into simple call t('changeme %num', array('%num' => 5), 'ru')
+			'/(\{(t|translate|i18n)\(\s*["\']{0,1})([\s\w\-\.\,\:\;\%\&\#\/\<\>\!\?\{\}]*)["\']{0,1}[,]{0,1}([^\)]*?)(\s*\)\})/ie'
+				=> "'".$_php_start. "echo common()->_translate_for_stpl(\''.\$this->_prepare_translate2('\\3').'\',\''.\$this->_prepare_translate2('\\4', 1).'\');".$_php_end."'",
 
 			'/(\{const\(\s*["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\s*\)\})/i'
-				=> $_php_start. 'echo (defined("$2") ? $2 : "");'. $_php_end,
+				=> $_php_start. 'echo (defined(\'$2\') ? $2 : \'\');'. $_php_end,
 
 			'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i'
-				=> $_php_start. 'echo conf("$2");'. $_php_end,
+				=> $_php_start. 'echo conf(\'$2\');'. $_php_end,
 
 			// Common replace tags
 			'/\{([a-z0-9\-\_]+)\}/i'
@@ -140,12 +141,12 @@ class yf_tpl_compile {
 	/**
 	* Prepare condition for the compilation
 	*/
-	function _compile_prepare_condition ($part_left = "", $cond_operator = "", $part_right = "", $add_cond = "") {
+	function _compile_prepare_condition ($part_left = '', $cond_operator = '', $part_right = '', $add_cond = '') {
 		// Left part processing
 		$part_left = $this->_compile_prepare_left($part_left);
 		// Right part processing
-		if ($part_right{0} == "#") {
-			$part_right = "\$replace['".ltrim($part_right, "#")."']";
+		if ($part_right{0} == '#') {
+			$part_right = '$replace[\''.ltrim($part_right, '#').'\']';
 		} else {
 			$part_right = "'".$part_right."'";
 		}
@@ -160,8 +161,8 @@ class yf_tpl_compile {
 					$a_part_left	= $this->_compile_prepare_left($m[1]);
 					$a_cur_operator	= tpl()->_cond_operators[strtolower($m[2])];
 					$a_part_right	= $m[3];
-					if ($a_part_right{0} == "#") {
-						$a_part_right = "\$replace['".ltrim($a_part_right, "#")."']";
+					if ($a_part_right{0} == '#') {
+						$a_part_right = '$replace[\''.ltrim($a_part_right, '#').'\']';
 					}
 					if (!is_numeric($a_part_right)) {
 						$a_part_right = "'".$a_part_right."'";
@@ -171,7 +172,7 @@ class yf_tpl_compile {
 					}
 					$_tmp_parts[$i] = $a_part_left." ".$a_cur_operator." ".$a_part_right;
 				} else {
-					$_tmp_parts[$i] = "";
+					$_tmp_parts[$i] = '';
 				}
 				if (!strlen($_tmp_parts[$i])) {
 					unset($_tmp_parts[$i]);
@@ -179,78 +180,78 @@ class yf_tpl_compile {
 				}
 			}
 			if ($_tmp_parts) {
-				$add_cond = implode(" ", (array)$_tmp_parts);
+				$add_cond = implode(' ', (array)$_tmp_parts);
 			} else {
-				$add_cond = "";
+				$add_cond = '';
 			}
 		}
 		$op = tpl()->_cond_operators[strtolower($cond_operator)];
 
-		return trim($part_left." ".$op." ".$part_right." ".$add_cond);
+		return trim($part_left.' '.$op.' '.$part_right.' '.$add_cond);
 	}
 
 	/**
 	* Prepare left part of the condition
 	*/
-	function _compile_prepare_left ($part_left = "") {
+	function _compile_prepare_left ($part_left = '') {
 		$_array_magick = array(
-			"_num"	=> "\$__f_counter",
-			"_total"=> "\$__f_total",
-			"_first"=> "(\$__f_counter == 1)",
-			"_last"	=> "(\$__f_counter == \$__f_total)",
-			"_even"	=> "(!(\$__f_counter % 2))",
-			"_odd"	=> "(\$__f_counter % 2)",
-			"_total"=> "\$__f_total",
-			"_key"	=> "\$_k",
-			"_val"	=> "\$_v",
+			'_num'	=> '$__f_counter',
+			'_total'=> '$__f_total',
+			'_first'=> '($__f_counter == 1)',
+			'_last'	=> '($__f_counter == $__f_total)',
+			'_even'	=> '(!($__f_counter % 2))',
+			'_odd'	=> '($__f_counter % 2)',
+			'_total'=> '$__f_total',
+			'_key'	=> '$_k',
+			'_val'	=> '$_v',
 		);
-		if (substr($part_left, 0, 2) == "#.") {
+		if (substr($part_left, 0, 2) == '#.') {
 
 			// Array item
-			$part_left = "\$_v['".substr($part_left, 2)."']";
+			$part_left = '$_v[\''.substr($part_left, 2).'\']';
 
 		} elseif (isset($_array_magick[$part_left])) {
 
 			// Array special magick keyword
 			$part_left = $_array_magick[$part_left];
 
-		} elseif (false !== strpos($part_left, "const.")) {
+		} elseif (false !== strpos($part_left, 'const.')) {
 
 			// Configuration item
-			$part_left = "conf('".substr($part_left, strlen("conf."))."')";
+			$part_left = 'conf(\''.substr($part_left, strlen('conf.')).'\')';
 
-		} elseif (false !== strpos($part_left, "const.")) {
+		} elseif (false !== strpos($part_left, 'const.')) {
 
 			// Constant
-			$part_left = substr($part_left, strlen("const."));
-			$part_left = "(defined('".$part_left."') ? ".$part_left." : '')";
+			$part_left = substr($part_left, strlen('const.'));
+			$part_left = '(defined(\''.$part_left.'\') ? '.$part_left.' : \'\')';
 
-		} elseif (false !== strpos($part_left, ".")) {
+		} elseif (false !== strpos($part_left, '.')) {
 
 			// Global array item in left part
-			list($k, $v) = explode(".", $part_left);
-			$part_left = "\$".str_replace(array_keys(tpl()->_avail_arrays), array_values(tpl()->_avail_arrays), $k)."['".$v."']";
+			list($k, $v) = explode('.', $part_left);
+			$part_left = '$'.str_replace(array_keys(tpl()->_avail_arrays), array_values(tpl()->_avail_arrays), $k).'[\''.$v.'\']';
 
-		} elseif ($part_left{0} == "%" && strlen($part_left) > 1) {
+		} elseif ($part_left{0} == '%' && strlen($part_left) > 1) {
 
-			// Simple number or string, started with "%"
-			$part_left = "\"".str_replace("\"", "\\\"", substr($part_left, 1))."\"";
+			// Simple number or string, started with '%'
+			$part_left = '"'.str_replace('"', '\"', substr($part_left, 1)).'"';
 
 		} else {
 
-			$part_left = "\$replace['".$part_left."']";
+			$part_left = '$replace[\''.$part_left.'\']';
 
 		}
 		return $part_left;
 	}
 
 	/**
-	* fix translation of the dynamic vars like: {t("num vars in {vertical}")}
+	* fix translation of the dynamic vars like: {t('num vars in {vertical}')}
 	*/
-	function _prepare_translate2 ($string = "", $for_params = false) {
+	function _prepare_translate2 ($string = '', $for_params = false) {
 		if ($for_params) {
-			$string = str_replace("'", "", $string);
+			$string = str_replace("'", '', $string);
 		}
-		return preg_replace("/\{([a-z0-9\-\_]+)\}/i", "'.\$replace['\\1'].'", $string);
+		return preg_replace('/\{([a-z0-9\-\_]+)\}/i', "'.\$replace['\\1'].'", $string);
 	}
 }
