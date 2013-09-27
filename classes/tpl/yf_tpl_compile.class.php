@@ -26,16 +26,16 @@ class yf_tpl_compile {
 			$this->_stpl_compile_dir_check = true;
 		}
 
-		$file_name = $compiled_dir."c_".MAIN_TYPE."_".urlencode($name).".php";
+		$file_name = $compiled_dir.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
 
-		$_php_start = "<"."?p"."hp ";
-		$_php_end	= " ?".">";
+		$_php_start = '<'.'?p'.'hp ';
+		$_php_end	= ' ?'.'>';
 
 		// Simple replaces
 		$_my_replace = array(
 			// Special tags for foreach
-			"{_key}"	=> $_php_start. 'echo $_k;'. $_php_end,
-			"{_val}"	=> $_php_start. 'echo $_v;'. $_php_end,
+			'{_key}'	=> $_php_start. 'echo $_k;'. $_php_end,
+			'{_val}'	=> $_php_start. 'echo $_v;'. $_php_end,
 		);
 		$string = str_replace(array_keys($_my_replace), array_values($_my_replace), $string);
 
@@ -99,6 +99,12 @@ class yf_tpl_compile {
    			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start. 'echo main()->_execute("advertising", "_show", array("ad"=>\'$1\'));'. $_php_end,
 
+			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
+				=> $_php_start. 'echo tpl()->_generate_url_wrapper(\'$1\');'. $_php_end,
+
+			'/\{form_row\(\s*["\']{1}([\s\w\-]+)["\']{1}([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?\s*\)\}/ims'
+				=> $_php_start. 'echo _class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\');'. $_php_end,
+
 			// DEBUG_MODE patterns
 
 			'/(\{_debug_get_replace\(\)\})/i'
@@ -121,12 +127,12 @@ class yf_tpl_compile {
 		);
 		$string = str_replace(array_keys($to_replace), array_values($to_replace), $string);
 
-		$string = "<"."?p"."hp /* ".
-			"date: ".gmdate("Y-m-d H:i:s")." GMT; ".
-			"compile_time: ".common()->_format_time_value(microtime(true) - $_time_start)."; ".
-			"name: ".$name."; ".
-			" */ ".
-			"?".">\n".$string;
+		$string = '<'.'?p'.'hp /* '.
+			'date: '.gmdate('Y-m-d H:i:s').' GMT; '.
+			'compile_time: '.common()->_format_time_value(microtime(true) - $_time_start).'; '.
+			'name: '.$name.'; '.
+			' */ '.
+			'?'.'>'. PHP_EOL. $string;
 
 		file_put_contents($file_name, $string);
 	}
