@@ -14,10 +14,11 @@ class yf_manage_servers {
 	*/
 	function show() {
 		return table("SELECT * FROM ".db('core_servers'))
-			->text("name")
-			->text("comment")
-			->text("hostname")
 			->text("ip")
+			->text("role")
+			->text("name")
+			->text("hostname")
+			->text("comment")
 			->btn_active()
 			->btn_edit()
 			->btn_delete()
