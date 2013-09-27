@@ -18,9 +18,7 @@ class yf_manage_conf {
 	/**
 	*/
 	function show() {
-		return table2('SELECT * FROM '.db('conf').' ORDER BY `name` ASC', array(
-//				'sortable' => true,
-			))
+		return table('SELECT * FROM '.db('conf').' ORDER BY `name` ASC')
 			->text('name','',array('badge' => 'info'))
 			->text('value')
 			->text('desc','Description')
@@ -34,7 +32,7 @@ class yf_manage_conf {
 	*/
 	function add() {
 		$replace = _class('admin_methods')->add($this->_table);
-		return form2($replace)
+		return form($replace)
 			->text('name')
 			->text('value')
 			->textarea('desc')
@@ -52,18 +50,18 @@ class yf_manage_conf {
 		if ($replace['linked_data']) {
 			$data = main()->get_data($replace['linked_data']);
 		} elseif ($replace['linked_table']) {
-			$q = db()->query("SELECT id, name FROM `".db($replace['linked_table'])."` ORDER BY name ASC");
+			$q = db()->query('SELECT id, name FROM `'.db($replace['linked_table']).'` ORDER BY name ASC');
 			while ($a = db()->fetch_assoc($q)) {
-				$data[$a["id"]] = $a["name"];
+				$data[$a['id']] = $a['name'];
 			}
 		} elseif ($replace['linked_method']) {
-			list($module, $method) = explode(".", trim($replace['linked_method']));
+			list($module, $method) = explode('.', trim($replace['linked_method']));
 			$module_obj = module($module);
 			if (method_exists($module_obj, $method)) {
 				$data = $module_obj->$method();
 			}
 		}
-		$form = form2($replace);
+		$form = form($replace);
 		$form->info('name');
 		if ($data) {
 			$form->select_box('value', $data);
