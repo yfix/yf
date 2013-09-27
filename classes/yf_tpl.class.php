@@ -1311,9 +1311,9 @@ class yf_tpl {
 	function _debug_get_vars ($string = '') {
 		$not_replaced = array();
 		$patterns = array(
-			"/\{([a-z0-9\_]{1,64})\}/ims",
-			"/\{if\([\'\"]*([a-z0-9\_]{1,64})[\'\"]*[^\}\)]+?\)\}/ims",
-			"/\{foreach\([\'\"]*([a-z0-9\_]{1,64})[\'\"]*\)\}/ims",
+			'/\{([a-z0-9\_]{1,64})\}/ims',
+			'/\{if\([\'"]*([a-z0-9\_]{1,64})[\'"]*[^\}\)]+?\)\}/ims',
+			'/\{foreach\([\'"]*([a-z0-9\_]{1,64})[\'"]*\)\}/ims',
 		);
 		// Parse simple vars
 		foreach ((array)$patterns as $pattern) {
@@ -1322,9 +1322,9 @@ class yf_tpl {
 			}
 			$cur_matches = $m[1];
 			foreach ((array)$cur_matches as $v) {
-				$v = str_replace(array("{","}"), "", $v);
+				$v = str_replace(array('{','}'), '', $v);
 				// Skip internal vars
-				if ($v{0} == "_" || $v == "else") {
+				if ($v{0} == '_' || $v == 'else') {
 					continue;
 				}
 				$not_replaced[$v] = $v;
@@ -1332,11 +1332,11 @@ class yf_tpl {
 		}
 		ksort($not_replaced);
 		if (!empty($not_replaced)) {
-			$body .= "<pre>array(\n";
+			$body .= '<pre>array('.PHP_EOL;
 			foreach ((array)$not_replaced as $v) {
-				$body .= "\t\""._prepare_html($v, 0)."\"\t=> \"\",\n";
+				$body .= "\t".'"'._prepare_html($v, 0).'" => "",'.PHP_EOL;
 			}
-			$body .= ");</pre>\n";
+			$body .= ');</pre>'.PHP_EOL;
 		}
 		return $body;
 	}
@@ -1344,42 +1344,42 @@ class yf_tpl {
 	/**
 	* Compile given template into pure PHP code
 	*/
-	function _compile($name, $replace = array(), $string = "") {
-		return _class("tpl_compile", "classes/tpl/")->_compile($name, $replace, $string);
+	function _compile($name, $replace = array(), $string = '') {
+		return _class('tpl_compile', 'classes/tpl/')->_compile($name, $replace, $string);
 	}
 
 	/**
 	* Wrapper function for t/translate/i18n calls inside templates
 	*/
-	function _i18n_wrapper ($input = "", $replace = array()) {
+	function _i18n_wrapper ($input = '', $replace = array()) {
 		if (!strlen($input)) {
-			return "";
+			return '';
 		}
 		$input = stripslashes(trim($input, '"\''));
 		$args = array();
 		// Complex case with substitutions
 		if (preg_match('/(?P<text>.+?)["\']{1},[\s\t]*%(?P<args>[a-z]+.+)$/ims', $input, $m)) {
-			foreach (explode(";%", $m["args"]) as $arg) {
-				$attr_name = $attr_val = "";
-				if (false !== strpos($arg, "=")) {
-					list($attr_name, $attr_val) = explode("=", trim($arg));
+			foreach (explode(';%', $m['args']) as $arg) {
+				$attr_name = $attr_val = '';
+				if (false !== strpos($arg, '=')) {
+					list($attr_name, $attr_val) = explode('=', trim($arg));
 				}
-				$attr_name  = trim(str_replace(array("'",'"'), "", $attr_name));
-				$attr_val   = trim(str_replace(array("'",'"'), "", $attr_val));
-				$args["%".$attr_name] = $attr_val;
+				$attr_name  = trim(str_replace(array("'",'"'), '', $attr_name));
+				$attr_val   = trim(str_replace(array("'",'"'), '', $attr_val));
+				$args['%'.$attr_name] = $attr_val;
 			}
-			$text_to_translate = $m["text"];
+			$text_to_translate = $m['text'];
 		} else {
 			// Easy case that just needs to be translated
 			$text_to_translate = $input;
 		}
 		$output = translate($text_to_translate, $args);
 		// Do replacement of the template vars on the last stage
-		// example: @replace1 will be got from $replace["replace1"] array item
-		if (false !== strpos($output, "@") && !empty($replace)) {
+		// example: @replace1 will be got from $replace['replace1'] array item
+		if (false !== strpos($output, '@') && !empty($replace)) {
 			$r = array();
 			foreach ((array)$replace as $k => $v) {
-				$r["@".$k] = $v;
+				$r['@'.$k] = $v;
 			}
 			$output = str_replace(array_keys($r), array_values($r), $output);
 		}
@@ -1387,21 +1387,21 @@ class yf_tpl {
 	}
 
 	/**
-	* Wrapper around "_generate_url" function, called like this inside templates:
+	* Wrapper around '_generate_url' function, called like this inside templates:
 	* {url(object=home_page;action=test)}
 	*/
 	function _generate_url_wrapper ($params = array()){
 		if(!function_exists('_force_get_url')) return '';
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
-			$tmp_params	 = explode(";", $params);
+			$tmp_params	 = explode(';', $params);
 			$params  = array();
 			// Convert params string into array
 			foreach ((array)$tmp_params as $v) {
-				$attrib_name = "";
-				$attrib_value = "";
-				if (false !== strpos($v, "=")) {
-					list($attrib_name, $attrib_value) = explode("=", trim($v));
+				$attrib_name = '';
+				$attrib_value = '';
+				if (false !== strpos($v, '=')) {
+					list($attrib_name, $attrib_value) = explode('=', trim($v));
 				}
 				$params[trim($attrib_name)] = trim($attrib_value);
 			}
