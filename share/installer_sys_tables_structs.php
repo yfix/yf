@@ -565,6 +565,7 @@ $data = my_array_merge((array)$data, array(
 	`cond_code` varchar(255) NOT NULL default '',
 	`icon` varchar(255) NOT NULL,
 	PRIMARY KEY (`id`)
+	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ",
 "menus"	=> "
 	`id` int(10) unsigned NOT NULL auto_increment,
@@ -575,6 +576,7 @@ $data = my_array_merge((array)$data, array(
 	`stpl_name` varchar(255) NOT NULL,
 	`method_name` varchar(255) NOT NULL,
 	PRIMARY KEY (`id`)
+	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ",
 "online"			=> "
 	`id` varchar(32) NOT NULL default '',
