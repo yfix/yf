@@ -512,12 +512,10 @@ class yf_tpl {
 			$params = array();
 		}
 		$string = $params['string'] ?: false;
-		if (!isset($params['replace_images'])) {
-			$params['replace_images'] = true;
-		}
-		if (!isset($params['no_cache']))		{ $params['no_cache'] = false; }
-#		if (!isset($params['get_from_db']))	 { $params['get_from_db'] = false; }
-#		if (!isset($params['no_include']))	  { $params['no_include'] = false; }
+		$params['replace_images'] = $params['replace_images'] ?: true;
+		$params['no_cache'] = $params['no_cache'] ?: false;
+		$params['get_from_db'] = $params['get_from_db'] ?: false;
+		$params['no_include'] = $params['no_include'] ?: false;
 		if (DEBUG_MODE) {
 			$stpl_time_start = microtime(true);
 		}
