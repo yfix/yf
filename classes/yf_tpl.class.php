@@ -498,6 +498,17 @@ class yf_tpl {
 	}
 
 	/**
+	* Wrapper to parse given template string
+	*/
+	function parse_string($name = '', $replace = array(), $string = '', $params = array()) {
+		if (!strlen($string)) {
+			$string = ' ';
+		}
+		$params['string'] = $string;
+		return $this->parse(!empty($name) ? $name : abs(crc32($string)), $replace, $params);
+	}
+
+	/**
 	* Simple template parser (*.stpl)
 	*/
 	function parse($name, $replace = array(), $params = array()) {
@@ -546,14 +557,12 @@ class yf_tpl {
 		}
 		$string = $this->_process_replaces($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
-		// If content need to be cleaned from unused tags - do that
 		if (isset($params['clear_all'])) {
-			$string = preg_replace('/\{[\w_]+\}/i', '', $string);
+			$string = $this->_process_eval_unused($string, $replace, $name);
 		}
 		if (isset($params['eval_content'])) {
-			eval('$string = "'.str_replace('"', '\"', $string).'";');
+			$string = $this->_process_eval_string($string, $replace, $name);
 		}
-		// Replace "images/" and "uploads/" to their full web paths
 		if ($params['replace_images']) {
 			$string = common()->_replace_images_paths($string);
 		}
@@ -702,14 +711,17 @@ class yf_tpl {
 	}
 
 	/**
-	* Wrapper to parse given template string
 	*/
-	function parse_string($name = '', $replace = array(), $string = '', $params = array()) {
-		if (!strlen($string)) {
-			$string = ' ';
-		}
-		$params['string'] = $string;
-		return $this->parse(!empty($name) ? $name : abs(crc32($string)), $replace, $params);
+	function _process_clear_unused($string, $replace = array(), $name = '') {
+		// If content need to be cleaned from unused tags - do that
+		return preg_replace('/\{[\w_]+\}/i', '', $string);
+	}
+
+	/**
+	*/
+	function _process_eval_string($string, $replace = array(), $name = '') {
+		eval('$string = "'.str_replace('"', '\"', $string).'";');
+		return $string;
 	}
 
 	/**
