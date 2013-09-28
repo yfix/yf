@@ -75,7 +75,7 @@ class yf_user_modules {
 				'locations'	=> $locations,
 			);
 		}
-		return table($items)
+		return table($items, array('condensed' => 1, 'pager_records_on_page' => 10000))
 			->form()
 			->check_box('name', array('field_desc' => '#'))
 			->text('name')
