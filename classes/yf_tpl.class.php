@@ -511,14 +511,17 @@ class yf_tpl {
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$string = $params['string'] ?: false;
 		if (!isset($params['replace_images'])) {
 			$params['replace_images'] = true;
 		}
-		$string = $params['string'] ?: false;
+		if (!isset($params['no_cache']))		{ $params['no_cache'] = false; }
+#		if (!isset($params['get_from_db']))	 { $params['get_from_db'] = false; }
+#		if (!isset($params['no_include']))	  { $params['no_include'] = false; }
 		if (DEBUG_MODE) {
 			$stpl_time_start = microtime(true);
 		}
-		$replace = (array)$this->_global_tags + (array)$replace;
+		$replace = (array)$replace + (array)$this->_global_tags;
 		$replace['error'] = $this->_parse_get_user_errors($name, $replace['error']);
 		if ($this->ALLOW_CUSTOM_FILTER) {
 			$this->_custom_filter($name, $replace);
@@ -664,7 +667,7 @@ class yf_tpl {
 
 	/**
 	*/
-	function _parse_debug($name = '', $replace = array(), $params = array(), $string = '', $stpl_time_start) {
+	function _parse_set_debug_info($name = '', $replace = array(), $params = array(), $string = '', $stpl_time_start) {
 		if (!DEBUG_MODE) {
 			return false;
 		}
