@@ -521,6 +521,9 @@ class yf_tpl {
 		}
 		$replace = (array)$replace + (array)$this->_global_tags;
 		$replace['error'] = $this->_parse_get_user_errors($name, $replace['error']);
+		if (isset($replace[''])) {
+			unset($replace['']);
+		}
 		if ($this->ALLOW_CUSTOM_FILTER) {
 			$this->_custom_filter($name, $replace);
 		}
@@ -538,26 +541,10 @@ class yf_tpl {
 		$string = $this->_process_cycles($string, $replace, $name);
 		$string = $this->_process_conditions($string, $replace, $name);
 		if (!$params['no_include']) {
-			$include_regex = key($this->_PATTERN_INCLUDE);
-			$include_replace = current($this->_PATTERN_INCLUDE);
-			$string = preg_replace($include_regex, $include_replace, $string);
+			$string = $this->_process_includes($string, $replace, $name);
 			$string = $this->_process_executes($string, $replace, $name);
 		}
-		if (isset($replace[''])) {
-			unset($replace['']);
-		}
-		// Replace given items (if exists ones)
-		foreach ((array)$replace as $item => $value) {
-			if (!is_array($value)) {
-				$string = str_replace('{'.$item.'}', $value, $string);
-			}
-			// Allow to replace simple 1-dimensional array items (some speed loss, but might be useful)
-			if (is_array($value) && !is_array(current($value))) {
-				foreach ((array)$value as $_sub_key => $_sub_val) {
-					$string = str_replace('{'.$item.'.'.$_sub_key.'}', $_sub_val, $string);
-				}
-			}
-		}
+		$string = $this->_process_replaces($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
 		// If content need to be cleaned from unused tags - do that
 		if (isset($params['clear_all'])) {
@@ -688,6 +675,30 @@ class yf_tpl {
 			}
 		}
 		return true;
+	}
+
+	/**
+	*/
+	function _process_includes($string, $replace = array(), $name = '') {
+		return preg_replace(key($this->_PATTERN_INCLUDE), current($this->_PATTERN_INCLUDE), $string);
+	}
+
+	/**
+	*/
+	function _process_replaces($string, $replace = array(), $name = '') {
+		// Replace given items (if exists ones)
+		foreach ((array)$replace as $item => $value) {
+			if (!is_array($value)) {
+				$string = str_replace('{'.$item.'}', $value, $string);
+			}
+			// Allow to replace simple 1-dimensional array items (some speed loss, but might be useful)
+			if (is_array($value) && !is_array(current($value))) {
+				foreach ((array)$value as $_sub_key => $_sub_val) {
+					$string = str_replace('{'.$item.'.'.$_sub_key.'}', $_sub_val, $string);
+				}
+			}
+		}
+		return $string;
 	}
 
 	/**
