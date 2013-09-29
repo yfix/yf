@@ -165,6 +165,10 @@ class yf_tpl_driver_yf {
 	function parse($name, $replace = array(), $params = array()) {
 		$string = $params['string'] ?: false;
 
+		$php_tpl = $this->_parse_get_php_tpl($name, $replace, $params);
+		if (isset($php_tpl)) {
+			return $php_tpl;
+		}
 		$compiled = $this->_parse_get_compiled($name, $replace, $params);
 		if (isset($compiled)) {
 			return $compiled;
@@ -189,14 +193,45 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
+	function _parse_get_php_tpl($name, $replace = array(), $params = array()) {
+		if (!$this->tpl->ALLOW_PHP_TEMPLATES) {
+			return null;
+		}
+		$path = PROJECT_PATH. $this->tpl->TPL_PATH. $name.'.tpl.php';
+		if (!file_exists($path)) {
+			return null;
+		}
+		$stpl_time_start = microtime(true);
+
+		ob_start();
+		include ($path);
+		$string = ob_get_contents();
+		ob_end_clean();
+
+		$this->_set_cache_details($name, $string, $stpl_time_start);
+		return $string;
+	}
+
+	/**
+	*/
 	function _parse_get_compiled($name, $replace = array(), $params = array()) {
 		if (!$this->tpl->COMPILE_TEMPLATES) {
 			return null;
 		}
+		$stpl_time_start = microtime(true);
+
 # TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
 		$compiled_path = PROJECT_PATH. $this->tpl->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
-		if (file_exists($compiled_path) && ($_compiled_mtime = filemtime($compiled_path)) > (time() - $this->tpl->COMPILE_TTL)) {
-			$_compiled_ok = true;
+		if (!file_exists($compiled_path)) {
+			return null;
+		}
+		$compiled_mtime = filemtime($compiled_path);
+		$allowed_time = time() - $this->tpl->COMPILE_TTL;
+		if ($_compiled_mtime < $allowed_time) {
+			return null;
+		}
+		$compiled_ok = true;
+		if ($compiled_ok) {
 
 			ob_start();
 			include ($compiled_path);
@@ -204,30 +239,36 @@ class yf_tpl_driver_yf {
 			ob_end_clean();
 
 			if ($this->tpl->COMPILE_CHECK_STPL_CHANGED) {
-				$_stpl_path = $this->tpl->_get_template_file($name, $params['get_from_db'], 0, 1);
-				if ($_stpl_path) {
-					$_source_mtime = filemtime($_stpl_path);
+				$stpl_path = $this->tpl->_get_template_file($name, $params['get_from_db'], 0, 1);
+				if ($stpl_path) {
+					$source_mtime = filemtime($stpl_path);
 				}
-				if (!$_stpl_path || $_source_mtime > $_compiled_mtime) {
-					$_compiled_ok = false;
+				if (!$stpl_path || $source_mtime > $compiled_mtime) {
+					$compiled_ok = false;
 					$string = false;
 				}
 			}
-			if ($_compiled_ok) {
-				$this->CACHE[$name]['calls']++;
-				if (!isset($this->CACHE[$name]['string'])) {
-					$this->CACHE[$name]['string']   = $string;
-				}
-				if (!isset($this->CACHE[$name]['s_length'])) {
-					$this->CACHE[$name]['s_length'] = strlen($string);
-				}
-				if (DEBUG_MODE && MAIN_TYPE_USER) {
-					$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
-				}
+			if ($compiled_ok) {
+				$this->_set_cache_details($name, $string, $stpl_time_start);
 				return $string;
 			}
 		}
 		return null;
+	}
+
+	/**
+	*/
+	function _set_cache_details($name, $string, $stpl_time_start) {
+		$this->CACHE[$name]['calls']++;
+		if (!isset($this->CACHE[$name]['string'])) {
+			$this->CACHE[$name]['string']   = $string;
+		}
+		if (!isset($this->CACHE[$name]['s_length'])) {
+			$this->CACHE[$name]['s_length'] = strlen($string);
+		}
+		if (DEBUG_MODE && MAIN_TYPE_USER) {
+			$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
+		}
 	}
 
 	/**

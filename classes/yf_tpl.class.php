@@ -70,6 +70,8 @@ class yf_tpl {
 	public $COMPILE_TTL				= 3600;
 	/** @var bool TTL for compiled stpls */
 	public $COMPILE_CHECK_STPL_CHANGED = false;
+	/** @var bool Allow pure php templates */
+	public $ALLOW_PHP_TEMPLATES		= false;
 	/** @var bool Use paths cache (check and save what stpl files we have and where) */
 	public $USE_PATHS_CACHE			= false;
 	/** @var bool */
@@ -460,6 +462,7 @@ class yf_tpl {
 		}
 		return true;
 	}
+
 	/**
 	*/
 	function _process_clear_unused($string, $replace = array(), $name = '') {

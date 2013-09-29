@@ -406,11 +406,9 @@ class yf_debug_info {
 				'storage'	=> strval($v['storage']),
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
-				'trace'		=> '<pre><small>'.debug('STPL_TRACES::'.$k).'</small></pre>',
+				'trace'		=> '<pre><small>'._prepare_html(debug('STPL_TRACES::'.$k)).'</small></pre>',
 			);
 		}
-// TODO: show connection info and totals inside 'caption'
-
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
 
@@ -423,6 +421,8 @@ class yf_debug_info {
 			->text('size')
 			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
 		;
+
+#		$body .= $this->_show_auto_table($items);
 		return $body;
 	}
 
@@ -561,15 +561,8 @@ class yf_debug_info {
 #				'trace'		=> '<pre><small>'.$cur_trace.'</small></pre>',
 			);
 		}
-//		$body .= '</ol><i>'.t('Rewrite processing time').': '.common()->_format_time_value($GLOBALS['rewrite_exec_time']).' <span>sec</span></div>';
-// TODO: show connection info and totals inside 'caption'
-		return table((array)$items, array('table_class' => 'debug_item table-condensed', 'pager_records_on_page' => 10000))
-			->text('id')
-#			->text('exec_time')
-			->text('source')
-			->text('result')
-#			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
-		;
+		$body .= t('Rewrite processing time').': '.common()->_format_time_value($GLOBALS['rewrite_exec_time']).' <span>sec</span>';
+		$body .= $this->_show_auto_table($items);
 		return $body;
 	}
 
