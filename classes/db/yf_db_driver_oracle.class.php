@@ -10,7 +10,7 @@ require dirname(__FILE__).'/yf_db_driver.abstract.class.php';
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_db_oracle extends yf_db_driver {
+class yf_db_driver_oracle extends yf_db_driver {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
