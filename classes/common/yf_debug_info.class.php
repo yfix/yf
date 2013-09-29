@@ -1162,7 +1162,16 @@ class yf_debug_info {
 			'auto_no_buttons' 	=> 1,
 			'caption'			=> $caption,
 			'pager_records_on_page' => 10000,
+			'hidden_data'		=> $params['hidden_data'],
+			'hidden_toggle'		=> $params['hidden_toggle'],
 		))->auto();
+
+		$h_toggle = $params['hidden_toggle'];
+		if ($h_toggle) {
+			foreach ((array)$h_toggle as $from => $to) {
+				$table->btn($from, 'javascript:void();', array('hidden_toggle' => $to));
+			}
+		}
 /*
 		return table((array)$items, array('table_class' => 'debug_item table-condensed','pager_records_on_page' => 10000))
 			->text('name', array('hidden_data' => array('%trace')))
