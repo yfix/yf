@@ -9,6 +9,11 @@
 */
 class yf_tpl_compile {
 
+	/** @var string @conf_skip pattern for multi-conditions */
+	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
+	/** @var array @conf_skip For "_process_conditions" */
+	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
+
 	/**
 	* Compile given template into pure PHP code
 	*/
@@ -157,9 +162,9 @@ class yf_tpl_compile {
 				$_tmp_count = count($_tmp_parts);
 			}
 			for ($i = 1; $i < $_tmp_count; $i+=2) {
-				if (preg_match(tpl()->_PATTERN_MULTI_COND, stripslashes($_tmp_parts[$i]), $m)) {
+				if (preg_match($this->_PATTERN_MULTI_COND, stripslashes($_tmp_parts[$i]), $m)) {
 					$a_part_left	= $this->_compile_prepare_left($m[1]);
-					$a_cur_operator	= tpl()->_cond_operators[strtolower($m[2])];
+					$a_cur_operator	= $this->_cond_operators[strtolower($m[2])];
 					$a_part_right	= $m[3];
 					if ($a_part_right{0} == '#') {
 						$a_part_right = '$replace[\''.ltrim($a_part_right, '#').'\']';
@@ -185,8 +190,12 @@ class yf_tpl_compile {
 				$add_cond = '';
 			}
 		}
-		$op = tpl()->_cond_operators[strtolower($cond_operator)];
-
+		$op = $this->_cond_operators[strtolower($cond_operator)];
+		// Special case for "mod". Example: {if("id" mod 4)} content {/if}
+		if ($op == '%') {
+			$part_left = '!('.$part_left;
+			$part_right = $part_right.')';
+		}
 		return trim($part_left.' '.$op.' '.$part_right.' '.$add_cond);
 	}
 
@@ -230,7 +239,8 @@ class yf_tpl_compile {
 
 			// Global array item in left part
 			list($k, $v) = explode('.', $part_left);
-			$part_left = '$'.str_replace(array_keys(tpl()->_avail_arrays), array_values(tpl()->_avail_arrays), $k).'[\''.$v.'\']';
+			$avail_arrays = (array)tpl()->_avail_arrays;
+			$part_left = '$'.str_replace(array_keys($avail_arrays), array_values($avail_arrays), $k).'[\''.$v.'\']';
 
 		} elseif ($part_left{0} == '%' && strlen($part_left) > 1) {
 

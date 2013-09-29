@@ -146,6 +146,8 @@ class yf_tpl_driver_yf {
 	* Simple template parser (*.stpl)
 	*/
 	function parse($name, $replace = array(), $params = array()) {
+		$string = $params['string'] ?: false;
+
 		$compiled = $this->_parse_get_compiled($name, $replace, $params);
 		if (isset($compiled)) {
 			return $compiled;
@@ -443,8 +445,9 @@ class yf_tpl_driver_yf {
 				$try_elm = substr($tmp_v, 0, strpos($tmp_v, '.'));
 				$try_elm2 = "['".str_replace('.',"']['",substr($tmp_v, strpos($tmp_v, '.') + 1))."']";
 				// Global array
-				if (isset($this->tpl->_avail_arrays[$try_elm])) {
-					$res_v = '$'.$this->tpl->_avail_arrays[$try_elm].$try_elm2;
+				$avail_arrays = (array)$this->tpl->_avail_arrays;
+				if (isset($avail_arrays[$try_elm])) {
+					$res_v = '$'.$avail_arrays[$try_elm].$try_elm2;
 				// Sub array
 				} elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
 					$res_v = '$replace["'.$try_elm.'"]'.$try_elm2;
@@ -602,5 +605,12 @@ class yf_tpl_driver_yf {
 			$body .= ');</pre>'.PHP_EOL;
 		}
 		return $body;
+	}
+
+	/**
+	* Wrapper for '_PATTERN_INCLUDE', allows you to include stpl, optionally pass $replace params to it
+	*/
+	function _include_stpl ($stpl_name = '', $params = '') {
+		return $this->tpl->_include_stpl($stpl_name, $params);
 	}
 }

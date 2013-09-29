@@ -25,6 +25,14 @@ class yf_tpl {
 	public $GET_STPLS_FROM_DB	  = false;
 	/** @var bool SECURITY: allow or not eval php code (with _PATTERN_INCLUDE) */
 	public $ALLOW_EVAL_PHP_CODE	= true;
+	/** @var array @conf_skip
+		For "_process_conditions",
+		Will be availiable in conditions with such form: {if("get.object" eq "login_form")} Hello from login form {/if}
+	*/
+	public $_avail_arrays	  = array(
+		"get"	   => "_GET",
+		"post"	  => "_POST",
+	);
 	/** @var bool Get all templates from db or not (1 query or multiple)
 	*   (NOTE: If true - Slow PHP processing but just 1 db query)
 	*/
