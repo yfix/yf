@@ -181,7 +181,6 @@ class yf_tpl {
 			$this->_OB_CATCH_CONTENT = false;
 		}
 		$this->driver = _class('tpl_driver_'.$this->DRIVER_NAME, 'classes/tpl/');
-		$this->CACHE = &$this->driver->CACHE;
 	}
 
 	/**
@@ -441,10 +440,10 @@ class yf_tpl {
 		if (!DEBUG_MODE) {
 			return false;
 		}
-		if (!isset($this->CACHE[$name]['exec_time'])) {
-			$this->CACHE[$name]['exec_time'] = 0;
+		if (!isset($this->driver->CACHE[$name]['exec_time'])) {
+			$this->driver->CACHE[$name]['exec_time'] = 0;
 		}
-		$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
+		$this->driver->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
 		// For debug store information about variables used while processing template
 		if ($this->DEBUG_STPL_VARS) {
 			$d = debug('STPL_REPLACE_VARS::'.$name);
@@ -601,7 +600,7 @@ class yf_tpl {
 		if ($NOT_FOUND) {
 			trigger_error('STPL: template "'.$file_name.'" in theme "'.conf('theme').'" not found.', E_USER_WARNING);
 		} else {
-			$this->CACHE[str_replace($this->_STPL_EXT, '', $file_name)]['storage'] = $storage;
+			$this->driver->CACHE[str_replace($this->_STPL_EXT, '', $file_name)]['storage'] = $storage;
 		}
 		return $string;
 	}

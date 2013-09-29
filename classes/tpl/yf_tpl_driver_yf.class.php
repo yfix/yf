@@ -103,6 +103,8 @@ class yf_tpl_driver_yf {
 	*   (how deeply could be nested template constructs like "if")
 	*/
 	public $_MAX_RECURSE_LEVEL = 4;
+	/** @var @conf_skip */
+	public $CACHE = array();
 
 	/**
 	* Constructor

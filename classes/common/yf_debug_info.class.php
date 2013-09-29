@@ -382,7 +382,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_STPLS) {
 			return '';
 		}
-		$data = tpl()->CACHE;
+		$data = _class('tpl')->driver->CACHE;
 		if ($this->SORT_TEMPLATES_BY_NAME && !empty($data)) {
 			ksort($data);
 		}
@@ -399,7 +399,7 @@ class yf_debug_info {
 			$total_size += $cur_size;
 			$total_stpls_exec_time += (float)$v['exec_time'];
 
-			$items[] = array(
+			$items[$counter] = array(
 				'id'		=> ++$counter,
 				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k),
@@ -496,12 +496,13 @@ class yf_debug_info {
 	/**
 	*/
 	function _debug_not_replaced_stpl () {
-		if (!$this->_NOT_REPLACED_STPL_TAGS || !isset(tpl()->CACHE['main']['string'])) {
+		$cache = tpl()->driver->CACHE;
+		if (!$this->_NOT_REPLACED_STPL_TAGS || !isset($cache['main']['string'])) {
 			return '';
 		}
 /*
 		$body = "";
-		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", tpl()->CACHE["main"]["string"], $m)) {
+		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", $cache["main"]["string"], $m)) {
 			$body .= "<div class='debug_allow_close'><h5>".t("Not processed STPL tags")."</h5><ol>";
 			foreach ((array)$m[0] as $v) {
 				$v = str_replace(array("{","}"), "", $v);
@@ -510,7 +511,7 @@ class yf_debug_info {
 			foreach ((array)$not_replaced as $v) {
 				$stpls = array();
 				// Try to find stpls where this tag appeared
-				foreach ((array)tpl()->CACHE as $name => $info) {
+				foreach ((array)$cache as $name => $info) {
 					if (!isset($info["string"])) {
 						continue;
 					}
