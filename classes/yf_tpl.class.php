@@ -95,55 +95,8 @@ class yf_tpl {
 		'lang_project'		=> 64,
 		'inherit_project2'	=> 128,
 	);
-
-	/**
-	* Constructor
-	*/
-	function __construct () {
-		if (defined('IS_FRONT')) {
-			conf('IS_FRONT', (bool)IS_FRONT);
-		}
-		$this->IS_FRONT = (bool)conf('IS_FRONT');
-		// Cache array (JUST DECLARATION, DO NOT CHANGE!)
-		$this->CACHE = array('stpl' => array());
-		// Special code for the compiled framework mode
-		if (defined('FRAMEWORK_IS_COMPILED')) {
-			conf('FRAMEWORK_IS_COMPILED', (bool)FRAMEWORK_IS_COMPILED);
-		}
-		if (conf('FRAMEWORK_IS_COMPILED') && $this->AUTO_LOAD_PACKED_STPLS) {
-			foreach ((array)conf('_compiled_stpls') as $_cur_name => $_cur_text) {
-				$this->CACHE[$_cur_name] = array(
-					'string'	=> $_cur_text,
-					'calls'		=> 0,
-					'storage'   => 'cache',
-				);
-			}
-		}
-		// Try to find PCRE module
-		if (!function_exists('preg_match_all')) {
-			trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
-		}
-		// Set custom skin
-		if (!empty($_SESSION['user_skin']) && MAIN_TYPE_USER) {
-			conf('theme', $_SESSION['user_skin']);
-		} elseif (defined('DEFAULT_SKIN')) {
-			conf('theme', DEFAULT_SKIN);
-		}
-		if (!conf('theme')) {
-			conf('theme', MAIN_TYPE);
-		}
-		// Merge eval pattern with main patterns
-		if ($this->ALLOW_EVAL_PHP_CODE) {
-			foreach ((array)$this->_PATTERN_EVAL as $k => $v) {
-				$this->_STPL_PATTERNS[$k] = $v;
-			}
-		}
-		if (DEBUG_MODE) {
-			foreach ((array)$this->_PATTERN_DEBUG as $k => $v) {
-				$this->_STPL_PATTERNS[$k] = $v;
-			}
-		}
-	}
+	/** @var string Current tempalte engine dirver to use */
+	public $DRIVER_NAME = 'yf';
 
 	/**
 	* Catch missing method call
@@ -154,15 +107,22 @@ class yf_tpl {
 	}
 
 	/**
-	*/
-	function _load_tpl_driver($name = 'yf') {
-		$this->driver = _class('tpl_driver_'.$name, 'classes/tpl/');
-	}
-
-	/**
 	* Framework constructor
 	*/
 	function _init () {
+		if (defined('IS_FRONT')) {
+			conf('IS_FRONT', (bool)IS_FRONT);
+		}
+		$this->IS_FRONT = (bool)conf('IS_FRONT');
+		// Set custom skin
+		if (!empty($_SESSION['user_skin']) && MAIN_TYPE_USER) {
+			conf('theme', $_SESSION['user_skin']);
+		} elseif (defined('DEFAULT_SKIN')) {
+			conf('theme', DEFAULT_SKIN);
+		}
+		if (!conf('theme')) {
+			conf('theme', MAIN_TYPE);
+		}
 		// Directory where themes are stored
 		conf('THEMES_PATH', $this->_THEMES_PATH);
 		// Template files extensions
@@ -220,6 +180,8 @@ class yf_tpl {
 		if (main()->CONSOLE_MODE) {
 			$this->_OB_CATCH_CONTENT = false;
 		}
+		$this->driver = _class('tpl_driver_'.$this->DRIVER_NAME, 'classes/tpl/');
+		$this->CACHE = &$this->driver->CACHE;
 	}
 
 	/**
@@ -446,9 +408,7 @@ class yf_tpl {
 			$this->_custom_filter($name, $replace);
 		}
 
-
-		$string = _class('tpl_driver_yf', 'classes/tpl/')->parse($name, $replace, $params);
-
+		$string = $this->driver->parse($name, $replace, $params);
 
 		if ($params['replace_images']) {
 			$string = common()->_replace_images_paths($string);

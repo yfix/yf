@@ -21,10 +21,10 @@ class yf_tpl_compile {
 		$_time_start = microtime(true);
 
 		// For later check for templates changes
-		if (tpl()->COMPILE_CHECK_STPL_CHANGED) {
+		if (_class('tpl')->COMPILE_CHECK_STPL_CHANGED) {
 			$_md5_string = md5($string);
 		}
-		$compiled_dir = PROJECT_PATH. tpl()->COMPILED_DIR;
+		$compiled_dir = PROJECT_PATH. _class('tpl')->COMPILED_DIR;
 		// Do not check dir existence twice
 		if (!isset($this->_stpl_compile_dir_check)) {
 			_mkdir_m($compiled_dir);
@@ -106,7 +106,7 @@ class yf_tpl_compile {
 				=> $_php_start. 'echo main()->_execute("advertising", "_show", array("ad"=>\'$1\'));'. $_php_end,
 
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
-				=> $_php_start. 'echo tpl()->_generate_url_wrapper(\'$1\');'. $_php_end,
+				=> $_php_start. 'echo _class(\'tp\')->_generate_url_wrapper(\'$1\');'. $_php_end,
 
 			'/\{form_row\(\s*["\']{1}([\s\w\-]+)["\']{1}([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?\s*\)\}/ims'
 				=> $_php_start. 'echo _class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\');'. $_php_end,
@@ -123,13 +123,13 @@ class yf_tpl_compile {
 
 		// Images and uploads paths compile
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
-		$images_path	= $web_path. '.tpl()->TPL_PATH. tpl()->_IMAGES_PATH';
+		$images_path	= $web_path. '._class(\'tpl\')->TPL_PATH. _class(\'tpl\')->_IMAGES_PATH';
 		$to_replace = array(
 			"\"images/"			=> '"'.$_php_start. 'echo '.$images_path.';'. $_php_end,
 			"'images/"			=> '\''.$_php_start. 'echo '.$images_path.';'. $_php_end,
-			"\"uploads/"		=> '"'.$_php_start. 'echo MEDIA_PATH. tpl()->_UPLOADS_PATH;'. $_php_end,
-			"'uploads/"			=> '\''.$_php_start. 'echo MEDIA_PATH. tpl()->_UPLOADS_PATH;'. $_php_end,
-			"src=\"uploads/"	=> 'src="'.$_php_start. 'echo '.$web_path.'.tpl()->_UPLOADS_PATH;'. $_php_end,
+			"\"uploads/"		=> '"'.$_php_start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
+			"'uploads/"			=> '\''.$_php_start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
+			"src=\"uploads/"	=> 'src="'.$_php_start. 'echo '.$web_path.'._class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
 		);
 		$string = str_replace(array_keys($to_replace), array_values($to_replace), $string);
 
@@ -239,7 +239,7 @@ class yf_tpl_compile {
 
 			// Global array item in left part
 			list($k, $v) = explode('.', $part_left);
-			$avail_arrays = (array)tpl()->_avail_arrays;
+			$avail_arrays = (array)_class('tpl')->_avail_arrays;
 			$part_left = '$'.str_replace(array_keys($avail_arrays), array_values($avail_arrays), $k).'[\''.$v.'\']';
 
 		} elseif ($part_left{0} == '%' && strlen($part_left) > 1) {

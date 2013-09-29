@@ -19,7 +19,7 @@ class yf_tpl_driver_yf {
 		// Translate some items if needed
 		// EXAMPLE:	 {t("Welcome")}
 		'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/imse'
-			=> 'tpl()->_i18n_wrapper(\'$2\', $replace)',
+			=> '_class(\'tpl\')->_i18n_wrapper(\'$2\', $replace)',
 		// Trims whitespaces, removes
 		// EXAMPLE:	 {cleanup()}some content here{/cleanup}
 		'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/imse'
@@ -43,7 +43,7 @@ class yf_tpl_driver_yf {
 		// Url generation with params
 		// EXAMPLE:	 {url(object=home_page;action=test)}
 		'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-			=> 'tpl()->_generate_url_wrapper(\'$1\')',
+			=> '_class(\'tpl\')->_generate_url_wrapper(\'$1\')',
 		// EXAMPLE:	 {form_row("text","password","New Password")}
 		'/\{form_row\(\s*["\']{1}([\s\w\-]+)["\']{1}([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([\s\w\-]*)["\']{1})?\s*\)\}/imse'
 			=> '_class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\')',
@@ -60,7 +60,7 @@ class yf_tpl_driver_yf {
 	public $_PATTERN_INCLUDE   = array(
 		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
 		'/(\{include\(["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
-			=> 'tpl()->_include_stpl(\'$2\',\'$3\')',
+			=> '_class(\'tpl\')->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
 	public $_PATTERN_EVAL	  = array(
@@ -75,7 +75,7 @@ class yf_tpl_driver_yf {
 			=> 'is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "";',
 		// EXAMPLE:	 {_debug_stpl_vars()}
 		'/(\{_debug_get_vars\(\)\})/ie'
-			=> 'tpl()->_debug_get_vars($string)',
+			=> '_class(\'tpl\')->_debug_get_vars($string)',
 	);
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// EXAMPLE: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
@@ -113,7 +113,22 @@ class yf_tpl_driver_yf {
 			trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
 		}
 		// Saving additional function calls
-		$this->tpl = tpl();
+		$this->tpl = _class('tpl');
+		// Cache array (JUST DECLARATION, DO NOT CHANGE!)
+		$this->CACHE = array('stpl' => array());
+		// Special code for the compiled framework mode
+		if (defined('FRAMEWORK_IS_COMPILED')) {
+			conf('FRAMEWORK_IS_COMPILED', (bool)FRAMEWORK_IS_COMPILED);
+		}
+		if (conf('FRAMEWORK_IS_COMPILED') && $this->AUTO_LOAD_PACKED_STPLS) {
+			foreach ((array)conf('_compiled_stpls') as $_cur_name => $_cur_text) {
+				$this->CACHE[$_cur_name] = array(
+					'string'	=> $_cur_text,
+					'calls'		=> 0,
+					'storage'   => 'cache',
+				);
+			}
+		}
 		// Merge eval pattern with main patterns
 		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
 			foreach ((array)$this->_PATTERN_EVAL as $k => $v) {
