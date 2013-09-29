@@ -225,12 +225,14 @@ class yf_tpl_driver_yf {
 		if (!file_exists($compiled_path)) {
 			return null;
 		}
+		$compiled_ok = false;
 		$compiled_mtime = filemtime($compiled_path);
-		$allowed_time = time() - $this->tpl->COMPILE_TTL;
-		if ($_compiled_mtime < $allowed_time) {
+		if ((time() - $compiled_mtime) < $this->tpl->COMPILE_TTL) {
+			$compiled_ok = true;
+		}
+		if (!$compiled_ok) {
 			return null;
 		}
-		$compiled_ok = true;
 		if ($compiled_ok) {
 
 			ob_start();
