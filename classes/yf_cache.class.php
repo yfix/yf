@@ -11,32 +11,32 @@ class yf_cache {
 
 	/** @var array config for file driver @conf_skip */
 	public $_file_conf				= array(
-		"auto_header"	=> "<?php\n",
-		"auto_footer"	=> "\n?>",
-		"file_prefix"	=> "cache_",
-		"file_ext"		=> ".php",
+		'auto_header'	=> "<?php\n",
+		'auto_footer'	=> "\n?>",
+		'file_prefix'	=> 'cache_',
+		'file_ext'		=> '.php',
 	);
 	/** @var int Cache files TimeToLive value (in seconds) */
 	public $FILES_TTL				= 3600;
 	/** @var int Add random value for each entry TTL (to avoid one-time cache invalidation problems) */
 	public $RANDOM_TTL_ADD			= true;
 	/** @var string Cache rules file */
-	public $RULES_FILE				= "cache_rules.php";
+	public $RULES_FILE				= 'cache_rules.php';
 	/** @var bool Allow or not custom rules (not found in rules array) */
 	public $ALLOW_CUSTOM_RULES		= true;
 	/** @var bool Auto-create cache folder */
 	public $AUTO_CREATE_CACHE_DIR	= true;
 	/** @var bool Include cache files (or simply read as string) */
 	public $INCLUDE_CACHE_FILES	= true;
-	/** @var string Cache driver enum("","auto","file","eaccelerator","apc","xcache","memcache") */
-	public $DRIVER					= "file";
-	/** @var string Namespace for drivers other than "file" */
-	public $CACHE_NS				= "";
+	/** @var string Cache driver enum('','auto','file','eaccelerator','apc','xcache','memcache') */
+	public $DRIVER					= 'file';
+	/** @var string Namespace for drivers other than 'file' */
+	public $CACHE_NS				= '';
 	/** @var array internal @conf_skip */
 	public $MEMCACHE_DEF_PARAMS	= array(
-		"port"		=> 11211,
-		"host"		=> "127.0.0.1", // !!! DO NOT USE "localhost" on Ubuntu 10.04 (and maybe others) due to memcached bug
-		"persistent"=> true,
+		'port'		=> 11211,
+		'host'		=> '127.0.0.1', // !!! DO NOT USE 'localhost' on Ubuntu 10.04 (and maybe others) due to memcached bug
+		'persistent'=> true,
 	);
 	/** @var object internal @conf_skip */
 	public $_memcache				= null;
@@ -44,17 +44,17 @@ class yf_cache {
 	public $FORCE_REBUILD_CACHE	= false;
 	/** @var array symbols to escape for debug */
 	public $_debug_escape_symbols = array(
-		"{"	=> "&#123;",
-		"}"	=> "&#125;",
-		"\\"=> "&#92;",
-		"(" => "&#40;",
-		")" => "&#41;",
-		"?" => "&#63;",
+		'{'	=> '&#123;',
+		'}'	=> '&#125;',
+		"\\"=> '&#92;',
+		'(' => '&#40;',
+		')' => '&#41;',
+		'?' => '&#63;',
 	);
 	/** @var bool We need this instead of global constant DEBUG_MODE to be able to early init cache when main is still not available */
 	public $DEBUG_MODE	= false;
 	/** @var int Max number of items to log when DEBUG_MODE is enabled, this limit needed to prevent stealing all RAM 
-		when we have high number of cache entries at once. Applied separately for "get", "set", "refresh".
+		when we have high number of cache entries at once. Applied separately for 'get', 'set', 'refresh'.
 	*/
 	public $LOG_MAX_ITEMS	= 200;
 
@@ -71,13 +71,13 @@ class yf_cache {
 			$this->MEMCACHE_DEF_PARAMS['port'] = $conf_mc_port;
 		}
 		// Cache namespace need to be unique, especially when using memcached shared between several projects
-#		$this->CACHE_NS = "core_".intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
+#		$this->CACHE_NS = 'core_'.intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
 		$conf_cache_ns = conf('CACHE_NS');
 		if ($conf_cache_ns) {
 			$this->CACHE_NS = $conf_cache_ns;
 		}
-		$this->_main_exists = (isset($GLOBALS['main']) && method_exists($GLOBALS['main'], "init_class"));
-		if (defined("DEBUG_MODE")) {
+		$this->_main_exists = (isset($GLOBALS['main']) && method_exists($GLOBALS['main'], 'init_class'));
+		if (defined('DEBUG_MODE')) {
 			$this->DEBUG_MODE = DEBUG_MODE;
 		}
 		if (conf('USE_CACHE') === null) {
@@ -96,7 +96,7 @@ class yf_cache {
 			}
 			conf('USE_CACHE', $use_cache);
 		}
-		define('CORE_CACHE_DIR', INCLUDE_PATH. "core_cache/");
+		define('CORE_CACHE_DIR', INCLUDE_PATH. 'core_cache/');
 		// Singleton pattern, prevents double cache init overhead when called without main and then with main class
 		if (isset($this->_init_complete)) {
 			return true;
@@ -117,7 +117,7 @@ class yf_cache {
 		$cache_systems[] = 'file';
 		$required_cache = isset($params['driver']) ? $params['driver'] : $this->DRIVER;
 		if (!$required_cache) {
-			$required_cache = "file";
+			$required_cache = 'file';
 		}
 		if (count($cache_systems)) {
 			if ($required_cache == 'auto') {
@@ -131,16 +131,16 @@ class yf_cache {
 		if ($this->DRIVER == 'memcache') {
 			$this->_memcache = null;
 			$mc_obj = null;
-			if (class_exists("Memcached")) {
+			if (class_exists('Memcached')) {
 				$mc_obj = new Memcached();
-			} elseif (class_exists("Memcache")) {
+			} elseif (class_exists('Memcache')) {
 				$mc_obj = new Memcache();
 			} else {
-				$client_path = YF_PATH."libs/memcached/memcached_client.class.php";
+				$client_path = YF_PATH.'libs/memcached/memcached_client.class.php';
 				if (file_exists($client_path)) {
 					include $client_path;
 				}
-				if (class_exists("memcached_client")) {
+				if (class_exists('memcached_client')) {
 					$mc_obj = new memcached_client();
 				}
 			}
@@ -167,10 +167,10 @@ class yf_cache {
 				$this->DRIVER = 'file';
 			}
 		}
-		if ($this->DRIVER == "memcache") {
-			$this->_memcache_new_extension = method_exists($this->_memcache, "getMulti");
+		if ($this->DRIVER == 'memcache') {
+			$this->_memcache_new_extension = method_exists($this->_memcache, 'getMulti');
 		}
-		if ($this->DRIVER == "file" && !file_exists(CORE_CACHE_DIR) && $this->AUTO_CREATE_CACHE_DIR) {
+		if ($this->DRIVER == 'file' && !file_exists(CORE_CACHE_DIR) && $this->AUTO_CREATE_CACHE_DIR) {
 // TODO: add 1-2 levels of subdirs to store 100 000+ entries easily in files (no matters when use memcached)
 			mkdir(CORE_CACHE_DIR, 0777, true);
 		}
@@ -181,7 +181,7 @@ class yf_cache {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -190,19 +190,19 @@ class yf_cache {
 	*/
 	function _init_from_main () {
 		// We need this uplicated piece of code to ensure cache will work after early init without main class and after that
-		$this->_main_exists = (method_exists(main(), "init_class"));
-		if (defined("DEBUG_MODE")) {
+		$this->_main_exists = (method_exists(main(), 'init_class'));
+		if (defined('DEBUG_MODE')) {
 			$this->DEBUG_MODE = DEBUG_MODE;
 		}
 		$this->FORCE_REBUILD_CACHE = false;
-		if ($this->_main_exists && main()->CACHE_CONTROL_FROM_URL && $_GET["rebuild_core_cache"]) {
+		if ($this->_main_exists && main()->CACHE_CONTROL_FROM_URL && $_GET['rebuild_core_cache']) {
 			$this->FORCE_REBUILD_CACHE = true;
 		}
 		// Try to load data handlers array
-		if ($this->_main_exists && !conf("data_handlers")) {
+		if ($this->_main_exists && !conf('data_handlers')) {
 			main()->_load_data_handlers();
 		}
-		if (defined("DEBUG_MODE")) {
+		if (defined('DEBUG_MODE')) {
 			$this->DEBUG_MODE = DEBUG_MODE;
 		}
 	}
@@ -210,7 +210,7 @@ class yf_cache {
 	/**
 	* Get data from cache
 	*/
-	function get ($cache_name = "", $force_ttl = 0, $params = array()) {
+	function get ($cache_name = '', $force_ttl = 0, $params = array()) {
 		if (empty($cache_name)) {
 			return false;
 		}
@@ -221,10 +221,10 @@ class yf_cache {
 			$time_start = microtime(true);
 		}
 		// Check if handler is locale-specific
-		$locale_cache_name = "";
-		if (strpos($cache_name, "locale:") === 0) {
+		$locale_cache_name = '';
+		if (strpos($cache_name, 'locale:') === 0) {
 			$cache_name = substr($cache_name, 7);
-			$locale_cache_name = $cache_name."___".conf('language');
+			$locale_cache_name = $cache_name.'___'.conf('language');
 		}
 		$key_name = $locale_cache_name ? $locale_cache_name : $cache_name;
 		$key_name_ns = $this->CACHE_NS. $key_name;
@@ -236,7 +236,7 @@ class yf_cache {
 			}
 		}
 		if ($this->DRIVER == 'file') {
-			$result = $this->_get_cache_file(CORE_CACHE_DIR. $this->_file_conf["file_prefix"]. $key_name. $this->_file_conf["file_ext"], $force_ttl);
+			$result = $this->_get_cache_file(CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $key_name. $this->_file_conf['file_ext'], $force_ttl);
 		} elseif ($this->DRIVER == 'eaccelerator') {
 			$result = eaccelerator_get($key_name_ns);
 		} elseif ($this->DRIVER == 'apc') {
@@ -244,14 +244,14 @@ class yf_cache {
 		} elseif ($this->DRIVER == 'xcache') {
 			$result = xcache_get($key_name_ns);
 		}
-		if ($this->DRIVER != "file" && is_string($result)) {
+		if ($this->DRIVER != 'file' && is_string($result)) {
 			$try_unpack = unserialize($result);
-			if ($try_unpack || substr($result, 0, 2) == "a:") {
+			if ($try_unpack || substr($result, 0, 2) == 'a:') {
 				$result = $try_unpack;
 			}
 		}
 		if ($this->DEBUG_MODE) {
-			$all_debug = debug("_core_cache_debug::get");
+			$all_debug = debug('_core_cache_debug::get');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				$_time = microtime(true) - $time_start;
@@ -260,16 +260,16 @@ class yf_cache {
 				var_dump($result);
 				$_debug_data = substr(ob_get_contents(), 0, 150);
 				ob_end_clean();
-				$_pos = strpos($_debug_data, ")");
+				$_pos = strpos($_debug_data, ')');
 
-				debug("_core_cache_debug::get::".$debug_index, array(
-					"name"		=> $cache_name,
-					"time"		=> round($_time, 5),
-					"data"		=> $_pos ? "<b>".substr($_debug_data, 0, $_pos + 1). "</b>". $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
-					"trace"		=> $this->trace_string(),
-					"driver"	=> $this->DRIVER,
-					"params"	=> $params,
-					"force_ttl"	=> $force_ttl,
+				debug('_core_cache_debug::get::'.$debug_index, array(
+					'name'		=> $cache_name,
+					'time'		=> round($_time, 5),
+					'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
+					'trace'		=> $this->trace_string(),
+					'driver'	=> $this->DRIVER,
+					'params'	=> $params,
+					'force_ttl'	=> $force_ttl,
 				));
 			}
 		}
@@ -280,20 +280,20 @@ class yf_cache {
 	}
 
 	/**
-	* Put data into cache (alias for "put")
+	* Put data into cache (alias for 'put')
 	*/
-	function set ($cache_name = "", $data = null, $TTL = 0) {
+	function set ($cache_name = '', $data = null, $TTL = 0) {
 		return $this->put($cache_name, $data, $TTL);
 	}
 
 	/**
 	* Put data into cache
 	*/
-	function put ($cache_name = "", $data = null, $TTL = 0) {
+	function put ($cache_name = '', $data = null, $TTL = 0) {
 		if (!$TTL) {
 			$TTL = $this->FILES_TTL;
 		}
-		// Add random value for each entry TTL (to avoid "at once" cache invalidation problems)
+		// Add random value for each entry TTL (to avoid 'at once' cache invalidation problems)
 		if ($this->RANDOM_TTL_ADD) {
 			$TTL += mt_rand(1, 15);
 		}
@@ -301,14 +301,14 @@ class yf_cache {
 			$time_start = microtime(true);
 		}
 		// Check if handler is locale-specific
-		if (strpos($cache_name, "locale:") === 0) {
+		if (strpos($cache_name, 'locale:') === 0) {
 			$cache_name	= substr($cache_name, 7);
-			$locale_cache_name = $cache_name."___".conf('language');
+			$locale_cache_name = $cache_name.'___'.conf('language');
 		}
 		$key_name = $locale_cache_name ? $locale_cache_name : $cache_name;
 		$key_name_ns = $this->CACHE_NS. $key_name;
 		// Stop here if custom rules not allowed
-		if (!$this->ALLOW_CUSTOM_RULES && !conf("data_handlers::".$cache_name)) {
+		if (!$this->ALLOW_CUSTOM_RULES && !conf('data_handlers::'.$cache_name)) {
 			return false;
 		}
 		if (is_null($data)) {
@@ -321,7 +321,7 @@ class yf_cache {
 		if ($this->_no_cache[$cache_name]) {
 			return true;
 		}
-		if ($this->DRIVER != "file") {
+		if ($this->DRIVER != 'file') {
 			$data_to_put = is_array($data) ? serialize($data) : $data;
 		}
 		if ($this->DRIVER == 'memcache') {
@@ -342,7 +342,7 @@ class yf_cache {
 			}
 		}
 		if ($this->DRIVER == 'file') {
-			$result = $this->_put_cache_file($data, CORE_CACHE_DIR. $this->_file_conf["file_prefix"]. $key_name. $this->_file_conf["file_ext"]);
+			$result = $this->_put_cache_file($data, CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $key_name. $this->_file_conf['file_ext']);
 		} elseif ($this->DRIVER == 'eaccelerator') {
 			$result = eaccelerator_put($key_name_ns, $data_to_put, $TTL);
 		} elseif ($this->DRIVER == 'apc') {
@@ -351,7 +351,7 @@ class yf_cache {
 			$result = xcache_set($key_name_ns, $data_to_put, $TTL);
 		}
 		if ($this->DEBUG_MODE) {
-			$all_debug = debug("_core_cache_debug::set");
+			$all_debug = debug('_core_cache_debug::set');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				$_time = microtime(true) - $time_start;
@@ -360,14 +360,14 @@ class yf_cache {
 				var_dump($data);
 				$_debug_data = substr(ob_get_contents(), 0, 150);
 				ob_end_clean();
-				$_pos = strpos($_debug_data, ")");
+				$_pos = strpos($_debug_data, ')');
 
-				debug("_core_cache_debug::set::".$debug_index, array(
-					"name"		=> $cache_name,
-					"time"		=> round($_time, 5),
-					"data"		=> $_pos ? "<b>".substr($_debug_data, 0, $_pos + 1). "</b>". $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
-					"trace"		=> $this->trace_string(),
-					"driver"	=> $this->DRIVER,
+				debug('_core_cache_debug::set::'.$debug_index, array(
+					'name'		=> $cache_name,
+					'time'		=> round($_time, 5),
+					'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
+					'trace'		=> $this->trace_string(),
+					'driver'	=> $this->DRIVER,
 				));
 			}
 		}
@@ -413,7 +413,7 @@ class yf_cache {
 	/**
 	* Update selected cache entry
 	*/
-	function refresh ($cache_name = "", $force_clean = false) {
+	function refresh ($cache_name = '', $force_clean = false) {
 		if (is_array($cache_name)) {
 			foreach ((array)$cache_name as $name) {
 				$result[$name] = $this->_refresh($name, $force_clean);
@@ -426,14 +426,14 @@ class yf_cache {
 
 	/**
 	*/
-	function _refresh ($cache_name = "", $force_clean = false) {
+	function _refresh ($cache_name = '', $force_clean = false) {
 		if ($this->DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
 		// Check if handler is locale-specific
-		if (strpos($cache_name, "locale:") === 0) {
+		if (strpos($cache_name, 'locale:') === 0) {
 			$cache_name	= substr($cache_name, 7);
-			$locale_cache_name = $cache_name."___".conf('language');
+			$locale_cache_name = $cache_name.'___'.conf('language');
 			// get available locales
 			$locales = array();
 			$locale_obj = _class('locale');
@@ -443,7 +443,7 @@ class yf_cache {
 		}
 		$key_name = $locale_cache_name ? $locale_cache_name : $cache_name;
 		$key_name_ns = $this->CACHE_NS. $key_name;
-		$need_touch = (bool)conf("data_handlers::".$cache_name);
+		$need_touch = (bool)conf('data_handlers::'.$cache_name);
 		if ($this->DRIVER == 'memcache') {
 			if (isset($this->_memcache)) {
 				$result = $this->_memcache->delete($key_name_ns);
@@ -454,7 +454,7 @@ class yf_cache {
 		if ($this->DRIVER == 'file') {
 			// Not locale specific
 			if (empty($locales)) {
-				$cache_file = CORE_CACHE_DIR. $this->_file_conf["file_prefix"]. $cache_name. $this->_file_conf["file_ext"];
+				$cache_file = CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $cache_name. $this->_file_conf['file_ext'];
 				if (file_exists($cache_file)) {
 					if ($force_clean) {
 						unlink($cache_file);
@@ -467,7 +467,7 @@ class yf_cache {
 			}
 			// Locale-specific
 			foreach ((array)$locales as $_cur_locale) {
-				$cache_file = CORE_CACHE_DIR. $this->_file_conf["file_prefix"]. $cache_name."___".$_cur_locale. $this->_file_conf["file_ext"];
+				$cache_file = CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $cache_name.'___'.$_cur_locale. $this->_file_conf['file_ext'];
 				if (file_exists($cache_file)) {
 					if ($force_clean) {
 						unlink($cache_file);
@@ -484,15 +484,15 @@ class yf_cache {
 			$result = xcache_unset($key_name_ns);
 		}
 		if ($this->DEBUG_MODE) {
-			$all_debug = debug("_core_cache_debug::refresh");
+			$all_debug = debug('_core_cache_debug::refresh');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				$time_end = microtime(true);
-				debug("_core_cache_debug::refresh::".$debug_index, array(
-					"name"			=> $cache_name,
-					"force_clean"	=> $force_clean,
-					"driver"		=> $this->DRIVER,
-					"time"			=> $time_end - $time_start,
+				debug('_core_cache_debug::refresh::'.$debug_index, array(
+					'name'			=> $cache_name,
+					'force_clean'	=> $force_clean,
+					'driver'		=> $this->DRIVER,
+					'time'			=> $time_end - $time_start,
 				));
 			}
 		}
@@ -502,14 +502,14 @@ class yf_cache {
 	/**
 	* Delete selected cache entry (alias)
 	*/
-	function del ($cache_name = "") {
+	function del ($cache_name = '') {
 		return $this->refresh($cache_name, true);
 	}
 
 	/**
 	* Clean selected cache entry
 	*/
-	function clean ($cache_name = "") {
+	function clean ($cache_name = '') {
 		return $this->refresh($cache_name, true);
 	}
 
@@ -517,16 +517,16 @@ class yf_cache {
 	* Update all cache entries
 	*/
 	function refresh_all () {
-		foreach ((array)conf("data_handlers") as $name => $v) {
+		foreach ((array)conf('data_handlers') as $name => $v) {
 			$this->refresh($name);
-			$this->refresh("locale:".$name);
+			$this->refresh('locale:'.$name);
 		}
 	}
 
 	/**
 	* Do get cache file contents
 	*/
-	function _get_cache_file ($cache_file = "", $force_ttl = 0) {
+	function _get_cache_file ($cache_file = '', $force_ttl = 0) {
 		if (empty($cache_file)) {
 			return null;
 		}
@@ -548,15 +548,15 @@ class yf_cache {
 			include ($cache_file);
 
 			if ($this->DEBUG_MODE) {
-				$_cf = strtolower(str_replace(DIRECTORY_SEPARATOR, "/", $cache_file));
+				$_cf = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $cache_file));
 				debug('include_files_exec_time::'.$_cf, microtime(true) - $_time_start);
 			}
 			return $data;
 		} else {
-			$output = eval("return ".substr(file_get_contents($cache_file), strlen($this->_file_conf["auto_header"]), -strlen($this->_file_conf["auto_footer"])).";");
+			$output = eval('return '.substr(file_get_contents($cache_file), strlen($this->_file_conf['auto_header']), -strlen($this->_file_conf['auto_footer'])).';');
 			// Check if file has parse error
 			if ($output === false) {
-				trigger_error("CACHE: Parse error in file \"".basename($cache_file)."\"", E_USER_WARNING);
+				trigger_error('CACHE: Parse error in file "'.basename($cache_file).'"', E_USER_WARNING);
 			}
 			return $output;
 		}
@@ -565,29 +565,29 @@ class yf_cache {
 	/**
 	* Do put cache file contents
 	*/
-	function _put_cache_file ($data = array(), $cache_file = "") {
+	function _put_cache_file ($data = array(), $cache_file = '') {
 		if (empty($cache_file)) {
 			return false;
 		}
 		return file_put_contents($cache_file, 
-			$this->_file_conf["auto_header"]
-			."\$data = ".str_replace(" => \narray (", "=>array(", preg_replace('/^\s+/m', '', var_export($data, 1))).";"
-			.$this->_file_conf["auto_footer"]
+			$this->_file_conf['auto_header']
+			.'$data = '.str_replace(' => '.PHP_EOL.'array (', '=>array(', preg_replace('/^\s+/m', '', var_export($data, 1))).';'
+			.$this->_file_conf['auto_footer']
 		);
 	}
 
 	/**
 	* Process given rule name
 	*/
-	function _process_rule ($rule_name = "", $locale_specific = false) {
+	function _process_rule ($rule_name = '', $locale_specific = false) {
 		$data = array();
 		$no_cache = false;
-		$rule_data = conf("data_handlers::".$rule_name);
+		$rule_data = conf('data_handlers::'.$rule_name);
 		if (!empty($rule_name) && $rule_data) {
-			$data = @eval(
-				($locale_specific ? "\$locale=\"".conf('language')."\";" : "")
+			$data = eval(
+				($locale_specific ? '$locale="'.conf('language').'";' : '')
 				.$rule_data
-				."; return \$data;"
+				.'; return $data;'
 			);
 		}
 		if ($no_cache) {
@@ -620,13 +620,13 @@ class yf_cache {
 				return false;
 			}
 			while (($f = readdir($dh)) !== false) {
-				if ($f == "." || $f == ".." || !is_file(CORE_CACHE_DIR.$f)) {
+				if ($f == '.' || $f == '..' || !is_file(CORE_CACHE_DIR.$f)) {
 					continue;
 				}
-				if (_class('common')->get_file_ext($f) != "php") {
+				if (_class('common')->get_file_ext($f) != 'php') {
 					continue;
 				}
-				if (substr($f, 0, strlen($this->_file_conf["file_prefix"])) != $this->_file_conf["file_prefix"]) {
+				if (substr($f, 0, strlen($this->_file_conf['file_prefix'])) != $this->_file_conf['file_prefix']) {
 					continue;
 				}
 				if (file_exists(CORE_CACHE_DIR.$f)) {
@@ -646,7 +646,7 @@ class yf_cache {
 	/**
 	* Escape html and framework specific symbols to display in debug console
 	*/
-	function _debug_escape($string = "") {
+	function _debug_escape($string = '') {
 		return str_replace(array_keys($this->_debug_escape_symbols), array_values($this->_debug_escape_symbols), htmlspecialchars($string, ENT_QUOTES));
 	}
 
@@ -655,7 +655,7 @@ class yf_cache {
 	*/
 	function trace_string() {
 		$e = new Exception();
-		$data = implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
+		$data = implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1));
 		return $data;
 	}
 }

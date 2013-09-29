@@ -4,11 +4,6 @@
 */
 class yf_tpl_driver_yf {
 
-	public $STPL_REPLACE_LIMIT	 = -1;
-	/** @var int Cycles and conditions max recurse level
-	*   (how deeply could be nested template constructs like "if")
-	*/
-	public $_MAX_RECURSE_LEVEL = 4;
 	/** @var array @conf_skip Patterns array for the STPL engine
 	*   (you can add additional patterns if you need)
 	*/
@@ -65,7 +60,7 @@ class yf_tpl_driver_yf {
 	public $_PATTERN_INCLUDE   = array(
 		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
 		'/(\{include\(["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
-			=> '$this->_include_stpl(\'$2\',\'$3\')',
+			=> 'tpl()->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
 	public $_PATTERN_EVAL	  = array(
@@ -80,7 +75,7 @@ class yf_tpl_driver_yf {
 			=> 'is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "";',
 		// EXAMPLE:	 {_debug_stpl_vars()}
 		'/(\{_debug_get_vars\(\)\})/ie'
-			=> '$this->_debug_get_vars($string)',
+			=> 'tpl()->_debug_get_vars($string)',
 	);
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// EXAMPLE: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
@@ -100,35 +95,27 @@ class yf_tpl_driver_yf {
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
 	/** @var array @conf_skip For '_process_conditions' */
 	public $_math_operators	= array('and'=>'&&','xor'=>'xor','or'=>'||','+'=>'+','-'=>'-');
-	/** @var array @conf_skip
-		For '_process_conditions',
-		Will be availiable in conditions with such form: {if('get.object' eq 'login_form')} Hello from login form {/if}
+	/** @var int Safe limit number of replacements (to avoid dead cycles)
+	*   (type "-1" for unlimited number)
 	*/
-	public $_avail_arrays	  = array(
-		'get'	   => '_GET',
-		'post'	  => '_POST',
-	);
-	/** @var bool Use backtrace to get STPLs source (where called from) FOR DEBUG_MODE ONLY ! */
-	public $USE_SOURCE_BACKTRACE	   = true;
-	/** @var bool Allow to compile templates */
-	public $COMPILE_TEMPLATES		  = false;
-	/** @var bool Compile templates folder */
-	public $COMPILED_DIR			   = 'stpls_compiled/';
-	/** @var bool TTL for compiled stpls */
-	public $COMPILE_TTL				= 3600;
-	/** @var bool TTL for compiled stpls */
-	public $COMPILE_CHECK_STPL_CHANGED = false;
+	public $STPL_REPLACE_LIMIT	 = -1;
+	/** @var int Cycles and conditions max recurse level
+	*   (how deeply could be nested template constructs like "if")
+	*/
+	public $_MAX_RECURSE_LEVEL = 4;
 
 	/**
 	* Constructor
 	*/
-	function __construct () {
+	function _init () {
 		// Try to find PCRE module
 		if (!function_exists('preg_match_all')) {
 			trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
 		}
+		// Saving additional function calls
+		$this->tpl = tpl();
 		// Merge eval pattern with main patterns
-		if ($this->ALLOW_EVAL_PHP_CODE) {
+		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
 			foreach ((array)$this->_PATTERN_EVAL as $k => $v) {
 				$this->_STPL_PATTERNS[$k] = $v;
 			}
@@ -149,91 +136,16 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
-	* Framework constructor
+	* Compile given template into pure PHP code
 	*/
-	function _init () {
-		$this->_init_global_tags();
-	}
-
-	/**
-	* Global scope tags
-	*/
-	function _init_global_tags () {
-		$data = array(
-			'is_logged_in'  => intval((bool) main()->USER_ID),
-			'is_spider'     => (int)conf('IS_SPIDER'),
-			'is_https'      => isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']) ? 1 : 0,
-			'site_id'       => (int)conf('SITE_ID'),
-			'lang_id'       => conf('language'),
-			'debug_mode'    => (int)((bool)DEBUG_MODE),
-			'tpl_path'      => MEDIA_PATH. $this->TPL_PATH,
-		);
-		foreach ($data as $k => $v) {
-			$this->_global_tags[$k] = $v;
-		}
-	}
-
-	/**
-	* Process output filters for the given text
-	*/
-	function _apply_output_filters ($text = '') {
-		foreach ((array)$this->_OUTPUT_FILTERS as $cur_filter) {
-			if (is_callable($cur_filter)) {
-				$text = call_user_func($cur_filter, $text);
-			}
-		}
-		return $text;
-	}
-
-	/**
-	* Initialization of the main template in the theme (could be overwritten to match design)
-	* Return contents of the main template
-	*/
-	function _init_main_stpl ($tpl_name = '') {
-		return $this->parse($tpl_name);
-	}
-
-	/**
-	* Wrapper to parse given template string
-	*/
-	function parse_string($name = '', $replace = array(), $string = '', $params = array()) {
-		if (!strlen($string)) {
-			$string = ' ';
-		}
-		$params['string'] = $string;
-		return $this->parse(!empty($name) ? $name : abs(crc32($string)), $replace, $params);
+	function _compile($name, $replace = array(), $string = '') {
+		return _class('tpl_compile', 'classes/tpl/')->_compile($name, $replace, $string);
 	}
 
 	/**
 	* Simple template parser (*.stpl)
 	*/
 	function parse($name, $replace = array(), $params = array()) {
-		$name = strtolower($name);
-		// Support for the framework calls
-		$yf_prefix = 'yf_';
-		$yfp_len = strlen($yf_prefix);
-		if (substr($name, 0, $yfp_len) == $yf_prefix) {
-			$name = substr($name, $yfp_len);
-		}
-		if (!is_array($params)) {
-			$params = array();
-		}
-		$string = $params['string'] ?: false;
-		$params['replace_images'] = $params['replace_images'] ?: true;
-		$params['no_cache'] = $params['no_cache'] ?: false;
-		$params['get_from_db'] = $params['get_from_db'] ?: false;
-		$params['no_include'] = $params['no_include'] ?: false;
-		if (DEBUG_MODE) {
-			$stpl_time_start = microtime(true);
-		}
-		$replace = (array)$replace + (array)$this->_global_tags;
-		$replace['error'] = $this->_parse_get_user_errors($name, $replace['error']);
-		if (isset($replace[''])) {
-			unset($replace['']);
-		}
-		if ($this->ALLOW_CUSTOM_FILTER) {
-			$this->_custom_filter($name, $replace);
-		}
 		$compiled = $this->_parse_get_compiled($name, $replace, $params);
 		if (isset($compiled)) {
 			return $compiled;
@@ -253,30 +165,18 @@ class yf_tpl_driver_yf {
 		}
 		$string = $this->_process_replaces($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
-		if (isset($params['clear_all'])) {
-			$string = $this->_process_eval_unused($string, $replace, $name);
-		}
-		if (isset($params['eval_content'])) {
-			$string = $this->_process_eval_string($string, $replace, $name);
-		}
-		if ($params['replace_images']) {
-			$string = common()->_replace_images_paths($string);
-		}
-		if (DEBUG_MODE) {
-			$this->_parse_set_debug_info($name, $replace, $params, $string, $stpl_time_start);
-		}
 		return $string;
 	}
 
 	/**
 	*/
 	function _parse_get_compiled($name, $replace = array(), $params = array()) {
-		if (!$this->COMPILE_TEMPLATES) {
+		if (!$this->tpl->COMPILE_TEMPLATES) {
 			return null;
 		}
 # TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
-		$compiled_path = PROJECT_PATH. $this->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
-		if (file_exists($compiled_path) && ($_compiled_mtime = filemtime($compiled_path)) > (time() - $this->COMPILE_TTL)) {
+		$compiled_path = PROJECT_PATH. $this->tpl->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
+		if (file_exists($compiled_path) && ($_compiled_mtime = filemtime($compiled_path)) > (time() - $this->tpl->COMPILE_TTL)) {
 			$_compiled_ok = true;
 
 			ob_start();
@@ -284,8 +184,8 @@ class yf_tpl_driver_yf {
 			$string = ob_get_contents();
 			ob_end_clean();
 
-			if ($this->COMPILE_CHECK_STPL_CHANGED) {
-				$_stpl_path = $this->_get_template_file($name, $params['get_from_db'], 0, 1);
+			if ($this->tpl->COMPILE_CHECK_STPL_CHANGED) {
+				$_stpl_path = $this->tpl->_get_template_file($name, $params['get_from_db'], 0, 1);
 				if ($_stpl_path) {
 					$_source_mtime = filemtime($_stpl_path);
 				}
@@ -322,13 +222,13 @@ class yf_tpl_driver_yf {
 			}
 		} else {
 			if (empty($string) && !isset($params['string'])) {
-				$string = $this->_get_template_file($name, $params['get_from_db']);
+				$string = $this->tpl->_get_template_file($name, $params['get_from_db']);
 			}
 			if ($string === false) {
 				return false;
 			}
 			$string = preg_replace($this->_PATTERN_COMMENT, '', $string);
-			if ($this->COMPILE_TEMPLATES) {
+			if ($this->tpl->COMPILE_TEMPLATES) {
 				$this->_compile($name, $replace, $string);
 			}
 			if (isset($params['no_cache']) && !$params['no_cache']) {
@@ -337,49 +237,6 @@ class yf_tpl_driver_yf {
 			}
 		}
 		return $string;
-	}
-
-	/**
-	*/
-	function _parse_get_user_errors($name, $err) {
-		if (isset($err)) {
-			return $err;
-		}
-		$err = '';
-		if ($name != 'main' && common()->_error_exists()) {
-			if (!isset($this->_user_error_msg)) {
-				$this->_user_error_msg = common()->_show_error_message('', false);
-			}
-			$err = $this->_user_error_msg;
-		}
-		return $err;
-	}
-
-	/**
-	*/
-	function _parse_set_debug_info($name = '', $replace = array(), $params = array(), $string = '', $stpl_time_start) {
-		if (!DEBUG_MODE) {
-			return false;
-		}
-		if (!isset($this->CACHE[$name]['exec_time'])) {
-			$this->CACHE[$name]['exec_time'] = 0;
-		}
-		$this->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
-		// For debug store information about variables used while processing template
-		if ($this->DEBUG_STPL_VARS) {
-			$d = debug('STPL_REPLACE_VARS::'.$name);
-			$next = is_array($d) ? count($d) : 0;
-			debug('STPL_REPLACE_VARS::'.$name.'::'.$next, $replace);
-		}
-		if ($this->USE_SOURCE_BACKTRACE) {
-			debug('STPL_TRACES::'.$name, main()->trace_string());
-		}
-		if ($this->ALLOW_INLINE_DEBUG && strlen($string) > 20 && !in_array($name, array('main', 'system/debug_info', 'system/js_inline_editor')) ) {
-			if (preg_match('/^<([^>]*?)>/ims', ltrim($string), $m)) {
-				$string = '<'.$m[1].' stpl_name="'.$name.'">'.substr(ltrim($string), strlen($m[0]));
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -586,8 +443,8 @@ class yf_tpl_driver_yf {
 				$try_elm = substr($tmp_v, 0, strpos($tmp_v, '.'));
 				$try_elm2 = "['".str_replace('.',"']['",substr($tmp_v, strpos($tmp_v, '.') + 1))."']";
 				// Global array
-				if (isset($this->_avail_arrays[$try_elm])) {
-					$res_v = '$'.$this->_avail_arrays[$try_elm].$try_elm2;
+				if (isset($this->tpl->_avail_arrays[$try_elm])) {
+					$res_v = '$'.$this->tpl->_avail_arrays[$try_elm].$try_elm2;
 				// Sub array
 				} elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
 					$res_v = '$replace["'.$try_elm.'"]'.$try_elm2;
@@ -712,109 +569,6 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
-	* Wrapper for '_PATTERN_INCLUDE', allows you to include stpl, optionally pass $replace params to it
-	*/
-	function _include_stpl ($stpl_name = '', $params = '') {
-		$replace = array();
-		// Try to process method params (string like attrib1=value1;attrib2=value2)
-		foreach ((array)explode(';', str_replace(array("'",''), '', $params)) as $v) {
-			$attrib_name	= '';
-			$attrib_value   = '';
-			if (false !== strpos($v, '=')) {
-				list($attrib_name, $attrib_value) = explode('=', trim($v));
-			}
-			$replace[trim($attrib_name)] = trim($attrib_value);
-		}
-		return $this->parse($stpl_name, $replace);
-	}
-
-	/**
-	* Registers custom function to be used in templates
-	*/
-	function register_output_filter($callback_impl, $filter_name = '') {
-		if (empty($filter_name)) {
-			$filter_name = substr(abs(crc32(microtime(true))),0,8);
-		}
-		$this->_OUTPUT_FILTERS[$filter_name] = $callback_impl;
-	}
-
-	/**
-	* Simple cleanup (compress) output
-	*/
-	function _simple_cleanup_callback ($text = '') {
-		if (DEBUG_MODE) {
-			debug('compress_output_size_1', strlen($text));
-		}
-		$text = str_replace(array("\r","\n","\t"), '', $text);
-		$text = preg_replace('#[\s]{2,}#ms', ' ', $text);
-		// Remove comments
-		$text = preg_replace('#<\!--[\w\s\-\/]*?-->#ms', '', $text);
-		if (DEBUG_MODE) {
-			debug('compress_output_size_2', strlen($text));
-		}
-		return $text;
-	}
-
-	/**
-	* Custom text replacing method
-	*/
-	function _custom_replace_callback ($text = '') {
-		return _class('custom_meta_info')->_process($text);
-	}
-
-	/**
-	* Replace method for 'IFRAME in center' mode
-	*/
-	function _replace_for_iframe_callback ($text = '') {
-		return module('rewrite')->_replace_links_for_iframe($text);
-	}
-
-	/**
-	* Rewrite links callback method
-	*/
-	function _rewrite_links_callback ($text = '') {
-		return module('rewrite')->_rewrite_replace_links($text);
-	}
-
-	/**
-	* Clenup HTML output with Tidy
-	*/
-	function _tidy_cleanup_callback ($text = '') {
-		if (!class_exists('tidy') || !extension_loaded('tidy')) {
-			return $text;
-		}
-		// Tidy
-		$tidy = new tidy;
-		$tidy->parseString($text, $this->_TIDY_CONFIG, conf('charset'));
-		$tidy->cleanRepair();
-		// Output
-		return $tidy;
-	}
-
-	/**
-	*/
-	function _debug_mode_callback ($text = '') {
-		if (!DEBUG_MODE) {
-			return $text;
-		}
-		$p = "<span class='locale_tr' s_var='[^\']+?'>([^<]+?)<\/span>";
-		$text = preg_replace("/(<title>)(.*?)(<\/title>)/imse", "'\\1'.strip_tags('\\2').'\\3'", $text);
-		// Output
-		return $text;
-	}
-
-	/**
-	* Custom filter (Inherit this method and customize anything you want)
-	*/
-	function _custom_filter ($stpl_name = '', &$replace) {
-		if ($stpl_name == 'home_page/main') {
-			// example only:
-			//print_r($replace);
-			//$replace['recent_ads'] = '';
-		}
-	}
-
-	/**
 	* Collect all template vars and display in pretty way
 	*/
 	function _debug_get_vars ($string = '') {
@@ -848,73 +602,5 @@ class yf_tpl_driver_yf {
 			$body .= ');</pre>'.PHP_EOL;
 		}
 		return $body;
-	}
-
-	/**
-	* Compile given template into pure PHP code
-	*/
-	function _compile($name, $replace = array(), $string = '') {
-		return _class('tpl_compile', 'classes/tpl/')->_compile($name, $replace, $string);
-	}
-
-	/**
-	* Wrapper function for t/translate/i18n calls inside templates
-	*/
-	function _i18n_wrapper ($input = '', $replace = array()) {
-		if (!strlen($input)) {
-			return '';
-		}
-		$input = stripslashes(trim($input, '"\''));
-		$args = array();
-		// Complex case with substitutions
-		if (preg_match('/(?P<text>.+?)["\']{1},[\s\t]*%(?P<args>[a-z]+.+)$/ims', $input, $m)) {
-			foreach (explode(';%', $m['args']) as $arg) {
-				$attr_name = $attr_val = '';
-				if (false !== strpos($arg, '=')) {
-					list($attr_name, $attr_val) = explode('=', trim($arg));
-				}
-				$attr_name  = trim(str_replace(array("'",'"'), '', $attr_name));
-				$attr_val   = trim(str_replace(array("'",'"'), '', $attr_val));
-				$args['%'.$attr_name] = $attr_val;
-			}
-			$text_to_translate = $m['text'];
-		} else {
-			// Easy case that just needs to be translated
-			$text_to_translate = $input;
-		}
-		$output = translate($text_to_translate, $args);
-		// Do replacement of the template vars on the last stage
-		// example: @replace1 will be got from $replace['replace1'] array item
-		if (false !== strpos($output, '@') && !empty($replace)) {
-			$r = array();
-			foreach ((array)$replace as $k => $v) {
-				$r['@'.$k] = $v;
-			}
-			$output = str_replace(array_keys($r), array_values($r), $output);
-		}
-		return $output;
-	}
-
-	/**
-	* Wrapper around '_generate_url' function, called like this inside templates:
-	* {url(object=home_page;action=test)}
-	*/
-	function _generate_url_wrapper ($params = array()){
-		if(!function_exists('_force_get_url')) return '';
-		// Try to process method params (string like attrib1=value1;attrib2=value2)
-		if (is_string($params) && strlen($params)) {
-			$tmp_params	 = explode(';', $params);
-			$params  = array();
-			// Convert params string into array
-			foreach ((array)$tmp_params as $v) {
-				$attrib_name = '';
-				$attrib_value = '';
-				if (false !== strpos($v, '=')) {
-					list($attrib_name, $attrib_value) = explode('=', trim($v));
-				}
-				$params[trim($attrib_name)] = trim($attrib_value);
-			}
-		}
-		return _force_get_url($params);
 	}
 }
