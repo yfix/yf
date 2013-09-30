@@ -193,6 +193,19 @@ class yf_form2 {
 	}
 
 	/**
+	* We need this to avoid encoding & => &amp; by standard htmlspecialchars()
+	*/
+	function _htmlchars($str = '') {
+		$replace = array(
+			'"' => '&quot;',
+			"'" => '&apos;',
+			'<'	=> '&lt;',
+			'>'	=> '&gt;',
+		);
+		return str_replace(array_keys($replace), array_values($replace), $str);
+	}
+
+	/**
 	*/
 	function _attrs($extra = array(), $names = array()) {
 		$body = array();
@@ -201,13 +214,13 @@ class yf_form2 {
 				continue;
 			}
 			$val = $extra[$name];
-			$body[$name] = htmlspecialchars($name, ENT_QUOTES).'="'.htmlspecialchars($val, ENT_QUOTES).'"';
+			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 		}
 		foreach ((array)$extra['attr'] as $name => $val) {
 			if (!$name || !isset($val)) {
 				continue;
 			}
-			$body[$name] = htmlspecialchars($name, ENT_QUOTES).'="'.htmlspecialchars($val, ENT_QUOTES).'"';
+			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 		}
 		return ' '.implode(' ', $body).' ';
 	}
@@ -217,7 +230,7 @@ class yf_form2 {
 	function _prepare_custom_attr($attr = array()) {
 		$body = array();
 		foreach ((array)$attr as $k => $v) {
-			$body[] = htmlspecialchars($k, ENT_QUOTES).'="'.htmlspecialchars($v, ENT_QUOTES).'"';
+			$body[] = $this->_htmlchars($k).'="'.$this->_htmlchars($v).'"';
 		}
 		return implode(" ", $body);
 	}
@@ -260,6 +273,10 @@ class yf_form2 {
 		$css_framework = conf('css_framework');
 		if ($css_framework) {
 #			return _class('html')->form_row($content, $extra, $replace, $this);
+		}
+		if (conf('form_input_no_append')) {
+			$extra['append'] = '';
+			$extra['prepend'] = '';
 		}
 		return '
 			<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
@@ -425,9 +442,6 @@ class yf_form2 {
 				$value = $this->_params['selected'][$name];
 			}
 		}
-		if (!isset($extra['no_escape'])) {
-			$value = htmlspecialchars($value, ENT_QUOTES);
-		}
 		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
 		$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
@@ -436,7 +450,7 @@ class yf_form2 {
 		$extra['desc'] = $desc;
 
 		$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows');
-		$body = $this->_row_html('<textarea '.$this->_attrs($extra, $attrs_names).'>'.$value.'</textarea>', $extra, $replace);
+		$body = $this->_row_html('<textarea '.$this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $this->_htmlchars($value) : $value).'</textarea>', $extra, $replace);
 
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
@@ -1097,6 +1111,9 @@ class yf_form2 {
 		}
 		$r = $replace ? $replace : $this->_replace;
 		$extra['errors'] = common()->_get_error_messages();
+		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
+		$extra['name'] = $name;
+		$extra['desc'] = $extra['no_label'] ? '' : $desc;
 		$value = $r[$name];
 		if (is_array($extra['data'])) {
 			if (isset($extra['data'][$value])) {
@@ -1105,12 +1122,7 @@ class yf_form2 {
 				$value = $extra['data'][$name];
 			}
 		}
-		if (!isset($extra['no_escape'])) {
-			$value = htmlspecialchars($value, ENT_QUOTES);
-		}
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-		$extra['name'] = $name;
-		$extra['desc'] = $extra['no_label'] ? '' : $desc;
+		$value = !isset($extra['no_escape']) ? $this->_htmlchars($value) : $value;
 
 		$content = '';
 		if ($extra['link']) {

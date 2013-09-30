@@ -34,9 +34,16 @@ class yf_manage_dashboards {
 			->text('name')
 			->btn_view()
 			->btn_edit('', '', array('no_ajax' => 1))
+			->btn_clone('', '', array('no_ajax' => 1))
 			->btn_delete()
 			->footer_add()
 		;
+	}
+
+	/**
+	*/
+	function clone_item() {
+// TODO
 	}
 
 	/**
