@@ -292,6 +292,9 @@ class yf_menus_editor {
 			main()->NO_GRAPHICS = true;
 			return false;
 		}
+		if (isset($items[''])) {
+			unset($items['']);
+		}
 		foreach ((array)$items as $id => $item) {
 			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
 			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;

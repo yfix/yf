@@ -261,6 +261,9 @@ class yf_category_editor {
 			main()->NO_GRAPHICS = true;
 			return false;
 		}
+		if (isset($items[''])) {
+			unset($items['']);
+		}
 		foreach ((array)$items as $id => $item) {
 			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
 			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
@@ -310,6 +313,9 @@ class yf_category_editor {
 		$_next_level = 0;
 		$item_counter = 0;
 		foreach ((array)$cat_items_to_display as $i => $item_info) {
+			if (!$item_info['id']) {
+				continue;
+			}
 			$item_counter++;
 			$_next_info	= isset($cat_items_to_display[$i + 1]) ? $cat_items_to_display[$i + 1] : array();
 			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;

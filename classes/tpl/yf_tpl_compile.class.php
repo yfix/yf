@@ -133,7 +133,7 @@ class yf_tpl_compile {
 		);
 		$string = str_replace(array_keys($to_replace), array_values($to_replace), $string);
 
-		$string = '<'.'?p'.'hp /* '.
+		$string = '<'.'?p'.'hp if(!defined(\'YF_PATH\')) exit(); /* '.
 			'date: '.gmdate('Y-m-d H:i:s').' GMT; '.
 			'compile_time: '.common()->_format_time_value(microtime(true) - $_time_start).'; '.
 			'name: '.$name.'; '.
