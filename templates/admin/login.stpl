@@ -6,7 +6,7 @@
 	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css" rel="stylesheet">
 	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
 	<style type="text/css">.container-valign-middle { margin:20% 30%; }</style>
-	<!--meta name="viewport" content="width=device-width, initial-scale=1.0"-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 	<div class="container-fluid container-valign-middle">

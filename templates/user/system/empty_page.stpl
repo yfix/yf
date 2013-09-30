@@ -1,14 +1,17 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE html>
 <html>
 <head>
-	{if("title" ne "")}<title>{title}</title>{/if}
-	<meta http-equiv="Content-Type" content="text/html; charset={conf('charset')}" />
-{execute(graphics,show_css)}
+	<title>{if("title" ne "")}{title}{/if}</title>
+	<meta charset="utf-8">
+	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body {if("full_width" ne "1")} id="empty_page"{/if}>
-<div {if("full_width" ne "1")} id="wrapper"{/if}>
-{text}
-{if("close_button" eq 1)}<div align="center"><a href="javascript:void(0)" onclick="window.close();">{t(Close)}</a></div>{/if}
-</div>
+<body>
+	{text}
+
+	{if("close_button" eq 1)}<div align="center"><a href="javascript:void(0)" onclick="window.close();">{t(Close)}</a></div>{/if}
 </body>
 </html>
