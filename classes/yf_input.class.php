@@ -1,5 +1,8 @@
 <?php
 
+// TODO: carefully check everythign here, what we need and what not
+// TODO: import unit tests for this class from CI
+
 /**
  * Input Class
  *
@@ -601,6 +604,7 @@ class yf_input {
 		// Unset globals for security.
 		// This is effectively the same as register_globals = off
 		// PHP 5.4 no longer has the register_globals functionality.
+/*
 		if ( ! is_php('5.4'))
 		{
 			foreach (array($_GET, $_POST, $_COOKIE) as $global)
@@ -623,7 +627,7 @@ class yf_input {
 				}
 			}
 		}
-
+*/
 		// Is $_GET data allowed? If not we'll set the $_GET to an empty array
 		if ($this->_allow_get_array === FALSE)
 		{
@@ -704,10 +708,12 @@ class yf_input {
 		   NOTE: In PHP 5.4 get_magic_quotes_gpc() will always return 0 and
 			 it will probably not exist in future versions at all.
 		*/
+/*
 		if ( ! is_php('5.4') && get_magic_quotes_gpc())
 		{
 			$str = stripslashes($str);
 		}
+*/
 
 		// Clean UTF-8 if supported
 		if (UTF8_ENABLED === TRUE)

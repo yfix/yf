@@ -45,7 +45,7 @@ class yf_sites_info {
 			return false;
 		}
 		// Get sites infos from db
-		$sites_info_from_db = main()->get_data("sys_sites");
+		$sites_info_from_db = main()->get_data("sites");
 		// Get users sites paths
 		foreach ((array)$sites_info_from_db as $A) {
 			$tmp = $A;

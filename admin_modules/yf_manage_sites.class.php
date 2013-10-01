@@ -35,7 +35,7 @@ class yf_manage_sites {
 				'name' => 'trim|required',
 			))
 			->db_update_if_ok('sites', array('name','web_path','real_path'), 'id='.$a['id'], array('on_after_update' => function() {
-				cache()->refresh(array('sys_sites'));
+				cache()->refresh(array('sites'));
 				common()->admin_wall_add(array('site updated: '.$_POST['name'].'', $a['id']));
 			}))
 			->text('name')
@@ -53,7 +53,7 @@ class yf_manage_sites {
 				'name' => 'trim|required',
 			))
 			->db_insert_if_ok('sites', array('name','web_path','real_path'), array(), array('on_after_update' => function() {
-				cache()->refresh(array('sys_sites'));
+				cache()->refresh(array('sites'));
 				common()->admin_wall_add(array('site added: '.$_POST['name'].'', db()->insert_id()));
 			}))
 			->text('name')

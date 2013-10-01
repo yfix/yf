@@ -296,22 +296,40 @@ class yf_validate {
 	/***/
 	function valid_ip($in, $params = array()) {
 		$which = $params['param'];
-		return _class('input')->valid_ip($ip, $which);
-	}
-
-	/***/
-	function xss_clean($in) {
-		return _class('security')->xss_clean($in);
-	}
-
-	/***/
-	function strip_image_tags($in) {
-		return _class('security')->strip_image_tags($in);
+		return $this->_valid_ip($in, $which);
 	}
 
 	/***/
 	function captcha($in, $params = array(), $fields = array()) {
 		return _class('captcha')->check('captcha');
+	}
+
+	/***/
+	function xss_clean($in) {
+# TODO: write unit tests and only then enable
+#		return _class('security')->xss_clean($in);
+		return $in;
+	}
+
+	/***/
+	function strip_image_tags($in) {
+# TODO: write unit tests and only then enable
+		return $in;
+#		return _class('security')->strip_image_tags($in);
+	}
+
+	/***/
+	public function _valid_ip($ip, $ip_version = 'ipv4') {
+		$ip_version = strtolower($ip_version);
+		if (!$ip_version) {
+			$ip_version = 'ipv4';
+		}
+		if ($ip_version == 'ipv6') {
+			$filter_flag = FILTER_FLAG_IPV6;
+		} else {
+			$filter_flag = FILTER_FLAG_IPV4;
+		}
+		return (bool) filter_var($ip, FILTER_VALIDATE_IP, $filter_flag);
 	}
 
 	/**

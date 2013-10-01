@@ -1916,7 +1916,14 @@ class yf_form2 {
 	/**
 	*/
 	function _db_change_if_ok($table, $fields, $type, $extra = array()) {
-		if (!$this->_validate_ok || !$table || !$type) {
+		if (!$table || !$type || empty($_POST)) {
+			return $this;
+		}
+		if (!$this->_validate_ok) {
+			if ($extra['on_validate_error']) {
+				$func = $extra['on_validate_error'];
+				$func($data, $table, $fields, $type, $extra);
+			}
 			return $this;
 		}
 		$data = array();

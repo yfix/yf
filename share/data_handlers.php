@@ -65,8 +65,11 @@ conf('data_handlers', my_array_merge((array)conf('data_handlers'), array(
 	'smilies'	=> 'include(H_PATH."smilies.h.php");',
 	'states'	=> 'include(H_PATH."states.h.php");',
 	'static_pages_names'	=> 'include(H_PATH."static_pages_names.h.php");',
-	'sys_sites'	=> 'include(H_PATH."sys_sites.h.php");',
-	'sys_servers'	=> 'include(H_PATH."sys_servers.h.php");',
+	'sites'	=> 'include(H_PATH."sites.h.php");',
+	'servers'	=> 'include(H_PATH."servers.h.php");',
+	'server_roles'	=> 'include(H_PATH."server_roles.h.php");',
+	'sys_sites'	=> 'include(H_PATH."sites.h.php");', // Deprecated, use "sites" instead
+	'sys_servers'	=> 'include(H_PATH."servers.h.php");', // Deprecated, use "servers" instead
 	'tips'	=> 'include(H_PATH."tips.h.php");',
 	'timezones'	=> 'include(H_PATH."timezones.h.php");',
 	'user_groups'	=> 'include(H_PATH."user_groups.h.php");',
