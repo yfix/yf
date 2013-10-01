@@ -67,8 +67,28 @@ class yf_form2 {
 	*	{form_row('info','add_date','Added')}
 	*	{form_row('save_and_back')}
 	*	{form_row('form_end')}
+	*
+	*	{catch("field_name")}some_other_field{/catch} {form_row('text','%field_name')}
+	*	{catch("t_password")}My password inside replace['t_password']{/catch} {form_row('text','pswd','%t_password')}
 	*/
 	function tpl_row($type = 'input', $replace = array(), $name, $desc = '', $extra = array()) {
+		$name = trim($name);
+		if ($name && $name[0] == '%') {
+			$_name = substr($name, 1);
+			if (isset($replace[$_name])) {
+				$name = $replace[$_name];
+			}
+		}
+		$desc = trim($desc);
+		if ($desc && $desc[0] == '%') {
+			$_desc = substr($desc, 1);
+			if (isset($replace[$_desc])) {
+				$desc = $replace[$_desc];
+			}
+		}
+		if (is_string($extra)) {
+			$extra = trim($extra);
+		}
 		return $this->$type($name, $desc, $extra, $replace);
 	}
 

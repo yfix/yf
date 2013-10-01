@@ -7,9 +7,6 @@ new yf_main("user", 1, 0);
 function _tpl($stpl_text = "", $replace = array(), $name = "") {
 	return tpl()->parse_string($stpl_text, $replace, $name);
 }
-#function _form_row() { }
-#	tpl_row($type = 'input', $replace = array(), $name, $desc = '', $extra = array()) {
-#	=> '_class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\')',
 
 class tpl_form_test extends PHPUnit_Framework_TestCase {
 	public function test_10() {
@@ -23,6 +20,10 @@ class tpl_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $html, _tpl( '{form_row(" password ")}' ) );
 		$this->assertEquals( $html, _tpl( '{form_row(   "   password   "  )}' ) );
 		$this->assertEquals( $html, _tpl( '{form_row(	" 	 password  	" 	)}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row("password","")}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row("password","","")}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row("password","","","")}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row("password", "", "", "")}' ) );
 	}
 	public function test_21() {
 		$replace = array('password' => '123');
@@ -37,8 +38,8 @@ class tpl_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $text, _tpl( '{form_row( "password" , "pswd" )}', $replace ) );
 		$this->assertEquals( $text, _tpl( '{form_row(  "password"  ,  "pswd"  )}', $replace ) );
 		$this->assertEquals( $text, _tpl( '{form_row("password", "pswd")}', $replace ) );
-#		$this->assertEquals( $text, _tpl( '{form_row( " password " , " pswd " )}', $replace ) );
-#		$this->assertEquals( $text, _tpl( '{form_row(" password "," pswd ")}', $replace ) );
+		$this->assertEquals( $text, _tpl( '{form_row( " password " , " pswd " )}', $replace ) );
+		$this->assertEquals( $text, _tpl( '{form_row(" password "," pswd ")}', $replace ) );
 	}
 	public function test_23() {
 		$replace = array('password' => '123');
@@ -49,7 +50,7 @@ class tpl_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $text, _tpl( '{form_row( "password", "pswd", "My password" )}', $replace ) );
 		$this->assertEquals( $text, _tpl( '{form_row( "password" , "pswd" , "My password" )}', $replace ) );
 		$this->assertEquals( $text, _tpl( '{form_row(  "password"  ,  "pswd"  ,  "My password"  )}', $replace ) );
-#		$this->assertEquals( $text, _tpl( '{form_row( " password ", " pswd ", " My password " )}', $replace ) );
+		$this->assertEquals( $text, _tpl( '{form_row( " password ", " pswd ", " My password " )}', $replace ) );
 	}
 	public function test_24() {
 		$replace = array('name' => 'Hello world');
@@ -59,5 +60,23 @@ class tpl_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $text, _tpl( '{form_row( "text", "name", "My name")}', $replace ) );
 		$this->assertEquals( $text, _tpl( '{form_row( "text" , "name" , "My name" )}', $replace ) );
 		$this->assertEquals( $text, _tpl( '{form_row(  "text"  ,  "name"  ,  "My name"  )}', $replace ) );
+	}
+
+	public function test_30() {
+		$replace = array('name' => 'Hello world', 't_password' => 'My password');
+		$text = _class('form2')->tpl_row('text', $replace, 'name', '%t_password');
+		$this->assertEquals( $text, _tpl( '{catch("t_password")}My password{/catch}{form_row("text","name","%t_password")}', $replace ) );
+	}
+
+	public function test_31() {
+		$replace = array('name' => 'Hello world', 't_password' => 'Пароль');
+		$text = _class('form2')->tpl_row('text', $replace, 'name', '%t_password');
+		$this->assertEquals( $text, _tpl( '{catch("t_password")}Пароль{/catch}{form_row("text","name","%t_password")}', $replace ) );
+	}
+
+	public function test_40() {
+		$replace = array('name' => 'Hello world');
+		$text = _class('form2')->tpl_row('text', $replace, 'name', 'Пароль');
+		$this->assertEquals( $text, _tpl( '{form_row("text","name","Пароль")}', $replace ) );
 	}
 }
