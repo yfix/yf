@@ -3,8 +3,9 @@
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<meta charset="utf-8">
-	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/slate/bootstrap.min.css" rel="stylesheet">
-	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+{execute(common,bs_theme_html)}
+{include("main_style_css")}
+{execute(graphics,show_metatags)}
 	<style type="text/css">.container-valign-middle { margin:20% 30%; }</style>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -34,6 +35,6 @@
 			</div>
 		</form>
 	</div>
-	<!--script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script-->
+	{include("main_js")}
 </body>
 </html>

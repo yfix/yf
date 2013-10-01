@@ -152,7 +152,7 @@ class yf_errors {
 			$exception->getMessage(),
 			$exception->getFile(),
 			$exception->getLine(),
-			implode("\n", $result),
+			implode(PHP_EOL, $result),
 			$exception->getFile(),
 			$exception->getLine()
 		);
@@ -223,14 +223,14 @@ class yf_errors {
 		}
 		// Create log message if needed
 		if ($save_log || $send_mail) {
-			$DIVIDER = "\n";
+			$DIVIDER = PHP_EOL;
 			if ($this->USE_COMPACT_FORMAT) {
 				$DIVIDER = "#@#";
 			}
 			// Create logging message
 			$log_message  = date("Y-m-d H:i:s"). $DIVIDER;
 			$log_message .= $this->error_types[$error_type]. $DIVIDER;
-			$log_message .= str_replace(array("\r","\n"), "", $error_msg).";".$DIVIDER;
+			$log_message .= str_replace(array("\r",PHP_EOL), "", $error_msg).";".$DIVIDER;
 			$log_message .= "SOURCE=".$error_file." on line ".$error_line. $DIVIDER;
 			$log_message .= "SITE_ID=".conf('SITE_ID'). $DIVIDER;
 			$log_message .= "IP=".$IP. $DIVIDER;
@@ -243,7 +243,7 @@ class yf_errors {
 			$log_message .= $this->_log_display_array("COOKIE"). $DIVIDER;
 			$log_message .= $this->_log_display_array("SESSION");
 			$log_message .= "USER_AGENT=".$_SERVER['HTTP_USER_AGENT']. $DIVIDER;
-			$log_message .= "\n";
+			$log_message .= PHP_EOL;
 		}
 		// Save log message if needed
 		if ($save_log) {
@@ -305,7 +305,7 @@ class yf_errors {
 		if (empty($A)) {
 			return "";
 		}
-		$output = str_replace(array("\r","\n"), "", var_export($A, 1));
+		$output = str_replace(array("\r",PHP_EOL), "", var_export($A, 1));
 		$output = preg_replace("/^array \((.*?)[\,]{0,1}\)$/i", "\$1", $output);
 		return "_".$array_name."=".$output;
 	}

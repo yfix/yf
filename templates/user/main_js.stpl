@@ -4,16 +4,6 @@ $(function(){
 		'trigger' : 'hover',
 		'delay'   : { 'show' : 100, 'hide' : 500 }
 	})
-
-	// Needed for debug console
-	$("#debug_console table.debug_item a[data-hidden-toggle]").on("click", function(){
-		var _this = $(this)
-		var _parent = _this.closest("tr")
-		var _name = _this.data("hidden-toggle")
-		var _hidden = _parent.find("[data-hidden-name='" + _name + "']")
-		_hidden.toggle();
-		console.log(_this, _parent, _name, _hidden)
-	})
 })
 </script>
 

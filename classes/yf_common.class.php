@@ -78,7 +78,11 @@ class yf_common {
 	/**
 	*/
 	function bs_current_theme() {
-		$theme = 'slate'; // Default
+		if (MAIN_TYPE_USER) {
+			$theme = 'spacelab'; // Default
+		} elseif (MAIN_TYPE_ADMIN) {
+			$theme = 'slate'; // Default
+		}
 		$conf_theme = conf('DEF_BOOTSTRAP_THEME');
 		if ($conf_theme) {
 			$theme = $conf_theme;
@@ -377,7 +381,7 @@ class yf_common {
 	*/
 	function _show_execution_time () {
 		main()->_time_end = $this->_format_time_value(microtime(true) - main()->_time_start);
-		return '<br><div align="center">'._ucfirst(t('page_generated_in')).' '.main()->_time_end.' '.t('seconds').', &nbsp;&nbsp;'.t('number_of_queries').' = '.intval(db()->NUM_QUERIES).'</div>'."\n";
+		return '<br><div align="center">'._ucfirst(t('page_generated_in')).' '.main()->_time_end.' '.t('seconds').', &nbsp;&nbsp;'.t('number_of_queries').' = '.intval(db()->NUM_QUERIES).'</div>'.PHP_EOL;
 	}
 
 	/**
@@ -467,7 +471,7 @@ class yf_common {
 		}
 		// Try to save errors log
 		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
-			_class('user_errors', COMMON_LIB)->_track_error(implode("\n", (array)$this->USER_ERRORS));
+			_class('user_errors', COMMON_LIB)->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
 		}
 		// Set default value
 		if ($clear_error) {
@@ -1076,7 +1080,7 @@ class yf_common {
 	*/
 	function trace_string() {
 		$e = new Exception();
-		return implode("\n", array_slice(explode("\n", $e->getTraceAsString()), 1, -1));
+		return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1));
 	}
 
 	/**
@@ -1383,7 +1387,7 @@ class yf_common {
 						$this->_db_escape($_SERVER['HTTP_USER_AGENT']),			
 						$this->_db_escape($sql),
 					);
-					file_put_contents($this->SPHINX_EMPTY_LOG_PATH, implode('#|#',$out)."\n", FILE_APPEND);
+					file_put_contents($this->SPHINX_EMPTY_LOG_PATH, implode('#|#',$out).PHP_EOL, FILE_APPEND);
 				}
 			}
 			if (DEBUG_MODE || $need_meta) {

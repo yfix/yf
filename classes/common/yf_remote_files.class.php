@@ -946,7 +946,7 @@ class yf_remote_files {
 					stream_set_timeout($sock, 5);
 					$meta = stream_get_meta_data($sock);
 					if ($debug) {
-						$_debug_info .= $mailers[$n]." replied: ".$response."\n";
+						$_debug_info .= $mailers[$n]." replied: ".$response.PHP_EOL;
 					}
 					$cmds = array(
 						"HELO ".$this->SMTP_PROBE_HOST,  // Be sure to set this correctly!
@@ -956,7 +956,7 @@ class yf_remote_files {
 					);
 					// Hard error on connect -> break out
 					if (!$meta['timed_out'] && !preg_match('/^2\d\d[ -]/', $response)) {
-						$_error_msg .= "Error: ".$mailers[$n]." said: ".$response."\n";
+						$_error_msg .= "Error: ".$mailers[$n]." said: ".$response.PHP_EOL;
 						break;
 					}
 					foreach ((array)$cmds as $_cmd_num => $cmd) {
@@ -965,7 +965,7 @@ class yf_remote_files {
 						$response = fgets($sock, 4096);
 						$t = 1000 * (microtime(true) - $before);
 						if ($debug) {
-							$_debug_info .= htmlentities($cmd."\n".$response) . "(".sprintf('%.2f', $t) . " ms)\n";
+							$_debug_info .= htmlentities($cmd.PHP_EOL.$response) . "(".sprintf('%.2f', $t) . " ms)\n";
 						}
 						if (!$meta['timed_out'] && preg_match('/^5\d\d[ -]/', $response)) {
 							$_error_msg .= "Unverified address: ".$mailers[$n]." said: ".$response;
