@@ -677,7 +677,8 @@ class yf_graphics {
 		$CUR_USER_THEME	= conf('theme');
 		$CUR_LOCALE		= conf('language');
 		$CUR_SITE		= (int)conf('SITE_ID');
-		$CUR_SERVER		= (int)conf('SERVER_ID');
+		$CUR_SERVER_ID	= (int)conf('SERVER_ID');
+		$CUR_SERVER_ROLE= conf('SERVER_ROLE');
 		$RESULT = false;
 		if (!isset($this->_blocks_rules)) {
 			$this->_load_blocks_rules();
@@ -691,7 +692,8 @@ class yf_graphics {
 			$matched_theme		= false;
 			$matched_locale		= false;
 			$matched_site		= false;
-			$matched_server		= false;
+			$matched_server_id	= false;
+			$matched_server_role= false;
 			// Check matches
 			if (is_array($rule_info['methods']) && (in_array($OBJECT, $rule_info['methods']) || in_array($OBJECT.'.'.$ACTION, $rule_info['methods']))) {
 				$matched_method = true;
@@ -708,15 +710,19 @@ class yf_graphics {
 			if (is_array($rule_info['site_ids']) && in_array($CUR_SITE, $rule_info['site_ids'])) {
 				$matched_site = true;
 			}
-			if (is_array($rule_info['server_ids']) && in_array($CUR_SERVER, $rule_info['server_ids'])) {
-				$matched_server = true;
+			if (is_array($rule_info['server_ids']) && in_array($CUR_SERVER_ID, $rule_info['server_ids'])) {
+				$matched_server_id = true;
 			}
-			if ((!is_array($rule_info['methods'])		|| $matched_method)
-				&& (!is_array($rule_info['user_groups'])|| $matched_user_group)
-				&& (!is_array($rule_info['themes'])		|| $matched_theme	|| !$CUR_USER_THEME)
-				&& (!is_array($rule_info['locales'])	|| $matched_locale	|| !$CUR_LOCALE)
-				&& (!is_array($rule_info['site_ids'])	|| $matched_site	|| !$CUR_SITE)
-				&& (!is_array($rule_info['server_ids'])	|| $matched_server	|| !$CUR_SERVER)
+			if (is_array($rule_info['server_roles']) && in_array($CUR_SERVER_ROLE, $rule_info['server_roles'])) {
+				$matched_server_role = true;
+			}
+			if ((!is_array($rule_info['methods'])			|| $matched_method)
+				&& (!is_array($rule_info['user_groups'])	|| $matched_user_group)
+				&& (!is_array($rule_info['themes'])			|| $matched_theme		|| !$CUR_USER_THEME)
+				&& (!is_array($rule_info['locales'])		|| $matched_locale		|| !$CUR_LOCALE)
+				&& (!is_array($rule_info['site_ids'])		|| $matched_site		|| !$CUR_SITE)
+				&& (!is_array($rule_info['server_ids'])		|| $matched_server_id	|| !$CUR_SERVER_ID)
+				&& (!is_array($rule_info['server_roles'])	|| $matched_server_role	|| !$CUR_SERVER_ROLE)
 			) {
 				$RESULT = trim($rule_info['rule_type']) == 'ALLOW' ? true : false;
 			}

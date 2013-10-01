@@ -158,6 +158,8 @@ class yf_main {
 	public $SITE_ID					= null;
 	/** @var int @conf_skip Multi-server mode option */
 	public $SERVER_ID				= null;
+	/** @var string @conf_skip Multi-server mode option */
+	public $SERVER_ROLE				= null;
 
 	/**
 	* Engine constructor
@@ -196,6 +198,7 @@ class yf_main {
 		$this->init_cache();
 		$this->init_site_id();
 		$this->init_server_id();
+		$this->init_server_role();
 		$this->init_settings();
 		$this->spider_detection();
 		$this->init_session();
@@ -694,18 +697,33 @@ class yf_main {
 	* Try to find current server if not done yet
 	*/
 	function init_server_id() {
+		$servers = $this->get_data('servers');
+		$this->SERVER_ID = 0;
 		if (!conf('SERVER_ID')) {
-			$server_id = 1;
-			foreach ((array)$this->get_data('sys_servers') as $server) {
+			foreach ((array)$servers as $server) {
 				if ($server['hostname'] == $this->HOSTNAME) {
-					$server_id = $server['id'];
+					$this->SERVER_ID = (int)$server['id'];
 					break;
 				}
 			}
-			conf('SERVER_ID', (int)$server_id);
 		}
-		$this->SERVER_ID = (int)conf('SERVER_ID');
+		conf('SERVER_ID', (int)$this->SERVER_ID);
+		if ($this->SERVER_ID) {
+			$this->SERVER_INFO = $servers[$this->SERVER_ID];
+		}
 		return $this->SERVER_ID;
+	}
+
+	/**
+	* Try to find current server role if not done yet
+	*/
+	function init_server_role() {
+		$this->SERVER_ROLE = 'default';
+		if (!conf('SERVER_ROLE') && $this->SERVER_INFO['role']) {
+			$this->SERVER_ROLE = $this->SERVER_INFO['role'];
+			conf('SERVER_ROLE', $this->SERVER_ROLE);
+		}
+		return $this->SERVER_ROLE;
 	}
 
 	/**

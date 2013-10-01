@@ -51,8 +51,9 @@ $data = my_array_merge((array)$data, array(
 	`others` text NOT NULL default '',
 	`active` enum('1','0') NOT NULL default '1',
 	`order` int(10) unsigned NOT NULL default '0',
-	`site_ids` varchar(255) NOT NULL,
-	`server_ids` varchar(255) NOT NULL,
+	`site_ids` varchar(1000) NOT NULL,
+	`server_ids` varchar(1000) NOT NULL,
+	`server_roles` varchar(1000) NOT NULL,
 	PRIMARY KEY  (`id`)
 ",
 "blocks"			=> "

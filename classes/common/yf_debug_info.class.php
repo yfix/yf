@@ -117,7 +117,7 @@ class yf_debug_info {
 	public $ADD_ADMIN_LINKS			= true;
 	/** @var bool */
 	public $ADMIN_PATHS				= array(
-		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location=framework&theme={{THEME}}&name={{ID}}',
+		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
 		'edit_file'		=> 'object=file_manager&action=edit_item&id={{ID}}',
 		'show_db_table'	=> 'object=db_parser&table={{ID}}',
@@ -402,7 +402,7 @@ class yf_debug_info {
 			$items[$counter] = array(
 				'id'		=> ++$counter,
 				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
-				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k),
+				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
 				'storage'	=> strval($v['storage']),
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
@@ -759,31 +759,6 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_yf_settings () {
-		if (!$this->_SHOW_SETTINGS) {
-			return '';
-		}
-		$data = array(
-			'DEBUG_MODE'	=> DEBUG_MODE,
-			'DEV_MODE'		=> (int)conf('DEV_MODE'),
-			'MAIN_TYPE'		=> MAIN_TYPE,
-			'USE_CACHE'		=> (int)conf('USE_CACHE'),
-			'HOSTNAME'		=> main()->HOSTNAME,
-			'SITE_ID'		=> (int)conf('SITE_ID'),
-			'SERVER_ID'		=> (int)conf('SERVER_ID'),
-			'@LANG'			=> conf('language'),
-			'SITE_PATH'		=> SITE_PATH,
-			'PROJECT_PATH'	=> PROJECT_PATH,
-			'YF_PATH'		=> YF_PATH,
-			'WEB_PATH'		=> WEB_PATH,
-			'MEDIA_PATH'	=> MEDIA_PATH,
-			'IS_SPIDER'		=> (int)conf('IS_SPIDER'),
-		);
-		return $this->_show_key_val_table($data);
-	}
-
-	/**
-	*/
 	function _debug_ssh () {
 		if (!$this->_SHOW_SSH) {
 			return "";
@@ -1027,6 +1002,32 @@ class yf_debug_info {
 
 	/**
 	*/
+	function _debug_yf_settings () {
+		if (!$this->_SHOW_SETTINGS) {
+			return '';
+		}
+		$data = array(
+			'DEBUG_MODE'	=> DEBUG_MODE,
+			'DEV_MODE'		=> (int)conf('DEV_MODE'),
+			'MAIN_TYPE'		=> MAIN_TYPE,
+			'USE_CACHE'		=> (int)conf('USE_CACHE'),
+			'HOSTNAME'		=> main()->HOSTNAME,
+			'SITE_ID'		=> (int)conf('SITE_ID'),
+			'SERVER_ID'		=> (int)conf('SERVER_ID'),
+			'SERVER_ROLE'	=> _prepare_html(conf('SERVER_ROLE')),
+			'@LANG'			=> conf('language'),
+			'SITE_PATH'		=> SITE_PATH,
+			'PROJECT_PATH'	=> PROJECT_PATH,
+			'YF_PATH'		=> YF_PATH,
+			'WEB_PATH'		=> WEB_PATH,
+			'MEDIA_PATH'	=> MEDIA_PATH,
+			'IS_SPIDER'		=> (int)conf('IS_SPIDER'),
+		);
+		return $this->_show_key_val_table($data);
+	}
+
+	/**
+	*/
 	function _format_db_explain_result($explain_result = array()) {
 		if (empty($explain_result)) {
 			return false;
@@ -1051,7 +1052,7 @@ class yf_debug_info {
 	/**
 	* Process through admin link or just return text if links disabled
 	*/
-	function _admin_link ($type, $text = '', $just_link = false) {
+	function _admin_link ($type, $text = '', $just_link = false, $replace = array()) {
 		if (!$this->ADD_ADMIN_LINKS || !isset($this->ADMIN_PATHS[$type])) {
 			return $text;
 		}
@@ -1062,7 +1063,7 @@ class yf_debug_info {
 		if ($type == 'show_db_table') {
 			$id = str_replace(db()->DB_PREFIX, '', $id);
 		}
-		$replace = array(
+		$replace += array(
 			'{{ID}}'	=> urlencode(str_replace("\\", '/', $id)),
 			'{{THEME}}'	=> conf('theme'),
 		);
