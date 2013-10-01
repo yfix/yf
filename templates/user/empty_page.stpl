@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{if("title" ne "")}{title}{else}{execute(graphics,show_site_title)}{/if}</title>
+{execute(common,bs_theme_html)}
+{include("main_style_css")}
+{execute(graphics,show_metatags)}
+	<meta charset="utf-8">
+	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	{text}
+
+	{if("close_button" eq 1)}<div align="center"><a href="javascript:void(0)" onclick="window.close();">{t(Close)}</a></div>{/if}
+
+	{include("main_js")}
+</body>
+</html>

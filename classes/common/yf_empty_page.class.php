@@ -23,7 +23,7 @@ class yf_empty_page {
 			'close_button'	=> (int)((bool)$params['close_button']),
 			'full_width'	=> (int)((bool)$params['full_width']),
 		);
-		$output .= tpl()->parse('system/empty_page', $replace);
+		$output .= tpl()->parse('empty_page', $replace);
 		if (DEBUG_MODE && common()->EMPTY_PAGE_DEBUG_INFO && !$params['no_debug']) {
 			$output .= common()->_show_execution_time();
 			$output .= common()->show_debug_info();
