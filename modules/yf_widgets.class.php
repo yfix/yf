@@ -78,7 +78,7 @@ class yf_widgets {
 		if (!empty($GLOBALS['_widgets_from_db'])) {
 			$body = $GLOBALS['_widgets_from_db'][$FOR_COLUMN];
 			if ($body) {
-				$body = tpl()->parse_string("_widgets_".$FOR_COLUMN."__virtual", "", $body);
+				$body = tpl()->parse_string($body, array(), "_widgets_".$FOR_COLUMN."__virtual");
 			}
 			return $body;
 		// Use default widgets scheme from stpls

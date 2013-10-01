@@ -370,12 +370,15 @@ class yf_tpl {
 	/**
 	* Wrapper to parse given template string
 	*/
-	function parse_string($name = '', $replace = array(), $string = '', $params = array()) {
+	function parse_string($string = '', $replace = array(), $name = '', $params = array()) {
 		if (!strlen($string)) {
 			$string = ' ';
 		}
+		if (!$name) {
+			$name = 'auto__'.abs(crc32($string));
+		}
 		$params['string'] = $string;
-		return $this->parse(!empty($name) ? $name : abs(crc32($string)), $replace, $params);
+		return $this->parse($name, $replace, $params);
 	}
 
 	/**

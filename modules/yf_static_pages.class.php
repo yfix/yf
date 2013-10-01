@@ -78,7 +78,7 @@ class yf_static_pages {
 				);
 			}
 		}
-		$content = tpl()->parse_string("static_page__".$page_info["id"], array(), stripslashes($page_info["text"]));
+		$content = tpl()->parse_string(stripslashes($page_info["text"]), array(), "static_page__".$page_info["id"]);
 		// Process template
 		$replace = array(
 			"id"				=> intval($page_info["id"]),

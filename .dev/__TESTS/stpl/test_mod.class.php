@@ -8,11 +8,7 @@ class test_mod {
 				'name'	=> 'name_'.$i,
 			);
 		}
-		return tpl()->parse_string('_test_', array('data' => $data), '
-{foreach("data")}
-	<li>{if("#.id" mod 4)}_MOD_{/if} {#.name}</li>
-{/foreach}
-		');
+		return tpl()->parse_string('{foreach("data")} <li>{if("#.id" mod 4)}_MOD_{/if} {#.name}</li> {/foreach}', array('data' => $data));
 #	<li>{if("#.id" mod 4)}_MOD_{/if} {if("#.id" mod 3 or "#.id" mod 5)}!!!{/if} {#.name}</li>
 	}
 }

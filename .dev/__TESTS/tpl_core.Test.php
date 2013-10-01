@@ -5,7 +5,7 @@ require YF_PATH."classes/yf_main.class.php";
 new yf_main("user", 1, 0);
 
 function _tpl($stpl_text = "", $replace = array(), $name = "") {
-	return tpl()->parse_string($name, $replace, $stpl_text);
+	return tpl()->parse_string($stpl_text, $replace, $name);
 }
 
 class tpl_core_test extends PHPUnit_Framework_TestCase {
