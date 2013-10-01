@@ -21,6 +21,7 @@ class yf_blocks {
 		$this->_locales = $array_all + (array)module('locale_editor')->_get_locales();
 		$this->_sites = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('sites').' WHERE active="1"');
 		$this->_servers = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('core_servers').' WHERE active="1"');
+		$this->_server_roles = $array_all + (array)db()->get_2d('SELECT role,role FROM '.db('core_servers').' WHERE active="1" AND role !="" GROUP BY role');
 	}
 
 	/**
@@ -184,6 +185,7 @@ class yf_blocks {
 			->data('locales', $this->_locales)
 			->data('site_ids', $this->_sites, array('desc' => 'Sites'))
 			->data('server_ids', $this->_servers, array('desc' => 'Servers'))
+			->data('server_roles', $this->_server_roles, array('desc' => 'Server roles'))
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_rule&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_rule&id=%d')
@@ -229,6 +231,7 @@ class yf_blocks {
 			->multi_select_box('locales', $this->_locales, array('edit_link' => './?object=locale_editor'))
 			->multi_select_box('site_ids', $this->_sites, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
 			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
+			->multi_select_box('server_roles', $this->_server_roles, array('edit_link' => './?object=manage_servers', 'desc' => 'Server roles'))
 			->number('order', 'Rule Processing Order')
 			->active_box()
 			->save_and_back();
@@ -279,6 +282,7 @@ class yf_blocks {
 			->multi_select_box('locales', $this->_locales, array('edit_link' => './?object=locale_editor'))
 			->multi_select_box('site_ids', $this->_sites, array('edit_link' => './?object=manage_sites', 'desc' => 'Sites'))
 			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
+			->multi_select_box('server_roles', $this->_server_roles, array('edit_link' => './?object=manage_servers', 'desc' => 'Server roles'))
 			->number('order', 'Rule Processing Order')
 			->active_box()
 			->save_and_back();
