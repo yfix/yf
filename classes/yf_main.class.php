@@ -701,6 +701,9 @@ class yf_main {
 		$this->SERVER_ID = 0;
 		if (!conf('SERVER_ID')) {
 			foreach ((array)$servers as $server) {
+// TODO: try to also get server id from console: "hostname --all-ip-addresses"
+// TODO: this need to be cached to not fork exec on every request
+#		$ips = exec('hostname --all-ip-addresses');
 				if ($server['hostname'] == $this->HOSTNAME) {
 					$this->SERVER_ID = (int)$server['id'];
 					break;
