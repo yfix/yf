@@ -1,0 +1,6 @@
+[submodule "libs/php5-utf8"]
+	path = libs/php5-utf8
+	url = git@github.com:yfix/php5-utf8.git
+[submodule "libs/lessphp"]
+	path = libs/lessphp
+	url = git@github.com:yfix/lessphp.git
