@@ -51,7 +51,7 @@ class yf_ssh {
 		if (!$this->DRIVER) {
 			$this->DRIVER = "phpseclib";
 		}
-		$test_phpseclib_path = YF_PATH."libs/phpseclib/Net/SSH2.php";
+		$test_phpseclib_path = YF_PATH."libs/phpseclib/phpseclib/Net/SSH2.php";
 		if ($this->DRIVER == "phpseclib" && !file_exists($test_phpseclib_path)) {
 			trigger_error("phpseclib Net_SSH2 not found", E_USER_WARNING);
 			return false;
