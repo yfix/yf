@@ -23,47 +23,47 @@ class yf_shop_supplier_panel {
 	}
 
 	function products($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_products', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function product_edit($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_products', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function product_add($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_products', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function product_delete($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_products', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function orders($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_orders', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_orders', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function order_view($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_orders', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_orders', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function category_mapping($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_categories', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function category_mapping_add($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_categories', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function category_mapping_edit($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_categories', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function category_mapping_delete($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_categories', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function import_xls($params = array()) {
-		$func = __FUNCTION__; return _class(__CLASS__.'_import', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	function import_products() {
@@ -71,13 +71,13 @@ class yf_shop_supplier_panel {
 	}
 
 	function filter_save() {
-		$func = __FUNCTION__; return _class(__CLASS__.'_filter', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_filter', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
 	/**
 	* Hook
 	*/
 	function _show_filter() {
-		$func = __FUNCTION__; return _class(__CLASS__.'_filter', 'admin_modules/'.__CLASS__.'/')->$func($params);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_filter', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 }
