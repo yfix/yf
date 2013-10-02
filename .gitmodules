@@ -19,3 +19,6 @@
 [submodule "libs/php-sass"]
 	path = libs/php-sass
 	url = git@github.com:yfix/php-sass.git
+[submodule "libs/smarty"]
+	path = libs/smarty
+	url = git@github.com:yfix/smarty.git
