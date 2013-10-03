@@ -217,7 +217,7 @@ class yf_html_controls {
 				.'<input type="checkbox" name="'.$name.'" id="'.$id.'" value="'.$value.'"'
 					.($selected ? ' checked="checked"' : '')
 					.($add_str ? ' '.$add_str : '')
-				.'>'
+				.'> &nbsp;' // Please do not remove this whitespace :)
 				.($translate ? t($extra['desc']) : $extra['desc'])
 			.'</label>';
 	}

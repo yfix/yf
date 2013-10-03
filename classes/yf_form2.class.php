@@ -300,7 +300,7 @@ class yf_form2 {
 		}
 		return '
 			<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
-				.($extra['desc'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
+				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
 				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '')
 
 					.(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
@@ -415,7 +415,7 @@ class yf_form2 {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
 		$extra['name'] = $name;
-		$extra['desc'] = $desc;
+		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
 
 		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
 		$body = $this->_row_html('<input '.$this->_attrs($extra, $attrs_names).'>', $extra, $replace);
@@ -467,7 +467,7 @@ class yf_form2 {
 		$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
 		$extra['class'] = 'ckeditor form-control '.$this->_prepare_css_class('', $r[$extra['name']], $extra);
 		$extra['name'] = $name;
-		$extra['desc'] = $desc;
+		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
 
 		$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows');
 		$body = $this->_row_html('<textarea '.$this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $this->_htmlchars($value) : $value).'</textarea>', $extra, $replace);
@@ -963,7 +963,7 @@ class yf_form2 {
 		$extra['errors'] = common()->_get_error_messages();
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
 		$extra['name'] = $name;
-		$extra['desc'] = $desc;
+		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
 		$extra['id'] = $name;
 
 		$selected = $r[$name];
@@ -1033,8 +1033,8 @@ class yf_form2 {
 		$value = isset($extra['value']) ? $extra['value'] : 'Save';
 		$r = $replace ? $replace : $this->_replace;
 		$extra['errors'] = common()->_get_error_messages();
-		$extra['id'] = $extra['id'] ?: $name;
-		$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : '') : '';
+		$extra['id'] = $extra['id'] ?: ($name ?: strtolower($value));
+		$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
 		if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
 			$extra['link_url'] = '';
 		}
@@ -1133,7 +1133,8 @@ class yf_form2 {
 		$extra['errors'] = common()->_get_error_messages();
 		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
 		$extra['name'] = $name;
-		$extra['desc'] = $extra['no_label'] ? '' : $desc;
+		$extra['desc'] = !$extra['no_label'] && !$this->_params['no_label'] ? $desc : '';
+
 		$value = $r[$name];
 		if (is_array($extra['data'])) {
 			if (isset($extra['data'][$value])) {
@@ -1234,7 +1235,11 @@ class yf_form2 {
 		$extra['id'] = $name;
 		$extra['name'] = $name;
 
-		$body = $this->_row_html(_class('html_controls')->$func($extra), $extra, $replace);
+		$content = _class('html_controls')->$func($extra);
+		if ($extra['no_label'] || $this->_params['no_label']) {
+			$extra['desc'] = '';
+		}
+		$body = $this->_row_html($content, $extra, $replace);
 
 		if ($this->_chained_mode) {
 			$this->_body[] = $body;
@@ -1308,8 +1313,8 @@ class yf_form2 {
 
 	/**
 	*/
-	function check_box($name, $values, $extra = array(), $replace = array()) {
-		return $this->_html_control($name, $values, $extra, $replace, 'check_box');
+	function check_box($name, $value = '', $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $value, $extra, $replace, 'check_box');
 	}
 
 	/**

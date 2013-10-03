@@ -1,5 +1,5 @@
 {if("is_logged_in" eq 0)}
-	{include("small_login_form")}
+	{execute(login_form,_small_form)}
 {else}
 	<div class="left_menu">
 		<h4>{t(Site Menu)}</h4>
