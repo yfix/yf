@@ -763,7 +763,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_SSH) {
 			return "";
 		}
-		return $this->_show_key_val_table(_class('ssh')->_debug);
+#		return $this->_show_key_val_table(_class('ssh')->_debug);
 	}
 
 	/**
