@@ -20,11 +20,11 @@ if (!function_exists('ssh_exec_all')) {
 		if (empty($servers)) {
 			$server_groups = array();
 			$server_groups_names = array();
-			foreach(db_pf()->get_all('SELECT * FROM '.db_pf('server_group').'') as $a) {
+			foreach(db_pf()->get_all('SELECT * FROM '.db_pf('server_group')) as $a) {
 				$server_groups[$a['id']] = $a['name'];
 				$server_groups_names[$a['name']] = $a['id'];
 			}
-			$servers = db_pf()->get_all('SELECT * FROM '.db_pf('servers').' WHERE `active`='1'');
+			$servers = db_pf()->get_all('SELECT * FROM '.db_pf('servers').' WHERE active="1"');
 			$servers_ids_by_group = array();
 			foreach ($servers as $a) {
 				$servers_ids_by_group[$a['group']][$a['id']] = $a['id'];
