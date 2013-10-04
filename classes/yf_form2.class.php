@@ -187,6 +187,10 @@ class yf_form2 {
 		$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
 		$body = '<form '.$this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype')).'>';
+		$body .= '<fieldset>';
+		if ($extra['legend']) {
+			$body .= '<legend>'.$this->_htmlchars(t($extra['legend'])).'</legend>';
+		}
 
 		if ($this->_chained_mode) {
 			$this->_body[__FUNCTION__] = $body;
@@ -204,7 +208,8 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$body = '</form>';
+		$body = '</fieldset>';
+		$body .= '</form>';
 		if ($this->_chained_mode) {
 			$this->_body[__FUNCTION__] = $body;
 			return $this;

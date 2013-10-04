@@ -19,7 +19,7 @@ class yf_register {
 		$a = $_POST;
 		$a['redirect_link'] = './?object='.$_GET['object'].'&action=success';
 // TODO: generate confirmation code and send emails
-		return form($a)
+		return form($a, array('legend' => 'Registration'))
 			->validate($validate_rules)
 			->db_insert_if_ok('user', array('login','email','password'), null, array('on_success_text' => 'Your account was created successfully!'))
 			->login()
