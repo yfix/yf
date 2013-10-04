@@ -24,8 +24,8 @@ class yf_login_form {
 	function _small_form() {
 		return form(array('form_action' => './?task=login'), array('class' => 'form-inline', 'no_label' => 1))
 			->validate(array('login' => 'trim|required', 'password' => 'trim|required'))
-			->login()
-			->password()
+			->login(array('class' => 'input-medium'))
+			->password(array('class' => 'input-medium'))
 			->check_box('remember_me')
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
 		;

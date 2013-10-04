@@ -589,7 +589,6 @@ class yf_form2 {
 	/**
 	*/
 	function password($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
@@ -616,7 +615,6 @@ class yf_form2 {
 	/**
 	*/
 	function file($name, $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -637,8 +635,10 @@ class yf_form2 {
 	* Custom
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
@@ -662,8 +662,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
@@ -752,7 +754,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
