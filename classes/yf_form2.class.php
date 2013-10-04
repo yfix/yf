@@ -1898,7 +1898,7 @@ class yf_form2 {
 				$func = $rule[0];
 				$param = $rule[1];
 				// PHP pure function, from core or user
-				if (function_exists($func)) {
+				if (is_string($func) && function_exists($func)) {
 					$data[$name] = $func($data[$name]);
 				} elseif (is_callable($func)) {
 					$is_ok = $func($data[$name], null, $data);
