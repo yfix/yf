@@ -1777,99 +1777,103 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function _validate_rules_array_from_raw($raw = '') {
+		$rules = array();
+		// At first, we merging all rules sets variants into one array
+		if (is_string($raw)) {
+			foreach((array)explode('|', $raw) as $_item) {
+				$rules[] = array($_item, null);
+			}
+		} elseif (is_array($raw)) {
+			foreach((array)$raw as $_raw) {
+				if (is_string($_raw)) {
+					foreach((array)explode('|', $_raw) as $_item) {
+						$rules[] = array($_item, null);
+					}
+				} elseif (is_callable($_raw)) {
+					$rules[] = array($_raw, null);
+				}
+			}
+		} elseif (is_callable($raw)) {
+			$rules[] = array($raw, null);
+		}
+		return $rules;
+	}
+
+	/**
 	* Examples of validate rules setting:
 	* 	'name1' => 'trim|required',
 	* 	'name2' => array('trim', 'required'),
 	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
 	* 	'name4' => array('trim|required', function() { return true; } ),
 	* 	'name5' => array('trim', 'required', function() { return true; } ),
-	* 	'__all_before__' => 'trim',
-	* 	'__all_after__' => 'some_method2|some_method3',
+	* 	'__before__' => 'trim',
+	* 	'__after__' => 'some_method2|some_method3',
 	*/
 	function _validate_rules_cleanup($validate_rules = array()) {
 		// Add these rules to all validation rules, before them
 		$_name = '__before__';
-		$all_before = '';
+		$all_before = array();
 		if (isset($validate_rules[$_name])) {
-			$all_before = $validate_rules[$_name];
-			if (!is_array($all_before)) {
-				$all_before = explode('|', $all_before);
-			}
+			$all_before = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
 			unset($validate_rules[$_name]);
 		}
 
 		// Add these rules to all validation rules, after them
 		$_name = '__after__';
-		$all_after = '';
+		$all_after = array();
 		if (isset($validate_rules[$_name])) {
-			$all_after = $validate_rules[$_name];
-			if (!is_array($all_after)) {
-				$all_after = explode('|', $all_after);
-			}
+			$all_after = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
 			unset($validate_rules[$_name]);
 		}
 		unset($_name);
 
 		$out = array();
-		foreach ((array)$validate_rules as $name => $rules) {
-			if (empty($rules)) {
-				continue;
+		foreach ((array)$validate_rules as $name => $raw) {
+			$rules = (array)$this->_validate_rules_array_from_raw($raw);
+			if ($all_before) {
+				$tmp = $all_before;
+				foreach((array)$rules as $_item) {
+					$tmp[] = $_item;
+				}
+				$rules = $tmp;
+				unset($tmp);
 			}
-			$_rules = array();
-			if (is_array($rules)) {
-				if ($all_before) {
-// TODO: fix me
-#					$tmp = $all_before;
-#					foreach ($rules as $v) {
-#						$tmp[] = $v;
-#					}
-#					$rules = $tmp;
-#					unset($tmp);
-#					$rules = $all_before + $rules;
+			if ($all_after) {
+				$tmp = $rules;
+				foreach((array)$all_after as $_item) {
+					$tmp[] = $_item;
 				}
-				if ($all_after) {
-#					$rules = $rules + $all_after;
-				}
-			} else {
-				if ($all_before) {
-#					$rules = array($all_before, $rules);
-				}
-				if ($all_after) {
-#					$rules = array($rules, $all_after);
-				}
+				$rules = $tmp;
+				unset($tmp);
 			}
-			foreach ((array)$rules as $rule) {
-				if (is_callable($rule)) {
-					$_rules[] = $rule;
-				} elseif (is_string($rule)) {
-					$rule = explode('|', $rule);
+			// Here we do last parse of the rules params like 'matches[user.email]' into rule item array second element
+			foreach ((array)$rules as $k => $rule) {
+				if (!is_string($rule[0])) {
+					continue;
 				}
-#				if (is_array($rule)) {
-#					foreach ($rule as $r2) {
-#						if (false !== strpos($r2, '|')) {
-#						}
-#					}
-#				}
-				if (is_array($rule)) {
-					foreach ($rule as $r2) {
-						$r2 = trim($r2);
-						$r_param = null;
-						// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
-						$pos = strpos($r2, '[');
-						if ($pos !== false) {
-							$r_param = trim(trim(substr($r2, $pos), ']['));
-							$r2 = trim(substr($r2, 0, $pos));
-						}
-						// Ensure we will not call duplicate rules on same field
-						$_rules[$r2] = array($r2, $r_param);
-					}
+				$val = trim($rule[0]);
+				$param = null;
+				// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
+				$pos = strpos($val, '[');
+				if ($pos !== false) {
+					$param = trim(trim(substr($val, $pos), ']['));
+					$val = trim(substr($val, 0, $pos));
 				}
+				if (!is_callable($val) && empty($val)) {
+					unset($rules[$k]);
+					continue;
+				}
+				$rules[$k] = array(
+					0	=> $val,
+					1	=> $param,
+				);
 			}
-			if ($_rules) {
-				$out[$name] = $_rules;
+			if ($rules) {
+				$out[$name] = array_values($rules); // array_values needed here to make array keys straight, unit tests will pass fine
 			}
 		}
-#echo '<pre>'.print_r($out, 1).'</pre>';
 		return $out;
 	}
 
@@ -1881,20 +1885,17 @@ class yf_form2 {
 			foreach ((array)$rules as $rule) {
 				$is_ok = true;
 				$error_msg = '';
-				if (is_callable($rule)) {
-					$is_ok = $rule($data[$name], null, $data);
+				$func = $rule[0];
+				$param = $rule[1];
+				// PHP pure function, from core or user
+				if (function_exists($func)) {
+					$data[$name] = $func($data[$name]);
+				} elseif (is_callable($func)) {
+					$is_ok = $func($data[$name], null, $data);
 				} else {
-					$func = $rule[0];
-					$param = $rule[1];
-					// PHP pure function, from core or user
-					if (function_exists($func)) {
-						$data[$name] = $func($data[$name]);
-					// Method from 'validate'
-					} else {
-						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
-						if (!$is_ok && empty($error_msg)) {
-							$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
-						}
+					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+					if (!$is_ok && empty($error_msg)) {
+						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
 					}
 				}
 				if (!$is_ok) {
