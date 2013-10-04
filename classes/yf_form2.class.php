@@ -404,8 +404,13 @@ class yf_form2 {
 			$extra['class'] .= ' input-'.$extra['sizing'];
 		}
 		$vr = $this->_validate_rules[$name];
-		if ($vr['required']) {
-			$extra['required'] = 1;
+		if ($vr) {
+			foreach ((array)$vr as $rule) {
+				if ($rule[0] == 'required') {
+					$extra['required'] = 1;
+					break;
+				}
+			}
 		}
 		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
 		if ($vr['min_length'] && !isset($extra['pattern'])) {
