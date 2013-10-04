@@ -51,7 +51,7 @@ class yf_blocks {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name'	=> 'trim|required|alpha_dash|is_unique[blocks.name]',
+				'name'	=> 'trim|required|alpha_dash', //|is_unique[blocks.name]
 				'type'	=> 'trim|required',
 			))
 			->db_insert_if_ok('blocks', array('type','name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
