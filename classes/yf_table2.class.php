@@ -526,7 +526,7 @@ class yf_table2 {
 			'desc'	=> $desc,
 			'func'	=> function($field, $params, $row, $instance_params) {
 				$extra = $params['extra'];
-				$text = str_replace(' ', '&nbsp;', _format_date($field, $params['desc']));
+				$text = str_replace(' ', '&nbsp;', _format_date($field, $extra['format']));
 				return _class('table2')->_apply_badges($text, $extra, $field);
 			}
 		);
