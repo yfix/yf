@@ -650,7 +650,7 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		$extra['type'] = 'text';
+		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['prepend'] = '<i class="icon-user"></i>';
 		if (!$name) {
 			$name = 'login';
@@ -1152,9 +1152,11 @@ class yf_form2 {
 
 		$content = '';
 		if ($extra['link']) {
-			$content = '<a href="'.$extra['link'].'" class="btn btn-mini btn-xs">'.$value.'</a>';
+			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
+			$content = '<a href="'.$extra['link'].'" class="'.$extra['class'].'">'.$value.'</a>';
 		} else {
-			$content = '<span class="'.$this->_prepare_css_class('label label-info', $r[$name], $extra).'">'.$value.'</span>';
+			$extra['class'] = $extra['class'] ?: 'label label-info';
+			$content = '<span class="'.$this->_prepare_css_class($extra['class'], $r[$name], $extra).'">'.$value.'</span>';
 		}
 		$body = $this->_row_html($content, $extra, $replace);
 
