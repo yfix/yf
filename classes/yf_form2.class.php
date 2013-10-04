@@ -1781,20 +1781,20 @@ class yf_form2 {
 		// At first, we merging all rules sets variants into one array
 		if (is_string($raw)) {
 			foreach((array)explode('|', $raw) as $_item) {
-				$rules[] = array($_item);
+				$rules[] = array($_item, null);
 			}
 		} elseif (is_array($raw)) {
 			foreach((array)$raw as $_raw) {
 				if (is_string($_raw)) {
 					foreach((array)explode('|', $_raw) as $_item) {
-						$rules[] = array($_item);
+						$rules[] = array($_item, null);
 					}
 				} elseif (is_callable($_raw)) {
-					$rules[] = array($_raw);
+					$rules[] = array($_raw, null);
 				}
 			}
 		} elseif (is_callable($raw)) {
-			$rules[] = array($raw);
+			$rules[] = array($raw, null);
 		}
 		return $rules;
 	}
@@ -1829,9 +1829,6 @@ class yf_form2 {
 
 		$out = array();
 		foreach ((array)$validate_rules as $name => $raw) {
-			if (empty($raw)) {
-				continue;
-			}
 			$rules = (array)$this->_validate_rules_array_from_raw($raw);
 			if ($all_before) {
 				$tmp = $all_before;
@@ -1862,13 +1859,17 @@ class yf_form2 {
 					$param = trim(trim(substr($val, $pos), ']['));
 					$val = trim(substr($val, 0, $pos));
 				}
+				if (!is_callable($val) && empty($val)) {
+					unset($rules[$k]);
+					continue;
+				}
 				$rules[$k] = array(
 					0	=> $val,
 					1	=> $param,
 				);
 			}
 			if ($rules) {
-				$out[$name] = $rules;
+				$out[$name] = array_values($rules); // array_values needed here to make array keys straight, unit tests will pass fine
 			}
 		}
 		return $out;
@@ -1884,18 +1885,15 @@ class yf_form2 {
 				$error_msg = '';
 				$func = $rule[0];
 				$param = $rule[1];
-				if (is_callable($func)) {
+				// PHP pure function, from core or user
+				if (function_exists($func)) {
+					$data[$name] = $func($data[$name]);
+				} elseif (is_callable($func)) {
 					$is_ok = $func($data[$name], null, $data);
 				} else {
-					// PHP pure function, from core or user
-					if (function_exists($func)) {
-						$data[$name] = $func($data[$name]);
-					// Method from 'validate'
-					} else {
-						$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
-						if (!$is_ok && empty($error_msg)) {
-							$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
-						}
+					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+					if (!$is_ok && empty($error_msg)) {
+						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
 					}
 				}
 				if (!$is_ok) {
