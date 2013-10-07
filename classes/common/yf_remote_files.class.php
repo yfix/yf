@@ -16,11 +16,11 @@ class yf_remote_files {
 	/** @var string */
 	public $SMTP_PROBE_ADDRESS	= 'admin@test.com';
 	/** @var string @conf_skip */
-	public $DEF_USER_AGENT		= "Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 5.1)";
+	public $DEF_USER_AGENT		= 'Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 5.1)';
 	/** @var bool @conf_skip */
 	public $REMOTE_ALLOW_CACHE	= true;
 	/** @var string @conf_skip */
-	public $REMOTE_CACHE_DIR	= "uploads/remote_cache/";
+	public $REMOTE_CACHE_DIR	= 'uploads/remote_cache/';
 	/** @var int @conf_skip */
 	public $CURL_DEF_CONNECT_TIMEOUT	= 15;
 	/** @var int @conf_skip */
@@ -30,9 +30,9 @@ class yf_remote_files {
 	/** @var int @conf_skip */
 	public $CURL_DEF_MAX_THREADS	= 20;
 	/** @var int @conf_skip */
-	public $CURL_DEF_INTERFACE		= "";
+	public $CURL_DEF_INTERFACE		= '';
 	/** @var int @conf_skip */
-	public $CURL_DEF_HEADER		= "";
+	public $CURL_DEF_HEADER		= '';
 	/** @var bool */
 	public $CURL_DEBUG		= false;
 	/** @var bool */
@@ -41,14 +41,14 @@ class yf_remote_files {
 	/**
 	*/
 	function __construct() {
-		$this->_is_avail_setopt_array = function_exists("curl_setopt_array");
+		$this->_is_avail_setopt_array = function_exists('curl_setopt_array');
 	}
 
 	/**
 	* Framework constructor
 	*/
 	function _init() {
-		if ($GLOBALS["USE_CURL_DEBUG"]) {
+		if ($GLOBALS['USE_CURL_DEBUG']) {
 			$this->DEBUG = true;
 		}
 	}
@@ -56,26 +56,26 @@ class yf_remote_files {
 	/**
 	* Correctly escaping spaces symbols inside url, while not touching other symbols that will be encoded by urlencode (not needed here)
 	*/
-	function _fix_url($url = "") {
-		return str_replace(array(" ","\t","\r","\n"), array("%20","%20","",""), trim($url));
+	function _fix_url($url = '') {
+		return str_replace(array(' ',"\t","\r","\n"), array('%20','%20','',''), trim($url));
 	}
 
 	/**
 	* Do upload file to server
 	*/
-	function do_upload ($tmp_file_path = "", $new_path = "", $new_file_name = "") {
+	function do_upload ($tmp_file_path = '', $new_path = '', $new_file_name = '') {
 		// First we need to move file to our temporary folder that is shown throgh web
-		$new_tmp_file_name = abs(crc32(microtime(true))).".upload.tmp";
+		$new_tmp_file_name = abs(crc32(microtime(true))).'.upload.tmp';
 		$new_tmp_file_path = INCLUDE_PATH. SITE_UPLOADS_DIR. $new_tmp_file_name;
 		move_uploaded_file($tmp_file_path, $new_tmp_file_path);
 		// Prepare CURL
-		$url_to_post = REMOTE_STORAGE_URL."?action=upload";
-		$array_to_post[] = "file_name=".urlencode(WEB_PATH. str_replace(array(INCLUDE_PATH, REAL_PATH, WEB_PATH), "", $new_tmp_file_path));
-		$array_to_post[] = "new_path=".urlencode($new_path);
-		$array_to_post[] = "new_file_name=".urlencode($new_file_name);
+		$url_to_post = REMOTE_STORAGE_URL.'?action=upload';
+		$array_to_post[] = 'file_name='.urlencode(WEB_PATH. str_replace(array(INCLUDE_PATH, REAL_PATH, WEB_PATH), '', $new_tmp_file_path));
+		$array_to_post[] = 'new_path='.urlencode($new_path);
+		$array_to_post[] = 'new_file_name='.urlencode($new_file_name);
 		if ($ch = curl_init()) {
 			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, implode("&", $array_to_post));
+			curl_setopt($ch, CURLOPT_POSTFIELDS, implode('&', $array_to_post));
 			curl_setopt($ch, CURLOPT_URL, $url_to_post);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			$result = curl_exec ($ch);
@@ -91,7 +91,7 @@ class yf_remote_files {
 	/**
 	* Delete file from server
 	*/
-	function do_delete ($path_to_file = "") {
+	function do_delete ($path_to_file = '') {
 		if ($this->file_is_exists($path_to_file)) {
 			@unlink($path_to_file);
 		}
@@ -100,10 +100,10 @@ class yf_remote_files {
 	/**
 	* Check if file exists on the server
 	*/
-	function file_is_exists ($path_to_file = "") {
+	function file_is_exists ($path_to_file = '') {
 		// Check if file is remote
 		$uri	= @parse_url($path_to_file);
-		return (int)(bool) (in_array($uri["scheme"], array("http", "https", "ftp")) && !empty($uri["host"]) ? $this->filemtime_remote($path_to_file) : file_exists($path_to_file));
+		return (int)(bool) (in_array($uri['scheme'], array('http', 'https', 'ftp')) && !empty($uri['host']) ? $this->filemtime_remote($path_to_file) : file_exists($path_to_file));
 	}
 
 	/**
@@ -115,7 +115,7 @@ class yf_remote_files {
 		$h		= @fsockopen($uri['host'], $uri['port'] ? $uri['port'] : 80, $errno, $errstr, $CONNECTION_TIMEOUT);
 		if (!$h) return 0;
 		$result = 0;
-		fputs($h, "HEAD ".$this->_fix_url($uri['path'])." HTTP/1.1\r\nHost: ".$uri['host']."\r\n\r\n");
+		fputs($h, 'HEAD '.$this->_fix_url($uri['path'])." HTTP/1.1\r\nHost: ".$uri['host']."\r\n\r\n");
 		while (!feof($h)) {
 			$line = fgets($h, 1024);
 			if (!trim($line)) break;
@@ -136,14 +136,14 @@ class yf_remote_files {
 	/**
 	* Get remote file size
 	*/
-	function remote_file_size($url = "") {
+	function remote_file_size($url = '') {
 		$url = $this->_fix_url($url);
 		$tmp = @parse_url($url);
-		$sch = $tmp["scheme"];
-		if (($sch != "http") && ($sch != "https") && ($sch != "ftp") && ($sch != "ftps")) {
+		$sch = $tmp['scheme'];
+		if (($sch != 'http') && ($sch != 'https') && ($sch != 'ftp') && ($sch != 'ftps')) {
 			return false;
 		}
-		if (($sch == "http") || ($sch == "https")) {
+		if (($sch == 'http') || ($sch == 'https')) {
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_NOBODY, true);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -161,7 +161,7 @@ class yf_remote_files {
 			}
 			return (int)$content_length;
 		}
-		if (($sch == "ftp") || ($sch == "ftps")) {
+		if (($sch == 'ftp') || ($sch == 'ftps')) {
 			$server = @parse_url($url, PHP_URL_HOST);
 			$port = @parse_url($url, PHP_URL_PORT);
 			$path = @parse_url($url, PHP_URL_PATH);
@@ -174,16 +174,16 @@ class yf_remote_files {
 				$port = 21;
 			}
 			if (!$user) {
-				$user = "anonymous";
+				$user = 'anonymous';
 			}
 			if (!$pass) {
-				$pass = "phpos@";
+				$pass = 'phpos@';
 			}
 			switch ($sch) {
-				case "ftp":
+				case 'ftp':
 					$ftpid = ftp_connect($server, $port);
 					break;
-				case "ftps":
+				case 'ftps':
 					$ftpid = ftp_ssl_connect($server, $port);
 					break;
 			}
@@ -211,17 +211,17 @@ class yf_remote_files {
 	* @param	array	$url_options	Array of request options
 	* @return	string
 	*/
-	function get_remote_page($url = "", $cache_ttl = -1, $url_options = array()) {
+	function get_remote_page($url = '', $cache_ttl = -1, $url_options = array()) {
 		if (empty($url)) {
 			return false;
 		}
 		$id = $url;
-		$result = "";
+		$result = '';
 		// Try to get from cache
 		if ($this->REMOTE_ALLOW_CACHE && $cache_ttl != -1) {
 			$cache_dir	= INCLUDE_PATH. $this->REMOTE_CACHE_DIR;
 			$cache_name	= md5($url);
-			$cache_path	= $cache_dir.$cache_name[0]."/".$cache_name[1]."/".$cache_name;
+			$cache_path	= $cache_dir.$cache_name[0].'/'.$cache_name[1].'/'.$cache_name;
 			if (file_exists($cache_path)) {
 				if ($cache_ttl && filemtime($cache_path) < (time() - $cache_ttl)) {
 					unlink($cache_path);
@@ -233,18 +233,18 @@ class yf_remote_files {
 		$url = $this->_fix_url($url);
 
 		$p = @parse_url($url);
-		if (!array_key_exists("scheme", $p) || !array_key_exists("host", $p) || !in_array($p["scheme"], array("http", "https", "ftp"))) {
+		if (!array_key_exists('scheme', $p) || !array_key_exists('host', $p) || !in_array($p['scheme'], array('http', 'https', 'ftp'))) {
 			return false;
 		}
-		if (!isset($GLOBALS["_curl_requests_info"])) {
-			$GLOBALS["_curl_requests_info"] = array();
+		if (!isset($GLOBALS['_curl_requests_info'])) {
+			$GLOBALS['_curl_requests_info'] = array();
 		}
 		if (!$ch = curl_init()) {
 			return false;
 		}
 		$file_handles	= array();
 
-		$is_ftp_url = ($p["scheme"] == "ftp");
+		$is_ftp_url = ($p['scheme'] == 'ftp');
 
 		curl_setopt($ch, CURLOPT_URL,	$url);
 		$curl_opts = $this->_set_curl_options($url_options, $is_ftp_url);
@@ -257,25 +257,25 @@ class yf_remote_files {
 		}
 		// Download file efficiently. Do not move up! 
 		// Should be set after CURLOPT_RETURNTRANSFER !
-		if ($url_options["save_path"]) {
-			$save_dir = dirname($url_options["save_path"]);
+		if ($url_options['save_path']) {
+			$save_dir = dirname($url_options['save_path']);
 			if (!file_exists($save_dir)) {
 				mkdir($save_dir, 0777, true);
 			}
-			$file_handles[$url] = fopen($url_options["save_path"], "w");
+			$file_handles[$url] = fopen($url_options['save_path'], 'w');
 			curl_setopt($ch, CURLOPT_FILE,	$file_handles[$url]);
 		}
 		$result = curl_exec($ch);
 
 		// Get lot of details about connections done
 		$info = curl_getinfo($ch);
-		$info["CURL_ERRNO"]	= curl_errno($ch);
-		$info["CURL_ERROR"]	= curl_error($ch);
-		$GLOBALS["_curl_requests_info"][$id] = $info;
+		$info['CURL_ERRNO']	= curl_errno($ch);
+		$info['CURL_ERROR']	= curl_error($ch);
+		$GLOBALS['_curl_requests_info'][$id] = $info;
 
 		curl_close ($ch);
 		// Close file handles after curl_close to receive good file
-		if ($url_options["save_path"] && $file_handles[$url]) {
+		if ($url_options['save_path'] && $file_handles[$url]) {
 			@fclose($file_handles[$url]);
 		}
 
@@ -293,8 +293,8 @@ class yf_remote_files {
 	* For internal use by _multi_request
 	*/
 	function _curl_use_http_queue_item($id, $details) {
-		$url = $details["url"];
-		$url_options = $details["options"];
+		$url = $details['url'];
+		$url_options = $details['options'];
 
 		$this->_curl_threads[$id] = curl_init();
 		if (!$this->_curl_threads[$id]) {
@@ -316,19 +316,19 @@ class yf_remote_files {
 		}
 		// Download file efficiently. Do not move up! 
 		// Should be set after CURLOPT_RETURNTRANSFER !
-		if ($url_options["save_path"]) {
-			$save_dir = dirname($url_options["save_path"]);
+		if ($url_options['save_path']) {
+			$save_dir = dirname($url_options['save_path']);
 			if (!file_exists($save_dir)) {
 				mkdir($save_dir, 0777, true);
 			}
-			$this->_file_handles[$url] = fopen($url_options["save_path"], "w");
+			$this->_file_handles[$url] = fopen($url_options['save_path'], 'w');
 			curl_setopt($this->_curl_threads[$id], CURLOPT_FILE, $this->_file_handles[$url]);
 		}
 		curl_multi_add_handle($this->_mh, $this->_curl_threads[$id]);
 	}
 
 	/**
-	* Get several pages in separate threads using "curl_multi_init"
+	* Get several pages in separate threads using 'curl_multi_init'
 	* $data and $options could be 1 and 2-dimensional arrays
 	* When 2-dimensional - then data post params could be used and 
 	* options could be set individually for each url
@@ -367,18 +367,18 @@ class yf_remote_files {
 				// Merge common options with url specific ones
 				// Useful when lot of similar opts should be set in $options
 				// But for example, several of them needed to be changed for every url
-				// like "save_path", "url"
+				// like 'save_path', 'url'
 				if (is_array($url_data)) {
 					foreach ((array)$url_data as $k => $v) {
 						$url_options[$k] = $v;
 					}
 				}
 			}
-			$url = "";
+			$url = '';
 			if (is_array($url_data)) {
 				$url = $url_data['url'] ? $url_data['url'] : $id;
-				if (isset($url_data["post"])) {
-					$url_options["post"] = $url_data["post"];
+				if (isset($url_data['post'])) {
+					$url_options['post'] = $url_data['post'];
 				}
 			} else {
 				$url = $url_data;
@@ -387,18 +387,18 @@ class yf_remote_files {
 			$url = $this->_fix_url($url);
 			// Check url parts for correctness
 			$p = @parse_url($url);
-			if (!array_key_exists("scheme", $p) || !array_key_exists("host", $p) || !in_array($p["scheme"], array("http", "https", "ftp"))) {
+			if (!array_key_exists('scheme', $p) || !array_key_exists('host', $p) || !in_array($p['scheme'], array('http', 'https', 'ftp'))) {
 				$result[$id] = false;
 				continue;
 			}
 			// Because of php bug http://bugs.php.net/bug.php?id=52284 we need to do ftp requests one-by-one
-			$is_ftp_url = ($p["scheme"] == "ftp");
+			$is_ftp_url = ($p['scheme'] == 'ftp');
 			if ($is_ftp_url) {
 				$ftp_calls[$id] = $url_data;
 			} else {
 				$http_queue[$id] = array(
-					"url"		=> $url,
-					"options"	=> $url_options,
+					'url'		=> $url,
+					'options'	=> $url_options,
 				);
 				$all_url_options[$id] = $url_options;
 			}
@@ -413,7 +413,7 @@ class yf_remote_files {
 			unset($http_queue[$id]);
 		}
 
-		$GLOBALS["_curl_requests_info"] = array();
+		$GLOBALS['_curl_requests_info'] = array();
 
 		// execute the handles in the efficient way
 		$running = null;
@@ -429,15 +429,15 @@ class yf_remote_files {
 				$url_options = $all_url_options[$id];
 				// get the info and content returned on the request
 				$result[$id] = curl_multi_getcontent($c);
-				if ($url_options["get_redirected_url"]) {
+				if ($url_options['get_redirected_url']) {
 					$result[$id] = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
 				}
 				$info = curl_getinfo($c);
-				$info["CURL_ERRNO"]	= curl_errno($c);
-				$info["CURL_ERROR"]	= curl_error($c);
-				$GLOBALS["_curl_requests_info"][$id] = $info;
+				$info['CURL_ERRNO']	= curl_errno($c);
+				$info['CURL_ERROR']	= curl_error($c);
+				$GLOBALS['_curl_requests_info'][$id] = $info;
 				// send the return values to the callback function.
-				$callback = $url_options["callback"];
+				$callback = $url_options['callback'];
 				if (is_callable($callback)) {
 					call_user_func($callback, $result[$id], $info, $id, $url_options);
 				}
@@ -476,22 +476,22 @@ class yf_remote_files {
 					$url_options[$k] = $v;
 				}
 			}
-			$url = "";
+			$url = '';
 			if (is_array($url_data)) {
 				$url = $url_data['url'] ? $url_data['url'] : $id;
 			} else {
 				$url = $url_data;
 			}
 			// Add delay between requests
-			if (isset($options["ftp_delay"]) && !empty($options["ftp_delay"])) {
-				sleep($options["ftp_delay"]);
+			if (isset($options['ftp_delay']) && !empty($options['ftp_delay'])) {
+				sleep($options['ftp_delay']);
 			}
 			$result[$id] = $this->get_remote_page($url, -1, $url_options);
 
-			$GLOBALS["_curl_requests_info"][$id] = $GLOBALS["_curl_requests_info"][$url];
-			$info = $GLOBALS["_curl_requests_info"][$id];
+			$GLOBALS['_curl_requests_info'][$id] = $GLOBALS['_curl_requests_info'][$url];
+			$info = $GLOBALS['_curl_requests_info'][$id];
 			// send the return values to the callback function.
-			$callback = $url_options["callback"];
+			$callback = $url_options['callback'];
 			if (is_callable($callback)) {
 				call_user_func($callback, $result[$id], $info, $id, $url_options);
 			}
@@ -512,8 +512,8 @@ class yf_remote_files {
 	function pretty_dump_curl_opts($curl_opts = array()) {
 		if (!isset($this->_curlopt_id_consts)) {
 			$all_consts = get_defined_constants(true);
-			foreach ((array)$all_consts["curl"] as $name => $id) {
-				if (substr($name, 0, 8) != "CURLOPT_") {
+			foreach ((array)$all_consts['curl'] as $name => $id) {
+				if (substr($name, 0, 8) != 'CURLOPT_') {
 					continue;
 				}
 				$this->_curlopt_id_consts[$id] = $name;
@@ -532,19 +532,19 @@ class yf_remote_files {
 	function _set_curl_options($url_options = array(), $is_ftp_url = false) {
 		$curl_opts = array();
 
-		$user_agent			= isset($url_options["user_agent"]) ? $url_options["user_agent"] : $this->DEF_USER_AGENT;
-		$curlopt_interface	= isset($url_options["interface"]) ? $url_options["interface"] : $this->CURL_DEF_INTERFACE;
-		$custom_header		= isset($url_options["custom_header"]) ? $url_options["custom_header"] : $this->CURL_DEF_HEADER;
-		$referer			= isset($url_options["referer"]) ? $url_options["referer"] : $url;
+		$user_agent			= isset($url_options['user_agent']) ? $url_options['user_agent'] : $this->DEF_USER_AGENT;
+		$curlopt_interface	= isset($url_options['interface']) ? $url_options['interface'] : $this->CURL_DEF_INTERFACE;
+		$custom_header		= isset($url_options['custom_header']) ? $url_options['custom_header'] : $this->CURL_DEF_HEADER;
+		$referer			= isset($url_options['referer']) ? $url_options['referer'] : $url;
 
 		$curl_opts[CURLOPT_RETURNTRANSFER]	= 1;
 		$curl_opts[CURLOPT_FOLLOWLOCATION]	= 1; // follow redirects
-		$curl_opts[CURLOPT_MAXREDIRS]		= $url_options["max_redirects"] ? $url_options["max_redirects"] : $this->CURL_DEF_MAX_REDIRECTS;
+		$curl_opts[CURLOPT_MAXREDIRS]		= $url_options['max_redirects'] ? $url_options['max_redirects'] : $this->CURL_DEF_MAX_REDIRECTS;
 		$curl_opts[CURLOPT_FILETIME]		= 1;
 		$curl_opts[CURLOPT_FRESH_CONNECT]	= 0;
 		$curl_opts[CURLOPT_DNS_CACHE_TIMEOUT]= 3600;
-		$curl_opts[CURLOPT_CONNECTTIMEOUT]	= $url_options["connect_timeout"] ? $url_options["connect_timeout"] : $this->CURL_DEF_CONNECT_TIMEOUT;
-		$curl_opts[CURLOPT_TIMEOUT]			= $url_options["timeout"] ? $url_options["timeout"] : $this->CURL_DEF_TIMEOUT; // timeout on response 
+		$curl_opts[CURLOPT_CONNECTTIMEOUT]	= $url_options['connect_timeout'] ? $url_options['connect_timeout'] : $this->CURL_DEF_CONNECT_TIMEOUT;
+		$curl_opts[CURLOPT_TIMEOUT]			= $url_options['timeout'] ? $url_options['timeout'] : $this->CURL_DEF_TIMEOUT; // timeout on response 
 		if ($user_agent) {
 			$curl_opts[CURLOPT_USERAGENT]	= $user_agent;
 		}
@@ -559,14 +559,14 @@ class yf_remote_files {
 		$curl_opts[CURLOPT_SSL_VERIFYPEER] = 0;
 		$curl_opts[CURLOPT_SSL_VERIFYHOST] = 0;
 		// HEAD request
-		if ($url_options["method_head"]) {
+		if ($url_options['method_head']) {
 			$curl_opts[CURLOPT_HEADER]		= 1;
 			$curl_opts[CURLOPT_NOBODY]		= 1;
 		// Common GET or POST request
 		} else {
 			$curl_opts[CURLOPT_HEADER]		= 0;
-			$curl_opts[CURLOPT_ENCODING]	= "gzip"; // The contents of the "Accept-Encoding: " header. This enables decoding
-			if (!$url_options["no_autoreferer"]) {
+			$curl_opts[CURLOPT_ENCODING]	= 'gzip'; // The contents of the 'Accept-Encoding: ' header. This enables decoding
+			if (!$url_options['no_autoreferer']) {
 				$curl_opts[CURLOPT_AUTOREFERER] = 1; // set referer on redirect 
 			}
 		}
@@ -576,11 +576,11 @@ class yf_remote_files {
 			$curl_opts[CURLOPT_POSTFIELDS]	= is_array($url_options['post']) ? http_build_query($url_options['post']) : $url_options['post'];
 		}
 		// Cookie string
-		if ($url_options["cookie"]) {
-			$curl_opts[CURLOPT_COOKIE]		= $url_options["cookie"];
+		if ($url_options['cookie']) {
+			$curl_opts[CURLOPT_COOKIE]		= $url_options['cookie'];
 		}
 		// If we need to get target url where remote server redirects us
-		if ($url_options["get_redirected_url"]) {
+		if ($url_options['get_redirected_url']) {
 			$curl_opts[CURLOPT_NOBODY]		= 1;
 		}
 		// Custom network interface to use in request
@@ -591,15 +591,15 @@ class yf_remote_files {
 		if ($is_ftp_url) {
 			$curl_opts[CURLOPT_FTP_USE_EPRT]	= 0;
 			$curl_opts[CURLOPT_FTP_USE_EPSV]	= 0;
-			if (!$url_options["method_head"]) {
+			if (!$url_options['method_head']) {
 				$curl_opts[CURLOPT_HEADER]		= 0;
 				$curl_opts[CURLOPT_NOBODY]		= 0;
 			}
 		}
 		// Enable a proxy connection for request
-		// $options["proxy"] = array("host" => "192.168.1.1", "port" => "8080", "user" => "", "pswd" => "");
-		if ($url_options["proxy"]) {
-			$proxy = $url_options["proxy"];
+		// $options['proxy'] = array('host' => '192.168.1.1', 'port' => '8080', 'user' => '', 'pswd' => '');
+		if ($url_options['proxy']) {
+			$proxy = $url_options['proxy'];
 			$curl_opts[CURLOPT_HTTPPROXYTUNNEL]	= true;
 			$curl_opts[CURLOPT_PROXY]			= $proxy['host']. ($proxy['port'] ? ':'.$proxy['port'] : '');
 			if (isset($proxy['user']) && isset($proxy['pswd'])) {
@@ -607,15 +607,15 @@ class yf_remote_files {
 			}
 		}
 		// HTTP basic auth support
-		if ($url_options["auth"]) {
-			$auth = $url_options["auth"];
+		if ($url_options['auth']) {
+			$auth = $url_options['auth'];
 			$curl_opts[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
 			if (isset($auth['user']) && isset($auth['pswd'])) {
 				$curl_opts[CURLOPT_USERPWD] = $auth['user'].':'.$auth['pswd'];
 			}
 		}
 		// Enable verbose debug output (usually into STDERR)
-		if ($url_options["curl_verbose"] || $this->DEBUG) {
+		if ($url_options['curl_verbose'] || $this->DEBUG) {
 			$curl_opts[CURLOPT_VERBOSE] = true;
 		}
 		if ($this->DEBUG) {
@@ -625,7 +625,7 @@ class yf_remote_files {
 	}
 
 	/**
-	* "Safe" multi_request, which splits input array into smaller chunks to prevent server breaking
+	* 'Safe' multi_request, which splits input array into smaller chunks to prevent server breaking
 	*/
 	function multi_request_safe($page_urls = array(), $options = array(), $chunk_size = 50) {
 		$response = array();
@@ -635,13 +635,13 @@ class yf_remote_files {
 			foreach ((array)$tmp_response as $k => $v) {
 				$response[$k] = $v;
 			}
-			// catch exec times ($GLOBALS["_curl_requests_info"][$url])
+			// catch exec times ($GLOBALS['_curl_requests_info'][$url])
 			// Because it is cleaned on each call
-			foreach ((array)$GLOBALS["_curl_requests_info"] as $k => $v) {
+			foreach ((array)$GLOBALS['_curl_requests_info'] as $k => $v) {
 				$overall_multi_info[$k] = $v;
 			}
 		}
-		$GLOBALS["_curl_requests_info"] = $overall_multi_info;
+		$GLOBALS['_curl_requests_info'] = $overall_multi_info;
 		return $response;
 	}
 
@@ -654,24 +654,24 @@ class yf_remote_files {
 		}
 		if (empty($options)) {
 			$options = array(
-				"method_head"	=> 1,
-				"max_redirects"	=> 5,
-				"user_agent"	=> "",
-				"referer"		=> "",
-				"no_autoreferer"=> 1,
+				'method_head'	=> 1,
+				'max_redirects'	=> 5,
+				'user_agent'	=> '',
+				'referer'		=> '',
+				'no_autoreferer'=> 1,
 			);
 		}
 		$response = $this->_multi_request($page_urls, $options);
 		$sizes = array();
 		foreach ((array)$page_urls as $k => $v) {
-			$info = $GLOBALS["_curl_requests_info"][$k];
-			$sizes[$k] = (int)$info["download_content_length"];
+			$info = $GLOBALS['_curl_requests_info'][$k];
+			$sizes[$k] = (int)$info['download_content_length'];
 			if ($sizes[$k] < 0) {
 				$sizes[$k] = 0;
 			}
 			// Try to fix case when content-length appeared > 1 times and second time it is 0
 			// so curl return 0 as content length
-			if (empty($size[$k]) && empty($info["download_content_length"]) && !empty($response[$k])) {
+			if (empty($size[$k]) && empty($info['download_content_length']) && !empty($response[$k])) {
 				if (preg_match('/Content-Length: (\d+)/i', $response[$k], $matches)) {
 					$content_length = (int)$matches[1];
 					if ($content_length) {
@@ -740,10 +740,10 @@ class yf_remote_files {
 	
 		// Create HTTP request.
 		$defaults = array(
-			// RFC 2616: "non-standard ports MUST, default ports MAY be included".
+			// RFC 2616: 'non-standard ports MUST, default ports MAY be included'.
 			// We don't add the port to prevent from breaking rewrite rules checking
 			// the host that do not take into account the port number.
-			'Host' => "Host: $host",
+			'Host' => 'Host: '.$host,
 			'User-Agent' => 'User-Agent: YF (+http://yfix.dev/)',
 			'Content-Length' => 'Content-Length: '. strlen($data)
 		);
@@ -833,26 +833,26 @@ class yf_remote_files {
 		if (empty($url)) {
 			return false;
 		}
-		if (!preg_match("/^(^http:\/\/)(.)+/", $url)) {
-			$url = "http://".$url;
+		if (!preg_match('/^(^http:\/\/)(.)+/', $url)) {
+			$url = 'http://'.$url;
 		} 
 		$url = $this->_fix_url($url);
 		if (!common()->url_verify($url)) {
 			return false;
 		}
 		$uri = parse_url($url);
-		$ip = gethostbyname($uri["host"]);
-		if ($ip == $uri["host"]) {
+		$ip = gethostbyname($uri['host']);
+		if ($ip == $uri['host']) {
 			return false;
 		} 
 		$allowed_codes = array(
-			"200",	// OK
-			"300",	// Multiple Choices
-			"301",	// Moved Permanently
-			"302",	// Found
-			"303",	// See Other (since HTTP/1.1)
-			"304",	// Not Modified
-			"307",	// Temporary Redirect (since HTTP/1.1)
+			'200',	// OK
+			'300',	// Multiple Choices
+			'301',	// Moved Permanently
+			'302',	// Found
+			'303',	// See Other (since HTTP/1.1)
+			'304',	// Not Modified
+			'307',	// Temporary Redirect (since HTTP/1.1)
 		);
 		$headers = common()->http_request($url);
 		if (in_array($headers->code, $allowed_codes)) {
@@ -865,7 +865,7 @@ class yf_remote_files {
 	/**
 	* Extended email verification method
 	*/
-	function _email_verify ($email = "", $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
+	function _email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
 		if (empty($email)) {
 			return false;
 		}
@@ -875,7 +875,7 @@ class yf_remote_files {
 		$p_user = '\w+([\.-]?\w+)*';
 		$p_domain = '\w+([\.-]?\w+)*(\.\w{2,})+';
 		$p_ipv4 = '[0-9]{1,3}(\.[0-9]{1,3}){3}';
-		$result = preg_match("/^$p_user@($p_domain|$p_ipv4)$/ims", $email);
+		$result = preg_match('/^'.$p_user.'@('.$p_domain.'|'.$p_ipv4.')$/ims', $email);
 		if ($result) {
 			list($user, $domain) = explode('@', $email);
 		}
@@ -883,7 +883,7 @@ class yf_remote_files {
 		if ($result && $check_mx) {
 			$mailers = array();
 			// Construct array of available mailservers
-			if (function_exists("getmxrr")) {
+			if (function_exists('getmxrr')) {
 				if (getmxrr($domain, $mxhosts, $mxweight)) {
 					for ($i = 0; $i < count($mxhosts); $i++){
 						$mxs[$mxhosts[$i]] = $mxweight[$i];
@@ -892,15 +892,15 @@ class yf_remote_files {
 					$mailers = array_keys($mxs);
 				}
 			} else {
-				@exec("nslookup -type=mx ".$domain, $_mx_result);
+				@exec('nslookup -type=mx '.$domain, $_mx_result);
 				foreach ((array)$_mx_result as $_key => $_value) {
-					if (strstr($_value, "mail exchanger")) {
+					if (strstr($_value, 'mail exchanger')) {
 						$_nslookup[$i++] = $_value;
 					}
 				}
 				$_mx = array();
 				foreach ((array)$_nslookup as $_key => $_value) {
-					preg_match("/MX preference = ([0-9]+), mail exchanger = (.+)\$/i", $_value, $_m);
+					preg_match('/MX preference = ([0-9]+), mail exchanger = (.+)$/i', $_value, $_m);
 					if (empty($_m[2])) {
 						continue;
 					}
@@ -915,7 +915,7 @@ class yf_remote_files {
 			}
 			$total = count($mailers);
 			if (!$total) {
-				$_error_msg .= "No usable DNS records found for domain '".$domain."'\n";
+				$_error_msg .= 'No usable DNS records found for domain "'.$domain.'"'.PHP_EOL;
 			} else {
 				$result = true;
 			}
@@ -923,7 +923,7 @@ class yf_remote_files {
 		// Check SMTP probe host ad\nd address (these are required)
 		if ($result && $check_by_smtp && !empty($total) && empty($_error_msg)) {
 			if (empty($this->SMTP_PROBE_HOST) || empty($this->SMTP_PROBE_ADDRESS)) {
-				$_error_msg .= "Internal error: 'SMTP_PROBE_HOST' AND 'SMTP_PROBE_ADDRESS' required!\n";
+				$_error_msg .= 'Internal error: "SMTP_PROBE_HOST" AND "SMTP_PROBE_ADDRESS" required!'.PHP_EOL;
 			}
 		}
 		// Check using SMTP
@@ -932,7 +932,7 @@ class yf_remote_files {
 			for ($n = 0; $n < $total; $n++) {
 				// Check if mailers accept mail
 				if ($debug) {
-					$_debug_info .= "Checking server ".$mailers[$n]."...\n";
+					$_debug_info .= 'Checking server '.$mailers[$n].'...'.PHP_EOL;
 				}
 				$connect_timeout	= 2;
 				$errno				= 0;
@@ -941,50 +941,50 @@ class yf_remote_files {
 				if ($sock = @fsockopen($mailers[$n], 25, $errno , $errstr, $connect_timeout)) {
 					$response = fgets($sock);
 					if ($debug) {
-						$_debug_info .= "Opening up socket to ".$mailers[$n]."... Succes!\n";
+						$_debug_info .= 'Opening up socket to '.$mailers[$n].'... Succes!'.PHP_EOL;
 					}
 					stream_set_timeout($sock, 5);
 					$meta = stream_get_meta_data($sock);
 					if ($debug) {
-						$_debug_info .= $mailers[$n]." replied: ".$response.PHP_EOL;
+						$_debug_info .= $mailers[$n].' replied: '.$response.PHP_EOL;
 					}
 					$cmds = array(
-						"HELO ".$this->SMTP_PROBE_HOST,  // Be sure to set this correctly!
-						"MAIL FROM: <".$this->SMTP_PROBE_ADDRESS.">",
-						"RCPT TO: <".$email.">",
-						"QUIT",
+						'HELO '.$this->SMTP_PROBE_HOST,  // Be sure to set this correctly!
+						'MAIL FROM: <'.$this->SMTP_PROBE_ADDRESS.'>',
+						'RCPT TO: <'.$email.'>',
+						'QUIT',
 					);
 					// Hard error on connect -> break out
 					if (!$meta['timed_out'] && !preg_match('/^2\d\d[ -]/', $response)) {
-						$_error_msg .= "Error: ".$mailers[$n]." said: ".$response.PHP_EOL;
+						$_error_msg .= 'Error: '.$mailers[$n].' said: '.$response.PHP_EOL;
 						break;
 					}
 					foreach ((array)$cmds as $_cmd_num => $cmd) {
 						$before = microtime(true);
-						fputs($sock, "$cmd\r\n");
+						fputs($sock, $cmd."\r\n");
 						$response = fgets($sock, 4096);
 						$t = 1000 * (microtime(true) - $before);
 						if ($debug) {
-							$_debug_info .= htmlentities($cmd.PHP_EOL.$response) . "(".sprintf('%.2f', $t) . " ms)\n";
+							$_debug_info .= htmlentities($cmd.PHP_EOL.$response) . '('.sprintf('%.2f', $t) . ' ms)'.PHP_EOL;
 						}
 						if (!$meta['timed_out'] && preg_match('/^5\d\d[ -]/', $response)) {
-							$_error_msg .= "Unverified address: ".$mailers[$n]." said: ".$response;
+							$_error_msg .= 'Unverified address: '.$mailers[$n].' said: '.$response;
 							break 2;
 						}
 						// Check if greylisted
 						if ($_cmd_num == 2 && in_array(intval(substr($response, 0, 3)), array(450,451))) {
-							$_debug_info .= "Greylisted address: ".$mailers[$n]." said: ".$response;
+							$_debug_info .= 'Greylisted address: '.$mailers[$n].' said: '.$response;
 							continue 2;
 						}
 					}
 					fclose($sock);
 					if ($debug) {
-						$_debug_info .= "Succesful communication with ".$mailers[$n].", no hard errors, assuming OK";
+						$_debug_info .= 'Succesful communication with '.$mailers[$n].', no hard errors, assuming OK';
 						$result = true;
 					}
 					break;
 				} elseif ($n == $total - 1) {
-					$_error_msg = "None of the mailservers listed for ".$domain." could be contacted";
+					$_error_msg = 'None of the mailservers listed for '.$domain.' could be contacted';
 				}
 			}
 		}
@@ -997,7 +997,7 @@ class yf_remote_files {
 			for ($n = 0; $n < $total; $n++) {
 				$response = $this->_not_blacklisted($mailers[$n]);
 				if ($response) {
-					$_error_msg = "Address ".$mailers[$n]." is blacklisted: ".$response;
+					$_error_msg = 'Address '.$mailers[$n].' is blacklisted: '.$response;
 					break;
 				}
 			}
@@ -1033,15 +1033,15 @@ class yf_remote_files {
 		if (!preg_match($_ip_pattern, $ip)) {
 			return false;
 		}
-		$reverse_ip = implode(".", array_reverse(explode(".", $ip)));
+		$reverse_ip = implode('.', array_reverse(explode('.', $ip)));
 		$dnsbl_lists = array(
-			"bl.spamcop.net",
-			"list.dsbl.org",
-			"sbl.spamhaus.org"
+			'bl.spamcop.net',
+			'list.dsbl.org',
+			'sbl.spamhaus.org'
 		);
 		foreach ((array)$dnsbl_lists as $dnsbl_list) {
-			if (checkdnsrr($reverse_ip . "." . $dnsbl_list . ".", "A")) {
-				return $reverse_ip . "." . $dnsbl_list;
+			if (checkdnsrr($reverse_ip . '.' . $dnsbl_list . '.', 'A')) {
+				return $reverse_ip . '.' . $dnsbl_list;
 			} 
 		}
 		return false;
@@ -1071,11 +1071,11 @@ class yf_remote_files {
 				$fp = @fsockopen('ssl://'. $uri['host'], $port, $errno, $errstr, 20);
 				break;
 			default:
-				$result["error"] = 'invalid schema '. $uri['scheme'];
+				$result['error'] = 'invalid schema '. $uri['scheme'];
 				return $result;
 		}
 		if (!$fp) {
-			$result["error"] = trim($errno .' '. $errstr);
+			$result['error'] = trim($errno .' '. $errstr);
 			return $result;
 		}
 		// Construct the path to act on.
@@ -1084,7 +1084,7 @@ class yf_remote_files {
 			$path .= '?'. $uri['query'];
 		}
 		$defaults = array(
-			'Host' => "Host: ".$host,
+			'Host' => 'Host: '.$host,
 		);
 		foreach ((array)$headers as $header => $value) {
 			$defaults[$header] = $header .': '. $value;
@@ -1095,7 +1095,7 @@ class yf_remote_files {
 		if ($data) {
 			$request .= $data ."\r\n";
 		}
-		$result["request"] = $request;
+		$result['request'] = $request;
 
 		fwrite($fp, $request);
 		// Get only first 4kb of response
@@ -1103,17 +1103,17 @@ class yf_remote_files {
 		$response .= fread($fp, 4096);
 		fclose($fp);
 
-		list($split, $result["data"]) = explode("\r\n\r\n", $response, 2);
+		list($split, $result['data']) = explode("\r\n\r\n", $response, 2);
 		$split = preg_split("/\r\n|\n|\r/", $split);
 		list($protocol, $code, $text) = explode(' ', trim(array_shift($split)), 3);
 		// Parse headers.
-		$result["headers"] = array();
+		$result['headers'] = array();
 		while ($line = trim(array_shift($split))) {
 			list($header, $value) = explode(':', $line, 2);
-			if (isset($result["headers"][$header]) && $header == 'Set-Cookie') {
-				$result["headers"][$header] .= ','. trim($value);
+			if (isset($result['headers'][$header]) && $header == 'Set-Cookie') {
+				$result['headers'][$header] .= ','. trim($value);
 			} else {
-				$result["headers"][$header] = trim($value);
+				$result['headers'][$header] = trim($value);
 			}
 		}
 		$responses = array(
@@ -1133,43 +1133,43 @@ class yf_remote_files {
 			case 301:
 			case 302:
 			case 307:
-				$location = $result["headers"]['Location'];
+				$location = $result['headers']['Location'];
 				if ($retry) {
-					$result = $this->alternate_remote_file_size($result["headers"]['Location'], --$retry);
-					$result["redirect_code"] = $result["code"];
+					$result = $this->alternate_remote_file_size($result['headers']['Location'], --$retry);
+					$result['redirect_code'] = $result['code'];
 				}
-				$result["redirect_url"] = $location;
+				$result['redirect_url'] = $location;
 				break;
 			default:
-				$result["error"] = $text;
+				$result['error'] = $text;
 		}
-		$result["code"] = $code;
+		$result['code'] = $code;
 
 		$time_end = microtime(true);
 
-		$result["emulate_curl_info"] = array(
-			"url"				=> $url,
-			"content_type"		=> $result["headers"]["Content-Type"],
-			"http_code"			=> $code,
-			"header_size"		=> !empty($result["headers"])?strlen(implode("\r\n", $result["headers"])):0,
-			"request_size"		=> strlen($request),
-			"filetime"			=> -1,
-			"ssl_verify_result"	=> 0,
-			"redirect_count"	=> 0,
-			"total_time"		=> ($time_end - $time_start),
-			"namelookup_time"	=> 0,
-			"connect_time"		=> 0,
-			"pretransfer_time"	=> 0,
-			"size_upload"		=> 0,
-			"size_download"		=> 0,
-			"speed_download"	=> 0,
-			"speed_upload"		=> 0,
-			"download_content_length"=> (int)$result["headers"]["Content-Length"],
-			"upload_content_length"	=> 0,
-			"starttransfer_time"=> 0,
-			"redirect_time"		=> 0,
-			"CURL_ERRNO"		=> 0,
-			"CURL_ERROR"		=> "",
+		$result['emulate_curl_info'] = array(
+			'url'				=> $url,
+			'content_type'		=> $result['headers']['Content-Type'],
+			'http_code'			=> $code,
+			'header_size'		=> !empty($result['headers'])?strlen(implode("\r\n", $result['headers'])):0,
+			'request_size'		=> strlen($request),
+			'filetime'			=> -1,
+			'ssl_verify_result'	=> 0,
+			'redirect_count'	=> 0,
+			'total_time'		=> ($time_end - $time_start),
+			'namelookup_time'	=> 0,
+			'connect_time'		=> 0,
+			'pretransfer_time'	=> 0,
+			'size_upload'		=> 0,
+			'size_download'		=> 0,
+			'speed_download'	=> 0,
+			'speed_upload'		=> 0,
+			'download_content_length'=> (int)$result['headers']['Content-Length'],
+			'upload_content_length'	=> 0,
+			'starttransfer_time'=> 0,
+			'redirect_time'		=> 0,
+			'CURL_ERRNO'		=> 0,
+			'CURL_ERROR'		=> '',
 		);
 		return $result;
 	}
