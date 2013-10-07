@@ -308,13 +308,13 @@ class yf_validate {
 	function xss_clean($in) {
 # TODO: write unit tests and only then enable
 #		return _class('security')->xss_clean($in);
-		return $in;
+		return true;
 	}
 
 	/***/
 	function strip_image_tags($in) {
 # TODO: write unit tests and only then enable
-		return $in;
+		return true;
 #		return _class('security')->strip_image_tags($in);
 	}
 
