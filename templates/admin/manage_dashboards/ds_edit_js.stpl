@@ -9,7 +9,18 @@ $(function() {
 		stop: function(e,ui) {
 			copyHelper && copyHelper.remove();
 			var _item = $(ui.item[0])
-			var _auto_id = "auto_id_" + Math.floor(Math.random() * 100000)
+			//Math.floor(Math.random() * 100000)
+			var _new_id = new Date().getTime();
+			var _auto_id = "autoid" + _new_id + "_autoid" + _new_id;
+
+			var _container = $(e.target)
+//			if (_container.parents('#portlets-side-column')) {	}
+			var _cur_item_id = _item.attr('id')
+			if (_cur_item_id == 'php_item' || _cur_item_id == 'stpl_item') {
+				_item.attr('id', _auto_id)
+				_cur_item_id = _auto_id
+			}
+
 			// Singleton for draggable available items
 			if ($(".portlets-side-column .column #" + ui.item[0].id).length > 1) {
 				_item.remove()

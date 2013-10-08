@@ -74,16 +74,16 @@ class yf_manage_dashboards {
 			$params = array();
 		}
 		$ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
-		$dashboard = $this->_get_dashboard_data($ds_name);
-		if (!$dashboard['id']) {
+		$ds = $this->_get_dashboard_data($ds_name);
+		if (!$ds['id']) {
 			return _e('No such record');
 		}
-		$items_configs = $dashboard['data']['items_configs'];
-		$ds_settings = $dashboard['data']['settings'];
+		$items_configs = $ds['data']['items_configs'];
+		$ds_settings = $ds['data']['settings'];
 		$num_columns = isset($this->_col_classes[$ds_settings['columns']]) ? $ds_settings['columns'] : 3;
 		if ($ds_settings['full_width']) {
 			$filled_columns = 0;
-			foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+			foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
 				$empty_items = true;
 				foreach ((array)$column_items as $name_id) {
 					if ($name_id) {
@@ -97,7 +97,7 @@ class yf_manage_dashboards {
 			}
 			$num_columns = $filled_columns;
 		}
-		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
 			$columns[$column_id] = array(
 				'num'	=> $column_id,
 				'class'	=> $this->_col_classes[$num_columns],
@@ -105,7 +105,7 @@ class yf_manage_dashboards {
 			);
 		}
 		$replace = array(
-			'edit_link'	=> './?object=manage_dashboards&action=edit&id='.$dashboard['id'],
+			'edit_link'	=> './?object=manage_dashboards&action=edit&id='.$ds['id'],
 			'columns'	=> $columns,
 		);
 		return tpl()->parse(__CLASS__.'/view_main', $replace);
@@ -156,12 +156,12 @@ class yf_manage_dashboards {
 		if ($_GET['object'] != 'manage_dashboards' || !in_array($_GET['action'], array('edit','add'))) {
 			return false;
 		}
-		$dashboard = $this->_get_dashboard_data();
-		if (!$dashboard) {
+		$ds = $this->_get_dashboard_data();
+		if (!$ds) {
 			return false;
 		}
 		$avail_hooks = $this->_get_available_widgets_hooks();
-		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
 			foreach ((array)$column_items as $auto_id) {
 				if (isset($avail_hooks[$auto_id])) {
 					unset($avail_hooks[$auto_id]);
@@ -170,9 +170,9 @@ class yf_manage_dashboards {
 		}
 		$replace = array(
 			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
-			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
-			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$dashboard['id'],
-			'settings_items'=> $this->_show_ds_settings_items($dashboard),
+			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
+			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$ds['id'],
+			'settings_items'=> $this->_show_ds_settings_items($ds),
 			'php_item'		=> tpl()->parse(__CLASS__.'/edit_item', array(
 				'id'				=> _prepare_html('php_item'),
 				'name'				=> _prepare_html('CLONEABLE: php item name'),
@@ -231,23 +231,24 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function edit () {
-		$dashboard = $this->_get_dashboard_data($_GET['id']);
-		if (!$dashboard['id']) {
+		$ds = $this->_get_dashboard_data($_GET['id']);
+//echo '<pre>'.print_r($ds, 1).'</pre>';
+		if (!$ds['id']) {
 			return _e('No such record');
 		}
 		if ($_POST) {
 			if (!_ee()) {
 				db()->update('dashboards', db()->es(array(
 					'data'	=> json_encode($_POST['ds_data']),
-				)), 'id='.intval($dashboard['id']));
-				common()->admin_wall_add(array('dashboard updated: '.$dashboard['name'], $_GET['id']));
+				)), 'id='.intval($ds['id']));
+				common()->admin_wall_add(array('dashboard updated: '.$ds['name'], $_GET['id']));
 				return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['object']);
 			}
 		}
-		$items_configs = $dashboard['data']['items_configs'];
-		$ds_settings = $dashboard['data']['settings'];
+		$items_configs = $ds['data']['items_configs'];
+		$ds_settings = $ds['data']['settings'];
 		$num_columns = isset($this->_col_classes[$ds_settings['columns']]) ? $ds_settings['columns'] : 3;
-		foreach ((array)$dashboard['data']['columns'] as $column_id => $column_items) {
+		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
 			$columns[$column_id] = array(
 				'num'	=> $column_id,
 				'class'	=> $this->_col_classes[$num_columns],
@@ -265,7 +266,7 @@ class yf_manage_dashboards {
 			}
 		}
 		$replace = array(
-			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$dashboard['id'],
+			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
 			'columns'	=> $columns,
 		);
 		return tpl()->parse(__CLASS__.'/edit_main', $replace);
@@ -278,10 +279,13 @@ class yf_manage_dashboards {
 
 		foreach ((array)$column_items as $name_id) {
 			$info = $list_of_hooks[$name_id];
-			if (!$info) {
+			$is_cloneable_item = (substr($name_id, 0, strlen('autoid')) == 'autoid');
+			if (!$info && !$is_cloneable_item) {
 				continue;
 			}
 			$saved_config = $items_configs[$name_id."_".$name_id];
+#echo $name_id."_".$name_id.'<br>';
+#print_r($saved_config).'<br>';
 			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/edit_item', array(
 				'id'				=> _prepare_html($info['auto_id'].'_'.$info['auto_id']),
 				'name'				=> _prepare_html($info['name']),
@@ -323,12 +327,12 @@ class yf_manage_dashboards {
 		if (isset($this->_dashboard_data[$id])) {
 			return $this->_dashboard_data[$id];
 		}
-		$dashboard = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
-		if ($dashboard) {
-			$dashboard['data'] = object_to_array(json_decode($dashboard['data']));
+		$ds = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
+		if ($ds) {
+			$ds['data'] = object_to_array(json_decode($ds['data']));
 		}
-		$this->_dashboard_data[$id] = $dashboard;
-		return $dashboard;
+		$this->_dashboard_data[$id] = $ds;
+		return $ds;
 	}
 
 	/**
