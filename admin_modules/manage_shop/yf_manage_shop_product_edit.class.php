@@ -44,6 +44,19 @@ class yf_manage_shop_product_edit{
 					$sql_array['image'] = 1;
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]);
+				
+				cache_del("_shop_product_params|_get_params_by_product|".$_GET['id']);
+				db()->query("DELETE FROM `".db('shop_products_productparams')."` WHERE `product_id`=".$_GET['id']);
+				if ($_POST['productparams'] != '') {
+					foreach($_POST['productparams_options_' . $_POST['productparams']] as $v) {
+						db()->INSERT("shop_products_productparams",array(
+							"product_id" => $_GET['id'],
+							"productparam_id" => $_POST['productparams'],
+							"value"	=> $v,
+						));
+					}
+				}
+				
 				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
 				db()->query("DELETE FROM  ".db('shop_product_to_category')." WHERE product_id = ".$_GET["id"]);
 				foreach ((array)$_POST["category"] as $k => $v){
@@ -139,6 +152,7 @@ class yf_manage_shop_product_edit{
 			"price_raw"				=> $product_info["price_raw"],
 			"old_price"				=> $product_info["old_price"],
 			"quantity"				=> $product_info["quantity"],
+			"productparams"			=> _class("manage_shop","admin_modules")->_productparams_container($_GET['id']),
 			"dynamic_fields"		=> $fields,
 			"single_atts"			=> $single_atts,
 			"ext_url"				=> $product_info["external_url"],
