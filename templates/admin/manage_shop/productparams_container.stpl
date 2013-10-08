@@ -1,0 +1,23 @@
+<select name="productparams" class="productparams">
+<option value="">- none -</option>	
+{foreach('params')}
+	<option value="{#.id}" {#.selected}>{#.title}</option>
+{/foreach}
+</select>
+{foreach('params_options')}
+<div class="productparams_options productparam_{#.productparams_id}" style="display:none;height:100px;overflow:auto;width:auto;">
+{#.options_list}
+</div>
+{/foreach}
+<script>
+$(function(){	
+	$(".productparam_{current_param_id}").show();
+	
+	$(document).on('change',".productparams",function(){
+		$(".productparams_options").hide();		
+		if ($(this).val() != '') {
+			$(".productparam_"+$(this).val()).show();
+		}
+	});
+});
+</script>

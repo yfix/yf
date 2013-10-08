@@ -325,7 +325,11 @@ class yf_debug_info {
 			.($db->DB_CHARSET ? '?charset='.$db->DB_CHARSET : '')
 			.($db->DB_SOCKET ? '?socket='.$db->DB_SOCKET : '')
 			.')</b>';
-		$body .= $connect_trace ? ' <a href="javascript:void(0)" class="btn btn-mini">Trace</a><pre style="display:none;"><small>'._prepare_html($connect_trace).'</small></pre>' : '';
+
+		$trace_html = ' <a href="javascript:void(0)" class="btn btn-mini btn-toggle" data-hidden-toggle="debug-db-connect-trace">'.t('Trace').'</a>'
+				.'<pre style="display:none;" id="debug-db-connect-trace"><small>'._prepare_html($connect_trace).'</small></pre>';
+
+		$body .= $connect_trace ? $trace_html : '';
 
 		foreach ((array)$db_queries_list as $id => $text) {
 			$text = trim($text);
