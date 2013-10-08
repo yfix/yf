@@ -66,6 +66,9 @@ class yf_register {
 			"admin_name"	=> SITE_ADVERT_NAME,
 			"advert_url"	=> SITE_ADVERT_URL,
 		);
+		if(isset($extra['add_replace']) && is_array($extra['add_replace'])){
+			$replace = array_merge($replace, $extra['add_replace']);
+		}
 		$text = tpl()->parse($_GET["object"]."/email_confirm".(!empty($_POST["account_type"]) ? '_'.$_POST["account_type"] : ''), $replace);
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
