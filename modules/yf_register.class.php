@@ -204,7 +204,8 @@ class yf_register {
 					"admin_name"	=> SITE_ADVERT_NAME,
 					"advert_url"	=> SITE_ADVERT_URL,
 				);
-				$text = tpl()->parse($_GET["object"]."/email_confirm_".$this->_account_types[$user_info["group"]], $replace);
+				//$text = tpl()->parse($_GET["object"]."/email_confirm_".$this->_account_types[$user_info["group"]], $replace);
+				$text = tpl()->parse($_GET["object"]."/email_confirm", $replace);
 				// Prepare email
 				$email_from	= SITE_ADMIN_EMAIL;
 				$name_from	= SITE_ADVERT_NAME;
