@@ -44,25 +44,25 @@ class yf_client_utils {
 
 	function _check_ip($ip, $ignore_ips = '', $check_type = ''){
 		$masks = array(
-			"0.0.0.0/8",		// Current network (only valid as source address)	RFC 1700
-			"10.0.0.0/8",		// Private network	RFC 1918
-			"127.0.0.0/8",		// Loopback	RFC 3330
-			"128.0.0.0/16",		// Reserved (IANA)	RFC 3330
-			"169.254.0.0/16",	// Link-Local	RFC 3927
-			"172.16.0.0/12",	// Private network	RFC 1918
-			"191.255.0.0/16",	// Reserved (IANA)	RFC 3330
-			"192.0.0.0/24",		// Reserved (IANA)	RFC 3330
-			"192.0.2.0/24",		// Documentation and example code	RFC 3330
-			"192.88.99.0/24",	// IPv6 to IPv4 relay	RFC 3068
-			"192.168.0.0/16",	// Private network	RFC 1918
-			"198.18.0.0/15",	// Network benchmark tests	RFC 2544
-			"223.255.255.0/24",	// Reserved (IANA)	RFC 3330
-			"224.0.0.0/4",		// Multicasts (former Class D network)	RFC 3171
-			"240.0.0.0/4",		// Reserved (former Class E network)	RFC 1700
-			"255.255.255.255/",	// Broadcast
+			'0.0.0.0/8',		// Current network (only valid as source address)	RFC 1700
+			'10.0.0.0/8',		// Private network	RFC 1918
+			'127.0.0.0/8',		// Loopback	RFC 3330
+			'128.0.0.0/16',		// Reserved (IANA)	RFC 3330
+			'169.254.0.0/16',	// Link-Local	RFC 3927
+			'172.16.0.0/12',	// Private network	RFC 1918
+			'191.255.0.0/16',	// Reserved (IANA)	RFC 3330
+			'192.0.0.0/24',		// Reserved (IANA)	RFC 3330
+			'192.0.2.0/24',		// Documentation and example code	RFC 3330
+			'192.88.99.0/24',	// IPv6 to IPv4 relay	RFC 3068
+			'192.168.0.0/16',	// Private network	RFC 1918
+			'198.18.0.0/15',	// Network benchmark tests	RFC 2544
+			'223.255.255.0/24',	// Reserved (IANA)	RFC 3330
+			'224.0.0.0/4',		// Multicasts (former Class D network)	RFC 3171
+			'240.0.0.0/4',		// Reserved (former Class E network)	RFC 1700
+			'255.255.255.255/',	// Broadcast
 		);
 		$ip = preg_replace('/[^\d\.]/', ',',  $ip);	
-		$ips = explode(",",$ip);
+		$ips = explode(',',$ip);
 		foreach ((array)$ips as $item){
 			if(empty($item) || (!empty($ignore_ips) && isset($ignore_ips[$item]))){
 				continue;
@@ -85,8 +85,8 @@ class yf_client_utils {
 					$flag = false;
 					break;
 				}
-				$ip_binary_string = sprintf("%032b",ip2long($item)); 
-				$net_binary_string = sprintf("%032b",ip2long($net_addr)); 
+				$ip_binary_string = sprintf('%032b',ip2long($item)); 
+				$net_binary_string = sprintf('%032b',ip2long($net_addr)); 
 				if(substr_compare($ip_binary_string,$net_binary_string,0,$net_mask) === 0){ 
 					$flag = false;
 				}
@@ -158,9 +158,9 @@ class yf_client_utils {
 				$USER_BROWSER_AGENT	= 'OTHER';
 			}
 		$result = array(
-			"USER_OS"			=> $USER_OS,
-			"USER_BROWSER_VER"	=> $USER_BROWSER_VER,
-			"USER_BROWSER_AGENT"=> $USER_BROWSER_AGENT,
+			'USER_OS'			=> $USER_OS,
+			'USER_BROWSER_VER'	=> $USER_BROWSER_VER,
+			'USER_BROWSER_AGENT'=> $USER_BROWSER_AGENT,
 		);
 		return $result;
 	}

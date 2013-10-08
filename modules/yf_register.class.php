@@ -54,9 +54,10 @@ class yf_register {
 	/**
 	* Send email with verification code
 	*/
-	function _send_email_with_code ($code = "") {
+	function _send_email_with_code ($code = "", $extra = false) {
+		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST["email"];
 		$replace = array(
-			"nick"			=> $_POST["nick"],
+			"nick"			=> $identify,
 			"confirm_code"	=> $code,
 			"conf_link"		=> process_url("./?object=".$_GET["object"]."&action=confirm&id=".$code),
 			"aol_link"		=> process_url("./?object=".$_GET["object"]."&action=confirm&id=".$code),
@@ -65,34 +66,35 @@ class yf_register {
 			"admin_name"	=> SITE_ADVERT_NAME,
 			"advert_url"	=> SITE_ADVERT_URL,
 		);
-		$text = tpl()->parse($_GET["object"]."/email_confirm_".$_POST["account_type"], $replace);
+		$text = tpl()->parse($_GET["object"]."/email_confirm".(!empty($_POST["account_type"]) ? '_'.$_POST["account_type"] : ''), $replace);
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
 		$name_from	= SITE_ADVERT_NAME;
-		$email_to	= $_POST["email"];
-		$name_to	= $_POST["nick"];
-		$subject	= t("Membership confirmation required!");
+		$email_to	= !empty($extra['email']) ? $extra['email'] : $_POST["email"];
+		$name_to	= $identify;
+		$subject	= !empty($extra['subject']) ? $extra['subject'] : t("Membership confirmation required!");
 		return common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
 	}
 
 	/**
 	* Send success email
 	*/
-	function _send_success_email () {
+	function _send_success_email ($extra = false) {
+		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST["email"];
 		$replace = array(
 			"code"			=> $code,
-			"nick"			=> $_POST["nick"],
+			"nick"			=> $identify,
 			"password"		=> $_POST["password"],
 			"advert_name"	=> SITE_ADVERT_NAME,
 			"advert_url"	=> SITE_ADVERT_URL,
 		);
-		$text = tpl()->parse($_GET["object"]."/email_success_".$_POST["account_type"], $replace);
+		$text = tpl()->parse($_GET["object"]."/email_success".(!empty($_POST["account_type"]) ? '_'.$_POST["account_type"] : ''), $replace);
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
 		$name_from	= SITE_ADVERT_NAME;
-		$email_to	= $_POST["email"];
-		$name_to	= $_POST["nick"];
-		$subject	= t("Thank you for registering with us!");
+		$email_to	= !empty($extra['email']) ? $extra['email'] : $_POST["email"];
+		$name_to	= $identify;
+		$subject	= !empty($extra['subject']) ? $extra['subject'] : t("Membership confirmation required!");
 		return common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
 	}
 

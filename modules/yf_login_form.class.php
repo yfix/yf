@@ -21,6 +21,17 @@ class yf_login_form {
 
 	/**
 	*/
+	function _admin_login_form() {
+		return form(array('form_action' => './?task=login'), array('no_label' => 1))
+			->validate(array('login' => 'trim|required', 'password' => 'trim|required'))
+			->login(array('class' => 'input-medium'))
+			->password(array('class' => 'input-medium'))
+			->submit(array('value' => 'Enter'))
+		;
+	}
+
+	/**
+	*/
 	function _small_form() {
 		return form(array('form_action' => './?task=login'), array('class' => 'form-inline', 'no_label' => 1))
 			->validate(array('login' => 'trim|required', 'password' => 'trim|required'))
