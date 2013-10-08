@@ -335,4 +335,20 @@ class yf_manage_shop {
 	function _hook_widget__stats ($params = array()) {
 		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
+	function users() {
+		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+	}	
+	function user_activate() {
+		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+	}	
+	function user_delete() {
+		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+	}	
+	function user_edit() {
+		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+	}
+	function _productparams_container($product_id) {		
+		$func = __FUNCTION__; return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->$func();
+	}
+	
 }
