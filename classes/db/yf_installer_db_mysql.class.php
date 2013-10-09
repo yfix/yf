@@ -167,10 +167,7 @@ class yf_installer_db_mysql {
 		$result = false;
 		// Try to repair query
 		if ($db_error['code'] == 1146) {
-#			if (!empty($item_to_repair)/* && defined($item_to_repair)*/) {
-#				$sql = str_replace($item_to_repair, eval("return ".$item_to_repair.";"), $sql);
-				$result = $DB_CONNECTION->query($sql);
-#			}
+			$result = $DB_CONNECTION->query($sql);
 		} elseif ($db_error['code'] == 1054) {
 			if (!empty($installer_result)) {
 				$result = $DB_CONNECTION->query($sql);
