@@ -49,12 +49,35 @@ class yf_manage_dashboards {
 	function show() {
 		return table('SELECT * FROM '.db('dashboards'))
 			->text('name')
+			->text('type')
 			->btn_view()
 			->btn_edit(array('no_ajax' => 1))
-			->btn_clone(array('no_ajax' => 1))
+			->btn_clone()
 			->btn_delete()
+			->btn_active()
 			->footer_add()
 		;
+	}
+
+	/**
+	*/
+	function delete () {
+		$id = $_GET['id'];
+		$ds_info = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
+		if (!$ds_info['id']) {
+			return _e('No such record');
+		}
+		$_GET['id'] = $ds_info['id'];
+		if (!empty($ds_info['id'])) {
+			db()->query('DELETE FROM '.db('dashboards').' WHERE id='.intval($_GET['id']).' LIMIT 1');
+			common()->admin_wall_add(array('dashboard deleted: '.$ds_info['name'].'', $_GET['id']));
+		}
+		if ($_POST['ajax_mode']) {
+			main()->NO_GRAPHICS = true;
+			echo $_GET['id'];
+		} else {
+			return js_redirect('./?object='.$_GET['object']);
+		}
 	}
 
 	/**
@@ -72,6 +95,94 @@ class yf_manage_dashboards {
 		db()->insert('dashboards', $sql);
 		common()->admin_wall_add( array('dashboard cloned: '.$ds_info['name'], db()->insert_id() ));
 		return js_redirect('./?object='.$_GET['object']);
+	}
+
+	/**
+	*/
+	function active () {
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$ds_info = db()->get('SELECT * FROM '.db('dashboards').' WHERE id='.intval($_GET['id']));
+		}
+		if (!empty($ds_info['id'])) {
+			db()->update('dashboards', array('active' => (int)!$ds_info['active']), 'id='.intval($_GET['id']));
+			common()->admin_wall_add(array('dashboard '.$ds_info['name'].' '.($ds_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+		}
+		if ($_POST['ajax_mode']) {
+			main()->NO_GRAPHICS = true;
+			echo ($ds_info['active'] ? 0 : 1);
+		} else {
+			return js_redirect('./?object='.$_GET['object']);
+		}
+	}
+
+	/**
+	*/
+	function add () {
+		if ($_POST) {
+			if (!_ee()) {
+				db()->insert('dashboards', db()->es(array(
+					'name'		=> $_POST['name'],
+					'type'		=> $_POST['type'],
+					'active'	=> $_POST['active'],
+				)));
+				$new_id = db()->insert_id();
+				common()->admin_wall_add(array('dashboard added: '.$_POST['name'], $new_id));
+				return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.$new_id);
+			}
+		}
+		$replace = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+			'back_link'		=> './?object='.$_GET['object'],
+		);
+		return form2($replace)
+			->text('name')
+			->radio_box('type', array('admin' => 'admin', 'user' => 'user'))
+			->active_box()
+			->save_and_back();
+	}
+
+	/**
+	*/
+	function edit () {
+		$ds = $this->_get_dashboard_data($_GET['id']);
+		if (!$ds['id']) {
+			return _e('No such record');
+		}
+		if ($_POST) {
+			if (!_ee()) {
+				db()->update('dashboards', db()->es(array(
+					'data'	=> json_encode($_POST['ds_data']),
+				)), 'id='.intval($ds['id']));
+				common()->admin_wall_add(array('dashboard updated: '.$ds['name'], $_GET['id']));
+				return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['object']);
+			}
+		}
+		$items_configs = $ds['data']['items_configs'];
+		$ds_settings = $ds['data']['settings'];
+		$num_columns = isset($this->_col_classes[$ds_settings['columns']]) ? $ds_settings['columns'] : 3;
+		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
+			$columns[$column_id] = array(
+				'num'	=> $column_id,
+				'class'	=> $this->_col_classes[$num_columns],
+				'items'	=> $this->_show_edit_widget_items($column_items, $ds),
+			);
+		}
+		// Fix empty drag places
+		foreach (range(1, $num_columns) as $num) {
+			if (!$columns[$num]) {
+				$columns[$num] = array(
+					'num'	=> $num,
+					'class'	=> $this->_col_classes[$num_columns],
+					'items'	=> '',
+				);
+			}
+		}
+		$replace = array(
+			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
+			'columns'	=> $columns,
+		);
+		return tpl()->parse(__CLASS__.'/edit_main', $replace);
 	}
 
 	/**
@@ -264,71 +375,6 @@ class yf_manage_dashboards {
 			->select_box('columns', $columns_values, array('class' => 'no-chosen', 'style'=>'width:auto;', 'selected' => (int)$settings['columns']))
 			->yes_no_box('full_width', '', array('selected' => (int)$settings['full_width']))
 		;
-	}
-
-	/**
-	*/
-	function add () {
-		if ($_POST) {
-			if (!_ee()) {
-				db()->insert('dashboards', db()->es(array(
-					'name'	=> $_POST['name'],
-				)));
-				$new_id = db()->insert_id();
-				common()->admin_wall_add(array('dashboard added: '.$_POST['name'], $new_id));
-				return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.$new_id);
-			}
-		}
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-			'back_link'		=> './?object='.$_GET['object'],
-		);
-		return form2($replace)
-			->text('name')
-			->save_and_back();
-	}
-
-	/**
-	*/
-	function edit () {
-		$ds = $this->_get_dashboard_data($_GET['id']);
-		if (!$ds['id']) {
-			return _e('No such record');
-		}
-		if ($_POST) {
-			if (!_ee()) {
-				db()->update('dashboards', db()->es(array(
-					'data'	=> json_encode($_POST['ds_data']),
-				)), 'id='.intval($ds['id']));
-				common()->admin_wall_add(array('dashboard updated: '.$ds['name'], $_GET['id']));
-				return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['object']);
-			}
-		}
-		$items_configs = $ds['data']['items_configs'];
-		$ds_settings = $ds['data']['settings'];
-		$num_columns = isset($this->_col_classes[$ds_settings['columns']]) ? $ds_settings['columns'] : 3;
-		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
-			$columns[$column_id] = array(
-				'num'	=> $column_id,
-				'class'	=> $this->_col_classes[$num_columns],
-				'items'	=> $this->_show_edit_widget_items($column_items, $ds),
-			);
-		}
-		// Fix empty drag places
-		foreach (range(1, $num_columns) as $num) {
-			if (!$columns[$num]) {
-				$columns[$num] = array(
-					'num'	=> $num,
-					'class'	=> $this->_col_classes[$num_columns],
-					'items'	=> '',
-				);
-			}
-		}
-		$replace = array(
-			'save_link'	=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
-			'columns'	=> $columns,
-		);
-		return tpl()->parse(__CLASS__.'/edit_main', $replace);
 	}
 
 	/**
