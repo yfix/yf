@@ -9,12 +9,12 @@ class yf_utils {
 	*		of the address encoded as either a decimal or hex entity, in
 	*		the hopes of foiling most address harvesting spam bots. E.g.:
 	*
-	*	  <a href="&#x6D;&#97;&#105;&#108;&#x74;&#111;:&#102;&#111;&#111;&#64;&#101;
-	*		x&#x61;&#109;&#x70;&#108;&#x65;&#x2E;&#99;&#111;&#109;">&#102;&#111;&#111;
+	*	  <a href='&#x6D;&#97;&#105;&#108;&#x74;&#111;:&#102;&#111;&#111;&#64;&#101;
+	*		x&#x61;&#109;&#x70;&#108;&#x65;&#x2E;&#99;&#111;&#109;'>&#102;&#111;&#111;
 	*		&#64;&#101;x&#x61;&#109;&#x70;&#108;&#x65;&#x2E;&#99;&#111;&#109;</a>
 	*
 	* @public
-	* @param	string	an email address to encode, e.g. "foo@example.com"
+	* @param	string	an email address to encode, e.g. 'foo@example.com'
 	* @param	bool	switch between returning HTML link or just encode text
 	* @return	string
 	*/
@@ -58,27 +58,27 @@ class yf_utils {
 	}
 
 	// Show custom text message (fetch it from db)
-	function show_text ($text = "") {
-		$text_l = str_replace(" ", "_", strtolower($text));
+	function show_text ($text = '') {
+		$text_l = str_replace(' ', '_', strtolower($text));
 		list($value) = db()->query_fetch("SELECT value AS `0` FROM ".db('texts')." WHERE name='".db()->es($text_l)."' AND active='1' AND language='".db()->es(conf('language'))."'");
 		$text = strlen($value) ? stripslashes($value) : $text_l;
-		return str_replace("_", " ", $text);
+		return str_replace('_', ' ', $text);
 	}
 
 	// Function that formats error messages
-	function error_back($where_go_back = "javascript:history.back()", $what_to_say= "error") {
-		if (!$what_to_say == "error" || $what_to_say == "") {
+	function error_back($where_go_back = 'javascript:history.back()', $what_to_say= 'error') {
+		if (!$what_to_say == 'error' || $what_to_say == '') {
 			$what_to_say = t('error');
 		}
 		if (!$where_go_back) {
-			$where_go_back = "javascript:history.back()";
+			$where_go_back = 'javascript:history.back()';
 		}
-		return $Text = "<div align=\"center\"><strong>".$what_to_say."</strong><input type='button' class='btn' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".ucfirst(t('back'))."'></div>";
+		return $Text = '<div align="center"><strong>'.$what_to_say."</strong><input type='button' class='btn' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".ucfirst(t('back'))."'></div>";
 	}
 
 	// Back link with text message
-	function back($where_go_back = "javascript:history.back()", $what_to_say = "back") {
-		if ($what_to_say == "back" || $what_to_say == "") {
+	function back($where_go_back = 'javascript:history.back()', $what_to_say = 'back') {
+		if ($what_to_say == 'back' || $what_to_say == '') {
 			$what_to_say = t('back');
 		}
 		return $Text = "<div align=\"center\"><input type='button' class='btn' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".$what_to_say."'></div>";
@@ -95,10 +95,10 @@ class yf_utils {
 	}
 
 	// Process URL (making rewrite if needed)
-	function process_url($url = "", $force_rewrite = false, $for_site_id = false) {
+	function process_url($url = '', $force_rewrite = false, $for_site_id = false) {
 		if (tpl()->REWRITE_MODE) {
-			module("rewrite")->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
-		} elseif (substr($url, 0, 3) == "./?") {
+			module('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		} elseif (substr($url, 0, 3) == './?') {
 			$url = WEB_PATH. substr($url, 2);
 		}
 		return $url;
@@ -136,15 +136,15 @@ class yf_utils {
 	function text_filter ($str) {
 		$str = htmlspecialchars($str);
 		if (defined('SITE_BAD_WORD_FILTER') && SITE_BAD_WORD_FILTER == 1) {
-			$bad_words = conf("BAD_WORDS_ARRAY");
+			$bad_words = conf('BAD_WORDS_ARRAY');
 			if (is_null($bad_words)) {
-				$Q = db()->query("SELECT word FROM ".db('badwords')."");
+				$Q = db()->query('SELECT word FROM '.db('badwords').'');
 				while ($A = db()->fetch_assoc($Q)) {
-					$bad_words[] = $A["word"];
+					$bad_words[] = $A['word'];
 				}
-				conf("BAD_WORDS_ARRAY", $bad_words);
+				conf('BAD_WORDS_ARRAY', $bad_words);
 			}
-			$str = str_replace($bad_words, "", $str);
+			$str = str_replace($bad_words, '', $str);
 		}
 		return $str;
 	}
@@ -153,7 +153,7 @@ class yf_utils {
 	function _check_words_length ($text, $length = 0, $do_encode_email = false) {
 		if (empty($length)) {
 			$length = 60;
-			if (SITE_MAX_WORD_LENGTH != "SITE_MAX_WORD_LENGTH" && SITE_MAX_WORD_LENGTH != "") {
+			if (SITE_MAX_WORD_LENGTH != 'SITE_MAX_WORD_LENGTH' && SITE_MAX_WORD_LENGTH != '') {
 				$length = SITE_MAX_WORD_LENGTH;
 			}
 		}
@@ -163,13 +163,13 @@ class yf_utils {
 		}
 		$email_pairs = array();
 		// Fast check that we do not have emails inside text
-		if (false !== strpos($text, "@")) {
+		if (false !== strpos($text, '@')) {
 			// Do extract emails from text
 			if (preg_match_all('/[\w-]+(\.[\w-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,5})/ims', $text, $m)) {
 				foreach ((array)$m[0] as $_cur_email) {
-					$cur_pair_key = "%%".(++$_cur_number)."%%";
-					$email_pairs[$_cur_email]		= " ".$cur_pair_key." ";
-					$reverted_pairs[$cur_pair_key]	= " ".($do_encode_email ? common()->encode_email($_cur_email) : $_cur_email)." ";
+					$cur_pair_key = '%%'.(++$_cur_number).'%%';
+					$email_pairs[$_cur_email]		= ' '.$cur_pair_key.' ';
+					$reverted_pairs[$cur_pair_key]	= ' '.($do_encode_email ? common()->encode_email($_cur_email) : $_cur_email).' ';
 				}
 				krsort($email_pairs);
 				krsort($reverted_pairs);
@@ -178,9 +178,9 @@ class yf_utils {
 		// Now we allow URLs in text
 		if (preg_match_all('/(http|https|ftp|ftps):\/\/[a-z0-9%&\?_\-\=\.\/]+/ims', $text, $m)) {
 			foreach ((array)$m[0] as $_cur_url) {
-				$cur_pair_key = "%%".(++$_cur_number)."%%";
-				$url_pairs[$_cur_url]			= " ".$cur_pair_key." ";
-				$reverted_pairs[$cur_pair_key]	= " ".$_cur_url." ";
+				$cur_pair_key = '%%'.(++$_cur_number).'%%';
+				$url_pairs[$_cur_url]			= ' '.$cur_pair_key.' ';
+				$reverted_pairs[$cur_pair_key]	= ' '.$_cur_url.' ';
 			}
 			krsort($url_pairs);
 			krsort($reverted_pairs);
@@ -191,7 +191,7 @@ class yf_utils {
 		if (!empty($url_pairs)) {
 			$text = str_replace(array_keys($url_pairs), array_values($url_pairs), $text);
 		}
-		$text = wordwrap($text, intval($length), " ", 1);
+		$text = wordwrap($text, intval($length), ' ', 1);
 		if (!empty($reverted_pairs)) {
 			$text = str_replace(array_keys($reverted_pairs), array_values($reverted_pairs), $text);
 		}
@@ -199,7 +199,7 @@ class yf_utils {
 	}
 
 	// Prepare content to the correct output in form fields
-	function _prepare_html ($text = "", $need_strip_slashes = 1, $use_smart_function = 1) {
+	function _prepare_html ($text = '', $need_strip_slashes = 1, $use_smart_function = 1) {
 		if (is_array($text)) {
 			foreach ((array)$text as $k => $v) {
 				$text[$k] = $this->_prepare_html($v);
@@ -216,12 +216,12 @@ class yf_utils {
 			}
 		}
 		$replace = array(
-			"{"	=> "&#123;",
-			"}"	=> "&#125;",
-			"\\"=> "&#92;",
-			"(" => "&#40;",
-			")" => "&#41;",
-			"?" => "&#63;",
+			'{'	=> '&#123;',
+			'}'	=> '&#125;',
+			"\\"=> '&#92;',
+			'(' => '&#40;',
+			')' => '&#41;',
+			'?' => '&#63;',
 		);
 		if ($need_strip_slashes) {
 			$text = stripslashes($text);
@@ -240,49 +240,49 @@ class yf_utils {
 	}
 
 	// Get user avatar
-	function _show_avatar ($user_id = 0, $user_name = "", $as_link = 0, $is_middle = 0, $only_img_src = 0, $force_link = "") {
+	function _show_avatar ($user_id = 0, $user_name = '', $as_link = 0, $is_middle = 0, $only_img_src = 0, $force_link = '') {
 		if (is_array($user_name)) {
 			$user_info = $user_name;
 			$user_name = _display_name($user_info);
 		}
-		$avatar_path	= _gen_dir_path($user_id, INCLUDE_PATH. SITE_AVATARS_DIR , 0, 0777). intval($user_id). ($is_middle ? "_m" : ""). ".jpg";
-		$photo_src		= file_exists($avatar_path) && filesize($avatar_path) ? str_replace(INCLUDE_PATH, WEB_PATH, $avatar_path) : "";
+		$avatar_path	= _gen_dir_path($user_id, INCLUDE_PATH. SITE_AVATARS_DIR , 0, 0777). intval($user_id). ($is_middle ? '_m' : ''). '.jpg';
+		$photo_src		= file_exists($avatar_path) && filesize($avatar_path) ? str_replace(INCLUDE_PATH, WEB_PATH, $avatar_path) : '';
 		if ($only_img_src) {
-			return !empty($photo_src) ? $photo_src : "";
+			return !empty($photo_src) ? $photo_src : '';
 		}
 		$use_ajax = conf('no_ajax_here') ? 0 : 1;
 		if (conf('HIGH_CPU_LOAD') == 1) {
 			$use_ajax = 0;
 		}
 		$replace = array(
-			"user_name"			=> $user_name,
-			"custom_title"		=> _prepare_html(conf('avatar_custom_title')),
-			"user_id"			=> $user_id,
-			"photo_src"			=> $photo_src,
-			"user_details_link"	=> !empty($force_link) ? process_url($force_link) : _profile_link(is_array($user_info) ? $user_info : $user_id, null, MAIN_TYPE_ADMIN ? 1 : 0),
-			"as_link"			=> intval((bool) $as_link),
-			"is_middle"			=> intval((bool) $is_middle),
-			"no_photo_small"	=> !$is_middle && empty($photo_src),
-			"no_photo_middle"	=> $is_middle && empty($photo_src),
-			"use_ajax"			=> intval($use_ajax),
+			'user_name'			=> $user_name,
+			'custom_title'		=> _prepare_html(conf('avatar_custom_title')),
+			'user_id'			=> $user_id,
+			'photo_src'			=> $photo_src,
+			'user_details_link'	=> !empty($force_link) ? process_url($force_link) : _profile_link(is_array($user_info) ? $user_info : $user_id, null, MAIN_TYPE_ADMIN ? 1 : 0),
+			'as_link'			=> intval((bool) $as_link),
+			'is_middle'			=> intval((bool) $is_middle),
+			'no_photo_small'	=> !$is_middle && empty($photo_src),
+			'no_photo_middle'	=> $is_middle && empty($photo_src),
+			'use_ajax'			=> intval($use_ajax),
 		);
-		$body = tpl()->parse("avatar_img", $replace);
-		return str_replace(array("\r","\n","\t"), "", trim($body));
+		$body = tpl()->parse('avatar_img', $replace);
+		return str_replace(array("\r","\n","\t"), '', trim($body));
 	}
 
 	// Check if user's avatar image exists
 	function _avatar_exists ($user_id = 0, $is_middle = 0) {
-		$avatar_path = _gen_dir_path($user_id, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777). intval($user_id). ($is_middle ? "_m" : ""). ".jpg";
+		$avatar_path = _gen_dir_path($user_id, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777). intval($user_id). ($is_middle ? '_m' : ''). '.jpg';
 		return file_exists($avatar_path);
 	}
 
-	// Get user's age (int) from birthday date in formet "YYYY-MM-DD"
-	function _get_age_from_birth ($birth_date = "0000-00-00") {
-		if (empty($birth_date) || $birth_date == "0000-00-00") {
+	// Get user's age (int) from birthday date in formet 'YYYY-MM-DD'
+	function _get_age_from_birth ($birth_date = '0000-00-00') {
+		if (empty($birth_date) || $birth_date == '0000-00-00') {
 			return false;
 		}
-		$tmp = explode("-", $birth_date);
-		return intval(date("Y") - $tmp[0] - (strtotime(date("Y")."-".$tmp[1]."-".$tmp[2]) > time() ? 1 : 0));
+		$tmp = explode('-', $birth_date);
+		return intval(date('Y') - $tmp[0] - (strtotime(date('Y').'-'.$tmp[1].'-'.$tmp[2]) > time() ? 1 : 0));
 	}
 
 	// Display user nick name (or name before all nicks will not be transfered)
@@ -290,40 +290,40 @@ class yf_utils {
 		if (is_string($user_info)) {
 			return $user_info;
 		}
-		return empty($user_info["display_name"]) ? (empty($user_info["name"]) ? $user_info["nick"] : $user_info["name"]) : $user_info["display_name"];
+		return empty($user_info['display_name']) ? (empty($user_info['name']) ? $user_info['nick'] : $user_info['name']) : $user_info['display_name'];
 	}
 
 	// Display formatted date
-	function _format_date ($input_date = "", $type = "short") {
+	function _format_date ($input_date = '', $type = 'short') {
 		if (!strlen($input_date)) {
-			return "";
+			return '';
 		}
-		$date_short_format = conf("date_short_format");
-		$date_long_format = conf("date_long_format");
+		$date_short_format = conf('date_short_format');
+		$date_long_format = conf('date_long_format');
 		// Different date formats
-		if (empty($type) || $type == "short") {
-			$date_format = !empty($date_short_format) ? $date_short_format : "%m/%d/%y";
-		} elseif ($type == "long") {
-			$date_format = !empty($date_long_format) ? $date_long_format : "%m/%d/%y %H:%M";
-		} elseif ($type == "time_only") {
-			$date_format = "%I:%M %p";
-		} elseif ($type == "for_profile") {
-			$date_format = "%B %d, %Y";
+		if (empty($type) || $type == 'short') {
+			$date_format = !empty($date_short_format) ? $date_short_format : '%m/%d/%y';
+		} elseif ($type == 'long') {
+			$date_format = !empty($date_long_format) ? $date_long_format : '%m/%d/%y %H:%M';
+		} elseif ($type == 'time_only') {
+			$date_format = '%I:%M %p';
+		} elseif ($type == 'for_profile') {
+			$date_format = '%B %d, %Y';
 		} else {
-			$date_format = "%Y-%m-%d %H:%M:%S";
+			$date_format = '%Y-%m-%d %H:%M:%S';
 		}
 		if (empty($input_date)) {
 			$input_date = time();
 		}
 		$date_to_show = !is_numeric($input_date) ? strtotime($input_date) : intval($input_date);
 		if (empty($date_to_show)) {
-			return "";
+			return '';
 		}
 		$output = strftime($date_format, $date_to_show);
 		// Try to catch and replace some basic dates before 1970 year
-		if (empty($output) && preg_match("/([0-9]{4})-([0-9]{2})-([0-9]{2})/", $input_date, $m)) {
-			if (empty($type) || in_array($type, array("short"))) {
-				$r = array("%y" => $m[1], "%m"	=> $m[2], "%d" => $m[3]);
+		if (empty($output) && preg_match('/([0-9]{4})-([0-9]{2})-([0-9]{2})/', $input_date, $m)) {
+			if (empty($type) || in_array($type, array('short'))) {
+				$r = array('%y' => $m[1], '%m'	=> $m[2], '%d' => $m[3]);
 				$output = str_replace(array_keys($r), array_values($r), $date_format);
 			}
 		}
@@ -333,10 +333,10 @@ class yf_utils {
 	// This function adds the 'st', 'nd', 'rd' or 'th' to a given timestamp
 	function _day_suffix_eng ($timestamp = 0) {
 		if (empty($timestamp)) $timestamp = time();
-		$day_number = gmstrftime ("%#d", $timestamp);
-		$sufixes	= array ("1" => "st", "2" => "nd", "3" => "rd");
+		$day_number = gmstrftime ('%#d', $timestamp);
+		$sufixes	= array ('1' => 'st', '2' => 'nd', '3' => 'rd');
 		$new_suffix	= $sufixes[substr($day_number, -1)];
-		return !empty($new_suffix) ? $new_suffix : "th";
+		return !empty($new_suffix) ? $new_suffix : 'th';
 	}
 
 	// Simple encode string
@@ -363,26 +363,26 @@ class yf_utils {
 		if (MAIN_TYPE_ADMIN) {
 			return false;
 		}
-		if (empty($_SESSION["user_id"])) {
+		if (empty($_SESSION['user_id'])) {
 			return false;
 		}
 		$RECORD_ID = conf('_log_auth_insert_id');
 		// Do add activity points
-		return common()->_add_activity_points($_SESSION["user_id"], "site_login", "", $RECORD_ID);
+		return common()->_add_activity_points($_SESSION['user_id'], 'site_login', '', $RECORD_ID);
 	}
 
 	// Prepare phone number for the internal view
-	function _prepare_phone ($phone = "") {
-		return preg_replace("/[^0-9]/ims", "", $phone);
+	function _prepare_phone ($phone = '') {
+		return preg_replace('/[^0-9]/ims', '', $phone);
 	}
 
 	/**
 	* Replacement for the htmlspecialchars function
 	* Performs the same function as htmlspecialchars, but leaves characters that are already escaped intact.
 	*/
-	function smart_htmlspecialchars($html_text = "") {
+	function smart_htmlspecialchars($html_text = '') {
 		if (!strlen($html_text)) {
-			return "";
+			return '';
 		}
 		$translation_table = get_html_translation_table (HTML_SPECIALCHARS, ENT_QUOTES);
 		// Change the ampersand to translate to itself, to avoid getting &amp;
@@ -395,7 +395,7 @@ class yf_utils {
 		// b) a hash symbol, then between 2 and 7 digits
 		// c) a hash symbol, an 'x' character, then between 2 and 7 digits
 		// d) a hash symbol, an 'X' character, then between 2 and 7 digits
-		return preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,7}|#x[0-9]{2,7}|#X[0-9]{2,7};)/", "&amp;" , strtr($html_text, $translation_table));
+		return preg_replace('/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,7}|#x[0-9]{2,7}|#X[0-9]{2,7};)/', '&amp;' , strtr($html_text, $translation_table));
 	}
 
 	// Similar to array_merge_recursive but keyed-valued are always overwritten. Priority goes to the 2nd array.
@@ -410,11 +410,11 @@ class yf_utils {
 	}
 
 	// Format given text as BB code
-	function format_bbcode_text ($body = "") {
+	function format_bbcode_text ($body = '') {
 		if (empty($body)) {
-			return "";
+			return '';
 		}
-		return _class("bb_codes")->_process_text($body);
+		return _class('bb_codes')->_process_text($body);
 	}
 
 	// print_r for view in browser
@@ -435,13 +435,13 @@ class yf_utils {
 			$text = print_r($text, 1);
 		}
 		$simple = false;
-		if ($log_level == "simple") {
+		if ($log_level == 'simple') {
 			$simple = true;
 		}
 		if (!$log_level || !is_numeric($log_level)) {
 			$log_level = E_NOTICE;
 		}
-		return _class("logs")->_save_debug_log($text, $log_level, array()/*array_shift(debug_backtrace())*/, $simple);
+		return _class('logs')->_save_debug_log($text, $log_level, array()/*array_shift(debug_backtrace())*/, $simple);
 	}
 
 	// fast debug function
@@ -454,20 +454,20 @@ class yf_utils {
 	/**
 	* Create path
 	*/
-	function _mkdir_m($path_to_create = "", $dir_mode = 0755, $create_index_htmls = 0, $start_folder = "") {
+	function _mkdir_m($path_to_create = '', $dir_mode = 0755, $create_index_htmls = 0, $start_folder = '') {
 		if (file_exists($path_to_create)) {
 			return true;
 		}
-		return _class("dir")->mkdir_m($path_to_create, $dir_mode, $create_index_htmls, $start_folder);
+		return _class('dir')->mkdir_m($path_to_create, $dir_mode, $create_index_htmls, $start_folder);
 	}
 
 	function _mklink($target, $link) {
-		return _class("dir")->mklink($target, $link);
+		return _class('dir')->mklink($target, $link);
 	}
 
 	// Generate path for given id with several subfolders
-	function _gen_dir_path($id, $path = "", $make = false, $dir_mode = 0755, $create_index_htmls = 1) {
-		return _class("dir")->_gen_dir_path($id, $path, $make, $dir_mode, $create_index_htmls);
+	function _gen_dir_path($id, $path = '', $make = false, $dir_mode = 0755, $create_index_htmls = 1) {
+		return _class('dir')->_gen_dir_path($id, $path, $make, $dir_mode, $create_index_htmls);
 	}
 
 	// Recursive function that preserves keys of merged arrays
@@ -493,8 +493,8 @@ class yf_utils {
 	}
 
 	// Prepare text to include it inside STPL tag like {execute(...)}
-	function _prepare_for_stpl_exec($source = "") {
-		return preg_replace("/[^a-z0-9\-\_\s]/ims", "", $source);
+	function _prepare_for_stpl_exec($source = '') {
+		return preg_replace('/[^a-z0-9\-\_\s]/ims', '', $source);
 	}
 
 	// Display link to user's profile
@@ -502,32 +502,32 @@ class yf_utils {
 		if (IS_FRONT == 1) {
 			return false;
 		}
-		$output = "";
+		$output = '';
 		if (is_array($user_info)) {
-			$user_id = $user_info["id"];
+			$user_id = $user_info['id'];
 		} else {
 			$user_id = intval($user_info);
 		}
-		$output	= "./?object=user_profile&action=show&id=".$user_id;
-		$output .= ($do_add_get ? common()->add_get_vars(array_merge(array("page"),(array)$skip_get_array)) : "");
+		$output	= './?object=user_profile&action=show&id='.$user_id;
+		$output .= ($do_add_get ? common()->add_get_vars(array_merge(array('page'),(array)$skip_get_array)) : '');
 		$output = process_url($output);
 		return $output;
 	}
 
 	// Error message for guests with propose to log into system (for user section)
-	function _error_need_login($go_after_login = "") {
+	function _error_need_login($go_after_login = '') {
 		// Hosting frontend
 		if (IS_FRONT == 1) {
-			return "";
+			return '';
 		}
 		if (empty($go_after_login)) {
-			$go_after_login = "./?object=".$_GET["object"]."&action=".$_GET["action"].(!empty($_GET["id"]) ? "&id=".$_GET["id"] : "").common()->add_get_vars();
+			$go_after_login = './?object='.$_GET['object'].'&action='.$_GET['action'].(!empty($_GET['id']) ? '&id='.$_GET['id'] : '').common()->add_get_vars();
 		}
 		conf('_force_login_go_url', $go_after_login);
 		if (empty(main()->USER_ID)) {
-			$body .= common()->_show_error_message(t("Only for members")."!");
+			$body .= common()->_show_error_message(t('Only for members').'!');
 		}
-		$body .= main()->_execute("login_form", "show");
+		$body .= main()->_execute('login_form', 'show');
 		return $body;
 	}
 
@@ -535,25 +535,25 @@ class yf_utils {
 		if (!main()->OUTPUT_CACHING) {
 			return false;
 		}
-		_class("output_cache")->_exec_trigger($data);
+		_class('output_cache')->_exec_trigger($data);
 	}
 
-	function _country_name ($code = "") {
+	function _country_name ($code = '') {
 		$countries = conf('countries');
 		if (!$countries) {
-			$countries = main()->get_data("countries");
+			$countries = main()->get_data('countries');
 			conf('countries', $countries);
 		}
-		if (FEATURED_COUNTRY_SELECT && substr($code, 0, 2) == "f_") {
+		if (FEATURED_COUNTRY_SELECT && substr($code, 0, 2) == 'f_') {
 			$code = substr($code, 2);
 		}
 		return isset($countries[$code]) ? $countries[$code] : $code;
 	}
 
-	function _region_name ($region_code = "", $country_code = "") {
+	function _region_name ($region_code = '', $country_code = '') {
 		$regions = conf('regions');
 		if (!$regions) {
-			$regions = main()->get_data("regions");
+			$regions = main()->get_data('regions');
 			conf('regions', $regions);
 		}
 		if (!strlen($region_code) || empty($country_code)) {
@@ -565,20 +565,20 @@ class yf_utils {
 
 	// Display link to send internal email
 	function _email_link ($user_id = 0, $skip_get_array = array(), $do_add_get = true) {
-		$body = _prepare_members_link("./?object=email&action=send_form&id=".$user_id);
-		$body .= ($do_add_get ? common()->add_get_vars(array_merge(array("page"),(array)$skip_get_array)) : "");
+		$body = _prepare_members_link('./?object=email&action=send_form&id='.$user_id);
+		$body .= ($do_add_get ? common()->add_get_vars(array_merge(array('page'),(array)$skip_get_array)) : '');
 		return $body;
 	}
 
 	// Prepare link for members
-	function _prepare_members_link ($url = "") {
+	function _prepare_members_link ($url = '') {
 		if (main()->USER_ID) {
 			return $url;
 		}
 		$parts = array();
 		parse_str(substr($url, 3), $parts);
-		if (!empty($parts["object"])) {
-			return "./?object=login_form&go_url=".$parts["object"]. (!empty($parts["action"]) ? ";".$parts["action"] : ""). (!empty($parts["id"]) ? ";id=".$parts["id"] : "");
+		if (!empty($parts['object'])) {
+			return './?object=login_form&go_url='.$parts['object']. (!empty($parts['action']) ? ';'.$parts['action'] : ''). (!empty($parts['id']) ? ';id='.$parts['id'] : '');
 		}
 	}
 
@@ -590,14 +590,14 @@ class yf_utils {
 		return $data;
 	}
 
-	function _my_strip_tags ($_text = "") {
-		return strip_tags($_text, "<a><b><i><u><p><br><strike><span><div><ul><ol><li><h1><h2><h3><h4><h5><h6><table><thead><tbody><th><tr><td>");
+	function _my_strip_tags ($_text = '') {
+		return strip_tags($_text, '<a><b><i><u><p><br><strike><span><div><ul><ol><li><h1><h2><h3><h4><h5><h6><table><thead><tbody><th><tr><td>');
 	}
 
 	function checkdnsrr($hostName, $recType = '') {
 		if (!empty($hostName)) {
 			if ($recType == '') {
-				$recType = "MX";
+				$recType = 'MX';
 			}
 			@exec("nslookup -type=$recType $hostName", $result);
 			// check each line to find the one that starts with the host
@@ -624,8 +624,8 @@ class yf_utils {
 		return true;
 	}
 
-	function _cut_bb_codes ($body = "") {
-		return preg_replace("/\[[^\]]+\]/ims", "", $body);
+	function _cut_bb_codes ($body = '') {
+		return preg_replace('/\[[^\]]+\]/ims', '', $body);
 	}
 
 	// Get server info
@@ -637,7 +637,7 @@ class yf_utils {
 				return false;
 			}
 			if (!$cached_server_info[$server_id]) {
-				$cached_server_info[$server_id] = db()->query_fetch("SELECT * FROM ".db('servers')." WHERE id=".$server_id);
+				$cached_server_info[$server_id] = db()->query_fetch('SELECT * FROM '.db('servers').' WHERE id='.$server_id);
 			}
 			$server_info = $cached_server_info[$server_id];
 		} elseif (is_array($server_id) && !empty($server_id)) {
@@ -647,9 +647,9 @@ class yf_utils {
 					$ids_to_get_info[] = $_id;
 				}
 			}
-			$Q = db()->query("SELECT * FROM ".db('servers')." WHERE id IN(".implode(",", $ids_to_get_info).")");
+			$Q = db()->query('SELECT * FROM '.db('servers').' WHERE id IN('.implode(',', $ids_to_get_info).')');
 			while($A = db()->fetch_assoc($Q)) {
-				$cached_server_info[$A["id"]] = $A;
+				$cached_server_info[$A['id']] = $A;
 			}
 			foreach ((array)$server_id as $_id) {
 				$server_info[$_id] = $cached_server_info[$_id];
@@ -669,7 +669,7 @@ class yf_utils {
 				return false;
 			}
 			if (!$cached_account_info[$account_id]) {
-				$cached_account_info[$account_id] = db()->query_fetch("SELECT * FROM ".db('host_accounts')." WHERE id=".$account_id);
+				$cached_account_info[$account_id] = db()->query_fetch('SELECT * FROM '.db('host_accounts').' WHERE id='.$account_id);
 			}
 			$account_info = $cached_account_info[$account_id];
 		} elseif (is_array($account_id)) {
@@ -679,9 +679,9 @@ class yf_utils {
 					$ids_to_get_info[] = $_id;
 				}
 			}
-			$Q = db()->query("SELECT * FROM ".db('host_accounts')." WHERE id IN(".implode(",", $ids_to_get_info).")");
+			$Q = db()->query('SELECT * FROM '.db('host_accounts').' WHERE id IN('.implode(',', $ids_to_get_info).')');
 			while($A = db()->fetch_assoc($Q)) {
-				$cached_account_info[$A["id"]] = $A;
+				$cached_account_info[$A['id']] = $A;
 			}
 			foreach ((array)$account_id as $_id) {
 				$account_info[$_id] = $cached_account_info[$_id];
@@ -695,11 +695,11 @@ class yf_utils {
 
 	// Locale safe floatval
 	function _floatval ($val = 0) {
-		return floatval(str_replace(",", ".", $val));
+		return floatval(str_replace(',', '.', $val));
 	}
 
 	// Useful explode with cleanup
-	function my_explode ($string = "", $divider = "\n") {
+	function my_explode ($string = '', $divider = "\n") {
 		$result = explode("\n", trim($string));
 		foreach ((array)$result as $k => $v) {
 			$v = trim($v);
@@ -713,9 +713,9 @@ class yf_utils {
 	// Allow to easy run subprocess in background both on win32 and linux
 	function _exec_in_background($cmd) {
 		if (substr(PHP_OS, 0, 3) == 'WIN') {
-			pclose(popen("start /B ". $cmd, "r"));
+			pclose(popen('start /B '. $cmd, 'r'));
 		} else {
-			exec($cmd . " > /dev/null &");
+			exec($cmd . ' > /dev/null &');
 		}
 	}
 

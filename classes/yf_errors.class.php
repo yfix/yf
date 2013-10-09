@@ -28,15 +28,15 @@ class yf_errors {
 	* NOTE: $error_log_filename will only be used if you have log_errors Off and ;error_log filename in php.ini 
 	* if log_errors is On, and error_log is set, the filename in error_log will be used. 
 	*/ 
-	public $error_log_filename		= "error_logs.log";
+	public $error_log_filename		= 'error_logs.log';
 	/** @var string The recipient email to mail errors to */
-	public $email_to				= "";
+	public $email_to				= '';
 	/** @var string Recipient address */
-	public $_email_addr_to			= "";
+	public $_email_addr_to			= '';
 	/** @var string Recipient name */
-	public $_email_name_to			= "";
+	public $_email_name_to			= '';
 	/** @var string @conf_skip Holds the total error report to be used by mail_error() */
-	public $mail_buffer			= "";
+	public $mail_buffer			= '';
 	/** @var bool Show start and end log headers or not */
 	public $_SHOW_BORDERS			= false;
 	/** @var bool @conf_skip Started log output or not */
@@ -48,34 +48,34 @@ class yf_errors {
 	/** @var Use compact format */
 	public $USE_COMPACT_FORMAT		= true;
 	/** @var string Could be any sequence from GPFCS */
-	public $ENV_ARRAYS				= "GPF";
+	public $ENV_ARRAYS				= 'GPF';
 	/** @var bool Quickly turn off notices */
 	public $NO_NOTICES				= true;
 	/** @var array @conf_skip Standard error types */
 	public $error_types = array(
-		1		=> "E_ERROR",
-		2		=> "E_WARNING",
-		4		=> "E_PARSE",
-		8		=> "E_NOTICE",
-		16		=> "E_CORE_ERROR",
-		32		=> "E_CORE_WARNING",
-		64		=> "E_COMPILE_ERROR",
-		128		=> "E_COMPILE_WARNING",
-		256		=> "E_USER_ERROR",
-		512		=> "E_USER_WARNING",
-		1024	=> "E_USER_NOTICE",
-		2047	=> "E_ALL",
-		2048	=> "E_STRICT",
-		4096	=> "E_RECOVERABLE_ERROR",
-		8192	=> "E_DEPRECATED",
-		16384	=> "E_USER_DEPRECATED",
+		1		=> 'E_ERROR',
+		2		=> 'E_WARNING',
+		4		=> 'E_PARSE',
+		8		=> 'E_NOTICE',
+		16		=> 'E_CORE_ERROR',
+		32		=> 'E_CORE_WARNING',
+		64		=> 'E_COMPILE_ERROR',
+		128		=> 'E_COMPILE_WARNING',
+		256		=> 'E_USER_ERROR',
+		512		=> 'E_USER_WARNING',
+		1024	=> 'E_USER_NOTICE',
+		2047	=> 'E_ALL',
+		2048	=> 'E_STRICT',
+		4096	=> 'E_RECOVERABLE_ERROR',
+		8192	=> 'E_DEPRECATED',
+		16384	=> 'E_USER_DEPRECATED',
 	);
 
 	/**
 	* Constructor
 	*/
 	function __construct () {
-		if (defined("ERROR_REPORTING")) {
+		if (defined('ERROR_REPORTING')) {
 			conf('ERROR_REPORTING', (int)ERROR_REPORTING);
 		}
 		if (conf('ERROR_REPORTING')) {
@@ -83,10 +83,10 @@ class yf_errors {
 		}
 		$this->set_mail_receiver('yf_framework_site_admin', defined('SITE_ADMIN_EMAIL') ? SITE_ADMIN_EMAIL : 'php_test@127.0.0.1');
 		$this->set_log_file_name(defined('ERROR_LOGS_FILE') ? ERROR_LOGS_FILE : INCLUDE_PATH. 'error_logs.log');
-		$this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : "110000");
+		$this->set_flags(defined('error_handler_FLAGS') ? error_handler_FLAGS : '110000');
 		$this->set_reporting_level();
-		ini_set("ignore_repeated_errors", 1);
-		ini_set("ignore_repeated_source", 1);
+		ini_set('ignore_repeated_errors', 1);
+		ini_set('ignore_repeated_source', 1);
 		set_error_handler(array($this, 'error_handler'), $this->NO_NOTICES ? E_ALL ^ E_NOTICE : E_ALL);
 		register_shutdown_function(array($this, 'error_handler_destructor'));
 		
@@ -97,7 +97,7 @@ class yf_errors {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -109,17 +109,17 @@ class yf_errors {
 		@chdir(main()->_CWD);
 		// Send the email if needed
 		if (strlen($this->mail_buffer)) {
-			common()->send_mail("", "error_handler", $this->_email_addr_to, $this->_email_name_to, 'Error Report', "", "<pre>".$this->mail_buffer."</pre>");
+			common()->send_mail('', 'error_handler', $this->_email_addr_to, $this->_email_name_to, 'Error Report', '', '<pre>'.$this->mail_buffer.'</pre>');
 		}
 		// Send the endian log text if errors exists
 		if ($this->_LOG_STARTED && $this->_SHOW_BORDERS) {
-			$this->_do_save_log_info("END EXECUTION\n", 1);
+			$this->_do_save_log_info('END EXECUTION'.PHP_EOL, 1);
 		}
 	} 
 
 	function exception_handler($exception) {
 		// these are our templates
-		$traceline = "#%s %s(%s): %s(%s)";
+		$traceline = '#%s %s(%s): %s(%s)';
 		$msg = "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
 
 		// alter your trace as you please, here
@@ -161,7 +161,7 @@ class yf_errors {
 		error_log($msg);
 
 		if (DEBUG_MODE) {
-			echo "<pre>".$msg."</pre>";
+			echo '<pre>'.$msg.'</pre>';
 		}
 	}
 
@@ -173,7 +173,7 @@ class yf_errors {
 		if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
 			return true;
 		}
-		$log_message = "";
+		$log_message = '';
 		$save_log	= false;
 		$send_mail	= false;
 		// Process critical errors
@@ -213,7 +213,7 @@ class yf_errors {
 			return true;
 		} 
 		if (in_array($error_type, array(E_USER_ERROR, E_USER_WARNING, E_WARNING))) {
-			$msg = $this->error_types[$error_type].":".$error_msg;
+			$msg = $this->error_types[$error_type].':'.$error_msg;
 			main()->_last_core_error_msg	= $msg;
 			main()->_all_core_error_msgs[]	= $msg;
 		}
@@ -225,31 +225,31 @@ class yf_errors {
 		if ($save_log || $send_mail) {
 			$DIVIDER = PHP_EOL;
 			if ($this->USE_COMPACT_FORMAT) {
-				$DIVIDER = "#@#";
+				$DIVIDER = '#@#';
 			}
 			// Create logging message
-			$log_message  = date("Y-m-d H:i:s"). $DIVIDER;
+			$log_message  = date('Y-m-d H:i:s'). $DIVIDER;
 			$log_message .= $this->error_types[$error_type]. $DIVIDER;
-			$log_message .= str_replace(array("\r",PHP_EOL), "", $error_msg).";".$DIVIDER;
-			$log_message .= "SOURCE=".$error_file." on line ".$error_line. $DIVIDER;
-			$log_message .= "SITE_ID=".conf('SITE_ID'). $DIVIDER;
-			$log_message .= "IP=".$IP. $DIVIDER;
-			$log_message .= "QUERY_STRING=".WEB_PATH. (strlen($_SERVER["QUERY_STRING"]) ? "?".$_SERVER["QUERY_STRING"] : ""). $DIVIDER;
-			$log_message .= "URL=http://".$_SERVER["HTTP_HOST"].$_SERVER['REQUEST_URI']. $DIVIDER;
-			$log_message .= "REFERER=".$_SERVER['HTTP_REFERER']. $DIVIDER;
-			$log_message .= $this->_log_display_array("GET"). $DIVIDER;
-			$log_message .= $this->_log_display_array("POST"). $DIVIDER;
-			$log_message .= $this->_log_display_array("FILES"). $DIVIDER;
-			$log_message .= $this->_log_display_array("COOKIE"). $DIVIDER;
-			$log_message .= $this->_log_display_array("SESSION");
-			$log_message .= "USER_AGENT=".$_SERVER['HTTP_USER_AGENT']. $DIVIDER;
+			$log_message .= str_replace(array("\r",PHP_EOL), '', $error_msg).';'.$DIVIDER;
+			$log_message .= 'SOURCE='.$error_file.' on line '.$error_line. $DIVIDER;
+			$log_message .= 'SITE_ID='.conf('SITE_ID'). $DIVIDER;
+			$log_message .= 'IP='.$IP. $DIVIDER;
+			$log_message .= 'QUERY_STRING='.WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''). $DIVIDER;
+			$log_message .= 'URL=http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']. $DIVIDER;
+			$log_message .= 'REFERER='.$_SERVER['HTTP_REFERER']. $DIVIDER;
+			$log_message .= $this->_log_display_array('GET'). $DIVIDER;
+			$log_message .= $this->_log_display_array('POST'). $DIVIDER;
+			$log_message .= $this->_log_display_array('FILES'). $DIVIDER;
+			$log_message .= $this->_log_display_array('COOKIE'). $DIVIDER;
+			$log_message .= $this->_log_display_array('SESSION');
+			$log_message .= 'USER_AGENT='.$_SERVER['HTTP_USER_AGENT']. $DIVIDER;
 			$log_message .= PHP_EOL;
 		}
 		// Save log message if needed
 		if ($save_log) {
 			if (!$this->_LOG_STARTED) {
 				if ($this->_SHOW_BORDERS) {
-					$this->_do_save_log_info("START EXECUTION\n", 1);
+					$this->_do_save_log_info('START EXECUTION'.PHP_EOL, 1);
 				}
 				$this->_LOG_STARTED = true;
 			}
@@ -262,34 +262,34 @@ class yf_errors {
 		// Do store message into database (also check if that possible)
 		if ($save_in_db && is_object(db()) && !empty(db()->_connected)) {
 			// Prepare SQL
-			$sql = db()->INSERT("log_core_errors", array(
-				"error_level"	=> intval($error_type),
-				"error_text"	=> _es($error_msg),
-				"source_file"	=> _es($error_file),
-				"source_line"	=> intval($error_line),
-				"date"			=> time(),
-				"site_id"		=> (int)conf('SITE_ID'),
-				"user_id"		=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_id" : "user_id"]),
-				"user_group"	=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_group" : "user_group"]),
-				"is_admin"		=> MAIN_TYPE_ADMIN ? 1 : 0,
-				"ip"			=> _es($IP),
-				"query_string"	=> _es(WEB_PATH. (strlen($_SERVER["QUERY_STRING"]) ? "?".$_SERVER["QUERY_STRING"] : "")),
-				"user_agent"	=> _es($_SERVER["HTTP_USER_AGENT"]),
-				"referer"		=> _es($_SERVER["HTTP_REFERER"]),
-				"request_uri"	=> _es($_SERVER["REQUEST_URI"]),
-				"env_data"		=> $this->DB_LOG_ENV ? _es($this->_prepare_env()) : "",
-				"object"		=> _es($_GET["object"]),
-				"action"		=> _es($_GET["action"]),
+			$sql = db()->INSERT('log_core_errors', array(
+				'error_level'	=> intval($error_type),
+				'error_text'	=> _es($error_msg),
+				'source_file'	=> _es($error_file),
+				'source_line'	=> intval($error_line),
+				'date'			=> time(),
+				'site_id'		=> (int)conf('SITE_ID'),
+				'user_id'		=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
+				'user_group'	=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
+				'is_admin'		=> MAIN_TYPE_ADMIN ? 1 : 0,
+				'ip'			=> _es($IP),
+				'query_string'	=> _es(WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '')),
+				'user_agent'	=> _es($_SERVER['HTTP_USER_AGENT']),
+				'referer'		=> _es($_SERVER['HTTP_REFERER']),
+				'request_uri'	=> _es($_SERVER['REQUEST_URI']),
+				'env_data'		=> $this->DB_LOG_ENV ? _es($this->_prepare_env()) : '',
+				'object'		=> _es($_GET['object']),
+				'action'		=> _es($_GET['action']),
 			), true);
 			db()->_add_shutdown_query($sql);
 		}
 		// Check if need to show error message to the user
 		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($log_message)) {
-			echo "<b>".$this->error_types[$error_type]."</b>: ". $error_msg." (<i>".$error_file." on line ".$error_line."</i>)<pre>".main()->trace_string()."</pre><br />\n";
+			echo '<b>'.$this->error_types[$error_type].'</b>: '. $error_msg.' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'.main()->trace_string().'</pre><br />'.PHP_EOL;
 		}
 		// For critical errors stop execution here
 		if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
-			exit("<center><h3>SOMETHING WRONG WITH THE SYSTEM...".($error_type == E_USER_ERROR ? "<br>". $error_msg : "")."</h3></center>");
+			exit('Fatal error: '.($error_type == E_USER_ERROR ? '<br>'. $error_msg : ''));
 		}
 		return true; 
 	}
@@ -297,17 +297,17 @@ class yf_errors {
 	/**
 	* Display array
 	*/
-	function _log_display_array($array_name = "") {
+	function _log_display_array($array_name = '') {
 		if (empty($array_name)) {
-			return "";
+			return '';
 		}
 		$A = eval("return \$_".$array_name.";");
 		if (empty($A)) {
-			return "";
+			return '';
 		}
-		$output = str_replace(array("\r",PHP_EOL), "", var_export($A, 1));
-		$output = preg_replace("/^array \((.*?)[\,]{0,1}\)$/i", "\$1", $output);
-		return "_".$array_name."=".$output;
+		$output = str_replace(array("\r",PHP_EOL), '', var_export($A, 1));
+		$output = preg_replace('/^array \((.*?)[\,]{0,1}\)$/i', "\$1", $output);
+		return '_'.$array_name.'='.$output;
 	}
 
 	/**
@@ -315,7 +315,7 @@ class yf_errors {
 	*/
 	function _do_save_log_info($log_message, $add_time = false) {
 		if ($add_time) {
-			$log_message = date("Y-m-d H:i:s")." - ".$log_message;
+			$log_message = date('Y-m-d H:i:s').' - '.$log_message;
 		}
 		// Save log to file
 		if ($this->error_log_filename == '') {
@@ -361,7 +361,7 @@ class yf_errors {
 	* Method that changes the error reporting level
 	*/
 	function set_reporting_level($level = false) {
-		$this->ERROR_REPORTING = $level === false ? ini_get("error_reporting") : $level;
+		$this->ERROR_REPORTING = $level === false ? ini_get('error_reporting') : $level;
 	}
 
 	/**
@@ -392,21 +392,21 @@ class yf_errors {
 		$this->ENV_ARRAYS = strtoupper($this->ENV_ARRAYS);
 		$data = array();
 		// Include only desired arrays
-		if (false !== strpos($this->ENV_ARRAYS, "G") && !empty($_GET)) {
-			$data["_GET"]		= $_GET;
+		if (false !== strpos($this->ENV_ARRAYS, 'G') && !empty($_GET)) {
+			$data['_GET']		= $_GET;
 		}
-		if (false !== strpos($this->ENV_ARRAYS, "P") && !empty($_GET)) {
-			$data["_POST"]		= $_POST;
+		if (false !== strpos($this->ENV_ARRAYS, 'P') && !empty($_GET)) {
+			$data['_POST']		= $_POST;
 		}
-		if (false !== strpos($this->ENV_ARRAYS, "F") && !empty($_GET)) {
-			$data["_FILES"]		= $_FILES;
+		if (false !== strpos($this->ENV_ARRAYS, 'F') && !empty($_GET)) {
+			$data['_FILES']		= $_FILES;
 		}
-		if (false !== strpos($this->ENV_ARRAYS, "C") && !empty($_GET)) {
-			$data["_COOKIE"]	= $_COOKIE;
+		if (false !== strpos($this->ENV_ARRAYS, 'C') && !empty($_GET)) {
+			$data['_COOKIE']	= $_COOKIE;
 		}
-		if (false !== strpos($this->ENV_ARRAYS, "S") && !empty($_SESSION)) {
-			$data["_SESSION"]	= $_SESSION;
+		if (false !== strpos($this->ENV_ARRAYS, 'S') && !empty($_SESSION)) {
+			$data['_SESSION']	= $_SESSION;
 		}
-		return !empty($data) ? serialize($data) : "";
+		return !empty($data) ? serialize($data) : '';
 	}
 }
