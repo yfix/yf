@@ -9,6 +9,7 @@
 		<li class="color-default"></li>
 	</ul>
 	<input type="hidden" name="color_item_{item_id}" value="{color}">
+	<input type="hidden" name="auto_type_{item_id}" value="{auto_type}">
 	<br class="clearfix" />
 	{form_items}
 </div>

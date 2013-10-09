@@ -25,6 +25,28 @@ class yf_manage_dashboards {
 	function _init () {
 // TODO: add ability to use user module dashboards also
 // TODO: implement auto-sizing grid if one of columns is empty
+		$this->_php_item_info = array(
+			'id'			=> 'php_item',
+			'name'			=> 'CLONEABLE: php item name',
+			'desc'			=> 'CLONEABLE: php item desc',
+			'configurable' => array(
+// TODO: list of available class/methods
+				'method'	=> array(),
+			),
+			'cloneable'	=> 1,
+			'auto_type'		=> 'php_item',
+		);
+		$this->_stpl_item_info = array(
+			'id'			=> 'stpl_item',
+			'name'			=> 'CLONEABLE: stpl item name',
+			'desc'			=> 'CLONEABLE: stpl item desc',
+			'configurable' => array(
+// TODO: list of available templates
+				'stpl'	=> array(),
+			),
+			'cloneable'	=> 1,
+			'auto_type'		=> 'stpl_item',
+		);
 	}
 
 	/**
@@ -67,7 +89,7 @@ class yf_manage_dashboards {
 	}
 
 	/**
-	* Similar to "display", but for usage inside this module (action links and more)
+	* Similar to 'display', but for usage inside this module (action links and more)
 	*/
 	function view($params = array()) {
 		if (!is_array($params)) {
@@ -126,7 +148,7 @@ class yf_manage_dashboards {
 			}
 			list($module_name, $method_name) = explode('::', $info['full_name']);
 
-			$saved_config = $items_configs[$name_id."_".$name_id];
+			$saved_config = $items_configs[$name_id.'_'.$name_id];
 
 			// This is needed to correctly execute widget (maybe not nicest method, I know...)
 			$_GET['object'] = $module_name;
@@ -146,7 +168,7 @@ class yf_manage_dashboards {
 		if (!$items) {
 			return '';
 		}
-		return implode("\n", $items);
+		return implode(PHP_EOL, $items);
 	}
 
 	/**
@@ -173,23 +195,21 @@ class yf_manage_dashboards {
 			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
 			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$ds['id'],
 			'settings_items'=> $this->_show_ds_settings_items($ds),
-			'php_item'		=> tpl()->parse(__CLASS__.'/edit_item', array(
-				'id'				=> _prepare_html('php_item'),
-				'name'				=> _prepare_html('CLONEABLE: php item name'),
-				'desc'				=> _prepare_html('CLONEABLE: php item desc'),
-//				'has_config'		=> $info['configurable'] ? 1 : 0,
-				'css_class'			=> 'drag-clone-needed custom_widget_template_php '.$saved_config['color'],
-// TODO
-				'options_container'	=> $this->_options_container($info, $saved_config),
+			'php_item' => tpl()->parse(__CLASS__.'/edit_item', array(
+				'id'				=> _prepare_html($this->_php_item_info['id']),
+				'name'				=> _prepare_html($this->_php_item_info['name']),
+				'desc'				=> _prepare_html($this->_php_item_info['desc']),
+				'has_config'		=> $this->_php_item_info['configurable'] ? 1 : 0,
+				'css_class'			=> 'drag-clone-needed custom_widget_template_php',
+				'options_container'	=> $this->_options_container($this->_php_item_info, $php_item_saved_config),
 			)),
-			'stpl_item'		=> tpl()->parse(__CLASS__.'/edit_item', array(
-				'id'				=> _prepare_html('stpl_item'),
-				'name'				=> _prepare_html('CLONEABLE: stpl item name'),
-				'desc'				=> _prepare_html('CLONEABLE: stpl item desc'),
-//				'has_config'		=> $info['configurable'] ? 1 : 0,
-				'css_class'			=> 'drag-clone-needed custom_widget_template_stpl '.$saved_config['color'],
-// TODO
-				'options_container'	=> $this->_options_container($info, $saved_config),
+			'stpl_item' => tpl()->parse(__CLASS__.'/edit_item', array(
+				'id'				=> _prepare_html($this->_stpl_item_info['id']),
+				'name'				=> _prepare_html($this->_stpl_item_info['name']),
+				'desc'				=> _prepare_html($this->_stpl_item_info['desc']),
+				'has_config'		=> $this->_stpl_item_info['configurable'] ? 1 : 0,
+				'css_class'			=> 'drag-clone-needed custom_widget_template_stpl',
+				'options_container'	=> $this->_options_container($this->_stpl_item_info, $stpl_item_saved_config),
 			)),
 		);
 		return tpl()->parse(__CLASS__.'/edit_side', $replace);
@@ -232,7 +252,7 @@ class yf_manage_dashboards {
 	*/
 	function edit () {
 		$ds = $this->_get_dashboard_data($_GET['id']);
-//echo '<pre>'.print_r($ds, 1).'</pre>';
+#echo '<pre>'.print_r($ds, 1).'</pre>';
 		if (!$ds['id']) {
 			return _e('No such record');
 		}
@@ -252,7 +272,7 @@ class yf_manage_dashboards {
 			$columns[$column_id] = array(
 				'num'	=> $column_id,
 				'class'	=> $this->_col_classes[$num_columns],
-				'items'	=> $this->_show_edit_widget_items($column_items, $items_configs, $ds_settings),
+				'items'	=> $this->_show_edit_widget_items($column_items, $ds),
 			);
 		}
 		// Fix empty drag places
@@ -274,18 +294,30 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _show_edit_widget_items ($column_items = array(), $items_configs = array(), $ds_settings = array()) {
+	function _show_edit_widget_items ($column_items = array(), $ds = array()) {
+		$items_configs = $ds['data']['items_configs'];
+		$ds_settings = $ds['data']['settings'];
+
 		$list_of_hooks = $this->_get_available_widgets_hooks();
 
 		foreach ((array)$column_items as $name_id) {
+			$saved_config = $items_configs[$name_id.'_'.$name_id];
 			$info = $list_of_hooks[$name_id];
+
 			$is_cloneable_item = (substr($name_id, 0, strlen('autoid')) == 'autoid');
-			if (!$info && !$is_cloneable_item) {
+			if ($is_cloneable_item) {
+				$auto_type = $saved_config['auto_type'];
+				if ($auto_type == 'stpl_item') {
+					$info = $this->_stpl_item_info;
+				} elseif ($auto_type == 'php_item') {
+					$info = $this->_php_item_info;
+				}
+				$info['auto_id'] = $name_id;
+				$info['auto_type'] = $auto_type;
+			}
+			if (!$info) {
 				continue;
 			}
-			$saved_config = $items_configs[$name_id."_".$name_id];
-#echo $name_id."_".$name_id.'<br>';
-#print_r($saved_config).'<br>';
 			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/edit_item', array(
 				'id'				=> _prepare_html($info['auto_id'].'_'.$info['auto_id']),
 				'name'				=> _prepare_html($info['name']),
@@ -298,13 +330,17 @@ class yf_manage_dashboards {
 		if (!$items) {
 			return '';
 		}
-		return implode("\n", $items);
+		return implode(PHP_EOL, $items);
 	}
 
 	/**
 	*/
 	function _options_container($info = array(), $saved = array()) {
 		$form = form();
+		if ($info['cloneable']) {
+			$form->text('name', array('class' => 'input-medium'));
+			$form->text('desc', 'Description', array('class' => 'input-medium'));
+		}
 		foreach ((array)$info['configurable'] as $k => $v) {
 			$form->select_box($k, $v, array('selected' => $saved[$k]));
 		}
@@ -312,12 +348,13 @@ class yf_manage_dashboards {
 			'form_items'	=> $form,
 			'color'			=> $saved['color'],
 			'item_id'		=> _prepare_html($info['auto_id']),
+			'auto_type'		=> $info['cloneable'] ? $info['auto_type'] : '',
 		));
 	}
 
 	/**
 	*/
-	function _get_dashboard_data ($id = "") {
+	function _get_dashboard_data ($id = '') {
 		if (!$id) {
 			$id = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
 		}
@@ -341,7 +378,7 @@ class yf_manage_dashboards {
 		if (isset($this->_avail_widgets)) {
 			return $this->_avail_widgets;
 		}
-		$method_prefix = "_hook_widget_";
+		$method_prefix = '_hook_widget_';
 		$r = array(
 			'_hook_widget__' => '',
 			'_' => '',
@@ -349,7 +386,7 @@ class yf_manage_dashboards {
 		);
 // TODO: add ability to use user module dashboards also
 		$_widgets = array();
-		foreach ((array)module("admin_modules")->_get_methods(array("private" => "1")) as $module_name => $module_methods) {
+		foreach ((array)module('admin_modules')->_get_methods(array('private' => '1')) as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
 				if (substr($method_name, 0, strlen($method_prefix)) != $method_prefix) {
 					continue;
@@ -365,12 +402,12 @@ class yf_manage_dashboards {
 				if (!$widgets[$auto_id]['name']) {
 unset($widgets[$auto_id]);
 continue;
-//					$widgets[$auto_id]['name'] = "TODO: ".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
+//					$widgets[$auto_id]['name'] = 'TODO: '.str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 					$widgets[$auto_id]['name'] = str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 				}
 				if (!$widgets[$auto_id]['desc']) {
-//					$widgets[$auto_id]['name'] = $module_name.":".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
-					$widgets[$auto_id]['name'] = "TODO: ".str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
+//					$widgets[$auto_id]['name'] = $module_name.':'.str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
+					$widgets[$auto_id]['name'] = 'TODO: '.str_replace('_', ' ', substr($method_name, strlen($method_prefix)));
 				}
 				$widgets[$auto_id]['full_name'] = $full_name;
 				$widgets[$auto_id]['auto_id'] = $auto_id;
@@ -381,10 +418,14 @@ continue;
 		return $widgets;
 	}
 
+	/**
+	*/
 	function _hook_widget__dashboards_stats ($params = array()) {
 // TODO
 	}
 
+	/**
+	*/
 	function _hook_widget__dashboards_list ($params = array()) {
 // TODO
 	}

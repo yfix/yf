@@ -52,11 +52,12 @@ $(function() {
 			var auto_id = _portlet.data("auto_id")
 			// used in case when custom widgets are cloned
 			if (auto_id) {
-				ds_data += "&" + "ds_data[auto_items][" + auto_id + "][type]=" + item_id
 				item_id = auto_id
 			}
 			var _cur_color = _portlet.find("input[name^=color_item_]").val()
 			ds_data += "&" + "ds_data[items_configs][" + item_id + "][color]=" + _cur_color
+			var _cur_auto_type = _portlet.find("input[name^=auto_type_]").val()
+			ds_data += "&" + "ds_data[items_configs][" + item_id + "][auto_type]=" + _cur_auto_type
 			$("select", _form).each(function(){
 				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).find(":selected").val()
 			})
