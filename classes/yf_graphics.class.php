@@ -917,7 +917,7 @@ class yf_graphics {
 			}
 			// Check PHP conditional code for display
 			if (!empty($item_info['cond_code'])) {
-				$cond_result = (bool)@eval('return ('.$item_info['cond_code'].');');
+				$cond_result = (bool)eval('return ('.$item_info['cond_code'].');');
 				if (!$cond_result) {
 					continue;
 				}
@@ -1387,7 +1387,7 @@ class yf_graphics {
 		// Override headers
 		if (conf('http_headers')) {
 			foreach (conf('http_headers') as $_name => $_value) {
-				@header($_name.': '.$_value, true);
+				header($_name.': '.$_value, true);
 			}
 		}
 	}

@@ -11,7 +11,7 @@ class yf_tpl {
 
 	/** @var string @conf_skip Path to the templates (including current theme path) */
 	public $TPL_PATH			   = '';
-	/** @var bool Compressing output by cutting "\t","\r","\n","  ","   " */
+	/** @var bool Compressing output by cutting '\t','\r','\n','  ','   ' */
 	public $COMPRESS_OUTPUT		= false;
 	/** @var bool Using SEO - friendly URLs (All links need to be absolute) */
 	public $REWRITE_MODE		   = false;
@@ -26,12 +26,12 @@ class yf_tpl {
 	/** @var bool SECURITY: allow or not eval php code (with _PATTERN_INCLUDE) */
 	public $ALLOW_EVAL_PHP_CODE	= true;
 	/** @var array @conf_skip
-		For "_process_conditions",
-		Will be availiable in conditions with such form: {if("get.object" eq "login_form")} Hello from login form {/if}
+		For '_process_conditions',
+		Will be availiable in conditions with such form: {if('get.object' eq 'login_form')} Hello from login form {/if}
 	*/
 	public $_avail_arrays	  = array(
-		"get"	   => "_GET",
-		"post"	  => "_POST",
+		'get'	   => '_GET',
+		'post'	  => '_POST',
 	);
 	/** @var bool Get all templates from db or not (1 query or multiple)
 	*   (NOTE: If true - Slow PHP processing but just 1 db query)
@@ -220,7 +220,7 @@ class yf_tpl {
 		}
 		if (!main()->NO_GRAPHICS) {
 			if ($this->_OB_CATCH_CONTENT) {
-				@ob_start();
+				ob_start();
 			}
 			// Trying to get default task
 			if ($init_type == 'user' && !empty($_SESSION['user_id']) && !empty($_SESSION['user_group'])) {
@@ -285,7 +285,7 @@ class yf_tpl {
 					$old_content = ob_get_contents();
 					ob_end_clean();
 				}
-				@ob_start('ob_gzhandler');
+				ob_start('ob_gzhandler');
 				conf('GZIP_ENABLED', true);
 				if ($this->_OB_CATCH_CONTENT) {
 					$body['content'] = $old_content.$body['content'];
@@ -330,7 +330,7 @@ class yf_tpl {
 			common()->log_exec();
 		}
 		// End sending main output
-		@ob_end_flush();
+		ob_end_flush();
 		if ($this->EXIT_AFTER_ECHO) {
 			exit();
 		}
@@ -576,7 +576,7 @@ class yf_tpl {
 				if (!$this->_stpl_path_exists($file_path, $stpl_name, $_storage)) {
 					continue;
 				}
-				$string = @file_get_contents($file_path);
+				$string = file_get_contents($file_path);
 				if ($string !== false) {
 					$storage = $_storage;
 					break;
