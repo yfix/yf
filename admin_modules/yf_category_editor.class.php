@@ -431,7 +431,7 @@ class yf_category_editor {
 					$tmp[$field_name] = $field_name.'='.$_POST['custom'][$field_name];
 				}
 			}
-			$_POST['other_info'] = implode(';', $tmp);
+			$_POST['other_info'] = implode(';'.PHP_EOL, $tmp);
 
 			if (empty($_POST['url']) && $this->PROPOSE_SHORT_URL) {
 				$_POST['url'] = common()->_propose_url_from_name($_POST['name']);
@@ -479,11 +479,11 @@ class yf_category_editor {
 		if ($_POST) {
 			$tmp = array();
 			foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
-				if ($field_name && $_POST['custom'][$field_name]) {
+				if ($field_zzname && $_POST['custom'][$field_name]) {
 					$tmp[$field_name] = $field_name.'='.$_POST['custom'][$field_name];
 				}
 			}
-			$_POST['other_info'] = implode(';', $tmp);
+			$_POST['other_info'] = implode(';'.PHP_EOL, $tmp);
 		} else {
 			if (empty($item_info['url']) && $this->PROPOSE_SHORT_URL) {
 				$item_info['url'] = common()->_propose_url_from_name($item_info['name']);

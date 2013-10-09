@@ -353,6 +353,8 @@ class yf_form2 {
 		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 		$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
 		$extra['id'] = $extra['id'] ?: 'content_editable';
+		$extra['name'] = $name;
+		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
 
 		$attrs_names = array('id','contenteditable','style','class');
 		$body = $this->_row_html(isset($extra['ckeditor']) ? '<div '.$this->_attrs($extra, $attrs_names).'>'.$text.'</div>' : $text, $extra, $replace);
