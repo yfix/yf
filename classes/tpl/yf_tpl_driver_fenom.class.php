@@ -8,6 +8,11 @@ class yf_tpl_driver_fenom {
 	* Constructor
 	*/
 	function _init () {
+		require_once YF_PATH. 'libs/fenom/src/Fenom.php';
+		$fenom = new Fenom();
+var_dump($fenom);
+#		$template = $fenom->compileCode('Hello {$user.name}! {if $user.email?} Your email: {$user.email} {/if}');
+#		$template->display($data);
 // TODO
 	}
 
