@@ -24,27 +24,20 @@ class yf_manage_dashboards {
 	*/
 	function _init () {
 // TODO: add ability to use user module dashboards also
-// TODO: implement auto-sizing grid if one of columns is empty
-		$this->_php_item_info = array(
+		$this->_auto_info['php_item'] = array(
 			'id'			=> 'php_item',
 			'name'			=> 'CLONEABLE: php item name',
 			'desc'			=> 'CLONEABLE: php item desc',
-			'configurable' => array(
-// TODO: list of available class/methods
-				'method'	=> array(),
-			),
-			'cloneable'	=> 1,
+			'configurable'	=> array(),
+			'cloneable'		=> 1,
 			'auto_type'		=> 'php_item',
 		);
-		$this->_stpl_item_info = array(
+		$this->_auto_info['stpl_item'] = array(
 			'id'			=> 'stpl_item',
 			'name'			=> 'CLONEABLE: stpl item name',
 			'desc'			=> 'CLONEABLE: stpl item desc',
-			'configurable' => array(
-// TODO: list of available templates
-				'stpl'	=> array(),
-			),
-			'cloneable'	=> 1,
+			'configurable'	=> array(),
+			'cloneable'		=> 1,
 			'auto_type'		=> 'stpl_item',
 		);
 	}
@@ -52,11 +45,11 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function show() {
-		return table2('SELECT * FROM '.db('dashboards'))
+		return table('SELECT * FROM '.db('dashboards'))
 			->text('name')
 			->btn_view()
-			->btn_edit('', '', array('no_ajax' => 1))
-			->btn_clone('', '', array('no_ajax' => 1))
+			->btn_edit(array('no_ajax' => 1))
+			->btn_clone(array('no_ajax' => 1))
 			->btn_delete()
 			->footer_add()
 		;
@@ -190,26 +183,29 @@ class yf_manage_dashboards {
 				}
 			}
 		}
+		$auto_info_php = $this->_auto_info['php_item'];
+		$auto_info_stpl = $this->_auto_info['stpl_item'];
+
 		$replace = array(
 			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
 			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
 			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$ds['id'],
 			'settings_items'=> $this->_show_ds_settings_items($ds),
 			'php_item' => tpl()->parse(__CLASS__.'/edit_item', array(
-				'id'				=> _prepare_html($this->_php_item_info['id']),
-				'name'				=> _prepare_html($this->_php_item_info['name']),
-				'desc'				=> _prepare_html($this->_php_item_info['desc']),
-				'has_config'		=> $this->_php_item_info['configurable'] ? 1 : 0,
+				'id'				=> _prepare_html($auto_info_php['id']),
+				'name'				=> _prepare_html($auto_info_php['name']),
+				'desc'				=> _prepare_html($auto_info_php['desc']),
+				'has_config'		=> $auto_info_php['configurable'] ? 1 : 0,
 				'css_class'			=> 'drag-clone-needed custom_widget_template_php',
-				'options_container'	=> $this->_options_container($this->_php_item_info, $php_item_saved_config),
+				'options_container'	=> $this->_options_container($auto_info_php, $php_item_saved_config),
 			)),
 			'stpl_item' => tpl()->parse(__CLASS__.'/edit_item', array(
-				'id'				=> _prepare_html($this->_stpl_item_info['id']),
-				'name'				=> _prepare_html($this->_stpl_item_info['name']),
-				'desc'				=> _prepare_html($this->_stpl_item_info['desc']),
-				'has_config'		=> $this->_stpl_item_info['configurable'] ? 1 : 0,
+				'id'				=> _prepare_html($auto_info_stpl['id']),
+				'name'				=> _prepare_html($auto_info_stpl['name']),
+				'desc'				=> _prepare_html($auto_info_stpl['desc']),
+				'has_config'		=> $auto_info_stpl['configurable'] ? 1 : 0,
 				'css_class'			=> 'drag-clone-needed custom_widget_template_stpl',
-				'options_container'	=> $this->_options_container($this->_stpl_item_info, $stpl_item_saved_config),
+				'options_container'	=> $this->_options_container($auto_info_stpl, $stpl_item_saved_config),
 			)),
 		);
 		return tpl()->parse(__CLASS__.'/edit_side', $replace);
@@ -307,10 +303,12 @@ class yf_manage_dashboards {
 			$is_cloneable_item = (substr($name_id, 0, strlen('autoid')) == 'autoid');
 			if ($is_cloneable_item) {
 				$auto_type = $saved_config['auto_type'];
-				if ($auto_type == 'stpl_item') {
-					$info = $this->_stpl_item_info;
-				} elseif ($auto_type == 'php_item') {
-					$info = $this->_php_item_info;
+				$info = $this->_auto_info[$auto_type];
+				// Merge default settings with saved override
+				foreach ((array)$saved_config as $k => $v) {
+					if (strlen($v)) {
+						$info[$k] = $v;
+					}
 				}
 				$info['auto_id'] = $name_id;
 				$info['auto_type'] = $auto_type;
@@ -338,8 +336,14 @@ class yf_manage_dashboards {
 	function _options_container($info = array(), $saved = array()) {
 		$form = form();
 		if ($info['cloneable']) {
-			$form->text('name', array('class' => 'input-medium'));
-			$form->text('desc', 'Description', array('class' => 'input-medium'));
+			$form->text('name', array('class' => 'input-medium', 'value' => $saved['name']));
+			$form->text('desc', 'Description', array('class' => 'input-medium', 'value' => $saved['desc']));
+			if ($info['auto_type'] == 'php_item') {
+				$form->method_select_box('method_name','Custom class method', array('value' => $saved['method_name']));
+			} elseif ($info['auto_type'] == 'stpl_item') {
+				$form->template_select_box('stpl_name','Custom template', array('value' => $saved['stpl_name']));
+			}
+			$form->textarea('code', array('value' => $saved['code']));
 		}
 		foreach ((array)$info['configurable'] as $k => $v) {
 			$form->select_box($k, $v, array('selected' => $saved[$k]));

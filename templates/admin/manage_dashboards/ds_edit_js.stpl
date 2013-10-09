@@ -61,7 +61,7 @@ $(function() {
 			$("select", _form).each(function(){
 				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).find(":selected").val()
 			})
-			$(":radio:checked, input", _form).each(function(){
+			$(":radio:checked, input, textarea", _form).each(function(){
 				ds_data += "&" + "ds_data[items_configs][" + item_id + "][" + $(this).attr("name") + "]=" + $(this).val()
 			})
 		})
@@ -69,7 +69,7 @@ $(function() {
 		$("select", _ds_settings_form).each(function(){
 			ds_data += "&" + "ds_data[settings][" + $(this).attr("name") + "]=" + $(this).find(":selected").val()
 		})
-		$(":radio:checked", _ds_settings_form).each(function(){
+		$(":radio:checked, input, textarea", _ds_settings_form).each(function(){
 			ds_data += "&" + "ds_data[settings][" + $(this).attr("name") + "]=" + $(this).val()
 		})
 		$.post($(this).attr("action"), ds_data, function(data){
