@@ -28,11 +28,10 @@ class yf_tpl_driver_smarty {
 	/**
 	*/
 	function parse($name, $replace = array(), $params = array()) {
-		foreach ((array)$replace as $k => $v) {
-			$this->smarty->assign($k, $v);
-		}
+		$this->smarty->assign($replace);
 		if ($params['string']) {
 			return $this->smarty->fetch('string:'.$params['string']);
 		}
+		return $this->smarty->display($name.'.tpl');
 	}
 }
