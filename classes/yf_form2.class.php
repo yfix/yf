@@ -495,7 +495,7 @@ class yf_form2 {
 	* Embedding ckeditor (http://ckeditor.com/) with kcfinder (http://kcfinder.sunhater.com/).
 	* Best way to include it into project: 
 	*
-	* git submodule add https://github.com/ckeditor/ckeditor-releases.git www/ckeditor/ && cd www/ckeditor/ && git checkout latest/full
+	* git submodule add https://github.com/yfix/ckeditor-releases.git www/ckeditor/ && cd www/ckeditor/ && git checkout latest/full
 	* git submodule add git@github.com:yfix/yf_kcfinder.git www/kcfinder
 	* 
 	* 'www/' usually means PROJECT_PATH inside project working copy.

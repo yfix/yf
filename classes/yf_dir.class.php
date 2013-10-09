@@ -18,25 +18,25 @@ class yf_dir {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
 	/**
 	* Check if we need to skip current path according to given patterns (unified method for whole dir module)
 	*/
-	function _skip_by_pattern ($path = "", $_is_dir = false, $pattern_include = "", $pattern_exclude = "") {
+	function _skip_by_pattern ($path = '', $_is_dir = false, $pattern_include = '', $pattern_exclude = '') {
 		if (!$path) {
 			return false;
 		}
 		if (!$pattern_include && !$pattern_exclude) {
 			return false;
 		}
-		$_path_clean = trim(str_replace("//", "/", str_replace("\\", "/", $path)));
+		$_path_clean = trim(str_replace('//', '/', str_replace("\\", '/', $path)));
 		// Include files only if they match the mask
 		$_index = $_is_dir ? 0 : 1;
 		if ($_is_dir) {
-			$_path_clean	= rtrim($_path_clean, "/");
+			$_path_clean	= rtrim($_path_clean, '/');
 		}
 		if (is_array($pattern_include)) {
 			$pattern_include = $pattern_include[$_index];
@@ -46,25 +46,25 @@ class yf_dir {
 		}
 		$MATCHED = false;
 		if (!empty($pattern_include) && is_string($pattern_include)) {
-			if (strlen($pattern_include) == 2 && $pattern_include{0} == "-") {
-				if ($pattern_include == "-d" && !$_is_dir) {
+			if (strlen($pattern_include) == 2 && $pattern_include{0} == '-') {
+				if ($pattern_include == '-d' && !$_is_dir) {
 					$MATCHED = true;
-				} elseif ($pattern_include == "-f" && $_is_dir) {
+				} elseif ($pattern_include == '-f' && $_is_dir) {
 					$MATCHED = true;
 				}
-			} elseif (!preg_match($pattern_include."ims", $_path_clean)) {
+			} elseif (!preg_match($pattern_include.'ims', $_path_clean)) {
 				$MATCHED = true;
 			}
 		}
 		// Exclude files from list by mask
 		if (!empty($pattern_exclude) && is_string($pattern_exclude)) {
-			if (strlen($pattern_exclude) == 2 && $pattern_exclude{0} == "-") {
-				if ($pattern_exclude == "-d" && $_is_dir) {
+			if (strlen($pattern_exclude) == 2 && $pattern_exclude{0} == '-') {
+				if ($pattern_exclude == '-d' && $_is_dir) {
 					$MATCHED = true;
-				} elseif ($pattern_exclude == "-f" && !$_is_dir) {
+				} elseif ($pattern_exclude == '-f' && !$_is_dir) {
 					$MATCHED = true;
 				}
-			} elseif (preg_match($pattern_exclude."ims", $_path_clean)) {
+			} elseif (preg_match($pattern_exclude.'ims', $_path_clean)) {
 				$MATCHED = true;
 			}
 		}
@@ -74,14 +74,14 @@ class yf_dir {
 	/**
 	* Alias
 	*/
-	function scan ($start_dir, $FLAT_MODE = true, $pattern_include = "", $pattern_exclude = "", $level = null) {
+	function scan ($start_dir, $FLAT_MODE = true, $pattern_include = '', $pattern_exclude = '', $level = null) {
 		return $this->scan_dir($start_dir, $FLAT_MODE, $pattern_include, $pattern_exclude, $level);
 	}
 
 	/**
 	* Recursively scanning directory structure (including subdirectories) //
 	*/
-	function scan_dir ($start_dir, $FLAT_MODE = true, $pattern_include = "", $pattern_exclude = "", $level = null) {
+	function scan_dir ($start_dir, $FLAT_MODE = true, $pattern_include = '', $pattern_exclude = '', $level = null) {
 		// Here we accept several start folders, result will be merged
 		if (is_array($start_dir)) {
 			$FLAT_MODE = true;
@@ -95,22 +95,22 @@ class yf_dir {
 		if (!$start_dir || !file_exists($start_dir)) {
 			return false;
 		}
-		$start_dir = rtrim($start_dir, "/");
+		$start_dir = rtrim($start_dir, '/');
 
 		$files	= array();
 		$dh		= opendir($start_dir);
 		while (false !== ($f = readdir($dh))) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name	= $start_dir."/".$f;
+			$item_name	= $start_dir.'/'.$f;
 			$tmp_file	= $FLAT_MODE ? $item_name : $f;
 			$_is_dir	= is_dir($item_name);
 			// Check patterns
 			if ($this->_skip_by_pattern($_is_dir ? $item_name : $tmp_file, $_is_dir, $pattern_include, $pattern_exclude)) {
 				continue;
 			}
-			// "Flat" mode (all filenames are stored as 1-dimension array, else - multi-dimension array)
+			// 'Flat' mode (all filenames are stored as 1-dimension array, else - multi-dimension array)
 			if ($_is_dir) {
 				if (is_null($level) || $level > 0) {
 					$tmp_file = $this->scan_dir($item_name, $FLAT_MODE, $pattern_include, $pattern_exclude, is_null($level) ? $level : $level - 1);
@@ -133,33 +133,33 @@ class yf_dir {
 	/**
 	* Alias
 	*/
-	function size($start_dir, $pattern_include = "", $pattern_exclude = "") {
+	function size($start_dir, $pattern_include = '', $pattern_exclude = '') {
 		return $this->dirsize($start_dir, $pattern_include, $pattern_exclude);
 	}
 
 	/**
 	* This function calculate directory size
 	*/
-	function dirsize($start_dir, $pattern_include = "", $pattern_exclude = "") {
+	function dirsize($start_dir, $pattern_include = '', $pattern_exclude = '') {
 		if (!$start_dir || !file_exists($start_dir)) {
 			return false;
 		}
-		$start_dir = rtrim($start_dir, "/");
+		$start_dir = rtrim($start_dir, '/');
 
 		$dh = opendir($start_dir);
 		$size = 0;
 		while (($f = readdir($dh)) !== false) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$path = $start_dir."/".$f;
+			$path = $start_dir.'/'.$f;
 			$_is_dir	= is_dir($path);
 			// Check patterns
 			if ($this->_skip_by_pattern($path, $_is_dir, $pattern_include, $pattern_exclude)) {
 				continue;
 			}
 			if ($_is_dir) {
-				$size += $this->dirsize($path."/", $pattern_include, $pattern_exclude);
+				$size += $this->dirsize($path.'/', $pattern_include, $pattern_exclude);
 			} elseif (is_file($path)) {
 				$size += filesize($path);
 			}
@@ -171,26 +171,26 @@ class yf_dir {
 	/**
 	* This function calculate number of files by mask inside given directory
 	*/
-	function count_files($start_dir, $pattern_include = "", $pattern_exclude = "") {
+	function count_files($start_dir, $pattern_include = '', $pattern_exclude = '') {
 		if (!$start_dir || !file_exists($start_dir)) {
 			return false;
 		}
-		$start_dir = rtrim($start_dir, "/");
+		$start_dir = rtrim($start_dir, '/');
 
 		$dh = opendir($start_dir);
 		$num_files = 0;
 		while (($f = readdir($dh)) !== false) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$path = $start_dir."/".$f;
+			$path = $start_dir.'/'.$f;
 			$_is_dir	= is_dir($path);
 			// Check patterns
 			if ($this->_skip_by_pattern($path, $_is_dir, $pattern_include, $pattern_exclude)) {
 				continue;
 			}
 			if ($_is_dir) {
-				$num_files += $this->count_files($path."/", $pattern_include, $pattern_exclude);
+				$num_files += $this->count_files($path.'/', $pattern_include, $pattern_exclude);
 			} elseif (is_file($path)) {
 				$num_files++;
 			}
@@ -202,19 +202,19 @@ class yf_dir {
 	/**
 	* Alias
 	*/
-	function copy($path1, $path2, $pattern_include = "", $pattern_exclude = "", $level = null) {
+	function copy($path1, $path2, $pattern_include = '', $pattern_exclude = '', $level = null) {
 		return $this->copy_dir($path1, $path2, $pattern_include, $pattern_exclude, $level);
 	}
 
 	/**
 	* This function recursively copies contents of source directory to destination
 	*/
-	function copy_dir($path1, $path2, $pattern_include = "", $pattern_exclude = "", $level = null) {
+	function copy_dir($path1, $path2, $pattern_include = '', $pattern_exclude = '', $level = null) {
 		if (!$path1 || !file_exists($path1)) {
 			return false;
 		}
-		$path1 = rtrim(str_replace("\\", "/", realpath($path1)), "/");
-		$path2 = rtrim(str_replace("\\", "/", realpath($path2)), "/");
+		$path1 = rtrim(str_replace("\\", '/', realpath($path1)), '/');
+		$path2 = rtrim(str_replace("\\", '/', realpath($path2)), '/');
 
 		$dh = opendir($path1);
 		$old_mask = umask(0);
@@ -222,11 +222,11 @@ class yf_dir {
 			$this->mkdir_m($path2);
 		}
 		while (false !== ($f = readdir($dh))) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name_1 = $path1."/".$f;
-			$item_name_2 = $path2."/".$f;
+			$item_name_1 = $path1.'/'.$f;
+			$item_name_2 = $path2.'/'.$f;
 			$_is_dir	= is_dir($item_name_1);
 			// Check patterns
 			if ($this->_skip_by_pattern($item_name_1, $_is_dir, $pattern_include, $pattern_exclude)) {
@@ -249,30 +249,30 @@ class yf_dir {
 	/**
 	* Alias
 	*/
-	function move($path1, $path2, $pattern_include = "", $pattern_exclude = "") {
+	function move($path1, $path2, $pattern_include = '', $pattern_exclude = '') {
 		return $this->move_dir($path1, $path2, $pattern_include, $pattern_exclude);
 	}
 
 	/**
 	* This function recursively move contents of source directory to destination
 	*/
-	function move_dir($path1, $path2, $pattern_include = "", $pattern_exclude = "") {
+	function move_dir($path1, $path2, $pattern_include = '', $pattern_exclude = '') {
 		if (!$path1 || !file_exists($path1)) {
 			return false;
 		}
-		$path1 = rtrim($path1, "/");
-		$path2 = rtrim($path2, "/");
+		$path1 = rtrim($path1, '/');
+		$path2 = rtrim($path2, '/');
 
 		$dh = opendir($path1);
 		if (!file_exists($path2)) {
 			mkdir($path2, 0777);
 		}
 		while (false !== ($f = readdir($dh))) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name_1 = $path1."/".$f;
-			$item_name_2 = $path2."/".$f;
+			$item_name_1 = $path1.'/'.$f;
+			$item_name_2 = $path2.'/'.$f;
 			$_is_dir	= is_dir($item_name_1);
 			// Check patterns
 			if ($this->_skip_by_pattern($item_name_1, $_is_dir, $pattern_include, $pattern_exclude)) {
@@ -294,7 +294,7 @@ class yf_dir {
 	/**
 	* Try to copy file
 	*/
-	function _copy_file($path_from = "", $path_to = "") {
+	function _copy_file($path_from = '', $path_to = '') {
 		if (!$path_from || !$path_to) {
 			return false;
 		}
@@ -324,14 +324,14 @@ class yf_dir {
 		if (!$start_dir || !file_exists($start_dir)) {
 			return false;
 		}
-		$start_dir = rtrim($start_dir, "/");
+		$start_dir = rtrim($start_dir, '/');
 		// Process folder contents
 		$dh = opendir($start_dir);
 		while (false !== ($f = readdir($dh))) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name = str_replace('//', '/', $start_dir."/".$f);
+			$item_name = str_replace('//', '/', $start_dir.'/'.$f);
 			@chmod($item_name, 0777);
 			// Delete files immediatelly
 			if (is_file($item_name)) {
@@ -356,7 +356,7 @@ class yf_dir {
 	/**
 	* Delete files in specified dir recursively using patterns
 	*/
-	function delete_files ($start_dir, $pattern_include = "", $pattern_exclude = "") {
+	function delete_files ($start_dir, $pattern_include = '', $pattern_exclude = '') {
 		foreach ((array)$this->scan_dir($start_dir, 1, $pattern_include, $pattern_exclude) as $file_path) {
 			unlink($file_path);
 		}
@@ -365,25 +365,25 @@ class yf_dir {
 	/**
 	* Alias
 	*/
-	function chmod($start_dir, $new_mode = 0755, $pattern_include = "", $pattern_exclude = "") {
+	function chmod($start_dir, $new_mode = 0755, $pattern_include = '', $pattern_exclude = '') {
 		return $this->chmod_dir($start_dir, $new_mode, $pattern_include, $pattern_exclude);
 	}
 
 	/**
 	* Recursively chmod directory structure (including subdirectories)
 	*/
-	function chmod_dir($start_dir, $new_mode = 0755, $pattern_include = "", $pattern_exclude = "") {
+	function chmod_dir($start_dir, $new_mode = 0755, $pattern_include = '', $pattern_exclude = '') {
 		if (!$start_dir || !file_exists($start_dir) || empty($new_mode)) {
 			return false;
 		}
-		$start_dir = rtrim($start_dir, "/");
+		$start_dir = rtrim($start_dir, '/');
 
 		$dh = opendir($start_dir);
 		while (false !== ($f = readdir($dh))) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name = $start_dir."/".$f;
+			$item_name = $start_dir.'/'.$f;
 			$_is_dir	= is_dir($item_name);
 			// Check patterns
 			if ($this->_skip_by_pattern($item_name, $_is_dir, $pattern_include, $pattern_exclude)) {
@@ -399,12 +399,12 @@ class yf_dir {
 	/**
 	* Alias
 	*/
-	function mkdir($dir_name, $dir_mode = 0755, $create_index_htmls = 0, $start_folder = "") {
+	function mkdir($dir_name, $dir_mode = 0755, $create_index_htmls = 0, $start_folder = '') {
 		return $this->mkdir_m($dir_name, $dir_mode, $create_index_htmls, $start_folder);
 	}
 
 	/**
-	* Create multiple dirs at one time (eg. mkdir_m("some_dir1/some_dir2/some_dir3"))
+	* Create multiple dirs at one time (eg. mkdir_m('some_dir1/some_dir2/some_dir3'))
 	* 
 	* @access	public
 	* @param	$dir_name			string
@@ -413,11 +413,11 @@ class yf_dir {
 	* @param	$start_folder		string
 	* @return	int		Status code
 	*/
-	function mkdir_m($dir_name, $dir_mode = 0755, $create_index_htmls = 0, $start_folder = "") {
+	function mkdir_m($dir_name, $dir_mode = 0755, $create_index_htmls = 0, $start_folder = '') {
 		if (!$dir_name || !strlen($dir_name)) {
 			return 0;
 		}
-		$dir_name = rtrim(str_replace(array("\\", "//"), "/", $dir_name), "/");
+		$dir_name = rtrim(str_replace(array("\\", '//'), '/', $dir_name), '/');
 		// Default dir mode
 		if (empty($dir_mode)) {
 			$dir_mode = 0777;
@@ -434,10 +434,10 @@ class yf_dir {
 		if (!strlen($start_folder)) {
 			$start_folder = INCLUDE_PATH;
 		}
-		$start_folder	= str_replace(array("\\", "//"), "/", realpath($start_folder)."/");
+		$start_folder	= str_replace(array("\\", '//'), '/', realpath($start_folder).'/');
 		// Process given file name
 		if (!file_exists($dir_name)) {
-			$base_path = OS_WINDOWS ? "" : "/";
+			$base_path = OS_WINDOWS ? '' : '/';
 			preg_match_all('/([^\/]+)\/?/i', $dir_name, $atmp);
 			foreach ((array)$atmp[0] as $val) {
 				$base_path = $base_path. $val;
@@ -449,24 +449,24 @@ class yf_dir {
 				if (file_exists($base_path)) {
 					continue;
 				} elseif ($this->CHECK_IF_WRITABLE && !is_writable(dirname($base_path))) {
-					trigger_error("DIR: directory \"".dirname($base_path)."\" is not writable", E_USER_WARNING);
+					trigger_error('DIR: directory: '.dirname($base_path).' is not writable', E_USER_WARNING);
 				}
 				// Try to create sub dir
 				if (!mkdir($base_path, $dir_mode)) {
-					trigger_error("DIR: Cannot create \"".$base_path."\"", E_USER_WARNING);
+					trigger_error('DIR: Cannot create: '.$base_path, E_USER_WARNING);
 					return -1;
 				}
 				chmod($base_path, $dir_mode);
 			}
 		} elseif (!is_dir($dir_name)) {
-			trigger_error("DIR: ".$dir_name." exists and is not a directory", E_USER_WARNING);
+			trigger_error('DIR: '.$dir_name.' exists and is not a directory', E_USER_WARNING);
 			return -2;
 		}
 		// Create empty index.html in new folder if needed
 		if ($create_index_htmls) {
-			$index_file_path = $dir_name. "/index.html";
+			$index_file_path = $dir_name. '/index.html';
 			if (!file_exists($index_file_path)) {
-				file_put_contents($index_file_path, "");
+				file_put_contents($index_file_path, '');
 			}
 		}
 		umask($old_mask);
@@ -500,20 +500,20 @@ class yf_dir {
 	* $user_id = 123456789;
 	* 
 	* // generate only path
-	* $dir = _class("dir")->_gen_dir_path($user_id);
-	* // $dir == "123/456/789/";
+	* $dir = _class('dir')->_gen_dir_path($user_id);
+	* // $dir == '123/456/789/';
 	* 
 	* // generate only full path
-	* $dir = _class("dir")->_gen_dir_path($user_id,INCLUDE_PATH);
-	* // $dir == INCLUDE_PATH."123/456/789/";
+	* $dir = _class('dir')->_gen_dir_path($user_id,INCLUDE_PATH);
+	* // $dir == INCLUDE_PATH.'123/456/789/';
 	* 
-	* // generate full path and make dirs "123/456/789/"
-	* $dir = _class("dir")->_gen_dir_path($user_id,INCLUDE_PATH,true);
-	* // $dir == INCLUDE_PATH."123/456/789/";
+	* // generate full path and make dirs '123/456/789/'
+	* $dir = _class('dir')->_gen_dir_path($user_id,INCLUDE_PATH,true);
+	* // $dir == INCLUDE_PATH.'123/456/789/';
 	* 
-	* // generate full path and make dirs "123/456/789/" with permissions 0644
-	* $dir = _class("dir")->_gen_dir_path($user_id,INCLUDE_PATH,true,0644);
-	* // $dir == INCLUDE_PATH."123/456/789/";
+	* // generate full path and make dirs '123/456/789/' with permissions 0644
+	* $dir = _class('dir')->_gen_dir_path($user_id,INCLUDE_PATH,true,0644);
+	* // $dir == INCLUDE_PATH.'123/456/789/';
 	* @endcode
 	* @param $id user id
 	* @param $path path to main dir
@@ -523,19 +523,19 @@ class yf_dir {
 	* @return user uploads path
 	* @private
 	*/
-	function _gen_dir_path($id, $path = "", $make = false, $dir_mode = 0755, $create_index_htmls = 1) {
+	function _gen_dir_path($id, $path = '', $make = false, $dir_mode = 0755, $create_index_htmls = 1) {
 		// Make 3-level dir path
-		$dirs = sprintf("%09s",$id);
+		$dirs = sprintf('%09s',$id);
 		$dir3 = substr($dirs,-3,3);
 		$dir2 = substr($dirs,-6,3);
 		$dir1 = substr($dirs,0,-6);
 		// 3-level path
-		$mpath = $dir1."/".$dir2."/".$dir3."/";
+		$mpath = $dir1.'/'.$dir2.'/'.$dir3.'/';
 		// Add path prefix to string
 		if (strlen($path) > 0) {
-			// if last char in $path not "\" or "/" add "/"
-			if((substr($path,-1,1) !== "/") && (substr($path,-1,1) !== "\\")) {
-				$path .= "/";
+			// if last char in $path not '\' or '/' add '/'
+			if((substr($path,-1,1) !== '/') && (substr($path,-1,1) !== "\\")) {
+				$path .= '/';
 			}
 			$mpath = $path. $mpath;
 		}
@@ -551,9 +551,9 @@ class yf_dir {
 	*/
 	function mklink($target, $link) {
 		// Required fixes for trailink slash
-		$target = rtrim(str_replace("\\", "/", $target), "/");
-		$link	= rtrim(str_replace("\\", "/", $link), "/");
-		// Check required syuff
+		$target = rtrim(str_replace("\\", '/', $target), '/');
+		$link	= rtrim(str_replace("\\", '/', $link), '/');
+		// Check required stuff
 		if (!strlen($target) || !strlen($link) || !file_exists($target)) {
 			return false;
 		}
@@ -568,7 +568,7 @@ class yf_dir {
 	*
 	* @return array of found files
 	*/
-	function search($start_dirs, $pattern_include = "", $pattern_exclude = "", $pattern_find = "") {
+	function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '') {
 		$files = array();
 		if (!is_array($start_dirs)) {
 			$start_dirs = array($start_dirs);
@@ -599,7 +599,7 @@ class yf_dir {
 	*
 	* @return array of processed files
 	*/
-	function replace($start_dirs, $pattern_include = "", $pattern_exclude = "", $pattern_find = "", $pattern_replace = null) {
+	function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '', $pattern_replace = null) {
 		$files = array();
 		if (!is_array($start_dirs)) {
 			$start_dirs = array($start_dirs);
@@ -626,19 +626,19 @@ class yf_dir {
 	}
 
 	/**
-	* Implementation of the UNIX "tail" command on pure PHP, memory safe on huge files
+	* Implementation of the UNIX 'tail' command on pure PHP, memory safe on huge files
 	*/
 	function tail($file, $lines = 10) {
 		if (!$file || !file_exists($file)) {
 			return false;
 		}
-		$handle = fopen($file, "r");
+		$handle = fopen($file, 'r');
 		$linecounter = $lines;
 		$pos = -2;
 		$beginning = false;
 		$text = array();
 		while ($linecounter > 0) {
-			$t = " ";
+			$t = ' ';
 			while ($t != "\n") {
 				if (fseek($handle, $pos, SEEK_END) == -1) {
 					$beginning = true; 
