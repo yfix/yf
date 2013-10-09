@@ -9,21 +9,23 @@
 */
 class yf_manage_dashboards {
 
+	/**
+	* Bootstrap CSS classes used to create configurable grid
+	*/
 	private $_col_classes = array(
 		1 => 'span12',
 		2 => 'span6',
 		3 => 'span4',
 		4 => 'span3',
-//		5 => 'span2',
 		6 => 'span2',
 		12 => 'span1',
 	);
 
+// TODO: add ability to use user module dashboards also
+
 	/**
-	* Framework constructor
 	*/
 	function _init () {
-// TODO: add ability to use user module dashboards also
 		$this->_auto_info['php_item'] = array(
 			'id'			=> 'php_item',
 			'name'			=> 'CLONEABLE: php item name',
@@ -58,7 +60,18 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function clone_item() {
-// TODO
+		$id = $_GET['id'];
+		$ds_info = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
+		if (!$ds_info['id']) {
+			return _e('No such record');
+		}
+		$_GET['id'] = $ds_info['id'];
+		$sql = $ds_info;
+		unset($sql['id']);
+		$sql['name'] = $sql['name'].'_clone';
+		db()->insert('dashboards', $sql);
+		common()->admin_wall_add( array('dashboard cloned: '.$ds_info['name'], db()->insert_id() ));
+		return js_redirect('./?object='.$_GET['object']);
 	}
 
 	/**
@@ -135,20 +148,51 @@ class yf_manage_dashboards {
 		$_orig_action = $_GET['action'];
 
 		foreach ((array)$name_ids as $name_id) {
+			$saved_config = $items_configs[$name_id.'_'.$name_id];
 			$info = $list_of_hooks[$name_id];
+
+			$is_cloneable_item = (substr($name_id, 0, strlen('autoid')) == 'autoid');
+			if ($is_cloneable_item) {
+				$auto_type = $saved_config['auto_type'];
+				$info = $this->_auto_info[$auto_type];
+				// Merge default settings with saved override
+				foreach ((array)$saved_config as $k => $v) {
+					if (strlen($v)) {
+						$info[$k] = $v;
+					}
+				}
+				$info['auto_id'] = $name_id;
+				$info['auto_type'] = $auto_type;
+			}
 			if (!$info) {
 				continue;
 			}
-			list($module_name, $method_name) = explode('::', $info['full_name']);
-
-			$saved_config = $items_configs[$name_id.'_'.$name_id];
-
-			// This is needed to correctly execute widget (maybe not nicest method, I know...)
-			$_GET['object'] = $module_name;
-			$_GET['action'] = $module_name;
-			$content = module($module_name)->$method_name($saved_config);
-			$_GET['object'] = $_orig_object;
-			$_GET['action'] = $_orig_action;
+			$module_name = '';
+			$method_name = '';
+			$content = '';
+			if ($is_cloneable_item) {
+				if ($auto_type == 'php_item') {
+					if (strlen($info['code'])) {
+						$content = eval('<?'.'php '.$info['code']);
+					} elseif ($info['method_name']) {
+						list($module_name, $method_name) = explode('.', $info['method_name']);
+					}
+				} elseif ($auto_type == 'stpl_item') {
+					if (strlen($info['code'])) {
+						$content = tpl()->parse_string($info['code']);
+					} elseif ($info['stpl_name']) {
+						$content = tpl()->parse($info['stpl_name']);
+					}
+				}
+			} else {
+				list($module_name, $method_name) = explode('::', $info['full_name']);
+			}
+			if ($module_name && $method_name) {
+				// This is needed to correctly execute widget (maybe not nicest method, I know...)
+				$_GET['object'] = $module_name; $_GET['action'] = $module_name;
+				$content = module($module_name)->$method_name($saved_config);
+				$_GET['object'] = $_orig_object; $_GET['action'] = $_orig_action;
+			}
 
 			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
 				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
@@ -248,7 +292,6 @@ class yf_manage_dashboards {
 	*/
 	function edit () {
 		$ds = $this->_get_dashboard_data($_GET['id']);
-#echo '<pre>'.print_r($ds, 1).'</pre>';
 		if (!$ds['id']) {
 			return _e('No such record');
 		}

@@ -14,7 +14,6 @@ $(function() {
 			var _auto_id = "autoid" + _new_id + "_autoid" + _new_id;
 
 			var _container = $(e.target)
-//			if (_container.parents('#portlets-side-column')) {	}
 			var _cur_item_id = _item.attr('id')
 			if (_cur_item_id == 'php_item' || _cur_item_id == 'stpl_item') {
 				_item.attr('id', _auto_id)
@@ -31,7 +30,7 @@ $(function() {
 		},
 		receive: function(e,ui) {
 			var _item = $(ui.item[0])
-			if (_item.hasClass('drag-clone-needed')) {
+			if (_item.hasClass('drag-clone-needed')/* || /^autoid/.test(_item.attr('id'))*/ ) {
 				copyHelper = null;
 			}
 		}
@@ -97,7 +96,7 @@ $(function() {
 
 	$("#yf_dashboard").on("click", ".yf_ds_delete", function(e){
 		var _portlet = $(this).closest('.portlet');
-		if (!_portlet.hasClass('drag-clone-needed')) {
+		if ( !_portlet.hasClass('drag-clone-needed') && !/^autoid/.test(_portlet.attr('id')) ) {
 			_portlet.clone().appendTo(".portlets-side-column .column")
 		}
 		_portlet.remove()

@@ -693,6 +693,7 @@ class yf_table2 {
 	function btn_edit($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'Edit';
@@ -715,6 +716,7 @@ class yf_table2 {
 	function btn_delete($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'Delete';
@@ -737,6 +739,7 @@ class yf_table2 {
 	function btn_clone($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'Clone';
@@ -759,6 +762,7 @@ class yf_table2 {
 	function btn_view($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'View';
@@ -781,6 +785,7 @@ class yf_table2 {
 	function btn_active($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'Active';

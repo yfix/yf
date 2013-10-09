@@ -1,4 +1,4 @@
-	  <div class="portlet {css_class}" id="{id}"{{-- data-auto-id="{auto_id}" data-auto-type="{auto_type}"--}}>
+	  <div class="portlet {css_class}" id="{id}">
 	    <div class="portlet-header">
 			{name}
 			<div style="float:right;">
