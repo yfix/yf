@@ -411,9 +411,12 @@ class yf_tpl {
 		if ($this->ALLOW_CUSTOM_FILTER) {
 			$this->_custom_filter($name, $replace);
 		}
-
-		$string = $this->driver->parse($name, $replace, $params);
-
+		// Allowing to override driver
+		if ($params['driver'] && $params['driver'] != $this->DRIVER_NAME) {
+			$string = _class('tpl_driver_'.$params['driver'], 'classes/tpl/')->parse($name, $replace, $params);
+		} else {
+			$string = $this->driver->parse($name, $replace, $params);
+		}
 		if ($params['replace_images']) {
 			$string = common()->_replace_images_paths($string);
 		}
