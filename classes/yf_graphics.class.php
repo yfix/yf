@@ -415,7 +415,8 @@ class yf_graphics {
 		}
 		// Override by hook method
 		$method_name = '_site_title';
-		$obj = module($_GET['object']);
+// TODO: need to check permissions at first
+#		$obj = module($_GET['object']);
 		if (method_exists($obj, $method_name)) {
 			$title = _prepare_html($obj->$method_name($title));
 		}
@@ -450,7 +451,8 @@ class yf_graphics {
 		);
 		// Override by hook method
 		$method_name = '_hook_meta_tags';
-		$obj = module($_GET['object']);
+// TODO: need to check permissions at first
+#		$obj = module($_GET['object']);
 		if (method_exists($obj, $method_name)) {
 			$meta = _prepare_html($obj->$method_name($meta));
 		}
@@ -1431,7 +1433,8 @@ class yf_graphics {
 		$page_header = '';
 		$page_subheader = '';
 		// Display hook contents
-		$obj = module($_GET['object']);
+// TODO: need to check permissions at first
+#		$obj = module($_GET['object']);
 		if (method_exists($obj, '_show_header')) {
 			$result = $obj->_show_header();
 			if (is_array($result)) {
@@ -1474,7 +1477,8 @@ class yf_graphics {
 			);
 		}
 		$method_name = '_quick_menu';
-		$obj = module($_GET['object']);
+// TODO: need to check permissions at first
+#		$obj = module($_GET['object']);
 		if (method_exists($obj, $method_name)) {
 			$data2 = $obj->$method_name();
 		}
