@@ -22,6 +22,11 @@ class yf_tpl_driver_blitz {
 	/**
 	*/
 	function parse($name, $replace = array(), $params = array()) {
-// TODO
+		if ($params['string']) {
+			$view = new Blitz();
+			$view->load($params['string']);
+			return $view->parse($replace);
+		}
+// TODO: test me and connect YF template loader
 	}
 }

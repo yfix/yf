@@ -8,6 +8,25 @@ class tpl_driver_fenom_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('Hello world', _tpl( 'Hello world' ));
 	}
 	public function test_60() {
-		$this->assertEquals('GOOD', _tpl( '{if $key1 eq "val1"}GOOD{/if}', array('key1' => 'val1') ));
+		$result = _tpl( 
+			'<html>
+			    <head>
+			        <title>Fenom</title>
+			    </head>
+			    <body>
+				    {if $templaters.fenom?}
+				        {var $tpl = $templaters.fenom}
+				        <div>Name: {$tpl.name}</div>
+				        <div>Description: {$tpl.name|truncate:80}</div>
+			    	    <ul>
+			        	{foreach $tpl.features as $feature}
+				            <li>{$feature.name} (from {$feature.timestamp|gmdate:"Y-m-d H:i:s"})</li>
+				        {/foreach}
+				        </ul>
+				    {/if}
+			    </body>
+			</html>'
+		);
+		$this->assertNotEmpty('GOOD', $result);
 	}
 }

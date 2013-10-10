@@ -8,14 +8,15 @@ class yf_tpl_driver_fenom {
 	* Constructor
 	*/
 	function _init () {
-#		$fenom_dir = YF_PATH. 'libs/fenom/src/';
+		$fenom_dir = YF_PATH. 'libs/fenom/src/';
 		require_once $fenom_dir. 'Fenom.php';
-#		$fenom = Fenom::factory('.', '/tmp', Fenom::AUTO_ESCAPE);;
-		$fenom = new Fenom();
-var_dump($fenom);
-#		$template = $fenom->compileCode('Hello {$user.name}! {if $user.email?} Your email: {$user.email} {/if}');
-#		$template->display($data);
-// TODO
+		// Dirty autoload
+		foreach (glob($fenom_dir.'Fenom/*.php') + glob($fenom_dir.'Fenom/Error/*.php') as $f) {
+			require_once $f;
+		}
+		$fenom = Fenom::factory('.', '/tmp', Fenom::AUTO_ESCAPE/* | Fenom::FORCE_COMPILE | Fenom::DISABLE_CACHE*/);
+		$this->fenom = $fenom;
+// TODO: fenom configuration
 	}
 
 	/**
@@ -29,6 +30,11 @@ var_dump($fenom);
 	/**
 	*/
 	function parse($name, $replace = array(), $params = array()) {
-// TODO
+		if ($params['string']) {
+			$tpl = $this->fenom->compileCode($params['string'], $name);
+			return $tpl->fetch($replace);
+		}
+// TODO: test me and connect YF template loader
+		return $this->fenom->fetch($name.'.tpl', $replace);
 	}
 }
