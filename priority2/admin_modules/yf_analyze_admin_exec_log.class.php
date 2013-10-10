@@ -165,7 +165,7 @@ class yf_analyze_admin_exec_log{
 					"from_cache" 	=> intval((bool)$info["from_cache"]),
 				);
 			}
-			return print common()->json_encode($data);
+			return print json_encode($data);
 		}
 
 		$_site_box_data = array(

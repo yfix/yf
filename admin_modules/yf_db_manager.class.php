@@ -252,7 +252,7 @@ class yf_db_manager {
 		$info["__total_rows"] = $total_rows;
 		$info["__total_size"] = common()->format_file_size($total_size);
 
-		return print common()->json_encode($info);
+		return print json_encode($info);
 	}
 
 	/**

@@ -40,7 +40,7 @@ class yf_project_packer {
 	);
 	/** @var @conf_skip */
 	public $_include_php_fwork_user = array(
-		"/(bb_codes|cache|captcha|cats|common|custom_meta_info|db|dir|errors|graphics|installer|locale|logs|main|module|output_cache|se_keywords|sites_info|spider_detect|task_manager|tpl|unicode_funcs)\.class\.php\$/i",
+		"/(bb_codes|cache|captcha|cats|common|custom_meta_info|db|dir|errors|graphics|installer|locale|logs|main|module|output_cache|se_keywords|sites_info|spider_detect|task_manager|tpl|unicode)\.class\.php\$/i",
 		"/(auth_user|client_utils|utf8_clean|rewrite|l10n|db_mysql41|divide_pages|user_data|site_nav_bar)\.class\.php\$/i",
 		"/(common_funcs|data_handlers)\.php\$/i",
 	);

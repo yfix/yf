@@ -880,7 +880,7 @@ _debug_log("LOCALE_NUM_VARS: ".count($vars));
 					continue;
 				}
 				foreach ((array)common()->multi_request($buffer) as $url => $response) {
-					$response_array = common()->json_decode($response);
+					$response_array = json_decode($response);
 					$response_text = trim($response_array->responseData->translatedText);
 					$ID = $_temp[$url];
 					$source = str_replace("_", " ", $vars[$ID]["value"]);

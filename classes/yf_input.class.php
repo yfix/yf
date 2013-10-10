@@ -102,7 +102,7 @@ class yf_input {
 		// Do we need the UTF-8 class?
 #		if (UTF8_ENABLED === TRUE)
 #		{
-#			$this->uni = _class('unicode_funcs');
+#			$this->uni = _class('utf8');
 #		}
 
 		// Sanitize global arrays

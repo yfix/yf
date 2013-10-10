@@ -425,7 +425,7 @@ class yf_conf_editor {
 			}
 			$val_json = "";
 			if ($type == "array") {
-				$val_json = common()->json_encode($_val_orig);
+				$val_json = json_encode($_val_orig);
 			}
 			$replace2 = array(
 				"var_name"			=> $name,

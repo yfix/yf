@@ -112,35 +112,35 @@ if (!function_exists('search_user')) {
 	function search_user($params = array(), $fields = array(), $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->search_user($params, $fields, $return_sql) : false; }
 }
 if (!function_exists('_truncate')) {
-	function _truncate($string, $len, $wordsafe = false, $dots = false) { return _class('unicode_funcs', 'classes/')->truncate_utf8($string, $len, $wordsafe, $dots); }
+	function _truncate($string, $len, $wordsafe = false, $dots = false) { return _class('utf8')->truncate_utf8($string, $len, $wordsafe, $dots); }
 }
 if (!function_exists('_strlen')) {
-	function _strlen($text) { return _class('unicode_funcs', 'classes/')->strlen($text); }
+	function _strlen($text) { return _class('utf8')->strlen($text); }
 }
 if (!function_exists('_strtoupper')) {
-	function _strtoupper($text) { return _class('unicode_funcs', 'classes/')->strtoupper($text); }
+	function _strtoupper($text) { return _class('utf8')->strtoupper($text); }
 }
 if (!function_exists('_strtolower')) {
-	function _strtolower($text) { return _class('unicode_funcs', 'classes/')->strtolower($text); }
+	function _strtolower($text) { return _class('utf8')->strtolower($text); }
 }
 if (!function_exists('_ucfirst')) {
-	function _ucfirst($text) { return _class('unicode_funcs', 'classes/')->ucfirst($text); }
+	function _ucfirst($text) { return _class('utf8')->ucfirst($text); }
 }
 if (!function_exists('_ucwords')) {
-	function _ucwords($text) { return _class('unicode_funcs', 'classes/')->ucwords($text); }
+	function _ucwords($text) { return _class('utf8')->ucwords($text); }
 }
 if (!function_exists('_substr')) {
-	function _substr($text, $start, $length = NULL) { return _class('unicode_funcs', 'classes/')->substr($text, $start, $length); }
+	function _substr($text, $start, $length = NULL) { return _class('utf8')->substr($text, $start, $length); }
 }
 if (!function_exists('_wordwrap')) {
-	function _wordwrap($string, $length = 75, $break = '\n', $cut = false) { return _class('unicode_funcs', 'classes/')->wordwrap($string, $length, $break, $cut); }
+	function _wordwrap($string, $length = 75, $break = '\n', $cut = false) { return _class('utf8')->wordwrap($string, $length, $break, $cut); }
 }
 if (!function_exists('_check_rights')) {
 	function _check_rights ($methods) { return method_exists($GLOBALS['main'], '_check_rights') ? $GLOBALS['main']->_check_rights($methods) : true; }
 }
 // Execute command on remote server using SSH
 if (!function_exists('_ssh_exec')) {
-	function _ssh_exec ($server_info = array(), $cmd = '') { return _class('ssh', 'classes/')->exec($server_info, $cmd); }
+	function _ssh_exec ($server_info = array(), $cmd = '') { return _class('ssh')->exec($server_info, $cmd); }
 }
 if (!function_exists('_add_get')) {
 	function _add_get ($add_skip = array()) { return common()->add_get_vars($add_skip); }

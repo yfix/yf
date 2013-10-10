@@ -88,7 +88,7 @@ class yf_l10n {
 	function months_abbr_js($t_var = "", $lang = "") {
 		$data = $this->_get_var("month_names_abbr", $lang);
 //		return print_r($data, 1);
-		return common()->json_encode($data);
+		return json_encode($data);
 /*
 		if (!$data) {
 			return $number;

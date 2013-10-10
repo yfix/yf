@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_unicode_funcs {
+class yf_utf8 {
 
 	/** @var @conf_skip Result of unicode checks, 1 -> fine, everything else - not */
 	public $MULTIBYTE = false;

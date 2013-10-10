@@ -32,7 +32,7 @@ class yf_validate {
 		if (is_array($user_modules)) {
 			$this->reserved_words = array_merge($this->reserved_words, $user_modules);
 		}
-		$this->MB_ENABLED = _class('unicode_funcs')->MULTIBYTE;
+		$this->MB_ENABLED = _class('utf8')->MULTIBYTE;
 	}
 
 	/***/

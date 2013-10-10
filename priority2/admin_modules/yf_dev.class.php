@@ -1033,7 +1033,7 @@ class yf_dev{
 				$_tpl_name = substr(basename($_path), 0, -5);
 	 			$tpls[$_tpl_name] = file_get_contents($_path);
 			}
-			echo common()->json_encode($tpls);
+			echo json_encode($tpls);
 			exit;
 		}
 

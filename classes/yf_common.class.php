@@ -767,50 +767,6 @@ class yf_common {
 	}
 
 	/**
-	* Encode JSON string
-	*/
-	function json_encode ($string = '') {
-		if (empty($string)) {
-			return false;
-		}
-		// Use fastest PHP5+ built-in function if available
-		if (function_exists('json_encode')) {
-			return json_encode($string);
-		}
-		// Else try pure PHP implementation
-		include_once YF_PATH.'libs/phpxmlrpc/lib/xmlrpc.inc';
-		include_once YF_PATH.'libs/phpxmlrpc/extras/jsonrpc/jsonrpc.inc';
-		if (function_exists('php_jsonrpc_encode')) {
-			$value =& php_jsonrpc_encode($string);
-			return $value->serialize();
-		}
-		return false;
-	}
-
-	/**
-	* Decode JSON string
-	*/
-	function json_decode ($string = '') {
-		if (empty($string)) {
-			return false;
-		}
-		// Use fastest PHP5+ built-in function if available
-		if (function_exists('json_decode')) {
-			return json_decode($string);
-		}
-		// Else try pure PHP implementation
-		include_once YF_PATH.'libs/phpxmlrpc/lib/xmlrpc.inc';
-		include_once YF_PATH.'libs/phpxmlrpc/extras/jsonrpc/jsonrpc.inc';
-		if (function_exists('php_jsonrpc_decode')) {
-			$value =& php_jsonrpc_decode_json($string);
-			if ($value) {
-				return php_jsonrpc_decode($value);
-			}
-		}
-		return false;
-	}
-
-	/**
 	* Get geo info by IP from db
 	*/
 	function _get_geo_data_from_db ($cur_ip = '') {

@@ -359,7 +359,7 @@ class yf_dynamic {
 		while($A = db()->fetch_assoc($Q)) {
 			$finded_users[$A["id"]] = $A["nick"];
 		}
-		echo $finded_users ? common()->json_encode($finded_users) : "*";
+		echo $finded_users ? json_encode($finded_users) : "*";
 	}
 
 	/**
@@ -413,7 +413,7 @@ class yf_dynamic {
 
 		}
 
-		echo $finded_ids ? common()->json_encode($finded_ids) : "*";
+		echo $finded_ids ? json_encode($finded_ids) : "*";
 	}
 
 	/**
