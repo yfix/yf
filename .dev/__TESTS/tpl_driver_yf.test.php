@@ -222,7 +222,7 @@ class tpl_core_test extends PHPUnit_Framework_TestCase {
 		_tpl( 'Inherited var: {key1}, passed var: {var2}', array(), 'unittest_include' );
 		$this->assertEquals('Inherited var: val1, passed var: 42', _tpl( '{include("unittest_include",var2=42)}', array('key1' => 'val1') ));
 	}
-	public function test_116() {
+	public function test_113() {
 		_tpl( 'Included: {var1} {var2} {var3} {var4}', array(), 'unittest_include' );
 		$this->assertEquals('Included: v1 v2 v3 v4', _tpl( '{include("unittest_include",var1=v1;var2=v2;var3=v3;var4=v4)}' ));
 	}
