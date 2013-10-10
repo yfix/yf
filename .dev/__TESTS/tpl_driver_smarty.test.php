@@ -5,8 +5,8 @@ require YF_PATH.'classes/yf_main.class.php';
 $GLOBALS['PROJECT_CONF']['tpl']['DRIVER_NAME'] = 'smarty';
 new yf_main('user', 1, 0);
 
-function _tpl($stpl_text = '', $replace = array(), $name = '') {
-	return tpl()->parse_string($stpl_text, $replace, $name);
+function _tpl($stpl_text = '', $replace = array(), $name = '', $params = array()) {
+	return tpl()->parse_string($stpl_text, $replace, $name, $params);
 }
 
 class tpl_driver_smarty_test extends PHPUnit_Framework_TestCase {
