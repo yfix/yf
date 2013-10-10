@@ -1,7 +1,6 @@
 {
 	"require": {
-		"smarty/smarty": "dev-master"
-		,"ensepar/html2pdf": "dev-master"
+		"ensepar/html2pdf": "dev-master"
 		,"facebook/xhprof": "dev-master"
 		,"openid/php-openid": "dev-master"
 		,"sharom/jevix": "dev-master"
