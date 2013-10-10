@@ -15,37 +15,13 @@ class yf_tpl_driver_yf_compile {
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
 
 	/**
-	* Compile given template into pure PHP code
 	*/
-	function _compile($name, $replace = array(), $string = "") {
-		$_time_start = microtime(true);
-
-		// For later check for templates changes
-		if (_class('tpl')->COMPILE_CHECK_STPL_CHANGED) {
-			$_md5_string = md5($string);
-		}
-		$compiled_dir = PROJECT_PATH. _class('tpl')->COMPILED_DIR;
-		// Do not check dir existence twice
-		if (!isset($this->_stpl_compile_dir_check)) {
-			_mkdir_m($compiled_dir);
-			$this->_stpl_compile_dir_check = true;
-		}
-
-		$file_name = $compiled_dir.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
-
+	function _init() {
 		$_php_start = '<'.'?p'.'hp ';
 		$_php_end	= ' ?'.'>';
 
-		// Simple replaces
-		$_my_replace = array(
-			// Special tags for foreach
-			'{_key}'	=> $_php_start. 'echo $_k;'. $_php_end,
-			'{_val}'	=> $_php_start. 'echo $_v;'. $_php_end,
-		);
-		$string = str_replace(array_keys($_my_replace), array_values($_my_replace), $string);
-
 		// Patterns replaces
-		$patterns = array(
+		$this->_patterns = array(
 			'/\{(else)\}/i'
 				=> $_php_start. '} else {'. $_php_end,
 
@@ -122,7 +98,38 @@ class yf_tpl_driver_yf_compile {
 			'/(\{_debug_get_vars\(\)\})/i'
 				=> $_php_start. 'echo $this->_debug_get_vars($string);'. $_php_end,
 		);
-		$string = preg_replace(array_keys($patterns), array_values($patterns), $string);
+	}
+
+	/**
+	* Compile given template into pure PHP code
+	*/
+	function _compile($name, $replace = array(), $string = "") {
+		$_time_start = microtime(true);
+
+		// For later check for templates changes
+		if (_class('tpl')->COMPILE_CHECK_STPL_CHANGED) {
+			$_md5_string = md5($string);
+		}
+		$compiled_dir = PROJECT_PATH. _class('tpl')->COMPILED_DIR;
+		// Do not check dir existence twice
+		if (!isset($this->_stpl_compile_dir_check)) {
+			_mkdir_m($compiled_dir);
+			$this->_stpl_compile_dir_check = true;
+		}
+
+		$file_name = $compiled_dir.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
+
+		$_php_start = '<'.'?p'.'hp ';
+		$_php_end	= ' ?'.'>';
+
+		// Simple replaces
+		$_my_replace = array(
+			// Special tags for foreach
+			'{_key}'	=> $_php_start. 'echo $_k;'. $_php_end,
+			'{_val}'	=> $_php_start. 'echo $_v;'. $_php_end,
+		);
+		$string = str_replace(array_keys($_my_replace), array_values($_my_replace), $string);
+		$string = preg_replace(array_keys($this->_patterns), array_values($this->_patterns), $string);
 
 		// Images and uploads paths compile
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
