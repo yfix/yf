@@ -1,6 +1,5 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Module for testing different new stuff
 class yf_test {
 
@@ -24,12 +23,19 @@ class yf_test {
 		"html"			=> "<h1>!!html html!!</h1>",
 	);
 
-	//-----------------------------------------------------------------------------
-	// YF module constructor
-	function _init () {
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $arguments) {
+		$obj = _class('test_'.$name, 'modules/test/');
+		if (method_exists($obj, 'test')) {
+			return $obj->test($arguments);
+		} else { 
+			trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		}
+		return false;
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function change_debug () {
 		// Save data
@@ -56,7 +62,6 @@ class yf_test {
 		return tpl()->parse(__CLASS__."/".__FUNCTION__, $replace);
 	}
 	
-	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
 		if(!DEBUG_MODE){
@@ -83,64 +88,11 @@ class yf_test {
 		return tpl()->parse(__CLASS__."/main", $replace);
 	}
 	
-	//-----------------------------------------------------------------------------
-	// 
-	function test_stpls () {
-		$test_array_1 = array("One", "Two", "Three", "Four");
-		$test_array_2 = array(
-			"One"	=> array(
-				"name"	=> "First",
-			),
-			"Two"	=> array(
-				"name"	=> "Second",
-			),
-			"Three"	=> array(
-				"name"	=> "Third",
-			),
-			"Four"	=> array(
-				"name"	=> "Fourth",
-			),
-		);
-		// Process template
-		$replace = array(
-			"test_array_1"	=> $test_array_1,
-			"test_array_2"	=> $test_array_2,
-			"cond_1"		=> 1,
-			"cond_2"		=> 2,
-			"cond_3"		=> 2,
-		);
-		return tpl()->parse(__CLASS__."/".__FUNCTION__, $replace);
-	}
-
-	//-----------------------------------------------------------------------------
-	// 
-	function json () {
-		$_time_start = microtime(true);
-		$data1 = array(1, 1.0, 'hello world', true, null, -1, 11.0, '~!@#$%^&*()_+|', false, null);
-		$data2 = array('zero' => $data1, 'one' => $data1, 'two' => $data1, 'three' => $data1, 'four' => $data1, 'five' => $data1, 'six' => $data1, 'seven' => $data1, 'eight' => $data1, 'nine' => $data1);
-		$data = array($data2, $data2);
-		$encoded = common()->json_encode($data);
-		$decoded = common()->json_decode($encoded);
-		$body .= "<h1>Source:</h1>".print_r($data, 1)."<br />";
-		$body .= "<h1>Encoded:</h1>".$encoded."<br />";
-		$body .= "<h1>Decoded:</h1>".print_r($decoded, 1)."<br />";
-		$body .= "<br /><b>Time spent: ".round(microtime(true) - $_time_start, 3)." sec<br />";
-		return $body;
-	}
-	
-	//-----------------------------------------------------------------------------
-	// 
-	function boxes () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
 	// 
 	function ajax_login () {
 		return tpl()->parse(__CLASS__."/test_ajax_login", $replace);
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function poll () {
 		$POLL_OBJ = main()->init_class("poll");
@@ -155,8 +107,7 @@ class yf_test {
 		));
 		return $body;
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// Test current project mailing system
 	function mail () {
 		// Only for members!
@@ -171,32 +122,12 @@ class yf_test {
 		// Display form
 		return "<form action='./?object=".$_GET["object"]."&action=".$_GET["action"]."' method='post'><input type='text' name='email'><input type='submit' name='go' value='SEND!'></form>";
 	}
-
-	//-----------------------------------------------------------------------------
-	// test XPM2 mailer
-	function smtp_xpm2 () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
-	// test XPM4 mailer
-	function smtp_xpm4 () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
-	// test EasySwift mailer
-	function smtp_swift () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
+	
 	// test PHPMailer
 	function smtp_phpmailer () {
-		return $this->_call_sub_module(__FUNCTION__);
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function send_mail () {
 		return common()->quick_send_mail("yfix.dev@gmail.com", "test subject", "blablabla");
@@ -222,34 +153,27 @@ class yf_test {
 			return "Message sent!";
 		}
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function rate () {
 		$body .= "<img src='".WEB_PATH."uploads/gallery/medium/000/000/001/1_260512.jpg' /><br />";
-
-		$RATE_OBJ = main()->init_class("rate");
-		$body .= $RATE_OBJ->_show_for_object(array(
+		$body .= module("rate")->_show_for_object(array(
 			"object_name"	=> "gallery_photo",
 			"object_id"		=> 260512,
 		));
 		return $body;
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function photo_rating () {
-		$OBJ = main()->init_class("photo_rating");
-		return $OBJ->_show_photo();
+		return _class("photo_rating")->_show_photo();
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function diff () {
-		return $this->_call_sub_module(__FUNCTION__);
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function geo_country () {
 		// UKRTELECOM ISP, Maxmind GeoCity does not recognize it, 
@@ -260,21 +184,12 @@ class yf_test {
 		$body .= "GEO DATA:<br /> <pre>".($ip_data ? print_r($ip_data, 1) : "Unknown... :-(")."</pre>";
 		return $body;
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// unicode functions
 	function unicode () {
-		return $this->_call_sub_module(__FUNCTION__);
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
-
-
-	//-----------------------------------------------------------------------------
-	// Main function
-	function maxmind_phone_check() {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function email_verify () {
 		if (empty($_GET["id"])) {
@@ -292,8 +207,7 @@ class yf_test {
 		$body .= $GLOBALS['_email_verify_output'];
 		return $body;
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function synonym () {
 		// NOTE: encoding = utf8
@@ -312,8 +226,7 @@ class yf_test {
 		);
 		return tpl()->parse(__CLASS__."/".__FUNCTION__, $replace);
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function image_resize () {
 		$body .= "<h3>Testing image upload and resize</h3>";
@@ -339,24 +252,7 @@ class yf_test {
 		$body .= "<form action='./?object=".$_GET["object"]."&action=".$_GET["action"]."' method='post' enctype='multipart/form-data'><input type='file' name='image'><input type='submit' name='go' value='GO'></form>";
 		return $body;
 	}
-
-	//-----------------------------------------------------------------------------
-	// 
-	function openid (){
-		if(isset($_POST["openid_url"])){	
-
-			$OBJ = main()->init_class("openid", "modules/");
-			$message = $OBJ->_get($_POST["openid_url"]);
-		}
-		$replace = array(
-			"action"	=> WEB_PATH."./?object=".$_GET["object"]."&action=".$_GET["action"],
-			"message"	=> $message,
-		);
-		return tpl()->parse($_GET["object"]."/".__FUNCTION__, $replace);
-
-	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function spoiler (){
 		$head_text="Cool spoiler head";	
@@ -370,14 +266,12 @@ class yf_test {
 		);
 		return tpl()->parse($_GET["object"]."/".__FUNCTION__, $replace);
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function redirect (){
 		return js_redirect("./?object=".$_GET["object"], true, "Testing redirect", 3);
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function filter_text (){
 		// Do process
@@ -399,8 +293,7 @@ class yf_test {
 		);
 		return tpl()->parse($_GET["object"]."/".__FUNCTION__, $replace);
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function translate (){
 		$body .= "<b> t(\"Test var\"): </b> ".t("Test var")."<br /><br />";
@@ -437,8 +330,7 @@ class yf_test {
 		*/
 		return $body;
 	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function notice () {
 		if (!empty($_POST)) {
@@ -449,45 +341,7 @@ class yf_test {
 		$body .= "<form action='./?object=".$_GET["object"]."&action=".$_GET["action"]."' method='post'>Set notice here:<br /><textarea name='notice'>Test notice text</textarea><br /><input type='submit'></form>";
 		return $body;
 	}
-
-	//-----------------------------------------------------------------------------
-	// Display sample page with selected user theme name
-	function user_theme () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Display sample page with selected user design id
-	function user_design () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Display sample page with selected user color scheme (apply it to the default theme)
-	function color_scheme () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
-	// Display sample page with selected user color scheme
-	function graphic_scheme () {
-		return $this->_call_sub_module(__FUNCTION__);
-	}
-
-	//-----------------------------------------------------------------------------
-	// 
-	function inline_tooltip () {
-		$body .= '
-			<label for="google_stats_id">Google stats ID &nbsp;&nbsp;
-				{itip("New tooltip text goes here<br />New tooltip text goes here<br />New tooltip text goes here")}
-			</label>
-			<input type="text" name="google_stats_id" value="" id="google_stats_id">
-		';
-
-		return $body;
-	}
-
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function lang () {
 		$OBJ = main()->init_class("dynamic");
@@ -495,104 +349,32 @@ class yf_test {
 	}
 
 	/**
-	* Client for remote make thumb service
-	*/
-	function _remote_thumb_client ($url_for_thumb = "") {
-		if (!$url_for_thumb) {
-			return false;
-		}
-
-		$server_url = "http://www.test.com/remote_thumb_server/";
-
-		$new_tmp_local_thumb_name = INCLUDE_PATH."uploads/tmp/".md5(microtime(true)).".jpg";
-
-		_mkdir_m(dirname($new_tmp_local_thumb_name));
-
-		$result_from_server = false;
-		if ($ch = curl_init()) {
-			curl_setopt($ch, CURLOPT_URL, $server_url);
-			curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 5.1)");
-			curl_setopt($ch, CURLOPT_REFERER, $server_url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, "url_for_thumb=".urlencode($url_for_thumb));
-			$result_from_server = curl_exec ($ch);
-			curl_close ($ch);
-		}
-		if ($result_from_server) {
-			file_put_contents($new_tmp_local_thumb_name, $result_from_server);
-			return $new_tmp_local_thumb_name;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	*/
-	function remote_thumb_server () {
-		main()->NO_GRAPHICS = true;
-
-		$url_for_thumb = $_POST["url_for_thumb"] ? $_POST["url_for_thumb"] : $_GET["id"];
-		
-		$new_tmp_server_thumb_name = INCLUDE_PATH."uploads/tmp/".md5(microtime(true)).".jpg";
-		$DIR_OBJ = main()->init_class("dir", "classes/");
-		$DIR_OBJ->delete_dir(dirname($new_tmp_local_thumb_name));
-		_mkdir_m(dirname($new_tmp_local_thumb_name));
-
-		// Using Firefox to generate thumbnail
-		common()->_make_thumb_remote($url_for_thumb, $new_tmp_server_thumb_name);
-		// Throw result
-		if (file_exists($new_tmp_server_thumb_name) && filesize($new_tmp_server_thumb_name)) {
-			header("Content-type: image/jpeg");
-			$result = file_get_contents($new_tmp_server_thumb_name);
-		}
-
-		exit($result);
-	}
-
-	/**
 	* Testing SSH wrapper
 	*/
 	function ssh () {
-		return $this->_call_sub_module(__FUNCTION__);
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
 
 	/**
 	*/
 	function bb_code () {
-		return $this->_call_sub_module(__FUNCTION__);
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
 
 	/**
 	*/
 	function text_typos () {
-		return $this->_call_sub_module(__FUNCTION__);
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
 
 	/**
 	* Testing short functions: user(), update_user(), search_user()
 	*/
 	function user () {
-		return $this->_call_sub_module(__FUNCTION__);
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
 
-	/**
-	*/
-	function multi_request () {
-		$t = array(
-			"http://google.com.ua",
-			"http://yahoo.com",
-			"http://google.ru",
-			"http://msn.com",
-			"http://live.com",
-			"http://facebook.com",
-		);
-		$t = array_combine($t, $t);
-		return print_R(_prepare_html(common()->multi_request($t)), 1);
-	}
-
-	//-----------------------------------------------------------------------------
-	// 
+	//
 	function utf8_clean () {
 		$text = file_get_contents(YF_PATH. "libs/utf8_funcs/utils/broken_utf8.txt");
 		$body .= $text;
@@ -601,7 +383,6 @@ class yf_test {
 		return $body;
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function threaded_exec () {
 		if (MAIN_TYPE_USER || !$_SESSION["admin_id"]) {
@@ -643,89 +424,6 @@ class yf_test {
 	* form2 reference examples
 	*/
 	function form2 () {
-		$data = array(
-			'0'	=> 'value0',
-			'1'	=> 'value1',
-			'2'	=> 'value2',
-		);
-		return form2()
-			->input('input')
-			->textarea('textarea')
-			->container('container')
-			->hidden('hide_me')
-			->text('text')
-			->password('password')
-			->file('file')
-			->email()
-			->number('number')
-			->integer('integer')
-			->money('money')
-			->url('url')
-			->color('color')
-			->date('date')
-			->datetime('datetime')
-			->datetime_local('datetime_local')
-			->month('month')
-			->range('range')
-			->search('search')
-			->tel('tel')
-			->time('time')
-			->week('week')
-			->active_box()
-			->allow_deny_box('allow')
-			->yes_no_box('yes_no')
-			->submit()
-			->save()
-			->save_and_back()
-			->save_and_clear()
-			->info('info')
-			->select_box('select_box', $data)
-			->multi_select_box('multi_select_box', $data)
-			->check_box('check_box', $data)
-			->multi_check_box('multi_check_box', $data)
-			->radio_box('radio_box', $data)
-			->date_box('date_box')
-			->time_box('time_box')
-			->datetime_box('datetime_box')
-			->birth_box()
-			->country_box()
-			->region_box()
-			->currency_box()
-			->language_box()
-			->timezone_box()
-			->method_select_box()
-			->template_select_box()
-			->icon_select_box()
-			->image("image")
-//			->box('my_box')
-//			->box_with_link('my_box')
-			->tbl_link('test link', './?test_url')
-			->tbl_link_edit()
-			->tbl_link_delete()
-			->tbl_link_clone()
-			->tbl_link_active()
-		;
-	}
-
-	/**
-	* Call test sub-module
-	*/
-	function _call_sub_module ($sub_module = "") {
-		$OBJ = main()->init_class("test_".$sub_module, "modules/test/");
-		return is_object($OBJ) ? $OBJ->run_test() : "";
-	}
-
-	/**
-	* Quick menu hook
-	*/
-	function _quick_menu () {
-		$menu = array();
-		foreach ((array)$this->_avail_methods as $_info) {
-			$menu[] = array(
-				"name"	=> $_info["name"],
-				"url"	=> $_info["link"],
-			);
-		}
-		return $menu;	
+		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
 }

@@ -6,15 +6,8 @@
 class yf_test_unicode {
 
 	/**
-	* YF module constructor
 	*/
-	function _init () {
-		$this->TEST_OBJ = module("test");
-	}
-
-	/**
-	*/
-	function run_test () {
+	function test () {
 		$_string = "Mutual Friends (пользователь должен быть у Вас в друзьях а Вы у него)";
 		$body .= "<b>NOTE: You need to set UTF-8 encoding in your browser to see correct results</b><br /><br />";
 		$body .= "String: \""._prepare_html($_string)."\"<br /><br />";

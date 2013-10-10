@@ -6,18 +6,9 @@
 class yf_test_text_typos {
 
 	/**
-	* YF module constructor
 	*/
-	function _init () {
-		$this->TEST_OBJ = module("test");
-	}
-
-	/**
-	*/
-	function run_test () {
+	function test () {
 		$GLOBALS['PROJECT_CONF']["text_typos"]["USE_RUSSIAN"] = 1;
-
-		$OBJ = main()->init_class("text_typos", "classes/");
 
 		$text = " и Джона Петруччи в особенности, 
 играющих или обучающихся игре на гитаре,  предлагается интересная 
@@ -30,7 +21,7 @@ class yf_test_text_typos {
 редкие радио версии песен 
 с других альбомов, би-сайды и лучшие хиты группы.";
 
-		$result = $OBJ->process($text);
+		$result = _class('text_typos')->process($text);
 
 		$body .= "<b>Source</b><br />".$text."<br /><hr /><br />";
 		$body .= "<b>Result</b><br />".$result."<br /><hr /><br />";

@@ -6,17 +6,10 @@
 class yf_test_user {
 
 	/**
-	* YF module constructor
-	*/
-	function _init () {
-		$this->TEST_OBJ = module("test");
-	}
-
-	/**
 	* Testing short functions: user(), update_user(), search_user()
 	*/
-	function run_test () {
-		$OBJ = &main()->init_class("user_data", "classes/common/");
+	function test () {
+		$OBJ = main()->init_class("user_data", "classes/common/");
 		if (!DEBUG_MODE) {
 			return "Allowed to run only when DEBUG_MODE is enabled!";
 		}

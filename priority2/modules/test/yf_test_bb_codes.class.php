@@ -6,15 +6,8 @@
 class yf_test_bb_codes {
 
 	/**
-	* YF module constructor
 	*/
-	function _init () {
-		$this->TEST_OBJ = module("test");
-	}
-
-	/**
-	*/
-	function run_test () {
+	function test () {
 		$BB_OBJ = main()->init_class("bb_codes", "classes/");
 
 		$string = "

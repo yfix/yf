@@ -6,15 +6,8 @@
 class yf_test_diff {
 
 	/**
-	* YF module constructor
 	*/
-	function _init () {
-		$this->TEST_OBJ = module("test");
-	}
-
-	/**
-	*/
-	function run_test () {
+	function test () {
 		$DIFF_OBJ = main()->init_class("diff", "classes/");
 //		$DIFF->method = "PHP";
 		$str1 = 

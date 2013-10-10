@@ -6,16 +6,9 @@
 class yf_test_smtp_phpmailer {
 
 	/**
-	* YF module constructor
-	*/
-	function _init () {
-		$this->TEST_OBJ = module("test");
-	}
-
-	/**
 	* test PHPMailer
 	*/
-	function run_test () {
+	function test () {
 		$time_start = microtime(true);
 
 		require_once(YF_PATH."libs/phpmailer/class.phpmailer.php");
@@ -23,24 +16,24 @@ class yf_test_smtp_phpmailer {
 		$mail = new PHPMailer();
 
 		$mail->IsSMTP();
-		$mail->Host		= $this->TEST_OBJ->SMTP_OPTIONS["smtp_host"];
+		$mail->Host		= module('test')->SMTP_OPTIONS["smtp_host"];
 		$mail->SMTPAuth = true;
-		$mail->Username = $this->TEST_OBJ->SMTP_OPTIONS["smtp_user_name"];
-		$mail->Password = $this->TEST_OBJ->SMTP_OPTIONS["smtp_password"];
-		if ($this->TEST_OBJ->SMTP_OPTIONS["smtp_secure"]) {
-			$mail->SMTPSecure = $this->TEST_OBJ->SMTP_OPTIONS["smtp_secure"];
+		$mail->Username = module('test')->SMTP_OPTIONS["smtp_user_name"];
+		$mail->Password = module('test')->SMTP_OPTIONS["smtp_password"];
+		if (module('test')->SMTP_OPTIONS["smtp_secure"]) {
+			$mail->SMTPSecure = module('test')->SMTP_OPTIONS["smtp_secure"];
 		}
 
-		$mail->From		= $this->TEST_OBJ->TEST_MAIL["email_from"];
-		if ($this->TEST_OBJ->TEST_MAIL["name_from"]) {
-			$mail->FromName = $this->TEST_OBJ->TEST_MAIL["name_from"];
+		$mail->From		= module('test')->TEST_MAIL["email_from"];
+		if (module('test')->TEST_MAIL["name_from"]) {
+			$mail->FromName = module('test')->TEST_MAIL["name_from"];
 		}
-		$mail->AddAddress($this->TEST_OBJ->TEST_MAIL["email_to"], $this->TEST_OBJ->TEST_MAIL["name_to"]);
+		$mail->AddAddress(module('test')->TEST_MAIL["email_to"], module('test')->TEST_MAIL["name_to"]);
 		$mail->IsHTML(true);
 
-		$mail->Subject = $this->TEST_OBJ->TEST_MAIL["subject"];
-		$mail->Body	= $this->TEST_OBJ->TEST_MAIL["html"];
-		$mail->AltBody = $this->TEST_OBJ->TEST_MAIL["text"];
+		$mail->Subject = module('test')->TEST_MAIL["subject"];
+		$mail->Body	= module('test')->TEST_MAIL["html"];
+		$mail->AltBody = module('test')->TEST_MAIL["text"];
 
 		// Go!
 		$result = $mail->Send();
