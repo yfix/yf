@@ -692,67 +692,6 @@ class yf_common {
 	}
 
 	/**
-	* Search template for the string that caused an error
-	*/
-	function _search_stpl_line ($class_name, $method_name, $method_params = '', $tpl_name) {
-		// Search in site
-		$stpl_file	= SITE_PATH. tpl()->TPL_PATH. $tpl_name;
-		// Search in project
-		if (!file_exists($stpl_file)) {
-			$stpl_file = PROJECT_PATH. tpl()->TPL_PATH. $tpl_name;
-		}
-		// Search in framework
-		if (!file_exists($stpl_file)) {
-			$stpl_file = YF_PATH. tpl()->TPL_PATH. $tpl_name;
-		}
-		if (file_exists($stpl_file)) {
-			$line_search = preg_grep("/\{execute\([\"']*".$class_name.','.$method_name.(!empty($method_params) ? ','.$method_params : '')."[\"']*\)\}/i", @file($stpl_file));
-			return ' on line '.intval(array_shift(array_keys($line_search)) + 1);
-		}
-	}
-
-	/**
-	* Wrapper for translation method (for call from templates or other)
-	*/
-	function _translate_for_stpl ($string = '', $args_from_tpl = '', $lang = '') {
-		$args = array();
-		// Try to convert args
-		if (is_string($args_from_tpl) && strlen($args_from_tpl)) {
-			$args_from_tpl = stripslashes($args_from_tpl);
-			$tmp_array = explode(';', $args_from_tpl);
-			// Convert string into array
-			foreach ((array)$tmp_array as $v) {
-				$attrib_name = '';
-				$attrib_value = '';
-				if (false !== strpos($v, '=')) {
-					list($attrib_name, $attrib_value) = explode('=', trim($v));
-				}
-				$attrib_name	= trim(str_replace(array("'",'"'), '', $attrib_name));
-				$attrib_value	= trim(str_replace(array("'",'"'), '', $attrib_value));
-				$args[$attrib_name] = $attrib_value;
-			}
-		}
-		return t($string, $args, $lang);
-	}
-
-	/**
-	* Replace paths to images
-	*/
-	function _replace_images_paths ($string = '') {
-		$web_path		= (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH);
-		$images_path	= $web_path. tpl()->TPL_PATH. tpl()->_IMAGES_PATH;
-		// Array of pairs 'match->replace' for str_replace
-		$to_replace = array(
-			'"images/'		=> '"'.$images_path,
-			"'images/"		=> "'".$images_path,
-			'"uploads/'		=> '"'.$this->MEDIA_PATH. tpl()->_UPLOADS_PATH,
-			"'uploads/"		=> "'".$this->MEDIA_PATH. tpl()->_UPLOADS_PATH,
-			'src="uploads/'	=> 'src="'.$web_path. tpl()->_UPLOADS_PATH,
-		);
-		return str_replace(array_keys($to_replace), array_values($to_replace), $string);
-	}
-
-	/**
 	* Get file using HTTP request (grabbed from drupal 5.1)
 	*/
 	function http_request ($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {

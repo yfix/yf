@@ -1057,14 +1057,14 @@ class yf_main {
 		}
 		if (!is_object($OBJ)) {
 			if (!$silent) {
-				trigger_error('MAIN: module "'.$class_name.'" init failed'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['common']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
+				trigger_error('MAIN: module "'.$class_name.'" init failed'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['tpl']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
 			}
 			return false;
 		}
 		// Try to find given class method
 		if (!method_exists($OBJ, $method_name)) {
 			if (!$silent) {
-				trigger_error('MAIN: no method "'.$method_name.'" in module "'.$class_name.'"'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['common']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
+				trigger_error('MAIN: no method "'.$method_name.'" in module "'.$class_name.'"'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['tpl']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
 			}
 			return false;
 		}

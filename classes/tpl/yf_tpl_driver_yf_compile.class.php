@@ -27,7 +27,7 @@ class yf_tpl_driver_yf_compile {
 
 // TODO: better execute some wrapper that will convert this into simple call t('changeme %num', array('%num' => 5), 'ru')
 			'/(\{(t|translate|i18n)\(\s*["\']{0,1})([\s\w\-\.\,\:\;\%\&\#\/\<\>\!\?\{\}]*)["\']{0,1}[,]{0,1}([^\)]*?)(\s*\)\})/ie'
-				=> "'".$_php_start. "echo common()->_translate_for_stpl(\''.\$this->_prepare_translate2('\\3').'\',\''.\$this->_prepare_translate2('\\4', 1).'\');".$_php_end."'",
+				=> "'".$_php_start. "echo tpl()->_translate_for_stpl(\''.\$this->_prepare_translate2('\\3').'\',\''.\$this->_prepare_translate2('\\4', 1).'\');".$_php_end."'",
 
 			'/(\{const\(\s*["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo (defined(\'$2\') ? $2 : \'\');'. $_php_end,

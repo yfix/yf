@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_graphics {
+class yf_core_js {
 
 	/**
 	* Catch missing method call
