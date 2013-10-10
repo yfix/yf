@@ -31,10 +31,6 @@ class yf_module {
 	}
 
 	/**
-	* Load current user info
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _load_cur_user_info () {
 		// Current user ID and group
@@ -49,20 +45,12 @@ class yf_module {
 	}
 
 	/**
-	* Display comments
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _view_comments ($params = array()) {
 		return module("comments")->_show_for_object( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
-	* Get number of comments for the given object ids
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _get_num_comments ($params = array()) {
 		if (!is_array($params)) {
@@ -72,20 +60,12 @@ class yf_module {
 	}
 
 	/**
-	* Check if post comment is allowed (abstract)
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _comment_is_allowed ($params = array()) {
 		return true;
 	}
 
 	/**
-	* Check if comment edit allowed (abstract)
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _comment_edit_allowed ($params = array()) {
 		$edit_allowed	= $this->USER_ID && $params["user_id"] && $params["user_id"] == $this->USER_ID;
@@ -93,10 +73,6 @@ class yf_module {
 	}
 
 	/**
-	* Check if comment deletion allowed (abstract)
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _comment_delete_allowed ($params = array()) {
 		$delete_allowed	= $this->USER_ID && $params["user_id"] && $params["user_id"] == $this->USER_ID;
@@ -104,10 +80,6 @@ class yf_module {
 	}
 
 	/**
-	* Add new comment
-	*
-	* @access	private
-	* @return	void
 	*/
 	function add_comment ($params = array()) {
 		if ($_POST["submit"] == 'Preview') {
@@ -117,20 +89,12 @@ class yf_module {
 	}
 
 	/**
-	* Edit user comment
-	*
-	* @access	private
-	* @return	void
 	*/
 	function edit_comment ($params = array()) {
 		return module("comments")->_edit( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
-	* Delete comment
-	*
-	* @access	private
-	* @return	void
 	*/
 	function delete_comment ($params = array()) {
 		return module("comments")->_delete( (array)$this->_comments_params + (array)$params );
@@ -138,9 +102,6 @@ class yf_module {
 
 	/**
 	* Show captcha image
-	*
-	* @access	private
-	* @return	void
 	*/
 	function captcha_image() {
 		$this->_captcha_load_code();
@@ -151,9 +112,6 @@ class yf_module {
 
 	/**
 	* Validate captcha (posted code)
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _captcha_check() {
 		$this->_captcha_load_code();
@@ -164,9 +122,6 @@ class yf_module {
 
 	/**
 	* Display captcha html block code
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _captcha_block() {
 		$this->_captcha_load_code();
@@ -177,9 +132,6 @@ class yf_module {
 
 	/**
 	* Load captcha code
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _captcha_load_code() {
 		if (!$this->USE_CAPTCHA) {
@@ -196,9 +148,6 @@ class yf_module {
 
 	/**
 	* Display rate box (stars etx)
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _show_rate_box ($params = array()) {
 		return module("rate")->_show_for_object($params);
@@ -206,9 +155,6 @@ class yf_module {
 
 	/**
 	* Display rate box (stars etx)
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _prefetch_rate_infos ($params = array()) {
 		return module("rate")->_prefetch_rate_infos($params);
@@ -216,9 +162,6 @@ class yf_module {
 
 	/**
 	* Format given text (convert BB Codes, new lines etc)
-	*
-	* @access	private
-	* @return	string
 	*/
 	function _format_text ($body = "") {
 		// Stop here if text is empty
@@ -238,9 +181,6 @@ class yf_module {
 
 	/**
 	* Process custom box
-	*
-	* @access	private
-	* @return	string
 	*/
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
@@ -249,9 +189,6 @@ class yf_module {
 
 	/**
 	* Display preview of current module (usually popup window)
-	*
-	* @access	public
-	* @return	string
 	*/
 	function display_preview($params = array(), $template = "") {
 		if ($_POST != null) {
@@ -260,40 +197,24 @@ class yf_module {
 	}
 
 	/**
-	* Replace with custom preview if needed
-	*
-	* @access	private
-	* @return	string
 	*/
 	function _prepare_preview() {
 		return false;
 	}
 
 	/**
-	* Preview buttons
-	*
-	* @access	private
-	* @return	string
 	*/
 	function _display_submit_buttons($params = array(), $template = "") {
 		return $this->USE_PREVIEW ? main()->call_class_method("preview", "classes/", "_display_buttons") : "";
 	}
 
 	/**
-	* Display tags
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _show_tags ($ids = array(), $params = array()) {
 		return module("tags")->_show($ids, (array)$this->_tags_params + (array)$params );
 	}
 
 	/**
-	* Edit tags
-	*
-	* @access	private
-	* @return	void
 	*/
 	function edit_tag () {
 		return module("tags")->_edit_tags($_GET["id"]);
@@ -314,21 +235,18 @@ class yf_module {
 	}
 
 	/**
-	* Create poll
 	*/
 	function create_poll() {
 		return module("poll")->_create($this->_poll_params);
 	}
 
 	/**
-	* Delete poll
 	*/
 	function delete_poll() {
 		return module("poll")->delete($this->_poll_params);
 	}
 
 	/**
-	* View poll results
 	*/
 	function view_poll_results() {
 		return module("poll")->owner_view($this->_poll_params);
