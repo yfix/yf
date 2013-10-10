@@ -836,21 +836,21 @@ class yf_graphics {
 	* Show menu
 	*/
 	function _show_menu ($input = array()) {
-		return _class('menu')->_show_menu($input);
+		return _class('core_menu')->_show_menu($input);
 	}
 
 	/**
 	* Template for the custom class method for menu block (useful to inherit)
 	*/
 	function _custom_menu_items($params = array()) {
-		return _class('menu')->_custom_menu_items($params);
+		return _class('core_menu')->_custom_menu_items($params);
 	}
 
 	/**
 	* Get menu items ordered array (recursively)
 	*/
 	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		return _class('menu')->_recursive_get_menu_items($menu_id, $skip_item_id, $parent_id, $level);
+		return _class('core_menu')->_recursive_get_menu_items($menu_id, $skip_item_id, $parent_id, $level);
 	}
 
 	/**

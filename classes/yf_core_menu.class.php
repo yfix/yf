@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_menu {
+class yf_core_menu {
 
 	/**
 	* Catch missing method call
