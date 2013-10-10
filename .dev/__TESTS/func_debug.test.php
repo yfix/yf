@@ -2,6 +2,8 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
+$GLOBALS['DEBUG'] = array();
+
 class func_debug_test extends PHPUnit_Framework_TestCase {
 
 	public function test_22() {

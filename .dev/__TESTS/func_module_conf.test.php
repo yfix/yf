@@ -1,6 +1,7 @@
 <?php
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
+
 $GLOBALS['PROJECT_CONF'] = array();
 
 class func_module_conf_test extends PHPUnit_Framework_TestCase {
