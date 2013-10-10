@@ -240,6 +240,6 @@ class tpl_core_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('GOOD', _tpl( '{if("%string" eq "string")}GOOD{else}BAD{/if}' ));
 	}
 	public function test_bug_01() {
-		$this->assertEquals('#description ', _tpl( '#description {execute(shop,_show_block123123)}' ));
+		$this->assertEquals('#description ', _tpl( '#description {execute(shop,_show_block123123)}', array('description' => 'test') ));
 	}
 }
