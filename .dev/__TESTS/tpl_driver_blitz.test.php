@@ -10,10 +10,10 @@ function _tpl($stpl_text = '', $replace = array(), $name = '') {
 }
 
 class tpl_driver_blitz_test extends PHPUnit_Framework_TestCase {
-#	public function test_10() {
+	public function test_10() {
 #		$this->assertEquals('Hello world', _tpl( 'Hello world' ));
-#	}
-#	public function test_60() {
+	}
+	public function test_60() {
 #		$this->assertEquals("GOOD", _tpl( '{if $key1 eq "val1"}GOOD{/if}', array("key1" => "val1") ));
-#	}
+	}
 }
