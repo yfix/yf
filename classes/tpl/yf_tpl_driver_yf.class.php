@@ -51,15 +51,15 @@ class yf_tpl_driver_yf {
 	/** @var array @conf_skip Show custom class method output pattern */
 	public $_PATTERN_EXECUTE   = array(
 		// EXAMPLE:	 {execute(graphics, translate, value = blabla; extra = strtoupper)
-		'/(\{execute\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
+		'/(\{execute\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,false)',
-		'/(\{exec_cached\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
+		'/(\{exec_cached\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,true)',
 	);
 	/** @var array @conf_skip Include template pattern */
 	public $_PATTERN_INCLUDE   = array(
 		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
-		'/(\{include\(["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
+		'/(\{include\(["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
 			=> '_class(\'tpl\')->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
@@ -346,7 +346,7 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{execute(') || empty($string)) {
 			return $string;
 		}
-// TODO: BUG 02: we need to replace '#' !!ONLY!! inside {execute(...)} statement, not touching other template parts
+// TODO: BUG 01: we need to replace '#' !!ONLY!! inside {execute(...)} statement, not touching other template parts
 		// Replace template vars, marked with '#' sign, before do execute pattern
 #		if (false !== strpos($string, '#') && !empty($replace)) {
 #			$pairs = array();

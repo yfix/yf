@@ -29,4 +29,7 @@ class tpl_core_test extends PHPUnit_Framework_TestCase {
 		_tpl( 'Included: {var1} {var2} {var3} {var4}', array(), 'unittest_include' );
 		$this->assertEquals('Included: v1 v2 v3 v4', _tpl( '{include("unittest_include",var1=v1;var2=v2;var3=v3;var4=v4)}' ));
 	}
+	public function tearDown() {
+		_class('dir')->delete_dir('./stpls_compiled/', $delete_start_dir = true);
+	}
 }

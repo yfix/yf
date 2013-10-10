@@ -78,8 +78,11 @@ class yf_tpl_compile {
 			'/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}/is'
 				=> $_php_start.'$__f_total = count($replace[\'$1\']); foreach (is_array($replace[\'$1\']) ? $replace[\'$1\'] : range(1, (int)$replace[\'$1\']) as $_k => $_v) {$__f_counter++;'.$_php_end,
 
-			'/(\{execute\(\s*["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
-				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\');'.$_php_end,
+			'/(\{execute\(\s*["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
+				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,false);'.$_php_end,
+
+			'/(\{exec_cached\(\s*["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
+				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,true);'.$_php_end,
 
 			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo main()->_execute("graphics", "_show_help_tip", array("tip_id"=>\'$1\',"tip_type"=>\'$2\'));'.$_php_end,
@@ -90,7 +93,7 @@ class yf_tpl_compile {
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo common()->_show_error_inline(\'$2\');'.$_php_end,
 
-			'/(\{include\(\s*["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
+			'/(\{include\(\s*["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\');'. $_php_end,
 
 			'/(\{eval_code\()([^\}]+?)(\)\})/i'
