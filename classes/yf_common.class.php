@@ -732,7 +732,7 @@ class yf_common {
 				$args[$attrib_name] = $attrib_value;
 			}
 		}
-		return translate($string, $args, $lang);
+		return t($string, $args, $lang);
 	}
 
 	/**

@@ -805,7 +805,7 @@ class yf_tpl {
 			// Easy case that just needs to be translated
 			$text_to_translate = $input;
 		}
-		$output = translate($text_to_translate, $args);
+		$output = t($text_to_translate, $args);
 		// Do replacement of the template vars on the last stage
 		// example: @replace1 will be got from $replace['replace1'] array item
 		if (false !== strpos($output, '@') && !empty($replace)) {
