@@ -12,6 +12,27 @@ class yf_test_form2 {
 			'1'	=> 'value1',
 			'2'	=> 'value2',
 		);
+		$methods = array();
+		$except = array('auto', 'validate', 'db_update_if_ok', 'db_insert_if_ok', 'form_begin', 'form_end', 'render', 'custom_fields', 'tpl_row');
+		foreach (get_class_methods(form()) as $m) {
+			if ($m[0] == '_' || in_array($m, $except)) {
+				continue;
+			}
+			$methods[$m] = $m;
+		}
+		ksort($methods);
+#return print_r($methods);
+		$form = form();
+		foreach ($methods as $m) {
+			if (false !== strpos($m, '_box') || false !== strpos($m, 'select')) {
+				$item = form()->$m($m, $data);
+			} else {
+				$item = form()->$m($m);
+			}
+			$form->container($item, array('desc' => $m, 'wide' => 1));
+		}
+		return $form;
+/*
 		return form2()
 			->input('input')
 			->textarea('textarea')
@@ -69,5 +90,6 @@ class yf_test_form2 {
 			->tbl_link_clone()
 			->tbl_link_active()
 		;
+*/
 	}
 }
