@@ -60,7 +60,7 @@ class yf_tpl_driver_yf {
 	public $_PATTERN_INCLUDE   = array(
 		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
 		'/(\{include\(["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
-			=> '_class(\'tpl\')->_include_stpl(\'$2\',\'$3\')',
+			=> '$this->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
 	public $_PATTERN_EVAL	  = array(

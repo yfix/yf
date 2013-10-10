@@ -1,15 +1,8 @@
 <?php
 
-define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
-require YF_PATH.'classes/yf_main.class.php';
-#$GLOBALS['PROJECT_CONF']['tpl']['COMPILE_TEMPLATES'] = true;
-new yf_main('user', 1, 0);
+require_once dirname(__FILE__).'/tpl__setup.php';
 
-function _tpl($stpl_text = '', $replace = array(), $name = '', $params = array()) {
-	return tpl()->parse_string($stpl_text, $replace, $name, $params);
-}
-
-class tpl_core_test extends PHPUnit_Framework_TestCase {
+class tpl_driver_yf_bugs_test extends PHPUnit_Framework_TestCase {
 	public function test_bug_01() {
 		$this->assertEquals('#description ', _tpl( '#description {execute(main,_show_block123123)}', array('description' => 'test') ));
 	}
@@ -28,8 +21,5 @@ class tpl_core_test extends PHPUnit_Framework_TestCase {
 	public function test_bug_02_4() {
 		_tpl( 'Included: {var1} {var2} {var3} {var4}', array(), 'unittest_include' );
 		$this->assertEquals('Included: v1 v2 v3 v4', _tpl( '{include("unittest_include",var1=v1;var2=v2;var3=v3;var4=v4)}' ));
-	}
-	public function tearDown() {
-		_class('dir')->delete_dir('./stpls_compiled/', $delete_start_dir = true);
 	}
 }

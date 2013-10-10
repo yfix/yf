@@ -1,14 +1,8 @@
 <?php  
 
-define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
-require YF_PATH.'classes/yf_main.class.php';
-new yf_main('user', 1, 0);
+require_once dirname(__FILE__).'/tpl__setup.php';
 
-function _tpl($stpl_text = '', $replace = array(), $name = '', $params = array()) {
-	return tpl()->parse_string($stpl_text, $replace, $name, $params);
-}
-
-class tpl_form_test extends PHPUnit_Framework_TestCase {
+class tpl_driver_yf_form_test extends PHPUnit_Framework_TestCase {
 	public function test_10() {
 		$html = _class('form2')->tpl_row('password');
 		$this->assertEquals( $html, _tpl( '{form_row("password")}' ) );
