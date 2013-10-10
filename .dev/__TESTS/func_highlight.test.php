@@ -1,7 +1,8 @@
 <?php  
-require '../share/functions/yf_common_funcs.php';
 
-class highlight_text extends PHPUnit_Framework_TestCase {
+require dirname(__FILE__).'/yf_unit_tests_setup.php';
+
+class func_highlight_test extends PHPUnit_Framework_TestCase {
 
 	var	$LANGS_TEST = array(
 		'photoshop cs2 download' => '<b>photoshop</b> <b>cs2</b> <b>download</b>',//English

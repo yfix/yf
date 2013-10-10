@@ -3,9 +3,7 @@
 require dirname(__FILE__).'/db_setup.php';
 require dirname(__FILE__).'/db_funcs.php';
 
-define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
-require YF_PATH.'classes/yf_main.class.php';
-new yf_main('user', 1, 0);
+require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 ######################
 echo 'db():'.PHP_EOL.			print_r( db()->get_one('SELECT COUNT(*) AS num from '.db('user').' ') , 1);
