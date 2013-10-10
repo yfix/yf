@@ -48,7 +48,7 @@ $GLOBALS[ 'var' ] = array(
 );
 
 $total = 1e5;
-printf( "Total iterations: %g\n\n", $total );
+printf( 'Total iterations: %g'.PHP_EOL, $total );
 
 class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 
@@ -62,7 +62,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 			globals_var( 'string', 'string'  );
 			globals_var( 'array',  $GLOBALS[ 'var' ] );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec )\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec )'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _globals_write_local() {
@@ -76,7 +76,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 			globals_var( 'string', 'string'  );
 			globals_var( 'array',  $array_var );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec ) local \n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec ) local '.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _globals_write_stack( $array_var ) {
@@ -89,7 +89,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 			globals_var( 'string', 'string'  );
 			globals_var( 'array',  $array_var );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec ) stack\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec ) stack'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _globals_read() {
@@ -99,7 +99,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
 			$a = globals_var( 'array' );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec )\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec )'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 // ---------------------------------
@@ -115,7 +115,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 			$config->variable( 'string', 'string'  );
 			$config->variable( 'array',  $GLOBALS[ 'var' ] );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec )\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec )'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _class_write_local() {
@@ -130,7 +130,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 			$config->variable( 'string', 'string'  );
 			$config->variable( 'array',  $array_var );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec ) local\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec ) local'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _class_write_stack( $array_var ) {
@@ -144,7 +144,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 			$config->variable( 'string', 'string'  );
 			$config->variable( 'array',  $array_var );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec ) stack\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec ) stack'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _class_read() {
@@ -154,7 +154,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
 			$a = $config->variable( 'array' );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec )\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec )'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _class_wrap_write() {
@@ -167,7 +167,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 			wrap_class_var( 'string', 'string'  );
 			wrap_class_var( 'array',  $GLOBALS[ 'var' ] );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec ) wrap\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec ) wrap'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 	private function _class_wrap_read() {
@@ -176,7 +176,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 		for( $i = 0; $i < $GLOBALS[ 'total' ]; $i++ ) {
 			$a = wrap_class_var( 'array' );
 		}
-		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( "%s ( %.3f msec ) wrap\n", $msg, $inteval_ts );
+		$finish_ts = microtime( true ); $inteval_ts = $finish_ts - $start_ts; printf( '%s ( %.3f msec ) wrap'.PHP_EOL, $msg, $inteval_ts );
 	}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ class test_globals_vs_class extends PHPUnit_Framework_TestCase {
 	public function test_globals_read() {
 		$this->_globals_read();
 		$this->assertEquals( globals_var( 'array' ), $GLOBALS[ 'var' ] );
-		echo "\n";
+		echo ''.PHP_EOL;
 	}
 
 // ---------------------------------

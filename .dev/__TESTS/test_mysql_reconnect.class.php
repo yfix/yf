@@ -13,25 +13,25 @@ class test_mysql_reconnect {
 		ini_set('zlib.output_compression',0);
 		ob_implicit_flush(1);
 		ob_end_flush();
-		if (!preg_match("~(curl|wget)~ims", $_SERVER['HTTP_USER_AGENT'])) {
-			echo str_repeat(" ", 1000); // Needed to send first packet to browser and ask him to keep polling content
+		if (!preg_match('~(curl|wget)~ims', $_SERVER['HTTP_USER_AGENT'])) {
+			echo str_repeat(' ', 1000); // Needed to send first packet to browser and ask him to keep polling content
 		}
 
-		echo "<pre>";
+		echo '<pre>';
 		echo db()->DB_TYPE;
 
 		foreach(range(1,1000) as $n) {
-			echo "\n".$n.") ";
-#			db()->query("SET wait_timeout=1");
-			print_r(db()->get_one("show tables"));
+			echo PHP_EOL.$n.') ';
+#			db()->query('SET wait_timeout=1');
+			print_r(db()->get_one('show tables'));
 			sleep(1);
 		}
 	}
 }
 
 #define('SITE_DEFAULT_PAGE', './?object=test_mysql_reconnect');
-define("YF_PATH", dirname(dirname(dirname(__FILE__)))."/");
-require YF_PATH."classes/yf_main.class.php";
-new yf_main("user", 1, 0);
+define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
+require YF_PATH.'classes/yf_main.class.php';
+new yf_main('user', 1, 0);
 
 _class('test_mysql_reconnect')->show();

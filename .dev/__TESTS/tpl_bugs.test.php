@@ -2,6 +2,7 @@
 
 define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
 require YF_PATH.'classes/yf_main.class.php';
+#$GLOBALS['PROJECT_CONF']['tpl']['COMPILE_TEMPLATES'] = true;
 new yf_main('user', 1, 0);
 
 function _tpl($stpl_text = '', $replace = array(), $name = '', $params = array()) {
@@ -10,6 +11,6 @@ function _tpl($stpl_text = '', $replace = array(), $name = '', $params = array()
 
 class tpl_core_test extends PHPUnit_Framework_TestCase {
 	public function test_bug_01() {
-		$this->assertEquals('#description ', _tpl( '#description {execute(shop,_show_block123123)}', array('description' => 'test') ));
+		$this->assertEquals('#description ', _tpl( '#description {execute(main,_show_block123123)}', array('description' => 'test') ));
 	}
 }

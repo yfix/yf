@@ -29,12 +29,12 @@ class register {
 		return common()->show_notices();
 	}
 
-	function _login_not_exists($in = "") {
+	function _login_not_exists($in = '') {
 // TODO
 		return true;
 	}
 
-	function _email_not_exists($in = "") {
+	function _email_not_exists($in = '') {
 // TODO
 		return true;
 	}
