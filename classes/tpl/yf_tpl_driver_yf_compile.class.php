@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_tpl_compile {
+class yf_tpl_driver_yf_compile {
 
 	/** @var string @conf_skip pattern for multi-conditions */
 	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
@@ -94,7 +94,7 @@ class yf_tpl_compile {
 				=> $_php_start.'echo common()->_show_error_inline(\'$2\');'.$_php_end,
 
 			'/(\{include\(\s*["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
-				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\');'. $_php_end,
+				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\',$replace);'. $_php_end,
 
 			'/(\{eval_code\()([^\}]+?)(\)\})/i'
 				=> $_php_start. 'echo $2;'. $_php_end,

@@ -156,7 +156,7 @@ class yf_tpl_driver_yf {
 	* Compile given template into pure PHP code
 	*/
 	function _compile($name, $replace = array(), $string = '') {
-		return _class('tpl_compile', 'classes/tpl/')->_compile($name, $replace, $string);
+		return _class('tpl_driver_yf_compile', 'classes/tpl/')->_compile($name, $replace, $string);
 	}
 
 	/**
@@ -671,7 +671,19 @@ class yf_tpl_driver_yf {
 	/**
 	* Wrapper for '_PATTERN_INCLUDE', allows you to include stpl, optionally pass $replace params to it
 	*/
-	function _include_stpl ($stpl_name = '', $params = '') {
-		return $this->tpl->_include_stpl($stpl_name, $params);
+	function _include_stpl ($stpl_name = '', $params = '', $replace = array()) {
+		if (!is_array($replace)) {
+			$replace = array();
+		}
+		// Try to process method params (string like attrib1=value1;attrib2=value2)
+		foreach ((array)explode(';', str_replace(array("'",''), '', $params)) as $v) {
+			$attrib_name	= '';
+			$attrib_value   = '';
+			if (false !== strpos($v, '=')) {
+				list($attrib_name, $attrib_value) = explode('=', trim($v));
+			}
+			$replace[trim($attrib_name)] = trim($attrib_value);
+		}
+		return $this->parse($stpl_name, $replace);
 	}
 }

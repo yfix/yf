@@ -770,23 +770,6 @@ class yf_tpl {
 	}
 
 	/**
-	* Wrapper for '_PATTERN_INCLUDE', allows you to include stpl, optionally pass $replace params to it
-	*/
-	function _include_stpl ($stpl_name = '', $params = '') {
-		$replace = array();
-		// Try to process method params (string like attrib1=value1;attrib2=value2)
-		foreach ((array)explode(';', str_replace(array("'",''), '', $params)) as $v) {
-			$attrib_name	= '';
-			$attrib_value   = '';
-			if (false !== strpos($v, '=')) {
-				list($attrib_name, $attrib_value) = explode('=', trim($v));
-			}
-			$replace[trim($attrib_name)] = trim($attrib_value);
-		}
-		return $this->parse($stpl_name, $replace);
-	}
-
-	/**
 	* Custom filter (Inherit this method and customize anything you want)
 	*/
 	function _custom_filter ($stpl_name = '', &$replace) {
