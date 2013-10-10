@@ -4,9 +4,9 @@
 class yf_site_nav_bar {
 
 	/** @var string */
-	public $HOOK_NAME		= "_nav_bar_items";
+	public $HOOK_NAME		= '_nav_bar_items';
 	/** @var string */
-	public $HOME_LOCATION	= "./";
+	public $HOME_LOCATION	= './';
 	/** @var bool */
 	public $AUTO_TRANSLATE = true;
 	/** @var bool */
@@ -16,7 +16,7 @@ class yf_site_nav_bar {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -24,25 +24,25 @@ class yf_site_nav_bar {
 	function _show () {
 		$items = array();
 		// Switch between specific actions
-		if (in_array($_GET["object"], array("", "home_page"))) {
+		if (in_array($_GET['object'], array('', 'home_page'))) {
 			// Empty
 		} else {
-			if (!in_array($_GET["action"], array("", "show"))) {
-				$items[]	= $this->_nav_item($this->_decode_from_url($_GET["object"]), "./?object=".$_GET["object"]);
-				$items[]	= $this->_nav_item($this->_decode_from_url($_GET["action"]));
+			if (!in_array($_GET['action'], array('', 'show'))) {
+				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']), './?object='.$_GET['object']);
+				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['action']));
 			} else {
-				$items[]	= $this->_nav_item($this->_decode_from_url($_GET["object"]));
+				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']));
 			}
 		}
 		// Add first item to all valid items
-		array_unshift($items, $this->_nav_item("Home", $this->HOME_LOCATION));
-		// Try to get items from hook "_nav_bar_items"
+		array_unshift($items, $this->_nav_item('Home', $this->HOME_LOCATION));
+		// Try to get items from hook '_nav_bar_items'
 		if (!empty($this->HOOK_NAME)) {
-			$CUR_OBJ = module($_GET["object"]);
+			$CUR_OBJ = module($_GET['object']);
 			if (is_object($CUR_OBJ) && method_exists($CUR_OBJ, $this->HOOK_NAME)) {
 				$hook_params = array(
-					"nav_bar_obj"	=> $this,
-					"items"			=> $items,
+					'nav_bar_obj'	=> $this,
+					'items'			=> $items,
 				);
 				$func = $this->HOOK_NAME;
 				$hooked_items = $CUR_OBJ->$func($hook_params);
@@ -62,55 +62,55 @@ class yf_site_nav_bar {
 		}
 		// Process template
 		$replace = array(
-			"items"			=> implode(tpl()->parse(__CLASS__."/div"), $items),
-			"is_logged_in"	=> intval((bool) (isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : 0)),
-			"bookmark_page"	=> isset($bookmark_page_code) ? $bookmark_page_code : "",
+			'items'			=> implode(tpl()->parse(__CLASS__.'/div'), $items),
+			'is_logged_in'	=> intval((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
+			'bookmark_page'	=> isset($bookmark_page_code) ? $bookmark_page_code : '',
 		);
-		return tpl()->parse(__CLASS__."/main", $replace);
+		return tpl()->parse(__CLASS__.'/main', $replace);
 	}
 
 	// Display navigation bar item
-	function _nav_item ($name = "", $nav_link = "") {
+	function _nav_item ($name = '', $nav_link = '') {
 		if ($this->AUTO_TRANSLATE) {
 			$name = t($name);
 		}
 		$replace = array(
-			"name"			=> _prepare_html($name),
-			"link"			=> $nav_link,
-			"as_link"		=> !empty($nav_link) ? 1 : 0,
-			"is_logged_in"	=> intval((bool) (isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : 0)),
+			'name'			=> _prepare_html($name),
+			'link'			=> $nav_link,
+			'as_link'		=> !empty($nav_link) ? 1 : 0,
+			'is_logged_in'	=> intval((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
 		);
-		return tpl()->parse(__CLASS__."/item", $replace);
+		return tpl()->parse(__CLASS__.'/item', $replace);
 	}
 
 	// Decode name
-	function _decode_from_url ($text = "") {
-		return ucwords(str_replace("_", " ", $text));
+	function _decode_from_url ($text = '') {
+		return ucwords(str_replace('_', ' ', $text));
 	}
 
 	// Encode name
-	function _encode_for_url ($text = "") {
-		return strtolower(str_replace(" ", "_", $text));
+	function _encode_for_url ($text = '') {
+		return strtolower(str_replace(' ', '_', $text));
 	}
 
 	/**
 	*/
 	function _show_dropdown_menu () {
-		$items = _class("graphics")->_show_menu(array(
-			"name"				=> "user_main_menu",
-			"force_stpl_name"	=> "site_nav_bar/dropdown_menu",
-			"return_array"		=> 1,
+		$items = _class('graphics')->_show_menu(array(
+			'name'				=> 'user_main_menu',
+			'force_stpl_name'	=> 'site_nav_bar/dropdown_menu',
+			'return_array'		=> 1,
 		));
 		foreach ((array)$items as $id => $item) {
-			$item["need_clear"] = 0;
-			if ($item["type_id"] != 1/* $item["type_id"] == 1 && !module("admin_home")->_url_allowed($item["link"])*/) {
+			$item['need_clear'] = 0;
+			if ($item['type_id'] != 1/* $item['type_id'] == 1 && !module('admin_home')->_url_allowed($item['link'])*/) {
 				unset($items[$id]);
 				continue;
 			}
-			$items[$id] = tpl()->parse("site_nav_bar/dropdown_menu_item", $item);
+			$items[$id] = tpl()->parse('site_nav_bar/dropdown_menu_item', $item);
 		}
-		return tpl()->parse("site_nav_bar/dropdown_menu", array(
-			"items" => implode("", (array)$items)
+		return tpl()->parse('site_nav_bar/dropdown_menu', array(
+			'items' => implode('', (array)$items)
 		));
 	}
 }
