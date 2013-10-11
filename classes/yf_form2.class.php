@@ -10,6 +10,19 @@
 class yf_form2 {
 
 	/**
+	*/
+	function __construct() {
+		$css_framework = conf('css_framework');
+		if ($css_framework) {
+			$this->_params['css_framework'] = $css_framework;
+		}
+		$form_input_no_append = conf('form_input_no_append');
+		if ($form_input_no_append) {
+			$this->_params['form_input_no_append'] = $form_input_no_append;
+		}
+	}
+
+	/**
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
@@ -295,16 +308,17 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
-		$css_framework = conf('css_framework');
-		if ($css_framework) {
-#			return _class('html')->form_row($content, $extra, $replace, $this);
-		}
-		if (conf('form_input_no_append')) {
+		$css_framework = $extra['css_framework'] ?: $this->_params['css_framework'];
+		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append']) {
 			$extra['append'] = '';
 			$extra['prepend'] = '';
 		}
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
+		}
+		if ($css_framework) {
+			$extra['css_framework'] = $css_framework;
+			return _class('html')->form_row($content, $extra, $replace, $this);
 		}
 		$row_start = 
 			'<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
