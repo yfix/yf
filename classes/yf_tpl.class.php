@@ -454,9 +454,7 @@ class yf_tpl {
 		$this->driver->CACHE[$name]['exec_time'] += (microtime(true) - $stpl_time_start);
 		// For debug store information about variables used while processing template
 		if ($this->DEBUG_STPL_VARS) {
-			$d = debug('STPL_REPLACE_VARS::'.$name);
-			$next = is_array($d) ? count($d) : 0;
-			debug('STPL_REPLACE_VARS::'.$name.'::'.$next, $replace);
+			debug('STPL_REPLACE_VARS::'.$name.'[]', $replace);
 		}
 		if ($this->USE_SOURCE_BACKTRACE) {
 			debug('STPL_TRACES::'.$name, main()->trace_string());

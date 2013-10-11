@@ -987,9 +987,7 @@ class yf_main {
 			}
 		}
 		if (DEBUG_MODE) {
-			$d = debug('_MAIN_LOAD_CLASS_DEBUG');
-			$next = is_array($d) ? count($d) : 0;
-			debug('_MAIN_LOAD_CLASS_DEBUG::'.$next, array(
+			debug('_MAIN_LOAD_CLASS_DEBUG[]', array(
 				'class_name'		=> $class_name,
 				'loaded_class_name'	=> $loaded_class_name,
 				'loaded_path'		=> $loaded_path,
@@ -1134,9 +1132,7 @@ class yf_main {
 			}
 		}
 		if (DEBUG_MODE) {
-			$d = debug('main_execute_block_time');
-			$next = is_array($d) ? count($d) : 0;
-			debug('main_execute_block_time::'.$next, array(
+			debug('main_execute_block_time[]', array(
 				'tpl_name'	=> $tpl_name,
 				'time'		=> round(microtime(true) - $_time_start, 5),
 				'class'		=> $class_name,
@@ -1232,9 +1228,7 @@ class yf_main {
 			ob_end_clean();
 			$_pos = strpos($_debug_data, ')');
 
-			$d = debug('_main_get_data_debug');
-			$next = is_array($d) ? count($d) : 0;
-			debug('_main_get_data_debug::'.$next, array(
+			debug('_main_get_data_debug[]', array(
 				'name'		=> $handler_name,
 				'time'		=> round($time_end - $time_start, 5),
 				'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. _prepare_html(substr($_debug_data, $_pos + 1)) : $_debug_data,
