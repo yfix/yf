@@ -27,6 +27,6 @@ class tpl_driver_fenom_test extends PHPUnit_Framework_TestCase {
 			    </body>
 			</html>'
 		);
-		$this->assertNotEmpty('GOOD', $result);
+		$this->assertNotEmpty($result);
 	}
 }
