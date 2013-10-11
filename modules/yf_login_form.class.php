@@ -10,7 +10,9 @@
 class yf_login_form {
 
 	/** @var string */
-	public $DEF_REDIRECT_URL	= './?object=account';
+	public $DEF_REDIRECT_URL = './?object=account';
+	/** @var string */
+	public $LOGIN_FIELD	     = 'login';
 
 	/**
 	* Default function
@@ -33,9 +35,10 @@ class yf_login_form {
 	/**
 	*/
 	function _small_form() {
+		if(conf('_login_form_displayed')) return '';
 		return form(array('form_action' => './?task=login'), array('class' => 'form-inline', 'no_label' => 1))
-			->validate(array('login' => 'trim|required', 'password' => 'trim|required'))
-			->login(array('class' => 'input-medium'))
+			->validate(array($this->LOGIN_FIELD => 'trim|required', 'password' => 'trim|required'))
+			->login($this->LOGIN_FIELD, "", array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me')
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
@@ -46,7 +49,6 @@ class yf_login_form {
 	* Login form
 	*/
 	function _show_form () {
-// TODO: migrate it into form2()
 		// Already logged in users not needed to login again
 		if (main()->USER_ID) {
 			return js_redirect($this->DEF_REDIRECT_URL);
@@ -75,7 +77,15 @@ class yf_login_form {
 		// To prevent multiple login forms displayed on one page
 		conf('_login_form_displayed', true);
 
-		return tpl()->parse(__CLASS__.'/form', array('form_action' => './?task=login'));
+		return form(array('form_action' => './?task=login'), array('class' => 'form-horizontal', 'legend' => 'Member Login',))
+			->validate(array($this->LOGIN_FIELD => 'trim|required', 'password' => 'trim|required'))
+			->login($this->LOGIN_FIELD, "", array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
+			->password(array('class' => 'input-medium'))
+			->check_box('remember_me', "", array('no_label' => 1))
+			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
+			->link('Retrieve lost password', "./?object=register&action=activation", array('class' => 'btn'))
+			->hidden('action', '', array('value' => 'login'))
+		;
 	}
 
 	/**
