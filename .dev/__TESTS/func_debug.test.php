@@ -20,12 +20,12 @@ class func_debug_test extends PHPUnit_Framework_TestCase {
 			'key2'	=> 'val2',
 			'key3'	=> 'val3',
 		));
-		$_conf_should_be = array(
+		$should_be = array(
 			'key1'	=> 'val1',
 			'key2'	=> 'val2',
 			'key3'	=> 'val3',
 		);
-	   	$this->assertEquals($GLOBALS['DEBUG'], $_conf_should_be);
+	   	$this->assertEquals($GLOBALS['DEBUG'], $should_be);
 	}
 	public function test_25() {
 		debug(array(
@@ -37,7 +37,7 @@ class func_debug_test extends PHPUnit_Framework_TestCase {
 			'key2::sub4::ss1::sss1'	=> 'val2411',
 			'key2::sub4::ss1::sss2'	=> 'val2412',
 		));
-		$_conf_should_be = array(
+		$should_be = array(
 			'key1'	=> 'val1',
 			'key2'	=> array(
 				'sub1'	=> 'val21',
@@ -54,7 +54,7 @@ class func_debug_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-	   	$this->assertEquals($GLOBALS['DEBUG'], $_conf_should_be);
+	   	$this->assertEquals($GLOBALS['DEBUG'], $should_be);
 	}
 	public function test_26() {
 		$GLOBALS['DEBUG'] = array(
@@ -67,5 +67,31 @@ class func_debug_test extends PHPUnit_Framework_TestCase {
 			),
 		);
 	   	$this->assertEquals(debug('key2::sub4::ss1::sss2'), 'val2412');
+	}
+	public function test_31() {
+		debug('key', array('v0','v1','v2'));
+		debug('key[]', 'v3');
+		$should_be = array(
+			'key'	=> array(
+				0 => 'v0',
+				1 => 'v1',
+				2 => 'v2',
+				3 => 'v3',
+			),
+		);
+	   	$this->assertEquals($should_be, $GLOBALS['DEBUG']);
+	}
+	public function test_32() {
+		debug(array(
+			'k1'	=> 'v1',
+			'k2[]'	=> 'v20',
+		));
+		$should_be = array(
+			'k1'	=> 'v1',
+			'k2'	=> array(
+				0 => 'v20',
+			),
+		);
+	   	$this->assertEquals($should_be, $GLOBALS['DEBUG']);
 	}
 }

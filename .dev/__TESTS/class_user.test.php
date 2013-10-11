@@ -2,10 +2,9 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
-/*
 class class_user_test extends PHPUnit_Framework_TestCase {
 	public function setUp() {
-
+/*
 INSERT INTO test_user_data_info_fields (id, name, type, value_list, default_value, comment, `order`, active) VALUES
 (1, 'blabla', 'varchar', '', '', '', 0, '1'),
 (2, 'blabla2', 'varchar', '', '', '', 0, '1'),
@@ -34,9 +33,11 @@ INSERT INTO test_user_data_info_values (user_id, field_id, value) VALUES
 		for ($i = $start; $i <= $end; $i++) {
 			update_user($i, array("active" => 1, "blabla" => "test ".rand(1000, $start)." test"));
 		}
+*/
 	}
 
 	public function test_main() {
+/*
 		$this->assertEquals('', _bbcode('[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]'));
 		$body .= "<small>";
 		// user();
@@ -242,6 +243,6 @@ INSERT INTO test_user_data_info_values (user_id, field_id, value) VALUES
 		$body .= "<br /><b>search_user(array(\"WHERE\" => array(\"active\" => 1), \"LIMIT\" => 10, \"ORDER BY\" => \"add_date\"), array(\"nick\", \"login\"))</b><br /><p>".print_r(
 				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 10, "ORDER BY" => "nick"), array("nick", "login"))
 			, 1)."</p>";
+*/
 	}
 }
-*/

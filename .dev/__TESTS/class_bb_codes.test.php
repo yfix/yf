@@ -5,9 +5,10 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 function _bbcode($text) {
 	return _class('bb_codes')->_process_text($text);
 }
-/*
+
 class class_bb_codes_test extends PHPUnit_Framework_TestCase {
 	public function test_main() {
+/*
 		$this->assertEquals('', _bbcode('[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]'));
 		$this->assertEquals('', _bbcode('[url]http://www.google.com/intl/en_ALL/images/logo.gif[/url]'));
 		$this->assertEquals('', _bbcode('[url=\'Google\']http://www.google.com/intl/en_ALL/images/logo.gif[/url]'));
@@ -34,6 +35,6 @@ class class_bb_codes_test extends PHPUnit_Framework_TestCase {
 				Long text here Long text here Long text here
 				Long text here Long text here Long text here
 			[/spoiler]'));
+*/
 	}
 }
-*/

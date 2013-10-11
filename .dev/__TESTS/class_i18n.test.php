@@ -2,10 +2,9 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
-/*
 class class_i18n_test extends PHPUnit_Framework_TestCase {
 	public function test_main() {
-
+/*
 		$body .= "<b> t(\"Test var\"): </b> ".t("Test var")."<br /><br />";
 		$body .= "<b> t(\"::forum::Test var\"): </b> ".t("::forum::Test var")."<br /><br />";
 		$body .= "<b> t(\"::forum__new_post::Test var\"): </b> ".t("::forum__new_post::Test var")."<br /><br />";
@@ -34,12 +33,11 @@ class class_i18n_test extends PHPUnit_Framework_TestCase {
 		$body .= "<b> t(\"While searching %num folders found\", array(\"%num\" => \"111\")): </b> ".t("While searching %num folders found", array("%num" => "111"))."<br /><br />";
 		$body .= "<b> t(\"While searching %num folders found\", array(\"%num\" => \"10003\")): </b> ".t("While searching %num folders found", array("%num" => "10003"))."<br /><br />";
 
-
 #	* {t(While searching %num folders found,%num=1001)}
 #	* В процессе поиска {Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}
 #	function _process_sub_patterns($text = '', $args = array()) {
 
 //		$this->assertEquals('', t('[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]'));
+*/
 	}
 }
-*/
