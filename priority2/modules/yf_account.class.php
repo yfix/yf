@@ -20,7 +20,7 @@ class yf_account {
 		}
 
 		// Try to get unread messages from the admin
-		$Q = db()->query("SELECT * FROM ".db('admin_messages')." WHERE user_id=".intval(main()->USER_ID)." AND read='0' ORDER BY time DESC");
+		$Q = db()->query("SELECT * FROM ".db('admin_messages')." WHERE user_id=".intval(main()->USER_ID)." AND `read`='0' ORDER BY time DESC");
 		while ($A = db()->fetch_assoc($Q)) {
 			$admin_messages[] = array(
 				"message_id"	=> intval($A["id"]),
