@@ -19,8 +19,23 @@ if (!function_exists('my_array_merge')) {
 // conf(array('key2' => 'v2','key3' => 'v3')); => set conf data array
 // conf('key2[]', 'v20'); => set conf data with auto-increment
 if (!function_exists('conf')) {
-	function conf ($name = null, $new_value = null) {
-		$ARR = &$GLOBALS['CONF'];
+	function conf ($name = null, $new_value = null, $_arr_name = '') {
+		$_arr_sub = null;
+		if (!$_arr_name) {
+			$_arr_name = 'CONF';
+		} else {
+			// Example: array('PROJECT_CONF' => 'users')
+			if (is_array($_arr_name)) {
+				$_arr_sub = current($_arr_name);
+				$_arr_name = key($_arr_name);
+			}
+		}
+		// This code needed to unify conf(), debug() and module_conf() functions
+		if ($_arr_sub) {
+			$ARR = &$GLOBALS[$_arr_name][$_arr_sub];
+		} else {
+			$ARR = &$GLOBALS[$_arr_name];
+		}
 		$value = null;
 		// If no first params passed - we return whole structure
 		if (!isset($name)) {
@@ -120,14 +135,6 @@ if (!function_exists('conf')) {
 	}
 }
 
-if (!function_exists('conf_add')) {
-	function conf_add($name = null, $new_value = null) {
-		if (!is_null($new_value)) {
-			$actual_error = conf($name) ? conf($name) . ';' : '';
-		}
-		return conf($name,$actual_error . $new_value);
-	}		
-}		
 // Useful short function to call PROJECT_CONF. 
 // Examples:
 // module_conf('home_page', 'SETTING1');
@@ -145,69 +152,7 @@ if (!function_exists('module_conf')) {
 		if ($module && !$name) {
 			return $GLOBALS['PROJECT_CONF'][$module];
 		}
-		$v = &$GLOBALS['PROJECT_CONF'][$module];
-		if (!$name) {
-			return $v;
-		}
-		// SET $name as array to merge as key-val
-		if (is_array($name)) {
-			foreach ((array)$name as $_key => $_new_val) {
-				if (!isset($_new_val)) {
-					continue;
-				}
-				$add_auto_index = false;
-				if (substr($_key, -2) == '[]') {
-					$_key = substr($_key, 0, -2);
-					$add_auto_index = true;
-				}
-				$a = false;
-				if (false !== strpos($_key, '::')) {
-					$a = explode('::', $_key);
-				}
-				if (is_array($a) && !empty($a)) {
-					$_key = $a[0];
-					$c = count($a);
-					if ($c == 2) { $v[$_key][$a[1]] = $_new_val; }
-					elseif ($c == 3) { $v[$_key][$a[1]][$a[2]] = $_new_val; }
-					elseif ($c == 4) { $v[$_key][$a[1]][$a[2]][$a[3]] = $_new_val; }
-				} else {
-					$v[$_key] = $_new_val;
-				}
-			}
-			return true;
-		}
-		$add_auto_index = false;
-		if (substr($name, -2) == '[]') {
-			$name = substr($name, 0, -2);
-			$add_auto_index = true;
-		}
-		$a = false;
-		if (false !== strpos($name, '::')) {
-			$a = explode('::', $name);
-		}
-		if (is_array($a) && !empty($a)) {
-			$name = $a[0];
-			$c = count($a);
-			if ($c == 2 && isset($v[$name][$a[1]])) { $value = $v[$name][$a[1]]; }
-			elseif ($c == 3 && isset($v[$name][$a[1]][$a[2]])) { $value = $v[$name][$a[1]][$a[2]]; }
-			elseif ($c == 4 && isset($v[$name][$a[1]][$a[2]][$a[3]])) { $value = $v[$name][$a[1]][$a[2]][$a[3]]; }
-			if (isset($new_value)) {
-				if ($c == 2) { $v[$name][$a[1]] = $new_value; }
-				elseif ($c == 3) { $v[$name][$a[1]][$a[2]] = $new_value; }
-				elseif ($c == 4) { $v[$name][$a[1]][$a[2]][$a[3]] = $new_value; }
-			}
-		} else {
-			if (isset($v[$name])) {
-				$value = $v[$name];
-			}
-			if (isset($new_value)) {
-				$v[$name] = $new_value;
-			}
-		}
-		if (isset($new_value)) {
-			$value = $new_value;
-		}
-		return $value;
+		return conf($name, $new_value, array('PROJECT_CONF' => $module));
 	}
 }
 
@@ -222,102 +167,19 @@ if (!function_exists('module_conf')) {
 // debug('key2[]', 'v20'); => set debug data with auto-increment
 if (!function_exists('debug')) {
 	function debug ($name = null, $new_value = null) {
-		$ARR = &$GLOBALS['DEBUG'];
-		$value = null;
-		// If no first params passed - we return whole structure
-		if (!isset($name)) {
-			return $ARR;
-		}
-		// SET $name as array to merge as key-val
-		if (is_array($name)) {
-			$v = &$ARR;
-			foreach ((array)$name as $_key => $_new_val) {
-				if (!isset($_new_val)) {
-					continue;
-				}
-				$add_auto_index = false;
-				if (substr($_key, -2) == '[]') {
-					$_key = substr($_key, 0, -2);
-					$add_auto_index = true;
-				}
-				$a = false;
-				if (false !== strpos($_key, '::')) {
-					$a = explode('::', $_key);
-				}
-				if (is_array($a) && !empty($a)) {
-					$_key = $a[0];
-					$c = count($a);
-					$last_key = $a[$c - 1];
-					$base = null;
-
-					if ($c == 2) { $base = &$v[$_key]; }
-					elseif ($c == 3) { $base = &$v[$_key][$a[1]]; }
-					elseif ($c == 4) { $base = &$v[$_key][$a[1]][$a[2]]; }
-					elseif ($c == 5) { $base = &$v[$_key][$a[1]][$a[2]][$a[3]]; }
-
-					if ($add_auto_index) {
-						$base[] = $_new_val;
-					} else {
-						$base[$last_key] = $_new_val;
-					}
-					unset($base);
-				} else {
-					if ($add_auto_index) {
-						$v[$_key][] = $_new_val;
-					} else {
-						$v[$_key] = $_new_val;
-					}
-				}
-			}
-			return true;
-		}
-		$add_auto_index = false;
-		if (substr($name, -2) == '[]') {
-			$name = substr($name, 0, -2);
-			$add_auto_index = true;
-		}
-		$a = false;
-		if (false !== strpos($name, '::')) {
-			$a = explode('::', $name);
-		}
-		if (is_array($a) && !empty($a)) {
-			$name = $a[0];
-			$v = &$ARR[$name];
-			$c = count($a);
-			$last_key = $a[$c - 1];
-			$base = null;
-
-			if ($c == 2) { $base = &$v; }
-			elseif ($c == 3) { $base = &$v[$a[1]]; }
-			elseif ($c == 4) { $base = &$v[$a[1]][$a[2]]; }
-			elseif ($c == 5) { $base = &$v[$a[1]][$a[2]][$a[3]]; }
-
-			if (isset($base[$last_key])) {
-				$value = $base[$last_key];
-			}
-			if (isset($new_value)) {
-				if ($add_auto_index) {
-					$base[] = $new_value;
-				} else {
-					$base[$last_key] = $new_value;
-				}
-			}
-		} else {
-			$v = &$ARR[$name];
-			if (isset($v)) {
-				$value = $v;
-			}
-			if (isset($new_value)) {
-				if ($add_auto_index) {
-					$v[] = $new_value;
-				} else {
-					$v = $new_value;
-				}
-			}
-		}
-		if (isset($new_value)) {
-			$value = $new_value;
-		}
-		return $value;
+		return conf($name, $new_value, 'DEBUG');
 	}
 }
+
+/**
+* Helper for concatenating string values
+*/
+if (!function_exists('conf_add')) {
+	function conf_add($name = null, $new_value = null, $separator = ';') {
+		$actual_value = null;
+		if (!is_null($new_value)) {
+			$actual_value = conf($name);
+		}
+		return conf($name, ($actual_value ? $actual_value. $separator : ''). $new_value);
+	}		
+}		
