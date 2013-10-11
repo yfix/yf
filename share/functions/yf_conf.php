@@ -17,16 +17,18 @@ if (!function_exists('my_array_merge')) {
 // conf('key2::k2'); => get conf data subarray item
 // conf('key2::k2', 'v2'); => set conf data subarray item
 // conf(array('key2' => 'v2','key3' => 'v3')); => set conf data array
+// conf('key2[]', 'v20'); => set conf data with auto-increment
 if (!function_exists('conf')) {
 	function conf ($name = null, $new_value = null) {
+		$ARR = &$GLOBALS['CONF'];
 		$value = null;
 		// If no first params passed - we return whole structure
 		if (!isset($name)) {
-			return $GLOBALS['CONF'];
+			return $ARR;
 		}
 		// SET $name as array to merge as key-val
 		if (is_array($name)) {
-			$V = &$GLOBALS['CONF'];
+			$v = &$ARR;
 			foreach ((array)$name as $_key => $_new_val) {
 				if (!isset($_new_val)) {
 					continue;
@@ -43,11 +45,26 @@ if (!function_exists('conf')) {
 				if (is_array($a) && !empty($a)) {
 					$_key = $a[0];
 					$c = count($a);
-					if ($c == 2) { $V[$_key][$a[1]] = $_new_val; }
-					elseif ($c == 3) { $V[$_key][$a[1]][$a[2]] = $_new_val; }
-					elseif ($c == 4) { $V[$_key][$a[1]][$a[2]][$a[3]] = $_new_val; }
+					$last_key = $a[$c - 1];
+					$base = null;
+
+					if ($c == 2) { $base = &$v[$_key]; }
+					elseif ($c == 3) { $base = &$v[$_key][$a[1]]; }
+					elseif ($c == 4) { $base = &$v[$_key][$a[1]][$a[2]]; }
+					elseif ($c == 5) { $base = &$v[$_key][$a[1]][$a[2]][$a[3]]; }
+
+					if ($add_auto_index) {
+						$base[] = $_new_val;
+					} else {
+						$base[$last_key] = $_new_val;
+					}
+					unset($base);
 				} else {
-					$V[$_key] = $_new_val;
+					if ($add_auto_index) {
+						$v[$_key][] = $_new_val;
+					} else {
+						$v[$_key] = $_new_val;
+					}
 				}
 			}
 			return true;
@@ -63,23 +80,37 @@ if (!function_exists('conf')) {
 		}
 		if (is_array($a) && !empty($a)) {
 			$name = $a[0];
-			$V = &$GLOBALS['CONF'][$name];
+			$v = &$ARR[$name];
 			$c = count($a);
-			if ($c == 2 && isset($V[$a[1]])) { $value = $V[$a[1]]; }
-			elseif ($c == 3 && isset($V[$a[1]][$a[2]])) { $value = $V[$a[1]][$a[2]]; }
-			elseif ($c == 4 && isset($V[$a[1]][$a[2]][$a[3]])) { $value = $V[$a[1]][$a[2]][$a[3]]; }
+			$last_key = $a[$c - 1];
+			$base = null;
+
+			if ($c == 2) { $base = &$v; }
+			elseif ($c == 3) { $base = &$v[$a[1]]; }
+			elseif ($c == 4) { $base = &$v[$a[1]][$a[2]]; }
+			elseif ($c == 5) { $base = &$v[$a[1]][$a[2]][$a[3]]; }
+
+			if (isset($base[$last_key])) {
+				$value = $base[$last_key];
+			}
 			if (isset($new_value)) {
-				if ($c == 2) { $V[$a[1]] = $new_value; }
-				elseif ($c == 3) { $V[$a[1]][$a[2]] = $new_value; }
-				elseif ($c == 4) { $V[$a[1]][$a[2]][$a[3]] = $new_value; }
+				if ($add_auto_index) {
+					$base[] = $new_value;
+				} else {
+					$base[$last_key] = $new_value;
+				}
 			}
 		} else {
-			$V = &$GLOBALS['CONF'][$name];
-			if (isset($V)) {
-				$value = $V;
+			$v = &$ARR[$name];
+			if (isset($v)) {
+				$value = $v;
 			}
 			if (isset($new_value)) {
-				$V = $new_value;
+				if ($add_auto_index) {
+					$v[] = $new_value;
+				} else {
+					$v = $new_value;
+				}
 			}
 		}
 		if (isset($new_value)) {
@@ -114,9 +145,9 @@ if (!function_exists('module_conf')) {
 		if ($module && !$name) {
 			return $GLOBALS['PROJECT_CONF'][$module];
 		}
-		$V = &$GLOBALS['PROJECT_CONF'][$module];
+		$v = &$GLOBALS['PROJECT_CONF'][$module];
 		if (!$name) {
-			return $V;
+			return $v;
 		}
 		// SET $name as array to merge as key-val
 		if (is_array($name)) {
@@ -136,11 +167,11 @@ if (!function_exists('module_conf')) {
 				if (is_array($a) && !empty($a)) {
 					$_key = $a[0];
 					$c = count($a);
-					if ($c == 2) { $V[$_key][$a[1]] = $_new_val; }
-					elseif ($c == 3) { $V[$_key][$a[1]][$a[2]] = $_new_val; }
-					elseif ($c == 4) { $V[$_key][$a[1]][$a[2]][$a[3]] = $_new_val; }
+					if ($c == 2) { $v[$_key][$a[1]] = $_new_val; }
+					elseif ($c == 3) { $v[$_key][$a[1]][$a[2]] = $_new_val; }
+					elseif ($c == 4) { $v[$_key][$a[1]][$a[2]][$a[3]] = $_new_val; }
 				} else {
-					$V[$_key] = $_new_val;
+					$v[$_key] = $_new_val;
 				}
 			}
 			return true;
@@ -157,20 +188,20 @@ if (!function_exists('module_conf')) {
 		if (is_array($a) && !empty($a)) {
 			$name = $a[0];
 			$c = count($a);
-			if ($c == 2 && isset($V[$name][$a[1]])) { $value = $V[$name][$a[1]]; }
-			elseif ($c == 3 && isset($V[$name][$a[1]][$a[2]])) { $value = $V[$name][$a[1]][$a[2]]; }
-			elseif ($c == 4 && isset($V[$name][$a[1]][$a[2]][$a[3]])) { $value = $V[$name][$a[1]][$a[2]][$a[3]]; }
+			if ($c == 2 && isset($v[$name][$a[1]])) { $value = $v[$name][$a[1]]; }
+			elseif ($c == 3 && isset($v[$name][$a[1]][$a[2]])) { $value = $v[$name][$a[1]][$a[2]]; }
+			elseif ($c == 4 && isset($v[$name][$a[1]][$a[2]][$a[3]])) { $value = $v[$name][$a[1]][$a[2]][$a[3]]; }
 			if (isset($new_value)) {
-				if ($c == 2) { $V[$name][$a[1]] = $new_value; }
-				elseif ($c == 3) { $V[$name][$a[1]][$a[2]] = $new_value; }
-				elseif ($c == 4) { $V[$name][$a[1]][$a[2]][$a[3]] = $new_value; }
+				if ($c == 2) { $v[$name][$a[1]] = $new_value; }
+				elseif ($c == 3) { $v[$name][$a[1]][$a[2]] = $new_value; }
+				elseif ($c == 4) { $v[$name][$a[1]][$a[2]][$a[3]] = $new_value; }
 			}
 		} else {
-			if (isset($V[$name])) {
-				$value = $V[$name];
+			if (isset($v[$name])) {
+				$value = $v[$name];
 			}
 			if (isset($new_value)) {
-				$V[$name] = $new_value;
+				$v[$name] = $new_value;
 			}
 		}
 		if (isset($new_value)) {
@@ -191,14 +222,15 @@ if (!function_exists('module_conf')) {
 // debug('key2[]', 'v20'); => set debug data with auto-increment
 if (!function_exists('debug')) {
 	function debug ($name = null, $new_value = null) {
+		$ARR = &$GLOBALS['DEBUG'];
 		$value = null;
 		// If no first params passed - we return whole structure
 		if (!isset($name)) {
-			return $GLOBALS['DEBUG'];
+			return $ARR;
 		}
 		// SET $name as array to merge as key-val
 		if (is_array($name)) {
-			$V = &$GLOBALS['DEBUG'];
+			$v = &$ARR;
 			foreach ((array)$name as $_key => $_new_val) {
 				if (!isset($_new_val)) {
 					continue;
@@ -218,10 +250,10 @@ if (!function_exists('debug')) {
 					$last_key = $a[$c - 1];
 					$base = null;
 
-					if ($c == 2) { $base = &$V[$_key]; }
-					elseif ($c == 3) { $base = &$V[$_key][$a[1]]; }
-					elseif ($c == 4) { $base = &$V[$_key][$a[1]][$a[2]]; }
-					elseif ($c == 5) { $base = &$V[$_key][$a[1]][$a[2]][$a[3]]; }
+					if ($c == 2) { $base = &$v[$_key]; }
+					elseif ($c == 3) { $base = &$v[$_key][$a[1]]; }
+					elseif ($c == 4) { $base = &$v[$_key][$a[1]][$a[2]]; }
+					elseif ($c == 5) { $base = &$v[$_key][$a[1]][$a[2]][$a[3]]; }
 
 					if ($add_auto_index) {
 						$base[] = $_new_val;
@@ -231,9 +263,9 @@ if (!function_exists('debug')) {
 					unset($base);
 				} else {
 					if ($add_auto_index) {
-						$V[$_key][] = $_new_val;
+						$v[$_key][] = $_new_val;
 					} else {
-						$V[$_key] = $_new_val;
+						$v[$_key] = $_new_val;
 					}
 				}
 			}
@@ -250,15 +282,15 @@ if (!function_exists('debug')) {
 		}
 		if (is_array($a) && !empty($a)) {
 			$name = $a[0];
-			$V = &$GLOBALS['DEBUG'][$name];
+			$v = &$ARR[$name];
 			$c = count($a);
 			$last_key = $a[$c - 1];
 			$base = null;
 
-			if ($c == 2) { $base = &$V; }
-			elseif ($c == 3) { $base = &$V[$a[1]]; }
-			elseif ($c == 4) { $base = &$V[$a[1]][$a[2]]; }
-			elseif ($c == 5) { $base = &$V[$a[1]][$a[2]][$a[3]]; }
+			if ($c == 2) { $base = &$v; }
+			elseif ($c == 3) { $base = &$v[$a[1]]; }
+			elseif ($c == 4) { $base = &$v[$a[1]][$a[2]]; }
+			elseif ($c == 5) { $base = &$v[$a[1]][$a[2]][$a[3]]; }
 
 			if (isset($base[$last_key])) {
 				$value = $base[$last_key];
@@ -271,15 +303,15 @@ if (!function_exists('debug')) {
 				}
 			}
 		} else {
-			$V = &$GLOBALS['DEBUG'][$name];
-			if (isset($V)) {
-				$value = $V;
+			$v = &$ARR[$name];
+			if (isset($v)) {
+				$value = $v;
 			}
 			if (isset($new_value)) {
 				if ($add_auto_index) {
-					$V[] = $new_value;
+					$v[] = $new_value;
 				} else {
-					$V = $new_value;
+					$v = $new_value;
 				}
 			}
 		}
