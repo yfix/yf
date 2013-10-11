@@ -303,29 +303,73 @@ class yf_form2 {
 			$extra['append'] = '';
 			$extra['prepend'] = '';
 		}
-		return '
-			<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
+		}
+		$row_start = 
+			'<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
 				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '')
+				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '');
 
-					.(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
-					.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '')
+		$row_end =
+				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
+			.'</div>'.PHP_EOL;
 
-					.$content.PHP_EOL
+		$before_content_html = 
+			(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
+			.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '');
 
-					.($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
-					.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '')
+		$after_content_html = 
+			($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
+			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
 
-					.($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '')
-					.(($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '')
+		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
+		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
 
-					.($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '')
-					.($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '')
+		$inline_help_html = ($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '');
+		$inline_tip_html = ($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '');
+
+		if ($extra['only_row_start']) {
+			return $row_start;
+		} elseif ($extra['only_row_end']) {
+			return $row_end;
+		} elseif ($extra['stacked']) {
+			return $before_content_html. $content. PHP_EOL. $after_content_html
+				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
+		} else {
+			// Full variant
+			return $row_start
+					.$before_content_html. $content. PHP_EOL. $after_content_html
+					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
 					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
+				.$row_end;
+		}
+	}
 
-				.(!$extra['wide'] ? '</div>'.PHP_EOL : '')
-			.'</div>'.PHP_EOL
-		;
+	/**
+	* Shortcut for starting form row, needed to build row with several inlined inputs
+	*/
+	function row_start($extra = array()) {
+		$body = $this->_row_html('', array('only_row_start' => 1) + (array)$extra);
+		if ($this->_chained_mode) {
+			$this->_stacked_mode_on = true;
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
+	}
+
+	/**
+	* Paired with row_start
+	*/
+	function row_end($extra = array()) {
+		$body = $this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		if ($this->_chained_mode) {
+			$this->_stacked_mode_on = false;
+			$this->_body[] = $body;
+			return $this;
+		}
+		return $body;
 	}
 
 	/**
@@ -640,6 +684,24 @@ class yf_form2 {
 			}
 		}
 		$extra['type'] = 'file';
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function button($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace('_', ' ', $name));
+		}
+		$extra['type'] = 'button';
+		$extra['value'] = $desc;
+		if (!$extra['class']) {
+			$extra['class'] = 'btn';
+		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
