@@ -421,7 +421,7 @@ class yf_auth_user {
 	function _success_login_redirect ($user_info = array(), $group_info = array()) {
 		// Auto-redirect to the page before login form if needed
 		if (!empty($_SESSION[$this->VAR_USER_GO_URL]) && !($this->URL_SUCCESS_LOGIN && $_POST['skip_auto_url'])) {
-			$REDIRECT_URL = (substr($_SESSION[$this->VAR_USER_GO_URL], 0, 2) != './' ? './?' : ''). str_replace(WEB_PATH, '', $_SESSION[$this->VAR_USER_GO_URL]);
+			$REDIRECT_URL = (substr($_SESSION[$this->VAR_USER_GO_URL], 0, 2) != './' ? './?' : ''). str_replace(WEB_PATH, '', trim($_SESSION[$this->VAR_USER_GO_URL], 'http:'));
 			// Cleanup redirect url
 			$_SESSION[$this->VAR_USER_GO_URL] = '';
 		// Redirect user to the user default
