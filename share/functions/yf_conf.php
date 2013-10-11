@@ -31,6 +31,11 @@ if (!function_exists('conf')) {
 				if (!isset($_new_val)) {
 					continue;
 				}
+				$add_auto_index = false;
+				if (substr($_key, -2) == '[]') {
+					$_key = substr($_key, 0, -2);
+					$add_auto_index = true;
+				}
 				$a = false;
 				if (false !== strpos($_key, '::')) {
 					$a = explode('::', $_key);
@@ -46,6 +51,11 @@ if (!function_exists('conf')) {
 				}
 			}
 			return true;
+		}
+		$add_auto_index = false;
+		if (substr($name, -2) == '[]') {
+			$name = substr($name, 0, -2);
+			$add_auto_index = true;
 		}
 		$a = false;
 		if (false !== strpos($name, '::')) {
@@ -114,6 +124,11 @@ if (!function_exists('module_conf')) {
 				if (!isset($_new_val)) {
 					continue;
 				}
+				$add_auto_index = false;
+				if (substr($_key, -2) == '[]') {
+					$_key = substr($_key, 0, -2);
+					$add_auto_index = true;
+				}
 				$a = false;
 				if (false !== strpos($_key, '::')) {
 					$a = explode('::', $_key);
@@ -129,6 +144,11 @@ if (!function_exists('module_conf')) {
 				}
 			}
 			return true;
+		}
+		$add_auto_index = false;
+		if (substr($name, -2) == '[]') {
+			$name = substr($name, 0, -2);
+			$add_auto_index = true;
 		}
 		$a = false;
 		if (false !== strpos($name, '::')) {
@@ -168,6 +188,7 @@ if (!function_exists('module_conf')) {
 // debug('key2::k2'); => get debug data subarray item
 // debug('key2::k2', 'v2'); => set debug data subarray item
 // debug(array('key2' => 'v2','key3' => 'v3')); => set debug data array
+// debug('key2[]', 'v20'); => set debug data with auto-increment
 if (!function_exists('debug')) {
 	function debug ($name = null, $new_value = null) {
 		$value = null;
@@ -181,6 +202,11 @@ if (!function_exists('debug')) {
 			foreach ((array)$name as $_key => $_new_val) {
 				if (!isset($_new_val)) {
 					continue;
+				}
+				$add_auto_index = false;
+				if (substr($_key, -2) == '[]') {
+					$_key = substr($_key, 0, -2);
+					$add_auto_index = true;
 				}
 				$a = false;
 				if (false !== strpos($_key, '::')) {
@@ -197,13 +223,26 @@ if (!function_exists('debug')) {
 					elseif ($c == 4) { $base = &$V[$_key][$a[1]][$a[2]]; }
 					elseif ($c == 5) { $base = &$V[$_key][$a[1]][$a[2]][$a[3]]; }
 
-					$base[$last_key] = $_new_val;
+					if ($add_auto_index) {
+						$base[] = $_new_val;
+					} else {
+						$base[$last_key] = $_new_val;
+					}
 					unset($base);
 				} else {
-					$V[$_key] = $_new_val;
+					if ($add_auto_index) {
+						$V[$_key][] = $_new_val;
+					} else {
+						$V[$_key] = $_new_val;
+					}
 				}
 			}
 			return true;
+		}
+		$add_auto_index = false;
+		if (substr($name, -2) == '[]') {
+			$name = substr($name, 0, -2);
+			$add_auto_index = true;
 		}
 		$a = false;
 		if (false !== strpos($name, '::')) {
@@ -225,7 +264,11 @@ if (!function_exists('debug')) {
 				$value = $base[$last_key];
 			}
 			if (isset($new_value)) {
-				$base[$last_key] = $new_value;
+				if ($add_auto_index) {
+					$base[] = $new_value;
+				} else {
+					$base[$last_key] = $new_value;
+				}
 			}
 		} else {
 			$V = &$GLOBALS['DEBUG'][$name];
@@ -233,7 +276,11 @@ if (!function_exists('debug')) {
 				$value = $V;
 			}
 			if (isset($new_value)) {
-				$V = $new_value;
+				if ($add_auto_index) {
+					$V[] = $new_value;
+				} else {
+					$V = $new_value;
+				}
 			}
 		}
 		if (isset($new_value)) {
