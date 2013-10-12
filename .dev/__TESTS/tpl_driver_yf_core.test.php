@@ -217,4 +217,7 @@ class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
 	public function test_123() {
 		$this->assertEquals('GOOD', _tpl( '{if("%string" eq "string")}GOOD{else}BAD{/if}' ));
 	}
+	public function test_131() {
+		$this->assertEquals('val1 val2', _tpl( '{sub.key1} {sub.key2}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
+	}
 }

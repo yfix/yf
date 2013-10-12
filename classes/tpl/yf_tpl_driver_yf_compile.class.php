@@ -39,6 +39,9 @@ class yf_tpl_driver_yf_compile {
 			'/\{([a-z0-9\-\_]+)\}/i'
 				=> $_php_start. 'echo $replace[\'$1\'];'. $_php_end,
 
+			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\}/i'
+				=> $_php_start. 'echo $replace[\'$1\'][\'$2\'];'. $_php_end,
+
 			// tags inside foreach
 			'/\{\#\.([a-z0-9\-\_]+)\}/i'
 				=> $_php_start. 'echo $_v[\'$1\'];'. $_php_end,
