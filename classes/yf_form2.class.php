@@ -12,6 +12,7 @@ class yf_form2 {
 	/**
 	*/
 	function __construct() {
+// TODO: fix me, as currently will be cleaned on clone
 		$css_framework = conf('css_framework');
 		if ($css_framework) {
 			$this->_params['css_framework'] = $css_framework;
@@ -37,6 +38,7 @@ class yf_form2 {
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			$this->$k = null;
 		}
+		$this->__construct();
 	}
 
 	/**
