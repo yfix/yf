@@ -997,6 +997,22 @@ class yf_form2 {
 	}
 
 	/**
+	* Alias
+	*/
+	function phone($name = '', $desc = '', $extra = array(), $replace = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		$extra['type'] = 'tel';
+		if (!$name) {
+			$name = 'phone';
+		}
+		return $this->input($name, $desc, $extra, $replace);
+	}
+
+	/**
 	* HTML5
 	*/
 	function time($name = '', $desc = '', $extra = array(), $replace = array()) {
@@ -1410,6 +1426,12 @@ class yf_form2 {
 
 	/**
 	*/
+	function div_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'div_box');
+	}
+
+	/**
+	*/
 	function check_box($name, $value = '', $extra = array(), $replace = array()) {
 		return $this->_html_control($name, $value, $extra, $replace, 'check_box');
 	}
@@ -1615,12 +1637,6 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
-	}
-
-	/**
-	*/
-	function div_box() {
-// TODO: need BS div-based select-box emulation, will be needed for several methods
 	}
 
 	/**

@@ -337,7 +337,7 @@ class yf_html_controls {
 		$m .= '<select name="month'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="month_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
 		$m .= $show_text ? '<option '.(!$month ? 'selected="selected"' : '').' value="">-'.($translate ? t('month') : 'month').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 12; $a++) {
-			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->month($a)) : $this->month($a)) .'</option>'.PHP_EOL;
+			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->_months($a)) : $this->_months($a)) .'</option>'.PHP_EOL;
 		}
 		$m .= '</select>'.PHP_EOL;
 		$d .= '<select name="day'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="day_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
@@ -447,7 +447,7 @@ class yf_html_controls {
 		$m .= '<select name="'.$name.'[month]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_month_box"' : '').'>'.PHP_EOL;
 		$m .= $show_text ? '<option '.(!$month ? 'selected="selected"' : '').' value="">-'.($translate ? t('month') : 'month').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 12; $a++) {
-			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->month($a)) : $this->month($a)) .'</option>'.PHP_EOL;
+			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->_months($a)) : $this->_months($a)) .'</option>'.PHP_EOL;
 		}
 		$m .= '</select>'.PHP_EOL;
 		$d .= '<select name="'.$name.'[day]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_day_box"' : '').'>'.PHP_EOL;
@@ -522,6 +522,28 @@ class yf_html_controls {
 	}
 
 	/**
+	* Month name
+	*/
+	function _months ($num, $lang = '') {
+		$m_array = array(
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		);
+		$num--;
+		return (($num > 12) || ($num < 0)) ? $num : $m_array[$num];
+	}
+
+	/**
 	* Simple input form control
 	*/
 	function input ($name = '', $value = '', $extra = array()) {
@@ -542,24 +564,65 @@ class yf_html_controls {
 	}
 
 	/**
-	* Month name
 	*/
-	function month ($num, $lang = '') {
-		$m_array = array(
-			'January',
-			'February',
-			'March',
-			'April',
-			'May',
-			'June',
-			'July',
-			'August',
-			'September',
-			'October',
-			'November',
-			'December',
-		);
-		$num--;
-		return (($num > 12) || ($num < 0)) ? $num : $m_array[$num];
+	function div_box ($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+		// Passing params as array
+		if (is_array($name)) {
+			$extra = $name;
+			$name = $extra['name'];
+			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+			if (!$extra['no_translate']) {
+				$values = t($values);
+			}
+			$selected = $extra['selected'];
+			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
+			$type = isset($extra['type']) ? $extra['type'] : 2;
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			$level = isset($extra['level']) ? $extra['level'] : 0;
+			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+			$extra['class'] .= ' form-control';
+			if ($extra['class']) {
+				$add_str .= ' class="'.$extra['class'].'" ';
+			}
+			if ($extra['style']) {
+				$add_str .= ' style="'.$extra['style'].'" ';
+			}
+		} else {
+			$add_str .= ' class="form-control" ';
+		}
+		if (!$values) {
+			return false;
+		}
+		$selected = strval($selected);
+/*
+		// (example: $add_str = 'size=6')
+		$body = $level == 0 ? PHP_EOL.'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.">".PHP_EOL : '';
+		if ($show_text && $level == 0) {
+			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
+		}
+		$self_func = __FUNCTION__;
+		foreach ((array)$values as $key => $cur_value) {
+			if (is_array($cur_value)) {
+				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
+				$body .= $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
+				$body .= '</optgroup>'.PHP_EOL;
+			} else {
+				$_what_compare = strval($type == 1 ? $cur_value : $key);
+				$body .= '<option value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
+			}
+		}
+		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
+*/
+		$body .= '<ul class="nav nav-tabs"><li class="dropdown">';
+		$body .= '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></a>';
+		$body .= '<ul class="dropdown-menu">';
+		foreach ((array)$values as $key => $cur_value) {
+			$_what_compare = strval($type == 1 ? $cur_value : $key);
+			$body .= '<li><a href="javascript:void();" value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+		}
+		$body .= '</ul>';
+		$body .= '</li></ul>';
+
+		return $body;
 	}
 }
