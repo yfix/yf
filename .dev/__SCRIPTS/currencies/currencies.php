@@ -77,17 +77,6 @@ $data = array (
     'sign' => '$',
     'active' => '0',
   ),
-  '' => 
-  array (
-    'id' => NULL,
-    'name' => 'No universal currency',
-    'number' => 0,
-    'minor_units' => 0,
-    'country_name' => 'SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS',
-    'country_code' => '',
-    'sign' => '',
-    'active' => '0',
-  ),
   'ARS' => 
   array (
     'id' => 'ARS',

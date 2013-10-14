@@ -12,6 +12,9 @@ $data = array();
 foreach ($xml->CcyTbl->CcyNtry as $item) {
 	$item = (array)$item;
 	$id = $item['Ccy'];
+	if (!$id) {
+		continue;
+	}
 	$data[$id] = array(
 		'id'	=> $item['Ccy'],
 		'name'	=> $item['CcyNm'],
@@ -51,6 +54,9 @@ foreach($tmp_tbl as $v) {
 	} elseif (count($v) == 6) {
 		$id = $v[3];
 		$sign = $v[2];
+	}
+	if (!$id) {
+		continue;
 	}
 	if ($sign) {
 		if (strlen($sign) > 7 || false !== strpos($sign, '<')) {
