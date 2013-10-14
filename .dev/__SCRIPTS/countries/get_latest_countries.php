@@ -48,6 +48,7 @@ foreach ($tmp_tbl as $v) {
 		'num'	=> $v[3],
 		'name'	=> $v[0],
 		'cont'	=> '',
+		'active'=> 0,
 	);
 }
 $f4 = dirname(__FILE__).'/countries.php';

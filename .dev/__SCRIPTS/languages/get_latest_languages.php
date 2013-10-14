@@ -47,7 +47,7 @@ foreach ($tmp_tbl as $v) {
 		'code'	=> $id,
 		'name'	=> $v[2],
 		'native'=> $v[3],
-		'code3' => $v[4],
+		'code3' => $v[5],
 		'active'=> 0,
 	);
 }

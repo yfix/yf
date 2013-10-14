@@ -7,6 +7,7 @@ $data = array (
     'num' => '004',
     'name' => 'Afghanistan',
     'cont' => '',
+    'active' => 0,
   ),
   'AX' => 
   array (
@@ -15,6 +16,7 @@ $data = array (
     'num' => '248',
     'name' => 'Aland Islands !Åland Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'AL' => 
   array (
@@ -23,6 +25,7 @@ $data = array (
     'num' => '008',
     'name' => 'Albania',
     'cont' => '',
+    'active' => 0,
   ),
   'DZ' => 
   array (
@@ -31,6 +34,7 @@ $data = array (
     'num' => '012',
     'name' => 'Algeria',
     'cont' => '',
+    'active' => 0,
   ),
   'AS' => 
   array (
@@ -39,6 +43,7 @@ $data = array (
     'num' => '016',
     'name' => 'American Samoa',
     'cont' => '',
+    'active' => 0,
   ),
   'AD' => 
   array (
@@ -47,6 +52,7 @@ $data = array (
     'num' => '020',
     'name' => 'Andorra',
     'cont' => '',
+    'active' => 0,
   ),
   'AO' => 
   array (
@@ -55,6 +61,7 @@ $data = array (
     'num' => '024',
     'name' => 'Angola',
     'cont' => '',
+    'active' => 0,
   ),
   'AI' => 
   array (
@@ -63,6 +70,7 @@ $data = array (
     'num' => '660',
     'name' => 'Anguilla',
     'cont' => '',
+    'active' => 0,
   ),
   'AQ' => 
   array (
@@ -71,6 +79,7 @@ $data = array (
     'num' => '010',
     'name' => 'Antarctica',
     'cont' => '',
+    'active' => 0,
   ),
   'AG' => 
   array (
@@ -79,6 +88,7 @@ $data = array (
     'num' => '028',
     'name' => 'Antigua and Barbuda',
     'cont' => '',
+    'active' => 0,
   ),
   'AR' => 
   array (
@@ -87,6 +97,7 @@ $data = array (
     'num' => '032',
     'name' => 'Argentina',
     'cont' => '',
+    'active' => 0,
   ),
   'AM' => 
   array (
@@ -95,6 +106,7 @@ $data = array (
     'num' => '051',
     'name' => 'Armenia',
     'cont' => '',
+    'active' => 0,
   ),
   'AW' => 
   array (
@@ -103,6 +115,7 @@ $data = array (
     'num' => '533',
     'name' => 'Aruba',
     'cont' => '',
+    'active' => 0,
   ),
   'AU' => 
   array (
@@ -111,6 +124,7 @@ $data = array (
     'num' => '036',
     'name' => 'Australia',
     'cont' => '',
+    'active' => 0,
   ),
   'AT' => 
   array (
@@ -119,6 +133,7 @@ $data = array (
     'num' => '040',
     'name' => 'Austria',
     'cont' => '',
+    'active' => 0,
   ),
   'AZ' => 
   array (
@@ -127,6 +142,7 @@ $data = array (
     'num' => '031',
     'name' => 'Azerbaijan',
     'cont' => '',
+    'active' => 0,
   ),
   'BS' => 
   array (
@@ -135,6 +151,7 @@ $data = array (
     'num' => '044',
     'name' => 'Bahamas',
     'cont' => '',
+    'active' => 0,
   ),
   'BH' => 
   array (
@@ -143,6 +160,7 @@ $data = array (
     'num' => '048',
     'name' => 'Bahrain',
     'cont' => '',
+    'active' => 0,
   ),
   'BD' => 
   array (
@@ -151,6 +169,7 @@ $data = array (
     'num' => '050',
     'name' => 'Bangladesh',
     'cont' => '',
+    'active' => 0,
   ),
   'BB' => 
   array (
@@ -159,6 +178,7 @@ $data = array (
     'num' => '052',
     'name' => 'Barbados',
     'cont' => '',
+    'active' => 0,
   ),
   'BY' => 
   array (
@@ -167,6 +187,7 @@ $data = array (
     'num' => '112',
     'name' => 'Belarus',
     'cont' => '',
+    'active' => 0,
   ),
   'BE' => 
   array (
@@ -175,6 +196,7 @@ $data = array (
     'num' => '056',
     'name' => 'Belgium',
     'cont' => '',
+    'active' => 0,
   ),
   'BZ' => 
   array (
@@ -183,6 +205,7 @@ $data = array (
     'num' => '084',
     'name' => 'Belize',
     'cont' => '',
+    'active' => 0,
   ),
   'BJ' => 
   array (
@@ -191,6 +214,7 @@ $data = array (
     'num' => '204',
     'name' => 'Benin',
     'cont' => '',
+    'active' => 0,
   ),
   'BM' => 
   array (
@@ -199,6 +223,7 @@ $data = array (
     'num' => '060',
     'name' => 'Bermuda',
     'cont' => '',
+    'active' => 0,
   ),
   'BT' => 
   array (
@@ -207,6 +232,7 @@ $data = array (
     'num' => '064',
     'name' => 'Bhutan',
     'cont' => '',
+    'active' => 0,
   ),
   'BO' => 
   array (
@@ -215,6 +241,7 @@ $data = array (
     'num' => '068',
     'name' => 'Bolivia, Plurinational State of',
     'cont' => '',
+    'active' => 0,
   ),
   'BQ' => 
   array (
@@ -223,6 +250,7 @@ $data = array (
     'num' => '535',
     'name' => 'Bonaire, Sint Eustatius and Saba',
     'cont' => '',
+    'active' => 0,
   ),
   'BA' => 
   array (
@@ -231,6 +259,7 @@ $data = array (
     'num' => '070',
     'name' => 'Bosnia and Herzegovina',
     'cont' => '',
+    'active' => 0,
   ),
   'BW' => 
   array (
@@ -239,6 +268,7 @@ $data = array (
     'num' => '072',
     'name' => 'Botswana',
     'cont' => '',
+    'active' => 0,
   ),
   'BV' => 
   array (
@@ -247,6 +277,7 @@ $data = array (
     'num' => '074',
     'name' => 'Bouvet Island',
     'cont' => '',
+    'active' => 0,
   ),
   'BR' => 
   array (
@@ -255,6 +286,7 @@ $data = array (
     'num' => '076',
     'name' => 'Brazil',
     'cont' => '',
+    'active' => 0,
   ),
   'IO' => 
   array (
@@ -263,6 +295,7 @@ $data = array (
     'num' => '086',
     'name' => 'British Indian Ocean Territory',
     'cont' => '',
+    'active' => 0,
   ),
   'BN' => 
   array (
@@ -271,6 +304,7 @@ $data = array (
     'num' => '096',
     'name' => 'Brunei Darussalam',
     'cont' => '',
+    'active' => 0,
   ),
   'BG' => 
   array (
@@ -279,6 +313,7 @@ $data = array (
     'num' => '100',
     'name' => 'Bulgaria',
     'cont' => '',
+    'active' => 0,
   ),
   'BF' => 
   array (
@@ -287,6 +322,7 @@ $data = array (
     'num' => '854',
     'name' => 'Burkina Faso',
     'cont' => '',
+    'active' => 0,
   ),
   'BI' => 
   array (
@@ -295,6 +331,7 @@ $data = array (
     'num' => '108',
     'name' => 'Burundi',
     'cont' => '',
+    'active' => 0,
   ),
   'KH' => 
   array (
@@ -303,6 +340,7 @@ $data = array (
     'num' => '116',
     'name' => 'Cambodia',
     'cont' => '',
+    'active' => 0,
   ),
   'CM' => 
   array (
@@ -311,6 +349,7 @@ $data = array (
     'num' => '120',
     'name' => 'Cameroon',
     'cont' => '',
+    'active' => 0,
   ),
   'CA' => 
   array (
@@ -319,6 +358,7 @@ $data = array (
     'num' => '124',
     'name' => 'Canada',
     'cont' => '',
+    'active' => 0,
   ),
   'CV' => 
   array (
@@ -327,6 +367,7 @@ $data = array (
     'num' => '132',
     'name' => 'Cape Verde',
     'cont' => '',
+    'active' => 0,
   ),
   'KY' => 
   array (
@@ -335,6 +376,7 @@ $data = array (
     'num' => '136',
     'name' => 'Cayman Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'CF' => 
   array (
@@ -343,6 +385,7 @@ $data = array (
     'num' => '140',
     'name' => 'Central African Republic',
     'cont' => '',
+    'active' => 0,
   ),
   'TD' => 
   array (
@@ -351,6 +394,7 @@ $data = array (
     'num' => '148',
     'name' => 'Chad',
     'cont' => '',
+    'active' => 0,
   ),
   'CL' => 
   array (
@@ -359,6 +403,7 @@ $data = array (
     'num' => '152',
     'name' => 'Chile',
     'cont' => '',
+    'active' => 0,
   ),
   'CN' => 
   array (
@@ -367,6 +412,7 @@ $data = array (
     'num' => '156',
     'name' => 'China',
     'cont' => '',
+    'active' => 0,
   ),
   'CX' => 
   array (
@@ -375,6 +421,7 @@ $data = array (
     'num' => '162',
     'name' => 'Christmas Island',
     'cont' => '',
+    'active' => 0,
   ),
   'CC' => 
   array (
@@ -383,6 +430,7 @@ $data = array (
     'num' => '166',
     'name' => 'Cocos (Keeling) Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'CO' => 
   array (
@@ -391,6 +439,7 @@ $data = array (
     'num' => '170',
     'name' => 'Colombia',
     'cont' => '',
+    'active' => 0,
   ),
   'KM' => 
   array (
@@ -399,6 +448,7 @@ $data = array (
     'num' => '174',
     'name' => 'Comoros',
     'cont' => '',
+    'active' => 0,
   ),
   'CG' => 
   array (
@@ -407,6 +457,7 @@ $data = array (
     'num' => '178',
     'name' => 'Congo',
     'cont' => '',
+    'active' => 0,
   ),
   'CD' => 
   array (
@@ -415,6 +466,7 @@ $data = array (
     'num' => '180',
     'name' => 'Congo, the Democratic Republic of the',
     'cont' => '',
+    'active' => 0,
   ),
   'CK' => 
   array (
@@ -423,6 +475,7 @@ $data = array (
     'num' => '184',
     'name' => 'Cook Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'CR' => 
   array (
@@ -431,6 +484,7 @@ $data = array (
     'num' => '188',
     'name' => 'Costa Rica',
     'cont' => '',
+    'active' => 0,
   ),
   'CI' => 
   array (
@@ -439,6 +493,7 @@ $data = array (
     'num' => '384',
     'name' => 'Cote d\'Ivoire !Côte d\'Ivoire',
     'cont' => '',
+    'active' => 0,
   ),
   'HR' => 
   array (
@@ -447,6 +502,7 @@ $data = array (
     'num' => '191',
     'name' => 'Croatia',
     'cont' => '',
+    'active' => 0,
   ),
   'CU' => 
   array (
@@ -455,6 +511,7 @@ $data = array (
     'num' => '192',
     'name' => 'Cuba',
     'cont' => '',
+    'active' => 0,
   ),
   'CW' => 
   array (
@@ -463,6 +520,7 @@ $data = array (
     'num' => '531',
     'name' => 'Curacao !Curaçao',
     'cont' => '',
+    'active' => 0,
   ),
   'CY' => 
   array (
@@ -471,6 +529,7 @@ $data = array (
     'num' => '196',
     'name' => 'Cyprus',
     'cont' => '',
+    'active' => 0,
   ),
   'CZ' => 
   array (
@@ -479,6 +538,7 @@ $data = array (
     'num' => '203',
     'name' => 'Czech Republic',
     'cont' => '',
+    'active' => 0,
   ),
   'DK' => 
   array (
@@ -487,6 +547,7 @@ $data = array (
     'num' => '208',
     'name' => 'Denmark',
     'cont' => '',
+    'active' => 0,
   ),
   'DJ' => 
   array (
@@ -495,6 +556,7 @@ $data = array (
     'num' => '262',
     'name' => 'Djibouti',
     'cont' => '',
+    'active' => 0,
   ),
   'DM' => 
   array (
@@ -503,6 +565,7 @@ $data = array (
     'num' => '212',
     'name' => 'Dominica',
     'cont' => '',
+    'active' => 0,
   ),
   'DO' => 
   array (
@@ -511,6 +574,7 @@ $data = array (
     'num' => '214',
     'name' => 'Dominican Republic',
     'cont' => '',
+    'active' => 0,
   ),
   'EC' => 
   array (
@@ -519,6 +583,7 @@ $data = array (
     'num' => '218',
     'name' => 'Ecuador',
     'cont' => '',
+    'active' => 0,
   ),
   'EG' => 
   array (
@@ -527,6 +592,7 @@ $data = array (
     'num' => '818',
     'name' => 'Egypt',
     'cont' => '',
+    'active' => 0,
   ),
   'SV' => 
   array (
@@ -535,6 +601,7 @@ $data = array (
     'num' => '222',
     'name' => 'El Salvador',
     'cont' => '',
+    'active' => 0,
   ),
   'GQ' => 
   array (
@@ -543,6 +610,7 @@ $data = array (
     'num' => '226',
     'name' => 'Equatorial Guinea',
     'cont' => '',
+    'active' => 0,
   ),
   'ER' => 
   array (
@@ -551,6 +619,7 @@ $data = array (
     'num' => '232',
     'name' => 'Eritrea',
     'cont' => '',
+    'active' => 0,
   ),
   'EE' => 
   array (
@@ -559,6 +628,7 @@ $data = array (
     'num' => '233',
     'name' => 'Estonia',
     'cont' => '',
+    'active' => 0,
   ),
   'ET' => 
   array (
@@ -567,6 +637,7 @@ $data = array (
     'num' => '231',
     'name' => 'Ethiopia',
     'cont' => '',
+    'active' => 0,
   ),
   'FK' => 
   array (
@@ -575,6 +646,7 @@ $data = array (
     'num' => '238',
     'name' => 'Falkland Islands (Malvinas)',
     'cont' => '',
+    'active' => 0,
   ),
   'FO' => 
   array (
@@ -583,6 +655,7 @@ $data = array (
     'num' => '234',
     'name' => 'Faroe Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'FJ' => 
   array (
@@ -591,6 +664,7 @@ $data = array (
     'num' => '242',
     'name' => 'Fiji',
     'cont' => '',
+    'active' => 0,
   ),
   'FI' => 
   array (
@@ -599,6 +673,7 @@ $data = array (
     'num' => '246',
     'name' => 'Finland',
     'cont' => '',
+    'active' => 0,
   ),
   'FR' => 
   array (
@@ -607,6 +682,7 @@ $data = array (
     'num' => '250',
     'name' => 'France',
     'cont' => '',
+    'active' => 0,
   ),
   'GF' => 
   array (
@@ -615,6 +691,7 @@ $data = array (
     'num' => '254',
     'name' => 'French Guiana',
     'cont' => '',
+    'active' => 0,
   ),
   'PF' => 
   array (
@@ -623,6 +700,7 @@ $data = array (
     'num' => '258',
     'name' => 'French Polynesia',
     'cont' => '',
+    'active' => 0,
   ),
   'TF' => 
   array (
@@ -631,6 +709,7 @@ $data = array (
     'num' => '260',
     'name' => 'French Southern Territories',
     'cont' => '',
+    'active' => 0,
   ),
   'GA' => 
   array (
@@ -639,6 +718,7 @@ $data = array (
     'num' => '266',
     'name' => 'Gabon',
     'cont' => '',
+    'active' => 0,
   ),
   'GM' => 
   array (
@@ -647,6 +727,7 @@ $data = array (
     'num' => '270',
     'name' => 'Gambia',
     'cont' => '',
+    'active' => 0,
   ),
   'GE' => 
   array (
@@ -655,6 +736,7 @@ $data = array (
     'num' => '268',
     'name' => 'Georgia',
     'cont' => '',
+    'active' => 0,
   ),
   'DE' => 
   array (
@@ -663,6 +745,7 @@ $data = array (
     'num' => '276',
     'name' => 'Germany',
     'cont' => '',
+    'active' => 0,
   ),
   'GH' => 
   array (
@@ -671,6 +754,7 @@ $data = array (
     'num' => '288',
     'name' => 'Ghana',
     'cont' => '',
+    'active' => 0,
   ),
   'GI' => 
   array (
@@ -679,6 +763,7 @@ $data = array (
     'num' => '292',
     'name' => 'Gibraltar',
     'cont' => '',
+    'active' => 0,
   ),
   'GR' => 
   array (
@@ -687,6 +772,7 @@ $data = array (
     'num' => '300',
     'name' => 'Greece',
     'cont' => '',
+    'active' => 0,
   ),
   'GL' => 
   array (
@@ -695,6 +781,7 @@ $data = array (
     'num' => '304',
     'name' => 'Greenland',
     'cont' => '',
+    'active' => 0,
   ),
   'GD' => 
   array (
@@ -703,6 +790,7 @@ $data = array (
     'num' => '308',
     'name' => 'Grenada',
     'cont' => '',
+    'active' => 0,
   ),
   'GP' => 
   array (
@@ -711,6 +799,7 @@ $data = array (
     'num' => '312',
     'name' => 'Guadeloupe',
     'cont' => '',
+    'active' => 0,
   ),
   'GU' => 
   array (
@@ -719,6 +808,7 @@ $data = array (
     'num' => '316',
     'name' => 'Guam',
     'cont' => '',
+    'active' => 0,
   ),
   'GT' => 
   array (
@@ -727,6 +817,7 @@ $data = array (
     'num' => '320',
     'name' => 'Guatemala',
     'cont' => '',
+    'active' => 0,
   ),
   'GG' => 
   array (
@@ -735,6 +826,7 @@ $data = array (
     'num' => '831',
     'name' => 'Guernsey',
     'cont' => '',
+    'active' => 0,
   ),
   'GN' => 
   array (
@@ -743,6 +835,7 @@ $data = array (
     'num' => '324',
     'name' => 'Guinea',
     'cont' => '',
+    'active' => 0,
   ),
   'GW' => 
   array (
@@ -751,6 +844,7 @@ $data = array (
     'num' => '624',
     'name' => 'Guinea-Bissau',
     'cont' => '',
+    'active' => 0,
   ),
   'GY' => 
   array (
@@ -759,6 +853,7 @@ $data = array (
     'num' => '328',
     'name' => 'Guyana',
     'cont' => '',
+    'active' => 0,
   ),
   'HT' => 
   array (
@@ -767,6 +862,7 @@ $data = array (
     'num' => '332',
     'name' => 'Haiti',
     'cont' => '',
+    'active' => 0,
   ),
   'HM' => 
   array (
@@ -775,6 +871,7 @@ $data = array (
     'num' => '334',
     'name' => 'Heard Island and McDonald Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'VA' => 
   array (
@@ -783,6 +880,7 @@ $data = array (
     'num' => '336',
     'name' => 'Holy See (Vatican City State)',
     'cont' => '',
+    'active' => 0,
   ),
   'HN' => 
   array (
@@ -791,6 +889,7 @@ $data = array (
     'num' => '340',
     'name' => 'Honduras',
     'cont' => '',
+    'active' => 0,
   ),
   'HK' => 
   array (
@@ -799,6 +898,7 @@ $data = array (
     'num' => '344',
     'name' => 'Hong Kong',
     'cont' => '',
+    'active' => 0,
   ),
   'HU' => 
   array (
@@ -807,6 +907,7 @@ $data = array (
     'num' => '348',
     'name' => 'Hungary',
     'cont' => '',
+    'active' => 0,
   ),
   'IS' => 
   array (
@@ -815,6 +916,7 @@ $data = array (
     'num' => '352',
     'name' => 'Iceland',
     'cont' => '',
+    'active' => 0,
   ),
   'IN' => 
   array (
@@ -823,6 +925,7 @@ $data = array (
     'num' => '356',
     'name' => 'India',
     'cont' => '',
+    'active' => 0,
   ),
   'ID' => 
   array (
@@ -831,6 +934,7 @@ $data = array (
     'num' => '360',
     'name' => 'Indonesia',
     'cont' => '',
+    'active' => 0,
   ),
   'IR' => 
   array (
@@ -839,6 +943,7 @@ $data = array (
     'num' => '364',
     'name' => 'Iran, Islamic Republic of',
     'cont' => '',
+    'active' => 0,
   ),
   'IQ' => 
   array (
@@ -847,6 +952,7 @@ $data = array (
     'num' => '368',
     'name' => 'Iraq',
     'cont' => '',
+    'active' => 0,
   ),
   'IE' => 
   array (
@@ -855,6 +961,7 @@ $data = array (
     'num' => '372',
     'name' => 'Ireland',
     'cont' => '',
+    'active' => 0,
   ),
   'IM' => 
   array (
@@ -863,6 +970,7 @@ $data = array (
     'num' => '833',
     'name' => 'Isle of Man',
     'cont' => '',
+    'active' => 0,
   ),
   'IL' => 
   array (
@@ -871,6 +979,7 @@ $data = array (
     'num' => '376',
     'name' => 'Israel',
     'cont' => '',
+    'active' => 0,
   ),
   'IT' => 
   array (
@@ -879,6 +988,7 @@ $data = array (
     'num' => '380',
     'name' => 'Italy',
     'cont' => '',
+    'active' => 0,
   ),
   'JM' => 
   array (
@@ -887,6 +997,7 @@ $data = array (
     'num' => '388',
     'name' => 'Jamaica',
     'cont' => '',
+    'active' => 0,
   ),
   'JP' => 
   array (
@@ -895,6 +1006,7 @@ $data = array (
     'num' => '392',
     'name' => 'Japan',
     'cont' => '',
+    'active' => 0,
   ),
   'JE' => 
   array (
@@ -903,6 +1015,7 @@ $data = array (
     'num' => '832',
     'name' => 'Jersey',
     'cont' => '',
+    'active' => 0,
   ),
   'JO' => 
   array (
@@ -911,6 +1024,7 @@ $data = array (
     'num' => '400',
     'name' => 'Jordan',
     'cont' => '',
+    'active' => 0,
   ),
   'KZ' => 
   array (
@@ -919,6 +1033,7 @@ $data = array (
     'num' => '398',
     'name' => 'Kazakhstan',
     'cont' => '',
+    'active' => 0,
   ),
   'KE' => 
   array (
@@ -927,6 +1042,7 @@ $data = array (
     'num' => '404',
     'name' => 'Kenya',
     'cont' => '',
+    'active' => 0,
   ),
   'KI' => 
   array (
@@ -935,6 +1051,7 @@ $data = array (
     'num' => '296',
     'name' => 'Kiribati',
     'cont' => '',
+    'active' => 0,
   ),
   'KP' => 
   array (
@@ -943,6 +1060,7 @@ $data = array (
     'num' => '408',
     'name' => 'Korea, Democratic People\'s Republic of',
     'cont' => '',
+    'active' => 0,
   ),
   'KR' => 
   array (
@@ -951,6 +1069,7 @@ $data = array (
     'num' => '410',
     'name' => 'Korea, Republic of',
     'cont' => '',
+    'active' => 0,
   ),
   'KW' => 
   array (
@@ -959,6 +1078,7 @@ $data = array (
     'num' => '414',
     'name' => 'Kuwait',
     'cont' => '',
+    'active' => 0,
   ),
   'KG' => 
   array (
@@ -967,6 +1087,7 @@ $data = array (
     'num' => '417',
     'name' => 'Kyrgyzstan',
     'cont' => '',
+    'active' => 0,
   ),
   'LA' => 
   array (
@@ -975,6 +1096,7 @@ $data = array (
     'num' => '418',
     'name' => 'Lao People\'s Democratic Republic',
     'cont' => '',
+    'active' => 0,
   ),
   'LV' => 
   array (
@@ -983,6 +1105,7 @@ $data = array (
     'num' => '428',
     'name' => 'Latvia',
     'cont' => '',
+    'active' => 0,
   ),
   'LB' => 
   array (
@@ -991,6 +1114,7 @@ $data = array (
     'num' => '422',
     'name' => 'Lebanon',
     'cont' => '',
+    'active' => 0,
   ),
   'LS' => 
   array (
@@ -999,6 +1123,7 @@ $data = array (
     'num' => '426',
     'name' => 'Lesotho',
     'cont' => '',
+    'active' => 0,
   ),
   'LR' => 
   array (
@@ -1007,6 +1132,7 @@ $data = array (
     'num' => '430',
     'name' => 'Liberia',
     'cont' => '',
+    'active' => 0,
   ),
   'LY' => 
   array (
@@ -1015,6 +1141,7 @@ $data = array (
     'num' => '434',
     'name' => 'Libya',
     'cont' => '',
+    'active' => 0,
   ),
   'LI' => 
   array (
@@ -1023,6 +1150,7 @@ $data = array (
     'num' => '438',
     'name' => 'Liechtenstein',
     'cont' => '',
+    'active' => 0,
   ),
   'LT' => 
   array (
@@ -1031,6 +1159,7 @@ $data = array (
     'num' => '440',
     'name' => 'Lithuania',
     'cont' => '',
+    'active' => 0,
   ),
   'LU' => 
   array (
@@ -1039,6 +1168,7 @@ $data = array (
     'num' => '442',
     'name' => 'Luxembourg',
     'cont' => '',
+    'active' => 0,
   ),
   'MO' => 
   array (
@@ -1047,6 +1177,7 @@ $data = array (
     'num' => '446',
     'name' => 'Macao',
     'cont' => '',
+    'active' => 0,
   ),
   'MK' => 
   array (
@@ -1055,6 +1186,7 @@ $data = array (
     'num' => '807',
     'name' => 'Macedonia, the former Yugoslav Republic of',
     'cont' => '',
+    'active' => 0,
   ),
   'MG' => 
   array (
@@ -1063,6 +1195,7 @@ $data = array (
     'num' => '450',
     'name' => 'Madagascar',
     'cont' => '',
+    'active' => 0,
   ),
   'MW' => 
   array (
@@ -1071,6 +1204,7 @@ $data = array (
     'num' => '454',
     'name' => 'Malawi',
     'cont' => '',
+    'active' => 0,
   ),
   'MY' => 
   array (
@@ -1079,6 +1213,7 @@ $data = array (
     'num' => '458',
     'name' => 'Malaysia',
     'cont' => '',
+    'active' => 0,
   ),
   'MV' => 
   array (
@@ -1087,6 +1222,7 @@ $data = array (
     'num' => '462',
     'name' => 'Maldives',
     'cont' => '',
+    'active' => 0,
   ),
   'ML' => 
   array (
@@ -1095,6 +1231,7 @@ $data = array (
     'num' => '466',
     'name' => 'Mali',
     'cont' => '',
+    'active' => 0,
   ),
   'MT' => 
   array (
@@ -1103,6 +1240,7 @@ $data = array (
     'num' => '470',
     'name' => 'Malta',
     'cont' => '',
+    'active' => 0,
   ),
   'MH' => 
   array (
@@ -1111,6 +1249,7 @@ $data = array (
     'num' => '584',
     'name' => 'Marshall Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'MQ' => 
   array (
@@ -1119,6 +1258,7 @@ $data = array (
     'num' => '474',
     'name' => 'Martinique',
     'cont' => '',
+    'active' => 0,
   ),
   'MR' => 
   array (
@@ -1127,6 +1267,7 @@ $data = array (
     'num' => '478',
     'name' => 'Mauritania',
     'cont' => '',
+    'active' => 0,
   ),
   'MU' => 
   array (
@@ -1135,6 +1276,7 @@ $data = array (
     'num' => '480',
     'name' => 'Mauritius',
     'cont' => '',
+    'active' => 0,
   ),
   'YT' => 
   array (
@@ -1143,6 +1285,7 @@ $data = array (
     'num' => '175',
     'name' => 'Mayotte',
     'cont' => '',
+    'active' => 0,
   ),
   'MX' => 
   array (
@@ -1151,6 +1294,7 @@ $data = array (
     'num' => '484',
     'name' => 'Mexico',
     'cont' => '',
+    'active' => 0,
   ),
   'FM' => 
   array (
@@ -1159,6 +1303,7 @@ $data = array (
     'num' => '583',
     'name' => 'Micronesia, Federated States of',
     'cont' => '',
+    'active' => 0,
   ),
   'MD' => 
   array (
@@ -1167,6 +1312,7 @@ $data = array (
     'num' => '498',
     'name' => 'Moldova, Republic of',
     'cont' => '',
+    'active' => 0,
   ),
   'MC' => 
   array (
@@ -1175,6 +1321,7 @@ $data = array (
     'num' => '492',
     'name' => 'Monaco',
     'cont' => '',
+    'active' => 0,
   ),
   'MN' => 
   array (
@@ -1183,6 +1330,7 @@ $data = array (
     'num' => '496',
     'name' => 'Mongolia',
     'cont' => '',
+    'active' => 0,
   ),
   'ME' => 
   array (
@@ -1191,6 +1339,7 @@ $data = array (
     'num' => '499',
     'name' => 'Montenegro',
     'cont' => '',
+    'active' => 0,
   ),
   'MS' => 
   array (
@@ -1199,6 +1348,7 @@ $data = array (
     'num' => '500',
     'name' => 'Montserrat',
     'cont' => '',
+    'active' => 0,
   ),
   'MA' => 
   array (
@@ -1207,6 +1357,7 @@ $data = array (
     'num' => '504',
     'name' => 'Morocco',
     'cont' => '',
+    'active' => 0,
   ),
   'MZ' => 
   array (
@@ -1215,6 +1366,7 @@ $data = array (
     'num' => '508',
     'name' => 'Mozambique',
     'cont' => '',
+    'active' => 0,
   ),
   'MM' => 
   array (
@@ -1223,6 +1375,7 @@ $data = array (
     'num' => '104',
     'name' => 'Myanmar',
     'cont' => '',
+    'active' => 0,
   ),
   'NA' => 
   array (
@@ -1231,6 +1384,7 @@ $data = array (
     'num' => '516',
     'name' => 'Namibia',
     'cont' => '',
+    'active' => 0,
   ),
   'NR' => 
   array (
@@ -1239,6 +1393,7 @@ $data = array (
     'num' => '520',
     'name' => 'Nauru',
     'cont' => '',
+    'active' => 0,
   ),
   'NP' => 
   array (
@@ -1247,6 +1402,7 @@ $data = array (
     'num' => '524',
     'name' => 'Nepal',
     'cont' => '',
+    'active' => 0,
   ),
   'NL' => 
   array (
@@ -1255,6 +1411,7 @@ $data = array (
     'num' => '528',
     'name' => 'Netherlands',
     'cont' => '',
+    'active' => 0,
   ),
   'NC' => 
   array (
@@ -1263,6 +1420,7 @@ $data = array (
     'num' => '540',
     'name' => 'New Caledonia',
     'cont' => '',
+    'active' => 0,
   ),
   'NZ' => 
   array (
@@ -1271,6 +1429,7 @@ $data = array (
     'num' => '554',
     'name' => 'New Zealand',
     'cont' => '',
+    'active' => 0,
   ),
   'NI' => 
   array (
@@ -1279,6 +1438,7 @@ $data = array (
     'num' => '558',
     'name' => 'Nicaragua',
     'cont' => '',
+    'active' => 0,
   ),
   'NE' => 
   array (
@@ -1287,6 +1447,7 @@ $data = array (
     'num' => '562',
     'name' => 'Niger',
     'cont' => '',
+    'active' => 0,
   ),
   'NG' => 
   array (
@@ -1295,6 +1456,7 @@ $data = array (
     'num' => '566',
     'name' => 'Nigeria',
     'cont' => '',
+    'active' => 0,
   ),
   'NU' => 
   array (
@@ -1303,6 +1465,7 @@ $data = array (
     'num' => '570',
     'name' => 'Niue',
     'cont' => '',
+    'active' => 0,
   ),
   'NF' => 
   array (
@@ -1311,6 +1474,7 @@ $data = array (
     'num' => '574',
     'name' => 'Norfolk Island',
     'cont' => '',
+    'active' => 0,
   ),
   'MP' => 
   array (
@@ -1319,6 +1483,7 @@ $data = array (
     'num' => '580',
     'name' => 'Northern Mariana Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'NO' => 
   array (
@@ -1327,6 +1492,7 @@ $data = array (
     'num' => '578',
     'name' => 'Norway',
     'cont' => '',
+    'active' => 0,
   ),
   'OM' => 
   array (
@@ -1335,6 +1501,7 @@ $data = array (
     'num' => '512',
     'name' => 'Oman',
     'cont' => '',
+    'active' => 0,
   ),
   'PK' => 
   array (
@@ -1343,6 +1510,7 @@ $data = array (
     'num' => '586',
     'name' => 'Pakistan',
     'cont' => '',
+    'active' => 0,
   ),
   'PW' => 
   array (
@@ -1351,6 +1519,7 @@ $data = array (
     'num' => '585',
     'name' => 'Palau',
     'cont' => '',
+    'active' => 0,
   ),
   'PS' => 
   array (
@@ -1359,6 +1528,7 @@ $data = array (
     'num' => '275',
     'name' => 'Palestine, State of',
     'cont' => '',
+    'active' => 0,
   ),
   'PA' => 
   array (
@@ -1367,6 +1537,7 @@ $data = array (
     'num' => '591',
     'name' => 'Panama',
     'cont' => '',
+    'active' => 0,
   ),
   'PG' => 
   array (
@@ -1375,6 +1546,7 @@ $data = array (
     'num' => '598',
     'name' => 'Papua New Guinea',
     'cont' => '',
+    'active' => 0,
   ),
   'PY' => 
   array (
@@ -1383,6 +1555,7 @@ $data = array (
     'num' => '600',
     'name' => 'Paraguay',
     'cont' => '',
+    'active' => 0,
   ),
   'PE' => 
   array (
@@ -1391,6 +1564,7 @@ $data = array (
     'num' => '604',
     'name' => 'Peru',
     'cont' => '',
+    'active' => 0,
   ),
   'PH' => 
   array (
@@ -1399,6 +1573,7 @@ $data = array (
     'num' => '608',
     'name' => 'Philippines',
     'cont' => '',
+    'active' => 0,
   ),
   'PN' => 
   array (
@@ -1407,6 +1582,7 @@ $data = array (
     'num' => '612',
     'name' => 'Pitcairn',
     'cont' => '',
+    'active' => 0,
   ),
   'PL' => 
   array (
@@ -1415,6 +1591,7 @@ $data = array (
     'num' => '616',
     'name' => 'Poland',
     'cont' => '',
+    'active' => 0,
   ),
   'PT' => 
   array (
@@ -1423,6 +1600,7 @@ $data = array (
     'num' => '620',
     'name' => 'Portugal',
     'cont' => '',
+    'active' => 0,
   ),
   'PR' => 
   array (
@@ -1431,6 +1609,7 @@ $data = array (
     'num' => '630',
     'name' => 'Puerto Rico',
     'cont' => '',
+    'active' => 0,
   ),
   'QA' => 
   array (
@@ -1439,6 +1618,7 @@ $data = array (
     'num' => '634',
     'name' => 'Qatar',
     'cont' => '',
+    'active' => 0,
   ),
   'RE' => 
   array (
@@ -1447,6 +1627,7 @@ $data = array (
     'num' => '638',
     'name' => 'Reunion !Réunion',
     'cont' => '',
+    'active' => 0,
   ),
   'RO' => 
   array (
@@ -1455,6 +1636,7 @@ $data = array (
     'num' => '642',
     'name' => 'Romania',
     'cont' => '',
+    'active' => 0,
   ),
   'RU' => 
   array (
@@ -1463,6 +1645,7 @@ $data = array (
     'num' => '643',
     'name' => 'Russian Federation',
     'cont' => '',
+    'active' => 0,
   ),
   'RW' => 
   array (
@@ -1471,6 +1654,7 @@ $data = array (
     'num' => '646',
     'name' => 'Rwanda',
     'cont' => '',
+    'active' => 0,
   ),
   'BL' => 
   array (
@@ -1479,6 +1663,7 @@ $data = array (
     'num' => '652',
     'name' => 'Saint Barthelemy !Saint Barthélemy',
     'cont' => '',
+    'active' => 0,
   ),
   'SH' => 
   array (
@@ -1487,6 +1672,7 @@ $data = array (
     'num' => '654',
     'name' => 'Saint Helena, Ascension and Tristan da Cunha',
     'cont' => '',
+    'active' => 0,
   ),
   'KN' => 
   array (
@@ -1495,6 +1681,7 @@ $data = array (
     'num' => '659',
     'name' => 'Saint Kitts and Nevis',
     'cont' => '',
+    'active' => 0,
   ),
   'LC' => 
   array (
@@ -1503,6 +1690,7 @@ $data = array (
     'num' => '662',
     'name' => 'Saint Lucia',
     'cont' => '',
+    'active' => 0,
   ),
   'MF' => 
   array (
@@ -1511,6 +1699,7 @@ $data = array (
     'num' => '663',
     'name' => 'Saint Martin (French part)',
     'cont' => '',
+    'active' => 0,
   ),
   'PM' => 
   array (
@@ -1519,6 +1708,7 @@ $data = array (
     'num' => '666',
     'name' => 'Saint Pierre and Miquelon',
     'cont' => '',
+    'active' => 0,
   ),
   'VC' => 
   array (
@@ -1527,6 +1717,7 @@ $data = array (
     'num' => '670',
     'name' => 'Saint Vincent and the Grenadines',
     'cont' => '',
+    'active' => 0,
   ),
   'WS' => 
   array (
@@ -1535,6 +1726,7 @@ $data = array (
     'num' => '882',
     'name' => 'Samoa',
     'cont' => '',
+    'active' => 0,
   ),
   'SM' => 
   array (
@@ -1543,6 +1735,7 @@ $data = array (
     'num' => '674',
     'name' => 'San Marino',
     'cont' => '',
+    'active' => 0,
   ),
   'ST' => 
   array (
@@ -1551,6 +1744,7 @@ $data = array (
     'num' => '678',
     'name' => 'Sao Tome and Principe',
     'cont' => '',
+    'active' => 0,
   ),
   'SA' => 
   array (
@@ -1559,6 +1753,7 @@ $data = array (
     'num' => '682',
     'name' => 'Saudi Arabia',
     'cont' => '',
+    'active' => 0,
   ),
   'SN' => 
   array (
@@ -1567,6 +1762,7 @@ $data = array (
     'num' => '686',
     'name' => 'Senegal',
     'cont' => '',
+    'active' => 0,
   ),
   'RS' => 
   array (
@@ -1575,6 +1771,7 @@ $data = array (
     'num' => '688',
     'name' => 'Serbia',
     'cont' => '',
+    'active' => 0,
   ),
   'SC' => 
   array (
@@ -1583,6 +1780,7 @@ $data = array (
     'num' => '690',
     'name' => 'Seychelles',
     'cont' => '',
+    'active' => 0,
   ),
   'SL' => 
   array (
@@ -1591,6 +1789,7 @@ $data = array (
     'num' => '694',
     'name' => 'Sierra Leone',
     'cont' => '',
+    'active' => 0,
   ),
   'SG' => 
   array (
@@ -1599,6 +1798,7 @@ $data = array (
     'num' => '702',
     'name' => 'Singapore',
     'cont' => '',
+    'active' => 0,
   ),
   'SX' => 
   array (
@@ -1607,6 +1807,7 @@ $data = array (
     'num' => '534',
     'name' => 'Sint Maarten (Dutch part)',
     'cont' => '',
+    'active' => 0,
   ),
   'SK' => 
   array (
@@ -1615,6 +1816,7 @@ $data = array (
     'num' => '703',
     'name' => 'Slovakia',
     'cont' => '',
+    'active' => 0,
   ),
   'SI' => 
   array (
@@ -1623,6 +1825,7 @@ $data = array (
     'num' => '705',
     'name' => 'Slovenia',
     'cont' => '',
+    'active' => 0,
   ),
   'SB' => 
   array (
@@ -1631,6 +1834,7 @@ $data = array (
     'num' => '090',
     'name' => 'Solomon Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'SO' => 
   array (
@@ -1639,6 +1843,7 @@ $data = array (
     'num' => '706',
     'name' => 'Somalia',
     'cont' => '',
+    'active' => 0,
   ),
   'ZA' => 
   array (
@@ -1647,6 +1852,7 @@ $data = array (
     'num' => '710',
     'name' => 'South Africa',
     'cont' => '',
+    'active' => 0,
   ),
   'GS' => 
   array (
@@ -1655,6 +1861,7 @@ $data = array (
     'num' => '239',
     'name' => 'South Georgia and the South Sandwich Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'SS' => 
   array (
@@ -1663,6 +1870,7 @@ $data = array (
     'num' => '728',
     'name' => 'South Sudan',
     'cont' => '',
+    'active' => 0,
   ),
   'ES' => 
   array (
@@ -1671,6 +1879,7 @@ $data = array (
     'num' => '724',
     'name' => 'Spain',
     'cont' => '',
+    'active' => 0,
   ),
   'LK' => 
   array (
@@ -1679,6 +1888,7 @@ $data = array (
     'num' => '144',
     'name' => 'Sri Lanka',
     'cont' => '',
+    'active' => 0,
   ),
   'SD' => 
   array (
@@ -1687,6 +1897,7 @@ $data = array (
     'num' => '729',
     'name' => 'Sudan',
     'cont' => '',
+    'active' => 0,
   ),
   'SR' => 
   array (
@@ -1695,6 +1906,7 @@ $data = array (
     'num' => '740',
     'name' => 'Suriname',
     'cont' => '',
+    'active' => 0,
   ),
   'SJ' => 
   array (
@@ -1703,6 +1915,7 @@ $data = array (
     'num' => '744',
     'name' => 'Svalbard and Jan Mayen',
     'cont' => '',
+    'active' => 0,
   ),
   'SZ' => 
   array (
@@ -1711,6 +1924,7 @@ $data = array (
     'num' => '748',
     'name' => 'Swaziland',
     'cont' => '',
+    'active' => 0,
   ),
   'SE' => 
   array (
@@ -1719,6 +1933,7 @@ $data = array (
     'num' => '752',
     'name' => 'Sweden',
     'cont' => '',
+    'active' => 0,
   ),
   'CH' => 
   array (
@@ -1727,6 +1942,7 @@ $data = array (
     'num' => '756',
     'name' => 'Switzerland',
     'cont' => '',
+    'active' => 0,
   ),
   'SY' => 
   array (
@@ -1735,6 +1951,7 @@ $data = array (
     'num' => '760',
     'name' => 'Syrian Arab Republic',
     'cont' => '',
+    'active' => 0,
   ),
   'TW' => 
   array (
@@ -1743,6 +1960,7 @@ $data = array (
     'num' => '158',
     'name' => 'Taiwan, Province of China',
     'cont' => '',
+    'active' => 0,
   ),
   'TJ' => 
   array (
@@ -1751,6 +1969,7 @@ $data = array (
     'num' => '762',
     'name' => 'Tajikistan',
     'cont' => '',
+    'active' => 0,
   ),
   'TZ' => 
   array (
@@ -1759,6 +1978,7 @@ $data = array (
     'num' => '834',
     'name' => 'Tanzania, United Republic of',
     'cont' => '',
+    'active' => 0,
   ),
   'TH' => 
   array (
@@ -1767,6 +1987,7 @@ $data = array (
     'num' => '764',
     'name' => 'Thailand',
     'cont' => '',
+    'active' => 0,
   ),
   'TL' => 
   array (
@@ -1775,6 +1996,7 @@ $data = array (
     'num' => '626',
     'name' => 'Timor-Leste',
     'cont' => '',
+    'active' => 0,
   ),
   'TG' => 
   array (
@@ -1783,6 +2005,7 @@ $data = array (
     'num' => '768',
     'name' => 'Togo',
     'cont' => '',
+    'active' => 0,
   ),
   'TK' => 
   array (
@@ -1791,6 +2014,7 @@ $data = array (
     'num' => '772',
     'name' => 'Tokelau',
     'cont' => '',
+    'active' => 0,
   ),
   'TO' => 
   array (
@@ -1799,6 +2023,7 @@ $data = array (
     'num' => '776',
     'name' => 'Tonga',
     'cont' => '',
+    'active' => 0,
   ),
   'TT' => 
   array (
@@ -1807,6 +2032,7 @@ $data = array (
     'num' => '780',
     'name' => 'Trinidad and Tobago',
     'cont' => '',
+    'active' => 0,
   ),
   'TN' => 
   array (
@@ -1815,6 +2041,7 @@ $data = array (
     'num' => '788',
     'name' => 'Tunisia',
     'cont' => '',
+    'active' => 0,
   ),
   'TR' => 
   array (
@@ -1823,6 +2050,7 @@ $data = array (
     'num' => '792',
     'name' => 'Turkey',
     'cont' => '',
+    'active' => 0,
   ),
   'TM' => 
   array (
@@ -1831,6 +2059,7 @@ $data = array (
     'num' => '795',
     'name' => 'Turkmenistan',
     'cont' => '',
+    'active' => 0,
   ),
   'TC' => 
   array (
@@ -1839,6 +2068,7 @@ $data = array (
     'num' => '796',
     'name' => 'Turks and Caicos Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'TV' => 
   array (
@@ -1847,6 +2077,7 @@ $data = array (
     'num' => '798',
     'name' => 'Tuvalu',
     'cont' => '',
+    'active' => 0,
   ),
   'UG' => 
   array (
@@ -1855,6 +2086,7 @@ $data = array (
     'num' => '800',
     'name' => 'Uganda',
     'cont' => '',
+    'active' => 0,
   ),
   'UA' => 
   array (
@@ -1863,6 +2095,7 @@ $data = array (
     'num' => '804',
     'name' => 'Ukraine',
     'cont' => '',
+    'active' => 0,
   ),
   'AE' => 
   array (
@@ -1871,6 +2104,7 @@ $data = array (
     'num' => '784',
     'name' => 'United Arab Emirates',
     'cont' => '',
+    'active' => 0,
   ),
   'GB' => 
   array (
@@ -1879,6 +2113,7 @@ $data = array (
     'num' => '826',
     'name' => 'United Kingdom',
     'cont' => '',
+    'active' => 0,
   ),
   'US' => 
   array (
@@ -1887,6 +2122,7 @@ $data = array (
     'num' => '840',
     'name' => 'United States',
     'cont' => '',
+    'active' => 0,
   ),
   'UM' => 
   array (
@@ -1895,6 +2131,7 @@ $data = array (
     'num' => '581',
     'name' => 'United States Minor Outlying Islands',
     'cont' => '',
+    'active' => 0,
   ),
   'UY' => 
   array (
@@ -1903,6 +2140,7 @@ $data = array (
     'num' => '858',
     'name' => 'Uruguay',
     'cont' => '',
+    'active' => 0,
   ),
   'UZ' => 
   array (
@@ -1911,6 +2149,7 @@ $data = array (
     'num' => '860',
     'name' => 'Uzbekistan',
     'cont' => '',
+    'active' => 0,
   ),
   'VU' => 
   array (
@@ -1919,6 +2158,7 @@ $data = array (
     'num' => '548',
     'name' => 'Vanuatu',
     'cont' => '',
+    'active' => 0,
   ),
   'VE' => 
   array (
@@ -1927,6 +2167,7 @@ $data = array (
     'num' => '862',
     'name' => 'Venezuela, Bolivarian Republic of',
     'cont' => '',
+    'active' => 0,
   ),
   'VN' => 
   array (
@@ -1935,6 +2176,7 @@ $data = array (
     'num' => '704',
     'name' => 'Viet Nam',
     'cont' => '',
+    'active' => 0,
   ),
   'VG' => 
   array (
@@ -1943,6 +2185,7 @@ $data = array (
     'num' => '092',
     'name' => 'Virgin Islands, British',
     'cont' => '',
+    'active' => 0,
   ),
   'VI' => 
   array (
@@ -1951,6 +2194,7 @@ $data = array (
     'num' => '850',
     'name' => 'Virgin Islands, U.S.',
     'cont' => '',
+    'active' => 0,
   ),
   'WF' => 
   array (
@@ -1959,6 +2203,7 @@ $data = array (
     'num' => '876',
     'name' => 'Wallis and Futuna',
     'cont' => '',
+    'active' => 0,
   ),
   'EH' => 
   array (
@@ -1967,6 +2212,7 @@ $data = array (
     'num' => '732',
     'name' => 'Western Sahara',
     'cont' => '',
+    'active' => 0,
   ),
   'YE' => 
   array (
@@ -1975,6 +2221,7 @@ $data = array (
     'num' => '887',
     'name' => 'Yemen',
     'cont' => '',
+    'active' => 0,
   ),
   'ZM' => 
   array (
@@ -1983,6 +2230,7 @@ $data = array (
     'num' => '894',
     'name' => 'Zambia',
     'cont' => '',
+    'active' => 0,
   ),
   'ZW' => 
   array (
@@ -1991,5 +2239,6 @@ $data = array (
     'num' => '716',
     'name' => 'Zimbabwe',
     'cont' => '',
+    'active' => 0,
   ),
 );
