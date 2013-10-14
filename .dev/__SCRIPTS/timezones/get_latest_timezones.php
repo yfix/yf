@@ -16,6 +16,7 @@ function html_table_to_array($html) {
 		$val = preg_replace($r, '$1', $val);
 		$val = preg_replace($r, '$1', $val);
 		$val = preg_replace($r, '$1', $val);
+		$val = preg_replace('~\[[^\]]+\]~ims', '', $val);
 		foreach ($val as &$v1) {
 			$v1 = trim(strip_tags($v1));
 		}
@@ -24,7 +25,7 @@ function html_table_to_array($html) {
 	return $tmp_tbl;
 }
 
-$url = 'https://en.wikipedia.org/wiki/ISO_3166-1';
+$url = 'https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations';
 $f = dirname(__FILE__).'/'.basename($url);
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
@@ -33,7 +34,7 @@ $html1 = file_get_contents($f);
 #############
 $f2 = $f.'.table.html';
 if (!file_exists($f2)) {
-	$regex1 = '~<h2>[^<]*<span[^>]*id="Current_codes"[^>]*>.*?</h2>.*?<table[^>]*>(.*?)</table>~ims';
+	$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
 	preg_match($regex1, $html1, $m1);
 	file_put_contents($f2, $m1[1]);
 }
@@ -43,22 +44,16 @@ $tmp_tbl = html_table_to_array($html2);
 #############
 $data = array();
 foreach ($tmp_tbl as $v) {
-	$id = $v[1];
+	$id = $v[0];
 	if (!$id) {
 		continue;
 	}
 	$data[$id] = array(
 		'code'	=> $id,
-		'code3' => $v[2],
-		'num'	=> $v[3],
-		'name'	=> $v[0],
-		'cont'	=> '',
+		'name'	=> $v[1],
+		'offset'=> $v[2],
 	);
 }
-$f4 = dirname(__FILE__).'/countries.php';
+$f4 = dirname(__FILE__).'/timezones.php';
 file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 print_r($data);
-
-// TODO: list of regions and country mapping
-#$url = 'http://unstats.un.org/unsd/methods/m49/m49regin.htm';
-#$url = 'http://unstats.un.org/unsd/methods/m49/m49alpha.htm';
