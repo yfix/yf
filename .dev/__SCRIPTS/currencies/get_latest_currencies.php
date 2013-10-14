@@ -25,15 +25,10 @@ foreach ($xml->CcyTbl->CcyNtry as $item) {
 }
 #############
 $url2 = 'https://en.wikipedia.org/wiki/List_of_circulating_currencies';
-$f2 = dirname(__FILE__).'/'.basename($url2);
-if (!file_exists($f2)) {
-	file_put_contents($f2, file_get_contents($url2));
-}
-#############
 $f3 = dirname(__FILE__).'/'.basename($url2).'.table.html';
 if (!file_exists($f3)) {
+	$html2 = file_get_contents($url2);
 	$regex2 = '~<h2>[^<]*<span[^>]*id="List_of_circulating_currencies_by_country_or_territory"[^>]*>.*?</h2>[^<]*<table[^>]*>(.*?)</table>~ims';
-	$html2 = file_get_contents($f2);
 	preg_match($regex2, $html2, $m2);
 	file_put_contents($f3, $m2[1]);
 }

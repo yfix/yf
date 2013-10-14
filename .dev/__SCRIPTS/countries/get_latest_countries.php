@@ -25,14 +25,9 @@ function html_table_to_array($html) {
 }
 
 $url = 'https://en.wikipedia.org/wiki/ISO_3166-1';
-$f = dirname(__FILE__).'/'.basename($url);
-if (!file_exists($f)) {
-	file_put_contents($f, file_get_contents($url));
-}
-$html1 = file_get_contents($f);
-#############
-$f2 = $f.'.table.html';
+$f2 = dirname(__FILE__).'/'.basename($url).'.table.html';
 if (!file_exists($f2)) {
+	$html1 = file_get_contents($url);
 	$regex1 = '~<h2>[^<]*<span[^>]*id="Current_codes"[^>]*>.*?</h2>.*?<table[^>]*>(.*?)</table>~ims';
 	preg_match($regex1, $html1, $m1);
 	file_put_contents($f2, $m1[1]);
@@ -59,6 +54,5 @@ $f4 = dirname(__FILE__).'/countries.php';
 file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 print_r($data);
 
-// TODO: list of regions and country mapping
+// TODO: list of continents and country mapping
 #$url = 'http://unstats.un.org/unsd/methods/m49/m49regin.htm';
-#$url = 'http://unstats.un.org/unsd/methods/m49/m49alpha.htm';

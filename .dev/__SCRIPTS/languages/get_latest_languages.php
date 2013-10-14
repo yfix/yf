@@ -25,7 +25,7 @@ function html_table_to_array($html) {
 	return $tmp_tbl;
 }
 
-$url = 'https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations';
+$url = 'https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes';
 $f2 = dirname(__FILE__).'/'.basename($url).'.table.html';
 if (!file_exists($f2)) {
 	$html1 = file_get_contents($url);
@@ -39,17 +39,18 @@ $tmp_tbl = html_table_to_array($html2);
 #############
 $data = array();
 foreach ($tmp_tbl as $v) {
-	$id = $v[0];
+	$id = $v[4];
 	if (!$id) {
 		continue;
 	}
 	$data[$id] = array(
 		'code'	=> $id,
-		'name'	=> $v[1],
-		'offset'=> $v[2],
+		'name'	=> $v[2],
+		'native'=> $v[3],
+		'code3' => $v[4],
 		'active'=> 0,
 	);
 }
-$f4 = dirname(__FILE__).'/timezones.php';
+$f4 = dirname(__FILE__).'/languages.php';
 file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 print_r($data);
