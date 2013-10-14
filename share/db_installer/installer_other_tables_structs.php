@@ -1243,11 +1243,11 @@ $data = my_array_merge((array)$data, array(
 	// ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ",
 ));
-$forum_tables_structs_file = YF_PATH."share/installer_forum_tables_structs.php";
+$forum_tables_structs_file = dirname(__FILE__)."/installer_forum_tables_structs.php";
 if (file_exists($forum_tables_structs_file)) {
 	include_once($forum_tables_structs_file);
 }
-$shop_tables_structs_file = YF_PATH."share/installer_shop_tables_structs.php";
+$shop_tables_structs_file = dirname(__FILE__)."/installer_shop_tables_structs.php";
 if (file_exists($shop_tables_structs_file)) {
 	include_once($shop_tables_structs_file);
 }

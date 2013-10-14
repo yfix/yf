@@ -194,11 +194,11 @@ $data = my_array_merge((array)$data, array(
 	),
 ),
 ));
-$forum_tables_datas_file = YF_PATH."share/installer_forum_tables_datas.php";
+$forum_tables_datas_file = dirname(__FILE__)."/installer_forum_tables_datas.php";
 if (file_exists($forum_tables_datas_file)) {
 	include_once($forum_tables_datas_file);
 }
-$shop_tables_datas_file = YF_PATH."share/installer_shop_tables_datas.php";
+$shop_tables_datas_file = dirname(__FILE__)."/installer_shop_tables_datas.php";
 if (file_exists($shop_tables_datas_file)) {
 	include_once($shop_tables_datas_file);
 }
