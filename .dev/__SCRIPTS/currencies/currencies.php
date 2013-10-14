@@ -20,7 +20,7 @@ $data = array (
     'country_name' => 'Vatican City State (HOLY SEE)',
     'country_code' => '',
     'sign' => '€',
-    'active' => '0',
+    'active' => 1,
   ),
   'ALL' => 
   array (
@@ -53,7 +53,7 @@ $data = array (
     'country_name' => 'VIRGIN ISLANDS (US)',
     'country_code' => '',
     'sign' => '$',
-    'active' => '0',
+    'active' => 1,
   ),
   'AOA' => 
   array (
@@ -878,7 +878,7 @@ $data = array (
     'country_name' => 'JAPAN',
     'country_code' => '',
     'sign' => '¥',
-    'active' => '0',
+    'active' => 1,
   ),
   'JOD' => 
   array (
@@ -1043,7 +1043,7 @@ $data = array (
     'country_name' => 'SWITZERLAND',
     'country_code' => '',
     'sign' => 'Fr',
-    'active' => '0',
+    'active' => 1,
   ),
   'LTL' => 
   array (
@@ -1395,7 +1395,7 @@ $data = array (
     'country_name' => 'RUSSIAN FEDERATION',
     'country_code' => '',
     'sign' => 'р.',
-    'active' => '0',
+    'active' => 1,
   ),
   'RWF' => 
   array (
@@ -1747,7 +1747,7 @@ $data = array (
     'country_name' => 'UKRAINE',
     'country_code' => '',
     'sign' => '₴',
-    'active' => '0',
+    'active' => 1,
   ),
   'AED' => 
   array (

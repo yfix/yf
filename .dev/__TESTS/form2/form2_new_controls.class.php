@@ -1,6 +1,6 @@
 <?php
 
-class test2 {
+class form2_new_controls {
 	function show() {
 		return form($replace/*, array('css_framework' => 'empty')*/)
 			->text('title')

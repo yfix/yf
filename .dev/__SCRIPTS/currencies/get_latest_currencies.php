@@ -70,6 +70,9 @@ foreach($tmp_tbl as $v) {
 		$data[$id]['sign'] = $sign;
 	}
 }
+foreach (array('USD','EUR','CHF','JPY','UAH','RUB') as $c) {
+	$data[$c]['active'] = 1;
+}
 
 $f4 = dirname(__FILE__).'/currencies.php';
 file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');

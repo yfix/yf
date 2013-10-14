@@ -1,4 +1,3 @@
 <?php
 
-$Q = db()->query("SELECT name, sign FROM ".db("currencies")." ORDER BY name");
-while ($A = db()->fetch_assoc($Q)) $data[$A["name"]] = $A["sign"];
+$data = db()->get_all('SELECT * FROM '.db('currencies').' WHERE active="1" ORDER BY name ASC');

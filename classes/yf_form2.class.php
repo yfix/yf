@@ -1519,8 +1519,11 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		$currencies = main()->get_data('currencies');
-		return $this->select_box($name, $currencies, $extra, $replace);
+		$data = array();
+		foreach ((array)main()->get_data('currencies') as $id => $v) {
+			$data[$id] = $v['name'].' ['.$id.'] '.$v['sign'];
+		}
+		return $this->div_box($name, $data, $extra, $replace);
 	}
 
 	/**
