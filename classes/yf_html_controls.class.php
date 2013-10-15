@@ -613,15 +613,23 @@ class yf_html_controls {
 		}
 		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
 */
-		$body .= '<ul class="nav nav-tabs"><li class="dropdown">';
-		$body .= '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></a>';
+#		$body .= '<ul class="nav nav-tabs"><li class="dropdown">';
+#		$body .= '<ul class="dropdown-menu">';
+
+#		$body .= '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></a>';
+		$body .= '<div class="btn-group">';
+
+		$body .= '<a href="#" class="dropdown-toggle btn" data-toggle="dropdown">Action <span class="caret"></span></a>';
 		$body .= '<ul class="dropdown-menu">';
 		foreach ((array)$values as $key => $cur_value) {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
 			$body .= '<li><a href="javascript:void();" value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
 		}
 		$body .= '</ul>';
-		$body .= '</li></ul>';
+
+		$body .= '</div>';
+#		$body .= '</ul>';
+#		$body .= '</li></ul>';
 
 		return $body;
 	}

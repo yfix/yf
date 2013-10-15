@@ -160,15 +160,20 @@ class yf_form2 {
 		unset($this->_body['form_begin']);
 		$form_end = $this->_body['form_end'];
 		unset($this->_body['form_end']);
-/*
-		$body = '';
-		$body .= $form_begin().PHP_EOL;
-		foreach ((array)$this->_body as $func) {
-			$body .= $func().PHP_EOL;
+
+#		$body = '';
+#		$body .= $form_begin().PHP_EOL;
+		$r = (array)$this->_replace + (array)$replace;
+		foreach ((array)$this->_body as $k => $v) {
+			if (is_array($v)) {
+				$_extra = $v['extra'];
+				$func = $v['func'];
+				$this->_body[$k] = $func($_extra, $r, $this);
+			}
 		}
-		$body .= $form_end().PHP_EOL;
-		return $body;
-*/
+#		$body .= $form_end().PHP_EOL;
+#		return $body;
+
 		return $form_begin. PHP_EOL. implode(PHP_EOL, $this->_body). PHP_EOL. $form_end;
 	}
 
@@ -441,10 +446,6 @@ class yf_form2 {
 	* General input
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -457,66 +458,62 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+		$extra['name'] = $name;
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $name)));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
 		}
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['id'] = $extra['id'] ?: $name;
-		$extra['placeholder'] = t($extra['placeholder'] ?: $desc);
-		$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$name];
-		// Compatibility with filter
-		if (!strlen($extra['value'])) {
-			if (isset($extra['selected'])) {
-				$extra['value'] = $extra['selected'];
-			} elseif (isset($this->_params['selected'])) {
-				$extra['value'] = $this->_params['selected'][$name];
+		$func = function($extra, $r, $_this) {
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['id'] = $extra['id'] ?: $extra['name'];
+			$extra['placeholder'] = t($extra['placeholder'] ?: $extra['desc']);
+			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
+			// Compatibility with filter
+			if (!strlen($extra['value'])) {
+				if (isset($extra['selected'])) {
+					$extra['value'] = $extra['selected'];
+				} elseif (isset($_this->_params['selected'])) {
+					$extra['value'] = $_this->_params['selected'][$extra['name']];
+				}
 			}
-		}
-		$extra['type'] = $extra['type'] ?: 'text';
-		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-		$extra['class'] = 'form-control '.$this->_prepare_css_class('', $r[$name], $extra);
-		// Supported: mini, small, medium, large, xlarge, xxlarge
-		if ($extra['sizing']) {
-			$extra['class'] .= ' input-'.$extra['sizing'];
-		}
-		$vr = $this->_validate_rules[$name];
-		if ($vr) {
+			$extra['type'] = $extra['type'] ?: 'text';
+			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['class'] = 'form-control '.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			// Supported: mini, small, medium, large, xlarge, xxlarge
+			if ($extra['sizing']) {
+				$extra['class'] .= ' input-'.$extra['sizing'];
+			}
+			$vr = $_this->_validate_rules[$extra['name']];
 			foreach ((array)$vr as $rule) {
 				if ($rule[0] == 'required') {
 					$extra['required'] = 1;
 					break;
 				}
 			}
-		}
-		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
-		if ($vr['min_length'] && !isset($extra['pattern'])) {
-			$extra['pattern'] = '.{'.$vr['min_length'][1].','.($vr['max_length'] ? $vr['max_length'][1] : '').'}';
-		}
-		if ($vr['max_length'] && !isset($extra['maxlength'])) {
-			$extra['maxlength'] = $vr['max_length'][1];
-		}
-		$extra['name'] = $name;
-		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
-
-		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
-		$body = $this->_row_html('<input '.$this->_attrs($extra, $attrs_names).'>', $extra, $replace);
-
+			// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
+			if ($vr['min_length'] && !isset($extra['pattern'])) {
+				$extra['pattern'] = '.{'.$vr['min_length'][1].','.($vr['max_length'] ? $vr['max_length'][1] : '').'}';
+			}
+			if ($vr['max_length'] && !isset($extra['maxlength'])) {
+				$extra['maxlength'] = $vr['max_length'][1];
+			}
+			if ($_this->_params['no_label']) {
+				$extra['desc'] = '';
+			}
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
+			return $_this->_row_html('<input '.$_this->_attrs($extra, $attrs_names).'>', $extra, $replace);
+		};
 		if ($this->_chained_mode) {
-			$this->_body[] = $body;
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
-		return $body;
+		return $func($extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -529,37 +526,39 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
-		}
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['id'] = $extra['id'] ? $extra['id'] : $name;
-		$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $desc);
-		$value = isset($extra['value']) ? $extra['value'] : $r[$name];
-		// Compatibility with filter
-		if (!strlen($value)) {
-			if (isset($extra['selected'])) {
-				$value = $extra['selected'];
-			} elseif (isset($this->_params['selected'])) {
-				$value = $this->_params['selected'][$name];
-			}
-		}
-		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-		$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
-		$extra['class'] = 'ckeditor form-control '.$this->_prepare_css_class('', $r[$extra['name']], $extra);
 		$extra['name'] = $name;
-		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
-
-		$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows');
-		$body = $this->_row_html('<textarea '.$this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $this->_htmlchars($value) : $value).'</textarea>', $extra, $replace);
-
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $name)));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
+		}
+		$func = function($extra, $r, $_this) {
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['id'] = $extra['id'] ? $extra['id'] : $extra['name'];
+			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
+			$value = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
+			// Compatibility with filter
+			if (!strlen($value)) {
+				if (isset($extra['selected'])) {
+					$value = $extra['selected'];
+				} elseif (isset($_this->_params['selected'])) {
+					$value = $_this->_params['selected'][$extra['name']];
+				}
+			}
+			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
+			$extra['class'] = 'ckeditor form-control '.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			if ($_this->_params['no_label']) {
+				$extra['desc'] = '';
+			}
+			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows');
+			return $_this->_row_html('<textarea '.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $replace);
+		};
 		if ($this->_chained_mode) {
-			$this->_body[] = $body;
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
-		return $body;
+		return $func($extra, $replace, $this);
 	}
 
 	/**
