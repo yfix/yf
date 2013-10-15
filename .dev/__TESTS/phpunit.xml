@@ -14,7 +14,7 @@
 		<directory>./</directory>
 	</testsuite>
 	<logging>
-		<!--<log type="coverage-clover" target="tests/artifacts/phpunit/coverage.xml" />-->
+		<log type="coverage-clover" target="tests/artifacts/phpunit/coverage.xml" />
 		<log type="junit" target="artifacts/phpunit/phpunit.xml" logIncompleteSkipped="true" />
 		<log type="testdox-html" target="./logs/testdox.html" />
 	</logging>
