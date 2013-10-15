@@ -1,0 +1,9 @@
+# git ignore
+
+# Ignore files,
+*~
+*.log
+*.swp
+# ignore folders
+logs/
+artifacts/
