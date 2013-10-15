@@ -88,6 +88,9 @@ class yf_form2 {
 		}
 		if (is_string($extra)) {
 			$extra = trim($extra);
+			if (false !== strpos($extra, ';') && false !== strpos($extra, '=')) {
+				$extra = $this->_attrs_string2array($extra);
+			}
 		}
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
@@ -234,6 +237,21 @@ class yf_form2 {
 			return $this;
 		}
 		return $func($extra, $replace, $this);
+	}
+
+	/**
+	*/
+	function _attrs_string2array($string = '') {
+		$output_array = array();
+		foreach (explode(';', trim($string)) as $tmp_string) {
+			list($try_key, $try_value) = explode('=', trim($tmp_string));
+			$try_key = trim(trim(trim($try_key), '"'));
+			$try_value = trim(trim(trim($try_value), '"'));
+			if (strlen($try_key) && strlen($try_value)) {
+				$output_array[$try_key] = $try_value;
+			}
+		}
+		return $output_array;
 	}
 
 	/**
@@ -1162,8 +1180,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function _get_selected($name, $extra, $replace) {
-		$r = $replace ?: $this->_replace;
+	function _get_selected($name, $extra, $r) {
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
@@ -1517,21 +1534,6 @@ class yf_form2 {
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-	}
-
-	/**
-	*/
-	function _attrs_string2array($string = '') {
-		$output_array = array();
-		foreach (explode(';', trim($string)) as $tmp_string) {
-			list($try_key, $try_value) = explode('=', trim($tmp_string));
-			$try_key = trim(trim(trim($try_key), '"'));
-			$try_value = trim(trim(trim($try_value), '"'));
-			if (strlen($try_key) && strlen($try_value)) {
-				$output_array[$try_key] = $try_value;
-			}
-		}
-		return $output_array;
 	}
 
 	/**
