@@ -1662,44 +1662,39 @@ class yf_form2 {
 	/**
 	*/
 	function custom_fields($name, $custom_fields, $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
+		$extra['name'] = $extra['name'] ?: $name;
+		$extra['custom_fields'] = $custom_fields;
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
 		}
-		$custom_fields = explode(',', $custom_fields);
-		$restore_mode = $this->_chained_mode;
-		$sub_array_name = $extra['sub_array'] ?: 'custom';
-		$custom_info = $this->_attrs_string2array($replace[$name]);
+		$func = function($extra, $r, $_this) {
+			$custom_fields = explode(',', $extra['custom_fields']);
+			$sub_array_name = $extra['sub_array'] ?: 'custom';
+			$custom_info = $this->_attrs_string2array($r[$extra['name']]);
 
-		$body = array();
-		$this->_chained_mode = false;
-		foreach ((array)$custom_fields as $field_name) {
-			if (empty($field_name)) {
-				continue;
+			$body = array();
+			$this->_chained_mode = false;
+			foreach ((array)$custom_fields as $field_name) {
+				if (empty($field_name)) {
+					continue;
+				}
+				$str = _class('html_controls')->input(array(
+					'id'	=> 'custom_'.$field_name.'_'.$r['id'],
+					'name'	=> $sub_array_name.'['.$field_name.']', // Example: custom[color]
+					'desc'	=> $field_name,
+					'value'	=> $custom_info[$field_name],
+				));
+				$desc = ucfirst(str_replace('_', ' ', $field_name)).' [Custom]';
+				$body[] = $this->container($str, $desc);
 			}
-			$str = _class('html_controls')->input(array(
-				'id'	=> 'custom_'.$field_name.'_'.$replace['id'],
-				'name'	=> $sub_array_name.'['.$field_name.']', // Example: custom[color]
-				'desc'	=> $field_name,
-				'value'	=> $custom_info[$field_name],
-			));
-			$desc = ucfirst(str_replace('_', ' ', $field_name)).' [Custom]';
-			$body[] = $this->container($str, $desc);
-		}
-		$body = implode(PHP_EOL, $body);
-		$this->_chained_mode = $restore_mode;
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			$this->_chained_mode = true;
+			return implode(PHP_EOL, $body);
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
@@ -1740,7 +1735,6 @@ class yf_form2 {
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
-
 // TODO: use CSS abstraction layer
 			return ' <a href="'.$link_url.'" class="btn btn-mini btn-xs'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
