@@ -1669,6 +1669,12 @@ class yf_form2 {
 		foreach ((array)$form_global_validate as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
 		}
+		foreach ((array)$this->_body as $v) {
+			$_extra = $v['extra'];
+			if (isset($_extra['validate']) && isset($_extra['name'])) {
+				$this->_validate_rules[$_extra['name']] = $_extra['validate'];
+			}
+		}
 		foreach ((array)$validate_rules as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
 		}
