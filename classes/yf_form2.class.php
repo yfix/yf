@@ -1819,42 +1819,35 @@ class yf_form2 {
 	* For use inside table item template
 	*/
 	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		if (!$name) {
-			$name = 'active';
-		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$r = $replace ? $replace : $this->_replace;
-		if (!$link) {
-			$link = 'active_link';
-			if (!isset($r['active_link']) && isset($r['active_url'])) {
-				$link = 'active_url';
+		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
+		$extra['link'] = $extra['link'] ?: $link;
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
+		}
+		$func = function($extra, $r, $_this) {
+			$link = $extra['link'];
+			if (!$link) {
+				$link = 'active_link';
+				if (!isset($r['active_link']) && isset($r['active_url'])) {
+					$link = 'active_url';
+				}
 			}
-		}
-		$link_url = isset($r[$link]) ? $r[$link] : $link;
-		$is_active = $r[$name];
-
+			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			$is_active = $r[$extra['name']];
 // TODO: use CSS abstraction layer
-		$body = ' <a href="'.$link_url.'" class="change_active">'
-			.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
-			.'</a> ';
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			return ' <a href="'.$link_url.'" class="change_active">'
+						.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
+					.'</a> ';
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
