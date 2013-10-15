@@ -432,7 +432,7 @@ class yf_form2 {
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 
 			$attrs_names = array('id','contenteditable','style','class');
-			return $_this->_row_html(isset($extra['ckeditor']) ? '<div '.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $replace);
+			return $_this->_row_html(isset($extra['ckeditor']) ? '<div '.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -501,7 +501,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
-			return $_this->_row_html('<input '.$_this->_attrs($extra, $attrs_names).'>', $extra, $replace);
+			return $_this->_row_html('<input '.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -551,7 +551,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows');
-			return $_this->_row_html('<textarea '.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $replace);
+			return $_this->_row_html('<textarea '.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -623,10 +623,10 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
+		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
-			$extra['id'] = $extra['id'] ? $extra['id'] : $name;
-			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$name];
-			$extra['name'] = $name;
+			$extra['id'] = $extra['id'] ? $extra['id'] : $extra['name'];
+			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
 			$extra['type'] = 'hidden';
 
 			$attrs_names = array('type','id','name','value','data');
@@ -1048,10 +1048,6 @@ class yf_form2 {
 	/**
 	*/
 	function active_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1059,46 +1055,36 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		if (!$name) {
-			$name = 'active';
+		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $name)));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
 		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
-		}
-		if (!$extra['items']) {
-			$extra['items'] = array(
-				'0' => '<span class="label label-warning">'.t('Disabled').'</span>',
-				'1' => '<span class="label label-success">'.t('Active').'</span>',
-			);
-		}
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-		$extra['name'] = $name;
-		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
-		$extra['id'] = $name;
+		$func = function($extra, $r, $_this) {
+			if (!$extra['items']) {
+				$extra['items'] = array(
+					'0' => '<span class="label label-warning">'.t('Disabled').'</span>',
+					'1' => '<span class="label label-success">'.t('Active').'</span>',
+				);
+			}
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
+			$extra['id'] = $extra['name'];
 
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-
-		$body = $this->_row_html(_class('html_controls')->radio_box($name, $extra['items'], $selected, false, 2, '', false), $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			$selected = $r[$extra['name']];
+			if (isset($extra['selected'])) {
+				$selected = $extra['selected'];
+			} elseif (isset($_this->_params['selected'])) {
+				$selected = $_this->_params['selected'][$extra['name']];
+			}
+			return $_this->_row_html(_class('html_controls')->radio_box($extra['name'], $extra['items'], $selected, false, 2, '', false), $extra, $r);
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
