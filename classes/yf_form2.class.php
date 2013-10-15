@@ -1310,9 +1310,8 @@ class yf_form2 {
 	/**
 	*/
 	function _html_control($name, $values, $extra = array(), $replace = array(), $func) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
+
+// TODO: move this into tpl_row()
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -1321,47 +1320,40 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		$r = $replace ?: $this->_replace;
-		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
+
+		$extra['name'] = $extra['name'] ?: $name;
 		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		$extra['selected'] = $this->_get_selected($name, $extra, $replace);
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-
-		$content = _class('html_controls')->$func($extra);
-		if ($extra['no_label'] || $this->_params['no_label']) {
-			$extra['desc'] = '';
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
 		}
-		$body = $this->_row_html($content, $extra, $replace);
+		$func = function($extra, $r, $_this) {
+			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['selected'] = $_this->_get_selected($extra['name'], $extra, $r);
+			$extra['id'] = $extra['name'];
 
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			$content = _class('html_controls')->$func($extra);
+			if ($extra['no_label'] || $_this->_params['no_label']) {
+				$extra['desc'] = '';
+			}
+			return $_this->_row_html($content, $extra, $r);
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
 	*/
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
+// TODO: move this into tpl_row()
 		if (!is_array($extra)) {
 			// Suppose we have 3rd argument as edit link here
 			if (!empty($extra)) {
@@ -1370,31 +1362,27 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		$r = $replace ? $replace : $this->_replace;
-		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		$extra['selected'] = $this->_get_selected($name, $extra, $replace);
-		$extra['id'] = $name;
-		$extra['name'] = $name;
-		$extra['desc'] = $desc;
-
-		$body = $this->_row_html($r[$name], $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
+		$extra['name'] = $extra['name'] ?: $name;
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
 		}
-		return $body;
-/*
+		$func = function($extra, $r, $_this) {
+			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+			$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $extra['name']));
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+			$extra['selected'] = $this->_get_selected($extra['name'], $extra, $r);
+			$extra['id'] = $extra['name'];
+
+			return $this->_row_html($r[$extra['name']], $extra, $r);
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
