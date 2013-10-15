@@ -10,22 +10,6 @@
 class yf_form2 {
 
 	/**
-	*/
-	function __construct() {
-// TODO: fix me, as currently will be cleaned on clone
-/*
-		$css_framework = conf('css_framework');
-		if ($css_framework) {
-			$this->_params['css_framework'] = $css_framework;
-		}
-		$form_input_no_append = conf('form_input_no_append');
-		if ($form_input_no_append) {
-			$this->_params['form_input_no_append'] = $form_input_no_append;
-		}
-*/
-	}
-
-	/**
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
@@ -40,7 +24,6 @@ class yf_form2 {
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			$this->$k = null;
 		}
-		$this->__construct();
 	}
 
 	/**
@@ -105,6 +88,14 @@ class yf_form2 {
 		}
 		if (is_string($extra)) {
 			$extra = trim($extra);
+		}
+		if (!is_array($extra)) {
+			// Suppose we have 3rd argument as edit link here
+			if (!empty($extra)) {
+				$extra = array('edit_link' => $extra);
+			} else {
+				$extra = array();
+			}
 		}
 		return $this->$type($name, $desc, $extra, $replace);
 	}
@@ -172,6 +163,9 @@ class yf_form2 {
 			if (is_array($v)) {
 				$_extra = $v['extra'];
 				$func = $v['func'];
+				if ($this->_stacked_mode_on) {
+					$_extra['stacked'] = true;
+				}
 				$this->_body[$k] = $func($_extra, $r, $this);
 			}
 		}
@@ -320,7 +314,7 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
-		$css_framework = $extra['css_framework'] ?: $this->_params['css_framework'];
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append'] || conf('form_input_no_append')) {
 			$extra['append'] = '';
 			$extra['prepend'] = '';
@@ -377,10 +371,10 @@ class yf_form2 {
 	*/
 	function row_start($extra = array()) {
 		$func = function($extra, $r, $_this) {
+			$_this->_stacked_mode_on = true;
 			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
-			$this->_stacked_mode_on = true;
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
@@ -392,10 +386,10 @@ class yf_form2 {
 	*/
 	function row_end($extra = array()) {
 		$func = function($extra, $r, $_this) {
+			$_this->_stacked_mode_on = false;
 			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
-			$this->_stacked_mode_on = false;
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
@@ -408,18 +402,9 @@ class yf_form2 {
 	*/
 	function container($text, $desc = '', $extra = array(), $replace = array()) {
 		$text = strval($text);
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
 		}
 		$extra['text'] = $text;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: '');
@@ -449,19 +434,8 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['id'] = $extra['id'] ?: $extra['name'];
@@ -517,19 +491,8 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['id'] = $extra['id'] ? $extra['id'] : $extra['name'];
@@ -642,18 +605,9 @@ class yf_form2 {
 	/**
 	*/
 	function text($name, $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
 		}
 		$extra['type'] = 'text';
 		return $this->input($name, $desc, $extra, $replace);
@@ -669,14 +623,6 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['type'] = 'password';
 		$extra['prepend'] = '<i class="icon-key"></i>';
 		if (!$name) {
@@ -691,14 +637,6 @@ class yf_form2 {
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
 		}
 		$extra['type'] = 'file';
 		return $this->input($name, $desc, $extra, $replace);
@@ -733,14 +671,6 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['prepend'] = '<i class="icon-user"></i>';
 		if (!$name) {
@@ -760,14 +690,6 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['type'] = 'email';
 		$extra['prepend'] = '@';
 		if (!$name) {
@@ -780,18 +702,9 @@ class yf_form2 {
 	* HTML5
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
 		}
 		if ($extra['min']) {
 			$extra['attr']['min'] = $extra['min'];
@@ -820,18 +733,9 @@ class yf_form2 {
 	/**
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
-		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
 		}
 		$extra['type'] = 'text';
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '$';
@@ -853,14 +757,6 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['type'] = 'url';
 		$extra['prepend'] = 'url';
 		if (!$name) {
@@ -873,7 +769,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function color($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -889,7 +784,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function date($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -905,7 +799,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function datetime($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -921,7 +814,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function datetime_local($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -937,7 +829,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function month($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -953,7 +844,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function range($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -969,7 +859,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function search($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -985,7 +874,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function tel($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1001,7 +889,6 @@ class yf_form2 {
 	* Alias
 	*/
 	function phone($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1017,7 +904,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function time($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1033,7 +919,6 @@ class yf_form2 {
 	* HTML5
 	*/
 	function week($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1057,9 +942,6 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			if (!$extra['items']) {
 				$extra['items'] = array(
@@ -1090,7 +972,6 @@ class yf_form2 {
 	/**
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1105,7 +986,6 @@ class yf_form2 {
 	/**
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1133,9 +1013,6 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['value'] = isset($extra['value']) ? $extra['value'] : ($value ?: 'Save');
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
@@ -1211,19 +1088,8 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
@@ -1261,8 +1127,9 @@ class yf_form2 {
 	function user_info($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$name = 'user_name';
 		$user_id = $this->_replace['user_id'];
+
 		$this->_replace[$name] = db()->get_one('SELECT CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
-		// Shortcut: use second param as $extra
+
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1283,7 +1150,6 @@ class yf_form2 {
 	/**
 	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1310,21 +1176,9 @@ class yf_form2 {
 	/**
 	*/
 	function _html_control($name, $values, $extra = array(), $replace = array(), $func_html_control = '') {
-		if (!is_array($extra)) {
-// TODO: move this into tpl_row()
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$extra['func_html_control'] = $extra['func_html_control'] ?: $func_html_control;
 		$func = function($extra, $r, $_this) {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
@@ -1354,20 +1208,8 @@ class yf_form2 {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!is_array($extra)) {
-// TODO: move this into tpl_row()
-			// Suppose we have 3rd argument as edit link here
-			if (!empty($extra)) {
-				$extra = array('edit_link' => $extra);
-			} else {
-				$extra = array();
-			}
-		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['errors'] = common()->_get_error_messages();
@@ -1469,7 +1311,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'country';
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1484,7 +1325,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'region';
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1499,7 +1339,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'currency';
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1517,7 +1356,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'language';
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1532,7 +1370,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'timezone';
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1545,7 +1382,6 @@ class yf_form2 {
 	* Image upload
 	*/
 	function image($name, $desc = '', $extra = array(), $replace = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1584,7 +1420,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'icon';
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1618,17 +1453,10 @@ class yf_form2 {
 		echo implode(PHP_EOL, $body);
 */
 		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
-		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
@@ -1643,9 +1471,6 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'captcha');
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
@@ -1664,9 +1489,6 @@ class yf_form2 {
 	function custom_fields($name, $custom_fields, $extra = array(), $replace = array()) {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['custom_fields'] = $custom_fields;
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$custom_fields = explode(',', $extra['custom_fields']);
 			$sub_array_name = $extra['sub_array'] ?: 'custom';
@@ -1721,9 +1543,6 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['link'] = $extra['link'] ?: $link;
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$link = $extra['link'];
 			if (!$link && $extra['link_variants']) {
@@ -1819,9 +1638,6 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
 		$extra['link'] = $extra['link'] ?: $link;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
-		}
 		$func = function($extra, $r, $_this) {
 			$link = $extra['link'];
 			if (!$link) {
