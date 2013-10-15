@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpunit backupGlobals="true" 
+	backupStaticAttributes="true"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	processIsolation="false"
+	stopOnFailure="true"
+	syntaxCheck="false"
+	verbose="true"
+	strict="false">
+	<testsuite name="Application">
+		<directory>./</directory>
+	</testsuite>
+	<logging>
+		<!--<log type="coverage-clover" target="tests/artifacts/phpunit/coverage.xml" />-->
+		<log type="junit" target="artifacts/phpunit/phpunit.xml" logIncompleteSkipped="true" />
+		<log type="testdox-html" target="./logs/testdox.html" />
+	</logging>
+</phpunit>
