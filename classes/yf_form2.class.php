@@ -158,6 +158,15 @@ class yf_form2 {
 		unset($this->_body['form_begin']);
 		$form_end = $this->_body['form_end'];
 		unset($this->_body['form_end']);
+/*
+		$body = '';
+		$body .= $form_begin().PHP_EOL;
+		foreach ((array)$this->_body as $func) {
+			$body .= $func().PHP_EOL;
+		}
+		$body .= $form_end().PHP_EOL;
+		return $body;
+*/
 		return $form_begin. PHP_EOL. implode(PHP_EOL, $this->_body). PHP_EOL. $form_end;
 	}
 
