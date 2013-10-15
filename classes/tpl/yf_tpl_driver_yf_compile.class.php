@@ -26,8 +26,8 @@ class yf_tpl_driver_yf_compile {
 				=> $_php_start. '} else {'. $_php_end,
 
 // TODO: better execute some wrapper that will convert this into simple call t('changeme %num', array('%num' => 5), 'ru')
-			'/(\{(t|translate|i18n)\(\s*["\']{0,1})([\s\w\-\.\,\:\;\%\&\#\/\<\>\!\?\{\}]*)["\']{0,1}[,]{0,1}([^\)]*?)(\s*\)\})/ie'
-				=> "'".$_php_start. "echo tpl()->_translate_for_stpl(\''.\$this->_prepare_translate2('\\3').'\',\''.\$this->_prepare_translate2('\\4', 1).'\');".$_php_end."'",
+			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims'
+				=> $_php_start. 'echo _class(\'tpl\')->_i18n_wrapper(\'$2\', $replace);'. $_php_end,
 
 			'/(\{const\(\s*["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo (defined(\'$2\') ? $2 : \'\');'. $_php_end,
@@ -271,10 +271,10 @@ class yf_tpl_driver_yf_compile {
 	/**
 	* fix translation of the dynamic vars like: {t('num vars in {vertical}')}
 	*/
-	function _prepare_translate2 ($string = '', $for_params = false) {
-		if ($for_params) {
-			$string = str_replace("'", '', $string);
-		}
-		return preg_replace('/\{([a-z0-9\-\_]+)\}/i', "'.\$replace['\\1'].'", $string);
-	}
+#	function _prepare_translate2 ($string = '', $for_params = false) {
+#		if ($for_params) {
+#			$string = str_replace("'", '', $string);
+#		}
+#		return preg_replace('/\{([a-z0-9\-\_]+)\}/i', "'.\$replace['\\1'].'", $string);
+#	}
 }
