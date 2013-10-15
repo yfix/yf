@@ -13,6 +13,7 @@ class yf_form2 {
 	*/
 	function __construct() {
 // TODO: fix me, as currently will be cleaned on clone
+/*
 		$css_framework = conf('css_framework');
 		if ($css_framework) {
 			$this->_params['css_framework'] = $css_framework;
@@ -21,6 +22,7 @@ class yf_form2 {
 		if ($form_input_no_append) {
 			$this->_params['form_input_no_append'] = $form_input_no_append;
 		}
+*/
 	}
 
 	/**
@@ -320,7 +322,7 @@ class yf_form2 {
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
 		$css_framework = $extra['css_framework'] ?: $this->_params['css_framework'];
-		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append']) {
+		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append'] || conf('form_input_no_append')) {
 			$extra['append'] = '';
 			$extra['prepend'] = '';
 		}
