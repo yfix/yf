@@ -1309,7 +1309,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function _html_control($name, $values, $extra = array(), $replace = array(), $func) {
+	function _html_control($name, $values, $extra = array(), $replace = array(), $html_control = '') {
 
 // TODO: move this into tpl_row()
 		if (!is_array($extra)) {
@@ -1326,6 +1326,7 @@ class yf_form2 {
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
+		$extra['html_control'] = $extra['html_control'] ?: $html_control;
 		$func = function($extra, $r, $_this) {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['errors'] = common()->_get_error_messages();
@@ -1333,6 +1334,7 @@ class yf_form2 {
 			$extra['selected'] = $_this->_get_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
 
+			$func = $extra['html_control'];
 			$content = _class('html_controls')->$func($extra);
 			if ($extra['no_label'] || $_this->_params['no_label']) {
 				$extra['desc'] = '';
@@ -1373,10 +1375,10 @@ class yf_form2 {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$extra['selected'] = $this->_get_selected($extra['name'], $extra, $r);
+			$extra['selected'] = $_this->_get_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
 
-			return $this->_row_html($r[$extra['name']], $extra, $r);
+			return $_this->_row_html($r[$extra['name']], $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
