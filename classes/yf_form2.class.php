@@ -206,7 +206,7 @@ class yf_form2 {
 			} elseif ($extra['for_upload']) {
 				$enctype = 'multipart/form-data';
 			}
-			$extra['action'] = isset($r[$name]) ? $r[$name] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
+			$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
 			$extra['class'] = $extra['class'] ?: 'form-horizontal';
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
@@ -236,7 +236,7 @@ class yf_form2 {
 			return $body;
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			$this->_body[__FUNCTION__] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -376,40 +376,30 @@ class yf_form2 {
 	* Shortcut for starting form row, needed to build row with several inlined inputs
 	*/
 	function row_start($extra = array()) {
-		$body = $this->_row_html('', array('only_row_start' => 1) + (array)$extra);
+		$func = function($extra, $r, $_this) {
+			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
+		};
 		if ($this->_chained_mode) {
 			$this->_stacked_mode_on = true;
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
-		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
 	* Paired with row_start
 	*/
 	function row_end($extra = array()) {
-		$body = $this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		$func = function($extra, $r, $_this) {
+			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		};
 		if ($this->_chained_mode) {
 			$this->_stacked_mode_on = false;
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
-		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
@@ -417,9 +407,6 @@ class yf_form2 {
 	* Can be used for inline rich editor editing with ckeditor, enable with: $extra = array('ckeditor' => true)
 	*/
 	function container($text, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
 		$text = strval($text);
 		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
@@ -434,27 +421,24 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-		$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
-		$extra['id'] = $extra['id'] ?: 'content_editable';
-		$extra['name'] = $name;
-		$extra['desc'] = !$this->_params['no_label'] ? $desc : '';
+		$extra['text'] = $text;
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: '');
 
-		$attrs_names = array('id','contenteditable','style','class');
-		$body = $this->_row_html(isset($extra['ckeditor']) ? '<div '.$this->_attrs($extra, $attrs_names).'>'.$text.'</div>' : $text, $extra, $replace);
+		$func = function($extra, $r, $_this) {
+			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+			$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
+			$extra['id'] = $extra['id'] ?: 'content_editable';
+			$extra['name'] = $name;
+			$extra['desc'] = !$this->_params['no_label'] ? $extra['desc'] : '';
 
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			$attrs_names = array('id','contenteditable','style','class');
+			return $this->_row_html(isset($extra['ckeditor']) ? '<div '.$this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $replace);
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
