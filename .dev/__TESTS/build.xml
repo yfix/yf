@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Application" default="build" basedir="./">
+
+	<target name="build" depends="prepare,phpunit,phpmd,phpcpd,phpcb,phpdcd,phploc,phpcs"/>
+
+	<property name="applicationDir" value="${basedir}" />
+	<property name="buildDir" value="${basedir}/build" />
+	
+	<target name="prepare">
+		<mkdir dir="${buildDir}logs" />
+		<mkdir dir="${buildDir}html/phpcb" />
+		<mkdir dir="${buildDir}html/phpcov" />
+		<mkdir dir="${buildDir}html/phpunit" />
+	</target>
+
+	<target name="phpunit" description="PHPUnit">
+		<property name="phpunitLogs" value="${applicationDir}artifacts/phpunit" />
+		<property name="junit" value="${phpunitLogs}/phpunit.xml" />
+        <exec dir="${basedir}" executable="phpunit" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpunit.txt">
+			<!--<arg line="--configuration ${applicationDir}/tests/phpunit.xml"/>-->
+        </exec>		
+		<echo message="##teamcity[importData type='junit' path='${junit}']" />
+		<zip destfile="${phpunitLogs}/coverage.zip" basedir="${phpunitLogs}/coverage"/>
+		<delete dir="${phpunitLogs}/coverage"/>
+		<echo message="##teamcity[publishArtifacts '${phpunitLogs}']" />
+	</target>
+	
+	<target name="phpmd" description="PHP Mess Detector">
+		<property name="pmd" value="${buildDir}/logs/phpmd.xml" />
+		<exec dir="${applicationDir}" executable="phpmd" failonerror="false" osfamily="unix">
+			<arg line="${applicationDir}" />
+			<arg line="xml" />
+			<arg line="naming,unusedcode,codesize" />
+			<arg line="--reportfile ${pmd}" />
+		</exec>
+		<echo message="##teamcity[importData type='pmd' path='${pmd}']"/>
+	</target>
+	
+	<target name="phpcpd" description="Copy/Paste Detector">
+		<property name="phpcpd" value="${buildDir}/logs/phpcpd.xml" />
+		<exec dir="${applicationDir}" executable="phpcpd" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpcpd.txt">
+			<arg line="--log-pmd ${phpcpd}" />
+			<arg line="${applicationDir}" />
+		</exec>
+		<echo message="##teamcity[importData type='pmd' path='${phpcpd}']"/>
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phpcpd.txt']" />
+		<echo message="##teamcity[publishArtifacts '${phpcpd}']" />
+	</target>
+	
+	<target name="pdepend" description="PHP_Depend">
+		<!--
+		@todo Use configuration=<file> argument. 
+		-->
+		<exec dir="${applicationDir}" executable="pdepend" failonerror="false" osfamily="unix">
+			<arg line="--jdepend-chart=${buildDir}/logs/pdepend.jdepend.chart.png" />
+			<arg line="--jdepend-xml=${buildDir}/logs/pdepend.jdepend.xml"></arg>
+			<arg line="--overview-pyramid=${buildDir}/logs/pdepend.overview.pyramid.png"></arg>
+			<arg line="--phpunit-xml=${buildDir}/logs/pdepend.phpunit.xml"></arg>
+			<arg line="--summary-xml=${buildDir}/logs/pdepend.summary.xml"></arg>
+			<arg line="--coverage-report=${buildDir}/logs/phpunit.clover.xml"></arg>
+			<arg line="--coderank-mode=inheritance,property,method"></arg>
+			<arg line="${applicationDir}"></arg>
+		</exec>
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/pdepend.jdepend.chart.png']" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/pdepend.jdepend.xml']" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/pdepend.overview.pyramid.png']" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/pdepend.phpunit.xml']" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/pdepend.summary.xml']" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phpunit.clover.xml']" />
+	</target>
+	
+	<target name="phpcs" description="PHP_CodeSniffer">
+		<exec dir="${applicationDir}" executable="phpcs" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpcs.txt">
+			<arg line="--tab-width=4" />
+			<arg line="--report=full" />
+			<arg line="--standard=PEAR" />
+			<arg line="--report-file=${buildDir}/logs/phpcs.xml" />
+			<arg line="${applicationDir}" />
+		</exec>
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phpcs.xml']" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phpcs.txt']" />
+	</target>
+	
+	<target name="phpcb" description="PHP_CodeBrowser">
+		<exec dir="${applicationDir}" executable="phpcb" failonerror="false" osfamily="unix">
+			<arg line="--log ${buildDir}/logs" />
+			<arg line="--source ${applicationDir}" />
+			<arg line="--output ${buildDir}/html/phpcb" />
+		</exec>
+		<zip destfile="${buildDir}/html/phpcb.zip" basedir="${buildDir}/html/phpcb" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/html/phpcb.zip']" />
+		<delete dir="${buildDir}/html/phpcb"/>
+	</target>
+	
+	<target name="phploc" description="Tool for quickly measuring the size of a PHP project">
+		<exec dir="${applicationDir}" executable="phploc" failonerror="false" osfamily="unix" output="${buildDir}/logs/phploc.txt">
+			<arg line="--count-tests" />
+			<arg line="--log-xml ${buildDir}/logs/phploc.xml" />
+			<arg line="${applicationDir}" />
+		</exec>
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phploc.xml']" />
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phploc.txt']" />
+	</target>
+
+	<target name="phpdcd" description="PHP Dead Code Detector">
+		<exec dir="${applicationDir}" executable="phpdcd" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpdcd.txt">
+			<arg line="--recursive" />
+			<arg line="${applicationDir}" />
+		</exec>
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phpdcd.txt']" />
+	</target>
+
+	<target name="phpcov" description="PHP Code Coverage">
+		<exec dir="${applicationDir}" executable="phpcov" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpdcd.txt">
+			<arg line="--clover ${buildDir}/logs/phpcov.clover.xml" />
+			<arg line="--html ${buildDir}/html/phpcov" />
+			<arg line="${applicationDir}" />
+		</exec>
+		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phpcov.clover.xml']" />
+		<zip destfile="${buildDir}/phpcov.zip" basedir="${buildDir}/html/phpcov"/>
+		<delete dir="${buildDir}/html/phpcov"/>
+		<echo message="##teamcity[publishArtifacts '${buildDir}/phpcov.zip']" />
+	</target>
+
+	<!--	<target name="padawan" description="PHP AST-based Detection of Antipatterns, Workarounds And general Nuisances"> 
+	</target> -->
+</project>
