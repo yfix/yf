@@ -80,5 +80,60 @@ class form2_stacked_sample {
 		;
 
 		return $body;
+/*
+		$validate_duration = function(){
+			if (!empty($_POST)) {
+				$empty_fields = true;
+				foreach($_POST as $key => $field){
+					if (strpos($key, 'duration_') === false) {
+						continue;
+					}
+					$_POST[$key] = $field = intval($field);
+					if($field){
+						$empty_fields = false;
+					}
+				}
+				if ($empty_fields) {
+					_re('One of the fields "For a period" must be filled');
+				} else {
+					return true;
+				}
+			}
+		    return false;
+		}
+		$validate_rules = array(
+			'title'         => array('trim|required|xss_clean'),
+			'type'          => array('trim|min_length[4]|max_length[4]|required|xss_clean'),
+			'amount'        => array('trim|required|min_length[1]|max_length[10]|xss_clean|numeric'),
+			'percent'       => array('trim|required|min_length[1]|max_length[4]|xss_clean|numeric'),
+			'split_period'  => array('trim|min_length[1]|max_length[1]|xss_clean|'),
+			'descr'         => array('trim|xss_clean'),
+			'duration'      => $validate_duration;
+		);
+		$a = $_POST;		
+		$form_html .= form($a)
+			->validate($validate_rules)
+		//	->db_insert_if_ok('credits', array('group','email','password','first_name','last_name','middle_name'), array('add_date' => time()), array('on_success_text' => 'Your account was created successfully!'))
+			->text('title')
+			->select_box('type', $this->_type,array('desc' => 'I want'))
+            ->money('amount')
+            ->row_start(array('desc' => 'For a period of'))
+                ->number('duration_day', 'day', array('class' => 'input-small'))
+                ->number('duration_week', 'week', array('class' => 'input-small'))
+                ->number('duration_month', 'month', array('class' => 'input-small'))
+                ->number('duration_year', 'year', array('class' => 'input-small'))
+            ->row_end()
+            ->row_start(array('desc' => 'Interest rate'))
+                ->number('percent', array('class' => 'input-small'))
+                ->button('per', array('disabled' => 1))
+                ->select_box('split_period', $this->_split_period)
+            ->row_end()
+            ->textarea('desc')
+            ->submit()
+        ;
+        $body .= _e();
+        $body .= $form_html;
+        return  $body ;
+*/
 	}
 }
