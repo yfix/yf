@@ -145,6 +145,16 @@ class yf_form2 {
 		if (!isset($this->_body['form_end'])) {
 			$this->form_end();
 		}
+		// Force form_begin as first array element
+		$form_begin = $this->_body['form_begin'];
+		unset($this->_body['form_begin']);
+		array_unshift($this->_body, $form_begin);
+
+		// Force form_end as last array element
+		$form_end = $this->_body['form_end'];
+		unset($this->_body['form_end']);
+		$this->_body['form_end'] = $form_end;
+
 		if ($this->_params['show_alerts']) {
 			$errors = common()->_get_error_messages();
 			if ($errors) {
@@ -155,15 +165,9 @@ class yf_form2 {
 				array_unshift($this->_body, implode(PHP_EOL, $e));
 			}
 		}
-		// Ensure that form begin and ending will be in the right place of the output
-		$form_begin = $this->_body['form_begin'];
-		unset($this->_body['form_begin']);
-		$form_end = $this->_body['form_end'];
-		unset($this->_body['form_end']);
 
-#		$body = '';
-#		$body .= $form_begin().PHP_EOL;
 		$r = (array)$this->_replace + (array)$replace;
+
 		foreach ((array)$this->_body as $k => $v) {
 			if (is_array($v)) {
 				$_extra = $v['extra'];
@@ -171,19 +175,12 @@ class yf_form2 {
 				$this->_body[$k] = $func($_extra, $r, $this);
 			}
 		}
-#		$body .= $form_end().PHP_EOL;
-#		return $body;
-
-		return $form_begin. PHP_EOL. implode(PHP_EOL, $this->_body). PHP_EOL. $form_end;
+		return implode(PHP_EOL, $this->_body);
 	}
 
 	/**
 	*/
 	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use second param as $extra
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
@@ -199,35 +196,32 @@ class yf_form2 {
 		$extra = $tmp;
 		unset($tmp);
 
-		if (!$name) {
-			$name = $extra['name'] ? $extra['name']: 'form_action';
-		}
-		if (!$method) {
-			$method = $extra['method'] ? $extra['method']: 'post';
-		}
-		$enctype = '';
-		if ($extra['enctype']) {
-			$enctype = $extra['enctype'];
-		} elseif ($extra['for_upload']) {
-			$enctype = 'multipart/form-data';
-		}
-		$r = $replace ? $replace : $this->_replace;
-		$extra['method'] = $extra['method'] ?: $method;
-		$extra['action'] = isset($r[$name]) ? $r[$name] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $this->_params['links_add'];
-		$extra['class'] = $extra['class'] ?: 'form-horizontal';
-		$extra['autocomplete'] = $extra['autocomplete'] ?: true;
+		$extra['name'] = $extra['name'] ?: ($name ?: 'form_action');
+		$extra['method'] = $extra['method'] ?: ($method ?: 'post');
 
-		$body = '<form '.$this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype')).'>';
-		$body .= '<fieldset>';
-		if ($extra['legend']) {
-			$body .= '<legend>'.$this->_htmlchars(t($extra['legend'])).'</legend>';
-		}
+		$func = function($extra, $r, $_this) {
+			$enctype = '';
+			if ($extra['enctype']) {
+				$enctype = $extra['enctype'];
+			} elseif ($extra['for_upload']) {
+				$enctype = 'multipart/form-data';
+			}
+			$extra['action'] = isset($r[$name]) ? $r[$name] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
+			$extra['class'] = $extra['class'] ?: 'form-horizontal';
+			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
+			$body = '<form '.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype')).'>';
+			$body .= '<fieldset>';
+			if ($extra['legend']) {
+				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>';
+			}
+			return $body;
+		};
 		if ($this->_chained_mode) {
-			$this->_body[__FUNCTION__] = $body;
+			$this->_body[__FUNCTION__] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
-		return $body;
+		return $func($extra, $replace, $this);
 	}
 
 	/**
@@ -246,6 +240,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -389,6 +390,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -402,6 +410,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -440,6 +455,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -646,6 +668,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1101,6 +1130,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1174,6 +1210,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1281,6 +1324,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1369,6 +1419,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1408,6 +1465,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1650,6 +1714,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1685,6 +1756,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1721,6 +1799,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1767,6 +1852,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
@@ -1866,6 +1958,13 @@ class yf_form2 {
 			return $this;
 		}
 		return $body;
+/*
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+*/
 	}
 
 	/**
