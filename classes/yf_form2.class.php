@@ -1119,52 +1119,45 @@ class yf_form2 {
 
 	/**
 	*/
-	function submit($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use first or second param as $extra
+	function submit($name = '', $value = '', $extra = array(), $replace = array()) {
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
 		}
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
+		if (is_array($value) && empty($extra)) {
+			$extra = $value;
+			$value = '';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$value = isset($extra['value']) ? $extra['value'] : 'Save';
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['id'] = $extra['id'] ?: ($name ?: strtolower($value));
-		$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
-		if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
-			$extra['link_url'] = '';
+		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
+		$extra['value'] = isset($extra['value']) ? $extra['value'] : ($value ?: 'Save');
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
 		}
-		$extra['link_name'] = $extra['link_name'] ?: '';
-		$extra['class'] = 'btn btn-primary '.$this->_prepare_css_class('', $r[$name], $extra);
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-		$extra['value'] = t($value);
-		$extra['desc'] = ''; // We do not need label here
-		$extra['type'] = 'submit';
+		$func = function($extra, $r, $_this) {
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
+			$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
+			if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
+				$extra['link_url'] = '';
+			}
+			$extra['link_name'] = $extra['link_name'] ?: '';
+			$extra['class'] = 'btn btn-primary '.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['value'] = t($extra['value']);
+			$extra['desc'] = ''; // We do not need label here
+			$extra['type'] = 'submit';
 
-		$attrs_names = array('type','name','id','class','style','value','disabled');
-		$body = $this->_row_html('<input '.$this->_attrs($extra, $attrs_names).'>', $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			$attrs_names = array('type','name','id','class','style','value','disabled');
+			return $_this->_row_html('<input '.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
