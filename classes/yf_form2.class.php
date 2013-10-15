@@ -457,8 +457,8 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		$extra['name'] = $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $name)));
+		$extra['name'] = $extra['name'] ?: $name;
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
@@ -525,8 +525,8 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		$extra['name'] = $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $name)));
+		$extra['name'] = $extra['name'] ?: $name;
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
@@ -1056,7 +1056,7 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $name)));
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
@@ -1131,7 +1131,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
+		$extra['name'] = $extra['name'] ?: $name;
 		$extra['value'] = isset($extra['value']) ? $extra['value'] : ($value ?: 'Save');
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
@@ -1176,16 +1176,12 @@ class yf_form2 {
 				$name = 'back_url';
 			}
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!$desc) {
-			$desc = 'Back';
-		}
 		$extra['link_url'] = $name;
-		$extra['link_name'] = $desc;
+		$extra['link_name'] = $desc ?: 'Back';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1199,26 +1195,18 @@ class yf_form2 {
 				$name = 'clear_url';
 			}
 		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
-		if (!$desc) {
-			$desc = 'Clear';
-		}
 		$extra['link_url'] = $name;
-		$extra['link_name'] = $desc;
+		$extra['link_name'] = $desc ?: 'Clear';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
 	function info($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -1231,47 +1219,41 @@ class yf_form2 {
 				$extra = array();
 			}
 		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+		$extra['name'] = $extra['name'] ?: $name;
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
 		}
-		$r = $replace ? $replace : $this->_replace;
-		$extra['errors'] = common()->_get_error_messages();
-		$extra['inline_help'] = isset($extra['errors'][$name]) ? $extra['errors'][$name] : $extra['inline_help'];
-		$extra['name'] = $name;
-		$extra['desc'] = !$extra['no_label'] && !$this->_params['no_label'] ? $desc : '';
+		$func = function($extra, $r, $_this) {
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['desc'] = !$extra['no_label'] && !$_this->_params['no_label'] ? $extra['desc'] : '';
 
-		$value = $r[$name];
-		if (is_array($extra['data'])) {
-			if (isset($extra['data'][$value])) {
-				$value = $extra['data'][$value];
-			} elseif (isset($extra['data'][$name])) {
-				$value = $extra['data'][$name];
+			$value = $r[$extra['name']];
+			if (is_array($extra['data'])) {
+				if (isset($extra['data'][$value])) {
+					$value = $extra['data'][$value];
+				} elseif (isset($extra['data'][$extra['name']])) {
+					$value = $extra['data'][$extra['name']];
+				}
 			}
-		}
-		$value = !isset($extra['no_escape']) ? $this->_htmlchars($value) : $value;
+			$value = !isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value;
 
-		$content = '';
-		if ($extra['link']) {
-			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
-			$content = '<a href="'.$extra['link'].'" class="'.$extra['class'].'">'.$value.'</a>';
-		} else {
-			$extra['class'] = $extra['class'] ?: 'label label-info';
-			$content = '<span class="'.$this->_prepare_css_class($extra['class'], $r[$name], $extra).'">'.$value.'</span>';
-		}
-		$body = $this->_row_html($content, $extra, $replace);
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			$content = '';
+			if ($extra['link']) {
+				$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
+				$content = '<a href="'.$extra['link'].'" class="'.$extra['class'].'">'.$value.'</a>';
+			} else {
+				$extra['class'] = $extra['class'] ?: 'label label-info';
+				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$value.'</span>';
+			}
+			return $_this->_row_html($content, $extra, $r);
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
