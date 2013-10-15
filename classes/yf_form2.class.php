@@ -226,27 +226,20 @@ class yf_form2 {
 
 	/**
 	*/
-	function form_end($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
+	function form_end($extra = array(), $replace = array()) {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$body = '</fieldset>';
-		$body .= '</form>';
-		if ($this->_chained_mode) {
-			$this->_body[__FUNCTION__] = $body;
-			return $this;
-		}
-		return $body;
-/*
+		$func = function($extra, $r, $_this) {
+			$body = '</fieldset>';
+			$body .= '</form>';
+			return $body;
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
