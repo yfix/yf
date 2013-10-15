@@ -429,10 +429,10 @@ class yf_form2 {
 			$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
 			$extra['id'] = $extra['id'] ?: 'content_editable';
 			$extra['name'] = $name;
-			$extra['desc'] = !$this->_params['no_label'] ? $extra['desc'] : '';
+			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 
 			$attrs_names = array('id','contenteditable','style','class');
-			return $this->_row_html(isset($extra['ckeditor']) ? '<div '.$this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $replace);
+			return $_this->_row_html(isset($extra['ckeditor']) ? '<div '.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $replace);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -619,39 +619,24 @@ class yf_form2 {
 	/**
 	* Just hidden input
 	*/
-	function hidden($name, $desc = '', $extra = array(), $replace = array()) {
-		if ($this->_chained_mode) {
-			$replace = (array)$this->_replace + (array)$replace;
-		}
-		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
+	function hidden($name, $extra = array(), $replace = array()) {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$r = $replace ? $replace : $this->_replace;
-		$extra['id'] = $extra['id'] ? $extra['id'] : $name;
-		$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$name];
-		$extra['name'] = $name;
-		$extra['type'] = 'hidden';
+		$func = function($extra, $r, $_this) {
+			$extra['id'] = $extra['id'] ? $extra['id'] : $name;
+			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$name];
+			$extra['name'] = $name;
+			$extra['type'] = 'hidden';
 
-		$attrs_names = array('type','id','name','value','data');
-		$body = '<input '.$this->_attrs($extra, $attrs_names).'>';
-
-		if ($this->_chained_mode) {
-			$this->_body[] = $body;
-			return $this;
-		}
-		return $body;
-/*
+			$attrs_names = array('type','id','name','value','data');
+			$body = '<input '.$_this->_attrs($extra, $attrs_names).'>';
+		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
-*/
 	}
 
 	/**
