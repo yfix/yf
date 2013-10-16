@@ -59,6 +59,33 @@ class yf_validate {
 	}
 
 	/***/
+	function required_any($in, $params = array(), $fields = array()) {
+		$param = trim($params['param']);
+		// Example: duration_*
+		if (false !== strpos($param, '*')) {
+			$strpos = str_replace('*', '', $param);
+		// Example: duration_day,duration_week,duration_month
+		} elseif (false !== strpos($param, ',')) {
+			$field_names = explode(',', $param);
+		}
+		foreach((array)$fields as $k => $v) {
+			$skip = true;
+			if ($strpos && false !== strpos($k, $strpos)) {
+				$skip = false;
+			} elseif ($field_names && in_array($v, $field_names)) {
+				$skip = false;
+			}
+			if ($skip) {
+				continue;
+			}
+			if (is_array($v) ? (bool) count($v) : (trim($v) !== '')) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/***/
 	function matches($in, $params = array(), $fields = array()) {
 		$field = $params['param'];
 		return isset($fields[$field], $_POST[$field]) ? ($in === $_POST[$field]) : false;

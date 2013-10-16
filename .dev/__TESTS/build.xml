@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Application" default="build" basedir="./">
 
-	<target name="build" depends="prepare,phpunit,phpmd,phpcpd,phpcb,phpdcd,phploc,phpcs"/>
+	<target name="build" depends="prepare,phpunit,phpmd,phpcpd,phpcb,phploc,phpcs"/>
 
-	<property name="applicationDir" value="${basedir}" />
+	<property name="applicationDir" value="../../" />
+	<property name="testDir" value="${basedir}" />
 	<property name="buildDir" value="${basedir}/build" />
 	
 	<target name="prepare">
-		<mkdir dir="${buildDir}logs" />
-		<mkdir dir="${buildDir}html/phpcb" />
-		<mkdir dir="${buildDir}html/phpcov" />
-		<mkdir dir="${buildDir}html/phpunit" />
+		<mkdir dir="${buildDir}/logs" />
+		<mkdir dir="${buildDir}/html/phpcb" />
+		<mkdir dir="${buildDir}/html/phpcov" />
+		<mkdir dir="${buildDir}/html/phpunit" />
 	</target>
 
 	<target name="phpunit" description="PHPUnit">
-		<property name="phpunitLogs" value="${applicationDir}artifacts/phpunit" />
+		<property name="phpunitLogs" value="${testDir}/artifacts/phpunit" />
 		<property name="junit" value="${phpunitLogs}/phpunit.xml" />
         <exec dir="${basedir}" executable="phpunit" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpunit.txt">
-			<!--<arg line="--configuration ${applicationDir}/tests/phpunit.xml"/>-->
         </exec>		
 		<echo message="##teamcity[importData type='junit' path='${junit}']" />
 		<zip destfile="${phpunitLogs}/coverage.zip" basedir="${phpunitLogs}/coverage"/>
-		<delete dir="${phpunitLogs}/coverage"/>
+		<!-- <delete dir="${phpunitLogs}/coverage"/> -->
 		<echo message="##teamcity[publishArtifacts '${phpunitLogs}']" />
 	</target>
 	
@@ -100,14 +100,6 @@
 		</exec>
 		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phploc.xml']" />
 		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phploc.txt']" />
-	</target>
-
-	<target name="phpdcd" description="PHP Dead Code Detector">
-		<exec dir="${applicationDir}" executable="phpdcd" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpdcd.txt">
-			<arg line="--recursive" />
-			<arg line="${applicationDir}" />
-		</exec>
-		<echo message="##teamcity[publishArtifacts '${buildDir}/logs/phpdcd.txt']" />
 	</target>
 
 	<target name="phpcov" description="PHP Code Coverage">

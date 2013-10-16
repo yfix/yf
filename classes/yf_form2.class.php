@@ -390,6 +390,7 @@ class yf_form2 {
 	function row_start($extra = array()) {
 		$func = function($extra, $r, $_this) {
 			$_this->_stacked_mode_on = true;
+			$extra['errors'] = common()->_get_error_messages();
 			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
@@ -1851,7 +1852,8 @@ class yf_form2 {
 		if (!$table || !$type || empty($_POST)) {
 			return $this;
 		}
-		if (!$this->_validate_ok) {
+		$validate_ok = ($this->_validate_ok || $extra['force']);
+		if (!$validate_ok) {
 			if ($extra['on_validate_error']) {
 				$func = $extra['on_validate_error'];
 				$func($data, $table, $fields, $type, $extra);
