@@ -870,7 +870,9 @@ class yf_table2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['a_class'] .= ' ajax_add';
+		if (!$extra['no_ajax']) {
+			$extra['a_class'] .= ' ajax_add';
+		}
 		$extra['icon'] .= 'icon-plus';
 		return $this->footer_link($name, $link, $extra);
 	}
