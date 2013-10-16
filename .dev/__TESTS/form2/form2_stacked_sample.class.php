@@ -14,7 +14,7 @@ class form2_stacked_sample {
 				'year'	=> 0,
 			),
 		);
-
+/*
 		$body .= tpl()->parse_string('
 			<form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
 				<div class="control-group form-group">
@@ -80,7 +80,7 @@ class form2_stacked_sample {
 		;
 
 		return $body;
-/*
+*/
 		$validate_duration = function(){
 			if (!empty($_POST)) {
 				$empty_fields = true;
@@ -100,7 +100,7 @@ class form2_stacked_sample {
 				}
 			}
 		    return false;
-		}
+		};
 		$validate_rules = array(
 			'title'         => array('trim|required|xss_clean'),
 			'type'          => array('trim|min_length[4]|max_length[4]|required|xss_clean'),
@@ -108,16 +108,17 @@ class form2_stacked_sample {
 			'percent'       => array('trim|required|min_length[1]|max_length[4]|xss_clean|numeric'),
 			'split_period'  => array('trim|min_length[1]|max_length[1]|xss_clean|'),
 			'descr'         => array('trim|xss_clean'),
-			'duration'      => $validate_duration;
+#			'duration'      => $validate_duration,
+			'duration'      => 'required_any[duration_*]',
 		);
 		$a = $_POST;		
 		$form_html .= form($a)
 			->validate($validate_rules)
 		//	->db_insert_if_ok('credits', array('group','email','password','first_name','last_name','middle_name'), array('add_date' => time()), array('on_success_text' => 'Your account was created successfully!'))
 			->text('title')
-			->select_box('type', $this->_type,array('desc' => 'I want'))
+			->select_box('type', array(1,2), array('desc' => 'I want'))
             ->money('amount')
-            ->row_start(array('desc' => 'For a period of'))
+            ->row_start(array('desc' => 'For a period of', 'name' => 'duration'))
                 ->number('duration_day', 'day', array('class' => 'input-small'))
                 ->number('duration_week', 'week', array('class' => 'input-small'))
                 ->number('duration_month', 'month', array('class' => 'input-small'))
@@ -126,7 +127,7 @@ class form2_stacked_sample {
             ->row_start(array('desc' => 'Interest rate'))
                 ->number('percent', array('class' => 'input-small'))
                 ->button('per', array('disabled' => 1))
-                ->select_box('split_period', $this->_split_period)
+                ->select_box('split_period', array('val1','val2'))
             ->row_end()
             ->textarea('desc')
             ->submit()
@@ -134,6 +135,6 @@ class form2_stacked_sample {
         $body .= _e();
         $body .= $form_html;
         return  $body ;
-*/
+
 	}
 }
