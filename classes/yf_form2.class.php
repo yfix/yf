@@ -1851,7 +1851,8 @@ class yf_form2 {
 		if (!$table || !$type || empty($_POST)) {
 			return $this;
 		}
-		if (!$this->_validate_ok) {
+		$validate_ok = ($this->_validate_ok || $extra['force']);
+		if (!$validate_ok) {
 			if ($extra['on_validate_error']) {
 				$func = $extra['on_validate_error'];
 				$func($data, $table, $fields, $type, $extra);
