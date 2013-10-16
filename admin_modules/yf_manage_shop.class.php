@@ -10,17 +10,21 @@ class yf_manage_shop {
 	/** @var string Folder where product's images store */
 	public $PROD_IMG_DIR	= 'shop/products/';
 	/** @var string fullsize image suffix (underscore at the beginning required)*/
-	public $FULL_IMG_SUFFIX	= '_full';
+	public $FULL_IMG_SUFFIX	= '_big';
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	public $THUMB_SUFFIX	= '_small';
+	public $THUMB_SUFFIX	= '_thumb';
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
 	public $MEDIUM_SUFFIX	= '_medium';
 	/** @var string Image prefix */
 	public $IMG_PREFIX		= 'product_';
 	/** @var int Thumb size X */
-	public $THUMB_X			= 100;
+	public $THUMB_X			= 216;
 	/** @var int Thumb size Y */
-	public $THUMB_Y			= 100;
+	public $THUMB_Y			= 216;
+	/** @var int Big img size X */
+	public $BIG_X			= 710;
+	/** @var int Big img size Y */
+	public $BIG_Y			= 750;
 	/** @var string Default currency */
 	public $CURRENCY		= '$';
 	/** @var Shipping types */

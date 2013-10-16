@@ -39,8 +39,7 @@ class yf_manage_shop_product_edit{
 				// Image upload
 				if (!empty($_FILES)) {
 					$product_id = $_GET["id"];
-					$product_name = _es(common()->_propose_url_from_name($_POST["name"]));
-					$rez_upload = module("manage_shop")->_product_image_upload($product_id, $product_name);
+					module("manage_shop")->_product_image_upload($product_id);
 					$sql_array['image'] = 1;
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]);
@@ -78,40 +77,38 @@ class yf_manage_shop_product_edit{
 			}
 			return js_redirect("./?object=manage_shop&action=products");
 		}
-		if ($product_info["image"] == 0) {
-			$thumb_path = "";
-		} else {
-			$dirs = sprintf("%06s",$product_info["id"]);
-			$dir2 = substr($dirs,-3,3);
-			$dir1 = substr($dirs,-6,3);
-			$mpath = $dir1."/".$dir2."/";
-			$image_files = _class('dir')->scan_dir(
-				module("manage_shop")->products_img_dir.$mpath, 
-				true, 
+		
+		$dirs = sprintf("%06s",$product_info["id"]);
+		$dir2 = substr($dirs,-3,3);
+		$dir1 = substr($dirs,-6,3);
+		$mpath = $dir1."/".$dir2."/";
+		$image_files = _class('dir')->scan_dir(
+			module("manage_shop")->products_img_dir.$mpath, 
+			true, 
 #				"/".$product_info["url"]."_".$product_info["id"].".+?_small\.jpg"."/"
-				"/product_".$product_info["id"].".+?_small\.jpg"."/"
-			);
+			"/product_".$product_info["id"].".+?_thumb\.jpg"."/"
+		);
 #			$reg = "/".$product_info["url"]."_".$product_info["id"]."_(?P<content>[\d]+)_small\.jpg/";
-			$reg = "/product_".$product_info["id"]."_(?P<content>[\d]+)_small\.jpg/";
-			foreach((array)$image_files as $filepath) {
-				preg_match($reg, $filepath, $rezult);
-				$i =  $rezult["content"];
+		$reg = "/product_".$product_info["id"]."_(?P<content>[\d]+)_thumb\.jpg/";
+		foreach((array)$image_files as $filepath) {
+			preg_match($reg, $filepath, $rezult);
+			$i =  $rezult["content"];
 
-				$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&name=".$product_info["url"]."&key=".$i;
+			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&name=".$product_info["url"]."&key=".$i;
 #				$thumb_path_temp = module("manage_shop")->products_img_webdir.$mpath. $product_info["url"]."_".$product_info["id"]."_".$i.module("manage_shop")->THUMB_SUFFIX.".jpg";
-				$thumb_path_temp = module("manage_shop")->products_img_webdir.$mpath. "product_".$product_info["id"]."_".$i. module("manage_shop")->THUMB_SUFFIX.".jpg";
+			$thumb_path_temp = module("manage_shop")->products_img_webdir.$mpath. "product_".$product_info["id"]."_".$i. module("manage_shop")->THUMB_SUFFIX.".jpg";
 #				$img_path = module("manage_shop")->products_img_webdir. $mpath. $product_info["url"]."_".$product_info["id"]."_".$i.module("manage_shop")->FULL_IMG_SUFFIX.".jpg";
-				$img_path = module("manage_shop")->products_img_webdir. $mpath. "product_".$product_info["id"]."_".$i. module("manage_shop")->FULL_IMG_SUFFIX.".jpg";
+			$img_path = module("manage_shop")->products_img_webdir. $mpath. "product_".$product_info["id"]."_".$i. module("manage_shop")->FULL_IMG_SUFFIX.".jpg";
 
-				$replace2 = array(
-					"img_path" 		=> $img_path,
-					"thumb_path"	=> $thumb_path_temp,
-					"del_url" 		=> $product_image_delete_url,
-					"name"			=> $product_info["url"],
-				);
-				$items .= tpl()->parse("manage_shop/image_items", $replace2);
-			}
-		}	
+			$replace2 = array(
+				"img_path" 		=> $img_path,
+				"thumb_path"	=> $thumb_path_temp,
+				"del_url" 		=> $product_image_delete_url,
+				"name"			=> $product_info["url"],
+			);
+			$items .= tpl()->parse("manage_shop/image_items", $replace2);
+		}
+	
 		// 1-st type of assigning attributes
 		$fields = module("manage_shop")->_attributes_html($_GET["id"]);
 		// 2-nd type of assigning attributes (select boxes)

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Application" default="build" basedir="./">
 
-	<target name="build" depends="prepare,phpunit,phpmd,phpcpd,phpcb,phploc,phpcs"/>
+	<!--<target name="build" depends="prepare,phpunit,phpmd,phpcpd,phpcb,phploc,phpcs"/>-->
+	<target name="build" depends="prepare,phpunit,phpcpd,phpcb,phploc,phpcs"/>
 
 	<property name="applicationDir" value="../../" />
 	<property name="testDir" value="${basedir}" />
@@ -25,16 +26,16 @@
 		<echo message="##teamcity[publishArtifacts '${phpunitLogs}']" />
 	</target>
 	
-	<target name="phpmd" description="PHP Mess Detector">
+	<!--	<target name="phpmd" description="PHP Mess Detector">
 		<property name="pmd" value="${buildDir}/logs/phpmd.xml" />
 		<exec dir="${applicationDir}" executable="phpmd" failonerror="false" osfamily="unix">
 			<arg line="${applicationDir}" />
 			<arg line="xml" />
 			<arg line="naming,unusedcode,codesize" />
-			<arg line="--reportfile ${pmd}" />
+			<arg line="reportfile ${pmd}" />
 		</exec>
 		<echo message="##teamcity[importData type='pmd' path='${pmd}']"/>
-	</target>
+	</target>-->
 	
 	<target name="phpcpd" description="Copy/Paste Detector">
 		<property name="phpcpd" value="${buildDir}/logs/phpcpd.xml" />
