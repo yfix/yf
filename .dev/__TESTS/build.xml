@@ -14,7 +14,7 @@
 	</target>
 
 	<target name="phpunit" description="PHPUnit">
-		<property name="phpunitLogs" value="${applicationDir}artifacts/phpunit" />
+		<property name="phpunitLogs" value="${applicationDir}/artifacts/phpunit" />
 		<property name="junit" value="${phpunitLogs}/phpunit.xml" />
         <exec dir="${basedir}" executable="phpunit" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpunit.txt">
         </exec>		
