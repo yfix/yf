@@ -8,7 +8,7 @@ class yf_manage_shop_products{
 	*/
 	function products () {
 		return table('SELECT * FROM '.db('shop_products'), array(
-				'filter' => $_SESSION['manage_shop'],
+				'filter' => $_SESSION[$_GET['object'].'__products'],
 				'filter_params' => array(
 					'name'	=> 'like',
 					'price' => 'between',

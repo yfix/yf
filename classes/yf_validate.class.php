@@ -58,7 +58,10 @@ class yf_validate {
 		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
 	}
 
-	/***/
+	/**
+	* Returns true when _ANY_ of passed fields will be non-empty
+	* Examples: required_any[duration_*] or required_any[duration_day,duration_week,duration_month]
+	*/
 	function required_any($in, $params = array(), $fields = array()) {
 		$param = trim($params['param']);
 		// Example: duration_*

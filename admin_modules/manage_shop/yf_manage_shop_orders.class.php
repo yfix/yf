@@ -14,8 +14,9 @@ class yf_manage_shop_orders{
 				FROM '.db('shop_orders').' AS o 
 				INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
 				GROUP BY o.id';
-		$filter_name = $_GET['object'].'__orders';
-		return table($sql, array('filter' => $_SESSION[$filter_name]))
+		return table($sql, array(
+				'filter' => $_SESSION[$_GET['object'].'__orders']
+			))
 			->text('id')
 			->date('date')
 			->user('user_id')

@@ -4,8 +4,9 @@ class yf_manage_shop_suppliers{
 	/**
 	*/
 	function suppliers () {
-		$filter_name = $_GET['object'].'__suppliers';
-		return table('SELECT * FROM '.db('shop_suppliers'), array('filter' => $_SESSION[$filter_name]))
+		return table('SELECT * FROM '.db('shop_suppliers'), array(
+				'filter' => $_SESSION[$_GET['object'].'__suppliers']
+			))
 			->image('id', 'uploads/shop/suppliers/%d.jpg', array('width' => '50px'))
 			->text('name')
 			->text('url')

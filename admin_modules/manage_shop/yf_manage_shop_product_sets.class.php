@@ -14,8 +14,9 @@ class yf_manage_shop_product_sets{
 	/**
 	*/
 	function product_sets () {
-		$filter_name = $_GET['object'].'__product_sets';
-		return table('SELECT * FROM '.db('shop_product_sets'), array('filter' => $_SESSION[$filter_name]))
+		return table('SELECT * FROM '.db('shop_product_sets'), array(
+				'filter' => $_SESSION[$_GET['object'].'__product_sets']
+			))
 			->image('id', 'uploads/shop/product_sets/%d.jpg', array('width' => '50px'))
 			->text('name')
 			->text('description')
