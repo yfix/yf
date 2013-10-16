@@ -55,8 +55,7 @@ class yf_manage_shop_product_add{
 				// Image upload
 				if (!empty($_FILES)) {
 					$product_id = $_GET["id"];
-					$product_name = _es(common()->_propose_url_from_name($_POST["name"]));
-					$rez_upload = module("manage_shop")->_product_image_upload ($product_id, $product_name);
+					module("manage_shop")->_product_image_upload($product_id);
 					$sql_array['image'] = 1;
 				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
