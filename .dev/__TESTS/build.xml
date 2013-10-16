@@ -7,10 +7,10 @@
 	<property name="buildDir" value="${basedir}/build" />
 	
 	<target name="prepare">
-		<mkdir dir="${buildDir}logs" />
-		<mkdir dir="${buildDir}html/phpcb" />
-		<mkdir dir="${buildDir}html/phpcov" />
-		<mkdir dir="${buildDir}html/phpunit" />
+		<mkdir dir="${buildDir}/logs" />
+		<mkdir dir="${buildDir}/html/phpcb" />
+		<mkdir dir="${buildDir}/html/phpcov" />
+		<mkdir dir="${buildDir}/html/phpunit" />
 	</target>
 
 	<target name="phpunit" description="PHPUnit">
