@@ -370,6 +370,13 @@ class yf_common {
 	} 
 
 	/**
+	* Do upload archive file (zip, rar, tar accepted)
+	*/
+	function upload_archive($new_file_path, $name_in_form = 'archive') {
+		return _class('upload_archive', COMMON_LIB)->go($new_file_path, $name_in_form);
+	}
+
+	/**
 	* Create simple table with debug info
 	*/
 	function show_debug_info() {
@@ -571,7 +578,7 @@ class yf_common {
 	}
 
 	/**
-	* Upload given file
+	* Upload given file to remote server from this server
 	*/
 	function upload_file ($path_tmp = '', $new_dir = '', $new_file = '') {
 		return _class('remote_files', COMMON_LIB)->do_upload($path_tmp, $new_dir, $new_file);
