@@ -90,6 +90,7 @@ class yf_manage_shop_product_edit{
 		);
 #			$reg = "/".$product_info["url"]."_".$product_info["id"]."_(?P<content>[\d]+)_small\.jpg/";
 		$reg = "/product_".$product_info["id"]."_(?P<content>[\d]+)_thumb\.jpg/";
+		sort($image_files);
 		foreach((array)$image_files as $filepath) {
 			preg_match($reg, $filepath, $rezult);
 			$i =  $rezult["content"];
