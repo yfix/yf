@@ -27,7 +27,7 @@ class form2_new_controls {
 
 			->navbar_start()->currency_box()->navbar_end()
 			->navbar_start()->language_box()->navbar_end()
-#			->navbar_start()->timezone_box()->navbar_end()
+			->navbar_start()->timezone_box()->navbar_end()
 
 #			->navbar_wrap(form($r, $params)->currency_box(array('stacked' => 1)))
 #			->container('<div class="navbar span3"><div class="navbar-inner"><ul class="nav">'

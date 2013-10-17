@@ -326,7 +326,7 @@ $data = array (
     'name' => 'English',
     'native' => 'English',
     'code3' => 'eng',
-    'active' => 0,
+    'active' => 1,
   ),
   'eo' => 
   array (
@@ -1070,7 +1070,7 @@ $data = array (
     'name' => 'Russian',
     'native' => 'русский язык',
     'code3' => 'rus',
-    'active' => 0,
+    'active' => 1,
   ),
   'sa' => 
   array (
@@ -1358,7 +1358,7 @@ $data = array (
     'name' => 'Ukrainian',
     'native' => 'українська мова',
     'code3' => 'ukr',
-    'active' => 0,
+    'active' => 1,
   ),
   'ur' => 
   array (

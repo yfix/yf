@@ -50,6 +50,9 @@ foreach ($tmp_tbl as $v) {
 		'active'=> 0,
 	);
 }
+foreach (array('UTC','GMT','CET','EET','MSK') as $c) {
+	$data[$c]['active'] = 1;
+}
 $f4 = dirname(__FILE__).'/timezones.php';
 file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 print_r($data);

@@ -52,9 +52,13 @@ foreach ($tmp as $v) {
 	}
 	$data[$id] = array(
 		'name'	=> $id,
-		'active'=> 0,
+		'active'=> 1,
 	);
 }
+#foreach (range(1,20) as $c) {
+#	$data[$c]['active'] = 1;
+#}
+
 $f4 = dirname(__FILE__).'/fontawesome_icons.php';
 file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 print_r($data);

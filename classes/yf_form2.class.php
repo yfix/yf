@@ -1436,8 +1436,10 @@ class yf_form2 {
 			$name = 'language';
 		}
 		$data = array();
-		foreach ((array)main()->get_data('languages') as $id => $v) {
-			$data[$id] = '<i class="flag-'.$v['country'].'"></i> '. $v['name'].' ['.$v['code'].']';
+// TODO: move this into main()->get_data('languages_new')
+		$a = db()->get_all('SELECT * FROM '.db('languages').' WHERE active="1" ORDER BY native ASC');
+		foreach ((array)$a as $id => $v) {
+			$data[$id] = /*'<i class="flag-'.$v['country'].'"></i> '. */$v['native'].' ['.$v['code'].']';
 		}
 		return $this->div_box($name, $data, $extra, $replace);
 	}
@@ -1456,8 +1458,10 @@ class yf_form2 {
 			$name = 'timezone';
 		}
 		$data = array();
-		foreach ((array)main()->get_data('timezones') as $id => $v) {
-			$data[$id] = $v['name'].' ['.$v['code'].']';
+// TODO: move this into main()->get_data('languages_new')
+		$a = db()->get_all('SELECT * FROM '.db('timezones').' WHERE active="1" ORDER BY name ASC');
+		foreach ((array)$a as $id => $v) {
+			$data[$id] = $v['name'].' ['.$v['offset'].'] ['.$v['code'].']';
 		}
 		return $this->select_box($name, $timezones, $extra, $replace);
 	}
