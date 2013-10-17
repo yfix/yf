@@ -264,15 +264,19 @@ class yf_category_editor {
 		if (isset($items[''])) {
 			unset($items['']);
 		}
+		$tpl_items = array();
 		foreach ((array)$items as $id => $item) {
+			if (!$id) {
+				continue;
+			}
 			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
 			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
-			$items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
+			$tpl_items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
 		$replace = array(
-			'items' 		=> implode(PHP_EOL, (array)$items),
+			'items' 		=> implode(PHP_EOL, (array)$tpl_items),
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
