@@ -21,24 +21,12 @@ class form2_new_controls {
 			->textarea('desc')
 */
 #			->div_box('testdiv', array('val1','val2'))
-#			->container('<div class="navbar span2"><div class="navbar-inner"><ul class="nav">'.form($r, $params)->currency_box(array('stacked' => 1)).'</ul></div></div>', array('stacked' => 1))
-#			->navbar_wrap(form($r, $params)->currency_box(array('stacked' => 1)))
-#			->navbar_wrap(form($r, $params)->currency_box(array('stacked' => 1)))
 
 			->navbar_start()->currency_box()->navbar_end()
 			->navbar_start()->language_box()->navbar_end()
 			->navbar_start()->timezone_box()->navbar_end()
-
-#			->navbar_wrap(form($r, $params)->currency_box(array('stacked' => 1)))
-#			->container('<div class="navbar span3"><div class="navbar-inner"><ul class="nav">'
-#				.form()->tpl_row('currency_box', $replace = array(), $name = '', $desc = '', $extra = array('no_label' => 1, 'stacked' => 1))
-#				.'</ul></div></div>'
-#			)
-/*
-			->country_box()
-			->region_box()
-			->language_box()
-			->timezone_box()
+			->navbar_start()->country_box()->navbar_end()
+#			->navbar_start()->region_box()->navbar_end()
 /*
 			->method_select_box()
 			->template_select_box()
