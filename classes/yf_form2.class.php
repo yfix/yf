@@ -204,6 +204,7 @@ class yf_form2 {
 			} elseif ($extra['for_upload']) {
 				$enctype = 'multipart/form-data';
 			}
+			$extra['enctype'] = $enctype;
 			$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
 			$extra['class'] = $extra['class'] ?: 'form-horizontal';
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
