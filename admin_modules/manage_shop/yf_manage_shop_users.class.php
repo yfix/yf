@@ -4,9 +4,8 @@ class yf_manage_shop_users{
 	/**
 	*/
 	function users () {
-		$filter_name = $_GET['object'].'__users';
 		return table('SELECT * FROM '.db('user'), array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => $_SESSION[$_GET['object'].'__users'],
 				'filter_params' => array(
 					'id'		=> 'like',					
 					'name'		=> 'like',
