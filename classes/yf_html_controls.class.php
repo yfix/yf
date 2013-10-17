@@ -565,11 +565,12 @@ class yf_html_controls {
 
 	/**
 	*/
-	function div_box ($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+	function div_box ($name, $values = array(), $selected = '', $extra = array()) {
 		// Passing params as array
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
+			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
 			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 			if (!$extra['no_translate']) {
 				$values = t($values);
@@ -617,17 +618,19 @@ class yf_html_controls {
 #		$body .= '<ul class="dropdown-menu">';
 
 #		$body .= '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></a>';
-		$body .= '<div class="btn-group">';
+#		$body .= '<div class="btn-group">';
+		$body .= '<li class="dropdown" style="list-style-type:none;">';
 
-		$body .= '<a href="#" class="dropdown-toggle btn" data-toggle="dropdown">Action <span class="caret"></span></a>';
+		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.$desc.'&nbsp;<span class="caret"></span></a>';
 		$body .= '<ul class="dropdown-menu">';
 		foreach ((array)$values as $key => $cur_value) {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
-			$body .= '<li><a href="javascript:void();" value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+			$body .= '<li class="dropdown"><a data-value="'.$key.'" '.($_what_compare == $selected ? 'data-selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
 		}
 		$body .= '</ul>';
 
-		$body .= '</div>';
+		$body .= '</li>';
+#		$body .= '</div>';
 #		$body .= '</ul>';
 #		$body .= '</li></ul>';
 

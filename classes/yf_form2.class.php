@@ -132,23 +132,24 @@ class yf_form2 {
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/
 	function render($extra = array(), $replace = array()) {
-		// Call these methods, if not done yet, save 2 api calls
-		if (!isset($this->_body['form_begin'])) {
-			$this->form_begin('', '', $extra, $replace);
-		}
-		if (!isset($this->_body['form_end'])) {
-			$this->form_end();
-		}
-		// Force form_begin as first array element
-		$form_begin = $this->_body['form_begin'];
-		unset($this->_body['form_begin']);
-		array_unshift($this->_body, $form_begin);
+		if (!$extra['no_form'] && !$this->_params['no_form']) {
+			// Call these methods, if not done yet, save 2 api calls
+			if (!isset($this->_body['form_begin'])) {
+				$this->form_begin('', '', $extra, $replace);
+			}
+			if (!isset($this->_body['form_end'])) {
+				$this->form_end();
+			}
+			// Force form_begin as first array element
+			$form_begin = $this->_body['form_begin'];
+			unset($this->_body['form_begin']);
+			array_unshift($this->_body, $form_begin);
 
-		// Force form_end as last array element
-		$form_end = $this->_body['form_end'];
-		unset($this->_body['form_end']);
-		$this->_body['form_end'] = $form_end;
-
+			// Force form_end as last array element
+			$form_end = $this->_body['form_end'];
+			unset($this->_body['form_end']);
+			$this->_body['form_end'] = $form_end;
+		}
 		if ($this->_params['show_alerts']) {
 			$errors = common()->_get_error_messages();
 			if ($errors) {
@@ -407,6 +408,37 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			$_this->_stacked_mode_on = false;
 			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Shortcut for starting navbar, needed to test div_box containers
+	*/
+	function navbar_start($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_params['no_form'] = true;
+			$_this->_stacked_mode_on = true;
+			return '<div class="navbar span2"><div class="navbar-inner"><ul class="nav">';
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Paired with navbar_start
+	*/
+	function navbar_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_stacked_mode_on = false;
+			return '</ul></div></div>';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -1317,6 +1349,13 @@ class yf_form2 {
 	/**
 	*/
 	function birth_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
 		if (!$name) {
 			$name = 'birth';
 		}
@@ -1326,44 +1365,59 @@ class yf_form2 {
 	/**
 	*/
 	function country_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'country';
-		}
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
-		$countries = main()->get_data('countries');
-		return $this->select_box($name, $countries, $extra, $replace);
+		if (!$name) {
+			$name = 'country';
+		}
+		$data = array();
+		foreach ((array)main()->get_data('countries') as $id => $v) {
+			$data[$id] = '<i class="flag-'.$v['code'].'"></i> '. $v['name'].' ['.strtoupper($code).']';
+		}
+		return $this->div_box($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
 	function region_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'region';
-		}
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
-		$regions = main()->get_data('regions');
-		return $this->select_box($name, $regions, $extra, $replace);
+		if (!$name) {
+			$name = 'region';
+		}
+		$data = array();
+		foreach ((array)main()->get_data('regions') as $id => $v) {
+			$data[$id] = $v['name'].' ['.$v['code'].']';
+		}
+		return $this->select_box($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
 	function currency_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'currency';
-		}
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
+		if (!$name) {
+			$name = 'currency';
+		}
 		$data = array();
 		foreach ((array)main()->get_data('currencies') as $id => $v) {
-			$data[$id] = $v['name'].' ['.$id.'] '.$v['sign'];
+			$data[$id] = $v['sign'].' &nbsp; '. $v['name'].' ['.$id.']';
 		}
 		return $this->div_box($name, $data, $extra, $replace);
 	}
@@ -1371,28 +1425,40 @@ class yf_form2 {
 	/**
 	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'language';
-		}
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
-		$languages = main()->get_data('languages');
-		return $this->select_box($name, $languages, $extra, $replace);
+		if (!$name) {
+			$name = 'language';
+		}
+		$data = array();
+		foreach ((array)main()->get_data('languages') as $id => $v) {
+			$data[$id] = '<i class="flag-'.$v['country'].'"></i> '. $v['name'].' ['.$v['code'].']';
+		}
+		return $this->div_box($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
 	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (!$name) {
-			$name = 'timezone';
-		}
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
-		$timezones = main()->get_data('timezones');
+		if (!$name) {
+			$name = 'timezone';
+		}
+		$data = array();
+		foreach ((array)main()->get_data('timezones') as $id => $v) {
+			$data[$id] = $v['name'].' ['.$v['code'].']';
+		}
 		return $this->select_box($name, $timezones, $extra, $replace);
 	}
 
