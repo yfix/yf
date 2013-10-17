@@ -2,7 +2,7 @@
 <project name="Application" default="build" basedir="./">
 
 	<!--<target name="build" depends="prepare,phpunit,phpmd,phpcpd,phpcb,phploc,phpcs"/>-->
-	<target name="build" depends="prepare,phpunit,phpcpd,phpcb,phploc,phpcs"/>
+	<target name="build" depends="prepare,phpunit,phpcpd,phpcb,phploc"/>
 
 	<property name="applicationDir" value="../../" />
 	<property name="testDir" value="${basedir}" />
@@ -14,15 +14,16 @@
 		<mkdir dir="${buildDir}/html/phpcov" />
 		<mkdir dir="${buildDir}/html/phpunit" />
 	</target>
-
+	
 	<target name="phpunit" description="PHPUnit">
 		<property name="phpunitLogs" value="${testDir}/artifacts/phpunit" />
 		<property name="junit" value="${phpunitLogs}/phpunit.xml" />
+		<!--
         <exec dir="${basedir}" executable="phpunit" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpunit.txt">
-        </exec>		
+		</exec>		
+		-->
 		<echo message="##teamcity[importData type='junit' path='${junit}']" />
-		<zip destfile="${phpunitLogs}/coverage.zip" basedir="${phpunitLogs}/coverage"/>
-		<!-- <delete dir="${phpunitLogs}/coverage"/> -->
+		<!--		<zip destfile="${phpunitLogs}/coverage.zip" basedir="${phpunitLogs}/coverage"/> -->
 		<echo message="##teamcity[publishArtifacts '${phpunitLogs}']" />
 	</target>
 	
@@ -73,7 +74,7 @@
 	<target name="phpcs" description="PHP_CodeSniffer">
 		<exec dir="${applicationDir}" executable="phpcs" failonerror="false" osfamily="unix" output="${buildDir}/logs/phpcs.txt">
 			<arg line="--tab-width=4" />
-			<arg line="--report=full" />
+			<arg line="--report=xml" />
 			<arg line="--standard=PEAR" />
 			<arg line="--report-file=${buildDir}/logs/phpcs.xml" />
 			<arg line="${applicationDir}" />
