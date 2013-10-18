@@ -3,6 +3,7 @@
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
+/*
 	public function test_10() {
 		$this->assertEquals(YF_PATH, _tpl( '{const("YF_PATH")}' ));
 	}
@@ -165,6 +166,21 @@ class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
 	public function test_92() {
 		$this->assertEquals(' 1  1  1 ', _tpl( '{foreach("testarray")} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
 	}
+	public function test_93() {
+		$this->assertEquals(' 1  1  1 ', _tpl( '{foreach( "testarray" )} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
+	}
+	public function test_94() {
+		$this->assertEquals(' 1  1  1 ', _tpl( '{foreach(\'testarray\')} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
+	}
+	public function test_95() {
+		$this->assertEquals(' 1  1  1 ', _tpl( '{foreach( \'testarray\' )} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
+	}
+	public function test_96() {
+		$this->assertEquals(' 1  1  1 ', _tpl( '{foreach(testarray)} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
+	}
+	public function test_97() {
+		$this->assertEquals(' 1  1  1 ', _tpl( '{foreach( testarray )} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
+	}
 	public function test_100() {
 		$this->assertEquals(
 "1). <small>(key: One)</small>
@@ -217,7 +233,17 @@ class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
 	public function test_123() {
 		$this->assertEquals('GOOD', _tpl( '{if("%string" eq "string")}GOOD{else}BAD{/if}' ));
 	}
-	public function test_131() {
-		$this->assertEquals('val1 val2', _tpl( '{sub.key1} {sub.key2}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
+	public function test_124() {
+		$this->assertEquals('GOOD', _tpl( '{if( "sub.key1" eq "val1" )}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
 	}
+*/
+	public function test_125() {
+		$this->assertEquals('GOOD', _tpl( '{if(sub.key1 eq val1)}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
+	}
+	public function test_126() {
+		$this->assertEquals('GOOD', _tpl( '{if( sub.key1 eq val1 )}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
+	}
+#	public function test_131() {
+#		$this->assertEquals('val1 val2', _tpl( '{sub.key1} {sub.key2}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
+#	}
 }
