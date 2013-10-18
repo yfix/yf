@@ -1490,70 +1490,73 @@ class yf_form2 {
 	/**
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'method';
+		}
+		$data = array();
 // TODO
-		return $this->text($name, $desc, $extra, $replace);
+		return $this->list_box($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'template';
+		}
+		$data = array();
 // TODO
-		return $this->text($name, $desc, $extra, $replace);
+		return $this->list_box($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
 	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'location';
+		}
+		$data = array();
 // TODO
-		return $this->text($name, $desc, $extra, $replace);
+		return $this->list_box($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
 	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return $this->text($name, $desc, $extra, $replace);
-// TODO
-
-		if (!$name) {
-			$name = 'icon';
-		}
-		if (is_array($desc) && empty($extra)) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
 		}
+		if (!$name) {
+			$name = 'icon';
+		}
+		$data = array();
 // TODO
-/*
-	<div class="control-group'.(isset($extra['errors'][$name]) ? ' error' : '').'">
-		<label class="control-label" for="icon">{t(Item Icon)}</label>
-		<div class="controls">
-			<span class="icon_preview">{if("icon_src" ne "")}<img src="{icon_src}" />{/if}</span>
-			<input type="text" id="icon" name="icon" value="{icon}" />
-			<input type="button" value="V" id="icon_selector" style="display:none;" class="btn" />
-		</div>
-	</div>
-*/
-/*
-		main()->NO_GRAPHICS = true;
-		$icons_dir = INCLUDE_PATH. $this->ICONS_PATH;
-		$cut_length = 0;
-		foreach ((array)_class('dir')->scan_dir($icons_dir, true, '', '/\.(svn|git)/i') as $_icon_path) {
-			$_icon_path = str_replace("\\", '/', strtolower($_icon_path));
-			if (empty($cut_length)) {
-				$cut_length = strpos($_icon_path, str_replace("\\", '/', strtolower($this->ICONS_PATH))) + strlen($this->ICONS_PATH);
-			}
-			$_icon_path = substr($_icon_path, $cut_length);
-			$body[$_icon_path] = $_icon_path;
-		}
-		if (is_array($body)) {
-			ksort($body);
-		}
-		echo implode(PHP_EOL, $body);
-*/
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+		return $this->list_box($name, $data, $extra, $replace);
 	}
 
 	/**

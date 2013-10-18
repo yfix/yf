@@ -48,7 +48,7 @@ class form2_new_controls {
 <div class="bfh-selectbox" data-flags="true">
 	<input type="hidden" value="US">
 	<a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
-		<span class="bfh-selectbox-option bfh-selectbox-medium" data-option=""><i class="glyphicon bfh-flag-US"></i> United States</span>
+		<span class="bfh-selectbox-option bfh-selectbox-medium" data-option=""><i class="icon bfh-flag-US"></i> United States</span>
 		<b class="caret"></b>
 	</a>
 	<div class="bfh-selectbox-options">
@@ -56,8 +56,8 @@ class form2_new_controls {
 		<div role="listbox">
 			<ul role="option">
 				<li><a tabindex="-1" href="#" data-option=""></a></li>
-				<li><a tabindex="-1" href="#" data-option="AF"><i class="glyphicon bfh-flag-AF"></i>Afghanistan</a></li>
-				<li><a tabindex="-1" href="#" data-option="US"><i class="glyphicon bfh-flag-US"></i>United States</a></li>
+				<li><a tabindex="-1" href="#" data-option="AF"><i class="icon bfh-flag-AF"></i>Afghanistan</a></li>
+				<li><a tabindex="-1" href="#" data-option="US"><i class="icon bfh-flag-US"></i>United States</a></li>
 			</ul>
 		</div>
 	</div>
@@ -72,12 +72,19 @@ class form2_new_controls {
 		}
 		return _class('html_controls')->list_box('country', $data, 'US', array());
 */
-		return form()
+
+		return form($r)
 			->currency_box(array('selected' => 'RUB'))
 			->language_box(array('selected' => 'uk'))
 			->timezone_box(array('selected' => 'UTC'))
 			->country_box(array('selected' => 'US'))
-			->region_box()
+			->region_box() // TODO
+
+			->method_select_box()
+			->template_select_box()
+			->location_select_box()
+			->icon_select_box()
+
 		;
 
 #		$params = array('no_form' => 1);//, array('css_framework' => 'empty','class' => 'form-inline')
