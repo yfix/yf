@@ -9,17 +9,47 @@ class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
 	public function test_11() {
 		$this->assertEquals(YF_PATH, _tpl( '{const(\'YF_PATH\')}' ));
 	}
-	public function test_12() {
+	public function test_12_1() {
 		$this->assertEquals(YF_PATH, _tpl( '{const(YF_PATH)}' ));
 	}
-	public function test_13() {
+	public function test_12_2() {
+		$this->assertEquals(YF_PATH, _tpl( '{const( YF_PATH)}' ));
+	}
+	public function test_12_3() {
+		$this->assertEquals(YF_PATH, _tpl( '{const( YF_PATH )}' ));
+	}
+	public function test_12_4() {
+		$this->assertEquals(YF_PATH, _tpl( '{const( YF_PATH )}' ));
+	}
+	public function test_12_5() {
+		$this->assertEquals(YF_PATH, _tpl( '{const(      YF_PATH         )}' ));
+	}
+	public function test_13_1() {
 		$this->assertEquals('{const(WRONG-CONST)}', _tpl( '{const(WRONG-CONST)}' ));
 	}
-	public function test_14() {
+	public function test_13_2() {
+		$this->assertEquals('{const( WRONG-CONST)}', _tpl( '{const( WRONG-CONST)}' ));
+	}
+	public function test_13_3() {
+		$this->assertEquals('{const( WRONG-CONST )}', _tpl( '{const( WRONG-CONST )}' ));
+	}
+	public function test_14_1() {
 		$this->assertEquals('{const()}', _tpl( '{const()}' ));
 	}
-	public function test_15() {
+	public function test_14_2() {
+		$this->assertEquals('{const( )}', _tpl( '{const( )}' ));
+	}
+	public function test_15_1() {
 		$this->assertEquals(substr(YF_PATH, 0, 8), _tpl( '{eval_code(substr(YF_PATH, 0, 8))}' ));
+	}
+	public function test_15_2() {
+		$this->assertEquals(substr(YF_PATH, 0, 8), _tpl( '{eval_code( substr(YF_PATH, 0, 8))}' ));
+	}
+	public function test_15_3() {
+		$this->assertEquals(substr(YF_PATH, 0, 8), _tpl( '{eval_code(substr(YF_PATH, 0, 8) )}' ));
+	}
+	public function test_15_4() {
+		$this->assertEquals(substr(YF_PATH, 0, 8), _tpl( '{eval_code( substr(YF_PATH, 0, 8) )}' ));
 	}
 	public function test_20() {
 		$this->assertEquals('val1', _tpl( '{replace1}', array('replace1' => 'val1') ));
@@ -27,7 +57,13 @@ class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
 	public function test_21() {
 		$this->assertEquals('val1', _tpl( '{replace-1}', array('replace-1' => 'val1') ));
 	}
-	public function test_22() {
+	public function test_22_1() {
+		$this->assertEquals('{ replace-1}', _tpl( '{ replace-1}', array('replace-1' => 'val1') ));
+	}
+	public function test_22_2() {
+		$this->assertEquals('{replace-1 }', _tpl( '{replace-1 }', array('replace-1' => 'val1') ));
+	}
+	public function test_22_3() {
 		$this->assertEquals('{ replace-1 }', _tpl( '{ replace-1 }', array('replace-1' => 'val1') ));
 	}
 	public function test_23() {
@@ -42,14 +78,104 @@ class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
 	public function test_26() {
 		$this->assertEquals('<a href="http://google.com/">Google</a>', _tpl( '{catch("url1")}http://yahoo.com/{/catch}{catch("url1")}http://google.com/{/catch}<a href="{url1}">Google</a>', array('url1' => 'http://google.com/') ));
 	}
-	public function test_27() {
+	public function test_27_1() {
 		$this->assertEquals('<script>function myjs(){ var i = 0 }<script>', _tpl( '<script>function myjs(){ {js-var} }<script>', array('js-var' => 'var i = 0') ));
 	}
-	public function test_28() {
+	public function test_27_2() {
+		$this->assertEquals('<script>function myjs(){ var i = 0; if(var > 0) alert("foreach"); }<script>', _tpl( '<script>function myjs(){ {js-var}; if(var > 0) alert("foreach"); }<script>', array('js-var' => 'var i = 0') ));
+	}
+	public function test_27_3() {
+		$this->assertEquals('<script>function myjs(){ var i = 0; { js-var}; }<script>', _tpl( '<script>function myjs(){ {js-var}; { js-var}; }<script>', array('js-var' => 'var i = 0') ));
+	}
+	public function test_27_4() {
+		$this->assertEquals('myjs(){ var i = 0; { js-var}; }', _tpl( 'myjs(){ {js-var}; { js-var}; }', array('js-var' => 'var i = 0') ));
+	}
+	public function test_27_5() {
+		$this->assertEquals('myjs(){ var i = 0; {js-var }; }', _tpl( 'myjs(){ {js-var}; {js-var }; }', array('js-var' => 'var i = 0') ));
+	}
+	public function test_27_6() {
+		$this->assertEquals('myjs(){ var i = 0; { js-var }; }', _tpl( 'myjs(){ {js-var}; { js-var }; }', array('js-var' => 'var i = 0') ));
+	}
+	public function test_28_1() {
 		$this->assertEquals('{get.test}', _tpl( '{get.test}' ));
 	}
-	public function test_29() {
+	public function test_28_2() {
+		$this->assertEquals('{ get.test }', _tpl( '{ get.test }' ));
+	}
+	public function test_29_1() {
+		$this->assertEquals('true', _tpl( '{execute(test,true_for_unittest)}' ));
+	}
+	public function test_29_2() {
+		$this->assertEquals('{ execute(test,true_for_unittest)}', _tpl( '{ execute(test,true_for_unittest)}' ));
+	}
+	public function test_29_3() {
+		$this->assertEquals('{execute(test,true_for_unittest) }', _tpl( '{execute(test,true_for_unittest) }' ));
+	}
+	public function test_29_4() {
+		$this->assertEquals('{ execute(test,true_for_unittest) }', _tpl( '{ execute(test,true_for_unittest) }' ));
+	}
+	public function test_29_5() {
+		$this->assertEquals('true', _tpl( '{execute( test,true_for_unittest)}' ));
+	}
+	public function test_29_6() {
+		$this->assertEquals('true', _tpl( '{execute(test,true_for_unittest )}' ));
+	}
+	public function test_29_7() {
+		$this->assertEquals('true', _tpl( '{execute( test,true_for_unittest )}' ));
+	}
+	public function test_29_8() {
+		$this->assertEquals('true', _tpl( '{execute(test ,true_for_unittest)}' ));
+	}
+	public function test_29_9() {
+		$this->assertEquals('true', _tpl( '{execute(test, true_for_unittest)}' ));
+	}
+	public function test_29_10() {
+		$this->assertEquals('true', _tpl( '{execute(test , true_for_unittest)}' ));
+	}
+	public function test_29_11() {
+		$this->assertEquals('true', _tpl( '{execute( test , true_for_unittest )}' ));
+	}
+	public function test_29_12() {
+		$this->assertEquals('true', _tpl( '{execute(test;true_for_unittest)}' ));
+	}
+	public function test_29_13() {
+		$this->assertEquals('true', _tpl( '{execute( test;true_for_unittest )}' ));
+	}
+	public function test_29_14() {
+		$this->assertEquals('true', _tpl( '{execute( test ; true_for_unittest )}' ));
+	}
+	public function test_29_15() {
+		$this->assertEquals('true', _tpl( '{execute(test;true_for_unittest;param1=val1)}' ));
+	}
+	public function test_29_16() {
+		$this->assertEquals('true', _tpl( '{execute(test,true_for_unittest,param1=val1)}' ));
+	}
+	public function test_29_17() {
+		$this->assertEquals('true', _tpl( '{execute( test , true_for_unittest , param1=val1 )}' ));
+	}
+	public function test_29_18() {
+		$this->assertEquals('true', _tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2)}' ));
+	}
+	public function test_29_19() {
+		$this->assertEquals('true', _tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2;param3=val3)}' ));
+	}
+	public function test_29_20() {
+		$this->assertEquals('true', _tpl( '{execute( test , true_for_unittest , param1=val1 ; param2=val2 )}' ));
+	}
+	public function test_29_21() {
+		$this->assertNotEquals('tru', _tpl( '{execute(test,true_for_unittest)}' ));
+	}
+	public function test_29_22() {
+		$this->assertEquals('  __true__', _tpl( '{catch("mytest1")}{execute(test,true_for_unittest)}{/catch}  __{mytest1}__' ));
+	}
+	public function test_29_30() {
 		$this->assertEquals('22true33', _tpl( '{catch("mytest1")}22{execute(test,true_for_unittest)}33{/catch}{mytest1}' ));
+	}
+	public function test_29_31() {
+		$this->assertEquals('22true33', _tpl( '{catch( "mytest1" )}22{execute(test,true_for_unittest)}33{/catch}{mytest1}' ));
+	}
+	public function test_29_32() {
+		$this->assertEquals('22true33', _tpl( '{catch( mytest1 )}22{execute(test,true_for_unittest)}33{/catch}{mytest1}' ));
 	}
 	public function test_30() {
 		$this->assertEquals('<script>function myjs(){ var i = 0 }<script>', _tpl( '{cleanup()}<script>function myjs(){ {js-var} }<script>{/cleanup}', array('js-var' => 'var i = 0') ));
