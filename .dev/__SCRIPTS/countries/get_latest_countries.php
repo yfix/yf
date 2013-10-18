@@ -18,7 +18,7 @@ function html_table_to_array($html) {
 		$val = preg_replace($r, '$1', $val);
 		foreach ($val as &$v1) {
 			$v1 = trim(strip_tags($v1));
-			$v1 = trim(preg_replace('~\!.+~ims', '', $v1));
+			$v1 = trim(preg_replace('~[\!&#]+.+~ims', '', $v1));
 		}
 		$tmp_tbl[] = $val;
 	}
@@ -27,11 +27,12 @@ function html_table_to_array($html) {
 
 $url = $url ?: 'https://en.wikipedia.org/wiki/ISO_3166-1';
 $result_file = $result_file ?: dirname(__FILE__).'/countries.php';
+$suffix = $suffix ?: '';
 
-$f2 = dirname(__FILE__).'/'.basename($url).'.table.html';
+$f2 = dirname(__FILE__).'/'.basename($url).'.table'.$suffix.'.html';
 if (!file_exists($f2)) {
 	$html1 = file_get_contents($url);
-	$regex1 = '~<h2>[^<]*<span[^>]*id="Current_codes"[^>]*>.*?</h2>.*?<table[^>]*>(.*?)</table>~ims';
+	$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
 	preg_match($regex1, $html1, $m1);
 	file_put_contents($f2, $m1[1]);
 }

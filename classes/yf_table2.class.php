@@ -689,6 +689,26 @@ class yf_table2 {
 	}
 
 	/**
+	* Callback function will be populated with these params: function($row, $params, $instance_params) {}
+	*/
+	function btn_func($name, $func, $extra = array()) {
+		if (!$desc && isset($extra['desc'])) {
+			$desc = $extra['desc'];
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace('_', ' ', $name));
+		}
+		$this->_buttons[] = array(
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'desc'	=> $desc,
+			'func'	=> $func,
+		);
+		return $this;
+	}
+
+	/**
 	*/
 	function btn_edit($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
