@@ -64,15 +64,24 @@ class form2_new_controls {
 </div>
 		';
 */
+/*
 		$data = array();
-		$a = db()->get_all('SELECT * FROM '.db('countries').' /*WHERE active="1"*/ ORDER BY name ASC');
+		$a = db()->get_all('SELECT * FROM '.db('countries').' ORDER BY name ASC');
 		foreach ((array)$a as $v) {
 			$data[$v['code']] = '<i class="bfh-flag-'.$v['code'].'"></i> '. trim($v['name']).' ['.strtoupper($v['code']).']';
 		}
 		return _class('html_controls')->list_box('country', $data, 'US', array());
+*/
+		return form()
+			->currency_box(array('selected' => 'RUB'))
+			->language_box(array('selected' => 'uk'))
+			->timezone_box(array('selected' => 'UTC'))
+			->country_box(array('selected' => 'US'))
+			->region_box()
+		;
 
-		$params = array('no_form' => 1);//, array('css_framework' => 'empty','class' => 'form-inline')
-		return form($r, $params)
+#		$params = array('no_form' => 1);//, array('css_framework' => 'empty','class' => 'form-inline')
+#		return form($r, $params)
 /*
 			->text('title')
 			->select_box('want', array('val1','val2'))
@@ -105,8 +114,7 @@ class form2_new_controls {
 			->image()
 			->birth_box()
 */
-#			->submit()
-		;
+#			->submit();
 		return $body;
 	}
 }
