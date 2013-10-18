@@ -59,7 +59,7 @@ class yf_tpl_driver_yf {
 	/** @var array @conf_skip Include template pattern */
 	public $_PATTERN_INCLUDE   = array(
 		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
-		'/(\{include\(\s*["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
+		'/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/ie'
 			=> '$this->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
