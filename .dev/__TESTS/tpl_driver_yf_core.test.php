@@ -3,7 +3,6 @@
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
-/*
 	public function test_10() {
 		$this->assertEquals(YF_PATH, _tpl( '{const("YF_PATH")}' ));
 	}
@@ -236,14 +235,13 @@ class tpl_driver_yf_core_test extends PHPUnit_Framework_TestCase {
 	public function test_124() {
 		$this->assertEquals('GOOD', _tpl( '{if( "sub.key1" eq "val1" )}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
 	}
-*/
 	public function test_125() {
 		$this->assertEquals('GOOD', _tpl( '{if(sub.key1 eq val1)}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
 	}
 	public function test_126() {
 		$this->assertEquals('GOOD', _tpl( '{if( sub.key1 eq val1 )}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
 	}
-#	public function test_131() {
-#		$this->assertEquals('val1 val2', _tpl( '{sub.key1} {sub.key2}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
-#	}
+	public function test_131() {
+		$this->assertEquals('val1 val2', _tpl( '{sub.key1} {sub.key2}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
+	}
 }
