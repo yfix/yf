@@ -636,4 +636,56 @@ class yf_html_controls {
 
 		return $body;
 	}
+
+	/**
+	*/
+	function list_box ($name, $values = array(), $selected = '', $extra = array()) {
+		// Passing params as array
+		if (is_array($name)) {
+			$extra = $name;
+			$name = $extra['name'];
+			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+			if (!$extra['no_translate']) {
+				$values = t($values);
+			}
+			$selected = $extra['selected'];
+#			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
+#			$type = isset($extra['type']) ? $extra['type'] : 2;
+#			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+#			$level = isset($extra['level']) ? $extra['level'] : 0;
+#			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+#			$extra['class'] .= ' form-control';
+#			if ($extra['class']) {
+#				$add_str .= ' class="'.$extra['class'].'" ';
+#			}
+#			if ($extra['style']) {
+#				$add_str .= ' style="'.$extra['style'].'" ';
+#			}
+#		} else {
+#			$add_str .= ' class="form-control" ';
+		}
+		if (!$values) {
+			return false;
+		}
+		$selected = strval($selected);
+		$body .= '<div class="bfh-selectbox">'
+					.'<input type="hidden" name="'.$name.'" value="">'
+					.'<a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">'
+						.'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option="'.$selected.'">'.$values[$selected].'</span>'
+						.'<b class="caret"></b>'
+					.'</a>'
+					.'<div class="bfh-selectbox-options">'
+						.'<input type="text" class="bfh-selectbox-filter">'
+						.'<div role="listbox">'
+							.'<ul role="option">';
+		foreach ((array)$values as $key => $cur_value) {
+			$body .= '<li><a tabindex="-1" href="#" data-option="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+		}
+		$body .= 			'</ul>'
+						.'</div>'
+					.'</div>'
+				.'</div>';
+		return $body;
+	}
 }
