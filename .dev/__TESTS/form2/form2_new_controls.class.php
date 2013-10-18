@@ -84,7 +84,6 @@ class form2_new_controls {
 			->template_select_box()
 			->location_select_box()
 			->icon_select_box()
-
 		;
 
 #		$params = array('no_form' => 1);//, array('css_framework' => 'empty','class' => 'form-inline')

@@ -1500,7 +1500,10 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'method';
 		}
+		return $this->text($name, $data, $extra, $replace);
+
 		$data = array();
+		$data = _class('user_modules', 'admin_modules/')->_get_methods_for_select();
 // TODO
 		return $this->list_box($name, $data, $extra, $replace);
 	}
@@ -1518,7 +1521,10 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'template';
 		}
+		return $this->text($name, $data, $extra, $replace);
+
 		$data = array();
+		$data = _class('template_editor', 'admin_modules/')->_get_stpls_for_type('user');
 // TODO
 		return $this->list_box($name, $data, $extra, $replace);
 	}
@@ -1536,6 +1542,8 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'location';
 		}
+		return $this->text($name, $data, $extra, $replace);
+
 		$data = array();
 // TODO
 		return $this->list_box($name, $data, $extra, $replace);
@@ -1555,6 +1563,7 @@ class yf_form2 {
 			$name = 'icon';
 		}
 		$data = array();
+		$data = main()->get_data('fontawesome_icons');
 // TODO
 		return $this->list_box($name, $data, $extra, $replace);
 	}
