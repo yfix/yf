@@ -575,7 +575,7 @@ class yf_html_controls {
 			if (!$extra['no_translate']) {
 				$values = t($values);
 			}
-			$selected = $extra['selected'];
+			$selected = $extra['selected'] ?: $selected;
 			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
 			$type = isset($extra['type']) ? $extra['type'] : 2;
 			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
@@ -649,7 +649,7 @@ class yf_html_controls {
 			if (!$extra['no_translate']) {
 				$values = t($values);
 			}
-			$selected = $extra['selected'];
+			$selected = $extra['selected'] ?: $selected;
 #			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
 #			$type = isset($extra['type']) ? $extra['type'] : 2;
 #			$translate = isset($extra['translate']) ? $extra['translate'] : 0;

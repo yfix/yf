@@ -66,8 +66,8 @@ class form2_new_controls {
 */
 		$data = array();
 		$a = db()->get_all('SELECT * FROM '.db('countries').' /*WHERE active="1"*/ ORDER BY name ASC');
-		foreach ((array)$a as $id => $v) {
-			$data[$id] = '<i class="bfh-flag-'.$v['code'].'"></i> '. trim($v['name']).' ['.strtoupper($v['code']).']';
+		foreach ((array)$a as $v) {
+			$data[$v['code']] = '<i class="bfh-flag-'.$v['code'].'"></i> '. trim($v['name']).' ['.strtoupper($v['code']).']';
 		}
 		return _class('html_controls')->list_box('country', $data, 'US', array());
 
@@ -90,12 +90,13 @@ class form2_new_controls {
 			->textarea('desc')
 */
 #			->div_box('testdiv', array('val1','val2'))
-
+/*
 			->navbar_start()->currency_box()->navbar_end()
 			->navbar_start()->language_box()->navbar_end()
 			->navbar_start()->timezone_box()->navbar_end()
 			->navbar_start()->country_box()->navbar_end()
 			->navbar_start()->region_box()->navbar_end()
+*/
 /*
 			->method_select_box()
 			->template_select_box()
