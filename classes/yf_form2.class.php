@@ -1470,7 +1470,27 @@ class yf_form2 {
 // TODO: move this into main()->get_data('timezones')
 		$a = db()->get_all('SELECT * FROM '.db('timezones').' WHERE active="1" ORDER BY offset ASC, name ASC');
 		foreach ((array)$a as $v) {
-			$data[$v['code']] = $v['name'].' ['.$v['offset'].'] ['.$v['code'].']';
+			$data[$v['code']] = '<small>'.$v['offset'].' ['.$v['code'].'] '.$v['name'].'</small>';
+		}
+		return $this->list_box($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
+	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'icon';
+		}
+		$data = array();
+		foreach ((array)main()->get_data('fontawesome_icons') as $icon) {
+			$data[$icon] = '<i class="icon '.$icon.'"></i> '.$icon;
 		}
 		return $this->list_box($name, $data, $extra, $replace);
 	}
@@ -1545,25 +1565,6 @@ class yf_form2 {
 		return $this->text($name, $data, $extra, $replace);
 
 		$data = array();
-// TODO
-		return $this->list_box($name, $data, $extra, $replace);
-	}
-
-	/**
-	*/
-	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
-		if (!$name) {
-			$name = 'icon';
-		}
-		$data = array();
-		$data = main()->get_data('fontawesome_icons');
 // TODO
 		return $this->list_box($name, $data, $extra, $replace);
 	}

@@ -1,5 +1,5 @@
 <?php
 
 $data = array(
-	2 => "member",
+	2 => 'member',
 );

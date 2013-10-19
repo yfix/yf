@@ -74,6 +74,7 @@ class form2_new_controls {
 */
 
 		return form($r)
+			->icon_select_box(array('selected' => 'icon-anchor'))
 			->currency_box(array('selected' => 'RUB'))
 			->language_box(array('selected' => 'uk'))
 			->timezone_box(array('selected' => 'UTC'))
@@ -83,7 +84,6 @@ class form2_new_controls {
 			->method_select_box()
 			->template_select_box()
 			->location_select_box()
-			->icon_select_box()
 		;
 
 #		$params = array('no_form' => 1);//, array('css_framework' => 'empty','class' => 'form-inline')
