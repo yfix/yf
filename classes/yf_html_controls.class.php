@@ -328,19 +328,19 @@ class yf_html_controls {
 			$start_year = 1900;
 			$end_year = gmdate('Y');
 		}
-		$y .= '<select name="year'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="year_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$y .= '<select name="year'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="year_'.$name_postfix.'_box"' : '').' class="span1">'.PHP_EOL;
 		$y .= $show_text ? '<option '.(!$year ? 'selected="selected"' : '').' value="">-'.($translate ? t('year') : 'year').'-</option>'.PHP_EOL : '';
 		for ($a = $start_year; $a <= $end_year; $a++) {
 			$y .= '<option '.(($year == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
 		$y .= '</select>'.PHP_EOL;
-		$m .= '<select name="month'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="month_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$m .= '<select name="month'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="month_'.$name_postfix.'_box"' : '').' class="span1">'.PHP_EOL;
 		$m .= $show_text ? '<option '.(!$month ? 'selected="selected"' : '').' value="">-'.($translate ? t('month') : 'month').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 12; $a++) {
 			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->_months($a)) : $this->_months($a)) .'</option>'.PHP_EOL;
 		}
 		$m .= '</select>'.PHP_EOL;
-		$d .= '<select name="day'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="day_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$d .= '<select name="day'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="day_'.$name_postfix.'_box"' : '').' class="span1">'.PHP_EOL;
 		$d .= $show_text ? '<option '.(!$day ? 'selected="selected"' : '').' value="">-'.($translate ? t('day') : 'day').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 31; $a++) {
 			$d .= '<option '.(($day == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
@@ -384,19 +384,19 @@ class yf_html_controls {
 			}
 			list ($hour, $minute, $second) = explode(':', $selected);
 		}
-		$body .= '<select name="hour'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="hour_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$body .= '<select name="hour'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="hour_'.$name_postfix.'_box"' : '').' class="span1">'.PHP_EOL;
 		$body .= $show_text ? '<option '.($hour == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('hour') : 'hour').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 23; $a++) {
 			$body .= '<option '.(($hour == $a && $hour != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
 		$body .= '</select>'.PHP_EOL;
-		$body .= '<select name="minute'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="minute_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$body .= '<select name="minute'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="minute_'.$name_postfix.'_box"' : '').' class="span1">'.PHP_EOL;
 		$body .= $show_text ? '<option '.($minute == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('minute') : 'minute').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
 			$body .= '<option '.(($minute == $a && $minute != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
 		$body .= '</select>'.PHP_EOL;
-		$body .= '<select name="second'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="second_'.$name_postfix.'_box"' : '').'>'.PHP_EOL;
+		$body .= '<select name="second'.$name_postfix.'"'.($this->AUTO_ASSIGN_IDS ? ' id="second_'.$name_postfix.'_box"' : '').' class="span1">'.PHP_EOL;
 		$body .= $show_text ? '<option '.($second == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('second') : 'second').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
 			$body .= '<option '.(($second == $a && $second != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
@@ -438,19 +438,19 @@ class yf_html_controls {
 			$start_year = 1900;
 			$end_year = gmdate('Y');
 		}
-		$y .= PHP_EOL.'<select name="'.$name.'[year]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_year_box"' : '').'>'.PHP_EOL;
+		$y .= PHP_EOL.'<select name="'.$name.'[year]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_year_box"' : '').' class="span1">'.PHP_EOL;
 		$y .= $show_text ? '<option '.(!$year ? 'selected="selected"' : '').' value="">-'.($translate ? t('year') : 'year').'-</option>'.PHP_EOL : '';
 		for ($a = $start_year; $a <= $end_year; $a++) {
 			$y .= '<option '.(($year == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
 		$y .= '</select>'.PHP_EOL;
-		$m .= '<select name="'.$name.'[month]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_month_box"' : '').'>'.PHP_EOL;
+		$m .= '<select name="'.$name.'[month]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_month_box"' : '').' class="span1">'.PHP_EOL;
 		$m .= $show_text ? '<option '.(!$month ? 'selected="selected"' : '').' value="">-'.($translate ? t('month') : 'month').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 12; $a++) {
 			$m .= '<option '.(($month == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.($translate ? t($this->_months($a)) : $this->_months($a)) .'</option>'.PHP_EOL;
 		}
 		$m .= '</select>'.PHP_EOL;
-		$d .= '<select name="'.$name.'[day]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_day_box"' : '').'>'.PHP_EOL;
+		$d .= '<select name="'.$name.'[day]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_day_box"' : '').' class="span1">'.PHP_EOL;
 		$d .= $show_text ? '<option '.(!$day ? 'selected="selected"' : '').' value="">-'.($translate ? t('day') : 'day').'-</option>'.PHP_EOL : '';
 		for ($a = 1; $a <= 31; $a++) {
 			$d .= '<option '.(($day == $a) ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
@@ -493,19 +493,19 @@ class yf_html_controls {
 			}
 			list ($hour, $minute, $second) = explode(':', $selected);
 		}
-		$body .= PHP_EOL.'<select name="'.$name.'"[hour]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_hour_box"' : '').'>'.PHP_EOL;
+		$body .= PHP_EOL.'<select name="'.$name.'"[hour]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_hour_box"' : '').' class="span1">'.PHP_EOL;
 		$body .= $show_text ? '<option '.($hour == "" ? 'selected="selected"' : '').' value="">-'.($translate ? t('hour') : 'hour').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 23; $a++) {
 			$body .= '<option '.(($hour == $a && $hour != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
 		$body .= '</select>'.PHP_EOL;
-		$body .= '<select name="'.$name.'"[minute]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_minute_box"' : '').'>'.PHP_EOL;
+		$body .= '<select name="'.$name.'"[minute]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_minute_box"' : '').' class="span1">'.PHP_EOL;
 		$body .= $show_text ? '<option '.($minute == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('minute') : 'minute').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
 			$body .= '<option '.(($minute == $a && $minute != '') ? 'selected="selected"' : '').' value="'.$a.'">'.$a.'</option>'.PHP_EOL;
 		}
 		$body .= '</select>'.PHP_EOL;
-		$body .= '<select name="'.$name.'"[second]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_second_box"' : '').'>'.PHP_EOL;
+		$body .= '<select name="'.$name.'"[second]'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_second_box"' : '').' class="span1">'.PHP_EOL;
 		$body .= $show_text ? '<option '.($second == '' ? 'selected="selected"' : '').' value="">-'.($translate ? t('second') : 'second').'-</option>'.PHP_EOL : '';
 		for ($a = 0; $a <= 59; $a++) {
 			$body .= '<option '.(($second == $a && $second != '') ? 'selected="selected"' : "").' value="'.$a.'">'.$a.'</option>'.PHP_EOL;

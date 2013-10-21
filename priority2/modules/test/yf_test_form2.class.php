@@ -13,7 +13,7 @@ class yf_test_form2 {
 			'2'	=> 'value2',
 		);
 		$methods = array();
-		$except = array('auto', 'validate', 'db_update_if_ok', 'db_insert_if_ok', 'form_begin', 'form_end', 'render', 'custom_fields', 'tpl_row');
+		$except = array('auto', 'validate', 'db_update_if_ok', 'db_insert_if_ok', 'form_begin', 'form_end', 'render', 'custom_fields', 'tpl_row','row_start','row_end','navbar_start','navbar_end');
 		foreach (get_class_methods(form()) as $m) {
 			if ($m[0] == '_' || in_array($m, $except)) {
 				continue;
