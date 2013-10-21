@@ -3,7 +3,7 @@ $data = array (
   'ab' => 
   array (
     'code' => 'ab',
-    'name' => '<a href="/wiki/Abkhaz_language" title="Abkhaz language">Abkhaz</a>',
+    'name' => 'Abkhaz',
     'native' => 'аҧсуа бызшәа, аҧсшәа',
     'code3' => 'abk',
     'country' => '',
@@ -12,7 +12,7 @@ $data = array (
   'aa' => 
   array (
     'code' => 'aa',
-    'name' => '<a href="/wiki/Afar_language" title="Afar language">Afar</a>',
+    'name' => 'Afar',
     'native' => 'Afaraf',
     'code3' => 'aar',
     'country' => '',
@@ -21,7 +21,7 @@ $data = array (
   'af' => 
   array (
     'code' => 'af',
-    'name' => '<a href="/wiki/Afrikaans_language" title="Afrikaans language" class="mw-redirect">Afrikaans</a>',
+    'name' => 'Afrikaans',
     'native' => 'Afrikaans',
     'code3' => 'afr',
     'country' => '',
@@ -30,7 +30,7 @@ $data = array (
   'ak' => 
   array (
     'code' => 'ak',
-    'name' => '<a href="/wiki/Akan_language" title="Akan language">Akan</a>',
+    'name' => 'Akan',
     'native' => 'Akan',
     'code3' => 'aka',
     'country' => '',
@@ -39,7 +39,7 @@ $data = array (
   'sq' => 
   array (
     'code' => 'sq',
-    'name' => '<a href="/wiki/Albanian_language" title="Albanian language">Albanian</a>',
+    'name' => 'Albanian',
     'native' => 'gjuha shqipe',
     'code3' => 'sqi',
     'country' => '',
@@ -48,7 +48,7 @@ $data = array (
   'am' => 
   array (
     'code' => 'am',
-    'name' => '<a href="/wiki/Amharic_language" title="Amharic language">Amharic</a>',
+    'name' => 'Amharic',
     'native' => 'አማርኛ',
     'code3' => 'amh',
     'country' => '',
@@ -57,7 +57,7 @@ $data = array (
   'ar' => 
   array (
     'code' => 'ar',
-    'name' => '<a href="/wiki/Arabic_language" title="Arabic language">Arabic</a>',
+    'name' => 'Arabic',
     'native' => 'العربية',
     'code3' => 'ara',
     'country' => '',
@@ -66,7 +66,7 @@ $data = array (
   'an' => 
   array (
     'code' => 'an',
-    'name' => '<a href="/wiki/Aragonese_language" title="Aragonese language">Aragonese</a>',
+    'name' => 'Aragonese',
     'native' => 'aragonés',
     'code3' => 'arg',
     'country' => '',
@@ -75,7 +75,7 @@ $data = array (
   'hy' => 
   array (
     'code' => 'hy',
-    'name' => '<a href="/wiki/Armenian_language" title="Armenian language">Armenian</a>',
+    'name' => 'Armenian',
     'native' => 'Հայերեն',
     'code3' => 'hye',
     'country' => '',
@@ -84,7 +84,7 @@ $data = array (
   'as' => 
   array (
     'code' => 'as',
-    'name' => '<a href="/wiki/Assamese_language" title="Assamese language">Assamese</a>',
+    'name' => 'Assamese',
     'native' => 'অসমীয়া',
     'code3' => 'asm',
     'country' => '',
@@ -93,7 +93,7 @@ $data = array (
   'av' => 
   array (
     'code' => 'av',
-    'name' => '<a href="/wiki/Avar_language" title="Avar language">Avaric</a>',
+    'name' => 'Avaric',
     'native' => 'авар мацӀ, магӀарул мацӀ',
     'code3' => 'ava',
     'country' => '',
@@ -102,7 +102,7 @@ $data = array (
   'ae' => 
   array (
     'code' => 'ae',
-    'name' => '<a href="/wiki/Avestan_language" title="Avestan language">Avestan</a>',
+    'name' => 'Avestan',
     'native' => 'avesta',
     'code3' => 'ave',
     'country' => '',
@@ -111,7 +111,7 @@ $data = array (
   'ay' => 
   array (
     'code' => 'ay',
-    'name' => '<a href="/wiki/Aymara_language" title="Aymara language">Aymara</a>',
+    'name' => 'Aymara',
     'native' => 'aymar aru',
     'code3' => 'aym',
     'country' => '',
@@ -120,8 +120,8 @@ $data = array (
   'az' => 
   array (
     'code' => 'az',
-    'name' => '<a href="/wiki/South_Azerbaijani_language" title="South Azerbaijani language" class="mw-redirect">South Azerbaijani</a>',
-    'native' => '<span lang="Azb" dir="rtl" xml:lang="Azb">تورکجه</span>‎',
+    'name' => 'South Azerbaijani',
+    'native' => 'تورکجه‎',
     'code3' => 'azb',
     'country' => '',
     'active' => 0,
@@ -129,7 +129,7 @@ $data = array (
   'bm' => 
   array (
     'code' => 'bm',
-    'name' => '<a href="/wiki/Bambara_language" title="Bambara language">Bambara</a>',
+    'name' => 'Bambara',
     'native' => 'bamanankan',
     'code3' => 'bam',
     'country' => '',
@@ -138,7 +138,7 @@ $data = array (
   'ba' => 
   array (
     'code' => 'ba',
-    'name' => '<a href="/wiki/Bashkir_language" title="Bashkir language">Bashkir</a>',
+    'name' => 'Bashkir',
     'native' => 'башҡорт теле',
     'code3' => 'bak',
     'country' => '',
@@ -147,7 +147,7 @@ $data = array (
   'eu' => 
   array (
     'code' => 'eu',
-    'name' => '<a href="/wiki/Basque_language" title="Basque language">Basque</a>',
+    'name' => 'Basque',
     'native' => 'euskara, euskera',
     'code3' => 'eus',
     'country' => '',
@@ -156,7 +156,7 @@ $data = array (
   'be' => 
   array (
     'code' => 'be',
-    'name' => '<a href="/wiki/Belarusian_language" title="Belarusian language">Belarusian</a>',
+    'name' => 'Belarusian',
     'native' => 'беларуская мова',
     'code3' => 'bel',
     'country' => 'by',
@@ -165,7 +165,7 @@ $data = array (
   'bn' => 
   array (
     'code' => 'bn',
-    'name' => '<a href="/wiki/Bengali_language" title="Bengali language">Bengali</a>; Bangla',
+    'name' => 'Bengali; Bangla',
     'native' => 'বাংলা',
     'code3' => 'ben',
     'country' => '',
@@ -174,7 +174,7 @@ $data = array (
   'bh' => 
   array (
     'code' => 'bh',
-    'name' => '<a href="/wiki/Bihari_languages" title="Bihari languages">Bihari</a>',
+    'name' => 'Bihari',
     'native' => 'भोजपुरी',
     'code3' => 'bih',
     'country' => '',
@@ -183,7 +183,7 @@ $data = array (
   'bi' => 
   array (
     'code' => 'bi',
-    'name' => '<a href="/wiki/Bislama_language" title="Bislama language" class="mw-redirect">Bislama</a>',
+    'name' => 'Bislama',
     'native' => 'Bislama',
     'code3' => 'bis',
     'country' => '',
@@ -192,7 +192,7 @@ $data = array (
   'bs' => 
   array (
     'code' => 'bs',
-    'name' => '<a href="/wiki/Bosnian_language" title="Bosnian language">Bosnian</a>',
+    'name' => 'Bosnian',
     'native' => 'bosanski jezik',
     'code3' => 'bos',
     'country' => '',
@@ -201,7 +201,7 @@ $data = array (
   'br' => 
   array (
     'code' => 'br',
-    'name' => '<a href="/wiki/Breton_language" title="Breton language">Breton</a>',
+    'name' => 'Breton',
     'native' => 'brezhoneg',
     'code3' => 'bre',
     'country' => '',
@@ -210,7 +210,7 @@ $data = array (
   'bg' => 
   array (
     'code' => 'bg',
-    'name' => '<a href="/wiki/Bulgarian_language" title="Bulgarian language">Bulgarian</a>',
+    'name' => 'Bulgarian',
     'native' => 'български език',
     'code3' => 'bul',
     'country' => 'bg',
@@ -219,7 +219,7 @@ $data = array (
   'my' => 
   array (
     'code' => 'my',
-    'name' => '<a href="/wiki/Burmese_language" title="Burmese language">Burmese</a>',
+    'name' => 'Burmese',
     'native' => 'ဗမာစာ',
     'code3' => 'mya',
     'country' => '',
@@ -228,7 +228,7 @@ $data = array (
   'ca' => 
   array (
     'code' => 'ca',
-    'name' => '<a href="/wiki/Catalan_language" title="Catalan language">Catalan</a>; <a href="/wiki/Valencian" title="Valencian">Valencian</a>',
+    'name' => 'Catalan; Valencian',
     'native' => 'català, valencià',
     'code3' => 'cat',
     'country' => '',
@@ -237,7 +237,7 @@ $data = array (
   'ch' => 
   array (
     'code' => 'ch',
-    'name' => '<a href="/wiki/Chamorro_language" title="Chamorro language">Chamorro</a>',
+    'name' => 'Chamorro',
     'native' => 'Chamoru',
     'code3' => 'cha',
     'country' => '',
@@ -246,7 +246,7 @@ $data = array (
   'ce' => 
   array (
     'code' => 'ce',
-    'name' => '<a href="/wiki/Chechen_language" title="Chechen language">Chechen</a>',
+    'name' => 'Chechen',
     'native' => 'нохчийн мотт',
     'code3' => 'che',
     'country' => '',
@@ -255,7 +255,7 @@ $data = array (
   'ny' => 
   array (
     'code' => 'ny',
-    'name' => '<a href="/wiki/Chichewa_language" title="Chichewa language" class="mw-redirect">Chichewa</a>; Chewa; Nyanja',
+    'name' => 'Chichewa; Chewa; Nyanja',
     'native' => 'chiCheŵa, chinyanja',
     'code3' => 'nya',
     'country' => '',
@@ -264,8 +264,8 @@ $data = array (
   'zh' => 
   array (
     'code' => 'zh',
-    'name' => '<a href="/wiki/Chinese_language" title="Chinese language">Chinese</a>',
-    'native' => '<span lang="zh-Hani" xml:lang="zh-Hani">中文</span> (Zhōngwén), <span lang="zh-Hans" xml:lang="zh-Hans">汉语</span>, <span lang="zh-Hant" xml:lang="zh-Hant">漢語</span>',
+    'name' => 'Chinese',
+    'native' => '中文 (Zhōngwén), 汉语, 漢語',
     'code3' => 'zho',
     'country' => 'cn',
     'active' => 0,
@@ -273,7 +273,7 @@ $data = array (
   'cv' => 
   array (
     'code' => 'cv',
-    'name' => '<a href="/wiki/Chuvash_language" title="Chuvash language">Chuvash</a>',
+    'name' => 'Chuvash',
     'native' => 'чӑваш чӗлхи',
     'code3' => 'chv',
     'country' => '',
@@ -282,7 +282,7 @@ $data = array (
   'kw' => 
   array (
     'code' => 'kw',
-    'name' => '<a href="/wiki/Cornish_language" title="Cornish language">Cornish</a>',
+    'name' => 'Cornish',
     'native' => 'Kernewek',
     'code3' => 'cor',
     'country' => '',
@@ -291,7 +291,7 @@ $data = array (
   'co' => 
   array (
     'code' => 'co',
-    'name' => '<a href="/wiki/Corsican_language" title="Corsican language">Corsican</a>',
+    'name' => 'Corsican',
     'native' => 'corsu, lingua corsa',
     'code3' => 'cos',
     'country' => '',
@@ -300,7 +300,7 @@ $data = array (
   'cr' => 
   array (
     'code' => 'cr',
-    'name' => '<a href="/wiki/Cree_language" title="Cree language">Cree</a>',
+    'name' => 'Cree',
     'native' => 'ᓀᐦᐃᔭᐍᐏᐣ',
     'code3' => 'cre',
     'country' => '',
@@ -309,7 +309,7 @@ $data = array (
   'hr' => 
   array (
     'code' => 'hr',
-    'name' => '<a href="/wiki/Croatian_language" title="Croatian language">Croatian</a>',
+    'name' => 'Croatian',
     'native' => 'hrvatski jezik',
     'code3' => 'hrv',
     'country' => '',
@@ -318,7 +318,7 @@ $data = array (
   'cs' => 
   array (
     'code' => 'cs',
-    'name' => '<a href="/wiki/Czech_language" title="Czech language">Czech</a>',
+    'name' => 'Czech',
     'native' => 'čeština, český jazyk',
     'code3' => 'ces',
     'country' => '',
@@ -327,7 +327,7 @@ $data = array (
   'da' => 
   array (
     'code' => 'da',
-    'name' => '<a href="/wiki/Danish_language" title="Danish language">Danish</a>',
+    'name' => 'Danish',
     'native' => 'dansk',
     'code3' => 'dan',
     'country' => 'dk',
@@ -336,7 +336,7 @@ $data = array (
   'dv' => 
   array (
     'code' => 'dv',
-    'name' => '<a href="/wiki/Dhivehi_language" title="Dhivehi language" class="mw-redirect">Divehi</a>; Dhivehi; Maldivian;',
+    'name' => 'Divehi; Dhivehi; Maldivian;',
     'native' => 'ދިވެހި',
     'code3' => 'div',
     'country' => '',
@@ -345,7 +345,7 @@ $data = array (
   'nl' => 
   array (
     'code' => 'nl',
-    'name' => '<a href="/wiki/Dutch_language" title="Dutch language">Dutch</a>',
+    'name' => 'Dutch',
     'native' => 'Nederlands, Vlaams',
     'code3' => 'nld',
     'country' => 'nl',
@@ -354,7 +354,7 @@ $data = array (
   'dz' => 
   array (
     'code' => 'dz',
-    'name' => '<a href="/wiki/Dzongkha_language" title="Dzongkha language" class="mw-redirect">Dzongkha</a>',
+    'name' => 'Dzongkha',
     'native' => 'རྫོང་ཁ',
     'code3' => 'dzo',
     'country' => '',
@@ -363,7 +363,7 @@ $data = array (
   'en' => 
   array (
     'code' => 'en',
-    'name' => '<a href="/wiki/English_language" title="English language">English</a>',
+    'name' => 'English',
     'native' => 'English',
     'code3' => 'eng',
     'country' => 'us',
@@ -372,7 +372,7 @@ $data = array (
   'eo' => 
   array (
     'code' => 'eo',
-    'name' => '<a href="/wiki/Esperanto" title="Esperanto">Esperanto</a>',
+    'name' => 'Esperanto',
     'native' => 'Esperanto',
     'code3' => 'epo',
     'country' => '',
@@ -381,7 +381,7 @@ $data = array (
   'et' => 
   array (
     'code' => 'et',
-    'name' => '<a href="/wiki/Estonian_language" title="Estonian language">Estonian</a>',
+    'name' => 'Estonian',
     'native' => 'eesti, eesti keel',
     'code3' => 'est',
     'country' => 'ee',
@@ -390,7 +390,7 @@ $data = array (
   'ee' => 
   array (
     'code' => 'ee',
-    'name' => '<a href="/wiki/Ewe_language" title="Ewe language">Ewe</a>',
+    'name' => 'Ewe',
     'native' => 'Eʋegbe',
     'code3' => 'ewe',
     'country' => '',
@@ -399,7 +399,7 @@ $data = array (
   'fo' => 
   array (
     'code' => 'fo',
-    'name' => '<a href="/wiki/Faroese_language" title="Faroese language">Faroese</a>',
+    'name' => 'Faroese',
     'native' => 'føroyskt',
     'code3' => 'fao',
     'country' => '',
@@ -408,7 +408,7 @@ $data = array (
   'fj' => 
   array (
     'code' => 'fj',
-    'name' => '<a href="/wiki/Fijian_language" title="Fijian language">Fijian</a>',
+    'name' => 'Fijian',
     'native' => 'vosa Vakaviti',
     'code3' => 'fij',
     'country' => '',
@@ -417,7 +417,7 @@ $data = array (
   'fi' => 
   array (
     'code' => 'fi',
-    'name' => '<a href="/wiki/Finnish_language" title="Finnish language">Finnish</a>',
+    'name' => 'Finnish',
     'native' => 'suomi, suomen kieli',
     'code3' => 'fin',
     'country' => 'fi',
@@ -426,7 +426,7 @@ $data = array (
   'fr' => 
   array (
     'code' => 'fr',
-    'name' => '<a href="/wiki/French_language" title="French language">French</a>',
+    'name' => 'French',
     'native' => 'français, langue française',
     'code3' => 'fra',
     'country' => 'fr',
@@ -435,7 +435,7 @@ $data = array (
   'ff' => 
   array (
     'code' => 'ff',
-    'name' => '<a href="/wiki/Fula_language" title="Fula language">Fula</a>; Fulah; Pulaar; Pular',
+    'name' => 'Fula; Fulah; Pulaar; Pular',
     'native' => 'Fulfulde, Pulaar, Pular',
     'code3' => 'ful',
     'country' => '',
@@ -444,7 +444,7 @@ $data = array (
   'gl' => 
   array (
     'code' => 'gl',
-    'name' => '<a href="/wiki/Galician_language" title="Galician language">Galician</a>',
+    'name' => 'Galician',
     'native' => 'galego',
     'code3' => 'glg',
     'country' => '',
@@ -453,7 +453,7 @@ $data = array (
   'ka' => 
   array (
     'code' => 'ka',
-    'name' => '<a href="/wiki/Georgian_language" title="Georgian language">Georgian</a>',
+    'name' => 'Georgian',
     'native' => 'ქართული',
     'code3' => 'kat',
     'country' => '',
@@ -462,7 +462,7 @@ $data = array (
   'de' => 
   array (
     'code' => 'de',
-    'name' => '<a href="/wiki/German_language" title="German language">German</a>',
+    'name' => 'German',
     'native' => 'Deutsch',
     'code3' => 'deu',
     'country' => 'de',
@@ -471,7 +471,7 @@ $data = array (
   'el' => 
   array (
     'code' => 'el',
-    'name' => '<a href="/wiki/Greek_language" title="Greek language">Greek</a>, Modern',
+    'name' => 'Greek, Modern',
     'native' => 'ελληνικά',
     'code3' => 'ell',
     'country' => 'gr',
@@ -480,7 +480,7 @@ $data = array (
   'gn' => 
   array (
     'code' => 'gn',
-    'name' => '<a href="/wiki/Guaran%C3%AD_language" title="Guaraní language" class="mw-redirect">Guaraní</a>',
+    'name' => 'Guaraní',
     'native' => 'Avañe\'ẽ',
     'code3' => 'grn',
     'country' => '',
@@ -489,7 +489,7 @@ $data = array (
   'gu' => 
   array (
     'code' => 'gu',
-    'name' => '<a href="/wiki/Gujarati_language" title="Gujarati language">Gujarati</a>',
+    'name' => 'Gujarati',
     'native' => 'ગુજરાતી',
     'code3' => 'guj',
     'country' => '',
@@ -498,7 +498,7 @@ $data = array (
   'ht' => 
   array (
     'code' => 'ht',
-    'name' => '<a href="/wiki/Haitian_Creole_language" title="Haitian Creole language" class="mw-redirect">Haitian</a>; Haitian Creole',
+    'name' => 'Haitian; Haitian Creole',
     'native' => 'Kreyòl ayisyen',
     'code3' => 'hat',
     'country' => '',
@@ -507,7 +507,7 @@ $data = array (
   'ha' => 
   array (
     'code' => 'ha',
-    'name' => '<a href="/wiki/Hausa_language" title="Hausa language">Hausa</a>',
+    'name' => 'Hausa',
     'native' => 'Hausa, هَوُسَ',
     'code3' => 'hau',
     'country' => '',
@@ -516,7 +516,7 @@ $data = array (
   'he' => 
   array (
     'code' => 'he',
-    'name' => '<a href="/wiki/Hebrew_language" title="Hebrew language">Hebrew</a> (modern)',
+    'name' => 'Hebrew (modern)',
     'native' => 'עברית',
     'code3' => 'heb',
     'country' => 'il',
@@ -525,7 +525,7 @@ $data = array (
   'hz' => 
   array (
     'code' => 'hz',
-    'name' => '<a href="/wiki/Herero_language" title="Herero language">Herero</a>',
+    'name' => 'Herero',
     'native' => 'Otjiherero',
     'code3' => 'her',
     'country' => '',
@@ -534,7 +534,7 @@ $data = array (
   'hi' => 
   array (
     'code' => 'hi',
-    'name' => '<a href="/wiki/Hindi" title="Hindi">Hindi</a>',
+    'name' => 'Hindi',
     'native' => 'हिन्दी, हिंदी',
     'code3' => 'hin',
     'country' => 'in',
@@ -543,7 +543,7 @@ $data = array (
   'ho' => 
   array (
     'code' => 'ho',
-    'name' => '<a href="/wiki/Hiri_Motu_language" title="Hiri Motu language">Hiri Motu</a>',
+    'name' => 'Hiri Motu',
     'native' => 'Hiri Motu',
     'code3' => 'hmo',
     'country' => '',
@@ -552,7 +552,7 @@ $data = array (
   'hu' => 
   array (
     'code' => 'hu',
-    'name' => '<a href="/wiki/Hungarian_language" title="Hungarian language">Hungarian</a>',
+    'name' => 'Hungarian',
     'native' => 'magyar',
     'code3' => 'hun',
     'country' => 'hu',
@@ -561,7 +561,7 @@ $data = array (
   'ia' => 
   array (
     'code' => 'ia',
-    'name' => '<a href="/wiki/Interlingua" title="Interlingua">Interlingua</a>',
+    'name' => 'Interlingua',
     'native' => 'Interlingua',
     'code3' => 'ina',
     'country' => '',
@@ -570,7 +570,7 @@ $data = array (
   'id' => 
   array (
     'code' => 'id',
-    'name' => '<a href="/wiki/Indonesian_language" title="Indonesian language">Indonesian</a>',
+    'name' => 'Indonesian',
     'native' => 'Bahasa Indonesia',
     'code3' => 'ind',
     'country' => '',
@@ -579,8 +579,8 @@ $data = array (
   'ie' => 
   array (
     'code' => 'ie',
-    'name' => '<a href="/wiki/Interlingue_language" title="Interlingue language" class="mw-redirect">Interlingue</a>',
-    'native' => 'Originally called <a href="/wiki/Occidental_language" title="Occidental language">Occidental</a>; then Interlingue after WWII',
+    'name' => 'Interlingue',
+    'native' => 'Originally called Occidental; then Interlingue after WWII',
     'code3' => 'ile',
     'country' => '',
     'active' => 0,
@@ -588,7 +588,7 @@ $data = array (
   'ga' => 
   array (
     'code' => 'ga',
-    'name' => '<a href="/wiki/Irish_language" title="Irish language">Irish</a>',
+    'name' => 'Irish',
     'native' => 'Gaeilge',
     'code3' => 'gle',
     'country' => '',
@@ -597,7 +597,7 @@ $data = array (
   'ig' => 
   array (
     'code' => 'ig',
-    'name' => '<a href="/wiki/Igbo_language" title="Igbo language">Igbo</a>',
+    'name' => 'Igbo',
     'native' => 'Asụsụ Igbo',
     'code3' => 'ibo',
     'country' => '',
@@ -606,7 +606,7 @@ $data = array (
   'ik' => 
   array (
     'code' => 'ik',
-    'name' => '<a href="/wiki/Inupiaq_language" title="Inupiaq language" class="mw-redirect">Inupiaq</a>',
+    'name' => 'Inupiaq',
     'native' => 'Iñupiaq, Iñupiatun',
     'code3' => 'ipk',
     'country' => '',
@@ -615,7 +615,7 @@ $data = array (
   'io' => 
   array (
     'code' => 'io',
-    'name' => '<a href="/wiki/Ido_(language)" title="Ido (language)">Ido</a>',
+    'name' => 'Ido',
     'native' => 'Ido',
     'code3' => 'ido',
     'country' => '',
@@ -624,7 +624,7 @@ $data = array (
   'is' => 
   array (
     'code' => 'is',
-    'name' => '<a href="/wiki/Icelandic_language" title="Icelandic language">Icelandic</a>',
+    'name' => 'Icelandic',
     'native' => 'Íslenska',
     'code3' => 'isl',
     'country' => '',
@@ -633,7 +633,7 @@ $data = array (
   'it' => 
   array (
     'code' => 'it',
-    'name' => '<a href="/wiki/Italian_language" title="Italian language">Italian</a>',
+    'name' => 'Italian',
     'native' => 'italiano',
     'code3' => 'ita',
     'country' => 'it',
@@ -642,7 +642,7 @@ $data = array (
   'iu' => 
   array (
     'code' => 'iu',
-    'name' => '<a href="/wiki/Inuktitut" title="Inuktitut">Inuktitut</a>',
+    'name' => 'Inuktitut',
     'native' => 'ᐃᓄᒃᑎᑐᑦ',
     'code3' => 'iku',
     'country' => '',
@@ -651,8 +651,8 @@ $data = array (
   'ja' => 
   array (
     'code' => 'ja',
-    'name' => '<a href="/wiki/Japanese_language" title="Japanese language">Japanese</a>',
-    'native' => '<span lang="ja-Hani" xml:lang="ja-Hani">日本語</span> (<span lang="ja-Hira" xml:lang="ja-Hira">にほんご</span>)',
+    'name' => 'Japanese',
+    'native' => '日本語 (にほんご)',
     'code3' => 'jpn',
     'country' => 'jp',
     'active' => 0,
@@ -660,7 +660,7 @@ $data = array (
   'jv' => 
   array (
     'code' => 'jv',
-    'name' => '<a href="/wiki/Javanese_language" title="Javanese language">Javanese</a>',
+    'name' => 'Javanese',
     'native' => 'basa Jawa',
     'code3' => 'jav',
     'country' => '',
@@ -669,7 +669,7 @@ $data = array (
   'kl' => 
   array (
     'code' => 'kl',
-    'name' => '<a href="/wiki/Kalaallisut_language" title="Kalaallisut language" class="mw-redirect">Kalaallisut</a>, Greenlandic',
+    'name' => 'Kalaallisut, Greenlandic',
     'native' => 'kalaallisut, kalaallit oqaasii',
     'code3' => 'kal',
     'country' => '',
@@ -678,7 +678,7 @@ $data = array (
   'kn' => 
   array (
     'code' => 'kn',
-    'name' => '<a href="/wiki/Kannada_language" title="Kannada language">Kannada</a>',
+    'name' => 'Kannada',
     'native' => 'ಕನ್ನಡ',
     'code3' => 'kan',
     'country' => '',
@@ -687,7 +687,7 @@ $data = array (
   'kr' => 
   array (
     'code' => 'kr',
-    'name' => '<a href="/wiki/Kanuri_language" title="Kanuri language">Kanuri</a>',
+    'name' => 'Kanuri',
     'native' => 'Kanuri',
     'code3' => 'kau',
     'country' => '',
@@ -696,8 +696,8 @@ $data = array (
   'ks' => 
   array (
     'code' => 'ks',
-    'name' => '<a href="/wiki/Kashmiri_language" title="Kashmiri language">Kashmiri</a>',
-    'native' => '<span lang="ks-Deva" xml:lang="ks-Deva">कश्मीरी</span>, <span lang="ks-Arb" dir="rtl" xml:lang="ks-Arb">كشميري</span>‎',
+    'name' => 'Kashmiri',
+    'native' => 'कश्मीरी, كشميري‎',
     'code3' => 'kas',
     'country' => '',
     'active' => 0,
@@ -705,7 +705,7 @@ $data = array (
   'kk' => 
   array (
     'code' => 'kk',
-    'name' => '<a href="/wiki/Kazakh_language" title="Kazakh language">Kazakh</a>',
+    'name' => 'Kazakh',
     'native' => 'қазақ тілі',
     'code3' => 'kaz',
     'country' => 'kz',
@@ -714,7 +714,7 @@ $data = array (
   'km' => 
   array (
     'code' => 'km',
-    'name' => '<a href="/wiki/Khmer_language" title="Khmer language">Khmer</a>',
+    'name' => 'Khmer',
     'native' => 'ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ',
     'code3' => 'khm',
     'country' => '',
@@ -723,7 +723,7 @@ $data = array (
   'ki' => 
   array (
     'code' => 'ki',
-    'name' => '<a href="/wiki/Gikuyu_language" title="Gikuyu language">Kikuyu</a>, Gikuyu',
+    'name' => 'Kikuyu, Gikuyu',
     'native' => 'Gĩkũyũ',
     'code3' => 'kik',
     'country' => '',
@@ -732,7 +732,7 @@ $data = array (
   'rw' => 
   array (
     'code' => 'rw',
-    'name' => '<a href="/wiki/Kinyarwanda" title="Kinyarwanda">Kinyarwanda</a>',
+    'name' => 'Kinyarwanda',
     'native' => 'Ikinyarwanda',
     'code3' => 'kin',
     'country' => '',
@@ -741,7 +741,7 @@ $data = array (
   'ky' => 
   array (
     'code' => 'ky',
-    'name' => '<a href="/wiki/Kyrgyz_language" title="Kyrgyz language">Kyrgyz</a>',
+    'name' => 'Kyrgyz',
     'native' => 'Кыргызча, Кыргыз тили',
     'code3' => 'kir',
     'country' => '',
@@ -750,7 +750,7 @@ $data = array (
   'kv' => 
   array (
     'code' => 'kv',
-    'name' => '<a href="/wiki/Komi_language" title="Komi language">Komi</a>',
+    'name' => 'Komi',
     'native' => 'коми кыв',
     'code3' => 'kom',
     'country' => '',
@@ -759,7 +759,7 @@ $data = array (
   'kg' => 
   array (
     'code' => 'kg',
-    'name' => '<a href="/wiki/Kongo_language" title="Kongo language">Kongo</a>',
+    'name' => 'Kongo',
     'native' => 'KiKongo',
     'code3' => 'kon',
     'country' => '',
@@ -768,8 +768,8 @@ $data = array (
   'ko' => 
   array (
     'code' => 'ko',
-    'name' => '<a href="/wiki/Korean_language" title="Korean language">Korean</a>',
-    'native' => '<span lang="ko-Hang" xml:lang="ko-Hang">한국어</span> (<span lang="ko-Hani" xml:lang="ko-Hani">韓國語</span>), <span lang="ko-Hang" xml:lang="ko-Hang">조선어</span> (<span lang="ko-Hani" xml:lang="ko-Hani">朝鮮語</span>)',
+    'name' => 'Korean',
+    'native' => '한국어 (韓國語), 조선어 (朝鮮語)',
     'code3' => 'kor',
     'country' => 'kp',
     'active' => 0,
@@ -777,8 +777,8 @@ $data = array (
   'ku' => 
   array (
     'code' => 'ku',
-    'name' => '<a href="/wiki/Kurdish_language" title="Kurdish language" class="mw-redirect">Kurdish</a>',
-    'native' => '<span lang="ku-Latn" xml:lang="ku-Latn">Kurdî</span>, <span lang="ku-Arab" dir="rtl" xml:lang="ku-Arab">كوردی</span>‎',
+    'name' => 'Kurdish',
+    'native' => 'Kurdî, كوردی‎',
     'code3' => 'kur',
     'country' => '',
     'active' => 0,
@@ -786,7 +786,7 @@ $data = array (
   'kj' => 
   array (
     'code' => 'kj',
-    'name' => '<a href="/wiki/Kwanyama" title="Kwanyama" class="mw-redirect">Kwanyama</a>, Kuanyama',
+    'name' => 'Kwanyama, Kuanyama',
     'native' => 'Kuanyama',
     'code3' => 'kua',
     'country' => '',
@@ -795,7 +795,7 @@ $data = array (
   'la' => 
   array (
     'code' => 'la',
-    'name' => '<a href="/wiki/Latin" title="Latin">Latin</a>',
+    'name' => 'Latin',
     'native' => 'latine, lingua latina',
     'code3' => 'lat',
     'country' => '',
@@ -804,7 +804,7 @@ $data = array (
   'lb' => 
   array (
     'code' => 'lb',
-    'name' => '<a href="/wiki/Luxembourgish_language" title="Luxembourgish language">Luxembourgish</a>, Letzeburgesch',
+    'name' => 'Luxembourgish, Letzeburgesch',
     'native' => 'Lëtzebuergesch',
     'code3' => 'ltz',
     'country' => '',
@@ -813,7 +813,7 @@ $data = array (
   'lg' => 
   array (
     'code' => 'lg',
-    'name' => '<a href="/wiki/Luganda" title="Luganda">Ganda</a>',
+    'name' => 'Ganda',
     'native' => 'Luganda',
     'code3' => 'lug',
     'country' => '',
@@ -822,7 +822,7 @@ $data = array (
   'li' => 
   array (
     'code' => 'li',
-    'name' => '<a href="/wiki/Limburgish_language" title="Limburgish language">Limburgish</a>, Limburgan, Limburger',
+    'name' => 'Limburgish, Limburgan, Limburger',
     'native' => 'Limburgs',
     'code3' => 'lim',
     'country' => '',
@@ -831,7 +831,7 @@ $data = array (
   'ln' => 
   array (
     'code' => 'ln',
-    'name' => '<a href="/wiki/Lingala_language" title="Lingala language">Lingala</a>',
+    'name' => 'Lingala',
     'native' => 'Lingála',
     'code3' => 'lin',
     'country' => '',
@@ -840,7 +840,7 @@ $data = array (
   'lo' => 
   array (
     'code' => 'lo',
-    'name' => '<a href="/wiki/Lao_language" title="Lao language">Lao</a>',
+    'name' => 'Lao',
     'native' => 'ພາສາລາວ',
     'code3' => 'lao',
     'country' => '',
@@ -849,7 +849,7 @@ $data = array (
   'lt' => 
   array (
     'code' => 'lt',
-    'name' => '<a href="/wiki/Lithuanian_language" title="Lithuanian language">Lithuanian</a>',
+    'name' => 'Lithuanian',
     'native' => 'lietuvių kalba',
     'code3' => 'lit',
     'country' => 'lt',
@@ -858,7 +858,7 @@ $data = array (
   'lu' => 
   array (
     'code' => 'lu',
-    'name' => '<a href="/wiki/Tshiluba_language" title="Tshiluba language" class="mw-redirect">Luba-Katanga</a>',
+    'name' => 'Luba-Katanga',
     'native' => 'Tshiluba',
     'code3' => 'lub',
     'country' => '',
@@ -867,7 +867,7 @@ $data = array (
   'lv' => 
   array (
     'code' => 'lv',
-    'name' => '<a href="/wiki/Latvian_language" title="Latvian language">Latvian</a>',
+    'name' => 'Latvian',
     'native' => 'latviešu valoda',
     'code3' => 'lav',
     'country' => 'lv',
@@ -876,7 +876,7 @@ $data = array (
   'gv' => 
   array (
     'code' => 'gv',
-    'name' => '<a href="/wiki/Manx_language" title="Manx language">Manx</a>',
+    'name' => 'Manx',
     'native' => 'Gaelg, Gailck',
     'code3' => 'glv',
     'country' => '',
@@ -885,7 +885,7 @@ $data = array (
   'mk' => 
   array (
     'code' => 'mk',
-    'name' => '<a href="/wiki/Macedonian_language" title="Macedonian language">Macedonian</a>',
+    'name' => 'Macedonian',
     'native' => 'македонски јазик',
     'code3' => 'mkd',
     'country' => '',
@@ -894,7 +894,7 @@ $data = array (
   'mg' => 
   array (
     'code' => 'mg',
-    'name' => '<a href="/wiki/Malagasy_language" title="Malagasy language">Malagasy</a>',
+    'name' => 'Malagasy',
     'native' => 'fiteny malagasy',
     'code3' => 'mlg',
     'country' => '',
@@ -903,8 +903,8 @@ $data = array (
   'ms' => 
   array (
     'code' => 'ms',
-    'name' => '<a href="/wiki/Malay_language" title="Malay language">Malay</a>',
-    'native' => '<span lang="ms" xml:lang="ms">bahasa Melayu</span>, <span lang="ms-Arab" dir="rtl" xml:lang="ms-Arab">بهاس ملايو</span>‎',
+    'name' => 'Malay',
+    'native' => 'bahasa Melayu, بهاس ملايو‎',
     'code3' => 'msa',
     'country' => '',
     'active' => 0,
@@ -912,7 +912,7 @@ $data = array (
   'ml' => 
   array (
     'code' => 'ml',
-    'name' => '<a href="/wiki/Malayalam_language" title="Malayalam language" class="mw-redirect">Malayalam</a>',
+    'name' => 'Malayalam',
     'native' => 'മലയാളം',
     'code3' => 'mal',
     'country' => '',
@@ -921,7 +921,7 @@ $data = array (
   'mt' => 
   array (
     'code' => 'mt',
-    'name' => '<a href="/wiki/Maltese_language" title="Maltese language">Maltese</a>',
+    'name' => 'Maltese',
     'native' => 'Malti',
     'code3' => 'mlt',
     'country' => '',
@@ -930,7 +930,7 @@ $data = array (
   'mi' => 
   array (
     'code' => 'mi',
-    'name' => '<a href="/wiki/M%C4%81ori_language" title="Māori language">Māori</a>',
+    'name' => 'Māori',
     'native' => 'te reo Māori',
     'code3' => 'mri',
     'country' => '',
@@ -939,7 +939,7 @@ $data = array (
   'mr' => 
   array (
     'code' => 'mr',
-    'name' => '<a href="/wiki/Marathi_language" title="Marathi language">Marathi (Marāṭhī)</a>',
+    'name' => 'Marathi (Marāṭhī)',
     'native' => 'मराठी',
     'code3' => 'mar',
     'country' => '',
@@ -948,7 +948,7 @@ $data = array (
   'mh' => 
   array (
     'code' => 'mh',
-    'name' => '<a href="/wiki/Marshallese_language" title="Marshallese language">Marshallese</a>',
+    'name' => 'Marshallese',
     'native' => 'Kajin M̧ajeļ',
     'code3' => 'mah',
     'country' => '',
@@ -957,7 +957,7 @@ $data = array (
   'mn' => 
   array (
     'code' => 'mn',
-    'name' => '<a href="/wiki/Mongolian_language" title="Mongolian language">Mongolian</a>',
+    'name' => 'Mongolian',
     'native' => 'монгол',
     'code3' => 'mon',
     'country' => '',
@@ -966,7 +966,7 @@ $data = array (
   'na' => 
   array (
     'code' => 'na',
-    'name' => '<a href="/wiki/Nauruan_language" title="Nauruan language">Nauru</a>',
+    'name' => 'Nauru',
     'native' => 'Ekakairũ Naoero',
     'code3' => 'nau',
     'country' => '',
@@ -975,7 +975,7 @@ $data = array (
   'nv' => 
   array (
     'code' => 'nv',
-    'name' => '<a href="/wiki/Navajo_language" title="Navajo language">Navajo</a>, Navaho',
+    'name' => 'Navajo, Navaho',
     'native' => 'Diné bizaad, Dinékʼehǰí',
     'code3' => 'nav',
     'country' => '',
@@ -984,7 +984,7 @@ $data = array (
   'nb' => 
   array (
     'code' => 'nb',
-    'name' => '<a href="/wiki/Bokm%C3%A5l" title="Bokmål">Norwegian Bokmål</a>',
+    'name' => 'Norwegian Bokmål',
     'native' => 'Norsk bokmål',
     'code3' => 'nob',
     'country' => '',
@@ -993,7 +993,7 @@ $data = array (
   'nd' => 
   array (
     'code' => 'nd',
-    'name' => '<a href="/wiki/Northern_Ndebele_language" title="Northern Ndebele language">North Ndebele</a>',
+    'name' => 'North Ndebele',
     'native' => 'isiNdebele',
     'code3' => 'nde',
     'country' => '',
@@ -1002,7 +1002,7 @@ $data = array (
   'ne' => 
   array (
     'code' => 'ne',
-    'name' => '<a href="/wiki/Nepali_language" title="Nepali language">Nepali</a>',
+    'name' => 'Nepali',
     'native' => 'नेपाली',
     'code3' => 'nep',
     'country' => '',
@@ -1011,7 +1011,7 @@ $data = array (
   'ng' => 
   array (
     'code' => 'ng',
-    'name' => '<a href="/wiki/Ndonga" title="Ndonga" class="mw-redirect">Ndonga</a>',
+    'name' => 'Ndonga',
     'native' => 'Owambo',
     'code3' => 'ndo',
     'country' => '',
@@ -1020,7 +1020,7 @@ $data = array (
   'nn' => 
   array (
     'code' => 'nn',
-    'name' => '<a href="/wiki/Nynorsk" title="Nynorsk">Norwegian Nynorsk</a>',
+    'name' => 'Norwegian Nynorsk',
     'native' => 'Norsk nynorsk',
     'code3' => 'nno',
     'country' => '',
@@ -1029,7 +1029,7 @@ $data = array (
   'no' => 
   array (
     'code' => 'no',
-    'name' => '<a href="/wiki/Norwegian_language" title="Norwegian language">Norwegian</a>',
+    'name' => 'Norwegian',
     'native' => 'Norsk',
     'code3' => 'nor',
     'country' => 'no',
@@ -1038,7 +1038,7 @@ $data = array (
   'ii' => 
   array (
     'code' => 'ii',
-    'name' => '<a href="/wiki/Nuosu_language" title="Nuosu language">Nuosu</a>',
+    'name' => 'Nuosu',
     'native' => 'ꆈꌠ꒿ Nuosuhxop',
     'code3' => 'iii',
     'country' => '',
@@ -1047,7 +1047,7 @@ $data = array (
   'nr' => 
   array (
     'code' => 'nr',
-    'name' => '<a href="/wiki/Southern_Ndebele_language" title="Southern Ndebele language">South Ndebele</a>',
+    'name' => 'South Ndebele',
     'native' => 'isiNdebele',
     'code3' => 'nbl',
     'country' => '',
@@ -1056,7 +1056,7 @@ $data = array (
   'oc' => 
   array (
     'code' => 'oc',
-    'name' => '<a href="/wiki/Occitan_language" title="Occitan language">Occitan</a>',
+    'name' => 'Occitan',
     'native' => 'occitan, lenga d\'òc',
     'code3' => 'oci',
     'country' => '',
@@ -1065,7 +1065,7 @@ $data = array (
   'oj' => 
   array (
     'code' => 'oj',
-    'name' => '<a href="/wiki/Ojibwe_language" title="Ojibwe language">Ojibwe</a>, Ojibwa',
+    'name' => 'Ojibwe, Ojibwa',
     'native' => 'ᐊᓂᔑᓈᐯᒧᐎᓐ',
     'code3' => 'oji',
     'country' => '',
@@ -1074,7 +1074,7 @@ $data = array (
   'cu' => 
   array (
     'code' => 'cu',
-    'name' => '<a href="/wiki/Old_Church_Slavonic" title="Old Church Slavonic">Old Church Slavonic</a>, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic',
+    'name' => 'Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic',
     'native' => 'ѩзыкъ словѣньскъ',
     'code3' => 'chu',
     'country' => '',
@@ -1083,7 +1083,7 @@ $data = array (
   'om' => 
   array (
     'code' => 'om',
-    'name' => '<a href="/wiki/Oromo_language" title="Oromo language">Oromo</a>',
+    'name' => 'Oromo',
     'native' => 'Afaan Oromoo',
     'code3' => 'orm',
     'country' => '',
@@ -1092,7 +1092,7 @@ $data = array (
   'or' => 
   array (
     'code' => 'or',
-    'name' => '<a href="/wiki/Oriya_language" title="Oriya language">Oriya</a>',
+    'name' => 'Oriya',
     'native' => 'ଓଡ଼ିଆ',
     'code3' => 'ori',
     'country' => '',
@@ -1101,7 +1101,7 @@ $data = array (
   'os' => 
   array (
     'code' => 'os',
-    'name' => '<a href="/wiki/Ossetic_language" title="Ossetic language" class="mw-redirect">Ossetian</a>, Ossetic',
+    'name' => 'Ossetian, Ossetic',
     'native' => 'ирон æвзаг',
     'code3' => 'oss',
     'country' => '',
@@ -1110,8 +1110,8 @@ $data = array (
   'pa' => 
   array (
     'code' => 'pa',
-    'name' => '<a href="/wiki/Punjabi_language" title="Punjabi language">Panjabi</a>, Punjabi',
-    'native' => '<span lang="pa" xml:lang="pa">ਪੰਜਾਬੀ</span>, <span lang="pa-Arab" dir="rtl" xml:lang="pa-Arab">پنجابی</span>‎',
+    'name' => 'Panjabi, Punjabi',
+    'native' => 'ਪੰਜਾਬੀ, پنجابی‎',
     'code3' => 'pan',
     'country' => '',
     'active' => 0,
@@ -1119,7 +1119,7 @@ $data = array (
   'pi' => 
   array (
     'code' => 'pi',
-    'name' => '<a href="/wiki/P%C4%81li_language" title="Pāli language" class="mw-redirect">Pāli</a>',
+    'name' => 'Pāli',
     'native' => 'पाऴि',
     'code3' => 'pli',
     'country' => '',
@@ -1128,7 +1128,7 @@ $data = array (
   'fa' => 
   array (
     'code' => 'fa',
-    'name' => '<a href="/wiki/Persian_language" title="Persian language">Persian</a> (Farsi)',
+    'name' => 'Persian (Farsi)',
     'native' => 'فارسی',
     'code3' => 'fas',
     'country' => '',
@@ -1137,7 +1137,7 @@ $data = array (
   'pl' => 
   array (
     'code' => 'pl',
-    'name' => '<a href="/wiki/Polish_language" title="Polish language">Polish</a>',
+    'name' => 'Polish',
     'native' => 'język polski, polszczyzna',
     'code3' => 'pol',
     'country' => 'pl',
@@ -1146,7 +1146,7 @@ $data = array (
   'ps' => 
   array (
     'code' => 'ps',
-    'name' => '<a href="/wiki/Pashto_language" title="Pashto language">Pashto</a>, Pushto',
+    'name' => 'Pashto, Pushto',
     'native' => 'پښتو',
     'code3' => 'pus',
     'country' => '',
@@ -1155,7 +1155,7 @@ $data = array (
   'pt' => 
   array (
     'code' => 'pt',
-    'name' => '<a href="/wiki/Portuguese_language" title="Portuguese language">Portuguese</a>',
+    'name' => 'Portuguese',
     'native' => 'português',
     'code3' => 'por',
     'country' => 'pt',
@@ -1164,7 +1164,7 @@ $data = array (
   'qu' => 
   array (
     'code' => 'qu',
-    'name' => '<a href="/wiki/Quechua_language" title="Quechua language" class="mw-redirect">Quechua</a>',
+    'name' => 'Quechua',
     'native' => 'Runa Simi, Kichwa',
     'code3' => 'que',
     'country' => '',
@@ -1173,7 +1173,7 @@ $data = array (
   'rm' => 
   array (
     'code' => 'rm',
-    'name' => '<a href="/wiki/Romansh_language" title="Romansh language">Romansh</a>',
+    'name' => 'Romansh',
     'native' => 'rumantsch grischun',
     'code3' => 'roh',
     'country' => '',
@@ -1182,7 +1182,7 @@ $data = array (
   'rn' => 
   array (
     'code' => 'rn',
-    'name' => '<a href="/wiki/Kirundi" title="Kirundi">Kirundi</a>',
+    'name' => 'Kirundi',
     'native' => 'Ikirundi',
     'code3' => 'run',
     'country' => '',
@@ -1191,7 +1191,7 @@ $data = array (
   'ro' => 
   array (
     'code' => 'ro',
-    'name' => '<a href="/wiki/Romanian_language" title="Romanian language">Romanian</a>, [])',
+    'name' => 'Romanian, [])',
     'native' => 'limba română',
     'code3' => 'ron',
     'country' => 'ro',
@@ -1200,7 +1200,7 @@ $data = array (
   'ru' => 
   array (
     'code' => 'ru',
-    'name' => '<a href="/wiki/Russian_language" title="Russian language">Russian</a>',
+    'name' => 'Russian',
     'native' => 'русский язык',
     'code3' => 'rus',
     'country' => 'ru',
@@ -1209,7 +1209,7 @@ $data = array (
   'sa' => 
   array (
     'code' => 'sa',
-    'name' => '<a href="/wiki/Sanskrit" title="Sanskrit">Sanskrit (Saṁskṛta)</a>',
+    'name' => 'Sanskrit (Saṁskṛta)',
     'native' => 'संस्कृतम्',
     'code3' => 'san',
     'country' => '',
@@ -1218,7 +1218,7 @@ $data = array (
   'sc' => 
   array (
     'code' => 'sc',
-    'name' => '<a href="/wiki/Sardinian_language" title="Sardinian language">Sardinian</a>',
+    'name' => 'Sardinian',
     'native' => 'sardu',
     'code3' => 'srd',
     'country' => '',
@@ -1227,8 +1227,8 @@ $data = array (
   'sd' => 
   array (
     'code' => 'sd',
-    'name' => '<a href="/wiki/Sindhi_language" title="Sindhi language">Sindhi</a>',
-    'native' => '<span lang="sd-Deva" xml:lang="sd-Deva">सिन्धी</span>, <span lang="sd-Arab" dir="rtl" xml:lang="sd-Arab">سنڌي، سندھی</span>‎',
+    'name' => 'Sindhi',
+    'native' => 'सिन्धी, سنڌي، سندھی‎',
     'code3' => 'snd',
     'country' => '',
     'active' => 0,
@@ -1236,7 +1236,7 @@ $data = array (
   'se' => 
   array (
     'code' => 'se',
-    'name' => '<a href="/wiki/Northern_Sami" title="Northern Sami" class="mw-redirect">Northern Sami</a>',
+    'name' => 'Northern Sami',
     'native' => 'Davvisámegiella',
     'code3' => 'sme',
     'country' => '',
@@ -1245,7 +1245,7 @@ $data = array (
   'sm' => 
   array (
     'code' => 'sm',
-    'name' => '<a href="/wiki/Samoan_language" title="Samoan language">Samoan</a>',
+    'name' => 'Samoan',
     'native' => 'gagana fa\'a Samoa',
     'code3' => 'smo',
     'country' => '',
@@ -1254,7 +1254,7 @@ $data = array (
   'sg' => 
   array (
     'code' => 'sg',
-    'name' => '<a href="/wiki/Sango_language" title="Sango language">Sango</a>',
+    'name' => 'Sango',
     'native' => 'yângâ tî sängö',
     'code3' => 'sag',
     'country' => '',
@@ -1263,7 +1263,7 @@ $data = array (
   'sr' => 
   array (
     'code' => 'sr',
-    'name' => '<a href="/wiki/Serbian_language" title="Serbian language">Serbian</a>',
+    'name' => 'Serbian',
     'native' => 'српски језик',
     'code3' => 'srp',
     'country' => '',
@@ -1272,7 +1272,7 @@ $data = array (
   'gd' => 
   array (
     'code' => 'gd',
-    'name' => '<a href="/wiki/Scottish_Gaelic_language" title="Scottish Gaelic language" class="mw-redirect">Scottish Gaelic</a>; Gaelic',
+    'name' => 'Scottish Gaelic; Gaelic',
     'native' => 'Gàidhlig',
     'code3' => 'gla',
     'country' => '',
@@ -1281,7 +1281,7 @@ $data = array (
   'sn' => 
   array (
     'code' => 'sn',
-    'name' => '<a href="/wiki/Shona_language" title="Shona language">Shona</a>',
+    'name' => 'Shona',
     'native' => 'chiShona',
     'code3' => 'sna',
     'country' => '',
@@ -1290,7 +1290,7 @@ $data = array (
   'si' => 
   array (
     'code' => 'si',
-    'name' => '<a href="/wiki/Sinhala_language" title="Sinhala language">Sinhala</a>, Sinhalese',
+    'name' => 'Sinhala, Sinhalese',
     'native' => 'සිංහල',
     'code3' => 'sin',
     'country' => '',
@@ -1299,7 +1299,7 @@ $data = array (
   'sk' => 
   array (
     'code' => 'sk',
-    'name' => '<a href="/wiki/Slovak_language" title="Slovak language">Slovak</a>',
+    'name' => 'Slovak',
     'native' => 'slovenčina, slovenský jazyk',
     'code3' => 'slk',
     'country' => 'sk',
@@ -1308,7 +1308,7 @@ $data = array (
   'sl' => 
   array (
     'code' => 'sl',
-    'name' => '<a href="/wiki/Slovene_language" title="Slovene language">Slovene</a>',
+    'name' => 'Slovene',
     'native' => 'slovenski jezik, slovenščina',
     'code3' => 'slv',
     'country' => '',
@@ -1317,7 +1317,7 @@ $data = array (
   'so' => 
   array (
     'code' => 'so',
-    'name' => '<a href="/wiki/Somali_language" title="Somali language">Somali</a>',
+    'name' => 'Somali',
     'native' => 'Soomaaliga, af Soomaali',
     'code3' => 'som',
     'country' => '',
@@ -1326,7 +1326,7 @@ $data = array (
   'st' => 
   array (
     'code' => 'st',
-    'name' => '<a href="/wiki/Sotho_language" title="Sotho language">Southern Sotho</a>',
+    'name' => 'Southern Sotho',
     'native' => 'Sesotho',
     'code3' => 'sot',
     'country' => '',
@@ -1335,7 +1335,7 @@ $data = array (
   'es' => 
   array (
     'code' => 'es',
-    'name' => '<a href="/wiki/Spanish_language" title="Spanish language">Spanish</a>; Castilian',
+    'name' => 'Spanish; Castilian',
     'native' => 'español, castellano',
     'code3' => 'spa',
     'country' => 'es',
@@ -1344,7 +1344,7 @@ $data = array (
   'su' => 
   array (
     'code' => 'su',
-    'name' => '<a href="/wiki/Sundanese_language" title="Sundanese language">Sundanese</a>',
+    'name' => 'Sundanese',
     'native' => 'Basa Sunda',
     'code3' => 'sun',
     'country' => '',
@@ -1353,7 +1353,7 @@ $data = array (
   'sw' => 
   array (
     'code' => 'sw',
-    'name' => '<a href="/wiki/Swahili_language" title="Swahili language">Swahili</a>',
+    'name' => 'Swahili',
     'native' => 'Kiswahili',
     'code3' => 'swa',
     'country' => '',
@@ -1362,7 +1362,7 @@ $data = array (
   'ss' => 
   array (
     'code' => 'ss',
-    'name' => '<a href="/wiki/Swati_language" title="Swati language" class="mw-redirect">Swati</a>',
+    'name' => 'Swati',
     'native' => 'SiSwati',
     'code3' => 'ssw',
     'country' => '',
@@ -1371,7 +1371,7 @@ $data = array (
   'sv' => 
   array (
     'code' => 'sv',
-    'name' => '<a href="/wiki/Swedish_language" title="Swedish language">Swedish</a>',
+    'name' => 'Swedish',
     'native' => 'Svenska',
     'code3' => 'swe',
     'country' => 'se',
@@ -1380,7 +1380,7 @@ $data = array (
   'ta' => 
   array (
     'code' => 'ta',
-    'name' => '<a href="/wiki/Tamil_language" title="Tamil language">Tamil</a>',
+    'name' => 'Tamil',
     'native' => 'தமிழ்',
     'code3' => 'tam',
     'country' => '',
@@ -1389,7 +1389,7 @@ $data = array (
   'te' => 
   array (
     'code' => 'te',
-    'name' => '<a href="/wiki/Telugu_language" title="Telugu language">Telugu</a>',
+    'name' => 'Telugu',
     'native' => 'తెలుగు',
     'code3' => 'tel',
     'country' => '',
@@ -1398,8 +1398,8 @@ $data = array (
   'tg' => 
   array (
     'code' => 'tg',
-    'name' => '<a href="/wiki/Tajik_language" title="Tajik language">Tajik</a>',
-    'native' => '<span lang="tg-Cyrl" xml:lang="tg-Cyrl">тоҷикӣ</span>, <span lang="tg-Latn" xml:lang="tg-Latn">toğikī</span>, <span lang="tg-Arab" dir="rtl" xml:lang="tg-Arab">تاجیکی</span>‎',
+    'name' => 'Tajik',
+    'native' => 'тоҷикӣ, toğikī, تاجیکی‎',
     'code3' => 'tgk',
     'country' => '',
     'active' => 0,
@@ -1407,7 +1407,7 @@ $data = array (
   'th' => 
   array (
     'code' => 'th',
-    'name' => '<a href="/wiki/Thai_language" title="Thai language">Thai</a>',
+    'name' => 'Thai',
     'native' => 'ไทย',
     'code3' => 'tha',
     'country' => '',
@@ -1416,7 +1416,7 @@ $data = array (
   'ti' => 
   array (
     'code' => 'ti',
-    'name' => '<a href="/wiki/Tigrinya_language" title="Tigrinya language">Tigrinya</a>',
+    'name' => 'Tigrinya',
     'native' => 'ትግርኛ',
     'code3' => 'tir',
     'country' => '',
@@ -1425,7 +1425,7 @@ $data = array (
   'bo' => 
   array (
     'code' => 'bo',
-    'name' => '<a href="/wiki/Standard_Tibetan" title="Standard Tibetan">Tibetan Standard</a>, Tibetan, Central',
+    'name' => 'Tibetan Standard, Tibetan, Central',
     'native' => 'བོད་ཡིག',
     'code3' => 'bod',
     'country' => '',
@@ -1434,7 +1434,7 @@ $data = array (
   'tk' => 
   array (
     'code' => 'tk',
-    'name' => '<a href="/wiki/Turkmen_language" title="Turkmen language">Turkmen</a>',
+    'name' => 'Turkmen',
     'native' => 'Türkmen, Түркмен',
     'code3' => 'tuk',
     'country' => '',
@@ -1443,7 +1443,7 @@ $data = array (
   'tl' => 
   array (
     'code' => 'tl',
-    'name' => '<a href="/wiki/Tagalog_language" title="Tagalog language">Tagalog</a>',
+    'name' => 'Tagalog',
     'native' => 'Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔',
     'code3' => 'tgl',
     'country' => '',
@@ -1452,7 +1452,7 @@ $data = array (
   'tn' => 
   array (
     'code' => 'tn',
-    'name' => '<a href="/wiki/Tswana_language" title="Tswana language">Tswana</a>',
+    'name' => 'Tswana',
     'native' => 'Setswana',
     'code3' => 'tsn',
     'country' => '',
@@ -1461,7 +1461,7 @@ $data = array (
   'to' => 
   array (
     'code' => 'to',
-    'name' => '<a href="/wiki/Tongan_language" title="Tongan language">Tonga</a> (Tonga Islands)',
+    'name' => 'Tonga (Tonga Islands)',
     'native' => 'faka Tonga',
     'code3' => 'ton',
     'country' => '',
@@ -1470,7 +1470,7 @@ $data = array (
   'tr' => 
   array (
     'code' => 'tr',
-    'name' => '<a href="/wiki/Turkish_language" title="Turkish language">Turkish</a>',
+    'name' => 'Turkish',
     'native' => 'Türkçe',
     'code3' => 'tur',
     'country' => '',
@@ -1479,7 +1479,7 @@ $data = array (
   'ts' => 
   array (
     'code' => 'ts',
-    'name' => '<a href="/wiki/Tsonga_language" title="Tsonga language">Tsonga</a>',
+    'name' => 'Tsonga',
     'native' => 'Xitsonga',
     'code3' => 'tso',
     'country' => '',
@@ -1488,8 +1488,8 @@ $data = array (
   'tt' => 
   array (
     'code' => 'tt',
-    'name' => '<a href="/wiki/Tatar_language" title="Tatar language">Tatar</a>',
-    'native' => '<span lang="tt-Cyrl" xml:lang="tt-Cyrl">татар теле</span>, <span lang="tt-Latn" xml:lang="tt-Latn">tatar tele</span>',
+    'name' => 'Tatar',
+    'native' => 'татар теле, tatar tele',
     'code3' => 'tat',
     'country' => '',
     'active' => 0,
@@ -1497,7 +1497,7 @@ $data = array (
   'tw' => 
   array (
     'code' => 'tw',
-    'name' => '<a href="/wiki/Twi" title="Twi" class="mw-redirect">Twi</a>',
+    'name' => 'Twi',
     'native' => 'Twi',
     'code3' => 'twi',
     'country' => '',
@@ -1506,7 +1506,7 @@ $data = array (
   'ty' => 
   array (
     'code' => 'ty',
-    'name' => '<a href="/wiki/Tahitian_language" title="Tahitian language">Tahitian</a>',
+    'name' => 'Tahitian',
     'native' => 'Reo Tahiti',
     'code3' => 'tah',
     'country' => '',
@@ -1515,8 +1515,8 @@ $data = array (
   'ug' => 
   array (
     'code' => 'ug',
-    'name' => '<a href="/wiki/Uyghur_language" title="Uyghur language">Uyghur</a>, Uighur',
-    'native' => '<span lang="ug-Latn" xml:lang="ug-Latn">Uyƣurqə</span>, <span lang="ug-Arab" dir="rtl" xml:lang="ug-Arab">ئۇيغۇرچە</span>‎',
+    'name' => 'Uyghur, Uighur',
+    'native' => 'Uyƣurqə, ئۇيغۇرچە‎',
     'code3' => 'uig',
     'country' => '',
     'active' => 0,
@@ -1524,7 +1524,7 @@ $data = array (
   'uk' => 
   array (
     'code' => 'uk',
-    'name' => '<a href="/wiki/Ukrainian_language" title="Ukrainian language">Ukrainian</a>',
+    'name' => 'Ukrainian',
     'native' => 'українська мова',
     'code3' => 'ukr',
     'country' => 'ua',
@@ -1533,7 +1533,7 @@ $data = array (
   'ur' => 
   array (
     'code' => 'ur',
-    'name' => '<a href="/wiki/Urdu" title="Urdu">Urdu</a>',
+    'name' => 'Urdu',
     'native' => 'اردو',
     'code3' => 'urd',
     'country' => '',
@@ -1542,8 +1542,8 @@ $data = array (
   'uz' => 
   array (
     'code' => 'uz',
-    'name' => '<a href="/wiki/Uzbek_language" title="Uzbek language">Uzbek</a>',
-    'native' => '<span lang="uz-Latn" xml:lang="uz-Latn">O‘zbek</span>, <span lang="uz-Cyrl" xml:lang="uz-Cyrl">Ўзбек</span>, <span lang="uz-Arab" dir="rtl" xml:lang="uz-Arab">أۇزبېك</span>‎',
+    'name' => 'Uzbek',
+    'native' => 'O‘zbek, Ўзбек, أۇزبېك‎',
     'code3' => 'uzb',
     'country' => '',
     'active' => 0,
@@ -1551,7 +1551,7 @@ $data = array (
   've' => 
   array (
     'code' => 've',
-    'name' => '<a href="/wiki/Venda_language" title="Venda language">Venda</a>',
+    'name' => 'Venda',
     'native' => 'Tshivenḓa',
     'code3' => 'ven',
     'country' => '',
@@ -1560,7 +1560,7 @@ $data = array (
   'vi' => 
   array (
     'code' => 'vi',
-    'name' => '<a href="/wiki/Vietnamese_language" title="Vietnamese language">Vietnamese</a>',
+    'name' => 'Vietnamese',
     'native' => 'Tiếng Việt',
     'code3' => 'vie',
     'country' => 'vn',
@@ -1569,7 +1569,7 @@ $data = array (
   'vo' => 
   array (
     'code' => 'vo',
-    'name' => '<a href="/wiki/Volap%C3%BCk" title="Volapük">Volapük</a>',
+    'name' => 'Volapük',
     'native' => 'Volapük',
     'code3' => 'vol',
     'country' => '',
@@ -1578,7 +1578,7 @@ $data = array (
   'wa' => 
   array (
     'code' => 'wa',
-    'name' => '<a href="/wiki/Walloon_language" title="Walloon language">Walloon</a>',
+    'name' => 'Walloon',
     'native' => 'walon',
     'code3' => 'wln',
     'country' => '',
@@ -1587,7 +1587,7 @@ $data = array (
   'cy' => 
   array (
     'code' => 'cy',
-    'name' => '<a href="/wiki/Welsh_language" title="Welsh language">Welsh</a>',
+    'name' => 'Welsh',
     'native' => 'Cymraeg',
     'code3' => 'cym',
     'country' => '',
@@ -1596,7 +1596,7 @@ $data = array (
   'wo' => 
   array (
     'code' => 'wo',
-    'name' => '<a href="/wiki/Wolof_language" title="Wolof language">Wolof</a>',
+    'name' => 'Wolof',
     'native' => 'Wollof',
     'code3' => 'wol',
     'country' => '',
@@ -1605,7 +1605,7 @@ $data = array (
   'fy' => 
   array (
     'code' => 'fy',
-    'name' => '<a href="/wiki/West_Frisian_language" title="West Frisian language">Western Frisian</a>',
+    'name' => 'Western Frisian',
     'native' => 'Frysk',
     'code3' => 'fry',
     'country' => '',
@@ -1614,7 +1614,7 @@ $data = array (
   'xh' => 
   array (
     'code' => 'xh',
-    'name' => '<a href="/wiki/Xhosa_language" title="Xhosa language">Xhosa</a>',
+    'name' => 'Xhosa',
     'native' => 'isiXhosa',
     'code3' => 'xho',
     'country' => '',
@@ -1623,7 +1623,7 @@ $data = array (
   'yi' => 
   array (
     'code' => 'yi',
-    'name' => '<a href="/wiki/Yiddish_language" title="Yiddish language">Yiddish</a>',
+    'name' => 'Yiddish',
     'native' => 'ייִדיש',
     'code3' => 'yid',
     'country' => '',
@@ -1632,7 +1632,7 @@ $data = array (
   'yo' => 
   array (
     'code' => 'yo',
-    'name' => '<a href="/wiki/Yoruba_language" title="Yoruba language">Yoruba</a>',
+    'name' => 'Yoruba',
     'native' => 'Yorùbá',
     'code3' => 'yor',
     'country' => '',
@@ -1641,7 +1641,7 @@ $data = array (
   'za' => 
   array (
     'code' => 'za',
-    'name' => '<a href="/wiki/Zhuang_languages" title="Zhuang languages">Zhuang</a>, Chuang',
+    'name' => 'Zhuang, Chuang',
     'native' => 'Saɯ cueŋƅ, Saw cuengh',
     'code3' => 'zha',
     'country' => '',
@@ -1650,14 +1650,10 @@ $data = array (
   'zu' => 
   array (
     'code' => 'zu',
-    'name' => '<a href="/wiki/Zulu_language" title="Zulu language">Zulu</a>',
+    'name' => 'Zulu',
     'native' => 'isiZulu',
     'code3' => 'zul',
     'country' => '',
     'active' => 0,
-  ),
-  'cz' => 
-  array (
-    'country' => 'cz',
   ),
 );
