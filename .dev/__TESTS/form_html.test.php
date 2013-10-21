@@ -60,4 +60,9 @@ class form_html_test extends PHPUnit_Framework_TestCase {
 		$html = form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc'));
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">', trim($html));
 	}
+	public function test_17() {
+		$r['name'] = 'value1';
+		$html = form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc', 'style' => 'color:red;'));
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">', trim($html));
+	}
 }
