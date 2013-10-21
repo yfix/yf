@@ -264,6 +264,7 @@ class yf_user_modules {
 			if (substr($user_module_name, 0, strlen(SITE_CLASS_PREFIX)) == SITE_CLASS_PREFIX) {
 				$user_module_name = substr($user_module_name, strlen(SITE_CLASS_PREFIX));
 			}
+			$file_names = array();
 			$file_text = '';
 			$tmp = PROJECT_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
 			if (file_exists($tmp)) {
@@ -390,7 +391,7 @@ class yf_user_modules {
 		if (!$data) {
 			$data = array('' => '-- All --');
 			foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
-				$data[$module_name] = $module_name.' -> -- All --';
+				$data[$module_name] = $module_name.' -> *';
 				foreach ((array)$module_methods as $method_name) {
 					if ($method_name == $module_name) {
 						continue;
