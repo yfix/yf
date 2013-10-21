@@ -1383,10 +1383,13 @@ class yf_form2 {
 			$name = 'country';
 		}
 		$data = array();
-#		$a = main()->get_data('countries');
+// TODO		$a = main()->get_data('countries_new');
 		$a = db()->get_all('SELECT * FROM '.db('countries').' WHERE active="1" ORDER BY name ASC');
 		foreach ((array)$a as $v) {
 			$data[$v['code']] = '<i class="bfh-flag-'.$v['code'].'"></i> '. $v['name'].' ['.strtoupper($v['code']).']';
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = './?object=manage_countries';
 		}
 		return $this->list_box($name, $data, $extra, $replace);
 	}
@@ -1405,8 +1408,12 @@ class yf_form2 {
 			$name = 'region';
 		}
 		$data = array();
-		foreach ((array)main()->get_data('regions') as $v) {
+// TODO: fill with data
+		foreach ((array)main()->get_data('regions_new') as $v) {
 			$data[$v['code']] = $v['name'].' ['.$v['code'].']';
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = './?object=manage_regions';
 		}
 		return $this->list_box($name, $data, $extra, $replace);
 	}
@@ -1427,6 +1434,9 @@ class yf_form2 {
 		$data = array();
 		foreach ((array)main()->get_data('currencies') as $v) {
 			$data[$v['id']] = $v['sign'].' &nbsp; '. $v['name'].' ['.$v['id'].']';
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = './?object=manage_currencies';
 		}
 		return $this->list_box($name, $data, $extra, $replace);
 	}
@@ -1450,6 +1460,9 @@ class yf_form2 {
 		foreach ((array)$a as $v) {
 			$data[$v['code']] = '<i class="bfh-flag-'.$v['code'].'"></i> '. $v['native'].' ['.$v['code'].']';
 		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = './?object=locale_editor';
+		}
 		return $this->list_box($name, $data, $extra, $replace);
 	}
 
@@ -1467,10 +1480,13 @@ class yf_form2 {
 			$name = 'timezone';
 		}
 		$data = array();
-// TODO: move this into main()->get_data('timezones')
+// TODO: move this into main()->get_data('timezones_new')
 		$a = db()->get_all('SELECT * FROM '.db('timezones').' WHERE active="1" ORDER BY offset ASC, name ASC');
 		foreach ((array)$a as $v) {
 			$data[$v['code']] = '<small>'.$v['offset'].' ['.$v['code'].'] '.$v['name'].'</small>';
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = './?object=manage_timezones';
 		}
 		return $this->list_box($name, $data, $extra, $replace);
 	}
@@ -1492,7 +1508,119 @@ class yf_form2 {
 		foreach ((array)main()->get_data('fontawesome_icons') as $icon) {
 			$data[$icon] = '<i class="icon '.$icon.'"></i> '.$icon;
 		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = './?object=manage_icons';
+		}
 		return $this->list_box($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
+	function user_method_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'method';
+		}
+		$data = array();
+		if ($extra['for_type'] == 'admin') {
+			$data = _class('admin_modules', 'admin_modules/')->_get_methods_for_select();
+		} else {
+			$data = _class('user_modules', 'admin_modules/')->_get_methods_for_select();
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=admin_modules' : './?object=user_modules';
+		}
+		return $this->list_box($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
+	function admin_method_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
+		$extra['for_type'] = 'admin';
+		return $this->user_method_box($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function user_template_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'template';
+		}
+		$data = array();
+		if ($extra['for_type'] == 'admin') {
+			$data = _class('template_editor', 'admin_modules/')->_get_stpls_for_type('admin');
+		} else {
+			$data = _class('template_editor', 'admin_modules/')->_get_stpls_for_type('user');
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=template_editor' : './?object=template_editor';
+		}
+		return $this->list_box($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
+	function admin_template_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
+		$extra['for_type'] = 'admin';
+		return $this->user_template_box($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function user_location_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		} elseif (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'location';
+		}
+#		return $this->text($name, $data, $extra, $replace);
+
+		$data = array();
+		if ($extra['for_type'] == 'admin') {
+		} else {
+		}
+// TODO
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=blocks' : './?object=blocks';
+		}
+		return $this->list_box($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
+	function admin_location_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
+		$extra['for_type'] = 'admin';
+		return $this->user_location_box($name, $desc, $extra, $replace);
 	}
 
 	/**
@@ -1505,68 +1633,6 @@ class yf_form2 {
 		}
 // TODO: show already uploaded image, link to delete it, input to upload new
 		return $this;
-	}
-
-	/**
-	*/
-	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
-		if (!$name) {
-			$name = 'method';
-		}
-		return $this->text($name, $data, $extra, $replace);
-
-		$data = array();
-		$data = _class('user_modules', 'admin_modules/')->_get_methods_for_select();
-// TODO
-		return $this->list_box($name, $data, $extra, $replace);
-	}
-
-	/**
-	*/
-	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
-		if (!$name) {
-			$name = 'template';
-		}
-		return $this->text($name, $data, $extra, $replace);
-
-		$data = array();
-		$data = _class('template_editor', 'admin_modules/')->_get_stpls_for_type('user');
-// TODO
-		return $this->list_box($name, $data, $extra, $replace);
-	}
-
-	/**
-	*/
-	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
-		if (!$name) {
-			$name = 'location';
-		}
-		return $this->text($name, $data, $extra, $replace);
-
-		$data = array();
-// TODO
-		return $this->list_box($name, $data, $extra, $replace);
 	}
 
 	/**

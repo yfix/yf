@@ -79,11 +79,13 @@ class form2_new_controls {
 			->language_box(array('selected' => 'uk'))
 			->timezone_box(array('selected' => 'UTC'))
 			->country_box(array('selected' => 'US'))
+			->user_method_box(array('desc' => 'user method'))
+			->admin_method_box(array('desc' => 'admin method'))
+			->user_template_box(array('desc' => 'user template'))
+			->admin_template_box(array('desc' => 'admin template'))
+			->user_location_box(array('desc' => 'user location'))
+			->admin_location_box(array('desc' => 'admin location'))
 			->region_box() // TODO
-
-			->method_select_box()
-			->template_select_box()
-			->location_select_box()
 		;
 
 #		$params = array('no_form' => 1);//, array('css_framework' => 'empty','class' => 'form-inline')
