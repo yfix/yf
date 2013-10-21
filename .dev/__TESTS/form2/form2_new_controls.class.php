@@ -86,6 +86,11 @@ class form2_new_controls {
 			->user_location_box(array('desc' => 'user location'))
 			->admin_location_box(array('desc' => 'admin location'))
 			->region_box() // TODO
+#			->image()
+#			->time_box()
+#			->date_box()
+#			->datetime_box()
+#			->birth_box()
 		;
 
 #		$params = array('no_form' => 1);//, array('css_framework' => 'empty','class' => 'form-inline')
@@ -113,14 +118,6 @@ class form2_new_controls {
 			->navbar_start()->timezone_box()->navbar_end()
 			->navbar_start()->country_box()->navbar_end()
 			->navbar_start()->region_box()->navbar_end()
-*/
-/*
-			->method_select_box()
-			->template_select_box()
-			->location_select_box()
-			->icon_select_box()
-			->image()
-			->birth_box()
 */
 #			->submit();
 		return $body;

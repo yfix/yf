@@ -95,8 +95,8 @@ class yf_menus_editor {
 			->info('type')
 			->text('name')
 			->text('desc', 'Description')
-			->template_select_box('stpl_name', array('for_type' => 'admin'))
-			->method_select_box('method_name', array('for_type' => 'admin'))
+			->template_select_box('stpl_name', array('for_type' => $a['type']))
+			->method_select_box('method_name', array('for_type' => $a['type']))
 			->active_box()
 			->save_and_back();
 	}

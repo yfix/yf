@@ -59,8 +59,6 @@ class yf_category_editor {
 			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
 			->text('name')
 			->text('desc', 'Description')
-			->template_select_box('stpl_name')
-			->method_select_box('method_name')
 			->text('custom_fields')
 			->active_box()
 			->save_and_back();
@@ -86,8 +84,8 @@ class yf_category_editor {
 			->info('type')
 			->text('name')
 			->text('desc', 'Description')
-			->template_select_box('stpl_name')
-			->method_select_box('method_name')
+			->template_select_box('stpl_name', array('for_type' => $a['type']))
+			->method_select_box('method_name', array('for_type' => $a['type']))
 			->text('custom_fields')
 			->active_box()
 			->save_and_back();

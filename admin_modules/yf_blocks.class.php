@@ -61,8 +61,6 @@ class yf_blocks {
 			->radio_box('type', array('admin' => 'admin', 'user' => 'user'))
 			->text('name','Block name')
 			->text('desc','Block Description')
-			->template_select_box('stpl_name','Custom template')
-			->method_select_box('method_name','Custom class method')
 			->active_box()
 			->save_and_back();
 	}
@@ -83,8 +81,8 @@ class yf_blocks {
 			}))
 			->text('name','Block name')
 			->text('desc','Block Description')
-			->template_select_box('stpl_name','Custom template')
-			->method_select_box('method_name','Custom class method')
+			->template_select_box('stpl_name', array('desc' => 'Custom template', 'for_type' => $a['type']))
+			->method_select_box('method_name', array('desc' => 'Custom class method', 'for_type' => $a['type']))
 			->active_box()
 			->save_and_back();
 	}
