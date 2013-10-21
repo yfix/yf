@@ -26,13 +26,16 @@
 <link rel="stylesheet" href="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz">
 
 <style type="text/css">
-	[class^="bfh-flag-"], [class*="bfh-flag-"] {
-		display: inline-block;
-		margin-right: 5px;
-	}
-	[class^="bfh-flag-"]:empty, [class*="bfh-flag-"]:empty {
-		width: 16px;
-	}
+[class^="bfh-flag-"], [class*="bfh-flag-"] {
+	display: inline-block;
+	margin-right: 5px;
+}
+[class^="bfh-flag-"]:empty, [class*="bfh-flag-"]:empty {
+	width: 16px;
+}
+.bfh-selectbox-options a {
+	padding-left: 10px;
+}
 </style>
 
 <!--[if lt IE 9]>
