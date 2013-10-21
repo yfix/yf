@@ -623,7 +623,7 @@ class yf_cache {
 				if ($f == '.' || $f == '..' || !is_file(CORE_CACHE_DIR.$f)) {
 					continue;
 				}
-				if (_class('common')->get_file_ext($f) != 'php') {
+				if (pathinfo($f, PATHINFO_EXTENSION) != 'php') {
 					continue;
 				}
 				if (substr($f, 0, strlen($this->_file_conf['file_prefix'])) != $this->_file_conf['file_prefix']) {

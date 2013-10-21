@@ -179,8 +179,8 @@ class yf_form2 {
 	/**
 	*/
 	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
 		}
 		if (!is_array($extra)) {
@@ -453,11 +453,11 @@ class yf_form2 {
 	* Can be used for inline rich editor editing with ckeditor, enable with: $extra = array('ckeditor' => true)
 	*/
 	function container($text, $desc = '', $extra = array(), $replace = array()) {
-		$text = strval($text);
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
+		$text = strval($text);
 		$extra['text'] = $text;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: '');
 
@@ -482,8 +482,8 @@ class yf_form2 {
 	* General input
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -539,8 +539,8 @@ class yf_form2 {
 	/**
 	*/
 	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -635,9 +635,6 @@ class yf_form2 {
 	* Just hidden input
 	*/
 	function hidden($name, $extra = array(), $replace = array()) {
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
 			$extra['id'] = $extra['id'] ? $extra['id'] : $extra['name'];
@@ -657,10 +654,6 @@ class yf_form2 {
 	/**
 	*/
 	function text($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['type'] = 'text';
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -668,15 +661,12 @@ class yf_form2 {
 	/**
 	*/
 	function password($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['type'] = 'password';
 		$extra['prepend'] = '<i class="icon-key"></i>';
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
 		if (!$name) {
 			$name = 'password';
 		}
@@ -686,10 +676,6 @@ class yf_form2 {
 	/**
 	*/
 	function file($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['type'] = 'file';
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -697,8 +683,8 @@ class yf_form2 {
 	/**
 	*/
 	function button($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$desc) {
@@ -716,15 +702,12 @@ class yf_form2 {
 	* Custom
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['prepend'] = '<i class="icon-user"></i>';
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
 		if (!$name) {
 			$name = 'login';
 		}
@@ -735,15 +718,12 @@ class yf_form2 {
 	* HTML5
 	*/
 	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['type'] = 'email';
 		$extra['prepend'] = '@';
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
 		if (!$name) {
 			$name = 'email';
 		}
@@ -754,10 +734,9 @@ class yf_form2 {
 	* HTML5
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
+		$extra['type'] = 'number';
+		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
+		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '10';
 		if ($extra['min']) {
 			$extra['attr']['min'] = $extra['min'];
 			unset($extra['min']);
@@ -770,9 +749,6 @@ class yf_form2 {
 			$extra['attr']['step'] = $extra['step'];
 			unset($extra['step']);
 		}
-		$extra['type'] = 'number';
-		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
-		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '10';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -785,10 +761,6 @@ class yf_form2 {
 	/**
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['type'] = 'text';
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '$';
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : '.00';
@@ -801,16 +773,12 @@ class yf_form2 {
 	* HTML5
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		}
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['type'] = 'url';
 		$extra['prepend'] = 'url';
+		if (is_array($name)) {
+			$extra += $name;
+			$desc = '';
+		}
 		if (!$name) {
 			$name = 'url';
 		}
@@ -821,11 +789,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function color($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'color';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'color';
 		if (!$name) {
 			$name = 'color';
 		}
@@ -836,11 +804,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function date($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'date';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'date';
 		if (!$name) {
 			$name = 'date';
 		}
@@ -851,11 +819,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function datetime($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'datetime';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'datetime';
 		if (!$name) {
 			$name = 'datetime';
 		}
@@ -866,11 +834,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function datetime_local($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'datetime-local';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'datetime-local';
 		if (!$name) {
 			$name = 'datetime_local';
 		}
@@ -881,11 +849,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function month($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'month';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'month';
 		if (!$name) {
 			$name = 'month';
 		}
@@ -896,11 +864,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function range($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'range';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'range';
 		if (!$name) {
 			$name = 'range';
 		}
@@ -911,11 +879,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function search($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'search';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'search';
 		if (!$name) {
 			$name = 'search';
 		}
@@ -926,11 +894,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function tel($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'tel';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'tel';
 		if (!$name) {
 			$name = 'tel';
 		}
@@ -941,11 +909,11 @@ class yf_form2 {
 	* Alias
 	*/
 	function phone($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'tel';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'tel';
 		if (!$name) {
 			$name = 'phone';
 		}
@@ -956,11 +924,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function time($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'time';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'time';
 		if (!$name) {
 			$name = 'time';
 		}
@@ -971,11 +939,11 @@ class yf_form2 {
 	* HTML5
 	*/
 	function week($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		$extra['type'] = 'week';
+		if (is_array($name)) {
+			$extra += $name;
 			$desc = '';
 		}
-		$extra['type'] = 'week';
 		if (!$name) {
 			$name = 'week';
 		}
@@ -985,8 +953,12 @@ class yf_form2 {
 	/**
 	*/
 	function active_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($name)) {
+			$extra += $name;
+			$desc = '';
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
@@ -1024,10 +996,6 @@ class yf_form2 {
 	/**
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['items'] = array(
 			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
 			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
@@ -1038,10 +1006,6 @@ class yf_form2 {
 	/**
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['items'] = array(
 			'1' => '<span class="label label-success">'.t('YES').'</span>',
 			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
@@ -1052,12 +1016,12 @@ class yf_form2 {
 	/**
 	*/
 	function submit($name = '', $value = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
 		}
-		if (is_array($value) && empty($extra)) {
-			$extra = $value;
+		if (is_array($value)) {
+			$extra += $value;
 			$value = '';
 		}
 		if (!is_array($extra)) {
@@ -1105,8 +1069,8 @@ class yf_form2 {
 				$name = 'back_url';
 			}
 		}
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		$extra['link_url'] = $name;
@@ -1124,8 +1088,8 @@ class yf_form2 {
 				$name = 'clear_url';
 			}
 		}
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		$extra['link_url'] = $name;
@@ -1136,8 +1100,8 @@ class yf_form2 {
 	/**
 	*/
 	function info($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -1182,10 +1146,6 @@ class yf_form2 {
 
 		$this->_replace[$name] = db()->get_one('SELECT CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
 
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$extra['link'] = './?object=members&action=edit&id='.$user_id;
 		return $this->info($name, $desc, $extra, $replace);
 	}
@@ -1193,7 +1153,7 @@ class yf_form2 {
 	/**
 	*/
 	function info_date($name = '', $format = '', $extra = array(), $replace = array()) {
-		$r = $replace ? $replace : $this->_replace;
+		$r = (array)$this->_replace + (array)$replace;
 		$replace[$name] = _format_date($r[$name], $format);
 		$this->_replace[$name] = $replace[$name];
 		return $this->info($name, $format, $extra, $replace);
@@ -1202,10 +1162,6 @@ class yf_form2 {
 	/**
 	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
-		}
 		$replace[$name] = $name;
 		$extra['link'] = $link;
 		$extra['no_label'] = 1;
@@ -1255,8 +1211,8 @@ class yf_form2 {
 	/**
 	*/
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -1344,12 +1300,9 @@ class yf_form2 {
 	/**
 	*/
 	function birth_box($name = '', $values = array(), $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
-			$desc = '';
 		}
 		if (!$name) {
 			$name = 'birth';
@@ -1372,11 +1325,12 @@ class yf_form2 {
 	/**
 	*/
 	function country_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1397,11 +1351,12 @@ class yf_form2 {
 	/**
 	*/
 	function region_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1421,11 +1376,12 @@ class yf_form2 {
 	/**
 	*/
 	function currency_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1444,11 +1400,12 @@ class yf_form2 {
 	/**
 	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1469,11 +1426,12 @@ class yf_form2 {
 	/**
 	*/
 	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1494,11 +1452,12 @@ class yf_form2 {
 	/**
 	*/
 	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1517,11 +1476,12 @@ class yf_form2 {
 	/**
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1542,10 +1502,6 @@ class yf_form2 {
 	/**
 	*/
 	function user_method_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		}
 		$extra['for_type'] = 'user';
 		return $this->method_select_box($name, $desc, $extra, $replace);
 	}
@@ -1553,10 +1509,6 @@ class yf_form2 {
 	/**
 	*/
 	function admin_method_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		}
 		$extra['for_type'] = 'admin';
 		return $this->method_select_box($name, $desc, $extra, $replace);
 	}
@@ -1564,11 +1516,12 @@ class yf_form2 {
 	/**
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1589,10 +1542,6 @@ class yf_form2 {
 	/**
 	*/
 	function user_template_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		}
 		$extra['for_type'] = 'user';
 		return $this->template_select_box($name, $desc, $extra, $replace);
 	}
@@ -1600,10 +1549,6 @@ class yf_form2 {
 	/**
 	*/
 	function admin_template_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		}
 		$extra['for_type'] = 'admin';
 		return $this->template_select_box($name, $desc, $extra, $replace);
 	}
@@ -1611,11 +1556,12 @@ class yf_form2 {
 	/**
 	*/
 	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
+		if (is_array($name)) {
+			$extra += $name;
 			$name = '';
-		} elseif (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1639,10 +1585,6 @@ class yf_form2 {
 	/**
 	*/
 	function user_location_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		}
 		$extra['for_type'] = 'user';
 		return $this->location_select_box($name, $desc, $extra, $replace);
 	}
@@ -1650,10 +1592,6 @@ class yf_form2 {
 	/**
 	*/
 	function admin_location_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($name) && empty($extra)) {
-			$extra = $name;
-			$name = '';
-		}
 		$extra['for_type'] = 'admin';
 		return $this->location_select_box($name, $desc, $extra, $replace);
 	}
@@ -1662,8 +1600,8 @@ class yf_form2 {
 	* Image upload
 	*/
 	function image($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 // TODO: show already uploaded image, link to delete it, input to upload new
@@ -1673,8 +1611,8 @@ class yf_form2 {
 	/**
 	*/
 	function captcha($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
@@ -1734,9 +1672,6 @@ class yf_form2 {
 	* For use inside table item template
 	*/
 	function tbl_link($name, $link, $extra = array(), $replace = array()) {
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['link'] = $extra['link'] ?: $link;
 		$func = function($extra, $r, $_this) {
@@ -1767,9 +1702,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'Edit';
 		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		$extra['link_variants'] = array('edit_link','edit_url');
 		$extra['icon'] = 'icon-edit';
 		$extra['class'] = 'ajax_edit';
@@ -1782,9 +1714,6 @@ class yf_form2 {
 	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array()) {
 		if (!$name) {
 			$name = 'Delete';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
 		}
 		$extra['link_variants'] = array('delete_link','delete_url');
 		$extra['icon'] = 'icon-trash';
@@ -1799,9 +1728,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'Clone';
 		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		$extra['link_variants'] = array('clone_link','clone_url');
 		$extra['icon'] = 'icon-plus';
 		$extra['class'] = 'ajax_clone';
@@ -1815,9 +1741,6 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'View';
 		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		$extra['link_variants'] = array('view_link','view_url');
 		$extra['icon'] = 'icon-eye-open';
 		$extra['class'] = 'ajax_view';
@@ -1828,9 +1751,6 @@ class yf_form2 {
 	* For use inside table item template
 	*/
 	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array()) {
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
 		$extra['link'] = $extra['link'] ?: $link;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));

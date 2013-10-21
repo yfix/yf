@@ -71,8 +71,6 @@ class yf_menus_editor {
 			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
 			->text('name')
 			->text('desc', 'Description')
-			->template_select_box('stpl_name')
-			->method_select_box('method_name')
 			->active_box()
 			->save_and_back();
 	}
@@ -97,8 +95,8 @@ class yf_menus_editor {
 			->info('type')
 			->text('name')
 			->text('desc', 'Description')
-			->template_select_box('stpl_name')
-			->method_select_box('method_name')
+			->template_select_box('stpl_name', array('for_type' => 'admin'))
+			->method_select_box('method_name', array('for_type' => 'admin'))
 			->active_box()
 			->save_and_back();
 	}
