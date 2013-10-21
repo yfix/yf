@@ -510,7 +510,7 @@ class yf_form2 {
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
-			$extra['class'] = 'form-control '.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = trim('form-control '.$_this->_prepare_css_class('', $r[$extra['name']], $extra));
 			// Supported: mini, small, medium, large, xlarge, xxlarge
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];

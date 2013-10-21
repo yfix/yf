@@ -13,13 +13,12 @@ class form_html_test extends PHPUnit_Framework_TestCase {
 <fieldset>
 <div class="control-group form-group">
 <div class="controls col-lg-4">
-<input type="text" class="form-control ">
+<input type="text" class="form-control">
 </div>
 </div>
 </fieldset>
 </form>', trim($html));
 	}
-
 	public function test_11() {
 		$html = form()->text('name');
 		$this->assertEquals(  
@@ -28,11 +27,37 @@ class form_html_test extends PHPUnit_Framework_TestCase {
 <div class="control-group form-group">
 <label class="control-label col-lg-2" for="name">Name</label>
 <div class="controls col-lg-4">
-<input name="name" type="text" id="name" class="form-control " placeholder="Name">
+<input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
 </div>
 </fieldset>
 </form>', trim($html));
 	}
-
+	public function test_12() {
+		$html = form('', array('no_form' => 1))->text('name');
+		$this->assertEquals(  
+'<div class="control-group form-group">
+<label class="control-label col-lg-2" for="name">Name</label>
+<div class="controls col-lg-4">
+<input name="name" type="text" id="name" class="form-control" placeholder="Name">
+</div>
+</div>', trim($html));
+	}
+	public function test_13() {
+		$html = form('', array('no_form' => 1))->text('name', array('stacked' => 1));
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim($html));
+	}
+	public function test_14() {
+		$html = form('', array('no_form' => 1))->text('name', '', array('stacked' => 1));
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim($html));
+	}
+	public function test_15() {
+		$html = form('', array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc'));
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc">', trim($html));
+	}
+	public function test_16() {
+		$r['name'] = 'value1';
+		$html = form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc'));
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">', trim($html));
+	}
 }
