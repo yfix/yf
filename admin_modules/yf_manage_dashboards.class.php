@@ -428,9 +428,9 @@ class yf_manage_dashboards {
 			$form->text('name', array('class' => 'input-medium', 'value' => $saved['name']));
 			$form->text('desc', 'Description', array('class' => 'input-medium', 'value' => $saved['desc']));
 			if ($info['auto_type'] == 'php_item') {
-				$form->method_select_box('method_name','Custom class method', array('value' => $saved['method_name'], 'for_type' => 'admin'));
+				$form->text('method_name','Custom class method', array('value' => $saved['method_name']));
 			} elseif ($info['auto_type'] == 'stpl_item') {
-				$form->template_select_box('stpl_name','Custom template', array('value' => $saved['stpl_name'], 'for_type' => 'admin'));
+				$form->text('stpl_name','Custom template', array('value' => $saved['stpl_name']));
 			}
 			$form->textarea('code', array('value' => $saved['code']));
 		}
