@@ -25,11 +25,11 @@ class yf_test_form2 {
 		$form = form();
 		foreach ($methods as $m) {
 			if (false !== strpos($m, '_box') || false !== strpos($m, 'select')) {
-				$item = form()->$m($m, $data);
+				$item = form('', array('no_form' => 1))->$m($m, $data, array('stacked' => 1));
 			} else {
-				$item = form()->$m($m);
+				$item = form('', array('no_form' => 1))->$m($m, array('stacked' => 1));
 			}
-			$form->container($item, array('desc' => $m, 'wide' => 1));
+			$form->container($item, array('desc' => $m));
 		}
 		return $form;
 /*
