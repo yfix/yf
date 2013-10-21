@@ -215,8 +215,12 @@ class yf_table2 {
 				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			if (!$params['no_header']) {
 				$body .= '<thead>'.PHP_EOL;
+				$data1row = current($data);
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
+					if (!isset($data1row[$name])) {
+						continue;
+					}
 					$info['extra'] = (array)$info['extra'];
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
