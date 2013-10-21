@@ -209,7 +209,7 @@ class yf_form2 {
 			$extra['class'] = $extra['class'] ?: 'form-horizontal';
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
-			$body = '<form '.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype')).'>';
+			$body = '<form'.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype')).'>'.PHP_EOL;
 			$body .= '<fieldset>';
 			if ($extra['legend']) {
 				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>';
@@ -230,8 +230,8 @@ class yf_form2 {
 			$extra = array();
 		}
 		$func = function($extra, $r, $_this) {
-			$body = '</fieldset>';
-			$body .= '</form>';
+			$body = '</fieldset>'.PHP_EOL;
+			$body .= '</form>'.PHP_EOL;
 			return $body;
 		};
 		if ($this->_chained_mode) {
@@ -278,15 +278,21 @@ class yf_form2 {
 				continue;
 			}
 			$val = $extra[$name];
+			if (!strlen($val)) {
+				continue;
+			}
 			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 		}
 		foreach ((array)$extra['attr'] as $name => $val) {
 			if (!$name || !isset($val)) {
 				continue;
 			}
+			if (!strlen($val)) {
+				continue;
+			}
 			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 		}
-		return ' '.implode(' ', $body).' ';
+		return ' '.implode(' ', $body);
 	}
 
 	/**
@@ -353,7 +359,7 @@ class yf_form2 {
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
-			.'</div>'.PHP_EOL;
+			.'</div>';
 
 		$before_content_html = 
 			(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
@@ -469,7 +475,7 @@ class yf_form2 {
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 
 			$attrs_names = array('id','contenteditable','style','class');
-			return $_this->_row_html(isset($extra['ckeditor']) ? '<div '.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
+			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -527,7 +533,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
-			return $_this->_row_html('<input '.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -566,7 +572,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows');
-			return $_this->_row_html('<textarea '.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
+			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -642,7 +648,7 @@ class yf_form2 {
 			$extra['type'] = 'hidden';
 
 			$attrs_names = array('type','id','name','value','data');
-			$body = '<input '.$_this->_attrs($extra, $attrs_names).'>';
+			$body = '<input'.$_this->_attrs($extra, $attrs_names).'>';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -1044,7 +1050,7 @@ class yf_form2 {
 			$extra['type'] = 'submit';
 
 			$attrs_names = array('type','name','id','class','style','value','disabled');
-			return $_this->_row_html('<input '.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
