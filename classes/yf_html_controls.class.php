@@ -595,30 +595,7 @@ class yf_html_controls {
 			return false;
 		}
 		$selected = strval($selected);
-/*
-		// (example: $add_str = 'size=6')
-		$body = $level == 0 ? PHP_EOL.'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$name.'_box"' : '').$add_str.">".PHP_EOL : '';
-		if ($show_text && $level == 0) {
-			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
-		}
-		$self_func = __FUNCTION__;
-		foreach ((array)$values as $key => $cur_value) {
-			if (is_array($cur_value)) {
-				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
-				$body .= $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
-				$body .= '</optgroup>'.PHP_EOL;
-			} else {
-				$_what_compare = strval($type == 1 ? $cur_value : $key);
-				$body .= '<option value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
-			}
-		}
-		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
-*/
-#		$body .= '<ul class="nav nav-tabs"><li class="dropdown">';
-#		$body .= '<ul class="dropdown-menu">';
 
-#		$body .= '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></a>';
-#		$body .= '<div class="btn-group">';
 		$body .= '<li class="dropdown" style="list-style-type:none;">';
 
 		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.$desc.'&nbsp;<span class="caret"></span></a>';
@@ -630,10 +607,6 @@ class yf_html_controls {
 		$body .= '</ul>';
 
 		$body .= '</li>';
-#		$body .= '</div>';
-#		$body .= '</ul>';
-#		$body .= '</li></ul>';
-
 		return $body;
 	}
 
@@ -650,24 +623,11 @@ class yf_html_controls {
 				$values = t($values);
 			}
 			$selected = $extra['selected'] ?: $selected;
-#			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
-#			$type = isset($extra['type']) ? $extra['type'] : 2;
-#			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-#			$level = isset($extra['level']) ? $extra['level'] : 0;
-#			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-#			$extra['class'] .= ' form-control';
-#			if ($extra['class']) {
-#				$add_str .= ' class="'.$extra['class'].'" ';
-#			}
-#			if ($extra['style']) {
-#				$add_str .= ' style="'.$extra['style'].'" ';
-#			}
-#		} else {
-#			$add_str .= ' class="form-control" ';
 		}
 		if (!$values) {
 			return false;
 		}
+// TODO: allow deep customization of its layout
 		$selected = strval($selected);
 		$body .= '<div class="bfh-selectbox">'
 					.'<input type="hidden" name="'.$name.'" value="">'
