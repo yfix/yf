@@ -1340,7 +1340,7 @@ class yf_form2 {
 // TODO		$a = main()->get_data('countries_new');
 		$a = db()->get_all('SELECT * FROM '.db('countries').' WHERE active="1" ORDER BY name ASC');
 		foreach ((array)$a as $v) {
-			$data[$v['code']] = '<i class="bfh-flag-'.$v['code'].'"></i> '. $v['name'].' ['.strtoupper($v['code']).']';
+			$data[$v['code']] = '<i class="bfh-flag-'.strtoupper($v['code']).'"></i> '. $v['name'].' ['.strtoupper($v['code']).']';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_countries';
@@ -1415,7 +1415,7 @@ class yf_form2 {
 // TODO: move this into main()->get_data('languages_new')
 		$a = db()->get_all('SELECT * FROM '.db('languages').' WHERE active="1" ORDER BY native ASC');
 		foreach ((array)$a as $v) {
-			$data[$v['code']] = '<i class="bfh-flag-'.$v['code'].'"></i> '. $v['native'].' ['.$v['code'].']';
+			$data[$v['code']] = ($v['country'] ? '<i class="bfh-flag-'.strtoupper($v['country']).'"></i> ' : ''). $v['native'].' ['.$v['code'].']';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_languages';
