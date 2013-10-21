@@ -1516,7 +1516,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function user_method_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
@@ -1541,18 +1541,29 @@ class yf_form2 {
 
 	/**
 	*/
+	function user_method_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
+		$extra['for_type'] = 'user';
+		return $this->method_select_box($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
 	function admin_method_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
 		}
 		$extra['for_type'] = 'admin';
-		return $this->user_method_box($name, $desc, $extra, $replace);
+		return $this->method_select_box($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
-	function user_template_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
@@ -1577,18 +1588,29 @@ class yf_form2 {
 
 	/**
 	*/
+	function user_template_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
+		$extra['for_type'] = 'user';
+		return $this->template_select_box($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
 	function admin_template_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
 		}
 		$extra['for_type'] = 'admin';
-		return $this->user_template_box($name, $desc, $extra, $replace);
+		return $this->template_select_box($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
-	function user_location_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name) && empty($extra)) {
 			$extra = $name;
 			$name = '';
@@ -1599,17 +1621,30 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'location';
 		}
-#		return $this->text($name, $data, $extra, $replace);
+
+// TODO
+		return $this->text($name, $data, $extra, $replace);
 
 		$data = array();
 		if ($extra['for_type'] == 'admin') {
 		} else {
 		}
-// TODO
+
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=blocks' : './?object=blocks';
 		}
 		return $this->list_box($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
+	function user_location_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name) && empty($extra)) {
+			$extra = $name;
+			$name = '';
+		}
+		$extra['for_type'] = 'user';
+		return $this->location_select_box($name, $desc, $extra, $replace);
 	}
 
 	/**
@@ -1620,7 +1655,7 @@ class yf_form2 {
 			$name = '';
 		}
 		$extra['for_type'] = 'admin';
-		return $this->user_location_box($name, $desc, $extra, $replace);
+		return $this->location_select_box($name, $desc, $extra, $replace);
 	}
 
 	/**
