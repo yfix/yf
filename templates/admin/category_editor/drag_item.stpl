@@ -3,9 +3,9 @@
 		<dl>
 			<a href="#" class="expander"><i class="icon"></i></a>
 {if("link" ne "")}
-			<a href="{link}">{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}{name}</a>
+			<a href="{link}">{if("icon_class" ne "")}<i class="{icon_class}"></i> {/if}{name}</a>
 {else}
-			{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}{name}
+			{if("icon_class" ne "")}<i class="{icon_class}"></i> {/if}{name}
 {/if}
 			<span class="move" title="{t(Move)}"><i class="icon icon-move"></i></span>
 			<div style="float:right;display:none;" class="controls_over">

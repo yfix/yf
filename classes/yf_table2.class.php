@@ -992,22 +992,23 @@ class yf_table2 {
 	function icon($name, $extra = array()) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
-// TODO: finish with icons
-/*
-			$icon_src = '';
-			if ($A['icon']) {
-				$_icon_path = $this->ICONS_PATH. $A['icon'];
+			$icon = trim($field);
+			if (!$icon) {
+				return '';
+			}
+			// Icon class from bootstrap icon class names 
+			if (preg_match('/^icon\-[a-z0-9_-]+$/i', $icon)) {
+				return '<i class="'.$icon.'"></i>';
+			} else {
+				$_icon_path = PROJECT_PATH.'uploads/icons/'. $icon;
 				if (file_exists(INCLUDE_PATH. $_icon_path)) {
 					$icon_src = WEB_PATH. $_icon_path;
 				}
+				if ($icon_src) {
+					return '<img src="'._prepare_html($icon_src).'" />';
+				}
 			}
-			// Icon class from bootstrap icon class names 
-			$icon_class = '';
-			if ($A['icon'] && (strpos($A['icon'], '.') === false)) {
-				$icon_class = $A['icon'];
-			}
-*/
-			return $out;
+			return '';
 		}, $extra);
 	}
 

@@ -407,6 +407,10 @@ class yf_menus_editor {
 		$_prev_level = 0;
 		$_next_level = 0;
 		$item_counter = 0;
+
+		$ICONS_DIR = _class('graphics')->ICONS_PATH;
+		$MEDIA_PATH = _class('graphics')->MEDIA_PATH;
+
 		foreach ((array)$menu_items_to_display as $i => $item_info) {
 			$item_counter++;
 			$_next_info	= isset($menu_items_to_display[$i + 1]) ? $menu_items_to_display[$i + 1] : array();
@@ -420,15 +424,19 @@ class yf_menus_editor {
 			} elseif ($item_info['type_id'] == 2) {
 				$item_link = $item_info['location'];
 			}
-			// Prepare icon path = WEB_PATH. $this->ICONS_PATH. $item_info['icon'];
+			$icon = trim($item_info['icon']);
 			$icon_path = '';
-			if ($item_info['icon'] && file_exists(PROJECT_PATH. _class('graphics')->ICONS_PATH. $item_info['icon'])) {
-				$icon_path = _class('graphics')->MEDIA_PATH. _class('graphics')->ICONS_PATH. $item_info['icon'];
-			}
-			// Icon class from bootstrap icon class names 
 			$icon_class = '';
-			if ($item_info['icon'] && (strpos($item_info['icon'], '.') === false)) {
-				$icon_class = $item_info['icon'];
+			if ($icon) {
+				// Icon class from bootstrap icon class names 
+				if (preg_match('/^icon\-[a-z0-9_-]+$/i', $icon) || (strpos($icon, '.') === false)) {
+					$icon_class = $icon;
+				} else {
+					$_icon_fs_path = PROJECT_PATH. $ICONS_DIR. $icon;
+					if (file_exists($_icon_fs_path)) {
+						$icon_path = $MEDIA_PATH. $ICONS_DIR. $icon;
+					}
+				}
 			}
 			$replace2 = array(
 				'item_id'		=> intval($item_info['id']),
