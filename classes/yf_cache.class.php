@@ -250,11 +250,6 @@ class yf_cache {
 				$result = $try_unpack;
 			}
 		}
-// TODO: add DEBUG_MODE checking here to not allow refresh_cache attacks
-// TODO: maybe add check for: conf('cache_refresh_token', 'something_random')
-		if ($_GET['refresh_cache']) {
-			return false;
-		}
 		if ($this->DEBUG_MODE) {
 			$all_debug = debug('_core_cache_debug::get');
 			$debug_index = count($all_debug);
@@ -279,6 +274,11 @@ class yf_cache {
 			}
 		}
 		if (!conf('USE_CACHE')) {
+			return false;
+		}
+// TODO: add DEBUG_MODE checking here to not allow refresh_cache attacks
+// TODO: maybe add check for: conf('cache_refresh_token', 'something_random')
+		if ($_GET['refresh_cache']) {
 			return false;
 		}
 		return $result;
