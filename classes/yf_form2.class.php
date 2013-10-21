@@ -334,7 +334,7 @@ class yf_form2 {
 				$css_class = $_css_class;
 			}
 		}
-		return $css_class;
+		return $css_class ? ' '.$css_class : '';
 	}
 
 	/**
@@ -510,7 +510,7 @@ class yf_form2 {
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
-			$extra['class'] = trim('form-control '.$_this->_prepare_css_class('', $r[$extra['name']], $extra));
+			$extra['class'] = 'form-control'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			// Supported: mini, small, medium, large, xlarge, xxlarge
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];
@@ -567,7 +567,7 @@ class yf_form2 {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
-			$extra['class'] = 'ckeditor form-control '.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = 'ckeditor form-control'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
@@ -1043,7 +1043,7 @@ class yf_form2 {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = 'btn btn-primary '.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['value'] = t($extra['value']);
 			$extra['desc'] = ''; // We do not need label here
