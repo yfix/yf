@@ -1418,7 +1418,7 @@ class yf_form2 {
 			$data[$v['code']] = '<i class="bfh-flag-'.$v['code'].'"></i> '. $v['native'].' ['.$v['code'].']';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
-			$extra['edit_link'] = './?object=locale_editor';
+			$extra['edit_link'] = './?object=manage_languages';
 		}
 		return $this->list_box($name, $data, $extra, $replace);
 	}
