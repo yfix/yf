@@ -19,6 +19,7 @@ class yf_shop_supplier_panel {
 			->link('Orders', './?object='.$_GET['object'].'&action=orders')
 			->link('Category mapping', './?object='.$_GET['object'].'&action=category_mapping')
 			->link('Import XLS', './?object='.$_GET['object'].'&action=import_xls')
+			->link('Upload images', './?object='.$_GET['object'].'&action=upload_images')
 		;
 	}
 
@@ -74,6 +75,9 @@ class yf_shop_supplier_panel {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_filter', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
+	function upload_images() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_upload_images', 'admin_modules/'.$cl.'/')->$func($params);
+	}
 	/**
 	* Hook
 	*/

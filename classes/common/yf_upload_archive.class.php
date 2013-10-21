@@ -11,10 +11,9 @@ class yf_upload_archive {
 
 	/** @var array */
 	public $ALLOWED_MIME_TYPES = array(
-#		'image/jpeg'	=> 'jpeg',
-#		'image/pjpeg'	=> 'jpeg',
-#		'image/png'		=> 'png',
-#		'image/gif'		=> 'gif',
+    	'application/zip'   => 'zip',
+    	'application/rar'   => 'rar',
+    	'application/tar'   => 'tar',
 	);
 
 	/**
@@ -31,7 +30,7 @@ class yf_upload_archive {
 		}
 		$ARCHIVE = is_array($name_in_form) ? $name_in_form : $_FILES[$name_in_form];
 		if ($ARCHIVE['type'] && !isset($this->ALLOWED_MIME_TYPES[$ARCHIVE['type']])) {
-#			_re('Invalid file mime type');
+			_re('Invalid file mime type');
 		}
 		if (common()->_error_exists()) {
 			return false;
