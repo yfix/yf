@@ -5,7 +5,7 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 $_GET['object'] = 'dynamic';
 $_GET['action'] = 'unit_test_table';
 
-class table_html_test extends PHPUnit_Framework_TestCase {
+class class_table_test extends PHPUnit_Framework_TestCase {
 	public function test_01() {
 		$html = table();
 		$this->assertEquals('<div class="alert alert-info">No records</div>', trim($html));
