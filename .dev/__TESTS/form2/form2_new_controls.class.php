@@ -20,7 +20,8 @@ class form2_new_controls {
 #			->date_box()
 #			->datetime_box()
 #			->birth_box()
-#			->div_box('testdiv', array('val1','val2'))
+			->navbar_start()->div_box('testdiv1', array('val1','val2'))->navbar_end()
+			->navbar_start()->div_box('testdiv2', array('val1','val2'))->navbar_end()
 /*
 			->navbar_start()->currency_box()->navbar_end()
 			->navbar_start()->language_box()->navbar_end()

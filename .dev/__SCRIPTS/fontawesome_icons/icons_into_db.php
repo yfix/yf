@@ -19,9 +19,11 @@ if (!$data) {
 	exit('Error: $data is missing');
 }
 ###########
-define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
-require YF_PATH.'classes/yf_main.class.php';
-new yf_main('admin', $no_db_connect = false, $auto_init_all = true);
+if (!defined('YF_PATH')) {
+	define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
+	require YF_PATH.'classes/yf_main.class.php';
+	new yf_main('admin', $no_db_connect = false, $auto_init_all = true);
+}
 ###########
 $table = DB_PREFIX.'icons';
 $tables = db()->get_2d('show tables');
