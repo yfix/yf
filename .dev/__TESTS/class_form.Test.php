@@ -2,10 +2,13 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
-$_GET['object'] = 'dynamic';
-$_GET['action'] = 'unit_test_form';
-
 class class_form_test extends PHPUnit_Framework_TestCase {
+	public static function setUpBeforeClass() {
+		$_GET['object'] = 'dynamic';
+		$_GET['action'] = 'unit_test_form';
+	}
+	public static function tearDownAfterClass() {
+	}
 	public function test_01() {
 		$html = form();
 		$this->assertEquals(  
