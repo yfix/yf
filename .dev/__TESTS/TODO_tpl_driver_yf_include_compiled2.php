@@ -2,7 +2,7 @@
 
 $GLOBALS['PROJECT_CONF']['tpl']['COMPILE_TEMPLATES'] = true;
 
-#require_once dirname(__FILE__).'/tpl_driver_yf_include.test.php';
+#require_once dirname(__FILE__).'/tpl_driver_yf_include.Test.php';
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_yf_include_compiled_test extends PHPUnit_Framework_TestCase {
