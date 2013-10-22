@@ -2,10 +2,15 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
-$GLOBALS['PROJECT_CONF'] = array();
-
 class func_module_conf_test extends PHPUnit_Framework_TestCase {
-
+	public static $_bak = array();
+	public static function setUpBeforeClass() {
+		self::$_bak = $GLOBALS['PROJECT_CONF'];
+		$GLOBALS['PROJECT_CONF'] = array();
+	}
+	public static function tearDownAfterClass() {
+		$GLOBALS['PROJECT_CONF'] = self::$_bak;
+	}
 	public function test_2() {
 		$GLOBALS['PROJECT_CONF']['test']['test'] = '55';
 		$this->assertEquals(module_conf('test', 'test'), '55');

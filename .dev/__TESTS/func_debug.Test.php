@@ -5,7 +5,14 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 $GLOBALS['DEBUG'] = array();
 
 class func_debug_test extends PHPUnit_Framework_TestCase {
-
+	public static $_bak = array();
+	public static function setUpBeforeClass() {
+		self::$_bak = $GLOBALS['DEBUG'];
+		$GLOBALS['DEBUG'] = array();
+	}
+	public static function tearDownAfterClass() {
+		$GLOBALS['DEBUG'] = self::$_bak;
+	}
 	public function test_22() {
 		$GLOBALS['DEBUG']['test'] = '55';
 		$this->assertEquals(debug('test'), '55');
