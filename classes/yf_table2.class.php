@@ -924,7 +924,8 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				return '<input type="submit" name="'.$value.'" value="'.t($value).'" class="btn btn-mini btn-xs">';
+				
+				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs">'.$icon. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {

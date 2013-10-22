@@ -1050,7 +1050,13 @@ class yf_form2 {
 			$extra['type'] = 'submit';
 
 			$attrs_names = array('type','name','id','class','style','value','disabled');
-			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+			if (!$extra['as_input']) {
+				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
+				$value = (!isset($extra['no_escape']) ? $_this->_htmlchars($extra['value']) : $extra['value']);
+				return $_this->_row_html('<button'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</button>', $extra, $r);
+			} else {
+				return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+			}
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -1062,6 +1068,7 @@ class yf_form2 {
 	/**
 	*/
 	function save($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['icon'] = 'icon-save';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1081,6 +1088,7 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Back';
+		$extra['icon'] = 'icon-save';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1100,6 +1108,7 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Clear';
+		$extra['icon'] = 'icon-save';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
