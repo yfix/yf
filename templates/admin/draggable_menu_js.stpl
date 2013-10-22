@@ -16,7 +16,7 @@
 $(function(){
 	$("#draggable_form").on("submit", function(){
 		var _form = $(this);
-		var items = {};
+		var items = { };
 		var i = 0;
 		$("li", ".draggable_menu").each(function(){
 			items[++i] = {
@@ -29,13 +29,16 @@ $(function(){
 		})
 		return false;
 	})
-//	$(".draggable_menu").on('click', '.expander', function() {
-//		$(this).closest('ul').toggleClass('opened').toggleClass('closed');
-//		return false;
-//	});
 
-	$('#draggable-menu-expand-all').on('click', function(){
-		$('ul.closed', '.draggable_menu').removeClass('closed').addClass('opened');
+	$('#draggable-menu-expand-all').on('click', function() {
+		var _this = $(this)
+		if ( ! _this.data('now_close_all') ) {
+			$('ul.closed', '.draggable_menu').removeClass('closed').addClass('opened');
+			_this.data('now_close_all', true);
+		} else {
+			$('ul.opened', '.draggable_menu').removeClass('opened').addClass('closed');
+			_this.data('now_close_all', false);
+		}
 		return false;
 	});
 })
@@ -44,22 +47,6 @@ $(function(){
 <script>
 //init functions
 $(function() {
-/*
-	// This is needed to get current BS theme colors for even and odd elements
-	var fake_table = $('<table class="table-striped"><tr><td></td></tr><tr><td></td></tr></table>').hide().appendTo("body");
-	var bg_color_bs1 = fake_table.find("tr:even td").css('background-color');
-	var bg_color_bs2 = fake_table.find("tr:odd td").css('background-color');
-	fake_table.remove();
-
-	function _set_dl_colors() {
-		$('dl:even', '.draggable_menu').css('background-color', bg_color_bs1)
-		$('dl:odd', '.draggable_menu').css('background-color', bg_color_bs2)
-	}
-	_set_dl_colors()
-*/
-//	$('li', '.draggable_menu').prepend('<div class="dropzone"></div>');
-//	$('a.expander i', '.draggable_menu').addClass('icon-caret-down')
-
 	$('dl, .dropzone', '.draggable_menu').droppable({
 		accept: '.draggable_menu li',
 		tolerance: 'pointer',

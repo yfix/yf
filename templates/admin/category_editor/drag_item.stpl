@@ -19,7 +19,7 @@
 		<ul class="{if(level_num ge 0)}closed{/if}">
 {else}
 	</li>
-	{if(next_level_diff ne "0")}
+	{if(next_level_diff ne 0)}
 		{foreach(next_level_diff)}</ul>{/foreach}
 	{/if}
 {/if}

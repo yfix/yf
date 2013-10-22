@@ -1,9 +1,10 @@
 <form action="{form_action}" method="post" id="draggable_form">
 
 <div class="controls">
-	<input type="submit" class="btn btn-primary btn-mini" value="{t(Save)}">
-	<a href="{add_link}" class="btn btn-mini ajax_add">{t(Add)}</a>
-	<a href="{back_link}" class="btn btn-mini">{t(Back)}</a>
+	<button type="submit" class="btn btn-primary btn-mini"><i class="icon-save"></i> {t(Save)}</button>
+	<a href="{back_link}" class="btn btn-mini"><i class="icon-backward"></i> {t(Go Back)}</a>
+	<a href="{add_link}" class="btn btn-mini ajax_add"><i class="icon-plus-sign"></i> {t(Add)}</a>
+	<a href="javascript:void(0);" class="btn btn-mini" id="draggable-menu-expand-all"><i class="icon-expand-alt"></i> {t(Expand)}</a>
 </div>
 
 <ul class="draggable_menu">
