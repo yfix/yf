@@ -1293,19 +1293,40 @@ class yf_form2 {
 
 	/**
 	*/
-	function date_box($name, $values = array(), $extra = array(), $replace = array()) {
+	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (!$name) {
+			$name = 'date';
+		}
 		return $this->_html_control($name, $values, $extra, $replace, 'date_box2');
 	}
 
 	/**
 	*/
-	function time_box($name, $values = array(), $extra = array(), $replace = array()) {
+	function time_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (!$name) {
+			$name = 'time';
+		}
 		return $this->_html_control($name, $values, $extra, $replace, 'time_box2');
 	}
 
 	/**
 	*/
-	function datetime_box($name, $values = array(), $extra = array(), $replace = array()) {
+	function datetime_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (!$name) {
+			$name = 'datetime';
+		}
 		if (!isset($extra['show_what'])) {
 			$extra['show_what'] = 'ymdhis';
 		}
@@ -1607,13 +1628,27 @@ class yf_form2 {
 	/**
 	* Image upload
 	*/
-	function image($name, $desc = '', $extra = array(), $replace = array()) {
+	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
 		}
 // TODO: show already uploaded image, link to delete it, input to upload new
-		return $this;
+		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$func = function($extra, $r, $_this) {
+/*
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['id'] = $extra['name'];
+*/
+			return $_this->_row_html('<input type="file">', $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
 	}
 
 	/**
