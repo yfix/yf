@@ -46,26 +46,54 @@ class yf_dir {
 		}
 		$MATCHED = false;
 		if (!empty($pattern_include) && is_string($pattern_include)) {
+			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
+			$try_modifier = substr($pattern_include, 0, 3);
+			if (in_array($try_modifier, array('-f ', '-d '))) {
+				$pattern_include = substr($pattern_include, 3);
+				$modifier = $try_modifier;
+			}
 			if (strlen($pattern_include) == 2 && $pattern_include{0} == '-') {
 				if ($pattern_include == '-d' && !$_is_dir) {
 					$MATCHED = true;
 				} elseif ($pattern_include == '-f' && $_is_dir) {
 					$MATCHED = true;
 				}
-			} elseif (!preg_match($pattern_include.'ims', $_path_clean)) {
-				$MATCHED = true;
+			} else {
+				$need_match = true;
+				if ($modifier == '-f ' && $_is_dir) {
+					$need_match = false;
+				} elseif ($modifier == '-d ' && !$_is_dir) {
+					$need_match = false;
+				}
+				if ($need_match && !preg_match($pattern_include.'ims', $_path_clean)) {
+					$MATCHED = true;
+				}
 			}
 		}
 		// Exclude files from list by mask
 		if (!empty($pattern_exclude) && is_string($pattern_exclude)) {
+			// Examples: "-f /\.(jpg|png)$/", -d /some_dir/
+			$try_modifier = substr($pattern_include, 0, 3);
+			if (in_array($try_modifier, array('-f ', '-d '))) {
+				$pattern_include = substr($pattern_include, 3);
+				$modifier = $try_modifier;
+			}
 			if (strlen($pattern_exclude) == 2 && $pattern_exclude{0} == '-') {
 				if ($pattern_exclude == '-d' && $_is_dir) {
 					$MATCHED = true;
 				} elseif ($pattern_exclude == '-f' && !$_is_dir) {
 					$MATCHED = true;
 				}
-			} elseif (preg_match($pattern_exclude.'ims', $_path_clean)) {
-				$MATCHED = true;
+			} else {
+				$need_match = true;
+				if ($modifier == '-f ' && $_is_dir) {
+					$need_match = false;
+				} elseif ($modifier == '-d ' && !$_is_dir) {
+					$need_match = false;
+				}
+				if ($need_match && preg_match($pattern_exclude.'ims', $_path_clean)) {
+					$MATCHED = true;
+				}
 			}
 		}
 		return $MATCHED;

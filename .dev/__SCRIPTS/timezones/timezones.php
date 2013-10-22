@@ -208,7 +208,7 @@ $data = array (
     'code' => 'CET',
     'name' => 'Central European Time',
     'offset' => 'UTC+01',
-    'active' => 0,
+    'active' => 1,
   ),
   'CHADT' => 
   array (
@@ -404,7 +404,7 @@ $data = array (
     'code' => 'EET',
     'name' => 'Eastern European Time',
     'offset' => 'UTC+02',
-    'active' => 0,
+    'active' => 1,
   ),
   'EGST' => 
   array (
@@ -516,7 +516,7 @@ $data = array (
     'code' => 'GMT',
     'name' => 'Greenwich Mean Time',
     'offset' => 'UTC',
-    'active' => 0,
+    'active' => 1,
   ),
   'GST' => 
   array (
@@ -754,7 +754,7 @@ $data = array (
     'code' => 'MSK',
     'name' => 'Moscow Time',
     'offset' => 'UTC+04',
-    'active' => 0,
+    'active' => 1,
   ),
   'MST' => 
   array (
@@ -1118,7 +1118,7 @@ $data = array (
     'code' => 'UTC',
     'name' => 'Coordinated Universal Time',
     'offset' => 'UTC',
-    'active' => 0,
+    'active' => 1,
   ),
   'UYST' => 
   array (

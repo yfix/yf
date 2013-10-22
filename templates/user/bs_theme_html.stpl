@@ -21,3 +21,23 @@
 {/if}
 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+
+<script type="text/javascript" src="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/js/bootstrap-formhelpers-selectbox.js.gz"></script>
+<link rel="stylesheet" href="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz">
+
+<style type="text/css">
+[class^="bfh-flag-"], [class*="bfh-flag-"] {
+	display: inline-block;
+	margin-right: 5px;
+}
+[class^="bfh-flag-"]:empty, [class*="bfh-flag-"]:empty {
+	width: 16px;
+}
+.bfh-selectbox-options a {
+	padding-left: 10px;
+}
+</style>
+
+<!--[if lt IE 9]>
+	<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->

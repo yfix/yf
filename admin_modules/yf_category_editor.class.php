@@ -59,8 +59,8 @@ class yf_category_editor {
 			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
 			->text('name')
 			->text('desc', 'Description')
-			->template_select_box('stpl_name')
-			->method_select_box('method_name')
+			->text('stpl_name')
+			->text('method_name')
 			->text('custom_fields')
 			->active_box()
 			->save_and_back();
@@ -86,8 +86,8 @@ class yf_category_editor {
 			->info('type')
 			->text('name')
 			->text('desc', 'Description')
-			->template_select_box('stpl_name')
-			->method_select_box('method_name')
+			->text('stpl_name')
+			->text('method_name')
 			->text('custom_fields')
 			->active_box()
 			->save_and_back();
@@ -264,15 +264,19 @@ class yf_category_editor {
 		if (isset($items[''])) {
 			unset($items['']);
 		}
+		$tpl_items = array();
 		foreach ((array)$items as $id => $item) {
+			if (!$id) {
+				continue;
+			}
 			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
 			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
-			$items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
+			$tpl_items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
 		$replace = array(
-			'items' 		=> implode(PHP_EOL, (array)$items),
+			'items' 		=> implode(PHP_EOL, (array)$tpl_items),
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
@@ -309,6 +313,9 @@ class yf_category_editor {
 		$cat_items_to_display = array_values($cat_items);
 		$num_cat_items = count($cat_items_to_display);
 
+		$ICONS_DIR = _class('graphics')->ICONS_PATH;
+		$MEDIA_PATH = _class('graphics')->MEDIA_PATH;
+
 		$_prev_level = 0;
 		$_next_level = 0;
 		$item_counter = 0;
@@ -319,15 +326,20 @@ class yf_category_editor {
 			$item_counter++;
 			$_next_info	= isset($cat_items_to_display[$i + 1]) ? $cat_items_to_display[$i + 1] : array();
 			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
-			// Prepare icon path = WEB_PATH. $this->ICONS_PATH. $item_info['icon'];
+
+			$icon = trim($item_info['icon']);
 			$icon_path = '';
-			if ($item_info['icon'] && file_exists(PROJECT_PATH. $ICONS_PATH. $item_info['icon'])) {
-				$icon_path = $MEDIA_PATH. $ICONS_PATH. $item_info['icon'];
-			}
-			// Icon class from bootstrap icon class names 
 			$icon_class = '';
-			if ($item_info['icon'] && (strpos($item_info['icon'], '.') === false)) {
-				$icon_class = $item_info['icon'];
+			if ($icon) {
+				// Icon class from bootstrap icon class names 
+				if (preg_match('/^icon\-[a-z0-9_-]+$/i', $icon) || (strpos($icon, '.') === false)) {
+					$icon_class = $icon;
+				} else {
+					$_icon_fs_path = PROJECT_PATH. $ICONS_DIR. $icon;
+					if (file_exists($_icon_fs_path)) {
+						$icon_path = $MEDIA_PATH. $ICONS_DIR. $icon;
+					}
+				}
 			}
 			$items[$item_info['id']] = array(
 				'item_id'		=> intval($item_info['id']),

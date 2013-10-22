@@ -14,7 +14,7 @@ $data = array (
     'code' => 'AX',
     'code3' => 'ALA',
     'num' => '248',
-    'name' => 'Aland Islands !Åland Islands',
+    'name' => 'Aland Islands',
     'cont' => '',
     'active' => 0,
   ),
@@ -491,7 +491,7 @@ $data = array (
     'code' => 'CI',
     'code3' => 'CIV',
     'num' => '384',
-    'name' => 'Cote d\'Ivoire !Côte d\'Ivoire',
+    'name' => 'Cote d\'Ivoire',
     'cont' => '',
     'active' => 0,
   ),
@@ -518,7 +518,7 @@ $data = array (
     'code' => 'CW',
     'code3' => 'CUW',
     'num' => '531',
-    'name' => 'Curacao !Curaçao',
+    'name' => 'Curacao',
     'cont' => '',
     'active' => 0,
   ),
@@ -682,7 +682,7 @@ $data = array (
     'num' => '250',
     'name' => 'France',
     'cont' => '',
-    'active' => 0,
+    'active' => 1,
   ),
   'GF' => 
   array (
@@ -745,7 +745,7 @@ $data = array (
     'num' => '276',
     'name' => 'Germany',
     'cont' => '',
-    'active' => 0,
+    'active' => 1,
   ),
   'GH' => 
   array (
@@ -1625,7 +1625,7 @@ $data = array (
     'code' => 'RE',
     'code3' => 'REU',
     'num' => '638',
-    'name' => 'Reunion !Réunion',
+    'name' => 'Reunion',
     'cont' => '',
     'active' => 0,
   ),
@@ -1645,7 +1645,7 @@ $data = array (
     'num' => '643',
     'name' => 'Russian Federation',
     'cont' => '',
-    'active' => 0,
+    'active' => 1,
   ),
   'RW' => 
   array (
@@ -1661,7 +1661,7 @@ $data = array (
     'code' => 'BL',
     'code3' => 'BLM',
     'num' => '652',
-    'name' => 'Saint Barthelemy !Saint Barthélemy',
+    'name' => 'Saint Barthelemy',
     'cont' => '',
     'active' => 0,
   ),
@@ -1879,7 +1879,7 @@ $data = array (
     'num' => '724',
     'name' => 'Spain',
     'cont' => '',
-    'active' => 0,
+    'active' => 1,
   ),
   'LK' => 
   array (
@@ -2095,7 +2095,7 @@ $data = array (
     'num' => '804',
     'name' => 'Ukraine',
     'cont' => '',
-    'active' => 0,
+    'active' => 1,
   ),
   'AE' => 
   array (
@@ -2113,7 +2113,7 @@ $data = array (
     'num' => '826',
     'name' => 'United Kingdom',
     'cont' => '',
-    'active' => 0,
+    'active' => 1,
   ),
   'US' => 
   array (
@@ -2122,7 +2122,7 @@ $data = array (
     'num' => '840',
     'name' => 'United States',
     'cont' => '',
-    'active' => 0,
+    'active' => 1,
   ),
   'UM' => 
   array (

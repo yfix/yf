@@ -51,15 +51,15 @@ class yf_tpl_driver_yf {
 	/** @var array @conf_skip Show custom class method output pattern */
 	public $_PATTERN_EXECUTE   = array(
 		// EXAMPLE:	 {execute(graphics, translate, value = blabla; extra = strtoupper)
-		'/(\{execute\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
+		'/(\{execute\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,false)',
-		'/(\{exec_cached\(["\']{0,1})([\s\w\-]+),([\s\w\-]+)[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
+		'/(\{exec_cached\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,true)',
 	);
 	/** @var array @conf_skip Include template pattern */
 	public $_PATTERN_INCLUDE   = array(
 		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
-		'/(\{include\(["\']{0,1})([\s\w\\/\.]+)["\']{0,1}?[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\)\})/ie'
+		'/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/ie'
 			=> '$this->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
@@ -79,18 +79,18 @@ class yf_tpl_driver_yf {
 	);
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// EXAMPLE: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
-	public $_PATTERN_CATCH	 = '/\{catch\(\s*["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\)\}(.*?)\{\/catch\}/ims';
+	public $_PATTERN_CATCH	 = '/\{catch\(\s*["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims';
 	/** @var array @conf_skip STPL internal comment pattern */
 	// EXAMPLE:	 {{-- some content you want to comment inside template only --}}
 	public $_PATTERN_COMMENT   = '/(\{\{--.*?--\}\})/ims';
 	/** @var string @conf_skip Conditional pattern */
 	// EXAMPLE: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-	public $_PATTERN_IF		= '/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\)\}/ims';
+	public $_PATTERN_IF		= '/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
 	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern */
 	// EXAMPLE: {foreach ("var")}<li>{var.value1}</li>{/foreach}
-	public $_PATTERN_FOREACH   = '/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\)\}((?![^\{]*?\{foreach\(["\']{0,1}?).*?)\{\/foreach\}/is';
+	public $_PATTERN_FOREACH   = '/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var array @conf_skip For "_process_conditions" */
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
 	/** @var array @conf_skip For '_process_conditions' */
@@ -402,8 +402,8 @@ class yf_tpl_driver_yf {
 		// Process matches
 		foreach ((array)$m[0] as $k => $v) {
 			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace);
-			$cur_operator   = $this->_cond_operators[strtolower($m[2][$k])];
-			$part_right	 = $m[3][$k];
+			$cur_operator = $this->_cond_operators[strtolower($m[2][$k])];
+			$part_right	 = trim($m[3][$k]);
 			if ($part_right && $part_right{0} == '#') {
 				$part_right = $replace[ltrim($part_right, '#')];
 			}
@@ -550,8 +550,8 @@ class yf_tpl_driver_yf {
 			$output		 = '';
 			$sub_array	  = array();
 			$sub_replace	= array();
-			$key_to_cycle   = &$m[1][$match_id];
-			$sub_template   = &$m[2][$match_id];
+			$key_to_cycle   = trim($m[1][$match_id]);
+			$sub_template   = $m[2][$match_id];
 			$sub_template   = str_replace('#.', $key_to_cycle.'.', $sub_template);
 			// Needed here for graceful quick exit from cycle
 			$a_for[$matched_string] = '';

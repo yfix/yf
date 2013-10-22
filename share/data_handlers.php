@@ -34,6 +34,7 @@ conf('data_handlers', my_array_merge((array)conf('data_handlers'), array(
 	'dynamic_fields_info'	=> 'include(H_PATH."dynamic_fields_info.h.php");',
 	'featured'	=> 'include(H_PATH."featured.h.php");',
 	'featured_countries'	=> 'include(H_PATH."featured_countries.h.php");',
+	'fontawesome_icons'	=> 'include(H_PATH."fontawesome_icons.h.php");',
 	'font_size'	=> 'include(H_PATH."font_size.h.php");',
 	'font_type'	=> 'include(H_PATH."font_type.h.php");',
 	'forum_categories'	=> 'include(H_PATH."forum_categories.h.php");',

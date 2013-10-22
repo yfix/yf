@@ -215,8 +215,12 @@ class yf_table2 {
 				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			if (!$params['no_header']) {
 				$body .= '<thead>'.PHP_EOL;
+				$data1row = current($data);
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
+					if (!isset($data1row[$name])) {
+						continue;
+					}
 					$info['extra'] = (array)$info['extra'];
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
@@ -689,6 +693,26 @@ class yf_table2 {
 	}
 
 	/**
+	* Callback function will be populated with these params: function($row, $params, $instance_params) {}
+	*/
+	function btn_func($name, $func, $extra = array()) {
+		if (!$desc && isset($extra['desc'])) {
+			$desc = $extra['desc'];
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace('_', ' ', $name));
+		}
+		$this->_buttons[] = array(
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'desc'	=> $desc,
+			'func'	=> $func,
+		);
+		return $this;
+	}
+
+	/**
 	*/
 	function btn_edit($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
@@ -972,22 +996,23 @@ class yf_table2 {
 	function icon($name, $extra = array()) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
-// TODO: finish with icons
-/*
-			$icon_src = '';
-			if ($A['icon']) {
-				$_icon_path = $this->ICONS_PATH. $A['icon'];
+			$icon = trim($field);
+			if (!$icon) {
+				return '';
+			}
+			// Icon class from bootstrap icon class names 
+			if (preg_match('/^icon\-[a-z0-9_-]+$/i', $icon)) {
+				return '<i class="'.$icon.'"></i>';
+			} else {
+				$_icon_path = PROJECT_PATH.'uploads/icons/'. $icon;
 				if (file_exists(INCLUDE_PATH. $_icon_path)) {
 					$icon_src = WEB_PATH. $_icon_path;
 				}
+				if ($icon_src) {
+					return '<img src="'._prepare_html($icon_src).'" />';
+				}
 			}
-			// Icon class from bootstrap icon class names 
-			$icon_class = '';
-			if ($A['icon'] && (strpos($A['icon'], '.') === false)) {
-				$icon_class = $A['icon'];
-			}
-*/
-			return $out;
+			return '';
 		}, $extra);
 	}
 

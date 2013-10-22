@@ -1,5 +1,5 @@
 <li class="dropdown">
-	<a href="{link}">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon icon-{icon_class}"></i> {/if}
+	<a href="{link}" class="dropdown-toggle">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="{icon_class}"></i> {/if}
 		{name} {if("have_children" eq "1")} <b class="caret"></b>{/if}
 	</a>
 {if("have_children" eq "1")}

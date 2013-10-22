@@ -276,6 +276,11 @@ class yf_cache {
 		if (!conf('USE_CACHE')) {
 			return false;
 		}
+// TODO: add DEBUG_MODE checking here to not allow refresh_cache attacks
+// TODO: maybe add check for: conf('cache_refresh_token', 'something_random')
+		if ($_GET['refresh_cache']) {
+			return false;
+		}
 		return $result;
 	}
 
@@ -623,7 +628,7 @@ class yf_cache {
 				if ($f == '.' || $f == '..' || !is_file(CORE_CACHE_DIR.$f)) {
 					continue;
 				}
-				if (_class('common')->get_file_ext($f) != 'php') {
+				if (pathinfo($f, PATHINFO_EXTENSION) != 'php') {
 					continue;
 				}
 				if (substr($f, 0, strlen($this->_file_conf['file_prefix'])) != $this->_file_conf['file_prefix']) {

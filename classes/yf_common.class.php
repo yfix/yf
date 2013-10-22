@@ -284,8 +284,7 @@ class yf_common {
 	* Return file extension
 	*/
 	function get_file_ext ($file_path = '') {
-		$_tmp = pathinfo($file_path);
-		return $_tmp['extension'];
+		return pathinfo($file_path, PATHINFO_EXTENSION);
 	}
 
 	/**
@@ -368,6 +367,13 @@ class yf_common {
 	function multi_upload_image($new_file_path, $k , $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
 		return _class('multi_upload_image', COMMON_LIB)->go($new_file_path, $k, $name_in_form, $max_image_size, $is_local);
 	} 
+
+	/**
+	* Do upload archive file (zip, rar, tar accepted)
+	*/
+	function upload_archive($new_file_path, $name_in_form = 'archive') {
+		return _class('upload_archive', COMMON_LIB)->go($new_file_path, $name_in_form);
+	}
 
 	/**
 	* Create simple table with debug info
@@ -571,7 +577,7 @@ class yf_common {
 	}
 
 	/**
-	* Upload given file
+	* Upload given file to remote server from this server
 	*/
 	function upload_file ($path_tmp = '', $new_dir = '', $new_file = '') {
 		return _class('remote_files', COMMON_LIB)->do_upload($path_tmp, $new_dir, $new_file);

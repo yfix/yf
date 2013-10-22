@@ -2,7 +2,7 @@
 <project name="Application" default="build" basedir="./">
 
 	<!--<target name="build" depends="prepare,phpunit,phpmd,phpcpd,phpcb,phploc,phpcs"/>-->
-	<target name="build" depends="prepare,phpunit,phpcpd,phpcb,phploc"/>
+	<target name="build" depends="prepare,phpunit"/>
 
 	<property name="applicationDir" value="../../" />
 	<property name="testDir" value="${basedir}" />

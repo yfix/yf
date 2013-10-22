@@ -24,6 +24,15 @@ class tpl_driver_yf_translate_test extends PHPUnit_Framework_TestCase {
 	public function test_16() {
 		$this->assertEquals('my translate', _tpl( '{i18n("my translate")}' ));
 	}
+	public function test_17() {
+		$this->assertEquals('my translate', _tpl( '{t( my translate)}' ));
+	}
+	public function test_18() {
+		$this->assertEquals('my translate', _tpl( '{t(my translate )}' ));
+	}
+	public function test_19() {
+		$this->assertEquals('my translate', _tpl( '{t( my translate )}' ));
+	}
 	public function test_20() {
 		$this->assertEquals('my translate', _tpl( '{t("::test::my translate")}' ));
 	}
