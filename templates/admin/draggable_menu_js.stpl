@@ -49,6 +49,7 @@ $(function() {
 	_set_dl_colors()
 */
 //	$('li', '.draggable_menu').prepend('<div class="dropzone"></div>');
+//	$('a.expander i', '.draggable_menu').addClass('icon-caret-down')
 
 	$('dl, .dropzone', '.draggable_menu').droppable({
 		accept: '.draggable_menu li',
@@ -57,15 +58,15 @@ $(function() {
 			var _this = $(this)
 			var li = _this.closest('li');
 			var child = !_this.hasClass('dropzone');
-			if (child && li.children('ul').length == 0) {
-				li.append('<ul/>');
-			}
+//			if (child && li.children('ul').length == 0) {
+//				li.append('<ul/>');
+//			}
 			if (child) {
 				li.addClass('opened').removeClass('closed').children('ul').append(ui.draggable);
 			} else {
 				li.before(ui.draggable);
 			}
-			$('li.opened', '.draggable_menu').not(':has(li:not(.ui-draggable-dragging))').removeClass('opened');
+//			$('li.opened', '.draggable_menu').not(':has(li:not(.ui-draggable-dragging))').removeClass('opened');
 			_this.filter('.over').removeClass('over');
 			draggable_history.commit();
 		},

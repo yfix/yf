@@ -63,4 +63,16 @@ class tpl_driver_yf_include_test extends PHPUnit_Framework_TestCase {
 		_tpl( 'Hello from include', array(), 'unittest_include1' );
 		$this->assertEquals('Hello from include', _tpl( '{include( "unittest_include1" )}' ));
 	}
+	public function test_120() {
+		_tpl( 'Hello from include', array(), 'unittest_include1' );
+		$this->assertEquals('Hello from include', _tpl( '{include( unittest_include1)}' ));
+	}
+	public function test_121() {
+		_tpl( 'Hello from include', array(), 'unittest_include1' );
+		$this->assertEquals('Hello from include', _tpl( '{include(unittest_include1 )}' ));
+	}
+	public function test_122() {
+		_tpl( 'Hello from include', array(), 'unittest_include1' );
+		$this->assertEquals('Hello from include', _tpl( '{include( unittest_include1 )}' ));
+	}
 }
