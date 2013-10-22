@@ -284,8 +284,7 @@ class yf_common {
 	* Return file extension
 	*/
 	function get_file_ext ($file_path = '') {
-		$_tmp = pathinfo($file_path);
-		return $_tmp['extension'];
+		return pathinfo($file_path, PATHINFO_EXTENSION);
 	}
 
 	/**

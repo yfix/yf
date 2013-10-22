@@ -26,7 +26,7 @@ $a = _class('form2')->_validate_rules_cleanup($rules_raw);
 var_export($a);
 
 */
-class form_validate_test extends PHPUnit_Framework_TestCase {
+class class_form_validate_test extends PHPUnit_Framework_TestCase {
 	public function test_cleanup_10() {
 		$rules_raw = array(
 			'name' => 'trim',

@@ -33,6 +33,7 @@ $create_table_sql = "CREATE TABLE IF NOT EXISTS `".$table."` (
   `code3` char(3) NOT NULL DEFAULT '',
   `name` varchar(64) NOT NULL DEFAULT '',
   `native` varchar(64) NOT NULL DEFAULT '',
+  `country` char(2) NOT NULL DEFAULT '',
   `active` enum('0','1') NOT NULL DEFAULT '0',
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;".PHP_EOL;
@@ -44,7 +45,7 @@ if (!$table_exists || $force) {
 #	echo $create_table_sql;
 	db()->query($create_table_sql) or print_r(db()->error());
 }
-#echo $sql.PHP_EOL;
+echo $sql.PHP_EOL;
 db()->query($sql) or print_r(db()->error());
 
 echo 'Trying to get 2 first records: '.PHP_EOL;

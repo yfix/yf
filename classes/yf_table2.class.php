@@ -215,8 +215,12 @@ class yf_table2 {
 				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 			if (!$params['no_header']) {
 				$body .= '<thead>'.PHP_EOL;
+				$data1row = current($data);
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
+					if (!isset($data1row[$name])) {
+						continue;
+					}
 					$info['extra'] = (array)$info['extra'];
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
@@ -607,8 +611,8 @@ class yf_table2 {
 	*/
 	function allow_deny($name, $extra = array()) {
 		$extra['data'] = array(
-			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
-			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
+			'DENY' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</button>',
+			'ALLOW' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</button>',
 		);
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
@@ -621,8 +625,8 @@ class yf_table2 {
 	*/
 	function yes_no($name = '', $extra = array()) {
 		$extra['data'] = array(
-			'1' => '<span class="label label-success">'.t('YES').'</span>',
-			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
+			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
+			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
 		);
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
@@ -823,8 +827,8 @@ class yf_table2 {
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$values = array(
-					1 => '<span class="label label-success">'.t('Active').'</span>',
-					0 => '<span class="label label-warning">'.t('Disabled').'</span>',
+					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
+					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
 				);
 				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
 			},
@@ -920,7 +924,8 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				return '<input type="submit" name="'.$value.'" value="'.t($value).'" class="btn btn-mini btn-xs">';
+				
+				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs">'.$icon. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {
@@ -992,22 +997,23 @@ class yf_table2 {
 	function icon($name, $extra = array()) {
 		$this->form();
 		return $this->func($name, function($field, $params, $row) {
-// TODO: finish with icons
-/*
-			$icon_src = '';
-			if ($A['icon']) {
-				$_icon_path = $this->ICONS_PATH. $A['icon'];
+			$icon = trim($field);
+			if (!$icon) {
+				return '';
+			}
+			// Icon class from bootstrap icon class names 
+			if (preg_match('/^icon\-[a-z0-9_-]+$/i', $icon)) {
+				return '<i class="'.$icon.'"></i>';
+			} else {
+				$_icon_path = PROJECT_PATH.'uploads/icons/'. $icon;
 				if (file_exists(INCLUDE_PATH. $_icon_path)) {
 					$icon_src = WEB_PATH. $_icon_path;
 				}
+				if ($icon_src) {
+					return '<img src="'._prepare_html($icon_src).'" />';
+				}
 			}
-			// Icon class from bootstrap icon class names 
-			$icon_class = '';
-			if ($A['icon'] && (strpos($A['icon'], '.') === false)) {
-				$icon_class = $A['icon'];
-			}
-*/
-			return $out;
+			return '';
 		}, $extra);
 	}
 

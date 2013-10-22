@@ -1,4 +1,0 @@
-<label class="radio">
-	<input type="radio" name="{name}" value="{value}" {add_str} {selected}>
-	{label}{divider}
-</label>

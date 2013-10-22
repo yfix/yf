@@ -1,3 +1,6 @@
+{if("pages" ne "")}
+<div class="pagination">
+	<ul>
 {page_first}
 {block_prev}
 {page_prev}
@@ -5,3 +8,6 @@
 {page_next}
 {block_next}
 {page_last}
+	</ul>
+</div>
+{/if}

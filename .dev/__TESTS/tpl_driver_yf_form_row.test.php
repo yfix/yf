@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__).'/tpl__setup.php';
 
-class tpl_driver_yf_form_test extends PHPUnit_Framework_TestCase {
+class tpl_driver_yf_form_row_test extends PHPUnit_Framework_TestCase {
 	public function test_10() {
 		$html = _class('form2')->tpl_row('password');
 		$this->assertEquals( $html, _tpl( '{form_row("password")}' ) );
@@ -18,6 +18,22 @@ class tpl_driver_yf_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $html, _tpl( '{form_row("password","","")}' ) );
 		$this->assertEquals( $html, _tpl( '{form_row("password","","","")}' ) );
 		$this->assertEquals( $html, _tpl( '{form_row("password", "", "", "")}' ) );
+	}
+	public function test_11() {
+		$html = _class('form2')->tpl_row('password');
+		$this->assertEquals( $html, _tpl( '{form_row(password)}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row( password )}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(password )}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row( password)}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(  password)}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(  password  )}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row( password )}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(      password     )}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(	 	 password  	 	)}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(password,"")}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(password,"","")}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(password,"","","")}' ) );
+		$this->assertEquals( $html, _tpl( '{form_row(password, "", "", "")}' ) );
 	}
 	public function test_21() {
 		$replace = array('password' => '123');

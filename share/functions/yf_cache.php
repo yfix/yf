@@ -40,6 +40,7 @@ if (conf('USE_CACHE') === null) {
 		$use_cache = (bool)$GLOBALS['PROJECT_CONF']['main']['USE_SYSTEM_CACHE'];
 	}
 // TODO: add DEBUG_MODE checking here to not allow no_cache attacks
+// TODO: maybe add check for: conf('cache_disable_token', 'something_random')
 	if ($_GET['no_core_cache'] || $_GET['no_cache']) {
 		$use_cache = false;
 	}
@@ -103,6 +104,11 @@ function cache_get($name, $level = '') {
 		return $GLOBALS['sys_cache']->get($name);
 	}
 	if (!conf('USE_CACHE')) {
+		return false;
+	}
+// TODO: add DEBUG_MODE checking here to not allow refresh_cache attacks
+// TODO: maybe add check for: conf('cache_refresh_token', 'something_random')
+	if ($_GET['refresh_cache']) {
 		return false;
 	}
 	$result = false;

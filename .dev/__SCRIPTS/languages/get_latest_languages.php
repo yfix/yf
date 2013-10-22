@@ -46,13 +46,50 @@ foreach ($tmp_tbl as $v) {
 	$data[$id] = array(
 		'code'	=> $id,
 		'name'	=> $v[2],
-		'native'=> $v[3],
+		'native'=> trim($v[3]),
 		'code3' => $v[5],
+		'country'=> '',
 		'active'=> 0,
 	);
 }
 foreach (array('en','ru','uk') as $c) {
 	$data[$c]['active'] = 1;
+}
+$lang_to_country = array(
+	'en' => 'us',
+	'ru' => 'ru',
+	'uk' => 'ua',
+	'be' => 'by',
+	'it' => 'it',
+	'de' => 'de',
+	'fr' => 'fr',
+	'es' => 'es',
+	'pt' => 'pt',
+	'da' => 'dk',
+	'nl' => 'nl',
+	'no' => 'no',
+	'fi' => 'fi',
+	'sv' => 'se',
+	'bg' => 'bg',
+	'ro' => 'ro',
+	'el' => 'gr',
+	'he' => 'il',
+#	'cz' => 'cz',
+	'hi' => 'in',
+	'pl' => 'pl',
+	'sk' => 'sk',
+	'hu' => 'hu',
+	'kk' => 'kz',
+	'vi' => 'vn',
+	'et' => 'ee',
+	'lt' => 'lt',
+	'lv' => 'lv',
+	'ko' => 'kp',
+	'ja' => 'jp',
+	'zh' => 'cn',
+);
+foreach ($lang_to_country as $lang => $country) {
+	$data[$lang]['country'] = $country;
 }
 
 $f4 = dirname(__FILE__).'/languages.php';

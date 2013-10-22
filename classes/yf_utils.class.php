@@ -424,7 +424,7 @@ class yf_utils {
 		$code =  htmlentities(ob_get_contents());
 		ob_clean();
 		if (!$do_not_echo) {
-			echo "<pre>$code</pre>";
+			echo '<pre>'.$code.'</pre>';
 		}
 		return $code;
 	}
