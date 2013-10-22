@@ -975,8 +975,8 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			if (!$extra['items']) {
 				$extra['items'] = array(
-					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
-					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
+					'0' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</span>',
+					'1' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</span>',
 				);
 			}
 			$extra['errors'] = common()->_get_error_messages();
@@ -1003,8 +1003,8 @@ class yf_form2 {
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['items'] = array(
-			'DENY' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</button>',
-			'ALLOW' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</button>',
+			'DENY' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</span>',
+			'ALLOW' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</span>',
 		);
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
@@ -1013,8 +1013,8 @@ class yf_form2 {
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['items'] = array(
-			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
-			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
+			'0' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</span>',
+			'1' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</span>',
 		);
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
