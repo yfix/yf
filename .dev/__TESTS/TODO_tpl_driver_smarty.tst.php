@@ -1,6 +1,5 @@
 <?php
 
-#$GLOBALS['PROJECT_CONF']['tpl']['DRIVER_NAME'] = 'smarty';
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_smarty_test extends tpl_abstract {
