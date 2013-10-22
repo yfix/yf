@@ -1013,8 +1013,8 @@ class yf_form2 {
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['items'] = array(
-			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
 			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
+			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
 		);
 		return $this->active_box($name, $desc, $extra, $replace);
 	}

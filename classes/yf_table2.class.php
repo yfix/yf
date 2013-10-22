@@ -625,8 +625,8 @@ class yf_table2 {
 	*/
 	function yes_no($name = '', $extra = array()) {
 		$extra['data'] = array(
-			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
 			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
+			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
 		);
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
