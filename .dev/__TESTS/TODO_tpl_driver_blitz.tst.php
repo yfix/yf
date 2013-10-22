@@ -1,9 +1,16 @@
 <?php
 
-$GLOBALS['PROJECT_CONF']['tpl']['DRIVER_NAME'] = 'blitz';
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_blitz_test extends PHPUnit_Framework_TestCase {
+	public static $_bak = array();
+	public static function setUpBeforeClass() {
+		self::$_bak = tpl()->DRIVER_NAME;
+		tpl()->DRIVER_NAME = 'blitz';
+	}
+	public static function tearDownAfterClass() {
+		tpl()->DRIVER_NAME = self::$_bak;
+	}
 	public function test_10() {
 		$this->assertEquals('Hello world', _tpl( 'Hello world' ));
 	}
