@@ -14,7 +14,7 @@
 <div>
 	<a href="{ajax_status_link}" id="ajax_status_link" class="btn">{t(Refresh Tables Status)}</a>
 	<a href="{backup_link}" class="btn">{t(Backup)}</a>
-	<span id="ajax_loading" style="display:none;">{t(Loading)}... <img src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif"></span>
+	<span id="ajax_loading" class="label label-info" style="display:none;"><i class="icon-spin icon icon-refresh"></i> {t(Loading)}</span>
 </div>
 
 <table id="tables" class="table table-bordered table-striped table-hover">
@@ -50,7 +50,8 @@
 </label> 
 {actions_select_box}
 	
-<img id="loading" style="display:none" src="{const(WEB_PATH)}uploads/icons/ajax-loader.gif"></img>
+<span id="loading" class="label label-info" style="display:none"><i class="icon-spin icon-refresh"></i> {t(Loading)}</span>
+
 <span id="status_message"></span>
 
 <script type="text/javascript">

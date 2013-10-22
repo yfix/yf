@@ -1352,9 +1352,7 @@ class yf_form2 {
 			$name = 'country';
 		}
 		$data = array();
-// TODO		$a = main()->get_data('countries_new');
-		$a = db()->get_all('SELECT * FROM '.db('countries').' WHERE active="1" ORDER BY name ASC');
-		foreach ((array)$a as $v) {
+		foreach ((array)main()->get_data('countries_new') as $v) {
 			$data[$v['code']] = '<i class="bfh-flag-'.strtoupper($v['code']).'"></i> '. $v['name'].' ['.strtoupper($v['code']).']';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -1378,7 +1376,6 @@ class yf_form2 {
 			$name = 'region';
 		}
 		$data = array();
-// TODO: fill with data
 		foreach ((array)main()->get_data('regions_new') as $v) {
 			$data[$v['code']] = $v['name'].' ['.$v['code'].']';
 		}
@@ -1427,9 +1424,7 @@ class yf_form2 {
 			$name = 'language';
 		}
 		$data = array();
-// TODO: move this into main()->get_data('languages_new')
-		$a = db()->get_all('SELECT * FROM '.db('languages').' WHERE active="1" ORDER BY native ASC');
-		foreach ((array)$a as $v) {
+		foreach ((array)main()->get_data('languages_new') as $v) {
 			$data[$v['code']] = ($v['country'] ? '<i class="bfh-flag-'.strtoupper($v['country']).'"></i> ' : ''). $v['native'].' ['.$v['code'].']';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -1453,9 +1448,7 @@ class yf_form2 {
 			$name = 'timezone';
 		}
 		$data = array();
-// TODO: move this into main()->get_data('timezones_new')
-		$a = db()->get_all('SELECT * FROM '.db('timezones').' WHERE active="1" ORDER BY offset ASC, name ASC');
-		foreach ((array)$a as $v) {
+		foreach ((array)main()->get_data('timezones_new') as $v) {
 			$data[$v['code']] = '<small>'.$v['offset'].' ['.$v['code'].'] '.$v['name'].'</small>';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
