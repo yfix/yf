@@ -3,7 +3,20 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_i18n_test extends PHPUnit_Framework_TestCase {
-	public function test_main() {
+#	public static $driver_bak = array();
+	public static function setUpBeforeClass() {
+		define('DEFAULT_LANG', 'en');
+		_class('i18n')->TR_VARS['en']['unit_test_var1'] = 'unit_test_value1';
+#		self::$driver_bak = tpl()->DRIVER_NAME;
+#		tpl()->DRIVER_NAME = 'smarty';
+#		parent::setUpBeforeClass();
+	}
+	public static function tearDownAfterClass() {
+#		tpl()->DRIVER_NAME = self::$driver_bak;
+#		parent::tearDownAfterClass();
+	}
+	public function test_10() {
+		$this->assertEquals('unit_test_value1', t('unit_test_var1'));
 /*
 		t("Test var")."<br /><br />";
 		t("::forum::Test var")."<br /><br />";
