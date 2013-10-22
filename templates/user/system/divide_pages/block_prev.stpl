@@ -1,1 +1,1 @@
-<span class="pagelink"><a href="{link}" title="{t('Previous %num pages', %num='{pages_per_block}')}">&lt;&lt;</a></span>&nbsp;
+<li><a href="{link}" title="{t('Previous %num pages', %num='{pages_per_block}')}">{pages_per_block} &laquo;</a></li>

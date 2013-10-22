@@ -1,1 +1,1 @@
-<span class="page_active">{page_num}</span>&nbsp;
+<li class="disabled"><a>{page_num}</a></li>

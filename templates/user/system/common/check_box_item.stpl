@@ -1,1 +1,4 @@
-<label class="for_box simple"><input type="checkbox" name="{name}" class="check" value="{value}" {selected} {add_str}>{label} {divider}</label>
+<label class="checkbox">
+	<input type="checkbox" name="{name}" value="{value}" {selected} {add_str}>
+	{label} {divider}
+</label>

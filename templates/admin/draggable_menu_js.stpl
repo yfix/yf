@@ -29,6 +29,15 @@ $(function(){
 		})
 		return false;
 	})
+//	$(".draggable_menu").on('click', '.expander', function() {
+//		$(this).closest('ul').toggleClass('opened').toggleClass('closed');
+//		return false;
+//	});
+
+	$('#draggable-menu-expand-all').on('click', function(){
+		$('ul.closed', '.draggable_menu').removeClass('closed').addClass('opened');
+		return false;
+	});
 })
 </script>
 
@@ -58,9 +67,9 @@ $(function() {
 			var _this = $(this)
 			var li = _this.closest('li');
 			var child = !_this.hasClass('dropzone');
-//			if (child && li.children('ul').length == 0) {
-//				li.append('<ul/>');
-//			}
+			if (child && li.children('ul').length == 0) {
+				li.append('<ul/>');
+			}
 			if (child) {
 				li.addClass('opened').removeClass('closed').children('ul').append(ui.draggable);
 			} else {
