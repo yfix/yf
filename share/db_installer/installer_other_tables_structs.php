@@ -793,6 +793,14 @@ $data = my_array_merge((array)$data, array(
 	KEY `object_name` (`object_name`),
 	KEY `object_id` (`object_id`)
 ",
+"regions"	=> "
+	`code` char(2) NOT NULL,
+	`country` char(2) NOT NULL,
+	`name` varchar(255) NOT NULL,
+	`active` enum('1','0') NOT NULL default '1',
+	KEY `country` (`country`),
+	KEY `code` (`code`)
+",
 "reput_total"	=> "
 	`user_id` int(10) unsigned NOT NULL,
 	`points` int(11) NOT NULL,
