@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__).'/tpl__setup.php';
 
-class tpl_driver_yf_include_compiled_test extends tpl_abstract {
+class tpl_driver_yf_include_compiled2_test extends tpl_abstract {
 	public function test_110() {
 		self::_tpl( 'Hello from include', array(), 'unittest_include1' );
 		$result = self::_tpl( '{include("unittest_include1")}' );

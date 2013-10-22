@@ -3,12 +3,12 @@
 $GLOBALS['PROJECT_CONF']['tpl']['DRIVER_NAME'] = 'fenom';
 require_once dirname(__FILE__).'/tpl__setup.php';
 
-class tpl_driver_fenom_test extends PHPUnit_Framework_TestCase {
+class tpl_driver_fenom_test extends tpl_abstract {
 	public function test_10() {
-		$this->assertEquals('Hello world', _tpl( 'Hello world' ));
+		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
 	}
 	public function test_60() {
-		$result = _tpl( 
+		$result = self::_tpl( 
 			'<html>
 			    <head>
 			        <title>Fenom</title>
