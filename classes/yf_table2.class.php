@@ -611,8 +611,8 @@ class yf_table2 {
 	*/
 	function allow_deny($name, $extra = array()) {
 		$extra['data'] = array(
-			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
-			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
+			'DENY' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</button>',
+			'ALLOW' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</button>',
 		);
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
@@ -625,8 +625,8 @@ class yf_table2 {
 	*/
 	function yes_no($name = '', $extra = array()) {
 		$extra['data'] = array(
-			'1' => '<span class="label label-success">'.t('YES').'</span>',
-			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
+			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
+			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
 		);
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
@@ -827,8 +827,8 @@ class yf_table2 {
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$values = array(
-					1 => '<span class="label label-success">'.t('Active').'</span>',
-					0 => '<span class="label label-warning">'.t('Disabled').'</span>',
+					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
+					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
 				);
 				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
 			},

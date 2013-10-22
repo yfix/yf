@@ -975,8 +975,8 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			if (!$extra['items']) {
 				$extra['items'] = array(
-					'0' => '<span class="label label-warning">'.t('Disabled').'</span>',
-					'1' => '<span class="label label-success">'.t('Active').'</span>',
+					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
+					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
 				);
 			}
 			$extra['errors'] = common()->_get_error_messages();
@@ -1003,8 +1003,8 @@ class yf_form2 {
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['items'] = array(
-			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
-			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
+			'DENY' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</button>',
+			'ALLOW' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</button>',
 		);
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
@@ -1013,8 +1013,8 @@ class yf_form2 {
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['items'] = array(
-			'1' => '<span class="label label-success">'.t('YES').'</span>',
-			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
+			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
+			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
 		);
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
@@ -1780,9 +1780,10 @@ class yf_form2 {
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			$is_active = $r[$extra['name']];
 // TODO: use CSS abstraction layer
-			return ' <a href="'.$link_url.'" class="change_active">'
-						.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
-					.'</a> ';
+			$html_0	= '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>';
+			$html_1 = '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>';
+
+			return ' <a href="'.$link_url.'" class="change_active">'.($is_active ? $html_1 : $html_0).'</a> ';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
