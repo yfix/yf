@@ -1,6 +1,5 @@
 <?php
 
-$GLOBALS['PROJECT_CONF']['tpl']['DRIVER_NAME'] = 'twig';
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_twig_test extends tpl_abstract {
@@ -8,7 +7,7 @@ class tpl_driver_twig_test extends tpl_abstract {
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
 		self::$driver_bak = tpl()->DRIVER_NAME;
-		tpl()->DRIVER_NAME = 'blitz';
+		tpl()->DRIVER_NAME = 'twig';
 	}
 	public static function tearDownAfterClass() {
 		parent::tearDownAfterClass();
