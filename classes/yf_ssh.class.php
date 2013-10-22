@@ -9,22 +9,22 @@
 */
 class yf_ssh {
 
-	/** @var string @conf_skip array("phpseclib","pecl_ssh2","auto") */
-	public $DRIVER				= "phpseclib";
+	/** @var string @conf_skip array('phpseclib','pecl_ssh2','auto') */
+	public $DRIVER				= 'phpseclib';
 	/** @var bool @conf_skip */
 	public $_INIT_OK			= false;
 	/** @var string @conf_skip */
-	public $_TMP_DIR			= "uploads/tmp";
+	public $_TMP_DIR			= 'uploads/tmp';
 	/** @var enum('password','pubkey') */
-	public $AUTH_TYPE			= "password";
+	public $AUTH_TYPE			= 'password';
 	/** @var bool Save actions log or not */
 	public $LOG_ACTIONS		= false;
 	/** @var bool Use archiving for mass actions */
 	public $MASS_USE_ARCHIVES	= true;
 	/** @var string Path to the tar archiver in console */
-	public $TAR_PATH			= "";
+	public $TAR_PATH			= '';
 	/** @var string Path to the gzip console programm */
-	public $GZIP_PATH			= "";
+	public $GZIP_PATH			= '';
 	/** @var bool */
 	public $USE_GZIP			= true;
 	/** @var bool */
@@ -40,7 +40,7 @@ class yf_ssh {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -49,39 +49,39 @@ class yf_ssh {
 	*/
 	function _init () {
 		if (!$this->DRIVER) {
-			$this->DRIVER = "phpseclib";
+			$this->DRIVER = 'phpseclib';
 		}
-		$test_phpseclib_path = YF_PATH."libs/phpseclib/phpseclib/Net/SSH2.php";
-		if ($this->DRIVER == "phpseclib" && !file_exists($test_phpseclib_path)) {
-			trigger_error("phpseclib Net_SSH2 not found", E_USER_WARNING);
+		$test_phpseclib_path = YF_PATH.'libs/phpseclib/phpseclib/Net/SSH2.php';
+		if ($this->DRIVER == 'phpseclib' && !file_exists($test_phpseclib_path)) {
+			trigger_error('phpseclib Net_SSH2 not found', E_USER_WARNING);
 			return false;
-		} elseif ($this->DRIVER == "pecl_ssh2" && !function_exists("ssh2_connect")) {
-			trigger_error("function ssh2_connect doesn't exist", E_USER_WARNING);
+		} elseif ($this->DRIVER == 'pecl_ssh2' && !function_exists('ssh2_connect')) {
+			trigger_error('function ssh2_connect does not exist', E_USER_WARNING);
 			return false;
 		} else {
 			$this->_INIT_OK = true;
 		}
 
-		if ($this->_INIT_OK && $this->DRIVER == "phpseclib") {
-			set_include_path (YF_PATH."libs/phpseclib/". PATH_SEPARATOR. get_include_path());
+		if ($this->_INIT_OK && $this->DRIVER == 'phpseclib') {
+			set_include_path (YF_PATH.'libs/phpseclib/'. PATH_SEPARATOR. get_include_path());
 			require_once('Crypt/RSA.php');
 			require_once('Net/SSH2.php');
 		}
 	}
 
 	/**
-	* Return internal SERVER_ID (usually "ssh_host:ssh_port")
+	* Return internal SERVER_ID (usually 'ssh_host:ssh_port')
 	*/
 	function _get_server_id ($server_info = array()) {
 		if (!$server_info) {
 			return false;
 		}
-		$ssh_host	= $server_info["base_ip"] ? $server_info["base_ip"] : $server_info["ssh_host"];
-		$ssh_port	= $server_info["ssh_port"] ? $server_info["ssh_port"] : 22;
+		$ssh_host	= $server_info['base_ip'] ? $server_info['base_ip'] : $server_info['ssh_host'];
+		$ssh_port	= $server_info['ssh_port'] ? $server_info['ssh_port'] : 22;
 		if (!$ssh_host) {
 			return false;
 		}
-		return $ssh_host.":".$ssh_port;
+		return $ssh_host.':'.$ssh_port;
 	}
 
 	/**
@@ -92,7 +92,7 @@ class yf_ssh {
 		if (isset($this->_ssh_cache_os[$_SERVER_ID])) {
 			return $this->_ssh_cache_os[$_SERVER_ID];
 		}
-		$result = strtoupper(trim($this->exec($server_info, "uname")));
+		$result = strtoupper(trim($this->exec($server_info, 'uname')));
 		$this->_ssh_cache_os[$_SERVER_ID] = $result;
 		return $result;
 	}
@@ -103,19 +103,19 @@ class yf_ssh {
 	* @example
 	*
 	* $server_info = array(
-	*	"ssh_host"	=> "192.168.1.2",
-	*	"ssh_user"	=> "root",
-	*	"ssh_pswd"	=> "111111",
+	*	'ssh_host'	=> '192.168.1.2',
+	*	'ssh_user'	=> 'root',
+	*	'ssh_pswd'	=> '111111',
 	* );
 	*/
 	function connect ($server_info = array()) {
 		if (!$this->_INIT_OK || !$server_info) {
 			return false;
 		}
-		$ssh_host	= $server_info["base_ip"] ? $server_info["base_ip"] : $server_info["ssh_host"];
-		$ssh_port	= $server_info["ssh_port"] ? $server_info["ssh_port"] : 22;
+		$ssh_host	= $server_info['base_ip'] ? $server_info['base_ip'] : $server_info['ssh_host'];
+		$ssh_port	= $server_info['ssh_port'] ? $server_info['ssh_port'] : 22;
 		if (!$ssh_host) {
-			trigger_error("SSH: missing server IP to connect", E_USER_WARNING);
+			trigger_error('SSH: missing server IP to connect', E_USER_WARNING);
 			return false;
 		}
 		$_SERVER_ID = $this->_get_server_id($server_info);
@@ -126,8 +126,8 @@ class yf_ssh {
 		if ($this->_ssh_try_to_connect[$_SERVER_ID] >= $this->MAX_RECONNECTS) {
 			return $this->_ssh_connected[$_SERVER_ID];
 		}
-		$ssh_user	= $server_info["ssh_user"] ? $server_info["ssh_user"] : "root";
-		$ssh_pswd	= $server_info["ssh_pswd"];
+		$ssh_user	= $server_info['ssh_user'] ? $server_info['ssh_user'] : 'root';
+		$ssh_pswd	= $server_info['ssh_pswd'];
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
@@ -136,42 +136,42 @@ class yf_ssh {
 		$fp = fsockopen($ssh_host, $ssh_port, $errno, $errstr, $this->CONNECT_TIMEOUT);
 		if (!$fp) {
 			$this->_ssh_try_to_connect[$_SERVER_ID]++;
-			trigger_error("SSH: cannot connect to \"".$_SERVER_ID."\"", E_USER_WARNING);
+			trigger_error('SSH: cannot connect to "'.$_SERVER_ID.'"', E_USER_WARNING);
 			return false;
 		} else {
 			fclose($fp);
 		}
 		// IMPORTANT: for best execution speed need to do: apt-get install php5-gmp php5-mcrypt php5-mhash
-		if ($this->DRIVER == "phpseclib") {
+		if ($this->DRIVER == 'phpseclib') {
 
 			$use_pswd = true;
-			if (!empty($server_info["ssh_key_private"])) {
+			if (!empty($server_info['ssh_key_private'])) {
 				$use_pswd = false;
 			}
 			if (!$use_pswd) {
 				$key = new Crypt_RSA();
-				if ($server_info["ssh_key_pswd"]) {
-					$key->setPassword($server_info["ssh_key_pswd"]); // password for key
+				if ($server_info['ssh_key_pswd']) {
+					$key->setPassword($server_info['ssh_key_pswd']); // password for key
 				}
-				$key_result = $key->loadKey(file_get_contents($server_info["ssh_key_private"]));
+				$key_result = $key->loadKey(file_get_contents($server_info['ssh_key_private']));
 				if (!$key_result) {
 					$this->_ssh_try_to_connect[$_SERVER_ID]++;
-					trigger_error("SSH: wrong key \"".$server_info["ssh_key_private"]."\" for \"".$_SERVER_ID."\"", E_USER_WARNING);
+					trigger_error('SSH: wrong key "'.$server_info['ssh_key_private'].'" for "'.$_SERVER_ID.'"', E_USER_WARNING);
 					return false;
 				}
 			}
 			$con = new Net_SSH2($ssh_host);
 			$auth_result = $con->login($ssh_user, $use_pswd ? $ssh_pswd : $key);
 
-		} elseif ($this->DRIVER == "pecl_ssh2") {
+		} elseif ($this->DRIVER == 'pecl_ssh2') {
 
 			$con = ssh2_connect($ssh_host, $ssh_port, null, array());
 			// Try to authenticate
 			$auth_result = false;
 			if ($con) {
-				if (!empty($server_info["ssh_key_public"]) && !empty($server_info["ssh_key_private"])) {
+				if (!empty($server_info['ssh_key_public']) && !empty($server_info['ssh_key_private'])) {
 					// using public key
-					$auth_result = ssh2_auth_pubkey_file($con, $ssh_user, $server_info["ssh_key_public"], $server_info["ssh_key_private"]);
+					$auth_result = ssh2_auth_pubkey_file($con, $ssh_user, $server_info['ssh_key_public'], $server_info['ssh_key_private']);
 				} else {
 					// using plain password
 					$auth_result = ssh2_auth_password($con, $ssh_user, $ssh_pswd);
@@ -180,19 +180,19 @@ class yf_ssh {
 
 		}
 		if (DEBUG_MODE) {
-			$this->_debug["connect_time"] = microtime(true) - $time_start;
+			$this->_debug['connect_time'] = microtime(true) - $time_start;
 		}
 		if (!$con) {
 			$this->_ssh_try_to_connect[$_SERVER_ID]++;
-			trigger_error("SSH: cannot connect to \"".$_SERVER_ID."\"", E_USER_WARNING);
+			trigger_error('SSH: cannot connect to "'.$_SERVER_ID.'"', E_USER_WARNING);
 			return false;
 		}
 		if ($auth_result) {
 			$this->_ssh_connected[$_SERVER_ID] = $con;
-			$this->_log($server_info, __FUNCTION__, "user: '".$ssh_user."', auth successful");
+			$this->_log($server_info, __FUNCTION__, 'user: "'.$ssh_user.'", auth successful');
 			return $con;
 		} else {
-			trigger_error("SSH: auth on \"".$ssh_host.":".$ssh_port."\" failed for ".($this->AUTH_TYPE == "pubkey" ? "pubkey: ".$server_info["pubkey_path"] : "user \"".$ssh_user."\""), E_USER_WARNING);
+			trigger_error('SSH: auth on "'.$ssh_host.':'.$ssh_port.'" failed for '.($this->AUTH_TYPE == 'pubkey' ? 'pubkey: '.$server_info['pubkey_path'] : 'user "'.$ssh_user.'"'), E_USER_WARNING);
 		}
 		return false;
 	}
@@ -201,16 +201,16 @@ class yf_ssh {
 	* SFTP subsystem for phpseclib
 	*/
 	function _init_sftp_phpseclib ($server_info = array()) {
-		if (!$this->DRIVER == "phpseclib") {
+		if (!$this->DRIVER == 'phpseclib') {
 			return false;
 		}
 		if (!$this->_INIT_OK || !$server_info) {
 			return false;
 		}
-		$ssh_host	= $server_info["base_ip"] ? $server_info["base_ip"] : $server_info["ssh_host"];
-		$ssh_port	= $server_info["ssh_port"] ? $server_info["ssh_port"] : 22;
+		$ssh_host	= $server_info['base_ip'] ? $server_info['base_ip'] : $server_info['ssh_host'];
+		$ssh_port	= $server_info['ssh_port'] ? $server_info['ssh_port'] : 22;
 		if (!$ssh_host) {
-			trigger_error("SSH: missing server IP to connect", E_USER_WARNING);
+			trigger_error('SSH: missing server IP to connect', E_USER_WARNING);
 			return false;
 		}
 		$_SERVER_ID = $this->_get_server_id($server_info);
@@ -221,8 +221,8 @@ class yf_ssh {
 		if ($this->_sftp_try_to_connect[$_SERVER_ID] >= $this->MAX_RECONNECTS) {
 			return $this->_sftp_connected[$_SERVER_ID];
 		}
-		$ssh_user	= $server_info["ssh_user"] ? $server_info["ssh_user"] : "root";
-		$ssh_pswd	= $server_info["ssh_pswd"];
+		$ssh_user	= $server_info['ssh_user'] ? $server_info['ssh_user'] : 'root';
+		$ssh_pswd	= $server_info['ssh_pswd'];
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
@@ -231,25 +231,25 @@ class yf_ssh {
 		$fp = fsockopen($ssh_host, $ssh_port, $errno, $errstr, $this->CONNECT_TIMEOUT);
 		if (!$fp) {
 			$this->_ssh_try_to_connect[$_SERVER_ID]++;
-			trigger_error("SSH: cannot connect to \"".$_SERVER_ID."\"", E_USER_WARNING);
+			trigger_error('SSH: cannot connect to "'.$_SERVER_ID.'"', E_USER_WARNING);
 			return false;
 		} else {
 			fclose($fp);
 		}
 
 		$use_pswd = true;
-		if ($this->AUTH_TYPE == "pubkey" && !empty($server_info["ssh_key_private"])) {
+		if ($this->AUTH_TYPE == 'pubkey' && !empty($server_info['ssh_key_private'])) {
 			$use_pswd = false;
 		}
 		if (!$use_pswd) {
 			$key = new Crypt_RSA();
-			if ($server_info["ssh_key_pswd"]) {
-				$key->setPassword($server_info["ssh_key_pswd"]); // password for key
+			if ($server_info['ssh_key_pswd']) {
+				$key->setPassword($server_info['ssh_key_pswd']); // password for key
 			}
-			$key_result = $key->loadKey(file_get_contents($server_info["ssh_key_private"]));
+			$key_result = $key->loadKey(file_get_contents($server_info['ssh_key_private']));
 			if (!$key_result) {
 				$this->_ssh_try_to_connect[$_SERVER_ID]++;
-				trigger_error("SSH: wrong key \"".$server_info["ssh_key_private"]."\" for \"".$_SERVER_ID."\"", E_USER_WARNING);
+				trigger_error('SSH: wrong key "'.$server_info['ssh_key_private'].'" for "'.$_SERVER_ID.'"', E_USER_WARNING);
 				return false;
 			}
 		}
@@ -260,19 +260,19 @@ class yf_ssh {
 		$auth_result = $con->login($ssh_user, $use_pswd ? $ssh_pswd : $key);
 
 		if (DEBUG_MODE) {
-			$this->_debug["connect_time"] += microtime(true) - $time_start;
+			$this->_debug['connect_time'] += microtime(true) - $time_start;
 		}
 		if (!$con) {
 			$this->_sftp_try_to_connect[$_SERVER_ID]++;
-			trigger_error("SSH: cannot connect to \"".$_SERVER_ID."\"", E_USER_WARNING);
+			trigger_error('SSH: cannot connect to "'.$_SERVER_ID.'"', E_USER_WARNING);
 			return false;
 		}
 		if ($auth_result) {
 			$this->_sftp_connected[$_SERVER_ID] = $con;
-			$this->_log($server_info, __FUNCTION__, "user: '".$ssh_user."', auth successful");
+			$this->_log($server_info, __FUNCTION__, 'user: '.$ssh_user.', auth successful');
 			return $con;
 		} else {
-			trigger_error("SSH: auth on \"".$ssh_host.":".$ssh_port."\" failed for ".($this->AUTH_TYPE == "pubkey" ? "pubkey: ".$server_info["pubkey_path"] : "user \"".$ssh_user."\""), E_USER_WARNING);
+			trigger_error('SSH: auth on '.$ssh_host.':'.$ssh_port.' failed for '.($this->AUTH_TYPE == 'pubkey' ? 'pubkey: '.$server_info['pubkey_path'] : 'user: '.$ssh_user.''), E_USER_WARNING);
 		}
 		return false;
 	}
@@ -280,7 +280,7 @@ class yf_ssh {
 	/**
 	* Executes remote command on given shell and returns result
 	*/
-	function exec ($server_info = array(), $cmd = "") {
+	function exec ($server_info = array(), $cmd = '') {
 		if (!$this->_INIT_OK || !$cmd || !$server_info) {
 			return false;
 		}
@@ -301,23 +301,23 @@ class yf_ssh {
 			$time_start = microtime(true);
 		}
 		// execute a command
-		if ($this->DRIVER == "phpseclib") {
+		if ($this->DRIVER == 'phpseclib') {
 
 			$data = $con->exec($cmd);
 			if (false === $data) {
-				trigger_error("SSH: failed to execute remote command", E_USER_WARNING);
+				trigger_error('SSH: failed to execute remote command', E_USER_WARNING);
 				return false;
 			}
 
-		} elseif ($this->DRIVER == "pecl_ssh2") {
+		} elseif ($this->DRIVER == 'pecl_ssh2') {
 
 			if (!($stream = ssh2_exec($con, $cmd, false))) {
-				trigger_error("SSH: failed to execute remote command", E_USER_WARNING);
+				trigger_error('SSH: failed to execute remote command', E_USER_WARNING);
 				return false;
 			} else {
 				// collect returning data from command
 				stream_set_blocking($stream, true);
-				$data = "";
+				$data = '';
 				while ($buf = fgets($stream)) {
 					$data .= $buf;
 				}
@@ -327,7 +327,7 @@ class yf_ssh {
 		}
 		if (DEBUG_MODE) {
 			$exec_time = microtime(true) - $time_start;
-			$debug_info .= "<b>".common()->_format_time_value($exec_time)." sec</b>,\n";
+			$debug_info .= '<b>'.common()->_format_time_value($exec_time)." sec</b>,\n";
 			$debug_info .= "func: <b>".__FUNCTION__."</b>, server: ".$server_info["base_ip"].",\n";
 			$debug_info .= "cmd: \"<b style='color:blue;'>".$cmd."</b>\" ".($this->LOG_FULL_EXEC ? ", <b>response</b>:<br />\n <pre><small>".trim($data)."</small></pre>\n" : "")."<br />";
 			$this->_debug["exec"][] = $debug_info;
