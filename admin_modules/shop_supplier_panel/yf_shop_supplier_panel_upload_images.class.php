@@ -4,7 +4,7 @@ class yf_shop_supplier_panel_upload_images {
 
 	public $ALLOWED_MIME_TYPES = array(
     	'application/zip'   => 'zip',
-    	'application/rar'   => 'rar',
+    	'application/x-rar'   => 'rar',
     	'application/x-tar' => 'tar',
     	'application/x-gzip'=> 'gz',
     );
@@ -35,7 +35,7 @@ class yf_shop_supplier_panel_upload_images {
 		$full_archive_name = escapeshellarg($this->ARCHIVE_FOLDER.$file['name']);
 
 		$zip = 'unzip -o '.$full_archive_name.' -d '.$EXTRACT_PATH;
-		$rar = 'unrar '.$full_archive_name.' '.$EXTRACT_PATH;
+		$rar = 'unrar e '.$full_archive_name.' '.$EXTRACT_PATH;
 		$tar = 'tar -xvf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 		$gz = 'tar -xzf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 
@@ -99,6 +99,7 @@ class yf_shop_supplier_panel_upload_images {
 		$dir1 = substr($dirs,-6,3);
 		$ext = pathinfo($img, PATHINFO_EXTENSION);
 		$new_path = $this->ARCHIVE_FOLDER.$dir1.'/'.$dir2.'/';
+//		$new_path = module('manage_shop')->products_img_webdir.$dir1.'/'.$dir2.'/';
 		if (!file_exists($new_path)) {
 			mkdir($new_path, 0777, true);
 			$num =1;
