@@ -5,19 +5,15 @@ class yf_shop_supplier_panel_upload_images {
 	public $ALLOWED_MIME_TYPES = array(
     	'application/zip'   => 'zip',
     	'application/rar'   => 'rar',
-    	'application/tar'   => 'tar',
+    	'application/x-tar' => 'tar',
+    	'application/x-gzip'=> 'gz',
     );
 	public $MAX_IMAGE_SIZE = 8196;
 	
 	function _init(){
 		$this->ARCHIVE_FOLDER = PROJECT_PATH."uploads/tmp/";
 	}
-/*
-exec('unzip '.escapeshellargs('/tmp/uploaded_archive.zip').' /tmp/temp_sub_dir/')
-exec('unrar '.escapeshellargs('/tmp/uploaded_archive.rar').' /tmp/temp_sub_dir/')
-exec('tar -xf '.escapeshellargs('/tmp/uploaded_archive.tar').' /tmp/temp_sub_dir/')
-exec('tar -xzf '.escapeshellargs('/tmp/uploaded_archive.tar.gz').' /tmp/temp_sub_dir/')
-*/
+
 	/**
 	*/
 	function upload_images() {
@@ -32,21 +28,25 @@ exec('tar -xzf '.escapeshellargs('/tmp/uploaded_archive.tar.gz').' /tmp/temp_sub
 		if(!$uploaded){
 			return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
 		}
-		$UNARCHIVE_PATH = $this->ARCHIVE_FOLDER.$SUPPLIER_ID.'_id_'.date("H_i_s");
+		$EXTRACT_PATH = $this->ARCHIVE_FOLDER.$SUPPLIER_ID.'_id_'.date("H_i_s");
+		if (!file_exists($EXTRACT_PATH)) {
+			mkdir($EXTRACT_PATH, 0777, true);
+		}
+		$full_archive_name = escapeshellarg($this->ARCHIVE_FOLDER.$file['name']);
 
-		$zip = 'unzip -o '.escapeshellarg($this->ARCHIVE_FOLDER.$file['name']).' -d '.$UNARCHIVE_PATH;
-		$rar = 'unrar '.escapeshellarg($this->ARCHIVE_FOLDER.$file['name']).' '.$UNARCHIVE_PATH;
-		$tar = 'tar -xf '.escapeshellarg($this->ARCHIVE_FOLDER.$file['name']).' '.$UNARCHIVE_PATH;
-		$gz = 'tar -xzf '.escapeshellarg($this->ARCHIVE_FOLDER.$file['name']).' '.$UNARCHIVE_PATH;
+		$zip = 'unzip -o '.$full_archive_name.' -d '.$EXTRACT_PATH;
+		$rar = 'unrar '.$full_archive_name.' '.$EXTRACT_PATH;
+		$tar = 'tar -xvf '.$full_archive_name.' -C '.$EXTRACT_PATH;
+		$gz = 'tar -xzf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 
 		$ext = $this->ALLOWED_MIME_TYPES[$file['type']];
 		exec($$ext, $result);
 
-		$result_files = _class('dir')->scan_dir($UNARCHIVE_PATH, true, '-f /\.(jpg|jpeg|png)$/');
+		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/');
 		foreach($result_files as $k => $v){
 			$status = $this->search_product_by_filename($v);
 			$items[] = array(
-				"filename"	=> str_replace($UNARCHIVE_PATH, '', $v),
+				"filename"	=> str_replace($EXTRACT_PATH, '', $v),
 				"status"	=> is_array($status)? $status['status'] : $status,
 				"image"		=> is_array($status)? str_replace(PROJECT_PATH, WEB_PATH, $status['img']): "",
 				"edit_url"	=> is_array($status)? "./?object=manage_shop&action=product_edit&id=".$status['id'] : "",
@@ -55,7 +55,7 @@ exec('tar -xzf '.escapeshellargs('/tmp/uploaded_archive.tar.gz').' /tmp/temp_sub
 				"items" => $items,
 			);	
 		}
-		_class('dir')->delete_dir($UNARCHIVE_PATH, true);
+		_class('dir')->delete_dir($EXTRACT_PATH, true);
 		unlink($this->ARCHIVE_FOLDER.$file['name']);
 		return tpl()->parse("shop_supplier_panel/upload_archive", $replace);
 	}
