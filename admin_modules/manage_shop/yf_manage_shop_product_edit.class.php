@@ -46,15 +46,15 @@ class yf_manage_shop_product_edit{
 				
 				cache_del("_shop_product_params|_get_params_by_product|".$_GET['id']);
 				db()->query("DELETE FROM `".db('shop_products_productparams')."` WHERE `product_id`=".$_GET['id']);
-				if ($_POST['productparams'] != '') {
-					foreach($_POST['productparams_options_' . $_POST['productparams']] as $v) {
-						db()->INSERT("shop_products_productparams",array(
-							"product_id" => $_GET['id'],
-							"productparam_id" => $_POST['productparams'],
-							"value"	=> $v,
-						));
-					}
-				}
+				if (count($_POST['productparams']) != 0)
+					foreach ($_POST['productparams'] as $param_id)
+						if (intval($param_id) != 0) 
+							foreach($_POST['productparams_options_' . $param_id] as $v)
+								db()->INSERT("shop_products_productparams",array(
+									"product_id" => $_GET['id'],
+									"productparam_id" => $param_id,
+									"value"	=> $v,
+								));
 				
 				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
 				db()->query("DELETE FROM  ".db('shop_product_to_category')." WHERE product_id = ".$_GET["id"]);
@@ -90,6 +90,7 @@ class yf_manage_shop_product_edit{
 		);
 #			$reg = "/".$product_info["url"]."_".$product_info["id"]."_(?P<content>[\d]+)_small\.jpg/";
 		$reg = "/product_".$product_info["id"]."_(?P<content>[\d]+)_thumb\.jpg/";
+		sort($image_files);
 		foreach((array)$image_files as $filepath) {
 			preg_match($reg, $filepath, $rezult);
 			$i =  $rezult["content"];

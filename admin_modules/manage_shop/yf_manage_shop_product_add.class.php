@@ -42,15 +42,15 @@ class yf_manage_shop_product_add{
 				}
 				$product_id = db()->INSERT_ID();
 				
-				if ($_POST['productparams'] != '') {
-					foreach($_POST['productparams_options_' . $_POST['productparams']] as $v) {
-						db()->INSERT("shop_products_productparams",array(
-							"product_id" => $product_id,
-							"productparam_id" => $_POST['productparams'],
-							"value"	=> $v,
-						));
-					}
-				}				
+				if (count($_POST['productparams']) != 0)
+					foreach ($_POST['productparams'] as $param_id)
+						if (intval($param_id) != 0) 
+							foreach($_POST['productparams_options_' . $param_id] as $v)
+								db()->INSERT("shop_products_productparams",array(
+									"product_id" => $product_id,
+									"productparam_id" => $param_id,
+									"value"	=> $v,
+								));			
 				
 				// Image upload
 				if (!empty($_FILES)) {

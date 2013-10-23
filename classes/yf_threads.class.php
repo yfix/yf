@@ -2,13 +2,13 @@
 
 /**
 * Call self project through console call (should be used in admin section for threaded execution)
-* @require "php-cli" installed and "php" availiable in the $PATH
+* @require 'php-cli' installed and 'php' availiable in the $PATH
 * @recommended set INCLUDE_PATH absolutely in index.php
 */
 class yf_threads {
 
 	/** @var */
-	public $php_path = "php";
+	public $php_path = 'php';
 	/** @var */
 	public $lastId = 0;
 	/** @var */
@@ -37,11 +37,11 @@ class yf_threads {
 	}
 
 	/**
-	* You should avoid "./" or "../" in config paths for example "../project_conf.php"
-	* Need to be replaced into dirname(dirname(__FILE__))."/project_conf.php"
+	* You should avoid './' or '../' in config paths for example '../project_conf.php'
+	* Need to be replaced into dirname(dirname(__FILE__)).'/project_conf.php'
 	*/
-	function new_framework_thread($object = "", $action = "", $params = array()) {
-		return $this->new_thread(str_replace("/", DIRECTORY_SEPARATOR, INCLUDE_PATH."admin/index.php")." --object=".$object." --action=".$action, $params, true);
+	function new_framework_thread($object = '', $action = '', $params = array()) {
+		return $this->new_thread(str_replace('/', DIRECTORY_SEPARATOR, INCLUDE_PATH.'admin/index.php').' --object='.$object.' --action='.$action, $params, true);
 	}
 
 	/**
@@ -51,8 +51,8 @@ class yf_threads {
 			exit('THREADS: FILE_NOT_FOUND: '.$filename);
 		}
 
-		$params = $params ? addcslashes(serialize($params), '"') : "";
-		$command = $this->php_path.' -q '.$filename. ($params ? ' --params "'.$params.'"' : "");
+		$params = $params ? addcslashes(serialize($params), '"') : '';
+		$command = $this->php_path.' -q '.$filename. ($params ? ' --params "'.$params.'"' : '');
 		++$this->lastId;
 
 		$this->handles[$this->lastId] = proc_open($command, $this->descriptorSpec, $pipes);
