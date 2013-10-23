@@ -225,7 +225,8 @@ class yf_table2 {
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
-					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($info['desc']). $th_icon_prepend. '</th>'.PHP_EOL;
+					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip']) : '';
+					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($info['desc']). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
@@ -247,8 +248,10 @@ class yf_table2 {
 					$func = $info['func'];
 					unset($info['func']); // Save resources
 					$td_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
+					$td_nowrap = ($info['extra']['nowrap'] ? ' nowrap="nowrap" ' : '');
+					$tip = $info['extra']['tip'] ? ''.$this->_show_tip($info['extra']['tip']) : '';
 
-					$body .= '<td'.$td_width.'>'.$func($row[$name], $info, $row, $params).'</td>'.PHP_EOL;
+					$body .= '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params). $tip. '</td>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<td nowrap>';
@@ -264,9 +267,11 @@ class yf_table2 {
 				$body .= '</tr>'.PHP_EOL;
 			}
 			$body .= '</tbody>'.PHP_EOL;
+			if ($params['show_total']) {
+				$params['caption'] .= PHP_EOL.' '.t('Total records:').':'.$total. PHP_EOL;
+			}
 			if ($params['caption']) {
 				$body .= '<caption>'.$params['caption'].'</caption>'.PHP_EOL;
-#				$body .= '<caption>'.$params['caption'].' '.t('Total records:').':'.$total.'</caption>'.PHP_EOL;
 			}
 			$body .= '</table>'.PHP_EOL;
 		} else {
@@ -286,6 +291,13 @@ class yf_table2 {
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $pages : '').PHP_EOL;
 		return $body;
+	}
+
+	/**
+	*/
+	function _show_tip($value = '', $extra = array()) {
+// TODO: also add ability to pass tips array into table2() params like 'data', to provide different tips, according to value
+		return _class('graphics')->_show_help_tip(array('tip_id'	=> $value));
 	}
 
 	/**
@@ -1053,7 +1065,6 @@ class yf_table2 {
 				$extra['name'] .= '['.$field.']';
 			}
 			$extra['id'] = 'radiobox_'.$field;
-// TODO: test me and maybe upgrade _class('html_controls')->radio_box()
 			return _class('html_controls')->radio_box($extra);
 		}, $extra);
 	}
@@ -1074,19 +1085,7 @@ class yf_table2 {
 				$extra['name'] .= '['.$field.']';
 			}
 			$extra['id'] = 'selectbox_'.$field;
-// TODO: test me and maybe upgrade _class('html_controls')->select_box()
 			return _class('html_controls')->select_box($extra);
 		}, $extra);
-	}
-
-	/**
-	*/
-	function _show_tip($value = '', $extra = array()) {
-// TODO: connect 2 kind of tips args to all funcs: 'tip' - near field value, 'header_tip' - for table header, 
-// TODO: also add ability to pass tips array into table2() params like 'data'
-		return _class('graphics')->_show_help_tip(array(
-			'tip_id'	=> $value,
-//			'replace'	=> $extra[],
-		));
 	}
 }

@@ -136,7 +136,7 @@ class yf_ssh {
 		$fp = fsockopen($ssh_host, $ssh_port, $errno, $errstr, $this->CONNECT_TIMEOUT);
 		if (!$fp) {
 			$this->_ssh_try_to_connect[$_SERVER_ID]++;
-			trigger_error('SSH: cannot connect to "'.$_SERVER_ID.'"', E_USER_WARNING);
+			trigger_error('SSH: cannot connect to: '.$_SERVER_ID.'', E_USER_WARNING);
 			return false;
 		} else {
 			fclose($fp);
@@ -156,7 +156,7 @@ class yf_ssh {
 				$key_result = $key->loadKey(file_get_contents($server_info['ssh_key_private']));
 				if (!$key_result) {
 					$this->_ssh_try_to_connect[$_SERVER_ID]++;
-					trigger_error('SSH: wrong key "'.$server_info['ssh_key_private'].'" for "'.$_SERVER_ID.'"', E_USER_WARNING);
+					trigger_error('SSH: wrong key: '.$server_info['ssh_key_private'].' for: '.$_SERVER_ID.'', E_USER_WARNING);
 					return false;
 				}
 			}
@@ -189,10 +189,10 @@ class yf_ssh {
 		}
 		if ($auth_result) {
 			$this->_ssh_connected[$_SERVER_ID] = $con;
-			$this->_log($server_info, __FUNCTION__, 'user: "'.$ssh_user.'", auth successful');
+			$this->_log($server_info, __FUNCTION__, 'user: '.$ssh_user.', auth successful');
 			return $con;
 		} else {
-			trigger_error('SSH: auth on "'.$ssh_host.':'.$ssh_port.'" failed for '.($this->AUTH_TYPE == 'pubkey' ? 'pubkey: '.$server_info['pubkey_path'] : 'user "'.$ssh_user.'"'), E_USER_WARNING);
+			trigger_error('SSH: auth on: '.$ssh_host.':'.$ssh_port.' failed for '.($this->AUTH_TYPE == 'pubkey' ? 'pubkey: '.$server_info['pubkey_path'] : 'user: '.$ssh_user.''), E_USER_WARNING);
 		}
 		return false;
 	}
@@ -249,7 +249,7 @@ class yf_ssh {
 			$key_result = $key->loadKey(file_get_contents($server_info['ssh_key_private']));
 			if (!$key_result) {
 				$this->_ssh_try_to_connect[$_SERVER_ID]++;
-				trigger_error('SSH: wrong key "'.$server_info['ssh_key_private'].'" for "'.$_SERVER_ID.'"', E_USER_WARNING);
+				trigger_error('SSH: wrong key: '.$server_info['ssh_key_private'].' for: '.$_SERVER_ID.'', E_USER_WARNING);
 				return false;
 			}
 		}
@@ -414,7 +414,7 @@ class yf_ssh {
 			return false;
 		}
 		if (!$this->file_exists($server_info, $remote_file)) {
-			trigger_error("SSH: ".__FUNCTION__.": remote file \"".$remote_file."\" does not exist", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": remote file ".$remote_file." does not exist", E_USER_WARNING);
 			return false;
 		}
 		// When local file is empty we will return contents of the remote file as a string
@@ -458,7 +458,7 @@ class yf_ssh {
 			$this->_debug["exec"][] = $debug_info;
 			$this->_debug["time_sum"] += $exec_time;
 		}
-		$this->_log($server_info, __FUNCTION__, "remote_file: '".$remote_file."', local_file: '".$local_file."'");
+		$this->_log($server_info, __FUNCTION__, "remote_file: ".$remote_file.", local_file: ".$local_file."");
 		return $result;
 	}
 
@@ -472,7 +472,7 @@ class yf_ssh {
 			return false;
 		}
 		if (!file_exists($local_file)) {
-			trigger_error("SSH: ".__FUNCTION__.": local file \"".$local_file."\" does not exist", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": local file ".$local_file." does not exist", E_USER_WARNING);
 			return false;
 		}
 		if (DEBUG_MODE) {
@@ -481,7 +481,7 @@ class yf_ssh {
 		// Check if remote folder exists and create it if not done yet
 		$this->mkdir($server_info, dirname($remote_file));
 		if (!$this->file_exists($server_info, dirname($remote_file))) {
-			trigger_error("SSH: ".__FUNCTION__.": cannot create remote dir \"".dirname($remote_file)."\"", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": cannot create remote dir ".dirname($remote_file)."", E_USER_WARNING);
 			return false;
 		}
 		if ($this->DRIVER == "phpseclib") {
@@ -515,7 +515,7 @@ class yf_ssh {
 			$this->_debug["exec"][] = $debug_info;
 			$this->_debug["time_sum"] += $exec_time;
 		}
-		$this->_log($server_info, __FUNCTION__, "local_file: '".$local_file."', remote_file: '".$remote_file."'");
+		$this->_log($server_info, __FUNCTION__, "local_file: ".$local_file.", remote_file: ".$remote_file."");
 		return $result;
 	}
 
@@ -607,7 +607,7 @@ class yf_ssh {
 					// Check if remote folder exists and create it if not done yet
 					$this->mkdir($server_info, dirname($_remote_file));
 					if (!$this->file_exists($server_info, dirname($_remote_file))) {
-						trigger_error("SSH: ".__FUNCTION__.": cannot create remote dir \"".dirname($_remote_file)."\"", E_USER_WARNING);
+						trigger_error("SSH: ".__FUNCTION__.": cannot create remote dir ".dirname($_remote_file)."", E_USER_WARNING);
 						continue;
 					}
 					if ($this->DRIVER == "phpseclib") {
@@ -623,7 +623,7 @@ class yf_ssh {
 					}
 				}
 			}
-			$this->_log($server_info, __FUNCTION__, "strlen: '".strlen($string)."', remote_file: '".$remote_file."'");
+			$this->_log($server_info, __FUNCTION__, "strlen: ".strlen($string).", remote_file: ".$remote_file."");
 			return $result;
 		}
 		if (DEBUG_MODE) {
@@ -638,7 +638,7 @@ class yf_ssh {
 		// Check if remote folder exists and create it if not done yet
 		$this->mkdir($server_info, dirname($remote_file));
 		if (!$this->file_exists($server_info, dirname($remote_file))) {
-			trigger_error("SSH: ".__FUNCTION__.": cannot create remote dir \"".dirname($remote_file)."\"", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": cannot create remote dir ".dirname($remote_file)."", E_USER_WARNING);
 			return false;
 		}
 		// Go!
@@ -655,7 +655,7 @@ class yf_ssh {
 		
 			}
 		}
-		$this->_log($server_info, __FUNCTION__, "strlen: '".strlen($string)."', remote_file: '".$remote_file."'");
+		$this->_log($server_info, __FUNCTION__, "strlen: ".strlen($string).", remote_file: ".$remote_file."");
 		return $result;
 	}
 
@@ -667,7 +667,7 @@ class yf_ssh {
 		if (strlen($path)) {
 			$command = "echo \"if [ -e '".$path."' ]; then echo 1; else echo 0; fi\" | bash";
 			$result = (bool)intval($this->exec($server_info, $command));
-			$this->_log($server_info, __FUNCTION__, "path: '".$path."', result: ".(int)$result);
+			$this->_log($server_info, __FUNCTION__, "path: ".$path.", result: ".(int)$result);
 			return $result;
 		}
 		return false;
@@ -683,7 +683,7 @@ class yf_ssh {
 		}
 		$result = $this->scan_dir($server_info, dirname($path), "", "", 0, basename($path));
 		$result = current($result);
-		$this->_log($server_info, __FUNCTION__, "path: '".$path."'");
+		$this->_log($server_info, __FUNCTION__, "path: ".$path."");
 		return $result;
 	}
 
@@ -794,7 +794,7 @@ class yf_ssh {
 		if (is_array($files)) {
 			ksort($files);
 		}
-		$this->_log($server_info, __FUNCTION__, "start_dir: '".$start_dir."', level: ".(int)$level);
+		$this->_log($server_info, __FUNCTION__, "start_dir: ".$start_dir.", level: ".(int)$level);
 		return $files;
 	}
 
@@ -919,7 +919,7 @@ class yf_ssh {
 			$dir_mode = 755;
 		}
 		$this->exec($server_info, "mkdir -m ".$dir_mode." -p ".$dir_name);
-		$this->_log($server_info, __FUNCTION__, "dir_name: '".$dir_name."', dir_mode: ".(int)$dir_mode);
+		$this->_log($server_info, __FUNCTION__, "dir_name: ".$dir_name.", dir_mode: ".(int)$dir_mode);
 		return true;
 	}
 
@@ -932,10 +932,10 @@ class yf_ssh {
 		// for example: deny for "/var",
 		// but allow for "/var/www"
 		if (substr_count($path, "/") <= 1) {
-			trigger_error("SSH: ".__FUNCTION__.": attempt to remove \"".$path."\" folder denied!", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": attempt to remove ".$path." folder denied!", E_USER_WARNING);
 			return false;
 		}
-		$this->_log($server_info, __FUNCTION__, "path: '".$path."'");
+		$this->_log($server_info, __FUNCTION__, "path: ".$path."");
 		return $this->exec($server_info, "rm -rf '".$path."'");
 	}
 
@@ -944,7 +944,7 @@ class yf_ssh {
 	*/
 	function unlink($server_info = array(), $path = "") {
 		$path = $this->_prepare_path($path);
-		$this->_log($server_info, __FUNCTION__, "path: '".$path."'");
+		$this->_log($server_info, __FUNCTION__, "path: ".$path."");
 		return $this->exec($server_info, "unlink '".$path."'");
 	}
 
@@ -957,7 +957,7 @@ class yf_ssh {
 			foreach ((array)$path as $_path => $_new_mode) {
 				$_path = $this->_prepare_path($_path);
 				if (substr_count($_path, "/") <= 1) {
-					trigger_error("SSH: ".__FUNCTION__.": attempt to change \"".$_path."\" denied!", E_USER_WARNING);
+					trigger_error("SSH: ".__FUNCTION__.": attempt to change ".$_path." denied!", E_USER_WARNING);
 					continue;
 				}
 				$_bulk_cmd[] .= "chmod ".($recursively ? "-R" : "")." ".$_new_mode." '".$_path."'";
@@ -974,10 +974,10 @@ class yf_ssh {
 		// for example: deny for "/var",
 		// but allow for "/var/www"
 		if (substr_count($path, "/") <= 1) {
-			trigger_error("SSH: ".__FUNCTION__.": attempt to change \"".$path."\" denied!", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": attempt to change ".$path." denied!", E_USER_WARNING);
 			return false;
 		}
-		$this->_log($server_info, __FUNCTION__, "path: '".$path."', new_mode: ".$new_mode.", recurse: ".(int)$recursively);
+		$this->_log($server_info, __FUNCTION__, "path: ".$path.", new_mode: ".$new_mode.", recurse: ".(int)$recursively);
 		return $this->exec($server_info, "chmod ".($recursively ? "-R" : "")." ".$new_mode." '".$path."'");
 	}
 
@@ -990,7 +990,7 @@ class yf_ssh {
 			foreach ((array)$path as $_path => $_new_owner) {
 				$_path = $this->_prepare_path($_path);
 				if (substr_count($_path, "/") <= 1) {
-					trigger_error("SSH: ".__FUNCTION__.": attempt to change \"".$_path."\" denied!", E_USER_WARNING);
+					trigger_error("SSH: ".__FUNCTION__.": attempt to change ".$_path." denied!", E_USER_WARNING);
 					continue;
 				}
 				$_bulk_cmd[] .= "chown ".($recursively ? "-R" : "")." ".$_new_owner." '".$_path."'";
@@ -1009,10 +1009,10 @@ class yf_ssh {
 		// for example: deny for "/var",
 		// but allow for "/var/www"
 		if (substr_count($path, "/") <= 1) {
-			trigger_error("SSH: ".__FUNCTION__.": attempt to change \"".$path."\" denied!", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": attempt to change ".$path." denied!", E_USER_WARNING);
 			return false;
 		}
-		$this->_log($server_info, __FUNCTION__, "path: '".$path."', new_owner: ".$new_owner.", new_group: ".$new_group.", recurse: ".(int)$recursively);
+		$this->_log($server_info, __FUNCTION__, "path: ".$path.", new_owner: ".$new_owner.", new_group: ".$new_group.", recurse: ".(int)$recursively);
 		return $this->exec($server_info, "chown ".($recursively ? "-R" : "")." ".$new_owner. ($new_group ? ":".$new_group : "")." '".$path."'");
 	}
 
@@ -1030,10 +1030,10 @@ class yf_ssh {
 		// for example: deny for "/var",
 		// but allow for "/var/www"
 		if (substr_count($path, "/") <= 1) {
-			trigger_error("SSH: ".__FUNCTION__.": attempt to rename \"".$path."\" denied!", E_USER_WARNING);
+			trigger_error("SSH: ".__FUNCTION__.": attempt to rename ".$path." denied!", E_USER_WARNING);
 			return false;
 		}
-		$this->_log($server_info, __FUNCTION__, "old_name: '".$old_name."', new_name: '".$new_name."'");
+		$this->_log($server_info, __FUNCTION__, "old_name: ".$old_name.", new_name: ".$new_name."");
 		return $this->exec($server_info, "mv '".$old_name."' '".$new_name."'");
 	}
 
@@ -1047,7 +1047,7 @@ class yf_ssh {
 			return false;
 		}
 		if (!$this->file_exists($server_info, $remote_dir)) {
-			trigger_error("SSH: ".__FUNCTION__.": remote dir \"".$remote_dir."\" not exist", E_USER_WARNING);
+			trigger_error('SSH: '.__FUNCTION__.': remote dir '.$remote_dir.' not exist', E_USER_WARNING);
 			return false;
 		}
 		$cutoff_len = strlen($remote_dir);
@@ -1065,39 +1065,39 @@ class yf_ssh {
 				$remote_file	= $_path;
 				$local_file		= $local_dir. substr($_path, $cutoff_len);
 				_mkdir_m(dirname($local_file));
-				if ($_info["type"] == "d") {
+				if ($_info['type'] == 'd') {
 					_mkdir_m($local_file);
-				} elseif ($_info["type"] == "f") {
+				} elseif ($_info['type'] == 'f') {
 					$this->read_file($server_info, $remote_file, $local_file);
-				} elseif ($_info["type"] == "l") {
+				} elseif ($_info['type'] == 'l') {
 					// Resolve link target and download it
 					$_target_path = $this->realpath($server_info, $_path);
 					$_target_info = $this->file_info($server_info, $_target_path);
-					if ($_target_info["type"] == "f") {
+					if ($_target_info['type'] == 'f') {
 						$this->read_file($server_info, $_target_path, $local_file);
 					}
 				}
 			}
 		}
-		$this->_log($server_info, __FUNCTION__, "remote_dir: '".$remote_dir."', local_dir: '".$local_dir."'");
+		$this->_log($server_info, __FUNCTION__, 'remote_dir: '.$remote_dir.', local_dir: '.$local_dir.'');
 		return true;
 	}
 
 	/**
 	* Copy local dir structure into remote one (bulk method)
 	*/
-	function upload_dir ($server_info = array(), $local_dir = "", $remote_dir = "", $pattern_include = "", $pattern_exclude = "", $level = null) {
+	function upload_dir ($server_info = array(), $local_dir = '', $remote_dir = '', $pattern_include = '', $pattern_exclude = '', $level = null) {
 		$local_dir	= $this->_prepare_path($local_dir);
 		$remote_dir	= $this->_prepare_path($remote_dir);
 		if (!$this->_INIT_OK || !$server_info || !strlen($local_dir) || !strlen($remote_dir)) {
 			return false;
 		}
 		if (!file_exists($local_dir)) {
-			trigger_error("SSH: ".__FUNCTION__.": local dir \"".$local_dir."\" not exist", E_USER_WARNING);
+			trigger_error('SSH: '.__FUNCTION__.': local dir: '.$local_dir.' not exists', E_USER_WARNING);
 			return false;
 		}
 		$cutoff_len = strlen($local_dir);
-		$dir_contents = _class("dir")->scan_dir($local_dir, 1, $pattern_include, $pattern_exclude, $level);
+		$dir_contents = _class('dir')->scan_dir($local_dir, 1, $pattern_include, $pattern_exclude, $level);
 		if (!$dir_contents) {
 			return false;
 		}
@@ -1107,13 +1107,13 @@ class yf_ssh {
 		if ($this->MASS_USE_ARCHIVES) {
 			$archive_path = $this->_local_make_tar($dir_contents);
 			if ($archive_path && file_exists($archive_path)) {
-				$remote_archive_path = $this->_prepare_path($remote_dir. "/". basename($archive_path));
+				$remote_archive_path = $this->_prepare_path($remote_dir. '/'. basename($archive_path));
 				$this->write_file($server_info, $archive_path, $remote_archive_path);
 				if ($this->file_exists($server_info, $remote_archive_path)) {
-					$first_local_dir = trim(substr($local_dir, 0, strpos($local_dir, "/", 1)), "/");
-					$_cwd = trim($this->exec($server_info, "pwd"));
+					$first_local_dir = trim(substr($local_dir, 0, strpos($local_dir, '/', 1)), '/');
+					$_cwd = trim($this->exec($server_info, 'pwd'));
 
-					$_tmp_dir = $this->_prepare_path($remote_dir. "/". str_replace(array(".tar", ".gz", ".bz"), "", basename($archive_path)));
+					$_tmp_dir = $this->_prepare_path($remote_dir. '/'. str_replace(array('.tar', '.gz', '.bz'), '', basename($archive_path)));
 					$this->mkdir_m($server_info, $_tmp_dir);
 
 					$cmd = "cd '".$_tmp_dir."';"
@@ -1137,8 +1137,8 @@ class yf_ssh {
 		if (!$completed) {
 			foreach ((array)$dir_contents as $_path) {
 				$local_file		= $_path;
-				$remote_file	= $remote_dir. "/". substr($_path, $cutoff_len);
-				$remote_file	= str_replace("//", "/", $remote_file);
+				$remote_file	= $remote_dir. '/'. substr($_path, $cutoff_len);
+				$remote_file	= str_replace('//', '/', $remote_file);
 				$this->mkdir($server_info, dirname($remote_file));
 				if (!$this->file_exists($server_info, dirname($remote_file))) {
 					continue;
@@ -1152,20 +1152,20 @@ class yf_ssh {
 				}
 			}
 		}
-		$this->_log($server_info, __FUNCTION__, "local_dir: '".$local_dir."', remote_dir: '".$remote_dir."'");
+		$this->_log($server_info, __FUNCTION__, 'local_dir: '.$local_dir.', remote_dir: '.$remote_dir.'');
 		return true;
 	}
 
 	/**
 	* Compress files to tar archive (local)
 	*/
-	function _local_make_tar ($files_list = array(), $archive_path = "") {
+	function _local_make_tar ($files_list = array(), $archive_path = '') {
 		if (empty($files_list)) {
 			return false;
 		}
 		if (!$archive_path) {
-			$archive_name = gmdate("Y-m-d__H_i_s")."_".abs(crc32(microtime(true))).".tar";
-			$archive_path = $this->_prepare_path(realpath(PROJECT_PATH)."/". $this->_TMP_DIR). "/". $archive_name;
+			$archive_name = gmdate('Y-m-d__H_i_s').'_'.abs(crc32(microtime(true))).'.tar';
+			$archive_path = $this->_prepare_path(realpath(PROJECT_PATH).'/'. $this->_TMP_DIR). '/'. $archive_name;
 		}
 		$destination_folder = dirname($archive_path);
 		if (!file_exists($destination_folder)) {
@@ -1181,15 +1181,15 @@ class yf_ssh {
 			unlink($archive_path);
 		}
 		foreach ((array)$files_list as $fpath) {
-			$cmd = $this->TAR_PATH."tar "
-				. (!file_exists($archive_path) ? "--create" : "--append"). " "
-				. " -f ".$archive_path." ".$fpath."";
+			$cmd = $this->TAR_PATH.'tar '
+				. (!file_exists($archive_path) ? '--create' : '--append'). ' '
+				. ' -f '.$archive_path.' '.$fpath.'';
 			exec($cmd);
 		}
 		if ($this->USE_GZIP) {
-			exec($this->GZIP_PATH."gzip ".$archive_path);
-			if (file_exists($archive_path.".gz")) {
-				$archive_path .= ".gz";
+			exec($this->GZIP_PATH.'gzip '.$archive_path);
+			if (file_exists($archive_path.'.gz')) {
+				$archive_path .= '.gz';
 			} else {
 				// GZIP failed for some reason, turn off temporary
 				$this->USE_GZIP = false;
@@ -1205,7 +1205,7 @@ class yf_ssh {
 	/**
 	* Extract files from tar archive (local)
 	*/
-	function _local_extract_tar ($archive_path = "", $extract_path = "") {
+	function _local_extract_tar ($archive_path = '', $extract_path = '') {
 		if (empty($archive_path) || empty($extract_path)) {
 			return false;
 		}
@@ -1222,8 +1222,8 @@ class yf_ssh {
 	/**
 	* Clean path from SFTP prefix (usually for pretty output for user)
 	*/
-	function clean_path ($path = "") {
-		$pattern = "#^(ssh2\.sftp://Resource id \#[0-9]+)#ims";
+	function clean_path ($path = '') {
+		$pattern = '#^(ssh2\.sftp://Resource id \#[0-9]+)#ims';
 		if (is_array($path)) {
 			// Get current resource string
 			$cur = current($path);
@@ -1231,15 +1231,15 @@ class yf_ssh {
 				$cur = current($cur);
 			}
 			preg_match($pattern, $cur, $m);
-			return str_replace($m[1], "", $path);
+			return str_replace($m[1], '', $path);
 		}
-		return preg_replace($pattern, "", $path);
+		return preg_replace($pattern, '', $path);
 	}
 
 	/**
 	* Prepare path, Prevent some hacks and misuses
 	*/
-	function _prepare_path ($path = "") {
+	function _prepare_path ($path = '') {
 		if (is_array($path)) {
 			foreach ((array)$path as $k => $v) {
 				$path[$k] = $this->_prepare_path($v);
@@ -1248,20 +1248,20 @@ class yf_ssh {
 		}
 		$bad_chars = array("`", "\"", "'", "..", "~", " ", "\t", "\r", "\n", "|", "<", ">", "&");
 		$result = str_replace($bad_chars, "", rtrim(str_replace(array("\\", "//", "///"), "/", trim($path)), "/"));
-		return $result ? $result : "/";
+		return $result ? $result : '/';
 	}
 
 	/**
 	* Prepare text for using inside (grep '%text%') or similar commands
 	*/
-	function _prepare_text ($text = "") {
+	function _prepare_text ($text = '') {
 		if (is_array($text)) {
 			foreach ((array)$path as $k => $v) {
 				$text[$k] = $this->_prepare_text($v);
 			}
 			return $text;
 		}
-		$text = preg_replace("/[\x0A-\xFF]/i", "", $text);
+		$text = preg_replace('/[\x0A-\xFF]/i', '', $text);
 		$replace = array(
 			"\\"	=> "\\\\",
 			"`"		=> "\\`",
@@ -1282,30 +1282,30 @@ class yf_ssh {
 	/**
 	* Log internal action (Currently we store here successful actions, not errors for debug)
 	*/
-	function _log ($server_info = array(), $action = "", $comment = "") {
+	function _log ($server_info = array(), $action = '', $comment = '') {
 		if (!$this->LOG_ACTIONS) {
 			return false;
 		}
 		$SERVER_ID = $this->_get_server_id($server_info);
 		$sql_array = array(
-			"server_id"		=> _es($SERVER_ID),
-			"microtime"		=> _es(str_replace(",", ".", microtime(true))),
-			"init_type"		=> _es(MAIN_TYPE),
-			"action"		=> _es($action),
-			"comment"		=> _es($comment),
-			"get_object"	=> _es($_GET["object"]),
-			"get_action"	=> _es($_GET["action"]),
-			"user_id"		=> intval($_SESSION["user_id"]),
-			"user_group"	=> intval($_SESSION["user_group"]),
-			"ip"			=> _es(common()->get_ip()),
+			'server_id'		=> _es($SERVER_ID),
+			'microtime'		=> _es(str_replace(',', '.', microtime(true))),
+			'init_type'		=> _es(MAIN_TYPE),
+			'action'		=> _es($action),
+			'comment'		=> _es($comment),
+			'get_object'	=> _es($_GET['object']),
+			'get_action'	=> _es($_GET['action']),
+			'user_id'		=> intval($_SESSION['user_id']),
+			'user_group'	=> intval($_SESSION['user_group']),
+			'ip'			=> _es(common()->get_ip()),
 		);
-		return db()->INSERT("log_ssh_action", $sql_array);
+		return db()->INSERT('log_ssh_action', $sql_array);
 	}
 
 	/**
 	* Convert string permission output to numerical
 	*/
-	function _perm_str2num ($perm = "") {
+	function _perm_str2num ($perm = '') {
 		$perm_len = strlen(trim($perm));
 		if ($perm_len > 10 && $perm_len < 9) {
 			return false;
@@ -1314,10 +1314,10 @@ class yf_ssh {
 			$perm = substr($perm, 1);
 		}
 		// Compatibility with sticky bit, setuid, setgid (http://en.wikipedia.org/wiki/File_system_permissions)
-		$perm = str_replace(array("s", "S", "t", "T"), array("x", "-", "x", "-"), $perm);
+		$perm = str_replace(array('s', 'S', 't', 'T'), array('x', '-', 'x', '-'), $perm);
 
 		foreach ((array)str_split($perm) as $k => $v) {
-			if ($v == "-") {
+			if ($v == '-') {
 				continue;
 			}
 			// Owner
@@ -1333,6 +1333,6 @@ class yf_ssh {
 			if ($k == 7) {	$oth += 2;	}
 			if ($k == 8) {	$oth += 1;	}
 		}
-		return "0". $own. "". $grp. "". $oth;
+		return '0'. $own. ''. $grp. ''. $oth;
 	}
 }
