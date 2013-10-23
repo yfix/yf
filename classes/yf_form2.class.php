@@ -975,8 +975,8 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			if (!$extra['items']) {
 				$extra['items'] = array(
-					'0' => '<span class="label label-warning">'.t('Disabled').'</span>',
-					'1' => '<span class="label label-success">'.t('Active').'</span>',
+					'0' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</span>',
+					'1' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</span>',
 				);
 			}
 			$extra['errors'] = common()->_get_error_messages();
@@ -1003,8 +1003,8 @@ class yf_form2 {
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['items'] = array(
-			'DENY' => '<span class="label label-warning">'.t('Deny').'</span>', 
-			'ALLOW' => '<span class="label label-success">'.t('Allow').'</span>',
+			'DENY' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</span>',
+			'ALLOW' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</span>',
 		);
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
@@ -1013,8 +1013,8 @@ class yf_form2 {
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['items'] = array(
-			'1' => '<span class="label label-success">'.t('YES').'</span>',
-			'0' => '<span class="label label-warning">'.t('NO').'</span>', 
+			'0' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</span>',
+			'1' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</span>',
 		);
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
@@ -1050,7 +1050,13 @@ class yf_form2 {
 			$extra['type'] = 'submit';
 
 			$attrs_names = array('type','name','id','class','style','value','disabled');
-			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+			if (!$extra['as_input']) {
+				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
+				$value = (!isset($extra['no_escape']) ? $_this->_htmlchars($extra['value']) : $extra['value']);
+				return $_this->_row_html('<button'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</button>', $extra, $r);
+			} else {
+				return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+			}
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -1062,6 +1068,7 @@ class yf_form2 {
 	/**
 	*/
 	function save($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$extra['icon'] = 'icon-save';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1081,6 +1088,7 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Back';
+		$extra['icon'] = 'icon-save';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1100,6 +1108,7 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Clear';
+		$extra['icon'] = 'icon-save';
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1284,19 +1293,40 @@ class yf_form2 {
 
 	/**
 	*/
-	function date_box($name, $values = array(), $extra = array(), $replace = array()) {
+	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (!$name) {
+			$name = 'date';
+		}
 		return $this->_html_control($name, $values, $extra, $replace, 'date_box2');
 	}
 
 	/**
 	*/
-	function time_box($name, $values = array(), $extra = array(), $replace = array()) {
+	function time_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (!$name) {
+			$name = 'time';
+		}
 		return $this->_html_control($name, $values, $extra, $replace, 'time_box2');
 	}
 
 	/**
 	*/
-	function datetime_box($name, $values = array(), $extra = array(), $replace = array()) {
+	function datetime_box($name = '', $values = array(), $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (!$name) {
+			$name = 'datetime';
+		}
 		if (!isset($extra['show_what'])) {
 			$extra['show_what'] = 'ymdhis';
 		}
@@ -1343,9 +1373,7 @@ class yf_form2 {
 			$name = 'country';
 		}
 		$data = array();
-// TODO		$a = main()->get_data('countries_new');
-		$a = db()->get_all('SELECT * FROM '.db('countries').' WHERE active="1" ORDER BY name ASC');
-		foreach ((array)$a as $v) {
+		foreach ((array)main()->get_data('countries_new') as $v) {
 			$data[$v['code']] = '<i class="bfh-flag-'.strtoupper($v['code']).'"></i> '. $v['name'].' ['.strtoupper($v['code']).']';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -1369,7 +1397,6 @@ class yf_form2 {
 			$name = 'region';
 		}
 		$data = array();
-// TODO: fill with data
 		foreach ((array)main()->get_data('regions_new') as $v) {
 			$data[$v['code']] = $v['name'].' ['.$v['code'].']';
 		}
@@ -1418,9 +1445,7 @@ class yf_form2 {
 			$name = 'language';
 		}
 		$data = array();
-// TODO: move this into main()->get_data('languages_new')
-		$a = db()->get_all('SELECT * FROM '.db('languages').' WHERE active="1" ORDER BY native ASC');
-		foreach ((array)$a as $v) {
+		foreach ((array)main()->get_data('languages_new') as $v) {
 			$data[$v['code']] = ($v['country'] ? '<i class="bfh-flag-'.strtoupper($v['country']).'"></i> ' : ''). $v['native'].' ['.$v['code'].']';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -1444,9 +1469,7 @@ class yf_form2 {
 			$name = 'timezone';
 		}
 		$data = array();
-// TODO: move this into main()->get_data('timezones_new')
-		$a = db()->get_all('SELECT * FROM '.db('timezones').' WHERE active="1" ORDER BY offset ASC, name ASC');
-		foreach ((array)$a as $v) {
+		foreach ((array)main()->get_data('timezones_new') as $v) {
 			$data[$v['code']] = '<small>'.$v['offset'].' ['.$v['code'].'] '.$v['name'].'</small>';
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
@@ -1605,13 +1628,27 @@ class yf_form2 {
 	/**
 	* Image upload
 	*/
-	function image($name, $desc = '', $extra = array(), $replace = array()) {
+	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
 		}
 // TODO: show already uploaded image, link to delete it, input to upload new
-		return $this;
+		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$func = function($extra, $r, $_this) {
+/*
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$extra['id'] = $extra['name'];
+*/
+			return $_this->_row_html('<input type="file">', $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
 	}
 
 	/**
@@ -1771,9 +1808,10 @@ class yf_form2 {
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			$is_active = $r[$extra['name']];
 // TODO: use CSS abstraction layer
-			return ' <a href="'.$link_url.'" class="change_active">'
-						.($is_active ? '<span class="label label-success">'.t('Active').'</span>' : '<span class="label label-warning">'.t('Disabled').'</span>')
-					.'</a> ';
+			$html_0	= '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>';
+			$html_1 = '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>';
+
+			return ' <a href="'.$link_url.'" class="change_active">'.($is_active ? $html_1 : $html_0).'</a> ';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);

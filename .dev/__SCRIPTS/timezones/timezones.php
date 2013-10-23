@@ -185,7 +185,7 @@ $data = array (
   'CDT' => 
   array (
     'code' => 'CDT',
-    'name' => 'Cuba Daylight Time',
+    'name' => 'Cuba Daylight Time[3]',
     'offset' => 'UTC-04',
     'active' => 0,
   ),
@@ -346,7 +346,7 @@ $data = array (
   'DFT' => 
   array (
     'code' => 'DFT',
-    'name' => 'AIX specific equivalent of Central European Time',
+    'name' => 'AIX specific equivalent of Central European Time[4]',
     'offset' => 'UTC+01',
     'active' => 0,
   ),
@@ -941,14 +941,14 @@ $data = array (
   'PYST' => 
   array (
     'code' => 'PYST',
-    'name' => 'Paraguay Summer Time (Brazil)',
+    'name' => 'Paraguay Summer Time (Brazil)[6]',
     'offset' => 'UTC-03',
     'active' => 0,
   ),
   'PYT' => 
   array (
     'code' => 'PYT',
-    'name' => 'Paraguay Time (Brazil)',
+    'name' => 'Paraguay Time (Brazil)[7]',
     'offset' => 'UTC-04',
     'active' => 0,
   ),

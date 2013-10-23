@@ -1,5 +1,0 @@
-{if("form_header" ne "")}<h1>{form_header}</h1>{/if}
-<form action="{form_action}" id="{form_id}" name="{form_name}" method="{form_method}" enctype="{form_enctype}" class="form-horizontal">
-{form_items}
-</form>
-{form_footer}

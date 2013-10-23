@@ -45,7 +45,7 @@ class yf_tpl_driver_yf {
 		'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> '_class(\'tpl\')->_generate_url_wrapper(\'$1\')',
 		// EXAMPLE:	 {form_row("text","password","New Password")}
-		'/\{form_row\(\s*["\']{1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/imse'
+		'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/imse'
 			=> '_class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\')',
 	);
 	/** @var array @conf_skip Show custom class method output pattern */

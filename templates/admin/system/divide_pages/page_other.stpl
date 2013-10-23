@@ -1,1 +1,0 @@
-<li><a href="{link}" title="{t('Page %num', %num='{page_num}')}">{page_num}</a></li>
