@@ -25,7 +25,7 @@ if (!defined('YF_PATH')) {
 
 $self = __FILE__;
 foreach(glob(dirname(dirname(__FILE__)).'/*/*into_db*.php') as $path) {
-	if ($path == $self) {
+	if ($path == $self || false !== strpos($path, 'TODO')) {
 		continue;
 	}
 	echo PHP_EOL.$path.PHP_EOL.PHP_EOL;
