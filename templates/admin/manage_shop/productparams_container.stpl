@@ -1,23 +1,74 @@
-<select name="productparams" class="productparams">
-<option value="">- none -</option>	
-{foreach('params')}
-	<option value="{#.id}" {#.selected}>{#.title}</option>
-{/foreach}
-</select>
-{foreach('params_options')}
-<div class="productparams_options productparam_{#.productparams_id}" style="display:none;height:100px;overflow:auto;width:auto;">
-{#.options_list}
+<a class="btn btn-mini addparams"><span>{t(Add Params)}</span></a><br />
+<div id="productparams_container">
 </div>
-{/foreach}
 <script>
 $(function(){	
-	$(".productparam_{current_param_id}").show();
+	var params = {params};
+	var params_selected = {params_selected};
+	var code = '';
+	var selected = '';
+	var hidden = '';
+	
+	for(var param_id in params_selected) {
+		code = '<div><select name="productparams[]" class="productparams"><option value="">- none -</option>';
+		
+		for(var param_id2 in params) {
+			if (param_id == param_id2) {
+				selected = ' selected';
+			} else {
+				selected = '';
+			}
+			code += '<option value="'+param_id2+'" '+selected+'>'+params[param_id2]['title']+'</option>';
+		}	   
+		code += '</select>';
+		for(var param_id2 in params) {
+			if (param_id != param_id2) {
+				hidden = 'display:none;';
+			} else {
+				hidden = '';
+			}
+			code += '<div class="productparams_options productparam_options_'+param_id2+'" style="'+hidden+'">';
+			for (var option_id in params[param_id2]['items']) {
+				if (params_selected[param_id][option_id] == option_id) {
+					selected = ' checked';
+				} else {
+					selected = '';
+				}				
+				code += '<input type="checkbox" name="productparams_options_'+param_id2+'[]" value="'+option_id+'"'+selected+'> '+params[param_id2]['items'][option_id]+'<br />';
+			}
+			code += '<br /></div>';
+		}
+
+		code += '</div>';
+		$("#productparams_container").append(code);
+	}
+	
+//
+					
+	
+	$(".addparams").click(function(){
+		code = '<div><select name="productparams[]" class="productparams"><option value="">- none -</option>';		
+		for(var param_id2 in params) {
+			code += '<option value="'+param_id2+'">'+params[param_id2]['title']+'</option>';
+		}	   
+		code += '</select>';
+		for(var param_id2 in params) {
+			code += '<div class="productparams_options productparam_options_'+param_id2+'" style="display:none;">';
+			for (var option_id in params[param_id2]['items']) {
+				code += '<input type="checkbox" name="productparams_options_'+param_id2+'[]" value="'+option_id+'"> '+params[param_id2]['items'][option_id]+'<br />';
+			}
+			code += '<br /></div>';
+		}
+		code += '</div>';
+		$("#productparams_container").append(code);
+		$('select').not('.portlet select').not('.no-chosen').chosen();
+	}); 
 	
 	$(document).on('change',".productparams",function(){
-		$(".productparams_options").hide();		
+		$(this).parent().children(".productparams_options").hide();
 		if ($(this).val() != '') {
-			$(".productparam_"+$(this).val()).show();
+			$(this).parent().children(".productparam_options_"+$(this).val()).show();		
 		}
-	});
+	}); 
 });
 </script>

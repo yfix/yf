@@ -29,8 +29,8 @@
 	{image}
 {/if}
 			<a class="btn btn-mini" onclick="addImage();"><span>{t(Add Image)}</span></a>
+			<div id="images"></div>		
 		</div>
-		<div id="images"></div>
 	</div>
 
 {foreach("dynamic_fields")}
