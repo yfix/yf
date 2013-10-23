@@ -6,7 +6,7 @@ class db_class_test extends PHPUnit_Framework_TestCase {
 	public function test_insert_01() {
 		$out = array();
 
-// TODO: automatically create and populate database test_yf_unittests with sample data to test db and related methods
+// TODO: automatically create and populate database yf_unit_tests with sample data to test db and related methods
 /*
 $a = _class('db')->insert('shop_orders', array(
 			'user_id' => 1,
