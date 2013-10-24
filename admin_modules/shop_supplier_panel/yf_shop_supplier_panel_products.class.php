@@ -73,6 +73,19 @@ class yf_shop_supplier_panel_products {
 					$sql_array['image'] = 1;
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, 'id='.$_GET['id']);
+				
+				cache_del("_shop_product_params|_get_params_by_product|".$_GET['id']);
+				db()->query("DELETE FROM `".db('shop_products_productparams')."` WHERE `product_id`=".$_GET['id']);
+				if (count($_POST['productparams']) != 0)
+					foreach ($_POST['productparams'] as $param_id)
+						if (intval($param_id) != 0) 
+							foreach($_POST['productparams_options_' . $param_id] as $v)
+								db()->INSERT("shop_products_productparams",array(
+									"product_id" => $_GET['id'],
+									"productparam_id" => $param_id,
+									"value"	=> $v,
+								));
+						
 				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
 /*
 				db()->query('DELETE FROM  '.db('shop_product_to_category').' WHERE product_id = '.$_GET['id']);
@@ -134,6 +147,7 @@ class yf_shop_supplier_panel_products {
 			'price'					=> $product_info['price'],
 			'quantity'				=> $product_info['quantity'],
 			'ext_url'				=> $product_info['external_url'],
+			'productparams'			=> module("manage_shop","admin_modules")->_productparams_container($_GET['id']),			
 			'manufacturer_box'		=> common()->select_box('manufacturer', module('manage_shop')->_man_for_select, $product_info['manufacturer_id'], false, 2),
 			'category_box'			=> common()->multi_select('category', module('manage_shop')->_cats_for_select, $cat_id, false, 2, ' size=5 ', false),
 			'cat_id_box'			=> common()->select_box('cat_id', module('manage_shop')->_cats_for_select, $product_info['cat_id'], false, 2),
@@ -175,6 +189,15 @@ class yf_shop_supplier_panel_products {
 					db()->INSERT(db('shop_product_to_category'), $cat_id);
 				}
 				$product_id = db()->INSERT_ID();
+				if (count($_POST['productparams']) != 0)
+					foreach ($_POST['productparams'] as $param_id)
+						if (intval($param_id) != 0) 
+							foreach($_POST['productparams_options_' . $param_id] as $v)
+								db()->INSERT("shop_products_productparams",array(
+									"product_id" => $product_id,
+									"productparam_id" => $param_id,
+									"value"	=> $v,
+								));				
 				// Image upload
 				if (!empty($_FILES)) {
 					module("shop_supplier_panel")->_product_image_upload($product_id);
@@ -204,6 +227,7 @@ class yf_shop_supplier_panel_products {
 			'price'					=> '',
 			'quantity'				=> '',
 			'ext_url'				=> '',
+			'productparams'			=> module("manage_shop","admin_modules")->_productparams_container($_GET['id']),	
 			'manufacturer_box'		=> common()->select_box('manufacturer', module('manage_shop')->_man_for_select, $product_info['manufacturer_id'], false, 2),
 			'category_box'			=> common()->multi_select('category', module('manage_shop')->_cats_for_select, $cat_id, false, 2, ' size=5 ', false),
 			'cat_id_box'			=> common()->select_box('cat_id', module('manage_shop')->_cats_for_select, $product_info['cat_id'], false, 2),

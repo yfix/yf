@@ -91,7 +91,7 @@ class yf_manage_shop_product_add{
 			"price_raw"			=> "",
 			"old_price"			=> "",
 			"quantity"			=> "",
-			"productparams"		=> _class("manage_shop","admin_modules")->_productparams_container(0),
+			"productparams"		=> module("manage_shop","admin_modules")->_productparams_container(0),
 			"dynamic_fields"	=> $fields,
 			"single_atts"		=> $single_atts,
 			"manufacturer_box"	=> common()->select_box("manufacturer", module("manage_shop")->_man_for_select, $man_id, false, 2),

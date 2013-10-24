@@ -150,7 +150,7 @@ class yf_manage_shop_product_edit{
 			"price_raw"				=> $product_info["price_raw"],
 			"old_price"				=> $product_info["old_price"],
 			"quantity"				=> $product_info["quantity"],
-			"productparams"			=> _class("manage_shop","admin_modules")->_productparams_container($_GET['id']),
+			"productparams"			=> module("manage_shop","admin_modules")->_productparams_container($_GET['id']),
 			"dynamic_fields"		=> $fields,
 			"single_atts"			=> $single_atts,
 			"ext_url"				=> $product_info["external_url"],
