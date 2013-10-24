@@ -264,9 +264,11 @@ class yf_core_install {
 		define('DEBUG_MODE', 1);
 
 		define('DB_PREFIX', $_POST['install_db_prefix']);
-		define('YF_PATH',	$_POST['install_yf_path']);
-		require YF_PATH. 'classes/yf_main.class.php';
-		new yf_main('user', $no_db_connect = false, $auto_init_all = false);
+		if (!defined('YF_PATH')) {
+			define('YF_PATH',	$_POST['install_yf_path']);
+			require YF_PATH. 'classes/yf_main.class.php';
+			new yf_main('user', $no_db_connect = false, $auto_init_all = false);
+		}
 
 		define('INSTALLER_PATH', YF_PATH.'.dev/__INSTALL/');
 		require (INSTALLER_PATH.'install/function.php');
