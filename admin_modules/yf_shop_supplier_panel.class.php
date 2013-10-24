@@ -22,6 +22,18 @@ class yf_shop_supplier_panel {
 			->link('Upload images', './?object='.$_GET['object'].'&action=upload_images')
 		;
 	}
+	
+	function _product_image_delete($id, $k) {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func($id, $k);
+	}
+	
+	function _product_image_upload($product_id) {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func($product_id);
+	}
+		
+	function product_image_delete() {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func();
+	}	
 
 	function products($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);

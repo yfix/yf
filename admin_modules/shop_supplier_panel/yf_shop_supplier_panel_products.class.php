@@ -19,15 +19,15 @@ class yf_shop_supplier_panel_products {
 					'price' => 'between',
 				),
 			))
-			->image('id', 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_full.jpg')
+			->image('id', 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_big.jpg')
 			->text('name')
 			->text('cat_id', '', array('data' => _class('cats')->_get_items_names('shop_cats')))
 			->text('price')
 			->text('quantity')
 			->date('add_date')
-			->btn_edit('', './?object='.$_GET['object'].'&action=product_edit&id=%d')
+			->btn_edit('', './?object='.$_GET['object'].'&action=product_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object='.$_GET['object'].'&action=product_delete&id=%d')
-			->footer_add('', './?object='.$_GET['object'].'&action=product_add')
+			->footer_add('', './?object='.$_GET['object'].'&action=product_add',array('no_ajax' => 1))
 		;
 	}
 
@@ -68,9 +68,8 @@ class yf_shop_supplier_panel_products {
 					'quantity'			=> intval($_POST['quantity']),
 				);
 				if (!empty($_FILES)) {
-					$product_id = $_GET['id'];
-					$product_name = _es(common()->_propose_url_from_name($_POST['name']));
-					$rez_upload = module('manage_shop')->_product_image_upload($product_id, $product_name);
+					$product_id = $_GET["id"];
+					module("shop_supplier_panel")->_product_image_upload($product_id);
 					$sql_array['image'] = 1;
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, 'id='.$_GET['id']);
@@ -97,14 +96,15 @@ class yf_shop_supplier_panel_products {
 			$image_files = _class('dir')->scan_dir(
 				module('manage_shop')->products_img_dir. $mpath, 
 				true, 
-				'/product_'.$product_info['id'].'.+?_(small)\.jpg'.'/'
+				'/product_'.$product_info['id'].'.+?_(thumb)\.jpg'.'/'
 			);
-			$reg = '/product_'.$product_info['id'].'_(?P<content>[\d]+)_(small)\.jpg/';
+			$reg = '/product_'.$product_info['id'].'_(?P<content>[\d]+)_(thumb)\.jpg/';
+			sort($image_files);
 			foreach((array)$image_files as $filepath) {
 				preg_match($reg, $filepath, $rezult);
 				$i =  $rezult['content'];
 
-				$product_image_delete_url ='./?object='.$_GET['object'].'&action=product_image_delete&id='.$product_info['id'].'&name='.$product_info['url'].'&key='.$i;
+				$product_image_delete_url ='./?object='.$_GET['object'].'&action=product_image_delete&id='.$product_info['id'].'&key='.$i;
 
 				$thumb_path_temp = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->THUMB_SUFFIX.'.jpg';
 				$img_path = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
@@ -177,9 +177,7 @@ class yf_shop_supplier_panel_products {
 				$product_id = db()->INSERT_ID();
 				// Image upload
 				if (!empty($_FILES)) {
-					$product_id = $_GET['id'];
-					$product_name = _es(common()->_propose_url_from_name($_POST['name']));
-					$rez_upload = module('manage_shop')->_product_image_upload ($product_id, $product_name);
+					module("shop_supplier_panel")->_product_image_upload($product_id);
 					$sql_array['image'] = 1;
 				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));

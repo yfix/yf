@@ -8,7 +8,7 @@ class yf_manage_shop_product_images{
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		module("manage_shop")->_product_image_delete($_GET["id"], $_GET["key"]);
+		module("shop_supplier_panel")->_product_image_delete($_GET["id"], $_GET["key"]);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
 
