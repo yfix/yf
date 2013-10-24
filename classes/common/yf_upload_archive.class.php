@@ -12,8 +12,9 @@ class yf_upload_archive {
 	/** @var array */
 	public $ALLOWED_MIME_TYPES = array(
     	'application/zip'   => 'zip',
-    	'application/rar'   => 'rar',
-    	'application/tar'   => 'tar',
+    	'application/x-rar'   => 'rar',
+    	'application/x-tar' => 'tar',
+    	'application/x-gzip'=> 'gz',
 	);
 
 	/**
