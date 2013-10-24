@@ -17,6 +17,9 @@ class yf_core_install {
 		return $theme;
 	}
 	function show_html($page = 'form', $vars = array(), $errors = array()) {
+		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
+			return print '__CONSOLE_INSTALL__'.PHP_EOL;
+		}
 		ob_start();
 ?>
 <!DOCTYPE html>
