@@ -1,9 +1,13 @@
 <?php
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
+_class('db');
+
+$tmp_dir = '/tmp/yf_for_unit_tests/';
+chdir($tmp_dir);
 
 $_POST = array(
-	'install_yf_path'					=> dirname(dirname(__FILE__)).'/tmp/',
+	'install_yf_path'					=> YF_PATH,
 	'install_db_host'					=> 'localhost',
 	'install_db_name'					=> 'test_'.substr(md5(microtime()), 0, 6),
 	'install_db_user'					=> 'root',
