@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_cast_128 {
+class yf_encryption_cast_128 {
 
 	/** @var array @conf_skip */
 	public $s1 = array(

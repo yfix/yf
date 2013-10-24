@@ -59,17 +59,18 @@ class yf_encryption {
 	* Initialize params
 	*/
 	function init () {
-		// Check if Mcrypt module exists
-		if (!extension_loaded('mcrypt')) $this->USE_MCRYPT = false;
-		// Process using PHP classes
+		if (!extension_loaded('mcrypt')) {
+			$this->USE_MCRYPT = false;
+		}
 		if ($this->USE_MCRYPT == true) {
 			if (isset($this->_avail_ciphers[$this->USE_CIPHER])) {
 				eval("\$this->_mcrypt_cipher = MCRYPT_".$this->_avail_ciphers[$this->USE_CIPHER].";");
-			} else trigger_error("Wrong Cipher number \"".$this->USE_CIPHER."\"", E_USER_ERROR);
+			} else {
+				trigger_error("Wrong Cipher number \"".$this->USE_CIPHER."\"", E_USER_ERROR);
+			}
 		} elseif (!is_object($this->_cur_cipher)) {
-			$driver_name = strtolower($this->_avail_ciphers[$this->USE_CIPHER]);
-			// Try Create new instanse of the driver class
-			$driver_loaded_class_name = main()->load_class_file($driver_name, "classes/crypto/");
+			$driver_name = 'encryption_'.strtolower($this->_avail_ciphers[$this->USE_CIPHER]);
+			$driver_loaded_class_name = main()->load_class_file($driver_name, "classes/encryption/");
 			if ($driver_loaded_class_name) {
 				$this->_cur_cipher = new $driver_loaded_class_name();
 			}
@@ -97,7 +98,9 @@ class yf_encryption {
 			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_ECB, '');
 			$key = substr(md5($this->_secret_key), 0, mcrypt_enc_get_key_size($td));
 			// In ECB mode IV value is ignored !
-			if (!strlen($this->_iv)) $this->_iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+			if (!strlen($this->_iv)) {
+				$this->_iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+			}
 			mcrypt_generic_init ($td, $key, $this->_iv);
 			$encrypt = mcrypt_generic ($td, $data);
 			mcrypt_generic_deinit ($td);
@@ -123,7 +126,9 @@ class yf_encryption {
 			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_ECB, '');
 			$key = substr(md5($this->_secret_key), 0, mcrypt_enc_get_key_size($td));
 			// In ECB mode IV value is ignored !
-			if (!strlen($this->_iv)) $this->_iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+			if (!strlen($this->_iv)) {
+				$this->_iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+			}
 			mcrypt_generic_init ($td, $key, $this->_iv);
 			$decrypt = mdecrypt_generic ($td, $data);
 			mcrypt_generic_deinit ($td);

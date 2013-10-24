@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_blowfish {
+class yf_encryption_blowfish {
 
 	/** @var array @conf_skip Pi Array */
 	public $p = array(
