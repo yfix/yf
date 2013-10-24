@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 #require dirname(__FILE__).'/yf_unit_tests_setup.php';
