@@ -5,7 +5,10 @@
 ///////////////////////////////////
 
 if (!function_exists('_class')) {
-	function _class($class_name, $custom_path = 'classes/', $params = '') { if (isset($GLOBALS['modules'][$class_name])) { return $GLOBALS['modules'][$class_name];	}; return main()->init_class($class_name, $custom_path, $params); }
+	function _class($class_name, $custom_path = '', $params = '') {
+		if (empty($custom_path)) { $custom_path = 'classes/' };
+		if (isset($GLOBALS['modules'][$class_name])) { return $GLOBALS['modules'][$class_name];	}; return main()->init_class($class_name, $custom_path, $params);
+	}
 }
 // example: module('test')->test_stpls();
 if (!function_exists('module')) {

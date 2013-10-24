@@ -39,16 +39,24 @@ class yf_home_page extends yf_module {
 	/**
 	*/
 	function show () {
-		$m = main();
-		$replace = array(
-			'newest_users'			=> $m->exec_cached('users',		'_for_home_page', $this->NUM_NEWEST_USERS),
-			'newest_news'			=> $m->exec_cached('news',		'_for_home_page', array('num_items' => $this->NUM_NEWEST_NEWS)),
-			'newest_forum_posts'	=> $m->exec_cached('forum',		'_for_home_page', $this->NUM_NEWEST_FORUM_POSTS, $this->NEWEST_FORUM_TEXT_LEN),
-			'newest_blog_posts'		=> $m->exec_cached('blog',		'_for_home_page', $this->NUM_NEWEST_BLOG_POSTS, $this->NEWEST_BLOG_TEXT_LEN),
-			'newest_gallery_photo'	=> $m->exec_cached('gallery',	'_for_home_page', $this->NUM_NEWEST_GALLERY_PHOTO),
-			'newest_article_post'	=> $m->exec_cached('articles',	'_for_home_page', $this->NUM_NEWEST_ARTICLE_POST),
-			'newest_comments'		=> $m->exec_cached('comments',	'_for_home_page', $this->NUM_NEWEST_COMMENTS),
-		);
+		$cache_name = 'home_page_default';
+		$data = cache_get($cache_name);
+		if (!$data) {
+// TODO
+/*
+			$data = array(
+				'newest_users'			=> module('users')->_for_home_page($this->NUM_NEWEST_USERS),
+				'newest_news'			=> module('news')->_for_home_page(array('num_items' => $this->NUM_NEWEST_NEWS)),
+				'newest_forum_posts'	=> module('forum')->_for_home_page($this->NUM_NEWEST_FORUM_POSTS, $this->NEWEST_FORUM_TEXT_LEN),
+				'newest_blog_posts'		=> module('blog')->_for_home_page($this->NUM_NEWEST_BLOG_POSTS, $this->NEWEST_BLOG_TEXT_LEN),
+				'newest_gallery_photo'	=> module('gallery')->_for_home_page($this->NUM_NEWEST_GALLERY_PHOTO),
+				'newest_article_post'	=> module('articles')->_for_home_page($this->NUM_NEWEST_ARTICLE_POST),
+				'newest_comments'		=> module('comments')->_for_home_page($this->NUM_NEWEST_COMMENTS),
+			);
+*/
+#			cache_set($cache_name, $data);
+		}
+		$replace = &$data;
 		return tpl()->parse($_GET['object'].'/main', $replace);
 	}
 }
