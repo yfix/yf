@@ -7,6 +7,7 @@ $tmp_dir = '/tmp/yf_for_unit_tests/';
 chdir($tmp_dir);
 
 $_POST = array(
+	'install_project_path'				=> $tmp_dir,
 	'install_yf_path'					=> YF_PATH,
 	'install_db_host'					=> 'localhost',
 	'install_db_name'					=> 'test_'.substr(md5(microtime()), 0, 6),

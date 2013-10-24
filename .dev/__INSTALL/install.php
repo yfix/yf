@@ -241,7 +241,7 @@ class yf_core_install {
 		return $vars;
 	}
 	function set_php_conf() {
-		define('PROJECT_PATH', realpath('./').'/');
+		define('PROJECT_PATH', $_POST['install_project_path'] ?: realpath('./').'/');
 		define('INCLUDE_PATH', PROJECT_PATH);
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
