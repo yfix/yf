@@ -2,6 +2,7 @@
 
 class form2_new_controls {
 	function show() {
+		$r['count_offers'] = 1;
 		return form($r)
 			->icon_select_box(array('selected' => 'icon-anchor'))
 			->currency_box(array('selected' => 'RUB'))
@@ -26,6 +27,9 @@ class form2_new_controls {
 			->admin_template_box(array('desc' => 'admin template'))
 			->user_location_box(array('desc' => 'user location'))
 			->admin_location_box(array('desc' => 'admin location'))
+
+			->link('count_offers', './?object=manage_shop&action=product_edit&id=%d',array('desc'=>'ffgd'))
+
 			->save()
 		;
 	}

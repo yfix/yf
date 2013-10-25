@@ -1190,7 +1190,9 @@ class yf_form2 {
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
 		$replace[$name] = $name;
 		$extra['link'] = $link;
-		$extra['no_label'] = 1;
+		if (!$extra['desc']) {
+			$extra['no_label'] = 1;
+		}
 		return $this->info($name, $desc, $extra, $replace);
 	}
 
