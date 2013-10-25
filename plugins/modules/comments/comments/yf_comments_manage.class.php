@@ -180,8 +180,8 @@ class yf_comments_manage {
 				"object_id"			=> intval($OBJECT_ID),
 				"use_captcha"		=> intval((bool)module($_GET["object"])->USE_CAPTCHA),
 				"captcha_block"		=> main()->_execute($_GET["object"], "_captcha_block"),
-				"bb_codes_block"	=> $this->COMMENTS_OBJ->USE_BB_CODES ? main()->call_class_method("bb_codes", "classes/", "_display_buttons", array("unique_id" => "text")) : "",
-				"submit_buttons"	=> main()->call_class_method("preview", "classes/", "_display_buttons"),
+				"bb_codes_block"	=> $this->COMMENTS_OBJ->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "text")) : "",
+				"submit_buttons"	=> _class_safe("preview")->_display_buttons(),
 				"js_check"			=> intval((bool)$this->COMMENTS_OBJ->JS_TEXT_CHECKING),
 				"parent_id"			=> intval($_POST["parent_id"]),
 			);
@@ -335,7 +335,7 @@ class yf_comments_manage {
 				"object_id"			=> intval($OBJECT_ID),
 				"use_captcha"		=> intval((bool)module($_GET["object"])->USE_CAPTCHA),
 				"captcha_block"		=> main()->_execute($_GET["object"], "_captcha_block"),
-				"bb_codes_block"	=> $this->COMMENTS_OBJ->USE_BB_CODES ? main()->call_class_method("bb_codes", "classes/", "_display_buttons", array("unique_id" => "text")) : "",
+				"bb_codes_block"	=> $this->COMMENTS_OBJ->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "text")) : "",
 				"js_check"			=> intval((bool)$this->COMMENTS_OBJ->JS_TEXT_CHECKING),
 			);
 			$body = tpl()->parse($STPL_NAME_EDIT, $replace);

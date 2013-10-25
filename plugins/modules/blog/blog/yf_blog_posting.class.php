@@ -148,7 +148,7 @@ class yf_blog_posting {
 				// Last update
 				update_user($this->BLOG_OBJ->USER_ID, array("last_update"=>time()));
 				// Update user stats
-				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->BLOG_OBJ->USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => $this->BLOG_OBJ->USER_ID));
 				// Do ping on blog change
 				$this->BLOG_OBJ->_do_ping($RECORD_ID, $this->BLOG_OBJ->USER_ID);
 				// Return user back
@@ -219,7 +219,7 @@ class yf_blog_posting {
 				"edit_settings_link"=> "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")),
 				"use_captcha"		=> intval((bool)module(BLOG_CLASS_NAME)->USE_CAPTCHA),
 				"captcha_block"		=> main()->_execute(BLOG_CLASS_NAME, "_captcha_block"),
-				"bb_codes_block"	=> $this->BLOG_OBJ->USE_BB_CODES ? main()->call_class_method("bb_codes", "classes/", "_display_buttons", array("unique_id" => "bb_text", "youtube" => 1)) : "",
+				"bb_codes_block"	=> $this->BLOG_OBJ->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_text", "youtube" => 1)) : "",
 				"tags"				=> $_POST["tags"],
 				"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
 				"min_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MIN_KEYWORD_LENGTH : "",
@@ -368,7 +368,7 @@ class yf_blog_posting {
 				// Last update
 				update_user($this->BLOG_OBJ->USER_ID, array("last_update"=>time()));
 				// Update user stats
-				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->BLOG_OBJ->USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => $this->BLOG_OBJ->USER_ID));
 				// Return user back
 				
 				//if this post in community
@@ -458,7 +458,7 @@ class yf_blog_posting {
 				"edit_settings_link"=> "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")),
 				"use_captcha"		=> intval((bool)module(BLOG_CLASS_NAME)->USE_CAPTCHA),
 				"captcha_block"		=> main()->_execute(BLOG_CLASS_NAME, "_captcha_block"),
-				"bb_codes_block"	=> $this->BLOG_OBJ->USE_BB_CODES ? main()->call_class_method("bb_codes", "classes/", "_display_buttons", array("unique_id" => "bb_text", "youtube" => 1)) : "",
+				"bb_codes_block"	=> $this->BLOG_OBJ->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_text", "youtube" => 1)) : "",
 				"tags"				=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->_collect_tags($post_info["id"], BLOG_CLASS_NAME) : "",
 				"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
 				"min_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MIN_KEYWORD_LENGTH : "",
@@ -528,7 +528,7 @@ class yf_blog_posting {
 		// Remove activity points
 		common()->_remove_activity_points($post_info["user_id"], "blog_post", $post_info["id"]);
 		// Update user stats
-		main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->BLOG_OBJ->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => $this->BLOG_OBJ->USER_ID));
 		// Return user back
 		
 		//if this post in community
