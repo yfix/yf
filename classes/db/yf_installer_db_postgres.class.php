@@ -44,7 +44,7 @@ $item_to_repair = $m[1];
 			preg_match("#[\s\t]+(UPDATE|FROM|INTO)[\s\t]+[\`]([a-z_0-9]+)[\`]#ims", $sql, $m2);
 			// Try to repair table
 			if (!empty($item_to_repair) && !empty($m2[2])) {
-				$installer_result = main()->call_class_method("installer", "classes/", "_alter_table", array("table_name" => str_replace($DB_CONNECTION->DB_PREFIX, "", $m2[2]), "column_name" => $item_to_repair));
+				$installer_result = _class_safe("installer")->_alter_table(array("table_name" => str_replace($DB_CONNECTION->DB_PREFIX, "", $m2[2]), "column_name" => $item_to_repair));
 			}
 */
 
