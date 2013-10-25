@@ -4,45 +4,75 @@
 // Aliases for often used methods
 ///////////////////////////////////
 
-if (!function_exists('_class')) {
-	function _class($class_name, $custom_path = '', $params = '') {
-		if (empty($custom_path)) { $custom_path = 'classes/'; }
-		if (isset($GLOBALS['modules'][$class_name])) { return $GLOBALS['modules'][$class_name];	}; return main()->init_class($class_name, $custom_path, $params);
-	}
-}
-// example: module('test')->test_stpls();
-if (!function_exists('module')) {
-	function module($class_name, $params = '') { if (isset($GLOBALS['modules'][$class_name])) { return $GLOBALS['modules'][$class_name]; }; return main()->init_class($class_name, '', $params); }
-}
 // Required to catch missing methods of the shortcut functions objects
 // Only one class from functions listed below
 if (!class_exists('my_missing_method_handler')) {
 	class my_missing_method_handler {
-		function __construct($o_name) { $this->_o_name = $o_name; }
-		function __call($name, $arguments) { trigger_error($this->_o_name.'(): missing object method: '.$name, E_USER_WARNING); return false; }
+		function __construct($o_name, $silent = false) {
+			$this->_o_name = $o_name;
+			$this->_silent = $silent;
+		}
+		function __call($name, $arguments) {
+			if (!$this->_silent) {
+				trigger_error($this->_o_name.'(): missing object method: '.$name, E_USER_WARNING);
+				return false;
+			}
+		}
 	}
+}
+// example: _class('i18n')->load_lang();
+if (!function_exists('_class')) {
+	function _class($class_name, $custom_path = '', $params = '', $silent = false) {
+		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent);
+	}
+}
+// Alias to _class() with $silent = true
+// example: _class_safe('not_existing_module')->not_existing_method();
+if (!function_exists('_class_safe')) {
+	function _class_safe($class_name, $custom_path = '', $params = '') {
+		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true);
+	}
+}
+// example: module('test')->test_stpls();
+if (!function_exists('module')) {
+	function module($class_name, $params = '', $silent = false) {
+		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent);
+	}
+}
+// Alias to module() with $silent = true
+// example: module_safe('not_existing_module')->not_existing_method();
+if (!function_exists('module_safe')) {
+	function module_safe($class_name, $params = '') {
+		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true);
+	}
+}
+// example: load('home_page', 'framework')
+if (!function_exists('load')) {
+	function load($class_name, $force_storage = '', $custom_path = '') { return main()->load_class_file($class_name, $custom_path, $force_storage); }
 }
 // example: main()->init_class('test')
 if (!function_exists('main')) {
-	function main() { return is_object($GLOBALS['main']) ? $GLOBALS['main'] : new my_missing_method_handler(__FUNCTION__); }
+	function main($silent = false) { return $GLOBALS['main'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
 // example: tpl()->parse('example', array())
 if (!function_exists('tpl')) {
-	function tpl() { return is_object($GLOBALS['tpl']) ? $GLOBALS['tpl'] : new my_missing_method_handler(__FUNCTION__); }
+	function tpl($silent = false) { return $GLOBALS['tpl'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
 // example: common()->send_mail()
 if (!function_exists('common')) {
-	function common() { return is_object($GLOBALS['common']) ? $GLOBALS['common'] : new my_missing_method_handler(__FUNCTION__); }
+	function common($silent = false) { return $GLOBALS['common'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
 // example: cache()->put()
 if (!function_exists('cache')) {
-	function cache() { return is_object($GLOBALS['sys_cache']) ? $GLOBALS['sys_cache'] : new my_missing_method_handler(__FUNCTION__); }
+	function cache($silent = false) { return $GLOBALS['sys_cache'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
 // example: db()->query()
 // exampleof getting real table name: db('user') should return DB_PREFIX.'user' value;
 if (!function_exists('db')) {
-	function db($tbl_name = '') {
-		if (!is_object($GLOBALS['db'])) { return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__); }
+	function db($tbl_name = '', $silent = false) {
+		if (!is_object($GLOBALS['db'])) {
+			return $tbl_name ?: new my_missing_method_handler(__FUNCTION__, $silent);
+		}
 		return $tbl_name ? $GLOBALS['db']->_real_name($tbl_name) : $GLOBALS['db'];
 	}
 }
@@ -51,10 +81,6 @@ if (!function_exists('db_master')) {
 }
 if (!function_exists('db_slave')) {
 	function db_slave($tbl_name = '') { return db($tbl_name); }
-}
-// example: load('home_page', 'framework')
-if (!function_exists('load')) {
-	function load($class_name, $force_storage = '', $custom_path = '') { return main()->load_class_file($class_name, $custom_path, $force_storage); }
 }
 if (!function_exists('t')) {
 	function t($string, $args = 0, $lang = '') { return _class('i18n')->translate_string($string, $args, $lang); }
