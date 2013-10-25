@@ -14,5 +14,5 @@ php:
 script:
   - cd .dev/__TESTS/ && phpunit --configuration phpunit.xml --coverage-text ./
 
-after_script:
-  - php ./bin/coveralls -v
+#after_script:
+#  - php ./bin/coveralls -v
