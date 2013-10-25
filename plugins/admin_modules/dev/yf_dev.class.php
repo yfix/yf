@@ -75,11 +75,6 @@ class yf_dev{
 
 	//### END make_wiki_xml####
 
-	function _init() {
-		// Init dir class
-		$this->DIR_OBJ = main()->init_class("dir", "classes/");
-	}
-
 	/**
 	* List all available methods
 	*/
@@ -197,8 +192,7 @@ class yf_dev{
 	function code_search() {
 		if (!empty($_POST) && strlen($_POST["text"])) {
 			$items = array();
-			$DIR_OBJ = main()->init_class("dir", "classes/");
-			foreach ((array)$DIR_OBJ->search(array(INCLUDE_PATH/*, YF_PATH*/), array("", "/\.class\.php/"), "/(svn|git)/", "#".preg_quote($_POST["text"], "#")."#") as $_path) {
+			foreach ((array)_class('dir')->search(array(INCLUDE_PATH/*, YF_PATH*/), array("", "/\.class\.php/"), "/(svn|git)/", "#".preg_quote($_POST["text"], "#")."#") as $_path) {
 				$items[] = array(
 					"path"		=> _prepare_html($_path),
 					"edit_link"	=> "./?object=file_manager&action=edit_item&id=".urlencode($_path),
@@ -222,10 +216,9 @@ class yf_dev{
 	
 		$pattern_include = array("", "#".preg_quote(CLASS_EXT)."\$#");
 		$pattern_exclude = "#\.(svn|git)#";
-		$DIR_OBJ = main()->init_class("dir", "classes/");
 
-		$_fwork_classes = $DIR_OBJ->scan_dir(YF_PATH."classes/", 1, $pattern_include, $pattern_exclude);
-		$_project_classes = $DIR_OBJ->scan_dir(INCLUDE_PATH."classes/", 1, $pattern_include, $pattern_exclude);
+		$_fwork_classes = _class('dir')->scan_dir(YF_PATH."classes/", 1, $pattern_include, $pattern_exclude);
+		$_project_classes = _class('dir')->scan_dir(INCLUDE_PATH."classes/", 1, $pattern_include, $pattern_exclude);
 
 		$_ext_len = strlen(CLASS_EXT);
 		$_fwork_class_names = array();
@@ -523,8 +516,6 @@ class yf_dev{
 		}
 		
 		if($_POST || $internal_request == true){
-			$OBJ_DIR = main()->init_class("dir", "classes/");
-			
 			if($internal_request){
 				$_POST["dir_path"] = array(
 					"framework"	=> "on",
@@ -533,7 +524,7 @@ class yf_dev{
 			}
 			
 			foreach ((array)$_POST["dir_path"] as $dir_path_name => $status){
-			 	$files_temp = $OBJ_DIR->scan_dir($DIRS[$dir_path_name],"false",array("", "/.*\.stpl/"),"/\.(svn|git)/");
+			 	$files_temp = _class('dir')->scan_dir($DIRS[$dir_path_name],"false",array("", "/.*\.stpl/"),"/\.(svn|git)/");
 				$files = my_array_merge($files, $files_temp);
 			}	
 			
@@ -787,7 +778,7 @@ class yf_dev{
 					foreach ((array)$fld as $folder) {
 			
 						// Get array of files inside folder
-						foreach ((array)$this->DIR_OBJ->scan_dir($basedir. $folder, true, array("", "/.php\$/"), "/(svn|git)/") as $fpath) {
+						foreach ((array)_class('dir')->scan_dir($basedir. $folder, true, array("", "/.php\$/"), "/(svn|git)/") as $fpath) {
 							if (!strlen($fpath)) {
 								continue;
 							}
@@ -985,7 +976,7 @@ class yf_dev{
 			// Save	view
 			file_put_contents($post_template_folder."/view.stpl", $view_content_string);
 
-			$this->DIR_OBJ->copy_dir($extracted_theme_folder, $theme_folder_path, "", "/\.php/");
+			_class('dir')->copy_dir($extracted_theme_folder, $theme_folder_path, "", "/\.php/");
 
 //print_r($tmp_content_string);
 //print_r($_FILES);
@@ -1005,8 +996,7 @@ class yf_dev{
 	* Internal crawler
 	*/
 	function crawler() {
-		$OBJ = main()->init_class("crawler", "classes/");
-		return is_object($OBJ) ? $OBJ->go() : "";
+		return _class("crawler")->go();
 	}
 
 	/**
@@ -1028,7 +1018,7 @@ class yf_dev{
 			$tpls = array();
 			$tpl_paths = array();
 
-			$tpl_paths = $this->DIR_OBJ->scan_dir($FORM_TEMPLATES_DIR. $_POST["style"], true, "", "/\.(svn|git)/");
+			$tpl_paths = _class('dir')->scan_dir($FORM_TEMPLATES_DIR. $_POST["style"], true, "", "/\.(svn|git)/");
 			foreach ((array)$tpl_paths as $_path) {
 				$_tpl_name = substr(basename($_path), 0, -5);
 	 			$tpls[$_tpl_name] = file_get_contents($_path);
@@ -1077,7 +1067,7 @@ class yf_dev{
 		}
 
 		// Get form templates for constructing
-		$form_tpls_array = $this->DIR_OBJ->scan_dir($FORM_TEMPLATES_DIR, false, "-d", "/\.(svn|git)/ims");
+		$form_tpls_array = _class('dir')->scan_dir($FORM_TEMPLATES_DIR, false, "-d", "/\.(svn|git)/ims");
 		foreach ((array)$form_tpls_array as $_dir => $_files) {
 				$name = basename($_dir);
 				$form_tpls[$name] = ucfirst(trim(str_replace("_", " ", $name)));
