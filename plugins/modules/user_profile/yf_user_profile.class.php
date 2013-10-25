@@ -119,7 +119,7 @@ class yf_user_profile extends yf_module {
 			$this->_user_info["last_update"] = $this->_user_info["add_date"];
 		}
 		// Get live quick user stats
-		$totals = main()->call_class_method("user_stats", "classes/", "_get_live_stats", array("user_id" => $this->_user_info["id"]));
+		$totals = _class_safe("user_stats")->_get_live_stats(array("user_id" => $this->_user_info["id"]));
 		
 		// Process template
 		$forum_posts = $totals["forum_posts"]?$this->_show_forum_posts():"";
@@ -459,7 +459,7 @@ class yf_user_profile extends yf_module {
 		}
 		if (empty($error_message)) {
 			// Get live quick user stats
-			$totals = main()->call_class_method("user_stats", "classes/", "_get_live_stats", array("user_id" => $this->_user_info["id"]));
+			$totals = _class_safe("user_stats")->_get_live_stats(array("user_id" => $this->_user_info["id"]));
 			// Check if this user is in favorites (also check if this is own profile)
 			$DISPLAY_CONTACT_ITEMS = 0;
 			if (main()->USER_ID && $this->_user_info["id"] != main()->USER_ID) {
@@ -552,7 +552,7 @@ class yf_user_profile extends yf_module {
 					"login_stats"			=> process_url("./?object=log_auth_view&action=save_filter&user_id=".$this->_user_info["id"]),
 					"multi_accounts_link"	=> process_url("./?object=check_multi_accounts&action=show_by_user&id=".$this->_user_info["id"]),
 					"user_errors"			=> process_url("./?object=log_user_errors_viewer&action=save_filter&user_id=".$this->_user_info["id"]),
-					"ban_popup_link"		=> main()->call_class_method("manage_auto_ban", "admin_modules/", "_popup_link", "user_id=".intval($this->_user_info["id"])),
+					"ban_popup_link"		=> _class("manage_auto_ban", "admin_modules/")->_popup_link(array("user_id" => intval($this->_user_info["id"]))),
 					"verify_link"			=> !$this->_user_info["photo_verified"] ? "./?object=manage_photo_verify&action=add&id=".intval($this->_user_info["id"]) : "",
 				));
 			}
