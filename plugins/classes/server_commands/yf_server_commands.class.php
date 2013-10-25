@@ -58,7 +58,6 @@ class yf_server_commands{
 	*
 	*/
 	function _init () {
-		$this->SSH_OBJ = main()->init_class("ssh", "classes/");
 		define("SERVER_COMMANDS_CLASS_NAME", "server_commands");
 	}
 	
@@ -67,7 +66,7 @@ class yf_server_commands{
 	*/
 	function get_procces_info($server_info){
 	
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 			
 		if($SERVER_OS == "FREEBSD"){
 			$services = _ssh_exec($server_info, "ps h -w -A -o pid,comm,user,%cpu,%mem | awk '{if(($1 != \"PID\") && ($1 !=\"\"))print $0}'");
@@ -112,7 +111,7 @@ class yf_server_commands{
 	*/
 	function get_cpu_info($server_info){
 
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 		
 		if($SERVER_OS == "FREEBSD"){
 			$buffer = _ssh_exec($server_info, "sysctl -a | egrep -i 'hw.machine|hw.model|hw.ncpu'");
@@ -177,8 +176,7 @@ class yf_server_commands{
 	*
 	*/
 	function get_mem_info ($server_info) {
-		$OBJ = main()->init_class("mem_info", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->get_mem_info($server_info) : false;
+		return _class("mem_info", "classes/server_commands/")->get_mem_info($server_info);
 	}
 
 	/**
@@ -222,7 +220,7 @@ class yf_server_commands{
 	*/
 	function get_uptime($server_info){
 	
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 		
 		if($SERVER_OS == "FREEBSD"){
 			$result = _ssh_exec($server_info, "uptime");
@@ -284,17 +282,17 @@ class yf_server_commands{
 	*/
 	function get_services($server_info){
 	
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 		
 		if($SERVER_OS == "FREEBSD"){
 			$dir_path = $this->_get_param($server_info, "init_d_dir_path");
-			$files_list = array_keys($this->SSH_OBJ->scan_dir($server_info, $dir_path, "", ""));
-			$files_list = $this->SSH_OBJ->clean_path($files_list);
+			$files_list = array_keys(_class('ssh')->scan_dir($server_info, $dir_path, "", ""));
+			$files_list = _class('ssh')->clean_path($files_list);
 		}else{
 			$dir_path = "/etc/rc".$this->get_run_level($server_info).".d/";
 
-			$files_list = array_keys($this->SSH_OBJ->scan_dir($server_info, $dir_path, "/[S|K][0-9]{1,2}.+/", ""));
-			$files_list = $this->SSH_OBJ->clean_path($files_list);
+			$files_list = array_keys(_class('ssh')->scan_dir($server_info, $dir_path, "/[S|K][0-9]{1,2}.+/", ""));
+			$files_list = _class('ssh')->clean_path($files_list);
 		}
 
 		
@@ -335,7 +333,7 @@ class yf_server_commands{
 			
 			/* old version*/
 			/*
-			$content = $this->SSH_OBJ->read_file($server_info, $dir_path.$file_name);
+			$content = _class('ssh')->read_file($server_info, $dir_path.$file_name);
 			preg_match("/Short-Description:(.+?)\n/si", $content, $short_description);
 			$short_description = trim($short_description["1"]);
 			//$short_description = _ssh_exec($server_info, "cat ".$dir_path.$file_name." | grep Short-Description:");
@@ -410,7 +408,7 @@ class yf_server_commands{
 	*/
 	function get_network_interfaces($server_info){
 	
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 			
 		if($SERVER_OS == "FREEBSD"){
 			$content = _ssh_exec($server_info, "ifconfig | grep \"flags=\" | awk '{print $1}'");
@@ -455,7 +453,7 @@ class yf_server_commands{
 		$content = _ssh_exec($server_info, "ifconfig ".$interface_name." | grep \"inet \"");
 		$content = split("\n", $content);
 		
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 			
 		if($SERVER_OS == "FREEBSD"){
 		// FREEBSD ######################################
@@ -495,7 +493,7 @@ class yf_server_commands{
 			$interface_name .= ":".$interface_num;
 		}
 		
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 		if($SERVER_OS == "FREEBSD"){
 			$alias = " alias";
 		}
@@ -508,7 +506,7 @@ class yf_server_commands{
 	*
 	*/
 	function delete_vitual_ip ($server_info, $interface_name, $ip) {
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 		
 		if($SERVER_OS == "FREEBSD"){ 
 			_ssh_exec($server_info, "ifconfig ".$interface_name." ".$ip." delete");
@@ -565,169 +563,147 @@ class yf_server_commands{
 	*
 	*/
 	function apache_virtual_hosts_get ($server_info) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_hosts_get($server_info) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_hosts_get($server_info);
 	}
 	
 	/**
 	*
 	*/
 	function apache_virtual_host_enable ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_host_enable($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_host_enable($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function apache_virtual_host_disable ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_host_disable($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_host_disable($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function apache_virtual_host_delete ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_host_delete($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_host_delete($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function apache_virtual_host_add ($server_info, $param) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_host_add($server_info, $param) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_host_add($server_info, $param);
 	}
 	
 	/**
 	*
 	*/
 	function apache_virtual_host_edit ($server_info, $param) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_host_edit($server_info, $param) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_host_edit($server_info, $param);
 	}
 	
 	/**
 	*
 	*/
 	function apache_virtual_host_file_content_get ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_host_file_content_get($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_host_file_content_get($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function apache_virtual_host_file_content_set ($server_info, $virtual_host_name, $content) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->apache_virtual_host_file_content_set($server_info, $virtual_host_name, $content) : false;
+		return _class("virtual_host", "classes/server_commands/")->apache_virtual_host_file_content_set($server_info, $virtual_host_name, $content);
 	}
 	
 	/**
 	*
 	*/
 	function nginx_virtual_hosts_get ($server_info) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->nginx_virtual_hosts_get($server_info) : false;
+		return _class("virtual_host", "classes/server_commands/")->nginx_virtual_hosts_get($server_info);
 	}
 	
 	/**
 	*
 	*/
 	function nginx_virtual_host_enable ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->nginx_virtual_host_enable($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->nginx_virtual_host_enable($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function nginx_virtual_host_disable ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->nginx_virtual_host_disable($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->nginx_virtual_host_disable($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function nginx_virtual_host_add ($server_info, $param) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->nginx_virtual_host_add($server_info, $param) : false;
+		return _class("virtual_host", "classes/server_commands/")->nginx_virtual_host_add($server_info, $param);
 	}
 	
 	/**
 	*
 	*/
 	function nginx_virtual_host_delete ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->nginx_virtual_host_delete($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->nginx_virtual_host_delete($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function nginx_virtual_host_file_content_get ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->nginx_virtual_host_file_content_get($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->nginx_virtual_host_file_content_get($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function nginx_virtual_host_file_content_set ($server_info, $virtual_host_name, $content) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->nginx_virtual_host_file_content_set($server_info, $virtual_host_name, $content) : false;
+		return _class("virtual_host", "classes/server_commands/")->nginx_virtual_host_file_content_set($server_info, $virtual_host_name, $content);
 	}
 	
 	/**
 	*
 	*/
 	function virtual_hosts_get ($server_info) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->virtual_hosts_get($server_info) : false;
+		return _class("virtual_host", "classes/server_commands/")->virtual_hosts_get($server_info);
 	}
 	
 	/**
 	*
 	*/
 	function virtual_host_add ($server_info, $param) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->virtual_host_add($server_info, $param) : false;
+		return _class("virtual_host", "classes/server_commands/")->virtual_host_add($server_info, $param);
 	}
 	
 	/**
 	*
 	*/
 	function virtual_host_enable ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->virtual_host_enable($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->virtual_host_enable($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function virtual_host_disable ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->virtual_host_disable($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->virtual_host_disable($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
 	function virtual_host_delete ($server_info, $virtual_host_name) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->virtual_host_delete($server_info, $virtual_host_name) : false;
+		return _class("virtual_host", "classes/server_commands/")->virtual_host_delete($server_info, $virtual_host_name);
 	}
 	
 	/**
 	*
 	*/
-//TODO доделать; что бы и в апаче работало и nginx
 	function virtual_host_edit ($server_info, $param) {
-		$OBJ = main()->init_class("virtual_host", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->virtual_host_edit($server_info, $param) : false;
+		return _class("virtual_host", "classes/server_commands/")->virtual_host_edit($server_info, $param);
 	}
 	
 	/**
@@ -1087,8 +1063,8 @@ class yf_server_commands{
 		$server_info["mysql_pswd"] = str_replace('"', '\"', $server_info["mysql_pswd"]);
 		$command = "mysqldump -u ".$server_info["mysql_user"]." -h localhost --password=\"".$server_info["mysql_pswd"]."\" ".$database." | gzip -5 > ".$backup_file_path;
 		
-		$this->SSH_OBJ->rmdir($server_info, $save_dir);
-		$this->SSH_OBJ->mkdir_m($server_info, $save_dir, 777);
+		_class('ssh')->rmdir($server_info, $save_dir);
+		_class('ssh')->mkdir_m($server_info, $save_dir, 777);
 
 		$info = _ssh_exec($server_info, $command);
 		return $info;
@@ -1100,7 +1076,7 @@ class yf_server_commands{
 	*/
 	
 	function cron_get_jobs ($server_info) {
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 
 		if($SERVER_OS == "FREEBSD"){
 			$content = _ssh_exec($server_info, 'cat /etc/crontab | awk \'{a = index($0,$7); if((substr($1, 0, 1) != "#") && (NF > 5)) print $1"#|#"$2"#|#"$3"#|#"$4"#|#"$5"#|#"$6"#|#"substr($0,a,length($0))}\'');
@@ -1128,8 +1104,8 @@ class yf_server_commands{
 			
 		}else{
 			$dir_path = "/etc/cron.d/";
-			$files_list = array_keys($this->SSH_OBJ->scan_dir($server_info, $dir_path, "", ""));
-			$files_list = $this->SSH_OBJ->clean_path($files_list);
+			$files_list = array_keys(_class('ssh')->scan_dir($server_info, $dir_path, "", ""));
+			$files_list = _class('ssh')->clean_path($files_list);
 			
 			
 			foreach ((array)$files_list as $file_name){
@@ -1164,14 +1140,14 @@ class yf_server_commands{
 	*/
 	function cron_add_job ($server_info, $job_name, $minutes, $hours, $days, $months, $weekdays, $command, $user_name = "root") {
 	
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 		$content = $minutes."	".$hours."	".$days."	".$months."	".$weekdays."	".$user_name."	".$command;
 
 		if($SERVER_OS == "FREEBSD"){
-			$file_content = $this->SSH_OBJ->read_file($server_info, "/etc/crontab");
-			$this->SSH_OBJ->write_string($server_info, $file_content.$content, "/etc/crontab");
+			$file_content = _class('ssh')->read_file($server_info, "/etc/crontab");
+			_class('ssh')->write_string($server_info, $file_content.$content, "/etc/crontab");
 		}else{
-			$this->SSH_OBJ->write_string($server_info, $content, "/etc/cron.d/".$job_name);
+			_class('ssh')->write_string($server_info, $content, "/etc/cron.d/".$job_name);
 		}
 	}
 
@@ -1180,20 +1156,19 @@ class yf_server_commands{
 	*/
 	function cron_edit_job ($server_info, $job_name, $minutes, $hours, $days, $months, $weekdays, $command, $user_name = "root") {
 
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 
 		if($SERVER_OS == "FREEBSD"){
 		
 		}else{
-			$this->SSH_OBJ = main()->init_class("ssh", "classes/");
-			$content = $this->SSH_OBJ->read_file($server_info, "/etc/cron.d/".$job_name);
+			$content = _class('ssh')->read_file($server_info, "/etc/cron.d/".$job_name);
 		
 			$old_command = trim(_ssh_exec($server_info, 'cat /etc/cron.d/'.$job_name.' | awk \'{a = index($0,$7); if(($1 != "#") && (NF > 5)) print $0}\''));
 			$new_command = $minutes." ".$hours." ".$days." ".$months." ".$weekdays." ".$user_name." ".$command;
 			
 			$content = str_replace($old_command, $new_command, $content);
 			
-			$this->SSH_OBJ->write_string($server_info, $content, "/etc/cron.d/".$job_name);
+			_class('ssh')->write_string($server_info, $content, "/etc/cron.d/".$job_name);
 		}
 	}
 
@@ -1201,10 +1176,10 @@ class yf_server_commands{
 	*
 	*/
 	function cron_delete_job ($server_info, $job_name) {
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 
 		if($SERVER_OS == "FREEBSD"){
-			$content = $this->SSH_OBJ->read_file($server_info, "/etc/crontab");
+			$content = _class('ssh')->read_file($server_info, "/etc/crontab");
 			$content = explode("\n", $content);
 			
 			$i = 1;
@@ -1224,7 +1199,7 @@ class yf_server_commands{
 			}
 
 			$content = implode("\n", $content);
-			$this->SSH_OBJ->write_string($server_info, $content, "/etc/crontab");
+			_class('ssh')->write_string($server_info, $content, "/etc/crontab");
 		}else{
 			_ssh_exec($server_info, "unlink /etc/cron.d/".$job_name);
 		}
@@ -1235,32 +1210,28 @@ class yf_server_commands{
 	*
 	*/
 	function upload_dir_from_base ($server_info, $conf_id) {
-		$OBJ = main()->init_class("files_operation", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->upload_dir_from_base($server_info) : false;
+		return _class("files_operation", "classes/server_commands/")->upload_dir_from_base($server_info);
 	}
 
 	/**
 	*
 	*/
 	function save_dir_to_base ($server_info, $name, $remote_path, $include_pattern = "", $exclude_pattern = "", $desc) {
-		$OBJ = main()->init_class("files_operation", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->save_dir_to_base($server_info, $name, $remote_path, $include_pattern = "", $exclude_pattern = "", $desc) : false;
+		return _class("files_operation", "classes/server_commands/")->save_dir_to_base($server_info, $name, $remote_path, $include_pattern = "", $exclude_pattern = "", $desc);
 	}
 
 	/**
 	*
 	*/
 	function save_remote_dir ($server_info, $remote_path, $local_path, $include_pattern = "", $exclude_pattern = "") {
-		$OBJ = main()->init_class("files_operation", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->save_remote_dir($server_info, $remote_path, $local_path, $include_pattern = "", $exclude_pattern = "") : false;
+		return _class("files_operation", "classes/server_commands/")->save_remote_dir($server_info, $remote_path, $local_path, $include_pattern = "", $exclude_pattern = "");
 	}
 	
 	/**
 	*
 	*/
 	function upload_remote_dir ($server_info, $local_path, $remote_path_force = "", $user_force = "", $group_force = "") {
-		$OBJ = main()->init_class("files_operation", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->upload_remote_dir($server_info, $local_path, $remote_path_force = "", $user_force = "", $group_force = "") : false;
+		return _class("files_operation", "classes/server_commands/")->upload_remote_dir($server_info, $local_path, $remote_path_force = "", $user_force = "", $group_force = "");
 	}
 	
 	/**
@@ -1288,7 +1259,7 @@ class yf_server_commands{
 			return false;
 		}
 		
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 
 		if($SERVER_OS == "FREEBSD"){
 			$result = _ssh_exec($server_info, "pw useradd ".$account_info["account_name"]);
@@ -1321,7 +1292,7 @@ class yf_server_commands{
 			return false;
 		}
 		
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 
 
 		if($SERVER_OS == "FREEBSD"){
@@ -1439,72 +1410,63 @@ class yf_server_commands{
 	*
 	*/
 	function domain_get_list ($server_info) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_get_list($server_info) : false;
+		return _class("domains", "classes/server_commands/")->domain_get_list($server_info);
 	}
 
 	/**
 	*
 	*/
 	function domain_add ($server_info, $param) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_add($server_info, $param) : false;
+		return _class("domains", "classes/server_commands/")->domain_add($server_info, $param);
 	}
 
 	/**
 	*
 	*/
 	function domain_delete ($server_info, $domain_name) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_delete($server_info, $domain_name) : false;
+		return _class("domains", "classes/server_commands/")->domain_delete($server_info, $domain_name);
 	}
 
 	/**
 	*
 	*/
 	function domain_get_subdomains_list ($server_info, $domain_name) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_get_subdomains_list($server_info, $domain_name) : false;
+		return _class("domains", "classes/server_commands/")->domain_get_subdomains_list($server_info, $domain_name);
 	}
 
 	/**
 	*
 	*/
 	function domain_add_subdomain ($server_info, $domain_name, $sub_domain_name) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_add_subdomain($server_info, $domain_name, $sub_domain_name) : false;
+		return _class("domains", "classes/server_commands/")->domain_add_subdomain($server_info, $domain_name, $sub_domain_name);
 	}
 
 	/**
 	*
 	*/
 	function domain_delete_subdomain ($server_info, $domain_name, $sub_domain_name) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_delete_subdomain($server_info, $domain_name, $sub_domain_name) : false;
+		return _class("domains", "classes/server_commands/")->domain_delete_subdomain($server_info, $domain_name, $sub_domain_name);
 	}
 
 	/**
 	*
 	*/
 	function domain_named_checkconf ($server_info) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_named_checkconf($server_info) : false;
+		return _class("domains", "classes/server_commands/")->domain_named_checkconf($server_info);
 	}
 
 	/**
 	*
 	*/
 	function domain_named_check_zone ($server_info, $domain) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_named_check_zone($server_info, $domain) : false;
+		return _class("domains", "classes/server_commands/")->domain_named_check_zone($server_info, $domain);
 	}
 
 	/**
 	*
 	*/
 	function domain_named_check_all_zone ($server_info) {
-		$OBJ = main()->init_class("domains", "classes/server_commands/");
-		return is_object($OBJ) ? $OBJ->domain_named_check_all_zone($server_info) : false;
+		return _class("domains", "classes/server_commands/")->domain_named_check_all_zone($server_info);
 	}
 	
 	/**
@@ -1519,7 +1481,7 @@ class yf_server_commands{
 			return false;
 		}
 	
-		$is_file_exist = $this->SSH_OBJ->file_exists($server_info, $file_path);
+		$is_file_exist = _class('ssh')->file_exists($server_info, $file_path);
 		
 		if(!$is_file_exist){
 			return false;
@@ -1528,11 +1490,11 @@ class yf_server_commands{
 		$lines_in_file = intval(_ssh_exec($server_info, "wc -l ".$file_path));
 		
 		if(!empty($exclude)){
-			$filter = " | grep -v '".$this->SSH_OBJ->_prepare_text($exclude)."'";
+			$filter = " | grep -v '"._class('ssh')->_prepare_text($exclude)."'";
 		}
 		
 		if(!empty($include)){
-			$filter .= " | grep '".$this->SSH_OBJ->_prepare_text($include)."'";
+			$filter .= " | grep '"._class('ssh')->_prepare_text($include)."'";
 		}
 		
 		if($lines_on_page < $lines_in_file){
@@ -1592,7 +1554,7 @@ class yf_server_commands{
 		
 		foreach ((array)$files_name as $file){
 			$result = _ssh_exec($server_info, "cat ".$file.".backup > ".$file);
-			$this->SSH_OBJ->unlink($server_info, $file.".backup");
+			_class('ssh')->unlink($server_info, $file.".backup");
 		}
 	}
 	
@@ -1606,7 +1568,7 @@ class yf_server_commands{
 		}
 		
 		foreach ((array)$files_name as $file){
-			$this->SSH_OBJ->unlink($server_info, $file.".backup");
+			_class('ssh')->unlink($server_info, $file.".backup");
 		}
 	}
 	
@@ -1681,10 +1643,10 @@ class yf_server_commands{
 		
 		$scripts_dir_path = $this->_get_scripts_dir_path($server_info);
 		
-		$is_exist = $this->SSH_OBJ->file_exists($server_info, $scripts_dir_path);
+		$is_exist = _class('ssh')->file_exists($server_info, $scripts_dir_path);
 
 		if(!$is_exist){
-			$this->SSH_OBJ->upload_dir($server_info, INCLUDE_PATH."uploads/scripts/", $scripts_dir_path);
+			_class('ssh')->upload_dir($server_info, INCLUDE_PATH."uploads/scripts/", $scripts_dir_path);
 			$result = _ssh_exec($server_info, "chmod 0777 ".$scripts_dir_path."*");
 		}
 	}
@@ -1707,12 +1669,12 @@ class yf_server_commands{
 	function _get_aven_list ($server_info, $available_path, $enabled_path) {
 
 		// get available
-		$available_list = array_keys($this->SSH_OBJ->scan_dir($server_info, $available_path, "", ""));
-		$available_list = $this->SSH_OBJ->clean_path($available_list);
+		$available_list = array_keys(_class('ssh')->scan_dir($server_info, $available_path, "", ""));
+		$available_list = _class('ssh')->clean_path($available_list);
 		$available_list = str_replace($available_path, "", $available_list);
 		
 		// get enabled
-		$SERVER_OS = $this->SSH_OBJ->_get_remote_os($server_info);
+		$SERVER_OS = _class('ssh')->_get_remote_os($server_info);
 		
 		if($SERVER_OS == "FREEBSD"){ 
 			$command = "ls -l ".$enabled_path." | grep -v 'total ' | awk '{print $11,$9}'";
@@ -1749,7 +1711,7 @@ class yf_server_commands{
 	*/
 	function _enable_aven ($server_info, $available_path, $enabled_path, $virtual_host_name) {
 	
-		if(!$this->SSH_OBJ->file_exists($server_info, $available_path.$virtual_host_name)){
+		if(!_class('ssh')->file_exists($server_info, $available_path.$virtual_host_name)){
 			return false;
 		}
 		
@@ -1768,7 +1730,7 @@ class yf_server_commands{
 	*/
 	function _disable_aven ($server_info, $available_path, $enabled_path, $virtual_host_name) {
 
-		if(!$this->SSH_OBJ->file_exists($server_info, $available_path.$virtual_host_name)){
+		if(!_class('ssh')->file_exists($server_info, $available_path.$virtual_host_name)){
 			return false;
 		}
 
@@ -1815,7 +1777,7 @@ class yf_server_commands{
 	*/
 	function _add_aven ($server_info, $available_path, $enabled_path, $virtual_host_name, $content, $status) {
 
-		$this->SSH_OBJ->write_string($server_info, $content, $available_path.$virtual_host_name);
+		_class('ssh')->write_string($server_info, $content, $available_path.$virtual_host_name);
 		
 		if($status == "1"){
 			$symlink_name = rtrim($enabled_path.$virtual_host_name, "/");
