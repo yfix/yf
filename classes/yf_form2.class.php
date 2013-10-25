@@ -47,6 +47,11 @@ class yf_form2 {
 	*		->info('add_date','Added');
 	*/
 	function chained_wrapper($replace = array(), $params = array()) {
+		if ($replace && is_string($replace)) {
+			$sql = $replace;
+			$this->_sql = $sql;
+			$replace = db()->get_2d($sql);
+		}
 		$this->_chained_mode = true;
 		$this->_replace = $replace;
 		$this->_params = $params;
@@ -106,21 +111,27 @@ class yf_form2 {
 	/**
 	* Enable automatic fields parsing mode
 	*/
-	function auto($table, $id, $params = array()) {
+	function auto($table = '', $id = '', $params = array()) {
 		if ($params['links_add']) {
 			$this->_params['links_add'] = $params['links_add'];
 		}
-		$columns = db()->meta_columns($table);
-		$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
-		foreach ((array)$info as $k => $v) {
-			$this->_replace[$k] = $v;
-		}
-		foreach((array)$columns as $name => $details) {
-			$type = strtoupper($details['type']);
-			if (strpos($type, 'TEXT') !== false) {
-				$this->textarea($name);
-			} else {
-				$this->text($name);
+		if ($table && $id) {
+			$columns = db()->meta_columns($table);
+			$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
+			foreach ((array)$info as $k => $v) {
+				$this->_replace[$k] = $v;
+			}
+			foreach((array)$columns as $name => $details) {
+				$type = strtoupper($details['type']);
+				if (strpos($type, 'TEXT') !== false) {
+					$this->textarea($name);
+				} else {
+					$this->text($name);
+				}
+			}
+		} elseif ($this->_sql && $this->_replace) {
+			foreach((array)$this->_replace as $name => $v) {
+				$this->container($v, $name);
 			}
 		}
 		$this->save_and_back();
