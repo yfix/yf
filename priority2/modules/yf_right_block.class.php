@@ -25,17 +25,11 @@ class yf_right_block {
 		}
 		$this->_user_info = &$GLOBALS['user_info'];
 		// Get live quick user stats
-		$totals = main()->call_class_method("user_stats", "classes/", "_get_live_stats", array("user_id" => $this->_user_info["id"]));
+		$totals = _class("user_stats")->_get_live_stats(array("user_id" => $this->_user_info["id"]));
 		// Interests
 		$totals["interests"] = 0;
 		if (!empty($totals["try_interests"])) {
-			$INTERESTS_OBJ = main()->init_class("interests");
-			if (is_object($INTERESTS_OBJ)) {
-				$user_interests = $INTERESTS_OBJ->_get_for_user_id($user_id);
-				if (!empty($user_interests) && is_array($user_interests)) {
-					$totals["interests"] = count($user_interests);
-				}
-			}
+			$totals["interests"] = count((array)module_safe("interests")->_get_for_user_id($user_id));
 		}
 		// Check if this user is in favorites (also check if this is own profile)
 		$DISPLAY_CONTACT_ITEMS = 0;
@@ -47,10 +41,9 @@ class yf_right_block {
 				$is_ignored			= db()->query_num_rows("SELECT 1 FROM ".db('ignore_list')." WHERE user_id=".intval(main()->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 //			}
 			// Check friendship
-			$FRIENDS_OBJ		= main()->init_class("friends");
-			$is_a_friend		= is_object($FRIENDS_OBJ) ? $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $this->_user_info["id"]) : -1;
+			$is_a_friend		= module_safe("friends")->_is_a_friend(main()->USER_ID, $this->_user_info["id"]);
 			if (!empty($totals["try_friends"])) {
-				$is_friend_of		= $FRIENDS_OBJ->_is_a_friend($this->_user_info["id"], main()->USER_ID);
+				$is_friend_of		= module_safe("friends")->_is_a_friend($this->_user_info["id"], main()->USER_ID);
 			}
 			$is_mutual_friends	= $is_a_friend && $is_friend_of;
 			// Switch for contact items

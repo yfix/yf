@@ -170,7 +170,7 @@ class yf_interests {
 					"keywords"	=> _es($_POST["keywords"]),
 				), "user_id=".intval($USER_ID));
 				// Update user stats
-				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => $USER_ID));
 				// Execute re-count on shutdown
 //				register_shutdown_function(array(&$this, "_update_unique_keywords"));
 				$this->_update_unique_keywords();

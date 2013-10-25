@@ -144,7 +144,7 @@ class yf_admin_home {
 	/**
 	*/
 	function _show_suggesting_messages () {
-		$user_modules_methods = main()->call_class_method("admin_modules", "admin_modules/", "_get_methods", array("private" => "1")); 
+		$user_modules_methods = module("admin_modules")->_get_methods(array("private" => "1")); 
 
 		$suggests = array();
 		foreach ((array)$user_modules_methods as $module_name => $module_methods) {

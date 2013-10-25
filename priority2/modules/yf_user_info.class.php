@@ -209,12 +209,10 @@ class yf_user_info {
 		update_user(main()->USER_ID, array("last_update" => time()));
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
-			main()->call_class_method("output_cache", "classes/", "_exec_trigger", array(
-				"user_id"	=> main()->USER_ID,
-			));
+			_class_safe("output_cache")->_exec_trigger(array("user_id" => main()->USER_ID));
 		}
 		// Update user stats
-		main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => main()->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 		// Do update user info in session
 		if (isset($_SESSION["user_info"])) {
 			$_SESSION["user_info"] = "";

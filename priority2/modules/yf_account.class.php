@@ -43,7 +43,7 @@ class yf_account {
 
 	// Display suggesting messages
 	function _show_suggesting_messages () {
-		$user_modules_methods = main()->call_class_method("user_modules", "admin_modules/", "_get_methods", array("private" => "1")); 
+		$user_modules_methods = _class("user_modules", "admin_modules/")->_get_methods(array("private" => "1")); 
 
 		$suggests = array();
 		foreach ((array)$user_modules_methods as $module_name => $module_methods) {
@@ -189,7 +189,7 @@ class yf_account {
 	
 	function _account_suggests(){
 		// Get live quick user stats
-		$totals = main()->call_class_method("user_stats", "classes/", "_get_live_stats", array("user_id" => $this->_user_info["id"]));
+		$totals = _class_safe("user_stats")->_get_live_stats(array("user_id" => $this->_user_info["id"]));
 		
 		// Prepare suggests
 		if ($this->_active_modules["user_info"] && !_avatar_exists(main()->USER_ID)) {
