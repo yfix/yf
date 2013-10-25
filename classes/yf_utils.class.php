@@ -527,7 +527,7 @@ class yf_utils {
 		if (empty(main()->USER_ID)) {
 			$body .= common()->_show_error_message(t('Only for members').'!');
 		}
-		$body .= main()->_execute('login_form', 'show');
+		$body .= module('login_form')->show();
 		return $body;
 	}
 
