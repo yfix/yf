@@ -119,8 +119,7 @@ class yf_user_stats {
 		if (empty($user_id) && !empty(main()->USER_ID)) {
 			$user_id = main()->USER_ID;
 		}
-		$OBJ = main()->init_class("user_stats_refresh", "classes/user_stats/");
-		return is_object($OBJ) ? $OBJ->_update_user_stats($user_id, $force_user_info) : "";
+		return _class("user_stats_refresh", "classes/user_stats/")->_update_user_stats($user_id, $force_user_info);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -171,7 +170,6 @@ class yf_user_stats {
 		if (!$this->STATS_ENABLED || !$this->ENABLE_REFRESH_STATS) {
 			return false;
 		}
-		$OBJ = main()->init_class("user_stats_refresh", "classes/user_stats/");
-		return is_object($OBJ) ? $OBJ->_refresh_all_stats() : "";
+		return _class("user_stats_refresh", "classes/user_stats/")->_refresh_all_stats();
 	}
 }

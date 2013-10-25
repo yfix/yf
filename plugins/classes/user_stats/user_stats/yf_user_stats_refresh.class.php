@@ -38,20 +38,9 @@ class yf_user_stats_refresh {
 			$totals[$_sql_keys[$_counter]] = $_value[0];
 		}
 		// Friends
-		$totals["friends"] = 0;
-		$FRIENDS_OBJ = main()->init_class("friends");
-		if (is_object($FRIENDS_OBJ)) {
-			$totals["friends"] = count((array)$FRIENDS_OBJ->_get_user_friends_ids($user_id));
-		}
+		$totals["friends"] = count((array)module("friends")->_get_user_friends_ids($user_id));
 		// Interests
-		$totals["interests"] = 0;
-		$INTERESTS_OBJ = main()->init_class("interests");
-		if (is_object($INTERESTS_OBJ)) {
-			$user_interests = $INTERESTS_OBJ->_get_for_user_id($user_id);
-			if (!empty($user_interests) && is_array($user_interests)) {
-				$totals["interests"] = count($user_interests);
-			}
-		}
+		$totals["interests"] = count((array)module("interests")->_get_for_user_id($user_id));
 		// Do update stats
 		$STATS_ARRAY = array(
 			"user_id"		=> intval($user_info["id"]),
