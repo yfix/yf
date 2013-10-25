@@ -33,9 +33,8 @@ class yf_help_tickets {
 			2	=> t("Medium"),
 			1	=> t("Low"),
 		);
-		$this->CATS_OBJ		= main()->init_class("cats", "classes/");
-		$this->CATS_OBJ->_default_cats_block = "help_cats";
-		$this->_help_cats	= $this->CATS_OBJ->_prepare_for_box("", 0);
+		_class('cats')->_default_cats_block = "help_cats";
+		$this->_help_cats	= _class('cats')->_prepare_for_box("", 0);
 
 		$this->_ticket_statuses = array(
 			"new"		=> t("new"),
@@ -47,8 +46,7 @@ class yf_help_tickets {
 		if ($this->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
-		$this->_sites_info = main()->init_class("sites_info", "classes/");
-		foreach ((array)$this->_sites_info->info as $site_id => $site_info) {
+		foreach ((array)_class('sites_info')->info as $site_id => $site_info) {
 			$this->_sites_names[$site_id] = $site_info["name"];
 		}
 		$this->_admin_groups	= main()->get_data("admin_groups");
@@ -466,8 +464,8 @@ class yf_help_tickets {
 			// Try to send mail to user
 			if (!common()->_error_exists()) {
 				// Get first site info
-				if (is_array($this->_sites_info->info))	{
-					$FIRST_SITE_INFO = array_shift($this->_sites_info->info);
+				if (is_array(_class('sites_info')->info))	{
+					$FIRST_SITE_INFO = array_shift(_class('sites_info')->info);
 				}
 				if (!common()->_error_exists()) {
 					$replace = array(
@@ -730,8 +728,8 @@ class yf_help_tickets {
 		} elseif ($CURRENT_OPERATION == "mass_reply") {
 
 			// Get first site info
-			if (is_array($this->_sites_info->info))	{
-				$FIRST_SITE_INFO = array_shift($this->_sites_info->info);
+			if (is_array(_class('sites_info')->info))	{
+				$FIRST_SITE_INFO = array_shift(_class('sites_info')->info);
 			}
 			$processed_tickets_ids = array();
 			// Process selected tickets
@@ -805,21 +803,10 @@ class yf_help_tickets {
 	* @return	string
 	*/
 	function _format_text ($body = "") {
-		// Stop here if text is empty
 		if (empty($body)) {
 			return "";
 		}
-		// If special code is "on" - process it
-		if ($this->USE_BB_CODES) {
-			$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
-		}
-		// We cannot die, need to be safe
-		if ($this->USE_BB_CODES && is_object($BB_CODES_OBJ)) {
-			$body = $BB_CODES_OBJ->_process_text($body);
-		} else {
-			$body = nl2br(_prepare_html($body, 0));
-		}
-		return $body;
+		return $this->USE_BB_CODES ? _class("bb_codes")->_process_text($body) : nl2br(_prepare_html($body, 0));
 
 	}
 
