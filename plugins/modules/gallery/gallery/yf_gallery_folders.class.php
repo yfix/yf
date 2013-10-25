@@ -119,7 +119,7 @@ class yf_gallery_folders {
 				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=edit_folder&id=".($this->GALLERY_OBJ->HIDE_TOTAL_ID ? ($_max_folder_id2 + 1) : intval($NEW_FOLDER_ID)). _add_get(array("page")));
 			}
 			// Update user stats
-			main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->GALLERY_OBJ->USER_ID));
+			_class_safe("user_stats")->_update(array("user_id" => $this->GALLERY_OBJ->USER_ID));
 		}
 		// Fill POST data
 		$DATA = $_POST;
@@ -225,7 +225,7 @@ class yf_gallery_folders {
 				// Update public photos
 				$this->GALLERY_OBJ->_sync_public_photos();
 				// Update user stats
-				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->GALLERY_OBJ->USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => $this->GALLERY_OBJ->USER_ID));
 				// Redirect user
 				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=edit_folder&id=".($this->GALLERY_OBJ->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : intval($FOLDER_ID)). _add_get(array("page")));
 			}
@@ -358,7 +358,7 @@ class yf_gallery_folders {
 				// Delete folder record from database
 				db()->query("DELETE FROM ".db('gallery_folders')." WHERE id=".intval($FOLDER_ID)." LIMIT 1");
 				// Update user stats
-				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->GALLERY_OBJ->USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => $this->GALLERY_OBJ->USER_ID));
 				// Update public photos
 				$this->GALLERY_OBJ->_sync_public_photos();
 				// Return user back

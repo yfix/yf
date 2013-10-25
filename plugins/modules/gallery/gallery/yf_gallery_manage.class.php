@@ -305,7 +305,7 @@ class yf_gallery_manage {
 				// Update public photos
 				$this->GALLERY_OBJ->_sync_public_photos($this->GALLERY_OBJ->USER_ID);
 				// Update user stats
-				main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $NEW_USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => $NEW_USER_ID));
 
 				$redirect_folder_id = $this->GALLERY_OBJ->HIDE_TOTAL_ID ? $user_folders[$_POST["folder_id"]]["id2"] : $_POST["folder_id"];
 
@@ -485,7 +485,7 @@ class yf_gallery_manage {
 
 			$this->GALLERY_OBJ->_sync_public_photos($NEW_USER_ID);
 
-			main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $NEW_USER_ID));
+			_class_safe("user_stats")->_update(array("user_id" => $NEW_USER_ID));
 		}
 
 		// Cleanup
@@ -791,7 +791,7 @@ class yf_gallery_manage {
 		// Update public photos
 		$this->GALLERY_OBJ->_sync_public_photos();
 		// Update user stats
-		main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->GALLERY_OBJ->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => $this->GALLERY_OBJ->USER_ID));
 		// Redirect user
 		return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".($this->GALLERY_OBJ->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]) : "show_gallery")._add_get(array("page")));
 	}

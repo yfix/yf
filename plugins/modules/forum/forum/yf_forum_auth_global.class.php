@@ -125,7 +125,7 @@ class yf_forum_auth_global {
 		}
 		// Try to recognize well-known spiders
 		if (module('forum')->SETTINGS["RECOGNIZE_SPIDERS"]) {
-			$spider_name = main()->call_class_method("spider_detect", "classes/", "detect");
+			$spider_name = _class_safe("spider_detect")->detect();
 			if (!empty($spider_name)) {
 				return false;
 			}

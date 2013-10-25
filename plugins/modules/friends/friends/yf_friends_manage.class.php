@@ -42,7 +42,7 @@ class yf_friends_manage {
 		$this->PARENT_OBJ->_add_user_friends_ids($this->PARENT_OBJ->USER_ID, $_GET["id"]);
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
-			main()->call_class_method("output_cache", "classes/", "_exec_trigger", array(
+			_class_safe("output_cache")->_exec_trigger(array(
 				"user_id"	=> $this->PARENT_OBJ->USER_ID,
 				"user_id2"	=> $target_user_info['id'],
 			));
@@ -61,7 +61,7 @@ class yf_friends_manage {
 			common()->quick_send_mail($target_user_info["email"], "You have been added to user's friends list", $mail_text);
 		}
 		// Update user stats
-		main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->PARENT_OBJ->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => $this->PARENT_OBJ->USER_ID));
 		// Return user to the "manage" page
 		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=view_all_friends");
 	}
@@ -84,7 +84,7 @@ class yf_friends_manage {
 		$this->PARENT_OBJ->_del_user_friends_ids($this->PARENT_OBJ->USER_ID, $target_user_info);
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
-			main()->call_class_method("output_cache", "classes/", "_exec_trigger", array(
+			_class_safe("output_cache")->_exec_trigger(array(
 				"user_id"	=> $this->PARENT_OBJ->USER_ID,
 				"user_id2"	=> $target_user_info['id'],
 			));
@@ -104,7 +104,7 @@ class yf_friends_manage {
 		common()->_log_user_action("del_friend", $_GET["id"], "friends");
 
 		// Update user stats
-		main()->call_class_method("user_stats", "classes/", "_update", array("user_id" => $this->PARENT_OBJ->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => $this->PARENT_OBJ->USER_ID));
 		// Return user back
 		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=view_all_friends");
 	}

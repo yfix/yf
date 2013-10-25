@@ -10,7 +10,7 @@ class yf_rss {
 			$rss_module_name = explode(",", $_GET["id"]);
 		}
 		
-		$user_modules_methods = main()->call_class_method("user_modules", "admin_modules/", "_get_methods", array("private" => "1")); 
+		$user_modules_methods = _class("user_modules", "admin_modules/")->_get_methods(array("private" => "1")); 
 
 		foreach ((array)$user_modules_methods as $module_name => $module_methods) {
 			$OBJ = "";
@@ -63,7 +63,7 @@ class yf_rss {
 	*/
 	function manage(){
 	
-		$user_modules_methods = main()->call_class_method("user_modules", "admin_modules/", "_get_methods", array("private" => "1")); 
+		$user_modules_methods = _class_safe("user_modules", "admin_modules/")->_get_methods(array("private" => "1")); 
 		
 		foreach ((array)$user_modules_methods as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
