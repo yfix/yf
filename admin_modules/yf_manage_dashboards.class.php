@@ -491,7 +491,7 @@ class yf_manage_dashboards {
 		foreach ((array)$_widgets as $module_name => $module_widgets) {
 			foreach ((array)$module_widgets as $method_name => $full_name) {
 				$auto_id = str_replace(array_keys($r), array_values($r), $full_name);
-				$widgets[$auto_id] = module($module_name)->$method_name(array('describe_self' => true));
+				$widgets[$auto_id] = module_safe($module_name)->$method_name(array('describe_self' => true));
 				if (!$widgets[$auto_id]['name']) {
 unset($widgets[$auto_id]);
 continue;
