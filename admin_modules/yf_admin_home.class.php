@@ -223,10 +223,7 @@ class yf_admin_home {
 	* Helper method
 	*/
 	function clear_core_cache () {
-		$CORE_CACHE_OBJ = main()->init_class("cache", "classes/");
-		if (is_object($CORE_CACHE_OBJ)) {
-			$CORE_CACHE_OBJ->_clear_cache_files();
-		}
+		_class("cache")->_clear_cache_files();
 		return js_redirect("./?object=".$_GET["object"]);
 	}
 

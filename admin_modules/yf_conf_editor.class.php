@@ -226,18 +226,15 @@ class yf_conf_editor {
 		if (!$group) {
 			$group = strtolower($_GET["action"]);
 		}
-		$CACHE_OBJ = main()->init_class("cache", "classes/");
 		// Switch by group
 		if ($group == "user_modules") {
 
 			$CACHE_NAME = "usr_modules_conf_tmp";
 
-			if ($this->USE_CACHE) {
-				$conf_array = $CACHE_OBJ->get($CACHE_NAME, $this->CACHE_TTL);
-			}
+			$conf_array = cache_get($CACHE_NAME, $this->CACHE_TTL);
 			if (empty($conf_array)) {
 				if (!$this->_user_modules) {
-					$this->_user_modules = main()->_execute("user_modules", "_get_modules");
+					$this->_user_modules = module("user_modules")->_get_modules();
 				}
 				$conf_array = $this->_collect_conf("modules/", $this->_user_modules);
 				foreach ((array)$conf_array[0] as $k => $v) {
@@ -247,20 +244,16 @@ class yf_conf_editor {
 					unset($conf_array[0][$k]); // Values
 					unset($conf_array[1][$k]); // Meta info
 				}		
-				if ($this->USE_CACHE) {
-					$CACHE_OBJ->put($CACHE_NAME, $conf_array);
-				}
+				cache_set($CACHE_NAME, $conf_array);
 			}
 		} elseif ($group == "admin_modules") {
 			
 			$CACHE_NAME = "adm_modules_conf_tmp";
 
-			if ($this->USE_CACHE) {
-				$conf_array = $CACHE_OBJ->get($CACHE_NAME, $this->CACHE_TTL);
-			}
+			$conf_array = cache_get($CACHE_NAME, $this->CACHE_TTL);
 			if (empty($conf_array)) {
 				if (!$this->_admin_modules) {
-					$this->_admin_modules = main()->_execute("admin_modules", "_get_modules");
+					$this->_admin_modules = module("admin_modules")->_get_modules();
 				}
 				$conf_array = $this->_collect_conf("admin_modules/", $this->_admin_modules);
 				foreach ((array)$conf_array[0] as $k => $v) {
@@ -270,18 +263,14 @@ class yf_conf_editor {
 					unset($conf_array[0][$k]); // Values
 					unset($conf_array[1][$k]); // Meta info
 				}		
-				if ($this->USE_CACHE) {
-					$CACHE_OBJ->put($CACHE_NAME, $conf_array);
-				}
+				cache_set($CACHE_NAME, $conf_array);
 			}
 
 		} elseif ($group == "classes") {
 
 			$CACHE_NAME = "classes_conf_tmp";
 
-			if ($this->USE_CACHE) {
-				$conf_array = $CACHE_OBJ->get($CACHE_NAME, $this->CACHE_TTL);
-			}
+			$conf_array = cache_get($CACHE_NAME, $this->CACHE_TTL);
 			
 			if (empty($conf_array)) {
 				if (empty($this->_classes_tree)) {
@@ -291,7 +280,6 @@ class yf_conf_editor {
 					$tmp_folder_array = $this->_collect_conf ($_folder, $_folder_classes);
 					$conf_array = my_array_merge($conf_array, (array)$tmp_folder_array);
 				}
-
 				foreach ((array)$conf_array[0] as $k => $v) {
 					if (!empty($v)) {
 						continue;
@@ -299,17 +287,13 @@ class yf_conf_editor {
 					unset($conf_array[0][$k]); // Values
 					unset($conf_array[1][$k]); // Meta info
 				}		
-				if ($this->USE_CACHE) {
-					$CACHE_OBJ->put($CACHE_NAME, $conf_array);
-				}
+				cache_set($CACHE_NAME, $conf_array);
 			}
 		} elseif ($group == "forum") {
 
 			$CACHE_NAME = "forum_conf_tmp";
 	
-			if ($this->USE_CACHE) {
-				$conf_array = $CACHE_OBJ->get($CACHE_NAME, $this->CACHE_TTL);
-			}
+			$conf_array = cache_get($CACHE_NAME, $this->CACHE_TTL);
 			if (empty($conf_array)) {
 	
 				// Get module file contents
@@ -323,13 +307,8 @@ class yf_conf_editor {
 					$conf_array[1]["_forum"][$var_name]["desc"] = trim($m[4][$k]);
 					$conf_array[1]["_forum"][$var_name]["type"] = $this->_get_type(@eval("return ".$m[2][$k].";"));
 				}
-	
-				if ($this->USE_CACHE) {
-					$CACHE_OBJ->put($CACHE_NAME, $conf_array);
-				}
+				cache_set($CACHE_NAME, $conf_array);
 			}
-
-
 		}
 		return $conf_array;
 	}
@@ -746,11 +725,12 @@ class yf_conf_editor {
 		// Save file
 		file_put_contents($this->AUTO_CONF_FILE, $data);
 		// Cleanup cache
-		$CACHE_OBJ = main()->init_class("cache", "classes/");
-		$CACHE_OBJ->clean("usr_modules_conf_tmp");
-		$CACHE_OBJ->clean("adm_modules_conf_tmp");
-		$CACHE_OBJ->clean("classes_conf_tmp");
-		$CACHE_OBJ->clean("forum_conf_tmp");
+		_class("cache")->clean(array(
+			"usr_modules_conf_tmp",
+			"adm_modules_conf_tmp",
+			"classes_conf_tmp",
+			"forum_conf_tmp",
+		));
 		// Return user back
 		return redirect($_SERVER["HTTP_REFERER"], 0);
 	}

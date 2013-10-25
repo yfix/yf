@@ -3,9 +3,7 @@
 class yf_manage_advertising {
 
 	function _init() {
-		if (!isset($GLOBALS['advertising'])) {
-			$GLOBALS['advertising'] = main()->init_class('advertising', 'modules/');
-		}
+		module('advertising', 'modules/');
 	}
 
 	/**
