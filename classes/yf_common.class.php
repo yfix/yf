@@ -1070,17 +1070,7 @@ class yf_common {
 	* Localize current piece of data
 	*/
 	function l($name = '', $data = '', $lang = '') {
-		if (!isset($this->L10N)) {
-			$this->L10N = main()->init_class('l10n', 'classes/');
-		}
-		if (!is_object($this->L10N)) {
-			return '';
-		}
-		if (method_exists($this->L10N, $name)) {
-			return $this->L10N->$name($data, $lang);
-		} else {
-			return $this->L10N->_get_var($name, $lang);
-		}
+		return _class('l10n')->$name($data, $lang);
 	}
 
 	/**
@@ -1147,27 +1137,21 @@ class yf_common {
 	*/
 	function threaded_exec($object, $action = 'show', $threads_params = array(), $max_threads = 10) {
 		$results = array();
-
-		$threads = main()->init_class('threads', 'classes/');
-
 		// Limit max number of parallel threads
 		foreach (array_chunk($threads_params, $max_threads, true) as $chunk) {
-
 			$ids_to_params = array();
 			foreach ((array)$chunk as $param_id => $_params) {
-				$thread_id = $threads->new_framework_thread($object, $action, $_params);
+				$thread_id = _class('threads')->new_framework_thread($object, $action, $_params);
 				$ids_to_params[$thread_id] = $param_id;
 			}
-			while (false !== ($result = $threads->iteration())) {
+			while (false !== ($result = _class('threads')->iteration())) {
 				if (!empty($result)) {
 					$thread_id	= $result[0];
 					$param_id	= $ids_to_params[$thread_id];
 					$results[$param_id] = $result[1];
 				}
 			}
-
 		}
-
 		return $results;
 	}
 

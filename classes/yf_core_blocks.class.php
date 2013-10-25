@@ -377,7 +377,7 @@ class yf_core_blocks {
 					$_GET['page']	= $url_not_found['page'];
 
 					if (!empty($url_not_found['object'])) {
-						$OBJ = main()->init_class($url_not_found['object'], $url_not_found['path']);
+						$OBJ = _class($url_not_found['object'], $url_not_found['path']);
 						$action = $url_not_found['action'] ? $url_not_found['action'] : 'show';
 						if (method_exists($OBJ, $action)) {
 							$body = $OBJ->$action();
