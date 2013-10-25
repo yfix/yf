@@ -1,10 +1,12 @@
 <?php
 
-if (!class_exists("news")) {
-	require_once (YF_PATH."priority2/modules/yf_news.class.php");
-}
+#if (!class_exists("news")) {
+#	require_once (YF_PATH."priority2/modules/yf_news.class.php");
+#}
+#load('news','framework_user');
 
-class yf_manage_news extends yf_news {
+// TODO: replace this module with modern one andremove dependency onto user module
+class yf_manage_news /*extends yf_news*/ {
 
 	/**
 	* Default method
