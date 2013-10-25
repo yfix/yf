@@ -715,11 +715,7 @@ class yf_forum_manage_future {
 			db()->query(
 				"DELETE FROM ".db('forum_future_posts')." WHERE id IN(".implode(",", $ids_to_delete).")"
 			);
-			// Re-synchronize board
-			$SYNC_OBJ = main()->init_class("forum_sync", USER_MODULES_DIR."forum/");
-			if (is_object($SYNC_OBJ)) {
-				$SYNC_OBJ->_sync_board(true);
-			}
+			_class("forum_sync", USER_MODULES_DIR."forum/")->_sync_board(true);
 		}
 	}
 

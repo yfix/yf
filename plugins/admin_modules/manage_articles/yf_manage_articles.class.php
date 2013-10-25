@@ -437,13 +437,7 @@ class yf_manage_articles extends yf_module {
 		if (empty($body)) return "";
 		// If special code is "on" - process it
 		if ($this->USE_BB_CODES) {
-			$BB_CODES_OBJ = &main()->init_class("bb_codes", "classes/");
-			// We cannot die, need to be safe
-			if (is_object($BB_CODES_OBJ)) {
-				$body = $BB_CODES_OBJ->_process_text($body);
-			} else {
-				$body = nl2br(_prepare_html($body, 0));
-			}
+			$body = _class("bb_codes")->_process_text($body);
 		} else {
 			$body = nl2br(_prepare_html($body, 0));
 		}

@@ -170,7 +170,7 @@ class yf_forum {
 		$this->_verify_session_vars();
 		// Init bb codes module
 		if ($this->BB_CODE) {
-			$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
+			$this->BB_OBJ = _class("bb_codes");
 		}
 		// Get all smilies into array
 		if ($this->BB_CODE && in_array($_GET["action"], array("view_topic"))) {
@@ -795,22 +795,14 @@ class yf_forum {
 	* Admin: synchronize board
 	*/
 	function sync_board () {
-		$SYNC_OBJ = main()->init_class("forum_sync", USER_MODULES_DIR."forum/");
-		if (is_object($SYNC_OBJ)) {
-			$SYNC_OBJ->_sync_board(true);
-		}
+		return _class("forum_sync", USER_MODULES_DIR."forum/")->_sync_board(true);
 	}
 
 	/**
 	* Try to load forum sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		$OBJ =& main()->init_class($module_name, FORUM_MODULES_DIR);
-		if (!is_object($OBJ)) {
-			trigger_error("FORUM: Cant load sub_module \"".$module_name."\"", E_USER_WARNING);
-			return false;
-		}
-		return $OBJ;
+		return _class($module_name, FORUM_MODULES_DIR);
 	}
 
 	/**
