@@ -58,8 +58,7 @@ class yf_user_stats {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
-	// Updated given user stats (special wrapper to call it from main->_execute)
+	// Updated given user stats
 	function _update ($params = array()) {
 		if (!$this->STATS_ENABLED) {
 			return false;
@@ -67,8 +66,7 @@ class yf_user_stats {
 		return $this->_update_user_stats ($params["user_id"], (array)$params["user_info"]);
 	}
 
-	//-----------------------------------------------------------------------------
-	// Get user stats for given users ids (special wrapper to call it from main->_execute)
+	// Get user stats for given users ids
 	function _get ($params = array()) {
 		if (!$this->STATS_ENABLED) {
 			return false;

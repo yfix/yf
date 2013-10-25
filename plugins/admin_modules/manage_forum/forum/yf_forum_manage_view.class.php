@@ -111,7 +111,7 @@ class yf_forum_manage_view {
 				"is_active"		=> $_topic_info["status"] == "a" ? 1 : 0,
 				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit_topic&id=".$_topic_info['id'],
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_topic&id=".$_topic_info['id'],
-				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($_topic_info["user_id"])),
+				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($_topic_info["user_id"]))),
 				"active_link"	=> "./?object=".$_GET["object"]."&action=change_topic_activity&id=".$_topic_info['id'],
 			);
 			$topics .= tpl()->parse("forum/admin/topic_item", $replace);
@@ -221,7 +221,7 @@ class yf_forum_manage_view {
 				"is_active"		=> $_post_info["status"] == "a" ? 1 : 0,
 				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit_post&id=".$_GET['id']."&msg_id=".$_post_info['id']._add_get(array("id", "msg_id")),
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_post&id=".$_GET['id']."&msg_id=".$_post_info['id']._add_get(array("id", "msg_id")),
-				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($_post_info["user_id"])),
+				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($_post_info["user_id"]))),
 				"active_link"	=> "./?object=".$_GET["object"]."&action=change_post_activity&id=".$_post_info['id'],
 			);
 			$posts .= tpl()->parse("forum/admin/post_item", $replace);
