@@ -871,16 +871,16 @@ class yf_main {
 			return $this->_plugins;
 		}
 		$sets = array(
-			'project'	=> array(
-				'classes' => YF_PATH.'plugins/classes/*/',
-				'admin_modules' => YF_PATH.'plugins/admin_modules/*/',
-				'modules' => YF_PATH.'plugins/modules/*/',
-			),
-			'framework'	=> array(
-				'classes' => PROJECT_PATH.'plugins/classes/*/',
-				'admin_modules' => PROJECT_PATH.'plugins/admin_modules/*/',
-				'modules' => PROJECT_PATH.'plugins/modules/*/',
-			),
+#			'project'	=> array(
+#				'classes' => YF_PATH.'plugins/classes/*/',
+#				'admin_modules' => YF_PATH.'plugins/admin_modules/*/',
+#				'modules' => YF_PATH.'plugins/modules/*/',
+#			),
+#			'framework'	=> array(
+#				'classes' => PROJECT_PATH.'plugins/classes/*/',
+#				'admin_modules' => PROJECT_PATH.'plugins/admin_modules/*/',
+#				'modules' => PROJECT_PATH.'plugins/modules/*/',
+#			),
 		);
 		$plugins = array();
 		foreach ((array)$sets as $set => $patterns) {
@@ -964,9 +964,9 @@ class yf_main {
 				$site_path			= $custom_path;
 			}
 		}
-		if (!isset($this->_plugins)) {
-			$this->_preload_plugins_list();
-		}
+#		if (!isset($this->_plugins)) {
+#			$this->_preload_plugins_list();
+#		}
 // TODO: connect plugins
 
 		// Order of storages matters a lot!
