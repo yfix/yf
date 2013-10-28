@@ -743,7 +743,9 @@ class yf_table2 {
 		if (!$extra['no_ajax']) {
 			$extra['a_class'] .= ' ajax_edit';
 		}
-		$extra['icon'] .= 'icon-edit';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-edit';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -766,7 +768,9 @@ class yf_table2 {
 		if (!$extra['no_ajax']) {
 			$extra['a_class'] .= ' ajax_delete';
 		}
-		$extra['icon'] .= 'icon-trash';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-trash';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -789,7 +793,9 @@ class yf_table2 {
 		if (!$extra['no_ajax']) {
 			$extra['a_class'] .= ' ajax_clone';
 		}
-		$extra['icon'] .= 'icon-code-fork';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-code-fork';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -812,7 +818,9 @@ class yf_table2 {
 		if (!$extra['no_ajax']) {
 			$extra['a_class'] .= ' ajax_view';
 		}
-		$extra['icon'] .= 'icon-eye-open';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-eye-open';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -909,7 +917,9 @@ class yf_table2 {
 		if (!$extra['no_ajax']) {
 			$extra['a_class'] .= ' ajax_add';
 		}
-		$extra['icon'] .= 'icon-plus';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-plus';
+		}
 		return $this->footer_link($name, $link, $extra);
 	}
 

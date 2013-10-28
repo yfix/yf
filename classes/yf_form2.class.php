@@ -1079,7 +1079,9 @@ class yf_form2 {
 	/**
 	*/
 	function save($name = '', $desc = '', $extra = array(), $replace = array()) {
-		$extra['icon'] = 'icon-save';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-save';
+		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1099,7 +1101,9 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Back';
-		$extra['icon'] = 'icon-save';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-save';
+		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1119,7 +1123,9 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Clear';
-		$extra['icon'] = 'icon-save';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-save';
+		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1759,8 +1765,12 @@ class yf_form2 {
 			$name = 'Edit';
 		}
 		$extra['link_variants'] = array('edit_link','edit_url');
-		$extra['icon'] = 'icon-edit';
-		$extra['class'] = 'ajax_edit';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-edit';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_edit';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
@@ -1772,8 +1782,12 @@ class yf_form2 {
 			$name = 'Delete';
 		}
 		$extra['link_variants'] = array('delete_link','delete_url');
-		$extra['icon'] = 'icon-trash';
-		$extra['class'] = 'ajax_delete';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-trash';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_delete';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
@@ -1785,8 +1799,12 @@ class yf_form2 {
 			$name = 'Clone';
 		}
 		$extra['link_variants'] = array('clone_link','clone_url');
-		$extra['icon'] = 'icon-plus';
-		$extra['class'] = 'ajax_clone';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-plus';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_clone';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
@@ -1798,8 +1816,12 @@ class yf_form2 {
 			$name = 'View';
 		}
 		$extra['link_variants'] = array('view_link','view_url');
-		$extra['icon'] = 'icon-eye-open';
-		$extra['class'] = 'ajax_view';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-eye-open';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_view';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
