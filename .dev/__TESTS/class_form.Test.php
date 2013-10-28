@@ -80,4 +80,12 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$html = form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc', 'style' => 'color:red;', 'value' => 'value1'));
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" style="color:red;" placeholder="Desc" value="value1">', trim($html));
 	}
+	public function test_19() {
+		$html = form($r, array('no_form' => 1))->hidden('hdn');
+		$this->assertEquals('<input type="hidden" id="hdn" name="hdn">', trim($html));
+	}
+	public function test_20() {
+		$html = form($r, array('no_form' => 1))->hidden('hdn', array('value' => 'val1'));
+		$this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim($html));
+	}
 }
