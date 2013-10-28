@@ -18,6 +18,7 @@ class yf_shop_supplier_panel_upload_images {
 	*/
 	function upload_images() {
 		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
+		$SUPPLIER_INFO = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.intval($SUPPLIER_ID));
 		if (empty($_FILES)) {
 			return form('',array('enctype' => 'multipart/form-data'))
 				->file("archive")
@@ -57,6 +58,8 @@ class yf_shop_supplier_panel_upload_images {
 		}
 		_class('dir')->delete_dir($EXTRACT_PATH, true);
 		unlink($this->ARCHIVE_FOLDER.$file['name']);
+		common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name']));
+
 		return tpl()->parse("shop_supplier_panel/upload_archive", $replace);
 	}
 
@@ -84,6 +87,8 @@ class yf_shop_supplier_panel_upload_images {
 		}else{
 			return "Product_not_found";
 		}
+		db()->UPDATE('shop_products', array("image" => 1), "id=".$product['id']); 
+
 		return array(
 			'status'=>"Success",
 			'img'	=> $thumb_name,
@@ -93,22 +98,22 @@ class yf_shop_supplier_panel_upload_images {
 
 	/**
 	*/
-	function resize_and_save_image($img, $id){
+	function resize_and_save_image($img, $id, $i = 1){
 		$dirs = sprintf('%06s',$id);
 		$dir2 = substr($dirs,-3,3);
 		$dir1 = substr($dirs,-6,3);
 		$ext = pathinfo($img, PATHINFO_EXTENSION);
 		$new_path = $this->ARCHIVE_FOLDER.$dir1.'/'.$dir2.'/';
-//		$new_path = module('manage_shop')->products_img_webdir.$dir1.'/'.$dir2.'/';
 		if (!file_exists($new_path)) {
 			mkdir($new_path, 0777, true);
-			$num =1;
-		}else{
-			$num = _class('dir')->scan_dir($new_path, true, '-f /\.(jpg|jpeg|png)$/');
-			$num = count($num);
 		}
-		$thumb_name = $new_path.'product_'.$id.'_'.$num.module('manage_shop')->THUMB_SUFFIX.'.jpg';
-		$big_name = $new_path.'product_'.$id.'_'.$num.module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
+		$thumb_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->THUMB_SUFFIX.'.jpg';
+		$big_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
+
+		if(file_exists($thumb_name) || file_exists($big_name)){
+			$i++;
+			$this->resize_and_save_image($img, $id, $i);
+		}
 		common()->make_thumb($img, $thumb_name, 216, 216);
 		common()->make_thumb($img, $big_name, 710, 750);
 

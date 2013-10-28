@@ -127,6 +127,7 @@ class yf_shop_supplier_panel_products {
 					'thumb_path'	=> $thumb_path_temp,
 					'del_url' 		=> $product_image_delete_url,
 					'name'			=> $product_info['url'],
+					'image_key'		=> $i,
 				);
 				$items .= tpl()->parse('manage_shop/image_items', $replace2);
 			}
@@ -152,6 +153,7 @@ class yf_shop_supplier_panel_products {
 			'category_box'			=> common()->multi_select('category', module('manage_shop')->_cats_for_select, $cat_id, false, 2, ' size=5 ', false),
 			'cat_id_box'			=> common()->select_box('cat_id', module('manage_shop')->_cats_for_select, $product_info['cat_id'], false, 2),
 			'image'					=> $items,
+			'set_main_image_url'	=> './?object='.$_GET['object'].'&action=set_main_image&id='.$product_info['id'],
 		);
 		return tpl()->parse($_GET['object'].'/product_edit', $replace);
 	}

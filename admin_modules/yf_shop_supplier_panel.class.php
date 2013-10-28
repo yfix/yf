@@ -35,6 +35,14 @@ class yf_shop_supplier_panel {
 		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func();
 	}	
 
+	function _product_images_rename($id, $k, $mpath) {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func($id, $k, $mpath);
+	}	
+
+	function set_main_image() {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func();
+	}	
+
 	function products($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
 	}

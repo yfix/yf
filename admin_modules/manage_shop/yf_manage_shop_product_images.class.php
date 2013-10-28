@@ -11,6 +11,27 @@ class yf_manage_shop_product_images{
 		module("manage_shop")->_product_image_delete($_GET["id"], $_GET["key"]);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
+	
+	/**
+	*/
+	function _product_images_rename($id, $k, $mpath){
+		$image_files = _class('dir')->scan_dir(
+			module("manage_shop")->products_img_dir.$mpath, 
+			true, 
+			"/product_".$id.".+?_thumb\.jpg"."/"
+		);
+		$reg = "/product_".$id."_(?P<content>[\d]+)_thumb\.jpg/";
+		sort($image_files);
+print_r($image_files);
+exit;
+/*
+		foreach((array)$image_files as $filepath) {
+			preg_match($reg, $filepath, $rezult);
+			$i =  $rezult["content"];
+
+			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&key=".$i;
+*/		
+	}
 
 	/**
 	*/
@@ -43,6 +64,7 @@ class yf_manage_shop_product_images{
 			db()->UPDATE('shop_products', $sql_array, "id=".$_GET["id"]); 
 			common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
 		}
+		$this->_product_images_rename($id, $k, $mpath);
 		return true;
 	}
 
