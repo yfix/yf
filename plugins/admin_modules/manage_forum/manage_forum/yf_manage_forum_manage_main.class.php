@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_forum_manage_main {
+class yf_manage_forum_manage_main {
 
 	//-----------------------------------------------------------------------------
 	// Admin: edit category
@@ -44,7 +44,7 @@ class yf_forum_manage_main {
 			"activity"		=> common()->radio_box("activity", module("forum")->_active_select, $cat_info["status"]),
 			"back"			=> back("./?object=".$_GET["object"]),
 		);
-		return tpl()->parse("forum/admin/category_form", $replace);
+		return tpl()->parse("manage_forum/admin/category_form", $replace);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ class yf_forum_manage_main {
 			"activity"		=> common()->radio_box("activity", module("forum")->_active_select, "a"),
 			"back"			=> back("./?object=".$_GET["object"]),
 		);
-		return tpl()->parse("forum/admin/category_form", $replace);
+		return tpl()->parse("manage_forum/admin/category_form", $replace);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -204,7 +204,7 @@ class yf_forum_manage_main {
 			"user_groups_box"	=> common()->multi_select("user_groups", $groups_select, $groups_selected, false, 2, " size=7 class=small_for_select ", false),
 			"back"				=> back("./?object=".$_GET["object"]),
 		);
-		return tpl()->parse("forum/admin/forum_form", $replace);
+		return tpl()->parse("manage_forum/admin/forum_form", $replace);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -262,7 +262,7 @@ class yf_forum_manage_main {
 			"back"				=> back("./?object=".$_GET["object"]),
 			"user_groups_box"	=> common()->multi_select("user_groups", $groups_select, $groups_selected, false, 2, " size=7 class=small_for_select ", false),
 		);
-		return tpl()->parse("forum/admin/forum_form", $replace);
+		return tpl()->parse("manage_forum/admin/forum_form", $replace);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -379,7 +379,7 @@ class yf_forum_manage_main {
 			"activity"		=> common()->radio_box("activity", module("forum")->_active_select, $topic_info["status"]),
 			"back"			=> back("./?object=".$_GET["object"]."&action=view_forum&id=".$topic_info["forum"]),
 		);
-		return tpl()->parse("forum/admin/topic_form", $replace);
+		return tpl()->parse("manage_forum/admin/topic_form", $replace);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -473,7 +473,7 @@ class yf_forum_manage_main {
 			"activity"		=> common()->radio_box("activity", module("forum")->_active_select, $post_info["status"]),
 			"back"			=> back("./?object=".$_GET["object"]."&action=view_topic&id=".$post_info['topic']),
 		);
-		return tpl()->parse("forum/admin/post_form", $replace);
+		return tpl()->parse("manage_forum/admin/post_form", $replace);
 	}
 
 	//-----------------------------------------------------------------------------

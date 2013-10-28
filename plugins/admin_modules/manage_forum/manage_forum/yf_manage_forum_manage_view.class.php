@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_forum_manage_view {
+class yf_manage_forum_manage_view {
 
 	//-----------------------------------------------------------------------------
 	// 
@@ -62,7 +62,7 @@ class yf_forum_manage_view {
 			"is_closed"		=> intval($forum_info["options"] == "2" ? 1 : 0),
 			"active_link"	=> "./?object=".$_GET["object"]."&action=change_forum_activity&id=".$forum_info['id'],
 		);
-		return tpl()->parse("forum/admin/forum_item", $replace);
+		return tpl()->parse("manage_forum/admin/forum_item", $replace);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -114,7 +114,7 @@ class yf_forum_manage_view {
 				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($_topic_info["user_id"]))),
 				"active_link"	=> "./?object=".$_GET["object"]."&action=change_topic_activity&id=".$_topic_info['id'],
 			);
-			$topics .= tpl()->parse("forum/admin/topic_item", $replace);
+			$topics .= tpl()->parse("manage_forum/admin/topic_item", $replace);
 		}
 		// Prepare sub forums
 		$sub_forums = array();
@@ -150,7 +150,7 @@ class yf_forum_manage_view {
 			"sub_forums_items"	=> $sub_forums_items,
 			"active_link"		=> "./?object=".$_GET["object"]."&action=change_forum_activity&id=".$forum_info['id'],
 		);
-		return module("forum")->_show_main_tpl(tpl()->parse("forum/admin/view_forum", $replace_f));
+		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/admin/view_forum", $replace_f));
 	}
 
 	//-----------------------------------------------------------------------------
@@ -224,7 +224,7 @@ class yf_forum_manage_view {
 				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($_post_info["user_id"]))),
 				"active_link"	=> "./?object=".$_GET["object"]."&action=change_post_activity&id=".$_post_info['id'],
 			);
-			$posts .= tpl()->parse("forum/admin/post_item", $replace);
+			$posts .= tpl()->parse("manage_forum/admin/post_item", $replace);
 		}
 		// Prepare parent forums
 		$parent_forums = array();
@@ -255,7 +255,7 @@ class yf_forum_manage_view {
 			"parent_forums"		=> !empty($parent_forums) ? $parent_forums : "",
 			"active_link"		=> "./?object=".$_GET["object"]."&action=change_topic_activity&id=".$topic_info['id'],
 		);
-		return module("forum")->_show_main_tpl(tpl()->parse("forum/admin/view_topic", $replace_t));
+		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/admin/view_topic", $replace_t));
 	}
 
 	//-----------------------------------------------------------------------------
@@ -359,7 +359,7 @@ class yf_forum_manage_view {
 			"user_name"			=> module("forum")->USER_NAME,
 			"parent_forums"		=> !empty($parent_forums) ? $parent_forums : "",
 		);
-		return module("forum")->_show_main_tpl(tpl()->parse("forum/new_topic", $replace));
+		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/new_topic", $replace));
 	}
 
 	//-----------------------------------------------------------------------------
@@ -441,6 +441,6 @@ class yf_forum_manage_view {
 			"iframe"			=> "",
 			"parent_forums"		=> !empty($parent_forums) ? $parent_forums : "",
 		);
-		return module("forum")->_show_main_tpl(tpl()->parse("forum/reply", $replace));
+		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/reply", $replace));
 	}
 }

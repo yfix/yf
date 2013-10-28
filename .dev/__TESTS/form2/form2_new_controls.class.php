@@ -4,6 +4,8 @@ class form2_new_controls {
 	function show() {
 		$r['count_offers'] = 1;
 		return form($r)
+			->hidden('hdn')
+
 			->icon_select_box(array('selected' => 'icon-anchor'))
 			->currency_box(array('selected' => 'RUB'))
 			->language_box(array('selected' => 'uk'))

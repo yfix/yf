@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_forum_manage_users {
+class yf_manage_forum_manage_users {
 
 	/**
 	* manage users
