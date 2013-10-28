@@ -659,7 +659,7 @@ class yf_form2 {
 			$extra['type'] = 'hidden';
 
 			$attrs_names = array('type','id','name','value','data');
-			$body = '<input'.$_this->_attrs($extra, $attrs_names).'>';
+			return '<input'.$_this->_attrs($extra, $attrs_names).'>';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
