@@ -47,6 +47,11 @@ class yf_form2 {
 	*		->info('add_date','Added');
 	*/
 	function chained_wrapper($replace = array(), $params = array()) {
+		if ($replace && is_string($replace)) {
+			$sql = $replace;
+			$this->_sql = $sql;
+			$replace = db()->get_2d($sql);
+		}
 		$this->_chained_mode = true;
 		$this->_replace = $replace;
 		$this->_params = $params;
@@ -106,21 +111,27 @@ class yf_form2 {
 	/**
 	* Enable automatic fields parsing mode
 	*/
-	function auto($table, $id, $params = array()) {
+	function auto($table = '', $id = '', $params = array()) {
 		if ($params['links_add']) {
 			$this->_params['links_add'] = $params['links_add'];
 		}
-		$columns = db()->meta_columns($table);
-		$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
-		foreach ((array)$info as $k => $v) {
-			$this->_replace[$k] = $v;
-		}
-		foreach((array)$columns as $name => $details) {
-			$type = strtoupper($details['type']);
-			if (strpos($type, 'TEXT') !== false) {
-				$this->textarea($name);
-			} else {
-				$this->text($name);
+		if ($table && $id) {
+			$columns = db()->meta_columns($table);
+			$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
+			foreach ((array)$info as $k => $v) {
+				$this->_replace[$k] = $v;
+			}
+			foreach((array)$columns as $name => $details) {
+				$type = strtoupper($details['type']);
+				if (strpos($type, 'TEXT') !== false) {
+					$this->textarea($name);
+				} else {
+					$this->text($name);
+				}
+			}
+		} elseif ($this->_sql && $this->_replace) {
+			foreach((array)$this->_replace as $name => $v) {
+				$this->container($v, $name);
 			}
 		}
 		$this->save_and_back();
@@ -648,7 +659,7 @@ class yf_form2 {
 			$extra['type'] = 'hidden';
 
 			$attrs_names = array('type','id','name','value','data');
-			$body = '<input'.$_this->_attrs($extra, $attrs_names).'>';
+			return '<input'.$_this->_attrs($extra, $attrs_names).'>';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra);
@@ -1068,7 +1079,9 @@ class yf_form2 {
 	/**
 	*/
 	function save($name = '', $desc = '', $extra = array(), $replace = array()) {
-		$extra['icon'] = 'icon-save';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-save';
+		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1088,7 +1101,9 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Back';
-		$extra['icon'] = 'icon-save';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-save';
+		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1108,7 +1123,9 @@ class yf_form2 {
 		}
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Clear';
-		$extra['icon'] = 'icon-save';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-save';
+		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
 
@@ -1179,7 +1196,9 @@ class yf_form2 {
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
 		$replace[$name] = $name;
 		$extra['link'] = $link;
-		$extra['no_label'] = 1;
+		if (!$extra['desc']) {
+			$extra['no_label'] = 1;
+		}
 		return $this->info($name, $desc, $extra, $replace);
 	}
 
@@ -1746,8 +1765,12 @@ class yf_form2 {
 			$name = 'Edit';
 		}
 		$extra['link_variants'] = array('edit_link','edit_url');
-		$extra['icon'] = 'icon-edit';
-		$extra['class'] = 'ajax_edit';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-edit';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_edit';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
@@ -1759,8 +1782,12 @@ class yf_form2 {
 			$name = 'Delete';
 		}
 		$extra['link_variants'] = array('delete_link','delete_url');
-		$extra['icon'] = 'icon-trash';
-		$extra['class'] = 'ajax_delete';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-trash';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_delete';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
@@ -1772,8 +1799,12 @@ class yf_form2 {
 			$name = 'Clone';
 		}
 		$extra['link_variants'] = array('clone_link','clone_url');
-		$extra['icon'] = 'icon-plus';
-		$extra['class'] = 'ajax_clone';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-plus';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_clone';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 
@@ -1785,8 +1816,12 @@ class yf_form2 {
 			$name = 'View';
 		}
 		$extra['link_variants'] = array('view_link','view_url');
-		$extra['icon'] = 'icon-eye-open';
-		$extra['class'] = 'ajax_view';
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = 'icon-eye-open';
+		}
+		if (!isset($extra['class'])) {
+			$extra['class'] = 'ajax_view';
+		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
 

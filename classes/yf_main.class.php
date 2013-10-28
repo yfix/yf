@@ -865,6 +865,37 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function _preload_plugins_list() {
+		if (isset($this->_plugins)) {
+			return $this->_plugins;
+		}
+		$sets = array(
+#			'project'	=> array(
+#				'classes' => YF_PATH.'plugins/classes/*/',
+#				'admin_modules' => YF_PATH.'plugins/admin_modules/*/',
+#				'modules' => YF_PATH.'plugins/modules/*/',
+#			),
+#			'framework'	=> array(
+#				'classes' => PROJECT_PATH.'plugins/classes/*/',
+#				'admin_modules' => PROJECT_PATH.'plugins/admin_modules/*/',
+#				'modules' => PROJECT_PATH.'plugins/modules/*/',
+#			),
+		);
+		$plugins = array();
+		foreach ((array)$sets as $set => $patterns) {
+			foreach ((array)$patterns as $role => $pattern) {
+				foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
+					$d = basename($d);
+					$plugins[$set][$role][$d] = $d;
+				}
+			}
+		}
+		$this->_plugins = $plugins;
+		return $this->_plugins;
+	}
+
+	/**
 	* Load module file
 	*/
 	function load_class_file($class_name = '', $custom_path = '', $force_storage = '') {
@@ -933,6 +964,11 @@ class yf_main {
 				$site_path			= $custom_path;
 			}
 		}
+#		if (!isset($this->_plugins)) {
+#			$this->_preload_plugins_list();
+#		}
+// TODO: connect plugins
+
 		// Order of storages matters a lot!
 		$storages = array();
 		if (conf('DEV_MODE')) {

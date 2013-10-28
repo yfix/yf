@@ -1,27 +1,27 @@
 [submodule "libs/php5-utf8"]
 	path = libs/php5-utf8
-	url = git@github.com:yfix/php5-utf8.git
+	url = https://github.com/yfix/php5-utf8.git
 [submodule "libs/lessphp"]
 	path = libs/lessphp
-	url = git@github.com:yfix/lessphp.git
+	url = https://github.com/yfix/lessphp.git
 [submodule "libs/phpmailer"]
 	path = libs/phpmailer
-	url = git@github.com:yfix/PHPMailer.git
+	url = https://github.com/yfix/PHPMailer.git
 [submodule "libs/fenom"]
 	path = libs/fenom
-	url = git@github.com:yfix/fenom.git
+	url = https://github.com/yfix/fenom.git
 [submodule "libs/phpseclib"]
 	path = libs/phpseclib
-	url = git@github.com:yfix/phpseclib.git
+	url = https://github.com/yfix/phpseclib.git
 [submodule "libs/kcfinder"]
 	path = libs/kcfinder
-	url = git@github.com:yfix/yf_kcfinder.git
+	url = https://github.com/yfix/yf_kcfinder.git
 [submodule "libs/php-sass"]
 	path = libs/php-sass
-	url = git@github.com:yfix/php-sass.git
+	url = https://github.com/yfix/php-sass.git
 [submodule "libs/smarty"]
 	path = libs/smarty
-	url = git@github.com:yfix/smarty.git
+	url = https://github.com/yfix/smarty.git
 [submodule "libs/twig"]
 	path = libs/twig
-	url = git@github.com:yfix/Twig.git
+	url = https://github.com/yfix/Twig.git

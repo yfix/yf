@@ -144,7 +144,7 @@ class yf_admin_home {
 	/**
 	*/
 	function _show_suggesting_messages () {
-		$user_modules_methods = main()->call_class_method("admin_modules", "admin_modules/", "_get_methods", array("private" => "1")); 
+		$user_modules_methods = module("admin_modules")->_get_methods(array("private" => "1")); 
 
 		$suggests = array();
 		foreach ((array)$user_modules_methods as $module_name => $module_methods) {
@@ -223,10 +223,7 @@ class yf_admin_home {
 	* Helper method
 	*/
 	function clear_core_cache () {
-		$CORE_CACHE_OBJ = main()->init_class("cache", "classes/");
-		if (is_object($CORE_CACHE_OBJ)) {
-			$CORE_CACHE_OBJ->_clear_cache_files();
-		}
+		_class("cache")->_clear_cache_files();
 		return js_redirect("./?object=".$_GET["object"]);
 	}
 

@@ -27,11 +27,11 @@ class yf_tpl_driver_yf {
 		// Display help tooltip
 		// EXAMPLE:	 {tip('register.login')} or {tip('form.some_field',2)}
 		'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-			=> 'main()->_execute("graphics", "_show_help_tip", array("tip_id"=>"$1","tip_type"=>"$2","replace"=>$replace))',
+			=> '_class_safe("graphics")->_show_help_tip(array("tip_id" => "$1", "tip_type" => "$2", "replace" => $replace))',
 		// Display help tooltip inline
 		// EXAMPLE:	 {itip('register.login')}
 		'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-			=> 'main()->_execute("graphics", "_show_inline_tip", array("text"=>"$1","replace"=>$replace))',
+			=> '_class_safe("graphics")->_show_inline_tip(array("text" => "$1", "replace" => $replace))',
 		// Display user level single (inline) error message by its name (keyword)
 		// EXAMPLE:	 {e('login')} or {user_error('name_field')}
 		'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/imse'
@@ -39,7 +39,7 @@ class yf_tpl_driver_yf {
 		// Advertising
 		// EXAMPLE:	 {ad('AD_ID')}
 		'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-			=> 'main()->_execute("advertising", "_show", array("ad"=>\'$1\'))',
+			=> 'module_safe("advertising")->_show(array("ad" => \'$1\'))',
 		// Url generation with params
 		// EXAMPLE:	 {url(object=home_page;action=test)}
 		'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'

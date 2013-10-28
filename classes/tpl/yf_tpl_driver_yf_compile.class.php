@@ -64,10 +64,10 @@ class yf_tpl_driver_yf_compile {
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,true);'.$_php_end,
 
 			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
-				=> $_php_start.'echo main()->_execute("graphics", "_show_help_tip", array("tip_id"=>\'$1\',"tip_type"=>\'$2\'));'.$_php_end,
+				=> $_php_start.'echo _class_safe("graphics")->_show_help_tip(array("tip_id"=>\'$1\',"tip_type"=>\'$2\'));'.$_php_end,
 
 			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
-				=> $_php_start.'echo main()->_execute("graphics", "_show_inline_tip", array("text"=>\'$1\'));'.$_php_end,
+				=> $_php_start.'echo _class_safe("graphics")->_show_inline_tip(array("text"=>\'$1\'));'.$_php_end,
 
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo common()->_show_error_inline(\'$2\');'.$_php_end,
@@ -85,7 +85,7 @@ class yf_tpl_driver_yf_compile {
 				=> $_php_start. 'echo trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')));'. $_php_end,
 
    			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
-				=> $_php_start. 'echo main()->_execute("advertising", "_show", array("ad"=>\'$1\'));'. $_php_end,
+				=> $_php_start. 'echo module_safe("advertising")->_show(array("ad"=>\'$1\'));'. $_php_end,
 
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start. 'echo _class(\'tp\')->_generate_url_wrapper(\'$1\');'. $_php_end,

@@ -30,7 +30,7 @@ class table2_new_controls {
 			->text('price')
 			->text('quantity')
 			->date('add_date')
-			->btn_edit()
+			->btn_edit(array('icon' => 'icon-star'))
 			->btn_delete()
 			->btn_clone()
 			->btn_active()

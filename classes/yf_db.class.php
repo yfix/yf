@@ -1061,7 +1061,7 @@ class yf_db {
 		} else {
 			return false;
 		}
-		$GLOBALS['main']->call_class_method('logs', 'classes/', 'store_db_queries_log');
+		_class_safe('logs')->store_db_queries_log();
 	}
 
 	/**
