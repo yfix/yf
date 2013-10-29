@@ -61,6 +61,8 @@ class yf_manage_shop_product_add{
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
 				module("manage_shop")->_attributes_save($product_id);
 			}
+			module("manage_shop")->_add_revision('product','edit',db('shop_products'),$product_id);
+			
 			return js_redirect("./?object=manage_shop&action=products");
 		}
 		// 1-st type of assigning attributes

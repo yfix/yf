@@ -6,11 +6,12 @@
 	{form_row("box","manufacturer_box","Manufacturer")}
 	{form_row("textarea","desc","Description")}
 	{form_row("money","price")}
-{{--
-	{form_row("money","price_promo")}
-	{form_row("money","price_partner")}
-	{form_row("money","price_raw")}
---}}
+	<div class="control-group">
+		<label class="control-label" for="productparams">Product params</label>		
+		<div class="controls">
+			{productparams}
+		</div>
+	</div>	
 	{form_row("number","quantity")}
 
 	<div class="control-group">
