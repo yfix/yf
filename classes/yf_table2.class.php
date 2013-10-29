@@ -251,7 +251,7 @@ class yf_table2 {
 					$td_nowrap = ($info['extra']['nowrap'] ? ' nowrap="nowrap" ' : '');
 					$tip = $info['extra']['tip'] ? ''.$this->_show_tip($info['extra']['tip']) : '';
 
-					$body .= '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params). $tip. '</td>'.PHP_EOL;
+					$body .= '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<td nowrap>';
@@ -260,7 +260,7 @@ class yf_table2 {
 						$func = $info['func'];
 						unset($info['func']); // Save resources
 
-						$body .= $func($row, $info, $params).PHP_EOL;
+						$body .= $func($row, $info, $params, $this).PHP_EOL;
 					}
 					$body .= '</td>'.PHP_EOL;
 				}
@@ -275,13 +275,17 @@ class yf_table2 {
 			}
 			$body .= '</table>'.PHP_EOL;
 		} else {
-			$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
+			if (isset($params['no_records_html'])) {
+				$body .= $params['no_records_html'].PHP_EOL;
+			} else {
+				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
+			}
 		}
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];
 			$func = $info['func'];
 			unset($info['func']); // Save resources
-			$body .= $func($info, $params).PHP_EOL;
+			$body .= $func($info, $params, $this).PHP_EOL;
 		}
 		if ($data && $this->_form_params) {
 			$body .= '</form>';
