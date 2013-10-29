@@ -97,6 +97,7 @@ class yf_shop_supplier_panel_products {
 */
 				module('manage_shop')->_attributes_save($_GET['id']);
 			}
+			module("manage_shop")->_add_revision('product','edit',db('shop_products'),$_GET['id']);
 			return js_redirect('./?object='.$_GET['object'].'&action=products');
 		}
 		if ($product_info['image'] == 0) {
@@ -185,12 +186,12 @@ class yf_shop_supplier_panel_products {
 					'quantity'			=> intval($_POST['quantity']),
 				);
 				db()->INSERT(db('shop_products'), $sql_array);
+				$product_id = db()->INSERT_ID();				
 				foreach ((array)$_POST['category'] as $k => $v){
-					$cat_id['product_id'] = $_GET['id'];
+					$cat_id['product_id'] = $product_id;
 					$cat_id['category_id'] = $v;
 					db()->INSERT(db('shop_product_to_category'), $cat_id);
 				}
-				$product_id = db()->INSERT_ID();
 				if (count($_POST['productparams']) != 0)
 					foreach ($_POST['productparams'] as $param_id)
 						if (intval($param_id) != 0) 
@@ -206,16 +207,9 @@ class yf_shop_supplier_panel_products {
 					$sql_array['image'] = 1;
 				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
-/*
-				db()->query('DELETE FROM  '.db('shop_product_to_category').' WHERE product_id = '.$_GET['id']);
-				foreach ((array)$_POST['category'] as $k => $v){
-					$cat_id['product_id'] = $_GET['id'];
-					$cat_id['category_id'] = $v;
-					db()->INSERT(db('shop_product_to_category'), $cat_id);
-				}
-*/
-				module('manage_shop')->_attributes_save($_GET['id']);
+				module('manage_shop')->_attributes_save($product_id);
 			}
+			module("manage_shop")->_add_revision('product','add',db('shop_products'),$product_id);			
 			return js_redirect('./?object='.$_GET['object'].'&action=products');
 		}
 		$replace = array(
@@ -253,6 +247,7 @@ class yf_shop_supplier_panel_products {
 		common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
 */
 		db()->query('DELETE FROM '.db('shop_products').' WHERE supplier_id='.(int)$SUPPLIER_ID.' AND id='.(int)$_GET['id'].' LIMIT 1');
+		module("manage_shop")->_add_revision('product','delete',db('shop_products'),$_GET['id']);		
 		return js_redirect('./?object='.$_GET['object'].'&action=products');
 	}
 }
