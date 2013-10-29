@@ -1,0 +1,17 @@
+{if("success_msg" eq "")}
+<h1>{t(Password Reminder)}</h1>
+
+<p>
+	{t(Password will be sent to your regular email. You can use either your account ID &#40;login&#41; or email to retrieve the forgotten password)}.
+</p>
+{if("error" ne "")}
+	{error}
+{/if}
+{login_form}
+{email_form}
+{else}
+<div class="alert alert-success">
+	<h4>Success!</h4>
+	{success_msg}
+</div>
+{/if}
