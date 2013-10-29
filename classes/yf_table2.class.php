@@ -275,7 +275,11 @@ class yf_table2 {
 			}
 			$body .= '</table>'.PHP_EOL;
 		} else {
-			$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
+			if (isset($params['no_records_html'])) {
+				$body .= $params['no_records_html'].PHP_EOL;
+			} else {
+				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
+			}
 		}
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];

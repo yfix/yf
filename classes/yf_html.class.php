@@ -36,4 +36,9 @@ class yf_html {
 	function breadcrumbs () {
 // TODO
 	}
+
+	/**
+	*/
+	function dd_table() {
+	}
 }
