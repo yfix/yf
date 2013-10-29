@@ -61,6 +61,7 @@ class yf_manage_shop_products{
 		db()->query('DELETE FROM '.db('shop_product_attributes_values').' WHERE object_id='.$_GET['id']);
 		db()->query('DELETE FROM '.db('shop_group_options').' WHERE product_id='.$_GET['id']);		
 		db()->query('DELETE FROM '.db('shop_products').' WHERE id='.$_GET['id']);
+		module("manage_shop")->_add_revision('product','delete',db('shop_products'),$_GET['id']);
 		common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
 		return js_redirect('./?object=manage_shopaction=products');
 	}
