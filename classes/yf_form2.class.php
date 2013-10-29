@@ -1431,6 +1431,31 @@ class yf_form2 {
 
 	/**
 	*/
+	function city_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		if (!$name) {
+			$name = 'city';
+		}
+		$data = array();
+// TODO
+		foreach ((array)main()->get_data('cities_new') as $v) {
+			$data[$v['code']] = $v['name'].' ['.$v['code'].']';
+		}
+		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
+			$extra['edit_link'] = './?object=manage_cities';
+		}
+		return $this->list_box($name, $data, $extra, $replace);
+	}
+
+	/**
+	*/
 	function currency_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
 			$extra += $name;

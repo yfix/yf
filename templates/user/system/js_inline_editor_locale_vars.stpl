@@ -1,4 +1,7 @@
 <script type="text/javascript">
+_last_tr_item = null;
+_last_tr_html = null;
+
 // Inline locale editor
 $(function(){
 
@@ -69,7 +72,8 @@ $(function(){
 		var _tag_name	= $(this).get(0).tagName.toLowerCase();
 		try {
 			$(this).prepend("<span class='stpl_name_inline'>" + _stpl_name + "</span> ");
-		} catch (e) {}
+		} catch (e) {
+		}
 	});
 
 	// Revert last state of the previous element
