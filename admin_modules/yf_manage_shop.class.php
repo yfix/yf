@@ -160,6 +160,14 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func($product_id);
 	}
 
+	function _product_images_rename($id, $k, $mpath) {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func($id, $k, $mpath);
+	}	
+
+	function set_main_image() {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func();
+	}	
+
 	function _product_image_delete($id, $k) {
 		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func($id, $k);
 	}

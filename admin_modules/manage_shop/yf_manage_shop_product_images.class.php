@@ -22,15 +22,81 @@ class yf_manage_shop_product_images{
 		);
 		$reg = "/product_".$id."_(?P<content>[\d]+)_thumb\.jpg/";
 		sort($image_files);
-print_r($image_files);
-exit;
-/*
 		foreach((array)$image_files as $filepath) {
 			preg_match($reg, $filepath, $rezult);
-			$i =  $rezult["content"];
+			$i[] =  $rezult["content"];
+		}
+		$max_key = max($i);
+		if($max_key <= $k){
+			return false;
+		}
+		$img_folder = module("manage_shop")->products_img_dir. $mpath;
 
-			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&key=".$i;
-*/		
+		$thumb = $img_folder."/product_".$id."_".$max_key."_thumb.jpg";
+		$big = $img_folder."/product_".$id."_".$max_key."_big.jpg";
+		$deleted_thumb = $img_folder."/product_".$id."_".$k."_thumb.jpg";
+		$deleted_big = $img_folder."/product_".$id."_".$k."_big.jpg";
+		if(file_exists($thumb)){
+			rename($thumb, $deleted_thumb);
+		}
+		if(file_exists($big)){
+			rename($big, $deleted_big);
+		}
+		return true;
+	}
+
+	/**
+	*/
+	function set_main_image(){
+		$product_info['id'] = intval($_GET['id']);
+		$dirs = sprintf('%06s',$product_info['id']);
+		$dir2 = substr($dirs,-3,3);
+		$dir1 = substr($dirs,-6,3);
+		$mpath = $dir1.'/'.$dir2.'/';
+		if(!empty($_POST)){
+			$img_folder = module("manage_shop")->products_img_dir. $mpath;
+
+			$thumb = $img_folder."product_".$product_info['id']."_".$_POST['main_image']."_thumb.jpg";
+			$big = $img_folder."product_".$product_info['id']."_".$_POST['main_image']."_big.jpg";
+			$main_thumb = $img_folder."product_".$product_info['id']."_1_thumb.jpg";
+			$main_big = $img_folder."product_".$product_info['id']."_1_big.jpg";
+			$tmp_thumb = $img_folder."product_tmp".$product_info['id']."_1_thumb.jpg";
+			$tmp_big = $img_folder."product_tmp".$product_info['id']."_1_big.jpg";
+			if(file_exists($main_thumb))	rename($main_thumb, $tmp_thumb);
+			if(file_exists($main_big))	rename($main_big, $tmp_big);
+			if(file_exists($thumb))	rename($thumb, $main_thumb);
+			if(file_exists($big))	rename($big, $main_big);
+			if(file_exists($tmp_thumb))	rename($tmp_thumb, $thumb);
+			if(file_exists($tmp_big))	rename($tmp_big, $big);
+		}else{
+			$image_files = _class('dir')->scan_dir(
+				module('manage_shop')->products_img_dir. $mpath, 
+				true, 
+				'/product_'.$product_info['id'].'.+?_(thumb)\.jpg'.'/'
+			);
+			$reg = '/product_'.$product_info['id'].'_(?P<content>[\d]+)_(thumb)\.jpg/';
+			sort($image_files);
+			foreach((array)$image_files as $filepath) {
+				preg_match($reg, $filepath, $rezult);
+				$i =  $rezult['content'];
+
+				$form_action ='./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$product_info['id'];
+
+				$thumb_path_temp = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->THUMB_SUFFIX.'.jpg';
+				$img_path = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
+
+				$items[] = array(
+					'img_path' 		=> $img_path,
+					'thumb_path'	=> $thumb_path_temp,
+					'image_key'		=> $i,
+				);
+			}
+			$replace = array(
+				"form_action"=> $form_action,
+				"items"		=> $items,
+			);	
+			return tpl()->parse($_GET['object'].'/image_items2', $replace);
+		}
 	}
 
 	/**

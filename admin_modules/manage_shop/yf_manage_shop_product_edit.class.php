@@ -106,6 +106,7 @@ class yf_manage_shop_product_edit{
 				"thumb_path"	=> $thumb_path_temp,
 				"del_url" 		=> $product_image_delete_url,
 				"name"			=> $product_info["url"],
+				"image_key"		=> $i,
 			);
 			$items .= tpl()->parse("manage_shop/image_items", $replace2);
 		}
@@ -170,6 +171,8 @@ class yf_manage_shop_product_edit{
 			"group_prices"			=> !empty($group_prices) ? $group_prices : "",
 			"link_get_product"		=>  process_url("./?object=manage_shop&action=show_product_by_category&cat_id="),
 			"product_related"		=>  module("manage_shop")->related_products($product_info["id"]),
+			"set_main_image_url"	=> './?object='.$_GET['object'].'&action=set_main_image&id='.$product_info['id'],
+
 		);
 		return tpl()->parse("manage_shop/product_edit", $replace);
 	}
