@@ -41,8 +41,8 @@ class yf_test {
 		}
 		$a = $_POST + $_SESSION;
 		return form($a)
-			->active_box('stpl_edit', array('selected' => $_SESSION['stpls_inline_edit']))
 			->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
+//			->active_box('stpl_edit', array('selected' => $_SESSION['stpls_inline_edit']))
 			->save()
 		;
 	}
