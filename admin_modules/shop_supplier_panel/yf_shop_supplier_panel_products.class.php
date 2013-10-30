@@ -97,7 +97,7 @@ class yf_shop_supplier_panel_products {
 */
 				module('manage_shop')->_attributes_save($_GET['id']);
 			}
-			module("manage_shop")->_add_revision('product','edit',db('shop_products'),$_GET['id']);
+			module("manage_shop")->_product_add_revision('edit',$_GET['id']);
 			return js_redirect('./?object='.$_GET['object'].'&action=products');
 		}
 		if ($product_info['image'] == 0) {
@@ -209,7 +209,7 @@ class yf_shop_supplier_panel_products {
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
 				module('manage_shop')->_attributes_save($product_id);
 			}
-			module("manage_shop")->_add_revision('product','add',db('shop_products'),$product_id);			
+			module("manage_shop")->_product_add_revision('add',$product_id);			
 			return js_redirect('./?object='.$_GET['object'].'&action=products');
 		}
 		$replace = array(
@@ -240,14 +240,11 @@ class yf_shop_supplier_panel_products {
 		if (!$a) {
 			return _e('No such record');
 		}
-/*
-		module('manage_shop')->_product_image_delete($_GET['id']);
-		db()->query('DELETE FROM '.db('shop_product_attributes_values').' WHERE object_id='.$_GET['id']);
-		db()->query('DELETE FROM '.db('shop_group_options').' WHERE product_id='.$_GET['id']);		
-		common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
-*/
+		db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);		
+		db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);
+		db()->query('DELETE FROM '.db('shop_product_productparams').' WHERE product_id='.$_GET['id']);
 		db()->query('DELETE FROM '.db('shop_products').' WHERE supplier_id='.(int)$SUPPLIER_ID.' AND id='.(int)$_GET['id'].' LIMIT 1');
-		module("manage_shop")->_add_revision('product','delete',db('shop_products'),$_GET['id']);		
+		module("manage_shop")->_product_add_revision('delete',$_GET['id']);		
 		return js_redirect('./?object='.$_GET['object'].'&action=products');
 	}
 }

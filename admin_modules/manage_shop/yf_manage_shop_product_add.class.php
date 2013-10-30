@@ -31,16 +31,16 @@ class yf_manage_shop_product_add{
 					"old_price"			=> number_format($_POST["old_price"], 2, '.', ''),
 					"featured"			=> intval((bool)$_POST["featured"]),
 					"currency"			=> "",// TODO
-					"add_date"			=> time(),
+					"add_date"			=> $_SERVER['REQUEST_TIME'],
 					"active"			=> 1,
 				);
 				db()->INSERT(db('shop_products'), $sql_array);
+				$product_id = db()->INSERT_ID();				
 				foreach ((array)$_POST["category"] as $k => $v){
-					$cat_id ["product_id"] = $_GET["id"];
+					$cat_id ["product_id"] = $product_id;
 					$cat_id ["category_id"] = $v;
 					db()->INSERT(db('shop_product_to_category'), $cat_id);
 				}
-				$product_id = db()->INSERT_ID();
 				
 				if (count($_POST['productparams']) != 0)
 					foreach ($_POST['productparams'] as $param_id)
@@ -54,14 +54,13 @@ class yf_manage_shop_product_add{
 				
 				// Image upload
 				if (!empty($_FILES)) {
-					$product_id = $_GET["id"];
 					module("manage_shop")->_product_image_upload($product_id);
 					$sql_array['image'] = 1;
 				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
 				module("manage_shop")->_attributes_save($product_id);
 			}
-			module("manage_shop")->_add_revision('product','edit',db('shop_products'),$product_id);
+			module("manage_shop")->_product_add_revision('edit',$product_id);
 			
 			return js_redirect("./?object=manage_shop&action=products");
 		}
