@@ -1,8 +1,9 @@
 <style type="text/css">
-span.locale_tr {
+span.locale_tr, .input-append span.locale_tr, .input-prepend span.locale_tr {
 	background: yellow;
 	color: black;
 	font-weight: bold;
+	font-size: 13px;
 	z-index: 1000;
 	margin: 1px;
 }

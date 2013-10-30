@@ -58,9 +58,11 @@ class yf_manage_shop_products{
 			return 'Empty ID!';
 		}
 		module('manage_shop')->_product_image_delete($_GET['id']);
-		db()->query('DELETE FROM '.db('shop_product_attributes_values').' WHERE object_id='.$_GET['id']);
-		db()->query('DELETE FROM '.db('shop_group_options').' WHERE product_id='.$_GET['id']);		
+		db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);		
+		db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);		
+		db()->query('DELETE FROM '.db('shop_product_productparams').' WHERE product_id='.$_GET['id']);
 		db()->query('DELETE FROM '.db('shop_products').' WHERE id='.$_GET['id']);
+		module("manage_shop")->_product_add_revision('delete',$_GET['id']);
 		common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
 		return js_redirect('./?object=manage_shopaction=products');
 	}

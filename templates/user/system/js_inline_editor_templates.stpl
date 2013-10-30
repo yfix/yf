@@ -90,5 +90,15 @@ $(function(){
 		return false;
 	});
 
+	// Add special class for the all elements that have template names attributes
+	$("[stpl_name]").each(function(i) {
+		var _stpl_name	= $(this).attr("stpl_name");
+		var _tag_name	= $(this).get(0).tagName.toLowerCase();
+		try {
+			$(this).prepend("<span class='stpl_name_inline'>" + _stpl_name + "</span> ");
+		} catch (e) {
+		}
+	});
+
 })
 </script>

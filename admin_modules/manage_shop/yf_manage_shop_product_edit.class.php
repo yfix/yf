@@ -75,6 +75,9 @@ class yf_manage_shop_product_edit{
 				}
 				module("manage_shop")->_attributes_save($_GET["id"]);
 			}
+			
+			module("manage_shop")->_product_add_revision('edit',$_GET['id']);
+			
 			return js_redirect("./?object=manage_shop&action=products");
 		}
 		

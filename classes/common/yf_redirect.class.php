@@ -59,7 +59,7 @@ class yf_redirect {
 				'text'			=> $text,
 				'ttl'			=> intval($ttl),
 			));
-			$body .= '<pre><small>'.main()->trace_string().'</small></pre>';
+			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
 			$body .= common()->_show_execution_time();
 			$body .= common()->show_debug_info();
 #			echo $this->USE_DESIGN && !empty($body) ? common()->show_empty_page($body, array('full_width' => 1, 'no_debug' => 1)) : $body;

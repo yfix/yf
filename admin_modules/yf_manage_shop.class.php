@@ -362,5 +362,8 @@ class yf_manage_shop {
 	function _productparams_container($product_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->$func($product_id);
 	}
+	function _product_add_revision($action, $item_id) {		
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
+	}
 	
 }

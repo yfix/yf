@@ -19,6 +19,7 @@ conf('data_handlers', my_array_merge((array)conf('data_handlers'), array(
 	'cats_blocks'	=> 'include(H_PATH."cats_blocks.h.php");', // Deprecated, use "category_sets" instead
 	'category_sets'	=> 'include(H_PATH."cats_blocks.h.php");',
 	'chat_smilies'	=> 'include(H_PATH."chat_smilies.h.php");',
+	'cities_new'	=> 'include(H_PATH."cities_new.h.php");',
 	'conf'	=> 'include(H_PATH."conf.h.php");',
 	'continents'	=> 'include(H_PATH."continents.h.php");',
 	'countries'	=> 'include(H_PATH."countries.h.php");',

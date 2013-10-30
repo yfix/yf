@@ -31,7 +31,7 @@ var _interval = window.setInterval(function(){
 {/if}
 {if("mode" eq "debug")}
 <form action="{location}" method="POST">
-	{t(Debug redirect)}: <input type="submit" value="{t(Go Next)}" class="btn btn-primary btn-default" /> 
+	{t(Debug redirect)}: <input type="submit" value="{t(Go Next)}" class="btn btn-primary btn-default btn-mini" /> 
 	(<small>{location}</small>)<br />
 	TTL: <b>{ttl} secs</b>;
 	{t(Redirect mode)}: <b>{normal_mode}</b>;

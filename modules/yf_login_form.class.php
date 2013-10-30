@@ -83,7 +83,7 @@ class yf_login_form {
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me', "", array('no_label' => 1))
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
-			->link('Retrieve lost password', "./?object=register&action=activation", array('class' => 'btn'))
+			->link('Retrieve lost password', "./?object=get_pswd", array('class' => 'btn'))
 			->hidden('action', '', array('value' => 'login'))
 		;
 	}
