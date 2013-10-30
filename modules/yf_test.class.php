@@ -46,4 +46,14 @@ class yf_test {
 			->save()
 		;
 	}
+
+	/**
+	*/
+	function oauth () {
+		$providers = _class('oauth2')->_get_providers();
+		foreach ((array)$providers as $name => $settings) {
+			$body[] = '<li>'.$name.' | '.print_r($settings, 1).'</li>';
+		}
+		return implode(PHP_EOL, $body);
+	}
 }
