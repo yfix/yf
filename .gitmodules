@@ -28,3 +28,6 @@
 [submodule "libs/oauth-api"]
 	path = libs/oauth-api
 	url = https://github.com/yfix/oauth-api.git
+[submodule "libs/geonames-db-import"]
+	path = libs/geonames-db-import
+	url = https://github.com/yfix/geonames-db-import.git
