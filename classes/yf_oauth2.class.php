@@ -18,7 +18,7 @@ class yf_oauth2 {
 			'access_token_url' => 'https://bitbucket.org/!api/1.0/oauth/access_token',
 			'url_parameters' => false,
 			'user_info_url' => 'https://api.bitbucket.org/1.0/user',
-			'dev_register_url' => '',
+			'dev_register_url' => array('https://bitbucket.org/account/', 'Integrated Applications', 'Add Consumer'),
 		),
 		'box' => array(
 			'oauth_version' => '2.0',
@@ -26,14 +26,14 @@ class yf_oauth2 {
 			'offline_dialog_url' => 'https://www.box.com/api/oauth2/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&state={STATE}&access_type=offline&approval_prompt=force',
 			'access_token_url' => 'https://www.box.com/api/oauth2/token',
 			'user_info_url' => 'https://api.box.com/2.0/users/me',
-			'dev_register_url' => '',
+			'dev_register_url' => 'https://www.box.com/developers/services',
 		),
 		'disqus' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://disqus.com/api/oauth/2.0/authorize/?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
 			'access_token_url' => 'https://disqus.com/api/oauth/2.0/access_token/',
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://disqus.com/api/3.0/users/details.json?api_key={CLIENT_ID}', // $client->scope = 'read,write'
+			'dev_register_url' => 'http://disqus.com/api/applications/',
 		),
 		'dropbox' => array(
 			'oauth_version' => '1.0',
@@ -41,8 +41,8 @@ class yf_oauth2 {
 			'dialog_url' => 'https://www.dropbox.com/1/oauth/authorize',
 			'access_token_url' => 'https://api.dropbox.com/1/oauth/access_token',
 			'authorization_header' => false,
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://api.dropbox.com/1/account/info',
+			'dev_register_url' => 'https://www.dropbox.com/developers/apps',
 		),
 		'evernote' => array(
 			'oauth_version' => '1.0a',
@@ -58,8 +58,8 @@ class yf_oauth2 {
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://www.facebook.com/dialog/oauth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
 			'access_token_url' => 'https://graph.facebook.com/oauth/access_token',
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://graph.facebook.com/me', // $client->scope = 'email';
+			'dev_register_url' => 'https://developers.facebook.com/apps',
 		),
 		'flickr' => array(
 			'oauth_version' => '1.0a',
@@ -67,22 +67,22 @@ class yf_oauth2 {
 			'dialog_url' => 'http://www.flickr.com/services/oauth/authorize?perms={SCOPE}',
 			'access_token_url' => 'http://www.flickr.com/services/oauth/access_token',
 			'authorization_header' => false,
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => array('http://api.flickr.com/services/rest/', array('method'=>'flickr.test.login', 'format'=>'json', 'nojsoncallback'=>'1')), // $client->scope = 'read'; // 'read', 'write' or 'delete'
+			'dev_register_url' => 'http://www.flickr.com/services/apps/create/',
 		),
 		'foursquare' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://foursquare.com/oauth2/authorize?client_id={CLIENT_ID}&scope={SCOPE}&response_type=code&redirect_uri={REDIRECT_URI}&state={STATE}',
 			'access_token_url' => 'https://foursquare.com/oauth2/access_token',
 			'access_token_parameter' => 'oauth_token',
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://api.foursquare.com/v2/users/self?v=20131013',
+			'dev_register_url' => 'https://foursquare.com/developers/apps',
 		),
 		'github' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
 			'access_token_url' => 'https://github.com/login/oauth/access_token',
-			'user_info_url' => '',
+			'user_info_url' => 'https://api.github.com/user',
 			'dev_register_url' => '',
 		),
 		'google' => array(
@@ -90,15 +90,15 @@ class yf_oauth2 {
 			'dialog_url' => 'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
 			'offline_dialog_url' => 'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline&approval_prompt=force',
 			'access_token_url' => 'https://accounts.google.com/o/oauth2/token',
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://www.googleapis.com/oauth2/v1/userinfo', // $client->scope = 'https://www.googleapis.com/auth/userinfo.email '.'https://www.googleapis.com/auth/userinfo.profile';
+			'dev_register_url' => 'http://code.google.com/apis/console',
 		),
 		'instagram' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://api.instagram.com/oauth/authorize/?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&response_type=code&state={STATE}',
 			'access_token_url' => 'https://api.instagram.com/oauth/access_token',
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://api.instagram.com/v1/users/self/', // $client->scope = 'basic';
+			'dev_register_url' => 'http://instagram.com/developer/register/',
 		),
 		'linkedin' => array(
 			'oauth_version' => '1.0a',
@@ -106,15 +106,15 @@ class yf_oauth2 {
 			'dialog_url' => 'https://api.linkedin.com/uas/oauth/authenticate',
 			'access_token_url' => 'https://api.linkedin.com/uas/oauth/accessToken',
 			'url_parameters' => true,
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => array('http://api.linkedin.com/v1/people/~', array('format'=>'json')), // $client->scope = 'r_fullprofile r_emailaddress';
+			'dev_register_url' => 'https://www.linkedin.com/secure/developer?newapp=',
 		),
 		'microsoft' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://login.live.com/oauth20_authorize.srf?client_id={CLIENT_ID}&scope={SCOPE}&response_type=code&redirect_uri={REDIRECT_URI}&state={STATE}',
 			'access_token_url' => 'https://login.live.com/oauth20_token.srf',
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://apis.live.net/v5.0/me', // $client->scope = 'wl.basic wl.emails';
+			'dev_register_url' => 'https://manage.dev.live.com/AddApplication.aspx',
 		),
 		'rightsignature' => array(
 			'oauth_version' => '1.0a',
