@@ -25,3 +25,6 @@
 [submodule "libs/twig"]
 	path = libs/twig
 	url = https://github.com/yfix/Twig.git
+[submodule "libs/oauth-api"]
+	path = libs/oauth-api
+	url = https://github.com/yfix/oauth-api.git

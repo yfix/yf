@@ -8,7 +8,7 @@
 	var _last_tr_item	= null;
 	var _last_tr_html	= null;
 	var _stpl_name		= "";
-	var _old_clicks		= {};
+	var _old_clicks		= { };
 	var _old_text		= "";
 	var _just_saved		= 0;
 	var _old_tip_text	= "";
@@ -31,5 +31,5 @@
 </script>
 
 {include("system/js_inline_editor_locale_vars")}
-{include("system/js_inline_editor_templates")}
-{include("system/js_inline_editor_tips")}
+{{--include("system/js_inline_editor_templates")--}}
+{{--include("system/js_inline_editor_tips")--}}
