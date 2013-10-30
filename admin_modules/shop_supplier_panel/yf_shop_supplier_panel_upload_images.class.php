@@ -18,12 +18,23 @@ class yf_shop_supplier_panel_upload_images {
 	*/
 	function upload_images() {
 		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
+		$ADMIN_INFO = db()->query_fetch('SELECT * FROM '.db('sys_admin').' WHERE id='.intval(main()->ADMIN_ID));
 		$SUPPLIER_INFO = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.intval($SUPPLIER_ID));
 		if (empty($_FILES)) {
-			return form('',array('enctype' => 'multipart/form-data'))
-				->file("archive")
-				->save('', "Upload");
+			if(!$SUPPLIER_ID){
+				$suppliers = db()->get_2d('SELECT id, name FROM '.db('shop_suppliers'));
+				$form = form('',array('enctype' => 'multipart/form-data'))
+					->file("archive")
+					->select_box('supplier', $suppliers, array('desc' => 'Supplier', 'show_text' => 1))
+					->save('', "Upload");
+			} else{
+				$form = form('',array('enctype' => 'multipart/form-data'))
+					->file("archive")
+					->save('', "Upload");
+			}
+			return $form;
 		}
+		if($_POST['supplier']) $SUPPLIER_ID = $_POST['supplier'];
 		$file = $_FILES['archive'];
 		$uploaded = common()->upload_archive($this->ARCHIVE_FOLDER. $file['name']);
 		if(!$uploaded){
@@ -45,7 +56,7 @@ class yf_shop_supplier_panel_upload_images {
 
 		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/');
 		foreach($result_files as $k => $v){
-			$status = $this->search_product_by_filename($v);
+			$status = $this->search_product_by_filename($v, $SUPPLIER_ID);
 			$items[] = array(
 				"filename"	=> str_replace($EXTRACT_PATH, '', $v),
 				"status"	=> is_array($status)? $status['status'] : $status,
@@ -58,15 +69,14 @@ class yf_shop_supplier_panel_upload_images {
 		}
 		_class('dir')->delete_dir($EXTRACT_PATH, true);
 		unlink($this->ARCHIVE_FOLDER.$file['name']);
-		common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name']));
+		common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']));
 
 		return tpl()->parse("shop_supplier_panel/upload_archive", $replace);
 	}
 
 	/**
 	*/
-	function search_product_by_filename($folder) {
-		$supplier_id = module('shop_supplier_panel')->SUPPLIER_ID;
+	function search_product_by_filename($folder, $supplier_id = false) {
 		$filename = basename($folder);
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 		preg_match('/[A-Za-z0-9._]*/i', $filename, $result);
