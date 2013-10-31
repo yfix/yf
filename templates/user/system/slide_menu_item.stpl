@@ -1,7 +1,13 @@
-<li class="dropdown">
-	<a href="{link}">{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon {icon_class}"></i> {/if}
-		{name} {if("have_children" eq "1")} <b class="caret"></b>{/if}
+<li class="dropdown {if(type_id eq 4)} dropdown-divider{/if}">
+{if(type_id eq 4)}
+	{name}
+{else}
+	<a {if(link ne '')} href="{link}"{/if}>
+		{if("icon_path" ne "")}<img src="{icon_path}"> {/if}{if("icon_class" ne "")}<i class="icon {icon_class}"></i> {/if}
+		{name}
+		{if("have_children" eq "1")} <b class="caret"></b>{/if}
 	</a>
+{/if}
 {if("have_children" eq "1")}
 	<ul class="dropdown-menu sub-menu">
 {else}
