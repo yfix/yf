@@ -244,6 +244,9 @@ class yf_send_mail {
 		// Try to use PHPMailer mailer
 		} elseif ($this->USE_MAILER == "phpmailer") {
 
+# TODO
+#		set_include_path (YF_PATH.'libs/pear/'. PATH_SEPARATOR. get_include_path());
+
 			require_once(YF_PATH."libs/phpmailer/class.phpmailer.php");
 			
 			$mail = new PHPMailer(true); // defaults to using php "mail()"

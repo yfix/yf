@@ -1563,8 +1563,6 @@ class yf_main {
 	function set_required_php_params() {
 		error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
 		// Set path to PEAR
-// TODO: do we need this always here?
-#		set_include_path (YF_PATH.'libs/pear/'. PATH_SEPARATOR. get_include_path());
 		ini_set('url_rewriter.tags', '');
 		ini_set('magic_quotes_runtime',	0);
 		ini_set('magic_quotes_sybase', 0);
@@ -1574,10 +1572,6 @@ class yf_main {
 			$_POST		= $this->_strip_quotes_recursive($_POST);
 			$_COOKIE	= $this->_strip_quotes_recursive($_COOKIE);
 			$_REQUEST	= array_merge((array)$_GET, (array)$_POST, (array)$_COOKIE);
-		}
-		if (function_exists('date_default_timezone_set') && function_exists('date_default_timezone_get')) {
-// TODO: wtf?
-//			date_default_timezone_set(date_default_timezone_get());
 		}
 	}
 
