@@ -28,6 +28,7 @@ class yf_menus_editor {
 			1 => 'Internal link',
 			2 => 'External link',
 			3 => 'Spacer',
+			4 => 'Divider',
 		);
 	}
 

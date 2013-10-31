@@ -33,6 +33,7 @@ class yf_core_menu {
 			1 => 'Internal link',
 			2 => 'External link',
 			3 => 'Spacer',
+			4 => 'Divider',
 		);
 		*/
 		$RETURN_ARRAY	= isset($input['return_array']) ? $input['return_array'] : false;

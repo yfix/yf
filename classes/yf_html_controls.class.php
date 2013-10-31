@@ -630,7 +630,7 @@ class yf_html_controls {
 // TODO: allow deep customization of its layout
 		$selected = strval($selected);
 		$body .= '<div class="bfh-selectbox">'
-					.'<input type="hidden" name="'.$name.'" value="">'
+					.'<input type="hidden" name="'.$name.'" value="'.$selected.'">'
 					.'<a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">'
 						.'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option="'.$selected.'">'.$values[$selected].'</span>'
 						.'<b class="caret"></b>'
