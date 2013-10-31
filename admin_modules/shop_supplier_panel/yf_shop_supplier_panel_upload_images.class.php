@@ -12,6 +12,7 @@ class yf_shop_supplier_panel_upload_images {
 	
 	function _init(){
 		$this->ARCHIVE_FOLDER = PROJECT_PATH."uploads/tmp/";
+		$this->SAVE_PATH = PROJECT_PATH."uploads/shop/products/";
 	}
 
 	/**
@@ -113,7 +114,7 @@ class yf_shop_supplier_panel_upload_images {
 		$dir2 = substr($dirs,-3,3);
 		$dir1 = substr($dirs,-6,3);
 		$ext = pathinfo($img, PATHINFO_EXTENSION);
-		$new_path = $this->ARCHIVE_FOLDER.$dir1.'/'.$dir2.'/';
+		$new_path = $this->SAVE_PATH.$dir1.'/'.$dir2.'/';
 		if (!file_exists($new_path)) {
 			mkdir($new_path, 0777, true);
 		}
@@ -123,10 +124,10 @@ class yf_shop_supplier_panel_upload_images {
 		if(file_exists($thumb_name) || file_exists($big_name)){
 			$i++;
 			$this->resize_and_save_image($img, $id, $i);
+		} else {
+			common()->make_thumb($img, $thumb_name, 216, 216);
+			common()->make_thumb($img, $big_name, 710, 750);
+			return $thumb_name;
 		}
-		common()->make_thumb($img, $thumb_name, 216, 216);
-		common()->make_thumb($img, $big_name, 710, 750);
-
-		return $thumb_name;
 	}
 }
