@@ -56,6 +56,7 @@ class yf_manage_shop_product_add{
 				if (!empty($_FILES)) {
 					module("manage_shop")->_product_image_upload($product_id);
 					$sql_array['image'] = 1;
+					module("manage_shop")->_product_images_add_revision($product_id);
 				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
 				module("manage_shop")->_attributes_save($product_id);

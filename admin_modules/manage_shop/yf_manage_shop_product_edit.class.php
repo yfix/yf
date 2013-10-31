@@ -38,9 +38,9 @@ class yf_manage_shop_product_edit{
 				);
 				// Image upload
 				if (!empty($_FILES)) {
-					$product_id = $_GET["id"];
-					module("manage_shop")->_product_image_upload($product_id);
+					module("manage_shop")->_product_image_upload($_GET['id']);
 					$sql_array['image'] = 1;
+					module("manage_shop")->_product_images_add_revision($_GET['id']);
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]);
 				
