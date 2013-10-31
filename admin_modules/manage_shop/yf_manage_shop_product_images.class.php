@@ -9,6 +9,7 @@ class yf_manage_shop_product_images{
 			return "Empty ID!";
 		}
 		module("manage_shop")->_product_image_delete($_GET["id"], $_GET["key"]);
+		module("manage_shop")->_product_images_add_revision($_GET['id']);		
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
 	
@@ -68,6 +69,7 @@ class yf_manage_shop_product_images{
 			if(file_exists($big))	rename($big, $main_big);
 			if(file_exists($tmp_thumb))	rename($tmp_thumb, $thumb);
 			if(file_exists($tmp_big))	rename($tmp_big, $big);
+			module("manage_shop")->_product_images_add_revision($_GET['id']);
 		}else{
 			$image_files = _class('dir')->scan_dir(
 				module('manage_shop')->products_img_dir. $mpath, 

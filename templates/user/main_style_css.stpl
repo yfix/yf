@@ -8,4 +8,6 @@
 
 td input[type=text], td textarea { margin-bottom: 0; }
 .modal.fade.in { top: 30px; }
+
+.dl-horizontal dt { width: 50%; margin-right: 10px; }
 </style>

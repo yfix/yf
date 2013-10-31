@@ -87,11 +87,40 @@ class yf_manage_shop_products{
 		db()->insert('shop_products', $sql);
 		$new_product_id = db()->insert_id();
 		common()->admin_wall_add(array('shop product cloned: '.$info['name'], $new_product_id));
-/*
-		db()->query('DELETE FROM '.db('shop_product_attributes_values').' WHERE object_id='.$_GET['id']);
-		db()->query('DELETE FROM '.db('shop_group_options').' WHERE product_id='.$_GET['id']);		
-*/
-// TODO: clone product attributes
+		
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$new_product_id}'");
+		foreach ($arr as $v) {
+			db()->INSERT(array(
+				'product_id' => $new_product_id,
+				'productparam_id' => $v['productparam_id'],
+				'value' => $v['value'],
+				'articul' => $v['articul'],
+				'item_quantity' => $v['item_quantity'],
+				'barcode' => $v['barcode'],
+			));
+		}
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$new_product_id}'");
+		foreach ($arr as $v) {
+			db()->INSERT(array(
+				'product_id' => $new_product_id,
+				'category_id' => $v['category_id'],				
+			));
+		}
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_region')."` WHERE `product_id`='{$new_product_id}'");
+		foreach ($arr as $v) {
+			db()->INSERT(array(
+				'product_id' => $new_product_id,
+				'region_id' => $v['region_id'],
+			));
+		}
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_related')."` WHERE `product_id`='{$new_product_id}'");
+		foreach ($arr as $v) {
+			db()->INSERT(array(
+				'product_id' => $new_product_id,
+				'related_id' => $v['related_id'],
+			));
+		}
+			
 		if ($sql['image'] && $new_product_id) {
 			$dirs = sprintf('%06s', $old_product_id);
 			$dir2 = substr($dirs, -3, 3);

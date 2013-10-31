@@ -68,9 +68,9 @@ class yf_shop_supplier_panel_products {
 					'quantity'			=> intval($_POST['quantity']),
 				);
 				if (!empty($_FILES)) {
-					$product_id = $_GET["id"];
-					module("shop_supplier_panel")->_product_image_upload($product_id);
+					module("shop_supplier_panel")->_product_image_upload($_GET['id']);
 					$sql_array['image'] = 1;
+					module("manage_shop")->_product_images_add_revision($_GET['id']);
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, 'id='.$_GET['id']);
 				
@@ -205,6 +205,7 @@ class yf_shop_supplier_panel_products {
 				if (!empty($_FILES)) {
 					module("shop_supplier_panel")->_product_image_upload($product_id);
 					$sql_array['image'] = 1;
+					module("manage_shop")->_product_images_add_revision($product_id);					
 				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
 				module('manage_shop')->_attributes_save($product_id);
