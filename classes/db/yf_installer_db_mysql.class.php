@@ -40,7 +40,7 @@ class yf_installer_db_mysql {
 		$this->PARENT_OBJ = _class('installer_db', 'classes/db/');
 		$this->_DEF_TABLE_OPTIONS = array(
 			"DEFAULT CHARSET"	=> $this->DEFAULT_CHARSET,
-			"ENGINE"			=> "MyISAM",
+			"ENGINE"			=> "InnoDB",
 		);
 	}
 

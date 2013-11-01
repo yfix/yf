@@ -52,7 +52,11 @@ class yf_test {
 	function oauth () {
 		$providers = _class('oauth2')->_get_providers();
 		foreach ((array)$providers as $name => $settings) {
-			$body[] = '<li>'.$name.' | '.print_r($settings, 1).'</li>';
+			if ($name[0] == '_') {
+				continue;
+			}
+			$href = '';
+			$body[] = '<a href="'.$href.'" class="btn">'.$name.'</a><br /> '.print_r($settings, 1).'<br>';
 		}
 		return implode(PHP_EOL, $body);
 	}
