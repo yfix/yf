@@ -11,7 +11,8 @@ td input[type=text], td textarea { margin-bottom: 0; }
 
 .dl-horizontal dt { width: 50%; margin-right: 10px; }
 
-/* ul#slide_menu { background-color: transparent; } */
-/* ul#slide_menu .dropdown { margin-bottom: 1px; } */
 ul#slide_menu .dropdown-divider { font-weight: bold; border-bottom: 1px solid; }
+
+form.form-inline legend { margin-bottom: 0; }
+
 </style>

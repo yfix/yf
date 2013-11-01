@@ -176,6 +176,19 @@ class yf_oauth2 {
 			'user_info_url' => '',
 			'dev_register_url' => '',
 		),
+		'amazon' => array(
+// TODO
+#				'oauth_version' => '2.0',
+#	'baseApiUri' => new Uri('https://api.amazon.com/'),
+#	return new Uri('https://www.amazon.com/ap/oa'),
+#	return new Uri('https://www.amazon.com/ap/oatoken'),
+#				'request_token_url' => 'https://oauth.yandex.com/authorize',
+#				'dialog_url' => 'https://oauth.yandex.com/authorize',
+#				'access_token_url' => 'https://oauth.yandex.com/verification_code',
+#				'authorization_header' => false,
+			'user_info_url' => '',
+			'dev_register_url' => '',
+		),
 		'yandex' => array(
 // TODO
 #			'oauth_version' => '2.0',
@@ -192,19 +205,6 @@ class yf_oauth2 {
 #	'baseApiUri' => new Uri('https://api.vk.com/method/'),
 #	return new Uri('https://oauth.vk.com/authorize'),
 #	return new Uri('https://oauth.vk.com/access_token'),
-#				'request_token_url' => 'https://oauth.yandex.com/authorize',
-#				'dialog_url' => 'https://oauth.yandex.com/authorize',
-#				'access_token_url' => 'https://oauth.yandex.com/verification_code',
-#				'authorization_header' => false,
-			'user_info_url' => '',
-			'dev_register_url' => '',
-		),
-		'amazon' => array(
-// TODO
-#				'oauth_version' => '2.0',
-#	'baseApiUri' => new Uri('https://api.amazon.com/'),
-#	return new Uri('https://www.amazon.com/ap/oa'),
-#	return new Uri('https://www.amazon.com/ap/oatoken'),
 #				'request_token_url' => 'https://oauth.yandex.com/authorize',
 #				'dialog_url' => 'https://oauth.yandex.com/authorize',
 #				'access_token_url' => 'https://oauth.yandex.com/verification_code',
