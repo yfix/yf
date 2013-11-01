@@ -7,9 +7,11 @@
 {execute(graphics,_show_menu;name=user_side_menu)}
 <!-- /LEFT_TOP_MENU -->
 	</div>
+{{--
 	<div class="left_area">
 {execute(common,show_left_filter)}
 	</div>
+--}}
 {/if}
 {{--
 	<div class="left_menu">

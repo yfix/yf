@@ -1,3 +1,9 @@
+{{--
+<div class="right_area">
+{execute(common,show_left_filter)}
+</div>
+--}}
+{{--
 <style type="text/css">
 #center_column {
 	margin-right: 190px;
@@ -6,7 +12,6 @@
 	display: block;
 }
 </style>
-
 {execute(right_block,_show)}
-
 {execute(widgets,_show;column=right)}
+--}}
