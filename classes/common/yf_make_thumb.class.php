@@ -122,7 +122,7 @@ class yf_make_thumb {
 	/**
 	* Make thumbnail using best available method
 	*/
-	function go($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1) {
+	function go($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
 		// Cleanup input params
 		$LIMIT_X = intval($LIMIT_X != -1 ? $LIMIT_X : THUMB_WIDTH);
@@ -159,16 +159,16 @@ class yf_make_thumb {
 		foreach ((array)$this->LIBS_PRIORITY as $cur_lib) {
 			$lib_result_error = false;
 			if ($cur_lib == "gd") {
-				$result_gd = $this->_use_gd($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y);
+				$result_gd = $this->_use_gd($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
 				if (!$result_gd) {
 					$lib_result_error = true;
 				}
 				$USED_LIB = $cur_lib;
 			} elseif ($cur_lib == "netpbm" && $this->ALLOW_NETPBM) {
-				$tried_cmds[] = $this->_use_netpbm($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y);
+				$tried_cmds[] = $this->_use_netpbm($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
 				$USED_LIB = $cur_lib;
 			} elseif ($cur_lib == "imagick" && $this->ALLOW_IMAGICK) {
-				$tried_cmds[] = $this->_use_imagick($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y);
+				$tried_cmds[] = $this->_use_imagick($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
 				$USED_LIB = $cur_lib;
 			}
 			// Skip not allowed libs
@@ -220,6 +220,9 @@ class yf_make_thumb {
 		// Do delete image if resize failed
 		if (!$resize_success && $this->DELETE_BAD_DEST_IMAGES && file_exists($dest_file_path)) {
 			unlink($dest_file_path);
+		}
+		if ($watermark_path) {
+// TODO: replace me with watermark apply code
 		}
 		// Save log
 		if ($this->ENABLE_DEBUG_LOG && ($this->LOG_TO_FILE || $this->LOG_TO_DB)) {
@@ -327,7 +330,7 @@ class yf_make_thumb {
 	/**
 	* Use GD library
 	*/
-	function _use_gd($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1) {
+	function _use_gd($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
 		$I = _class("resize_images");
 		$I->reduce_only = 1;
 		if ($this->FORCE_PROCESSING) {
@@ -347,7 +350,7 @@ class yf_make_thumb {
 	/**
 	* Use NETPBM library http://netpbm.sourceforge.net/
 	*/
-	function _use_netpbm($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1) {
+	function _use_netpbm($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
 		// Not working under WIN for now (possibly can, but we have not time to make it work correctly)
 		if (OS_WINDOWS) {
 			return false;
@@ -376,7 +379,7 @@ class yf_make_thumb {
 	/**
 	* Use Image Magick library	http://www.imagemagick.org/
 	*/
-	function _use_imagick($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1) {
+	function _use_imagick($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
 		// Generate correct resize command for Imagick library
 		$resize_cmd = "";
 		if ($LIMIT_X > 0 && $LIMIT_Y > 0) {
