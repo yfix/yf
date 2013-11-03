@@ -391,7 +391,6 @@ class yf_gallery_manage {
 		$photos = $DIR_OBJ->scan_dir($_archive_extract_path, true, array("", "/\.(jpg|jpeg|gif|png)\$/"), "/(svn|git)/");
 		$photos = array_slice((array)$photos, -abs($ADD_PHOTOS_ALLOWED_NUM));
 
-
 		// Check text fields
 		$_POST["photo_name"] = module('gallery')->_filter_text($_POST["photo_name"]);
 		$_POST["photo_desc"] = module('gallery')->_filter_text($_POST["photo_desc"]);
@@ -399,7 +398,6 @@ class yf_gallery_manage {
 		$creation_time = time();
 		// Fix second id
 		$_max_id2 = $this->_fix_id2($NEW_USER_ID);
-
 
 		// Do process them!
 		foreach ((array)$photos as $_photo_path) {

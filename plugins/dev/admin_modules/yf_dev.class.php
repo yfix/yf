@@ -231,8 +231,7 @@ class yf_dev{
 //		print_r($_classes);
 		//list($PARSED_CONF_3, $PARSED_META_3) = $this->_collect_conf("classes/", $_classes_for_vars);
 		//print_r($PARSED_META_3);
-	
-	
+
 		$all_modules["admin"] = main()->_execute("admin_modules", "_get_modules");
 		$all_modules["user"] = main()->_execute("user_modules", "_get_modules");
 		$all_modules["classes"] = $_classes;
@@ -352,8 +351,7 @@ class yf_dev{
 		return "File 'import_wiki.xml' saved to project dir";
 		
 	}
-	
-	
+
 	function _get_methods_names_from_text ($text = "", $ONLY_PRIVATE_METHODS = false) {
 		$methods = array();
 		if (empty($text)) {
@@ -375,11 +373,7 @@ class yf_dev{
 		return $methods;
 	}
 
-	
-	
-	
-	
-	
+
 	function _collect_conf ($dir_name = "", $modules_list = array()) {
 		if (empty($dir_name) || empty($modules_list)) {
 			return false;
@@ -478,13 +472,9 @@ class yf_dev{
 		return array($CONF, $META);
 	}
 
-	
-	
 
-	
 //#######################################################################	
 	
-
 
 	/**
 	* Try to find non-closed HTML tags
@@ -706,7 +696,6 @@ class yf_dev{
 		return $output_css;
 	}
 
-
 	/**
 	* Check script (classes, modules, admin modules, functions) for fatal errors
 	*/
@@ -873,7 +862,6 @@ class yf_dev{
 
 //TODO atomatic theme download
 
-
 		if (!empty($_POST) || !empty($_FILES)) {
 
 			if ($_FILES["theme"]["type"] != "application/zip") {
@@ -915,13 +903,11 @@ class yf_dev{
 			// Find elements and replace them
 			$tmp_content_string = str_replace(array_keys($ELEMENTS_ARRAY), array_values($ELEMENTS_ARRAY), $tmp_content_string);
 
-
 			// Cleanup from the rest PHP entries
 			$tmp_content_string = preg_replace("/(<\?php)(.+?)(\?>)/ims", "", $tmp_content_string);
 			//Find old meta-tags and remove them 
 			$tmp_content_string = preg_replace("/<meta[^>]+\>/ims", "", $tmp_content_string);
 			$tmp_content_string = preg_replace("/<\/title>/ims", "</title>\n".implode("\n", $NEW_META_TAGS), $tmp_content_string);
-
 
 			// Create theme folder
 			$theme_folder_path = INCLUDE_PATH."templates/".$original_theme_name;
@@ -931,7 +917,6 @@ class yf_dev{
 
 			// Save		
 			file_put_contents($theme_folder_path."main.stpl" ,$tmp_content_string);
-
 
 			// Process post template
 			$POST_ELEMENTS_ARRAY = array(
@@ -965,7 +950,6 @@ class yf_dev{
 				"/<\?php the_title\(\); \?>/ims"		 	=> "{title}",
 				"/<\?php the_content\((.)+?\); \?>/ims"		=> "{text}",
 				/* fill it if needed! */
-
 
 			);
 			$view_content_string .= file_get_contents($extracted_theme_folder."page.php");
@@ -1042,7 +1026,6 @@ class yf_dev{
 				"functions"		=> $functions,
 			);
 
-
 			$body = tpl()->parse($_GET["object"]."/formgenerator_templates/php_class_main", $replace);
 
 			$module_fpath = INCLUDE_PATH."modules/".$class_name.".class.php";
@@ -1082,14 +1065,12 @@ class yf_dev{
 		return tpl()->parse($_GET["object"]."/form_generator", $replace);
 
 	}
-	
-	
+
 	/**
 	*
 	*/
 	function _unit_test_syntax_checker () {
-	
-	
+
 		$result[] = array(
 			"title"		=> "php_syntax (count errors)",
 			"expect"	=> "0",

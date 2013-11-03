@@ -1,6 +1,5 @@
 <?php
 
-
 // Escorts calendar manager
 class yf_calendar {
 	/** @var array @conf_skip Calendar date statuses */
@@ -345,8 +344,7 @@ class yf_calendar {
 		);
 		return tpl()->parse("calendar/day_main", $replace);
 	}
-	
-	
+
 	// Edit calendar contents
 	function manage () {
 		if (empty(main()->USER_ID)) {
@@ -673,8 +671,7 @@ class yf_calendar {
 			db()->INSERT("calendar_dates", $sql);
 		}
 	}
-	
-	
+
 	// Do delete selected event
 	function delete_event() {
 		if (empty(main()->USER_ID)) {
@@ -726,8 +723,7 @@ class yf_calendar {
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_day&id=".gmdate("Y-m-d", $day_time));
 	}
-	
-	
+
 	// Edit calendar default settings
 	function edit_defaults_settings () {
 		if (empty(main()->USER_ID)) {
@@ -860,8 +856,7 @@ class yf_calendar {
 		);
 		return tpl()->parse("calendar/defaults_settings", $replace);
 	}
-	
-	
+
 	// Delete default item
 	function delete_default () {
 		if (empty(main()->USER_ID)) {
@@ -892,8 +887,7 @@ class yf_calendar {
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_defaults_settings");
 	}
-	
-	
+
 	// Clean default week days settings
 	function clean_default_settings () {
 		if (empty(main()->USER_ID)) {
@@ -902,8 +896,7 @@ class yf_calendar {
 		db()->UPDATE("calendar_settings", array("default"	=> ""), "user_id=".main()->USER_ID);
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_defaults_settings");
 	}
-	
-	
+
 	// Apply default settings to the selected month
 	function apply_defaults_settings () {
 		if (empty(main()->USER_ID)) {

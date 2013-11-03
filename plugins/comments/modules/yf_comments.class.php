@@ -274,7 +274,6 @@ class yf_comments {
 			));
 		}
 
-
 		//  SORT ARRAY TO TREE
 		$this->_comment_array = $comments_array_ids;
 		$this->_comment_tree_array = array();

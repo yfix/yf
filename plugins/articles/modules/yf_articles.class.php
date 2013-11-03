@@ -49,7 +49,6 @@ class yf_articles extends yf_module {
 	/** @var int */
 	public $NUM_RSS 	= 10;
 
-
 	/**
 	* YF module constructor
 	*/
@@ -313,8 +312,7 @@ class yf_articles extends yf_module {
 		);
 		return tpl()->parse('articles'."/manage_main", $replace);
 	}
-	
-	
+
 	/**
 	* Manage comments
 	*/
@@ -327,7 +325,6 @@ class yf_articles extends yf_module {
 		$OBJ = $this->_load_sub_module("articles_search_comments");
 		return $OBJ->_delete();
 	} 
-
 
 	/**
 	* Edit article
@@ -792,7 +789,6 @@ class yf_articles extends yf_module {
 		// Default subheader get from action name
 		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
 
-
 		if ($_GET["action"] == "view_cat" && !is_numeric($_GET["id"])) {
 			$subheader = t("Category").": ".$_GET["id"];
 		} elseif ($_GET["action"] == "view_cat" && is_numeric($_GET["id"])) {
@@ -868,6 +864,5 @@ class yf_articles extends yf_module {
 		
 		return tpl()->parse($_GET["object"]."/unread", $replace);
 	}
-	
-	
+
 }

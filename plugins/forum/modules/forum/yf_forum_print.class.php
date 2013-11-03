@@ -74,7 +74,6 @@ td, p, div
 			echo "<br /><small>Pages: ".$pages."</small>\r\n";
 		  }
 
-
 		echo "<BR>";
 		// Init bb codes module
 		$BB_OBJ = _class("bb_codes");

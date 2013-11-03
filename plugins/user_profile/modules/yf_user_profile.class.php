@@ -1,6 +1,5 @@
 <?php
 
-
 // User profile handling module
 class yf_user_profile extends yf_module {
 
@@ -311,8 +310,7 @@ class yf_user_profile extends yf_module {
 		$OBJ_FORUM = main()->init_class("forum");
 		return $OBJ_FORUM->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_FORUM_POSTS);
 	}
-	
-	
+
 	// Show user forum posts
 	function _show_articles () {
 		$OBJ_ARTICLE = main()->init_class("articles");
@@ -325,8 +323,7 @@ class yf_user_profile extends yf_module {
 		$OBJ_BLOG = main()->init_class("blog");
 		return $OBJ_BLOG->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_BLOG_POSTS);
 	}
-	
-	
+
 	// Show user blog posts
 	function _show_gallery_photos () {
 		$OBJ_GALLERY = main()->init_class("gallery");
@@ -339,8 +336,7 @@ class yf_user_profile extends yf_module {
 		$COMMENTS_OBJ = main()->init_class("comments");
 		return $COMMENTS_OBJ->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_COMMENTS);
 	}
-	
-	
+
 	// Show users where current one is in friends list
 	function _show_friend_of () {
 		return is_object($this->FRIENDS_OBJ) ? $this->FRIENDS_OBJ->_show_friend_of_for_profile($this->_user_info, $this->MAX_SHOW_FRIEND_OF) : "";

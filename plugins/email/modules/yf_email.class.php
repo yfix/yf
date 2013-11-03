@@ -1,6 +1,5 @@
 <?php
 
-
 // Site internal mailing system
 class yf_email {
 

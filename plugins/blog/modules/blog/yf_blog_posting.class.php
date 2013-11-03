@@ -466,7 +466,6 @@ class yf_blog_posting {
 				"community_select_box"	=> "",
 				"friends_group_box"		=> $friends_group_box,
 
-
 			);
 			$body = tpl()->parse('blog'."/edit_post_form", $replace);
 		}

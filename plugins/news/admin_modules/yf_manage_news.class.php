@@ -44,8 +44,7 @@ class yf_manage_news /*extends yf_news*/ {
 		}
 	}
 
-	
-	
+
 	/**
 	* add
 	*/
@@ -106,7 +105,6 @@ class yf_manage_news /*extends yf_news*/ {
 		
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
-
 
 	/**
 	* delete

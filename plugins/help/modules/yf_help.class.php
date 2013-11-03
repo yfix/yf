@@ -1,6 +1,5 @@
 <?php
 
-
 // Help section module
 class yf_help extends yf_module {
 

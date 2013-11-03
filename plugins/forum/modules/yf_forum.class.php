@@ -772,11 +772,7 @@ class yf_forum {
 		return $this->_load_sub_module("forum_view_topic_flat")->_show_main();
 	}
 
-
-
 	/* ####### PRIVATE METHODS START ###### */
-
-
 
 	/**
 	* Display image button for RSS feed

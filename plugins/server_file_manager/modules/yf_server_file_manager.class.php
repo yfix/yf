@@ -79,7 +79,6 @@ class yf_server_file_manager {
 		return $body;
 	}
 
-
 	/**
 	* Default method
 	*/
@@ -286,7 +285,6 @@ class yf_server_file_manager {
 				$_POST["mass_selected"] = unserialize($_POST["mass_selected"]);
 			}
 
-
 			$_POST["perms_octal"] = intval($_POST["perms_octal"]);
 			$recurs = $_POST["change_recurs"] ? 1 : 0;
 			if (!empty($_POST["perms_octal"])) {
@@ -434,7 +432,6 @@ class yf_server_file_manager {
 		$this->SSH_OBJ->rmdir($this->_server_info, $folder_name);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
-
 
 	/**
 	* Upload file

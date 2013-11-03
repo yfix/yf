@@ -1,6 +1,5 @@
 <?php
 
-
 // Help tickets handler
 class yf_help_tickets {
 

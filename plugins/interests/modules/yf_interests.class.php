@@ -73,7 +73,6 @@ class yf_interests {
 		// Check user
 		$user_info = user($_GET["id"], "full", array("WHERE" => array("active" => 1)));
 
-
 		if (empty($user_info)) {
 			return _e(t("No such user"));
 		}

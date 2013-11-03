@@ -45,7 +45,6 @@ class yf_forum_low {
 		// Reference to the forums array
 		$forums_array	= &module('forum')->_forums_array;
 
-
 		// Default low page
 		$body = "";
 		if ($TYPE == "main" || empty($ID)) {

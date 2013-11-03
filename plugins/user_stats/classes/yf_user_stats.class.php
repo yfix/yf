@@ -1,6 +1,5 @@
 <?php
 
-
 // User stats manager
 class yf_user_stats {
 

@@ -1,6 +1,5 @@
 <?php
 
-
 // Blogs management module
 class yf_manage_blogs {
 

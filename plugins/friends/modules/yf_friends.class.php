@@ -1,6 +1,5 @@
 <?php
 
-
 // Friends manager
 class yf_friends extends yf_module {
 

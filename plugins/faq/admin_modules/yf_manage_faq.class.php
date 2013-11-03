@@ -1,6 +1,5 @@
 <?php
 
-
 // FAQ management module
 class yf_manage_faq extends yf_module {
 

@@ -1,6 +1,5 @@
 <?php
 
-
 // Reputation management module
 class yf_manage_reput {
 

@@ -1,6 +1,5 @@
 <?php
 
-
 // Comments management module
 class yf_manage_comments {
 

@@ -1,6 +1,5 @@
 <?php
 
-
 // User stats refresh methods
 class yf_user_stats_refresh {
 
