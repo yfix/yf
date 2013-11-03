@@ -58,11 +58,6 @@ class yf_friends extends yf_module {
 	
 	// YF module constructor
 	function _init () {
-		// Friends class name (to allow changing only in one place)
-		define("FRIENDS_CLASS_NAME", "friends");
-		// Friends modules folder
-		define("FRIENDS_MODULES_DIR", USER_MODULES_DIR. FRIENDS_CLASS_NAME."/");
-		// Try to init captcha
 		$this->CAPTCHA = main()->init_class("captcha", "classes/");
 //		$this->CAPTCHA->set_image_size(120, 50);
 //		$this->CAPTCHA->font_height = 16;
@@ -249,12 +244,7 @@ class yf_friends extends yf_module {
 	* Try to load blog sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		$OBJ = main()->init_class($module_name, FRIENDS_MODULES_DIR);
-		if (!is_object($OBJ)) {
-			trigger_error("BLOG: Cant load sub_module \"".$module_name."\"", E_USER_WARNING);
-			return false;
-		}
-		return $OBJ;
+		return _class($module_name, 'modules/friends/');
 	}
 	
 	/**
