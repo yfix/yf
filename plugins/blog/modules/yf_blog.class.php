@@ -1079,8 +1079,7 @@ class yf_blog extends yf_module {
 	* Call sub_module method
 	*/
 	function _call_sub_method ($sub_module = "", $method_name = "", $params = array()) {
-		$OBJ = $this->_load_sub_module($sub_module);
-		return is_object($OBJ) ? $OBJ->$method_name($params) : "";
+		return $this->_load_sub_module($sub_module)->$method_name($params);
 	}
 
 	/**
@@ -1167,8 +1166,7 @@ class yf_blog extends yf_module {
 	* Home page integration
 	*/
 	function _for_home_page($NUM_NEWEST_BLOG_POSTS = 4, $NEWEST_BLOG_TEXT_LEN = 100, $params = array()){
-		$OBJ = $this->_load_sub_module("blog_integration");
-		return $OBJ->_for_home_page($NUM_NEWEST_BLOG_POSTS, $NEWEST_BLOG_TEXT_LEN, $params);
+		return $this->_load_sub_module("blog_integration")->_for_home_page($NUM_NEWEST_BLOG_POSTS, $NEWEST_BLOG_TEXT_LEN, $params);
 	}
 	
 	/**

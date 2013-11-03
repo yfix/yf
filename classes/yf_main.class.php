@@ -876,21 +876,26 @@ class yf_main {
 		);
 		$_plen = strlen(YF_PREFIX);
 		$plugins = array();
-		$plugins_names = array();
+		$plugins_classes = array();
 		foreach ((array)$sets as $set => $pattern) {
 			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
-				$d = basename($d);
-				$name = str_replace(CLASS_EXT, '', $d);
-				if (substr($name, 0, $_plen) == YF_PREFIX) {
-					$name = substr($name, $_plen);
+				$pname = basename($d);
+				$dlen = strlen($d);
+				$classes = array();
+				foreach (array_merge(glob($d.'*/*.class.php'), glob($d.'*/*/*.class.php')) as $f) {
+					$cname = str_replace(CLASS_EXT, '', basename($f));
+					$cdir = dirname(substr($f, $dlen)).'/';
+					if (substr($cname, 0, $_plen) == YF_PREFIX) {
+						$cname = substr($cname, $_plen);
+					}
+					$classes[$cname][$cdir] = $f;
+					$plugins_classes[$cname] = $pname;
 				}
-				if (!$name) {
-					continue;
-				}
-				$plugins[$name][$set] = $d;
+				$plugins[$pname][$set] = $classes;
 			}
 		}
 		$this->_plugins = $plugins;
+		$this->_plugins_classes = $plugins_classes;
 		return $this->_plugins;
 	}
 
@@ -964,7 +969,12 @@ class yf_main {
 				$site_path			= $custom_path;
 			}
 		}
-		$yf_plugins = $this->_preload_plugins_list();
+		if (!isset($this->_plugins)) {
+			$this->_preload_plugins_list();
+		}
+		$yf_plugins = &$this->_plugins;
+		$yf_plugins_classes = &$this->_plugins_classes;
+
 		// Order of storages matters a lot!
 		$storages = array();
 		if (conf('DEV_MODE')) {
@@ -984,14 +994,24 @@ class yf_main {
 			$storages['admin_user_project']		= array(PROJECT_PATH. $project_path2);
 			$storages['admin_user_framework']	= array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
 		}
-		if (isset($yf_plugins[$class_name])) {
-			$plugin_subdir = 'plugins/'.$class_name.'/';
-			if (isset($yf_plugins[$class_name]['project'])) {
+		if (isset($yf_plugins[$class_name]) || isset($yf_plugins_classes[$class_name])) {
+			if (isset($yf_plugins[$class_name])) {
+				$plugin_name = $class_name;
+			} else {
+				$plugin_name = $yf_plugins_classes[$class_name];
+			}
+			$plugin_info = $yf_plugins[$plugin_name];
+			$plugin_subdir = 'plugins/'.$plugin_name.'/';
+
+			if ($site_path && $site_path != $project_path) {
+				$storages['plugins_site']	= array($SITE_PATH. $plugin_subdir. $site_path);
+			}
+			if (isset($plugin_info['project'])) {
 				$storages['plugins_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path);
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path2);
 				}
-			} elseif (isset($yf_plugins[$class_name]['framework'])) {
+			} elseif (isset($plugin_info['framework'])) {
 				$storages['plugins_framework']	= array(YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX);
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
