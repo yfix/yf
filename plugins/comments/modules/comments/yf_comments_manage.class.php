@@ -31,7 +31,8 @@ class yf_comments_manage {
 		// Check if comment is allowed
 		$COMMENT_IS_ALLOWED = true;
 		if (is_object(module($_GET["object"]))) {
-			$COMMENT_IS_ALLOWED = main()->_execute($_GET["object"], module('comments')->_add_allowed_method, $params);
+			$m = module('comments')->_add_allowed_method;
+			$COMMENT_IS_ALLOWED = module($_GET["object"])->$m($params);
 		}
 		// Display errors
 		if (!$COMMENT_IS_ALLOWED && common()->_error_exists()) {
@@ -60,12 +61,12 @@ class yf_comments_manage {
 				// Tree mode
 				if (module('comments')->USE_TREE_MODE && isset($_POST['parent_id'])) {
 					if (empty(module('comments')->USER_ID)) {
-						main()->_execute($_GET["object"], "_captcha_check");
+						module($_GET["object"])->_captcha_check();
 					} else {
 // TODO: more checks for the members in tree mode
 					}
 				} else {
-					main()->_execute($_GET["object"], "_captcha_check");
+					module($_GET["object"])->_captcha_check();
 				}
 			}
 			// Check for errors
@@ -171,7 +172,7 @@ class yf_comments_manage {
 				"object_name"		=> _prepare_html($OBJECT_NAME),
 				"object_id"			=> intval($OBJECT_ID),
 				"use_captcha"		=> intval((bool)module($_GET["object"])->USE_CAPTCHA),
-				"captcha_block"		=> main()->_execute($_GET["object"], "_captcha_block"),
+				"captcha_block"		=> module($_GET["object"])->_captcha_block(),
 				"bb_codes_block"	=> module('comments')->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "text")) : "",
 				"submit_buttons"	=> _class_safe("preview")->_display_buttons(),
 				"js_check"			=> intval((bool)module('comments')->JS_TEXT_CHECKING),
@@ -214,7 +215,8 @@ class yf_comments_manage {
 		$edit_allowed = false;
 		$edit_allowed_check_method	= is_object(module($_GET["object"])) && method_exists(module($_GET["object"]), module('comments')->_edit_allowed_method);
 		if ($edit_allowed_check_method) {
-			$edit_allowed	= (bool)main()->_execute($_GET["object"], module('comments')->_edit_allowed_method, array(
+			$m = module('comments')->_edit_allowed_method;
+			$edit_allowed	= (bool)module($_GET["object"])->$m(array(
 				"user_id" => $comment_info["user_id"],
 				"object_id" => $comment_info["object_id"]
 			));
@@ -246,7 +248,7 @@ class yf_comments_manage {
 			}
 			// Do check captcha (if needed)
 			if (module($_GET["object"])->USE_CAPTCHA) {
-				main()->_execute($_GET["object"], "_captcha_check");
+				module($_GET["object"])->_captcha_check();
 			}
 			// Check for errors
 			if (!common()->_error_exists() && MAIN_TYPE_USER) {
@@ -326,7 +328,7 @@ class yf_comments_manage {
 				"object_name"		=> _prepare_html($OBJECT_NAME),
 				"object_id"			=> intval($OBJECT_ID),
 				"use_captcha"		=> intval((bool)module($_GET["object"])->USE_CAPTCHA),
-				"captcha_block"		=> main()->_execute($_GET["object"], "_captcha_block"),
+				"captcha_block"		=> module($_GET["object"])->_captcha_block(),
 				"bb_codes_block"	=> module('comments')->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "text")) : "",
 				"js_check"			=> intval((bool)module('comments')->JS_TEXT_CHECKING),
 			);
@@ -374,7 +376,8 @@ class yf_comments_manage {
 		$delete_allowed = false;
 		$delete_allowed_check_method	= is_object($module_obj) && method_exists($module_obj, module('comments')->_delete_allowed_method);
 		if ($delete_allowed_check_method) {
-			$delete_allowed	= (bool)main()->_execute($_GET["object"], module('comments')->_delete_allowed_method, array(
+			$m = module('comments')->_delete_allowed_method;
+			$delete_allowed	= (bool)module($_GET["object"])->$m(array(
 				"user_id" => $comment_info["user_id"],
 				"object_id" => $comment_info["object_id"]
 			));

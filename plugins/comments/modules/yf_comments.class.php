@@ -134,28 +134,29 @@ class yf_comments {
 		
 		// Check if view user email allowed
 		if($view_email_allowed_check_method){
-			$view_email = (bool)main()->_execute($_GET["object"], $this->_view_email_allowed_method, array(
-				"object_id" => $OBJECT_ID
-			));
+			$m = $this->_view_email_allowed_method;
+			$view_email = (bool)module($_GET["object"])->$m( array("object_id" => $OBJECT_ID) );
 		}
 		
 		// Process comments items
 		foreach ((array)$comments_array as $comment_info) {
 			// Check if edit comment allowed
 			if ($edit_allowed_check_method) {
-				$edit_allowed	= (bool)main()->_execute($_GET["object"], $this->_edit_allowed_method, array(
+				$m = $this->_edit_allowed_method;
+				$edit_allowed	= (bool)module($_GET["object"])->$m( array(
 					"user_id"	=> $comment_info["user_id"],
 					"object_id"	=> $comment_info["object_id"],
-				));
+				) );
 			} else {
 				$edit_allowed	= main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
 			// Check if delete comment allowed
 			if ($delete_allowed_check_method) {
-				$delete_allowed	= (bool)main()->_execute($_GET["object"], $this->_delete_allowed_method, array(
+				$m = $this->_delete_allowed_method;
+				$delete_allowed	= (bool)module($_GET["object"])->$m( array(
 					"user_id" => $comment_info["user_id"],
 					"object_id" => $comment_info["object_id"]
-				));
+				) );
 			} else {
 				$delete_allowed = main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
@@ -269,7 +270,8 @@ class yf_comments {
 
 		// Check if view user email allowed
 		if($view_email_allowed_check_method){
-			$view_email = (bool)main()->_execute($_GET["object"], $this->_view_email_allowed_method, array(
+			$m = $this->_view_email_allowed_method;
+			$view_email = (bool)module($_GET["object"])->$m(array(
 				"object_id" => $OBJECT_ID
 			));
 		}
@@ -294,7 +296,8 @@ class yf_comments {
 			
 			// Check if edit comment allowed
 			if ($edit_allowed_check_method) {
-				$edit_allowed	= (bool)main()->_execute($_GET["object"], $this->_edit_allowed_method, array(
+				$m = $this->_edit_allowed_method;
+				$edit_allowed	= (bool)module($_GET["object"])->$m(array(
 					"user_id" => $comment_info["user_id"],
 					"object_id" => $comment_info["object_id"]
 				));
@@ -303,7 +306,8 @@ class yf_comments {
 			}
 			// Check if delete comment allowed
 			if ($delete_allowed_check_method) {
-				$delete_allowed	= (bool)main()->_execute($_GET["object"], $this->_delete_allowed_method, array(
+				$m = $this->_delete_allowed_method;
+				$delete_allowed	= (bool)module($_GET["object"])->$m(array(
 					"user_id" => $comment_info["user_id"],
 					"object_id" => $comment_info["object_id"]
 				));
