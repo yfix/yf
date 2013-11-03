@@ -9,10 +9,8 @@ class yf_blog_search_comments {
 	* Constructor
 	*/
 	function _init () {
-		// Reference to parent object
-		$this->BLOG_OBJ		= module('blog');
-		$this->SETTINGS		= &$this->BLOG_OBJ->SETTINGS;
-		$this->USER_RIGHTS	= &$this->BLOG_OBJ->USER_RIGHTS;
+		$this->SETTINGS		= &module('blog')->SETTINGS;
+		$this->USER_RIGHTS	= &module('blog')->USER_RIGHTS;
 	}
 
 	/**
@@ -56,7 +54,7 @@ class yf_blog_search_comments {
 		
 		if (!empty($posts_ids)) {
 		
-			if ($this->BLOG_OBJ->SEARCH_ONLY_MEMBER){
+			if (module('blog')->SEARCH_ONLY_MEMBER){
 				$search_only_member = " AND NOT (user_id = 0)";
 			}
 		
@@ -124,7 +122,7 @@ class yf_blog_search_comments {
 				"title"			=> $posts[$comment["object_id"]]["title"],
 				"post_url"		=> "./?object=blog&action=show_single_post&id=".$posts[$comment["object_id"]]["id"],
 				"date"			=> _format_date($comment["add_date"], "long"),
-				"delete"		=> $this->BLOG_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+				"delete"		=> module('blog')->ALLOW_DELETE_COMMENTS?"1":"0",
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_blog_comment&id=".$comment["id"],
 			);
 			$items.= tpl()->parse($_GET["object"]."/search_comments_item", $replace2);
@@ -137,7 +135,7 @@ class yf_blog_search_comments {
 			"author_select_box"		=> $author_select_box,
 			"cats_select_box"		=> $cats_select_box,
 			"sort_type_select_box"	=> $sort_type_select_box,
-			"delete"				=> $this->BLOG_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+			"delete"				=> module('blog')->ALLOW_DELETE_COMMENTS?"1":"0",
 		);
 		return tpl()->parse($_GET["object"]."/search_comments_main", $replace);
 	}

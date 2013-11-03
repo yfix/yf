@@ -8,14 +8,6 @@
 * @version		1.0
 */
 class yf_blog_widgets {
-
-	/**
-	* Framework constructor
-	*/
-	function _init () {
-		// Reference to parent object
-		$this->BLOG_OBJ		= module('blog');
-	}
 	
 	/**
 	* Blog last post
@@ -24,7 +16,7 @@ class yf_blog_widgets {
 		if ($params["describe"]) {
 			return array("allow_cache" => 1);
 		}
-		return $this->BLOG_OBJ->_for_home_page(1, 100, array("for_widgets" => 1));
+		return module('blog')->_for_home_page(1, 100, array("for_widgets" => 1));
 	}
 	
 	/**
@@ -34,7 +26,7 @@ class yf_blog_widgets {
 		if ($params["describe"]) {
 			return array("allow_cache" => 1);
 		}
-		return $this->BLOG_OBJ->_for_home_page(4, 100, array("for_widgets" => 1));
+		return module('blog')->_for_home_page(4, 100, array("for_widgets" => 1));
 	}
 	
 	/**
@@ -54,7 +46,7 @@ class yf_blog_widgets {
 				AND cat_id NOT IN(0,1) 
 				AND privacy NOT IN(9)";
 		// Geo filter
-		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
+		if (module('blog')->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
 			$sql .= " AND user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') ";
 		}
 		$sql .= " GROUP BY cat_id ORDER BY num_posts DESC";
@@ -63,10 +55,10 @@ class yf_blog_widgets {
 			$num_posts_by_cats[$A["cat_id"]] = $A["num_posts"];
 		}
 		// Process posts categories
-		foreach ((array)$this->BLOG_OBJ->_blog_cats as $cat_id => $cat_name) {
+		foreach ((array)module('blog')->_blog_cats as $cat_id => $cat_name) {
 			$num_posts = $num_posts_by_cats[$cat_id];
 			// Skip empty cats if needed
-			if (empty($num_posts) && $this->BLOG_OBJ->STATS_HIDE_EMPTY_CATS) {
+			if (empty($num_posts) && module('blog')->STATS_HIDE_EMPTY_CATS) {
 				continue;
 			}
 			// Process template
@@ -75,7 +67,7 @@ class yf_blog_widgets {
 				"cat_link"		=> "./?object=".'blog'."&action=show_in_cat&id=".$cat_id._add_get(array("page")),
 				"cat_name"		=> _prepare_html($cat_name),
 				"num_posts"		=> intval($num_posts),
-				"rss_cat_button"=> $this->BLOG_OBJ->_show_rss_link("./?object=".'blog'."&action=rss_for_cat&id=".$cat_id, "RSS feed for posts inside blog category: ".$cat_name),
+				"rss_cat_button"=> module('blog')->_show_rss_link("./?object=".'blog'."&action=rss_for_cat&id=".$cat_id, "RSS feed for posts inside blog category: ".$cat_name),
 			);
 			$blog_cats_posts .= tpl()->parse('blog'."/widget_category_item", $replace2);
 		}
@@ -110,7 +102,7 @@ class yf_blog_widgets {
 		if ($params["describe"]) {
 			return array("allow_cache" => 1);
 		}
-		$OBJ = $this->BLOG_OBJ->_load_sub_module("blog_stats");
+		$OBJ = module('blog')->_load_sub_module("blog_stats");
 		return $OBJ->_show_most_commented(array("for_widgets" => 1));
 	}
 
@@ -121,7 +113,7 @@ class yf_blog_widgets {
 		if ($params["describe"]) {
 			return array("allow_cache" => 0);
 		}
-		$OBJ = $this->BLOG_OBJ->_load_sub_module("blog_right_block");
+		$OBJ = module('blog')->_load_sub_module("blog_right_block");
 		return is_object($OBJ) ? $OBJ->_show(array("for_widgets" => 1)) : "";
 	}
 
@@ -135,7 +127,7 @@ class yf_blog_widgets {
 		if (!main()->USER_ID) {
 			return "";
 		}
-		$OBJ = $this->BLOG_OBJ->_load_sub_module("blog_right_block");
+		$OBJ = module('blog')->_load_sub_module("blog_right_block");
 		$blog_links = $OBJ->_show_blog_links();
 		if (!$blog_links) {
 			return "";

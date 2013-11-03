@@ -13,10 +13,7 @@ class yf_blog_filter {
 	* Constructor
 	*/
 	function _init () {
-		// Reference to the parent object
-		$this->BLOG_OBJ		= module('blog');
-		// Prepare data
-		if ($this->BLOG_OBJ->USE_FILTER) {
+		if (module('blog')->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
 	}
@@ -25,7 +22,7 @@ class yf_blog_filter {
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql () {
-		if (!$this->BLOG_OBJ->USE_FILTER) {
+		if (!module('blog')->USE_FILTER) {
 			return "";
 		}
 		$SF = &$_SESSION[$this->_filter_name];
@@ -61,13 +58,13 @@ class yf_blog_filter {
 			$sql .= " AND s.user_id IN (SELECT id FROM ".db('user')." WHERE 1=1 ".$user_sub_sql.") \r\n";
 		}
 		// Geo filter
-		if ($this->BLOG_OBJ->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
+		if (module('blog')->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
 			$sql .= " AND s.user_id IN (SELECT id FROM ".db('user')." WHERE country = '"._es(GEO_LIMIT_COUNTRY)."') \r\n";
 		}
 		// Special processing for the seach_as_posts
-		if (strlen($SF["post_text"]) >= $this->BLOG_OBJ->MIN_SEARCH_TEXT_LENGTH) {
+		if (strlen($SF["post_text"]) >= module('blog')->MIN_SEARCH_TEXT_LENGTH) {
 			$sql .= " AND p.text LIKE '%"._es($SF["post_text"])."%' \r\n";
-			$this->BLOG_OBJ->_SEARCH_AS_POSTS = $SF["post_text"];
+			module('blog')->_SEARCH_AS_POSTS = $SF["post_text"];
 		} else {
 			$SF["post_text"] = "";
 		}
@@ -85,7 +82,7 @@ class yf_blog_filter {
 	* Prepare filter data
 	*/
 	function _prepare_filter_data () {
-		if (!$this->BLOG_OBJ->USE_FILTER || !in_array($_GET["action"], array(
+		if (!module('blog')->USE_FILTER || !in_array($_GET["action"], array(
 			"clear_filter",
 			"save_filter",
 			"show_all_blogs",
@@ -152,7 +149,7 @@ class yf_blog_filter {
 	* Session - based filter form stored in $_SESSION[$this->_filter_name][...]
 	*/
 	function _show_filter () {
-		if (!$this->BLOG_OBJ->USE_FILTER) return "";
+		if (!module('blog')->USE_FILTER) return "";
 		$replace = array(
 			"save_action"	=> "./?object=".'blog'."&action=save_filter"._add_get(),
 			"clear_url"		=> "./?object=".'blog'."&action=clear_filter"._add_get(),
@@ -171,7 +168,7 @@ class yf_blog_filter {
 	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
-		if (!$this->BLOG_OBJ->USE_FILTER) return "";
+		if (!module('blog')->USE_FILTER) return "";
 		// Process featured countries
 		if (FEATURED_COUNTRY_SELECT && !empty($_POST["country"]) && substr($_POST["country"], 0, 2) == "f_") {
 			$_POST["country"] = substr($_POST["country"], 2);
@@ -188,7 +185,7 @@ class yf_blog_filter {
 	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
-		if (!$this->BLOG_OBJ->USE_FILTER) return "";
+		if (!module('blog')->USE_FILTER) return "";
 		if (is_array($_SESSION[$this->_filter_name])) {
 			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
 		}
