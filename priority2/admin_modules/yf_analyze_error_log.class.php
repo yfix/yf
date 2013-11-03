@@ -11,7 +11,6 @@ class yf_analyze_error_log {
 	/**
 	* Constructor
 	*/
-	
 
 	function _init() {
 		$this->update_box_val = array(
@@ -40,7 +39,6 @@ class yf_analyze_error_log {
 			"200"	=> 200,
 		);
 
-	
 		$this->stats_interval = time() - $this->STATS_INTERVAL * 86400;
 
 		$this->_country_names = main()->get_data("countries");
@@ -112,8 +110,7 @@ class yf_analyze_error_log {
 				} 
 				 
 				$_date = date("H:i:s | d-m-Y", $_date);
-					
-		
+
 				$data["items"][] = array(
 					"unique_id"		=> md5($_line),
 					"date"			=> $_date,

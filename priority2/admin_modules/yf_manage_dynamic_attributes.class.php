@@ -43,8 +43,7 @@ class yf_manage_dynamic_attributes{
 			
 			$items .= tpl()->parse($_GET["object"]."/category_item", $replace2);
 		}
-		
-		
+
 		$replace = array(
 			"add_actegory_link"	=> "./?object=".$_GET["object"]."&action=add_category",
 			"pages"				=> $pages,
@@ -138,7 +137,6 @@ class yf_manage_dynamic_attributes{
 		}
 		return js_redirect("./?object=".$_GET["object"]);
 	}
-	
 
 	function view_category () {
 	
@@ -171,7 +169,6 @@ class yf_manage_dynamic_attributes{
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace); 
 	}	
-
 
 	/*
 	* Add field
@@ -229,8 +226,7 @@ class yf_manage_dynamic_attributes{
 		}
 		return tpl()->parse($_GET["object"]."/edit_form", $replace);
 	}
-	
-	
+
 	/*
 	* Edit field
 	*/
@@ -295,8 +291,7 @@ class yf_manage_dynamic_attributes{
 		}
 		return tpl()->parse($_GET["object"]."/edit_form", $replace);				
 	}
-	
-	
+
 	/*
 	* Delete field
 	*/
@@ -356,11 +351,7 @@ class yf_manage_dynamic_attributes{
 			return js_redirect("./?object=".$_GET["object"]);
 		}
 	}
-	
-	
-	
-	
-	
+
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");

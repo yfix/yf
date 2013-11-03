@@ -31,7 +31,6 @@ class yf_backup_manager {
 //		"d:/kyivstar",
 	);
 
-
 	/**
 	* Constructor
 	*/

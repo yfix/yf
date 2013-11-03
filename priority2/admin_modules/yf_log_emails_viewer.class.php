@@ -231,7 +231,6 @@ class yf_log_emails_viewer {
 		return $this->show();
 	}
 
-	
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -281,7 +280,6 @@ class yf_log_emails_viewer {
 		);
 	}
 
-	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -304,7 +302,6 @@ class yf_log_emails_viewer {
 		return substr($sql, 0, -3);
 	}
 
-	
 	// Session - based filter
 	function _show_filter () {
 		if($_GET["action"] != "show"){
@@ -325,7 +322,6 @@ class yf_log_emails_viewer {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -343,7 +339,6 @@ class yf_log_emails_viewer {
 		}
 	}
 
-	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -358,14 +353,12 @@ class yf_log_emails_viewer {
 		}
 	}
 
-	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
-	
 	// Delete filtered records
 	function delete_all_filtered () {
 		// Prepare query for deleting
@@ -390,7 +383,6 @@ class yf_log_emails_viewer {
 		}
 	}	
 
-	
 	// Forming top of errors
 	function top_of_errors () {
 		$GLOBALS['PROJECT_CONF']["divide_pages"]["SQL_COUNT_REWRITE"] = false;

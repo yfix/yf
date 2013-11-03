@@ -7,7 +7,6 @@ class yf_log_admin_exec{
 	// Session array name where filter vars are stored
 	public $_filter_name = "log_admin_exec_filter";
 
-
 	/**
 	* Framework constructor
 	*/
@@ -34,7 +33,6 @@ class yf_log_admin_exec{
 			"sort_order",
 		);
 	}
-
 
 	/**
 	*
@@ -84,7 +82,6 @@ class yf_log_admin_exec{
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
 
- 	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$MF = &$_SESSION[$this->_filter_name];
@@ -103,7 +100,6 @@ class yf_log_admin_exec{
 		return substr($sql, 0, -3);
 	}
 
-	
 	// Session - based members filter form stored in $_SESSION[$this->_filter_name][...]
 	function _show_filter () {
 		$replace = array(
@@ -120,7 +116,6 @@ class yf_log_admin_exec{
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	
 	// Filter save method
 	function save_filter ($silent = false) {
 		if (is_array($this->_fields_in_filter)) {
@@ -131,7 +126,6 @@ class yf_log_admin_exec{
 		}
 	}
 
-	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -141,7 +135,6 @@ class yf_log_admin_exec{
 			js_redirect("./?object=".$_GET["object"]."&action=show"._add_get());
 		}
 	}
-	
 
 	// Process custom box
 	function _box ($name = "", $selected = "") {

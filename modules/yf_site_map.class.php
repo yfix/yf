@@ -348,7 +348,6 @@ class yf_site_map {
 		} 
 	}
 
-	
 	/**
 	* Redirect to sitemap source files
 	*/

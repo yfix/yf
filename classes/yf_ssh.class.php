@@ -402,7 +402,6 @@ class yf_ssh {
 		return $data;
 
 	}
-	
 
 	/**
 	* Read remote file

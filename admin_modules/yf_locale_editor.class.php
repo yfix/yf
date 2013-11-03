@@ -922,7 +922,6 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		return tpl()->parse($_GET["object"]."/autotranslate", $replace);
 	}	
 
-
 	/**
 	* Return array of all used locations in vars
 	*/

@@ -128,7 +128,6 @@ class yf_graph {
 		$width = isset($params["width"])?$params["width"]:"90%";
 		$height = isset($params["height"])?$params["height"]:"90%";
 
-	
 		$replace = array(
 			"data"		=> $data,
 			"id"		=> "pie".rand(),
@@ -142,9 +141,7 @@ class yf_graph {
 		
 		return $incude_js.tpl()->parse("system/graph/graph_pie", $replace);
 	}
-	
-	
-	
+
 	/**
 	*
 	*/
@@ -190,8 +187,7 @@ class yf_graph {
 	
 		return $content;
 	}
-	
-	
+
 	/**
 	*
 	*/
@@ -231,7 +227,6 @@ class yf_graph {
 		$g->set_x_legend( 'Date', 10, '#000000' );
 		
 		$g->set_tool_tip(  '#val# EUR on #x_label#' );
-	
 
 		// формат значений
 		$g->set_num_decimals(0);
@@ -256,8 +251,7 @@ class yf_graph {
 
 		$width = isset($params["width"])?$params["width"]:"90%";
 		$height = isset($params["height"])?$params["height"]:"90%";
-	
-	
+
 		$g = new graph();
 		$g->js_path = isset($params["js_path"])?$params["js_path"]:"/js/";
 		$g->swf_path = isset($params["swf_path"])?$params["swf_path"]:"/js/";
@@ -290,7 +284,6 @@ class yf_graph {
 		
 		$g->set_tool_tip(  '#val# EUR on #x_label#' );
 		$g->line_dot( 2, 3, "#0750D9", "", 10);
-	
 
 		// формат значений
 		$g->set_num_decimals(0);

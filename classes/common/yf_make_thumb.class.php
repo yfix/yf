@@ -409,8 +409,7 @@ class yf_make_thumb {
 		}
 		return $imagick_cmd;
 	}
-	
-	
+
 	/**
 	* detect animated gif for imagick
 	**/

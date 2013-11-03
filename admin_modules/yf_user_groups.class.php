@@ -72,7 +72,6 @@ class yf_user_groups {
 			->save_and_back();
 	}
 
-
 	/**
 	*/
 	function delete() {

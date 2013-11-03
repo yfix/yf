@@ -83,7 +83,6 @@ class yf_revisions_manager {
 		return tpl()->parse($_GET["object"]."/object_main", $replace);
 	}
 
-
 	/**
 	* Preview old and new versions of item as they will be showed to user
 	*/
@@ -100,7 +99,6 @@ class yf_revisions_manager {
 		return tpl()->parse($_GET["object"]."/preview_obj_item", $replace);
 	}
 
-	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

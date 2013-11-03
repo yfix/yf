@@ -1,10 +1,8 @@
 <?php
 
-
 // Admin messages handling class
 class yf_admin_messages {
 
-	
 	// Constructor
 	function yf_admin_messages () {
 		main()->USER_ID = intval($_GET['user_id']);
@@ -12,7 +10,6 @@ class yf_admin_messages {
 		$this->_account_types	= main()->get_data("account_types");
 	}
 
-	
 	// Default method
 	function show () {
 		// Show all messages if no user selected
@@ -23,7 +20,6 @@ class yf_admin_messages {
 		}
 	}
 
-	
 	// Display popup window for adding admin message to the specified user id
 	function show_popup () {
 		$user_id = main()->USER_ID;
@@ -43,7 +39,6 @@ class yf_admin_messages {
 		return common()->show_empty_page($body);
 	}
 
-	
 	// Do add message for the specified user
 	function add () {
 		// Check for user_id
@@ -76,7 +71,6 @@ class yf_admin_messages {
 		}
 	}
 
-	
 	// Display link to the popup URL to send message to the given user_id
 	function _popup_link ($user_id = 0) {
 		if (empty($user_id)) {
@@ -85,7 +79,6 @@ class yf_admin_messages {
 		return process_url("./?object=".__CLASS__."&action=show_popup&user_id=".intval($user_id));
 	}
 
-	
 	// Display list of sent messages for the given user
 	function _show_for_user ($user_id = 0) {
 		if (is_array($user_id)) {
@@ -124,7 +117,6 @@ class yf_admin_messages {
 		return tpl()->parse(__CLASS__."/for_user_main", $replace);
 	}
 
-	
 	// Display all messages for users sent from admin panel
 	function _view_all_messages () {
 // TODO: write templates, code is mostly done here
@@ -186,7 +178,6 @@ class yf_admin_messages {
 		return tpl()->parse(__CLASS__."/view_all_main", $replace);
 	}
 
-	
 	// View single selected message
 	function view () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -208,19 +199,16 @@ class yf_admin_messages {
 		return tpl()->parse(__CLASS__."/view_msg", $replace);
 	}
 
-	
 	//
 	function edit () {
 // TODO
 	}
 
-	
 	//
 	function delete () {
 // TODO
 	}
 
-	
 	//
 	function read () {
 // TODO
