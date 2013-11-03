@@ -514,6 +514,10 @@ class yf_tpl {
 		if (substr($file_name, 0, $l) == YF_PREFIX) {
 			$file_name = substr($file_name, $l);
 		}
+		$class_name = '';
+		if (false !== strpos($file_name, '/')) {
+			$class_name = current(explode('/', $file_name));
+		}
 		$file_name  .= $this->_STPL_EXT;
 		// Fix double extesion
 		$file_name  = str_replace($this->_STPL_EXT.$this->_STPL_EXT, $this->_STPL_EXT, $file_name);
@@ -536,6 +540,9 @@ class yf_tpl {
 			}
 			$storage = 'db';
 		} else {
+			if (!isset($this->_yf_plugins)) {
+				$this->_yf_plugins = main()->_preload_plugins_list();
+			}
 			// Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
 			$storages = array();
 			$site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
@@ -554,7 +561,6 @@ class yf_tpl {
 				$storages['site']		   = $site_path. $this->TPL_PATH. $file_name;
 			}
 			$storages['project']			= PROJECT_PATH. $this->TPL_PATH. $file_name;
-			// Skin inheritance on project level
 			if ($this->_INHERITED_SKIN) {
 				$storages['inherit_project']= PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
 			}
@@ -563,13 +569,28 @@ class yf_tpl {
 			}
 			$storages['framework']		  = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
 			$storages['framework_p2']	   = YF_PATH. 'priority2/'. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
+			// user section within admin
 			if (MAIN_TYPE_ADMIN) {
-				// user section within admin
 				$storages['user_section']	   = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
-				// user section from framework within admin
 				$storages['framework_user']	 = YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
-				// user section from framework within admin priority2
 				$storages['framework_user_p2']  = YF_PATH. 'priority2/'. $this->_THEMES_PATH. 'user/'. $file_name;
+			}
+			// Load template from plugins. Should stay in subdir like this:  
+			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')
+			if ($class_name && isset($this->_yf_plugins[$class_name])) {
+				$plugin_subdir = 'plugins/'.$class_name.'/';
+				$storages['plugins_project'] = PROJECT_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
+				if ($this->_INHERITED_SKIN) {
+					$storages['plugins_inherit_project'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
+				}
+				if ($this->_INHERITED_SKIN2) {
+					$storages['plugins_inherit_project2'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
+				}
+				$storages['plugins_framework'] = YF_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
+				if (MAIN_TYPE_ADMIN) {
+					$storages['plugins_user_section']	 = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
+					$storages['plugins_framework_user']	 = YF_PATH. $plugin_subdir. $this->_THEMES_PATH. 'user/'. $file_name;
+				}
 			}
 			// Try storages one-by-one in inheritance `order`, stop when found
 			$storage = '';

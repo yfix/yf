@@ -964,7 +964,7 @@ class yf_main {
 				$site_path			= $custom_path;
 			}
 		}
-		$plugins = $this->_preload_plugins_list();
+		$yf_plugins = $this->_preload_plugins_list();
 		// Order of storages matters a lot!
 		$storages = array();
 		if (conf('DEV_MODE')) {
@@ -984,14 +984,14 @@ class yf_main {
 			$storages['admin_user_project']		= array(PROJECT_PATH. $project_path2);
 			$storages['admin_user_framework']	= array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
 		}
-		if (isset($plugins[$class_name])) {
+		if (isset($yf_plugins[$class_name])) {
 			$plugin_subdir = 'plugins/'.$class_name.'/';
-			if (isset($plugins[$class_name]['project'])) {
+			if (isset($yf_plugins[$class_name]['project'])) {
 				$storages['plugins_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path);
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path2);
 				}
-			} elseif (isset($plugins[$class_name]['framework'])) {
+			} elseif (isset($yf_plugins[$class_name]['framework'])) {
 				$storages['plugins_framework']	= array(YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX);
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
