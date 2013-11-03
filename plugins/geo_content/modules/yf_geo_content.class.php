@@ -1,25 +1,16 @@
 <?php
 
-
 // Content display by geo location (ads, pages, etc)
 class yf_geo_content {
 
 // TODO: need to connect here in all methods where needed
 	/** @var bool  */
 	public $AJAX_USE_CACHE = false;
-
-	
-	// YF module constructor
-	function _init () {
-		define("GEO_CONTENT_CLASS_NAME", "geo_content");
-	}
-
 	
 	// Default method
 	function show () {
 		return $this->change_location();
 	}
-
 	
 	// JavaScript - based city select (3-step) method
 	function _city_select ($params = array()) {
@@ -83,7 +74,7 @@ class yf_geo_content {
 			"sel_country"	=> $_POST["country"],
 			"sel_region"	=> $_POST["region"],
 			"sel_city"		=> $_POST["city"],
-			"ajax_link"		=> process_url("./?object=".GEO_CONTENT_CLASS_NAME."&action=ajax_city"),
+			"ajax_link"		=> process_url("./?object=".'geo_content'."&action=ajax_city"),
 			"sel_no_regions"=> intval($have_no_regions),
 		);
 		return tpl()->parse($STPL_NAME, $replace);
@@ -381,12 +372,12 @@ class yf_geo_content {
 				}
 				$result = setcookie("geo_selected", serialize($data_to_save), time() + 2592000, "/");
 			}
-			return js_redirect("./?object=".GEO_CONTENT_CLASS_NAME."&action=change_location_result");
+			return js_redirect("./?object=".'geo_content'."&action=change_location_result");
 		}
 		// Prepare template
 		$replace = array(
-			"form_action"		=> "./?object=".GEO_CONTENT_CLASS_NAME."&action=".__FUNCTION__,
-			"ajax_link"			=> process_url("./?object=".GEO_CONTENT_CLASS_NAME."&action=ajax_city"),
+			"form_action"		=> "./?object=".'geo_content'."&action=".__FUNCTION__,
+			"ajax_link"			=> process_url("./?object=".'geo_content'."&action=ajax_city"),
 
 			"country_box"		=> common()->select_box("country",	$_countries,	$sel_data["country_code"],	false, 2, "", false),
 			"region_box"		=> common()->select_box("region",		$_regions,		$sel_data["region_code"],	false, 2, "", false),
@@ -418,7 +409,7 @@ class yf_geo_content {
 			"sel_no_regions"	=> intval($have_no_regions),
 			"empty_selection"	=> empty($sel_data["country_code"]) && empty($sel_data["region_code"]) && empty($sel_data["city_name"]) ? 1 : 0,
 		);
-		return tpl()->parse(GEO_CONTENT_CLASS_NAME."/change_location_form", $replace);
+		return tpl()->parse('geo_content'."/change_location_form", $replace);
 	}
 
 	
@@ -444,13 +435,13 @@ class yf_geo_content {
 		}
 		// Prepare template
 		$replace2 = array(
-			"form_action"		=> "./?object=".GEO_CONTENT_CLASS_NAME."&action=change_location",
+			"form_action"		=> "./?object=".'geo_content'."&action=change_location",
 			"show_update_form"	=> main()->USER_ID && $something_changed ? 1 : 0,
 			"city"				=> _prepare_html($sel_data["city_name"]),
 			"region"			=> _prepare_html(_region_name($sel_data["region_code"], $sel_data["country_code"])),
 			"country"			=> _prepare_html(_country_name($sel_data["country_code"])),
 			"zip"				=> _prepare_html($sel_data["zip_code"]),
 		);
-		return tpl()->parse(GEO_CONTENT_CLASS_NAME."/change_location_success", $replace2);
+		return tpl()->parse('geo_content'."/change_location_success", $replace2);
 	}
 }
