@@ -208,7 +208,6 @@ class yf_forum {
 	*/
 	function _init () {
 		$GLOBALS['no_page_header'] = true;
-		// Internal super-admin mode
 		define('FORUM_INTERNAL_CALL', intval($INTERNAL_CALL));
 		// Set config vars (special name '_forum')
 		foreach ((array)$GLOBALS['PROJECT_CONF']['_forum'] as $k => $v) {
@@ -218,23 +217,15 @@ class yf_forum {
 		foreach ((array)$GLOBALS['PROJECT_CONF']['_forum_def_rights'] as $k => $v) {
 			$this->USER_RIGHTS[$k] = $v;
 		}
-		// Set current authentication module
 		define('FORUM_AUTH_MODULE', $this->SETTINGS['USE_GLOBAL_USERS'] ? 'forum_auth_global' : 'forum_auth');
-		// Process topic view type
 		if (isset($_SESSION['board_topic_view']) && in_array($_SESSION['board_topic_view'], array(1,2))) {
 			$this->SETTINGS['TOPIC_VIEW_TYPE'] = intval($_SESSION['board_topic_view']);
 		}
-		// Set path to smilies for bb codes module
 		$GLOBALS['PROJECT_CONF']['bb_codes']['SMILIES_DIR']	= module('forum')->SETTINGS['SMILIES_DIR'];
-		// Get all user groups
 		$this->_forum_groups		= main()->get_data('forum_groups');
-		// Get all moderators
 		$this->_forum_moderators	= main()->get_data('forum_moderators');
-		// Process user session vars
 		$this->_load_sub_module(FORUM_AUTH_MODULE)->_verify_session_vars();
-		// Get all forum categories
 		$this->_forum_cats_array	= main()->get_data('forum_categories');
-		// Get all forums
 		$this->_forums_array		= main()->get_data('forum_forums');
 		// Hide inactive forums and categories
 		foreach ((array)$this->_forum_cats_array as $_cat_id => $_cat_info) {
@@ -247,17 +238,12 @@ class yf_forum {
 				unset($this->_forums_array[$_forum_id]);
 			}
 		}
-		// Get all available user skins
 		if ($this->SETTINGS['ALLOW_SKIN_CHANGE']) {
 			$this->_skins_array		= main()->get_data('user_skins');
 		}
-		// Try to init captcha
 		if ($this->SETTINGS['USE_CAPTCHA'] && in_array($_GET['action'], array('show_captcha_image','register','send_password'))) {
 			$this->CAPTCHA = _class('captcha');
-//			$this->CAPTCHA->set_image_size(120, 50);
-//			$this->CAPTCHA->font_height = 16;
 		}
-		// Prepare array of read messages ids
 		$this->_init_read_messages();
 	}
 
