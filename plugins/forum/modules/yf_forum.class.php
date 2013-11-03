@@ -235,8 +235,7 @@ class yf_forum {
 		// Get all moderators
 		$this->_forum_moderators	= main()->get_data("forum_moderators");
 		// Process user session vars
-		$AUTH_OBJ = $this->_load_sub_module(FORUM_AUTH_MODULE);
-		$AUTH_OBJ->_verify_session_vars();
+		$this->_load_sub_module(FORUM_AUTH_MODULE)->_verify_session_vars();
 		// Get all forum categories
 		$this->_forum_cats_array	= main()->get_data("forum_categories");
 		// Get all forums
@@ -959,7 +958,7 @@ class yf_forum {
 	* Try to load forum sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		return _class_safe($module_name, 'modules/forum/');
+		return _class($module_name, 'modules/forum/');
 	}
 
 	/**

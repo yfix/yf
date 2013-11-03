@@ -1072,12 +1072,7 @@ class yf_blog extends yf_module {
 	* Try to load blog sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		$OBJ = main()->init_class($module_name, BLOG_MODULES_DIR);
-		if (!is_object($OBJ)) {
-			trigger_error("BLOG: Cant load sub_module \"".$module_name."\"", E_USER_WARNING);
-			return false;
-		}
-		return $OBJ;
+		return _class($module_name, 'modules/blog/');
 	}
 
 	/**

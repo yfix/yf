@@ -485,8 +485,7 @@ class yf_comments {
 	* For home page method
 	*/
 	function _for_home_page($NUM_NEWEST_COMMENTS = 4){
-		$OBJ = $this->_load_sub_module("comments_integration");
-		return is_object($OBJ) ? $OBJ->_for_home_page($NUM_NEWEST_COMMENTS) : "";
+		return $this->_load_sub_module("comments_integration")->_for_home_page($NUM_NEWEST_COMMENTS);
 	}
 	
 	/**
@@ -501,12 +500,7 @@ class yf_comments {
 	* Try to load sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		$OBJ = main()->init_class($module_name, COMMENTS_MODULES_DIR);
-		if (!is_object($OBJ)) {
-			trigger_error("COMMENTS: Cant load sub_module \"".$module_name."\"", E_USER_WARNING);
-			return false;
-		}
-		return $OBJ;
+		return _class($module_name, 'modules/comments/');
 	}
 	
 	/**
