@@ -346,7 +346,7 @@ class yf_articles extends yf_module {
 		if ($_POST) {
 			// Do check captcha (if needed)
 			if (module('articles')->USE_CAPTCHA) {
-				main()->_execute('articles', "_captcha_check");
+				module('articles')->_captcha_check();
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
@@ -435,7 +435,7 @@ class yf_articles extends yf_module {
 				"status"		=> $this->_articles_statuses[$DATA["status"]],
 				"for_edit"		=> 1,
 				"use_captcha"	=> intval((bool)module('articles')->USE_CAPTCHA),
-				"captcha_block"	=> main()->_execute('articles', "_captcha_block"),
+				"captcha_block"	=> module('articles')->_captcha_block(),
 				"bb_codes_block_full_text"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_full_text")) : "",
 				"bb_codes_block_summary"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_summary")) : "",
 				"bb_codes_block_cred"		=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_cred")) : "",
@@ -459,7 +459,7 @@ class yf_articles extends yf_module {
 		if ($_POST) {
 			// Do check captcha (if needed)
 			if (module('articles')->USE_CAPTCHA) {
-				main()->_execute('articles', "_captcha_check");
+				module('articles')->_captcha_check();
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
@@ -545,7 +545,7 @@ class yf_articles extends yf_module {
 				"status"		=> $this->_articles_statuses[$DATA["status"]],
 				"for_edit"		=> 0,
 				"use_captcha"	=> intval((bool)module('articles')->USE_CAPTCHA),
-				"captcha_block"	=> main()->_execute('articles', "_captcha_block"),
+				"captcha_block"	=> module('articles')->_captcha_block(),
 				"allow_bb_code"	=> intval((bool) $this->USE_BB_CODES),
 				"bb_codes_block_full_text"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_full_text")) : "",
 				"bb_codes_block_summary"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_summary")) : "",

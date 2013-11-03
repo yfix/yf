@@ -231,8 +231,8 @@ class yf_dev{
 		//list($PARSED_CONF_3, $PARSED_META_3) = $this->_collect_conf("classes/", $_classes_for_vars);
 		//print_r($PARSED_META_3);
 
-		$all_modules["admin"] = main()->_execute("admin_modules", "_get_modules");
-		$all_modules["user"] = main()->_execute("user_modules", "_get_modules");
+		$all_modules["admin"] = module("admin_modules")->_get_modules();
+		$all_modules["user"] = module("user_modules")->_get_modules();
 		$all_modules["classes"] = $_classes;
 
 		ksort($all_modules["classes"]);
