@@ -13,7 +13,7 @@ class yf_blog_ping {
 	* Constructor
 	*/
 	function _init () {
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 		$this->SETTINGS		= &$this->BLOG_OBJ->SETTINGS;
 		$this->USER_RIGHTS	= &$this->BLOG_OBJ->USER_RIGHTS;
 	}
@@ -27,8 +27,8 @@ class yf_blog_ping {
 		}
 		main()->NO_GRAPHICS = true;
 		// Prepare URLs that changed
-		$post_html_url	= process_url("./?object=".BLOG_CLASS_NAME."&action=show_posts&id=".$blog_id);
-		$post_rss_url	= process_url("./?object=".BLOG_CLASS_NAME."&action=rss_for_single_blog&id=".$blog_id);
+		$post_html_url	= process_url("./?object=".'blog'."&action=show_posts&id=".$blog_id);
+		$post_rss_url	= process_url("./?object=".'blog'."&action=rss_for_single_blog&id=".$blog_id);
 		// Switch between ping methods
 		if ($this->BLOG_OBJ->PING_METHOD == "xml-rpc") {
 

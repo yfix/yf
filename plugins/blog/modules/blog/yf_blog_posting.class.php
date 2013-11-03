@@ -14,7 +14,7 @@ class yf_blog_posting {
 	*/
 	function _init () {
 		// Reference to parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 		$this->SETTINGS		= &$this->BLOG_OBJ->SETTINGS;
 		$this->USER_RIGHTS	= &$this->BLOG_OBJ->USER_RIGHTS;
 		if ($this->BLOG_OBJ->ALLOW_TAGGING) {
@@ -57,8 +57,8 @@ class yf_blog_posting {
 				_re(t("Post text required"));
 			}
 			// Do check captcha (if needed)
-			if (module(BLOG_CLASS_NAME)->USE_CAPTCHA) {
-				main()->_execute(BLOG_CLASS_NAME, "_captcha_check");
+			if (module('blog')->USE_CAPTCHA) {
+				main()->_execute('blog', "_captcha_check");
 			}
 			// Load attached_image
 			$attach_image = !empty($_FILES["attach_image"]["size"]) ? $this->_load_attach_image() : "";
@@ -138,7 +138,7 @@ class yf_blog_posting {
 
 				// Save tags 
 				if ($_POST["tags"]) {
-					$this->TAGS_OBJ->_save_tags($_POST["tags"], $RECORD_ID, BLOG_CLASS_NAME);
+					$this->TAGS_OBJ->_save_tags($_POST["tags"], $RECORD_ID, 'blog');
 				}
 
 				// Synchronize all blogs stats
@@ -156,7 +156,7 @@ class yf_blog_posting {
 					//if post in community
 					return js_redirect("./?object=community&action=view&id=".$community_info["id"]);
 				}else{
-					return js_redirect("./?object=".BLOG_CLASS_NAME."&action=show_posts"._add_get(array("page")));
+					return js_redirect("./?object=".'blog'."&action=show_posts"._add_get(array("page")));
 				}
 			} else {
 				$error_message = _e();
@@ -194,7 +194,7 @@ class yf_blog_posting {
 		// Show form
 		if (empty($_POST["go"]) || !empty($error_message)) {
 			$replace = array(
-				"form_action"		=> "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'blog'."&action=".$_GET["action"]._add_get(array("page")),
 				"error_message"		=> $error_message,
 				"max_attach_size"	=> intval($this->BLOG_OBJ->MAX_IMAGE_SIZE),
 				"max_width"			=> intval($this->BLOG_OBJ->ATTACH_LIMIT_X),
@@ -212,13 +212,13 @@ class yf_blog_posting {
 				"mood2"				=> !in_array($_POST["mood"], (array)$this->BLOG_OBJ->_moods) ? _prepare_html($_POST["mood"]) : "",
 				"mode_text"			=> _prepare_html($_POST["mode_text"]),
 				"add_date"			=> date("Y-m-d H:i:s", !empty($_POST["add_date"]) ? strtotime($_POST["add_date"]) : time()),
-				"back_url"			=> "./?object=".BLOG_CLASS_NAME."&action=show_posts"._add_get(array("page")),
+				"back_url"			=> "./?object=".'blog'."&action=show_posts"._add_get(array("page")),
 				"user_id"			=> intval($this->BLOG_OBJ->USER_ID),
 				"stpl_for_edit"		=> 0,
 				"custom_cats_box"	=> !empty($custom_cats_for_box) ? common()->select_box("custom_cat_id", array_merge(array(""), $custom_cats_for_box), $_POST["custom_cat_id"], false, 2, "", false) : "",
-				"edit_settings_link"=> "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")),
-				"use_captcha"		=> intval((bool)module(BLOG_CLASS_NAME)->USE_CAPTCHA),
-				"captcha_block"		=> main()->_execute(BLOG_CLASS_NAME, "_captcha_block"),
+				"edit_settings_link"=> "./?object=".'blog'."&action=settings"._add_get(array("page")),
+				"use_captcha"		=> intval((bool)module('blog')->USE_CAPTCHA),
+				"captcha_block"		=> main()->_execute('blog', "_captcha_block"),
 				"bb_codes_block"	=> $this->BLOG_OBJ->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_text", "youtube" => 1)) : "",
 				"tags"				=> $_POST["tags"],
 				"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
@@ -228,7 +228,7 @@ class yf_blog_posting {
 				"friends_group_box"		=> $friends_group_box,
 
 			);
-			$body = tpl()->parse(BLOG_CLASS_NAME."/edit_post_form", $replace);
+			$body = tpl()->parse('blog'."/edit_post_form", $replace);
 		}
 		return $body;
 	}
@@ -286,7 +286,7 @@ class yf_blog_posting {
 
 			// Save tags 
 			if (isset($_POST["tags"])) {
-				$this->TAGS_OBJ->_save_tags($_POST["tags"], $post_info["id"], BLOG_CLASS_NAME);
+				$this->TAGS_OBJ->_save_tags($_POST["tags"], $post_info["id"], 'blog');
 			}
 
 			$_POST["post_title"]	= substr($_POST["post_title"], 0, $this->BLOG_OBJ->MAX_POST_TITLE_LENGTH);
@@ -299,8 +299,8 @@ class yf_blog_posting {
 				_re(t("Post text required"));
 			}
 			// Do check captcha (if needed)
-			if (module(BLOG_CLASS_NAME)->USE_CAPTCHA) {
-				main()->_execute(BLOG_CLASS_NAME, "_captcha_check");
+			if (module('blog')->USE_CAPTCHA) {
+				main()->_execute('blog', "_captcha_check");
 			}
 			// Try to get new date
 			$_POST["add_date"] = !empty($_POST["add_date"]) ? strtotime($_POST["add_date"]) : 0;
@@ -376,7 +376,7 @@ class yf_blog_posting {
 					return js_redirect("./?object=blog&action=show_single_post&id=".$post_info["id"]);
 				}
 				
-				return js_redirect("./?object=".BLOG_CLASS_NAME."&action=show_posts"._add_get(array("page")));
+				return js_redirect("./?object=".'blog'."&action=show_posts"._add_get(array("page")));
 			} else $error_message = _e();
 		} else {
 			$_POST["post_title"]		= $post_info["title"];
@@ -430,10 +430,10 @@ class yf_blog_posting {
 			
 			// Process template
 			$replace = array(
-				"form_action"		=> "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'blog'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 				"error_message"		=> $error_message,
 				"attach_image_src"	=> $attach_web_path,
-				"del_image_link"	=> "./?object=".BLOG_CLASS_NAME."&action=delete_attach_image&id=".$_GET["id"]._add_get(array("page")),
+				"del_image_link"	=> "./?object=".'blog'."&action=delete_attach_image&id=".$_GET["id"]._add_get(array("page")),
 				"max_attach_size"	=> intval($this->BLOG_OBJ->MAX_IMAGE_SIZE),
 				"max_width"			=> intval($this->BLOG_OBJ->ATTACH_LIMIT_X),
 				"max_height"		=> intval($this->BLOG_OBJ->ATTACH_LIMIT_Y),
@@ -451,15 +451,15 @@ class yf_blog_posting {
 				"mode_text"			=> _prepare_html($_POST["mode_text"]),
 				"disable_comments"	=> intval((bool) $_POST["disable_comments"]),
 				"add_date"			=> date("Y-m-d H:i:s", !empty($_POST["add_date"]) ? $_POST["add_date"] : time()),
-				"back_url"			=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".$_GET["id"]._add_get(array("page")),
+				"back_url"			=> "./?object=".'blog'."&action=show_single_post&id=".$_GET["id"]._add_get(array("page")),
 				"user_id"			=> intval($this->BLOG_OBJ->USER_ID),
 				"stpl_for_edit"		=> 1,
 				"custom_cats_box"	=> !empty($custom_cats_for_box) ? common()->select_box("custom_cat_id", array_merge(array(""), $custom_cats_for_box), $_POST["custom_cat_id"], false, 2, "", false) : "",
-				"edit_settings_link"=> "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")),
-				"use_captcha"		=> intval((bool)module(BLOG_CLASS_NAME)->USE_CAPTCHA),
-				"captcha_block"		=> main()->_execute(BLOG_CLASS_NAME, "_captcha_block"),
+				"edit_settings_link"=> "./?object=".'blog'."&action=settings"._add_get(array("page")),
+				"use_captcha"		=> intval((bool)module('blog')->USE_CAPTCHA),
+				"captcha_block"		=> main()->_execute('blog', "_captcha_block"),
 				"bb_codes_block"	=> $this->BLOG_OBJ->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_text", "youtube" => 1)) : "",
-				"tags"				=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->_collect_tags($post_info["id"], BLOG_CLASS_NAME) : "",
+				"tags"				=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->_collect_tags($post_info["id"], 'blog') : "",
 				"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
 				"min_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MIN_KEYWORD_LENGTH : "",
 				"max_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MAX_KEYWORD_LENGTH : "",
@@ -468,7 +468,7 @@ class yf_blog_posting {
 
 
 			);
-			$body = tpl()->parse(BLOG_CLASS_NAME."/edit_post_form", $replace);
+			$body = tpl()->parse('blog'."/edit_post_form", $replace);
 		}
 		return $body;
 	}
@@ -520,7 +520,7 @@ class yf_blog_posting {
 		}
 		// Do delete post and its comments
 		db()->query("DELETE FROM ".db('blog_posts')." WHERE id=".intval($post_info["id"])." AND user_id='".intval($post_info["user_id"])."' LIMIT 1");
-		db()->query("DELETE FROM ".db('comments')." WHERE object_name='"._es(BLOG_CLASS_NAME)."' AND object_id=".intval($post_info["id"]));
+		db()->query("DELETE FROM ".db('comments')." WHERE object_name='"._es('blog')."' AND object_id=".intval($post_info["id"]));
 		// Last update
 		update_user($this->BLOG_OBJ->USER_ID, array("last_update"=>time()));
 		// Synchronize all blogs stats
@@ -536,7 +536,7 @@ class yf_blog_posting {
 			return js_redirect("./?object=community");
 		}
 		
-		return js_redirect("./?object=".BLOG_CLASS_NAME."&action=show_posts"._add_get(array("page")));
+		return js_redirect("./?object=".'blog'."&action=show_posts"._add_get(array("page")));
 	}
 
 	/**

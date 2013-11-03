@@ -57,8 +57,6 @@ class yf_articles extends yf_module {
 	* @return	void
 	*/
 	function _init () {
-		// Articles modules folder
-		define("ARTICLES_MODULES_DIR", USER_MODULES_DIR. 'articles'."/");
 		// Array of select boxes to process
 		$this->_boxes = array(
 			"cat_id"		=> 'select_box("cat_id", $this->_cats_for_select, $selected, false, 2, "style=\"width:100%;\"", false)',
@@ -669,7 +667,7 @@ class yf_articles extends yf_module {
 	* Try to load sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		return _class($module_name, ARTICLES_MODULES_DIR);
+		return _class($module_name, 'modules/articles/');
 	}
 
 	/**

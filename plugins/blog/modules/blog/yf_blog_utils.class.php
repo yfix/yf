@@ -14,7 +14,7 @@ class yf_blog_utils {
 	*/
 	function _init () {
 		// Reference to parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 	}
 
 	/**

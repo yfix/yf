@@ -124,10 +124,6 @@ class yf_blog extends yf_module {
 	* @return	void
 	*/
 	function _init () {
-		// Blog class name (to allow changing only in one place)
-		define("BLOG_CLASS_NAME", "blog");
-		// Blog modules folder
-		define("BLOG_MODULES_DIR", USER_MODULES_DIR. BLOG_CLASS_NAME."/");
 		// Set dir name
 		if (defined("SITE_BLOG_IMAGES_DIR")) {
 			$this->ATTACH_IMAGES_DIR = SITE_BLOG_IMAGES_DIR;
@@ -164,8 +160,8 @@ class yf_blog extends yf_module {
 		$this->_numbers = range(0,9);
 		// Get blogs categories
 		$this->CATS_OBJ		= main()->init_class("cats", "classes/");
-		$this->_blog_cats	= $this->CATS_OBJ->_get_items_names(BLOG_CLASS_NAME."_cats");
-		$this->_blog_cats2	= $this->CATS_OBJ->_prepare_for_box(BLOG_CLASS_NAME."_cats");
+		$this->_blog_cats	= $this->CATS_OBJ->_get_items_names('blog'."_cats");
+		$this->_blog_cats2	= $this->CATS_OBJ->_prepare_for_box('blog'."_cats");
 		// Get moods
 		$this->_moods = main()->get_data("locale:moods");
 		// Check total id mode
@@ -295,11 +291,11 @@ class yf_blog extends yf_module {
 			$replace = array(
 				"is_logged_in"	=> intval((bool) main()->USER_ID),
 				"is_own_blog"	=> intval(($_GET["id"] && main()->USER_ID == $_GET["id"]) || (!$_GET["id"] && main()->USER_ID)),
-				"start_link"	=> "./?object=".BLOG_CLASS_NAME."&action=start"._add_get(array("page")),
+				"start_link"	=> "./?object=".'blog'."&action=start"._add_get(array("page")),
 				"user_id"		=> intval(main()->USER_ID),
 				"user_avatar"	=> _show_avatar($user_info["id"], _display_name($user_info), 1, 0),
 			);
-			$body = tpl()->parse(BLOG_CLASS_NAME."/no_blog_yet", $replace);
+			$body = tpl()->parse('blog'."/no_blog_yet", $replace);
 		} else {
 			$body = $this->_view_user_posts(intval($user_id), intval($num_user_posts));
 		}
@@ -375,7 +371,7 @@ class yf_blog extends yf_module {
 				}
 			}
 			$total_posts		= count($posts_ids_to_show);
-			$path				= "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"].
+			$path				= "./?object=".'blog'."&action=".$_GET["action"].
 				"&id=".($this->HIDE_TOTAL_ID ? "" : $_GET["id"]."-").$this->CUR_YEAR
 				.($this->CUR_MONTH ? "-".$this->CUR_MONTH : "")
 				.($this->CUR_DAY ? "-".$this->CUR_DAY : "");
@@ -394,7 +390,7 @@ class yf_blog extends yf_module {
 		} else {
 			$posts_ids_to_show	= array_slice($this->_all_posts_ids, $_GET["page"] ? ($_GET["page"] - 1) * $this->POSTS_PER_PAGE : 0, $this->POSTS_PER_PAGE);
 			$total_posts		= count($this->_all_posts_ids);
-			$path				= "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$user_id);
+			$path				= "./?object=".'blog'."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$user_id);
 		}
 		// Get selected posts details
 		if (is_array($posts_ids_to_show) && !empty($posts_ids_to_show)) {
@@ -446,23 +442,23 @@ class yf_blog extends yf_module {
 		$replace = array(
 			"user_name"				=> _prepare_html(_display_name($user_info)),
 			"user_profile_link"		=> _profile_link($user_id),
-			"change_settings_link"	=> $user_id == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")) : "",
-			"add_post_link"			=> $user_id == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=add_post"._add_get(array("page")) : "",
-			"users_comments_link"	=> $user_id == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=search_comments"._add_get(array("page")) : "",
+			"change_settings_link"	=> $user_id == main()->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
+			"add_post_link"			=> $user_id == main()->USER_ID ? "./?object=".'blog'."&action=add_post"._add_get(array("page")) : "",
+			"users_comments_link"	=> $user_id == main()->USER_ID ? "./?object=".'blog'."&action=search_comments"._add_get(array("page")) : "",
 			"posts"					=> $posts,
-			"page_link"				=> process_url("./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$_GET["id"])),
+			"page_link"				=> process_url("./?object=".'blog'."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$_GET["id"])),
 			"latest_posts"			=> $this->_latest_posts,
 			"archive_date"			=> $archive_date,
 			"pages"					=> trim($pages),
 			"right_block"			=> $this->_show_right_block(),
 			"blog_title"			=> _prepare_html($this->BLOG_SETTINGS["blog_title"]),
-			"user_blog_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$user_id). _add_get(array("page")),
+			"user_blog_link"		=> "./?object=".'blog'."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$user_id). _add_get(array("page")),
 			"user_avatar"			=> _show_avatar($user_info["id"], $user_info, 1, 1),
 			"reput_text"			=> $reput_text,
 			"custom_cat_name"		=> $custom_cat_name,
-			"rss_posts_button"		=> $this->_show_rss_link("./?object=".BLOG_CLASS_NAME."&action=rss_for_single_blog".($this->HIDE_TOTAL_ID ? "" : "&id=".$user_id), "RSS feed for blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
+			"rss_posts_button"		=> $this->_show_rss_link("./?object=".'blog'."&action=rss_for_single_blog".($this->HIDE_TOTAL_ID ? "" : "&id=".$user_id), "RSS feed for blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
 		);
-		$body = tpl()->parse(BLOG_CLASS_NAME."/view_blog_main", $replace);
+		$body = tpl()->parse('blog'."/view_blog_main", $replace);
 		// Update number of reads
 		if (is_array($posts_ids) && empty($GLOBALS['blog_no_count_views'])) {
 			db()->query("UPDATE ".db('blog_posts')." SET num_reads = num_reads + 1 WHERE id IN(".implode(",", $posts_ids).")");
@@ -505,7 +501,7 @@ class yf_blog extends yf_module {
 			if ($i++ < $this->NUM_LATEST_POSTS) {
 				$post_title = $this->_format_text($post_info["title"]);
 				$this->_latest_posts[$post_info["id"]] = array(
-					"post_link"	=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")),
+					"post_link"	=> "./?object=".'blog'."&action=show_single_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")),
 					"post_title"=> $this->LATEST_POSTS_CUT_LENGTH && strlen($post_title) > $this->LATEST_POSTS_CUT_LENGTH ? _substr($post_title, 0, $this->LATEST_POSTS_CUT_LENGTH)."..." : $post_title,
 				);
 			}
@@ -625,23 +621,23 @@ class yf_blog extends yf_module {
 			"user_name"				=> _prepare_html(_display_name($user_info)),
 			"user_avatar"			=> _show_avatar($user_info["id"], $user_info, 1, 1),
 			"user_profile_link"		=> _profile_link($this->_post_info["user_id"]),
-			"change_settings_link"	=> $this->_post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=settings"._add_get(array("page")) : "",
-			"add_post_link"			=> $this->_post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=add_post"._add_get(array("page")) : "",
-			"post_info"				=> $this->_show_post_item($this->_post_info, count($comments_array), 0, BLOG_CLASS_NAME."/single_post_item"),
-			"user_blog_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]). _add_get(array("page")),
-			"back_url"				=> "./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]). _add_get(array("page")),
-			"page_link"				=> process_url("./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$_GET["id"])),
+			"change_settings_link"	=> $this->_post_info["user_id"] == main()->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
+			"add_post_link"			=> $this->_post_info["user_id"] == main()->USER_ID ? "./?object=".'blog'."&action=add_post"._add_get(array("page")) : "",
+			"post_info"				=> $this->_show_post_item($this->_post_info, count($comments_array), 0, 'blog'."/single_post_item"),
+			"user_blog_link"		=> "./?object=".'blog'."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]). _add_get(array("page")),
+			"back_url"				=> "./?object=".'blog'."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]). _add_get(array("page")),
+			"page_link"				=> process_url("./?object=".'blog'."&action=".$_GET["action"]. ($this->HIDE_TOTAL_ID ? "" : "&id=".$_GET["id"])),
 			"user_id"				=> intval(main()->USER_ID),
 			"right_block"			=> $this->_show_right_block(),
 			"blog_title"			=> _prepare_html($this->BLOG_SETTINGS["blog_title"]),
 			"reput_text"			=> $reput_text,
 			"comments"				=> $comments_allowed ? $this->_view_comments(array("object_id" => $this->_post_info["id"])) : "",
 			"vote_popup_link"		=> $SHOW_REPUT_LINK ? process_url("./?object=reputation&action=vote_popup&id=".$this->_post_info["user_id"]."&page=".$_GET["object"]."--".$this->_post_info["id"]) : "",
-			"rss_posts_button"		=> $this->_show_rss_link("./?object=".BLOG_CLASS_NAME."&action=rss_for_single_blog". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]), "RSS feed for blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
+			"rss_posts_button"		=> $this->_show_rss_link("./?object=".'blog'."&action=rss_for_single_blog". ($this->HIDE_TOTAL_ID ? "" : "&id=".$this->_post_info["user_id"]), "RSS feed for blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
 			"poll_block"			=> $this->_poll($this->_post_info["id"]),
 			"related_posts"			=> $this->_show_related_posts($this->_post_info),
 		);
-		return tpl()->parse(BLOG_CLASS_NAME."/single_post_main", $replace);
+		return tpl()->parse('blog'."/single_post_main", $replace);
 	}
 
 	/**
@@ -676,7 +672,7 @@ class yf_blog extends yf_module {
 				"post_id"	=> intval($A["id"]),
 				"post_date"	=> _format_date($A["add_date"]),
 				"post_title"=> _prepare_html($A["title"]),
-				"post_link"	=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".$A["id"],
+				"post_link"	=> "./?object=".'blog'."&action=show_single_post&id=".$A["id"],
 			);
 		}
 		return $result;
@@ -687,7 +683,7 @@ class yf_blog extends yf_module {
 	*/
 	function _show_post_item ($post_info = array(), $num_comments = 0, $counter = 0, $stpl_name = "") {
 		if (empty($stpl_name)) {
-			$stpl_name = BLOG_CLASS_NAME."/view_blog_item";
+			$stpl_name = 'blog'."/view_blog_item";
 		}
 		$custom_cat_name	= $this->_user_custom_cats[$post_info["custom_cat_id"] - 1]["name"];
 		$custom_cat_link	= $this->_user_custom_cats[$post_info["custom_cat_id"] - 1]["link"];
@@ -720,15 +716,15 @@ class yf_blog extends yf_module {
 			"text"				=> $this->_format_text($post_info["text"]),
 			"add_date"			=> _format_date($post_info["add_date"], "long"),
 			"num_comments"		=> $cur_allow_comments < 9 ? intval($num_comments) : -1,
-			"show_post_link"	=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")),
-			"edit_post_link"	=> $post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=edit_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
-			"delete_post_link"	=> $post_info["user_id"] == main()->USER_ID ? "./?object=".BLOG_CLASS_NAME."&action=delete_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
+			"show_post_link"	=> "./?object=".'blog'."&action=show_single_post&id=".($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")),
+			"edit_post_link"	=> $post_info["user_id"] == main()->USER_ID ? "./?object=".'blog'."&action=edit_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
+			"delete_post_link"	=> $post_info["user_id"] == main()->USER_ID ? "./?object=".'blog'."&action=delete_post&id=". ($this->HIDE_TOTAL_ID ? $post_info["id2"] : $post_info["id"]). _add_get(array("page")) : "",
 			"attach_image_src"	=> $attach_web_path,
 			"mood"				=> _prepare_html($this->_prepare_mood($post_info["mood"])),
 			"mode_text"			=> _prepare_html(!empty($post_info["mode_type"]) ? $post_info["mode_text"] : ""),
 			"mode_type"			=> _prepare_html($this->_mode_types[$post_info["mode_type"]]),
 			"blog_cat_name"		=> !empty($this->_blog_cats[$post_info["cat_id"]]) ? _prepare_html($this->_blog_cats[$post_info["cat_id"]]) : "",
-			"blog_cat_link"		=> !empty($this->_blog_cats[$post_info["cat_id"]]) ? "./?object=".BLOG_CLASS_NAME."&action=show_in_cat&id=".$post_info["cat_id"] : "",
+			"blog_cat_link"		=> !empty($this->_blog_cats[$post_info["cat_id"]]) ? "./?object=".'blog'."&action=show_in_cat&id=".$post_info["cat_id"] : "",
 			"custom_cat_name"	=> !empty($custom_cat_name) ? $custom_cat_name : "",
 			"custom_cat_link"	=> $custom_cat_link,
 			"privacy_status"	=> $cur_privacy > 0 ? $this->_privacy_types[$cur_privacy] : "",
@@ -949,11 +945,11 @@ class yf_blog extends yf_module {
 		$Q = db()->query("SELECT id,id2,title,add_date FROM ".db('blog_posts')." WHERE user_id=".intval($user_info["id"])." AND active=1 ORDER BY add_date DESC LIMIT ".intval($this->NUM_FOR_PROFILE));
 		while ($A = db()->fetch_assoc($Q)) {
 			$replace2 = array(
-				"post_link"	=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".($this->HIDE_TOTAL_ID ? $A["id2"] : $A["id"]). _add_get(array("page")),
+				"post_link"	=> "./?object=".'blog'."&action=show_single_post&id=".($this->HIDE_TOTAL_ID ? $A["id2"] : $A["id"]). _add_get(array("page")),
 				"post_title"=> $this->_format_text($A["title"]),
 				"add_date"	=> _format_date($A["add_date"], "long"),
 			);
-			$items .= tpl()->parse(BLOG_CLASS_NAME."/for_profile_item", $replace2);
+			$items .= tpl()->parse('blog'."/for_profile_item", $replace2);
 		}
 		// Stop here if no items is found
 		$items = trim($items);
@@ -963,10 +959,10 @@ class yf_blog extends yf_module {
 		// Process template
 		$replace = array(
 			"is_logged_in"	=> intval((bool) main()->USER_ID),
-			"user_blog_link"=> "./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")),
+			"user_blog_link"=> "./?object=".'blog'."&action=show_posts". ($this->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")),
 			"items"			=> $items,
 		);
-		return tpl()->parse(BLOG_CLASS_NAME."/for_profile_main", $replace);
+		return tpl()->parse('blog'."/for_profile_main", $replace);
 	}
 
 	/**

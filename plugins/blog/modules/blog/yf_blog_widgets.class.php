@@ -14,7 +14,7 @@ class yf_blog_widgets {
 	*/
 	function _init () {
 		// Reference to parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 	}
 	
 	/**
@@ -72,17 +72,17 @@ class yf_blog_widgets {
 			// Process template
 			$replace2 = array(
 				"result_num"	=> $i,
-				"cat_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_in_cat&id=".$cat_id._add_get(array("page")),
+				"cat_link"		=> "./?object=".'blog'."&action=show_in_cat&id=".$cat_id._add_get(array("page")),
 				"cat_name"		=> _prepare_html($cat_name),
 				"num_posts"		=> intval($num_posts),
-				"rss_cat_button"=> $this->BLOG_OBJ->_show_rss_link("./?object=".BLOG_CLASS_NAME."&action=rss_for_cat&id=".$cat_id, "RSS feed for posts inside blog category: ".$cat_name),
+				"rss_cat_button"=> $this->BLOG_OBJ->_show_rss_link("./?object=".'blog'."&action=rss_for_cat&id=".$cat_id, "RSS feed for posts inside blog category: ".$cat_name),
 			);
-			$blog_cats_posts .= tpl()->parse(BLOG_CLASS_NAME."/widget_category_item", $replace2);
+			$blog_cats_posts .= tpl()->parse('blog'."/widget_category_item", $replace2);
 		}
 		$replace = array(
 			"cats" => $blog_cats_posts,
 		);
-		return $blog_cats_posts ? tpl()->parse(BLOG_CLASS_NAME."/widget_cats", $replace) : "";
+		return $blog_cats_posts ? tpl()->parse('blog'."/widget_cats", $replace) : "";
 	}
 
 	/**
@@ -100,7 +100,7 @@ class yf_blog_widgets {
 		$replace = array(
 			"items" => $items,
 		);
-		return tpl()->parse(BLOG_CLASS_NAME."/widget_cloud", $replace);
+		return tpl()->parse('blog'."/widget_cloud", $replace);
 	}
 
 	/**
@@ -143,6 +143,6 @@ class yf_blog_widgets {
 		$replace = array(
 			"blog_links"	=> $blog_links,
 		);
-		return tpl()->parse(BLOG_CLASS_NAME."/widget_friendly_sites", $replace);
+		return tpl()->parse('blog'."/widget_friendly_sites", $replace);
 	}
 }

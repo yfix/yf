@@ -14,7 +14,7 @@ class yf_blog_rss {
 	*/
 	function _init () {
 		// Reference to parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 		$this->SETTINGS		= &$this->BLOG_OBJ->SETTINGS;
 		$this->USER_RIGHTS	= &$this->BLOG_OBJ->USER_RIGHTS;
 	}
@@ -80,7 +80,7 @@ class yf_blog_rss {
 			// Fill item data
 			$data[] = array(
 				"title"			=> $this->BLOG_OBJ->_format_text($A["post_title"]),
-				"link"			=> process_url("./?object=".BLOG_CLASS_NAME."&action=show_posts&id=".$A["user_id"]),
+				"link"			=> process_url("./?object=".'blog'."&action=show_posts&id=".$A["user_id"]),
 				"description"	=> _prepare_html(strip_tags($this->BLOG_OBJ->_format_text($post_text))),
 				"date"			=> $A["post_date"],
 				"author"		=> _prepare_html(_display_name($this->_users_infos[$A["user_id"]]), 0),
@@ -92,7 +92,7 @@ class yf_blog_rss {
 			"feed_file_name"	=> "feed_all_blogs_latest",
 			"feed_title"		=> "Latest posts inside board",
 			"feed_desc"			=> "Latest posts inside board",
-			"feed_url"			=> process_url("./?object=".BLOG_CLASS_NAME),
+			"feed_url"			=> process_url("./?object=".'blog'),
 		);
 		return common()->rss_page($data, $params);
 	}
@@ -153,7 +153,7 @@ class yf_blog_rss {
 			// Fill item data
 			$data[] = array(
 				"title"			=> $this->BLOG_OBJ->_format_text($A["title"]),
-				"link"			=> process_url("./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=". ($this->BLOG_OBJ->HIDE_TOTAL_ID ? $A["id2"] : $A["id"])),
+				"link"			=> process_url("./?object=".'blog'."&action=show_single_post&id=". ($this->BLOG_OBJ->HIDE_TOTAL_ID ? $A["id2"] : $A["id"])),
 				"description"	=> _prepare_html(strip_tags($this->BLOG_OBJ->_format_text($post_text))),
 				"date"			=> $A["add_date"],
 				"author"		=> _prepare_html(_display_name($user_info), 0),
@@ -165,7 +165,7 @@ class yf_blog_rss {
 			"feed_file_name"	=> "feed_blog_posts_".$user_id,
 			"feed_title"		=> _prepare_html("Latest posts inside blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
 			"feed_desc"			=> _prepare_html("Latest posts inside blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
-			"feed_url"			=> process_url("./?object=".BLOG_CLASS_NAME."&action=show_posts". ($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_id)),
+			"feed_url"			=> process_url("./?object=".'blog'."&action=show_posts". ($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_id)),
 		);
 		return common()->rss_page($data, $params);
 	}
@@ -237,7 +237,7 @@ class yf_blog_rss {
 			// Fill item data
 			$data[] = array(
 				"title"			=> $this->BLOG_OBJ->_format_text($A["post_title"]),
-				"link"			=> process_url("./?object=".BLOG_CLASS_NAME."&action=show_posts&id=".$A["user_id"]),
+				"link"			=> process_url("./?object=".'blog'."&action=show_posts&id=".$A["user_id"]),
 				"description"	=> _prepare_html(strip_tags($this->BLOG_OBJ->_format_text($post_text))),
 				"date"			=> $A["post_date"],
 				"author"		=> _prepare_html(_display_name($this->_users_infos[$A["user_id"]]), 0),
@@ -251,7 +251,7 @@ class yf_blog_rss {
 			"feed_file_name"	=> "feed_blog_cat_".$_GET["id"],
 			"feed_title"		=> _prepare_html("Latest posts inside blog category: ".$cat_name),
 			"feed_desc"			=> _prepare_html("Latest posts inside blog category: ".$cat_name),
-			"feed_url"			=> process_url("./?object=".BLOG_CLASS_NAME."&action=show_in_cat&id=".$cat_id),
+			"feed_url"			=> process_url("./?object=".'blog'."&action=show_in_cat&id=".$cat_id),
 		);
 		return common()->rss_page($data, $params);
 	}
@@ -331,7 +331,7 @@ class yf_blog_rss {
 			// Fill item data
 			$data[] = array(
 				"title"			=> $this->BLOG_OBJ->_format_text($post_info["post_title"]),
-				"link"			=> process_url("./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".$post_info["post_id"]),
+				"link"			=> process_url("./?object=".'blog'."&action=show_single_post&id=".$post_info["post_id"]),
 				"description"	=> _prepare_html(strip_tags($this->BLOG_OBJ->_format_text($post_text))),
 				"date"			=> $post_info["add_date"],
 				"author"		=> _prepare_html(_display_name($user_info), 0),
@@ -343,7 +343,7 @@ class yf_blog_rss {
 			"feed_file_name"	=> "feed_blog_friends_posts_".$user_id,
 			"feed_title"		=> _prepare_html("Latest friends posts for blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
 			"feed_desc"			=> _prepare_html("Latest friends posts for blog: ".(!empty($this->BLOG_SETTINGS["blog_title"]) ? $this->BLOG_SETTINGS["blog_title"] : _display_name($user_info)."'s blog")),
-			"feed_url"			=> process_url("./?object=".BLOG_CLASS_NAME."&action=friends_posts&id=".$user_id),
+			"feed_url"			=> process_url("./?object=".'blog'."&action=friends_posts&id=".$user_id),
 		);
 		return common()->rss_page($data, $params);
 	}

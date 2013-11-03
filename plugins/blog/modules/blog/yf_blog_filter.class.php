@@ -14,7 +14,7 @@ class yf_blog_filter {
 	*/
 	function _init () {
 		// Reference to the parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 		// Prepare data
 		if ($this->BLOG_OBJ->USE_FILTER) {
 			$this->_prepare_filter_data();
@@ -93,7 +93,7 @@ class yf_blog_filter {
 			"show",
 		))) return "";
 		// Filter session array name
-		$this->_filter_name	= BLOG_CLASS_NAME."_filter";
+		$this->_filter_name	= 'blog'."_filter";
 		// Connect common used arrays
 		$f = INCLUDE_PATH."common_code.php";
 		if (file_exists($f)) {
@@ -154,8 +154,8 @@ class yf_blog_filter {
 	function _show_filter () {
 		if (!$this->BLOG_OBJ->USE_FILTER) return "";
 		$replace = array(
-			"save_action"	=> "./?object=".BLOG_CLASS_NAME."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".BLOG_CLASS_NAME."&action=clear_filter"._add_get(),
+			"save_action"	=> "./?object=".'blog'."&action=save_filter"._add_get(),
+			"clear_url"		=> "./?object=".'blog'."&action=clear_filter"._add_get(),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -164,7 +164,7 @@ class yf_blog_filter {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse(BLOG_CLASS_NAME."/search_filter", $replace);
+		return tpl()->parse('blog'."/search_filter", $replace);
 	}
 
 	/**
@@ -180,7 +180,7 @@ class yf_blog_filter {
 			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_POST[$name];
 		}
 		if (!$silent) {
-			js_redirect("./?object=".BLOG_CLASS_NAME."&action=show_all_blogs");
+			js_redirect("./?object=".'blog'."&action=show_all_blogs");
 		}
 	}
 
@@ -193,7 +193,7 @@ class yf_blog_filter {
 			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
 		}
 		if (!$silent) {
-			js_redirect("./?object=".BLOG_CLASS_NAME."&action=show_all_blogs");
+			js_redirect("./?object=".'blog'."&action=show_all_blogs");
 		}
 	}
 

@@ -13,7 +13,7 @@ class yf_blog_integration {
 	* Framework constructor
 	*/
 	function _init () {
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 	}
 
 	/**
@@ -55,7 +55,7 @@ class yf_blog_integration {
 				"post_title"	=> _prepare_html($A["title"]),
 				"post_link"		=> "./?object=blog&action=show_single_post&id=".$A["id"],
 			);			
-			$items .= tpl()->parse(BLOG_CLASS_NAME."/".$stpl_name, $replace2);
+			$items .= tpl()->parse('blog'."/".$stpl_name, $replace2);
 		}
 		if(empty($items)) {
 			return;
@@ -63,7 +63,7 @@ class yf_blog_integration {
 		$replace = array(
 			"items"	=> $items,
 		);
-		return tpl()->parse(BLOG_CLASS_NAME."/for_home_page_main2", $replace);
+		return tpl()->parse('blog'."/for_home_page_main2", $replace);
 	}
 
 	/**
@@ -80,7 +80,7 @@ class yf_blog_integration {
 				"created"	=> _format_date($A["add_date"]),
 				"view_link"	=> "./?object=blog&action=show_single_post&id=".$A["id"],
 			);
-			$items .= tpl()->parse(BLOG_CLASS_NAME."/for_profile_blog_item", $replace2);
+			$items .= tpl()->parse('blog'."/for_profile_blog_item", $replace2);
 		}
 		$value[0] = $items;
 		$value[1] = $pages;

@@ -14,7 +14,7 @@ class yf_blog_right_block {
 	*/
 	function _init () {
 		// Reference to the parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 		$this->SETTINGS		= &$this->BLOG_OBJ->SETTINGS;
 		$this->USER_RIGHTS	= &$this->BLOG_OBJ->USER_RIGHTS;
 	}
@@ -37,7 +37,7 @@ class yf_blog_right_block {
 		if (is_object($CALENDAR_OBJ) && !empty($this->BLOG_OBJ->_posts_by_days)) {
 			$CALENDAR_OBJ->_set_params(array(
 				"selected_dates"	=> array_keys($this->BLOG_OBJ->_posts_by_days),
-				"on_select_link"	=> process_url("./?object=".BLOG_CLASS_NAME."&action=show_posts_archive&id=".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : $user_info["id"]."-")."{id}"),
+				"on_select_link"	=> process_url("./?object=".'blog'."&action=show_posts_archive&id=".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : $user_info["id"]."-")."{id}"),
 				"start_date"		=> array_shift(array_keys($this->BLOG_OBJ->_posts_by_days)),
 				"end_date"			=> array_pop(array_keys($this->BLOG_OBJ->_posts_by_days)),
 				"cur_month"			=> $this->BLOG_OBJ->CUR_YEAR."-".$this->BLOG_OBJ->CUR_MONTH."-".($this->BLOG_OBJ->CUR_YEAR != date("Y") || $this->BLOG_OBJ->CUR_MONTH != date("m") ? "01" : date("d")),
@@ -57,7 +57,7 @@ class yf_blog_right_block {
 					"is_year"	=> 1,
 					"year"		=> $_year,
 					"name"		=> "",
-					"link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts_archive&id=".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : $user_info["id"]."-").$_year,
+					"link"		=> "./?object=".'blog'."&action=show_posts_archive&id=".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : $user_info["id"]."-").$_year,
 					"num_posts"	=> (int)array_sum($_posts_by_months),
 				);
 			}
@@ -70,7 +70,7 @@ class yf_blog_right_block {
 					"is_year"	=> 0,
 					"year"		=> $_year,
 					"name"		=> date("F", strtotime($_year."-".$_month."-01")),
-					"link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts_archive&id=".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : $user_info["id"]."-").$_year."-".$_month,
+					"link"		=> "./?object=".'blog'."&action=show_posts_archive&id=".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : $user_info["id"]."-").$_year."-".$_month,
 					"num_posts"	=> intval($_num_posts),
 				);
 			}
@@ -79,10 +79,10 @@ class yf_blog_right_block {
 		if ($params["for_widgets"]) {
 			$replace = array(
 				"archive_nav"		=> $archive_nav ? $archive_nav : "",
-				"all_posts_link"	=> !empty($this->BLOG_OBJ->_latest_posts) ? "./?object=".BLOG_CLASS_NAME."&action=show_posts".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]) : "",
+				"all_posts_link"	=> !empty($this->BLOG_OBJ->_latest_posts) ? "./?object=".'blog'."&action=show_posts".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]) : "",
 				"latest_posts"		=> $this->BLOG_OBJ->_latest_posts,
 			);
-			return tpl()->parse(BLOG_CLASS_NAME."/widget_archive", $replace);
+			return tpl()->parse('blog'."/widget_archive", $replace);
 		}
 		// Process right column template
 		$replace2 = array(
@@ -92,15 +92,15 @@ class yf_blog_right_block {
 			"archive_date"			=> !empty($this->BLOG_OBJ->CUR_MONTH) ? date("F Y", strtotime($this->BLOG_OBJ->CUR_YEAR."-".$this->BLOG_OBJ->CUR_MONTH."-01")) : "",
 			"calendar_code"			=> is_object($CALENDAR_OBJ) ? $CALENDAR_OBJ->_display_code() : "",
 			"calendar_container"	=> is_object($CALENDAR_OBJ) ? $CALENDAR_OBJ->_display_container() : "",
-			"all_posts_link"		=> !empty($this->BLOG_OBJ->_latest_posts) ? "./?object=".BLOG_CLASS_NAME."&action=show_posts".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]) : "",
+			"all_posts_link"		=> !empty($this->BLOG_OBJ->_latest_posts) ? "./?object=".'blog'."&action=show_posts".($this->BLOG_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]) : "",
 			"archive_nav"			=> $archive_nav ? $archive_nav : "",
 			"blog_links"			=> $this->_show_blog_links(),
 			"custom_cats"			=> $this->_show_custom_cats(),
 			"friends_posts"			=> $this->_show_friends_posts(),
-			"all_friends_posts_link"=> "./?object=".BLOG_CLASS_NAME."&action=friends_posts&id=".$user_info["id"],
-			"rss_friends_button"	=> $this->BLOG_OBJ->_show_rss_link("./?object=".BLOG_CLASS_NAME."&action=rss_for_friends_posts&id=".$user_info["id"], "RSS feed for friends posts"),
+			"all_friends_posts_link"=> "./?object=".'blog'."&action=friends_posts&id=".$user_info["id"],
+			"rss_friends_button"	=> $this->BLOG_OBJ->_show_rss_link("./?object=".'blog'."&action=rss_for_friends_posts&id=".$user_info["id"], "RSS feed for friends posts"),
 		);
-		$body = tpl()->parse(BLOG_CLASS_NAME."/right_column", $replace2);
+		$body = tpl()->parse('blog'."/right_column", $replace2);
 		$GLOBALS['right_block_items'][] = $body;
 		return $body;
 	}
@@ -186,7 +186,7 @@ class yf_blog_right_block {
 		while ($post_info = db()->fetch_assoc($Q)) {
 			$posts_array[$post_info["post_id"]] = array(
 				"post_id"		=> intval($post_info["post_id"]),
-				"post_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_single_post&id=".$post_info["post_id"]._add_get(array("page")),
+				"post_link"		=> "./?object=".'blog'."&action=show_single_post&id=".$post_info["post_id"]._add_get(array("page")),
 				"post_title"	=> _prepare_html($post_info["post_title"]),
 				"post_date"		=> _format_date($post_info["add_date"], "long"),
 				"user_id"		=> intval($post_info["user_id"]),

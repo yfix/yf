@@ -10,7 +10,7 @@ class yf_blog_search_comments {
 	*/
 	function _init () {
 		// Reference to parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
+		$this->BLOG_OBJ		= module('blog');
 		$this->SETTINGS		= &$this->BLOG_OBJ->SETTINGS;
 		$this->USER_RIGHTS	= &$this->BLOG_OBJ->USER_RIGHTS;
 	}
@@ -156,7 +156,7 @@ class yf_blog_search_comments {
 		}
 		$comment_info = db()->query_fetch(
 			"SELECT * FROM ".db('comments')." 
-			WHERE object_name='".BLOG_CLASS_NAME."' 
+			WHERE object_name='".'blog'."' 
 				AND object_id IN(
 					SELECT id FROM ".db('blog_posts')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
@@ -169,6 +169,6 @@ class yf_blog_search_comments {
 		if (is_object($COMMENTS_OBJ)) {
 			$COMMENTS_OBJ->_delete(array("silent_mode" => 1));
 		}
-		return js_redirect("./?object=".BLOG_CLASS_NAME."&action=search_comments");
+		return js_redirect("./?object=".'blog'."&action=search_comments");
 	}
 }
