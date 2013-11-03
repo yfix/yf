@@ -294,9 +294,8 @@ class yf_forum {
 	* View topic contents
 	*/
 	function view_topic () {
-		$OBJ = $this->_load_sub_module("forum_view_topic_".($this->SETTINGS["TOPIC_VIEW_TYPE"] == 1 ? "tree" : "flat"));
-		$this->_VIEW_TOPIC_OBJ = &$OBJ;
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		$submodule_name = "forum_view_topic_".($this->SETTINGS["TOPIC_VIEW_TYPE"] == 1 ? "tree" : "flat");
+		return $this->_load_sub_module($submodule_name)->_show_main();
 	}
 
 	/**
@@ -305,9 +304,9 @@ class yf_forum {
 	function view_post () {
 		$GLOBALS['show_only_post_id'] = true;
 		$this->SETTINGS["TOPIC_VIEW_TYPE"] = 2;
-		$OBJ = $this->_load_sub_module("forum_view_topic_".($this->SETTINGS["TOPIC_VIEW_TYPE"] == 1 ? "tree" : "flat"));
-		$this->_VIEW_TOPIC_OBJ = &$OBJ;
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+
+		$submodule_name = "forum_view_topic_".($this->SETTINGS["TOPIC_VIEW_TYPE"] == 1 ? "tree" : "flat");
+		return $this->_load_sub_module($submodule_name)->_show_main();
 	}
 
 	/**
@@ -416,40 +415,35 @@ class yf_forum {
 	* Contact with admin form
 	*/
 	function contact_admin () {
-		$OBJ = $this->_load_sub_module("forum_help");
-		return is_object($OBJ) ? $OBJ->_contact_admin() : "";
+		return $this->_load_sub_module("forum_help")->_contact_admin();
 	}
 
 	/**
 	* Help on bb code
 	*/
 	function bb_code_help () {
-		$OBJ = $this->_load_sub_module("forum_help");
-		return is_object($OBJ) ? $OBJ->_bb_code_help() : "";
+		return $this->_load_sub_module("forum_help")->_bb_code_help();
 	}
 
 	/**
 	* New topic creation form
 	*/
 	function new_topic () {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_new_topic() : "";
+		return $this->_load_sub_module("forum_post")->_new_topic();
 	}
 
 	/**
 	* Add new post item
 	*/
 	function new_poll () {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_new_poll() : "";
+		return $this->_load_sub_module("forum_post")->_new_poll();
 	}
 
 	/**
 	* Reply to the existing topic (post message)
 	*/
 	function reply () {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_reply() : "";
+		return $this->_load_sub_module("forum_post")->_reply();
 	}
 
 	/**
@@ -457,64 +451,56 @@ class yf_forum {
 	*/
 	function reply_no_quote () {
 		$GLOBALS['_forum_reply_no_quote'] = true;
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_reply() : "";
+		return $this->_load_sub_module("forum_post")->_reply();
 	}
 
 	/**
 	* Add new post item
 	*/
 	function new_post () {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_new_post() : "";
+		return $this->_load_sub_module("forum_post")->_new_post();
 	}
 
 	/**
 	* Edit post
 	*/
 	function edit_post () {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_edit_post() : "";
+		return $this->_load_sub_module("forum_post")->_edit_post();
 	}
 
 	/**
 	* Delete post
 	*/
 	function delete_post ($SILENT_MODE = false, $_FORCE_ID = 0) {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_delete_post($SILENT_MODE, $_FORCE_ID) : "";
+		return $this->_load_sub_module("forum_post")->_delete_post($SILENT_MODE, $_FORCE_ID);
 	}
 
 	/**
 	* Save new post
 	*/
 	function save_post () {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_save_post() : "";
+		return $this->_load_sub_module("forum_post")->_save_post();
 	}
 
 	/**
 	* Edit personal info
 	*/
 	function edit_profile () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_edit_profile() : "";
+		return $this->_load_sub_module("forum_user")->_edit_profile();
 	}
 
 	/**
 	* Delete user profile
 	*/
 	function delete_profile () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_delete_profile() : "";
+		return $this->_load_sub_module("forum_user")->_delete_profile();
 	}
 
 	/**
 	* Edit personal board settings
 	*/
 	function settings () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_edit_settings() : "";
+		return $this->_load_sub_module("forum_user")->_edit_settings();
 	}
 
 	/**
@@ -528,120 +514,105 @@ class yf_forum {
 	* Subscribe to the forum
 	*/
 	function subscribe_forum () {
-		$OBJ = $this->_load_sub_module("forum_tracker");
-		return is_object($OBJ) ? $OBJ->_subscribe_forum() : "";
+		return $this->_load_sub_module("forum_tracker")->_subscribe_forum();
 	}
 
 	/**
 	* Subscribe to the topic
 	*/
 	function subscribe_topic () {
-		$OBJ = $this->_load_sub_module("forum_tracker");
-		return is_object($OBJ) ? $OBJ->_subscribe_topic() : "";
+		return $this->_load_sub_module("forum_tracker")->_subscribe_topic();
 	}
 
 	/**
 	* Manage forums subscriptions
 	*/
 	function tracker_manage_forums () {
-		$OBJ = $this->_load_sub_module("forum_tracker");
-		return is_object($OBJ) ? $OBJ->_manage_forums() : "";
+		return $this->_load_sub_module("forum_tracker")->_manage_forums();
 	}
 
 	/**
 	* Manage topics subscriptions
 	*/
 	function tracker_manage_topics () {
-		$OBJ = $this->_load_sub_module("forum_tracker");
-		return is_object($OBJ) ? $OBJ->_manage_topics() : "";
+		return $this->_load_sub_module("forum_tracker")->_manage_topics();
 	}
 
 	/**
 	* View printable version of the topic
 	*/
 	function print_topic () {
-		$OBJ = $this->_load_sub_module("forum_print");
-		return is_object($OBJ) ? $OBJ->_show_topic() : "";
+		return $this->_load_sub_module("forum_print")->_show_topic();
 	}
 
 	/**
 	* View light forum version
 	*/
 	function low () {
-		$OBJ = $this->_load_sub_module("forum_low");
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_low")->_show_main();
 	}
 
 	/**
 	* Delete cookies set by this forum
 	*/
 	function del_cookies () {
-		$OBJ = $this->_load_sub_module("forum_auth");
-		return is_object($OBJ) ? $OBJ->_del_cookies() : "";
+		return $this->_load_sub_module("forum_auth")->_del_cookies();
 	}
 
 	/**
 	* Mark all messages read
 	*/
 	function mark_read () {
-		$OBJ = $this->_load_sub_module("forum_read");
-		return is_object($OBJ) ? $OBJ->_mark_read() : "";
+		return $this->_load_sub_module("forum_read")->_mark_read();
 	}
 
 	/**
 	* Send topic by email
 	*/
 	function email_topic () {
-		$OBJ = $this->_load_sub_module("forum_utils");
-		return is_object($OBJ) ? $OBJ->_email_topic() : "";
+		return $this->_load_sub_module("forum_utils")->_email_topic();
 	}
 
 	/**
 	* Report post
 	*/
 	function report_post () {
-		$OBJ = $this->_load_sub_module("forum_utils");
-		return is_object($OBJ) ? $OBJ->_report_post() : "";
+		return $this->_load_sub_module("forum_utils")->_report_post();
 	}
 
 	/**
 	* View Reports
 	*/
 	function view_reports () {
-		$OBJ = $this->_load_sub_module("forum_utils");
-		return is_object($OBJ) ? $OBJ->_view_reports() : "";
+		return $this->_load_sub_module("forum_utils")->_view_reports();
 	}
 
 	/**
 	* Close report
 	*/
 	function close_reports () {
-		$OBJ = $this->_load_sub_module("forum_utils");
-		return is_object($OBJ) ? $OBJ->_close_reports() : "";
+		return $this->_load_sub_module("forum_utils")->_close_reports();
 	}
 
 	/**
 	* Forum user control panel
 	*/
 	function user_cp () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_user_cp() : "";
+		return $this->_load_sub_module("forum_user")->_user_cp();
 	}
 
 	/**
 	* Send email to the user
 	*/
 	function email_user () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_email_user() : "";
+		return $this->_load_sub_module("forum_user")->_email_user();
 	}
 
 	/**
 	* Delete avatar
 	*/
 	function delete_avatar () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_delete_avatar() : "";
+		return $this->_load_sub_module("forum_user")->_delete_avatar();
 	}
 
 	/**
@@ -676,56 +647,49 @@ class yf_forum {
 	* Change language
 	*/
 	function change_lang () {
-		$OBJ = $this->_load_sub_module("forum_utils");
-		return is_object($OBJ) ? $OBJ->_change_lang() : "";
+		return $this->_load_sub_module("forum_utils")->_change_lang();
 	}
 
 	/**
 	* Change skin
 	*/
 	function change_skin () {
-		$OBJ = $this->_load_sub_module("forum_utils");
-		return is_object($OBJ) ? $OBJ->_change_skin() : "";
+		return $this->_load_sub_module("forum_utils")->_change_skin();
 	}
 
 	/**
 	* Change topic view
 	*/
 	function change_topic_view () {
-		$OBJ = $this->_load_sub_module("forum_utils");
-		return is_object($OBJ) ? $OBJ->_change_topic_view() : "";
+		return $this->_load_sub_module("forum_utils")->_change_topic_view();
 	}
 
 	/**
 	* Administration control panel
 	*/
 	function admin () {
-		$OBJ = $this->_load_sub_module("forum_admin");
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_admin")->_show_main();
 	}
 
 	/**
 	* Board synchronization
 	*/
 	function sync_board () {
-		$OBJ = $this->_load_sub_module("forum_sync");
-		return is_object($OBJ) ? $OBJ->_sync_board() : "";
+		return $this->_load_sub_module("forum_sync")->_sync_board();
 	}
 
 	/**
 	* Forum synchronization
 	*/
 	function sync_forum () {
-		$OBJ = $this->_load_sub_module("forum_sync");
-		return is_object($OBJ) ? $OBJ->_sync_forum() : "";
+		return $this->_load_sub_module("forum_sync")->_sync_forum();
 	}
 
 	/**
 	* Edit announces
 	*/
 	function edit_announces () {
-		$OBJ = $this->_load_sub_module("forum_announce");
-		return is_object($OBJ) ? $OBJ->_edit_main() : "";
+		return $this->_load_sub_module("forum_announce")->_edit_main();
 	}
 
 	/**
@@ -741,48 +705,42 @@ class yf_forum {
 	* Display RSS feed for whole board
 	*/
 	function rss_board() {
-		$OBJ = $this->_load_sub_module("forum_rss");
-		return is_object($OBJ) ? $OBJ->_display_for_board() : "";
+		return $this->_load_sub_module("forum_rss")->_display_for_board();
 	}
 
 	/**
 	* Display RSS feed for given forum
 	*/
 	function rss_forum() {
-		$OBJ = $this->_load_sub_module("forum_rss");
-		return is_object($OBJ) ? $OBJ->_display_for_forum() : "";
+		return $this->_load_sub_module("forum_rss")->_display_for_forum();
 	}
 
 	/**
 	* Display RSS feed for given topic
 	*/
 	function rss_topic() {
-		$OBJ = $this->_load_sub_module("forum_rss");
-		return is_object($OBJ) ? $OBJ->_display_for_topic() : "";
+		return $this->_load_sub_module("forum_rss")->_display_for_topic();
 	}
 
 	/**
 	* Compact topic repliers view (usually for popup or for ajax)
 	*/
 	function compact_topic_repliers () {
-		$OBJ = $this->_load_sub_module("forum_compact_view");
-		return is_object($OBJ) ? $OBJ->_topic_repliers() : "";
+		return $this->_load_sub_module("forum_compact_view")->_topic_repliers();
 	}
 
 	/**
 	* Compact post preview (usually for popup or for ajax)
 	*/
 	function compact_post_preview () {
-		$OBJ = $this->_load_sub_module("forum_compact_view");
-		return is_object($OBJ) ? $OBJ->_post() : "";
+		return $this->_load_sub_module("forum_compact_view")->_post();
 	}
 
 	/**
 	* Delete attached file
 	*/
 	function delete_attach () {
-		$OBJ = $this->_load_sub_module("forum_post");
-		return is_object($OBJ) ? $OBJ->_delete_attach() : "";
+		return $this->_load_sub_module("forum_post")->_delete_attach();
 	}
 
 	/**
@@ -796,17 +754,14 @@ class yf_forum {
 			return $this->_show_error("You are not allowed to vote in polls");
 		}
 		$return_path = "./?object=".$_GET["object"]."&action=view_topic&id=".$_GET["id"];
-		$POLL_OBJ = main()->init_class("poll");
-		if (is_object($POLL_OBJ)) {
-			$POLL_OBJ->show(array(
-				"silent"		=> 1,
-				"object_name"	=> $_GET["object"],
-				"object_id"		=> $_GET["id"],
-				"return_path"	=> $return_path,
-				"stpl_main"		=> $_GET["object"]."/poll_vote",
-				"stpl_view"		=> $_GET["object"]."/poll_results",
-			));
-		}
+		module_safe("poll")->show(array(
+			"silent"		=> 1,
+			"object_name"	=> $_GET["object"],
+			"object_id"		=> $_GET["id"],
+			"return_path"	=> $return_path,
+			"stpl_main"		=> $_GET["object"]."/poll_vote",
+			"stpl_view"		=> $_GET["object"]."/poll_results",
+		));
 		return js_redirect($return_path);
 	}
 
@@ -815,9 +770,7 @@ class yf_forum {
 	*/
 	function poll_results () {
 		$GLOBALS['POLL_ONLY_RESULTS'] = true;
-		$OBJ = $this->_load_sub_module("forum_view_topic_flat");
-		$this->_VIEW_TOPIC_OBJ = &$OBJ;
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_view_topic_flat")->_show_main();
 	}
 
 
@@ -846,34 +799,30 @@ class yf_forum {
 	* Process main template
 	*/
 	function _show_main_tpl($items = "") {
-		$OBJ = $this->_load_sub_module("forum_main_tpl");
-		return is_object($OBJ) ? $OBJ->_show_main_tpl($items) : "";
+		return $this->_load_sub_module("forum_main_tpl")->_show_main_tpl($items);
 	}
 
 	/**
 	* Show board fast navigation box
 	*/
 	function _board_fast_nav_box () {
-		$OBJ = $this->_load_sub_module("forum_fast_nav");
-		return is_object($OBJ) ? $OBJ->_board_fast_nav_box() : "";
+		return $this->_load_sub_module("forum_fast_nav")->_board_fast_nav_box();
 	}
 
 	/**
 	* Show user info in post
 	*/
 	function _show_user_details($user_info = array(), $is_online = 0, $post_user_name = "", $post_id = 0) {
-		$OBJ = $this->_load_sub_module($this->SETTINGS["USE_GLOBAL_USERS"] ? "forum_user_details_global" : "forum_user_details");
-		$this->_USER_DETAILS_OBJ = &$OBJ;
-		return is_object($OBJ) ? $OBJ->_show_user_details($user_info, $is_online, $post_user_name, $post_id) : "";
+		$submodule_name = $this->SETTINGS["USE_GLOBAL_USERS"] ? "forum_user_details_global" : "forum_user_details";
+		return $this->_load_sub_module($submodule_name)->_show_user_details($user_info, $is_online, $post_user_name, $post_id);
 	}
 
 	/**
 	* Get users infos
 	*/
 	function _get_users_infos($users_ids = array(), $params = array()) {
-		$OBJ = $this->_load_sub_module($this->SETTINGS["USE_GLOBAL_USERS"] ? "forum_user_details_global" : "forum_user_details");
-		$this->_USER_DETAILS_OBJ = &$OBJ;
-		return is_object($OBJ) ? $OBJ->_get_users_infos($users_ids, $params) : "";
+		$submodule_name = $this->SETTINGS["USE_GLOBAL_USERS"] ? "forum_user_details_global" : "forum_user_details";
+		return $this->_load_sub_module($submodule_name)->_get_users_infos($users_ids, $params);
 	}
 
 	/**
@@ -900,9 +849,7 @@ class yf_forum {
 		if (empty($user_id) || $this->SETTINGS["HIDE_USERS_INFO"]) {
 			return "";
 		}
-		return ($this->SETTINGS["USE_GLOBAL_USERS"] && !$force_forum_link 
-			? _profile_link($user_id) 
-			: "./?object=".FORUM_CLASS_NAME."&action=view_profile&id=".$user_id);
+		return ($this->SETTINGS["USE_GLOBAL_USERS"] && !$force_forum_link ? _profile_link($user_id) : "./?object=".FORUM_CLASS_NAME."&action=view_profile&id=".$user_id);
 	}
 
 	/**
@@ -1019,34 +966,28 @@ class yf_forum {
 	* Init read messages info
 	*/
 	function _init_read_messages() {
-		$OBJ = $this->_load_sub_module("forum_read");
-		if (is_object($OBJ)) {
-			$OBJ->_init_read_messages();
-		}
+		return $this->_load_sub_module("forum_read")->_init_read_messages();
 	}
 
 	/**
 	* Set topic read (if needed)
 	*/
 	function _set_topic_read ($topic_info = array()) {
-		$OBJ = $this->_load_sub_module("forum_read");
-		return is_object($OBJ) ? $OBJ->_set_topic_read ($topic_info) : "";
+		return $this->_load_sub_module("forum_read")->_set_topic_read ($topic_info);
 	}
 
 	/**
 	* Get topic is read status (if needed)
 	*/
 	function _get_topic_read ($topic_info = array()) {
-		$OBJ = $this->_load_sub_module("forum_read");
-		return is_object($OBJ) ? $OBJ->_get_topic_read ($topic_info) : "";
+		return $this->_load_sub_module("forum_read")->_get_topic_read ($topic_info);
 	}
 
 	/**
 	* Get forum is read status (if needed)
 	*/
 	function _get_forum_read ($forum_info = array()) {
-		$OBJ = $this->_load_sub_module("forum_read");
-		return is_object($OBJ) ? $OBJ->_get_forum_read ($forum_info) : "";
+		return $this->_load_sub_module("forum_read")->_get_forum_read ($forum_info);
 	}
 
 	/**
@@ -1093,8 +1034,7 @@ class yf_forum {
 		if (!module('forum')->SETTINGS["USE_GLOBAL_USERS"]) {
 			return false;
 		}
-		$OBJ = $this->_load_sub_module("forum_user_details_global");
-		return is_object($OBJ) ? $OBJ->_start_forum_account($user_id) : "";
+		return $this->_load_sub_module("forum_user_details_global")->_start_forum_account($user_id);
 	}
 
 	/**
@@ -1146,12 +1086,10 @@ class yf_forum {
 	* Display Wysiwyg editor code
 	*/
 	function _show_wysiwyg_editor ($text = "") {
-		if (!module('forum')->SETTINGS["ALLOW_WYSIWYG_EDITOR"]/* || conf('IS_SPIDER')*/) {
+		if (!module('forum')->SETTINGS["ALLOW_WYSIWYG_EDITOR"]) {
 			return false;
 		}
-		$OBJ = main()->init_class("text_editor", "classes/");
-		return is_object($OBJ) ? $OBJ->_display_code($text, "text2", "bbcode") : "";
-//		return is_object($OBJ) ? $OBJ->_display_code($text, "text") : "";
+		return _class_safe("text_editor")->_display_code($text, "text2", "bbcode");
 	}
 
 	/**
@@ -1170,32 +1108,28 @@ class yf_forum {
 	* Hook for the site_map
 	*/
 	function _site_map_items ($SITE_MAP_OBJ = false) {
-		$OBJ = $this->_load_sub_module("forum_integration");
-		return is_object($OBJ) ? $OBJ->_site_map_items($SITE_MAP_OBJ) : "";
+		return $this->_load_sub_module("forum_integration")->_site_map_items($SITE_MAP_OBJ);
 	}
 
 	/**
 	* Hook for navigation bar
 	*/
 	function _nav_bar_items ($params = array()) {
-		$OBJ = $this->_load_sub_module("forum_integration");
-		return is_object($OBJ) ? $OBJ->_nav_bar_items($params) : "";
+		return $this->_load_sub_module("forum_integration")->_nav_bar_items($params);
 	}
 
 	/**
 	* Integration into home page
 	*/
 	function _for_home_page($NUM_NEWEST_FORUM_POSTS = 4, $NEWEST_FORUM_TEXT_LEN = 100, $params = array()) {
-		$OBJ = $this->_load_sub_module("forum_integration");
-		return is_object($OBJ) ? $OBJ->_for_home_page($NUM_NEWEST_FORUM_POSTS, $NEWEST_FORUM_TEXT_LEN, $params) : "";
+		return $this->_load_sub_module("forum_integration")->_for_home_page($NUM_NEWEST_FORUM_POSTS, $NEWEST_FORUM_TEXT_LEN, $params);
 	}
 
 	/**
 	* Integration into user profile
 	*/
 	function _for_user_profile($user_id, $MAX_SHOW_FORUM_POSTS = 10) {
-		$OBJ = $this->_load_sub_module("forum_integration");
-		return is_object($OBJ) ? $OBJ->_for_user_profile($user_id, $MAX_SHOW_FORUM_POSTS) : "";
+		return $this->_load_sub_module("forum_integration")->_for_user_profile($user_id, $MAX_SHOW_FORUM_POSTS);
 	}
 	
 	/**
@@ -1222,8 +1156,7 @@ class yf_forum {
 	* General rss
 	*/
 	function _rss_general() {
-		$OBJ = $this->_load_sub_module("forum_integration");
-		return is_object($OBJ) ? $OBJ->_rss_general() : "";
+		return $this->_load_sub_module("forum_integration")->_rss_general();
 	}
 
 	/**
@@ -1256,13 +1189,10 @@ class yf_forum {
 	*/
 	function _unread () {
 		$link = process_url("./?object=forum&action=unread");
-		
 		$unread = array(
 			"count"	=> "",
 			"link"	=> $link,
 		);
-	
 		return $unread;
 	}
-
 }
