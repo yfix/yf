@@ -242,7 +242,7 @@ class yf_forum_search {
 		}
 		if (!empty($topics_array)) {
 			// Init topic item object
-			$TOPIC_ITEM_OBJ = main()->init_class("forum_topic_item", FORUM_MODULES_DIR);
+			$TOPIC_ITEM_OBJ = _class("forum_topic_item", FORUM_MODULES_DIR);
 			// Process posts
 			if (is_object($TOPIC_ITEM_OBJ)) {
 				foreach ((array)$topics_array as $topic_info) {
@@ -289,7 +289,7 @@ class yf_forum_search {
 				}
 			}
 			// Process users reputation
-			$REPUT_OBJ = main()->init_class("reputation");
+			$REPUT_OBJ = module("reputation");
 			if (is_object($REPUT_OBJ)) {
 				$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($users_ids);
 				foreach ((array)$users_reput_info as $reput_user_id => $reput_info) {
@@ -297,7 +297,7 @@ class yf_forum_search {
 				}
 			}
 			// Init post item object
-			$POST_ITEM_OBJ = main()->init_class("forum_post_item", FORUM_MODULES_DIR);
+			$POST_ITEM_OBJ = _class("forum_post_item", FORUM_MODULES_DIR);
 			// Process posts
 			if (!empty($topics_array) && is_object($POST_ITEM_OBJ)) {
 				foreach ((array)$posts as $post_info) {

@@ -14,7 +14,7 @@ class yf_forum_tracker {
 	*/
 	function _init () {
 		// Load user cp module
-		$this->USER_CP_OBJ = main()->init_class("forum_user", FORUM_MODULES_DIR);
+		$this->USER_CP_OBJ = _class("forum_user", FORUM_MODULES_DIR);
 	}
 	
 	/**

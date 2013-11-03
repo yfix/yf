@@ -97,7 +97,7 @@ class yf_forum_view_topic_tree {
 		$use_fast_reply		= intval(module('forum')->SETTINGS["USE_FAST_REPLY"] && $allow_reply);
 		$use_topic_options	= intval(FORUM_USER_ID && module('forum')->SETTINGS["USE_TOPIC_OPTIONS"] && $allow_reply);
 		// Process users reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids(array($this->_user_info["id"]));
 			foreach ((array)$users_reput_info as $reput_user_id => $reput_info) {
@@ -105,9 +105,9 @@ class yf_forum_view_topic_tree {
 			}
 		}
 		// Statistics
-		$STATS_OBJ = main()->init_class("forum_stats", FORUM_MODULES_DIR);
+		$STATS_OBJ = _class("forum_stats", FORUM_MODULES_DIR);
 		// Post item object
-		$POST_ITEM_OBJ = main()->init_class("forum_post_item", FORUM_MODULES_DIR);
+		$POST_ITEM_OBJ = _class("forum_post_item", FORUM_MODULES_DIR);
 		if (is_object($POST_ITEM_OBJ)) {
 			$post_info		= &$this->_post_info;
 			if (!empty($users_reput_info)) {

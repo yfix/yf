@@ -131,7 +131,7 @@ class yf_forum_view_topic_flat {
 		}
 		// Init post item object
 		if (!empty($this->_posts_array)) {
-			$POST_ITEM_OBJ = main()->init_class("forum_post_item", FORUM_MODULES_DIR);
+			$POST_ITEM_OBJ = _class("forum_post_item", FORUM_MODULES_DIR);
 		}
 		// Set required params
 		$forum_is_closed	= $this->_forum_info["options"] == "2" ? 1 : 0;
@@ -154,7 +154,7 @@ class yf_forum_view_topic_flat {
 		$use_fast_reply		= intval(module('forum')->SETTINGS["USE_FAST_REPLY"] && $allow_reply);
 		$use_topic_options	= intval(FORUM_USER_ID && module('forum')->SETTINGS["USE_TOPIC_OPTIONS"] && $allow_reply);
 		// Process users reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($users_ids);
 			foreach ((array)$users_reput_info as $reput_user_id => $reput_info) {
@@ -175,10 +175,10 @@ class yf_forum_view_topic_flat {
 				}
 			}
 		}
-		$STATS_OBJ = main()->init_class("forum_stats", FORUM_MODULES_DIR);
+		$STATS_OBJ = _class("forum_stats", FORUM_MODULES_DIR);
 		$poll = "";
 		if (module('forum')->SETTINGS["ALLOW_POLLS"]) {
-			$POLL_OBJ = main()->init_class("poll");
+			$POLL_OBJ = module("poll");
 			$_method = $GLOBALS['POLL_ONLY_RESULTS'] ? "view" : "show";
 			$poll = is_object($POLL_OBJ) ? $POLL_OBJ->$_method(array(
 				"silent"		=> 1,
