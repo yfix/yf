@@ -249,7 +249,7 @@ class yf_help_tickets {
 			"user_agent"		=> _prepare_html($ticket_info["user_agent"]),
 			"ip"				=> _prepare_html($ticket_info["ip"]),
 			"cookies_enabled"	=> $ticket_info["cookies_enabled"] ? 1 : 0,
-			"ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($user_info["id"])),
+			"ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($user_info["id"]))),
 			"site_id"			=> intval($ticket_info["site_id"]),
 			"site_name"			=> $ticket_info["site_id"] ? $this->_sites_names[$ticket_info["site_id"]] : "",
 			"referer"			=> $ticket_info["referer"],

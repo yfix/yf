@@ -86,7 +86,7 @@ class yf_manage_comments {
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$comment_info["id"],
 				"active_link"	=> "./?object=".$_GET["object"]."&action=activate&id=".$comment_info["id"],
 				"item_link"		=> "./?object=".$comment_info["object_name"]."&action=".$this->_comments_actions[$comment_info["object_name"]]."&id=".$comment_info["object_id"],
-				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($comment_info["user_id"])),
+				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($comment_info["user_id"]))),
 			);
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
@@ -141,7 +141,7 @@ class yf_manage_comments {
 			"object_name"		=> _prepare_html($info["object_name"]),
 			"object_id"			=> intval($info["object_id"]),
 			"back_url"			=> "./?object=".$_GET["object"],
-			"ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($info["user_id"])),
+			"ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($info["user_id"]))),
 		);
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
