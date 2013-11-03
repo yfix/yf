@@ -15,8 +15,6 @@ class yf_forum_admin {
 	function _init () {
 		// Synchronization module
 		$this->SYNC_OBJ = main()->init_class("forum_sync", FORUM_MODULES_DIR);
-		// Init bb codes module
-		$this->BB_OBJ = _class("bb_codes");
 		// Apply moderator rights here
 		if (FORUM_IS_MODERATOR) {
 			module('forum')->_apply_moderator_rights();
@@ -254,14 +252,14 @@ class yf_forum_admin {
 			}
 			// Show template contents
 			$replace = array(
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 				"forum_id"			=> intval($_GET["id"]),
 				"forum_name"		=> $forum_info["name"],
 				"forums_box"		=> $this->_forums_box(),
 				"leave_link_box"	=> common()->radio_box("leave_link", array("No","Yes"), 1),
 				"selected_topics"	=> $selected_topics,
 			);
-			return tpl()->parse(FORUM_CLASS_NAME."/admin/move_topic_main", $replace);
+			return tpl()->parse('forum'."/admin/move_topic_main", $replace);
 		// Process data
 		} else {
 			$leave_link		= intval($_POST["leave_link"]);
@@ -407,7 +405,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$_GET["id"]);
+		return js_redirect("./?object=".'forum'."&action=view_topic&id=".$_GET["id"]);
 	}
 	
 	/**
@@ -449,7 +447,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$_GET["id"]);
+		return js_redirect("./?object=".'forum'."&action=view_topic&id=".$_GET["id"]);
 	}
 	
 	/**
@@ -496,19 +494,19 @@ class yf_forum_admin {
 					"post_id"		=> $post_id,
 					"user_name"		=> _prepare_html($posts_array[$post_id]["user_name"]),
 					"post_date"		=> module('forum')->_show_date($posts_array[$post_id]["created"], "post_date"),
-					"post_text"		=> $this->BB_OBJ->_process_text($posts_array[$post_id]["text"]),
+					"post_text"		=> _class('bb_codes')->_process_text($posts_array[$post_id]["text"]),
 				);
 			}
 			// Show template contents
 			$replace = array(
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 				"forum_id"			=> intval($forum_info["id"]),
 				"topic_id"			=> intval($topic_info["id"]),
 				"old_forum_name"	=> $forum_info["name"],
 				"old_topic_name"	=> $topic_info["name"],
 				"posts"				=> $selected_posts,
 			);
-			return tpl()->parse(FORUM_CLASS_NAME."/admin/move_posts_main", $replace);
+			return tpl()->parse('forum'."/admin/move_posts_main", $replace);
 		} else {
 			$old_topic_id	= $topic_info["id"];
 			$old_forum_id	= $forum_info["id"];
@@ -565,7 +563,7 @@ class yf_forum_admin {
 				}
 			}
 		}
-		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$_GET["id"]);
+		return js_redirect("./?object=".'forum'."&action=view_topic&id=".$_GET["id"]);
 	}
 	
 	/**
@@ -612,12 +610,12 @@ class yf_forum_admin {
 					"post_id"		=> $post_id,
 					"user_name"		=> _prepare_html($posts_array[$post_id]["user_name"]),
 					"post_date"		=> module('forum')->_show_date($posts_array[$post_id]["created"], "post_date"),
-					"post_text"		=> $this->BB_OBJ->_process_text($posts_array[$post_id]["text"]),
+					"post_text"		=> _class('bb_codes')->_process_text($posts_array[$post_id]["text"]),
 				);
 			}
 			// Show template contents
 			$replace = array(
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 				"forum_id"			=> intval($forum_info["id"]),
 				"topic_id"			=> intval($topic_info["id"]),
 				"old_forum_name"	=> $forum_info["name"],
@@ -625,7 +623,7 @@ class yf_forum_admin {
 				"forums_box"		=> $this->_forums_box(),
 				"posts"				=> $selected_posts,
 			);
-			return tpl()->parse(FORUM_CLASS_NAME."/admin/split_topic_main", $replace);
+			return tpl()->parse('forum'."/admin/split_topic_main", $replace);
 		} else {
 			$old_topic_id	= $topic_info["id"];
 			$old_forum_id	= $forum_info["id"];
@@ -685,7 +683,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$_GET["id"]);
+		return js_redirect("./?object=".'forum'."&action=view_topic&id=".$_GET["id"]);
 	}
 	
 	/**
@@ -739,14 +737,14 @@ class yf_forum_admin {
 			}
 			// Show template contents
 			$replace = array(
-				"form_action"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+				"form_action"	=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 				"dates_box"		=> common()->select_box("new_date", $dates_array, $selected, false, 2, "", false),
 				"authors_box"	=> common()->select_box("new_author", $authors_array, $selected, false, 2, "", false),
 				"selected_ids"	=> implode(",", $selected_ids),
 				"merged_post_id"=> intval(array_pop($selected_ids)),
 				"text"			=> implode("\r\n\r\n", $text_merged),
 			);
-			return tpl()->parse(FORUM_CLASS_NAME."/admin/merge_posts_main", $replace);
+			return tpl()->parse('forum'."/admin/merge_posts_main", $replace);
 		} else {
 			$old_topic_id		= $topic_info["id"];
 			$old_forum_id		= $forum_info["id"];
@@ -787,7 +785,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$_GET["id"]);
+		return js_redirect("./?object=".'forum'."&action=view_topic&id=".$_GET["id"]);
 	}
 
 	/**

@@ -50,10 +50,10 @@ class yf_forum_fast_nav {
 		else														$selected = "sj_home";
 		// Process main template
 		$replace = array(
-			"form_action"	=> "./?object=".FORUM_CLASS_NAME."&action=site_jump"._add_get(array("page")),
+			"form_action"	=> "./?object=".'forum'."&action=site_jump"._add_get(array("page")),
 			"fast_nav_box"	=> common()->select_box("fast_nav", array("Site Jump" => $site_jump_array, "Forum Jump" => $forum_jump_array), $selected, false, 2, " onchange=\"if(this.options[this.selectedIndex].value != -1){ document.jumpmenu.submit() }\"", false),
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/board_fast_nav", $replace);
+		return tpl()->parse('forum'."/board_fast_nav", $replace);
 	}
 	
 	/**

@@ -74,19 +74,19 @@ class yf_forum_auth {
 					setcookie($this->COOKIE_NAME, $cookie_text, $this->COOKIE_LIFE_TIME, "/");
 				}
 				// Return user back
-				js_redirect(strlen($_POST["back_url"]) ? $_POST["back_url"] : "./?object=".FORUM_CLASS_NAME, false);
+				js_redirect(strlen($_POST["back_url"]) ? $_POST["back_url"] : "./?object=".'forum', false);
 			// Show message that login failed
 			} else {
-				$body .= tpl()->parse(FORUM_CLASS_NAME."/login_failed");
+				$body .= tpl()->parse('forum'."/login_failed");
 			}
 		// Show login form
 		} else {
 			$replace = array(
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
-				"forgot_pswd_link"	=> "./?object=".FORUM_CLASS_NAME."&action=send_password"._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]._add_get(array("page")),
+				"forgot_pswd_link"	=> "./?object=".'forum'."&action=send_password"._add_get(array("page")),
 				"back_url"			=> getenv("HTTP_REFERER"),
 			);
-			$body .= tpl()->parse(FORUM_CLASS_NAME."/login_form", $replace);
+			$body .= tpl()->parse('forum'."/login_form", $replace);
 		}
 		return module('forum')->_show_main_tpl($body);
 	}

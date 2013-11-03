@@ -40,7 +40,7 @@ class yf_forum_integration {
 				"topic_link"	=> "./?object=forum&action=view_topic&id=".$A["topic"],
 				"created"		=> _format_date($A["created"], "long"),
 			);			
-			$items .= tpl()->parse(FORUM_CLASS_NAME."/".$item_stpl_name, $replace2);		
+			$items .= tpl()->parse('forum'."/".$item_stpl_name, $replace2);		
 		}
 		if(empty($items)) {
 			return;
@@ -48,7 +48,7 @@ class yf_forum_integration {
 		$replace = array(
 			"items"	=> $items,
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/for_home_page_main", $replace);
+		return tpl()->parse('forum'."/for_home_page_main", $replace);
 	}
 
 	/**
@@ -65,9 +65,9 @@ class yf_forum_integration {
 				"author"		=> _prepare_html($A["user_name"]),
 				"reply_link"	=> "./?object=forum&action=view_topic&id=".$A["topic"],
 				"created"		=> _format_date($A["created"]),
-				"profile_url"	=> "./?object=".FORUM_CLASS_NAME."&action=show&id=".$A["user_id"],
+				"profile_url"	=> "./?object=".'forum'."&action=show&id=".$A["user_id"],
 			);
-			$items .= tpl()->parse(FORUM_CLASS_NAME."/for_profile_forum_item", $replace2);
+			$items .= tpl()->parse('forum'."/for_profile_forum_item", $replace2);
 		}
 			$value[0] = $items;
 			$value[1] = $pages;
@@ -176,7 +176,7 @@ class yf_forum_integration {
 		// Create new items
 		$items = array();
 		$items[]	= $NAV_BAR_OBJ->_nav_item("Home", "./");
-		$items[]	= $NAV_BAR_OBJ->_nav_item("Forum", "./?object=".FORUM_CLASS_NAME);
+		$items[]	= $NAV_BAR_OBJ->_nav_item("Forum", "./?object=".'forum');
 		// Get pregenerated forum items
 		$OBJ = module('forum')->_load_sub_module("forum_main_tpl");
 		$_FORUM_ITEMS = $OBJ->_show_navigation(true);

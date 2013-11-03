@@ -121,14 +121,14 @@ class yf_forum_view_topic_tree {
 		$replace = array(
 			"is_admin"			=> intval(FORUM_IS_ADMIN),
 			"is_moderator"		=> intval(FORUM_IS_ADMIN || (FORUM_IS_MODERATOR && module('forum')->_moderate_forum_allowed($this->_forum_info["id"]))),
-			"cat_link"			=> "./?object=".FORUM_CLASS_NAME._add_get(array("page")),
+			"cat_link"			=> "./?object=".'forum'._add_get(array("page")),
 			"forum_link"		=> module('forum')->_link_to_forum($this->_topic_info["forum"]),
-			"topic_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$this->_topic_info["id"]._add_get(array("page")),
-			"new_topic_link"	=> $allow_new_topic ? "./?object=".FORUM_CLASS_NAME."&action=new_topic&id=".$this->_topic_info["forum"]._add_get(array("page")) : "",
-			"add_post_link"		=> $allow_reply ? "./?object=".FORUM_CLASS_NAME."&action=new_post&id=".$this->_topic_info["id"]._add_get() : "",
-			"track_topic_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["ALLOW_TRACK_TOPIC"] ? "./?object=".FORUM_CLASS_NAME."&action=subscribe_topic&id=".$this->_topic_info["id"]._add_get() : "",
-			"email_topic_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["ALLOW_EMAIL_TOPIC"] ? "./?object=".FORUM_CLASS_NAME."&action=email_topic&id=".$this->_topic_info["id"]._add_get() : "",
-			"print_topic_link"	=> module('forum')->SETTINGS["ALLOW_PRINT_TOPIC"] ? "./?object=".FORUM_CLASS_NAME."&action=print_topic&id=".$this->_topic_info["id"]._add_get() : "",
+			"topic_link"		=> "./?object=".'forum'."&action=view_topic&id=".$this->_topic_info["id"]._add_get(array("page")),
+			"new_topic_link"	=> $allow_new_topic ? "./?object=".'forum'."&action=new_topic&id=".$this->_topic_info["forum"]._add_get(array("page")) : "",
+			"add_post_link"		=> $allow_reply ? "./?object=".'forum'."&action=new_post&id=".$this->_topic_info["id"]._add_get() : "",
+			"track_topic_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["ALLOW_TRACK_TOPIC"] ? "./?object=".'forum'."&action=subscribe_topic&id=".$this->_topic_info["id"]._add_get() : "",
+			"email_topic_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["ALLOW_EMAIL_TOPIC"] ? "./?object=".'forum'."&action=email_topic&id=".$this->_topic_info["id"]._add_get() : "",
+			"print_topic_link"	=> module('forum')->SETTINGS["ALLOW_PRINT_TOPIC"] ? "./?object=".'forum'."&action=print_topic&id=".$this->_topic_info["id"]._add_get() : "",
 			"cat_name"			=> _prepare_html($this->_cat_info["name"]),
 			"forum_id"			=> $this->_forum_info["id"],
 			"forum_name"		=> _prepare_html($this->_forum_info["name"]),
@@ -136,12 +136,12 @@ class yf_forum_view_topic_tree {
 			"topic_name"		=> _prepare_html($this->_topic_info["name"]),
 			"topic_pages"		=> $topic_pages,
 			"current_post"		=> $current_post,
-			"tree_view_link"	=> "./?object=".FORUM_CLASS_NAME."&action=change_topic_view&id=1"._add_get(),
-			"flat_view_link"	=> "./?object=".FORUM_CLASS_NAME."&action=change_topic_view&id=2"._add_get(),
-			"link_to_post_base"	=> process_url("./?object=".FORUM_CLASS_NAME."&action=view_post&id=0"._add_get(array("page"))),
+			"tree_view_link"	=> "./?object=".'forum'."&action=change_topic_view&id=1"._add_get(),
+			"flat_view_link"	=> "./?object=".'forum'."&action=change_topic_view&id=2"._add_get(),
+			"link_to_post_base"	=> process_url("./?object=".'forum'."&action=view_post&id=0"._add_get(array("page"))),
 			"board_fast_nav"	=> module('forum')->SETTINGS["ALLOW_FAST_JUMP_BOX"] ? module('forum')->_board_fast_nav_box() : "",
 			"topic_online"		=> is_object($STATS_OBJ) ? $STATS_OBJ->_show_topic_stats() : "",
-			"search_form_action"=> module('forum')->USER_RIGHTS["use_search"] && module('forum')->SETTINGS["ALLOW_SEARCH"] ? "./?object=".FORUM_CLASS_NAME."&action=search". _add_get() : "",
+			"search_form_action"=> module('forum')->USER_RIGHTS["use_search"] && module('forum')->SETTINGS["ALLOW_SEARCH"] ? "./?object=".'forum'."&action=search". _add_get() : "",
 			"forum_closed"		=> intval($forum_is_closed),
 			"topic_closed"		=> !$forum_is_closed ? $topic_is_closed : "",
 			"use_fast_reply"	=> $use_fast_reply,
@@ -149,10 +149,10 @@ class yf_forum_view_topic_tree {
 			"fast_reply_form"	=> $use_fast_reply ? $this->_show_fast_reply_form() : "",
 			"topic_options_form"=> $use_topic_options ? $this->_show_topic_options_form() : "",
 			"posts_tree"		=> $this->_show_tree_view(),
-			"rss_topic_button"	=> module('forum')->_show_rss_link("./?object=".FORUM_CLASS_NAME."&action=rss_forum&id=".$this->_topic_info["forum"], "RSS feed for topic: ".$this->_topic_info["name"]),
+			"rss_topic_button"	=> module('forum')->_show_rss_link("./?object=".'forum'."&action=rss_forum&id=".$this->_topic_info["forum"], "RSS feed for topic: ".$this->_topic_info["name"]),
 			"allow_change_view"	=> intval((bool) module('forum')->SETTINGS["ALLOW_CHANGE_TOPIC_VIEW"]),
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse(FORUM_CLASS_NAME."/view_topic_tree/main", $replace));
+		return module('forum')->_show_main_tpl(tpl()->parse('forum'."/view_topic_tree/main", $replace));
 	}
 	
 	/**
@@ -160,12 +160,12 @@ class yf_forum_view_topic_tree {
 	*/
 	function _show_fast_reply_form() {
 		$replace = array(
-			"post_form_action"	=> "./?object=".FORUM_CLASS_NAME."&action=save_post&id=".$_GET["id"]. _add_get(),
+			"post_form_action"	=> "./?object=".'forum'."&action=save_post&id=".$_GET["id"]. _add_get(),
 			"topic_id"			=> intval($this->_topic_info["id"]),
 			"forum_id"			=> intval($this->_forum_info["id"]),
 			"act_name" 			=> "new_post",
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/view_topic_flat/fast_reply", $replace);
+		return tpl()->parse('forum'."/view_topic_flat/fast_reply", $replace);
 	}
 	
 	/**
@@ -173,10 +173,10 @@ class yf_forum_view_topic_tree {
 	*/
 	function _show_topic_options_form() {
 		$replace = array(
-			"track_topic_link"		=> FORUM_USER_ID ? "./?object=".FORUM_CLASS_NAME."&action=subscribe_topic&id=".$this->_topic_info["id"]._add_get() : "",
-			"subscribe_forum_link"	=> FORUM_USER_ID ? "./?object=".FORUM_CLASS_NAME."&action=subscribe_forum&id=".$this->_forum_info["id"]._add_get() : "",
+			"track_topic_link"		=> FORUM_USER_ID ? "./?object=".'forum'."&action=subscribe_topic&id=".$this->_topic_info["id"]._add_get() : "",
+			"subscribe_forum_link"	=> FORUM_USER_ID ? "./?object=".'forum'."&action=subscribe_forum&id=".$this->_forum_info["id"]._add_get() : "",
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/view_topic_flat/topic_options", $replace);
+		return tpl()->parse('forum'."/view_topic_flat/topic_options", $replace);
 	}
 	
 	/**
@@ -189,14 +189,14 @@ class yf_forum_view_topic_tree {
 		// First we need to build posts tree
 		$this->_posts_tree		= $this->_build_posts_tree();
 		// Get spacer template
-		$this->_spacer = tpl()->parse(FORUM_CLASS_NAME."/view_topic_tree/spacer");
+		$this->_spacer = tpl()->parse('forum'."/view_topic_tree/spacer");
 		// Process template
 		$replace = array(
 			"root_item"		=> $this->_show_topic_tree_item($this->_topic_info["first_post_id"]),
 			"items"			=> $this->_display_posts_tree($this->_posts_tree),
 			"pages"			=> $pages,
 		);
-		return $tree_view = tpl()->parse(FORUM_CLASS_NAME."/view_topic_tree/tree_main", $replace);
+		return $tree_view = tpl()->parse('forum'."/view_topic_tree/tree_main", $replace);
 	}
 
 	/**
@@ -266,10 +266,10 @@ class yf_forum_view_topic_tree {
 			"post_date"			=> module('forum')->_show_date($post_info["created"], "post_date"),
 			"post_id"			=> intval($post_info["id"]),
 			"is_current_post"	=> intval($post_info["id"] == $this->_post_info["id"]),
-			"view_topic_link"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$this->_topic_info["id"]."&post_id=".intval($post_info["id"]),
+			"view_topic_link"	=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$this->_topic_info["id"]."&post_id=".intval($post_info["id"]),
 			"spacer"			=> $this->_display_spacer($post_id, $level),
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/view_topic_tree/tree_item", $replace);
+		return tpl()->parse('forum'."/view_topic_tree/tree_item", $replace);
 	}
 	
 	/**

@@ -13,8 +13,6 @@ class yf_forum_post_item {
 	* Constructor
 	*/
 	function _init () {
-		// Init bb codes module
-		$this->BB_OBJ = _class("bb_codes");
 		// Get online users ids for those who posted here
 		foreach ((array)module("forum")->online_array as $online_info) {
 			if (!empty($online_info["user_id"]) && !empty($this->_users_array[$online_info["user_id"]])) {
@@ -64,22 +62,22 @@ class yf_forum_post_item {
 			"post_id"			=> intval($post_info["id"]),
 			"post_date"			=> module('forum')->_show_date($post_info["created"], "post_date"),
 // FIXME: smilies incorrect
-			"post_text"			=> $this->BB_OBJ->_process_text($post_info["text"], !$post_info["use_emo"]),
+			"post_text"			=> _class('bb_codes')->_process_text($post_info["text"], !$post_info["use_emo"]),
 			"user_details"		=> module('forum')->_show_user_details($user_info, $user_is_online, $post_info["user_name"], $post_info["id"]),
 			"user_id"			=> intval($post_info["user_id"]),
 			"user_name"			=> strlen($post_info["user_name"]) ? $post_info["user_name"] : (strlen($user_info["name"]) ? $user_info["name"] : t("Anonymous")),
 			"user_profile_link"	=> $post_info["user_id"] ? module('forum')->_user_profile_link($post_info["user_id"]) : "",
 			"user_group"		=> $post_info["user_id"] ? $user_group : "",
-			"user_sig"			=> $post_info["user_id"] && $show_sig ? $this->BB_OBJ->_process_text($user_info["user_sig"]) : "",
+			"user_sig"			=> $post_info["user_id"] && $show_sig ? _class('bb_codes')->_process_text($user_info["user_sig"]) : "",
 			"user_is_online"	=> $post_info["user_id"] && module('forum')->SETTINGS["ONLINE_USERS_STATS"] ? $user_is_online : "",
 			"user_is_offline"	=> $post_info["user_id"] && module('forum')->SETTINGS["ONLINE_USERS_STATS"] ? !$user_is_online : "",
 			"ip_address"		=> module('forum')->USER_RIGHTS["view_ip"] ? $post_info["poster_ip"] : "",
-			"quote_link"		=> $allow_reply		? "./?object=".FORUM_CLASS_NAME."&action=reply&id=".$post_info["id"]._add_get(array("page")) : "",
-			"no_quote_link"		=> $allow_reply		? "./?object=".FORUM_CLASS_NAME."&action=reply_no_quote&id=".$post_info["id"]._add_get(array("page")) : "",
-			"email_link"		=> $allow_email		? "./?object=".FORUM_CLASS_NAME."&action=email_user&id=".$post_info["user_id"]._add_get(array("page")) : "",
-			"edit_link"			=> $allow_edit		? "./?object=".FORUM_CLASS_NAME."&action=edit_post&id=".$post_info["id"]._add_get(array("page")) : "",
-			"delete_link"		=> $allow_delete	? "./?object=".FORUM_CLASS_NAME."&action=delete_post&id=".$post_info["id"]._add_get(array("page")) : "",
-			"report_link"		=> FORUM_USER_ID ? process_url("./?object=".FORUM_CLASS_NAME."&action=report_post&id=".$post_info["id"]._add_get()) : "",
+			"quote_link"		=> $allow_reply		? "./?object=".'forum'."&action=reply&id=".$post_info["id"]._add_get(array("page")) : "",
+			"no_quote_link"		=> $allow_reply		? "./?object=".'forum'."&action=reply_no_quote&id=".$post_info["id"]._add_get(array("page")) : "",
+			"email_link"		=> $allow_email		? "./?object=".'forum'."&action=email_user&id=".$post_info["user_id"]._add_get(array("page")) : "",
+			"edit_link"			=> $allow_edit		? "./?object=".'forum'."&action=edit_post&id=".$post_info["id"]._add_get(array("page")) : "",
+			"delete_link"		=> $allow_delete	? "./?object=".'forum'."&action=delete_post&id=".$post_info["id"]._add_get(array("page")) : "",
+			"report_link"		=> FORUM_USER_ID ? process_url("./?object=".'forum'."&action=report_post&id=".$post_info["id"]._add_get()) : "",
 			"show_edit_by"		=> intval($post_info["show_edit_by"] && $post_info["edit_time"] && !empty($post_info["edit_name"])),
 			"editor_name"		=> $post_info["edit_name"],
 			"edit_time"			=> module('forum')->_show_date($post_info["edit_time"], "edit_time"),
@@ -93,9 +91,9 @@ class yf_forum_post_item {
 			"num_replies"		=> intval($topic_info["num_posts"]),
 			"num_views"			=> intval($topic_info["num_views"]),
 			"forum_link"		=> module('forum')->_link_to_forum($post_info["forum"]),
-			"topic_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$post_info["topic"]._add_get(array("page")),
-			"post_link"			=> "./?object=".FORUM_CLASS_NAME."&action=view_post&id=".$post_info["id"]._add_get(array("page")),
+			"topic_link"		=> "./?object=".'forum'."&action=view_topic&id=".$post_info["topic"]._add_get(array("page")),
+			"post_link"			=> "./?object=".'forum'."&action=view_post&id=".$post_info["id"]._add_get(array("page")),
 		));
-		return tpl()->parse(FORUM_CLASS_NAME. $stpl_name, $replace);
+		return tpl()->parse('forum'. $stpl_name, $replace);
 	}
 }

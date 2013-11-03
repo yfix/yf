@@ -8,12 +8,6 @@
 * @version		1.0
 */
 class yf_forum_user_details_global {
-
-	/**
-	* Constructor
-	*/
-	function _init () {
-	}
 	
 	/**
 	* Show user info in post
@@ -44,7 +38,7 @@ class yf_forum_user_details_global {
 			"use_ajax"			=> 1,
 			"photo_verified"	=> $avatar_src && $user_info["photo_verified"] ? 1 : 0,
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/user_details_global", $replace);
+		return tpl()->parse('forum'."/user_details_global", $replace);
 	}
 	
 	/**

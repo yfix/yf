@@ -46,17 +46,17 @@ class yf_forum_stats {
 			"newest_user_link"		=> module('forum')->_user_profile_link($forum_totals["last_user_id"]),
 			"num_most_users"		=> intval($forum_most_users["num_most_users"]),
 			"most_date"				=> module('forum')->_show_date($forum_most_users["most_date"], "most_date"),
-			"by_last_click_link"	=> "./?object=".FORUM_CLASS_NAME."&action=view_stats&id=1". _add_get(),
-			"by_member_name_link"	=> "./?object=".FORUM_CLASS_NAME."&action=view_stats&id=2". _add_get(),
-			"today_topics_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_stats&id=3". _add_get(),
-			"moderators_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_stats&id=4". _add_get(),
-			"today_top_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_stats&id=5". _add_get(),
-			"overall_top_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_stats&id=6". _add_get(),
-			"del_cookies_link"		=> "./?object=".FORUM_CLASS_NAME."&action=del_cookies". _add_get(),
-			"mark_all_read_link"	=> "./?object=".FORUM_CLASS_NAME."&action=mark_read". _add_get(),
-			"sync_board_link"		=> FORUM_IS_ADMIN ? "./?object=".FORUM_CLASS_NAME."&action=sync_board". _add_get() : "",
+			"by_last_click_link"	=> "./?object=".'forum'."&action=view_stats&id=1". _add_get(),
+			"by_member_name_link"	=> "./?object=".'forum'."&action=view_stats&id=2". _add_get(),
+			"today_topics_link"		=> "./?object=".'forum'."&action=view_stats&id=3". _add_get(),
+			"moderators_link"		=> "./?object=".'forum'."&action=view_stats&id=4". _add_get(),
+			"today_top_link"		=> "./?object=".'forum'."&action=view_stats&id=5". _add_get(),
+			"overall_top_link"		=> "./?object=".'forum'."&action=view_stats&id=6". _add_get(),
+			"del_cookies_link"		=> "./?object=".'forum'."&action=del_cookies". _add_get(),
+			"mark_all_read_link"	=> "./?object=".'forum'."&action=mark_read". _add_get(),
+			"sync_board_link"		=> FORUM_IS_ADMIN ? "./?object=".'forum'."&action=sync_board". _add_get() : "",
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/stats_board_totals", $replace);
+		return tpl()->parse('forum'."/stats_board_totals", $replace);
 	}
 
 	/**
@@ -77,7 +77,7 @@ class yf_forum_stats {
 			"num_total_online"		=> intval($online_stats["num_total_online"]),
 			"online_users"			=> $online_users,
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/stats_forum", $replace);
+		return tpl()->parse('forum'."/stats_forum", $replace);
 	}
 
 	/**
@@ -98,7 +98,7 @@ class yf_forum_stats {
 			"num_total_online"		=> intval($online_stats["num_total_online"]),
 			"online_users"			=> $online_users,
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/stats_topic", $replace);
+		return tpl()->parse('forum'."/stats_topic", $replace);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class yf_forum_stats {
 					"user_profile_link"	=> module('forum')->_user_profile_link($online_info["user_id"]),
 					"user_login_date"	=> module('forum')->_show_date($online_info["login_date"], "user_login_date"),
 				);
-				$online_users_array[$online_info["user_name"]] = tpl()->parse(FORUM_CLASS_NAME."/stats_user_item", $replace);
+				$online_users_array[$online_info["user_name"]] = tpl()->parse('forum'."/stats_user_item", $replace);
 			// Count guests
 			} else {
 				$online_stats["num_guests"]++;

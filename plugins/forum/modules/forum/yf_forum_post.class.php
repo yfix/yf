@@ -18,9 +18,6 @@ class yf_forum_post {
 	* Constructor
 	*/
 	function _init () {
-		// Init bb codes module
-		$this->BB_OBJ = _class("bb_codes");
-		// Get smilies
 		$this->_smiles_array = main()->get_data("smilies");
 	}
 
@@ -219,7 +216,7 @@ class yf_forum_post {
 				$last_posts[$A["id"]] = array(
 					"user_name"		=> !empty($A["user_name"]) ? _prepare_html($A["user_name"]) : t("Anonymous"),
 					"posted_date"	=> module('forum')->_show_date($A["created"], "post_date"),
-					"text"			=> $this->BB_OBJ->_process_text(_strlen($A["text"]) > module('forum')->SETTINGS["LAST_POSTS_MAX_LENGTH"] ? _substr($A["text"], 0, module('forum')->SETTINGS["LAST_POSTS_MAX_LENGTH"]). "..." : $A["text"]),
+					"text"			=> _class('bb_codes')->_process_text(_strlen($A["text"]) > module('forum')->SETTINGS["LAST_POSTS_MAX_LENGTH"] ? _substr($A["text"], 0, module('forum')->SETTINGS["LAST_POSTS_MAX_LENGTH"]). "..." : $A["text"]),
 				);
 			}
 		}
@@ -231,7 +228,7 @@ class yf_forum_post {
 				"selected"	=> $is_first_post && $topic_info["icon_id"] == $i ? "checked" : "",
 				"img_src"	=> WEB_PATH. module('forum')->SETTINGS["POST_ICONS_DIR"]. "icon".$i.".gif",
 			);
-			$post_icons .= tpl()->parse(FORUM_CLASS_NAME."/new_post_icon", $replace3);
+			$post_icons .= tpl()->parse('forum'."/new_post_icon", $replace3);
 		}
 		$as_image = 0;
 		if (module('forum')->SETTINGS["SMILIES_IMAGES"]) {
@@ -248,10 +245,10 @@ class yf_forum_post {
 			);
 			$replace2 = array(
 				"code"		=> $smile_info["code"],
-				"smile_item"=> tpl()->parse(FORUM_CLASS_NAME."/smile_item", $replace4),
+				"smile_item"=> tpl()->parse('forum'."/smile_item", $replace4),
 				"need_div"	=> !(++$i % 3),
 			);
-			$smile_icons .= tpl()->parse(FORUM_CLASS_NAME."/new_post_smile_icon", $replace2);
+			$smile_icons .= tpl()->parse('forum'."/new_post_smile_icon", $replace2);
 		}
 		// Process text
 		$text = "";
@@ -269,19 +266,19 @@ class yf_forum_post {
 		$allow_polls = FORUM_USER_ID && module('forum')->SETTINGS["ALLOW_POLLS"] && module('forum')->USER_RIGHTS["make_polls"];
 		$bb_codes_params = array(
 			"unique_id" 	=> "text",
-			"stpl_name"		=> FORUM_CLASS_NAME."/new_post_buttons",
+			"stpl_name"		=> 'forum'."/new_post_buttons",
 		);
 		// Process template
 		$replace = array(
 			"is_admin"			=> intval(FORUM_IS_ADMIN),
-			"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=save_post&id=".$_GET["id"]._add_get(array("id")),
+			"form_action"		=> "./?object=".'forum'."&action=save_post&id=".$_GET["id"]._add_get(array("id")),
 			"bbcode_js_src"		=> WEB_PATH. "js/bbcode.js",
 			"cat_name"			=> _prepare_html($cat_info["name"]),
 			"forum_name"		=> _prepare_html($forum_info["name"]),
 			"topic_name"		=> !$new_topic ? _prepare_html($topic_info["name"]) : "",
-			"cat_link"			=> "./?object=".FORUM_CLASS_NAME._add_get(array("id")),
+			"cat_link"			=> "./?object=".'forum'._add_get(array("id")),
 			"forum_link"		=> module('forum')->_link_to_forum($forum_info["id"]),
-			"topic_link"		=> !$new_topic ? "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$_GET["id"]._add_get(array("id")) : "",
+			"topic_link"		=> !$new_topic ? "./?object=".'forum'."&action=view_topic&id=".$_GET["id"]._add_get(array("id")) : "",
 			"subject"			=> !$new_topic ? "Re:"._prepare_html($topic_info["name"]) : "",
 			"text"				=> !$new_topic ? $text : "",
 			"last_posts"		=> !$new_topic ? $last_posts : "",
@@ -312,12 +309,12 @@ class yf_forum_post {
 			"attach_max_width"	=> intval(module('forum')->SETTINGS["ATTACH_LIMIT_X"]),
 			"attach_max_height"	=> intval(module('forum')->SETTINGS["ATTACH_LIMIT_Y"]),
 			"attach_image_src"	=> !empty($attach_path) && file_exists(INCLUDE_PATH. $attach_path) ? WEB_PATH. $attach_path : "",
-			"del_attach_link"	=> !empty($attach_path) && FORUM_USER_ID ? "./?object=".FORUM_CLASS_NAME."&action=delete_attach&id=".$post_info["id"]._add_get(array("id")) : "",
-			"bb_codes_block"	=> module('forum')->SETTINGS["BB_CODE"] ? $this->BB_OBJ->_display_buttons($bb_codes_params) : "",
-			"bb_pop_link"		=> process_url("./?object=".FORUM_CLASS_NAME."&action=bb_code_help"._add_get(array("page"))),
+			"del_attach_link"	=> !empty($attach_path) && FORUM_USER_ID ? "./?object=".'forum'."&action=delete_attach&id=".$post_info["id"]._add_get(array("id")) : "",
+			"bb_codes_block"	=> module('forum')->SETTINGS["BB_CODE"] ? _class('bb_codes')->_display_buttons($bb_codes_params) : "",
+			"bb_pop_link"		=> process_url("./?object=".'forum'."&action=bb_code_help"._add_get(array("page"))),
 			"wysiwyg_editor"	=> module('forum')->_show_wysiwyg_editor($text),
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/new_post", $replace);
+		return tpl()->parse('forum'."/new_post", $replace);
 	}
 
 	/**
@@ -619,7 +616,7 @@ class yf_forum_post {
 			}
 		}
 		// Redirect user back
-		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$topic_info["id"]. (!empty($topic_last_page) ? "&page=".intval($topic_last_page) : ""). _add_get(array("page")). "#last_post");
+		return js_redirect("./?object=".'forum'."&action=view_topic&id=".$topic_info["id"]. (!empty($topic_last_page) ? "&page=".intval($topic_last_page) : ""). _add_get(array("page")). "#last_post");
 	}
 
 	/**

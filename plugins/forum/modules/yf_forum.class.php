@@ -208,10 +208,6 @@ class yf_forum {
 	*/
 	function _init () {
 		$GLOBALS['no_page_header'] = true;
-		// Forum class name (to allow changing only in one place)
-		define("FORUM_CLASS_NAME", "forum");
-		// Forum modules folder
-		define("FORUM_MODULES_DIR", USER_MODULES_DIR.FORUM_CLASS_NAME."/");
 		// Internal super-admin mode
 		define("FORUM_INTERNAL_CALL", intval($INTERNAL_CALL));
 		// Set config vars (special name "_forum")
@@ -636,7 +632,7 @@ class yf_forum {
 			}
 		}
 		if (!empty($new_action)) {
-			return js_redirect("./?object=".FORUM_CLASS_NAME.($new_action != "home" ? "&action=".$new_action : "").(!empty($new_id) ? "&id=".$new_id : ""));
+			return js_redirect("./?object=".'forum'.($new_action != "home" ? "&action=".$new_action : "").(!empty($new_id) ? "&id=".$new_id : ""));
 		}
 		// Default redirect back
 		return js_redirect($_SERVER["HTTP_REFERER"], false);
@@ -844,7 +840,7 @@ class yf_forum {
 		if (empty($user_id) || $this->SETTINGS["HIDE_USERS_INFO"]) {
 			return "";
 		}
-		return ($this->SETTINGS["USE_GLOBAL_USERS"] && !$force_forum_link ? _profile_link($user_id) : "./?object=".FORUM_CLASS_NAME."&action=view_profile&id=".$user_id);
+		return ($this->SETTINGS["USE_GLOBAL_USERS"] && !$force_forum_link ? _profile_link($user_id) : "./?object=".'forum'."&action=view_profile&id=".$user_id);
 	}
 
 	/**
@@ -896,17 +892,17 @@ class yf_forum {
 			"text"				=> $text,
 			"is_logged_in"		=> intval(FORUM_USER_ID),
 			"back_url"			=> $this->USER_RIGHTS["view_board"] && !empty($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "",
-			"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=login",
-			"forgot_pswd_link"	=> "./?object=".FORUM_CLASS_NAME."&action=send_password",
-			"register_link"		=> "./?object=".FORUM_CLASS_NAME."&action=register",
-			"help_link"			=> "./?object=".FORUM_CLASS_NAME."&action=help",
-			"contact_admin_link"=> "./?object=".FORUM_CLASS_NAME."&action=contact_admin",
+			"form_action"		=> "./?object=".'forum'."&action=login",
+			"forgot_pswd_link"	=> "./?object=".'forum'."&action=send_password",
+			"register_link"		=> "./?object=".'forum'."&action=register",
+			"help_link"			=> "./?object=".'forum'."&action=help",
+			"contact_admin_link"=> "./?object=".'forum'."&action=contact_admin",
 			"admin_email_1"		=> $admin_email[0],
 			"admin_email_2"		=> $admin_email[1],
 			"show_login_form"	=> !FORUM_USER_ID && $this->USER_RIGHTS["view_board"],
 			"show_useful_links"	=> $this->USER_RIGHTS["view_board"],
 		);
-		$body = tpl()->parse(FORUM_CLASS_NAME."/errors_main", $replace);
+		$body = tpl()->parse('forum'."/errors_main", $replace);
 		return $use_main_tpl ? $this->_show_main_tpl($body) : $body;
 	}
 
@@ -1074,7 +1070,7 @@ class yf_forum {
 			$forum_name = $this->_forums_array[$forum_id]["name"];
 			$forum_name = preg_replace("/[^a-z0-9\-\_]/ims", "_", strtolower($forum_name));
 		}
-		return "./?object=".FORUM_CLASS_NAME."&action=view_forum&id=".(!empty($forum_name) ? $forum_name : $forum_id);
+		return "./?object=".'forum'."&action=view_forum&id=".(!empty($forum_name) ? $forum_name : $forum_id);
 	}
 
 	/**

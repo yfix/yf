@@ -41,7 +41,7 @@ class yf_forum_compact_view {
 				"user_name"			=> _prepare_html($users_names[$user_id]),
 				"user_profile_link"	=> process_url(module('forum')->_user_profile_link($user_id)),
 			);
-			$body .= tpl()->parse(FORUM_CLASS_NAME."/compact_topic_repliers_item", $replace);
+			$body .= tpl()->parse('forum'."/compact_topic_repliers_item", $replace);
 		}
 		// Throw output
 		echo t("Topic posts by users").":<br />\r\n";
