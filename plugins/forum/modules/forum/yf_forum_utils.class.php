@@ -120,7 +120,7 @@ class yf_forum_utils {
 		$url = "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=all";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url, null, $_reports_per_page);
 
-		$BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$BB_OBJ = _class("bb_codes");
 
 		// Get records from db	  выбираем из репортов все id
 		$Q = db()->query($sql. $order_by. $add_sql);

@@ -430,7 +430,7 @@ class yf_comments {
 		}
 		// If special code is "on" - process it
 		if ($this->USE_BB_CODES) {
-			$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+			$BB_CODES_OBJ = _class("bb_codes");
 		}
 		// We cannot die, need to be safe
 		if ($this->USE_BB_CODES && is_object($BB_CODES_OBJ)) {
@@ -533,7 +533,7 @@ class yf_comments {
 			$ids = $OBJ->_get_unread("comments");
 		}
 		
-		$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+		$BB_CODES_OBJ = _class("bb_codes");
 		
 		if(!empty($ids)){
 			$sql		= "SELECT text,object_name,id,object_id FROM ".db('comments')." WHERE id IN(".implode(",", (array)$ids).")";

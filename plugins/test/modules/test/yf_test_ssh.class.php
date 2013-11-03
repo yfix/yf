@@ -15,7 +15,7 @@ class yf_test_ssh {
 			"ssh_user"	=> "root",
 			"ssh_pswd"	=> "123456",
 		);
-		$SSH_OBJ = main()->init_class("ssh", "classes/");
+		$SSH_OBJ = _class("ssh");
 
 		$body .= "<br /><b>Test exec \"ifconfig\"</b><br /><br />";
 		$body .= _ssh_exec($server_info, "ifconfig");
@@ -42,7 +42,7 @@ class yf_test_ssh {
 //		$SSH_OBJ->write_string($server_info, "...Testing string...", "/var/www/__tmp/111/222/333/tmp2.tmp");
 //		$SSH_OBJ->write_string($server_info, array("/var/www/__tmp2/testing_1" => "some content 1", "/var/www/__tmp2/testing_2" => "some content 2"));
 //		$SSH_OBJ->unlink($server_info, "/var/www/__tmp/111/222/333/tmp.tmp");
-//		$DIR_OBJ = main()->init_class("dir", "classes/");
+//		$DIR_OBJ = _class("dir");
 //		$DIR_OBJ->delete_dir(INCLUDE_PATH."__123testing123", 1);
 //		$SSH_OBJ->download_dir($server_info, "/etc/apache2", INCLUDE_PATH."__123testing123");
 //		$SSH_OBJ->upload_dir($server_info, YF_PATH."__UPDATES", "/var/www/__tmp_new", "", "/(svn|git)/i");

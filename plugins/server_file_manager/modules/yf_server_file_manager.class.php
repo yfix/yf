@@ -50,14 +50,14 @@ class yf_server_file_manager {
 		$this->_server_info = db()->query_fetch("SELECT * FROM ".db('servers')." WHERE id=".intval($_GET["id"]));
 		
 		// Init ssh class
-		$this->SSH_OBJ = main()->init_class("ssh", "classes/");
+		$this->SSH_OBJ = _class("ssh");
 
 		$this->START_DIR = "/";
 
 		$this->GET_PATH = $_GET["page"];
 
 		// Get images for extensions
-		$this->DIR_OBJ = main()->init_class("dir", "classes/");		
+		$this->DIR_OBJ = _class("dir");		
 		$images = $this->DIR_OBJ->scan_dir("./uploads/icons/ext", true, "", "/(svn|git)/i");
 		foreach((array)$images as $filename) {
 			list($ext_name) = explode(".", basename($filename));
@@ -242,7 +242,7 @@ class yf_server_file_manager {
 
 		if ($this->ALLOW_CHANGE_OWNER) {
 			// Init server commands class
-			$this->SERVER_OBJ = &main()->init_class("server_commands", "classes/"); 
+			$this->SERVER_OBJ = &_class("server_commands"); 
 
 			// Find all users
 			$system_users_array = $this->SERVER_OBJ->get_system_users($this->_server_info);

@@ -32,7 +32,7 @@ class yf_blog_ping {
 		// Switch between ping methods
 		if ($this->BLOG_OBJ->PING_METHOD == "xml-rpc") {
 
-			$XML_RPC_OBJ = main()->init_class("xml_rpc", "classes/");
+			$XML_RPC_OBJ = _class("xml_rpc");
 			$XML_RPC_OBJ->USE_COMPACT_PARAMS = true;
 			if (DEBUG_MODE) {
 				$XML_RPC_OBJ->_XML_RPC_DEBUG = true;

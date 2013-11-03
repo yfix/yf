@@ -14,7 +14,7 @@ class yf_forum_post_item {
 	*/
 	function _init () {
 		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$this->BB_OBJ = _class("bb_codes");
 		// Get online users ids for those who posted here
 		foreach ((array)module("forum")->online_array as $online_info) {
 			if (!empty($online_info["user_id"]) && !empty($this->_users_array[$online_info["user_id"]])) {

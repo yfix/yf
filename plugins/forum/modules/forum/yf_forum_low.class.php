@@ -154,7 +154,7 @@ class yf_forum_low {
 		}
 		$body .= "<ul>\r\n";
 		// Init bb codes module
-		$BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$BB_OBJ = _class("bb_codes");
 		// Process posts
 		$Q = db()->query($sql. $order_by. $add_sql);
 		while ($post_info = db()->fetch_assoc($Q)) {

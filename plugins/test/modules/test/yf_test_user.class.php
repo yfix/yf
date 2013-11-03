@@ -9,7 +9,7 @@ class yf_test_user {
 	* Testing short functions: user(), update_user(), search_user()
 	*/
 	function test () {
-		$OBJ = main()->init_class("user_data", "classes/common/");
+		$OBJ = _class("user_data");
 		if (!DEBUG_MODE) {
 			return "Allowed to run only when DEBUG_MODE is enabled!";
 		}

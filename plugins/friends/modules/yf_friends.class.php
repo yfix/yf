@@ -58,7 +58,7 @@ class yf_friends extends yf_module {
 	
 	// YF module constructor
 	function _init () {
-		$this->CAPTCHA = main()->init_class("captcha", "classes/");
+		$this->CAPTCHA = _class("captcha");
 //		$this->CAPTCHA->set_image_size(120, 50);
 //		$this->CAPTCHA->font_height = 16;
 	}

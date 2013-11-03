@@ -19,7 +19,7 @@ class yf_forum_post {
 	*/
 	function _init () {
 		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$this->BB_OBJ = _class("bb_codes");
 		// Get smilies
 		$this->_smiles_array = main()->get_data("smilies");
 	}
@@ -465,7 +465,7 @@ class yf_forum_post {
 		}
 		// Do close BB Codes (if needed)
 		if (module('forum')->SETTINGS["BB_CODE"]) {
-			$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+			$BB_CODES_OBJ = _class("bb_codes");
 			if (is_object($BB_CODES_OBJ)) {
 				$_POST["title"]	= $BB_CODES_OBJ->_force_close_bb_codes($_POST["title"]);
 				$_POST["desc"]	= $BB_CODES_OBJ->_force_close_bb_codes($_POST["desc"]);

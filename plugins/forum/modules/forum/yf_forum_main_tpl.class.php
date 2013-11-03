@@ -29,7 +29,7 @@ class yf_forum_main_tpl {
 		module('forum')->_MAIN_TPL_VISITED = true;
 		// Seo keywords
 		if ($_GET["action"] == "show" && module('forum')->SETTINGS["SEO_KEYWORDS"]) {
-			$SEO_OBJ = main()->init_class("se_keywords", "classes/");
+			$SEO_OBJ = _class("se_keywords");
 			$seo_keywords = is_object($SEO_OBJ) ? $SEO_OBJ->_show_search_keywords() : "";
 		}
 		// Forum statistics

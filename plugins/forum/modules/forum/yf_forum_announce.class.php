@@ -14,7 +14,7 @@ class yf_forum_announce {
 	*/
 	function _init () {
 		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$this->BB_OBJ = _class("bb_codes");
 	}
 	
 	/**

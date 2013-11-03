@@ -171,7 +171,7 @@ class yf_user_profile extends yf_module {
 		
 		
 		if (main()->USER_INFO_DYNAMIC) {
-			$OBJ_DYNAMIC_INFO = &main()->init_class("dynamic_info", "classes/");
+			$OBJ_DYNAMIC_INFO = &_class("dynamic_info");
 			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_view(intval($_GET["id"]));
 		}
 		
@@ -407,7 +407,7 @@ class yf_user_profile extends yf_module {
 	// Show profile comments
 	function _show_custom_design_css ($user_info = array()) {
 /*
-		$OBJ = main()->init_class("custom_design", "classes/");
+		$OBJ = _class("custom_design");
 		return is_object($OBJ) ? $OBJ->_show_css(array(
 			"item_id"			=> $user_info["id"],
 			"css_table_main"	=> "tbl,.wrapper,textarea,input",

@@ -40,7 +40,7 @@ class yf_manage_comments {
 	// Default function
 	function show () {
 		// Get sites info
-		$this->_sites_info = main()->init_class("sites_info", "classes/");
+		$this->_sites_info = _class("sites_info");
 		$FIRST_SITE_INFO = array_shift($this->_sites_info->info);
 		// Calling function to divide records per pages
 		$sql = "SELECT * FROM ".db('comments')." ";

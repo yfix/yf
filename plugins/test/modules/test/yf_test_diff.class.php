@@ -8,7 +8,7 @@ class yf_test_diff {
 	/**
 	*/
 	function test () {
-		$DIFF_OBJ = main()->init_class("diff", "classes/");
+		$DIFF_OBJ = _class("diff");
 //		$DIFF->method = "PHP";
 		$str1 = 
 "class Text_Diff_Op_add extends Text_Diff_Op {

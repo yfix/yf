@@ -70,7 +70,7 @@ class yf_blog_posting {
 				$_POST["mode_text"]		= _filter_text($_POST["mode_text"]);
 				// Do close BB Codes (if needed)
 				if ($this->USE_BB_CODES) {
-					$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+					$BB_CODES_OBJ = _class("bb_codes");
 					if (is_object($BB_CODES_OBJ)) {
 						$_POST["post_text"] = $BB_CODES_OBJ->_force_close_bb_codes($_POST["post_text"]);
 					}
@@ -314,7 +314,7 @@ class yf_blog_posting {
 				$_POST["mode_text"]		= _filter_text($_POST["mode_text"]);
 				// Do close BB Codes (if needed)
 				if ($this->USE_BB_CODES) {
-					$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+					$BB_CODES_OBJ = _class("bb_codes");
 					if (is_object($BB_CODES_OBJ)) {
 						$_POST["post_text"] = $BB_CODES_OBJ->_force_close_bb_codes($_POST["post_text"]);
 					}

@@ -257,7 +257,7 @@ class yf_forum {
 		}
 		// Try to init captcha
 		if ($this->SETTINGS["USE_CAPTCHA"] && in_array($_GET["action"], array("show_captcha_image","register","send_password"))) {
-			$this->CAPTCHA = main()->init_class("captcha", "classes/");
+			$this->CAPTCHA = _class("captcha");
 //			$this->CAPTCHA->set_image_size(120, 50);
 //			$this->CAPTCHA->font_height = 16;
 		}

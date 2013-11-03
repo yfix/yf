@@ -159,7 +159,7 @@ class yf_blog extends yf_module {
 		}
 		$this->_numbers = range(0,9);
 		// Get blogs categories
-		$this->CATS_OBJ		= main()->init_class("cats", "classes/");
+		$this->CATS_OBJ		= _class("cats");
 		$this->_blog_cats	= $this->CATS_OBJ->_get_items_names('blog'."_cats");
 		$this->_blog_cats2	= $this->CATS_OBJ->_prepare_for_box('blog'."_cats");
 		// Get moods

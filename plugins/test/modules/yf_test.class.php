@@ -214,7 +214,7 @@ class yf_test {
 		$source = '{сегодня|вчера|20 лет назад} [test|||test1] [te|s|t3|test4]#3# [te|s|t|5[te|s|t|5]#1,4#|t|e|s|t6]#6,4# {Жак Ив Кусто|Леонид Хрущев{ и его колеги|, а также родственники жены| в компании инопланетян}} {сообщил|утонул|занимался сексом c{ {Хилари Клинтон|Перис Хилтон|Надеждой Крупской|Мерлином Менсоном}}} {на %DEMO% Елисейских полях|на полях|в подезде|в ванной|в ванной с утятами|на унитазе|пьяным|%DEMO%|%DEMO%|}';
 		if (!empty($_POST)) {
 			$source = $_POST['source'];
-			$OBJ = main()->init_class('synonymizer', 'classes/');
+			$OBJ = _class('synonymizer');
 			$result .= '1) '. $OBJ->process($source). PHP_EOL;
 			$result .= '2) '. $OBJ->process($source). PHP_EOL;
 			$result .= '3) '. $OBJ->process($source). PHP_EOL;
@@ -276,7 +276,7 @@ class yf_test {
 	function filter_text (){
 		// Do process
 		if (!empty($_POST)) {
-			$BB_CODES_OBJ = main()->init_class('bb_codes', 'classes/');
+			$BB_CODES_OBJ = _class('bb_codes');
 			if (is_object($BB_CODES_OBJ)) {
 				$result = $_POST['text'];
 				$result = _filter_text($result);

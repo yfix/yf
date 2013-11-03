@@ -20,7 +20,7 @@ class yf_email {
 	// YF module constructor
 	function _init () {
 		// Try to init captcha
-		$this->CAPTCHA = main()->init_class("captcha", "classes/");
+		$this->CAPTCHA = _class("captcha");
 //		$this->CAPTCHA->set_image_size(120, 50);
 //		$this->CAPTCHA->font_height = 16;
 	}

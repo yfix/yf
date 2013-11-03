@@ -385,7 +385,7 @@ class yf_gallery_manage {
 		if (!$result) {
 			return _e("GALLERY: upload internal error #3 in ".__FUNCTION__);
 		}
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 
 		// Get photos availiable to process
 		$photos = $DIR_OBJ->scan_dir($_archive_extract_path, true, array("", "/\.(jpg|jpeg|gif|png)\$/"), "/(svn|git)/");
@@ -1096,7 +1096,7 @@ class yf_gallery_manage {
 			if ($GALLERY_SETTINGS["thumb_type"] == 1 && in_array($format_name, array("thumbnail", "ad thumbnail"))) {
 				@copy($photo_path, $new_thumb_path);
 
-				$OBJ = main()->init_class("image_manip", "classes/common/");
+				$OBJ = _class("image_manip");
 				$thumb_result = $OBJ->crop_box($new_thumb_path, $new_thumb_path, $limit_x, $limit_y);
 
 			} else {
@@ -1146,7 +1146,7 @@ class yf_gallery_manage {
 		$orig_crop_width	= $crop_width * $scale;
 		$orig_crop_height	= $crop_height * $scale;
 		// Go
-		$OBJ = main()->init_class("image_manip", "classes/common/");
+		$OBJ = _class("image_manip");
 		$thumb_result = $OBJ->crop($original_path, $original_path, $orig_crop_width, $orig_crop_height, $orig_pos_left, $orig_pos_top);
 		// Resize all image sizes
 		$this->_restore_all_sizes($photo_info);
@@ -1160,7 +1160,7 @@ class yf_gallery_manage {
 	function _rotate ($photo_info, $angle) {
 		$original_path	 	= module('gallery')->_photo_fs_path($photo_info, "original");
 		// Go
-		$OBJ = main()->init_class("image_manip", "classes/common/");
+		$OBJ = _class("image_manip");
 		$OBJ->rotate($original_path, $original_path, $angle);
 		// Resize all image sizes
 		$this->_restore_all_sizes($photo_info);

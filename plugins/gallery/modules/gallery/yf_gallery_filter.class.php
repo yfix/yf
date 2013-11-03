@@ -145,7 +145,7 @@ class yf_gallery_filter {
 		}
 		// Search by ZIP code (US only)
 		if (!empty($SF['zip_code']) && (strlen($SF['zip_code']) == 5)) {
-			$ZIP_CODES_OBJ = main()->init_class("zip_codes", "classes/");
+			$ZIP_CODES_OBJ = _class("zip_codes");
 			$radius = (intval($SF['miles']) > 0) ? intval($SF['miles']) : 20;
 			$sql_zip = $ZIP_CODES_OBJ->_generate_sql($SF['zip_code'], $radius);
 			if (strlen($sql_zip)) {

@@ -32,7 +32,7 @@ class yf_blog_right_block {
 			ksort($this->BLOG_OBJ->_posts_by_days);
 		}
 		if ($this->BLOG_OBJ->USE_JS_CALENDAR && MAIN_TYPE_USER) {
-			$CALENDAR_OBJ = main()->init_class("js_calendar", "classes/");
+			$CALENDAR_OBJ = _class("js_calendar");
 		}
 		if (is_object($CALENDAR_OBJ) && !empty($this->BLOG_OBJ->_posts_by_days)) {
 			$CALENDAR_OBJ->_set_params(array(

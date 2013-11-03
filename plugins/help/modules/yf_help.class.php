@@ -45,7 +45,7 @@ class yf_help extends yf_module {
 			1	=> t("Low"),
 		);
 		// Prepare categories
-		$this->CATS_OBJ		= main()->init_class("cats", "classes/");
+		$this->CATS_OBJ		= _class("cats");
 		$this->_help_cats	= $this->CATS_OBJ->_prepare_for_box("", 0);
 		$this->_help_cats	= my_array_merge(array("" => ""), (array)$this->_help_cats);
 		// Array of statuses
@@ -63,7 +63,7 @@ class yf_help extends yf_module {
 		));
 		if ($this->USE_CAPTCHA) {
 			// Try to init captcha
-			$this->CAPTCHA = main()->init_class("captcha", "classes/");
+			$this->CAPTCHA = _class("captcha");
 //			$this->CAPTCHA->set_image_size(120, 50);
 //			$this->CAPTCHA->font_height = 16;
 		}

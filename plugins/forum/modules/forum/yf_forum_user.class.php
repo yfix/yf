@@ -14,7 +14,7 @@ class yf_forum_user {
 	*/
 	function _init () {
 		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$this->BB_OBJ = _class("bb_codes");
 		// Required arrays
 		$this->_view_sig		= array(1 => t("Yes"), 0 => t("No"));
 		$this->_view_images		= array(1 => t("Yes"), 0 => t("No"));
@@ -195,7 +195,7 @@ class yf_forum_user {
 				}
 				$img_file = REAL_PATH. module('forum')->SETTINGS["AVATARS_DIR"]. common()->rand_name(16). ".jpg";
 				move_uploaded_file($_FILES["user_avatar"]["tmp_name"], $img_file);
-				$I = &main()->init_class("resize_images", "classes/");
+				$I = &_class("resize_images");
 				$I->set_source($img_file);
 				$I->set_limits(module('forum')->SETTINGS["AVATAR_MAX_X"], module('forum')->SETTINGS["AVATAR_MAX_Y"]);
 				$I->save($img_file);
@@ -275,7 +275,7 @@ class yf_forum_user {
 			return module('forum')->_show_error("You are not allowed to edit other users settings");
 		}
 		// Load time zone module
-		$TIME_ZONE_OBJ = main()->init_class("time_zone", "classes/");
+		$TIME_ZONE_OBJ = _class("time_zone");
 		// Do save user settings
 		if (count($_POST)) {
 			$sql = "UPDATE ".db('forum_users')." SET
@@ -573,7 +573,7 @@ class yf_forum_user {
 			return module('forum')->_show_error("Disabled by the site admin!");
 		}
 		// Load time zone module
-		$TIME_ZONE_OBJ = main()->init_class("time_zone", "classes/");
+		$TIME_ZONE_OBJ = _class("time_zone");
 		// Check if need to use captcha
 		$use_captcha = module('forum')->SETTINGS["USE_CAPTCHA"] && is_object(module('forum')->CAPTCHA);
 		// Process post data
@@ -599,7 +599,7 @@ class yf_forum_user {
 			if (!common()->_error_exists()) {
 				// Send confirmation email if needed
 				if (module('forum')->SETTINGS["CONFIRM_REGISTER"]) {
-					$E = main()->init_class("encryption", "classes/");
+					$E = _class("encryption");
 					if (!empty(module('forum')->SETTINGS["SECRET_KEY"])) {
 						$E->set_key(module('forum')->SETTINGS["SECRET_KEY"]);
 					}
@@ -654,7 +654,7 @@ class yf_forum_user {
 			return module('forum')->_show_error("Disabled by the site admin!");
 		}
 		if (!empty($_GET["key"]) && module('forum')->SETTINGS["CONFIRM_REGISTER"]) {
-			$E = main()->init_class("encryption", "classes/");
+			$E = _class("encryption");
 			if (!empty(module('forum')->SETTINGS["SECRET_KEY"])) {
 				$E->set_key(module('forum')->SETTINGS["SECRET_KEY"]);
 			}

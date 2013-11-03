@@ -121,7 +121,7 @@ class yf_comments_manage {
 				}
 				// Do close BB Codes (if needed)
 				if (module('comments')->USE_BB_CODES) {
-					$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+					$BB_CODES_OBJ = _class("bb_codes");
 					if (is_object($BB_CODES_OBJ)) {
 						$_POST["text"] = $BB_CODES_OBJ->_force_close_bb_codes($_POST["text"]);
 					}
@@ -289,7 +289,7 @@ class yf_comments_manage {
 				}
 				// Do close BB Codes (if needed)
 				if (module('comments')->USE_BB_CODES) {
-					$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+					$BB_CODES_OBJ = _class("bb_codes");
 					if (is_object($BB_CODES_OBJ)) {
 						$_POST["text"] = $BB_CODES_OBJ->_force_close_bb_codes($_POST["text"]);
 					}

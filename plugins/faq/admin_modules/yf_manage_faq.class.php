@@ -35,12 +35,12 @@ class yf_manage_faq extends yf_module {
 			"suspended"	=> t("suspended"),
 		);
 		// Prepare categories
-		$this->CATS_OBJ = main()->init_class("cats", "classes/");
+		$this->CATS_OBJ = _class("cats");
 		$this->CATS_OBJ->_default_cats_block = "faq_cats";
 		$this->_faqs_cats		= $this->CATS_OBJ->_get_items_array();
 		$this->_cats_for_select = $this->CATS_OBJ->_prepare_for_box("", 0);
 		// Init text editor
-		$this->TEXT_EDITOR_OBJ = main()->init_class("text_editor", "classes/");
+		$this->TEXT_EDITOR_OBJ = _class("text_editor");
 		$this->_EDITOR_EXISTS = is_object($this->TEXT_EDITOR_OBJ);
 		if ($this->_EDITOR_EXISTS) {
 			$this->TEXT_EDITOR_OBJ->TEXT_FIELD_NAME = "answer_text";

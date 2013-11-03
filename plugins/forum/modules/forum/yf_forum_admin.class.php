@@ -16,7 +16,7 @@ class yf_forum_admin {
 		// Synchronization module
 		$this->SYNC_OBJ = main()->init_class("forum_sync", FORUM_MODULES_DIR);
 		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$this->BB_OBJ = _class("bb_codes");
 		// Apply moderator rights here
 		if (FORUM_IS_MODERATOR) {
 			module('forum')->_apply_moderator_rights();

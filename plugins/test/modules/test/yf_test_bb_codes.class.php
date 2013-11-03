@@ -8,7 +8,7 @@ class yf_test_bb_codes {
 	/**
 	*/
 	function test () {
-		$BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$BB_OBJ = _class("bb_codes");
 
 		$string = "
 			[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]
