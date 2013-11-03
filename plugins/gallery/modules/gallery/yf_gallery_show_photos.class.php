@@ -10,14 +10,6 @@
 class yf_gallery_show_photos {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-	}
-
-	/**
 	* Display single photo
 	*/
 	function _show_single_photo ($params = array()) {
@@ -27,18 +19,18 @@ class yf_gallery_show_photos {
 		$PHOTO_TYPE		= !empty($params["photo_type"]) ? $params["photo_type"] : "medium";
 		// Try to get given post info
 		$sql = "SELECT * FROM ".db('gallery_photos')." WHERE ";
-		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
+		if (module('gallery')->HIDE_TOTAL_ID) {
 			$sql .= "id2=".intval($_GET["id"])." AND user_id=".intval($GLOBALS['HOSTING_ID'] ? $GLOBALS['HOSTING_ID'] : main()->USER_ID);
 		} else {
 			$sql .= "id=".intval($_GET["id"]);
 		}
-		$this->GALLERY_OBJ->_photo_info = db()->query_fetch($sql);
-		$photo_info = &$this->GALLERY_OBJ->_photo_info;
-		if (empty($this->GALLERY_OBJ->_photo_info["id"])) {
+		module('gallery')->_photo_info = db()->query_fetch($sql);
+		$photo_info = &module('gallery')->_photo_info;
+		if (empty(module('gallery')->_photo_info["id"])) {
 			return _e(t("No such photo!"));
 		}
 		// Try to get given user info
-		$user_id = $this->GALLERY_OBJ->_photo_info["user_id"];
+		$user_id = module('gallery')->_photo_info["user_id"];
 		if ($user_id) {
 			$user_info = user($user_id, "", array("WHERE" => array("active" => "1")));
 		}
@@ -49,24 +41,24 @@ class yf_gallery_show_photos {
 			$GLOBALS['user_info'] = $user_info;
 		}
 		if (MAIN_TYPE_USER) {
-			$this->GALLERY_OBJ->is_own_gallery = intval(!empty($this->GALLERY_OBJ->USER_ID) && $this->GALLERY_OBJ->USER_ID == $this->GALLERY_OBJ->_photo_info["user_id"]);
+			module('gallery')->is_own_gallery = intval(!empty(module('gallery')->USER_ID) && module('gallery')->USER_ID == module('gallery')->_photo_info["user_id"]);
 		} elseif (MAIN_TYPE_ADMIN) {
-			$this->GALLERY_OBJ->is_own_gallery = true;
+			module('gallery')->is_own_gallery = true;
 		}
 		// Get user gallery settings
-		$this->GALLERY_OBJ->CUR_SETTINGS = $this->GALLERY_OBJ->_get_settings($user_id);
-		$settings = $this->GALLERY_OBJ->CUR_SETTINGS;
+		module('gallery')->CUR_SETTINGS = module('gallery')->_get_settings($user_id);
+		$settings = module('gallery')->CUR_SETTINGS;
 		// Get available user folders
-		if (empty($this->GALLERY_OBJ->_user_folders_infos)) {
-			$this->GALLERY_OBJ->_user_folders_infos = $this->GALLERY_OBJ->_get_user_folders($user_info["id"]);
+		if (empty(module('gallery')->_user_folders_infos)) {
+			module('gallery')->_user_folders_infos = module('gallery')->_get_user_folders($user_info["id"]);
 		}
 		// Prepare folder info
-		$FOLDER_ID = $this->GALLERY_OBJ->_photo_info["folder_id"];
+		$FOLDER_ID = module('gallery')->_photo_info["folder_id"];
 		if (empty($FOLDER_ID)) {
-			$this->GALLERY_OBJ->_fix_and_get_folder_id($this->GALLERY_OBJ->_photo_info);
+			module('gallery')->_fix_and_get_folder_id(module('gallery')->_photo_info);
 		}
 		if (!empty($FOLDER_ID)) {
-			$cur_folder_info = $this->GALLERY_OBJ->_user_folders_infos[$FOLDER_ID];
+			$cur_folder_info = module('gallery')->_user_folders_infos[$FOLDER_ID];
 			$this->_cur_folder_info = $cur_folder_info;
 		}
 		// Folder info is REQUIRED here
@@ -74,28 +66,28 @@ class yf_gallery_show_photos {
 			return _e(t("Folder info is required"));
 		}
 		// Prepare global vars
-		$this->GALLERY_OBJ->_author_id		= intval($user_info["id"]);
-		$this->GALLERY_OBJ->_author_name	= _display_name($user_info);
-		$this->GALLERY_OBJ->_folder_name	= _prepare_html($cur_folder_info["title"]);
+		module('gallery')->_author_id		= intval($user_info["id"]);
+		module('gallery')->_author_name	= _display_name($user_info);
+		module('gallery')->_folder_name	= _prepare_html($cur_folder_info["title"]);
 		// ###########################
 		// Access checks
 		// ###########################
-		if (!$this->GALLERY_OBJ->is_own_gallery) {
+		if (!module('gallery')->is_own_gallery) {
 			// Check privacy permissions
-			if (!$this->GALLERY_OBJ->_privacy_check($cur_folder_info["privacy"], $this->GALLERY_OBJ->_photo_info["privacy"], $user_info["id"])) {
+			if (!module('gallery')->_privacy_check($cur_folder_info["privacy"], module('gallery')->_photo_info["privacy"], $user_info["id"])) {
 				return _e(t("You are not allowed to view this gallery folder"));
 			}
 			// Check for password for protected gallery
 			if (!empty($cur_folder_info["password"])) {
-				$PASSWORD_MATCHED = $_SESSION[$this->GALLERY_OBJ->SESSION_PSWD_FIELD][$FOLDER_ID] == $cur_folder_info["password"];
+				$PASSWORD_MATCHED = $_SESSION[module('gallery')->SESSION_PSWD_FIELD][$FOLDER_ID] == $cur_folder_info["password"];
 			}
 			// Display form to enter the password
 			if (!empty($cur_folder_info["password"]) && !$PASSWORD_MATCHED && MAIN_TYPE_USER) {
-				return $this->GALLERY_OBJ->_enter_pswd($FOLDER_ID);
+				return module('gallery')->_enter_pswd($FOLDER_ID);
 			}
 		}
 		// Comments block check
-		$comments_allowed = $this->GALLERY_OBJ->_comment_allowed_check ($cur_folder_info["allow_comments"], $this->GALLERY_OBJ->_photo_info["allow_comments"], $this->GALLERY_OBJ->_photo_info["user_id"]);
+		$comments_allowed = module('gallery')->_comment_allowed_check ($cur_folder_info["allow_comments"], module('gallery')->_photo_info["allow_comments"], module('gallery')->_photo_info["user_id"]);
 		// Prepare links to the adjacent photos
 		list($prev_photo_link, $next_photo_link) = $this->_get_prev_next_links($user_info, $cur_folder_info["id"]);
 		// Mini-thumbs display
@@ -105,7 +97,7 @@ class yf_gallery_show_photos {
 				"prev_photo_link"	=> $settings["thumbs_loc"] == 0 ? $prev_photo_link : "",
 				"next_photo_link"	=> $settings["thumbs_loc"] == 0 ? $next_photo_link : "",
 			));
-			if ($this->GALLERY_OBJ->MINI_THUMBS_SHOW_ALL) {
+			if (module('gallery')->MINI_THUMBS_SHOW_ALL) {
 				$prev_photo_link = "";
 				$next_photo_link = "";
 			}
@@ -116,14 +108,14 @@ class yf_gallery_show_photos {
 			$SHOW_IN_ADS_ALLOWED = 1;
 		}
 
-		$this->_tags = $this->GALLERY_OBJ->_show_tags($photo_info["id"]);
+		$this->_tags = module('gallery')->_show_tags($photo_info["id"]);
 
 		// Prepare web paths to photo
-		$img_web_path = $this->GALLERY_OBJ->_photo_web_path($photo_info, $PHOTO_TYPE);
-		$full_img_web_path = $this->GALLERY_OBJ->_photo_web_path($photo_info, "original");
+		$img_web_path = module('gallery')->_photo_web_path($photo_info, $PHOTO_TYPE);
+		$full_img_web_path = module('gallery')->_photo_web_path($photo_info, "original");
 		// Photo id for outside
 		$_web_photo_id	= $_GET["id"];
-		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
+		if (module('gallery')->HIDE_TOTAL_ID) {
 			$_web_photo_id = $photo_info["id2"];
 		}
 		// Thumbs location helper
@@ -134,43 +126,43 @@ class yf_gallery_show_photos {
 		);
 		// Process template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) $this->GALLERY_OBJ->USER_ID),
-			"is_own_gallery"		=> $this->GALLERY_OBJ->is_own_gallery,
-			"user_name"				=> $this->GALLERY_OBJ->_author_name,
+			"is_logged_in"			=> intval((bool) module('gallery')->USER_ID),
+			"is_own_gallery"		=> module('gallery')->is_own_gallery,
+			"user_name"				=> module('gallery')->_author_name,
 			"user_profile_link"		=> _profile_link($user_info["id"]),
-			"user_gallery_link"		=> "./?object=".GALLERY_CLASS_NAME."&action=show_gallery".($this->GALLERY_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")),
-			"user_folder_link"		=> $FOLDER_ID ? "./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".($this->GALLERY_OBJ->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $FOLDER_ID). _add_get(array("page")) : "",
+			"user_gallery_link"		=> "./?object=".GALLERY_CLASS_NAME."&action=show_gallery".(module('gallery')->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")),
+			"user_folder_link"		=> $FOLDER_ID ? "./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $FOLDER_ID). _add_get(array("page")) : "",
 			"large_size_link"		=> "./?object=".GALLERY_CLASS_NAME."&action=show_full_size&id=".$_web_photo_id. _add_get(array("page")),
 			"img_src"				=> $img_web_path,
 			"full_image_link"		=> $full_img_web_path,
-			"photo_name"			=> _prepare_html(strlen($this->GALLERY_OBJ->_photo_info["name"]) ? $this->GALLERY_OBJ->_photo_info["name"] : "photo"),
-			"photo_desc"			=> _prepare_html($this->GALLERY_OBJ->_photo_info["desc"]),
-			"cat_name"				=> $this->GALLERY_OBJ->_cat_name,
+			"photo_name"			=> _prepare_html(strlen(module('gallery')->_photo_info["name"]) ? module('gallery')->_photo_info["name"] : "photo"),
+			"photo_desc"			=> _prepare_html(module('gallery')->_photo_info["desc"]),
+			"cat_name"				=> module('gallery')->_cat_name,
 			"page_link"				=> process_url("./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page"))),
-			"user_id"				=> intval($this->GALLERY_OBJ->USER_ID),
-			"comments"				=> $settings["allow_comments"] != 9 ? $this->GALLERY_OBJ->_view_comments(array("object_id" => $photo_info["id"])) : "",
+			"user_id"				=> intval(module('gallery')->USER_ID),
+			"comments"				=> $settings["allow_comments"] != 9 ? module('gallery')->_view_comments(array("object_id" => $photo_info["id"])) : "",
 			"prev_photo_link"		=> $prev_photo_link,
 			"next_photo_link"		=> $next_photo_link,
 			"mini_thumbs"			=> $mini_thumbs,
-			"edit_photo_link"		=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=edit_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"delete_photo_link"		=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=delete_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"change_show_ads_link"	=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_show_ads&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"make_default_link"		=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=make_default&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"show_in_ads"			=> $SHOW_IN_ADS_ALLOWED && $this->GALLERY_OBJ->is_own_gallery ? intval((bool) $photo_info["show_in_ads"]) : -1,
-			"rate_enabled"			=> intval((bool) $this->GALLERY_OBJ->ALLOW_RATE),
-			"rate_allowed"			=> $this->GALLERY_OBJ->ALLOW_RATE ? intval((bool) $photo_info["allow_rate"]) : 0,
+			"edit_photo_link"		=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=edit_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"delete_photo_link"		=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=delete_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"change_show_ads_link"	=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_show_ads&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"make_default_link"		=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=make_default&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"show_in_ads"			=> $SHOW_IN_ADS_ALLOWED && module('gallery')->is_own_gallery ? intval((bool) $photo_info["show_in_ads"]) : -1,
+			"rate_enabled"			=> intval((bool) module('gallery')->ALLOW_RATE),
+			"rate_allowed"			=> module('gallery')->ALLOW_RATE ? intval((bool) $photo_info["allow_rate"]) : 0,
 			"rating"				=> $photo_info["allow_rate"] ? round($photo_info["rating"], 1) : "",
 			"rate_num_votes"		=> $photo_info["allow_rate"] ? intval($photo_info["num_votes"]) : "",
 			"rate_last_voted"		=> $photo_info["allow_rate"] ? _format_date($photo_info["last_vote_date"]) : "",
-			"rate_block"			=> $photo_info["allow_rate"] ? $this->GALLERY_OBJ->_show_rate_block($photo_info) : "",
-			"change_rate_link"		=> $this->GALLERY_OBJ->ALLOW_RATE && $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_rate_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"tagging_enabled"		=> intval((bool) $this->GALLERY_OBJ->ALLOW_TAGGING),
-			"tagging_allowed"		=> $this->GALLERY_OBJ->ALLOW_TAGGING ? intval((bool) $photo_info["allow_tagging"]) : 0,
-			"change_tagging_link"	=> $this->GALLERY_OBJ->ALLOW_TAGGING && $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_tagging_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"tags"					=> $this->GALLERY_OBJ->ALLOW_TAGGING && !empty($tags) ? $tags : "",
+			"rate_block"			=> $photo_info["allow_rate"] ? module('gallery')->_show_rate_block($photo_info) : "",
+			"change_rate_link"		=> module('gallery')->ALLOW_RATE && module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_rate_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"tagging_enabled"		=> intval((bool) module('gallery')->ALLOW_TAGGING),
+			"tagging_allowed"		=> module('gallery')->ALLOW_TAGGING ? intval((bool) $photo_info["allow_tagging"]) : 0,
+			"change_tagging_link"	=> module('gallery')->ALLOW_TAGGING && module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_tagging_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"tags"					=> module('gallery')->ALLOW_TAGGING && !empty($tags) ? $tags : "",
 			"allow_edit_tag"		=> $allow_edit_tags ? 1 : 0,
 			"edit_tag_link"			=> $allow_edit_tags ? process_url("./?object=".GALLERY_CLASS_NAME."&action=edit_tags_popup&id=".$_web_photo_id. _add_get(array("page"))) : "",
-			"tags_block"			=> $this->GALLERY_OBJ->ALLOW_TAGGING ? $this->_tags[$photo_info["id"]] : "",
+			"tags_block"			=> module('gallery')->ALLOW_TAGGING ? $this->_tags[$photo_info["id"]] : "",
 			"thumbs_location"		=> $_thumbs_loc[$settings["thumbs_loc"]],
 			"thumbs_in_row"			=> intval($settings["thumbs_in_row"]),
 			"thumbs_square"			=> $settings["thumb_type"] == 1 ? 1 : 0,
@@ -186,15 +178,15 @@ class yf_gallery_show_photos {
 			return false;
 		}
 		// Prepare links to the adjacent photos
-		if (!$this->GALLERY_OBJ->GET_PREV_NEXT_PHOTOS) {
+		if (!module('gallery')->GET_PREV_NEXT_PHOTOS) {
 			return false;
 		}
 		// Get max privacy
-		$max_privacy		= $this->GALLERY_OBJ->_get_max_privacy($user_info["id"]);
+		$max_privacy		= module('gallery')->_get_max_privacy($user_info["id"]);
 		$max_level			= 1;
-		$only_same_folder	= $this->GALLERY_OBJ->MINI_THUMBS_SAME_FOLDER;
+		$only_same_folder	= module('gallery')->MINI_THUMBS_SAME_FOLDER;
 		// Generate SQL for the access checks
-		if (!$this->GALLERY_OBJ->is_own_gallery) {
+		if (!module('gallery')->is_own_gallery) {
 			$PHOTOS_ACCESS_SQL = " AND is_public='1' ";
 /*
 			$PHOTOS_ACCESS_SQL = 
@@ -212,8 +204,8 @@ class yf_gallery_show_photos {
 		if ($only_same_folder && $cur_folder_id) {
 			$PHOTOS_ACCESS_SQL = "";
 			// Check if user already entered password
-			if (!$this->GALLERY_OBJ->is_own_gallery) {
-				$_entered_pswd	= $_SESSION[$this->GALLERY_OBJ->SESSION_PSWD_FIELD][$cur_folder_id];
+			if (!module('gallery')->is_own_gallery) {
+				$_entered_pswd	= $_SESSION[module('gallery')->SESSION_PSWD_FIELD][$cur_folder_id];
 				$_folder_pswd	= $this->_cur_folder_info["password"];
 				if ($_folder_pswd && $_entered_pswd == $_folder_pswd) {
 					$PHOTOS_ACCESS_SQL = "";
@@ -228,7 +220,7 @@ class yf_gallery_show_photos {
 		$Q = db()->query(
 			"SELECT * 
 			FROM ".db('gallery_photos')." 
-			WHERE user_id=".intval($this->GALLERY_OBJ->_photo_info["user_id"])." 
+			WHERE user_id=".intval(module('gallery')->_photo_info["user_id"])." 
 				AND active='1' 
 				".$PHOTOS_ACCESS_SQL." 
 			ORDER BY cat_id ASC,id ASC"
@@ -237,7 +229,7 @@ class yf_gallery_show_photos {
 // TODO: global photos sorting		general_sort_id ASC, 
 
 		while ($A = db()->fetch_assoc($Q)) {
-			$_fs_thumb_path = $this->GALLERY_OBJ->_photo_fs_path($A, $cur_photo_type);
+			$_fs_thumb_path = module('gallery')->_photo_fs_path($A, $cur_photo_type);
 			// Skip non-existed files
 			if (!file_exists($_fs_thumb_path) || !@filesize($_fs_thumb_path)) {
 				continue;
@@ -255,7 +247,7 @@ class yf_gallery_show_photos {
 		$next_photo_id	= 0;
 		// First find array position for the requested photo
 		foreach ((array)$photos_ids as $_cur_pos => $_photo_id) {
-			if ($_photo_id == $this->GALLERY_OBJ->_photo_info["id"]) {
+			if ($_photo_id == module('gallery')->_photo_info["id"]) {
 				$_cur_photo_pos = $_cur_pos;
 				break;
 			}
@@ -282,13 +274,13 @@ class yf_gallery_show_photos {
 		}
 		// Prepare links to the prev and next photos
 		if (!empty($prev_photo_id)) {
-			if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
+			if (module('gallery')->HIDE_TOTAL_ID) {
 				$prev_photo_id = $this->_all_photos[$prev_photo_id]["id2"];
 			}
 			$prev_photo_link = "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]."&id=".intval($prev_photo_id);
 		}
 		if (!empty($next_photo_id)) {
-			if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
+			if (module('gallery')->HIDE_TOTAL_ID) {
 				$next_photo_id = $this->_all_photos[$next_photo_id]["id2"];
 			}
 			$next_photo_link = "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]."&id=".intval($next_photo_id);
@@ -304,7 +296,7 @@ class yf_gallery_show_photos {
 			return false;
 		}
 		// Check if needed
-		if (!$this->GALLERY_OBJ->FOR_MEDIUM_NUM_MINI_THUMBS) {
+		if (!module('gallery')->FOR_MEDIUM_NUM_MINI_THUMBS) {
 			return false;
 		}
 		// Temporary chained with prev_next_links
@@ -312,7 +304,7 @@ class yf_gallery_show_photos {
 			return false;
 		}
 		$cur_photo_type		= "ad thumbnail";
-		$settings = $this->GALLERY_OBJ->CUR_SETTINGS;
+		$settings = module('gallery')->CUR_SETTINGS;
 		// Prepare arrays
 		$photos_ids		= array_keys($this->_all_photos);
 		$_num_photos	= count($photos_ids);
@@ -320,18 +312,18 @@ class yf_gallery_show_photos {
 		// First find array position for the requested photo
 		$_cur_photo_pos = 0;
 		foreach ((array)$photos_ids as $_cur_pos => $_photo_id) {
-			if ($_photo_id == $this->GALLERY_OBJ->_photo_info["id"]) {
+			if ($_photo_id == module('gallery')->_photo_info["id"]) {
 				$_cur_photo_pos = $_cur_pos;
 				break;
 			}
 		}
 		$mini_positions = array();
 		// Filter photos to display in mini thumbs
-		$num_mini_thumbs = $this->GALLERY_OBJ->FOR_MEDIUM_NUM_MINI_THUMBS;
-		if ($this->GALLERY_OBJ->MINI_THUMBS_SHOW_ALL) {
+		$num_mini_thumbs = module('gallery')->FOR_MEDIUM_NUM_MINI_THUMBS;
+		if (module('gallery')->MINI_THUMBS_SHOW_ALL) {
 			$num_mini_thumbs = $_num_photos;
 		}
-		if ($_num_photos < $this->GALLERY_OBJ->FOR_MEDIUM_NUM_MINI_THUMBS) {
+		if ($_num_photos < module('gallery')->FOR_MEDIUM_NUM_MINI_THUMBS) {
 			$num_mini_thumbs = $_num_photos;
 		}
 		$_num_mini_prev = floor($num_mini_thumbs / 2);
@@ -392,7 +384,7 @@ class yf_gallery_show_photos {
 			$mini_positions[] = $_cur_pos;
 		}
 		// Override order when show all
-		if ($this->GALLERY_OBJ->MINI_THUMBS_SHOW_ALL) {
+		if (module('gallery')->MINI_THUMBS_SHOW_ALL) {
 			$mini_positions = array_keys($photos_ids);
 		}
 		// Process photos to display
@@ -408,15 +400,15 @@ class yf_gallery_show_photos {
 			}
 			// Check if we need to update other info
 			if (empty($other_info[$cur_photo_type]["w"]) || empty($other_info[$cur_photo_type]["h"])) {
-				$other_info = $this->GALLERY_OBJ->_update_other_info($A);
+				$other_info = module('gallery')->_update_other_info($A);
 			}
 			// Prepare real dimensions
 			$real_w = $other_info[$cur_photo_type]["w"];
 			$real_h = $other_info[$cur_photo_type]["h"];
 			$_real_coef = $real_h ? $real_w / $real_h : 0;
 			// Limits for the current photo size
-			$_max_w = $this->GALLERY_OBJ->PHOTO_TYPES[$cur_photo_type]["max_x"];
-			$_max_h = $this->GALLERY_OBJ->PHOTO_TYPES[$cur_photo_type]["max_y"];
+			$_max_w = module('gallery')->PHOTO_TYPES[$cur_photo_type]["max_x"];
+			$_max_h = module('gallery')->PHOTO_TYPES[$cur_photo_type]["max_y"];
 			// Force cut photo dimensions
 			$force_resize = false;
 			if ($_max_w && $real_w > $_max_w) {
@@ -432,12 +424,12 @@ class yf_gallery_show_photos {
 				$force_resize	= false;
 			}
 			if ($force_resize) {
-				$_fs_img_path = $this->GALLERY_OBJ->_photo_fs_path($A, $cur_photo_type);
+				$_fs_img_path = module('gallery')->_photo_fs_path($A, $cur_photo_type);
 				common()->make_thumb($_fs_img_path, $_fs_img_path, $_max_w, $_max_h);
-				$other_info = $this->GALLERY_OBJ->_update_other_info($A);
+				$other_info = module('gallery')->_update_other_info($A);
 			}
 			$_web_photo_id = $A["id"];
-			if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
+			if (module('gallery')->HIDE_TOTAL_ID) {
 				$_web_photo_id = $A["id2"];
 			}
 			// Prepare array for template
@@ -445,7 +437,7 @@ class yf_gallery_show_photos {
 				"photo_id"		=> intval($_web_photo_id),
 				"photo_name"	=> _prepare_html(!empty($A["name"]) ? $A["name"] : _display_name($user_info)." photo"),
 				"photo_url"		=> process_url("./?object=gallery&action=show_medium_size&id=".$_web_photo_id),
-				"img_src"		=> $this->GALLERY_OBJ->_photo_web_path($A, $cur_photo_type),
+				"img_src"		=> module('gallery')->_photo_web_path($A, $cur_photo_type),
 				"name"			=> _display_name($user_info),
 				"real_w"		=> intval($real_w),
 				"real_h"		=> intval($real_h),
@@ -468,63 +460,63 @@ class yf_gallery_show_photos {
 	function _show_user_photos ($user_info = array(), $FOLDER_ID = 0, $stpl_prefix = "show_") {
 		$user_id = intval($user_info["id"]);
 		// Get user gallery settings
-		$this->GALLERY_OBJ->CUR_SETTINGS = $this->GALLERY_OBJ->_get_settings($user_id);
-		$settings = $this->GALLERY_OBJ->CUR_SETTINGS;
+		module('gallery')->CUR_SETTINGS = module('gallery')->_get_settings($user_id);
+		$settings = module('gallery')->CUR_SETTINGS;
 		// Get template name postfix
 		$stpl_postfix = "";
 		if ($settings["layout_type"] == 1 && $stpl_prefix == "show_") {
 			$stpl_postfix = "_simple";
-			$this->GALLERY_OBJ->USER_GALLERY_HOME_SHOW = "latest";
-			$this->GALLERY_OBJ->STATS_NUM_LATEST = 100;
+			module('gallery')->USER_GALLERY_HOME_SHOW = "latest";
+			module('gallery')->STATS_NUM_LATEST = 100;
 		}
 		// Get available user folders
-		if (empty($this->GALLERY_OBJ->_user_folders_infos)) {
-			$this->GALLERY_OBJ->_user_folders_infos = $this->GALLERY_OBJ->_get_user_folders($user_info["id"]);
+		if (empty(module('gallery')->_user_folders_infos)) {
+			module('gallery')->_user_folders_infos = module('gallery')->_get_user_folders($user_info["id"]);
 		}
 		if (!empty($FOLDER_ID)) {
-			$cur_folder_info = $this->GALLERY_OBJ->_user_folders_infos[$FOLDER_ID];
+			$cur_folder_info = module('gallery')->_user_folders_infos[$FOLDER_ID];
 		}
 		// Get max privacy
-		$max_privacy	= $this->GALLERY_OBJ->_get_max_privacy($user_info["id"]);
+		$max_privacy	= module('gallery')->_get_max_privacy($user_info["id"]);
 		$max_level		= 1;
 		// Set some global vars for other modules
-		$this->GALLERY_OBJ->_author_id	= intval($user_info["id"]);
-		$this->GALLERY_OBJ->_author_name = _display_name($user_info);
+		module('gallery')->_author_id	= intval($user_info["id"]);
+		module('gallery')->_author_name = _display_name($user_info);
 		if (!empty($FOLDER_ID)) {
-			$this->GALLERY_OBJ->_folder_name = _prepare_html($cur_folder_info["title"]);
+			module('gallery')->_folder_name = _prepare_html($cur_folder_info["title"]);
 		}
 		// ###########################
 		// Access checks
 		// ###########################
-		if (!$this->GALLERY_OBJ->is_own_gallery) {
+		if (!module('gallery')->is_own_gallery) {
 			// Remove denied folders from list
-			foreach ((array)$this->GALLERY_OBJ->_user_folders_infos as $_folder_id => $_folder_info) {
+			foreach ((array)module('gallery')->_user_folders_infos as $_folder_id => $_folder_info) {
 				if ($_folder_info["privacy"] && $_folder_info["privacy"] > $max_privacy) {
-					unset($this->GALLERY_OBJ->_user_folders_infos[$_folder_id]);
+					unset(module('gallery')->_user_folders_infos[$_folder_id]);
 				}
 			}
 			if (!empty($cur_folder_info)) {
 				// Check privacy permissions
-				if (!$this->GALLERY_OBJ->_privacy_check($cur_folder_info["privacy"], $this->GALLERY_OBJ->_photo_info["privacy"], $user_info["id"])) {
+				if (!module('gallery')->_privacy_check($cur_folder_info["privacy"], module('gallery')->_photo_info["privacy"], $user_info["id"])) {
 					return _e(t("You are not allowed to view this gallery folder"));
 				}
 				// Check for password for protected gallery
 				if (!empty($cur_folder_info["password"])) {
-					$PASSWORD_MATCHED = $_SESSION[$this->GALLERY_OBJ->SESSION_PSWD_FIELD][$FOLDER_ID] == $cur_folder_info["password"];
+					$PASSWORD_MATCHED = $_SESSION[module('gallery')->SESSION_PSWD_FIELD][$FOLDER_ID] == $cur_folder_info["password"];
 				}
 				// Display form to enter the password
 				if (!empty($cur_folder_info["password"]) && !$PASSWORD_MATCHED && MAIN_TYPE_USER) {
-					return $this->GALLERY_OBJ->_enter_pswd($FOLDER_ID);
+					return module('gallery')->_enter_pswd($FOLDER_ID);
 				}
 			}
 		}
-		$_show_featured = $this->GALLERY_OBJ->USER_GALLERY_HOME_SHOW == "featured" ? true : false;
+		$_show_featured = module('gallery')->USER_GALLERY_HOME_SHOW == "featured" ? true : false;
 		$featured_sql = "";
 		if (empty($FOLDER_ID) && $_show_featured) {
 			$featured_sql = " AND is_featured = '1' ";
 		}
 		// Generate SQL for the access checks
-		if (!$this->GALLERY_OBJ->is_own_gallery) {
+		if (!module('gallery')->is_own_gallery) {
 			$PHOTOS_ACCESS_SQL = 
 				" AND folder_id IN( 
 					SELECT id 
@@ -550,19 +542,19 @@ class yf_gallery_show_photos {
 			$photos_by_folders[$A["folder_id"]][$A["id"]] = $A["id"];
 		}
 		// Prepare folders for template
-		foreach ((array)$this->GALLERY_OBJ->_user_folders_infos as $A) {
+		foreach ((array)module('gallery')->_user_folders_infos as $A) {
 			$folders_array[$A["id"]] = array(
 				"title"			=> _prepare_html($A["title"]),
-				"link"			=> "./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".($this->GALLERY_OBJ->HIDE_TOTAL_ID ? $A["id2"] : $A["id"]),
+				"link"			=> "./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $A["id2"] : $A["id"]),
 				"is_default"	=> intval((bool)$A["is_default"]),
 			);
 		}
-		$this->_tags = $this->GALLERY_OBJ->_show_tags(array_keys((array)$photos_array), array("simple" => 1));
+		$this->_tags = module('gallery')->_show_tags(array_keys((array)$photos_array), array("simple" => 1));
 
 		// Main user's page
 		if (empty($FOLDER_ID)) {
 			// Get latest photos
-			$GALLERY_STATS_OBJ = $this->GALLERY_OBJ->_load_sub_module("gallery_stats");
+			$GALLERY_STATS_OBJ = module('gallery')->_load_sub_module("gallery_stats");
 			$photos = $GALLERY_STATS_OBJ->_show_latest_user_photos($user_info, $_show_featured, $photos_array);
 		// Inside selected folder
 		} else {
@@ -571,12 +563,12 @@ class yf_gallery_show_photos {
 				if ($photo_info["folder_id"] != $FOLDER_ID) {
 					continue;
 				}
-				$photos .= $this->GALLERY_OBJ->_show_photo_item($photos_array[$photo_id], $stpl_prefix);
+				$photos .= module('gallery')->_show_photo_item($photos_array[$photo_id], $stpl_prefix);
 			}
 		}
 		// Check if user has uploaded max number of photos
-		if (!empty($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS)) {
-			$limit_reached = count($photos_array) >= $this->GALLERY_OBJ->MAX_TOTAL_PHOTOS;
+		if (!empty(module('gallery')->MAX_TOTAL_PHOTOS)) {
+			$limit_reached = count($photos_array) >= module('gallery')->MAX_TOTAL_PHOTOS;
 		}
 		// Prepare show in ads
 		$SHOW_IN_ADS_ALLOWED = 0;
@@ -584,7 +576,7 @@ class yf_gallery_show_photos {
 			$SHOW_IN_ADS_ALLOWED = 1;
 		}
 		$_web_folder_id = $FOLDER_ID;
-		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID && $FOLDER_ID) {
+		if (module('gallery')->HIDE_TOTAL_ID && $FOLDER_ID) {
 			$_web_folder_id = $cur_folder_info["id2"];
 		}
 		// Sorting templates (To use inside JavaScript code)
@@ -592,35 +584,35 @@ class yf_gallery_show_photos {
 		$_sort_link_tpl	= process_url("./?object=".$_GET["object"]."&action=sort_photo&id={id}&page=up".$_sort_add);
 		// Preocess template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) $this->GALLERY_OBJ->USER_ID),
-			"is_own_gallery"		=> $this->GALLERY_OBJ->is_own_gallery,
-			"user_name"				=> $this->GALLERY_OBJ->_author_name,
-			"user_avatar"			=> _show_avatar($user_info["id"], $this->GALLERY_OBJ->_author_name, 1, 1),
+			"is_logged_in"			=> intval((bool) module('gallery')->USER_ID),
+			"is_own_gallery"		=> module('gallery')->is_own_gallery,
+			"user_name"				=> module('gallery')->_author_name,
+			"user_avatar"			=> _show_avatar($user_info["id"], module('gallery')->_author_name, 1, 1),
 			"user_profile_link"		=> _profile_link($user_info["id"]),
-			"add_photo_link"		=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=add_photo".($_web_folder_id ? "&id=".$_web_folder_id : ""). _add_get(array("page")) : "",
+			"add_photo_link"		=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=add_photo".($_web_folder_id ? "&id=".$_web_folder_id : ""). _add_get(array("page")) : "",
 			"page_link"				=> process_url("./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"].($_GET["id"] ? "&id=".$_GET["id"] : ""). _add_get(array("page"))),
-			"user_gallery_link"		=> $user_info["id"] ? "./?object=".GALLERY_CLASS_NAME."&action=show_gallery".($this->GALLERY_OBJ->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")) : "",
-			"max_photos"			=> intval($this->GALLERY_OBJ->MAX_TOTAL_PHOTOS),
-			"user_id"				=> intval($this->GALLERY_OBJ->USER_ID),
-			"add_form"				=> $stpl_prefix == "edit_" && $this->GALLERY_OBJ->is_own_gallery && !$limit_reached ? $this->GALLERY_OBJ->add_photo() : "",
+			"user_gallery_link"		=> $user_info["id"] ? "./?object=".GALLERY_CLASS_NAME."&action=show_gallery".(module('gallery')->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")) : "",
+			"max_photos"			=> intval(module('gallery')->MAX_TOTAL_PHOTOS),
+			"user_id"				=> intval(module('gallery')->USER_ID),
+			"add_form"				=> $stpl_prefix == "edit_" && module('gallery')->is_own_gallery && !$limit_reached ? module('gallery')->add_photo() : "",
 			"photos"				=> $photos,
 			"folders"				=> $folders_array,
-			"folder_name"			=> $FOLDER_ID ? _prepare_html($this->GALLERY_OBJ->_user_folders_infos[$FOLDER_ID]["title"]) : "",
+			"folder_name"			=> $FOLDER_ID ? _prepare_html(module('gallery')->_user_folders_infos[$FOLDER_ID]["title"]) : "",
 			"folder_comment"		=> nl2br(_prepare_html($cur_folder_info["comment"])),
 			"folder_add_date"		=> $cur_folder_info["add_date"] ? _format_date($cur_folder_info["add_date"]) : "",
-			"folder_content_level"	=> $this->GALLERY_OBJ->_content_levels[$cur_folder_info["content_level"]],
-			"folder_privacy"		=> $this->GALLERY_OBJ->_privacy_types[$cur_folder_info["privacy"]],
-			"folder_allow_comments"	=> $this->GALLERY_OBJ->_comments_types[$cur_folder_info["allow_comments"]],
-			"add_folder_link"		=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=add_folder". _add_get(array("page")) : "",
-			"edit_folder_link"		=> $this->GALLERY_OBJ->is_own_gallery && $FOLDER_ID ? "./?object=".GALLERY_CLASS_NAME."&action=edit_folder&id=".$_web_folder_id. _add_get(array("page")) : "",
-			"delete_folder_link"	=> $this->GALLERY_OBJ->is_own_gallery && $FOLDER_ID ? "./?object=".GALLERY_CLASS_NAME."&action=delete_folder&id=".$_web_folder_id. _add_get(array("page")) : "",
-			"show_ads_denied"		=> $this->GALLERY_OBJ->is_own_gallery ? intval(!$SHOW_IN_ADS_ALLOWED) : "",
-			"users_comments_link"	=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=search_comments". _add_get(array("page")) : "",
-			"settings_link"			=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=settings" : "",
+			"folder_content_level"	=> module('gallery')->_content_levels[$cur_folder_info["content_level"]],
+			"folder_privacy"		=> module('gallery')->_privacy_types[$cur_folder_info["privacy"]],
+			"folder_allow_comments"	=> module('gallery')->_comments_types[$cur_folder_info["allow_comments"]],
+			"add_folder_link"		=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=add_folder". _add_get(array("page")) : "",
+			"edit_folder_link"		=> module('gallery')->is_own_gallery && $FOLDER_ID ? "./?object=".GALLERY_CLASS_NAME."&action=edit_folder&id=".$_web_folder_id. _add_get(array("page")) : "",
+			"delete_folder_link"	=> module('gallery')->is_own_gallery && $FOLDER_ID ? "./?object=".GALLERY_CLASS_NAME."&action=delete_folder&id=".$_web_folder_id. _add_get(array("page")) : "",
+			"show_ads_denied"		=> module('gallery')->is_own_gallery ? intval(!$SHOW_IN_ADS_ALLOWED) : "",
+			"users_comments_link"	=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=search_comments". _add_get(array("page")) : "",
+			"settings_link"			=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=settings" : "",
 			"show_featured"			=> intval((bool)$_show_featured),
 			"thumbs_square"			=> $settings["thumb_type"] == 1 ? 1 : 0,
 			"slideshow_mode"		=> intval($settings["slideshow_mode"]),
-			"sort_link_tpl"			=> $this->GALLERY_OBJ->is_own_gallery ? $_sort_link_tpl : "",
+			"sort_link_tpl"			=> module('gallery')->is_own_gallery ? $_sort_link_tpl : "",
 		);
 		return tpl()->parse(GALLERY_CLASS_NAME."/".$stpl_prefix."main".$stpl_postfix, $replace);
 	}
@@ -648,34 +640,34 @@ class yf_gallery_show_photos {
 		// Prepare user name
 		$user_name = $PARAMS["user_name"];
 		if (!strlen($user_name)) {
-			if (isset($this->GALLERY_OBJ->_users_names[$photo_info["user_id"]])) {
-				$user_name = $this->GALLERY_OBJ->_users_names[$photo_info["user_id"]];
+			if (isset(module('gallery')->_users_names[$photo_info["user_id"]])) {
+				$user_name = module('gallery')->_users_names[$photo_info["user_id"]];
 			} else {
 				$user_name = _display_name($GLOBALS['user_info']);
 			}
 		}
-		$cur_photo_type = $this->GALLERY_OBJ->PHOTO_ITEM_DISPLAY_TYPE;
-		$_fs_img_path = $this->GALLERY_OBJ->_photo_fs_path($photo_info, $cur_photo_type);
+		$cur_photo_type = module('gallery')->PHOTO_ITEM_DISPLAY_TYPE;
+		$_fs_img_path = module('gallery')->_photo_fs_path($photo_info, $cur_photo_type);
 		// Skip empty images
 		if (empty($_fs_img_path) || !file_exists($_fs_img_path) || !filesize($_fs_img_path)) {
-			if ($this->GALLERY_OBJ->SKIP_NOT_FOUND_PHOTOS) {
+			if (module('gallery')->SKIP_NOT_FOUND_PHOTOS) {
 				return false;
 			}
 		}
 		// Get available user folders
-		$user_folders_infos = $this->GALLERY_OBJ->_get_user_folders($photo_info["user_id"]);
+		$user_folders_infos = module('gallery')->_get_user_folders($photo_info["user_id"]);
 		// Get photo folder info
 		$FOLDER_ID = $photo_info["folder_id"];
 		if (empty($FOLDER_ID)) {
-			$FOLDER_ID = $this->GALLERY_OBJ->_fix_and_get_folder_id($photo_info);
+			$FOLDER_ID = module('gallery')->_fix_and_get_folder_id($photo_info);
 		}
 		if (!empty($FOLDER_ID)) {
 			$cur_folder_info = $user_folders_infos[$FOLDER_ID];
 		}
-		if (!isset($this->GALLERY_OBJ->CUR_SETTINGS)) {
-			$this->GALLERY_OBJ->CUR_SETTINGS = $this->GALLERY_OBJ->_get_settings($photo_info["user_id"]);
+		if (!isset(module('gallery')->CUR_SETTINGS)) {
+			module('gallery')->CUR_SETTINGS = module('gallery')->_get_settings($photo_info["user_id"]);
 		}
-		$settings = $this->GALLERY_OBJ->CUR_SETTINGS;
+		$settings = module('gallery')->CUR_SETTINGS;
 		// Prepare show in ads
 		$SHOW_IN_ADS_ALLOWED = 0;
 		if ($cur_folder_info["content_level"] <= 1 && $cur_folder_info["privacy"] <= 1 && $cur_folder_info["password"] == "") {
@@ -691,8 +683,8 @@ class yf_gallery_show_photos {
 		$real_h = $other_info[$cur_photo_type]["h"];
 		$_real_coef = $real_h ? $real_w / $real_h : 0;
 		// Limits for the current photo size
-		$_max_w = $this->GALLERY_OBJ->PHOTO_TYPES[$cur_photo_type]["max_x"];
-		$_max_h = $this->GALLERY_OBJ->PHOTO_TYPES[$cur_photo_type]["max_y"];
+		$_max_w = module('gallery')->PHOTO_TYPES[$cur_photo_type]["max_x"];
+		$_max_h = module('gallery')->PHOTO_TYPES[$cur_photo_type]["max_y"];
 		// Force cut photo dimensions
 		$force_resize = false;
 		if ($_max_w && $real_w > $_max_w) {
@@ -709,14 +701,14 @@ class yf_gallery_show_photos {
 		}
 		if ($force_resize && $cur_photo_type != "original") {
 			common()->make_thumb($_fs_img_path, $_fs_img_path, $_max_w, $_max_h);
-			$other_info = $this->GALLERY_OBJ->_update_other_info($photo_info);
+			$other_info = module('gallery')->_update_other_info($photo_info);
 		}
 
-		$tags_block = $this->GALLERY_OBJ->_show_tags($photo_info["id"]);
+		$tags_block = module('gallery')->_show_tags($photo_info["id"]);
 		$tags_block = $tags_block[$photo_info["id"]];
 
 		$_web_photo_id = $photo_info["id"];
-		if ($this->GALLERY_OBJ->HIDE_TOTAL_ID) {
+		if (module('gallery')->HIDE_TOTAL_ID) {
 			$_web_photo_id = $photo_info["id2"];
 		}
 		// Special for tags
@@ -736,19 +728,19 @@ class yf_gallery_show_photos {
 		$replace = array(
 			"photo_number"			=> intval(++$GLOBALS["_photo_items_counter"]),
 			"photo_id"				=> intval($photo_info["id"]),
-			"photo_id2"				=> $this->GALLERY_OBJ->HIDE_TOTAL_ID ? intval($photo_info["id2"]) : $photo_info["id"],
-			"img_src"				=> !$show_pswd_protected ? $this->GALLERY_OBJ->_photo_web_path($photo_info, $cur_photo_type) : "",
+			"photo_id2"				=> module('gallery')->HIDE_TOTAL_ID ? intval($photo_info["id2"]) : $photo_info["id"],
+			"img_src"				=> !$show_pswd_protected ? module('gallery')->_photo_web_path($photo_info, $cur_photo_type) : "",
 			"photo_name"			=> _prepare_html($photo_info["name"]),
 			"photo_desc"			=> _prepare_html($photo_info["desc"]),
 			"medium_size_link"		=> "./?object=".GALLERY_CLASS_NAME."&action=show_medium_size&id=".$_web_photo_id. _add_get(array("page")),
 			"large_size_link"		=> "./?object=".GALLERY_CLASS_NAME."&action=show_full_size&id=".$_web_photo_id. _add_get(array("page")),
-			"edit_photo_link"		=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=edit_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"delete_photo_link"		=> $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=delete_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"change_show_ads_link"	=> $this->GALLERY_OBJ->is_own_gallery && !$params["no_show_in_ads"] ? "./?object=".GALLERY_CLASS_NAME."&action=change_show_ads&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"make_default_link"		=> $this->GALLERY_OBJ->is_own_gallery && !$params["no_make_default"] ? "./?object=".GALLERY_CLASS_NAME."&action=make_default&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"show_in_ads"			=> $SHOW_IN_ADS_ALLOWED && $this->GALLERY_OBJ->is_own_gallery && !$params["no_show_in_ads"] ? intval((bool) $photo_info["show_in_ads"]) : -1,
-			"is_own_gallery"		=> intval((bool) $this->GALLERY_OBJ->is_own_gallery),
-			"need_divider"			=> !($GLOBALS["_photo_items_counter"] % $this->GALLERY_OBJ->PHOTOS_IN_COLUMN),
+			"edit_photo_link"		=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=edit_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"delete_photo_link"		=> module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=delete_photo&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"change_show_ads_link"	=> module('gallery')->is_own_gallery && !$params["no_show_in_ads"] ? "./?object=".GALLERY_CLASS_NAME."&action=change_show_ads&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"make_default_link"		=> module('gallery')->is_own_gallery && !$params["no_make_default"] ? "./?object=".GALLERY_CLASS_NAME."&action=make_default&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"show_in_ads"			=> $SHOW_IN_ADS_ALLOWED && module('gallery')->is_own_gallery && !$params["no_show_in_ads"] ? intval((bool) $photo_info["show_in_ads"]) : -1,
+			"is_own_gallery"		=> intval((bool) module('gallery')->is_own_gallery),
+			"need_divider"			=> !($GLOBALS["_photo_items_counter"] % module('gallery')->PHOTOS_IN_COLUMN),
 			"user_name"				=> _prepare_html($user_name),
 			"user_id"				=> intval($photo_info["user_id"]),
 			"rate_box"				=> $rate_box,
@@ -757,28 +749,28 @@ class yf_gallery_show_photos {
 			"folder_name"			=> $FOLDER_ID ? _prepare_html($user_folders_infos[$FOLDER_ID]["title"]) : "",
 			"folder_comment"		=> nl2br(_prepare_html($cur_folder_info["comment"])),
 			"folder_add_date"		=> $cur_folder_info["add_date"] ? _format_date($cur_folder_info["add_date"]) : "",
-			"folder_content_level"	=> $this->GALLERY_OBJ->_content_levels[$cur_folder_info["content_level"]],
-			"folder_privacy"		=> $this->GALLERY_OBJ->_privacy_types[$cur_folder_info["privacy"]],
-			"show_ads_denied"		=> $this->GALLERY_OBJ->is_own_gallery ? intval(!$SHOW_IN_ADS_ALLOWED) : "",
-			"rate_enabled"			=> intval((bool) $this->GALLERY_OBJ->ALLOW_RATE),
-			"rate_allowed"			=> $this->GALLERY_OBJ->ALLOW_RATE ? intval((bool) $photo_info["allow_rate"]) : 0,
+			"folder_content_level"	=> module('gallery')->_content_levels[$cur_folder_info["content_level"]],
+			"folder_privacy"		=> module('gallery')->_privacy_types[$cur_folder_info["privacy"]],
+			"show_ads_denied"		=> module('gallery')->is_own_gallery ? intval(!$SHOW_IN_ADS_ALLOWED) : "",
+			"rate_enabled"			=> intval((bool) module('gallery')->ALLOW_RATE),
+			"rate_allowed"			=> module('gallery')->ALLOW_RATE ? intval((bool) $photo_info["allow_rate"]) : 0,
 			"rating"				=> $photo_info["allow_rate"] ? round($photo_info["rating"], 1) : "",
 			"rate_num_votes"		=> $photo_info["allow_rate"] ? intval($photo_info["num_votes"]) : "",
 			"rate_last_voted"		=> $photo_info["allow_rate"] ? _format_date($photo_info["last_vote_date"]) : "",
-			"rate_block"			=> $photo_info["allow_rate"] ? $this->GALLERY_OBJ->_show_rate_block($photo_info) : "",
-			"change_rate_link"		=> $this->GALLERY_OBJ->ALLOW_RATE && $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_rate_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"tagging_enabled"		=> intval((bool) $this->GALLERY_OBJ->ALLOW_TAGGING),
-			"tagging_allowed"		=> $this->GALLERY_OBJ->ALLOW_TAGGING ? intval((bool) $photo_info["allow_tagging"]) : 0,
-			"change_tagging_link"	=> $this->GALLERY_OBJ->ALLOW_TAGGING && $this->GALLERY_OBJ->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_tagging_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
-			"tags"					=> $this->GALLERY_OBJ->ALLOW_TAGGING && !empty($tags) ? $tags : "",
+			"rate_block"			=> $photo_info["allow_rate"] ? module('gallery')->_show_rate_block($photo_info) : "",
+			"change_rate_link"		=> module('gallery')->ALLOW_RATE && module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_rate_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"tagging_enabled"		=> intval((bool) module('gallery')->ALLOW_TAGGING),
+			"tagging_allowed"		=> module('gallery')->ALLOW_TAGGING ? intval((bool) $photo_info["allow_tagging"]) : 0,
+			"change_tagging_link"	=> module('gallery')->ALLOW_TAGGING && module('gallery')->is_own_gallery ? "./?object=".GALLERY_CLASS_NAME."&action=change_tagging_allowed&id=".$_web_photo_id. _add_get(array("page")) : "",
+			"tags"					=> module('gallery')->ALLOW_TAGGING && !empty($tags) ? $tags : "",
 			"allow_add_tag"			=> $allow_add_tag ? 1 : 0,
 			"edit_tag_link"			=> $allow_add_tag ? process_url("./?object=".GALLERY_CLASS_NAME."&action=edit_tags_popup&id=".$_web_photo_id. _add_get(array("page"))) : "",
 			"tags_block"			=> $tags_block,
 			"show_pswd_protected"	=> $show_pswd_protected ? 1 : 0,
 			"slideshow_mode"		=> intval($settings["slideshow_mode"]),
-			"img_m_src"				=> !$show_pswd_protected ? $this->GALLERY_OBJ->_photo_web_path($photo_info, "medium") : "",
-			"sort_up_link"			=> $this->GALLERY_OBJ->is_own_gallery ? $_sort_up_link : "",
-			"sort_down_link"		=> $this->GALLERY_OBJ->is_own_gallery ? $_sort_down_link : "",
+			"img_m_src"				=> !$show_pswd_protected ? module('gallery')->_photo_web_path($photo_info, "medium") : "",
+			"sort_up_link"			=> module('gallery')->is_own_gallery ? $_sort_up_link : "",
+			"sort_down_link"		=> module('gallery')->is_own_gallery ? $_sort_down_link : "",
 		);
 		return tpl()->parse($ITEM_STPL, $replace);
 	}

@@ -13,10 +13,7 @@ class yf_gallery_settings {
 	* Constructor
 	*/
 	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-		// Tagging
-		if (!is_object($this->TAG_OBJ && $this->GALLERY_OBJ->ALLOW_TAGGING)) {
+		if (!is_object($this->TAG_OBJ && module('gallery')->ALLOW_TAGGING)) {
 			$this->TAG_OBJ = module("tags");
 		}
 	}
@@ -26,25 +23,25 @@ class yf_gallery_settings {
 	*/
 	function _edit () {
 		// Check if user is member
-		if (empty($this->GALLERY_OBJ->_user_info)) {
+		if (empty(module('gallery')->_user_info)) {
 			return _error_need_login();
 		}
 		// Ban check
-		if ($this->GALLERY_OBJ->_user_info["ban_images"]) {
-			return $this->GALLERY_OBJ->_error_msg("ban_images");
+		if (module('gallery')->_user_info["ban_images"]) {
+			return module('gallery')->_error_msg("ban_images");
 		}
 		// Try to get user settings
-		$GALLERY_SETTINGS = $this->GALLERY_OBJ->_get_settings($this->GALLERY_OBJ->USER_ID);
+		$GALLERY_SETTINGS = module('gallery')->_get_settings(module('gallery')->USER_ID);
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			// Check required data
-			if (!isset($this->GALLERY_OBJ->_thumb_types[$_POST["thumb_type"]])) {
+			if (!isset(module('gallery')->_thumb_types[$_POST["thumb_type"]])) {
 				_re("Wrong thumb type");
 			}
-			if (!isset($this->GALLERY_OBJ->MEDIUM_SIZES[$_POST["medium_size"]])) {
+			if (!isset(module('gallery')->MEDIUM_SIZES[$_POST["medium_size"]])) {
 				_re("Wrong medium photo size");
 			}
-			if (!isset($this->GALLERY_OBJ->_layout_types[$_POST["layout_type"]])) {
+			if (!isset(module('gallery')->_layout_types[$_POST["layout_type"]])) {
 				_re("Wrong layout type");
 			}
 			// Check for errors
@@ -68,10 +65,10 @@ class yf_gallery_settings {
 				if (isset($_POST["allow_rate"])) {
 					$sql["allow_rate"]		= _es($_POST["allow_rate"]);
 				}
-				db()->UPDATE("gallery_settings", $sql, "user_id=".intval($this->GALLERY_OBJ->USER_ID));
+				db()->UPDATE("gallery_settings", $sql, "user_id=".intval(module('gallery')->USER_ID));
 				// Update cache
-				$GLOBALS['_gal_settings'][$this->GALLERY_OBJ->USER_ID]["thumb_type"]	= $_POST["thumb_type"];
-				$GLOBALS['_gal_settings'][$this->GALLERY_OBJ->USER_ID]["medium_size"]	= $_POST["medium_size"];
+				$GLOBALS['_gal_settings'][module('gallery')->USER_ID]["thumb_type"]	= $_POST["thumb_type"];
+				$GLOBALS['_gal_settings'][module('gallery')->USER_ID]["medium_size"]	= $_POST["medium_size"];
 				// Regenerate thumbs (if changed)
 				if ($_POST["thumb_type"] != $GALLERY_SETTINGS["thumb_type"]) {
 					$this->_regenerate_format("thumbnail");
@@ -98,16 +95,16 @@ class yf_gallery_settings {
 			$replace = array(
 				"form_action"		=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
 				"error_message"		=> _e(),
-				"privacy_box"		=> $this->GALLERY_OBJ->_box("privacy", $DATA["privacy"]),
-				"comments_box"		=> $this->GALLERY_OBJ->_box("allow_comments", $DATA["allow_comments"]),
-				"tagging_box"		=> $this->GALLERY_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => $this->GALLERY_OBJ->USER_ID)) : "",
-				"allow_rate_box"	=> $this->GALLERY_OBJ->ALLOW_RATE ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => $this->GALLERY_OBJ->USER_ID)) : "",
-				"thumb_type_box"	=> $this->GALLERY_OBJ->_box("thumb_type", $DATA["thumb_type"]),
-				"medium_size_box"	=> $this->GALLERY_OBJ->_box("medium_size", $DATA["medium_size"]),
-				"layout_type_box"	=> $this->GALLERY_OBJ->_box("layout_type", $DATA["layout_type"]),
-				"thumbs_loc_box"	=> $this->GALLERY_OBJ->_box("thumbs_loc", $DATA["thumbs_loc"]),
-				"thumbs_in_row_box"	=> $this->GALLERY_OBJ->_box("thumbs_in_row", $DATA["thumbs_in_row"]),
-				"slideshow_mode_box"=> $this->GALLERY_OBJ->_box("slideshow_mode", $DATA["slideshow_mode"]),
+				"privacy_box"		=> module('gallery')->_box("privacy", $DATA["privacy"]),
+				"comments_box"		=> module('gallery')->_box("allow_comments", $DATA["allow_comments"]),
+				"tagging_box"		=> module('gallery')->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => module('gallery')->USER_ID)) : "",
+				"allow_rate_box"	=> module('gallery')->ALLOW_RATE ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => module('gallery')->USER_ID)) : "",
+				"thumb_type_box"	=> module('gallery')->_box("thumb_type", $DATA["thumb_type"]),
+				"medium_size_box"	=> module('gallery')->_box("medium_size", $DATA["medium_size"]),
+				"layout_type_box"	=> module('gallery')->_box("layout_type", $DATA["layout_type"]),
+				"thumbs_loc_box"	=> module('gallery')->_box("thumbs_loc", $DATA["thumbs_loc"]),
+				"thumbs_in_row_box"	=> module('gallery')->_box("thumbs_in_row", $DATA["thumbs_in_row"]),
+				"slideshow_mode_box"=> module('gallery')->_box("slideshow_mode", $DATA["slideshow_mode"]),
 			);
 			$body = tpl()->parse(GALLERY_CLASS_NAME."/edit_settings", $replace);
 		}
@@ -153,8 +150,8 @@ class yf_gallery_settings {
 			return $users_settings;
 		// Single user_id
 		} else {
-			if (!empty($this->GALLERY_OBJ->USER_ID) && $user_id == $this->GALLERY_OBJ->USER_ID && !empty($this->CUR_USER_SETTINGS)) {
-				return $this->GALLERY_OBJ->CUR_USER_SETTINGS;
+			if (!empty(module('gallery')->USER_ID) && $user_id == module('gallery')->USER_ID && !empty($this->CUR_USER_SETTINGS)) {
+				return module('gallery')->CUR_USER_SETTINGS;
 			}
 			// Use cache
 			if (isset($GLOBALS['_gal_settings'][$user_id])) {
@@ -185,10 +182,10 @@ class yf_gallery_settings {
 			return false;
 		}
 		// Get default gallery settings
-		$sql_array = $this->GALLERY_OBJ->DEFAULT_SETTINGS;
+		$sql_array = module('gallery')->DEFAULT_SETTINGS;
 		$sql_array["user_id"]	= intval($user_id);
 		// Set global tags settings as defaults
-		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => $this->GALLERY_OBJ->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
+		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => module('gallery')->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
 		$sql_array["allow_tagging"]	= intval($default_tags_settings);
 
 		db()->INSERT("gallery_settings", $sql_array);
@@ -200,7 +197,7 @@ class yf_gallery_settings {
 	* Regenerate given photo formats
 	*/
 	function _regenerate_format($format_name = "") {
-		if (empty($format_name) || !isset($this->GALLERY_OBJ->PHOTO_TYPES[$format_name])) {
+		if (empty($format_name) || !isset(module('gallery')->PHOTO_TYPES[$format_name])) {
 			return false;
 		}
 		$OBJ = main()->init_class("gallery_manage", GALLERY_MODULES_DIR);

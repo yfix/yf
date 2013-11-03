@@ -13,10 +13,7 @@ class yf_gallery_filter {
 	* Constructor
 	*/
 	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-		// Prepare data
-		if ($this->GALLERY_OBJ->USE_FILTER) {
+		if (module('gallery')->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
 	}
@@ -25,7 +22,7 @@ class yf_gallery_filter {
 	* Prepare filter data
 	*/
 	function _prepare_filter_data () {
-		if (!$this->GALLERY_OBJ->USE_FILTER || !in_array($_GET["action"], array(
+		if (!module('gallery')->USE_FILTER || !in_array($_GET["action"], array(
 			"show",
 			"clear_filter",
 			"save_filter",
@@ -109,7 +106,7 @@ class yf_gallery_filter {
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql ($_source_sql = "") {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		$SF = &$_SESSION[$this->_filter_name];
@@ -159,7 +156,7 @@ class yf_gallery_filter {
 			$sql[] = implode("\r\n", $user_sub_sql);
 			$sql[] = " AND p.user_id = u.id ";
 		}
-		if ($this->GALLERY_OBJ->ALLOW_TAGGING && strlen($SF["tag"])) {
+		if (module('gallery')->ALLOW_TAGGING && strlen($SF["tag"])) {
 			$_source_sql = str_replace(" AS p", " AS p,".db('tags')." AS t", $_source_sql);
 			$sql[] = " AND p.id = t.object_id ";
 			$sql[] = " AND t.object_name='gallery' ";
@@ -224,14 +221,14 @@ class yf_gallery_filter {
 	* Session - based filter form stored in $_SESSION[$this->_filter_name][...]
 	*/
 	function _show_filter () {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		$SF = &$_SESSION[$this->_filter_name];
 		$replace = array(
 			"save_action"	=> "./?object=".GALLERY_CLASS_NAME."&action=save_filter"._add_get(),
 			"clear_url"		=> "./?object=".GALLERY_CLASS_NAME."&action=clear_filter"._add_get(),
-			"allow_tagging"	=> intval((bool)$this->GALLERY_OBJ->ALLOW_TAGGING),
+			"allow_tagging"	=> intval((bool)module('gallery')->ALLOW_TAGGING),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $SF[$name];
@@ -250,7 +247,7 @@ class yf_gallery_filter {
 	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		// Process featured countries
@@ -269,7 +266,7 @@ class yf_gallery_filter {
 	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		foreach ((array)$_SESSION[$this->_filter_name] as $name) {

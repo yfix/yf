@@ -6,14 +6,6 @@
 class yf_gallery_search_comments {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-	}
-
-	/**
 	* Display users comments
 	*/
 	function search_comments(){
@@ -54,7 +46,7 @@ class yf_gallery_search_comments {
 		
 		if (!empty($posts_ids)) {
 		
-			if($this->GALLERY_OBJ->SEARCH_ONLY_MEMBER){
+			if(module('gallery')->SEARCH_ONLY_MEMBER){
 				$serch_only_member = " AND NOT (user_id = 0)";
 			}
 
@@ -121,7 +113,7 @@ class yf_gallery_search_comments {
 				"text"			=> $comment["text"],
 				"cat"			=> $cats[$posts[$comment["object_id"]]["folder_id"]],
 				"date"			=> _format_date($comment["add_date"], "long"),
-				"delete"		=> $this->GALLERY_OBJ->ALLOW_DELETE_COMMENTS ? "1":"0",
+				"delete"		=> module('gallery')->ALLOW_DELETE_COMMENTS ? "1":"0",
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_gallery_comment&id=".$comment["id"],
 			);
 			$items.= tpl()->parse($_GET["object"]."/search_comments_item", $replace2);
@@ -134,7 +126,7 @@ class yf_gallery_search_comments {
 			"author_select_box"		=> $author_select_box,
 			"cats_select_box"		=> $cats_select_box,
 			"sort_type_select_box"	=> $sort_type_select_box,
-			"delete"				=> $this->GALLERY_OBJ->ALLOW_DELETE_COMMENTS ? "1" : "0",
+			"delete"				=> module('gallery')->ALLOW_DELETE_COMMENTS ? "1" : "0",
 		);
 		return tpl()->parse($_GET["object"]."/search_comments_main", $replace);
 	}
