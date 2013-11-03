@@ -57,10 +57,8 @@ class yf_articles extends yf_module {
 	* @return	void
 	*/
 	function _init () {
-		// Articles class name (to allow changing only in one place)
-		define("ARTICLES_CLASS_NAME", "articles");
 		// Articles modules folder
-		define("ARTICLES_MODULES_DIR", USER_MODULES_DIR. ARTICLES_CLASS_NAME."/");
+		define("ARTICLES_MODULES_DIR", USER_MODULES_DIR. 'articles'."/");
 		// Array of select boxes to process
 		$this->_boxes = array(
 			"cat_id"		=> 'select_box("cat_id", $this->_cats_for_select, $selected, false, 2, "style=\"width:100%;\"", false)',
@@ -73,10 +71,10 @@ class yf_articles extends yf_module {
 			"active"	=> t("active"),
 		);
 		// Prepare categories
-		$this->CATS_OBJ = main()->init_class("cats", "classes/");
-		$this->_articles_cats	= $this->CATS_OBJ->_get_items_array();
+		$this->CATS_OBJ = _class("cats");
+		$this->_articles_cats	= _class("cats")->_get_items_array();
 		// Categories for the select box
-		$this->_cats_for_select	= $this->CATS_OBJ->_prepare_for_box("", 0);
+		$this->_cats_for_select	= _class("cats")->_prepare_for_box("", 0);
 	}
 
 	/**
@@ -208,10 +206,7 @@ class yf_articles extends yf_module {
 			return _e(t("No such article!"));
 		}
 		
-		$OBJ = &main()->init_class("unread");
-		if(is_object($OBJ)){
-			$ids = $OBJ->_set_read("articles", $_GET["id"]);
-		}
+		$ids = _class_safe("unread")->_set_read("articles", $_GET["id"]);
 		
 		$IS_OWN_ARTICLE = false;
 		// Do get author info
@@ -240,11 +235,8 @@ class yf_articles extends yf_module {
 		// Process user reputation
 		$reput_text = "";
 		if (!empty($article_info["user_id"])) {
-			$REPUT_OBJ = main()->init_class("reputation");
-		}
-		if (is_object($REPUT_OBJ)) {
-			$REPUT_INFO	= $REPUT_OBJ->_get_user_reput_info($article_info["user_id"]);
-			$reput_text	= $REPUT_OBJ->_show_for_user($article_info["user_id"], $REPUT_INFO, 1, array("articles_texts", $article_info["id"]));
+			$REPUT_INFO	= _class_safe("reputation")->_get_user_reput_info($article_info["user_id"]);
+			$reput_text	= _class_safe("reputation")->_show_for_user($article_info["user_id"], $REPUT_INFO, 1, array("articles_texts", $article_info["id"]));
 
 			if (!empty(main()->USER_ID) && !empty($article_info["user_id"]) && !$IS_OWN_ARTICLE) {
 				$SHOW_REPUT_LINK = true;
@@ -272,15 +264,15 @@ class yf_articles extends yf_module {
 			"edit_date"			=> _format_date($article_info["edit_date"], "long"),
 			"views"				=> intval($article_info["views"]),
 			"status"			=> $this->_articles_statuses[$article_info["status"]],
-			"edit_link"			=> $IS_OWN_ARTICLE ? "./?object=".ARTICLES_CLASS_NAME."&action=edit&id=".$article_info["id"] : "",
-			"delete_link"		=> $IS_OWN_ARTICLE ? "./?object=".ARTICLES_CLASS_NAME."&action=delete&id=".$article_info["id"] : "",
+			"edit_link"			=> $IS_OWN_ARTICLE ? "./?object=".'articles'."&action=edit&id=".$article_info["id"] : "",
+			"delete_link"		=> $IS_OWN_ARTICLE ? "./?object=".'articles'."&action=delete&id=".$article_info["id"] : "",
 			"comments"			=> $this->_view_comments(),
-			"social_bookmarks"	=> _class('graphics')->_show_bookmarks_button($article_info["short_url"], "./?object=".ARTICLES_CLASS_NAME."&action=view_by_name&id=".$article_info["short_url"]),
+			"social_bookmarks"	=> _class('graphics')->_show_bookmarks_button($article_info["short_url"], "./?object=".'articles'."&action=view_by_name&id=".$article_info["short_url"]),
 			"reput_text"		=> $reput_text,
 			"vote_popup_link"	=> $SHOW_REPUT_LINK ? process_url("./?object=reputation&action=vote_popup&id=".$article_info["user_id"]."&page=".$_GET["object"]."--".$article_info["id"]) : "",
 			"tags_block"		=> $this->_tags[intval($article_info["id"])],
 		);
-		return tpl()->parse(ARTICLES_CLASS_NAME."/view", $replace);
+		return tpl()->parse('articles'."/view", $replace);
 	}
 
 	/**
@@ -314,21 +306,21 @@ class yf_articles extends yf_module {
 				"edit_date"		=> !empty($A["edit_date"]) ? _format_date($A["edit_date"]) : "",
 				"cat_name"		=> 	_prepare_html($this->_articles_cats[$A["cat_id"]]["name"]),
 				"cat_link"		=> $this->_cat_link($A["cat_id"]),
-				"view_link"		=> "./?object=".ARTICLES_CLASS_NAME."&action=view&id=".$A["id"],
-				"edit_link"		=> "./?object=".ARTICLES_CLASS_NAME."&action=edit&id=".$A["id"],
-				"delete_link"	=> "./?object=".ARTICLES_CLASS_NAME."&action=delete&id=".$A["id"],
+				"view_link"		=> "./?object=".'articles'."&action=view&id=".$A["id"],
+				"edit_link"		=> "./?object=".'articles'."&action=edit&id=".$A["id"],
+				"delete_link"	=> "./?object=".'articles'."&action=delete&id=".$A["id"],
 			);
-			$items .= tpl()->parse(ARTICLES_CLASS_NAME."/manage_item", $replace2);
+			$items .= tpl()->parse('articles'."/manage_item", $replace2);
 		}
 		// Process template
 		$replace = array(
 			"items"					=> $items,
 			"pages"					=> $pages,
 			"total"					=> intval($total),
-			"add_link"				=> "./?object=".ARTICLES_CLASS_NAME."&action=add",
-			"comments_search_link"	=> "./?object=".ARTICLES_CLASS_NAME."&action=search_comments",
+			"add_link"				=> "./?object=".'articles'."&action=add",
+			"comments_search_link"	=> "./?object=".'articles'."&action=search_comments",
 		);
-		return tpl()->parse(ARTICLES_CLASS_NAME."/manage_main", $replace);
+		return tpl()->parse('articles'."/manage_main", $replace);
 	}
 	
 	
@@ -365,8 +357,8 @@ class yf_articles extends yf_module {
 		// Do save content
 		if ($_POST) {
 			// Do check captcha (if needed)
-			if (module(ARTICLES_CLASS_NAME)->USE_CAPTCHA) {
-				main()->_execute(ARTICLES_CLASS_NAME, "_captcha_check");
+			if (module('articles')->USE_CAPTCHA) {
+				main()->_execute('articles', "_captcha_check");
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
@@ -430,7 +422,7 @@ class yf_articles extends yf_module {
 				// Update user stats
 				_class("user_stats")->_update(array("user_id" => main()->USER_ID));
 				// Return user back
-				return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=manage");
+				return js_redirect("./?object=".'articles'."&action=manage");
 			}
 		}
 		// Fill POST data
@@ -440,7 +432,7 @@ class yf_articles extends yf_module {
 		// Display form
 		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
-				"form_action"	=> "./?object=".ARTICLES_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"],
+				"form_action"	=> "./?object=".'articles'."&action=".$_GET["action"]."&id=".$_GET["id"],
 				"error_message"	=> _e(),
 				"cats_box"		=> $this->_box("cat_id", $DATA["cat_id"]),
 				"cat_name"		=> _prepare_html($this->_articles_cats[$DATA["cat_id"]]["name"]),
@@ -454,8 +446,8 @@ class yf_articles extends yf_module {
 				"views"			=> intval($DATA["views"]),
 				"status"		=> $this->_articles_statuses[$DATA["status"]],
 				"for_edit"		=> 1,
-				"use_captcha"	=> intval((bool)module(ARTICLES_CLASS_NAME)->USE_CAPTCHA),
-				"captcha_block"	=> main()->_execute(ARTICLES_CLASS_NAME, "_captcha_block"),
+				"use_captcha"	=> intval((bool)module('articles')->USE_CAPTCHA),
+				"captcha_block"	=> main()->_execute('articles', "_captcha_block"),
 				"bb_codes_block_full_text"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_full_text")) : "",
 				"bb_codes_block_summary"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_summary")) : "",
 				"bb_codes_block_cred"		=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_cred")) : "",
@@ -464,7 +456,7 @@ class yf_articles extends yf_module {
 				"max_full_text_length"		=> intval($this->MAX_FULL_TEXT_LENGTH),
 				"max_credentials_length"	=> intval($this->MAX_CREDENTIALS_LENGTH),
 			);
-			return tpl()->parse(ARTICLES_CLASS_NAME."/edit_form", $replace);
+			return tpl()->parse('articles'."/edit_form", $replace);
 		}
 	}
 
@@ -478,8 +470,8 @@ class yf_articles extends yf_module {
 		// Do save content
 		if ($_POST) {
 			// Do check captcha (if needed)
-			if (module(ARTICLES_CLASS_NAME)->USE_CAPTCHA) {
-				main()->_execute(ARTICLES_CLASS_NAME, "_captcha_check");
+			if (module('articles')->USE_CAPTCHA) {
+				main()->_execute('articles', "_captcha_check");
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
@@ -539,7 +531,7 @@ class yf_articles extends yf_module {
 				// Update user stats
 				_class("user_stats")->_update(array("user_id" => main()->USER_ID));
 				// Return user back
-				return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=manage");
+				return js_redirect("./?object=".'articles'."&action=manage");
 			}
 		}
 		// Fill POST data
@@ -550,7 +542,7 @@ class yf_articles extends yf_module {
 		// Display form
 		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
-				"form_action"	=> "./?object=".ARTICLES_CLASS_NAME."&action=".$_GET["action"],
+				"form_action"	=> "./?object=".'articles'."&action=".$_GET["action"],
 				"error_message"	=> _e(),
 				"cats_box"		=> $this->_box("cat_id", $DATA["cat_id"]),
 				"cat_name"		=> _prepare_html($this->_articles_cats[$DATA["cat_id"]]["name"]),
@@ -564,8 +556,8 @@ class yf_articles extends yf_module {
 				"views"			=> intval($DATA["views"]),
 				"status"		=> $this->_articles_statuses[$DATA["status"]],
 				"for_edit"		=> 0,
-				"use_captcha"	=> intval((bool)module(ARTICLES_CLASS_NAME)->USE_CAPTCHA),
-				"captcha_block"	=> main()->_execute(ARTICLES_CLASS_NAME, "_captcha_block"),
+				"use_captcha"	=> intval((bool)module('articles')->USE_CAPTCHA),
+				"captcha_block"	=> main()->_execute('articles', "_captcha_block"),
 				"allow_bb_code"	=> intval((bool) $this->USE_BB_CODES),
 				"bb_codes_block_full_text"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_full_text")) : "",
 				"bb_codes_block_summary"	=> $this->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_summary")) : "",
@@ -576,7 +568,7 @@ class yf_articles extends yf_module {
 				"max_credentials_length"	=> intval($this->MAX_CREDENTIALS_LENGTH),
 			);
 
-			return tpl()->parse(ARTICLES_CLASS_NAME."/edit_form", $replace);
+			return tpl()->parse('articles'."/edit_form", $replace);
 		}
 	}
 
@@ -607,7 +599,7 @@ class yf_articles extends yf_module {
 		// Update user stats
 		_class("user_stats")->_update(array("user_id" => main()->USER_ID));
 		// Return user back
-		return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=manage");
+		return js_redirect("./?object=".'articles'."&action=manage");
 	}
 
 	/**
@@ -618,7 +610,7 @@ class yf_articles extends yf_module {
 	* @return	string
 	*/
 	function _cat_link ($cat_id = 0) {
-		return "./?object=".ARTICLES_CLASS_NAME."&action=view_cat&id=".(!empty($this->_articles_cats[$cat_id]["url"]) ? _prepare_html($this->_articles_cats[$cat_id]["url"]) : $cat_id);
+		return "./?object=".'articles'."&action=view_cat&id=".(!empty($this->_articles_cats[$cat_id]["url"]) ? _prepare_html($this->_articles_cats[$cat_id]["url"]) : $cat_id);
 	}
 
 	/**
@@ -633,9 +625,9 @@ class yf_articles extends yf_module {
 	*/
 	function _user_articles_link ($user_id = 0, $author_name = "") {
 		if (!empty($user_id)) {
-			return "./?object=".ARTICLES_CLASS_NAME."&action=view_by_user&id=".$user_id;
+			return "./?object=".'articles'."&action=view_by_user&id=".$user_id;
 		} else {
-			return "./?object=".ARTICLES_CLASS_NAME."&action=search&q=results&author_name=".rawurlencode($author_name);
+			return "./?object=".'articles'."&action=search&q=results&author_name=".rawurlencode($author_name);
 		}
 	}
 

@@ -280,16 +280,14 @@ class yf_forum {
 	* Show forum layout (default function)
 	*/
 	function show () {
-		$OBJ = $this->_load_sub_module("forum_view_home");
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_view_home")->_show_main();
 	}
 
 	/**
 	* View forum contents
 	*/
 	function view_forum () {
-		$OBJ = $this->_load_sub_module("forum_view_forum");
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_view_forum")->_show_main();
 	}
 
 	/**
@@ -316,40 +314,35 @@ class yf_forum {
 	* View single anounce
 	*/
 	function view_announce () {
-		$OBJ = $this->_load_sub_module("forum_announce");
-		return is_object($OBJ) ? $OBJ->_view_announce() : "";
+		return $this->_load_sub_module("forum_announce")->_view_announce();
 	}
 
 	/**
 	* View forum statistics
 	*/
 	function view_stats () {
-		$OBJ = $this->_load_sub_module("forum_online_users");
-		return is_object($OBJ) ? $OBJ->_view_stats() : "";
+		return $this->_load_sub_module("forum_online_users")->_view_stats();
 	}
 
 	/**
 	* Members list (with search)
 	*/
 	function view_members () {
-		$OBJ = $this->_load_sub_module("forum_members");
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_members")->_show_main();
 	}
 
 	/**
 	* View user's profile
 	*/
 	function view_profile () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_view_profile() : "";
+		return $this->_load_sub_module("forum_user")->_view_profile();
 	}
 
 	/**
 	* View latest posts
 	*/
 	function view_new_posts () {
-		$OBJ = $this->_load_sub_module("forum_search");
-		return is_object($OBJ) ? $OBJ->_view_new_posts() : "";
+		return $this->_load_sub_module("forum_search")->_view_new_posts();
 	}
 
 	/**
@@ -363,8 +356,7 @@ class yf_forum {
 	* View unread messages groupped by topics
 	*/
 	function unread () {
-		$OBJ = $this->_load_sub_module("forum_search");
-		return is_object($OBJ) ? $OBJ->_view_unread_topics() : "";
+		return $this->_load_sub_module("forum_search")->_view_unread_topics();
 	}
 
 	/**
@@ -375,56 +367,49 @@ class yf_forum {
 		if (conf('HIGH_CPU_LOAD') == 1) {
 			return common()->server_is_busy();
 		}
-		$OBJ = $this->_load_sub_module("forum_search");
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_search")->_show_main();
 	}
 
 	/**
 	* Log in function
 	*/
 	function login () {
-		$OBJ = $this->_load_sub_module("forum_auth");
-		return is_object($OBJ) ? $OBJ->_login() : "";
+		return $this->_load_sub_module("forum_auth")->_login();
 	}
 
 	/**
 	* Log out function
 	*/
 	function logout () {
-		$OBJ = $this->_load_sub_module("forum_auth");
-		return is_object($OBJ) ? $OBJ->_logout() : "";
+		return $this->_load_sub_module("forum_auth")->_logout();
 	}
 
 	/**
 	* Retrieve forgotten password
 	*/
 	function send_password () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_send_password() : "";
+		return $this->_load_sub_module("forum_user")->_send_password();
 	}
 
 	/**
 	* Registration
 	*/
 	function register () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_register() : "";
+		return $this->_load_sub_module("forum_user")->_register();
 	}
 
 	/**
 	* Confirm registration function
 	*/
 	function confirm_register () {
-		$OBJ = $this->_load_sub_module("forum_user");
-		return is_object($OBJ) ? $OBJ->_confirm_register() : "";
+		return $this->_load_sub_module("forum_user")->_confirm_register();
 	}
 
 	/**
 	* Forum help
 	*/
 	function help () {
-		$OBJ = $this->_load_sub_module("forum_help");
-		return is_object($OBJ) ? $OBJ->_show_main() : "";
+		return $this->_load_sub_module("forum_help")->_show_main();
 	}
 
 	/**
@@ -1027,12 +1012,7 @@ class yf_forum {
 	* Try to load forum sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		$OBJ =& main()->init_class($module_name, FORUM_MODULES_DIR);
-		if (!is_object($OBJ)) {
-			trigger_error("FORUM: Cant load sub_module \"".$module_name."\"", E_USER_WARNING);
-			return false;
-		}
-		return $OBJ;
+		return _class_safe($module_name, 'modules/forum/');
 	}
 
 	/**
