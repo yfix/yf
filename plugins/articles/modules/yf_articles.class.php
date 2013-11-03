@@ -52,26 +52,19 @@ class yf_articles extends yf_module {
 
 	/**
 	* YF module constructor
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _init () {
-		// Array of select boxes to process
 		$this->_boxes = array(
 			"cat_id"		=> 'select_box("cat_id", $this->_cats_for_select, $selected, false, 2, "style=\"width:100%;\"", false)',
 		);
-		// Array of available article statuses
 		$this->_articles_statuses = array(
 			"new"		=> t("new"),
 			"edited"	=> t("edited"),
 			"suspended"	=> t("suspended"),
 			"active"	=> t("active"),
 		);
-		// Prepare categories
 		$this->CATS_OBJ = _class("cats");
 		$this->_articles_cats	= _class("cats")->_get_items_array();
-		// Categories for the select box
 		$this->_cats_for_select	= _class("cats")->_prepare_for_box("", 0);
 	}
 

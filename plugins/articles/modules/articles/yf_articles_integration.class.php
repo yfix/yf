@@ -10,13 +10,6 @@
 class yf_articles_integration {
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-		$this->ARTICLES_OBJ		= module('articles');
-	}
-
-	/**
 	* Code for home page
 	*/
 	function _for_home_page($NUM_NEWEST_ARTICLE_POST = 4){
@@ -74,7 +67,7 @@ class yf_articles_integration {
 			FROM ".db('articles_texts')." 
 			WHERE status = 'active' 
 			ORDER BY add_date DESC 
-			LIMIT ".intval($this->ARTICLES_OBJ->NUM_RSS)
+			LIMIT ".intval(module('articles')->NUM_RSS)
 		);
 		
 		while ($A = db()->fetch_assoc($Q)) {

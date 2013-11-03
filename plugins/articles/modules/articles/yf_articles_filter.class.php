@@ -13,10 +13,7 @@ class yf_articles_filter {
 	* Constructor
 	*/
 	function _init () {
-		// Reference to the parent object
-		$this->PARENT_OBJ		= module('articles');
-		// Prepare data
-		if ($this->PARENT_OBJ->USE_FILTER) {
+		if (module('articles')->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
 	}
@@ -25,7 +22,7 @@ class yf_articles_filter {
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql () {
-		if (!$this->PARENT_OBJ->USE_FILTER) return "";
+		if (!module('articles')->USE_FILTER) return "";
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
 		// Create qubquery for the user table
@@ -79,7 +76,7 @@ class yf_articles_filter {
 	*/
 	function _prepare_filter_data () {
 /*
-		if (!$this->PARENT_OBJ->USE_FILTER || !in_array($_GET["action"], array(
+		if (!module('articles')->USE_FILTER || !in_array($_GET["action"], array(
 			"clear_filter",
 			"save_filter",
 			"search",
@@ -118,7 +115,7 @@ class yf_articles_filter {
 			"country"		=> 'select_box("country",		$this->_countries,		$selected, 0, 2, "", false)',
 			"cat_id"		=> 'select_box("cat_id", 		$this->_articles_cats2,	$selected, false, 2, "", false)',
 		));
-		$this->_articles_cats2 = $this->PARENT_OBJ->CATS_OBJ->_prepare_for_box(null, 1);
+		$this->_articles_cats2 = module('articles')->CATS_OBJ->_prepare_for_box(null, 1);
 		// Number of records per page
 		$this->_per_page = array(10=>10,20=>20,50=>50,100=>100);
 		// Sort fields
@@ -139,7 +136,7 @@ class yf_articles_filter {
 	* Session - based filter form stored in $_SESSION[$this->_filter_name][...]
 	*/
 	function _show_filter () {
-		if (!$this->PARENT_OBJ->USE_FILTER) return "";
+		if (!module('articles')->USE_FILTER) return "";
 		$replace = array(
 			"save_action"	=> "./?object=".'articles'."&action=save_filter".(MAIN_TYPE_ADMIN ? _add_get() : ""),
 			"clear_url"		=> "./?object=".'articles'."&action=clear_filter".(MAIN_TYPE_ADMIN ? _add_get() : ""),
@@ -158,7 +155,7 @@ class yf_articles_filter {
 	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
-		if (!$this->PARENT_OBJ->USE_FILTER) return "";
+		if (!module('articles')->USE_FILTER) return "";
 		// Process featured countries
 		if (FEATURED_COUNTRY_SELECT && !empty($_REQUEST["country"]) && substr($_REQUEST["country"], 0, 2) == "f_") {
 			$_REQUEST["country"] = substr($_REQUEST["country"], 2);
@@ -175,7 +172,7 @@ class yf_articles_filter {
 	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
-		if (!$this->PARENT_OBJ->USE_FILTER) return "";
+		if (!module('articles')->USE_FILTER) return "";
 		if (is_array($_SESSION[$this->_filter_name])) {
 			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
 		}

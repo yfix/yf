@@ -6,14 +6,6 @@
 class yf_articles_search_comments {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->PARENT_OBJ		= module('articles');
-	}
-
-	/**
 	* Display comments posted in user's articles
 	*/
 	function search_comments(){
@@ -55,7 +47,7 @@ class yf_articles_search_comments {
 		
 		if (!empty($posts_ids)) {
 		
-			if($this->PARENT_OBJ->SEARCH_ONLY_MEMBER){
+			if(module('articles')->SEARCH_ONLY_MEMBER){
 				$serch_only_member = " AND NOT (user_id = 0)";
 			}
 
@@ -124,7 +116,7 @@ class yf_articles_search_comments {
 				"title"			=> $posts[$comment["object_id"]]["title"],
 				"post_url"		=> "./?object=articles&action=view&id=".$posts[$comment["object_id"]]["id"],
 				"date"			=> _format_date($comment["add_date"], "long"),
-				"delete"		=> $this->PARENT_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+				"delete"		=> module('articles')->ALLOW_DELETE_COMMENTS?"1":"0",
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_articles_comment&id=".$comment["id"],
 			);
 			$items.= tpl()->parse($_GET["object"]."/search_comments_item", $replace2);
@@ -137,7 +129,7 @@ class yf_articles_search_comments {
 			"author_select_box"		=> $author_select_box,
 			"cats_select_box"		=> $cats_select_box,
 			"sort_type_select_box"	=> $sort_type_select_box,
-			"delete"				=> $this->PARENT_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+			"delete"				=> module('articles')->ALLOW_DELETE_COMMENTS?"1":"0",
 		);
 		return tpl()->parse($_GET["object"]."/search_comments_main", $replace);
 	}
