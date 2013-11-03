@@ -18,13 +18,6 @@ class yf_rate {
 	public $VOTE_DURATION	= 10;
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-		define("RATE_CLASS_NAME", "rate");
-	}
-
-	/**
 	* Default method
 	*/
 	function show () {
@@ -211,12 +204,12 @@ class yf_rate {
 			"max_rate"			=> intval($this->NUM_STARS),
 			"stars"				=> $this->_show_rate_stars($CUR_RATE_VALUE),
 			"total_stars"		=> intval($this->NUM_STARS),
-			"do_vote_url"		=> process_url("./?object=".RATE_CLASS_NAME."&action=do_vote"),
+			"do_vote_url"		=> process_url("./?object=".'rate'."&action=do_vote"),
 			"allow_vote"		=> intval((bool)$ALLOW_VOTE),
 			"display_js"		=> intval($this->_num_calls == 1),
 			"rate_images_url"	=> WEB_PATH."js/yf_rate/images/",
 		);
-		return tpl()->parse(RATE_CLASS_NAME."/vote_box", $replace);
+		return tpl()->parse('rate'."/vote_box", $replace);
 	}
 
 	/**
