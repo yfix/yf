@@ -78,7 +78,7 @@ class yf_manage_blogs {
 				"member_url"	=> "./?object=account&user_id=".$post_info["user_id"],
 				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit&id=".$post_info["id"],
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$post_info["id"],
-				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($post_info["user_id"])),
+				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($post_info["user_id"]))),
 			);
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
@@ -143,7 +143,7 @@ class yf_manage_blogs {
 			"title"				=> _prepare_html($post_info["title"]),
 			"text"				=> _prepare_html($post_info["text"]),
 			"back_url"			=> "./?object=".$_GET["object"],
-			"ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($post_info["user_id"])),
+			"ban_popup_link"	=> _class("manage_auto_ban")->_popup_link(array("user_id" => intval($post_info["user_id"]))),
 		);
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}

@@ -56,7 +56,7 @@ class yf_blog_posting {
 			}
 			// Do check captcha (if needed)
 			if (module('blog')->USE_CAPTCHA) {
-				main()->_execute('blog', "_captcha_check");
+				_class('blog')->_captcha_check();
 			}
 			// Load attached_image
 			$attach_image = !empty($_FILES["attach_image"]["size"]) ? $this->_load_attach_image() : "";
@@ -216,7 +216,7 @@ class yf_blog_posting {
 				"custom_cats_box"	=> !empty($custom_cats_for_box) ? common()->select_box("custom_cat_id", array_merge(array(""), $custom_cats_for_box), $_POST["custom_cat_id"], false, 2, "", false) : "",
 				"edit_settings_link"=> "./?object=".'blog'."&action=settings"._add_get(array("page")),
 				"use_captcha"		=> intval((bool)module('blog')->USE_CAPTCHA),
-				"captcha_block"		=> main()->_execute('blog', "_captcha_block"),
+				"captcha_block"		=> _class('blog')->_captcha_block(),
 				"bb_codes_block"	=> module('blog')->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_text", "youtube" => 1)) : "",
 				"tags"				=> $_POST["tags"],
 				"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
@@ -298,7 +298,7 @@ class yf_blog_posting {
 			}
 			// Do check captcha (if needed)
 			if (module('blog')->USE_CAPTCHA) {
-				main()->_execute('blog', "_captcha_check");
+				_class('blog')->_captcha_check();
 			}
 			// Try to get new date
 			$_POST["add_date"] = !empty($_POST["add_date"]) ? strtotime($_POST["add_date"]) : 0;
@@ -455,7 +455,7 @@ class yf_blog_posting {
 				"custom_cats_box"	=> !empty($custom_cats_for_box) ? common()->select_box("custom_cat_id", array_merge(array(""), $custom_cats_for_box), $_POST["custom_cat_id"], false, 2, "", false) : "",
 				"edit_settings_link"=> "./?object=".'blog'."&action=settings"._add_get(array("page")),
 				"use_captcha"		=> intval((bool)module('blog')->USE_CAPTCHA),
-				"captcha_block"		=> main()->_execute('blog', "_captcha_block"),
+				"captcha_block"		=> _class('blog')->_captcha_block(),
 				"bb_codes_block"	=> module('blog')->USE_BB_CODES ? _class("bb_codes")->_display_buttons(array("unique_id" => "bb_text", "youtube" => 1)) : "",
 				"tags"				=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->_collect_tags($post_info["id"], 'blog') : "",
 				"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
