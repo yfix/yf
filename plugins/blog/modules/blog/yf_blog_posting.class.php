@@ -38,7 +38,7 @@ class yf_blog_posting {
 			$custom_cats_for_box[$custom_cat_id + 1] = $info["name"];
 		}
 		
-		$FRIENDS_OBJ = &main()->init_class("friends");
+		$FRIENDS_OBJ = module("friends");
 		
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
@@ -176,7 +176,7 @@ class yf_blog_posting {
 			}
 		}
 		
-		$OBJ = main()->init_class("community");
+		$OBJ = module("community");
 		$community = is_object($OBJ) ? $OBJ->_get_community_with_allow_posting_for_user(main()->USER_ID) : "";
 		
 		$first_element = array("0" => t("In my blog"));
@@ -275,7 +275,7 @@ class yf_blog_posting {
 			$custom_cats_for_box[$custom_cat_id + 1] = $info["name"];
 		}
 		
-		$FRIENDS_OBJ = &main()->init_class("friends");
+		$FRIENDS_OBJ = module("friends");
 		
 		// Check posted data and save
 		if (!empty($_POST["go"])) {

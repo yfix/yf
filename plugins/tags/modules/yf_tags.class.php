@@ -285,8 +285,8 @@ class yf_tags {
 		}
 
 		if (!empty($blog_ids_array)) {
-			$COMMENTS_OBJ = &main()->init_class("comments", USER_MODULES_DIR);
-			$BLOG_OBJ = main()->init_class("blog");
+			$COMMENTS_OBJ = module("comments");
+			$BLOG_OBJ = module("blog");
 
 			$num_comments = $COMMENTS_OBJ->_get_num_comments(array(
 				"object_name" => "blog",
@@ -303,7 +303,7 @@ class yf_tags {
 		}
 
 		if (!empty($gallery_ids_array)) {
-			$GALLERY_OBJ = &main()->init_class("gallery");
+			$GALLERY_OBJ = module("gallery");
 			$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE id IN(".implode(",", $gallery_ids_array).")");
 			while ($A = db()->fetch_assoc($Q)) {
 				$_photo_infos[$A["id"]] = $A;
@@ -313,8 +313,8 @@ class yf_tags {
 		}
 
 		if (!empty($articles_ids_array)) {
-			$COMMENTS_OBJ = &main()->init_class("comments", USER_MODULES_DIR);
-			$ARTICLES_OBJ = &main()->init_class("articles"); 
+			$COMMENTS_OBJ = module("comments");
+			$ARTICLES_OBJ = module("articles"); 
 
 			$num_comments = $COMMENTS_OBJ->_get_num_comments(array(
 				"object_name" => "articles",
@@ -510,7 +510,7 @@ class yf_tags {
 			}
 			// Only friends can edit tags
 			if ($A["allowed_group"] == 1 && main()->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				$friend_of_array = $FRIENDS_OBJ->_get_users_where_friend_of(main()->USER_ID);
 				if(in_array($A["user_id"], $friend_of_array)) {
 					$_allowed[$A["id"]]["allowed"] = 1;	

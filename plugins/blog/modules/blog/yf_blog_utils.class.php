@@ -35,7 +35,7 @@ class yf_blog_utils {
 		// Friends (simple, user need only to add poster to his friends list)
 		} elseif ($cur_privacy == 3) {
 			if ($post_author_id != module('blog')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
 					return $is_a_friend;
@@ -45,7 +45,7 @@ class yf_blog_utils {
 		// My friends (simple, user need to be in poster's friends list)
 		} elseif ($cur_privacy == 4) {
 			if ($post_author_id != module('blog')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
 					return $is_my_friend;
@@ -55,7 +55,7 @@ class yf_blog_utils {
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_privacy == 5) {
 			if ($post_author_id != module('blog')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
 					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
@@ -93,7 +93,7 @@ class yf_blog_utils {
 		// Friends (simple, user need only to add poster to his friends list)
 		} elseif ($cur_comments == 3) {
 			if ($post_author_id != module('blog')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
 					return $is_a_friend;
@@ -103,7 +103,7 @@ class yf_blog_utils {
 		// My friends (simple, user need to be in poster's friends list)
 		} elseif ($cur_comments == 4) {
 			if ($post_author_id != module('blog')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
 					return $is_my_friend;
@@ -113,7 +113,7 @@ class yf_blog_utils {
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_comments == 5) {
 			if ($post_author_id != module('blog')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
 					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
