@@ -250,4 +250,54 @@ class yf_oauth2 {
 		return $this->_providers;
 	}
 // TODO
+
+	/**
+	*/
+	function initialize($provider) {
+		require('/home/www/oauth-api/.dev/config.php');
+		require('/home/www/oauth-api/http/http.php');
+		require('/home/www/oauth-api/oauth/oauth_client.php');
+
+		$client = new oauth_client_class();
+		$client->debug = true;
+		$client->debug_http = true;
+		$client->server = 'Bitbucket';
+#		$client->redirect_uri = 'http://'.$_SERVER['HTTP_HOST'].dirname(strtok($_SERVER['REQUEST_URI'],'?')).'/login_with_bitbucket.php';
+		$client->redirect_uri = WEB_PATH.'?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'];
+		$client->client_id = $config['bitbucket']['client_id'] ?: ''; $application_line = __LINE__;
+		$client->client_secret = $config['bitbucket']['client_secret'] ?: '';
+		if(strlen($client->client_id) == 0 || strlen($client->client_secret) == 0)
+			die('Please go to Bitbucket page to Manage Account '.
+				'https://bitbucket.org/account/ , click on Integrated Applications, '.
+				'then Add Consumer, and in the line '.$application_line.
+				' set the client_id with Key and client_secret with Secret. '.
+				'The URL must be '.$client->redirect_uri);
+
+		$settings = $this->_providers[$provider] + $this->_providers['__default__'];
+		foreach ($settings as $k => $v) {
+			$client->$k = $v;
+		}
+
+		if (($success = $client->Process())) {
+			if (strlen($client->access_token)) {
+				$success = $client->CallAPI(
+					$settings['user_info_url'],
+					'GET', array(), array('FailOnAccessError' => true), $user);
+			}
+		}
+#		$success = $client->Finalize($success);
+#		if($client->exit) {
+#			exit;
+#		}
+		if($success) {
+			return '<pre>'.print_r($user, 1).'</pre>';
+		}
+#		return $this;
+	}
+
+	/**
+	*/
+	function process() {
+#		return $this;
+	}
 }
