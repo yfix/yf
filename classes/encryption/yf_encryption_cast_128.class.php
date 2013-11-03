@@ -426,7 +426,7 @@ class yf_encryption_cast_128 {
 		return $decrypted;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	//
 	function f0($data,$keym,$keyr) {
 		$I = $keym + $data;
@@ -438,7 +438,7 @@ class yf_encryption_cast_128 {
 		return $f;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	//
 	function f1($data,$keym,$keyr) {
 		$I = $keym ^ $data;
@@ -450,7 +450,7 @@ class yf_encryption_cast_128 {
 		return $f;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	//
 	function f2($data,$keym,$keyr) {
 		$I = 0xFFFFFFFF & ($keym - $data);

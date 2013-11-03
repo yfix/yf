@@ -164,7 +164,7 @@ class yf_online_users_manager {
 		return $_user_info;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -199,7 +199,7 @@ class yf_online_users_manager {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -215,7 +215,7 @@ class yf_online_users_manager {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -232,7 +232,7 @@ class yf_online_users_manager {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Filter save method
 	function save_filter ($silent = false) {
 		if (is_array($this->_fields_in_filter)) {
@@ -246,7 +246,7 @@ class yf_online_users_manager {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -260,7 +260,7 @@ class yf_online_users_manager {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

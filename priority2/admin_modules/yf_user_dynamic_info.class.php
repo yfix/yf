@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // Class to handle user dynamic info fields
 class yf_user_dynamic_info {
 
@@ -222,7 +222,7 @@ class yf_user_dynamic_info {
 		cache()->refresh("fields_map_dynamic");
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

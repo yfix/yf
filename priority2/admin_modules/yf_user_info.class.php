@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // Class to handle user personal info
 class yf_user_info {
 
@@ -13,7 +13,7 @@ class yf_user_info {
 	public $AVATAR_MAX_HEIGHT		= 100;
 	public $AVATAR_MAX_FILE_SIZE	= 500000; // bytes
 
-	//-----------------------------------------------------------------------------
+	
 	// Constructor
 	function yf_user_info () {
 		main()->USER_ID = $_GET['user_id'];
@@ -132,7 +132,7 @@ class yf_user_info {
 		$this->_user_levels		= main()->get_data("user_levels");
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// This function handle user personal info
 	function show () {
 		// Process correct steps
@@ -153,7 +153,7 @@ class yf_user_info {
 		return $body;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	//
 	function _step_1 ($A = null) {
 		if (!$A) $A = $this->_user_info;
@@ -228,7 +228,7 @@ class yf_user_info {
 		return tpl()->parse($_GET["object"]."/step_1_".$this->cur_account_type, $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	//
 	function _step_2 () {
 		// Process featured countries
@@ -340,7 +340,7 @@ class yf_user_info {
 		}
 	}	
 
-	//-----------------------------------------------------------------------------
+	
 	// Validate form for steps 3 and 4
 	function _validate_form () {
 		// Cleanup all $_POST fields
@@ -375,7 +375,7 @@ class yf_user_info {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Delete avatar from server
 	function delete_avatar () {
 		$user_id = intval($_GET["user_id"]);
@@ -394,7 +394,7 @@ class yf_user_info {
 		return js_redirect("./?object=".$_GET["object"]._add_get());
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Load user avatar to the server (multi-site)
 	function _load_avatar () {
 		$AVATAR = &$_FILES["avatar"];
@@ -469,7 +469,7 @@ class yf_user_info {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

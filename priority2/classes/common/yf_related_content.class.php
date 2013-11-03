@@ -122,7 +122,7 @@ class yf_related_content {
 // TODO: complete these
 		$WEIGHT_TAG		= $params["weight_tag"]		? intval($params["weight_tag"])				: $this->DEF_PARAMS["WEIGHT_TAG"];
 		$WEIGHT_CAT		= $params["weight_cat"]		? intval($params["weight_cat"])				: $this->DEF_PARAMS["WEIGHT_CAT"];
-		//-------------------
+		
 		// PARSE PARAMS END
 
 		$WEIGHT_TOTAL	= $WEIGHT_TEXT + $WEIGHT_TITLE + $WEIGHT_TAG + $WEIGHT_CAT;

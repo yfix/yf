@@ -1,5 +1,5 @@
 <?php
-//-----------------------------------------------------------------------------
+
 // THIS TASKS OPERATIONS:
 // Cleanup Search Engine keywords
 class task_item {
@@ -7,7 +7,7 @@ class task_item {
 	var $class		= "";
 	var $task		= "";
 
-	//-----------------------------------------------------------------------------
+	
 	// ADD YOUR CODE HERE
 	function run_task()	{
 		// Check for correct call
@@ -20,17 +20,17 @@ class task_item {
 		$this->class->append_task_log($this->task, 'SE keywords cleaned up');
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// DO NOT MODIFY!
 	function register_class(&$class) {
 		$this->class = $class;
 	}
 	
-	//-----------------------------------------------------------------------------
+	
 	// DO NOT MODIFY!
 	function pass_task($this_task) {
 		$this->task = $this_task;
 	}
 }
-//-----------------------------------------------------------------------------
+
 ?>

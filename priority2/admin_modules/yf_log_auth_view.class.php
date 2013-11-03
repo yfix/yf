@@ -159,7 +159,7 @@ class yf_log_auth_view {
 		return tpl()->parse($_GET["object"]."/same_ips", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -200,7 +200,7 @@ class yf_log_auth_view {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -218,7 +218,7 @@ class yf_log_auth_view {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -235,7 +235,7 @@ class yf_log_auth_view {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -250,7 +250,7 @@ class yf_log_auth_view {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -261,7 +261,7 @@ class yf_log_auth_view {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

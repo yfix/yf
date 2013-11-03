@@ -100,7 +100,7 @@ class yf_revisions_manager {
 		return tpl()->parse($_GET["object"]."/preview_obj_item", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

@@ -187,12 +187,12 @@ class yf_debug_info {
 
 		// DO NOT REMOVE!!! Needed to correct display template tags in debug output
 		$body = str_replace(array("{", "}"), array("&#123;", "&#125;"), $body);
-		//-----------------------------------------------------------------------------
+		
 		// Do hide console if needed
 		if (isset($_SESSION['hide_debug_console']) && $_SESSION['hide_debug_console']) {
 			$body = "";
 		}
-		//-----------------------------------------------------------------------------
+		
 		// !!! Needed to be on the bottom of the page
 		$i18n_vars = _class('i18n')->_I18N_VARS;
 		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {

@@ -9,7 +9,7 @@
 */
 class yf_manage_forum_manage_view {
 
-	//-----------------------------------------------------------------------------
+	
 	// 
 	function _show_forum_item ($forum_info = array()) {
 		$sub_forums = array();
@@ -65,7 +65,7 @@ class yf_manage_forum_manage_view {
 		return tpl()->parse("manage_forum/admin/forum_item", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Main function
 	function _view_forum () {
 		$_GET['id'] = intval($_GET['id']);
@@ -75,12 +75,12 @@ class yf_manage_forum_manage_view {
 		}
 		$forum_name = module("forum")->_forums_array[$forum_info['id']]["name"];
 		$cat_name = $forum_info["category"] ? module("forum")->_forum_cats_array[$forum_info["category"]]["name"] : "";
-		//-----------------------------------------------------------------------------
+		
 		$order_by = " ORDER BY created DESC, num_posts DESC ";
 		$sql = "SELECT * FROM ".db('forum_topics')." WHERE forum=".$_GET['id'];
 		$path = "./?object=".$_GET["object"]."&action=view_forum&id=".$_GET['id'];
 		list($add_sql, $pages, $num_rows) = common()->divide_pages($sql, $path);
-		//-----------------------------------------------------------------------------
+		
 		$Q = db()->query($sql.$order_by.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			module("forum")->topics[$A["id"]] = $A;
@@ -153,7 +153,7 @@ class yf_manage_forum_manage_view {
 		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/admin/view_forum", $replace_f));
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process template
 	function _view_topic () {
 		$_GET['id'] = intval($_GET['id']);
@@ -163,11 +163,11 @@ class yf_manage_forum_manage_view {
 		}
 		// Count user view
 		module("forum")->_add_topic_view($topic_info);
-		//-----------------------------------------------------------------------------
+		
 		$forum_name = $topic_info["forum"] ? module("forum")->_forums_array[$topic_info["forum"]]["name"] : "";
 		$cat_name	= module("forum")->_forum_cats_array[module("forum")->_forums_array[$topic_info["forum"]]["category"]]["name"];
 		$topic_name = $topic_info["name"];
-		//-----------------------------------------------------------------------------
+		
 		$order_by = " ORDER BY created ASC ";
 		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$_GET['id'];
 		$path = "./?object=".$_GET["object"]."&action=view_topic&id=".$_GET['id'];
@@ -258,7 +258,7 @@ class yf_manage_forum_manage_view {
 		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/admin/view_topic", $replace_t));
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// New topic creation form
 	function _new_topic () {
 		$_GET['id'] = intval($_GET['id']);
@@ -362,7 +362,7 @@ class yf_manage_forum_manage_view {
 		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/new_topic", $replace));
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Reply to the existing topic (post message)
 	function _reply () {
 		$_GET['id'] = intval($_GET['id']);

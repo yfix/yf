@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // Comments management module
 class yf_manage_comments {
 
@@ -21,7 +21,7 @@ class yf_manage_comments {
 		"user_profile"	=> "show",
 	);
 
-	//-----------------------------------------------------------------------------
+	
 	// Constructor
 	function yf_manage_comments() {
 		main()->USER_ID = $_GET['user_id'];
@@ -36,7 +36,7 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Default function
 	function show () {
 		// Get sites info
@@ -103,7 +103,7 @@ class yf_manage_comments {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Edit record
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -150,7 +150,7 @@ class yf_manage_comments {
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Do delete record (mass method)
 	function mass_delete () {
 		$ids_to_delete = array();
@@ -170,7 +170,7 @@ class yf_manage_comments {
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -187,7 +187,7 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Revert record "active" status
 	function activate () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -208,7 +208,7 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -270,7 +270,7 @@ class yf_manage_comments {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -301,7 +301,7 @@ class yf_manage_comments {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -318,7 +318,7 @@ class yf_manage_comments {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -333,7 +333,7 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -344,7 +344,7 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

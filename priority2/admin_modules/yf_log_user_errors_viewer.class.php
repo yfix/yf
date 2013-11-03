@@ -230,7 +230,7 @@ class yf_log_user_errors_viewer {
 		return $this->show();
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Delete filtered records
 	function delete_all_filtered () {
 		// Prepare query for deleting
@@ -254,7 +254,7 @@ class yf_log_user_errors_viewer {
 		}
 	}	
 
-	//-----------------------------------------------------------------------------
+	
 	// Forming top of errors
 	function top_of_errors () {
 		$GLOBALS['PROJECT_CONF']["divide_pages"]["SQL_COUNT_REWRITE"] = false;
@@ -283,7 +283,7 @@ class yf_log_user_errors_viewer {
 		return tpl()->parse($_GET["object"]."/main_top", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -325,7 +325,7 @@ class yf_log_user_errors_viewer {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -344,7 +344,7 @@ class yf_log_user_errors_viewer {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -362,7 +362,7 @@ class yf_log_user_errors_viewer {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -387,7 +387,7 @@ class yf_log_user_errors_viewer {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -401,7 +401,7 @@ class yf_log_user_errors_viewer {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

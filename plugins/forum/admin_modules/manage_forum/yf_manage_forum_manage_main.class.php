@@ -9,7 +9,7 @@
 */
 class yf_manage_forum_manage_main {
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: edit category
 	function _edit_category () {
 		$_GET['id'] = intval($_GET['id']);
@@ -47,7 +47,7 @@ class yf_manage_forum_manage_main {
 		return tpl()->parse("manage_forum/admin/category_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: add category
 	function _add_category () {
 		// Save data
@@ -83,7 +83,7 @@ class yf_manage_forum_manage_main {
 		return tpl()->parse("manage_forum/admin/category_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Delete category
 	function _delete_category () {
 		$_GET['id'] = intval($_GET['id']);
@@ -117,7 +117,7 @@ class yf_manage_forum_manage_main {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: edit forum
 	function _edit_forum () {
 		$_GET['id'] = intval($_GET['id']);
@@ -207,7 +207,7 @@ class yf_manage_forum_manage_main {
 		return tpl()->parse("manage_forum/admin/forum_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: add forum
 	function _add_forum () {
 		$_GET['id'] = intval($_GET['id']);
@@ -265,7 +265,7 @@ class yf_manage_forum_manage_main {
 		return tpl()->parse("manage_forum/admin/forum_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: delete forum
 	function _delete_forum () {
 		$_GET['id'] = intval($_GET['id']);
@@ -294,7 +294,7 @@ class yf_manage_forum_manage_main {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: edit topic
 	function _edit_topic () {
 		$_GET['id'] = intval($_GET['id']);
@@ -382,7 +382,7 @@ class yf_manage_forum_manage_main {
 		return tpl()->parse("manage_forum/admin/topic_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: delete topic
 	function _delete_topic () {
 		$_GET['id'] = intval($_GET['id']);
@@ -416,7 +416,7 @@ class yf_manage_forum_manage_main {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: edit post
 	function _edit_post () {
 		$_GET['id']		= intval($_GET['id']);
@@ -476,7 +476,7 @@ class yf_manage_forum_manage_main {
 		return tpl()->parse("manage_forum/admin/post_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Admin: delete post
 	function _delete_post () {
 		$_GET['id'] = intval($_GET['id']);

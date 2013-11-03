@@ -278,7 +278,7 @@ class yf_comments {
 		}
 
 
-		//----------  SORT ARRAY TO TREE ------
+		  SORT ARRAY TO TREE ------
 		$this->_comment_array = $comments_array_ids;
 		$this->_comment_tree_array = array();
 
@@ -290,7 +290,7 @@ class yf_comments {
 			}
 			$this->_sort_to_tree($temp_array);
 		}
-		//-------------------------------------
+		
 		// Process comments items
 		foreach ((array)$this->_comment_tree_array as $comment_tree_info) {
 			$comment_info = $comments_array[$comment_tree_info["id"]];

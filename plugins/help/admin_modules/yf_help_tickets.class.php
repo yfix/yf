@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // Help tickets handler
 class yf_help_tickets {
 
@@ -15,7 +15,7 @@ class yf_help_tickets {
 	/** @var bool */
 	public $ADD_ADMIN_NAME		= true;
 
-	//-----------------------------------------------------------------------------
+	
 	// Constructor
 	function _init () {
 		main()->USER_ID = intval($_SESSION["admin_id"]);
@@ -167,7 +167,7 @@ class yf_help_tickets {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Edit record
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -260,7 +260,7 @@ class yf_help_tickets {
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Activate user's account
 	function activate_account () {
 		$_GET["ticket_id"]		= intval($_GET["ticket_id"]);
@@ -319,7 +319,7 @@ class yf_help_tickets {
 		echo common()->show_empty_page($body);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -599,7 +599,7 @@ class yf_help_tickets {
 		return js_redirect("./?object=".$_GET["object"]."&action=edit&id=".$answer_info["object_id"], false);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Return ticket text for AJAX
 	function ajax_ticket_source () {
 		main()->NO_GRAPHICS = true;
@@ -623,7 +623,7 @@ class yf_help_tickets {
 		echo $body;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Do mass actions with selected items
 	function mass_actions () {
 		$OBJECT_NAME	= "help";
@@ -810,7 +810,7 @@ class yf_help_tickets {
 
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		if (!$this->USE_FILTER || !in_array($_GET["action"], array(
@@ -880,7 +880,7 @@ class yf_help_tickets {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -937,7 +937,7 @@ class yf_help_tickets {
 		return $sql;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -958,7 +958,7 @@ class yf_help_tickets {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -975,7 +975,7 @@ class yf_help_tickets {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -986,7 +986,7 @@ class yf_help_tickets {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

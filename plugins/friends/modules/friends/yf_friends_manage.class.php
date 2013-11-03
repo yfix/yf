@@ -17,7 +17,7 @@ class yf_friends_manage {
 		$this->PARENT_OBJ	= module(FRIENDS_CLASS_NAME);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Add user to friends list
 	function add () {
 		if (empty($this->PARENT_OBJ->USER_ID)) {
@@ -66,7 +66,7 @@ class yf_friends_manage {
 		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=view_all_friends");
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Delete selected friend
 	function delete () {
 		if (empty($this->PARENT_OBJ->USER_ID)) {
@@ -109,7 +109,7 @@ class yf_friends_manage {
 		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=view_all_friends");
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Get current user friends ids array
 	function _get_user_friends_ids ($target_user_id) {
 		$cur_friends_ids = array();
@@ -128,7 +128,7 @@ class yf_friends_manage {
 		return $cur_friends_ids;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Add friends to user's friends list
 	function _add_user_friends_ids ($target_user_id, $add_friends_ids = array()) {
 		$cur_friends_ids = $this->_get_user_friends_ids($target_user_id);
@@ -143,7 +143,7 @@ class yf_friends_manage {
 		$this->_save_user_friends_ids ($target_user_id, $cur_friends_ids);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Delete friends to user's friends list
 	function _del_user_friends_ids ($target_user_id, $del_friends_ids = array()) {
 		$cur_friends_ids = $this->_get_user_friends_ids($target_user_id);
@@ -160,7 +160,7 @@ class yf_friends_manage {
 		$this->_save_user_friends_ids ($target_user_id, $cur_friends_ids);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Save friends
 	function _save_user_friends_ids ($target_user_id, $friends_array = array()) {
 		// Save friends ids

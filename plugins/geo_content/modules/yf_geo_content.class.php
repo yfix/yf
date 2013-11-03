@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // Content display by geo location (ads, pages, etc)
 class yf_geo_content {
 
@@ -8,19 +8,19 @@ class yf_geo_content {
 	/** @var bool  */
 	public $AJAX_USE_CACHE = false;
 
-	//-----------------------------------------------------------------------------
+	
 	// YF module constructor
 	function _init () {
 		define("GEO_CONTENT_CLASS_NAME", "geo_content");
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Default method
 	function show () {
 		return $this->change_location();
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// JavaScript - based city select (3-step) method
 	function _city_select ($params = array()) {
 		$STPL_NAME = "register/city_select";
@@ -89,7 +89,7 @@ class yf_geo_content {
 		return tpl()->parse($STPL_NAME, $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Get selected array
 	function ajax_city () {
 		main()->NO_GRAPHICS = true;
@@ -179,7 +179,7 @@ class yf_geo_content {
 		echo $body;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Change user location
 	function change_location () {
 		if (!main()->USE_GEO_IP) {
@@ -421,7 +421,7 @@ class yf_geo_content {
 		return tpl()->parse(GEO_CONTENT_CLASS_NAME."/change_location_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Change user location
 	function change_location_result () {
 		if (!main()->USE_GEO_IP) {

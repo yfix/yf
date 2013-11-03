@@ -109,7 +109,7 @@ class yf_log_auth_fails_viewer {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -126,7 +126,7 @@ class yf_log_auth_fails_viewer {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Session - based filter
 	function _show_filter () {
 		if($_GET["action"] != "show"){
@@ -151,7 +151,7 @@ class yf_log_auth_fails_viewer {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Filter save method
 	function save_filter ($silent = false) {
 		if (is_array($this->_fields_in_filter)) {
@@ -173,7 +173,7 @@ class yf_log_auth_fails_viewer {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -187,7 +187,7 @@ class yf_log_auth_fails_viewer {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // Class for handling retrieving lost password
 class yf_get_pswd {
 
@@ -69,7 +69,7 @@ class yf_get_pswd {
 		));
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	//
 	function _send_info_to_user ($A = array()) {
 		if (empty($A)) {

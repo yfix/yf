@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // User profile handling module
 class yf_user_profile extends yf_module {
 
@@ -27,7 +27,7 @@ class yf_user_profile extends yf_module {
 	/** @var int */
 	public $ADS_TEXT_PREVIEW_LENGTH=250;
 
-	//-----------------------------------------------------------------------------
+	
 	// Module constructor
 	function _init () {
 		if (!empty($_SESSION["edit_escort_id"])) {
@@ -69,7 +69,7 @@ class yf_user_profile extends yf_module {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Try to get user info
 	function _get_user_info () {
 		if (!empty($this->_user_info)) {
@@ -94,7 +94,7 @@ class yf_user_profile extends yf_module {
 		$GLOBALS['user_info'] = $this->_user_info;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Default function
 	function show () {
 		// Check if user exists
@@ -178,7 +178,7 @@ class yf_user_profile extends yf_module {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show user info items
 	function _show_info_items () {
 		// Array of text fields
@@ -293,66 +293,66 @@ class yf_user_profile extends yf_module {
 		return $body;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show item
 	function _show_item($name = "", $value = "") {
 		return (!empty($name) && !empty($value)) ? tpl()->parse($_GET["object"]."/item", array("name" => $name,"value" => $value)) : "";
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show contact item
 	function _show_contact_item($name = "", $value = "") {
 		return (!empty($name) && !empty($value)) ? tpl()->parse($_GET["object"]."/item_contact", array("name" => $name,"link" => $value)) : "";
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show user forum posts
 	function _show_forum_posts () {
 		$OBJ_FORUM = main()->init_class("forum");
 		return $OBJ_FORUM->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_FORUM_POSTS);
 	}
 	
-	//-----------------------------------------------------------------------------
+	
 	// Show user forum posts
 	function _show_articles () {
 		$OBJ_ARTICLE = main()->init_class("articles");
 		return $OBJ_ARTICLE->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_ARTICLES);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show user blog posts
 	function _show_blog_posts () {
 		$OBJ_BLOG = main()->init_class("blog");
 		return $OBJ_BLOG->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_BLOG_POSTS);
 	}
 	
-	//-----------------------------------------------------------------------------
+	
 	// Show user blog posts
 	function _show_gallery_photos () {
 		$OBJ_GALLERY = main()->init_class("gallery");
 		return $OBJ_GALLERY->_for_user_profile(user($this->_user_info["id"], "short"), $this->MAX_SHOW_GALLERY_PHOTO);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show user comments
 	function _show_comments () {
 		$COMMENTS_OBJ = main()->init_class("comments");
 		return $COMMENTS_OBJ->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_COMMENTS);
 	}
 	
-	//-----------------------------------------------------------------------------
+	
 	// Show users where current one is in friends list
 	function _show_friend_of () {
 		return is_object($this->FRIENDS_OBJ) ? $this->FRIENDS_OBJ->_show_friend_of_for_profile($this->_user_info, $this->MAX_SHOW_FRIEND_OF) : "";
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show friends users list
 	function _show_friends () {
 		return is_object($this->FRIENDS_OBJ) ? $this->FRIENDS_OBJ->_show_friends_for_profile($this->_user_info, $this->MAX_SHOW_FRIENDS) : "";
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show user reputation info
 	function _show_reput_info () {
 		$REPUT_OBJ = main()->init_class("reputation");
@@ -373,7 +373,7 @@ class yf_user_profile extends yf_module {
 		return tpl()->parse($_GET["object"]."/reput_info", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show user interests
 	function _show_interests () {
 		$INTERESTS_OBJ = main()->init_class("interests");
@@ -392,7 +392,7 @@ class yf_user_profile extends yf_module {
 		return $body;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show stars for the given value between 1 and 5
 	function _show_stars ($value = 0) {
 		if (empty($value) || $value > 5 || $value < 1) return "Not rated";
@@ -403,7 +403,7 @@ class yf_user_profile extends yf_module {
 		return $body;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show profile comments
 	function _show_custom_design_css ($user_info = array()) {
 /*
@@ -416,7 +416,7 @@ class yf_user_profile extends yf_module {
 */
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Check if comment delete allowed
 	function _comment_delete_allowed ($params = array()) {
 		$delete_allowed	= main()->USER_ID && (($params["user_id"] && $params["user_id"] == main()->USER_ID) || ($params["object_id"] && main()->USER_ID == $params["object_id"]));
@@ -440,7 +440,7 @@ class yf_user_profile extends yf_module {
 		return $items;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Show compact user info (usually for JavaScript calls)
 	function compact_info () {
 		main()->NO_GRAPHICS		= true;

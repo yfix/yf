@@ -1,6 +1,6 @@
 <?php
 
-//-----------------------------------------------------------------------------
+
 // User stats manager
 class yf_user_stats {
 
@@ -11,7 +11,7 @@ class yf_user_stats {
 	/** @var */
 	public $_sql_array	= array();
 
-	//-----------------------------------------------------------------------------
+	
 	// Framework constructor
 	function _init () {
 		main()->USER_ID = $_SESSION['user_id'];
@@ -74,7 +74,7 @@ class yf_user_stats {
 		return $this->_get_user_stats_for_ids (array($params["user_ids"]));
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Get user stats for given user id (not cached)
 	function _get_live_stats ($params = array()) {
 		if (!$this->STATS_ENABLED) {
@@ -107,7 +107,7 @@ class yf_user_stats {
 		return $totals;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Updated given user stats
 	function _update_user_stats ($user_id = 0, $force_user_info = array()) {
 		if (!$this->STATS_ENABLED || !$this->ENABLE_REFRESH_STATS) {
@@ -120,7 +120,7 @@ class yf_user_stats {
 		return _class("user_stats_refresh", "classes/user_stats/")->_update_user_stats($user_id, $force_user_info);
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Get user stats for given users ids
 	function _get_user_stats_for_ids ($user_ids = array()) {
 		if (!$this->STATS_ENABLED) {
@@ -153,7 +153,7 @@ class yf_user_stats {
 		return $users_stats;
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Refresh all stats (truncate table)
 	function _cleanup_all_stats () {
 		if (!$this->STATS_ENABLED || !$this->ENABLE_REFRESH_STATS) {
@@ -162,7 +162,7 @@ class yf_user_stats {
 		db()->query("TRUNCATE TABLE ".db('user_stats')."");
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// Refresh all stats
 	function _refresh_all_stats () {
 		if (!$this->STATS_ENABLED || !$this->ENABLE_REFRESH_STATS) {
