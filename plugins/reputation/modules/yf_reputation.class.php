@@ -114,10 +114,6 @@ class yf_reputation {
 
 	/**
 	* Default method
-	* 
-	* @access	public
-	* @param
-	* @return	string
 	*/
 	function show () {
 		// Get top users by reputation points

@@ -8,14 +8,6 @@
 * @version		1.0
 */
 class yf_reputation_sync {
-
-	/**
-	* Constructor
-	*/
-	function yf_reputation_sync () {
-		// Reference to the parent object
-		$this->REPUT_OBJ	= module(REPUT_CLASS_NAME);
-	}
 	
 	/**
 	* Do cleanup
@@ -26,7 +18,7 @@ class yf_reputation_sync {
 		// fix negative alt power
 		db()->query("UPDATE ".db('reput_total')." SET alt_power = 0 WHERE alt_power < 0");
 		// Set initial value for reputation
-		db()->query("UPDATE ".db('reput_total')." SET points = ".intval($this->REPUT_OBJ->START_REPUT));
+		db()->query("UPDATE ".db('reput_total')." SET points = ".intval(module('reputation')->START_REPUT));
 		// Set initial value for activity
 		db()->query("UPDATE ".db('activity_total')." SET points = 0");
 
@@ -71,7 +63,7 @@ class yf_reputation_sync {
 		// Count reputation points
 		db()->query(
 			"INSERT INTO ".$tmp_table_name."  
-				SELECT target_user_id, SUM(counted) + ".intval($this->REPUT_OBJ->START_REPUT)." 
+				SELECT target_user_id, SUM(counted) + ".intval(module('reputation')->START_REPUT)." 
 				FROM ".db('reput_user_votes')." 
 				GROUP BY target_user_id"
 		);
@@ -115,16 +107,16 @@ class yf_reputation_sync {
 			"UPDATE ".db('reput_total')." AS r, 
 					".db('activity_total')." AS a 
 				SET r.alt_power = ( 
-					".intval($this->REPUT_OBJ->START_REPUT_ALT)." 
+					".intval(module('reputation')->START_REPUT_ALT)." 
 					+ (CASE WHEN 
-							FLOOR(LOG(a.points / ".intval($this->REPUT_OBJ->ACT_REPUT_VALUE).")) > 0 
-						THEN FLOOR(LOG(a.points / ".intval($this->REPUT_OBJ->ACT_REPUT_VALUE).")) 
+							FLOOR(LOG(a.points / ".intval(module('reputation')->ACT_REPUT_VALUE).")) > 0 
+						THEN FLOOR(LOG(a.points / ".intval(module('reputation')->ACT_REPUT_VALUE).")) 
 						ELSE 0 
 					END) 
 					+ (CASE 
 						WHEN 
-							FLOOR(r.points / ".intval($this->REPUT_OBJ->REPUT_ADD_ALT_POINTS).") > 0 
-						THEN FLOOR(r.points / ".intval($this->REPUT_OBJ->REPUT_ADD_ALT_POINTS).")
+							FLOOR(r.points / ".intval(module('reputation')->REPUT_ADD_ALT_POINTS).") > 0 
+						THEN FLOOR(r.points / ".intval(module('reputation')->REPUT_ADD_ALT_POINTS).")
 						ELSE 0 
 					END) 
 				) 
