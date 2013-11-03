@@ -61,7 +61,7 @@ class yf_photo_rating extends yf_module {
 			$this->_prepare_filter_data();
 		}
 		// Gallery object required
-		$this->GALLERY_OBJ = main()->init_class("gallery");
+		$this->GALLERY_OBJ = module("gallery");
 		// Array of select boxes to process
 		$this->_boxes = array(
 			"rate_value"	=> 'radio_box("rate_value",	$this->_rate_values, $selected, false, 2, "", false)',

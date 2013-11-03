@@ -339,7 +339,7 @@ class yf_help extends yf_module {
 		}
 		$this->_comments_params["object_id"] = $ticket_info["id"];
 		// Do add answer
-		$COMMENTS_OBJ = main()->init_class("comments", USER_MODULES_DIR);
+		$COMMENTS_OBJ = module("comments");
 		ob_start(); // To prevent wrong redirect
 		$COMMENTS_OBJ->_add($this->_comments_params);
 		ob_end_clean();
