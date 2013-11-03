@@ -282,7 +282,7 @@ class yf_blog_rss {
 			return _e(t("You are not allowed to view this blog"));
 		}
 		// Get friends
-		$FRIENDS_OBJ	= main()->init_class("friends");
+		$FRIENDS_OBJ	= module("friends");
 		$friends_ids	= $FRIENDS_OBJ->_get_user_friends_ids($user_info["id"]);
 		// Get users infos
 		if (!empty($friends_ids)) {

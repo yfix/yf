@@ -399,7 +399,7 @@ class yf_comments_manage {
 		}
 		
 		// set comments read
-		$OBJ = &main()->init_class("unread");
+		$OBJ = module("unread");
 		if (is_object($OBJ)) {
 			$ids = $OBJ->_set_read("comments", $_GET["id"]);
 		}

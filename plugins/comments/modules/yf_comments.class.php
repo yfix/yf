@@ -107,7 +107,7 @@ class yf_comments {
 		}
 		// set comments read
 		if(!empty(main()->USER_ID) && !empty($comments_array)){
-			$OBJ = &main()->init_class("unread");
+			$OBJ = module("unread");
 			if (is_object($OBJ)) {
 				$OBJ->_set_read("comments", array_keys($comments_array));
 			}
@@ -120,7 +120,7 @@ class yf_comments {
 			} 
 		}
 		// Process user reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($users_ids);
 		}
@@ -242,7 +242,7 @@ class yf_comments {
 		}
 		// set comments read
 		if(!empty(main()->USER_ID) && !empty($comments_array)){
-			$OBJ = &main()->init_class("unread");
+			$OBJ = module("unread");
 			if (is_object($OBJ)) {
 				$ids = $OBJ->_set_read("comments", array_keys($comments_array));
 			}
@@ -255,7 +255,7 @@ class yf_comments {
 			} 
 		}
 		// Process user reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($users_ids);
 		}
@@ -527,7 +527,7 @@ class yf_comments {
 			return;
 		}
 	
-		$OBJ = &main()->init_class("unread");
+		$OBJ = module("unread");
 		if (is_object($OBJ)) {
 			$ids = $OBJ->_get_unread("comments");
 		}
@@ -545,7 +545,7 @@ class yf_comments {
 				$A["text"] = $BB_CODES_OBJ->_force_close_bb_codes($A["text"]);
 				$A["text"] = $this->_format_text($A["text"])." ...";
 				
-				$OBJ = &main()->init_class($A["object_name"]);
+				$OBJ = module($A["object_name"]);
 				if(is_object($OBJ)){
 					$action = $OBJ->_comments_params["return_action"];
 					$A["action"] = $action;

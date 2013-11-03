@@ -154,7 +154,7 @@ class yf_articles_search_comments {
 		if (empty($comment_info)) {
 			return _e(t("You have no rights to delete this comment"));
 		}
-		$COMMENTS_OBJ = main()->init_class("comments", USER_MODULES_DIR);
+		$COMMENTS_OBJ = module("comments");
 		if (is_object($COMMENTS_OBJ)) {
 			$COMMENTS_OBJ->_delete(array("silent_mode" => 1));
 		}

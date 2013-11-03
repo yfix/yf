@@ -412,7 +412,7 @@ class yf_blog extends yf_module {
 		}
 		// Process user reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($user_id);
 			$reput_text	= $REPUT_OBJ->_show_for_user($user_id, $reput_info);
@@ -573,7 +573,7 @@ class yf_blog extends yf_module {
 				$user_mask = db()->query_fetch("SELECT mask FROM ".db('friends_users')." WHERE user_id = ".$user_id." AND friend_id = ".main()->USER_ID);
 				$user_mask = $user_mask["mask"];
 				
-				$FRIENDS_OBJ = &main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				
 				$is_allowed = $FRIENDS_OBJ->check_mask_permissions($user_mask, $this->_post_info["mask"]);
 				
@@ -589,7 +589,7 @@ class yf_blog extends yf_module {
 		$this->_user_custom_cats	= $this->_custom_cats_into_array($this->BLOG_SETTINGS["custom_cats"]);
 		// Process user reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$all_users_ids		= $users_ids;
 			$all_users_ids[$user_info["id"]] = $user_info["id"];

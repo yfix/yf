@@ -84,7 +84,7 @@ class yf_blog_widgets {
 		if ($params["describe"]) {
 			return array("allow_cache" => 1);
 		}
-		$OBJ = main()->init_class("tags");
+		$OBJ = module("tags");
 		$items = $OBJ->_tags_cloud("blog");
 		if (!$items) {
 			return "";

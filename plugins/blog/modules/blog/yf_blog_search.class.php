@@ -270,7 +270,7 @@ class yf_blog_search {
 			return _e(t("No such user"));
 		}
 		// Get friends
-		$FRIENDS_OBJ	= main()->init_class("friends");
+		$FRIENDS_OBJ	= module("friends");
 		$friends_ids	= $FRIENDS_OBJ->_get_user_friends_ids($user_info["id"]);
 /*
 		// Stop here if no friends found

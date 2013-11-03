@@ -577,7 +577,7 @@ class yf_articles extends yf_module {
 			return _e(t("No such article!"));
 		}
 		
-		$OBJ = &main()->init_class("unread");
+		$OBJ = module("unread");
 		if(is_object($OBJ)){
 			$ids = $OBJ->_set_read("articles", $_GET["id"]);
 		}
@@ -844,7 +844,7 @@ class yf_articles extends yf_module {
 			return;
 		}
 	
-		$OBJ = &main()->init_class("unread");
+		$OBJ = module("unread");
 		$ids = $OBJ->_get_unread("articles");
 		
 		if(!empty($ids)){

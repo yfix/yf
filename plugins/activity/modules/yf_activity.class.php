@@ -124,7 +124,7 @@ class yf_activity {
 	* Add points automatically after specified action (task)
 	*
 	* @example
-	*	$ACTIVITY_OBJ = main()->init_class("activity");
+	*	$ACTIVITY_OBJ = module("activity");
 	*	if (is_object($ACTIVITY_OBJ)) {
 	*		$ACTIVITY_OBJ->_add_activity_points($this->BLOG_OBJ->USER_ID, "blog_post", strlen($_POST["post_text"]));
 	*	}
@@ -175,7 +175,7 @@ class yf_activity {
 		// Do update user's activity
 		$this->_update_user_activity($task_info, $user_id);
 		// Update reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$REPUT_OBJ->_update_user_reput_info($user_id);
 		}

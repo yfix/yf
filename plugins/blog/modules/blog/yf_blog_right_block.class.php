@@ -147,7 +147,7 @@ class yf_blog_right_block {
 	function _show_friends_posts () {
 		$user_info = $GLOBALS['user_info'];
 		// Get friends
-		$FRIENDS_OBJ	= main()->init_class("friends");
+		$FRIENDS_OBJ	= module("friends");
 		$friends_ids	= is_object($FRIENDS_OBJ) ? $FRIENDS_OBJ->_get_user_friends_ids($user_info["id"]) : false;
 		// Stop here if no friends found
 		if (empty($friends_ids)) {
