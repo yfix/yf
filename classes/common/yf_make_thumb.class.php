@@ -411,12 +411,12 @@ class yf_make_thumb {
 	}
 	
 	
-	   /**
-		*     * detect animated gif
-		*         */
-	function is_gif_animated_imagick($source_file_path){
+	/**
+	* detect animated gif for imagick
+	**/
+    function _is_gif_animated_imagick($source_file_path){
 	    $nb_image_frame = 0;
-		$image = new Imagick($filename);
+		$image = new Imagick($source_file_path);
 		foreach($image->deconstructImages() as $i) {
 		    $nb_image_frame++;
 			if ($nb_image_frame > 1) {
