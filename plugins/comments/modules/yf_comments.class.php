@@ -70,9 +70,6 @@ class yf_comments {
 	* Framework constructor
 	*/
 	function _init () {
-		define("COMMENTS_CLASS_NAME", "comments");
-		define("COMMENTS_MODULES_DIR", "modules/". COMMENTS_CLASS_NAME."/");
-		// Fix for the case when skipping auto-assignment of main()->USER_ID in main class
 		if (!main()->USER_ID && main()->USER_ID) {
 			main()->USER_ID = main()->USER_ID;
 		}
@@ -507,25 +504,19 @@ class yf_comments {
 	*
 	*/
 	function _unread () {
-	
-	
 		if(empty($this->_user_info["last_view"])){
 			return;
 		}
-		
 		$Q = db()->query("SELECT id FROM ".db('comments')." WHERE user_id != ".intval(main()->USER_ID)." AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
-		
 		$link = process_url("./?object=comments&action=view_unread");
-
 		$unread = array(
 			"count"	=> count($ids),
 			"ids"	=> $ids,
 			"link"	=> $link,
 		);
-	
 		return $unread;
 	}
 	
@@ -564,15 +555,10 @@ class yf_comments {
 				$comments_info[$A["id"]] = $A;
 			}
 		}
-		
-
 		$replace = array(
 			"items"		=> $comments_info,
 			"pages"		=> $pages,
 		);
-		
 		return tpl()->parse($_GET["object"]."/unread", $replace);
 	}
-
-
 }

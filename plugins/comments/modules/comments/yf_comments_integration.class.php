@@ -4,14 +4,6 @@
 * Comments integration
 */
 class yf_comments_integration {
-
-	/**
-	* Framework constructor
-	*/
-	function _init () {
-		// Reference to parent object
-		$this->COMMENTS_OBJ		= module(COMMENTS_CLASS_NAME);
-	}
 	
 	/**
 	* For home page method
@@ -27,13 +19,13 @@ class yf_comments_integration {
 					"title"			=> _prepare_html($titles[$comment["object_name"].$comment["object_id"]]),
 					"user_name"		=> $user_names[$comment["user_id"]]["nick"],
 					"add_date"		=> _format_date($comment["add_date"],"long"),
-					"link"			=> $this->COMMENTS_OBJ->COMMENT_LINKS[$comment["object_name"]].$comment["object_id"]."#cid_".$comment["id"],
+					"link"			=> module('comments')->COMMENT_LINKS[$comment["object_name"]].$comment["object_id"]."#cid_".$comment["id"],
 					"where_comment"	=> $comment["object_name"],
 					"user_link"		=> "./?object=user_profile&action=show&id=".$comment["user_id"],
 
 				);
 				
-				$item .= tpl()->parse(COMMENTS_CLASS_NAME."/for_home_page_item", $replace2);
+				$item .= tpl()->parse('comments'."/for_home_page_item", $replace2);
 			}
 		}
 		
@@ -41,7 +33,7 @@ class yf_comments_integration {
 			"items"		=> $item,
 		);
 		
-		return tpl()->parse(COMMENTS_CLASS_NAME."/for_home_page_main", $replace);
+		return tpl()->parse('comments'."/for_home_page_main", $replace);
 	}
 	
 	function _for_user_profile($user_id, $MAX_SHOW_COMMENTS){
@@ -56,13 +48,13 @@ class yf_comments_integration {
 					"text"			=> nl2br(_cut_bb_codes(_prepare_html($comment["text"]))),
 					"title"			=> _prepare_html($titles[$comment["object_name"].$comment["object_id"]]),
 					"created"		=> _format_date($comment["add_date"],"long"),
-					"view_link"		=> $this->COMMENTS_OBJ->COMMENT_LINKS[$comment["object_name"]].$comment["object_id"]."#cid_".$comment["id"],
+					"view_link"		=> module('comments')->COMMENT_LINKS[$comment["object_name"]].$comment["object_id"]."#cid_".$comment["id"],
 					"where_comment"	=> $comment["object_name"],
 					"user_link"		=> "./?object=user_profile&action=show&id=".$comment["user_id"],
 
 				);
 				
-				$item .= tpl()->parse(COMMENTS_CLASS_NAME."/for_user_profile_item", $replace2);
+				$item .= tpl()->parse('comments'."/for_user_profile_item", $replace2);
 			}
 		}
 		
@@ -71,10 +63,10 @@ class yf_comments_integration {
 	
 	function _get_comments($NUM_NEWEST_COMMENTS, $user_id = ""){
 	
-		foreach ((array)$this->COMMENTS_OBJ->COMMENT_LINKS as $key => $value){
+		foreach ((array)module('comments')->COMMENT_LINKS as $key => $value){
 			$where .= "object_name='".$key."'";
 			
-			if($value !== end($this->COMMENTS_OBJ->COMMENT_LINKS)) {
+			if($value !== end(module('comments')->COMMENT_LINKS)) {
 				$where .= " OR ";
 			}
 		}
@@ -132,15 +124,15 @@ class yf_comments_integration {
 	* Hook for the RSS module
 	*/
 	function _rss_general(){
-		foreach ((array)$this->COMMENTS_OBJ->COMMENT_LINKS as $key => $value){
+		foreach ((array)module('comments')->COMMENT_LINKS as $key => $value){
 			$where .= "object_name='".$key."'";
 			
-			if($value !== end($this->COMMENTS_OBJ->COMMENT_LINKS)) {
+			if($value !== end(module('comments')->COMMENT_LINKS)) {
 				$where .= " OR ";
 			}
 		}
 		
-		$Q = db()->query("SELECT * FROM ".db('comments')." WHERE (".$where.") AND active='1' ORDER BY add_date DESC LIMIT ".$this->COMMENTS_OBJ->NUM_RSS);
+		$Q = db()->query("SELECT * FROM ".db('comments')." WHERE (".$where.") AND active='1' ORDER BY add_date DESC LIMIT ".module('comments')->NUM_RSS);
 		while ($A = db()->fetch_assoc($Q)) {
 			$comments[$A["id"]] = $A;
 			$user_ids[$A["user_id"]] = $A["user_id"];
@@ -186,7 +178,7 @@ class yf_comments_integration {
 
 				$data[] = array(
 					"title"			=> _prepare_html(t("Comments in ").$comment["object_name"]." - ".$titles[$comment["object_name"].$comment["object_id"]]),
-					"link"			=> process_url($this->COMMENTS_OBJ->COMMENT_LINKS[$comment["object_name"]].$comment["object_id"]."#cid_".$comment["id"]),
+					"link"			=> process_url(module('comments')->COMMENT_LINKS[$comment["object_name"]].$comment["object_id"]."#cid_".$comment["id"]),
 					"description"	=> nl2br(_cut_bb_codes(_prepare_html($comment["text"]))),
 					"date"			=> $comment["add_date"],
 					"author"		=> $user_names[$comment["user_id"]]["nick"],
