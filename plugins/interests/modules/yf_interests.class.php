@@ -30,13 +30,8 @@ class yf_interests {
 
 	/**
 	* YF module constructor
-	*
-	* @access	private
-	* @return	void
 	*/
 	function _init () {
-		// class name (to allow changing only in one place)
-		define("INTERESTS_CLASS_NAME", "interests");
 		// Get user account type
 		$this->_account_types	= main()->get_data("account_types");
 	}
@@ -58,14 +53,14 @@ class yf_interests {
 			$cloud_data[$data["keyword"]] = $data["users"];
 		}
 
-		$cloud = common()->_create_cloud($cloud_data, array("object" => INTERESTS_CLASS_NAME));
+		$cloud = common()->_create_cloud($cloud_data, array("object" => 'interests'));
 		// Process template
 		$replace = array(
-			"search_link"	=> "./?object=".INTERESTS_CLASS_NAME."&action=search",
-			"manage_link"	=> "./?object=".INTERESTS_CLASS_NAME."&action=manage",
+			"search_link"	=> "./?object=".'interests'."&action=search",
+			"manage_link"	=> "./?object=".'interests'."&action=manage",
 			"cloud"			=> $cloud,
 		);
-		return tpl()->parse(INTERESTS_CLASS_NAME."/main_page", $replace);
+		return tpl()->parse('interests'."/main_page", $replace);
 	}
 
 	/**
@@ -97,11 +92,11 @@ class yf_interests {
 				$cur_word = substr($cur_word, 0, $this->MAX_KEYWORD_LENGTH);
 			}
 			$replace2 = array(
-				"search_link"	=> "./?object=".INTERESTS_CLASS_NAME."&action=search&id=".$this->_prepare_keyword_for_url($cur_word),
+				"search_link"	=> "./?object=".'interests'."&action=search&id=".$this->_prepare_keyword_for_url($cur_word),
 				"keyword"		=> _prepare_html($cur_word),
 				"need_div"		=> 1,
 			);
-			$items .= tpl()->parse(INTERESTS_CLASS_NAME."/view_item", $replace2);
+			$items .= tpl()->parse('interests'."/view_item", $replace2);
 		}
 		// Process template
 		$replace = array(
@@ -112,7 +107,7 @@ class yf_interests {
 			"user_name"			=> _prepare_html(_display_name($user_info)),
 			"user_avatar"		=> _show_avatar($user_info["id"], $user_info/*, 1, 1*/),
 		);
-		return tpl()->parse(INTERESTS_CLASS_NAME."/view_main", $replace);
+		return tpl()->parse('interests'."/view_main", $replace);
 	}
 
 	/**
@@ -192,7 +187,7 @@ class yf_interests {
 //				}
 			}
 			// Return user back
-			return !$FORCE_USER_ID ? js_redirect("./?object=".INTERESTS_CLASS_NAME."&action=".$_GET["action"]) : "";
+			return !$FORCE_USER_ID ? js_redirect("./?object=".'interests'."&action=".$_GET["action"]) : "";
 		}
 		// Fill POST data
 		foreach ((array)$interests_info as $k => $v) {
@@ -200,7 +195,7 @@ class yf_interests {
 		}
 		// Process teplate
 		$replace = array(
-			"form_action"	=> "./?object=".INTERESTS_CLASS_NAME."&action=".$_GET["action"],
+			"form_action"	=> "./?object=".'interests'."&action=".$_GET["action"],
 			"error_message"	=> _e(),
 			"keywords"		=> trim(str_replace(";", "\r\n", $DATA["keywords"])),
 			"max_items"		=> intval($this->MAX_KEYWORDS_NUM),
@@ -209,7 +204,7 @@ class yf_interests {
 			"js_check"		=> intval((bool)$this->JS_CHECK),
 			"act_keywords"	=> $act_keywords,
 		);
-		return tpl()->parse(INTERESTS_CLASS_NAME."/manage", $replace);
+		return tpl()->parse('interests'."/manage", $replace);
 	}
 
 	/**
@@ -232,7 +227,7 @@ class yf_interests {
 		// Do search
 		$sql = "SELECT * FROM ".db('interests')." ".(!empty($KEYWORD) ? "WHERE keywords LIKE '%;"._es($KEYWORD). ($EXACT_MATCH ? ";" : "")."%'" : "");
 		$order_by_sql = " ORDER BY user_id ASC ";
-		$url = "./?object=".INTERESTS_CLASS_NAME."&action=".$_GET["action"]."&id=".(strlen($KEYWORD) ? $this->_prepare_keyword_for_url($KEYWORD) : "_");
+		$url = "./?object=".'interests'."&action=".$_GET["action"]."&id=".(strlen($KEYWORD) ? $this->_prepare_keyword_for_url($KEYWORD) : "_");
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url);
 		// Get records
 		$Q = db()->query($sql.$order_by_sql.$add_sql);
@@ -257,7 +252,7 @@ class yf_interests {
 				}
 				$prepared_keywords[] = array(
 					"word"			=> $prepared_word,
-					"search_link"	=> "./?object=".INTERESTS_CLASS_NAME."&action=search&id=".$this->_prepare_keyword_for_url($cur_word),
+					"search_link"	=> "./?object=".'interests'."&action=search&id=".$this->_prepare_keyword_for_url($cur_word),
 				);
 			}
 			// Process template
@@ -271,7 +266,7 @@ class yf_interests {
 				"sex"				=> _prepare_html($user_info["sex"]),
 				"age"				=> !empty($user_info["age"]) ? intval($user_info["age"]) : "",
 			);
-			$items .= tpl()->parse(INTERESTS_CLASS_NAME."/search_item", $replace2);
+			$items .= tpl()->parse('interests'."/search_item", $replace2);
 		}
 		// Process template
 		$replace = array(
@@ -280,7 +275,7 @@ class yf_interests {
 			"total"			=> intval($total),
 			"search_form"	=> $this->_show_search_form($KEYWORD, $EXACT_MATCH),
 		);
-		return tpl()->parse(INTERESTS_CLASS_NAME."/search_main", $replace);
+		return tpl()->parse('interests'."/search_main", $replace);
 	}
 
 	/**
@@ -288,11 +283,11 @@ class yf_interests {
 	*/
 	function _show_search_form ($cur_word = "", $EXACT_MATCH = 0) {
 		$replace = array(
-			"form_action"	=> "./?object=".INTERESTS_CLASS_NAME."&action=".$_GET["action"],
+			"form_action"	=> "./?object=".'interests'."&action=".$_GET["action"],
 			"keyword"		=> $cur_word,
 			"exact_match"	=> intval($EXACT_MATCH),
 		);
-		return tpl()->parse(INTERESTS_CLASS_NAME."/search_form", $replace);
+		return tpl()->parse('interests'."/search_form", $replace);
 	}
 
 	/**
@@ -314,7 +309,7 @@ class yf_interests {
 				continue;
 			}
 			$output_array[$cur_word] = array(
-				"search_link"	=> "./?object=".INTERESTS_CLASS_NAME."&action=search&id=".$this->_prepare_keyword_for_url($cur_word),
+				"search_link"	=> "./?object=".'interests'."&action=search&id=".$this->_prepare_keyword_for_url($cur_word),
 				"keyword"		=> _prepare_html($cur_word),
 				"need_div"		=> 1,
 			);
@@ -507,7 +502,7 @@ class yf_interests {
 		foreach ((array)$A as $data) {
 			$cloud_data[$data["keyword"]] = $data["users"];
 		}
-		$items = $cloud_data ? common()->_create_cloud($cloud_data, array("object" => INTERESTS_CLASS_NAME)) : "";
+		$items = $cloud_data ? common()->_create_cloud($cloud_data, array("object" => 'interests')) : "";
 		if (!$items) {
 			return "";
 		}
@@ -515,7 +510,7 @@ class yf_interests {
 		$replace = array(
 			"items"			=> $items,
 		);
-		return tpl()->parse(INTERESTS_CLASS_NAME."/widget_cloud", $replace);
+		return tpl()->parse('interests'."/widget_cloud", $replace);
 	}
 
 	/**
