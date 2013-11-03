@@ -61,7 +61,7 @@ class yf_analyze_error_log {
 
 		$path = INCLUDE_PATH."error_logs.log";
 		
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 		$reg_warning = "#WARNING]:\s*(?P<content>.+)#";
 		$reg_source = "#SOURCE:\s*(?P<content>.+)#";
 		$reg_query_string = "#QUERY_STRING\s*=\s*(?P<content>.+)#";
@@ -152,7 +152,7 @@ class yf_analyze_error_log {
 // TODO
 		$LOGS_DIR = INCLUDE_PATH."logs/log_exec/";
 
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 		foreach ((array)$DIR_OBJ->scan_dir($LOGS_DIR, 0, "#[0-9]{4}-[0-9]{2}-[0-9]{2}\.log#") as $_file) {
 			$path	= $LOGS_DIR. $_file;
 //			$items	= count(file($path));

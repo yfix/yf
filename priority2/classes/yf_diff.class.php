@@ -6,7 +6,7 @@
 * Get file differences
 *
 * @example
-*	$DIFF = main()->init_class("diff", "classes/");
+*	$DIFF = _class("diff");
 *	$DIFF->method = "PHP";
 *	echo $DIFF->get_differences("aaa\r\n1", "aaa\r\nav");
 *

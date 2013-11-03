@@ -50,7 +50,7 @@ class yf_log_core_errors_viewer {
 			$this->_prepare_filter_data();
 		}
 		// Try to get info about sites vars
-		$this->_sites_info = main()->init_class("sites_info", "classes/");
+		$this->_sites_info = _class("sites_info");
 	}
 
 	/**

@@ -112,7 +112,7 @@ class yf_log_ssh_viewer {
 
 		// Process calendar
 		if ($this->USE_JS_CALENDAR == true) {
-			$CALENDAR_OBJ = main()->init_class("js_calendar", "classes/");
+			$CALENDAR_OBJ = _class("js_calendar");
 		}
 		// Prepare boxes
 		$Q = db()->query("SELECT * FROM ".db('servers')." WHERE active = '1' ORDER BY name ASC");

@@ -18,7 +18,7 @@ class yf_online_users_manager {
 	*/
 	function __construct () {
 		// Get info about sites vars
-		$this->_sites_info = main()->init_class("sites_info", "classes/");
+		$this->_sites_info = _class("sites_info");
 		// Get user groups
 		$A = db()->query_fetch_all("SELECT * FROM ".db('user_groups')."");
 		foreach ((array)$A as $V) {

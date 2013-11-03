@@ -71,7 +71,7 @@ class yf_analyze_admin_exec_log{
 
 		$path = INCLUDE_PATH."logs/log_admin_exec/".$_cur_date.".log";
 
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 		// Return AJAX data
 		if (!empty($_POST)) {
 			main()->NO_GRAPHICS = true;

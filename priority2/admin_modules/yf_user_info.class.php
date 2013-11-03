@@ -127,7 +127,7 @@ class yf_user_info {
 			$this->_managers2[$k] = $v;
 		}
 		// Try to get info about sites vars
-		$this->_sites_info = main()->init_class("sites_info", "classes/");
+		$this->_sites_info = _class("sites_info");
 		// Get user levels
 		$this->_user_levels		= main()->get_data("user_levels");
 	}
@@ -171,7 +171,7 @@ class yf_user_info {
 		}
 		// Process user avatar
 		$avatar_image = "No Photo";
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 		$avatar_file_path	= $DIR_OBJ->_gen_dir_path($A["id"], INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777). intval($A["id"]). ".jpg";
 		if (file_exists($avatar_file_path)) {
 			$replace3 = array(
@@ -320,7 +320,7 @@ class yf_user_info {
 			));
 			db()->UPDATE("user", $sql_array, "id = ".intval($this->_user_info['id']));
 			// Try to update user's geo location
-			$GEO_OBJ = main()->init_class("geo_ip", "classes/");
+			$GEO_OBJ = _class("geo_ip");
 			if (is_object($GEO_OBJ)) {
 				$GEO_OBJ->_update_user_geo_location($this->_user_info['id']);
 			}
@@ -346,7 +346,7 @@ class yf_user_info {
 		// Cleanup all $_POST fields
 		foreach ((array)$_POST as $k => $v) trim($_POST[$k]);
 		// Init default validator
-		$VALIDATE_OBJ = main()->init_class("validate", "classes/");
+		$VALIDATE_OBJ = _class("validate");
   		// Check location
 		$VALIDATE_OBJ->_check_location();
 		// Validate birth date
@@ -385,7 +385,7 @@ class yf_user_info {
 				$SITE_INFO	= array_shift($this->_sites_info->info);
 			}
 			// Process user avatar
-			$DIR_OBJ = main()->init_class("dir", "classes/");
+			$DIR_OBJ = _class("dir");
 			$avatar_file_path = $DIR_OBJ->_gen_dir_path($user_id, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777). intval($user_id). ".jpg";
 			if (file_exists($avatar_file_path))	{
 				unlink($avatar_file_path);
@@ -410,7 +410,7 @@ class yf_user_info {
 			return false;
 		}
 		// Init dir class
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 		$avatars_dir = $DIR_OBJ->_gen_dir_path(main()->USER_ID, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777);
 		$avatar_file_path	= $avatars_dir. main()->USER_ID. ".jpg";
 		// Do delete previous avatar (if existed one)

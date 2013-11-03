@@ -38,7 +38,7 @@ class yf_backup_manager {
 	function _init () {
 
 		// Init dir class
-		$this->DIR_OBJ = main()->init_class("dir", "classes/");
+		$this->DIR_OBJ = _class("dir");
 		$this->DB_MGR = main()->init_class("db_manager", "admin_modules/");
 
 		$this->backup_folder_path = INCLUDE_PATH. $this->BACKUP_PATH;
