@@ -47,9 +47,9 @@ class yf_locale_editor {
 			"location"		=> 'select_box("location",		$this->_used_locations,	$selected, false, 2, "", false)',
 			"module"		=> 'select_box("module",		$this->_modules,		$selected, false, 2, "", false)',
 		);
-		$this->_user_modules	= main()->_execute("user_modules", "_get_modules", array("with_sub_modules" => 1));
+		$this->_user_modules	= module("user_modules")->_get_modules(array("with_sub_modules" => 1));
 
-		$tmp_admin_modules		= main()->_execute("admin_modules", "_get_modules", array("with_sub_modules" => 1));
+		$tmp_admin_modules		= module("admin_modules")->_get_modules(array("with_sub_modules" => 1));
 		$this->_admin_modules_prefix = "admin___";
 		foreach ((array)$tmp_admin_modules as $module_name) {
 			$this->_admin_modules[$this->_admin_modules_prefix.$module_name] = $module_name;

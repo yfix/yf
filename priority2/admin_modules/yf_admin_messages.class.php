@@ -33,7 +33,7 @@ class yf_admin_messages {
 			"form_action"	=> "./?object=".__CLASS__."&action=add"._add_get(),
 			"user_name"		=> _display_name($user_info),
 			"account_link"	=> "./?object=account&user_id=".intval($user_info["id"]),
-			"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($user_info["id"])),
+			"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($user_info["id"]))),
 		);
 		$body = tpl()->parse(__CLASS__."/popup_add", $replace);
 		return common()->show_empty_page($body);
@@ -112,7 +112,7 @@ class yf_admin_messages {
 			"pages"			=> $pages,
 			"items"			=> $items,
 			"popup_add_link"=> $this->_popup_link(),
-			"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($user_id)),
+			"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($user_id))),
 		);
 		return tpl()->parse(__CLASS__."/for_user_main", $replace);
 	}

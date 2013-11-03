@@ -194,7 +194,7 @@ class yf_user_info {
 			"home"			=> tpl()->parse("system/home", array("home_link" => WEB_PATH._add_get())),
 			"user_id"		=> main()->USER_ID,
 			"avatar"		=> tpl()->parse($_GET["object"]."/avatar_item", array("image" => $avatar_image)),
-			"admin_msgs"	=> main()->_execute("admin_messages", "_show_for_user", "user_id=".main()->USER_ID),
+			"admin_msgs"	=> module("admin_messages")->_show_for_user(array("user_id" => main()->USER_ID)),
 			"city_select"	=> $city_select,
 		);
 		$A["agency"]	= $A["agency_id"];

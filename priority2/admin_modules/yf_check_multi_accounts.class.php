@@ -285,7 +285,7 @@ class yf_check_multi_accounts {
 					"num_m_ips"			=> intval($num_m_ips_by_users[$_cur_user_id]),
 					"has_cookie_match"	=> isset($with_cookie_match[$_cur_user_id]) ? 1 : 0,
 					"this_cookie_match"	=> isset($cookie_matched_ids[$_cur_user_id]) ? 1 : 0,
-					"ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", array("user_id" => intval($_cur_user_id), "force_text" => "ban")),
+					"ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($_cur_user_id), "force_text" => "ban")),
 				);
 				$users_by_ips_stpl .= tpl()->parse($_GET["object"]."/user_by_ip_item", $replace3);
 			}

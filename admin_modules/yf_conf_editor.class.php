@@ -86,7 +86,7 @@ class yf_conf_editor {
 	*/
 	function user_modules () {
 		if (!$this->_user_modules) {
-			$this->_user_modules = main()->_execute("user_modules", "_get_modules");
+			$this->_user_modules = module("user_modules")->_get_modules();
 		}
 
 		if ($_GET["id"] && !in_array($_GET["id"], (array)$this->_user_modules)) {
@@ -113,7 +113,7 @@ class yf_conf_editor {
 	*/
 	function admin_modules () {
 		if (!$this->_admin_modules) {
-			$this->_admin_modules = main()->_execute("admin_modules", "_get_modules");
+			$this->_admin_modules = module("admin_modules")->_get_modules();
 		}
 
 		if ($_GET["id"] && !in_array($_GET["id"], (array)$this->_admin_modules)) {
@@ -170,7 +170,7 @@ class yf_conf_editor {
 	function _forum_settings () {
 		// Check if forum is an active module
 		if (!$this->_user_modules) {
-			$this->_user_modules = main()->_execute("user_modules", "_get_modules");
+			$this->_user_modules = module("user_modules")->_get_modules();
 		}
 		if (!in_array("forum", (array)$this->_user_modules)) {
 
