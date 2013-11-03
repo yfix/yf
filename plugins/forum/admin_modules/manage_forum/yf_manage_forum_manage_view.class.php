@@ -9,7 +9,6 @@
 */
 class yf_manage_forum_manage_view {
 
-	
 	// 
 	function _show_forum_item ($forum_info = array()) {
 		$sub_forums = array();
@@ -65,7 +64,6 @@ class yf_manage_forum_manage_view {
 		return tpl()->parse("manage_forum/admin/forum_item", $replace);
 	}
 
-	
 	// Main function
 	function _view_forum () {
 		$_GET['id'] = intval($_GET['id']);
@@ -153,7 +151,6 @@ class yf_manage_forum_manage_view {
 		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/admin/view_forum", $replace_f));
 	}
 
-	
 	// Process template
 	function _view_topic () {
 		$_GET['id'] = intval($_GET['id']);
@@ -258,7 +255,6 @@ class yf_manage_forum_manage_view {
 		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/admin/view_topic", $replace_t));
 	}
 
-	
 	// New topic creation form
 	function _new_topic () {
 		$_GET['id'] = intval($_GET['id']);
@@ -362,7 +358,6 @@ class yf_manage_forum_manage_view {
 		return module("forum")->_show_main_tpl(tpl()->parse("manage_forum/new_topic", $replace));
 	}
 
-	
 	// Reply to the existing topic (post message)
 	function _reply () {
 		$_GET['id'] = intval($_GET['id']);

@@ -17,7 +17,6 @@ class yf_manage_faq extends yf_module {
 		"object_name"	=> "faq",
 	);
 
-	
 	// Constructor
 	function yf_manage_faq() {
 		main()->USER_ID = $_GET['user_id'];
@@ -177,7 +176,6 @@ class yf_manage_faq extends yf_module {
 		return $items_to_display;
 	}
 
-	
 	// Edit record
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -241,7 +239,6 @@ class yf_manage_faq extends yf_module {
 		}
 	}
 
-	
 	// Add record
 	function add () {
 		// Check posted data and save
@@ -292,7 +289,6 @@ class yf_manage_faq extends yf_module {
 		}
 	}
 
-	
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -311,7 +307,6 @@ class yf_manage_faq extends yf_module {
 		}
 	}
 
-	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

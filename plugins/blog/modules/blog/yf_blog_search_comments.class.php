@@ -46,8 +46,7 @@ class yf_blog_search_comments {
 		if(empty($_SESSION["sort_type_select_box"])){
 			$_SESSION["sort_type_select_box"] = "DESC";
 		}
-		
-		
+
 		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE user_id=".main()->USER_ID.$WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];

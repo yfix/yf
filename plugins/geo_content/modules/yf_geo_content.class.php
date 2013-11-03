@@ -80,7 +80,6 @@ class yf_geo_content {
 		return tpl()->parse($STPL_NAME, $replace);
 	}
 
-	
 	// Get selected array
 	function ajax_city () {
 		main()->NO_GRAPHICS = true;
@@ -170,7 +169,6 @@ class yf_geo_content {
 		echo $body;
 	}
 
-	
 	// Change user location
 	function change_location () {
 		if (!main()->USE_GEO_IP) {
@@ -412,7 +410,6 @@ class yf_geo_content {
 		return tpl()->parse('geo_content'."/change_location_form", $replace);
 	}
 
-	
 	// Change user location
 	function change_location_result () {
 		if (!main()->USE_GEO_IP) {

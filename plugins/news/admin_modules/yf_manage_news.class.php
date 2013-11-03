@@ -44,7 +44,6 @@ class yf_manage_news /*extends yf_news*/ {
 		}
 	}
 
-
 	/**
 	* add
 	*/

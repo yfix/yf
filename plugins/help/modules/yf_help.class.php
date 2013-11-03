@@ -27,7 +27,6 @@ class yf_help extends yf_module {
 	/** @var bool */
 	public $USE_CAPTCHA = 1;
 
-	
 	// YF module constructor
 	function _init () {
 		// Array of select boxes to process
@@ -68,7 +67,6 @@ class yf_help extends yf_module {
 		}
 	}
 
-	
 	// Default function
 	function show () {
 		$replace = array(
@@ -77,7 +75,6 @@ class yf_help extends yf_module {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	
 	// Form to contact with site admin
 	function email_form ($A = array()) {
 		if (!count($A) && main()->USER_ID) {
@@ -100,7 +97,6 @@ class yf_help extends yf_module {
 		return tpl()->parse($_GET["object"]."/email_form", $replace);
 	}
 
-	
 	// Sending email function
 	function send_email () {
 		if (count($_POST) <= 1) {
@@ -210,7 +206,6 @@ class yf_help extends yf_module {
 		return $body;
 	}
 
-	
 	// Display success message
 	function email_sent () {
 		$replace = array(
@@ -219,7 +214,6 @@ class yf_help extends yf_module {
 		return tpl()->parse($_GET["object"]."/email_sent", $replace);
 	}
 
-	
 	// Display requests sent by user
 	function view_tickets () {
 		if (empty(main()->USER_ID)) {
@@ -256,7 +250,6 @@ class yf_help extends yf_module {
 		return tpl()->parse($_GET["object"]."/view_tickets_main", $replace);
 	}
 
-	
 	// Close given ticket
 	function close_ticket () {
 		if (empty(main()->USER_ID)) {
@@ -290,7 +283,6 @@ class yf_help extends yf_module {
 		return js_redirect("./?object=".$_GET["object"]."&action=view_answers&id=".$_GET["id"]);
 	}
 
-	
 	// Re-open given ticket
 	function reopen_ticket () {
 		if (empty(main()->USER_ID)) {
@@ -355,7 +347,6 @@ class yf_help extends yf_module {
 		return js_redirect("./?object=".$_GET["object"]."&action=view_answers&id=".$ticket_info["ticket_key"]);
 	}
 
-	
 	// Delete given ticket
 	function delete_ticket () {
 		if (empty(main()->USER_ID)) {
@@ -383,7 +374,6 @@ class yf_help extends yf_module {
 		return js_redirect("./?object=".$_GET["object"]."&action=view_tickets");
 	}
 
-	
 	// Display ansers for the given ticket
 	function view_answers () {
 		// Try to decode ticket id
@@ -427,7 +417,6 @@ class yf_help extends yf_module {
 		return tpl()->parse($_GET["object"]."/view_answers_main", $replace);
 	}
 
-	
 	// Display help toolip (for AJAX style calls)
 	function show_tip () {
 		main()->NO_GRAPHICS = true;
@@ -471,21 +460,18 @@ class yf_help extends yf_module {
 		return true;
 	}
 
-	
 	// Check if comment edit allowed
 	function _comment_edit_allowed ($params = array()) {
 		$edit_allowed	= main()->USER_ID && $this->ALLOW_EDIT_OWN_ANSWERS && $params["user_id"] && $params["user_id"] == main()->USER_ID;
 		return (bool)$edit_allowed;
 	}
 
-	
 	// Check if comment delete allowed
 	function _comment_delete_allowed ($params = array()) {
 		$delete_allowed	= main()->USER_ID && $this->ALLOW_DELETE_OWN_ANSWERS && $params["user_id"] && $params["user_id"] == main()->USER_ID;
 		return (bool)$delete_allowed;
 	}
 
-	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

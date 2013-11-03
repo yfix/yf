@@ -8,7 +8,6 @@ class yf_manage_blogs {
 	/** @var bool Filter on/off */
 	public $USE_FILTER				= true;
 
-	
 	// Constructor
 	function yf_manage_blogs() {
 		main()->USER_ID = $_GET['user_id'];
@@ -23,7 +22,6 @@ class yf_manage_blogs {
 		}
 	}
 
-	
 	// Default method (display blog posts)
 	function show () {
 		// Connect pager
@@ -95,7 +93,6 @@ class yf_manage_blogs {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	
 	// Edit record
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -151,7 +148,6 @@ class yf_manage_blogs {
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
-	
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -174,7 +170,6 @@ class yf_manage_blogs {
 		}
 	}
 
-	
 	// Mass delete records
 	function mass_delete () {
 		$ids_to_delete = array();
@@ -194,7 +189,6 @@ class yf_manage_blogs {
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
 
-	
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -239,7 +233,6 @@ class yf_manage_blogs {
 		);
 	}
 
-	
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -268,7 +261,6 @@ class yf_manage_blogs {
 		return substr($sql, 0, -3);
 	}
 
-	
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -285,7 +277,6 @@ class yf_manage_blogs {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -300,7 +291,6 @@ class yf_manage_blogs {
 		}
 	}
 
-	
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -311,7 +301,6 @@ class yf_manage_blogs {
 		}
 	}
 
-	
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

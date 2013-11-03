@@ -81,7 +81,6 @@ class yf_friends_view {
 		return tpl()->parse('friends'."/view_all_friends_main", $replace);
 	}
 
-	
 	// All friends list for the given user
 	function view_all_friend_of () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -149,7 +148,6 @@ class yf_friends_view {
 		return tpl()->parse('friends'."/view_all_friend_of_main", $replace);
 	}
 
-	
 	// Show "friends" info for user profile
 	function _show_friends_for_profile ($user_info = array(), $MAX_SHOW_ITEMS = 0) {
 		if (empty($user_info)) {
@@ -195,7 +193,6 @@ class yf_friends_view {
 		return tpl()->parse('friends'."/for_profile_friends_main", $replace);
 	}
 
-	
 	// Show "friend_of" info for user profile
 	function _show_friend_of_for_profile ($user_info = array(), $MAX_SHOW_ITEMS = 0) {
 		if (empty($user_info)) {

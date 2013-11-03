@@ -54,7 +54,6 @@ class yf_friends extends yf_module {
 		"3"	=> "CoWorkers"
 	);
 
-	
 	// YF module constructor
 	function _init () {
 		$this->CAPTCHA = _class("captcha");
@@ -62,20 +61,17 @@ class yf_friends extends yf_module {
 //		$this->CAPTCHA->font_height = 16;
 	}
 
-	
 	// Default method
 	function show () {
 		return $this->view_all_friends();
 	}
 
-	
 	// Add user to friends list
 	function add () {
 		$OBJ = $this->_load_sub_module("friends_manage");
 		return is_object($OBJ) ? $OBJ->add() : "";
 	}
 
-	
 	// Delete selected friend
 	function delete () {
 		$OBJ = $this->_load_sub_module("friends_manage");
@@ -90,70 +86,60 @@ class yf_friends extends yf_module {
 		return is_object($OBJ) ? $OBJ->friends_posts() : "";
 	}
 
-	
 	// All friends list for the given user
 	function view_all_friends () {
 		$OBJ = $this->_load_sub_module("friends_view");
 		return is_object($OBJ) ? $OBJ->view_all_friends() : "";
 	}
 
-	
 	// All friends list for the given user
 	function view_all_friend_of () {
 		$OBJ = $this->_load_sub_module("friends_view");
 		return is_object($OBJ) ? $OBJ->view_all_friend_of() : "";
 	}
 
-	
 	// Show "friends" info for user profile
 	function _show_friends_for_profile ($user_info = array(), $MAX_SHOW_ITEMS = 0) {
 		$OBJ = $this->_load_sub_module("friends_view");
 		return is_object($OBJ) ? $OBJ->_show_friends_for_profile ($user_info, $MAX_SHOW_ITEMS) : "";
 	}
 
-	
 	// Show "friend_of" info for user profile
 	function _show_friend_of_for_profile ($user_info = array(), $MAX_SHOW_ITEMS = 0) {
 		$OBJ = $this->_load_sub_module("friends_view");
 		return is_object($OBJ) ? $OBJ->_show_friend_of_for_profile ($user_info, $MAX_SHOW_ITEMS) : "";
 	}
 
-	
 	// Get current user friends ids array
 	function _get_user_friends_ids ($target_user_id) {
 		$OBJ = $this->_load_sub_module("friends_manage");
 		return is_object($OBJ) ? $OBJ->_get_user_friends_ids ($target_user_id) : "";
 	}
 
-	
 	// Add friends to user's friends list
 	function _add_user_friends_ids ($target_user_id, $add_friends_ids = array()) {
 		$OBJ = $this->_load_sub_module("friends_manage");
 		return is_object($OBJ) ? $OBJ->_add_user_friends_ids ($target_user_id, $add_friends_ids) : "";
 	}
 
-	
 	// Delete friends to user's friends list
 	function _del_user_friends_ids ($target_user_id, $del_friends_ids = array()) {
 		$OBJ = $this->_load_sub_module("friends_manage");
 		return is_object($OBJ) ? $OBJ->_del_user_friends_ids ($target_user_id, $del_friends_ids) : "";
 	}
 
-	
 	// Save friends
 	function _save_user_friends_ids ($target_user_id, $friends_array = array()) {
 		$OBJ = $this->_load_sub_module("friends_manage");
 		return is_object($OBJ) ? $OBJ->_save_user_friends_ids ($target_user_id, $friends_array) : "";
 	}
 
-	
 	// Check if one user if a friends to another
 	function _is_a_friend ($user_id_1, $user_id_2) {
 		list($IS_A_FRIEND) = db()->query_fetch("SELECT user_id AS `0` FROM ".db('friends')." WHERE user_id=".intval($user_id_1)." AND friends_list LIKE '%,".intval($user_id_2).",%' LIMIT 1");
 		return intval((bool) $IS_A_FRIEND);
 	}
 
-	
 	// Get all users where current one is in friends list
 	function _get_users_where_friend_of ($user_id_1) {
 		$users_ids = array();

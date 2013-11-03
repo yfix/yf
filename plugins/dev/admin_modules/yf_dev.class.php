@@ -43,7 +43,6 @@ class yf_dev{
 	/** @var string Physical path to php.exe */
 	var	$PHP_REALPATH = "D:/www/php5/php.exe";
 
-	
 	//#####make_wiki_xml VARS###### 
 		/** @var string @conf_skip */
 	public $_regexp_pairs_cleanup = array(
@@ -313,8 +312,6 @@ class yf_dev{
 					ksort($private_methods);
 					$methods = my_array_merge($methods, $private_methods);
 				}
-				
-				
 
 				if($modules_key == "classes"){
 					$title = $module_name;
@@ -372,7 +369,6 @@ class yf_dev{
 		ksort($methods);
 		return $methods;
 	}
-
 
 	function _collect_conf ($dir_name = "", $modules_list = array()) {
 		if (empty($dir_name) || empty($modules_list)) {
@@ -472,9 +468,7 @@ class yf_dev{
 		return array($CONF, $META);
 	}
 
-
 //#######################################################################	
-	
 
 	/**
 	* Try to find non-closed HTML tags
@@ -744,8 +738,7 @@ class yf_dev{
 					$chosen_location[] = "project";
 					$chosen_location[] = "framework";
 				}
-				
-				
+
 				if (main()->USE_SYSTEM_CACHE) {
 					$syntax_check_file_hashes = cache()->get("syntax_check_file_hashes");
 				}
@@ -926,7 +919,6 @@ class yf_dev{
 				"/<\?php the_content\((.)+?\); \?>/ims"			=> "{description}",
 				"/<\?php the_time\((.)+?\) \?>/ims"				=> "{add_date}",
 			);
-			
 
 			$post_content_string .= file_get_contents($extracted_theme_folder."index.php");
 			$post_content_string = preg_replace(array_keys($POST_ELEMENTS_ARRAY), array_values($POST_ELEMENTS_ARRAY), $post_content_string);
@@ -1011,7 +1003,6 @@ class yf_dev{
 			exit;
 		}
 
-	
 		if ($_POST["save"]) {
 			
 			// Get php functions

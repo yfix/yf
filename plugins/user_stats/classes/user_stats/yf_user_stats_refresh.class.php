@@ -3,7 +3,6 @@
 // User stats refresh methods
 class yf_user_stats_refresh {
 
-	
 	// Updated given user stats
 	function _update_user_stats ($user_id = 0, $force_user_info = array()) {
 		// Check for user id
@@ -65,7 +64,6 @@ class yf_user_stats_refresh {
 		return $STATS_ARRAY;
 	}
 
-	
 	// Refresh all stats
 	function _refresh_all_stats () {
 		// Delete all cached user stats first

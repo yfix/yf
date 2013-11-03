@@ -16,8 +16,7 @@ class yf_gallery_search_comments {
 			$_GET["page"] = $_GET["id"];
 			unset($_GET["id"]);
 		}
-		
-		
+
 		if(isset($_POST["author_select_box"])){
 			$_SESSION["author_select_box"] = $_POST["author_select_box"];
 		}
@@ -80,7 +79,6 @@ class yf_gallery_search_comments {
 			}
 		}
 
-		
 		$Q = db()->query("SELECT id,title FROM ".db('gallery_folders')." WHERE user_id=".main()->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$cats[$A["id"]] = $A["title"];
@@ -98,13 +96,11 @@ class yf_gallery_search_comments {
 		$sort_type_select = array("DESC" => "descending", "ASC" => "ascending");
 		$sort_type_select_box = common()->select_box("sort_type_select_box", $sort_type_select, $_SESSION["sort_type_select_box"], false, 2, $select_box_change, true);
 
-		
 		foreach ((array)$comments as $comment){
 		
 			$user_name = _prepare_html(_display_name($users_info[$comment["user_id"]]));
 			empty($user_name)?$user_name = _prepare_html($comment["user_name"]):"";
 
-			
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
 				"user_name"		=> $user_name,

@@ -36,8 +36,7 @@ class yf_articles_search_comments {
 		if(empty($_SESSION["sort_type_select_box"])){
 			$_SESSION["sort_type_select_box"] = "DESC";
 		}
-		
-		
+
 		$Q = db()->query("SELECT id,title,cat_id FROM ".db('articles_texts')." WHERE user_id=".main()->USER_ID.$WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];
@@ -100,7 +99,6 @@ class yf_articles_search_comments {
 		$sort_type_select = array("DESC" => "descending", "ASC" => "ascending");
 		$sort_type_select_box = common()->select_box("sort_type_select_box", $sort_type_select, $_SESSION["sort_type_select_box"], false, 2, $select_box_change, true);
 
-		
 		foreach ((array)$comments as $comment){
 
 			$user_name = _prepare_html(_display_name($users_info[$comment["user_id"]]));
