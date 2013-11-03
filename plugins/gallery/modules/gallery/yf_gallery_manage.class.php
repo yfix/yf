@@ -264,7 +264,7 @@ class yf_gallery_manage {
 				}
 				// Save tags 
 				if (isset($_POST["tags"])) {
-					$this->TAGS_OBJ->_save_tags($_POST["tags"], $PHOTO_RECORD_ID, GALLERY_CLASS_NAME);
+					$this->TAGS_OBJ->_save_tags($_POST["tags"], $PHOTO_RECORD_ID, 'gallery');
 				}
 
 			}
@@ -305,7 +305,7 @@ class yf_gallery_manage {
 
 				$redirect_folder_id = module('gallery')->HIDE_TOTAL_ID ? $user_folders[$_POST["folder_id"]]["id2"] : $_POST["folder_id"];
 
-				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".(!empty($redirect_folder_id) ? "view_folder&id=".$redirect_folder_id : "show_gallery"). _add_get(array("page")));
+				return js_redirect("./?object=".'gallery'."&action=".(!empty($redirect_folder_id) ? "view_folder&id=".$redirect_folder_id : "show_gallery"). _add_get(array("page")));
 			}
 		}
 		if (common()->_error_exists()) {
@@ -316,7 +316,7 @@ class yf_gallery_manage {
 		$allow_edit_tags = module('gallery')->ALLOW_TAGGING ? true : false;
 		// Show form
 		$replace = array(
-			"form_action"		=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+			"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")),
 			"error_message"		=> $error_message,
 			"folders_box"		=> module('gallery')->_box("folder_id", !empty($_POST["folder_id"]) ? $_POST["folder_id"] : $FOLDER_ID),
 			"show_in_ads_box"	=> $SHOW_IN_ADS_ALLOWED ? module('gallery')->_box("show_in_ads", $_POST["show_in_ads"] || $num_photos_for_ads < module('gallery')->MAX_PHOTOS_FOR_ADS ? 1 : 0) : "",
@@ -337,7 +337,7 @@ class yf_gallery_manage {
 			"max_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MAX_KEYWORD_LENGTH : "",
 			"is_featured_box"	=> module('gallery')->_box("is_featured", $photo_info["is_featured"]),
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/add_photo_form", $replace);
+		return tpl()->parse('gallery'."/add_photo_form", $replace);
 	}
 	
 	/**
@@ -433,7 +433,7 @@ class yf_gallery_manage {
 			}
 			// Save tags 
 			if (isset($_POST["tags"])) {
-				$this->TAGS_OBJ->_save_tags($_POST["tags"], $PHOTO_RECORD_ID, GALLERY_CLASS_NAME);
+				$this->TAGS_OBJ->_save_tags($_POST["tags"], $PHOTO_RECORD_ID, 'gallery');
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -494,7 +494,7 @@ class yf_gallery_manage {
 
 		$redirect_folder_id = module('gallery')->HIDE_TOTAL_ID ? $user_folders[$_POST["folder_id"]]["id2"] : $_POST["folder_id"];
 
-		return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".(!empty($redirect_folder_id) ? "view_folder&id=".$redirect_folder_id : "show_gallery"). _add_get(array("page")));
+		return js_redirect("./?object=".'gallery'."&action=".(!empty($redirect_folder_id) ? "view_folder&id=".$redirect_folder_id : "show_gallery"). _add_get(array("page")));
 	}
 	
 	/**
@@ -541,7 +541,7 @@ class yf_gallery_manage {
 		if (!empty($_POST["go"])) {
 			// Save tags 
 			if (isset($_POST["tags"])) {
-				$this->TAGS_OBJ->_save_tags($_POST["tags"], $photo_info["id"], GALLERY_CLASS_NAME);
+				$this->TAGS_OBJ->_save_tags($_POST["tags"], $photo_info["id"], 'gallery');
 			}
 			$_POST["photo_name"]	= substr($_POST["photo_name"], 0, module('gallery')->MAX_NAME_LENGTH);
 			$_POST["photo_desc"]	= substr($_POST["photo_desc"], 0, module('gallery')->MAX_DESC_LENGTH);
@@ -613,7 +613,7 @@ class yf_gallery_manage {
 					$redirect_folder_id = module('gallery')->HIDE_TOTAL_ID ? $user_folders[$_POST["folder_id"]]["id2"] : $_POST["folder_id"];
 				}
 
-				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".(!empty($redirect_folder_id) ? "view_folder&id=".$redirect_folder_id : "show_gallery")._add_get(array("page")));
+				return js_redirect("./?object=".'gallery'."&action=".(!empty($redirect_folder_id) ? "view_folder&id=".$redirect_folder_id : "show_gallery")._add_get(array("page")));
 			}
 		} else {
 			$_POST["photo_name"]	= $photo_info["name"];
@@ -630,7 +630,7 @@ class yf_gallery_manage {
 		if (module('gallery')->ALLOW_TAGGING) {
 			$_prefetched_tags = module('gallery')->_get_tags($photo_info["id"]);
 			foreach ((array)$GLOBALS['_gallery_tags'][$photo_info["id"]] as $_name) {
-				$tags[$_name] = "./?object=".GALLERY_CLASS_NAME."&action=tag&id=".urlencode($_name);
+				$tags[$_name] = "./?object=".'gallery'."&action=tag&id=".urlencode($_name);
 			}
 		}
 		$allow_edit_tags = module('gallery')->ALLOW_TAGGING ? true : false;
@@ -647,7 +647,7 @@ class yf_gallery_manage {
 			$thumb_web_path .= "?".$this->_cur_rand;
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+			"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 			"error_message"		=> $error_message,
 			"folders_box"		=> module('gallery')->_box("folder_id", !empty($_POST["folder_id"]) ? $_POST["folder_id"] : $FOLDER_ID),
 			"show_in_ads_box"	=> $SHOW_IN_ADS_ALLOWED ? module('gallery')->_box("show_in_ads", $num_photos_for_ads >= module('gallery')->MAX_PHOTOS_FOR_ADS ? 0 : $_POST["show_in_ads"]) : "",
@@ -659,9 +659,9 @@ class yf_gallery_manage {
 			"thumb_src"			=> $thumb_web_path,
 			"user_id"			=> intval(module('gallery')->USER_ID),
 			"show_ads_denied"	=> intval(!$SHOW_IN_ADS_ALLOWED),
-			"crop_link"			=> "./?object=".GALLERY_CLASS_NAME."&action=crop_photo&id=".$_GET["id"]._add_get(array("page")),
-			"rotate_link"		=> "./?object=".GALLERY_CLASS_NAME."&action=rotate_photo&id=".$_GET["id"]._add_get(array("page")),
-			"back_link"			=> "./?object=".GALLERY_CLASS_NAME."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".$photo_info["folder_id"] : "show_gallery")._add_get(array("page")),
+			"crop_link"			=> "./?object=".'gallery'."&action=crop_photo&id=".$_GET["id"]._add_get(array("page")),
+			"rotate_link"		=> "./?object=".'gallery'."&action=rotate_photo&id=".$_GET["id"]._add_get(array("page")),
+			"back_link"			=> "./?object=".'gallery'."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".$photo_info["folder_id"] : "show_gallery")._add_get(array("page")),
 			"refresh_image_code"=> $this->_refresh_images_in_browser($photo_info["id"]),
 			"rate_enabled"		=> intval((bool) module('gallery')->ALLOW_RATE),
 			"rating"			=> round($photo_info["rating"], 1),
@@ -669,17 +669,17 @@ class yf_gallery_manage {
 			"rate_last_voted"	=> _format_date($photo_info["last_vote_date"]),
 			"tagging_enabled"	=> intval((bool) module('gallery')->ALLOW_TAGGING),
 			"tags"				=> module('gallery')->ALLOW_TAGGING && !empty($tags) ? $tags : "",
-			"edit_tags_link"	=> $allow_edit_tags ? process_url("./?object=".GALLERY_CLASS_NAME."&action=edit_tags_popup&id=".$photo_info["id"]._add_get(array("page"))) : "",
+			"edit_tags_link"	=> $allow_edit_tags ? process_url("./?object=".'gallery'."&action=edit_tags_popup&id=".$photo_info["id"]._add_get(array("page"))) : "",
 			"allow_rate_box"	=> module('gallery')->_box("allow_rate", $photo_info["allow_rate"]),
 			"allow_tagging_box"	=> module('gallery')->_box("allow_tagging", $photo_info["allow_tagging"]),
-			"edit_folder_link"	=> "./?object=".GALLERY_CLASS_NAME."&action=edit_folder&id=".intval($FOLDER_ID),
-			"tags"				=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->_collect_tags($photo_info["id"], GALLERY_CLASS_NAME) : "",
+			"edit_folder_link"	=> "./?object=".'gallery'."&action=edit_folder&id=".intval($FOLDER_ID),
+			"tags"				=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->_collect_tags($photo_info["id"], 'gallery') : "",
 			"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
 			"min_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MIN_KEYWORD_LENGTH : "",
 			"max_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MAX_KEYWORD_LENGTH : "",
 			"is_featured_box"	=> module('gallery')->_box("is_featured", $photo_info["is_featured"]),
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/edit_photo_form", $replace);
+		return tpl()->parse('gallery'."/edit_photo_form", $replace);
 	}
 	
 	/**
@@ -789,7 +789,7 @@ class yf_gallery_manage {
 		// Update user stats
 		_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
 		// Redirect user
-		return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]) : "show_gallery")._add_get(array("page")));
+		return js_redirect("./?object=".'gallery'."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]) : "show_gallery")._add_get(array("page")));
 	}
 
 	/**
@@ -850,7 +850,7 @@ class yf_gallery_manage {
 				}
 			}
 			$_SESSION["_refresh_image_in_browser"] = true;
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=edit_photo&id=".(module('gallery')->HIDE_TOTAL_ID ? $photo_info["id2"] : $photo_info["id"]). _add_get(array("page")));
+			return js_redirect("./?object=".'gallery'."&action=edit_photo&id=".(module('gallery')->HIDE_TOTAL_ID ? $photo_info["id2"] : $photo_info["id"]). _add_get(array("page")));
 		}
 		// Show form
 		$_fs_thumb_src = module('gallery')->_photo_fs_path($photo_info, $cur_photo_type);
@@ -859,17 +859,17 @@ class yf_gallery_manage {
 			$thumb_web_path = module('gallery')->_photo_web_path($photo_info, $cur_photo_type);
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+			"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 			"error_message"		=> _e(),
 			"photo_name"		=> _prepare_html($_POST["photo_name"]),
 			"photo_desc"		=> _prepare_html($_POST["photo_desc"]),
 			"thumb_src"			=> $thumb_web_path,
 			"user_id"			=> intval(module('gallery')->USER_ID),
-			"back_link"			=> "./?object=".GALLERY_CLASS_NAME."&action=edit_photo&id=".$photo_info["id"]._add_get(array("page")),
+			"back_link"			=> "./?object=".'gallery'."&action=edit_photo&id=".$photo_info["id"]._add_get(array("page")),
 			"real_w"			=> intval($real_w),
 			"real_h"			=> intval($real_h),
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/crop_photo_form", $replace);
+		return tpl()->parse('gallery'."/crop_photo_form", $replace);
 	}
 	
 	/**
@@ -895,7 +895,7 @@ class yf_gallery_manage {
 
 			$_SESSION["_refresh_image_in_browser"] = true;
 
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=edit_photo&id=".(module('gallery')->HIDE_TOTAL_ID ? $photo_info["id2"] : $photo_info["id"]). _add_get(array("page")));
+			return js_redirect("./?object=".'gallery'."&action=edit_photo&id=".(module('gallery')->HIDE_TOTAL_ID ? $photo_info["id2"] : $photo_info["id"]). _add_get(array("page")));
 		}
 	}
 
@@ -912,7 +912,7 @@ class yf_gallery_manage {
 		$num_photos_for_ads = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval(module('gallery')->USER_ID)." AND show_in_ads='1'");
 		if ($num_photos_for_ads >= module('gallery')->MAX_PHOTOS_FOR_ADS && $photo_info["show_in_ads"] == 0) {
 			_re(t("You can use max @num photos in your ads!", array("@num" => intval(module('gallery')->MAX_PHOTOS_FOR_ADS))));
-			return redirect("./?object=".GALLERY_CLASS_NAME."&action=show_gallery"._add_get(array("page")), 1, _e());
+			return redirect("./?object=".'gallery'."&action=show_gallery"._add_get(array("page")), 1, _e());
 		}
 		// Do update db record
 		db()->query(
@@ -925,7 +925,7 @@ class yf_gallery_manage {
 			main()->NO_GRAPHICS = true;
 			echo $photo_info["show_in_ads"] ? 0 : 1;
 		} else {
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]));
+			return js_redirect("./?object=".'gallery'."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]));
 		}
 	}
 
@@ -949,7 +949,7 @@ class yf_gallery_manage {
 			main()->NO_GRAPHICS = true;
 			echo $photo_info["allow_rate"] ? 0 : 1;
 		} else {
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]));
+			return js_redirect("./?object=".'gallery'."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]));
 		}
 	}
 
@@ -973,7 +973,7 @@ class yf_gallery_manage {
 			main()->NO_GRAPHICS = true;
 			echo $photo_info["allow_tagging"] ? 0 : 1;
 		} else {
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]));
+			return js_redirect("./?object=".'gallery'."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]));
 		}
 	}
 
@@ -998,7 +998,7 @@ class yf_gallery_manage {
 		$_SESSION["_refresh_avatar_in_browser"] = true;
 
 		// Return user back
-		return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=edit");
+		return js_redirect("./?object=".'gallery'."&action=edit");
 	}
 
 	/**

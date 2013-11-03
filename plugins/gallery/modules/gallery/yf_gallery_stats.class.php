@@ -18,7 +18,7 @@ class yf_gallery_stats {
 		}
 // TODO: decide what to here if HIDE_TOTAL_ID enabled
 		if (empty($MAIN_STPL)) {
-			$MAIN_STPL = GALLERY_CLASS_NAME."/stats_main";
+			$MAIN_STPL = 'gallery'."/stats_main";
 		}
 		if (empty($GLOBALS['user_info']) && !empty(module('gallery')->_user_info)) {
 			$GLOBALS['user_info'] = module('gallery')->_user_info;
@@ -33,7 +33,7 @@ class yf_gallery_stats {
 			$sql .= " GROUP BY user_id ";
 		}
 		$order_by_sql = " ORDER BY add_date DESC ";
-		$url = "./?object=".GALLERY_CLASS_NAME."&action=latest";
+		$url = "./?object=".'gallery'."&action=latest";
 		list($add_sql, $latest_pages, $latest_total) = common()->divide_pages($sql, $url, null, module('gallery')->STATS_NUM_LATEST * 2);
 		// Get top latest photos
 		$Q = db()->query($sql.$order_by_sql.$add_sql);
@@ -61,7 +61,7 @@ class yf_gallery_stats {
 			$_POST["gender"]	= "Female";
 			module('gallery')->save_filter(1);
 			$geo_top_galleries = $this->_show_all_galleries(array(
-				"stpl_main"	=> GALLERY_CLASS_NAME."/stats_geo_top_main",
+				"stpl_main"	=> 'gallery'."/stats_geo_top_main",
 				"for_stats"	=> true,
 			));
 		}
@@ -84,7 +84,7 @@ class yf_gallery_stats {
 				.$geo_filter_sql
 				.$group_by_sql;
 			$order_by_sql = " ORDER BY add_date DESC ";
-			$url = "./?object=".GALLERY_CLASS_NAME."&action=latest_geo";
+			$url = "./?object=".'gallery'."&action=latest_geo";
 			_class('divide_pages', 'classes/common/')->SQL_COUNT_REWRITE = false;
 			list($add_sql, $geo_latest_pages, $geo_latest_total) = common()->divide_pages(str_replace("SELECT *", "SELECT id,user_id", $sql), $url, null, module('gallery')->STATS_NUM_LATEST * 2);
 			// Get from db
@@ -139,8 +139,8 @@ class yf_gallery_stats {
 		// Process template
 		$replace = array(
 			"is_logged_in"			=> intval((bool) module('gallery')->USER_ID),
-			"show_own_gallery_link"	=> module('gallery')->USER_ID ? "./?object=".GALLERY_CLASS_NAME."&action=show_gallery&id=".intval(module('gallery')->USER_ID)._add_get(array("page")) : "",
-			"all_galleries_link"	=> "./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries"._add_get(array("page")),
+			"show_own_gallery_link"	=> module('gallery')->USER_ID ? "./?object=".'gallery'."&action=show_gallery&id=".intval(module('gallery')->USER_ID)._add_get(array("page")) : "",
+			"all_galleries_link"	=> "./?object=".'gallery'."&action=show_all_galleries"._add_get(array("page")),
 			"latest_photos"			=> $latest_photos,
 			"num_latest"			=> intval(module('gallery')->STATS_NUM_LATEST),
 			"latest_pages"			=> $latest_pages,
@@ -169,7 +169,7 @@ class yf_gallery_stats {
 		}
 		$account_types	= main()->get_data("account_types");
 		// Prepare params
-		$STPL_MAIN = !empty($params["stpl_main"]) ? $params["stpl_main"] : GALLERY_CLASS_NAME."/all_galleries_main";
+		$STPL_MAIN = !empty($params["stpl_main"]) ? $params["stpl_main"] : 'gallery'."/all_galleries_main";
 		// Swithc between search type
 		if (!empty($_SESSION["gallery_filter"]["as_photos"])) {
 			module('gallery')->_SEARCH_AS_PHOTOS = 1;
@@ -201,7 +201,7 @@ class yf_gallery_stats {
 			$sql = module('gallery')->_create_filter_sql($sql);
 		}
 //		$order_by_sql = " ORDER BY p.priority DESC, num_photos DESC ";
-		$path = "./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries&id=all";
+		$path = "./?object=".'gallery'."&action=show_all_galleries&id=all";
 		list($add_sql, $pages, $total) = common()->divide_pages(preg_replace("/ORDER BY .*?\$/ims", "ORDER BY NULL", $sql), $path, null, $params["for_stats"] ? module('gallery')->STATS_TOP_ON_PAGE : module('gallery')->VIEW_ALL_ON_PAGE);
 		// Get contents from db
 		$Q = db()->query($sql. /*$order_by_sql. */$add_sql);
@@ -252,7 +252,7 @@ class yf_gallery_stats {
 					break;
 				}
 				$photos[$_photo_id] = array(
-					"link"		=> "./?object=".GALLERY_CLASS_NAME."&action=show_medium_size&id=".$_photo_id,
+					"link"		=> "./?object=".'gallery'."&action=show_medium_size&id=".$_photo_id,
 					"img_src"	=> module('gallery')->_photo_web_path($_photo_info, $cur_photo_type),
 				);
 			}
@@ -261,10 +261,10 @@ class yf_gallery_stats {
 			foreach ((array)$folders_by_users[$user_id] as $_folder_id => $_folder_info) {
 				$folders[$_folder_id] = array(
 					"title"	=> _prepare_html($_folder_info["title"]),
-					"link"	=> "./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".$_folder_info["id"],
+					"link"	=> "./?object=".'gallery'."&action=view_folder&id=".$_folder_info["id"],
 				);
 			}
-			$view_gallery_link = "./?object=".GALLERY_CLASS_NAME."&action=show_gallery&id=".$user_id._add_get(array("page"));
+			$view_gallery_link = "./?object=".'gallery'."&action=show_gallery&id=".$user_id._add_get(array("page"));
 			// Process template
 			$replace2 = array(
 				"user_name"			=> _prepare_html($user_name),
@@ -278,14 +278,14 @@ class yf_gallery_stats {
 				"photos"			=> !empty($photos)	? $photos : "",
 				"folders"			=> !empty($folders)	? $folders : "",
 			);
-			$items .= tpl()->parse(GALLERY_CLASS_NAME."/all_galleries_item", $replace2);
+			$items .= tpl()->parse('gallery'."/all_galleries_item", $replace2);
 		}
 		// Process template
 		$replace = array(
 			"items"		=> $items,
 			"pages"		=> $pages,
 			"total"		=> intval($total),
-			"back_url"	=> "./?object=".GALLERY_CLASS_NAME."&action=show"._add_get(array("page")),
+			"back_url"	=> "./?object=".'gallery'."&action=show"._add_get(array("page")),
 			"filter"	=> module('gallery')->_show_filter(),
 		);
 		return tpl()->parse($STPL_MAIN, $replace);
@@ -315,7 +315,7 @@ class yf_gallery_stats {
 		if (module('gallery')->USE_FILTER) {
 			$sql = module('gallery')->_create_filter_sql($sql);
 		}
-		$url = $pager_url ? $pager_url : "./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries&id=all";
+		$url = $pager_url ? $pager_url : "./?object=".'gallery'."&action=show_all_galleries&id=all";
 		// Turn off count rewrite for "divide_pages"
 //		$GLOBALS["PROJECT_CONF"]["divide_pages"]["SQL_COUNT_REWRITE"] = false;
 		list($add_sql, $latest_pages, $latest_total) = common()->divide_pages(preg_replace("/ORDER BY .*?\$/ims", "ORDER BY NULL", $sql), $url, null, module('gallery')->STATS_NUM_LATEST * 2);
@@ -353,7 +353,7 @@ class yf_gallery_stats {
 		}
 		// Prepare template
 		$replace = array(
-			"back_url"			=> "./?object=".GALLERY_CLASS_NAME."&action=show"._add_get(array("page")),
+			"back_url"			=> "./?object=".'gallery'."&action=show"._add_get(array("page")),
 			"filter"			=> module('gallery')->_show_filter(),
 			"items"				=> $latest_photos,
 			"pages"				=> $latest_pages,
@@ -363,7 +363,7 @@ class yf_gallery_stats {
 			"geo_region_name"	=> $geo_data["region_code"]	? _region_name($geo_data["region_code"], $geo_data["country_code"]) : "",
 			"use_ajax"			=> 1,
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/as_photos_main", $replace);
+		return tpl()->parse('gallery'."/as_photos_main", $replace);
 	}
 
 	/**
@@ -483,7 +483,7 @@ class yf_gallery_stats {
 			.$geo_filter_sql
 			.$group_by_sql;
 		$order_by_sql = " ORDER BY add_date DESC ";
-		$url = "./?object=".GALLERY_CLASS_NAME."&action=latest";
+		$url = "./?object=".'gallery'."&action=latest";
 		list($add_sql, $latest_pages, $latest_total) = common()->divide_pages($sql, $url, null, module('gallery')->STATS_NUM_LATEST * 2);
 		// Get top latest photos
 		$Q = db()->query($sql.$order_by_sql.$add_sql);
@@ -524,6 +524,6 @@ class yf_gallery_stats {
 			"geo_region_name"	=> $geo_data["region_code"]	? _region_name($geo_data["region_code"], $geo_data["country_code"]) : "",
 			"use_ajax"			=> 1,
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/latest_main", $replace);
+		return tpl()->parse('gallery'."/latest_main", $replace);
 	}
 }

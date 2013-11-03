@@ -178,11 +178,6 @@ class yf_gallery extends yf_module {
 	* YF module constructor
 	*/
 	function _init () {
-		// Gallery class name (to allow changing only in one place)
-		define("GALLERY_CLASS_NAME", "gallery");
-		// Sub modules folder
-		define("GALLERY_MODULES_DIR", USER_MODULES_DIR. GALLERY_CLASS_NAME."/");
-		// Set gallery dir
 		if (defined("SITE_GALLERY_DIR")) {
 			$this->GALLERY_DIR = SITE_GALLERY_DIR;
 		}
@@ -341,10 +336,10 @@ class yf_gallery extends yf_module {
 			$replace = array(
 				"is_logged_in"	=> intval((bool) main()->USER_ID),
 				"is_own_gallery"=> $this->is_own_gallery,
-				"start_link"	=> "./?object=".GALLERY_CLASS_NAME."&action=add_photo"._add_get(array("page")),
+				"start_link"	=> "./?object=".'gallery'."&action=add_photo"._add_get(array("page")),
 				"user_id"		=> intval(main()->USER_ID),
 			);
-			$body = tpl()->parse(GALLERY_CLASS_NAME."/no_gallery_yet", $replace);
+			$body = tpl()->parse('gallery'."/no_gallery_yet", $replace);
 		} else {
 			$body = $this->_show_user_photos($user_info, 0, $stpl_prefix);
 		}
@@ -415,7 +410,7 @@ class yf_gallery extends yf_module {
 	*/
 	function show_medium_size () {
 		return $this->_show_single_photo(array(
-			"template_name"	=> GALLERY_CLASS_NAME."/show_medium_size",
+			"template_name"	=> 'gallery'."/show_medium_size",
 			"photo_type"	=> "medium",
 		));
 	}
@@ -433,7 +428,7 @@ class yf_gallery extends yf_module {
 	*/
 	function show_full_size () {
 		return $this->_show_single_photo(array(
-			"template_name"	=> GALLERY_CLASS_NAME."/show_full_size",
+			"template_name"	=> 'gallery'."/show_full_size",
 			"photo_type"	=> "original",
 		));
 	}
@@ -833,12 +828,12 @@ class yf_gallery extends yf_module {
 		// Create new items
 		$items = array();
 		$items[]	= $NAV_BAR_OBJ->_nav_item("Home", "./");
-		$items[]	= $NAV_BAR_OBJ->_nav_item("Galleries", "./?object=".GALLERY_CLASS_NAME);
+		$items[]	= $NAV_BAR_OBJ->_nav_item("Galleries", "./?object=".'gallery');
 		if (!in_array($_GET["action"], array("show", "show_all_galleries"))) {
 			if (!empty($this->_author_name)) {
-				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html($this->_author_name), "./?object=".GALLERY_CLASS_NAME."&action=show_gallery&id=".$this->_author_id);
+				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html($this->_author_name), "./?object=".'gallery'."&action=show_gallery&id=".$this->_author_id);
 			} elseif (!empty(main()->USER_ID)) {
-				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name($this->_user_info)), "./?object=".GALLERY_CLASS_NAME."&action=show_gallery&id=".main()->USER_ID);
+				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name($this->_user_info)), "./?object=".'gallery'."&action=show_gallery&id=".main()->USER_ID);
 			}
 		}
 		if (in_array($_GET["action"], array("show_all_galleries"))) {
@@ -1016,7 +1011,7 @@ class yf_gallery extends yf_module {
 		$replace = array(
 			"items" => $items,
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/widget_cloud", $replace);
+		return tpl()->parse('gallery'."/widget_cloud", $replace);
 	}
 
 	/**
@@ -1034,7 +1029,7 @@ class yf_gallery extends yf_module {
 		$replace = array(
 			"info"	=> $_info,
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/widget_folders", $replace);
+		return tpl()->parse('gallery'."/widget_folders", $replace);
 	}
 
 	/**

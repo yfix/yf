@@ -108,7 +108,7 @@ class yf_gallery_folders {
 				// Update public photos
 				module('gallery')->_sync_public_photos();
 				// Redirect user
-				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=edit_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? ($_max_folder_id2 + 1) : intval($NEW_FOLDER_ID)). _add_get(array("page")));
+				return js_redirect("./?object=".'gallery'."&action=edit_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? ($_max_folder_id2 + 1) : intval($NEW_FOLDER_ID)). _add_get(array("page")));
 			}
 			// Update user stats
 			_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
@@ -117,7 +117,7 @@ class yf_gallery_folders {
 		$DATA = $_POST;
 		// Show form
 		$replace = array(
-			"form_action"			=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+			"form_action"			=> "./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")),
 			"error_message"			=> _e(),
 			"max_title_length"		=> intval(module('gallery')->MAX_FOLDER_TITLE_LENGTH),
 			"max_comment_length"	=> intval(module('gallery')->MAX_FOLDER_COMMENT_LENGTH),
@@ -128,11 +128,11 @@ class yf_gallery_folders {
 			"privacy_box"			=> module('gallery')->_box("privacy",			$DATA["privacy"]),
 			"allow_comments_box"	=> module('gallery')->_box("allow_comments",	$DATA["allow_comments"]),
 			"user_id"				=> intval(module('gallery')->USER_ID),
-			"back_link"				=> "./?object=".GALLERY_CLASS_NAME."&action=show_gallery"._add_get(array("page")),
+			"back_link"				=> "./?object=".'gallery'."&action=show_gallery"._add_get(array("page")),
 			"warn_user"				=> intval($WARN_USER),
 			"folder_tagging_box"	=> module('gallery')->ALLOW_TAGGING ? module('gallery')->TAG_OBJ->_mod_spec_settings(array("module"=>"gallery")) : "",			
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/add_folder_form", $replace);
+		return tpl()->parse('gallery'."/add_folder_form", $replace);
 	}
 
 	/**
@@ -219,7 +219,7 @@ class yf_gallery_folders {
 				// Update user stats
 				_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
 				// Redirect user
-				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=edit_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : intval($FOLDER_ID)). _add_get(array("page")));
+				return js_redirect("./?object=".'gallery'."&action=edit_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : intval($FOLDER_ID)). _add_get(array("page")));
 			}
 		}
 		// Fill POST data
@@ -228,7 +228,7 @@ class yf_gallery_folders {
 		}
 		// Show form
 		$replace = array(
-			"form_action"			=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]."&id=".intval($_GET["id"])._add_get(array("page")),
+			"form_action"			=> "./?object=".'gallery'."&action=".$_GET["action"]."&id=".intval($_GET["id"])._add_get(array("page")),
 			"error_message"			=> _e(),
 			"max_title_length"		=> intval(module('gallery')->MAX_FOLDER_TITLE_LENGTH),
 			"max_comment_length"	=> intval(module('gallery')->MAX_FOLDER_COMMENT_LENGTH),
@@ -239,13 +239,13 @@ class yf_gallery_folders {
 			"privacy_box"			=> module('gallery')->_box("privacy",			$DATA["privacy"]),
 			"allow_comments_box"	=> module('gallery')->_box("allow_comments",	$DATA["allow_comments"]),
 			"user_id"				=> intval(module('gallery')->USER_ID),
-			"back_link"				=> "./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".$_GET["id"]. _add_get(array("page")),
+			"back_link"				=> "./?object=".'gallery'."&action=view_folder&id=".$_GET["id"]. _add_get(array("page")),
 			"is_default"			=> intval((bool)$cur_folder_info["is_default"]),
 			"content_level"			=> module('gallery')->_content_levels[$cur_folder_info["content_level"]],
 			"warn_user"				=> intval($WARN_USER),
 			"folder_tagging_box"	=> module('gallery')->ALLOW_TAGGING ? module('gallery')->TAG_OBJ->_mod_spec_settings(array("module"=>"gallery", "object_id"=>$DATA["id"])) : "",			
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/edit_folder_form", $replace);
+		return tpl()->parse('gallery'."/edit_folder_form", $replace);
 	}
 
 	/**
@@ -354,7 +354,7 @@ class yf_gallery_folders {
 				// Update public photos
 				module('gallery')->_sync_public_photos();
 				// Return user back
-				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=show_gallery");
+				return js_redirect("./?object=".'gallery'."&action=show_gallery");
 			}
 		}
 		// Fodlers for select
@@ -366,15 +366,15 @@ class yf_gallery_folders {
 		}
 		// Display confirmation form
 		$replace = array(
-			"form_action"		=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]. _add_get(array("page")),
-			"back_link"			=> "./?object=".GALLERY_CLASS_NAME."&action=view_folder&id=".$_GET["id"]. _add_get(array("page")),
+			"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]."&id=".$_GET["id"]. _add_get(array("page")),
+			"back_link"			=> "./?object=".'gallery'."&action=view_folder&id=".$_GET["id"]. _add_get(array("page")),
 			"error_message"		=> _e(),
 			"folders_box"		=> common()->select_box("new_folder_id", $new_folders, 0, 0, 2, "", false),
 			"folder_name"		=> _prepare_html($cur_folder_info["title"]),
 			"contains_photos"	=> !empty($folder_photos) ? 1 : 0,
 			"is_last_folder"	=> count($user_folders) <= 1 ? 1 : 0,
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/delete_folder", $replace);
+		return tpl()->parse('gallery'."/delete_folder", $replace);
 	}
 	
 	/**
@@ -442,15 +442,15 @@ class yf_gallery_folders {
 			}
 			// Return user back
 			if (!common()->_error_exists()) {
-				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]. (!empty($_GET["id"]) ? "&id=".$_GET["id"] : ""));
+				return js_redirect("./?object=".'gallery'."&action=".$_GET["action"]. (!empty($_GET["id"]) ? "&id=".$_GET["id"] : ""));
 			}
 		}
 		// Display form
 		$replace = array(
 			"error_message"		=> _e(),
-			"enter_pswd_action"	=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]. (!empty($_GET["id"]) ? "&id=".$_GET["id"] : ""),
+			"enter_pswd_action"	=> "./?object=".'gallery'."&action=".$_GET["action"]. (!empty($_GET["id"]) ? "&id=".$_GET["id"] : ""),
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/enter_password", $replace);
+		return tpl()->parse('gallery'."/enter_password", $replace);
 	}
 
 	/**

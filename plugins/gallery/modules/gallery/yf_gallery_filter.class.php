@@ -31,7 +31,7 @@ class yf_gallery_filter {
 			"tag",
 		))) return "";
 		// Filter session array name
-		$this->_filter_name	= GALLERY_CLASS_NAME."_filter";
+		$this->_filter_name	= 'gallery'."_filter";
 		// Connect common used arrays
 		$f = INCLUDE_PATH."common_code.php";
 		if (file_exists($f)) {
@@ -226,8 +226,8 @@ class yf_gallery_filter {
 		}
 		$SF = &$_SESSION[$this->_filter_name];
 		$replace = array(
-			"save_action"	=> "./?object=".GALLERY_CLASS_NAME."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".GALLERY_CLASS_NAME."&action=clear_filter"._add_get(),
+			"save_action"	=> "./?object=".'gallery'."&action=save_filter"._add_get(),
+			"clear_url"		=> "./?object=".'gallery'."&action=clear_filter"._add_get(),
 			"allow_tagging"	=> intval((bool)module('gallery')->ALLOW_TAGGING),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
@@ -240,7 +240,7 @@ class yf_gallery_filter {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $SF[$item_name]);
 		}
-		return tpl()->parse(GALLERY_CLASS_NAME."/search_filter", $replace);
+		return tpl()->parse('gallery'."/search_filter", $replace);
 	}
 
 	/**
@@ -258,7 +258,7 @@ class yf_gallery_filter {
 			$_SESSION[$this->_filter_name][$name] = $_POST[$name];
 		}
 		if (!$silent) {
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries");
+			return js_redirect("./?object=".'gallery'."&action=show_all_galleries");
 		}
 	}
 
@@ -273,7 +273,7 @@ class yf_gallery_filter {
 			unset($_SESSION[$this->_filter_name]);
 		}
 		if (!$silent) {
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries");
+			return js_redirect("./?object=".'gallery'."&action=show_all_galleries");
 		}
 	}
 

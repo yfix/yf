@@ -13,21 +13,21 @@ class yf_gallery_integration {
 	* Home page integration
 	*/
 	function _for_home_page($num = 5) {
-		return module('gallery')->_show_stats(GALLERY_CLASS_NAME ."/for_home_page_main", "", $num);
+		return module('gallery')->_show_stats('gallery' ."/for_home_page_main", "", $num);
 	}
 	
 	/**
 	* 
 	*/
 	function _for_user_profile($user_info, $MAX_SHOW_GALLERY_PHOTO){
-		return module('gallery')->_show_stats(GALLERY_CLASS_NAME ."/for_home_page_main", "", $MAX_SHOW_GALLERY_PHOTO);
+		return module('gallery')->_show_stats('gallery' ."/for_home_page_main", "", $MAX_SHOW_GALLERY_PHOTO);
 	}
 	
 	/**
 	* 
 	*/
 	function _widget_last_photo(){
-		return module('gallery')->_show_stats(GALLERY_CLASS_NAME ."/widget_photo_main", GALLERY_CLASS_NAME."/widget_photo_item", 1);
+		return module('gallery')->_show_stats('gallery' ."/widget_photo_main", 'gallery'."/widget_photo_item", 1);
 
 	}
 	

@@ -145,7 +145,7 @@ class yf_gallery_search_comments {
 		}
 		$comment_info = db()->query_fetch(
 			"SELECT * FROM ".db('comments')." 
-			WHERE object_name='".GALLERY_CLASS_NAME."' 
+			WHERE object_name='".'gallery'."' 
 				AND object_id IN(
 					SELECT id FROM ".db('gallery_photos')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
@@ -158,6 +158,6 @@ class yf_gallery_search_comments {
 		if (is_object($COMMENTS_OBJ)) {
 			$COMMENTS_OBJ->_delete(array("silent_mode" => 1));
 		}
-		return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=search_comments");
+		return js_redirect("./?object=".'gallery'."&action=search_comments");
 	}
 }

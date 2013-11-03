@@ -157,24 +157,24 @@ class yf_gallery_tags {
 			}
 // TODO: move into template
 			return "<div align='center'>Saved successfully<br /> <a href='javascript:self.window.close();'>Close window</a></div>";
-//			echo js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""));
+//			echo js_redirect("./?object=".'gallery'."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""));
 		}
 		// Prepare tags array
 		if (main()->NO_GRAPHICS) {
 			$tags = array();
 			$_prefetched_tags = module('gallery')->_get_tags($photo_id);
 			foreach ((array)$GLOBALS['_gallery_tags'][$photo_id] as $_name) {
-				$tags[$_name] = process_url("./?object=".GALLERY_CLASS_NAME."&action=tag&id=".urlencode($_name));
+				$tags[$_name] = process_url("./?object=".'gallery'."&action=tag&id=".urlencode($_name));
 			}
 		}
 		// Prepare template
 		$replace = array(
-			"form_action"	=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
+			"form_action"	=> "./?object=".'gallery'."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
 			"tags_to_edit"	=> $tags_to_edit,
 			"max_num_tags"	=> intval(module('gallery')->TAGS_PER_PHOTO),
 			"tags"			=> !empty($tags) ? $tags : "",
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/edit_tags_form", $replace);
+		return tpl()->parse('gallery'."/edit_tags_form", $replace);
 	}
 
 	/**
@@ -221,6 +221,6 @@ class yf_gallery_tags {
 		module('gallery')->save_filter(1);
 
 		$OBJ = module('gallery')->_load_sub_module("gallery_stats");
-		return $OBJ->_show_all_galleries(array("pager_url" => "./?object=".GALLERY_CLASS_NAME."&action=tag&id=".urlencode($_POST["tag"])));
+		return $OBJ->_show_all_galleries(array("pager_url" => "./?object=".'gallery'."&action=tag&id=".urlencode($_POST["tag"])));
 	}
 }

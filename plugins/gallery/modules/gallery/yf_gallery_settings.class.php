@@ -80,7 +80,7 @@ class yf_gallery_settings {
 				}
 // TODO: connect these privacy, allow_comments, allow_tagging and allow_rate everywhere in other gallery edit forms
 				// Return user back
-				return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")));
+				return js_redirect("./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")));
 			}
 		}
 		// Merge data
@@ -93,7 +93,7 @@ class yf_gallery_settings {
 		// Show form
 		if (empty($_POST["go"])) {
 			$replace = array(
-				"form_action"		=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")),
 				"error_message"		=> _e(),
 				"privacy_box"		=> module('gallery')->_box("privacy", $DATA["privacy"]),
 				"comments_box"		=> module('gallery')->_box("allow_comments", $DATA["allow_comments"]),
@@ -106,7 +106,7 @@ class yf_gallery_settings {
 				"thumbs_in_row_box"	=> module('gallery')->_box("thumbs_in_row", $DATA["thumbs_in_row"]),
 				"slideshow_mode_box"=> module('gallery')->_box("slideshow_mode", $DATA["slideshow_mode"]),
 			);
-			$body = tpl()->parse(GALLERY_CLASS_NAME."/edit_settings", $replace);
+			$body = tpl()->parse('gallery'."/edit_settings", $replace);
 		}
 		return $body;
 	}

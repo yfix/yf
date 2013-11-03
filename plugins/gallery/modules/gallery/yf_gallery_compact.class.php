@@ -119,7 +119,7 @@ class yf_gallery_compact {
 			"real_h"		=> intval($real_h),
 			"user_name"		=> _display_name($user_info),
 		);
-		$body = tpl()->parse(GALLERY_CLASS_NAME."/compact_view", $replace);
+		$body = tpl()->parse('gallery'."/compact_view", $replace);
 
 		if (DEBUG_MODE) {
 			$body .= "<hr class='clearfloat'>DEBUG INFO:\r\n";
