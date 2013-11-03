@@ -244,7 +244,7 @@ class yf_gallery extends yf_module {
 		}
 		// Tagging
 		if (!is_object($this->TAG_OBJ && $this->ALLOW_TAGGING)) {
-			$this->TAG_OBJ = main()->init_class("tags", "modules/");
+			$this->TAG_OBJ = module("tags");
 		}
 		// Check if we could handle bulk upload (using zip archive with photos)
 		if ($this->ALLOW_BULK_UPLOAD && !file_exists(YF_PATH."classes/yf_pclzip.class.php")) {
@@ -912,7 +912,7 @@ class yf_gallery extends yf_module {
 			"rating"	=> $photo_info["rating"],
 			"num_votes"	=> $photo_info["num_votes"],
 		);
-		$OBJ = main()->init_class("photo_rating");
+		$OBJ = module("photo_rating");
 		return is_object($OBJ) ? $OBJ->_show_ajax_box($params) : "";
 	}
 
@@ -1003,7 +1003,7 @@ class yf_gallery extends yf_module {
 		if ($params["describe"]) {
 			return array("allow_cache" => 1, "cache_ttl" => 600);
 		}
-		$OBJ = main()->init_class("tags");
+		$OBJ = module("tags");
 		$items = $OBJ->_tags_cloud("gallery");
 		if (!$items) {
 			return "";

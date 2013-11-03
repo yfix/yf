@@ -61,7 +61,7 @@ class yf_gallery_utils {
 			return $max_privacy;
 		}
 		// Check friendship
-		$FRIENDS_OBJ = main()->init_class("friends");
+		$FRIENDS_OBJ = module("friends");
 		if (is_object($FRIENDS_OBJ)) {
 			$is_in_his_friends	= $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $user_id);
 			$is_my_friend		= $FRIENDS_OBJ->_is_a_friend($user_id, module('gallery')->USER_ID);
@@ -108,7 +108,7 @@ class yf_gallery_utils {
 		// Friends (simple, user need only to add photo owner to his friends list)
 		} elseif ($cur_privacy == 3) {
 			if ($owner_id != module('gallery')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
 					return $is_a_friend;
@@ -118,7 +118,7 @@ class yf_gallery_utils {
 		// My friends (simple, user need to be in photo owner's friends list)
 		} elseif ($cur_privacy == 4) {
 			if ($owner_id != module('gallery')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);
 					return $is_my_friend;
@@ -128,7 +128,7 @@ class yf_gallery_utils {
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_privacy == 5) {
 			if ($owner_id != module('gallery')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
 					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);
@@ -166,7 +166,7 @@ class yf_gallery_utils {
 		// Friends (simple, user need only to add photo owner to his friends list)
 		} elseif ($cur_comments == 3) {
 			if ($owner_id != module('gallery')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
 					return $is_a_friend;
@@ -176,7 +176,7 @@ class yf_gallery_utils {
 		// My friends (simple, user need to be in photo owner's friends list)
 		} elseif ($cur_comments == 4) {
 			if ($owner_id != module('gallery')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);
 					return $is_my_friend;
@@ -186,7 +186,7 @@ class yf_gallery_utils {
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_comments == 5) {
 			if ($owner_id != module('gallery')->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
 					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
 					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);

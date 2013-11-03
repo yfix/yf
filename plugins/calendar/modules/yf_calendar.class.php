@@ -1101,7 +1101,7 @@ class yf_calendar {
 			return false;
 		}
 		if (!is_object($MODULES_OBJ)) {
-			$MODULES_OBJ = main()->init_class("site_modules", "modules/");
+			$MODULES_OBJ = module("site_modules");
 		}
 		$MODULES_OBJ->_modules_record_exists = true;
 		foreach ((array)$MODULES_OBJ->_modules_array as $k => $mod_settings){

@@ -200,7 +200,7 @@ class yf_gallery_settings {
 		if (empty($format_name) || !isset(module('gallery')->PHOTO_TYPES[$format_name])) {
 			return false;
 		}
-		$OBJ = main()->init_class("gallery_manage", GALLERY_MODULES_DIR);
+		$OBJ = _class("gallery_manage", 'modules/gallery/');
 		// Process all photos
 		$Q = db()->query("SELECT * FROM ".db('gallery_photos')." WHERE user_id=".intval(main()->USER_ID));
 		while ($A = db()->fetch_assoc($Q)) {

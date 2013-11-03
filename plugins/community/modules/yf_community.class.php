@@ -110,7 +110,7 @@ class yf_community {
 					"maintainer"	=> "1",
 				));
 				
-				$OBJ_FRIENDS = main()->init_class("friends");
+				$OBJ_FRIENDS = module("friends");
 				
 				$OBJ_FRIENDS->_add_user_friends_ids(main()->USER_ID, $community_user_id);
 				$OBJ_FRIENDS->_add_user_friends_ids($community_user_id, main()->USER_ID);
@@ -150,7 +150,7 @@ class yf_community {
 		$post_link = "";
 		
 		if (!empty(main()->USER_ID)) {
-			$OBJ_FRIENDS = main()->init_class("friends");
+			$OBJ_FRIENDS = module("friends");
 			$joined = $OBJ_FRIENDS->_is_a_friend(main()->USER_ID, $community_info["user_id"]);
 			
 			if($joined){
@@ -209,7 +209,7 @@ class yf_community {
 				"title" 	=> _es($_POST["title"]),
 			), "id=".$_GET["id"]);
 
-			$OBJ_INTERESTS = main()->init_class("interests");
+			$OBJ_INTERESTS = module("interests");
 			$OBJ_INTERESTS->manage($community_info["user_id"]);
 		
 			js_redirect("./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".$_GET["id"]);
@@ -314,7 +314,7 @@ class yf_community {
 			return _e(t("only for owner"));
 		}
 		
-		$OBJ_FRIENDS = main()->init_class("friends");
+		$OBJ_FRIENDS = module("friends");
 		$friends_ids = $OBJ_FRIENDS->_get_user_friends_ids($community_info["user_id"]);
 		
 		foreach ((array)$friends_ids as $id){
@@ -451,7 +451,7 @@ class yf_community {
 			return _e(t("only for owner"));
 		}
 
-		$OBJ_FRIENDS = main()->init_class("friends");	
+		$OBJ_FRIENDS = module("friends");	
 		return $OBJ_FRIENDS->all_handshake_request($community_info["user_id"], $_GET["object"]);
 	}
 	
@@ -468,7 +468,7 @@ class yf_community {
 			return _e(t("only for owner"));
 		}
 
-		$OBJ_FRIENDS = main()->init_class("friends");	
+		$OBJ_FRIENDS = module("friends");	
 		return $OBJ_FRIENDS->all_handshake_request_to_you($community_info["user_id"], $_GET["object"]);
 	}
 	
@@ -541,7 +541,7 @@ class yf_community {
 				return _e(t("No such user"));
 			}
 			// Check if user is already a friend
-			$OBJ_FRIENDS = main()->init_class("friends");
+			$OBJ_FRIENDS = module("friends");
 			$IS_A_FRIEND = $OBJ_FRIENDS->_is_a_friend($community["user_id"], $handshake["sender"]);
 			if ($IS_A_FRIEND) {
 				return _e(t("This user is already in your community list"));
@@ -581,7 +581,7 @@ class yf_community {
 		
 		if(!empty($handshake["id"])){
 			// Check if user is already a friend
-			$OBJ_FRIENDS = main()->init_class("friends");
+			$OBJ_FRIENDS = module("friends");
 			$IS_A_FRIEND = $OBJ_FRIENDS->_is_a_friend($community["user_id"], $handshake["sender"]);
 			if ($IS_A_FRIEND) {
 				return _e(t("This user is already in your community list"));
@@ -632,7 +632,7 @@ class yf_community {
 						return _e(t("No such user"));
 					}
 					// Check if user is already a friend
-					$OBJ_FRIENDS = main()->init_class("friends");
+					$OBJ_FRIENDS = module("friends");
 					$IS_A_FRIEND = $OBJ_FRIENDS->_is_a_friend($community["user_id"], $handshake["sender"]);
 					
 					if ($IS_A_FRIEND) {
@@ -700,14 +700,14 @@ class yf_community {
 		
 		if($community_info["membership"] == "open"){
 			// join to community
-			$OBJ_FRIENDS = main()->init_class("friends");
+			$OBJ_FRIENDS = module("friends");
 			$OBJ_FRIENDS->_add_user_friends_ids(main()->USER_ID, $community_info["user_id"]);
 			$OBJ_FRIENDS->_add_user_friends_ids($community_info["user_id"], main()->USER_ID);
 		}
 		
 		if($community_info["membership"] == "moderated"){
 			// send handshake request
-			$OBJ_FRIENDS = main()->init_class("friends");
+			$OBJ_FRIENDS = module("friends");
 			$OBJ_HANDSHAKE = $OBJ_FRIENDS->_load_sub_module("friends_handshake");
 			$OBJ_HANDSHAKE->_add_handshake_request(main()->USER_ID, $community_info["user_id"], "Please join me to community '".$community_info["title"]."'");
 			$OBJ_FRIENDS->_add_user_friends_ids(main()->USER_ID, $community_info["user_id"]);

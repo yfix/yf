@@ -88,7 +88,7 @@ class yf_email {
 			$users_infos = user($users_ids, array("id","name","nick","photo_verified"));
 		}
 		// Process user reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$all_users_ids		= $users_ids;
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($all_users_ids);
@@ -155,7 +155,7 @@ class yf_email {
 		}
 		// Process reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($mail_info["sender"]);
 			$reput_text	= $REPUT_OBJ->_show_for_user($mail_info["sender"], $reput_info, true);
@@ -228,7 +228,7 @@ class yf_email {
 		}
 		// Process reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($mail_info["sender"]);
 			$reput_text	= $REPUT_OBJ->_show_for_user($mail_info["sender"], $reput_info, true);
@@ -292,7 +292,7 @@ class yf_email {
 		$GLOBALS['user_info'] = $receiver_info;
 		// Process reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($receiver_info["id"]);
 			$reput_text	= $REPUT_OBJ->_show_for_user($receiver_info["id"], $reput_info, true);
