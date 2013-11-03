@@ -93,10 +93,10 @@ class yf_news extends yf_module {
 				"title"			=> _prepare_html($A['title'], 0),
 				"add_date"		=> _format_date($A['add_date'], "long"),
 				"head_text"		=> nl2br($A["head_text"]),
-				"full_link"		=> "./?object=".__CLASS__."&action=full_news&id=".$A['id'],
+				"full_link"		=> "./?object=".'news'."&action=full_news&id=".$A['id'],
 //				"num_comments"	=> intval($num_comments[$A['id']]),
 			);
-			$items .= tpl()->parse(__CLASS__."/home_page_item", $replace2);
+			$items .= tpl()->parse('news'."/home_page_item", $replace2);
 		}
 		// Do not display this block if there is no latest news
 		if (empty($items)) return false;
@@ -104,7 +104,7 @@ class yf_news extends yf_module {
 		$replace = array(
 			"items"	=> $items,
 		);
-		return tpl()->parse(__CLASS__."/home_page_main", $replace);
+		return tpl()->parse('news'."/home_page_main", $replace);
 	}
 
 	/**
@@ -114,7 +114,7 @@ class yf_news extends yf_module {
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				"title"			=> _prepare_html(t("News")." - ".$A["title"]),
-				"link"			=> process_url("./?object=". __CLASS__ ."&action=full_news&id=".$A["id"]),
+				"link"			=> process_url("./?object=". 'news' ."&action=full_news&id=".$A["id"]),
 				"description"	=> nl2br(_prepare_html(strip_tags($A["head_text"]))),
 				"date"			=> $A['add_date'],
 				"author"		=> "",

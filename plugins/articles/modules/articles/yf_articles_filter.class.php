@@ -14,7 +14,7 @@ class yf_articles_filter {
 	*/
 	function _init () {
 		// Reference to the parent object
-		$this->PARENT_OBJ		= module(ARTICLES_CLASS_NAME);
+		$this->PARENT_OBJ		= module('articles');
 		// Prepare data
 		if ($this->PARENT_OBJ->USE_FILTER) {
 			$this->_prepare_filter_data();
@@ -86,7 +86,7 @@ class yf_articles_filter {
 		))) return "";
 */
 		// Filter session array name
-		$this->_filter_name	= ARTICLES_CLASS_NAME."_filter";
+		$this->_filter_name	= 'articles'."_filter";
 		// Connect common used arrays
 		include (INCLUDE_PATH."common_code.php");
 		// Array of available filter fields
@@ -141,8 +141,8 @@ class yf_articles_filter {
 	function _show_filter () {
 		if (!$this->PARENT_OBJ->USE_FILTER) return "";
 		$replace = array(
-			"save_action"	=> "./?object=".ARTICLES_CLASS_NAME."&action=save_filter".(MAIN_TYPE_ADMIN ? _add_get() : ""),
-			"clear_url"		=> "./?object=".ARTICLES_CLASS_NAME."&action=clear_filter".(MAIN_TYPE_ADMIN ? _add_get() : ""),
+			"save_action"	=> "./?object=".'articles'."&action=save_filter".(MAIN_TYPE_ADMIN ? _add_get() : ""),
+			"clear_url"		=> "./?object=".'articles'."&action=clear_filter".(MAIN_TYPE_ADMIN ? _add_get() : ""),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -151,7 +151,7 @@ class yf_articles_filter {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse(ARTICLES_CLASS_NAME."/search_filter", $replace);
+		return tpl()->parse('articles'."/search_filter", $replace);
 	}
 
 	/**
@@ -167,7 +167,7 @@ class yf_articles_filter {
 			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_REQUEST[$name];
 		}
 		if (!$silent) {
-			js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=search");
+			js_redirect("./?object=".'articles'."&action=search");
 		}
 	}
 
@@ -180,7 +180,7 @@ class yf_articles_filter {
 			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
 		}
 		if (!$silent) {
-			js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=search");
+			js_redirect("./?object=".'articles'."&action=search");
 		}
 	}
 

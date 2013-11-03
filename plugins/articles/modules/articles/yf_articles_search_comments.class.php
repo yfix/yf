@@ -10,7 +10,7 @@ class yf_articles_search_comments {
 	*/
 	function _init () {
 		// Reference to the parent object
-		$this->PARENT_OBJ		= module(ARTICLES_CLASS_NAME);
+		$this->PARENT_OBJ		= module('articles');
 	}
 
 	/**
@@ -155,7 +155,7 @@ class yf_articles_search_comments {
 		}
 		$comment_info = db()->query_fetch(
 			"SELECT * FROM ".db('comments')." 
-			WHERE object_name='".ARTICLES_CLASS_NAME."' 
+			WHERE object_name='".'articles'."' 
 				AND object_id IN(
 					SELECT id FROM ".db('articles_texts')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
@@ -168,6 +168,6 @@ class yf_articles_search_comments {
 		if (is_object($COMMENTS_OBJ)) {
 			$COMMENTS_OBJ->_delete(array("silent_mode" => 1));
 		}
-		return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=search_comments");
+		return js_redirect("./?object=".'articles'."&action=search_comments");
 	}
 }

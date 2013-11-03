@@ -14,7 +14,7 @@ class yf_articles_stats {
 	*/
 	function _init () {
 		// Reference to the parent object
-		$this->PARENT_OBJ	= module(ARTICLES_CLASS_NAME);
+		$this->PARENT_OBJ	= module('articles');
 	}
 	
 	/**
@@ -58,7 +58,7 @@ class yf_articles_stats {
 				a.summary 
 			FROM ".db('comments')." AS c,
 				".db('articles_texts')." AS a 
-			WHERE c.object_name='"._es(ARTICLES_CLASS_NAME)."' 
+			WHERE c.object_name='"._es('articles')."' 
 				AND a.status = 'active' 
 				AND a.id=c.object_id 
 			GROUP BY c.object_id 
@@ -152,7 +152,7 @@ class yf_articles_stats {
 				"user_name"			=> _prepare_html($author_name),
 				"user_profile_link"	=> $A["is_own_article"] ? _profile_link($A["user_id"]) : "",
 			);
-			$most_active_authors .= tpl()->parse(ARTICLES_CLASS_NAME."/stats_most_active_item", $replace2);
+			$most_active_authors .= tpl()->parse('articles'."/stats_most_active_item", $replace2);
 		}
 		$i = 0;
 		// Process articles groupped by categories
@@ -165,7 +165,7 @@ class yf_articles_stats {
 				"cat_nav"			=> $this->PARENT_OBJ->CATS_OBJ->_get_nav_by_item_id($cat_id),
 				"num_articles"		=> intval($num_articles),
 			);
-			$articles_by_cats .= tpl()->parse(ARTICLES_CLASS_NAME."/stats_cat_item", $replace2);
+			$articles_by_cats .= tpl()->parse('articles'."/stats_cat_item", $replace2);
 		}
 
 		// Process tags
@@ -180,9 +180,9 @@ class yf_articles_stats {
 		// Process main template
 		$replace = array(
 			"is_logged_in"				=> intval((bool) $this->PARENT_OBJ->USER_ID),
-			"show_own_articles_link"	=> $this->PARENT_OBJ->USER_ID ? "./?object=".ARTICLES_CLASS_NAME."&action=search&user_id=".$this->PARENT_OBJ->USER_ID._add_get(array("page")) : "",
-			"manage_link"				=> $this->PARENT_OBJ->USER_ID ? "./?object=".ARTICLES_CLASS_NAME."&action=manage".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : "") : "",
-			"search_link"				=> "./?object=".ARTICLES_CLASS_NAME."&action=search".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
+			"show_own_articles_link"	=> $this->PARENT_OBJ->USER_ID ? "./?object=".'articles'."&action=search&user_id=".$this->PARENT_OBJ->USER_ID._add_get(array("page")) : "",
+			"manage_link"				=> $this->PARENT_OBJ->USER_ID ? "./?object=".'articles'."&action=manage".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : "") : "",
+			"search_link"				=> "./?object=".'articles'."&action=search".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
 			"latest_articles"			=> $latest_articles,
 			"last_article_pages"		=> $last_article_pages,
 			"most_active_authors"		=> $most_active_authors,
@@ -190,7 +190,7 @@ class yf_articles_stats {
 			"most_read_articles"		=> $most_read_articles,
 			"articles_by_cats"			=> $articles_by_cats,
 		);
-		return tpl()->parse(ARTICLES_CLASS_NAME."/stats_main", $replace);
+		return tpl()->parse('articles'."/stats_main", $replace);
 	}
 	
 	/**
@@ -212,7 +212,7 @@ class yf_articles_stats {
 				"avatar"		=> _show_avatar($A["user_id"], $this->_users_infos[$A["user_id"]], 1),
 				"user_name"		=> _prepare_html($author_name),
 				"user_link"		=> $A["user_id"] ? _profile_link($A["user_id"]) : "",
-				"view_link"		=> "./?object=".ARTICLES_CLASS_NAME."&action=view&id=".$ARTICLE_ID.(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
+				"view_link"		=> "./?object=".'articles'."&action=view&id=".$ARTICLE_ID.(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
 				"add_date"		=> _format_date($A["add_date"]),
 				"title"			=> $this->PARENT_OBJ->_format_text($A["title"]),
 				"summary"		=> $this->PARENT_OBJ->_format_text($summary),
@@ -223,7 +223,7 @@ class yf_articles_stats {
 				"num_articles"	=> intval($A["num_articles"]),
 				"tags_block"	=> isset($this->_tags[$ARTICLE_ID]) ? $this->_tags[$ARTICLE_ID] : $this->PARENT_OBJ->_tags[$ARTICLE_ID],
 			);
-			$body .= tpl()->parse(ARTICLES_CLASS_NAME."/stats_item", $replace2);
+			$body .= tpl()->parse('articles'."/stats_item", $replace2);
 		}
 		return $body;
 	}
