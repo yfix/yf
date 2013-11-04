@@ -221,8 +221,8 @@ class yf_make_thumb {
 		if (!$resize_success && $this->DELETE_BAD_DEST_IMAGES && file_exists($dest_file_path)) {
 			unlink($dest_file_path);
 		}
-		if ($watermark_path) {
-// TODO: replace me with watermark apply code
+		if ($watermark_path && $dest_file_path) {
+			$this->add_watermark($dest_file_path, $watermark_path, $LIMIT_X, $LIMIT_Y);
 		}
 		// Save log
 		if ($this->ENABLE_DEBUG_LOG && ($this->LOG_TO_FILE || $this->LOG_TO_DB)) {
@@ -326,6 +326,35 @@ class yf_make_thumb {
 		}
 		return $resize_success;
 	} 
+
+	/**
+	*/
+	function add_watermark($source_img_path, $watermark_path, $width_orig, $height_orig){
+
+		$img = imagecreatefromjpeg($source_img_path);
+        $watermark = imagecreatefrompng($watermark_path);
+		imageAlphaBlending($watermark, true);
+		imageSaveAlpha($watermark, true);
+		
+        $watermarkwidth = imagesx($watermark);
+        $watermarkheight = imagesy($watermark);
+
+        $thumb_watermark_w = intval($width_orig / 1.2);
+        $thumb_watermark_h = intval(($thumb_watermark_w / $watermarkwidth) * $watermarkheight);
+
+        $thumb_watermark = imagecreatetruecolor($thumb_watermark_w, $thumb_watermark_h);
+        imagefill($thumb_watermark, 0, 0, imagecolorallocatealpha($thumb_watermark, 255, 255, 255, 127));
+        imagecopyresampled($thumb_watermark, $watermark, 0, 0, 0, 0, $thumb_watermark_w, $thumb_watermark_h, $watermarkwidth, $watermarkheight);
+
+        $watermarkwidth = imagesx($thumb_watermark);
+        $watermarkheight = imagesy($thumb_watermark);
+
+        $startwidth = (($width_orig - $watermarkwidth) / 2);
+        $startheight = (($height_orig - $watermarkheight) / 2);
+        imagecopy($img, $thumb_watermark, $startwidth, $startheight, 0, 0, $watermarkwidth, $watermarkheight);
+		imagejpeg($img, $source_img_path);
+	}
+
 
 	/**
 	* Use GD library

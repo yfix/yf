@@ -118,6 +118,7 @@ class yf_shop_supplier_panel_upload_images {
 		if (!file_exists($new_path)) {
 			mkdir($new_path, 0777, true);
 		}
+		$real_name = $new_path.'product_'.$id.'.jpg';
 		$thumb_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->THUMB_SUFFIX.'.jpg';
 		$big_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
 
@@ -125,8 +126,9 @@ class yf_shop_supplier_panel_upload_images {
 			$i++;
 			$this->resize_and_save_image($img, $id, $i);
 		} else {
-			common()->make_thumb($img, $thumb_name, 216, 216);
-			common()->make_thumb($img, $big_name, 710, 750);
+			common()->make_thumb($img, $real_name, 710, 750);
+			common()->make_thumb($img, $thumb_name, 216, 216, PROJECT_PATH.SITE_WATERMARK_FILE);
+			common()->make_thumb($img, $big_name, 710, 750, PROJECT_PATH.SITE_WATERMARK_FILE );
 			return $thumb_name;
 		}
 	}

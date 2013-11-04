@@ -161,8 +161,10 @@ class yf_manage_shop_product_images{
 			'%d'        => $product_id,
 		);
 		$url = "uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i_%s.jpg";
+		$clean_image_url = "uploads/shop/products/{subdir2}/{subdir3}/product_%d.jpg";
 
 		$url = str_replace(array_keys($replace), array_values($replace), $url);
+		$clean_image_url = str_replace(array_keys($replace), array_values($replace), $clean_image_url);
 		while(file_exists(PROJECT_PATH. str_replace('%i', $i, str_replace('%s','big',$url)))) {
 			$i++;
 		}
@@ -172,12 +174,15 @@ class yf_manage_shop_product_images{
 			if (empty($img_properties) || !$product_id) {
 				return false;
 			}
-			$img_path = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','big',$url));
+			$img_path = PROJECT_PATH.$clean_image_url;
+			$img_path_big = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','big',$url));
 			$img_path_thumb = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','thumb',$url));
+			$watermark_path = PROJECT_PATH.SITE_WATERMARK_FILE;
 
-			common()->make_thumb($v, $img_path_thumb, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y);
 			common()->make_thumb($v, $img_path, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y);
-			
+			common()->make_thumb($v, $img_path_thumb, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y, $watermark_path);
+			common()->make_thumb($v, $img_path_big, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_path);
+
 			$i++;
 		} 
 		return $i;
