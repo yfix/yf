@@ -112,7 +112,7 @@ class yf_table2 {
 		} elseif (strlen($sql)) {
 			$db = is_object($params['db']) ? $params['db'] : db();
 			if ($params['filter']) {
-				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params']);
+				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
 			}
 			if ($filter_sql) {
 				$sql_upper = strtoupper($sql);
@@ -313,7 +313,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array()) {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $sql) {
 		if (!$filter_data) {
 			return '';
 		}
@@ -376,7 +376,7 @@ class yf_table2 {
 		if ($sql) {
 			$filter_sql = ' AND '.implode(' AND ', $sql);
 		}
-		if ($filter_data['order_by']) {
+		if ($filter_data['order_by'] && strpos(strtoupper($sql), 'ORDER BY') === false) {
 			$filter_sql .= ' ORDER BY `'.db()->es($filter_data['order_by']).'` ';
 			if ($filter_data['order_direction']) {
 				$direction = strtoupper($filter_data['order_direction']);
