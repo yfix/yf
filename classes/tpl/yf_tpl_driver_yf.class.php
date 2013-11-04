@@ -50,11 +50,14 @@ class yf_tpl_driver_yf {
 	);
 	/** @var array @conf_skip Show custom class method output pattern */
 	public $_PATTERN_EXECUTE   = array(
-		// EXAMPLE:	 {execute(graphics, translate, value = blabla; extra = strtoupper)
+		// Examples: {execute(graphics, translate, value = blabla; extra = strtoupper)
 		'/(\{execute\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,false)',
 		'/(\{exec_cached\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,true)',
+		// Examples:  {block(center_area))   {block(center_area;param1=val1;param2=val2))
+		'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/ie'
+			=> 'main()->_execute(\'graphics\',\'_show_block\',\'name=$1;$2\',"{tpl_name}",0,false)',
 	);
 	/** @var array @conf_skip Include template pattern */
 	public $_PATTERN_INCLUDE   = array(

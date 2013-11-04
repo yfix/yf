@@ -29,14 +29,14 @@
 		<div class="row-fluid">
 			<div class="span2">
 {execute(graphics,_show_menu;name=user_main_menu)}
-{execute(graphics,_show_block,name=left_area)}
+{block(left_area)}
 			</div>
 			<div class="span8">
-{execute(graphics,_show_block;name=center_area)}
+{block(center_area)}
 			</div>
 			<div class="span2">
 {execute(common,show_left_filter)}
-{{--{execute(graphics,_show_block,name=right_area)}--}}
+{{--{block(right_area)}--}}
 			</div>
 		</div>
 	</div>
