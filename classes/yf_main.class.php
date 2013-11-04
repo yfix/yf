@@ -983,7 +983,7 @@ class yf_main {
 			}
 			$storages['dev_project'] = array(PROJECT_PATH. $project_path_dev);
 		}
-		if ($site_path && $site_path != $project_path) {
+		if (strlen($SITE_PATH. $site_path) && ($SITE_PATH. $site_path) != (PROJECT_PATH. $project_path)) {
 			$storages['site'] 		= array($SITE_PATH. $site_path);
 		}
 		$storages['site_hook']		= array($SITE_PATH. $site_path, $cur_hook_prefix);
