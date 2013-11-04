@@ -13,9 +13,6 @@ class yf_forum_user {
 	* Constructor
 	*/
 	function _init () {
-		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
-		// Required arrays
 		$this->_view_sig		= array(1 => t("Yes"), 0 => t("No"));
 		$this->_view_images		= array(1 => t("Yes"), 0 => t("No"));
 		$this->_view_avatars	= array(1 => t("Yes"), 0 => t("No"));
@@ -74,14 +71,14 @@ class yf_forum_user {
 				"is_my_info"			=> $is_my_info,
 				"user_name"				=> _prepare_html($user_info["name"]),
 				"user_details"			=> module('forum')->_show_user_details($user_info, $user_is_online, $user_info["name"]),
-				"find_user_posts_link"	=> FORUM_USER_ID ? "./?object=".FORUM_CLASS_NAME."&action=search&result_type=posts&user_id=".$user_info["id"]."&q=results"._add_get(array("page")) : "",
-				"find_user_topics_link"	=> FORUM_USER_ID ? "./?object=".FORUM_CLASS_NAME."&action=search&result_type=topics&user_id=".$user_info["id"]."&q=results"._add_get(array("page")) : "",
+				"find_user_posts_link"	=> FORUM_USER_ID ? "./?object=".'forum'."&action=search&result_type=posts&user_id=".$user_info["id"]."&q=results"._add_get(array("page")) : "",
+				"find_user_topics_link"	=> FORUM_USER_ID ? "./?object=".'forum'."&action=search&result_type=topics&user_id=".$user_info["id"]."&q=results"._add_get(array("page")) : "",
 // FIXME
-				"send_pm_link"			=> /*FORUM_USER_ID ? "./?object=".FORUM_CLASS_NAME."&action=send_pm&id=".$user_info["id"]._add_get(array("page")) : */"",
-				"send_email_link"		=> FORUM_USER_ID ? "./?object=".FORUM_CLASS_NAME."&action=email_user&id=".$user_info["id"]._add_get(array("page")) : "",
-				"edit_profile_link"		=> $is_my_info ? "./?object=".FORUM_CLASS_NAME."&action=edit_profile"._add_get(array("page")) : "",
-				"edit_user_link"		=> FORUM_IS_ADMIN ? "./?object=".FORUM_CLASS_NAME."&action=edit_profile&id=".$user_info["id"]._add_get(array("page")) : "",
-				"delete_user_link"		=> FORUM_IS_ADMIN && $user_info["group"] != 1 ? "./?object=".FORUM_CLASS_NAME."&action=delete_profile&id=".$user_info["id"]._add_get(array("page")) : "",
+				"send_pm_link"			=> /*FORUM_USER_ID ? "./?object=".'forum'."&action=send_pm&id=".$user_info["id"]._add_get(array("page")) : */"",
+				"send_email_link"		=> FORUM_USER_ID ? "./?object=".'forum'."&action=email_user&id=".$user_info["id"]._add_get(array("page")) : "",
+				"edit_profile_link"		=> $is_my_info ? "./?object=".'forum'."&action=edit_profile"._add_get(array("page")) : "",
+				"edit_user_link"		=> FORUM_IS_ADMIN ? "./?object=".'forum'."&action=edit_profile&id=".$user_info["id"]._add_get(array("page")) : "",
+				"delete_user_link"		=> FORUM_IS_ADMIN && $user_info["group"] != 1 ? "./?object=".'forum'."&action=delete_profile&id=".$user_info["id"]._add_get(array("page")) : "",
 				"user_total_posts"		=> intval($user_info["user_posts"]),
 				"posts_per_day"			=> floatval($posts_per_day),
 				"posts_percent"			=> floatval($posts_percent),
@@ -103,7 +100,7 @@ class yf_forum_user {
 				"user_add_info"			=> $user_info["add_info"],
 				"user_local_time"		=> module('forum')->_show_date(time() - (module('forum')->SETTINGS["GLOBAL_TIME_OFFSET"] * 3600) - (FORUM_USER_TIME_ZONE * 3600) + $user_info["user_timezone"] * 3600),
 			);
-			$body .= tpl()->parse(FORUM_CLASS_NAME."/view_profile", $replace);
+			$body .= tpl()->parse('forum'."/view_profile", $replace);
 		} else {
 			return module('forum')->_show_error(t("no_such_user"));
 		}
@@ -142,7 +139,7 @@ class yf_forum_user {
 			"posts_per_day"	=> round($user_info["user_posts"] / (time() - $user_info["user_regdate"]) * 3600 * 24, 2),
 			"recent_topics"	=> $this->_show_recent_read_topics(),
 		);
-		$content = tpl()->parse(FORUM_CLASS_NAME."/user_cp/home", $replace);
+		$content = tpl()->parse('forum'."/user_cp/home", $replace);
 		$body = $this->_user_cp_main_tpl($content);
 		return module('forum')->_show_main_tpl($body);
 	}
@@ -195,7 +192,7 @@ class yf_forum_user {
 				}
 				$img_file = REAL_PATH. module('forum')->SETTINGS["AVATARS_DIR"]. common()->rand_name(16). ".jpg";
 				move_uploaded_file($_FILES["user_avatar"]["tmp_name"], $img_file);
-				$I = &main()->init_class("resize_images", "classes/");
+				$I = &_class("resize_images");
 				$I->set_source($img_file);
 				$I->set_limits(module('forum')->SETTINGS["AVATAR_MAX_X"], module('forum')->SETTINGS["AVATAR_MAX_Y"]);
 				$I->save($img_file);
@@ -222,7 +219,7 @@ class yf_forum_user {
 			return js_redirect(getenv("HTTP_REFERER"), false);
 		} else {
 			$replace = array(
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]._add_get(array("page")),
 				"birth_date_box"	=> $this->_box("user_birth", $user_info["user_birth"]),
 				"user_website"		=> _prepare_html($user_info["user_website"]),
 				"user_icq"			=> _prepare_html($user_info["user_icq"]),
@@ -236,13 +233,13 @@ class yf_forum_user {
 				"avatar_max_y"		=> intval(module('forum')->SETTINGS["AVATAR_MAX_Y"]),
 				"avatar_max_bytes"	=> intval(module('forum')->SETTINGS["AVATAR_MAX_BYTES"]),
 				"avatar_image_types"=> module('forum')->SETTINGS["AVATAR_IMAGE_TYPES"],
-				"user_sig_with_bb"	=> $this->BB_OBJ->_process_text($user_info["user_sig"]),
+				"user_sig_with_bb"	=> _class('bb_codes')->_process_text($user_info["user_sig"]),
 				"user_sig"			=> _prepare_html($user_info["user_sig"]),
-				"delete_avatar_link"=> "./?object=".FORUM_CLASS_NAME."&action=delete_avatar"._add_get(array("page")),
+				"delete_avatar_link"=> "./?object=".'forum'."&action=delete_avatar"._add_get(array("page")),
 				"global_users_mode"	=> (int)(module('forum')->SETTINGS["USE_GLOBAL_USERS"]),
 				"max_sig_length"	=> intval(module('forum')->SETTINGS["MAX_SIG_LENGTH"]),
 			);
-			$content = tpl()->parse(FORUM_CLASS_NAME."/user_cp/edit_profile", $replace);
+			$content = tpl()->parse('forum'."/user_cp/edit_profile", $replace);
 			$body = $this->_user_cp_main_tpl($content);
 		}
 		return module('forum')->_show_main_tpl($body);
@@ -275,7 +272,7 @@ class yf_forum_user {
 			return module('forum')->_show_error("You are not allowed to edit other users settings");
 		}
 		// Load time zone module
-		$TIME_ZONE_OBJ = main()->init_class("time_zone", "classes/");
+		$TIME_ZONE_OBJ = _class("time_zone");
 		// Do save user settings
 		if (count($_POST)) {
 			$sql = "UPDATE ".db('forum_users')." SET
@@ -293,7 +290,7 @@ class yf_forum_user {
 		// Show form
 		} else {
 			$replace = array(
-				"form_action"			=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+				"form_action"			=> "./?object=".'forum'."&action=".$_GET["action"]._add_get(array("page")),
 				"time_zone_box"			=> is_object($TIME_ZONE_OBJ) ? $TIME_ZONE_OBJ->_time_zone_box("time_zone", $user_info["user_timezone"]) : "",
 				"dst_status"			=> intval($user_info["dst_status"]),
 				"view_sig_box"			=> $this->_box("view_sig",			$user_info["view_sig"]),
@@ -303,7 +300,7 @@ class yf_forum_user {
 				"topics_per_page_box"	=> $this->_box("topics_per_page",	$user_info["topics_per_page"]),
 				"user_time"				=> module('forum')->_show_date(),
 			);
-			$content = tpl()->parse(FORUM_CLASS_NAME."/user_cp/board_settings", $replace);
+			$content = tpl()->parse('forum'."/user_cp/board_settings", $replace);
 		}
 		$body = $this->_user_cp_main_tpl($content);
 		return module('forum')->_show_main_tpl($body);
@@ -315,14 +312,14 @@ class yf_forum_user {
 	function _user_cp_menu () {
 		// Process template
 		$replace = array(
-			"edit_info_link"		=> "./?object=".FORUM_CLASS_NAME."&action=edit_profile"._add_get(array("page")),
-			"board_settings_link"	=> "./?object=".FORUM_CLASS_NAME."&action=edit_settings"._add_get(array("page")),
-			"subscr_topics_link"	=> module('forum')->SETTINGS["ALLOW_TRACK_TOPIC"] ? "./?object=".FORUM_CLASS_NAME."&action=tracker_manage_topics"._add_get(array("page")) : "",
-			"subscr_forums_link"	=> module('forum')->SETTINGS["ALLOW_TRACK_FORUM"] ? "./?object=".FORUM_CLASS_NAME."&action=tracker_manage_forums"._add_get(array("page")) : "",
+			"edit_info_link"		=> "./?object=".'forum'."&action=edit_profile"._add_get(array("page")),
+			"board_settings_link"	=> "./?object=".'forum'."&action=edit_settings"._add_get(array("page")),
+			"subscr_topics_link"	=> module('forum')->SETTINGS["ALLOW_TRACK_TOPIC"] ? "./?object=".'forum'."&action=tracker_manage_topics"._add_get(array("page")) : "",
+			"subscr_forums_link"	=> module('forum')->SETTINGS["ALLOW_TRACK_FORUM"] ? "./?object=".'forum'."&action=tracker_manage_forums"._add_get(array("page")) : "",
 			"need_subscr_block"		=> (int)(module('forum')->SETTINGS["ALLOW_TRACK_TOPIC"] || module('forum')->SETTINGS["ALLOW_TRACK_FORUM"]),
-			"announce_link"			=> FORUM_IS_ADMIN && module('forum')->SETTINGS["ALLOW_ANNOUNCES"] ? "./?object=".FORUM_CLASS_NAME."&action=edit_announces"._add_get(array("page")) : "",
+			"announce_link"			=> FORUM_IS_ADMIN && module('forum')->SETTINGS["ALLOW_ANNOUNCES"] ? "./?object=".'forum'."&action=edit_announces"._add_get(array("page")) : "",
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/user_cp/menu", $replace);
+		return tpl()->parse('forum'."/user_cp/menu", $replace);
 	}
 
 	/**
@@ -352,7 +349,7 @@ class yf_forum_user {
 		}
 		// Init topic item object
 		if (!empty($topics_array)) {
-			$TOPIC_ITEM_OBJ = main()->init_class("forum_topic_item", FORUM_MODULES_DIR);
+			$TOPIC_ITEM_OBJ = _class("forum_topic_item", FORUM_MODULES_DIR);
 		}
 		// Process posts
 		if (!empty($topics_array) && is_object($TOPIC_ITEM_OBJ)) {
@@ -407,16 +404,16 @@ class yf_forum_user {
 					"last_post_author_link"	=> $post_info["user_id"] ? module('forum')->_user_profile_link($post_info["user_id"]) : "",
 					"last_post_subject"		=> _prepare_html($subject),
 					"last_post_date"		=> module('forum')->_show_date($post_info["created"], "last_post_date"),
-					"last_post_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$post_info["topic"]._add_get(array("page")),
+					"last_post_link"		=> "./?object=".'forum'."&action=view_topic&id=".$post_info["topic"]._add_get(array("page")),
 				);
-				$last_posts[$post_info["topic"]] = tpl()->parse(FORUM_CLASS_NAME."/view_forum_last_posts", $replace3);
+				$last_posts[$post_info["topic"]] = tpl()->parse('forum'."/view_forum_last_posts", $replace3);
 			}
 		}
 		// Process topic pages
 		if (module('forum')->SETTINGS["SHOW_TOPIC_PAGES"] && !empty($topic_pages_ids)) {
 			$topic_pages = array();
 			foreach ((array)$topic_pages_ids as $topic_id => $topic_num_posts) {
-				list(,$topic_pages[$topic_id],) = common()->divide_pages("", "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$topic_id, null, module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"], $topic_num_posts, FORUM_CLASS_NAME."/pages_2/");
+				list(,$topic_pages[$topic_id],) = common()->divide_pages("", "./?object=".'forum'."&action=view_topic&id=".$topic_id, null, module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"], $topic_num_posts, 'forum'."/pages_2/");
 			}
 		}
 		return array($last_posts, $topic_pages);
@@ -469,7 +466,7 @@ class yf_forum_user {
 			db()->query("DELETE FROM ".db('forum_users')." WHERE id=".intval($user_info["id"]));
 		}
 		// Redirect user
-		js_redirect("./?object=".FORUM_CLASS_NAME);
+		js_redirect("./?object=".'forum');
 	}
 
 	/**
@@ -541,7 +538,7 @@ class yf_forum_user {
 						"login"			=> $user_info["name"],
 						"password"		=> $user_info["pswd"],
 					);
-					$text = tpl()->parse(FORUM_CLASS_NAME."/send_pswd/email", $replace);
+					$text = tpl()->parse('forum'."/send_pswd/email", $replace);
 					// Send email with user password
 					common()->send_mail(module('forum')->SETTINGS["ADMIN_EMAIL_FROM"], t("administator")." ".conf('website_name'), $user_info["user_email"], $user_info["user_email"], t("Lost password"), $text, $text);
 					$body .= t("password_sent");
@@ -555,12 +552,12 @@ class yf_forum_user {
 		// Show form
 		} else {
 			$replace = array(
-				"form_action"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"],
+				"form_action"	=> "./?object=".'forum'."&action=".$_GET["action"],
 				"use_captcha"	=> intval($use_captcha),
-				"captcha_image"	=> $use_captcha ? module('forum')->CAPTCHA->show_html("./?object=".FORUM_CLASS_NAME."&action=show_captcha_image") : "",
+				"captcha_image"	=> $use_captcha ? module('forum')->CAPTCHA->show_html("./?object=".'forum'."&action=show_captcha_image") : "",
 				"captcha_hash"	=> /*$use_captcha ? $_SESSION[module('forum')->CAPTCHA->var_name] : */"",
 			);
-			$body .= tpl()->parse(FORUM_CLASS_NAME."/send_pswd/main_form", $replace);
+			$body .= tpl()->parse('forum'."/send_pswd/main_form", $replace);
 		}
 		return module('forum')->_show_main_tpl($body);
 	}
@@ -573,7 +570,7 @@ class yf_forum_user {
 			return module('forum')->_show_error("Disabled by the site admin!");
 		}
 		// Load time zone module
-		$TIME_ZONE_OBJ = main()->init_class("time_zone", "classes/");
+		$TIME_ZONE_OBJ = _class("time_zone");
 		// Check if need to use captcha
 		$use_captcha = module('forum')->SETTINGS["USE_CAPTCHA"] && is_object(module('forum')->CAPTCHA);
 		// Process post data
@@ -599,22 +596,22 @@ class yf_forum_user {
 			if (!common()->_error_exists()) {
 				// Send confirmation email if needed
 				if (module('forum')->SETTINGS["CONFIRM_REGISTER"]) {
-					$E = main()->init_class("encryption", "classes/");
+					$E = _class("encryption");
 					if (!empty(module('forum')->SETTINGS["SECRET_KEY"])) {
 						$E->set_key(module('forum')->SETTINGS["SECRET_KEY"]);
 					}
 					$confirm_string = $E->_safe_encrypt_with_base64(time()."##".$_POST["email"]."##".$_POST["login"]."##".$_POST["pswd"]);
 					// Get message template
 					$replace2 = array(
-						"link" => process_url("./?object=".FORUM_CLASS_NAME."&action=confirm_register&key=".$confirm_string),
+						"link" => process_url("./?object=".'forum'."&action=confirm_register&key=".$confirm_string),
 					);
-					$text = tpl()->parse(FORUM_CLASS_NAME."/register/confirm_email", $replace2);
+					$text = tpl()->parse('forum'."/register/confirm_email", $replace2);
 					// Send confirmation email
 					common()->send_mail(module('forum')->SETTINGS["ADMIN_EMAIL_FROM"], "administrator", $_POST["email"], "Forum new user", "Confirm registration", $text, $text);
 					// Show result message
 					$replace = array(
 					);
-					$body = tpl()->parse(FORUM_CLASS_NAME."/register/email_sent", $replace);
+					$body = tpl()->parse('forum'."/register/email_sent", $replace);
 				} else {
 					$user_info = array(
 						"email"			=>	$_POST["email"],
@@ -627,7 +624,7 @@ class yf_forum_user {
 					// Show result message
 					$replace = array(
 					);
-					$body = tpl()->parse(FORUM_CLASS_NAME."/register/success", $replace);
+					$body = tpl()->parse('forum'."/register/success", $replace);
 				}
 			} else {
 				return module('forum')->_show_error(_e());
@@ -635,13 +632,13 @@ class yf_forum_user {
 		// Show form
 		} else {
 			$replace = array(
-				"form_action"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"],
+				"form_action"	=> "./?object=".'forum'."&action=".$_GET["action"],
 				"time_zone_box"	=> is_object($TIME_ZONE_OBJ) ? $TIME_ZONE_OBJ->_time_zone_box("time_zone", $user_info["user_timezone"]) : "",
 				"use_captcha"	=> intval($use_captcha),
-				"captcha_image"	=> $use_captcha ? module('forum')->CAPTCHA->show_html("./?object=".FORUM_CLASS_NAME."&action=show_captcha_image") : "",
+				"captcha_image"	=> $use_captcha ? module('forum')->CAPTCHA->show_html("./?object=".'forum'."&action=show_captcha_image") : "",
 				"captcha_hash"	=> /*$use_captcha ? $_SESSION[module('forum')->CAPTCHA->var_name] : */"",
 			);
-			$body = tpl()->parse(FORUM_CLASS_NAME."/register/main_form", $replace);
+			$body = tpl()->parse('forum'."/register/main_form", $replace);
 		}
 		return module('forum')->_show_main_tpl($body);
 	}
@@ -654,7 +651,7 @@ class yf_forum_user {
 			return module('forum')->_show_error("Disabled by the site admin!");
 		}
 		if (!empty($_GET["key"]) && module('forum')->SETTINGS["CONFIRM_REGISTER"]) {
-			$E = main()->init_class("encryption", "classes/");
+			$E = _class("encryption");
 			if (!empty(module('forum')->SETTINGS["SECRET_KEY"])) {
 				$E->set_key(module('forum')->SETTINGS["SECRET_KEY"]);
 			}
@@ -677,7 +674,7 @@ class yf_forum_user {
 					$this->_create_new_user($user_info);
 					$replace = array(
 					);
-					$body = tpl()->parse(FORUM_CLASS_NAME."/register/success", $replace);
+					$body = tpl()->parse('forum'."/register/success", $replace);
 				} else {
 					return module('forum')->_show_error(_e());
 				}
@@ -709,7 +706,7 @@ class yf_forum_user {
 			"menu"			=> $this->_user_cp_menu(),
 			"content"		=> $content,
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/user_cp/main", $replace);
+		return tpl()->parse('forum'."/user_cp/main", $replace);
 	}
 
 	/**

@@ -8,19 +8,10 @@
 * @version		1.0
 */
 class yf_friends_manage {
-
-	/**
-	* Framework constructor
-	*/
-	function _init () {
-		// Reference to parent object
-		$this->PARENT_OBJ	= module(FRIENDS_CLASS_NAME);
-	}
-
-	//-----------------------------------------------------------------------------
+	
 	// Add user to friends list
 	function add () {
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		// Check target user id
@@ -34,16 +25,16 @@ class yf_friends_manage {
 			return _e("No such user!");
 		}
 		// Check if user is already a friend
-		$IS_A_FRIEND = $this->PARENT_OBJ->_is_a_friend($this->PARENT_OBJ->USER_ID, $_GET["id"]);
+		$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $_GET["id"]);
 		if ($IS_A_FRIEND) {
 			return _e("This user is already in your friends list");
 		}
 		// Do add user
-		$this->PARENT_OBJ->_add_user_friends_ids($this->PARENT_OBJ->USER_ID, $_GET["id"]);
+		module('friends')->_add_user_friends_ids(module('friends')->USER_ID, $_GET["id"]);
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
 			_class_safe("output_cache")->_exec_trigger(array(
-				"user_id"	=> $this->PARENT_OBJ->USER_ID,
+				"user_id"	=> module('friends')->USER_ID,
 				"user_id2"	=> $target_user_info['id'],
 			));
 		}
@@ -51,25 +42,24 @@ class yf_friends_manage {
 		common()->_log_user_action("add_friend", $_GET["id"], "friends");
 
 		// Send notify email
-		if ($this->PARENT_OBJ->SEND_EMAIL_NOTIFY) {
+		if (module('friends')->SEND_EMAIL_NOTIFY) {
 			$replace = array(
 				"target_user_name"	=> _display_name($target_user_info),
-				"user_name"			=> _display_name($this->PARENT_OBJ->_user_info),
-				"profile_link"		=> _profile_link($this->PARENT_OBJ->_user_info["id"]),
+				"user_name"			=> _display_name(module('friends')->_user_info),
+				"profile_link"		=> _profile_link(module('friends')->_user_info["id"]),
 			);
-			$mail_text = tpl()->parse(FRIENDS_CLASS_NAME."/email_when_added", $replace);
+			$mail_text = tpl()->parse('friends'."/email_when_added", $replace);
 			common()->quick_send_mail($target_user_info["email"], "You have been added to user's friends list", $mail_text);
 		}
 		// Update user stats
-		_class_safe("user_stats")->_update(array("user_id" => $this->PARENT_OBJ->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => module('friends')->USER_ID));
 		// Return user to the "manage" page
-		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=view_all_friends");
+		return js_redirect("./?object=".'friends'."&action=view_all_friends");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Delete selected friend
 	function delete () {
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -81,22 +71,22 @@ class yf_friends_manage {
 			return _e();
 		}
 		// Do delete
-		$this->PARENT_OBJ->_del_user_friends_ids($this->PARENT_OBJ->USER_ID, $target_user_info);
+		module('friends')->_del_user_friends_ids(module('friends')->USER_ID, $target_user_info);
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
 			_class_safe("output_cache")->_exec_trigger(array(
-				"user_id"	=> $this->PARENT_OBJ->USER_ID,
+				"user_id"	=> module('friends')->USER_ID,
 				"user_id2"	=> $target_user_info['id'],
 			));
 		}
 		// Send notify email
-		if ($this->PARENT_OBJ->SEND_EMAIL_NOTIFY) {
+		if (module('friends')->SEND_EMAIL_NOTIFY) {
 			$replace = array(
 				"target_user_name"	=> _display_name($target_user_info),
-				"user_name"			=> _display_name($this->PARENT_OBJ->_user_info),
-				"profile_link"		=> _profile_link($this->PARENT_OBJ->_user_info["id"]),
+				"user_name"			=> _display_name(module('friends')->_user_info),
+				"profile_link"		=> _profile_link(module('friends')->_user_info["id"]),
 			);
-			$mail_text = tpl()->parse(FRIENDS_CLASS_NAME."/email_when_deleted", $replace);
+			$mail_text = tpl()->parse('friends'."/email_when_deleted", $replace);
 			common()->quick_send_mail($target_user_info["email"], "You have been deleted from user's friends list", $mail_text);
 		}
 
@@ -104,12 +94,11 @@ class yf_friends_manage {
 		common()->_log_user_action("del_friend", $_GET["id"], "friends");
 
 		// Update user stats
-		_class_safe("user_stats")->_update(array("user_id" => $this->PARENT_OBJ->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => module('friends')->USER_ID));
 		// Return user back
-		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=view_all_friends");
+		return js_redirect("./?object=".'friends'."&action=view_all_friends");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Get current user friends ids array
 	function _get_user_friends_ids ($target_user_id) {
 		$cur_friends_ids = array();
@@ -128,7 +117,6 @@ class yf_friends_manage {
 		return $cur_friends_ids;
 	}
 
-	//-----------------------------------------------------------------------------
 	// Add friends to user's friends list
 	function _add_user_friends_ids ($target_user_id, $add_friends_ids = array()) {
 		$cur_friends_ids = $this->_get_user_friends_ids($target_user_id);
@@ -143,7 +131,6 @@ class yf_friends_manage {
 		$this->_save_user_friends_ids ($target_user_id, $cur_friends_ids);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Delete friends to user's friends list
 	function _del_user_friends_ids ($target_user_id, $del_friends_ids = array()) {
 		$cur_friends_ids = $this->_get_user_friends_ids($target_user_id);
@@ -160,7 +147,6 @@ class yf_friends_manage {
 		$this->_save_user_friends_ids ($target_user_id, $cur_friends_ids);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Save friends
 	function _save_user_friends_ids ($target_user_id, $friends_array = array()) {
 		// Save friends ids

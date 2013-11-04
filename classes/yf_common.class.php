@@ -272,7 +272,6 @@ class yf_common {
 		return $result_string;
 	}
 
-
 	/**
 	* Return file size formatted
 	*/
@@ -1029,8 +1028,7 @@ class yf_common {
 		include_once 'strip_tags_smart.php';
 		return strip_tags_smart($content);
 	}
-	
-	
+
 	/**
 	* strip_tags_smart
 	*/

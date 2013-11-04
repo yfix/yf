@@ -66,7 +66,6 @@ echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
 		}
 */
 
-
 		$this->fss_exists = function_exists("fss_prep_replace");
 
 	}
@@ -121,7 +120,6 @@ echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
 		return $result;
 	}
 
-
 	/**
 	* Strip out all non-7bit ASCII bytes
 	* If you need to transmit a string to system which you know can only
@@ -163,8 +161,7 @@ echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
 				$GLOBALS["fss"]["unaccent"] = fss_prep_replace($s);
 			}
 			$str = fss_exec_replace($GLOBALS["fss"]["unaccent"], $str);
-			
-			
+
 			return $str;
 		}
 		$str = strtr($str, $this->UTF8_UPPER_ACCENTS);

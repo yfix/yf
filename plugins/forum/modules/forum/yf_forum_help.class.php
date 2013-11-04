@@ -27,22 +27,22 @@ class yf_forum_help {
 				"text"	=> $help_info["text"],
 				"title"	=> $help_info["title"],
 			);
-			$body = tpl()->parse(FORUM_CLASS_NAME."/help_item", $replace);
+			$body = tpl()->parse('forum'."/help_item", $replace);
 		// Show items list
 		} else {
 			$Q = db()->query("SELECT * FROM ".db('faq')." ORDER BY title ASC");
 			while ($A = db()->fetch_assoc($Q)) {
 				$items[$A["id"]] = array(
-					"topic_link"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$A["id"],
+					"topic_link"	=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$A["id"],
 					"topic_name"	=> $A["title"],
 					"desc"			=> $A["description"],
 				);
 			}
 			$replace = array(
-				"form_action"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+				"form_action"	=> "./?object=".'forum'."&action=".$_GET["action"]._add_get(array("page")),
 				"items"			=> $items,
 			);
-			$body = tpl()->parse(FORUM_CLASS_NAME."/help_main", $replace);
+			$body = tpl()->parse('forum'."/help_main", $replace);
 		}
 		return module('forum')->_show_main_tpl($body);
 	}
@@ -54,7 +54,7 @@ class yf_forum_help {
 		if (!module('forum')->SETTINGS["SHOW_HELP"]) {
 			return module('forum')->_show_error("Help is disabled");
 		}
-		return tpl()->parse(FORUM_CLASS_NAME."/bb_code_help");
+		return tpl()->parse('forum'."/bb_code_help");
 	}
 	
 	/**

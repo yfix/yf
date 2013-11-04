@@ -62,8 +62,6 @@ class yf_forum_search {
 	* Framework constructor
 	*/
 	function _init () {
-		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
 		// Get online users ids for those who posted here
 		foreach ((array)module("forum")->online_array as $online_info) {
 			if (!empty($online_info["user_id"]) && !empty($this->_users_array[$online_info["user_id"]])) {
@@ -125,7 +123,7 @@ class yf_forum_search {
 	*/
 	function _search_form ($force_stpl = "") {
 		$replace = array(
-			"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]. ($_GET["language"] ? "&language=".$_GET["language"] : ""),
+			"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]. ($_GET["language"] ? "&language=".$_GET["language"] : ""),
 			"prune_days_box"	=> $this->_box("prune_days", 1000),
 			"forums_box"		=> $this->_box("forums", "all"),
 			"sort_by_box"		=> $this->_box("sort_by", "last_post_date"),
@@ -136,7 +134,7 @@ class yf_forum_search {
 		if (!empty($force_stpl)) {
 			$body = tpl()->parse($force_stpl, $replace);
 		} else {
-			$body = module('forum')->_show_main_tpl(tpl()->parse(FORUM_CLASS_NAME."/search/form_main", $replace));
+			$body = module('forum')->_show_main_tpl(tpl()->parse('forum'."/search/form_main", $replace));
 		}
 		return $body;
 	}
@@ -244,7 +242,7 @@ class yf_forum_search {
 		}
 		if (!empty($topics_array)) {
 			// Init topic item object
-			$TOPIC_ITEM_OBJ = main()->init_class("forum_topic_item", FORUM_MODULES_DIR);
+			$TOPIC_ITEM_OBJ = _class("forum_topic_item", FORUM_MODULES_DIR);
 			// Process posts
 			if (is_object($TOPIC_ITEM_OBJ)) {
 				foreach ((array)$topics_array as $topic_info) {
@@ -260,7 +258,7 @@ class yf_forum_search {
 			"pages"			=> empty($this->FORCE_LIMIT) ? trim($this->pages) : "",
 			"board_fast_nav"=> module('forum')->SETTINGS["ALLOW_FAST_JUMP_BOX"] ? module('forum')->_board_fast_nav_box() : "",
 		);
-		return !empty($items) ? module('forum')->_show_main_tpl(tpl()->parse(FORUM_CLASS_NAME."/search/result_topics_main", $replace)) : module('forum')->_show_error("No topics matching your search query found!");
+		return !empty($items) ? module('forum')->_show_main_tpl(tpl()->parse('forum'."/search/result_topics_main", $replace)) : module('forum')->_show_error("No topics matching your search query found!");
 	}
 
 	/**
@@ -291,7 +289,7 @@ class yf_forum_search {
 				}
 			}
 			// Process users reputation
-			$REPUT_OBJ = main()->init_class("reputation");
+			$REPUT_OBJ = module("reputation");
 			if (is_object($REPUT_OBJ)) {
 				$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($users_ids);
 				foreach ((array)$users_reput_info as $reput_user_id => $reput_info) {
@@ -299,7 +297,7 @@ class yf_forum_search {
 				}
 			}
 			// Init post item object
-			$POST_ITEM_OBJ = main()->init_class("forum_post_item", FORUM_MODULES_DIR);
+			$POST_ITEM_OBJ = _class("forum_post_item", FORUM_MODULES_DIR);
 			// Process posts
 			if (!empty($topics_array) && is_object($POST_ITEM_OBJ)) {
 				foreach ((array)$posts as $post_info) {
@@ -334,7 +332,7 @@ class yf_forum_search {
 			"pages"			=> empty($this->FORCE_LIMIT) ? trim($this->pages) : "",
 			"board_fast_nav"=> module('forum')->SETTINGS["ALLOW_FAST_JUMP_BOX"] ? module('forum')->_board_fast_nav_box() : "",
 		);
-		return !empty($items) ? module('forum')->_show_main_tpl(tpl()->parse(FORUM_CLASS_NAME."/search/result_posts_main", $replace)) : module('forum')->_show_error("No posts matching your search query found!");
+		return !empty($items) ? module('forum')->_show_main_tpl(tpl()->parse('forum'."/search/result_posts_main", $replace)) : module('forum')->_show_error("No posts matching your search query found!");
 	}
 
 	/**
@@ -367,7 +365,7 @@ class yf_forum_search {
 			$topic_pages = array();
 			foreach ((array)$topic_pages_ids as $topic_id => $topic_num_posts) {
 				$topics_per_page = !empty(module('forum')->USER_SETTINGS["TOPICS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["TOPICS_PER_PAGE"] : module('forum')->SETTINGS["NUM_TOPICS_ON_PAGE"];
-				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages("", "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$topic_id, null, $topics_per_page, $topic_num_posts + 1, FORUM_CLASS_NAME."/pages_2/");
+				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages("", "./?object=".'forum'."&action=view_topic&id=".$topic_id, null, $topics_per_page, $topic_num_posts + 1, 'forum'."/pages_2/");
 			}
 		}
 		// Process last posts records
@@ -384,9 +382,9 @@ class yf_forum_search {
 					"last_post_author_link"	=> $post_info["user_id"] ? module('forum')->_user_profile_link($post_info["user_id"]) : "",
 					"last_post_subject"		=> _prepare_html($subject),
 					"last_post_date"		=> module('forum')->_show_date($post_info["created"], "last_post_date"),
-					"last_post_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$post_info["topic"].($_total_pages[$post_info["topic"]] > 1 ? "&page=".$_total_pages[$post_info["topic"]] : "")."#last_post",
+					"last_post_link"		=> "./?object=".'forum'."&action=view_topic&id=".$post_info["topic"].($_total_pages[$post_info["topic"]] > 1 ? "&page=".$_total_pages[$post_info["topic"]] : "")."#last_post",
 				);
-				$last_posts[$post_info["topic"]] = tpl()->parse(FORUM_CLASS_NAME."/view_forum_last_posts", $replace3);
+				$last_posts[$post_info["topic"]] = tpl()->parse('forum'."/view_forum_last_posts", $replace3);
 			}
 		}
 		return array($last_posts, $topic_pages);
@@ -461,10 +459,10 @@ class yf_forum_search {
 			}
 			$matched_records = intval($matched_records);
 			// Get pages string
-			$path = "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"].$q."&q=results".($_GET["language"] ? "&language=".$_GET["language"] : "");
+			$path = "./?object=".'forum'."&action=".$_GET["action"].$q."&q=results".($_GET["language"] ? "&language=".$_GET["language"] : "");
 			$posts_per_page		= !empty(module('forum')->USER_SETTINGS["POSTS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["POSTS_PER_PAGE"] : module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"];
 			$topics_per_page	= !empty(module('forum')->USER_SETTINGS["TOPICS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["TOPICS_PER_PAGE"] : module('forum')->SETTINGS["NUM_TOPICS_ON_PAGE"];
-			list($limit_sql, $this->pages, ) = common()->divide_pages(null, $path, null, $AF["result_type"] == "topics" ? $topics_per_page : $posts_per_page, $matched_records, FORUM_CLASS_NAME."/pages_1/");
+			list($limit_sql, $this->pages, ) = common()->divide_pages(null, $path, null, $AF["result_type"] == "topics" ? $topics_per_page : $posts_per_page, $matched_records, 'forum'."/pages_1/");
 		} else {
 			$limit_sql = " LIMIT 0,".$this->FORCE_LIMIT;
 		}

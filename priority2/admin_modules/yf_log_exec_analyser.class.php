@@ -106,7 +106,7 @@ class yf_log_exec_analyser {
 		if ($num_new_records > 0) {
 			// Check if folder exists and create it elsewhere
 			if (!file_exists($this->STATS_ARCHIVE_DIR)) {
-				$DIR_OBJ = main()->init_class("dir", "classes/");
+				$DIR_OBJ = _class("dir");
 				$DIR_OBJ->mkdir_m($this->STATS_ARCHIVE_DIR, 0777);
 			}
 			// User agents

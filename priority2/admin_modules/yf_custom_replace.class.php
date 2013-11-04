@@ -32,7 +32,7 @@ class yf_custom_replace {
 			"1" => "<span class='positive'>YES</span>",
 		);
 		// Get user modules
-		$this->_user_modules = main()->_execute("user_modules", "_get_modules");
+		$this->_user_modules = module("user_modules")->_get_modules();
 		// Get sites infos
 		$this->_sites_names[""] = "-- ALL --";
 		$Q = db()->query("SELECT * FROM ".db('sites')." WHERE active='1' ORDER BY id ASC");
@@ -45,10 +45,8 @@ class yf_custom_replace {
 		// Get available replacement words
 		$this->_words = main()->get_data("custom_replace_words");
 		foreach ((array)$this->_words as $k => $v) $this->_words[$k] = $k;
-		// Get user modules
-		$this->_user_modules = main()->_execute("user_modules", "_get_modules");
 		// Get user methods groupped by modules
-		$this->_user_modules_methods = main()->_execute("user_modules", "_get_methods");
+		$this->_user_modules_methods = module("user_modules")->_get_methods();
 		$this->_user_methods[""] = "-- ALL --";
 		// Prepare methods
 		foreach ((array)$this->_user_modules_methods as $module_name => $module_methods) {

@@ -85,7 +85,7 @@ class yf_analyze_engine_log {
 
 		$path = INCLUDE_PATH."logs/log_exec/".$_cur_date.".log";
 
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 		// Return AJAX data
 		if (!empty($_POST)) {
 			main()->NO_GRAPHICS = true;
@@ -332,7 +332,7 @@ class yf_analyze_engine_log {
 
 		$cur_date = (int)gmdate("Ymd");
 
-		$DIR_OBJ = main()->init_class("dir", "classes/");
+		$DIR_OBJ = _class("dir");
 		foreach ((array)$DIR_OBJ->scan_dir($LOGS_DIR, 0, "#[0-9]{4}-[0-9]{2}-[0-9]{2}\.log#") as $_file) {
 			$day = substr(basename($_file), 0, -4);
 			if (isset($daily_stats[$day])) {

@@ -6,14 +6,6 @@
 class yf_articles_search_comments {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->PARENT_OBJ		= module(ARTICLES_CLASS_NAME);
-	}
-
-	/**
 	* Display comments posted in user's articles
 	*/
 	function search_comments(){
@@ -44,8 +36,7 @@ class yf_articles_search_comments {
 		if(empty($_SESSION["sort_type_select_box"])){
 			$_SESSION["sort_type_select_box"] = "DESC";
 		}
-		
-		
+
 		$Q = db()->query("SELECT id,title,cat_id FROM ".db('articles_texts')." WHERE user_id=".main()->USER_ID.$WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];
@@ -55,7 +46,7 @@ class yf_articles_search_comments {
 		
 		if (!empty($posts_ids)) {
 		
-			if($this->PARENT_OBJ->SEARCH_ONLY_MEMBER){
+			if(module('articles')->SEARCH_ONLY_MEMBER){
 				$serch_only_member = " AND NOT (user_id = 0)";
 			}
 
@@ -108,7 +99,6 @@ class yf_articles_search_comments {
 		$sort_type_select = array("DESC" => "descending", "ASC" => "ascending");
 		$sort_type_select_box = common()->select_box("sort_type_select_box", $sort_type_select, $_SESSION["sort_type_select_box"], false, 2, $select_box_change, true);
 
-		
 		foreach ((array)$comments as $comment){
 
 			$user_name = _prepare_html(_display_name($users_info[$comment["user_id"]]));
@@ -124,7 +114,7 @@ class yf_articles_search_comments {
 				"title"			=> $posts[$comment["object_id"]]["title"],
 				"post_url"		=> "./?object=articles&action=view&id=".$posts[$comment["object_id"]]["id"],
 				"date"			=> _format_date($comment["add_date"], "long"),
-				"delete"		=> $this->PARENT_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+				"delete"		=> module('articles')->ALLOW_DELETE_COMMENTS?"1":"0",
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_articles_comment&id=".$comment["id"],
 			);
 			$items.= tpl()->parse($_GET["object"]."/search_comments_item", $replace2);
@@ -137,7 +127,7 @@ class yf_articles_search_comments {
 			"author_select_box"		=> $author_select_box,
 			"cats_select_box"		=> $cats_select_box,
 			"sort_type_select_box"	=> $sort_type_select_box,
-			"delete"				=> $this->PARENT_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+			"delete"				=> module('articles')->ALLOW_DELETE_COMMENTS?"1":"0",
 		);
 		return tpl()->parse($_GET["object"]."/search_comments_main", $replace);
 	}
@@ -155,7 +145,7 @@ class yf_articles_search_comments {
 		}
 		$comment_info = db()->query_fetch(
 			"SELECT * FROM ".db('comments')." 
-			WHERE object_name='".ARTICLES_CLASS_NAME."' 
+			WHERE object_name='".'articles'."' 
 				AND object_id IN(
 					SELECT id FROM ".db('articles_texts')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
@@ -164,10 +154,10 @@ class yf_articles_search_comments {
 		if (empty($comment_info)) {
 			return _e(t("You have no rights to delete this comment"));
 		}
-		$COMMENTS_OBJ = main()->init_class("comments", USER_MODULES_DIR);
+		$COMMENTS_OBJ = module("comments");
 		if (is_object($COMMENTS_OBJ)) {
 			$COMMENTS_OBJ->_delete(array("silent_mode" => 1));
 		}
-		return js_redirect("./?object=".ARTICLES_CLASS_NAME."&action=search_comments");
+		return js_redirect("./?object=".'articles'."&action=search_comments");
 	}
 }

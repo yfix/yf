@@ -41,7 +41,7 @@ class yf_forum_compact_view {
 				"user_name"			=> _prepare_html($users_names[$user_id]),
 				"user_profile_link"	=> process_url(module('forum')->_user_profile_link($user_id)),
 			);
-			$body .= tpl()->parse(FORUM_CLASS_NAME."/compact_topic_repliers_item", $replace);
+			$body .= tpl()->parse('forum'."/compact_topic_repliers_item", $replace);
 		}
 		// Throw output
 		echo t("Topic posts by users").":<br />\r\n";
@@ -85,7 +85,7 @@ class yf_forum_compact_view {
 		// Cut-off long posts
 		$post_info["text"] = _substr($post_info["text"], 0, 1000);
 		// Init bb codes module
-		$BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$BB_OBJ = _class("bb_codes");
 		$body = is_object($BB_OBJ) ? $BB_OBJ->_process_text($post_info["text"], !$post_info["use_emo"]) : nl2br(_prepare_html($post_info["text"]));
 		if (DEBUG_MODE) {
 			$body .= "<hr class='clearfloat'>DEBUG INFO:\r\n";

@@ -10,13 +10,6 @@
 class yf_blog_integration {
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
-	}
-
-	/**
 	* Code for home page
 	*/
 	function _for_home_page($NUM_NEWEST_BLOG_POSTS = 4, $NEWEST_BLOG_TEXT_LEN = 100, $params = array()){
@@ -39,7 +32,7 @@ class yf_blog_integration {
 			}
 		}
 		foreach ((array)$blog_posts as $A) {
-			$text = $this->BLOG_OBJ->_cut_bb_codes(nl2br(_prepare_html($A["text"])));
+			$text = module('blog')->_cut_bb_codes(nl2br(_prepare_html($A["text"])));
 			
 			if (strlen($text) > $NEWEST_BLOG_TEXT_LEN) {
 				$text = _truncate($text, $NEWEST_BLOG_TEXT_LEN, true, true);
@@ -55,7 +48,7 @@ class yf_blog_integration {
 				"post_title"	=> _prepare_html($A["title"]),
 				"post_link"		=> "./?object=blog&action=show_single_post&id=".$A["id"],
 			);			
-			$items .= tpl()->parse(BLOG_CLASS_NAME."/".$stpl_name, $replace2);
+			$items .= tpl()->parse('blog'."/".$stpl_name, $replace2);
 		}
 		if(empty($items)) {
 			return;
@@ -63,7 +56,7 @@ class yf_blog_integration {
 		$replace = array(
 			"items"	=> $items,
 		);
-		return tpl()->parse(BLOG_CLASS_NAME."/for_home_page_main2", $replace);
+		return tpl()->parse('blog'."/for_home_page_main2", $replace);
 	}
 
 	/**
@@ -80,7 +73,7 @@ class yf_blog_integration {
 				"created"	=> _format_date($A["add_date"]),
 				"view_link"	=> "./?object=blog&action=show_single_post&id=".$A["id"],
 			);
-			$items .= tpl()->parse(BLOG_CLASS_NAME."/for_profile_blog_item", $replace2);
+			$items .= tpl()->parse('blog'."/for_profile_blog_item", $replace2);
 		}
 		$value[0] = $items;
 		$value[1] = $pages;
@@ -93,7 +86,7 @@ class yf_blog_integration {
 	*/
 	function _rss_general(){
 
-		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE active='1' ORDER BY add_date DESC LIMIT ".intval($this->BLOG_OBJ->NUM_RSS));
+		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE active='1' ORDER BY add_date DESC LIMIT ".intval(module('blog')->NUM_RSS));
 		while ($A = db()->fetch_assoc($Q)) {
 			$blog_posts[$A["id"]] = $A;	
 			$users_id[$A["user_id"]] = $A["user_id"];
@@ -108,7 +101,7 @@ class yf_blog_integration {
 		
 		if(!empty($blog_posts)){
 			foreach ((array)$blog_posts as $A) {
-				$text = $this->BLOG_OBJ->_cut_bb_codes(nl2br(_prepare_html($A["text"])));
+				$text = module('blog')->_cut_bb_codes(nl2br(_prepare_html($A["text"])));
 				
 				if (strlen($text) > $NEWEST_BLOG_TEXT_LEN) {
 					$text = _truncate($text, $NEWEST_BLOG_TEXT_LEN, true, true);

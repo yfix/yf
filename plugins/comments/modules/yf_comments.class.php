@@ -70,9 +70,6 @@ class yf_comments {
 	* Framework constructor
 	*/
 	function _init () {
-		define("COMMENTS_CLASS_NAME", "comments");
-		define("COMMENTS_MODULES_DIR", "modules/". COMMENTS_CLASS_NAME."/");
-		// Fix for the case when skipping auto-assignment of main()->USER_ID in main class
 		if (!main()->USER_ID && main()->USER_ID) {
 			main()->USER_ID = main()->USER_ID;
 		}
@@ -110,7 +107,7 @@ class yf_comments {
 		}
 		// set comments read
 		if(!empty(main()->USER_ID) && !empty($comments_array)){
-			$OBJ = &main()->init_class("unread");
+			$OBJ = module("unread");
 			if (is_object($OBJ)) {
 				$OBJ->_set_read("comments", array_keys($comments_array));
 			}
@@ -123,7 +120,7 @@ class yf_comments {
 			} 
 		}
 		// Process user reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($users_ids);
 		}
@@ -137,28 +134,29 @@ class yf_comments {
 		
 		// Check if view user email allowed
 		if($view_email_allowed_check_method){
-			$view_email = (bool)main()->_execute($_GET["object"], $this->_view_email_allowed_method, array(
-				"object_id" => $OBJECT_ID
-			));
+			$m = $this->_view_email_allowed_method;
+			$view_email = (bool)module($_GET["object"])->$m( array("object_id" => $OBJECT_ID) );
 		}
 		
 		// Process comments items
 		foreach ((array)$comments_array as $comment_info) {
 			// Check if edit comment allowed
 			if ($edit_allowed_check_method) {
-				$edit_allowed	= (bool)main()->_execute($_GET["object"], $this->_edit_allowed_method, array(
+				$m = $this->_edit_allowed_method;
+				$edit_allowed	= (bool)module($_GET["object"])->$m( array(
 					"user_id"	=> $comment_info["user_id"],
 					"object_id"	=> $comment_info["object_id"],
-				));
+				) );
 			} else {
 				$edit_allowed	= main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
 			// Check if delete comment allowed
 			if ($delete_allowed_check_method) {
-				$delete_allowed	= (bool)main()->_execute($_GET["object"], $this->_delete_allowed_method, array(
+				$m = $this->_delete_allowed_method;
+				$delete_allowed	= (bool)module($_GET["object"])->$m( array(
 					"user_id" => $comment_info["user_id"],
 					"object_id" => $comment_info["object_id"]
-				));
+				) );
 			} else {
 				$delete_allowed = main()->USER_ID && $comment_info["user_id"] == main()->USER_ID;
 			}
@@ -245,7 +243,7 @@ class yf_comments {
 		}
 		// set comments read
 		if(!empty(main()->USER_ID) && !empty($comments_array)){
-			$OBJ = &main()->init_class("unread");
+			$OBJ = module("unread");
 			if (is_object($OBJ)) {
 				$ids = $OBJ->_set_read("comments", array_keys($comments_array));
 			}
@@ -258,7 +256,7 @@ class yf_comments {
 			} 
 		}
 		// Process user reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($users_ids);
 		}
@@ -272,13 +270,13 @@ class yf_comments {
 
 		// Check if view user email allowed
 		if($view_email_allowed_check_method){
-			$view_email = (bool)main()->_execute($_GET["object"], $this->_view_email_allowed_method, array(
+			$m = $this->_view_email_allowed_method;
+			$view_email = (bool)module($_GET["object"])->$m(array(
 				"object_id" => $OBJECT_ID
 			));
 		}
 
-
-		//----------  SORT ARRAY TO TREE ------
+		//  SORT ARRAY TO TREE
 		$this->_comment_array = $comments_array_ids;
 		$this->_comment_tree_array = array();
 
@@ -290,7 +288,7 @@ class yf_comments {
 			}
 			$this->_sort_to_tree($temp_array);
 		}
-		//-------------------------------------
+		
 		// Process comments items
 		foreach ((array)$this->_comment_tree_array as $comment_tree_info) {
 			$comment_info = $comments_array[$comment_tree_info["id"]];
@@ -298,7 +296,8 @@ class yf_comments {
 			
 			// Check if edit comment allowed
 			if ($edit_allowed_check_method) {
-				$edit_allowed	= (bool)main()->_execute($_GET["object"], $this->_edit_allowed_method, array(
+				$m = $this->_edit_allowed_method;
+				$edit_allowed	= (bool)module($_GET["object"])->$m(array(
 					"user_id" => $comment_info["user_id"],
 					"object_id" => $comment_info["object_id"]
 				));
@@ -307,7 +306,8 @@ class yf_comments {
 			}
 			// Check if delete comment allowed
 			if ($delete_allowed_check_method) {
-				$delete_allowed	= (bool)main()->_execute($_GET["object"], $this->_delete_allowed_method, array(
+				$m = $this->_delete_allowed_method;
+				$delete_allowed	= (bool)module($_GET["object"])->$m(array(
 					"user_id" => $comment_info["user_id"],
 					"object_id" => $comment_info["object_id"]
 				));
@@ -433,7 +433,7 @@ class yf_comments {
 		}
 		// If special code is "on" - process it
 		if ($this->USE_BB_CODES) {
-			$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+			$BB_CODES_OBJ = _class("bb_codes");
 		}
 		// We cannot die, need to be safe
 		if ($this->USE_BB_CODES && is_object($BB_CODES_OBJ)) {
@@ -485,8 +485,7 @@ class yf_comments {
 	* For home page method
 	*/
 	function _for_home_page($NUM_NEWEST_COMMENTS = 4){
-		$OBJ = $this->_load_sub_module("comments_integration");
-		return is_object($OBJ) ? $OBJ->_for_home_page($NUM_NEWEST_COMMENTS) : "";
+		return $this->_load_sub_module("comments_integration")->_for_home_page($NUM_NEWEST_COMMENTS);
 	}
 	
 	/**
@@ -501,37 +500,26 @@ class yf_comments {
 	* Try to load sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		$OBJ = main()->init_class($module_name, COMMENTS_MODULES_DIR);
-		if (!is_object($OBJ)) {
-			trigger_error("COMMENTS: Cant load sub_module \"".$module_name."\"", E_USER_WARNING);
-			return false;
-		}
-		return $OBJ;
+		return _class($module_name, 'modules/comments/');
 	}
 	
 	/**
 	*
 	*/
 	function _unread () {
-	
-	
 		if(empty($this->_user_info["last_view"])){
 			return;
 		}
-		
 		$Q = db()->query("SELECT id FROM ".db('comments')." WHERE user_id != ".intval(main()->USER_ID)." AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
-		
 		$link = process_url("./?object=comments&action=view_unread");
-
 		$unread = array(
 			"count"	=> count($ids),
 			"ids"	=> $ids,
 			"link"	=> $link,
 		);
-	
 		return $unread;
 	}
 	
@@ -543,12 +531,12 @@ class yf_comments {
 			return;
 		}
 	
-		$OBJ = &main()->init_class("unread");
+		$OBJ = module("unread");
 		if (is_object($OBJ)) {
 			$ids = $OBJ->_get_unread("comments");
 		}
 		
-		$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+		$BB_CODES_OBJ = _class("bb_codes");
 		
 		if(!empty($ids)){
 			$sql		= "SELECT text,object_name,id,object_id FROM ".db('comments')." WHERE id IN(".implode(",", (array)$ids).")";
@@ -561,7 +549,7 @@ class yf_comments {
 				$A["text"] = $BB_CODES_OBJ->_force_close_bb_codes($A["text"]);
 				$A["text"] = $this->_format_text($A["text"])." ...";
 				
-				$OBJ = &main()->init_class($A["object_name"]);
+				$OBJ = module($A["object_name"]);
 				if(is_object($OBJ)){
 					$action = $OBJ->_comments_params["return_action"];
 					$A["action"] = $action;
@@ -570,15 +558,10 @@ class yf_comments {
 				$comments_info[$A["id"]] = $A;
 			}
 		}
-		
-
 		$replace = array(
 			"items"		=> $comments_info,
 			"pages"		=> $pages,
 		);
-		
 		return tpl()->parse($_GET["object"]."/unread", $replace);
 	}
-
-
 }

@@ -9,10 +9,8 @@ class yf_blog_search_comments {
 	* Constructor
 	*/
 	function _init () {
-		// Reference to parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
-		$this->SETTINGS		= &$this->BLOG_OBJ->SETTINGS;
-		$this->USER_RIGHTS	= &$this->BLOG_OBJ->USER_RIGHTS;
+		$this->SETTINGS		= &module('blog')->SETTINGS;
+		$this->USER_RIGHTS	= &module('blog')->USER_RIGHTS;
 	}
 
 	/**
@@ -46,8 +44,7 @@ class yf_blog_search_comments {
 		if(empty($_SESSION["sort_type_select_box"])){
 			$_SESSION["sort_type_select_box"] = "DESC";
 		}
-		
-		
+
 		$Q = db()->query("SELECT * FROM ".db('blog_posts')." WHERE user_id=".main()->USER_ID.$WHERE);
 		while ($A = db()->fetch_assoc($Q)) {
 			$posts_ids[$A["id"]] = $A["id"];
@@ -57,7 +54,7 @@ class yf_blog_search_comments {
 		
 		if (!empty($posts_ids)) {
 		
-			if ($this->BLOG_OBJ->SEARCH_ONLY_MEMBER){
+			if (module('blog')->SEARCH_ONLY_MEMBER){
 				$search_only_member = " AND NOT (user_id = 0)";
 			}
 		
@@ -125,7 +122,7 @@ class yf_blog_search_comments {
 				"title"			=> $posts[$comment["object_id"]]["title"],
 				"post_url"		=> "./?object=blog&action=show_single_post&id=".$posts[$comment["object_id"]]["id"],
 				"date"			=> _format_date($comment["add_date"], "long"),
-				"delete"		=> $this->BLOG_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+				"delete"		=> module('blog')->ALLOW_DELETE_COMMENTS?"1":"0",
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_blog_comment&id=".$comment["id"],
 			);
 			$items.= tpl()->parse($_GET["object"]."/search_comments_item", $replace2);
@@ -138,7 +135,7 @@ class yf_blog_search_comments {
 			"author_select_box"		=> $author_select_box,
 			"cats_select_box"		=> $cats_select_box,
 			"sort_type_select_box"	=> $sort_type_select_box,
-			"delete"				=> $this->BLOG_OBJ->ALLOW_DELETE_COMMENTS?"1":"0",
+			"delete"				=> module('blog')->ALLOW_DELETE_COMMENTS?"1":"0",
 		);
 		return tpl()->parse($_GET["object"]."/search_comments_main", $replace);
 	}
@@ -156,7 +153,7 @@ class yf_blog_search_comments {
 		}
 		$comment_info = db()->query_fetch(
 			"SELECT * FROM ".db('comments')." 
-			WHERE object_name='".BLOG_CLASS_NAME."' 
+			WHERE object_name='".'blog'."' 
 				AND object_id IN(
 					SELECT id FROM ".db('blog_posts')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
@@ -165,10 +162,10 @@ class yf_blog_search_comments {
 		if (empty($comment_info)) {
 			return _e("You have no rights to delete this comment");
 		}
-		$COMMENTS_OBJ = main()->init_class("comments", USER_MODULES_DIR);
+		$COMMENTS_OBJ = module("comments");
 		if (is_object($COMMENTS_OBJ)) {
 			$COMMENTS_OBJ->_delete(array("silent_mode" => 1));
 		}
-		return js_redirect("./?object=".BLOG_CLASS_NAME."&action=search_comments");
+		return js_redirect("./?object=".'blog'."&action=search_comments");
 	}
 }

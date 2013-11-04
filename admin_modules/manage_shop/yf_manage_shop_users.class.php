@@ -88,5 +88,4 @@ class yf_manage_shop_users{
 			->save();
 	}
 
-
 }

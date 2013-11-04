@@ -1,7 +1,7 @@
 <?php
-//-----------------------------------------------------------------------------
+
 // REWRITE LINKS SECTION
-//-----------------------------------------------------------------------------
+
 define('REWRITE_ADD_EXT', '/'); // Extension to add
 // PCRE patterns to rewrite links
 if (!isset($GLOBALS['REWRITE_PATTERNS'])) {

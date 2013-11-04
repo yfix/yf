@@ -10,21 +10,13 @@
 class yf_gallery_utils {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-	}
-
-	/**
 	* Get real photo sizes from photo files for the given photo db record
 	*/
 	function _update_other_info ($photo_info = array()) {
 		$other_info_array = array();
 		// Go through photo types
-		foreach ((array)$this->GALLERY_OBJ->PHOTO_TYPES as $type_name => $type_info) {
-			$cur_file_full_path = $this->GALLERY_OBJ->_photo_fs_path($photo_info, $type_name);
+		foreach ((array)module('gallery')->PHOTO_TYPES as $type_name => $type_info) {
+			$cur_file_full_path = module('gallery')->_photo_fs_path($photo_info, $type_name);
 			// We need to calculate it real dimensions
 			list($i_width, $i_height,,) = getimagesize($cur_file_full_path);
 			// Fill other info array
@@ -50,29 +42,29 @@ class yf_gallery_utils {
 			return $max_privacy;
 		}
 		// Guest
-		if (!$this->GALLERY_OBJ->USER_ID || empty($user_id)) {
+		if (!module('gallery')->USER_ID || empty($user_id)) {
 			return $max_privacy;
 		}
 		$is_member = true;
 		// Check gallery owner
-		if (!isset($this->GALLERY_OBJ->is_own_gallery)) {
-			$this->GALLERY_OBJ->is_own_gallery = false;
-			if (MAIN_TYPE_USER && $this->GALLERY_OBJ->USER_ID && $this->GALLERY_OBJ->USER_ID == $user_id) {
-				$this->GALLERY_OBJ->is_own_gallery = true;
+		if (!isset(module('gallery')->is_own_gallery)) {
+			module('gallery')->is_own_gallery = false;
+			if (MAIN_TYPE_USER && module('gallery')->USER_ID && module('gallery')->USER_ID == $user_id) {
+				module('gallery')->is_own_gallery = true;
 			} elseif (MAIN_TYPE_ADMIN) {
-				$this->GALLERY_OBJ->is_own_gallery = true;
+				module('gallery')->is_own_gallery = true;
 			}
 		}
 		// Owner
-		if ($this->GALLERY_OBJ->is_own_gallery) {
+		if (module('gallery')->is_own_gallery) {
 			$max_privacy = 9;
 			return $max_privacy;
 		}
 		// Check friendship
-		$FRIENDS_OBJ = main()->init_class("friends");
+		$FRIENDS_OBJ = module("friends");
 		if (is_object($FRIENDS_OBJ)) {
-			$is_in_his_friends	= $FRIENDS_OBJ->_is_a_friend($this->GALLERY_OBJ->USER_ID, $user_id);
-			$is_my_friend		= $FRIENDS_OBJ->_is_a_friend($user_id, $this->GALLERY_OBJ->USER_ID);
+			$is_in_his_friends	= $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $user_id);
+			$is_my_friend		= $FRIENDS_OBJ->_is_a_friend($user_id, module('gallery')->USER_ID);
 			$is_mutual_friends	= $is_in_his_friends && $is_my_friend;
 		}
 		if ($is_member) {
@@ -99,12 +91,12 @@ class yf_gallery_utils {
 			return true;
 		}
 		// This is owner
-		if (($this->GALLERY_OBJ->USER_ID && $owner_id == $this->GALLERY_OBJ->USER_ID) || MAIN_TYPE_ADMIN) {
+		if ((module('gallery')->USER_ID && $owner_id == module('gallery')->USER_ID) || MAIN_TYPE_ADMIN) {
 			return true;
 		}
 		// Public section was over, now begin checking for members,
 		// so if user is guest - we deny view here
-		if (!$this->GALLERY_OBJ->USER_ID) {
+		if (!module('gallery')->USER_ID) {
 			return false;
 		}
 		// Currently user can set more private status for the current 
@@ -115,31 +107,31 @@ class yf_gallery_utils {
 			return true;
 		// Friends (simple, user need only to add photo owner to his friends list)
 		} elseif ($cur_privacy == 3) {
-			if ($owner_id != $this->GALLERY_OBJ->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+			if ($owner_id != module('gallery')->USER_ID) {
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend = $FRIENDS_OBJ->_is_a_friend($this->GALLERY_OBJ->USER_ID, $owner_id);
+					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
 					return $is_a_friend;
 				}
 			}
 			return true;
 		// My friends (simple, user need to be in photo owner's friends list)
 		} elseif ($cur_privacy == 4) {
-			if ($owner_id != $this->GALLERY_OBJ->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+			if ($owner_id != module('gallery')->USER_ID) {
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($owner_id, $this->GALLERY_OBJ->USER_ID);
+					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);
 					return $is_my_friend;
 				}
 			}
 			return true;
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_privacy == 5) {
-			if ($owner_id != $this->GALLERY_OBJ->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+			if ($owner_id != module('gallery')->USER_ID) {
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend($this->GALLERY_OBJ->USER_ID, $owner_id);
-					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($owner_id, $this->GALLERY_OBJ->USER_ID);
+					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
+					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);
 					return $is_a_friend_1 && $is_a_friend_2;
 				}
 			}
@@ -162,7 +154,7 @@ class yf_gallery_utils {
 		}
 		// Public section was over, now begin checking for members,
 		// so if user is guest - we deny view here
-		if (!$this->GALLERY_OBJ->USER_ID) {
+		if (!module('gallery')->USER_ID) {
 			return false;
 		}
 		// Currently user can set more private status for the current 
@@ -173,31 +165,31 @@ class yf_gallery_utils {
 			return true;
 		// Friends (simple, user need only to add photo owner to his friends list)
 		} elseif ($cur_comments == 3) {
-			if ($owner_id != $this->GALLERY_OBJ->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+			if ($owner_id != module('gallery')->USER_ID) {
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend = $FRIENDS_OBJ->_is_a_friend($this->GALLERY_OBJ->USER_ID, $owner_id);
+					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
 					return $is_a_friend;
 				}
 			}
 			return true;
 		// My friends (simple, user need to be in photo owner's friends list)
 		} elseif ($cur_comments == 4) {
-			if ($owner_id != $this->GALLERY_OBJ->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+			if ($owner_id != module('gallery')->USER_ID) {
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($owner_id, $this->GALLERY_OBJ->USER_ID);
+					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);
 					return $is_my_friend;
 				}
 			}
 			return true;
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_comments == 5) {
-			if ($owner_id != $this->GALLERY_OBJ->USER_ID) {
-				$FRIENDS_OBJ = main()->init_class("friends");
+			if ($owner_id != module('gallery')->USER_ID) {
+				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend($this->GALLERY_OBJ->USER_ID, $owner_id);
-					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($owner_id, $this->GALLERY_OBJ->USER_ID);
+					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('gallery')->USER_ID, $owner_id);
+					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($owner_id, module('gallery')->USER_ID);
 					return $is_a_friend_1 && $is_a_friend_2;
 				}
 			}
@@ -293,7 +285,7 @@ class yf_gallery_utils {
 
 		$sql = "SELECT COUNT(DISTINCT user_id) AS num FROM ".db('gallery_photos')." WHERE active='1' AND is_public='1'";
 		$A = db()->query_fetch($sql);
-		$total_pages = ceil(intval($A["num"]) / intval($this->GALLERY_OBJ->VIEW_ALL_ON_PAGE));
+		$total_pages = ceil(intval($A["num"]) / intval(module('gallery')->VIEW_ALL_ON_PAGE));
 		// Process pages
 		if ($total_pages > 1) {
 			for ($i = 1; $i <= $total_pages; $i++) {

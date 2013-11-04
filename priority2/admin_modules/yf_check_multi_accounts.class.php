@@ -285,7 +285,7 @@ class yf_check_multi_accounts {
 					"num_m_ips"			=> intval($num_m_ips_by_users[$_cur_user_id]),
 					"has_cookie_match"	=> isset($with_cookie_match[$_cur_user_id]) ? 1 : 0,
 					"this_cookie_match"	=> isset($cookie_matched_ids[$_cur_user_id]) ? 1 : 0,
-					"ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", array("user_id" => intval($_cur_user_id), "force_text" => "ban")),
+					"ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($_cur_user_id), "force_text" => "ban")),
 				);
 				$users_by_ips_stpl .= tpl()->parse($_GET["object"]."/user_by_ip_item", $replace3);
 			}
@@ -499,7 +499,6 @@ class yf_check_multi_accounts {
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -543,7 +542,6 @@ class yf_check_multi_accounts {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -567,7 +565,6 @@ class yf_check_multi_accounts {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -584,7 +581,6 @@ class yf_check_multi_accounts {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -599,7 +595,6 @@ class yf_check_multi_accounts {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -610,7 +605,6 @@ class yf_check_multi_accounts {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

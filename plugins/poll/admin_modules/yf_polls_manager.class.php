@@ -11,7 +11,7 @@ class yf_polls_manager {
 	/**
 	*/
 	function __construct () {
-		$this->POLL_OBJ = main()->init_class("poll", "modules/");
+		$this->POLL_OBJ = module("poll");
 		$this->_polls_info = db()->query_fetch_all(
 			"SELECT * FROM ".db('polls')." WHERE user_id=0 ORDER BY add_date,votes DESC"
 		);

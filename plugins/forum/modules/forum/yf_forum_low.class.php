@@ -45,7 +45,6 @@ class yf_forum_low {
 		// Reference to the forums array
 		$forums_array	= &module('forum')->_forums_array;
 
-
 		// Default low page
 		$body = "";
 		if ($TYPE == "main" || empty($ID)) {
@@ -55,7 +54,7 @@ class yf_forum_low {
 		} elseif ($TYPE == "topic")	{
 			$body = $this->_show_topic($ID);
 		}
-		$RW = main()->init_class("rewrite");
+		$RW = module("rewrite");
 		// Replace relative links to their full paths
 		if (is_object($RW)) {
 			$body = $RW->_rewrite_replace_links($body);
@@ -154,7 +153,7 @@ class yf_forum_low {
 		}
 		$body .= "<ul>\r\n";
 		// Init bb codes module
-		$BB_OBJ = main()->init_class("bb_codes", "classes/");
+		$BB_OBJ = _class("bb_codes");
 		// Process posts
 		$Q = db()->query($sql. $order_by. $add_sql);
 		while ($post_info = db()->fetch_assoc($Q)) {

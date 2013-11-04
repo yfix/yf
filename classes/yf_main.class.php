@@ -871,27 +871,31 @@ class yf_main {
 			return $this->_plugins;
 		}
 		$sets = array(
-#			'project'	=> array(
-#				'classes' => YF_PATH.'plugins/classes/*/',
-#				'admin_modules' => YF_PATH.'plugins/admin_modules/*/',
-#				'modules' => YF_PATH.'plugins/modules/*/',
-#			),
-#			'framework'	=> array(
-#				'classes' => PROJECT_PATH.'plugins/classes/*/',
-#				'admin_modules' => PROJECT_PATH.'plugins/admin_modules/*/',
-#				'modules' => PROJECT_PATH.'plugins/modules/*/',
-#			),
+			'project'	=> PROJECT_PATH.'plugins/*/',
+			'framework'	=> YF_PATH.'plugins/*/',
 		);
+		$_plen = strlen(YF_PREFIX);
 		$plugins = array();
-		foreach ((array)$sets as $set => $patterns) {
-			foreach ((array)$patterns as $role => $pattern) {
-				foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
-					$d = basename($d);
-					$plugins[$set][$role][$d] = $d;
+		$plugins_classes = array();
+		foreach ((array)$sets as $set => $pattern) {
+			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
+				$pname = basename($d);
+				$dlen = strlen($d);
+				$classes = array();
+				foreach (array_merge(glob($d.'*/*.class.php'), glob($d.'*/*/*.class.php')) as $f) {
+					$cname = str_replace(CLASS_EXT, '', basename($f));
+					$cdir = dirname(substr($f, $dlen)).'/';
+					if (substr($cname, 0, $_plen) == YF_PREFIX) {
+						$cname = substr($cname, $_plen);
+					}
+					$classes[$cname][$cdir] = $f;
+					$plugins_classes[$cname] = $pname;
 				}
+				$plugins[$pname][$set] = $classes;
 			}
 		}
 		$this->_plugins = $plugins;
+		$this->_plugins_classes = $plugins_classes;
 		return $this->_plugins;
 	}
 
@@ -925,68 +929,94 @@ class yf_main {
 		$class_file = $class_name. CLASS_EXT;
 		// Developer part of path is related to hostname to be able to make different code overrides for each
 		$dev_path = '.dev/'. $this->HOSTNAME.'/';
-		// Try to generate additional path variables
+		// additional path variables
+		$SITE_PATH = MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH;
 		if (MAIN_TYPE_USER) {
 			if (empty($custom_path)) {
-				$site_path			= SITE_PATH. USER_MODULES_DIR;
-				$site_path_dev		= SITE_PATH. $dev_path. USER_MODULES_DIR;
-				$project_path		= PROJECT_PATH. USER_MODULES_DIR;
-				$project_path_dev	= PROJECT_PATH. $dev_path. USER_MODULES_DIR;
-				$fwork_path			= YF_PATH. USER_MODULES_DIR;
-				$fwork_path2		= YF_PATH. 'priority2/'. USER_MODULES_DIR;
+				$site_path			= USER_MODULES_DIR;
+				$site_path_dev		= $dev_path. USER_MODULES_DIR;
+				$project_path		= USER_MODULES_DIR;
+				$project_path_dev	= $dev_path. USER_MODULES_DIR;
+				$fwork_path			= USER_MODULES_DIR;
+				$fwork_path2		= 'priority2/'. USER_MODULES_DIR;
 			} elseif (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH)) {
-				$site_path			= SITE_PATH. $custom_path;
-				$site_path_dev		= SITE_PATH. $dev_path. $custom_path;
-				$project_path		= PROJECT_PATH. $custom_path;
-				$project_path_dev	= PROJECT_PATH. $dev_path. $custom_path;
-				$fwork_path			= YF_PATH. $custom_path;
-				$fwork_path2		= YF_PATH. 'priority2/'. $custom_path;
+				$site_path			= $custom_path;
+				$site_path_dev		= $dev_path. $custom_path;
+				$project_path		= $custom_path;
+				$project_path_dev	= $dev_path. $custom_path;
+				$fwork_path			= $custom_path;
+				$fwork_path2		= 'priority2/'. $custom_path;
 			} else {
 				$site_path			= $custom_path;
 			}
 		} elseif (MAIN_TYPE_ADMIN) {
 			if (empty($custom_path)) {
-				$site_path			= ADMIN_SITE_PATH. ADMIN_MODULES_DIR;
-				$site_path_dev		= ADMIN_SITE_PATH. $dev_path. ADMIN_MODULES_DIR;
-				$project_path		= PROJECT_PATH. ADMIN_MODULES_DIR;
-				$project_path_dev	= PROJECT_PATH. $dev_path. ADMIN_MODULES_DIR;
-				$fwork_path			= YF_PATH. ADMIN_MODULES_DIR;
-				$fwork_path2		= YF_PATH. 'priority2/'. ADMIN_MODULES_DIR;
-				$project_path2		= PROJECT_PATH. USER_MODULES_DIR;
+				$site_path			= ADMIN_MODULES_DIR;
+				$site_path_dev		= $dev_path. ADMIN_MODULES_DIR;
+				$project_path		= ADMIN_MODULES_DIR;
+				$project_path_dev	= $dev_path. ADMIN_MODULES_DIR;
+				$fwork_path			= ADMIN_MODULES_DIR;
+				$fwork_path2		= 'priority2/'. ADMIN_MODULES_DIR;
+				$project_path2		= USER_MODULES_DIR;
 			} elseif (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH) && false === strpos($custom_path, ADMIN_SITE_PATH)) {
-				$site_path			= ADMIN_SITE_PATH. $custom_path;
-				$site_path_dev		= ADMIN_SITE_PATH. $dev_path. $custom_path;
-				$project_path		= PROJECT_PATH. $custom_path;
-				$project_path_dev	= PROJECT_PATH. $dev_path. $custom_path;
-				$fwork_path			= YF_PATH. $custom_path;
-				$fwork_path2		= YF_PATH. 'priority2/'. $custom_path;
+				$site_path			= $custom_path;
+				$site_path_dev		= $dev_path. $custom_path;
+				$project_path		= $custom_path;
+				$project_path_dev	= $dev_path. $custom_path;
+				$fwork_path			= $custom_path;
+				$fwork_path2		= 'priority2/'. $custom_path;
 			} else {
 				$site_path			= $custom_path;
 			}
 		}
-#		if (!isset($this->_plugins)) {
-#			$this->_preload_plugins_list();
-#		}
-// TODO: connect plugins
+		if (!isset($this->_plugins)) {
+			$this->_preload_plugins_list();
+		}
+		$yf_plugins = &$this->_plugins;
+		$yf_plugins_classes = &$this->_plugins_classes;
 
 		// Order of storages matters a lot!
 		$storages = array();
 		if (conf('DEV_MODE')) {
 			if ($site_path_dev && $site_path_dev != $project_path_dev) {
-				$storages['dev_site']	= array($site_path_dev);
+				$storages['dev_site']	= array($SITE_PATH. $site_path_dev);
 			}
-			$storages['dev_project']= array($project_path_dev);
+			$storages['dev_project'] = array(PROJECT_PATH. $project_path_dev);
 		}
 		if ($site_path && $site_path != $project_path) {
-			$storages['site'] 			= array($site_path);
+			$storages['site'] 		= array($SITE_PATH. $site_path);
 		}
-		$storages['site_hook']		= array($site_path, $cur_hook_prefix);
-		$storages['project']		= array($project_path);
-		$storages['framework']		= array($fwork_path, YF_PREFIX);
-		$storages['framework_p2']	= array($fwork_path2, YF_PREFIX);
+		$storages['site_hook']		= array($SITE_PATH. $site_path, $cur_hook_prefix);
+		$storages['project']		= array(PROJECT_PATH. $project_path);
+		$storages['framework']		= array(YF_PATH. $fwork_path, YF_PREFIX);
+		$storages['framework_p2']	= array(YF_PATH. $fwork_path2, YF_PREFIX);
 		if (MAIN_TYPE_ADMIN) {
-			$storages['admin_user_project']		= array($project_path2);
+			$storages['admin_user_project']		= array(PROJECT_PATH. $project_path2);
 			$storages['admin_user_framework']	= array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
+		}
+		if (isset($yf_plugins[$class_name]) || isset($yf_plugins_classes[$class_name])) {
+			if (isset($yf_plugins[$class_name])) {
+				$plugin_name = $class_name;
+			} else {
+				$plugin_name = $yf_plugins_classes[$class_name];
+			}
+			$plugin_info = $yf_plugins[$plugin_name];
+			$plugin_subdir = 'plugins/'.$plugin_name.'/';
+
+			if ($site_path && $site_path != $project_path) {
+				$storages['plugins_site']	= array($SITE_PATH. $plugin_subdir. $site_path);
+			}
+			if (isset($plugin_info['project'])) {
+				$storages['plugins_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path);
+				if (MAIN_TYPE_ADMIN) {
+					$storages['plugins_admin_user_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path2);
+				}
+			} elseif (isset($plugin_info['framework'])) {
+				$storages['plugins_framework']	= array(YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX);
+				if (MAIN_TYPE_ADMIN) {
+					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
+				}
+			}
 		}
 		$storage = '';
 		$loaded_path = '';

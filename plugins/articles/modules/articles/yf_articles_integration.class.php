@@ -10,13 +10,6 @@
 class yf_articles_integration {
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-		$this->ARTICLES_OBJ		= module(ARTICLES_CLASS_NAME);
-	}
-
-	/**
 	* Code for home page
 	*/
 	function _for_home_page($NUM_NEWEST_ARTICLE_POST = 4){
@@ -31,20 +24,20 @@ class yf_articles_integration {
 				"title"			=> _prepare_html($A["title"]),
 				"add_date"		=> _format_date($A['add_date'], "long"),
 				"summary"		=> nl2br(_prepare_html(_cut_bb_codes($A["summary"]))),
-				"full_link"		=> "./?object=".ARTICLES_CLASS_NAME."&action=view&id=".$A["article_id"],
+				"full_link"		=> "./?object=".'articles'."&action=view&id=".$A["article_id"],
 				"user_link"		=> "./?object=user_profile&action=show&id=".$A["user_id"],
 				"user_name"		=> $A["author_name"],
 
 			);
 			
-			$items .= tpl()->parse(ARTICLES_CLASS_NAME."/home_page_item", $replace2);
+			$items .= tpl()->parse('articles'."/home_page_item", $replace2);
 		}
 		
 		$replace = array(
 			"items"		=> $items,
 		);
 		
-		return tpl()->parse(ARTICLES_CLASS_NAME."/home_page_main", $replace);
+		return tpl()->parse('articles'."/home_page_main", $replace);
 	}
 
 	/**
@@ -61,7 +54,7 @@ class yf_articles_integration {
 				"created"	=> _format_date($A["add_date"]),
 				"view_link"	=> "./?object=articles&action=view&id=".$A["id"],
 			);
-			$items .= tpl()->parse(ARTICLES_CLASS_NAME."/for_profile_item", $replace2);
+			$items .= tpl()->parse('articles'."/for_profile_item", $replace2);
 		}
 			$value[0] = $items;
 			$value[1] = $pages;
@@ -74,14 +67,14 @@ class yf_articles_integration {
 			FROM ".db('articles_texts')." 
 			WHERE status = 'active' 
 			ORDER BY add_date DESC 
-			LIMIT ".intval($this->ARTICLES_OBJ->NUM_RSS)
+			LIMIT ".intval(module('articles')->NUM_RSS)
 		);
 		
 		while ($A = db()->fetch_assoc($Q)) {
 			
 			$data[] = array(
 				"title"			=> _prepare_html(t("Articles")." - ".$A["title"]),
-				"link"			=> process_url("./?object=".ARTICLES_CLASS_NAME."&action=view&id=".$A["article_id"]),
+				"link"			=> process_url("./?object=".'articles'."&action=view&id=".$A["article_id"]),
 				"description"	=> nl2br(_prepare_html(strip_tags($A["summary"]))),
 				"date"			=> $A['add_date'],
 				"author"		=> $A["author_name"],

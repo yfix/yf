@@ -34,7 +34,6 @@ class yf_test_unicode {
 		$body .= "<br />\n";
 		$body .= "<br />\n";
 
-
 		$_start_time = microtime(true);
 		for ($i = 0; $i <= 10000; $i++) {
 			$_length = strlen($_string);

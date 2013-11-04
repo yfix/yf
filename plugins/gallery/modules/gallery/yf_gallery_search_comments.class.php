@@ -6,14 +6,6 @@
 class yf_gallery_search_comments {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-	}
-
-	/**
 	* Display users comments
 	*/
 	function search_comments(){
@@ -24,8 +16,7 @@ class yf_gallery_search_comments {
 			$_GET["page"] = $_GET["id"];
 			unset($_GET["id"]);
 		}
-		
-		
+
 		if(isset($_POST["author_select_box"])){
 			$_SESSION["author_select_box"] = $_POST["author_select_box"];
 		}
@@ -54,7 +45,7 @@ class yf_gallery_search_comments {
 		
 		if (!empty($posts_ids)) {
 		
-			if($this->GALLERY_OBJ->SEARCH_ONLY_MEMBER){
+			if(module('gallery')->SEARCH_ONLY_MEMBER){
 				$serch_only_member = " AND NOT (user_id = 0)";
 			}
 
@@ -88,7 +79,6 @@ class yf_gallery_search_comments {
 			}
 		}
 
-		
 		$Q = db()->query("SELECT id,title FROM ".db('gallery_folders')." WHERE user_id=".main()->USER_ID);
 		while ($A = db()->fetch_assoc($Q)) {
 			$cats[$A["id"]] = $A["title"];
@@ -106,13 +96,11 @@ class yf_gallery_search_comments {
 		$sort_type_select = array("DESC" => "descending", "ASC" => "ascending");
 		$sort_type_select_box = common()->select_box("sort_type_select_box", $sort_type_select, $_SESSION["sort_type_select_box"], false, 2, $select_box_change, true);
 
-		
 		foreach ((array)$comments as $comment){
 		
 			$user_name = _prepare_html(_display_name($users_info[$comment["user_id"]]));
 			empty($user_name)?$user_name = _prepare_html($comment["user_name"]):"";
 
-			
 			$replace2 = array(
 				"bg_class"		=> !(++$i % 2) ? "bg1" : "bg2",
 				"user_name"		=> $user_name,
@@ -121,7 +109,7 @@ class yf_gallery_search_comments {
 				"text"			=> $comment["text"],
 				"cat"			=> $cats[$posts[$comment["object_id"]]["folder_id"]],
 				"date"			=> _format_date($comment["add_date"], "long"),
-				"delete"		=> $this->GALLERY_OBJ->ALLOW_DELETE_COMMENTS ? "1":"0",
+				"delete"		=> module('gallery')->ALLOW_DELETE_COMMENTS ? "1":"0",
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete_gallery_comment&id=".$comment["id"],
 			);
 			$items.= tpl()->parse($_GET["object"]."/search_comments_item", $replace2);
@@ -134,7 +122,7 @@ class yf_gallery_search_comments {
 			"author_select_box"		=> $author_select_box,
 			"cats_select_box"		=> $cats_select_box,
 			"sort_type_select_box"	=> $sort_type_select_box,
-			"delete"				=> $this->GALLERY_OBJ->ALLOW_DELETE_COMMENTS ? "1" : "0",
+			"delete"				=> module('gallery')->ALLOW_DELETE_COMMENTS ? "1" : "0",
 		);
 		return tpl()->parse($_GET["object"]."/search_comments_main", $replace);
 	}
@@ -153,7 +141,7 @@ class yf_gallery_search_comments {
 		}
 		$comment_info = db()->query_fetch(
 			"SELECT * FROM ".db('comments')." 
-			WHERE object_name='".GALLERY_CLASS_NAME."' 
+			WHERE object_name='".'gallery'."' 
 				AND object_id IN(
 					SELECT id FROM ".db('gallery_photos')." WHERE user_id = ".intval(main()->USER_ID)."
 				) 
@@ -162,10 +150,10 @@ class yf_gallery_search_comments {
 		if (empty($comment_info)) {
 			return _e("You have no rights to delete this comment");
 		}
-		$COMMENTS_OBJ = main()->init_class("comments", USER_MODULES_DIR);
+		$COMMENTS_OBJ = module("comments");
 		if (is_object($COMMENTS_OBJ)) {
 			$COMMENTS_OBJ->_delete(array("silent_mode" => 1));
 		}
-		return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=search_comments");
+		return js_redirect("./?object=".'gallery'."&action=search_comments");
 	}
 }

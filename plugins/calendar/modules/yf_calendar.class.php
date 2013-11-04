@@ -1,6 +1,5 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Escorts calendar manager
 class yf_calendar {
 	/** @var array @conf_skip Calendar date statuses */
@@ -31,7 +30,6 @@ class yf_calendar {
 	/** @var bool Hide empty months */
 	public $HIDE_EMPTY_MONTHS = true;
 
-	//-----------------------------------------------------------------------------
 	// YF module constructor
 	function _init () {
 		$this->_max_year = gmdate("Y") + 5;
@@ -51,7 +49,6 @@ class yf_calendar {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default method
 	function show () {
 		if (main()->USER_ID) {
@@ -61,7 +58,6 @@ class yf_calendar {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// View given month and related info
 	function view ($_uid = 0, $params = array()) {
 		if ($this->HIDE_TOTAL_ID) {
@@ -228,7 +224,6 @@ class yf_calendar {
 		return tpl()->parse("calendar/view_main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display day info
 	function day () {
 		if ($this->HIDE_TOTAL_ID) {
@@ -345,8 +340,7 @@ class yf_calendar {
 		);
 		return tpl()->parse("calendar/day_main", $replace);
 	}
-	
-	//-----------------------------------------------------------------------------
+
 	// Edit calendar contents
 	function manage () {
 		if (empty(main()->USER_ID)) {
@@ -475,7 +469,6 @@ class yf_calendar {
 		return tpl()->parse("calendar/manage_main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Edit day contents
 	function edit_day () {
 		if (empty(main()->USER_ID)) {
@@ -626,7 +619,6 @@ class yf_calendar {
 		return tpl()->parse("calendar/edit_day_main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// General saving method
 	function _save_hours_into_db($date, $hours, $desc, $old_day_info = array()) {
 		if (empty($date)) {
@@ -673,8 +665,7 @@ class yf_calendar {
 			db()->INSERT("calendar_dates", $sql);
 		}
 	}
-	
-	//-----------------------------------------------------------------------------
+
 	// Do delete selected event
 	function delete_event() {
 		if (empty(main()->USER_ID)) {
@@ -726,8 +717,7 @@ class yf_calendar {
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_day&id=".gmdate("Y-m-d", $day_time));
 	}
-	
-	//-----------------------------------------------------------------------------
+
 	// Edit calendar default settings
 	function edit_defaults_settings () {
 		if (empty(main()->USER_ID)) {
@@ -860,8 +850,7 @@ class yf_calendar {
 		);
 		return tpl()->parse("calendar/defaults_settings", $replace);
 	}
-	
-	//-----------------------------------------------------------------------------
+
 	// Delete default item
 	function delete_default () {
 		if (empty(main()->USER_ID)) {
@@ -892,8 +881,7 @@ class yf_calendar {
 		}
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_defaults_settings");
 	}
-	
-	//-----------------------------------------------------------------------------
+
 	// Clean default week days settings
 	function clean_default_settings () {
 		if (empty(main()->USER_ID)) {
@@ -902,8 +890,7 @@ class yf_calendar {
 		db()->UPDATE("calendar_settings", array("default"	=> ""), "user_id=".main()->USER_ID);
 		return js_redirect("./?object=".$_GET["object"]."&action=edit_defaults_settings");
 	}
-	
-	//-----------------------------------------------------------------------------
+
 	// Apply default settings to the selected month
 	function apply_defaults_settings () {
 		if (empty(main()->USER_ID)) {
@@ -951,7 +938,6 @@ class yf_calendar {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display one month contents
 	function _show_month ($start_date = 0, $params = array()) {
 
@@ -1020,7 +1006,6 @@ class yf_calendar {
 		return tpl()->parse("calendar/".$_tpl_prefix."month_main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Get calendar settings
 	function _get_settings ($user_id = 0) {
 		if (empty($user_id) && !empty(main()->USER_ID)) {
@@ -1048,7 +1033,6 @@ class yf_calendar {
 		return $cal_settings;
 	}
 
-	//-----------------------------------------------------------------------------
 	// Get other month time
 	function _get_other_month_time ($cur_month_time = 0, $diff = 0) {
 		if (empty($cur_month_time) || empty($diff)) {
@@ -1075,14 +1059,12 @@ class yf_calendar {
 		return strtotime($new_year_num."-".$new_month_num."-01 GMT");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
-	//-----------------------------------------------------------------------------
 	// 
 	function _get_week_day_name($num = 0) {
 		// Cache it
@@ -1119,7 +1101,7 @@ class yf_calendar {
 			return false;
 		}
 		if (!is_object($MODULES_OBJ)) {
-			$MODULES_OBJ = main()->init_class("site_modules", "modules/");
+			$MODULES_OBJ = module("site_modules");
 		}
 		$MODULES_OBJ->_modules_record_exists = true;
 		foreach ((array)$MODULES_OBJ->_modules_array as $k => $mod_settings){

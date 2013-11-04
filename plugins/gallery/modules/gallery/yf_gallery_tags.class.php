@@ -26,21 +26,13 @@ class yf_gallery_tags {
 	public $UTF8_MODE			= 0;
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-	}
-
-	/**
 	* Manage tags for the selected photo
 	*/
 	function _edit_tags ($photo_id = 0) {
 // TODO: make this compatible with HIDE_TOTAL_ID
 		// Only for members and only if turned on
 		if (MAIN_TYPE_USER 
-			&& (!$this->GALLERY_OBJ->ALLOW_TAGGING || !$this->GALLERY_OBJ->USER_ID)
+			&& (!module('gallery')->ALLOW_TAGGING || !module('gallery')->USER_ID)
 		) {
 			return "";
 		}
@@ -58,17 +50,17 @@ class yf_gallery_tags {
 			$_tags[$A["id"]] = $A["text"];
 		}
 		// Get photo details if not done yet
-		if (empty($this->GALLERY_OBJ->_photo_info)) {
-			$this->GALLERY_OBJ->_photo_info = db()->query_fetch("SELECT * FROM ".db('gallery_photos')." WHERE id=".intval($photo_id));
-			$photo_info = &$this->GALLERY_OBJ->_photo_info;
+		if (empty(module('gallery')->_photo_info)) {
+			module('gallery')->_photo_info = db()->query_fetch("SELECT * FROM ".db('gallery_photos')." WHERE id=".intval($photo_id));
+			$photo_info = &module('gallery')->_photo_info;
 		}
 		if (MAIN_TYPE_USER) {
-			$this->GALLERY_OBJ->is_own_gallery = intval(!empty($this->GALLERY_OBJ->USER_ID) && $this->GALLERY_OBJ->USER_ID == $this->GALLERY_OBJ->_photo_info["user_id"]);
+			module('gallery')->is_own_gallery = intval(!empty(module('gallery')->USER_ID) && module('gallery')->USER_ID == module('gallery')->_photo_info["user_id"]);
 		} elseif (MAIN_TYPE_ADMIN) {
-			$this->GALLERY_OBJ->is_own_gallery = true;
+			module('gallery')->is_own_gallery = true;
 		}
 		// Check for owner or for the member if we have free slots for adding
-		if (!$this->GALLERY_OBJ->is_own_gallery && count($_tags) >= $this->GALLERY_OBJ->TAGS_PER_PHOTO) {
+		if (!module('gallery')->is_own_gallery && count($_tags) >= module('gallery')->TAGS_PER_PHOTO) {
 			return "";
 		}
 		// Prepare for edit
@@ -84,8 +76,8 @@ class yf_gallery_tags {
 			$source = trim(preg_replace($this->REGEXP_ALLOWED, "", $source));
 			// Split by lines
 			$lines	= explode("\n", $source);
-//			if (count($lines) > $this->GALLERY_OBJ->TAGS_PER_PHOTO) {
-//				_re("Too many keywords (".count($lines)."), allowed max=".$this->GALLERY_OBJ->TAGS_PER_PHOTO);
+//			if (count($lines) > module('gallery')->TAGS_PER_PHOTO) {
+//				_re("Too many keywords (".count($lines)."), allowed max=".module('gallery')->TAGS_PER_PHOTO);
 //			}
 			// Last cleanup
 			foreach ((array)$lines as $cur_word) {
@@ -94,7 +86,7 @@ class yf_gallery_tags {
 					continue;
 				}
 				// Check max number of keywords
-				if (++$i > $this->GALLERY_OBJ->TAGS_PER_PHOTO) {
+				if (++$i > module('gallery')->TAGS_PER_PHOTO) {
 					break;
 				}
 				// Cut long keywords
@@ -119,7 +111,7 @@ class yf_gallery_tags {
 					unset($_new_tags[$_key]);
 				}
 				// Delete is only for owner
-				if ($this->GALLERY_OBJ->is_own_gallery) {
+				if (module('gallery')->is_own_gallery) {
 					$ids_to_delete = array_keys((array)$_new_tags);
 					// Delete old keywords
 					if (!empty($ids_to_delete)) {
@@ -130,7 +122,7 @@ class yf_gallery_tags {
 				// Save new keywords
 				foreach ((array)$keywords_array as $_word) {
 					// Check total ads limit for non-owner
-					if (!$this->GALLERY_OBJ->is_own_gallery && $num_tags >= $this->GALLERY_OBJ->TAGS_PER_PHOTO) {
+					if (!module('gallery')->is_own_gallery && $num_tags >= module('gallery')->TAGS_PER_PHOTO) {
 						break;
 					}
 					$num_tags++;
@@ -152,7 +144,7 @@ class yf_gallery_tags {
 						"text"			=> _es($_word),
 						"date"			=> time(),
 						"site_id"		=> (int)conf('SITE_ID'),
-						"owner_id"		=> intval($this->GALLERY_OBJ->_photo_info["user_id"]),
+						"owner_id"		=> intval(module('gallery')->_photo_info["user_id"]),
 						"user_id"		=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_id" : "user_id"]),
 					//	"user_group"	=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_group" : "user_group"]),
 					//	"is_admin"		=> MAIN_TYPE_ADMIN ? 1 : 0,
@@ -165,24 +157,24 @@ class yf_gallery_tags {
 			}
 // TODO: move into template
 			return "<div align='center'>Saved successfully<br /> <a href='javascript:self.window.close();'>Close window</a></div>";
-//			echo js_redirect("./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""));
+//			echo js_redirect("./?object=".'gallery'."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""));
 		}
 		// Prepare tags array
 		if (main()->NO_GRAPHICS) {
 			$tags = array();
-			$_prefetched_tags = $this->GALLERY_OBJ->_get_tags($photo_id);
+			$_prefetched_tags = module('gallery')->_get_tags($photo_id);
 			foreach ((array)$GLOBALS['_gallery_tags'][$photo_id] as $_name) {
-				$tags[$_name] = process_url("./?object=".GALLERY_CLASS_NAME."&action=tag&id=".urlencode($_name));
+				$tags[$_name] = process_url("./?object=".'gallery'."&action=tag&id=".urlencode($_name));
 			}
 		}
 		// Prepare template
 		$replace = array(
-			"form_action"	=> "./?object=".GALLERY_CLASS_NAME."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
+			"form_action"	=> "./?object=".'gallery'."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
 			"tags_to_edit"	=> $tags_to_edit,
-			"max_num_tags"	=> intval($this->GALLERY_OBJ->TAGS_PER_PHOTO),
+			"max_num_tags"	=> intval(module('gallery')->TAGS_PER_PHOTO),
 			"tags"			=> !empty($tags) ? $tags : "",
 		);
-		return tpl()->parse(GALLERY_CLASS_NAME."/edit_tags_form", $replace);
+		return tpl()->parse('gallery'."/edit_tags_form", $replace);
 	}
 
 	/**
@@ -219,16 +211,16 @@ class yf_gallery_tags {
 	* Display photos filtered by tag
 	*/
 	function _show_by_tag() {
-		if (!$this->GALLERY_OBJ->ALLOW_TAGGING) {
+		if (!module('gallery')->ALLOW_TAGGING) {
 			return _e(t("Tagging disabled"));
 		}
 		$_POST["tag"] = trim(preg_replace($this->REGEXP_ALLOWED, "", $_GET["id"]));
-		$this->GALLERY_OBJ->_SEARCH_AS_PHOTOS = $_POST["as_photos"] = 1;
+		module('gallery')->_SEARCH_AS_PHOTOS = $_POST["as_photos"] = 1;
 
-		$this->GALLERY_OBJ->clear_filter(1);
-		$this->GALLERY_OBJ->save_filter(1);
+		module('gallery')->clear_filter(1);
+		module('gallery')->save_filter(1);
 
-		$OBJ = $this->GALLERY_OBJ->_load_sub_module("gallery_stats");
-		return $OBJ->_show_all_galleries(array("pager_url" => "./?object=".GALLERY_CLASS_NAME."&action=tag&id=".urlencode($_POST["tag"])));
+		$OBJ = module('gallery')->_load_sub_module("gallery_stats");
+		return $OBJ->_show_all_galleries(array("pager_url" => "./?object=".'gallery'."&action=tag&id=".urlencode($_POST["tag"])));
 	}
 }

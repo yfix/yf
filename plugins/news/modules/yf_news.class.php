@@ -1,11 +1,10 @@
 <?php
 
-//-----------------------------------------------------------------------------
-// News handler module
+/**
+* News plugin
+*/
 class yf_news extends yf_module {
 	
-	//** @var int */
-//	public $TRIM_LENGTH	= 100;
 	/** @var bool Use bb codes */
 	public $USE_BB_CODES	= true;
 	/** @var array @conf_skip Params for the comments */
@@ -13,22 +12,16 @@ class yf_news extends yf_module {
 		"return_action" => "full_news"
 	);
 
-	//-----------------------------------------------------------------------------
-	// YF module constructor
-	function _init () {
-		// Try to override param
-//		$this->TRIM_LENGTH = conf('length_trim') ? conf('length_trim') : $this->TRIM_LENGTH;
-	}
-
-	//-----------------------------------------------------------------------------
-	// Main function
+	/**
+	*/
 	function show () {
-		// Connect pager
 		$sql = "SELECT * FROM ".db('news')." WHERE active='1' ORDER BY add_date DESC";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Do get news from db
 		$Q = db()->query($sql.$add_sql);
-		while ($A = db()->fetch_assoc($Q)) $news_array[$A["id"]] = $A;
+		while ($A = db()->fetch_assoc($Q)) {
+			$news_array[$A["id"]] = $A;
+		}
 		// Try to get info about comments
 		if (!empty($news_array)) {
 			$num_comments = $this->_get_num_comments(array(
@@ -56,15 +49,14 @@ class yf_news extends yf_module {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
-	// This function show full news text
+	/**
+	*/
 	function full_news () {
 		$_GET['id'] = intval($_GET['id']);
 		$news_info = db()->query_fetch("SELECT * FROM ".db('news')." WHERE id=".intval($_GET['id'])." AND active='1'");
 		if (!empty($news_info['id'])) {
 		
-			$OBJ = &main()->init_class("unread");
-			$ids = $OBJ->_set_read("news", $_GET["id"]);
+			$ids = _class_safe("unread")->_set_read("news", $_GET["id"]);
 
 			$replace = array(
 				"title"		=> _prepare_html($news_info['title'], 0),
@@ -81,9 +73,6 @@ class yf_news extends yf_module {
 
 	/**
 	* Display recent news for the home page
-	*
-	* @access	public
-	* @return void
 	*/
 	function _show_for_home_page ($input = array()) {
 		$LIMIT_RECENT = isset($input["num_items"]) ? $input["num_items"] : 4;
@@ -104,10 +93,10 @@ class yf_news extends yf_module {
 				"title"			=> _prepare_html($A['title'], 0),
 				"add_date"		=> _format_date($A['add_date'], "long"),
 				"head_text"		=> nl2br($A["head_text"]),
-				"full_link"		=> "./?object=".__CLASS__."&action=full_news&id=".$A['id'],
+				"full_link"		=> "./?object=".'news'."&action=full_news&id=".$A['id'],
 //				"num_comments"	=> intval($num_comments[$A['id']]),
 			);
-			$items .= tpl()->parse(__CLASS__."/home_page_item", $replace2);
+			$items .= tpl()->parse('news'."/home_page_item", $replace2);
 		}
 		// Do not display this block if there is no latest news
 		if (empty($items)) return false;
@@ -115,7 +104,7 @@ class yf_news extends yf_module {
 		$replace = array(
 			"items"	=> $items,
 		);
-		return tpl()->parse(__CLASS__."/home_page_main", $replace);
+		return tpl()->parse('news'."/home_page_main", $replace);
 	}
 
 	/**
@@ -125,7 +114,7 @@ class yf_news extends yf_module {
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				"title"			=> _prepare_html(t("News")." - ".$A["title"]),
-				"link"			=> process_url("./?object=". __CLASS__ ."&action=full_news&id=".$A["id"]),
+				"link"			=> process_url("./?object=". 'news' ."&action=full_news&id=".$A["id"]),
 				"description"	=> nl2br(_prepare_html(strip_tags($A["head_text"]))),
 				"date"			=> $A['add_date'],
 				"author"		=> "",
@@ -143,42 +132,32 @@ class yf_news extends yf_module {
 	}
 	
 	/**
-	*
 	*/
 	function _unread () {
-	
-		if(empty($this->_user_info["last_view"])){
+		if (empty($this->_user_info["last_view"])) {
 			return;
 		}
-		
 		$Q = db()->query("SELECT id FROM ".db('news')." WHERE active = '1' AND add_date > ".$this->_user_info["last_view"]);
 		while ($A = db()->fetch_assoc($Q)) {
 			$ids[$A["id"]] = $A["id"];
 		}
-		
 		$link = process_url("./?object=news&action=view_unread");
-		
 		$unread = array(
 			"count"	=> count($ids),
 			"ids"	=> $ids,
 			"link"	=> $link,
 		);
-	
 		return $unread;
 	}
 	
 	/**
-	*
 	*/
 	function view_unread () {
 		if(empty(main()->USER_ID)){
 			return;
 		}
-	
-		$OBJ = &main()->init_class("unread");
-		$ids = $OBJ->_get_unread("news");
-		
-		if(!empty($ids)){
+		$ids = _class_safe("unread")->_get_unread("news");
+		if (!empty($ids)) {
 			$sql		= "SELECT id,title FROM ".db('news')." WHERE id IN(".implode(",", (array)$ids).")";
 			$order_sql	= " ORDER BY add_date DESC";
 			list($add_sql, $pages, $total) = common()->divide_pages($sql);

@@ -1,9 +1,7 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Class for handling retrieving lost password
 class yf_get_pswd {
-
 
 	function _init(){
 		$this->_my_site_title = t('Password Reminder');
@@ -69,7 +67,6 @@ class yf_get_pswd {
 		));
 	}
 
-	//-----------------------------------------------------------------------------
 	//
 	function _send_info_to_user ($A = array()) {
 		if (empty($A)) {

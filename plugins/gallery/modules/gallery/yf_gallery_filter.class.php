@@ -13,10 +13,7 @@ class yf_gallery_filter {
 	* Constructor
 	*/
 	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-		// Prepare data
-		if ($this->GALLERY_OBJ->USE_FILTER) {
+		if (module('gallery')->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
 	}
@@ -25,7 +22,7 @@ class yf_gallery_filter {
 	* Prepare filter data
 	*/
 	function _prepare_filter_data () {
-		if (!$this->GALLERY_OBJ->USE_FILTER || !in_array($_GET["action"], array(
+		if (!module('gallery')->USE_FILTER || !in_array($_GET["action"], array(
 			"show",
 			"clear_filter",
 			"save_filter",
@@ -34,7 +31,7 @@ class yf_gallery_filter {
 			"tag",
 		))) return "";
 		// Filter session array name
-		$this->_filter_name	= GALLERY_CLASS_NAME."_filter";
+		$this->_filter_name	= 'gallery'."_filter";
 		// Connect common used arrays
 		$f = INCLUDE_PATH."common_code.php";
 		if (file_exists($f)) {
@@ -109,7 +106,7 @@ class yf_gallery_filter {
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql ($_source_sql = "") {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		$SF = &$_SESSION[$this->_filter_name];
@@ -148,7 +145,7 @@ class yf_gallery_filter {
 		}
 		// Search by ZIP code (US only)
 		if (!empty($SF['zip_code']) && (strlen($SF['zip_code']) == 5)) {
-			$ZIP_CODES_OBJ = main()->init_class("zip_codes", "classes/");
+			$ZIP_CODES_OBJ = _class("zip_codes");
 			$radius = (intval($SF['miles']) > 0) ? intval($SF['miles']) : 20;
 			$sql_zip = $ZIP_CODES_OBJ->_generate_sql($SF['zip_code'], $radius);
 			if (strlen($sql_zip)) {
@@ -159,7 +156,7 @@ class yf_gallery_filter {
 			$sql[] = implode("\r\n", $user_sub_sql);
 			$sql[] = " AND p.user_id = u.id ";
 		}
-		if ($this->GALLERY_OBJ->ALLOW_TAGGING && strlen($SF["tag"])) {
+		if (module('gallery')->ALLOW_TAGGING && strlen($SF["tag"])) {
 			$_source_sql = str_replace(" AS p", " AS p,".db('tags')." AS t", $_source_sql);
 			$sql[] = " AND p.id = t.object_id ";
 			$sql[] = " AND t.object_name='gallery' ";
@@ -224,14 +221,14 @@ class yf_gallery_filter {
 	* Session - based filter form stored in $_SESSION[$this->_filter_name][...]
 	*/
 	function _show_filter () {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		$SF = &$_SESSION[$this->_filter_name];
 		$replace = array(
-			"save_action"	=> "./?object=".GALLERY_CLASS_NAME."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".GALLERY_CLASS_NAME."&action=clear_filter"._add_get(),
-			"allow_tagging"	=> intval((bool)$this->GALLERY_OBJ->ALLOW_TAGGING),
+			"save_action"	=> "./?object=".'gallery'."&action=save_filter"._add_get(),
+			"clear_url"		=> "./?object=".'gallery'."&action=clear_filter"._add_get(),
+			"allow_tagging"	=> intval((bool)module('gallery')->ALLOW_TAGGING),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $SF[$name];
@@ -243,14 +240,14 @@ class yf_gallery_filter {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $SF[$item_name]);
 		}
-		return tpl()->parse(GALLERY_CLASS_NAME."/search_filter", $replace);
+		return tpl()->parse('gallery'."/search_filter", $replace);
 	}
 
 	/**
 	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		// Process featured countries
@@ -261,7 +258,7 @@ class yf_gallery_filter {
 			$_SESSION[$this->_filter_name][$name] = $_POST[$name];
 		}
 		if (!$silent) {
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries");
+			return js_redirect("./?object=".'gallery'."&action=show_all_galleries");
 		}
 	}
 
@@ -269,14 +266,14 @@ class yf_gallery_filter {
 	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
-		if (!$this->GALLERY_OBJ->USE_FILTER) {
+		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
 		foreach ((array)$_SESSION[$this->_filter_name] as $name) {
 			unset($_SESSION[$this->_filter_name]);
 		}
 		if (!$silent) {
-			return js_redirect("./?object=".GALLERY_CLASS_NAME."&action=show_all_galleries");
+			return js_redirect("./?object=".'gallery'."&action=show_all_galleries");
 		}
 	}
 

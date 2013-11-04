@@ -1,6 +1,5 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Reputation management module
 class yf_manage_reput {
 
@@ -27,7 +26,6 @@ class yf_manage_reput {
 		"reviews"		=> "./?object=reviews&action=edit&id=",
 	);
 
-	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_manage_reput() {
 		main()->USER_ID = $_GET['user_id'];
@@ -42,7 +40,6 @@ class yf_manage_reput {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default method (display blog posts)
 	function show () {
 		// Prepare filter
@@ -91,8 +88,8 @@ class yf_manage_reput {
 				"all_by_target_link"=> "./?object=".$_GET["object"]."&action=all_by_target&id=".$A["target_user_id"],
 				"voter_ban_info"	=> $this->_prepare_ban_info($users_infos[$A["user_id"]]),
 				"target_ban_info"	=> $this->_prepare_ban_info($users_infos[$A["target_user_id"]]),
-				"voter_ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($A["user_id"])),
-				"target_ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($A["target_user_id"])),
+				"voter_ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($A["user_id"]))),
+				"target_ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($A["target_user_id"]))),
 				"vote_for_object"	=> _prepare_html($A["object_name"]),
 				"vote_for_id"		=> intval($A["object_id"]),
 				"vote_for_link"		=> $A["object_name"] && $this->_map_vote_for[$A["object_name"]] ? $this->_map_vote_for[$A["object_name"]].$A["object_id"] : "",
@@ -110,7 +107,6 @@ class yf_manage_reput {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Do delete record (mass method)
 	function mass_delete () {
 		$ids_to_delete = array();
@@ -129,7 +125,6 @@ class yf_manage_reput {
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -177,7 +172,6 @@ class yf_manage_reput {
 		return "<b>".implode(" ", $body)."</b>";
 	}
 
-	//-----------------------------------------------------------------------------
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -212,7 +206,6 @@ class yf_manage_reput {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -226,7 +219,6 @@ class yf_manage_reput {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -243,7 +235,6 @@ class yf_manage_reput {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -258,7 +249,6 @@ class yf_manage_reput {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -269,7 +259,6 @@ class yf_manage_reput {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

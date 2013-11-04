@@ -301,7 +301,6 @@ class yf_poll {
 		$OBJECT_ID		= !empty($params["object_id"])		? intval($params["object_id"]) : intval($_GET["id"]);
 		$IS_COMMON		= !empty($params["common"])			? 1 : 0;
 
-
 		// Display create form
 		if (empty($_POST)) {
 			// Show form for create poll

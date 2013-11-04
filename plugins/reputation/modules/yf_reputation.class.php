@@ -103,9 +103,6 @@ class yf_reputation {
 	* @return	void
 	*/
 	function _init () {
-		define("REPUT_CLASS_NAME", "reputation");
-		// Sub modules folder
-		define("REPUT_MODULES_DIR", USER_MODULES_DIR. REPUT_CLASS_NAME."/");
 		// Do get reputation info about current user (if is a member)
 		if (!empty(main()->USER_ID)) {
 			$this->_get_cur_user_reput_info();
@@ -114,10 +111,6 @@ class yf_reputation {
 
 	/**
 	* Default method
-	* 
-	* @access	public
-	* @param
-	* @return	string
 	*/
 	function show () {
 		// Get top users by reputation points
@@ -316,7 +309,7 @@ class yf_reputation {
 			"votes"		=> $votes,
 			"limit"		=> $LIMIT_LAST_VOTES,
 		);
-		return tpl()->parse(REPUT_CLASS_NAME."/recent_votes", $replace);
+		return tpl()->parse('reputation'."/recent_votes", $replace);
 	}
 
 	/**
@@ -342,9 +335,9 @@ class yf_reputation {
 		// Process template
 		$replace = array(
 			"reput_stars"	=> $this->_show_reput_stars($reput_info["points"]),
-			"popup_link"	=> $SHOW_LINK ? process_url("./?object=".REPUT_CLASS_NAME."&action=vote_popup&id=".intval($user_id).$object_link) : "",
+			"popup_link"	=> $SHOW_LINK ? process_url("./?object=".'reputation'."&action=vote_popup&id=".intval($user_id).$object_link) : "",
 		);
-		return tpl()->parse(REPUT_CLASS_NAME."/user_reput", $replace);
+		return tpl()->parse('reputation'."/user_reput", $replace);
 	}
 
 	/**
@@ -520,14 +513,14 @@ class yf_reputation {
 				"success"	=> 1,
 				"text"		=> "",
 			);
-			$body = tpl()->parse(REPUT_CLASS_NAME."/vote_result", $replace);
+			$body = tpl()->parse('reputation'."/vote_result", $replace);
 		} else {
 			// Error message
 			$replace = array(
 				"success"	=> 0,
 				"text"		=> _e(),
 			);
-			$body = tpl()->parse(REPUT_CLASS_NAME."/vote_result", $replace);
+			$body = tpl()->parse('reputation'."/vote_result", $replace);
 		}
 		return common()->show_empty_page($body);
 	}
@@ -587,7 +580,7 @@ class yf_reputation {
 				$_vote_change[$i] = ($i > 0 ? "+" : ""). $i;
 			}
 			$replace = array(
-				"form_action"		=> process_url("./?object=".REPUT_CLASS_NAME."&action=vote&id=".$user_info["id"].$object_link),
+				"form_action"		=> process_url("./?object=".'reputation'."&action=vote&id=".$user_info["id"].$object_link),
 				"reput_points"		=> intval($REPUT_INFO["points"]),
 				"reput_stars"		=> $this->_show_reput_stars($REPUT_INFO["points"]),
 				"url_return_to"		=> $_SERVER["HTTP_REFERER"],
@@ -595,7 +588,7 @@ class yf_reputation {
 				"user_profile_link"	=> process_url("./?object=user_profile&action=show&id=".$target_user_id),
 				"vote_change_box"	=> common()->select_box("vote_change", $_vote_change,	1, false, 2, "", false),
 			);
-			$body = tpl()->parse(REPUT_CLASS_NAME."/vote_popup", $replace);
+			$body = tpl()->parse('reputation'."/vote_popup", $replace);
 		} else {
 			$body = _e();
 		}
@@ -727,7 +720,7 @@ class yf_reputation {
 		list($num_votes)	= db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('reput_user_votes')." WHERE user_id=".intval($user_id));
 		list($num_voted)	= db()->query_fetch("SELECT COUNT(id) AS `0` FROM ".db('reput_user_votes')." WHERE target_user_id=".intval($user_id));
 		// Get user's activity
-		$ACTIVITY_OBJ = main()->init_class("activity");
+		$ACTIVITY_OBJ = module("activity");
 		if (is_object($ACTIVITY_OBJ)) {
 			$activity_info	= $ACTIVITY_OBJ->_get_user_total_info($user_id);
 			$act_points		= $activity_info["points"];
@@ -763,7 +756,7 @@ class yf_reputation {
 		}
 		$activity_points = 0;
 		// Connecting to the activity module
-		$ACTIVITY_OBJ = main()->init_class("activity");
+		$ACTIVITY_OBJ = module("activity");
 		if (is_object($ACTIVITY_OBJ)) {
 			$activity_points = $ACTIVITY_OBJ->_get_user_total_points($user_id);
 		}
@@ -860,22 +853,22 @@ class yf_reputation {
 		// Total stars to fill with values
 		$stars_to_fill = ceil(count($this->STARS_VALUES_ARRAY) / 2);
 		// Do get stars templates
-		$this->_star_good		= tpl()->parse(REPUT_CLASS_NAME."/stars", array(
+		$this->_star_good		= tpl()->parse('reputation'."/stars", array(
 			"good"			=> 1,
 			"reput_value"	=> $reput_value,
 			"no_number"		=> (int)$_no_reput_number,
 		));
-		$this->_star_grey		= tpl()->parse(REPUT_CLASS_NAME."/stars", array(
+		$this->_star_grey		= tpl()->parse('reputation'."/stars", array(
 			"grey"			=> 1,
 			"reput_value"	=> $reput_value,
 			"no_number"		=> (int)$_no_reput_number,
 		));
-		$this->_star_bad		= tpl()->parse(REPUT_CLASS_NAME."/stars", array(
+		$this->_star_bad		= tpl()->parse('reputation'."/stars", array(
 			"bad"			=> 1,
 			"reput_value"	=> $reput_value,
 			"no_number"		=> (int)$_no_reput_number,
 		));
-		$this->_star_neutral	= tpl()->parse(REPUT_CLASS_NAME."/stars", array(
+		$this->_star_neutral	= tpl()->parse('reputation'."/stars", array(
 			"neutral"		=> 1,
 			"reput_value"	=> $reput_value,
 			"no_number"		=> (int)$_no_reput_number,
@@ -901,12 +894,7 @@ class yf_reputation {
 	* Try to load sub_module
 	*/
 	function _load_sub_module ($module_name = "") {
-		$OBJ = main()->init_class($module_name, REPUT_MODULES_DIR);
-		if (!is_object($OBJ)) {
-			trigger_error("REPUTATION: Cant load sub_module \"".$module_name."\"", E_USER_WARNING);
-			return false;
-		}
-		return $OBJ;
+		return _class($module_name, 'modules/reputation/');
 	}
 
 	/**

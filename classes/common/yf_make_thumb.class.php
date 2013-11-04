@@ -21,7 +21,7 @@ class yf_make_thumb {
 	);
 	/** @var bool */
 // TODO: connect this
-	public $OUTPUT_IMAGE_TYPE	= "jpeg";
+	public $OUTPUT_IMAGE_TYPE	    = "jpeg";
 	/** @var bool */
 	public $ALLOW_NETPBM			= 1;
 	/** @var bool */
@@ -39,7 +39,7 @@ class yf_make_thumb {
 	/** @var string */
 	public $DEBUG_LOG_FILE			= "logs/make_thumb.log";
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
-	public $LOG_TO_FILE			= 1;
+	public $LOG_TO_FILE		      	= 1;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
 	public $LOG_TO_DB				= 1;
 	/** @var bool Depends on ENABLE_DEBUG_LOG */
@@ -48,13 +48,13 @@ class yf_make_thumb {
 	public $DEGRADE_GRACEFULLY		= 1;
 	/** @var bool Use temporary images (more operations but more stable) */
 // TODO: currently broken
-	public $USE_TEMP_IMAGES		= 1;
+	public $USE_TEMP_IMAGES	    	= 1;
 	/** @var string Folder for temporary images */
-	public $TEMP_IMAGES_DIR		= "uploads/tmp/";
+	public $TEMP_IMAGES_DIR	    	= "uploads/tmp/";
 	/** @var string Folder for temporary images */
 	public $BAD_IMAGES_DIR			= "logs/bad_images/";
 	/** @var bool */
-	public $AUTO_FIND_PATHS		= 0;
+	public $AUTO_FIND_PATHS	    	= 0;
 	/** @var string */
 	public $FOUND_NETPBM_PATH		= "";
 	/** @var string */
@@ -422,7 +422,7 @@ class yf_make_thumb {
 		$PATH_TO_IMAGICK = $this->FOUND_IMAGICK_PATH;
 		$_source_image_info = $this->_image_info_imagick($source_file_path);
 		if ($_source_image_info["type"] == "gif") {
-			$add_cmd = " -composite ";
+			 $this->_is_gif_animated_imagick($source_file_path) ? $add_cmd = " -coalesce " : $add_cmd = " -composite ";
 		}
 		$imagick_cmd	= $PATH_TO_IMAGICK."convert ".$source_file_path." ".$add_cmd." ".(!empty($resize_cmd) ? "-thumbnail \"".$resize_cmd.">\"" : "")." ".(defined("THUMB_QUALITY") ? " -quality \"".intval(THUMB_QUALITY)."\"" : "")." ".$dest_file_path;
 		$output = exec($imagick_cmd);
@@ -438,6 +438,21 @@ class yf_make_thumb {
 		}
 		return $imagick_cmd;
 	}
+
+	/**
+	* detect animated gif for imagick
+	**/
+    function _is_gif_animated_imagick($source_file_path){
+	    $nb_image_frame = 0;
+		$image = new Imagick($source_file_path);
+		foreach($image->deconstructImages() as $i) {
+		    $nb_image_frame++;
+			if ($nb_image_frame > 1) {
+			    return true;
+			 }
+        }
+		return false;
+	 }
 
 	/**
 	* Get image info using "identify" binary from "imagemagick"

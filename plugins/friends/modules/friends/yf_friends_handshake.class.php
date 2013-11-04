@@ -10,18 +10,10 @@
 class yf_friends_handshake {
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-		// Reference to parent object
-		$this->PARENT_OBJ	= module(FRIENDS_CLASS_NAME);
-	}
-
-	/**
 	* 
 	*/
 	function request_handshake_form(){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -32,25 +24,25 @@ class yf_friends_handshake {
 			return _e("No such user in database!");
 		}
 
-		if ($receiver_info["id"] == $this->PARENT_OBJ->USER_ID) {
+		if ($receiver_info["id"] == module('friends')->USER_ID) {
 			return _e("You are trying to send handshake to yourself!");
 		}
 
 		$replace = array(
-			"form_action"	=> "./?object=".FRIENDS_CLASS_NAME."&action=send_request_handshake&id=".$receiver_info["id"],
+			"form_action"	=> "./?object=".'friends'."&action=send_request_handshake&id=".$receiver_info["id"],
 			"receiver_name"	=> _display_name($receiver_info),
-			"captcha_block"	=> $this->PARENT_OBJ->_captcha_block(),
+			"captcha_block"	=> module('friends')->_captcha_block(),
 			"error"			=> "",
 			"message"		=> "",
 		);
-		return tpl()->parse(FRIENDS_CLASS_NAME."/send_handshake_form", $replace);
+		return tpl()->parse('friends'."/send_handshake_form", $replace);
 	}
 	
 	/**
 	* 
 	*/
 	function send_request_handshake(){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -61,31 +53,31 @@ class yf_friends_handshake {
 			return _e("No such user in database!");
 		}
 
-		if ($receiver_info["id"] == $this->PARENT_OBJ->USER_ID) {
+		if ($receiver_info["id"] == module('friends')->USER_ID) {
 			return _e("You are trying to send handshake to yourself!");
 		}
 
 		// Validate captcha
-		$this->PARENT_OBJ->CAPTCHA->check("captcha");
+		module('friends')->CAPTCHA->check("captcha");
 
 		if (!common()->_error_exists()) {
 
-			$this->_add_handshake_request(intval($this->PARENT_OBJ->_user_info["id"]), intval($receiver_info["id"]), $_POST["message"]);
+			$this->_add_handshake_request(intval(module('friends')->_user_info["id"]), intval($receiver_info["id"]), $_POST["message"]);
 		
 			$replace = array(
 				"receiver_name"	=> _display_name($receiver_info),
 			);
-			return tpl()->parse(FRIENDS_CLASS_NAME."/send_handshake_complete", $replace);
+			return tpl()->parse('friends'."/send_handshake_complete", $replace);
 
 		}else{
 			$replace = array(
-				"form_action"	=> "./?object=".FRIENDS_CLASS_NAME."&action=send_request_handshake&id=".$receiver_info["id"],
+				"form_action"	=> "./?object=".'friends'."&action=send_request_handshake&id=".$receiver_info["id"],
 				"error"			=> _e(),
-				"captcha_block"	=> $this->PARENT_OBJ->_captcha_block(),
+				"captcha_block"	=> module('friends')->_captcha_block(),
 				"receiver_name"	=> _display_name($receiver_info),
 				"message"		=> $_POST["message"],
 			);
-			return tpl()->parse(FRIENDS_CLASS_NAME."/send_handshake_form", $replace);
+			return tpl()->parse('friends'."/send_handshake_form", $replace);
 		}
 	}
 	
@@ -104,14 +96,14 @@ class yf_friends_handshake {
 	*/
 	function all_handshake_request($sender = 0, $object = ""){
 		
-		$this->PARENT_OBJ->USER_ID = $sender?$sender:$this->PARENT_OBJ->USER_ID;
-		$object = $object?$object:FRIENDS_CLASS_NAME;
+		module('friends')->USER_ID = $sender?$sender:module('friends')->USER_ID;
+		$object = $object?$object:'friends';
 	
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 
-		$sql = "SELECT * FROM ".db('handshake')." WHERE sender=".$this->PARENT_OBJ->USER_ID;
+		$sql = "SELECT * FROM ".db('handshake')." WHERE sender=".module('friends')->USER_ID;
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$Q = db()->query($sql.$add_sql);
@@ -136,35 +128,35 @@ class yf_friends_handshake {
 					"description"		=> _prepare_html($A["text"]),
 					"date"				=> _format_date($A["add_date"], "long"),
 					"action_date"		=> _format_date($A["action_date"], "long"),
-					"status"			=> $this->PARENT_OBJ->status[$A["status"]],
+					"status"			=> module('friends')->status[$A["status"]],
 					"delete_link"		=> "./?object=".$object."&action=delete_handshake&id=".$A["id"],
 				);
-				$items .= tpl()->parse(FRIENDS_CLASS_NAME."/sender_handshake_item", $replace2);
+				$items .= tpl()->parse('friends'."/sender_handshake_item", $replace2);
 			}
 		}
 		// Process template
 		$replace = array(
 			"items"					=> $items,
-			"delete_form_action"	=> "./?object=".FRIENDS_CLASS_NAME."&action=group_handshake_delete",
+			"delete_form_action"	=> "./?object=".'friends'."&action=group_handshake_delete",
 			"pages"					=> $pages,
 			"group_handshake_action"=> "./?object=".$object."&action=group_handshake_delete",
 
 		);
-		return tpl()->parse(FRIENDS_CLASS_NAME."/sender_handshake_main", $replace);
+		return tpl()->parse('friends'."/sender_handshake_main", $replace);
 	}
 
 	/**
 	* 
 	*/
 	function all_handshake_request_to_you($receiver = 0, $object = ""){
-		$this->PARENT_OBJ->USER_ID = $receiver?$receiver:$this->PARENT_OBJ->USER_ID;
-		$object = $object?$object:FRIENDS_CLASS_NAME;
+		module('friends')->USER_ID = $receiver?$receiver:module('friends')->USER_ID;
+		$object = $object?$object:'friends';
 	
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 
-		$sql = "SELECT * FROM ".db('handshake')." WHERE receiver=".$this->PARENT_OBJ->USER_ID." ORDER BY status";
+		$sql = "SELECT * FROM ".db('handshake')." WHERE receiver=".module('friends')->USER_ID." ORDER BY status";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$Q = db()->query($sql.$add_sql);
@@ -187,11 +179,11 @@ class yf_friends_handshake {
 					"description"	=> _prepare_html($A["text"]),
 					"date"			=> _format_date($A["add_date"], "long"),
 					"action_date"	=> _format_date($A["action_date"], "long"),
-					"status"		=> $this->PARENT_OBJ->status[$A["status"]],
+					"status"		=> module('friends')->status[$A["status"]],
 					"accept_link"	=> "./?object=".$object."&action=accept_handshake&id=".$A["id"],
 					"decline_link"	=> "./?object=".$object."&action=decline_handshake&id=".$A["id"],
 				);
-				$items .= tpl()->parse(FRIENDS_CLASS_NAME."/receiver_handshake_item", $replace2);
+				$items .= tpl()->parse('friends'."/receiver_handshake_item", $replace2);
 			}
 		}
 		// Process template
@@ -200,14 +192,14 @@ class yf_friends_handshake {
 			"items"					=> $items,		
 			"pages"					=> $pages,
 		);
-		return tpl()->parse(FRIENDS_CLASS_NAME."/receiver_handshake_main", $replace);
+		return tpl()->parse('friends'."/receiver_handshake_main", $replace);
 	}
 
 	/**
 	* 
 	*/
 	function accept_handshake(){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -216,7 +208,7 @@ class yf_friends_handshake {
 			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
-		if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
+		if(module('friends')->USER_ID != $handshake["receiver"]){
 			return _e("Only for owner!");
 		}
 		
@@ -234,22 +226,22 @@ class yf_friends_handshake {
 			), "id=".intval($handshake["id"]));			
 			
 			// Check if user is already a friend
-			$IS_A_FRIEND = $this->PARENT_OBJ->_is_a_friend($this->PARENT_OBJ->USER_ID, $handshake["sender"]);
+			$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $handshake["sender"]);
 			if ($IS_A_FRIEND) {
 				return _e("This user is already in your friends list");
 			}
 			// Do add user
-			$this->PARENT_OBJ->_add_user_friends_ids($this->PARENT_OBJ->USER_ID, $handshake["sender"]);
+			module('friends')->_add_user_friends_ids(module('friends')->USER_ID, $handshake["sender"]);
 	
 		}
-		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request_to_you");
+		return js_redirect("./?object=".'friends'."&action=all_handshake_request_to_you");
 	}
 
 	/**
 	* 
 	*/
 	function decline_handshake(){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -258,7 +250,7 @@ class yf_friends_handshake {
 			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
-		if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
+		if(module('friends')->USER_ID != $handshake["receiver"]){
 			return _e("Only for owner!");
 		}
 		
@@ -271,9 +263,9 @@ class yf_friends_handshake {
 				return _e("No such user!");
 			}
 			// Check if user is already a friend
-			$IS_A_FRIEND = $this->PARENT_OBJ->_is_a_friend($this->PARENT_OBJ->USER_ID, $handshake["sender"]);
+			$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $handshake["sender"]);
 			if ($IS_A_FRIEND) {
-				$this->PARENT_OBJ->_del_user_friends_ids($this->PARENT_OBJ->USER_ID, $target_user_info);
+				module('friends')->_del_user_friends_ids(module('friends')->USER_ID, $target_user_info);
 			}
 			
 			db()->UPDATE("handshake", array(
@@ -281,14 +273,14 @@ class yf_friends_handshake {
 				"status"		=> 2,
 			), "id=".intval($handshake["id"]));			
 		}
-		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request_to_you");
+		return js_redirect("./?object=".'friends'."&action=all_handshake_request_to_you");
 	}
 
 	/**
 	* 
 	*/
 	function group_handshake_action(){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -297,7 +289,7 @@ class yf_friends_handshake {
 				if (!empty($value_id)) {
 					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
-				if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
+				if(module('friends')->USER_ID != $handshake["receiver"]){
 					return _e("Only for owner!");
 				}
 
@@ -308,7 +300,7 @@ class yf_friends_handshake {
 						return _e("No such user!");
 					}
 					// Check if user is already a friend
-					$IS_A_FRIEND = $this->PARENT_OBJ->_is_a_friend($this->PARENT_OBJ->USER_ID, $handshake["sender"]);
+					$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $handshake["sender"]);
 					if ($IS_A_FRIEND) {
 						db()->UPDATE("handshake", array(
 							"action_date"	=> time(),
@@ -316,7 +308,7 @@ class yf_friends_handshake {
 						), "id=".intval($handshake["id"]));
 					}else{
 					// Do add user
-					$this->PARENT_OBJ->_add_user_friends_ids($this->PARENT_OBJ->USER_ID, $handshake["sender"]);
+					module('friends')->_add_user_friends_ids(module('friends')->USER_ID, $handshake["sender"]);
 			
 					// update status
 						db()->UPDATE("handshake", array(
@@ -333,7 +325,7 @@ class yf_friends_handshake {
 				if (!empty($value_id)) {
 					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
-				if($this->PARENT_OBJ->USER_ID != $handshake["receiver"]){
+				if(module('friends')->USER_ID != $handshake["receiver"]){
 					return _e("Only for owner!");
 				}
 
@@ -352,14 +344,14 @@ class yf_friends_handshake {
 			}
 		}
 
-		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request_to_you");
+		return js_redirect("./?object=".'friends'."&action=all_handshake_request_to_you");
 	}
 
 	/**
 	* 
 	*/
 	function delete_handshake(){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -368,20 +360,20 @@ class yf_friends_handshake {
 			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
-		if ($this->PARENT_OBJ->USER_ID != $handshake["sender"]){
+		if (module('friends')->USER_ID != $handshake["sender"]){
 			return _e("Only for owner!");
 		}
 		if (!empty($_GET["id"])){
 			db()->query("DELETE FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
-		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request");
+		return js_redirect("./?object=".'friends'."&action=all_handshake_request");
 	}
 
 	/**
 	* 
 	*/
 	function group_handshake_delete(){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		foreach ((array)$_POST["item"] as $value_id){
@@ -389,14 +381,14 @@ class yf_friends_handshake {
 				$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 			}
 
-			if ($this->PARENT_OBJ->USER_ID != $handshake["sender"]){
+			if (module('friends')->USER_ID != $handshake["sender"]){
 				return _e("Only for owner!");
 			}
 			if (!empty($value_id)){
 				db()->query("DELETE FROM ".db('handshake')." WHERE id=".$value_id);
 			}
 		}
-		return js_redirect("./?object=".FRIENDS_CLASS_NAME."&action=all_handshake_request");
+		return js_redirect("./?object=".'friends'."&action=all_handshake_request");
 	}
 	
 	/**

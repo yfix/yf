@@ -55,18 +55,13 @@ class yf_photo_rating extends yf_module {
 
 	/**
 	* Framework constructor
-	*
-	* @access	public
-	* @return	void
 	*/
 	function _init () {
-		define("PHOTO_RATING_CLASS_NAME", "photo_rating");
-		// Prepare data
 		if ($this->USE_FILTER) {
 			$this->_prepare_filter_data();
 		}
 		// Gallery object required
-		$this->GALLERY_OBJ = main()->init_class("gallery");
+		$this->GALLERY_OBJ = module("gallery");
 		// Array of select boxes to process
 		$this->_boxes = array(
 			"rate_value"	=> 'radio_box("rate_value",	$this->_rate_values, $selected, false, 2, "", false)',
@@ -268,7 +263,7 @@ class yf_photo_rating extends yf_module {
 		);
 		// Prepare template
 		$replace = array(
-			"form_action"	=> "./?object=".PHOTO_RATING_CLASS_NAME."&action=ajax_vote",
+			"form_action"	=> "./?object=".'photo_rating'."&action=ajax_vote",
 			"img_src"		=> WEB_PATH. $img_path,
 			"rate_box"		=> $this->_box("rate_value"),
 			"real_w"		=> intval($real_w),
@@ -285,7 +280,7 @@ class yf_photo_rating extends yf_module {
 			"no_results"	=> intval((bool)$NO_RESULTS),
 			"comments"		=> $this->_view_comments(),
 		);
-		return tpl()->parse(PHOTO_RATING_CLASS_NAME."/photo_main", $replace);
+		return tpl()->parse('photo_rating'."/photo_main", $replace);
 	}
 
 	/**
@@ -476,7 +471,7 @@ class yf_photo_rating extends yf_module {
 		$replace = array(
 			"object_id"			=> intval($OBJECT_ID),
 			"object_name"		=> _prepare_html($OBJECT_NAME),
-			"do_vote_url"		=> process_url("./?object=".PHOTO_RATING_CLASS_NAME."&action=ajax_vote"),
+			"do_vote_url"		=> process_url("./?object=".'photo_rating'."&action=ajax_vote"),
 			"allow_vote"		=> intval((bool)$ALLOW_VOTE),
 			"display_js"		=> intval($GLOBALS["_rate_item_num_calls"] == 1),
 			"vote_box"			=> common()->select_box("vote", $this->_rate_values, $selected, false, 1, " class='vote_box' ", false),
@@ -562,7 +557,7 @@ class yf_photo_rating extends yf_module {
 	*/
 	function _prepare_filter_data () {
 		// Filter session array name
-		$this->_filter_name	= PHOTO_RATING_CLASS_NAME."_filter";
+		$this->_filter_name	= 'photo_rating'."_filter";
 		// Connect common used arrays
 		$f = INCLUDE_PATH."common_code.php";
 		if (file_exists($f)) {
@@ -630,8 +625,8 @@ class yf_photo_rating extends yf_module {
 	function _show_filter () {
 		if (!$this->USE_FILTER) return "";
 		$replace = array(
-			"save_action"	=> "./?object=".PHOTO_RATING_CLASS_NAME."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".PHOTO_RATING_CLASS_NAME."&action=clear_filter"._add_get(),
+			"save_action"	=> "./?object=".'photo_rating'."&action=save_filter"._add_get(),
+			"clear_url"		=> "./?object=".'photo_rating'."&action=clear_filter"._add_get(),
 		);
 		foreach ((array)$this->_fields_in_filter as $name) {
 			$replace[$name] = $_SESSION[$this->_filter_name][$name];
@@ -640,7 +635,7 @@ class yf_photo_rating extends yf_module {
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse(PHOTO_RATING_CLASS_NAME."/filter", $replace);
+		return tpl()->parse('photo_rating'."/filter", $replace);
 	}
 
 	/**
@@ -656,7 +651,7 @@ class yf_photo_rating extends yf_module {
 			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_POST[$name];
 		}
 		if (!$silent) {
-			js_redirect("./?object=".PHOTO_RATING_CLASS_NAME."&action=show");
+			js_redirect("./?object=".'photo_rating'."&action=show");
 		}
 	}
 
@@ -669,7 +664,7 @@ class yf_photo_rating extends yf_module {
 			$_SESSION[$this->_filter_name] = array();
 		}
 		if (!$silent) {
-			js_redirect("./?object=".PHOTO_RATING_CLASS_NAME."&action=show");
+			js_redirect("./?object=".'photo_rating'."&action=show");
 		}
 	}
 

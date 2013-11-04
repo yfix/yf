@@ -15,14 +15,6 @@ class yf_gallery_cleanup {
 	public $ALLOW_STEP_2 = 1;
 	/** @var bool Useful for debugging @conf_skip */
 	public $ALLOW_STEP_3 = 1;
-
-	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->GALLERY_OBJ	= module(GALLERY_CLASS_NAME);
-	}
 	
 	/**
 	* Do cleanup
@@ -38,7 +30,7 @@ class yf_gallery_cleanup {
 		// Delete all inactive gallery photos records
 		db()->query("DELETE FROM ".db('gallery_photos')." WHERE active='0'");
 		// Start to cleanup "dead" photos
-		$path_to_photos = INCLUDE_PATH.$this->GALLERY_OBJ->GALLERY_DIR;
+		$path_to_photos = INCLUDE_PATH.module('gallery')->GALLERY_DIR;
 		// ############ STEP 1 ###############
 		// Cleanup non-linked to db photos files
 		// ###################################
@@ -67,7 +59,7 @@ class yf_gallery_cleanup {
 				// Prepare path to the user's folder
 				$cur_user_folder = _gen_dir_path($i);
 				// Process gallery photo types
-				foreach ((array)$this->GALLERY_OBJ->PHOTO_TYPES as $type_name => $type_info) {
+				foreach ((array)module('gallery')->PHOTO_TYPES as $type_name => $type_info) {
 					$cur_type_dir	= $path_to_photos. $type_info["sub_folder"]. $cur_user_folder;
 					// Skip non-existed dirs
 					if (!file_exists($cur_type_dir)) {
@@ -81,7 +73,7 @@ class yf_gallery_cleanup {
 					// Prepare photos names
 					$avail_photos_names	= array();
 					foreach ((array)$user_known_photos as $_photo_info) {
-						$avail_photos_names[$_photo_info["id"]] = $this->GALLERY_OBJ->_create_name_from_tpl($_photo_info, $type_name, 0).".jpg";
+						$avail_photos_names[$_photo_info["id"]] = module('gallery')->_create_name_from_tpl($_photo_info, $type_name, 0).".jpg";
 					}
 					// Do delete subfolders if user have no photos
 					if (empty($avail_photos_names)) {
@@ -113,7 +105,7 @@ class yf_gallery_cleanup {
 							list($i_width, $i_height,,) = $image_info;
 						}
 						// Get photo_id from name
-						$_try_photo_info = $this->GALLERY_OBJ->_get_info_from_file_name($f);
+						$_try_photo_info = module('gallery')->_get_info_from_file_name($f);
 						// Fill other info array
 						$user_photos_other_infos[$_try_photo_info["photo_id"]][$type_name] = array(
 							"w"	=> intval($i_width),
@@ -150,7 +142,7 @@ class yf_gallery_cleanup {
 				// Prepare path to the user's folder
 				$cur_user_folder = _gen_dir_path($A["user_id"]);
 				// First we need to check original photo
-				$original_photo_path = $path_to_photos. $this->GALLERY_OBJ->PHOTO_TYPES["original"]["sub_folder"]. $cur_user_folder .$this->GALLERY_OBJ->_create_name_from_tpl($A, "original", 0).".jpg";
+				$original_photo_path = $path_to_photos. module('gallery')->PHOTO_TYPES["original"]["sub_folder"]. $cur_user_folder .module('gallery')->_create_name_from_tpl($A, "original", 0).".jpg";
 				if (!file_exists($original_photo_path) || !is_readable($original_photo_path) || !filesize($original_photo_path)) {
 					$PHOTO_CORRUPTED = true;
 				}
@@ -175,14 +167,14 @@ class yf_gallery_cleanup {
 				}
 				// Process gallery photo types
 				if (!$PHOTO_CORRUPTED) {
-					foreach ((array)$this->GALLERY_OBJ->PHOTO_TYPES as $type_name => $type_info) {
+					foreach ((array)module('gallery')->PHOTO_TYPES as $type_name => $type_info) {
 						// We did special processing of the original photos before
 						if ($type_name == "original") {
 							continue;
 						}
 						$NEED_RESIZE = false;
 						$cur_type_dir	= $path_to_photos. $type_info["sub_folder"]. $cur_user_folder;
-						$cur_photo_path = $cur_type_dir.$this->GALLERY_OBJ->_create_name_from_tpl($A, $type_name, 0).".jpg";
+						$cur_photo_path = $cur_type_dir.module('gallery')->_create_name_from_tpl($A, $type_name, 0).".jpg";
 						// Check if file is ok
 						if (file_exists($cur_photo_path) && filesize($cur_photo_path) && is_readable($cur_photo_path)) {
 							continue;
@@ -228,7 +220,7 @@ class yf_gallery_cleanup {
 		if ($this->ALLOW_STEP_3) {
 			$counter = 0;
 			// Prepare data
-			$def_title		= $this->GALLERY_OBJ->DEFAULT_FOLDER_NAME;
+			$def_title		= module('gallery')->DEFAULT_FOLDER_NAME;
 			$is_default		= 1;
 			$creation_date	= time();
 			// Delete photos with missing users
@@ -301,6 +293,6 @@ class yf_gallery_cleanup {
 			db()->query("OPTIMIZE TABLE ".db('gallery_folders')."");
 		}
 		// Update public photos
-		$this->GALLERY_OBJ->_sync_public_photos();
+		module('gallery')->_sync_public_photos();
 	}
 }

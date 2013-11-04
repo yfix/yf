@@ -8,14 +8,6 @@
 * @version		1.0
 */
 class yf_forum_announce {
-
-	/**
-	* Constructor
-	*/
-	function _init () {
-		// Init bb codes module
-		$this->BB_OBJ = main()->init_class("bb_codes", "classes/");
-	}
 	
 	/**
 	* Show announce with given id
@@ -70,7 +62,7 @@ class yf_forum_announce {
 		// Process template
 		$replace = array(
 			"announce_name"		=> $announce_info["title"],
-			"announce_text"		=> $this->BB_OBJ->_process_text($announce_info["post"]),
+			"announce_text"		=> _class('bb_codes')->_process_text($announce_info["post"]),
 			"end_date"			=> $announce_info["end_date"] ? module('forum')->_show_date($announce_info["end_date"], "announce_date") : "",
 			"user_name"			=> _prepare_html($user_info["name"]),
 			"user_profile_link"	=> !module('forum')->SETTINGS["HIDE_USERS_INFO"] ? process_url(module('forum')->_user_profile_link($announce_info["user_id"])) : "",
@@ -81,7 +73,7 @@ class yf_forum_announce {
 			"user_location"		=> $user_info["user_from"],
 			"user_reg_date"		=> module('forum')->_show_date($user_info["user_regdate"], "user_reg_date"),
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse(FORUM_CLASS_NAME."/view_announce_main", $replace));
+		return module('forum')->_show_main_tpl(tpl()->parse('forum'."/view_announce_main", $replace));
 	}
 	
 	/**
@@ -93,7 +85,7 @@ class yf_forum_announce {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Init user cp module
-		$this->USER_CP_OBJ = main()->init_class("forum_user", FORUM_MODULES_DIR);
+		$this->USER_CP_OBJ = _class("forum_user", FORUM_MODULES_DIR);
 		// Switch between actions
 		if (!empty($_POST["add"]))		$content = $this->_add();
 		elseif (!empty($_POST["edit"]))	$content = $this->_edit();
@@ -137,8 +129,8 @@ class yf_forum_announce {
 			}
 			$replace2 = array(
 				"css_class_1"		=> module('forum')->_CSS["topic_".($A["active"] ? "a" : "u")."_1"],
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$A["id"]._add_get(array("page")),
-				"view_announce_link"=> "./?object=".FORUM_CLASS_NAME."&action=view_announce&id=".$A["id"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$A["id"]._add_get(array("page")),
+				"view_announce_link"=> "./?object=".'forum'."&action=view_announce&id=".$A["id"]._add_get(array("page")),
 				"announce_id"		=> $A["id"],
 				"announce_title"	=> $A["title"],
 				"creator_name"		=> $users_names[$A["author_id"]],
@@ -147,13 +139,13 @@ class yf_forum_announce {
 				"all_forums"		=> intval($A["forum"] == "*"),
 				"forums"			=> $forums,
 			);
-			$items .= tpl()->parse(FORUM_CLASS_NAME."/user_cp/announces_list_item", $replace2);
+			$items .= tpl()->parse('forum'."/user_cp/announces_list_item", $replace2);
 		}
 		$replace = array(
-			"form_action"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+			"form_action"	=> "./?object=".'forum'."&action=".$_GET["action"]._add_get(array("page")),
 			"items"			=> $items,
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/user_cp/announces_list_main", $replace);
+		return tpl()->parse('forum'."/user_cp/announces_list_main", $replace);
 	}
 	
 	/**
@@ -163,7 +155,7 @@ class yf_forum_announce {
 		// Show form
 		if (empty($_POST["save"])) {
 			$replace = array(
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]._add_get(array("page")),
 				"announce_title"	=> "",
 				"announce_start"	=> "",
 				"announce_end"		=> "",
@@ -171,7 +163,7 @@ class yf_forum_announce {
 				"announce_active"	=> "",
 				"forums_box"		=> $this->_forums_box("forum"),
 			);
-			return tpl()->parse(FORUM_CLASS_NAME."/user_cp/announce_add", $replace);
+			return tpl()->parse('forum'."/user_cp/announce_add", $replace);
 		// Do add announce
 		} else {
 			if ($_POST["forum"] == "*") {
@@ -192,7 +184,7 @@ class yf_forum_announce {
 			if (main()->USE_SYSTEM_CACHE) {
 				$cache = cache()->refresh("forum_announces");
 			}
-			js_redirect("./?object=".FORUM_CLASS_NAME."&action=edit_announces"._add_get(array("page")));
+			js_redirect("./?object=".'forum'."&action=edit_announces"._add_get(array("page")));
 		}
 	}
 	
@@ -212,16 +204,16 @@ class yf_forum_announce {
 				foreach ((array)$tmp as $forum_id) $forum_selected[$forum_id] = $forum_id;
 			}
 			$replace = array(
-				"form_action"		=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 				"announce_id"		=> $announce_info["id"],
 				"announce_title"	=> $announce_info["title"],
 				"announce_start"	=> $announce_info["start_time"] ? date("Y-m-d", $announce_info["start_time"]) : "",
 				"announce_end"		=> $announce_info["end_time"] ? date("Y-m-d", $announce_info["end_time"]) : "",
-				"announce_content"	=> $this->BB_OBJ->_process_text($announce_info["post"]),
+				"announce_content"	=> _class('bb_codes')->_process_text($announce_info["post"]),
 				"announce_active"	=> intval($announce_info["active"]),
 				"forums_box"		=> $this->_forums_box("forum", $forum_selected),
 			);
-			return tpl()->parse(FORUM_CLASS_NAME."/user_cp/announce_edit", $replace);
+			return tpl()->parse('forum'."/user_cp/announce_edit", $replace);
 		// Do save announce
 		} else {
 			if ($_POST["forum"] == "*") {
@@ -242,7 +234,7 @@ class yf_forum_announce {
 			if (main()->USE_SYSTEM_CACHE) {
 				$cache = cache()->refresh("forum_announces");
 			}
-			js_redirect("./?object=".FORUM_CLASS_NAME."&action=edit_announces"._add_get(array("page")));
+			js_redirect("./?object=".'forum'."&action=edit_announces"._add_get(array("page")));
 		}
 	}
 	
@@ -257,7 +249,7 @@ class yf_forum_announce {
 		if (main()->USE_SYSTEM_CACHE) {
 			$cache = cache()->refresh("forum_announces");
 		}
-		return js_redirect("./?object=".FORUM_CLASS_NAME."&action=edit_announces"._add_get(array("page")));
+		return js_redirect("./?object=".'forum'."&action=edit_announces"._add_get(array("page")));
 	}
 	
 	/**

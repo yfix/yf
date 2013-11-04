@@ -46,7 +46,7 @@ class yf_aggregator {
 		}
 		$this->DOMIT_RSS_PATH	= YF_PATH. $this->DOMIT_RSS_PATH;
 
-		$this->CONVERTER_OBJ = main()->init_class("convert_charset", "classes/");
+		$this->CONVERTER_OBJ = _class("convert_charset");
 	}
 
 	/**

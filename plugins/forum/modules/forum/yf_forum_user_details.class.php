@@ -71,7 +71,7 @@ class yf_forum_user_details {
 			"user_level"		=> $user_info["id"] && $user_level && module('forum')->SETTINGS["SHOW_USER_LEVEL"] ? ($user_level > 1 ? range(1, $user_level) : array(1)) : "",
 			"show_user_level"	=> intval($user_info["id"] && $user_level && module('forum')->SETTINGS["SHOW_USER_LEVEL"]),
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/view_user_details", $replace);
+		return tpl()->parse('forum'."/view_user_details", $replace);
 	}
 	
 	/**

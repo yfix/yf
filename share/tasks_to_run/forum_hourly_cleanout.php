@@ -1,5 +1,5 @@
 <?php
-//-----------------------------------------------------------------------------
+
 // THIS TASKS OPERATIONS:
 // Clean out forum 'dead' sessions, validations etc
 class task_item {
@@ -7,7 +7,7 @@ class task_item {
 	var $class		= "";
 	var $task		= "";
 
-	//-----------------------------------------------------------------------------
+	
 	// ADD YOUR CODE HERE
 	function run_task()	{
 		// Check for correct call
@@ -19,17 +19,17 @@ class task_item {
 		$this->class->append_task_log($this->task, 'Forum module: Old sessions, validations deleted');
 	}
 
-	//-----------------------------------------------------------------------------
+	
 	// DO NOT MODIFY!
 	function register_class(&$class) {
 		$this->class = $class;
 	}
 	
-	//-----------------------------------------------------------------------------
+	
 	// DO NOT MODIFY!
 	function pass_task($this_task) {
 		$this->task = $this_task;
 	}
 }
-//-----------------------------------------------------------------------------
+
 ?>

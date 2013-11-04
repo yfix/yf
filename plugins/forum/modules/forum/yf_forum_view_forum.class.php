@@ -147,7 +147,7 @@ class yf_forum_view_forum {
 				// Prepare pages
 				list($forum_num_posts) = db()->query_fetch("SELECT FOUND_ROWS() AS `0`", false);
 				$forum_num_posts = intval($forum_num_posts);
-				list(, $forum_pages, ) = common()->divide_pages(null, $path, null, $topics_per_page, $forum_num_posts, FORUM_CLASS_NAME."/pages_1/");
+				list(, $forum_pages, ) = common()->divide_pages(null, $path, null, $topics_per_page, $forum_num_posts, 'forum'."/pages_1/");
 				if (!empty($forum_num_posts)) {
 					$Q = db()->query("SELECT * FROM ".db('forum_topics')." WHERE id IN(".implode(",", array_keys($topics_array)).")");
 					while ($A = db()->fetch_assoc($Q)) {
@@ -157,7 +157,7 @@ class yf_forum_view_forum {
 			}
 		// Common version
 		} else {
-			list($add_sql, $forum_pages, $forum_num_posts) = common()->divide_pages(str_replace("SELECT *","SELECT id",$sql), $path, null, $topics_per_page, null, FORUM_CLASS_NAME."/pages_1/");
+			list($add_sql, $forum_pages, $forum_num_posts) = common()->divide_pages(str_replace("SELECT *","SELECT id",$sql), $path, null, $topics_per_page, null, 'forum'."/pages_1/");
 			// Get data from db
 			$Q = db()->query($sql. $order_by. $add_sql);
 			while ($A = db()->fetch_assoc($Q)) {
@@ -175,7 +175,7 @@ class yf_forum_view_forum {
 		}
 		// Init topic item object
 		if (!empty($topics_array)) {
-			$TOPIC_ITEM_OBJ = main()->init_class("forum_topic_item", FORUM_MODULES_DIR);
+			$TOPIC_ITEM_OBJ = _class("forum_topic_item", FORUM_MODULES_DIR);
 		}
 		// Process posts
 		if (is_object($TOPIC_ITEM_OBJ)) {
@@ -200,7 +200,7 @@ class yf_forum_view_forum {
 			$allow_new_topic	= 0;
 		}
 		// Get stats
-		$STATS_OBJ = main()->init_class("forum_stats", FORUM_MODULES_DIR);
+		$STATS_OBJ = _class("forum_stats", FORUM_MODULES_DIR);
 		$announce_items = module('forum')->SETTINGS["ALLOW_ANNOUNCES"] ? $this->_show_announce_items() : "";
 		// Prepare sub forums
 		$sub_forums_ids = module('forum')->_get_sub_forums_ids($this->_forum_info["id"], 1);
@@ -213,38 +213,38 @@ class yf_forum_view_forum {
 			"is_moderator"			=> intval(FORUM_IS_ADMIN || (FORUM_IS_MODERATOR && module('forum')->_moderate_forum_allowed($this->_forum_info["id"]))),
 			"sub_forums"			=> $this->_show_sub_forums(),
 			"cat_name"				=> $this->_cat_info["name"],
-			"cat_link"				=> "./?object=".FORUM_CLASS_NAME._add_get(array("page")),
-			"add_topic_link"		=> $allow_new_topic ? "./?object=".FORUM_CLASS_NAME."&action=new_topic&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
-			"new_poll_link"			=> $allow_new_poll ? "./?object=".FORUM_CLASS_NAME."&action=new_poll&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
+			"cat_link"				=> "./?object=".'forum'._add_get(array("page")),
+			"add_topic_link"		=> $allow_new_topic ? "./?object=".'forum'."&action=new_topic&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
+			"new_poll_link"			=> $allow_new_poll ? "./?object=".'forum'."&action=new_poll&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
 			"forum_name"			=> _prepare_html($this->_forum_info["name"]),
 			"forum_num_posts"		=> $forum_num_posts > 0 ? $forum_num_posts - 1 : $forum_num_posts,
 			"forum_pages"			=> $forum_pages,
-			"forum_topics"			=> !empty($forum_topics) ? $forum_topics : tpl()->parse(FORUM_CLASS_NAME."/view_forum_no_topics"),
+			"forum_topics"			=> !empty($forum_topics) ? $forum_topics : tpl()->parse('forum'."/view_forum_no_topics"),
 			"forum_online"			=> is_object($STATS_OBJ) ? $STATS_OBJ->_show_forum_stats() : "",
 			"forum_filter"			=> $this->USE_FILTER ? $this->_show_filter() : "",
 			"board_fast_nav"		=> !$forum_is_closed && module('forum')->SETTINGS["ALLOW_FAST_JUMP_BOX"] ? module('forum')->_board_fast_nav_box() : "",
 			"anounce_items"			=> $announce_items,
 			"pinned_items"			=> $pinned_items,
 			"show_sub_header"		=> !empty($announce_items) || !empty($pinned_items),
-			"mark_forum_read_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["USE_READ_MESSAGES"] ? "./?object=".FORUM_CLASS_NAME."&action=mark_read&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
-			"subscribe_forum_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["ALLOW_TRACK_FORUM"] ? "./?object=".FORUM_CLASS_NAME."&action=subscribe_forum&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
-			"search_form_action"	=> module('forum')->SETTINGS["ALLOW_SEARCH"] && module('forum')->USER_RIGHTS["use_search"] ? "./?object=".FORUM_CLASS_NAME."&action=search". _add_get() : "",
+			"mark_forum_read_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["USE_READ_MESSAGES"] ? "./?object=".'forum'."&action=mark_read&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
+			"subscribe_forum_link"	=> FORUM_USER_ID && module('forum')->SETTINGS["ALLOW_TRACK_FORUM"] ? "./?object=".'forum'."&action=subscribe_forum&id=".$this->_forum_info["id"]._add_get(array("page")) : "",
+			"search_form_action"	=> module('forum')->SETTINGS["ALLOW_SEARCH"] && module('forum')->USER_RIGHTS["use_search"] ? "./?object=".'forum'."&action=search". _add_get() : "",
 			"forum_closed"			=> intval($forum_is_closed),
 			"t_act_box"				=> FORUM_IS_ADMIN || FORUM_IS_MODERATOR ? $this->_t_act_box() : "",
-			"rss_forum_button"		=> module('forum')->_show_rss_link("./?object=".FORUM_CLASS_NAME."&action=rss_forum&id=".$this->_forum_info["id"], "RSS feed for forum: ".$this->_forum_info["name"]),
+			"rss_forum_button"		=> module('forum')->_show_rss_link("./?object=".'forum'."&action=rss_forum&id=".$this->_forum_info["id"], "RSS feed for forum: ".$this->_forum_info["name"]),
 			"sub_forums_items"		=> $sub_forums_items,
 		);
 		// Administration methods
 		if (FORUM_IS_ADMIN || FORUM_IS_MODERATOR) {
 			$replace = array_merge($replace, array(
-				"admin_action_link"		=> "./?object=".FORUM_CLASS_NAME."&action=admin&id=".$this->_forum_info["id"]._add_get(array("page")),
-				"inv_topics_link"		=> "./?object=".FORUM_CLASS_NAME."&action=show_inv_topics&id=".$this->_forum_info["id"]._add_get(array("page")),
-				"inv_posts_link"		=> "./?object=".FORUM_CLASS_NAME."&action=show_inv_posts&id=".$this->_forum_info["id"]._add_get(array("page")),
-				"resync_forum_link"		=> "./?object=".FORUM_CLASS_NAME."&action=sync_forum&id=".$this->_forum_info["id"]._add_get(array("page")),
-				"prune_link"			=> "./?object=".FORUM_CLASS_NAME."&action=prune&id=".$this->_forum_info["id"]._add_get(array("page")),
+				"admin_action_link"		=> "./?object=".'forum'."&action=admin&id=".$this->_forum_info["id"]._add_get(array("page")),
+				"inv_topics_link"		=> "./?object=".'forum'."&action=show_inv_topics&id=".$this->_forum_info["id"]._add_get(array("page")),
+				"inv_posts_link"		=> "./?object=".'forum'."&action=show_inv_posts&id=".$this->_forum_info["id"]._add_get(array("page")),
+				"resync_forum_link"		=> "./?object=".'forum'."&action=sync_forum&id=".$this->_forum_info["id"]._add_get(array("page")),
+				"prune_link"			=> "./?object=".'forum'."&action=prune&id=".$this->_forum_info["id"]._add_get(array("page")),
 			));
 		}
-		return module('forum')->_show_main_tpl(tpl()->parse(FORUM_CLASS_NAME."/view_forum_main", $replace));
+		return module('forum')->_show_main_tpl(tpl()->parse('forum'."/view_forum_main", $replace));
 	}
 
 	/**
@@ -276,7 +276,7 @@ class yf_forum_view_forum {
 		if (module('forum')->SETTINGS["SHOW_TOPIC_PAGES"] && !empty($topic_pages_ids)) {
 			$topic_pages = array();
 			foreach ((array)$topic_pages_ids as $topic_id => $topic_num_posts) {
-				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages("", "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$topic_id, null, module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"], $topic_num_posts + 1, FORUM_CLASS_NAME."/pages_2/");
+				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages("", "./?object=".'forum'."&action=view_topic&id=".$topic_id, null, module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"], $topic_num_posts + 1, 'forum'."/pages_2/");
 			}
 		}
 		// Process last posts records
@@ -293,12 +293,12 @@ class yf_forum_view_forum {
 					"last_post_author_link"	=> $post_info["user_id"] ? module('forum')->_user_profile_link($post_info["user_id"]) : "",
 					"last_post_subject"		=> _prepare_html($subject),
 					"last_post_date"		=> module('forum')->_show_date($post_info["created"], "last_post_date"),
-					"last_post_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$post_info["topic"].($_total_pages[$post_info["topic"]] > 1 ? "&page=".$_total_pages[$post_info["topic"]] : "")."#last_post",
+					"last_post_link"		=> "./?object=".'forum'."&action=view_topic&id=".$post_info["topic"].($_total_pages[$post_info["topic"]] > 1 ? "&page=".$_total_pages[$post_info["topic"]] : "")."#last_post",
 					"last_post_id"			=> $post_info["id"],
 					"user_id"				=> $post_info["user_id"],
 					"fast_text_preview"		=> (int)module('forum')->SETTINGS["FAST_TEXT_PREVIEW"],
 				);
-				$last_posts[$post_info["topic"]] = tpl()->parse(FORUM_CLASS_NAME."/view_forum_last_posts", $replace3);
+				$last_posts[$post_info["topic"]] = tpl()->parse('forum'."/view_forum_last_posts", $replace3);
 			}
 		}
 		return array($last_posts, $topic_pages);
@@ -311,7 +311,7 @@ class yf_forum_view_forum {
 		if (empty($sub_forums_ids)) {
 			return false;
 		}
-		$FORUM_VIEW_HOME_OBJ = main()->init_class("forum_view_home", FORUM_MODULES_DIR);
+		$FORUM_VIEW_HOME_OBJ = _class("forum_view_home", FORUM_MODULES_DIR);
 		// Collect last posts ids
 		foreach ((array)$sub_forums_ids as $_sub_id) {
 			$_forum_info = module('forum')->_forums_array[$_sub_id];
@@ -336,10 +336,10 @@ class yf_forum_view_forum {
 					"last_post_author_link"	=> $post_info["user_id"] ? module('forum')->_user_profile_link($post_info["user_id"]) : "",
 					"last_post_subject"		=> _prepare_html($subject),
 					"last_post_date"		=> module('forum')->_show_date($post_info["created"], "last_post_date"),
-					"last_post_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".$post_info["topic"]._add_get(),
+					"last_post_link"		=> "./?object=".'forum'."&action=view_topic&id=".$post_info["topic"]._add_get(),
 					"user_id"				=> intval($post_info["user_id"]),
 				);
-				$forums_last_posts[$post_info["forum"]] = tpl()->parse(FORUM_CLASS_NAME."/view_home_last_posts", $replace3);
+				$forums_last_posts[$post_info["forum"]] = tpl()->parse('forum'."/view_home_last_posts", $replace3);
 			}
 			$FORUM_VIEW_HOME_OBJ->_last_posts = $forums_last_posts;
 			unset($forums_last_posts);
@@ -390,13 +390,13 @@ class yf_forum_view_forum {
 				// Show anounce item
 				$replace = array(
 					"is_admin"				=> intval(FORUM_IS_ADMIN),
-					"announce_link"			=> "./?object=".FORUM_CLASS_NAME."&action=view_announce&id=".$info["id"]._add_get(array("page")),
+					"announce_link"			=> "./?object=".'forum'."&action=view_announce&id=".$info["id"]._add_get(array("page")),
 					"announce_title"		=> _prepare_html($info["title"]),
 					"announce_author_link"	=> module('forum')->_user_profile_link($info["author_id"]),
 					"announce_author_name"	=> _prepare_html($users_names[$info["author_id"]]),
 					"announce_num_views"	=> intval($info["title"]),
 				);
-				$announce_items .= tpl()->parse(FORUM_CLASS_NAME."/view_forum_announce_item", $replace);
+				$announce_items .= tpl()->parse('forum'."/view_forum_announce_item", $replace);
 			}
 		}
 		return $announce_items;
@@ -449,13 +449,13 @@ class yf_forum_view_forum {
 	*/
 	function _show_filter () {
 		$replace = array(
-			"save_action"	=> "./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
+			"save_action"	=> "./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 		);
 		// Process boxes
 		foreach ((array)$this->_boxes as $item_name => $v) {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
-		return tpl()->parse(FORUM_CLASS_NAME."/view_forum_filter", $replace);
+		return tpl()->parse('forum'."/view_forum_filter", $replace);
 	}
 
 	/**
@@ -468,7 +468,7 @@ class yf_forum_view_forum {
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get());
+			js_redirect("./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get());
 		}
 	}
 
@@ -482,7 +482,7 @@ class yf_forum_view_forum {
 			}
 		}
 		if (!$silent) {
-			js_redirect("./?object=".FORUM_CLASS_NAME."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get());
+			js_redirect("./?object=".'forum'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get());
 		}
 	}
 

@@ -102,7 +102,7 @@ class yf_manage_articles extends yf_module {
 				"edit_link"		=> "./?object=".$_GET["object"]."&action=edit&id=".$article_info["id"],
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$article_info["id"],
 				"active_link"	=> "./?object=".$_GET["object"]."&action=activate&id=".$article_info["id"],
-				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($article_info["user_id"])),
+				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($article_info["user_id"]))),
 			);
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
@@ -179,7 +179,7 @@ class yf_manage_articles extends yf_module {
 			"members_link"	=> "./?object=members",
 			"edit_cats_link"=> "./?object=category_editor&action=show_items&id=".$this->CATS_OBJ->_get_cat_id_by_name(),
 			"back_link"		=> "./?object=".$_GET["object"],
-			"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($article_info["user_id"])),
+			"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($article_info["user_id"]))),
 		);
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
@@ -273,7 +273,7 @@ class yf_manage_articles extends yf_module {
 			"edit_link"			=> $IS_OWN_ARTICLE ? "./?object=".$_GET["object"]."&action=edit&id=".$article_info["id"] : "",
 			"delete_link"		=> $IS_OWN_ARTICLE ? "./?object=".$_GET["object"]."&action=delete&id=".$article_info["id"] : "",
 			"comments"			=> $this->_view_comments(),
-			"ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($article_info["user_id"])),
+			"ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($article_info["user_id"]))),
 		);
 		return tpl()->parse($_GET["object"]."/view", $replace);
 	}

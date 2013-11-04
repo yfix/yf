@@ -243,7 +243,6 @@ class yf_image_manip {
 		return $dest_file_path;
 	}
 
-
 	/**
 	* Use NetPBM library http://netpbm.sourceforge.net/
 	* function cut image using NetPBM
@@ -329,7 +328,6 @@ class yf_image_manip {
 
 		return file_exists($dest_file_path);
 	}
-
 
 	/**
 	* find libs & paths of imagelibs

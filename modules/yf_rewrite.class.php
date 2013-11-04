@@ -66,7 +66,6 @@ class yf_rewrite {
 		return ($sa < $sb) ? +1 : -1;
 	}
 
-	
     function _force_get_url ($params = array(), $host = "", $url_str = "", $gen_cache = true) {
 		$time_start = microtime(true);
 		if(!is_array($params) && empty($url_str)){

@@ -146,7 +146,7 @@ class yf_bb_codes {
 				$body = preg_replace(array_keys($this->_preg_bb_codes), array_values($this->_preg_bb_codes), $body);
 				// Check if need to connect SQL and HTML highlighter
 				if ($this->USE_HIGHLIGHT) {
-					$HIGHLIGHT_OBJ = main()->init_class("text_highlight", "classes/");
+					$HIGHLIGHT_OBJ = _class("text_highlight");
 //					$body = preg_replace("/\[html\](.*?)\[\/html\]/imse",	"\$this->_geshi_highlight('\$1')",$body);
 				}
 				if (is_object($HIGHLIGHT_OBJ)) {

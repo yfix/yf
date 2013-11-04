@@ -75,8 +75,7 @@ class yf_url_to_absolute {
 				$r['query'] = $b['query'];
 			return $this->join_url( $r );
 		}
-		
-		
+
 		// If relative URL path doesn't start with /, merge with base path
 		if ( $r['path'][0] != '/' )
 		{
@@ -262,7 +261,6 @@ class yf_url_to_absolute {
 		// URL.
 		$xurl		  = '^(' . $xscheme . ':)?' .  $xapath . '?' .
 						 '(\?' . $xqueryfrag . ')?(#' . $xqueryfrag . ')?$';
-
 
 		// Split the URL into components.
 		if ( !preg_match( '!' . $xurl . '!', $url, $m ) )

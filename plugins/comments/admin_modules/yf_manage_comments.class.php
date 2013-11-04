@@ -1,6 +1,5 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Comments management module
 class yf_manage_comments {
 
@@ -21,7 +20,6 @@ class yf_manage_comments {
 		"user_profile"	=> "show",
 	);
 
-	//-----------------------------------------------------------------------------
 	// Constructor
 	function yf_manage_comments() {
 		main()->USER_ID = $_GET['user_id'];
@@ -36,11 +34,10 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
 		// Get sites info
-		$this->_sites_info = main()->init_class("sites_info", "classes/");
+		$this->_sites_info = _class("sites_info");
 		$FIRST_SITE_INFO = array_shift($this->_sites_info->info);
 		// Calling function to divide records per pages
 		$sql = "SELECT * FROM ".db('comments')." ";
@@ -89,7 +86,7 @@ class yf_manage_comments {
 				"delete_link"	=> "./?object=".$_GET["object"]."&action=delete&id=".$comment_info["id"],
 				"active_link"	=> "./?object=".$_GET["object"]."&action=activate&id=".$comment_info["id"],
 				"item_link"		=> "./?object=".$comment_info["object_name"]."&action=".$this->_comments_actions[$comment_info["object_name"]]."&id=".$comment_info["object_id"],
-				"ban_popup_link"=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($comment_info["user_id"])),
+				"ban_popup_link"=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($comment_info["user_id"]))),
 			);
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
@@ -103,7 +100,6 @@ class yf_manage_comments {
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Edit record
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -145,12 +141,11 @@ class yf_manage_comments {
 			"object_name"		=> _prepare_html($info["object_name"]),
 			"object_id"			=> intval($info["object_id"]),
 			"back_url"			=> "./?object=".$_GET["object"],
-			"ban_popup_link"	=> main()->_execute("manage_auto_ban", "_popup_link", "user_id=".intval($info["user_id"])),
+			"ban_popup_link"	=> module("manage_auto_ban")->_popup_link(array("user_id" => intval($info["user_id"]))),
 		);
 		return tpl()->parse($_GET["object"]."/edit", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Do delete record (mass method)
 	function mass_delete () {
 		$ids_to_delete = array();
@@ -170,7 +165,6 @@ class yf_manage_comments {
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -187,7 +181,6 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Revert record "active" status
 	function activate () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -208,7 +201,6 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -270,7 +262,6 @@ class yf_manage_comments {
 		);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -301,7 +292,6 @@ class yf_manage_comments {
 		return substr($sql, 0, -3);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -318,7 +308,6 @@ class yf_manage_comments {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -333,7 +322,6 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -344,7 +332,6 @@ class yf_manage_comments {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

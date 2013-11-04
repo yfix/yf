@@ -1,32 +1,12 @@
 <?php
 class yf_friends_groups{
 	
-/*		
-			echo "<b>".$key."</b><br>";			
-					$v1 = 2; // 2^1
-					$v2 = 4;
-					$v3 = 8;
-					$v4 = 16;
-					$mask = $value - 1;
-
-					echo intval((bool)($mask & $v1))."<br />";
-					echo intval((bool)($mask & $v2))."<br />";
-					echo intval((bool)($mask & $v3))."<br />";
-					echo intval((bool)($mask & $v4))."<br />";
-*/				
-	
-	function _init () {
-		// Reference to parent object
-		$this->PARENT_OBJ	= module(FRIENDS_CLASS_NAME);
-	}
-
-
 	function friends_groups (){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 
-		$groups_info = $this->_get_friends_groups($this->PARENT_OBJ->USER_ID);
+		$groups_info = $this->_get_friends_groups(module('friends')->USER_ID);
 		
 		if($_POST){
 			// save mask
@@ -34,11 +14,11 @@ class yf_friends_groups{
 					$friends[$key] = $value - 1;
 			}	
 			if(!empty($friends)){
-				$this->_save_mask($this->PARENT_OBJ->USER_ID, $friends);
+				$this->_save_mask(module('friends')->USER_ID, $friends);
 			}
 			
 			// save POST setting to array $group_new_info
-			for($i = 0; $i < $this->PARENT_OBJ->NUMBER_FRIENDS_GROUP; $i++){
+			for($i = 0; $i < module('friends')->NUMBER_FRIENDS_GROUP; $i++){
 				$group_new_info[$i+1]["title"] = $_POST["efg_set_".($i+1)."_name"];
 				$group_new_info[$i+1]["order"] = $_POST["efg_set_".($i+1)."_sort"];
 				$group_new_info[$i+1]["delete"] = $_POST["efg_delete_".($i+1)];
@@ -73,13 +53,13 @@ class yf_friends_groups{
 		}
 		
 		$groups_info = array();
-		$groups_info = $this->_get_friends_groups($this->PARENT_OBJ->USER_ID);
+		$groups_info = $this->_get_friends_groups(module('friends')->USER_ID);
 		
 		foreach ((array)$groups_info as $key => $group){
 			$groups .= "<option value='".($group["id2"])."'>".$group["title"];
 		}
 
-		for($i = 1; $i < $this->PARENT_OBJ->NUMBER_FRIENDS_GROUP + 1; $i++){
+		for($i = 1; $i < module('friends')->NUMBER_FRIENDS_GROUP + 1; $i++){
 			if(isset($groups_info[$i])){
 				$groups_hidden .= "<input type='hidden' name='efg_set_".$groups_info[$i]["id2"]."_name' value='".$groups_info[$i]["title"]."' />";
 				$groups_hidden .= "<input type='hidden' name='efg_set_".$groups_info[$i]["id2"]."_sort' value='".$groups_info[$i]["order"]."' />";
@@ -94,7 +74,7 @@ class yf_friends_groups{
 		}
 			
 		$friends = "";
-		$friends_info = user($this->PARENT_OBJ->_get_user_friends_ids($this->PARENT_OBJ->USER_ID), "short");
+		$friends_info = user(module('friends')->_get_user_friends_ids(module('friends')->USER_ID), "short");
 		
 		// delete community
 		foreach ((array)$friends_info as $key => $value){
@@ -126,12 +106,12 @@ class yf_friends_groups{
 		
 		$replace = array(
 			"form_action"			=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-			"manage_groups"			=> "./?object=".FRIENDS_CLASS_NAME."&action=manage_groups",
+			"manage_groups"			=> "./?object=".'friends'."&action=manage_groups",
 			"groups_hidden"			=> $groups_hidden,
 			"groups"				=> $groups,
 			"friends"				=> $friends,
 			"friends_map"			=> $friends_map,
-			"number_friends_group"	=> $this->PARENT_OBJ->NUMBER_FRIENDS_GROUP,
+			"number_friends_group"	=> module('friends')->NUMBER_FRIENDS_GROUP,
 		);
 		return tpl()->parse($_GET["object"]."/friends_groups_main", $replace);
 	}
@@ -143,7 +123,7 @@ class yf_friends_groups{
 		}
 		
 		if(empty($groups_info)){
-			foreach ((array)$this->PARENT_OBJ->_friends_group as $key => $title){
+			foreach ((array)module('friends')->_friends_group as $key => $title){
 				db()->INSERT("friends_groups", array(
 					"id2"		=> $key,
 					"user_id"	=> $user_id,
@@ -157,17 +137,17 @@ class yf_friends_groups{
 	}
 
 	function _delete_group($group){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		if(empty($group)){
 			return;
 		}
-		db()->query("DELETE FROM ".db('friends_groups')." WHERE user_id= ".$this->PARENT_OBJ->USER_ID." AND id2 IN(".implode(",", $group).")");
+		db()->query("DELETE FROM ".db('friends_groups')." WHERE user_id= ".module('friends')->USER_ID." AND id2 IN(".implode(",", $group).")");
 	}
 
 	function _reorder_group($group){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		if(empty($group)){
@@ -176,12 +156,12 @@ class yf_friends_groups{
 		foreach ((array)$group as $id2 => $order){
 			db()->UPDATE("friends_groups", array(
 				"order" => $order,
-			), "id2=".intval($id2)." AND user_id=".$this->PARENT_OBJ->USER_ID);
+			), "id2=".intval($id2)." AND user_id=".module('friends')->USER_ID);
 		}
 	}
 	
 	function _rename_group($group){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		if(empty($group)){
@@ -190,16 +170,16 @@ class yf_friends_groups{
 		
 		foreach ((array)$group as $id2 => $title){
 		
-			$exist = db()->query_fetch("SELECT id FROM ".db('friends_groups')." WHERE id2=".intval($id2)." AND user_id=".$this->PARENT_OBJ->USER_ID);
+			$exist = db()->query_fetch("SELECT id FROM ".db('friends_groups')." WHERE id2=".intval($id2)." AND user_id=".module('friends')->USER_ID);
 
 			if(!empty($exist)){
 				db()->UPDATE("friends_groups", array(
 					"title" => $title,
-				), "id2=".intval($id2)." AND user_id=".$this->PARENT_OBJ->USER_ID);
+				), "id2=".intval($id2)." AND user_id=".module('friends')->USER_ID);
 			}else{
 				db()->INSERT("friends_groups", array(
 					"id2"		=> $id2,
-					"user_id"	=> $this->PARENT_OBJ->USER_ID,
+					"user_id"	=> module('friends')->USER_ID,
 					"title"		=> $title,
 					"order"		=> "0",
 				));
@@ -208,7 +188,7 @@ class yf_friends_groups{
 	}
 	
 	function _save_mask($user_id, $friends_ids){
-		if (empty($this->PARENT_OBJ->USER_ID)) {
+		if (empty(module('friends')->USER_ID)) {
 			return _error_need_login();
 		}
 		if(empty($friends_ids)){

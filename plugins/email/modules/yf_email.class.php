@@ -1,6 +1,5 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Site internal mailing system
 class yf_email {
 
@@ -16,58 +15,49 @@ class yf_email {
 	/** @var bool Really delete emails records? */
 	public $DELETE_EMAIL_RECORDS	= false;
 
-	//-----------------------------------------------------------------------------
 	// YF module constructor
 	function _init () {
 		// Try to init captcha
-		$this->CAPTCHA = main()->init_class("captcha", "classes/");
+		$this->CAPTCHA = _class("captcha");
 //		$this->CAPTCHA->set_image_size(120, 50);
 //		$this->CAPTCHA->font_height = 16;
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
 		return $this->_view_folder("inbox");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Inbox folder
 	function inbox () {
 		return $this->_view_folder("inbox");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Inbox folder (alias for inbox)
 	function view_inbox () {
 		return $this->_view_folder("inbox");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Sent folder
 	function sent () {
 		return $this->_view_folder("sent");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Sent folder
 	function view_sent () {
 		return $this->_view_folder("sent");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Trash folder
 	function trash () {
 		return $this->_view_folder("trash");
 	}
 
-	//-----------------------------------------------------------------------------
 	// Trash folder
 	function view_trash () {
 		return $this->_view_folder("trash");
 	}
 
-	//-----------------------------------------------------------------------------
 	// View folder contents
 	function _view_folder ($folder_name) {
 		if (empty(main()->USER_ID)) {
@@ -98,7 +88,7 @@ class yf_email {
 			$users_infos = user($users_ids, array("id","name","nick","photo_verified"));
 		}
 		// Process user reputation
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$all_users_ids		= $users_ids;
 			$users_reput_info	= $REPUT_OBJ->_get_reput_info_for_user_ids($all_users_ids);
@@ -145,7 +135,6 @@ class yf_email {
 		return tpl()->parse(__CLASS__."/view_folder_main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// View email
 	function view () {
 		if (empty(main()->USER_ID)) {
@@ -166,7 +155,7 @@ class yf_email {
 		}
 		// Process reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($mail_info["sender"]);
 			$reput_text	= $REPUT_OBJ->_show_for_user($mail_info["sender"], $reput_info, true);
@@ -197,7 +186,6 @@ class yf_email {
 		return tpl()->parse(__CLASS__."/view_message", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Reply form to the selected email
 	function reply () {
 		if (empty(main()->USER_ID)) {
@@ -240,7 +228,7 @@ class yf_email {
 		}
 		// Process reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($mail_info["sender"]);
 			$reput_text	= $REPUT_OBJ->_show_for_user($mail_info["sender"], $reput_info, true);
@@ -268,7 +256,6 @@ class yf_email {
 		return tpl()->parse(__CLASS__."/send_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Form to send email
 	function send_form () {
 		if (empty(main()->USER_ID)) {
@@ -305,7 +292,7 @@ class yf_email {
 		$GLOBALS['user_info'] = $receiver_info;
 		// Process reputation
 		$reput_text = "";
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$reput_info	= $REPUT_OBJ->_get_user_reput_info($receiver_info["id"]);
 			$reput_text	= $REPUT_OBJ->_show_for_user($receiver_info["id"], $reput_info, true);
@@ -327,7 +314,6 @@ class yf_email {
 		return tpl()->parse(__CLASS__."/send_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Send internal mail
 	function send_mail () {
 		if (empty(main()->USER_ID)) {
@@ -432,7 +418,6 @@ class yf_email {
 		return $body;
 	}
 
-	//-----------------------------------------------------------------------------
 	// Forward message to the target user
 	function forward () {
 		if (empty(main()->USER_ID)) {
@@ -470,7 +455,6 @@ class yf_email {
 		return tpl()->parse(__CLASS__."/forward_success", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Delete email item
 	function delete () {
 		if (empty(main()->USER_ID)) {
@@ -523,7 +507,6 @@ class yf_email {
 		return js_redirect("./?object=".$_GET["object"]."&action=inbox"._add_get(array("page")));
 	}
 
-	//-----------------------------------------------------------------------------
 	// Check current text for scum words
 	function _check_for_scum_words ($message = "") {
 		global $SCUM_WORDS;
@@ -564,7 +547,6 @@ class yf_email {
 		return 0; // If folder not found
 	}
 
-	//-----------------------------------------------------------------------------
 	// Show captcha image
 	function show_image() {
 		$this->CAPTCHA->show_image();

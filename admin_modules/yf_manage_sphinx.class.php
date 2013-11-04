@@ -1087,7 +1087,6 @@ class sphinx_config_variable
 	}
 }
 
-
 /**
 * sphinx_config_comment
 * Represents a comment inside the sphinx configuration

@@ -13,10 +13,7 @@ class yf_blog_settings {
 	* Constructor
 	*/
 	function yf_blog_settings () {
-		// Reference to the parent object
-		$this->BLOG_OBJ		= module(BLOG_CLASS_NAME);
-		// Tagging
-		if (!is_object($this->TAG_OBJ && $this->BLOG_OBJ->ALLOW_TAGGING)) {
+		if (!is_object($this->TAG_OBJ && module('blog')->ALLOW_TAGGING)) {
 			$this->TAG_OBJ = module("tags");
 		}
 	}
@@ -26,19 +23,19 @@ class yf_blog_settings {
 	*/
 	function _start_blog () {
 		// Check if user is member
-		if (empty($this->BLOG_OBJ->_user_info)) {
+		if (empty(module('blog')->_user_info)) {
 			return _error_need_login();
 		}
-		if ($_ban_error = $this->BLOG_OBJ->_ban_check()) {
+		if ($_ban_error = module('blog')->_ban_check()) {
 			return $_ban_error;
 		}
 		// Try to get user settings (also start them if not done yet)
-		$BLOG_SETTINGS = $this->BLOG_OBJ->_get_user_blog_settings($this->BLOG_OBJ->USER_ID);
+		$BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
 		// Save data
 		if (!empty($_POST)) {
 			// Prepare posted blog links
 			$_posted_links = array();
-			for ($i = 0; $i < $this->BLOG_OBJ->MAX_BLOG_LINKS_NUM; $i++) {
+			for ($i = 0; $i < module('blog')->MAX_BLOG_LINKS_NUM; $i++) {
 				if (empty($_POST["blog_links_titles"][$i]) || empty($_POST["blog_links_urls"][$i])) {
 					continue;
 				}
@@ -63,17 +60,17 @@ class yf_blog_settings {
 					$sql["blog_title"]	= _es($_POST["blog_title"]);
 				}
 				// Generate SQL
-				db()->UPDATE("blog_settings", $sql, "user_id=".intval($this->BLOG_OBJ->USER_ID));
+				db()->UPDATE("blog_settings", $sql, "user_id=".intval(module('blog')->USER_ID));
 
-				$this->BLOG_OBJ->_callback_on_update(array("page_header" => $_POST["blog_title"]));
+				module('blog')->_callback_on_update(array("page_header" => $_POST["blog_title"]));
 
-				return js_redirect("./?object=".BLOG_CLASS_NAME."&action=add_post");
+				return js_redirect("./?object=".'blog'."&action=add_post");
 			}
 		}
 		// Prepare links for display
 		$blog_links_array = array();
-		$_links_array = $this->BLOG_OBJ->_blog_links_into_array($BLOG_SETTINGS["blog_links"]);
-		for ($i = 0; $i < $this->BLOG_OBJ->MAX_BLOG_LINKS_NUM; $i++) {
+		$_links_array = module('blog')->_blog_links_into_array($BLOG_SETTINGS["blog_links"]);
+		for ($i = 0; $i < module('blog')->MAX_BLOG_LINKS_NUM; $i++) {
 			$blog_links_array[$i] = array(
 				"title"	=> $_links_array[$i]["title"],
 				"url"	=> $_links_array[$i]["url"],
@@ -81,20 +78,20 @@ class yf_blog_settings {
 		}
 		// Prepare tempalte
 		$replace = array(
-			"form_action"		=> "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"],
+			"form_action"		=> "./?object=".'blog'."&action=".$_GET["action"],
 			"error_message"		=> _e(),
 			"blog_title"		=> $_POST["blog_title"],
 			"blog_links"		=> _prepare_html($_POST["blog_links"]),
 			"blog_links_array"	=> $blog_links_array,
 			"custom_cats"		=> _prepare_html($_POST["custom_cats"]),
-			"max_blog_title"	=> intval($this->BLOG_OBJ->MAX_BLOG_TITLE_LENGTH),
-			"max_blog_links"	=> intval($this->BLOG_OBJ->MAX_CUSTOM_CATS_NUM),
-			"max_custom_cats"	=> intval($this->BLOG_OBJ->MAX_BLOG_LINKS_NUM),
-			"blog_privacy_box"	=> $this->BLOG_OBJ->_box("privacy", $_POST["privacy"]),
-			"blog_comments_box"	=> $this->BLOG_OBJ->_box("allow_comments", $_POST["allow_comments"]),
-			"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
+			"max_blog_title"	=> intval(module('blog')->MAX_BLOG_TITLE_LENGTH),
+			"max_blog_links"	=> intval(module('blog')->MAX_CUSTOM_CATS_NUM),
+			"max_custom_cats"	=> intval(module('blog')->MAX_BLOG_LINKS_NUM),
+			"blog_privacy_box"	=> module('blog')->_box("privacy", $_POST["privacy"]),
+			"blog_comments_box"	=> module('blog')->_box("allow_comments", $_POST["allow_comments"]),
+			"blog_tagging_box"	=> module('blog')->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
 		);
-		return tpl()->parse(BLOG_CLASS_NAME."/start_blog", $replace);
+		return tpl()->parse('blog'."/start_blog", $replace);
 	}
 
 	/**
@@ -102,19 +99,19 @@ class yf_blog_settings {
 	*/
 	function _change () {
 		// Check if user is member
-		if (empty($this->BLOG_OBJ->_user_info)) {
+		if (empty(module('blog')->_user_info)) {
 			return _error_need_login();
 		}
-		if ($_ban_error = $this->BLOG_OBJ->_ban_check()) {
+		if ($_ban_error = module('blog')->_ban_check()) {
 			return $_ban_error;
 		}
 		// Try to get user settings
-		$BLOG_SETTINGS = $this->BLOG_OBJ->_get_user_blog_settings($this->BLOG_OBJ->USER_ID);
+		$BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			// Prepare posted blog links
 			$_posted_links = array();
-			for ($i = 0; $i < $this->BLOG_OBJ->MAX_BLOG_LINKS_NUM; $i++) {
+			for ($i = 0; $i < module('blog')->MAX_BLOG_LINKS_NUM; $i++) {
 				if (empty($_POST["blog_links_titles"][$i]) || empty($_POST["blog_links_urls"][$i])) {
 					continue;
 				}
@@ -136,20 +133,20 @@ class yf_blog_settings {
 				);
 				if (isset($_POST["blog_title"])) {
 					// Check fields
-					if (!empty($this->BLOG_OBJ->MAX_BLOG_TITLE_LENGTH)) {
-						$_POST["blog_title"] = substr($_POST["blog_title"], 0, $this->BLOG_OBJ->MAX_BLOG_TITLE_LENGTH);
+					if (!empty(module('blog')->MAX_BLOG_TITLE_LENGTH)) {
+						$_POST["blog_title"] = substr($_POST["blog_title"], 0, module('blog')->MAX_BLOG_TITLE_LENGTH);
 					}
 					$_POST["blog_title"]	= _filter_text($_POST["blog_title"]);
 
 					$sql["blog_title"]	= _es($_POST["blog_title"]);
 				}
-				db()->UPDATE("blog_settings", $sql, "user_id=".intval($this->BLOG_OBJ->USER_ID));
+				db()->UPDATE("blog_settings", $sql, "user_id=".intval(module('blog')->USER_ID));
 				// Synchronize blog title with site menu
-				$this->BLOG_OBJ->_callback_on_update(array("page_header" => $_POST["blog_title"]));
+				module('blog')->_callback_on_update(array("page_header" => $_POST["blog_title"]));
 				// Synchronize all blogs stats
-				$this->BLOG_OBJ->_update_all_stats();
+				module('blog')->_update_all_stats();
 				// Return user back
-				return js_redirect("./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")));
+				return js_redirect("./?object=".'blog'."&action=".$_GET["action"]._add_get(array("page")));
 			} else {
 				$error_message = _e();
 			}
@@ -163,8 +160,8 @@ class yf_blog_settings {
 		}
 		// Prepare links for display
 		$blog_links_array = array();
-		$_links_array = $this->BLOG_OBJ->_blog_links_into_array($BLOG_SETTINGS["blog_links"]);
-		for ($i = 0; $i < $this->BLOG_OBJ->MAX_BLOG_LINKS_NUM; $i++) {
+		$_links_array = module('blog')->_blog_links_into_array($BLOG_SETTINGS["blog_links"]);
+		for ($i = 0; $i < module('blog')->MAX_BLOG_LINKS_NUM; $i++) {
 			$blog_links_array[$i] = array(
 				"title"	=> $_links_array[$i]["title"],
 				"url"	=> $_links_array[$i]["url"],
@@ -173,22 +170,22 @@ class yf_blog_settings {
 		// Show form
 		if (empty($_POST["go"]) || !empty($error_message)) {
 			$replace = array(
-				"form_action"		=> "./?object=".BLOG_CLASS_NAME."&action=".$_GET["action"]._add_get(array("page")),
+				"form_action"		=> "./?object=".'blog'."&action=".$_GET["action"]._add_get(array("page")),
 				"error_message"		=> $error_message,
 				"blog_title"		=> _prepare_html($_POST["blog_title"]),
 				"blog_desc"			=> _prepare_html($_POST["blog_desc"]),
 				"blog_links"		=> _prepare_html($_POST["blog_links"]),
 				"blog_links_array"	=> $blog_links_array,
 				"custom_cats"		=> _prepare_html($_POST["custom_cats"]),
-				"max_blog_title"	=> intval($this->BLOG_OBJ->MAX_BLOG_TITLE_LENGTH),
-				"max_blog_links"	=> intval($this->BLOG_OBJ->MAX_BLOG_LINKS_NUM),
-				"max_custom_cats"	=> intval($this->BLOG_OBJ->MAX_CUSTOM_CATS_NUM),
-				"blog_privacy_box"	=> $this->BLOG_OBJ->_box("privacy", $_POST["privacy"]),
-				"blog_comments_box"	=> $this->BLOG_OBJ->_box("allow_comments", $_POST["allow_comments"]),
-				"manage_link"		=> "./?object=".BLOG_CLASS_NAME."&action=show_posts"._add_get(array("page")),
-				"blog_tagging_box"	=> $this->BLOG_OBJ->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
+				"max_blog_title"	=> intval(module('blog')->MAX_BLOG_TITLE_LENGTH),
+				"max_blog_links"	=> intval(module('blog')->MAX_BLOG_LINKS_NUM),
+				"max_custom_cats"	=> intval(module('blog')->MAX_CUSTOM_CATS_NUM),
+				"blog_privacy_box"	=> module('blog')->_box("privacy", $_POST["privacy"]),
+				"blog_comments_box"	=> module('blog')->_box("allow_comments", $_POST["allow_comments"]),
+				"manage_link"		=> "./?object=".'blog'."&action=show_posts"._add_get(array("page")),
+				"blog_tagging_box"	=> module('blog')->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module"=>"blog", "object_id"=>main()->USER_ID)) : "",
 			);
-			$body = tpl()->parse(BLOG_CLASS_NAME."/edit_blog_settings", $replace);
+			$body = tpl()->parse('blog'."/edit_blog_settings", $replace);
 		}
 		return $body;
 	}
@@ -266,13 +263,13 @@ class yf_blog_settings {
 				continue;
 			}
 			$_id_for_link = "";
-			if (!$this->BLOG_OBJ->HIDE_TOTAL_ID) {
+			if (!module('blog')->HIDE_TOTAL_ID) {
 				$_id_for_link .= intval($GLOBALS['user_info']["id"]). "-";
 			}
-			$_id_for_link .= $this->BLOG_OBJ->CUSTOM_CATS_LINKS_TEXTS ? urlencode(str_replace(" ", "_", strtolower($cat_name))) : ($k + 1);
+			$_id_for_link .= module('blog')->CUSTOM_CATS_LINKS_TEXTS ? urlencode(str_replace(" ", "_", strtolower($cat_name))) : ($k + 1);
 			$cats_array[$k] = array(
 				"name"	=> _prepare_html($cat_name),
-				"link"	=> "./?object=".BLOG_CLASS_NAME."&action=custom_category&id=".$_id_for_link,
+				"link"	=> "./?object=".'blog'."&action=custom_category&id=".$_id_for_link,
 			);
 		}
 		return $cats_array;
@@ -349,7 +346,7 @@ class yf_blog_settings {
 					COUNT(c.id) AS num_comments
 				FROM ".db('comments')." AS c,
 					".db('blog_posts')." AS b 
-				WHERE c.object_name='"._es(BLOG_CLASS_NAME)."' 
+				WHERE c.object_name='"._es('blog')."' 
 					AND b.id=c.object_id 
 					AND b.active=1 
 					AND b.privacy NOT IN(9)
@@ -382,9 +379,9 @@ class yf_blog_settings {
 	*/
 	function _fix_id2($user_id = 0) {
 		if (empty($user_id)) {
-			$user_id = $this->BLOG_OBJ->USER_ID;
+			$user_id = module('blog')->USER_ID;
 		}
-		if (empty($user_id) || !$this->BLOG_OBJ->HIDE_TOTAL_ID) {
+		if (empty($user_id) || !module('blog')->HIDE_TOTAL_ID) {
 			return false;
 		}
 		// Prepare curent max id

@@ -1,13 +1,11 @@
 <?php
 
-//-----------------------------------------------------------------------------
 // Auto-ban management module
 class yf_manage_auto_ban {
 
 	// Filter on/off
 	public $USE_FILTER				= true;
 
-	//-----------------------------------------------------------------------------
 	// Framework constructor
 	function _init() {
 		main()->USER_ID = $_GET['user_id'];
@@ -32,7 +30,6 @@ class yf_manage_auto_ban {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Default function
 	function show () {
 		// Connect pager
@@ -71,7 +68,6 @@ class yf_manage_auto_ban {
 		return tpl()->parse(__CLASS__."/main", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Add record
 	function add () {
 		// Save form
@@ -129,7 +125,6 @@ class yf_manage_auto_ban {
 		return tpl()->parse(__CLASS__."/edit_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Edit record
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -202,7 +197,6 @@ class yf_manage_auto_ban {
 		return tpl()->parse(__CLASS__."/edit_form", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Do delete record
 	function delete () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -220,7 +214,6 @@ class yf_manage_auto_ban {
 		return js_redirect("./?object=".$_GET["object"]);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Display link for the popup window
 	function _popup_link ($user_id = 0) {
 		if (is_array($user_id)) {
@@ -240,7 +233,6 @@ class yf_manage_auto_ban {
 		return tpl()->parse(__CLASS__."/popup_link", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Popup window
 	function ban_user_popup () {
 		$_GET["id"] = intval($_GET["id"]);
@@ -327,7 +319,6 @@ class yf_manage_auto_ban {
 		return common()->show_empty_page(tpl()->parse(__CLASS__."/ban_user_popup", $replace), array("close_button" => 1));
 	}
 
-	//-----------------------------------------------------------------------------
 	// Prepare required data for filter
 	function _prepare_filter_data () {
 		// Filter session array name
@@ -335,7 +326,6 @@ class yf_manage_auto_ban {
 // TODO
 	}
 
-	//-----------------------------------------------------------------------------
 	// Generate filter SQL query
 	function _create_filter_sql () {
 		$SF = &$_SESSION[$this->_filter_name];
@@ -343,7 +333,6 @@ class yf_manage_auto_ban {
 // TODO
 	}
 
-	//-----------------------------------------------------------------------------
 	// Session - based filter
 	function _show_filter () {
 		$replace = array(
@@ -360,7 +349,6 @@ class yf_manage_auto_ban {
 		return tpl()->parse($_GET["object"]."/filter", $replace);
 	}
 
-	//-----------------------------------------------------------------------------
 	// Filter save method
 	function save_filter ($silent = false) {
 		// Process featured countries
@@ -375,7 +363,6 @@ class yf_manage_auto_ban {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Clear filter
 	function clear_filter ($silent = false) {
 		if (is_array($_SESSION[$this->_filter_name])) {
@@ -386,7 +373,6 @@ class yf_manage_auto_ban {
 		}
 	}
 
-	//-----------------------------------------------------------------------------
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;

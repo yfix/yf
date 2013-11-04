@@ -54,7 +54,7 @@ class yf_multi_upload_image {
 		// Create folder if not exists
 		$photo_dir = dirname($new_file_path);
 		if (!file_exists($photo_dir)) {
-			$DIR_OBJ = main()->init_class("dir", "classes/");
+			$DIR_OBJ = _class("dir");
 			$DIR_OBJ->mkdir_m($photo_dir, 0777, 1);
 		}
 		// Upload original photo

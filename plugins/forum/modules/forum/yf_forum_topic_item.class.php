@@ -29,7 +29,7 @@ class yf_forum_topic_item {
 			"topic_status_icon"	=> $this->_show_topic_new_msgs_status($topic_info),
 			"topic_icon"		=> $topic_info["icon_id"] ? WEB_PATH. module('forum')->SETTINGS["POST_ICONS_DIR"]. $topic_info["icon_id"].".gif" : "",
 			"topic_id"			=> $topic_info["id"],
-			"topic_link"		=> "./?object=".FORUM_CLASS_NAME."&action=view_topic&id=".($moved_id ? $moved_id : $topic_info["id"])._add_get(array("page")),
+			"topic_link"		=> "./?object=".'forum'."&action=view_topic&id=".($moved_id ? $moved_id : $topic_info["id"])._add_get(array("page")),
 			"topic_name"		=> ($topic_is_moved ? t("Moved").": " : ""). _prepare_html($topic_info["name"]),
 			"topic_desc"		=> _prepare_html($topic_info["desc"]),
 			"topic_pages"		=> $topic_pages,
@@ -42,13 +42,13 @@ class yf_forum_topic_item {
 			"topic_approved"	=> intval($topic_info["approved"]),
 			"forum_name"		=> _prepare_html(module('forum')->_forums_array[$topic_info["forum"]]["name"]),
 			"forum_link"		=> module('forum')->_link_to_forum($topic_info["forum"]),
-			"rss_topic_button"	=> module('forum')->_show_rss_link("./?object=".FORUM_CLASS_NAME."&action=rss_forum&id=".$topic_info["forum"], "RSS feed for topic: ".$topic_info["name"]),
+			"rss_topic_button"	=> module('forum')->_show_rss_link("./?object=".'forum'."&action=rss_forum&id=".$topic_info["forum"], "RSS feed for topic: ".$topic_info["name"]),
 			"user_id"			=> intval($topic_info["user_id"]),
 			"fast_view_replies"	=> (int)module('forum')->SETTINGS["FAST_VIEW_REPLIERS"],
 			"fast_text_preview"	=> (int)module('forum')->SETTINGS["FAST_TEXT_PREVIEW"],
 			"first_post_id"		=> $topic_info["first_post_id"],
 		);
-		return tpl()->parse(FORUM_CLASS_NAME. $stpl_name, $replace);
+		return tpl()->parse('forum'. $stpl_name, $replace);
 	}
 
 	/**
@@ -74,6 +74,6 @@ class yf_forum_topic_item {
 			"img_src"		=> WEB_PATH. tpl()->TPL_PATH. module('forum')->TOPIC_STATUSES[$topic_status][0],
 			"status_title"	=> t(module('forum')->TOPIC_STATUSES[$topic_status][1]),
 		);
-		return tpl()->parse(FORUM_CLASS_NAME."/view_forum_status_icon", $replace);
+		return tpl()->parse('forum'."/view_forum_status_icon", $replace);
 	}
 }

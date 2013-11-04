@@ -150,10 +150,6 @@ class yf_forum {
 	function _init () {
 		// Init required constants
 		define('FORUM_IS_ADMIN', 1);
-		// Forum class name (to allow changing only in one place)
-		define('FORUM_CLASS_NAME', 'forum');
-		// Forum modules folder
-		define('FORUM_MODULES_DIR', ADMIN_MODULES_DIR.FORUM_CLASS_NAME.'/');
 		// Set unique identifier (if is empty)
 		if (!strlen($this->salt)) {
 			$this->salt = substr(md5($_SERVER['HTTP_HOST'].'123456'), 0, 8);
@@ -213,7 +209,7 @@ class yf_forum {
 	* Try to load forum sub_module
 	*/
 	function _load ($module_name = '') {
-		return _class($module_name, 'plugins/admin_modules/manage_forum/manage_forum/');
+		return _class($module_name, 'admin_modules/manage_forum/');
 	}
 
 	/**

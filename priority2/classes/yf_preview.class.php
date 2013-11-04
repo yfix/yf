@@ -100,7 +100,7 @@ class yf_preview {
 */
 		// If special code is "on" - process it
 		if ($this->USE_BB_CODES) {
-			$BB_CODES_OBJ = main()->init_class("bb_codes", "classes/");
+			$BB_CODES_OBJ = _class("bb_codes");
 		}
 		// We cannot die, need to be safe
 		if ($this->USE_BB_CODES && is_object($BB_CODES_OBJ)) {

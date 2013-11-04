@@ -27,10 +27,7 @@ class yf_faq extends yf_module {
 	* YF module constructor
 	*/
 	function _init () {
-		// class name (to allow changing only in one place)
-		define("FAQ_CLASS_NAME", "faq");
-		// Get faqs categories
-		$this->CATS_OBJ			= &main()->init_class("cats", "classes/");
+		$this->CATS_OBJ			= _class("cats");
 		$this->CATS_OBJ->_default_cats_block = "faq_cats";
 		$this->_faqs_cats		= $this->CATS_OBJ->_get_items_array();
 		$this->_cats_for_select = $this->CATS_OBJ->_prepare_for_box("", 0);
@@ -68,10 +65,10 @@ class yf_faq extends yf_module {
 					"answer"	=> _prepare_html($text_info["answer_text"]),
 					"add_date"	=> _format_date($text_info["add_date"], "long"),
 					"edit_date"	=> _format_date($text_info["edit_date"], "long"),
-					"view_link"	=> "./?object=".FAQ_CLASS_NAME."&action=view&id=".intval($text_info["id"]),
+					"view_link"	=> "./?object=".'faq'."&action=view&id=".intval($text_info["id"]),
 					"num_views"	=> intval($text_info["views"]),
 				);
-				$cur_texts .= tpl()->parse(FAQ_CLASS_NAME."/text_item", $replace3);
+				$cur_texts .= tpl()->parse('faq'."/text_item", $replace3);
 			}
 			// Skip empty categories
 			if (empty($cur_texts) && $this->SKIP_EMPTY_CATS) {
@@ -93,7 +90,7 @@ class yf_faq extends yf_module {
 			"pages"			=> $pages,
 			"total"			=> intval($total),
 		);
-		return tpl()->parse(FAQ_CLASS_NAME."/main_page", $replace);
+		return tpl()->parse('faq'."/main_page", $replace);
 	}
 
 	/**
@@ -121,7 +118,7 @@ class yf_faq extends yf_module {
 		$replace = array(
 			"id"				=> intval($text_info["id"]),
 			"cat_name"			=> _prepare_html($this->_faqs_cats[$text_info["cat_id"]]["name"]),
-			"cat_link"			=> "./?object=".FAQ_CLASS_NAME."&action=show#cat_id_".intval($text_info["cat_id"]),
+			"cat_link"			=> "./?object=".'faq'."&action=show#cat_id_".intval($text_info["cat_id"]),
 			"question"			=> $text_info["question_text"],
 			"answer"			=> $text_info["answer_text"],
 			"add_date"			=> _format_date($text_info["add_date"], "long"),
@@ -129,7 +126,7 @@ class yf_faq extends yf_module {
 			"num_views"			=> intval($text_info["views"]),
 			"comments"			=> $this->_view_comments(),
 		);
-		return tpl()->parse(FAQ_CLASS_NAME."/view", $replace);
+		return tpl()->parse('faq'."/view", $replace);
 	}
 
 	/**
@@ -149,12 +146,12 @@ class yf_faq extends yf_module {
 			}
 			// Process template
 			$replace2 = array(
-				"url"		=> "./?object=".FAQ_CLASS_NAME."&action=".$_GET["action"]."#cat_id_".$cur_item_id,
+				"url"		=> "./?object=".'faq'."&action=".$_GET["action"]."#cat_id_".$cur_item_id,
 				"name"		=> _prepare_html($cur_item_info["name"]),
 				"level"		=> intval($cur_item_info["level"]),
 				"padding"	=> intval($cur_item_info["level"] * 20),
 			);
-			$items_to_display .= tpl()->parse(FAQ_CLASS_NAME."/cat_item", $replace2);
+			$items_to_display .= tpl()->parse('faq'."/cat_item", $replace2);
 		}
 		return $items_to_display;
 	}

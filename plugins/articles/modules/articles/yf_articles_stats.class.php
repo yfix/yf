@@ -8,14 +8,6 @@
 * @version		1.0
 */
 class yf_articles_stats {
-
-	/**
-	* Constructor
-	*/
-	function _init () {
-		// Reference to the parent object
-		$this->PARENT_OBJ	= module(ARTICLES_CLASS_NAME);
-	}
 	
 	/**
 	* Display total blog stats
@@ -37,7 +29,7 @@ class yf_articles_stats {
 			WHERE status = 'active'";
 			
 		$order_sql	= " ORDER BY add_date DESC";
-		list($add_sql, $last_article_pages, $total) = common()->divide_pages($sql, "", "", intval($this->PARENT_OBJ->STATS_NUM_LATEST));
+		list($add_sql, $last_article_pages, $total) = common()->divide_pages($sql, "", "", intval(module('articles')->STATS_NUM_LATEST));
 		$Q = db()->query($sql.$order_sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$latest_articles_ids[$A["article_id"]] = $A;
@@ -58,12 +50,12 @@ class yf_articles_stats {
 				a.summary 
 			FROM ".db('comments')." AS c,
 				".db('articles_texts')." AS a 
-			WHERE c.object_name='"._es(ARTICLES_CLASS_NAME)."' 
+			WHERE c.object_name='"._es('articles')."' 
 				AND a.status = 'active' 
 				AND a.id=c.object_id 
 			GROUP BY c.object_id 
 			ORDER BY num_comments DESC 
-			LIMIT ".intval($this->PARENT_OBJ->STATS_NUM_MOST_COMMENTED)
+			LIMIT ".intval(module('articles')->STATS_NUM_MOST_COMMENTED)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$articles_comments_ids[$A["article_id"]] = $A;
@@ -83,7 +75,7 @@ class yf_articles_stats {
 			FROM ".db('articles_texts')." 
 			WHERE status = 'active' 
 			ORDER BY views DESC 
-			LIMIT ".intval($this->PARENT_OBJ->STATS_NUM_MOST_READ)
+			LIMIT ".intval(module('articles')->STATS_NUM_MOST_READ)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$most_read_ids[$A["article_id"]] = $A;
@@ -99,7 +91,7 @@ class yf_articles_stats {
 			WHERE status = 'active' 
 			GROUP BY author_name 
 			ORDER BY num_articles DESC 
-			LIMIT ".intval($this->PARENT_OBJ->STATS_NUM_MOST_ACTIVE)
+			LIMIT ".intval(module('articles')->STATS_NUM_MOST_ACTIVE)
 		);
 		while ($A = db()->fetch_assoc($Q)) {
 			$top_articles_users[$A["author_name"]] = $A;
@@ -137,7 +129,7 @@ class yf_articles_stats {
 			array_keys((array)$most_read_ids)
 		);
 		if (!empty($articles_ids)) {
-			$this->_num_comments = $this->PARENT_OBJ->_get_num_comments(implode(",",$articles_ids));
+			$this->_num_comments = module('articles')->_get_num_comments(implode(",",$articles_ids));
 		}
 		$i = 0;
 		// Process most active authors
@@ -147,12 +139,12 @@ class yf_articles_stats {
 				"bg_class"			=> !(++$i % 2) ? "bg1" : "bg2",
 				"result_num"		=> $i,
 				"avatar"			=> $A["is_own_article"] ? _show_avatar($A["user_id"], $this->_users_infos[$A["user_id"]], 1) : "",
-				"articles_link"		=> $this->PARENT_OBJ->_user_articles_link($A["user_id"], $A["author_name"]),
+				"articles_link"		=> module('articles')->_user_articles_link($A["user_id"], $A["author_name"]),
 				"num_articles"		=> intval($A["num_articles"]),
 				"user_name"			=> _prepare_html($author_name),
 				"user_profile_link"	=> $A["is_own_article"] ? _profile_link($A["user_id"]) : "",
 			);
-			$most_active_authors .= tpl()->parse(ARTICLES_CLASS_NAME."/stats_most_active_item", $replace2);
+			$most_active_authors .= tpl()->parse('articles'."/stats_most_active_item", $replace2);
 		}
 		$i = 0;
 		// Process articles groupped by categories
@@ -160,16 +152,16 @@ class yf_articles_stats {
 			$replace2 = array(
 				"bg_class"			=> !(++$i % 2) ? "bg1" : "bg2",
 				"result_num"		=> $i,
-				"cat_link"			=> $this->PARENT_OBJ->_cat_link($cat_id),
-				"cat_name"			=> _prepare_html($this->PARENT_OBJ->_articles_cats[$cat_id]["name"]),
-				"cat_nav"			=> $this->PARENT_OBJ->CATS_OBJ->_get_nav_by_item_id($cat_id),
+				"cat_link"			=> module('articles')->_cat_link($cat_id),
+				"cat_name"			=> _prepare_html(module('articles')->_articles_cats[$cat_id]["name"]),
+				"cat_nav"			=> module('articles')->CATS_OBJ->_get_nav_by_item_id($cat_id),
 				"num_articles"		=> intval($num_articles),
 			);
-			$articles_by_cats .= tpl()->parse(ARTICLES_CLASS_NAME."/stats_cat_item", $replace2);
+			$articles_by_cats .= tpl()->parse('articles'."/stats_cat_item", $replace2);
 		}
 
 		// Process tags
-		$this->_tags = $this->PARENT_OBJ->_show_tags(array_keys((array)$latest_articles_ids));
+		$this->_tags = module('articles')->_show_tags(array_keys((array)$latest_articles_ids));
 
 		// Process latest articles
 		$latest_articles			= $this->_process_stats_item($latest_articles_ids);
@@ -179,10 +171,10 @@ class yf_articles_stats {
 		$most_read_articles			= $this->_process_stats_item($most_read_ids);
 		// Process main template
 		$replace = array(
-			"is_logged_in"				=> intval((bool) $this->PARENT_OBJ->USER_ID),
-			"show_own_articles_link"	=> $this->PARENT_OBJ->USER_ID ? "./?object=".ARTICLES_CLASS_NAME."&action=search&user_id=".$this->PARENT_OBJ->USER_ID._add_get(array("page")) : "",
-			"manage_link"				=> $this->PARENT_OBJ->USER_ID ? "./?object=".ARTICLES_CLASS_NAME."&action=manage".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : "") : "",
-			"search_link"				=> "./?object=".ARTICLES_CLASS_NAME."&action=search".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
+			"is_logged_in"				=> intval((bool) module('articles')->USER_ID),
+			"show_own_articles_link"	=> module('articles')->USER_ID ? "./?object=".'articles'."&action=search&user_id=".module('articles')->USER_ID._add_get(array("page")) : "",
+			"manage_link"				=> module('articles')->USER_ID ? "./?object=".'articles'."&action=manage".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : "") : "",
+			"search_link"				=> "./?object=".'articles'."&action=search".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
 			"latest_articles"			=> $latest_articles,
 			"last_article_pages"		=> $last_article_pages,
 			"most_active_authors"		=> $most_active_authors,
@@ -190,7 +182,7 @@ class yf_articles_stats {
 			"most_read_articles"		=> $most_read_articles,
 			"articles_by_cats"			=> $articles_by_cats,
 		);
-		return tpl()->parse(ARTICLES_CLASS_NAME."/stats_main", $replace);
+		return tpl()->parse('articles'."/stats_main", $replace);
 	}
 	
 	/**
@@ -200,8 +192,8 @@ class yf_articles_stats {
 		foreach ((array)$info_array as $A) {
 			$summary = $A["summary"];
 /*
-			if (strlen($summary) > $this->PARENT_OBJ->POST_TEXT_PREVIEW_LENGTH) {
-				$post_text = substr($A["post_text"], 0, $this->PARENT_OBJ->POST_TEXT_PREVIEW_LENGTH);
+			if (strlen($summary) > module('articles')->POST_TEXT_PREVIEW_LENGTH) {
+				$post_text = substr($A["post_text"], 0, module('articles')->POST_TEXT_PREVIEW_LENGTH);
 			}
 */
 			$author_name = !empty($A["author_name"]) ? $A["author_name"] : _display_name($this->_users_infos[$A["user_id"]]);
@@ -212,18 +204,18 @@ class yf_articles_stats {
 				"avatar"		=> _show_avatar($A["user_id"], $this->_users_infos[$A["user_id"]], 1),
 				"user_name"		=> _prepare_html($author_name),
 				"user_link"		=> $A["user_id"] ? _profile_link($A["user_id"]) : "",
-				"view_link"		=> "./?object=".ARTICLES_CLASS_NAME."&action=view&id=".$ARTICLE_ID.(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
+				"view_link"		=> "./?object=".'articles'."&action=view&id=".$ARTICLE_ID.(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
 				"add_date"		=> _format_date($A["add_date"]),
-				"title"			=> $this->PARENT_OBJ->_format_text($A["title"]),
-				"summary"		=> $this->PARENT_OBJ->_format_text($summary),
-				"credentials"	=> $this->PARENT_OBJ->_format_text($A["credentials"]),
+				"title"			=> module('articles')->_format_text($A["title"]),
+				"summary"		=> module('articles')->_format_text($summary),
+				"credentials"	=> module('articles')->_format_text($A["credentials"]),
 				"num_reads"		=> intval($A["views"]),
-				"num_comments"	=> isset($this->_num_comments[$ARTICLE_ID]) ? intval($this->_num_comments[$ARTICLE_ID]) : intval($this->PARENT_OBJ->_num_comments[$ARTICLE_ID]),
-				"articles_link"	=> $A["is_own_article"] && $A["user_id"] ? $this->PARENT_OBJ->_user_articles_link($A["user_id"]) : "",
+				"num_comments"	=> isset($this->_num_comments[$ARTICLE_ID]) ? intval($this->_num_comments[$ARTICLE_ID]) : intval(module('articles')->_num_comments[$ARTICLE_ID]),
+				"articles_link"	=> $A["is_own_article"] && $A["user_id"] ? module('articles')->_user_articles_link($A["user_id"]) : "",
 				"num_articles"	=> intval($A["num_articles"]),
-				"tags_block"	=> isset($this->_tags[$ARTICLE_ID]) ? $this->_tags[$ARTICLE_ID] : $this->PARENT_OBJ->_tags[$ARTICLE_ID],
+				"tags_block"	=> isset($this->_tags[$ARTICLE_ID]) ? $this->_tags[$ARTICLE_ID] : module('articles')->_tags[$ARTICLE_ID],
 			);
-			$body .= tpl()->parse(ARTICLES_CLASS_NAME."/stats_item", $replace2);
+			$body .= tpl()->parse('articles'."/stats_item", $replace2);
 		}
 		return $body;
 	}

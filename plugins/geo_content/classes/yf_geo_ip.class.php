@@ -9,7 +9,6 @@
 */
 class yf_geo_ip {
 
-	//-----------------------------------------------------------------------------
 	// Send email with verification code
 	function _update_user_geo_location ($user_id = 0, $FORCE_IP = "") {
 		if (!main()->USE_GEO_IP) {

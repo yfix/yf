@@ -156,7 +156,7 @@ class yf_admin_home {
 					continue;
 				}
 				
-				$module_suggests = main()->_execute($module_name, $method_name);
+				$module_suggests = module_safe($module_name)->$method_name();
 				foreach ((array)$module_suggests as $val){
 					$suggests[] = $val;
 				}
