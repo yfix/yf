@@ -35,7 +35,7 @@ class yf_site_nav_bar {
 			}
 		}
 		// Add first item to all valid items
-		array_unshift($items, $this->_nav_item('Home', $this->HOME_LOCATION));
+		array_unshift($items, $this->_nav_item('Home', $this->HOME_LOCATION, 'icon-home fa-home'));
 		// Try to get items from hook '_nav_bar_items'
 		if (!empty($this->HOOK_NAME)) {
 			$CUR_OBJ = module($_GET['object']);
@@ -70,13 +70,14 @@ class yf_site_nav_bar {
 	}
 
 	// Display navigation bar item
-	function _nav_item ($name = '', $nav_link = '') {
+	function _nav_item ($name = '', $nav_link = '', $nav_icon = '') {
 		if ($this->AUTO_TRANSLATE) {
 			$name = t($name);
 		}
 		$replace = array(
 			'name'			=> _prepare_html($name),
 			'link'			=> $nav_link,
+			'icon'			=> $nav_icon,
 			'as_link'		=> !empty($nav_link) ? 1 : 0,
 			'is_logged_in'	=> intval((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
 		);

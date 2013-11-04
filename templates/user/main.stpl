@@ -20,7 +20,7 @@
 {execute(common,bs_theme_changer)}
 {if("is_logged_in" ne 0)}
 				<li>{execute(graphics,show_welcome)}</li>
-				<li><a href="./?task=logout" target="_parent">{t(Logout)}</a></li>
+				<li><a href="./?task=logout" target="_parent"><i class="icon-signout fa-sign-out"></i> {t(Logout)}</a></li>
 {/if}
 			</ul>
 		</div>

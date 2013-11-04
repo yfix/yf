@@ -1,2 +1,2 @@
-<a{if("edit_link" ne "")} href="{edit_link}"{/if}>{name}</a> 
+<a{if("edit_link" ne "")} href="{edit_link}"{/if}><i class="icon-user"></i> {name}</a> 
 

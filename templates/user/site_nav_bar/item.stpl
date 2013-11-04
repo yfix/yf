@@ -1,5 +1,5 @@
 {if("as_link" eq 1)}
-	<li><a href="{link}">{name}</a></li>
+	<li><a href="{link}">{if("icon" ne "")}<i class="{icon}"></i> {/if}{name}</a></li>
 {else}
-	<li class="active"><a>{name}</a></li>
+	<li class="active"><a>{if("icon" ne "")}<i class="{icon}"></i> {/if}{name}</a></li>
 {/if}
