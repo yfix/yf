@@ -115,7 +115,14 @@ class yf_table2 {
 				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params']);
 			}
 			if ($filter_sql) {
-				$sql .= (strpos(strtoupper($sql), 'WHERE') === false ? ' WHERE 1 ' : '').' '.$filter_sql;
+				$sql_upper = strtoupper($sql);
+				if (strpos($sql, '/*FILTER*/') !== false) {
+					$sql = str_replace('/*FILTER*/', ' '.$filter_sql.' ', $sql);
+				} elseif (strpos($sql_upper, 'WHERE') === false) {
+					$sql .= ' WHERE 1 '.$filter_sql;
+				} else {
+					$sql .= ' '.$filter_sql;
+				}
 			}
 			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
 
