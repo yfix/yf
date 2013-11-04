@@ -313,7 +313,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $sql) {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '') {
 		if (!$filter_data) {
 			return '';
 		}
@@ -376,7 +376,7 @@ class yf_table2 {
 		if ($sql) {
 			$filter_sql = ' AND '.implode(' AND ', $sql);
 		}
-		if ($filter_data['order_by'] && strpos(strtoupper($sql), 'ORDER BY') === false) {
+		if ($filter_data['order_by'] && strpos(strtoupper($__sql), 'ORDER BY') === false) {
 			$filter_sql .= ' ORDER BY `'.db()->es($filter_data['order_by']).'` ';
 			if ($filter_data['order_direction']) {
 				$direction = strtoupper($filter_data['order_direction']);
