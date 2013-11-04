@@ -176,7 +176,7 @@ class yf_blocks {
 			return _e('No such block!');
 		}
 		$_GET['id'] = $block_info['id'];
-		return table('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']), array('caption' => ''/*$block_info['type'].'::'.$block_info['name']*/))
+		return table('SELECT * FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']).' ORDER BY `order` ASC', array('caption' => ''/*$block_info['type'].'::'.$block_info['name']*/))
 			->text('order')
 			->allow_deny('rule_type')
 			->data('methods', $this->_methods[$block_info['type']])
