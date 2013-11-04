@@ -29,6 +29,9 @@ class form2_filter_sample {
 			->select_box('type', $offer_types, array('show_text' => 1))
 			->select_box('currency', $currencies, array('show_text' => 1))
 			->row_start(array('desc' => 'Amount from/to'))
+
+			->ui_range('amount')
+
 			->money('amount')
 			->money('amount__and')
 			->row_end()
