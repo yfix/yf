@@ -1735,7 +1735,7 @@ class yf_form2 {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 // TODO
-/*
+
 			$body .= '
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -1765,7 +1765,7 @@ $body .= $_this->_row_html('
 <br>
 <br>
 ', $extra, $r);
-*/
+
 			return $body;
 #			return $_this->_row_html('<input type="file">', $extra, $r);
 		};
