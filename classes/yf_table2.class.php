@@ -324,6 +324,7 @@ class yf_table2 {
 			'like'		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
 			'rlike'		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
 			'between'	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
+// TODO: add support for callback as condition
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {

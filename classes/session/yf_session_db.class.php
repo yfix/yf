@@ -11,9 +11,6 @@ class yf_session_db {
 
 	/*
 	* Open session
-	*
-	* @access	public
-	* @return	bool
 	*/ 
 	function _open($path, $name) {
 		return true;
@@ -21,9 +18,6 @@ class yf_session_db {
 
 	/*
 	* Close session
-	*
-	* @access	public
-	* @return	bool
 	*/ 
 	function _close() {
 		// This is used for a manual call of the session gc function
@@ -33,9 +27,6 @@ class yf_session_db {
 
 	/*
 	* Read session data from database
-	*
-	* @access	public
-	* @return	bool
 	*/
 	function _read($ses_id) {
 		$SESSION_DATA = db()->query_fetch("SELECT * FROM ".db('sessions')." WHERE id = '"._es($ses_id)."'");
@@ -44,9 +35,6 @@ class yf_session_db {
 
 	/*
 	* Write new data to database
-	*
-	* @access	public
-	* @return	bool
 	*/
 	function _write($ses_id, $data) {
 		$SESSION_DATA = db()->query_fetch("SELECT * FROM ".db('sessions')." WHERE id = '"._es($ses_id)."'");
@@ -79,9 +67,6 @@ class yf_session_db {
 
 	/*
 	* Destroy session record in database
-	*
-	* @access	public
-	* @return	bool
 	*/
 	function _destroy($ses_id) {
 		return db()->query("DELETE FROM ".db('sessions')." WHERE id = '"._es($ses_id)."'");
@@ -89,9 +74,6 @@ class yf_session_db {
 
 	/*
 	* Garbage collection, deletes old sessions
-	*
-	* @access	public
-	* @return	bool
 	*/
 	function _gc($life_time) {
 		// Be sure to adjust 'php_value session.gc_maxlifetime' to a large enough
