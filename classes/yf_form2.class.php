@@ -1746,17 +1746,20 @@ class yf_form2 {
 						max: 500,
 						values: [ 75, 300 ],
 						slide: function( event, ui ) {
-							$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+							$( "#'.$name.'" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
 						}
 					});
 					$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
 						" - $" + $( "#slider-range" ).slider( "values", 1 ) );
 				});
 				</script>
-				<div class="span2">
+				<div class="span10">
 					<div id="slider-range"></div>
 				</div>
-				<input type="text" id="amount" style="font-weight: bold;" class="input-small" />
+				<input type="hidden" id="'.$name.'" name=".$name." value="'.$extra['value_min'].'" />
+				<input type="hidden" id="'.$name.'__and" name=".$name." value="'.$extra['value_max'].'" />
+
+<!--			<input type="text" id="amount" style="font-weight: bold;" class="input-small" /> -->
 			';
 			return $_this->_row_html($body, $extra, $r);
 		};
