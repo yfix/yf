@@ -13,6 +13,45 @@ class yf_html_controls {
 	public $AUTO_ASSIGN_IDS = true;
 
 	/**
+	* We need this to avoid encoding & => &amp; by standard htmlspecialchars()
+	*/
+	function _htmlchars($str = '') {
+		$replace = array(
+			'"' => '&quot;',
+			"'" => '&apos;',
+			'<'	=> '&lt;',
+			'>'	=> '&gt;',
+		);
+		return str_replace(array_keys($replace), array_values($replace), $str);
+	}
+
+	/**
+	*/
+	function _attrs($extra = array(), $names = array()) {
+		$body = array();
+		foreach ((array)$names as $name) {
+			if (!$name || !isset($extra[$name])) {
+				continue;
+			}
+			$val = $extra[$name];
+			if (!strlen($val)) {
+				continue;
+			}
+			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+		}
+		foreach ((array)$extra['attr'] as $name => $val) {
+			if (!$name || !isset($val)) {
+				continue;
+			}
+			if (!strlen($val)) {
+				continue;
+			}
+			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+		}
+		return ' '.implode(' ', $body);
+	}
+
+	/**
 	*/
 	function select_box ($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		// Passing params as array
@@ -554,13 +593,15 @@ class yf_html_controls {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$name = $extra['name'] ? $extra['name'] : 'text';
-		$value = $extra['value'] ? $extra['value'] : $value;
-		$id = $extra['id'] ? $extra['id'] : $name;
-		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-		$type = $extra['type'] ? $extra['type'] : 'text';
+		$extra['name'] = $extra['name'] ?: ($name ?: 'text');
+		$extra['value'] = $extra['value'] ?: $value;
+		$extra['id'] = $extra['id'] ?: $extra['name'];
+		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
+		$extra['type'] = $extra['type'] ?: 'text';
+		$extra['placeholder'] = $extra['desc'];
 
-		return '<input type="'.$type.'" name="'.$name.'" id="'.$id.'" value="'.$value.'" placeholder="'.$desc.'"'.($attrs ? ' '.implode(' ', $attrs) : '').'>';
+		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
+		return '<input'.$this->_attrs($extra, $attrs_names).'>';
 	}
 
 	/**
