@@ -9,6 +9,9 @@ class table2_filter_sample {
 				'filter_params' => array(
 					'name'	=> 'like',
 					'price' => 'between',
+					'add_date' => function() {
+// TODO
+					}
 				),
 			))
 
