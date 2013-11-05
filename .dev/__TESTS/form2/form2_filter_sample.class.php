@@ -47,7 +47,7 @@ class form2_filter_sample {
 			->number('duration__and')
 			*/
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending')/*, array('selected' => 'asc')*/)
 			->save_and_clear();
 	}
 }

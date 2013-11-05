@@ -1,10 +1,17 @@
 <?php
 
-class table2_new_controls {
+class table2_filter_sample {
 	function show() {
 		$values = array('', 'k1' => 'v1', 'k2' => 'v2');
 
-		return table('SELECT * FROM '.db('shop_products')
+		return table('SELECT * FROM '.db('shop_products'), array(
+				'filter' => $_SESSION[$_GET['object'].'__products'],
+				'filter_params' => array(
+					'name'	=> 'like',
+					'price' => 'between',
+				),
+			))
+
 			->check_box('id', array('header_tip' => 'This is checkbox'))
 			->select_box('id', array('values' => $values, 'selected' => 'k1', 'tip' => 'Checkbox value tip', 'nowrap' => 1, 'class' => 'input-small'))
 			->radio_box('id')
@@ -22,5 +29,9 @@ class table2_new_controls {
 			->btn_active()
 			->footer_add()
 		;
+	}
+
+	function _show_filter () {
+		return module('form2_filter_sample')->show();
 	}
 }
