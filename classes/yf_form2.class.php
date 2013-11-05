@@ -1734,40 +1734,31 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
-// TODO
-
-			$body .= '
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script>
-$(function() {
-    $( "#slider-range" ).slider({
-      range: true,
-      min: 0,
-      max: 500,
-      values: [ 75, 300 ],
-      slide: function( event, ui ) {
-        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-      }
-    });
-    $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-      " - $" + $( "#slider-range" ).slider( "values", 1 ) );
-});
-</script>';
-
-$body .= $_this->_row_html('
-<input type="text" id="amount" style="font-weight: bold;" class="span2" />
-<br>
-<br>
-<div class="span2">
-	<div id="slider-range"></div>
-</div>
-<br>
-<br>
-', $extra, $r);
-
-			return $body;
-#			return $_this->_row_html('<input type="file">', $extra, $r);
+// TODO: upgrade look and feel and connect $field__and for filter
+			$body = '
+				<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+				<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+				<script>
+				$(function() {
+					$( "#slider-range" ).slider({
+						range: true,
+						min: 0,
+						max: 500,
+						values: [ 75, 300 ],
+						slide: function( event, ui ) {
+							$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+						}
+					});
+					$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+						" - $" + $( "#slider-range" ).slider( "values", 1 ) );
+				});
+				</script>
+				<div class="span2">
+					<div id="slider-range"></div>
+				</div>
+				<input type="text" id="amount" style="font-weight: bold;" class="input-small" />
+			';
+			return $_this->_row_html($body, $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
