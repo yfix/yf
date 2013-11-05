@@ -178,39 +178,45 @@ class yf_main {
 		define('MAIN_TYPE_USER', $this->type == 'user'); // Alias
 		define('MAIN_TYPE_ADMIN', $this->type == 'admin'); // Alias
 		$GLOBALS['main'] = &$this; // To allow links to the incomplete initialized class
-		$this->init_conf_functions();
-		$this->_before_init_hook();
-		$this->NO_DB_CONNECT = (bool) $no_db_connect;
-		$this->fix_required_constants();
-		$this->set_required_php_params();
-		$this->_set_module_conf('main', $this); // // Load project config for self
-		$this->init_firephp();
-		$this->init_server_health();
-		$this->try_fast_init();
-		$this->init_modules_base();
-		$this->init_cache_functions();
-		$this->init_files();
-		$this->init_db();
-		$this->init_common();
-		$this->init_class('graphics', 'classes/');
-		$this->load_class_file('module', 'classes/');
-		$this->init_error_reporting();
-		$this->init_cache();
-		$this->init_site_id();
-		$this->init_server_id();
-		$this->init_server_role();
-		$this->init_settings();
-		$this->spider_detection();
-		$this->init_session();
-		$this->init_locale();
-		$this->init_tpl();
-		$this->_after_init_hook();
-		if ($auto_init_all) {
-			$this->init_auth();
-			$this->tpl->init_graphics();
+		try {
+			$this->init_conf_functions();
+			$this->_before_init_hook();
+			$this->NO_DB_CONNECT = (bool) $no_db_connect;
+			$this->fix_required_constants();
+			$this->set_required_php_params();
+			$this->_set_module_conf('main', $this); // // Load project config for self
+			$this->init_firephp();
+			$this->init_server_health();
+			$this->try_fast_init();
+			$this->init_modules_base();
+			$this->init_cache_functions();
+			$this->init_files();
+			$this->init_db();
+			$this->init_common();
+			$this->init_class('graphics', 'classes/');
+			$this->load_class_file('module', 'classes/');
+			$this->init_error_reporting();
+			$this->init_cache();
+			$this->init_site_id();
+			$this->init_server_id();
+			$this->init_server_role();
+			$this->init_settings();
+			$this->spider_detection();
+			$this->init_session();
+			$this->init_locale();
+			$this->init_tpl();
+			$this->_after_init_hook();
+			if ($auto_init_all) {
+				$this->init_auth();
+				$this->tpl->init_graphics();
+			}
+			// Add framework destructor functionality (allows to execute custom code before shutdown)
+			register_shutdown_function(array($this, '_framework_destruct'));
+		} catch (Exception $e) {
+// TODO: show pretty html message with Exception contents
+			$msg = 'MAIN: Caught exception: '.print_r($e->getMessage(), 1). PHP_EOL. '<pre>'.$e->getTraceAsString().'</pre>';
+			trigger_error($msg, E_USER_WARNING);
 		}
-		// Add framework destructor functionality (allows to execute custom code before shutdown)
-		register_shutdown_function(array($this, '_framework_destruct'));
 	}
 
 	/**
