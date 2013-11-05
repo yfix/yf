@@ -64,10 +64,8 @@ class yf_test {
 				continue;
 			}
 			$href = './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$name;
-			$img_file = '/oauthd/providers/'.$name.'.png';
-			$img_fs_path = '/home/www/'.$img_file;
-			$img_web_path = $img_file;
-			$body[] = '<a href="'.$href.'" class="btn">'.(file_exists($img_fs_path) ? '<img src="'.$img_web_path.'" style="height:24px;"> ' : ''). $name.'</a><br /> '.print_r($settings, 1).'<br>';
+			$img_web_path = 'https://s3-eu-west-1.amazonaws.com/yfix/oauth/providers/'.$name.'.png';
+			$body[] = '<a href="'.$href.'" class="btn">'.'<img src="'.$img_web_path.'" style="height:24px;"> '. $name.'</a><br /> '.print_r($settings, 1).'<br>';
 		}
 		return implode(PHP_EOL, $body);
 	}
