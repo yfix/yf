@@ -54,15 +54,11 @@ class yf_divide_pages {
 			$_need_std_num_rows		= true;
 			// Try to rewrite query for more speed
 			if ($this->SQL_COUNT_REWRITE) {
-				$modified_sql = $sql;
-				if (preg_match('/\sGROUP\s+BY\s/ims', $sql)) {
-					$modified_sql = 'SELECT COUNT(*) AS `0` FROM ('.$sql.') AS __tmp';
-				} elseif (false === strpos($sql, ' JOIN ')) {
-					$modified_sql = preg_replace('/^SELECT\s+.*?\s+FROM/i', 'SELECT COUNT(*) AS `0` FROM', $sql);
-				}
+				$modified_sql = 'SELECT COUNT(*) AS `0` FROM ('.$sql.') AS __pager_tmp';
 				if ($modified_sql != $sql) {
 					$_need_std_num_rows = false;
 				}
+				// Simple speed optimization by removing ORDER BY ... from SQL when counting total records
 				$modified_sql = preg_replace('/\sORDER BY .*? (ASC|DESC)$/i', '', $modified_sql);
 			}
 			if ($_need_std_num_rows) {
