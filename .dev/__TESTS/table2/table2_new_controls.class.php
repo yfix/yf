@@ -4,7 +4,7 @@ class table2_new_controls {
 	function show() {
 		$values = array('', 'k1' => 'v1', 'k2' => 'v2');
 
-		return table('SELECT * FROM '.db('shop_products')
+		return table('SELECT * FROM '.db('shop_products'))
 			->check_box('id', array('header_tip' => 'This is checkbox'))
 			->select_box('id', array('values' => $values, 'selected' => 'k1', 'tip' => 'Checkbox value tip', 'nowrap' => 1, 'class' => 'input-small'))
 			->radio_box('id')

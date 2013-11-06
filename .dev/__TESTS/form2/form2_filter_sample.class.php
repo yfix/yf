@@ -25,7 +25,7 @@ class form2_filter_sample {
 // TODO
 //				'class_for_all' => 'span2',
 			))
-			->text('title', array('class' => 'input-medium'))
+			->text('title', array('class' => 'input-medium', 'tip' => 'Title field helping description'))
 			->select_box('type', $offer_types, array('show_text' => 1, 'class' => 'input-medium'))
 			->select_box('currency', $currencies, array('show_text' => 1, 'class' => 'input-medium'))
 

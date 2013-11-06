@@ -11,6 +11,7 @@ class yf_oauth2 {
 			'token_request_method' => 'GET',
 			'signature_method' => 'HMAC-SHA1',
 		),
+/*
 		'bitbucket' => array(
 			'oauth_version' => '1.0a',
 			'request_token_url' => 'https://bitbucket.org/!api/1.0/oauth/request_token',
@@ -54,6 +55,7 @@ class yf_oauth2 {
 			'user_info_url' => '',
 			'dev_register_url' => '',
 		),
+*/
 		'facebook' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://www.facebook.com/dialog/oauth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
@@ -61,6 +63,7 @@ class yf_oauth2 {
 			'user_info_url' => 'https://graph.facebook.com/me', // $client->scope = 'email';
 			'dev_register_url' => 'https://developers.facebook.com/apps',
 		),
+/*
 		'flickr' => array(
 			'oauth_version' => '1.0a',
 			'request_token_url' => 'http://www.flickr.com/services/oauth/request_token',
@@ -78,6 +81,7 @@ class yf_oauth2 {
 			'user_info_url' => 'https://api.foursquare.com/v2/users/self?v=20131013',
 			'dev_register_url' => 'https://foursquare.com/developers/apps',
 		),
+*/
 		'github' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
@@ -93,6 +97,7 @@ class yf_oauth2 {
 			'user_info_url' => 'https://www.googleapis.com/oauth2/v1/userinfo', // $client->scope = 'https://www.googleapis.com/auth/userinfo.email '.'https://www.googleapis.com/auth/userinfo.profile';
 			'dev_register_url' => 'http://code.google.com/apis/console',
 		),
+/*
 		'instagram' => array(
 			'oauth_version' => '2.0',
 			'dialog_url' => 'https://api.instagram.com/oauth/authorize/?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&response_type=code&state={STATE}',
@@ -149,6 +154,7 @@ class yf_oauth2 {
 			'user_info_url' => '',
 			'dev_register_url' => '',
 		),
+*/
 		'twitter' => array(
 			'oauth_version' => '1.0a',
 			'request_token_url' => 'https://api.twitter.com/oauth/request_token',
@@ -158,6 +164,7 @@ class yf_oauth2 {
 			'user_info_url' => '',
 			'dev_register_url' => '',
 		),
+/*
 		'xing' => array(
 			'oauth_version' => '1.0a',
 			'request_token_url' => 'https://api.xing.com/v1/request_token',
@@ -189,6 +196,7 @@ class yf_oauth2 {
 			'user_info_url' => '',
 			'dev_register_url' => '',
 		),
+*/
 		'yandex' => array(
 // TODO
 #			'oauth_version' => '2.0',
@@ -222,6 +230,7 @@ class yf_oauth2 {
 			'user_info_url' => '',
 			'dev_register_url' => '',
 		),
+/*
 		'bitly' => array(
 // TODO
 			'user_info_url' => '',
@@ -242,6 +251,7 @@ class yf_oauth2 {
 			'user_info_url' => '',
 			'dev_register_url' => '',
 		),
+*/
 	);
 
 	/**
