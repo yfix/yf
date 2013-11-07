@@ -55,16 +55,16 @@ class yf_admin_modules {
 		$items = array();
 		foreach ((array)db()->get_all('SELECT * FROM '.db('admin_modules').' ORDER BY name ASC') as $a) {
 			$locations = array();
-			if (file_exists(ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $a['name']. CLASS_EXT)) {
+			if (file_exists(ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
 				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'modules');
 			}
-			if (file_exists(ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR. $a['name']. CLASS_EXT)) {
+			if (file_exists(ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
 				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'priority2/modules');
 			}
-			if (file_exists(YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+			if (file_exists(YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
 				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules');
 			}
-			if (file_exists(YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+			if (file_exists(YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
 				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules');
 			}
 			$items[] = array(
@@ -180,14 +180,14 @@ class yf_admin_modules {
 		$dir_to_scan = ADMIN_SITE_PATH. ADMIN_MODULES_DIR;
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
 			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 				continue;
 			}
-			$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-			$module_name = str_replace(ADMIN_CLASS_PREFIX, '', $module_name);
+			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
+			$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
@@ -196,14 +196,14 @@ class yf_admin_modules {
 		$dir_to_scan = ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR;
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
 			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 				continue;
 			}
-			$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-			$module_name = str_replace(ADMIN_CLASS_PREFIX, '', $module_name);
+			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
+			$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
@@ -214,16 +214,16 @@ class yf_admin_modules {
 			$dir_to_scan = YF_PATH. ADMIN_MODULES_DIR;
 			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
 				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 					continue;
 				}
-				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
+				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
 				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(ADMIN_CLASS_PREFIX, '', $module_name);
-				$module_name = str_replace(SITE_CLASS_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
@@ -232,16 +232,16 @@ class yf_admin_modules {
 			$dir_to_scan = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR;
 			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
 				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 					continue;
 				}
-				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
+				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
 				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(ADMIN_CLASS_PREFIX, '', $module_name);
-				$module_name = str_replace(SITE_CLASS_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
@@ -262,24 +262,24 @@ class yf_admin_modules {
 		}
 		$methods_by_modules = array();
 		foreach ((array)$GLOBALS['admin_modules_array'] as $user_module_name) {
-			if (substr($user_module_name, 0, strlen(ADMIN_CLASS_PREFIX)) == ADMIN_CLASS_PREFIX) {
-				$user_module_name = substr($user_module_name, strlen(ADMIN_CLASS_PREFIX));
+			if (substr($user_module_name, 0, strlen(YF_ADMIN_CLS_PREFIX)) == YF_ADMIN_CLS_PREFIX) {
+				$user_module_name = substr($user_module_name, strlen(YF_ADMIN_CLS_PREFIX));
 			}
 			$file_names = array();
 			$file_text = '';
-			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $user_module_name. CLASS_EXT;
+			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['admin'] = $tmp;
 			}
-			$tmp = YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			$tmp = YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['yf'] = $tmp;
 			}
-			$tmp = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			$tmp = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['yf_p2'] = $tmp;
 			}
-			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. ADMIN_CLASS_PREFIX. $user_module_name. CLASS_EXT;
+			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. YF_ADMIN_CLS_PREFIX. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['admin_with_prefix'] = $tmp;
 			}
@@ -289,7 +289,7 @@ class yf_admin_modules {
 			foreach ((array)$file_names as $location => $file_name) {
 				$file_text = file_get_contents($file_name);
 				// Try to get methods from parent classes (if exist one)
-				$_methods = $this->_recursive_get_methods_from_extends($file_text, ($location == 'admin_with_prefix' ? ADMIN_CLASS_PREFIX : ''). $user_module_name, $ONLY_PRIVATE_METHODS);
+				$_methods = $this->_recursive_get_methods_from_extends($file_text, ($location == 'admin_with_prefix' ? YF_ADMIN_CLS_PREFIX : ''). $user_module_name, $ONLY_PRIVATE_METHODS);
 				foreach ($_methods as $method_name) {
 					$method_name = str_replace(YF_PREFIX, '', $method_name);
 					$methods_by_modules[$user_module_name][$method_name] = $method_name;
@@ -329,29 +329,29 @@ class yf_admin_modules {
 
 			$_extends_from_fwork = (substr($class_name_2, 0, strlen(YF_PREFIX)) == YF_PREFIX);
 			if ($_type == 'admin') {
-				if (substr($class_name_1, 0, strlen(ADMIN_CLASS_PREFIX)) == ADMIN_CLASS_PREFIX) {
+				if (substr($class_name_1, 0, strlen(YF_ADMIN_CLS_PREFIX)) == YF_ADMIN_CLS_PREFIX) {
 					if ($_extends_from_fwork) {
-						$extends_file_path = YF_PATH. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
-						$extends_file_path2 = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
+						$extends_file_path = YF_PATH. ADMIN_MODULES_DIR. $class_name_2. YF_CLS_EXT;
+						$extends_file_path2 = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. $class_name_2. YF_CLS_EXT;
 					} else {
-						$extends_file_path = INCLUDE_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
-						$extends_file_path2 = INCLUDE_PATH. 'priority2/'. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
+						$extends_file_path = INCLUDE_PATH. USER_MODULES_DIR. $class_name_2. YF_CLS_EXT;
+						$extends_file_path2 = INCLUDE_PATH. 'priority2/'. USER_MODULES_DIR. $class_name_2. YF_CLS_EXT;
 						$_type = 'user';
 					}
-					$user_module_name = substr($user_module_name, strlen(ADMIN_CLASS_PREFIX));
+					$user_module_name = substr($user_module_name, strlen(YF_ADMIN_CLS_PREFIX));
 				} elseif ($class_name_1 == $user_module_name || str_replace(YF_PREFIX, '', $class_name_1) == $user_module_name) {
-					$extends_file_path = YF_PATH. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
-					$extends_file_path2 = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. $class_name_2. CLASS_EXT;
+					$extends_file_path = YF_PATH. ADMIN_MODULES_DIR. $class_name_2. YF_CLS_EXT;
+					$extends_file_path2 = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. $class_name_2. YF_CLS_EXT;
 				}
 			} elseif ($_type == 'user') {
 				if ($class_name_1 == $user_module_name || str_replace(YF_PREFIX, '', $class_name_1) == $user_module_name) {
-					$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
-					$extends_file_path2 = YF_PATH. 'priority2/'. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
+					$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. YF_CLS_EXT;
+					$extends_file_path2 = YF_PATH. 'priority2/'. USER_MODULES_DIR. $class_name_2. YF_CLS_EXT;
 				}
 			}
 			// Special processing of the 'yf_module'
 			if ($this->PARSE_YF_MODULE && $class_name_2 == YF_PREFIX. 'module') {
-				$extends_file_path = YF_PATH. 'classes/'. YF_PREFIX. 'module'. CLASS_EXT;
+				$extends_file_path = YF_PATH. 'classes/'. YF_PREFIX. 'module'. YF_CLS_EXT;
 			}
 			if (!empty($extends_file_path) && file_exists($extends_file_path)) {
 				$extends_file_text = file_get_contents($extends_file_path);

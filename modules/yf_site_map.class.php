@@ -435,14 +435,14 @@ class yf_site_map {
 		$dir_to_scan = INCLUDE_PATH. USER_MODULES_DIR;
 		foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace("//", "/", $v);
-			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
 			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
 				continue;
 			}
-			$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-			$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
+			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
+			$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
 			$file_content = file_get_contents($v);
 			if (preg_match($pattern, $file_content, $matches)) {
 				$user_modules_array[$module_name] = $module_name;
@@ -451,14 +451,14 @@ class yf_site_map {
 		$dir_to_scan = INCLUDE_PATH. "priority2/". USER_MODULES_DIR;
 		foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace("//", "/", $v);
-			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
 			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
 				continue;
 			}
-			$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-			$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
+			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
+			$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
 			$file_content = file_get_contents($v);
 			if (preg_match($pattern, $file_content, $matches)) {
 				$user_modules_array[$module_name] = $module_name;
@@ -469,15 +469,15 @@ class yf_site_map {
 			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
-				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
 				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
 					continue;
 				}
-				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
+				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
 				$module_name = str_replace(YF_PREFIX, "", $module_name);
-				$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
 				$file_content = file_get_contents($v);
 				if (preg_match($pattern, $file_content, $matches)) {
 					$user_modules_array[$module_name] = $module_name;
@@ -486,15 +486,15 @@ class yf_site_map {
 			$dir_to_scan = YF_PATH. "priority2/". USER_MODULES_DIR;
 			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace("//", "/", $v);
-				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
 				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
 					continue;
 				}
-				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
+				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
 				$module_name = str_replace(YF_PREFIX, "", $module_name);
-				$module_name = str_replace(SITE_CLASS_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
 				$file_content = file_get_contents($v);
 				if (preg_match($pattern, $file_content, $matches)) {
 					$user_modules_array[$module_name] = $module_name;

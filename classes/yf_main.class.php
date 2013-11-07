@@ -173,6 +173,12 @@ class yf_main {
 			$this->CONSOLE_MODE = true;
 		}
 		error_reporting(0); // Remove all errors initially
+
+		define('YF_CLS_EXT', '.class.php');
+		define('YF_PREFIX', 'yf_'); // Prefix to the all framework classes
+		define('YF_ADMIN_CLS_PREFIX', 'adm__'); // Prefix for the admin files (optional, to inherit user class with the same name)
+		define('YF_SITE_CLS_PREFIX', 'site__'); // Prefix for the site files (optional, to inherit project level user class with the same name)
+
 		$this->type = $type; // Initialization type (user or admin)
 		define('MAIN_TYPE', $this->type); // Alias
 		define('MAIN_TYPE_USER', $this->type == 'user'); // Alias
@@ -889,7 +895,7 @@ class yf_main {
 				$dlen = strlen($d);
 				$classes = array();
 				foreach (array_merge(glob($d.'*/*.class.php'), glob($d.'*/*/*.class.php')) as $f) {
-					$cname = str_replace(CLASS_EXT, '', basename($f));
+					$cname = str_replace(YF_CLS_EXT, '', basename($f));
 					$cdir = dirname(substr($f, $dlen)).'/';
 					if (substr($cname, 0, $_plen) == YF_PREFIX) {
 						$cname = substr($cname, $_plen);
@@ -912,7 +918,7 @@ class yf_main {
 		if (empty($class_name) || $class_name == 'main') {
 			return false;
 		}
-		$cur_hook_prefix = MAIN_TYPE_ADMIN ? ADMIN_CLASS_PREFIX : SITE_CLASS_PREFIX;
+		$cur_hook_prefix = MAIN_TYPE_ADMIN ? YF_ADMIN_CLS_PREFIX : YF_SITE_CLS_PREFIX;
 		// By default thinking that class not exists
 		$loaded_class_name	= false;
 		// Site loaded class have top priority
@@ -932,7 +938,7 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
-		$class_file = $class_name. CLASS_EXT;
+		$class_file = $class_name. YF_CLS_EXT;
 		// Developer part of path is related to hostname to be able to make different code overrides for each
 		$dev_path = '.dev/'. $this->HOSTNAME.'/';
 		// additional path variables
@@ -1549,13 +1555,6 @@ class yf_main {
 		define('USER_MODULES_DIR', 'modules/');
 		define('ADMIN_MODULES_DIR', 'admin_modules/');
 		define('AUTH_MODULES_DIR', 'classes/auth/');
-		define('CLASS_EXT', '.class.php');
-		// Prefix to the all framework classes
-		define('YF_PREFIX', 'yf_');
-		// Prefix for the admin files (optional, to inherit user class with the same name)
-		define('ADMIN_CLASS_PREFIX', 'adm__');
-		// Prefix for the site files (optional, to inherit project level user class with the same name)
-		define('SITE_CLASS_PREFIX', 'site__');
 		// Set console-specific options
 		if ($this->CONSOLE_MODE) {
 			ini_set('memory_limit', -1);

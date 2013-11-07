@@ -70,7 +70,9 @@ class yf_locale_editor {
 		}
 
 		$Q = db()->query("SELECT * FROM ".db('locale_langs')." ORDER BY is_default DESC, locale ASC");
-		while ($A = db()->fetch_assoc($Q)) $this->_cur_langs_array[$A["id"]] = $A;
+		while ($A = db()->fetch_assoc($Q)) {
+			$this->_cur_langs_array[$A["id"]] = $A;
+		}
 
 		if (empty($this->_cur_langs_array)) {
 			db()->INSERT("locale_langs", array(
@@ -164,7 +166,9 @@ class yf_locale_editor {
 	*/
 	function add_lang() {
 		foreach ((array)$this->_cur_langs_array as $A) {
-			if (isset($this->_langs[$A["locale"]])) unset($this->_langs[$A["locale"]]);
+			if (isset($this->_langs[$A["locale"]])) {
+				unset($this->_langs[$A["locale"]]);
+			}
 		}
 		if ($_POST) {
 			if (empty($_POST["lang_code"])) {

@@ -213,13 +213,13 @@ class yf_dev{
 	*/
 	function make_wiki_xml(){
 	
-		$pattern_include = array("", "#".preg_quote(CLASS_EXT)."\$#");
+		$pattern_include = array("", "#".preg_quote(YF_CLS_EXT)."\$#");
 		$pattern_exclude = "#\.(svn|git)#";
 
 		$_fwork_classes = _class('dir')->scan_dir(YF_PATH."classes/", 1, $pattern_include, $pattern_exclude);
 		$_project_classes = _class('dir')->scan_dir(INCLUDE_PATH."classes/", 1, $pattern_include, $pattern_exclude);
 
-		$_ext_len = strlen(CLASS_EXT);
+		$_ext_len = strlen(YF_CLS_EXT);
 		$_fwork_class_names = array();
 		foreach ((array)$_fwork_classes as $_path) {
 			$_class_name = str_replace(YF_PREFIX, "", substr(strrchr($_path, "/"), 1, -$_ext_len));
@@ -378,25 +378,25 @@ class yf_dev{
 		$PARSED_META = array();
 
 		foreach ((array)$modules_list as $_module_name) {
-			$file_path			= REAL_PATH.$dir_name.$_module_name.CLASS_EXT;
+			$file_path			= REAL_PATH.$dir_name.$_module_name.YF_CLS_EXT;
 			$file_path_fwork	= "";
 			$file_path_project	= "";
 			$_source = "site";
 			if (!file_exists($file_path)) {
-				$file_path = INCLUDE_PATH.$dir_name.$_module_name.CLASS_EXT;
+				$file_path = INCLUDE_PATH.$dir_name.$_module_name.YF_CLS_EXT;
 				$_source = "project";
 				if (!file_exists($file_path)) {
-					$file_path = YF_PATH.$dir_name.YF_PREFIX.$_module_name.CLASS_EXT;
+					$file_path = YF_PATH.$dir_name.YF_PREFIX.$_module_name.YF_CLS_EXT;
 					$_source = "framework";
 					if (!file_exists($file_path)) {
 						continue;
 					}
 				} else {
-					$file_path_fwork = YF_PATH.$dir_name.YF_PREFIX.$_module_name.CLASS_EXT;
+					$file_path_fwork = YF_PATH.$dir_name.YF_PREFIX.$_module_name.YF_CLS_EXT;
 				}
 			} else {
-				$file_path_fwork	= YF_PATH.$dir_name.YF_PREFIX.$_module_name.CLASS_EXT;
-				$file_path_project	= INCLUDE_PATH.$dir_name.$_module_name.CLASS_EXT;
+				$file_path_fwork	= YF_PATH.$dir_name.YF_PREFIX.$_module_name.YF_CLS_EXT;
+				$file_path_project	= INCLUDE_PATH.$dir_name.$_module_name.YF_CLS_EXT;
 			}
 
 			$_tmp_conf = array();

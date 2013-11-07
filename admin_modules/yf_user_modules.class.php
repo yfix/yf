@@ -57,16 +57,16 @@ class yf_user_modules {
 		$items = array();
 		foreach ((array)db()->get_all('SELECT * FROM '.db('user_modules').' ORDER BY name ASC') as $a) {
 			$locations = array();
-			if (file_exists(PROJECT_PATH. USER_MODULES_DIR. $a['name']. CLASS_EXT)) {
+			if (file_exists(PROJECT_PATH. USER_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
 				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(PROJECT_PATH. 'modules');
 			}
-			if (file_exists(PROJECT_PATH. 'priority2/'. USER_MODULES_DIR. $a['name']. CLASS_EXT)) {
+			if (file_exists(PROJECT_PATH. 'priority2/'. USER_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
 				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(PROJECT_PATH. 'priority2/modules');
 			}
-			if (file_exists(YF_PATH. USER_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+			if (file_exists(YF_PATH. USER_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
 				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules');
 			}
-			if (file_exists(YF_PATH. 'priority2/'. USER_MODULES_DIR. YF_PREFIX. $a['name']. CLASS_EXT)) {
+			if (file_exists(YF_PATH. 'priority2/'. USER_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
 				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules');
 			}
 			$items[] = array(
@@ -180,14 +180,14 @@ class yf_user_modules {
 		$dir_to_scan = PROJECT_PATH. USER_MODULES_DIR;
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
 			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 				continue;
 			}
-			$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-			$module_name = str_replace(SITE_CLASS_PREFIX, '', $module_name);
+			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
+			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
@@ -196,14 +196,14 @@ class yf_user_modules {
 		$dir_to_scan = PROJECT_PATH. 'priority2/'. USER_MODULES_DIR;
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
 			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 				continue;
 			}
-			$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
-			$module_name = str_replace(SITE_CLASS_PREFIX, '', $module_name);
+			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
+			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
@@ -214,15 +214,15 @@ class yf_user_modules {
 			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
 			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
 				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 					continue;
 				}
-				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
+				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
 				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(SITE_CLASS_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
@@ -231,15 +231,15 @@ class yf_user_modules {
 			$dir_to_scan = YF_PATH. 'priority2/'. USER_MODULES_DIR;
 			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(CLASS_EXT)) != CLASS_EXT) {
+				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
 				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 					continue;
 				}
-				$module_name = substr(basename($v), 0, -strlen(CLASS_EXT));
+				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
 				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(SITE_CLASS_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
@@ -261,20 +261,20 @@ class yf_user_modules {
 		$methods_by_modules = array();
 		foreach ((array)$GLOBALS['user_modules_array'] as $user_module_name) {
 			// Remove site prefix from module name here
-			if (substr($user_module_name, 0, strlen(SITE_CLASS_PREFIX)) == SITE_CLASS_PREFIX) {
-				$user_module_name = substr($user_module_name, strlen(SITE_CLASS_PREFIX));
+			if (substr($user_module_name, 0, strlen(YF_SITE_CLS_PREFIX)) == YF_SITE_CLS_PREFIX) {
+				$user_module_name = substr($user_module_name, strlen(YF_SITE_CLS_PREFIX));
 			}
 			$file_names = array();
 			$file_text = '';
-			$tmp = PROJECT_PATH. USER_MODULES_DIR.$user_module_name.CLASS_EXT;
+			$tmp = PROJECT_PATH. USER_MODULES_DIR.$user_module_name.YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['user'] = $tmp;
 			}
-			$tmp = YF_PATH. USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			$tmp = YF_PATH. USER_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['yf'] = $tmp;
 			}
-			$tmp = YF_PATH. 'priority2/'. USER_MODULES_DIR. YF_PREFIX. $user_module_name. CLASS_EXT;
+			$tmp = YF_PATH. 'priority2/'. USER_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['yf_p2'] = $tmp;
 			}
@@ -326,11 +326,11 @@ class yf_user_modules {
 			$_extends_from_fwork = (substr($class_name_2, 0, strlen(YF_PREFIX)) == YF_PREFIX);
 			// Check if we parsing current class
 			if ($class_name_1 == $user_module_name || str_replace(YF_PREFIX, '', $class_name_1) == $user_module_name) {
-				$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
-				$extends_file_path2 = YF_PATH. 'priority2/'. USER_MODULES_DIR. $class_name_2. CLASS_EXT;
+				$extends_file_path = YF_PATH. USER_MODULES_DIR. $class_name_2. YF_CLS_EXT;
+				$extends_file_path2 = YF_PATH. 'priority2/'. USER_MODULES_DIR. $class_name_2. YF_CLS_EXT;
 				// Special processing of the 'yf_module'
 				if ($this->PARSE_YF_MODULE && $class_name_2 == YF_PREFIX.'module') {
-					$extends_file_path = YF_PATH. 'classes/'.YF_PREFIX.'module'. CLASS_EXT;
+					$extends_file_path = YF_PATH. 'classes/'.YF_PREFIX.'module'. YF_CLS_EXT;
 				}
 			}
 			if (!empty($extends_file_path) && file_exists($extends_file_path)) {
