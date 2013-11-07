@@ -1771,6 +1771,24 @@ class yf_form2 {
 	}
 
 	/**
+	* Custom function, useful to insert custom html and not breaking form chain
+	*/
+	function func($name, $func, $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
+		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', ' ', $extra['name']));
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+
+	/**
 	*/
 	function custom_fields($name, $custom_fields, $extra = array(), $replace = array()) {
 		$extra['name'] = $extra['name'] ?: $name;

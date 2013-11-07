@@ -1,6 +1,4 @@
-        {<<"mailru">>, [
                 {callback_uri, <<"/auth/mailru/callback">>},
-                {scope, <<>>},
                 {authorize_uri, <<"https://connect.mail.ru/oauth/authorize">>},
                 {token_uri, <<"https://connect.mail.ru/oauth/token">>},
                 {userinfo_uri, <<"http://www.appsmail.ru/platform/api">>},
@@ -28,4 +26,3 @@
                                         1 -> <<"female">>; _ -> <<"male">> end;
                                 (Other, Profile, Default) -> Default(Other, Profile) end}
 
-            ]},
