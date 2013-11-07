@@ -214,9 +214,13 @@ class yf_locale_editor {
 	/**
 	*/
 	function show_vars() {
+		if (array_key_exists('mass_delete', $_POST)) {
+			return $this->mass_delete_vars();
+		}
+
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 
-		$sql = 'SELECT v.id, v.value, GROUP_CONCAT(DISTINCT CONCAT("<b>", UPPER(t.locale), "</b> = ", t.value) SEPARATOR "'.PHP_EOL.'") AS translation
+		$sql = 'SELECT v.id, v.value, GROUP_CONCAT(DISTINCT CONCAT("<b class=badge>", UPPER(t.locale), "</b> ", t.value) SEPARATOR "'.PHP_EOL.'") AS translation
 			FROM '.db('locale_vars').' AS v 
 			LEFT JOIN '.db('locale_translate').' AS t ON t.var_id = v.id
 			LEFT JOIN '.db('locale_langs').' AS l ON t.locale = l.locale
@@ -227,24 +231,23 @@ class yf_locale_editor {
 				'pager_records_on_page' => $_SESSION[$filter_name]['per_page'],
 				'filter' => $_SESSION[$filter_name],
 				'filter_params' => array(
-#					'value'			=> function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; },
-					'value'			=> array('cond' => 'like', 'field' => 'v.value'),
+					'value'			=> function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; },
+#					'value'			=> array('cond' => 'like', 'field' => 'v.value'),
 					'translation'	=> array('like', 't.value'),
 				),
 			))
 			->check_box('id', array('width' => '1%', 'desc' => ''))
-			->text('value')
-			->text('translation')
+			->text('value', array('wordwrap' => '30', 'hl_filter' => 1))
+			->text('translation', array('hl_filter' => 1))
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_var&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_var&id=%d')
+			->footer_submit('mass_delete')
 			->footer_add('', './?object='.$_GET['object'].'&action=add_var')
-
-			->footer_link('mass_delete', './?object='.$_GET['object'].'&action=mass_delete_vars')
-			->footer_link('collect_vars', './?object='.$_GET['object'].'&action=collect_vars')
-			->footer_link('cleanup_vars', './?object='.$_GET['object'].'&action=cleanup_vars')
-			->footer_link('import_vars', './?object='.$_GET['object'].'&action=import_vars')
-			->footer_link('export_vars', './?object='.$_GET['object'].'&action=export_vars')
-			->footer_link('user_vars', './?object='.$_GET['object'].'&action=user_vars')
+#			->footer_link('collect_vars', './?object='.$_GET['object'].'&action=collect_vars')
+#			->footer_link('cleanup_vars', './?object='.$_GET['object'].'&action=cleanup_vars')
+#			->footer_link('import_vars', './?object='.$_GET['object'].'&action=import_vars')
+#			->footer_link('export_vars', './?object='.$_GET['object'].'&action=export_vars')
+#			->footer_link('user_vars', './?object='.$_GET['object'].'&action=user_vars')
 		;
 	}
 
@@ -1436,7 +1439,10 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	/**
 	*/
 	function _show_filter() {
-		$filter_name = $_GET['object'].'__show_vars';
+		if (!in_array($_GET['action'], array('show_vars'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
 			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
@@ -1444,7 +1450,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		$order_fields = array(
 			'value'     => 'value',
 		);
-		$per_page = array(10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000);
+		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000);
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
 //				'class'		=> 'form-inline',
