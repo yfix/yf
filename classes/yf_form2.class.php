@@ -1796,10 +1796,10 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			$custom_fields = explode(',', $extra['custom_fields']);
 			$sub_array_name = $extra['sub_array'] ?: 'custom';
-			$custom_info = $this->_attrs_string2array($r[$extra['name']]);
+			$custom_info = $_this->_attrs_string2array($r[$extra['name']]);
 
 			$body = array();
-			$this->_chained_mode = false;
+			$_this->_chained_mode = false;
 			foreach ((array)$custom_fields as $field_name) {
 				if (empty($field_name)) {
 					continue;
@@ -1811,9 +1811,9 @@ class yf_form2 {
 					'value'	=> $custom_info[$field_name],
 				));
 				$desc = ucfirst(str_replace('_', ' ', $field_name)).' [Custom]';
-				$body[] = $this->container($str, $desc);
+				$body[] = $_this->container($str, $desc);
 			}
-			$this->_chained_mode = true;
+			$_this->_chained_mode = true;
 			return implode(PHP_EOL, $body);
 		};
 		if ($this->_chained_mode) {
