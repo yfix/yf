@@ -233,7 +233,8 @@ class yf_table2 {
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
 					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip']) : '';
-					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($info['desc']). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
+					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
+					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
@@ -331,7 +332,6 @@ class yf_table2 {
 			'like'		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
 			'rlike'		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
 			'between'	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
-// TODO: add support for callback as condition
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -344,18 +344,26 @@ class yf_table2 {
 			if (substr($k, -strlen('__and')) == '__and') {
 				continue;
 			}
+			$field = $k;
+			$left_part = '';
 			$part_on_the_right = '';
 			// Here we support complex filtering conditions, examples:
 			// 'price' => array('gt', 'value' => '100')
 			// 'price' => array('between', 'value' => '1', 'and' => '10')
 			// 'name' => array('like', 'value' => 'john')
 			if (is_array($v)) {
-				$cond = $v[0];
+				$cond = isset($v[0]) ? $v[0] : $v['cond'];
+				if (!$cond) {
+					continue;
+				}
 				if (!isset($supported_conds[$cond])) {
 					continue;
 				}
 				if (!isset($v['and'])) {
 					$v['and'] == $filter_data[$k.'__and'];
+				}
+				if ($v['field']) {
+					$field = $v['field'];
 				}
 				$part_on_the_right = $supported_conds[$cond]($v);
 			} else {
@@ -363,15 +371,44 @@ class yf_table2 {
 					continue;
 				}
 				$cond = 'eq';
-				// Here we can override default 'eq' condition with custom one by passing additional param to table2. 
-				// example: table2($sql, array('filter_params' => array('name' => 'gt', 'price' => 'between'), 'filter' => $_SESSION[__CLASS__]))
-				if (isset($filter_params[$k]) && isset($supported_conds[$filter_params[$k]])) {
-					$cond = $filter_params[$k];
+				$func = null;
+				// Here we can override default 'eq' condition with custom one by passing filter $params like this: table($sql, array('filter_params' => $filter_params)).
+				$field_params = $filter_params[$k];
+				if ($field_params) {
+					// Fully replacing left and right parts with callback function
+					// Example: table($sql, array('filter_params' => array('value' => function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; } )))
+					if (is_callable($field_params)) {
+						$left_part = ' ';
+						$func = $field_params;
+					// Ways of passing array of params: 1) long and 2) short
+					// Example: table($sql, array('filter_params' => array('value'	=> array('cond' => 'like', 'field' => 'v.value'))))
+					// Example: table($sql, array('filter_params' => array('translation' => array('like', 't.value'))))
+					} elseif (is_array($field_params)) {
+						$cond = isset($field_params['cond']) ? $field_params['cond'] : $field_params[0];
+						$func = $supported_conds[$cond];
+						if ($field_params['field']) {
+							$field = $field_params['field'];
+						} elseif (isset($field_params[1])) {
+							$field = $field_params[1];
+						}
+					// Predefined condition found (gt, between, like, etc..)
+					// Example: table($sql, array('filter_params' => array('name' => 'gt', 'price' => 'between')))
+					} elseif (isset($supported_conds[$field_params])) {
+						$cond = $field_params;
+						$func = $supported_conds[$cond];
+					}
 				}
 				// Field with __and on the end of its name is special one for 'between' condition
-				$part_on_the_right = $supported_conds[$cond](array('value' => $v, 'and' => $filter_data[$k.'__and']));
+				if ($func) {
+					$part_on_the_right = $func(array('value' => $v, 'and' => $filter_data[$k.'__and']), $filter_data);
+				}
 			}
-			$sql[] = '`'.db()->es($k).'`'.$part_on_the_right;
+			if (!strlen($left_part)) {
+				$left_part = '`'.str_replace('.', '`.`', db()->es($field)).'`';
+			}
+			if ($part_on_the_right) {
+				$sql[] = trim($left_part). ' '. trim($part_on_the_right);
+			}
 		}
 		if ($sql) {
 			$filter_sql = ' AND '.implode(' AND ', $sql);
@@ -618,12 +655,7 @@ class yf_table2 {
 	* Callback function will be populated with these params: function($field, $params, $row, $instance_params) {}
 	*/
 	function func($name, $func, $extra = array()) {
-		if (!$desc && isset($extra['desc'])) {
-			$desc = $extra['desc'];
-		}
-		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
-		}
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$this->_fields[] = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
