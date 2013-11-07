@@ -24,6 +24,7 @@ class yf_admin {
 			->btn_edit()
 			->btn_delete()
 			->btn('log_auth', './?object=log_admin_auth_view&action=show_for_admin&id=%d')
+			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d')
 			->footer_link('Failed auth log', './?object=log_admin_auth_fails_viewer')
 			->footer_add();
 	}
@@ -42,8 +43,8 @@ class yf_admin {
 				'__before__'	=> 'trim',
 				'login'			=> 'required|alpha_numeric|is_unique_without[admin.login.'.$id.']',
 				'email'			=> 'required|valid_email|is_unique_without[admin.email.'.$id.']',
-				'first_name'	=> 'required|alpha_numeric_spaces',
-				'last_name'		=> 'required|alpha_numeric_spaces',
+				'first_name'	=> 'required',
+				'last_name'		=> 'required',
 				'password'		=> 'password_update',
 				'group'			=> 'required|exists[admin_groups.id]',
 			))
@@ -74,8 +75,8 @@ class yf_admin {
 				'__before__'	=> 'trim',
 				'login'			=> 'required|alpha_numeric|is_unique[admin.login]',
 				'email'			=> 'required|valid_email|is_unique[admin.email]',
-				'first_name'	=> 'required|alpha_numeric_spaces',
-				'last_name'		=> 'required|alpha_numeric_spaces',
+				'first_name'	=> 'required',
+				'last_name'		=> 'required',
 				'password'		=> 'required|md5',
 				'group'			=> 'required|exists[admin_groups.id]',
 			))
@@ -128,6 +129,32 @@ class yf_admin {
 		} else {
 			return js_redirect('./?object='.$_GET['object']);
 		}
+	}
+
+	/**
+	*/
+	function login_as() {
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('Wrong id');
+		}
+		if (main()->ADMIN_GROUP != 1) {
+			return _e('Allowed only for super-admins');
+		}
+		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
+		if (!$a) {
+			return _e('Target admin user info not found');
+		}
+		$t_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)$a['group']);
+		// Save previous session
+		$_SESSION['admin_prev_info'] = $_SESSION;
+		// Login as different admin user
+		$_SESSION['admin_id'] = $a['id'];
+		$_SESSION['admin_group'] = $a['group'];
+		$_SESSION['admin_login_time'] = time();
+
+		$after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
+		return js_redirect($after_login ?: './');
 	}
 
 	/**

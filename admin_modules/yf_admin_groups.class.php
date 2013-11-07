@@ -38,7 +38,7 @@ class yf_admin_groups {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
+				'name' => 'trim|required|alpha_dash|is_unique[admin_groups.name]'
 			))
 			->db_insert_if_ok('admin_groups', array('name','go_after_login','active'), array(), array('on_after_update' => function() {
 				cache()->refresh(array('admin_groups', 'admin_groups_details'));
@@ -58,10 +58,11 @@ class yf_admin_groups {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']));
+		$a = (array)$_POST + (array)$a;
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
+				'name' => 'trim|required|alpha_dash|is_unique_without[admin_groups.name.'.$id.']'
 			))
 			->db_update_if_ok('admin_groups', array('name','go_after_login'), 'id='.$id, array('on_after_update' => function() {
 				cache()->refresh(array('admin_groups', 'admin_groups_details'));
