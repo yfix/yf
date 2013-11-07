@@ -23,10 +23,6 @@ class yf_locale_editor {
 	public $DISPLAY_VARS_LOCATIONS	= true;
 	/** @var bool Display links to edit source files (in location) */
 	public $LOCATIONS_EDIT_LINKS	= true;
-	/** @var bool Filter on/off */
-// TODO: implement new filters, based on form2/table2
-#	public $USE_FILTER				= true;
-	public $USE_FILTER				= false;
 	/** @var bool Ignore case on import/export */
 	public $VARS_IGNORE_CASE		= true;
 
@@ -103,13 +99,6 @@ class yf_locale_editor {
 			1	=> t('Strings in the uploaded file replace existing ones, new ones are added'),
 			2	=> t('Existing strings are kept, only new strings are added'),
 		);
-		$this->_search_types = array(
-			'vars'			=> t('Vars'),
-			'translations'	=> t('Translations'),
-		);
-#		if ($this->USE_FILTER) {
-#			$this->_prepare_filter_data();
-#		}
 	}
 
 	/**
@@ -225,65 +214,38 @@ class yf_locale_editor {
 	/**
 	*/
 	function show_vars() {
-#		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : '';
-		$sql = 'SELECT * FROM '.db('locale_vars').' AS v WHERE 1=1 '.$filter_sql.' ORDER BY '.($this->VARS_IGNORE_CASE ? 'LOWER(REPLACE(CONVERT(v.value USING utf8), " ", "_"))' : 'v.value').' ASC';
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
 
-		$path = './?object='.$_GET['object'].'&action='.$_GET['action'];
-		$per_page = conf('admin_per_page');
-#		if ($this->USE_FILTER && !empty($_SESSION[$this->_filter_name]['per_page'])) {
-#			$per_page = $_SESSION[$this->_filter_name]['per_page'];
-#		}
-		list($limit_sql, $pages, $total) = common()->divide_pages($sql, $path, null, $per_page);
+		$sql = 'SELECT v.id, v.value, GROUP_CONCAT(DISTINCT CONCAT("<b>", UPPER(t.locale), "</b> = ", t.value) SEPARATOR "'.PHP_EOL.'") AS translation
+			FROM '.db('locale_vars').' AS v 
+			LEFT JOIN '.db('locale_translate').' AS t ON t.var_id = v.id
+			LEFT JOIN '.db('locale_langs').' AS l ON t.locale = l.locale
+			WHERE 1 /*FILTER*/
+			GROUP BY v.id';
 
-		$Q = db()->query($sql. $limit_sql);
-		while ($A = db()->fetch_assoc($Q)) $vars_array[$A['id']] = $A;
+		return table($sql, array(
+				'pager_records_on_page' => $_SESSION[$filter_name]['per_page'],
+				'filter' => $_SESSION[$filter_name],
+				'filter_params' => array(
+#					'value'			=> function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; },
+					'value'			=> array('cond' => 'like', 'field' => 'v.value'),
+					'translation'	=> array('like', 't.value'),
+				),
+			))
+			->check_box('id', array('width' => '1%', 'desc' => ''))
+			->text('value')
+			->text('translation')
+			->btn_edit('', './?object='.$_GET['object'].'&action=edit_var&id=%d')
+			->btn_delete('', './?object='.$_GET['object'].'&action=delete_var&id=%d')
+			->footer_add('', './?object='.$_GET['object'].'&action=add_var')
 
-		if (!empty($vars_array)) {
-			$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE var_id IN('.implode(',', array_keys($vars_array)).')');
-			while ($A = db()->fetch_assoc($Q)) $tr_vars[$A['var_id']][$A['locale']] = $A['value'];
-			foreach ((array)$tr_vars as $var_id => $locales_array) {
-				$body_array = array();
-				foreach ((array)$locales_array as $locale_name => $tr_text) {
-					if (empty($tr_text)) {
-						continue;
-					}
-					$body_array[] = tpl()->parse($_GET['object'].'/locale_item', array(
-						'name'		=> _prepare_html($locale_name),
-						'is_empty'	=> empty($tr_text) ? 1 : 0,
-					));
-				}
-				$used_locales[$var_id] = !empty($body_array) ? nl2br(implode(PHP_EOL, $body_array)) : '';
-			}
-		}
-#		if (isset($_SESSION[$this->_filter_name]['show_locs']) && !$_SESSION[$this->_filter_name]['show_locs']) {
-#			$this->DISPLAY_VARS_LOCATIONS = false;
-#		}
-		foreach ((array)$vars_array as $A) {
-			$replace2 = array(
-				'id'			=> $A['id'],
-				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'value'			=> _prepare_html(str_replace('_', ' ', $A['value'])),
-				'location'		=> $this->DISPLAY_VARS_LOCATIONS ? $this->_prepare_locations($A['location']) : '',
-				'locales'		=> $used_locales[$A['id']],
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_var&id='.$A['id'],
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_var&id='.$A['id'],
-			);
-			$items .= tpl()->parse($_GET['object'].'/vars_item', $replace2);
-		}
-		$replace = array(
-			'mass_delete_link'	=> './?object='.$_GET['object'].'&action=mass_delete_vars',
-			'back_link'			=> './?object='.$_GET['object'],
-			'add_link'			=> './?object='.$_GET['object'].'&action=add_var',
-			'collect_vars_link'	=> './?object='.$_GET['object'].'&action=collect_vars',
-			'cleanup_vars_link'	=> './?object='.$_GET['object'].'&action=cleanup_vars',
-			'import_vars_link'	=> './?object='.$_GET['object'].'&action=import_vars',
-			'export_vars_link'	=> './?object='.$_GET['object'].'&action=export_vars',
-			'user_vars_link'	=> './?object='.$_GET['object'].'&action=user_vars',
-			'items'				=> $items,
-			'pages'				=> $pages,
-			'total'				=> intval($total),
-		);
-		return tpl()->parse($_GET['object'].'/vars_main', $replace);
+			->footer_link('mass_delete', './?object='.$_GET['object'].'&action=mass_delete_vars')
+			->footer_link('collect_vars', './?object='.$_GET['object'].'&action=collect_vars')
+			->footer_link('cleanup_vars', './?object='.$_GET['object'].'&action=cleanup_vars')
+			->footer_link('import_vars', './?object='.$_GET['object'].'&action=import_vars')
+			->footer_link('export_vars', './?object='.$_GET['object'].'&action=export_vars')
+			->footer_link('user_vars', './?object='.$_GET['object'].'&action=user_vars')
+		;
 	}
 
 	/**
@@ -841,34 +803,34 @@ class yf_locale_editor {
 			}
 		}
 
-		$this->_used_locations[""] = t("-- ALL --");
+		$this->_used_locations[''] = t('-- ALL --');
 		foreach ((array)$this->_get_all_vars_locations() as $cur_location => $num_vars) {
 			if (empty($num_vars)) {
 				continue;
 			}
-			$this->_used_locations[$cur_location] = $cur_location." (".intval($num_vars).")";
+			$this->_used_locations[$cur_location] = $cur_location.' ('.intval($num_vars).')';
 		}
 		$replace = array(
-			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-			"back_link"			=> "./?object=".$_GET["object"],
-			"error_message"		=> _e(),
-			"langs_box"			=> $this->_box("cur_langs",		-1),
-			"file_formats_box"	=> $this->_box("file_format",	"csv"),
-			"location_box"		=> $this->_box("location",		-1),
-			"modules_box"		=> $this->_box("module",		-1),
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+			'back_link'			=> './?object='.$_GET['object'],
+			'error_message'		=> _e(),
+			'langs_box'			=> $this->_box('cur_langs',		-1),
+			'file_formats_box'	=> $this->_box('file_format',	'csv'),
+			'location_box'		=> $this->_box('location',		-1),
+			'modules_box'		=> $this->_box('module',		-1),
 		);
-		return tpl()->parse($_GET["object"]."/export_vars", $replace);
+		return tpl()->parse($_GET['object'].'/export_vars', $replace);
 	}
 
 	/**
 	* Automatic translator via Google translate
 	*/
 	function autotranslate() {
-		if ($_POST["translate"] && $_POST["locale"]) {
+		if ($_POST['translate'] && $_POST['locale']) {
 			set_time_limit(1800); 
-			$LOCALE_RES = $_POST["locale"];
+			$LOCALE_RES = $_POST['locale'];
 	
-			$base_url = "http://ajax.googleapis.com/ajax/services/language/translate"."?v=1.0";
+			$base_url = 'http://ajax.googleapis.com/ajax/services/language/translate'.'?v=1.0';
 			
 			$vars = db()->query_fetch_all(
 				"SELECT id,value FROM ".db('locale_vars')." WHERE id NOT IN( 
@@ -936,11 +898,13 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	*/
 	function _get_all_vars_locations() {
 		$used_locations = array();
-		$Q = db()->query("SELECT * FROM ".db('locale_vars')."");
+		$Q = db()->query('SELECT * FROM '.db('locale_vars').'');
 		while ($A = db()->fetch_assoc($Q)) {
-			foreach ((array)explode(";", $A["location"]) as $cur_location) {
-				$cur_location = trim(substr($cur_location, 0, strpos($cur_location, ":")));
-				if (empty($cur_location)) continue;
+			foreach ((array)explode(';', $A['location']) as $cur_location) {
+				$cur_location = trim(substr($cur_location, 0, strpos($cur_location, ':')));
+				if (empty($cur_location)) {
+					continue;
+				}
 				$used_locations[$cur_location]++;
 			}
 		}
@@ -953,9 +917,9 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	*/
 	function collect_vars () {
 		// Select all known variables from db
-		$Q = db()->query("SELECT * FROM ".db('locale_vars')." ORDER BY value ASC");
+		$Q = db()->query('SELECT * FROM '.db('locale_vars').' ORDER BY value ASC');
 		while ($A = db()->fetch_assoc($Q)) {
-			$this->_locale_vars[$A["value"]] = $A;
+			$this->_locale_vars[$A['value']] = $A;
 		}
 		// Try to get variables from the source code
 		$vars_from_code = $this->_parse_source_code_for_vars();
@@ -963,22 +927,22 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		foreach ((array)$vars_from_code as $cur_var_name => $var_files_info) {
 			$location_array = array();
 			foreach ((array)$var_files_info as $file_name => $line_numbers) {
-				$location_array[] = $file_name.":".$line_numbers;
+				$location_array[] = $file_name.':'.$line_numbers;
 			}
-			$location	= implode("; ", $location_array);
+			$location	= implode('; ', $location_array);
 			$sql_array	= array(
-				"value"		=> _es($cur_var_name),
-				"location"	=> $location,
+				'value'		=> _es($cur_var_name),
+				'location'	=> $location,
 			);
 			// If variable exists - use update
 			if (isset($this->_locale_vars[$cur_var_name])) {
-				db()->UPDATE("locale_vars", $sql_array, "id=".intval($this->_locale_vars[$cur_var_name]['id']));
+				db()->UPDATE('locale_vars', $sql_array, 'id='.intval($this->_locale_vars[$cur_var_name]['id']));
 			} else {
-				db()->INSERT("locale_vars", $sql_array);
+				db()->INSERT('locale_vars', $sql_array);
 			}
 		}
 		// Return user back
-		js_redirect("./?object=".$_GET["object"]."&action=show_vars");
+		js_redirect('./?object='.$_GET['object'].'&action=show_vars');
 	}
 
 	/**
@@ -987,21 +951,21 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	function collect_vars_for_module () {
 		main()->NO_GRAPHICS = true;
 
-		$module_name = preg_replace("/[^a-z0-9\_]/i", "", strtolower(trim($_GET["id"])));
+		$module_name = preg_replace('/[^a-z0-9\_]/i', '', strtolower(trim($_GET['id'])));
 		if (!$module_name) {
-			return print "Error, no module name";
+			return print 'Error, no module name';
 		}
 
 		$vars = $this->_parse_source_code_for_vars(array(
-			"only_project"	=> 1,
-			"only_module"	=> $module_name,
+			'only_project'	=> 1,
+			'only_module'	=> $module_name,
 		));
 
-		echo "<pre>";
+		echo '<pre>';
 		foreach ((array)$vars as $var => $paths) {
-			echo $var."\n";
+			echo $var.PHP_EOL;
 		}
-		echo "</pre>";
+		echo '</pre>';
 	}
 
 	/**
@@ -1082,35 +1046,35 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		$vars_array = array();
 		// Avail params: only_framework, only_project, only_stpls, only_php, only_module
 
-		$php_path_pattern	= "";
-		$stpl_path_pattern	= "";
-		if ($params["only_module"]) {
-			$this->_include_php_pattern	= array("#/(modules)#", "#".preg_quote($params["only_module"], "#")."\.class\.php\$#");
-			$this->_include_stpl_pattern	= array("#/templates#", "#\.stpl\$#");
-			$stpl_path_pattern = "#templates/[^/]+/".$params["only_module"]."/#";
+		$php_path_pattern	= '';
+		$stpl_path_pattern	= '';
+		if ($params['only_module']) {
+			$this->_include_php_pattern	= array('#/(modules)#', '#'.preg_quote($params['only_module'], '#').'\.class\.php$#');
+			$this->_include_stpl_pattern	= array('#/templates#', '#\.stpl$#');
+			$stpl_path_pattern = '#templates/[^/]+/'.$params['only_module'].'/#';
 		}
 		// Get source files from the framework
-		if (!$params["only_project"]) {
-			if (!$params["only_stpls"]) {
-				$yf_framework_php_files	= _class("dir")->scan_dir(YF_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
+		if (!$params['only_project']) {
+			if (!$params['only_stpls']) {
+				$yf_framework_php_files	= _class('dir')->scan_dir(YF_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
 			}
-			if (!$params["only_php"]) {
-				$yf_framework_stpl_files	= _class("dir")->scan_dir(YF_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
+			if (!$params['only_php']) {
+				$yf_framework_stpl_files	= _class('dir')->scan_dir(YF_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
 			}
 		}
 		// Get source files from the current project
-		if (!$params["only_framework"]) {
-			if (!$params["only_stpls"]) {
-				$cur_project_php_files		= _class("dir")->scan_dir(INCLUDE_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
+		if (!$params['only_framework']) {
+			if (!$params['only_stpls']) {
+				$cur_project_php_files		= _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_php_pattern, $this->_exclude_pattern);
 			}
-			if (!$params["only_php"]) {
-				$cur_project_stpl_files		= _class("dir")->scan_dir(INCLUDE_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
+			if (!$params['only_php']) {
+				$cur_project_stpl_files		= _class('dir')->scan_dir(INCLUDE_PATH, true, $this->_include_stpl_pattern, $this->_exclude_pattern);
 			}
 		}
 		// Get PHP files from the framework (classes and functions only)
 		foreach ((array)$yf_framework_php_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), '', $file_name);
 			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
@@ -1119,7 +1083,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get PHP files from the current project (classes and functions only)
 		foreach ((array)$cur_project_php_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), '', $file_name);
 			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_php_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
@@ -1128,7 +1092,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get STPL files from the framework
 		foreach ((array)$yf_framework_stpl_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), '', $file_name);
 			// Merge vars
 			foreach ((array)$this->_get_vars_from_file_name($file_name, $this->_translate_stpl_pattern) as $cur_var_name => $code_lines) {
 				$vars_array[$cur_var_name][$short_file_name] = $code_lines;
@@ -1137,7 +1101,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		// Get STPL files from the current project
 		foreach ((array)$cur_project_stpl_files as $file_name) {
 			// Create short file name
-			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), "", $file_name);
+			$short_file_name = str_replace(array(REAL_PATH, INCLUDE_PATH, YF_PATH), '', $file_name);
 			if ($stpl_path_pattern && !preg_match($stpl_path_pattern, $short_file_name)) {
 				continue;
 			}
@@ -1153,14 +1117,14 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	/**
 	* Get vars from the given file name
 	*/
-	function _get_vars_from_file_name($file_name = "", $pattern = "") {
+	function _get_vars_from_file_name($file_name = '', $pattern = '') {
 		$vars_array = array();
 		if (empty($file_name)) {
 			return $vars_array;
 		}
 		// Get file source as array
 		$file_source_array = file($file_name);
-		$match	= preg_match_all($pattern, implode("\n", $file_source_array), $matches);
+		$match	= preg_match_all($pattern, implode(PHP_EOL, $file_source_array), $matches);
 		// Skip files with no translate vars
 		if (empty($matches[0])) {
 			return $vars_array;
@@ -1178,7 +1142,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 			if (empty($code_lines) || empty($cur_var_name)) {
 				continue;
 			}
-			$vars_array[$cur_var_name] = implode(",",$code_lines);
+			$vars_array[$cur_var_name] = implode(',',$code_lines);
 		}
 		return $vars_array;
 	}
@@ -1186,7 +1150,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	/**
 	* Prepare locations text
 	*/
-	function _prepare_locations($source_text = "") {
+	function _prepare_locations($source_text = '') {
 		if (empty($source_text)) {
 			return false;
 		}
@@ -1196,9 +1160,9 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 		}
 		// Try to find separate links
 		$body = array();
-		foreach ((array)explode(";", $source_text) as $cur_source) {
-			$cur_file_name = trim(substr($cur_source, 0, strpos($cur_source, ":")));
-			$path_to = "";
+		foreach ((array)explode(';', $source_text) as $cur_source) {
+			$cur_file_name = trim(substr($cur_source, 0, strpos($cur_source, ':')));
+			$path_to = '';
 			// Try to find real file
 			if (file_exists(REAL_PATH.$cur_file_name)) {
 				$path_to = REAL_PATH;
@@ -1212,27 +1176,27 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 				$body[] = $cur_source;
 			} else {
 				$replace = array(
-					"link"	=> "./?object=file_manager&action=edit_item&f_=".basename($cur_file_name)."&dir_name=".urlencode($path_to.dirname($cur_file_name)),
-					"text"	=> _prepare_html($cur_source),
+					'link'	=> './?object=file_manager&action=edit_item&f_='.basename($cur_file_name).'&dir_name='.urlencode($path_to.dirname($cur_file_name)),
+					'text'	=> _prepare_html($cur_source),
 				);
-				$body[] = tpl()->parse($_GET["object"]."/location_item", $replace);
+				$body[] = tpl()->parse($_GET['object'].'/location_item', $replace);
 			}
 		}
-		return !empty($body) ? nl2br(implode(";\r\n", $body)) : _prepare_html($source_text);
+		return !empty($body) ? nl2br(implode(';'.PHP_EOL, $body)) : _prepare_html($source_text);
 	}
 
 	/**
 	* Create empty vars for the default language
 	*/
-	function _create_empty_vars_for_locale($force_locale = "") {
-		$def_locale = "en";
+	function _create_empty_vars_for_locale($force_locale = '') {
+		$def_locale = 'en';
 		if (!empty($force_locale)) {
 			$locale = $force_locale;
 		} else {
 			// Try to find default locale
 			foreach ((array)$this->_cur_langs_array as $A) {
-				if ($A["is_default"]) {
-					$locale = $A["locale"];
+				if ($A['is_default']) {
+					$locale = $A['locale'];
 					break;
 				}
 			}
@@ -1246,10 +1210,10 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 			$Q = db()->query("SELECT * FROM ".db('locale_vars')." WHERE id NOT IN(SELECT var_id FROM ".db('locale_translate')." WHERE locale='"._es($locale)."')");
 			while ($A = db()->fetch_assoc($Q)) {
 				// Do create empty records
-				db()->INSERT("locale_translate", array(
-					"var_id"	=> $A["id"],
-					"value"		=> "",
-					"locale"	=> $locale,
+				db()->INSERT('locale_translate', array(
+					'var_id'	=> $A['id'],
+					'value'		=> '',
+					'locale'	=> $locale,
 				));
 			}
 		}
@@ -1257,359 +1221,253 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 
 	/**
 	* Some of the common languages with their English and native names
-	*
 	* Based on ISO 639 and http://people.w3.org/rishida/names/languages.html
-	*
-	* @private
 	*/
 	function _get_iso639_list() {
+// TODO: use db('languages') instead
 		return array(
-			"aa" => array("Afar"),
-			"ab" => array("Abkhazian", "аҧсуа бызшәа"),
-			"ae" => array("Avestan"),
-			"af" => array("Afrikaans"),
-			"ak" => array("Akan"),
-			"am" => array("Amharic", "አማርኛ"),
-			"ar" => array("Arabic", "العربية"),
-			"as" => array("Assamese"),
-			"av" => array("Avar"),
-			"ay" => array("Aymara"),
-			"az" => array("Azerbaijani", "azərbaycan"),
-			"ba" => array("Bashkir"),
-			"be" => array("Belarusian", "Беларуская"),
-			"bg" => array("Bulgarian", "Български"),
-			"bh" => array("Bihari"),
-			"bi" => array("Bislama"),
-			"bm" => array("Bambara", "Bamanankan"),
-			"bn" => array("Bengali"),
-			"bo" => array("Tibetan"),
-			"br" => array("Breton"),
-			"bs" => array("Bosnian", "Bosanski"),
-			"ca" => array("Catalan", "Català"),
-			"ce" => array("Chechen"),
-			"ch" => array("Chamorro"),
-			"co" => array("Corsican"),
-			"cr" => array("Cree"),
-			"cs" => array("Czech", "Čeština"),
-			"cu" => array("Old Slavonic"),
-			"cv" => array("Welsh", "Cymraeg"),
-			"cy" => array("Welch"),
-			"da" => array("Danish", "Dansk"),
-			"de" => array("German", "Deutsch"),
-			"dv" => array("Maldivian"),
-			"dz" => array("Bhutani"),
-			"ee" => array("Ewe", "Ɛʋɛ"),
-			"el" => array("Greek", "Ελληνικά"),
-			"en" => array("English"),
-			"eo" => array("Esperanto"),
-			"es" => array("Spanish", "Español"),
-			"et" => array("Estonian", "Eesti"),
-			"eu" => array("Basque", "Euskera"),
-			"fa" => array("Persian", "فارسی"),
-			"ff" => array("Fulah", "Fulfulde"),
-			"fi" => array("Finnish", "Suomi"),
-			"fj" => array("Fiji"),
-			"fo" => array("Faeroese"),
-			"fr" => array("French", "Français"),
-			"fy" => array("Frisian", "Frysk"),
-			"ga" => array("Irish", "Gaeilge"),
-			"gd" => array("Scots Gaelic"),
-			"gl" => array("Galician", "Galego"),
-			"gn" => array("Guarani"),
-			"gu" => array("Gujarati"),
-			"gv" => array("Manx"),
-			"ha" => array("Hausa"),
-			"he" => array("Hebrew", "עברית"),
-			"hi" => array("Hindi", "हिन्दी"),
-			"ho" => array("Hiri Motu"),
-			"hr" => array("Croatian", "Hrvatski"),
-			"hu" => array("Hungarian", "Magyar"),
-			"hy" => array("Armenian", "Հայերեն"),
-			"hz" => array("Herero"),
-			"ia" => array("Interlingua"),
-			"id" => array("Indonesian", "Bahasa Indonesia"),
-			"ie" => array("Interlingue"),
-			"ig" => array("Igbo"),
-			"ik" => array("Inupiak"),
-			"is" => array("Icelandic", "Íslenska"),
-			"it" => array("Italian", "Italiano"),
-			"iu" => array("Inuktitut"),
-			"ja" => array("Japanese", "日本語"),
-			"jv" => array("Javanese"),
-			"ka" => array("Georgian"),
-			"kg" => array("Kongo"),
-			"ki" => array("Kikuyu"),
-			"kj" => array("Kwanyama"),
-			"kk" => array("Kazakh", "Қазақ"),
-			"kl" => array("Greenlandic"),
-			"km" => array("Cambodian"),
-			"kn" => array("Kannada", "ಕನ್ನಡ"),
-			"ko" => array("Korean", "한국어"),
-			"kr" => array("Kanuri"),
-			"ks" => array("Kashmiri"),
-			"ku" => array("Kurdish", "Kurdî"),
-			"kv" => array("Komi"),
-			"kw" => array("Cornish"),
-			"ky" => array("Kirghiz", "Кыргыз"),
-			"la" => array("Latin", "Latina"),
-			"lb" => array("Luxembourgish"),
-			"lg" => array("Luganda"),
-			"ln" => array("Lingala"),
-			"lo" => array("Laothian"),
-			"lt" => array("Lithuanian", "Lietuviškai"),
-			"lv" => array("Latvian", "Latviešu"),
-			"mg" => array("Malagasy"),
-			"mh" => array("Marshallese"),
-			"mi" => array("Maori"),
-			"mk" => array("Macedonian", "Македонски"),
-			"ml" => array("Malayalam", "മലയാളം"),
-			"mn" => array("Mongolian"),
-			"mo" => array("Moldavian"),
-			"mr" => array("Marathi"),
-			"ms" => array("Malay", "Bahasa Melayu"),
-			"mt" => array("Maltese", "Malti"),
-			"my" => array("Burmese"),
-			"na" => array("Nauru"),
-			"nd" => array("North Ndebele"),
-			"ne" => array("Nepali"),
-			"ng" => array("Ndonga"),
-			"nl" => array("Dutch", "Nederlands"),
-			"no" => array("Norwegian", "Norsk"),
-			"nr" => array("South Ndebele"),
-			"nv" => array("Navajo"),
-			"ny" => array("Chichewa"),
-			"oc" => array("Occitan"),
-			"om" => array("Oromo"),
-			"or" => array("Oriya"),
-			"os" => array("Ossetian"),
-			"pa" => array("Punjabi"),
-			"pi" => array("Pali"),
-			"pl" => array("Polish", "Polski"),
-			"ps" => array("Pashto", "پښتو"),
-			"pt" => array("Portuguese", "Português"),
-			"qu" => array("Quechua"),
-			"rm" => array("Rhaeto-Romance"),
-			"rn" => array("Kirundi"),
-			"ro" => array("Romanian", "Română"),
-			"ru" => array("Russian", "Русский"),
-			"rw" => array("Kinyarwanda"),
-			"sa" => array("Sanskrit"),
-			"sc" => array("Sardinian"),
-			"sd" => array("Sindhi"),
-			"se" => array("Northern Sami"),
-			"sg" => array("Sango"),
-			"sh" => array("Serbo-Croatian"),
-			"si" => array("Singhalese"),
-			"sk" => array("Slovak", "Slovenčina"),
-			"sl" => array("Slovenian", "Slovenščina"),
-			"sm" => array("Samoan"),
-			"sn" => array("Shona"),
-			"so" => array("Somali"),
-			"sq" => array("Albanian", "Shqip"),
-			"sr" => array("Serbian", "Српски"),
-			"ss" => array("Siswati"),
-			"st" => array("Sesotho"),
-			"su" => array("Sudanese"),
-			"sv" => array("Swedish", "Svenska"),
-			"sw" => array("Swahili", "Kiswahili"),
-			"ta" => array("Tamil", "தமிழ்"),
-			"te" => array("Telugu", "తెలుగు"),
-			"tg" => array("Tajik"),
-			"th" => array("Thai", "ภาษาไทย"),
-			"ti" => array("Tigrinya"),
-			"tk" => array("Turkmen"),
-			"tl" => array("Tagalog"),
-			"tn" => array("Setswana"),
-			"to" => array("Tonga"),
-			"tr" => array("Turkish", "Türkçe"),
-			"ts" => array("Tsonga"),
-			"tt" => array("Tatar", "Tatarça"),
-			"tw" => array("Twi"),
-			"ty" => array("Tahitian"),
-			"ug" => array("Uighur"),
-			"uk" => array("Ukrainian", "Українська"),
-			"ur" => array("Urdu", "اردو"),
-			"uz" => array("Uzbek", "o'zbek"),
-			"ve" => array("Venda"),
-			"vi" => array("Vietnamese", "Tiếng Việt"),
-			"wo" => array("Wolof"),
-			"xh" => array("Xhosa", "isiXhosa"),
-			"yi" => array("Yiddish"),
-			"yo" => array("Yoruba", "Yorùbá"),
-			"za" => array("Zhuang"),
-			"zh-hans" => array("Chinese, Simplified", "简体中文"),
-			"zh-hant" => array("Chinese, Traditional", "繁體中文"),
-			"zu" => array("Zulu", "isiZulu"),
+			'aa' => array('Afar'),
+			'ab' => array('Abkhazian', 'аҧсуа бызшәа'),
+			'ae' => array('Avestan'),
+			'af' => array('Afrikaans'),
+			'ak' => array('Akan'),
+			'am' => array('Amharic', 'አማርኛ'),
+			'ar' => array('Arabic', 'العربية'),
+			'as' => array('Assamese'),
+			'av' => array('Avar'),
+			'ay' => array('Aymara'),
+			'az' => array('Azerbaijani', 'azərbaycan'),
+			'ba' => array('Bashkir'),
+			'be' => array('Belarusian', 'Беларуская'),
+			'bg' => array('Bulgarian', 'Български'),
+			'bh' => array('Bihari'),
+			'bi' => array('Bislama'),
+			'bm' => array('Bambara', 'Bamanankan'),
+			'bn' => array('Bengali'),
+			'bo' => array('Tibetan'),
+			'br' => array('Breton'),
+			'bs' => array('Bosnian', 'Bosanski'),
+			'ca' => array('Catalan', 'Català'),
+			'ce' => array('Chechen'),
+			'ch' => array('Chamorro'),
+			'co' => array('Corsican'),
+			'cr' => array('Cree'),
+			'cs' => array('Czech', 'Čeština'),
+			'cu' => array('Old Slavonic'),
+			'cv' => array('Welsh', 'Cymraeg'),
+			'cy' => array('Welch'),
+			'da' => array('Danish', 'Dansk'),
+			'de' => array('German', 'Deutsch'),
+			'dv' => array('Maldivian'),
+			'dz' => array('Bhutani'),
+			'ee' => array('Ewe', 'Ɛʋɛ'),
+			'el' => array('Greek', 'Ελληνικά'),
+			'en' => array('English'),
+			'eo' => array('Esperanto'),
+			'es' => array('Spanish', 'Español'),
+			'et' => array('Estonian', 'Eesti'),
+			'eu' => array('Basque', 'Euskera'),
+			'fa' => array('Persian', 'فارسی'),
+			'ff' => array('Fulah', 'Fulfulde'),
+			'fi' => array('Finnish', 'Suomi'),
+			'fj' => array('Fiji'),
+			'fo' => array('Faeroese'),
+			'fr' => array('French', 'Français'),
+			'fy' => array('Frisian', 'Frysk'),
+			'ga' => array('Irish', 'Gaeilge'),
+			'gd' => array('Scots Gaelic'),
+			'gl' => array('Galician', 'Galego'),
+			'gn' => array('Guarani'),
+			'gu' => array('Gujarati'),
+			'gv' => array('Manx'),
+			'ha' => array('Hausa'),
+			'he' => array('Hebrew', 'עברית'),
+			'hi' => array('Hindi', 'हिन्दी'),
+			'ho' => array('Hiri Motu'),
+			'hr' => array('Croatian', 'Hrvatski'),
+			'hu' => array('Hungarian', 'Magyar'),
+			'hy' => array('Armenian', 'Հայերեն'),
+			'hz' => array('Herero'),
+			'ia' => array('Interlingua'),
+			'id' => array('Indonesian', 'Bahasa Indonesia'),
+			'ie' => array('Interlingue'),
+			'ig' => array('Igbo'),
+			'ik' => array('Inupiak'),
+			'is' => array('Icelandic', 'Íslenska'),
+			'it' => array('Italian', 'Italiano'),
+			'iu' => array('Inuktitut'),
+			'ja' => array('Japanese', '日本語'),
+			'jv' => array('Javanese'),
+			'ka' => array('Georgian'),
+			'kg' => array('Kongo'),
+			'ki' => array('Kikuyu'),
+			'kj' => array('Kwanyama'),
+			'kk' => array('Kazakh', 'Қазақ'),
+			'kl' => array('Greenlandic'),
+			'km' => array('Cambodian'),
+			'kn' => array('Kannada', 'ಕನ್ನಡ'),
+			'ko' => array('Korean', '한국어'),
+			'kr' => array('Kanuri'),
+			'ks' => array('Kashmiri'),
+			'ku' => array('Kurdish', 'Kurdî'),
+			'kv' => array('Komi'),
+			'kw' => array('Cornish'),
+			'ky' => array('Kirghiz', 'Кыргыз'),
+			'la' => array('Latin', 'Latina'),
+			'lb' => array('Luxembourgish'),
+			'lg' => array('Luganda'),
+			'ln' => array('Lingala'),
+			'lo' => array('Laothian'),
+			'lt' => array('Lithuanian', 'Lietuviškai'),
+			'lv' => array('Latvian', 'Latviešu'),
+			'mg' => array('Malagasy'),
+			'mh' => array('Marshallese'),
+			'mi' => array('Maori'),
+			'mk' => array('Macedonian', 'Македонски'),
+			'ml' => array('Malayalam', 'മലയാളം'),
+			'mn' => array('Mongolian'),
+			'mo' => array('Moldavian'),
+			'mr' => array('Marathi'),
+			'ms' => array('Malay', 'Bahasa Melayu'),
+			'mt' => array('Maltese', 'Malti'),
+			'my' => array('Burmese'),
+			'na' => array('Nauru'),
+			'nd' => array('North Ndebele'),
+			'ne' => array('Nepali'),
+			'ng' => array('Ndonga'),
+			'nl' => array('Dutch', 'Nederlands'),
+			'no' => array('Norwegian', 'Norsk'),
+			'nr' => array('South Ndebele'),
+			'nv' => array('Navajo'),
+			'ny' => array('Chichewa'),
+			'oc' => array('Occitan'),
+			'om' => array('Oromo'),
+			'or' => array('Oriya'),
+			'os' => array('Ossetian'),
+			'pa' => array('Punjabi'),
+			'pi' => array('Pali'),
+			'pl' => array('Polish', 'Polski'),
+			'ps' => array('Pashto', 'پښتو'),
+			'pt' => array('Portuguese', 'Português'),
+			'qu' => array('Quechua'),
+			'rm' => array('Rhaeto-Romance'),
+			'rn' => array('Kirundi'),
+			'ro' => array('Romanian', 'Română'),
+			'ru' => array('Russian', 'Русский'),
+			'rw' => array('Kinyarwanda'),
+			'sa' => array('Sanskrit'),
+			'sc' => array('Sardinian'),
+			'sd' => array('Sindhi'),
+			'se' => array('Northern Sami'),
+			'sg' => array('Sango'),
+			'sh' => array('Serbo-Croatian'),
+			'si' => array('Singhalese'),
+			'sk' => array('Slovak', 'Slovenčina'),
+			'sl' => array('Slovenian', 'Slovenščina'),
+			'sm' => array('Samoan'),
+			'sn' => array('Shona'),
+			'so' => array('Somali'),
+			'sq' => array('Albanian', 'Shqip'),
+			'sr' => array('Serbian', 'Српски'),
+			'ss' => array('Siswati'),
+			'st' => array('Sesotho'),
+			'su' => array('Sudanese'),
+			'sv' => array('Swedish', 'Svenska'),
+			'sw' => array('Swahili', 'Kiswahili'),
+			'ta' => array('Tamil', 'தமிழ்'),
+			'te' => array('Telugu', 'తెలుగు'),
+			'tg' => array('Tajik'),
+			'th' => array('Thai', 'ภาษาไทย'),
+			'ti' => array('Tigrinya'),
+			'tk' => array('Turkmen'),
+			'tl' => array('Tagalog'),
+			'tn' => array('Setswana'),
+			'to' => array('Tonga'),
+			'tr' => array('Turkish', 'Türkçe'),
+			'ts' => array('Tsonga'),
+			'tt' => array('Tatar', 'Tatarça'),
+			'tw' => array('Twi'),
+			'ty' => array('Tahitian'),
+			'ug' => array('Uighur'),
+			'uk' => array('Ukrainian', 'Українська'),
+			'ur' => array('Urdu', 'اردو'),
+			'uz' => array('Uzbek', 'o\'zbek'),
+			've' => array('Venda'),
+			'vi' => array('Vietnamese', 'Tiếng Việt'),
+			'wo' => array('Wolof'),
+			'xh' => array('Xhosa', 'isiXhosa'),
+			'yi' => array('Yiddish'),
+			'yo' => array('Yoruba', 'Yorùbá'),
+			'za' => array('Zhuang'),
+			'zh-hans' => array('Chinese, Simplified', '简体中文'),
+			'zh-hant' => array('Chinese, Traditional', '繁體中文'),
+			'zu' => array('Zulu', 'isiZulu'),
 		);
-	}
-
-	/**
-	* Process custom box
-	*/
-	function _box ($name = "", $selected = "") {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval("return common()->".$this->_boxes[$name].";");
 	}
 
 	/**
 	* Do get current languages from db
 	*/
 	function _get_locales () {
-		$Q = db()->query("SELECT * FROM ".db('locale_langs')." ORDER BY is_default DESC, locale ASC");
+		$Q = db()->query('SELECT * FROM '.db('locale_langs').' ORDER BY is_default DESC, locale ASC');
 		while ($A = db()->fetch_assoc($Q)) {
-			$data[$A["locale"]] = $A["name"];
+			$data[$A['locale']] = $A['name'];
 		}
 		return $data;
 	}
-/*
-	// Prepare required data for filter
-	function _prepare_filter_data () {
-		// Filter session array name
-		$this->_filter_name	= $_GET["object"]."_filter";
-		// Prepare boxes
-		$this->_boxes = array_merge((array)$this->_boxes, array(
-			"show_locs"			=> 'radio_box("show_locs",		$this->_std_trigger,		$selected, 0, 2, "", false)',
-			"search_lang"		=> 'radio_box("search_lang",	$this->_langs_for_search,	$selected, true, 2, "", false)',
-			"search_in"			=> 'radio_box("search_in",		$this->_search_in,			$selected, true, 2, "", false)',
-			"sort_by"			=> 'select_box("sort_by",		$this->_sort_by,			$selected, 0, 2, "", false)',
-			"sort_order"		=> 'select_box("sort_order",	$this->_sort_orders,		$selected, 0, 2, "", false)',
-			"per_page"			=> 'select_box("per_page",		$this->_per_page,			$selected, 0, 2, "", false)',
-			"case_sens"			=> 'radio_box("case_sens",		$this->_std_trigger,		$selected, 0, 2, "", false)',
-		));
-		$this->_std_trigger = array(
-			"1" => "<span class='positive'>YES</span>",
-			"0" => "<span class='negative'>NO</span>",
-		);
-		// Sort orders
-		$this->_sort_orders = array("DESC" => "Descending", "ASC" => "Ascending");
-		// Sort fields
-		$this->_sort_by = array(
-			"",
-			"value",
-		);
-		// Number per page
-		$this->_per_page = array("" => "", 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500);
-		// Fields in the filter
-		$this->_fields_in_filter = array(
-			"search_lang",
-			"search_in",
-			"search_string",
-			"search_type",
-			"show_locs",
-			"per_page",
-			"case_sens",
-			"sort_by",
-			"sort_order",
-		);
+
+	/**
+	*/
+	function filter_save() {
+		$filter_name = $_GET['object'].'__show_vars';
+		if ($_GET['sub'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+				if (isset($_SESSION[$filter_name][$f])) {
+					unset($_SESSION[$filter_name][$f]);
+				}
+			}
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
 	}
 
-	// Generate filter SQL query
-	function _create_filter_sql () {
-		$SF = &$_SESSION[$this->_filter_name];
-		foreach ((array)$SF as $k => $v) {
-			$SF[$k] = trim($v);
-		}
-		// Do not allow "_" pattern for LIKE
-		$string = str_replace("_", "\_", str_replace(" ", "_", $SF["search_string"]));
-		// Generate filter for the common fileds
-		if ($SF["search_lang"] && $SF["search_lang"] != "all") {
-			$tr_sql .= " AND t.locale='"._es($SF["search_lang"])."' \r\n";
-		}
-		if ($SF["search_in"] && $SF["search_lang"] != "all") {
-			if ($SF["search_in"] == "translated") {
-				$tr_sql .= " AND t.value != '' \r\n";
-			} elseif ($SF["search_in"] == "untranslated") {
-				$tr_sql .= " AND (t.value = '' OR LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) = LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_'))) \r\n";
-			}
-		}
-		// Search in transtions
-		if ($SF["search_string"] && $SF["search_type"] == "translations") {
-			if (!$SF["case_sens"]) {
-				$tr_sql .= " AND LOWER(REPLACE(CONVERT(t.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
-			} else {
-				$tr_sql .= " AND t.value LIKE '"._es($string)."%' \r\n";
-			}
-		}
-		if (!empty($tr_sql)) {
-			$sql .= " AND v.id IN( SELECT t.var_id FROM ".db('locale_translate')." AS t WHERE 1=1 ".$tr_sql.") \r\n";
-		}
-		// Search in vars
-		if ($SF["search_string"] && $SF["search_type"] != "translations") {
-			if (!$SF["case_sens"]) {
-				$sql .= " AND LOWER(REPLACE(CONVERT(v.value USING utf8), ' ', '_')) LIKE '"._es(_strtolower($string))."%' \r\n";
-			} else {
-				$sql .= " AND v.value LIKE '"._es($string)."%' \r\n";
-			}
-		}
-		// Sorting here
-		if ($SF["sort_by"]) {
-		 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
-		}
-		if ($SF["sort_by"] && strlen($SF["sort_order"])) {
-			$sql .= " ".$SF["sort_order"]." \r\n";
-		}
-		return substr($sql, 0, -3);
+	/**
+	*/
+	function _show_filter() {
+		$filter_name = $_GET['object'].'__show_vars';
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
+		);
+		$order_fields = array(
+			'value'     => 'value',
+		);
+		$per_page = array(10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000);
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+//				'class'		=> 'form-inline',
+			))
+			->text('value', 'Source var')
+			->text('translation')
+			->select_box('locale', $this->_langs_for_search)
+			->select_box('per_page', $per_page)
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
 	}
 
-	// Session - based filter
-	function _show_filter () {
-		if ($_GET["action"] != "show_vars") {
+	/**
+	*/
+	function _box ($name = '', $selected = '') {
+		if (empty($name) || empty($this->_boxes[$name])) {
 			return false;
-		}
-		$replace = array(
-			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
-		);
-		// Default values
-		if (!isset($_SESSION[$this->_filter_name]["search_lang"])) {
-			$_SESSION[$this->_filter_name]["search_lang"] = "all";
-		}
-		if (!isset($_SESSION[$this->_filter_name]["search_in"])) {
-			$_SESSION[$this->_filter_name]["search_in"] = "all";
-		}
-		if (!isset($_SESSION[$this->_filter_name]["search_type"])) {
-			$_SESSION[$this->_filter_name]["search_type"] = "vars";
-		}
-		if (!isset($_SESSION[$this->_filter_name]["show_locs"])) {
-			$_SESSION[$this->_filter_name]["show_locs"] = 1;
-		}
-		if (!isset($_SESSION[$this->_filter_name]["case_sens"])) {
-			$_SESSION[$this->_filter_name]["case_sens"] = 0;
-		}
-		foreach ((array)$this->_fields_in_filter as $name) {
-			$replace[$name] = $_SESSION[$this->_filter_name][$name];
-		}
-		// Process boxes
-		foreach ((array)$this->_boxes as $item_name => $v) {
-			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
-		}
-		return tpl()->parse($_GET["object"]."/filter", $replace);
-	}
-
-	// Filter save method
-	function save_filter ($silent = false) {
-		// Process featured countries
-		if (FEATURED_COUNTRY_SELECT && !empty($_REQUEST["country"]) && substr($_REQUEST["country"], 0, 2) == "f_") {
-			$_REQUEST["country"] = substr($_REQUEST["country"], 2);
-		}
-		if (is_array($this->_fields_in_filter)) {
-			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_REQUEST[$name];
-		}
-		if (!$silent) {
-			js_redirect($_SERVER["HTTP_REFERER"], 0);
+		} else {
+			return eval('return common()->'.$this->_boxes[$name].';');
 		}
 	}
-
-	// Clear filter
-	function clear_filter ($silent = false) {
-		if (is_array($_SESSION[$this->_filter_name])) {
-			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
-		}
-		if (!$silent) {
-			js_redirect($_SERVER["HTTP_REFERER"], 0);
-		}
-	}
-*/
 
 	/**
 	*/
