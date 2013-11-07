@@ -112,12 +112,12 @@ class yf_table2 {
 		} elseif (strlen($sql)) {
 			$db = is_object($params['db']) ? $params['db'] : db();
 			if ($params['filter']) {
-				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
+				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
 				// These 2 arrays needed to be able to use filter parts somehow inside methods
 				$this->_filter_data = $params['filter'];
 				$this->_filter_params = $params['filter_params'];
 			}
-			if ($filter_sql) {
+			if ($filter_sql || $order_sql) {
 				$sql_upper = strtoupper($sql);
 				if (strpos($sql, '/*FILTER*/') !== false) {
 					$sql = str_replace('/*FILTER*/', ' '.$filter_sql.' ', $sql);
@@ -125,6 +125,13 @@ class yf_table2 {
 					$sql .= ' WHERE 1 '.$filter_sql;
 				} else {
 					$sql .= ' '.$filter_sql;
+				}
+				if ($order_sql) {
+					if (strpos($sql, '/*ORDER*/') !== false) {
+						$sql = str_replace('/*ORDER*/', ' '.$order_sql.' ', $sql);
+					} else {
+						$sql .= ' '.$order_sql;
+					}
 				}
 			}
 			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
@@ -417,15 +424,15 @@ class yf_table2 {
 			$filter_sql = ' AND '.implode(' AND ', $sql);
 		}
 		if ($filter_data['order_by'] && strpos(strtoupper($__sql), 'ORDER BY') === false) {
-			$filter_sql .= ' ORDER BY `'.db()->es($filter_data['order_by']).'` ';
+			$order_sql = ' ORDER BY `'.str_replace('.', '`.`', db()->es($filter_data['order_by'])).'` ';
 			if ($filter_data['order_direction']) {
 				$direction = strtoupper($filter_data['order_direction']);
 			}
 			if ($direction && in_array($direction, array('ASC','DESC'))) {
-				$filter_sql .= ' '.$direction;
+				$order_sql .= ' '.$direction;
 			}
 		}
-		return $filter_sql;
+		return array($filter_sql, $order_sql);
 	}
 
 	/**
