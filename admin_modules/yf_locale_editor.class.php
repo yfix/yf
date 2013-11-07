@@ -224,8 +224,10 @@ class yf_locale_editor {
 			FROM '.db('locale_vars').' AS v 
 			LEFT JOIN '.db('locale_translate').' AS t ON t.var_id = v.id
 			LEFT JOIN '.db('locale_langs').' AS l ON t.locale = l.locale
-			WHERE 1 /*FILTER*/
-			GROUP BY v.id';
+			WHERE 1
+				/*FILTER*/
+			GROUP BY v.id
+				/*ORDER*/';
 
 		return table($sql, array(
 				'pager_records_on_page' => $_SESSION[$filter_name]['per_page'],
@@ -1448,7 +1450,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
 		);
 		$order_fields = array(
-			'value'     => 'value',
+			'v.value'     => 'value',
 		);
 		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000);
 		return form($r, array(
