@@ -113,6 +113,9 @@ class yf_table2 {
 			$db = is_object($params['db']) ? $params['db'] : db();
 			if ($params['filter']) {
 				$filter_sql = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
+				// These 2 arrays needed to be able to use filter parts somehow inside methods
+				$this->_filter_data = $params['filter'];
+				$this->_filter_params = $params['filter_params'];
 			}
 			if ($filter_sql) {
 				$sql_upper = strtoupper($sql);
@@ -512,7 +515,7 @@ class yf_table2 {
 			'desc'	=> $desc,
 			'link'	=> $extra['link'],
 			'data'	=> t($extra['data']),
-			'func'	=> function($field, $params, $row, $instance_params) {
+			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$extra = $params['extra'];
 				if (!$params['data'] && $extra['data_name']) {
 					$params['data'] = $instance_params['data_sql_names'][$extra['data_name']];
@@ -529,6 +532,12 @@ class yf_table2 {
 				if ($extra['translate']) {
 					$text = t($text);
 				}
+				if ($extra['wordwrap']) {
+					$text = wordwrap($text, $_width = $extra['wordwrap'], $_break = PHP_EOL, $_cut = true);
+				}
+#				if ($extra['hl_filter'] && isset($_this->_filter_params[$field])) {
+#					$text = highlight($text, $_this->_filter_params[$field]);
+#				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
