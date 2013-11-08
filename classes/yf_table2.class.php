@@ -265,9 +265,23 @@ class yf_table2 {
 					}
 					$func = $info['func'];
 					unset($info['func']); // Save resources
-					$td_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
-					$td_nowrap = ($info['extra']['nowrap'] ? ' nowrap="nowrap" ' : '');
-					$tip = $info['extra']['tip'] ? ''.$this->_show_tip($info['extra']['tip']) : '';
+					$_extra = $info['extra'];
+					$td_width = ($_extra['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $_extra['width']).'"' : '');
+					$td_nowrap = ($_extra['nowrap'] ? ' nowrap="nowrap" ' : '');
+					$tip = $_extra['tip'] ? ''.$this->_show_tip($_extra['tip']) : '';
+
+					if ($_extra['hl_filter'] && isset($this->_filter_data[$name])) {
+						$_kw = $this->_filter_data[$name];
+						if (is_string($_kw) && strlen($_kw)) {
+							$row[$name] = preg_replace('~('.preg_quote($_kw,'~').')~ims', '<b class="badge-warning">\1</b>', $row[$name]);
+						}
+					}
+					if ($_extra['wordwrap']) {
+						$row[$name] = wordwrap($row[$name], $_width = $_extra['wordwrap'], $_break = PHP_EOL, $_cut = true);
+					}
+					if (isset($_extra['transform']) && !empty($_extra['transform'])) {
+						$row[$name] = $this->_apply_transform($row[$name], $_extra['transform']);
+					}
 
 					$body .= '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
 				}
@@ -313,6 +327,26 @@ class yf_table2 {
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $pages : '').PHP_EOL;
 		return $body;
+	}
+
+	/**
+	* Custom transformation function (one or several, also can be callback). Idea get from form validation rules.
+	*/
+	function _apply_transform($text, $trans) {
+		if (is_string($trans) && strpos($trans, '|') !== false) {
+			$trans = explode('|', $trans);
+		}
+		if (!is_array($trans)) {
+			$trans = array($trans);
+		}
+		foreach ($trans as $fname) {
+			if (is_callable($fname)) {
+				$text = $fname($text);
+			} elseif (is_string($fname) && function_exists($fname)) {
+				$text = $fname($text);
+			}
+		}
+		return $text;
 	}
 
 	/**
@@ -539,15 +573,6 @@ class yf_table2 {
 				}
 				if ($extra['translate']) {
 					$text = t($text);
-				}
-				if ($extra['hl_filter'] && isset($_this->_filter_data[$name])) {
-					$kw = $_this->_filter_data[$name];
-					if (is_string($kw) && strlen($kw)) {
-						$text = preg_replace('~('.preg_quote($kw,'~').')~ims', '<b class="badge-warning">\1</b>', $text);
-					}
-				}
-				if ($extra['wordwrap']) {
-					$text = wordwrap($text, $_width = $extra['wordwrap'], $_break = PHP_EOL, $_cut = true);
 				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];

@@ -108,7 +108,7 @@ class yf_locale_editor {
 			$data[$id] = $v;
 		}
 		return table($data)
-			->text('locale', array('badge' => 'default'/*, 'transform' => 'strtoupper'*/))
+			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
 			->text('name')
 			->text('charset')
 			->text('tr_count', 'Num vars')
