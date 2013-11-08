@@ -523,6 +523,7 @@ class yf_table2 {
 			'link'	=> $extra['link'],
 			'data'	=> t($extra['data']),
 			'func'	=> function($field, $params, $row, $instance_params, $_this) {
+				$name = $params['name'];
 				$extra = $params['extra'];
 				if (!$params['data'] && $extra['data_name']) {
 					$params['data'] = $instance_params['data_sql_names'][$extra['data_name']];
@@ -539,12 +540,15 @@ class yf_table2 {
 				if ($extra['translate']) {
 					$text = t($text);
 				}
+				if ($extra['hl_filter'] && isset($_this->_filter_data[$name])) {
+					$kw = $_this->_filter_data[$name];
+					if (is_string($kw) && strlen($kw)) {
+						$text = preg_replace('~('.preg_quote($kw,'~').')~ims', '<b class="badge-warning">\1</b>', $text);
+					}
+				}
 				if ($extra['wordwrap']) {
 					$text = wordwrap($text, $_width = $extra['wordwrap'], $_break = PHP_EOL, $_cut = true);
 				}
-#				if ($extra['hl_filter'] && isset($_this->_filter_params[$field])) {
-#					$text = highlight($text, $_this->_filter_params[$field]);
-#				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
