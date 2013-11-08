@@ -105,18 +105,7 @@ class yf_locale_editor {
 	* Display all project languages
 	*/
 	function show() {
-		if ($_POST) {
-			foreach ((array)$this->_cur_langs_array as $A) {
-				db()->UPDATE('locale_langs', array(
-					'name'			=> _es($_POST['name_'.$A['id']]),
-					'charset'		=> _es($_POST['charset_'.$A['id']]),
-					'active'		=> intval((bool)$_POST['active_'.$A['id']]),
-					'is_default'	=> intval($_POST['default'] == $A['id']),
-				), 'id='.intval($A['id']));
-			}
-			cache()->refresh('locale_langs');
-			return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
-		}
+/*
 		$Q = db()->query('SELECT COUNT(var_id) AS num,locale FROM '.db('locale_translate').' WHERE value != "" GROUP BY locale');
 		while ($A = db()->fetch_assoc($Q)) {
 			$tr_vars[$A['locale']] = $A['num'];
@@ -125,11 +114,6 @@ class yf_locale_editor {
 		foreach ((array)$this->_cur_langs_array as $A) {
 			$tr_stats = !empty($total_vars) && !empty($tr_vars[$A['locale']]) ? round(100 * $tr_vars[$A['locale']] / $total_vars, 2) : 0;
 			$replace2 = array(
-				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'id'			=> intval($A['id']),
-				'code'			=> _prepare_html($A['locale']),
-				'name'			=> _prepare_html($A['name']),
-				'charset'		=> _prepare_html($A['charset']),
 				'tr_stats'		=> $tr_stats,
 				'tr_stats_int'	=> intval($tr_stats),
 				'tr_vars'		=> intval($tr_vars[$A['locale']]),
@@ -137,23 +121,27 @@ class yf_locale_editor {
 				'active'		=> intval($A['active']),
 				'is_default'	=> intval($A['is_default']),
 				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_lang&id='.$A['id'],
-			);
-			$items .= tpl()->parse($_GET['object'].'/langs_item', $replace2);
-		}
-		$replace = array(
-			'items'				=> $items,
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-			'show_vars_link'	=> './?object='.$_GET['object'].'&action=show_vars',
-			'add_lang_link'		=> './?object='.$_GET['object'].'&action=add_lang',
-			'import_vars_link'	=> './?object='.$_GET['object'].'&action=import_vars',
-			'export_vars_link'	=> './?object='.$_GET['object'].'&action=export_vars',
-		);
-		return tpl()->parse($_GET['object'].'/langs_main', $replace);
+*/
+		$data = $this->_cur_langs_array;
+		return table($data)
+			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
+			->text('name')
+			->text('charset')
+			->text('stats')
+			->btn_edit('', './?object='.$_GET['object'].'&action=lang_add')
+			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete', array('display_func' => function($in){ return $in; }))
+			->btn_active('', './?object='.$_GET['object'].'&action=lang_active')
+//			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default')
+			->footer_link('Manage vars', './?object='.$_GET['object'].'&action=show_vars')
+			->footer_add('Add language', './?object='.$_GET['object'].'&action=lang_add')
+#			'import_vars_link'	=> './?object='.$_GET['object'].'&action=import_vars',
+#			'export_vars_link'	=> './?object='.$_GET['object'].'&action=export_vars',
+		;
 	}
 
 	/**
 	*/
-	function add_lang() {
+	function lang_add() {
 		foreach ((array)$this->_cur_langs_array as $A) {
 			if (isset($this->_langs[$A['locale']])) {
 				unset($this->_langs[$A['locale']]);
@@ -195,7 +183,25 @@ class yf_locale_editor {
 
 	/**
 	*/
-	function delete_lang() {
+	function lang_edit() {
+// TODO
+	}
+
+	/**
+	*/
+	function lang_active() {
+// TODO
+	}
+
+	/**
+	*/
+	function lang_default() {
+// TODO
+	}
+
+	/**
+	*/
+	function lang_delete() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
 			db()->query('DELETE FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']).' LIMIT 1');
@@ -217,10 +223,7 @@ class yf_locale_editor {
 		if (array_key_exists('mass_delete', $_POST)) {
 			return $this->mass_delete_vars();
 		}
-
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-
-		$sql = 'SELECT v.id, v.value, GROUP_CONCAT(DISTINCT CONCAT("<b class=badge>", UPPER(t.locale), "</b> ", t.value) SEPARATOR "'.PHP_EOL.'") AS translation
+		$sql = 'SELECT v.id, v.value, IFNULL(GROUP_CONCAT(DISTINCT CONCAT("<b class=badge>", UPPER(t.locale), "</b> ", t.value) SEPARATOR "'.PHP_EOL.'<br>"), "") AS translation
 			FROM '.db('locale_vars').' AS v 
 			LEFT JOIN '.db('locale_translate').' AS t ON t.var_id = v.id
 			LEFT JOIN '.db('locale_langs').' AS l ON t.locale = l.locale
@@ -229,6 +232,7 @@ class yf_locale_editor {
 			GROUP BY v.id
 				/*ORDER*/';
 
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		return table($sql, array(
 				'pager_records_on_page' => $_SESSION[$filter_name]['per_page'],
 				'filter' => $_SESSION[$filter_name],
@@ -239,8 +243,8 @@ class yf_locale_editor {
 				),
 			))
 			->check_box('id', array('width' => '1%', 'desc' => ''))
-			->text('value', array('wordwrap' => '30', 'hl_filter' => 1))
-			->text('translation', array('hl_filter' => 1))
+			->text('value', array('wordwrap' => '40', 'hl_filter' => 1))
+			->text('translation', array('wordwrap' => '40', 'hl_filter' => 1))
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_var&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_var&id=%d')
 			->footer_submit('mass_delete')
@@ -256,23 +260,31 @@ class yf_locale_editor {
 	/**
 	*/
 	function add_var() {
-		if (!empty($_POST['var_name'])) {
+		if ($_POST) {
 			$_POST['var_name'] = _strtolower(str_replace(' ', '_', $_POST['var_name']));
-			$var_info = db()->query_fetch(
-				'SELECT * FROM '.db('locale_vars').' WHERE LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($_POST['var_name']).'"'
-			);
+			$var_info = db()->get('SELECT * FROM '.db('locale_vars').' WHERE LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($_POST['var_name']).'"');
+			if (!empty($_POST['var_name']) && empty($var_info)) {
+				db()->insert('locale_vars', _es(array(
+					'value' => $_POST['var_name']
+				)));
+				$INSERT_ID = db()->insert_id();
+				common()->admin_wall_add(array('locale var added: '.$_POST['var_name'], $INSERT_ID));
+			}
+			if (empty($INSERT_ID) && !empty($var_info)) {
+				$INSERT_ID = $var_info['id'];
+			}
+			if (!_ee()) {
+				return js_redirect($INSERT_ID ? './?object='.$_GET['object'].'&action=edit_var&id='.intval($INSERT_ID) : './?object='.$_GET['object'].'&action=show_vars');
+			}
 		}
-		if (!empty($_POST['var_name']) && empty($var_info)) {
-			db()->INSERT('locale_vars', array(
-				'value'	=> _es($_POST['var_name'])
-			));
-			$INSERT_ID = db()->INSERT_ID();
-			common()->admin_wall_add(array('locale var added: '.$_POST['var_name'], $INSERT_ID));
-		}
-		if (empty($INSERT_ID) && !empty($var_info)) {
-			$INSERT_ID = $var_info['id'];
-		}
-		return js_redirect($INSERT_ID ? './?object='.$_GET['object'].'&action=edit_var&id='.intval($INSERT_ID) : './?object='.$_GET['object'].'&action=show_vars');
+		$r = (array)$_POST + array(
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=show_vars',
+		);
+		return form($r)
+			->text('var_name')
+			->save_and_back()
+		;
 	}
 
 	/**

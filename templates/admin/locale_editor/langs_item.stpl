@@ -1,9 +1,0 @@
-<tr>
-	<td><b>{code}</b></td>
-	<td>{if("is_default" eq 0)}<input type="text" name="name_{id}" value="{name}" size="20">{else}{name}<input type="hidden" name="name_{id}" value="{name}">{/if}</td>
-	<td>{if("is_default" eq 0)}<input type="text" name="charset_{id}" value="{charset}" size="12">{else}{charset}<input type="hidden" name="charset_{id}" value="{charset}">{/if}</td>
-	<td><input type="checkbox" name="active_{id}" value="1"{if("active" eq 1)} checked{/if}></td>
-	<td><input type="radio" name="default" value="{id}"{if("is_default" eq 1)} checked{/if}></td>
-	<td><div class="progress"><div class="bar" style="width: {tr_stats_int}%;">{tr_vars}/{total_vars} ({tr_stats}%)</div></div></td>
-	<td>{if("is_default" eq 0)}{form_row("tbl_link_delete")}{/if}</td>
-</tr>

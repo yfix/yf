@@ -12,7 +12,7 @@ class yf_blocks {
 	/**
 	*/
 	function _init () {
-		$array_all = array('' => '-- ALL --');
+		$array_all = array('' => '--All--');
 		$this->_methods['user'] = $array_all + (array)module('user_modules')->_get_methods_for_select();
 		$this->_methods['admin'] = $array_all + (array)module('admin_modules')->_get_methods_for_select();
 		$this->_groups['user'] = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('user_groups').' WHERE active="1"');

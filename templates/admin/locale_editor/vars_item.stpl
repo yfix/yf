@@ -1,9 +1,0 @@
-<tr id="del_row_{id}">
-	<td><input type="checkbox" name="items[]" value="{id}"></td>
-	<td>{value} {if("location" ne "")}<br /><small>{location}</small>{/if}</td>
-	<td>{locales}</td>
-	<td>
-{form_row("tbl_link_edit")}
-{form_row("tbl_link_delete")}
-	</td>
-</tr>
