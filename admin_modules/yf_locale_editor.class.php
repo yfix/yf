@@ -175,59 +175,67 @@ class yf_locale_editor {
 	/**
 	*/
 	function lang_edit() {
-/*
 		$id = intval($_GET['id']);
 		if (!$id) {
 			return _e('No id');
 		}
-		$a = db()->query_fetch('SELECT * FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']));
+		$a = db()->query_fetch('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
 		$a = (array)$_POST + (array)$a;
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name' => 'trim|required|alpha_dash|is_unique_without[admin_groups.name.'.$id.']'
+				'name' => 'trim|required|is_unique[locale_langs.name]',
+				'charset' => 'trim|required',
 			))
-			->db_update_if_ok('admin_groups', array('name','go_after_login'), 'id='.$id, array('on_after_update' => function() {
-				cache()->refresh(array('admin_groups', 'admin_groups_details'));
-				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', $id));
+			->db_update_if_ok('locale_langs', array('name','charset'), 'id='.$id, array('on_after_update' => function() {
+				cache()->refresh('locale_langs');
+				common()->admin_wall_add(array('locale lang updated: '.$_POST['name'].'', $id));
 			}))
-			->text('name','Group name')
-			->text('go_after_login','Url after login')
+			->info('locale')
+			->text('name')
+			->text('charset')
 			->save_and_back();
-*/
-// TODO
 	}
 
 	/**
 	*/
 	function lang_active() {
-/*
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
-			$group_info = db()->query_fetch('SELECT * FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']));
+			$info = db()->get('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
 		}
-		if ($_GET['id'] == 1) {
-			$group_info = array();
+		if (!empty($info) && !$info['is_default']) {
+			db()->update('locale_langs', array('active' => intval(!$info['active'])), 'id='.intval($_GET['id']));
+			common()->admin_wall_add(array('locale lang '.$info['name'].' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+			cache()->refresh(array('locale_langs'));
 		}
-		if (!empty($group_info)) {
-			db()->UPDATE('admin_groups', array('active'	=> intval(!$group_info['active'])), 'id='.intval($_GET['id']));
-			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
-		}
-		cache()->refresh(array('admin_groups', 'admin_groups_details'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($group_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect('./?object='.$_GET['object']);
 		}
-*/
-// TODO
 	}
 
 	/**
 	*/
 	function lang_default() {
-// TODO
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$info = db()->get('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
+		}
+		if (!empty($info) && !$info['is_default']) {
+			db()->update('locale_langs', array('is_default' => 0), '1=1');
+			db()->update('locale_langs', array('is_default' => 1), 'id='.intval($_GET['id']));
+			common()->admin_wall_add(array('locale lang '.$info['name'].' made default', $_GET['id']));
+			cache()->refresh(array('locale_langs'));
+		}
+		if ($_POST['ajax_mode']) {
+			main()->NO_GRAPHICS = true;
+			echo ($group_info['active'] ? 0 : 1);
+		} else {
+			return js_redirect('./?object='.$_GET['object']);
+		}
 	}
 
 	/**
