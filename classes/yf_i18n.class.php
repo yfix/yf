@@ -334,6 +334,7 @@ class yf_i18n {
 		if (!$input_string) {
 			return $input_string;
 		}
+		$input_string = trim($input_string);
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
 			$CACHE_NAME = $lang.'#____#'.$input_string;
 			if (isset($this->_LOCALE_CACHE[$CACHE_NAME])) {
