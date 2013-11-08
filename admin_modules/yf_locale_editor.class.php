@@ -30,10 +30,6 @@ class yf_locale_editor {
 	* Framework constructor
 	*/
 	function _init () {
-		$this->_std_trigger = array(
-			'1' => '<span class="positive">YES</span>',
-			'0' => '<span class="negative">NO</span>',
-		);
 		$this->_boxes = array(
 			'lang_code'		=> 'select_box("lang_code",		$this->_langs,			$selected, false, 2, "", false)',
 			'cur_langs'		=> 'select_box("lang_code",		$this->_cur_langs,		$selected, false, 2, "", false)',
@@ -43,6 +39,7 @@ class yf_locale_editor {
 			'location'		=> 'select_box("location",		$this->_used_locations,	$selected, false, 2, "", false)',
 			'module'		=> 'select_box("module",		$this->_modules,		$selected, false, 2, "", false)',
 		);
+/*
 		$this->_user_modules	= module('user_modules')->_get_modules(array('with_sub_modules' => 1));
 
 		$tmp_admin_modules		= module('admin_modules')->_get_modules(array('with_sub_modules' => 1));
@@ -60,7 +57,7 @@ class yf_locale_editor {
 		if (!empty($tmp_user_modules)) {
 			$this->_modules['user'] = $tmp_user_modules;
 		}
-
+*/
 		foreach ((array)$this->_get_iso639_list() as $lang_code => $lang_params) {
 			$this->_langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? ' ('.$lang_params[1].') ' : '');
 		}
@@ -86,11 +83,6 @@ class yf_locale_editor {
 			$this->_langs_for_search[$A['locale']] = t($A['name']);
 			$this->_cur_langs[$A['locale']] = t($A['name']);
 		}
-		$this->_search_in = array(
-			'all'			=> t('All strings in that language'),
-			'translated'	=> t('Only translated strings'),
-			'untranslated'	=> t('Only untranslated strings'),
-		);
 		$this->_file_formats = array(
 			'csv'	=> t('CSV, compatible with MS Excel'),
 			'xml'	=> t('XML'),
@@ -105,37 +97,30 @@ class yf_locale_editor {
 	* Display all project languages
 	*/
 	function show() {
-/*
-		$Q = db()->query('SELECT COUNT(var_id) AS num,locale FROM '.db('locale_translate').' WHERE value != "" GROUP BY locale');
-		while ($A = db()->fetch_assoc($Q)) {
-			$tr_vars[$A['locale']] = $A['num'];
+		$tr_vars = db()->get_2d('SELECT locale, COUNT(var_id) AS num FROM '.db('locale_translate').' WHERE value != "" GROUP BY locale');
+		$total_vars = (int)db()->get_one('SELECT COUNT(*) FROM '.db('locale_vars'));
+
+		$data = array();
+		foreach ((array)$this->_cur_langs_array as $v) {
+			$id = $v['locale'];
+			$v['tr_count'] = strval($tr_vars[$id]);
+			$v['tr_percent'] = $total_vars && $v['tr_count'] ? round(100 * $v['tr_count'] / $total_vars, 2).'%' : '';
+			$data[$id] = $v;
 		}
-		list($total_vars) = db()->query_fetch('SELECT COUNT(id) AS `0` FROM '.db('locale_vars').'');
-		foreach ((array)$this->_cur_langs_array as $A) {
-			$tr_stats = !empty($total_vars) && !empty($tr_vars[$A['locale']]) ? round(100 * $tr_vars[$A['locale']] / $total_vars, 2) : 0;
-			$replace2 = array(
-				'tr_stats'		=> $tr_stats,
-				'tr_stats_int'	=> intval($tr_stats),
-				'tr_vars'		=> intval($tr_vars[$A['locale']]),
-				'total_vars'	=> intval($total_vars),
-				'active'		=> intval($A['active']),
-				'is_default'	=> intval($A['is_default']),
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_lang&id='.$A['id'],
-*/
-		$data = $this->_cur_langs_array;
 		return table($data)
-			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
+			->text('locale', array('badge' => 'default'/*, 'transform' => 'strtoupper'*/))
 			->text('name')
 			->text('charset')
-			->text('stats')
+			->text('tr_count', 'Num vars')
+			->text('tr_percent', 'Translated', array('badge' => 'info'))
 			->btn_edit('', './?object='.$_GET['object'].'&action=lang_add')
-			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete', array('display_func' => function($in){ return $in; }))
-			->btn_active('', './?object='.$_GET['object'].'&action=lang_active')
-//			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default')
+			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d'/*, array('display_func' => function($in){ return $in; })*/)
+			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d'/*, array('class' => 'badge-info')*/)
+			->btn_active('', './?object='.$_GET['object'].'&action=lang_active&id=%d')
 			->footer_link('Manage vars', './?object='.$_GET['object'].'&action=show_vars')
 			->footer_add('Add language', './?object='.$_GET['object'].'&action=lang_add')
-#			'import_vars_link'	=> './?object='.$_GET['object'].'&action=import_vars',
-#			'export_vars_link'	=> './?object='.$_GET['object'].'&action=export_vars',
+			->footer_link('Import vars', './?object='.$_GET['object'].'&action=import_vars', array(''))
+			->footer_link('Export vars', './?object='.$_GET['object'].'&action=export_vars')
 		;
 	}
 
@@ -173,10 +158,10 @@ class yf_locale_editor {
 			}
 		}
 		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-			'langs_box'			=> $this->_box('lang_code',	-1),
-			'back_link'			=> './?object='.$_GET['object'],
-			'error_message'		=> _e(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+			'langs_box'		=> $this->_box('lang_code',	-1),
+			'back_link'		=> './?object='.$_GET['object'],
+			'error_message'	=> _e(),
 		);
 		return tpl()->parse($_GET['object'].'/add_lang', $replace);
 	}
@@ -672,7 +657,7 @@ class yf_locale_editor {
 				foreach ((array)$found_vars as $source => $translation) {
 					$var_id = 0;
 					if ($this->VARS_IGNORE_CASE) {
-						$source = str_replace(" ", "_", strtolower($source));
+						$source = str_replace(' ', '_', strtolower($source));
 					}
 					foreach ((array)$cur_vars_array as $cur_var_id => $cur_var_value) {
 						if ($cur_var_value == $source) {
@@ -681,36 +666,36 @@ class yf_locale_editor {
 						}
 					}
 					if (empty($var_id)) {
-						db()->INSERT("locale_vars", array("value"	=> _es($source)));
+						db()->INSERT('locale_vars', array('value'	=> _es($source)));
 						$var_id = db()->INSERT_ID();
 					}
 					$sql_array = array(
-						"var_id"	=> intval($var_id),
-						"locale"	=> _es($cur_locale),
-						"value"		=> _es($translation),
+						'var_id'	=> intval($var_id),
+						'locale'	=> _es($cur_locale),
+						'value'		=> _es($translation),
 					);
 					if (isset($cur_tr_vars[$var_id])) {
 						if ($IMPORT_MODE == 2 || $translation == $cur_tr_vars[$var_id]) continue;
-						db()->UPDATE("locale_translate", $sql_array, "var_id=".intval($var_id)." AND locale='"._es($cur_locale)."'");
+						db()->UPDATE('locale_translate', $sql_array, 'var_id='.intval($var_id).' AND locale="'._es($cur_locale).'"');
 					} else {
-						db()->INSERT("locale_translate", $sql_array);
+						db()->INSERT('locale_translate', $sql_array);
 					}
 				}
 				unlink($new_file_path);
-				cache()->refresh("locale_translate_".$cur_locale);
-				return js_redirect("./?object=".$_GET["object"]."&action=show_vars");
+				cache()->refresh('locale_translate_'.$cur_locale);
+				return js_redirect('./?object='.$_GET['object'].'&action=show_vars');
 			}
 		}
 		if (!$_POST || common()->_error_exists()) {
 			$replace = array(
-				"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
-				"back_link"			=> "./?object=".$_GET["object"],
-				"error_message"		=> _e(),
-				"langs_box"			=> $this->_box("lang_code",		-1),
-				"file_formats_box"	=> $this->_box("file_format",	"csv"),
-				"modes_box"			=> $this->_box("mode",			1),
+				'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+				'back_link'			=> './?object='.$_GET['object'],
+				'error_message'		=> _e(),
+				'langs_box'			=> $this->_box('lang_code',		-1),
+				'file_formats_box'	=> $this->_box('file_format',	'csv'),
+				'modes_box'			=> $this->_box('mode',			1),
 			);
-			return tpl()->parse($_GET["object"]."/import_vars", $replace);
+			return tpl()->parse($_GET['object'].'/import_vars', $replace);
 		}
 	}
 
@@ -718,83 +703,78 @@ class yf_locale_editor {
 	* Export vars
 	*/
 	function export_vars() {
-		// Do save data
 		if ($_POST) {
-			// Check file format
-			if (empty($_POST["file_format"]) || !isset($this->_file_formats[$_POST["file_format"]])) {
-				_re(t("Please select file format"));
+			if (empty($_POST['file_format']) || !isset($this->_file_formats[$_POST['file_format']])) {
+				_re(t('Please select file format'));
 			}
-			$IS_TEMPLATE = intval((bool)$_POST["is_template"]);
-			// Check language code
-			if (empty($_POST["lang_code"]) && !$IS_TEMPLATE) {
-				_re(t("Please select language to export"));
+			$IS_TEMPLATE = intval((bool)$_POST['is_template']);
+			if (empty($_POST['lang_code']) && !$IS_TEMPLATE) {
+				_re(t('Please select language to export'));
 			}
-			// Prepare lang info
-			$cur_locale = !empty($_POST["lang_code"]) ? $_POST["lang_code"] : "en";
+			$cur_locale = !empty($_POST['lang_code']) ? $_POST['lang_code'] : 'en';
 			$cur_lang_info = array(
-				"locale"	=> $cur_locale,
-				"name"		=> $this->_cur_langs[$cur_locale],
+				'locale'	=> $cur_locale,
+				'name'		=> $this->_cur_langs[$cur_locale],
 			);
-			// Get translations
 			if (!$IS_TEMPLATE) {
-				$Q = db()->query("SELECT * FROM ".db('locale_translate')." WHERE locale = '"._es($cur_locale)."'");
-				while ($A = db()->fetch_assoc($Q)) $tr_vars[$A["var_id"]] = $A["value"];
+				$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE locale = "'._es($cur_locale).'"');
+				while ($A = db()->fetch_assoc($Q)) {
+					$tr_vars[$A['var_id']] = $A['value'];
+				}
 			}
-			// Get vars
-			$Q = db()->query("SELECT * FROM ".db('locale_vars')." ORDER BY value ASC");
+			$Q = db()->query('SELECT * FROM '.db('locale_vars').' ORDER BY value ASC');
 			while ($A = db()->fetch_assoc($Q)) {
-				$source			= $A["value"];
-				$translation	= $IS_TEMPLATE ? $A["value"] : $tr_vars[$A["id"]];
+				$source			= $A['value'];
+				$translation	= $IS_TEMPLATE ? $A['value'] : $tr_vars[$A['id']];
 				// Skip not translated vars
 				if (!$IS_TEMPLATE && empty($translation)) continue;
 				// Export only for specified location
-				if (!$IS_TEMPLATE && !empty($_POST["location"]) && (false === strpos($A["location"], $_POST["location"]))) {
+				if (!$IS_TEMPLATE && !empty($_POST['location']) && (false === strpos($A['location'], $_POST['location']))) {
 					continue;
 				}
 				// Export only for specified module
-				if (!empty($_POST["module"])) {
+				if (!empty($_POST['module'])) {
 					$is_admin_module = false;
-					// Admin module
-					if (substr($_POST["module"], 0, strlen($this->_admin_modules_prefix)) == $this->_admin_modules_prefix) {
-						$_POST["module"] = substr($_POST["module"], strlen($this->_admin_modules_prefix));
+					if (substr($_POST['module'], 0, strlen($this->_admin_modules_prefix)) == $this->_admin_modules_prefix) {
+						$_POST['module'] = substr($_POST['module'], strlen($this->_admin_modules_prefix));
 						$is_admin_module = true;
 					}
-					// Check for file name
-					if ((false === strpos($A["location"], ($is_admin_module ? ADMIN_MODULES_DIR : USER_MODULES_DIR).$_POST["module"].".class.php"))
-						&& (false === strpos($A["location"], "/".$_POST["module"]."/") || false === strpos($A["location"], ".stpl"))
-					) continue;
+					if ((false === strpos($A['location'], ($is_admin_module ? ADMIN_MODULES_DIR : USER_MODULES_DIR).$_POST['module'].'.class.php'))
+						&& (false === strpos($A['location'], '/'.$_POST['module'].'/') || false === strpos($A['location'], '.stpl'))
+					) {
+						continue;
+					}
 				}
-				// Prepare array for export
-				$tr_array[$A["id"]] = array(
-					"source"		=> trim($source),
-					"translation"	=> trim($translation),
+				$tr_array[$A['id']] = array(
+					'source'		=> trim($source),
+					'translation'	=> trim($translation),
 				);
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
 				// Get vars to export
-				if ($_POST["file_format"] == "csv") {
-					$body .= "source;translation\r\n";
+				if ($_POST['file_format'] == 'csv') {
+					$body .= "source;translation".PHP_EOL;
 					// Process vars
 					foreach ((array)$tr_array as $info) {
 						$body .= "\"".str_replace("\"","\"\"",$info["source"])."\";\"".
-							str_replace("\"","\"\"",$info["translation"])."\"\r\n";
+							str_replace("\"","\"\"",$info["translation"])."\"".PHP_EOL;
 					}
 					// Generate result file_name
 					$file_name = $cur_lang_info["locale"]."_translation.csv";
 				} elseif ($_POST["file_format"] == "xml") {
 					// Generate XML string
-					$body .= "<!DOCTYPE tr><tr>\r\n";
-					$body .= "\t<info>\r\n";
-					$body .= "\t\t<locale>"._prepare_html($cur_lang_info["locale"])."</locale>\r\n";
-					$body .= "\t\t<lang_name>"._prepare_html($cur_lang_info["name"])."</lang_name>\r\n";
-					$body .= "\t</info>\r\n";
+					$body .= "<!DOCTYPE tr><tr>".PHP_EOL;
+					$body .= "\t<info>".PHP_EOL;
+					$body .= "\t\t<locale>"._prepare_html($cur_lang_info["locale"])."</locale>".PHP_EOL;
+					$body .= "\t\t<lang_name>"._prepare_html($cur_lang_info["name"])."</lang_name>".PHP_EOL;
+					$body .= "\t</info>".PHP_EOL;
 					// Process vars
 					foreach ((array)$tr_array as $info) {
-						$body .= "\t<message>\r\n";
-						$body .= "\t\t<source>"._prepare_html($info["source"])."</source>\r\n";
-						$body .= "\t\t<translation>"._prepare_html($info["translation"])."</translation>\r\n";
-						$body .= "\t</message>\r\n";
+						$body .= "\t<message>".PHP_EOL;
+						$body .= "\t\t<source>"._prepare_html($info["source"])."</source>".PHP_EOL;
+						$body .= "\t\t<translation>"._prepare_html($info["translation"])."</translation>".PHP_EOL;
+						$body .= "\t</message>".PHP_EOL;
 					}
 					$body .= "</tr>";
 					// Generate result file_name
