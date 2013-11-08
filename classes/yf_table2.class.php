@@ -1039,8 +1039,10 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save');
+				$class = $extra['class'] ?: $extra['a_class'];
 				
-				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs">'.$icon. t($value).'</button>';
+				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {
