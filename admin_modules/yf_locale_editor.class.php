@@ -111,10 +111,16 @@ class yf_locale_editor {
 			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
 			->text('name')
 			->text('charset')
+			->text('default')
 			->text('tr_count', 'Num vars')
 			->text('tr_percent', 'Translated', array('badge' => 'info'))
 			->btn_edit('', './?object='.$_GET['object'].'&action=lang_add')
 			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d'/*, array('display_func' => function($in){ return $in; })*/)
+
+#			->btn_func('Make default', function($row, $params, $instance_params, $_this) {
+#				echo $row;
+#			})
+
 			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d', array('class' => 'btn-info'))
 			->btn_active('', './?object='.$_GET['object'].'&action=lang_active&id=%d')
 			->footer_link('Manage vars', './?object='.$_GET['object'].'&action=show_vars')
@@ -259,6 +265,25 @@ class yf_locale_editor {
 				$INSERT_ID = $var_info['id'];
 			}
 			if (!_ee()) {
+				$sql = array();
+				$cnames = array();
+				foreach ((array)$this->_cur_langs_array as $info) {
+					$tr_name = 'var_tr__'.$info['locale'];
+					if (!isset($_POST[$tr_name])) {
+						continue;
+					}
+					$sql[] = _es(array(
+						'var_id'	=> (int)$INSERT_ID,
+						'value'		=> $_POST[$tr_name],
+						'locale'	=> $info['locale'],
+					));
+					$cnames[] = 'locale_translate_'.$info['locale'];
+				}
+				if ($sql && $INSERT_ID) {
+					db()->insert('locale_translate', $sql);
+					cache()->refresh($cnames);
+				}
+				common()->admin_wall_add(array('locale var added: '.$_POST['var_name']));
 				return js_redirect($INSERT_ID ? './?object='.$_GET['object'].'&action=edit_var&id='.intval($INSERT_ID) : './?object='.$_GET['object'].'&action=show_vars');
 			}
 		}
@@ -266,10 +291,11 @@ class yf_locale_editor {
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_vars',
 		);
-		return form($r)
-			->text('var_name')
-			->save_and_back()
-		;
+		$form = form($r)->text('var_name');
+		foreach ((array)$this->_cur_langs_array as $info) {
+			$form->textarea('var_tr__'.$info['locale'], $info['name']);
+		}
+		return $form->save_and_back();
 	}
 
 	/**
@@ -300,10 +326,12 @@ class yf_locale_editor {
 		}
 
 		$Q = db()->query('SELECT * FROM '.db('locale_translate').' WHERE var_id='.intval($var_info['id']));
-		while ($A = db()->fetch_assoc($Q)) $var_tr[$A['locale']] = $A['value'];
+		while ($A = db()->fetch_assoc($Q)) {
+			$var_tr[$A['locale']] = $A['value'];
+		}
 
 		if ($_POST) {
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
 					if (!isset($_POST[$lang_info['locale']])) {
 						continue;
