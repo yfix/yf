@@ -17,6 +17,10 @@ class class_i18n_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_10() {
 		$this->assertEquals('unit_test_value1', t('unit_test_var1'));
+		$this->assertEquals('unit_test_value1', t(' unit_test_var1'));
+		$this->assertEquals('unit_test_value1', t('unit_test_var1 '));
+		$this->assertEquals('unit_test_value1', t(' unit_test_var1 '));
+		$this->assertEquals('unit_test_value1', t('   unit_test_var1   '));
 /*
 		t("Test var")."<br /><br />";
 		t("::forum::Test var")."<br /><br />";

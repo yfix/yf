@@ -351,7 +351,6 @@ class yf_i18n {
 			$_prefix = substr($input_string, 0, strpos($input_string, '::', 2) + 2);
 			$_prefix_length = strlen($_prefix);
 			$input_string = substr($input_string, $_prefix_length);
-
 		}
 		if ($this->TRANSLATE_ENABLED) {
 			// Prepare for case ignore
