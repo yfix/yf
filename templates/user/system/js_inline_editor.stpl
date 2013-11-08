@@ -15,7 +15,7 @@
 	var _tip_just_saved = 0;
 	var _tip_id			= 0;
 	var _USE_EDITAREA	= 0;
-	var WEB_PATH = '{const(WEB_PATH)}';
+	var WEB_PATH = '{if(const.MAIN_TYPE eq user)}{const(WEB_PATH)}{else}{const(ADMIN_WEB_PATH)}{/if}';
 	if (typeof WEB_PATH != "undefined") {
 		_form_action	= WEB_PATH + _form_action;
 		_edit_stpl_url	= WEB_PATH + _edit_stpl_url;

@@ -168,7 +168,7 @@ class yf_tpl {
 			$this->LOG_EXEC_INFO	= false;
 		}
 		// Force inline debug setting
-		if (isset($_SESSION['stpls_inline_edit']) && MAIN_TYPE_USER) {
+		if (isset($_SESSION['stpls_inline_edit'])) {
 			$this->ALLOW_INLINE_DEBUG = intval((bool)$_SESSION['stpls_inline_edit']);
 		}
 		$this->_init_global_tags();

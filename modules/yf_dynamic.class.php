@@ -229,7 +229,7 @@ class yf_dynamic {
 		}
 		$sql = db()->UPDATE('locale_translate', $sql_data, 'var_id='.intval($var_info['id'])." AND locale='"._es($CUR_LOCALE)."'", true);
 		db()->INSERT('revisions', array(
-			'user_id'		=> intval(main()->USER_ID),
+			'user_id'		=> intval(MAIN_TYPE_USER ? main()->USER_ID : main()->ADMIN_ID),
 			'object_name'	=> _es('locale_var'),
 			'object_id'		=> _es($var_info['id']),
 			'old_text'		=> _es($var_tr[$CUR_LOCALE]),
@@ -280,7 +280,7 @@ class yf_dynamic {
 				file_put_contents($locale_stpl_path, $_POST['text']);
 				// Save revision
 				db()->INSERT('revisions', array(
-					'user_id'		=> intval(main()->USER_ID),
+					'user_id'		=> intval(MAIN_TYPE_USER ? main()->USER_ID : main()->ADMIN_ID),
 					'object_name'	=> _es('locale_stpl'),
 					'object_id'		=> _es($STPL_NAME),
 					'old_text'		=> _es($text),

@@ -396,7 +396,7 @@ class yf_debug_info {
 				continue;
 			}
 			$stpl_inline_edit = '';
-			if (MAIN_TYPE_USER && tpl()->ALLOW_INLINE_DEBUG) {
+			if (tpl()->ALLOW_INLINE_DEBUG) {
 				$stpl_inline_edit = " stpl_name='".$k."' ";
 			}
 			$cur_size = strlen($v['string']);

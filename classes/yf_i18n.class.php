@@ -426,7 +426,7 @@ class yf_i18n {
 		if (DEBUG_MODE) {
 			if ($this->TRACK_TRANSLATED) {
 				$this->_I18N_VARS[$lang][$_source] = $output_string;
-				if (MAIN_TYPE_USER && main()->INLINE_EDIT_LOCALE && !main()->_IS_REDIRECTING) {
+				if (main()->INLINE_EDIT_LOCALE && !main()->_IS_REDIRECTING) {
 					$output_string = '<span class=locale_tr s_var='._prepare_html(str_replace(' ', '%20', $_source)).'>'.$output_string.'</span>';
 				}
 			}
