@@ -240,6 +240,7 @@ class yf_locale_editor {
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_var&id=%d')
 			->footer_submit('mass_delete')
 			->footer_add('', './?object='.$_GET['object'].'&action=add_var')
+			->header_add('', './?object='.$_GET['object'].'&action=add_var')
 #			->footer_link('collect_vars', './?object='.$_GET['object'].'&action=collect_vars')
 #			->footer_link('cleanup_vars', './?object='.$_GET['object'].'&action=cleanup_vars')
 #			->footer_link('import_vars', './?object='.$_GET['object'].'&action=import_vars')
