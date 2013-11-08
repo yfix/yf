@@ -178,6 +178,7 @@ class yf_admin_modules {
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
 		$admin_modules_array = array();
 		$dir_to_scan = ADMIN_SITE_PATH. ADMIN_MODULES_DIR;
+// TODO: connect plugins
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
 			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
@@ -261,6 +262,7 @@ class yf_admin_modules {
 			$ONLY_PRIVATE_METHODS = $params['private'];
 		}
 		$methods_by_modules = array();
+// TODO: connect plugins
 		foreach ((array)$GLOBALS['admin_modules_array'] as $user_module_name) {
 			if (substr($user_module_name, 0, strlen(YF_ADMIN_CLS_PREFIX)) == YF_ADMIN_CLS_PREFIX) {
 				$user_module_name = substr($user_module_name, strlen(YF_ADMIN_CLS_PREFIX));
@@ -322,6 +324,7 @@ class yf_admin_modules {
 	function _recursive_get_methods_from_extends ($file_text = '', $user_module_name = '', $_type = 'admin', $ONLY_PRIVATE_METHODS = false) {
 		$extends_file_path = '';
 		$methods = array();
+// TODO: connect plugins
 		// Check if cur class extends some other class
 		if (preg_match($this->_extends_pattern, $file_text, $matches_extends)) {
 			$class_name_1 = $matches_extends[1];

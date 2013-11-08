@@ -542,6 +542,7 @@ class yf_tpl {
 		} else {
 			if (!isset($this->_yf_plugins)) {
 				$this->_yf_plugins = main()->_preload_plugins_list();
+				$this->_yf_plugins_classes = main()->_plugins_classes;
 			}
 			// Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
 			$storages = array();
@@ -577,8 +578,12 @@ class yf_tpl {
 			}
 			// Load template from plugins. Should stay in subdir like this:  
 			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')
-			if ($class_name && isset($this->_yf_plugins[$class_name])) {
-				$plugin_subdir = 'plugins/'.$class_name.'/';
+			if ($class_name && (isset($this->_yf_plugins[$class_name]) || isset($this->_yf_plugins_classes[$class_name]))) {
+				if (isset($this->_yf_plugins[$class_name])) {
+					$plugin_subdir = 'plugins/'.$class_name.'/';
+				} else {
+					$plugin_subdir = 'plugins/'.$this->_yf_plugins_classes[$class_name].'/';
+				}
 				$storages['plugins_project'] = PROJECT_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				if ($this->_INHERITED_SKIN) {
 					$storages['plugins_inherit_project'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;

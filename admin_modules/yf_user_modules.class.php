@@ -178,6 +178,7 @@ class yf_user_modules {
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
 		$user_modules_array = array();
 		$dir_to_scan = PROJECT_PATH. USER_MODULES_DIR;
+// TODO: connect plugins
 		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
 			$v = str_replace('//', '/', $v);
 			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
@@ -259,6 +260,7 @@ class yf_user_modules {
 			$ONLY_PRIVATE_METHODS = $params['private'];
 		}
 		$methods_by_modules = array();
+// TODO: connect plugins
 		foreach ((array)$GLOBALS['user_modules_array'] as $user_module_name) {
 			// Remove site prefix from module name here
 			if (substr($user_module_name, 0, strlen(YF_SITE_CLS_PREFIX)) == YF_SITE_CLS_PREFIX) {
