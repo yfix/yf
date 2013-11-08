@@ -59,13 +59,13 @@ class yf_manage_languages {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('languages')));
+		return _class('admin_methods')->delete(array('table' => 'languages'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('languages')));
+		return _class('admin_methods')->active(array('table' => 'languages'));
 	}
 
 	/**

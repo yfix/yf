@@ -59,13 +59,13 @@ class yf_manage_timezones {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('timezones')));
+		return _class('admin_methods')->delete(array('table' => 'timezones'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('timezones')));
+		return _class('admin_methods')->active(array('table' => 'timezones'));
 	}
 
 	/**

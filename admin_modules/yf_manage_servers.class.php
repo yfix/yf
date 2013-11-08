@@ -69,13 +69,13 @@ class yf_manage_servers {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('core_servers')));
+		return _class('admin_methods')->delete(array('table' => 'core_servers'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('core_servers')));
+		return _class('admin_methods')->active(array('table' => 'core_servers'));
 	}
 
 	/**

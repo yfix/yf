@@ -114,7 +114,7 @@ class yf_locale_editor {
 			->text('tr_count', 'Num vars')
 			->text('tr_percent', 'Translated', array('badge' => 'info'))
 			->text('is_default')
-			->btn_edit('', './?object='.$_GET['object'].'&action=lang_add')
+			->btn_edit('', './?object='.$_GET['object'].'&action=lang_edit&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d'/*, array('display_func' => function($in){ return $in; })*/)
 
 #			->btn_func('Make default', function($row, $params, $instance_params, $_this) {
@@ -175,12 +175,52 @@ class yf_locale_editor {
 	/**
 	*/
 	function lang_edit() {
+/*
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('No id');
+		}
+		$a = db()->query_fetch('SELECT * FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']));
+		$a = (array)$_POST + (array)$a;
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name' => 'trim|required|alpha_dash|is_unique_without[admin_groups.name.'.$id.']'
+			))
+			->db_update_if_ok('admin_groups', array('name','go_after_login'), 'id='.$id, array('on_after_update' => function() {
+				cache()->refresh(array('admin_groups', 'admin_groups_details'));
+				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', $id));
+			}))
+			->text('name','Group name')
+			->text('go_after_login','Url after login')
+			->save_and_back();
+*/
 // TODO
 	}
 
 	/**
 	*/
 	function lang_active() {
+/*
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$group_info = db()->query_fetch('SELECT * FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']));
+		}
+		if ($_GET['id'] == 1) {
+			$group_info = array();
+		}
+		if (!empty($group_info)) {
+			db()->UPDATE('admin_groups', array('active'	=> intval(!$group_info['active'])), 'id='.intval($_GET['id']));
+			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+		}
+		cache()->refresh(array('admin_groups', 'admin_groups_details'));
+		if ($_POST['ajax_mode']) {
+			main()->NO_GRAPHICS = true;
+			echo ($group_info['active'] ? 0 : 1);
+		} else {
+			return js_redirect('./?object='.$_GET['object']);
+		}
+*/
 // TODO
 	}
 

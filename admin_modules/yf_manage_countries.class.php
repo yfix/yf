@@ -69,13 +69,13 @@ class yf_manage_countries {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('countries')));
+		return _class('admin_methods')->delete(array('table' => 'countries'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('countries')));
+		return _class('admin_methods')->active(array('table' => 'countries'));
 	}
 
 	/**

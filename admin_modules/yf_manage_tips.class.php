@@ -18,7 +18,7 @@ class yf_manage_tips {
 	/**
 	*/
 	function add() {
-		$replace = _class('admin_methods')->add(array('table' => db('tips')));
+		$replace = _class('admin_methods')->add(array('table' => 'tips'));
 		return form($replace)
 			->text('name')
 			->textarea('text')
@@ -29,7 +29,7 @@ class yf_manage_tips {
 	/**
 	*/
 	function edit() {
-		$replace = _class('admin_methods')->edit(array('table' => db('tips')));
+		$replace = _class('admin_methods')->edit(array('table' => 'tips'));
 		return form($replace)
 			->text('name')
 			->textarea('text')
@@ -40,19 +40,19 @@ class yf_manage_tips {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('tips')));
+		return _class('admin_methods')->delete(array('table' => 'tips'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('tips')));
+		return _class('admin_methods')->active(array('table' => 'tips'));
 	}
 
 	/**
 	*/
 	function clone_item() {
-		return _class('admin_methods')->clone_item(array('table' => db('tips')));
+		return _class('admin_methods')->clone_item(array('table' => 'tips'));
 	}
 
 	function _hook_widget__tips ($params = array()) {

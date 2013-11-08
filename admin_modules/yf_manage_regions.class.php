@@ -74,13 +74,13 @@ class yf_manage_regions {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('regions')));
+		return _class('admin_methods')->delete(array('table' => 'regions'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('regions')));
+		return _class('admin_methods')->active(array('table' => 'regions'));
 	}
 
 	/**

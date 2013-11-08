@@ -66,13 +66,13 @@ class yf_manage_sites {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('sites')));
+		return _class('admin_methods')->delete(array('table' => 'sites'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('sites')));
+		return _class('admin_methods')->active(array('table' => 'sites'));
 	}
 
 	/**

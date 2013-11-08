@@ -57,13 +57,13 @@ class yf_manage_icons {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('icons')));
+		return _class('admin_methods')->delete(array('table' => 'icons'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('icons')));
+		return _class('admin_methods')->active(array('table' => 'icons'));
 	}
 
 	/**
