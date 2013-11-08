@@ -111,10 +111,10 @@ class yf_locale_editor {
 			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
 			->text('name')
 			->text('charset')
-			->text('default')
 			->text('tr_count', 'Num vars')
 			->text('tr_percent', 'Translated', array('badge' => 'info'))
-			->btn_edit('', './?object='.$_GET['object'].'&action=lang_add')
+			->text('is_default')
+			->btn_edit('', './?object='.$_GET['object'].'&action=lang_edit&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d'/*, array('display_func' => function($in){ return $in; })*/)
 
 #			->btn_func('Make default', function($row, $params, $instance_params, $_this) {
@@ -175,19 +175,67 @@ class yf_locale_editor {
 	/**
 	*/
 	function lang_edit() {
-// TODO
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('No id');
+		}
+		$a = db()->query_fetch('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
+		$a = (array)$_POST + (array)$a;
+		$a['redirect_link'] = './?object='.$_GET['object'];
+		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'name' => 'trim|required|is_unique_without[locale_langs.name.'.$id.']',
+				'charset' => 'trim|required',
+			))
+			->db_update_if_ok('locale_langs', array('name','charset'), 'id='.$id, array('on_after_update' => function() {
+				cache()->refresh('locale_langs');
+				common()->admin_wall_add(array('locale lang updated: '.$_POST['name'].'', $id));
+			}))
+			->info('locale')
+			->text('name')
+			->text('charset')
+			->save_and_back();
 	}
 
 	/**
 	*/
 	function lang_active() {
-// TODO
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$info = db()->get('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
+		}
+		if (!empty($info) && !$info['is_default']) {
+			db()->update('locale_langs', array('active' => intval(!$info['active'])), 'id='.intval($_GET['id']));
+			common()->admin_wall_add(array('locale lang '.$info['name'].' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+			cache()->refresh(array('locale_langs'));
+		}
+		if ($_POST['ajax_mode']) {
+			main()->NO_GRAPHICS = true;
+			echo ($info['active'] ? 0 : 1);
+		} else {
+			return js_redirect('./?object='.$_GET['object']);
+		}
 	}
 
 	/**
 	*/
 	function lang_default() {
-// TODO
+		$_GET['id'] = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$info = db()->get('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
+		}
+		if (!empty($info) && !$info['is_default']) {
+			db()->update('locale_langs', array('is_default' => 0), '1=1');
+			db()->update('locale_langs', array('is_default' => 1), 'id='.intval($_GET['id']));
+			common()->admin_wall_add(array('locale lang '.$info['name'].' made default', $_GET['id']));
+			cache()->refresh(array('locale_langs'));
+		}
+		if ($_POST['ajax_mode']) {
+			main()->NO_GRAPHICS = true;
+			echo ($group_info['active'] ? 0 : 1);
+		} else {
+			return js_redirect('./?object='.$_GET['object']);
+		}
 	}
 
 	/**
@@ -238,8 +286,8 @@ class yf_locale_editor {
 			->text('translation', array('wordwrap' => '40', 'hl_filter' => 1))
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_var&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_var&id=%d')
-			->footer_submit('mass_delete')
 			->footer_add('', './?object='.$_GET['object'].'&action=add_var')
+			->footer_submit('mass_delete', array('icon' => 'icon-trash', 'class' => 'btn-danger'))
 			->header_add('', './?object='.$_GET['object'].'&action=add_var')
 #			->footer_link('collect_vars', './?object='.$_GET['object'].'&action=collect_vars')
 #			->footer_link('cleanup_vars', './?object='.$_GET['object'].'&action=cleanup_vars')

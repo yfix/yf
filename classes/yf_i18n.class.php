@@ -334,6 +334,7 @@ class yf_i18n {
 		if (!$input_string) {
 			return $input_string;
 		}
+		$input_string = trim($input_string);
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
 			$CACHE_NAME = $lang.'#____#'.$input_string;
 			if (isset($this->_LOCALE_CACHE[$CACHE_NAME])) {
@@ -350,7 +351,6 @@ class yf_i18n {
 			$_prefix = substr($input_string, 0, strpos($input_string, '::', 2) + 2);
 			$_prefix_length = strlen($_prefix);
 			$input_string = substr($input_string, $_prefix_length);
-
 		}
 		if ($this->TRANSLATE_ENABLED) {
 			// Prepare for case ignore

@@ -59,13 +59,13 @@ class yf_manage_currencies {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => db('currencies')));
+		return _class('admin_methods')->delete(array('table' => 'currencies'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => db('currencies')));
+		return _class('admin_methods')->active(array('table' => 'currencies'));
 	}
 
 	/**

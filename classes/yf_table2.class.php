@@ -282,6 +282,12 @@ class yf_table2 {
 					if (isset($_extra['transform']) && !empty($_extra['transform'])) {
 						$row[$name] = $this->_apply_transform($row[$name], $_extra['transform']);
 					}
+					if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+						$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
+						if (!$_display_allowed) {
+							continue;
+						}
+					}
 
 					$body .= '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
 				}
@@ -291,6 +297,13 @@ class yf_table2 {
 						$name = $info['name'];
 						$func = $info['func'];
 						unset($info['func']); // Save resources
+						$_extra = $info['extra'];
+						if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+							$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
+							if (!$_display_allowed) {
+								continue;
+							}
+						}
 
 						$body .= $func($row, $info, $params, $this).PHP_EOL;
 					}
@@ -1039,8 +1052,10 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save');
+				$class = $extra['class'] ?: $extra['a_class'];
 				
-				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs">'.$icon. t($value).'</button>';
+				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {

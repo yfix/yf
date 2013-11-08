@@ -6,7 +6,7 @@ class yf_manage_conf {
 	*/
 	function _init() {
 		$this->_table = array(
-			'table' => db('conf'),
+			'table' => 'conf',
 			'fields' => array(
 				'name',
 				'value',
