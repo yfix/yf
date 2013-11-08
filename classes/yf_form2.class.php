@@ -1879,7 +1879,7 @@ class yf_form2 {
 			$extra['icon'] = 'icon-trash';
 		}
 		if (!isset($extra['class'])) {
-			$extra['class'] = 'ajax_delete';
+			$extra['class'] = 'ajax_delete btn-danger';
 		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}

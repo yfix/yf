@@ -584,7 +584,8 @@ class yf_table2 {
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$body = '<a href="'.$link.'" class="btn btn-mini btn-xs"'.$a_class. $attrs. '>'.$text.'</a>';
+					$a_class = $extra['a_class'];
+					$body = '<a href="'.$link.'" class="btn btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.$text.'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -780,14 +781,14 @@ class yf_table2 {
 					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
-				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
+				$class = $extra['class'] ?: $extra['a_class'];
 				if ($extra['hidden_toggle']) {
 					$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 
-				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.$a_class.'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
 				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
@@ -858,7 +859,7 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['a_class'] .= ' ajax_delete';
+			$extra['a_class'] .= ' ajax_delete btn-danger';
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-trash';
@@ -968,8 +969,8 @@ class yf_table2 {
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
-				$a_class = ($extra['a_class'] ? ' '.$extra['a_class'] : '');
-				return '<a href="'.$link.'" class="btn btn-mini btn-xs'.$a_class.'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				$class = $extra['class'] ?: $extra['a_class'];
+				return '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		if (!$extra['display_in']) {

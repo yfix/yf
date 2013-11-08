@@ -115,12 +115,12 @@ class yf_locale_editor {
 			->text('tr_percent', 'Translated', array('badge' => 'info'))
 			->btn_edit('', './?object='.$_GET['object'].'&action=lang_add')
 			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d'/*, array('display_func' => function($in){ return $in; })*/)
-			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d'/*, array('class' => 'badge-info')*/)
+			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d', array('class' => 'btn-info'))
 			->btn_active('', './?object='.$_GET['object'].'&action=lang_active&id=%d')
 			->footer_link('Manage vars', './?object='.$_GET['object'].'&action=show_vars')
 			->footer_add('Add language', './?object='.$_GET['object'].'&action=lang_add')
-			->footer_link('Import vars', './?object='.$_GET['object'].'&action=import_vars', array(''))
-			->footer_link('Export vars', './?object='.$_GET['object'].'&action=export_vars')
+			->footer_link('Import vars', './?object='.$_GET['object'].'&action=import_vars', array('icon' => 'icon-signin'))
+			->footer_link('Export vars', './?object='.$_GET['object'].'&action=export_vars', array('icon' => 'icon-signout'))
 		;
 	}
 
