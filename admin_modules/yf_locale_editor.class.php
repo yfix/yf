@@ -39,7 +39,9 @@ class yf_locale_editor {
 			'location'		=> 'select_box("location",		$this->_used_locations,	$selected, false, 2, "", false)',
 			'module'		=> 'select_box("module",		$this->_modules,		$selected, false, 2, "", false)',
 		);
-/*
+
+
+// TODO: move out this into separate method and call only when needed
 		$this->_user_modules	= module('user_modules')->_get_modules(array('with_sub_modules' => 1));
 
 		$tmp_admin_modules		= module('admin_modules')->_get_modules(array('with_sub_modules' => 1));
@@ -57,7 +59,9 @@ class yf_locale_editor {
 		if (!empty($tmp_user_modules)) {
 			$this->_modules['user'] = $tmp_user_modules;
 		}
-*/
+// ENDTODO
+
+
 		foreach ((array)$this->_get_iso639_list() as $lang_code => $lang_params) {
 			$this->_langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? ' ('.$lang_params[1].') ' : '');
 		}
@@ -83,6 +87,10 @@ class yf_locale_editor {
 			$this->_langs_for_search[$A['locale']] = t($A['name']);
 			$this->_cur_langs[$A['locale']] = t($A['name']);
 		}
+// TODO: add support for these file formats for import/export:
+// * JSON
+// * PHP
+// * GNU Gettext (.po)  http://www.gutenberg.org/wiki/Gutenberg:GNU_Gettext_Translation_How-To, https://en.wikipedia.org/wiki/Gettext
 		$this->_file_formats = array(
 			'csv'	=> t('CSV, compatible with MS Excel'),
 			'xml'	=> t('XML'),
@@ -107,6 +115,9 @@ class yf_locale_editor {
 			$v['tr_percent'] = $total_vars && $v['tr_count'] ? round(100 * $v['tr_count'] / $total_vars, 2).'%' : '';
 			$data[$id] = $v;
 		}
+		$no_actions_if_default = function($row) {
+			return $row['is_default'] ? false : true;
+		};
 		return table($data)
 			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
 			->text('name')
@@ -115,18 +126,18 @@ class yf_locale_editor {
 			->text('tr_percent', 'Translated', array('badge' => 'info'))
 			->text('is_default')
 			->btn_edit('', './?object='.$_GET['object'].'&action=lang_edit&id=%d')
-			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d'/*, array('display_func' => function($in){ return $in; })*/)
-
-#			->btn_func('Make default', function($row, $params, $instance_params, $_this) {
-#				echo $row;
-#			})
-
-			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d', array('class' => 'btn-info'))
-			->btn_active('', './?object='.$_GET['object'].'&action=lang_active&id=%d')
+			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d', array('display_func' => $no_actions_if_default))
+			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d', array('class' => 'btn-info', 'display_func' => $no_actions_if_default))
+			->btn_active('', './?object='.$_GET['object'].'&action=lang_active&id=%d', array('display_func' => $no_actions_if_default))
 			->footer_link('Manage vars', './?object='.$_GET['object'].'&action=show_vars')
 			->footer_add('Add language', './?object='.$_GET['object'].'&action=lang_add')
 			->footer_link('Import vars', './?object='.$_GET['object'].'&action=import_vars', array('icon' => 'icon-signin'))
 			->footer_link('Export vars', './?object='.$_GET['object'].'&action=export_vars', array('icon' => 'icon-signout'))
+#			->footer_link('Collect vars', './?object='.$_GET['object'].'&action=collect_vars')
+#			->footer_link('Cleanup vars', './?object='.$_GET['object'].'&action=cleanup_vars')
+#			->footer_link('Import vars', './?object='.$_GET['object'].'&action=import_vars')
+#			->footer_link('Export vars', './?object='.$_GET['object'].'&action=export_vars')
+#			->footer_link('User vars', './?object='.$_GET['object'].'&action=user_vars')
 		;
 	}
 
@@ -165,6 +176,7 @@ class yf_locale_editor {
 		}
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+// TODO: replace this with _class('html_controls')->list_box()
 			'langs_box'		=> $this->_box('lang_code',	-1),
 			'back_link'		=> './?object='.$_GET['object'],
 			'error_message'	=> _e(),
@@ -291,9 +303,6 @@ class yf_locale_editor {
 			->header_add('', './?object='.$_GET['object'].'&action=add_var')
 #			->footer_link('collect_vars', './?object='.$_GET['object'].'&action=collect_vars')
 #			->footer_link('cleanup_vars', './?object='.$_GET['object'].'&action=cleanup_vars')
-#			->footer_link('import_vars', './?object='.$_GET['object'].'&action=import_vars')
-#			->footer_link('export_vars', './?object='.$_GET['object'].'&action=export_vars')
-#			->footer_link('user_vars', './?object='.$_GET['object'].'&action=user_vars')
 		;
 	}
 
@@ -463,6 +472,7 @@ class yf_locale_editor {
 	* Display list of user-specific vars
 	*/
 	function user_vars() {
+// TODO: move out into submodule
 		if (isset($_GET['id']) && !isset($_GET['page'])) {
 			$_GET['page'] = $_GET['id'];
 			$_GET['id'] = null;
@@ -553,6 +563,7 @@ class yf_locale_editor {
 	* Edit user var
 	*/
 	function user_var_edit() {
+// TODO: move out into submodule
 		$_GET['id'] = intval($_GET['id']);
 		$A = db()->query_fetch('SELECT * FROM '.db('locale_user_tr').' WHERE id='.intval($_GET['id']));
 		if (!$A) {
@@ -587,6 +598,7 @@ class yf_locale_editor {
 	* Delete user var
 	*/
 	function user_var_delete() {
+// TODO: move out into submodule
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
 			db()->query('DELETE FROM '.db('locale_user_tr').' WHERE id='.intval($_GET['id']));
@@ -604,6 +616,7 @@ class yf_locale_editor {
 	* Push user var into main traslation table
 	*/
 	function user_var_push($FORCE_ID = false) {
+// TODO: move out into submodule
 		$_GET['id'] = intval($FORCE_ID ? $FORCE_ID : $_GET['id']);
 		$A = db()->query_fetch('SELECT * FROM '.db('locale_user_tr').' WHERE id='.intval($_GET['id']));
 		if (!$A) {
@@ -661,6 +674,7 @@ class yf_locale_editor {
 	/**
 	*/
 	function import_vars() {
+// TODO: move out into submodule
 		if ($_POST) {
 			if (empty($_FILES['import_file']['name'])) {
 				_re('Please select file to process', 'name');
@@ -780,6 +794,7 @@ class yf_locale_editor {
 	* Export vars
 	*/
 	function export_vars() {
+// TODO: move out into submodule
 		if ($_POST) {
 			if (empty($_POST['file_format']) || !isset($this->_file_formats[$_POST['file_format']])) {
 				_re(t('Please select file format'));
@@ -900,6 +915,7 @@ class yf_locale_editor {
 	* Automatic translator via Google translate
 	*/
 	function autotranslate() {
+// TODO: move out into submodule
 		if ($_POST['translate'] && $_POST['locale']) {
 			set_time_limit(1800); 
 			$LOCALE_RES = $_POST['locale'];
@@ -942,35 +958,36 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 					);
 				}
 				foreach ((array)$translated as $_id => $_value) {
-					db()->REPLACE("locale_translate", array(
-						"var_id"	=> intval($_id),
-						"value"		=> _es($_value),
-						"locale"	=> _es($LOCALE_RES),
+					db()->REPLACE('locale_translate', array(
+						'var_id'	=> intval($_id),
+						'value'		=> _es($_value),
+						'locale'	=> _es($LOCALE_RES),
 					));
 				}
 				$buffer = array();
 				$_temp = array();
 			}
-			cache()->refresh("locale_translate_".$LOCALE_RES);
-			return js_redirect("./?object=".$_GET["object"]);
+			cache()->refresh('locale_translate_'.$LOCALE_RES);
+			return js_redirect('./?object='.$_GET['object']);
 		}
 
-		$Q = db()->query("SELECT * FROM ".db('locale_langs')." ORDER BY name");
+		$Q = db()->query('SELECT * FROM '.db('locale_langs').' ORDER BY name');
 		while($A = db()->fetch_assoc($Q)){
-			$locales[$A["locale"]] = $A["name"];
+			$locales[$A['locale']] = $A['name'];
 		}
 		$replace = array(
-			"locale_box" 		=> common()->select_box("locale", $locales),
-			"locale_editor_url" => "./?object=locale_editor",
-			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"],
+			'locale_box' 		=> common()->select_box('locale', $locales),
+			'locale_editor_url' => './?object=locale_editor',
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
 		);
-		return tpl()->parse($_GET["object"]."/autotranslate", $replace);
+		return tpl()->parse($_GET['object'].'/autotranslate', $replace);
 	}	
 
 	/**
 	* Return array of all used locations in vars
 	*/
 	function _get_all_vars_locations() {
+// TODO: move out into submodule
 		$used_locations = array();
 		$Q = db()->query('SELECT * FROM '.db('locale_vars').'');
 		while ($A = db()->fetch_assoc($Q)) {
@@ -990,6 +1007,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Collect vars from source files (Framework included)
 	*/
 	function collect_vars () {
+// TODO: move out into submodule
 		// Select all known variables from db
 		$Q = db()->query('SELECT * FROM '.db('locale_vars').' ORDER BY value ASC');
 		while ($A = db()->fetch_assoc($Q)) {
@@ -1023,6 +1041,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Collect vars from source files, no framework, just project and given module name (internal use only method)
 	*/
 	function collect_vars_for_module () {
+// TODO: move out into submodule
 		main()->NO_GRAPHICS = true;
 
 		$module_name = preg_replace('/[^a-z0-9\_]/i', '', strtolower(trim($_GET['id'])));
@@ -1046,6 +1065,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Cleanup variables (Delete not translated or missed vars)
 	*/
 	function cleanup_vars () {
+// TODO: move out into submodule
 		// Find empty translations
 		db()->query(
 			"DELETE FROM ".db('locale_translate')." WHERE value=''"
@@ -1117,6 +1137,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Parse source code for translate variables
 	*/
 	function _parse_source_code_for_vars ($params = array()) {
+// TODO: move out into submodule
 		$vars_array = array();
 		// Avail params: only_framework, only_project, only_stpls, only_php, only_module
 
@@ -1192,6 +1213,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Get vars from the given file name
 	*/
 	function _get_vars_from_file_name($file_name = '', $pattern = '') {
+// TODO: move out into submodule
 		$vars_array = array();
 		if (empty($file_name)) {
 			return $vars_array;
@@ -1225,6 +1247,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Prepare locations text
 	*/
 	function _prepare_locations($source_text = '') {
+// TODO: move out into submodule
 		if (empty($source_text)) {
 			return false;
 		}
@@ -1298,6 +1321,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 	* Based on ISO 639 and http://people.w3.org/rishida/names/languages.html
 	*/
 	function _get_iso639_list() {
+// TODO: move out into submodule
 // TODO: use db('languages') instead
 		return array(
 			'aa' => array('Afar'),
