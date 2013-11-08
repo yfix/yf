@@ -184,7 +184,7 @@ class yf_locale_editor {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'name' => 'trim|required|is_unique[locale_langs.name]',
+				'name' => 'trim|required|is_unique_without[locale_langs.name.'.$id.']',
 				'charset' => 'trim|required',
 			))
 			->db_update_if_ok('locale_langs', array('name','charset'), 'id='.$id, array('on_after_update' => function() {
@@ -211,7 +211,7 @@ class yf_locale_editor {
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo ($group_info['active'] ? 0 : 1);
+			echo ($info['active'] ? 0 : 1);
 		} else {
 			return js_redirect('./?object='.$_GET['object']);
 		}
