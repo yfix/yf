@@ -15,7 +15,7 @@
 	{form_row("money","price_partner")}
 	{form_row("money","price_raw")}
 	<div class="control-group">
-		<label class="control-label" for="productparams">Product params</label>		
+		<label class="control-label" for="productparams">{t(Product params)}</label>		
 		<div class="controls">
 			{productparams}
 		</div>
@@ -47,9 +47,9 @@
 	</div>
 {/foreach}
 	<div class="control-group form-group">
-		<label for="set_main_image" class="control-label col-lg-2">Set main image</label>
+		<label for="set_main_image" class="control-label col-lg-2">{t(Set main image)}</label>
 		<div class="controls col-lg-4">
-		<a class="btn btn-mini btn-xs ajax_edit" href="{set_main_image_url}">Set main image</a>
+		<a class="btn btn-mini btn-xs ajax_edit" href="{set_main_image_url}">{t(Set main image)}</a>
 		</div>
 	</div>
 
