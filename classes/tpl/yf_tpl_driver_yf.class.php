@@ -314,7 +314,7 @@ class yf_tpl_driver_yf {
 		// Examples: {const("SITE_NAME")}
 		$string = preg_replace_callback(
 			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i',
-			function($m) /*use ($replace, $name, $_this)*/ {
+			function($m) {
 				return eval('return '.$m[1].';');
 			}
 		, $string);
@@ -323,7 +323,7 @@ class yf_tpl_driver_yf {
 		// Examples: {conf("TEST_DOMAIN")}
 		$string = preg_replace_callback(
 			'/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i',
-			function($m) /*use ($replace, $name, $_this)*/ {
+			function($m) {
 				return conf($m[1]);
 			}
 		, $string);
@@ -334,6 +334,15 @@ class yf_tpl_driver_yf {
 			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims',
 			function($m) use ($replace, $name, $_this) {
 				return _class('tpl')->_i18n_wrapper($m[2], $replace);
+			}
+		, $string);
+
+		// Trims whitespaces, removes
+		// Examples: {cleanup()}some content here{/cleanup}
+		$string = preg_replace_callback(
+			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims',
+			function($m) {
+				return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
 			}
 		, $string);
 
