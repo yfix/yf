@@ -7,18 +7,18 @@ class yf_tpl_driver_yf {
 
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
-	public $_PATTERN_CATCH	 = '/\{catch\(\s*["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims';
+	public $_PATTERN_CATCH = '/\{catch\(\s*["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims';
 	/** @var array @conf_skip STPL internal comment pattern */
 	// Examples: {{-- some content you want to comment inside template only --}}
-	public $_PATTERN_COMMENT   = '/(\{\{--.*?--\}\})/ims';
+	public $_PATTERN_COMMENT = '/(\{\{--.*?--\}\})/ims';
 	/** @var string @conf_skip Conditional pattern */
 	// Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-	public $_PATTERN_IF		= '/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
+	public $_PATTERN_IF	= '/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
-	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
+	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern */
 	// Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach}
-	public $_PATTERN_FOREACH   = '/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
+	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var array @conf_skip For "_process_conditions" */
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
 	/** @var array @conf_skip For '_process_conditions' */
@@ -308,146 +308,86 @@ class yf_tpl_driver_yf {
 	* Replace standard patterns
 	*/
 	function _replace_std_patterns($string, $name = '', $replace = array(), $params = array()) {
-		$_this = $this;
+		// Insert constant here (cutoff for eval_code). Examples: {const("SITE_NAME")}
+		$string = preg_replace_callback('/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i', function($m) {
+			return eval('return '.$m[1].';');
+		}, $string);
 
-		// Insert constant here (cutoff for eval_code)
-		// Examples: {const("SITE_NAME")}
-		$string = preg_replace_callback(
-			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i',
-			function($m) {
-				return eval('return '.$m[1].';');
-			}
+		// Configuration item. Examples: {conf("TEST_DOMAIN")}
+		$string = preg_replace_callback('/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i', function($m) {
+			return conf($m[1]);
+		}, $string);
+
+		// Translate some items if needed. Examples: {t("Welcome")}
+		$string = preg_replace_callback('/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name) {
+			return _class('tpl')->_i18n_wrapper($m[2], $replace);
+		}, $string);
+
+		// Trims whitespaces, removes. Examples: {cleanup()}some content here{/cleanup}
+		$string = preg_replace_callback('/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims', function($m) {
+			return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
+		}, $string);
+
+		// Display help tooltip. Examples: {tip('register.login')} or {tip('form.some_field',2)}
+		$string = preg_replace_callback('/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name) {
+			return _class_safe('graphics')->_show_help_tip(array('tip_id' => $m[1], 'tip_type' => $m[2], 'replace' => $replace));
+		}, $string);
+
+		// Display help tooltip inline. Examples: {itip('register.login')}
+		$string = preg_replace_callback('/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name) {
+			return _class_safe('graphics')->_show_inline_tip(array('text' => $m[1], 'replace' => $replace));
+		}, $string);
+
+		// Display user level single (inline) error message by its name (keyword). Examples: {e('login')} or {user_error('name_field')}
+		$string = preg_replace_callback('/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims', function($m) {
+			return common()->_show_error_inline($m[2]);
+		}, $string);
+
+		// Advertising. Examples: {ad('AD_ID')}
+		$string = preg_replace_callback('/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) {
+			return module_safe('advertising')->_show(array('ad' => $m[1]));
+		}, $string);
+
+		// Url generation with params. Examples: {url(object=home_page;action=test)}
+		$string = preg_replace_callback('/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) {
+			return _class('tpl')->_generate_url_wrapper($m[1]);
+		}, $string);
+
+		// Form item/row. Examples: {form_row("text","password","New Password")}
+		$string = preg_replace_callback('/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'
+			.'[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims', function($m) use ($replace, $name) {
+			return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
+		}
 		, $string);
 
-		// Configuration item
-		// Examples: {conf("TEST_DOMAIN")}
-		$string = preg_replace_callback(
-			'/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i',
-			function($m) {
-				return conf($m[1]);
-			}
-		, $string);
+		// Variable filtering like in Smarty/Twig. Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
+		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name) {
+			return _class('tpl')->_process_var_filters($replace[$m[1]], $m[2]);
+		}, $string);
 
-		// Translate some items if needed
-		// Examples: {t("Welcome")}
-		$string = preg_replace_callback(
-			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims',
-			function($m) use ($replace, $name, $_this) {
-				return _class('tpl')->_i18n_wrapper($m[2], $replace);
-			}
-		, $string);
+		// Second level variables with filters. Examples: {sub1.var1|trim}
+		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name) {
+			return _class('tpl')->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
+		}, $string);
 
-		// Trims whitespaces, removes
-		// Examples: {cleanup()}some content here{/cleanup}
-		$string = preg_replace_callback(
-			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims',
-			function($m) {
-				return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
-			}
-		, $string);
-
-		// Display help tooltip
-		// Examples: {tip('register.login')} or {tip('form.some_field',2)}
-		$string = preg_replace_callback(
-			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
-			function($m) use ($replace, $name, $_this) {
-				return _class_safe('graphics')->_show_help_tip(array('tip_id' => $m[1], 'tip_type' => $m[2], 'replace' => $replace));
-			}
-		, $string);
-
-		// Display help tooltip inline
-		// Examples: {itip('register.login')}
-		$string = preg_replace_callback(
-			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
-			function($m) use ($replace, $name, $_this) {
-				return _class_safe('graphics')->_show_inline_tip(array('text' => $m[1], 'replace' => $replace));
-			}
-		, $string);
-
-		// Display user level single (inline) error message by its name (keyword)
-		// Examples: {e('login')} or {user_error('name_field')}
-		$string = preg_replace_callback(
-			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims',
-			function($m) {
-				return common()->_show_error_inline($m[2]);
-			}
-		, $string);
-
-		// Advertising
-		// Examples: {ad('AD_ID')}
-		$string = preg_replace_callback(
-			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
-			function($m) {
-				return module_safe('advertising')->_show(array('ad' => $m[1]));
-			}
-		, $string);
-
-		// Url generation with params
-		// Examples: {url(object=home_page;action=test)}
-		$string = preg_replace_callback(
-			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
-			function($m) {
-				return _class('tpl')->_generate_url_wrapper($m[1]);
-			}
-		, $string);
-
-		// Examples: {form_row("text","password","New Password")}
-		$string = preg_replace_callback(
-			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims',
-			function($m) use ($replace, $name, $_this) {
-				return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
-			}
-		, $string);
-
-		// Variable filtering like in Smarty/Twig
-		// Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
-		$string = preg_replace_callback(
-			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims',
-			function($m) use ($replace, $name, $_this) {
-				return _class('tpl')->_process_var_filters($replace[$m[1]], $m[2]);
-			}
-		, $string);
-
-		/** Patterns array for the STPL engine */
-		$STPL_PATTERNS	 = array(
-			// Second level variables with filters
-			// Examples: {sub1.var1|trim}
-			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/imse'
-				=> '_class(\'tpl\')->_process_var_filters($replace[\'$1\'][\'$2\'],\'$3\')',
-		);
+		// Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
 		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
-			/** @var array @conf_skip Evaluate custom PHP code pattern */
-			$PATTERN_EVAL	  = array(
-				// Examples: {eval_code(print_r(_class('forum')))}
-				'/(\{eval_code\()([^\}]+?)(\)\})/ie'
-					=> 'main()->_eval_code(\'$2\', 0)',
-			);
-			foreach ((array)$PATTERN_EVAL as $k => $v) {
-				$STPL_PATTERNS[$k] = $v;
-			}
+			$string = preg_replace_callback('/(\{eval_code\()([^\}]+?)(\)\})/i', function($m) {
+				return main()->_eval_code($m[2], 0);
+			}, $string);
 		}
 		if (DEBUG_MODE) {
-			/** @var array @conf_skip Evaluate custom PHP code pattern special for the DEBUG_MODE */
-			$PATTERN_DEBUG	 = array(
-				// Examples: {_debug_get_replace()}
-				'/(\{_debug_get_replace\(\)\})/ie'
-					=> 'is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "";',
-				// Examples:	 {_debug_stpl_vars()}
-				'/(\{_debug_get_vars\(\)\})/ie'
-					=> '_class(\'tpl\')->_debug_get_vars($string)',
-			);
-			foreach ((array)$PATTERN_DEBUG as $k => $v) {
-				$STPL_PATTERNS[$k] = $v;
-			}
+			// Evaluate custom PHP code pattern special for the DEBUG_MODE. Examples: {_debug_get_replace()}
+			$string = preg_replace_callback('/(\{_debug_get_replace\(\)\})/i', function($m) use ($replace, $name) {
+				return is_array($replace) ? '<pre>'.print_r(array_keys($replace), 1).'</pre>' : '';
+			}, $string);
+
+			// Evaluate custom PHP code pattern special for the DEBUG_MODE. Examples: {_debug_stpl_vars()}
+			$string = preg_replace_callback('/(\{_debug_get_vars\(\)\})/i', function($m) use ($string) {
+				return _class('tpl')->_debug_get_vars($string);
+			}, $string);
 		}
-
-		return preg_replace(
-			array_keys($STPL_PATTERNS)
-			, str_replace('{tpl_name}', $name.$this->_STPL_EXT, array_values($STPL_PATTERNS))
-			, $string
-			, --$this->STPL_REPLACE_LIMIT > 0 ? $this->STPL_REPLACE_LIMIT : -1
-		);
-
+		return $string;
 	}
 
 	/**
