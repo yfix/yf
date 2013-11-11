@@ -346,16 +346,17 @@ class yf_tpl_driver_yf {
 			}
 		, $string);
 
+		// Display help tooltip
+		// Examples: {tip('register.login')} or {tip('form.some_field',2)}
+		$string = preg_replace_callback(
+			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
+			function($m) use ($replace, $name, $_this) {
+				return _class_safe('graphics')->_show_help_tip(array('tip_id' => $m[1], 'tip_type' => $m[2], 'replace' => $replace));
+			}
+		, $string);
+
 		/** Patterns array for the STPL engine */
 		$STPL_PATTERNS	 = array(
-			// Trims whitespaces, removes
-			// Examples: {cleanup()}some content here{/cleanup}
-			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/imse'
-				=> 'trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')))',
-			// Display help tooltip
-			// Examples: {tip('register.login')} or {tip('form.some_field',2)}
-			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-				=> '_class_safe("graphics")->_show_help_tip(array("tip_id" => "$1", "tip_type" => "$2", "replace" => $replace))',
 			// Display help tooltip inline
 			// Examples: {itip('register.login')}
 			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
