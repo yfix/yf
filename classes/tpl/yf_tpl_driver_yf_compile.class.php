@@ -35,17 +35,32 @@ class yf_tpl_driver_yf_compile {
 			'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo conf(\'$2\');'. $_php_end,
 
-			// Common replace tags
+			// Common replace vars
 			'/\{([a-z0-9\-\_]+)\}/i'
 				=> $_php_start. 'echo $replace[\'$1\'];'. $_php_end,
 
+			// Second level vars
 			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\}/i'
 				=> $_php_start. 'echo $replace[\'$1\'][\'$2\'];'. $_php_end,
 
-			// tags inside foreach
+			// vars inside foreach
 			'/\{\#\.([a-z0-9\-\_]+)\}/i'
 				=> $_php_start. 'echo $_v[\'$1\'];'. $_php_end,
 
+			// Variable filtering like in Smarty/Twig
+			// Examples:	 {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}   {sub1.var1|trim}
+			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/i'
+				=> $_php_start. 'echo _class(\'tpl\')->_process_var_filters($replace[\'$1\'],\'$2\');'. $_php_end,
+
+			// Second level variables with filters
+			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/i'
+				=> $_php_start. 'echo _class(\'tpl\')->_process_var_filters($replace[\'$1\'][\'$2\'],\'$3\');'. $_php_end,
+
+			// Vars inside foreach with filters
+			'/\{\#\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/i'
+				=> $_php_start. 'echo _class(\'tpl\')->_process_var_filters($_v[\'$1\'],\'$2\');'. $_php_end,
+
+			// Just closing foreach tags
 			'/\{\/(if|foreach)\}/i'
 				=> $_php_start. '}'. $_php_end,
 
@@ -207,7 +222,8 @@ class yf_tpl_driver_yf_compile {
 			}
 		}
 		$op = $this->_cond_operators[strtolower($cond_operator)];
-		// Special case for "mod". Example: {if("id" mod 4)} content {/if}
+		// Special case for "mod". 
+		// Examples: {if("id" mod 4)} content {/if}
 		if ($op == '%') {
 			$part_left = '!('.$part_left;
 			$part_right = $part_right.')';

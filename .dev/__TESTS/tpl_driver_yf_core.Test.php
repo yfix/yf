@@ -370,4 +370,13 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	public function test_131() {
 		$this->assertEquals('val1 val2', self::_tpl( '{sub.key1} {sub.key2}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
 	}
+	public function test_140() {
+		$this->assertEquals('val1', self::_tpl( '{key1|trim}', array('key1' => ' val1 ') ));
+	}
+	public function test_141() {
+		$this->assertEquals('val1', self::_tpl( '{key1|trim|urlencode}', array('key1' => ' val1 ') ));
+	}
+	public function test_142() {
+		$this->assertEquals('val1 val2', self::_tpl( '{sub.key1|trim} {sub.key2|urlencode}', array('sub' => array('key1' => ' val1 ', 'key2' => 'val2')) ));
+	}
 }

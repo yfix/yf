@@ -9,44 +9,52 @@ class yf_tpl_driver_yf {
 	*/
 	public $_STPL_PATTERNS	 = array(
 		// Insert constant here (cutoff for eval_code)
-		// EXAMPLE:	 {const("SITE_NAME")}
+		// Examples: {const("SITE_NAME")}
 		'/(\{const\(\s*["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\s*\)\})/ie'
 			=> 'defined(\'$2\') ? main()->_eval_code(\'$2\', 0) : ""',
 		// Configuration item
-		// EXAMPLE:	 {conf("TEST_DOMAIN")}
+		// Examples: {conf("TEST_DOMAIN")}
 		'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/ie'
 			=> 'conf(\'$2\')',
 		// Translate some items if needed
-		// EXAMPLE:	 {t("Welcome")}
+		// Examples: {t("Welcome")}
 		'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/imse'
 			=> '_class(\'tpl\')->_i18n_wrapper(\'$2\', $replace)',
 		// Trims whitespaces, removes
-		// EXAMPLE:	 {cleanup()}some content here{/cleanup}
+		// Examples: {cleanup()}some content here{/cleanup}
 		'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/imse'
 			=> 'trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')))',
 		// Display help tooltip
-		// EXAMPLE:	 {tip('register.login')} or {tip('form.some_field',2)}
+		// Examples: {tip('register.login')} or {tip('form.some_field',2)}
 		'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> '_class_safe("graphics")->_show_help_tip(array("tip_id" => "$1", "tip_type" => "$2", "replace" => $replace))',
 		// Display help tooltip inline
-		// EXAMPLE:	 {itip('register.login')}
+		// Examples: {itip('register.login')}
 		'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> '_class_safe("graphics")->_show_inline_tip(array("text" => "$1", "replace" => $replace))',
 		// Display user level single (inline) error message by its name (keyword)
-		// EXAMPLE:	 {e('login')} or {user_error('name_field')}
+		// Examples: {e('login')} or {user_error('name_field')}
 		'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/imse'
 			=> 'common()->_show_error_inline(\'$2\')',
 		// Advertising
-		// EXAMPLE:	 {ad('AD_ID')}
+		// Examples: {ad('AD_ID')}
 		'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> 'module_safe("advertising")->_show(array("ad" => \'$1\'))',
 		// Url generation with params
-		// EXAMPLE:	 {url(object=home_page;action=test)}
+		// Examples: {url(object=home_page;action=test)}
 		'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
 			=> '_class(\'tpl\')->_generate_url_wrapper(\'$1\')',
-		// EXAMPLE:	 {form_row("text","password","New Password")}
+		// Examples: {form_row("text","password","New Password")}
 		'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/imse'
 			=> '_class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\')',
+		// Variable filtering like in Smarty/Twig
+		// Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
+		'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/imse'
+			=> '_class(\'tpl\')->_process_var_filters($replace[\'$1\'],\'$2\')',
+		// Second level variables with filters
+		// Examples: {sub1.var1|trim}
+		'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/imse'
+			=> '_class(\'tpl\')->_process_var_filters($replace[\'$1\'][\'$2\'],\'$3\')',
 	);
 	/** @var array @conf_skip Show custom class method output pattern */
 	public $_PATTERN_EXECUTE   = array(
@@ -55,73 +63,68 @@ class yf_tpl_driver_yf {
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,false)',
 		'/(\{exec_cached\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
 			=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,true)',
-		// Examples:  {block(center_area))   {block(center_area;param1=val1;param2=val2))
+		// Examples: {block(center_area))   {block(center_area;param1=val1;param2=val2))
 		'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/ie'
 			=> 'main()->_execute(\'graphics\',\'_show_block\',\'name=$1;$2\',"{tpl_name}",0,false)',
 	);
 	/** @var array @conf_skip Include template pattern */
 	public $_PATTERN_INCLUDE   = array(
-		// EXAMPLE:	 {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
+		// Examples: {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
 		'/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/ie'
 			=> '$this->_include_stpl(\'$2\',\'$3\')',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern */
 	public $_PATTERN_EVAL	  = array(
-		// EXAMPLE:	 {eval_code(print_r(_class('forum')))}
+		// Examples: {eval_code(print_r(_class('forum')))}
 		'/(\{eval_code\()([^\}]+?)(\)\})/ie'
 			=> 'main()->_eval_code(\'$2\', 0)',
 	);
 	/** @var array @conf_skip Evaluate custom PHP code pattern special for the DEBUG_MODE */
 	public $_PATTERN_DEBUG	 = array(
-		// EXAMPLE:	 {_debug_get_replace()}
+		// Examples: {_debug_get_replace()}
 		'/(\{_debug_get_replace\(\)\})/ie'
 			=> 'is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "";',
-		// EXAMPLE:	 {_debug_stpl_vars()}
+		// Examples:	 {_debug_stpl_vars()}
 		'/(\{_debug_get_vars\(\)\})/ie'
 			=> '_class(\'tpl\')->_debug_get_vars($string)',
 	);
 	/** @var array @conf_skip Catch dynamic content into variable */
-	// EXAMPLE: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
+	// Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
 	public $_PATTERN_CATCH	 = '/\{catch\(\s*["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims';
 	/** @var array @conf_skip STPL internal comment pattern */
-	// EXAMPLE:	 {{-- some content you want to comment inside template only --}}
+	// Examples: {{-- some content you want to comment inside template only --}}
 	public $_PATTERN_COMMENT   = '/(\{\{--.*?--\}\})/ims';
 	/** @var string @conf_skip Conditional pattern */
-	// EXAMPLE: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
+	// Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
 	public $_PATTERN_IF		= '/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
 	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern */
-	// EXAMPLE: {foreach ("var")}<li>{var.value1}</li>{/foreach}
+	// Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach}
 	public $_PATTERN_FOREACH   = '/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var array @conf_skip For "_process_conditions" */
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
 	/** @var array @conf_skip For '_process_conditions' */
 	public $_math_operators	= array('and'=>'&&','xor'=>'xor','or'=>'||','+'=>'+','-'=>'-');
-	/** @var int Safe limit number of replacements (to avoid dead cycles)
-	*   (type "-1" for unlimited number)
-	*/
+	/** @var int Safe limit number of replacements (to avoid dead cycles) (type "-1" for unlimited number) */
 	public $STPL_REPLACE_LIMIT	 = -1;
-	/** @var int Cycles and conditions max recurse level
-	*   (how deeply could be nested template constructs like "if")
-	*/
+	/** @var int Cycles and conditions max recurse level (how deeply could be nested template constructs like "if") */
 	public $_MAX_RECURSE_LEVEL = 4;
 	/** @var @conf_skip */
 	public $CACHE = array();
 
 	/**
-	* Constructor
+	* YF constructor
 	*/
 	function _init () {
-		// Try to find PCRE module
 		if (!function_exists('preg_match_all')) {
 			trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
 		}
-		// Saving additional function calls
 		$this->tpl = _class('tpl');
-		// Cache array (JUST DECLARATION, DO NOT CHANGE!)
-		$this->CACHE = array('stpl' => array());
-		// Special code for the compiled framework mode
+
+		$this->CACHE = array(
+			'stpl' => array()
+		);
 		if (defined('FRAMEWORK_IS_COMPILED')) {
 			conf('FRAMEWORK_IS_COMPILED', (bool)FRAMEWORK_IS_COMPILED);
 		}
@@ -134,7 +137,6 @@ class yf_tpl_driver_yf {
 				);
 			}
 		}
-		// Merge eval pattern with main patterns
 		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
 			foreach ((array)$this->_PATTERN_EVAL as $k => $v) {
 				$this->_STPL_PATTERNS[$k] = $v;
@@ -434,7 +436,8 @@ class yf_tpl_driver_yf {
 					$part_other = ' '. implode(' ', (array)$_tmp_parts);
 				}
 			}
-			// Special case for "mod". Example: {if("id" mod 4)} content {/if}
+			// Special case for "mod". 
+			// Examples: {if("id" mod 4)} content {/if}
 			if ($cur_operator == '%') {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';

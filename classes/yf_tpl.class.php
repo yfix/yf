@@ -891,7 +891,9 @@ class yf_tpl {
 	* {url(object=home_page;action=test)}
 	*/
 	function _generate_url_wrapper ($params = array()){
-		if(!function_exists('_force_get_url')) return '';
+		if (!function_exists('_force_get_url')) {
+			return '';
+		}
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
 			$tmp_params	 = explode(';', $params);
@@ -924,5 +926,24 @@ class yf_tpl {
 			'src="uploads/'	=> 'src="'.$web_path. tpl()->_UPLOADS_PATH,
 		);
 		return str_replace(array_keys($to_replace), array_values($to_replace), $string);
+	}
+
+	/**
+	*/
+	function _process_var_filters($text = '', $filters = '') {
+		if (is_string($filters) && strpos($filters, '|') !== false) {
+			$filters = explode('|', $filters);
+		}
+		if (!is_array($filters)) {
+			$filters = array($filters);
+		}
+		foreach ($filters as $fname) {
+			if (is_callable($fname)) {
+				$text = $fname($text);
+			} elseif (is_string($fname) && function_exists($fname)) {
+				$text = $fname($text);
+			}
+		}
+		return $text;
 	}
 }
