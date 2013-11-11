@@ -120,12 +120,6 @@ class yf_tpl_driver_yf {
 			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/ie'
 				=> 'main()->_execute(\'graphics\',\'_show_block\',\'name=$1;$2\',"{tpl_name}",0,false)',
 		);
-		/** @var array @conf_skip Include template pattern */
-		$this->_PATTERN_INCLUDE   = array(
-			// Examples: {include("forum/custom_info")}, {include("forum/custom_info", value = blabla; extra = strtoupper)}
-			'/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/ie'
-				=> '$this->_include_stpl(\'$2\',\'$3\')',
-		);
 		/** @var array @conf_skip Evaluate custom PHP code pattern */
 		$this->_PATTERN_EVAL	  = array(
 			// Examples: {eval_code(print_r(_class('forum')))}
@@ -313,7 +307,22 @@ class yf_tpl_driver_yf {
 	/**
 	*/
 	function _process_includes($string, $replace = array(), $name = '') {
-		return preg_replace(key($this->_PATTERN_INCLUDE), current($this->_PATTERN_INCLUDE), $string);
+		$_this = $this;
+		$pattern = '/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i';
+		$func = function($m) use ($replace, $name, $_this) {
+			$stpl_name = $m[2];
+			$_replace = $m[3];
+			// Here we merge/override incoming $replace with parsed params, to be passed to included template
+			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
+				list($a_name, $a_val) = explode('=', trim($v));
+				$a_name	= trim($a_name);
+				if (strlen($a_name)) {
+					$replace[$a_name] = trim($a_val);
+				}
+			}
+			return $_this->parse($stpl_name, $replace);
+		};
+		return preg_replace_callback($pattern, $func, $string);
 	}
 
 	/**
@@ -371,7 +380,12 @@ class yf_tpl_driver_yf {
 	* Replace standard patterns
 	*/
 	function _replace_std_patterns($string, $name = '', $replace = array(), $params = array()) {
-		return preg_replace(array_keys($this->_STPL_PATTERNS), str_replace('{tpl_name}', $name.$this->_STPL_EXT, array_values($this->_STPL_PATTERNS)), $string, --$this->STPL_REPLACE_LIMIT > 0 ? $this->STPL_REPLACE_LIMIT : -1);
+		return preg_replace(
+			array_keys($this->_STPL_PATTERNS)
+			, str_replace('{tpl_name}', $name.$this->_STPL_EXT, array_values($this->_STPL_PATTERNS))
+			, $string
+			, --$this->STPL_REPLACE_LIMIT > 0 ? $this->STPL_REPLACE_LIMIT : -1
+		);
 	}
 
 	/**
