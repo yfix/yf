@@ -118,7 +118,7 @@ class yf_shop_supplier_panel_upload_images {
 		if (!file_exists($new_path)) {
 			mkdir($new_path, 0777, true);
 		}
-		$real_name = $new_path.'product_'.$id.'.jpg';
+		$real_name = $new_path.'product_'.$id.'_'.$i.'.jpg';
 		$thumb_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->THUMB_SUFFIX.'.jpg';
 		$big_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
 
