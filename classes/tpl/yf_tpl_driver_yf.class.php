@@ -109,17 +109,6 @@ class yf_tpl_driver_yf {
 			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/imse'
 				=> '_class(\'tpl\')->_process_var_filters($replace[\'$1\'][\'$2\'],\'$3\')',
 		);
-		/** @var array @conf_skip Show custom class method output pattern */
-		$this->_PATTERN_EXECUTE   = array(
-			// Examples: {execute(graphics, translate, value = blabla; extra = strtoupper)
-			'/(\{execute\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
-				=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,false)',
-			'/(\{exec_cached\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)(["\']{0,1}\s*\)\})/ie'
-				=> 'main()->_execute(\'$2\',\'$3\',\'$4\',"{tpl_name}",0,true)',
-			// Examples: {block(center_area))   {block(center_area;param1=val1;param2=val2))
-			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/ie'
-				=> 'main()->_execute(\'graphics\',\'_show_block\',\'name=$1;$2\',"{tpl_name}",0,false)',
-		);
 		/** @var array @conf_skip Evaluate custom PHP code pattern */
 		$this->_PATTERN_EVAL	  = array(
 			// Examples: {eval_code(print_r(_class('forum')))}
@@ -361,19 +350,33 @@ class yf_tpl_driver_yf {
 	* Replace '{execute' patterns
 	*/
 	function _process_executes($string, $replace = array(), $name = '', $params = array()) {
-		if (false === strpos($string, '{execute(') || empty($string)) {
+		if (empty($string)) {
 			return $string;
 		}
-// TODO: BUG 01: we need to replace '#' !!ONLY!! inside {execute(...)} statement, not touching other template parts
-		// Replace template vars, marked with '#' sign, before do execute pattern
-#		if (false !== strpos($string, '#') && !empty($replace)) {
-#			$pairs = array();
-#			foreach ((array)$replace as $k => $v) {
-#				$pairs['#'.$k] = $v;
-#			}
-#			$string = str_replace(array_keys($pairs), array_values($pairs), $string);
-#		}
-		return preg_replace(array_keys($this->_PATTERN_EXECUTE), str_replace('{tpl_name}', $name.$this->_STPL_EXT, array_values($this->_PATTERN_EXECUTE)), $string, --$this->STPL_REPLACE_LIMIT > 0 ? $this->STPL_REPLACE_LIMIT : -1);
+		$_this = $this;
+		// Examples: {execute(graphics, translate, value = blabla; extra = strtoupper)
+		if (strpos($string, '{exec') !== false) {
+			$string = preg_replace_callback(
+				'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
+				function($m) use ($replace, $name, $_this) {
+					$use_cache = false;
+					if ($m[1] == 'exec_cached') {
+						$use_cache = true;
+					}
+					return main()->_execute($m[2], $m[3], $m[4], $name. $_this->_STPL_EXT, 0, $use_cache);
+				}
+			, $string);
+		}
+		// Examples: {block(center_area))   {block(center_area;param1=val1;param2=val2))
+		if (strpos($string, '{block(') !== false) {
+			$string = preg_replace_callback(
+				'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i',
+				function($m) use ($replace, $name, $_this) {
+					return main()->_execute('graphics', '_show_block', 'name='.$m[1].';'.$m[2], $name. $_this->_STPL_EXT, 0, $use_cache = false);
+				}
+			, $string);
+		}
+		return $string;
 	}
 
 	/**
