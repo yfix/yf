@@ -12,8 +12,15 @@ class yf_static_pages {
 	/**
 	*/
 	function show() {
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+
 		$sql = 'SELECT * FROM '.db('static_pages');
-		return table($sql)
+		return table($sql, array(
+				'filter' => $_SESSION[$filter_name],
+				'filter_params' => array(
+					'name'	=> 'like',
+				),
+			))
 			->text('name')
 			->btn_edit()
 			->btn_delete()
@@ -188,6 +195,49 @@ class yf_static_pages {
 			'subheader'	=> $subheader ? _prepare_html($subheader) : '',
 		);
 	}
+
+	/**
+	*/
+	function filter_save() {
+		$filter_name = $_GET['object'].'__show_vars';
+		if ($_GET['sub'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+				if (isset($_SESSION[$filter_name][$f])) {
+					unset($_SESSION[$filter_name][$f]);
+				}
+			}
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
+		);
+		$order_fields = array(
+			'name'		=> 'name',
+			'active'	=> 'active',
+		);
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->text('name')
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
+	}
+
 
 	/**
 	*/
