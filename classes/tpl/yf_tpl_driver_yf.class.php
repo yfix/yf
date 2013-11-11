@@ -328,12 +328,17 @@ class yf_tpl_driver_yf {
 			}
 		, $string);
 
+		// Translate some items if needed
+		// Examples: {t("Welcome")}
+		$string = preg_replace_callback(
+			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims',
+			function($m) use ($replace, $name, $_this) {
+				return _class('tpl')->_i18n_wrapper($m[2], $replace);
+			}
+		, $string);
+
 		/** Patterns array for the STPL engine */
 		$STPL_PATTERNS	 = array(
-			// Translate some items if needed
-			// Examples: {t("Welcome")}
-			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/imse'
-				=> '_class(\'tpl\')->_i18n_wrapper(\'$2\', $replace)',
 			// Trims whitespaces, removes
 			// Examples: {cleanup()}some content here{/cleanup}
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/imse'
