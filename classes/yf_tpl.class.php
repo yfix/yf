@@ -915,17 +915,17 @@ class yf_tpl {
 	* Replace paths to images
 	*/
 	function _replace_images_paths ($string = '') {
-		$web_path		= (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH);
-		$images_path	= $web_path. tpl()->TPL_PATH. tpl()->_IMAGES_PATH;
-		// Array of pairs 'match->replace' for str_replace
-		$to_replace = array(
+		$images_path  = (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH). $this->TPL_PATH. $this->_IMAGES_PATH;
+		$uploads_path = $this->MEDIA_PATH. $this->_UPLOADS_PATH;
+
+		$r = array(
 			'"images/'		=> '"'.$images_path,
 			"'images/"		=> "'".$images_path,
-			'"uploads/'		=> '"'.$this->MEDIA_PATH. tpl()->_UPLOADS_PATH,
-			"'uploads/"		=> "'".$this->MEDIA_PATH. tpl()->_UPLOADS_PATH,
-			'src="uploads/'	=> 'src="'.$web_path. tpl()->_UPLOADS_PATH,
+			'src="uploads/'	=> 'src="'.$uploads_path,
+			'"uploads/'		=> '"'.$uploads_path,
+			"'uploads/"		=> "'".$uploads_path,
 		);
-		return str_replace(array_keys($to_replace), array_values($to_replace), $string);
+		return str_replace(array_keys($r), array_values($r), $string);
 	}
 
 	/**
