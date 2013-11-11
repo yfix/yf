@@ -355,31 +355,61 @@ class yf_tpl_driver_yf {
 			}
 		, $string);
 
+		// Display help tooltip inline
+		// Examples: {itip('register.login')}
+		$string = preg_replace_callback(
+			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
+			function($m) use ($replace, $name, $_this) {
+				return _class_safe('graphics')->_show_inline_tip(array('text' => $m[1], 'replace' => $replace));
+			}
+		, $string);
+
+		// Display user level single (inline) error message by its name (keyword)
+		// Examples: {e('login')} or {user_error('name_field')}
+		$string = preg_replace_callback(
+			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims',
+			function($m) {
+				return common()->_show_error_inline($m[2]);
+			}
+		, $string);
+
+		// Advertising
+		// Examples: {ad('AD_ID')}
+		$string = preg_replace_callback(
+			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
+			function($m) {
+				return module_safe('advertising')->_show(array('ad' => $m[1]));
+			}
+		, $string);
+
+		// Url generation with params
+		// Examples: {url(object=home_page;action=test)}
+		$string = preg_replace_callback(
+			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims',
+			function($m) {
+				return _class('tpl')->_generate_url_wrapper($m[1]);
+			}
+		, $string);
+
+		// Examples: {form_row("text","password","New Password")}
+		$string = preg_replace_callback(
+			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims',
+			function($m) use ($replace, $name, $_this) {
+				return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
+			}
+		, $string);
+
+		// Variable filtering like in Smarty/Twig
+		// Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
+		$string = preg_replace_callback(
+			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims',
+			function($m) use ($replace, $name, $_this) {
+				return _class('tpl')->_process_var_filters($replace[$m[1]], $m[2]);
+			}
+		, $string);
+
 		/** Patterns array for the STPL engine */
 		$STPL_PATTERNS	 = array(
-			// Display help tooltip inline
-			// Examples: {itip('register.login')}
-			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-				=> '_class_safe("graphics")->_show_inline_tip(array("text" => "$1", "replace" => $replace))',
-			// Display user level single (inline) error message by its name (keyword)
-			// Examples: {e('login')} or {user_error('name_field')}
-			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/imse'
-				=> 'common()->_show_error_inline(\'$2\')',
-			// Advertising
-			// Examples: {ad('AD_ID')}
-			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-				=> 'module_safe("advertising")->_show(array("ad" => \'$1\'))',
-			// Url generation with params
-			// Examples: {url(object=home_page;action=test)}
-			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/imse'
-				=> '_class(\'tpl\')->_generate_url_wrapper(\'$1\')',
-			// Examples: {form_row("text","password","New Password")}
-			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/imse'
-				=> '_class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\')',
-			// Variable filtering like in Smarty/Twig
-			// Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
-			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/imse'
-				=> '_class(\'tpl\')->_process_var_filters($replace[\'$1\'],\'$2\')',
 			// Second level variables with filters
 			// Examples: {sub1.var1|trim}
 			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/imse'
