@@ -553,12 +553,14 @@ class yf_tpl_driver_yf {
 			$non_array_replace[$k5] = $v5;
 		}
 		foreach ((array)$m[0] as $match_id => $matched_string) {
-			$output		 = '';
-			$sub_array	  = array();
-			$sub_replace	= array();
-			$key_to_cycle   = trim($m[1][$match_id]);
-			$sub_template   = $m[2][$match_id];
-			$sub_template   = str_replace('#.', $key_to_cycle.'.', $sub_template);
+			$output       = '';
+			$sub_array    = array();
+			$sub_replace  = array();
+			$key_to_cycle = trim($m[1][$match_id]);
+			$sub_template = $m[2][$match_id];
+			$sub_template = str_replace('#.', $key_to_cycle.'.', $sub_template);
+			$var_filter_pattern = '/\{('.preg_quote($key_to_cycle, '/').')\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims'; // Example: {testarray.key1|trim}
+			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
 			// Needed here for graceful quick exit from cycle
 			$a_for[$matched_string] = '';
 			if (empty($key_to_cycle)) {
@@ -611,19 +613,23 @@ class yf_tpl_driver_yf {
 					} else {
 						$cur_output = str_replace(array('{_key}', '{_val}') , array($sub_k, $sub_v), $cur_output);
 					}
+					// Apply var filtering pattern, in case if such constructions found on the upper level
+					if ($has_var_filters) {
+						$cur_output = preg_replace($var_filter_pattern.'e', '_class(\'tpl\')->_process_var_filters($replace[\'$1\'][$sub_k][\'$2\'],\'$3\')', $cur_output);
+					}
 					// Prepare items for condition
 					$tmp_array = $non_array_replace;
 					foreach ((array)$sub_v as $k6 => $v6) {
 						$tmp_array[$key_to_cycle.'.'.$k6] = $v6;
 					}
-					$tmp_array['_num']	= $_i;
-					$tmp_array['_total']= $_total;
-					$tmp_array['_first']= $_is_first;
-					$tmp_array['_last']	= $_is_last;
-					$tmp_array['_even']	= $_is_odd;
-					$tmp_array['_odd']	= $_is_even;
-					$tmp_array['_key']	= $sub_k;
-					$tmp_array['_val']	= is_array($sub_v) ? strval($sub_v) : $sub_v;
+					$tmp_array['_num']   = $_i;
+					$tmp_array['_total'] = $_total;
+					$tmp_array['_first'] = $_is_first;
+					$tmp_array['_last']  = $_is_last;
+					$tmp_array['_even']  = $_is_odd;
+					$tmp_array['_odd']   = $_is_even;
+					$tmp_array['_key']   = $sub_k;
+					$tmp_array['_val']   = is_array($sub_v) ? strval($sub_v) : $sub_v;
 					// Try to process conditions in every cycle
 					$output .= $this->_process_conditions($cur_output, $tmp_array, $stpl_name);
 				}
