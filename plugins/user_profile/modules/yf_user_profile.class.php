@@ -51,7 +51,7 @@ class yf_user_profile extends yf_module {
 			$this->_get_user_info();
 		}
 		// Init friends module
-		$this->FRIENDS_OBJ = main()->init_class("friends");
+		$this->FRIENDS_OBJ = module("friends");
 		// Params for the comments
 		$this->_comments_params = array(
 			"return_action" => "show",
@@ -299,31 +299,31 @@ class yf_user_profile extends yf_module {
 
 	// Show user forum posts
 	function _show_forum_posts () {
-		$OBJ_FORUM = main()->init_class("forum");
+		$OBJ_FORUM = module("forum");
 		return $OBJ_FORUM->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_FORUM_POSTS);
 	}
 
 	// Show user forum posts
 	function _show_articles () {
-		$OBJ_ARTICLE = main()->init_class("articles");
+		$OBJ_ARTICLE = module("articles");
 		return $OBJ_ARTICLE->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_ARTICLES);
 	}
 
 	// Show user blog posts
 	function _show_blog_posts () {
-		$OBJ_BLOG = main()->init_class("blog");
+		$OBJ_BLOG = module("blog");
 		return $OBJ_BLOG->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_BLOG_POSTS);
 	}
 
 	// Show user blog posts
 	function _show_gallery_photos () {
-		$OBJ_GALLERY = main()->init_class("gallery");
+		$OBJ_GALLERY = module("gallery");
 		return $OBJ_GALLERY->_for_user_profile(user($this->_user_info["id"], "short"), $this->MAX_SHOW_GALLERY_PHOTO);
 	}
 
 	// Show user comments
 	function _show_comments () {
-		$COMMENTS_OBJ = main()->init_class("comments");
+		$COMMENTS_OBJ = module("comments");
 		return $COMMENTS_OBJ->_for_user_profile($this->_user_info["id"], $this->MAX_SHOW_COMMENTS);
 	}
 
@@ -339,7 +339,7 @@ class yf_user_profile extends yf_module {
 
 	// Show user reputation info
 	function _show_reput_info () {
-		$REPUT_OBJ = main()->init_class("reputation");
+		$REPUT_OBJ = module("reputation");
 		if (is_object($REPUT_OBJ)) {
 			$REPUT_INFO			= $REPUT_OBJ->_get_user_reput_info($this->_user_info["id"]);
 			$reput_stars		= $REPUT_OBJ->_show_reput_stars($REPUT_INFO["points"]);
@@ -359,7 +359,7 @@ class yf_user_profile extends yf_module {
 
 	// Show user interests
 	function _show_interests () {
-		$INTERESTS_OBJ = main()->init_class("interests");
+		$INTERESTS_OBJ = module("interests");
 		if (!is_object($INTERESTS_OBJ)) {
 			return "";
 		}
@@ -449,7 +449,7 @@ class yf_user_profile extends yf_module {
 					$is_ignored			= db()->query_num_rows("SELECT 1 FROM ".db('ignore_list')." WHERE user_id=".intval(main()->USER_ID)." AND target_user_id=".intval($this->_user_info["id"]));
 				}
 				// Check friendship
-				$FRIENDS_OBJ		= main()->init_class("friends");
+				$FRIENDS_OBJ		= module("friends");
 				$is_a_friend		= is_object($FRIENDS_OBJ) ? $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $this->_user_info["id"]) : -1;
 				if (!empty($totals["try_friends"])) {
 					$is_friend_of		= $FRIENDS_OBJ->_is_a_friend($this->_user_info["id"], main()->USER_ID);
@@ -461,7 +461,7 @@ class yf_user_profile extends yf_module {
 			// Interests
 			$totals["interests"] = 0;
 			if (!empty($totals["try_interests"])) {
-				$INTERESTS_OBJ = main()->init_class("interests");
+				$INTERESTS_OBJ = module("interests");
 				if (is_object($INTERESTS_OBJ)) {
 					$user_interests = $INTERESTS_OBJ->_get_for_user_id($user_id);
 					if (!empty($user_interests) && is_array($user_interests)) {
@@ -471,7 +471,7 @@ class yf_user_profile extends yf_module {
 			}
 			// Process user reputation
 			$reput_text = "";
-			$REPUT_OBJ = main()->init_class("reputation");
+			$REPUT_OBJ = module("reputation");
 			if (is_object($REPUT_OBJ)) {
 				$reput_info = array(
 					"points"	=> $totals["reput_points"],
