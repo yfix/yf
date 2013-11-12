@@ -712,7 +712,10 @@ class yf_form2 {
 			$desc = ucfirst(str_replace('_', ' ', $name));
 		}
 		$extra['type'] = 'button';
-		$extra['value'] = $desc;
+		if (!isset($extra['value'])) {
+			$extra['value'] = $desc;
+		}
+		$extra['value'] = t($extra['value']);
 		if (!$extra['class']) {
 			$extra['class'] = 'btn';
 		}
