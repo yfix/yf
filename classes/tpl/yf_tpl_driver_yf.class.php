@@ -308,6 +308,8 @@ class yf_tpl_driver_yf {
 	* Replace standard patterns
 	*/
 	function _replace_std_patterns($string, $name = '', $replace = array(), $params = array()) {
+		$_this = $this;
+
 		// Insert constant here (cutoff for eval_code). Examples: {const("SITE_NAME")}
 		$string = preg_replace_callback('/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i', function($m) {
 			return eval('return '.$m[1].';');
@@ -319,8 +321,8 @@ class yf_tpl_driver_yf {
 		}, $string);
 
 		// Translate some items if needed. Examples: {t("Welcome")}
-		$string = preg_replace_callback('/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name) {
-			return _class('tpl')->_i18n_wrapper($m[2], $replace);
+		$string = preg_replace_callback('/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name, $_this) {
+			return $_this->tpl->_i18n_wrapper($m[2], $replace);
 		}, $string);
 
 		// Trims whitespaces, removes. Examples: {cleanup()}some content here{/cleanup}
@@ -349,8 +351,8 @@ class yf_tpl_driver_yf {
 		}, $string);
 
 		// Url generation with params. Examples: {url(object=home_page;action=test)}
-		$string = preg_replace_callback('/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) {
-			return _class('tpl')->_generate_url_wrapper($m[1]);
+		$string = preg_replace_callback('/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
+			return $_this->tpl->_generate_url_wrapper($m[1]);
 		}, $string);
 
 		// Form item/row. Examples: {form_row("text","password","New Password")}
@@ -361,19 +363,19 @@ class yf_tpl_driver_yf {
 		, $string);
 
 		// Variable filtering like in Smarty/Twig. Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
-		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name) {
-			return _class('tpl')->_process_var_filters($replace[$m[1]], $m[2]);
+		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name, $_this) {
+			return $_this->tpl->_process_var_filters($replace[$m[1]], $m[2]);
 		}, $string);
 
 		// Second level variables with filters. Examples: {sub1.var1|trim}
-		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name) {
-			return _class('tpl')->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
+		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name, $_this) {
+			return $_this->tpl->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
 		}, $string);
 
 		// Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
 		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
 			$string = preg_replace_callback('/(\{eval_code\()([^\}]+?)(\)\})/i', function($m) {
-				return main()->_eval_code($m[2], 0);
+				return eval('return '.$m[2].' ;');
 			}, $string);
 		}
 		if (DEBUG_MODE) {
@@ -383,8 +385,8 @@ class yf_tpl_driver_yf {
 			}, $string);
 
 			// Evaluate custom PHP code pattern special for the DEBUG_MODE. Examples: {_debug_stpl_vars()}
-			$string = preg_replace_callback('/(\{_debug_get_vars\(\)\})/i', function($m) use ($string) {
-				return _class('tpl')->_debug_get_vars($string);
+			$string = preg_replace_callback('/(\{_debug_get_vars\(\)\})/i', function($m) use ($string, $_this) {
+				return $_this->tpl->_debug_get_vars($string);
 			}, $string);
 		}
 		return $string;
