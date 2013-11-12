@@ -39,7 +39,6 @@ class yf_manage_shop_product_edit{
 				// Image upload
 				if (!empty($_FILES)) {
 					module("manage_shop")->_product_image_upload($_GET['id']);
-					$sql_array['image'] = 1;
 					module("manage_shop")->_product_images_add_revision($_GET['id']);
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, "id=".$_GET["id"]);
@@ -81,39 +80,44 @@ class yf_manage_shop_product_edit{
 			return js_redirect("./?object=manage_shop&action=products");
 		}
 		
-		$dirs = sprintf("%06s",$product_info["id"]);
-		$dir2 = substr($dirs,-3,3);
-		$dir1 = substr($dirs,-6,3);
-		$mpath = $dir1."/".$dir2."/";
-		$image_files = _class('dir')->scan_dir(
-			module("manage_shop")->products_img_dir.$mpath, 
-			true, 
-#				"/".$product_info["url"]."_".$product_info["id"].".+?_small\.jpg"."/"
-			"/product_".$product_info["id"].".+?_thumb\.jpg"."/"
+		$image_ids = array();			
+		$R = db()->query("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`='".intval($product_info['id'])."' ORDER BY `is_default` DESC");
+		while ($A = db()->fetch_assoc($R)) {
+			$image_ids[] = $A;
+		}
+		
+		// Make 3-level dir path
+		$d = sprintf("%09s", $product_info['id']);
+		$replace = array(
+			'{subdir1}' => substr($d, 0, -6),
+			'{subdir2}' => substr($d, -6, 3),
+			'{subdir3}' => substr($d, -3, 3),
 		);
-#			$reg = "/".$product_info["url"]."_".$product_info["id"]."_(?P<content>[\d]+)_small\.jpg/";
-		$reg = "/product_".$product_info["id"]."_(?P<content>[\d]+)_thumb\.jpg/";
-		sort($image_files);
-		foreach((array)$image_files as $filepath) {
-			preg_match($reg, $filepath, $rezult);
-			$i =  $rezult["content"];
+		$img_path = str_replace(array_keys($replace), array_values($replace), "uploads/shop/products/{subdir2}/{subdir3}/");
+		
+		$base_url = WEB_PATH;
+		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
+		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
 
-			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&key=".$i;
-#				$thumb_path_temp = module("manage_shop")->products_img_webdir.$mpath. $product_info["url"]."_".$product_info["id"]."_".$i.module("manage_shop")->THUMB_SUFFIX.".jpg";
-			$thumb_path_temp = module("manage_shop")->products_img_webdir.$mpath. "product_".$product_info["id"]."_".$i. module("manage_shop")->THUMB_SUFFIX.".jpg";
-#				$img_path = module("manage_shop")->products_img_webdir. $mpath. $product_info["url"]."_".$product_info["id"]."_".$i.module("manage_shop")->FULL_IMG_SUFFIX.".jpg";
-			$img_path = module("manage_shop")->products_img_webdir. $mpath. "product_".$product_info["id"]."_".$i. module("manage_shop")->FULL_IMG_SUFFIX.".jpg";
+		$image_files = array();
+		foreach ($image_ids as $A) $image_files[] = array(
+			'id' => $A['id'],
+			'url' => $base_url . $img_path . "product_" . $product_info['id'] . "_" . $A['id'],
+		);
+		foreach((array)$image_files as $A) {
+			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&key=".$A['id'];
+			$thumb_path = $A['url']."_thumb.jpg";
+			$img_path = $A['url']."_big.jpg";
 
 			$replace2 = array(
 				"img_path" 		=> $img_path,
-				"thumb_path"	=> $thumb_path_temp,
+				"thumb_path"	=> $thumb_path,
 				"del_url" 		=> $product_image_delete_url,
-				"name"			=> $product_info["url"],
-				"image_key"		=> $i,
+				"image_key"		=> $A['id'],
 			);
 			$items .= tpl()->parse("manage_shop/image_items", $replace2);
 		}
-	
+
 		// 1-st type of assigning attributes
 		$fields = module("manage_shop")->_attributes_html($_GET["id"]);
 		// 2-nd type of assigning attributes (select boxes)

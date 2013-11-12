@@ -5,45 +5,17 @@ class yf_manage_shop_product_images{
 	*/
 	function product_image_delete () {
 		$_GET["id"] = intval($_GET["id"]);
+		$A = db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." && `id`=".intval($_GET['key']));
+		if (count($A) == 0) return 'Image not found';
+		module("shop_supplier_panel")->_product_image_delete($_GET["id"], $_GET["key"]);
+		
+		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
 		module("shop_supplier_panel")->_product_image_delete($_GET["id"], $_GET["key"]);
 		module("manage_shop")->_product_images_add_revision($_GET['id']);		
 		return js_redirect($_SERVER["HTTP_REFERER"]);
-	}
-
-	/**
-	*/
-	function _product_images_rename($id, $k, $mpath){
-		$image_files = _class('dir')->scan_dir(
-			module("manage_shop")->products_img_dir.$mpath, 
-			true, 
-			"/product_".$id.".+?_thumb\.jpg"."/"
-		);
-		$reg = "/product_".$id."_(?P<content>[\d]+)_thumb\.jpg/";
-		sort($image_files);
-		foreach((array)$image_files as $filepath) {
-			preg_match($reg, $filepath, $rezult);
-			$i[] =  $rezult["content"];
-		}
-		$max_key = max($i);
-		if($max_key <= $k){
-			return false;
-		}
-		$img_folder = module("manage_shop")->products_img_dir. $mpath;
-
-		$thumb = $img_folder."/product_".$id."_".$max_key."_thumb.jpg";
-		$big = $img_folder."/product_".$id."_".$max_key."_big.jpg";
-		$deleted_thumb = $img_folder."/product_".$id."_".$k."_thumb.jpg";
-		$deleted_big = $img_folder."/product_".$id."_".$k."_big.jpg";
-		if(file_exists($thumb)){
-			rename($thumb, $deleted_thumb);
-		}
-		if(file_exists($big)){
-			rename($big, $deleted_big);
-		}
-		return true;
 	}
 
 	/**
@@ -121,30 +93,18 @@ class yf_manage_shop_product_images{
 		$dir2 = substr($dirs,-3,3);
 		$dir1 = substr($dirs,-6,3);
 		$mpath = $dir1."/".$dir2."/";
+
 		$image_files = _class('dir')->scan_dir(
 			module("manage_shop")->products_img_dir. $mpath,
 			true,
-#			"/".$name."_".$id."_".$k.".+?jpg"."/"
 			"/product_".$id."_".$k.".+?jpg"."/"
 		);
 		foreach((array)$image_files as $filepath) {
 			unlink($filepath);
 		}
-
-		$image_files = _class('dir')->scan_dir(
-			module("manage_shop")->products_img_dir. $mpath, 
-			true, 
-#			"/".$name."_".$id.".+?.jpg"."/"
-			"/product_".$id.".+?.jpg"."/"
-		);
-		if (!$image_files) {
-			$sql_array = array(
-				"image"	=> 0,
-			);
-			db()->UPDATE('shop_products', $sql_array, "id=".$_GET["id"]); 
-			common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
-		}
-		$this->_product_images_rename($id, $k, $mpath);
+		db()->query("DELETE FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." AND `id`=".intval($_GET['key']));
+		common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
+		
 		return true;
 	}
 
@@ -161,7 +121,7 @@ class yf_manage_shop_product_images{
 
 	/**
 	*/
-	function _product_image_upload ($product_id) {
+	function _product_image_upload ($product_id) {		
 		$products_images_dir = module("manage_shop")->products_img_dir;
 		$i = 1;
 		
@@ -177,11 +137,14 @@ class yf_manage_shop_product_images{
 
 		$url = str_replace(array_keys($replace), array_values($replace), $url);
 		$clean_image_url = str_replace(array_keys($replace), array_values($replace), $clean_image_url);
-		while(file_exists(PROJECT_PATH. str_replace('%i', $i, str_replace('%s','big',$url)))) {
-			$i++;
-		}
 		
-		foreach ((array)$_FILES['image'] ['tmp_name'] as $k => $v) {
+		foreach ((array)$_FILES['image'] ['tmp_name'] as $v) {
+			db()->INSERT(db('shop_product_images'), array(
+				'product_id' => $product_id,
+				'date_uploaded' => $_SERVER['REQUEST_TIME'],
+			));
+			$i = db()->INSERT_ID();
+			
 			$img_properties = getimagesize($v);
 			if (empty($img_properties) || !$product_id) {
 				return false;
@@ -194,8 +157,6 @@ class yf_manage_shop_product_images{
 			common()->make_thumb($v, $img_path, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y);
 			common()->make_thumb($v, $img_path_thumb, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y, $watermark_path);
 			common()->make_thumb($v, $img_path_big, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_path);
-			
-			$i++;
 		} 
 		return $i;
 	}	

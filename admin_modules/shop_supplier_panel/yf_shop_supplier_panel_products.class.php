@@ -69,7 +69,6 @@ class yf_shop_supplier_panel_products {
 				);
 				if (!empty($_FILES)) {
 					module("shop_supplier_panel")->_product_image_upload($_GET['id']);
-					$sql_array['image'] = 1;
 					module("manage_shop")->_product_images_add_revision($_GET['id']);
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, 'id='.$_GET['id']);
@@ -100,39 +99,46 @@ class yf_shop_supplier_panel_products {
 			module("manage_shop")->_product_add_revision('edit',$_GET['id']);
 			return js_redirect('./?object='.$_GET['object'].'&action=products');
 		}
-		if ($product_info['image'] == 0) {
-			$thumb_path = '';
-		} else {
-			$dirs = sprintf('%06s',$product_info['id']);
-			$dir2 = substr($dirs,-3,3);
-			$dir1 = substr($dirs,-6,3);
-			$mpath = $dir1.'/'.$dir2.'/';
-			$image_files = _class('dir')->scan_dir(
-				module('manage_shop')->products_img_dir. $mpath, 
-				true, 
-				'/product_'.$product_info['id'].'.+?_(thumb)\.jpg'.'/'
+
+		$image_ids = array();			
+		$R = db()->query("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`='".intval($product_info['id'])."' ORDER BY `is_default` DESC");
+		while ($A = db()->fetch_assoc($R)) {
+			$image_ids[] = $A;
+		}
+		
+		// Make 3-level dir path
+		$d = sprintf("%09s", $product_info['id']);
+		$replace = array(
+			'{subdir1}' => substr($d, 0, -6),
+			'{subdir2}' => substr($d, -6, 3),
+			'{subdir3}' => substr($d, -3, 3),
+		);
+		$img_path = str_replace(array_keys($replace), array_values($replace), "uploads/shop/products/{subdir2}/{subdir3}/");
+		
+		$base_url = WEB_PATH;
+		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
+		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
+
+		$image_files = array();
+		foreach ($image_ids as $A) $image_files[] = array(
+			'id' => $A['id'],
+			'url' => $base_url . $img_path . "product_" . $product_info['id'] . "_" . $A['id'],
+		);
+		foreach((array)$image_files as $A) {
+			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&key=".$A['id'];
+			$thumb_path = $A['url']."_thumb.jpg";
+			$img_path = $A['url']."_big.jpg";
+
+			$replace2 = array(
+				"img_path" 		=> $img_path,
+				"thumb_path"	=> $thumb_path,
+				"del_url" 		=> $product_image_delete_url,
+				"image_key"		=> $A['id'],
 			);
-			$reg = '/product_'.$product_info['id'].'_(?P<content>[\d]+)_(thumb)\.jpg/';
-			sort($image_files);
-			foreach((array)$image_files as $filepath) {
-				preg_match($reg, $filepath, $rezult);
-				$i =  $rezult['content'];
-
-				$product_image_delete_url ='./?object='.$_GET['object'].'&action=product_image_delete&id='.$product_info['id'].'&key='.$i;
-
-				$thumb_path_temp = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->THUMB_SUFFIX.'.jpg';
-				$img_path = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
-
-				$replace2 = array(
-					'img_path' 		=> $img_path,
-					'thumb_path'	=> $thumb_path_temp,
-					'del_url' 		=> $product_image_delete_url,
-					'name'			=> $product_info['url'],
-					'image_key'		=> $i,
-				);
-				$items .= tpl()->parse('manage_shop/image_items', $replace2);
-			}
-		}	
+			$items .= tpl()->parse("manage_shop/image_items", $replace2);
+		}
+		
+		
 		$sql1 = 'SELECT category_id FROM '.db('shop_product_to_category').' WHERE product_id = '. $_GET['id'];
 		$products = db()->query($sql1);
 		while ($A = db()->fetch_assoc($products)) {
@@ -204,7 +210,6 @@ class yf_shop_supplier_panel_products {
 				// Image upload
 				if (!empty($_FILES)) {
 					module("shop_supplier_panel")->_product_image_upload($product_id);
-					$sql_array['image'] = 1;
 					module("manage_shop")->_product_images_add_revision($product_id);					
 				} 
 				common()->admin_wall_add(array('shop product added: '.$_POST['name'], $product_id));
