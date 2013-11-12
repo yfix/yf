@@ -309,6 +309,9 @@ class yf_utils {
 			$date_format = '%I:%M %p';
 		} elseif ($type == 'for_profile') {
 			$date_format = '%B %d, %Y';
+		// Custom format
+		} elseif (!empty($type)) {
+			$date_format = $type;
 		} else {
 			$date_format = '%Y-%m-%d %H:%M:%S';
 		}
