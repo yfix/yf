@@ -33,11 +33,11 @@ class yf_module {
 	/**
 	*/
 	function _load_cur_user_info () {
-		// Current user ID and group
-		$this->USER_ID		= &main()->USER_ID;
-		$this->USER_GROUP	= &main()->USER_GROUP;
+		$main = main();
+		$this->USER_ID		= &$main->USER_ID;
+		$this->USER_GROUP	= &$main->USER_GROUP;
 		if ($this->USER_ID) {
-			$this->_user_info = &main()->USER_INFO;
+			$this->_user_info = &$main->USER_INFO;
 			if (!$this->_user_info) {
 				$this->_user_info = user($this->USER_ID);
 			}
@@ -47,7 +47,7 @@ class yf_module {
 	/**
 	*/
 	function _view_comments ($params = array()) {
-		return module_safe('comments')->_show_for_object( (array)$this->_comments_params + (array)$params );
+		return module_safe('comments')->_show_for_object( (array)$params + (array)$this->_comments_params );
 	}
 
 	/**
@@ -56,7 +56,7 @@ class yf_module {
 		if (!is_array($params)) {
 			$params = array('objects_ids' => $params);
 		}
-		return module_safe('comments')->_get_num_comments( (array)$this->_comments_params, (array)$params );
+		return module_safe('comments')->_get_num_comments( (array)$params + (array)$this->_comments_params );
 	}
 
 	/**
