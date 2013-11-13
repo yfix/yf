@@ -13,10 +13,6 @@ class yf_send_mail {
 	public $_KNOWN_MAILERS			= array(
 		'simple',
 		'internal',
-		'pear',
-		'xpm2',
-		'xpm4',
-		'swift',
 		'phpmailer',
 	);
 	/** @var string Select mailer driver to use */
@@ -120,7 +116,7 @@ class yf_send_mail {
 			$email_to = $this->DEBUG_TEST_ADDRESS;
 		}
 		// Load specific SMTP options (only for 'pear', 'xpm2', 'xpm4')
-		if (in_array($this->USE_MAILER, array('pear','xpm2','xpm4','swift','phpmailer'))) {
+		if (in_array($this->USE_MAILER, array('phpmailer'))) {
 			// Try to get specific SMTP settings
 			$this->SMTP_OPTIONS = $this->_process_smtp_config($email_to);
 		}
@@ -132,120 +128,9 @@ class yf_send_mail {
 			$email_from = $this->SMTP_OPTIONS['from'];
 			$name_from	= $email_from;
 		}
-		// Try to use PEAR mailer
-		if ($this->USE_MAILER == 'pear') {
-
-			$options		= array(
-				'to_email'		=> $email_to,
-				'to_real_name'	=> $name_to,
-				'from_email'	=> $email_from,
-				'from_real_name'=> $name_from,
-				'subject'		=> $subject,
-				'body'			=> $html,
-				'backend'		=> in_array($pear_mailer_backend, $this->PEAR_MAILER_BACKENDS) ? $pear_mailer_backend : 'mail',
-			);
-			// Force mta options
-			if (!empty($force_mta_opts) && is_array($force_mta_opts)) {
-				$options['mta_opts'] = $force_mta_opts;
-			}
-			$result = _class('pear_emailer', COMMON_LIB)->send($options);
-
-		// Try to use XPM2 mailer
-		} elseif ($this->USE_MAILER == 'xpm2') {
-
-			// path to smtp.php from XPM2 package
-			require_once YF_PATH.'libs/xpm2/smtp.php';
-			// Process options
-			$mailer = new SMTP;
-			if (!empty($this->SMTP_OPTIONS['smtp_host'])) {
-				$mailer->Delivery('relay');
-				$mailer->Relay(
-					$this->SMTP_OPTIONS['smtp_host']
-					, !empty($this->SMTP_OPTIONS['smtp_user_name']) ? $this->SMTP_OPTIONS['smtp_user_name'] : false
-					, !empty($this->SMTP_OPTIONS['smtp_password']) ? $this->SMTP_OPTIONS['smtp_password'] : false
-					, !empty($this->SMTP_OPTIONS['smtp_port']) ? intval($this->SMTP_OPTIONS['smtp_port']) : 25
-					, !empty($this->SMTP_OPTIONS['smtp_auth']) ? $this->SMTP_OPTIONS['smtp_auth'] : 'autodetect'
-					, !empty($this->SMTP_OPTIONS['smtp_secure']) ? $this->SMTP_OPTIONS['smtp_secure'] : false
-				);
-			}
-			// Set different 'Reply-To' field if needed
-			if (defined('SITE_ADMIN_EMAIL')) {
-				$mailer->From(SITE_ADMIN_EMAIL, 'noreply');
-				$mailer->addheader('Reply-To', $name_from.'<'.$email_from.'>', 'utf-8', '');
-			} else {
-				$mailer->From($email_from, $name_from);
-			}
-			$mailer->AddTo($email_to, $name_to);
-			$mailer->Text($text);
-			$mailer->Html($html);
-			if ($this->ALLOW_ATTACHMENTS) {
-				foreach ((array)$attaches as $cur_file) {
-					$mailer->AttachFile($cur_file);
-				}
-			}
-			// Go!
-			$result = $mailer->Send($subject, !empty($charset) ? $charset : 'utf-8');
-
-		// Try to use XPM4 mailer
-		} elseif ($this->USE_MAILER == 'xpm4') {
-
-			require_once YF_PATH.'libs/xpm4/MAIL.php';
-			// Prepare
-			$mailer = new MAIL;
-			// Set different 'Reply-To' field if needed
-			if (defined('SITE_ADMIN_EMAIL')) {
-				$mailer->From(SITE_ADMIN_EMAIL, 'noreply');
-				$mailer->addheader('Reply-To', 'noreply'.'<'.SITE_ADMIN_EMAIL.'>', 'utf-8', '');
-			} else {
-				$mailer->From($email_from, $name_from);
-			}
-			$mailer->AddTo($email_to, $name_to);
-			$mailer->Text($text);
-			$mailer->Html($html);
-			$mailer->Subject($subject);
-			if ($this->ALLOW_ATTACHMENTS) {
-				foreach ((array)$attaches as $cur_file) {
-					$mailer->AttachFile($cur_file);
-				}
-			}
-			// make sure you have OpenSSL module (extension) enable on your php configuration
-			$connection = $mailer->Connect(
-				$this->SMTP_OPTIONS['smtp_host']
-				, !empty($this->SMTP_OPTIONS['smtp_port']) ? intval($this->SMTP_OPTIONS['smtp_port']) : 25
-				, !empty($this->SMTP_OPTIONS['smtp_user_name']) ? $this->SMTP_OPTIONS['smtp_user_name'] : false
-				, !empty($this->SMTP_OPTIONS['smtp_password']) ? $this->SMTP_OPTIONS['smtp_password'] : false
-				, !empty($this->SMTP_OPTIONS['smtp_secure']) ? $this->SMTP_OPTIONS['smtp_secure'] : false
-			);
-			if (is_resource($connection)) {
-				$result = $mailer->Send($c);
-				$mailer->Disconnect();
-			} else {
-				$error_message .= 'Cannot connect to SMTP server, Reason: <br />';
-				$error_message .= print_r($mailer->Result, 1);
-			}
-
-		// Try to use Swift mailer
-		} elseif ($this->USE_MAILER == 'swift') {
-
-			require_once YF_PATH. '/swift/lib/Swift.php';
-			require_once YF_PATH. '/swift/lib/Swift/Connection/SMTP.php';
-
-			$conn = new Swift_Connection_SMTP($this->SMTP_OPTIONS['smtp_host'], $this->SMTP_OPTIONS['smtp_port'], $this->SMTP_OPTIONS['smtp_secure'] == 'tls' ? SWIFT_SMTP_ENC_TLS : false);
-			$conn->setUsername($this->SMTP_OPTIONS['smtp_user_name']);
-			$conn->setPassword($this->SMTP_OPTIONS['smtp_password']);
-
-			$swift	= new Swift($conn);
-			$result = $swift->send(
-				new Swift_Message($subject, $text)
-				, new Swift_Address($email_from, $name_from)
-				, new Swift_Address($email_to, $name_to)
-			);
 
 		// Try to use PHPMailer mailer
-		} elseif ($this->USE_MAILER == 'phpmailer') {
-
-# TODO
-#		set_include_path (YF_PATH.'libs/pear/'. PATH_SEPARATOR. get_include_path());
+		if ($this->USE_MAILER == 'phpmailer') {
 
 			require_once(YF_PATH.'libs/phpmailer/class.phpmailer.php');
 			
@@ -300,7 +185,7 @@ class yf_send_mail {
 				$error_message .= $mail->ErrorInfo;
 			}
 			
-			if(DEBUG_MODE){
+			if (DEBUG_MODE) {
 				echo $error_message;
 			}
 			

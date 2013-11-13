@@ -16,6 +16,7 @@ class table2_new_controls {
 			->text('price')
 			->text('quantity')
 			->date('add_date')
+			->date('add_date', array('format' => '%y-%m-%d %H:%M'))
 			->btn_edit(array('icon' => 'icon-star'))
 			->btn_delete()
 			->btn_clone()
