@@ -15,6 +15,7 @@ class yf_pattern_yf {
 				if (empty($a['action'])) {
 					$a['action'] = 'show';
 				}
+				// Make urls shorter if default action found
 				if ($a['action'] != 'show') {
 					$u[] = $a['action'];
 				}
@@ -53,6 +54,8 @@ class yf_pattern_yf {
 			$s = 'object='.$url[0].'&action='.$url[1];
 		} elseif (!empty($url[0])) {
 			$s = 'object='.$url[0].'&action=show';
+		} elseif (defined('SITE_DEFAULT_PAGE')) {
+			$s = ltrim(SITE_DEFAULT_PAGE, './');
 		} else {
 			$s = 'object=home_page&action=show';
 		}
@@ -65,6 +68,8 @@ class yf_pattern_yf {
 				$arr[$k] = $v;
 			}
 		}
+		$arr['object'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['object']));
+		$arr['action'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['action']));
 		return $arr;
 	}
 }
