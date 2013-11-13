@@ -13,15 +13,16 @@ class yf_articles_filter {
 	* Constructor
 	*/
 	function _init () {
-		if (module('articles')->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
+#		if (module('articles')->USE_FILTER) {
+#			$this->_prepare_filter_data();
+#		}
 	}
 
 	/**
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql () {
+/*
 		if (!module('articles')->USE_FILTER) return "";
 		$SF = &$_SESSION[$this->_filter_name];
 		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
@@ -69,6 +70,7 @@ class yf_articles_filter {
 		if ($SF["sort_by"])		$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
 		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
 		return substr($sql, 0, -3);
+*/
 	}
 
 	/**
@@ -82,6 +84,7 @@ class yf_articles_filter {
 			"search",
 		))) return "";
 */
+/*
 		// Filter session array name
 		$this->_filter_name	= 'articles'."_filter";
 		// Connect common used arrays
@@ -130,12 +133,14 @@ class yf_articles_filter {
 		}
 		$this->_races			= array_merge(array(" " => t("-- All --")), $this->_races);
 		$this->_sex				= array_merge(array(" " => t("-- All --")), $this->_sex);
+*/
 	}
 
 	/**
 	* Session - based filter form stored in $_SESSION[$this->_filter_name][...]
 	*/
 	function _show_filter () {
+/*
 		if (!module('articles')->USE_FILTER) return "";
 		$replace = array(
 			"save_action"	=> "./?object=".'articles'."&action=save_filter".(MAIN_TYPE_ADMIN ? _add_get() : ""),
@@ -149,12 +154,14 @@ class yf_articles_filter {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
 		return tpl()->parse('articles'."/search_filter", $replace);
+*/
 	}
 
 	/**
 	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
+/*
 		if (!module('articles')->USE_FILTER) return "";
 		// Process featured countries
 		if (FEATURED_COUNTRY_SELECT && !empty($_REQUEST["country"]) && substr($_REQUEST["country"], 0, 2) == "f_") {
@@ -166,12 +173,14 @@ class yf_articles_filter {
 		if (!$silent) {
 			js_redirect("./?object=".'articles'."&action=search");
 		}
+*/
 	}
 
 	/**
 	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
+/*
 		if (!module('articles')->USE_FILTER) return "";
 		if (is_array($_SESSION[$this->_filter_name])) {
 			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
@@ -179,6 +188,7 @@ class yf_articles_filter {
 		if (!$silent) {
 			js_redirect("./?object=".'articles'."&action=search");
 		}
+*/
 	}
 
 	/**
