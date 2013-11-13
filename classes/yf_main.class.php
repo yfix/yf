@@ -276,7 +276,7 @@ class yf_main {
 	* Url rewriting engine init and apply if rewrite is enabled
 	*/
     function _do_rewrite() {
-		if ($this->CONSOLE_MODE || !module_conf('tpl', 'REWRITE_MODE') || MAIN_TYPE_ADMIN) {
+		if ($this->CONSOLE_MODE || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
 			return false;
 		}
         $host = $_SERVER['HTTP_HOST'];
