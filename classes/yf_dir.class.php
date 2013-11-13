@@ -596,26 +596,33 @@ class yf_dir {
 	*
 	* @return array of found files
 	*/
-	function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '') {
-		$files = array();
+	function search($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find) {
 		if (!is_array($start_dirs)) {
 			$start_dirs = array($start_dirs);
 		}
+		if (!$pattern_find) {
+			return false;
+		}
+		if (!is_array($pattern_find)) {
+			$pattern_find = array($pattern_find);
+		}
+		$files = array();
 		foreach ((array)$start_dirs as $_dir_name) {
 			foreach ((array)$this->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
 				$files[] = $_file_path;
 			}
 		}
-		if (strlen($pattern_find)) {
-			foreach ((array)$files as $_id => $_file_path) {
-				$contents = file_get_contents($_file_path);
-				if (!preg_match($pattern_find, $contents)) {
-					unset($files[$_id]);
+		$files_matched = array();
+		foreach ((array)$files as $_id => $_file_path) {
+			$contents = file_get_contents($_file_path);
+			foreach ((array)$pattern_find as $p_find) {
+				if (preg_match($p_find, $contents)) {
+					$files_matched[$_id] = $files[$_id];
 					continue;
 				}
 			}
 		}
-		return $files;
+		return $files_matched;
 	}
 
 	/**
@@ -627,10 +634,16 @@ class yf_dir {
 	*
 	* @return array of processed files
 	*/
-	function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find = '', $pattern_replace = null) {
+	function replace($start_dirs, $pattern_include = '', $pattern_exclude = '', $pattern_find, $pattern_replace) {
 		$files = array();
 		if (!is_array($start_dirs)) {
 			$start_dirs = array($start_dirs);
+		}
+		if (!$pattern_find || !isset($pattern_replace)) {
+			return false;
+		}
+		if (!is_array($pattern_find)) {
+			$pattern_find = array($pattern_find => $pattern_replace);
 		}
 		foreach ((array)$start_dirs as $_dir_name) {
 			foreach ((array)$this->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
@@ -639,16 +652,21 @@ class yf_dir {
 		}
 		foreach ((array)$files as $_id => $_file_path) {
 			$contents = file_get_contents($_file_path);
-			if (!$pattern_find || is_null($pattern_replace)) {
+			$what = array();
+			foreach ((array)$pattern_find as $p_find => $p_replace) {
+				if (preg_match($p_find, $contents)) {
+					$what[$p_find] = $p_replace;
+				}
+			}
+			// This needed to not log/touch/override files that have no matches
+			if (!$what) {
 				unset($files[$_id]);
 				continue;
 			}
-			if (!preg_match($pattern_find, $contents)) {
-				unset($files[$_id]);
-				continue;
+			$contents_new = preg_replace(array_keys($what), array_values($what), $contents);
+			if ($contents_new !== $contents) {
+				file_put_contents($_file_path, $contents_new);
 			}
-			$contents = preg_replace($pattern_find, $pattern_replace, $contents);
-			file_put_contents($_file_path, $contents);
 		}
 		return $files;
 	}
