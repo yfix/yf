@@ -13,15 +13,16 @@ class yf_blog_filter {
 	* Constructor
 	*/
 	function _init () {
-		if (module('blog')->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
+#		if (module('blog')->USE_FILTER) {
+#			$this->_prepare_filter_data();
+#		}
 	}
 
 	/**
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql () {
+/*
 		if (!module('blog')->USE_FILTER) {
 			return "";
 		}
@@ -76,12 +77,14 @@ class yf_blog_filter {
 			}
 		}
 		return substr($sql, 0, -3);
+*/
 	}
 
 	/**
 	* Prepare filter data
 	*/
 	function _prepare_filter_data () {
+/*
 		if (!module('blog')->USE_FILTER || !in_array($_GET["action"], array(
 			"clear_filter",
 			"save_filter",
@@ -143,12 +146,14 @@ class yf_blog_filter {
 		}
 		$this->_races			= array_merge(array(" " => t("-- All --")), (array)$this->_races);
 		$this->_sex				= array_merge(array(" " => t("-- All --")), (array)$this->_sex);
+*/
 	}
 
 	/**
 	* Session - based filter form stored in $_SESSION[$this->_filter_name][...]
 	*/
 	function _show_filter () {
+/*
 		if (!module('blog')->USE_FILTER) return "";
 		$replace = array(
 			"save_action"	=> "./?object=".'blog'."&action=save_filter"._add_get(),
@@ -162,12 +167,14 @@ class yf_blog_filter {
 			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
 		}
 		return tpl()->parse('blog'."/search_filter", $replace);
+*/
 	}
 
 	/**
 	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
+/*
 		if (!module('blog')->USE_FILTER) return "";
 		// Process featured countries
 		if (FEATURED_COUNTRY_SELECT && !empty($_POST["country"]) && substr($_POST["country"], 0, 2) == "f_") {
@@ -179,12 +186,14 @@ class yf_blog_filter {
 		if (!$silent) {
 			js_redirect("./?object=".'blog'."&action=show_all_blogs");
 		}
+*/
 	}
 
 	/**
 	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
+/*
 		if (!module('blog')->USE_FILTER) return "";
 		if (is_array($_SESSION[$this->_filter_name])) {
 			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
@@ -192,6 +201,7 @@ class yf_blog_filter {
 		if (!$silent) {
 			js_redirect("./?object=".'blog'."&action=show_all_blogs");
 		}
+*/
 	}
 
 	/**
