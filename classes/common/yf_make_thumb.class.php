@@ -331,7 +331,8 @@ class yf_make_thumb {
 	*/
 	function add_watermark($source_img_path, $watermark_path, $width_orig, $height_orig){
 
-		$img = imagecreatefromjpeg($source_img_path);
+		$img_create_func = 'imagecreatefrom'.$this->ALLOWED_MIME_TYPES[mime_content_type($source_img_path)];
+		$img = $img_create_func($source_img_path);
         $watermark = imagecreatefrompng($watermark_path);
 		imageAlphaBlending($watermark, true);
 		imageSaveAlpha($watermark, true);
@@ -352,7 +353,8 @@ class yf_make_thumb {
         $startwidth = (($width_orig - $watermarkwidth) / 2);
         $startheight = (($height_orig - $watermarkheight) / 2);
         imagecopy($img, $thumb_watermark, $startwidth, $startheight, 0, 0, $watermarkwidth, $watermarkheight);
-		imagejpeg($img, $source_img_path);
+		$img_save_func = 'image'.$this->ALLOWED_MIME_TYPES[mime_content_type($source_img_path)];
+		$img_save_func($img, $source_img_path);
 	}
 
 
@@ -368,6 +370,7 @@ class yf_make_thumb {
 		$result = false;
 		if ($I->set_source($source_file_path)) {
 			$I->set_limits($LIMIT_X, $LIMIT_Y);
+			$I->set_output_type($this->ALLOWED_MIME_TYPES[mime_content_type($source_file_path)]);
 			$I->save($dest_file_path);
 			$result = true;
 		}

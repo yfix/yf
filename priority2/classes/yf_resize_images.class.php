@@ -94,10 +94,10 @@ class yf_resize_images {
 	function set_output_type ($new_type = "") {
 		// If image type is set by number (1,2,3)
 		if (!empty($new_type) && is_numeric($new_type) && isset($this->_avail_types[$new_type])) {
-			$output_type = $this->_avail_types[$new_type];
+			$this->output_type = $this->_avail_types[$new_type];
 		// If type is set by string name (gif, jpeg, png)
 		} elseif (!empty($new_type) && in_array($new_type, $this->_avail_types)) {
-			$output_type = $new_type;
+			$this->output_type = $new_type;
 		// Send error message if type is unknown
 		} else {
 			if (!$this->SILENT_MODE) {
