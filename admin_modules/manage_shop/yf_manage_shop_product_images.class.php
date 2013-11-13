@@ -21,20 +21,8 @@ class yf_manage_shop_product_images{
 		$dir1 = substr($dirs,-6,3);
 		$mpath = $dir1.'/'.$dir2.'/';
 		if(!empty($_POST)){
-			$img_folder = module("manage_shop")->products_img_dir. $mpath;
-
-			$thumb = $img_folder."product_".$product_info['id']."_".$_POST['main_image']."_thumb.jpg";
-			$big = $img_folder."product_".$product_info['id']."_".$_POST['main_image']."_big.jpg";
-			$main_thumb = $img_folder."product_".$product_info['id']."_1_thumb.jpg";
-			$main_big = $img_folder."product_".$product_info['id']."_1_big.jpg";
-			$tmp_thumb = $img_folder."product_tmp".$product_info['id']."_1_thumb.jpg";
-			$tmp_big = $img_folder."product_tmp".$product_info['id']."_1_big.jpg";
-			if(file_exists($main_thumb))	rename($main_thumb, $tmp_thumb);
-			if(file_exists($main_big))	rename($main_big, $tmp_big);
-			if(file_exists($thumb))	rename($thumb, $main_thumb);
-			if(file_exists($big))	rename($big, $main_big);
-			if(file_exists($tmp_thumb))	rename($tmp_thumb, $thumb);
-			if(file_exists($tmp_big))	rename($tmp_big, $big);
+			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='0' WHERE `product_id`=".$product_info['id']);
+			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$_POST['main_image']);
 			module("manage_shop")->_product_images_add_revision($_GET['id']);
 		}else{
 			$image_files = _class('dir')->scan_dir(
@@ -137,6 +125,12 @@ class yf_manage_shop_product_images{
 			common()->make_thumb($v, $img_path, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y);
 			common()->make_thumb($v, $img_path_thumb, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y, $watermark_path);
 			common()->make_thumb($v, $img_path_big, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_path); 
+			
+			$A = db()->query_fetch("SELECT COUNT(*) AS `cnt` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."'");
+			if ($A['cnt'] == 0) {
+				$A = db()->query_fetch("SELECT `id` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."' ORDER BY `id`");
+				db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$A['id']);
+			}			
 		} 
 		return $i;
 	}	
