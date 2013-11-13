@@ -656,6 +656,9 @@ class yf_form2 {
 	* Just hidden input
 	*/
 	function hidden($name, $extra = array(), $replace = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
 			$extra['id'] = $extra['id'] ? $extra['id'] : $extra['name'];
@@ -1159,6 +1162,10 @@ class yf_form2 {
 				}
 			}
 			$value = !isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value;
+			if (!$extra['no_translate']) {
+				$extra['desc'] = t($extra['desc']);
+				$value = t($value);
+			}
 
 			$content = '';
 			if ($extra['link']) {
