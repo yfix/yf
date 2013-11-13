@@ -15,7 +15,7 @@ class yf_pattern_yf {
 				if (empty($a['action'])) {
 					$a['action'] = 'show';
 				}
-				// Make urls shorter if default action found
+				// Make urls shorter if default action found.
 				if ($a['action'] != 'show') {
 					$u[] = $a['action'];
 				}
@@ -48,14 +48,23 @@ class yf_pattern_yf {
 	*/
 	function _parse ($host, $url, $query) {
 		$s = '';
+		// Examples: /login    /logout
 		if ($url[0] == 'login' || $url[0] == 'logout') {
 			$s = 'task='.$url[0];
+		// Examples: /user_profile/5
+		} elseif (!empty($url[0]) && !empty($url[1]) && is_numeric($url[1])) {
+			$s = 'object='.$url[0].'&action=show';
+			$url[2] = $url[1]; // id
+		// Examples: /test/oauth
 		} elseif (!empty($url[0]) && !empty($url[1])) {
 			$s = 'object='.$url[0].'&action='.$url[1];
+		// Examples: /test/  /test
 		} elseif (!empty($url[0])) {
 			$s = 'object='.$url[0].'&action=show';
+		// Examples: define('SITE_DEFAULT_PAGE', './?object=index&action=some_action')
 		} elseif (defined('SITE_DEFAULT_PAGE')) {
 			$s = ltrim(SITE_DEFAULT_PAGE, './');
+		// Default inner url
 		} else {
 			$s = 'object=home_page&action=show';
 		}
@@ -68,6 +77,7 @@ class yf_pattern_yf {
 				$arr[$k] = $v;
 			}
 		}
+		// Filter bad symbols
 		$arr['object'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['object']));
 		$arr['action'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['action']));
 		return $arr;
