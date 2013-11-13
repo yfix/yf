@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Directory handling class
- * 
- * @package		YF
- * @author		YFix Team <yfix.dev@gmail.com>
- * @version		1.0
- */
+* Directory handling class
+* 
+* @package		YF
+* @author		YFix Team <yfix.dev@gmail.com>
+* @version		1.0
+*/
 class yf_dir {
 
 	/** @var bool */
