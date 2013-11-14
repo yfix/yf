@@ -12,11 +12,11 @@ class table2_rotate {
 			->text('quantity')
 			->date('add_date')
 			->date('add_date', array('format' => '%y-%m-%d %H:%M'))
-#			->btn_edit(array('icon' => 'icon-star'))
-#			->btn_delete()
-#			->btn_clone()
-#			->btn_active()
-#			->footer_add()
+			->btn_edit(array('icon' => 'icon-star'))
+			->btn_delete()
+			->btn_clone()
+			->btn_active()
+			->footer_add()
 		;
 	}
 }

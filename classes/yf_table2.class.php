@@ -227,11 +227,33 @@ class yf_table2 {
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
 			}
-			if ($params['rotate']) {
-				$body .= $this->_render_table_rotated($data, $params);
-			} else {
-				$body .= $this->_render_table($data, $params);
+			if ($this->_form_params) {
+				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
 			}
+			foreach ((array)$this->_header_links as $info) {
+				$name = $info['name'];
+				$func = $info['func'];
+				unset($info['func']); // Save resources
+				$body .= $func($info, $params).PHP_EOL;
+			}
+			if ($params['condensed']) {
+				$params['table_class'] .= ' table-condensed';
+			}
+			$body .= '<table class="table table-bordered table-striped table-hover'
+				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
+				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
+			if ($params['rotate']) {
+				$body .= $this->_render_table_contents_rotated($data, $params);
+			} else {
+				$body .= $this->_render_table_contents($data, $params);
+			}
+			if ($params['show_total']) {
+				$params['caption'] .= PHP_EOL.' '.t('Total records:').':'.$total. PHP_EOL;
+			}
+			if ($params['caption']) {
+				$body .= '<caption>'.$params['caption'].'</caption>'.PHP_EOL;
+			}
+			$body .= '</table>'.PHP_EOL;
 		} else {
 			if (isset($params['no_records_html'])) {
 				$body .= $params['no_records_html'].PHP_EOL;
@@ -257,22 +279,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function _render_table($data, $params = array()) {
-		if ($this->_form_params) {
-			$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
-		}
-		foreach ((array)$this->_header_links as $info) {
-			$name = $info['name'];
-			$func = $info['func'];
-			unset($info['func']); // Save resources
-			$body .= $func($info, $params).PHP_EOL;
-		}
-		if ($params['condensed']) {
-			$params['table_class'] .= ' table-condensed';
-		}
-		$body .= '<table class="table table-bordered table-striped table-hover'
-			.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
-			.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
+	function _render_table_contents($data, $params = array()) {
 		if (!$params['no_header']) {
 			$body .= '<thead>'.PHP_EOL;
 			$data1row = current($data);
@@ -355,21 +362,29 @@ class yf_table2 {
 			$body .= '</tr>'.PHP_EOL;
 		}
 		$body .= '</tbody>'.PHP_EOL;
-		if ($params['show_total']) {
-			$params['caption'] .= PHP_EOL.' '.t('Total records:').':'.$total. PHP_EOL;
-		}
-		if ($params['caption']) {
-			$body .= '<caption>'.$params['caption'].'</caption>'.PHP_EOL;
-		}
-		$body .= '</table>'.PHP_EOL;
 		return $body;
 	}
 
 	/**
 	*/
-	function _render_table_rotated($data = array(), $params) {
+	function _render_table_contents_rotated($data = array(), $params) {
 // TODO
-		return $this->_render_table($data, $params);
+		$body .= '<tbody>'.PHP_EOL;
+		foreach ((array)$data as $_id => $row) {
+			$body .= '<tr'.(isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '').'>'.PHP_EOL;
+			foreach ((array)$this->_fields as $info) {
+				$name = $info['name'];
+				if (!isset($row[$name])) {
+					continue;
+				}
+				$func = &$info['func'];
+				$_extra = &$info['extra'];
+				$body .= '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
+			}
+			$body .= '</tr>'.PHP_EOL;
+		}
+		$body .= '</tbody>'.PHP_EOL;
+		return $body;
 	}
 
 	/**
@@ -396,7 +411,7 @@ class yf_table2 {
 	*/
 	function _show_tip($value = '', $extra = array()) {
 // TODO: also add ability to pass tips array into table2() params like 'data', to provide different tips, according to value
-		return _class('graphics')->_show_help_tip(array('tip_id'	=> $value));
+		return _class('graphics')->_show_help_tip(array('tip_id' => $value));
 	}
 
 	/**
