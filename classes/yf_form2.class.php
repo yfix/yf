@@ -355,6 +355,9 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
+		if ($this->_params['dd_mode']) {
+			return $this->_dd_row_html($content, $extra, $replace);
+		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append'] || conf('form_input_no_append')) {
 			$extra['append'] = '';
@@ -389,6 +392,37 @@ class yf_form2 {
 
 		$inline_help_html = ($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '');
 		$inline_tip_html = ($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '');
+
+		if ($extra['only_row_start']) {
+			return $row_start;
+		} elseif ($extra['only_row_end']) {
+			return $row_end;
+		} elseif ($extra['stacked']) {
+			return $before_content_html. $content. PHP_EOL. $after_content_html
+				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
+		} else {
+			// Full variant
+			return $row_start
+					.$before_content_html. $content. PHP_EOL. $after_content_html
+					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
+					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
+				.$row_end;
+		}
+	}
+
+	/**
+	* Generate form row using dl>dt,dd html tags. Useful for user profle and other simple table-like content
+	*/
+	function _dd_row_html($content, $extra = array(), $replace = array()) {
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
+		}
+		$dd_class = $this->_params['dd_class'] ?: 'span6';
+
+		$row_start = '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL;
+		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
+		$row_end = '</dl>'.PHP_EOL;
 
 		if ($extra['only_row_start']) {
 			return $row_start;

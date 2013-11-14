@@ -39,6 +39,33 @@ class yf_html {
 
 	/**
 	*/
-	function dd_table() {
+	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
+		$form = form($replace, array(
+			'legend' => $replace['title'],
+			'no_form' => 1,
+			'dd_mode' => 1,
+			'dd_class' => 'span6',
+		));
+		foreach ($replace as $name => $val) {
+			$func = 'container';
+			$_extra = array(
+				'desc' => $name,
+				'value' => $val,
+			);
+			$ft = $field_types[$name];
+			if (isset($ft)) {
+				if (is_array($ft)) {
+					if (isset($ft['func'])) {
+						$func = $ft['func'];
+					}
+					$_extra = (array)$ft + $_extra;
+				} else {
+					$func = $ft;
+				}
+			}
+			$form->$func($val, $_extra);
+		}
+		$legend = $extra['legend'] ? '<legend>'._prepare_html($extra['legend']).'</legend>' : '';
+		return '<div class="row-fluid">'.$legend.'<div class="span6">'.$form.'</div></div>';
 	}
 }
