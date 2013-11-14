@@ -1,6 +1,6 @@
 <?php
 
-class test_dd {
+class form2_test_dd {
 	function show() {
 		$_GET['id'] = 2;
 		$user_id = intval(main()->USER_ID);
