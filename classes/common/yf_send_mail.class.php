@@ -23,6 +23,7 @@ class yf_send_mail {
 	public $MAIL_DEBUG				= true;
 	/** @var string */
 	public $DEBUG_TEST_ADDRESS		= '';
+	public $DEBUG_TEST_SEND_BULK	= true;
 	/** @var string */
 	public $DEFAULT_CHARSET		= 'windows-1251';
 	/** @var bool */
@@ -118,10 +119,15 @@ class yf_send_mail {
 				$emails = array();
 				$debug_name = '';
 				foreach( $email_to as $name => $email ) {
-					$debug_name .= " ($name - $email)";
+					$debug_name = "(debug: $name - $email)";
+					$emails[ $debug_name ] = $debug_email;
 				}
-				$email_to = $debug_email;
-				$name_to  = "debug -$debug_name";
+				if( $this->DEBUG_TEST_SEND_BULK ) {
+					$email_to = $emails;
+				} else {
+					$email_to = $debug_email;
+					$name_to  = implode( ' - ', array_keys( $emails ) );
+				}
 			} else {
 				$email_to = $debug_email;
 			}
