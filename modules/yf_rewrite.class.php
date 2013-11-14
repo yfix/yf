@@ -97,7 +97,7 @@ class yf_rewrite {
 				$arr_out[] = $k.'='.$v;
 			}
 			if (!empty($arr_out)) $u .= '?'.implode('&',$arr_out);
-			$link = $this->_correct_protocol('http://{$params[host]}/{$u}');
+			$link = $this->_correct_protocol('http://'.$params[host].'/'.$u);
 		}
 		return $link;
 	}
