@@ -35,7 +35,11 @@ class test_dd {
 			'url_owner_profile'	  => $url_owner_profile, 
 		);
 		return _class('html')->dd_table($r, array(
-			'type' => array('label' => 'info'),
+			'type' => array('func' => 'info', 'label' => 'info'),
+			'currency' => array('func' => 'link', 'label' => 'info', 'link' => './?object=currency'),
+			'descr' => '', // Remove row
+			'custom_html' => '', // Remove row
+			'url_owner_profile' => array('func' => ''), // Remove row
 		), array(
 			'legend' => $r['title'],
 		));

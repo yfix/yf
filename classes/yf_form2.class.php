@@ -1187,7 +1187,7 @@ class yf_form2 {
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['desc'] = !$extra['no_label'] && !$_this->_params['no_label'] ? $extra['desc'] : '';
 
-			$value = $r[$extra['name']];
+			$value = $r[$extra['name']] ?: $extra['value'];
 			if (is_array($extra['data'])) {
 				if (isset($extra['data'][$value])) {
 					$value = $extra['data'][$value];
@@ -1242,8 +1242,16 @@ class yf_form2 {
 	/**
 	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
-		$replace[$name] = $name;
-		$extra['link'] = $link;
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (is_array($link)) {
+			$extra += $link;
+			$link = '';
+		}
+		$extra['link'] = $link ?: $extra['link'];
+		$extra['value'] = $name;
 		if (!$extra['desc']) {
 			$extra['no_label'] = 1;
 		}

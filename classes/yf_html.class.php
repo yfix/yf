@@ -63,7 +63,9 @@ class yf_html {
 					$func = $ft;
 				}
 			}
-			$form->$func($val, $_extra);
+			if ($func) {
+				$form->$func($val, $_extra);
+			}
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html($extra['legend']).'</legend>' : '';
 		return '<div class="row-fluid">'.$legend.'<div class="span6">'.$form.'</div></div>';
