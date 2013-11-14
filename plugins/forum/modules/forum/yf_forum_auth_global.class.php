@@ -195,7 +195,7 @@ class yf_forum_auth_global {
 	function _check_user_ban () {
 		// Check if user in ban list
 		if (module('forum')->SETTINGS['USE_BAN_IP_FILTER']) {
-			if (db()->query_num_rows('SELECT ip FROM '.db('bannedip').' WHERE ip=''._es(common()->get_ip()).''')) {
+			if (db()->query_num_rows('SELECT ip FROM '.db('bannedip').' WHERE ip="'._es(common()->get_ip()).'"')) {
 				module('forum')->BAN_REASONS[] = 'Your IP address was found in ban list!';
 			}
 		}
