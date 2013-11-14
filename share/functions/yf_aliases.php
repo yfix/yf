@@ -129,7 +129,7 @@ if (!function_exists('_re')) {
 	function _re($text = '', $error_key = '') { return common()->_raise_error($text, $error_key); }
 }
 if (!function_exists('_ee')) {
-	function _ee() { return common()->_error_exists(); }
+	function _ee($error_key = '') { return common()->_error_exists($error_key); }
 }
 if (!function_exists('user')) {
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->user($user_id, $fields, $params, $return_sql) : false; }
