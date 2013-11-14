@@ -22,7 +22,7 @@ class yf_forum_main_tpl {
 			$error_message = "Your account is banned by the site admin";
 			$error_message .= "For more details <a href=\"./?object=faq&action=view&id=16\">click here</a>";
 			if (!empty(module('forum')->BAN_REASONS)) {
-				$error_message .= "\r\n<br />Reasons: \r\n<br /><li>".implode("<li>", module('forum')->BAN_REASONS);
+				$error_message .= PHP_EOL."<br />Reasons: ".PHP_EOL."<br /><li>".implode("<li>", module('forum')->BAN_REASONS);
 			}
 			$items = module('forum')->_show_error($error_message, 0);
 		}

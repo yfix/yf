@@ -63,7 +63,7 @@ td, p, div
 <body class="page">
 		<?php
 
-		echo "<a href='".process_url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".$topic_info["name"]."</b></a><br/>\r\n";
+		echo "<a href='".process_url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".$topic_info["name"]."</b></a><br/>".PHP_EOL;
 		// Prepare SQL query
 		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$topic_id;
 		$order_by = " ORDER BY created ASC ";
@@ -71,7 +71,7 @@ td, p, div
 
 		if (!empty($pages))
 		  {
-			echo "<br /><small>Pages: ".$pages."</small>\r\n";
+			echo "<br /><small>Pages: ".$pages."</small>".PHP_EOL;
 		  }
 
 		echo "<BR>";

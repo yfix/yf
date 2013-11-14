@@ -416,31 +416,31 @@ class yf_forum_view_forum {
 		}
 		// Process prune days
 		if (isset($this->_filter_prune_days[$F["prune_day"]])) {
-			$sql .= " AND created > ".(time() - $F["prune_day"] * 3600 * 24)." \r\n";
+			$sql .= " AND created > ".(time() - $F["prune_day"] * 3600 * 24)." ".PHP_EOL;
 		}
 		// Process topics flag
 		if (isset($this->_filter_topics_flags[$F["topics_flag"]])) {
 			if ($F["topics_flag"] == "all") {
 				$sql .= "";
 			} elseif ($F["topics_flag"] == "open") {
-				$sql .= " AND status = 'a' \r\n";
+				$sql .= " AND status = 'a' ".PHP_EOL;
 			} elseif ($F["topics_flag"] == "closed") {
-				$sql .= " AND status = 'c' \r\n";
+				$sql .= " AND status = 'c' ".PHP_EOL;
 			} elseif ($F["topics_flag"] == "hot") {
-				$sql .= " AND num_posts >= ".intval(module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"])." \r\n";
+				$sql .= " AND num_posts >= ".intval(module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"])." ".PHP_EOL;
 			} elseif ($F["topics_flag"] == "locked") {
-				$sql .= " AND pinned = 1 \r\n";
+				$sql .= " AND pinned = 1 ".PHP_EOL;
 			} elseif ($F["topics_flag"] == "moved")	{
-				$sql .= " AND moved_to != '' \r\n";
+				$sql .= " AND moved_to != '' ".PHP_EOL;
 			// Only for logged in users
 			} elseif ($F["topics_flag"] == "istarted" && FORUM_USER_ID) {
-				$sql .= " AND user_id=".intval(FORUM_USER_ID)." \r\n";
+				$sql .= " AND user_id=".intval(FORUM_USER_ID)." ".PHP_EOL;
 			}
 		}
 		// Sorting here
 		if (isset($this->_filter_sort_by[$F["sort_by"]])) {
-			$sql .= " ORDER BY ".$F["sort_by"]." ".($F["sort_order"] == "Z-A" ? "DESC" : "ASC")." \r\n";
-		} else $sql .= " ORDER BY last_post_date DESC \r\n";
+			$sql .= " ORDER BY ".$F["sort_by"]." ".($F["sort_order"] == "Z-A" ? "DESC" : "ASC")." ".PHP_EOL;
+		} else $sql .= " ORDER BY last_post_date DESC ".PHP_EOL;
 		return substr($sql, 0, -3);
 	}
 

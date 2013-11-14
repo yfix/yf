@@ -355,7 +355,7 @@ class yf_forum_post {
 				// Stop here if user is banned
 				if ($user_info["ban_forum"]) {
 					return _e(
-						"Sorry, you are not allowed to make forum posts!\r\nPerhaps, you broke some of our rules and moderator has banned you from using this feature. Please, enjoy our site in some other way!"
+						"Sorry, you are not allowed to make forum posts!".PHP_EOL."Perhaps, you broke some of our rules and moderator has banned you from using this feature. Please, enjoy our site in some other way!"
 						."For more details <a href=\"./?object=faq&action=view&id=16\">click here</a>"
 					);
 				}
@@ -444,7 +444,7 @@ class yf_forum_post {
 			// Prepare text
 			$_POST["text"] = _substr(trim($_POST["text"]), 0, module('forum')->SETTINGS["MSG_TEXT_TRIM"]);
 			// Cut loooooong lines 
-//			$_POST["text"] = wordwrap($_POST["text"], 75, "\r\n", 1);
+//			$_POST["text"] = wordwrap($_POST["text"], 75, "".PHP_EOL, 1);
 			// Try to cut "bad" words
 			if (module('forum')->SETTINGS["USE_GLOBAL_USERS"] && module('forum')->SETTINGS["POST_CUT_BAD_WORDS"]) {
 				$_POST["text"] = $this->_text_filter($_POST["text"]);

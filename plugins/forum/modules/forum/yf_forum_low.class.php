@@ -60,7 +60,7 @@ class yf_forum_low {
 			$body = $RW->_rewrite_replace_links($body);
 		}
 		if (DEBUG_MODE) {
-			$body .= "<hr class='clearfloat'>DEBUG INFO:\r\n";
+			$body .= "<hr class='clearfloat'>DEBUG INFO:".PHP_EOL;
 			$body .= common()->_show_execution_time();
 //			$body .= common()->show_debug_info();
 		}
@@ -72,16 +72,16 @@ class yf_forum_low {
 	* Show Home
 	*/
 	function _show_home($cat_id = 0) {
-		$body = "<a href='".url("./?object=forum&action=show".($cat_id ? "&id=".$cat_id : ""))."'><b>".t("Full version")."</b></a><br />\r\n";
+		$body = "<a href='".url("./?object=forum&action=show".($cat_id ? "&id=".$cat_id : ""))."'><b>".t("Full version")."</b></a><br />".PHP_EOL;
 		// Reference to the categories array
 		$cats_array		= &module('forum')->_forum_cats_array;
 		// Reference to the forums array
 		$forums_array	= &module('forum')->_forums_array;
-		$body .= "<ul>\r\n";
+		$body .= "<ul>".PHP_EOL;
 		// Process categories
 		foreach ((array)$cats_array as $cat_info) {
-			$body .= "<li><a href='".url("./?object=forum&action=low&id=".$cat_info["id"])."'>"._prepare_html($cat_info["name"])."</a></li>\r\n";
-			$body .= "<ul>\r\n";
+			$body .= "<li><a href='".url("./?object=forum&action=low&id=".$cat_info["id"])."'>"._prepare_html($cat_info["name"])."</a></li>".PHP_EOL;
+			$body .= "<ul>".PHP_EOL;
 			// Filter category if specified one
 			if (!empty($cat_id) && $cat_info["id"] != $cat_id) {
 				continue;
@@ -96,11 +96,11 @@ class yf_forum_low {
 				if (!empty($_forum_info["parent"])) {
 					continue;
 				}
-				$body .= "<li>&nbsp;&nbsp;<a href='".url("./?object=forum&action=low&id=f".$_forum_info["id"])."'>"._prepare_html($_forum_info["name"])."</a> <small>(".$_forum_info["num_posts"]." ".t("posts").")</small></li>\r\n";
+				$body .= "<li>&nbsp;&nbsp;<a href='".url("./?object=forum&action=low&id=f".$_forum_info["id"])."'>"._prepare_html($_forum_info["name"])."</a> <small>(".$_forum_info["num_posts"]." ".t("posts").")</small></li>".PHP_EOL;
 			}
-			$body .= "</ul>\r\n";
+			$body .= "</ul>".PHP_EOL;
 		}
-		$body .= "</ul>\r\n";
+		$body .= "</ul>".PHP_EOL;
 		return $body;
 	}
 	
@@ -111,22 +111,22 @@ class yf_forum_low {
 		if (empty($forum_id) || empty(module('forum')->_forums_array[$forum_id])) {
 			return "";
 		}
-		$body = "<a href='".module('forum')->_link_to_forum($forum_id)."'><b>".t("Full version")."</b></a><br />\r\n";
+		$body = "<a href='".module('forum')->_link_to_forum($forum_id)."'><b>".t("Full version")."</b></a><br />".PHP_EOL;
 		// Prepare SQL query
 		$sql = "SELECT * FROM ".db('forum_topics')." WHERE forum=".intval($forum_id)." ";
 		$order_by_sql = " ORDER BY last_post_date DESC ";
 		$path = "./?object=forum&action=low&id=f".$forum_id;
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $path, "", $this->_topics_per_page);
 		if (!empty($pages)) {
-			$body .= "<br /><small>".t("Pages").": ".$pages."</small><br />\r\n";
+			$body .= "<br /><small>".t("Pages").": ".$pages."</small><br />".PHP_EOL;
 		}
-		$body .= "<ol>\r\n";
+		$body .= "<ol>".PHP_EOL;
 		// Process posts
 		$Q = db()->query($sql. $order_by_sql. $add_sql);
 		while ($topic_info = db()->fetch_assoc($Q)) {
-			$body .= "<li><a href='".url("./?object=forum&action=low&id=t".$topic_info["id"])."'>"._prepare_html($topic_info["name"])."</a> <small>(".$topic_info["num_posts"]." ".t("replies").")</small></li>\r\n";
+			$body .= "<li><a href='".url("./?object=forum&action=low&id=t".$topic_info["id"])."'>"._prepare_html($topic_info["name"])."</a> <small>(".$topic_info["num_posts"]." ".t("replies").")</small></li>".PHP_EOL;
 		}
-		$body .= "</ol>\r\n";
+		$body .= "</ol>".PHP_EOL;
 		return $body;
 	}
 	
@@ -142,24 +142,24 @@ class yf_forum_low {
 		if (empty($topic_info)) {
 			return "";
 		}
-		$body = "<a href='".url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".t("Full version")."</b></a><br />\r\n";
+		$body = "<a href='".url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".t("Full version")."</b></a><br />".PHP_EOL;
 		// Prepare SQL query
 		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$topic_id;
 		$order_by = " ORDER BY created ASC ";
 		$path = "./?object=forum&action=low&id=t".$topic_id;
 		list($add_sql, $topic_pages, $topic_num_posts) = common()->divide_pages($sql, $path, null, $this->_posts_per_page);
 		if (!empty($pages)) {
-			$body .= "<br /><small>".t("Pages").": ".$pages."</small><br />\r\n";
+			$body .= "<br /><small>".t("Pages").": ".$pages."</small><br />".PHP_EOL;
 		}
-		$body .= "<ul>\r\n";
+		$body .= "<ul>".PHP_EOL;
 		// Init bb codes module
 		$BB_OBJ = _class("bb_codes");
 		// Process posts
 		$Q = db()->query($sql. $order_by. $add_sql);
 		while ($post_info = db()->fetch_assoc($Q)) {
-			$body .= "<li>".t("Author").": "._prepare_html($post_info["user_name"]).", Time: "._format_date($post_info["created"], "long")."<br /><br />".$BB_OBJ->_process_text($post_info["text"])."<br /><br /></li>\r\n";
+			$body .= "<li>".t("Author").": "._prepare_html($post_info["user_name"]).", Time: "._format_date($post_info["created"], "long")."<br /><br />".$BB_OBJ->_process_text($post_info["text"])."<br /><br /></li>".PHP_EOL;
 		}
-		$body .= "</ul>\r\n";
+		$body .= "</ul>".PHP_EOL;
 		return $body;
 	}
 }
