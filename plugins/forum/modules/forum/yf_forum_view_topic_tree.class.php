@@ -104,10 +104,8 @@ class yf_forum_view_topic_tree {
 				module('forum')->_reput_texts[$reput_user_id] = $REPUT_OBJ->_show_for_user($reput_user_id, $users_reput_info[$reput_user_id]);
 			}
 		}
-		// Statistics
-		$STATS_OBJ = _class("forum_stats", FORUM_MODULES_DIR);
-		// Post item object
-		$POST_ITEM_OBJ = _class("forum_post_item", FORUM_MODULES_DIR);
+		$STATS_OBJ = _class("forum_stats", 'modules/forum/');
+		$POST_ITEM_OBJ = _class("forum_post_item", 'modules/forum/');
 		if (is_object($POST_ITEM_OBJ)) {
 			$post_info		= &$this->_post_info;
 			if (!empty($users_reput_info)) {

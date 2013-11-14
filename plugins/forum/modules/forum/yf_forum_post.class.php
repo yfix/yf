@@ -148,7 +148,7 @@ class yf_forum_post {
 				// Delete post
 				db()->query("DELETE FROM ".db('forum_posts')." WHERE id=".intval($post_info["id"])." LIMIT 1");
 				// Synchronize forum and topic
-				$SYNC_OBJ = _class("forum_sync", FORUM_MODULES_DIR);
+				$SYNC_OBJ = _class("forum_sync", 'modules/forum/');
 				if (is_object($SYNC_OBJ)) {
 					$SYNC_OBJ->_update_topic_record($post_info["topic"]);
 					$SYNC_OBJ->_update_forum_record($post_info["forum"]);
@@ -588,7 +588,7 @@ class yf_forum_post {
 					db()->query("UPDATE ".db('forum_users')." SET user_posts=user_posts+1 WHERE id=".intval(FORUM_USER_ID));
 				}
 				// Synchronize forum and topic
-				$SYNC_OBJ = _class("forum_sync", FORUM_MODULES_DIR);
+				$SYNC_OBJ = _class("forum_sync", 'modules/forum/');
 				if (is_object($SYNC_OBJ)) {
 					// $SYNC_OBJ->_sync_forum($forum_info["id"], 1);
 					$SYNC_OBJ->_update_topic_record($topic_info["id"]);

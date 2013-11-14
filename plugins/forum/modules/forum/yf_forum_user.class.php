@@ -349,7 +349,7 @@ class yf_forum_user {
 		}
 		// Init topic item object
 		if (!empty($topics_array)) {
-			$TOPIC_ITEM_OBJ = _class("forum_topic_item", FORUM_MODULES_DIR);
+			$TOPIC_ITEM_OBJ = _class("forum_topic_item", 'modules/forum/');
 		}
 		// Process posts
 		if (!empty($topics_array) && is_object($TOPIC_ITEM_OBJ)) {

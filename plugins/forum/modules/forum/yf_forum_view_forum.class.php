@@ -175,7 +175,7 @@ class yf_forum_view_forum {
 		}
 		// Init topic item object
 		if (!empty($topics_array)) {
-			$TOPIC_ITEM_OBJ = _class("forum_topic_item", FORUM_MODULES_DIR);
+			$TOPIC_ITEM_OBJ = _class("forum_topic_item", 'modules/forum/');
 		}
 		// Process posts
 		if (is_object($TOPIC_ITEM_OBJ)) {
@@ -200,7 +200,7 @@ class yf_forum_view_forum {
 			$allow_new_topic	= 0;
 		}
 		// Get stats
-		$STATS_OBJ = _class("forum_stats", FORUM_MODULES_DIR);
+		$STATS_OBJ = _class("forum_stats", 'modules/forum/');
 		$announce_items = module('forum')->SETTINGS["ALLOW_ANNOUNCES"] ? $this->_show_announce_items() : "";
 		// Prepare sub forums
 		$sub_forums_ids = module('forum')->_get_sub_forums_ids($this->_forum_info["id"], 1);
@@ -311,7 +311,7 @@ class yf_forum_view_forum {
 		if (empty($sub_forums_ids)) {
 			return false;
 		}
-		$FORUM_VIEW_HOME_OBJ = _class("forum_view_home", FORUM_MODULES_DIR);
+		$FORUM_VIEW_HOME_OBJ = _class("forum_view_home", 'modules/forum/');
 		// Collect last posts ids
 		foreach ((array)$sub_forums_ids as $_sub_id) {
 			$_forum_info = module('forum')->_forums_array[$_sub_id];

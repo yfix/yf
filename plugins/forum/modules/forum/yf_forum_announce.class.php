@@ -85,7 +85,7 @@ class yf_forum_announce {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		// Init user cp module
-		$this->USER_CP_OBJ = _class("forum_user", FORUM_MODULES_DIR);
+		$this->USER_CP_OBJ = _class("forum_user", 'modules/forum/');
 		// Switch between actions
 		if (!empty($_POST["add"]))		$content = $this->_add();
 		elseif (!empty($_POST["edit"]))	$content = $this->_edit();

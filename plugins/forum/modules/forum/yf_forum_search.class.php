@@ -242,7 +242,7 @@ class yf_forum_search {
 		}
 		if (!empty($topics_array)) {
 			// Init topic item object
-			$TOPIC_ITEM_OBJ = _class("forum_topic_item", FORUM_MODULES_DIR);
+			$TOPIC_ITEM_OBJ = _class("forum_topic_item", 'modules/forum/');
 			// Process posts
 			if (is_object($TOPIC_ITEM_OBJ)) {
 				foreach ((array)$topics_array as $topic_info) {
@@ -297,7 +297,7 @@ class yf_forum_search {
 				}
 			}
 			// Init post item object
-			$POST_ITEM_OBJ = _class("forum_post_item", FORUM_MODULES_DIR);
+			$POST_ITEM_OBJ = _class("forum_post_item", 'modules/forum/');
 			// Process posts
 			if (!empty($topics_array) && is_object($POST_ITEM_OBJ)) {
 				foreach ((array)$posts as $post_info) {

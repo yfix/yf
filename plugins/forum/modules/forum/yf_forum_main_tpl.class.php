@@ -34,7 +34,7 @@ class yf_forum_main_tpl {
 		}
 		// Forum statistics
 		if ($_GET["action"] == "show" && module('forum')->SETTINGS["SHOW_TOTALS"]) {
-			$STATS_OBJ = _class("forum_stats", FORUM_MODULES_DIR);
+			$STATS_OBJ = _class("forum_stats", 'modules/forum/');
 			$stats = is_object($STATS_OBJ) ? $STATS_OBJ->_show_total_board_stats() : "";
 		}
 		// Main template
