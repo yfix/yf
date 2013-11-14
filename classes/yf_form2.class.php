@@ -1959,6 +1959,8 @@ class yf_form2 {
 	}
 
 	/**
+	* Form validation handler.
+	* Here we have special rule, called __form_id__ , it is used to track which form need to be validated from $_POST.
 	*/
 	function validate($validate_rules = array(), $post = array()) {
 		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
@@ -1974,10 +1976,24 @@ class yf_form2 {
 		foreach ((array)$validate_rules as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
 		}
+		$form_id = '';
+		$form_id_field = '__form_id__';
+		if (isset($this->_validate_rules[$form_id_field])) {
+			$form_id = $this->_validate_rules[$form_id_field];
+			unset($this->_validate_rules[$form_id_field]);
+			$this->hidden($form_id_field, array('value' => $form_id));
+		}
 		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
+		if (!$this->_validate_rules) {
+			return $this;
+		}
 		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 		$data = (array)(!empty($post) ? $post : $_POST);
 		if (empty($data)) {
+			return $this;
+		}
+		// We need this to validate only correct form on page, where there can be several forms with validation at once
+		if ($form_id && $data[$form_id_field] != $form_id) {
 			return $this;
 		}
 		// Processing of prepared rules

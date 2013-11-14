@@ -15,6 +15,7 @@ class form2_validate_sample {
 			),
 		);
 		$validate_rules = array(
+			'__form_id__'	=> 'validate_sample_form',
 			'title'         => array('trim|required|xss_clean'),
 			'type'          => array('trim|required|xss_clean'),
 			'amount'        => array('trim|required|min_length[1]|max_length[10]|xss_clean|numeric'),
