@@ -1614,55 +1614,6 @@ $data = my_array_merge((array)$data, array(
 	),
 */
 ),
-"settings"	=> array(
-	99999 => array(
-		"item"		=> "constructor_mode",
-		"type"		=> "enum",
-		"size"		=> "'0','1'",
-		"value"		=> "0",
-		"category"	=> 0,
-		"order"		=> 0,
-	),
-	array(
-		"item"		=> "mail_debug",
-		"type"		=> "enum",
-		"size"		=> "'1','0'",
-		"value"		=> "1",
-		"category"	=> 1,
-		"order"		=> 1,
-	),
-	array(
-		"item"		=> "test_mail",
-		"type"		=> "text",
-		"size"		=> "20",
-		"value"		=> "", // communet01@gmail.com
-		"category"	=> 1,
-		"order"		=> 1,
-	),
-	array(
-		"item"		=> "rewrite_mode",
-		"type"		=> "enum",
-		"size"		=> "'1','0'",
-		"value"		=> "0",
-		"category"	=> 1,
-		"order"		=> 1,
-	),
-	array(
-		"item"		=> "admin_per_page",
-		"type"		=> "text",
-		"size"		=> "",
-		"value"		=> "20",
-		"category"	=> 1,
-		"order"		=> 1,
-	),
-),
-"settings_category"	=> array(
-	99999 => array(
-		"id"	=> 1,
-		"name"	=> "Main",
-		"order"	=> 1,
-	),
-),
 "sites"	=> array(
 	99999 => array(
 		"name"		=> "Current site name (__CHANGE_ME!__)",
