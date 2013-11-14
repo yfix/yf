@@ -231,22 +231,11 @@ class yf_table2 {
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
 			}
-			if ($this->_form_params) {
-				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
-			}
-			foreach ((array)$this->_header_links as $info) {
-				$name = $info['name'];
-				$func = &$info['func'];
-				$body .= $func($info, $params).PHP_EOL;
-			}
-			if ($params['condensed']) {
-				$params['table_class'] .= ' table-condensed';
-			}
 			$body .= '<table class="table table-bordered table-striped table-hover'
 				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
 				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 
-			if (!$params['no_header'] || $params['rotate_table']) {
+			if (!$params['no_header'] && !$params['rotate_table']) {
 				$body .= '<thead>'.PHP_EOL;
 				$data1row = current($data);
 				foreach ((array)$this->_fields as $info) {
