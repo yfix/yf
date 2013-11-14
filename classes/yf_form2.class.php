@@ -2097,6 +2097,13 @@ class yf_form2 {
 	function _validate_rules_process($validate_rules = array(), &$data) {
 		$validate_ok = true;
 		foreach ((array)$validate_rules as $name => $rules) {
+			$is_required = false;
+			foreach ((array)$rules as $rule) {
+				if ($rule[0] == 'required') {
+					$is_required = true;
+					break;
+				}
+			}
 			foreach ((array)$rules as $rule) {
 				$is_ok = true;
 				$error_msg = '';
@@ -2112,6 +2119,11 @@ class yf_form2 {
 					if (!$is_ok && empty($error_msg)) {
 						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
 					}
+				}
+				// In this case we do not track error if field is empty and not required
+				if (!$is_ok && !$is_required && !strlen($data[$name])) {
+					$is_ok = true;
+					$error_msg = '';
 				}
 				if (!$is_ok) {
 					$validate_ok = false;

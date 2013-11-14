@@ -1,6 +1,6 @@
 <?php
 
-class form2_stacked_sample {
+class form2_validate_sample {
 	function show() {
 		$replace = array(
 			'title'			=> 'title',
@@ -16,12 +16,13 @@ class form2_stacked_sample {
 		);
 		$validate_rules = array(
 			'title'         => array('trim|required|xss_clean'),
-			'type'          => array('trim|min_length[4]|max_length[4]|required|xss_clean'),
+			'type'          => array('trim|required|xss_clean'),
 			'amount'        => array('trim|required|min_length[1]|max_length[10]|xss_clean|numeric'),
 			'percent'       => array('trim|required|min_length[1]|max_length[4]|xss_clean|numeric'),
 			'split_period'  => array('trim|min_length[1]|max_length[1]|xss_clean|'),
 			'descr'         => array('trim|xss_clean'),
 			'duration'      => 'required_any[duration_*]',
+			'integer'       => array('integer'),
 		);
 		$a = $_POST;		
 		$form_html .= form($a)
@@ -41,6 +42,7 @@ class form2_stacked_sample {
                 ->button('per', array('disabled' => 1))
                 ->select_box('split_period', array('val1','val2'))
             ->row_end()
+            ->text('integer')
             ->textarea('desc')
             ->submit()
         ;
