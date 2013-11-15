@@ -191,7 +191,7 @@ class yf_send_mail {
 					}
 				}
 				$result = $mail->Send();
-				if( !empty( $email_to ) ) {
+				if (is_array($email_to) && !empty( $email_to )) {
 					foreach( $email_to as $name => $email ) {
 						$mail->clearAddresses();
 						$mail->AddAddress($email, $name);
