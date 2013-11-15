@@ -65,6 +65,22 @@ class yf_make_thumb {
 	public $DELETE_BAD_DEST_IMAGES	= 1;
 	/** @var bool Force resizing for images with lower sizes than limits, but possibly with not optimal size */
 	public $FORCE_PROCESSING		= 0;
+	/** @var string */
+	public $WATERMARK_ALIGN_X		= "center";
+	/** @var string */
+	public $WATERMARK_ALIGN_Y		= "middle";
+	/** @var array */
+	public $IMAGE_ALIGN_X	= array(
+		"center",
+		"right",
+		"left",
+	);
+	/** @var array */
+	public $IMAGE_ALIGN_Y	= array(
+		"middle",
+		"top",
+		"bottom",
+	);
 
 	/**
 	* Module constructor
@@ -116,6 +132,17 @@ class yf_make_thumb {
 		}
 		if (empty($this->LIBS_PRIORITY)) {
 			$this->LIBS_PRIORITY = array("gd");
+		}
+		if(!empty($this->WATERMARK_POSITION)){
+			if(strpos($this->WATERMARK_POSITION, "-")){
+				$position = explode("-",$this->WATERMARK_POSITION);
+				$this->WATERMARK_ALIGN_X = $position[0];
+				$this->WATERMARK_ALIGN_Y = $position[1];
+			}
+			if($this->WATERMARK_POSITION == "random"){
+				$this->WATERMARK_ALIGN_X = $this->IMAGE_ALIGN_X[rand(0,2)];
+				$this->WATERMARK_ALIGN_Y = $this->IMAGE_ALIGN_Y[rand(0,2)];
+			}
 		}
 	}
 
@@ -222,7 +249,7 @@ class yf_make_thumb {
 			unlink($dest_file_path);
 		}
 		if ($watermark_path && $dest_file_path) {
-			$this->add_watermark($dest_file_path, $watermark_path, $LIMIT_X, $LIMIT_Y);
+			$this->add_watermark($dest_file_path, $watermark_path);
 		}
 		// Save log
 		if ($this->ENABLE_DEBUG_LOG && ($this->LOG_TO_FILE || $this->LOG_TO_DB)) {
@@ -329,14 +356,18 @@ class yf_make_thumb {
 
 	/**
 	*/
-	function add_watermark($source_img_path, $watermark_path, $width_orig, $height_orig){
+	function add_watermark($source_img_path, $watermark_path){
 
-		$img_create_func = 'imagecreatefrom'.$this->ALLOWED_MIME_TYPES[mime_content_type($source_img_path)];
+		$source_mime_type = $this->ALLOWED_MIME_TYPES[mime_content_type($source_img_path)];
+		$img_create_func = 'imagecreatefrom'.$source_mime_type;
 		$img = $img_create_func($source_img_path);
+		$width_orig = imagesx($img);
+		$height_orig = imagesy($img);
+
         $watermark = imagecreatefrompng($watermark_path);
 		imageAlphaBlending($watermark, true);
 		imageSaveAlpha($watermark, true);
-		
+
         $watermarkwidth = imagesx($watermark);
         $watermarkheight = imagesy($watermark);
 
@@ -350,10 +381,18 @@ class yf_make_thumb {
         $watermarkwidth = imagesx($thumb_watermark);
         $watermarkheight = imagesy($thumb_watermark);
 
-        $startwidth = (($width_orig - $watermarkwidth) / 2);
-        $startheight = (($height_orig - $watermarkheight) / 2);
-        imagecopy($img, $thumb_watermark, $startwidth, $startheight, 0, 0, $watermarkwidth, $watermarkheight);
-		$img_save_func = 'image'.$this->ALLOWED_MIME_TYPES[mime_content_type($source_img_path)];
+		$startwidth = array(
+			"left"	=> 0,
+			"right" => $width_orig - $watermarkwidth,
+			"center"=> (($width_orig - $watermarkwidth) / 2),
+		);
+		$startheight = array(
+			"top" 	=> 0,
+			"bottom"=> $height_orig - $watermarkheight,
+			"middle"=> (($height_orig - $watermarkheight) / 2),
+		);
+        imagecopy($img, $thumb_watermark, $startwidth[$this->WATERMARK_ALIGN_X], $startheight[$this->WATERMARK_ALIGN_Y], 0, 0, $watermarkwidth, $watermarkheight);
+		$img_save_func = 'image'.$source_mime_type;
 		$img_save_func($img, $source_img_path);
 	}
 
