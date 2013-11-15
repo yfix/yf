@@ -1004,9 +1004,16 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($row, $params) {
+			'func'	=> function($row, $params, $instance_params) {
 				$extra = $params['extra'];
-				$id = isset($extra['id']) ? $extra['id'] : 'id';
+				$override_id = '';
+				if (isset($extra['id'])) {
+					$override_id = $extra['id'];
+				}
+				if (isset($instance_params['id'])) {
+					$override_id = $instance_params['id'];
+				}
+				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$values = array(
 					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
