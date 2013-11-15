@@ -664,7 +664,6 @@ class yf_main {
 		conf('language',	$lang);
 		conf('charset',		'utf-8');
 		conf('site_enabled',1);
-		conf('mail_debug',	1);
 	}
 
 	/**

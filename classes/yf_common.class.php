@@ -440,7 +440,10 @@ class yf_common {
 	/**
 	* Chec if user error exists
 	*/
-	function _error_exists () {
+	function _error_exists ($error_key = '') {
+		if (!empty($error_key)) {
+			return (bool)$this->USER_ERRORS[$error_key];
+		}
 		return isset($this->USER_ERRORS) && count($this->USER_ERRORS) ? true : false;
 	}
 

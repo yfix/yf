@@ -35,9 +35,18 @@ class yf_login_form {
 	/**
 	*/
 	function _small_form() {
-		if(conf('_login_form_displayed')) return '';
-		return form(array('form_action' => './?task=login'), array('class' => 'form-inline', 'no_label' => 1))
-			->validate(array($this->LOGIN_FIELD => 'trim|required', 'password' => 'trim|required'))
+		if (conf('_login_form_displayed')) {
+			return '';
+		}
+		return form(array('form_action' => './?task=login'), array(
+				'class'		=> 'form-inline',
+				'no_label'	=> 1,
+			))
+			->validate(array(
+				'__form_id__' => 'login_small_form',
+				$this->LOGIN_FIELD => 'trim|required',
+				'password' => 'trim|required',
+			))
 			->login($this->LOGIN_FIELD, "", array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me')
@@ -77,8 +86,15 @@ class yf_login_form {
 		// To prevent multiple login forms displayed on one page
 		conf('_login_form_displayed', true);
 
-		return form(array('form_action' => './?task=login'), array('class' => 'form-horizontal', 'legend' => 'Member Login',))
-			->validate(array($this->LOGIN_FIELD => 'trim|required', 'password' => 'trim|required'))
+		return form(array('form_action' => './?task=login'), array(
+				'class' => 'form-horizontal',
+				'legend' => 'Member Login',
+			))
+			->validate(array(
+				'__form_id__' => 'login_full_form',
+				$this->LOGIN_FIELD => 'trim|required',
+				'password' => 'trim|required',
+			))
 			->login($this->LOGIN_FIELD, "", array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me', "", array('no_label' => 1))

@@ -13,15 +13,16 @@ class yf_gallery_filter {
 	* Constructor
 	*/
 	function _init () {
-		if (module('gallery')->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
+#		if (module('gallery')->USE_FILTER) {
+#			$this->_prepare_filter_data();
+#		}
 	}
 
 	/**
 	* Prepare filter data
 	*/
 	function _prepare_filter_data () {
+/*
 		if (!module('gallery')->USE_FILTER || !in_array($_GET["action"], array(
 			"show",
 			"clear_filter",
@@ -71,6 +72,7 @@ class yf_gallery_filter {
 		// Number of records per page
 		$this->_per_page = array(10=>10,20=>20,50=>50,100=>100);
 		// Sort fields
+*/
 /*
 		$this->_sort_by = array(
 			""				=> "",
@@ -78,6 +80,7 @@ class yf_gallery_filter {
 			"num_photos"	=> "Number of photos",
 		);
 */
+/*
 		$this->_sort_by = array(
 			"date_added"	=> "date added",
 			"user_rating"	=> "user rating",
@@ -100,12 +103,14 @@ class yf_gallery_filter {
 		);
 		// Prepare miles array for zip_code search
 		$this->_miles = main()->get_data("miles");
+*/
 	}
 
 	/**
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql ($_source_sql = "") {
+/*
 		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
@@ -203,10 +208,10 @@ class yf_gallery_filter {
 		}
 		// Convert to string
 		$sql = implode("\r\n", (array)$sql);
-
-		$SQL_REPLACE["/*__FILTER_SQL__*/"]	= $sql;
-		$SQL_REPLACE["/*__SORT_SQL__*/"]	= $sort_sql;
-
+*/
+#		$SQL_REPLACE["/*__FILTER_SQL__*/"]	= $sql;
+#		$SQL_REPLACE["/*__SORT_SQL__*/"]	= $sort_sql;
+/*
 		// Replace filter SQL inside source SQL code (if provided)
 		if (!empty($_source_sql)) {
 			$sql = str_replace(array_keys($SQL_REPLACE), array_values($SQL_REPLACE), $_source_sql);
@@ -215,12 +220,14 @@ class yf_gallery_filter {
 			$sql .= $sort_sql;
 		}
 		return $sql;
+*/
 	}
 
 	/**
 	* Session - based filter form stored in $_SESSION[$this->_filter_name][...]
 	*/
 	function _show_filter () {
+/*
 		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
@@ -241,12 +248,14 @@ class yf_gallery_filter {
 			$replace[$item_name."_box"] = $this->_box($item_name, $SF[$item_name]);
 		}
 		return tpl()->parse('gallery'."/search_filter", $replace);
+*/
 	}
 
 	/**
 	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
+/*
 		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
@@ -260,12 +269,14 @@ class yf_gallery_filter {
 		if (!$silent) {
 			return js_redirect("./?object=".'gallery'."&action=show_all_galleries");
 		}
+*/
 	}
 
 	/**
 	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
+/*
 		if (!module('gallery')->USE_FILTER) {
 			return "";
 		}
@@ -275,6 +286,7 @@ class yf_gallery_filter {
 		if (!$silent) {
 			return js_redirect("./?object=".'gallery'."&action=show_all_galleries");
 		}
+*/
 	}
 
 	/**

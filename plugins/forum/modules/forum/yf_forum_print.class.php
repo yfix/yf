@@ -15,25 +15,25 @@ class yf_forum_print {
 // TODO: move this into template
 	function _show_topic() {
 
-		$_posts_per_page = !empty(module('forum')->USER_SETTINGS["POSTS_PER_PAGE"]) ? module('forum')->USER_SETTINGS["POSTS_PER_PAGE"] : module('forum')->SETTINGS["NUM_POSTS_ON_PAGE"];
+		$_posts_per_page = !empty(module('forum')->USER_SETTINGS['POSTS_PER_PAGE']) ? module('forum')->USER_SETTINGS['POSTS_PER_PAGE'] : module('forum')->SETTINGS['NUM_POSTS_ON_PAGE'];
 
-		if (!module('forum')->SETTINGS["ALLOW_PRINT_TOPIC"]) {
-			return module('forum')->_show_error("Print topic is disabled");
+		if (!module('forum')->SETTINGS['ALLOW_PRINT_TOPIC']) {
+			return module('forum')->_show_error('Print topic is disabled');
 		}
 
 		main()->NO_GRAPHICS = true;
 
-		$topic_id = intval($_GET["id"]);
+		$topic_id = intval($_GET['id']);
 
 		// Get topic info
-		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".intval($topic_id)." LIMIT 1");
+		$topic_info = db()->query_fetch('SELECT * FROM '.db('forum_topics').' WHERE id='.intval($topic_id).' LIMIT 1');
 		if (empty($topic_info)) {
-			return "";
+			return '';
 		}
 		?>
 <html>
 <head>
-<title><?php echo $topic_info["name"]?></title>
+<title><?php echo $topic_info['name']?></title>
 <style type="text/css">
 <!--
 td, p, div
@@ -63,20 +63,20 @@ td, p, div
 <body class="page">
 		<?php
 
-		echo "<a href='".process_url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".$topic_info["name"]."</b></a><br/>\r\n";
+		echo "<a href='".process_url("./?object=forum&action=view_topic&id=".$topic_id)."'><b>".$topic_info["name"]."</b></a><br/>".PHP_EOL;
 		// Prepare SQL query
-		$sql = "SELECT * FROM ".db('forum_posts')." WHERE topic=".$topic_id;
-		$order_by = " ORDER BY created ASC ";
+		$sql = 'SELECT * FROM '.db('forum_posts').' WHERE topic='.$topic_id;
+		$order_by = ' ORDER BY created ASC ';
 		list($add_sql, $pages, $topic_num_posts) = common()->divide_pages($sql, null, null, $_posts_per_page);
 
 		if (!empty($pages))
 		  {
-			echo "<br /><small>Pages: ".$pages."</small>\r\n";
+			echo '<br /><small>Pages: '.$pages.'</small>'.PHP_EOL;
 		  }
 
-		echo "<BR>";
+		echo '<BR>';
 		// Init bb codes module
-		$BB_OBJ = _class("bb_codes");
+		$BB_OBJ = _class('bb_codes');
 		// Process posts
 		$Q = db()->query($sql. $order_by. $add_sql);
 		while ($post_info = db()->fetch_assoc($Q))
@@ -87,18 +87,18 @@ td, p, div
 	<td class="page">
 		<table cellpadding="0" cellspacing="0" border="0" width="100%">
 		  <tr valign="bottom">
-			<td style="font-size:14pt"><?php echo _prepare_html($post_info["user_name"])?></td>
-			<td class="smallfont" align="right"><?php echo _format_date($post_info["created"], "long")?></td>
+			<td style="font-size:14pt"><?php echo _prepare_html($post_info['user_name'])?></td>
+			<td class="smallfont" align="right"><?php echo _format_date($post_info['created'], 'long')?></td>
 		  </tr>
 		</table>
 		<hr/>
-		<div><?php echo $BB_OBJ->_process_text($post_info["text"])?></div>
+		<div><?php echo $BB_OBJ->_process_text($post_info['text'])?></div>
 	</td>
   </tr>
 </table>
 <br/>
 		   <?php
 		  }
-		echo "</body></html>";
+		echo '</body></html>';
 	}
 }

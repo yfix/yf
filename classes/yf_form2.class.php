@@ -355,6 +355,9 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
+		if ($this->_params['dd_mode']) {
+			return $this->_dd_row_html($content, $extra, $replace);
+		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append'] || conf('form_input_no_append')) {
 			$extra['append'] = '';
@@ -389,6 +392,37 @@ class yf_form2 {
 
 		$inline_help_html = ($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '');
 		$inline_tip_html = ($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '');
+
+		if ($extra['only_row_start']) {
+			return $row_start;
+		} elseif ($extra['only_row_end']) {
+			return $row_end;
+		} elseif ($extra['stacked']) {
+			return $before_content_html. $content. PHP_EOL. $after_content_html
+				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
+		} else {
+			// Full variant
+			return $row_start
+					.$before_content_html. $content. PHP_EOL. $after_content_html
+					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
+					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
+				.$row_end;
+		}
+	}
+
+	/**
+	* Generate form row using dl>dt,dd html tags. Useful for user profle and other simple table-like content
+	*/
+	function _dd_row_html($content, $extra = array(), $replace = array()) {
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		if ($this->_stacked_mode_on) {
+			$extra['stacked'] = true;
+		}
+		$dd_class = $this->_params['dd_class'] ?: 'span6';
+
+		$row_start = '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL;
+		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
+		$row_end = '</dl>'.PHP_EOL;
 
 		if ($extra['only_row_start']) {
 			return $row_start;
@@ -1153,7 +1187,7 @@ class yf_form2 {
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['desc'] = !$extra['no_label'] && !$_this->_params['no_label'] ? $extra['desc'] : '';
 
-			$value = $r[$extra['name']];
+			$value = $r[$extra['name']] ?: $extra['value'];
 			if (is_array($extra['data'])) {
 				if (isset($extra['data'][$value])) {
 					$value = $extra['data'][$value];
@@ -1208,8 +1242,16 @@ class yf_form2 {
 	/**
 	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
-		$replace[$name] = $name;
-		$extra['link'] = $link;
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		if (is_array($link)) {
+			$extra += $link;
+			$link = '';
+		}
+		$extra['link'] = $link ?: $extra['link'];
+		$extra['value'] = $name;
 		if (!$extra['desc']) {
 			$extra['no_label'] = 1;
 		}
@@ -1959,6 +2001,8 @@ class yf_form2 {
 	}
 
 	/**
+	* Form validation handler.
+	* Here we have special rule, called __form_id__ , it is used to track which form need to be validated from $_POST.
 	*/
 	function validate($validate_rules = array(), $post = array()) {
 		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
@@ -1974,10 +2018,24 @@ class yf_form2 {
 		foreach ((array)$validate_rules as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
 		}
+		$form_id = '';
+		$form_id_field = '__form_id__';
+		if (isset($this->_validate_rules[$form_id_field])) {
+			$form_id = $this->_validate_rules[$form_id_field];
+			unset($this->_validate_rules[$form_id_field]);
+			$this->hidden($form_id_field, array('value' => $form_id));
+		}
 		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
+		if (!$this->_validate_rules) {
+			return $this;
+		}
 		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 		$data = (array)(!empty($post) ? $post : $_POST);
 		if (empty($data)) {
+			return $this;
+		}
+		// We need this to validate only correct form on page, where there can be several forms with validation at once
+		if ($form_id && $data[$form_id_field] != $form_id) {
 			return $this;
 		}
 		// Processing of prepared rules
@@ -2097,6 +2155,13 @@ class yf_form2 {
 	function _validate_rules_process($validate_rules = array(), &$data) {
 		$validate_ok = true;
 		foreach ((array)$validate_rules as $name => $rules) {
+			$is_required = false;
+			foreach ((array)$rules as $rule) {
+				if ($rule[0] == 'required') {
+					$is_required = true;
+					break;
+				}
+			}
 			foreach ((array)$rules as $rule) {
 				$is_ok = true;
 				$error_msg = '';
@@ -2112,6 +2177,11 @@ class yf_form2 {
 					if (!$is_ok && empty($error_msg)) {
 						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
 					}
+				}
+				// In this case we do not track error if field is empty and not required
+				if (!$is_ok && !$is_required && !strlen($data[$name])) {
+					$is_ok = true;
+					$error_msg = '';
 				}
 				if (!$is_ok) {
 					$validate_ok = false;
