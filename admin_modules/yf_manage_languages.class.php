@@ -9,12 +9,18 @@
 */
 class yf_manage_languages {
 
-// TODO
+	/**
+	*/
+	private $params = array(
+		'table' => 'languages',
+		'id'	=> 'code',
+	);
 
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('languages'))
+// TODO
+		return table('SELECT * FROM '.db('languages'), array('id' => 'code'))
 			->text('name')
 			->btn_active()
 			->btn_edit()
@@ -25,16 +31,18 @@ class yf_manage_languages {
 	/**
 	*/
 	function edit() {
-		$a = db()->query_fetch('SELECT * FROM '.db('languages').' WHERE id='.intval($_GET['id']));
-		if (!$a['id']) {
-			return _e('No id!');
+		$_GET['id'] = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
+		$a = db()->query_fetch('SELECT * FROM '.db('languages').' WHERE code="'._es($_GET['id']).'"');
+		if (!$a) {
+			return _e('Wrong record!');
 		}
+		$a['id'] = $a['code'];
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('languages', array('name','active'), 'id='.$a['id'], array('on_after_update' => function() {
+			->db_update_if_ok('languages', array('name','active'), 'code="'._es($a['code']).'"', array('on_after_update' => function() {
 				cache()->refresh(array('languages'));
-				common()->admin_wall_add(array('language updated: '.$_POST['name'].'', $a['id']));
+				common()->admin_wall_add(array('language updated: '.$_POST['name'].'', $a['code']));
 			}))
 			->text('name')
 			->active_box()
@@ -59,13 +67,13 @@ class yf_manage_languages {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => 'languages'));
+		return _class('admin_methods')->delete($this->params);
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => 'languages'));
+		return _class('admin_methods')->active($this->params);
 	}
 
 	/**
