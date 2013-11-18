@@ -134,6 +134,7 @@ class yf_admin {
 	/**
 	*/
 	function login_as() {
+// TODO: move this into classes/auth_admin
 		$id = intval($_GET['id']);
 		if (!$id) {
 			return _e('Wrong id');
