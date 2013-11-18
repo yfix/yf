@@ -1,33 +1,26 @@
 <?php
 
 /**
-* Timezones management
+* Cities management
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_manage_timezones {
+class yf_manage_cities {
 
-	/**
-	*/
-	private $params = array(
-		'table' => 'timezones',
-		'id'	=> 'code',
-	);
+// TODO
 
 	/**
 	*/
 	function show() {
-		$filter_name = $_GET['object'].'__show';
-		return table('SELECT * FROM '.db('timezones'), array(
-				'id' => 'code',
-				'filter' => $_SESSION[$filter_name],
-				'filter_params' => array('name' => 'like'),
-			))
-			->text('code')
+		return table('SELECT * FROM '.db('cities')/*, array('id' => 'code')*/)
 			->text('name')
-			->text('offset')
+			->text('country')
+			->text('code')
+			->text('code3')
+			->text('num')
+			->text('cont')
 			->btn_active()
 			->btn_edit()
 			->btn_delete()
@@ -37,20 +30,23 @@ class yf_manage_timezones {
 	/**
 	*/
 	function edit() {
-		$_GET['id'] = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
-		$a = db()->query_fetch('SELECT * FROM '.db('timezones').' WHERE code="'._es($_GET['id']).'"');
-		if (!$a) {
-			return _e('Wrong record!');
+		$a = db()->query_fetch('SELECT * FROM '.db('cities').' WHERE id='.intval($_GET['id']));
+		if (!$a['id']) {
+			return _e('No id!');
 		}
-		$a['id'] = $a['code'];
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
-			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('timezones', array('name','active'), 'code="'._es($a['code']).'"', array('on_after_update' => function() {
-				cache()->refresh(array('timezones'));
-				common()->admin_wall_add(array('timezone updated: '.$_POST['name'].'', $a['code']));
+			->validate(array('name' => 'trim|required'))
+			->db_update_if_ok('cities', array('name','active'), 'id='.$a['id'], array('on_after_update' => function() {
+				cache()->refresh(array('cities'));
+				common()->admin_wall_add(array('city updated: '.$_POST['name'].'', $a['id']));
 			}))
 			->text('name')
+			->text('country')
+			->info('code')
+			->info('code3')
+			->info('num')
+			->info('cont')
 			->active_box()
 			->save_and_back();
 	}
@@ -60,14 +56,17 @@ class yf_manage_timezones {
 	function add() {
 		$a = $_POST;
 		return form($a)
-			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_insert_if_ok('timezones', array('name','code','offset','active'), array(), array('on_after_update' => function() {
-				cache()->refresh(array('timezones'));
-				common()->admin_wall_add(array('timezone added: '.$_POST['name'].'', db()->insert_id()));
+			->validate(array('name' => 'trim|required'))
+			->db_insert_if_ok('cities', array('name','active'), array(), array('on_after_update' => function() {
+				cache()->refresh(array('cities'));
+				common()->admin_wall_add(array('city added: '.$_POST['name'].'', db()->insert_id()));
 			}))
-			->text('code')
 			->text('name')
-			->text('offset')
+			->text('country')
+			->info('code')
+			->info('code3')
+			->info('num')
+			->info('cont')
 			->active_box()
 			->save_and_back();
 	}
@@ -75,13 +74,13 @@ class yf_manage_timezones {
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete($this->params);
+		return _class('admin_methods')->delete(array('table' => 'cities'));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active($this->params);
+		return _class('admin_methods')->active(array('table' => 'cities'));
 	}
 
 	/**
@@ -115,16 +114,15 @@ class yf_manage_timezones {
 		$order_fields = array(
 			'code' => 'code',
 			'name' => 'name',
-			'offset' => 'offset',
-			'active' => 'active',
+			'native' => 'native',
 		);
 		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000);
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
 #				'class'		=> 'form-inline',
 			))
-			->text('name', array('class' => 'input-medium'))
-			->text('offset', array('class' => 'input-small'))
+			->text('name')
+			->text('native')
 			->select_box('per_page', $per_page, array('class' => 'input-small'))
 			->select_box('order_by', $order_fields, array('show_text' => 1, 'class' => 'input-medium'))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
@@ -134,7 +132,7 @@ class yf_manage_timezones {
 
 	/**
 	*/
-	function _hook_widget__timezones_list ($params = array()) {
+	function _hook_widget__cities_list ($params = array()) {
 // TODO
 	}
 }

@@ -22,6 +22,13 @@ class yf_pattern_yf {
 				if (!empty($a['id'])) {
 					$u[] = $a['id'];
 				}
+				// When only page passed, without id, we set id=0
+				if (!empty($a['page'])) {
+					if (empty($a['id'])) {
+						$u[] = 0;
+					}
+					$u[] = $a['page'];
+				}
 			}
 			$u = implode('/',$u);
 		}
@@ -31,6 +38,7 @@ class yf_pattern_yf {
 		unset($arr['action']);
 		unset($arr['host']);
 		unset($arr['id']);
+		unset($arr['page']);
 		foreach ((array)$arr as $k => $v) {
 			$arr_out[] = $k.'='.$v;
 		}
@@ -51,8 +59,13 @@ class yf_pattern_yf {
 		// Examples: /login    /logout
 		if ($url[0] == 'login' || $url[0] == 'logout') {
 			$s = 'task='.$url[0];
+		// Examples: /table2_test/0/5,  where 5 - page number
+		} elseif (!empty($url[0]) && is_numeric($url[1]) && is_numeric($url[2])) {
+			$s = 'object='.$url[0].'&action=show';
+			$url[3] = $url[2]; // page
+			$url[2] = $url[1]; // id
 		// Examples: /user_profile/5
-		} elseif (!empty($url[0]) && !empty($url[1]) && is_numeric($url[1])) {
+		} elseif (!empty($url[0]) && is_numeric($url[1])) {
 			$s = 'object='.$url[0].'&action=show';
 			$url[2] = $url[1]; // id
 		// Examples: /test/oauth
@@ -68,8 +81,11 @@ class yf_pattern_yf {
 		} else {
 			$s = 'object=home_page&action=show';
 		}
-		if (!empty($url[2])) {
+		if (isset($url[2])) {
 			$s .= '&id='.$url[2];
+		}
+		if (isset($url[3])) {
+			$s .= '&page='.$url[3];
 		}
 		if ($s != '') {
 			parse_str($s, $arr);

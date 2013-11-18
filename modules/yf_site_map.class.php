@@ -14,11 +14,11 @@ class yf_site_map {
 	/** @var array Array of site modules to include their parts of sitemap */
 	public $MODULES_TO_INCLUDE		= array();
 	/** @var string Sitemap store folder */
-	public $SITEMAP_STORE_FOLDER	= "site_map/";
+	public $SITEMAP_STORE_FOLDER	= 'site_map/';
 	/** @var string Sitemap file name */
-	public $SITEMAP_FILE_NAME		= "site_map";
+	public $SITEMAP_FILE_NAME		= 'site_map';
 	/** @var @conf_skip */
-	public $_HOOK_NAME				= "_site_map_items";
+	public $_HOOK_NAME				= '_site_map_items';
 	/** @var bool Use GZIP */
 	public $USE_GZIP				= false;
 	/** @var bool Notify Google */
@@ -32,7 +32,7 @@ class yf_site_map {
 	/** @var int Max number of sitemaps */
 	public $MAX_SITEMAPS			= 1000;
 	/** @var bool Do not change! 
-	* It's a flag which is become "true" if number of sitemap 
+	* It's a flag which is become 'true' if number of sitemap 
 	* files reached $MAX_SITEMAPS. There will be no actions after this
 	*/
 	public $LIMIT_REACHED			= false;
@@ -49,7 +49,7 @@ class yf_site_map {
 	/** @var int Lock timeout */
 	public $LOCK_TIMEOUT			= 600;
 	/** @var string Lock file name */
-	public $LOCK_FILE_NAME			= "uploads/site_map.lock";
+	public $LOCK_FILE_NAME			= 'uploads/site_map.lock';
 	/** @var int Site map TTL */
 	public $SITEMAP_LIVE_TIME		= 43200;	// 60*60*12 = 12hours
 	/** @var bool Allow rewrite */
@@ -65,7 +65,7 @@ class yf_site_map {
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
-		trigger_error(__CLASS__.": No method ".$name, E_USER_WARNING);
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
 
@@ -81,16 +81,16 @@ class yf_site_map {
 			$this->LOCK_FILE_NAME = INCLUDE_PATH. $this->LOCK_FILE_NAME;
 		}
 		// Define path to folder where sitemap files are stored
-		if (!defined("UPLOADS_DIR")) {
-			define("UPLOADS_DIR", "uploads/");
+		if (!defined('UPLOADS_DIR')) {
+			define('UPLOADS_DIR', 'uploads/');
 		}
-		if (defined("SEARCH_VERTICAL") && SEARCH_VERTICAL != "") {
-			$this->SITEMAP_FILE_NAME .= "_".SEARCH_VERTICAL;
-			$this->LOCK_FILE_NAME = str_replace(".lock", "_".SEARCH_VERTICAL.".lock", $this->LOCK_FILE_NAME);
+		if (defined('SEARCH_VERTICAL') && SEARCH_VERTICAL != '') {
+			$this->SITEMAP_FILE_NAME .= '_'.SEARCH_VERTICAL;
+			$this->LOCK_FILE_NAME = str_replace('.lock', '_'.SEARCH_VERTICAL.'.lock', $this->LOCK_FILE_NAME);
 		}
-		if (defined("SEARCH_COUNTRY") && SEARCH_COUNTRY != "") {
-			$this->SITEMAP_FILE_NAME .= "_".SEARCH_COUNTRY;
-			$this->LOCK_FILE_NAME = str_replace(".lock", "_".SEARCH_COUNTRY.".lock", $this->LOCK_FILE_NAME);
+		if (defined('SEARCH_COUNTRY') && SEARCH_COUNTRY != '') {
+			$this->SITEMAP_FILE_NAME .= '_'.SEARCH_COUNTRY;
+			$this->LOCK_FILE_NAME = str_replace('.lock', '_'.SEARCH_COUNTRY.'.lock', $this->LOCK_FILE_NAME);
 		}
 		$this->SITEMAP_WEB_PATH = WEB_PATH. UPLOADS_DIR. $this->SITEMAP_STORE_FOLDER;
 		$this->SITEMAP_STORE_FOLDER = INCLUDE_PATH. UPLOADS_DIR. $this->SITEMAP_STORE_FOLDER;
@@ -99,7 +99,7 @@ class yf_site_map {
 		// Leave some space in file size
 		$this->MAX_SIZE = $this->MAX_SIZE * 0.9;
 		// Current page URL
-		$this->_notify_url = process_url(WEB_PATH. $_GET["object"]);
+		$this->_notify_url = process_url(WEB_PATH. $_GET['object']);
 		// Turn off gzip if not available
 		if ($this->USE_GZIP && extension_loaded('zlib')) {
 			$this->USE_GZIP = false;
@@ -109,10 +109,10 @@ class yf_site_map {
 			$this->MODULES_TO_INCLUDE = $this->_get_modules_from_files();
 		}
 		// Remove non-active modules
-		$Q = db()->query("SELECT * FROM ".db('user_modules')." WHERE active='0'");
+		$Q = db()->query('SELECT * FROM '.db('user_modules').' WHERE active=0');
 		while ($A = db()->fetch_assoc($Q)) {
-			if (in_array($A["name"], $this->MODULES_TO_INCLUDE)) {
-				unset($this->MODULES_TO_INCLUDE[$A["name"]]);
+			if (in_array($A['name'], $this->MODULES_TO_INCLUDE)) {
+				unset($this->MODULES_TO_INCLUDE[$A['name']]);
 			}
 		}
 		if ($this->ALLOW_REWRITE && !tpl()->REWRITE_MODE) {
@@ -148,17 +148,17 @@ class yf_site_map {
 		}
 		$_sitemap_base_name = $this->SITEMAP_FILE_NAME;
 		// Check if needed to recreate sitemap files
-		$_path = $this->SITEMAP_STORE_FOLDER. $this->SITEMAP_FILE_NAME."_index".$this->_file_extension;
+		$_path = $this->SITEMAP_STORE_FOLDER. $this->SITEMAP_FILE_NAME.'_index'.$this->_file_extension;
 		if (file_exists($_path) && (filemtime($_path) + $this->SITEMAP_LIVE_TIME) > time() && !$this->TEST_MODE) {
 			// send headers
-			$this->_redirect_sitemap($this->SITEMAP_WEB_PATH. $this->SITEMAP_FILE_NAME. "_index". $this->_file_extension);
+			$this->_redirect_sitemap($this->SITEMAP_WEB_PATH. $this->SITEMAP_FILE_NAME. '_index'. $this->_file_extension);
 			return false;
 		}
 		if (!file_exists($_path)){
-			$_path = $this->SITEMAP_STORE_FOLDER. $this->SITEMAP_FILE_NAME."1".$this->_file_extension;
+			$_path = $this->SITEMAP_STORE_FOLDER. $this->SITEMAP_FILE_NAME.'1'.$this->_file_extension;
 			if (file_exists($_path) && (filemtime($_path) + $this->SITEMAP_LIVE_TIME) > time() && !$this->TEST_MODE) {
 				// send headers
-				$this->_redirect_sitemap($this->SITEMAP_WEB_PATH. $this->SITEMAP_FILE_NAME. "1". $this->_file_extension);
+				$this->_redirect_sitemap($this->SITEMAP_WEB_PATH. $this->SITEMAP_FILE_NAME. '1'. $this->_file_extension);
 				return false;
 			} 
 		}
@@ -184,14 +184,14 @@ class yf_site_map {
 		// Check if sitemap store folder exists an create it if not
 		_mkdir_m($this->SITEMAP_STORE_FOLDER);
 		// Delete files in folder before create new sitemap
-		_class("dir")->delete_files($this->SITEMAP_STORE_FOLDER, "/".$_sitemap_base_name.".*/i");
+		_class('dir')->delete_files($this->SITEMAP_STORE_FOLDER, '/'.$_sitemap_base_name.'.*/i');
 		// Create and open to write first sitemap file 
 		$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.$this->_sitemap_file_counter.$this->_file_extension, 'w+');
 		$this->_total_length = 0;
 		$this->_entries_counter = 0;
 		// Output header
-		// I use "_get_template_file" instead of "parse" To avoid collisions with compiled stpls and xml headers
-		$header_text = tpl()->_get_template_file(__CLASS__."/header");
+		// I use '_get_template_file' instead of 'parse' To avoid collisions with compiled stpls and xml headers
+		$header_text = tpl()->_get_template_file(__CLASS__.'/header');
 		$this->_output($header_text);
 		$this->_total_length = strlen($header_text);
 		// Process modules hooks
@@ -204,25 +204,25 @@ class yf_site_map {
 		}
 		if (!$this->LIMIT_REACHED) {
 			// Output footer
-			$footer_text = tpl()->_get_template_file(__CLASS__."/footer");
+			$footer_text = tpl()->_get_template_file(__CLASS__.'/footer');
 			$this->_output($footer_text);
 			// Close file
 			@fclose($this->_fp);
 		}
 		// Verification the number of files with name $SITEMAP_FILE_NAME (if more than 1 create sitemap index)
-		$files = _class("dir")->scan_dir($this->SITEMAP_STORE_FOLDER);
+		$files = _class('dir')->scan_dir($this->SITEMAP_STORE_FOLDER);
 		// Create array of sitemap filenames 
 		foreach ((array)$files as $file_name) {
-			if (false !== strpos($file_name, ".svn")) {
+			if (false !== strpos($file_name, '.svn')) {
 				continue;
 			}
-			if (false !== strpos($file_name, ".git")) {
+			if (false !== strpos($file_name, '.git')) {
 				continue;
 			}
 			// Skip all other files except sitemaps
 			$path_info = pathinfo($file_name);
-			$_sitemap_filename_pattern = "/^(".$this->SITEMAP_FILE_NAME.")([0-9]{1,3})(\.xml)$/";
-			if (!preg_match($_sitemap_filename_pattern, $path_info["basename"])) {
+			$_sitemap_filename_pattern = '/^('.$this->SITEMAP_FILE_NAME.')([0-9]{1,3})(\.xml)$/';
+			if (!preg_match($_sitemap_filename_pattern, $path_info['basename'])) {
 				continue;
 			} else {
 				$sitemaps[$file_name] = $file_name;
@@ -234,13 +234,13 @@ class yf_site_map {
 				$this->_process_sitemap_file($filename);
 			}
 		} 
-		$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER). $this->SITEMAP_FILE_NAME."1".$this->_file_extension;
+		$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER). $this->SITEMAP_FILE_NAME.'1'.$this->_file_extension;
 		if ($sitemaps && count($sitemaps) > 1) {
 			// Create sitemap index 
-			$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME."_index".$this->_file_extension, 'w+');
+			$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.'_index'.$this->_file_extension, 'w+');
 			// Put contents to sitemap index file
 			// Output header
-			$this->_output(tpl()->parse(__CLASS__."/index_header"));
+			$this->_output(tpl()->parse(__CLASS__.'/index_header'));
 			foreach ((array)$sitemaps as $sitemap_file){
 				// Gzip sitemap files
 				if ($this->USE_GZIP){
@@ -257,11 +257,11 @@ class yf_site_map {
 				$this->_output($string);
 			}
 			// Output footer
-			$this->_output(tpl()->parse(__CLASS__."/index_footer"));
+			$this->_output(tpl()->parse(__CLASS__.'/index_footer'));
 			// Close file
 			fclose($this->_fp);
 
-			$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER) .$this->SITEMAP_FILE_NAME. "_index". $this->_file_extension;
+			$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER) .$this->SITEMAP_FILE_NAME. '_index'. $this->_file_extension;
 		}	
 
 		// Release lock
@@ -277,14 +277,14 @@ class yf_site_map {
 	* Store sitemap item
 	*/
 	function _store_item ($data = array()) {
-		if (empty($data) || empty($data["url"])) {
+		if (empty($data) || empty($data['url'])) {
 			return false;
 		}
 		// Do nothing
 		if ($this->LIMIT_REACHED) {
 			return false;
 		}
-		$location = $data["url"];
+		$location = $data['url'];
 		if ((strlen($location) + $this->_path_size_bytes) >= $this->MAX_URL_LENGTH) {
 			return false;
 		}
@@ -310,7 +310,7 @@ class yf_site_map {
 			// Finish to write file and create another one
 			if ($this->_fp) {
 				// Output footer
-				$this->_output(tpl()->_get_template_file(__CLASS__."/footer"));
+				$this->_output(tpl()->_get_template_file(__CLASS__.'/footer'));
 				fclose($this->_fp);
 			}
 			if ($this->_entries_counter >= $this->MAX_ENTRIES || $this->_total_length >= $this->MAX_SIZE) {
@@ -326,8 +326,8 @@ class yf_site_map {
 				// Create and open to write next sitemap file 
 				$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.$this->_sitemap_file_counter.$this->_file_extension, 'w+');
 				// Output header
-				$this->_output(tpl()->_get_template_file(__CLASS__."/header"));
-				$this->_total_length = strlen(tpl()->_get_template_file(__CLASS__."/header"));
+				$this->_output(tpl()->_get_template_file(__CLASS__.'/header'));
+				$this->_total_length = strlen(tpl()->_get_template_file(__CLASS__.'/header'));
 			}
 		}
 		if (!$this->LIMIT_REACHED) {
@@ -356,12 +356,12 @@ class yf_site_map {
 			return false;
 		}
 		if ($this->DIRECT_FILE_OUTPUT) {
-			@header("Content-type: text/xml");
+			header('Content-type: text/xml');
 			readfile(str_replace($this->SITEMAP_WEB_PATH, $this->SITEMAP_STORE_FOLDER, $location));
 			exit();
 		} else {
-			@header(($_SERVER["SERVER_PROTOCOL"] ? $_SERVER["SERVER_PROTOCOL"] : "HTTP/1.1")." 301 Moved Permanently");
-			@header("Location: ".$location); 
+			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 301 Moved Permanently');
+			header('Location: '.$location); 
 		}
 	}
 
@@ -369,7 +369,7 @@ class yf_site_map {
 	* Do gzip file
 	*/
 	function _gzip_file($filename) {
-		$new_filename = $filename.".gz";
+		$new_filename = $filename.'.gz';
 		file_put_contents($new_filename, gzencode(file_get_contents($filename)));
 		return $new_filename;		
 	}
@@ -380,7 +380,7 @@ class yf_site_map {
 	*/
 	function _do_notify_google() {
 		if ($this->NOTIFY_GOOGLE) {
-			fopen("http://www.google.com/webmasters/sitemaps/ping?sitemap=".urlencode($this->_notify_url), 'r');
+			fopen('http://www.google.com/webmasters/sitemaps/ping?sitemap='.urlencode($this->_notify_url), 'r');
 		}
 	}
 
@@ -400,18 +400,18 @@ class yf_site_map {
 	/**
 	* Processes sitemap file. Escapes special chars. Makes full webpath 
 	*/
-	function _process_sitemap_file($_path = ""){
+	function _process_sitemap_file($_path = ''){
 		$text = file_get_contents($_path);
 		// Process URLs
 		if ($this->ALLOW_REWRITE) {
-			$RW = module("rewrite");
+			$RW = module('rewrite');
 			$RW->FORCE_NO_DEBUG = true;
 			// Save old pattern
 			$old_pattern = $RW->_links_pattern;
 			// Aplly our custom pattern
-			$RW->_links_pattern = "/(<loc>)([^\<]+)(<\/loc>)/ms";
+			$RW->_links_pattern = '/(<loc>)([^\<]+)(<\/loc>)/ms';
 			// Process rewrite
-			foreach ((array)common()->_my_split($text, "<url>", $this->REWRITE_SPLIT_LENGTH) as $_cur_text) {
+			foreach ((array)common()->_my_split($text, '<url>', $this->REWRITE_SPLIT_LENGTH) as $_cur_text) {
 				$rewrited .= $RW->_rewrite_replace_links($_cur_text);
 			}
 			$text = $rewrited;
@@ -419,9 +419,9 @@ class yf_site_map {
 			// Revert old links pattern
 			$RW->_links_pattern = $old_pattern;
 		} else {
-			$text = str_replace("<loc>./?", "<loc>".WEB_PATH."?", $text);
+			$text = str_replace('<loc>./?', '<loc>'.WEB_PATH.'?', $text);
 		}
-		$text = preg_replace("/<loc>([^\<]+)<\/loc>/imse", "'<loc>'.htmlspecialchars('\\1').'</loc>'", $text);
+		$text = preg_replace('/<loc>([^\<]+)<\/loc>/imse', "'<loc>'.htmlspecialchars('\\1').'</loc>'", $text);
 		file_put_contents($_path, $text);
 	}
 
@@ -429,36 +429,36 @@ class yf_site_map {
 	* Get available modules for the sitemap creation
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
-		$pattern = "/(function)(\s)+(_site_map_items)/ims";
+		$pattern = '/(function)(\s)+(_site_map_items)/ims';
 
 		$user_modules_array = array();
 		$dir_to_scan = INCLUDE_PATH. USER_MODULES_DIR;
-		foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
-			$v = str_replace("//", "/", $v);
+		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+			$v = str_replace('//', '/', $v);
 			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
+			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 				continue;
 			}
 			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
+			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 			$file_content = file_get_contents($v);
 			if (preg_match($pattern, $file_content, $matches)) {
 				$user_modules_array[$module_name] = $module_name;
 			}
 		}
-		$dir_to_scan = INCLUDE_PATH. "priority2/". USER_MODULES_DIR;
-		foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
-			$v = str_replace("//", "/", $v);
+		$dir_to_scan = INCLUDE_PATH. 'priority2/'. USER_MODULES_DIR;
+		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+			$v = str_replace('//', '/', $v);
 			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 				continue;
 			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
+			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 				continue;
 			}
 			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
+			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 			$file_content = file_get_contents($v);
 			if (preg_match($pattern, $file_content, $matches)) {
 				$user_modules_array[$module_name] = $module_name;
@@ -467,34 +467,34 @@ class yf_site_map {
 		// Do parse files from the framework
 		if ($include_framework) {
 			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
-			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
-				$v = str_replace("//", "/", $v);
+			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+				$v = str_replace('//', '/', $v);
 				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
+				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 					continue;
 				}
 				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, "", $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 				$file_content = file_get_contents($v);
 				if (preg_match($pattern, $file_content, $matches)) {
 					$user_modules_array[$module_name] = $module_name;
 				}
 			}
-			$dir_to_scan = YF_PATH. "priority2/". USER_MODULES_DIR;
-			foreach ((array)_class("dir")->scan_dir($dir_to_scan) as $k => $v) {
-				$v = str_replace("//", "/", $v);
+			$dir_to_scan = YF_PATH. 'priority2/'. USER_MODULES_DIR;
+			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+				$v = str_replace('//', '/', $v);
 				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
 					continue;
 				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), "/")) {
+				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 					continue;
 				}
 				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, "", $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, "", $module_name);
+				$module_name = str_replace(YF_PREFIX, '', $module_name);
+				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
 				$file_content = file_get_contents($v);
 				if (preg_match($pattern, $file_content, $matches)) {
 					$user_modules_array[$module_name] = $module_name;

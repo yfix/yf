@@ -49,10 +49,22 @@ class yf_admin_methods {
 						$sql[$f] = $_POST[$f];
 					}
 				}
+				if (is_callable($params['on_before_update'])) {
+					$params['on_before_update']($sql);
+				}
+
 				db()->insert($table, db()->es($sql));
 				$NEW_ID = db()->insert_id();
 				common()->admin_wall_add(array($_GET['object'].': added record into table '.$table, $NEW_ID));
+
+				if (is_callable($params['on_after_update'])) {
+					$params['on_after_update']($sql, $NEW_ID);
+				}
 				return js_redirect('./?object='.$_GET['object']. ($NEW_ID ? '&action=edit&id='.$NEW_ID : ''). $params['links_add']);
+			} else {
+				if (is_callable($params['on_error'])) {
+					$params['on_error']();
+				}
 			}
 		}
 		$DATA = _prepare_html($_POST);
@@ -102,9 +114,21 @@ class yf_admin_methods {
 						$sql[$f] = $_POST[$f];
 					}
 				}
+				if (is_callable($params['on_before_update'])) {
+					$params['on_before_update']($sql);
+				}
+
 				db()->update($table, db()->es($sql), '`'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'"');
 				common()->admin_wall_add(array($_GET['object'].': updated record in table '.$table, $_GET['id']));
+
+				if (is_callable($params['on_after_update'])) {
+					$params['on_after_update']($sql);
+				}
 				return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.urlencode($_GET['id']). $params['links_add']);
+			} else {
+				if (is_callable($params['on_error'])) {
+					$params['on_error']();
+				}
 			}
 		}
 		$DATA = $a;
@@ -144,8 +168,17 @@ class yf_admin_methods {
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
 		if (!empty($_GET['id'])) {
+			if (is_callable($params['on_before_update'])) {
+				$params['on_before_update']($_GET['id']);
+			}
+
 			db()->query('DELETE FROM '.db()->es($table).' WHERE `'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'" LIMIT 1');
+
 			common()->admin_wall_add(array($_GET['object'].': deleted record from table '.$table, $_GET['id']));
+
+			if (is_callable($params['on_after_update'])) {
+				$params['on_after_update']($_GET['id']);
+			}
 		}
 		if (conf('IS_AJAX')) {
 			echo $_GET['id'];
@@ -176,10 +209,19 @@ class yf_admin_methods {
 			$info = db()->query_fetch('SELECT * FROM '.db()->es($table).' WHERE `'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'" LIMIT 1');
 		}
 		if ($info) {
+			if (is_callable($params['on_before_update'])) {
+				$params['on_before_update']($info);
+			}
+
 			db()->update($table, array(
 				'active' => (int)!$info['active'],
 			), db()->es($primary_field).'="'.db()->es($_GET['id']).'"');
+
 			common()->admin_wall_add(array($_GET['object'].': item in table '.$table.' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+
+			if (is_callable($params['on_after_update'])) {
+				$params['on_after_update']($info);
+			}
 		}
 		if (conf('IS_AJAX')) {
 			echo ($info['active'] ? 0 : 1);
@@ -213,9 +255,18 @@ class yf_admin_methods {
 			$sql = $info;
 			unset($sql[$primary_field]);
 
+			if (is_callable($params['on_before_update'])) {
+				$params['on_before_update']($sql);
+			}
+
 			db()->insert($table, db()->es($sql));
 			$new_id = db()->insert_id();
+
 			common()->admin_wall_add(array($_GET['object'].': item cloned in table '.$table, $new_id));
+
+			if (is_callable($params['on_after_update'])) {
+				$params['on_after_update']($sql, $new_id);
+			}
 		}
 		if (conf('IS_AJAX')) {
 			echo ($new_id ? 1 : 0);
