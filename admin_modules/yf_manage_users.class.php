@@ -127,6 +127,27 @@ class yf_manage_users {
 	}
 
 	/**
+	*/
+	function login_as() {
+// TODO: move this into classes/auth_user ?
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('Wrong id');
+		}
+		$a = db()->get('SELECT * FROM '.db('user').' WHERE id='.$id);
+		if (!$a) {
+			return _e('Target user not found');
+		}
+		$t = time();
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.WEB_PATH.'")) FROM '.db('admin').' WHERE id=1');
+		_class('encryption')->_secret_key = $secret_key;
+		$to_encode = 'userid-'.$a['id'].'-'.$t.'-'.md5($a['password']);
+		$integrity_hash = md5($to_encode);
+		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash);
+		return js_redirect(WEB_PATH.'?task=login&id='.$encrypted, $rewrite = false);
+	}
+
+	/**
 	* User account confirmation
 	*/
 	function do_confirm () {
@@ -160,35 +181,6 @@ class yf_manage_users {
 			$body .= $this->show($_POST);
 		}
 		return $body;
-*/
-	}
-
-	/**
-	*/
-	function login_as() {
-// TODO: move this into classes/auth_admin
-/*
-		$id = intval($_GET['id']);
-		if (!$id) {
-			return _e('Wrong id');
-		}
-		if (main()->ADMIN_GROUP != 1) {
-			return _e('Allowed only for super-admins');
-		}
-		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
-		if (!$a) {
-			return _e('Target admin user info not found');
-		}
-		$t_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)$a['group']);
-		// Save previous session
-		$_SESSION['admin_prev_info'] = $_SESSION;
-		// Login as different admin user
-		$_SESSION['admin_id'] = $a['id'];
-		$_SESSION['admin_group'] = $a['group'];
-		$_SESSION['admin_login_time'] = time();
-
-		$after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
-		return js_redirect($after_login ?: './');
 */
 	}
 
