@@ -19,13 +19,17 @@ class yf_admin_groups {
 				break;
 			}
 		}
+		$gid = main()->ADMIN_GROUP;
+		$func = function($row) use ($gid) {
+			return !($row['id'] == $gid);
+		};
 		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="admin" AND active="1" LIMIT 1');
 		return table('SELECT * FROM '.db('admin_groups').' ORDER BY id ASC')
 			->text('name')
 			->text('go_after_login')
 			->btn_edit()
-			->btn_delete()
-			->btn_active()
+			->btn_delete(array('display_func' => $func))
+			->btn_active(array('display_func' => $func))
 			->footer_add()
 			->footer_link('Blocks', './?object=blocks&action=show_rules&id='.$admin_center_id)
 			->footer_link('Menu', './?object=menus_editor&action=show_items&id='.$menu_id);
