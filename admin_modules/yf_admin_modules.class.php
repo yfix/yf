@@ -52,20 +52,42 @@ class yf_admin_modules {
 			return js_redirect('./?object='.$_GET['object']);
 		}
 
+		if (!isset($this->_yf_plugins)) {
+			$this->_yf_plugins = main()->_preload_plugins_list();
+			$this->_yf_plugins_classes = main()->_plugins_classes;
+		}
 		$items = array();
 		foreach ((array)db()->get_all('SELECT * FROM '.db('admin_modules').' ORDER BY name ASC') as $a) {
+			$name = $a['name'];
+			$plugin_name = '';
+			if (isset($this->_yf_plugins_classes[$name])) {
+				$plugin_name = $this->_yf_plugins_classes[$name];
+			}
 			$locations = array();
-			if (file_exists(ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
-				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'modules');
+			$d = ADMIN_SITE_PATH. ADMIN_MODULES_DIR;
+			$f = $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
-			if (file_exists(ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
-				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(INCLUDE_PATH. 'priority2/modules');
+			$d = ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR;
+			$f = $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
-			if (file_exists(YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
-				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules');
+			$d = YF_PATH. ADMIN_MODULES_DIR;
+			$f = YF_PREFIX. $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
-			if (file_exists(YF_PATH. 'priority2/'. ADMIN_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
-				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules');
+			$d = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR;
+			$f = YF_PREFIX. $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
+			}
+			$d = YF_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR;
+			$f = YF_PREFIX. $name. YF_CLS_EXT;
+			if ($plugin_name && file_exists($d. $f)) {
+				$locations['framework_plugin'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
 			$items[] = array(
 				'name'		=> $a['name'],
@@ -113,33 +135,41 @@ class yf_admin_modules {
 	*/
 	function refresh_modules_list ($silent = false) {
 		// Cleanup duplicate records
-		$Q = db()->query('SELECT name, COUNT(*) AS num FROM '.db('admin_modules').' GROUP BY name HAVING num > 1');
-		while ($A = db()->fetch_assoc($Q)) {
-			db()->query('DELETE FROM '.db('admin_modules').' WHERE name="'._es($A['name']).'" LIMIT '.intval($A['num'] - 1));
+		$q = db()->query('SELECT name, COUNT(*) AS num FROM '.db('admin_modules').' GROUP BY name HAVING num > 1');
+		while ($a = db()->fetch_assoc($q)) {
+			db()->query('DELETE FROM '.db('admin_modules').' WHERE name="'._es($a['name']).'" LIMIT '.intval($a['num'] - 1));
 		}
-		$Q = db()->query('SELECT * FROM '.db('admin_modules').'');
-		while ($A = db()->fetch_assoc($Q)) {
-			$all_admin_modules_array[$A['name']] = $A['name'];
+		$q = db()->query('SELECT * FROM '.db('admin_modules').'');
+		while ($a = db()->fetch_assoc($q)) {
+			$all_admin_modules_array[$a['name']] = $a['name'];
 		}
 
-		$refreshed_modules = $this->_get_modules_from_files(1);
+		$refreshed_modules = $this->_get_modules_from_files($include_framework = true, $with_sub_modules = false);
+
+		$insert_data = array();
 		foreach ((array)$refreshed_modules as $cur_module_name) {
 			if (isset($all_admin_modules_array[$cur_module_name])) {
 				continue;
 			}
-			db()->insert('admin_modules', array(
-				'name'		=> _es($cur_module_name),
-				'active'	=> 0,
-			));
+			$insert_data[$cur_module_name] = array(
+				'name'   => $cur_module_name,
+				'active' => 0,
+			);
+		}
+		if ($insert_data) {
+			db()->insert('admin_modules', db()->es($insert_data));
 		}
 		// Check for missing modules
+		$delete_names = array();
 		foreach ((array)$all_admin_modules_array as $cur_module_name) {
-			// Do delete missing modules records
 			if (!isset($refreshed_modules[$cur_module_name])) {
-				db()->query('DELETE FROM '.db('admin_modules').' WHERE name="'._es($cur_module_name).'"');
+				$delete_names[$cur_module_name] = $cur_module_name;
 			}
 		}
-		cache()->refresh('admin_modules');
+		if ($delete_names) {
+			db()->query('DELETE FROM '.db('admin_modules').' WHERE name IN("'.implode('","', _es($delete_names)).'")');
+		}
+		cache()->refresh(array('admin_modules','admin_modules_for_select'));
 		if (!$silent) {
 			return js_redirect('./?object='.$_GET['object']);
 		}
@@ -149,6 +179,10 @@ class yf_admin_modules {
 	* Get available modules
 	*/
 	function _get_modules ($params = array()) {
+		// Need to prevent multiple calls
+		if (isset($this->_admin_modules_array)) {
+			return $this->_admin_modules_array;
+		}
 		$with_all			= isset($params['with_all']) ? $params['with_all'] : 1;
 		$with_sub_modules	= isset($params['with_sub_modules']) ? $params['with_sub_modules'] : 0;
 		$admin_modules_array	= array();
@@ -156,19 +190,13 @@ class yf_admin_modules {
 		if ($with_all) {
 			$admin_modules_array[''] = t('-- ALL --');
 		}
-		// Need to prevent multiple calls
-		if (isset($GLOBALS['admin_modules_array'])) {
-			return $GLOBALS['admin_modules_array'];
-		}
-
 		$Q = db()->query('SELECT * FROM '.db('admin_modules').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$admin_modules_array[$A['name']] = $A['name'];
 		}
-
 		ksort($admin_modules_array);
-		$GLOBALS['admin_modules_array'] = $admin_modules_array;
-		unset($GLOBALS['admin_modules_array']['']);
+		$this->_admin_modules_array = $admin_modules_array;
+		unset($this->_admin_modules_array['']);
 		return $admin_modules_array;
 	}
 
@@ -177,72 +205,154 @@ class yf_admin_modules {
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
 		$admin_modules_array = array();
+
+		$pattern_include = '-f ~/'.preg_quote(ADMIN_MODULES_DIR,'~').'.*'.preg_quote(YF_CLS_EXT,'~').'$~';
+		$pattern_no_submodules = '~/'.preg_quote(ADMIN_MODULES_DIR,'~').'[^/]+'.preg_quote(YF_CLS_EXT,'~').'$~ims';
+
+		$yf_prefix_len = strlen(YF_PREFIX);
+		$yf_cls_ext_len = strlen(YF_CLS_EXT);
+		$admin_prefix_len = strlen(YF_ADMIN_CLS_PREFIX);
+		$site_prefix_len = strlen(YF_SITE_CLS_PREFIX);
+
 		$dir_to_scan = ADMIN_SITE_PATH. ADMIN_MODULES_DIR;
-// TODO: connect plugins
-		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+		foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 				continue;
 			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-				continue;
+			if (!$with_sub_modules) {
+				if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+					continue;
+				}
 			}
-			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
+			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+			if (substr($module_name, 0, $admin_prefix_len) == YF_ADMIN_CLS_PREFIX) {
+				$module_name = substr($module_name, $admin_prefix_len);
+			}
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
 			$admin_modules_array[$module_name] = $module_name;
 		}
-		$dir_to_scan = ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR;
-		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+
+		$dir_to_scan = PROJECT_PATH. 'priority2/'. ADMIN_MODULES_DIR;
+		foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 				continue;
 			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-				continue;
+			if (!$with_sub_modules) {
+				if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+					continue;
+				}
 			}
-			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
+			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+			if (substr($module_name, 0, $admin_prefix_len) == YF_ADMIN_CLS_PREFIX) {
+				$module_name = substr($module_name, $admin_prefix_len);
+			}
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
 			$admin_modules_array[$module_name] = $module_name;
 		}
+
+		// Plugins parsed differently
+		foreach ((array)_class('dir')->scan(PROJECT_PATH. 'plugins/', true, $pattern_include) as $k => $v) {
+			$v = str_replace('//', '/', $v);
+			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
+				continue;
+			}
+			if (!$with_sub_modules) {
+				if (!preg_match($pattern_no_submodules, $v)) {
+					continue;
+				}
+			}
+			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+			if (substr($module_name, 0, $admin_prefix_len) == YF_ADMIN_CLS_PREFIX) {
+				$module_name = substr($module_name, $admin_prefix_len);
+			}
+			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
+				continue;
+			}
+			$admin_modules_array[$module_name] = $module_name;
+		}
+
 		// Do parse files from the framework
 		if ($include_framework) {
 			$dir_to_scan = YF_PATH. ADMIN_MODULES_DIR;
-			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+			foreach ((array)_class('dir')->scan($dir_to_scan) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 					continue;
 				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-					continue;
+				if (!$with_sub_modules) {
+					if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+						continue;
+					}
 				}
-				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
+				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+				if (substr($module_name, 0, $yf_prefix_len) == YF_PREFIX) {
+					$module_name = substr($module_name, $yf_prefix_len);
+				}
+				if (substr($module_name, 0, $admin_prefix_len) == YF_ADMIN_CLS_PREFIX) {
+					$module_name = substr($module_name, $admin_prefix_len);
+				}
+				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+					$module_name = substr($module_name, $site_prefix_len);
+				}
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
 				$admin_modules_array[$module_name] = $module_name;
 			}
 			$dir_to_scan = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR;
-			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+			foreach ((array)_class('dir')->scan($dir_to_scan) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 					continue;
 				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+				if (!$with_sub_modules) {
+					if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+						continue;
+					}
+				}
+				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+				if (substr($module_name, 0, $yf_prefix_len) == YF_PREFIX) {
+					$module_name = substr($module_name, $yf_prefix_len);
+				}
+				if (substr($module_name, 0, $admin_prefix_len) == YF_ADMIN_CLS_PREFIX) {
+					$module_name = substr($module_name, $admin_prefix_len);
+				}
+				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+					$module_name = substr($module_name, $site_prefix_len);
+				}
+				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
-				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_ADMIN_CLS_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
+				$admin_modules_array[$module_name] = $module_name;
+			}
+
+			// Plugins parsed differently
+			foreach ((array)_class('dir')->scan(YF_PATH. 'plugins/', true, $pattern_include) as $k => $v) {
+				$v = str_replace('//', '/', $v);
+				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
+					continue;
+				}
+				if (!$with_sub_modules) {
+					if (!preg_match($pattern_no_submodules, $v)) {
+						continue;
+					}
+				}
+				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+				if (substr($module_name, 0, $yf_prefix_len) == YF_PREFIX) {
+					$module_name = substr($module_name, $yf_prefix_len);
+				}
+				if (substr($module_name, 0, $admin_prefix_len) == YF_ADMIN_CLS_PREFIX) {
+					$module_name = substr($module_name, $admin_prefix_len);
+				}
+				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+					$module_name = substr($module_name, $site_prefix_len);
+				}
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
@@ -262,16 +372,35 @@ class yf_admin_modules {
 			$ONLY_PRIVATE_METHODS = $params['private'];
 		}
 		$methods_by_modules = array();
-// TODO: connect plugins
-		foreach ((array)$GLOBALS['admin_modules_array'] as $user_module_name) {
+		if (!isset($this->_yf_plugins)) {
+			$this->_yf_plugins = main()->_preload_plugins_list();
+			$this->_yf_plugins_classes = main()->_plugins_classes;
+		}
+		if (!isset($this->_admin_modules_array)) {
+			$this->_get_modules();
+		}
+		foreach ((array)$this->_admin_modules_array as $user_module_name) {
 			if (substr($user_module_name, 0, strlen(YF_ADMIN_CLS_PREFIX)) == YF_ADMIN_CLS_PREFIX) {
 				$user_module_name = substr($user_module_name, strlen(YF_ADMIN_CLS_PREFIX));
 			}
+			$plugin_name = '';
+			if (isset($this->_yf_plugins_classes[$user_module_name])) {
+				$plugin_name = $this->_yf_plugins_classes[$user_module_name];
+			}
 			$file_names = array();
-			$file_text = '';
 			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
 				$file_names['admin'] = $tmp;
+			}
+			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. YF_ADMIN_CLS_PREFIX. $user_module_name. YF_CLS_EXT;
+			if (file_exists($tmp)) {
+				$file_names['admin_with_prefix'] = $tmp;
+			}
+			if ($plugin_name) {
+				$tmp = PROJECT_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR. $user_module_name. YF_CLS_EXT;
+				if (file_exists($tmp)) {
+					$file_names['admin_plugin'] = $tmp;
+				}
 			}
 			$tmp = YF_PATH. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
 			if (file_exists($tmp)) {
@@ -281,9 +410,11 @@ class yf_admin_modules {
 			if (file_exists($tmp)) {
 				$file_names['yf_p2'] = $tmp;
 			}
-			$tmp = ADMIN_SITE_PATH. ADMIN_MODULES_DIR. YF_ADMIN_CLS_PREFIX. $user_module_name. YF_CLS_EXT;
-			if (file_exists($tmp)) {
-				$file_names['admin_with_prefix'] = $tmp;
+			if ($plugin_name) {
+				$tmp = YF_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR. YF_PREFIX. $user_module_name. YF_CLS_EXT;
+				if (file_exists($tmp)) {
+					$file_names['yf_plugin'] = $tmp;
+				}
 			}
 			if (!$file_names) {
 				continue;
