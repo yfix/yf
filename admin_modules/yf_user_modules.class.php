@@ -116,29 +116,39 @@ class yf_user_modules {
 	*/
 	function refresh_modules_list ($silent = false) {
 		// Cleanup duplicate records
-		$Q = db()->query('SELECT name, COUNT(*) AS num FROM '.db('user_modules').' GROUP BY name HAVING num > 1');
-		while ($A = db()->fetch_assoc($Q)) {
-			db()->query('DELETE FROM '.db('user_modules').' WHERE name="'._es($A['name']).'" LIMIT '.intval($A['num'] - 1));
+		$q = db()->query('SELECT name, COUNT(*) AS num FROM '.db('user_modules').' GROUP BY name HAVING num > 1');
+		while ($a = db()->fetch_assoc($q)) {
+			db()->query('DELETE FROM '.db('user_modules').' WHERE name="'._es($a['name']).'" LIMIT '.intval($a['num'] - 1));
 		}
-		$Q = db()->query('SELECT * FROM '.db('user_modules').'');
-		while ($A = db()->fetch_assoc($Q)) {
-			$all_user_modules_array[$A['name']] = $A['name'];
+		$q = db()->query('SELECT * FROM '.db('user_modules').'');
+		while ($a = db()->fetch_assoc($q)) {
+			$all_user_modules_array[$a['name']] = $a['name'];
 		}
-		$refreshed_modules = $this->_get_modules_from_files(1);
+
+		$refreshed_modules = $this->_get_modules_from_files($include_framework = true, $with_sub_modules = false);
+
+		$insert_data = array();
 		foreach ((array)$refreshed_modules as $cur_module_name) {
 			if (isset($all_user_modules_array[$cur_module_name])) {
 				continue;
 			}
-			db()->insert('user_modules', array(
-				'name'		=> _es($cur_module_name),
-				'active'	=> 0,
-			));
+			$insert_data[$cur_module_name] = array(
+				'name'   => $cur_module_name,
+				'active' => 0,
+			);
+		}
+		if ($insert_data) {
+			db()->insert('user_modules', db()->es($insert_data));
 		}
 		// Check for missing modules
+		$delete_names = array();
 		foreach ((array)$all_user_modules_array as $cur_module_name) {
 			if (!isset($refreshed_modules[$cur_module_name])) {
-				db()->query('DELETE FROM '.db('user_modules').' WHERE name="'._es($cur_module_name).'"');
+				$delete_names[$cur_module_name] = $cur_module_name;
 			}
+		}
+		if ($delete_names) {
+			db()->query('DELETE FROM '.db('user_modules').' WHERE name IN("'.implode('","', _es($delete_names)).'")');
 		}
 		cache()->refresh(array('user_modules','user_modules_for_select'));
 		if (!$silent) {
@@ -177,34 +187,69 @@ class yf_user_modules {
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
 		$user_modules_array = array();
+		$pattern_include = '-f ~'.preg_quote(USER_MODULES_DIR,'~').'.*'.preg_quote(YF_CLS_EXT,'~').'$~';
+
+		$yf_prefix_len = strlen(YF_PREFIX);
+		$yf_cls_ext_len = strlen(YF_CLS_EXT);
+		$site_prefix_len = strlen(YF_SITE_CLS_PREFIX);
+
 		$dir_to_scan = PROJECT_PATH. USER_MODULES_DIR;
-// TODO: connect plugins
-		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+		foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 				continue;
 			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-				continue;
+			if (!$with_sub_modules) {
+				if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+					continue;
+				}
 			}
-			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
+			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+			if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+				$module_name = substr($module_name, $site_prefix_len);
+			}
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
 			$user_modules_array[$module_name] = $module_name;
 		}
+
 		$dir_to_scan = PROJECT_PATH. 'priority2/'. USER_MODULES_DIR;
-		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+		foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
 			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 				continue;
 			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+			if (!$with_sub_modules) {
+				if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+					continue;
+				}
+			}
+			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+			if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+				$module_name = substr($module_name, $site_prefix_len);
+			}
+			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
-			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
+			$user_modules_array[$module_name] = $module_name;
+		}
+
+		// Plugins parsed differently
+		foreach ((array)_class('dir')->scan(PROJECT_PATH. 'plugins/', true, $pattern_include) as $k => $v) {
+			$v = str_replace('//', '/', $v);
+			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
+				continue;
+			}
+			if (!$with_sub_modules) {
+				if (!preg_match('~'.preg_quote(USER_MODULES_DIR,'~').'[^/]+'.preg_quote(YF_CLS_EXT,'~').'$~ims', $v)) {
+					continue;
+				}
+			}
+			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+			if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+				$module_name = substr($module_name, $site_prefix_len);
+			}
 			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 				continue;
 			}
@@ -213,34 +258,63 @@ class yf_user_modules {
 		// Do parse files from the framework
 		if ($include_framework) {
 			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
-			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+			foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 					continue;
 				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-					continue;
+				if (!$with_sub_modules) {
+					if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+						continue;
+					}
 				}
-				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
+				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+				$module_name = substr($module_name, $yf_prefix_len);
+				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+					$module_name = substr($module_name, $site_prefix_len);
+				}
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
 				$user_modules_array[$module_name] = $module_name;
 			}
 			$dir_to_scan = YF_PATH. 'priority2/'. USER_MODULES_DIR;
-			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
+			foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
 				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
+				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
 					continue;
 				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+				if (!$with_sub_modules) {
+					if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
+						continue;
+					}
+				}
+				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+				$module_name = substr($module_name, $yf_prefix_len);
+				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+					$module_name = substr($module_name, $site_prefix_len);
+				}
+				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
+				}
+				$user_modules_array[$module_name] = $module_name;
+			}
+			foreach ((array)_class('dir')->scan(YF_PATH. 'plugins/', true, $pattern_include) as $k => $v) {
+				$v = str_replace('//', '/', $v);
+				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
+					continue;
+				}
+				if (!$with_sub_modules) {
+					if (!preg_match('~'.preg_quote(USER_MODULES_DIR,'~').'[^/]+'.preg_quote(YF_CLS_EXT,'~').'$~ims', $v)) {
+						continue;
+					}
 				}
 				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
+				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
+				$module_name = substr($module_name, $yf_prefix_len);
+				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
+					$module_name = substr($module_name, $site_prefix_len);
+				}
 				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
