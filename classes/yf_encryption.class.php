@@ -155,13 +155,20 @@ class yf_encryption {
 	* Safe encrypt data into base64 string (replace '/' symbol)
 	*/
 	function _safe_encrypt_with_base64 ($input = '') {
-		return str_replace('/', '*', base64_encode($this->encrypt($input)));
+		$r = array(
+			'/' => '*',
+		);
+		return str_replace(array_keys($r), array_values($r), base64_encode($this->encrypt($input)));
 	}
 
 	/**
 	* Safe decrypt data from base64 string (replace '/' symbol)
 	*/
 	function _safe_decrypt_with_base64 ($input = '') {
-		return $this->decrypt(base64_decode(str_replace('*', '/', $input)));
+		$r = array(
+			'*' => '/',
+			' ' => '+',
+		);
+		return $this->decrypt(base64_decode(str_replace(array_keys($r), array_values($r), $input)));
 	}
 }
