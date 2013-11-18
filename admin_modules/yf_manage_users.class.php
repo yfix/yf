@@ -16,7 +16,10 @@ class yf_manage_users {
 			->btn_edit()
 			->btn_delete()
 			->btn_active()
+			->btn('log_auth', './?object=log_auth_view&action=show_for_user&id=%d')
+			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d')
 			->footer_add()
+			->footer_link('Failed auth log', './?object=log_auth_fails_viewer')
 		;
 	}
 
@@ -157,6 +160,35 @@ class yf_manage_users {
 			$body .= $this->show($_POST);
 		}
 		return $body;
+*/
+	}
+
+	/**
+	*/
+	function login_as() {
+// TODO: move this into classes/auth_admin
+/*
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('Wrong id');
+		}
+		if (main()->ADMIN_GROUP != 1) {
+			return _e('Allowed only for super-admins');
+		}
+		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
+		if (!$a) {
+			return _e('Target admin user info not found');
+		}
+		$t_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)$a['group']);
+		// Save previous session
+		$_SESSION['admin_prev_info'] = $_SESSION;
+		// Login as different admin user
+		$_SESSION['admin_id'] = $a['id'];
+		$_SESSION['admin_group'] = $a['group'];
+		$_SESSION['admin_login_time'] = time();
+
+		$after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
+		return js_redirect($after_login ?: './');
 */
 	}
 
