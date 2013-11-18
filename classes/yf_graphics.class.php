@@ -314,6 +314,9 @@ class yf_graphics {
 				'time'		=> _format_date($login_time),
 				'edit_link'	=> './?object=admin_account',
 			));
+			if (main()->ADMIN_GROUP != 1 && $_SESSION['admin_prev_info']) {
+				$body .= '<li><a href="./?task=login&action=prev_info"><i class="icon icon-arrow-up"></i> '.t('Login back').'</a></li>';
+			}
 		// For authorized users only
 		} elseif (MAIN_TYPE_USER && $user_id && $user_group) {
 			$user_info 		= user($user_id);
