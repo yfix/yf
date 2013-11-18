@@ -104,7 +104,7 @@ class yf_auth_admin {
 		if ($_GET['task'] == 'login') {
 			if (empty($_SESSION[$this->VAR_ADMIN_ID])) {
 				$this->_do_login();
-			} elseif ($_GET['action'] == 'prev_info' && !empty($_SESSION['admin_prev_info'])) {
+			} elseif ($_GET['id'] == 'prev_info' && !empty($_SESSION['admin_prev_info'])) {
 				$this->_login_with_prev_info();
 			}
 		} elseif ($_GET['task'] == 'logout') {
