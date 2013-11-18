@@ -6,7 +6,7 @@ class yf_get_pswd {
 	function _init(){
 		$this->_my_site_title = t('Password Reminder');
 	}
-	
+
 	/*
 	* Default function
 	*/
@@ -81,7 +81,7 @@ class yf_get_pswd {
 			"home_url"		=> process_url("./"),
 			"login_url"		=> process_url("./?object=login_form"),
 			"faq_url"		=> process_url("./?object=faq"),
-		);	
+		);
 		// Prepare email
 		$message	= tpl()->parse($_GET["object"]."/email", $replace);
 		$name_from	= SITE_ADVERT_NAME;

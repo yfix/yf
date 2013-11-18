@@ -115,6 +115,7 @@ class yf_send_mail {
 		// Debug mail (All emails are sending to the specified email address)
 		if ($this->MAIL_DEBUG && $this->DEBUG_TEST_ADDRESS) {
 			$debug_email = $this->DEBUG_TEST_ADDRESS;
+			$debug_name = "(debug: $name_to - $email_to)";
 			if ($this->USE_MAILER == 'phpmailer' && is_array($email_to)) {
 				$emails = array();
 				$debug_name = '';
@@ -130,6 +131,7 @@ class yf_send_mail {
 				}
 			} else {
 				$email_to = $debug_email;
+				$name_to  = $debug_name;
 			}
 		}
 		// Load specific SMTP options (only for 'pear', 'xpm2', 'xpm4')
