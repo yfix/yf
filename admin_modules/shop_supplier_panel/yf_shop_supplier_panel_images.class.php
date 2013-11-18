@@ -1,5 +1,5 @@
 <?php
-class yf_manage_shop_product_images{
+class yf_shop_supplier_panel_images{
 
 	/**
 	*/
