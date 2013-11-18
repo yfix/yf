@@ -54,20 +54,47 @@ class yf_user_modules {
 			return js_redirect('./?object='.$_GET['object']);
 		}
 
+		if (!isset($this->_yf_plugins)) {
+			$this->_yf_plugins = main()->_preload_plugins_list();
+			$this->_yf_plugins_classes = main()->_plugins_classes;
+		}
 		$items = array();
 		foreach ((array)db()->get_all('SELECT * FROM '.db('user_modules').' ORDER BY name ASC') as $a) {
+			$name = $a['name'];
+			$plugin_name = '';
+			if (isset($this->_yf_plugins_classes[$name])) {
+				$plugin_name = $this->_yf_plugins_classes[$name];
+			}
 			$locations = array();
-			if (file_exists(PROJECT_PATH. USER_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
-				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(PROJECT_PATH. 'modules');
+			$d = PROJECT_PATH. USER_MODULES_DIR;
+			$f = $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
-			if (file_exists(PROJECT_PATH. 'priority2/'. USER_MODULES_DIR. $a['name']. YF_CLS_EXT)) {
-				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$a['name'].'.class.php'.'&dir_name='.urlencode(PROJECT_PATH. 'priority2/modules');
+			$d = PROJECT_PATH. 'priority2/'. USER_MODULES_DIR;
+			$f = $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
-			if (file_exists(YF_PATH. USER_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
-				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'modules');
+			$d = PROJECT_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR;
+			$f = $name. YF_CLS_EXT;
+			if ($plugin_name && file_exists($d. $f)) {
+				$locations['project_plugin'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
-			if (file_exists(YF_PATH. 'priority2/'. USER_MODULES_DIR. YF_PREFIX. $a['name']. YF_CLS_EXT)) {
-				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.'yf_'.$a['name'].'.class.php'.'&dir_name='.urlencode(YF_PATH. 'priority2/modules');
+			$d = YF_PATH. USER_MODULES_DIR;
+			$f = YF_PREFIX. $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
+			}
+			$d = YF_PATH. 'priority2/'. USER_MODULES_DIR;
+			$f = YF_PREFIX. $name. YF_CLS_EXT;
+			if (file_exists($d. $f)) {
+				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
+			}
+			$d = YF_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR;
+			$f = YF_PREFIX. $name. YF_CLS_EXT;
+			if ($plugin_name && file_exists($d. $f)) {
+				$locations['framework_plugin'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
 			}
 			$items[] = array(
 				'name'		=> $a['name'],
