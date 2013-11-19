@@ -185,6 +185,13 @@ class yf_form2 {
 				if ($this->_stacked_mode_on) {
 					$_extra['stacked'] = true;
 				}
+				// Callback to decide if we need to show this field or not
+				if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+					$_display_allowed = $_extra['display_func']($_extra, $_replace, $this);
+					if (!$_display_allowed) {
+						continue;
+					}
+				}
 				$this->_body[$k] = $func($_extra, $_replace, $this);
 			}
 		}
@@ -1895,8 +1902,8 @@ class yf_form2 {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 			$extra['id'] = $extra['name'];
-			$bg_color_ok = $extra['bg_color_ok'] ?: 'yellow';
-			$bg_color_ko = $extra['bg_color_ko'] ?: '';
+			$color_ok = $extra['color_ok'] ?: 'yellow';
+			$color_ko = $extra['color_ko'] ?: '';
 			$class = $extra['class'] ?: 'icon-star icon-large';
 			$class_ok = $extra['class_ok'] ?: 'star-ok';
 			$class_ko = $extra['class_ko'] ?: 'star-ko';
@@ -1905,7 +1912,7 @@ class yf_form2 {
 			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
 			foreach (range(1, $stars) as $num) {
 				$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
-				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
+				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';"></i>';
 			}
 			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);
 		};
