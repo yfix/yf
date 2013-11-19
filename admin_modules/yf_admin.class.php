@@ -55,7 +55,7 @@ class yf_admin {
 			->db_update_if_ok('admin', array(
 				'login','email','first_name','last_name','go_after_login','password','group'
 			), 'id='.$id, array('on_after_update' => function() {
-				common()->admin_wall_add(array('admin account edited: '.$_POST['login'].'', $id));
+				common()->admin_wall_add(array(t('admin account edited: %login', array('%login' => $_POST['login'])), $id));
 			}))
 			->login()
 			->email()
