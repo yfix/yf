@@ -83,11 +83,42 @@ class yf_encryption {
 	*/
 	function set_key($value) {
 		$this->_secret_key = $value;
+		return $this->_secret_key;
+	}
+
+	/**
+	* Alias
+	*/
+	function set_secret($value) {
+		return $this->set_key($value);
+	}
+
+	/**
+	* Choose encoding/decoding algorithm by its name.
+	* Examples: _class('encyption')->set_cipher('cast128'), _class('encyption')->set_cipher('CAST_128')
+	*/
+	function set_cipher($name) {
+		$name = str_replace(array('_','-',' '), '', strtolower(trim($name)));
+		if (!strlen($name)) {
+			return false;
+		}
+		$name_to_id = array();
+		foreach((array)$this->_avail_ciphers as $id => $n) {
+			$n = str_replace(array('_','-',' '), '', strtolower(trim($n)));
+			$name_to_id[$n] = $id;
+		}
+		if (isset($name_to_id[$name])) {
+			$this->USE_CIPHER = $name_to_id[$name];
+		}
+		return $this->USE_CIPHER;
 	}
 
 	/**
 	*/
-	function encrypt($data) {
+	function encrypt($data, $secret = null) {
+		if (isset($secret)) {
+			$this->set_key($secret);
+		}
 		$this->init();
 		// MCrypt PHP module processing (high speed)
 		if ($this->USE_MCRYPT && $this->_mcrypt_cipher) {
@@ -113,7 +144,10 @@ class yf_encryption {
 
 	/**
 	*/
-	function decrypt($data) {
+	function decrypt($data, $secret = null) {
+		if (isset($secret)) {
+			$this->set_key($secret);
+		}
 		$this->init();
 		// MCrypt PHP module processing (high speed)
 		if ($this->USE_MCRYPT && $this->_mcrypt_cipher) {
@@ -140,21 +174,30 @@ class yf_encryption {
 	/**
 	* Encrypt specified file using private key
 	*/
-	function encrypt_file ($source, $encrypted) {
+	function encrypt_file ($source, $encrypted, $secret = null) {
+		if (isset($secret)) {
+			$this->set_key($secret);
+		}
 		file_put_contents($encrypted, $this->encrypt(file_get_contents($source)));
 	}
 
 	/**
 	* Decrypt specified file using private key
 	*/
-	function decrypt_file($source, $decrypted) {
+	function decrypt_file($source, $decrypted, $secret = null) {
+		if (isset($secret)) {
+			$this->set_key($secret);
+		}
 		file_put_contents($decrypted, $this->decrypt(file_get_contents($source)));
 	}
 
 	/**
 	* Safe encrypt data into base64 string (replace '/' symbol)
 	*/
-	function _safe_encrypt_with_base64 ($input = '') {
+	function _safe_encrypt_with_base64 ($input, $secret = null) {
+		if (isset($secret)) {
+			$this->set_key($secret);
+		}
 		$r = array(
 			'/' => '*',
 		);
@@ -164,7 +207,10 @@ class yf_encryption {
 	/**
 	* Safe decrypt data from base64 string (replace '/' symbol)
 	*/
-	function _safe_decrypt_with_base64 ($input = '') {
+	function _safe_decrypt_with_base64 ($input, $secret = null) {
+		if (isset($secret)) {
+			$this->set_key($secret);
+		}
 		$r = array(
 			'*' => '/',
 			' ' => '+',
