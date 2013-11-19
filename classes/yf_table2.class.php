@@ -718,6 +718,47 @@ class yf_table2 {
 
 	/**
 	*/
+	function stars($name, $desc = '', $extra = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace('_', ' ', $name));
+		}
+		$this->_fields[] = array(
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'desc'	=> $desc,
+			'func'	=> function($field, $params, $row, $instance_params) {
+				$extra = $params['extra'];
+				$extra['id'] = $extra['name'];
+				$bg_color_ok = 'yellow';
+				$bg_color_ko = '';
+#				$class = 'icon-star icon-large';
+				$class = 'icon-star';
+				$class_ok = 'star-ok';
+				$class_ko = 'star-ko';
+				$max = 5;
+				$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
+				foreach (range(1, $max) as $num) {
+					$is_ok = $input >= $num ? 1 : 0;
+					$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
+				}
+				$text = implode(PHP_EOL, $body);
+				return $text;
+#				return _class('table2')->_apply_badges($text, $extra, $field);
+			}
+		);
+		return $this;
+	}
+
+
+
+	/**
+	*/
 	function image($name, $path, $link = '', $extra = array()) {
 		if (is_array($link) && empty($extra)) {
 			$extra = $link;
