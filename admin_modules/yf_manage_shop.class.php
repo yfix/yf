@@ -372,5 +372,10 @@ class yf_manage_shop {
 	function _product_images_add_revision($item_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($item_id);
 	}
-	
+	function import_xls($params = array()) {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+	function import_products() {
+		return $this->import_xls();
+	}	
 }
