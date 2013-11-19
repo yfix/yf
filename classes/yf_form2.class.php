@@ -1876,6 +1876,41 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+// TODO: add stars selection
+	function stars($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$func = function($extra, $r, $_this) {
+			$extra['id'] = $extra['name'];
+			$bg_color_ok = 'yellow';
+			$bg_color_ko = '';
+			$class = 'icon-star icon-large';
+			$class_ok = 'star-ok';
+			$class_ko = 'star-ko';
+			$max = 5;
+			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
+			foreach (range(1, $max) as $num) {
+				$is_ok = $input > $num ? 1 : 0;
+				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
+			}
+			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
 	* For use inside table item template
 	*/
 	function tbl_link($name, $link, $extra = array(), $replace = array()) {
