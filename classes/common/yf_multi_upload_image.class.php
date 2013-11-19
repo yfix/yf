@@ -71,7 +71,10 @@ class yf_multi_upload_image {
 		}
 		// Check if file uploaded successfully
 		if (!$move_result || !file_exists($photo_path) || !filesize($photo_path) || !is_readable($photo_path)) {
-			_re('Uploading image error #001. Please <a href=''.process_url('./?object=help&action=email_form').''>contact</a> site admin.');
+			_re(t('Uploading image error %num. Please <a href="%url">contact</a> site admin.', array(
+				'%num' => '#001',
+				'%url' => process_url('./?object=help&action=email_form'))
+			));
 			trigger_error('Moving uploaded image error', E_USER_WARNING);
 			return false;
 		}
@@ -96,7 +99,10 @@ class yf_multi_upload_image {
 				$c_func = 'imagecreatefromgif';
 			}
 			if ($c_func && false === @$c_func($photo_path)) {
-				_re('Uploading image error #002. Please <a href=''.process_url('./?object=help&action=email_form').''>contact</a> site admin.');
+				_re(t('Uploading image error %num. Please <a href="%url">contact</a> site admin.', array(
+					'%num' => '#002',
+					'%url' => process_url('./?object=help&action=email_form'))
+				));
 				trigger_error('Image that crashes GD found', E_USER_WARNING);
 				unlink($photo_path);
 				return false;
