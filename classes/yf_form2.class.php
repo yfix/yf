@@ -1838,7 +1838,13 @@ class yf_form2 {
 			$func = '';
 		}
 		if (!$func) {
-			$func = isset($extra['function']) ? $extra['function'] : $extra['func'];
+			if (isset($extra['callback'])) {
+				$func = $extra['callback'];
+			} elseif (isset($extra['function'])) {
+				$func = $extra['function'];
+			} else {
+				$func = $extra['func'];
+			}
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', ' ', $extra['name']));
