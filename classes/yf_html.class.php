@@ -64,7 +64,7 @@ class yf_html {
 				}
 			}
 			if ($func) {
-				$form->$func($val, $_extra);
+				$form->$func($val, $_extra + $extra);
 			}
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
