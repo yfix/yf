@@ -1885,7 +1885,7 @@ class yf_form2 {
 	/**
 	*/
 	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
-// TODO: add stars selection
+// TODO: add stars selection like here: http://fontawesome.io/examples/ , at the bottom of the bage
 	}
 
 	/**
@@ -1912,7 +1912,7 @@ class yf_form2 {
 			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
 			foreach (range(1, $stars) as $num) {
 				$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
-				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';"></i>';
+				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';" title="'.$input.'"></i>';
 			}
 			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);
 		};

@@ -748,7 +748,7 @@ class yf_table2 {
 				$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
 				foreach (range(1, $stars) as $num) {
 					$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
-					$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';"></i>';
+					$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';" title="'.$input.'"></i>';
 				}
 				return implode(PHP_EOL, $body);
 			}

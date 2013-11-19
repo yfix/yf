@@ -955,11 +955,14 @@ class yf_common {
 			$from_encoding = $this->TRANSLIT_FROM;
 		}
 		$url = str_replace(array(';',',','.',':',' ','/'), '_', $name);
-		$url = str_replace('__', '_', $url);
-		// Use translit
+		$url = preg_replace('/[_]{2,}/', '_', $url);
+		$url = trim(trim(trim($url), '_'));
+
 		$url = common()->make_translit($url, $from_encoding);
-		// Cut spaces
-		$url = strtolower(preg_replace('/\W/i', '', $url));
+
+		$url = preg_replace('/[_]{2,}/', '_', $url);
+		$url = strtolower(preg_replace('/[^a-z0-9_-]+/i', '', $url));
+		$url = trim(trim(trim($url), '_'));
 		return $url;
 	}
 
