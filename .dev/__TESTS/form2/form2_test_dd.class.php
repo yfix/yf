@@ -35,9 +35,9 @@ class form2_test_dd {
 			'status'              => t(isset($offer_status[$a['status']]) ? $offer_status[$a['status']] : $offer_status[0]),
 			'custom_html'	      => !empty($custom_html) ? $custom_html: false,
 			'url_owner_profile'	  => $url_owner_profile,
-			'url_offers'          => './?object=offers&action=user_offers&id=1',
+			'url_offers'          => 'Offers',
 			'stars'				  => 4.5,
-			'stars2'				  => 4.5,
+			'stars2'			  => 4.5,
 		);
 		return _class('html')->dd_table($r, array(
 			'type' => array('func' => 'info', 'label' => 'info'),
@@ -45,10 +45,15 @@ class form2_test_dd {
 			'descr' => '', // Remove row
 			'custom_html' => '', // Remove row
 			'url_owner_profile' => array('func' => ''), // Remove row
-
-			'url_offers' => array('func' => 'link', 'label' => 'info', 'desc' => 'offers'),
+			'url_offers' => array(
+				'func' => 'link',
+				'label' => 'info',
+				'desc' => 'offers',
+				'link' => './?object=offers&action=user_offers&id=1',
+#				'display_func' => function($row){ return rand(0,1); }
+			),
 			'stars' => 'stars',
-			'stars2' => array('func' => 'stars', 'desc' => 'stars', 'max' => 10, 'color' => 'red'),
+			'stars2' => array('func' => 'stars', 'desc' => 'stars', 'max' => 10, 'stars' => 10, 'color_ok' => 'red'),
 		), array(
 			'legend' => $r['title'],
 		));

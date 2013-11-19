@@ -46,7 +46,7 @@ class yf_html {
 			'dd_mode' => 1,
 			'dd_class' => 'span6',
 		));
-		foreach ($replace as $name => $val) {
+		foreach ((array)$replace as $name => $val) {
 			$func = 'container';
 			$_extra = array(
 				'desc' => $name,
@@ -63,8 +63,16 @@ class yf_html {
 					$func = $ft;
 				}
 			}
+			$_extra += (array)$extra;
+			// Callback to decide if we need to show this field or not
+			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+				$_display_allowed = $_extra['display_func']($val, $_extra);
+				if (!$_display_allowed) {
+					continue;
+				}
+			}
 			if ($func) {
-				$form->$func($val, $_extra + $extra);
+				$form->$func($val, $_extra);
 			}
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
