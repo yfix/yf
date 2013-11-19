@@ -1877,7 +1877,12 @@ class yf_form2 {
 
 	/**
 	*/
+	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
 // TODO: add stars selection
+	}
+
+	/**
+	*/
 	function stars($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
 			$extra += $desc;
@@ -1890,15 +1895,16 @@ class yf_form2 {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 			$extra['id'] = $extra['name'];
-			$bg_color_ok = 'yellow';
-			$bg_color_ko = '';
-			$class = 'icon-star icon-large';
-			$class_ok = 'star-ok';
-			$class_ko = 'star-ko';
-			$max = 5;
-			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
-			foreach (range(1, $max) as $num) {
-				$is_ok = $input >= $num ? 1 : 0;
+			$bg_color_ok = $extra['bg_color_ok'] ?: 'yellow';
+			$bg_color_ko = $extra['bg_color_ko'] ?: '';
+			$class = $extra['class'] ?: 'icon-star icon-large';
+			$class_ok = $extra['class_ok'] ?: 'star-ok';
+			$class_ko = $extra['class_ko'] ?: 'star-ko';
+			$max = $extra['max'] ?: 5;
+			$stars = $extra['stars'] ?: 5;
+			$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
+			foreach (range(1, $stars) as $num) {
+				$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
 				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
 			}
 			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);

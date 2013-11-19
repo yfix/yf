@@ -735,21 +735,19 @@ class yf_table2 {
 			'func'	=> function($field, $params, $row, $instance_params) {
 				$extra = $params['extra'];
 				$extra['id'] = $extra['name'];
-				$bg_color_ok = 'yellow';
-				$bg_color_ko = '';
-#				$class = 'icon-star icon-large';
-				$class = 'icon-star';
-				$class_ok = 'star-ok';
-				$class_ko = 'star-ko';
-				$max = 5;
+				$bg_color_ok = $extra['bg_color_ok'] ?: 'yellow';
+				$bg_color_ko = $extra['bg_color_ko'] ?: '';
+				$class = $extra['class'] ?: 'icon-star';
+				$class_ok = $extra['class_ok'] ?: 'star-ok';
+				$class_ko = $extra['class_ko'] ?: 'star-ko';
+				$max = $extra['max'] ?: 5;
+				$stars = $extra['stars'] ?: 5;
 				$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
-				foreach (range(1, $max) as $num) {
-					$is_ok = $input >= $num ? 1 : 0;
+				foreach (range(1, $stars) as $num) {
+					$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
 					$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
 				}
-				$text = implode(PHP_EOL, $body);
-				return $text;
-#				return _class('table2')->_apply_badges($text, $extra, $field);
+				return implode(PHP_EOL, $body);
 			}
 		);
 		return $this;
