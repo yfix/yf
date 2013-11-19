@@ -1898,7 +1898,7 @@ class yf_form2 {
 			$max = 5;
 			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
 			foreach (range(1, $max) as $num) {
-				$is_ok = $input > $num ? 1 : 0;
+				$is_ok = $input >= $num ? 1 : 0;
 				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
 			}
 			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);
