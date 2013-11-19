@@ -1144,6 +1144,7 @@ class yf_debug_info {
 		if (!is_array($items)) {
 			$items = array();
 		}
+#		$items = _prepare_html($items);
 		foreach ($items as &$item) {
 			foreach ($item as $k => &$v) {
 				if (is_array($v)) {

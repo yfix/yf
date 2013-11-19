@@ -27,6 +27,9 @@ class yf_blocks {
 	/**
 	*/
 	function show () {
+		$func = function($row) {
+			return !($row['name'] == 'center_area' && $row['type'] == 'admin');
+		};
 		return table('SELECT * FROM '.db('blocks').' ORDER BY type DESC, name ASC', array('custom_fields' => array(
 				'num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'
 			)))
@@ -37,9 +40,9 @@ class yf_blocks {
 			->text('method_name', 'Method')
 			->btn('Rules', './?object='.$_GET['object'].'&action=show_rules&id=%d')
 			->btn_edit()
-			->btn_delete()
+			->btn_delete(array('display_func' => $func))
 			->btn_clone()
-			->btn_active()
+			->btn_active(array('display_func' => $func))
 			->footer_add('', './?object='.$_GET['object'].'&action=add')
 		;
 	}

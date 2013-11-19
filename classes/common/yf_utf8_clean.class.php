@@ -50,46 +50,46 @@ class yf_utf8_clean {
 	* Constructor
 	*/
 	function _init () {
-		include_once (YF_PATH. "libs/utf8_funcs/utils/ascii.php");
+		include_once (YF_PATH. 'libs/utf8_funcs/utils/ascii.php');
 /*
 		// russian ones here
-		foreach (range("а","я") as $v) {
+		foreach (range('а','я') as $v) {
 			$this->UTF8_LOWER_ACCENTS[$v] = $v;
 		}
-		foreach (range("А","Я") as $v) {
+		foreach (range('А','Я') as $v) {
 			$this->UTF8_UPPER_ACCENTS[$v] = $v;
 		}
 		*/
 /*
 		foreach ((array)$this->UTF8_LOWER_ACCENTS as $k => $v) {
-echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
+echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 		}
 */
 
-		$this->fss_exists = function_exists("fss_prep_replace");
+		$this->fss_exists = function_exists('fss_prep_replace');
 
 	}
 
 	/**
 	* Do clean
 	*/
-	function _do ($text = "", $params = array()) {
+	function _do ($text = '', $params = array()) {
 		if (!strlen($text)) {
-			return "";
+			return '';
 		}
 		$text = utf8_strip_ascii_ctrl($text);
 // TODO: make the country be bassed as para to work from inside the admin section
-		if ((SEARCH_COUNTRY == 'ru' || $params["country"] == "ru" || SEARCH_COUNTRY == 'ua' || $params["country"] == "ua") && preg_match("/[а-яА-Я]/", $text)) {
+		if ((SEARCH_COUNTRY == 'ru' || $params['country'] == 'ru' || SEARCH_COUNTRY == 'ua' || $params['country'] == 'ua') && preg_match('/[а-яА-Я]/', $text)) {
 			$text = $this->_utf8_bad_for_rus_clean($text);
 		} else {
 			$text = $this->_utf8_strip_non_ascii($text);
 		}
-		if ($params["simple_chars"]) {
-			$allowed_symbols = implode("", array_keys($this->UTF8_LOWER_ACCENTS)). implode("", array_keys($this->UTF8_UPPER_ACCENTS));
-			if ((SEARCH_COUNTRY == 'ru' || $params["country"] == "ru" || SEARCH_COUNTRY == 'ua' || $params["country"] == "ua")) {
-				$allowed_symbols .= "а-яА-Я";
+		if ($params['simple_chars']) {
+			$allowed_symbols = implode('', array_keys($this->UTF8_LOWER_ACCENTS)). implode('', array_keys($this->UTF8_UPPER_ACCENTS));
+			if ((SEARCH_COUNTRY == 'ru' || $params['country'] == 'ru' || SEARCH_COUNTRY == 'ua' || $params['country'] == 'ua')) {
+				$allowed_symbols .= 'а-яА-Я';
 			}
-			$text = preg_replace("/[^a-z0-9".$allowed_symbols." ]/", "", $text);
+			$text = preg_replace('/[^a-z0-9'.$allowed_symbols.' ]/', '', $text);
 		}
 		return $text;
 	}
@@ -137,7 +137,7 @@ echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
 				if (isset($this->UTF8_LOWER_ACCENTS[$matches[0]]) || isset($this->UTF8_UPPER_ACCENTS[$matches[0]])) {
 					echo $matches[0];
 				}
-//echo "<b> ".dechex(ord($matches[0]{0}))." ".dechex(ord($matches[0]{1}))." </b>";
+//echo '<b> '.dechex(ord($matches[0]{0})).' '.dechex(ord($matches[0]{1})).' </b>';
 			}
 			$str = substr($str, strlen($matches[0]));
 		}
@@ -149,18 +149,18 @@ echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
 	/**
 	* Unaccent
 	*/
-	function _unaccent ($str = "") {
+	function _unaccent ($str = '') {
 		if (!common()->is_utf8($str)) {
 			$str = utf8_encode($str);
 		}
 //return $this->_unaccent_test3($str);
-		if ($this->fss_exists && !$GLOBALS["force_strtr"]) {
+		if ($this->fss_exists && !$GLOBALS['force_strtr']) {
 // TODO: fss
-			if(!isset($GLOBALS["fss"]["unaccent"])){
+			if(!isset($GLOBALS['fss']['unaccent'])){
 				$s = array_merge($this->UTF8_UPPER_ACCENTS, $this->UTF8_LOWER_ACCENTS);
-				$GLOBALS["fss"]["unaccent"] = fss_prep_replace($s);
+				$GLOBALS['fss']['unaccent'] = fss_prep_replace($s);
 			}
-			$str = fss_exec_replace($GLOBALS["fss"]["unaccent"], $str);
+			$str = fss_exec_replace($GLOBALS['fss']['unaccent'], $str);
 
 			return $str;
 		}
@@ -172,45 +172,45 @@ echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
 	/*
 	* Alternate experimental method 2 (same speed, same results)
 	*/
-	function _unaccent_test2($string = "") {
+	function _unaccent_test2($string = '') {
 		$transliteration =  array(
-			"À" => "A","Á" => "A","Â" => "A","Ã" => "A","Ä" => "A",
-			"Å" => "A","Æ" => "A","Ā" => "A","Ą" => "A","Ă" => "A",
-			"Ç" => "C","Ć" => "C","Č" => "C","Ĉ" => "C","Ċ" => "C",
-			"Ď" => "D","Đ" => "D","È" => "E","É" => "E","Ê" => "E",
-			"Ë" => "E","Ē" => "E","Ę" => "E","Ě" => "E","Ĕ" => "E",
-			"Ė" => "E","Ĝ" => "G","Ğ" => "G","Ġ" => "G","Ģ" => "G",
-			"Ĥ" => "H","Ħ" => "H","Ì" => "I","Í" => "I","Î" => "I",
-			"Ï" => "I","Ī" => "I","Ĩ" => "I","Ĭ" => "I","Į" => "I",
-			"İ" => "I","Ĳ" => "IJ","Ĵ" => "J","Ķ" => "K","Ľ" => "K",
-			"Ĺ" => "K","Ļ" => "K","Ŀ" => "K","Ł" => "L","Ñ" => "N",
-			"Ń" => "N","Ň" => "N","Ņ" => "N","Ŋ" => "N","Ò" => "O",
-			"Ó" => "O","Ô" => "O","Õ" => "O","Ö" => "Oe","Ø" => "O",
-			"Ō" => "O","Ő" => "O","Ŏ" => "O","Œ" => "OE","Ŕ" => "R",
-			"Ř" => "R","Ŗ" => "R","Ś" => "S","Ş" => "S","Ŝ" => "S",
-			"Ș" => "S","Š" => "S","Ť" => "T","Ţ" => "T","Ŧ" => "T",
-			"Ț" => "T","Ù" => "U","Ú" => "U","Û" => "U","Ü" => "Ue",
-			"Ū" => "U","Ů" => "U","Ű" => "U","Ŭ" => "U","Ũ" => "U",
-			"Ų" => "U","Ŵ" => "W","Ŷ" => "Y","Ÿ" => "Y","Ý" => "Y",
-			"Ź" => "Z","Ż" => "Z","Ž" => "Z","à" => "a","á" => "a",
-			"â" => "a","ã" => "a","ä" => "ae","ā" => "a","ą" => "a",
-			"ă" => "a","å" => "a","æ" => "ae","ç" => "c","ć" => "c",
-			"č" => "c","ĉ" => "c","ċ" => "c","ď" => "d","đ" => "d",
-			"è" => "e","é" => "e","ê" => "e","ë" => "e","ē" => "e",
-			"ę" => "e","ě" => "e","ĕ" => "e","ė" => "e","ƒ" => "f",
-			"ĝ" => "g","ğ" => "g","ġ" => "g","ģ" => "g","ĥ" => "h",
-			"ħ" => "h","ì" => "i","í" => "i","î" => "i","ï" => "i",
-			"ī" => "i","ĩ" => "i","ĭ" => "i","į" => "i","ı" => "i",
-			"ĳ" => "ij","ĵ" => "j","ķ" => "k","ĸ" => "k","ł" => "l",
-			"ľ" => "l","ĺ" => "l","ļ" => "l","ŀ" => "l","ñ" => "n",
-			"ń" => "n","ň" => "n","ņ" => "n","ŉ" => "n","ŋ" => "n",
-			"ò" => "o","ó" => "o","ô" => "o","õ" => "o","ö" => "oe",
-			"ø" => "o","ō" => "o","ő" => "o","ŏ" => "o","œ" => "oe",
-			"ŕ" => "r","ř" => "r","ŗ" => "r","ś" => "s","š" => "s",
-			"ť" => "t","ù" => "u","ú" => "u","û" => "u","ü" => "ue",
-			"ū" => "u","ů" => "u","ű" => "u","ŭ" => "u","ũ" => "u",
-			"ų" => "u","ŵ" => "w","ÿ" => "y","ý" => "y","ŷ" => "y",
-			"ż" => "z","ź" => "z","ž" => "z","ß" => "ss","ſ" => "ss"
+			'À' => 'A','Á' => 'A','Â' => 'A','Ã' => 'A','Ä' => 'A',
+			'Å' => 'A','Æ' => 'A','Ā' => 'A','Ą' => 'A','Ă' => 'A',
+			'Ç' => 'C','Ć' => 'C','Č' => 'C','Ĉ' => 'C','Ċ' => 'C',
+			'Ď' => 'D','Đ' => 'D','È' => 'E','É' => 'E','Ê' => 'E',
+			'Ë' => 'E','Ē' => 'E','Ę' => 'E','Ě' => 'E','Ĕ' => 'E',
+			'Ė' => 'E','Ĝ' => 'G','Ğ' => 'G','Ġ' => 'G','Ģ' => 'G',
+			'Ĥ' => 'H','Ħ' => 'H','Ì' => 'I','Í' => 'I','Î' => 'I',
+			'Ï' => 'I','Ī' => 'I','Ĩ' => 'I','Ĭ' => 'I','Į' => 'I',
+			'İ' => 'I','Ĳ' => 'IJ','Ĵ' => 'J','Ķ' => 'K','Ľ' => 'K',
+			'Ĺ' => 'K','Ļ' => 'K','Ŀ' => 'K','Ł' => 'L','Ñ' => 'N',
+			'Ń' => 'N','Ň' => 'N','Ņ' => 'N','Ŋ' => 'N','Ò' => 'O',
+			'Ó' => 'O','Ô' => 'O','Õ' => 'O','Ö' => 'Oe','Ø' => 'O',
+			'Ō' => 'O','Ő' => 'O','Ŏ' => 'O','Œ' => 'OE','Ŕ' => 'R',
+			'Ř' => 'R','Ŗ' => 'R','Ś' => 'S','Ş' => 'S','Ŝ' => 'S',
+			'Ș' => 'S','Š' => 'S','Ť' => 'T','Ţ' => 'T','Ŧ' => 'T',
+			'Ț' => 'T','Ù' => 'U','Ú' => 'U','Û' => 'U','Ü' => 'Ue',
+			'Ū' => 'U','Ů' => 'U','Ű' => 'U','Ŭ' => 'U','Ũ' => 'U',
+			'Ų' => 'U','Ŵ' => 'W','Ŷ' => 'Y','Ÿ' => 'Y','Ý' => 'Y',
+			'Ź' => 'Z','Ż' => 'Z','Ž' => 'Z','à' => 'a','á' => 'a',
+			'â' => 'a','ã' => 'a','ä' => 'ae','ā' => 'a','ą' => 'a',
+			'ă' => 'a','å' => 'a','æ' => 'ae','ç' => 'c','ć' => 'c',
+			'č' => 'c','ĉ' => 'c','ċ' => 'c','ď' => 'd','đ' => 'd',
+			'è' => 'e','é' => 'e','ê' => 'e','ë' => 'e','ē' => 'e',
+			'ę' => 'e','ě' => 'e','ĕ' => 'e','ė' => 'e','ƒ' => 'f',
+			'ĝ' => 'g','ğ' => 'g','ġ' => 'g','ģ' => 'g','ĥ' => 'h',
+			'ħ' => 'h','ì' => 'i','í' => 'i','î' => 'i','ï' => 'i',
+			'ī' => 'i','ĩ' => 'i','ĭ' => 'i','į' => 'i','ı' => 'i',
+			'ĳ' => 'ij','ĵ' => 'j','ķ' => 'k','ĸ' => 'k','ł' => 'l',
+			'ľ' => 'l','ĺ' => 'l','ļ' => 'l','ŀ' => 'l','ñ' => 'n',
+			'ń' => 'n','ň' => 'n','ņ' => 'n','ŉ' => 'n','ŋ' => 'n',
+			'ò' => 'o','ó' => 'o','ô' => 'o','õ' => 'o','ö' => 'oe',
+			'ø' => 'o','ō' => 'o','ő' => 'o','ŏ' => 'o','œ' => 'oe',
+			'ŕ' => 'r','ř' => 'r','ŗ' => 'r','ś' => 's','š' => 's',
+			'ť' => 't','ù' => 'u','ú' => 'u','û' => 'u','ü' => 'ue',
+			'ū' => 'u','ů' => 'u','ű' => 'u','ŭ' => 'u','ũ' => 'u',
+			'ų' => 'u','ŵ' => 'w','ÿ' => 'y','ý' => 'y','ŷ' => 'y',
+			'ż' => 'z','ź' => 'z','ž' => 'z','ß' => 'ss','ſ' => 'ss'
 		);
 		$string = strtr($string, $transliteration);
 		return $string;
@@ -220,7 +220,7 @@ echo $k." <b> ".dechex(ord($k{0}))." ".dechex(ord($k{1}))." </b><br />\n";
 	* Alternate experimental method (more speed, but results sometimes not exact as on base variant)
 	* Currently fastest variant
 	*/
-	function _unaccent_test3($text = "") {
+	function _unaccent_test3($text = '') {
 		static $search;
 		if (!$search) {
 			$search = array();

@@ -101,8 +101,12 @@ class yf_auth_admin {
 			$_GET['task'] = 'logout';
 		}
 		// Process log in or log out
-		if ($_GET['task'] == 'login' && empty($_SESSION[$this->VAR_ADMIN_ID])) {
-			$this->_do_login();
+		if ($_GET['task'] == 'login') {
+			if (empty($_SESSION[$this->VAR_ADMIN_ID])) {
+				$this->_do_login();
+			} elseif ($_GET['id'] == 'prev_info' && !empty($_SESSION['admin_prev_info'])) {
+				$this->_login_with_prev_info();
+			}
 		} elseif ($_GET['task'] == 'logout') {
 			$this->_do_logout();
 		}
@@ -232,6 +236,37 @@ class yf_auth_admin {
 	}
 
 	/**
+	* Process previous login (used when super-admin logged in as less privileged user and want to login back as super-admin)
+	*/
+	function _login_with_prev_info() {
+		$prev_info = $_SESSION['admin_prev_info'];
+		if (!$prev_info || !$prev_info[$this->VAR_ADMIN_ID] || !$prev_info[$this->VAR_ADMIN_GROUP_ID]) {
+			if (!empty($this->URL_WRONG_LOGIN)) {
+				return js_redirect($this->URL_WRONG_LOGIN);
+			}
+			return false;
+		}
+		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.intval($prev_info[$this->VAR_ADMIN_ID]));
+		if (!$a) {
+			if (!empty($this->URL_WRONG_LOGIN)) {
+				return js_redirect($this->URL_WRONG_LOGIN);
+			}
+			return false;
+		}
+		$t_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)$a['group']);
+		// Save previous session
+		$_SESSION = $_SESSION['admin_prev_info'];
+		unset($_SESSION['admin_prev_info']); // Prevent recursion
+		// Login as different admin user
+		$_SESSION[$this->VAR_ADMIN_ID] = $a['id'];
+		$_SESSION[$this->VAR_ADMIN_GROUP_ID] = $a['group'];
+		$_SESSION[$this->VAR_ADMIN_LOGIN_TIME] = time();
+
+		$after_login = $t_group[$this->VAR_ADMIN_GO_URL] ?: $t_group[$this->VAR_ADMIN_GO_URL];
+		return js_redirect($after_login ?: './');
+	}
+
+	/**
 	* Process logout
 	*/
 	function _do_logout () {
@@ -267,10 +302,6 @@ class yf_auth_admin {
 
 	/**
 	* Execute user method after specified action
-	*
-	* @private
-	* @param	$action		string	Specified action on which execute user function
-	* @return void
 	*/
 	function _exec_method_on_action($action = 'login') {
 		// Assign action callbacks

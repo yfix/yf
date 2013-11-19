@@ -4,7 +4,10 @@ class table2_new_controls {
 	function show() {
 		$values = array('', 'k1' => 'v1', 'k2' => 'v2');
 
-		return table('SELECT * FROM '.db('shop_products'))
+		return table('SELECT *, "4" AS stars, "20" AS stars_big FROM '.db('shop_products'))
+			->stars('stars')
+			->stars('stars_big', array('stars' => 5, 'max' => 100))
+
 			->check_box('id', array('header_tip' => 'This is checkbox'))
 			->select_box('id', array('values' => $values, 'selected' => 'k1', 'tip' => 'Checkbox value tip', 'nowrap' => 1, 'class' => 'input-small'))
 			->radio_box('id')
@@ -16,6 +19,7 @@ class table2_new_controls {
 			->text('price')
 			->text('quantity')
 			->date('add_date')
+			->date('add_date', array('format' => '%y-%m-%d %H:%M'))
 			->btn_edit(array('icon' => 'icon-star'))
 			->btn_delete()
 			->btn_clone()

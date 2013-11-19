@@ -1,6 +1,6 @@
 <?php
 
-class yf_oauth2 {
+class yf_oauth {
 
 	private $_providers = array(
 		'__default__' => array(

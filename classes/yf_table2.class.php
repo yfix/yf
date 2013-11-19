@@ -89,12 +89,17 @@ class yf_table2 {
 		$params = $tmp;
 		unset($tmp);
 
-		$pager_path = $params['pager_path'] ? $params['pager_path'] : '';
-		$pager_type = $params['pager_type'] ? $params['pager_type'] : 'blocks';
-		$pager_records_on_page = $params['pager_records_on_page'] ? $params['pager_records_on_page'] : (MAIN_TYPE_USER ? conf('user_per_page') : conf('admin_per_page'));
-		$pager_num_records = $params['pager_num_records'] ? $params['pager_num_records'] : 0;
-		$pager_stpl_path = $params['pager_stpl_path'] ? $params['pager_stpl_path'] : '';
-		$pager_add_get_vars = $params['pager_add_get_vars'] ? $params['pager_add_get_vars'] : 1;
+		$default_per_page = MAIN_TYPE_USER ? conf('user_per_page') : conf('admin_per_page');
+		if ($params['rotate_table']) {
+			$default_per_page = 10;
+		}
+
+		$pager_path = $params['pager_path'] ?: '';
+		$pager_type = $params['pager_type'] ?: 'blocks';
+		$pager_records_on_page = $params['pager_records_on_page'] ?: $default_per_page;
+		$pager_num_records = $params['pager_num_records'] ?: 0;
+		$pager_stpl_path = $params['pager_stpl_path'] ?: '';
+		$pager_add_get_vars = $params['pager_add_get_vars'] ?: 1;
 
 		$sql = $this->_sql;
 		$ids = array();
@@ -220,8 +225,7 @@ class yf_table2 {
 			}
 			foreach ((array)$this->_header_links as $info) {
 				$name = $info['name'];
-				$func = $info['func'];
-				unset($info['func']); // Save resources
+				$func = &$info['func'];
 				$body .= $func($info, $params).PHP_EOL;
 			}
 			if ($params['condensed']) {
@@ -230,7 +234,8 @@ class yf_table2 {
 			$body .= '<table class="table table-bordered table-striped table-hover'
 				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
 				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
-			if (!$params['no_header']) {
+
+			if (!$params['no_header'] && !$params['rotate_table']) {
 				$body .= '<thead>'.PHP_EOL;
 				$data1row = current($data);
 				foreach ((array)$this->_fields as $info) {
@@ -255,63 +260,13 @@ class yf_table2 {
 			if ($sortable_url && strlen($sortable_url) <= 5) {
 				$sortable_url = './?object='.$_GET['object'].'&action=sortable';
 			}
-			$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
-			foreach ((array)$data as $_id => $row) {
-				$body .= '<tr'.(isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '').'>'.PHP_EOL;
-				foreach ((array)$this->_fields as $info) {
-					$name = $info['name'];
-					if (!isset($row[$name])) {
-						continue;
-					}
-					$func = $info['func'];
-					unset($info['func']); // Save resources
-					$_extra = $info['extra'];
-					$td_width = ($_extra['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $_extra['width']).'"' : '');
-					$td_nowrap = ($_extra['nowrap'] ? ' nowrap="nowrap" ' : '');
-					$tip = $_extra['tip'] ? ''.$this->_show_tip($_extra['tip']) : '';
 
-					if ($_extra['hl_filter'] && isset($this->_filter_data[$name])) {
-						$_kw = $this->_filter_data[$name];
-						if (is_string($_kw) && strlen($_kw)) {
-							$row[$name] = preg_replace('~('.preg_quote($_kw,'~').')~ims', '<b class="badge-warning">\1</b>', $row[$name]);
-						}
-					}
-					if ($_extra['wordwrap']) {
-						$row[$name] = wordwrap($row[$name], $_width = $_extra['wordwrap'], $_break = PHP_EOL, $_cut = true);
-					}
-					if (isset($_extra['transform']) && !empty($_extra['transform'])) {
-						$row[$name] = $this->_apply_transform($row[$name], $_extra['transform']);
-					}
-					if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
-						$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
-						if (!$_display_allowed) {
-							continue;
-						}
-					}
-
-					$body .= '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
-				}
-				if ($this->_buttons) {
-					$body .= '<td nowrap>';
-					foreach ((array)$this->_buttons as $info) {
-						$name = $info['name'];
-						$func = $info['func'];
-						unset($info['func']); // Save resources
-						$_extra = $info['extra'];
-						if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
-							$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
-							if (!$_display_allowed) {
-								continue;
-							}
-						}
-
-						$body .= $func($row, $info, $params, $this).PHP_EOL;
-					}
-					$body .= '</td>'.PHP_EOL;
-				}
-				$body .= '</tr>'.PHP_EOL;
+			if ($params['rotate_table']) {
+				$body .= $this->_render_table_contents_rotated($data, $params);
+			} else {
+				$body .= $this->_render_table_contents($data, $params);
 			}
-			$body .= '</tbody>'.PHP_EOL;
+
 			if ($params['show_total']) {
 				$params['caption'] .= PHP_EOL.' '.t('Total records:').':'.$total. PHP_EOL;
 			}
@@ -328,8 +283,7 @@ class yf_table2 {
 		}
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];
-			$func = $info['func'];
-			unset($info['func']); // Save resources
+			$func = &$info['func'];
 			$body .= $func($info, $params, $this).PHP_EOL;
 		}
 		if ($data && $this->_form_params) {
@@ -340,6 +294,111 @@ class yf_table2 {
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $pages : '').PHP_EOL;
 		return $body;
+	}
+
+	/**
+	*/
+	function _render_table_contents($data, $params = array()) {
+		$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
+		foreach ((array)$data as $_id => $row) {
+			$body .= '<tr'.(isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '').'>'.PHP_EOL;
+			foreach ((array)$this->_fields as $info) {
+				$body .= $this->_render_table_td($info, $row, $params);
+			}
+			if ($this->_buttons) {
+				$body .= '<td nowrap>';
+				foreach ((array)$this->_buttons as $info) {
+					$name = $info['name'];
+					$func = &$info['func'];
+					$_extra = &$info['extra'];
+					// Callback to decide if we need to show this field or not
+					if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+						$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
+						if (!$_display_allowed) {
+							continue;
+						}
+					}
+					$body .= $func($row, $info, $params, $this).PHP_EOL;
+				}
+				$body .= '</td>'.PHP_EOL;
+			}
+			$body .= '</tr>'.PHP_EOL;
+		}
+		$body .= '</tbody>'.PHP_EOL;
+		return $body;
+	}
+
+	/**
+	*/
+	function _render_table_contents_rotated($data = array(), $params) {
+		$body .= '<tbody>'.PHP_EOL;
+		foreach ((array)$this->_fields as $info) {
+			$body .= '<tr>'.PHP_EOL;
+			foreach ((array)$data as $_id => $row) {
+				$body .= $this->_render_table_td($info, $row, $params);
+			}
+			$body .= '</tr>'.PHP_EOL;
+		}
+		if ($this->_buttons) {
+			$body .= '<tr>'.PHP_EOL;
+			foreach ((array)$data as $_id => $row) {
+				$body .= '<td nowrap>';
+				foreach ((array)$this->_buttons as $info) {
+					$name = $info['name'];
+					$func = &$info['func'];
+					$_extra = &$info['extra'];
+					// Callback to decide if we need to show this field or not
+					if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+						$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
+						if (!$_display_allowed) {
+							continue;
+						}
+					}
+					$body .= $func($row, $info, $params, $this).'<br>'.PHP_EOL;
+				}
+				$body .= '</td>'.PHP_EOL;
+			}
+			$body .= '</tr>'.PHP_EOL;
+		}
+		$body .= '</tbody>'.PHP_EOL;
+		return $body;
+	}
+
+	/**
+	*/
+	function _render_table_td($info, $row, $params) {
+		$name = $info['name'];
+		if (!isset($row[$name])) {
+			return false;
+		}
+
+		$func = &$info['func'];
+		$_extra = &$info['extra'];
+
+		$td_width = ($_extra['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $_extra['width']).'"' : '');
+		$td_nowrap = ($_extra['nowrap'] ? ' nowrap="nowrap" ' : '');
+		$tip = $_extra['tip'] ? ''.$this->_show_tip($_extra['tip']) : '';
+
+		if ($_extra['hl_filter'] && isset($this->_filter_data[$name])) {
+			$_kw = $this->_filter_data[$name];
+			if (is_string($_kw) && strlen($_kw)) {
+				$row[$name] = preg_replace('~('.preg_quote($_kw,'~').')~ims', '<b class="badge-warning">\1</b>', $row[$name]);
+			}
+		}
+		if ($_extra['wordwrap']) {
+			$row[$name] = wordwrap($row[$name], $_width = $_extra['wordwrap'], $_break = PHP_EOL, $_cut = true);
+		}
+		if (isset($_extra['transform']) && !empty($_extra['transform'])) {
+			$row[$name] = $this->_apply_transform($row[$name], $_extra['transform']);
+		}
+		// Callback to decide if we need to show this field or not
+		if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+			$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
+			if (!$_display_allowed) {
+				return false;
+			}
+		}
+		return '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
 	}
 
 	/**
@@ -366,7 +425,7 @@ class yf_table2 {
 	*/
 	function _show_tip($value = '', $extra = array()) {
 // TODO: also add ability to pass tips array into table2() params like 'data', to provide different tips, according to value
-		return _class('graphics')->_show_help_tip(array('tip_id'	=> $value));
+		return _class('graphics')->_show_help_tip(array('tip_id' => $value));
 	}
 
 	/**
@@ -662,6 +721,45 @@ class yf_table2 {
 
 	/**
 	*/
+	function stars($name, $desc = '', $extra = array()) {
+		// Shortcut: use second param as $extra
+		if (is_array($desc) && empty($extra)) {
+			$extra = $desc;
+			$desc = '';
+		}
+		if (!$desc) {
+			$desc = ucfirst(str_replace('_', ' ', $name));
+		}
+		$this->_fields[] = array(
+			'type'	=> __FUNCTION__,
+			'name'	=> $name,
+			'extra'	=> $extra,
+			'desc'	=> $desc,
+			'func'	=> function($field, $params, $row, $instance_params) {
+				$extra = $params['extra'];
+				$extra['id'] = $extra['name'];
+				$color_ok = $extra['color_ok'] ?: 'yellow';
+				$color_ko = $extra['color_ko'] ?: '';
+				$class = $extra['class'] ?: 'icon-star';
+				$class_ok = $extra['class_ok'] ?: 'star-ok';
+				$class_ko = $extra['class_ko'] ?: 'star-ko';
+				$max = $extra['max'] ?: 5;
+				$stars = $extra['stars'] ?: 5;
+				$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
+				foreach (range(1, $stars) as $num) {
+					$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
+					$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';" title="'.$input.'"></i>';
+				}
+				return implode(PHP_EOL, $body);
+			}
+		);
+		return $this;
+	}
+
+
+
+	/**
+	*/
 	function image($name, $path, $link = '', $extra = array()) {
 		if (is_array($link) && empty($extra)) {
 			$extra = $link;
@@ -948,9 +1046,16 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($row, $params) {
+			'func'	=> function($row, $params, $instance_params) {
 				$extra = $params['extra'];
-				$id = isset($extra['id']) ? $extra['id'] : 'id';
+				$override_id = '';
+				if (isset($extra['id'])) {
+					$override_id = $extra['id'];
+				}
+				if (isset($instance_params['id'])) {
+					$override_id = $instance_params['id'];
+				}
+				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$values = array(
 					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',

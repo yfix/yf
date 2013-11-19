@@ -84,9 +84,7 @@ class yf_main {
 	/** @var bool Use only HTTPS protocol and check if not - the redirect to the HTTPS */
 	public $USE_ONLY_HTTPS			= false;
 	/** @var array List of patterns for https-enabled pages */
-	public $HTTPS_ENABLED_FOR		= array(
-		// 'object=shop',
-	);
+	public $HTTPS_ENABLED_FOR		= array( /* 'object=shop', */ );
 	/** @var bool Track user last visit */
 	public $TRACK_USER_PAGE_VIEWS	= false;
 	/** @var bool Auto-pack PHP code and use it @experimental */
@@ -109,24 +107,6 @@ class yf_main {
 	public $MODULE_CUSTOM_HANDLER	= '_module_action_handler';
 	/** @var string @conf_skip Module (not class) constructor name */
 	public $MODULE_CONSTRUCT		= '_init';
-	/** @var object @conf_skip Container */
-	public $db						= null;
-	/** @var object @conf_skip Container */
-	public $common					= null;
-	/** @var object @conf_skip Container */
-	public $tpl						= null;
-	/** @var object @conf_skip Container */
-	public $auth					= null;
-	/** @var object @conf_skip Container */
-	public $modules					= array();
-	/** @var object @conf_skip Container */
-	public $error_handler			= null;
-	/** @var object @conf_skip Container */
-	public $sys_cache				= null;
-	/** @var object @conf_skip Container */
-	public $session					= null;
-	/** @var object @conf_skip Container */
-	public $widgets_params			= null;
 	/** @var int @conf_skip Current user session info */
 	public $USER_ID					= 0;
 	/** @var int @conf_skip Current user session info */
@@ -134,16 +114,9 @@ class yf_main {
 	/** @var array @conf_skip Current user session info */
 	public $USER_INFO				= null;
 	/** @var array */
-	public $_auto_info_skip_modules = array(
-		'user_data','db','cache','errors','spider_detect','user_profile',
-	);
-	/** @var array List of objects/actions for which no db connection is required
-	* @example: 'object' => array('action1', 'action2')
-	*/
-	public $NO_DB_FOR				= array(
-		'internal'	=> array(),
-		'dynamic'	=> array('php_func'),
-	);
+	public $_auto_info_skip_modules = array('user_data','db','cache','errors','spider_detect','user_profile');
+	/** @var array List of objects/actions for which no db connection is required. @example: 'object' => array('action1', 'action2') */
+	public $NO_DB_FOR				= array('internal' => array(), 'dynamic' => array('php_func'));
 	/** @var int Error reporting level for production/non-debug mode (int from built-in constants) */
 	public $ERROR_REPORTING_PROD	= 0;
 	/** @var int Error reporting level for DEBUG_MODE enabled */
@@ -234,10 +207,9 @@ class yf_main {
 	}
 
 	/**
-	* Fast init
+	* Micro-framework 'fast_init' inside big YF framework. We use it when some actions need to be done at top speed.
 	*/
 	function try_fast_init () {
-		// Only for user section
 		if (!$this->ALLOW_FAST_INIT) {
 			return false;
 		}
@@ -268,9 +240,7 @@ class yf_main {
 	* Allows to call code here before we begin with graphics
 	*/
 	function _after_init_hook () {
-		if (!main()->CONSOLE_MODE && $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1) {
-#			$this->_do_rewrite();
-		}		
+		$this->_do_rewrite();
 
 		$this->_init_cur_user_info($this);
 
@@ -294,7 +264,7 @@ class yf_main {
 			}
 		}
 		if ($https_needed && !$this->CONSOLE_MODE && !($this->_server('HTTPS') || $this->_server('SSL_PROTOCOL'))) {
-			$redirect_url	= str_replace('http://', 'https://', WEB_PATH). $this->_server('QUERY_STRING');
+			$redirect_url = str_replace('http://', 'https://', WEB_PATH). $this->_server('QUERY_STRING');
 			return js_redirect(process_url($redirect_url));
 		}
 		if ($this->INTRUSION_DETECTION) {
@@ -303,29 +273,39 @@ class yf_main {
 	}
 
 	/**
+	* Url rewriting engine init and apply if rewrite is enabled
 	*/
     function _do_rewrite() {
+		if ($this->CONSOLE_MODE || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
+			return false;
+		}
         $host = $_SERVER['HTTP_HOST'];
+		$request_uri = $_SERVER['REQUEST_URI'];
 		// Override by WEB_PATH
 		if (defined('WEB_PATH') && ! $this->web_path_was_not_defined) {
-			$w_host = parse_url(WEB_PATH, PHP_URL_HOST);
-			$w_port = parse_url(WEB_PATH, PHP_URL_PORT);
-			$w_path = parse_url(WEB_PATH, PHP_URL_PATH);
-#			$host = $w_host. (strlen($w_port) > 1 ? ':'.$w_port : ''). (strlen($w_path) > 1 ? $w_path : '');
-// TODO: fix me or change me to make this work in REWRITE_MODE
+			$w = parse_url(WEB_PATH);
+			$w_host = $w['host'];
+			$w_port = $w['port'];
+			$w_path = $w['path'];
+			$host = $w_host. (strlen($w_port) > 1 ? ':'.$w_port : ''). (strlen($w_path) > 1 ? $w_path : '');
+			if ($w_path != '/' && substr($request_uri, 0, strlen($w_path)) == $w_path) {
+				$request_uri = substr($request_uri, strlen($w_path));
+				$request_uri = '/'.ltrim($request_uri, '/');
+			}
 		}
         if (isset($_GET['host']) && !empty($_GET['host'])) {
             $host = $_GET['host'];
         }
+        list($u,) = explode('?', trim($request_uri, '/'));
+        $u_arr = explode('/', preg_replace('/\.htm.*/', '', $u));
 
-        list($u,) = explode('?', trim($_SERVER['REQUEST_URI'], '/'));
-        $u = preg_replace('/\.htm.*/', '', $u);
-        $u_arr = explode('/', $u);
+		$orig_object = $_GET['object'];
+		$orig_action = $_GET['action'];
 
         unset($_GET['object']);
         unset($_GET['action']);
 
-        $arr = module('rewrite')->REWRITE_PATTERNS['yf']->_parse($host, $u_arr, $_GET);
+		$arr = module('rewrite')->REWRITE_PATTERNS['yf']->_parse($host, $u_arr, $_GET);
 
         foreach ((array)$arr as $k => $v) {
             if ($k != '%redirect_url%') {
@@ -684,7 +664,6 @@ class yf_main {
 		conf('language',	$lang);
 		conf('charset',		'utf-8');
 		conf('site_enabled',1);
-		conf('mail_debug',	1);
 	}
 
 	/**

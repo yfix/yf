@@ -12,6 +12,10 @@ class yf_admin {
 	/**
 	*/
 	function show() {
+		$admin_id = main()->ADMIN_ID;
+		$func = function($row) use ($admin_id) {
+			return !($row['id'] == $admin_id);
+		};
 		return table('SELECT * FROM '.db('admin'))
 			->text('login')
 			->text('email')
@@ -20,11 +24,11 @@ class yf_admin {
 			->text('last_name')
 			->text('go_after_login')
 			->date('add_date')
-			->btn_active()
+			->btn_active(array('display_func' => $func))
 			->btn_edit()
-			->btn_delete()
+			->btn_delete(array('display_func' => $func))
 			->btn('log_auth', './?object=log_admin_auth_view&action=show_for_admin&id=%d')
-			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d')
+			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d', array('display_func' => $func))
 			->footer_link('Failed auth log', './?object=log_admin_auth_fails_viewer')
 			->footer_add();
 	}
@@ -51,7 +55,7 @@ class yf_admin {
 			->db_update_if_ok('admin', array(
 				'login','email','first_name','last_name','go_after_login','password','group'
 			), 'id='.$id, array('on_after_update' => function() {
-				common()->admin_wall_add(array('admin account edited: '.$_POST['login'].'', $id));
+				common()->admin_wall_add(array(t('admin account edited: %login', array('%login' => $_POST['login'])), $id));
 			}))
 			->login()
 			->email()
@@ -134,6 +138,7 @@ class yf_admin {
 	/**
 	*/
 	function login_as() {
+// TODO: move this into classes/auth_admin
 		$id = intval($_GET['id']);
 		if (!$id) {
 			return _e('Wrong id');

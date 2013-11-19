@@ -171,9 +171,7 @@ class yf_auth_user {
 		// Check for session IP
 		if ($this->SESSION_LOCK_TO_IP && !empty($_SESSION[$this->VAR_USER_ID])) {
 			// User has changed IP, logout immediately
-			if (!isset($_SESSION[$this->VAR_LOCK_IP]) 
-				|| $_SESSION[$this->VAR_LOCK_IP] != common()->get_ip()
-			) {
+			if (!isset($_SESSION[$this->VAR_LOCK_IP]) || $_SESSION[$this->VAR_LOCK_IP] != common()->get_ip()) {
 				trigger_error('AUTH: Attempt to use session with changed IP blocked, auth_ip:'.$_SESSION[$this->VAR_LOCK_IP].', new_ip:'.common()->get_ip().', user_id: '.intval($_SESSION[$this->VAR_USER_ID]), E_USER_WARNING);
 				$_GET['task'] = 'logout';
 			}
@@ -190,11 +188,16 @@ class yf_auth_user {
 		if (!empty($_COOKIE[$this->VAR_COOKIE_NAME]) && empty($_SESSION[$this->VAR_USER_ID])) {
 			$this->_process_cookie();
 		}
-		if (isset($_GET['task']) && $_GET['task'] == 'login' && empty($_SESSION[$this->VAR_USER_ID])) {
-			$this->_do_login(array(
-				'login'	=> $_POST[$this->LOGIN_FIELD],
-				'pswd'	=> $_POST[$this->PSWD_FIELD],
-			));
+		if (isset($_GET['task']) && $_GET['task'] == 'login') {
+			if ($_GET['id'] && strlen($_GET['id']) > 16 && !is_numeric($_GET['id'])) {
+				$this->_do_login_with_encrypted();
+			}
+			if (empty($_SESSION[$this->VAR_USER_ID])) {
+				$this->_do_login(array(
+					'login'	=> $_POST[$this->LOGIN_FIELD],
+					'pswd'	=> $_POST[$this->PSWD_FIELD],
+				));
+			}
 		}
 		// Check if current user session has expired
 		if ($this->STORE_ONLINE_USERS) {
@@ -336,6 +339,63 @@ class yf_auth_user {
 			}
 		}
 		$this->_save_login_in_session($user_info, $params['no_redirect']);
+	}
+
+	/**
+	* Try to log in user with encrypted string (used to quickly login admin as common user)
+	*/
+	function _do_login_with_encrypted () {
+		if (!$_GET['id'] || strlen($_GET['id']) < 16 || is_numeric($_GET['id'])) {
+			$this->_encrypted_error = 'GET_id is not like an encrypted string';
+			return false;
+		}
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.WEB_PATH.'")) FROM '.db('admin').' WHERE id=1');
+		if (!$secret_key) {
+			$this->_encrypted_error = 'secret key generation failed';
+			return false;
+		}
+		_class('encryption')->_secret_key = $secret_key;
+		// Should contain this: 'userid-%id-%time-%md5';
+		$decrypted = _class('encryption')->_safe_decrypt_with_base64($_GET['id']);
+		if (!$decrypted || !strlen($decrypted) || substr($decrypted, 0, strlen('userid-')) != 'userid-') {
+			$this->_encrypted_error = 'decryption failed, possibly broken string or hack attempt';
+			return false;
+		}
+		$d = explode('-', $decrypted);
+		if (count($d) != 5) {
+			$this->_encrypted_error = 'decrypted string is not a valid array';
+			return false;
+		}
+		if (md5($d[0].'-'.$d[1].'-'.$d[2].'-'.$d[3]) != $d[4]) {
+			$this->_encrypted_error = 'md5 hash not matches';
+			return false;
+		}
+		$user_id = intval($d[1]);
+		$time = intval($d[2]);
+		$pswd_hash = strtolower(trim($d[3]));
+		if (!$user_id || !$time) {
+			$this->_encrypted_error = 'wrong user_id or time';
+			return false;
+		}
+		if (!preg_match('~^[a-z0-9]{32}$~', $pswd_hash)) {
+			$this->_encrypted_error = 'wrong pswd_hash';
+			return false;
+		}
+		// Allowing only 6 hours for link to keep alive
+		if ($time < (time() - 3600 * 6)) {
+			$this->_encrypted_error = 'time elapsed';
+			return false;
+		}
+		$user_info = db()->get('SELECT *, MD5(`password`) AS md5_pswd FROM '.db('user').' WHERE id='.intval($user_id));
+		if (!$user_info || $user_info['id'] != $user_id) {
+			$this->_encrypted_error = 'user not found';
+			return false;
+		}
+		if (!$user_info['md5_pswd'] || $user_info['md5_pswd'] != $pswd_hash) {
+			$this->_encrypted_error = 'user pswd_hash not matched';
+			return false;
+		}
+		return $this->_save_login_in_session($user_info);
 	}
 
 	/**

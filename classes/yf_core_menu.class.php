@@ -117,6 +117,9 @@ class yf_core_menu {
 					continue;
 				}
 			}
+			if (substr($item_info['location'], 0, 3) == './?') {
+				$item_info['location'] = substr($item_info['location'], 3);
+			}
 			// Internal link
 			if ($item_info['type_id'] == 1 && strlen($item_info['location']) > 0) {
 				parse_str($item_info['location'], $_item_parts);
@@ -160,6 +163,9 @@ class yf_core_menu {
 			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
 			$is_cur_page = false;
 			$item_link = '';
+			if (substr($item_info['location'], 0, 3) == './?') {
+				$item_info['location'] = substr($item_info['location'], 3);
+			}
 			// Internal link
 			if ($item_info['type_id'] == 1 && strlen($item_info['location']) > 0) {
 				parse_str($item_info['location'], $_item_parts);

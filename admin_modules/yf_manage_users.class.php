@@ -16,7 +16,10 @@ class yf_manage_users {
 			->btn_edit()
 			->btn_delete()
 			->btn_active()
+			->btn('log_auth', './?object=log_auth_view&action=show_for_user&id=%d')
+			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d')
 			->footer_add()
+			->footer_link('Failed auth log', './?object=log_auth_fails_viewer')
 		;
 	}
 
@@ -121,6 +124,27 @@ class yf_manage_users {
 		}
 		db()->query('DELETE FROM '.db('user').' WHERE id='.$user_id);
 		return js_redirect($_SERVER['HTTP_REFERER']);
+	}
+
+	/**
+	*/
+	function login_as() {
+// TODO: move this into classes/auth_user ?
+		$id = intval($_GET['id']);
+		if (!$id) {
+			return _e('Wrong id');
+		}
+		$a = db()->get('SELECT * FROM '.db('user').' WHERE id='.$id);
+		if (!$a) {
+			return _e('Target user not found');
+		}
+		$t = time();
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.WEB_PATH.'")) FROM '.db('admin').' WHERE id=1');
+		_class('encryption')->_secret_key = $secret_key;
+		$to_encode = 'userid-'.$a['id'].'-'.$t.'-'.md5($a['password']);
+		$integrity_hash = md5($to_encode);
+		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash);
+		return js_redirect(WEB_PATH.'?task=login&id='.$encrypted, $rewrite = false);
 	}
 
 	/**

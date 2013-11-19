@@ -17,25 +17,25 @@ class yf_related_content {
 	public $NUM_KEYWORDS		= 20;
 	/** @var @conf_skip */
 	public $DEF_PARAMS			= array(
-		"WHAT_TO_RETURN"=> "sql",
-		"FIELD_ID"		=> "id",
-		"FIELD_DATE"	=> "add_date",	// Set to -1 to disable
-		"FIELD_USER"	=> "user_id",	// Set to -1 to disable
-		"FIELD_TITLE"	=> "title",		// Set to -1 to disable
-		"FIELD_TEXT"	=> "text",		// Set to -1 to disable
-		"FIELD_SCORE"	=> "score",
-		"FIELD_ADD_1"	=> "",
-		"FIELD_ADD_2"	=> "",
-		"PAST_ONLY"		=> 0,
-		"RECORDS_LIMIT"	=> 5,
-		"THRESHOLD"		=> 1,
-		"WEIGHT_TEXT"	=> 3,
-		"WEIGHT_TITLE"	=> 1,
-		"WEIGHT_TAG"	=> 0,
-		"WEIGHT_CAT"	=> 0,
-		"WEIGHT_ADD_1"	=> 1,
-		"WEIGHT_ADD_2"	=> 1,
-		"STPL_NAME"		=> "system/common/related_content",
+		'WHAT_TO_RETURN'=> 'sql',
+		'FIELD_ID'		=> 'id',
+		'FIELD_DATE'	=> 'add_date',	// Set to -1 to disable
+		'FIELD_USER'	=> 'user_id',	// Set to -1 to disable
+		'FIELD_TITLE'	=> 'title',		// Set to -1 to disable
+		'FIELD_TEXT'	=> 'text',		// Set to -1 to disable
+		'FIELD_SCORE'	=> 'score',
+		'FIELD_ADD_1'	=> '',
+		'FIELD_ADD_2'	=> '',
+		'PAST_ONLY'		=> 0,
+		'RECORDS_LIMIT'	=> 5,
+		'THRESHOLD'		=> 1,
+		'WEIGHT_TEXT'	=> 3,
+		'WEIGHT_TITLE'	=> 1,
+		'WEIGHT_TAG'	=> 0,
+		'WEIGHT_CAT'	=> 0,
+		'WEIGHT_ADD_1'	=> 1,
+		'WEIGHT_ADD_2'	=> 1,
+		'STPL_NAME'		=> 'system/common/related_content',
 	);
 
 	/**
@@ -43,44 +43,44 @@ class yf_related_content {
 	*
 	* @exmaple
 	*	$data = common()->related_content(array(
-	*		"action"		=> "fetch", // Action: sql, fetch, stpl
-	*		"source_array"	=> $post_info, // array to analyze title and text from
-	*		"table_name"	=> db('blog_posts'), // database table name to query
-	*		"fields_return"	=> "id, user_id, add_date, title, text, privacy", // array or string of fields to return in resultset
-	*		"field_id"		=> "id",
-	*		"field_date"	=> "add_date",
-	*		"field_title"	=> "title",
-	*		"field_text"	=> "text",
-	*		"where"			=> "user_id=".intval($post_info["user_id"]), // custom WHERE condition will be added to query
+	*		'action'		=> 'fetch', // Action: sql, fetch, stpl
+	*		'source_array'	=> $post_info, // array to analyze title and text from
+	*		'table_name'	=> db('blog_posts'), // database table name to query
+	*		'fields_return'	=> 'id, user_id, add_date, title, text, privacy', // array or string of fields to return in resultset
+	*		'field_id'		=> 'id',
+	*		'field_date'	=> 'add_date',
+	*		'field_title'	=> 'title',
+	*		'field_text'	=> 'text',
+	*		'where'			=> 'user_id='.intval($post_info['user_id']), // custom WHERE condition will be added to query
 	*	));
 	*
 	*/
 	function _process ($params = array()) {
 		// THESE ARE REQUIRED!
-		$SOURCE_ARRAY	= $params["source_array"];
-		$TABLE_NAME		= $params["table_name"];
+		$SOURCE_ARRAY	= $params['source_array'];
+		$TABLE_NAME		= $params['table_name'];
 		// Missing required params
 		if (!$SOURCE_ARRAY) {
-			trigger_error("RELATED: empty params['source_array']", E_USER_WARNING);
+			trigger_error('RELATED: empty params[source_array]', E_USER_WARNING);
 			return false;
 		}
-		$WHAT_TO_RETURN	= $params["action"] && in_array($params["action"], array("sql", "fetch", "stpl")) ? $params["action"] : $this->DEF_PARAMS["WHAT_TO_RETURN"];
+		$WHAT_TO_RETURN	= $params['action'] && in_array($params['action'], array('sql', 'fetch', 'stpl')) ? $params['action'] : $this->DEF_PARAMS['WHAT_TO_RETURN'];
 
-		$FIELD_ID		= $params["field_id"]		? _es($params["field_id"])	: $this->DEF_PARAMS["FIELD_ID"];
-		$FIELD_DATE		= $params["field_date"]		? _es($params["field_date"])	: $this->DEF_PARAMS["FIELD_DATE"];
-		$FIELD_USER		= $params["field_user"]		? _es($params["field_user"])	: $this->DEF_PARAMS["FIELD_USER"];
-		$FIELD_TITLE	= $params["field_title"]	? _es($params["field_title"]): $this->DEF_PARAMS["FIELD_TITLE"];
-		$FIELD_TEXT		= $params["field_text"]		? _es($params["field_text"])	: $this->DEF_PARAMS["FIELD_TEXT"];
-		$FIELD_SCORE	= $params["field_score"]	? _es($params["field_score"]): $this->DEF_PARAMS["FIELD_SCORE"];
+		$FIELD_ID		= $params['field_id']		? _es($params['field_id'])	: $this->DEF_PARAMS['FIELD_ID'];
+		$FIELD_DATE		= $params['field_date']		? _es($params['field_date'])	: $this->DEF_PARAMS['FIELD_DATE'];
+		$FIELD_USER		= $params['field_user']		? _es($params['field_user'])	: $this->DEF_PARAMS['FIELD_USER'];
+		$FIELD_TITLE	= $params['field_title']	? _es($params['field_title']): $this->DEF_PARAMS['FIELD_TITLE'];
+		$FIELD_TEXT		= $params['field_text']		? _es($params['field_text'])	: $this->DEF_PARAMS['FIELD_TEXT'];
+		$FIELD_SCORE	= $params['field_score']	? _es($params['field_score']): $this->DEF_PARAMS['FIELD_SCORE'];
 		// Additional fields for fulltext searching
-		$FIELD_ADD_1	= $params["field_add_1"]	? _es($params["field_add_1"]): $this->DEF_PARAMS["FIELD_ADD_1"];
-		$FIELD_ADD_2	= $params["field_add_2"]	? _es($params["field_add_2"]): $this->DEF_PARAMS["FIELD_ADD_2"];
+		$FIELD_ADD_1	= $params['field_add_1']	? _es($params['field_add_1']): $this->DEF_PARAMS['FIELD_ADD_1'];
+		$FIELD_ADD_2	= $params['field_add_2']	? _es($params['field_add_2']): $this->DEF_PARAMS['FIELD_ADD_2'];
 		// Title or text is required
 		if ((!$FIELD_TITLE || $FIELD_TITLE == -1) && (!$FIELD_TEXT || $FIELD_TEXT == -1)) {
-			trigger_error("RELATED: no title and text fields specified", E_USER_WARNING);
+			trigger_error('RELATED: no title and text fields specified', E_USER_WARNING);
 			return false;
 		}
-		$FIELDS_RETURN	= $params["fields_return"]	? $this->_prepare_fields_param($params["fields_return"]) : "";
+		$FIELDS_RETURN	= $params['fields_return']	? $this->_prepare_fields_param($params['fields_return']) : '';
 		if (!$FIELDS_RETURN) {
 			$FIELDS_RETURN[] = $FIELD_ID;
 			if ($FIELD_DATE && $FIELD_DATE != -1) {
@@ -104,43 +104,43 @@ class yf_related_content {
 			$FIELDS_RETURN[] = $FIELD_SCORE;
 		}
 
-		$WHERE_COND		= $params["where"]			? $params["where"]							: ""; // Not checked. Be careful with this!
-		$PAST_ONLY		= $params["past_only"]		? intval((bool)$params["past_only"])		: $this->DEF_PARAMS["PAST_ONLY"];
+		$WHERE_COND		= $params['where']			? $params['where']							: ''; // Not checked. Be careful with this!
+		$PAST_ONLY		= $params['past_only']		? intval((bool)$params['past_only'])		: $this->DEF_PARAMS['PAST_ONLY'];
 		if (!$FIELD_DATE || $FIELD_DATE == -1) {
 			$PAST_ONLY = false;
 		}
-		$RECORDS_LIMIT	= $params["limit"]			? intval($params["limit"])					: $this->DEF_PARAMS["RECORDS_LIMIT"];
-		$ORDER_BY		= $params["order_by"]		? _es($params["order_by"])	: $FIELD_SCORE. " DESC";
-		$STPL_NAME		= $params["stpl_name"]		? $params["stpl_name"]						: $this->DEF_PARAMS["STPL_NAME"];
+		$RECORDS_LIMIT	= $params['limit']			? intval($params['limit'])					: $this->DEF_PARAMS['RECORDS_LIMIT'];
+		$ORDER_BY		= $params['order_by']		? _es($params['order_by'])	: $FIELD_SCORE. ' DESC';
+		$STPL_NAME		= $params['stpl_name']		? $params['stpl_name']						: $this->DEF_PARAMS['STPL_NAME'];
 
-		$THRESHOLD		= $params["thold"]			? intval($params["thold"])					: $this->DEF_PARAMS["THRESHOLD"];
-		$WEIGHT_TEXT	= $params["weight_body"]	? intval($params["weight_body"])			: $this->DEF_PARAMS["WEIGHT_TEXT"];
-		$WEIGHT_TITLE	= $params["weight_title"]	? intval($params["weight_title"])			: $this->DEF_PARAMS["WEIGHT_TITLE"];
+		$THRESHOLD		= $params['thold']			? intval($params['thold'])					: $this->DEF_PARAMS['THRESHOLD'];
+		$WEIGHT_TEXT	= $params['weight_body']	? intval($params['weight_body'])			: $this->DEF_PARAMS['WEIGHT_TEXT'];
+		$WEIGHT_TITLE	= $params['weight_title']	? intval($params['weight_title'])			: $this->DEF_PARAMS['WEIGHT_TITLE'];
 		// Additional fields
-		$WEIGHT_ADD_1	= $params["weight_add_1"]	? intval($params["weight_add_1"])			: $this->DEF_PARAMS["WEIGHT_ADD_1"];
-		$WEIGHT_ADD_2	= $params["weight_add_2"]	? intval($params["weight_add_2"])			: $this->DEF_PARAMS["WEIGHT_ADD_2"];
+		$WEIGHT_ADD_1	= $params['weight_add_1']	? intval($params['weight_add_1'])			: $this->DEF_PARAMS['WEIGHT_ADD_1'];
+		$WEIGHT_ADD_2	= $params['weight_add_2']	? intval($params['weight_add_2'])			: $this->DEF_PARAMS['WEIGHT_ADD_2'];
 // TODO: complete these
-		$WEIGHT_TAG		= $params["weight_tag"]		? intval($params["weight_tag"])				: $this->DEF_PARAMS["WEIGHT_TAG"];
-		$WEIGHT_CAT		= $params["weight_cat"]		? intval($params["weight_cat"])				: $this->DEF_PARAMS["WEIGHT_CAT"];
+		$WEIGHT_TAG		= $params['weight_tag']		? intval($params['weight_tag'])				: $this->DEF_PARAMS['WEIGHT_TAG'];
+		$WEIGHT_CAT		= $params['weight_cat']		? intval($params['weight_cat'])				: $this->DEF_PARAMS['WEIGHT_CAT'];
 		
 		// PARSE PARAMS END
 
 		$WEIGHT_TOTAL	= $WEIGHT_TEXT + $WEIGHT_TITLE + $WEIGHT_TAG + $WEIGHT_CAT;
 		$WEIGHTED_THOLD	= $THRESHOLD / ($WEIGHT_TOTAL + 0.1);
 
-		$keywords_text = "";
+		$keywords_text = '';
 		if ($FIELD_TEXT && $FIELD_TEXT != -1) {
 			$keywords_text	= $this->_get_keywords_from_text($SOURCE_ARRAY[$FIELD_TEXT]);
 		}
-		$keywords_title = "";
+		$keywords_title = '';
 		if ($FIELD_TITLE && $FIELD_TITLE != -1) {
 			$keywords_title	= $this->_get_keywords_from_text($SOURCE_ARRAY[$FIELD_TITLE]);
 		}
-		$keywords_add_1 = "";
+		$keywords_add_1 = '';
 		if ($FIELD_ADD_1 && $FIELD_ADD_1 != -1) {
 			$keywords_add_1	= $this->_get_keywords_from_text($SOURCE_ARRAY[$FIELD_ADD_1]);
 		}
-		$keywords_add_2 = "";
+		$keywords_add_2 = '';
 		if ($FIELD_ADD_2 && $FIELD_ADD_2 != -1) {
 			$keywords_add_2	= $this->_get_keywords_from_text($SOURCE_ARRAY[$FIELD_ADD_2]);
 		}
@@ -153,14 +153,14 @@ class yf_related_content {
 		foreach ((array)$FIELDS_RETURN as $k => $v) {
 			$_tmp[$k] = db()->enclose_field_name($v);
 		}
-		$fields_to_return_sql = implode(", ", $_tmp);
+		$fields_to_return_sql = implode(', ', $_tmp);
 		unset($_tmp);
 
 		$now = time();
 
 		// TODO
-		$cats = "";
-		$tags = "";
+		$cats = '';
+		$tags = '';
 
 		$sql = 
 			"SELECT *, ( 
@@ -219,16 +219,16 @@ class yf_related_content {
 		$sql = str_replace(array("\r", "\n\t\t\t\t\t\n", "\n\t\t\t\t\n", "\n\t\t\t\n"), "\n", $sql);
 		$sql = str_replace(array("\n\n\n", "\n\n"), "\n", $sql);
 		// RETURN RESULT HERE
-		if ($WHAT_TO_RETURN == "sql") {
+		if ($WHAT_TO_RETURN == 'sql') {
 			return $sql;
 		}
-		if ($WHAT_TO_RETURN == "fetch") {
+		if ($WHAT_TO_RETURN == 'fetch') {
 			return db()->query_fetch_all($sql, $FIELD_ID);
 		}
-		if ($WHAT_TO_RETURN == "stpl") {
+		if ($WHAT_TO_RETURN == 'stpl') {
 			$data = db()->query_fetch_all($sql, $FIELD_ID);
 			if (!$data) {
-				return "";
+				return '';
 			}
 			// Get users infos
 			if ($FIELD_USER && $FIELD_USER != -1) {
@@ -244,31 +244,31 @@ class yf_related_content {
 			}
 			foreach ((array)$data as $k => $v) {
 				$data2[$k] = array(
-					"id"			=> intval($v[$FIELD_ID]),
-					"date"			=> _format_date($v[$FIELD_DATE]),
-					"title"			=> _prepare_html($v[$FIELD_TITLE]),
-					"text"			=> _prepare_html(_substr($v[$FIELD_TEXT], 0, 200)),
-					"add_1"			=> _prepare_html(_substr($v[$FIELD_ADD_1], 0, 200)),
-					"add_2"			=> _prepare_html(_substr($v[$FIELD_ADD_2], 0, 200)),
-					"user_id"		=> intval($v[$FIELD_USER]),
-					"user_name"		=> _prepare_html(_display_name($users_infos[$v[$FIELD_USER]])),
-					"profile_link"	=> _profile_link($v[$FIELD_USER]),
-					"score"			=> _prepare_html($v[$FIELD_SCORE]),
-					"href"			=> process_url("./?object=".$_GET["object"]."&action=".$_GET["action"]."&id=".intval($v[$FIELD_ID])),
+					'id'			=> intval($v[$FIELD_ID]),
+					'date'			=> _format_date($v[$FIELD_DATE]),
+					'title'			=> _prepare_html($v[$FIELD_TITLE]),
+					'text'			=> _prepare_html(_substr($v[$FIELD_TEXT], 0, 200)),
+					'add_1'			=> _prepare_html(_substr($v[$FIELD_ADD_1], 0, 200)),
+					'add_2'			=> _prepare_html(_substr($v[$FIELD_ADD_2], 0, 200)),
+					'user_id'		=> intval($v[$FIELD_USER]),
+					'user_name'		=> _prepare_html(_display_name($users_infos[$v[$FIELD_USER]])),
+					'profile_link'	=> _profile_link($v[$FIELD_USER]),
+					'score'			=> _prepare_html($v[$FIELD_SCORE]),
+					'href'			=> process_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.intval($v[$FIELD_ID])),
 				);
 			}
 			$replace = array(
-				"data"		=> $data2,
-				"source"	=> _prepare_html($SOURCE_ARRAY),
+				'data'		=> $data2,
+				'source'	=> _prepare_html($SOURCE_ARRAY),
 			);
 			return tpl()->parse($STPL_NAME, $replace);
 		}
 	}
 
 	/**
-	* Analyze text, find top keywords and return string ready for use inside "MATCH ... AGAINST ..."
+	* Analyze text, find top keywords and return string ready for use inside 'MATCH ... AGAINST ...'
 	*/
-	function _get_keywords_from_text ($text = "") {
+	function _get_keywords_from_text ($text = '') {
 
 		$num_to_ret = $this->NUM_KEYWORDS;
 
@@ -301,7 +301,7 @@ class yf_related_content {
 	/**
 	* Cleanup and convert fields param value into array
 	*/
-	function _prepare_fields_param ($fields = "") {
+	function _prepare_fields_param ($fields = '') {
 		if (is_array($fields)) {
 			return array_unique($fields);
 		}
@@ -309,8 +309,8 @@ class yf_related_content {
 			return array();
 		}
 		$fields_array = array();
-		$fields = strtolower(preg_replace("/[^a-z0-9_,]/i", "", trim($fields)));
-		foreach ((array)explode(",", $fields) as $_item) {
+		$fields = strtolower(preg_replace('/[^a-z0-9_,]/i', '', trim($fields)));
+		foreach ((array)explode(',', $fields) as $_item) {
 			$fields_array[$_item] = $_item;
 		}
 		return $fields_array;

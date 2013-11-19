@@ -314,6 +314,9 @@ class yf_graphics {
 				'time'		=> _format_date($login_time),
 				'edit_link'	=> './?object=admin_account',
 			));
+			if ($_SESSION['admin_prev_info']) {
+				$body .= '<li><a href="./?task=login&id=prev_info"><i class="icon icon-arrow-up"></i> '.t('Login back').'</a></li>';
+			}
 		// For authorized users only
 		} elseif (MAIN_TYPE_USER && $user_id && $user_group) {
 			$user_info 		= user($user_id);
@@ -450,14 +453,14 @@ class yf_graphics {
 	* Get html code for external bookmarking (Yahoo, Digg, etc)
 	*/
 	function _show_bookmarks_button($title = '', $url = '', $only_links = 1) {
-		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
+#		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
 	}
 
 	/**
 	* Get html code for external bookmarking (Yahoo, Digg, etc)
 	*/
 	function _show_rss_button($feed_name = '', $feed_link = '', $only_links = 1) {
-		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
+#		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
 	}
 
 	/**

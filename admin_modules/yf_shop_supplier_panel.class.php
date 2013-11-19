@@ -24,23 +24,23 @@ class yf_shop_supplier_panel {
 	}
 	
 	function _product_image_delete($id, $k) {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func($id, $k);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func($id, $k);
 	}
 	
 	function _product_image_upload($product_id) {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func($product_id);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func($product_id);
 	}
 		
 	function product_image_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func();
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func();
 	}	
 
 	function _product_images_rename($id, $k, $mpath) {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func($id, $k, $mpath);
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func($id, $k, $mpath);
 	}	
 
 	function set_main_image() {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/shop_supplier_panel/')->$func();
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func();
 	}	
 
 	function products($params = array()) {

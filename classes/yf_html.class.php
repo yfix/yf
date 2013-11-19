@@ -39,6 +39,43 @@ class yf_html {
 
 	/**
 	*/
-	function dd_table() {
+	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
+		$form = form($replace, array(
+			'legend' => $replace['title'],
+			'no_form' => 1,
+			'dd_mode' => 1,
+			'dd_class' => 'span6',
+		));
+		foreach ((array)$replace as $name => $val) {
+			$func = 'container';
+			$_extra = array(
+				'desc' => $name,
+				'value' => $val,
+			);
+			$ft = $field_types[$name];
+			if (isset($ft)) {
+				if (is_array($ft)) {
+					if (isset($ft['func'])) {
+						$func = $ft['func'];
+					}
+					$_extra = (array)$ft + $_extra;
+				} else {
+					$func = $ft;
+				}
+			}
+			$_extra += (array)$extra;
+			// Callback to decide if we need to show this field or not
+			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+				$_display_allowed = $_extra['display_func']($val, $_extra);
+				if (!$_display_allowed) {
+					continue;
+				}
+			}
+			if ($func) {
+				$form->$func($val, $_extra);
+			}
+		}
+		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
+		return '<div class="row-fluid">'.$legend.'<div class="span6">'.$form.'</div></div>';
 	}
 }

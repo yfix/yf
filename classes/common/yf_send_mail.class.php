@@ -2,7 +2,7 @@
 
 /**
 * Mail sender
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -13,10 +13,6 @@ class yf_send_mail {
 	public $_KNOWN_MAILERS			= array(
 		'simple',
 		'internal',
-		'pear',
-		'xpm2',
-		'xpm4',
-		'swift',
 		'phpmailer',
 	);
 	/** @var string Select mailer driver to use */
@@ -27,6 +23,7 @@ class yf_send_mail {
 	public $MAIL_DEBUG				= true;
 	/** @var string */
 	public $DEBUG_TEST_ADDRESS		= '';
+	public $DEBUG_TEST_SEND_BULK	= true;
 	/** @var string */
 	public $DEFAULT_CHARSET		= 'windows-1251';
 	/** @var bool */
@@ -70,11 +67,11 @@ class yf_send_mail {
 			$this->MAIL_DEBUG = $mail_debug;
 		}
 		$test_mail = conf('test_mail');
-		if (isset($test_mail)) {
+		if (!empty($test_mail)) {
 			$this->DEBUG_TEST_ADDRESS = $test_mail;
 		}
 		$log_emails = conf('log_emails');
-		if (isset($log_emails)) {
+		if (!empty($log_emails)) {
 			$this->LOG_EMAILS = $log_emails;
 		}
 		// hide XPM4 errors
@@ -117,10 +114,28 @@ class yf_send_mail {
 		}
 		// Debug mail (All emails are sending to the specified email address)
 		if ($this->MAIL_DEBUG && $this->DEBUG_TEST_ADDRESS) {
-			$email_to = $this->DEBUG_TEST_ADDRESS;
+			$debug_email = $this->DEBUG_TEST_ADDRESS;
+			$debug_name = "(debug: $name_to - $email_to)";
+			if ($this->USE_MAILER == 'phpmailer' && is_array($email_to)) {
+				$emails = array();
+				$debug_name = '';
+				foreach( $email_to as $name => $email ) {
+					$debug_name = "(debug: $name - $email)";
+					$emails[ $debug_name ] = $debug_email;
+				}
+				if( $this->DEBUG_TEST_SEND_BULK ) {
+					$email_to = $emails;
+				} else {
+					$email_to = $debug_email;
+					$name_to  = implode( ' - ', array_keys( $emails ) );
+				}
+			} else {
+				$email_to = $debug_email;
+				$name_to  = $debug_name;
+			}
 		}
 		// Load specific SMTP options (only for 'pear', 'xpm2', 'xpm4')
-		if (in_array($this->USE_MAILER, array('pear','xpm2','xpm4','swift','phpmailer'))) {
+		if (in_array($this->USE_MAILER, array('phpmailer'))) {
 			// Try to get specific SMTP settings
 			$this->SMTP_OPTIONS = $this->_process_smtp_config($email_to);
 		}
@@ -132,152 +147,44 @@ class yf_send_mail {
 			$email_from = $this->SMTP_OPTIONS['from'];
 			$name_from	= $email_from;
 		}
-		// Try to use PEAR mailer
-		if ($this->USE_MAILER == 'pear') {
-
-			$options		= array(
-				'to_email'		=> $email_to,
-				'to_real_name'	=> $name_to,
-				'from_email'	=> $email_from,
-				'from_real_name'=> $name_from,
-				'subject'		=> $subject,
-				'body'			=> $html,
-				'backend'		=> in_array($pear_mailer_backend, $this->PEAR_MAILER_BACKENDS) ? $pear_mailer_backend : 'mail',
-			);
-			// Force mta options
-			if (!empty($force_mta_opts) && is_array($force_mta_opts)) {
-				$options['mta_opts'] = $force_mta_opts;
-			}
-			$result = _class('pear_emailer', COMMON_LIB)->send($options);
-
-		// Try to use XPM2 mailer
-		} elseif ($this->USE_MAILER == 'xpm2') {
-
-			// path to smtp.php from XPM2 package
-			require_once YF_PATH.'libs/xpm2/smtp.php';
-			// Process options
-			$mailer = new SMTP;
-			if (!empty($this->SMTP_OPTIONS['smtp_host'])) {
-				$mailer->Delivery('relay');
-				$mailer->Relay(
-					$this->SMTP_OPTIONS['smtp_host']
-					, !empty($this->SMTP_OPTIONS['smtp_user_name']) ? $this->SMTP_OPTIONS['smtp_user_name'] : false
-					, !empty($this->SMTP_OPTIONS['smtp_password']) ? $this->SMTP_OPTIONS['smtp_password'] : false
-					, !empty($this->SMTP_OPTIONS['smtp_port']) ? intval($this->SMTP_OPTIONS['smtp_port']) : 25
-					, !empty($this->SMTP_OPTIONS['smtp_auth']) ? $this->SMTP_OPTIONS['smtp_auth'] : 'autodetect'
-					, !empty($this->SMTP_OPTIONS['smtp_secure']) ? $this->SMTP_OPTIONS['smtp_secure'] : false
-				);
-			}
-			// Set different 'Reply-To' field if needed
-			if (defined('SITE_ADMIN_EMAIL')) {
-				$mailer->From(SITE_ADMIN_EMAIL, 'noreply');
-				$mailer->addheader('Reply-To', $name_from.'<'.$email_from.'>', 'utf-8', '');
-			} else {
-				$mailer->From($email_from, $name_from);
-			}
-			$mailer->AddTo($email_to, $name_to);
-			$mailer->Text($text);
-			$mailer->Html($html);
-			if ($this->ALLOW_ATTACHMENTS) {
-				foreach ((array)$attaches as $cur_file) {
-					$mailer->AttachFile($cur_file);
-				}
-			}
-			// Go!
-			$result = $mailer->Send($subject, !empty($charset) ? $charset : 'utf-8');
-
-		// Try to use XPM4 mailer
-		} elseif ($this->USE_MAILER == 'xpm4') {
-
-			require_once YF_PATH.'libs/xpm4/MAIL.php';
-			// Prepare
-			$mailer = new MAIL;
-			// Set different 'Reply-To' field if needed
-			if (defined('SITE_ADMIN_EMAIL')) {
-				$mailer->From(SITE_ADMIN_EMAIL, 'noreply');
-				$mailer->addheader('Reply-To', 'noreply'.'<'.SITE_ADMIN_EMAIL.'>', 'utf-8', '');
-			} else {
-				$mailer->From($email_from, $name_from);
-			}
-			$mailer->AddTo($email_to, $name_to);
-			$mailer->Text($text);
-			$mailer->Html($html);
-			$mailer->Subject($subject);
-			if ($this->ALLOW_ATTACHMENTS) {
-				foreach ((array)$attaches as $cur_file) {
-					$mailer->AttachFile($cur_file);
-				}
-			}
-			// make sure you have OpenSSL module (extension) enable on your php configuration
-			$connection = $mailer->Connect(
-				$this->SMTP_OPTIONS['smtp_host']
-				, !empty($this->SMTP_OPTIONS['smtp_port']) ? intval($this->SMTP_OPTIONS['smtp_port']) : 25
-				, !empty($this->SMTP_OPTIONS['smtp_user_name']) ? $this->SMTP_OPTIONS['smtp_user_name'] : false
-				, !empty($this->SMTP_OPTIONS['smtp_password']) ? $this->SMTP_OPTIONS['smtp_password'] : false
-				, !empty($this->SMTP_OPTIONS['smtp_secure']) ? $this->SMTP_OPTIONS['smtp_secure'] : false
-			);
-			if (is_resource($connection)) {
-				$result = $mailer->Send($c);
-				$mailer->Disconnect();
-			} else {
-				$error_message .= 'Cannot connect to SMTP server, Reason: <br />';
-				$error_message .= print_r($mailer->Result, 1);
-			}
-
-		// Try to use Swift mailer
-		} elseif ($this->USE_MAILER == 'swift') {
-
-			require_once YF_PATH. '/swift/lib/Swift.php';
-			require_once YF_PATH. '/swift/lib/Swift/Connection/SMTP.php';
-
-			$conn = new Swift_Connection_SMTP($this->SMTP_OPTIONS['smtp_host'], $this->SMTP_OPTIONS['smtp_port'], $this->SMTP_OPTIONS['smtp_secure'] == 'tls' ? SWIFT_SMTP_ENC_TLS : false);
-			$conn->setUsername($this->SMTP_OPTIONS['smtp_user_name']);
-			$conn->setPassword($this->SMTP_OPTIONS['smtp_password']);
-
-			$swift	= new Swift($conn);
-			$result = $swift->send(
-				new Swift_Message($subject, $text)
-				, new Swift_Address($email_from, $name_from)
-				, new Swift_Address($email_to, $name_to)
-			);
 
 		// Try to use PHPMailer mailer
-		} elseif ($this->USE_MAILER == 'phpmailer') {
-
-# TODO
-#		set_include_path (YF_PATH.'libs/pear/'. PATH_SEPARATOR. get_include_path());
+		if ($this->USE_MAILER == 'phpmailer') {
 
 			require_once(YF_PATH.'libs/phpmailer/class.phpmailer.php');
-			
+
 			$mail = new PHPMailer(true); // defaults to using php 'mail()'
 			try {
-				$mail->CharSet	= 'utf-8';
-				$mail->From		= $email_from;
-				if ($name_from) {
-					$mail->FromName = $name_from;
-				}
-				$mail->SetFrom($email_from, $name_from ? $name_from : $email_from);
+				$mail->CharSet  = $charset ?: $this->DEFAULT_CHARSET;
+				$mail->From     = $email_from;
+				$mail->FromName = $name_from;
 				if(DEBUG_MODE){
 					$mail->SMTPDebug  = 1;
 				}
-//				$mail->AddReplyTo($email_from, $name_from);
-				$mail->AddAddress($email_to, $name_to);
-				$mail->Subject	= $subject;
-				
-				$mail->IsHTML(true);
-				$mail->AltBody	= 'To view the message, please use an HTML compatible email viewer!';
-				$mail->MsgHTML($html);
-				
+				if (is_array($email_to)) {
+					list( $name, $email ) = each( $email_to ); array_shift( $email_to );
+					$mail->AddAddress($email, $name);
+				} else {
+					$mail->AddAddress($email_to, $name_to);
+				}
+				$mail->Subject = $subject;
+				if (empty($html)) {
+					$mail->Body = $text;
+				} else {
+					$mail->IsHTML(true);
+					$mail->Body    = $html;
+					$mail->AltBody = $text;
+				}
 				if ($this->ALLOW_ATTACHMENTS) {
-					foreach ((array)$attaches as $cur_file) {
-						$mail->AddAttachment($cur_file);
+					foreach ((array)$attaches as $name => $file) {
+						$file_name = is_string( $name ) ? $name: '';
+						$mail->AddAttachment($file, $file_name );
 					}
 				}
-
 				if ($this->FORCE_USE_SMTP && $this->SMTP_OPTIONS['smtp_host']) {
 					$mail->IsSMTP();
-					$mail->Host		= $this->SMTP_OPTIONS['smtp_host'];
-					$mail->Port		= $this->SMTP_OPTIONS['smtp_port'];
+					$mail->Host     = $this->SMTP_OPTIONS['smtp_host'];
+					$mail->Port     = $this->SMTP_OPTIONS['smtp_port'];
 					$mail->SMTPAuth = true;
 					$mail->Username = $this->SMTP_OPTIONS['smtp_user_name'];
 					$mail->Password = $this->SMTP_OPTIONS['smtp_password'];
@@ -285,9 +192,15 @@ class yf_send_mail {
 						$mail->SMTPSecure = $this->SMTP_OPTIONS['smtp_secure'];
 					}
 				}
-
 				$result = $mail->Send();
-
+				if (is_array($email_to) && !empty( $email_to )) {
+					foreach( $email_to as $name => $email ) {
+						$mail->clearAddresses();
+						$mail->AddAddress($email, $name);
+						$r = $mail->Send();
+						$result = $result && $r;
+					}
+				}
 			} catch (phpmailerException $e) {
 
 				$error_message .= $e->errorMessage(); //Pretty error messages from PHPMailer
@@ -299,11 +212,11 @@ class yf_send_mail {
 			if (!$result) {
 				$error_message .= $mail->ErrorInfo;
 			}
-			
-			if(DEBUG_MODE){
+
+			if (DEBUG_MODE) {
 				echo $error_message;
 			}
-			
+
 		// Internal Framework mailer
 		} elseif ($this->USE_MAILER == 'internal') {
 
@@ -348,7 +261,7 @@ class yf_send_mail {
 			$GLOBALS['_send_mail_debug'][] = $log_data;
 		}
 		return $result;
-	} 
+	}
 
 	/**
 	* Send emails with attachments with DEBUG ability
@@ -366,7 +279,7 @@ class yf_send_mail {
 
 		$OB = '----=_OuterBoundary_000';
 		$IB = '----=_InnerBoundery_001';
-		$headers  = 'MIME-Version: 1.0'."\r\n"; 
+		$headers  = 'MIME-Version: 1.0'."\r\n";
 		// Strange behaviour on windows,
 		if (OS_WINDOWS) {
 			$headers .= $email_from	? 'From:'.$email_from."\r\n"		: '';
@@ -377,8 +290,8 @@ class yf_send_mail {
 			$headers .= $email_to	? 'To:'.$name_to.'<'.$email_to.">\r\n"				: '';
 			$headers .= $email_from ? 'Reply-To:'.$name_from.'<'.$email_from.">\r\n"	: '';
 		}
-		$headers .= "X-Priority:".intval($priority)."\r\n"; 
-		$headers .= "X-Mailer:".$mailer_name."\r\n"; 
+		$headers .= "X-Priority:".intval($priority)."\r\n";
+		$headers .= "X-Mailer:".$mailer_name."\r\n";
 		$headers .= "Content-Type:multipart/mixed;\r\n\tboundary=\"".$OB."\"\r\n";
 		// Messages start with text/html alternatives in OB
 		$msg  = "This is a multi-part message in MIME format.\r\n";
@@ -386,7 +299,7 @@ class yf_send_mail {
 		if (strlen($text) || strlen($html)) {
 			$msg .= "Content-Type: multipart/alternative;\r\n\tboundary=\"".$IB."\"\r\n\r\n";
 		}
-		// plaintext section 
+		// plaintext section
 		if (strlen($text)) {
 			$msg .= "\r\n--".$IB."\r\n";
 			$msg .= "Content-Type: text/plain;\r\n\tcharset=\"".$charset."\"\r\n";
@@ -394,12 +307,12 @@ class yf_send_mail {
 			// plaintext goes here
 			$msg .= $text."\r\n\r\n";
 		}
-		// html section 
+		// html section
 		if (strlen($html)) {
 			$msg .= "\r\n--".$IB."\r\n";
 			$msg .= "Content-Type: text/html;\r\n\tcharset=\"".$charset."\"\r\n";
 			$msg .= "Content-Transfer-Encoding: base64\r\n\r\n";
-			// html goes here 
+			// html goes here
 			$msg .= chunk_split(base64_encode($html))."\r\n\r\n";
 		}
 		// end of IB
@@ -423,7 +336,7 @@ class yf_send_mail {
 		$msg .= "\r\n--".$OB."--\r\n";
 		// Send composed email
 		return mail($email_to, $subject, $msg, $headers);
-	} 
+	}
 
 	/**
 	* SMTP config init
@@ -490,7 +403,7 @@ class yf_send_mail {
 		}
 		$smtp = $params['smtp_options'];
 		if (!empty($smtp)) {
-			$other_options .= 
+			$other_options .=
 				'smtp_host:'.$smtp['smtp_host']
 				.', smtp_user: '.$smtp['smtp_user_name']
 				.', smtp_port: '.$smtp['smtp_port']

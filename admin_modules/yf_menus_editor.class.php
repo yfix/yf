@@ -228,7 +228,7 @@ class yf_menus_editor {
 			}
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
-		$groups = $this->{'_'.$menu_info['type'].'_groups'};
+		$groups = $this->_groups[$menu_info['type']];
 		return table($menu_items, array('pager_records_on_page' => 10000, 'condensed' => 1))
 			->form()
 			->icon('icon')
