@@ -311,6 +311,7 @@ class yf_table2 {
 					$name = $info['name'];
 					$func = &$info['func'];
 					$_extra = &$info['extra'];
+					// Callback to decide if we need to show this field or not
 					if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
 						$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
 						if (!$_display_allowed) {
@@ -346,6 +347,7 @@ class yf_table2 {
 					$name = $info['name'];
 					$func = &$info['func'];
 					$_extra = &$info['extra'];
+					// Callback to decide if we need to show this field or not
 					if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
 						$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
 						if (!$_display_allowed) {
@@ -389,6 +391,7 @@ class yf_table2 {
 		if (isset($_extra['transform']) && !empty($_extra['transform'])) {
 			$row[$name] = $this->_apply_transform($row[$name], $_extra['transform']);
 		}
+		// Callback to decide if we need to show this field or not
 		if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
 			$_display_allowed = $_extra['display_func']($row, $info, $params, $this);
 			if (!$_display_allowed) {
@@ -735,8 +738,8 @@ class yf_table2 {
 			'func'	=> function($field, $params, $row, $instance_params) {
 				$extra = $params['extra'];
 				$extra['id'] = $extra['name'];
-				$bg_color_ok = $extra['bg_color_ok'] ?: 'yellow';
-				$bg_color_ko = $extra['bg_color_ko'] ?: '';
+				$color_ok = $extra['color_ok'] ?: 'yellow';
+				$color_ko = $extra['color_ko'] ?: '';
 				$class = $extra['class'] ?: 'icon-star';
 				$class_ok = $extra['class_ok'] ?: 'star-ok';
 				$class_ko = $extra['class_ko'] ?: 'star-ko';
@@ -745,7 +748,7 @@ class yf_table2 {
 				$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
 				foreach (range(1, $stars) as $num) {
 					$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
-					$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
+					$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';"></i>';
 				}
 				return implode(PHP_EOL, $body);
 			}
