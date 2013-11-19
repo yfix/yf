@@ -16,4 +16,10 @@ ul#slide_menu .dropdown-divider { font-weight: bold; border-bottom: 1px solid; }
 .form-inline legend { margin-bottom: 0; margin-top: 0; }
 .form-inline .controls .radio:first-child, .form-inline .controls>.checkbox:first-child { padding-top:0 }
 /*.form-inline .control-group label { margin-top: -5px; }*/
+
+.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
+.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
+.rating span.star:hover { cursor:pointer }
+.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
+.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
 </style>

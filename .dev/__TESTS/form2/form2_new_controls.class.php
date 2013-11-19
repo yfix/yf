@@ -30,7 +30,8 @@ class form2_new_controls {
 			->user_location_box(array('desc' => 'user location'))
 			->admin_location_box(array('desc' => 'admin location'))
 
-			->link('count_offers', './?object=manage_shop&action=product_edit&id=%d',array('desc'=>'ffgd'))
+#			->link('count_offers', './?object=manage_shop&action=product_edit&id=%d',array('desc'=>'ffgd'))
+			->stars_select('stars')
 
 			->save()
 		;
