@@ -1833,9 +1833,12 @@ class yf_form2 {
 	* Custom function, useful to insert custom html and not breaking form chain
 	*/
 	function func($name, $func, $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
+		if (is_array($func)) {
+			$extra += $func;
+			$func = '';
+		}
+		if (!$func) {
+			$func = isset($extra['function']) ? $extra['function'] : $extra['func'];
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', ' ', $extra['name']));
