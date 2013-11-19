@@ -1902,7 +1902,7 @@ class yf_form2 {
 			$class_ko = $extra['class_ko'] ?: 'star-ko';
 			$max = $extra['max'] ?: 5;
 			$stars = $extra['stars'] ?: 5;
-			$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
+			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
 			foreach (range(1, $stars) as $num) {
 				$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
 				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $bg_color_ok : $bg_color_ko).';"></i>';
