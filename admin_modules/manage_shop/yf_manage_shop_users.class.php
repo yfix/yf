@@ -19,7 +19,8 @@ class yf_manage_shop_users{
 			->text('email')
 			->text('phone')
 			->text('address')
-			->btn_edit('', './?object=manage_shop&action=user_edit&id=%d')				
+			->btn_edit('', './?object=manage_shop&action=user_edit&id=%d')
+			->btn('Login', './?object=manage_users&action=login_as&id=%d')
 			->btn_delete('', './?object=manage_shop&action=user_delete&id=%d')
 			->btn_active('', './?object=manage_shop&action=user_activate&id=%d')
 		;
@@ -45,6 +46,8 @@ class yf_manage_shop_users{
 		}
 	}
 
+	/**
+	*/
 	function user_activate () {
 		if ($_GET['id']){
 			$A = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
@@ -63,6 +66,8 @@ class yf_manage_shop_users{
 		}
 	}
 	
+	/**
+	*/
 	function user_edit() {
 		if ($_GET['id']){
 			$A = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
