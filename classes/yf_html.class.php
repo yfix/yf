@@ -76,6 +76,7 @@ class yf_html {
 			}
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
-		return '<div class="row-fluid">'.$legend.'<div class="span6">'.$form.'</div></div>';
+		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6';
+		return '<div class="row-fluid">'.$legend.'<div class="'.$div_class.'">'.$form.'</div></div>';
 	}
 }
