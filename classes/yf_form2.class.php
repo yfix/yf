@@ -1838,7 +1838,13 @@ class yf_form2 {
 			$func = '';
 		}
 		if (!$func) {
-			$func = isset($extra['function']) ? $extra['function'] : $extra['func'];
+			if (isset($extra['callback'])) {
+				$func = $extra['callback'];
+			} elseif (isset($extra['function'])) {
+				$func = $extra['function'];
+			} else {
+				$func = $extra['func'];
+			}
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', ' ', $extra['name']));
@@ -1886,9 +1892,42 @@ class yf_form2 {
 	}
 
 	/**
+	* Star selector, got from http://fontawesome.io/examples/#custom. Require this CSS:
+	*	'<style>
+	*	.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
+	*	.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
+	*	.rating span.star:hover { cursor:pointer }
+	*	.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
+	*	.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
+	*	</style>';
 	*/
 	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
-// TODO: add stars selection like here: http://fontawesome.io/examples/ , at the bottom of the bage
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$func = function($extra, $r, $_this) {
+			$max = $extra['max'] ?: 5;
+			$stars = $extra['stars'] ?: 5;
+			$class = $extra['class'] ?: 'star';
+			$body[] = '<span class="rating">';
+			foreach (range(1, $stars) as $num) {
+				$body[] = '<span class="'.$class.'"></span>';
+			}
+			$body[] = '</span>';
+// TODO: add jquery catching click and store inside hidden
+			return $_this->_row_html(implode('', $body), $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
 	}
 
 	/**

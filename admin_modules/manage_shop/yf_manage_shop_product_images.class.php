@@ -31,6 +31,9 @@ class yf_manage_shop_product_images{
 				'/product_'.$product_info['id'].'.+?_(thumb)\.jpg'.'/'
 			);
 			$reg = '/product_'.$product_info['id'].'_(?P<content>[\d]+)_(thumb)\.jpg/';
+			if(!$image_files){
+				return js_redirect($_SERVER["HTTP_REFERER"]);
+			}
 			sort($image_files);
 			foreach((array)$image_files as $filepath) {
 				preg_match($reg, $filepath, $rezult);
