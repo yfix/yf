@@ -1416,4 +1416,26 @@ class yf_common {
 		$this->date_picker_count++;
 		return $content;
 	}
+
+	/**
+	*
+	*/
+	function shop_get_images($product_id) {
+		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' ORDER BY is_default DESC');
+		$d = sprintf('%09s', $product_id);
+		foreach($A as $img){
+	    	$replace = array(
+			    '{subdir2}' => substr($d, -6, 3),
+			    '{subdir3}' => substr($d, -3, 3),
+		    	'{product_id}' => $product_id,
+			    '{image_id}' => $img['id'],
+			);
+			$images[] = array(
+				"big" 	=> str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_big.jpg'),
+				"thumb" => str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_thumb.jpg'),
+				"id"	=> $img['id'],
+			);
+		}
+		return $images;
+	}	
 }

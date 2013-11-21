@@ -26,10 +26,6 @@ class yf_shop_contentm_panel {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func();
 	}	
 
-	function _product_images_rename($id, $k, $mpath) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func($id, $k, $mpath);
-	}	
-
 	function set_main_image() {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_images', 'admin_modules/'.$cl.'/')->$func();
 	}	
