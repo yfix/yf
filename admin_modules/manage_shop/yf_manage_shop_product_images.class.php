@@ -5,8 +5,16 @@ class yf_manage_shop_product_images{
 	*/
 	function product_image_delete () {
 		$_GET["id"] = intval($_GET["id"]);
+		if (empty($_GET["id"])) {
+			return "Empty ID!";
+		}
+		if (empty($_GET["key"])) {
+			return "Empty image key!";
+		}
 		$A = db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." && `id`=".intval($_GET['key']));
-		if (count($A) == 0) return 'Image not found';
+		if (count($A) == 0){
+			 return "Image not found";
+		}
 		module("manage_shop")->_product_image_delete($_GET["id"], $_GET["key"]);
 		module("manage_shop")->_product_images_add_revision($_GET['id']);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
@@ -54,7 +62,7 @@ class yf_manage_shop_product_images{
 				"form_action"=> $form_action,
 				"items"		=> $items,
 			);	
-			return tpl()->parse($_GET['object'].'/image_items2', $replace);
+			return tpl()->parse($_GET['object'].'/set_image_items', $replace);
 		}
 	}
 

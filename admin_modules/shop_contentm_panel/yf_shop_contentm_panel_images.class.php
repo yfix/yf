@@ -5,86 +5,19 @@ class yf_shop_contentm_panel_images{
 	*/
 	function product_image_delete () {
 		$_GET["id"] = intval($_GET["id"]);
-		$A = db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." && `id`=".intval($_GET['key']));
-		if (count($A) == 0) return 'Image not found';
-		module("shop_supplier_panel")->_product_image_delete($_GET["id"], $_GET["key"]);
-		
-		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return "Empty ID!";
 		}
-		module("shop_supplier_panel")->_product_image_delete($_GET["id"], $_GET["key"]);
+		if (empty($_GET["key"])) {
+			return "Empty image key!";
+		}
+		$A = db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." && `id`=".intval($_GET['key']));
+		if (count($A) == 0){
+			 return "Image not found";
+		}
+		module("manage_shop")->_product_image_delete($_GET["id"], $_GET["key"]);
 		module("manage_shop")->_product_images_add_revision($_GET['id']);		
 		return js_redirect($_SERVER["HTTP_REFERER"]);
-	}
-
-	/**
-	*/
-	function set_main_image(){
-		$product_info['id'] = intval($_GET['id']);
-		$dirs = sprintf('%06s',$product_info['id']);
-		$dir2 = substr($dirs,-3,3);
-		$dir1 = substr($dirs,-6,3);
-		$mpath = $dir1.'/'.$dir2.'/';
-
-		if(!empty($_POST)){
-			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='0' WHERE `product_id`=".$product_info['id']);
-			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$_POST['main_image']);
-			module("manage_shop")->_product_images_add_revision($_GET['id']);
-		}else{
-			$image_files = _class('dir')->scan_dir(
-				module('manage_shop')->products_img_dir. $mpath, 
-				true, 
-				'/product_'.$product_info['id'].'.+?_(thumb)\.jpg'.'/'
-			);
-			$reg = '/product_'.$product_info['id'].'_(?P<content>[\d]+)_(thumb)\.jpg/';
-			if(!$image_files){
-				return js_redirect($_SERVER["HTTP_REFERER"]);
-			}
-			sort($image_files);
-			foreach((array)$image_files as $filepath) {
-				preg_match($reg, $filepath, $rezult);
-				$i =  $rezult['content'];
-
-				$form_action ='./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$product_info['id'];
-
-				$thumb_path_temp = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->THUMB_SUFFIX.'.jpg';
-				$img_path = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
-
-				$items[] = array(
-					'img_path' 		=> $img_path,
-					'thumb_path'	=> $thumb_path_temp,
-					'image_key'		=> $i,
-				);
-			}
-			$replace = array(
-				"form_action"=> $form_action,
-				"items"		=> $items,
-			);	
-			return tpl()->parse($_GET['object'].'/image_items', $replace);
-		}
-	}
-
-	/**
-	*/
-	function _product_image_delete ($id, $k) {
-		$dirs = sprintf("%06s",$id);
-		$dir2 = substr($dirs,-3,3);
-		$dir1 = substr($dirs,-6,3);
-		$mpath = $dir1."/".$dir2."/";
-
-		$image_files = _class('dir')->scan_dir(
-			module("manage_shop")->products_img_dir. $mpath,
-			true,
-			"/product_".$id."_".$k.".+?jpg"."/"
-		);
-		foreach((array)$image_files as $filepath) {
-			unlink($filepath);
-		}
-		db()->query("DELETE FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." AND `id`=".intval($_GET['key']));
-		common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
-		
-		return true;
 	}
 
 	/**
@@ -98,52 +31,4 @@ class yf_shop_contentm_panel_images{
 		return js_redirect($_SERVER["HTTP_REFERER"]);
 	}
 
-	/**
-	*/
-	function _product_image_upload ($product_id) {		
-		$products_images_dir = module("manage_shop")->products_img_dir;
-		$i = 1;
-		
-		$d = sprintf("%09s", $product_id);
-		$replace = array(
-			'{subdir1}' => substr($d, 0, -6),
-			'{subdir2}' => substr($d, -6, 3),
-			'{subdir3}' => substr($d, -3, 3),
-			'%d'        => $product_id,
-		);
-		$url = "uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i_%s.jpg";
-		$clean_image_url = "uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i.jpg";
-
-		$url = str_replace(array_keys($replace), array_values($replace), $url);
-		$clean_image_url = str_replace(array_keys($replace), array_values($replace), $clean_image_url);
-		
-		foreach ((array)$_FILES['image'] ['tmp_name'] as $v) {
-			db()->INSERT(db('shop_product_images'), array(
-				'product_id' => $product_id,
-				'date_uploaded' => $_SERVER['REQUEST_TIME'],
-			));
-			$i = db()->INSERT_ID();
-			
-			$img_properties = getimagesize($v);
-			if (empty($img_properties) || !$product_id) {
-				return false;
-			}
-			$img_path = PROJECT_PATH.str_replace('%i', $i, $clean_image_url);
-			$img_path_big = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','big',$url));
-			$img_path_thumb = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','thumb',$url));
-			$watermark_path = PROJECT_PATH.SITE_WATERMARK_FILE;
-
-			common()->make_thumb($v, $img_path, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y);
-			common()->make_thumb($v, $img_path_thumb, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y, $watermark_path);
-			common()->make_thumb($v, $img_path_big, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_path);
-			
-			$A = db()->query_fetch("SELECT COUNT(*) AS `cnt` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."'");
-			if ($A['cnt'] == 0) {
-				$A = db()->query_fetch("SELECT `id` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."' ORDER BY `id`");
-				db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$A['id']);
-			}
-			
-		} 
-		return $i;
-	}	
 }
