@@ -21,7 +21,7 @@ class yf_shop_contentm_panel_products {
 			->text('quantity')
 			->date('add_date')
 			->btn_edit('', './?object='.$_GET['object'].'&action=product_edit&id=%d',array('no_ajax' => 1))
-	//		->btn_delete('', './?object='.$_GET['object'].'&action=product_delete&id=%d')
+			->btn_delete('', './?object='.$_GET['object'].'&action=product_delete&id=%d')
 	//		->footer_add('', './?object='.$_GET['object'].'&action=product_add',array('no_ajax' => 1))
 		;
 	}
