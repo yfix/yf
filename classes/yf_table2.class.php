@@ -789,8 +789,8 @@ class yf_table2 {
 					'{subdir3}'	=> substr($d, -3, 3),
 					'%d'		=> $id,
 				);
-				if (isset($params['img_path_callback']) && is_callable($params['img_path_callback'])) {
-					$img_path = $params['img_path_callback']($field, $params, $row, $instance_params);
+				if (isset($extra['img_path_callback']) && is_callable($extra['img_path_callback'])) {
+					$img_path = $extra['img_path_callback']($field, $params, $row, $instance_params);
 				} else {
 					$img_path = str_replace(array_keys($replace), array_values($replace), $params['path']);
 				}
@@ -803,8 +803,8 @@ class yf_table2 {
 				if (!file_exists($fs_path. $img_path)) {
 					return '';
 				}
-				if (isset($params['link_callback']) && is_callable($params['link_callback'])) {
-					$link_url = $params['link_callback']($field, $params, $row, $instance_params);
+				if (isset($extra['link_callback']) && is_callable($extra['link_callback'])) {
+					$link_url = $extra['link_callback']($field, $params, $row, $instance_params);
 				} else {
 					$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
 				}
