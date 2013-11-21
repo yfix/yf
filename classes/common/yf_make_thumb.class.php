@@ -370,10 +370,13 @@ class yf_make_thumb {
 
         $watermarkwidth = imagesx($watermark);
         $watermarkheight = imagesy($watermark);
-
-        $thumb_watermark_w = intval($width_orig / 1.2);
-        $thumb_watermark_h = intval(($thumb_watermark_w / $watermarkwidth) * $watermarkheight);
-
+		if($watermarkwidth > $watermarkheight){
+	        $thumb_watermark_w = intval($width_orig / 1.2);
+	        $thumb_watermark_h = intval(($thumb_watermark_w / $watermarkwidth) * $watermarkheight);
+		}else{
+	        $thumb_watermark_h = intval($height_orig / 1.2);
+	        $thumb_watermark_w = intval(($thumb_watermark_h / $watermarkheight) * $watermarkwidth);
+		}
         $thumb_watermark = imagecreatetruecolor($thumb_watermark_w, $thumb_watermark_h);
         imagefill($thumb_watermark, 0, 0, imagecolorallocatealpha($thumb_watermark, 255, 255, 255, 127));
         imagecopyresampled($thumb_watermark, $watermark, 0, 0, 0, 0, $thumb_watermark_w, $thumb_watermark_h, $watermarkwidth, $watermarkheight);
