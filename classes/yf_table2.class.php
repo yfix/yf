@@ -756,8 +756,6 @@ class yf_table2 {
 		return $this;
 	}
 
-
-
 	/**
 	*/
 	function image($name, $path, $link = '', $extra = array()) {
