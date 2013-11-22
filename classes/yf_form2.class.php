@@ -2112,13 +2112,11 @@ class yf_form2 {
 		$form_id_field = '__form_id__';
 		if (isset($this->_validate_rules[$form_id_field])) {
 			$form_id = $this->_validate_rules[$form_id_field];
+			$this->_form_id = $form_id;
 			unset($this->_validate_rules[$form_id_field]);
 			$this->hidden($form_id_field, array('value' => $form_id));
 		}
 		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
-		if (!$this->_validate_rules) {
-			return $this;
-		}
 		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 		$data = (array)(!empty($post) ? $post : $_POST);
 		if (empty($data)) {
