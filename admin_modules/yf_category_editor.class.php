@@ -529,9 +529,9 @@ class yf_category_editor {
 
 	/**
 	*/
-	function _get_parents_for_select($cat_id) {
+	function _get_parents_for_select($cat_id, $skip_id = null) {
 		$data = array(0 => '-- TOP --');
-		foreach ((array)$this->_recursive_get_cat_items($cat_id, $_GET['id']) as $cur_item_id => $cur_item_info) {
+		foreach ((array)$this->_recursive_get_cat_items($cat_id, $skip_id) as $cur_item_id => $cur_item_info) {
 			if (empty($cur_item_id)) {
 				continue;
 			}

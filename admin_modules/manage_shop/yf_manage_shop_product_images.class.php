@@ -5,8 +5,16 @@ class yf_manage_shop_product_images{
 	*/
 	function product_image_delete () {
 		$_GET["id"] = intval($_GET["id"]);
+		if (empty($_GET["id"])) {
+			return "Empty ID!";
+		}
+		if (empty($_GET["key"])) {
+			return "Empty image key!";
+		}
 		$A = db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." && `id`=".intval($_GET['key']));
-		if (count($A) == 0) return 'Image not found';
+		if (count($A) == 0){
+			 return "Image not found";
+		}
 		module("manage_shop")->_product_image_delete($_GET["id"], $_GET["key"]);
 		module("manage_shop")->_product_images_add_revision($_GET['id']);
 		return js_redirect($_SERVER["HTTP_REFERER"]);
@@ -15,46 +23,32 @@ class yf_manage_shop_product_images{
 	/**
 	*/
 	function set_main_image(){
-		$product_info['id'] = intval($_GET['id']);
-		$dirs = sprintf('%06s',$product_info['id']);
-		$dir2 = substr($dirs,-3,3);
-		$dir1 = substr($dirs,-6,3);
-		$mpath = $dir1.'/'.$dir2.'/';
+		$product_id = intval($_GET['id']);
 		if(!empty($_POST)){
-			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='0' WHERE `product_id`=".$product_info['id']);
+			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='0' WHERE `product_id`=".$product_id);
 			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$_POST['main_image']);
 			module("manage_shop")->_product_images_add_revision($_GET['id']);
 		}else{
-			$image_files = _class('dir')->scan_dir(
-				module('manage_shop')->products_img_dir. $mpath, 
-				true, 
-				'/product_'.$product_info['id'].'.+?_(thumb)\.jpg'.'/'
-			);
-			$reg = '/product_'.$product_info['id'].'_(?P<content>[\d]+)_(thumb)\.jpg/';
-			if(!$image_files){
+			$images = common()->shop_get_images($product_id);
+			if(!$images){
 				return js_redirect($_SERVER["HTTP_REFERER"]);
 			}
-			sort($image_files);
-			foreach((array)$image_files as $filepath) {
-				preg_match($reg, $filepath, $rezult);
-				$i =  $rezult['content'];
-
-				$form_action ='./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$product_info['id'];
-
-				$thumb_path_temp = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->THUMB_SUFFIX.'.jpg';
-				$img_path = module('manage_shop')->products_img_webdir. $mpath. 'product_'.$product_info['id'].'_'.$i. module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
-
+			$base_url = WEB_PATH;
+			$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
+			if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
+			foreach((array)$images as $A) {
 				$items[] = array(
-					'img_path' 		=> $img_path,
-					'thumb_path'	=> $thumb_path_temp,
-					'image_key'		=> $i,
+					'img_path' 		=> $base_url . $A['big'],
+					'thumb_path'	=> $base_url . $A['thumb'],
+					'image_key'		=> $A['id'],
 				);
 			}
+			$form_action ='./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$product_id;
 			$replace = array(
 				"form_action"=> $form_action,
 				"items"		=> $items,
 			);	
-			return tpl()->parse($_GET['object'].'/image_items2', $replace);
+			return tpl()->parse($_GET['object'].'/set_image_items', $replace);
 		}
 	}
 
