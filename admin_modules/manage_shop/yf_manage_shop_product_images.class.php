@@ -89,7 +89,7 @@ class yf_manage_shop_product_images{
 	*/
 	function _product_image_upload ($product_id) {		
 		$products_images_dir = module("manage_shop")->products_img_dir;
-		
+
 		$d = sprintf("%09s", $product_id);
 		$replace = array(
 			'{subdir1}' => substr($d, 0, -6),
@@ -104,8 +104,12 @@ class yf_manage_shop_product_images{
 		$clean_image_url = str_replace(array_keys($replace), array_values($replace), $clean_image_url);
 		
 		foreach ((array)$_FILES['image'] ['tmp_name'] as $v) {
+			$md5 = md5_file($v);
+			$db_item = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$product_id." AND md5='".$md5."'");
+			if(!empty($db_item)) continue;
 			db()->insert(db('shop_product_images'), array(
-				'product_id' => $product_id,
+				'product_id' 	=> $product_id,
+				'md5'			=> $md5,
 				'date_uploaded' => $_SERVER['REQUEST_TIME'],
 			));
 			$i = db()->insert_id();
