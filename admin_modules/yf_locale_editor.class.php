@@ -806,7 +806,7 @@ class yf_locale_editor {
 	*/
 	function filter_save() {
 		$filter_name = $_GET['object'].'__show_vars';
-		if ($_GET['sub'] == 'clear') {
+		if ($_GET['page'] == 'clear') {
 			$_SESSION[$filter_name] = array();
 		} else {
 			$_SESSION[$filter_name] = $_POST;
@@ -828,7 +828,7 @@ class yf_locale_editor {
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
 		);
 		$order_fields = array(
 			'v.value'     => 'value',

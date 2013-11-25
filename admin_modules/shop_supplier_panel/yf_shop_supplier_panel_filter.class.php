@@ -10,7 +10,7 @@ class yf_shop_supplier_panel_filter {
 		if ($_GET['id'] && false !== strpos($_GET['id'], $_GET['object'].'__')) {
 			$filter_name = $_GET['id'];
 		}
-		if ($_GET['sub'] == 'clear') {
+		if ($_GET['page'] == 'clear') {
 			$_SESSION[$filter_name] = array();
 		} else {
 			$_SESSION[$filter_name] = $_POST;
@@ -34,7 +34,7 @@ class yf_shop_supplier_panel_filter {
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
 		);
 		$filters = array(
 			'products'	=> function($filter_name, $replace) {
