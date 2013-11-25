@@ -71,7 +71,7 @@ class yf_manage_shop_orders{
 			$products[$_info['product_id']] = array(
 				'product_id'	=> intval($_info['product_id']),
 				'name'			=> _prepare_html($_product['name']),
-				'price'			=> module('manage_shop')->_format_price($_info['sum']),
+				'price'			=> module('manage_shop')->_format_price($_info['price']),
 				'currency'		=> _prepare_html(module('manage_shop')->CURRENCY),
 				'quantity'		=> intval($_info['quantity']),
 				'details_link'	=> process_url('./?object=manage_shop&action=view&id='.$_product['id']),
