@@ -123,7 +123,7 @@ class yf_manage_shop_product_images{
 			common()->make_thumb($v, $img_path_thumb, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y, $watermark_path);
 			common()->make_thumb($v, $img_path_big, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_path); 
 			
-			$A = db()->query_fetch("SELECT COUNT(*) AS `cnt` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."'");
+			$A = db()->query_fetch("SELECT COUNT(*) AS `cnt` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."' AND is_default='1'");
 			if ($A['cnt'] == 0) {
 				$A = db()->query_fetch("SELECT `id` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."' ORDER BY `id`");
 				db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$A['id']);

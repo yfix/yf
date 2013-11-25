@@ -4,7 +4,7 @@ class yf_shop_supplier_panel_upload_images {
 
 	public $ALLOWED_MIME_TYPES = array(
     	'application/zip'   => 'zip',
-    	'application/x-rar'   => 'rar',
+    	'application/x-rar' => 'rar',
     	'application/x-tar' => 'tar',
     	'application/x-gzip'=> 'gz',
     );
@@ -12,13 +12,16 @@ class yf_shop_supplier_panel_upload_images {
 	
 	function _init(){
 		$this->ARCHIVE_FOLDER = PROJECT_PATH."uploads/tmp/";
-		$this->SAVE_PATH = PROJECT_PATH."uploads/shop/products/";
+		$this->SAVE_PATH = PROJECT_PATH."uploads/tmp/";
+//		$this->SAVE_PATH = PROJECT_PATH."uploads/shop/products/";
+		$this->SUPPLIER_ID = (int)db()->get_one('SELECT supplier_id FROM '.db('shop_admin_to_supplier').' WHERE admin_id='.intval(main()->ADMIN_ID));
+
 	}
 
 	/**
 	*/
 	function upload_images() {
-		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
+		$SUPPLIER_ID = $this->SUPPLIER_ID;
 		$ADMIN_INFO = db()->query_fetch('SELECT * FROM '.db('sys_admin').' WHERE id='.intval(main()->ADMIN_ID));
 		$SUPPLIER_INFO = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.intval($SUPPLIER_ID));
 		if (empty($_FILES)) {
@@ -35,7 +38,9 @@ class yf_shop_supplier_panel_upload_images {
 			}
 			return $form;
 		}
-		if($_POST['supplier']) $SUPPLIER_ID = $_POST['supplier'];
+		if($_POST['supplier']){
+			 $SUPPLIER_ID = $_POST['supplier'];
+		}
 		$file = $_FILES['archive'];
 		$uploaded = common()->upload_archive($this->ARCHIVE_FOLDER. $file['name']);
 		if(!$uploaded){
@@ -54,7 +59,6 @@ class yf_shop_supplier_panel_upload_images {
 
 		$ext = $this->ALLOWED_MIME_TYPES[$file['type']];
 		exec($$ext, $result);
-
 		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/');
 		foreach($result_files as $k => $v){
 			$status = $this->search_product_by_filename($v, $SUPPLIER_ID);
@@ -78,12 +82,10 @@ class yf_shop_supplier_panel_upload_images {
 	/**
 	*/
 	function search_product_by_filename($folder, $supplier_id = false) {
+
 		$filename = basename($folder);
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
-		preg_match('/[A-Za-z0-9._]*/i', $filename, $result);
-		if(strlen($result[0]) !== strlen($filename)){
-			return "Wrong_filename";
-		}
+
 		preg_match('/^[0-9]*/i', $filename, $articul);
 		if(!empty($articul[0])){
 			$sql = 'SELECT id FROM '.db('shop_products').' 
@@ -93,13 +95,15 @@ class yf_shop_supplier_panel_upload_images {
 		}else{
 			return "Articul_not_found";
 		}
-		if(!empty($product)){
-			$thumb_name = $this->resize_and_save_image($folder, $product['id']);
-		}else{
+		if(empty($product)){
 			return "Product_not_found";
 		}
-		db()->UPDATE('shop_products', array("image" => 1), "id=".$product['id']); 
-
+		$md5 = md5_file($folder);
+		$db_item = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$product['id']." AND md5='".$md5."'");
+		if(!empty($db_item)){
+			return "Dublicate image";
+		}
+		$thumb_name = $this->resize_and_save_image($folder, $product['id'], $md5);
 		return array(
 			'status'=>"Success",
 			'img'	=> $thumb_name,
@@ -109,7 +113,7 @@ class yf_shop_supplier_panel_upload_images {
 
 	/**
 	*/
-	function resize_and_save_image($img, $id, $i = 1){
+	function resize_and_save_image($img, $id, $md5){
 		$dirs = sprintf('%06s',$id);
 		$dir2 = substr($dirs,-3,3);
 		$dir1 = substr($dirs,-6,3);
@@ -118,18 +122,29 @@ class yf_shop_supplier_panel_upload_images {
 		if (!file_exists($new_path)) {
 			mkdir($new_path, 0777, true);
 		}
+
+		db()->insert(db('shop_product_images'), array(
+			'product_id' 	=> $id,
+			'md5'			=> $md5,
+			'date_uploaded' => $_SERVER['REQUEST_TIME'],
+		));
+		$i = db()->insert_id();
+
 		$real_name = $new_path.'product_'.$id.'_'.$i.'.jpg';
 		$thumb_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->THUMB_SUFFIX.'.jpg';
 		$big_name = $new_path.'product_'.$id.'_'.$i.module('manage_shop')->FULL_IMG_SUFFIX.'.jpg';
+		$watermark_name = PROJECT_PATH.SITE_WATERMARK_FILE;
 
-		if(file_exists($thumb_name) || file_exists($big_name)){
-			$i++;
-			$this->resize_and_save_image($img, $id, $i);
-		} else {
-			common()->make_thumb($img, $real_name, 710, 750);
-			common()->make_thumb($img, $thumb_name, 216, 216, PROJECT_PATH.SITE_WATERMARK_FILE);
-			common()->make_thumb($img, $big_name, 710, 750, PROJECT_PATH.SITE_WATERMARK_FILE );
-			return $thumb_name;
-		}
+		common()->make_thumb($img, $real_name, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y);
+		common()->make_thumb($img, $thumb_name, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y, $watermark_name);
+		common()->make_thumb($img, $big_name, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_name);
+
+		$A = db()->query_fetch("SELECT COUNT(*) AS cnt FROM ".db('shop_product_images')." WHERE product_id=".$id." AND is_default=1");
+		if ($A['cnt'] == 0) {
+			$A = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$id." ORDER BY id");
+			db()->query("UPDATE ".db('shop_product_images')." SET is_default='1' WHERE id=".$A['id']);
+		}			
+		return $thumb_name;
+
 	}
 }

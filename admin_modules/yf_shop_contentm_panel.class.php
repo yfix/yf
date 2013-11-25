@@ -51,7 +51,7 @@ class yf_shop_contentm_panel {
 	}
 
 	function upload_images() {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_upload_images', 'admin_modules/'.$cl.'/')->$func($params);
+		$func = __FUNCTION__; return _class('shop_supplier_panel_upload_images', 'admin_modules/shop_supplier_panel/')->$func($params);
 	}
 	/**
 	* Hook
