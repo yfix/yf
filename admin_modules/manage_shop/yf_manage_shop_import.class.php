@@ -45,9 +45,9 @@ class yf_manage_shop_import {
 			}
 			
 //			return $this->process_items_epicentr($items); // DONE
-//			return $this->process_items_fortuna($items); // DONE
-			
-			return $this->process_items_talisman($items);
+//			return $this->process_items_fortuna($items); // DONE			
+//			return $this->process_items_talisman($items);
+			return $this->process_items_talisman_import($items);
 		}
 		return 'no rows to process';
 	}
@@ -110,7 +110,9 @@ class yf_manage_shop_import {
 	}
 	
 	
-	function process_items_epicentr($items) {
+	function process_items_epicentr_import($items) {
+		
+		return false;
 		
 		$supplier_id = 101;
 		
@@ -150,52 +152,35 @@ class yf_manage_shop_import {
 		return $result;
 	}
 	
-	function process_items_talisman($items) {
+	function process_items_talisman_import($items) {
 		
 		$supplier_id = 100;
 
 		db()->query("DELETE FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
 				
 		$remap = array (
-			62494 => 'Вермут',
-			62495 => 'Віскі ; Виски ; Наб.Віскі',
-			62496 => 'Горілка ; Водка',
-			62497 => 'Джин',
-			62498 => 'Ігристе ; Шампанское;  Шам.брют ; Шамп ; Шампан ; Шампанське',
-			62499 => 'Кашаца',
-			62501 => 'Коньяк ; Наб.Коньяк ; Коньяк',
-			62502 => 'Ликер ; Лікер ; Крем-Лікер ; Крем-лікер',
-			62503 => 'Ром',
-			62504 => 'Текіла ; Текила',
-			62505 => 'Бальзам',
-			62506 => 'Метаха',
-			62507 => 'Арманьяк',
-			62508 => 'Бренді ; Бренди',
-			62509 => 'Вино ; Винокріп.лікерне',
-			62510 => 'Граппа',
-			62511 => 'Кальвадоc ; Кальвадос',
-			62512 => 'Пиво',
-			62513 => 'Сидр',
-			62514 => 'Саке',
-			62515 => 'Настойка',
-			62517 => 'Абсент',
-			62518 => 'Бурбон',
-			62519 => 'Самбука',
-			
-			62520 => 'Другое',
+			62517 => 'абсент', 
+			62505 => 'бальзам', 
+			62509 => 'вино', 
+			62510 => 'вермут', 
+			62495 => 'виски', 
+			62496 => 'водка', 
+			62497 => 'джин', 
+			62501 => 'коньяк', 
+			62502 => 'ликер', 
+			62504 => 'текила', 
+			62512 => 'пиво', 
+			62514 => 'слабоалкогольные напитки',
 		);
-
 		
+
+		$i =0 ;
 		foreach ($items as $item) {
-			if (count($item)!=4) continue;
+			if ($i==0) {$i++;continue;}
 			
-			$cat_id = 62520;
+			$cat_id = 0;
 			foreach ($remap as $k=>$v) {
-				$data = explode(" ; ",$v);
-				foreach ($data as $v1) {
-					if (substr(trim($item[0]),0,strlen($v1)) == $v1) $cat_id = $k;
-				}
-				if ($v == $item[5])
+				if ($v == $item[4])
 					$cat_id = $k;
 			}
 
@@ -220,6 +205,7 @@ class yf_manage_shop_import {
 				$result .= 'OK';				
 			}
 			$result .= '<br />';
+ 
 			$i++;
 		}
  
