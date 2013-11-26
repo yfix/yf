@@ -1,4 +1,4 @@
-<li class="dropdown {if(type_id eq 4)} dropdown-divider{/if}">
+<li class="dropdown {if(type_id eq 4)} dropdown-divider{/if} {if(is_cur_page eq 1)} active{/if}">
 {if(type_id eq 4)}
 	{name}
 {else}

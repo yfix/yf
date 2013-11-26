@@ -87,7 +87,7 @@ class yf_manage_countries {
 	*/
 	function filter_save() {
 		$filter_name = $_GET['object'].'__show';
-		if ($_GET['sub'] == 'clear') {
+		if ($_GET['page'] == 'clear') {
 			$_SESSION[$filter_name] = array();
 		} else {
 			$_SESSION[$filter_name] = $_POST;
@@ -109,7 +109,7 @@ class yf_manage_countries {
 		$filter_name = $_GET['object'].'__show';
 		$r = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&sub=clear&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
 		);
 		$order_fields = array(
 			'code' => 'code',
