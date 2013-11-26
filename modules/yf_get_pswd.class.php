@@ -78,9 +78,9 @@ class yf_get_pswd {
 			"password"		=> $A["password"],
 			"login"			=> $A['login'],
 			"advert_name"	=> SITE_ADVERT_NAME,
-			"home_url"		=> process_url("./"),
-			"login_url"		=> process_url("./?object=login_form"),
-			"faq_url"		=> process_url("./?object=faq"),
+			"home_url"		=> _force_get_url(array(), '', "./"),
+			"login_url"		=> _force_get_url(array("object" => "login_form")),
+			"faq_url"		=> _force_get_url(array("object" => "faq")),
 		);
 		// Prepare email
 		$message	= tpl()->parse($_GET["object"]."/email", $replace);
