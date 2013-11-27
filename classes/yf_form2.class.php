@@ -143,6 +143,9 @@ class yf_form2 {
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/
 	function render($extra = array(), $replace = array()) {
+		if (isset($this->_rendered)) {
+			return $this->_rendered;
+		}
 		if (!$extra['no_form'] && !$this->_params['no_form']) {
 			// Call these methods, if not done yet, save 2 api calls
 			if (!isset($this->_body['form_begin'])) {
@@ -195,7 +198,8 @@ class yf_form2 {
 				$this->_body[$k] = $func($_extra, $_replace, $this);
 			}
 		}
-		return implode(PHP_EOL, $this->_body);
+		$this->_rendered = implode(PHP_EOL, $this->_body);
+		return $this->_rendered;
 	}
 
 	/**
