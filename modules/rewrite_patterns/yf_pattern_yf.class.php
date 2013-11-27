@@ -59,6 +59,10 @@ class yf_pattern_yf {
 		// Examples: /login    /logout
 		if ($url[0] == 'login' || $url[0] == 'logout') {
 			$s = 'task='.$url[0];
+			if (isset($url[1])) {
+				$s .= '&id='.$url[1];
+				unset($url[1]);
+			}
 		// Examples: /table2_test/0/5,  where 5 - page number
 		} elseif (!empty($url[0]) && is_numeric($url[1]) && is_numeric($url[2])) {
 			$s = 'object='.$url[0].'&action=show';
