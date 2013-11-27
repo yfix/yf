@@ -149,7 +149,7 @@ class yf_make_thumb {
 	/**
 	* Make thumbnail using best available method
 	*/
-	function go($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
+	function go($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
 		// Cleanup input params
 		$LIMIT_X = intval($LIMIT_X != -1 ? $LIMIT_X : THUMB_WIDTH);
@@ -186,7 +186,7 @@ class yf_make_thumb {
 		foreach ((array)$this->LIBS_PRIORITY as $cur_lib) {
 			$lib_result_error = false;
 			if ($cur_lib == "gd") {
-				$result_gd = $this->_use_gd($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
+				$result_gd = $this->_use_gd($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
 				if (!$result_gd) {
 					$lib_result_error = true;
 				}
@@ -360,7 +360,7 @@ class yf_make_thumb {
 		$img_info = getimagesize($source_img_path);
 		$source_mime_type = $this->ALLOWED_MIME_TYPES[$img_info['mime']];
 		if(!$source_mime_type){
-			$source_mime_type = "jpg";
+			$source_mime_type = "jpeg";
 		}
 		$img_create_func = 'imagecreatefrom'.$source_mime_type;
 		$img = $img_create_func($source_img_path);
@@ -406,7 +406,7 @@ class yf_make_thumb {
 	/**
 	* Use GD library
 	*/
-	function _use_gd($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
+	function _use_gd($source_file_path = "", $dest_file_path = "", $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $output_type = '') {
 		$I = _class("resize_images");
 		$I->reduce_only = 1;
 		if ($this->FORCE_PROCESSING) {
@@ -415,7 +415,9 @@ class yf_make_thumb {
 		$result = false;
 		if ($I->set_source($source_file_path)) {
 			$I->set_limits($LIMIT_X, $LIMIT_Y);
-			$I->set_output_type($this->ALLOWED_MIME_TYPES[mime_content_type($source_file_path)]);
+			if($output_type){
+				$I->set_output_type($output_type);
+			}
 			$I->save($dest_file_path);
 			$result = true;
 		}

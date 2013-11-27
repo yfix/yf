@@ -349,8 +349,8 @@ class yf_common {
 	/**
 	* Make thumbnail using best available method
 	*/
-	function make_thumb($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '') {
-		return _class('make_thumb', COMMON_LIB)->go($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path);
+	function make_thumb($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
+		return _class('make_thumb', COMMON_LIB)->go($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
 	} 
 
 	/**
