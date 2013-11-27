@@ -59,10 +59,11 @@ class yf_shop_supplier_panel_upload_images {
 
 		$ext = $this->ALLOWED_MIME_TYPES[$file['type']];
 		exec($$ext, $result);
-		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/');
+		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/', '/__MACOSX/');
 		foreach($result_files as $k => $v){
 			$status = $this->search_product_by_filename($v, $SUPPLIER_ID);
 			$items[] = array(
+				"number"	=> $k,
 				"filename"	=> str_replace($EXTRACT_PATH, '', $v),
 				"status"	=> is_array($status)? $status['status'] : $status,
 				"image"		=> is_array($status)? str_replace(PROJECT_PATH, WEB_PATH, $status['img']): "",
@@ -86,10 +87,15 @@ class yf_shop_supplier_panel_upload_images {
 		$filename = basename($folder);
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-		preg_match('/^[0-9]*/i', $filename, $articul);
+		$filename = ltrim($filename, ' .-_+=/\|,!@#%~&*()');
+		if(!strpos($filename,'_')){
+			return "Wrong filename";
+		}
+		$articul = explode('_', $filename);
 		if(!empty($articul[0])){
+			$articul = _es(strip_tags($articul[0]));
 			$sql = 'SELECT id FROM '.db('shop_products').' 
-					WHERE articul='.intval($articul[0]).'
+					WHERE articul="'.$articul.'"
 						AND supplier_id='.$supplier_id;
 			$product = db()->query_fetch($sql);
 		}else{

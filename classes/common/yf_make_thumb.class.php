@@ -357,8 +357,11 @@ class yf_make_thumb {
 	/**
 	*/
 	function add_watermark($source_img_path, $watermark_path){
-
-		$source_mime_type = $this->ALLOWED_MIME_TYPES[mime_content_type($source_img_path)];
+		$img_info = getimagesize($source_img_path);
+		$source_mime_type = $this->ALLOWED_MIME_TYPES[$img_info['mime']];
+		if(!$source_mime_type){
+			$source_mime_type = "jpg";
+		}
 		$img_create_func = 'imagecreatefrom'.$source_mime_type;
 		$img = $img_create_func($source_img_path);
 		$width_orig = imagesx($img);

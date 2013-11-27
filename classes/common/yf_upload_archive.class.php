@@ -52,7 +52,7 @@ class yf_upload_archive {
 			$move_result = move_uploaded_file($ARCHIVE['tmp_name'], $ARCHIVE_PATH);
 		}
 		if (!$move_result || !file_exists($ARCHIVE_PATH) || !filesize($ARCHIVE_PATH) || !is_readable($ARCHIVE_PATH)) {
-			trigger_error('Moving uploaded image error', E_USER_WARNING);
+			trigger_error('Moving uploaded archive error', E_USER_WARNING);
 			return false;
 		}
 		return true;
