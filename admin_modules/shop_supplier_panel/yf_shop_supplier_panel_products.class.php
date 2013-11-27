@@ -19,7 +19,12 @@ class yf_shop_supplier_panel_products {
 					'price' => 'between',
 				),
 			))
-			->image('id', 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_big.jpg')
+			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
+                $product_id = $row['id'];
+				$image = common()->shop_get_images($product_id);
+                return $image[0]['thumb'];
+
+            }))
 			->text('name')
 			->text('cat_id', '', array('data' => _class('cats')->_get_items_names('shop_cats')))
 			->text('price')
@@ -100,45 +105,20 @@ class yf_shop_supplier_panel_products {
 			return js_redirect('./?object='.$_GET['object'].'&action=products');
 		}
 
-		$image_ids = array();			
-		$R = db()->query("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`='".intval($product_info['id'])."' ORDER BY `is_default` DESC");
-		while ($A = db()->fetch_assoc($R)) {
-			$image_ids[] = $A;
-		}
-		
-		// Make 3-level dir path
-		$d = sprintf("%09s", $product_info['id']);
-		$replace = array(
-			'{subdir1}' => substr($d, 0, -6),
-			'{subdir2}' => substr($d, -6, 3),
-			'{subdir3}' => substr($d, -3, 3),
-		);
-		$img_path = str_replace(array_keys($replace), array_values($replace), "uploads/shop/products/{subdir2}/{subdir3}/");
-		
+		$images = common()->shop_get_images($product_info["id"]);
 		$base_url = WEB_PATH;
 		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
 		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
-
-		$image_files = array();
-		foreach ($image_ids as $A) $image_files[] = array(
-			'id' => $A['id'],
-			'url' => $base_url . $img_path . "product_" . $product_info['id'] . "_" . $A['id'],
-		);
-		foreach((array)$image_files as $A) {
+		foreach((array)$images as $A) {
 			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&key=".$A['id'];
-			$thumb_path = $A['url']."_thumb.jpg";
-			$img_path = $A['url']."_big.jpg";
-
 			$replace2 = array(
-				"img_path" 		=> $img_path,
-				"thumb_path"	=> $thumb_path,
+				"img_path" 		=> $base_url . $A['big'],
+				"thumb_path"	=> $base_url . $A['thumb'],
 				"del_url" 		=> $product_image_delete_url,
 				"image_key"		=> $A['id'],
 			);
 			$items .= tpl()->parse("manage_shop/image_items", $replace2);
 		}
-		
-		
 		$sql1 = 'SELECT category_id FROM '.db('shop_product_to_category').' WHERE product_id = '. $_GET['id'];
 		$products = db()->query($sql1);
 		while ($A = db()->fetch_assoc($products)) {

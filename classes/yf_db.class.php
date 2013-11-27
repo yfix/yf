@@ -412,6 +412,13 @@ class yf_db {
 	}
 
 	/**
+	* Alias of insert() with auto-escaping of data
+	*/
+	function insert_safe($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
+		return $this->insert($table, $this->es($data), $only_sql, $replace, $ignore, $on_duplicate_key_update);
+	}
+
+	/**
 	* Insert array of values into table
 	*/
 	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
@@ -495,10 +502,24 @@ class yf_db {
 	}
 
 	/**
+	* Alias of replace() with data auto-escape
+	*/
+	function replace_safe($table, $data, $only_sql = false) {
+		return $this->insert_safe($table, $data, $only_sql, true);
+	}
+
+	/**
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false) {
 		return $this->insert($table, $data, $only_sql, true);
+	}
+
+	/**
+	* Alias of update() with data auto-escape
+	*/
+	function update_safe($table, $data, $where, $only_sql = false) {
+		return $this->update($table, $this->es($data), $where, $only_sql);
 	}
 
 	/**
@@ -809,7 +830,7 @@ class yf_db {
 	/**
 	* Function escapes characters for using in query
 	*/
-	function real_escape_string($string) {
+	function es($string) {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -826,22 +847,22 @@ class yf_db {
 	/**
 	* Alias
 	*/
+	function real_escape_string($string) {
+		return $this->es($string);
+	}
+
+	/**
+	* Alias
+	*/
 	function escape_string($string) {
-		return $this->real_escape_string ($string);
+		return $this->es($string);
 	}
 
 	/**
 	* Alias
 	*/
 	function escape($string) {
-		return $this->real_escape_string($string);
-	}
-
-	/**
-	* Alias
-	*/
-	function es($string) {
-		return $this->real_escape_string($string);
+		return $this->es($string);
 	}
 
 	/**

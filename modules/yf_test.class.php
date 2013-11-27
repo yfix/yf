@@ -22,9 +22,11 @@ class yf_test {
 			}
 			$methods[$_method_name] = './?object='.$_GET['object'].'&action='.$_method_name;
 		}
+		$body[] = '<ul class="nav nav-list span3">';
 		foreach ((array)$methods as $name => $link) {
-			$body[] = '<li><a href="'.$link.'">'.$name.'</a></li>';
+			$body[] = '<li><a href="'.$link.'"><i class="icon-chevron-right"></i> '.$name.'</a></li>';
 		}
+		$body[] = '</ul>';
 		return implode(PHP_EOL, $body);
 	}
 

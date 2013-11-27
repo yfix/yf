@@ -36,7 +36,7 @@ class yf_cats {
 	/**
 	* Get all category items for the given block
 	*/
-	function _get_items_array($cat_name = '', $recursive_sort = true) {
+	function _get_items_array($cat_name = '', $recursive_sort = true, $all = false) {
 		if (empty($cat_name)) {
 			$cat_name = $this->_default_cats_block;
 		}
@@ -55,7 +55,8 @@ class yf_cats {
 					}
 				}
 			}
-			foreach ((array)main()->get_data('cat_items') as $A) {
+			$cat_items = $all ? 'category_items_all': 'category_items';
+			foreach ((array)main()->get_data($cat_items) as $A) {
 				if ($A['cat_id'] != $cat_id) {
 					continue;
 				}

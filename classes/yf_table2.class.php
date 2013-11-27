@@ -756,8 +756,6 @@ class yf_table2 {
 		return $this;
 	}
 
-
-
 	/**
 	*/
 	function image($name, $path, $link = '', $extra = array()) {
@@ -781,6 +779,8 @@ class yf_table2 {
 			'func'	=> function($field, $params, $row, $instance_params) {
 				$extra = $params['extra'];
 				$id = $row['id'];
+				$fs_path = $extra['fs_path'] ?: PROJECT_PATH;
+				$web_path = $extra['web_path'] ?: WEB_PATH;
 				// Make 3-level dir path
 				$d = sprintf('%09s', $id);
 				$replace = array(
@@ -789,18 +789,38 @@ class yf_table2 {
 					'{subdir3}'	=> substr($d, -3, 3),
 					'%d'		=> $id,
 				);
-				$img_path = str_replace(array_keys($replace), array_values($replace), $params['path']);
-				if (!file_exists(PROJECT_PATH. $img_path)) {
+				if (isset($extra['img_path_callback']) && is_callable($extra['img_path_callback'])) {
+					$img_path = $extra['img_path_callback']($field, $params, $row, $instance_params);
+				} else {
+					$img_path = str_replace(array_keys($replace), array_values($replace), $params['path']);
+				}
+				if (!$img_path && $extra['default_image']) {
+					$img_path = $extra['default_image'];
+				}
+				if (!$img_path) {
 					return '';
 				}
-				$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
+				if (!file_exists($fs_path. $img_path)) {
+					return '';
+				}
+				if (isset($extra['link_callback']) && is_callable($extra['link_callback'])) {
+					$link_url = $extra['link_callback']($field, $params, $row, $instance_params);
+				} else {
+					$link_url = str_replace(array_keys($replace), array_values($replace), $params['link']);
+				}
+				if (!$link_url && $img_path) {
+					$link_url = $web_path. $img_path;
+				}
+				if ($extra['no_link']) {
+					$link_url = '';
+				}
+				$style = ($extra['width'] ? 'width:'.$extra['width'].';' : ''). ($extra['height'] ? 'height:'.$extra['height'].';' : ''). $extra['style'];
 				return ($link_url ? '<a href="'.$link_url.'">' : '')
-					.'<img src="'.WEB_PATH. $img_path.'"'
+					.'<img src="'.$web_path. $img_path.'"'
+						.($extra['class'] ? ' class="'.$extra['class'].'"' : '')
 						.($extra['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $extra['width']).'"' : '')
 						.($extra['height'] ? ' height="'.preg_replace('~[^[0-9]%]~ims', '', $extra['height']).'"' : '')
-					.' style="'
-						.($extra['width'] ? 'width:'.$extra['width'].';' : '')
-						.($extra['height'] ? 'height:'.$extra['height'].';' : '')
+						.($style ? ' style="'.$style.'"' : '')
 					.'">'
 					.($link_url ? '</a>' : '');
 			}

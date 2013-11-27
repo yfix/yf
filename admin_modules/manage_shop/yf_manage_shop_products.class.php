@@ -14,7 +14,12 @@ class yf_manage_shop_products{
 					'price' => 'between',
 				),
 			))
-			->image('id', 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_1_thumb.jpg', array('width' => '50px'))
+			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
+                $product_id = $row['id'];
+				$image = common()->shop_get_images($product_id);
+                return $image[0]['thumb'];
+
+            }))
 			->text('name')
 			->link('cat_id', './?object=category_editor&action=show_items&&id=%d', _class('cats')->_get_items_names('shop_cats'))
 			->text('price')

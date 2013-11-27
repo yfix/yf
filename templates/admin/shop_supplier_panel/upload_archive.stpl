@@ -3,6 +3,7 @@
 <table class="table table-bordered table-striped table-hover">
 <thead>
 	<tr>
+		<th>#</th>
 		<th>{t(Filename)}</th>
 		<th>{t(Status)}</th>
 		<th>{t(Image)}</th>
@@ -12,6 +13,7 @@
 <tbody>
 {foreach("items")}
 <tr>
+	<td>{#.number}</td>
 	<td>{#.filename}</td>
 	<td>{#.status}</td>
 	<td width="50px">

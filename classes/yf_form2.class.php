@@ -1833,9 +1833,18 @@ class yf_form2 {
 	* Custom function, useful to insert custom html and not breaking form chain
 	*/
 	function func($name, $func, $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
+		if (is_array($func)) {
+			$extra += $func;
+			$func = '';
+		}
+		if (!$func) {
+			if (isset($extra['callback'])) {
+				$func = $extra['callback'];
+			} elseif (isset($extra['function'])) {
+				$func = $extra['function'];
+			} else {
+				$func = $extra['func'];
+			}
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', ' ', $extra['name']));
@@ -1883,9 +1892,42 @@ class yf_form2 {
 	}
 
 	/**
+	* Star selector, got from http://fontawesome.io/examples/#custom. Require this CSS:
+	*	'<style>
+	*	.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
+	*	.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
+	*	.rating span.star:hover { cursor:pointer }
+	*	.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
+	*	.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
+	*	</style>';
 	*/
 	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
-// TODO: add stars selection like here: http://fontawesome.io/examples/ , at the bottom of the bage
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$func = function($extra, $r, $_this) {
+			$max = $extra['max'] ?: 5;
+			$stars = $extra['stars'] ?: 5;
+			$class = $extra['class'] ?: 'star';
+			$body[] = '<span class="rating">';
+			foreach (range(1, $stars) as $num) {
+				$body[] = '<span class="'.$class.'"></span>';
+			}
+			$body[] = '</span>';
+// TODO: add jquery catching click and store inside hidden
+			return $_this->_row_html(implode('', $body), $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
 	}
 
 	/**
@@ -2070,13 +2112,11 @@ class yf_form2 {
 		$form_id_field = '__form_id__';
 		if (isset($this->_validate_rules[$form_id_field])) {
 			$form_id = $this->_validate_rules[$form_id_field];
+			$this->_form_id = $form_id;
 			unset($this->_validate_rules[$form_id_field]);
 			$this->hidden($form_id_field, array('value' => $form_id));
 		}
 		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
-		if (!$this->_validate_rules) {
-			return $this;
-		}
 		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 		$data = (array)(!empty($post) ? $post : $_POST);
 		if (empty($data)) {

@@ -80,44 +80,20 @@ class yf_manage_shop_product_edit{
 			return js_redirect("./?object=manage_shop&action=products");
 		}
 		
-		$image_ids = array();			
-		$R = db()->query("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`='".intval($product_info['id'])."' ORDER BY `is_default` DESC");
-		while ($A = db()->fetch_assoc($R)) {
-			$image_ids[] = $A;
-		}
-		
-		// Make 3-level dir path
-		$d = sprintf("%09s", $product_info['id']);
-		$replace = array(
-			'{subdir1}' => substr($d, 0, -6),
-			'{subdir2}' => substr($d, -6, 3),
-			'{subdir3}' => substr($d, -3, 3),
-		);
-		$img_path = str_replace(array_keys($replace), array_values($replace), "uploads/shop/products/{subdir2}/{subdir3}/");
-		
+		$images = common()->shop_get_images($product_info["id"]);
 		$base_url = WEB_PATH;
 		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
 		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
-
-		$image_files = array();
-		foreach ($image_ids as $A) $image_files[] = array(
-			'id' => $A['id'],
-			'url' => $base_url . $img_path . "product_" . $product_info['id'] . "_" . $A['id'],
-		);
-		foreach((array)$image_files as $A) {
+		foreach((array)$images as $A) {
 			$product_image_delete_url ="./?object=manage_shop&action=product_image_delete&id=".$product_info["id"]."&key=".$A['id'];
-			$thumb_path = $A['url']."_thumb.jpg";
-			$img_path = $A['url']."_big.jpg";
-
 			$replace2 = array(
-				"img_path" 		=> $img_path,
-				"thumb_path"	=> $thumb_path,
+				"img_path" 		=> $base_url . $A['big'],
+				"thumb_path"	=> $base_url . $A['thumb'],
 				"del_url" 		=> $product_image_delete_url,
 				"image_key"		=> $A['id'],
 			);
 			$items .= tpl()->parse("manage_shop/image_items", $replace2);
 		}
-
 		// 1-st type of assigning attributes
 		$fields = module("manage_shop")->_attributes_html($_GET["id"]);
 		// 2-nd type of assigning attributes (select boxes)

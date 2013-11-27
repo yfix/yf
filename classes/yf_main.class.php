@@ -38,7 +38,7 @@ class yf_main {
 	/** @var string Custom session save dir (leave ampty to skip), example: 'session_data/' */
 	public $SESSION_SAVE_DIR		= '';
 	/** @var int Session life time (in seconds) */
-	public $SESSION_LIFE_TIME		= 7200; // 2 hours
+	public $SESSION_LIFE_TIME		= 18000; // 5 hours
 	/** @var string */
 	public $SESSION_DOMAIN			= ''; // Default empty, means current domain
 	/** @var string */
@@ -609,6 +609,23 @@ class yf_main {
 		// Instruct bots to totally ignore current page
 		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
+		}
+		$now = gmmktime();
+		$last_update = $this->_session('last_update');
+		if ($last_update) {
+			$diff = $now - $last_update;
+			$percent = $diff / $this->SESSION_LIFE_TIME * 100;
+			// Session expired
+			if ($percent > 100) {
+				session_destroy();
+				session_start();
+			// Session need to be regenerated
+			} elseif ($percent > 10) {
+				session_regenerate_id();
+				$this->_session('last_update', $now);
+			}
+		} else {
+			$this->_session('last_update', $now);
 		}
 		$this->_session_init_complete = true;
 	}
@@ -1735,5 +1752,23 @@ class yf_main {
 		}
 		return $key === null ? $_COOKIE : $_COOKIE[$key];
 	}
-	
+
+	/**
+	*/
+	function event_subscribe($name, $func, $params = array()) {
+// TODO: events system
+	}
+
+	/**
+	*/
+	function event_fire($name, $extra = array()) {
+// TODO: events system
+	}
+
+	/**
+	*/
+	function event_find_hooks() {
+// TODO: will search through active modules for _event_hook() methods, where class/method can subscribe to any events
+// TODO: events system
+	}
 }
