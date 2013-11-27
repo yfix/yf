@@ -95,6 +95,7 @@ class yf_oauth {
 			'offline_dialog_url' => 'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline&approval_prompt=force',
 			'access_token_url' => 'https://accounts.google.com/o/oauth2/token',
 			'user_info_url' => 'https://www.googleapis.com/oauth2/v1/userinfo', // $client->scope = 'https://www.googleapis.com/auth/userinfo.email '.'https://www.googleapis.com/auth/userinfo.profile';
+			'scope' => 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
 			'dev_register_url' => 'http://code.google.com/apis/console',
 		),
 /*
@@ -198,14 +199,13 @@ class yf_oauth {
 		),
 */
 		'yandex' => array(
-// TODO
-#			'oauth_version' => '2.0',
-#			'request_token_url' => 'https://oauth.yandex.com/authorize',
-#			'dialog_url' => 'https://oauth.yandex.com/authorize',
-#			'access_token_url' => 'https://oauth.yandex.com/verification_code',
+			'oauth_version' => '2.0',
+			'request_token_url' => 'https://oauth.yandex.ru/token',
+			'dialog_url' => 'https://oauth.yandex.ru/authorize?response_type=token&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}',
+			'access_token_url' => 'https://oauth.yandex.com/verification_code',
 #			'authorization_header' => false,
-			'user_info_url' => '',
-			'dev_register_url' => '',
+			'user_info_url' => 'https://login.yandex.ru/info',
+			'dev_register_url' => 'https://oauth.yandex.ru/client/new',
 		),
 		'vk' => array(
 // TODO
@@ -272,9 +272,10 @@ class yf_oauth {
 		$client->debug = true;
 		$client->debug_http = true;
 		$client->server = $provider;
-		$client->redirect_uri = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'];
+#		$client->redirect_uri = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'];
+		$client->redirect_uri = _force_get_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']);
 		$client->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
-		$client->client_secret = $config['bitbucket']['client_secret'] ?: '';
+		$client->client_secret = $config[$provider]['client_secret'] ?: '';
 		if (strlen($client->client_id) == 0 || strlen($client->client_secret) == 0) {
 			die('Please set the client_id with Key and client_secret with Secret. The URL must be '.$client->redirect_uri);
 		}
@@ -284,19 +285,37 @@ class yf_oauth {
 			$client->$k = $v;
 		}
 
-		if (($success = $client->Process())) {
-			if (strlen($client->access_token)) {
-				$success = $client->CallAPI(
-					$settings['user_info_url'],
-					'GET', array(), array('FailOnAccessError' => true), $user);
+		if ($_SESSION['oauth'][$provider]['token']) {
+			$success = $_SESSION['oauth'][$provider]['token'];
+			$user = $_SESSION['oauth'][$provider]['user_info'];
+		} else {
+			$error = 'Cannot process';
+			if (($success = $client->Process())) {
+				if (strlen($client->access_token)) {
+					$_SESSION['oauth'][$provider]['token'] = $client->access_token;
+					$error = '';
+					$success = $client->CallAPI(
+						$settings['user_info_url'],
+						'GET',
+						array(),
+						array('FailOnAccessError' => true),
+						$user
+					);
+	
+					$_SESSION['oauth'][$provider]['user_info'] = $user;
+				} else {
+					$error = $client->authorization_error;
+				}
 			}
 		}
 #		$success = $client->Finalize($success);
 #		if($client->exit) {
 #			exit;
 #		}
-		if($success) {
-			return '<h1>Success</h1><pre>'.print_r($user, 1).'</pre>';
+		if ($error) {
+			return '<h1 class="text-error">Error: '.$error.'</h1>'.(DEBUG_MODE ? '<pre>'.print_r($client, 1).'</pre>' : '');
+		} elseif ($success) {
+			return '<h1 class="text-success">Success</h1><pre>'.print_r($user, 1).'</pre>';
 		}
 #		return $this;
 	}
