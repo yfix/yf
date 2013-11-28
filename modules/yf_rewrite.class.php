@@ -88,7 +88,9 @@ class yf_rewrite {
 			}
 		}
 		// patterns support here
-		$params['host'] = !empty($host) ? $host : $_SERVER['HTTP_HOST'];
+		if (!isset($params['host'])) {
+			$params['host'] = !empty($host) ? $host : $_SERVER['HTTP_HOST'];
+		}
 		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1){
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
