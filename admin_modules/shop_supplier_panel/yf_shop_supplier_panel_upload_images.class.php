@@ -42,7 +42,9 @@ class yf_shop_supplier_panel_upload_images {
 			 $SUPPLIER_ID = $_POST['supplier'];
 		}
 		$file = $_FILES['archive'];
-		$uploaded = common()->upload_archive($this->ARCHIVE_FOLDER. $file['name']);
+		$new_name = md5(rand().microtime()).'.'.pathinfo($file['name'], PATHINFO_EXTENSION);
+		rename($file['name'], $new_name);
+		$uploaded = common()->upload_archive($this->ARCHIVE_FOLDER. $new_name);
 		if(!$uploaded){
 			return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
 		}
@@ -50,7 +52,7 @@ class yf_shop_supplier_panel_upload_images {
 		if (!file_exists($EXTRACT_PATH)) {
 			mkdir($EXTRACT_PATH, 0777, true);
 		}
-		$full_archive_name = escapeshellarg($this->ARCHIVE_FOLDER.$file['name']);
+		$full_archive_name = escapeshellarg($this->ARCHIVE_FOLDER.$new_name);
 
 		$zip = 'unzip -o '.$full_archive_name.' -d '.$EXTRACT_PATH;
 		$rar = 'unrar e '.$full_archive_name.' '.$EXTRACT_PATH;
@@ -58,7 +60,7 @@ class yf_shop_supplier_panel_upload_images {
 		$gz = 'tar -xzf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 
 		$ext = $this->ALLOWED_MIME_TYPES[$file['type']];
-		exec($$ext, $result);
+		passthru($$ext);
 		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/', '/__MACOSX/');
 		foreach($result_files as $k => $v){
 			$status = $this->search_product_by_filename($v, $SUPPLIER_ID);
@@ -74,7 +76,7 @@ class yf_shop_supplier_panel_upload_images {
 			);	
 		}
 		_class('dir')->delete_dir($EXTRACT_PATH, true);
-		unlink($this->ARCHIVE_FOLDER.$file['name']);
+		unlink($this->ARCHIVE_FOLDER.$new_name);
 		common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']));
 
 		return tpl()->parse("shop_supplier_panel/upload_archive", $replace);
