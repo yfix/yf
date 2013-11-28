@@ -31,3 +31,6 @@
 [submodule "libs/geonames-db-import"]
 	path = libs/geonames-db-import
 	url = https://github.com/yfix/geonames-db-import.git
+[submodule "libs/phpcrypt"]
+	path = libs/phpcrypt
+	url = https://github.com/yfix/phpcrypt.git
