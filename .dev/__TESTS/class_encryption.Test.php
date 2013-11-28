@@ -67,6 +67,10 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_04() {
+		// Do this test only if mcrypt is available
+		if (!function_exists('mcrypt_module_open')) {
+			return false;
+		}
 		_class('encryption')->USE_MCRYPT = true;
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
 			if (!_class('encryption')->USE_MCRYPT && !in_array($cipher, array('CAST_128', 'BLOWFISH'))) {
@@ -158,6 +162,10 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_52() {
+		// Do this test only if mcrypt is available
+		if (!function_exists('mcrypt_module_open')) {
+			return false;
+		}
 		_class('encryption')->USE_MCRYPT = true;
 		$prev_encrypted = '';
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
