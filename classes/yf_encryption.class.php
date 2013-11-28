@@ -37,6 +37,8 @@ class yf_encryption {
 	public $_mcrypt_cipher = null;
 	/** @var mixed @conf_skip Current cipher processor */
 	public $_cur_cipher	= null;
+	/** @var mixed @conf_skip Current cipher id */
+	public $_cur_cipher_id	= null;
 	/** @var mixed @conf_skip Key assigned */
 	public $_key_assigned	= false;
 	/** @var mixed @conf_skip Initialization vector (Need in non-ECB mode) */
@@ -67,11 +69,12 @@ class yf_encryption {
 			} else {
 				trigger_error('Wrong Cipher number '.$this->USE_CIPHER, E_USER_ERROR);
 			}
-		} elseif (!is_object($this->_cur_cipher)) {
+		} elseif ($this->_cur_cipher_id !== $this->USE_CIPHER) {
 			$driver_name = 'encryption_'.strtolower($this->_avail_ciphers[$this->USE_CIPHER]);
 			$driver_loaded_class_name = main()->load_class_file($driver_name, 'classes/encryption/');
 			if ($driver_loaded_class_name) {
 				$this->_cur_cipher = new $driver_loaded_class_name();
+				$this->_cur_cipher_id = $this->USE_CIPHER;
 			}
 			if (!is_object($this->_cur_cipher)) {
 				trigger_error('Wrong Cipher number '.$this->USE_CIPHER, E_USER_ERROR);
@@ -81,9 +84,22 @@ class yf_encryption {
 
 	/**
 	*/
+	function get_key() {
+		return $this->_secret_key;
+	}
+
+	/**
+	* Alias
+	*/
+	function get_secret() {
+		return $this->get_key();
+	}
+
+	/**
+	*/
 	function set_key($value) {
 		$this->_secret_key = $value;
-		return $this->_secret_key;
+		return $this;
 	}
 
 	/**
@@ -94,13 +110,19 @@ class yf_encryption {
 	}
 
 	/**
+	*/
+	function get_cipher() {
+		return $this->_avail_ciphers[$this->USE_CIPHER];
+	}
+
+	/**
 	* Choose encoding/decoding algorithm by its name.
 	* Examples: _class('encyption')->set_cipher('cast128'), _class('encyption')->set_cipher('CAST_128')
 	*/
 	function set_cipher($name) {
 		$name = str_replace(array('_','-',' '), '', strtolower(trim($name)));
 		if (!strlen($name)) {
-			return false;
+			return $this;
 		}
 		$name_to_id = array();
 		foreach((array)$this->_avail_ciphers as $id => $n) {
@@ -110,14 +132,17 @@ class yf_encryption {
 		if (isset($name_to_id[$name])) {
 			$this->USE_CIPHER = $name_to_id[$name];
 		}
-		return $this->USE_CIPHER;
+		return $this;
 	}
 
 	/**
 	*/
-	function encrypt($data, $secret = null) {
+	function encrypt($data, $secret = null, $cipher = null) {
 		if (isset($secret)) {
 			$this->set_key($secret);
+		}
+		if (isset($cipher)) {
+			$this->set_cipher($cipher);
 		}
 		$this->init();
 		// MCrypt PHP module processing (high speed)
@@ -144,9 +169,12 @@ class yf_encryption {
 
 	/**
 	*/
-	function decrypt($data, $secret = null) {
+	function decrypt($data, $secret = null, $cipher = null) {
 		if (isset($secret)) {
 			$this->set_key($secret);
+		}
+		if (isset($cipher)) {
+			$this->set_cipher($cipher);
 		}
 		$this->init();
 		// MCrypt PHP module processing (high speed)
@@ -174,29 +202,40 @@ class yf_encryption {
 	/**
 	* Encrypt specified file using private key
 	*/
-	function encrypt_file ($source, $encrypted, $secret = null) {
+	function encrypt_file ($source, $encrypted, $secret = null, $cipher = null) {
 		if (isset($secret)) {
 			$this->set_key($secret);
 		}
+		if (isset($cipher)) {
+			$this->set_cipher($cipher);
+		}
 		file_put_contents($encrypted, $this->encrypt(file_get_contents($source)));
+		return $this;
 	}
 
 	/**
 	* Decrypt specified file using private key
 	*/
-	function decrypt_file($source, $decrypted, $secret = null) {
+	function decrypt_file($source, $decrypted, $secret = null, $cipher = null) {
 		if (isset($secret)) {
 			$this->set_key($secret);
 		}
+		if (isset($cipher)) {
+			$this->set_cipher($cipher);
+		}
 		file_put_contents($decrypted, $this->decrypt(file_get_contents($source)));
+		return $this;
 	}
 
 	/**
 	* Safe encrypt data into base64 string (replace '/' symbol)
 	*/
-	function _safe_encrypt_with_base64 ($input, $secret = null) {
+	function _safe_encrypt_with_base64 ($input, $secret = null, $cipher = null) {
 		if (isset($secret)) {
 			$this->set_key($secret);
+		}
+		if (isset($cipher)) {
+			$this->set_cipher($cipher);
 		}
 		$r = array(
 			'/' => '*',
@@ -207,13 +246,17 @@ class yf_encryption {
 	/**
 	* Safe decrypt data from base64 string (replace '/' symbol)
 	*/
-	function _safe_decrypt_with_base64 ($input, $secret = null) {
+	function _safe_decrypt_with_base64 ($input, $secret = null, $cipher = null) {
 		if (isset($secret)) {
 			$this->set_key($secret);
+		}
+		if (isset($cipher)) {
+			$this->set_cipher($cipher);
 		}
 		$r = array(
 			'*' => '/',
 			' ' => '+',
+			'%20' => '+',
 		);
 		return $this->decrypt(base64_decode(str_replace(array_keys($r), array_values($r), $input)));
 	}
