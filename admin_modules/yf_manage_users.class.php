@@ -144,7 +144,8 @@ class yf_manage_users {
 		$integrity_hash = md5($to_encode);
 		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash, $secret_key);
 		if (tpl()->REWRITE_MODE) {
-			$url = WEB_PATH.'login/'.$encrypted;
+#			$url = WEB_PATH.'login/'.$encrypted;
+			$url = _force_get_url(array('task' => 'login', 'id' => $encrypted), parse_url(WEB_PATH, PHP_URL_HOST));
 		} else {
 			$url = WEB_PATH.'?task=login&id='.$encrypted;
 		}
