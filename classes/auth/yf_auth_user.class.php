@@ -349,7 +349,7 @@ class yf_auth_user {
 			$this->_encrypted_error = 'GET_id is not like an encrypted string';
 			return false;
 		}
-		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.WEB_PATH.'")) FROM '.db('admin').' WHERE id=1');
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', WEB_PATH).'")) FROM '.db('admin').' WHERE id=1');
 		if (!$secret_key) {
 			$this->_encrypted_error = 'secret key generation failed';
 			return false;
