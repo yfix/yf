@@ -52,8 +52,8 @@ class yf_pattern_yf {
 		if (!empty($arr_out)) {
 			$u .= '?'.implode('&',$arr_out);
 		}
-#		return module('rewrite')->_correct_protocol('http://'.$a['host'].'/'.$u);
-		return module('rewrite')->_correct_protocol(WEB_PATH. $u);
+		return module('rewrite')->_correct_protocol('http://'.$a['host'].'/'.$u);
+#		return module('rewrite')->_correct_protocol(WEB_PATH. $u);
 	}
 
 	/**
