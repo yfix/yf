@@ -8,6 +8,10 @@ class yf_pattern_yf {
 		if ($a['task'] == 'login' || $a['task'] == 'logout') {
 			$u = $a['task'];
 			unset($a['task']);
+			if ($a['id']) {
+				$u .= '/'.$a['id'];
+				unset($a['id']);
+			}
 		} else {
 			$u = array();
 			if (!empty($a['object'])) {
