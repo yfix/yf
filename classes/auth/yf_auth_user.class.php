@@ -345,6 +345,7 @@ class yf_auth_user {
 	* Try to log in user with encrypted string (used to quickly login admin as common user)
 	*/
 	function _do_login_with_encrypted () {
+		header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		if (!$_GET['id'] || strlen($_GET['id']) < 16 || is_numeric($_GET['id'])) {
 			$this->_encrypted_error = 'GET_id is not like an encrypted string';
 			return false;
