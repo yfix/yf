@@ -354,9 +354,8 @@ class yf_auth_user {
 			$this->_encrypted_error = 'secret key generation failed';
 			return false;
 		}
-		_class('encryption')->_secret_key = $secret_key;
 		// Should contain this: 'userid-%id-%time-%md5';
-		$decrypted = _class('encryption')->_safe_decrypt_with_base64($_GET['id']);
+		$decrypted = _class('encryption')->_safe_decrypt_with_base64($_GET['id'], $secret_key);
 		if (!$decrypted || !strlen($decrypted) || substr($decrypted, 0, strlen('userid-')) != 'userid-') {
 			$this->_encrypted_error = 'decryption failed, possibly broken string or hack attempt';
 			return false;
