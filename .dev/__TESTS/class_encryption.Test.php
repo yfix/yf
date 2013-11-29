@@ -101,7 +101,7 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEmpty($encrypted);
 		$this->assertNotEquals($encrypted, self::$to_encode);
 		$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
-		$this->assertEquals('jkVmKEjPznM5brNc+dFQZjyvLqYng+8dFvy3E*o2uDfoddCEo2J3VK079cHoOST282+WX4HhJE6YZgYnDo054w==', $encrypted);
+		$this->assertEquals('jkVmKEjPznMjISVwD3L54Pxjle+Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', $encrypted);
 
 		$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret);
 		$this->assertNotEmpty($decrypted);
@@ -110,7 +110,7 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 
 	public function test_22() {
 		$this->assertEquals(
-			'jkVmKEjPznM5brNc+dFQZjyvLqYng+8dFvy3E*o2uDfoddCEo2J3VK079cHoOST282+WX4HhJE6YZgYnDo054w==',
+			'jkVmKEjPznMjISVwD3L54Pxjle+Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==',
 			_class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, self::$cipher)
 		);
 	}
@@ -137,12 +137,12 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_41() {
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznM5brNc+dFQZjyvLqYng+8dFvy3E*o2uDfoddCEo2J3VK079cHoOST282+WX4HhJE6YZgYnDo054w==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznM5brNc dFQZjyvLqYng+8dFvy3E*o2uDfoddCEo2J3VK079cHoOST282 WX4HhJE6YZgYnDo054w==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznM5brNc+dFQZjyvLqYng+8dFvy3E/o2uDfoddCEo2J3VK079cHoOST282+WX4HhJE6YZgYnDo054w==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznM5brNc dFQZjyvLqYng+8dFvy3E/o2uDfoddCEo2J3VK079cHoOST282+WX4HhJE6YZgYnDo054w==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznM5brNc%20dFQZjyvLqYng+8dFvy3E*o2uDfoddCEo2J3VK079cHoOST282%20WX4HhJE6YZgYnDo054w==', self::$secret, self::$cipher));
-		$this->assertNotEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64(' jkVmKEjPznM5brNc dFQZjyvLqYng+8dFvy3E*o2uDfoddCEo2J3VK079cHoOST282 WX4HhJE6YZgYnDo054w==', self::$secret, self::$cipher));
+		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle+Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
+		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
+		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle%20Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
+		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle Qb/3JR8L6CCQ5K//WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
+		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle+Qb/3JR8L6CCQ5K//WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
+		$this->assertNotEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64(' jkVmKEjPznMjISVwD3L54Pxjle Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA== ', self::$secret, self::$cipher));
 	}
 
 	public function test_51() {
