@@ -896,7 +896,7 @@ class yf_tpl {
 		}
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
-			$tmp_params	 = explode(';', $params);
+			$tmp_params	 = explode(';', str_replace(',', ';', $params));
 			$params  = array();
 			// Convert params string into array
 			foreach ((array)$tmp_params as $v) {

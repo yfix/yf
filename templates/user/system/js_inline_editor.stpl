@@ -1,10 +1,10 @@
 {include("system/js_inline_editor_css")}
 
 <script type="text/javascript">
-	var _form_action	= "?object=dynamic&action=save_locale_var";
-	var _edit_stpl_url	= "?object=dynamic&action=edit_locale_stpl";
-	var _edit_tip_url	= "?object=dynamic&action=edit_tip";
-	var _tip_text_url	= "?object=help&action=show_tip&page=no_debug";
+	var _form_action	= "{url(object=dynamic,action=save_locale_var)}";
+	var _edit_stpl_url	= "{url(object=dynamic,action=edit_locale_stpl)}";
+	var _edit_tip_url	= "{url(object=dynamic,action=edit_tip)}";
+	var _tip_text_url	= "{url(object=help,action=show_tip,page=no_debug)}";
 	var _last_tr_item	= null;
 	var _last_tr_html	= null;
 	var _stpl_name		= "";
@@ -16,18 +16,6 @@
 	var _tip_id			= 0;
 	var _USE_EDITAREA	= 0;
 	var WEB_PATH = '{if(const.MAIN_TYPE eq user)}{const(WEB_PATH)}{else}{const(ADMIN_WEB_PATH)}{/if}';
-	if (typeof WEB_PATH != "undefined") {
-		_form_action	= WEB_PATH + _form_action;
-		_edit_stpl_url	= WEB_PATH + _edit_stpl_url;
-		_edit_tip_url	= WEB_PATH + _edit_tip_url;
-		_tip_text_url	= WEB_PATH + _tip_text_url;
-	} else {
-		console.log("INLINE EDITOR: Please define missed JS global variable 'WEB_PATH'");
-	}
-//	// Singleton
-//	if (typeof _inline_editor_loaded != "undefined" && _inline_editor_loaded) {
-//		return false;
-//	}
 </script>
 
 {include("system/js_inline_editor_locale_vars")}
