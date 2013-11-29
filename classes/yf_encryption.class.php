@@ -15,90 +15,9 @@ class yf_encryption {
 	public $USE_CIPHER		= 0;
 	/** @var array Available algorithms (sorted in speed descending order) */
 	public $_avail_ciphers	= array(
-		0	=>	'CAST_128', // note: PHP Class exists
-		1	=>	'BLOWFISH', // note: PHP Class exists
-/*
-		2	=>	'XTEA',
-		3	=>	'TWOFISH',
+		0	=>	'CAST_128',
 		4	=>	'CAST_256',
-		5	=>	'GOST',
-		6	=>	'DES',
-		7	=>	'SERPENT',
-		8	=>	'RIJNDAEL_128',
-		9	=>	'RC2',
-		10	=>	'RIJNDAEL_192',
-*/
-		11	=>	'3DES',
-/*
-		12	=>	'LOKI97',
-		13	=>	'RIJNDAEL_256',
-		14	=>	'SAFERPLUS',
-*/
 	);
-/*
-MCRYPT_3DES
-MCRYPT_ARCFOUR_IV (libmcrypt > 2.4.x only)
-MCRYPT_ARCFOUR (libmcrypt > 2.4.x only)
-MCRYPT_BLOWFISH
-MCRYPT_CAST_128
-MCRYPT_CAST_256
-MCRYPT_CRYPT
-MCRYPT_DES
-MCRYPT_DES_COMPAT (libmcrypt 2.2.x only)
-MCRYPT_ENIGMA (libmcrypt > 2.4.x only, alias for MCRYPT_CRYPT)
-MCRYPT_GOST
-MCRYPT_IDEA (non-free)
-MCRYPT_LOKI97 (libmcrypt > 2.4.x only)
-MCRYPT_MARS (libmcrypt > 2.4.x only, non-free)
-MCRYPT_PANAMA (libmcrypt > 2.4.x only)
-MCRYPT_RIJNDAEL_128 (libmcrypt > 2.4.x only)
-MCRYPT_RIJNDAEL_192 (libmcrypt > 2.4.x only)
-MCRYPT_RIJNDAEL_256 (libmcrypt > 2.4.x only)
-MCRYPT_RC2
-MCRYPT_RC4 (libmcrypt 2.2.x only)
-MCRYPT_RC6 (libmcrypt > 2.4.x only)
-MCRYPT_RC6_128 (libmcrypt 2.2.x only)
-MCRYPT_RC6_192 (libmcrypt 2.2.x only)
-MCRYPT_RC6_256 (libmcrypt 2.2.x only)
-MCRYPT_SAFER64
-MCRYPT_SAFER128
-MCRYPT_SAFERPLUS (libmcrypt > 2.4.x only)
-MCRYPT_SERPENT(libmcrypt > 2.4.x only)
-MCRYPT_SERPENT_128 (libmcrypt 2.2.x only)
-MCRYPT_SERPENT_192 (libmcrypt 2.2.x only)
-MCRYPT_SERPENT_256 (libmcrypt 2.2.x only)
-MCRYPT_SKIPJACK (libmcrypt > 2.4.x only)
-MCRYPT_TEAN (libmcrypt 2.2.x only)
-MCRYPT_THREEWAY
-MCRYPT_TRIPLEDES (libmcrypt > 2.4.x only)
-MCRYPT_TWOFISH (for older mcrypt 2.x versions, or mcrypt > 2.4.x )
-MCRYPT_TWOFISH128 (TWOFISHxxx are available in newer 2.x versions, but not in the 2.4.x versions)
-MCRYPT_TWOFISH192
-MCRYPT_TWOFISH256
-MCRYPT_WAKE (libmcrypt > 2.4.x only)
-MCRYPT_XTEA (libmcrypt > 2.4.x only)
-*/
-/*
-			const CIPHER_3DES			= "3DES";
-			const CIPHER_3WAY			= "3-Way";
-			const CIPHER_AES_128		= "AES-128";
-			const CIPHER_AES_192		= "AES-192";
-			const CIPHER_AES_256		= "AES-256";
-			const CIPHER_ARC4			= "ARC4"; // Alternative RC4
-			const CIPHER_BLOWFISH		= "Blowfish";
-			const CIPHER_CAST_128		= "CAST-128";
-			const CIPHER_CAST_256		= "CAST-256";
-			const CIPHER_DES			= "DES";
-			const CIPHER_ENIGMA			= "Enigma";
-			const CIPHER_GOST			= "GOST";
-			const CIPHER_RC2			= "RC2";
-			const CIPHER_RIJNDAEL_128	= "Rijndael-128";
-			const CIPHER_RIJNDAEL_192	= "Rijndael-192";
-			const CIPHER_RIJNDAEL_256	= "Rijndael-256";
-			const CIPHER_SKIPJACK		= "Skipjack";
-			const CIPHER_SIMPLEXOR		= "SimpleXOR";
-			const CIPHER_VIGENERE		= "Vigenere"; // historical
-*/
 	/** @var string Secret key */
 	public $_secret_key	= 'secret 134578';
 	/** @var mixed @conf_skip Mcrypt cipher constant value */
@@ -141,10 +60,8 @@ MCRYPT_XTEA (libmcrypt > 2.4.x only)
 
 			$cipher_id_to_name = array(
 				0	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_128,
-				1	=>	PHP_Crypt\PHP_Crypt::CIPHER_BLOWFISH,
-				11	=>	PHP_Crypt\PHP_Crypt::CIPHER_3DES,
+				4	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_256,
 			);
-#echo $cipher_id_to_name[$this->USE_CIPHER];
 			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER], PHP_Crypt\PHP_Crypt::MODE_ECB);
 		}
 	}
