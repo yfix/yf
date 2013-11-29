@@ -442,7 +442,7 @@ class yf_conf_editor {
 		foreach ((array)$modules_list as $_module_name) {
 			$file_path_fwork	= YF_PATH.$dir_name.YF_PREFIX.$_module_name.YF_CLS_EXT;
 			if ($dir_name == "admin_modules/") {
-				$file_path_project	= ADMIN_REAL_PATH.$dir_name.$_module_name.YF_CLS_EXT;
+				$file_path_project	= ADMIN_SITE_PATH.$dir_name.$_module_name.YF_CLS_EXT;
 			} else {
 				$file_path_project	= INCLUDE_PATH.$dir_name.$_module_name.YF_CLS_EXT;
 			}

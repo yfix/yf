@@ -1531,19 +1531,11 @@ class yf_main {
 		if (!defined('MEDIA_PATH')) {
 			define('MEDIA_PATH', WEB_PATH);
 		}
-		if (MAIN_TYPE_ADMIN) {
-			// Administration physical path
-			if (!defined('ADMIN_SITE_PATH')) {
-				define('ADMIN_SITE_PATH', SITE_PATH.'admin/');
-			}
-			// Alias. DEPRECATED
-			if (!defined('ADMIN_REAL_PATH')) {
-				define('ADMIN_REAL_PATH', ADMIN_SITE_PATH);
-			}
-			// Administration web path
-			if (!defined('ADMIN_WEB_PATH')) {
-				define('ADMIN_WEB_PATH', WEB_PATH.'admin/');
-			}
+		if (!defined('ADMIN_SITE_PATH')) {
+			define('ADMIN_SITE_PATH', SITE_PATH.'admin/');
+		}
+		if (!defined('ADMIN_WEB_PATH')) {
+			define('ADMIN_WEB_PATH', WEB_PATH.'admin/');
 		}
 		// Check if current page is called via AJAX call from javascript
 		conf('IS_AJAX', (strtolower($this->_server('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest' || !empty($_GET['ajax_mode'])) ? 1 : 0);
