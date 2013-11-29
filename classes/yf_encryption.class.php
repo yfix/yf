@@ -79,25 +79,25 @@ MCRYPT_WAKE (libmcrypt > 2.4.x only)
 MCRYPT_XTEA (libmcrypt > 2.4.x only)
 */
 /*
-3DES
-3Way
-AES128
-AES192
-AES256
-ARC4
-Blowfish
-CAST128
-CAST256
-DES
-Enigma
-RC2
-Rijndael128
-Rijndael192
-Rijndael256
-Rijndael
-SimpleXOR
-Skipjack
-Vigenere
+			const CIPHER_3DES			= "3DES";
+			const CIPHER_3WAY			= "3-Way";
+			const CIPHER_AES_128		= "AES-128";
+			const CIPHER_AES_192		= "AES-192";
+			const CIPHER_AES_256		= "AES-256";
+			const CIPHER_ARC4			= "ARC4"; // Alternative RC4
+			const CIPHER_BLOWFISH		= "Blowfish";
+			const CIPHER_CAST_128		= "CAST-128";
+			const CIPHER_CAST_256		= "CAST-256";
+			const CIPHER_DES			= "DES";
+			const CIPHER_ENIGMA			= "Enigma";
+			const CIPHER_GOST			= "GOST";
+			const CIPHER_RC2			= "RC2";
+			const CIPHER_RIJNDAEL_128	= "Rijndael-128";
+			const CIPHER_RIJNDAEL_192	= "Rijndael-192";
+			const CIPHER_RIJNDAEL_256	= "Rijndael-256";
+			const CIPHER_SKIPJACK		= "Skipjack";
+			const CIPHER_SIMPLEXOR		= "SimpleXOR";
+			const CIPHER_VIGENERE		= "Vigenere"; // historical
 */
 	/** @var string Secret key */
 	public $_secret_key	= 'secret 134578';
@@ -130,78 +130,22 @@ Vigenere
 
 	/**
 	*/
-	function _load_phpcrypt () {
-		require_once YF_PATH.'libs/phpcrypt/phpCrypt.php';
-#		use PHP_Crypt\PHP_Crypt as PHP_Crypt;
-
-#		$text = "This is my secret message.";
-#		$key = "^mY@TEst~Key_0123456789abcefghij"; // the key will be truncated if it's too long
-
-#		$crypt = new PHP_Crypt($key, PHP_Crypt::CIPHER_AES_256, PHP_Crypt::MODE_CTR);
-
-#		$iv = $crypt->createIV();
-#		$encrypt = $crypt->encrypt($text);
-
-#		$crypt->IV($iv);
-#		$decrypt = $crypt->decrypt($encrypt);
-
-#		print "CIPHER: ".$crypt->cipherName()."\n";
-#		print "MODE: ".$crypt->modeName()."\n";
-	}
-
-	/**
-	*/
 	function init () {
 		if (!extension_loaded('mcrypt')) {
 			$this->USE_MCRYPT = false;
 		}
 		if ($this->USE_MCRYPT == true) {
-			if (isset($this->_avail_ciphers[$this->USE_CIPHER])) {
-				eval('$this->_mcrypt_cipher = MCRYPT_'.$this->_avail_ciphers[$this->USE_CIPHER].';');
-			} else {
-				trigger_error('Wrong Cipher number '.$this->USE_CIPHER, E_USER_ERROR);
-			}
-		} elseif ($this->_cur_cipher_id !== $this->USE_CIPHER) {
-/*
-			$driver_name = 'encryption_'.strtolower($this->_avail_ciphers[$this->USE_CIPHER]);
-			$driver_loaded_class_name = main()->load_class_file($driver_name, 'classes/encryption/');
-			if ($driver_loaded_class_name) {
-				$this->_cur_cipher = new $driver_loaded_class_name();
-				$this->_cur_cipher_id = $this->USE_CIPHER;
-			}
-			if (!is_object($this->_cur_cipher)) {
-				trigger_error('Wrong Cipher number '.$this->USE_CIPHER, E_USER_ERROR);
-			}
-*/
-			$this->_load_phpcrypt();
+			$this->_mcrypt_cipher = constant('MCRYPT_'.$this->_avail_ciphers[$this->USE_CIPHER]);
+		} else {/*if ($this->_cur_cipher_id !== $this->USE_CIPHER) {*/
+			require_once YF_PATH.'libs/phpcrypt/phpCrypt.php';
 
 			$cipher_id_to_name = array(
 				0	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_128,
 				1	=>	PHP_Crypt\PHP_Crypt::CIPHER_BLOWFISH,
 				11	=>	PHP_Crypt\PHP_Crypt::CIPHER_3DES,
 			);
-/*
-			const CIPHER_3DES			= "3DES";
-			const CIPHER_3WAY			= "3-Way";
-			const CIPHER_AES_128		= "AES-128";
-			const CIPHER_AES_192		= "AES-192";
-			const CIPHER_AES_256		= "AES-256";
-			const CIPHER_ARC4			= "ARC4"; // Alternative RC4
-			const CIPHER_BLOWFISH		= "Blowfish";
-			const CIPHER_CAST_128		= "CAST-128";
-			const CIPHER_CAST_256		= "CAST-256";
-			const CIPHER_DES			= "DES";
-			const CIPHER_ENIGMA			= "Enigma";
-			const CIPHER_GOST			= "GOST";
-			const CIPHER_RC2			= "RC2";
-			const CIPHER_RIJNDAEL_128	= "Rijndael-128";
-			const CIPHER_RIJNDAEL_192	= "Rijndael-192";
-			const CIPHER_RIJNDAEL_256	= "Rijndael-256";
-			const CIPHER_SKIPJACK		= "Skipjack";
-			const CIPHER_SIMPLEXOR		= "SimpleXOR";
-			const CIPHER_VIGENERE		= "Vigenere"; // historical
-*/
-			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER]/*, PHP_Crypt\PHP_Crypt::MODE_CTR*/);
+#echo $cipher_id_to_name[$this->USE_CIPHER];
+			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER], PHP_Crypt\PHP_Crypt::MODE_ECB);
 		}
 	}
 
@@ -271,25 +215,23 @@ Vigenere
 		// MCrypt PHP module processing (high speed)
 		if ($this->USE_MCRYPT && $this->_mcrypt_cipher) {
 			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_ECB, '');
-			$key = substr(md5($this->_secret_key), 0, mcrypt_enc_get_key_size($td));
-			// In ECB mode IV value is ignored !
-			if (!strlen($this->_iv)) {
-				$this->_iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-			}
-			mcrypt_generic_init ($td, $key, $this->_iv);
+			$md5_key = md5($this->_secret_key);
+			$key = substr($md5_key, 0, mcrypt_enc_get_key_size($td));
+
+#			$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+			$iv = substr($md5_key, 0, mcrypt_enc_get_iv_size($td));
+
+			mcrypt_generic_init ($td, $key, $iv);
 			$encrypt = mcrypt_generic ($td, $data);
 			mcrypt_generic_deinit ($td);
 		// Use classes written in PHP (less speed, more flexibility)
 		} elseif (is_object($this->_cur_cipher)) {
-/*
-			if ($this->_key_assigned == false) {
-				$this->_cur_cipher->setkey($this->_secret_key);
-				$this->_key_assigned = true;
-			}
-			$encrypt = $this->_cur_cipher->encrypt($data);
-*/
 			$this->_cur_cipher->cipherKey($this->_secret_key);
-#			$iv = $this->_cur_cipher->createIV();
+
+#			$md5_key = md5($this->_secret_key);
+#			$iv = substr($md5_key, 0, 8);
+#			$this->_cur_cipher->IV($iv);
+
 			$encrypt = $this->_cur_cipher->encrypt($data);
 		}
 		return $encrypt;
@@ -308,26 +250,23 @@ Vigenere
 		// MCrypt PHP module processing (high speed)
 		if ($this->USE_MCRYPT && $this->_mcrypt_cipher) {
 			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_ECB, '');
-			$key = substr(md5($this->_secret_key), 0, mcrypt_enc_get_key_size($td));
-			// In ECB mode IV value is ignored !
-			if (!strlen($this->_iv)) {
-				$this->_iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-			}
-			mcrypt_generic_init ($td, $key, $this->_iv);
+			$md5_key = md5($this->_secret_key);
+			$key = substr($md5_key, 0, mcrypt_enc_get_key_size($td));
+
+#			$iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+			$iv = substr($md5_key, 0, mcrypt_enc_get_iv_size($td));
+
+			mcrypt_generic_init ($td, $key, $iv);
 			$decrypt = mdecrypt_generic ($td, $data);
 			mcrypt_generic_deinit ($td);
 		// Use classes written in PHP (less speed, more flexibility)
 		} elseif (is_object($this->_cur_cipher)) {
-/*
-			if ($this->_key_assigned == false) {
-				$this->_cur_cipher->setkey($this->_secret_key);
-				$this->_key_assigned = true;
-			}
-			$decrypt = $this->_cur_cipher->decrypt($data);
-*/
 			$this->_cur_cipher->cipherKey($this->_secret_key);
-#			$iv = $this->_cur_cipher->createIV();
+
+#			$md5_key = md5($this->_secret_key);
+#			$iv = substr($md5_key, 0, 8);
 #			$this->_cur_cipher->IV($iv);
+
 			$decrypt = $this->_cur_cipher->decrypt($data);
 		}
 		return rtrim($decrypt);
@@ -362,6 +301,26 @@ Vigenere
 	}
 
 	/**
+	*/
+	function _safe_base64_encode ($text) {
+		$r = array(
+			'/' => '*',
+		);
+		return str_replace(array_keys($r), array_values($r), base64_encode($text));
+	}
+
+	/**
+	*/
+	function _safe_base64_decode ($text) {
+		$r = array(
+			'*' => '/',
+			' ' => '+',
+			'%20' => '+',
+		);
+		return base64_decode(str_replace(array_keys($r), array_values($r), $text));
+	}
+
+	/**
 	* Safe encrypt data into base64 string (replace '/' symbol)
 	*/
 	function _safe_encrypt_with_base64 ($input, $secret = null, $cipher = null) {
@@ -371,10 +330,7 @@ Vigenere
 		if (isset($cipher)) {
 			$this->set_cipher($cipher);
 		}
-		$r = array(
-			'/' => '*',
-		);
-		return str_replace(array_keys($r), array_values($r), base64_encode($this->encrypt($input)));
+		return $this->_safe_base64_encode($this->encrypt($input));
 	}
 
 	/**
@@ -387,11 +343,6 @@ Vigenere
 		if (isset($cipher)) {
 			$this->set_cipher($cipher);
 		}
-		$r = array(
-			'*' => '/',
-			' ' => '+',
-			'%20' => '+',
-		);
-		return $this->decrypt(base64_decode(str_replace(array_keys($r), array_values($r), $input)));
+		return $this->decrypt($this->_safe_base64_decode($input));
 	}
 }
