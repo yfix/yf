@@ -11,7 +11,7 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {
 		self::$_bak_settings['USE_MCRYPT'] = _class('encryption')->USE_MCRYPT;
 		self::$_bak_settings['USE_CIPHER'] = _class('encryption')->USE_CIPHER;
-		_class('encryption')->USE_MCRYPT = false;
+		_class('encryption')->USE_MCRYPT = true;
 	}
 
 	public static function tearDownAfterClass() {
@@ -56,14 +56,13 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_03() {
+		$prev = _class('encryption')->USE_MCRYPT;
 		_class('encryption')->USE_MCRYPT = false;
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
-			if (!_class('encryption')->USE_MCRYPT && !in_array($cipher, array('CAST_128', 'BLOWFISH'))) {
-				continue;
-			}
 			$this->assertEquals($cipher, _class('encryption')->set_cipher($cipher)->get_cipher());
 			$this->assertEquals($cipher, _class('encryption')->set_cipher(strtolower($cipher))->get_cipher());
 		}
+		_class('encryption')->USE_MCRYPT = $prev;
 	}
 
 	public function test_04() {
@@ -71,15 +70,13 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		if (!function_exists('mcrypt_module_open')) {
 			return false;
 		}
+		$prev = _class('encryption')->USE_MCRYPT;
 		_class('encryption')->USE_MCRYPT = true;
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
-			if (!_class('encryption')->USE_MCRYPT && !in_array($cipher, array('CAST_128', 'BLOWFISH'))) {
-				continue;
-			}
 			$this->assertEquals($cipher, _class('encryption')->set_cipher($cipher)->get_cipher());
 			$this->assertEquals($cipher, _class('encryption')->set_cipher(strtolower($cipher))->get_cipher());
 		}
-		_class('encryption')->USE_MCRYPT = false;
+		_class('encryption')->USE_MCRYPT = $prev;
 	}
 
 	public function test_11() {
@@ -101,18 +98,10 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEmpty($encrypted);
 		$this->assertNotEquals($encrypted, self::$to_encode);
 		$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
-		$this->assertEquals('jkVmKEjPznMjISVwD3L54Pxjle+Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', $encrypted);
 
 		$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret);
 		$this->assertNotEmpty($decrypted);
 		$this->assertEquals(self::$to_encode, $decrypted);
-	}
-
-	public function test_22() {
-		$this->assertEquals(
-			'jkVmKEjPznMjISVwD3L54Pxjle+Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==',
-			_class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, self::$cipher)
-		);
 	}
 
 	public function test_31() {
@@ -122,56 +111,34 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEmpty($encrypted);
 		$this->assertNotEquals($encrypted, self::$to_encode);
 		$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
-		$this->assertEquals('VHRbYP9UBcpE3TQwjAlWERnQ4o1hSYK4evSry5yrEfgJqMRifcLWqdnHcOFnFsrTufZWJt0jxRpL7KzunBEh1A==', $encrypted);
 
 		$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret);
 		$this->assertNotEmpty($decrypted);
 		$this->assertEquals(self::$to_encode, $decrypted);
 	}
 
-	public function test_32() {
-		$this->assertEquals(
-			'VHRbYP9UBcpE3TQwjAlWERnQ4o1hSYK4evSry5yrEfgJqMRifcLWqdnHcOFnFsrTufZWJt0jxRpL7KzunBEh1A==',
-			_class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, 'blowfish')
-		);
+	public function test_41() {
+		$b64_decoded = _class('encryption')->_safe_base64_decode('jkVmKEjPznMjISVwD3L54Pxjle+Qb/3JR8L6CCQ5K//WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==');
+		$this->assertEquals($b64_decoded, _class('encryption')->_safe_base64_decode('jkVmKEjPznMjISVwD3L54Pxjle+Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA=='));
+		$this->assertEquals($b64_decoded, _class('encryption')->_safe_base64_decode('jkVmKEjPznMjISVwD3L54Pxjle Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA=='));
+		$this->assertEquals($b64_decoded, _class('encryption')->_safe_base64_decode('jkVmKEjPznMjISVwD3L54Pxjle Qb/3JR8L6CCQ5K//WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA=='));
 	}
 
-	public function test_41() {
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle+Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle%20Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle Qb/3JR8L6CCQ5K//WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
-		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64('jkVmKEjPznMjISVwD3L54Pxjle+Qb/3JR8L6CCQ5K//WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA==', self::$secret, self::$cipher));
-		$this->assertNotEquals(self::$to_encode, _class('encryption')->_safe_decrypt_with_base64(' jkVmKEjPznMjISVwD3L54Pxjle Qb*3JR8L6CCQ5K**WSeDejJykl7QeVHVAw7X50D7qaXS2jlrDfaD1sN52iA== ', self::$secret, self::$cipher));
+	public function test_42() {
+		$b64_encoded = _class('encryption')->_safe_base64_encode(self::$to_encode);
+		$this->assertNotEquals($b64_encoded, self::$to_encode);
+		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_base64_decode($b64_encoded));
 	}
 
 	public function test_51() {
-		$prev_encrypted = '';
-		foreach (_class('encryption')->_avail_ciphers as $cipher) {
-			if (!_class('encryption')->USE_MCRYPT && !in_array($cipher, array('CAST_128', 'BLOWFISH'))) {
-				continue;
-			}
-			$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, $cipher);
-			$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
-			$this->assertNotEquals($prev_encrypted, $encrypted);
-			$prev_encrypted = $encrypted;
-
-			$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret, $cipher);
-			$this->assertEquals(self::$to_encode, $decrypted);
-		}
-	}
-
-	public function test_52() {
 		// Do this test only if mcrypt is available
 		if (!function_exists('mcrypt_module_open')) {
 			return false;
 		}
+		$prev = _class('encryption')->USE_MCRYPT;
 		_class('encryption')->USE_MCRYPT = true;
 		$prev_encrypted = '';
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
-			if (!_class('encryption')->USE_MCRYPT && !in_array($cipher, array('CAST_128', 'BLOWFISH'))) {
-				continue;
-			}
 			$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, $cipher);
 			$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
 			$this->assertNotEquals($prev_encrypted, $encrypted);
@@ -180,6 +147,74 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 			$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret, $cipher);
 			$this->assertEquals(self::$to_encode, $decrypted);
 		}
-		_class('encryption')->USE_MCRYPT = false;
+		_class('encryption')->USE_MCRYPT = $prev;
 	}
+/*
+	public function test_52() {
+		// Do pure php encode/decode testing
+		$prev = _class('encryption')->USE_MCRYPT;
+		_class('encryption')->USE_MCRYPT = false;
+		$prev_encrypted = '';
+		foreach (_class('encryption')->_avail_ciphers as $cipher) {
+			$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, $cipher);
+			$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
+			$this->assertNotEquals($prev_encrypted, $encrypted);
+			$prev_encrypted = $encrypted;
+
+			$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret, $cipher);
+			$this->assertEquals(self::$to_encode, $decrypted);
+		}
+		_class('encryption')->USE_MCRYPT = $prev;
+	}
+*/
+/*
+	// Test if mcrypt and not mcrypt versions can be encoded/decoded similarly
+	public function test_61() {
+		// Do this test only if mcrypt is available
+		if (!function_exists('mcrypt_module_open')) {
+			return false;
+		}
+		$prev = _class('encryption')->USE_MCRYPT;
+		_class('encryption')->USE_MCRYPT = true;
+
+		_class('encryption')->set_cipher('cast128');
+
+		$encrypted = _class('encryption')->encrypt(self::$to_encode, self::$secret);
+		$this->assertNotEmpty($encrypted);
+		$this->assertNotEquals($encrypted, self::$to_encode);
+
+		_class('encryption')->USE_MCRYPT = false;
+
+		$decrypted = _class('encryption')->decrypt($encrypted, self::$secret);
+		$this->assertNotEmpty($decrypted);
+		$this->assertEquals(self::$to_encode, $decrypted);
+
+		_class('encryption')->USE_MCRYPT = $prev;
+	}
+*/
+/*
+	// Test if mcrypt and not mcrypt versions can be encoded/decoded similarly
+	public function test_62() {
+		// Do this test only if mcrypt is available
+		if (!function_exists('mcrypt_module_open')) {
+			return false;
+		}
+		$prev = _class('encryption')->USE_MCRYPT;
+		_class('encryption')->USE_MCRYPT = false;
+
+		_class('encryption')->set_cipher('cast128');
+
+		$encrypted = _class('encryption')->encrypt(self::$to_encode, self::$secret);
+		$this->assertNotEmpty($encrypted);
+		$this->assertNotEquals($encrypted, self::$to_encode);
+
+		_class('encryption')->USE_MCRYPT = true;
+
+		$decrypted = _class('encryption')->decrypt($encrypted, self::$secret);
+		$this->assertNotEmpty($decrypted);
+		$this->assertEquals(self::$to_encode, $decrypted);
+
+		_class('encryption')->USE_MCRYPT = $prev;
+	}
+*/
 }
