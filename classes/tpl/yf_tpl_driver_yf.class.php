@@ -312,7 +312,7 @@ class yf_tpl_driver_yf {
 
 		// Insert constant here (cutoff for eval_code). Examples: {const("SITE_NAME")}
 		$string = preg_replace_callback('/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i', function($m) {
-			return eval('return '.$m[1].';');
+			return constant($m[1]);
 		}, $string);
 
 		// Configuration item. Examples: {conf("TEST_DOMAIN")}
