@@ -32,12 +32,12 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_02() {
-		_class('encryption')->set_cipher('3des');
-		$this->assertEquals(11, _class('encryption')->USE_CIPHER);
-		$this->assertEquals('3DES', _class('encryption')->get_cipher());
+		_class('encryption')->set_cipher('cast256');
+		$this->assertEquals(4, _class('encryption')->USE_CIPHER);
+		$this->assertEquals('CAST_256', _class('encryption')->get_cipher());
 
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher(self::$cipher)->get_cipher());
-		$this->assertEquals('3DES', _class('encryption')->set_cipher('3des')->get_cipher());
+		$this->assertEquals('CAST_256', _class('encryption')->set_cipher('cast256')->get_cipher());
 
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher('cast128')->get_cipher());
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher('cast-128')->get_cipher());
@@ -46,9 +46,6 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher('CAST 128')->get_cipher());
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher('  CAST 128  ')->get_cipher());
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher('  CAST128  ')->get_cipher());
-
-		$this->assertEquals('BLOWFISH', _class('encryption')->set_cipher('blowfish')->get_cipher());
-		$this->assertEquals('BLOWFISH', _class('encryption')->set_cipher('BLOWFISH')->get_cipher());
 
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher(self::$cipher)->get_cipher());
 		$this->assertEquals(self::$cipher, _class('encryption')->set_cipher('some unknown cipher')->get_cipher());
@@ -105,7 +102,7 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_31() {
-		_class('encryption')->set_cipher('blowfish');
+		_class('encryption')->set_cipher('cast256');
 
 		$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret);
 		$this->assertNotEmpty($encrypted);
@@ -149,13 +146,14 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		}
 		_class('encryption')->USE_MCRYPT = $prev;
 	}
-/*
+
 	public function test_52() {
 		// Do pure php encode/decode testing
 		$prev = _class('encryption')->USE_MCRYPT;
 		_class('encryption')->USE_MCRYPT = false;
 		$prev_encrypted = '';
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
+#$ts = microtime(true);
 			$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, $cipher);
 			$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
 			$this->assertNotEquals($prev_encrypted, $encrypted);
@@ -163,10 +161,10 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 
 			$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret, $cipher);
 			$this->assertEquals(self::$to_encode, $decrypted);
+#echo $cipher.': '.(microtime(true) - $ts).PHP_EOL;
 		}
 		_class('encryption')->USE_MCRYPT = $prev;
 	}
-*/
 /*
 	// Test if mcrypt and not mcrypt versions can be encoded/decoded similarly
 	public function test_61() {
