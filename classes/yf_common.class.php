@@ -1437,5 +1437,31 @@ class yf_common {
 			);
 		}
 		return $images;
-	}	
+	}
+
+	/**
+	*/
+	function rar_extract($archive_name, $EXTRACT_PATH){
+		$rar = rar_open($archive_name);
+		$list = rar_list($rar);
+		foreach($list as $file) {
+			$file = explode("\"",$file); 
+		    $entry = rar_entry_get($rar, $file[1]);
+		    $entry->extract($EXTRACT_PATH); 
+		}
+		rar_close($rar);
+	}
+
+	/**
+	*/
+	function zip_extract($archive_name, $EXTRACT_PATH){
+		$zip = new ZipArchive;
+		$res = $zip->open($archive_name);
+		if ($res === TRUE) {
+		    $zip->extractTo($EXTRACT_PATH);
+			$zip->close();
+		}
+	}
+
 }
+
