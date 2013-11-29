@@ -10,6 +10,7 @@
 class yf_encryption {
 
 	/** @var bool Use internal PHP MCrypt module or not */
+#	public $USE_MCRYPT		= true;
 	public $USE_MCRYPT		= false;
 	/** @var int Define which cryptographic algorithm to use */
 	public $USE_CIPHER		= 0;
@@ -17,6 +18,7 @@ class yf_encryption {
 	public $_avail_ciphers	= array(
 		0	=>	'CAST_128', // note: PHP Class exists
 		1	=>	'BLOWFISH', // note: PHP Class exists
+/*
 		2	=>	'XTEA',
 		3	=>	'TWOFISH',
 		4	=>	'CAST_256',
@@ -26,10 +28,13 @@ class yf_encryption {
 		8	=>	'RIJNDAEL_128',
 		9	=>	'RC2',
 		10	=>	'RIJNDAEL_192',
+*/
 		11	=>	'3DES',
+/*
 		12	=>	'LOKI97',
 		13	=>	'RIJNDAEL_256',
 		14	=>	'SAFERPLUS',
+*/
 	);
 /*
 MCRYPT_3DES
@@ -119,24 +124,30 @@ Vigenere
 		if (isset($crypto_use_cipher)) {
 			$this->USE_CIPHER = $crypto_use_cipher;
 		}
-/*
-include(dirname(__FILE__)."/../phpCrypt.php");
-use PHP_Crypt\PHP_Crypt as PHP_Crypt;
+		if (!extension_loaded('mcrypt')) {
+			$this->USE_MCRYPT = false;
+		}
+	}
 
-$text = "This is my secret message.";
-$key = "^mY@TEst~Key_0123456789abcefghij"; // the key will be truncated if it's too long
+	/**
+	*/
+	function _load_phpcrypt () {
+		require_once YF_PATH.'libs/phpcrypt/phpCrypt.php';
+#		use PHP_Crypt\PHP_Crypt as PHP_Crypt;
 
-$crypt = new PHP_Crypt($key, PHP_Crypt::CIPHER_AES_256, PHP_Crypt::MODE_CTR);
+#		$text = "This is my secret message.";
+#		$key = "^mY@TEst~Key_0123456789abcefghij"; // the key will be truncated if it's too long
 
-$iv = $crypt->createIV();
-$encrypt = $crypt->encrypt($text);
+#		$crypt = new PHP_Crypt($key, PHP_Crypt::CIPHER_AES_256, PHP_Crypt::MODE_CTR);
 
-$crypt->IV($iv);
-$decrypt = $crypt->decrypt($encrypt);
+#		$iv = $crypt->createIV();
+#		$encrypt = $crypt->encrypt($text);
 
-print "CIPHER: ".$crypt->cipherName()."\n";
-print "MODE: ".$crypt->modeName()."\n";
-*/
+#		$crypt->IV($iv);
+#		$decrypt = $crypt->decrypt($encrypt);
+
+#		print "CIPHER: ".$crypt->cipherName()."\n";
+#		print "MODE: ".$crypt->modeName()."\n";
 	}
 
 	/**
@@ -152,6 +163,7 @@ print "MODE: ".$crypt->modeName()."\n";
 				trigger_error('Wrong Cipher number '.$this->USE_CIPHER, E_USER_ERROR);
 			}
 		} elseif ($this->_cur_cipher_id !== $this->USE_CIPHER) {
+/*
 			$driver_name = 'encryption_'.strtolower($this->_avail_ciphers[$this->USE_CIPHER]);
 			$driver_loaded_class_name = main()->load_class_file($driver_name, 'classes/encryption/');
 			if ($driver_loaded_class_name) {
@@ -161,6 +173,36 @@ print "MODE: ".$crypt->modeName()."\n";
 			if (!is_object($this->_cur_cipher)) {
 				trigger_error('Wrong Cipher number '.$this->USE_CIPHER, E_USER_ERROR);
 			}
+*/
+			$this->_load_phpcrypt();
+
+			$cipher_id_to_name = array(
+				0	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_128,
+				1	=>	PHP_Crypt\PHP_Crypt::CIPHER_BLOWFISH,
+				11	=>	PHP_Crypt\PHP_Crypt::CIPHER_3DES,
+			);
+/*
+			const CIPHER_3DES			= "3DES";
+			const CIPHER_3WAY			= "3-Way";
+			const CIPHER_AES_128		= "AES-128";
+			const CIPHER_AES_192		= "AES-192";
+			const CIPHER_AES_256		= "AES-256";
+			const CIPHER_ARC4			= "ARC4"; // Alternative RC4
+			const CIPHER_BLOWFISH		= "Blowfish";
+			const CIPHER_CAST_128		= "CAST-128";
+			const CIPHER_CAST_256		= "CAST-256";
+			const CIPHER_DES			= "DES";
+			const CIPHER_ENIGMA			= "Enigma";
+			const CIPHER_GOST			= "GOST";
+			const CIPHER_RC2			= "RC2";
+			const CIPHER_RIJNDAEL_128	= "Rijndael-128";
+			const CIPHER_RIJNDAEL_192	= "Rijndael-192";
+			const CIPHER_RIJNDAEL_256	= "Rijndael-256";
+			const CIPHER_SKIPJACK		= "Skipjack";
+			const CIPHER_SIMPLEXOR		= "SimpleXOR";
+			const CIPHER_VIGENERE		= "Vigenere"; // historical
+*/
+			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER]/*, PHP_Crypt\PHP_Crypt::MODE_CTR*/);
 		}
 	}
 
@@ -233,17 +275,22 @@ print "MODE: ".$crypt->modeName()."\n";
 			$key = substr(md5($this->_secret_key), 0, mcrypt_enc_get_key_size($td));
 			// In ECB mode IV value is ignored !
 			if (!strlen($this->_iv)) {
-				$this->_iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+				$this->_iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
 			}
 			mcrypt_generic_init ($td, $key, $this->_iv);
 			$encrypt = mcrypt_generic ($td, $data);
 			mcrypt_generic_deinit ($td);
 		// Use classes written in PHP (less speed, more flexibility)
 		} elseif (is_object($this->_cur_cipher)) {
+/*
 			if ($this->_key_assigned == false) {
 				$this->_cur_cipher->setkey($this->_secret_key);
 				$this->_key_assigned = true;
 			}
+			$encrypt = $this->_cur_cipher->encrypt($data);
+*/
+			$this->_cur_cipher->cipherKey($this->_secret_key);
+#			$iv = $this->_cur_cipher->createIV();
 			$encrypt = $this->_cur_cipher->encrypt($data);
 		}
 		return $encrypt;
@@ -272,10 +319,16 @@ print "MODE: ".$crypt->modeName()."\n";
 			mcrypt_generic_deinit ($td);
 		// Use classes written in PHP (less speed, more flexibility)
 		} elseif (is_object($this->_cur_cipher)) {
+/*
 			if ($this->_key_assigned == false) {
 				$this->_cur_cipher->setkey($this->_secret_key);
 				$this->_key_assigned = true;
 			}
+			$decrypt = $this->_cur_cipher->decrypt($data);
+*/
+			$this->_cur_cipher->cipherKey($this->_secret_key);
+#			$iv = $this->_cur_cipher->createIV();
+#			$this->_cur_cipher->IV($iv);
 			$decrypt = $this->_cur_cipher->decrypt($data);
 		}
 		return rtrim($decrypt);
