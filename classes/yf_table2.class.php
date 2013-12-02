@@ -155,8 +155,19 @@ class yf_table2 {
 		// Automatically get fields from results
 		if ($params['auto'] && $data) {
 			$field_names = array_keys((array)current((array)$data));
+			$skip_fields = array();
+			foreach ((array)$this->_params['hidden_map'] as $container => $field) {
+				$skip_fields[$field] = $field;
+			}
 			foreach ((array)$field_names as $f) {
-				$this->text($f);
+				if (isset($skip_fields[$f])) {
+					continue;
+				}
+				$_extra = array();
+				if (isset($this->_params['hidden_map'][$f])) {
+					$_extra['hidden_data'] = array('%'.$this->_params['hidden_map'][$f]);
+				}
+				$this->text($f, $_extra);
 			}
 			if (!$params['auto_no_buttons']) {
 				$this->btn_edit();
