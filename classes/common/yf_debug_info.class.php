@@ -538,35 +538,21 @@ class yf_debug_info {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
-#		$data = debug('rewrite') || $GLOBALS['REWRITE_DEBUG'];
-		$data = $GLOBALS['REWRITE_DEBUG'];
+		$data = debug('rewrite');
 		if (empty($data)) {
 			return '';
 		}
 		$items = array();
-/*
-		$body = '';
-		$body .= '<div class="debug_allow_close"><h5>'.t('rewrite_links_info').'</h5><ol>';
-		$data['SOURCE']		= array_unique($data['SOURCE']);
-		$data['REWRITED']	= array_unique($data['REWRITED']);
-		foreach ((array)$data['SOURCE'] as $k => $v) {
-			$body .= '<li>'.$v.' =&gt; '.$this->_admin_link('link', $data['REWRITED'][$k]).'</li>';
-		}
-		$body .= '</ol><i>'.t('Rewrite processing time').': '.common()->_format_time_value($GLOBALS['rewrite_exec_time']).' <span>sec</span></div>';
-*/
-
-		$data['SOURCE']		= array_unique($data['SOURCE']);
-		$data['REWRITED']	= array_unique($data['REWRITED']);
-		foreach ((array)$data['SOURCE'] as $k => $v) {
+		foreach ((array)$data as $k => $v) {
 			$items[] = array(
-				'id'		=> ++$counter,
-#				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
-				'source'	=> strval($v),
-				'result'	=> strval($this->_admin_link('link', $data['REWRITED'][$k])),
-#				'trace'		=> '<pre><small>'.$cur_trace.'</small></pre>',
+				'id'		=> $k + 1,
+				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
+				'source'	=> strval($v['source']),
+				'rewrited'	=> strval($this->_admin_link('link', $v['rewrited'])),
+				'trace'		=> '<pre><small>'.$v['trace'].'</small></pre>',
 			);
 		}
-		$body .= t('Rewrite processing time').': '.common()->_format_time_value($GLOBALS['rewrite_exec_time']).' <span>sec</span>';
+		$body .= t('Rewrite processing time').': '.common()->_format_time_value(debug('rewrite_exec_time')).' <span>sec</span>';
 		$body .= $this->_show_auto_table($items);
 		return $body;
 	}
