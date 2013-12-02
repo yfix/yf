@@ -95,20 +95,20 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret);
 		$this->assertNotEmpty($encrypted);
 		$this->assertNotEquals($encrypted, self::$to_encode);
-		$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
+		$this->assertRegexp('/^[a-z0-9\=+\*\|]+$/i', $encrypted);
 
 		$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret);
 		$this->assertNotEmpty($decrypted);
 		$this->assertEquals(self::$to_encode, $decrypted);
 	}
-/*
+
 	public function test_31() {
 		_class('encryption')->set_cipher('cast256');
 
 		$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret);
 		$this->assertNotEmpty($encrypted);
 		$this->assertNotEquals($encrypted, self::$to_encode);
-		$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
+		$this->assertRegexp('/^[a-z0-9\=+\*\|]+$/i', $encrypted);
 
 		$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret);
 		$this->assertNotEmpty($decrypted);
@@ -127,7 +127,7 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEquals($b64_encoded, self::$to_encode);
 		$this->assertEquals(self::$to_encode, _class('encryption')->_safe_base64_decode($b64_encoded));
 	}
-/*
+
 	public function test_51() {
 		// Do this test only if mcrypt is available
 		if (!function_exists('mcrypt_module_open')) {
@@ -138,7 +138,7 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		$prev_encrypted = '';
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
 			$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, $cipher);
-			$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
+			$this->assertRegexp('/^[a-z0-9\=+\*\|]+$/i', $encrypted);
 			$this->assertNotEquals($prev_encrypted, $encrypted);
 			$prev_encrypted = $encrypted;
 
@@ -154,19 +154,17 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 		_class('encryption')->USE_MCRYPT = false;
 		$prev_encrypted = '';
 		foreach (_class('encryption')->_avail_ciphers as $cipher) {
-#$ts = microtime(true);
 			$encrypted = _class('encryption')->_safe_encrypt_with_base64(self::$to_encode, self::$secret, $cipher);
-			$this->assertRegexp('/^[a-z0-9\=+\*]+$/i', $encrypted);
+			$this->assertRegexp('/^[a-z0-9\=+\*\|]+$/i', $encrypted);
 			$this->assertNotEquals($prev_encrypted, $encrypted);
 			$prev_encrypted = $encrypted;
 
 			$decrypted = _class('encryption')->_safe_decrypt_with_base64($encrypted, self::$secret, $cipher);
 			$this->assertEquals(self::$to_encode, $decrypted);
-#echo $cipher.': '.(microtime(true) - $ts).PHP_EOL;
 		}
 		_class('encryption')->USE_MCRYPT = $prev;
 	}
-/*
+
 	// Test if mcrypt and not mcrypt versions can be encoded/decoded similarly
 	public function test_61() {
 		// Do this test only if mcrypt is available
@@ -191,8 +189,7 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 
 		_class('encryption')->USE_MCRYPT = $prev;
 	}
-*/
-/*
+
 	// Test if mcrypt and not mcrypt versions can be encoded/decoded similarly
 	public function test_62() {
 		// Do this test only if mcrypt is available
@@ -217,5 +214,4 @@ class class_encryption_test extends PHPUnit_Framework_TestCase {
 
 		_class('encryption')->USE_MCRYPT = $prev;
 	}
-*/
 }
