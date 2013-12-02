@@ -42,6 +42,7 @@ class yf_shop_supplier_panel_upload_images {
 			 $SUPPLIER_ID = $_POST['supplier'];
 		}
 		$file = $_FILES['archive'];
+		$log_str = "\n[".$file['name']."]\n";
 		$new_name = md5(rand().microtime()).'.'.pathinfo($file['name'], PATHINFO_EXTENSION);
 		rename($file['name'], $new_name);
 		$archive_name = $this->ARCHIVE_FOLDER. $new_name;
@@ -70,20 +71,25 @@ class yf_shop_supplier_panel_upload_images {
 		}
 		foreach($result_files as $k => $v){
 			$status = $this->search_product_by_filename($v, $SUPPLIER_ID);
+			$status = is_array($status)? $status['status'] : $status;
+			$filename = str_replace($EXTRACT_PATH, '', $v);
+			$product_id = is_array($status)? $status['id'] : "???";
 			$items[] = array(
 				"number"	=> $k,
-				"filename"	=> str_replace($EXTRACT_PATH, '', $v),
-				"status"	=> is_array($status)? $status['status'] : $status,
+				"filename"	=> $filename,
+				"status"	=> $status,
 				"image"		=> is_array($status)? str_replace(PROJECT_PATH, WEB_PATH, $status['img']): "",
 				"edit_url"	=> is_array($status)? "./?object=manage_shop&action=product_edit&id=".$status['id'] : "",
 			);
-			$replace =array(
-				"items" => $items,
-			);	
+			$log_str .= $product_id." | ".$status." | ".$filename.";\n";
 		}
+		$replace =array(
+			"items" => $items,
+		);	
 		_class('dir')->delete_dir($EXTRACT_PATH, true);
 		unlink($this->ARCHIVE_FOLDER.$new_name);
 		common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']));
+		file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", $log_str, FILE_APPEND);
 
 		return tpl()->parse("shop_supplier_panel/upload_archive", $replace);
 	}
