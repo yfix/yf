@@ -637,7 +637,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		return $this->_show_auto_table(debug('_core_cache_debug::get'));
+		$items = debug('_core_cache_debug::get');
+		foreach ((array)$items as $k => $v) {
+			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
 	}
 
 	/**
@@ -646,7 +650,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		return $this->_show_auto_table(debug('_core_cache_debug::set'));
+		$items = debug('_core_cache_debug::set');
+		foreach ((array)$items as $k => $v) {
+			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('name' => 'trace')));
 	}
 
 	/**
@@ -655,7 +663,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		return $this->_show_auto_table(debug('_core_cache_debug::refresh'));
+		$items = debug('_core_cache_debug::refresh');
+		foreach ((array)$items as $k => $v) {
+			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('name' => 'trace')));
 	}
 
 	/**
