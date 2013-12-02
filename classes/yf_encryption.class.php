@@ -156,6 +156,9 @@ class yf_encryption {
 	/**
 	*/
 	function decrypt($data, $secret = null, $cipher = null, $iv) {
+		if (!$iv) {
+			return false;
+		}
 		if (isset($secret)) {
 			$this->set_key($secret);
 		}
@@ -184,7 +187,7 @@ class yf_encryption {
 	* Encrypt specified file using private key
 	*/
 	function encrypt_file ($source_path, $encrypted_path, $secret = null, $cipher = null) {
-		file_put_contents($encrypted_path, $this->encrypt(file_get_contents($source_path)));
+		file_put_contents($encrypted_path, $this->encrypt(file_get_contents($source_path), $secret, $cipher));
 		return $this;
 	}
 
@@ -222,14 +225,17 @@ class yf_encryption {
 	function _safe_encrypt_with_base64 ($input, $secret = null, $cipher = null) {
 		$encrypted = $this->encrypt($input, $secret, $cipher);
 		$iv = $this->_iv;
-		return $this->_safe_base64_encode($iv.'|'.$encrypted);
+		return $this->_safe_base64_encode($iv).'|'.$this->_safe_base64_encode($encrypted);
 	}
 
 	/**
 	* Safe decrypt data from base64 string (replace '/' symbol)
 	*/
 	function _safe_decrypt_with_base64 ($input, $secret = null, $cipher = null) {
-		list($iv, $encrypted) = explode('|', $this->_safe_base64_decode($input));
-		return $this->decrypt($encrypted, $secret, $cipher, $iv);
+		if (strpos($input, '|') === false) {
+			return false;
+		}
+		list($iv, $encrypted) = explode('|', $input);
+		return $this->decrypt($this->_safe_base64_decode($encrypted), $secret, $cipher, $this->_safe_base64_decode($iv));
 	}
 }
