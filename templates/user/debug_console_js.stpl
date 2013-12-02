@@ -1,7 +1,8 @@
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
 <script type="text/javascript">
 $(function(){
 	// Needed for debug console
-	$("#debug_console table.debug_item a[data-hidden-toggle]").on("click", function(e){
+	$("table.debug_item a[data-hidden-toggle]", "#debug_console").on("click", function(e){
 		e.preventDefault();
 		var _this = $(this)
 		var _parent = _this.closest("tr")
@@ -12,7 +13,7 @@ $(function(){
 	})
 
 	// Needed for debug console
-	$("#debug_console .btn-toggle").on("click", function(e){
+	$(".btn-toggle", "#debug_console").on("click", function(e){
 		e.preventDefault();
 		var _this = $(this)
 		var _toggle_what_id = _this.data("hidden-toggle")
@@ -20,6 +21,11 @@ $(function(){
 			$('#' + _toggle_what_id).toggle();
 		}
 		console.log(_this, _toggle_what_id)
+	})
+
+	// Needed for debug console
+	$("ul.nav-tabs li a", "#debug_console").on("click", function(){
+		$.cookie('debug_tabs_active', $(this).attr("href").substring(1)); // Remove # at the beginning
 	})
 });
 </script>
