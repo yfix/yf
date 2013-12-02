@@ -12,11 +12,11 @@ class yf_encryption {
 	/** @var bool Use internal PHP MCrypt module or not */
 	public $USE_MCRYPT		= true;
 	/** @var int Define which cryptographic algorithm to use */
-	public $USE_CIPHER		= 0;
+	public $USE_CIPHER		= 4;
 	/** @var array Available algorithms (sorted in speed descending order) */
 	public $_avail_ciphers	= array(
-		0	=>	'CAST_128',
 		4	=>	'CAST_256',
+		0	=>	'CAST_128',
 	);
 	/** @var string Secret key */
 	public $_secret_key	= 'secret 134578';
