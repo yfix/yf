@@ -250,8 +250,9 @@ class yf_debug_info {
 				continue;
 			}
 			$is_first = (++$i == 1);
-			$contents[$name] = '  <div class="tab-pane fade in'.($is_first ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
-			$links[$name] = '  <li'.($is_first ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
+			$is_active = isset($_COOKIE['debug_tabs_active']) ? ($_COOKIE['debug_tabs_active'] == 'debug_item_'.$name) : $is_first;
+			$contents[$name] = '  <div class="tab-pane fade in'.($is_active ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
+			$links[$name] = '  <li'.($is_active ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
 		}
 
 		$body .= '<ul class="nav nav-tabs">';
