@@ -18,7 +18,6 @@ class yf_rewrite {
 	* Replace links for url rewrite
 	*/
 	function _rewrite_replace_links ($body = '', $standalone = false, $force_rewrite = false, $for_site_id = false) {
-		// Skip rewriting for the admin section
 		if (MAIN_TYPE_ADMIN && !$force_rewrite) {
 			return $body;
 		}
@@ -32,8 +31,8 @@ class yf_rewrite {
 			$r_array = array();
 			foreach ($links as $v) {
 				$url = parse_url($v);
-				parse_str($url['query'],$arr);
-				$replace = $this->_force_get_url($arr,$_SERVER['HTTP_HOST']);
+				parse_str($url['query'], $arr);
+				$replace = $this->_force_get_url($arr, $_SERVER['HTTP_HOST']);
 				$r_array[$v] = $replace;
 			}
 			// Fix for bug with similar shorter links, sort by length DESC
@@ -45,20 +44,22 @@ class yf_rewrite {
 				}
 				return ($sa < $sb) ? +1 : -1;
 			});
-			// DO NOT USE strtr() here!!!
 			$body = str_replace(array_keys($r_array), array_values($r_array), $body);
-			// Show debug info if needed
 			if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
-				if (empty($GLOBALS['REWRITE_DEBUG'])) $GLOBALS['REWRITE_DEBUG'] = array('SOURCE'=> array(),	'REWRITED'	=> array());
-				$GLOBALS['REWRITE_DEBUG']['SOURCE']		= array_merge($GLOBALS['REWRITE_DEBUG']['SOURCE'],		array_keys($r_array));
-				$GLOBALS['REWRITE_DEBUG']['REWRITED']	= array_merge($GLOBALS['REWRITE_DEBUG']['REWRITED'],	array_values($r_array));
+				$exec_time = (microtime(true) - $this->_time_start);
+				$trace = main()->trace_string();
+				foreach ((array)$r_array as $s => $r) {
+					debug('rewrite[]', array(
+						'source'	=> $s,
+						'rewrited'	=> $r,
+						'trace'		=> $trace,
+						'exec_time'	=> $exec_time,
+					));
+				}
 			}
 		}
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
-			if (!isset($GLOBALS['rewrite_exec_time'])) {
-				$GLOBALS['rewrite_exec_time'] = 0;
-			}
-			$GLOBALS['rewrite_exec_time'] += (microtime(true) - $this->_time_start);
+			debug('rewrite_exec_time', debug('rewrite_exec_time') + $exec_time);
 		}
 		return $body;
 	}
@@ -66,8 +67,10 @@ class yf_rewrite {
 	/**
 	*/
 	function _force_get_url ($params = array(), $host = '', $url_str = '', $gen_cache = true) {
-		$time_start = microtime(true);
-		if (!is_array($params) && empty($url_str)){
+		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
+			$time_start = microtime(true);
+		}
+		if (!is_array($params) && empty($url_str)) {
 			return false;
 		}
 		if (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache'])){
@@ -75,7 +78,6 @@ class yf_rewrite {
 			$params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
 			$params['no_core_cache'] = isset($_GET['no_core_cache']) ? 'y' : '';
 		}
-
 		if (empty($url_str)){
 			if (isset($params['action']) && empty($params['action'])){
 				$params['action'] = 'show';
@@ -94,12 +96,26 @@ class yf_rewrite {
 		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1){
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
-			foreach ((array)$params as $k=>$v) {
-				if ($k == 'host') continue;
+			foreach ((array)$params as $k => $v) {
+				if ($k == 'host') {
+					continue;
+				}
 				$arr_out[] = $k.'='.$v;
 			}
-			if (!empty($arr_out)) $u .= '?'.implode('&',$arr_out);
-			$link = $this->_correct_protocol('http://'.$params[host].'/'.$u);
+			if (!empty($arr_out)) {
+				$u .= '?'.implode('&',$arr_out);
+			}
+			$link = $this->_correct_protocol('http://'.$params['host'].'/'.$u);
+		}
+        if (DEBUG_MODE) {
+			debug(__FUNCTION__.'[]', array(
+				'params'		=> $params,
+				'rewrited_link' => $link,
+				'host'			=> $host,
+				'url_str'		=> $url_str,
+				'time'			=> microtime(true) - $time_start,
+				'trace' 		=> main()->trace_string(),
+			));
 		}
 		return $link;
 	}
