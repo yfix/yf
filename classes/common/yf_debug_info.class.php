@@ -552,7 +552,12 @@ class yf_debug_info {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
-		return $this->_show_key_val_table(debug('_force_get_url'));
+		$items = debug('_force_get_url');
+		foreach ((array)$items as $k => $v) {
+			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
+			$items[$k]['time'] = strval(common()->_format_time_value($v['time']));
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
 	}
 
 	/**
