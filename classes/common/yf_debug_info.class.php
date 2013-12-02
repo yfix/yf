@@ -416,18 +416,7 @@ class yf_debug_info {
 		}
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
-
-		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed', 'pager_records_on_page' => 10000))
-			->text('id')
-			->text('exec_time')
-			->text('name', array('hidden_data' => array('%trace')))
-			->text('storage')
-			->text('calls')
-			->text('size')
-			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
-		;
-
-#		$body .= $this->_show_auto_table($items);
+		$body .= $this->_show_auto_table($items, array('hidden_map' => array('name' => 'trace')));
 		return $body;
 	}
 
@@ -553,7 +542,7 @@ class yf_debug_info {
 			);
 		}
 		$body .= t('Rewrite processing time').': '.common()->_format_time_value(debug('rewrite_exec_time')).' <span>sec</span>';
-		$body .= $this->_show_auto_table($items);
+		$body .= $this->_show_auto_table($items, array('hidden_map' => array('source' => 'trace')));
 		return $body;
 	}
 
@@ -1137,40 +1126,23 @@ class yf_debug_info {
 				if (is_array($v)) {
 					$v = !empty($v) ? print_r($v, 1) : '';
 				}
-// TODO: auto-assign hidden trace container and button
-				if ($k == 'trace') {
-					unset($item[$k]);
-				}
 			}
 		}
-#		if ($params['total_sum']) {
-#		}
 		if (!$items) {
 			return false;
 		}
 #		$caption .= 'items: '.count($items);
-
 		$table = table((array)$items, array(
 			'table_class' 		=> 'debug_item table-condensed', 
 			'auto_no_buttons' 	=> 1,
 			'caption'			=> $caption,
 			'pager_records_on_page' => 10000,
-			'hidden_data'		=> $params['hidden_data'],
-			'hidden_toggle'		=> $params['hidden_toggle'],
+			'hidden_map'		=> $params['hidden_map'],
 		))->auto();
 
-		$h_toggle = $params['hidden_toggle'];
-		if ($h_toggle) {
-			foreach ((array)$h_toggle as $from => $to) {
-				$table->btn($from, 'javascript:void();', array('hidden_toggle' => $to));
-			}
+		foreach ((array)$params['hidden_map'] as $to => $name) {
+			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
 		}
-/*
-		return table((array)$items, array('table_class' => 'debug_item table-condensed','pager_records_on_page' => 10000))
-			->text('name', array('hidden_data' => array('%trace')))
-			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
-		;
-*/
 		return $table;
 	}
 }
