@@ -264,12 +264,12 @@ class yf_cache {
 
 				debug('_core_cache_debug::get::'.$debug_index, array(
 					'name'		=> $cache_name,
-					'time'		=> round($_time, 5),
 					'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
-					'trace'		=> $this->trace_string(),
 					'driver'	=> $this->DRIVER,
 					'params'	=> $params,
 					'force_ttl'	=> $force_ttl,
+					'time'		=> round($_time, 5),
+					'trace'		=> $this->trace_string(),
 				));
 			}
 		}
@@ -369,10 +369,10 @@ class yf_cache {
 
 				debug('_core_cache_debug::set::'.$debug_index, array(
 					'name'		=> $cache_name,
-					'time'		=> round($_time, 5),
 					'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
-					'trace'		=> $this->trace_string(),
 					'driver'	=> $this->DRIVER,
+					'time'		=> round($_time, 5),
+					'trace'		=> $this->trace_string(),
 				));
 			}
 		}
