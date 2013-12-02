@@ -576,9 +576,10 @@ class yf_debug_info {
 				'loaded_class'	=> $data['loaded_class_name'],
 				'size'			=> file_exists($data['loaded_path']) ? filesize($data['loaded_path']) : '',
 				'storage'		=> $data['storage'],
+				'trace'			=> '<pre><small>'.$data['trace'].'</small></pre>',
 			);
 		}
-		return $this->_show_auto_table($items);
+		return $this->_show_auto_table($items, array('hidden_map' => array('path' => 'trace')));
 	}
 
 	/**
@@ -610,7 +611,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_MAIN_EXECUTE) {
 			return '';
 		}
-		return $this->_show_auto_table(debug('main_execute_block_time'));
+		$items = debug('main_execute_block_time');
+		foreach ((array)$items as $k => $v) {
+			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
 	}
 
 	/**
@@ -619,7 +624,11 @@ class yf_debug_info {
 		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return '';
 		}
-		return $this->_show_auto_table(debug('_main_get_data_debug'));
+		$items = debug('_main_get_data_debug');
+		foreach ((array)$items as $k => $v) {
+			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
 	}
 
 	/**
