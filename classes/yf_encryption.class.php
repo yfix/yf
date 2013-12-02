@@ -57,12 +57,11 @@ class yf_encryption {
 			$this->_mcrypt_cipher = constant('MCRYPT_'.$this->_avail_ciphers[$this->USE_CIPHER]);
 		} else {/*if ($this->_cur_cipher_id !== $this->USE_CIPHER) {*/
 			require_once YF_PATH.'libs/phpcrypt/phpCrypt.php';
-
 			$cipher_id_to_name = array(
 				0	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_128,
 				4	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_256,
 			);
-			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER], PHP_Crypt\PHP_Crypt::MODE_ECB);
+			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER], PHP_Crypt\PHP_Crypt::MODE_CBC);
 		}
 	}
 
@@ -121,6 +120,12 @@ class yf_encryption {
 
 	/**
 	*/
+	function get_iv() {
+		return $this->_iv;
+	}
+
+	/**
+	*/
 	function encrypt($data, $secret = null, $cipher = null) {
 		if (isset($secret)) {
 			$this->set_key($secret);
@@ -129,34 +134,28 @@ class yf_encryption {
 			$this->set_cipher($cipher);
 		}
 		$this->init();
+		$key = $this->_secret_key;
 		// MCrypt PHP module processing (high speed)
 		if ($this->USE_MCRYPT && $this->_mcrypt_cipher) {
-			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_ECB, '');
-			$md5_key = md5($this->_secret_key);
-			$key = substr($md5_key, 0, mcrypt_enc_get_key_size($td));
-
-#			$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-			$iv = substr($md5_key, 0, mcrypt_enc_get_iv_size($td));
-
-			mcrypt_generic_init ($td, $key, $iv);
-			$encrypt = mcrypt_generic ($td, $data);
+			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_CBC, '');
+			$key = substr($key, 0, mcrypt_enc_get_key_size($td));
+			$this->_iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+			mcrypt_generic_init ($td, $key, $this->_iv);
+			$encrypted = mcrypt_generic ($td, $data);
 			mcrypt_generic_deinit ($td);
 		// Use classes written in PHP (less speed, more flexibility)
 		} elseif (is_object($this->_cur_cipher)) {
-			$this->_cur_cipher->cipherKey($this->_secret_key);
-
-#			$md5_key = md5($this->_secret_key);
-#			$iv = substr($md5_key, 0, 8);
-#			$this->_cur_cipher->IV($iv);
-
-			$encrypt = $this->_cur_cipher->encrypt($data);
+			$this->_cur_cipher->cipherKey($key);
+			$this->_iv = $this->_cur_cipher->createIV();
+			$this->_cur_cipher->IV($this->_iv);
+			$encrypted = $this->_cur_cipher->encrypt($data);
 		}
-		return $encrypt;
+		return $encrypted;
 	}
 
 	/**
 	*/
-	function decrypt($data, $secret = null, $cipher = null) {
+	function decrypt($data, $secret = null, $cipher = null, $iv) {
 		if (isset($secret)) {
 			$this->set_key($secret);
 		}
@@ -164,56 +163,36 @@ class yf_encryption {
 			$this->set_cipher($cipher);
 		}
 		$this->init();
+		$key = $this->_secret_key;
 		// MCrypt PHP module processing (high speed)
 		if ($this->USE_MCRYPT && $this->_mcrypt_cipher) {
-			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_ECB, '');
-			$md5_key = md5($this->_secret_key);
-			$key = substr($md5_key, 0, mcrypt_enc_get_key_size($td));
-
-#			$iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-			$iv = substr($md5_key, 0, mcrypt_enc_get_iv_size($td));
-
+			$td = mcrypt_module_open ($this->_mcrypt_cipher, '', MCRYPT_MODE_CBC, '');
+			$key = substr($key, 0, mcrypt_enc_get_key_size($td));
 			mcrypt_generic_init ($td, $key, $iv);
-			$decrypt = mdecrypt_generic ($td, $data);
+			$decrypted = mdecrypt_generic ($td, $data);
 			mcrypt_generic_deinit ($td);
 		// Use classes written in PHP (less speed, more flexibility)
 		} elseif (is_object($this->_cur_cipher)) {
-			$this->_cur_cipher->cipherKey($this->_secret_key);
-
-#			$md5_key = md5($this->_secret_key);
-#			$iv = substr($md5_key, 0, 8);
-#			$this->_cur_cipher->IV($iv);
-
-			$decrypt = $this->_cur_cipher->decrypt($data);
+			$this->_cur_cipher->cipherKey($key);
+			$this->_cur_cipher->IV($iv);
+			$decrypted = $this->_cur_cipher->decrypt($data);
 		}
-		return rtrim($decrypt);
+		return rtrim($decrypted);
 	}
 
 	/**
 	* Encrypt specified file using private key
 	*/
-	function encrypt_file ($source, $encrypted, $secret = null, $cipher = null) {
-		if (isset($secret)) {
-			$this->set_key($secret);
-		}
-		if (isset($cipher)) {
-			$this->set_cipher($cipher);
-		}
-		file_put_contents($encrypted, $this->encrypt(file_get_contents($source)));
+	function encrypt_file ($source_path, $encrypted_path, $secret = null, $cipher = null) {
+		file_put_contents($encrypted_path, $this->encrypt(file_get_contents($source_path)));
 		return $this;
 	}
 
 	/**
 	* Decrypt specified file using private key
 	*/
-	function decrypt_file($source, $decrypted, $secret = null, $cipher = null) {
-		if (isset($secret)) {
-			$this->set_key($secret);
-		}
-		if (isset($cipher)) {
-			$this->set_cipher($cipher);
-		}
-		file_put_contents($decrypted, $this->decrypt(file_get_contents($source)));
+	function decrypt_file($source_path, $decrypted_path, $secret = null, $cipher = null, $iv) {
+		file_put_contents($decrypted_path, $this->decrypt(file_get_contents($source_path)), $secret, $cipher, $iv);
 		return $this;
 	}
 
@@ -241,25 +220,16 @@ class yf_encryption {
 	* Safe encrypt data into base64 string (replace '/' symbol)
 	*/
 	function _safe_encrypt_with_base64 ($input, $secret = null, $cipher = null) {
-		if (isset($secret)) {
-			$this->set_key($secret);
-		}
-		if (isset($cipher)) {
-			$this->set_cipher($cipher);
-		}
-		return $this->_safe_base64_encode($this->encrypt($input));
+		$encrypted = $this->encrypt($input, $secret, $cipher);
+		$iv = $this->_iv;
+		return $this->_safe_base64_encode($iv.'|'.$encrypted);
 	}
 
 	/**
 	* Safe decrypt data from base64 string (replace '/' symbol)
 	*/
 	function _safe_decrypt_with_base64 ($input, $secret = null, $cipher = null) {
-		if (isset($secret)) {
-			$this->set_key($secret);
-		}
-		if (isset($cipher)) {
-			$this->set_cipher($cipher);
-		}
-		return $this->decrypt($this->_safe_base64_decode($input));
+		list($iv, $encrypted) = explode('|', $this->_safe_base64_decode($input));
+		return $this->decrypt($encrypted, $secret, $cipher, $iv);
 	}
 }
