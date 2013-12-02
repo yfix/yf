@@ -1067,6 +1067,7 @@ class yf_main {
 				'loaded_path'		=> $loaded_path,
 				'storage'			=> $storage,
 				'time'				=> (microtime(true) - $_time_start),
+				'trace'				=> $this->trace_string(),
 			));
 		}
 		return $loaded_class_name;
@@ -1207,13 +1208,13 @@ class yf_main {
 		}
 		if (DEBUG_MODE) {
 			debug('main_execute_block_time[]', array(
-				'tpl_name'	=> $tpl_name,
-				'time'		=> round(microtime(true) - $_time_start, 5),
 				'class'		=> $class_name,
 				'method'	=> $method_name,
 				'params'	=> $method_params,
-				'trace'		=> $this->trace_string(),
+				'tpl_name'	=> $tpl_name,
 				'silent'	=> (int)$silent,
+				'time'		=> round(microtime(true) - $_time_start, 5),
+				'trace'		=> $this->trace_string(),
 			));
 		}
 		return $body;
@@ -1304,11 +1305,11 @@ class yf_main {
 
 			debug('_main_get_data_debug[]', array(
 				'name'		=> $handler_name,
-				'time'		=> round($time_end - $time_start, 5),
 				'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. _prepare_html(substr($_debug_data, $_pos + 1)) : $_debug_data,
-				'trace'		=> $this->trace_string(),
 				'params'	=> $params,
 				'force_ttl'	=> $force_ttl,
+				'time'		=> round($time_end - $time_start, 5),
+				'trace'		=> $this->trace_string(),
 			));
 		}
 		return $data_to_return;
