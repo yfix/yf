@@ -76,8 +76,6 @@ class yf_debug_info {
 	/** @var string */
 	public $_NOT_TRANSLATED_FILE		= '';
 	/** @var bool */
-	public $_NOT_REPLACED_STPL_TAGS		= 1;
-	/** @var bool */
 	public $_SHOW_GET_DATA				= 1;
 	/** @var bool */
 	public $_SHOW_POST_DATA				= 1;
@@ -289,15 +287,15 @@ class yf_debug_info {
 		);
 		if (tpl()->COMPRESS_OUTPUT && !main()->NO_GRAPHICS) {
 			$data['ini'] += array(
-				'compress: Main content size original'	=> debug('compress_output_size_1').' bytes',
-				'compress: Main content size compressed'	=> debug('compress_output_size_2').' bytes',
-				'compress: ratio'				=> (debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0).'%',
+				'compress: size original'	=> debug('compress_output_size_1').' bytes',
+				'compress: size compressed'	=> debug('compress_output_size_2').' bytes',
+				'compress: ratio'			=> (debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0).'%',
 			);
 		}
 		if (conf('GZIP_ENABLED')) {
 			$data['ini'] = array(
-				'gzip: Main content size original'		=> debug('page_size_original').' bytes',
-				'gzip: Main content size gzipped approx'	=> debug('page_size_gzipped').' bytes',
+				'gzip: size original'		=> debug('page_size_original').' bytes',
+				'gzip: size gzipped approx'	=> debug('page_size_gzipped').' bytes',
 				'gzip: ratio approx'		=> round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0).'%',
 			);
 		}
@@ -475,6 +473,7 @@ class yf_debug_info {
 		if ($this->SORT_TEMPLATES_BY_NAME && !empty($data)) {
 			ksort($data);
 		}
+		$stpl_vars = debug('STPL_REPLACE_VARS');
 		$items = array();
 		foreach ((array)$data as $k => $v) {
 			if (empty($v['calls'])) {
@@ -497,83 +496,16 @@ class yf_debug_info {
 				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
 				'trace'		=> _prepare_html(debug('STPL_TRACES::'.$k)),
 			);
+			if (isset($stpl_vars[$counter])) {
+				$items[$counter]['vars'] = '<pre><small>'._prepare_html(var_export($stpl_vars[$counter], 1)).'</small></pre>';
+			}
 		}
+		$body .= t('tpl_driver').': '.tpl()->DRIVER_NAME.' | '.t('compile_mode').': '.(int)tpl()->COMPILE_TEMPLATES.' | ';
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name')));
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name', 'vars' => 'name')));
 		return $body;
 	}
-
-	/**
-	*/
-	function _debug_stpl_replace_vars () {
-		if (!$this->_SHOW_STPLS) {
-			return '';
-		}
-		$data = debug('STPL_REPLACE_VARS');
-		// Debug output of the template vars
-		if (!$data) {
-			return false;
-		}
-// TODO
-/*
-		foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
-			$body .= ''.$stpl_name.'';
-			$body .= '<div>';
-			foreach ((array)$calls as $num => $vars) {
-				ksort($vars);
-				$body .= '<div>';
-				if (count($calls) > 1) {
-					$body .= '<i>'.$num.'';
-				}
-				$body .= '<table class="table table-bordered table-striped table-hover">';
-				foreach ((array)$vars as $n => $v) {
-					$body .= '<tr><td>'.$n.'</td><td>'.htmlspecialchars(print_r($v, 1)).'</td></tr>';
-				}
-				$body .= '</table>';
-				$body .= '</div>';
-			}
-			$body .= '<br style="clear:both" />';
-			$body .= '</div>';
-		}
-*/
-		return $body;
-	}
-
-	/**
-	*/
-	function _debug_not_replaced_stpl () {
-		$cache = tpl()->driver->CACHE;
-		if (!$this->_NOT_REPLACED_STPL_TAGS || !isset($cache['main']['string'])) {
-			return '';
-		}
-/*
-		$body = "";
-		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", $cache["main"]["string"], $m)) {
-			$body .= "<div class='debug_allow_close'><h5>".t("Not processed STPL tags")."</h5><ol>";
-			foreach ((array)$m[0] as $v) {
-				$v = str_replace(array("{","}"), "", $v);
-				$not_replaced[$v] = $v;
-			}
-			foreach ((array)$not_replaced as $v) {
-				$stpls = array();
-				// Try to find stpls where this tag appeared
-				foreach ((array)$cache as $name => $info) {
-					if (!isset($info["string"])) {
-						continue;
-					}
-					if (false !== strpos($info["string"], $v)) {
-						$stpls[] = $name;
-					}
-				}
-				$body .= "'".htmlspecialchars($v)."' (".implode(", ", $stpls).")";
-			}
-			$body .= "</ol></div>";
-		}
-*/
-		return $body;
-	}
-
 
 	/**
 	*/
@@ -879,9 +811,13 @@ class yf_debug_info {
 	*/
 	function _debug_ssh () {
 		if (!$this->_SHOW_SSH) {
-			return "";
+			return '';
 		}
-#		return $this->_show_key_val_table(_class('ssh')->_debug);
+		// Need to enable only when ssh was used
+		if (!isset(main()->modules['ssh'])) {
+			return '';
+		}
+		return $this->_show_key_val_table(_class('ssh')->_debug);
 	}
 
 	/**
@@ -973,8 +909,10 @@ class yf_debug_info {
 				'name'	=> $this->_admin_link('edit_file', $file_name),
 				'size'	=> $cur_size,
 			);
+			$total_size += $cur_size;
 		}
-		return $this->_show_auto_table($items);
+		$body .= 'total size: '.$total_size;
+		return $body. $this->_show_auto_table($items);
 	}
 
 	/**
