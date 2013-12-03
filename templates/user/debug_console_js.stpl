@@ -25,7 +25,7 @@ $(function(){
 
 	// Needed for debug console
 	$("ul.nav-tabs li a", "#debug_console").on("click", function(){
-		$.cookie('debug_tabs_active', $(this).attr("href").substring(1)); // Remove # at the beginning
+		$.cookie('debug_tabs_active', $(this).attr("href").substring(1), {path: '/'}); // Remove # at the beginning
 	})
 });
 </script>
