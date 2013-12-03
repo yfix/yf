@@ -441,10 +441,22 @@ class yf_debug_info {
 			return '';
 		}
 		$mc_obj = cache_memcached_connect();
-		if (!is_object($mc_obj) || !method_exists($mc_obj, 'getExtendedStats')) {
+		if (!is_object($mc_obj)) {
 			return 'n/a';
 		}
-		$data = $mc_obj->getExtendedStats();
+		$data = array();
+		$ext = '';
+		if (method_exists($mc_obj, 'getExtendedStats')) {
+			$ext = 'memcache (old)';
+			$data = $mc_obj->getExtendedStats();
+		} elseif (method_exists($mc_obj, 'getStats')) {
+			$ext = 'memcached (new)';
+			$data = $mc_obj->getStats();
+		}
+		if (!$data) {
+			return 'n/a';
+		}
+		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
 		foreach ($data as $name => $_data) {
 			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
