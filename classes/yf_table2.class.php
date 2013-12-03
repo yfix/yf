@@ -156,7 +156,7 @@ class yf_table2 {
 		if ($params['auto'] && $data) {
 			$field_names = array_keys((array)current((array)$data));
 			$skip_fields = array();
-			foreach ((array)$this->_params['hidden_map'] as $container => $field) {
+			foreach ((array)$this->_params['hidden_map'] as $field => $container) {
 				$skip_fields[$field] = $field;
 			}
 			foreach ((array)$field_names as $f) {
@@ -164,8 +164,11 @@ class yf_table2 {
 					continue;
 				}
 				$_extra = array();
-				if (isset($this->_params['hidden_map'][$f])) {
-					$_extra['hidden_data'] = array('%'.$this->_params['hidden_map'][$f]);
+				foreach ((array)$this->_params['hidden_map'] as $field => $container) {
+					if ($container != $f) {
+						continue;
+					}
+					$_extra['hidden_data'][] = '%'.$field;
 				}
 				$this->text($f, $_extra);
 			}
