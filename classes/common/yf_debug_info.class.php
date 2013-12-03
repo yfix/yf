@@ -142,7 +142,7 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _show_key_val_table ($a) {
+	function _show_key_val_table ($a, $params = array()) {
 		if (!$a) {
 			return false;
 		}
@@ -159,7 +159,7 @@ class yf_debug_info {
 		if (!$items) {
 			return false;
 		}
-		return $this->_show_auto_table($items);
+		return $this->_show_auto_table($items, $params);
 	}
 
 	/**
@@ -170,10 +170,14 @@ class yf_debug_info {
 		}
 		$items = $this->_format_trace_in_items($items);
 #		$items = _prepare_html($items);
+		$total_time = 0.0;
 		foreach ($items as &$item) {
 			foreach ($item as $k => &$v) {
 				if (is_array($v)) {
 					$v = !empty($v) ? print_r($v, 1) : '';
+				}
+				if ($k == 'time') {
+					$total_time += $v;
 				}
 			}
 		}
@@ -186,13 +190,17 @@ class yf_debug_info {
 			'auto_no_buttons' 	=> 1,
 			'pager_records_on_page' => 10000,
 			'hidden_map'		=> $params['hidden_map'],
+			'first_col_width'	=> $params['first_col_width'],
 #			'caption'			=> $caption,
 		))->auto();
 
 		foreach ((array)$params['hidden_map'] as $name => $to) {
 			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
 		}
-		return $table;
+		if (!$params['no_total']) {
+			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.common()->_format_time_value($total_time) : '');
+		}
+		return $body. $table;
 	}
 
 	/**
@@ -311,7 +319,6 @@ class yf_debug_info {
 		}
 
 		$body .= '<ul class="nav nav-tabs">';
-		$body .= '  <li><a class="brand" href="javascript:void(0)">DEBUG</a></li>';
 		$body .= implode(PHP_EOL, $links);
 		$body .= '</ul>';
 
@@ -323,6 +330,59 @@ class yf_debug_info {
 		$body = str_replace(array('{', '}'), array('&#123;', '&#125;'), $body);
 
 		$body .= '</div>';
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_DEBUG_YF () {
+		if (!$this->_SHOW_SETTINGS) {
+			return '';
+		}
+		$data['yf'] = array(
+			'DEBUG_MODE'	=> DEBUG_MODE,
+			'DEV_MODE'		=> (int)conf('DEV_MODE'),
+			'MAIN_TYPE'		=> MAIN_TYPE,
+			'USE_CACHE'		=> (int)conf('USE_CACHE'),
+			'HOSTNAME'		=> main()->HOSTNAME,
+			'SITE_ID'		=> (int)conf('SITE_ID'),
+			'SERVER_ID'		=> (int)conf('SERVER_ID'),
+			'SERVER_ROLE'	=> _prepare_html(conf('SERVER_ROLE')),
+			'@LANG'			=> conf('language'),
+			'SITE_PATH'		=> SITE_PATH,
+			'PROJECT_PATH'	=> PROJECT_PATH,
+			'YF_PATH'		=> YF_PATH,
+			'WEB_PATH'		=> WEB_PATH,
+			'MEDIA_PATH'	=> MEDIA_PATH,
+			'IS_SPIDER'		=> (int)conf('IS_SPIDER'),
+		);
+		$data['ini'] = array(
+			'memory_usage'	=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
+			'memory_peak_usage'	=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
+		);
+		$ini_all = ini_get_all();
+		$ini = array(
+			'memory_limit',
+			'max_execution_time',
+			'default_socket_timeout',
+			'max_input_time',
+			'memory_limit',
+			'post_max_size',
+			'upload_max_filesize',
+			'file_uploads',
+			'allow_url_fopen',
+			'error_reporting',
+			'display_errors',
+		);
+		foreach ($ini as $name) {
+			$data['ini']['php_ini&nbsp;:&nbsp;'.$name] = $ini_all[$name]['local_value'];
+		}
+		foreach ((array)ini_get_all('session') as $k => $v) {
+			$data['session'][$k] = $v['local_value'];
+		}
+		foreach ($data as $name => $_data) {
+			$body .= '<div class="span6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'first_col_width' => '20%')).'</div>';
+		}
 		return $body;
 	}
 
@@ -515,12 +575,12 @@ class yf_debug_info {
 		foreach ((array)debug('_MAIN_LOAD_CLASS_DEBUG') as $data) {
 			$items[] = array(
 				'id'			=> ++$counter,
-				'exec_time'		=> common()->_format_time_value($data['time']),
-				'path'			=> $this->_admin_link('edit_file', $data['loaded_path']),
 				'module'		=> $data['class_name'],
 				'loaded_class'	=> $data['loaded_class_name'],
+				'path'			=> $this->_admin_link('edit_file', $data['loaded_path']),
 				'size'			=> file_exists($data['loaded_path']) ? filesize($data['loaded_path']) : '',
 				'storage'		=> $data['storage'],
+				'time'			=> common()->_format_time_value($data['time']),
 				'trace'			=> $data['trace'],
 			);
 		}
@@ -656,18 +716,6 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_session_ini () {
-		if (!$this->_SHOW_SESSION_DATA) {
-			return '';
-		}
-		foreach ((array)ini_get_all('session') as $k => $v) {
-			$items[$k] = $v['local_value'];
-		}
-		return $this->_show_key_val_table($items);
-	}
-
-	/**
-	*/
 	function _debug__server () {
 		if (!$this->_SHOW_SERVER_DATA) {
 			return '';
@@ -682,15 +730,6 @@ class yf_debug_info {
 			return '';
 		}
 		return $this->_show_key_val_table($_ENV);
-	}
-
-	/**
-	*/
-	function _debug_php_ini () {
-		if (!$this->_SHOW_PHP_INI) {
-			return '';
-		}
-		return $this->_show_key_val_table(ini_get_all());
 	}
 
 	/**
@@ -739,15 +778,6 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_custom_replace () {
-		if (!$this->_SHOW_CUSTOM_REPLACED) {
-			return '';
-		}
-		return $this->_show_auto_table($GLOBALS['CUSTOM_REPLACED_DEBUG']);
-	}
-
-	/**
-	*/
 	function _debug_resize_images () {
 		if (!$this->_SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
 			return '';
@@ -757,32 +787,11 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_output_cache () {
-		if (!$this->_SHOW_OUTPUT_CACHE_INFO) {
-			return '';
-		}
-		return $this->_show_auto_table(conf('output_cache'));
-	}
-
-	/**
-	*/
 	function _debug_declared_classes () {
 		if (!$this->_SHOW_DECLARED_CLASSES) {
 			return '';
 		}
 		return $this->_show_key_val_table(get_declared_classes());
-	}
-
-	/**
-	*/
-	function _debug_mem_usage () {
-		if (!$this->_SHOW_MEM_USAGE) {
-			return '';
-		}
-		if (function_exists('memory_get_usage')) {
-			return memory_get_usage();
-		}
-		return false;
 	}
 
 	/**
@@ -856,32 +865,6 @@ class yf_debug_info {
 		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec';
 		$body .= $this->_show_key_val_table($tmp);
 		return $body;
-	}
-
-	/**
-	*/
-	function _debug_yf_settings () {
-		if (!$this->_SHOW_SETTINGS) {
-			return '';
-		}
-		$data = array(
-			'DEBUG_MODE'	=> DEBUG_MODE,
-			'DEV_MODE'		=> (int)conf('DEV_MODE'),
-			'MAIN_TYPE'		=> MAIN_TYPE,
-			'USE_CACHE'		=> (int)conf('USE_CACHE'),
-			'HOSTNAME'		=> main()->HOSTNAME,
-			'SITE_ID'		=> (int)conf('SITE_ID'),
-			'SERVER_ID'		=> (int)conf('SERVER_ID'),
-			'SERVER_ROLE'	=> _prepare_html(conf('SERVER_ROLE')),
-			'@LANG'			=> conf('language'),
-			'SITE_PATH'		=> SITE_PATH,
-			'PROJECT_PATH'	=> PROJECT_PATH,
-			'YF_PATH'		=> YF_PATH,
-			'WEB_PATH'		=> WEB_PATH,
-			'MEDIA_PATH'	=> MEDIA_PATH,
-			'IS_SPIDER'		=> (int)conf('IS_SPIDER'),
-		);
-		return $this->_show_key_val_table($data);
 	}
 	
 	/**
