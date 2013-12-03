@@ -319,7 +319,7 @@ class yf_tpl {
 			// Throw generated output to user
 			echo $output;
 		}
-		if (main()->NO_GRAPHICS && DEBUG_MODE) {
+		if (main()->NO_GRAPHICS && DEBUG_MODE && !conf('IS_AJAX')) {
 			echo common()->_show_execution_time();
 			echo common()->show_debug_info();
 		}

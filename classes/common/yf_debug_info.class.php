@@ -430,7 +430,7 @@ class yf_debug_info {
 		}
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
-		$body .= $this->_show_auto_table($items, array('hidden_map' => array('explain' => 'sql', 'trace' => 'sql')));
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%','hidden_map' => array('explain' => 'sql', 'trace' => 'sql')));
 		return $body;
 	}
 
@@ -498,7 +498,7 @@ class yf_debug_info {
 		}
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
-		$body .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name')));
 		return $body;
 	}
 
@@ -523,7 +523,7 @@ class yf_debug_info {
 			);
 		}
 		$body .= t('Rewrite processing time').': '.common()->_format_time_value(debug('rewrite_exec_time')).' <span>sec</span>';
-		$body .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'source')));
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'source')));
 		return $body;
 	}
 
@@ -565,35 +565,12 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_included_files () {
-		if (!$this->_SHOW_INCLUDED_FILES) {
-			return '';
-		}
-		$items = array();
-		foreach ((array)$included_files as $file_name) {
-			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, 'core_cache')) {
-				continue;
-			}
-			$cur_size = file_exists($file_name) ? filesize($file_name) : '';
-			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $file_name));
-			$items[] = array(
-				'id'			=> ++$counter,
-				'exec_time'		=> common()->_format_time_value(isset($exec_time[$_fname]) ? $exec_time[$_fname] : 0),
-				'name'			=> $this->_admin_link('edit_file', $file_name),
-				'size'			=> $cur_size,
-			);
-		}
-		return $this->_show_auto_table($items);
-	}
-
-	/**
-	*/
 	function _debug_execute () {
 		if (!$this->_SHOW_MAIN_EXECUTE) {
 			return '';
 		}
 		$items = debug('main_execute_block_time');
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
+		return $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'params')));
 	}
 
 	/**
@@ -872,9 +849,33 @@ class yf_debug_info {
 		$data['globals'] = array_filter(array_keys($GLOBALS), function($v) { return $v[0] != '_';} );
 		sort($data['globals']);
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'first_col_width' => '1%')).'</div>';
+			$body .= '<div class="span4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function _debug_included_files () {
+		if (!$this->_SHOW_INCLUDED_FILES) {
+			return '';
+		}
+		$items = array();
+		$included_files = get_included_files();
+		foreach ((array)$included_files as $file_name) {
+			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, 'core_cache')) {
+				continue;
+			}
+			$cur_size = file_exists($file_name) ? filesize($file_name) : '';
+			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $file_name));
+			$items[] = array(
+				'id'		=> ++$counter,
+				'name'		=> $this->_admin_link('edit_file', $file_name),
+				'size'		=> $cur_size,
+				'exec_time'	=> common()->_format_time_value(isset($exec_time[$_fname]) ? $exec_time[$_fname] : 0),
+			);
+		}
+		return $this->_show_auto_table($items);
 	}
 
 	/**
@@ -954,7 +955,7 @@ class yf_debug_info {
 			return false;
 		}
 		if (!isset($params['first_col_width'])) {
-			$params['first_col_width'] = '20%';
+			$params['first_col_width'] = '1%';
 		}
 		if (is_array($a) && !$params['no_sort']) {
 			ksort($a);
