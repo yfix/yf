@@ -18,13 +18,9 @@ class yf_debug_info {
 	/** @var string @conf_skip */
 	public $_auto_footer				= "\n?>";
 	/** @var bool */
-	public $_SHOW_QUERY_LOG				= 1;
+	public $_SHOW_DB_QUERY_LOG			= 1;
 	/** @var bool */
-	public $_SHOW_SHUTDOWN_QUERIES		= 1;
-	/** @var bool */
-	public $_SHOW_CACHED_QUERIES		= 1;
-	/** @var bool */
-	public $_SHOW_DB_SESSION_STATS		= 1;
+	public $_SHOW_DB_STATS				= 1;
 	/** @var bool */
 	public $_SHOW_DB_EXPLAIN_QUERY		= 1;
 	/** @var bool */
@@ -332,10 +328,11 @@ class yf_debug_info {
 		}
 		return $body;
 	}
+
 	/**
 	*/
 	function _debug_db_queries () {
-		if (!$this->_SHOW_QUERY_LOG) {
+		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return false;
 		}
 		$body = '';
@@ -353,7 +350,7 @@ class yf_debug_info {
 	/**
 	*/
 	function _do_debug_db_connection_queries ($db, $connect_trace = array()) {
-		if (!$this->_SHOW_QUERY_LOG) {
+		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return '';
 		}
 		if (!is_object($db) || !is_array($db->QUERY_LOG) || !$db->_tried_to_connect) {
@@ -436,13 +433,32 @@ class yf_debug_info {
 
 	/**
 	*/
+	function _debug_db_stats () {
+		if (!$this->_SHOW_DB_STATS) {
+			return '';
+		}
+// TODO: add support for multiple instances and multiple drivers
+		$data['stats'] = db()->get_2d('SHOW SESSION STATUS');
+		$data['vars'] = db()->get_2d('SHOW VARIABLES');
+#		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
+		foreach ($data as $name => $_data) {
+			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+		}
+		return $body;
+	}
+
+	/**
+	*/
 	function _debug_memcached () {
 		if (!$this->_SHOW_MEMCACHED_INFO) {
 			return '';
 		}
+		if (strpos(strtolower(cache()->DRIVER), 'memcache') === false) {
+			return '';
+		}
 		$mc_obj = cache_memcached_connect();
 		if (!is_object($mc_obj)) {
-			return 'n/a';
+			return '';
 		}
 		$data = array();
 		$ext = '';
