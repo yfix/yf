@@ -187,14 +187,12 @@ class yf_debug_info {
 		if (!$items) {
 			return false;
 		}
-#		$caption .= 'items: '.count($items);
 		$table = table((array)$items, array(
 			'table_class' 		=> 'debug_item table-condensed', 
 			'auto_no_buttons' 	=> 1,
 			'pager_records_on_page' => 10000,
 			'hidden_map'		=> $params['hidden_map'],
 			'first_col_width'	=> $params['first_col_width'],
-#			'caption'			=> $caption,
 		))->auto();
 
 		foreach ((array)$params['hidden_map'] as $name => $to) {
@@ -250,15 +248,10 @@ class yf_debug_info {
 			$methods[$_method_name] = $_method_name;
 			$body .= $this->$_method_name();
 		}
-
-		// DO NOT REMOVE!!! Needed to correct display template tags in debug output
-		$body = str_replace(array("{", "}"), array("&#123;", "&#125;"), $body);
-		
 		// Do hide console if needed
 		if (isset($_SESSION['hide_debug_console']) && $_SESSION['hide_debug_console']) {
 			$body = "";
 		}
-		
 		// !!! Needed to be on the bottom of the page
 		$i18n_vars = _class('i18n')->_I18N_VARS;
 		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {
@@ -397,6 +390,14 @@ class yf_debug_info {
 		foreach ((array)ini_get_all('session') as $k => $v) {
 			$data['session'][$k] = $v['local_value'];
 		}
+		$a = $_POST + $_SESSION;
+		$body .= form($a, array('action' => _force_get_url(array('object' => 'test', 'action' => 'change_debug')), 'class' => 'form-inline', 'style' => 'padding-left:20px;'))
+			->row_start()
+				->container('Locale edit')
+				->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
+				->save(array('class' => 'btn-mini'))
+			->row_end()
+		;
 		foreach ($data as $name => $_data) {
 			$body .= '<div class="span6">'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
 		}
@@ -809,21 +810,21 @@ class yf_debug_info {
 		}
 		$lang = conf('language');
 		$i18n_vars = (array)_class('i18n')->_I18N_VARS;
-		ksort($i18n_vars[$lang]);
-
+// TODO: show translations on other languages here too: print_r($i18n_vars)
+		if ($i18n_vars[$lang]) {
+			ksort($i18n_vars[$lang]);
+		}
 		$data = array();
 		$data['vars'] = array();
 		foreach ((array)$i18n_vars[$lang] as $k => $v) {
 			$data['vars'][$this->_admin_link('edit_i18n', $k)] = $v;
 		}
-
 		$data['calls'] = array();
 		$tr_time	= _class('i18n')->_tr_time;
 		$tr_calls	= _class('i18n')->_tr_calls;
 		foreach ((array)$tr_time[$lang] as $k => $v) {
 			$data['calls'][$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.common()->_format_time_value($v);
 		}
-
 		$data['not_translated'] = (array)_class('i18n')->_NOT_TRANSLATED[$lang];
 
 		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec<br>';
