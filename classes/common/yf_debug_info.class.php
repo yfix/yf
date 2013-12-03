@@ -58,6 +58,8 @@ class yf_debug_info {
 	/** @var bool */
 	public $_SHOW_XCACHE_INFO			= 1;
 	/** @var bool */
+	public $_SHOW_APC_INFO				= 1;
+	/** @var bool */
 	public $_SHOW_MAIN_GET_DATA			= 1;
 	/** @var bool */
 	public $_SHOW_CORE_CACHE			= 1;
@@ -504,6 +506,77 @@ class yf_debug_info {
 
 	/**
 	*/
+	function _debug_stpl_replace_vars () {
+		if (!$this->_SHOW_STPLS) {
+			return '';
+		}
+		$data = debug('STPL_REPLACE_VARS');
+		// Debug output of the template vars
+		if (!$data) {
+			return false;
+		}
+// TODO
+/*
+		foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
+			$body .= ''.$stpl_name.'';
+			$body .= '<div>';
+			foreach ((array)$calls as $num => $vars) {
+				ksort($vars);
+				$body .= '<div>';
+				if (count($calls) > 1) {
+					$body .= '<i>'.$num.'';
+				}
+				$body .= '<table class="table table-bordered table-striped table-hover">';
+				foreach ((array)$vars as $n => $v) {
+					$body .= '<tr><td>'.$n.'</td><td>'.htmlspecialchars(print_r($v, 1)).'</td></tr>';
+				}
+				$body .= '</table>';
+				$body .= '</div>';
+			}
+			$body .= '<br style="clear:both" />';
+			$body .= '</div>';
+		}
+*/
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_not_replaced_stpl () {
+		$cache = tpl()->driver->CACHE;
+		if (!$this->_NOT_REPLACED_STPL_TAGS || !isset($cache['main']['string'])) {
+			return '';
+		}
+/*
+		$body = "";
+		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", $cache["main"]["string"], $m)) {
+			$body .= "<div class='debug_allow_close'><h5>".t("Not processed STPL tags")."</h5><ol>";
+			foreach ((array)$m[0] as $v) {
+				$v = str_replace(array("{","}"), "", $v);
+				$not_replaced[$v] = $v;
+			}
+			foreach ((array)$not_replaced as $v) {
+				$stpls = array();
+				// Try to find stpls where this tag appeared
+				foreach ((array)$cache as $name => $info) {
+					if (!isset($info["string"])) {
+						continue;
+					}
+					if (false !== strpos($info["string"], $v)) {
+						$stpls[] = $name;
+					}
+				}
+				$body .= "'".htmlspecialchars($v)."' (".implode(", ", $stpls).")";
+			}
+			$body .= "</ol></div>";
+		}
+*/
+		return $body;
+	}
+
+
+	/**
+	*/
 	function _debug_rewrite () {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
@@ -817,11 +890,39 @@ class yf_debug_info {
 		if (!$this->_SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
 			return '';
 		}
+// TODO: check me
 		$eaccel_stats = eaccelerator_info();
 		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
 			$eaccel_stats[$_k] = $_v['local_value'];
 		}
 		return $this->_show_key_val_table($eaccel_stats);
+	}
+
+	/**
+	*/
+	function _debug_apc () {
+		if (!$this->_SHOW_APC_INFO || !function_exists('apc_cache_info')) {
+			return '';
+		}
+// TODO
+#		$data = apc_cache_info();
+#		foreach ((array)ini_get_all('apc') as $_k => $_v) {
+#			$data[$_k] = $_v['local_value'];
+#		}
+#		return $this->_show_key_val_table($data);
+	}
+
+	/**
+	*/
+	function _debug_xcache () {
+		if (!$this->_SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
+			return '';
+		}
+// TODO
+#		foreach ((array)ini_get_all('xcache') as $_k => $_v) {
+#			$data[$_k] = $_v['local_value'];
+#		}
+#		return $this->_show_key_val_table($data);
 	}
 
 	/**
@@ -861,91 +962,19 @@ class yf_debug_info {
 			return '';
 		}
 		$items = array();
-		$included_files = get_included_files();
-		foreach ((array)$included_files as $file_name) {
+		foreach (get_included_files() as $file_name) {
 			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, 'core_cache')) {
 				continue;
 			}
 			$cur_size = file_exists($file_name) ? filesize($file_name) : '';
 			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $file_name));
 			$items[] = array(
-				'id'		=> ++$counter,
-				'name'		=> $this->_admin_link('edit_file', $file_name),
-				'size'		=> $cur_size,
-				'exec_time'	=> common()->_format_time_value(isset($exec_time[$_fname]) ? $exec_time[$_fname] : 0),
+				'id'	=> ++$counter,
+				'name'	=> $this->_admin_link('edit_file', $file_name),
+				'size'	=> $cur_size,
 			);
 		}
 		return $this->_show_auto_table($items);
-	}
-
-	/**
-	*/
-	function _debug_stpl_replace_vars () {
-		if (!$this->_SHOW_STPLS) {
-			return '';
-		}
-		$data = debug('STPL_REPLACE_VARS');
-		// Debug output of the template vars
-		if (!$data) {
-			return false;
-		}
-// TODO
-/*
-		foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
-			$body .= ''.$stpl_name.'';
-			$body .= '<div>';
-			foreach ((array)$calls as $num => $vars) {
-				ksort($vars);
-				$body .= '<div>';
-				if (count($calls) > 1) {
-					$body .= '<i>'.$num.'';
-				}
-				$body .= '<table class="table table-bordered table-striped table-hover">';
-				foreach ((array)$vars as $n => $v) {
-					$body .= '<tr><td>'.$n.'</td><td>'.htmlspecialchars(print_r($v, 1)).'</td></tr>';
-				}
-				$body .= '</table>';
-				$body .= '</div>';
-			}
-			$body .= '<br style="clear:both" />';
-			$body .= '</div>';
-		}
-*/
-		return $body;
-	}
-
-	/**
-	*/
-	function _debug_not_replaced_stpl () {
-		$cache = tpl()->driver->CACHE;
-		if (!$this->_NOT_REPLACED_STPL_TAGS || !isset($cache['main']['string'])) {
-			return '';
-		}
-/*
-		$body = "";
-		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", $cache["main"]["string"], $m)) {
-			$body .= "<div class='debug_allow_close'><h5>".t("Not processed STPL tags")."</h5><ol>";
-			foreach ((array)$m[0] as $v) {
-				$v = str_replace(array("{","}"), "", $v);
-				$not_replaced[$v] = $v;
-			}
-			foreach ((array)$not_replaced as $v) {
-				$stpls = array();
-				// Try to find stpls where this tag appeared
-				foreach ((array)$cache as $name => $info) {
-					if (!isset($info["string"])) {
-						continue;
-					}
-					if (false !== strpos($info["string"], $v)) {
-						$stpls[] = $name;
-					}
-				}
-				$body .= "'".htmlspecialchars($v)."' (".implode(", ", $stpls).")";
-			}
-			$body .= "</ol></div>";
-		}
-*/
-		return $body;
 	}
 
 	/**
