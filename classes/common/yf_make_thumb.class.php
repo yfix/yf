@@ -373,7 +373,7 @@ class yf_make_thumb {
 
         $watermarkwidth = imagesx($watermark);
         $watermarkheight = imagesy($watermark);
-		if($watermarkwidth > $watermarkheight){
+		if($watermarkwidth > $watermarkheight && $width_orig > $height_orig){
 	        $thumb_watermark_w = intval($width_orig / 1.2);
 	        $thumb_watermark_h = intval(($thumb_watermark_w / $watermarkwidth) * $watermarkheight);
 		}else{
