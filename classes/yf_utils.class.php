@@ -465,6 +465,8 @@ class yf_utils {
 		return _class('dir')->mkdir_m($path_to_create, $dir_mode, $create_index_htmls, $start_folder);
 	}
 
+	/**
+	*/
 	function _mklink($target, $link) {
 		return _class('dir')->mklink($target, $link);
 	}
