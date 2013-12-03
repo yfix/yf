@@ -320,7 +320,8 @@ class yf_tpl {
 			echo $output;
 		}
 		if (main()->NO_GRAPHICS && DEBUG_MODE) {
-			common()->show_debug_info();
+			echo common()->_show_execution_time();
+			echo common()->show_debug_info();
 		}
 		// Output cache for 'no graphics' content
 		if (main()->NO_GRAPHICS && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
