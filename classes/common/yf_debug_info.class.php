@@ -759,15 +759,6 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_meta_tags () {
-		if (!$this->_SHOW_META_TAGS) {
-			return "";
-		}
-		return $this->_show_key_val_table(debug('_DEBUG_META'));
-	}
-
-	/**
-	*/
 	function _debug_memcached () {
 		if (!$this->_SHOW_MEMCACHED_INFO) {
 			return '';
@@ -817,42 +808,38 @@ class yf_debug_info {
 			return '';
 		}
 		$lang = conf('language');
-		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if (empty($i18n_vars[$lang])) {
-			return '';
-		}
+		$i18n_vars = (array)_class('i18n')->_I18N_VARS;
 		ksort($i18n_vars[$lang]);
+
 		$data = array();
+		$data['vars'] = array();
 		foreach ((array)$i18n_vars[$lang] as $k => $v) {
-			$data[$this->_admin_link('edit_i18n', $k)] = $v;
+			$data['vars'][$this->_admin_link('edit_i18n', $k)] = $v;
 		}
-		$body .= $this->_show_key_val_table($data);
 
-
-		$tmp = array();
+		$data['calls'] = array();
 		$tr_time	= _class('i18n')->_tr_time;
 		$tr_calls	= _class('i18n')->_tr_calls;
 		foreach ((array)$tr_time[$lang] as $k => $v) {
-			$tmp[$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.common()->_format_time_value($v);
+			$data['calls'][$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.common()->_format_time_value($v);
 		}
-		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec';
-		$body .= $this->_show_key_val_table($tmp);
+
+		$data['not_translated'] = (array)_class('i18n')->_NOT_TRANSLATED[$lang];
+
+		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec<br>';
+		foreach ($data as $name => $_data) {
+			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
+		}
 		return $body;
 	}
 
 	/**
 	*/
-	function _debug_not_translated () {
-		if (!$this->_SHOW_NOT_TRANSLATED) {
-			return '';
+	function _debug_meta_tags () {
+		if (!$this->_SHOW_META_TAGS) {
+			return "";
 		}
-		$lang = conf('language');
-		$not_translated = _class('i18n')->_NOT_TRANSLATED[$lang];
-		if (empty($not_translated)) {
-			return '';
-		}
-#		$this->_log_not_translated_to_file();
-		return $this->_show_key_val_table($not_translated);
+		return $this->_show_key_val_table(debug('_DEBUG_META'));
 	}
 	
 	/**
@@ -1033,7 +1020,7 @@ class yf_debug_info {
 			return $text;
 		}
 		if ($type == 'link') {
-			return '<a href="'.$text.'">'.$text.'</a>';
+			return '<a href="'.$text.'" class="btn btn-mini">'.$text.'</a>';
 		}
 		$id = $text;
 		if ($type == 'show_db_table') {
@@ -1048,7 +1035,7 @@ class yf_debug_info {
 		if ($just_link) {
 			return $link;
 		}
-		return '<a href="'.$link.'">'.$text.'</a>';
+		return '<a href="'.$link.'" class="btn btn-mini">'.$text.'</a>';
 	}
 
 	/**
