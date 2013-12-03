@@ -66,17 +66,11 @@ class yf_debug_info {
 	/** @var bool */
 	public $_SHOW_SEND_MAIL				= 1;
 	/** @var bool */
-	public $_SHOW_DECLARED_CLASSES		= 0;
+	public $_SHOW_GLOBALS				= 1;
 	/** @var bool */
-	public $_SHOW_NOT_TRANSLATED		= 0;
+	public $_SHOW_NOT_TRANSLATED		= 1;
 	/** @var bool */
-	public $_SHOW_I18N_VARS				= 0;
-	/** @var bool */
-	public $_SHOW_COMPRESS_INFO			= 1;
-	/** @var bool */
-	public $_SHOW_GZIP_INFO				= 1;
-	/** @var bool */
-	public $_SHOW_MEM_USAGE				= 1;
+	public $_SHOW_I18N_VARS				= 1;
 	/** @var string */
 	public $_NOT_TRANSLATED_FILE		= '';
 	/** @var bool */
@@ -99,10 +93,8 @@ class yf_debug_info {
 	public $_SHOW_ENV_DATA				= 0;
 	/** @var bool */
 	public $_SHOW_SETTINGS				= 1;
-	/** @var bool */
-	public $_SHOW_PHP_INI				= 0;
 	/** @var bool Store db queries to file */
-	public $LOG_QUERIES_TO_FILE		= 0;
+	public $LOG_QUERIES_TO_FILE			= 0;
 	/** @var bool Store slow db queries to file */
 	public $LOG_SLOW_QUERIES_TO_FILE	= 0;
 	/** @var bool Log queries file name */
@@ -110,11 +102,11 @@ class yf_debug_info {
 	/** @var bool Log slow queries file name */
 	public $LOG_SLOW_QUERIES_FILE_NAME	= 'slow_queries.log';
 	/** @var float */
-	public $SLOW_QUERIES_TIME_LIMIT	= 0.2;
+	public $SLOW_QUERIES_TIME_LIMIT		= 0.2;
 	/** @var bool */
 	public $SORT_TEMPLATES_BY_NAME		= 1;
 	/** @var bool */
-	public $ADD_ADMIN_LINKS			= true;
+	public $ADD_ADMIN_LINKS				= true;
 	/** @var bool */
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
@@ -854,11 +846,23 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_declared_classes () {
-		if (!$this->_SHOW_DECLARED_CLASSES) {
+	function _debug_globals () {
+		if (!$this->_SHOW_GLOBALS) {
 			return '';
 		}
-		return $this->_show_key_val_table(get_declared_classes());
+		$data['constants'] = get_defined_constants(true);
+		$data['constants'] = array_keys($data['constants']['user']); // Compatibility with PHP 5.3
+		sort($data['constants']);
+		$data['functions'] = get_defined_functions();
+		$data['functions'] = $data['functions']['user']; // Compatibility with PHP 5.3
+		sort($data['functions']);
+		$data['classes'] = get_declared_classes();
+		$data['globals'] = array_filter(array_keys($GLOBALS), function($v) { return $v[0] != '_';} );
+		sort($data['globals']);
+		foreach ($data as $name => $_data) {
+			$body .= '<div class="span4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'first_col_width' => '1%')).'</div>';
+		}
+		return $body;
 	}
 
 	/**
