@@ -52,7 +52,7 @@ class yf_debug_info {
 	/** @var bool */
 	public $_SHOW_META_TAGS				= 1;
 	/** @var bool */
-	public $_SHOW_MEMCACHED_INFO		= 0;
+	public $_SHOW_MEMCACHED_INFO		= 1;
 	/** @var bool */
 	public $_SHOW_EACCELERATOR_INFO		= 1;
 	/** @var bool */
@@ -138,70 +138,6 @@ class yf_debug_info {
 	*/
 	function _init () {
 		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. $this->_file_prefix. conf('language'). $this->_file_ext;
-	}
-
-	/**
-	*/
-	function _show_key_val_table ($a, $params = array()) {
-		if (!$a) {
-			return false;
-		}
-		if (!isset($params['first_col_width'])) {
-			$params['first_col_width'] = '20%';
-		}
-		if (is_array($a)) {
-			ksort($a);
-		}
-		$items = array();
-		foreach ((array)$a as $k => $v) {
-			$items[] = array(
-				'key'	=> $k,
-				'value'	=> is_array($v) ? print_r($v, 1) : $v,
-			);
-		}
-		if (!$items) {
-			return false;
-		}
-		return $this->_show_auto_table($items, $params);
-	}
-
-	/**
-	*/
-	function _show_auto_table ($items = array(), $params = array()) {
-		if (!is_array($items)) {
-			$items = array();
-		}
-		$items = $this->_format_trace_in_items($items);
-#		$items = _prepare_html($items);
-		$total_time = 0.0;
-		foreach ($items as &$item) {
-			foreach ($item as $k => &$v) {
-				if (is_array($v)) {
-					$v = !empty($v) ? print_r($v, 1) : '';
-				}
-				if ($k == 'time') {
-					$total_time += $v;
-				}
-			}
-		}
-		if (!$items) {
-			return false;
-		}
-		$table = table((array)$items, array(
-			'table_class' 		=> 'debug_item table-condensed', 
-			'auto_no_buttons' 	=> 1,
-			'pager_records_on_page' => 10000,
-			'hidden_map'		=> $params['hidden_map'],
-			'first_col_width'	=> $params['first_col_width'],
-		))->auto();
-
-		foreach ((array)$params['hidden_map'] as $name => $to) {
-			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
-		}
-		if (!$params['no_total']) {
-			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.common()->_format_time_value($total_time) : '');
-		}
-		return $body. $table;
 	}
 
 	/**
@@ -340,6 +276,7 @@ class yf_debug_info {
 			'DEV_MODE'		=> (int)conf('DEV_MODE'),
 			'MAIN_TYPE'		=> MAIN_TYPE,
 			'USE_CACHE'		=> (int)conf('USE_CACHE'),
+			'CACHE_DRIVER'	=> conf('USE_CACHE') ? cache()->DRIVER : '',
 			'HOSTNAME'		=> main()->HOSTNAME,
 			'SITE_ID'		=> (int)conf('SITE_ID'),
 			'SERVER_ID'		=> (int)conf('SERVER_ID'),
@@ -399,7 +336,7 @@ class yf_debug_info {
 			->row_end()
 		;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6">'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
+			$body .= '<div class="span6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -488,13 +425,13 @@ class yf_debug_info {
 			$exec_time = common()->_format_time_value($db->QUERY_EXEC_TIME[$id]);
 			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
-				$exec_time = '<a href="'.$admin_link.'">'.$exec_time.'</a>';
+				$exec_time = '<a href="'.$admin_link.'" class="btn btn-mini">'.$exec_time.'</a>';
 			}
 			$items[] = array(
 				'id'		=> ($id + 1),
-				'exec_time'	=> strval($exec_time),
 				'sql'		=> $text,
 				'rows'		=> strval($db->QUERY_AFFECTED_ROWS[$orig_sql]),
+				'exec_time'	=> strval($exec_time),
 				'trace'		=> $_cur_trace,
 				'explain'	=> $_cur_explain,
 			);
@@ -502,6 +439,23 @@ class yf_debug_info {
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
 		$body .= $this->_show_auto_table($items, array('hidden_map' => array('explain' => 'sql', 'trace' => 'sql')));
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_memcached () {
+		if (!$this->_SHOW_MEMCACHED_INFO) {
+			return '';
+		}
+		$mc_obj = cache_memcached_connect();
+		if (!is_object($mc_obj)) {
+			return 'n/a';
+		}
+		$data = $mc_obj->getExtendedStats();
+		foreach ($data as $name => $_data) {
+			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+		}
 		return $body;
 	}
 
@@ -530,11 +484,11 @@ class yf_debug_info {
 
 			$items[$counter] = array(
 				'id'		=> ++$counter,
-				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
 				'storage'	=> strval($v['storage']),
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
+				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
 				'trace'		=> _prepare_html(debug('STPL_TRACES::'.$k)),
 			);
 		}
@@ -558,9 +512,9 @@ class yf_debug_info {
 		foreach ((array)$data as $k => $v) {
 			$items[] = array(
 				'id'		=> $k + 1,
-				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
 				'source'	=> strval($v['source']),
 				'rewrited'	=> strval($this->_admin_link('link', $v['rewrited'])),
+				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
 				'trace'		=> $v['trace'],
 			);
 		}
@@ -752,59 +706,6 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_ssh () {
-		if (!$this->_SHOW_SSH) {
-			return "";
-		}
-#		return $this->_show_key_val_table(_class('ssh')->_debug);
-	}
-
-	/**
-	*/
-	function _debug_memcached () {
-		if (!$this->_SHOW_MEMCACHED_INFO) {
-			return '';
-		}
-		$mc_obj = cache_memcached_connect();
-		if (!is_object($mc_obj)) {
-			return '';
-		}
-		return $this->_show_key_val_table($mc_obj->getExtendedStats());
-	}
-
-	/**
-	*/
-	function _debug_eaccelerator () {
-		if (!$this->_SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
-			return '';
-		}
-		$eaccel_stats = eaccelerator_info();
-		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
-			$eaccel_stats[$_k] = $_v['local_value'];
-		}
-		return $this->_show_key_val_table($eaccel_stats);
-	}
-
-	/**
-	*/
-	function _debug_resize_images () {
-		if (!$this->_SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
-			return '';
-		}
-		return $this->_show_auto_table($GLOBALS['_RESIZED_IMAGES_LOG']);
-	}
-
-	/**
-	*/
-	function _debug_declared_classes () {
-		if (!$this->_SHOW_DECLARED_CLASSES) {
-			return '';
-		}
-		return $this->_show_key_val_table(get_declared_classes());
-	}
-
-	/**
-	*/
 	function _debug_i18n () {
 		if (!$this->_SHOW_I18N_VARS) {
 			return '';
@@ -920,6 +821,45 @@ class yf_debug_info {
 		return $body;
 	}
 
+	/**
+	*/
+	function _debug_ssh () {
+		if (!$this->_SHOW_SSH) {
+			return "";
+		}
+#		return $this->_show_key_val_table(_class('ssh')->_debug);
+	}
+
+	/**
+	*/
+	function _debug_eaccelerator () {
+		if (!$this->_SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
+			return '';
+		}
+		$eaccel_stats = eaccelerator_info();
+		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
+			$eaccel_stats[$_k] = $_v['local_value'];
+		}
+		return $this->_show_key_val_table($eaccel_stats);
+	}
+
+	/**
+	*/
+	function _debug_resize_images () {
+		if (!$this->_SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
+			return '';
+		}
+		return $this->_show_auto_table($GLOBALS['_RESIZED_IMAGES_LOG']);
+	}
+
+	/**
+	*/
+	function _debug_declared_classes () {
+		if (!$this->_SHOW_DECLARED_CLASSES) {
+			return '';
+		}
+		return $this->_show_key_val_table(get_declared_classes());
+	}
 
 	/**
 	*/
@@ -989,6 +929,73 @@ class yf_debug_info {
 		}
 */
 		return $body;
+	}
+
+	/**
+	*/
+	function _show_key_val_table ($a, $params = array()) {
+		if (!$a) {
+			return false;
+		}
+		if (!isset($params['first_col_width'])) {
+			$params['first_col_width'] = '20%';
+		}
+		if (is_array($a) && !$params['no_sort']) {
+			ksort($a);
+		}
+		$items = array();
+		foreach ((array)$a as $k => $v) {
+			if ($params['skip_empty_values'] && !$v) {
+				continue;
+			}
+			$items[] = array(
+				'key'	=> $k,
+				'value'	=> is_array($v) ? print_r($v, 1) : $v,
+			);
+		}
+		if (!$items) {
+			return false;
+		}
+		return $this->_show_auto_table($items, $params);
+	}
+
+	/**
+	*/
+	function _show_auto_table ($items = array(), $params = array()) {
+		if (!is_array($items)) {
+			$items = array();
+		}
+		$items = $this->_format_trace_in_items($items);
+#		$items = _prepare_html($items);
+		$total_time = 0.0;
+		foreach ($items as &$item) {
+			foreach ($item as $k => &$v) {
+				if (is_array($v)) {
+					$v = !empty($v) ? print_r($v, 1) : '';
+				}
+				if ($k == 'time') {
+					$total_time += $v;
+				}
+			}
+		}
+		if (!$items) {
+			return false;
+		}
+		$table = table((array)$items, array(
+			'table_class' 		=> 'debug_item table-condensed', 
+			'auto_no_buttons' 	=> 1,
+			'pager_records_on_page' => 10000,
+			'hidden_map'		=> $params['hidden_map'],
+			'first_col_width'	=> $params['first_col_width'],
+		))->auto();
+
+		foreach ((array)$params['hidden_map'] as $name => $to) {
+			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
+		}
+		if (!$params['no_total']) {
+			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.common()->_format_time_value($total_time) : '');
+		}
+		return $body. $table;
 	}
 
 	/**
