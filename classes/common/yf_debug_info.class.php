@@ -137,7 +137,62 @@ class yf_debug_info {
 	* Constructor
 	*/
 	function _init () {
-		$this->_NOT_TRANSLATED_FILE = INCLUDE_PATH. $this->_file_prefix. conf('language'). $this->_file_ext;
+		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. $this->_file_prefix. conf('language'). $this->_file_ext;
+	}
+
+	/**
+	*/
+	function _show_key_val_table ($a) {
+		if (!$a) {
+			return false;
+		}
+		if (is_array($a)) {
+			ksort($a);
+		}
+		$items = array();
+		foreach ((array)$a as $k => $v) {
+			$items[] = array(
+				'key'	=> $k,
+				'value'	=> is_array($v) ? print_r($v, 1) : $v,
+			);
+		}
+		if (!$items) {
+			return false;
+		}
+		return $this->_show_auto_table($items);
+	}
+
+	/**
+	*/
+	function _show_auto_table ($items = array(), $params = array()) {
+		if (!is_array($items)) {
+			$items = array();
+		}
+		$items = $this->_format_trace_in_items($items);
+#		$items = _prepare_html($items);
+		foreach ($items as &$item) {
+			foreach ($item as $k => &$v) {
+				if (is_array($v)) {
+					$v = !empty($v) ? print_r($v, 1) : '';
+				}
+			}
+		}
+		if (!$items) {
+			return false;
+		}
+#		$caption .= 'items: '.count($items);
+		$table = table((array)$items, array(
+			'table_class' 		=> 'debug_item table-condensed', 
+			'auto_no_buttons' 	=> 1,
+			'pager_records_on_page' => 10000,
+			'hidden_map'		=> $params['hidden_map'],
+#			'caption'			=> $caption,
+		))->auto();
+
+		foreach ((array)$params['hidden_map'] as $name => $to) {
+			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
+		}
+		return $table;
 	}
 
 	/**
@@ -363,7 +418,7 @@ class yf_debug_info {
 				'exec_time'	=> strval($exec_time),
 				'sql'		=> $text,
 				'rows'		=> strval($db->QUERY_AFFECTED_ROWS[$orig_sql]),
-				'trace'		=> '<pre><small>'.$_cur_trace.'</small></pre>',
+				'trace'		=> $_cur_trace,
 				'explain'	=> $_cur_explain,
 			);
 		}
@@ -403,113 +458,12 @@ class yf_debug_info {
 				'storage'	=> strval($v['storage']),
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
-				'trace'		=> '<pre><small>'._prepare_html(debug('STPL_TRACES::'.$k)).'</small></pre>',
+				'trace'		=> _prepare_html(debug('STPL_TRACES::'.$k)),
 			);
 		}
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
 		$body .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
-		return $body;
-	}
-
-	/**
-	*/
-	function _debug_stpl_tree () {
-		if (!$this->_SHOW_STPLS) {
-			return '';
-		}
-		if (debug('STPL_PARENTS')) {
-			$body .= '<ul>
-						<li>main</li>
-						<ul>';
-			$body .= $this->_show_stpls_tree();
-			$body .= '</ul>
-					</ul>';
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function _show_stpls_tree($parent = 'main', $level = 1) {
-		$body = '';
-		foreach ((array)debug('STPL_PARENTS') as $_name => $_stpl_parent) {
-			if ($_stpl_parent != $parent) {
-				continue;
-			}
-			$body .= '<li>'.$this->_admin_link('edit_stpl', $_name).'</li>';
-			$body .= '<ul>'.$this->_show_stpls_tree($_name, $level + 1).'</ul>';
-		}
-		return $body;
-	}
-
-	/**
-	*/
-	function _debug_stpl_replace_vars () {
-		if (!$this->_SHOW_STPLS) {
-			return '';
-		}
-		$data = debug('STPL_REPLACE_VARS');
-		// Debug output of the template vars
-		if (!$data) {
-			return false;
-		}
-// TODO
-/*
-		foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
-			$body .= ''.$stpl_name.'';
-			$body .= '<div>';
-			foreach ((array)$calls as $num => $vars) {
-				ksort($vars);
-				$body .= '<div>';
-				if (count($calls) > 1) {
-					$body .= '<i>'.$num.'';
-				}
-				$body .= '<table class="table table-bordered table-striped table-hover">';
-				foreach ((array)$vars as $n => $v) {
-					$body .= '<tr><td>'.$n.'</td><td>'.htmlspecialchars(print_r($v, 1)).'</td></tr>';
-				}
-				$body .= '</table>';
-				$body .= '</div>';
-			}
-			$body .= '<br style="clear:both" />';
-			$body .= '</div>';
-		}
-*/
-		return $body;
-	}
-
-	/**
-	*/
-	function _debug_not_replaced_stpl () {
-		$cache = tpl()->driver->CACHE;
-		if (!$this->_NOT_REPLACED_STPL_TAGS || !isset($cache['main']['string'])) {
-			return '';
-		}
-/*
-		$body = "";
-		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", $cache["main"]["string"], $m)) {
-			$body .= "<div class='debug_allow_close'><h5>".t("Not processed STPL tags")."</h5><ol>";
-			foreach ((array)$m[0] as $v) {
-				$v = str_replace(array("{","}"), "", $v);
-				$not_replaced[$v] = $v;
-			}
-			foreach ((array)$not_replaced as $v) {
-				$stpls = array();
-				// Try to find stpls where this tag appeared
-				foreach ((array)$cache as $name => $info) {
-					if (!isset($info["string"])) {
-						continue;
-					}
-					if (false !== strpos($info["string"], $v)) {
-						$stpls[] = $name;
-					}
-				}
-				$body .= "'".htmlspecialchars($v)."' (".implode(", ", $stpls).")";
-			}
-			$body .= "</ol></div>";
-		}
-*/
 		return $body;
 	}
 
@@ -530,7 +484,7 @@ class yf_debug_info {
 				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
 				'source'	=> strval($v['source']),
 				'rewrited'	=> strval($this->_admin_link('link', $v['rewrited'])),
-				'trace'		=> '<pre><small>'.$v['trace'].'</small></pre>',
+				'trace'		=> $v['trace'],
 			);
 		}
 		$body .= t('Rewrite processing time').': '.common()->_format_time_value(debug('rewrite_exec_time')).' <span>sec</span>';
@@ -546,7 +500,6 @@ class yf_debug_info {
 		}
 		$items = debug('_force_get_url');
 		foreach ((array)$items as $k => $v) {
-			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
 			$items[$k]['time'] = strval(common()->_format_time_value($v['time']));
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
@@ -568,7 +521,7 @@ class yf_debug_info {
 				'loaded_class'	=> $data['loaded_class_name'],
 				'size'			=> file_exists($data['loaded_path']) ? filesize($data['loaded_path']) : '',
 				'storage'		=> $data['storage'],
-				'trace'			=> '<pre><small>'.$data['trace'].'</small></pre>',
+				'trace'			=> $data['trace'],
 			);
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
@@ -604,9 +557,6 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('main_execute_block_time');
-		foreach ((array)$items as $k => $v) {
-			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
-		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
@@ -617,9 +567,6 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('_main_get_data_debug');
-		foreach ((array)$items as $k => $v) {
-			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
-		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
@@ -630,9 +577,6 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('_core_cache_debug::get');
-		foreach ((array)$items as $k => $v) {
-			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
-		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
@@ -643,9 +587,6 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('_core_cache_debug::set');
-		foreach ((array)$items as $k => $v) {
-			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
-		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
 
@@ -656,9 +597,6 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('_core_cache_debug::refresh');
-		foreach ((array)$items as $k => $v) {
-			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
-		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
 
@@ -908,7 +846,6 @@ class yf_debug_info {
 		}
 		$body .= $this->_show_key_val_table($data);
 
-#		$add_text = t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec';
 
 		$tmp = array();
 		$tr_time	= _class('i18n')->_tr_time;
@@ -916,8 +853,35 @@ class yf_debug_info {
 		foreach ((array)$tr_time[$lang] as $k => $v) {
 			$tmp[$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.common()->_format_time_value($v);
 		}
+		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec';
 		$body .= $this->_show_key_val_table($tmp);
 		return $body;
+	}
+
+	/**
+	*/
+	function _debug_yf_settings () {
+		if (!$this->_SHOW_SETTINGS) {
+			return '';
+		}
+		$data = array(
+			'DEBUG_MODE'	=> DEBUG_MODE,
+			'DEV_MODE'		=> (int)conf('DEV_MODE'),
+			'MAIN_TYPE'		=> MAIN_TYPE,
+			'USE_CACHE'		=> (int)conf('USE_CACHE'),
+			'HOSTNAME'		=> main()->HOSTNAME,
+			'SITE_ID'		=> (int)conf('SITE_ID'),
+			'SERVER_ID'		=> (int)conf('SERVER_ID'),
+			'SERVER_ROLE'	=> _prepare_html(conf('SERVER_ROLE')),
+			'@LANG'			=> conf('language'),
+			'SITE_PATH'		=> SITE_PATH,
+			'PROJECT_PATH'	=> PROJECT_PATH,
+			'YF_PATH'		=> YF_PATH,
+			'WEB_PATH'		=> WEB_PATH,
+			'MEDIA_PATH'	=> MEDIA_PATH,
+			'IS_SPIDER'		=> (int)conf('IS_SPIDER'),
+		);
+		return $this->_show_key_val_table($data);
 	}
 	
 	/**
@@ -958,7 +922,6 @@ class yf_debug_info {
 		$body .= "</tr>";
 
 		foreach ((array)$sphinx_debug as $val) {
-#			$_cur_trace = $val["trace"][0];
 			$_cur_trace = $val["trace"];
 
 			preg_match('/SELECT[\s\t]+.+[\s\t]+FROM[\s\t]+([a-z0-9\_]+)[\s\t]+WHERE[\s\t]+/ims', $val["query"], $m);
@@ -978,7 +941,6 @@ class yf_debug_info {
 					.(!empty($val['error']) ? "<small style='color:red;'># ERROR: ".print_r($val["error"], 1)."</small>" : "")
 					.(!empty($val['meta']) ? "<small style='color:grey;'># META: ".print_r($val["meta"], 1)."</small>" : "")
 					.(!empty($desc) ? "<small style='color:grey;'># DESCRIBE INDEX: ".print_r($desc, 1).")</small>" : "")
-#					.(!empty($_cur_trace) ? "<small style='color:blue;'># ".$this->_admin_link("edit_file", $_cur_trace["file"])." on line ".$_cur_trace["line"]." (".($_cur_trace["object"] ? $_cur_trace["object"]."->" : "").$_cur_trace["function"].")</small>" : "")
 					.(!empty($_cur_trace) ? "<pre style='color:blue;'><small>"._prepare_html($_cur_trace)."</small></pre>" : "")
 					."</td>";
 			$body .= "</tr>";
@@ -998,30 +960,75 @@ class yf_debug_info {
 		return $body;
 	}
 
+
 	/**
 	*/
-	function _debug_yf_settings () {
-		if (!$this->_SHOW_SETTINGS) {
+	function _debug_stpl_replace_vars () {
+		if (!$this->_SHOW_STPLS) {
 			return '';
 		}
-		$data = array(
-			'DEBUG_MODE'	=> DEBUG_MODE,
-			'DEV_MODE'		=> (int)conf('DEV_MODE'),
-			'MAIN_TYPE'		=> MAIN_TYPE,
-			'USE_CACHE'		=> (int)conf('USE_CACHE'),
-			'HOSTNAME'		=> main()->HOSTNAME,
-			'SITE_ID'		=> (int)conf('SITE_ID'),
-			'SERVER_ID'		=> (int)conf('SERVER_ID'),
-			'SERVER_ROLE'	=> _prepare_html(conf('SERVER_ROLE')),
-			'@LANG'			=> conf('language'),
-			'SITE_PATH'		=> SITE_PATH,
-			'PROJECT_PATH'	=> PROJECT_PATH,
-			'YF_PATH'		=> YF_PATH,
-			'WEB_PATH'		=> WEB_PATH,
-			'MEDIA_PATH'	=> MEDIA_PATH,
-			'IS_SPIDER'		=> (int)conf('IS_SPIDER'),
-		);
-		return $this->_show_key_val_table($data);
+		$data = debug('STPL_REPLACE_VARS');
+		// Debug output of the template vars
+		if (!$data) {
+			return false;
+		}
+// TODO
+/*
+		foreach ((array)debug('STPL_REPLACE_VARS') as $stpl_name => $calls) {
+			$body .= ''.$stpl_name.'';
+			$body .= '<div>';
+			foreach ((array)$calls as $num => $vars) {
+				ksort($vars);
+				$body .= '<div>';
+				if (count($calls) > 1) {
+					$body .= '<i>'.$num.'';
+				}
+				$body .= '<table class="table table-bordered table-striped table-hover">';
+				foreach ((array)$vars as $n => $v) {
+					$body .= '<tr><td>'.$n.'</td><td>'.htmlspecialchars(print_r($v, 1)).'</td></tr>';
+				}
+				$body .= '</table>';
+				$body .= '</div>';
+			}
+			$body .= '<br style="clear:both" />';
+			$body .= '</div>';
+		}
+*/
+		return $body;
+	}
+
+	/**
+	*/
+	function _debug_not_replaced_stpl () {
+		$cache = tpl()->driver->CACHE;
+		if (!$this->_NOT_REPLACED_STPL_TAGS || !isset($cache['main']['string'])) {
+			return '';
+		}
+/*
+		$body = "";
+		if (preg_match_all("/\{[a-z0-9\_\-]{1,64}\}/ims", $cache["main"]["string"], $m)) {
+			$body .= "<div class='debug_allow_close'><h5>".t("Not processed STPL tags")."</h5><ol>";
+			foreach ((array)$m[0] as $v) {
+				$v = str_replace(array("{","}"), "", $v);
+				$not_replaced[$v] = $v;
+			}
+			foreach ((array)$not_replaced as $v) {
+				$stpls = array();
+				// Try to find stpls where this tag appeared
+				foreach ((array)$cache as $name => $info) {
+					if (!isset($info["string"])) {
+						continue;
+					}
+					if (false !== strpos($info["string"], $v)) {
+						$stpls[] = $name;
+					}
+				}
+				$body .= "'".htmlspecialchars($v)."' (".implode(", ", $stpls).")";
+			}
+			$body .= "</ol></div>";
+		}
+*/
+		return $body;
 	}
 
 	/**
@@ -1074,93 +1081,19 @@ class yf_debug_info {
 	}
 
 	/**
-	* Collect unique not translated vars into log file
 	*/
-	function _log_not_translated_to_file () {
-// TODO
-/*
-		$f = $this->_NOT_TRANSLATED_FILE;
-		$existed_vars = array();
-		if (file_exists($f)) {
-			$existed_vars = eval('return '.substr(file_get_contents($f), strlen($this->_auto_header), -strlen($this->_auto_footer)).';');
-		}
-		$something_changed = false;
-		$lang = conf('language');
-		foreach ((array)_class('i18n')->_NOT_TRANSLATED[$lang] as $var_name => $_hits) {
-			$var_name = addslashes(stripslashes(str_replace(' ','_',strtolower(trim($var_name)))));
-			if (empty($var_name)) {
-				continue;
-			}
-			if (!isset($existed_vars[$var_name])) {
-				$existed_vars[$var_name] = $var_name;
-				$something_changed = true;
-			}
-		}
-		if (!$something_changed) {
-			return false;
-		}
-		if (is_array($existed_vars)) {
-			ksort($existed_vars);
-		}
-		$_dir = dirname($this->_NOT_TRANSLATED_FILE);
-		if (!file_exists($_dir)) {
-			_mkdir_m($_dir);
-		}
-		file_put_contents($f, $this->_auto_header. "\$data = ".var_export($existed_vars, 1).";". $this->_auto_footer);
-*/
+	function _format_trace ($trace) {
+		return '<pre><small>'._prepare_html($trace).'</small></pre>';
 	}
 
 	/**
 	*/
-	function _show_key_val_table ($a) {
-		if (!$a) {
-			return false;
-		}
-		if (is_array($a)) {
-			ksort($a);
-		}
-		$items = array();
-		foreach ((array)$a as $k => $v) {
-			$items[] = array(
-				'key'	=> $k,
-				'value'	=> is_array($v) ? print_r($v, 1) : $v,
-			);
-		}
-		if (!$items) {
-			return false;
-		}
-		return $this->_show_auto_table($items);
-	}
-
-	/**
-	*/
-	function _show_auto_table ($items = array(), $params = array()) {
-		if (!is_array($items)) {
-			$items = array();
-		}
-#		$items = _prepare_html($items);
-		foreach ($items as &$item) {
-			foreach ($item as $k => &$v) {
-				if (is_array($v)) {
-					$v = !empty($v) ? print_r($v, 1) : '';
-				}
+	function _format_trace_in_items ($items) {
+		foreach ((array)$items as $k => $v) {
+			if (isset($v['trace'])) {
+				$items[$k]['trace'] = $this->_format_trace($v['trace']);
 			}
 		}
-		if (!$items) {
-			return false;
-		}
-#		$caption .= 'items: '.count($items);
-		$table = table((array)$items, array(
-			'table_class' 		=> 'debug_item table-condensed', 
-			'auto_no_buttons' 	=> 1,
-			'caption'			=> $caption,
-			'pager_records_on_page' => 10000,
-			'hidden_map'		=> $params['hidden_map'],
-		))->auto();
-
-		foreach ((array)$params['hidden_map'] as $name => $to) {
-			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
-		}
-		return $table;
+		return $items;
 	}
 }
