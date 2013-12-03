@@ -24,10 +24,6 @@ class yf_empty_page {
 			'full_width'	=> (int)((bool)$params['full_width']),
 		);
 		$output .= tpl()->parse('empty_page', $replace);
-		if (DEBUG_MODE && common()->EMPTY_PAGE_DEBUG_INFO && !$params['no_debug']) {
-			$output .= common()->_show_execution_time();
-			$output .= common()->show_debug_info();
-		}
 		$output = tpl()->_apply_output_filters($output);
 		main()->_send_main_headers(strlen($output));
 		echo $output;
