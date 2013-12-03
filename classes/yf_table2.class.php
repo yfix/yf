@@ -164,6 +164,9 @@ class yf_table2 {
 					continue;
 				}
 				$_extra = array();
+				if (++$counter == 1 && $this->_params['first_col_width']) {
+					$_extra['width'] = $this->_params['first_col_width'];
+				}
 				foreach ((array)$this->_params['hidden_map'] as $field => $container) {
 					if ($container != $f) {
 						continue;
