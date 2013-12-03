@@ -578,6 +578,7 @@ class yf_debug_info {
 		$items = debug('_force_get_url');
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['time'] = strval(common()->_format_time_value($v['time']));
+			$items[$k]['rewrited_link'] = strval($this->_admin_link('link', $v['rewrited_link']));
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
