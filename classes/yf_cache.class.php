@@ -36,7 +36,7 @@ class yf_cache {
 	public $MEMCACHE_DEF_PARAMS	= array(
 		'port'		=> 11211,
 		'host'		=> '127.0.0.1', // !!! DO NOT USE 'localhost' on Ubuntu 10.04 (and maybe others) due to memcached bug
-		'persistent'=> true,
+		'persistent'=> false,
 	);
 	/** @var object internal @conf_skip */
 	public $_memcache				= null;
@@ -135,14 +135,6 @@ class yf_cache {
 				$mc_obj = new Memcached();
 			} elseif (class_exists('Memcache')) {
 				$mc_obj = new Memcache();
-			} else {
-				$client_path = YF_PATH.'libs/memcached/memcached_client.class.php';
-				if (file_exists($client_path)) {
-					include $client_path;
-				}
-				if (class_exists('memcached_client')) {
-					$mc_obj = new memcached_client();
-				}
 			}
 			if (is_object($mc_obj)) {
 				$mc_params = (isset($params['memcache']) && !empty($params['memcache'])) 
@@ -353,7 +345,7 @@ class yf_cache {
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				debug('_core_cache_debug::set::'.$debug_index, array(
 					'name'		=> $cache_name,
-					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
+					'data'		=> '<pre><small>'._prepare_html(substr(var_export($data, 1), 0, 1000)).'</small></pre>',
 					'driver'	=> $this->DRIVER,
 					'time'		=> round(microtime(true) - $time_start, 5),
 					'trace'		=> $this->trace_string(),
@@ -435,7 +427,7 @@ class yf_cache {
 		$need_touch = (bool)conf('data_handlers::'.$cache_name);
 		if ($this->DRIVER == 'memcache') {
 			if (isset($this->_memcache)) {
-				$result = $this->_memcache->delete($key_name_ns);
+				$result = $this->_memcache->delete($key_name_ns, 0);
 			} else {
 				$this->DRIVER = 'file';
 			}
@@ -476,12 +468,11 @@ class yf_cache {
 			$all_debug = debug('_core_cache_debug::refresh');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				$time_end = microtime(true);
 				debug('_core_cache_debug::refresh::'.$debug_index, array(
 					'name'			=> $cache_name,
 					'force_clean'	=> $force_clean,
 					'driver'		=> $this->DRIVER,
-					'time'			=> $time_end - $time_start,
+					'time'			=> microtime(true) - $time_start,
 				));
 			}
 		}
