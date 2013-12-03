@@ -7,10 +7,12 @@
 	{if("use_ajax" eq 1)}
 <script type="text/javascript">
 <!--
+/*
 	// JQuery on DOM ready
 	$(function(){
 		$("a.gallery_photo").yf_tooltip();
 	})
+*/
 -->
 </script>
 	{/if}

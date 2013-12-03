@@ -46,11 +46,14 @@
 <script type="text/javascript">
 <!--
 $(function(){
+// TODO: replace yf_tooltip with modern one
+/*
 	$("a.ajax_ticket_info").yf_tooltip({
 		ajax_id: "yf:ticket_id"
 		,ajax_url: "{ajax_link}"
 		,ajax_prefix: "ticket_"
 	});
+*/
 });
 -->
 </script>

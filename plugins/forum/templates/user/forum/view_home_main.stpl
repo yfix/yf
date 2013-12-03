@@ -7,8 +7,8 @@
 <script type="text/javascript">
 <!--
 // JQuery on DOM ready
-$(function(){
-	$("a.topic_author").yf_tooltip();
-})
+//$(function(){
+//	$("a.topic_author").yf_tooltip();
+//})
 -->
 </script>

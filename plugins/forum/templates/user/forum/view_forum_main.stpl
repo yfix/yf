@@ -184,6 +184,7 @@
 <script type="text/javascript">
 <!--
 // JQuery on DOM ready
+/*
 $(function(){
 	$("a.topic_last_post, a.topic_title").yf_tooltip({
 		ajax_id: "yf:post_id"
@@ -194,6 +195,7 @@ $(function(){
 
 	$("a.topic_author").yf_tooltip();
 })
+*/
 -->
 </script>
 

@@ -62,7 +62,8 @@ $(function(){
 		return false;
 	});
 
-	$("a.photo_author").yf_tooltip();
+// TODO: show something else here
+//	$("a.photo_author").yf_tooltip();
 });
 -->
 </script>
