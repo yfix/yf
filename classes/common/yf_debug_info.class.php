@@ -315,7 +315,6 @@ class yf_debug_info {
 		}
 		$total_queries_exec_time = 0;
 
-// TODO: insert as caption into table
 		$body .= '<b>'.t('QUERY_LOG').'  ('
 			.($db->DB_SSL ? 'SSL ' : '')
 			.$db->DB_TYPE
@@ -332,6 +331,7 @@ class yf_debug_info {
 
 		$body .= $connect_trace ? $trace_html : '';
 
+		$_this = $this;
 		foreach ((array)$db_queries_list as $id => $text) {
 			$text = trim($text);
 			// Cut comment
@@ -349,7 +349,9 @@ class yf_debug_info {
 				','	=> ', ', 
 			);
 			$text = str_replace(array_keys($replace), array_values($replace), $text);
-#			$text = preg_replace('#('.$db->DB_PREFIX.'[a-z0-9_]+)#imse', "''.\$this->_admin_link('show_db_table', '\\1').''", $text);
+			$text = preg_replace_callback('/([\s\t]+)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)/ims', function($m) use ($_this) {
+				return $m[1]. $_this->_admin_link('show_db_table', $m[2]);
+			}, $text);
 
 			$exec_time = common()->_format_time_value($db->QUERY_EXEC_TIME[$id]);
 			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
@@ -365,19 +367,9 @@ class yf_debug_info {
 				'explain'	=> $_cur_explain,
 			);
 		}
-
-// TODO: show connection info and totals inside 'caption'
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
-
-		$body .= table((array)$items, array('table_class' => 'debug_item table-condensed', 'pager_records_on_page' => 10000))
-			->text('id')
-			->text('exec_time')
-			->text('sql', array('hidden_data' => array('%explain', '%trace')))
-			->text('rows')
-			->btn('explain', 'javascript:void(0)', array('hidden_toggle' => 'explain'))
-			->btn('trace', 'javascript:void(0)', array('hidden_toggle' => 'trace'))
-		;
+		$body .= $this->_show_auto_table($items, array('hidden_map' => array('explain' => 'sql', 'trace' => 'sql')));
 		return $body;
 	}
 
@@ -416,7 +408,7 @@ class yf_debug_info {
 		}
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
-		$body .= $this->_show_auto_table($items, array('hidden_map' => array('name' => 'trace')));
+		$body .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 		return $body;
 	}
 
@@ -542,7 +534,7 @@ class yf_debug_info {
 			);
 		}
 		$body .= t('Rewrite processing time').': '.common()->_format_time_value(debug('rewrite_exec_time')).' <span>sec</span>';
-		$body .= $this->_show_auto_table($items, array('hidden_map' => array('source' => 'trace')));
+		$body .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'source')));
 		return $body;
 	}
 
@@ -557,7 +549,7 @@ class yf_debug_info {
 			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
 			$items[$k]['time'] = strval(common()->_format_time_value($v['time']));
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
 	/**
@@ -579,7 +571,7 @@ class yf_debug_info {
 				'trace'			=> '<pre><small>'.$data['trace'].'</small></pre>',
 			);
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('path' => 'trace')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
 	}
 
 	/**
@@ -615,7 +607,7 @@ class yf_debug_info {
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
 	/**
@@ -628,7 +620,7 @@ class yf_debug_info {
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
 	/**
@@ -641,7 +633,7 @@ class yf_debug_info {
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('params' => 'trace')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
 	/**
@@ -654,7 +646,7 @@ class yf_debug_info {
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('name' => 'trace')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
 
 	/**
@@ -667,7 +659,7 @@ class yf_debug_info {
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['trace'] = '<pre><small>'.$v['trace'].'</small></pre>';
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('name' => 'trace')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
 
 	/**
@@ -1166,7 +1158,7 @@ class yf_debug_info {
 			'hidden_map'		=> $params['hidden_map'],
 		))->auto();
 
-		foreach ((array)$params['hidden_map'] as $to => $name) {
+		foreach ((array)$params['hidden_map'] as $name => $to) {
 			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
 		}
 		return $table;
