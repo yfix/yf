@@ -441,7 +441,7 @@ class yf_debug_info {
 			return '';
 		}
 		$mc_obj = cache_memcached_connect();
-		if (!is_object($mc_obj)) {
+		if (!is_object($mc_obj) || !method_exists($mc_obj, 'getExtendedStats')) {
 			return 'n/a';
 		}
 		$data = $mc_obj->getExtendedStats();
