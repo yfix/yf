@@ -146,6 +146,9 @@ class yf_debug_info {
 		if (!$a) {
 			return false;
 		}
+		if (!isset($params['first_col_width'])) {
+			$params['first_col_width'] = '20%';
+		}
 		if (is_array($a)) {
 			ksort($a);
 		}
@@ -360,6 +363,20 @@ class yf_debug_info {
 			'memory_usage'	=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
 			'memory_peak_usage'	=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
 		);
+		if (tpl()->COMPRESS_OUTPUT && !main()->NO_GRAPHICS) {
+			$data['ini'] += array(
+				'compress: Main content size original'	=> debug('compress_output_size_1').' bytes',
+				'compress: Main content size compressed'	=> debug('compress_output_size_2').' bytes',
+				'compress: ratio'				=> (debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0).'%',
+			);
+		}
+		if (conf('GZIP_ENABLED')) {
+			$data['ini'] = array(
+				'gzip: Main content size original'		=> debug('page_size_original').' bytes',
+				'gzip: Main content size gzipped approx'	=> debug('page_size_gzipped').' bytes',
+				'gzip: ratio approx'		=> round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0).'%',
+			);
+		}
 		$ini_all = ini_get_all();
 		$ini = array(
 			'memory_limit',
@@ -381,11 +398,10 @@ class yf_debug_info {
 			$data['session'][$k] = $v['local_value'];
 		}
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'first_col_width' => '20%')).'</div>';
+			$body .= '<div class="span6">'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
 		}
 		return $body;
 	}
-
 	/**
 	*/
 	function _debug_db_queries () {
@@ -796,49 +812,6 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_compress_output () {
-		if (!$this->_SHOW_COMPRESS_INFO || !tpl()->COMPRESS_OUTPUT || main()->NO_GRAPHICS) {
-			return '';
-		}
-		$data = array(
-			'Main content size original'	=> debug('compress_output_size_1').' bytes',
-			'Main content size compressed'	=> debug('compress_output_size_2').' bytes',
-			'Compress ratio'				=> (debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0).'%',
-		);
-		return $this->_show_key_val_table($data);
-	}
-
-	/**
-	*/
-	function _debug_gzip () {
-		if (!$this->_SHOW_GZIP_INFO || !conf('GZIP_ENABLED')) {
-			return '';
-		}
-		$data = array(
-			'Main content size original'		=> debug('page_size_original').' bytes',
-			'Main content size gzipped approx'	=> debug('page_size_gzipped').' bytes',
-			'GZIP compress ratio approx'		=> round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0).'%',
-		);
-		return $this->_show_key_val_table($data);
-	}
-
-	/**
-	*/
-	function _debug_not_translated () {
-		if (!$this->_SHOW_NOT_TRANSLATED) {
-			return '';
-		}
-		$lang = conf('language');
-		$not_translated = _class('i18n')->_NOT_TRANSLATED[$lang];
-		if (empty($not_translated)) {
-			return '';
-		}
-#		$this->_log_not_translated_to_file();
-		return $this->_show_key_val_table($not_translated);
-	}
-
-	/**
-	*/
 	function _debug_i18n () {
 		if (!$this->_SHOW_I18N_VARS) {
 			return '';
@@ -865,6 +838,21 @@ class yf_debug_info {
 		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec';
 		$body .= $this->_show_key_val_table($tmp);
 		return $body;
+	}
+
+	/**
+	*/
+	function _debug_not_translated () {
+		if (!$this->_SHOW_NOT_TRANSLATED) {
+			return '';
+		}
+		$lang = conf('language');
+		$not_translated = _class('i18n')->_NOT_TRANSLATED[$lang];
+		if (empty($not_translated)) {
+			return '';
+		}
+#		$this->_log_not_translated_to_file();
+		return $this->_show_key_val_table($not_translated);
 	}
 	
 	/**
