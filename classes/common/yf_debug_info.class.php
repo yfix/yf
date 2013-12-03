@@ -567,7 +567,7 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('_main_get_data_debug');
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
 
 	/**
@@ -577,7 +577,7 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('_core_cache_debug::get');
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
 
 	/**
@@ -587,7 +587,7 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('_core_cache_debug::set');
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
 	}
 
 	/**
