@@ -33,6 +33,7 @@ class form2_new_controls {
 #			->link('count_offers', './?object=manage_shop&action=product_edit&id=%d',array('desc'=>'ffgd'))
 			->stars_select('stars')
 
+			->captcha()
 			->save()
 		;
 	}
