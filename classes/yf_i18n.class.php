@@ -427,7 +427,14 @@ class yf_i18n {
 			if ($this->TRACK_TRANSLATED) {
 				$this->_I18N_VARS[$lang][$_source] = $output_string;
 				if (main()->INLINE_EDIT_LOCALE && !main()->_IS_REDIRECTING) {
-					$output_string = '<span class=locale_tr s_var='._prepare_html(str_replace(' ', '%20', $_source)).'>'.$output_string.'</span>';
+					$r = array(
+						' ' => '%20',
+						'='	=> '&equals;',
+						'<' => '&lt;',
+						'>' => '&gt;',
+					);
+					$s_var = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
+					$output_string = '<span class=locale_tr s_var='.$s_var.'>'.$output_string.'</span>';
 				}
 			}
 			$this->_tr_total_time += (microtime(true) - $_start_time);
