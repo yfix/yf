@@ -254,21 +254,13 @@ class yf_cache {
 			$all_debug = debug('_core_cache_debug::get');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				$_time = microtime(true) - $time_start;
-
-				ob_start();
-				var_dump($result);
-				$_debug_data = substr(ob_get_contents(), 0, 150);
-				ob_end_clean();
-				$_pos = strpos($_debug_data, ')');
-
 				debug('_core_cache_debug::get::'.$debug_index, array(
 					'name'		=> $cache_name,
-					'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
+					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
 					'driver'	=> $this->DRIVER,
 					'params'	=> $params,
 					'force_ttl'	=> $force_ttl,
-					'time'		=> round($_time, 5),
+					'time'		=> round(microtime(true) - $time_start, 5),
 					'trace'		=> $this->trace_string(),
 				));
 			}
@@ -359,19 +351,11 @@ class yf_cache {
 			$all_debug = debug('_core_cache_debug::set');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				$_time = microtime(true) - $time_start;
-
-				ob_start();
-				var_dump($data);
-				$_debug_data = substr(ob_get_contents(), 0, 150);
-				ob_end_clean();
-				$_pos = strpos($_debug_data, ')');
-
 				debug('_core_cache_debug::set::'.$debug_index, array(
 					'name'		=> $cache_name,
-					'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. $this->_debug_escape(substr($_debug_data, $_pos + 1)) : $_debug_data,
+					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
 					'driver'	=> $this->DRIVER,
-					'time'		=> round($_time, 5),
+					'time'		=> round(microtime(true) - $time_start, 5),
 					'trace'		=> $this->trace_string(),
 				));
 			}
@@ -620,7 +604,7 @@ class yf_cache {
 			}
 		}
 		if ($this->DRIVER == 'file') {
-			$dh = @opendir(CORE_CACHE_DIR);
+			$dh = opendir(CORE_CACHE_DIR);
 			if (!$dh) {
 				return false;
 			}
@@ -638,7 +622,7 @@ class yf_cache {
 					unlink(CORE_CACHE_DIR.$f);
 				}
 			}
-			@closedir($dh);
+			closedir($dh);
 		} elseif ($this->DRIVER == 'eaccelerator') {
 			eaccelerator_clear();
 		} elseif ($this->DRIVER == 'apc') {

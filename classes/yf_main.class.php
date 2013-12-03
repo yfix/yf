@@ -1295,20 +1295,12 @@ class yf_main {
 			}
 		}
 		if (DEBUG_MODE) {
-			$time_end = microtime(true);
-
-			ob_start();
-			var_dump($data_to_return);
-			$_debug_data = substr(ob_get_contents(), 0, 150);
-			ob_end_clean();
-			$_pos = strpos($_debug_data, ')');
-
 			debug('_main_get_data_debug[]', array(
 				'name'		=> $handler_name,
-				'data'		=> $_pos ? '<b>'.substr($_debug_data, 0, $_pos + 1). '</b>'. _prepare_html(substr($_debug_data, $_pos + 1)) : $_debug_data,
+				'data'		=> '<pre><small>'._prepare_html(substr(var_export($data_to_return, 1), 0, 1000)).'</small></pre>',
 				'params'	=> $params,
 				'force_ttl'	=> $force_ttl,
-				'time'		=> round($time_end - $time_start, 5),
+				'time'		=> round(microtime(true) - $time_start, 5),
 				'trace'		=> $this->trace_string(),
 			));
 		}
