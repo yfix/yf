@@ -84,7 +84,7 @@ class yf_pattern_yf {
 			$s = 'object='.$url[0].'&action=show';
 		// Examples: define('SITE_DEFAULT_PAGE', './?object=index&action=some_action')
 		} elseif (defined('SITE_DEFAULT_PAGE')) {
-			$s = ltrim(SITE_DEFAULT_PAGE, './');
+			$s = ltrim(SITE_DEFAULT_PAGE, './?');
 		// Default inner url
 		} else {
 			$s = 'object=home_page&action=show';
