@@ -60,11 +60,7 @@ class yf_redirect {
 				'ttl'			=> intval($ttl),
 			));
 			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
-			$body .= common()->_show_execution_time();
-			$body .= common()->show_debug_info();
-#			echo $this->USE_DESIGN && !empty($body) ? common()->show_empty_page($body, array('full_width' => 1, 'no_debug' => 1)) : $body;
-			echo common()->show_empty_page($body, array('full_width' => 1, 'no_debug' => 1));
-			return '';
+			return print common()->show_empty_page($body, array('full_width' => 1/*, 'no_debug' => 1*/));
 		}
 		if (empty($redirect_type) || !in_array($redirect_type, $this->AVAIL_TYPES)) {
 			$redirect_type = 'http';
