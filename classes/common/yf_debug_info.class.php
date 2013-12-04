@@ -226,12 +226,17 @@ class yf_debug_info {
 		$body .= '<div id="debug_console">';
 
 		$i = 0;
+		$cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen('debug_item_'));
+		// This is needed to show default tab if saved tab not existing now for any reason
+		if (!isset($debug_contents[$cookie_active_tab])) {
+			$cookie_active_tab = '';
+		}
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
 			}
 			$is_first = (++$i == 1);
-			$is_active = isset($_COOKIE['debug_tabs_active']) ? ($_COOKIE['debug_tabs_active'] == 'debug_item_'.$name) : $is_first;
+			$is_active = $cookie_active_tab ? ($cookie_active_tab == $name) : $is_first;
 			$contents[$name] = '  <div class="tab-pane fade in'.($is_active ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
 			$links[$name] = '  <li'.($is_active ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
 		}
