@@ -46,8 +46,6 @@ class yf_debug_info {
 	/** @var bool */
 	public $_INCLUDED_SKIP_CACHE		= 0;
 	/** @var bool */
-	public $_SHOW_META_TAGS				= 1;
-	/** @var bool */
 	public $_SHOW_MEMCACHED_INFO		= 1;
 	/** @var bool */
 	public $_SHOW_EACCELERATOR_INFO		= 1;
@@ -260,40 +258,36 @@ class yf_debug_info {
 			return '';
 		}
 		$data['yf'] = array(
-			'DEBUG_MODE'	=> DEBUG_MODE,
-			'DEV_MODE'		=> (int)conf('DEV_MODE'),
-			'MAIN_TYPE'		=> MAIN_TYPE,
-			'USE_CACHE'		=> (int)conf('USE_CACHE'),
-			'CACHE_DRIVER'	=> conf('USE_CACHE') ? cache()->DRIVER : '',
-			'HOSTNAME'		=> main()->HOSTNAME,
-			'SITE_ID'		=> (int)conf('SITE_ID'),
-			'SERVER_ID'		=> (int)conf('SERVER_ID'),
-			'SERVER_ROLE'	=> _prepare_html(conf('SERVER_ROLE')),
-			'@LANG'			=> conf('language'),
-			'SITE_PATH'		=> SITE_PATH,
-			'PROJECT_PATH'	=> PROJECT_PATH,
-			'YF_PATH'		=> YF_PATH,
-			'WEB_PATH'		=> WEB_PATH,
-			'MEDIA_PATH'	=> MEDIA_PATH,
-			'IS_SPIDER'		=> (int)conf('IS_SPIDER'),
+			'MAIN_TYPE'			=> MAIN_TYPE,
+			'LANG'				=> conf('language'),
+			'DEBUG_MODE'		=> DEBUG_MODE,
+			'DEV_MODE'			=> (int)conf('DEV_MODE'),
+			'REWRITE_MODE'		=> (int)tpl()->REWRITE_MODE,
+			'USE_CACHE'			=> (int)conf('USE_CACHE'),
+			'CACHE_DRIVER'		=> conf('USE_CACHE') ? cache()->DRIVER : '',
+			'SITE_PATH'			=> SITE_PATH,
+			'PROJECT_PATH'		=> PROJECT_PATH,
+			'YF_PATH'			=> YF_PATH,
+			'WEB_PATH'			=> WEB_PATH,
+			'MEDIA_PATH'		=> MEDIA_PATH,
+			'TPL_THEMES_PATH'	=> tpl()->_THEMES_PATH,
+			'TPL_PATH'			=> tpl()->TPL_PATH,
+			'TPL_SKIN'			=> conf('theme'),
+			'TPL_INHERIT_SKIN'	=> (string)tpl()->INHERIT_SKIN,
+			'TPL_INHERIT_SKIN2'	=> (string)tpl()->INHERIT_SKIN2,
+			'MAIN_HOSTNAME'		=> main()->HOSTNAME,
+			'SITE_ID'			=> (int)conf('SITE_ID'),
+			'SERVER_ID'			=> (int)conf('SERVER_ID'),
+			'SERVER_ROLE'		=> _prepare_html(conf('SERVER_ROLE')),
+			'USER_ID'			=> (int)main()->USER_ID,
+			'USER_GROUP'		=> (int)main()->USER_GROUP,
+			'IS_SPIDER'			=> (int)conf('IS_SPIDER'),
+			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
+			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
+			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
 		);
-		$data['ini'] = array(
-			'memory_usage'	=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
-			'memory_peak_usage'	=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
-		);
-		if (tpl()->COMPRESS_OUTPUT && !main()->NO_GRAPHICS) {
-			$data['ini'] += array(
-				'compress: size original'	=> debug('compress_output_size_1').' bytes',
-				'compress: size compressed'	=> debug('compress_output_size_2').' bytes',
-				'compress: ratio'			=> (debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0).'%',
-			);
-		}
-		if (conf('GZIP_ENABLED')) {
-			$data['ini'] = array(
-				'gzip: size original'		=> debug('page_size_original').' bytes',
-				'gzip: size gzipped approx'	=> debug('page_size_gzipped').' bytes',
-				'gzip: ratio approx'		=> round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0).'%',
-			);
+		foreach (debug('_DEBUG_META') as $k => $v) {
+			$data['yf']['META_'.strtoupper($k)] = $v;
 		}
 		$ini_all = ini_get_all();
 		$ini = array(
@@ -312,6 +306,34 @@ class yf_debug_info {
 		foreach ($ini as $name) {
 			$data['ini']['php_ini&nbsp;:&nbsp;'.$name] = $ini_all[$name]['local_value'];
 		}
+		if (tpl()->COMPRESS_OUTPUT && !main()->NO_GRAPHICS) {
+			$data['ini'] += array(
+				'compress: size original'	=> debug('compress_output_size_1').' bytes',
+				'compress: size compressed'	=> debug('compress_output_size_2').' bytes',
+				'compress: ratio'			=> (debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0).'%',
+			);
+		}
+		if (conf('GZIP_ENABLED')) {
+			$data['ini'] += array(
+				'gzip: size original'		=> debug('page_size_original').' bytes',
+				'gzip: size gzipped approx'	=> debug('page_size_gzipped').' bytes',
+				'gzip: ratio approx'		=> round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0).'%',
+			);
+		}
+		$data['ini'] += array(
+			'memory_usage'			=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
+			'memory_peak_usage'		=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
+			'sys_loadavg'			=> implode(' | ', sys_getloadavg()),
+			'db_server_version'		=> db()->get_server_version(),
+			'db_host_info'			=> db()->get_host_info(),
+			'php_version'			=> phpversion(),
+			'php_sapi_name'			=> php_sapi_name(),
+			'php_current_user'		=> get_current_user(),
+			'php_uname'				=> php_uname(),
+			'php_include_path'		=> get_include_path(),
+			'php_loaded_extensions'	=> implode(', ', get_loaded_extensions()),
+			'php_ini_scanned_files'	=> nl2br(php_ini_scanned_files()),
+		);
 		foreach ((array)ini_get_all('session') as $k => $v) {
 			$data['session'][$k] = $v['local_value'];
 		}
@@ -736,15 +758,6 @@ class yf_debug_info {
 			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
 		}
 		return $body;
-	}
-
-	/**
-	*/
-	function _debug_meta_tags () {
-		if (!$this->_SHOW_META_TAGS) {
-			return "";
-		}
-		return $this->_show_key_val_table(debug('_DEBUG_META'));
 	}
 	
 	/**
