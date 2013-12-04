@@ -61,26 +61,22 @@ class yf_oauth {
 	/**
 	*/
 	function initialize($provider) {
-		require(PROJECT_PATH. '.dev/config.php');
-		require(YF_PATH. 'libs/oauth-api/http/http.php');
-#		require(YF_PATH. 'libs/oauth-api/oauth/oauth_client.php');
+		require_once PROJECT_PATH. '.dev/config.php';
+		require_once YF_PATH. 'libs/oauth-api/http/http.php';
 
-#		$client = new oauth_client_class();
-		$client = $this;
-
-		$client->debug = true;
-		$client->debug_http = true;
-		$client->server = $provider;
-		$client->redirect_uri = _force_get_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']);
-		$client->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
-		$client->client_secret = $config[$provider]['client_secret'] ?: '';
-		if (strlen($client->client_id) == 0 || strlen($client->client_secret) == 0) {
-			die('Please set the client_id with Key and client_secret with Secret. The URL must be '.$client->redirect_uri);
+		$this->debug = true;
+		$this->debug_http = true;
+		$this->server = $provider;
+		$this->redirect_uri = _force_get_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']);
+		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
+		$this->client_secret = $config[$provider]['client_secret'] ?: '';
+		if (strlen($this->client_id) == 0 || strlen($this->client_secret) == 0) {
+			die('Please set the client_id with Key and client_secret with Secret. The URL must be '.$this->redirect_uri);
 		}
 
 		$settings = $this->_providers[$provider] + $this->_providers['__default__'];
 		foreach ($settings as $k => $v) {
-			$client->$k = $v;
+			$this->$k = $v;
 		}
 
 #		if ($_SESSION['oauth'][$provider]['token']) {
@@ -88,23 +84,23 @@ class yf_oauth {
 #			$user = $_SESSION['oauth'][$provider]['user_info'];
 #		} else {
 			$error = 'Cannot process';
-			if (($success = $client->process())) {
-				if (strlen($client->access_token)) {
-					$_SESSION['oauth'][$provider]['token'] = $client->access_token;
+			if (($success = $this->process())) {
+				if (strlen($this->access_token)) {
+					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
 					$error = '';
-					$success = $client->call_api($settings['user_info_url'], 'GET', array(), array('FailOnAccessError' => true), $user);
+					$success = $this->call_api($settings['user_info_url'], 'GET', array(), array('FailOnAccessError' => true), $user);
 	
 					$_SESSION['oauth'][$provider]['user_info'] = $user;
 				} else {
-					$error = $client->authorization_error;
+					$error = $this->authorization_error;
 				}
 			}
 #		}
 
-		$body = $client->output();
+		$body = $this->output();
 
 		if ($error) {
-			return $body.'<h1 class="text-error">Error: '.$error.'</h1>'.(DEBUG_MODE ? '<pre>'.print_r($client, 1).'</pre>' : '');
+			return $body.'<h1 class="text-error">Error: '.$error.'</h1>'.(DEBUG_MODE ? '<pre>'.print_r($this, 1).'</pre>' : '');
 		} elseif ($success) {
 			return $body.'<h1 class="text-success">Success</h1><pre>'.print_r($user, 1).'</pre>';
 		}
