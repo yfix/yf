@@ -42,7 +42,7 @@ class yf_shop_supplier_panel_upload_images {
 			 $SUPPLIER_ID = $_POST['supplier'];
 		}
 		$file = $_FILES['archive'];
-		$log_str = "\n[".$file['name']."]\n";
+		file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", "\n[".$file['name']."]\n", FILE_APPEND);
 		$new_name = md5(rand().microtime()).'.'.pathinfo($file['name'], PATHINFO_EXTENSION);
 		rename($file['name'], $new_name);
 		$archive_name = $this->ARCHIVE_FOLDER. $new_name;
@@ -56,19 +56,17 @@ class yf_shop_supplier_panel_upload_images {
 		}
 		$full_archive_name = escapeshellarg($archive_name);
 
-		$zip = 'unzip -o '.$full_archive_name.' -d '.$EXTRACT_PATH;
-		$rar = 'unrar e '.$full_archive_name.' '.$EXTRACT_PATH;
+//		$zip = 'unzip -o '.$full_archive_name.' -d '.$EXTRACT_PATH;
+//		$rar = 'unrar e '.$full_archive_name.' '.$EXTRACT_PATH;
 		$tar = 'tar -xvf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 		$gz = 'tar -xzf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 
 		$ext = $this->ALLOWED_MIME_TYPES[$file['type']];
-		passthru($$ext);
+		if($ext == 'rar') common()->rar_extract($archive_name, $EXTRACT_PATH);
+		if($ext == 'zip') common()->zip_extract($archive_name, $EXTRACT_PATH);
+		if($ext == 'tar' || $ext == 'gz') passthru($$ext);
+
 		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/', '/__MACOSX/');
-		if(empty($result_files)){
-			if($ext == 'rar') common()->rar_extract($archive_name, $EXTRACT_PATH);
-			if($ext == 'zip') common()->zip_extract($archive_name, $EXTRACT_PATH);
-			$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/', '/__MACOSX/');
-		}
 		foreach($result_files as $k => $v){
 			$status = $this->search_product_by_filename($v, $SUPPLIER_ID);
 			$result = is_array($status)? $status['status'] : $status;
@@ -81,7 +79,8 @@ class yf_shop_supplier_panel_upload_images {
 				"image"		=> is_array($status)? str_replace(PROJECT_PATH, WEB_PATH, $status['img']): "",
 				"edit_url"	=> is_array($status)? "./?object=manage_shop&action=product_edit&id=".$status['id'] : "",
 			);
-			$log_str .= $product_id." | ".$status." | ".$filename.";\n";
+			$log_str = $product_id." | ".$status." | ".$filename.";\n";
+			file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", $log_str, FILE_APPEND);
 		}
 		$replace =array(
 			"items" => $items,
@@ -89,7 +88,6 @@ class yf_shop_supplier_panel_upload_images {
 		_class('dir')->delete_dir($EXTRACT_PATH, true);
 		unlink($this->ARCHIVE_FOLDER.$new_name);
 		common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']));
-		file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", $log_str, FILE_APPEND);
 
 		return tpl()->parse("shop_supplier_panel/upload_archive", $replace);
 	}
