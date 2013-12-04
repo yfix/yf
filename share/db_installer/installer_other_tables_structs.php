@@ -550,102 +550,6 @@ $data = my_array_merge((array)$data, array(
 	`users` int(10) unsigned NOT NULL,
 	PRIMARY KEY	(`keyword`)
 ",
-"link_request"	=> "
-	`id` mediumint(7) NOT NULL auto_increment,
-	`user_id` mediumint(7) NOT NULL default '0',
-	`time` int(11) NOT NULL default '0',
-	PRIMARY KEY	(`id`)
-",
-"links_categories"	=> "
-	`id` int(5) NOT NULL auto_increment,
-	`name` varchar(50) NOT NULL default '',
-	`order1` smallint(3) NOT NULL default '0',
-	`bottom` text NOT NULL,
-	`file_name` varchar(64) NOT NULL default '',
-	PRIMARY KEY	(`id`),
-	UNIQUE KEY `id` (`id`)
-",
-"links_links"	=> "
-	`id` int(5) NOT NULL auto_increment,
-	`user_id` int(5) NOT NULL default '0',
-	`cat_id` smallint(3) NOT NULL default '0',
-	`status` smallint(1) NOT NULL default '0',
-	`title` varchar(50) NOT NULL default '',
-	`url` varchar(250) NOT NULL default '',
-	`description` text NOT NULL,
-	`link_url` varchar(250) NOT NULL default '',
-	`banner_url` varchar(250) NOT NULL default '',
-	`type` smallint(1) NOT NULL default '0',
-	`priority` smallint(1) NOT NULL default '0',
-	`linker` varchar(20) NOT NULL default '',
-	`email1_time` int(11) NOT NULL default '0',
-	`email2_time` int(11) NOT NULL default '0',
-	`email3_time` int(11) NOT NULL default '0',
-	`repl_url` varchar(250) NOT NULL default '',
-	`linker_id` int(10) unsigned NOT NULL default '0',
-	`add_date` int(10) unsigned NOT NULL default '0',
-	`site1` smallint(1) NOT NULL default '0',
-	`site2` smallint(1) NOT NULL default '0',
-	`site3` smallint(1) NOT NULL default '0',
-	`site4` smallint(1) NOT NULL default '0',
-	`site5` smallint(1) NOT NULL default '0',
-	`site6` smallint(1) NOT NULL default '0',
-	`site7` smallint(1) NOT NULL default '0',
-	`site8` smallint(1) NOT NULL default '0',
-	`site9` smallint(1) NOT NULL default '0',
-	`site10` smallint(1) NOT NULL default '0',
-	`site11` smallint(1) NOT NULL default '0',
-	`site12` smallint(1) NOT NULL default '0',
-	`site13` smallint(1) NOT NULL default '0',
-	`site14` smallint(1) NOT NULL default '0',
-	`site15` smallint(1) NOT NULL default '0',
-	`site16` smallint(1) NOT NULL default '0',
-	`site17` smallint(1) NOT NULL default '0',
-	`site18` smallint(1) NOT NULL default '0',
-	`site19` smallint(1) NOT NULL default '0',
-	`site20` smallint(1) NOT NULL default '0',
-	`site21` smallint(1) NOT NULL default '0',
-	`site22` smallint(1) NOT NULL default '0',
-	`site23` smallint(1) NOT NULL default '0',
-	`site24` smallint(1) NOT NULL default '0',
-	`site25` smallint(1) NOT NULL default '0',
-	`site26` smallint(1) NOT NULL default '0',
-	`site27` smallint(1) NOT NULL default '0',
-	`site28` smallint(1) NOT NULL default '0',
-	`site29` smallint(1) NOT NULL default '0',
-	`site30` smallint(1) NOT NULL default '0',
-	UNIQUE KEY `id` (`id`),
-	KEY `user_id` (`user_id`)
-",
-"links_mails"	=> "
-	`id` int(5) NOT NULL auto_increment,
-	`time` int(11) NOT NULL default '0',
-	`subject` varchar(250) NOT NULL default '',
-	`message` text NOT NULL,
-	UNIQUE KEY `id` (`id`)
-",
-"links_sites"	=> "
-	`id` int(5) NOT NULL auto_increment,
-	`title` varchar(50) NOT NULL default '',
-	`description` text NOT NULL,
-	`url` varchar(250) NOT NULL default '',
-	`links_url` varchar(250) NOT NULL default '',
-	`register_url` varchar(250) NOT NULL default '',
-	`login_url` varchar(250) NOT NULL default '',
-	`banner_url` varchar(250) NOT NULL default '',
-	`list_bottom` text NOT NULL,
-	UNIQUE KEY `id` (`id`)
-",
-"links_users"	=> "
-	`id` int(5) NOT NULL auto_increment,
-	`name` varchar(50) NOT NULL default '',
-	`password` varchar(12) NOT NULL default '',
-	`email` varchar(50) NOT NULL default '',
-	`linker` varchar(50) NOT NULL default '',
-	`time` int(11) NOT NULL default '0',
-	`linker_id` int(10) unsigned NOT NULL default '0',
-	UNIQUE KEY `id` (`id`)
-",
 "log_user_action"	=> "
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 	`owner_id` INT UNSIGNED NOT NULL ,
@@ -690,27 +594,6 @@ $data = my_array_merge((array)$data, array(
 	`add_date` int(10) unsigned NOT NULL default '0',
 	`active` enum('1','0') NOT NULL default '1',
 	PRIMARY KEY  (`id`)
-",
-"openid_association"	=> "
-	`url`		varchar(256) NOT NULL,
-	`handle`	varchar(256) NOT NULL default '',
-	`mac_func`	char(16) NOT NULL default '',
-	`secret`	varchar(256) NOT NULL default '',
-	`expires`	int(10) unsigned NOT NULL default '0',
-	PRIMARY KEY  (`url`)
-",
-"openid_discovery"	=> "
-	`id`		varchar(256) NOT NULL,
-	`real_id`	varchar(256) NOT NULL default '',
-	`server`	varchar(256) NOT NULL default '',
-	`version`	float,
-	`expires`	int(10) unsigned NOT NULL default '0',
-	PRIMARY KEY  (`id`)
-",
-"openid_nonce"	=> "
-	`nonce`		varchar(256) NOT NULL,
-	`created`	int(10) unsigned NOT NULL default '0',
-	PRIMARY KEY  (`nonce`)
 ",
 "pm"	=> "
 	`id` int(10) unsigned NOT NULL,
@@ -1088,21 +971,6 @@ $data = my_array_merge((array)$data, array(
 	`num_views` int(10) unsigned NOT NULL default '0',
 	PRIMARY KEY  (`id`)
 ",
-/*
-"user_data_stats"	=> "
-	`id` int(10) unsigned NOT NULL,
-	`add_date` int(10) unsigned NOT NULL default '0',
-	`last_view` int(10) unsigned NOT NULL default '0',
-	`last_login` int(10) unsigned NOT NULL default '0',
-	`last_update` int(10) unsigned NOT NULL default '0',
-	`num_views` int(10) unsigned NOT NULL default '0',
-	`num_logins` smallint(6) unsigned NOT NULL default '0',
-	`num_updates` smallint(6) unsigned NOT NULL default '0',
-	`num_r_mails` smallint(6) unsigned NOT NULL default '0',
-	`num_s_mails` smallint(6) unsigned NOT NULL default '0',
-	PRIMARY KEY  (`id`)
-",
-*/
 "user_stats"	=> "
 	`user_id` int(10) unsigned NOT NULL,
 	`group_id` tinyint(3) unsigned NOT NULL,
@@ -1239,7 +1107,7 @@ $data = my_array_merge((array)$data, array(
 	`edit_date` int(11) NOT NULL DEFAULT '0',
 	`active` tinyint(4) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
-	// ENGINE=MyISAM DEFAULT CHARSET=utf8 
+	/** ENGINE=MyISAM DEFAULT CHARSET=utf8 **/
 ",
 "log_ads_changes" => "
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1248,7 +1116,7 @@ $data = my_array_merge((array)$data, array(
 	`action` text NOT NULL,
 	`date` int(10) unsigned NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`)
-	// ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ",
 ));
 $forum_tables_structs_file = dirname(__FILE__)."/installer_forum_tables_structs.php";
