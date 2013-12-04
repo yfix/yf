@@ -61,8 +61,12 @@ class yf_oauth {
 	/**
 	*/
 	function initialize($provider) {
-		require_once PROJECT_PATH. '.dev/config.php';
-		require_once YF_PATH. 'libs/oauth-api/http/http.php';
+		global $oauth_config;
+		$config = &$oauth_config;
+
+		if (!$config[$provider]) {
+			return 'Error: no config cleint_id and client_secret for provider: '.$provider;
+		}
 
 		$this->debug = true;
 		$this->debug_http = true;
@@ -346,7 +350,7 @@ class yf_oauth {
 	*/
 	function send_api_request($url, $method, $parameters, $oauth, $options, &$response) {
 		$this->response_status = 0;
-		$http = new http_class;
+		$http = _class('oauth_http');
 		$http->debug = ($this->debug && $this->debug_http);
 		$http->log_debug = true;
 		$http->sasl_authenticate = 0;
