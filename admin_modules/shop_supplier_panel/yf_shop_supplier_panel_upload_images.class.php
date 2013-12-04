@@ -79,7 +79,7 @@ class yf_shop_supplier_panel_upload_images {
 				"image"		=> is_array($status)? str_replace(PROJECT_PATH, WEB_PATH, $status['img']): "",
 				"edit_url"	=> is_array($status)? "./?object=manage_shop&action=product_edit&id=".$status['id'] : "",
 			);
-			$log_str = $product_id." | ".$status." | ".$filename.";\n";
+			$log_str = $product_id." | ".$result." | ".$filename.";\n";
 			file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", $log_str, FILE_APPEND);
 		}
 		$replace =array(
