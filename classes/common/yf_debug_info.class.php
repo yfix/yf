@@ -286,7 +286,7 @@ class yf_debug_info {
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
 		);
-		foreach (debug('_DEBUG_META') as $k => $v) {
+		foreach ((array)debug('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;
 		}
 		$ini_all = ini_get_all();
