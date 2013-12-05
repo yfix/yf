@@ -62,7 +62,7 @@ class yf_oauth {
 
 	/**
 	*/
-	function initialize($provider) {
+	function login($provider) {
 		global $oauth_config;
 		$config = &$oauth_config;
 

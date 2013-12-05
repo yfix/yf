@@ -56,8 +56,7 @@ class yf_test {
 		if ($_GET['id']) {
 			$provider = $_GET['id'];
 #			$settings = $providers($_GET['id']);
-			return _class('oauth')->initialize($provider);
-#				->process();
+			return _class('oauth')->login($provider);
 		}
 		foreach ((array)$providers as $name => $settings) {
 			if ($name[0] == '_') {
