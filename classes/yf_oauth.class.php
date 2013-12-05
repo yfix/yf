@@ -126,6 +126,12 @@ class yf_oauth {
 
 	/**
 	*/
+	function _get_http_class() {
+		return _class('oauth_http', 'classes/oauth/');
+	}
+
+	/**
+	*/
 	function _set_error($error) {
 		$this->error = $error;
 		if ($this->debug) {
@@ -365,7 +371,7 @@ class yf_oauth {
 		}
 		$this->response_status = 0;
 
-		$http = _class('oauth_http');
+		$http = $this->_get_http_class();
 
 		$http->debug = ($this->debug && $this->debug_http);
 		$http->log_debug = true;

@@ -1,16 +1,7 @@
 <?php
 
-define('HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR',       -1);
-define('HTTP_CLIENT_ERROR_NO_ERROR',                 0);
-define('HTTP_CLIENT_ERROR_INVALID_SERVER_ADDRESS',   1);
-define('HTTP_CLIENT_ERROR_CANNOT_CONNECT',           2);
-define('HTTP_CLIENT_ERROR_COMMUNICATION_FAILURE',    3);
-define('HTTP_CLIENT_ERROR_CANNOT_ACCESS_LOCAL_FILE', 4);
-define('HTTP_CLIENT_ERROR_PROTOCOL_FAILURE',         5);
-define('HTTP_CLIENT_ERROR_INVALID_PARAMETERS',       6);
+class yf_oauth_http {
 
-class yf_oauth_http
-{
 	public $host_name="";
 	public $host_port=0;
 	public $proxy_host_name="";
@@ -83,25 +74,24 @@ class yf_oauth_http
 	private $chunked=0;
 	private $remaining_chunk=0;
 	private $last_chunk_read=0;
-	private $months=array(
-		"Jan"=>"01",
-		"Feb"=>"02",
-		"Mar"=>"03",
-		"Apr"=>"04",
-		"May"=>"05",
-		"Jun"=>"06",
-		"Jul"=>"07",
-		"Aug"=>"08",
-		"Sep"=>"09",
-		"Oct"=>"10",
-		"Nov"=>"11",
-		"Dec"=>"12");
+	private $months=array("Jan"=>"01", "Feb"=>"02", "Mar"=>"03", "Apr"=>"04", "May"=>"05", "Jun"=>"06", "Jul"=>"07", "Aug"=>"08", "Sep"=>"09", "Oct"=>"10", "Nov"=>"11","Dec"=>"12");
 	private $session='';
 	private $connection_close=0;
 	private $force_close = 0;
 	private $connected_host = '';
 	private $connected_port = -1;
 	private $connected_ssl = 0;
+
+	function __construct() {
+		define('HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR',       -1);
+		define('HTTP_CLIENT_ERROR_NO_ERROR',                 0);
+		define('HTTP_CLIENT_ERROR_INVALID_SERVER_ADDRESS',   1);
+		define('HTTP_CLIENT_ERROR_CANNOT_CONNECT',           2);
+		define('HTTP_CLIENT_ERROR_COMMUNICATION_FAILURE',    3);
+		define('HTTP_CLIENT_ERROR_CANNOT_ACCESS_LOCAL_FILE', 4);
+		define('HTTP_CLIENT_ERROR_PROTOCOL_FAILURE',         5);
+		define('HTTP_CLIENT_ERROR_INVALID_PARAMETERS',       6);
+	}
 
 	/* Private methods - DO NOT CALL */
 
@@ -115,9 +105,9 @@ class yf_oauth_http
 		for($character=0;$character<strlen($separator);$character++)
 		{
 			if(gettype($position=strpos($string,$separator[$character]))=="integer")
-				$found=(IsSet($found) ? min($found,$position) : $position);
+				$found=(isset($found) ? min($found,$position) : $position);
 		}
-		if(IsSet($found))
+		if(isset($found))
 		{
 			$this->next_token=substr($string,$found+1);
 			return(substr($string,0,$found));
@@ -142,7 +132,7 @@ class yf_oauth_http
 
 	function SetPHPError($error, &$php_error_message, $error_code = HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR)
 	{
-		if(IsSet($php_error_message)
+		if(isset($php_error_message)
 		&& strlen($php_error_message))
 			$error.=": ".$php_error_message;
 		return($this->SetError($error, $error_code));
@@ -461,7 +451,7 @@ class yf_oauth_http
 									"\x5d"=>'request failed because client\'s identd could not confirm the user ID string in the request',
 								);
 								$error_code = $response[1];
-								$error = (IsSet($socks_errors[$error_code]) ? $socks_errors[$error_code] : 'unknown');
+								$error = (isset($socks_errors[$error_code]) ? $socks_errors[$error_code] : 'unknown');
 								if(strlen($error))
 									$error = 'SOCKS error: '.$error;
 							}
@@ -508,7 +498,7 @@ class yf_oauth_http
 											"\x08"=>'Address type not supported'
 										);
 										$error_code = $response[1];
-										$error = (IsSet($socks_errors[$error_code]) ? $socks_errors[$error_code] : 'unknown');
+										$error = (isset($socks_errors[$error_code]) ? $socks_errors[$error_code] : 'unknown');
 										if(strlen($error))
 											$error = 'SOCKS error: '.$error;
 									}
@@ -572,7 +562,7 @@ class yf_oauth_http
 		$parameters=@parse_url($url);
 		if(!$parameters)
 			return($this->SetError("it was not specified a valid URL", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-		if(!IsSet($parameters["scheme"]))
+		if(!isset($parameters["scheme"]))
 			return($this->SetError("it was not specified the protocol type argument", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
 		switch(strtolower($parameters["scheme"]))
 		{
@@ -583,23 +573,23 @@ class yf_oauth_http
 			default:
 				return($parameters["scheme"]." connection scheme is not yet supported");
 		}
-		if(!IsSet($parameters["host"]))
+		if(!isset($parameters["host"]))
 			return($this->SetError("it was not specified the connection host argument", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
 		$arguments["HostName"]=$parameters["host"];
-		$arguments["Headers"]=array("Host"=>$parameters["host"].(IsSet($parameters["port"]) ? ":".$parameters["port"] : ""));
-		if(IsSet($parameters["user"]))
+		$arguments["Headers"]=array("Host"=>$parameters["host"].(isset($parameters["port"]) ? ":".$parameters["port"] : ""));
+		if(isset($parameters["user"]))
 		{
 			$arguments["AuthUser"]=UrlDecode($parameters["user"]);
-			if(!IsSet($parameters["pass"]))
+			if(!isset($parameters["pass"]))
 				$arguments["AuthPassword"]="";
 		}
-		if(IsSet($parameters["pass"]))
+		if(isset($parameters["pass"]))
 		{
-			if(!IsSet($parameters["user"]))
+			if(!isset($parameters["user"]))
 				$arguments["AuthUser"]="";
 			$arguments["AuthPassword"]=UrlDecode($parameters["pass"]);
 		}
-		if(IsSet($parameters["port"]))
+		if(isset($parameters["port"]))
 		{
 			if(strcmp($parameters["port"],strval(intval($parameters["port"]))))
 				return($this->SetError("it was not specified a valid connection host argument", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
@@ -607,7 +597,7 @@ class yf_oauth_http
 		}
 		else
 			$arguments["HostPort"]=0;
-		$arguments["RequestURI"]=(IsSet($parameters["path"]) ? $parameters["path"] : "/").(IsSet($parameters["query"]) ? "?".$parameters["query"] : "");
+		$arguments["RequestURI"]=(isset($parameters["path"]) ? $parameters["path"] : "/").(isset($parameters["query"]) ? "?".$parameters["query"] : "");
 		if(strlen($this->user_agent))
 			$arguments["Headers"]["User-Agent"]=$this->user_agent;
 		if(strlen($this->accept))
@@ -620,21 +610,21 @@ class yf_oauth_http
 		if(strlen($this->error))
 			return($this->error);
 		$error_code = HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR;
-		if(IsSet($arguments["HostName"]))
+		if(isset($arguments["HostName"]))
 			$this->host_name=$arguments["HostName"];
-		if(IsSet($arguments["HostPort"]))
+		if(isset($arguments["HostPort"]))
 			$this->host_port=$arguments["HostPort"];
-		if(IsSet($arguments["ProxyHostName"]))
+		if(isset($arguments["ProxyHostName"]))
 			$this->proxy_host_name=$arguments["ProxyHostName"];
-		if(IsSet($arguments["ProxyHostPort"]))
+		if(isset($arguments["ProxyHostPort"]))
 			$this->proxy_host_port=$arguments["ProxyHostPort"];
-		if(IsSet($arguments["SOCKSHostName"]))
+		if(isset($arguments["SOCKSHostName"]))
 			$this->socks_host_name=$arguments["SOCKSHostName"];
-		if(IsSet($arguments["SOCKSHostPort"]))
+		if(isset($arguments["SOCKSHostPort"]))
 			$this->socks_host_port=$arguments["SOCKSHostPort"];
-		if(IsSet($arguments["SOCKSVersion"]))
+		if(isset($arguments["SOCKSVersion"]))
 			$this->socks_version=$arguments["SOCKSVersion"];
-		if(IsSet($arguments["Protocol"]))
+		if(isset($arguments["Protocol"]))
 			$this->protocol=$arguments["Protocol"];
 		switch(strtolower($this->protocol))
 		{
@@ -691,13 +681,13 @@ class yf_oauth_http
 			$error=(($this->connection=curl_init($this->protocol."://".$this->host_name.($host_port==$default_port ? "" : ":".strval($host_port))."/")) ? "" : "Could not initialize a CURL session");
 			if(strlen($error)==0)
 			{
-				if(IsSet($arguments["SSLCertificateFile"]))
+				if(isset($arguments["SSLCertificateFile"]))
 					curl_setopt($this->connection,CURLOPT_SSLCERT,$arguments["SSLCertificateFile"]);
-				if(IsSet($arguments["SSLCertificatePassword"]))
+				if(isset($arguments["SSLCertificatePassword"]))
 					curl_setopt($this->connection,CURLOPT_SSLCERTPASSWD,$arguments["SSLCertificatePassword"]);
-				if(IsSet($arguments["SSLKeyFile"]))
+				if(isset($arguments["SSLKeyFile"]))
 					curl_setopt($this->connection,CURLOPT_SSLKEY,$arguments["SSLKeyFile"]);
-				if(IsSet($arguments["SSLKeyPassword"]))
+				if(isset($arguments["SSLKeyPassword"]))
 					curl_setopt($this->connection,CURLOPT_SSLKEYPASSWD,$arguments["SSLKeyPassword"]);
 			}
 			$this->state="Connected";
@@ -706,16 +696,16 @@ class yf_oauth_http
 		{
 			$error="";
 			if(strlen($this->proxy_host_name)
-			&& (IsSet($arguments["SSLCertificateFile"])
-			|| IsSet($arguments["SSLCertificateFile"])))
+			&& (isset($arguments["SSLCertificateFile"])
+			|| isset($arguments["SSLCertificateFile"])))
 				$error="establishing SSL connections using certificates or private keys via non-SSL proxies is not supported";
 			else
 			{
 				if($ssl)
 				{
-					if(IsSet($arguments["SSLCertificateFile"]))
+					if(isset($arguments["SSLCertificateFile"]))
 						$error="establishing SSL connections using certificates is only supported when the cURL extension is enabled";
-					elseif(IsSet($arguments["SSLKeyFile"]))
+					elseif(isset($arguments["SSLKeyFile"]))
 						$error="establishing SSL connections using a private key is only supported when the cURL extension is enabled";
 					else
 					{
@@ -763,7 +753,7 @@ class yf_oauth_http
 
 	function PickCookies(&$cookies,$secure)
 	{
-		if(IsSet($this->cookies[$secure]))
+		if(isset($this->cookies[$secure]))
 		{
 			$now=gmdate("Y-m-d H-i-s");
 			for($domain=0,reset($this->cookies[$secure]);$domain<count($this->cookies[$secure]);next($this->cookies[$secure]),$domain++)
@@ -800,13 +790,13 @@ class yf_oauth_http
 	function GetFileDefinition($file, &$definition)
 	{
 		$name="";
-		if(IsSet($file["FileName"]))
+		if(isset($file["FileName"]))
 			$name=basename($file["FileName"]);
-		if(IsSet($file["Name"]))
+		if(isset($file["Name"]))
 			$name=$file["Name"];
 		if(strlen($name)==0)
 			return("it was not specified the file part name");
-		if(IsSet($file["Content-Type"]))
+		if(isset($file["Content-Type"]))
 		{
 			$content_type=$file["Content-Type"];
 			$type=$this->Tokenize(strtolower($content_type),"/");
@@ -979,12 +969,12 @@ class yf_oauth_http
 			"Content-Type"=>$content_type,
 			"NAME"=>$name
 		);
-		if(IsSet($file["FileName"]))
+		if(isset($file["FileName"]))
 		{
 			if(gettype($length=@filesize($file["FileName"]))!="integer")
 			{
 				$error="it was not possible to determine the length of the file ".$file["FileName"];
-				if(IsSet($php_errormsg)
+				if(isset($php_errormsg)
 				&& strlen($php_errormsg))
 					$error.=": ".$php_errormsg;
 				if(!file_exists($file["FileName"]))
@@ -994,7 +984,7 @@ class yf_oauth_http
 			$definition["FILENAME"]=$file["FileName"];
 			$definition["Content-Length"]=$length;
 		}
-		elseif(IsSet($file["Data"]))
+		elseif(isset($file["Data"]))
 			$definition["Content-Length"]=strlen($definition["DATA"]=$file["Data"]);
 		else
 			return("it was not specified a valid file name");
@@ -1008,7 +998,7 @@ class yf_oauth_http
 		&& !$this->PutLine('User-Agent: '.$this->user_agent))
 		|| (strlen($this->accept)
 		&& !$this->PutLine('Accept: '.$this->accept))
-		|| (IsSet($arguments['Headers']['Proxy-Authorization'])
+		|| (isset($arguments['Headers']['Proxy-Authorization'])
 		&& !$this->PutLine('Proxy-Authorization: '.$arguments['Headers']['Proxy-Authorization']))
 		|| !$this->PutLine(''))
 		{
@@ -1050,21 +1040,21 @@ class yf_oauth_http
 	{
 		if(strlen($this->error))
 			return($this->error);
-		if(IsSet($arguments["ProxyUser"]))
+		if(isset($arguments["ProxyUser"]))
 			$this->proxy_request_user=$arguments["ProxyUser"];
-		elseif(IsSet($this->proxy_user))
+		elseif(isset($this->proxy_user))
 			$this->proxy_request_user=$this->proxy_user;
-		if(IsSet($arguments["ProxyPassword"]))
+		if(isset($arguments["ProxyPassword"]))
 			$this->proxy_request_password=$arguments["ProxyPassword"];
-		elseif(IsSet($this->proxy_password))
+		elseif(isset($this->proxy_password))
 			$this->proxy_request_password=$this->proxy_password;
-		if(IsSet($arguments["ProxyRealm"]))
+		if(isset($arguments["ProxyRealm"]))
 			$this->proxy_request_realm=$arguments["ProxyRealm"];
-		elseif(IsSet($this->proxy_realm))
+		elseif(isset($this->proxy_realm))
 			$this->proxy_request_realm=$this->proxy_realm;
-		if(IsSet($arguments["ProxyWorkstation"]))
+		if(isset($arguments["ProxyWorkstation"]))
 			$this->proxy_request_workstation=$arguments["ProxyWorkstation"];
-		elseif(IsSet($this->proxy_workstation))
+		elseif(isset($this->proxy_workstation))
 			$this->proxy_request_workstation=$this->proxy_workstation;
 		switch($this->state)
 		{
@@ -1081,51 +1071,51 @@ class yf_oauth_http
 			default:
 				return($this->SetError("can not send request in the current connection state", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
 		}
-		if(IsSet($arguments["RequestMethod"]))
+		if(isset($arguments["RequestMethod"]))
 			$this->request_method=$arguments["RequestMethod"];
-		if(IsSet($arguments["User-Agent"]))
+		if(isset($arguments["User-Agent"]))
 			$this->user_agent=$arguments["User-Agent"];
-		if(!IsSet($arguments["Headers"]["User-Agent"])
+		if(!isset($arguments["Headers"]["User-Agent"])
 		&& strlen($this->user_agent))
 			$arguments["Headers"]["User-Agent"]=$this->user_agent;
-		if(IsSet($arguments["KeepAlive"]))
+		if(isset($arguments["KeepAlive"]))
 			$this->keep_alive=intval($arguments["KeepAlive"]);
-		if(!IsSet($arguments["Headers"]["Connection"])
+		if(!isset($arguments["Headers"]["Connection"])
 		&& $this->keep_alive)
 			$arguments["Headers"]["Connection"]='Keep-Alive';
-		if(IsSet($arguments["Accept"]))
+		if(isset($arguments["Accept"]))
 			$this->user_agent=$arguments["Accept"];
-		if(!IsSet($arguments["Headers"]["Accept"])
+		if(!isset($arguments["Headers"]["Accept"])
 		&& strlen($this->accept))
 			$arguments["Headers"]["Accept"]=$this->accept;
 		if(strlen($this->request_method)==0)
 			return($this->SetError("it was not specified a valid request method", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-		if(IsSet($arguments["RequestURI"]))
+		if(isset($arguments["RequestURI"]))
 			$this->request_uri=$arguments["RequestURI"];
 		if(strlen($this->request_uri)==0
 		|| substr($this->request_uri,0,1)!="/")
 			return($this->SetError("it was not specified a valid request URI", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
 		$this->request_arguments=$arguments;
-		$this->request_headers=(IsSet($arguments["Headers"]) ? $arguments["Headers"] : array());
+		$this->request_headers=(isset($arguments["Headers"]) ? $arguments["Headers"] : array());
 		$body_length=0;
 		$this->request_body="";
 		$get_body=1;
 		if($this->request_method=="POST"
 		|| $this->request_method=="PUT")
 		{
-			if(IsSet($arguments['StreamRequest']))
+			if(isset($arguments['StreamRequest']))
 			{
 				$get_body = 0;
 				$this->request_headers["Transfer-Encoding"]="chunked";
 			}
-			elseif(IsSet($arguments["PostFiles"])
+			elseif(isset($arguments["PostFiles"])
 			|| ($this->force_multipart_form_post
-			&& IsSet($arguments["PostValues"])))
+			&& isset($arguments["PostValues"])))
 			{
 				$boundary="--".md5(uniqid(time()));
-				$this->request_headers["Content-Type"]="multipart/form-data; boundary=".$boundary.(IsSet($arguments["CharSet"]) ? "; charset=".$arguments["CharSet"] : "");
+				$this->request_headers["Content-Type"]="multipart/form-data; boundary=".$boundary.(isset($arguments["CharSet"]) ? "; charset=".$arguments["CharSet"] : "");
 				$post_parts=array();
-				if(IsSet($arguments["PostValues"]))
+				if(isset($arguments["PostValues"]))
 				{
 					$values=$arguments["PostValues"];
 					if(gettype($values)!="array")
@@ -1140,7 +1130,7 @@ class yf_oauth_http
 					}
 				}
 				$body_length+=strlen("--".$boundary."--\r\n");
-				$files=(IsSet($arguments["PostFiles"]) ? $arguments["PostFiles"] : array());
+				$files=(isset($arguments["PostFiles"]) ? $arguments["PostFiles"] : array());
 				reset($files);
 				$end=(gettype($input=key($files))!="string");
 				for(;!$end;)
@@ -1150,7 +1140,7 @@ class yf_oauth_http
 					$headers="--".$boundary."\r\nContent-Disposition: form-data; name=\"".$input."\"; filename=\"".$definition["NAME"]."\"\r\nContent-Type: ".$definition["Content-Type"]."\r\n\r\n";
 					$part=count($post_parts);
 					$post_parts[$part]=array("HEADERS"=>$headers);
-					if(IsSet($definition["FILENAME"]))
+					if(isset($definition["FILENAME"]))
 					{
 						$post_parts[$part]["FILENAME"]=$definition["FILENAME"];
 						$data="";
@@ -1164,7 +1154,7 @@ class yf_oauth_http
 				}
 				$get_body=0;
 			}
-			elseif(IsSet($arguments["PostValues"]))
+			elseif(isset($arguments["PostValues"]))
 			{
 				$values=$arguments["PostValues"];
 				if(gettype($values)!="array")
@@ -1188,15 +1178,15 @@ class yf_oauth_http
 						$this->request_body.=UrlEncode($k)."=".UrlEncode($values[$k]);
 					}
 				}
-				$this->request_headers["Content-Type"]="application/x-www-form-urlencoded".(IsSet($arguments["CharSet"]) ? "; charset=".$arguments["CharSet"] : "");
+				$this->request_headers["Content-Type"]="application/x-www-form-urlencoded".(isset($arguments["CharSet"]) ? "; charset=".$arguments["CharSet"] : "");
 				$get_body=0;
 			}
 		}
 		if($get_body
-		&& (IsSet($arguments["Body"])
-		|| IsSet($arguments["BodyStream"])))
+		&& (isset($arguments["Body"])
+		|| isset($arguments["BodyStream"])))
 		{
-			if(IsSet($arguments["Body"]))
+			if(isset($arguments["Body"]))
 				$this->request_body=$arguments["Body"];
 			else
 			{
@@ -1204,9 +1194,9 @@ class yf_oauth_http
 				$this->request_body="";
 				for($part=0; $part<count($stream); $part++)
 				{
-					if(IsSet($stream[$part]["Data"]))
+					if(isset($stream[$part]["Data"]))
 						$this->request_body.=$stream[$part]["Data"];
-					elseif(IsSet($stream[$part]["File"]))
+					elseif(isset($stream[$part]["File"]))
 					{
 						if(!($file=@fopen($stream[$part]["File"],"rb")))
 							return($this->SetPHPError("could not open upload file ".$stream[$part]["File"], $php_errormsg, HTTP_CLIENT_ERROR_CANNOT_ACCESS_LOCAL_FILE));
@@ -1226,24 +1216,24 @@ class yf_oauth_http
 						return("5 it was not specified a valid file or data body stream element at position ".$part);
 				}
 			}
-			if(!IsSet($this->request_headers["Content-Type"]))
-				$this->request_headers["Content-Type"]="application/octet-stream".(IsSet($arguments["CharSet"]) ? "; charset=".$arguments["CharSet"] : "");
+			if(!isset($this->request_headers["Content-Type"]))
+				$this->request_headers["Content-Type"]="application/octet-stream".(isset($arguments["CharSet"]) ? "; charset=".$arguments["CharSet"] : "");
 		}
-		if(IsSet($arguments["AuthUser"]))
+		if(isset($arguments["AuthUser"]))
 			$this->request_user=$arguments["AuthUser"];
-		elseif(IsSet($this->user))
+		elseif(isset($this->user))
 			$this->request_user=$this->user;
-		if(IsSet($arguments["AuthPassword"]))
+		if(isset($arguments["AuthPassword"]))
 			$this->request_password=$arguments["AuthPassword"];
-		elseif(IsSet($this->password))
+		elseif(isset($this->password))
 			$this->request_password=$this->password;
-		if(IsSet($arguments["AuthRealm"]))
+		if(isset($arguments["AuthRealm"]))
 			$this->request_realm=$arguments["AuthRealm"];
-		elseif(IsSet($this->realm))
+		elseif(isset($this->realm))
 			$this->request_realm=$this->realm;
-		if(IsSet($arguments["AuthWorkstation"]))
+		if(isset($arguments["AuthWorkstation"]))
 			$this->request_workstation=$arguments["AuthWorkstation"];
-		elseif(IsSet($this->workstation))
+		elseif(isset($this->workstation))
 			$this->request_workstation=$this->workstation;
 		if(strlen($this->proxy_host_name)==0
 		|| $connect)
@@ -1263,7 +1253,7 @@ class yf_oauth_http
 		}
 		if($this->use_curl)
 		{
-			$version=(gettype($v=curl_version())=="array" ? (IsSet($v["version"]) ? $v["version"] : "0.0.0") : (preg_match("/^libcurl\\/([0-9]+\\.[0-9]+\\.[0-9]+)/",$v,$m) ? $m[1] : "0.0.0"));
+			$version=(gettype($v=curl_version())=="array" ? (isset($v["version"]) ? $v["version"] : "0.0.0") : (preg_match("/^libcurl\\/([0-9]+\\.[0-9]+\\.[0-9]+)/",$v,$m) ? $m[1] : "0.0.0"));
 			$curl_version=100000*intval($this->Tokenize($version,"."))+1000*intval($this->Tokenize("."))+intval($this->Tokenize(""));
 			$protocol_version=($curl_version<713002 ? "1.0" : $this->protocol_version);
 		}
@@ -1316,7 +1306,7 @@ class yf_oauth_http
 		$next_state = "RequestSent";
 		if($this->use_curl)
 		{
-			if(IsSet($arguments['StreamRequest']))
+			if(isset($arguments['StreamRequest']))
 				return($this->SetError("Streaming request data is not supported when using Curl", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
 			if($body_length
 			&& strlen($this->request_body)==0)
@@ -1324,7 +1314,7 @@ class yf_oauth_http
 				for($request_body="",$success=1,$part=0;$part<count($post_parts);$part++)
 				{
 					$request_body.=$post_parts[$part]["HEADERS"].$post_parts[$part]["DATA"];
-					if(IsSet($post_parts[$part]["FILENAME"]))
+					if(isset($post_parts[$part]["FILENAME"]))
 					{
 						if(!($file=@fopen($post_parts[$part]["FILENAME"],"rb")))
 						{
@@ -1380,7 +1370,7 @@ class yf_oauth_http
 				if($success
 				&& ($success=$this->PutLine("")))
 				{
-					if(IsSet($arguments['StreamRequest']))
+					if(isset($arguments['StreamRequest']))
 						$next_state = "SendingRequestBody";
 					elseif($body_length)
 					{
@@ -1393,7 +1383,7 @@ class yf_oauth_http
 								if(!($success=$this->PutData($post_parts[$part]["HEADERS"]))
 								|| !($success=$this->PutData($post_parts[$part]["DATA"])))
 									break;
-								if(IsSet($post_parts[$part]["FILENAME"]))
+								if(isset($post_parts[$part]["FILENAME"]))
 								{
 									if(!($file=@fopen($post_parts[$part]["FILENAME"],"rb")))
 									{
@@ -1550,7 +1540,7 @@ class yf_oauth_http
 			}
 			$header_name=strtolower($this->Tokenize($line,":"));
 			$header_value=Trim(Chop($this->Tokenize("\r\n")));
-			if(IsSet($headers[$header_name]))
+			if(isset($headers[$header_name]))
 			{
 				if(gettype($headers[$header_name])=="string")
 					$headers[$header_name]=array($headers[$header_name]);
@@ -1633,7 +1623,7 @@ class yf_oauth_http
 	{
 		if($this->follow_redirect)
 		{
-			if(!IsSet($headers["location"])
+			if(!isset($headers["location"])
 			|| (gettype($headers["location"])!="array"
 			&& strlen($location=$headers["location"])==0)
 			|| (gettype($headers["location"])=="array"
@@ -1643,7 +1633,7 @@ class yf_oauth_http
 			{
 				if(!($location_arguments=@parse_url($location)))
 					return($this->SetError("the server did not return a valid redirection location URL", HTTP_CLIENT_ERROR_PROTOCOL_FAILURE));
-				if(!IsSet($location_arguments["scheme"]))
+				if(!isset($location_arguments["scheme"]))
 					$location=((gettype($end=strrpos($this->request_uri,"/"))=="integer" && $end>1) ? substr($this->request_uri,0,$end) : "")."/".$location;
 			}
 			if(!strcmp($location[0],"/"))
@@ -1688,7 +1678,7 @@ class yf_oauth_http
 			$authenticate_status="401";
 			$authentication_mechanism=$this->authentication_mechanism;
 		}
-		if(IsSet($headers[$authenticate_header])
+		if(isset($headers[$authenticate_header])
 		&& $this->sasl_authenticate)
 		{
 			if(function_exists("class_exists")
@@ -1714,13 +1704,13 @@ class yf_oauth_http
 					$mechanisms[]=$mechanism;
 			}
 			$sasl=new sasl_client_class;
-			if(IsSet($user))
+			if(isset($user))
 				$sasl->SetCredential("user",$user);
-			if(IsSet($password))
+			if(isset($password))
 				$sasl->SetCredential("password",$password);
-			if(IsSet($realm))
+			if(isset($realm))
 				$sasl->SetCredential("realm",$realm);
-			if(IsSet($workstation))
+			if(isset($workstation))
 				$sasl->SetCredential("workstation",$workstation);
 			$sasl->SetCredential("uri",$this->request_uri);
 			$sasl->SetCredential("method",$this->request_method);
@@ -1749,7 +1739,7 @@ class yf_oauth_http
 						break;
 				}
 			}
-			$authorization_value=$sasl->mechanism.(IsSet($message) ? " ".($sasl->encode_response ? base64_encode($message) : $message) : "");
+			$authorization_value=$sasl->mechanism.(isset($message) ? " ".($sasl->encode_response ? base64_encode($message) : $message) : "");
 			$request_arguments=$this->request_arguments;
 			$arguments=$request_arguments;
 			$arguments["Headers"][$authorization_header]=$authorization_value;
@@ -1760,7 +1750,7 @@ class yf_oauth_http
 			|| strlen($error=$this->Open($arguments)))
 				return($this->SetError($error, $this->error_code));
 			$authenticated=0;
-			if(IsSet($message))
+			if(isset($message))
 			{
 				if($proxy < 0)
 				{
@@ -1773,7 +1763,7 @@ class yf_oauth_http
 					|| strlen($error=$this->ReadReplyHeadersResponse($headers)))
 						return($this->SetError($error, $this->error_code));
 				}
-				if(!IsSet($headers[$authenticate_header]))
+				if(!isset($headers[$authenticate_header]))
 					$authenticate=array();
 				elseif(gettype($headers[$authenticate_header])=="array")
 					$authenticate=$headers[$authenticate_header];
@@ -1825,7 +1815,7 @@ class yf_oauth_http
 				switch($status)
 				{
 					case SASL_CONTINUE:
-						$authorization_value=$sasl->mechanism.(IsSet($message) ? " ".($sasl->encode_response ? base64_encode($message) : $message) : "");
+						$authorization_value=$sasl->mechanism.(isset($message) ? " ".($sasl->encode_response ? base64_encode($message) : $message) : "");
 						$arguments=$request_arguments;
 						$arguments["Headers"][$authorization_header]=$authorization_value;
 						if(!$proxy
