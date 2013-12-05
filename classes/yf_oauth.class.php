@@ -57,6 +57,8 @@ class yf_oauth {
 	private $response_status = 0;
 	private $oauth_user_agent = 'PHP-OAuth-API';
 	private $session_started = false;
+	private $provider = '';
+	private $_last_response = null;
 
 	/**
 	*/
@@ -92,7 +94,12 @@ class yf_oauth {
 				if (strlen($this->access_token)) {
 					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
 					$error = '';
-					$success = $this->call_api($settings['user_info_url'], 'GET', array(), array('FailOnAccessError' => true), $user);
+					$success = $this->call_api(array(
+						'url' => $settings['user_info_url'],
+						'method' => 'GET',
+						'options' => array('FailOnAccessError' => true),
+					));
+					$user = $this->_get_last_response();
 	
 					$_SESSION['oauth'][$provider]['user_info'] = $user;
 				} else {
@@ -180,22 +187,6 @@ class yf_oauth {
 
 	/**
 	*/
-	function _get_stored_state(&$state) {
-		if (!$this->session_started) {
-			if (!function_exists('session_start')) {
-				return $this->_set_error('Session variables are not accessible in this PHP environment');
-			}
-		}
-		if (isset($_SESSION['OAUTH_STATE'])) {
-			$state = $_SESSION['OAUTH_STATE'];
-		} else {
-			$state = $_SESSION['OAUTH_STATE'] = time().'-'.substr(md5(rand().time()), 0, 6);
-		}
-		return true;
-	}
-
-	/**
-	*/
 	function _get_request_state(&$state) {
 		$check = (strlen($this->append_state_to_redirect_uri) ? $this->append_state_to_redirect_uri : 'state');
 		$state = (isset($_GET[$check]) ? $_GET[$check] : null);
@@ -247,6 +238,22 @@ class yf_oauth {
 	function _redirect($url) {
 		header('HTTP/1.0 302 OAuth _redirection');
 		header('Location: '.$url);
+	}
+
+	/**
+	*/
+	function _get_stored_state(&$state) {
+		if (!$this->session_started) {
+			if (!function_exists('session_start')) {
+				return $this->_set_error('Session variables are not accessible in this PHP environment');
+			}
+		}
+		if (isset($_SESSION['OAUTH_STATE'])) {
+			$state = $_SESSION['OAUTH_STATE'];
+		} else {
+			$state = $_SESSION['OAUTH_STATE'] = time().'-'.substr(md5(rand().time()), 0, 6);
+		}
+		return true;
 	}
 
 	/**
@@ -314,13 +321,13 @@ class yf_oauth {
 	/**
 	*/
 	function _encode($value) {
-		return (is_array($value) ? $this->_encode_array($value) : str_replace('%7E', '~', str_replace('+',' ', Rawurlencode($value))));
+		return (is_array($value) ? $this->_encode_array($value) : str_replace('%7E', '~', str_replace('+',' ', rawurlencode($value))));
 	}
 
 	/**
 	*/
 	function _encode_array($array) {
-		foreach($array as $key => $value) {
+		foreach ($array as $key => $value) {
 			$array[$key] = $this->_encode($value);
 		}
 		return $array;
@@ -348,9 +355,18 @@ class yf_oauth {
 
 	/**
 	*/
-	function send_api_request($url, $method, $parameters, $oauth, $options, &$response) {
+	function send_api_request($url, $method = 'GET', $parameters = array(), $oauth = array(), $options = array()) {
+		if (is_array($url)) {
+			$options += $url;
+			$url = $options['url'];
+			$method = $options['method'] ?: 'GET';
+			$parameters = (array)$options['parameters'];
+			$oauth = (array)$options['oauth'];
+		}
 		$this->response_status = 0;
+
 		$http = _class('oauth_http');
+
 		$http->debug = ($this->debug && $this->debug_http);
 		$http->log_debug = true;
 		$http->sasl_authenticate = 0;
@@ -366,15 +382,15 @@ class yf_oauth {
 		$type = (isset($options['RequestContentType']) ? strtolower(trim(strtok($options['RequestContentType'], ';'))) : 'application/x-www-form-urlencoded');
 		if (isset($oauth)) {
 			$values = array(
-				'oauth_consumer_key' => $this->client_id,
-				'oauth_nonce' => md5(uniqid(rand(), true)),
-				'oauth_signature_method' => $this->signature_method,
-				'oauth_timestamp' => time(),
-				'oauth_version' => '1.0',
+				'oauth_consumer_key'	=> $this->client_id,
+				'oauth_nonce'			=> md5(uniqid(rand(), true)),
+				'oauth_signature_method'=> $this->signature_method,
+				'oauth_timestamp'		=> time(),
+				'oauth_version'			=> '1.0',
 			);
 			$files = (isset($options['Files']) ? $options['Files'] : array());
 			if (count($files)) {
-				foreach($files as $name => $value) {
+				foreach ($files as $name => $value) {
 					if (!isset($parameters[$name])) {
 						return ($this->_set_error('it was specified an file parameters named '.$name));
 					}
@@ -405,7 +421,7 @@ class yf_oauth {
 			} else {
 				if ($this->url_parameters && $type === 'application/x-www-form-urlencoded' && count($parameters)) {
 					$first = (strpos($url, '?') === false);
-					foreach($parameters as $parameter => $value) {
+					foreach ($parameters as $parameter => $value) {
 						$url .= ($first ? '?' : '&').urlencode($parameter).'='.urlencode($value);
 						$first = false;
 					}
@@ -423,12 +439,12 @@ class yf_oauth {
 				$u = parse_url($url);
 				if (isset($u['query'])) {
 					parse_str($u['query'], $q);
-					foreach($q as $parameter => $value) {
+					foreach ($q as $parameter => $value) {
 						$sign_values[$parameter] = $value;
 					}
 				}
 				ksort($sign_values);
-				foreach($sign_values as $parameter => $value) {
+				foreach ($sign_values as $parameter => $value) {
 					$sign .= $this->_encode(($first ? '' : '&').$parameter.'='.$this->_encode($value));
 					$first = false;
 				}
@@ -438,18 +454,17 @@ class yf_oauth {
 			} else {
 				return $this->_set_error($this->signature_method.' signature method is not yet supported');
 			}
-			if ($this->authorization_header)
-			{
+			if ($this->authorization_header) {
 				$authorization = 'OAuth';
 				$first = true;
-				foreach($values as $parameter => $value) {
+				foreach ($values as $parameter => $value) {
 					$authorization .= ($first ? ' ' : ',').$parameter.'="'.$this->_encode($value).'"';
 					$first = false;
 				}
 			} else {
 				if ($method === 'GET' || (isset($options['PostValuesInURI']) && $options['PostValuesInURI'])) {
 					$first = (strcspn($url, '?') == strlen($url));
-					foreach($values as $parameter => $value) {
+					foreach ($values as $parameter => $value) {
 						$url .= ($first ? '?' : '&').$parameter.'='.$this->_encode($value);
 						$first = false;
 					}
@@ -518,25 +533,25 @@ class yf_oauth {
 			$obj_type = gettype($object);
 			if ($obj_type == 'object') {
 				if (!isset($options['ConvertObjects']) || !$options['ConvertObjects']) {
-					$response = $object;
+					$this->_last_response = $object;
 				} else {
-					$response = array();
-					foreach($object as $property => $value) {
-						$response[$property] = $value;
+					$this->_last_response = array();
+					foreach ($object as $property => $value) {
+						$this->_last_response[$property] = $value;
 					}
 				}
 			} elseif ($obj_type == 'array') {
-				$response = $object;
+				$this->_last_response = $object;
 			} else {
 				if (!isset($object)) {
 					return ($this->_set_error('it was not returned a valid JSON definition of the '.$options['Resource'].' values'));
 				}
-				$response = $object;
+				$this->_last_response = $object;
 			}
 		} elseif ($content_type == 'application/x-www-form-urlencoded' || $content_type == 'text/plain' || $content_type == 'text/html') {
-			parse_str($data, $response);
+			parse_str($data, $this->_last_response);
 		} else {
-			$response = $data;
+			$this->_last_response = $data;
 		}
 		if ($this->response_status >= 200 && $this->response_status < 300) {
 			$this->access_token_error = '';
@@ -555,7 +570,13 @@ class yf_oauth {
 
 	/**
 	*/
-	function process_token($code, $refresh) {
+	function _get_last_response() {
+		return $this->_last_response;
+	}
+
+	/**
+	*/
+	function process_token($code, $refresh = false) {
 		if ($refresh) {
 			$values = array(
 				'client_id' => $this->client_id,
@@ -581,9 +602,10 @@ class yf_oauth {
 		if (!$this->send_api_request($access_token_url, 'POST', $values, null, array(
 			'Resource' => 'OAuth '.($refresh ? 'refresh' : 'access').' token', 
 			'ConvertObjects' => true
-		), $response)) {
+		))) {
 			return false;
 		}
+		$response = $this->_get_last_response();
 		if (strlen($this->access_token_error)) {
 			$this->authorization_error = $this->access_token_error;
 			return true;
@@ -655,7 +677,7 @@ class yf_oauth {
 
 	/**
 	*/
-	function RetrieveToken(&$valid) {
+	function retrieve_token(&$valid) {
 		$valid = false;
 		if (!$this->_get_access_token($access_token)) {
 			return false;
@@ -701,7 +723,13 @@ class yf_oauth {
 
 	/**
 	*/
-	function call_api($url, $method, $parameters, $options, &$response) {
+	function call_api($url, $method = 'GET', $parameters = array(), $options = array()) {
+		if (is_array($url)) {
+			$options += $url;
+			$url = $options['url'];
+			$method = $options['method'] ?: 'GET';
+			$parameters = (array)$options['parameters'];
+		}
 		if (!isset($options['Resource'])) {
 			$options['Resource'] = 'API call';
 		}
@@ -709,7 +737,7 @@ class yf_oauth {
 			$options['ConvertObjects'] = false;
 		}
 		if (strlen($this->access_token) === 0) {
-			if (!$this->RetrieveToken($valid)) {
+			if (!$this->retrieve_token($valid)) {
 				return false;
 			}
 			if (!$valid) {
@@ -741,7 +769,7 @@ class yf_oauth {
 		} else {
 			return ($this->_set_error($this->oauth_version.' is not a supported version of the OAuth protocol'));
 		}
-		return ($this->send_api_request($url, $method, $parameters, $oauth, $options, $response));
+		return $this->send_api_request($url, $method, $parameters, $oauth, $options);
 	}
 
 	/**
@@ -822,9 +850,10 @@ class yf_oauth {
 					} else {
 						$this->error = $method.' is not a supported method to request tokens';
 					}
-					if (!$this->send_api_request($url, $method, array(), $oauth, $options, $response)) {
+					if (!$this->send_api_request($url, $method, array(), $oauth, $options)) {
 						return false;
 					}
+					$response = $this->_get_last_response();
 					if (strlen($this->access_token_error)) {
 						$this->authorization_error = $this->access_token_error;
 						return true;
@@ -834,9 +863,9 @@ class yf_oauth {
 						return true;
 					}
 					$access_token = array(
-						'value' => $response['oauth_token'],
-						'secret' => $response['oauth_token_secret'],
-						'authorized' => true,
+						'value'		=> $response['oauth_token'],
+						'secret'	=> $response['oauth_token_secret'],
+						'authorized'=> true,
 					);
 					if (isset($response['oauth_expires_in']) && $response['oauth_expires_in'] == 0) {
 						if ($this->debug) {
@@ -889,11 +918,11 @@ class yf_oauth {
 				return false;
 			}
 			$oauth = array(
-				'oauth_callback'=>$redirect_uri,
+				'oauth_callback' => $redirect_uri,
 			);
 			$options = array(
-				'Resource' => 'OAuth request token',
-				'FailOnAccessError' => true,
+				'Resource'			=> 'OAuth request token',
+				'FailOnAccessError'	=> true,
 			);
 			$method = strtoupper($this->token_request_method);
 			if ($method == 'GET') {
@@ -902,9 +931,10 @@ class yf_oauth {
 			} else {
 				$this->error = $method.' is not a supported method to request tokens';
 			}
-			if (!$this->send_api_request($url, $method, array(), $oauth, $options, $response)) {
+			if (!$this->send_api_request($url, $method, array(), $oauth, $options)) {
 				return false;
 			}
+			$response = $this->_get_last_response();
 			if (strlen($this->access_token_error)) {
 				$this->authorization_error = $this->access_token_error;
 				return true;
@@ -914,9 +944,9 @@ class yf_oauth {
 				return true;
 			}
 			$access_token = array(
-				'value' => $response['oauth_token'],
-				'secret' => $response['oauth_token_secret'],
-				'authorized' => false,
+				'value'		=> $response['oauth_token'],
+				'secret'	=> $response['oauth_token_secret'],
+				'authorized'=> false,
 			);
 			if (!$this->_store_access_token($access_token)) {
 				return false;
@@ -949,7 +979,7 @@ class yf_oauth {
 			}
 			$this->_output_debug('Checking if OAuth access token was already retrieved from '.$access_token_url);
 		}
-		if (!$this->RetrieveToken($valid)) {
+		if (!$this->retrieve_token($valid)) {
 			return false;
 		}
 		if ($valid) {
