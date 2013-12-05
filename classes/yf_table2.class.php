@@ -318,7 +318,17 @@ class yf_table2 {
 	function _render_table_contents($data, $params = array()) {
 		$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
-			$body .= '<tr'.(isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '').'>'.PHP_EOL;
+			$tr_attrs = '';
+			if (isset($params['tr'])) {
+				if (is_callable($params['tr'])) {
+					$tr_attrs = $params['tr']($row, $_id);
+				} elseif (is_array($params['tr'])) {
+					$tr_attrs = (isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '');
+				} else {
+					$tr_attrs = $params['tr'];
+				}
+			}
+			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
 			foreach ((array)$this->_fields as $info) {
 				$body .= $this->_render_table_td($info, $row, $params);
 			}
