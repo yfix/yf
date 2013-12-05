@@ -172,6 +172,7 @@ class yf_oauth {
 	/**
 	*/
 	function _get_providers() {
+		$providers = $this->_load_oauth_providers();
 		return $this->_providers;
 	}
 
