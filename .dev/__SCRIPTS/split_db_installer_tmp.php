@@ -1,5 +1,7 @@
 <?php
 
+exit('Script is temporary');
+
 if (!function_exists('my_array_merge')) {
 	function my_array_merge($a1, $a2) {
 		foreach ((array)$a2 as $k => $v) { if (isset($a1[$k]) && is_array($a1[$k])) { if (is_array($a2[$k])) { 
