@@ -54,6 +54,18 @@ class yf_oauth {
 	}
 
 	/**
+	*/
+	function _parse_provider_config_json($json) {
+		$a = json_decode($json);
+// TODO
+		$data = array();
+		if (isset($a['oauth2']) && is_array($a['oauth2'])) {
+			$data['oauth_version'] = '2.0';
+		}
+		return $data;
+	}
+
+	/**
 	* Example of $this->_providers item:
 	*	'github' => array(
 	*		'oauth_version' => '2.0',
