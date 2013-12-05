@@ -18,7 +18,7 @@
         "values": {
           "https://www.googleapis.com/auth/devstorage.read_only": "To download reports through the API a client must request both this and the above auth scope. This is because the finished report data is provided by Google Cloud Storage.", 
           "https://www.googleapis.com/auth/dfareporting": "View and manage DoubleClick for Advertisers reports"
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

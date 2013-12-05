@@ -20,7 +20,7 @@
           "https://www.googleapis.com/auth/tasks.readonly": "View your tasks", 
           "https://www.googleapis.com/auth/taskqueue.consumer": "Consume Tasks from your Taskqueues", 
           "https://www.googleapis.com/auth/taskqueue": "Manage your Tasks"
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

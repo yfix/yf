@@ -17,7 +17,7 @@
       "scope": {
         "values": {
           "https://www.googleapis.com/auth/apps.licensing": "Read/write access to License Manager API."
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

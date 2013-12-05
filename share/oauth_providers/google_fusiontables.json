@@ -18,7 +18,7 @@
         "values": {
           "https://www.googleapis.com/auth/fusiontables.readonly": "View your Fusion Tables", 
           "https://www.googleapis.com/auth/fusiontables": "Manage your Fusion Tables"
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

@@ -16,8 +16,8 @@
       "client_id": "string", 
       "scope": {
         "values": {
- 	  "https://www.google.com/m8/feeds":"read/write access to Contacts and Contact Groups"
-          }, 
+          "https://www.google.com/m8/feeds":"read/write access to Contacts and Contact Groups"
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

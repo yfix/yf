@@ -20,8 +20,7 @@
           "https://www.googleapis.com/auth/latitude.current.city": "Manage your city-level location", 
           "https://www.googleapis.com/auth/latitude.all.best": "Manage your best-available location and location history", 
           "https://www.googleapis.com/auth/latitude.all.city": "Manage your city-level location and location history"
- 
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

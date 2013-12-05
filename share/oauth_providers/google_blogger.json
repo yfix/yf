@@ -18,7 +18,7 @@
         "values": {
           "https://www.googleapis.com/auth/blogger.readonly": "View your Blogger account", 
           "https://www.googleapis.com/auth/blogger": "Manage your Blogger account" 
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

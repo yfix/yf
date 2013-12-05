@@ -16,9 +16,9 @@
       "client_id": "string", 
       "scope": {
         "values": {	
-	  "https://www.googleapis.com/auth/apps.groups.settings": "View and manage the settings of a Google Apps Group",
-	  "https://www.googleapis.com/auth/apps.groups.migration": "Read and write access to Groups Migration API."
-      }, 
+          "https://www.googleapis.com/auth/apps.groups.settings": "View and manage the settings of a Google Apps Group",
+          "https://www.googleapis.com/auth/apps.groups.migration": "Read and write access to Groups Migration API."
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

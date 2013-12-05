@@ -17,7 +17,7 @@
       "scope": {
         "values": {
           "https://www.googleapis.com/auth/books": "Manage your books"
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

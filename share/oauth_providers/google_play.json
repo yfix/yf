@@ -21,7 +21,7 @@
           "https://www.googleapis.com/auth/appstate": "Scope for using the App State service.", 
           "https://www.googleapis.com/auth/plus.login": "scope for accessing the user's name, basic profile info, list of people in the user's circles, and writing app activities to Google.", 
           "https://www.googleapis.com/auth/plus.me": "scope for accessing the user's Google+ profile data."
-       }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

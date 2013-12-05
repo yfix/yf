@@ -17,7 +17,7 @@
       "scope": {
         "values": {
           "https://www.googleapis.com/auth/urlshortener": "Manage your goo.gl short URLs"
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

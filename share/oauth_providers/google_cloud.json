@@ -17,10 +17,10 @@
       "scope": {
         "values": {
           "https://www.googleapis.com/auth/devstorage.full_control": "Manage your data and permissions in Google Cloud Storage", 
-   	  "https://www.googleapis.com/auth/devstorage.read_only": "View your data in Google Cloud Storage", 
- 	  "https://www.googleapis.com/auth/devstorage.read_write": "Manage your data in Google Cloud Storage",
-	  "https://www.googleapis.com/auth/gcm_for_chrome":"CloudMessaging for chrome"
-          }, 
+          "https://www.googleapis.com/auth/devstorage.read_only": "View your data in Google Cloud Storage", 
+          "https://www.googleapis.com/auth/devstorage.read_write": "Manage your data in Google Cloud Storage",
+          "https://www.googleapis.com/auth/gcm_for_chrome":"CloudMessaging for chrome"
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

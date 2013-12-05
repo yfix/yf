@@ -20,10 +20,10 @@
           "https://www.googleapis.com/auth/drive.file": "View and manage Google Drive files that you have opened or created with this app", 
           "https://www.googleapis.com/auth/drive": "View and manage the files and documents in your Google Drive", 
           "https://www.googleapis.com/auth/drive.readonly": "View the files and documents in your Google Drive", 
-	  "https://www.googleapis.com/auth/drive.apps.readonly": "View your Google Drive apps", 
+          "https://www.googleapis.com/auth/drive.apps.readonly": "View your Google Drive apps", 
           "https://www.googleapis.com/auth/drive.scripts": "Modify your Google Apps Script scripts' behavior", 
-	  "https://www.googleapis.com/auth/drive.install": "Special scope used to let users approve installation of an app", 
-	  "https://www.googleapis.com/auth/drive.appdata": "Allows access to the Application Data folder"
+          "https://www.googleapis.com/auth/drive.install": "Special scope used to let users approve installation of an app", 
+          "https://www.googleapis.com/auth/drive.appdata": "Allows access to the Application Data folder"
         }, 
         "cardinality": "*", 
         "separator": " ", 

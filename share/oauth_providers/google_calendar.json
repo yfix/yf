@@ -16,9 +16,9 @@
       "client_id": "string", 
       "scope": {
         "values": {
-	  "https://www.googleapis.com/auth/calendar": "Manage your calendars", 
-     	  "https://www.googleapis.com/auth/calendar.readonly": "View your calendars"
-      }, 
+          "https://www.googleapis.com/auth/calendar": "Manage your calendars", 
+          "https://www.googleapis.com/auth/calendar.readonly": "View your calendars"
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

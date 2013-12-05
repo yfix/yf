@@ -16,10 +16,10 @@
       "client_id": "string",
       "scope": {
         "values": {
- 	  "https://docs.google.com/feeds/":"Access to all Document List feeds. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
- 	  "https://docs.googleusercontent.com/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
- 	  "https://spreadsheets.google.com/feeds/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API."
-          },
+          "https://docs.google.com/feeds/":"Access to all Document List feeds. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+          "https://docs.googleusercontent.com/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+          "https://spreadsheets.google.com/feeds/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API."
+        },
         "cardinality": "*",
         "separator": " ",
         "type": "string"

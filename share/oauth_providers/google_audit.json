@@ -19,7 +19,7 @@
            "https://apps-apis.google.com/a/feeds/compliance/audit/": "Access to email Audit Api",
            "https://www.googleapis.com/auth/apps/reporting/audit.readonly": "Access to the Admin Audit API ReadOnly",
            "https://apps-apis.google.com/a/feeds/policies/": "Use this scope for OAuth access to the customerId operation"
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"

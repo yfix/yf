@@ -17,7 +17,7 @@
       "scope": {
         "values": {
           "https://www.googleapis.com/auth/prediction": "Manage your data in the Google Prediction API" 
-      }, 
+        }, 
         "cardinality": "*", 
         "separator": " ", 
         "type": "string"
