@@ -66,7 +66,7 @@ class yf_shop_supplier_panel_upload_images {
 		if($ext == 'zip') common()->zip_extract($archive_name, $EXTRACT_PATH);
 		if($ext == 'tar' || $ext == 'gz') passthru($$ext);
 
-		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png)$/', '/__MACOSX/');
+		$result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png|gif|bmp)$/', '/__MACOSX/');
 		foreach($result_files as $k => $v){
 			$status = $this->search_product_by_filename($v, $SUPPLIER_ID);
 			$result = is_array($status)? $status['status'] : $status;

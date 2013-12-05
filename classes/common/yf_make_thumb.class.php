@@ -18,6 +18,7 @@ class yf_make_thumb {
 		"image/pjpeg"	=> "jpeg",
 		"image/png"		=> "png",
 		"image/gif"		=> "gif",
+		"image/x-ms-bmp"=> "wbmp",
 	);
 	/** @var bool */
 // TODO: connect this

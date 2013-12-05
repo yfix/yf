@@ -42,6 +42,7 @@ class yf_resize_images {
 		1 => "gif",
 		2 => "jpeg",
 		3 => "png",
+		6 => "wbmp",
 	);
 	/** @var bool */
 	public $SILENT_MODE	= false;
