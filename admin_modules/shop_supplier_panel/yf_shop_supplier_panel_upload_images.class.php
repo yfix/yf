@@ -15,7 +15,7 @@ class yf_shop_supplier_panel_upload_images {
 //		$this->SAVE_PATH = PROJECT_PATH."uploads/tmp/";
 		$this->SAVE_PATH = PROJECT_PATH."uploads/shop/products/";
 		$this->SUPPLIER_ID = (int)db()->get_one('SELECT supplier_id FROM '.db('shop_admin_to_supplier').' WHERE admin_id='.intval(main()->ADMIN_ID));
-
+		set_time_limit(0);
 	}
 
 	/**
