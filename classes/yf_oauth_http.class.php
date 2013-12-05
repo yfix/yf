@@ -1,10 +1,4 @@
 <?php
-/*
- * http.php
- *
- * @(#) $Header: /opt2/ena/metal/http/http.php,v 1.90 2013/02/20 11:45:28 mlemos Exp $
- *
- */
 
 define('HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR',       -1);
 define('HTTP_CLIENT_ERROR_NO_ERROR',                 0);
@@ -17,79 +11,79 @@ define('HTTP_CLIENT_ERROR_INVALID_PARAMETERS',       6);
 
 class yf_oauth_http
 {
-	var $host_name="";
-	var $host_port=0;
-	var $proxy_host_name="";
-	var $proxy_host_port=80;
-	var $socks_host_name = '';
-	var $socks_host_port = 1080;
-	var $socks_version = '5';
+	public $host_name="";
+	public $host_port=0;
+	public $proxy_host_name="";
+	public $proxy_host_port=80;
+	public $socks_host_name = '';
+	public $socks_host_port = 1080;
+	public $socks_version = '5';
 
-	var $protocol="http";
-	var $request_method="GET";
-	var $user_agent='httpclient (http://www.phpclasses.org/httpclient $Revision: 1.90 $)';
-	var $accept='';
-	var $authentication_mechanism="";
-	var $user;
-	var $password;
-	var $realm;
-	var $workstation;
-	var $proxy_authentication_mechanism="";
-	var $proxy_user;
-	var $proxy_password;
-	var $proxy_realm;
-	var $proxy_workstation;
-	var $request_uri="";
-	var $request="";
-	var $request_headers=array();
-	var $request_user;
-	var $request_password;
-	var $request_realm;
-	var $request_workstation;
-	var $proxy_request_user;
-	var $proxy_request_password;
-	var $proxy_request_realm;
-	var $proxy_request_workstation;
-	var $request_body="";
-	var $request_arguments=array();
-	var $protocol_version="1.1";
-	var $timeout=0;
-	var $data_timeout=0;
-	var $debug=0;
-	var $log_debug=0;
-	var $debug_response_body=1;
-	var $html_debug=0;
-	var $support_cookies=1;
-	var $cookies=array();
-	var $error="";
-	var $error_code = HTTP_CLIENT_ERROR_NO_ERROR;
-	var $exclude_address="";
-	var $follow_redirect=0;
-	var $redirection_limit=5;
-	var $response_status="";
-	var $response_message="";
-	var $file_buffer_length=8000;
-	var $force_multipart_form_post=0;
-	var $prefer_curl = 0;
-	var $keep_alive = 1;
-	var $sasl_authenticate = 1;
+	public $protocol="http";
+	public $request_method="GET";
+	public $user_agent='httpclient (http://www.phpclasses.org/httpclient $Revision: 1.90 $)';
+	public $accept='';
+	public $authentication_mechanism="";
+	public $user;
+	public $password;
+	public $realm;
+	public $workstation;
+	public $proxy_authentication_mechanism="";
+	public $proxy_user;
+	public $proxy_password;
+	public $proxy_realm;
+	public $proxy_workstation;
+	public $request_uri="";
+	public $request="";
+	public $request_headers=array();
+	public $request_user;
+	public $request_password;
+	public $request_realm;
+	public $request_workstation;
+	public $proxy_request_user;
+	public $proxy_request_password;
+	public $proxy_request_realm;
+	public $proxy_request_workstation;
+	public $request_body="";
+	public $request_arguments=array();
+	public $protocol_version="1.1";
+	public $timeout=0;
+	public $data_timeout=0;
+	public $debug=0;
+	public $log_debug=0;
+	public $debug_response_body=1;
+	public $html_debug=0;
+	public $support_cookies=1;
+	public $cookies=array();
+	public $error="";
+	public $error_code = HTTP_CLIENT_ERROR_NO_ERROR;
+	public $exclude_address="";
+	public $follow_redirect=0;
+	public $redirection_limit=5;
+	public $response_status="";
+	public $response_message="";
+	public $file_buffer_length=8000;
+	public $force_multipart_form_post=0;
+	public $prefer_curl = 0;
+	public $keep_alive = 1;
+	public $sasl_authenticate = 1;
 
 	/* private variables - DO NOT ACCESS */
 
-	var $state="Disconnected";
-	var $use_curl=0;
-	var $connection=0;
-	var $content_length=0;
-	var $response="";
-	var $read_response=0;
-	var $read_length=0;
-	var $request_host="";
-	var $next_token="";
-	var $redirection_level=0;
-	var $chunked=0;
-	var $remaining_chunk=0;
-	var $last_chunk_read=0;
-	var $months=array(
+	private $state="Disconnected";
+	private $use_curl=0;
+	private $connection=0;
+	private $content_length=0;
+	private $response="";
+	private $read_response=0;
+	private $read_length=0;
+	private $request_host="";
+	private $next_token="";
+	private $redirection_level=0;
+	private $chunked=0;
+	private $remaining_chunk=0;
+	private $last_chunk_read=0;
+	private $months=array(
 		"Jan"=>"01",
 		"Feb"=>"02",
 		"Mar"=>"03",
@@ -102,16 +96,16 @@ class yf_oauth_http
 		"Oct"=>"10",
 		"Nov"=>"11",
 		"Dec"=>"12");
-	var $session='';
-	var $connection_close=0;
-	var $force_close = 0;
-	var $connected_host = '';
-	var $connected_port = -1;
-	var $connected_ssl = 0;
+	private $session='';
+	private $connection_close=0;
+	private $force_close = 0;
+	private $connected_host = '';
+	private $connected_port = -1;
+	private $connected_ssl = 0;
 
 	/* Private methods - DO NOT CALL */
 
-	Function Tokenize($string,$separator="")
+	function Tokenize($string,$separator="")
 	{
 		if(!strcmp($separator,""))
 		{
@@ -120,7 +114,7 @@ class yf_oauth_http
 		}
 		for($character=0;$character<strlen($separator);$character++)
 		{
-			if(GetType($position=strpos($string,$separator[$character]))=="integer")
+			if(gettype($position=strpos($string,$separator[$character]))=="integer")
 				$found=(IsSet($found) ? min($found,$position) : $position);
 		}
 		if(IsSet($found))
@@ -135,18 +129,18 @@ class yf_oauth_http
 		}
 	}
 
-	Function CookieEncode($value, $name)
+	function CookieEncode($value, $name)
 	{
 		return($name ? str_replace("=", "%25", $value) : str_replace(";", "%3B", $value));
 	}
 
-	Function SetError($error, $error_code = HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR)
+	function SetError($error, $error_code = HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR)
 	{
 		$this->error_code = $error_code;
 		return($this->error=$error);
 	}
 
-	Function SetPHPError($error, &$php_error_message, $error_code = HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR)
+	function SetPHPError($error, &$php_error_message, $error_code = HTTP_CLIENT_ERROR_UNSPECIFIED_ERROR)
 	{
 		if(IsSet($php_error_message)
 		&& strlen($php_error_message))
@@ -154,7 +148,7 @@ class yf_oauth_http
 		return($this->SetError($error, $error_code));
 	}
 
-	Function SetDataAccessError($error,$check_connection=0)
+	function SetDataAccessError($error,$check_connection=0)
 	{
 		$this->error=$error;
 		$this->error_code = HTTP_CLIENT_ERROR_COMMUNICATION_FAILURE;
@@ -174,7 +168,7 @@ class yf_oauth_http
 		}
 	}
 
-	Function OutputDebug($message)
+	function OutputDebug($message)
 	{
 		if($this->log_debug)
 			error_log($message);
@@ -188,7 +182,7 @@ class yf_oauth_http
 		}
 	}
 
-	Function GetLine()
+	function GetLine()
 	{
 		for($line="";;)
 		{
@@ -207,7 +201,7 @@ class yf_oauth_http
 				}
 				$data=fgets($this->connection,100);
 			}
-			if(GetType($data)!="string"
+			if(gettype($data)!="string"
 			|| strlen($data)==0)
 			{
 				$this->SetDataAccessError("it was not possible to read line from the HTTP server");
@@ -227,7 +221,7 @@ class yf_oauth_http
 		}
 	}
 
-	Function PutLine($line)
+	function PutLine($line)
 	{
 		if($this->debug)
 			$this->OutputDebug("C $line");
@@ -239,7 +233,7 @@ class yf_oauth_http
 		return(1);
 	}
 
-	Function PutData($data)
+	function PutData($data)
 	{
 		if(strlen($data))
 		{
@@ -254,7 +248,7 @@ class yf_oauth_http
 		return(1);
 	}
 
-	Function FlushData()
+	function FlushData()
 	{
 		if(!fflush($this->connection))
 		{
@@ -264,7 +258,7 @@ class yf_oauth_http
 		return(1);
 	}
 
-	Function ReadChunkSize()
+	function ReadChunkSize()
 	{
 		if($this->remaining_chunk==0)
 		{
@@ -273,7 +267,7 @@ class yf_oauth_http
 				$this->debug=0;
 			$line=$this->GetLine();
 			$this->debug=$debug;
-			if(GetType($line)!="string")
+			if(gettype($line)!="string")
 				return($this->SetError("could not read chunk start: ".$this->error, $this->error_code));
 			$this->remaining_chunk=hexdec($line);
 			if($this->remaining_chunk == 0)
@@ -282,14 +276,14 @@ class yf_oauth_http
 					$this->debug=0;
 				$line=$this->GetLine();
 				$this->debug=$debug;
-				if(GetType($line)!="string")
+				if(gettype($line)!="string")
 					return($this->SetError("could not read chunk end: ".$this->error, $this->error_code));
 			}
 		}
 		return("");
 	}
 
-	Function ReadBytes($length)
+	function ReadBytes($length)
 	{
 		if($this->use_curl)
 		{
@@ -356,7 +350,7 @@ class yf_oauth_http
 		return($bytes);
 	}
 
-	Function EndOfInput()
+	function EndOfInput()
 	{
 		if($this->use_curl)
 			return($this->read_response>=strlen($this->response));
@@ -367,7 +361,7 @@ class yf_oauth_http
 		return(feof($this->connection));
 	}
 
-	Function Resolve($domain, &$ip, $server_type)
+	function Resolve($domain, &$ip, $server_type)
 	{
 		if(preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/',$domain))
 			$ip=$domain;
@@ -385,7 +379,7 @@ class yf_oauth_http
 		return('');
 	}
 
-	Function Connect($host_name, $host_port, $ssl, $server_type = 'HTTP')
+	function Connect($host_name, $host_port, $ssl, $server_type = 'HTTP')
 	{
 		$domain=$host_name;
 		$port = $host_port;
@@ -552,7 +546,7 @@ class yf_oauth_http
 		}
 	}
 
-	Function Disconnect()
+	function Disconnect()
 	{
 		if($this->debug)
 			$this->OutputDebug("Disconnected from ".$this->connected_host);
@@ -569,7 +563,7 @@ class yf_oauth_http
 
 	/* Public methods */
 
-	Function GetRequestArguments($url, &$arguments)
+	function GetRequestArguments($url, &$arguments)
 	{
 		$this->error = '';
 		$this->error_code = HTTP_CLIENT_ERROR_NO_ERROR;
@@ -621,7 +615,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function Open($arguments)
+	function Open($arguments)
 	{
 		if(strlen($this->error))
 			return($this->error);
@@ -750,7 +744,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function Close($force = 0)
+	function Close($force = 0)
 	{
 		if($this->state=="Disconnected")
 			return("1 already disconnected");
@@ -767,14 +761,14 @@ class yf_oauth_http
 		return($this->Disconnect());
 	}
 
-	Function PickCookies(&$cookies,$secure)
+	function PickCookies(&$cookies,$secure)
 	{
 		if(IsSet($this->cookies[$secure]))
 		{
 			$now=gmdate("Y-m-d H-i-s");
-			for($domain=0,Reset($this->cookies[$secure]);$domain<count($this->cookies[$secure]);Next($this->cookies[$secure]),$domain++)
+			for($domain=0,reset($this->cookies[$secure]);$domain<count($this->cookies[$secure]);next($this->cookies[$secure]),$domain++)
 			{
-				$domain_pattern=Key($this->cookies[$secure]);
+				$domain_pattern=key($this->cookies[$secure]);
 				$match=strlen($this->request_host)-strlen($domain_pattern);
 				if($match>=0
 				&& !strcmp($domain_pattern,substr($this->request_host,$match))
@@ -782,15 +776,15 @@ class yf_oauth_http
 				|| $domain_pattern[0]=="."
 				|| $this->request_host[$match-1]=="."))
 				{
-					for(Reset($this->cookies[$secure][$domain_pattern]),$path_part=0;$path_part<count($this->cookies[$secure][$domain_pattern]);Next($this->cookies[$secure][$domain_pattern]),$path_part++)
+					for(reset($this->cookies[$secure][$domain_pattern]),$path_part=0;$path_part<count($this->cookies[$secure][$domain_pattern]);next($this->cookies[$secure][$domain_pattern]),$path_part++)
 					{
-						$path=Key($this->cookies[$secure][$domain_pattern]);
+						$path=key($this->cookies[$secure][$domain_pattern]);
 						if(strlen($this->request_uri)>=strlen($path)
 						&& substr($this->request_uri,0,strlen($path))==$path)
 						{
-							for(Reset($this->cookies[$secure][$domain_pattern][$path]),$cookie=0;$cookie<count($this->cookies[$secure][$domain_pattern][$path]);Next($this->cookies[$secure][$domain_pattern][$path]),$cookie++)
+							for(reset($this->cookies[$secure][$domain_pattern][$path]),$cookie=0;$cookie<count($this->cookies[$secure][$domain_pattern][$path]);next($this->cookies[$secure][$domain_pattern][$path]),$cookie++)
 							{
-								$cookie_name=Key($this->cookies[$secure][$domain_pattern][$path]);
+								$cookie_name=key($this->cookies[$secure][$domain_pattern][$path]);
 								$expires=$this->cookies[$secure][$domain_pattern][$path][$cookie_name]["expires"];
 								if($expires==""
 								|| strcmp($now,$expires)<0)
@@ -803,7 +797,7 @@ class yf_oauth_http
 		}
 	}
 
-	Function GetFileDefinition($file, &$definition)
+	function GetFileDefinition($file, &$definition)
 	{
 		$name="";
 		if(IsSet($file["FileName"]))
@@ -830,7 +824,7 @@ class yf_oauth_http
 					switch($sub_type)
 					{
 						case "name":
-							switch(GetType($dot=strrpos($name,"."))=="integer" ? strtolower(substr($name,$dot)) : "")
+							switch(gettype($dot=strrpos($name,"."))=="integer" ? strtolower(substr($name,$dot)) : "")
 							{
 								case ".xls":
 									$content_type="application/excel";
@@ -987,7 +981,7 @@ class yf_oauth_http
 		);
 		if(IsSet($file["FileName"]))
 		{
-			if(GetType($length=@filesize($file["FileName"]))!="integer")
+			if(gettype($length=@filesize($file["FileName"]))!="integer")
 			{
 				$error="it was not possible to determine the length of the file ".$file["FileName"];
 				if(IsSet($php_errormsg)
@@ -1007,7 +1001,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function ConnectFromProxy($arguments, &$headers)
+	function ConnectFromProxy($arguments, &$headers)
 	{
 		if(!$this->PutLine('CONNECT '.$this->host_name.':'.($this->host_port ? $this->host_port : 443).' HTTP/1.0')
 		|| (strlen($this->user_agent)
@@ -1052,7 +1046,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function SendRequest($arguments)
+	function SendRequest($arguments)
 	{
 		if(strlen($this->error))
 			return($this->error);
@@ -1134,11 +1128,11 @@ class yf_oauth_http
 				if(IsSet($arguments["PostValues"]))
 				{
 					$values=$arguments["PostValues"];
-					if(GetType($values)!="array")
+					if(gettype($values)!="array")
 						return($this->SetError("it was not specified a valid POST method values array", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-					for(Reset($values),$value=0;$value<count($values);Next($values),$value++)
+					for(reset($values),$value=0;$value<count($values);next($values),$value++)
 					{
-						$input=Key($values);
+						$input=key($values);
 						$headers="--".$boundary."\r\nContent-Disposition: form-data; name=\"".$input."\"\r\n\r\n";
 						$data=$values[$input];
 						$post_parts[]=array("HEADERS"=>$headers,"DATA"=>$data);
@@ -1147,8 +1141,8 @@ class yf_oauth_http
 				}
 				$body_length+=strlen("--".$boundary."--\r\n");
 				$files=(IsSet($arguments["PostFiles"]) ? $arguments["PostFiles"] : array());
-				Reset($files);
-				$end=(GetType($input=Key($files))!="string");
+				reset($files);
+				$end=(gettype($input=key($files))!="string");
 				for(;!$end;)
 				{
 					if(strlen($error=$this->GetFileDefinition($files[$input],$definition)))
@@ -1165,20 +1159,20 @@ class yf_oauth_http
 						$data=$definition["DATA"];
 					$post_parts[$part]["DATA"]=$data;
 					$body_length+=strlen($headers)+$definition["Content-Length"]+strlen("\r\n");
-					Next($files);
-					$end=(GetType($input=Key($files))!="string");
+					next($files);
+					$end=(gettype($input=key($files))!="string");
 				}
 				$get_body=0;
 			}
 			elseif(IsSet($arguments["PostValues"]))
 			{
 				$values=$arguments["PostValues"];
-				if(GetType($values)!="array")
+				if(gettype($values)!="array")
 					return($this->SetError("it was not specified a valid POST method values array", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-				for(Reset($values),$value=0;$value<count($values);Next($values),$value++)
+				for(reset($values),$value=0;$value<count($values);next($values),$value++)
 				{
-					$k=Key($values);
-					if(GetType($values[$k])=="array")
+					$k=key($values);
+					if(gettype($values[$k])=="array")
 					{
 						for($v = 0; $v < count($values[$k]); $v++)
 						{
@@ -1218,7 +1212,7 @@ class yf_oauth_http
 							return($this->SetPHPError("could not open upload file ".$stream[$part]["File"], $php_errormsg, HTTP_CLIENT_ERROR_CANNOT_ACCESS_LOCAL_FILE));
 						while(!feof($file))
 						{
-							if(GetType($block=@fread($file,$this->file_buffer_length))!="string")
+							if(gettype($block=@fread($file,$this->file_buffer_length))!="string")
 							{
 								$error=$this->SetPHPError("could not read body stream file ".$stream[$part]["File"], $php_errormsg, HTTP_CLIENT_ERROR_CANNOT_ACCESS_LOCAL_FILE);
 								fclose($file);
@@ -1269,7 +1263,7 @@ class yf_oauth_http
 		}
 		if($this->use_curl)
 		{
-			$version=(GetType($v=curl_version())=="array" ? (IsSet($v["version"]) ? $v["version"] : "0.0.0") : (preg_match("/^libcurl\\/([0-9]+\\.[0-9]+\\.[0-9]+)/",$v,$m) ? $m[1] : "0.0.0"));
+			$version=(gettype($v=curl_version())=="array" ? (IsSet($v["version"]) ? $v["version"] : "0.0.0") : (preg_match("/^libcurl\\/([0-9]+\\.[0-9]+\\.[0-9]+)/",$v,$m) ? $m[1] : "0.0.0"));
 			$curl_version=100000*intval($this->Tokenize($version,"."))+1000*intval($this->Tokenize("."))+intval($this->Tokenize(""));
 			$protocol_version=($curl_version<713002 ? "1.0" : $this->protocol_version);
 		}
@@ -1280,18 +1274,18 @@ class yf_oauth_http
 		|| ($body_length=strlen($this->request_body))
 		|| !strcmp($this->request_method, 'POST'))
 			$this->request_headers["Content-Length"]=$body_length;
-		for($headers=array(),$host_set=0,Reset($this->request_headers),$header=0;$header<count($this->request_headers);Next($this->request_headers),$header++)
+		for($headers=array(),$host_set=0,reset($this->request_headers),$header=0;$header<count($this->request_headers);next($this->request_headers),$header++)
 		{
-			$header_name=Key($this->request_headers);
+			$header_name=key($this->request_headers);
 			$header_value=$this->request_headers[$header_name];
-			if(GetType($header_value)=="array")
+			if(gettype($header_value)=="array")
 			{
-				for(Reset($header_value),$value=0;$value<count($header_value);Next($header_value),$value++)
-					$headers[]=$header_name.": ".$header_value[Key($header_value)];
+				for(reset($header_value),$value=0;$value<count($header_value);next($header_value),$value++)
+					$headers[]=$header_name.": ".$header_value[key($header_value)];
 			}
 			else
 				$headers[]=$header_name.": ".$header_value;
-			if(strtolower(Key($this->request_headers))=="host")
+			if(strtolower(key($this->request_headers))=="host")
 			{
 				$this->request_host=strtolower($header_value);
 				$host_set=1;
@@ -1312,9 +1306,9 @@ class yf_oauth_http
 			{
 				$h=count($headers);
 				$headers[$h]="Cookie:";
-				for(Reset($cookies),$cookie=0;$cookie<count($cookies);Next($cookies),$cookie++)
+				for(reset($cookies),$cookie=0;$cookie<count($cookies);next($cookies),$cookie++)
 				{
-					$cookie_name=Key($cookies);
+					$cookie_name=key($cookies);
 					$headers[$h].=" ".$cookie_name."=".$cookies[$cookie_name]["value"].";";
 				}
 			}
@@ -1340,7 +1334,7 @@ class yf_oauth_http
 						}
 						while(!feof($file))
 						{
-							if(GetType($block=@fread($file,$this->file_buffer_length))!="string")
+							if(gettype($block=@fread($file,$this->file_buffer_length))!="string")
 							{
 								$this->SetPHPError("could not read upload file", $php_errormsg, HTTP_CLIENT_ERROR_CANNOT_ACCESS_LOCAL_FILE);
 								$success=0;
@@ -1409,7 +1403,7 @@ class yf_oauth_http
 									}
 									while(!feof($file))
 									{
-										if(GetType($block=@fread($file,$this->file_buffer_length))!="string")
+										if(gettype($block=@fread($file,$this->file_buffer_length))!="string")
 										{
 											$this->SetPHPError("could not read upload file", $php_errormsg, HTTP_CLIENT_ERROR_CANNOT_ACCESS_LOCAL_FILE);
 											$success=0;
@@ -1440,7 +1434,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function SetCookie($name, $value, $expires="" , $path="/" , $domain="" , $secure=0, $verbatim=0)
+	function SetCookie($name, $value, $expires="" , $path="/" , $domain="" , $secure=0, $verbatim=0)
 	{
 		if(strlen($this->error))
 			return($this->error);
@@ -1472,7 +1466,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function SendRequestBody($data, $end_of_data)
+	function SendRequestBody($data, $end_of_data)
 	{
 		if(strlen($this->error))
 			return($this->error);
@@ -1508,7 +1502,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function ReadReplyHeadersResponse(&$headers)
+	function ReadReplyHeadersResponse(&$headers)
 	{
 		$headers=array();
 		if(strlen($this->error))
@@ -1538,7 +1532,7 @@ class yf_oauth_http
 		for($this->response_status="";;)
 		{
 			$line=$this->GetLine();
-			if(GetType($line)!="string")
+			if(gettype($line)!="string")
 				return($this->SetError("could not read request reply: ".$this->error, $this->error_code));
 			if(strlen($this->response_status)==0)
 			{
@@ -1558,7 +1552,7 @@ class yf_oauth_http
 			$header_value=Trim(Chop($this->Tokenize("\r\n")));
 			if(IsSet($headers[$header_name]))
 			{
-				if(GetType($headers[$header_name])=="string")
+				if(gettype($headers[$header_name])=="string")
 					$headers[$header_name]=array($headers[$header_name]);
 				$headers[$header_name][]=$header_value;
 			}
@@ -1581,7 +1575,7 @@ class yf_oauth_http
 					case "set-cookie":
 						if($this->support_cookies)
 						{
-							if(GetType($headers[$header_name])=="array")
+							if(gettype($headers[$header_name])=="array")
 								$cookie_headers=$headers[$header_name];
 							else
 								$cookie_headers=array($headers[$header_name]);
@@ -1635,14 +1629,14 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function Redirect(&$headers)
+	function Redirect(&$headers)
 	{
 		if($this->follow_redirect)
 		{
 			if(!IsSet($headers["location"])
-			|| (GetType($headers["location"])!="array"
+			|| (gettype($headers["location"])!="array"
 			&& strlen($location=$headers["location"])==0)
-			|| (GetType($headers["location"])=="array"
+			|| (gettype($headers["location"])=="array"
 			&& strlen($location=$headers["location"][0])==0))
 				return($this->SetError("it was received a redirect without location URL", HTTP_CLIENT_ERROR_PROTOCOL_FAILURE));
 			if(strcmp($location[0],"/"))
@@ -1650,7 +1644,7 @@ class yf_oauth_http
 				if(!($location_arguments=@parse_url($location)))
 					return($this->SetError("the server did not return a valid redirection location URL", HTTP_CLIENT_ERROR_PROTOCOL_FAILURE));
 				if(!IsSet($location_arguments["scheme"]))
-					$location=((GetType($end=strrpos($this->request_uri,"/"))=="integer" && $end>1) ? substr($this->request_uri,0,$end) : "")."/".$location;
+					$location=((gettype($end=strrpos($this->request_uri,"/"))=="integer" && $end>1) ? substr($this->request_uri,0,$end) : "")."/".$location;
 			}
 			if(!strcmp($location[0],"/"))
 				$location=$this->protocol."://".$this->host_name.($this->host_port ? ":".$this->host_port : "").$location;
@@ -1678,7 +1672,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function Authenticate(&$headers, $proxy, &$proxy_authorization, &$user, &$password, &$realm, &$workstation)
+	function Authenticate(&$headers, $proxy, &$proxy_authorization, &$user, &$password, &$realm, &$workstation)
 	{
 		if($proxy)
 		{
@@ -1700,7 +1694,7 @@ class yf_oauth_http
 			if(function_exists("class_exists")
 			&& !class_exists("sasl_client_class"))
 				return($this->SetError("the SASL client class needs to be loaded to be able to authenticate".($proxy ? " with the proxy server" : "")." and access this site", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-			if(GetType($headers[$authenticate_header])=="array")
+			if(gettype($headers[$authenticate_header])=="array")
 				$authenticate=$headers[$authenticate_header];
 			else
 				$authenticate=array($headers[$authenticate_header]);
@@ -1781,7 +1775,7 @@ class yf_oauth_http
 				}
 				if(!IsSet($headers[$authenticate_header]))
 					$authenticate=array();
-				elseif(GetType($headers[$authenticate_header])=="array")
+				elseif(gettype($headers[$authenticate_header])=="array")
 					$authenticate=$headers[$authenticate_header];
 				else
 					$authenticate=array($headers[$authenticate_header]);
@@ -1851,7 +1845,7 @@ class yf_oauth_http
 						switch($this->response_status)
 						{
 							case $authenticate_status:
-								if(GetType($headers[$authenticate_header])=="array")
+								if(gettype($headers[$authenticate_header])=="array")
 									$authenticate=$headers[$authenticate_header];
 								else
 									$authenticate=array($headers[$authenticate_header]);
@@ -1907,7 +1901,7 @@ class yf_oauth_http
 		return("");
 	}
 	
-	Function ReadReplyHeaders(&$headers)
+	function ReadReplyHeaders(&$headers)
 	{
 		if(strlen($error=$this->ReadReplyHeadersResponse($headers)))
 			return($error);
@@ -1938,7 +1932,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function ReadReplyBody(&$body,$length)
+	function ReadReplyBody(&$body,$length)
 	{
 		$body="";
 		if(strlen($this->error))
@@ -1980,7 +1974,7 @@ class yf_oauth_http
 		return("");
 	}
 
-	Function ReadWholeReplyBody(&$body)
+	function ReadWholeReplyBody(&$body)
 	{
 		$body = '';
 		for(;;)
@@ -1993,19 +1987,19 @@ class yf_oauth_http
 		}
 	}
 
-	Function SaveCookies(&$cookies, $domain='', $secure_only=0, $persistent_only=0)
+	function SaveCookies(&$cookies, $domain='', $secure_only=0, $persistent_only=0)
 	{
 		$now=gmdate("Y-m-d H-i-s");
 		$cookies=array();
-		for($secure_cookies=0,Reset($this->cookies);$secure_cookies<count($this->cookies);Next($this->cookies),$secure_cookies++)
+		for($secure_cookies=0,reset($this->cookies);$secure_cookies<count($this->cookies);next($this->cookies),$secure_cookies++)
 		{
-			$secure=Key($this->cookies);
+			$secure=key($this->cookies);
 			if(!$secure_only
 			|| $secure)
 			{
-				for($cookie_domain=0,Reset($this->cookies[$secure]);$cookie_domain<count($this->cookies[$secure]);Next($this->cookies[$secure]),$cookie_domain++)
+				for($cookie_domain=0,reset($this->cookies[$secure]);$cookie_domain<count($this->cookies[$secure]);next($this->cookies[$secure]),$cookie_domain++)
 				{
-					$domain_pattern=Key($this->cookies[$secure]);
+					$domain_pattern=key($this->cookies[$secure]);
 					$match=strlen($domain)-strlen($domain_pattern);
 					if(strlen($domain)==0
 					|| ($match>=0
@@ -2014,12 +2008,12 @@ class yf_oauth_http
 					|| $domain_pattern[0]=="."
 					|| $domain[$match-1]==".")))
 					{
-						for(Reset($this->cookies[$secure][$domain_pattern]),$path_part=0;$path_part<count($this->cookies[$secure][$domain_pattern]);Next($this->cookies[$secure][$domain_pattern]),$path_part++)
+						for(reset($this->cookies[$secure][$domain_pattern]),$path_part=0;$path_part<count($this->cookies[$secure][$domain_pattern]);next($this->cookies[$secure][$domain_pattern]),$path_part++)
 						{
-							$path=Key($this->cookies[$secure][$domain_pattern]);
-							for(Reset($this->cookies[$secure][$domain_pattern][$path]),$cookie=0;$cookie<count($this->cookies[$secure][$domain_pattern][$path]);Next($this->cookies[$secure][$domain_pattern][$path]),$cookie++)
+							$path=key($this->cookies[$secure][$domain_pattern]);
+							for(reset($this->cookies[$secure][$domain_pattern][$path]),$cookie=0;$cookie<count($this->cookies[$secure][$domain_pattern][$path]);next($this->cookies[$secure][$domain_pattern][$path]),$cookie++)
 							{
-								$cookie_name=Key($this->cookies[$secure][$domain_pattern][$path]);
+								$cookie_name=key($this->cookies[$secure][$domain_pattern][$path]);
 								$expires=$this->cookies[$secure][$domain_pattern][$path][$cookie_name]["expires"];
 								if((!$persistent_only
 								&& strlen($expires)==0)
@@ -2034,41 +2028,41 @@ class yf_oauth_http
 		}
 	}
 
-	Function SavePersistentCookies(&$cookies, $domain='', $secure_only=0)
+	function SavePersistentCookies(&$cookies, $domain='', $secure_only=0)
 	{
 		$this->SaveCookies($cookies, $domain, $secure_only, 1);
 	}
 
-	Function GetPersistentCookies(&$cookies, $domain='', $secure_only=0)
+	function GetPersistentCookies(&$cookies, $domain='', $secure_only=0)
 	{
 		$this->SavePersistentCookies($cookies, $domain, $secure_only);
 	}
 
-	Function RestoreCookies($cookies, $clear=1)
+	function RestoreCookies($cookies, $clear=1)
 	{
 		$new_cookies=($clear ? array() : $this->cookies);
-		for($secure_cookies=0, Reset($cookies); $secure_cookies<count($cookies); Next($cookies), $secure_cookies++)
+		for($secure_cookies=0, reset($cookies); $secure_cookies<count($cookies); next($cookies), $secure_cookies++)
 		{
-			$secure=Key($cookies);
-			if(GetType($secure)!="integer")
+			$secure=key($cookies);
+			if(gettype($secure)!="integer")
 				return($this->SetError("invalid cookie secure value type (".serialize($secure).")", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-			for($cookie_domain=0,Reset($cookies[$secure]);$cookie_domain<count($cookies[$secure]);Next($cookies[$secure]),$cookie_domain++)
+			for($cookie_domain=0,reset($cookies[$secure]);$cookie_domain<count($cookies[$secure]);next($cookies[$secure]),$cookie_domain++)
 			{
-				$domain_pattern=Key($cookies[$secure]);
-				if(GetType($domain_pattern)!="string")
+				$domain_pattern=key($cookies[$secure]);
+				if(gettype($domain_pattern)!="string")
 					return($this->SetError("invalid cookie domain value type (".serialize($domain_pattern).")", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-				for(Reset($cookies[$secure][$domain_pattern]),$path_part=0;$path_part<count($cookies[$secure][$domain_pattern]);Next($cookies[$secure][$domain_pattern]),$path_part++)
+				for(reset($cookies[$secure][$domain_pattern]),$path_part=0;$path_part<count($cookies[$secure][$domain_pattern]);next($cookies[$secure][$domain_pattern]),$path_part++)
 				{
-					$path=Key($cookies[$secure][$domain_pattern]);
-					if(GetType($path)!="string"
+					$path=key($cookies[$secure][$domain_pattern]);
+					if(gettype($path)!="string"
 					|| strcmp(substr($path, 0, 1), "/"))
 						return($this->SetError("invalid cookie path value type (".serialize($path).")", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
-					for(Reset($cookies[$secure][$domain_pattern][$path]),$cookie=0;$cookie<count($cookies[$secure][$domain_pattern][$path]);Next($cookies[$secure][$domain_pattern][$path]),$cookie++)
+					for(reset($cookies[$secure][$domain_pattern][$path]),$cookie=0;$cookie<count($cookies[$secure][$domain_pattern][$path]);next($cookies[$secure][$domain_pattern][$path]),$cookie++)
 					{
-						$cookie_name=Key($cookies[$secure][$domain_pattern][$path]);
+						$cookie_name=key($cookies[$secure][$domain_pattern][$path]);
 						$expires=$cookies[$secure][$domain_pattern][$path][$cookie_name]["expires"];
 						$value=$cookies[$secure][$domain_pattern][$path][$cookie_name]["value"];
-						if(GetType($expires)!="string"
+						if(gettype($expires)!="string"
 						|| (strlen($expires)
 						&& !preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\$/", $expires)))
 							return($this->SetError("invalid cookie expiry value type (".serialize($expires).")", HTTP_CLIENT_ERROR_INVALID_PARAMETERS));
@@ -2087,6 +2081,4 @@ class yf_oauth_http
 		$this->cookies=$new_cookies;
 		return("");
 	}
-};
-
-?>
+}
