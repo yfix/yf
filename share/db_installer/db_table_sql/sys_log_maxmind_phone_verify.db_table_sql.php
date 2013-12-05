@@ -1,0 +1,27 @@
+<?php
+$data = '
+	`id` int(10) unsigned NOT NULL auto_increment,
+	`owner_id` int(11) unsigned NOT NULL,
+	`check_type` enum(\'i\',\'v\') NOT NULL,
+	`phone_num` varchar(32) NOT NULL,
+	`phone_type` tinyint(3) unsigned NOT NULL,
+	`verify_code` varchar(4) NOT NULL,
+	`ref_id` varchar(32) NOT NULL,
+	`success` enum(\'0\',\'1\') NOT NULL,
+	`date` int(10) unsigned NOT NULL,
+	`process_time` int(10) unsigned NOT NULL,
+	`error_text` text NOT NULL,
+	`site_id` tinyint(3) unsigned NOT NULL,
+	`user_id` int(10) unsigned NOT NULL,
+	`user_group` tinyint(3) unsigned NOT NULL,
+	`is_admin` enum(\'0\',\'1\') NOT NULL,
+	`ip` varchar(32) NOT NULL,
+	`query_string` text NOT NULL,
+	`user_agent` varchar(255) NOT NULL,
+	`referer` varchar(255) NOT NULL,
+	`request_uri` varchar(255) NOT NULL,
+	`object` varchar(255) NOT NULL,
+	`action` varchar(255) NOT NULL,
+	`server_answer` varchar(255) NOT NULL,
+	PRIMARY KEY  (`id`)
+';
