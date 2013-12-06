@@ -56,11 +56,18 @@ class yf_oauth {
 	/**
 	*/
 	function _parse_provider_config_json($json) {
-		$a = json_decode($json);
+		$a = _class('utils')->object_to_array(json_decode($json));
 // TODO
 		$data = array();
 		if (isset($a['oauth2']) && is_array($a['oauth2'])) {
 			$data['oauth_version'] = '2.0';
+			$data['dialog_url'] = $a['url']. $a['oauth2']['authorize'] . '?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}';
+#			$p_str = array();
+#			foreach((array)$a['oauth2']['parameters'] as $k => $v) {
+#				$p_str[$k] = $k.'={'.strtoupper($k).'}';
+#			}
+			$p_str['state'] = 'state={STATE}';
+			$data['access_token_url'] = $a['url']. $a['oauth2']['access_token']/*($p_str ? '?'.implode('&', $p_str) : '')*/;
 		}
 		return $data;
 	}
@@ -88,7 +95,6 @@ class yf_oauth {
 			'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
 			'access_token_url' => 'https://github.com/login/oauth/access_token',
 			'user_info_url' => 'https://api.github.com/user',
-			'dev_register_url' => '',
 		);
 
 		$this->_providers_loaded = true;
