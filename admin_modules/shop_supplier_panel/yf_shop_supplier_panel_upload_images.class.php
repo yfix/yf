@@ -162,6 +162,10 @@ class yf_shop_supplier_panel_upload_images {
 			$A = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$id." ORDER BY id");
 			db()->query("UPDATE ".db('shop_product_images')." SET is_default='1' WHERE id=".$A['id']);
 		}			
+		db()->query("UPDATE `".db('shop_products')."` SET `image`='1' WHERE `id`=".$id);
+		
+		
+		
 		return $thumb_name;
 
 	}

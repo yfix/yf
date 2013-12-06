@@ -38,22 +38,26 @@ class yf_manage_shop_import {
 				$item = array();
 				foreach ($cellIterator as $cell) {
 					$value = $cell->getCalculatedValue();
-					if ($value != '') $item[] = $value;
+					$item[] = $value;
 					$i++;
 				}
 				$items[] = $item;
 			}
-			
-//			return $this->process_items_epicentr($items); // DONE
-//			return $this->process_items_fortuna($items); // DONE			
-//			return $this->process_items_talisman($items);
-			return $this->process_items_talisman_import($items);
 		}
-		return 'no rows to process';
+		if (count($items) != 0) {
+			return $this->process_items_epicentr_update($items);
+	//		return $this->process_items_epicentr_import($items);
+	//		return $this->process_items_fortuna($items);
+	//		return $this->process_items_talisman($items);
+	//		return $this->process_items_talisman_import($items);
+		} else {
+			return 'no rows to process';
+		}
 	}
 	
 	
 	function process_items_fortuna($items) {
+		return false;
 		
 		$supplier_id = 99;
 		
@@ -110,6 +114,73 @@ class yf_manage_shop_import {
 	}
 	
 	
+	function process_items_epicentr_update($items) {
+		$supplier_id = 101;
+		
+		$products = array();
+		$R = db()->query("SELECT * FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+		while ($A = db()->fetch_assoc($R)) {
+			$products[$A['articul']] = $A['id'];
+		}
+		
+		$i = 0;
+		$cats_list = array();
+		$result = array();
+		foreach ($items as $item) {
+			if (intval($item[0]) == 0) continue;
+			
+			if ($item[2]!='') {
+				$v = array(
+					'name' => trim($item[1]),
+					'articul' => $item[2],
+					'price' => number_format($item[3], 2, '.', ''),
+					'supplier_id' => $supplier_id, 
+					'url' => common()->_propose_url_from_name(trim($item[1])),
+					'active' => 1,
+				);
+
+				if (empty($products[$v['articul']])) {
+					$result[] = array(
+						'articul' => $v['articul'],
+						'product' => $v['name'],
+						'price' => $v['price'],
+						'is_new' => 'new',
+					);
+				} else {
+					$result[] = array(
+						'articul' => $v['articul'],
+						'product' => $v['name'],
+						'price' => $v['price'],
+						'is_new' => 'upd',
+					);
+				}
+				$error = false;
+	//			db()->insert(db('shop_products'), $v) or $error = true;
+	/*			if ($error) {
+					$result .= 'ERROR';
+				} else {
+					$result .= 'OK';				
+				} */
+			}
+			$i++;
+		} 
+		
+		return table($result, array(
+            'table_class'       => 'table-condensed',
+            'auto_no_buttons'   => 1,
+            'pager_records_on_page' => 100000,
+			'tr' => function($row,$id) {
+				if ($row['is_new'] == 'new') {
+					return ' class="success"';
+				} else {
+					return ' class="warning"';					
+				}
+			}
+		))->auto();
+	}
+	
+	
+	
 	function process_items_epicentr_import($items) {
 		
 		return false;
@@ -153,7 +224,7 @@ class yf_manage_shop_import {
 	}
 	
 	function process_items_talisman_import($items) {
-		
+		return false;
 		$supplier_id = 100;
 
 		db()->query("DELETE FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
