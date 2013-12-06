@@ -1,0 +1,25 @@
+<?php
+$data = '
+	`id` int(10) unsigned NOT NULL auto_increment,
+	`error_level` smallint(5) unsigned NOT NULL,
+	`error_text` text NOT NULL,
+	`source_file` varchar(255) NOT NULL,
+	`source_line` smallint(5) unsigned NOT NULL,
+	`env_data` text NOT NULL,
+	`user_id` int(10) unsigned NOT NULL default \'0\',
+	`user_group` tinyint(3) unsigned NOT NULL,
+	`is_admin` enum(\'0\',\'1\') NOT NULL default \'0\',
+	`site_id` tinyint(3) unsigned NOT NULL default \'0\',
+	`server_id` tinyint(3) unsigned NOT NULL default \'0\',
+	`date` int(10) unsigned NOT NULL default \'0\',
+	`ip` varchar(16) NOT NULL default \'\',
+	`query_string` varchar(255) NOT NULL default \'\',
+	`request_uri` varchar(255) NOT NULL default \'\',
+	`user_agent` varchar(255) NOT NULL default \'\',
+	`referer` varchar(255) NOT NULL default \'\',
+	`object` varchar(255) NOT NULL default \'\',
+	`action` varchar(255) NOT NULL default \'\',
+	PRIMARY KEY	(`id`),
+	KEY `error_level` (`error_level`),
+	KEY `date` (`date`)
+';

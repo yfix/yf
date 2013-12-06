@@ -1,0 +1,28 @@
+<?php
+$data = '
+	`id` int(10) unsigned NOT NULL auto_increment,
+	`parent` int(10) unsigned NOT NULL default \'0\',
+	`forum` int(10) unsigned NOT NULL default \'0\',
+	`topic` int(10) unsigned NOT NULL default \'0\',
+	`user_id` int(10) unsigned NOT NULL default \'0\',
+	`user_name` varchar(64) NOT NULL default \'\',
+	`created` int(10) unsigned NOT NULL default \'0\',
+	`status` char(1) NOT NULL default \'a\',
+	`subject` varchar(255) NOT NULL default \'\',
+	`text` longtext NOT NULL,
+	`new_topic` tinyint(1) unsigned NOT NULL default \'0\',
+	`edit_name` varchar(64) NOT NULL default \'\',
+	`edit_time` int(10) unsigned NOT NULL default \'0\',
+	`show_edit_by` tinyint(1) unsigned NOT NULL default \'0\',
+	`use_sig` tinyint(1) unsigned NOT NULL default \'1\',
+	`use_emo` tinyint(1) unsigned NOT NULL default \'1\',
+	`icon_id` smallint(5) unsigned NOT NULL default \'0\',
+	`poster_ip` varchar(16) NOT NULL default \'\',
+	`language` varchar(12) NOT NULL default \'0\',
+	`activity` int(10) unsigned NOT NULL default \'0\',
+	PRIMARY KEY	(`id`),
+	KEY `user_id` (`user_id`),
+	KEY `status` (`status`),
+	KEY `created` (`created`),
+	KEY `topic` (`topic`)
+';

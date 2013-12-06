@@ -1,0 +1,25 @@
+<?php
+$data = '
+	`id` int(10) unsigned NOT NULL auto_increment,
+	`forum` int(10) unsigned NOT NULL default \'0\',
+	`name` varchar(255) NOT NULL default \'\',
+	`desc` varchar(255) NOT NULL default \'\',
+	`user_id` int(10) unsigned NOT NULL default \'0\',
+	`user_name` varchar(255) NOT NULL default \'\',
+	`created` int(10) unsigned NOT NULL default \'0\',
+	`status` char(1) NOT NULL default \'a\',
+	`num_views` int(10) unsigned NOT NULL default \'0\',
+	`num_posts` int(10) unsigned NOT NULL default \'0\',
+	`first_post_id` int(10) unsigned NOT NULL default \'0\',
+	`last_post_id` int(10) unsigned NOT NULL default \'0\',
+	`last_poster_id` int(10) unsigned NOT NULL default \'0\',
+	`last_poster_name` varchar(64) NOT NULL default \'\',
+	`last_post_date` int(10) unsigned NOT NULL default \'0\',
+	`icon_id` tinyint(2) unsigned NOT NULL default \'0\',
+	`pinned` tinyint(1) NOT NULL default \'0\',
+	`moved_to` varchar(64) NOT NULL default \'\',
+	`approved` tinyint(1) NOT NULL default \'0\',
+	`language` varchar(12) NOT NULL default \'0\',
+	PRIMARY KEY	(`id`),
+	KEY `forum` (`forum`,`pinned`)
+';

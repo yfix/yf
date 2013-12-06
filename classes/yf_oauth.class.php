@@ -2,23 +2,7 @@
 
 class yf_oauth {
 
-	private $_providers = array(
-		'__default__' => array(
-			'request_token_url' => '',
-			'append_state_to_redirect_uri' => '',
-			'authorization_header' => true,
-			'url_parameters' => false,
-			'token_request_method' => 'GET',
-			'signature_method' => 'HMAC-SHA1',
-		),
-		'github' => array(
-			'oauth_version' => '2.0',
-			'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
-			'access_token_url' => 'https://github.com/login/oauth/access_token',
-			'user_info_url' => 'https://api.github.com/user',
-			'dev_register_url' => '',
-		),
-	);
+	private $_providers = array();
 	private $error = '';
 	private $debug = false;
 	private $debug_http = false;
@@ -62,9 +46,73 @@ class yf_oauth {
 
 	/**
 	*/
-	function login($provider) {
+	function _init() {
+		foreach ($this as $k => $v) {
+			$def[$k] = $v;
+		}
+		$this->_default_values = $def;
+	}
+
+	/**
+	*/
+	function _parse_provider_config_json($json) {
+		$a = json_decode($json);
+// TODO
+		$data = array();
+		if (isset($a['oauth2']) && is_array($a['oauth2'])) {
+			$data['oauth_version'] = '2.0';
+		}
+		return $data;
+	}
+
+	/**
+	* Example of $this->_providers item:
+	*	'github' => array(
+	*		'oauth_version' => '2.0',
+	*		'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
+	*		'access_token_url' => 'https://github.com/login/oauth/access_token',
+	*		'user_info_url' => 'https://api.github.com/user',
+	*		'dev_register_url' => '',
+	*	),
+	*/
+	function _load_oauth_providers() {
+		if (isset($this->_providers_loaded)) {
+			return $this->_providers;
+		}
+// TODO: 
+#		foreach (_class('dir')->scan(YF_PATH. 'share/oauth_providers/') as $path) {
+#		}
+
+		$this->_providers['github'] = array(
+			'oauth_version' => '2.0',
+			'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
+			'access_token_url' => 'https://github.com/login/oauth/access_token',
+			'user_info_url' => 'https://api.github.com/user',
+			'dev_register_url' => '',
+		);
+
+		$this->_providers_loaded = true;
+		return $this->_providers;
+	}
+
+	/**
+	* Usually client_id and client_secret stored like this:
+	* $oauth_config = array(
+	*	'github' => array('client_id' => '_put_github_client_id_here_', 'client_secret' => '_put_github_client_secret_here_'),
+	*	'google' => array('client_id' => '_put_google_client_id_here_', 'client_secret' => '_put_google_client_secret_here_'),
+	*	...
+	* )
+	*/
+	function _load_oauth_config() {
 		global $oauth_config;
-		$config = &$oauth_config;
+		return $oauth_config;
+	}
+
+	/**
+	*/
+	function login($provider) {
+		$providers = $this->_load_oauth_providers();
+		$config = $this->_load_oauth_config();
 
 		if (!$config[$provider]) {
 			return 'Error: no config cleint_id and client_secret for provider: '.$provider;
@@ -77,11 +125,14 @@ class yf_oauth {
 		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
 		$this->client_secret = $config[$provider]['client_secret'] ?: '';
 		if (strlen($this->client_id) == 0 || strlen($this->client_secret) == 0) {
-			die('Please set the client_id with Key and client_secret with Secret. The URL must be '.$this->redirect_uri);
+			return 'Error: Please set the client_id with Key and client_secret with Secret. The URL must be '.$this->redirect_uri;
 		}
 
-		$settings = $this->_providers[$provider] + $this->_providers['__default__'];
-		foreach ($settings as $k => $v) {
+		$settings = $this->_providers[$provider];
+		if (!$settings) {
+			return 'Error: no settings for provider: '.$provider;
+		}
+		foreach ((array)$settings as $k => $v) {
 			$this->$k = $v;
 		}
 
@@ -121,6 +172,7 @@ class yf_oauth {
 	/**
 	*/
 	function _get_providers() {
+		$providers = $this->_load_oauth_providers();
 		return $this->_providers;
 	}
 

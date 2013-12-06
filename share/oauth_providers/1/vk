@@ -1,0 +1,8 @@
+dev_url http://vk.com/dev
+scope "uid,first_name,last_name,sex,photo"
+authorize_uri https://oauth.vk.com/authorize
+token_uri https://oauth.vk.com/access_token
+userinfo_uri https://api.vk.com/method/users.get
+userinfo_params [{access_token, access_token}, 
+	{fields, "uid,first_name,last_name,sex,photo"}
+	{field_names, [uid, undefined, name, photo, gender, undefined]},
