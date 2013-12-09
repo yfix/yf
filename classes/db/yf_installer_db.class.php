@@ -19,13 +19,6 @@ class yf_installer_db {
 	public $SYS_TABLES_DATAS		= array();
 	/** @var array @conf_skip Other common used tables required data */
 	public $OTHER_TABLES_DATAS		= array();
-	/** @var array @conf_skip */
-	public $_external_files = array(
-		'SYS_TABLES_STRUCTS'	=> 'installer_sys_tables_structs.php',
-		'SYS_TABLES_DATAS'		=> 'installer_sys_tables_datas.php',
-		'OTHER_TABLES_STRUCTS'	=> 'installer_other_tables_structs.php',
-		'OTHER_TABLES_DATAS'	=> "installer_other_tables_datas.php",
-	);
 	/** @var array @conf_skip Required patterns */
 	public $_patterns	= array(
 		"table"		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
@@ -56,28 +49,23 @@ class yf_installer_db {
 	public $PARTITION_BY_MONTH		= false;
 	/** @var bool */
 	public $PARTITION_BY_DAY		= false;
+	/** @var array */
+	public $TABLES_SQL				= array();
+	/** @var array */
+	public $TABLES_DATA				= array();
 
 	/**
-	* Framework constructor
 	*/
-	function _init () {
-		// Prepare lock file
-		if ($this->USE_LOCKING) {
-			$this->LOCK_FILE_NAME = PROJECT_PATH. $this->LOCK_FILE_NAME;
-		}
+	function _load_data_files() {
 		// Load install data from external files
-		$path_to_external_files = YF_PATH.'share/db_installer/';
-		foreach ((array)$this->_external_files as $cur_array_name => $cur_file_name) {
-			$data = array();
-			if (!file_exists($path_to_external_files.$cur_file_name)) {
-				continue;
-			}
-			include_once ($path_to_external_files.$cur_file_name);
-			if (empty($data)) {
-				continue;
-			}
-			// Do load info
-			$this->$cur_array_name = my_array_merge((array)$this->$cur_array_name, (array)$data);
+		$dir_installer_db = YF_PATH.'share/db_installer/';
+		foreach (glob($dir_installer_db.'db_table_sql/*.db_table_sql.php') as $f) {
+			require_once $f;
+			$this->TABLES_SQL = my_array_merge((array)$this->TABLES_SQL, (array)$data);
+		}
+		foreach (glob($dir_installer_db.'db_table_data/*.db_table_data.php') as $f) {
+			require_once $f;
+			$this->TABLES_DATA = my_array_merge((array)$this->TABLES_DATA, (array)$data);
 		}
 		// Project has higher priority than framework (allow to change anything in project)
 		// Try to load db structure from project file
@@ -88,7 +76,31 @@ class yf_installer_db {
 		}
 		foreach((array)$project_data as $cur_array_name => $_cur_data) {
 			$this->$cur_array_name = my_array_merge((array)$this->$cur_array_name, (array)$_cur_data);
-		} 
+		}
+		// Compatibility with old codebase
+		foreach ((array)$this->SYS_TABLES_STRUCTS as $k => $v) {
+			$this->TABLES_SQL[$k] = $v;
+		}
+		foreach ((array)$this->OTHER_TABLES_STRUCTS as $k => $v) {
+			$this->TABLES_SQL[$k] = $v;
+		}
+		foreach ((array)$this->SYS_TABLES_DATAS as $k => $v) {
+			$this->TABLES_DATAS[$k] = $v;
+		}
+		foreach ((array)$this->OTHER_TABLES_DATAS as $k => $v) {
+			$this->TABLES_DATAS[$k] = $v;
+		}
+	}
+
+	/**
+	* Framework constructor
+	*/
+	function _init () {
+		// Prepare lock file
+		if ($this->USE_LOCKING) {
+			$this->LOCK_FILE_NAME = PROJECT_PATH. $this->LOCK_FILE_NAME;
+		}
+		$this->_load_data_files();
 		// Get current abstract db type
 		if (in_array(DB_TYPE, array('mysql','mysql4','mysql41','mysql5'))) {
 			$this->db_type = 'mysql';
@@ -128,18 +140,15 @@ class yf_installer_db {
 		if (isset($this->_installed_tables[$table_name])) {
 			return false;
 		}
-		// Try to find table name inside system tables
-		if (isset($this->SYS_TABLES_STRUCTS[$table_name])) {
-			$table_found		= true;
-			$TABLE_STRUCTURE	= $this->SYS_TABLES_STRUCTS[$table_name];
-			$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name];
-			$full_table_name	= $DB_CONNECTION->DB_PREFIX. 'sys_'.$table_name;
+		if (isset($this->TABLES_SQL[$table_name])) {
+			$table_found	= true;
+		} elseif (isset($this->TABLES_SQL['sys_'.$table_name])) {
+			$table_name		= 'sys_'.$table_name;
+			$table_found	= true;
 		}
-		// Then try to find in other tables
-		if (!$table_found && isset($this->OTHER_TABLES_STRUCTS[$table_name])) {
-			$table_found		= true;
-			$TABLE_STRUCTURE	= $this->OTHER_TABLES_STRUCTS[$table_name];
-			$TABLE_DATAS		= $this->OTHER_TABLES_DATAS[$table_name];
+		if ($table_found) {
+			$TABLE_STRUCTURE	= $this->SYS_TABLES_SQL[$table_name];
+			$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name];
 			$full_table_name	= $DB_CONNECTION->DB_PREFIX. $table_name;
 		}
 		// Not partitioned at first
@@ -147,8 +156,8 @@ class yf_installer_db {
 		// Try sharding by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
 		if (!$table_found && $this->PARTITION_BY_MONTH) {
 			$_t_name = $p_table_name ? $p_table_name : $table_name;
-			$p_month		= (int)substr($_t_name, -2);
-			$p_year			= (int)substr($_t_name, -7, 4);
+			$p_month	= (int)substr($_t_name, -2);
+			$p_year		= (int)substr($_t_name, -7, 4);
 			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12) {
 				$p_table_name	= substr($_t_name, 0, -8);
 			}
@@ -156,25 +165,24 @@ class yf_installer_db {
 		// Try sharding by year/month/day (example: db('currency_pairs_log_2013_07_01') from db('currency_pairs_log'))
 		if (!$table_found && $this->PARTITION_BY_DAY) {
 			$_t_name = $p_table_name ? $p_table_name : $table_name;
-			$p_day			= (int)substr($_t_name, -2);
-			$p_month		= (int)substr($_t_name, -5, 2);
-			$p_year			= (int)substr($_t_name, -10, 4);
+			$p_day		= (int)substr($_t_name, -2);
+			$p_month	= (int)substr($_t_name, -5, 2);
+			$p_year		= (int)substr($_t_name, -10, 4);
 			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12 && $p_day >= 1 && $p_day <= 31) {
 				$p_table_name	= substr($_t_name, 0, -11);
 			}
 		}
 		if ($p_table_name) {
-			if (isset($this->SYS_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->SYS_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name]; // No error in name!
-				$full_table_name	= $DB_CONNECTION->DB_PREFIX. 'sys_'.$table_name;
+			if (isset($this->TABLES_SQL[$p_table_name])) {
+				$table_found	= true;
+			} elseif (isset($this->TABLES_SQL['sys_'.$p_table_name])) {
+				$table_found	= true;
+				$p_table_name	= 'sys_'.$p_table_name;
+				$table_name		= 'sys_'.$table_name;
 			}
-			// Then try to find in other tables
-			if (!$table_found && isset($this->OTHER_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->OTHER_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->OTHER_TABLES_DATAS[$table_name]; // No error in name!
+			if ($table_found) {
+				$TABLE_STRUCTURE	= $this->TABLES_SQL[$p_table_name];
+				$TABLE_DATAS		= $this->TABLES_DATAS[$table_name]; // No error in name!
 				$full_table_name	= $DB_CONNECTION->DB_PREFIX. $table_name;
 			}
 		}
@@ -190,17 +198,16 @@ class yf_installer_db {
 			}
 		}
 		if ($p_table_name) {
-			if (isset($this->SYS_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->SYS_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name]; // No error in name!
-				$full_table_name	= $DB_CONNECTION->DB_PREFIX. 'sys_'.$table_name;
+			if (isset($this->TABLES_SQL[$p_table_name])) {
+				$table_found	= true;
+			} elseif (isset($this->TABLES_SQL['sys_'.$p_table_name])) {
+				$table_found	= true;
+				$p_table_name	= 'sys_'.$p_table_name;
+				$table_name		= 'sys_'.$table_name;
 			}
-			// Then try to find in other tables
-			if (!$table_found && isset($this->OTHER_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->OTHER_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->OTHER_TABLES_DATAS[$table_name]; // No error in name!
+			if ($table_found) {
+				$TABLE_STRUCTURE	= $this->TABLES_SQL[$p_table_name];
+				$TABLE_DATAS		= $this->TABLES_DATAS[$table_name]; // No error in name!
 				$full_table_name	= $DB_CONNECTION->DB_PREFIX. $table_name;
 			}
 		}
@@ -252,7 +259,11 @@ class yf_installer_db {
 		$IS_SYS_TABLE = (substr($table_name, 0, strlen('sys_')) == 'sys_');
 		// Try to get table 'model' from the framework 'share' folder
 		clearstatcache();
-		$file_path = PROJECT_PATH.'core_cache/installer_'.($IS_SYS_TABLE ? 'sys' : 'other').'_tables_structs_arrays.php';
+
+// TODO: use cache_set/cache_get
+#		$file_path = PROJECT_PATH.'core_cache/installer_'.($IS_SYS_TABLE ? 'sys' : 'other').'_tables_structs_arrays.php';
+		$file_path = '/tmp/yf_installer_db_tables_structs.php';
+
 		if (file_exists($file_path) && (filemtime($this->_cache_tables_file) < (time() - $this->CACHE_TTL))) {
 			unlink($file_path);
 			clearstatcache();
@@ -288,8 +299,8 @@ class yf_installer_db {
 			}
 			// Try partition by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
 			if (!$table_found && $this->PARTITION_BY_MONTH && !$p_table_name) {
-				$p_month		= (int)substr($table_name, -2);
-				$p_year			= (int)substr($table_name, -7, 4);
+				$p_month	= (int)substr($table_name, -2);
+				$p_year		= (int)substr($table_name, -7, 4);
 				if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12) {
 					$p_table_name	= substr($table_name, 0, -8);
 				}
@@ -376,7 +387,6 @@ class yf_installer_db {
 	}
 
 	/**
-	* 
 	*/
 	function _db_table_struct_into_array ($raw_data = '') {
 		$struct_array	= array();
@@ -489,21 +499,10 @@ class yf_installer_db {
 	* 
 	*/
 	function _create_struct_files ($FORCE_OVERWRITE = false) {
-		// Code to insert into footer of the other tables structs
-		$footer = '
-	// Try to load chat tables
-	$chat_tables_structs_file = PROJECT_PATH.\'core_cache/installer_chat_tables_structs_arrays.php\';
-	if (file_exists($chat_tables_structs_file)) {
-		include_once($chat_tables_structs_file);
-	}
-	// Try to load forum tables
-	$forum_tables_structs_file = PROJECT_PATH.\'core_cache/installer_forum_tables_structs_arrays.php\';
-	if (file_exists($forum_tables_structs_file)) {
-		include_once($forum_tables_structs_file);
-	}'.PHP_EOL;
 		$SHARE_PATH		= YF_PATH.'share/db_installer/';
 		$CACHE_PATH		= PROJECT_PATH.'core_cache/';
 		_mkdir_m($CACHE_PATH);
+/*
 		$this->_convert_struct_files(
 			$this->SYS_TABLES_STRUCTS,
 			$CACHE_PATH.'installer_sys_tables_structs_arrays.php',
@@ -526,6 +525,7 @@ class yf_installer_db {
 			$CACHE_PATH.'installer_chat_tables_structs_arrays.php',
 			$FORCE_OVERWRITE
 		);
+*/
 	}
 
 	/**
