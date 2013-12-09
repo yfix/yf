@@ -9,16 +9,12 @@
 */
 class yf_installer_db {
 
+	/** @var array */
+	public $TABLES_SQL				= array();
+	/** @var array */
+	public $TABLES_DATA				= array();
 	/** @var bool */
 	public $USE_SQL_IF_NOT_EXISTS	= true;
-	/** @var array @conf_skip Structures for the system tables */
-	public $SYS_TABLES_STRUCTS		= array();
-	/** @var array @conf_skip Structures for the other common used tables */
-	public $OTHER_TABLES_STRUCTS	= array();
-	/** @var array @conf_skip System tables required data */
-	public $SYS_TABLES_DATAS		= array();
-	/** @var array @conf_skip Other common used tables required data */
-	public $OTHER_TABLES_DATAS		= array();
 	/** @var array @conf_skip Required patterns */
 	public $_patterns	= array(
 		"table"		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
@@ -49,23 +45,22 @@ class yf_installer_db {
 	public $PARTITION_BY_MONTH		= false;
 	/** @var bool */
 	public $PARTITION_BY_DAY		= false;
-	/** @var array */
-	public $TABLES_SQL				= array();
-	/** @var array */
-	public $TABLES_DATA				= array();
 
 	/**
 	*/
 	function _load_data_files() {
+		$data = array();
 		// Load install data from external files
 		$dir_installer_db = YF_PATH.'share/db_installer/';
 		foreach (glob($dir_installer_db.'db_table_sql/*.db_table_sql.php') as $f) {
-			require_once $f;
-			$this->TABLES_SQL = my_array_merge((array)$this->TABLES_SQL, (array)$data);
+			$t_name = substr(basename($f), 0, -strlen('.db_table_sql.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_SQL[$t_name] = $data;
 		}
 		foreach (glob($dir_installer_db.'db_table_data/*.db_table_data.php') as $f) {
-			require_once $f;
-			$this->TABLES_DATA = my_array_merge((array)$this->TABLES_DATA, (array)$data);
+			$t_name = substr(basename($f), 0, -strlen('.db_table_data.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_DATA[$t_name] = $data;
 		}
 		// Project has higher priority than framework (allow to change anything in project)
 		// Try to load db structure from project file
@@ -147,8 +142,8 @@ class yf_installer_db {
 			$table_found	= true;
 		}
 		if ($table_found) {
-			$TABLE_STRUCTURE	= $this->SYS_TABLES_SQL[$table_name];
-			$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name];
+			$TABLE_STRUCTURE	= $this->TABLES_SQL[$table_name];
+			$TABLE_DATAS		= $this->TABLES_DATAS[$table_name];
 			$full_table_name	= $DB_CONNECTION->DB_PREFIX. $table_name;
 		}
 		// Not partitioned at first
