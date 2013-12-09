@@ -543,6 +543,10 @@ if ($_POST['install_checkbox_demo_data']) {
 }
 $debug_info = $_POST['install_checkbox_debug_info'] ? common()->show_debug_info() : '';
 $vars = installer()->prepare_vars();
-$vars['install_log'] = $debug_info;
+
+# TODO: create some log
+#$vars['install_log'] = $debug_info;
+$vars['install_log'] = '';
+
 installer()->show_html('results', $vars);
 echo $debug_info;
