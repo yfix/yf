@@ -1,5 +1,8 @@
 <?php
 
+#if (!is_readable(realpath('./'))) {
+#}
+
 // TODO: form validation
 // TODO: check database connection
 // TODO: add language selector $_POST['install_project_lang']
@@ -19,6 +22,10 @@ class yf_core_install {
 	function show_html($page = 'form', $vars = array(), $errors = array()) {
 		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
 			return print '__CONSOLE_INSTALL__'.PHP_EOL;
+		}
+		$cur_dir = realpath('./');
+		if (!is_writable($cur_dir)) {
+			$error = 'Current dir: '.$cur_dir.' is not writable, please fix filesystem permissions.';
 		}
 		ob_start();
 ?>
@@ -90,6 +97,9 @@ class yf_core_install {
 		</div>
 	</div>
 <?php
+		if ($error) {
+			echo '<div class="alert alert-danger">'.$error.'</div>';
+		}
 		if ($page == 'form') {
 ?>
 	<header>
