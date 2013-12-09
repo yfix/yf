@@ -68,6 +68,7 @@ class yf_oauth {
 #			}
 			$p_str['state'] = 'state={STATE}';
 			$data['access_token_url'] = $a['url']. $a['oauth2']['access_token']/*($p_str ? '?'.implode('&', $p_str) : '')*/;
+			$data['user_info_url'] = $a['url']. $a['user'];
 		}
 		return $data;
 	}
