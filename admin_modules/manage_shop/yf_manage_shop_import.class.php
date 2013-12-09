@@ -45,10 +45,11 @@ class yf_manage_shop_import {
 			}
 		}
 		if (count($items) != 0) {
-			return $this->process_items_epicentr_update($items);
+	//		return $this->process_items_epicentr_update($items);
 	//		return $this->process_items_epicentr_import($items);
 	//		return $this->process_items_fortuna($items);
 	//		return $this->process_items_talisman($items);
+			return $this->process_items_talisman_update($items);	
 	//		return $this->process_items_talisman_import($items);
 		} else {
 			return 'no rows to process';
@@ -221,6 +222,86 @@ class yf_manage_shop_import {
 			$i++;
 		} 
 		return $result;
+	}
+
+	function process_items_talisman_update($items) {
+		$supplier_id = 100;
+
+		$remap = array (
+			62517 => 'абсент', 
+			62505 => 'бальзам', 
+			62509 => 'вино', 
+			62510 => 'вермут', 
+			62495 => 'виски', 
+			62496 => 'водка', 
+			62497 => 'джин', 
+			62501 => 'коньяк', 
+			62502 => 'ликер', 
+			62504 => 'текила', 
+			62512 => 'пиво', 
+			62514 => 'слабоалкогольные напитки',
+		);
+		
+		$products = array();
+		$R = db()->query("SELECT * FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+		while ($A = db()->fetch_assoc($R)) {
+			$products[$A['articul']] = $A['id'];
+		}
+
+		$i =0 ;
+		foreach ($items as $item) {
+			if ($item[3]=='' || $item[3] == 'Ед. изм.') continue;
+			
+			$cat_id = 0;
+			foreach ($remap as $k=>$v) {
+				if ($v == $item[4])
+					$cat_id = $k;
+			}
+
+			$v = array(
+				'name' => trim($item[0]),
+				'articul' => $item[1],
+				'cat_id' => $cat_id,
+				'price' => number_format($item[2], 2, '.', ''),
+				'url' => common()->_propose_url_from_name(trim($item[0])),				
+				'supplier_id' => $supplier_id, 
+				'active' => 1,
+			);
+			
+			if (empty($products[$v['articul']])) {
+				$result[] = array(
+					'articul' => $v['articul'],
+					'product' => $v['name'],
+					'price' => $v['price'],
+					'is_new' => 'new',
+				);
+			} else {
+				if ($v['articul']!='') {
+					$result[] = array(
+						'articul' => $v['articul'],
+						'product' => $v['name'],
+						'price' => $v['price'],
+						'is_new' => 'upd',
+					);
+
+					db()->query("UPDATE `".db('shop_products')."` SET `name`='"._es($v['name'])."' WHERE `articul`='"._es($v['articul'])."' AND `supplier_id`=".$supplier_id);
+				}
+			}				
+			$i++;
+		}
+ 
+		return table($result, array(
+            'table_class'       => 'table-condensed',
+            'auto_no_buttons'   => 1,
+            'pager_records_on_page' => 100000,
+			'tr' => function($row,$id) {
+				if ($row['is_new'] == 'new') {
+					return ' class="success"';
+				} else {
+					return ' class="warning"';					
+				}
+			}
+		))->auto();
 	}
 	
 	function process_items_talisman_import($items) {
