@@ -1291,10 +1291,10 @@ if ($class_name == 'yf_db_driver_mysql41') {
 				$locale_handler_name = $handler_name.'___'.conf('language');
 			}
 			$handler_php_source = conf('data_handlers::'.$handler_name);
-			if ($handler_php_source) {
-				$data_to_return = eval(
-					($locale_handler_name ? '$locale="'.conf('language').'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;'
-				);
+			if (is_callable($handler_php_source)) {
+				$data_to_return = $handler_php_source($handler_name, $params);
+			} elseif (is_string($handler_php_source)) {
+				$data_to_return = eval( ($locale_handler_name ? '$locale="'.conf('language').'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;' );
 			}
 			if (!empty($this->USE_SYSTEM_CACHE) && !$no_cache && $cache_obj_available) {
 				$this->modules['cache']->put($locale_handler_name ? $locale_handler_name : $handler_name, $data_to_return);
