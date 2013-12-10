@@ -124,10 +124,10 @@ class yf_oauth {
 		foreach ((array)$settings as $k => $v) {
 			$this->$k = $v;
 		}
-		if ($_SESSION['oauth'][$provider]['token']) {
-			$success = $_SESSION['oauth'][$provider]['token'];
-			$user = $_SESSION['oauth'][$provider]['user_info'];
-		} else {
+#		if ($_SESSION['oauth'][$provider]['token']) {
+#			$success = $_SESSION['oauth'][$provider]['token'];
+#			$user = $_SESSION['oauth'][$provider]['user_info'];
+#		} else {
 			$error = 'Cannot process';
 			if (($success = $this->process())) {
 				if (strlen($this->access_token)) {
@@ -137,12 +137,12 @@ class yf_oauth {
 					if ($user) {
 						$success = true;
 					}
-					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
-					$_SESSION['oauth'][$provider]['user_info'] = $user;
+#					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
+#					$_SESSION['oauth'][$provider]['user_info'] = $user;
 				} else {
 					$error = $this->authorization_error;
 				}
-			}
+#			}
 		}
 		$body = $this->output();
 
