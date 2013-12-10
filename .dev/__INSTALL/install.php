@@ -363,12 +363,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	}
 	function import_base_db_structure() {
 		$import_tables = array(
-#			'activity_types',
-#			'countries',
-#			'forum_groups',
-#			'forum_users',
-#			'moods',
-#			'states',
 			'static_pages',
 			'sys_categories',
 			'sys_category_items',
@@ -378,7 +372,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			'sys_menu_items',
 			'sys_user_groups',
 			'sys_user_modules',
-#			'tips',
 			'user',
 		);
 		$_temp_array = array();
