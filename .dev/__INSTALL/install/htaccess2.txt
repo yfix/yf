@@ -3,12 +3,10 @@ RewriteEngine on
 RewriteBase %%%#path#%%%
 #RewriteBase /
 
-### To allow files inheritance we need to httpd.conf string like:  
-# Return non-existed images from the base site (allows to store design images and css in one place)
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-s
-RewriteRule ^templates\/([^\/]+)\/images\/forum\/(.*)$ uploads/forum/std_images/$2 [PT]
+# Allow to include static html pages inside folder "html", also allow "admin" folder and old images directory
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(admin|js|templates|uploads|html|images|ckeditor|sitemaps)\/(.*) $1/$2		[L,NC]
 
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-s
-RewriteRule ^(admin|js|fckeditor|templates|uploads|pma)\/(.*)$ /$1/$2 [PT] 
+# Main rewrite for YF engine
+RewriteRule ^ index.php		[L,NC,T=application/x-httpd-php]
