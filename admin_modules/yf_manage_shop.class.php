@@ -39,14 +39,7 @@ class yf_manage_shop {
 		2	=> 'Authorize.Net',
 	);
 	/** @var @conf_skip */
-	public $_statuses = array(
-		''					=> '',
-		'pending'			=> 'Pending',
-		'pending payment'	=> 'Pending payment',
-		'proccessed'		=> 'Proccessed',
-		'delivery'			=> 'Delivery',
-		'shipped'			=> 'Shipped',
-	);
+	public $_statuses = array();
 	/** @var Company info */
 	public $COMPANY_INFO = array(
 		'company_name'		=> 'Company Name',
@@ -66,6 +59,9 @@ class yf_manage_shop {
 	*/
 	function _init() {
 		$manage_shop = module('manage_shop');
+
+		$manage_shop->_statuses = common()->get_static_conf("order_status");
+		$manage_shop->_order_items_status = common()->get_static_conf("order_items_status");
 
 		$manage_shop->_category_names	= _class('cats')->_get_items_names('shop_cats');
 		$manage_shop->_cats_for_select	= _class('cats')->_prepare_for_box('shop_cats', 0);
@@ -91,6 +87,7 @@ class yf_manage_shop {
 			'status'		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
 			'featured'		=> 'radio_box("featured",		module("manage_shop")->_featured,	$selected, false, 2, "", false)',
 			'status_prod'	=> 'select_box("status_prod",	module("manage_shop")->_status_prod,$selected, 0, 2, "", false)',
+			'status_item'	=> 'select_box("status_item",	module("manage_shop")->_order_items_status,	$selected, false, 2, "", false)',
 		);
 		$manage_shop->_featured = array(
 			'0' => '<span class="negative">NO</span>',
