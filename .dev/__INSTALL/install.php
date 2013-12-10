@@ -1,10 +1,6 @@
 <?php
 
-#if (!is_readable(realpath('./'))) {
-#}
-
 // TODO: form validation
-// TODO: check database connection
 // TODO: add language selector $_POST['install_project_lang']
 
 class yf_core_install {
@@ -367,12 +363,12 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	}
 	function import_base_db_structure() {
 		$import_tables = array(
-			'activity_types',
-			'countries',
-			'forum_groups',
-			'forum_users',
-			'moods',
-			'states',
+#			'activity_types',
+#			'countries',
+#			'forum_groups',
+#			'forum_users',
+#			'moods',
+#			'states',
 			'static_pages',
 			'sys_categories',
 			'sys_category_items',
@@ -382,7 +378,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			'sys_menu_items',
 			'sys_user_groups',
 			'sys_user_modules',
-			'tips',
+#			'tips',
 			'user',
 		);
 		$_temp_array = array();
@@ -419,10 +415,10 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		foreach ((array)$import_tables as $table){
 			if ($table == 'sys_user_modules') {
 				include (INSTALLER_PATH.'install/data_user_modules.php');
-				db()->replace(db('user_modules'), db()->es($GLOBALS['INSTALL']['data_user_modules']));
+				db()->replace('sys_user_modules', db()->es($GLOBALS['INSTALL']['data_user_modules']));
 			} elseif ($table == 'sys_menu_items') {
 				include (INSTALLER_PATH.'install/data_menu_items.php');
-				db()->replace(db('menu_items'), db()->es($GLOBALS['INSTALL']['data_menu_items']));
+				db()->replace('sys_menu_items', db()->es($GLOBALS['INSTALL']['data_menu_items']));
 			} else {
 				import (INSTALLER_PATH.'install/sql/'.$table.'.sql', DB_PREFIX);
 			}
@@ -474,13 +470,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		_class('forum_sync', 'modules/forum/')->_sync_board();
 		ob_end_clean();
 
-		db()->update(db('menu_items'), array('active' => 1), '1=1');
+		db()->update('sys_menu_items', array('active' => 1), '1=1');
 		return installer();
 	}
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess.txt');
-			db()->update(db('settings'), array('value' => 1), 'id=4');
+			db()->update('sys_settings', array('value' => 1), 'id=4');
 		} else {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess2.txt');
 		}
@@ -488,11 +484,12 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		return installer();
 	}
 	function set_admin_login_pswd() {
-		db()->update(db('admin'), db()->es(array(
+		db()->replace_safe('sys_admin', array(
+			'id'		=> 1,
 			'login'		=> $_POST['install_admin_login'],
 			'password'	=> md5($_POST['install_admin_pswd']),
 			'add_date'	=> gmmktime(),
-		)), 'id=1');
+		));
 		return installer();
 	}
 	function copy_project_skeleton() {
@@ -530,6 +527,7 @@ if ($errors) {
 	exit();
 }
 installer()
+	->import_base_db_structure()
 	->write_db_setup()
 	->write_user_index_php()
 	->write_admin_index_php()
@@ -537,7 +535,6 @@ installer()
 	->set_admin_login_pswd()
 	->copy_project_skeleton()
 ;
-#installer()->import_base_db_structure();
 if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
 	_class('dir')->copy_dir(INSTALLER_PATH.'install/demo_skel/', PROJECT_PATH, '', '/\.(svn|git)/');
