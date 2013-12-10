@@ -1232,10 +1232,15 @@ class yf_db {
 		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
 			return false;
 		}
-		if (!function_exists('main')) {
-			return false;
+		// Get current abstract db type
+		if (in_array($this->DB_TYPE, array('mysql','mysql4','mysql41','mysql5'))) {
+			$db_type = 'mysql';
+		} elseif (in_array($this->DB_TYPE, array('ora','oci8','oracle','oracle10'))) {
+			$db_type = 'oracle';
+		} elseif (in_array($this->DB_TYPE, array('pgsql','postgre','postgres','postgres7','postgres8'))) {
+			$db_type = 'postgres';
 		}
-		return _class('installer_db', 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
+		return _class('installer_db_'.$db_type, 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
 	}
 
 	/**

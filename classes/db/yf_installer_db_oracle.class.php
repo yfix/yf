@@ -1,13 +1,7 @@
 <?php
 
-class yf_installer_db_oracle {
-
-	/**
-	* Framework construct
-	*/
-	function _init() {
-		$this->PARENT_OBJ = _class('installer_db', 'classes/db/');
-	}
+load('installer_db', 'framework', 'classes/db/');
+class yf_installer_db_oracle extends yf_installer_db {
 
 	/**
 	* Trying to repair given table structure (and possibly data)
@@ -24,7 +18,7 @@ class yf_installer_db_oracle {
 			$item_to_repair = trim($m[1]);
 			// Try to repair table
 			if (!empty($item_to_repair)) {
-				$this->PARENT_OBJ->create_table($item_to_repair);
+				$this->create_table($item_to_repair);
 			}
 /*
 		} elseif ($db_error['code'] == 1054) {
@@ -76,7 +70,7 @@ $item_to_repair = $m[1];
 		$file_path = YF_PATH."share/db_installer/installer_".($IS_SYS_TABLE ? "sys" : "other")."_tables_structs_arrays.php";
 		// Try to convert strings structure into arrays (if not done yet)
 		if (!file_exists($file_path)) {
-			$this->PARENT_OBJ->_create_struct_files(1);
+			$this->_create_struct_files(1);
 		}
 		// Last check for file existance
 		if (!file_exists($file_path)) {

@@ -2,10 +2,6 @@
 
 /**
 * YF db driver abstract class
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
 */
 abstract class yf_db_driver {
 	abstract protected function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false);

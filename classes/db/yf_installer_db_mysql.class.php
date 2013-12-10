@@ -1,6 +1,7 @@
 <?php
 
-class yf_installer_db_mysql {
+load('installer_db', 'framework', 'classes/db/');
+class yf_installer_db_mysql extends yf_installer_db {
 
 	/** @var int */
 	public $NUM_RETRIES = 3;
@@ -37,7 +38,7 @@ class yf_installer_db_mysql {
 	* Framework construct
 	*/
 	function _init() {
-		$this->PARENT_OBJ = _class('installer_db', 'classes/db/');
+		parent::_init();
 		$this->_DEF_TABLE_OPTIONS = array(
 			'DEFAULT CHARSET'	=> $this->DEFAULT_CHARSET,
 			'ENGINE'			=> 'InnoDB',
@@ -47,20 +48,17 @@ class yf_installer_db_mysql {
 	/**
 	* Trying to repair given table structure (and possibly data)
 	*/
-	function _auto_repair_table($sql, $db_error, $DB_CONNECTION) {
-		if (!is_object($this->PARENT_OBJ)) {
-			return false;
-		}
+	function _auto_repair_table($sql, $db_error, $db) {
 		$sql = trim($sql);
 		// #1191 Can't find FULLTEXT index matching the column list
-		if ($this->PARENT_OBJ->RESTORE_FULLTEXT_INDEX && in_array($db_error['code'], array(1191))) {
+		if ($this->RESTORE_FULLTEXT_INDEX && in_array($db_error['code'], array(1191))) {
 			foreach ((array)conf('fulltext_needed_for') as $_fulltext_field) {
 				list($f_table, $f_field) = explode('.', $_fulltext_field);
 				if (empty($f_table) || false === strpos($sql, $f_table) || empty($f_field)) {
 					continue;
 				}
 				// Check if such index already exists
-				foreach ((array)$DB_CONNECTION->query_fetch_all('SHOW INDEX FROM '.$f_table.'', 'Key_name') as $k => $v) {
+				foreach ((array)$db->query_fetch_all('SHOW INDEX FROM '.$f_table.'', 'Key_name') as $k => $v) {
 					if ($v['Column_name'] != $f_field) {
 						continue;
 					}
@@ -69,10 +67,10 @@ class yf_installer_db_mysql {
 						continue 2;
 					}
 				}
-				$DB_CONNECTION->query('ALTER TABLE '.$f_table.' ADD FULLTEXT KEY '.$f_field.' ('.$f_field.')');
+				$db->query('ALTER TABLE '.$f_table.' ADD FULLTEXT KEY '.$f_field.' ('.$f_field.')');
 			}
 			// Execute original query again
-			$result = $DB_CONNECTION->query($sql);
+			$result = $db->query($sql);
 			return $result;
 		}
 
@@ -84,7 +82,7 @@ class yf_installer_db_mysql {
 			$result = false;
 			// Try 5 times with delay
 			for ($i = 0; $i <= $this->NUM_RETRIES; $i++) {
-				$result = $DB_CONNECTION->db->query($sql);
+				$result = $db->db->query($sql);
 				// Stop after success
 				if (!empty($result)) {
 					break;
@@ -114,12 +112,12 @@ class yf_installer_db_mysql {
 			if (false !== $dot_pos) {
 				$item_to_repair = substr($item_to_repair, $dot_pos);
 			}
-			if (substr($item_to_repair, 0, strlen($DB_CONNECTION->DB_PREFIX)) == $DB_CONNECTION->DB_PREFIX) {
-				$item_to_repair = substr($item_to_repair, strlen($DB_CONNECTION->DB_PREFIX));
+			if (substr($item_to_repair, 0, strlen($db->DB_PREFIX)) == $db->DB_PREFIX) {
+				$item_to_repair = substr($item_to_repair, strlen($db->DB_PREFIX));
 			}
 			// Try to repair table
 			if (!empty($item_to_repair)) {
-				if(!$this->PARENT_OBJ->create_table(str_replace('dbt_', '', $item_to_repair), $DB_CONNECTION)){
+				if (!$this->create_table(str_replace('dbt_', '', $item_to_repair), $db)) {
 					return false;
 				}
 			}
@@ -150,27 +148,31 @@ class yf_installer_db_mysql {
 			if (false !== $dot_pos) {
 				$table_to_repair = substr($table_to_repair, $dot_pos);
 			}
-			if (substr($table_to_repair, 0, strlen($DB_CONNECTION->DB_PREFIX)) == $DB_CONNECTION->DB_PREFIX) {
-				$table_to_repair = substr($table_to_repair, strlen($DB_CONNECTION->DB_PREFIX));
+			if (substr($table_to_repair, 0, strlen($db->DB_PREFIX)) == $db->DB_PREFIX) {
+				$table_to_repair = substr($table_to_repair, strlen($db->DB_PREFIX));
 			}
 			// Try to repair table
 			if (!empty($item_to_repair) && !empty($m2[2])) {
-				if(!$this->PARENT_OBJ->alter_table($table_to_repair, $item_to_repair, $DB_CONNECTION)){
+				if (!$this->alter_table($table_to_repair, $item_to_repair, $db)) {
 					return false;
 				}
 			}
 		}
 		// Refresh tables cache
-		if (file_exists($DB_CONNECTION->_cache_tables_file)) {
-			unlink($DB_CONNECTION->_cache_tables_file);
+		if (file_exists($db->_cache_tables_file)) {
+			unlink($db->_cache_tables_file);
 		}
 		$result = false;
 		// Try to repair query
 		if ($db_error['code'] == 1146) {
-			$result = $DB_CONNECTION->query($sql);
+			if ($this->_sql_retries[$sql] < $this->NUM_RETRIES) {
+# WTF? recursion level 100 reached
+#				$result = $db->query($sql);
+			}
+			$this->_sql_retries[$sql]++;
 		} elseif ($db_error['code'] == 1054) {
 			if (!empty($installer_result)) {
-				$result = $DB_CONNECTION->query($sql);
+#				$result = $db->query($sql);
 			}
 		}
 		return $result;
@@ -179,19 +181,16 @@ class yf_installer_db_mysql {
 	/**
 	* Do create table
 	*/
-	function _do_create_table ($full_table_name = '', $TABLE_STRUCTURE = '', $DB_CONNECTION) {
-		if (!is_object($this->PARENT_OBJ)) {
-			return false;
-		}
+	function _do_create_table ($full_table_name = '', $table_struct = '', $db) {
 		$TABLE_OPTIONS = $this->_DEF_TABLE_OPTIONS;
 
 		$_options_to_merge = array();
 		// Get table options from table structure
 		// Example: /** ENGINE=MEMORY **/
-		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($TABLE_STRUCTURE), $m)) {
+		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($table_struct), $m)) {
 			// Cut comment with options from source table structure
 			// to prevent misunderstanding
-			$TABLE_STRUCTURE = str_replace($m[0], '', $TABLE_STRUCTURE);
+			$table_struct = str_replace($m[0], '', $table_struct);
 
 			$_raw_options = str_replace(array("\r","\n","\t"), array('','',' '), trim($m[1]));
 
@@ -222,23 +221,20 @@ class yf_installer_db_mysql {
 		}
 		// Try to create table
 		$sql = 'CREATE TABLE '
-			.($this->PARENT_OBJ->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS' : '')
-			.' '.$DB_CONNECTION->enclose_field_name($full_table_name)
+			.($this->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS' : '')
+			.' '.$db->enclose_field_name($full_table_name)
 			.' ('."\r\n".
-			$TABLE_STRUCTURE
+			$table_struct
 			.')'.$_table_options_string;
 		// Try to execute query
-		$result = $DB_CONNECTION->query($sql);
+		$result = $db->query($sql);
 		return $result;
 	}
 
 	/**
 	* Do alter table structure
 	*/
-	function _do_alter_table ($table_name = '', $column_name = '', $table_struct = array(), $DB_CONNECTION) {
-		if (!is_object($this->PARENT_OBJ)) {
-			return false;
-		}
+	function _do_alter_table ($table_name = '', $column_name = '', $table_struct = array(), $db) {
 		// Shorthand for the column structure
 		$column_struct = $table_struct[$column_name];
 		// Fix for the 'int' default value
@@ -246,7 +242,7 @@ class yf_installer_db_mysql {
 			unset($column_struct['default']);
 		}
 		// Generate 'ALTER TABLE' query
-		$sql = 'ALTER TABLE '.$DB_CONNECTION->DB_PREFIX.$table_name."\r\n".
+		$sql = 'ALTER TABLE '.$db->DB_PREFIX.$table_name."\r\n".
 			"\t".'ADD '._es($column_name).' '.strtoupper($column_struct['type']).
 			(!empty($column_struct['length'])	? '('.$column_struct['length'].')' : '').
 			(!empty($column_struct['attrib'])	? ' '.$column_struct['attrib'].'' : '').
@@ -255,6 +251,6 @@ class yf_installer_db_mysql {
 			(!empty($column_struct['auto_inc'])	? ' AUTO_INCREMENT' : '').
 			';';
 		// Do execute generated query
-		return $DB_CONNECTION->query($sql);
+		return $db->query($sql);
 	}
 }
