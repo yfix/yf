@@ -131,19 +131,13 @@ class yf_oauth {
 			$error = 'Cannot process';
 			if (($success = $this->process())) {
 				if (strlen($this->access_token)) {
-					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
 					$error = '';
-					$success = $this->call_api(array('url' => $settings['user_info_url']));
-					$user = $this->_get_last_response();
-					if (is_object($user)) {
-						$user = _class('utils')->object_to_array($user);
+					$func = $this->get_user_info_callback;
+					$user = $func($settings, $this);
+					if ($user) {
+						$success = true;
 					}
-
-					$success = $this->call_api(array('url' => $settings['user_info_url'].'/emails'));
-					foreach ($this->_get_last_response() as $k => $v) {
-						$user['emails'][$k] = $v;
-					}
-	
+					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
 					$_SESSION['oauth'][$provider]['user_info'] = $user;
 				} else {
 					$error = $this->authorization_error;
