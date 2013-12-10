@@ -136,6 +136,17 @@ abstract class yf_installer_db {
 			require_once $f; // $data should be loaded from file
 			$this->TABLES_DATA[$t_name] = $data;
 		}
+		$dir_installer_db = PROJECT_PATH.'share/db_installer/';
+		foreach (glob($dir_installer_db.'db_table_sql/*.db_table_sql.php') as $f) {
+			$t_name = substr(basename($f), 0, -strlen('.db_table_sql.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_SQL[$t_name] = $data;
+		}
+		foreach (glob($dir_installer_db.'db_table_data/*.db_table_data.php') as $f) {
+			$t_name = substr(basename($f), 0, -strlen('.db_table_data.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_DATA[$t_name] = $data;
+		}
 		// Project has higher priority than framework (allow to change anything in project)
 		// Try to load db structure from project file
 		// Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
