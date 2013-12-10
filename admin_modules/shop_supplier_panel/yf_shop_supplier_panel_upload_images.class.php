@@ -154,7 +154,7 @@ class yf_shop_supplier_panel_upload_images {
 		$watermark_name = PROJECT_PATH.SITE_WATERMARK_FILE;
 
 		common()->make_thumb($img, $real_name, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y);
-		common()->make_thumb($img, $thumb_name, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y, $watermark_name);
+		common()->make_thumb($img, $thumb_name, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y);
 		common()->make_thumb($img, $big_name, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_name);
 
 		$A = db()->query_fetch("SELECT COUNT(*) AS cnt FROM ".db('shop_product_images')." WHERE product_id=".$id." AND is_default=1");
