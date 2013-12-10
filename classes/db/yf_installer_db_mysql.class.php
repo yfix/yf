@@ -159,17 +159,17 @@ class yf_installer_db_mysql extends yf_installer_db {
 			}
 		}
 		// Refresh tables cache
-		if (file_exists($db->_cache_tables_file)) {
-			unlink($db->_cache_tables_file);
-		}
+#		if (file_exists($db->_cache_tables_file)) {
+#			unlink($db->_cache_tables_file);
+#		}
 		$result = false;
 		// Try to repair query
 		if ($db_error['code'] == 1146) {
-			if ($this->_sql_retries[$sql] < $this->NUM_RETRIES) {
-# WTF? recursion level 100 reached
-#				$result = $db->query($sql);
-			}
 			$this->_sql_retries[$sql]++;
+			if ($this->_sql_retries[$sql] <= $this->NUM_RETRIES) {
+# WTF? recursion level 100 reached
+				$result = $db->query($sql);
+			}
 		} elseif ($db_error['code'] == 1054) {
 			if (!empty($installer_result)) {
 #				$result = $db->query($sql);
