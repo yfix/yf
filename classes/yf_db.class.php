@@ -48,11 +48,9 @@ class yf_db {
 		1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
 	);
 	/** @var string */
-	public $RECONNECT_LOCK_FILE_NAME	= 'uploads/db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock';
+	public $RECONNECT_LOCK_FILE_NAME	= 'db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock';
 	/** @var int Time in seconds between unlock reconnect */
 	public $RECONNECT_LOCK_TIMEOUT	= 30;
-	/** @var string */
-	public $CACHE_TABLES_NAMES_FILE	= 'core_cache/cache_db_tables_[DB_HOST]_[DB_NAME]_[DB_USER].php';
 	/** @var bool Connection required or not (else E_USER_WARNING will be thrown not E_USER_ERROR) */
 	public $CONNECTION_REQUIRED		= 0;
 	/** @var bool Allow to use shutdown queries or not */
@@ -1102,19 +1100,7 @@ class yf_db {
 		if (count($GLOBALS['_debug_db_instances']) > 1) {
 			$use_defines = false;
 		}
-		$cache_path = $this->_get_cache_tables_names_path();
-		// Get table names from cache
 // TODO: use cache() class/function if available
-		if ($use_defines && !empty($this->CACHE_TABLE_NAMES) && file_exists($cache_path)) {
-			// Refresh cache file after 1 day
-			$last_modified = filemtime($cache_path);
-			if ($last_modified < (time() - $this->TABLE_NAMES_CACHE_TTL)) {
-				unlink($cache_path);
-			} else {
-				include($cache_path);
-				$included = true;
-			}
-		}
 		if (empty($included)) {
 			// Do get current database tables array
 			$tmp_tables = $this->meta_tables();
@@ -1175,20 +1161,6 @@ class yf_db {
 			'[DB_PORT]'	=> $db_port ? $db_port : $this->DB_PORT,
 		);
 		$file_name = str_replace(array_keys($params), array_values($params), $this->RECONNECT_LOCK_FILE_NAME);
-		return INCLUDE_PATH. $file_name;
-	}
-
-	/**
-	* Get tables names cache file name
-	*/
-	function _get_cache_tables_names_path($db_host = '', $db_user = '', $db_name = '', $db_port = '') {
-		$params = array(
-			'[DB_HOST]'	=> $db_host ? $db_host : $this->DB_HOST,
-			'[DB_NAME]'	=> $db_name ? $db_name : $this->DB_NAME,
-			'[DB_USER]'	=> $db_user ? $db_user : $this->DB_USER,
-			'[DB_PORT]'	=> $db_port ? $db_port : $this->DB_PORT,
-		);
-		$file_name = str_replace(array_keys($params), array_values($params), $this->CACHE_TABLES_NAMES_FILE);
 		return INCLUDE_PATH. $file_name;
 	}
 
