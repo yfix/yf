@@ -155,7 +155,7 @@ class yf_installer_db_mysql extends yf_installer_db {
 	/**
 	* Do create table
 	*/
-	function _do_create_table ($full_table_name = '', $table_struct = '', $db) {
+	function _do_create_table ($full_table_name, $table_struct, $db) {
 		$TABLE_OPTIONS = $this->_DEF_TABLE_OPTIONS;
 
 		$_options_to_merge = array();
@@ -201,19 +201,19 @@ class yf_installer_db_mysql extends yf_installer_db {
 	/**
 	* Do alter table structure
 	*/
-	function _do_alter_table ($table_name = '', $column_name = '', $table_struct = array(), $db) {
+	function _do_alter_table ($table_name, $column_name, $table_struct, $db) {
 		$column_struct = $table_struct[$column_name];
 		if ($column_struct['type'] != 'int' && $column_struct['default'] == '') {
 			unset($column_struct['default']);
 		}
-		$sql = 'ALTER TABLE '.$db->DB_PREFIX.$table_name."\r\n".
+		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. PHP_EOL.
 			"\t".'ADD '._es($column_name).' '.strtoupper($column_struct['type']).
 			(!empty($column_struct['length'])	? '('.$column_struct['length'].')' : '').
 			(!empty($column_struct['attrib'])	? ' '.$column_struct['attrib'].'' : '').
 			(!empty($column_struct['not_null'])	? ' NOT NULL' : '').
 			(isset($column_struct['default'])	? ' DEFAULT \''.$column_struct['default'].'\'' : '').
 			(!empty($column_struct['auto_inc'])	? ' AUTO_INCREMENT' : '').
-			';';
+		';';
 		return $db->query($sql);
 	}
 }
