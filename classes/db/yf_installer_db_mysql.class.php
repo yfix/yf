@@ -50,6 +50,7 @@ class yf_installer_db_mysql extends yf_installer_db {
 	*/
 	function _auto_repair_table($sql, $db_error, $db) {
 		$sql = trim($sql);
+/*
 		// #1191 Can't find FULLTEXT index matching the column list
 		if ($this->RESTORE_FULLTEXT_INDEX && in_array($db_error['code'], array(1191))) {
 			foreach ((array)conf('fulltext_needed_for') as $_fulltext_field) {
@@ -73,7 +74,7 @@ class yf_installer_db_mysql extends yf_installer_db {
 			$result = $db->query($sql);
 			return $result;
 		}
-
+*/
 		// Errors related to server high load (currently we will handle only SELECTs)
 		// #2013 means 'Lost connection to MySQL server during query'
 		// #1205 means 'Lock wait timeout expired. Transaction was rolled back' (InnoDB)
@@ -102,20 +103,15 @@ class yf_installer_db_mysql extends yf_installer_db {
 			// Try to get table name from error message
 			preg_match("#Table [\'][a-z_0-9]+\.([a-z_0-9]+)[\'] doesn\'t exist#ims", $db_error['message'], $m);
 			$item_to_repair = trim($m[1]);
-			// Cut dottes from name
-			$dot_pos = strpos($item_to_repair, '.');
-			if (false !== $dot_pos) {
-				$item_to_repair = substr($item_to_repair, $dot_pos);
-			}
-			// Cut dottes from name (again)
-			$dot_pos = strpos($item_to_repair, '.');
-			if (false !== $dot_pos) {
-				$item_to_repair = substr($item_to_repair, $dot_pos);
+			foreach(range(1,3) as $n) {
+				$dot_pos = strpos($item_to_repair, '.');
+				if (false !== $dot_pos) {
+					$item_to_repair = substr($item_to_repair, $dot_pos);
+				}
 			}
 			if (substr($item_to_repair, 0, strlen($db->DB_PREFIX)) == $db->DB_PREFIX) {
 				$item_to_repair = substr($item_to_repair, strlen($db->DB_PREFIX));
 			}
-			// Try to repair table
 			if (!empty($item_to_repair)) {
 				if (!$this->create_table(str_replace('dbt_', '', $item_to_repair), $db)) {
 					return false;
@@ -125,54 +121,43 @@ class yf_installer_db_mysql extends yf_installer_db {
 			// Try to get column name from error message
 			preg_match("#Unknown column [\']([a-z_0-9]+)[\'] in#ims", $db_error['message'], $m);
 			$item_to_repair = $m[1];
-			// Cut dottes from name
-			$dot_pos = strpos($item_to_repair, '.');
-			if (false !== $dot_pos) {
-				$item_to_repair = substr($item_to_repair, $dot_pos);
-			}
-			// Cut dottes from name (again)
-			$dot_pos = strpos($item_to_repair, '.');
-			if (false !== $dot_pos) {
-				$item_to_repair = substr($item_to_repair, $dot_pos);
+			foreach(range(1,3) as $n) {
+				$dot_pos = strpos($item_to_repair, '.');
+				if (false !== $dot_pos) {
+					$item_to_repair = substr($item_to_repair, $dot_pos);
+				}
 			}
 			// Try to get table name from SQL
 			preg_match("#[\s\t]*(UPDATE|FROM|INTO)[\s\t]+[\`]{0,1}([a-z_0-9]+)[\`]{0,1}#ims", $sql, $m2);
 			$table_to_repair = $m2[2];
-			// Cut dottes from name
-			$dot_pos = strpos($table_to_repair, '.');
-			if (false !== $dot_pos) {
-				$table_to_repair = substr($table_to_repair, $dot_pos);
-			}
-			// Cut dottes from name (again)
-			$dot_pos = strpos($table_to_repair, '.');
-			if (false !== $dot_pos) {
-				$table_to_repair = substr($table_to_repair, $dot_pos);
+			foreach(range(1,3) as $n) {
+				$dot_pos = strpos($table_to_repair, '.');
+				if (false !== $dot_pos) {
+					$table_to_repair = substr($table_to_repair, $dot_pos);
+				}
 			}
 			if (substr($table_to_repair, 0, strlen($db->DB_PREFIX)) == $db->DB_PREFIX) {
 				$table_to_repair = substr($table_to_repair, strlen($db->DB_PREFIX));
 			}
-			// Try to repair table
 			if (!empty($item_to_repair) && !empty($m2[2])) {
 				if (!$this->alter_table($table_to_repair, $item_to_repair, $db)) {
 					return false;
 				}
 			}
 		}
-		// Refresh tables cache
-#		if (file_exists($db->_cache_tables_file)) {
-#			unlink($db->_cache_tables_file);
-#		}
 		$result = false;
 		// Try to repair query
 		if ($db_error['code'] == 1146) {
-			$this->_sql_retries[$sql]++;
-			if ($this->_sql_retries[$sql] <= $this->NUM_RETRIES) {
+#			$this->_sql_retries[$sql]++;
+#			if ($this->_sql_retries[$sql] <= $this->NUM_RETRIES) {
 # WTF? recursion level 100 reached
-				$result = $db->query($sql);
-			}
+#echo $sql.'<br><br><br>';
+				$result = $db->db->query($sql);
+#echo intval($result).'<br>';
+#			}
 		} elseif ($db_error['code'] == 1054) {
 			if (!empty($installer_result)) {
-#				$result = $db->query($sql);
+#				$result = $db->db->query($sql);
 			}
 		}
 		return $result;

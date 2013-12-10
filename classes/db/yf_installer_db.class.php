@@ -269,10 +269,7 @@ abstract class yf_installer_db {
 		define('dbt_'.$table_name, $full_table_name);
 		// Check if we also need to insert some data into new system table
 		foreach ((array)$table_data as $query_array) {
-			foreach ((array)$query_array as $k => $v) {
-				$query_array[$k] = _es($v);
-			}
-			$result = $db->INSERT($full_table_name, $query_array);
+			$result = $db->insert_safe($full_table_name, $query_array);
 		}
 		if ($this->USE_LOCKING) {
 			$this->_release_lock();
@@ -284,6 +281,7 @@ abstract class yf_installer_db {
 	* Do alter table structure
 	*/
 	function alter_table ($table_name = '', $column_name = '', $db) {
+/*
 		if ($this->USE_LOCKING && !$this->_get_lock()) {
 			return false;
 		}
@@ -348,6 +346,7 @@ abstract class yf_installer_db {
 			$this->_release_lock();
 		}
 		return $result;
+*/
 	}
 
 	/**
