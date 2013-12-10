@@ -37,7 +37,7 @@ class yf_core_install {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/<?php echo installer()->bs_current_theme(); ?>/bootstrap.min.css" rel="stylesheet">
 
-<style type="text/css">
+	<style type="text/css">
 .sidebar-nav {
     padding: 9px 0;
 }
@@ -74,7 +74,19 @@ class yf_core_install {
     top: 11px;
     left: -6px;
 }
-</style>
+	</style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<script>
+	$(function(){
+		$(".theme-selector > li > a").click(function(){
+			var theme = this.id.substr(9) // 9 == strlen('theme_id_')
+			document.cookie='yf_theme=' + theme;
+			window.location.reload();
+			return false;
+		})
+	})
+	</script>
 
 </head>
 <body>
@@ -167,18 +179,6 @@ class yf_core_install {
 <?php
 		}
 ?>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-	<script>
-	$(function(){
-		$(".theme-selector > li > a").click(function(){
-			var theme = this.id.substr(9) // 9 == strlen('theme_id_')
-			document.cookie='yf_theme=' + theme;
-			window.location.reload();
-			return false;
-		})
-	})
-	</script>
 </body>
 </html>
 <?php
@@ -259,6 +259,7 @@ class yf_core_install {
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
 		$GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
+		$GLOBALS['PROJECT_CONF']['db']['RECONNECT_NUM_TRIES'] = 1;
 		ini_set('display_errors', 'on');
 		ini_set('memory_limit', '512M');
 		error_reporting(E_ALL ^E_NOTICE);
