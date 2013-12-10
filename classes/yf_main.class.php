@@ -931,6 +931,9 @@ class yf_main {
 		if (class_exists(YF_PREFIX. $class_name)) {
 			return YF_PREFIX. $class_name;
 		}
+		if (substr($class_name, 0, strlen(YF_PREFIX)) === YF_PREFIX) {
+			$class_name = substr($class_name, strlen(YF_PREFIX));
+		}
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -1041,6 +1044,9 @@ class yf_main {
 					continue;
 				}
 			}
+if ($class_name == 'yf_db_driver_mysql41') {
+	echo $class_file.' | '.$_path.' | '.$_prefix.'<br>';
+}
 			$this->include_module($_path. $_prefix. $class_file);
 			if (class_exists($_prefix. $class_name)) {
 				$loaded_class_name	= $_prefix. $class_name;
