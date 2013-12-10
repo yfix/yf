@@ -154,10 +154,10 @@ abstract class yf_installer_db {
 			$this->TABLES_SQL[$k] = $v;
 		}
 		foreach ((array)$this->SYS_TABLES_DATAS as $k => $v) {
-			$this->TABLES_DATAS[$k] = $v;
+			$this->TABLES_DATA[$k] = $v;
 		}
 		foreach ((array)$this->OTHER_TABLES_DATAS as $k => $v) {
-			$this->TABLES_DATAS[$k] = $v;
+			$this->TABLES_DATA[$k] = $v;
 		}
 	}
 
@@ -180,7 +180,7 @@ abstract class yf_installer_db {
 		}
 		if ($table_found) {
 			$table_struct	= $this->TABLES_SQL[$table_name];
-			$table_data		= $this->TABLES_DATAS[$table_name];
+			$table_data		= $this->TABLES_DATA[$table_name];
 			$full_table_name	= $db->DB_PREFIX. $table_name;
 		}
 		$p_table_name = '';
@@ -213,7 +213,7 @@ abstract class yf_installer_db {
 			}
 			if ($table_found) {
 				$table_struct	= $this->TABLES_SQL[$p_table_name];
-				$table_data		= $this->TABLES_DATAS[$table_name]; // No error in name!
+				$table_data		= $this->TABLES_DATA[$table_name]; // No error in name!
 				$full_table_name	= $db->DB_PREFIX. $table_name;
 			}
 		}
@@ -238,7 +238,7 @@ abstract class yf_installer_db {
 			}
 			if ($table_found) {
 				$table_struct	= $this->TABLES_SQL[$p_table_name];
-				$table_data		= $this->TABLES_DATAS[$table_name]; // No error in name!
+				$table_data		= $this->TABLES_DATA[$table_name]; // No error in name!
 				$full_table_name	= $db->DB_PREFIX. $table_name;
 			}
 		}
@@ -252,8 +252,6 @@ abstract class yf_installer_db {
 			return false;
 		}
 		$this->create_table_post_hook($full_table_name, $table_struct, $db);
-		// Temporary hack for the insert actions
-#		define('dbt_'.$table_name, $full_table_name);
 		// Check if we also need to insert some data into new system table
 		if ($table_data && is_array($table_data)) {
 			$result = $db->insert_safe($full_table_name, $table_data);
