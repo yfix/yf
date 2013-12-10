@@ -252,6 +252,7 @@ class yf_installer_db {
 			return false;
 		}
 		$IS_SYS_TABLE = (substr($table_name, 0, strlen('sys_')) == 'sys_');
+/*
 		// Try to get table 'model' from the framework 'share' folder
 		clearstatcache();
 
@@ -270,6 +271,7 @@ class yf_installer_db {
 			return false;
 		}
 		include $file_path;
+*/
 		if (!isset($data)) {
 			return false;
 		}
@@ -384,6 +386,8 @@ class yf_installer_db {
 	/**
 	*/
 	function _db_table_struct_into_array ($raw_data = '') {
+// TODO: bug with parsed default values
+// TODO: write unit tests on parsing table structures
 		$struct_array	= array();
 		// Check if we have full table definition or cutted one
 		if (preg_match($this->_patterns['table'], $raw_data, $m9)) {
@@ -479,8 +483,7 @@ class yf_installer_db {
 	* 
 	*/
 	function _format_struct_array ($data = array(), $add_header = '', $add_footer = '') {
-// TODO: bug with parsed default values
-// TODO: write unit tests on parsing table structures
+/*
 		$out = '<'.'?php'.PHP_EOL;
 		$out .= $add_header;
 		$out .= '// AUTO GENERATED ON '.date('Y-m-d H:i:s').'.'.PHP_EOL;
@@ -488,15 +491,18 @@ class yf_installer_db {
 		$out .= '$data = '. var_export($data, 1). ' + (array)$data;'.PHP_EOL;
 		$out .= '?'.'>'.PHP_EOL;
 		return $out;
+*/
 	}
 
 	/**
 	* 
 	*/
 	function _create_struct_files ($FORCE_OVERWRITE = false) {
+/*
 		$SHARE_PATH		= YF_PATH.'share/db_installer/';
 		$CACHE_PATH		= PROJECT_PATH.'core_cache/';
 		_mkdir_m($CACHE_PATH);
+*/
 /*
 		$this->_convert_struct_files(
 			$this->SYS_TABLES_STRUCTS,
@@ -527,6 +533,7 @@ class yf_installer_db {
 	* 
 	*/
 	function _convert_struct_files ($file_path_strings = '', $file_path_arrays = '', $FORCE_OVERWRITE = false, $add_header = '', $add_footer = '') {
+/*
 		// Cache file is old
 		if (file_exists($file_path_arrays) && filemtime($file_path_arrays) < (time() - $this->CACHE_TTL)) {
 			$FORCE_OVERWRITE = true;
@@ -553,6 +560,7 @@ class yf_installer_db {
 		}
 		$file_text = $this->_format_struct_array($struct_array, $add_header, $add_footer);
 		return file_put_contents($file_path_arrays, $file_text);
+*/
 	}
 
 	/**
