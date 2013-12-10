@@ -6,6 +6,7 @@ $data = array (
     'name' => 'admin_left_menu',
     'type' => 'admin',
     'active' => 1,
+	'stpl_name' => '',
   ),
   100000 => 
   array (
@@ -13,6 +14,7 @@ $data = array (
     'name' => 'user_main_menu',
     'type' => 'user',
     'active' => 1,
+	'stpl_name' => '',
   ),
   100001 => 
   array (
@@ -20,6 +22,7 @@ $data = array (
     'name' => 'admin_top_menu',
     'type' => 'admin',
     'active' => 1,
+	'stpl_name' => '',
   ),
   100002 => 
   array (
@@ -35,5 +38,6 @@ $data = array (
     'name' => 'admin_home_menu',
     'type' => 'admin',
     'active' => 1,
+	'stpl_name' => '',
   ),
 );
