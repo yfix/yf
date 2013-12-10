@@ -112,8 +112,9 @@ class yf_db {
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
 	/** @var array */
+// TODO: read _class('dir')->scan(YF_PATH.'share/db_installer/db_table_sql/', 1, '-f /sys_[a-z0-9_]+\.db_table_sql\.php/')
 	public $_need_sys_prefix		= array(
-		'admin', 'admin_groups', 'admin_modules', 'block_rules', 'blocks', 'categories', 'category_items', 'core_servers', 'custom_bbcode',
+		'admin', 'admin_groups', 'admin_modules', 'block_rules', 'blocks', 'categories', 'category_items', 'conf', 'core_servers', 'custom_bbcode',
 		'custom_replace_tags', 'custom_replace_words', 'locale_langs', 'locale_translate', 'locale_vars', 'log_admin_auth', 'log_admin_auth_fails', 'log_auth',
 		'log_auth_fails', 'log_core_errors', 'log_emails', 'log_img_resizes', 'menu_items', 'menus', 'online', 'settings', 'sites', 'smilies', 'user_groups', 'user_modules',
 	);
@@ -1189,6 +1190,7 @@ class yf_db {
 			$n2 = $this->_PARSED_TABLES[$name_wo_db_prefix];
 		} else {
 			if ($name_wo_db_prefix != $name) {
+// TODO: get _need_sys_prefix from db_installer files
 				$n2 = $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
 			} else {
 				$n2 = $this->DB_PREFIX. $name_wo_db_prefix;
