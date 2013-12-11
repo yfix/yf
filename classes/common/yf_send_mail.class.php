@@ -20,7 +20,7 @@ class yf_send_mail {
 	/** @var string Force SMTP usage if availiable (phpmailer now support) */
 	public $FORCE_USE_SMTP			= true;
 	/** @var bool */
-	public $MAIL_DEBUG				= true;
+	public $MAIL_DEBUG				= false;
 	/** @var string */
 	public $DEBUG_TEST_ADDRESS		= '';
 	public $DEBUG_TEST_SEND_BULK	= true;
@@ -114,23 +114,23 @@ class yf_send_mail {
 		}
 		// Debug mail (All emails are sending to the specified email address)
 		if ($this->MAIL_DEBUG && $this->DEBUG_TEST_ADDRESS) {
-			$debug_email = $this->DEBUG_TEST_ADDRESS;
+			$debug_mail = $this->DEBUG_TEST_ADDRESS;
 			$debug_name = "(debug: $name_to - $email_to)";
 			if ($this->USE_MAILER == 'phpmailer' && is_array($email_to)) {
-				$emails = array();
+				$mails = array();
 				$debug_name = '';
 				foreach( $email_to as $name => $email ) {
 					$debug_name = "(debug: $name - $email)";
-					$emails[ $debug_name ] = $debug_email;
+					$mails[ $debug_name ] = $debug_mail;
 				}
 				if( $this->DEBUG_TEST_SEND_BULK ) {
-					$email_to = $emails;
+					$email_to = $mails;
 				} else {
-					$email_to = $debug_email;
-					$name_to  = implode( ' - ', array_keys( $emails ) );
+					$email_to = $debug_mail;
+					$name_to  = implode( ' - ', array_keys( $mails ) );
 				}
 			} else {
-				$email_to = $debug_email;
+				$email_to = $debug_mail;
 				$name_to  = $debug_name;
 			}
 		}
