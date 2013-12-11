@@ -109,7 +109,8 @@ class yf_oauth {
 			$this->debug_http = true;
 		}
 		$this->server = $provider;
-		$this->redirect_uri = _force_get_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']);
+#		$this->redirect_uri = _force_get_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']);
+		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
 		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
 		$this->client_secret = $config[$provider]['client_secret'] ?: '';
 		if (strlen($this->client_id) == 0 || strlen($this->client_secret) == 0) {
