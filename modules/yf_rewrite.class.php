@@ -1,12 +1,12 @@
 <?php
 
 class yf_rewrite {
-	
+
 	/** @var string @conf_skip Links pattern */
 	var	$_links_pattern			= '/(action|location|href|src)[\s]{0,1}=[\s]{0,1}["\']?(\.\/\?[^"\'\>\s]+|\.\/)["\']?/ims';
 	/** @var string @conf_skip Pattern for iframe links */
 	var	$_iframe_pattern		= '/(action|location|href)[\s]{0,1}=[\s]{0,1}["\']+\.\/\?([^"\'>\s]*)["\']+/ims';
-	
+
 	/**
 	* YF module constructor
 	*/

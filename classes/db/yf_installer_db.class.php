@@ -1,45 +1,30 @@
 <?php
 
 /**
-* Database structure installer
-*
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
+* Database structure installer core
 */
-class yf_installer_db {
+abstract class yf_installer_db {
 
+	/** @var array */
+	public $TABLES_SQL				= array();
+	/** @var array */
+	public $TABLES_DATA				= array();
 	/** @var bool */
 	public $USE_SQL_IF_NOT_EXISTS	= true;
-	/** @var array @conf_skip Structures for the system tables */
-	public $SYS_TABLES_STRUCTS		= array();
-	/** @var array @conf_skip Structures for the other common used tables */
-	public $OTHER_TABLES_STRUCTS	= array();
-	/** @var array @conf_skip System tables required data */
-	public $SYS_TABLES_DATAS		= array();
-	/** @var array @conf_skip Other common used tables required data */
-	public $OTHER_TABLES_DATAS		= array();
-	/** @var array @conf_skip */
-	public $_external_files = array(
-		'SYS_TABLES_STRUCTS'	=> 'installer_sys_tables_structs.php',
-		'SYS_TABLES_DATAS'		=> 'installer_sys_tables_datas.php',
-		'OTHER_TABLES_STRUCTS'	=> 'installer_other_tables_structs.php',
-		'OTHER_TABLES_DATAS'	=> "installer_other_tables_datas.php",
-	);
 	/** @var array @conf_skip Required patterns */
 	public $_patterns	= array(
-		"table"		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
-		"split"		=> "/[\n]+,?/",
-		"field"		=> "/[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]+?([^\s\t]+)(.*)/ims",
+		'table'		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
+		'split'		=> "/[\n]+,?/",
+		'field'		=> "/[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]+?([^\s\t]+)(.*)/ims",
 // TODO: key could contain several fields
-		"key"		=> "/(PRIMARY|UNIQUE){0,1}[\s\t]*?KEY[\s\t]*?[\`]{0,1}([a-z\_]*)[\`]{0,1}[\s\t]*?\(([^\)]+)\)/ims",
+		'key'		=> "/(PRIMARY|UNIQUE){0,1}[\s\t]*?KEY[\s\t]*?[\`]{0,1}([a-z\_]*)[\`]{0,1}[\s\t]*?\(([^\)]+)\)/ims",
 // TODO: character_set with collate
-		"collate"	=> "/collate[\s\t][\"\'][a-z\_][\"\']/i",
-		"default"	=> "/(,|unsigned|not null|null|zerofill|auto_increment|default)/i",
-		"type"		=> "/([a-z]+)[\(]*([^\)]*)[\)]*/ims",
+		'collate'	=> "/collate[\s\t][\"\'][a-z\_][\"\']/i",
+		'default'	=> '/(,|unsigned|not null|null|zerofill|auto_increment|default)/i',
+		'type'		=> '/([a-z]+)[\(]*([^\)]*)[\)]*/ims',
+// TODO: support for foreign keys
+// TODO: support for partitions
 	);
-	/** @var string @conf_skip Abstract database type */
-	public $db_type					= '';
 	/** @var int Lifetime for caches */
 	public $CACHE_TTL				= 86400; // 1*3600*24 = 1 day
 	/** @var bool */
@@ -47,7 +32,7 @@ class yf_installer_db {
 	/** @var int */
 	public $LOCK_TIMEOUT			= 600;
 	/** @var string */
-	public $LOCK_FILE_NAME			= 'uploads/installer_db.lock';
+	public $LOCK_FILE_NAME			= 'installer_db.lock';
 	/** @var bool */
 	public $RESTORE_FULLTEXT_INDEX	= true;
 	/** @var bool */
@@ -61,23 +46,106 @@ class yf_installer_db {
 	* Framework constructor
 	*/
 	function _init () {
-		// Prepare lock file
-		if ($this->USE_LOCKING) {
-			$this->LOCK_FILE_NAME = PROJECT_PATH. $this->LOCK_FILE_NAME;
+		$this->LOCK_FILE_NAME = PROJECT_PATH. $this->LOCK_FILE_NAME;
+		$this->_load_data_files();
+	}
+
+	/**
+	*/
+	abstract protected function _do_alter_table ($table_name, $column_name, $table_struct, $db);
+
+	/**
+	*/
+	abstract protected function _auto_repair_table($sql, $db_error, $db);
+
+	/**
+	*/
+	abstract protected function _do_create_table ($full_table_name, $table_struct, $db);
+
+	/**
+	* This method can be inherited in project with custom rules inside.
+	* Or use array or pattern callbacks. Example:
+	*	$this->create_table_pre_callbacks = array(
+	*		'^b_bets.*' => function($table, $struct, $db, $m) {
+	*			return $struct;
+	*		}
+	*	);
+	*/
+	function create_table_pre_hook($full_table_name, $table_struct, $db) {
+		foreach ((array)$this->create_table_pre_callbacks as $regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
+				continue;
+			}
+			$table_struct = $func($full_table_name, $table_struct, $db, $m);
 		}
+		return $table_struct;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside.
+	*/
+	function create_table_post_hook($full_table_name, $table_struct, $db) {
+		foreach ((array)$this->create_table_post_callbacks as $regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
+				continue;
+			}
+			$results[$regex] = $func($full_table_name, $table_struct, $db, $m);
+		}
+		return $results;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside
+	*/
+	function alter_table_pre_hook($table_name, $column_name, $table_struct, $db) {
+		foreach ((array)$this->alter_table_pre_callbacks as $table_regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
+				continue;
+			}
+			$table_struct = $func($table_name, $column_name, $table_struct, $db, $m);
+		}
+		return $table_struct;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside
+	*/
+	function alter_table_post_hook($table_name, $column_name, $table_struct, $db) {
+		foreach ((array)$this->alter_table_post_callbacks as $table_regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
+				continue;
+			}
+			$results[$regex] = $func($table_name, $column_name, $table_struct, $db, $m);
+		}
+		return $results;
+	}
+
+	/**
+	*/
+	function _load_data_files() {
+		$data = array();
 		// Load install data from external files
-		$path_to_external_files = YF_PATH.'share/db_installer/';
-		foreach ((array)$this->_external_files as $cur_array_name => $cur_file_name) {
-			$data = array();
-			if (!file_exists($path_to_external_files.$cur_file_name)) {
-				continue;
-			}
-			include_once ($path_to_external_files.$cur_file_name);
-			if (empty($data)) {
-				continue;
-			}
-			// Do load info
-			$this->$cur_array_name = my_array_merge((array)$this->$cur_array_name, (array)$data);
+		$dir_installer_db = YF_PATH.'share/db_installer/';
+		foreach (glob($dir_installer_db.'db_table_sql/*.db_table_sql.php') as $f) {
+			$t_name = substr(basename($f), 0, -strlen('.db_table_sql.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_SQL[$t_name] = $data;
+		}
+		foreach (glob($dir_installer_db.'db_table_data/*.db_table_data.php') as $f) {
+			$t_name = substr(basename($f), 0, -strlen('.db_table_data.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_DATA[$t_name] = $data;
+		}
+		$dir_installer_db = PROJECT_PATH.'share/db_installer/';
+		foreach (glob($dir_installer_db.'db_table_sql/*.db_table_sql.php') as $f) {
+			$t_name = substr(basename($f), 0, -strlen('.db_table_sql.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_SQL[$t_name] = $data;
+		}
+		foreach (glob($dir_installer_db.'db_table_data/*.db_table_data.php') as $f) {
+			$t_name = substr(basename($f), 0, -strlen('.db_table_data.php'));
+			require_once $f; // $data should be loaded from file
+			$this->TABLES_DATA[$t_name] = $data;
 		}
 		// Project has higher priority than framework (allow to change anything in project)
 		// Try to load db structure from project file
@@ -88,67 +156,50 @@ class yf_installer_db {
 		}
 		foreach((array)$project_data as $cur_array_name => $_cur_data) {
 			$this->$cur_array_name = my_array_merge((array)$this->$cur_array_name, (array)$_cur_data);
-		} 
-		// Get current abstract db type
-		if (in_array(DB_TYPE, array('mysql','mysql4','mysql41','mysql5'))) {
-			$this->db_type = 'mysql';
-		} elseif (in_array(DB_TYPE, array('ora','oci8','oracle','oracle10'))) {
-			$this->db_type = 'oracle';
-		} elseif (in_array(DB_TYPE, array('pgsql','postgre','postgres','postgres7','postgres8'))) {
-			$this->db_type = 'postgres';
 		}
-	}
-
-	/**
-	* Try to auto-repair table
-	*/
-	function _auto_repair_table ($sql, $db_error, $DB_CONNECTION) {
-		// Load sub-module
-		if (empty($this->db_type)) {
-			return false;
+		// Compatibility with old codebase
+		foreach ((array)$this->SYS_TABLES_STRUCTS as $k => $v) {
+			$this->TABLES_SQL[$k] = $v;
 		}
-		return _class('installer_db_'.$this->db_type, 'classes/db/')->_auto_repair_table($sql, $db_error, $DB_CONNECTION);
+		foreach ((array)$this->OTHER_TABLES_STRUCTS as $k => $v) {
+			$this->TABLES_SQL[$k] = $v;
+		}
+		foreach ((array)$this->SYS_TABLES_DATAS as $k => $v) {
+			$this->TABLES_DATA[$k] = $v;
+		}
+		foreach ((array)$this->OTHER_TABLES_DATAS as $k => $v) {
+			$this->TABLES_DATA[$k] = $v;
+		}
 	}
 
 	/**
 	* Do create table
 	*/
-	function create_table ($table_name = '', $DB_CONNECTION) {
+	function create_table ($table_name, $db) {
 		$table_found = false;
 		if (empty($table_name)) {
 			return false;
 		}
-		if ($this->USE_LOCKING && !$this->_get_lock()) {
+		if (!$this->_get_lock()) {
 			return false;
 		}
-		if (substr($table_name, 0, strlen('sys_')) == 'sys_') {
-			$table_name = substr($table_name, strlen('sys_'));
+		if (isset($this->TABLES_SQL[$table_name])) {
+			$table_found	= true;
+		} elseif (isset($this->TABLES_SQL['sys_'.$table_name])) {
+			$table_name		= 'sys_'.$table_name;
+			$table_found	= true;
 		}
-		// Prevent repairing twice
-		if (isset($this->_installed_tables[$table_name])) {
-			return false;
+		if ($table_found) {
+			$table_struct	= $this->TABLES_SQL[$table_name];
+			$table_data		= $this->TABLES_DATA[$table_name];
+			$full_table_name	= $db->DB_PREFIX. $table_name;
 		}
-		// Try to find table name inside system tables
-		if (isset($this->SYS_TABLES_STRUCTS[$table_name])) {
-			$table_found		= true;
-			$TABLE_STRUCTURE	= $this->SYS_TABLES_STRUCTS[$table_name];
-			$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name];
-			$full_table_name	= $DB_CONNECTION->DB_PREFIX. 'sys_'.$table_name;
-		}
-		// Then try to find in other tables
-		if (!$table_found && isset($this->OTHER_TABLES_STRUCTS[$table_name])) {
-			$table_found		= true;
-			$TABLE_STRUCTURE	= $this->OTHER_TABLES_STRUCTS[$table_name];
-			$TABLE_DATAS		= $this->OTHER_TABLES_DATAS[$table_name];
-			$full_table_name	= $DB_CONNECTION->DB_PREFIX. $table_name;
-		}
-		// Not partitioned at first
 		$p_table_name = '';
 		// Try sharding by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
 		if (!$table_found && $this->PARTITION_BY_MONTH) {
 			$_t_name = $p_table_name ? $p_table_name : $table_name;
-			$p_month		= (int)substr($_t_name, -2);
-			$p_year			= (int)substr($_t_name, -7, 4);
+			$p_month	= (int)substr($_t_name, -2);
+			$p_year		= (int)substr($_t_name, -7, 4);
 			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12) {
 				$p_table_name	= substr($_t_name, 0, -8);
 			}
@@ -156,26 +207,25 @@ class yf_installer_db {
 		// Try sharding by year/month/day (example: db('currency_pairs_log_2013_07_01') from db('currency_pairs_log'))
 		if (!$table_found && $this->PARTITION_BY_DAY) {
 			$_t_name = $p_table_name ? $p_table_name : $table_name;
-			$p_day			= (int)substr($_t_name, -2);
-			$p_month		= (int)substr($_t_name, -5, 2);
-			$p_year			= (int)substr($_t_name, -10, 4);
+			$p_day		= (int)substr($_t_name, -2);
+			$p_month	= (int)substr($_t_name, -5, 2);
+			$p_year		= (int)substr($_t_name, -10, 4);
 			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12 && $p_day >= 1 && $p_day <= 31) {
 				$p_table_name	= substr($_t_name, 0, -11);
 			}
 		}
 		if ($p_table_name) {
-			if (isset($this->SYS_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->SYS_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name]; // No error in name!
-				$full_table_name	= $DB_CONNECTION->DB_PREFIX. 'sys_'.$table_name;
+			if (isset($this->TABLES_SQL[$p_table_name])) {
+				$table_found	= true;
+			} elseif (isset($this->TABLES_SQL['sys_'.$p_table_name])) {
+				$table_found	= true;
+				$p_table_name	= 'sys_'.$p_table_name;
+				$table_name		= 'sys_'.$table_name;
 			}
-			// Then try to find in other tables
-			if (!$table_found && isset($this->OTHER_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->OTHER_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->OTHER_TABLES_DATAS[$table_name]; // No error in name!
-				$full_table_name	= $DB_CONNECTION->DB_PREFIX. $table_name;
+			if ($table_found) {
+				$table_struct	= $this->TABLES_SQL[$p_table_name];
+				$table_data		= $this->TABLES_DATA[$table_name]; // No error in name!
+				$full_table_name	= $db->DB_PREFIX. $table_name;
 			}
 		}
 		// Try sharding by country (example: db('cars_es'), db('cars_uk'), db('cars_de') from db('cars'))
@@ -190,84 +240,59 @@ class yf_installer_db {
 			}
 		}
 		if ($p_table_name) {
-			if (isset($this->SYS_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->SYS_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->SYS_TABLES_DATAS[$table_name]; // No error in name!
-				$full_table_name	= $DB_CONNECTION->DB_PREFIX. 'sys_'.$table_name;
+			if (isset($this->TABLES_SQL[$p_table_name])) {
+				$table_found	= true;
+			} elseif (isset($this->TABLES_SQL['sys_'.$p_table_name])) {
+				$table_found	= true;
+				$p_table_name	= 'sys_'.$p_table_name;
+				$table_name		= 'sys_'.$table_name;
 			}
-			// Then try to find in other tables
-			if (!$table_found && isset($this->OTHER_TABLES_STRUCTS[$p_table_name])) {
-				$table_found		= true;
-				$TABLE_STRUCTURE	= $this->OTHER_TABLES_STRUCTS[$p_table_name];
-				$TABLE_DATAS		= $this->OTHER_TABLES_DATAS[$table_name]; // No error in name!
-				$full_table_name	= $DB_CONNECTION->DB_PREFIX. $table_name;
+			if ($table_found) {
+				$table_struct	= $this->TABLES_SQL[$p_table_name];
+				$table_data		= $this->TABLES_DATA[$table_name]; // No error in name!
+				$full_table_name	= $db->DB_PREFIX. $table_name;
 			}
 		}
-		// Do not touch!!!
-		$this->_installed_tables[$table_name] = 1;
 		// Stop here if we do not know about given table name
-		if (!$table_found || empty($TABLE_STRUCTURE)) {
+		if (!$table_found || empty($table_struct)) {
 			return false;
 		}
-		if (empty($this->db_type)) {
-			return false;
-		}
-		$TABLE_STRUCTURE = $this->create_table_pre_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION);
-		$result = _class('installer_db_'.$this->db_type, 'classes/db/')->_do_create_table($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION);
+		$table_struct = $this->create_table_pre_hook($full_table_name, $table_struct, $db);
+		$result = $this->_do_create_table($full_table_name, $table_struct, $db);
 		if (!$result) {
 			return false;
 		}
-		$this->create_table_post_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION);
-		// Temporary hack for the insert actions
-		define('dbt_'.$table_name, $full_table_name);
+		$this->create_table_post_hook($full_table_name, $table_struct, $db);
 		// Check if we also need to insert some data into new system table
-		foreach ((array)$TABLE_DATAS as $query_array) {
-			foreach ((array)$query_array as $k => $v) {
-				$query_array[$k] = _es($v);
-			}
-			$result = $DB_CONNECTION->INSERT($full_table_name, $query_array);
+		if ($table_data && is_array($table_data)) {
+			$result = $db->insert_safe($full_table_name, $table_data);
 		}
-		if ($this->USE_LOCKING) {
-			$this->_release_lock();
-		}
+		$this->_release_lock();
 		return $result;
 	}
 
 	/**
 	* Do alter table structure
 	*/
-	function alter_table ($table_name = '', $column_name = '', $DB_CONNECTION) {
-		if ($this->USE_LOCKING && !$this->_get_lock()) {
+	function alter_table ($table_name, $column_name, $db) {
+		if (!$this->_get_lock()) {
 			return false;
 		}
-		// Force cut off prefix
-		if (substr($table_name, 0, strlen($DB_CONNECTION->DB_PREFIX)) == $DB_CONNECTION->DB_PREFIX) {
-			$table_name = substr($table_name, strlen($DB_CONNECTION->DB_PREFIX));
+		if (substr($table_name, 0, strlen($db->DB_PREFIX)) == $db->DB_PREFIX) {
+			$table_name = substr($table_name, strlen($db->DB_PREFIX));
 		}
-		$avail_tables = $DB_CONNECTION->meta_tables();
-		if (!in_array($DB_CONNECTION->DB_PREFIX.$table_name, $avail_tables)) {
+		$avail_tables = $db->meta_tables();
+		if (!in_array($db->DB_PREFIX. $table_name, $avail_tables)) {
 			return false;
 		}
-		$IS_SYS_TABLE = (substr($table_name, 0, strlen('sys_')) == 'sys_');
-		// Try to get table 'model' from the framework 'share' folder
-		clearstatcache();
-		$file_path = PROJECT_PATH.'core_cache/installer_'.($IS_SYS_TABLE ? 'sys' : 'other').'_tables_structs_arrays.php';
-		if (file_exists($file_path) && (filemtime($this->_cache_tables_file) < (time() - $this->CACHE_TTL))) {
-			unlink($file_path);
-			clearstatcache();
-		}
-		if (!file_exists($file_path)) {
-			$this->_create_struct_files(1);
-		}
-		if (!file_exists($file_path)) {
-			return false;
-		}
-		include $file_path;
+
+# TODO: use cache_set()/cache_get()
+		$data = $this->_db_table_struct_into_array($this->TABLES_SQL[$table_name]);
+
 		if (!isset($data)) {
 			return false;
 		}
-		$table_struct = $data[$IS_SYS_TABLE ? substr($table_name, strlen('sys_')) : $table_name]['fields'];
+		$table_struct = $data[$table_name]['fields'];
 		// Possibly this is partitioned table
 		if (empty($table_struct)) {
 			$table_found = false;
@@ -281,19 +306,19 @@ class yf_installer_db {
 				if (preg_match('/[a-z]{2}/', $p_country)) {
 					$p_table_name	= substr($table_name, 0, -3);
 				}
-				$table_struct = $data[$IS_SYS_TABLE ? substr($p_table_name, strlen('sys_')) : $p_table_name]['fields'];
+				$table_struct = $data[$p_table_name]['fields'];
 				if ($table_struct) {
 					$table_found = true;
 				}
 			}
 			// Try partition by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
 			if (!$table_found && $this->PARTITION_BY_MONTH && !$p_table_name) {
-				$p_month		= (int)substr($table_name, -2);
-				$p_year			= (int)substr($table_name, -7, 4);
+				$p_month	= (int)substr($table_name, -2);
+				$p_year		= (int)substr($table_name, -7, 4);
 				if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12) {
 					$p_table_name	= substr($table_name, 0, -8);
 				}
-				$table_struct = $data[$IS_SYS_TABLE ? substr($p_table_name, strlen('sys_')) : $p_table_name]['fields'];
+				$table_struct = $data[$p_table_name]['fields'];
 				if ($table_struct) {
 					$table_found = true;
 				}
@@ -304,81 +329,18 @@ class yf_installer_db {
 		if (!isset($table_struct[$column_name])) {
 			return false;
 		}
-		if (empty($this->db_type)) {
-			return false;
-		}
-		$table_struct = $this->alter_table_pre_hook($table_name, $column_name, $table_struct, $DB_CONNECTION);
-		$result = _class('installer_db_'.$this->db_type, 'classes/db/')->_do_alter_table($table_name, $column_name, $table_struct, $DB_CONNECTION);
-		$this->alter_table_post_hook($table_name, $column_name, $table_struct, $DB_CONNECTION);
-
-		if ($this->USE_LOCKING) {
-			$this->_release_lock();
-		}
+		$table_struct = $this->alter_table_pre_hook($table_name, $column_name, $table_struct, $db);
+		$result = $this->_do_alter_table($table_name, $column_name, $table_struct, $db);
+		$this->alter_table_post_hook($table_name, $column_name, $table_struct, $db);
+		$this->_release_lock();
 		return $result;
 	}
 
 	/**
-	* This method can be inherited in project with custom rules inside.
-	* Or use array or pattern callbacks. Example:
-	*	$this->create_table_pre_callbacks = array(
-	*		'^b_bets.*' => function($table, $struct, $db, $m) {
-	*			return $struct;
-	*		}
-	*	);
 	*/
-	function create_table_pre_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION) {
-		foreach ((array)$this->create_table_pre_callbacks as $regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
-				continue;
-			}
-			$TABLE_STRUCTURE = $func($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION, $m);
-		}
-		return $TABLE_STRUCTURE;
-	}
-
-	/**
-	* This method can be inherited in project with custom rules inside.
-	*/
-	function create_table_post_hook($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION) {
-		foreach ((array)$this->create_table_post_callbacks as $regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
-				continue;
-			}
-			$results[$regex] = $func($full_table_name, $TABLE_STRUCTURE, $DB_CONNECTION, $m);
-		}
-		return $results;
-	}
-
-	/**
-	* This method can be inherited in project with custom rules inside
-	*/
-	function alter_table_pre_hook($table_name, $column_name, $table_struct, $DB_CONNECTION) {
-		foreach ((array)$this->alter_table_pre_callbacks as $table_regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
-				continue;
-			}
-			$table_struct = $func($table_name, $column_name, $table_struct, $DB_CONNECTION, $m);
-		}
-		return $table_struct;
-	}
-
-	/**
-	* This method can be inherited in project with custom rules inside
-	*/
-	function alter_table_post_hook($table_name, $column_name, $table_struct, $DB_CONNECTION) {
-		foreach ((array)$this->alter_table_post_callbacks as $table_regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
-				continue;
-			}
-			$results[$regex] = $func($table_name, $column_name, $table_struct, $DB_CONNECTION, $m);
-		}
-		return $results;
-	}
-
-	/**
-	* 
-	*/
-	function _db_table_struct_into_array ($raw_data = '') {
+	function _db_table_struct_into_array ($raw_data) {
+// TODO: bug with parsed default values
+// TODO: write unit tests on parsing table structures
 		$struct_array	= array();
 		// Check if we have full table definition or cutted one
 		if (preg_match($this->_patterns['table'], $raw_data, $m9)) {
@@ -427,7 +389,6 @@ class yf_installer_db {
 				if (!strlen($field_default) && (false !== strpos($field_type, 'int') || in_array($field_type, array('float','double')))) {
 					$field_default = '0';
 				}
-				// Store data
 				$struct_array['fields'][$field_name] = array(
 					'type'		=> $field_type,
 					'length'	=> $field_length,
@@ -442,151 +403,44 @@ class yf_installer_db {
 	}
 
 	/**
-	* 
 	*/
-	function _get_table_struct_array_by_name ($table_name = '', $DB_CONNECTION) {
-		$data2 = $DB_CONNECTION->query_fetch('SHOW CREATE TABLE `'.$table_name.'`');
+	function _get_table_struct_array_by_name ($table_name, $db) {
+		$data2 = $db->query_fetch('SHOW CREATE TABLE `'.$table_name.'`');
 		$table_struct = $data2['Create Table'];
 		return $this->_db_table_struct_into_array($table_struct);
 	}
 
 	/**
-	* 
 	*/
-	function _get_all_struct_array ($only_what = '', $DB_CONNECTION) {
+	function _get_all_struct_array ($only_what, $db) {
 		$structs_array = array();
-		// Clean up tables from system prefixes
-		foreach ((array)$DB_CONNECTION->meta_tables() as $full_table_name) {
-			$is_sys_table = (false !== strpos($full_table_name, $DB_CONNECTION->DB_PREFIX.'sys_'));
-			// Skip non-sys tables
-			if ($only_what == 'sys' && !$is_sys_table) {
-				continue;
-			}
-			if ($only_what == 'other' && $is_sys_table) {
-				continue;
-			}
-			$structs_array[substr(str_replace('sys_', '', $full_table_name), strlen($DB_CONNECTION->DB_PREFIX))] = $this->_get_table_struct_array_by_name($full_table_name, $DB_CONNECTION);
+		foreach ((array)$db->meta_tables() as $full_table_name) {
+			$structs_array[substr($full_table_name, strlen($db->DB_PREFIX))] = $this->_get_table_struct_array_by_name($full_table_name, $db);
 		}
 		return $structs_array;
 	}
 
 	/**
-	* 
-	*/
-	function _format_struct_array ($data = array(), $add_header = '', $add_footer = '') {
-// TODO: bug with parsed default values
-// TODO: write unit tests on parsing table structures
-		$out = '<'.'?php'.PHP_EOL;
-		$out .= $add_header;
-		$out .= '// AUTO GENERATED ON '.date('Y-m-d H:i:s').'.'.PHP_EOL;
-		$out .= '// DO NOT EDIT THIS FILE DIRECTLY! ALL CHANGES WILL BE LOST!'.PHP_EOL;
-		$out .= '$data = '. var_export($data, 1). ' + (array)$data;'.PHP_EOL;
-		$out .= '?'.'>'.PHP_EOL;
-		return $out;
-	}
-
-	/**
-	* 
-	*/
-	function _create_struct_files ($FORCE_OVERWRITE = false) {
-		// Code to insert into footer of the other tables structs
-		$footer = '
-	// Try to load chat tables
-	$chat_tables_structs_file = PROJECT_PATH.\'core_cache/installer_chat_tables_structs_arrays.php\';
-	if (file_exists($chat_tables_structs_file)) {
-		include_once($chat_tables_structs_file);
-	}
-	// Try to load forum tables
-	$forum_tables_structs_file = PROJECT_PATH.\'core_cache/installer_forum_tables_structs_arrays.php\';
-	if (file_exists($forum_tables_structs_file)) {
-		include_once($forum_tables_structs_file);
-	}'.PHP_EOL;
-		$SHARE_PATH		= YF_PATH.'share/db_installer/';
-		$CACHE_PATH		= PROJECT_PATH.'core_cache/';
-		_mkdir_m($CACHE_PATH);
-		$this->_convert_struct_files(
-			$this->SYS_TABLES_STRUCTS,
-			$CACHE_PATH.'installer_sys_tables_structs_arrays.php',
-			$FORCE_OVERWRITE
-		);
-		$this->_convert_struct_files(
-			$this->OTHER_TABLES_STRUCTS,
-			$CACHE_PATH.'installer_other_tables_structs_arrays.php',
-			$FORCE_OVERWRITE,
-			'',
-			$footer
-		);
-		$this->_convert_struct_files(
-			$SHARE_PATH.'installer_forum_tables_structs.php',
-			$CACHE_PATH.'installer_forum_tables_structs_arrays.php',
-			$FORCE_OVERWRITE
-		);
-		$this->_convert_struct_files(
-			$SHARE_PATH.'installer_chat_tables_structs.php',
-			$CACHE_PATH.'installer_chat_tables_structs_arrays.php',
-			$FORCE_OVERWRITE
-		);
-	}
-
-	/**
-	* 
-	*/
-	function _convert_struct_files ($file_path_strings = '', $file_path_arrays = '', $FORCE_OVERWRITE = false, $add_header = '', $add_footer = '') {
-		// Cache file is old
-		if (file_exists($file_path_arrays) && filemtime($file_path_arrays) < (time() - $this->CACHE_TTL)) {
-			$FORCE_OVERWRITE = true;
-		}
-		if (file_exists($file_path_arrays) && !$FORCE_OVERWRITE) {
-			return false;
-		}
-		if (is_array($file_path_strings)) {
-			$data = $file_path_strings;
-			$file_path_strings = array(); // Clean some memory
-		} else {
-			if (!file_exists($file_path_strings)) {
-				return false;
-			}
-			include $file_path_strings;
-		}
-		if (!isset($data)) {
-			return false;
-		}
-		// Loop through raw tables datas
-		$struct_array = array();
-		foreach ((array)$data as $item_name => $raw_data) {
-			$struct_array[$item_name] = $this->_db_table_struct_into_array($raw_data);
-		}
-		$file_text = $this->_format_struct_array($struct_array, $add_header, $add_footer);
-		return file_put_contents($file_path_arrays, $file_text);
-	}
-
-	/**
-	* Get lock installer
 	*/
 	function _get_lock () {
 		if (!$this->USE_LOCKING) {
-			return false;
+			return true;
 		}
-		clearstatcache();
 		if (file_exists($this->LOCK_FILE_NAME)) {
-			// Timed out lock file
 			if ((time() - filemtime($this->LOCK_FILE_NAME)) > $this->LOCK_TIMEOUT) {
 				unlink($this->LOCK_FILE_NAME);
 			} else {
 				return false;
 			}
 		}
-		// Put lock file
-		file_put_contents($this->LOCK_FILE_NAME, time());
-		return true;
+		return file_put_contents($this->LOCK_FILE_NAME, time());
 	}
 
 	/**
-	* Get lock
 	*/
 	function _release_lock () {
 		if (!$this->USE_LOCKING) {
-			return false;
+			return true;
 		}
 		unlink($this->LOCK_FILE_NAME);
 		return true;

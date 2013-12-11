@@ -1,7 +1,6 @@
 <?php
 
 // TODO: form validation
-// TODO: check database connection
 // TODO: add language selector $_POST['install_project_lang']
 
 class yf_core_install {
@@ -20,6 +19,10 @@ class yf_core_install {
 		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
 			return print '__CONSOLE_INSTALL__'.PHP_EOL;
 		}
+		$cur_dir = realpath('./');
+		if (!is_writable($cur_dir)) {
+			$error = 'Current dir: '.$cur_dir.' is not writable, please fix filesystem permissions.';
+		}
 		ob_start();
 ?>
 <!DOCTYPE html>
@@ -30,7 +33,7 @@ class yf_core_install {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/<?php echo installer()->bs_current_theme(); ?>/bootstrap.min.css" rel="stylesheet">
 
-<style type="text/css">
+	<style type="text/css">
 .sidebar-nav {
     padding: 9px 0;
 }
@@ -67,7 +70,19 @@ class yf_core_install {
     top: 11px;
     left: -6px;
 }
-</style>
+	</style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<script>
+	$(function(){
+		$(".theme-selector > li > a").click(function(){
+			var theme = this.id.substr(9) // 9 == strlen('theme_id_')
+			document.cookie='yf_theme=' + theme;
+			window.location.reload();
+			return false;
+		})
+	})
+	</script>
 
 </head>
 <body>
@@ -90,6 +105,9 @@ class yf_core_install {
 		</div>
 	</div>
 <?php
+		if ($error) {
+			echo '<div class="alert alert-danger">'.$error.'</div>';
+		}
 		if ($page == 'form') {
 ?>
 	<header>
@@ -157,18 +175,6 @@ class yf_core_install {
 <?php
 		}
 ?>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-	<script>
-	$(function(){
-		$(".theme-selector > li > a").click(function(){
-			var theme = this.id.substr(9) // 9 == strlen('theme_id_')
-			document.cookie='yf_theme=' + theme;
-			window.location.reload();
-			return false;
-		})
-	})
-	</script>
 </body>
 </html>
 <?php
@@ -249,6 +255,7 @@ class yf_core_install {
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
 		$GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
+		$GLOBALS['PROJECT_CONF']['db']['RECONNECT_NUM_TRIES'] = 1;
 		ini_set('display_errors', 'on');
 		ini_set('memory_limit', '512M');
 		error_reporting(E_ALL ^E_NOTICE);
@@ -356,12 +363,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	}
 	function import_base_db_structure() {
 		$import_tables = array(
-			'activity_types',
-			'countries',
-			'forum_groups',
-			'forum_users',
-			'moods',
-			'states',
 			'static_pages',
 			'sys_categories',
 			'sys_category_items',
@@ -371,7 +372,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			'sys_menu_items',
 			'sys_user_groups',
 			'sys_user_modules',
-			'tips',
 			'user',
 		);
 		$_temp_array = array();
@@ -408,10 +408,10 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		foreach ((array)$import_tables as $table){
 			if ($table == 'sys_user_modules') {
 				include (INSTALLER_PATH.'install/data_user_modules.php');
-				db()->replace(db('user_modules'), db()->es($GLOBALS['INSTALL']['data_user_modules']));
+				db()->replace('sys_user_modules', db()->es($GLOBALS['INSTALL']['data_user_modules']));
 			} elseif ($table == 'sys_menu_items') {
 				include (INSTALLER_PATH.'install/data_menu_items.php');
-				db()->replace(db('menu_items'), db()->es($GLOBALS['INSTALL']['data_menu_items']));
+				db()->replace('sys_menu_items', db()->es($GLOBALS['INSTALL']['data_menu_items']));
 			} else {
 				import (INSTALLER_PATH.'install/sql/'.$table.'.sql', DB_PREFIX);
 			}
@@ -463,13 +463,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		_class('forum_sync', 'modules/forum/')->_sync_board();
 		ob_end_clean();
 
-		db()->update(db('menu_items'), array('active' => 1), '1=1');
+		db()->update('sys_menu_items', array('active' => 1), '1=1');
 		return installer();
 	}
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess.txt');
-			db()->update(db('settings'), array('value' => 1), 'id=4');
+			db()->update('sys_settings', array('value' => 1), 'id=4');
 		} else {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess2.txt');
 		}
@@ -477,11 +477,12 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		return installer();
 	}
 	function set_admin_login_pswd() {
-		db()->update(db('admin'), db()->es(array(
+		db()->replace_safe('sys_admin', array(
+			'id'		=> 1,
 			'login'		=> $_POST['install_admin_login'],
 			'password'	=> md5($_POST['install_admin_pswd']),
 			'add_date'	=> gmmktime(),
-		)), 'id=1');
+		));
 		return installer();
 	}
 	function copy_project_skeleton() {
@@ -519,6 +520,7 @@ if ($errors) {
 	exit();
 }
 installer()
+	->import_base_db_structure()
 	->write_db_setup()
 	->write_user_index_php()
 	->write_admin_index_php()
@@ -526,13 +528,15 @@ installer()
 	->set_admin_login_pswd()
 	->copy_project_skeleton()
 ;
-#installer()->import_base_db_structure();
 if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
 	_class('dir')->copy_dir(INSTALLER_PATH.'install/demo_skel/', PROJECT_PATH, '', '/\.(svn|git)/');
 }
-$debug_info = $_POST['install_checkbox_debug_info'] ? common()->show_debug_info() : '';
+$debug_info = $_POST['install_checkbox_debug_info'] ? tpl()->parse('debug_console_js'). common()->show_debug_info() : '';
 $vars = installer()->prepare_vars();
-$vars['install_log'] = $debug_info;
+
+# TODO: create some log
+$vars['install_log'] = '';
+
 installer()->show_html('results', $vars);
 echo $debug_info;

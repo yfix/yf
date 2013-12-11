@@ -54,49 +54,30 @@ class yf_oauth {
 	}
 
 	/**
-	*/
-	function _parse_provider_config_json($json) {
-		$a = _class('utils')->object_to_array(json_decode($json));
-// TODO
-		$data = array();
-		if (isset($a['oauth2']) && is_array($a['oauth2'])) {
-			$data['oauth_version'] = '2.0';
-			$data['dialog_url'] = $a['url']. $a['oauth2']['authorize'] . '?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}';
-#			$p_str = array();
-#			foreach((array)$a['oauth2']['parameters'] as $k => $v) {
-#				$p_str[$k] = $k.'={'.strtoupper($k).'}';
-#			}
-			$p_str['state'] = 'state={STATE}';
-			$data['access_token_url'] = $a['url']. $a['oauth2']['access_token']/*($p_str ? '?'.implode('&', $p_str) : '')*/;
-		}
-		return $data;
-	}
-
-	/**
 	* Example of $this->_providers item:
 	*	'github' => array(
 	*		'oauth_version' => '2.0',
 	*		'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
 	*		'access_token_url' => 'https://github.com/login/oauth/access_token',
 	*		'user_info_url' => 'https://api.github.com/user',
-	*		'dev_register_url' => '',
 	*	),
 	*/
 	function _load_oauth_providers() {
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
-// TODO: 
-#		foreach (_class('dir')->scan(YF_PATH. 'share/oauth_providers/') as $path) {
-#		}
-
-		$this->_providers['github'] = array(
-			'oauth_version' => '2.0',
-			'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
-			'access_token_url' => 'https://github.com/login/oauth/access_token',
-			'user_info_url' => 'https://api.github.com/user',
+		$paths = array(
+			YF_PATH. 'share/oauth_providers/',
+			PROJECT_PATH. 'share/oauth_providers/',
 		);
-
+		foreach ((array)_class('dir')->scan($paths, 1, '-f /[a-z0-9_-]+\.php$/i') as $path) {
+			$name = trim(substr(trim(basename($path)), 0, -strlen('.php')));
+			if (!$name) {
+				continue;
+			}
+			require_once $path;
+			$this->_providers[$name] = $data;
+		}
 		$this->_providers_loaded = true;
 		return $this->_providers;
 	}
@@ -119,29 +100,30 @@ class yf_oauth {
 	function login($provider) {
 		$providers = $this->_load_oauth_providers();
 		$config = $this->_load_oauth_config();
-
 		if (!$config[$provider]) {
-			return 'Error: no config cleint_id and client_secret for provider: '.$provider;
+			$this->error = 'Error: no config client_id and client_secret for provider: '.$provider;
+			return false;
 		}
-
-		$this->debug = true;
-		$this->debug_http = true;
+		if (DEBUG_MODE) {
+			$this->debug = true;
+			$this->debug_http = true;
+		}
 		$this->server = $provider;
 		$this->redirect_uri = _force_get_url('./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']);
 		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
 		$this->client_secret = $config[$provider]['client_secret'] ?: '';
 		if (strlen($this->client_id) == 0 || strlen($this->client_secret) == 0) {
-			return 'Error: Please set the client_id with Key and client_secret with Secret. The URL must be '.$this->redirect_uri;
+			$this->error = 'Error: Please set the client_id with Key and client_secret with Secret. The URL must be '.$this->redirect_uri;
+			return false;
 		}
-
 		$settings = $this->_providers[$provider];
 		if (!$settings) {
-			return 'Error: no settings for provider: '.$provider;
+			$this->error = 'Error: no settings for provider: '.$provider;
+			return false;
 		}
 		foreach ((array)$settings as $k => $v) {
 			$this->$k = $v;
 		}
-
 #		if ($_SESSION['oauth'][$provider]['token']) {
 #			$success = $_SESSION['oauth'][$provider]['token'];
 #			$user = $_SESSION['oauth'][$provider]['user_info'];
@@ -149,22 +131,19 @@ class yf_oauth {
 			$error = 'Cannot process';
 			if (($success = $this->process())) {
 				if (strlen($this->access_token)) {
-					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
 					$error = '';
-					$success = $this->call_api(array(
-						'url' => $settings['user_info_url'],
-						'method' => 'GET',
-						'options' => array('FailOnAccessError' => true),
-					));
-					$user = $this->_get_last_response();
-	
-					$_SESSION['oauth'][$provider]['user_info'] = $user;
+					$func = $this->get_user_info_callback;
+					$user = $func($settings, $this);
+					if ($user) {
+						$success = true;
+					}
+#					$_SESSION['oauth'][$provider]['token'] = $this->access_token;
+#					$_SESSION['oauth'][$provider]['user_info'] = $user;
 				} else {
 					$error = $this->authorization_error;
 				}
-			}
-#		}
-
+#			}
+		}
 		$body = $this->output();
 
 		if ($error) {
@@ -172,7 +151,6 @@ class yf_oauth {
 		} elseif ($success) {
 			return $body.'<h1 class="text-success">Success</h1><pre>'.print_r($user, 1).'</pre>';
 		}
-#		return $this;
 	}
 
 	/**

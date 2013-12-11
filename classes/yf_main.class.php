@@ -931,6 +931,9 @@ class yf_main {
 		if (class_exists(YF_PREFIX. $class_name)) {
 			return YF_PREFIX. $class_name;
 		}
+		if (substr($class_name, 0, strlen(YF_PREFIX)) === YF_PREFIX) {
+			$class_name = substr($class_name, strlen(YF_PREFIX));
+		}
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -1041,6 +1044,9 @@ class yf_main {
 					continue;
 				}
 			}
+if ($class_name == 'yf_db_driver_mysql41') {
+	echo $class_file.' | '.$_path.' | '.$_prefix.'<br>';
+}
 			$this->include_module($_path. $_prefix. $class_file);
 			if (class_exists($_prefix. $class_name)) {
 				$loaded_class_name	= $_prefix. $class_name;
@@ -1285,10 +1291,10 @@ class yf_main {
 				$locale_handler_name = $handler_name.'___'.conf('language');
 			}
 			$handler_php_source = conf('data_handlers::'.$handler_name);
-			if ($handler_php_source) {
-				$data_to_return = eval(
-					($locale_handler_name ? '$locale="'.conf('language').'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;'
-				);
+			if (is_callable($handler_php_source)) {
+				$data_to_return = $handler_php_source($handler_name, $params);
+			} elseif (is_string($handler_php_source)) {
+				$data_to_return = eval( ($locale_handler_name ? '$locale="'.conf('language').'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;' );
 			}
 			if (!empty($this->USE_SYSTEM_CACHE) && !$no_cache && $cache_obj_available) {
 				$this->modules['cache']->put($locale_handler_name ? $locale_handler_name : $handler_name, $data_to_return);

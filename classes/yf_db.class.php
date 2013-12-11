@@ -48,11 +48,9 @@ class yf_db {
 		1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
 	);
 	/** @var string */
-	public $RECONNECT_LOCK_FILE_NAME	= 'uploads/db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock';
+	public $RECONNECT_LOCK_FILE_NAME	= 'db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock';
 	/** @var int Time in seconds between unlock reconnect */
 	public $RECONNECT_LOCK_TIMEOUT	= 30;
-	/** @var string */
-	public $CACHE_TABLES_NAMES_FILE	= 'core_cache/cache_db_tables_[DB_HOST]_[DB_NAME]_[DB_USER].php';
 	/** @var bool Connection required or not (else E_USER_WARNING will be thrown not E_USER_ERROR) */
 	public $CONNECTION_REQUIRED		= 0;
 	/** @var bool Allow to use shutdown queries or not */
@@ -114,8 +112,9 @@ class yf_db {
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
 	/** @var array */
+// TODO: read _class('dir')->scan(YF_PATH.'share/db_installer/db_table_sql/', 1, '-f /sys_[a-z0-9_]+\.db_table_sql\.php/')
 	public $_need_sys_prefix		= array(
-		'admin', 'admin_groups', 'admin_modules', 'block_rules', 'blocks', 'categories', 'category_items', 'core_servers', 'custom_bbcode',
+		'admin', 'admin_groups', 'admin_modules', 'block_rules', 'blocks', 'categories', 'category_items', 'conf', 'core_servers', 'custom_bbcode',
 		'custom_replace_tags', 'custom_replace_words', 'locale_langs', 'locale_translate', 'locale_vars', 'log_admin_auth', 'log_admin_auth_fails', 'log_auth',
 		'log_auth_fails', 'log_core_errors', 'log_emails', 'log_img_resizes', 'menu_items', 'menus', 'online', 'settings', 'sites', 'smilies', 'user_groups', 'user_modules',
 	);
@@ -1102,19 +1101,7 @@ class yf_db {
 		if (count($GLOBALS['_debug_db_instances']) > 1) {
 			$use_defines = false;
 		}
-		$cache_path = $this->_get_cache_tables_names_path();
-		// Get table names from cache
 // TODO: use cache() class/function if available
-		if ($use_defines && !empty($this->CACHE_TABLE_NAMES) && file_exists($cache_path)) {
-			// Refresh cache file after 1 day
-			$last_modified = filemtime($cache_path);
-			if ($last_modified < (time() - $this->TABLE_NAMES_CACHE_TTL)) {
-				unlink($cache_path);
-			} else {
-				include($cache_path);
-				$included = true;
-			}
-		}
 		if (empty($included)) {
 			// Do get current database tables array
 			$tmp_tables = $this->meta_tables();
@@ -1178,20 +1165,6 @@ class yf_db {
 		return INCLUDE_PATH. $file_name;
 	}
 
-	/**
-	* Get tables names cache file name
-	*/
-	function _get_cache_tables_names_path($db_host = '', $db_user = '', $db_name = '', $db_port = '') {
-		$params = array(
-			'[DB_HOST]'	=> $db_host ? $db_host : $this->DB_HOST,
-			'[DB_NAME]'	=> $db_name ? $db_name : $this->DB_NAME,
-			'[DB_USER]'	=> $db_user ? $db_user : $this->DB_USER,
-			'[DB_PORT]'	=> $db_port ? $db_port : $this->DB_PORT,
-		);
-		$file_name = str_replace(array_keys($params), array_values($params), $this->CACHE_TABLES_NAMES_FILE);
-		return INCLUDE_PATH. $file_name;
-	}
-
 // TODO: cover this method with unit tests and simplify/remove constants/use PARSED TABLES
 	/**
 	* Try to fix table name
@@ -1217,6 +1190,7 @@ class yf_db {
 			$n2 = $this->_PARSED_TABLES[$name_wo_db_prefix];
 		} else {
 			if ($name_wo_db_prefix != $name) {
+// TODO: get _need_sys_prefix from db_installer files
 				$n2 = $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
 			} else {
 				$n2 = $this->DB_PREFIX. $name_wo_db_prefix;
@@ -1232,10 +1206,15 @@ class yf_db {
 		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
 			return false;
 		}
-		if (!function_exists('main')) {
-			return false;
+		// Get current abstract db type
+		if (in_array($this->DB_TYPE, array('mysql','mysql4','mysql41','mysql5'))) {
+			$db_type = 'mysql';
+		} elseif (in_array($this->DB_TYPE, array('ora','oci8','oracle','oracle10'))) {
+			$db_type = 'oracle';
+		} elseif (in_array($this->DB_TYPE, array('pgsql','postgre','postgres','postgres7','postgres8'))) {
+			$db_type = 'postgres';
 		}
-		return _class('installer_db', 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
+		return _class('installer_db_'.$db_type, 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
 	}
 
 	/**

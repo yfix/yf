@@ -13,16 +13,19 @@ class yf_manage_shop_orders{
 		$sql = 'SELECT o.*, COUNT(*) AS num_items 
 				FROM '.db('shop_orders').' AS o 
 				INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
-				GROUP BY o.id';
+				GROUP BY o.id ORDER BY o.id DESC';
 		return table($sql, array(
 				'filter' => $_SESSION[$_GET['object'].'__orders']
 			))
 			->text('id')
-			->date('date')
+			->date('date', array('format' => '%d-%m-%Y'))
 			->user('user_id')
 			->text('total_sum')
 			->text('num_items')
-			->btn_edit('', './?object=manage_shop&action=view_order&id=%d')
+			->func('status', function($field, $params) { 
+				return common()->get_static_conf("order_status", $field);
+			})
+			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
 		;
 	}
 
@@ -36,11 +39,14 @@ class yf_manage_shop_orders{
 		if (empty($order_info)) {
 			return _e('No such order');
 		}
+		if(!empty($_POST)){
+			foreach($_POST as $k => $v)
+				if(is_int($k))
+					db()->UPDATE(db('shop_order_items'), array('status'	=> $v), ' order_id='.$_GET['id'].' AND product_id='.intval($k));
+		}
 		if (!empty($_POST['status'])) {
 			db()->UPDATE(db('shop_orders'), array(
 				'status'	=> _es($_POST['status']),
-				'comment_m'	=> _es($_POST['comment_m']),
-				'comment_c'	=> _es($_POST['comment_c']),
 				'address'	=> _es($_POST['address']),
 				'phone'		=> _es($_POST['phone']),
 			), 'id='.intval($_GET['id']));
@@ -71,11 +77,12 @@ class yf_manage_shop_orders{
 			$products[$_info['product_id']] = array(
 				'product_id'	=> intval($_info['product_id']),
 				'name'			=> _prepare_html($_product['name']),
-				'price'			=> module('manage_shop')->_format_price($_info['price']),
+				'price'			=> module('manage_shop')->_format_price(intval($_info['quantity']*$_info['price'])),
 				'currency'		=> _prepare_html(module('manage_shop')->CURRENCY),
 				'quantity'		=> intval($_info['quantity']),
 				'details_link'	=> process_url('./?object=manage_shop&action=view&id='.$_product['id']),
 				'dynamic_atts'	=> !empty($dynamic_atts) ? implode('<br />'.PHP_EOL, $dynamic_atts) : '',
+				'status'		=> module('manage_shop')->_box('status_item', $_info['status']),
 			);
 			$total_price += $_info['price'] * $quantity;
 		}
@@ -92,25 +99,31 @@ class yf_manage_shop_orders{
 			'total_price'	=> module('manage_shop')->_format_price($total_price),
 			'ship_type'		=> module('manage_shop')->_ship_types[$order_info['ship_type']],
 			'pay_type'		=> module('manage_shop')->_pay_types[$order_info['pay_type']],
-			'date'			=> _format_date($order_info['date'], 'long'),
+			'date'			=> _format_date($order_info['date'], '%d-%m-%Y'),
 			'status_box'	=> module('manage_shop')->_box('status', $order_info['status']),
 			'back_url'		=> './?object=manage_shop&action=show_orders',
 			'print_url'		=> './?object=manage_shop&action=show_print&id='.$order_info['id'],
+			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 		));
 		return form2($replace)
 			->info('id')
 			->info('total_sum', '', array('no_escape' => 1))
 			->info('date')
 			->user_info('user_id')
+			->info('payment', 'Payment method')
 			->container(
 				table2($products)
 					->link('product_id', './?object=manage_shop&action=product_edit&id=%d')
 					->text('quantity')
 					->text('price')
 					->text('name')
+					->func('status', function($f, $p, $row){
+						$row['status'] = str_replace("status_item", $row['product_id'], $row['status']);
+						return $row['status'];
+					})
 				, array('wide' => 1)
 			)
-			->box('status_box', 'Status', array('selected' => $order_info['status']))
+			->box('status_box', 'Status order', array('selected' => $order_info['status']))
 			->save_and_back()
 		;
 		return $form;

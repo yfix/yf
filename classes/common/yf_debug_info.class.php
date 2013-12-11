@@ -390,7 +390,7 @@ class yf_debug_info {
 				$_query_text = trim($_query_text);
 				// Cut comment
 				if (substr($_query_text, 0, 2) == '--') {
-					$_query_text = substr($_query_text, strpos($_query_text, ''));
+					$_query_text = substr($_query_text, strpos($_query_text, "\n"));
 				}
 				$_query_text = preg_replace('/[\s]{2,}/ims', ' ', str_replace("\t", ' ', trim($_query_text)));
 				if (preg_match('/^[\(]*select/ims', $_query_text)) {
@@ -421,7 +421,11 @@ class yf_debug_info {
 			$text = trim($text);
 			// Cut comment
 			if (substr($text, 0, 2) == '--') {
-				$text = substr($text, strpos($text, ''));
+				$text = substr($text, strpos($text, "\n"));
+				$text = trim($text);
+				if (!strlen($text)) {
+					continue;
+				}
 			}
 			$total_queries_exec_time += $db->QUERY_EXEC_TIME[$id];
 			$_cur_trace = $db->QUERY_BACKTRACE_LOG[$id];

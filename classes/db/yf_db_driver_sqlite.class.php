@@ -1,15 +1,6 @@
 <?php
 
-#load('yf_db_driver.abstract', 'classes/db/');
-require dirname(__FILE__).'/yf_db_driver.abstract.class.php';
-
-/**
-* Sqlite abstraction layer
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
-*/
+load('db_driver', 'framework', 'classes/db/');
 class yf_db_driver_sqlite extends yf_db_driver {
 
 	/** @var @conf_skip */
