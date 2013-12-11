@@ -4,6 +4,27 @@ class yf_manage_shop_import {
 
 	/**
 	*/
+	function import_xml() {
+		if (empty($_FILES)) {
+			return form('',array('enctype' => 'multipart/form-data'))
+				->file("file")
+				->save('', "Upload");
+		}
+		$xml = file_get_contents($_FILES['file']['tmp_name']);
+		$p = xml_parser_create();
+		xml_parse_into_struct($p, $xml, $vals, $index);
+		xml_parser_free($p);
+		echo "<pre>";
+//		print_r($index);
+		foreach ($vals as $v) {
+//			if (!($v['tag'] == 'PRODUCT' && $v['type'] == 'open')) continue;
+			print_r($v);
+		}
+		die();
+	}
+	
+	/**
+	*/
 	function import_xls() {
 		set_time_limit(0);
 		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
@@ -22,12 +43,14 @@ class yf_manage_shop_import {
 		$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
 		
 		$objReader = PHPExcel_IOFactory::createReader($ext == 'xls' ? 'Excel5' : 'Excel2007');
+		$objReader->setReadDataOnly(false);
 		$objPHPExcel = $objReader->load($_FILES['file']['tmp_name']);
 		
 		$items = array();
 		
 		foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
 			$header = array();
+			$title = $worksheet->getTitle();
 			$header_items = array();
 			foreach ($worksheet->getRowIterator() as $row) {
 				$row_number = $row->getRowIndex();
@@ -39,30 +62,110 @@ class yf_manage_shop_import {
 				foreach ($cellIterator as $cell) {
 					$value = $cell->getCalculatedValue();
 					$item[] = $value;
+					$item['worksheet_title'] = $title;
 					$i++;
 				}
+					
+				$item['background_color'] = $objPHPExcel->getActiveSheet()->getStyle('A'.$row_number)->getFill()->getStartColor()->getRGB();
+				$item['coordinate'] = 'A'.$row_number;
 				$items[] = $item;
 			}
+		
 		}
 		if (count($items) != 0) {
 	//		return $this->process_items_epicentr_update($items);
-	//		return $this->process_items_epicentr_import($items);
 	//		return $this->process_items_fortuna($items);
 	//		return $this->process_items_talisman($items);
-			return $this->process_items_talisman_update($items);	
+//			return $this->process_items_talisman_update($items);	
 	//		return $this->process_items_talisman_import($items);
+			return $this->process_items_epicentr_import($items);			
+//			return $this->process_items_yugcontract_xls($items);
 		} else {
 			return 'no rows to process';
 		}
 	}
 	
+	function yugcontract_get_cat_id($cats) {
+		$parent_id = 9;
+		foreach ($cats as $cat) {
+			$A = db()->get("SELECT * FROM `".db('category_items')."` WHERE `parent_id`='".$parent_id."' AND `name`='".$cat."'");
+			if (empty($A)) {
+				db()->insert(db('category_items'),array(
+					'parent_id' => $parent_id,
+					'name' => _es($cat),
+					'cat_id' => 1,
+					'active' => 1,
+					'url' => common()->_propose_url_from_name($cat),
+				));
+				$parent_id = db()->insert_id();
+			} else {
+				$parent_id = $A['id'];
+			}
+		}
+		return $parent_id;
+	}
+
+	function process_items_yugcontract_xls($items) {
+		$supplier_id = 102;
+		
+//		db()->query("DELETE FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+//		db()->query("DELETE FROM `".db('category_items')."` WHERE `id`>62897");
+
+		$cats = array();
+		foreach ($items as $item) {
+			$cats[0] = mb_convert_case($item['worksheet_title'], MB_CASE_TITLE, "UTF-8"); 
+			
+			if ($item[0]!='' && $item['background_color'] == '666699') {
+				$cats[1] = $item[0];
+				unset($cats[2]);unset($cats[3]);				
+				echo implode("/",$cats)." - ".$item['background_color']." - ".$item['coordinate']."<br />";
+				continue;
+			}
+			if ($item[0]!='' && $item['background_color'] == '99CCFF') {
+				$cats[2] = $item[0];
+				unset($cats[3]);				
+				echo implode("/",$cats)." - ".$item['background_color']." - ".$item['coordinate']."<br />";
+				continue;
+			}
+			if ($item[0]!='' && $item['background_color'] == 'CCFFFF') {
+				$cats[3] = $item[0];
+				echo implode("/",$cats)." - ".$item['background_color']." - ".$item['coordinate']."<br />";
+				continue;
+			}
+//			echo implode(",",$item)."<br />";
+/*			if (intval($item[0])!=0 && $item[1] != '' && $item[2]!='' && intval($item[9])!=0) {
+				$cat_id = $this->yugcontract_get_cat_id($cats);
+				$name = trim($item[2]);
+				$name = substr($item[2],strpos($item[2],' '));
+				$v = array(
+					'name' => $name,
+					'articul' => trim($item[1]),
+					'cat_id' => $cat_id,
+					'price' => number_format($item[9], 2, '.', ''),
+					'supplier_id' => $supplier_id, 
+					'url' => common()->_propose_url_from_name($name),
+					'active' => 0,
+				);	
+				$result .= "articul: ".$v['articul']."; product: ".$v['name']." - ";				
+				db()->insert(db('shop_products'), _es($v)) or $error = true;
+				if ($error) {
+					$result .= 'ERROR';
+				} else {
+					$result .= 'OK';				
+				}
+				$result .= '<br />';				
+			} */
+		}
+
+		die();
+	}
 	
 	function process_items_fortuna($items) {
 		return false;
 		
 		$supplier_id = 99;
 		
-		db()->query("DELETE FROM `".db('shop_products')."` WHERE `supplier_id`=99");
+		db()->query("DELETE FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
 		
 		$remap = array (
 			62486 => 'все для самокруток',
@@ -184,24 +287,31 @@ class yf_manage_shop_import {
 	
 	function process_items_epicentr_import($items) {
 		
-		return false;
-		
 		$supplier_id = 101;
 		
-		db()->query("DELETE FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+		db()->query("DELETE FROM `".db('shop_products')."` WHERE `cat_id` IN ()");
 		
-		$start_index = 3;
-		$i = 0;
-		$cats_list = array();
+
+		$remap = array (
+			63710 => 'средства для дерева',
+			63711 => 'малярный инструмент',
+			63712 => 'краска',
+			63713 => 'подготовка поверхности',
+		);
 		
 		foreach ($items as $item) {
+			if (intval($item[0])== 0 || $item[1]== '' || $item[2] == '') continue;
 			
-			if ($i<=$start_index) { $i++;continue; }
+			$cat_id = 0;
+			foreach ($remap as $k=>$v) {
+				if ($v == $item[5])
+					$cat_id = $k;
+			}
 			
 			$v = array(
 				'name' => trim($item[1]),
 				'articul' => $item[2],
-				'cat_id' => 1,
+				'cat_id' => $cat_id,
 				'price' => number_format($item[3], 2, '.', ''),
 				'supplier_id' => $supplier_id, 
 				'url' => common()->_propose_url_from_name(trim($item[1])),
