@@ -16,7 +16,7 @@ class yf_remote_files {
 	/** @var string */
 	public $SMTP_PROBE_ADDRESS	= 'admin@test.com';
 	/** @var string @conf_skip */
-	public $DEF_USER_AGENT		= 'Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 5.1)';
+	public $DEF_USER_AGENT		= 'Mozilla/5.0 YF Firefox';
 	/** @var bool @conf_skip */
 	public $REMOTE_ALLOW_CACHE	= true;
 	/** @var string @conf_skip */
@@ -211,9 +211,15 @@ class yf_remote_files {
 	* @param	array	$url_options	Array of request options
 	* @return	string
 	*/
-	function get_remote_page($url = '', $cache_ttl = -1, $url_options = array()) {
+	function get_remote_page($url = '', $cache_ttl = -1, $url_options = array(), &$requests_info = array()) {
 		if (empty($url)) {
 			return false;
+		}
+		if (!$cache_ttl) {
+			$cache_ttl = -1;
+		}
+		if (!is_array($url_options)) {
+			$url_options = array();
 		}
 		$id = $url;
 		$result = '';
@@ -271,6 +277,7 @@ class yf_remote_files {
 		$info = curl_getinfo($ch);
 		$info['CURL_ERRNO']	= curl_errno($ch);
 		$info['CURL_ERROR']	= curl_error($ch);
+		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
 
 		curl_close ($ch);
@@ -337,7 +344,7 @@ class yf_remote_files {
 	* @param	array	$options	Array of request options
 	* @return	array				Result array of fetched urls
 	*/
-	function _multi_request($urls, $options = array(), $max_threads = 0) {
+	function _multi_request($urls, $options = array(), $max_threads = 0, &$requests_info = array()) {
 		if (!$max_threads) {
 			$max_threads = $this->CURL_DEF_MAX_THREADS;
 		}
@@ -435,6 +442,7 @@ class yf_remote_files {
 				$info = curl_getinfo($c);
 				$info['CURL_ERRNO']	= curl_errno($c);
 				$info['CURL_ERROR']	= curl_error($c);
+				$requests_info = $info;
 				$GLOBALS['_curl_requests_info'][$id] = $info;
 				// send the return values to the callback function.
 				$callback = $url_options['callback'];
@@ -502,8 +510,8 @@ class yf_remote_files {
 	/**
 	* Alias for the _multi_request()
 	*/
-	function multi_request($urls, $options = array(), $max_threads = 0) {
-		return $this->_multi_request($urls, $options, $max_threads);
+	function multi_request($urls, $options = array(), $max_threads = 0, &$requests_info = array()) {
+		return $this->_multi_request($urls, $options, $max_threads, $requests_info);
 	}
 
 	/**	
