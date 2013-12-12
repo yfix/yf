@@ -561,7 +561,8 @@ class yf_remote_files {
 		}
 		// Custom HTTP header string to add into request
 		if ($custom_header) {
-			$curl_opts[CURLOPT_HTTPHEADER]	= $custom_header;
+			// CURLOPT_HTTPHEADER An array of HTTP header fields to set, in the format array('Content-type: text/plain', 'Content-length: 100') 
+			$curl_opts[CURLOPT_HTTPHEADER]	= !is_array($custom_header) ? array($custom_header) : $custom_header;
 		}
 		// We not need to check SSL here
 		$curl_opts[CURLOPT_SSL_VERIFYPEER] = 0;
