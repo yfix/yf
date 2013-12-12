@@ -38,7 +38,7 @@ if ($provider == 'vk') {
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 					'v'				=> '5.5',
 				));
-				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
+				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 				if (strpos($response['content_type'], 'json') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				}
@@ -73,7 +73,7 @@ if ($provider == 'vk') {
 					'v'				=> '5.5',
 				));
 				$response = array(); // Will be filled with debug information about request
-				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
+				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 				if ($response['http_code'] == 401) {
 					return js_redirect( $this->redirect_uri, $url_rewrite = false );
 				} elseif ($response['http_code'] == 200) {
@@ -106,8 +106,104 @@ if ($provider == 'vk') {
 } elseif ($provider == 'github') {
 
 // TODO
+/*
+	'oauth_version' => '2.0',
+	'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
+	'access_token_url' => 'https://github.com/login/oauth/access_token',
+	'user_info_url' => 'https://api.github.com/user',
+	'scope' => 'user',
+	'get_user_info_callback' => function ($settings, $_this) {
+		$_this->call_api(array('url' => $settings['user_info_url']));
+		$user = $_this->_get_last_response();
+		if (is_object($user)) {
+			$user = _class('utils')->object_to_array($user);
+		}
+		$_this->call_api(array('url' => $settings['user_info_url'].'/emails'));
+		foreach ($_this->_get_last_response() as $k => $v) {
+			$user['emails'][$k] = $v;
+		}
+		return $user;
+	}
+*/
+/*
+		if ($_SESSION['oauth'][$provider]['access_token']) {
+			$body = '';
+			if ($_SESSION['oauth'][$provider]['user']) {
+				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
+			} else {
+				$url = 'https://api.github.com/user?'.http_build_query(array(
+					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
+				));
+				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
+				if (strpos($response['content_type'], 'json') !== false) {
+					$result = _class('utils')->object_to_array(json_decode($result));
+				}
+				$_SESSION['oauth'][$provider]['user_info_request'] = array(
+					'result'	=> $result,
+					'response'	=> $response,
+				);
+				$_SESSION['oauth'][$provider]['user'] = $result;
+				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+			}
+			$user_info_request = $_SESSION['oauth'][$provider]['user_info_request'];
+			if ($user_info_request) {
+				$arr = $user_info_request;
+				$body .= '<h4>user_info_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
+			}
+			$access_token_request = $_SESSION['oauth'][$provider]['access_token_request'];
+			if ($access_token_request) {
+				$arr = $access_token_request;
+				$body .= '<h4>access_token_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
+			}
+			return $body;
+		}
+*/
+		if ($_GET['code'] || $_GET['error']) {
+			if ($_GET['error']) {
+				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
+			} elseif ($_GET['code']) {
+				$url = 'https://github.com/login/oauth/access_token';
+				$opts = array(
+					'custom_header' => 'Accept: application/vnd.github.v3+json',
+					'post'	=> array(
+						'client_id'		=> $this->client_id,
+						'client_secret' => $this->client_secret,
+						'code'			=> $_GET['code'],
+						'redirect_uri' 	=> $this->redirect_uri,
+					),
+				);
+				$response = array(); // Will be filled with debug information about request
+				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
+				if ($response['http_code'] == 406) {
+					return js_redirect( $this->redirect_uri, $url_rewrite = false );
+				} elseif ($response['http_code'] == 200) {
+/*
+					if (strpos($response['content_type'], 'json') !== false) {
+						$result = _class('utils')->object_to_array(json_decode($result));
+					}
+					$_SESSION['oauth'][$provider]['access_token_request'] = array(
+						'result'	=> $result,
+						'response'	=> $response,
+					);
+					$_SESSION['oauth'][$provider]['access_token'] = $result['access_token'];
+*/
+				}
+				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+			}
+		} else {
+			$url = 'https://github.com/login/oauth/authorize?'.http_build_query(array(
+				'client_id' 		=> $this->client_id,
+				'redirect_uri' 		=> $this->redirect_uri,
+				'scope'				=> 'user', // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
+// TODO save this in session and implement for all other providers too to prevent CSRF
+				'state'				=> md5(microtime().rand(1,10000000)), // An unguessable random string. It is used to protect against cross-site request forgery attacks.
+			));
+			return js_redirect($url, $url_rewrite = false);
+		}
 
 }
+
+
 	}
 
 	/**
