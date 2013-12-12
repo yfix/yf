@@ -17,18 +17,13 @@ class yf_oauth {
 		$providers = $this->_load_oauth_providers();
 		$config = $this->_load_oauth_config();
 		if (!$config[$provider] || !$config[$provider]['client_id'] || !$config[$provider]['client_secret']) {
-			$this->error = 'Error: no config client_id and client_secret for provider: '.$provider;
-			return false;
+			return '<h1 class="text-error">Error: no config client_id and client_secret for provider: '.$provider.'</h1>';
 		}
 		$this->server = $provider;
 		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
 		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
 		$this->client_secret = $config[$provider]['client_secret'] ?: '';
 		$settings = $this->_providers[$provider];
-		if (!$settings) {
-			$this->error = 'Error: no settings for provider: '.$provider;
-			return false;
-		}
 		foreach ((array)$settings as $k => $v) {
 			$this->$k = $v;
 		}
@@ -47,12 +42,16 @@ class yf_oauth {
 	function login_vk() {
 		$provider = 'vk';
 
+		$url_authorize = 'https://oauth.vk.com/authorize';
+		$url_access_token = 'https://oauth.vk.com/access_token';
+		$url_user = 'https://api.vk.com/method/users.get';
+
 		if ($_SESSION['oauth'][$provider]['access_token']) {
 			$body = '';
 			if ($_SESSION['oauth'][$provider]['user']) {
 				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
 			} else {
-				$url = 'https://api.vk.com/method/users.get?'.http_build_query(array(
+				$url = $url_user.'?'.http_build_query(array(
 					'user_id'		=> $_SESSION['oauth'][$provider]['access_token_request']['result']['user_id'],
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 					'v'				=> '5.5',
@@ -84,7 +83,7 @@ class yf_oauth {
 			if ($_GET['error']) {
 				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
 			} elseif ($_GET['code']) {
-				$url = 'https://oauth.vk.com/access_token?'.http_build_query(array(
+				$url = $url_access_token.'?'.http_build_query(array(
 					'client_id'		=> $this->client_id,
 					'client_secret' => $this->client_secret,
 					'code'			=> $_GET['code'],
@@ -108,7 +107,7 @@ class yf_oauth {
 				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
 			}
 		} else {
-			$url = 'https://oauth.vk.com/authorize?'.http_build_query(array(
+			$url = $url_authorize.'?'.http_build_query(array(
 				'client_id' 		=> $this->client_id,
 				'redirect_uri' 		=> $this->redirect_uri,
 				'scope'				=> 'offline,wall,friends,email', // Comma or space separated names
@@ -125,12 +124,16 @@ class yf_oauth {
 	function login_github() {
 		$provider = 'github';
 
+		$url_authorize = 'https://github.com/login/oauth/authorize';
+		$url_access_token = 'https://github.com/login/oauth/access_token';
+		$url_user = 'https://api.github.com/user';
+
 		if ($_SESSION['oauth'][$provider]['access_token']) {
 			$body = '';
 			if ($_SESSION['oauth'][$provider]['user']) {
 				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
 			} else {
-				$url = 'https://api.github.com/user?'.http_build_query(array(
+				$url = $url_user.'?'.http_build_query(array(
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 				));
 				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
@@ -145,7 +148,7 @@ class yf_oauth {
 				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
 
 				// Emails
-				$url_emails = 'https://api.github.com/user/emails?'.http_build_query(array(
+				$url_emails = $url_user.'/emails?'.http_build_query(array(
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 				));
 				$result = common()->get_remote_page($url_emails, $cache = false, $opts = array(), $response);
@@ -171,7 +174,7 @@ class yf_oauth {
 			if ($_GET['error']) {
 				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
 			} elseif ($_GET['code']) {
-				$url = 'https://github.com/login/oauth/access_token';
+				$url = $url_access_token;
 				$opts = array(
 					'post'	=> array(
 						'client_id'		=> $this->client_id,
@@ -204,7 +207,7 @@ class yf_oauth {
 				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
 			}
 		} else {
-			$url = 'https://github.com/login/oauth/authorize?'.http_build_query(array(
+			$url = $url_authorize.'?'.http_build_query(array(
 				'client_id' 		=> $this->client_id,
 				'redirect_uri' 		=> $this->redirect_uri,
 				'scope'				=> 'user', // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
@@ -219,13 +222,18 @@ class yf_oauth {
 	*/
 	function login_odnoklassniki() {
 		$provider = 'odnoklassniki';
+
+#		$url_authorize = 'https://github.com/login/oauth/authorize';
+#		$url_access_token = 'https://github.com/login/oauth/access_token';
+#		$url_user = 'https://api.github.com/user';
+
 /*
 		if ($_SESSION['oauth'][$provider]['access_token']) {
 			$body = '';
 			if ($_SESSION['oauth'][$provider]['user']) {
 				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
 			} else {
-				$url = 'https://api.github.com/user?'.http_build_query(array(
+				$url = $url_user.'?'.http_build_query(array(
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 				));
 				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
@@ -238,17 +246,6 @@ class yf_oauth {
 				);
 				$_SESSION['oauth'][$provider]['user'] = $result;
 				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-
-				// Emails
-				$url_emails = 'https://api.github.com/user/emails?'.http_build_query(array(
-					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
-				));
-				$result = common()->get_remote_page($url_emails, $cache = false, $opts = array(), $response);
-				if (strpos($response['content_type'], 'json') !== false) {
-					$result = _class('utils')->object_to_array(json_decode($result));
-				}
-				$_SESSION['oauth'][$provider]['user']['emails'] = $result;
-				$body .= '<h4>user emails</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
 			}
 			$user_info_request = $_SESSION['oauth'][$provider]['user_info_request'];
 			if ($user_info_request) {
@@ -268,7 +265,7 @@ class yf_oauth {
 			if ($_GET['error']) {
 				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
 			} elseif ($_GET['code']) {
-				$url = 'https://github.com/login/oauth/access_token';
+				$url = $url_access_token;
 				$opts = array(
 					'post'	=> array(
 						'client_id'		=> $this->client_id,
@@ -303,7 +300,7 @@ class yf_oauth {
 */
 		} else {
 /*
-			$url = 'https://github.com/login/oauth/authorize?'.http_build_query(array(
+			$url = $url_authorize.'?'.http_build_query(array(
 				'client_id' 		=> $this->client_id,
 				'redirect_uri' 		=> $this->redirect_uri,
 				'scope'				=> 'user', // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
