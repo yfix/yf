@@ -28,14 +28,9 @@ class yf_oauth {
 		foreach ((array)$settings as $k => $v) {
 			$this->$k = $v;
 		}
-		if ($provider == 'vk') {
-			return $this->login_vk();
-		} elseif ($provider == 'github') {
-			return $this->login_github();
-		} elseif ($provider == 'odnoklassniki') {
-			return $this->login_odnoklassniki();
-		} elseif ($provider == 'facebook') {
-			return $this->login_facebook();
+		$fname = 'login_'.$provider;
+		if (method_exists($this, $fname)) {
+			return $this->$fname();
 		}
 		return '<h1 class="text-error">Error: no driver found for provider: '.$provider.'</h1>';
 	}
@@ -60,7 +55,7 @@ class yf_oauth {
 					'v'				=> '5.5',
 				));
 				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-				if (strpos($response['content_type'], 'json') !== false) {
+				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				}
 				$_SESSION['oauth'][$provider]['user_info_request'] = array(
@@ -101,7 +96,7 @@ class yf_oauth {
 					}
 					return js_redirect( $this->redirect_uri, $url_rewrite = false );
 				} elseif ($response['http_code'] == 200) {
-					if (strpos($response['content_type'], 'json') !== false) {
+					if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 						$result = _class('utils')->object_to_array(json_decode($result));
 					}
 					$_SESSION['oauth'][$provider]['access_token_request'] = array(
@@ -143,7 +138,7 @@ class yf_oauth {
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 				));
 				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
-				if (strpos($response['content_type'], 'json') !== false) {
+					if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				}
 				$_SESSION['oauth'][$provider]['user_info_request'] = array(
@@ -158,7 +153,7 @@ class yf_oauth {
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 				));
 				$result = common()->get_remote_page($url_emails, $cache = false, $opts = array(), $response);
-				if (strpos($response['content_type'], 'json') !== false) {
+				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				}
 				$_SESSION['oauth'][$provider]['user']['emails'] = $result;
@@ -192,7 +187,7 @@ class yf_oauth {
 				$response = array(); // Will be filled with debug information about request
 				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 				$raw_result = $result;
-				if (strpos($response['content_type'], 'json') !== false) {
+				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
 					$try_parsed = array();
@@ -251,7 +246,7 @@ class yf_oauth {
 					'sig'				=> $sign,
 				));
 				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
-				if (strpos($response['content_type'], 'json') !== false) {
+				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				}
 				$_SESSION['oauth'][$provider]['user_info_request'] = array(
@@ -290,7 +285,7 @@ class yf_oauth {
 				$response = array(); // Will be filled with debug information about request
 				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 				$raw_result = $result;
-				if (strpos($response['content_type'], 'json') !== false) {
+				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
 					$try_parsed = array();
@@ -344,7 +339,7 @@ class yf_oauth {
 					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
 				));
 				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
-				if (strpos($response['content_type'], 'json') !== false) {
+				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 					$result = _class('utils')->object_to_array(json_decode($result));
 				}
 				$_SESSION['oauth'][$provider]['user_info_request'] = array(
@@ -411,6 +406,123 @@ class yf_oauth {
 			));
 			return js_redirect($url, $url_rewrite = false);
 		}
+	}
+
+	/**
+	*/
+	function login_twitter() {
+		$provider = 'twitter';
+
+		$url_authorize = 'https://api.twitter.com/oauth/authorize';
+		$url_access_token = 'https://api.twitter.com/oauth/access_token';
+		$url_user = 'https://api.twitter.com/1/users/lookup.json';// ?user_id={user_id}';
+// TODO: oauth v1
+	}
+
+	/**
+	*/
+	function login_mailru() {
+		$provider = 'mailru';
+
+		$url_authorize = 'https://connect.mail.ru/oauth/authorize';
+		$url_access_token = 'https://connect.mail.ru/oauth/token';
+		$url_user = 'http://www.appsmail.ru/platform/api';
+
+		if ($_SESSION['oauth'][$provider]['access_token']) {
+			$body = '';
+			if ($_SESSION['oauth'][$provider]['user']) {
+				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
+			} else {
+				$method = 'users.getInfo';
+				$access_token = $_SESSION['oauth'][$provider]['access_token'];
+				$sign = md5('app_id='.$this->client_id. 'method='. $method. 'secure=1'. 'session_key='.$access_token. $this->client_public);
+				$url = $url_user.'?'.http_build_query(array(
+					'session_key'	=> $access_token,
+					'secure'		=> 1,
+					'app_id'		=> $this->client_id,
+					'method'		=> $method,
+					'sig'			=> $sign,
+				));
+				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
+				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
+					$result = _class('utils')->object_to_array(json_decode($result));
+				}
+				$_SESSION['oauth'][$provider]['user_info_request'] = array(
+					'result'	=> $result,
+					'response'	=> $response,
+				);
+				$_SESSION['oauth'][$provider]['user'] = $result;
+				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+			}
+			$user_info_request = $_SESSION['oauth'][$provider]['user_info_request'];
+			if ($user_info_request) {
+				$arr = $user_info_request;
+				$body .= '<h4>user_info_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
+			}
+			$access_token_request = $_SESSION['oauth'][$provider]['access_token_request'];
+			if ($access_token_request) {
+				$arr = $access_token_request;
+				$body .= '<h4>access_token_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
+			}
+			return $body;
+		}
+		if ($_GET['code'] || $_GET['error']) {
+			if ($_GET['error']) {
+				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
+			} elseif ($_GET['code']) {
+				$url = $url_access_token;
+				$opts = array(
+					'post'	=> array(
+						'client_id'		=> $this->client_id,
+						'client_secret' => $this->client_secret,
+						'redirect_uri' 	=> $this->redirect_uri,
+						'code'			=> $_GET['code'],
+						'grant_type'	=> 'authorization_code',
+					),
+				);
+				$response = array(); // Will be filled with debug information about request
+				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
+				if (substr($response['http_code'], 0, 1) == '4') { // 4xx
+					if (DEBUG_MODE) {
+						echo '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+					}
+					return js_redirect( $this->redirect_uri, $url_rewrite = false );
+				} elseif ($response['http_code'] == 200) {
+					if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
+						$result = _class('utils')->object_to_array(json_decode($result));
+					}
+					$_SESSION['oauth'][$provider]['access_token_request'] = array(
+						'result'	=> $result,
+						'response'	=> $response,
+					);
+					$_SESSION['oauth'][$provider]['access_token'] = $result['access_token'];
+				}
+				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+			}
+		} else {
+			$url = $url_authorize.'?'.http_build_query(array(
+				'client_id' 		=> $this->client_id,
+				'redirect_uri' 		=> $this->redirect_uri,
+				'response_type' 	=> 'code',
+#				'scope'				=> '',
+			));
+			return js_redirect($url, $url_rewrite = false);
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function login_google() {
+		$provider = 'google';
+// TODO
+	}
+
+	/**
+	*/
+	function login_yandex() {
+		$provider = 'yandex';
+// TODO
 	}
 
 	/**
