@@ -23,6 +23,7 @@ class yf_oauth {
 		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
 		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
 		$this->client_secret = $config[$provider]['client_secret'] ?: '';
+		$this->client_public = $config[$provider]['client_public'] ?: '';
 		$settings = $this->_providers[$provider];
 		foreach ((array)$settings as $k => $v) {
 			$this->$k = $v;
@@ -93,6 +94,9 @@ class yf_oauth {
 				$response = array(); // Will be filled with debug information about request
 				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 				if ($response['http_code'] == 401) {
+					if (DEBUG_MODE) {
+						echo '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+					}
 					return js_redirect( $this->redirect_uri, $url_rewrite = false );
 				} elseif ($response['http_code'] == 200) {
 					if (strpos($response['content_type'], 'json') !== false) {
@@ -196,6 +200,9 @@ class yf_oauth {
 					}
 				}
 				if (isset($result['error']) && strlen($result['error']) || !is_array($result)) {
+					if (DEBUG_MODE) {
+						echo '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+					}
 					return js_redirect( $this->redirect_uri, $url_rewrite = false );
 				} else {
 					$_SESSION['oauth'][$provider]['access_token_request'] = array(
@@ -223,18 +230,23 @@ class yf_oauth {
 	function login_odnoklassniki() {
 		$provider = 'odnoklassniki';
 
-#		$url_authorize = 'https://github.com/login/oauth/authorize';
-#		$url_access_token = 'https://github.com/login/oauth/access_token';
-#		$url_user = 'https://api.github.com/user';
+		$url_authorize = 'http://www.odnoklassniki.ru/oauth/authorize';
+		$url_access_token = 'http://api.odnoklassniki.ru/oauth/token.do';
+		$url_user = 'http://api.odnoklassniki.ru/fb.do';
 
-/*
 		if ($_SESSION['oauth'][$provider]['access_token']) {
 			$body = '';
 			if ($_SESSION['oauth'][$provider]['user']) {
 				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
 			} else {
+				$method = 'users.getCurrentUser';
+				$access_token = $_SESSION['oauth'][$provider]['access_token'];
+				$sign = md5('application_key='.$this->client_public. 'method='. $method. md5($access_token. $this->client_secret));
 				$url = $url_user.'?'.http_build_query(array(
-					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
+					'access_token'		=> $access_token,
+					'application_key'	=> $this->client_public,
+					'method'			=> $method,
+					'sig'				=> $sign,
 				));
 				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
 				if (strpos($response['content_type'], 'json') !== false) {
@@ -259,9 +271,7 @@ class yf_oauth {
 			}
 			return $body;
 		}
-*/
 		if ($_GET['code'] || $_GET['error']) {
-/*
 			if ($_GET['error']) {
 				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
 			} elseif ($_GET['code']) {
@@ -270,8 +280,9 @@ class yf_oauth {
 					'post'	=> array(
 						'client_id'		=> $this->client_id,
 						'client_secret' => $this->client_secret,
-						'code'			=> $_GET['code'],
 						'redirect_uri' 	=> $this->redirect_uri,
+						'code'			=> $_GET['code'],
+						'grant_type'	=> 'authorization_code',
 					),
 				);
 				$response = array(); // Will be filled with debug information about request
@@ -287,6 +298,9 @@ class yf_oauth {
 					}
 				}
 				if (isset($result['error']) && strlen($result['error']) || !is_array($result)) {
+					if (DEBUG_MODE) {
+						echo '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+					}
 					return js_redirect( $this->redirect_uri, $url_rewrite = false );
 				} else {
 					$_SESSION['oauth'][$provider]['access_token_request'] = array(
@@ -297,18 +311,16 @@ class yf_oauth {
 				}
 				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
 			}
-*/
 		} else {
-/*
 			$url = $url_authorize.'?'.http_build_query(array(
 				'client_id' 		=> $this->client_id,
 				'redirect_uri' 		=> $this->redirect_uri,
-				'scope'				=> 'user', // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
-// TODO save this in session and implement for all other providers too to prevent CSRF
-				'state'				=> md5(microtime().rand(1,10000000)), // An unguessable random string. It is used to protect against cross-site request forgery attacks.
+				'scope'				=> 'SET_STATUS;VALUABLE_ACCESS',
+#				'scope'				=> 'SET_STATUS',
+				'response_type' 	=> 'code',
+#				'layout'			=> 'm', // http://apiok.ru/wiki/pages/viewpage.action?pageId=42476652    layout ="m"- мобильная форма авторизации, если не используете iOS или Android интеграцию
 			));
 			return js_redirect($url, $url_rewrite = false);
-*/
 		}
 	}
 
