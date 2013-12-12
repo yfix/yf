@@ -21,6 +21,11 @@ abstract class yf_oauth_driver {
 	function _decode_result($result, $response) {
 		if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
 			$result = _class('utils')->object_to_array(json_decode($result));
+		} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
+			parse_str($result, $try_parsed);
+			if (is_array($try_parsed) && count($try_parsed) > 1) {
+				$result = $try_parsed;
+			}
 		}
 		return $result;
 	}
