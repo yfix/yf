@@ -282,6 +282,7 @@ class yf_remote_files {
 		}
 		if ($this->DEBUG) {
 			$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
+			$info['CURL_REQUEST_DATE'] = date('Y-m-d H:i:s');
 		}
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
