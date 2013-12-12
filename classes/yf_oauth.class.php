@@ -34,6 +34,8 @@ class yf_oauth {
 			return $this->login_github();
 		} elseif ($provider == 'odnoklassniki') {
 			return $this->login_odnoklassniki();
+		} elseif ($provider == 'facebook') {
+			return $this->login_facebook();
 		}
 		return '<h1 class="text-error">Error: no driver found for provider: '.$provider.'</h1>';
 	}
@@ -319,6 +321,93 @@ class yf_oauth {
 #				'scope'				=> 'SET_STATUS',
 				'response_type' 	=> 'code',
 #				'layout'			=> 'm', // http://apiok.ru/wiki/pages/viewpage.action?pageId=42476652    layout ="m"- мобильная форма авторизации, если не используете iOS или Android интеграцию
+			));
+			return js_redirect($url, $url_rewrite = false);
+		}
+	}
+
+	/**
+	*/
+	function login_facebook() {
+		$provider = 'facebook';
+
+		$url_authorize = 'https://www.facebook.com/dialog/oauth';
+		$url_access_token = 'https://graph.facebook.com/oauth/access_token';
+		$url_user = 'https://graph.facebook.com/me';
+
+		if ($_SESSION['oauth'][$provider]['access_token']) {
+			$body = '';
+			if ($_SESSION['oauth'][$provider]['user']) {
+				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
+			} else {
+				$url = $url_user.'?'.http_build_query(array(
+					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
+				));
+				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
+				if (strpos($response['content_type'], 'json') !== false) {
+					$result = _class('utils')->object_to_array(json_decode($result));
+				}
+				$_SESSION['oauth'][$provider]['user_info_request'] = array(
+					'result'	=> $result,
+					'response'	=> $response,
+				);
+				$_SESSION['oauth'][$provider]['user'] = $result;
+				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+			}
+			$user_info_request = $_SESSION['oauth'][$provider]['user_info_request'];
+			if ($user_info_request) {
+				$arr = $user_info_request;
+				$body .= '<h4>user_info_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
+			}
+			$access_token_request = $_SESSION['oauth'][$provider]['access_token_request'];
+			if ($access_token_request) {
+				$arr = $access_token_request;
+				$body .= '<h4>access_token_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
+			}
+			return $body;
+		}
+		if ($_GET['code'] || $_GET['error']) {
+			if ($_GET['error']) {
+				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
+			} elseif ($_GET['code']) {
+				$url = $url_access_token.'?'.http_build_query(array(
+					'client_id'		=> $this->client_id,
+					'client_secret' => $this->client_secret,
+					'code'			=> $_GET['code'],
+					'redirect_uri' 	=> $this->redirect_uri,
+				));
+				$response = array(); // Will be filled with debug information about request
+				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
+				$raw_result = $result;
+#				if (strpos($response['content_type'], 'json') !== false) {
+#					$result = _class('utils')->object_to_array(json_decode($result));
+#				} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
+					$try_parsed = array();
+					parse_str($result, $try_parsed);
+					if (is_array($try_parsed) && count($try_parsed) > 1) {
+						$result = $try_parsed;
+					}
+#				}
+				if (isset($result['error']) || !is_array($result) || $response['http_code'] == 400) {
+					if (DEBUG_MODE) {
+						echo '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+					}
+					return js_redirect( $this->redirect_uri, $url_rewrite = false );
+				} else {
+					$_SESSION['oauth'][$provider]['access_token_request'] = array(
+						'result'	=> $result,
+						'response'	=> $response,
+					);
+					$_SESSION['oauth'][$provider]['access_token'] = $result['access_token'];
+				}
+				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
+			}
+		} else {
+			$url = $url_authorize.'?'.http_build_query(array(
+				'client_id' 		=> $this->client_id,
+				'redirect_uri' 		=> $this->redirect_uri,
+				'response_type' 	=> 'code',
+#				'scope'				=> '',
 			));
 			return js_redirect($url, $url_rewrite = false);
 		}
