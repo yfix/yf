@@ -48,7 +48,7 @@ class yf_remote_files {
 	* Framework constructor
 	*/
 	function _init() {
-		if ($GLOBALS['USE_CURL_DEBUG']) {
+		if ($GLOBALS['USE_CURL_DEBUG'] || conf('USE_CURL_DEBUG')) {
 			$this->DEBUG = true;
 		}
 	}
@@ -277,6 +277,12 @@ class yf_remote_files {
 		$info = curl_getinfo($ch);
 		$info['CURL_ERRNO']	= curl_errno($ch);
 		$info['CURL_ERROR']	= curl_error($ch);
+		if (strlen($result) < 1000) {
+			$info['CURL_RESULT_RAW'] = $result;
+		}
+		if ($this->DEBUG) {
+			$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
+		}
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
 
@@ -313,7 +319,6 @@ class yf_remote_files {
 		curl_setopt($this->_curl_threads[$id], CURLOPT_URL, $url);
 		// Apply array of curl options (useful for debugging, see $this->pretty_dump_curl_opts() )
 		$curl_opts = $this->_set_curl_options($url_options, false);
-		//print_R($this->pretty_dump_curl_opts($curl_opts));
 		if ($this->_is_avail_setopt_array) {
 			curl_setopt_array($this->_curl_threads[$id], $curl_opts);
 		} else {
@@ -627,7 +632,7 @@ class yf_remote_files {
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
 			$curl_opts[CURLOPT_VERBOSE] = true;
 		}
-		if ($this->DEBUG) {
+		if ($this->DEBUG && main()->CONSOLE_MODE) {
 			print_r($this->pretty_dump_curl_opts($curl_opts));
 		}
 		return $curl_opts;
