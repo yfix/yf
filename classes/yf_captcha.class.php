@@ -186,6 +186,10 @@ class yf_captcha {
 		if (!$this->ENABLED) {
 			return false;
 		}
+		if (is_array($stpl_name)) {
+			$extra += $stpl_name;
+			$stpl_name = $extra['captcha_stpl_name'];
+		}
 		$stpl_name = $extra['captcha_stpl_name'] ?: $stpl_name;
 		if (empty($location)) {
 			$location = './?object='.$_GET['object'].'&action=show_image';
