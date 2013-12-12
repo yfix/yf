@@ -36,6 +36,7 @@ class yf_oauth {
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
+/*
 		$paths = array(
 			YF_PATH. 'share/oauth_providers/',
 			PROJECT_PATH. 'share/oauth_providers/',
@@ -46,6 +47,17 @@ class yf_oauth {
 				continue;
 			}
 			require_once $path;
+			$this->_providers[$name] = $data;
+		}
+*/
+		$paths = array(
+			YF_PATH. 'classes/oauth/',
+		);
+		foreach ((array)_class('dir')->scan($paths, 1, '-f /yf_oauth_driver_[a-z0-9_-]+\.class\.php$/i') as $path) {
+			$name = trim(substr(trim(basename($path)), strlen('yf_oauth_driver_'), -strlen('.class.php')));
+			if (!$name) {
+				continue;
+			}
 			$this->_providers[$name] = $data;
 		}
 		$this->_providers_loaded = true;
