@@ -29,4 +29,36 @@ abstract class yf_oauth_driver {
 		}
 		return $result;
 	}
+
+	/**
+	*/
+	function get_user_info() {
+		if (!$_SESSION['oauth'][$this->provider]['access_token']) {
+			$this->get_access_token();
+		}
+		if (!$_SESSION['oauth'][$this->provider]['access_token']) {
+			return false;
+		}
+		if (!$_SESSION['oauth'][$this->provider]['user']) {
+			$url = $this->url_user.'?'.http_build_query(array(
+				'access_token'	=> $_SESSION['oauth'][$this->provider]['access_token'],
+			));
+			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
+			$result = $this->_decode_result($result, $response);
+			$_SESSION['oauth'][$this->provider]['user_info_request'] = array(
+				'result'	=> $result,
+				'response'	=> $response,
+			);
+			$_SESSION['oauth'][$this->provider]['user'] = $result;
+		}
+		return $_SESSION['oauth'][$this->provider]['user'];
+	}
+
+	/**
+	*/
+	abstract function get_access_token();
+
+	/**
+	*/
+	abstract function authorize();
 }
