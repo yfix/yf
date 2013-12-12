@@ -163,7 +163,7 @@ class yf_send_mail {
 				$mail->CharSet  = $charset ?: $this->DEFAULT_CHARSET;
 				$mail->From     = $email_from;
 				$mail->FromName = $name_from;
-				if( DEBUG_MODE ) {
+				if( DEBUG_MODE && $this->MAIL_DEBUG ) {
 					$mail->SMTPDebug = 1;
 				}
 				if (is_array($email_to)) {
@@ -213,7 +213,7 @@ class yf_send_mail {
 			if (!$result) {
 				$error_message .= $mail->ErrorInfo;
 			}
-			if (DEBUG_MODE) {
+			if( DEBUG_MODE && $this->MAIL_DEBUG ) {
 				echo $error_message;
 			}
 		// Internal Framework mailer
