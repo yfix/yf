@@ -75,11 +75,11 @@ class yf_test {
 	/**
 	*/
 	function oauth2 () {
-		$providers = _class('oauth2')->_get_providers();
+		$providers = _class('oauth')->_get_providers();
 		if ($_GET['id']) {
 			$provider = $_GET['id'];
 #			$settings = $providers($_GET['id']);
-			return _class('oauth2')->login($provider);
+			return _class('oauth')->login($provider);
 		}
 		$body = array();
 		foreach ((array)$providers as $name => $settings) {
