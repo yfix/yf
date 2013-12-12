@@ -14,110 +14,13 @@ class yf_oauth {
 	/**
 	*/
 	function login($provider) {
-		$providers = $this->_load_oauth_providers();
-		$config = $this->_load_oauth_config();
-		if (!$config[$provider] || !$config[$provider]['client_id'] || !$config[$provider]['client_secret']) {
-			return '<h1 class="text-error">Error: no config client_id and client_secret for provider: '.$provider.'</h1>';
+		$user_info = _class('oauth_driver_'.$provider, 'classes/oauth/')->login();
+		if ($user_info) {
+			return '<h1 class="text-success">User info</h1>
+				<pre><small>'.print_r($user_info, 1).'</small></pre>
+				<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
 		}
-		$this->server = $provider;
-		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
-		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
-		$this->client_secret = $config[$provider]['client_secret'] ?: '';
-		$this->client_public = $config[$provider]['client_public'] ?: '';
-		$settings = $this->_providers[$provider];
-		foreach ((array)$settings as $k => $v) {
-			$this->$k = $v;
-		}
-		$fname = 'login_'.$provider;
-		if (method_exists($this, $fname)) {
-			return $this->$fname();
-		}
-		return '<h1 class="text-error">Error: no driver found for provider: '.$provider.'</h1>';
-	}
-
-	/**
-	*/
-	function login_vk() {
-		$provider = 'vk';
-
-		$url_authorize = 'https://oauth.vk.com/authorize';
-		$url_access_token = 'https://oauth.vk.com/access_token';
-		$url_user = 'https://api.vk.com/method/users.get';
-
-		if ($_SESSION['oauth'][$provider]['access_token']) {
-			$body = '';
-			if ($_SESSION['oauth'][$provider]['user']) {
-				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
-			} else {
-				$url = $url_user.'?'.http_build_query(array(
-					'user_id'		=> $_SESSION['oauth'][$provider]['access_token_request']['result']['user_id'],
-					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
-					'v'				=> '5.5',
-				));
-				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-				if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
-					$result = _class('utils')->object_to_array(json_decode($result));
-				}
-				$_SESSION['oauth'][$provider]['user_info_request'] = array(
-					'result'	=> $result,
-					'response'	=> $response,
-				);
-				$_SESSION['oauth'][$provider]['user'] = $result;
-				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-			}
-			$user_info_request = $_SESSION['oauth'][$provider]['user_info_request'];
-			if ($user_info_request) {
-				$arr = $user_info_request;
-				$body .= '<h4>user_info_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
-			}
-			$access_token_request = $_SESSION['oauth'][$provider]['access_token_request'];
-			if ($access_token_request) {
-				$arr = $access_token_request;
-				$body .= '<h4>access_token_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
-			}
-			return $body;
-		}
-		if ($_GET['code'] || $_GET['error']) {
-			if ($_GET['error']) {
-				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
-			} elseif ($_GET['code']) {
-				$url = $url_access_token.'?'.http_build_query(array(
-					'client_id'		=> $this->client_id,
-					'client_secret' => $this->client_secret,
-					'code'			=> $_GET['code'],
-					'redirect_uri' 	=> $this->redirect_uri,
-					'v'				=> '5.5',
-				));
-				$response = array(); // Will be filled with debug information about request
-				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-				if ($response['http_code'] == 401) {
-					if (DEBUG_MODE) {
-						echo '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-					}
-					return js_redirect( $this->redirect_uri, $url_rewrite = false );
-				} elseif ($response['http_code'] == 200) {
-					if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
-						$result = _class('utils')->object_to_array(json_decode($result));
-					}
-					$_SESSION['oauth'][$provider]['access_token_request'] = array(
-						'result'	=> $result,
-						'response'	=> $response,
-					);
-					$_SESSION['oauth'][$provider]['access_token'] = $result['access_token'];
-				}
-				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-			}
-		} else {
-			$url = $url_authorize.'?'.http_build_query(array(
-				'client_id' 		=> $this->client_id,
-				'redirect_uri' 		=> $this->redirect_uri,
-				'scope'				=> 'offline,wall,friends,email', // Comma or space separated names
-				'response_type' 	=> 'code',
-				'v'					=> '5.5',
-			));
-			return js_redirect($url, $url_rewrite = false);
-		}
-		return false;
+		return '<h1 class="text-error">Error</h1>';
 	}
 
 	/**
