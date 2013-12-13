@@ -7,7 +7,6 @@ class yf_oauth {
 	/**
 	*/
 	function _init() {
-// TODO: create special section in debug panel with curl requests inside
 		conf('USE_CURL_DEBUG', true);
 	}
 
@@ -16,11 +15,14 @@ class yf_oauth {
 	function login($provider) {
 		$user_info = _class('oauth_driver_'.$provider, 'classes/oauth/')->login();
 		if ($user_info) {
-			return '<h1 class="text-success">User info</h1>
-				<pre><small>'.print_r($user_info, 1).'</small></pre>
-				<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
+			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($user_info, 1).'</small></pre>';
+		} else {
+			$body .= '<h1 class="text-error">Error</h1>';
 		}
-		return '<h1 class="text-error">Error</h1>';
+		if (DEBUG_MODE) {
+			$body .= '<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
+		}
+		return $body;
 	}
 
 	/**
