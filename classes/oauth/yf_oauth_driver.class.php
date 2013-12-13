@@ -20,12 +20,6 @@ abstract class yf_oauth_driver {
 
 	/**
 	*/
-	function _init() {
-		$this->storage = &$_SESSION['oauth'][$this->provider];
-	}
-
-	/**
-	*/
 	function login() {
 		$config = _class('oauth')->_load_oauth_config();
 		if (!$config[$this->provider] || !$config[$this->provider]['client_id'] || !$config[$this->provider]['client_secret']) {
@@ -54,8 +48,12 @@ abstract class yf_oauth_driver {
 			));
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
-			$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
-			$this->_storage_set('user', $result);
+			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
+				return false;
+			} else {
+				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user', $result);
+			}
 		}
 		return $this->_storage_get('user');
 	}
@@ -88,7 +86,8 @@ abstract class yf_oauth_driver {
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 		$result = $this->_decode_result($result, $response, __FUNCTION__);
 		if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
-			return js_redirect( $this->redirect_uri, $url_rewrite = false );
+			js_redirect( $this->redirect_uri, $url_rewrite = false );
+			return false;
 		} else {
 			$this->_storage_set('access_token_request', array('result' => $result, 'response' => $response));
 			$this->_storage_set('access_token', $result['access_token']);
@@ -106,7 +105,8 @@ abstract class yf_oauth_driver {
 			'response_type' => 'code',
 			'state'			=> md5(microtime().rand(1,10000000)), // An unguessable random string. It is used to protect against cross-site request forgery attacks.
 		));
-		return js_redirect($url, $url_rewrite = false);
+		js_redirect($url, $url_rewrite = false);
+		return false;
 	}
 
 	/**
@@ -126,13 +126,13 @@ abstract class yf_oauth_driver {
 	/**
 	*/
 	function _storage_get($key) {
-		return isset($this->storage[$key]) ? $this->storage[$key] : false;
+		return isset($_SESSION['oauth'][$this->provider][$key]) ? $_SESSION['oauth'][$this->provider][$key] : false;
 	}
 
 	/**
 	*/
 	function _storage_set($key, $val = null) {
-		$this->storage[$key] = $val;
+		$_SESSION['oauth'][$this->provider][$key] = $val;
 		return $val;
 	}
 }
