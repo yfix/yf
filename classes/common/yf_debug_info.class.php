@@ -718,7 +718,14 @@ class yf_debug_info {
 		if (!$this->_SHOW_SESSION_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_SESSION);
+		$items = $_SESSION;
+		foreach ((array)$items as $k => $v) {
+			$items[$k] = array(
+				'key' => $k,
+				'value' => '<pre>'.var_export($v, 1).'</pre>',
+			);
+		}
+		return $this->_show_auto_table($items/*, array('hidden_map' => array('trace' => 'id'))*/);
 	}
 
 	/**

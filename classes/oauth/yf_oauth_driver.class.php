@@ -136,4 +136,12 @@ abstract class yf_oauth_driver {
 		$_SESSION['oauth'][$this->provider][$key] = $val;
 		return $val;
 	}
+
+	/**
+	*/
+	function _storage_clean() {
+		if (isset($_SESSION['oauth'][$this->provider])) {
+			unset($_SESSION['oauth'][$this->provider]);
+		}
+	}
 }
