@@ -12,4 +12,13 @@ class yf_oauth_driver_yahoo extends yf_oauth_driver1 {
 
 // TODO
 
+	/**
+	*/
+#	function _decode_result($result, $response, $for_method = '') {
+#		// Force content_type here as facebook return text/plain, but in form urlencoded format
+#		if ($for_method == 'authorize') {
+#			$response['content_type'] = 'application/x-www-form-urlencoded';
+#		}
+#		return parent::_decode_result($result, $response, $for_method);
+#	}
 }

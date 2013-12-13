@@ -15,7 +15,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	/**
 	*/
 	function get_user_info() {
-$this->_storage_clean();
+#$this->_storage_clean();
 		$access_token = $this->_storage_get('access_token');
 		if (!$access_token) {
 			$access_token = $this->get_access_token();
@@ -76,12 +76,12 @@ $this->_storage_clean();
 
 		$params = array(
 			'oauth_version'			=> $this->oauth_version,
-			'oauth_callback'		=> $this->redirect_uri,
 			'oauth_consumer_key'	=> $this->client_id,
 			'oauth_nonce'			=> $this->_storage_get('nonce'),
 			'oauth_timestamp'		=> $this->_storage_get('last_time'),
 			'oauth_signature_method'=> 'HMAC-SHA1',
 			'oauth_token'			=> $oauth_token,
+			'oauth_verifier'		=> $oauth_verifier,
 		);
 		$url = $this->url_access_token;
 		$opts = array(
