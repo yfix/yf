@@ -7,7 +7,16 @@ abstract class yf_oauth_driver {
 	protected $url_user = '';
 	protected $provider = '';
 	protected $scope = '';
+	protected $get_access_token_method = 'POST';
+	protected $url_params = array();
+	protected $url_params_authorize = array();
+	protected $url_params_access_token = array();
+	protected $url_params_user_info = array();
 	protected $storage = array();
+	protected $redirect_uri = '';
+	protected $client_id = '';
+	protected $client_secret = '';
+	protected $client_public = '';
 
 	/**
 	*/
@@ -40,7 +49,7 @@ abstract class yf_oauth_driver {
 			}
 		}
 		if (!$this->_storage_get('user')) {
-			$url = $this->url_user.'?'.http_build_query(array(
+			$url = $this->url_user.'?'.http_build_query($this->url_params + $this->url_params_user_info + array(
 				'access_token'	=> $access_token,
 			));
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
@@ -62,15 +71,20 @@ abstract class yf_oauth_driver {
 		if (!$code) {
 			return $this->authorize();
 		}
-		$url = $this->url_access_token;
-		$opts = array(
-			'post'	=> array(
-				'client_id'		=> $this->client_id,
-				'client_secret' => $this->client_secret,
-				'redirect_uri' 	=> $this->redirect_uri,
-				'code'			=> $code,
-			),
+		$url_params = $this->url_params + $this->url_params_access_token + array(
+			'client_id'		=> $this->client_id,
+			'client_secret' => $this->client_secret,
+			'redirect_uri' 	=> $this->redirect_uri,
+			'code'			=> $code,
 		);
+		if ($this->get_access_token_method == 'POST') {
+			$url = $this->url_access_token;
+			$opts = array(
+				'post'	=> $url_params,
+			);
+		} else {
+			$url = $this->url_access_token.'?'.http_build_query($url_params);
+		}
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 		$result = $this->_decode_result($result, $response, __FUNCTION__);
 		if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
@@ -85,7 +99,7 @@ abstract class yf_oauth_driver {
 	/**
 	*/
 	function authorize() {
-		$url = $this->url_authorize.'?'.http_build_query(array(
+		$url = $this->url_authorize.'?'.http_build_query($this->url_params + $this->url_params_authorize + array(
 			'client_id' 	=> $this->client_id,
 			'redirect_uri' 	=> $this->redirect_uri,
 			'scope'			=> $this->scope,
@@ -99,16 +113,12 @@ abstract class yf_oauth_driver {
 	*/
 	function _decode_result($result, $response, $for_method = '') {
 		if (strpos($response['content_type'], 'json') !== false || strpos($response['content_type'], 'javascript') !== false) {
-
 			$result = _class('utils')->object_to_array(json_decode($result));
-
 		} elseif (strpos($response['content_type'], 'application/x-www-form-urlencoded') !== false) {
-
 			parse_str($result, $try_parsed);
 			if (is_array($try_parsed) && count($try_parsed) > 1) {
 				$result = $try_parsed;
 			}
-
 		}
 		return $result;
 	}
