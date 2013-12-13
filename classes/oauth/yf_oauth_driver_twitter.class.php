@@ -26,6 +26,7 @@ echo __FUNCTION__.' | '.__LINE__.'<br>'.PHP_EOL;
 				return false;
 			}
 		}
+/*
 		if (!$this->_storage_get('user')) {
 			$access_token_request = $this->_storage_get('access_token_request');
 			$url = $this->url_user.'?'.http_build_query($this->url_params + (array)$this->url_params_user_info + array(
@@ -44,6 +45,7 @@ echo __FUNCTION__.' | '.__LINE__.'<br>'.PHP_EOL;
 			}
 		}
 		return $this->_storage_get('user');
+*/
 	}
 
 	/**
