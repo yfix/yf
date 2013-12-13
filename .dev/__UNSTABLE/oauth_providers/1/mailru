@@ -1,5 +1,0 @@
-authorize_uri https://connect.mail.ru/oauth/authorize
-token_uri https://connect.mail.ru/oauth/token
-userinfo_uri http://www.appsmail.ru/platform/api
-userinfo_composer  {method, <<"users.getInfo">>},    {secure, <<"1">>},   {session_key, get_value(access_token, Auth)}, "method=users.getInfosecure=1session_key=",
-field_names [uid, email, name, pic, sex, undefined]}
