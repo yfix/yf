@@ -100,10 +100,13 @@ class yf_shop_supplier_panel_upload_images {
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 
 		$filename = ltrim($filename, ' .-_+=/\|,!@#%~&*()');
-		if(!strpos($filename,'_')){
+		if(strpos($filename,'_')){
+			$articul = explode('_', $filename);
+		}elseif(strpos($filename,'.')){
+			$articul = explode('.', $filename);
+		}else{
 			return "Wrong filename";
 		}
-		$articul = explode('_', $filename);
 		if(!empty($articul[0])){
 			$articul = _es(strip_tags($articul[0]));
 			$sql = 'SELECT id FROM '.db('shop_products').' 
