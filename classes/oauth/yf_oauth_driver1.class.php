@@ -3,29 +3,29 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 
-	protected $url_authorize = '';
 	protected $url_request_token = '';
 	protected $url_access_token = '';
 	protected $url_authenticate = '';
 	protected $url_user = '';
 	protected $scope = '';
-	protected $get_access_token_method = 'POST';
 	protected $oauth_version = '1.0';
+	protected $access_token_use_header = true;
 
 	/**
 	*/
 	function get_user_info() {
 #$this->_storage_clean();
 		$access_token = $this->_storage_get('access_token');
-		if (!$access_token) {
+		$access_token_secret = $this->_storage_get('access_token_secret');
+		if (!$access_token || !$access_token_secret) {
 			$access_token = $this->get_access_token();
-			if (!$access_token) {
+			$access_token_secret = $this->_storage_get('access_token_secret');
+			if (!$access_token || !$access_token_secret) {
 #				$this->_storage_clean();
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			}
 		}
-		$access_token_secret = $this->_storage_get('access_token_secret');
 		if (!$this->_storage_get('user')) {
 			$user_id = $this->_storage_get('user_id');
 			$url = $this->url_user.'?'.http_build_query($this->url_params + (array)$this->url_params_user_info + array(
@@ -71,6 +71,8 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			return $this->authenticate();
 		}
 
+		$request_token = $this->_storage_get('request_token');
+
 		$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 		$this->_storage_set('last_time', time());
 
@@ -84,12 +86,19 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			'oauth_verifier'		=> $oauth_verifier,
 		);
 		$url = $this->url_access_token;
-		$opts = array(
-			'post'	=> array(
-				'oauth_verifier' => $oauth_verifier,
-			),
-			'custom_header' => $this->_get_oauth_header($url, $params),
-		);
+		if ($this->access_token_use_header) {
+			$opts = array(
+				'post'	=> array(
+					'oauth_verifier' => $oauth_verifier,
+				),
+				'custom_header' => $this->_get_oauth_header($url, $params),
+			);
+		} else {
+			$opts = array(
+				'post'	=> $params,
+				'custom_header' => $this->_get_oauth_header($url, $params, 'POST', $request_token['oauth_token_secret']),
+			);
+		}
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + $response, __FUNCTION__);
 		if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
