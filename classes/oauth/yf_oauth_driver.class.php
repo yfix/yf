@@ -2,10 +2,10 @@
 
 abstract class yf_oauth_driver {
 
+	protected $provider = '';
 	protected $url_authorize = '';
 	protected $url_access_token = '';
 	protected $url_user = '';
-	protected $provider = '';
 	protected $scope = '';
 	protected $get_access_token_method = 'POST';
 	protected $url_params = array();
@@ -22,6 +22,7 @@ abstract class yf_oauth_driver {
 	*/
 	function login() {
 		$config = _class('oauth')->_load_oauth_config();
+		$this->provider = substr(get_called_class(), strlen(__CLASS__) + 1); // yf_oauth_driver_vk, yf_oauth_driver
 		if (!$config[$this->provider] || !$config[$this->provider]['client_id'] || !$config[$this->provider]['client_secret']) {
 			return '<h1 class="text-error">Error: no config client_id and client_secret for provider: '.$this->provider.'</h1>';
 		}

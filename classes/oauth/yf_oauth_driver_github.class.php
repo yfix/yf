@@ -7,7 +7,6 @@ class yf_oauth_driver_github extends yf_oauth_driver {
 	protected $url_access_token = 'https://github.com/login/oauth/access_token';
 	protected $url_user = 'https://api.github.com/user';
 	protected $url_user_emails = 'https://api.github.com/user/emails';
-	protected $provider = 'github';
 	protected $scope = 'user'; // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
 	protected $get_access_token_method = 'POST';
 

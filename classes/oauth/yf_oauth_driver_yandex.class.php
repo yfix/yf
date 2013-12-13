@@ -6,7 +6,6 @@ class yf_oauth_driver_yandex extends yf_oauth_driver {
 	protected $url_authorize = 'https://oauth.yandex.ru/authorize';
 	protected $url_access_token = 'https://oauth.yandex.ru/token';
 	protected $url_user = 'https://login.yandex.ru/info';
-	protected $provider = 'yandex';
 	protected $scope = '';
 	protected $get_access_token_method = 'POST';
 	protected $url_params_access_token = array(
