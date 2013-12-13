@@ -7,6 +7,7 @@ class yf_oauth_driver_github extends yf_oauth_driver {
 	protected $url_access_token = 'https://github.com/login/oauth/access_token';
 	protected $url_user = 'https://api.github.com/user';
 	protected $provider = 'github';
+	protected $scope = 'user'; // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
 
 	/**
 	*/
@@ -55,13 +56,13 @@ class yf_oauth_driver_github extends yf_oauth_driver {
 			'post'	=> array(
 				'client_id'		=> $this->client_id,
 				'client_secret' => $this->client_secret,
-				'code'			=> $code,
 				'redirect_uri' 	=> $this->redirect_uri,
+				'code'			=> $code,
 			),
 		);
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 		$result = $this->_decode_result($result, $response);
-		if (isset($result['error']) && strlen($result['error']) || !is_array($result)) {
+		if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
 			return js_redirect( $this->redirect_uri, $url_rewrite = false );
 		} else {
 			$_SESSION['oauth'][$this->provider]['access_token_request'] = array(
@@ -71,18 +72,5 @@ class yf_oauth_driver_github extends yf_oauth_driver {
 			$_SESSION['oauth'][$this->provider]['access_token'] = $result['access_token'];
 		}
 		return $_SESSION['oauth'][$this->provider]['access_token'];
-	}
-
-	/**
-	*/
-	function authorize () {
-		$url = $this->url_authorize.'?'.http_build_query(array(
-			'client_id' 	=> $this->client_id,
-			'redirect_uri' 	=> $this->redirect_uri,
-			'scope'			=> 'user', // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
-// TODO save this in session and implement for all other providers too to prevent CSRF
-			'state'			=> md5(microtime().rand(1,10000000)), // An unguessable random string. It is used to protect against cross-site request forgery attacks.
-		));
-		return js_redirect($url, $url_rewrite = false);
 	}
 }
