@@ -1,7 +1,7 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_yandex extends yf_oauth_driver {
+load('oauth_driver2', 'framework', 'classes/oauth/');
+class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://oauth.yandex.ru/authorize';
 	protected $url_access_token = 'https://oauth.yandex.ru/token';

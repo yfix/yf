@@ -1,7 +1,7 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_odnoklassniki extends yf_oauth_driver {
+load('oauth_driver2', 'framework', 'classes/oauth/');
+class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'http://www.odnoklassniki.ru/oauth/authorize';
 	protected $url_access_token = 'http://api.odnoklassniki.ru/oauth/token.do';

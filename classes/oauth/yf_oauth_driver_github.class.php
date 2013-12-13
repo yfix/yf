@@ -1,7 +1,7 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_github extends yf_oauth_driver {
+load('oauth_driver2', 'framework', 'classes/oauth/');
+class yf_oauth_driver_github extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://github.com/login/oauth/authorize';
 	protected $url_access_token = 'https://github.com/login/oauth/access_token';
