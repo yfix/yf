@@ -962,7 +962,7 @@ class yf_debug_info {
 			return '';
 		}
 		$items = debug('curl_get_remote_page');
-		foreach ($items as $k => $v) {
+		foreach ((array)$items as $k => $v) {
 			$items[$k] = array(
 				'id' => $k + 1,
 				'info' => '<pre>'.var_export($v['info'], 1).'</pre>',

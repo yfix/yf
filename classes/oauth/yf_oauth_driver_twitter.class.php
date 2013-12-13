@@ -85,6 +85,10 @@ class yf_oauth_driver_twitter extends yf_oauth_driver {
 	/**
 	*/
 	function authorize() {
+		$request_token_info = $this->_storage_get('request_token');
+		if ($request_token_info) {
+			return $request_token_info;
+		}
 		$url = $this->url_request_token;
 
 		$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
@@ -92,30 +96,22 @@ class yf_oauth_driver_twitter extends yf_oauth_driver {
 
 		$params = array(
 			'oauth_version'			=> '1.0',
-#			'oauth_callback'		=> $this->encode($this->redirect_uri),
+			'oauth_callback'		=> $this->redirect_uri,
 			'oauth_consumer_key'	=> $this->client_id,
 			'oauth_nonce'			=> $this->_storage_get('nonce'), // 'kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg',
 			'oauth_timestamp'		=> $this->_storage_get('last_time'),
 			'oauth_signature_method'=> 'HMAC-SHA1',
-#			'oauth_signature'		=> '', // 'tnnArxj06cWHq44gCs1OSKk%2FjLY%3D',
-#			'oauth_token' => '', // '370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb',
 		);
 		ksort($params);
 
-		$str = array();
+		$sign_str = array();
 		foreach($params as $k => $v) {
-			$str[$k] = $k.'="'.$this->encode($v).'"';
+			$sign_str[$k] = $k.'="'.$this->encode($v).'"';
 		}
-		$str = 'POST'. '&'. $this->encode($url). '&'. $this->encode(http_build_query($params));
-#echo $str.'<br>'.PHP_EOL;
+		$sign_str = 'POST'. '&'. $this->encode($url). '&'. $this->encode(http_build_query($params));
 
-		$sign = $this->hmac($str, $this->client_secret.'&'.$oauth_token_secret); // $oauth_token_secret here is empty, it is ok    http://habrahabr.ru/post/145988/
-#		$sign = $this->hmac_sha1($str, $this->client_secret.'&'.$oauth_token_secret); // $oauth_token_secret here is empty, it is ok    http://habrahabr.ru/post/145988/
-#echo $sign.'<br>'.PHP_EOL;
-echo		$sign = $this->encode(base64_encode($sign));
-#echo		$sign = $this->encode($sign);
-#echo		$sign = base64_encode($sign);
-#echo $sign.'<br>'.PHP_EOL;
+		$sign = $this->hmac_sha1($sign_str, $this->client_secret.'&'.$oauth_token_secret); // $oauth_token_secret here is empty, it is ok    http://habrahabr.ru/post/145988/
+		$sign = $this->encode(base64_encode($sign));
 
 		$params['oauth_signature'] = $sign;
 
@@ -128,62 +124,39 @@ echo		$sign = $this->encode(base64_encode($sign));
 			'custom_header' => 'Authorization: OAuth '.implode(', ', $keyval),
 		);
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
+		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + $response);
+		if ($result['oauth_token'] && $result['oauth_token_secret']) {
+			$this->_storage_set('request_token', $result);
+			return $result;
+		}
 		return false;
-	}
-
-	function encode($value) {
-		return(is_array($value) ? $this->encode_array($value) : str_replace('%7E', '~', str_replace('+',' ', rawurlencode($value))));
-	}
-	function encode_array($array) {
-		foreach($array as $key => $value) {
-			$array[$key] = $this->Encode($value);
-		}
-		return $array;
-	}
-	function hmac($data, $key, $function = 'sha1') {
-		if (!$function) {
-			$function = 'sha1';
-		}
-		switch($function) {
-			case 'sha1':
-				$pack = 'H40';
-				break;
-			default:
-				return '';
-		}
-		if (strlen($key) > 64) {
-			$key = pack($pack, $function($key));
-		}
-		if( strlen($key) < 64) {
-			$key = str_pad($key, 64, "\0");
-		}
-		return pack($pack, $function(
-			(str_repeat("\x5c", 64) ^ $key)
-			.pack($pack, $function(
-				(str_repeat("\x36", 64) ^ $key)
-				.$data
-			))
-		));
 	}
 
 	/**
 	*/
-	function hmac_sha1($key, $data) {
-		// Adjust key to exactly 64 bytes
+	function hmac_sha1($data, $key) {
+		$pack = 'H40';
 		if (strlen($key) > 64) {
-			$key = str_pad(sha1($key, true), 64, chr(0));
+			$key = pack($pack, sha1($key));
 		}
 		if (strlen($key) < 64) {
-			$key = str_pad($key, 64, chr(0));
+			$key = str_pad($key, 64, "\0");
 		}
-		// Outter and Inner pad
-		$opad = str_repeat(chr(0x5C), 64);
-		$ipad = str_repeat(chr(0x36), 64);
-		// Xor key with opad & ipad
-		for ($i = 0; $i < strlen($key); $i++) {
-			$opad[$i] = $opad[$i] ^ $key[$i];
-			$ipad[$i] = $ipad[$i] ^ $key[$i];
+		return pack($pack, sha1( (str_repeat("\x5c", 64) ^ $key) .pack($pack, sha1(	(str_repeat("\x36", 64) ^ $key)	.$data )) ));
+	}
+
+	/**
+	*/
+	function encode($value) {
+		return(is_array($value) ? $this->encode_array($value) : str_replace('%7E', '~', str_replace('+',' ', rawurlencode($value))));
+	}
+
+	/**
+	*/
+	function encode_array($array) {
+		foreach($array as $key => $value) {
+			$array[$key] = $this->encode($value);
 		}
-		return sha1($opad.sha1($ipad.$data, true));
+		return $array;
 	}
 }
