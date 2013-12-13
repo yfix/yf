@@ -6,204 +6,21 @@ class yf_oauth {
 
 	/**
 	*/
-	function login($provider) {
-		$providers = $this->_load_oauth_providers();
-		$config = $this->_load_oauth_config();
-		if (!$config[$provider] || !$config[$provider]['client_id'] || !$config[$provider]['client_secret']) {
-			$this->error = 'Error: no config client_id and client_secret for provider: '.$provider;
-			return false;
-		}
-		$this->server = $provider;
-		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
-		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
-		$this->client_secret = $config[$provider]['client_secret'] ?: '';
-		$settings = $this->_providers[$provider];
-		if (!$settings) {
-			$this->error = 'Error: no settings for provider: '.$provider;
-			return false;
-		}
-		foreach ((array)$settings as $k => $v) {
-			$this->$k = $v;
-		}
-
-if ($provider == 'vk') {
-
-		if ($_SESSION['oauth'][$provider]['access_token']) {
-			$body = '';
-			if ($_SESSION['oauth'][$provider]['user']) {
-				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
-			} else {
-				$url = 'https://api.vk.com/method/users.get?'.http_build_query(array(
-					'user_id'		=> $_SESSION['oauth'][$provider]['access_token_request']['result']['user_id'],
-					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
-					'v'				=> '5.5',
-				));
-				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-				if (strpos($response['content_type'], 'json') !== false) {
-					$result = _class('utils')->object_to_array(json_decode($result));
-				}
-				$_SESSION['oauth'][$provider]['user_info_request'] = array(
-					'result'	=> $result,
-					'response'	=> $response,
-				);
-				$_SESSION['oauth'][$provider]['user'] = $result;
-				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-			}
-			$user_info_request = $_SESSION['oauth'][$provider]['user_info_request'];
-			if ($user_info_request) {
-				$arr = $user_info_request;
-				$body .= '<h4>user_info_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
-			}
-			$access_token_request = $_SESSION['oauth'][$provider]['access_token_request'];
-			if ($access_token_request) {
-				$arr = $access_token_request;
-				$body .= '<h4>access_token_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
-			}
-			return $body;
-		}
-		if ($_GET['code'] || $_GET['error']) {
-			if ($_GET['error']) {
-				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
-			} elseif ($_GET['code']) {
-				$url = 'https://oauth.vk.com/access_token?'.http_build_query(array(
-					'client_id'		=> $this->client_id,
-					'client_secret' => $this->client_secret,
-					'code'			=> $_GET['code'],
-					'redirect_uri' 	=> $this->redirect_uri,
-					'v'				=> '5.5',
-				));
-				$response = array(); // Will be filled with debug information about request
-				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-				if ($response['http_code'] == 401) {
-					return js_redirect( $this->redirect_uri, $url_rewrite = false );
-				} elseif ($response['http_code'] == 200) {
-					if (strpos($response['content_type'], 'json') !== false) {
-						$result = _class('utils')->object_to_array(json_decode($result));
-					}
-					$_SESSION['oauth'][$provider]['access_token_request'] = array(
-						'result'	=> $result,
-						'response'	=> $response,
-					);
-					$_SESSION['oauth'][$provider]['access_token'] = $result['access_token'];
-				}
-				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-			}
-		} else {
-			$url = 'https://oauth.vk.com/authorize?'.http_build_query(array(
-				'client_id' 		=> $this->client_id,
-				'redirect_uri' 		=> $this->redirect_uri,
-				'scope'				=> 'offline,wall,friends,email', // Comma or space separated names
-				'response_type' 	=> 'code',
-				'v'					=> '5.5',
-			));
-			return js_redirect($url, $url_rewrite = false);
-		}
-
-} elseif ($provider == 'odnoklassniki') {
-
-// TODO
-
-} elseif ($provider == 'github') {
-
-// TODO
-/*
-	'oauth_version' => '2.0',
-	'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
-	'access_token_url' => 'https://github.com/login/oauth/access_token',
-	'user_info_url' => 'https://api.github.com/user',
-	'scope' => 'user',
-	'get_user_info_callback' => function ($settings, $_this) {
-		$_this->call_api(array('url' => $settings['user_info_url']));
-		$user = $_this->_get_last_response();
-		if (is_object($user)) {
-			$user = _class('utils')->object_to_array($user);
-		}
-		$_this->call_api(array('url' => $settings['user_info_url'].'/emails'));
-		foreach ($_this->_get_last_response() as $k => $v) {
-			$user['emails'][$k] = $v;
-		}
-		return $user;
+	function _init() {
+// TODO: create special section in debug panel with curl requests inside
+		conf('USE_CURL_DEBUG', true);
 	}
-*/
-/*
-		if ($_SESSION['oauth'][$provider]['access_token']) {
-			$body = '';
-			if ($_SESSION['oauth'][$provider]['user']) {
-				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
-			} else {
-				$url = 'https://api.github.com/user?'.http_build_query(array(
-					'access_token'	=> $_SESSION['oauth'][$provider]['access_token'],
-				));
-				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
-				if (strpos($response['content_type'], 'json') !== false) {
-					$result = _class('utils')->object_to_array(json_decode($result));
-				}
-				$_SESSION['oauth'][$provider]['user_info_request'] = array(
-					'result'	=> $result,
-					'response'	=> $response,
-				);
-				$_SESSION['oauth'][$provider]['user'] = $result;
-				$body .= '<h4>user</h4><pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-			}
-			$user_info_request = $_SESSION['oauth'][$provider]['user_info_request'];
-			if ($user_info_request) {
-				$arr = $user_info_request;
-				$body .= '<h4>user_info_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
-			}
-			$access_token_request = $_SESSION['oauth'][$provider]['access_token_request'];
-			if ($access_token_request) {
-				$arr = $access_token_request;
-				$body .= '<h4>access_token_request</h4>Result:<pre>'.print_r($arr['result'], 1).'</pre>Response:<pre>'.print_r($arr['response'], 1).'</pre>';
-			}
-			return $body;
+
+	/**
+	*/
+	function login($provider) {
+		$user_info = _class('oauth_driver_'.$provider, 'classes/oauth/')->login();
+		if ($user_info) {
+			return '<h1 class="text-success">User info</h1>
+				<pre><small>'.print_r($user_info, 1).'</small></pre>
+				<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
 		}
-*/
-		if ($_GET['code'] || $_GET['error']) {
-			if ($_GET['error']) {
-				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
-			} elseif ($_GET['code']) {
-				$url = 'https://github.com/login/oauth/access_token';
-				$opts = array(
-					'custom_header' => 'Accept: application/vnd.github.v3+json',
-					'post'	=> array(
-						'client_id'		=> $this->client_id,
-						'client_secret' => $this->client_secret,
-						'code'			=> $_GET['code'],
-						'redirect_uri' 	=> $this->redirect_uri,
-					),
-				);
-				$response = array(); // Will be filled with debug information about request
-				$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-				if ($response['http_code'] == 406) {
-					return js_redirect( $this->redirect_uri, $url_rewrite = false );
-				} elseif ($response['http_code'] == 200) {
-/*
-					if (strpos($response['content_type'], 'json') !== false) {
-						$result = _class('utils')->object_to_array(json_decode($result));
-					}
-					$_SESSION['oauth'][$provider]['access_token_request'] = array(
-						'result'	=> $result,
-						'response'	=> $response,
-					);
-					$_SESSION['oauth'][$provider]['access_token'] = $result['access_token'];
-*/
-				}
-				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-			}
-		} else {
-			$url = 'https://github.com/login/oauth/authorize?'.http_build_query(array(
-				'client_id' 		=> $this->client_id,
-				'redirect_uri' 		=> $this->redirect_uri,
-				'scope'				=> 'user', // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
-// TODO save this in session and implement for all other providers too to prevent CSRF
-				'state'				=> md5(microtime().rand(1,10000000)), // An unguessable random string. It is used to protect against cross-site request forgery attacks.
-			));
-			return js_redirect($url, $url_rewrite = false);
-		}
-
-}
-
-
+		return '<h1 class="text-error">Error</h1>';
 	}
 
 	/**
@@ -219,6 +36,7 @@ if ($provider == 'vk') {
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
+/*
 		$paths = array(
 			YF_PATH. 'share/oauth_providers/',
 			PROJECT_PATH. 'share/oauth_providers/',
@@ -229,6 +47,17 @@ if ($provider == 'vk') {
 				continue;
 			}
 			require_once $path;
+			$this->_providers[$name] = $data;
+		}
+*/
+		$paths = array(
+			YF_PATH. 'classes/oauth/',
+		);
+		foreach ((array)_class('dir')->scan($paths, 1, '-f /yf_oauth_driver_[a-z0-9_-]+\.class\.php$/i') as $path) {
+			$name = trim(substr(trim(basename($path)), strlen('yf_oauth_driver_'), -strlen('.class.php')));
+			if (!$name) {
+				continue;
+			}
 			$this->_providers[$name] = $data;
 		}
 		$this->_providers_loaded = true;

@@ -16,7 +16,7 @@ class yf_remote_files {
 	/** @var string */
 	public $SMTP_PROBE_ADDRESS	= 'admin@test.com';
 	/** @var string @conf_skip */
-	public $DEF_USER_AGENT		= 'Mozilla/5.0 YF Firefox';
+	public $DEF_USER_AGENT		= 'Mozilla/5.0 Firefox YF';
 	/** @var bool @conf_skip */
 	public $REMOTE_ALLOW_CACHE	= true;
 	/** @var string @conf_skip */
@@ -48,7 +48,7 @@ class yf_remote_files {
 	* Framework constructor
 	*/
 	function _init() {
-		if ($GLOBALS['USE_CURL_DEBUG']) {
+		if ($GLOBALS['USE_CURL_DEBUG'] || conf('USE_CURL_DEBUG')) {
 			$this->DEBUG = true;
 		}
 	}
@@ -261,6 +261,10 @@ class yf_remote_files {
 				curl_setopt($ch, $k, $v);
 			}
 		}
+		if ($url_options['curl_verbose'] || $this->DEBUG) {
+			$verbose_stream = fopen('php://temp', 'rw+');
+			curl_setopt($ch, CURLOPT_STDERR, $verbose_stream);
+		}
 		// Download file efficiently. Do not move up! 
 		// Should be set after CURLOPT_RETURNTRANSFER !
 		if ($url_options['save_path']) {
@@ -272,11 +276,25 @@ class yf_remote_files {
 			curl_setopt($ch, CURLOPT_FILE,	$file_handles[$url]);
 		}
 		$result = curl_exec($ch);
-
 		// Get lot of details about connections done
 		$info = curl_getinfo($ch);
 		$info['CURL_ERRNO']	= curl_errno($ch);
 		$info['CURL_ERROR']	= curl_error($ch);
+		if ($url_options['curl_verbose'] || $this->DEBUG) {
+			rewind($verbose_stream);
+			$info['CURLINFO_SENT_REQUEST'] = stream_get_contents($verbose_stream);
+# TODO: need to test this
+			if (main()->CONSOLE_MODE) {
+				echo $info['CURLINFO_SENT_REQUEST'];
+			}
+		}
+		if (strlen($result) < 1000) {
+			$info['CURL_RESULT_RAW'] = $result;
+		}
+		if ($url_options['curl_verbose'] || $this->DEBUG) {
+			$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
+			$info['CURL_REQUEST_DATE'] = date('Y-m-d H:i:s');
+		}
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
 
@@ -313,7 +331,6 @@ class yf_remote_files {
 		curl_setopt($this->_curl_threads[$id], CURLOPT_URL, $url);
 		// Apply array of curl options (useful for debugging, see $this->pretty_dump_curl_opts() )
 		$curl_opts = $this->_set_curl_options($url_options, false);
-		//print_R($this->pretty_dump_curl_opts($curl_opts));
 		if ($this->_is_avail_setopt_array) {
 			curl_setopt_array($this->_curl_threads[$id], $curl_opts);
 		} else {
@@ -626,8 +643,9 @@ class yf_remote_files {
 		// Enable verbose debug output (usually into STDERR)
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
 			$curl_opts[CURLOPT_VERBOSE] = true;
+			$curl_opts[CURLINFO_HEADER_OUT] = true;
 		}
-		if ($this->DEBUG) {
+		if ($this->DEBUG && main()->CONSOLE_MODE) {
 			print_r($this->pretty_dump_curl_opts($curl_opts));
 		}
 		return $curl_opts;
