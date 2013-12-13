@@ -18,7 +18,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		if (!$access_token) {
 			$access_token = $this->get_access_token();
 			if (!$access_token) {
-				$this->_storage_clean();
+#				$this->_storage_clean();
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			}
@@ -45,7 +45,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
-				$this->_storage_clean();
+#				$this->_storage_clean();
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			} else {
