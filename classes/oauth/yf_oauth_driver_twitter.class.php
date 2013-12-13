@@ -92,7 +92,7 @@ class yf_oauth_driver_twitter extends yf_oauth_driver {
 
 		$params = array(
 			'oauth_version'			=> '1.0',
-			'oauth_callback'		=> rawurlencode($this->redirect_uri),
+#			'oauth_callback'		=> $this->encode($this->redirect_uri),
 			'oauth_consumer_key'	=> $this->client_id,
 			'oauth_nonce'			=> $this->_storage_get('nonce'), // 'kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg',
 			'oauth_timestamp'		=> $this->_storage_get('last_time'),
@@ -101,21 +101,69 @@ class yf_oauth_driver_twitter extends yf_oauth_driver {
 #			'oauth_token' => '', // '370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb',
 		);
 		ksort($params);
-		$str = 'POST'.rawurlencode(implode('&', $params));
-		$sign = $this->hmac_sha1($str, $this->client_secret.'&'.$oauth_token_secret); // $oauth_token_secret here is empty, it is ok    http://habrahabr.ru/post/145988/
+
+		$str = array();
+		foreach($params as $k => $v) {
+			$str[$k] = $k.'="'.$this->encode($v).'"';
+		}
+		$str = 'POST'. '&'. $this->encode($url). '&'. $this->encode(http_build_query($params));
+#echo $str.'<br>'.PHP_EOL;
+
+		$sign = $this->hmac($str, $this->client_secret.'&'.$oauth_token_secret); // $oauth_token_secret here is empty, it is ok    http://habrahabr.ru/post/145988/
+#		$sign = $this->hmac_sha1($str, $this->client_secret.'&'.$oauth_token_secret); // $oauth_token_secret here is empty, it is ok    http://habrahabr.ru/post/145988/
+#echo $sign.'<br>'.PHP_EOL;
+echo		$sign = $this->encode(base64_encode($sign));
+#echo		$sign = $this->encode($sign);
+#echo		$sign = base64_encode($sign);
+#echo $sign.'<br>'.PHP_EOL;
 
 		$params['oauth_signature'] = $sign;
 
 		$keyval = array();
 		foreach($params as $k => $v) {
-			$keyval[$k] = $k.'="'.rawurlencode($v).'"';
+			$keyval[$k] = $k.'="'.$v.'"';
 		}
 		$opts = array(
-			'post'	=> $url_params,
+			'post'	=> array(),
 			'custom_header' => 'Authorization: OAuth '.implode(', ', $keyval),
 		);
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 		return false;
+	}
+
+	function encode($value) {
+		return(is_array($value) ? $this->encode_array($value) : str_replace('%7E', '~', str_replace('+',' ', rawurlencode($value))));
+	}
+	function encode_array($array) {
+		foreach($array as $key => $value) {
+			$array[$key] = $this->Encode($value);
+		}
+		return $array;
+	}
+	function hmac($data, $key, $function = 'sha1') {
+		if (!$function) {
+			$function = 'sha1';
+		}
+		switch($function) {
+			case 'sha1':
+				$pack = 'H40';
+				break;
+			default:
+				return '';
+		}
+		if (strlen($key) > 64) {
+			$key = pack($pack, $function($key));
+		}
+		if( strlen($key) < 64) {
+			$key = str_pad($key, 64, "\0");
+		}
+		return pack($pack, $function(
+			(str_repeat("\x5c", 64) ^ $key)
+			.pack($pack, $function(
+				(str_repeat("\x36", 64) ^ $key)
+				.$data
+			))
+		));
 	}
 
 	/**
