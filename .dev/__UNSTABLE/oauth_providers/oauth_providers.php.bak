@@ -9,8 +9,8 @@
 		$this->url_parameters = false;
 		$this->token_request_method = 'GET';
 		$this->signature_method = 'HMAC-SHA1';
-		switch($this->server)
-		{
+
+
 			case 'Bitbucket':
 				$this->oauth_version = '1.0a';
 				$this->request_token_url = 'https://bitbucket.org/!api/1.0/oauth/request_token';
@@ -40,16 +40,6 @@
 				$this->authorization_header = false;
 				break;
 
-			case 'Eventful':
-				$this->oauth_version = '1.0a';
-				$this->request_token_url = 'http://eventful.com/oauth/request_token';
-				$this->dialog_url = 'http://eventful.com/oauth/authorize';
-				$this->access_token_url = 'http://eventful.com/oauth/access_token';
-				$this->authorization_header = false;
-				$this->url_parameters = true;
-				$this->token_request_method = 'POST';
-				break;
-
 			case 'Evernote':
 				$this->oauth_version = '1.0a';
 				$this->request_token_url = 'https://sandbox.evernote.com/oauth';
@@ -64,14 +54,6 @@
 				$this->dialog_url = 'https://www.facebook.com/dialog/oauth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}';
 				$this->access_token_url = 'https://graph.facebook.com/oauth/access_token';
 				break;
-
-			case 'Fitbit':
-				$this->oauth_version = '1.0a';
-				$this->request_token_url = 'http://api.fitbit.com/oauth/request_token';
-				$this->dialog_url = 'http://api.fitbit.com/oauth/authorize';
-				$this->access_token_url = 'http://api.fitbit.com/oauth/access_token';
-				break;
-
 			case 'Flickr':
 				$this->oauth_version = '1.0a';
 				$this->request_token_url = 'http://www.flickr.com/services/oauth/request_token';
@@ -186,41 +168,3 @@
 				$this->access_token_url = 'https://api.login.yahoo.com/oauth/v2/get_token';
 				$this->authorization_header = false;
 				break;
-
-			case 'Yandex':
-				$this->oauth_version = '2.0';
-				$this->request_token_url = 'https://oauth.yandex.com/authorize';
-				$this->dialog_url = 'https://oauth.yandex.com/authorize';
-				$this->access_token_url = 'https://oauth.yandex.com/verification_code';
-				$this->authorization_header = false;
-				break;
-
-			case 'vk':
-				$this->oauth_version = '2.0';
-#	$this->baseApiUri = new Uri('https://api.vk.com/method/');
-#	return new Uri('https://oauth.vk.com/authorize');
-#	return new Uri('https://oauth.vk.com/access_token');
-
-#				$this->request_token_url = 'https://oauth.yandex.com/authorize';
-#				$this->dialog_url = 'https://oauth.yandex.com/authorize';
-#				$this->access_token_url = 'https://oauth.yandex.com/verification_code';
-				$this->authorization_header = false;
-				break;
-
-			case 'amazon':
-				$this->oauth_version = '2.0';
-#	$this->baseApiUri = new Uri('https://api.amazon.com/');
-#	return new Uri('https://www.amazon.com/ap/oa');
-#	return new Uri('https://www.amazon.com/ap/oatoken');
-
-#				$this->request_token_url = 'https://oauth.yandex.com/authorize';
-#				$this->dialog_url = 'https://oauth.yandex.com/authorize';
-#				$this->access_token_url = 'https://oauth.yandex.com/verification_code';
-				$this->authorization_header = false;
-				break;
-
-			default:
-				return($this->SetError($this->server.' is not yet a supported type of OAuth server. Please contact the author Manuel Lemos <mlemos@acm.org> to request adding built-in support to this type of OAuth server.'));
-		}
-		return(true);
-	}

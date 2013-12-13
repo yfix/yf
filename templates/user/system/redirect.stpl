@@ -30,7 +30,8 @@ var _interval = window.setInterval(function(){
 </div>
 {/if}
 {if("mode" eq "debug")}
-<form action="{location}" method="POST">
+<form action="{location}" method="{if(form_method ne "")}{form_method}{else}GET{/if}">
+	{hidden_fields}
 	{t(Debug redirect)}: <input type="submit" value="{t(Go Next)}" class="btn btn-primary btn-default btn-mini" /> 
 	(<small>{location}</small>)<br />
 	TTL: <b>{ttl} secs</b>;

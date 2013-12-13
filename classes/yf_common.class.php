@@ -616,15 +616,15 @@ class yf_common {
 	/**
 	* Get remote file using CURL extension
 	*/
-	function get_remote_page($page_url = '', $cache_ttl = -1, $options = array()) {
-		return _class('remote_files', COMMON_LIB)->get_remote_page($page_url, $cache_ttl, $options);
+	function get_remote_page($page_url = '', $cache_ttl = -1, $options = array(), &$requests_info = array()) {
+		return _class('remote_files', COMMON_LIB)->get_remote_page($page_url, $cache_ttl, $options, $requests_info);
 	}
 
 	/**
 	* Get several remote files at one time
 	*/
-	function multi_request($page_urls = array(), $options = array()) {
-		return _class('remote_files', COMMON_LIB)->_multi_request($page_urls, $options);
+	function multi_request($page_urls = array(), $options = array(), &$requests_info = array()) {
+		return _class('remote_files', COMMON_LIB)->_multi_request($page_urls, $options, $requests_info);
 	}
 
 	/**

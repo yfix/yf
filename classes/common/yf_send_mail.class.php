@@ -20,7 +20,7 @@ class yf_send_mail {
 	/** @var string Force SMTP usage if availiable (phpmailer now support) */
 	public $FORCE_USE_SMTP			= true;
 	/** @var bool */
-	public $MAIL_DEBUG				= true;
+	public $MAIL_DEBUG				= false;
 	/** @var string */
 	public $DEBUG_TEST_ADDRESS		= '';
 	public $DEBUG_TEST_SEND_BULK	= true;
@@ -39,7 +39,7 @@ class yf_send_mail {
 		'smtp',
 	);
 	/** @var bool Replaces 'From' with $this->SMTP_OPTIONS['from'] */
-	public $REPLACE_FIELD_FROM		= false;
+	public $REPLACE_FIELD_FROM		= true;
 	/** @var string External SMTP config file */
 	public $_smtp_config_file		= 'smtp_config.php';
 	/** @var array SMTP specific options */
@@ -83,7 +83,7 @@ class yf_send_mail {
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function send ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
+	function send ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3, $smtp = array()) {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
@@ -114,38 +114,43 @@ class yf_send_mail {
 		}
 		// Debug mail (All emails are sending to the specified email address)
 		if ($this->MAIL_DEBUG && $this->DEBUG_TEST_ADDRESS) {
-			$debug_email = $this->DEBUG_TEST_ADDRESS;
+			$debug_mail = $this->DEBUG_TEST_ADDRESS;
 			$debug_name = "(debug: $name_to - $email_to)";
 			if ($this->USE_MAILER == 'phpmailer' && is_array($email_to)) {
-				$emails = array();
+				$mails = array();
 				$debug_name = '';
 				foreach( $email_to as $name => $email ) {
 					$debug_name = "(debug: $name - $email)";
-					$emails[ $debug_name ] = $debug_email;
+					$mails[ $debug_name ] = $debug_mail;
 				}
 				if( $this->DEBUG_TEST_SEND_BULK ) {
-					$email_to = $emails;
+					$email_to = $mails;
 				} else {
-					$email_to = $debug_email;
-					$name_to  = implode( ' - ', array_keys( $emails ) );
+					$email_to = $debug_mail;
+					$name_to  = implode( ' - ', array_keys( $mails ) );
 				}
 			} else {
-				$email_to = $debug_email;
+				$email_to = $debug_mail;
 				$name_to  = $debug_name;
 			}
 		}
-		// Load specific SMTP options (only for 'pear', 'xpm2', 'xpm4')
-		if (in_array($this->USE_MAILER, array('phpmailer'))) {
+
+		// Load specific SMTP options (only for 'phpmailer', 'pear', 'xpm2', 'xpm4')
+		if ( !$this->MAIL_DEBUG && empty( $smtp ) && in_array($this->USE_MAILER, array('phpmailer'))) {
 			// Try to get specific SMTP settings
 			$this->SMTP_OPTIONS = $this->_process_smtp_config($email_to);
+		}
+
+		if( !$this->MAIL_DEBUG && !empty( $smtp ) ) {
+			$this->SMTP_OPTIONS = $smtp;
 		}
 
 		$result = false;
 		$error_message = '';
 		// Replaces 'From:' field
-		if ($this->REPLACE_FIELD_FROM && $this->USE_MAILER != 'internal' && !empty($this->SMTP_OPTIONS['from'])) {
-			$email_from = $this->SMTP_OPTIONS['from'];
-			$name_from	= $email_from;
+		if ($this->REPLACE_FIELD_FROM && $this->USE_MAILER != 'internal' && !empty($this->SMTP_OPTIONS['smtp_from_mail'])) {
+			$email_from = $this->SMTP_OPTIONS['smtp_from_mail'];
+			$name_from  = $this->SMTP_OPTIONS['smtp_from_name'] ?: $email_from;
 		}
 
 		// Try to use PHPMailer mailer
@@ -158,8 +163,8 @@ class yf_send_mail {
 				$mail->CharSet  = $charset ?: $this->DEFAULT_CHARSET;
 				$mail->From     = $email_from;
 				$mail->FromName = $name_from;
-				if(DEBUG_MODE){
-					$mail->SMTPDebug  = 1;
+				if( DEBUG_MODE ) {
+					$mail->SMTPDebug = 1;
 				}
 				if (is_array($email_to)) {
 					list( $name, $email ) = each( $email_to ); array_shift( $email_to );
@@ -182,15 +187,14 @@ class yf_send_mail {
 					}
 				}
 				if ($this->FORCE_USE_SMTP && $this->SMTP_OPTIONS['smtp_host']) {
+					$smtp_options = &$this->SMTP_OPTIONS;
 					$mail->IsSMTP();
-					$mail->Host     = $this->SMTP_OPTIONS['smtp_host'];
-					$mail->Port     = $this->SMTP_OPTIONS['smtp_port'];
-					$mail->SMTPAuth = true;
-					$mail->Username = $this->SMTP_OPTIONS['smtp_user_name'];
-					$mail->Password = $this->SMTP_OPTIONS['smtp_password'];
-					if ($this->SMTP_OPTIONS['smtp_secure']) {
-						$mail->SMTPSecure = $this->SMTP_OPTIONS['smtp_secure'];
-					}
+					$mail->Host       = $smtp_options[ 'smtp_host'      ];
+					$mail->Port       = $smtp_options[ 'smtp_port'      ];
+					$mail->SMTPAuth   = $smtp_options[ 'smtp_auth'      ];
+					$mail->Username   = $smtp_options[ 'smtp_user_name' ];
+					$mail->Password   = $smtp_options[ 'smtp_password'  ];
+					$mail->SMTPSecure = $smtp_options[ 'smtp_secure'    ] ?: false;
 				}
 				$result = $mail->Send();
 				if (is_array($email_to) && !empty( $email_to )) {
@@ -202,52 +206,42 @@ class yf_send_mail {
 					}
 				}
 			} catch (phpmailerException $e) {
-
 				$error_message .= $e->errorMessage(); //Pretty error messages from PHPMailer
-
 			} catch (Exception $e) {
 				$error_message .= $e->getMessage(); //Boring error messages from anything else!
 			}
-
 			if (!$result) {
 				$error_message .= $mail->ErrorInfo;
 			}
-
 			if (DEBUG_MODE) {
 				echo $error_message;
 			}
-
 		// Internal Framework mailer
 		} elseif ($this->USE_MAILER == 'internal') {
-
 			// Send email using old lightweight lib
 			$result = $this->_simple_send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $priority);
-
 		// Simple using mail()
 		} elseif ($this->USE_MAILER == 'simple') {
-
 			$result = mail($email_to, $subject, $text/*, ($email_from ? 'From: '.$email_from : null)*/);
-
 		} else {
-
 			trigger_error('SEND_MAIL: Wrong USE_MAILER value: '.$this->USE_MAILER , E_USER_WARNING);
-
 		}
+
 		$log_data = array(
-			'email_from'	=> $email_from,
-			'name_from'		=> $name_from,
-			'email_to'		=> $email_to,
-			'name_to'		=> $name_to,
-			'subject'		=> $subject,
-			'text'			=> $text,
-			'attaches'		=> $attaches,
-			'charset'		=> $charset,
-			'mail_debug'	=> $this->MAIL_DEBUG,
-			'used_mailer'	=> $this->USE_MAILER,
-			'smtp_options'	=> in_array($this->USE_MAILER, array('pear','xpm2','xpm4')) ? $this->SMTP_OPTIONS : '',
-			'time_start'	=> $_time_start,
-			'send_success'	=> $result ? 1 : 0,
-			'error_message'	=> $error_message,
+			'email_from'         => $email_from,
+			'name_from'          => $name_from,
+			'email_to'           => implode( ', ', (array)$email_to ),
+			'name_to'            => $name_to,
+			'subject'            => $subject,
+			'text'               => $text,
+			'attaches'           => $attaches,
+			'charset'            => $charset,
+			'mail_debug'         => $this->MAIL_DEBUG,
+			'used_mailer'        => $this->USE_MAILER,
+			'smtp_options'       => $this->USE_MAILER != 'internal' ? $this->SMTP_OPTIONS : '',
+			'time_start'         => $_time_start,
+			'send_success'       => $result ? 1 : 0,
+			'error_message'      => $error_message,
 		);
 		// Do log email if needed
 		if ($this->LOG_EMAILS) {
