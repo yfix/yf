@@ -600,7 +600,7 @@ class yf_remote_files {
 			}
 		}
 		// POST method
-		if (!empty($url_options['post'])) {
+		if (isset($url_options['post'])) {
 			$curl_opts[CURLOPT_POST]		= 1;
 			$curl_opts[CURLOPT_POSTFIELDS]	= is_array($url_options['post']) ? http_build_query($url_options['post']) : $url_options['post'];
 		}
