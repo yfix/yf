@@ -3,7 +3,7 @@
 load('oauth_driver1', 'framework', 'classes/oauth/');
 class yf_oauth_driver_twitter extends yf_oauth_driver1 {
 
-	protected $url_authorize = 'https://api.twitter.com/oauth/authorize';
+#	protected $url_authorize = 'https://api.twitter.com/oauth/authorize';
 	protected $url_request_token = 'https://api.twitter.com/oauth/request_token';
 	protected $url_access_token = 'https://api.twitter.com/oauth/access_token';
 	protected $url_authenticate = 'https://api.twitter.com/oauth/authenticate';

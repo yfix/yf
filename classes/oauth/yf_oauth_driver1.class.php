@@ -14,6 +14,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	/**
 	*/
 	function get_user_info() {
+$this->_storage_clean();
 		$access_token = $this->_storage_get('access_token');
 		if (!$access_token) {
 			$access_token = $this->get_access_token();
