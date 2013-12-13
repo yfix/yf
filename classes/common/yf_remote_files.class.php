@@ -297,6 +297,9 @@ class yf_remote_files {
 		}
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
+		if (DEBUG_MODE) {
+			debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
+		}
 
 		curl_close ($ch);
 		// Close file handles after curl_close to receive good file
