@@ -278,26 +278,32 @@ class yf_remote_files {
 		$result = curl_exec($ch);
 		// Get lot of details about connections done
 		$info = curl_getinfo($ch);
-		$info['CURL_ERRNO']	= curl_errno($ch);
-		$info['CURL_ERROR']	= curl_error($ch);
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
-			rewind($verbose_stream);
-			$info['CURLINFO_SENT_REQUEST'] = stream_get_contents($verbose_stream);
-# TODO: need to test this
-			if (main()->CONSOLE_MODE) {
-				echo $info['CURLINFO_SENT_REQUEST'];
+			$response_header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+			$response_header = substr($result, 0, $response_header_size);
+			$result = substr($result, $response_header_size);
+			$info['CURL_RESPONSE_HEADER'] = $response_header;
+			if (strlen($result) < 100000) {
+				$info['CURL_RESPONSE_BODY'] = $result;
 			}
-		}
-		if (strlen($result) < 1000) {
-			$info['CURL_RESULT_RAW'] = $result;
-		}
-		if ($url_options['curl_verbose'] || $this->DEBUG) {
+			rewind($verbose_stream);
+# TODO: need to test this
+			$info['CURL_STDERR'] = stream_get_contents($verbose_stream);
+			if (main()->CONSOLE_MODE) {
+				echo $info['CURL_STDERR'];
+			}
 			$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
 			$info['CURL_REQUEST_DATE'] = date('Y-m-d H:i:s');
+		} else {
+			if (strlen($result) < 100000) {
+				$info['CURL_RESPONSE_BODY'] = $result;
+			}
 		}
+		$info['CURL_ERRNO']	= curl_errno($ch);
+		$info['CURL_ERROR']	= curl_error($ch);
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
-		if (DEBUG_MODE) {
+		if (DEBUG_MODE && !main()->CONSOLE_MODE) {
 			debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
 		}
 
@@ -460,8 +466,26 @@ class yf_remote_files {
 					$result[$id] = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
 				}
 				$info = curl_getinfo($c);
+				if ($url_options['curl_verbose'] || $this->DEBUG) {
+					$response_header_size = curl_getinfo($c, CURLINFO_HEADER_SIZE);
+					$response_header = substr($result[$id], 0, $response_header_size);
+					$result[$id] = substr($result[$id], $response_header_size);
+					$info['CURL_RESPONSE_HEADER'] = $response_header;
+					if (strlen($result[$id]) < 100000) {
+						$info['CURL_RESPONSE_BODY'] = $result[$id];
+					}
+#					$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
+					$info['CURL_REQUEST_DATE'] = date('Y-m-d H:i:s');
+				} else {
+					if (strlen($result[$id]) < 100000) {
+						$info['CURL_RESPONSE_BODY'] = $result[$id];
+					}
+				}
 				$info['CURL_ERRNO']	= curl_errno($c);
 				$info['CURL_ERROR']	= curl_error($c);
+				if (DEBUG_MODE && !main()->CONSOLE_MODE) {
+					debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
+				}
 				$requests_info = $info;
 				$GLOBALS['_curl_requests_info'][$id] = $info;
 				// send the return values to the callback function.
@@ -645,8 +669,9 @@ class yf_remote_files {
 		}
 		// Enable verbose debug output (usually into STDERR)
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
-			$curl_opts[CURLOPT_VERBOSE] = true;
+			$curl_opts[CURLOPT_VERBOSE] 	= true;
 			$curl_opts[CURLINFO_HEADER_OUT] = true;
+			$curl_opts[CURLOPT_HEADER]		= true;
 		}
 		if ($this->DEBUG && main()->CONSOLE_MODE) {
 			print_r($this->pretty_dump_curl_opts($curl_opts));
