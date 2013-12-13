@@ -144,6 +144,7 @@ class yf_shop_supplier_panel_upload_images {
 			mkdir($new_path, 0777, true);
 		}
 
+		db()->begin();
 		db()->insert(db('shop_product_images'), array(
 			'product_id' 	=> $id,
 			'md5'			=> $md5,
@@ -166,11 +167,9 @@ class yf_shop_supplier_panel_upload_images {
 			db()->query("UPDATE ".db('shop_product_images')." SET is_default='1' WHERE id=".$A['id']);
 		}			
 		db()->query("UPDATE `".db('shop_products')."` SET `image`='1' WHERE `id`=".$id);
-		
-		
+		db()->commit();
 		
 		return $thumb_name;
-
 	}
 
 }
