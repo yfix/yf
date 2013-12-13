@@ -10,6 +10,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	protected $url_user = '';
 	protected $scope = '';
 	protected $get_access_token_method = 'POST';
+	protected $oauth_version = '1.0';
 
 	/**
 	*/
@@ -33,7 +34,7 @@ $this->_storage_clean();
 			$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 			$this->_storage_set('last_time', time());
 			$params = array(
-				'oauth_version'			=> '1.0',
+				'oauth_version'			=> $this->oauth_version,
 				'oauth_consumer_key'	=> $this->client_id,
 				'oauth_nonce'			=> $this->_storage_get('nonce'),
 				'oauth_timestamp'		=> $this->_storage_get('last_time'),
@@ -74,7 +75,7 @@ $this->_storage_clean();
 		$this->_storage_set('last_time', time());
 
 		$params = array(
-			'oauth_version'			=> '1.0',
+			'oauth_version'			=> $this->oauth_version,
 			'oauth_callback'		=> $this->redirect_uri,
 			'oauth_consumer_key'	=> $this->client_id,
 			'oauth_nonce'			=> $this->_storage_get('nonce'),
@@ -131,7 +132,7 @@ $this->_storage_clean();
 		$this->_storage_set('last_time', time());
 
 		$params = array(
-			'oauth_version'			=> '1.0',
+			'oauth_version'			=> $this->oauth_version,
 			'oauth_callback'		=> $this->redirect_uri,
 			'oauth_consumer_key'	=> $this->client_id,
 			'oauth_nonce'			=> $this->_storage_get('nonce'),
@@ -143,7 +144,7 @@ $this->_storage_clean();
 			'custom_header' => $this->_get_oauth_header($url, $params),
 		);
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + $response);
+		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + $response, __FUNCTION__);
 		$this->_storage_set('authorize_request', array('result' => $result, 'response' => $response));
 		if ($result['oauth_token'] && $result['oauth_token_secret']) {
 			$this->_storage_set('request_token', $result);

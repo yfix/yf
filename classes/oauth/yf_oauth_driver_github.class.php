@@ -29,7 +29,7 @@ class yf_oauth_driver_github extends yf_oauth_driver2 {
 				'access_token'	=> $access_token,
 			));
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-			$result = $this->_decode_result($result, $response);
+			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
 				$this->_storage_clean();
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
@@ -43,7 +43,7 @@ class yf_oauth_driver_github extends yf_oauth_driver2 {
 					'access_token'	=> $access_token,
 				));
 				$result = common()->get_remote_page($url_emails, $cache = false, $opts = array(), $response);
-				$result = $this->_decode_result($result, $response);
+				$result = $this->_decode_result($result, $response, __FUNCTION__);
 				$user['emails'] = $result;
 
 				$this->_storage_set('user', $user);
