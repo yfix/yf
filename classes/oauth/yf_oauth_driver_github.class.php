@@ -10,6 +10,8 @@ class yf_oauth_driver_github extends yf_oauth_driver {
 	protected $scope = 'user'; // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
 	protected $get_access_token_method = 'POST';
 
+// 'custom_header' => 'Accept: application/vnd.github.v3+json',
+
 	/**
 	*/
 	function get_user_info() {
