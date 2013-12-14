@@ -6,12 +6,19 @@ class yf_oauth_driver_yahoo extends yf_oauth_driver1 {
 	protected $url_request_token = 'https://api.login.yahoo.com/oauth/v2/get_request_token';
 	protected $url_access_token = 'https://api.login.yahoo.com/oauth/v2/get_token';
 	protected $url_authenticate = 'https://api.login.yahoo.com/oauth/v2/request_auth';
-	protected $url_user = 'http://query.yahooapis.com/v1/yql';
+#	protected $url_user = 'http://social.yahooapis.com/v1/user/{guid}/profile?format=json';
+	protected $url_user = 'http://social.yahooapis.com/v1/user/{guid}/profile';
 	protected $access_token_use_header = false;
 
 	/**
 	*/
 	function get_user_info() {
+$debug = $_SESSION['oauth']['yahoo'];
+unset($debug['access_token_request']);
+unset($debug['request_token_request']);
+unset($debug['authorize_request']);
+echo '<pre><small>'.print_r($debug, 1).'</small></pre>';
+
 #$this->_storage_clean();
 		$access_token = $this->_storage_get('access_token');
 		$access_token_secret = $this->_storage_get('access_token_secret');
@@ -25,10 +32,9 @@ class yf_oauth_driver_yahoo extends yf_oauth_driver1 {
 			}
 		}
 		if (!$this->_storage_get('user')) {
-			$user_id = $this->_storage_get('user_id');
-			$url = $this->url_user.'?'.http_build_query($this->url_params + (array)$this->url_params_user_info + array(
-				'user_id'	=> $user_id,
-			));
+			$guid = 'APF4JWLCUDYDK5IHBK7E5K34ZA';
+			$url = str_replace('{guid}', $guid, $this->url_user);
+
 			$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 			$this->_storage_set('last_time', time());
 			$params = array(
@@ -37,10 +43,12 @@ class yf_oauth_driver_yahoo extends yf_oauth_driver1 {
 				'oauth_nonce'			=> $this->_storage_get('nonce'),
 				'oauth_timestamp'		=> $this->_storage_get('last_time'),
 				'oauth_signature_method'=> 'HMAC-SHA1',
+#				'oauth_token'			=> $this->_encode($access_token),
 				'oauth_token'			=> $access_token,
+#				'realm'					=> 'yahooapis.com', 
 			);
 			$opts = array(
-				'custom_header' => $this->_get_oauth_header($this->url_user, $params, 'GET', $access_token_secret, array('user_id' => $user_id)),
+				'custom_header' => $this->_get_oauth_header($url, $params, 'GET', $access_token_secret),
 			);
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
@@ -54,5 +62,17 @@ class yf_oauth_driver_yahoo extends yf_oauth_driver1 {
 			}
 		}
 		return $this->_storage_get('user');
+	}
+
+	/**
+	*/
+	function _get_oauth_header($url, $params, $method = 'POST', $oauth_token_secret = '', $add_to_sign = array()) {
+		ksort($params);
+		$params['oauth_signature'] = $this->_do_sign_request($url, $params + (array)$add_to_sign, $method, $oauth_token_secret);
+		$keyval = array();
+		foreach($params as $k => $v) {
+			$keyval[$k] = $k.'="'.$v.'"';
+		}
+		return 'Authorization: OAuth '.implode(', ', $keyval);
 	}
 }

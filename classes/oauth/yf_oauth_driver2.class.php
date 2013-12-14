@@ -17,6 +17,7 @@ abstract class yf_oauth_driver2 {
 	protected $client_id = '';
 	protected $client_secret = '';
 	protected $client_public = '';
+	protected $get_user_info_user_bearer = false;
 
 	/**
 	*/
@@ -49,6 +50,12 @@ abstract class yf_oauth_driver2 {
 			$url = $this->url_user.'?'.http_build_query($this->url_params + $this->url_params_user_info + array(
 				'access_token'	=> $access_token,
 			));
+			if ($this->get_user_info_user_bearer) {
+				$url = $this->url_user;
+				$opts = array(
+					'custom_header'	=> 'Authorization: Bearer '.$access_token,
+				);
+			}
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
