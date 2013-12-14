@@ -1,13 +1,13 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_vimeo extends yf_oauth_driver {
+load('oauth_driver1', 'framework', 'classes/oauth/');
+class yf_oauth_driver_vimeo extends yf_oauth_driver1 {
 
-#	protected $url_authorize = '';
-#	protected $url_access_token = '';
+	protected $url_authorize = 'https://vimeo.com/oauth/authorize';
+	protected $url_access_token = 'https://vimeo.com/oauth/access_token';
 #	protected $url_user = '';
-#	protected $scope = '';
-#	protected $get_access_token_method = 'POST';
+	protected $scope = '';
+	protected $get_access_token_method = 'POST';
 
 // TODO
 
