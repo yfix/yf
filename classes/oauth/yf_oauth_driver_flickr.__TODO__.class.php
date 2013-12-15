@@ -1,12 +1,13 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_flickr extends yf_oauth_driver {
+load('oauth_driver1', 'framework', 'classes/oauth/');
+class yf_oauth_driver_flickr extends yf_oauth_driver1 {
 
-#	protected $url_authorize = '';
-#	protected $url_access_token = '';
+	protected $url_authorize = 'http://www.flickr.com/services/oauth/authorize';
+	protected $url_request_token = 'http://www.flickr.com/services/oauth/request_token';
+	protected $url_access_token = 'http://www.flickr.com/services/oauth/access_token';
 #	protected $url_user = '';
-#	protected $scope = '';
+	protected $scope = '';
 #	protected $get_access_token_method = 'POST';
 
 // TODO

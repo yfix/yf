@@ -1,7 +1,7 @@
 <?php
 
 load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_bitly extends yf_oauth_driver {
+class yf_oauth_driver_bibucket extends yf_oauth_driver {
 
 #	protected $url_authorize = '';
 #	protected $url_access_token = '';

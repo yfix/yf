@@ -62,6 +62,7 @@ class yf_oauth {
 			}
 			$this->_providers[$name] = $data;
 		}
+		ksort($this->_providers);
 		$this->_providers_loaded = true;
 		return $this->_providers;
 	}
