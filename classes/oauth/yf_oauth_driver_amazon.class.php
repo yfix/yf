@@ -9,4 +9,5 @@ class yf_oauth_driver_amazon extends yf_oauth_driver2 {
 	protected $scope = 'profile';
 	protected $get_access_token_method = 'POST';
 
+// TODO
 }

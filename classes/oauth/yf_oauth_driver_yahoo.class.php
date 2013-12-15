@@ -10,6 +10,8 @@ class yf_oauth_driver_yahoo extends yf_oauth_driver1 {
 	protected $url_user = 'http://social.yahooapis.com/v1/user/{guid}/profile';
 	protected $access_token_use_header = false;
 
+// TODO
+
 	/**
 	*/
 	function get_user_info() {

@@ -9,4 +9,5 @@ class yf_oauth_driver_flickr extends yf_oauth_driver1 {
 	protected $url_user = 'http://api.flickr.com/services/rest'; // ?nojsoncallback=1  &method=flickr.test.login
 	protected $get_access_token_method = 'POST';
 
+// TODO
 }
