@@ -4,24 +4,110 @@ class yf_manage_shop_import {
 
 	/**
 	*/
-	function import_xml() {
-		if (empty($_FILES)) {
-			return form('',array('enctype' => 'multipart/form-data'))
-				->file("file")
-				->save('', "Upload");
-		}
-		$xml = file_get_contents($_FILES['file']['tmp_name']);
+/*	function import_xml() {
+		$supplier_id = 102;
+		
+		$file_name = "/home/sergey/kupi_import/price.xml";
+		$xml = file_get_contents($file_name);
 		$p = xml_parser_create();
 		xml_parse_into_struct($p, $xml, $vals, $index);
 		xml_parser_free($p);
-		echo "<pre>";
-//		print_r($index);
+		$cnt = 0;
 		foreach ($vals as $v) {
-//			if (!($v['tag'] == 'PRODUCT' && $v['type'] == 'open')) continue;
-			print_r($v);
+			if (!($v['tag'] == 'PRODUCT' && $v['type'] == 'open')) continue;
+			$name = $v['attributes']['NAME'];
+			$name = trim(substr($name,strpos($name,' ')));
+			if ($v['attributes']['URL']!='') {
+				$file = file_get_contents($v['attributes']['URL']);
+				if ($file == '') {
+					echo "[".$cnt."] ".$v['attributes']['ID']." ".$v['attributes']['URL']." - ERROR\n";
+				}
+				preg_match_all('~ href="/img/products/([^"]+)~ims', $file, $m);
+				if (count($m[1]) == 0) {
+					echo "[".$cnt."] ".$v['attributes']['ID']." ".$v['attributes']['URL']." - NOIMGS\n";
+				}
+				$i = 1;
+				foreach($m[1] as $url) {
+					$dst  = '/home/sergey/kupi_import/imgs/'.$v['attributes']['ID']."_".$i.".jpg";
+					if (!file_exists($dst)) {
+						echo "[".$cnt."] http://yugcontract.ua/img/products/".$url." => ".$dst."\n";
+						copy("http://yugcontract.ua/img/products/".$url,$dst);					
+					} else {
+						echo "[".$cnt."] ".$v['attributes']['ID']." ".$i."\n";
+					}
+					$i++;
+				}
+				$cnt++;
+			}
 		}
 		die();
-	}
+	} */
+	
+	/**
+	*/
+	function import_xml() {
+		set_time_limit(0);
+/*		if (empty($_FILES)) {
+			return form('',array('enctype' => 'multipart/form-data'))
+				->file("file")
+				->save('', "Upload");
+		}  */
+		$supplier_id = 102;
+//		db()->query("DELETE FROM `".db('category_items')."` WHERE `cat_id`=1 AND `id`>63713");
+		$file_name = "/home/sergey/kupi_import/price.xml";
+//		$xml = file_get_contents($_FILES['file']['tmp_name']);
+		$xml = file_get_contents($file_name);
+		$p = xml_parser_create();
+		xml_parse_into_struct($p, $xml, $vals, $index);
+		xml_parser_free($p);
+		$cnt = 0;
+		$product_art = 0;
+		foreach ($vals as $v) {
+			if ($v['tag'] == 'DESCR') {
+				echo "[".$cnt."] ".$product_art."\n";
+				db()->update(db('shop_products'), array('description' => nl2br($v['value'])), "`supplier_id`=".$supplier_id." AND `articul`='".$product_art."'");
+				
+
+				$cnt++;
+				continue;
+			}
+			if (!($v['tag'] == 'PRODUCT' && $v['type'] == 'open')) continue;
+			$name = $v['attributes']['NAME'];
+			$name = trim(substr($name,strpos($name,' ')));
+/*			if ($v['attributes']['URL']=='') {			
+				echo "[".$cnt."] ".$v['attributes']['ID']." - no_url\n";			
+				db()->query("DELETE FROM `".db('shop_products')." WHERE `supplier_id`=".$supplier_id." AND `articul`='".$v['attributes']['ID']."'");
+				$cnt++;
+			} */
+/*
+			if ($v['attributes']['URL']!='') {
+				$file = file_get_contents($v['attributes']['URL']);
+				if ($file == '') {
+					echo "[".$cnt."] ".$v['attributes']['ID']." ".$v['attributes']['URL']." - ERROR\n";
+				}
+				preg_match_all('~<nav class=\'crumbs\' xmlns:v="http://rdf.data-vocabulary.org/#">(.*)</nav>~ims', $file, $m);
+				$cats_toprocess = explode("\n",strip_tags($m[1][0]));
+				$cats = array();
+				foreach ($cats_toprocess as $v1) {
+					$cat = trim($v1);
+					if ($cat != '') $cats[] = $cat;
+				}
+				unset($cats[count($cats)-1]);
+				unset($cats[0]);unset($cats[1]);
+				$cat_id = $this->yugcontract_get_cat_id($cats);				
+				db()->update(db('shop_products'), array('cat_id' => $cat_id), "`supplier_id`=".$supplier_id." AND `articul`='".$v['attributes']['ID']."'");
+				echo "[".$cnt."] ".$v['attributes']['ID']." - ".$v['attributes']['NAME']."-> ".implode('/',$cats)." ".$cat_id."\n";
+				
+				$cnt++;
+//				if ($cnt == 100) die();
+			}
+*/	
+			$product_art = $v['attributes']['ID'];
+/*			$price = $v['attributes']['PRICE']*8.32;
+			db()->update(db('shop_products'), array('price' => number_format($price, 2, '.', '')),"`supplier_id`=".$supplier_id." AND `articul`='".$v['attributes']['ID']."'");*/
+		}
+		die();
+	}	
 	
 	/**
 	*/
@@ -66,23 +152,41 @@ class yf_manage_shop_import {
 					$i++;
 				}
 					
-				$item['background_color'] = $objPHPExcel->getActiveSheet()->getStyle('A'.$row_number)->getFill()->getStartColor()->getRGB();
-				$item['coordinate'] = 'A'.$row_number;
+//				$item['background_color'] = $objPHPExcel->getActiveSheet()->getStyle('A'.$row_number)->getFill()->getStartColor()->getRGB();
+//				$item['coordinate'] = 'A'.$row_number;
 				$items[] = $item;
 			}
 		
 		}
 		if (count($items) != 0) {
-	//		return $this->process_items_epicentr_update($items);
+			return $this->process_items_ambar_update($items);
+//			return $this->process_items_epicentr_update($items);
 	//		return $this->process_items_fortuna($items);
 	//		return $this->process_items_talisman($items);
 //			return $this->process_items_talisman_update($items);	
 	//		return $this->process_items_talisman_import($items);
-			return $this->process_items_epicentr_import($items);			
+//			return $this->process_items_epicentr_import($items);			
 //			return $this->process_items_yugcontract_xls($items);
 		} else {
 			return 'no rows to process';
 		}
+	}
+	
+	function process_items_yugcontract($items) {
+		$supplier_id = 102;
+		
+//		db()->query("DELETE FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+//		db()->query("DELETE FROM `".db('category_items')."` WHERE `id`>62897");
+
+		$cats = array();
+		foreach ($items as $item) {
+			$cat_id = 9;
+			if(intval($item[0]) == 0) continue;
+			print_r($item);
+			die();
+		}
+
+		return $result;
 	}
 	
 	function yugcontract_get_cat_id($cats) {
@@ -114,7 +218,7 @@ class yf_manage_shop_import {
 		$cats = array();
 		foreach ($items as $item) {
 			$cats[0] = mb_convert_case($item['worksheet_title'], MB_CASE_TITLE, "UTF-8"); 
-			
+/*			
 			if ($item[0]!='' && $item['background_color'] == '666699') {
 				$cats[1] = $item[0];
 				unset($cats[2]);unset($cats[3]);				
@@ -131,10 +235,11 @@ class yf_manage_shop_import {
 				$cats[3] = $item[0];
 				echo implode("/",$cats)." - ".$item['background_color']." - ".$item['coordinate']."<br />";
 				continue;
-			}
+			} */
 //			echo implode(",",$item)."<br />";
-/*			if (intval($item[0])!=0 && $item[1] != '' && $item[2]!='' && intval($item[9])!=0) {
-				$cat_id = $this->yugcontract_get_cat_id($cats);
+			if (intval($item[0])!=0 && $item[1] != '' && $item[2]!='' && intval($item[9])!=0) {
+				
+		//		$cat_id = $this->yugcontract_get_cat_id($cats);
 				$name = trim($item[2]);
 				$name = substr($item[2],strpos($item[2],' '));
 				$v = array(
@@ -147,17 +252,20 @@ class yf_manage_shop_import {
 					'active' => 0,
 				);	
 				$result .= "articul: ".$v['articul']."; product: ".$v['name']." - ";				
-				db()->insert(db('shop_products'), _es($v)) or $error = true;
+//				db()->insert(db('shop_products'), _es($v)) or $error = true;
+				$price = $item[7]*8.32;
+				db()->update(db('shop_products'), array('price' => number_format($price, 2, '.', '')),"`supplier_id`=".$supplier_id." AND `articul`='".trim($item[0])."'");
+		
+
 				if ($error) {
 					$result .= 'ERROR';
 				} else {
 					$result .= 'OK';				
 				}
-				$result .= '<br />';				
-			} */
+				$result .= ' - '.$price.'<br />';				
+			} 
 		}
-
-		die();
+		return $result;
 	}
 	
 	function process_items_fortuna($items) {
@@ -217,6 +325,36 @@ class yf_manage_shop_import {
 		return $result;
 	}
 	
+	function process_items_ambar_update($items) {
+		$supplier_id = 103;
+		
+		$products = array();
+		$R = db()->query("SELECT * FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+		while ($A = db()->fetch_assoc($R)) {
+			$products[$A['name']] = $A['id'];
+		}
+		
+		$i = 0;
+		$cats_list = array();
+		$result = array();
+		foreach ($items as $item) {
+			if (intval($item[0]) == 0) continue;
+			echo $item[2]." - ".$products[$item[2]]."\n";
+		} 
+		
+		return table($result, array(
+            'table_class'       => 'table-condensed',
+            'auto_no_buttons'   => 1,
+            'pager_records_on_page' => 100000,
+			'tr' => function($row,$id) {
+				if ($row['is_new'] == 'new') {
+					return ' class="success"';
+				} else {
+					return ' class="warning"';					
+				}
+			}
+		))->auto();
+	}
 	
 	function process_items_epicentr_update($items) {
 		$supplier_id = 101;
@@ -244,19 +382,22 @@ class yf_manage_shop_import {
 				);
 
 				if (empty($products[$v['articul']])) {
-					$result[] = array(
-						'articul' => $v['articul'],
-						'product' => $v['name'],
-						'price' => $v['price'],
-						'is_new' => 'new',
-					);
+					if ($v['price']!=0) {
+						$result[] = array(
+							'articul' => $v['articul'],
+							'product' => $v['name'],
+							'price' => $v['price'],
+							'cat' => $item[5]." ",
+							'is_new' => 'new',
+						);
+					}
 				} else {
-					$result[] = array(
+				/*	$result[] = array(
 						'articul' => $v['articul'],
 						'product' => $v['name'],
 						'price' => $v['price'],
 						'is_new' => 'upd',
-					);
+					); */
 				}
 				$error = false;
 	//			db()->insert(db('shop_products'), $v) or $error = true;
@@ -289,7 +430,6 @@ class yf_manage_shop_import {
 		
 		$supplier_id = 101;
 		
-		db()->query("DELETE FROM `".db('shop_products')."` WHERE `cat_id` IN ()");
 		
 
 		$remap = array (
@@ -298,6 +438,8 @@ class yf_manage_shop_import {
 			63712 => 'краска',
 			63713 => 'подготовка поверхности',
 		);
+		
+		db()->query("DELETE FROM `".db('shop_products')."` WHERE `cat_id` IN (".implode(",",array_keys($remap)).")");
 		
 		foreach ($items as $item) {
 			if (intval($item[0])== 0 || $item[1]== '' || $item[2] == '') continue;
@@ -322,7 +464,7 @@ class yf_manage_shop_import {
 			
 			$result .= 'new - ';
 			$error = false;
-			db()->insert(db('shop_products'), $v) or $error = true;
+			db()->insert(db('shop_products'), _es($v)) or $error = true;
 			if ($error) {
 				$result .= 'ERROR';
 			} else {

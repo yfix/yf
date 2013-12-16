@@ -182,10 +182,15 @@ class yf_captcha {
 	/**
 	* Show HTML block for the CAPTCHA image (complete, with input and it's validation)
 	*/
-	function show_block($location = '', $stpl_name = '') {
+	function show_block($location = '', $stpl_name = '', $extra = array()) {
 		if (!$this->ENABLED) {
 			return false;
 		}
+		if (is_array($stpl_name)) {
+			$extra += $stpl_name;
+			$stpl_name = $extra['captcha_stpl_name'];
+		}
+		$stpl_name = $extra['captcha_stpl_name'] ?: $stpl_name;
 		if (empty($location)) {
 			$location = './?object='.$_GET['object'].'&action=show_image';
 		}
@@ -199,6 +204,7 @@ class yf_captcha {
 		$replace = array(
 			'img_src'		=> process_url($location),
 			'num_symbols'	=> intval($this->num_symbols),
+			'input_attrs'	=> $extra['input_attrs'],
 		);
 		return tpl()->parse($stpl_name, $replace);
 	}

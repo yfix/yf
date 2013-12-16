@@ -16,7 +16,7 @@ class yf_remote_files {
 	/** @var string */
 	public $SMTP_PROBE_ADDRESS	= 'admin@test.com';
 	/** @var string @conf_skip */
-	public $DEF_USER_AGENT		= 'Mozilla/5.0 YF Firefox';
+	public $DEF_USER_AGENT		= 'Mozilla/5.0 Firefox YF';
 	/** @var bool @conf_skip */
 	public $REMOTE_ALLOW_CACHE	= true;
 	/** @var string @conf_skip */
@@ -48,7 +48,7 @@ class yf_remote_files {
 	* Framework constructor
 	*/
 	function _init() {
-		if ($GLOBALS['USE_CURL_DEBUG']) {
+		if ($GLOBALS['USE_CURL_DEBUG'] || conf('USE_CURL_DEBUG')) {
 			$this->DEBUG = true;
 		}
 	}
@@ -261,6 +261,10 @@ class yf_remote_files {
 				curl_setopt($ch, $k, $v);
 			}
 		}
+		if ($url_options['curl_verbose'] || $this->DEBUG) {
+			$verbose_stream = fopen('php://temp', 'rw+');
+			curl_setopt($ch, CURLOPT_STDERR, $verbose_stream);
+		}
 		// Download file efficiently. Do not move up! 
 		// Should be set after CURLOPT_RETURNTRANSFER !
 		if ($url_options['save_path']) {
@@ -272,13 +276,36 @@ class yf_remote_files {
 			curl_setopt($ch, CURLOPT_FILE,	$file_handles[$url]);
 		}
 		$result = curl_exec($ch);
-
 		// Get lot of details about connections done
 		$info = curl_getinfo($ch);
+		if ($url_options['curl_verbose'] || $this->DEBUG) {
+			$response_header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+			$response_header = substr($result, 0, $response_header_size);
+			$result = substr($result, $response_header_size);
+			$info['CURL_RESPONSE_HEADER'] = $response_header;
+			if (strlen($result) < 100000) {
+				$info['CURL_RESPONSE_BODY'] = $result;
+			}
+			rewind($verbose_stream);
+# TODO: need to test this
+			$info['CURL_STDERR'] = stream_get_contents($verbose_stream);
+			if (main()->CONSOLE_MODE) {
+				echo $info['CURL_STDERR'];
+			}
+			$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
+			$info['CURL_REQUEST_DATE'] = date('Y-m-d H:i:s');
+		} else {
+			if (strlen($result) < 100000) {
+				$info['CURL_RESPONSE_BODY'] = $result;
+			}
+		}
 		$info['CURL_ERRNO']	= curl_errno($ch);
 		$info['CURL_ERROR']	= curl_error($ch);
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
+		if (DEBUG_MODE && !main()->CONSOLE_MODE) {
+			debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
+		}
 
 		curl_close ($ch);
 		// Close file handles after curl_close to receive good file
@@ -313,7 +340,6 @@ class yf_remote_files {
 		curl_setopt($this->_curl_threads[$id], CURLOPT_URL, $url);
 		// Apply array of curl options (useful for debugging, see $this->pretty_dump_curl_opts() )
 		$curl_opts = $this->_set_curl_options($url_options, false);
-		//print_R($this->pretty_dump_curl_opts($curl_opts));
 		if ($this->_is_avail_setopt_array) {
 			curl_setopt_array($this->_curl_threads[$id], $curl_opts);
 		} else {
@@ -440,8 +466,26 @@ class yf_remote_files {
 					$result[$id] = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
 				}
 				$info = curl_getinfo($c);
+				if ($url_options['curl_verbose'] || $this->DEBUG) {
+					$response_header_size = curl_getinfo($c, CURLINFO_HEADER_SIZE);
+					$response_header = substr($result[$id], 0, $response_header_size);
+					$result[$id] = substr($result[$id], $response_header_size);
+					$info['CURL_RESPONSE_HEADER'] = $response_header;
+					if (strlen($result[$id]) < 100000) {
+						$info['CURL_RESPONSE_BODY'] = $result[$id];
+					}
+#					$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
+					$info['CURL_REQUEST_DATE'] = date('Y-m-d H:i:s');
+				} else {
+					if (strlen($result[$id]) < 100000) {
+						$info['CURL_RESPONSE_BODY'] = $result[$id];
+					}
+				}
 				$info['CURL_ERRNO']	= curl_errno($c);
 				$info['CURL_ERROR']	= curl_error($c);
+				if (DEBUG_MODE && !main()->CONSOLE_MODE) {
+					debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
+				}
 				$requests_info = $info;
 				$GLOBALS['_curl_requests_info'][$id] = $info;
 				// send the return values to the callback function.
@@ -561,7 +605,8 @@ class yf_remote_files {
 		}
 		// Custom HTTP header string to add into request
 		if ($custom_header) {
-			$curl_opts[CURLOPT_HTTPHEADER]	= $custom_header;
+			// CURLOPT_HTTPHEADER An array of HTTP header fields to set, in the format array('Content-type: text/plain', 'Content-length: 100') 
+			$curl_opts[CURLOPT_HTTPHEADER]	= !is_array($custom_header) ? array($custom_header) : $custom_header;
 		}
 		// We not need to check SSL here
 		$curl_opts[CURLOPT_SSL_VERIFYPEER] = 0;
@@ -579,7 +624,7 @@ class yf_remote_files {
 			}
 		}
 		// POST method
-		if (!empty($url_options['post'])) {
+		if (isset($url_options['post'])) {
 			$curl_opts[CURLOPT_POST]		= 1;
 			$curl_opts[CURLOPT_POSTFIELDS]	= is_array($url_options['post']) ? http_build_query($url_options['post']) : $url_options['post'];
 		}
@@ -624,9 +669,11 @@ class yf_remote_files {
 		}
 		// Enable verbose debug output (usually into STDERR)
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
-			$curl_opts[CURLOPT_VERBOSE] = true;
+			$curl_opts[CURLOPT_VERBOSE] 	= true;
+			$curl_opts[CURLINFO_HEADER_OUT] = true;
+			$curl_opts[CURLOPT_HEADER]		= true;
 		}
-		if ($this->DEBUG) {
+		if ($this->DEBUG && main()->CONSOLE_MODE) {
 			print_r($this->pretty_dump_curl_opts($curl_opts));
 		}
 		return $curl_opts;

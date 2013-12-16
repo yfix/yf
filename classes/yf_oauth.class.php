@@ -6,96 +6,23 @@ class yf_oauth {
 
 	/**
 	*/
+	function _init() {
+		conf('USE_CURL_DEBUG', true);
+	}
+
+	/**
+	*/
 	function login($provider) {
-		$providers = $this->_load_oauth_providers();
-		$config = $this->_load_oauth_config();
-		if (!$config[$provider]) {
-			$this->error = 'Error: no config client_id and client_secret for provider: '.$provider;
-			return false;
+		$user_info = _class('oauth_driver_'.$provider, 'classes/oauth/')->login();
+		if ($user_info) {
+			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($user_info, 1).'</small></pre>';
+		} else {
+			$body .= '<h1 class="text-error">Error</h1>';
 		}
 		if (DEBUG_MODE) {
-			$this->debug = true;
-			$this->debug_http = true;
+			$body .= '<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
 		}
-		$this->server = $provider;
-		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
-		$this->client_id = $config[$provider]['client_id'] ?: ''; $application_line = __LINE__;
-		$this->client_secret = $config[$provider]['client_secret'] ?: '';
-		if (strlen($this->client_id) == 0 || strlen($this->client_secret) == 0) {
-			$this->error = 'Error: Please set the client_id with Key and client_secret with Secret. The URL must be '.$this->redirect_uri;
-			return false;
-		}
-		$settings = $this->_providers[$provider];
-		if (!$settings) {
-			$this->error = 'Error: no settings for provider: '.$provider;
-			return false;
-		}
-		foreach ((array)$settings as $k => $v) {
-			$this->$k = $v;
-		}
-
-if ($provider == 'vk') {
-
-		if ($_SESSION['oauth'][$provider]['access_token']) {
-			$body = '';
-			if ($_SESSION['oauth'][$provider]['user']) {
-				$body .= '<h4>user</h4><pre>'.print_r($_SESSION['oauth'][$provider]['user'], 1).'</pre>';
-			} else {
-			}
-			if ($_SESSION['oauth'][$provider]['access_token_request']) {
-				$arr = $_SESSION['oauth'][$provider]['access_token_request'];
-				$result = $arr['result'];
-				$response = $arr['response'];
-				$body .= '<h4>access_token_request</h4>Result:<pre>'.print_r($result, 1).'</pre>Response:<pre>'.print_r($response, 1).'</pre>';
-			}
-			return $body;
-		}
-		if ($_GET['code'] || $_GET['error']) {
-			if ($_GET['error']) {
-				return '<h1 class="text-error">Error: '.$_GET['error'].'</h1>';
-			} elseif ($_GET['code']) {
-				$url = 'https://oauth.vk.com/access_token?'.http_build_query(array(
-					'client_id'		=> $this->client_id,
-					'client_secret' => $this->client_secret,
-					'code'			=> $_GET['code'],
-					'redirect_uri' 	=> $this->redirect_uri,
-					'v'				=> '5.5',
-				));
-				$response = array(); // Will be filled with debug information about request
-				$result = common()->get_remote_page($url, $cache = false, $opts = array(), $response);
-				if ($response['http_code'] == 401) {
-					return js_redirect( $this->redirect_uri, $url_rewrite = false );
-				} elseif ($response['http_code'] == 200) {
-					if ($response['content_type'] == 'application/json') {
-						$result = _class('utils')->object_to_array(json_decode($result));
-					}
-					$_SESSION['oauth'][$provider]['access_token_request']['result'] = $result;
-					$_SESSION['oauth'][$provider]['access_token_request']['response'] = $response;
-					$_SESSION['oauth'][$provider]['access_token'] = $result['access_token'];
-				}
-				return '<pre>'.print_r($result, 1).'</pre><br>'.PHP_EOL.'<pre>'.print_r($response, 1).'</pre>';
-			}
-		} else {
-			main()->NO_GRAPHICS = true;
-			$url = 'https://oauth.vk.com/authorize?'.http_build_query(array(
-				'client_id' 		=> $this->client_id,
-				'redirect_uri' 		=> $this->redirect_uri,
-				'scope'				=> 12,//$this->scope,
-				'response_type' 	=> 'code',
-				'v'					=> '5.5',
-			));
-			return js_redirect($url, $url_rewrite = false);
-		}
-
-} elseif ($provider == 'odnoklassniki') {
-
-// TODO
-
-} elseif ($provider == 'github') {
-
-// TODO
-
-}
+		return $body;
 	}
 
 	/**
@@ -111,6 +38,7 @@ if ($provider == 'vk') {
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
+/*
 		$paths = array(
 			YF_PATH. 'share/oauth_providers/',
 			PROJECT_PATH. 'share/oauth_providers/',
@@ -123,6 +51,18 @@ if ($provider == 'vk') {
 			require_once $path;
 			$this->_providers[$name] = $data;
 		}
+*/
+		$paths = array(
+			YF_PATH. 'classes/oauth/',
+		);
+		foreach ((array)_class('dir')->scan($paths, 1, '-f /yf_oauth_driver_[a-z0-9_-]+\.class\.php$/i') as $path) {
+			$name = trim(substr(trim(basename($path)), strlen('yf_oauth_driver_'), -strlen('.class.php')));
+			if (!$name) {
+				continue;
+			}
+			$this->_providers[$name] = $data;
+		}
+		ksort($this->_providers);
 		$this->_providers_loaded = true;
 		return $this->_providers;
 	}
