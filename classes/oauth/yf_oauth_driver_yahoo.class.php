@@ -50,9 +50,7 @@ echo '<pre><small>'.print_r($debug, 1).'</small></pre>';
 				'oauth_nonce'			=> $this->_storage_get('nonce'),
 				'oauth_timestamp'		=> $this->_storage_get('last_time'),
 				'oauth_signature_method'=> 'HMAC-SHA1',
-#				'oauth_token'			=> $this->_encode($access_token),
 				'oauth_token'			=> $access_token,
-#				'realm'					=> 'yahooapis.com', 
 			);
 			$opts = array(
 				'custom_header' => $this->_get_oauth_header($url, $params, 'GET', $access_token_secret),
@@ -73,6 +71,7 @@ echo '<pre><small>'.print_r($debug, 1).'</small></pre>';
 
 	/**
 	*/
+/*
 	function _get_oauth_header($url, $params, $method = 'POST', $oauth_token_secret = '', $add_to_sign = array()) {
 		ksort($params);
 		$params['oauth_signature'] = $this->_do_sign_request($url, $params + (array)$add_to_sign, $method, $oauth_token_secret);
@@ -82,4 +81,5 @@ echo '<pre><small>'.print_r($debug, 1).'</small></pre>';
 		}
 		return 'Authorization: OAuth '.implode(', ', $keyval);
 	}
+*/
 }

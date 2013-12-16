@@ -34,9 +34,16 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		}
 		if (!$this->_storage_get('user')) {
 			$user_id = $this->_storage_get('user_id');
-			$url = $this->url_user.'?'.http_build_query($this->url_params + (array)$this->url_params_user_info + array(
-				'user_id'	=> $user_id,
-			));
+			$url = $this->url_user;
+			$_url_params = $this->url_params + (array)$this->url_params_user_info;
+			if ($user_id) {
+				$_url_params += array(
+					'user_id'	=> $user_id,
+				);
+			}
+			if ($_url_params) {
+				$url .= (false !== strpos($url, '?') ? '&' : '?'). http_build_query($_url_params);
+			}
 			$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 			$this->_storage_set('last_time', time());
 			$params = array(
@@ -48,11 +55,11 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 				'oauth_token'			=> $access_token,
 			) + (array)$this->url_params + (array)$this->url_params_user_info;
 			$opts = array(
-				'custom_header' => $this->_get_oauth_header($this->url_user, $params, 'GET', $access_token_secret, array('user_id' => $user_id)),
+				'custom_header' => $this->_get_oauth_header($url, $params, 'GET', $access_token_secret),
 			);
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
-			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
+			if (isset($result['error']) || isset($result['err']) || substr($response['http_code'], 0, 1) == '4') {
 #				$this->_storage_clean();
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
@@ -76,8 +83,10 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		if ((!$oauth_verifier || !$oauth_token) && !$this->_storage_get('oauth_verifier')) {
 			return $this->authenticate();
 		}
-
 		$request_token = $this->_storage_get('request_token');
+		if (!$request_token['oauth_token_secret']) {
+			return $this->authenticate();
+		}
 
 		$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 		$this->_storage_set('last_time', time());
@@ -92,21 +101,23 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			'oauth_verifier'		=> $oauth_verifier,
 		) + (array)$this->url_params + (array)$this->url_params_access_token;
 		$url = $this->url_access_token;
+
+		$auth_header = $this->_get_oauth_header($url, $params, 'POST', $request_token['oauth_token_secret']);
 		if ($this->access_token_use_header) {
 			$opts = array(
 				'post'	=> array(
 					'oauth_verifier' => $oauth_verifier,
 				),
-				'custom_header' => $this->_get_oauth_header($url, $params),
+				'custom_header' => $auth_header,
 			);
 		} else {
 			$opts = array(
 				'post'	=> $params,
-				'custom_header' => $this->_get_oauth_header($url, $params, 'POST', $request_token['oauth_token_secret']),
+				'custom_header' => $auth_header,
 			);
 		}
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + $response, __FUNCTION__);
+		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + (array)$response, __FUNCTION__);
 		if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
 			js_redirect( $this->redirect_uri, $url_rewrite = false );
 			return false;
@@ -159,7 +170,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			'custom_header' => $this->_get_oauth_header($url, $params),
 		);
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + $response, __FUNCTION__);
+		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + (array)$response, __FUNCTION__);
 		$this->_storage_set('authorize_request', array('result' => $result, 'response' => $response));
 		if ($result['oauth_token'] && $result['oauth_token_secret']) {
 			$this->_storage_set('request_token', $result);
@@ -171,26 +182,58 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	/**
 	*/
 	function _get_oauth_header($url, $params, $method = 'POST', $oauth_token_secret = '', $add_to_sign = array()) {
+		if (!is_array($params)) {
+			$params = array();
+		}
 		ksort($params);
-		$params['oauth_signature'] = $this->_do_sign_request($url, $params + (array)$add_to_sign, $method, $oauth_token_secret);
+		$params['oauth_signature'] = $this->_do_sign_request($url, (array)$params + (array)$add_to_sign, $method, $oauth_token_secret);
 		$keyval = array();
 		foreach($params as $k => $v) {
 			$keyval[$k] = $k.'="'.$v.'"';
 		}
-		return 'Authorization: OAuth '.implode(', ', $keyval);
+		$realm = '';
+		if ($this->header_add_realm) {
+			$realm_url = $url;
+			$url_query_string = parse_url($url, PHP_URL_QUERY);
+			if ($url_query_string) {
+				$realm_url = substr($realm_url, 0, -strlen('?'.$url_query_string));
+			}
+			$realm = 'realm="'.$realm_url.'"';
+		}
+		return 'Authorization: OAuth '.$realm.' '.implode(', ', $keyval);
 	}
 
 	/**
 	*/
 	function _do_sign_request($url, $params, $method = 'POST', $oauth_token_secret = '') {
+		if (!is_array($params)) {
+			$params = array();
+		}
 		$sign_str = array();
+
+		$url_query_string = parse_url($url, PHP_URL_QUERY);
+		if ($url_query_string) {
+			$qs_array = array();
+			parse_str($url_query_string, $qs_array);
+			foreach ((array)$qs_array as $k => $v) {
+				$params[$k] = $v;
+			}
+			$url = substr($url, 0, -strlen('?'.$url_query_string));
+		}
+
 		ksort($params);
-		foreach ($params as $k => $v) {
+		foreach ((array)$params as $k => $v) {
 			$sign_str[$k] = $k.'="'.$this->_encode($v).'"';
 		}
 		$sign_str = $method. '&'. $this->_encode($url). '&'. $this->_encode(http_build_query($params));
+#if (DEBUG_MODE) {
+#	echo '<br>'.PHP_EOL.$sign_str.'<br>'.PHP_EOL;
+#}
 		// $oauth_token_secret here is empty, it is ok    http://habrahabr.ru/post/145988/
 		$sign = $this->_hmac_sha1($sign_str, $this->client_secret.'&'.$oauth_token_secret);
+#if (DEBUG_MODE) {
+#	echo '<br>'.PHP_EOL.$this->client_secret.'&'.$oauth_token_secret;
+#}
 		$sign = $this->_encode(base64_encode($sign));
 		return $sign;
 	}
