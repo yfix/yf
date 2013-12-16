@@ -18,6 +18,7 @@ abstract class yf_oauth_driver2 {
 	protected $client_secret = '';
 	protected $client_public = '';
 	protected $get_user_info_user_bearer = false;
+	protected $redirect_uri_force_https = false;
 
 	/**
 	*/
@@ -28,6 +29,9 @@ abstract class yf_oauth_driver2 {
 			return '<h1 class="text-error">Error: no config client_id and client_secret for provider: '.$this->provider.'</h1>';
 		}
 		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
+		if ($this->redirect_uri_force_https) {
+			$this->redirect_uri = str_replace('http://', 'https://', $this->redirect_uri);
+		}
 		$this->client_id = $config[$this->provider]['client_id'] ?: ''; $application_line = __LINE__;
 		$this->client_secret = $config[$this->provider]['client_secret'] ?: '';
 		$this->client_public = $config[$this->provider]['client_public'] ?: '';
@@ -47,7 +51,7 @@ abstract class yf_oauth_driver2 {
 			}
 		}
 		if (!$this->_storage_get('user')) {
-			$url = $this->url_user.'?'.http_build_query($this->url_params + $this->url_params_user_info + array(
+			$url = $this->url_user.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_user_info + array(
 				'access_token'	=> $access_token,
 			));
 			if ($this->get_user_info_user_bearer) {
@@ -81,7 +85,7 @@ abstract class yf_oauth_driver2 {
 		if (!$code) {
 			return $this->authorize();
 		}
-		$url_params = $this->url_params + $this->url_params_access_token + array(
+		$url_params = (array)$this->url_params + (array)$this->url_params_access_token + array(
 			'client_id'		=> $this->client_id,
 			'client_secret' => $this->client_secret,
 			'redirect_uri' 	=> $this->redirect_uri,
@@ -110,7 +114,7 @@ abstract class yf_oauth_driver2 {
 	/**
 	*/
 	function authorize() {
-		$url = $this->url_authorize.'?'.http_build_query($this->url_params + $this->url_params_authorize + array(
+		$url = $this->url_authorize.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_authorize + array(
 			'client_id' 	=> $this->client_id,
 			'redirect_uri' 	=> $this->redirect_uri,
 			'scope'			=> $this->scope,

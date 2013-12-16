@@ -12,5 +12,6 @@ class yf_oauth_driver_dropbox extends yf_oauth_driver2 {
 	);
 	protected $get_access_token_method = 'POST';
 	protected $get_user_info_user_bearer = true;
+	protected $redirect_uri_force_https = true;
 
 }

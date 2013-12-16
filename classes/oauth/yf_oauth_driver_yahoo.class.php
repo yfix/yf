@@ -36,7 +36,12 @@ echo '<pre><small>'.print_r($debug, 1).'</small></pre>';
 		if (!$this->_storage_get('user')) {
 			$guid = 'APF4JWLCUDYDK5IHBK7E5K34ZA';
 			$url = str_replace('{guid}', $guid, $this->url_user);
-
+/*
+			$url = 'http://query.yahooapis.com/v1/yql?'.http_build_query(array(
+				'q' => 'select * from social.profile where guid=me',
+				'format' => 'json',
+			));
+*/
 			$this->_storage_set('nonce', md5(microtime().rand(1,10000000)));
 			$this->_storage_set('last_time', time());
 			$params = array(

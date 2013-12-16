@@ -10,6 +10,12 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	protected $scope = '';
 	protected $oauth_version = '1.0';
 	protected $access_token_use_header = true;
+	protected $url_params = array();
+	protected $url_params_authorize = array();
+	protected $url_params_authenticate = array();
+	protected $url_params_request_token = array();
+	protected $url_params_access_token = array();
+	protected $url_params_user_info = array();
 
 	/**
 	*/
@@ -40,7 +46,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 				'oauth_timestamp'		=> $this->_storage_get('last_time'),
 				'oauth_signature_method'=> 'HMAC-SHA1',
 				'oauth_token'			=> $access_token,
-			);
+			) + (array)$this->url_params + (array)$this->url_params_user_info;
 			$opts = array(
 				'custom_header' => $this->_get_oauth_header($this->url_user, $params, 'GET', $access_token_secret, array('user_id' => $user_id)),
 			);
@@ -84,7 +90,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			'oauth_signature_method'=> 'HMAC-SHA1',
 			'oauth_token'			=> $oauth_token,
 			'oauth_verifier'		=> $oauth_verifier,
-		);
+		) + (array)$this->url_params + (array)$this->url_params_access_token;
 		$url = $this->url_access_token;
 		if ($this->access_token_use_header) {
 			$opts = array(
@@ -121,7 +127,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		if (!$request_token_info) {
 			return $this->authorize();
 		}
-		$url = $this->url_authenticate.'?'.http_build_query($this->url_params + (array)$this->url_params_authenticate + array(
+		$url = $this->url_authenticate.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_authenticate + array(
 			'oauth_token' 	=> $request_token_info['oauth_token'],
 		));
 		js_redirect($url, $url_rewrite = false);
@@ -147,7 +153,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			'oauth_nonce'			=> $this->_storage_get('nonce'),
 			'oauth_timestamp'		=> $this->_storage_get('last_time'),
 			'oauth_signature_method'=> 'HMAC-SHA1',
-		);
+		) + (array)$this->url_params + (array)$this->url_params_authorize;
 		$opts = array(
 			'post'	=> array(),
 			'custom_header' => $this->_get_oauth_header($url, $params),
