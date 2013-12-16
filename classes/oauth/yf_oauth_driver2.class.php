@@ -20,6 +20,8 @@ abstract class yf_oauth_driver2 {
 	protected $get_user_info_user_bearer = false;
 	protected $redirect_uri_force_https = false;
 
+// TODO: refresh_token
+
 	/**
 	*/
 	function login() {

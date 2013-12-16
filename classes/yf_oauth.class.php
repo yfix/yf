@@ -26,38 +26,30 @@ class yf_oauth {
 	}
 
 	/**
-	* Example of $this->_providers item:
+	* Example of $this->_providers item (can also be empty):
 	*	'github' => array(
-	*		'oauth_version' => '2.0',
-	*		'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
-	*		'access_token_url' => 'https://github.com/login/oauth/access_token',
 	*		'user_info_url' => 'https://api.github.com/user',
 	*	),
 	*/
 	function _load_oauth_providers() {
+		$config = $this->_load_oauth_config();
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
-/*
-		$paths = array(
-			YF_PATH. 'share/oauth_providers/',
-			PROJECT_PATH. 'share/oauth_providers/',
-		);
-		foreach ((array)_class('dir')->scan($paths, 1, '-f /[a-z0-9_-]+\.php$/i') as $path) {
-			$name = trim(substr(trim(basename($path)), 0, -strlen('.php')));
-			if (!$name) {
-				continue;
-			}
-			require_once $path;
-			$this->_providers[$name] = $data;
-		}
-*/
 		$paths = array(
 			YF_PATH. 'classes/oauth/',
+			PROJECT_PATH. 'classes/oauth/',
 		);
 		foreach ((array)_class('dir')->scan($paths, 1, '-f /yf_oauth_driver_[a-z0-9_-]+\.class\.php$/i') as $path) {
 			$name = trim(substr(trim(basename($path)), strlen('yf_oauth_driver_'), -strlen('.class.php')));
 			if (!$name) {
+				continue;
+			}
+			if (!isset($config[$name])) {
+				continue;
+			}
+			$p_config = $config[$name];
+			if (!strlen($p_config['client_id']) || !strlen($p_config['client_secret'])) {
 				continue;
 			}
 			$this->_providers[$name] = $data;
