@@ -3,6 +3,8 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_mailru extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: http://api.mail.ru/sites/my/
+
 	protected $url_authorize = 'https://connect.mail.ru/oauth/authorize';
 	protected $url_access_token = 'https://connect.mail.ru/oauth/token';
 	protected $url_user = 'http://www.appsmail.ru/platform/api';

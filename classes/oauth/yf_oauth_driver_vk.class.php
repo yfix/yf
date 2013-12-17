@@ -3,6 +3,8 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_vk extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: http://vk.com/dev
+
 	protected $url_authorize = 'https://oauth.vk.com/authorize';
 	protected $url_access_token = 'https://oauth.vk.com/access_token';
 	protected $url_user = 'https://api.vk.com/method/users.get';

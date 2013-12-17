@@ -3,6 +3,8 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_google extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: https://cloud.google.com/console#/project
+
 	protected $url_authorize = 'https://accounts.google.com/o/oauth2/auth';
 	protected $url_access_token = 'https://accounts.google.com/o/oauth2/token';
 	protected $url_user = 'https://www.googleapis.com/oauth2/v1/userinfo';

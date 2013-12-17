@@ -3,6 +3,8 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_github extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: https://github.com/settings/applications
+
 	protected $url_authorize = 'https://github.com/login/oauth/authorize';
 	protected $url_access_token = 'https://github.com/login/oauth/access_token';
 	protected $url_user = 'https://api.github.com/user';

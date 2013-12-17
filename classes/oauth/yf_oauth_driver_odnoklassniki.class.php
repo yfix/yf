@@ -3,6 +3,9 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: http://www.odnoklassniki.ru/devaccess
+	// http://www.odnoklassniki.ru/dk?st.cmd=appEditWizard&st._aid=Apps_Info_MyDev_AddApp
+
 	protected $url_authorize = 'http://www.odnoklassniki.ru/oauth/authorize';
 	protected $url_access_token = 'http://api.odnoklassniki.ru/oauth/token.do';
 	protected $url_user = 'http://api.odnoklassniki.ru/fb.do';

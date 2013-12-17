@@ -3,6 +3,8 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: https://oauth.yandex.ru/client/new
+
 	protected $url_authorize = 'https://oauth.yandex.ru/authorize';
 	protected $url_access_token = 'https://oauth.yandex.ru/token';
 	protected $url_user = 'https://login.yandex.ru/info';
