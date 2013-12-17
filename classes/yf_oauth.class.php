@@ -13,9 +13,11 @@ class yf_oauth {
 	/**
 	*/
 	function login($provider) {
-		$user_info = _class('oauth_driver_'.$provider, 'classes/oauth/')->login();
+		$driver = _class('oauth_driver_'.$provider, 'classes/oauth/');
+		$user_info = $driver->login();
 		if ($user_info) {
-			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($user_info, 1).'</small></pre>';
+			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($driver->_get_user_info_for_auth($user_info), 1).'</small></pre>';
+			$body .= '<h1 class="text-success">Raw user info</h1><pre><small>'.print_r($user_info, 1).'</small></pre>';
 		} else {
 			$body .= '<h1 class="text-error">Error</h1>';
 		}
