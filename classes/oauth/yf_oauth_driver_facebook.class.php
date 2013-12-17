@@ -11,6 +11,22 @@ class yf_oauth_driver_facebook extends yf_oauth_driver2 {
 
 	/**
 	*/
+	function _get_user_info_for_auth($raw = array()) {
+/*
+		$user_info = array(
+			'user_id'		=> $raw['id'],
+			'login'			=> $raw['login'],
+			'name'			=> $raw['id'],
+			'email'			=> current($raw['emails']),
+			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> $raw['url'],
+		);
+*/
+		return $user_info;
+	}
+
+	/**
+	*/
 	function _decode_result($result, $response, $for_method = '') {
 		// Force content_type here as facebook return text/plain, but in form urlencoded format
 		if ($for_method == 'get_access_token') {

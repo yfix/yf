@@ -20,6 +20,12 @@ abstract class yf_oauth_driver2 {
 	protected $get_user_info_user_bearer = false;
 	protected $redirect_uri_force_https = false;
 
+// TODO: refresh_token
+
+	/**
+	*/
+	abstract function _get_user_info_for_auth($raw = array());
+
 	/**
 	*/
 	function login() {
@@ -57,7 +63,7 @@ abstract class yf_oauth_driver2 {
 			if ($this->get_user_info_user_bearer) {
 				$url = $this->url_user;
 				$opts = array(
-					'custom_header'	=> 'Authorization: Bearer '.$access_token,
+					'custom_header'	=> array('Authorization: Bearer '.$access_token),
 				);
 			}
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);

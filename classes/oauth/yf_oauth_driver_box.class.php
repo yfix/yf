@@ -14,4 +14,19 @@ class yf_oauth_driver_box extends yf_oauth_driver2 {
 	protected $get_user_info_user_bearer = true;
 	protected $redirect_uri_force_https = true;
 
+	/**
+	*/
+	function _get_user_info_for_auth($raw = array()) {
+		$user_info = array(
+			'user_id'		=> $raw['id'],
+			'login'			=> $raw['login'],
+			'name'			=> $raw['name'],
+			'email'			=> $raw['login'],
+			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> '',
+			'phone'			=> $raw['phone'],
+			'lang'			=> $raw['language'],
+		);
+		return $user_info;
+	}
 }

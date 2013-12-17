@@ -12,4 +12,19 @@ class yf_oauth_driver_live extends yf_oauth_driver2 {
 		'grant_type'	=> 'authorization_code',
 	);
 
+	/**
+	*/
+	function _get_user_info_for_auth($raw = array()) {
+/*
+		$user_info = array(
+			'user_id'		=> $raw['id'],
+			'login'			=> $raw['login'],
+			'name'			=> $raw['id'],
+			'email'			=> current($raw['emails']),
+			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> $raw['url'],
+		);
+*/
+		return $user_info;
+	}
 }

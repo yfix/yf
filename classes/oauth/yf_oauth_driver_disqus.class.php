@@ -14,6 +14,20 @@ class yf_oauth_driver_disqus extends yf_oauth_driver2 {
 
 	/**
 	*/
+	function _get_user_info_for_auth($raw = array()) {
+		$user_info = array(
+			'user_id'		=> $raw['response']['id'],
+			'login'			=> $raw['response']['username'],
+			'name'			=> $raw['response']['name'],
+			'email'			=> '',
+			'avatar_url'	=> $raw['response']['avatar']['permalink'],
+			'profile_url'	=> $raw['response']['profileUrl'],
+		);
+		return $user_info;
+	}
+
+	/**
+	*/
 	function get_user_info() {
 		$access_token = $this->_storage_get('access_token');
 		if (!$access_token) {

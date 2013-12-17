@@ -11,6 +11,26 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 	protected $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
+// TODO
+#	protected $http_headers_add = array(
+#		'x-li-format: json',
+#	);
+
+	/**
+	*/
+	function _get_user_info_for_auth($raw = array()) {
+/*
+		$user_info = array(
+			'user_id'		=> $raw['id'],
+			'login'			=> $raw['login'],
+			'name'			=> $raw['id'],
+			'email'			=> current($raw['emails']),
+			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> $raw['url'],
+		);
+*/
+		return $user_info;
+	}
 
 	/**
 	*/
@@ -41,5 +61,4 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 		}
 		return $this->_storage_get('user');
 	}
-
 }
