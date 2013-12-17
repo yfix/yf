@@ -53,7 +53,11 @@ class yf_oauth {
 				if (!$sys_user_info) {
 					$login = $normalized_info['login'] ?: 'oauth_auto__'.$provider.'__'.$normalized_info['user_id'];
 // TODO: auto-login user if email exists or show dialog to enter email
-					$email = $normalized_info['email'] ?: $login.'@'.parse_url(WEB_PATH, PHP_URL_HOST);
+					$self_host = parse_url(WEB_PATH, PHP_URL_HOST);
+					if (!$self_host) {
+						$self_host = $_SERVER['HTTP_HOST'];
+					}
+					$email = $normalized_info['email'] ?: $login.'@'.$self_host;
 					db()->insert_safe('user', array(
 						'group'			=> 2,
 						'login'			=> $login,
@@ -86,13 +90,13 @@ class yf_oauth {
 				_class('auth_user', 'classes/auth/')->_save_login_in_session($sys_user_info);
 			}
 		}
-		if ($oauth_user_info) {
-			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($normalized_info, 1).'</small></pre>';
-			$body .= '<h1 class="text-success">Raw user info</h1><pre><small>'.print_r($oauth_user_info, 1).'</small></pre>';
-		} else {
-			$body .= '<h1 class="text-error">Error</h1>';
-		}
 		if (DEBUG_MODE) {
+			if ($oauth_user_info) {
+				$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($normalized_info, 1).'</small></pre>';
+				$body .= '<h1 class="text-success">Raw user info</h1><pre><small>'.print_r($oauth_user_info, 1).'</small></pre>';
+			} else {
+				$body .= '<h1 class="text-error">Error</h1>';
+			}
 			$body .= '<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
 		}
 		return $body;
