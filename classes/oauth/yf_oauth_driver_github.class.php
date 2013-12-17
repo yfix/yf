@@ -1,88 +1,68 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_github extends yf_oauth_driver {
+load('oauth_driver2', 'framework', 'classes/oauth/');
+class yf_oauth_driver_github extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://github.com/login/oauth/authorize';
 	protected $url_access_token = 'https://github.com/login/oauth/access_token';
 	protected $url_user = 'https://api.github.com/user';
-	protected $provider = 'github';
+	protected $url_user_emails = 'https://api.github.com/user/emails';
+	protected $scope = 'user'; // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
+	protected $get_access_token_method = 'POST';
+
+// 'custom_header' => 'Accept: application/vnd.github.v3+json',
+
+	/**
+	*/
+	function _get_user_info_for_auth($raw = array()) {
+		$user_info = array(
+			'user_id'		=> $raw['id'],
+			'login'			=> $raw['login'],
+			'name'			=> $raw['id'],
+			'email'			=> current($raw['emails']),
+			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> $raw['html_url'],
+		);
+		return $user_info;
+	}
 
 	/**
 	*/
 	function get_user_info() {
-		if (!$_SESSION['oauth'][$this->provider]['access_token']) {
-			$this->get_access_token();
+		$access_token = $this->_storage_get('access_token');
+		if (!$access_token) {
+			$access_token = $this->get_access_token();
+			if (!$access_token) {
+				$this->_storage_clean();
+				js_redirect( $this->redirect_uri, $url_rewrite = false );
+				return false;
+			}
 		}
-		if (!$_SESSION['oauth'][$this->provider]['access_token']) {
-			return false;
-		}
-		if (!$_SESSION['oauth'][$this->provider]['user']) {
+		if (!$this->_storage_get('user')) {
 			$url = $this->url_user.'?'.http_build_query(array(
-				'access_token'	=> $_SESSION['oauth'][$this->provider]['access_token'],
+				'access_token'	=> $access_token,
 			));
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-			$result = $this->_decode_result($result, $response);
-			$_SESSION['oauth'][$this->provider]['user_info_request'] = array(
-				'result'	=> $result,
-				'response'	=> $response,
-			);
-			$_SESSION['oauth'][$this->provider]['user'] = $result;
+			$result = $this->_decode_result($result, $response, __FUNCTION__);
+			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
+				$this->_storage_clean();
+				js_redirect( $this->redirect_uri, $url_rewrite = false );
+				return false;
+			} else {
+				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$user = $result;
 
-			// Emails
-			$url_emails = $this->url_user.'/emails?'.http_build_query(array(
-				'access_token'	=> $_SESSION['oauth'][$this->provider]['access_token'],
-			));
-			$result = common()->get_remote_page($url_emails, $cache = false, $opts = array(), $response);
-			$result = $this->_decode_result($result, $response);
-			$_SESSION['oauth'][$this->provider]['user']['emails'] = $result;
-		}
-		return $_SESSION['oauth'][$this->provider]['user'];
-	}
+				// Emails
+				$url_emails = $this->url_user_emails.'?'.http_build_query(array(
+					'access_token'	=> $access_token,
+				));
+				$result = common()->get_remote_page($url_emails, $cache = false, $opts = array(), $response);
+				$result = $this->_decode_result($result, $response, __FUNCTION__);
+				$user['emails'] = $result;
 
-	/**
-	*/
-	function get_access_token () {
-		if ($_SESSION['oauth'][$this->provider]['access_token']) {
-			return $_SESSION['oauth'][$this->provider]['access_token'];
+				$this->_storage_set('user', $user);
+			}
 		}
-		$code = $_GET['code'];
-		if (!$code) {
-			return $this->authorize();
-		}
-		$url = $this->url_access_token;
-		$opts = array(
-			'post'	=> array(
-				'client_id'		=> $this->client_id,
-				'client_secret' => $this->client_secret,
-				'code'			=> $code,
-				'redirect_uri' 	=> $this->redirect_uri,
-			),
-		);
-		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-		$result = $this->_decode_result($result, $response);
-		if (isset($result['error']) && strlen($result['error']) || !is_array($result)) {
-			return js_redirect( $this->redirect_uri, $url_rewrite = false );
-		} else {
-			$_SESSION['oauth'][$this->provider]['access_token_request'] = array(
-				'result'	=> $result,
-				'response'	=> $response,
-			);
-			$_SESSION['oauth'][$this->provider]['access_token'] = $result['access_token'];
-		}
-		return $_SESSION['oauth'][$this->provider]['access_token'];
-	}
-
-	/**
-	*/
-	function authorize () {
-		$url = $this->url_authorize.'?'.http_build_query(array(
-			'client_id' 	=> $this->client_id,
-			'redirect_uri' 	=> $this->redirect_uri,
-			'scope'			=> 'user', // http://developer.github.com/v3/oauth/#scopes // user Read/write access to profile info only. Note: this scope includes user:email and user:follow.
-// TODO save this in session and implement for all other providers too to prevent CSRF
-			'state'			=> md5(microtime().rand(1,10000000)), // An unguessable random string. It is used to protect against cross-site request forgery attacks.
-		));
-		return js_redirect($url, $url_rewrite = false);
+		return $this->_storage_get('user');
 	}
 }

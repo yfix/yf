@@ -87,6 +87,8 @@ class yf_debug_info {
 	public $_SHOW_ENV_DATA				= 0;
 	/** @var bool */
 	public $_SHOW_SETTINGS				= 1;
+	/** @var bool */
+	public $_SHOW_CURL_REQUESTS			= 1;
 	/** @var bool Store db queries to file */
 	public $LOG_QUERIES_TO_FILE			= 0;
 	/** @var bool Store slow db queries to file */
@@ -716,7 +718,14 @@ class yf_debug_info {
 		if (!$this->_SHOW_SESSION_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_SESSION);
+		$items = $_SESSION;
+		foreach ((array)$items as $k => $v) {
+			$items[$k] = array(
+				'key' => $k,
+				'value' => '<pre>'.var_export($v, 1).'</pre>',
+			);
+		}
+		return $this->_show_auto_table($items/*, array('hidden_map' => array('trace' => 'id'))*/);
 	}
 
 	/**
@@ -951,6 +960,23 @@ class yf_debug_info {
 		}
 		$body .= 'total size: '.$total_size;
 		return $body. $this->_show_auto_table($items);
+	}
+
+	/**
+	*/
+	function _debug_curl_requests () {
+		if (!$this->_SHOW_CURL_REQUESTS) {
+			return '';
+		}
+		$items = debug('curl_get_remote_page');
+		foreach ((array)$items as $k => $v) {
+			$items[$k] = array(
+				'id' => $k + 1,
+				'info' => '<pre>'.var_export($v['info'], 1).'</pre>',
+				'trace'	=> $v['trace'],
+			);
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'id')));
 	}
 
 	/**

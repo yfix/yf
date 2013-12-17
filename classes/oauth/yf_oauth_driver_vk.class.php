@@ -1,80 +1,61 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_vk extends yf_oauth_driver {
+load('oauth_driver2', 'framework', 'classes/oauth/');
+class yf_oauth_driver_vk extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://oauth.vk.com/authorize';
 	protected $url_access_token = 'https://oauth.vk.com/access_token';
 	protected $url_user = 'https://api.vk.com/method/users.get';
-	protected $provider = 'vk';
+	protected $scope = 'offline,wall,friends,email'; // Comma or space separated names. Note: "email" currently works only for verified partners like afisha.ru
+	protected $get_access_token_method = 'GET';
+	protected $url_params = array(
+		'v'	=> '5.5',
+	);
+
+	/**
+	*/
+	function _get_user_info_for_auth($raw = array()) {
+		$user_info = array(
+			'user_id'		=> $raw['response'][0]['id'],
+#			'login'			=> $raw['login'],
+			'name'			=> $raw['response'][0]['first_name'].' '.$raw['response'][0]['last_name'],
+#			'email'			=> $raw['email'],
+#			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> 'http://vk.com/id'.$raw['response'][0]['id'],
+		);
+		return $user_info;
+	}
 
 	/**
 	*/
 	function get_user_info() {
-		if (!$_SESSION['oauth'][$this->provider]['access_token']) {
-			$this->get_access_token();
+		$access_token = $this->_storage_get('access_token');
+		if (!$access_token) {
+			$access_token = $this->get_access_token();
+			if (!$access_token) {
+				$this->_storage_clean();
+				js_redirect( $this->redirect_uri, $url_rewrite = false );
+				return false;
+			}
 		}
-		if (!$_SESSION['oauth'][$this->provider]['access_token']) {
-			return false;
-		}
-		if (!$_SESSION['oauth'][$this->provider]['user']) {
-			$url = $this->url_user.'?'.http_build_query(array(
-				'user_id'		=> $_SESSION['oauth'][$this->provider]['access_token_request']['result']['user_id'],
-				'access_token'	=> $_SESSION['oauth'][$this->provider]['access_token'],
-				'v'				=> '5.5',
+		if (!$this->_storage_get('user')) {
+			$access_token_request = $this->_storage_get('access_token_request');
+			$user_id = $access_token_request['result']['user_id'];
+			$url = $this->url_user.'?'.http_build_query($this->url_params + array(
+				'access_token'	=> $access_token,
+				'user_id'		=> $user_id,
 			));
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response);
-			$_SESSION['oauth'][$this->provider]['user_info_request'] = array(
-				'result'	=> $result,
-				'response'	=> $response,
-			);
-			$_SESSION['oauth'][$this->provider]['user'] = $result;
+			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
+				$this->_storage_clean();
+				js_redirect( $this->redirect_uri, $url_rewrite = false );
+				return false;
+			} else {
+				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user', $result);
+			}
 		}
-		return $_SESSION['oauth'][$this->provider]['user'];
-	}
-
-	/**
-	*/
-	function get_access_token () {
-		if ($_SESSION['oauth'][$this->provider]['access_token']) {
-			return $_SESSION['oauth'][$this->provider]['access_token'];
-		}
-		$code = $_GET['code'];
-		if (!$code) {
-			return $this->authorize();
-		}
-		$url = $this->url_access_token.'?'.http_build_query(array(
-			'client_id'		=> $this->client_id,
-			'client_secret' => $this->client_secret,
-			'code'			=> $code,
-			'redirect_uri' 	=> $this->redirect_uri,
-			'v'				=> '5.5',
-		));
-		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-		$result = $this->_decode_result($result, $response);
-		if ($response['http_code'] == 401) {
-			return js_redirect( $this->redirect_uri, $url_rewrite = false );
-		} elseif ($response['http_code'] == 200) {
-			$_SESSION['oauth'][$this->provider]['access_token_request'] = array(
-				'result'	=> $result,
-				'response'	=> $response,
-			);
-			$_SESSION['oauth'][$this->provider]['access_token'] = $result['access_token'];
-		}
-		return $_SESSION['oauth'][$this->provider]['access_token'];
-	}
-
-	/**
-	*/
-	function authorize () {
-		$url = $this->url_authorize.'?'.http_build_query(array(
-			'client_id' 		=> $this->client_id,
-			'redirect_uri' 		=> $this->redirect_uri,
-			'scope'				=> 'offline,wall,friends,email', // Comma or space separated names
-			'response_type' 	=> 'code',
-			'v'					=> '5.5',
-		));
-		return js_redirect($url, $url_rewrite = false);
+		return $this->_storage_get('user');
 	}
 }

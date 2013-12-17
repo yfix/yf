@@ -7,59 +7,59 @@ class yf_oauth {
 	/**
 	*/
 	function _init() {
-// TODO: create special section in debug panel with curl requests inside
 		conf('USE_CURL_DEBUG', true);
 	}
 
 	/**
 	*/
 	function login($provider) {
-		$user_info = _class('oauth_driver_'.$provider, 'classes/oauth/')->login();
-		if ($user_info) {
-			return '<h1 class="text-success">User info</h1>
-				<pre><small>'.print_r($user_info, 1).'</small></pre>
-				<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
+		$driver = _class('oauth_driver_'.$provider, 'classes/oauth/');
+		$user_info = $driver->login();
+		if ($user_info['user_id']) {
+// TODO: create new oauth_to_user table record, create new user record if not exists, auto-login user if email exists or show dialog to enter email
 		}
-		return '<h1 class="text-error">Error</h1>';
+		if ($user_info) {
+			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($driver->_get_user_info_for_auth($user_info), 1).'</small></pre>';
+			$body .= '<h1 class="text-success">Raw user info</h1><pre><small>'.print_r($user_info, 1).'</small></pre>';
+		} else {
+			$body .= '<h1 class="text-error">Error</h1>';
+		}
+		if (DEBUG_MODE) {
+			$body .= '<pre><small>'.print_r($_SESSION['oauth'][$provider], 1).'</small></pre>';
+		}
+		return $body;
 	}
 
 	/**
-	* Example of $this->_providers item:
+	* Example of $this->_providers item (can also be empty):
 	*	'github' => array(
-	*		'oauth_version' => '2.0',
-	*		'dialog_url' => 'https://github.com/login/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}',
-	*		'access_token_url' => 'https://github.com/login/oauth/access_token',
 	*		'user_info_url' => 'https://api.github.com/user',
 	*	),
 	*/
 	function _load_oauth_providers() {
+		$config = $this->_load_oauth_config();
 		if (isset($this->_providers_loaded)) {
 			return $this->_providers;
 		}
-/*
-		$paths = array(
-			YF_PATH. 'share/oauth_providers/',
-			PROJECT_PATH. 'share/oauth_providers/',
-		);
-		foreach ((array)_class('dir')->scan($paths, 1, '-f /[a-z0-9_-]+\.php$/i') as $path) {
-			$name = trim(substr(trim(basename($path)), 0, -strlen('.php')));
-			if (!$name) {
-				continue;
-			}
-			require_once $path;
-			$this->_providers[$name] = $data;
-		}
-*/
 		$paths = array(
 			YF_PATH. 'classes/oauth/',
+			PROJECT_PATH. 'classes/oauth/',
 		);
 		foreach ((array)_class('dir')->scan($paths, 1, '-f /yf_oauth_driver_[a-z0-9_-]+\.class\.php$/i') as $path) {
 			$name = trim(substr(trim(basename($path)), strlen('yf_oauth_driver_'), -strlen('.class.php')));
 			if (!$name) {
 				continue;
 			}
+			if (!isset($config[$name])) {
+				continue;
+			}
+			$p_config = $config[$name];
+			if (!strlen($p_config['client_id']) || !strlen($p_config['client_secret'])) {
+				continue;
+			}
 			$this->_providers[$name] = $data;
 		}
+		ksort($this->_providers);
 		$this->_providers_loaded = true;
 		return $this->_providers;
 	}
