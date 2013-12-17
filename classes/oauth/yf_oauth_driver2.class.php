@@ -24,6 +24,10 @@ abstract class yf_oauth_driver2 {
 
 	/**
 	*/
+	abstract function _get_user_info_for_auth($raw = array());
+
+	/**
+	*/
 	function login() {
 		$config = _class('oauth')->_load_oauth_config();
 		$this->provider = substr(get_called_class(), strlen(__CLASS__)); // yf_oauth_driver_vk, yf_oauth_driver2

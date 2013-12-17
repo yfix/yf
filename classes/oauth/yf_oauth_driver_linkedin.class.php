@@ -18,6 +18,22 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 
 	/**
 	*/
+	function _get_user_info_for_auth($raw = array()) {
+/*
+		$user_info = array(
+			'user_id'		=> $raw['id'],
+			'login'			=> $raw['login'],
+			'name'			=> $raw['id'],
+			'email'			=> current($raw['emails']),
+			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> $raw['url'],
+		);
+*/
+		return $user_info;
+	}
+
+	/**
+	*/
 	function get_user_info() {
 		$access_token = $this->_storage_get('access_token');
 		if (!$access_token) {
@@ -45,5 +61,4 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 		}
 		return $this->_storage_get('user');
 	}
-
 }

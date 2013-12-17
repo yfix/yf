@@ -14,4 +14,18 @@ class yf_oauth_driver_dropbox extends yf_oauth_driver2 {
 	protected $get_user_info_user_bearer = true;
 	protected $redirect_uri_force_https = true;
 
+	/**
+	*/
+	function _get_user_info_for_auth($raw = array()) {
+		$user_info = array(
+			'user_id'		=> $raw['uid'],
+			'login'			=> $raw['email'],
+			'name'			=> $raw['display_name'],
+			'email'			=> $raw['email'],
+			'avatar_url'	=> '',
+			'profile_url'	=> '',
+			'country'		=> $raw['country'],
+		);
+		return $user_info;
+	}
 }
