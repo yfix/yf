@@ -15,16 +15,14 @@ class yf_oauth_driver_instagram extends yf_oauth_driver2 {
 	/**
 	*/
 	function _get_user_info_for_auth($raw = array()) {
-/*
 		$user_info = array(
-			'user_id'		=> $raw['id'],
-			'login'			=> $raw['login'],
-			'name'			=> $raw['id'],
-			'email'			=> current($raw['emails']),
-			'avatar_url'	=> $raw['avatar_url'],
-			'profile_url'	=> $raw['url'],
+			'user_id'		=> $raw['data']['id'],
+			'login'			=> $raw['data']['username'],
+			'name'			=> $raw['data']['full_name'],
+			'email'			=> '',
+			'avatar_url'	=> $raw['data']['profile_picture'],
+			'profile_url'	=> 'http://instagram.com/'.$raw['data']['username'],
 		);
-*/
 		return $user_info;
 	}
 }
