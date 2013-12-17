@@ -21,7 +21,7 @@ class yf_oauth_driver_github extends yf_oauth_driver2 {
 			'name'			=> $raw['id'],
 			'email'			=> current($raw['emails']),
 			'avatar_url'	=> $raw['avatar_url'],
-			'profile_url'	=> $raw['url'],
+			'profile_url'	=> $raw['html_url'],
 		);
 		return $user_info;
 	}
