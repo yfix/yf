@@ -13,14 +13,77 @@ class yf_oauth {
 	/**
 	*/
 	function login($provider) {
-		$driver = _class('oauth_driver_'.$provider, 'classes/oauth/');
-		$user_info = $driver->login();
-		if ($user_info['user_id']) {
-// TODO: create new oauth_to_user table record, create new user record if not exists, auto-login user if email exists or show dialog to enter email
+		if (!$provider) {
+			return false;
 		}
-		if ($user_info) {
-			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($driver->_get_user_info_for_auth($user_info), 1).'</small></pre>';
-			$body .= '<h1 class="text-success">Raw user info</h1><pre><small>'.print_r($user_info, 1).'</small></pre>';
+		$normalized_info = array();
+		$driver = _class('oauth_driver_'.$provider, 'classes/oauth/');
+		$oauth_user_info = $driver->login();
+		if ($oauth_user_info) {
+			$normalized_info = $driver->_get_user_info_for_auth($oauth_user_info);
+		}
+// TODO: merge oauth if user is logged in: if (main()->USER_ID) {}
+		if ($normalized_info['user_id']) {
+			$oauth_registration = db()->get('SELECT * FROM '.db('oauth_users').' WHERE provider="'._es($provider).'" AND provider_uid="'._es($normalized_info['user_id']).'"');
+			if (!$oauth_registration) {
+				db()->insert_safe('oauth_users', array(
+					'provider'		=> $provider,
+					'provider_uid'	=> $normalized_info['user_id'],
+					'login'			=> $normalized_info['user_id'],
+					'email'			=> $normalized_info['email'],
+					'name'			=> $normalized_info['name'],
+					'avatar_url'	=> $normalized_info['avatar_url'],
+					'profile_url'	=> $normalized_info['profile_url'],
+					'json_normalized'=> json_encode($normalized_info),
+					'json_raw'		=> json_encode($oauth_user_info),
+					'add_date'		=> time(),
+					'user_id'		=> 0, // Here it is 0, will be updated later if OK
+				));
+				$oauth_user_id = db()->insert_id();
+				if ($oauth_user_id) {
+					$oauth_registration = db()->get('SELECT * FROM '.db('oauth_users').' WHERE provider="'._es($provider).'" AND provider_uid="'._es($normalized_info['user_id']).'" AND id='.intval($oauth_user_id));
+				}
+			}
+			if ($oauth_registration) {
+				$sys_user_info = array();
+				if ($oauth_registration['user_id']) {
+					$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($oauth_registration['user_id']));
+				} else {
+					$login = $normalized_info['login'] ?: 'oauth_auto__'.$provider.'__'.$normalized_info['user_id'];
+// TODO: auto-login user if email exists or show dialog to enter email
+					$email = $normalized_info['email'] ?: $login.'@'.parse_url(WEB_PATH, PHP_URL_HOST);
+					db()->insert_safe('user', array(
+						'group'			=> 2,
+						'login'			=> $login,
+						'email'			=> $email,
+						'name'			=> $normalized_info['name'] ?: $login,
+						'nick'			=> $normalized_info['name'] ?: $login,
+						'password'		=> md5(time().'some_salt'.uniqid()),
+// TODO: make verification by email
+						'active'		=> 1,
+						'add_date'		=> time(),
+						'verify_code'	=> md5(time().'some_salt'.uniqid()),
+// TODO: add other fields: locale, lang, age, gender, location, birthday, avatar_url, profile_url
+					));
+					$sys_user_id = db()->insert_id();
+					if ($sys_user_id) {
+						$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($sys_user_id));
+					}
+					// Link oauth record with system user account
+					if ($sys_user_info['id'] && !$oauth_registration['user_id']) {
+						db()->update_safe('oauth_users', array('user_id' => $sys_user_info['id']), 'id='.intval($oauth_registration['id']));
+						$oauth_registration['user_id'] = $sys_user_info['id'];
+					}
+				}
+			}
+			// Auto-login user if everything fine
+			if ($oauth_registration['user_id'] && $sys_user_info['id'] && !main()->USER_ID) {
+				_class('auth_user', 'classes/auth/')->_save_login_in_session($sys_user_info);
+			}
+		}
+		if ($oauth_user_info) {
+			$body .= '<h1 class="text-success">User info</h1><pre><small>'.print_r($normalized_info, 1).'</small></pre>';
+			$body .= '<h1 class="text-success">Raw user info</h1><pre><small>'.print_r($oauth_user_info, 1).'</small></pre>';
 		} else {
 			$body .= '<h1 class="text-error">Error</h1>';
 		}
