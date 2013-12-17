@@ -15,16 +15,15 @@ class yf_oauth_driver_mailru extends yf_oauth_driver2 {
 	/**
 	*/
 	function _get_user_info_for_auth($raw = array()) {
-/*
 		$user_info = array(
-			'user_id'		=> $raw['id'],
-			'login'			=> $raw['login'],
-			'name'			=> $raw['id'],
-			'email'			=> current($raw['emails']),
-			'avatar_url'	=> $raw['avatar_url'],
-			'profile_url'	=> $raw['url'],
+			'user_id'		=> $raw[0]['uid'],
+			'login'			=> $raw[0]['email'],
+			'name'			=> $raw[0]['nick'],
+			'email'			=> $raw[0]['email'],
+			'avatar_url'	=> $raw[0]['pic'],
+			'profile_url'	=> $raw[0]['link'],
+			'birthday'		=> $raw[0]['birthday'],
 		);
-*/
 		return $user_info;
 	}
 
