@@ -285,14 +285,16 @@ abstract class yf_installer_db {
 		if (!in_array($db->DB_PREFIX. $table_name, $avail_tables)) {
 			return false;
 		}
-
-# TODO: use cache_set()/cache_get()
-		$data = $this->_db_table_struct_into_array($this->TABLES_SQL[$table_name]);
-
+		$cache_name = __CLASS__.'__'.__FUNCTION__.'__'.$table_name;
+		$data = cache_get($cache_name);
+		if (!$data) {
+			$data = $this->_db_table_struct_into_array($this->TABLES_SQL[$table_name]);
+			cache_set($cache_name, $data);
+		}
 		if (!isset($data)) {
 			return false;
 		}
-		$table_struct = $data[$table_name]['fields'];
+		$table_struct = $data['fields'];
 		// Possibly this is partitioned table
 		if (empty($table_struct)) {
 			$table_found = false;
