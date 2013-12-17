@@ -23,6 +23,8 @@ class yf_oauth_driver_google extends yf_oauth_driver2 {
 			'email'			=> $raw['email'],
 			'avatar_url'	=> $raw['picture'],
 			'profile_url'	=> $raw['link'],
+			'gender'		=> $raw['gender'],
+			'locale'		=> $raw['locale'],
 		);
 		return $user_info;
 	}
