@@ -421,6 +421,13 @@ class yf_auth_user {
 	}
 
 	/**
+	* Alias
+	*/
+	function auto_login ($user_info = array(), $no_redirect_on_success = false) {
+		return $this->_save_login_in_session ($user_info, $no_redirect_on_success);
+	}
+
+	/**
 	* Save auth information in session
 	*/
 	function _save_login_in_session ($user_info = array(), $no_redirect_on_success = false) {

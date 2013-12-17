@@ -22,7 +22,6 @@ class yf_oauth {
 		if ($oauth_user_info) {
 			$normalized_info = $driver->_get_user_info_for_auth($oauth_user_info);
 		}
-// TODO: merge oauth if user is logged in: if (main()->USER_ID) {}
 		if ($normalized_info['user_id']) {
 			$oauth_registration = db()->get('SELECT * FROM '.db('oauth_users').' WHERE provider="'._es($provider).'" AND provider_uid="'._es($normalized_info['user_id']).'"');
 			if (!$oauth_registration) {
@@ -44,11 +43,14 @@ class yf_oauth {
 					$oauth_registration = db()->get('SELECT * FROM '.db('oauth_users').' WHERE provider="'._es($provider).'" AND provider_uid="'._es($normalized_info['user_id']).'" AND id='.intval($oauth_user_id));
 				}
 			}
-			if ($oauth_registration) {
-				$sys_user_info = array();
-				if ($oauth_registration['user_id']) {
-					$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($oauth_registration['user_id']));
-				} else {
+			$sys_user_info = array();
+			// merge oauth if user is logged in
+			if (main()->USER_ID) {
+				$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval(main()->USER_ID));
+			}
+// TODO: try to merge accounts by email if it is not empty
+			if ($oauth_registration && !$oauth_registration['user_id']) {
+				if (!$sys_user_info) {
 					$login = $normalized_info['login'] ?: 'oauth_auto__'.$provider.'__'.$normalized_info['user_id'];
 // TODO: auto-login user if email exists or show dialog to enter email
 					$email = $normalized_info['email'] ?: $login.'@'.parse_url(WEB_PATH, PHP_URL_HOST);
@@ -69,12 +71,15 @@ class yf_oauth {
 					if ($sys_user_id) {
 						$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($sys_user_id));
 					}
-					// Link oauth record with system user account
-					if ($sys_user_info['id'] && !$oauth_registration['user_id']) {
-						db()->update_safe('oauth_users', array('user_id' => $sys_user_info['id']), 'id='.intval($oauth_registration['id']));
-						$oauth_registration['user_id'] = $sys_user_info['id'];
-					}
 				}
+				// Link oauth record with system user account
+				if ($sys_user_info['id']) {
+					db()->update_safe('oauth_users', array('user_id' => $sys_user_info['id']), 'id='.intval($oauth_registration['id']));
+					$oauth_registration['user_id'] = $sys_user_info['id'];
+				}
+			}
+			if ($oauth_registration['user_id'] && !$sys_user_info['id']) {
+				$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($oauth_registration['user_id']));
 			}
 			// Auto-login user if everything fine
 			if ($oauth_registration['user_id'] && $sys_user_info['id'] && !main()->USER_ID) {
