@@ -11,6 +11,10 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 	protected $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
+// TODO
+#	protected $http_headers_add = array(
+#		'x-li-format: json',
+#	);
 
 	/**
 	*/

@@ -59,7 +59,7 @@ abstract class yf_oauth_driver2 {
 			if ($this->get_user_info_user_bearer) {
 				$url = $this->url_user;
 				$opts = array(
-					'custom_header'	=> 'Authorization: Bearer '.$access_token,
+					'custom_header'	=> array('Authorization: Bearer '.$access_token),
 				);
 			}
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
