@@ -5,7 +5,7 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 
 	protected $url_authorize = 'https://www.linkedin.com/uas/oauth2/authorization';
 	protected $url_access_token = 'https://www.linkedin.com/uas/oauth2/accessToken';
-	protected $url_user = 'https://api.linkedin.com/v1/people/~';
+	protected $url_user = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,formatted-name,picture-url,public-profile-url,email-address,location:(name),industry,headline)';
 	protected $scope = '';
 	protected $get_access_token_method = 'POST';
 	protected $url_params_access_token = array(
@@ -19,16 +19,14 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 	/**
 	*/
 	function _get_user_info_for_auth($raw = array()) {
-/*
 		$user_info = array(
 			'user_id'		=> $raw['id'],
-			'login'			=> $raw['login'],
-			'name'			=> $raw['id'],
-			'email'			=> current($raw['emails']),
-			'avatar_url'	=> $raw['avatar_url'],
-			'profile_url'	=> $raw['url'],
+			'login'			=> $raw['emailAddress'],
+			'name'			=> $raw['formattedName'],
+			'email'			=> $raw['emailAddress'],
+			'avatar_url'	=> $raw['pictureUrl'], // Can be empty
+			'profile_url'	=> $raw['publicProfileUrl'],
 		);
-*/
 		return $user_info;
 	}
 
@@ -48,6 +46,8 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 			$url = $this->url_user.'?'.http_build_query(array(
 				'oauth2_access_token'	=> $access_token,
 			));
+			$opts['custom_header'][] = 'x-li-format: json';
+
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {

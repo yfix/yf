@@ -3,6 +3,8 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_vk extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: http://vk.com/dev
+
 	protected $url_authorize = 'https://oauth.vk.com/authorize';
 	protected $url_access_token = 'https://oauth.vk.com/access_token';
 	protected $url_user = 'https://api.vk.com/method/users.get';
@@ -15,16 +17,14 @@ class yf_oauth_driver_vk extends yf_oauth_driver2 {
 	/**
 	*/
 	function _get_user_info_for_auth($raw = array()) {
-/*
 		$user_info = array(
-			'user_id'		=> $raw['id'],
-			'login'			=> $raw['login'],
-			'name'			=> $raw['id'],
-			'email'			=> current($raw['emails']),
-			'avatar_url'	=> $raw['avatar_url'],
-			'profile_url'	=> $raw['url'],
+			'user_id'		=> $raw['response'][0]['id'],
+#			'login'			=> $raw['login'],
+			'name'			=> $raw['response'][0]['first_name'].' '.$raw['response'][0]['last_name'],
+#			'email'			=> $raw['email'],
+#			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> 'http://vk.com/id'.$raw['response'][0]['id'],
 		);
-*/
 		return $user_info;
 	}
 

@@ -3,6 +3,8 @@
 load('oauth_driver2', 'framework', 'classes/oauth/');
 class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 
+	// Register for API client_id and client_secret here: https://oauth.yandex.ru/client/new
+
 	protected $url_authorize = 'https://oauth.yandex.ru/authorize';
 	protected $url_access_token = 'https://oauth.yandex.ru/token';
 	protected $url_user = 'https://login.yandex.ru/info';
@@ -15,16 +17,16 @@ class yf_oauth_driver_yandex extends yf_oauth_driver2 {
 	/**
 	*/
 	function _get_user_info_for_auth($raw = array()) {
-/*
 		$user_info = array(
 			'user_id'		=> $raw['id'],
-			'login'			=> $raw['login'],
-			'name'			=> $raw['id'],
-			'email'			=> current($raw['emails']),
-			'avatar_url'	=> $raw['avatar_url'],
-			'profile_url'	=> $raw['url'],
+			'login'			=> $raw['display_name'],
+			'name'			=> $raw['real_name'],
+			'email'			=> $raw['default_email'],
+#			'avatar_url'	=> $raw['avatar_url'],
+#			'profile_url'	=> $raw['url'],
+			'birthday'		=> $raw['birthday'],
+			'gender'		=> $raw['sex'],
 		);
-*/
 		return $user_info;
 	}
 

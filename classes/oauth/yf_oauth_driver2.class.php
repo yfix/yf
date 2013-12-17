@@ -47,6 +47,9 @@ abstract class yf_oauth_driver2 {
 	/**
 	*/
 	function get_user_info() {
+		if (DEBUG_MODE && $_GET['oauth_clean']) {
+			$this->_storage_clean();
+		}
 		$access_token = $this->_storage_get('access_token');
 		if (!$access_token) {
 			$access_token = $this->get_access_token();
@@ -56,7 +59,7 @@ abstract class yf_oauth_driver2 {
 				return false;
 			}
 		}
-		if (!$this->_storage_get('user')) {
+#		if (!$this->_storage_get('user')) {
 			$url = $this->url_user.'?'.http_build_query((array)$this->url_params + (array)$this->url_params_user_info + array(
 				'access_token'	=> $access_token,
 			));
@@ -76,7 +79,7 @@ abstract class yf_oauth_driver2 {
 				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
 				$this->_storage_set('user', $result);
 			}
-		}
+#		}
 		return $this->_storage_get('user');
 	}
 
