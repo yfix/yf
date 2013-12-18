@@ -46,6 +46,7 @@ class yf_manage_shop_import {
 	/**
 	*/
 	function import_xml() {
+		return false;
 		set_time_limit(0);
 /*		if (empty($_FILES)) {
 			return form('',array('enctype' => 'multipart/form-data'))
@@ -112,6 +113,7 @@ class yf_manage_shop_import {
 	/**
 	*/
 	function import_xls() {
+		return false;
 		set_time_limit(0);
 		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
 		$cat_aliases = db()->get_2d("SELECT name, cat_id FROM `".db('shop_suppliers_cat_aliases')."` WHERE supplier_id=".intval($SUPPLIER_ID));
@@ -159,8 +161,8 @@ class yf_manage_shop_import {
 		
 		}
 		if (count($items) != 0) {
-			return $this->process_items_ambar_update($items);
-//			return $this->process_items_epicentr_update($items);
+//			return $this->process_items_ambar_update($items);
+			return $this->process_items_epicentr_update($items);
 	//		return $this->process_items_fortuna($items);
 	//		return $this->process_items_talisman($items);
 //			return $this->process_items_talisman_update($items);	
@@ -331,16 +333,29 @@ class yf_manage_shop_import {
 		$products = array();
 		$R = db()->query("SELECT * FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
 		while ($A = db()->fetch_assoc($R)) {
-			$products[$A['name']] = $A['id'];
+			$name = mb_strtoupper($A['name'],"UTF-8");
+			$name = str_replace("И","І",$name);
+			$name = str_replace("Ы","И",$name);
+			
+			$products[$name] = $A['id'];
 		}
+
 		
 		$i = 0;
 		$cats_list = array();
 		$result = array();
+		$found=0;$not_found =0;
 		foreach ($items as $item) {
 			if (intval($item[0]) == 0) continue;
-			echo $item[2]." - ".$products[$item[2]]."\n";
+			if ($products[$item[2]]!='') {
+				$found++;
+				echo $item[2].": ".$products[$item[2]]."<br />";
+			} else {
+				echo $item[2].": NF<br />";
+				$not_found++;
+			}			
 		} 
+		echo $found."/".$not_found;
 		
 		return table($result, array(
             'table_class'       => 'table-condensed',
@@ -356,6 +371,23 @@ class yf_manage_shop_import {
 		))->auto();
 	}
 	
+	function _get_cat_id($cat,$parent_id) {
+		$A = db()->get("SELECT * FROM `".db('category_items')."` WHERE `parent_id`='".$parent_id."' AND `name`='".$cat."'");
+		if (empty($A)) {
+			db()->insert(db('category_items'),array(
+				'parent_id' => $parent_id,
+				'name' => _es($cat),
+				'cat_id' => 1,
+				'active' => 1,
+				'url' => common()->_propose_url_from_name($cat),
+			));
+			$parent_id = db()->insert_id();
+		} else {
+			$parent_id = $A['id'];
+		}
+		return $parent_id;
+	}
+	
 	function process_items_epicentr_update($items) {
 		$supplier_id = 101;
 		
@@ -366,15 +398,18 @@ class yf_manage_shop_import {
 		}
 		
 		$i = 0;
-		$cats_list = array();
 		$result = array();
 		foreach ($items as $item) {
 			if (intval($item[0]) == 0) continue;
+			$cat = mb_convert_case($item[5], MB_CASE_TITLE, "UTF-8");
+
+			$cat_id = $this->_get_cat_id($cat,62520);
 			
 			if ($item[2]!='') {
 				$v = array(
 					'name' => trim($item[1]),
 					'articul' => $item[2],
+					'cat_id' => $cat_id,
 					'price' => number_format($item[3], 2, '.', ''),
 					'supplier_id' => $supplier_id, 
 					'url' => common()->_propose_url_from_name(trim($item[1])),
@@ -391,21 +426,17 @@ class yf_manage_shop_import {
 							'is_new' => 'new',
 						);
 					}
+					db()->insert(db('shop_products'), _es($v)) or $error = true;					
 				} else {
-				/*	$result[] = array(
+					$result[] = array(
 						'articul' => $v['articul'],
 						'product' => $v['name'],
 						'price' => $v['price'],
 						'is_new' => 'upd',
-					); */
+					); 
+					db()->update(db('shop_products'), _es($v),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'") or $error = true;
 				}
 				$error = false;
-	//			db()->insert(db('shop_products'), $v) or $error = true;
-	/*			if ($error) {
-					$result .= 'ERROR';
-				} else {
-					$result .= 'OK';				
-				} */
 			}
 			$i++;
 		} 
