@@ -26,7 +26,7 @@ class yf_manage_shop {
 	/** @var int Big img size Y */
 	public $BIG_Y			= 750;
 	/** @var string Default currency */
-	public $CURRENCY		= '$';
+	public $CURRENCY		= 'грн';
 	/** @var Shipping types */
 	public $_ship_types = array(
 		1	=> 'Free',
