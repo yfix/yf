@@ -24,12 +24,13 @@ class yf_shop_supplier_panel_upload_images {
 		$SUPPLIER_ID = $this->SUPPLIER_ID;
 		$ADMIN_INFO = db()->query_fetch('SELECT * FROM '.db('sys_admin').' WHERE id='.intval(main()->ADMIN_ID));
 		$SUPPLIER_INFO = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.intval($SUPPLIER_ID));
-		if (empty($_FILES)) {
+		if (empty($_FILES) && empty($_POST['server_path'])) {
 			if(!$SUPPLIER_ID){
 				$suppliers = db()->get_2d('SELECT id, name FROM '.db('shop_suppliers'));
 				$form = form('',array('enctype' => 'multipart/form-data'))
 					->file("archive")
 					->select_box('supplier', $suppliers, array('desc' => 'Supplier', 'show_text' => 1))
+					->text("server_path","from server path")
 					->save('', "Upload");
 			} else{
 				$form = form('',array('enctype' => 'multipart/form-data'))
@@ -41,12 +42,22 @@ class yf_shop_supplier_panel_upload_images {
 		if($_POST['supplier']){
 			 $SUPPLIER_ID = $_POST['supplier'];
 		}
-		$file = $_FILES['archive'];
-		file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", "\n[".$file['name']."]\n", FILE_APPEND);
-		$new_name = md5(rand().microtime()).'.'.pathinfo($file['name'], PATHINFO_EXTENSION);
-		rename($file['name'], $new_name);
-		$archive_name = $this->ARCHIVE_FOLDER. $new_name;
-		$uploaded = common()->upload_archive($archive_name);
+		if($_POST['server_path']){
+			$server_path = strip_tags(ltrim($_POST['server_path'], ' .-_+=|,!@#%~&*();:\'"'));
+			if(file_exists($server_path) && is_readable($server_path)){
+				$archive_name = $server_path;
+				$file_type = mime_content_type($archive_name);
+				$uploaded = true;
+			}
+		}else{
+			$file = $_FILES['archive'];
+			file_put_contents($this->ARCHIVE_FOLDER.date("d-m-Y").".log", "\n[".$file['name']."]\n", FILE_APPEND);
+			$new_name = md5(rand().microtime()).'.'.pathinfo($file['name'], PATHINFO_EXTENSION);
+			rename($file['name'], $new_name);
+			$archive_name = $this->ARCHIVE_FOLDER. $new_name;
+			$file_type = $file['type'];
+			$uploaded = common()->upload_archive($archive_name);
+		}
 		if(!$uploaded){
 			return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
 		}
@@ -61,7 +72,7 @@ class yf_shop_supplier_panel_upload_images {
 		$tar = 'tar -xvf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 		$gz = 'tar -xzf '.$full_archive_name.' -C '.$EXTRACT_PATH;
 
-		$ext = $this->ALLOWED_MIME_TYPES[$file['type']];
+		$ext = $this->ALLOWED_MIME_TYPES[$file_type];
 		if($ext == 'rar') common()->rar_extract($archive_name, $EXTRACT_PATH);
 		if($ext == 'zip') common()->zip_extract($archive_name, $EXTRACT_PATH);
 		if($ext == 'tar' || $ext == 'gz') passthru($$ext);
@@ -173,3 +184,4 @@ class yf_shop_supplier_panel_upload_images {
 	}
 
 }
+
