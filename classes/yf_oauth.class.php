@@ -47,8 +47,18 @@ class yf_oauth {
 			// merge oauth if user is logged in
 			if (main()->USER_ID) {
 				$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval(main()->USER_ID));
-			}
 // TODO: try to merge accounts by email if it is not empty
+				if ($sys_user_info && $oauth_registration && !$oauth_registration['user_id']) {
+					$try_other_oauths = db()->get_all('SELECT * FROM '.db('oauth_users').' WHERE user_id='.intval(main()->USER_ID));
+					foreach ((array)$try_other_oauths as $v) {
+						if (substr($v['email'], 0, strlen('oauth_auto__')) == 'oauth_auto__') {
+							continue;
+						}
+// TODO
+					}
+#print_r($try_other_oauths);
+				}
+			}
 			if ($oauth_registration && !$oauth_registration['user_id']) {
 				if (!$sys_user_info) {
 					$login = $normalized_info['login'] ?: 'oauth_auto__'.$provider.'__'.$normalized_info['user_id'];
