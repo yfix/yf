@@ -1,7 +1,9 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_mailru extends yf_oauth_driver {
+load('oauth_driver2', 'framework', 'classes/oauth/');
+class yf_oauth_driver_mailru extends yf_oauth_driver2 {
+
+	// Register for API client_id and client_secret here: http://api.mail.ru/sites/my/
 
 	protected $url_authorize = 'https://connect.mail.ru/oauth/authorize';
 	protected $url_access_token = 'https://connect.mail.ru/oauth/token';
@@ -14,11 +16,28 @@ class yf_oauth_driver_mailru extends yf_oauth_driver {
 
 	/**
 	*/
+	function _get_user_info_for_auth($raw = array()) {
+		$user_info = array(
+			'user_id'		=> $raw[0]['uid'],
+			'login'			=> $raw[0]['email'],
+			'name'			=> $raw[0]['nick'],
+			'email'			=> $raw[0]['email'],
+			'avatar_url'	=> $raw[0]['pic'],
+			'profile_url'	=> $raw[0]['link'],
+			'birthday'		=> $raw[0]['birthday'],
+		);
+		return $user_info;
+	}
+
+	/**
+	*/
 	function get_user_info() {
 		$access_token = $this->_storage_get('access_token');
 		if (!$access_token) {
 			$access_token = $this->get_access_token();
 			if (!$access_token) {
+				$this->_storage_clean();
+				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			}
 		}
@@ -33,9 +52,15 @@ class yf_oauth_driver_mailru extends yf_oauth_driver {
 				'sig'			=> $sign,
 			));
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
-			$result = $this->_decode_result($result, $response);
-			$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
-			$this->_storage_set('user', $result);
+			$result = $this->_decode_result($result, $response, __FUNCTION__);
+			if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
+				$this->_storage_clean();
+				js_redirect( $this->redirect_uri, $url_rewrite = false );
+				return false;
+			} else {
+				$this->_storage_set('user_info_request', array('result' => $result, 'response' => $response));
+				$this->_storage_set('user', $result);
+			}
 		}
 		return $this->_storage_get('user');
 	}

@@ -99,7 +99,8 @@ class yf_login_form {
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me', "", array('no_label' => 1))
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
-			->link('Retrieve lost password', "./?object=get_pswd", array('class' => 'btn'))
+			->link('Retrieve lost password', "./?object=get_pswd", array('class' => 'btn btn-mini'))
+			->container($this->oauth(array('only_icons' => 1)), array('wide' => 1))
 			->hidden('action', '', array('value' => 'login'))
 		;
 	}
@@ -122,5 +123,28 @@ class yf_login_form {
 			'login_form_url'	=> process_url('./?object=login_form'),
 		);
 		return tpl()->parse(__CLASS__.'/account_inactive', $replace);
+	}
+
+	/**
+	* Endpoint for oauth logins
+	*/
+	function oauth ($params = array()) {
+		if (!isset($params['only_icons'])) {
+			$params['only_icons'] = 1;
+		}
+		if ($_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
+			return _class('oauth')->login($_GET['id']);
+		}
+		$body = array();
+		$providers = _class('oauth')->_get_providers();
+		foreach ((array)$providers as $name => $settings) {
+			if ($name[0] == '_') {
+				continue;
+			}
+			$href = './?object='.$_GET['object'].'&action='.__FUNCTION__.'&id='.$name;
+			$img_web_path = 'https://s3-eu-west-1.amazonaws.com/yfix/oauth/providers/'.$name.'.png';
+			$body[] = '<a href="'.$href.'">'.'<img src="'.$img_web_path.'" style="height:32px;padding-right:2px;">'. (!$params['only_icons'] ? ' '.$name : '').'</a>';
+		}
+		return implode(PHP_EOL, $body);
 	}
 }

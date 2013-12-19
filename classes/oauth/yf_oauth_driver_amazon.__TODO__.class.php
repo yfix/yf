@@ -1,18 +1,29 @@
 <?php
 
-load('oauth_driver', 'framework', 'classes/oauth/');
-class yf_oauth_driver_amazon extends yf_oauth_driver {
-
-#	$this->baseApiUri = new Uri('https://api.amazon.com/');
-#	return new Uri('https://www.amazon.com/ap/oa');
-#	return new Uri('https://www.amazon.com/ap/oatoken');
-
-#	protected $url_authorize = '';
-#	protected $url_access_token = '';
-#	protected $url_user = '';
-#	protected $scope = '';
-#	protected $get_access_token_method = 'POST';
-
+load('oauth_driver2', 'framework', 'classes/oauth/');
+class yf_oauth_driver_amazon extends yf_oauth_driver2 {
+/*
+	protected $url_authorize = 'https://www.amazon.com/ap/oa';
+	protected $url_access_token = 'https://www.amazon.com/ap/oatoken';
+	protected $url_user = 'https://api.amazon.com/';
+	protected $scope = 'profile';
+	protected $get_access_token_method = 'POST';
+*/
 // TODO
 
+	/**
+	*/
+	function _get_user_info_for_auth($raw = array()) {
+/*
+		$user_info = array(
+			'user_id'		=> $raw['id'],
+			'login'			=> $raw['login'],
+			'name'			=> $raw['id'],
+			'email'			=> current($raw['emails']),
+			'avatar_url'	=> $raw['avatar_url'],
+			'profile_url'	=> $raw['url'],
+		);
+*/
+		return $user_info;
+	}
 }
