@@ -123,4 +123,24 @@ class yf_login_form {
 		);
 		return tpl()->parse(__CLASS__.'/account_inactive', $replace);
 	}
+
+	/**
+	* Endpoint for oauth logins
+	*/
+	function oauth () {
+		if ($_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
+			return _class('oauth')->login($_GET['id']);
+		}
+		$body = array();
+		$providers = _class('oauth')->_get_providers();
+		foreach ((array)$providers as $name => $settings) {
+			if ($name[0] == '_') {
+				continue;
+			}
+			$href = './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$name;
+			$img_web_path = 'https://s3-eu-west-1.amazonaws.com/yfix/oauth/providers/'.$name.'.png';
+			$body[] = '<a href="'.$href.'" class="btn">'.'<img src="'.$img_web_path.'" style="height:24px;"> '. $name.'</a>';
+		}
+		return implode(PHP_EOL, $body);
+	}
 }
