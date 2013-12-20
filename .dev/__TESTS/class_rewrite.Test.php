@@ -40,7 +40,26 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/test/my/123/456', _force_get_url('/test/my/123/456', array('host' => self::$host)) );
 
 		// Alias
+		$this->assertEquals('http://'.self::$host.'/test', url('/test', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test/my', url('/test/my', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123', url('/test/my/123', array('host' => self::$host)) );
 		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456', array('host' => self::$host)) );
+
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test') );
+		$this->assertEquals('http://'.self::$host.'/test/my', url(self::$host.'/test/my') );
+		$this->assertEquals('http://'.self::$host.'/test/my/123', url(self::$host.'/test/my/123') );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url(self::$host.'/test/my/123/456') );
+
+		$this->assertEquals('http://'.self::$host.'/test/123/456', url(self::$host.'/test//123/456') );
+		$this->assertEquals('http://'.self::$host.'/test/123', url(self::$host.'/test//123') );
+		$this->assertEquals('http://'.self::$host.'/test/0/456', url(self::$host.'/test///456') );
+
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test//') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test///') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////something') );
 	}
 
 /*
