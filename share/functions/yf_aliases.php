@@ -205,12 +205,13 @@ if (!function_exists('sphinx_escape_string')) {
 	function sphinx_escape_string ($string) { return common()->sphinx_escape_string($string); }
 }
 if (!function_exists('html')) {
-// TODO
 	function html ($params) { return _class('html')->chained_wrapper($params); }
 }
 if (!function_exists('url')) {
-// TODO
-	function url($url = '', $extra = array()) { return common()->url($url, $extra); }
+	function url($params = array(), $params2 = array()) { return module('rewrite')->_force_get_url($params, $params2); }
+}
+if (!function_exists('validate')) {
+	function validate($text = '', $rules = array()) { return _class('validate')->_process_text($text, $rules); }
 }
 // Check user banned or not
 if (!function_exists('_check_user_ban')) {
