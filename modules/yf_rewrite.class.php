@@ -82,6 +82,10 @@ class yf_rewrite {
 					list($params['host'], $params['object'], $params['action'], $params['id'], $params['page']/*, $params['other']*/) = explode('/', $url_str);
 				}
 			}
+			if (is_array($host)) {
+				$params += (array)$host;
+				$host = $params['host'];
+			}
 		}
 		if (!is_array($params) && empty($url_str)) {
 			return false;
