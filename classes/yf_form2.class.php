@@ -2146,107 +2146,6 @@ class yf_form2 {
 
 	/**
 	*/
-	function _validate_rules_array_from_raw($raw = '') {
-		$rules = array();
-		// At first, we merging all rules sets variants into one array
-		if (is_string($raw)) {
-			foreach((array)explode('|', $raw) as $_item) {
-				$rules[] = array($_item, null);
-			}
-		} elseif (is_array($raw)) {
-			foreach((array)$raw as $_raw) {
-				if (is_string($_raw)) {
-					foreach((array)explode('|', $_raw) as $_item) {
-						$rules[] = array($_item, null);
-					}
-				} elseif (is_callable($_raw)) {
-					$rules[] = array($_raw, null);
-				}
-			}
-		} elseif (is_callable($raw)) {
-			$rules[] = array($raw, null);
-		}
-		return $rules;
-	}
-
-	/**
-	* Examples of validate rules setting:
-	* 	'name1' => 'trim|required',
-	* 	'name2' => array('trim', 'required'),
-	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
-	* 	'name4' => array('trim|required', function() { return true; } ),
-	* 	'name5' => array('trim', 'required', function() { return true; } ),
-	* 	'__before__' => 'trim',
-	* 	'__after__' => 'some_method2|some_method3',
-	*/
-	function _validate_rules_cleanup($validate_rules = array()) {
-		// Add these rules to all validation rules, before them
-		$_name = '__before__';
-		$all_before = array();
-		if (isset($validate_rules[$_name])) {
-			$all_before = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
-			unset($validate_rules[$_name]);
-		}
-
-		// Add these rules to all validation rules, after them
-		$_name = '__after__';
-		$all_after = array();
-		if (isset($validate_rules[$_name])) {
-			$all_after = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
-			unset($validate_rules[$_name]);
-		}
-		unset($_name);
-
-		$out = array();
-		foreach ((array)$validate_rules as $name => $raw) {
-			$rules = (array)$this->_validate_rules_array_from_raw($raw);
-			if ($all_before) {
-				$tmp = $all_before;
-				foreach((array)$rules as $_item) {
-					$tmp[] = $_item;
-				}
-				$rules = $tmp;
-				unset($tmp);
-			}
-			if ($all_after) {
-				$tmp = $rules;
-				foreach((array)$all_after as $_item) {
-					$tmp[] = $_item;
-				}
-				$rules = $tmp;
-				unset($tmp);
-			}
-			// Here we do last parse of the rules params like 'matches[user.email]' into rule item array second element
-			foreach ((array)$rules as $k => $rule) {
-				if (!is_string($rule[0])) {
-					continue;
-				}
-				$val = trim($rule[0]);
-				$param = null;
-				// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
-				$pos = strpos($val, '[');
-				if ($pos !== false) {
-					$param = trim(trim(substr($val, $pos), ']['));
-					$val = trim(substr($val, 0, $pos));
-				}
-				if (!is_callable($val) && empty($val)) {
-					unset($rules[$k]);
-					continue;
-				}
-				$rules[$k] = array(
-					0	=> $val,
-					1	=> $param,
-				);
-			}
-			if ($rules) {
-				$out[$name] = array_values($rules); // array_values needed here to make array keys straight, unit tests will pass fine
-			}
-		}
-		return $out;
-	}
-
-	/**
-	*/
 	function _validate_rules_process($validate_rules = array(), &$data) {
 		$validate_ok = true;
 		foreach ((array)$validate_rules as $name => $rules) {
@@ -2290,6 +2189,28 @@ class yf_form2 {
 			}
 		}
 		return $validate_ok;
+	}
+
+	/**
+	* Examples of validate rules setting:
+	* 	'name1' => 'trim|required',
+	* 	'name2' => array('trim', 'required'),
+	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
+	* 	'name4' => array('trim|required', function() { return true; } ),
+	* 	'name5' => array('trim', 'required', function() { return true; } ),
+	* 	'__before__' => 'trim',
+	* 	'__after__' => 'some_method2|some_method3',
+	*/
+	function _validate_rules_cleanup($validate_rules = array()) {
+		$func = __FUNCTION__;
+		return _class('validate')->$func($validate_rules);
+	}
+
+	/**
+	*/
+	function _validate_rules_array_from_raw($raw = '') {
+		$func = __FUNCTION__;
+		return _class('validate')->$func($raw);
 	}
 
 	/**
