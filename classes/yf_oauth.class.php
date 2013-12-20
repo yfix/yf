@@ -12,13 +12,13 @@ class yf_oauth {
 
 	/**
 	*/
-	function login($provider) {
+	function login($provider, $params = array()) {
 		if (!$provider) {
 			return false;
 		}
 		$normalized_info = array();
 		$driver = _class('oauth_driver_'.$provider, 'classes/oauth/');
-		$oauth_user_info = $driver->login();
+		$oauth_user_info = $driver->login($params);
 		if ($oauth_user_info) {
 			$normalized_info = $driver->_get_user_info_for_auth($oauth_user_info);
 		}
