@@ -66,7 +66,9 @@ class yf_manage_shop_product_images{
 			"/product_".$id."_".$k.".+?jpg"."/"
 		);
 		foreach((array)$image_files as $filepath) {
-			unlink($filepath);
+			if (file_exists($filepath)) {
+				unlink($filepath);
+			}
 		}
 		db()->query("DELETE FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." AND `id`=".intval($_GET['key']));
 		
