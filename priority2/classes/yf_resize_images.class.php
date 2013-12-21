@@ -154,6 +154,10 @@ class yf_resize_images {
 		// If image file has another name - just copy it there (only if non-empty)
 		} else {
 			if ($this->source_file != $output_file) {
+				$out_dir = dirname($output_file);
+				if (!file_exists($out_dir)) {
+					mkdir($out_dir, 0755, $recursive = true);
+				}
 				copy($this->source_file, $output_file);
 			}
 		}
