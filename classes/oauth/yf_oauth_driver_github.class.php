@@ -20,7 +20,7 @@ class yf_oauth_driver_github extends yf_oauth_driver2 {
 		$user_info = array(
 			'user_id'		=> $raw['id'],
 			'login'			=> $raw['login'],
-			'name'			=> $raw['id'],
+			'name'			=> $raw['login'],
 			'email'			=> current($raw['emails']),
 			'avatar_url'	=> $raw['avatar_url'],
 			'profile_url'	=> $raw['html_url'],

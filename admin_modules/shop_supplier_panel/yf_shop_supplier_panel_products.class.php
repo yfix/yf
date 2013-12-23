@@ -78,7 +78,8 @@ class yf_shop_supplier_panel_products {
 				} 
 				db()->UPDATE(db('shop_products'), $sql_array, 'id='.$_GET['id']);
 				
-				cache_del("_shop_product_params|_get_params_by_product|".$_GET['id']);
+				module('manage_shop')->_product_cache_purge($_GET['id']);
+
 				db()->query("DELETE FROM `".db('shop_products_productparams')."` WHERE `product_id`=".$_GET['id']);
 				if (count($_POST['productparams']) != 0)
 					foreach ($_POST['productparams'] as $param_id)

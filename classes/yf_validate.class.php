@@ -27,12 +27,161 @@ class yf_validate {
 
 	/***/
 	function _init() {
+		$this->MB_ENABLED = _class('utf8')->MULTIBYTE;
+	}
+
+	/***/
+	function _prepare_reserved_words() {
+		if ($this->_reserved_words_prepared) {
+			return $this->reserved_words;
+		}
 		$user_modules = main()->get_data('user_modules');
 		// Merge them with default ones
 		if (is_array($user_modules)) {
 			$this->reserved_words = array_merge($this->reserved_words, $user_modules);
 		}
-		$this->MB_ENABLED = _class('utf8')->MULTIBYTE;
+		$this->_reserved_words_prepared = true;
+		return $this->reserved_words;
+	}
+
+	/**
+	*/
+	function _process_text($text, $validate_rules = array()) {
+		$rules = array();
+		$global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
+		foreach ((array)$global_rules as $name => $rules) {
+			$rules[$name] = $rules;
+		}
+		foreach ((array)$validate_rules as $name => $rules) {
+			$rules[$name] = $rules;
+		}
+		$rules = $this->_validate_rules_cleanup($rules);
+		return $this->_do_process_text($rules, $text);
+	}
+
+	/**
+	*/
+	function _do_process_text($validate_rules = array(), &$data) {
+/*
+		$validate_ok = true;
+		foreach ((array)$validate_rules as $name => $rules) {
+			$is_required = false;
+			foreach ((array)$rules as $rule) {
+				if ($rule[0] == 'required') {
+					$is_required = true;
+					break;
+				}
+			}
+			foreach ((array)$rules as $rule) {
+				$is_ok = true;
+				$error_msg = '';
+				$func = $rule[0];
+				$param = $rule[1];
+				// PHP pure function, from core or user
+				if (is_string($func) && function_exists($func)) {
+					$data[$name] = $func($data[$name]);
+				} elseif (is_callable($func)) {
+					$is_ok = $func($data[$name], null, $data);
+				} else {
+					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+					if (!$is_ok && empty($error_msg)) {
+						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
+					}
+				}
+				// In this case we do not track error if field is empty and not required
+				if (!$is_ok && !$is_required && !strlen($data[$name])) {
+					$is_ok = true;
+					$error_msg = '';
+				}
+				if (!$is_ok) {
+					$validate_ok = false;
+					if (!$error_msg) {
+						$error_msg = 'Wrong field '.$name;
+					}
+					_re($error_msg, $name);
+					// In case when we see any validation rule is not OK - we stop checking further for this field
+					continue 2;
+				}
+			}
+		}
+		return $validate_ok;
+*/
+	}
+
+	/**
+	* Examples of validate rules setting:
+	* 	'name1' => 'trim|required',
+	* 	'name2' => array('trim', 'required'),
+	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
+	* 	'name4' => array('trim|required', function() { return true; } ),
+	* 	'name5' => array('trim', 'required', function() { return true; } ),
+	* 	'__before__' => 'trim',
+	* 	'__after__' => 'some_method2|some_method3',
+	*/
+	function _validate_rules_cleanup($validate_rules = array()) {
+		// Add these rules to all validation rules, before them
+		$_name = '__before__';
+		$all_before = array();
+		if (isset($validate_rules[$_name])) {
+			$all_before = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
+			unset($validate_rules[$_name]);
+		}
+
+		// Add these rules to all validation rules, after them
+		$_name = '__after__';
+		$all_after = array();
+		if (isset($validate_rules[$_name])) {
+			$all_after = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
+			unset($validate_rules[$_name]);
+		}
+		unset($_name);
+
+		$out = array();
+		foreach ((array)$validate_rules as $name => $raw) {
+			$rules = (array)$this->_validate_rules_array_from_raw($raw);
+			if ($all_before) {
+				$tmp = $all_before;
+				foreach((array)$rules as $_item) {
+					$tmp[] = $_item;
+				}
+				$rules = $tmp;
+				unset($tmp);
+			}
+			if ($all_after) {
+				$tmp = $rules;
+				foreach((array)$all_after as $_item) {
+					$tmp[] = $_item;
+				}
+				$rules = $tmp;
+				unset($tmp);
+			}
+			// Here we do last parse of the rules params like 'matches[user.email]' into rule item array second element
+			foreach ((array)$rules as $k => $rule) {
+				if (!is_string($rule[0])) {
+					continue;
+				}
+				$val = trim($rule[0]);
+				$param = null;
+				// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
+				$pos = strpos($val, '[');
+				if ($pos !== false) {
+					$param = trim(trim(substr($val, $pos), ']['));
+					$val = trim(substr($val, 0, $pos));
+				}
+				if (!is_callable($val) && empty($val)) {
+					unset($rules[$k]);
+					continue;
+				}
+				$rules[$k] = array(
+					0	=> $val,
+					1	=> $param,
+				);
+			}
+			if ($rules) {
+				$out[$name] = array_values($rules); // array_values needed here to make array keys straight, unit tests will pass fine
+			}
+		}
+		return $out;
 	}
 
 	/***/
@@ -43,6 +192,31 @@ class yf_validate {
 			$in = md5($in);
 		}
 		return true;
+	}
+
+	/**
+	*/
+	function _validate_rules_array_from_raw($raw = '') {
+		$rules = array();
+		// At first, we merging all rules sets variants into one array
+		if (is_string($raw)) {
+			foreach((array)explode('|', $raw) as $_item) {
+				$rules[] = array($_item, null);
+			}
+		} elseif (is_array($raw)) {
+			foreach((array)$raw as $_raw) {
+				if (is_string($_raw)) {
+					foreach((array)explode('|', $_raw) as $_item) {
+						$rules[] = array($_item, null);
+					}
+				} elseif (is_callable($_raw)) {
+					$rules[] = array($_raw, null);
+				}
+			}
+		} elseif (is_callable($raw)) {
+			$rules[] = array($raw, null);
+		}
+		return $rules;
 	}
 
 	/***/
@@ -405,6 +579,7 @@ class yf_validate {
 		if (empty($TEXT_TO_CHECK)) {
 			return false;
 		}
+		$this->_prepare_reserved_words();
 		// Do check profile url
 		if (!empty($CUR_VALUE)) {
 			_re(t("You have already chosen your profile url. You are not allowed to change it!"));
@@ -500,4 +675,22 @@ class yf_validate {
 			$_POST['age'] = _get_age_from_birth($_POST['birth_date']);
 		}
 	}
+
+	/**
+	*/
+#	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
+#		return _class('remote_files', COMMON_LIB)->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
+#	}
+
+	/**
+	*/
+#	function url_verify ($url = '', $absolute = false) {
+#		return preg_match('/^(http|https):\/\/(www\.){0,1}[a-z0-9\-]+\.[a-z]{2,5}[^\s]*$/i', $url);
+#	}
+
+	/**
+	*/
+#	function _validate_url_by_http($url) {
+#		return _class('remote_files', COMMON_LIB)->_validate_url_by_http($url);
+#	}
 }

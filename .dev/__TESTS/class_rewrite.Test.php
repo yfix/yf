@@ -19,7 +19,7 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals(false, module('rewrite')->_force_get_url() );
 #		$this->assertEquals(false, module('rewrite')->_force_get_url('') );
 #		$this->assertEquals(false, module('rewrite')->_force_get_url('', '') );
-		$this->assertEquals(false, module('rewrite')->_force_get_url('', self::$host) );
+#		$this->assertEquals(false, module('rewrite')->_force_get_url('', self::$host) );
 
 		$this->assertEquals('http://'.self::$host.'/test', _force_get_url(array('object' => 'test'), self::$host) );
 		$this->assertEquals('http://'.self::$host.'/test', _force_get_url(array('object' => 'test', 'host' => self::$host)) );
@@ -35,6 +35,31 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/login/asdf', _force_get_url(array('task' => 'login', 'id' => 'asdf', 'host' => self::$host)) );
 
 #		$this->assertEquals('http://'.self::$host.'/', _force_get_url(array('task' => 'fdsfdsfds'), self::$host) );
+
+		// Short form of writing _force_get_url
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', _force_get_url('/test/my/123/456', array('host' => self::$host)) );
+
+		// Alias
+		$this->assertEquals('http://'.self::$host.'/test', url('/test', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test/my', url('/test/my', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123', url('/test/my/123', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456', array('host' => self::$host)) );
+
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test') );
+		$this->assertEquals('http://'.self::$host.'/test/my', url(self::$host.'/test/my') );
+		$this->assertEquals('http://'.self::$host.'/test/my/123', url(self::$host.'/test/my/123') );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url(self::$host.'/test/my/123/456') );
+
+		$this->assertEquals('http://'.self::$host.'/test/123/456', url(self::$host.'/test//123/456') );
+		$this->assertEquals('http://'.self::$host.'/test/123', url(self::$host.'/test//123') );
+		$this->assertEquals('http://'.self::$host.'/test/0/456', url(self::$host.'/test///456') );
+
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test//') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test///') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////') );
+		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////something') );
 	}
 
 /*

@@ -371,5 +371,14 @@ class yf_manage_shop {
 	}
 	function import_products() {
 		return $this->import_xls();
-	}	
+	}
+	function _product_cache_purge($product_id = 0) {
+		if (!$product_id) {
+			$product_id = $_GET['id'];
+		}
+		cache_del('_shop_products|_product_image|'.$product_id);
+		cache_del('_shop_product_params|_product_image|'.$product_id);
+		cache_del('_shop_product_params|_get_params_by_product|'.$product_id);
+		cache_del('pattern_yf|_get_shop_product_details|'.$product_id);
+	}
 }

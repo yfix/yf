@@ -28,7 +28,7 @@ abstract class yf_oauth_driver2 {
 
 	/**
 	*/
-	function login() {
+	function login($params = array()) {
 		$config = _class('oauth')->_load_oauth_config();
 		$this->provider = substr(get_called_class(), strlen(__CLASS__)); // yf_oauth_driver_vk, yf_oauth_driver2
 		if (!$config[$this->provider] || !$config[$this->provider]['client_id'] || !$config[$this->provider]['client_secret']) {

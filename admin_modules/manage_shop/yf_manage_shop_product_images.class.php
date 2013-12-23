@@ -4,34 +4,40 @@ class yf_manage_shop_product_images{
 	/**
 	*/
 	function product_image_delete () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return "Empty ID!";
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return 'Empty ID!';
 		}
-		if (empty($_GET["key"])) {
-			return "Empty image key!";
+		if (empty($_GET['key'])) {
+			return 'Empty image key!';
 		}
-		$A = db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." && `id`=".intval($_GET['key']));
+		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' && `id`='.intval($_GET['key']));
 		if (count($A) == 0){
-			 return "Image not found";
+			 return 'Image not found';
 		}
-		module("manage_shop")->_product_image_delete($_GET["id"], $_GET["key"]);
-		module("manage_shop")->_product_images_add_revision($_GET['id']);
-		return js_redirect($_SERVER["HTTP_REFERER"]);
+		module('manage_shop')->_product_image_delete($_GET['id'], $_GET['key']);
+		module('manage_shop')->_product_images_add_revision($_GET['id']);
+
+		module('manage_shop')->_product_cache_purge($_GET['id']);
+
+		common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
+		return js_redirect($_SERVER['HTTP_REFERER']);
 	}
 
 	/**
 	*/
 	function set_main_image(){
 		$product_id = intval($_GET['id']);
-		if(!empty($_POST)){
-			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='0' WHERE `product_id`=".$product_id);
-			db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$_POST['main_image']);
-			module("manage_shop")->_product_images_add_revision($_GET['id']);
-		}else{
+		if (!empty($_POST)) {
+			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'0\' WHERE `product_id`='.$product_id);
+			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'1\' WHERE `id`='.$_POST['main_image']);
+			module('manage_shop')->_product_images_add_revision($_GET['id']);
+
+			module('manage_shop')->_product_cache_purge($_GET['id']);
+		} else {
 			$images = common()->shop_get_images($product_id);
 			if(!$images){
-				return js_redirect($_SERVER["HTTP_REFERER"]);
+				return js_redirect($_SERVER['HTTP_REFERER']);
 			}
 			$base_url = WEB_PATH;
 			$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
@@ -45,8 +51,8 @@ class yf_manage_shop_product_images{
 			}
 			$form_action ='./?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$product_id;
 			$replace = array(
-				"form_action"=> $form_action,
-				"items"		=> $items,
+				'form_action'=> $form_action,
+				'items'		=> $items,
 			);	
 			return tpl()->parse($_GET['object'].'/set_image_items', $replace);
 		}
@@ -55,63 +61,66 @@ class yf_manage_shop_product_images{
 	/**
 	*/
 	function _product_image_delete ($id, $k) {
-		$dirs = sprintf("%06s",$id);
+		$dirs = sprintf('%06s',$id);
 		$dir2 = substr($dirs,-3,3);
 		$dir1 = substr($dirs,-6,3);
-		$mpath = $dir1."/".$dir2."/";
+		$mpath = $dir1.'/'.$dir2.'/';
 
 		$image_files = _class('dir')->scan_dir(
-			module("manage_shop")->products_img_dir. $mpath,
+			module('manage_shop')->products_img_dir. $mpath,
 			true,
-			"/product_".$id."_".$k.".+?jpg"."/"
+			'/product_'.$id.'_'.$k.'.+?jpg'.'/'
 		);
 		foreach((array)$image_files as $filepath) {
-			unlink($filepath);
+			if (file_exists($filepath)) {
+				unlink($filepath);
+			}
 		}
-		db()->query("DELETE FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." AND `id`=".intval($_GET['key']));
+		db()->query('DELETE FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' AND `id`='.intval($_GET['key']));
 		
-		$A = db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`=".intval($_GET['id'])." && `id`=".intval($_GET['key']));
-		if (count($A) == 0) db()->query("UPDATE `".db('shop_products')."` SET `image`='0' WHERE `id`=".intval($_GET['id']));
-		
-		
-		common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
-		
+		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' && `id`='.intval($_GET['key']));
+		if (count($A) == 0) {
+			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'0\' WHERE `id`='.intval($_GET['id']));
+		}
 		return true;
 	}
 
 	/**
 	*/
 	function product_image_upload () {
-		$_GET["id"] = intval($_GET["id"]);
-		if (empty($_GET["id"])) {
-			return "Empty ID!";
+		$_GET['id'] = intval($_GET['id']);
+		if (empty($_GET['id'])) {
+			return 'Empty ID!';
 		}
-		module("manage_shop")->_product_image_upload($_GET["id"]);
-		return js_redirect($_SERVER["HTTP_REFERER"]);
+		module('manage_shop')->_product_image_upload($_GET['id']);
+		module('manage_shop')->_product_cache_purge($_GET['id']);
+		return js_redirect($_SERVER['HTTP_REFERER']);
 	}
 
 	/**
 	*/
 	function _product_image_upload ($product_id) {		
-		$products_images_dir = module("manage_shop")->products_img_dir;
+		$products_images_dir = module('manage_shop')->products_img_dir;
 
-		$d = sprintf("%09s", $product_id);
+		$d = sprintf('%09s', $product_id);
 		$replace = array(
 			'{subdir1}' => substr($d, 0, -6),
 			'{subdir2}' => substr($d, -6, 3),
 			'{subdir3}' => substr($d, -3, 3),
 			'%d'        => $product_id,
 		);
-		$url = "uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i_%s.jpg";
-		$clean_image_url = "uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i.jpg";
+		$url = 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i_%s.jpg';
+		$clean_image_url = 'uploads/shop/products/{subdir2}/{subdir3}/product_%d_%i.jpg';
 
 		$url = str_replace(array_keys($replace), array_values($replace), $url);
 		$clean_image_url = str_replace(array_keys($replace), array_values($replace), $clean_image_url);
 		
 		foreach ((array)$_FILES['image'] ['tmp_name'] as $v) {
 			$md5 = md5_file($v);
-			$db_item = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$product_id." AND md5='".$md5."'");
-			if(!empty($db_item)) continue;
+			$db_item = db()->query_fetch('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id.' AND md5="'._es($md5).'"');
+			if (!empty($db_item)) {
+				continue;
+			}
 			db()->insert(db('shop_product_images'), array(
 				'product_id' 	=> $product_id,
 				'md5'			=> $md5,
@@ -128,16 +137,16 @@ class yf_manage_shop_product_images{
 			$img_path_thumb = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','thumb',$url));
 			$watermark_path = PROJECT_PATH.SITE_WATERMARK_FILE;
 
-			common()->make_thumb($v, $img_path, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y);
-			common()->make_thumb($v, $img_path_thumb, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y);
-			common()->make_thumb($v, $img_path_big, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_path); 
+			common()->make_thumb($v, $img_path, module('manage_shop')->BIG_X, module('manage_shop')->BIG_Y);
+			common()->make_thumb($v, $img_path_thumb, module('manage_shop')->THUMB_X, module('manage_shop')->THUMB_Y);
+			common()->make_thumb($v, $img_path_big, module('manage_shop')->BIG_X, module('manage_shop')->BIG_Y, $watermark_path); 
 			
-			$A = db()->query_fetch("SELECT COUNT(*) AS `cnt` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."' AND is_default='1'");
+			$A = db()->query_fetch('SELECT COUNT(*) AS `cnt` FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($product_id).' AND is_default=\'1\'');
 			if ($A['cnt'] == 0) {
-				$A = db()->query_fetch("SELECT `id` FROM `".db('shop_product_images')."` WHERE `product_id`='".$product_id."' ORDER BY `id`");
-				db()->query("UPDATE `".db('shop_product_images')."` SET `is_default`='1' WHERE `id`=".$A['id']);
+				$A = db()->query_fetch('SELECT `id` FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($product_id).' ORDER BY `id`');
+				db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'1\' WHERE `id`='.$A['id']);
 			}
-			db()->query("UPDATE `".db('shop_products')."` SET `image`='1' WHERE `id`=".$product_id);
+			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'1\' WHERE `id`='.$product_id);
 			
 		} 
 		return $i;

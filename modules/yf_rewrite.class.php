@@ -70,6 +70,23 @@ class yf_rewrite {
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 			$time_start = microtime(true);
 		}
+		if (!is_array($params) && is_string($params)) {
+			$url_str = trim($params);
+			$params = array();
+			if (preg_match('~[a-z0-9_\./]+~ims', $url_str)) {
+				if ($url_str[0] == '/') {
+					// Example: /test/oauth/github => object=test, action=oauth, id=github
+					list(,$params['object'], $params['action'], $params['id'], $params['page']/*, $params['other']*/) = explode('/', $url_str);
+				} else {
+					// Example: test2.dev/test/oauth/github => host=test2.dev, object=test, action=oauth, id=github
+					list($params['host'], $params['object'], $params['action'], $params['id'], $params['page']/*, $params['other']*/) = explode('/', $url_str);
+				}
+			}
+			if (is_array($host)) {
+				$params += (array)$host;
+				$host = $params['host'];
+			}
+		}
 		if (!is_array($params) && empty($url_str)) {
 			return false;
 		}

@@ -11,6 +11,41 @@
 class yf_html {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $arguments) {
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+	/**
+	* We cleanup object properties when cloning
+	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			$this->$k = null;
+		}
+	}
+
+	/**
+	* Need to avoid calling render() without params
+	*/
+	function __toString() {
+		return $this->render();
+	}
+
+	/**
+	* Wrapper for template engine
+	* Example:
+	*	return html()->dd_table(db()->get_2d('SELECT * FROM '.db('countries')));
+	*/
+	function chained_wrapper($params = array()) {
+		$this->_chained_mode = true;
+		$this->_params = $params;
+		return $this;
+	}
+
+	/**
 	*/
 	function form_row ($content, $extra = array(), $replace = array(), $obj) {
 		$css_framework = $extra['css_framework'] ?: conf('css_framework');

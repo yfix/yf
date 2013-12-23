@@ -48,6 +48,8 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name]))
 					->text('name')
+					->text('id')
+					->text('articul')
 					->money('price', array('class' => 'span1'))
 					->money('price__and', array('class' => 'span1'))
 					->select_box('cat_id', _class('cats')->_get_items_names('shop_cats'), array('desc' => 'Main category', 'show_text' => 1))
