@@ -372,6 +372,9 @@ class yf_manage_shop {
 	function import_products() {
 		return $this->import_xls();
 	}
+	function send_sms() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_send_sms', 'admin_modules/'.$cl.'/')->$func($params);		
+	}
 	function _product_cache_purge($product_id = 0) {
 		if (!$product_id) {
 			$product_id = $_GET['id'];

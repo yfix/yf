@@ -113,6 +113,7 @@ class yf_manage_shop_orders{
 			->info('name')
 			->email('email')
 			->info('phone')
+			->container('<a href="./?object=manage_shop&action=send_sms&phone='.urlencode($replace["phone"]).'">Send SMS</a><br /><br />')
 			->info('address')
 			->info('house')
 			->info('apartment')
