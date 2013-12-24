@@ -1111,7 +1111,8 @@ class yf_form2 {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $extra['class'] ? $extra['class'] : 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+//			$extra['class'] = 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['value'] = t($extra['value']);
 			$extra['desc'] = ''; // We do not need label here
