@@ -52,7 +52,7 @@ class yf_manage_shop_filter{
 					->text('articul')
 					->money('price', array('class' => 'span1'))
 					->money('price__and', array('class' => 'span1'))
-					->select_box('cat_id', _class('cats')->_get_items_names('shop_cats'), array('desc' => 'Main category', 'show_text' => 1))
+					->select_box('cat_id', _class('cats')->_get_items_names('shop_cats'), array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->radio_box('image', array(0 => 'No image', 1 => 'Have image'))
 					->select_box('order_by', $order_fields, array('show_text' => 1))
 					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
