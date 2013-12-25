@@ -89,6 +89,10 @@ class yf_debug_info {
 	public $_SHOW_SETTINGS				= 1;
 	/** @var bool */
 	public $_SHOW_CURL_REQUESTS			= 1;
+	/** @var bool */
+	public $_SHOW_FORM2					= 1;
+	/** @var bool */
+	public $_SHOW_TABLE2				= 1;
 	/** @var bool Store db queries to file */
 	public $LOG_QUERIES_TO_FILE			= 0;
 	/** @var bool Store slow db queries to file */
@@ -982,7 +986,7 @@ class yf_debug_info {
 	/**
 	*/
 	function _debug_form2 () {
-		if (!$this->_SHOW_CORE_CACHE) {
+		if (!$this->_SHOW_FORM2) {
 			return '';
 		}
 		$items = debug('form2');
@@ -995,7 +999,7 @@ class yf_debug_info {
 	/**
 	*/
 	function _debug_table2 () {
-		if (!$this->_SHOW_CORE_CACHE) {
+		if (!$this->_SHOW_TABLE2) {
 			return '';
 		}
 		$items = debug('table2');
