@@ -981,6 +981,32 @@ class yf_debug_info {
 
 	/**
 	*/
+	function _debug_form2 () {
+		if (!$this->_SHOW_CORE_CACHE) {
+			return '';
+		}
+		$items = debug('form2');
+		foreach ((array)$items as $k => $v) {
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'fields')));
+	}
+
+	/**
+	*/
+	function _debug_table2 () {
+		if (!$this->_SHOW_CORE_CACHE) {
+			return '';
+		}
+		$items = debug('table2');
+		foreach ((array)$items as $k => $v) {
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'fields')));
+	}
+
+	/**
+	*/
 	function _show_key_val_table ($a, $params = array()) {
 		if (!$a) {
 			return false;
