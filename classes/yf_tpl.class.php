@@ -292,8 +292,8 @@ class yf_tpl {
 				}
 				// Count number of compressed bytes (not exactly accurate)
 				if (DEBUG_MODE) {
-					debug('page_size_original', strlen($body['content']));
-					debug('page_size_gzipped', strlen(gzencode($body['content'], 3, FORCE_GZIP)));
+					debug('gzip_page::size_original', strlen($body['content']));
+					debug('gzip_page::size_gzipped', strlen(gzencode($body['content'], 3, FORCE_GZIP)));
 				}
 			}
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -734,14 +734,14 @@ class yf_tpl {
 	*/
 	function _simple_cleanup_callback ($text = '') {
 		if (DEBUG_MODE) {
-			debug('compress_output_size_1', strlen($text));
+			debug('compress_output::size_original', strlen($text));
 		}
 		$text = str_replace(array("\r","\n","\t"), '', $text);
 		$text = preg_replace('#[\s]{2,}#ms', ' ', $text);
 		// Remove comments
 		$text = preg_replace('#<\!--[\w\s\-\/]*?-->#ms', '', $text);
 		if (DEBUG_MODE) {
-			debug('compress_output_size_2', strlen($text));
+			debug('compress_output::size_compressed', strlen($text));
 		}
 		return $text;
 	}
