@@ -9,105 +9,54 @@
 */
 class yf_debug_info {
 
-	/** @var string */
 	public $_file_prefix				= 'logs/not_translated_';
-	/** @var string @conf_skip */
 	public $_file_ext					= '.php';
-	/** @var string @conf_skip */
-	public $_auto_header				= "<? die('go away!');\n";
-	/** @var string @conf_skip */
-	public $_auto_footer				= "\n?>";
-	/** @var bool */
 	public $_SHOW_DB_QUERY_LOG			= 1;
-	/** @var bool */
 	public $_SHOW_DB_STATS				= 1;
-	/** @var bool */
 	public $_SHOW_DB_EXPLAIN_QUERY		= 1;
-	/** @var bool */
 	public $_SHOW_SPHINX				= 1;
-	/** @var bool */
 	public $_SHOW_SSH					= 1;
-	/** @var bool */
 	public $_SHOW_TPLS					= 1;
-	/** @var bool */
 	public $_SHOW_STPLS					= 1;
-	/** @var bool */
 	public $_SHOW_REWRITE_INFO			= 1;
-	/** @var bool */
 	public $_SHOW_CUSTOM_REPLACED		= 1;
-	/** @var bool */
 	public $_SHOW_OUTPUT_CACHE_INFO		= 1;
-	/** @var bool */
 	public $_SHOW_RESIZED_IMAGES_LOG	= 1;
-	/** @var bool */
 	public $_SHOW_INCLUDED_FILES		= 1;
-	/** @var bool */
 	public $_SHOW_LOADED_MODULES		= 1;
-	/** @var bool */
 	public $_INCLUDED_SKIP_CACHE		= 0;
-	/** @var bool */
 	public $_SHOW_MEMCACHED_INFO		= 1;
-	/** @var bool */
 	public $_SHOW_EACCELERATOR_INFO		= 1;
-	/** @var bool */
 	public $_SHOW_XCACHE_INFO			= 1;
-	/** @var bool */
 	public $_SHOW_APC_INFO				= 1;
-	/** @var bool */
 	public $_SHOW_MAIN_GET_DATA			= 1;
-	/** @var bool */
 	public $_SHOW_CORE_CACHE			= 1;
-	/** @var bool */
 	public $_SHOW_MAIN_EXECUTE			= 1;
-	/** @var bool */
 	public $_SHOW_SEND_MAIL				= 1;
-	/** @var bool */
 	public $_SHOW_GLOBALS				= 1;
-	/** @var bool */
 	public $_SHOW_NOT_TRANSLATED		= 1;
-	/** @var bool */
 	public $_SHOW_I18N_VARS				= 1;
-	/** @var string */
-	public $_NOT_TRANSLATED_FILE		= '';
-	/** @var bool */
 	public $_SHOW_GET_DATA				= 1;
-	/** @var bool */
 	public $_SHOW_POST_DATA				= 1;
-	/** @var bool */
 	public $_SHOW_COOKIE_DATA			= 1;
-	/** @var bool */
 	public $_SHOW_REQUEST_DATA			= 0;
-	/** @var bool */
 	public $_SHOW_SESSION_DATA			= 1;
-	/** @var bool */
 	public $_SHOW_FILES_DATA			= 1;
-	/** @var bool */
 	public $_SHOW_SERVER_DATA			= 1;
-	/** @var bool */
 	public $_SHOW_ENV_DATA				= 0;
-	/** @var bool */
 	public $_SHOW_SETTINGS				= 1;
-	/** @var bool */
 	public $_SHOW_CURL_REQUESTS			= 1;
-	/** @var bool */
 	public $_SHOW_FORM2					= 1;
-	/** @var bool */
 	public $_SHOW_TABLE2				= 1;
-	/** @var bool Store db queries to file */
+	public $_SHOW_DD_TABLE				= 1;
 	public $LOG_QUERIES_TO_FILE			= 0;
-	/** @var bool Store slow db queries to file */
 	public $LOG_SLOW_QUERIES_TO_FILE	= 0;
-	/** @var bool Log queries file name */
 	public $LOG_QUERIES_FILE_NAME		= 'db_queries.log';
-	/** @var bool Log slow queries file name */
 	public $LOG_SLOW_QUERIES_FILE_NAME	= 'slow_queries.log';
-	/** @var float */
 	public $SLOW_QUERIES_TIME_LIMIT		= 0.2;
-	/** @var bool */
 	public $SORT_TEMPLATES_BY_NAME		= 1;
-	/** @var bool */
 	public $ADD_ADMIN_LINKS				= true;
-	/** @var bool */
+	public $_NOT_TRANSLATED_FILE		= '';
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
@@ -212,12 +161,6 @@ class yf_debug_info {
 
 			$body .= "</script>";
 		}
-		// Add ability to slideup/slidedown different debug blocks and remeber selection in cookie
-		$body .= tpl()->parse("system/debug_info_js");
-
-		if ($this->ADD_ADMIN_LINKS) {
-			$body = "<a href='".process_url("./?object=test")."'>Test module</a>".$body;
-		}
 */
 		$methods = array();
 		$class_name = get_class($this);
@@ -299,9 +242,10 @@ class yf_debug_info {
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
 		);
-		foreach ((array)debug('_DEBUG_META') as $k => $v) {
+		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;
 		}
+
 		$ini_all = ini_get_all();
 		$ini = array(
 			'memory_limit',
@@ -320,17 +264,21 @@ class yf_debug_info {
 			$data['ini']['php_ini&nbsp;:&nbsp;'.$name] = $ini_all[$name]['local_value'];
 		}
 		if (tpl()->COMPRESS_OUTPUT && !main()->NO_GRAPHICS) {
+			$c_info = $this->_get_debug_data('compress_output');
+
 			$data['ini'] += array(
-				'compress: size original'	=> debug('compress_output_size_1').' bytes',
-				'compress: size compressed'	=> debug('compress_output_size_2').' bytes',
-				'compress: ratio'			=> (debug('compress_output_size_2') ? round(debug('compress_output_size_1') / debug('compress_output_size_2') * 100, 0) : 0).'%',
+				'compress: size original'	=> $c_info['size_original'].' bytes',
+				'compress: size compressed'	=> $c_info['size_compressed'].' bytes',
+				'compress: ratio'			=> ($c_info['size_compressed'] ? round($c_info['size_original'] / $c_info['size_compressed'] * 100, 0) : 0).'%',
 			);
 		}
 		if (conf('GZIP_ENABLED')) {
+			$g_info = $this->_get_debug_data('gzip_page');
+
 			$data['ini'] += array(
-				'gzip: size original'		=> debug('page_size_original').' bytes',
-				'gzip: size gzipped approx'	=> debug('page_size_gzipped').' bytes',
-				'gzip: ratio approx'		=> round(debug('page_size_original') / debug('page_size_gzipped') * 100, 0).'%',
+				'gzip: size original'		=> $g_info['size_original'].' bytes',
+				'gzip: size gzipped approx'	=> $g_info['size_gzipped'].' bytes',
+				'gzip: ratio approx'		=> round($g_info['size_original'] / $g_info['size_gzipped'] * 100, 0).'%',
 			);
 		}
 		$data['ini'] += array(
@@ -371,8 +319,8 @@ class yf_debug_info {
 			return false;
 		}
 		$body = '';
-		$instances_trace = debug('db_instances_trace');
-		foreach ((array)debug('db_instances') as $k => $v) {
+		$instances_trace = $this->_get_debug_data('db_instances_trace');
+		foreach ((array)$this->_get_debug_data('db_instances') as $k => $v) {
 			$connect_trace = array();
 			if (isset($instances_trace[$k])) {
 				$connect_trace = $instances_trace[$k];
@@ -528,7 +476,9 @@ class yf_debug_info {
 		if ($this->SORT_TEMPLATES_BY_NAME && !empty($data)) {
 			ksort($data);
 		}
-		$stpl_vars = debug('STPL_REPLACE_VARS');
+		$stpl_vars = $this->_get_debug_data('STPL_REPLACE_VARS');
+		$stpl_traces = $this->_get_debug_data('STPL_TRACES');
+
 		$items = array();
 		foreach ((array)$data as $k => $v) {
 			if (empty($v['calls'])) {
@@ -549,7 +499,7 @@ class yf_debug_info {
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
 				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
-				'trace'		=> _prepare_html(debug('STPL_TRACES::'.$k)),
+				'trace'		=> _prepare_html($stpl_traces[$k]),
 			);
 			if (isset($stpl_vars[$counter])) {
 				$items[$counter]['vars'] = '<pre><small>'._prepare_html(var_export($stpl_vars[$counter], 1)).'</small></pre>';
@@ -568,7 +518,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
-		$data = debug('rewrite');
+		$data = $this->_get_debug_data('rewrite');
 		if (empty($data)) {
 			return '';
 		}
@@ -582,7 +532,7 @@ class yf_debug_info {
 				'trace'		=> $v['trace'],
 			);
 		}
-		$body .= t('Rewrite processing time').': '.common()->_format_time_value(debug('rewrite_exec_time')).' <span>sec</span>';
+		$body .= t('Rewrite processing time').': '.common()->_format_time_value($this->_get_debug_data('rewrite_exec_time')).' <span>sec</span>';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'source')));
 		return $body;
 	}
@@ -593,7 +543,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
-		$items = debug('_force_get_url');
+		$items = $this->_get_debug_data('_force_get_url');
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['time'] = strval(common()->_format_time_value($v['time']));
 			$items[$k]['rewrited_link'] = strval($this->_admin_link('link', $v['rewrited_link']));
@@ -608,7 +558,7 @@ class yf_debug_info {
 			return '';
 		}
 		$items = array();
-		foreach ((array)debug('_MAIN_LOAD_CLASS_DEBUG') as $data) {
+		foreach ((array)$this->_get_debug_data('main_load_class') as $data) {
 			$items[] = array(
 				'id'			=> ++$counter,
 				'module'		=> $data['class_name'],
@@ -629,7 +579,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_MAIN_EXECUTE) {
 			return '';
 		}
-		$items = debug('main_execute_block_time');
+		$items = $this->_get_debug_data('main_execute_block_time');
 		return $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'params')));
 	}
 
@@ -639,7 +589,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return '';
 		}
-		$items = debug('_main_get_data_debug');
+		$items = $this->_get_debug_data('main_get_data');
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
 
@@ -649,7 +599,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		$items = debug('_core_cache_debug::get');
+		$items = $this->_get_debug_data('cache_get');
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
 
@@ -659,7 +609,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		$items = debug('_core_cache_debug::set');
+		$items = $this->_get_debug_data('cache_set');
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
 	}
 
@@ -669,7 +619,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		$items = debug('_core_cache_debug::refresh');
+		$items = $this->_get_debug_data('cache_refresh');
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
 
@@ -731,7 +681,7 @@ class yf_debug_info {
 				'value' => '<pre>'.var_export($v, 1).'</pre>',
 			);
 		}
-		return $this->_show_auto_table($items/*, array('hidden_map' => array('trace' => 'id'))*/);
+		return $this->_show_auto_table($items, array('first_col_width' => '1%'));
 	}
 
 	/**
@@ -791,8 +741,8 @@ class yf_debug_info {
 			return "";
 		}
 // TODO
-#		$sphinx_debug = debug('sphinx') || $GLOBALS['_SPHINX_QL_DEBUG'];
-		$sphinx_debug = debug('sphinx');
+#		$sphinx_debug = $this->_get_debug_data('sphinxsearch') || $GLOBALS['_SPHINX_QL_DEBUG'];
+		$sphinx_debug = $this->_get_debug_data('sphinx');
 		if (!$sphinx_debug) {
 			return "";
 		}
@@ -950,6 +900,8 @@ class yf_debug_info {
 		if (!$this->_SHOW_INCLUDED_FILES) {
 			return '';
 		}
+		$exec_times = $this->_get_debug_data('include_files_exec_time');
+		$traces = $this->_get_debug_data('include_files_trace');
 		$items = array();
 		foreach (get_included_files() as $file_name) {
 			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, 'core_cache')) {
@@ -961,11 +913,13 @@ class yf_debug_info {
 				'id'	=> ++$counter,
 				'name'	=> $this->_admin_link('edit_file', $file_name),
 				'size'	=> $cur_size,
+				'time'	=> strval($exec_times[$file_name]),
+				'trace'	=> strval($traces[$file_name]),
 			);
 			$total_size += $cur_size;
 		}
 		$body .= 'total size: '.$total_size;
-		return $body. $this->_show_auto_table($items);
+		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
 
 	/**
@@ -974,7 +928,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_CURL_REQUESTS) {
 			return '';
 		}
-		$items = debug('curl_get_remote_page');
+		$items = $this->_get_debug_data('curl_get_remote_page');
 		foreach ((array)$items as $k => $v) {
 			$items[$k] = array(
 				'id' => $k + 1,
@@ -991,11 +945,13 @@ class yf_debug_info {
 		if (!$this->_SHOW_FORM2) {
 			return '';
 		}
-		$items = debug('form2');
+		$items = $this->_get_debug_data('form2');
 		foreach ((array)$items as $k => $v) {
+			$v['params'] = '<pre>'.var_export($v['params'], 1).'</pre>';
+			$v['fields'] = '<pre>'.var_export($v['fields'], 1).'</pre>';
 			$items[$k] = array('id' => ++$i) + $v;
 		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'fields')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'fields' => 'params')));
 	}
 
 	/**
@@ -1004,8 +960,35 @@ class yf_debug_info {
 		if (!$this->_SHOW_TABLE2) {
 			return '';
 		}
-		$items = debug('table2');
+		$items = $this->_get_debug_data('table2');
 		foreach ((array)$items as $k => $v) {
+			$v['params'] = '<pre>'.var_export($v['params'], 1).'</pre>';
+			$v['fields'] = '<pre>'.var_export($v['fields'], 1).'</pre>';
+			$v['buttons'] = '<pre>'.var_export($v['buttons'], 1).'</pre>';
+			if ($v['header_links']) {
+				$v['header_links'] = '<pre>'.var_export($v['header_links'], 1).'</pre>';
+			}
+			if ($v['footer_links']) {
+				$v['footer_links'] = '<pre>'.var_export($v['footer_links'], 1).'</pre>';
+			}
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'header_links', 'fields' => 'header_links', 'buttons' => 'header_links')));
+	}
+
+	/**
+	*/
+	function _debug_dd_table () {
+		if (!$this->_SHOW_DD_TABLE) {
+			return '';
+		}
+		$items = $this->_get_debug_data('dd_table');
+		foreach ((array)$items as $k => $v) {
+			$v['fields'] = '<pre>'.var_export($v['fields'], 1).'</pre>';
+			$v['extra'] = '<pre>'.var_export($v['extra'], 1).'</pre>';
+			if ($v['field_types']) {
+				$v['field_types'] = '<pre>'.var_export($v['field_types'], 1).'</pre>';
+			}
 			$items[$k] = array('id' => ++$i) + $v;
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'fields')));
@@ -1013,7 +996,20 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _show_key_val_table ($a, $params = array()) {
+	function _debug_other () {
+		$body = array();
+		foreach (debug() as $k => $v) {
+			if (isset($this->_used_debug_datas[$k])) {
+				continue;
+			}
+			$body[] = $k.' = '.var_export($v, 1);
+		}
+		return nl2br(implode(PHP_EOL, $body));
+	}
+
+	/**
+	*/
+	function _show_key_val_table ($a, $params = array(), $name = '') {
 		if (!$a) {
 			return false;
 		}
@@ -1041,7 +1037,7 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _show_auto_table ($items = array(), $params = array()) {
+	function _show_auto_table ($items = array(), $params = array(), $name = '') {
 		if (!is_array($items)) {
 			$items = array();
 		}
@@ -1142,5 +1138,14 @@ class yf_debug_info {
 			}
 		}
 		return $items;
+	}
+
+	/**
+	*/
+	function _get_debug_data ($name) {
+		$this->_used_debug_datas[$name]++;
+		$data = debug($name);
+		debug($name, false);
+		return $data;
 	}
 }
