@@ -85,6 +85,7 @@ class yf_debug_info {
 	* Create simple table with debug info
 	*/
 	function go () {
+		$ts = microtime(true);
 /*
 		$body = "";
 		// Get debug hook from current $_GET["object"]
@@ -191,6 +192,9 @@ class yf_debug_info {
 			$contents[$name] = '  <div class="tab-pane fade in'.($is_active ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
 			$links[$name] = '  <li'.($is_active ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
 		}
+
+		$debug_time = round(microtime(true) - $ts, 5);
+		$body .= 'debug console rendering: '.$debug_time.' secs';
 
 		$body .= '<ul class="nav nav-tabs">';
 		$body .= implode(PHP_EOL, $links);
@@ -303,7 +307,7 @@ class yf_debug_info {
 			->row_start()
 				->container('Locale edit')
 				->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
-				->save(array('class' => 'btn-mini'))
+				->save(array('class' => 'btn btn-mini'))
 			->row_end()
 		;
 		foreach ($data as $name => $_data) {
