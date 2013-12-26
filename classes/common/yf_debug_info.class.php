@@ -237,6 +237,8 @@ class yf_debug_info {
 		if (!isset($debug_contents[$cookie_active_tab])) {
 			$cookie_active_tab = '';
 		}
+		$links = array();
+		$contents = array();
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
