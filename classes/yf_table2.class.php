@@ -55,7 +55,7 @@ class yf_table2 {
 	function chained_wrapper($sql = '', $params = array()) {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
-		$this->_params = $params;
+		$this->_params = (array)$params;
 		return $this;
 	}
 
@@ -264,6 +264,9 @@ class yf_table2 {
 						continue;
 					}
 					$info['extra'] = (array)$info['extra'];
+					if (++$counter2 == 1 && $this->_params['first_col_width']) {
+						$info['extra']['width'] = $this->_params['first_col_width'];
+					}
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
