@@ -21,7 +21,7 @@ class yf_manage_shop_products{
 
             }))
 			->text('name')
-			->link('cat_id', './?object=category_editor&action=show_items&&id=%d', _class('cats')->_get_items_names('shop_cats'))
+			->link('cat_id', './?object=category_editor&action=show_items&&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
 			->text('price')
 			->text('quantity')
 			->date('add_date')
