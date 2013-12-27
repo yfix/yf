@@ -78,7 +78,7 @@ class yf_manage_shop_orders{
 				$order_info['total_sum']  = $total_price;
 				$order_info['delivery_price'] = $delivery_price;
 
-				db()->UPDATE(db('shop_orders'), array('total_sum' => $order_info['total_sum'],'delivery_price' => $order_info['delivery_price']),"`id`='".$_GET['id']."'");
+				db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($order_info['total_sum'], 2, '.', ''),'delivery_price' => $order_info['delivery_price']),"`id`='".$_GET['id']."'");
 			}
 		}
 		if (!empty($_POST['status'])) {
