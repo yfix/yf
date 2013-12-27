@@ -534,6 +534,37 @@ class yf_form2 {
 	}
 
 	/**
+	* Shortcut for making tabbable form
+	*/
+	function tab_start($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_params['no_form'] = true;
+			$_this->_stacked_mode_on = true;
+			return '<div class="tab-pane fade in" id="form_tab1">';
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Paired with tab_start
+	*/
+	function tab_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_stacked_mode_on = false;
+			return '</div>';
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
 	* Bootstrap-compatible html wrapper for any custom content inside.
 	* Can be used for inline rich editor editing with ckeditor, enable with: $extra = array('ckeditor' => true)
 	*/
