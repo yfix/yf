@@ -4,6 +4,12 @@ class yf_manage_shop_users{
 	/**
 	*/
 	function users () {
+		if (empty($_SESSION[$_GET['object'].'__users'])) {
+			$_SESSION[$_GET['object'].'__users'] = array(
+				'order_by' => 'add_date',
+				'order_direction' => 'desc'
+			);
+		}
 		return table('SELECT * FROM '.db('user'), array(
 				'filter' => $_SESSION[$_GET['object'].'__users'],
 				'filter_params' => array(
@@ -19,6 +25,7 @@ class yf_manage_shop_users{
 			->text('email')
 			->text('phone')
 			->text('address')
+			->date('add_date',array('format' => 'Y-m-d H:i:s','nowrap' => '1'))
 			->btn_edit('', './?object=manage_shop&action=user_edit&id=%d')
 			->btn('Login', './?object=manage_users&action=login_as&id=%d')
 			->btn_delete('', './?object=manage_shop&action=user_delete&id=%d')

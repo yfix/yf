@@ -61,7 +61,7 @@ class yf_manage_shop_filter{
 			},
 			'users' => function($filter_name, $replace) {
 
-				$fields = array('id','name','email','phone');
+				$fields = array('add_date','id','name','email','phone');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
