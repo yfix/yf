@@ -1,5 +1,7 @@
 <?php
 class yf_manage_shop_orders{
+	
+	var $delivery_price = 30;
 
 	/**
 	*/
@@ -41,9 +43,36 @@ class yf_manage_shop_orders{
 			return _e('No such order');
 		}
 		if(!empty($_POST)){
-			foreach($_POST as $k => $v)
-				if(is_int($k))
+			foreach($_POST as $k => $v) {
+				if(is_int($k)) {
 					db()->UPDATE(db('shop_order_items'), array('status'	=> $v), ' order_id='.$_GET['id'].' AND product_id='.intval($k));
+				} elseif ($k=='qty') {
+					foreach ($v as $product_id => $qty) {
+						if (intval($qty) == 0) {
+							db()->DELETE(db('shop_order_items'), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
+						} else {
+							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
+						}
+						
+						
+						$total_price = 0;
+						$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
+						while ($_info = db()->fetch_assoc($Q)) {
+							$total_price += $_info['quantity']*$_info['price'];
+						}
+						
+						$delivery_price = ($order_info['region'] == 7)? ((intval($total_price) < 200)? $this->delivery_price : intval(0)) : NULL;
+						$total_price += intval($delivery_price);
+//									'delivery_price' => ($delivery_price !== NULL)?  $delivery_price : '',
+
+						$order_info['total_sum']  = $total_price;
+						$order_info['delivery_price'] = $delivery_price;
+						
+						db()->UPDATE(db('shop_orders'), array('total_sum' => $order_info['total_sum'],'delivery_price' => $order_info['delivery_price']),"`id`='".$_GET['id']."'");
+						
+					}
+				}
+			}
 		}
 		if (!empty($_POST['status'])) {
 			db()->UPDATE(db('shop_orders'), array(
@@ -126,7 +155,10 @@ class yf_manage_shop_orders{
 			->container(
 				table2($products)
 					->link('product_id', './?object=manage_shop&action=product_edit&id=%d')
-					->text('quantity')
+					->func('quantity',function($f, $p, $row){
+						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
+						return $row['quantity'];
+					})
 					->text('price')
 					->text('name')
 					->func('status', function($f, $p, $row){
