@@ -27,6 +27,6 @@ class yf_pdf_page {
 			
 		$this->pdf_obj->charset_in = 'cp1251';
 		$this->pdf_obj->WriteHTML($text, 2); 
-		$this->pdf_obj->Output($name.'.pdf', 'D');
+		$this->pdf_obj->Output($name.'.pdf', 'I');
 	}
 }
