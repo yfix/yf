@@ -679,7 +679,7 @@ class yf_validate {
 	/**
 	*/
 #	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
-#		return _class('remote_files', COMMON_LIB)->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
+#		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
 #	}
 
 	/**
@@ -691,6 +691,6 @@ class yf_validate {
 	/**
 	*/
 #	function _validate_url_by_http($url) {
-#		return _class('remote_files', COMMON_LIB)->_validate_url_by_http($url);
+#		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
 #	}
 }

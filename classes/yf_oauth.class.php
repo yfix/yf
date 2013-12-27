@@ -2,6 +2,7 @@
 
 class yf_oauth {
 
+	private $auto_email_prefix = 'oauth.';
 	private $_providers = array();
 
 	/**
@@ -51,7 +52,7 @@ class yf_oauth {
 				if ($sys_user_info && $oauth_registration && !$oauth_registration['user_id']) {
 					$try_other_oauths = db()->get_all('SELECT * FROM '.db('oauth_users').' WHERE user_id='.intval(main()->USER_ID));
 					foreach ((array)$try_other_oauths as $v) {
-						if (substr($v['email'], 0, strlen('oauth_auto__')) == 'oauth_auto__') {
+						if (substr($v['email'], 0, strlen($this->auto_email_prefix)) == $this->auto_email_prefix) {
 							continue;
 						}
 // TODO
@@ -61,7 +62,7 @@ class yf_oauth {
 			}
 			if ($oauth_registration && !$oauth_registration['user_id']) {
 				if (!$sys_user_info) {
-					$login = $normalized_info['login'] ?: 'oauth_auto__'.$provider.'__'.$normalized_info['user_id'];
+					$login = $normalized_info['login'] ?: $this->auto_email_prefix. $provider. '.'. $normalized_info['user_id'];
 // TODO: auto-login user if email exists or show dialog to enter email
 					$self_host = parse_url(WEB_PATH, PHP_URL_HOST);
 					if (!$self_host) {

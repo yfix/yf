@@ -55,7 +55,7 @@ class yf_table2 {
 	function chained_wrapper($sql = '', $params = array()) {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
-		$this->_params = $params;
+		$this->_params = (array)$params;
 		return $this;
 	}
 
@@ -81,6 +81,9 @@ class yf_table2 {
 	* Render result table html, gathered by row functions
 	*/
 	function render($params = array()) {
+		if (DEBUG_MODE) {
+			$ts = microtime(true);
+		}
 		// Merge params passed to table2() and params passed here, with params here have more priority:
 		$tmp = $this->_params;
 		foreach ((array)$params as $k => $v) {
@@ -261,6 +264,9 @@ class yf_table2 {
 						continue;
 					}
 					$info['extra'] = (array)$info['extra'];
+					if (++$counter2 == 1 && $this->_params['first_col_width']) {
+						$info['extra']['width'] = $this->_params['first_col_width'];
+					}
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
@@ -310,6 +316,33 @@ class yf_table2 {
 			$params['pages_on_bottom'] = true;
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $pages : '').PHP_EOL;
+		if (DEBUG_MODE) {
+			$_fields = array();
+			foreach ((array)$this->_fields as $k => $v) {
+				$_fields[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			$_header_links = array();
+			foreach ((array)$this->_header_links as $k => $v) {
+				$_header_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			$_footer_links = array();
+			foreach ((array)$this->_footer_links as $k => $v) {
+				$_footer_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			$_buttons = array();
+			foreach ((array)$this->_buttons as $k => $v) {
+				$_buttons[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			debug('table2[]', array(
+				'params'		=> $params,
+				'fields'		=> $_fields,
+				'buttons'		=> $_buttons,
+				'header_links'	=> $_header_links,
+				'footer_links'	=> $_footer_links,
+				'time'			=> round(microtime(true) - $ts, 5),
+				'trace'			=> main()->trace_string(),
+			));
+		}
 		return $body;
 	}
 

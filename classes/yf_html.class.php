@@ -75,6 +75,9 @@ class yf_html {
 	/**
 	*/
 	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
+		if (DEBUG_MODE) {
+			$ts = microtime(true);
+		}
 		$form = form($replace, array(
 			'legend' => $replace['title'],
 			'no_form' => 1,
@@ -112,6 +115,15 @@ class yf_html {
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
 		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6';
+		if (DEBUG_MODE) {
+			debug('dd_table[]', array(
+				'fields'		=> $replace,
+				'field_types'	=> $field_types,
+				'extra'			=> $extra,
+				'time'			=> round(microtime(true) - $ts, 5),
+				'trace'			=> main()->trace_string(),
+			));
+		}
 		return '<div class="row-fluid">'.$legend.'<div class="'.$div_class.'">'.$form.'</div></div>';
 	}
 }

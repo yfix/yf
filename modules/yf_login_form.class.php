@@ -13,11 +13,16 @@ class yf_login_form {
 	public $DEF_REDIRECT_URL = './?object=account';
 	/** @var string */
 	public $LOGIN_FIELD	     = 'login';
+	/** @var string */
+	public $OAUTH_LIST_PROVIDERS = true;
 
 	/**
 	* Default function
 	*/
 	function show () {
+		if (main()->USER_ID) {
+			return js_redirect('./');
+		}
 		return $this->_show_form();
 	}
 
@@ -131,6 +136,13 @@ class yf_login_form {
 	function oauth ($params = array()) {
 		if (!isset($params['only_icons'])) {
 			$params['only_icons'] = 1;
+		}
+		if (!$_GET['id'] && !$this->OAUTH_LIST_PROVIDERS && empty($params)) {
+			if (main()->USER_ID) {
+				return js_redirect('./');
+			} else {
+				return js_redirect('./?object=login_form');
+			}
 		}
 		if ($_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
 			return _class('oauth')->login($_GET['id']);
