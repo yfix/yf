@@ -77,7 +77,7 @@ class yf_manage_shop {
 
 		$this->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
 		$this->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
-		if (!file_exists($this->products_img_dir)) {
+		if (!file_exists($this->products_img_dir) && !@is_link($this->products_img_dir)) {
 			_mkdir_m($this->products_img_dir);
 		}
 		$this->_boxes = array(

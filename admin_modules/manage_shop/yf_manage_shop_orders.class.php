@@ -29,7 +29,7 @@ class yf_manage_shop_orders{
 			})
 			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
 			->btn('Paywill', './?object=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
-			->btn('PDF', './?object=paywill&id=%d&pdf=y',array('no_ajax' => 1))
+			->btn('PDF', './?object=paywill&id=%d&pdf=y',array('no_ajax' => 1, 'target' => '_blank'))
 		;
 	}
 

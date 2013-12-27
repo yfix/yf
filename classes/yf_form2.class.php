@@ -642,7 +642,7 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept');
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target');
 			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -1166,7 +1166,7 @@ class yf_form2 {
 			$extra['desc'] = ''; // We do not need label here
 			$extra['type'] = 'submit';
 
-			$attrs_names = array('type','name','id','class','style','value','disabled');
+			$attrs_names = array('type','name','id','class','style','value','disabled','target');
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? $_this->_htmlchars($extra['value']) : $extra['value']);
@@ -2038,8 +2038,11 @@ class yf_form2 {
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
+			$extra['href'] = $link_url;
+			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
+			$attrs_names = array('id','name','href','class','style','target');
 // TODO: use CSS abstraction layer
-			return ' <a href="'.$link_url.'" class="btn btn-mini btn-xs'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
+			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
