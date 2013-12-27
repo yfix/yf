@@ -353,6 +353,9 @@ class yf_manage_shop {
 	function user_edit() {
 		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
 	}
+	function express() {
+		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func();
+	}
 	function _productparams_container($product_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->$func($product_id);
 	}

@@ -121,6 +121,7 @@ class yf_manage_shop_product_images{
 			if (!empty($db_item)) {
 				continue;
 			}
+			db()->begin();
 			db()->insert(db('shop_product_images'), array(
 				'product_id' 	=> $product_id,
 				'md5'			=> $md5,
@@ -147,7 +148,7 @@ class yf_manage_shop_product_images{
 				db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'1\' WHERE `id`='.$A['id']);
 			}
 			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'1\' WHERE `id`='.$product_id);
-			
+			db()->commit();
 		} 
 		return $i;
 	}	
