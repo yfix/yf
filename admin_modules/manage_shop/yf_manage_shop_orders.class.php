@@ -43,6 +43,7 @@ class yf_manage_shop_orders{
 		if (empty($order_info)) {
 			return _e('No such order');
 		}
+		$recount_price = false;
 		if(!empty($_POST)){
 			foreach($_POST as $k => $v) {
 				if(is_int($k)) {
@@ -55,24 +56,30 @@ class yf_manage_shop_orders{
 							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
 						}
 						
-						
-						$total_price = 0;
-						$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
-						while ($_info = db()->fetch_assoc($Q)) {
-							$total_price += $_info['quantity']*$_info['price'];
-						}
-						
-						$delivery_price = ($order_info['region'] == 7)? ((intval($total_price) < 200)? $this->delivery_price : intval(0)) : NULL;
-						$total_price += intval($delivery_price);
-//									'delivery_price' => ($delivery_price !== NULL)?  $delivery_price : '',
-
-						$order_info['total_sum']  = $total_price;
-						$order_info['delivery_price'] = $delivery_price;
-						
-						db()->UPDATE(db('shop_orders'), array('total_sum' => $order_info['total_sum'],'delivery_price' => $order_info['delivery_price']),"`id`='".$_GET['id']."'");
-						
+						$recount_price = true;
+					}
+				} elseif ($k=='price_unit') {
+					print_r($v);
+					foreach ($v as $product_id => $price) {
+						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
+						$recount_price = true;						
 					}
 				}
+			}
+			if ($recount_price) {
+				$total_price = 0;
+				$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
+				while ($_info = db()->fetch_assoc($Q)) {
+					$total_price += $_info['quantity']*$_info['price'];
+				}
+
+				$delivery_price = ($order_info['region'] == 7)? ((intval($total_price) < 200)? $this->delivery_price : intval(0)) : NULL;
+				$total_price += intval($delivery_price);
+
+				$order_info['total_sum']  = $total_price;
+				$order_info['delivery_price'] = $delivery_price;
+
+				db()->UPDATE(db('shop_orders'), array('total_sum' => $order_info['total_sum'],'delivery_price' => $order_info['delivery_price']),"`id`='".$_GET['id']."'");
 			}
 		}
 		if (!empty($_POST['status'])) {
@@ -108,7 +115,8 @@ class yf_manage_shop_orders{
 			$products[$_info['product_id']] = array(
 				'product_id'	=> intval($_info['product_id']),
 				'name'			=> _prepare_html($_product['name']),
-				'price'			=> module('manage_shop')->_format_price($_info['quantity']*$_info['price']),
+				'price_unit'	=> $_info['price'],				
+				'price'			=> $_info['quantity']*$_info['price'],
 				'currency'		=> _prepare_html(module('manage_shop')->CURRENCY),
 				'quantity'		=> intval($_info['quantity']),
 				'details_link'	=> process_url('./?object=manage_shop&action=view&id='.$_product['id']),
@@ -159,6 +167,10 @@ class yf_manage_shop_orders{
 					->func('quantity',function($f, $p, $row){
 						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
 						return $row['quantity'];
+					})
+					->func('price_unit',function($f, $p, $row){
+						$row['price_unit'] = "<input type='text' name='price_unit[".$row['product_id']."]' value='".$row['price_unit']."' style='width:100px;'>";
+						return $row['price_unit'];
 					})
 					->text('price')
 					->text('name')
