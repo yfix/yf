@@ -20,7 +20,7 @@ class yf_manage_shop_orders{
 				'filter' => $_SESSION[$_GET['object'].'__orders']
 			))
 			->text('id')
-			->date('date', array('format' => '%d-%m-%Y'))
+			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->user('user_id')
 			->text('total_sum')
 			->text('num_items')
