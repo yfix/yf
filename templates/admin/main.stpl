@@ -27,7 +27,7 @@
 		</div>
 	</div>
 {block(left_area)}
-	<div class="container">
+	<div class="container center_area">
 {block(center_area)}
 	</div>
 	{include("main_js")}
