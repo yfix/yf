@@ -811,7 +811,8 @@ class yf_main {
 		}
 		if (DEBUG_MODE) {
 			$path_prepared = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', str_replace("\\", '/', $path_to_module)));
-			debug('include_files_exec_time::'.$path_prepared, microtime(true) - $_time_start);
+			debug('include_files_exec_time::'.$path_prepared, round(microtime(true) - $_time_start, 5));
+			debug('include_files_trace::'.$path_prepared, $this->trace_string());
 		}
 	}
 
@@ -1067,7 +1068,7 @@ if ($class_name == 'yf_db_driver_mysql41') {
 			}
 		}
 		if (DEBUG_MODE) {
-			debug('_MAIN_LOAD_CLASS_DEBUG[]', array(
+			debug('main_load_class[]', array(
 				'class_name'		=> $class_name,
 				'loaded_class_name'	=> $loaded_class_name,
 				'loaded_path'		=> $loaded_path,
@@ -1301,7 +1302,7 @@ if ($class_name == 'yf_db_driver_mysql41') {
 			}
 		}
 		if (DEBUG_MODE) {
-			debug('_main_get_data_debug[]', array(
+			debug('main_get_data[]', array(
 				'name'		=> $handler_name,
 				'data'		=> '<pre><small>'._prepare_html(substr(var_export($data_to_return, 1), 0, 1000)).'</small></pre>',
 				'params'	=> $params,

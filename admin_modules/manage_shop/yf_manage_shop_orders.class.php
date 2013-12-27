@@ -110,6 +110,17 @@ class yf_manage_shop_orders{
 			->info('id')
 			->info('total_sum', '', array('no_escape' => 1))
 			->info('date')
+			->info('name')
+			->email('email')
+			->info('phone')
+			->container('<a href="./?object=manage_shop&action=send_sms&phone='.urlencode($replace["phone"]).'">Send SMS</a><br /><br />')
+			->info('address')
+			->info('house')
+			->info('apartment')
+			->info('floor')
+			->info('porch')
+			->info('intercom')
+			->info('comment')
 			->user_info('user_id')
 			->info('payment', 'Payment method')
 			->container(
@@ -127,7 +138,7 @@ class yf_manage_shop_orders{
 			->box('status_box', 'Status order', array('selected' => $order_info['status']))
 			->save_and_back()
 		;
-		return $form;
+		return $form;		
 	}
 
 	/**

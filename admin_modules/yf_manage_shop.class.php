@@ -58,12 +58,11 @@ class yf_manage_shop {
 	* Constructor
 	*/
 	function _init() {
-		$this->_statuses = common()->get_static_conf("order_status");
-		$this->_order_items_status = common()->get_static_conf("order_items_status");
+		$this->_statuses = common()->get_static_conf('order_status');
+		$this->_order_items_status = common()->get_static_conf('order_items_status');
+		$this->_category_names	= _class('cats')->_get_items_names_cached('shop_cats');
+		$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 0);
 
-		$this->_category_names	= _class('cats')->_get_items_names('shop_cats');
-		$this->_cats_for_select	= _class('cats')->_prepare_for_box('shop_cats', 0);
-		
 		$this->man = db()->query_fetch_all('SELECT * FROM '.db('shop_manufacturers').' ORDER BY name ASC');
 		$this->_man_for_select[0] = '--NONE--';
 		foreach ((array)$this->man as $k => $v) {
@@ -374,6 +373,9 @@ class yf_manage_shop {
 	}
 	function import_products() {
 		return $this->import_xls();
+	}
+	function send_sms() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_send_sms', 'admin_modules/'.$cl.'/')->$func($params);		
 	}
 	function _product_cache_purge($product_id = 0) {
 		if (!$product_id) {

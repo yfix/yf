@@ -243,10 +243,10 @@ class yf_cache {
 			}
 		}
 		if ($this->DEBUG_MODE) {
-			$all_debug = debug('_core_cache_debug::get');
+			$all_debug = debug('cache_get');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('_core_cache_debug::get::'.$debug_index, array(
+				debug('cache_get::'.$debug_index, array(
 					'name'		=> $cache_name,
 					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
 					'driver'	=> $this->DRIVER,
@@ -340,10 +340,10 @@ class yf_cache {
 			$result = xcache_set($key_name_ns, $data_to_put, $TTL);
 		}
 		if ($this->DEBUG_MODE) {
-			$all_debug = debug('_core_cache_debug::set');
+			$all_debug = debug('cache_set');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('_core_cache_debug::set::'.$debug_index, array(
+				debug('cache_set::'.$debug_index, array(
 					'name'		=> $cache_name,
 					'data'		=> '<pre><small>'._prepare_html(substr(var_export($data, 1), 0, 1000)).'</small></pre>',
 					'driver'	=> $this->DRIVER,
@@ -465,10 +465,10 @@ class yf_cache {
 			$result = xcache_unset($key_name_ns);
 		}
 		if ($this->DEBUG_MODE) {
-			$all_debug = debug('_core_cache_debug::refresh');
+			$all_debug = debug('cache_refresh');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('_core_cache_debug::refresh::'.$debug_index, array(
+				debug('cache_refresh::'.$debug_index, array(
 					'name'			=> $cache_name,
 					'force_clean'	=> $force_clean,
 					'driver'		=> $this->DRIVER,
