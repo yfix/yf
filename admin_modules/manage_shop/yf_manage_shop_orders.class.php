@@ -26,7 +26,7 @@ class yf_manage_shop_orders{
 				return common()->get_static_conf("order_status", $field);
 			})
 			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
-			->btn('Paywill', './?object=paywill&id=%d',array('no_ajax' => 1))
+			->btn('Paywill', './?object=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
 		;
 	}
 
