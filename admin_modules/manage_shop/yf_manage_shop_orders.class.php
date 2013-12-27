@@ -59,7 +59,6 @@ class yf_manage_shop_orders{
 						$recount_price = true;
 					}
 				} elseif ($k=='price_unit') {
-					print_r($v);
 					foreach ($v as $product_id => $price) {
 						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
 						$recount_price = true;						
