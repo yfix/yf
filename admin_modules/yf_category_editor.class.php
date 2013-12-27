@@ -200,12 +200,12 @@ class yf_category_editor {
 			if ($batch) {
 				db()->update_batch('category_items', db()->es($batch));
 				common()->admin_wall_add(array('category items updated: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(
+				cache()->refresh(array(
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
 					'cats__prepare_for_box__'.$cat_info['name'].'_0',
 					'cats__prepare_for_box__'.$cat_info['name'].'_1',
-				);
+				));
 			}
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
@@ -262,13 +262,13 @@ class yf_category_editor {
 			if ($batch) {
 				db()->update_batch('category_items', db()->es($batch));
 				common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(
+				cache()->refresh(array(
 					'category_sets',
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
 					'cats__prepare_for_box__'.$cat_info['name'].'_0',
 					'cats__prepare_for_box__'.$cat_info['name'].'_1',
-				);
+				));
 			}
 			main()->NO_GRAPHICS = true;
 			return false;
@@ -472,13 +472,13 @@ class yf_category_editor {
 				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
 			), array('cat_id' => $cat_info['id']), array('on_after_update' => function() use ($cat_info) {
 				common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(
+				cache()->refresh(array(
 					'category_sets',
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
 					'cats__prepare_for_box__'.$cat_info['name'].'_0',
 					'cats__prepare_for_box__'.$cat_info['name'].'_1',
-				);
+				));
 			}))
 			->select_box('parent_id', $this->_get_parents_for_select($cat_info['id']), array('desc' => 'Parent item'))
 			->text('name')
@@ -530,13 +530,13 @@ class yf_category_editor {
 				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
 			), 'id='.$item_info['id'], array('on_after_update' => function() use ($cat_info) {
 				common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(
+				cache()->refresh(array(
 					'category_sets',
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
 					'cats__prepare_for_box__'.$cat_info['name'].'_0',
 					'cats__prepare_for_box__'.$cat_info['name'].'_1',
-				);
+				));
 			}))
 			->select_box('parent_id', $this->_get_parents_for_select($cat_info['id']), array('desc' => 'Parent item'))
 			->text('name')
@@ -589,13 +589,13 @@ class yf_category_editor {
 			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($item_info['cat_id']));
 			db()->UPDATE('category_items', array('active' => (int)!$item_info['active']), 'id='.intval($item_info['id']));
 			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
-			cache()->refresh(
+			cache()->refresh(array(
 				'category_sets',
 				'category_items',
 				'cats__get_items_names__'.$cat_info['name'],
 				'cats__prepare_for_box__'.$cat_info['name'].'_0',
 				'cats__prepare_for_box__'.$cat_info['name'].'_1',
-			);
+			));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -616,13 +616,13 @@ class yf_category_editor {
 			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($item_info['cat_id']));
 			db()->query('DELETE FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
 			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
-			cache()->refresh(
+			cache()->refresh(array(
 				'category_sets',
 				'category_items',
 				'cats__get_items_names__'.$cat_info['name'],
 				'cats__prepare_for_box__'.$cat_info['name'].'_0',
 				'cats__prepare_for_box__'.$cat_info['name'].'_1',
-			);
+			));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -645,13 +645,13 @@ class yf_category_editor {
 			unset($sql['id']);
 			db()->INSERT('category_items', $sql);
 			common()->admin_wall_add(array('category item cloned from '.$item_info['id'].' into '.$item_info['id'], $_GET['id']));
-			cache()->refresh(
+			cache()->refresh(array(
 				'category_sets',
 				'category_items',
 				'cats__get_items_names__'.$cat_info['name'],
 				'cats__prepare_for_box__'.$cat_info['name'].'_0',
 				'cats__prepare_for_box__'.$cat_info['name'].'_1',
-			);
+			));
 		}
 		return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['cat_id']);
 	}
