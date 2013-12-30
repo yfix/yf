@@ -77,8 +77,8 @@ class yf_manage_shop {
 
 		$this->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
 		$this->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
-		if (!file_exists($this->products_img_dir) && !@is_link($this->products_img_dir)) {
-			_mkdir_m($this->products_img_dir);
+		if (!file_exists($this->products_img_dir)) {
+			mkdir($this->products_img_dir, 0755, true);
 		}
 		$this->_boxes = array(
 			'status'		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',

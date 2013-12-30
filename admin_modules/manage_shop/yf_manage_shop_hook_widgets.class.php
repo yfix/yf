@@ -95,9 +95,9 @@ class yf_manage_shop_hook_widgets{
 		$config = $params;
 		$sql = 'SELECT o.*, COUNT(*) AS num FROM '.db('shop_orders').' AS o INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id GROUP BY o.id ORDER BY o.`date` DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+			->date('date')
 			->text('total_sum')
 			->text('num')
-			->date('date')
 			->text('email')
 			->btn_edit('', './?object=manage_shop&action=view_order&id=%d')
 		;
@@ -117,15 +117,18 @@ class yf_manage_shop_hook_widgets{
 			return $meta;
 		}
 		$config = $params;
-		$sql = 'SELECT u.*, COUNT(*) AS num FROM '.db('user').' AS u
+		$sql = 'SELECT u.*, COUNT(*) AS num, SUM(o.total_sum) AS total FROM '.db('user').' AS u
 			INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id
 			GROUP BY u.id
 			ORDER BY COUNT(*) DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->text('login')
-			->text('email')
+			->text('name')
+			->text('phone')
+#			->text('login')
+#			->text('email')
 			->text('num')
-			->btn_edit('', './?object=members&action=edit&id=%d')
+			->text('total')
+			->btn_edit('', './?object=manage_shop&action=user_edit&id=%d')
 		;
 	}
 
@@ -148,9 +151,11 @@ class yf_manage_shop_hook_widgets{
 			GROUP BY u.id
 			ORDER BY u.add_date DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->text('login')
+			->text('name')
+			->text('phone')
 			->text('email')
-			->date('date')
+#			->text('login')
+			->date('add_date')
 			->btn_edit('', './?object=members&action=edit&id=%d')
 		;
 	}
@@ -172,15 +177,20 @@ class yf_manage_shop_hook_widgets{
 		$config = $params;
 		$sql = array(
 			'SELECT "products total" AS `name`, COUNT(*) AS num FROM '.db('shop_products').'',
-			'SELECT "products in stock" AS `name`, COUNT(*) AS num FROM '.db('shop_products').' WHERE quantity > 0',
+			'SELECT "products with images" AS `name`, COUNT(*) AS num FROM '.db('shop_products').' WHERE image > 1',
+#			'SELECT "products images" AS `name`, COUNT(*) AS num FROM '.db('shop_products_images').'',
 			'SELECT "products ordered" AS `name`, COUNT(*) AS num FROM (SELECT p.id FROM '.db('shop_products').' AS p INNER JOIN '.db('shop_order_items').' AS i ON i.product_id = p.id GROUP BY p.id) AS __tmp_products_ordered',
-			'SELECT "products total price" AS `name`, SUM(price) AS num FROM '.db('shop_products').'',
-			'SELECT "customers number" AS `name`, COUNT(*) AS num FROM (SELECT u.id FROM '.db('user').' AS u INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id GROUP BY u.id) AS __tmp_customers_number',
-			'SELECT "orders number" AS `name`, COUNT(*) AS num FROM '.db('shop_orders').'',
+#			'SELECT "products total price" AS `name`, SUM(price) AS num FROM '.db('shop_products').'',
+#			'SELECT "products in stock" AS `name`, COUNT(*) AS num FROM '.db('shop_products').' WHERE quantity > 0',
+			'SELECT "customers count" AS `name`, COUNT(*) AS num FROM (SELECT u.id FROM '.db('user').' AS u INNER JOIN '.db('shop_orders').' AS o ON o.user_id = u.id GROUP BY u.id) AS __tmp_customers_number',
+			'SELECT "orders count" AS `name`, COUNT(*) AS num FROM '.db('shop_orders').'',
 			'SELECT "orders total amount" AS `name`, SUM(total_sum) AS num FROM '.db('shop_orders').' AS o',
 		);
 		$sql = '('.implode(') UNION ALL (', $sql).')';
 		$data = db()->get_all($sql);
+		foreach ((array)$data as $k => $v) {
+			$data[$k]['num'] = intval($v['num']);
+		}
 		return table($data, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
 			->text('name', '', array('width' => '100%'))
 			->text('num')
