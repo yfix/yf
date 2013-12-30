@@ -1,6 +1,6 @@
 <?php
 
-class yf_manage_shop_hook_widgets{
+class yf_manage_shop_hook_widgets {
 
 	/**
 	*/
@@ -19,8 +19,7 @@ class yf_manage_shop_hook_widgets{
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('shop_products').' ORDER BY add_date DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1))
-			->text('name')
+			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name'))
 			->text('price')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')
 		;
@@ -46,8 +45,7 @@ class yf_manage_shop_hook_widgets{
 			GROUP BY p.id
 			ORDER BY o.date DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1))
-			->text('name')
+			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name'))
 			->text('price')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')
 		;
@@ -74,8 +72,7 @@ class yf_manage_shop_hook_widgets{
 			GROUP BY p.id
 			ORDER BY COUNT(*) DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
-			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1))
-			->text('name')
+			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name'))
 			->text('price')
 			->text('num')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')

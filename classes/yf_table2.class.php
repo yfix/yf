@@ -703,6 +703,10 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
+				// Example of overriding data using field from same row: text('id', array('link' => '/shop/products/%d', 'rewrite' => 1, 'data' => '@name'));
+				if ($text[0] == '@') {
+					$text = $row[substr($text, 1)];
+				}
 				if ($extra['translate']) {
 					$text = t($text);
 				}
