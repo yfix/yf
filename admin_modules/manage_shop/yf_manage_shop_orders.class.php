@@ -20,7 +20,7 @@ class yf_manage_shop_orders{
 				'filter' => $_SESSION[$_GET['object'].'__orders']
 			))
 			->text('id')
-			->date('date', array('format' => '%d-%m-%Y'), array('nowrap' => 1))
+			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->user('user_id')
 			->text('name')
 			->text('phone')				
@@ -148,7 +148,7 @@ class yf_manage_shop_orders{
 			'total_price'	=> module('manage_shop')->_format_price($total_price),
 			'ship_type'		=> module('manage_shop')->_ship_types[$order_info['ship_type']],
 			'pay_type'		=> module('manage_shop')->_pay_types[$order_info['pay_type']],
-			'date'			=> _format_date($order_info['date'], '%d-%m-%Y'),
+			'date'			=> $order_info['date'],
 			'status_box'	=> module('manage_shop')->_box('status', $order_info['status']),
 			'back_url'		=> './?object=manage_shop&action=show_orders',
 			'print_url'		=> './?object=manage_shop&action=show_print&id='.$order_info['id'],
@@ -157,11 +157,11 @@ class yf_manage_shop_orders{
 		return form2($replace)
 			->info('id')
 			->info('total_sum', '', array('no_escape' => 1))
-			->info('date')
+			->info_date('date', 'full')
 			->info('name')
 			->email('email')
 			->info('phone')
-			->container('<a href="./?object=manage_shop&action=send_sms&phone='.urlencode($replace["phone"]).'">Send SMS</a><br /><br />')
+			->container('<a href="./?object=manage_shop&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
 			->info('address')
 			->info('house')
 			->info('apartment')
