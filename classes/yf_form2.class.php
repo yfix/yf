@@ -1265,6 +1265,9 @@ class yf_form2 {
 
 			$content = '';
 			if ($extra['link']) {
+				if ($extra['rewrite']) {
+					$extra['link'] = url($extra['link']);
+				}
 				$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
 				$content = '<a href="'.$extra['link'].'" class="'.$extra['class'].'">'.$value.'</a>';
 			} else {
@@ -2075,6 +2078,9 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($extra['rewrite']) {
+				$link_url = url($link_url);
+			}
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
@@ -2173,6 +2179,9 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($extra['rewrite']) {
+				$link_url = url($link_url);
+			}
 			$is_active = $r[$extra['name']];
 // TODO: use CSS abstraction layer
 			$html_0	= '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>';
