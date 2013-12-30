@@ -35,7 +35,7 @@ class yf_manage_shop_orders{
 			->btn('PDF', './?object=paywill&id=%d&pdf=y',array('no_ajax' => 1, 'target' => '_blank'))
 		;
 	}
-
+	
 	/**
 	*/
 	function view_order() {
@@ -88,7 +88,7 @@ class yf_manage_shop_orders{
 					$total_price += $_info['quantity']*$_info['price'];
 				}
 
-				$delivery_price = ($order_info['region'] == 7)? ((intval($total_price) < 200)? $this->delivery_price : 0) : NULL;
+				$delivery_price = ((intval($total_price) < 200)? $this->delivery_price : 0);
 				$total_price += intval($delivery_price);
 
 				$order_info['total_sum']  = $total_price;
@@ -162,7 +162,8 @@ class yf_manage_shop_orders{
 			'print_url'		=> './?object=manage_shop&action=show_print&id='.$order_info['id'],
 			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 		));
-		return form2($replace)
+		
+		$out = form2($replace)
 			->info('id')
 			->info('total_sum', '', array('no_escape' => 1))
 			->info_date('date', 'full')
@@ -208,7 +209,78 @@ class yf_manage_shop_orders{
 			->box('status_box', 'Status order', array('selected' => $order_info['status']))
 			->save_and_back()
 		;
-		return $form;		
+					
+		// get similar orders
+		$sql= "SELECT * FROM `".db('shop_orders')."` AS `o` INNER JOIN ".db('shop_order_items')." AS i ON i.order_id = o.id  WHERE `o`.`id`!='".$order_info['id']."' AND `o`.`phone`='".$order_info['phone']."' AND `o`.`status`='".$order_info['status']."' GROUP BY o.id ORDER BY o.id DESC";
+		$out .= "<br /><br /><h3>".t('Similar orders')."</h3>".table($sql)
+			->text('id')
+			->date('date', array('format' => 'full', 'nowrap' => 1))
+			->user('user_id')
+			->text('name')
+			->text('total_sum', array('nowrap' => 1))
+
+			->text('num_items')
+			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
+			->btn('Merge', './?object=manage_shop&action=merge_order&id='.$order_info['id'].'&merge_id=%d',array('no_ajax' => 1))
+		;									
+
+		return $out;
+	}
+	
+	function merge_order() {
+		$_GET['id'] = intval($_GET['id']);
+		if ($_GET['id']) {
+			$order_info = db()->query_fetch('SELECT * FROM '.db('shop_orders').' WHERE id='.intval($_GET['id']));
+		}
+		if (empty($order_info)) {
+			return _e('No such order');
+		}
+		$_GET['merge_id'] = intval($_GET['merge_id']);
+		if ($_GET['merge_id']) {
+			$order_info_merge = db()->query_fetch('SELECT * FROM '.db('shop_orders').' WHERE id='.intval($_GET['merge_id'])." AND `id`!='".$order_info['id']."' AND `phone`='".$order_info['phone']."' AND `status`='".$order_info['status']."'");
+		}
+		if (empty($order_info_merge)) {
+			return _e('No order to merge');
+		}
+		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
+		while ($_info = db()->fetch_assoc($Q)) {
+			$order_items[$_info['product_id']."_".$_info['param_id']] = $_info;
+		}
+		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info_merge['id']));
+		while ($_info = db()->fetch_assoc($Q)) {
+			$order_items_merge[$_info['product_id']."_".$_info['param_id']] = $_info;
+		}
+		
+		foreach ($order_items_merge as $k=>$v) {
+			if (!empty($order_items[$k])) {
+				db()->UPDATE(db('shop_order_items'), array(
+					'quantity' => $order_items[$k]['quantity'] + $v['quantity'],
+				), "`order_id`='{$_GET['id']}' AND `product_id`='{$v['product_id']}' AND `param_id`='{$v['param_id']}'"); 
+			} else {
+				db()->INSERT(db('shop_order_items'), _es(array(
+					'order_id'	=> $_GET['id'],
+					'type'		=> $v['type'],
+					'product_id' => $v['product_id'],
+					'param_id'   => $v['param_id'],
+					'user_id'    => $v['user_id'],
+					'quantity'   => $v['quantity'],
+					'price'     => number_format($v['price'], 2, '.', ''),
+					'status'	=> $v['status'],
+				))); 
+			}
+		}
+		
+		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($_GET['id']));
+		while ($_info = db()->fetch_assoc($Q)) {
+			$total_price += $_info['quantity']*$_info['price'];
+		}
+
+		$delivery_price = ((intval($total_price) < 200)? $this->delivery_price : 0);
+		$total_price += intval($delivery_price);
+
+		db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($total_price, 2, '.', ''),'delivery_price' => $delivery_price),"`id`='".$_GET['id']."'");
+		db()->query("DELETE FROM `".db('shop_order_items')."` WHERE `order_id`='{$_GET['merge_id']}'");
+		return js_redirect("./?object=manage_shop&action=view_order&id={$_GET['id']}");
 	}
 
 	/**
