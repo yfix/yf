@@ -317,7 +317,8 @@ class yf_utils {
 			$date_format = '%Y-%m-%d %H:%M:%S';
 		}
 		if (empty($input_date)) {
-			$input_date = time();
+			return '';
+#			$input_date = time();
 		}
 		$date_to_show = !is_numeric($input_date) ? strtotime($input_date) : intval($input_date);
 		if (empty($date_to_show)) {

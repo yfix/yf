@@ -20,13 +20,16 @@ class yf_manage_shop_orders{
 				'filter' => $_SESSION[$_GET['object'].'__orders']
 			))
 			->text('id')
-			->date('date', array('format' => '%d-%m-%Y'))
+			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->user('user_id')
-			->text('total_sum')
+			->text('name')
+			->text('phone')				
+			->text('total_sum', array('nowrap' => 1))
+
 			->text('num_items')
 			->func('status', function($field, $params) { 
 				return common()->get_static_conf("order_status", $field);
-			})
+			}, array('nowrap' => 1))
 			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
 			->btn('Paywill', './?object=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
 			->btn('PDF', './?object=paywill&id=%d&pdf=y',array('no_ajax' => 1, 'target' => '_blank'))
@@ -46,21 +49,34 @@ class yf_manage_shop_orders{
 		$recount_price = false;
 		if(!empty($_POST)){
 			foreach($_POST as $k => $v) {
-				if(is_int($k)) {
-					db()->UPDATE(db('shop_order_items'), array('status'	=> $v), ' order_id='.$_GET['id'].' AND product_id='.intval($k));
+				if($k == 'status_item') {
+					foreach ($v as $k1 => $status) {
+						list ($product_id,$param_id) = explode("_",$k1);
+						db()->UPDATE(db('shop_order_items'), array('status'	=> $status), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id)." AND param_id=".intval($param_id));					
+					}
+				} elseif ($k=='delete') {
+					foreach ($v as $k1 => $is_del) {
+						list ($product_id,$param_id) = explode("_",$k1);
+						if ($is_del == 1) {
+							db()->query("DELETE FROM ".db('shop_order_items')." WHERE order_id=".$_GET['id']." AND product_id=".intval($product_id)." AND param_id=".intval($param_id));
+						}
+					}
+					$recount_price = true;
 				} elseif ($k=='qty') {
-					foreach ($v as $product_id => $qty) {
+					foreach ($v as $k1 => $qty) {
+						list ($product_id,$param_id) = explode("_",$k1);
 						if (intval($qty) == 0) {
-							db()->DELETE(db('shop_order_items'), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
+							db()->query("DELETE FROM ".db('shop_order_items')." WHERE order_id=".$_GET['id']." AND product_id=".intval($product_id)." AND param_id=".intval($param_id));
 						} else {
-							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
+							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id)." AND param_id=".intval($param_id));
 						}
 						
 						$recount_price = true;
 					}
 				} elseif ($k=='price_unit') {
-					foreach ($v as $product_id => $price) {
-						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id));
+					foreach ($v as $k1 => $price) {
+						list ($product_id,$param_id) = explode("_",$k1);
+						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id)." AND param_id=".intval($param_id));
 						$recount_price = true;						
 					}
 				}
@@ -72,7 +88,7 @@ class yf_manage_shop_orders{
 					$total_price += $_info['quantity']*$_info['price'];
 				}
 
-				$delivery_price = ($order_info['region'] == 7)? ((intval($total_price) < 200)? $this->delivery_price : intval(0)) : NULL;
+				$delivery_price = ($order_info['region'] == 7)? ((intval($total_price) < 200)? $this->delivery_price : 0) : NULL;
 				$total_price += intval($delivery_price);
 
 				$order_info['total_sum']  = $total_price;
@@ -95,7 +111,7 @@ class yf_manage_shop_orders{
 			if ($_info['product_id']) {
 				$products_ids[$_info['product_id']] = $_info['product_id'];
 			}
-			$order_items[$_info['product_id']] = $_info;
+			$order_items[$_info['product_id']."_".$_info['param_id']] = $_info;
 		}
 		if (!empty($products_ids)) {
 			$products_infos = db()->query_fetch_all('SELECT * FROM '.db('shop_products').' WHERE id IN('.implode(',', $products_ids).') AND active="1"');
@@ -111,8 +127,10 @@ class yf_manage_shop_orders{
 					$price += $_attr_info['price'];
 				}
 			}
-			$products[$_info['product_id']] = array(
+			$products[$_info['product_id'].'_'.$_info['param_id']] = array(
 				'product_id'	=> intval($_info['product_id']),
+				'param_id'	=> intval($_info['param_id']),				
+				'param_name'	=> _class( '_shop_product_params', 'modules/shop/' )->_get_name_by_option_id($_info['param_id']),
 				'name'			=> _prepare_html($_product['name']),
 				'price_unit'	=> $_info['price'],				
 				'price'			=> $_info['quantity']*$_info['price'],
@@ -121,6 +139,7 @@ class yf_manage_shop_orders{
 				'details_link'	=> process_url('./?object=manage_shop&action=view&id='.$_product['id']),
 				'dynamic_atts'	=> !empty($dynamic_atts) ? implode('<br />'.PHP_EOL, $dynamic_atts) : '',
 				'status'		=> module('manage_shop')->_box('status_item', $_info['status']),
+				'delete'		=> '', // will be filled later on table2()
 			);
 			$total_price += $_info['price'] * $quantity;
 		}
@@ -137,7 +156,7 @@ class yf_manage_shop_orders{
 			'total_price'	=> module('manage_shop')->_format_price($total_price),
 			'ship_type'		=> module('manage_shop')->_ship_types[$order_info['ship_type']],
 			'pay_type'		=> module('manage_shop')->_pay_types[$order_info['pay_type']],
-			'date'			=> _format_date($order_info['date'], '%d-%m-%Y'),
+			'date'			=> $order_info['date'],
 			'status_box'	=> module('manage_shop')->_box('status', $order_info['status']),
 			'back_url'		=> './?object=manage_shop&action=show_orders',
 			'print_url'		=> './?object=manage_shop&action=show_print&id='.$order_info['id'],
@@ -146,11 +165,11 @@ class yf_manage_shop_orders{
 		return form2($replace)
 			->info('id')
 			->info('total_sum', '', array('no_escape' => 1))
-			->info('date')
+			->info_date('date', 'full')
 			->info('name')
 			->email('email')
 			->info('phone')
-			->container('<a href="./?object=manage_shop&action=send_sms&phone='.urlencode($replace["phone"]).'">Send SMS</a><br /><br />')
+			->container('<a href="./?object=manage_shop&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
 			->info('address')
 			->info('house')
 			->info('apartment')
@@ -164,18 +183,25 @@ class yf_manage_shop_orders{
 				table2($products)
 					->link('product_id', './?object=manage_shop&action=product_edit&id=%d')
 					->func('quantity',function($f, $p, $row){
-						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
+						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."_".$row['param_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
 						return $row['quantity'];
 					})
 					->func('price_unit',function($f, $p, $row){
-						$row['price_unit'] = "<input type='text' name='price_unit[".$row['product_id']."]' value='".$row['price_unit']."' style='width:100px;'>";
+						$row['price_unit'] = "<input type='text' name='price_unit[".$row['product_id']."_".$row['param_id']."]' value='".$row['price_unit']."' style='width:100px;'>";
 						return $row['price_unit'];
 					})
 					->text('price')
-					->text('name')
+					->func('name', function($f, $p, $row){
+						$row['name'] = $row['name'].($row['param_name']!='' ? "<br /><small>".$row['param_name']."</small>" : '');
+						return $row['name'];
+					})
 					->func('status', function($f, $p, $row){
-						$row['status'] = str_replace("status_item", $row['product_id'], $row['status']);
+						$row['status'] = str_replace("status_item", "status_item[".$row['product_id']."_".$row['param_id']."]", $row['status']);
 						return $row['status'];
+					})
+					->func('delete',function($f, $p, $row){
+						$row['delete'] = "<input type='checkbox' name='delete[".$row['product_id']."_".$row['param_id']."]' value='1'>";
+						return $row['delete'];
 					})
 				, array('wide' => 1)
 			)

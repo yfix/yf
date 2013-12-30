@@ -21,10 +21,10 @@ class yf_manage_shop_products{
 
             }))
 			->text('name')
-			->link('cat_id', './?object=category_editor&action=show_items&&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
+			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
 			->text('price')
 			->text('quantity')
-			->date('add_date')
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object=manage_shop&action=product_delete&id=%d')
 			->btn_clone('', './?object=manage_shop&action=product_clone&id=%d')

@@ -750,7 +750,10 @@ class yf_table2 {
 		$extra['link'] = $link ? $link : './?object=members&action=edit&id=%d';
 		$extra['link_field_name'] = $name;
 		$extra['data'] = $data;
-		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
+		$this->_params['custom_fields'][$_name] = array(
+			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name 
+			FROM '.db('user').' WHERE id IN(%ids)'
+		, $name);
 		return $this->text($_name, $extra['desc'], $extra);
 	}
 

@@ -12,7 +12,12 @@ class yf_pdf_page {
 	/**
 	*/
 	function __construct() {
-		require_once (YF_PATH."libs/mPDF/mpdf.php");
+		$path = "libs/mPDF/mpdf.php";
+		if(file_exists(YF_PATH.$path)){
+			require_once (YF_PATH.$path);
+		}else{
+			require_once (PROJECT_PATH.$path);
+		}
 		$this->pdf_obj = new mPDF('utf-8', 'A4','10');
 	}
 
@@ -24,8 +29,8 @@ class yf_pdf_page {
 		if (empty($name)) {
 			$name = "page";
 		}
-			
-		$this->pdf_obj->charset_in = 'cp1251';
+
+		$this->pdf_obj->charset_in = 'utf-8';
 		$this->pdf_obj->WriteHTML($text, 2); 
 		$this->pdf_obj->Output($name.'.pdf', 'I');
 	}
