@@ -1311,6 +1311,27 @@ class yf_form2 {
 
 	/**
 	*/
+	function admin_info($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$name = 'user_name';
+		$user_id = $this->_replace['user_id'];
+
+		$user_info = db()->get('SELECT login,id AS user_name FROM '.db('admin').' WHERE id='.intval($user_id));
+		$user_name = array();
+		if ($user_info) {
+			if (strlen($user_info['id'])) {
+				$user_name[] = $user_info['id'];
+			}
+			if (strlen($user_info['login'])) {
+				$user_name[] = $user_info['login'];
+			}
+		}
+		$this->_replace[$name] = implode('; ', $user_name);
+		$extra['link'] = './?object=admin&action=edit&id='.$user_id;
+		return $this->info($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
 	function info_date($name = '', $format = '', $extra = array(), $replace = array()) {
 		$r = (array)$this->_replace + (array)$replace;
 		$replace[$name] = _format_date($r[$name], $format);
