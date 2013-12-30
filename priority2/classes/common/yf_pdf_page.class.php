@@ -32,7 +32,9 @@ class yf_pdf_page {
 	 * S: return the document as a string. filename is ignored. You can use the 'S' option to e-mail a PDF file (as a content of email).
 	 */
 	function go ($text = "", $name = "", $dest = "I") {
-		main()->NO_GRAPHICS = true;
+		if($dest != "F"){
+			main()->NO_GRAPHICS = true;
+		}
 		if (empty($name)) {
 			$name = "page";
 		}
