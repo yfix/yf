@@ -758,6 +758,21 @@ class yf_table2 {
 	}
 
 	/**
+	* Currently designed only for admin usage
+	*/
+	function admin($name = '', $link = '', $data = '', $extra = array()) {
+		if (!$name) {
+			$name = 'user_id';
+		}
+		$_name = 'user';
+		$extra['link'] = $link ? $link : './?object=admin&action=edit&id=%d';
+		$extra['link_field_name'] = $name;
+		$extra['data'] = $data;
+		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name);
+		return $this->text($_name, $extra['desc'], $extra);
+	}
+
+	/**
 	*/
 	function date($name, $desc = '', $extra = array()) {
 		// Shortcut: use second param as $extra
