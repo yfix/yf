@@ -65,6 +65,7 @@ class yf_admin_wall {
 		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1))
 			->date('add_date')
+			->admin('user_id')
 			->text('message')
 			->btn_view()
 		;
