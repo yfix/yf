@@ -30,7 +30,7 @@ class yf_pdf_page {
 			$name = "page";
 		}
 
-		$this->pdf_obj->charset_in = 'cp1251';
+		$this->pdf_obj->charset_in = 'utf-8';
 		$this->pdf_obj->WriteHTML($text, 2); 
 		$this->pdf_obj->Output($name.'.pdf', 'I');
 	}
