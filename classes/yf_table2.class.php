@@ -710,6 +710,9 @@ class yf_table2 {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
+					if ($extra['rewrite']) {
+						$link = url($link);
+					}
 					if ($extra['hidden_toggle']) {
 						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 					}
@@ -999,6 +1002,9 @@ class yf_table2 {
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				if ($extra['rewrite']) {
+					$link = url($link);
+				}
 
 				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
@@ -1158,6 +1164,9 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				if ($extra['rewrite']) {
+					$link = url($link);
+				}
 				$values = array(
 					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
 					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
@@ -1187,6 +1196,9 @@ class yf_table2 {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				if ($extra['rewrite']) {
+					$link = url($link);
+				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$class = $extra['class'] ?: $extra['a_class'];
 				return '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
