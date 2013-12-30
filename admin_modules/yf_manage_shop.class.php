@@ -183,6 +183,7 @@ class yf_manage_shop {
 	}
 
 	function show_orders() {
+		$_GET['action'] = 'orders';
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
 	}
 
