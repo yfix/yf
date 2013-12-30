@@ -413,8 +413,8 @@ class yf_common {
 	/**
 	* Create PDF 'on the fly' from the given content
 	*/
-	function pdf_page ($text = '', $name = '') {
-		return _class('pdf_page', 'classes/common/')->go($text, $name);
+	function pdf_page ($text = '', $name = '', $destination = 'I') {
+		return _class('pdf_page', 'classes/common/')->go($text, $name, $destination);
 	}
 
 	/**
