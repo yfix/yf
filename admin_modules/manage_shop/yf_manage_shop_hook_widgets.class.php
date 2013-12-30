@@ -96,9 +96,11 @@ class yf_manage_shop_hook_widgets{
 		$sql = 'SELECT o.*, COUNT(*) AS num FROM '.db('shop_orders').' AS o INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id GROUP BY o.id ORDER BY o.`date` DESC';
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
 			->date('date')
+			->text('name')
+			->text('phone')
 			->text('total_sum')
 			->text('num')
-			->text('email')
+#			->text('email')
 			->btn_edit('', './?object=manage_shop&action=view_order&id=%d')
 		;
 	}

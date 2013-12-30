@@ -28,7 +28,7 @@ class yf_manage_shop_orders{
 
 			->text('num_items')
 			->func('status', function($field, $params) { 
-				return common()->get_static_conf("order_status", $field);
+				return common()->get_static_conf('order_status', $field);
 			}, array('nowrap' => 1))
 			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
 			->btn('Paywill', './?object=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
@@ -51,32 +51,32 @@ class yf_manage_shop_orders{
 			foreach($_POST as $k => $v) {
 				if($k == 'status_item') {
 					foreach ($v as $k1 => $status) {
-						list ($product_id,$param_id) = explode("_",$k1);
-						db()->UPDATE(db('shop_order_items'), array('status'	=> $status), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id)." AND param_id=".intval($param_id));					
+						list ($product_id,$param_id) = explode('_',$k1);
+						db()->UPDATE(db('shop_order_items'), array('status'	=> $status), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));					
 					}
 				} elseif ($k=='delete') {
 					foreach ($v as $k1 => $is_del) {
-						list ($product_id,$param_id) = explode("_",$k1);
+						list ($product_id,$param_id) = explode('_',$k1);
 						if ($is_del == 1) {
-							db()->query("DELETE FROM ".db('shop_order_items')." WHERE order_id=".$_GET['id']." AND product_id=".intval($product_id)." AND param_id=".intval($param_id));
+							db()->query('DELETE FROM '.db('shop_order_items').' WHERE order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						}
 					}
 					$recount_price = true;
 				} elseif ($k=='qty') {
 					foreach ($v as $k1 => $qty) {
-						list ($product_id,$param_id) = explode("_",$k1);
+						list ($product_id,$param_id) = explode('_',$k1);
 						if (intval($qty) == 0) {
-							db()->query("DELETE FROM ".db('shop_order_items')." WHERE order_id=".$_GET['id']." AND product_id=".intval($product_id)." AND param_id=".intval($param_id));
+							db()->query('DELETE FROM '.db('shop_order_items').' WHERE order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						} else {
-							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id)." AND param_id=".intval($param_id));
+							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						}
 						
 						$recount_price = true;
 					}
 				} elseif ($k=='price_unit') {
 					foreach ($v as $k1 => $price) {
-						list ($product_id,$param_id) = explode("_",$k1);
-						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id)." AND param_id=".intval($param_id));
+						list ($product_id,$param_id) = explode('_',$k1);
+						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						$recount_price = true;						
 					}
 				}
