@@ -217,6 +217,7 @@ class yf_manage_shop_orders{
 			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->user('user_id')
 			->text('name')
+			->text('phone')				
 			->text('total_sum', array('nowrap' => 1))
 
 			->text('num_items')

@@ -198,6 +198,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
 	}
 
+	function merge_order() {
+		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+	}
+
 	function delete_order() {
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
 	}
