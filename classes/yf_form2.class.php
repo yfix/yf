@@ -1337,7 +1337,12 @@ class yf_form2 {
 	*/
 	function info_date($name = '', $format = '', $extra = array(), $replace = array()) {
 		$r = (array)$this->_replace + (array)$replace;
-		$replace[$name] = _format_date($r[$name], $format);
+		if (is_array($format)) {
+			$extra += $format;
+			$format = '';
+		}
+		$extra['format'] = $extra['format'] ?: $format;
+		$replace[$name] = _format_date($r[$name], $extra['format']);
 		$this->_replace[$name] = $replace[$name];
 		return $this->info($name, $format, $extra, $replace);
 	}
