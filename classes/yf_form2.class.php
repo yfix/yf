@@ -379,6 +379,9 @@ class yf_form2 {
 				$css_class = $_css_class;
 			}
 		}
+		if ($this->_params['big_labels']) {
+			$css_class .= ' labels-big';
+		}
 		return $css_class ? ' '.$css_class : '';
 	}
 
@@ -450,7 +453,7 @@ class yf_form2 {
 		}
 		$dd_class = $this->_params['dd_class'] ?: 'span6';
 
-		$row_start = '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL;
+		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
 		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
 		$row_end = '</dl>'.PHP_EOL;
 
