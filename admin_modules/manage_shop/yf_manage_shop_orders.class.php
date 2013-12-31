@@ -163,10 +163,10 @@ class yf_manage_shop_orders{
 			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 		));
 		
-		$out = form2($replace)
+		$out = form2($replace, array('dd_mode' => 1, 'big_labels' => true))
 			->info('id')
 			->info('total_sum', '', array('no_escape' => 1))
-			->info_date('date', 'full')
+			->info_date('date', array('format' => 'full'))
 			->info('name')
 			->email('email')
 			->info('phone')
