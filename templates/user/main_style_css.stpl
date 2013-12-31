@@ -22,4 +22,6 @@ ul#slide_menu .dropdown-divider { font-weight: bold; border-bottom: 1px solid; }
 .rating span.star:hover { cursor:pointer }
 .rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
 .rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
+
+.label.labels-big, .badge.labels-big { font-size: inherit; }
 </style>
