@@ -178,6 +178,8 @@ class yf_manage_shop_orders{
 			->info('porch')
 			->info('intercom')
 			->info('comment')
+			->info('delivery_time')			
+			->info('delivery_price')
 			->user_info('user_id')
 			->info('payment', 'Payment method')
 			->container(
@@ -211,7 +213,7 @@ class yf_manage_shop_orders{
 		;
 					
 		// get similar orders
-		$sql= "SELECT * FROM `".db('shop_orders')."` AS `o` INNER JOIN ".db('shop_order_items')." AS i ON i.order_id = o.id  WHERE `o`.`id`!='".$order_info['id']."' AND `o`.`phone`='".$order_info['phone']."' AND `o`.`status`='".$order_info['status']."' GROUP BY o.id ORDER BY o.id DESC";
+		$sql= "SELECT o.*, COUNT(*) AS num_items FROM `".db('shop_orders')."` AS `o` INNER JOIN ".db('shop_order_items')." AS i ON i.order_id = o.id  WHERE `o`.`id`!='".$order_info['id']."' AND `o`.`phone`='".$order_info['phone']."' AND `o`.`status`='".$order_info['status']."' GROUP BY o.id ORDER BY o.id DESC";
 		$out .= "<br /><br /><h3>".t('Similar orders')."</h3>".table($sql)
 			->text('id')
 			->date('date', array('format' => 'full', 'nowrap' => 1))
