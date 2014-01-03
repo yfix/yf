@@ -180,32 +180,68 @@ class yf_form2 {
 
 		$r = (array)$this->_replace + (array)$replace;
 
+		$tabbed_mode = false;
+		$tabbed_buffer = array();
+		$tabs = array();
+		$tabs_name = '';
+		$tabs_container = '';
+
 		foreach ((array)$this->_body as $k => $v) {
-			if (is_array($v)) {
-				$_extra = $v['extra'];
-				$_replace = $r;
-				if (is_array($v['replace'])) {
-					$_replace += $v['replace'];
-				}
-				$func = $v['func'];
-				if ($this->_stacked_mode_on) {
-					$_extra['stacked'] = true;
-				}
-				// Callback to decide if we need to show this field or not
-				if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
-					$_display_allowed = $_extra['display_func']($_extra, $_replace, $this);
-					if (!$_display_allowed) {
-						continue;
-					}
-				}
-				if (DEBUG_MODE) {
-					$_debug_fields[$k] = array(
-						'name'	=> $v['name'],
-						'extra'	=> $_extra,
-					);
-				}
-				$this->_body[$k] = $func($_extra, $_replace, $this);
+			if (!is_array($v)) {
+				continue;
 			}
+			$_extra = $v['extra'];
+			$_replace = $r;
+			if (is_array($v['replace'])) {
+				$_replace += $v['replace'];
+			}
+			$func = $v['func'];
+			if ($this->_stacked_mode_on) {
+				$_extra['stacked'] = true;
+			}
+			// Callback to decide if we need to show this field or not
+			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
+				$_display_allowed = $_extra['display_func']($_extra, $_replace, $this);
+				if (!$_display_allowed) {
+					continue;
+				}
+			}
+			if (DEBUG_MODE) {
+				$_debug_fields[$k] = array(
+					'name'	=> $v['name'],
+					'extra'	=> $_extra,
+				);
+			}
+			$this->_body[$k] = $func($_extra, $_replace, $this);
+
+			if ($this->_tabbed_mode_on) {
+				$tabbed_mode = true;
+				$tabbed_buffer[$k] = $this->_body[$k];
+				if ($v['name'] == 'tab_start') {
+					$this->_tabs_counter++;
+					$tabs_name = $this->_tabs_name ?: 'tabs_'.$this->_tabs_counter;
+				}
+				if ($v['name'] == 'tab_start' && !$tabs_container) {
+					$tabs_container = $k;
+					$this->_body[$k] = '__TAB_START__';
+				} else {
+					unset($this->_body[$k]);
+				}
+			} elseif ($tabbed_mode) { // switch off
+				if (!$this->_tabbed_mode_on) {
+					$tabbed_mode = false;
+				}
+				$tabs[$tabs_name] = implode(PHP_EOL, $tabbed_buffer);
+				$tabbed_buffer = array();
+				$tabs_name = '';
+			}
+		}
+		if ($tabbed_buffer) {
+			$tabs['tab_last'] = implode(PHP_EOL, $tabbed_buffer);
+			$tabbed_buffer = array();
+		}
+		if ($tabs) {
+			$this->_body[$tabs_container] = _class('html')->tabs($tabs);
 		}
 		$this->_rendered = implode(PHP_EOL, $this->_body);
 		if (DEBUG_MODE) {
@@ -539,17 +575,20 @@ class yf_form2 {
 	/**
 	* Shortcut for making tabbable form
 	*/
-	function tab_start($extra = array()) {
+	function tab_start($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
-			$_this->_params['no_form'] = true;
-			$_this->_stacked_mode_on = true;
-			return '<div class="tab-pane fade in" id="form_tab1">';
+			$_this->_tabs_name = $extra['name'];
+			$_this->_tabbed_mode_on = true;
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
-		return $func($extra, $replace, $this);
 	}
 
 	/**
@@ -557,14 +596,12 @@ class yf_form2 {
 	*/
 	function tab_end($extra = array()) {
 		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = false;
-			return '</div>';
+			$_this->_tabbed_mode_on = false;
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
-		return $func($extra, $replace, $this);
 	}
 
 	/**
