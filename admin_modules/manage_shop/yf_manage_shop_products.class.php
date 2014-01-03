@@ -20,11 +20,11 @@ class yf_manage_shop_products{
                 return $image[0]['thumb'];
 
             }))
-			->text('name')
-			->link('cat_id', './?object=category_editor&action=show_items&&id=%d', _class('cats')->_get_items_names('shop_cats'))
+			->text('name', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name', 'link_field_name' => 'id'))
+			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
 			->text('price')
 			->text('quantity')
-			->date('add_date')
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object=manage_shop&action=product_delete&id=%d')
 			->btn_clone('', './?object=manage_shop&action=product_clone&id=%d')

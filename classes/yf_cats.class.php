@@ -99,11 +99,37 @@ class yf_cats {
 	* Get all category items names for the given block
 	*/
 	function _get_items_names($cat_name = '') {
-		$items_names = array();
+		$items = array();
 		foreach ((array)$this->_get_items_array($cat_name) as $item_id => $item_info) {
-			$items_names[$item_info['id']] = $item_info['name'];
+			$items[$item_info['id']] = $item_info['name'];
 		}
-		return $items_names;
+		return $items;
+	}
+
+	/**
+	*/
+	function _get_items_names_cached($cat_name = '') {
+		$cache_name = 'cats__get_items_names__'.$cat_name;
+		$items = cache_get($cache_name);
+		if ($items) {
+			return $items;
+		}
+		$items = $this->_get_items_names($cat_name);
+		cache_set($cache_name, $items);
+		return $items;
+	}
+
+	/**
+	*/
+	function _prepare_for_box_cached($cat_name = '', $with_all = 1) {
+		$cache_name = 'cats__prepare_for_box__'.$cat_name.'_'.$with_all;
+		$items = cache_get($cache_name);
+		if ($items) {
+			return $items;
+		}
+		$items = $this->_prepare_for_box($cat_name, $with_all);
+		cache_set($cache_name, $items);
+		return $items;
 	}
 
 	/**

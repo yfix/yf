@@ -21,6 +21,8 @@ class yf_redirect {
 	public $JS_SHOW_TEXT	= false;
 	/** @var string Force using only this method (if text is empty), leave blank to disable */
 	public $FORCE_TYPE		= 'http';
+	/** @var bool */
+	public $LOG_REDIRECTS	= true;
 
 	/**
 	* Common redirect method
@@ -89,12 +91,22 @@ class yf_redirect {
 				'hidden_fields'	=> $hidden_fields,
 			));
 			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
+			if ($this->FORCE_TYPE) {
+				$redirect_type = $this->FORCE_TYPE;
+			}
+			$this->_save_log(array(
+				'url_to'	=> $location,
+				'reason'	=> $text,
+				'rewrite'	=> $rewrite,
+				'ttl'		=> $ttl,
+				'type'		=> $redirect_type,
+			));
 			return print common()->show_empty_page($body, array('full_width' => 1));
 		}
 		if (empty($redirect_type) || !in_array($redirect_type, $this->AVAIL_TYPES)) {
 			$redirect_type = 'http';
 		}
-		if ($this->FORCE_TYPE/* && empty($text)*/) {
+		if ($this->FORCE_TYPE) {
 			$redirect_type = $this->FORCE_TYPE;
 		}
 		if ($redirect_type == 'js') {
@@ -104,6 +116,13 @@ class yf_redirect {
 		} elseif ($redirect_type == 'http') {
 			$body = $this->_redirect_http($location, $text, $ttl, $params);
 		}
+		$this->_save_log(array(
+			'url_to'	=> $location,
+			'reason'	=> $text,
+			'rewrite'	=> $rewrite,
+			'ttl'		=> $ttl,
+			'type'		=> $redirect_type,
+		));
 		echo $this->USE_DESIGN && !empty($body) ? common()->show_empty_page($body, array('full_width' => 1)) : $body;
 	}
 
@@ -144,5 +163,42 @@ class yf_redirect {
 		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 302 Found');
 		header('Location: '.$location);
 		return '';
+	}
+
+	/**
+	*/
+	function _save_log ($params = array()) {
+		if (!$this->LOG_REDIRECTS) {
+			return false;
+		}
+		// slice 2 first elements (__FUNCTION__ and $this->_go) and leave only 5 more trace elements to save space
+		$trace = implode(PHP_EOL, array_slice(explode(PHP_EOL, main()->trace_string()), 2, 7));
+
+		$is_https = ($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']);
+
+		return db()->insert_safe('log_redirects', array(
+			'url_from'		=> ($is_https ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
+			'url_to'		=> $params['url_to'],
+			'reason'		=> $params['reason'],
+			'use_rewrite'	=> (int)$params['rewrite'],
+			'redirect_type'	=> $params['type'],
+			'date'			=> gmdate('Y-m-d H:i:s'),
+			'ip'			=> $_SERVER['REMOTE_ADDR'],
+			'query_string'	=> $_SERVER['QUERY_STRING'],
+			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
+			'referer'		=> $_SERVER['HTTP_REFERER'],
+			'object'		=> $_GET['object'],
+			'action'		=> $_GET['action'],
+			'user_id'		=> MAIN_TYPE_ADMIN ? main()->ADMIN_ID : main()->USER_ID,
+			'user_group'	=> MAIN_TYPE_ADMIN ? main()->ADMIN_GROUP : main()->USER_GROUP,
+			'site_id'		=> (int)main()->SITE_ID,
+			'server_id'		=> (int)main()->SERVER_ID,
+			'locale'		=> conf('language'),
+			'is_admin'		=> MAIN_TYPE_ADMIN ? 1 : 0,
+			'rewrite_mode'	=> (int)tpl()->REWRITE_MODE,
+			'debug_mode'	=> DEBUG_MODE ? 1 : 0,
+			'exec_time'		=> str_replace(',', '.', round(microtime(true) - main()->_time_start, 4)),
+			'trace'			=> $trace,
+		));
 	}
 }

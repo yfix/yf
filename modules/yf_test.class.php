@@ -51,24 +51,7 @@ class yf_test {
 
 	/**
 	*/
-	function oauth () {
-		$providers = _class('oauth')->_get_providers();
-		if ($_GET['id']) {
-			$provider = $_GET['id'];
-#			$settings = $providers($_GET['id']);
-			return _class('oauth')->login($provider);
-		}
-		$body = array();
-		foreach ((array)$providers as $name => $settings) {
-			if ($name[0] == '_') {
-				continue;
-			}
-			$href = './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$name;
-			$img_web_path = 'https://s3-eu-west-1.amazonaws.com/yfix/oauth/providers/'.$name.'.png';
-			$body[] = '<a href="'.$href.'" class="btn">'.'<img src="'.$img_web_path.'" style="height:24px;"> '. $name.'</a>'
-//				.'<br /> '.print_r($settings, 1).'<br>'
-			;
-		}
-		return implode(PHP_EOL, $body);
+	function oauth ($params = array()) {
+		return module('login_form')->oauth($params);
 	}
 }

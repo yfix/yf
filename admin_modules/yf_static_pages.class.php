@@ -238,7 +238,6 @@ class yf_static_pages {
 		;
 	}
 
-
 	/**
 	*/
 	function _hook_widget__static_pages_list ($params = array()) {

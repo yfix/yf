@@ -1,6 +1,11 @@
 <style type="text/css">
-.left_area { margin-left: 20px; margin-right: 20px; width: 410px; float:left; word-wrap: break-word; }
 .sidebar-nav { padding: 9px 0; }
+
+.left_area { margin-left: 20px; margin-right: 20px; width: 410px; float:left; word-wrap: break-word; }
+@media (min-width: 1650px) {
+	.left_area { margin-left: 1%; margin-right: 1%; width: 20%; }
+	.center_area { margin-left:25%; margin-right: 1%; width: 74%; }
+}
 
 .dropdown-menu .sub-menu { left: 100%; position: absolute; top: 0; visibility: hidden; margin-top: -1px; }
 .dropdown-menu li:hover > .sub-menu { visibility: visible; }
@@ -8,11 +13,16 @@
 .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
 
 td input[type=text], td textarea { margin-bottom: 0; }
+.modal { width: auto; }
 .modal.fade.in { top: 30px; }
+.modal .form-horizontal .control-group { margin-bottom: 5px; }
 
 .rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
 .rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
 .rating span.star:hover { cursor:pointer }
 .rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
 .rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
+
+.label.labels-big, .badge.labels-big { font-size: inherit; }
+
 </style>

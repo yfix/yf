@@ -165,6 +165,7 @@ class yf_send_mail {
 				$mail->FromName = $name_from;
 				if( DEBUG_MODE && $this->MAIL_DEBUG ) {
 					$mail->SMTPDebug = 1;
+					$mail->Debugoutput = 'error_log';
 				}
 				if (is_array($email_to)) {
 					list( $name, $email ) = each( $email_to ); array_shift( $email_to );

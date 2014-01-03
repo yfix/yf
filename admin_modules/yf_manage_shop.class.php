@@ -26,7 +26,7 @@ class yf_manage_shop {
 	/** @var int Big img size Y */
 	public $BIG_Y			= 750;
 	/** @var string Default currency */
-	public $CURRENCY		= '$';
+	public $CURRENCY		= 'грн';
 	/** @var Shipping types */
 	public $_ship_types = array(
 		1	=> 'Free',
@@ -58,48 +58,45 @@ class yf_manage_shop {
 	* Constructor
 	*/
 	function _init() {
-		$manage_shop = module('manage_shop');
+		$this->_statuses = common()->get_static_conf('order_status');
+		$this->_order_items_status = common()->get_static_conf('order_items_status');
+		$this->_category_names	= _class('cats')->_get_items_names_cached('shop_cats');
+		$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 0);
 
-		$manage_shop->_statuses = common()->get_static_conf("order_status");
-		$manage_shop->_order_items_status = common()->get_static_conf("order_items_status");
-
-		$manage_shop->_category_names	= _class('cats')->_get_items_names('shop_cats');
-		$manage_shop->_cats_for_select	= _class('cats')->_prepare_for_box('shop_cats', 0);
-		
-		$manage_shop->man = db()->query_fetch_all('SELECT * FROM '.db('shop_manufacturers').' ORDER BY name ASC');
-		$manage_shop->_man_for_select[0] = '--NONE--';
-		foreach ((array)$manage_shop->man as $k => $v) {
-			$manage_shop->_man_for_select[$v['id']] = $v['name'];
+		$this->man = db()->query_fetch_all('SELECT * FROM '.db('shop_manufacturers').' ORDER BY name ASC');
+		$this->_man_for_select[0] = '--NONE--';
+		foreach ((array)$this->man as $k => $v) {
+			$this->_man_for_select[$v['id']] = $v['name'];
 		}
 
-		$manage_shop->_suppliers = db()->query_fetch_all('SELECT * FROM '.db('shop_suppliers').' ORDER BY name ASC');
-		$manage_shop->_suppliers_for_select[0] = '--NONE--';
-		foreach ((array)$manage_shop->_suppliers as $k => $v) {
-			$manage_shop->_suppliers_for_select[$v['id']] = $v['name'];
+		$this->_suppliers = db()->query_fetch_all('SELECT * FROM '.db('shop_suppliers').' ORDER BY name ASC');
+		$this->_suppliers_for_select[0] = '--NONE--';
+		foreach ((array)$this->_suppliers as $k => $v) {
+			$this->_suppliers_for_select[$v['id']] = $v['name'];
 		}
 
-		$manage_shop->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $manage_shop->PROD_IMG_DIR;
-		$manage_shop->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $manage_shop->PROD_IMG_DIR;
-		if (!file_exists($manage_shop->products_img_dir)) {
-			_mkdir_m($manage_shop->products_img_dir);
+		$this->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
+		$this->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
+		if (!file_exists($this->products_img_dir)) {
+			mkdir($this->products_img_dir, 0755, true);
 		}
-		$manage_shop->_boxes = array(
+		$this->_boxes = array(
 			'status'		=> 'select_box("status",		module("manage_shop")->_statuses,	$selected, false, 2, "", false)',
 			'featured'		=> 'radio_box("featured",		module("manage_shop")->_featured,	$selected, false, 2, "", false)',
 			'status_prod'	=> 'select_box("status_prod",	module("manage_shop")->_status_prod,$selected, 0, 2, "", false)',
 			'status_item'	=> 'select_box("status_item",	module("manage_shop")->_order_items_status,	$selected, false, 2, "", false)',
 		);
-		$manage_shop->_featured = array(
+		$this->_featured = array(
 			'0' => '<span class="negative">NO</span>',
 			'1' => '<span class="positive">YES</span>',
 		);
-		$manage_shop->_status_prod = array(
+		$this->_status_prod = array(
 			''		=> '',
 			'1'	=> 'Active',
 			'0'	=> 'Inacive',
 		);
 		// Sync company info with user section
-#		$manage_shop->COMPANY_INFO = _class('shop', 'modules/')->COMPANY_INFO;
+#		$this->COMPANY_INFO = _class('shop', 'modules/')->COMPANY_INFO;
 
 //		$this->manufacturer_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->MAN_IMG_DIR;
 //		$this->manufacturer_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->MAN_IMG_DIR;
@@ -186,6 +183,7 @@ class yf_manage_shop {
 	}
 
 	function show_orders() {
+		$_GET['action'] = 'orders';
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
 	}
 
@@ -198,6 +196,10 @@ class yf_manage_shop {
 	}
 
 	function view_order() {
+		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function merge_order() {
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
 	}
 
@@ -356,6 +358,9 @@ class yf_manage_shop {
 	function user_edit() {
 		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
 	}
+	function express() {
+		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func();
+	}
 	function _productparams_container($product_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->$func($product_id);
 	}
@@ -373,5 +378,17 @@ class yf_manage_shop {
 	}
 	function import_products() {
 		return $this->import_xls();
-	}	
+	}
+	function send_sms() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_send_sms', 'admin_modules/'.$cl.'/')->$func($params);		
+	}
+	function _product_cache_purge($product_id = 0) {
+		if (!$product_id) {
+			$product_id = $_GET['id'];
+		}
+		cache_del('_shop_products|_product_image|'.$product_id);
+		cache_del('_shop_product_params|_product_image|'.$product_id);
+		cache_del('_shop_product_params|_get_params_by_product|'.$product_id);
+		cache_del('pattern_yf|_get_shop_product_details|'.$product_id);
+	}
 }

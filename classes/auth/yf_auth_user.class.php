@@ -255,7 +255,7 @@ class yf_auth_user {
 			main()->USER_GROUP	= $_SESSION[$this->VAR_USER_GROUP_ID];
 			// Store user info in session
 			if ($this->USER_INFO_IN_SESSION && !empty($_SESSION[$this->VAR_USER_INFO])) {
-				main()->USER_INFO = &$_SESSION[$this->VAR_USER_INFO];
+				main()->USER_INFO = $_SESSION[$this->VAR_USER_INFO];
 			}
 		}
 	}

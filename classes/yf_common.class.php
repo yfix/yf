@@ -140,14 +140,14 @@ class yf_common {
 	function divide_pages ($input_data = '', $path = '', $type = 'blocks', $records_on_page = 0, $num_records = 0, $TPLS_PATH = '', $add_get_vars = 1) {
 		// Override default method for input array
 		$method = is_array($input_data) ? 'go_with_array' : 'go';
-		return _class('divide_pages', COMMON_LIB)->$method($input_data, $path, $type, $records_on_page, $num_records, $TPLS_PATH, $add_get_vars);
+		return _class('divide_pages', 'classes/common/')->$method($input_data, $path, $type, $records_on_page, $num_records, $TPLS_PATH, $add_get_vars);
 	}
 
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
 	function send_mail ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
-		return _class('send_mail', COMMON_LIB)->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
+		return _class('send_mail', 'classes/common/')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
 	} 
 
 	/**
@@ -297,7 +297,7 @@ class yf_common {
 	* Email verifying function
 	*/
 	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
-		return _class('remote_files', COMMON_LIB)->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
+		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
 	}
 
 	/**
@@ -311,7 +311,7 @@ class yf_common {
 	* Verify url using remote call
 	*/
 	function _validate_url_by_http($url) {
-		return _class('remote_files', COMMON_LIB)->_validate_url_by_http($url);
+		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
 	}
 
 	/**
@@ -350,35 +350,35 @@ class yf_common {
 	* Make thumbnail using best available method
 	*/
 	function make_thumb($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
-		return _class('make_thumb', COMMON_LIB)->go($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
+		return _class('make_thumb', 'classes/common/')->go($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
 	} 
 
 	/**
 	* Do upload image
 	*/
 	function upload_image($new_file_path, $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
-		return _class('upload_image', COMMON_LIB)->go($new_file_path, $name_in_form, $max_image_size, $is_local);
+		return _class('upload_image', 'classes/common/')->go($new_file_path, $name_in_form, $max_image_size, $is_local);
 	}
 	
 	/**
 	* Do multi upload image
 	*/
 	function multi_upload_image($new_file_path, $k , $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
-		return _class('multi_upload_image', COMMON_LIB)->go($new_file_path, $k, $name_in_form, $max_image_size, $is_local);
+		return _class('multi_upload_image', 'classes/common/')->go($new_file_path, $k, $name_in_form, $max_image_size, $is_local);
 	} 
 
 	/**
 	* Do upload archive file (zip, rar, tar accepted)
 	*/
 	function upload_archive($new_file_path, $name_in_form = 'archive') {
-		return _class('upload_archive', COMMON_LIB)->go($new_file_path, $name_in_form);
+		return _class('upload_archive', 'classes/common/')->go($new_file_path, $name_in_form);
 	}
 
 	/**
 	* Create simple table with debug info
 	*/
 	function show_debug_info() {
-		return _class('debug_info', COMMON_LIB)->go();
+		return _class('debug_info', 'classes/common/')->go();
 	}
 
 	/**
@@ -393,28 +393,28 @@ class yf_common {
 	* Get user IP address
 	*/
 	function get_ip () {
-		return _class('client_utils', COMMON_LIB)->_get_ip();
+		return _class('client_utils', 'classes/common/')->_get_ip();
 	}
 
 	/**
 	* Show print version of the given page
 	*/
 	function print_page ($text = '') {
-		return _class('print_page', COMMON_LIB)->go($text);
+		return _class('print_page', 'classes/common/')->go($text);
 	}
 
 	/**
 	* Send given text to a desired email address
 	*/
 	function email_page ($text = '') {
-		return _class('email_page', COMMON_LIB)->go($text);
+		return _class('email_page', 'classes/common/')->go($text);
 	}
 
 	/**
 	* Create PDF 'on the fly' from the given content
 	*/
-	function pdf_page ($text = '', $name = '') {
-		return _class('pdf_page', COMMON_LIB)->go($text, $name);
+	function pdf_page ($text = '', $name = '', $destination = 'I') {
+		return _class('pdf_page', 'classes/common/')->go($text, $name, $destination);
 	}
 
 	/**
@@ -479,7 +479,7 @@ class yf_common {
 		}
 		// Try to save errors log
 		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
-			_class('user_errors', COMMON_LIB)->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
+			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
 		}
 		// Set default value
 		if ($clear_error) {
@@ -533,35 +533,35 @@ class yf_common {
 	* Create Alphabet search criteria.Make alphabet html and query limit for selected chars
 	*/
 	function make_alphabet($url, &$chars, $get_var_name = 'id', $q_var = 'id') {
-		return _class('make_alphabet', COMMON_LIB)->go($url, $chars, $get_var_name, $q_var);
+		return _class('make_alphabet', 'classes/common/')->go($url, $chars, $get_var_name, $q_var);
 	}
 
 	/**
 	* Log script execution params
 	*/
 	function log_exec () {
-		return _class(MAIN_TYPE_ADMIN ? 'log_admin_exec' : 'log_exec', COMMON_LIB)->go();
+		return _class(MAIN_TYPE_ADMIN ? 'log_admin_exec' : 'log_exec', 'classes/common/')->go();
 	}
 
 	/**
 	* Create RSS 'on the fly' from the given content
 	*/
 	function rss_page ($data = '', $params = array()) {
-		return _class('rss_data', COMMON_LIB)->show_rss_page($data, $params);
+		return _class('rss_data', 'classes/common/')->show_rss_page($data, $params);
 	}
 
 	/**
 	* Get data from RSS feeds and return it as array
 	*/
 	function fetch_rss ($params = array()) {
-		return _class('rss_data', COMMON_LIB)->fetch_data($params);
+		return _class('rss_data', 'classes/common/')->fetch_data($params);
 	}
 
 	/**
 	* Show empty page (useful for popup windows, etc)
 	*/
 	function show_empty_page ($text = '', $params = array()) {
-		return _class('empty_page', COMMON_LIB)->_show($text, $params);
+		return _class('empty_page', 'classes/common/')->_show($text, $params);
 	}
 
 	/**
@@ -582,77 +582,77 @@ class yf_common {
 	* Upload given file to remote server from this server
 	*/
 	function upload_file ($path_tmp = '', $new_dir = '', $new_file = '') {
-		return _class('remote_files', COMMON_LIB)->do_upload($path_tmp, $new_dir, $new_file);
+		return _class('remote_files', 'classes/common/')->do_upload($path_tmp, $new_dir, $new_file);
 	}
 
 	/**
 	* Delete uploaded file
 	*/
 	function delete_uploaded_file ($path_to = '') {
-		return _class('remote_files', COMMON_LIB)->do_delete($path_to);
+		return _class('remote_files', 'classes/common/')->do_delete($path_to);
 	}
 
 	/**
 	* Remote file last-modification time
 	*/
 	function filemtime_remote ($path_to = '') {
-		return _class('remote_files', COMMON_LIB)->filemtime_remote($path_to);
+		return _class('remote_files', 'classes/common/')->filemtime_remote($path_to);
 	}
 
 	/**
 	* Check if file exists
 	*/
 	function file_is_exists ($path_to = '') {
-		return _class('remote_files', COMMON_LIB)->file_is_exists($path_to);
+		return _class('remote_files', 'classes/common/')->file_is_exists($path_to);
 	}
 
 	/**
 	* Get remote file using CURL extension
 	*/
 	function remote_file_size($page_url = '') {
-		return _class('remote_files', COMMON_LIB)->remote_file_size($page_url);
+		return _class('remote_files', 'classes/common/')->remote_file_size($page_url);
 	}
 
 	/**
 	* Get remote file using CURL extension
 	*/
 	function get_remote_page($page_url = '', $cache_ttl = -1, $options = array(), &$requests_info = array()) {
-		return _class('remote_files', COMMON_LIB)->get_remote_page($page_url, $cache_ttl, $options, $requests_info);
+		return _class('remote_files', 'classes/common/')->get_remote_page($page_url, $cache_ttl, $options, $requests_info);
 	}
 
 	/**
 	* Get several remote files at one time
 	*/
 	function multi_request($page_urls = array(), $options = array(), &$requests_info = array()) {
-		return _class('remote_files', COMMON_LIB)->_multi_request($page_urls, $options, $requests_info);
+		return _class('remote_files', 'classes/common/')->_multi_request($page_urls, $options, $requests_info);
 	}
 
 	/**
 	* 'Safe' multi_request, which splits inpu array into smaller chunks to prevent server breaking
 	*/
 	function multi_request_safe($page_urls = array(), $options = array(), $chunk_size = 50) {
-		return _class('remote_files', COMMON_LIB)->multi_request_safe($page_urls, $options, $chunk_size);
+		return _class('remote_files', 'classes/common/')->multi_request_safe($page_urls, $options, $chunk_size);
 	}
 
 	/**
 	* Get several remote files sizes
 	*/
 	function multi_file_size($page_urls, $options = array(), $max_threads = 50) {
-		return _class('remote_files', COMMON_LIB)->multi_file_size($page_urls, $options, $max_threads);
+		return _class('remote_files', 'classes/common/')->multi_file_size($page_urls, $options, $max_threads);
 	}
 
 	/**
 	* Check if user is banned
 	*/
 	function check_user_ban ($info = array(), $user_info = array()) {
-		return _class('user_ban', COMMON_LIB)->_check($info, $user_info);
+		return _class('user_ban', 'classes/common/')->_check($info, $user_info);
 	}
 
 	/**
 	* Check if user is banned
 	*/
 	function get_browser_info () {
-		return _class('client_utils', COMMON_LIB)->_get_browser_info();
+		return _class('client_utils', 'classes/common/')->_get_browser_info();
 	}
 
 	/**
@@ -678,7 +678,7 @@ class yf_common {
 	* Do redirect user to the specified location
 	*/
 	function redirect($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3) {
-		return _class('redirect', COMMON_LIB)->_go($location, $rewrite, $redirect_type, $text, $ttl);
+		return _class('redirect', 'classes/common/')->_go($location, $rewrite, $redirect_type, $text, $ttl);
 	}
 
 	/**
@@ -703,35 +703,35 @@ class yf_common {
 	* Get file using HTTP request (grabbed from drupal 5.1)
 	*/
 	function http_request ($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {
-		return _class('remote_files', COMMON_LIB)->http_request($url, $headers, $method, $data, $retry);
+		return _class('remote_files', 'classes/common/')->http_request($url, $headers, $method, $data, $retry);
 	}
 
 	/**
 	* Get file using HTTP request (grabbed from drupal 5.1)
 	*/
 	function get_whois_info ($url, $server = '') {
-		return _class('other_common', COMMON_LIB)->get_whois_info ($url, $server);
+		return _class('other_common', 'classes/common/')->get_whois_info ($url, $server);
 	}
 
 	/**
 	* Get geo info by IP from db
 	*/
 	function _get_geo_data_from_db ($cur_ip = '') {
-		return _class('other_common', COMMON_LIB)->_get_geo_data_from_db ($cur_ip);
+		return _class('other_common', 'classes/common/')->_get_geo_data_from_db ($cur_ip);
 	}
 
 	/**
 	* Get geo info by IP from db
 	*/
 	function _is_ip_to_skip ($cur_ip = '') {
-		return _class('other_common', COMMON_LIB)->_is_ip_to_skip ($cur_ip);
+		return _class('other_common', 'classes/common/')->_is_ip_to_skip ($cur_ip);
 	}
 
 	/**
 	* Check if given IP matches given CIDR
 	*/
 	function _is_ip_in_cidr($iptocheck, $CIDR) {
-		return _class('other_common', COMMON_LIB)->_is_ip_in_cidr($iptocheck, $CIDR);
+		return _class('other_common', 'classes/common/')->_is_ip_in_cidr($iptocheck, $CIDR);
 	}
 
 	/**
@@ -779,35 +779,35 @@ class yf_common {
 	* Check multi-accounts
 	*/
 	function _check_multi_accounts($target_user_id = 0, $source_user_id = 0) {
-		return _class('check_multi_accounts', COMMON_LIB)->_check($target_user_id, $source_user_id);
+		return _class('check_multi_accounts', 'classes/common/')->_check($target_user_id, $source_user_id);
 	}
 
 	/**
 	* Adaptively split large text into smaller parts by token with part size limit
 	*/
 	function _my_split ($text = '', $split_token = '', $split_length = 0) {
-		return _class('other_common', COMMON_LIB)->_my_split ($text, $split_token, $split_length);
+		return _class('other_common', 'classes/common/')->_my_split ($text, $split_token, $split_length);
 	}
 
 	/**
 	* Get user info(s) by id(s)
 	*/
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) {
-		return _class('user_data', COMMON_LIB)->_user($user_id, $fields, $params, $return_sql);
+		return _class('user_data', 'classes/common/')->_user($user_id, $fields, $params, $return_sql);
 	}
 
 	/**
 	* Update given user info by id
 	*/
 	function update_user($user_id, $data = array(), $params = '', $return_sql = false) {
-		return _class('user_data', COMMON_LIB)->_update_user($user_id, $data, $params, $return_sql);
+		return _class('user_data', 'classes/common/')->_update_user($user_id, $data, $params, $return_sql);
 	}
 
 	/**
 	* Search user(s) info by params
 	*/
 	function search_user($params = array(), $fields = array(), $return_sql = false) {
-		return _class('user_data', COMMON_LIB)->_search_user($params, $fields, $return_sql);
+		return _class('user_data', 'classes/common/')->_search_user($params, $fields, $return_sql);
 	}
 
 	/**
@@ -835,7 +835,7 @@ class yf_common {
 		if (!strlen($text)) {
 			return $text;
 		}
-		return _class('utf8_clean', COMMON_LIB)->_unaccent($text, $case);
+		return _class('utf8_clean', 'classes/common/')->_unaccent($text, $case);
 	}
 
 	/**
@@ -845,7 +845,7 @@ class yf_common {
 		if (empty($from_encoding)) {
 			$from_encoding = $this->TRANSLIT_FROM;
 		}
-		return _class('translit', COMMON_LIB)->make($string);
+		return _class('translit', 'classes/common/')->make($string);
 	}
 
 	/**
@@ -891,7 +891,7 @@ class yf_common {
 	* $cloud_data - array like (text => num)
 	*/
 	function _create_cloud($cloud_data = array(), $params = array()) {
-		return _class('other_common', COMMON_LIB)->_create_cloud($cloud_data, $params);
+		return _class('other_common', 'classes/common/')->_create_cloud($cloud_data, $params);
 	}	
 
 	/**
@@ -920,14 +920,14 @@ class yf_common {
 	* Try to detect intrusions (XSS and other hack stuff)
 	*/
 	function intrusion_detection() {
-		return _class('intrusion_detection', COMMON_LIB)->check();
+		return _class('intrusion_detection', 'classes/common/')->check();
 	}
 
 	/**
 	* Parse text using jevix
 	*/
 	function jevix_parse($text = '', $params = array()) {
-		return _class('other_common', COMMON_LIB)->jevix_parse($text, $params);
+		return _class('other_common', 'classes/common/')->jevix_parse($text, $params);
 	}
 
 	/**
@@ -941,7 +941,7 @@ class yf_common {
 	* Search related content based on params
 	*/
 	function related_content($params = array()) {
-		return _class('related_content', COMMON_LIB)->_process($params);
+		return _class('related_content', 'classes/common/')->_process($params);
 	}
 
 	/**
@@ -993,7 +993,7 @@ class yf_common {
 	* Convert URL to absolute form
 	*/
 	function url_to_absolute($base_url, $relative_url) {
-		return _class('url_to_absolute', COMMON_LIB)->url_to_absolute($base_url, $relative_url);
+		return _class('url_to_absolute', 'classes/common/')->url_to_absolute($base_url, $relative_url);
 	}
 	
 	/**
@@ -1039,7 +1039,7 @@ class yf_common {
 	* strip_tags_smart
 	*/
 	function utf8_clean ($text = '', $params = array()) {
-		return _class('utf8_clean', COMMON_LIB)->_do($text, $params);
+		return _class('utf8_clean', 'classes/common/')->_do($text, $params);
 	}
 	
 	/**
@@ -1053,21 +1053,21 @@ class yf_common {
 	* 
 	*/
 	function graph ($data, $params = '') {
-		return _class('graph', COMMON_LIB)->graph($data, $params);
+		return _class('graph', 'classes/common/')->graph($data, $params);
 	}
 	
 	/**
 	* 
 	*/
 	function graph_bar ($data, $params = '') {
-		return _class('graph', COMMON_LIB)->graph_bar($data, $params);
+		return _class('graph', 'classes/common/')->graph_bar($data, $params);
 	}
 	
 	/**
 	* 
 	*/
 	function graph_pie ($data, $params = '') {
-		return _class('graph', COMMON_LIB)->graph_pie($data, $params);
+		return _class('graph', 'classes/common/')->graph_pie($data, $params);
 	}
 
 	/**
@@ -1081,7 +1081,7 @@ class yf_common {
 	* new method checking for spider by ip address (database from http://www.iplists.com/)
 	*/
 	function _is_spider ($ip = '', $ua = '') {
-		return _class('spider_detection', COMMON_LIB)->_is_spider ($ip, $ua);
+		return _class('spider_detection', 'classes/common/')->_is_spider ($ip, $ua);
 	}
 
 	/**
@@ -1089,14 +1089,14 @@ class yf_common {
 	* @return string name of the found search engine
 	*/
 	function is_search_engine_url ($url = '') {
-		return _class('spider_detection', COMMON_LIB)->is_search_engine_url ($url);
+		return _class('spider_detection', 'classes/common/')->is_search_engine_url ($url);
 	}
 
 	/**
 	* Return SQL part for detecting search engine ips
 	*/
 	function get_spiders_ips_sql ($field_name = 'ip') {
-		return _class('spider_detection', COMMON_LIB)->get_spiders_ips_sql ($field_name);
+		return _class('spider_detection', 'classes/common/')->get_spiders_ips_sql ($field_name);
 	}
 
 	/**
@@ -1104,14 +1104,14 @@ class yf_common {
 	* @return 2-byte $country_code (uppercased) or false if something wrong
 	*/
 	function _get_country_by_ip ($ip = '') {
-		return _class('other_common', COMMON_LIB)->_get_country_by_ip ($ip);
+		return _class('other_common', 'classes/common/')->_get_country_by_ip ($ip);
 	}
 
 	/**
 	* Converter between well-known currencies
 	*/
 	function _currency_convert ($number = 0, $c_from = '', $c_to = '') {
-		return _class('other_common', COMMON_LIB)->_currency_convert ($number, $c_from, $c_to);
+		return _class('other_common', 'classes/common/')->_currency_convert ($number, $c_from, $c_to);
 	}
 
 	/**
@@ -1418,12 +1418,11 @@ class yf_common {
 	}
 
 	/**
-	*
 	*/
 	function shop_get_images($product_id) {
 		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' ORDER BY is_default DESC');
 		$d = sprintf('%09s', $product_id);
-		foreach($A as $img){
+		foreach((array)$A as $img){
 	    	$replace = array(
 			    '{subdir2}' => substr($d, -6, 3),
 			    '{subdir3}' => substr($d, -3, 3),
@@ -1431,9 +1430,9 @@ class yf_common {
 			    '{image_id}' => $img['id'],
 			);
 			$images[] = array(
-				"big" 	=> str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_big.jpg'),
-				"thumb" => str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_thumb.jpg'),
-				"id"	=> $img['id'],
+				'big' 	=> str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_big.jpg'),
+				'thumb' => str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_thumb.jpg'),
+				'id'	=> $img['id'],
 			);
 		}
 		return $images;

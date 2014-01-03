@@ -17,112 +17,112 @@ class yf_shop extends yf_module {
 	*/
 
 	/** @var string Folder where product's images store */
-	public $PROD_IMG_DIR		= "shop/products/";
+	public $PROD_IMG_DIR		= 'shop/products/';
 	/** @var string fullsize image suffix (underscore at the beginning required)*/
-	public $FULL_IMG_SUFFIX	= "_full";
+	public $FULL_IMG_SUFFIX	= '_full';
 	/** @var string Thumb image suffix (underscore at the beginning required)*/
-	public $THUMB_SUFFIX		= "_small";
+	public $THUMB_SUFFIX		= '_small';
 	/** @var string Image prefix */
-	public $IMG_PREFIX			= "product_";
+	public $IMG_PREFIX			= 'product_';
 	/** @var string Default currency */
-	public $CURRENCY			= "\$";
+	public $CURRENCY			= '$';
 	/** @var bool SHOW_SIMILAR_PRICE or not */
 	public $SHOW_SIMILAR_PRICE		= true;
 	/** @var bool THIS_ITEM_OFTEN_BUY or not */
 	public $THIS_ITEM_OFTEN_BUY		= true;
 	 /** @var array forum settings (default values) */
 	public $COMPANY_INFO = array(
-		"company_name"		=> "Shop.com ", //
-		"company_address"	=> "Company Address 1", //
-		"company_address2"	=> "Company Address 2", //
-		"company_phone"		=> "Company Phone", //
-		"company_website"	=> "Company Website", //
-		"company_email"		=> "Company Email", //
-		"company_title"		=> "Shop.com ", //
+		'company_name'		=> 'Shop.com ', //
+		'company_address'	=> 'Company Address 1', //
+		'company_address2'	=> 'Company Address 2', //
+		'company_phone'		=> 'Company Phone', //
+		'company_website'	=> 'Company Website', //
+		'company_email'		=> 'Company Email', //
+		'company_title'		=> 'Shop.com ', //
 	);
 	/** @var Billing info */
 	public $_b_fields = array(
-		"b_first_name",
-		"b_last_name",
-		"b_email",
-		"b_phone",
-		"b_address",
-		"b_address2",
-		"b_zip_code",
-		"b_city",
-		"b_state",
-		"b_country",
-		"b_company",
+		'b_first_name',
+		'b_last_name',
+		'b_email',
+		'b_phone',
+		'b_address',
+		'b_address2',
+		'b_zip_code',
+		'b_city',
+		'b_state',
+		'b_country',
+		'b_company',
 	);
 	/** @var Shipping info */
 	public $_s_fields = array(
-		"s_first_name",
-		"s_last_name",
-		"s_email",
-		"s_phone",
-		"s_address",
-		"s_address2",
-		"s_zip_code",
-		"s_city",
-		"s_state",
-		"s_country",
-		"s_company",
+		's_first_name',
+		's_last_name',
+		's_email',
+		's_phone',
+		's_address',
+		's_address2',
+		's_zip_code',
+		's_city',
+		's_state',
+		's_country',
+		's_company',
 	);
 	/** @var Required shipping and billing fields */
 	public $_required_fields = array(
-		"name",
-		"phone",
+		'name',
+		'phone',
 	);
 	/** @var @conf_skip */
 	public $_statuses = array(
-		"pending"			=> "pending",
-		"pending payment"	=> "pending payment",
-		"proccessed"		=> "proccessed",
-		"delivery"			=> "delivery",
-		"shipped"			=> "shipped",
+		'pending'			=> 'pending',
+		'pending payment'	=> 'pending payment',
+		'proccessed'		=> 'proccessed',
+		'delivery'			=> 'delivery',
+		'shipped'			=> 'shipped',
 	);
 	public $_ship_type = array(
-		1 => "Free",
-		2 => "Courier",
-		3 => "FedEX",
-		4 => "Post",
+		1 => 'Free',
+		2 => 'Courier',
+		3 => 'FedEX',
+		4 => 'Post',
 	);
 	/** @var Shipping types */
 	public $_ship_types = array(
 		1 => array(
-			"name"	=> "Free",
-			"price"	=> 0,
+			'name'	=> 'Free',
+			'price'	=> 0,
 		),
 		2 => array(
-			"name"	=> "Courier",
-			"price"	=> 1,
+			'name'	=> 'Courier',
+			'price'	=> 1,
 		),
 		3 => array(
-			"name"	=> "FedEX",
-			"price"	=> 5,
+			'name'	=> 'FedEX',
+			'price'	=> 5,
 		),
 		4 => array(
-			"name"	=> "Post",
-			"price"	=> 1,
+			'name'	=> 'Post',
+			'price'	=> 1,
 		),
 	);
-	/** @var Shipping types names (creating automatically inside "_init") @conf_skip */
+	/** @var Shipping types names (creating automatically inside '_init') @conf_skip */
 	public $_ship_types_name = array();
 	/** @var Payment types */
 	public $_pay_types = array(
-		1 => "Cash On Delivery",
-		2 => "Authorize.Net",
-		3 => "Bank Transfer",
-		4 => "Cheque / Money Order",
+		1 => 'Cash On Delivery',
+		2 => 'Authorize.Net',
+		3 => 'Bank Transfer',
+		4 => 'Cheque / Money Order',
 	);
 	/** @var Payment methods params */
 	public $_pay_method_params = array(
 		2 => array( // Authorize.Net
-			"LOGIN_ID"			=> "7wYB5c6R",
-			"TRANSACTION_KEY"	=> "4px54kx6ZZ7489Gq",
-			"TEST_MODE"			=> 1,
-			"IN_PRODUCTION"		=> 0,
-			"DESCRIPTION"		=> "Shop Description Here",
+			'LOGIN_ID'			=> '{CLIENT_ID}',
+			'TRANSACTION_KEY'	=> '{CLIENT_SECRET}',
+			'TEST_MODE'			=> 1,
+			'IN_PRODUCTION'		=> 0,
+			'DESCRIPTION'		=> 'Shop Description Here',
 		),
 	);
 
@@ -141,25 +141,25 @@ class yf_shop extends yf_module {
 		//3	=> 1,
 	);
 	var  $_comments_params = array(
-		"return_action"		=> "product_details",
-		"object_name"		=> "shop",
-		"allow_guests_posts"=> '1',
+		'return_action'		=> 'product_details',
+		'object_name'		=> 'shop',
+		'allow_guests_posts'=> '1',
 	);
 
 	function _init() {
 		$shop = module('shop');
-		$shop->_shop_cats				= _class('cats')->_get_items_names("shop_cats");
-		$shop->_shop_cats_all			= _class('cats')->_get_items_array("shop_cats");
-		$shop->_shop_cats_for_select	= _class('cats')->_prepare_for_box("shop_cats");
+		$shop->_shop_cats				= _class('cats')->_get_items_names('shop_cats');
+		$shop->_shop_cats_all			= _class('cats')->_get_items_array('shop_cats');
+		$shop->_shop_cats_for_select	= _class('cats')->_prepare_for_box('shop_cats');
 
-		$sql_man = "SELECT * FROM ".db('shop_manufacturers')." ORDER BY name ASC";
+		$sql_man = 'SELECT * FROM '.db('shop_manufacturers').' ORDER BY name ASC';
 		$shop->_manufacturer = db()->query_fetch_all($sql_man);
 
-		$shop->_man_for_select["none"] = "--NONE--";
+		$shop->_man_for_select['none'] = '--NONE--';
 		foreach ((array)$shop->_manufacturer as $k => $v) {
-			$shop->_man_for_select[$v["url"]] = $v["name"];
+			$shop->_man_for_select[$v['url']] = $v['name'];
 		}
-		$shop->_man_id = "none";
+		$shop->_man_id = 'none';
 		$shop->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $shop->PROD_IMG_DIR;
 		$shop->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $shop->PROD_IMG_DIR;
 		if (!file_exists($shop->products_img_dir)) {
@@ -167,14 +167,14 @@ class yf_shop extends yf_module {
 		}
 
 		$shop->_boxes = array(
-			"ship_type"	=> 'select_box("ship_type", $shop->_ship_types_names, $selected, false, 2, "", false)',
-			"pay_type"	=> 'radio_box("pay_type", $shop->_pay_types, $selected, 1, 2, "", false)',
+			'ship_type'	=> 'select_box("ship_type", $shop->_ship_types_names, $selected, false, 2, "", false)',
+			'pay_type'	=> 'radio_box("pay_type", $shop->_pay_types, $selected, 1, 2, "", false)',
 		);
 
 		$shop->_ship_types_names = array();
 		foreach ((array)$shop->_ship_types as $_id => $_info) {
-			$_price_text = " (".($_info["price"] < 0 ? "-" : "+"). $shop->_format_price(abs($_info["price"])).")";
-			$shop->_ship_types_names[$_id] = $_info["name"]. ($_info["price"] ? $_price_text : "");
+			$_price_text = ' ('.($_info['price'] < 0 ? '-' : '+'). $shop->_format_price(abs($_info['price'])).')';
+			$shop->_ship_types_names[$_id] = $_info['name']. ($_info['price'] ? $_price_text : '');
 		}
 
 		// Override pay type for group
@@ -188,7 +188,7 @@ class yf_shop extends yf_module {
 		return _class('shop_show', 'modules/shop/')->show();
 	}
 
-	function products_show($search = "", $str_search = "") {
+	function products_show($search = '', $str_search = '') {
 		return _class('shop_products_show', 'modules/shop/')->products_show($search, $str_search);
 	}
 
@@ -196,7 +196,7 @@ class yf_shop extends yf_module {
 		return _class('shop_product_details', 'modules/shop/')->product_details();
 	}
 
-	function products_related($id = "") {
+	function products_related($id = '') {
 		return _class('shop_products_related', 'modules/shop/')->products_related($id);
 	}
 
@@ -304,7 +304,7 @@ class yf_shop extends yf_module {
 		return _class('shop__format_price', 'modules/shop/')->_format_price($price);
 	}
 
-	function _hidden_field($name = "", $value = "") {
+	function _hidden_field($name = '', $value = '') {
 		return _class('shop__hidden_field', 'modules/shop/')->_hidden_field($name, $value);
 	}
 
@@ -348,7 +348,7 @@ class yf_shop extends yf_module {
 		return _class('shop__get_select_attributes', 'modules/shop/')->_get_select_attributes($atts);
 	}
 
-	function _box($name = "", $selected = "") {
+	function _box($name = '', $selected = '') {
 		return _class('shop__box', 'modules/shop/')->_box($name, $selected);
 	}
 

@@ -55,7 +55,7 @@ class yf_table2 {
 	function chained_wrapper($sql = '', $params = array()) {
 		$this->_chained_mode = true;
 		$this->_sql = $sql;
-		$this->_params = $params;
+		$this->_params = (array)$params;
 		return $this;
 	}
 
@@ -81,6 +81,9 @@ class yf_table2 {
 	* Render result table html, gathered by row functions
 	*/
 	function render($params = array()) {
+		if (DEBUG_MODE) {
+			$ts = microtime(true);
+		}
 		// Merge params passed to table2() and params passed here, with params here have more priority:
 		$tmp = $this->_params;
 		foreach ((array)$params as $k => $v) {
@@ -261,6 +264,9 @@ class yf_table2 {
 						continue;
 					}
 					$info['extra'] = (array)$info['extra'];
+					if (++$counter2 == 1 && $this->_params['first_col_width']) {
+						$info['extra']['width'] = $this->_params['first_col_width'];
+					}
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
@@ -310,6 +316,33 @@ class yf_table2 {
 			$params['pages_on_bottom'] = true;
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $pages : '').PHP_EOL;
+		if (DEBUG_MODE) {
+			$_fields = array();
+			foreach ((array)$this->_fields as $k => $v) {
+				$_fields[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			$_header_links = array();
+			foreach ((array)$this->_header_links as $k => $v) {
+				$_header_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			$_footer_links = array();
+			foreach ((array)$this->_footer_links as $k => $v) {
+				$_footer_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			$_buttons = array();
+			foreach ((array)$this->_buttons as $k => $v) {
+				$_buttons[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
+			}
+			debug('table2[]', array(
+				'params'		=> $params,
+				'fields'		=> $_fields,
+				'buttons'		=> $_buttons,
+				'header_links'	=> $_header_links,
+				'footer_links'	=> $_footer_links,
+				'time'			=> round(microtime(true) - $ts, 5),
+				'trace'			=> main()->trace_string(),
+			));
+		}
 		return $body;
 	}
 
@@ -670,6 +703,10 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
+				// Example of overriding data using field from same row: text('id', array('link' => '/shop/products/%d', 'rewrite' => 1, 'data' => '@name'));
+				if ($text[0] == '@') {
+					$text = $row[substr($text, 1)];
+				}
 				if ($extra['translate']) {
 					$text = t($text);
 				}
@@ -677,6 +714,9 @@ class yf_table2 {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
+					if ($extra['rewrite']) {
+						$link = url($link);
+					}
 					if ($extra['hidden_toggle']) {
 						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 					}
@@ -717,7 +757,25 @@ class yf_table2 {
 		$extra['link'] = $link ? $link : './?object=members&action=edit&id=%d';
 		$extra['link_field_name'] = $name;
 		$extra['data'] = $data;
-		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id IN(%ids)', $name);
+		$this->_params['custom_fields'][$_name] = array(
+			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name 
+			FROM '.db('user').' WHERE id IN(%ids)'
+		, $name);
+		return $this->text($_name, $extra['desc'], $extra);
+	}
+
+	/**
+	* Currently designed only for admin usage
+	*/
+	function admin($name = '', $link = '', $data = '', $extra = array()) {
+		if (!$name) {
+			$name = 'user_id';
+		}
+		$_name = 'user';
+		$extra['link'] = $link ? $link : './?object=admin&action=edit&id=%d';
+		$extra['link_field_name'] = $name;
+		$extra['data'] = $data;
+		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name);
 		return $this->text($_name, $extra['desc'], $extra);
 	}
 
@@ -943,8 +1001,14 @@ class yf_table2 {
 				if ($extra['hidden_toggle']) {
 					$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 				}
+				if ($extra['target']) {
+					$attrs .= ' target="'.$extra['target'].'"';
+				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				if ($extra['rewrite']) {
+					$link = url($link);
+				}
 
 				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
@@ -1104,6 +1168,9 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				if ($extra['rewrite']) {
+					$link = url($link);
+				}
 				$values = array(
 					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
 					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
@@ -1133,6 +1200,9 @@ class yf_table2 {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				if ($extra['rewrite']) {
+					$link = url($link);
+				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$class = $extra['class'] ?: $extra['a_class'];
 				return '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';

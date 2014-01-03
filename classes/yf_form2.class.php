@@ -146,6 +146,9 @@ class yf_form2 {
 		if (isset($this->_rendered)) {
 			return $this->_rendered;
 		}
+		if (DEBUG_MODE) {
+			$ts = microtime(true);
+		}
 		if (!$extra['no_form'] && !$this->_params['no_form']) {
 			// Call these methods, if not done yet, save 2 api calls
 			if (!isset($this->_body['form_begin'])) {
@@ -195,10 +198,24 @@ class yf_form2 {
 						continue;
 					}
 				}
+				if (DEBUG_MODE) {
+					$_debug_fields[$k] = array(
+						'name'	=> $v['name'],
+						'extra'	=> $_extra,
+					);
+				}
 				$this->_body[$k] = $func($_extra, $_replace, $this);
 			}
 		}
 		$this->_rendered = implode(PHP_EOL, $this->_body);
+		if (DEBUG_MODE) {
+			debug('form2[]', array(
+				'params'	=> $this->_params,
+				'fields'	=> $_debug_fields,
+				'time'		=> round(microtime(true) - $ts, 5),
+				'trace'		=> main()->trace_string(),
+			));
+		}
 		return $this->_rendered;
 	}
 
@@ -245,7 +262,7 @@ class yf_form2 {
 			return $body;
 		};
 		if ($this->_chained_mode) {
-			$this->_body[__FUNCTION__] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[__FUNCTION__] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -263,7 +280,7 @@ class yf_form2 {
 			return $body;
 		};
 		if ($this->_chained_mode) {
-			$this->_body[__FUNCTION__] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[__FUNCTION__] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -362,6 +379,9 @@ class yf_form2 {
 				$css_class = $_css_class;
 			}
 		}
+		if ($this->_params['big_labels']) {
+			$css_class .= ' labels-big';
+		}
 		return $css_class ? ' '.$css_class : '';
 	}
 
@@ -433,7 +453,7 @@ class yf_form2 {
 		}
 		$dd_class = $this->_params['dd_class'] ?: 'span6';
 
-		$row_start = '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL;
+		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
 		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
 		$row_end = '</dl>'.PHP_EOL;
 
@@ -464,7 +484,7 @@ class yf_form2 {
 			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -479,7 +499,7 @@ class yf_form2 {
 			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -495,7 +515,7 @@ class yf_form2 {
 			return '<div class="navbar span2"><div class="navbar-inner"><ul class="nav">';
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -510,7 +530,38 @@ class yf_form2 {
 			return '</ul></div></div>';
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Shortcut for making tabbable form
+	*/
+	function tab_start($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_params['no_form'] = true;
+			$_this->_stacked_mode_on = true;
+			return '<div class="tab-pane fade in" id="form_tab1">';
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Paired with tab_start
+	*/
+	function tab_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_stacked_mode_on = false;
+			return '</div>';
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -540,7 +591,7 @@ class yf_form2 {
 			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -594,11 +645,11 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept');
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target');
 			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -637,7 +688,7 @@ class yf_form2 {
 			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -716,7 +767,7 @@ class yf_form2 {
 			return '<input'.$_this->_attrs($extra, $attrs_names).'>';
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1061,7 +1112,7 @@ class yf_form2 {
 			return $_this->_row_html(_class('html_controls')->radio_box($extra['name'], $extra['items'], $selected, false, 2, '', false), $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1111,13 +1162,14 @@ class yf_form2 {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $extra['class'] ? $extra['class'] : 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+//			$extra['class'] = 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['value'] = t($extra['value']);
 			$extra['desc'] = ''; // We do not need label here
 			$extra['type'] = 'submit';
 
-			$attrs_names = array('type','name','id','class','style','value','disabled');
+			$attrs_names = array('type','name','id','class','style','value','disabled','target');
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? $_this->_htmlchars($extra['value']) : $extra['value']);
@@ -1127,7 +1179,7 @@ class yf_form2 {
 			}
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1216,6 +1268,9 @@ class yf_form2 {
 
 			$content = '';
 			if ($extra['link']) {
+				if ($extra['rewrite']) {
+					$extra['link'] = url($extra['link']);
+				}
 				$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
 				$content = '<a href="'.$extra['link'].'" class="'.$extra['class'].'">'.$value.'</a>';
 			} else {
@@ -1225,7 +1280,7 @@ class yf_form2 {
 			return $_this->_row_html($content, $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1237,7 +1292,24 @@ class yf_form2 {
 		$name = 'user_name';
 		$user_id = $this->_replace['user_id'];
 
-		$this->_replace[$name] = db()->get_one('SELECT CONCAT(login," ",email) AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
+		$user_info = db()->get('SELECT login,email,phone,nick,id AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
+		$user_name = array();
+		if ($user_info) {
+			if (strlen($user_info['id'])) {
+				$user_name[] = $user_info['id'];
+			}
+			if (strlen($user_info['login'])) {
+				$user_name[] = $user_info['login'];
+			}
+			if (strlen($user_info['email'])) {
+				$user_name[] = $user_info['email'];
+			} elseif (strlen($user_info['phone'])) {
+				$user_name[] = $user_info['phone'];
+			} elseif (strlen($user_info['nick'])) {
+				$user_name[] = $user_info['nick'];
+			}
+		}
+		$this->_replace[$name] = implode('; ', $user_name);
 
 		$extra['link'] = './?object=members&action=edit&id='.$user_id;
 		return $this->info($name, $desc, $extra, $replace);
@@ -1245,9 +1317,35 @@ class yf_form2 {
 
 	/**
 	*/
+	function admin_info($name = '', $desc = '', $extra = array(), $replace = array()) {
+		$name = 'user_name';
+		$user_id = $this->_replace['user_id'];
+
+		$user_info = db()->get('SELECT login,id AS user_name FROM '.db('admin').' WHERE id='.intval($user_id));
+		$user_name = array();
+		if ($user_info) {
+			if (strlen($user_info['id'])) {
+				$user_name[] = $user_info['id'];
+			}
+			if (strlen($user_info['login'])) {
+				$user_name[] = $user_info['login'];
+			}
+		}
+		$this->_replace[$name] = implode('; ', $user_name);
+		$extra['link'] = './?object=admin&action=edit&id='.$user_id;
+		return $this->info($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
 	function info_date($name = '', $format = '', $extra = array(), $replace = array()) {
 		$r = (array)$this->_replace + (array)$replace;
-		$replace[$name] = _format_date($r[$name], $format);
+		if (is_array($format)) {
+			$extra += $format;
+			$format = '';
+		}
+		$extra['format'] = $extra['format'] ?: $format;
+		$replace[$name] = _format_date($r[$name], $extra['format']);
 		$this->_replace[$name] = $replace[$name];
 		return $this->info($name, $format, $extra, $replace);
 	}
@@ -1305,7 +1403,7 @@ class yf_form2 {
 			return $_this->_row_html($content, $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1331,7 +1429,7 @@ class yf_form2 {
 			return $_this->_row_html($r[$extra['name']], $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1758,7 +1856,7 @@ class yf_form2 {
 			return $_this->_row_html('<input type="file">', $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1784,7 +1882,7 @@ class yf_form2 {
 			return $_this->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1830,7 +1928,7 @@ class yf_form2 {
 			return $_this->_row_html($body, $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1856,7 +1954,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', ' ', $extra['name']));
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1892,7 +1990,7 @@ class yf_form2 {
 			return implode(PHP_EOL, $body);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1931,7 +2029,7 @@ class yf_form2 {
 			return $_this->_row_html(implode('', $body), $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1966,7 +2064,7 @@ class yf_form2 {
 			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -1988,12 +2086,18 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($extra['rewrite']) {
+				$link_url = url($link_url);
+			}
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
+			$extra['href'] = $link_url;
+			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
+			$attrs_names = array('id','name','href','class','style','target');
 // TODO: use CSS abstraction layer
-			return ' <a href="'.$link_url.'" class="btn btn-mini btn-xs'.($extra['class'] ? ' '.$extra['class'] : '').'"><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
+			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -2083,6 +2187,9 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($extra['rewrite']) {
+				$link_url = url($link_url);
+			}
 			$is_active = $r[$extra['name']];
 // TODO: use CSS abstraction layer
 			$html_0	= '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>';
@@ -2091,7 +2198,7 @@ class yf_form2 {
 			return ' <a href="'.$link_url.'" class="change_active">'.($is_active ? $html_1 : $html_0).'</a> ';
 		};
 		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace);
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
 		}
 		return $func($extra, $replace, $this);
@@ -2146,107 +2253,6 @@ class yf_form2 {
 
 	/**
 	*/
-	function _validate_rules_array_from_raw($raw = '') {
-		$rules = array();
-		// At first, we merging all rules sets variants into one array
-		if (is_string($raw)) {
-			foreach((array)explode('|', $raw) as $_item) {
-				$rules[] = array($_item, null);
-			}
-		} elseif (is_array($raw)) {
-			foreach((array)$raw as $_raw) {
-				if (is_string($_raw)) {
-					foreach((array)explode('|', $_raw) as $_item) {
-						$rules[] = array($_item, null);
-					}
-				} elseif (is_callable($_raw)) {
-					$rules[] = array($_raw, null);
-				}
-			}
-		} elseif (is_callable($raw)) {
-			$rules[] = array($raw, null);
-		}
-		return $rules;
-	}
-
-	/**
-	* Examples of validate rules setting:
-	* 	'name1' => 'trim|required',
-	* 	'name2' => array('trim', 'required'),
-	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
-	* 	'name4' => array('trim|required', function() { return true; } ),
-	* 	'name5' => array('trim', 'required', function() { return true; } ),
-	* 	'__before__' => 'trim',
-	* 	'__after__' => 'some_method2|some_method3',
-	*/
-	function _validate_rules_cleanup($validate_rules = array()) {
-		// Add these rules to all validation rules, before them
-		$_name = '__before__';
-		$all_before = array();
-		if (isset($validate_rules[$_name])) {
-			$all_before = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
-			unset($validate_rules[$_name]);
-		}
-
-		// Add these rules to all validation rules, after them
-		$_name = '__after__';
-		$all_after = array();
-		if (isset($validate_rules[$_name])) {
-			$all_after = (array)$this->_validate_rules_array_from_raw($validate_rules[$_name]);
-			unset($validate_rules[$_name]);
-		}
-		unset($_name);
-
-		$out = array();
-		foreach ((array)$validate_rules as $name => $raw) {
-			$rules = (array)$this->_validate_rules_array_from_raw($raw);
-			if ($all_before) {
-				$tmp = $all_before;
-				foreach((array)$rules as $_item) {
-					$tmp[] = $_item;
-				}
-				$rules = $tmp;
-				unset($tmp);
-			}
-			if ($all_after) {
-				$tmp = $rules;
-				foreach((array)$all_after as $_item) {
-					$tmp[] = $_item;
-				}
-				$rules = $tmp;
-				unset($tmp);
-			}
-			// Here we do last parse of the rules params like 'matches[user.email]' into rule item array second element
-			foreach ((array)$rules as $k => $rule) {
-				if (!is_string($rule[0])) {
-					continue;
-				}
-				$val = trim($rule[0]);
-				$param = null;
-				// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
-				$pos = strpos($val, '[');
-				if ($pos !== false) {
-					$param = trim(trim(substr($val, $pos), ']['));
-					$val = trim(substr($val, 0, $pos));
-				}
-				if (!is_callable($val) && empty($val)) {
-					unset($rules[$k]);
-					continue;
-				}
-				$rules[$k] = array(
-					0	=> $val,
-					1	=> $param,
-				);
-			}
-			if ($rules) {
-				$out[$name] = array_values($rules); // array_values needed here to make array keys straight, unit tests will pass fine
-			}
-		}
-		return $out;
-	}
-
-	/**
-	*/
 	function _validate_rules_process($validate_rules = array(), &$data) {
 		$validate_ok = true;
 		foreach ((array)$validate_rules as $name => $rules) {
@@ -2290,6 +2296,28 @@ class yf_form2 {
 			}
 		}
 		return $validate_ok;
+	}
+
+	/**
+	* Examples of validate rules setting:
+	* 	'name1' => 'trim|required',
+	* 	'name2' => array('trim', 'required'),
+	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
+	* 	'name4' => array('trim|required', function() { return true; } ),
+	* 	'name5' => array('trim', 'required', function() { return true; } ),
+	* 	'__before__' => 'trim',
+	* 	'__after__' => 'some_method2|some_method3',
+	*/
+	function _validate_rules_cleanup($validate_rules = array()) {
+		$func = __FUNCTION__;
+		return _class('validate')->$func($validate_rules);
+	}
+
+	/**
+	*/
+	function _validate_rules_array_from_raw($raw = '') {
+		$func = __FUNCTION__;
+		return _class('validate')->$func($raw);
 	}
 
 	/**

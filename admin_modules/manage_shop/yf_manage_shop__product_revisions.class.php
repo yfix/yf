@@ -1,6 +1,8 @@
 <?php
 class yf_manage_shop__product_revisions {
 
+	/**
+	*/
 	function _product_add_revision($action, $item_id) {
 		$data = array();
 		if ($action != 'delete') {
@@ -19,6 +21,8 @@ class yf_manage_shop__product_revisions {
 		));
 	}
 	
+	/**
+	*/
 	function _product_images_add_revision($item_id) {
 		$dirs = sprintf('%06s', $item_id);
 		$dir2 = substr($dirs, -3, 3);
@@ -30,7 +34,10 @@ class yf_manage_shop__product_revisions {
 			'/product_'.$item_id.'_.+?\.jpg/'
 		);
 		$data = array();
-		foreach ($images as $v) {
+		foreach ((array)$images as $v) {
+			if (!$v) {
+				continue;
+			}
 			$k = str_replace(module('manage_shop')->products_img_dir, "", $v);
 			$data[$k] = base64_encode(file_get_contents($v));
 		}

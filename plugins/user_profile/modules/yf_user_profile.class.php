@@ -165,12 +165,15 @@ class yf_user_profile extends yf_module {
 		);
 		// Dynamic info
 
-		if (main()->USER_INFO_DYNAMIC) {
-			$OBJ_DYNAMIC_INFO = &_class("dynamic_info");
-			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_view(intval($_GET["id"]));
-		}
+#		if (main()->USER_INFO_DYNAMIC) {
+#			$OBJ_DYNAMIC_INFO = &_class("dynamic_info");
+#			$replace["dynamic_items"] = $OBJ_DYNAMIC_INFO->_view(intval($_GET["id"]));
+#		}
 		
 		return tpl()->parse($_GET["object"]."/main", $replace);
+// TODO: prepare array for dd_table
+// TODO: make this pluggable: use forum, articles, gallery and other specific items through hooks in those modules
+#		return _class('html')->dd_table($replace);
 	}
 
 	// Show user info items

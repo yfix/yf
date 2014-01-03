@@ -11,6 +11,41 @@
 class yf_html {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $arguments) {
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+	/**
+	* We cleanup object properties when cloning
+	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			$this->$k = null;
+		}
+	}
+
+	/**
+	* Need to avoid calling render() without params
+	*/
+	function __toString() {
+		return $this->render();
+	}
+
+	/**
+	* Wrapper for template engine
+	* Example:
+	*	return html()->dd_table(db()->get_2d('SELECT * FROM '.db('countries')));
+	*/
+	function chained_wrapper($params = array()) {
+		$this->_chained_mode = true;
+		$this->_params = $params;
+		return $this;
+	}
+
+	/**
 	*/
 	function form_row ($content, $extra = array(), $replace = array(), $obj) {
 		$css_framework = $extra['css_framework'] ?: conf('css_framework');
@@ -40,6 +75,9 @@ class yf_html {
 	/**
 	*/
 	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
+		if (DEBUG_MODE) {
+			$ts = microtime(true);
+		}
 		$form = form($replace, array(
 			'legend' => $replace['title'],
 			'no_form' => 1,
@@ -77,6 +115,15 @@ class yf_html {
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
 		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6';
+		if (DEBUG_MODE) {
+			debug('dd_table[]', array(
+				'fields'		=> $replace,
+				'field_types'	=> $field_types,
+				'extra'			=> $extra,
+				'time'			=> round(microtime(true) - $ts, 5),
+				'trace'			=> main()->trace_string(),
+			));
+		}
 		return '<div class="row-fluid">'.$legend.'<div class="'.$div_class.'">'.$form.'</div></div>';
 	}
 }
