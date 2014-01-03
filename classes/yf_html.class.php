@@ -56,24 +56,6 @@ class yf_html {
 
 	/**
 	*/
-	function table_header () {
-// TODO
-	}
-
-	/**
-	*/
-	function navbar () {
-// TODO
-	}
-
-	/**
-	*/
-	function breadcrumbs () {
-// TODO
-	}
-
-	/**
-	*/
 	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
@@ -125,5 +107,48 @@ class yf_html {
 			));
 		}
 		return '<div class="row-fluid">'.$legend.'<div class="'.$div_class.'">'.$form.'</div></div>';
+	}
+
+	/**
+	*/
+	function table_header () {
+// TODO
+	}
+
+	/**
+	*/
+	function navbar () {
+// TODO
+	}
+
+	/**
+	*/
+	function breadcrumbs () {
+// TODO
+	}
+
+	/**
+	*/
+	function tabs ($tabs = array(), $extra = array()) {
+		$headers = array();
+		$body = array();
+		foreach ((array)$tabs as $k => $v) {
+			if (!is_array($v)) {
+				$content = $v;
+				$v = array();
+			} else {
+				$content = $v['content'];
+			}
+			$name = $v['name'] ?: $k;
+			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
+			$id = $v['id'] ?: 'tab_'.$k;
+			$is_active = (++$i == 1);
+
+			$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.$desc.'</a></li>';
+			$body[] = '<div class="tab-pane '.($is_active ? 'active' : 'fade').'" id="'.$id.'"><p>'.$content.'</p></div>';
+		}
+		$extra['id'] = $extra['id'] ?: 'tabs_'.substr(md5(microtime()), 0, 8);
+		return '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL
+			.'<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$body).'</div>';
 	}
 }
