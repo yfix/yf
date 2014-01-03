@@ -76,11 +76,11 @@ class yf_manage_shop_product_images{
 				unlink($filepath);
 			}
 		}
-		db()->query('DELETE FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' AND `id`='.intval($_GET['key']));
+		db()->query('DELETE FROM `'.db('shop_product_images').'` WHERE `product_id`='.$id.' AND `id`='.$k);
 		
-		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' && `id`='.intval($_GET['key']));
+		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.$id);
 		if (count($A) == 0) {
-			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'0\' WHERE `id`='.intval($_GET['id']));
+			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'0\' WHERE `id`='.$id);
 		}
 		return true;
 	}
