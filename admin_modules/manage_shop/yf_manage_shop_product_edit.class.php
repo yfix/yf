@@ -20,8 +20,9 @@ class yf_manage_shop_product_edit{
 				$sql_array = array(
 					'name'				=> _es($_POST['name']),
 					'model'				=> _es($_POST['model']),
+					'articul'			=> _es($_POST['articul']),
 					'cat_id'			=> _es($_POST['cat_id']),
-					'url'				=> _es(common()->_propose_url_from_name($_POST['name'])),
+					'url'				=> _es($_POST['url'] ?: common()->_propose_url_from_name($_POST['name'])),
 					'description'		=> _es($_POST['desc']),
 					'meta_keywords'		=> _es($_POST['meta_keywords']),
 					'meta_desc'			=> _es($_POST['meta_desc']),
@@ -35,6 +36,8 @@ class yf_manage_shop_product_edit{
 					'supplier_id'		=> intval($_POST['supplier']),
 					'quantity'			=> intval($_POST['quantity']),
 					'featured'			=> intval((bool)$_POST['featured']),
+					'active'			=> intval((bool)$_POST['active']),
+					'update_date'		=> time(),
 				);
 				// Image upload
 				if (!empty($_FILES)) {
@@ -134,6 +137,11 @@ class yf_manage_shop_product_edit{
 			'price_raw'				=> $product_info['price_raw'],
 			'old_price'				=> $product_info['old_price'],
 			'quantity'				=> $product_info['quantity'],
+			'url'					=> $product_info['url'],
+			'articul'				=> $product_info['articul'],
+			'active'				=> $product_info['active'],
+			'add_date'				=> $product_info['add_date'],
+			'update_date'			=> $product_info['update_date'],
 			'productparams'			=> module('manage_shop','admin_modules')->_productparams_container($_GET['id']),
 			'dynamic_fields'		=> $fields,
 			'single_atts'			=> $single_atts,

@@ -12,6 +12,7 @@ class yf_manage_shop_products{
 				'filter_params' => array(
 					'name'	=> 'like',
 					'price' => 'between',
+					'articul' => 'like',
 				),
 			))
 			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
@@ -25,6 +26,7 @@ class yf_manage_shop_products{
 			->text('price')
 			->text('quantity')
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->text('articul')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object=manage_shop&action=product_delete&id=%d')
 			->btn_clone('', './?object=manage_shop&action=product_clone&id=%d')
