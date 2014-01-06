@@ -98,11 +98,17 @@ class yf_manage_shop_orders{
 			}
 		}
 		if (!empty($_POST['status'])) {
-			db()->UPDATE(db('shop_orders'), array(
-				'status'	=> _es($_POST['status']),
-				'address'	=> _es($_POST['address']),
-				'phone'		=> _es($_POST['phone']),
-			), 'id='.intval($_GET['id']));
+			$sql = array(
+				'status'	=> $_POST['status'],
+			);
+			foreach (array('address','phone') as $f) {
+				if (isset($_POST[$f])) {
+					$sql[$f] = $_POST[$f];
+				}
+			}
+			if ($sql) {
+				db()->update_safe(db('shop_orders'), $sql, 'id='.intval($_GET['id']));
+			}
 			return js_redirect('./?object=manage_shop&action=show_orders');
 		}
 		$products_ids = array();

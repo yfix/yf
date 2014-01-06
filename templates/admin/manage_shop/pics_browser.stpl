@@ -1,0 +1,31 @@
+<div align="center">
+
+<form method="POST">
+{if("items" ne "")}
+<table class="table table-bordered table-striped table-hover">
+	<col align="left"><col><col align="left"><col align="left"><col><col>
+	<thead>
+		<th>{t(Id)}</th>		
+		<th>{t(Image)}</th>
+		<th>{t(Delete)}</th>
+	</thead>
+	<tbody>
+{foreach("items")}
+	<tr>
+		<td style="width:100px"><b>{#.id}</b></td>
+		<td><img src="{#.image}"></td>
+		<td style="width:100px">
+			<input type="checkbox" name="delete[{#.id}_{#.image_id}]" value="1">
+		</td>
+	</tr>
+{/foreach}
+	</tbody>
+</table>
+<input type="submit" value="Process">
+</form>
+</div>
+{else}
+{t(No items)}
+{/if}
+<br /><div align="center">{t(Total)}: <b>{total}</b></div>
+{if("pages" ne "")}<br /><div align="center">{t(Pages)}: {pages}</div>{/if}

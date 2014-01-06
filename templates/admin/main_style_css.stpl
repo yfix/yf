@@ -25,4 +25,5 @@ td input[type=text], td textarea { margin-bottom: 0; }
 
 .label.labels-big, .badge.labels-big { font-size: inherit; }
 
+.tab-content { overflow: visible; }
 </style>

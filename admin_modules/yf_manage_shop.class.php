@@ -379,6 +379,9 @@ class yf_manage_shop {
 	function import_products() {
 		return $this->import_xls();
 	}
+	function pics_browser($params = array()) {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_pics_browser', 'admin_modules/'.$cl.'/')->$func($params);
+	}
 	function send_sms() {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_send_sms', 'admin_modules/'.$cl.'/')->$func($params);		
 	}

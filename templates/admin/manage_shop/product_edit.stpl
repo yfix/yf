@@ -53,5 +53,14 @@
 		</div>
 	</div>
 
+	{form_row("text","articul")}
+	{form_row("text","url")}
+
+{{--
+	{form_row("info_date","add_date")}
+	{form_row("info_date","update_date")}
+--}}
+	{form_row("active_box")}
+
 	{form_row("save_and_back")}
 </form>
