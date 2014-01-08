@@ -1200,7 +1200,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($row, $params, $instance_params) {
+			'func'	=> function($row, $params, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$override_id = '';
 				if (isset($extra['id'])) {
@@ -1214,10 +1214,10 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-				if (!isset($this->_pair_active)) {
-					$this->_pair_active = main()->get_data('pair_active');
+				if (!isset($_this->_pair_active)) {
+					$_this->_pair_active = main()->get_data('pair_active');
 				}
-				$values = $this->_pair_active;
+				$values = $_this->_pair_active;
 				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
 			},
 		);

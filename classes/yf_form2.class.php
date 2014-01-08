@@ -1130,10 +1130,10 @@ class yf_form2 {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 			if (!$extra['items']) {
-				if (!isset($this->_pair_active)) {
-					$this->_pair_active = main()->get_data('pair_active');
+				if (!isset($_this->_pair_active)) {
+					$_this->_pair_active = main()->get_data('pair_active');
 				}
-				$extra['items'] = $this->_pair_active;
+				$extra['items'] = $_this->_pair_active;
 			}
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
