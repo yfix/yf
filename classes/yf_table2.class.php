@@ -931,10 +931,10 @@ class yf_table2 {
 	/**
 	*/
 	function allow_deny($name, $extra = array()) {
-		$extra['data'] = array(
-			'DENY' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</button>',
-			'ALLOW' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</button>',
-		);
+		if (!isset($this->_pair_allow_deny)) {
+			$this->_pair_allow_deny = main()->get_data('pair_allow_deny');
+		}
+		$extra['data'] = $this->_pair_allow_deny;
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
 			$extra['data'] = (array)$extra['data'];
@@ -945,10 +945,10 @@ class yf_table2 {
 	/**
 	*/
 	function yes_no($name = '', $extra = array()) {
-		$extra['data'] = array(
-			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
-			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
-		);
+		if (!isset($this->_pair_yes_no)) {
+			$this->_pair_yes_no = main()->get_data('pair_yes_no');
+		}
+		$extra['data'] = $this->_pair_yes_no;
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
 			$extra['data'] = (array)$extra['data'];
@@ -1171,10 +1171,10 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-				$values = array(
-					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
-					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
-				);
+				if (!isset($this->_pair_active)) {
+					$this->_pair_active = main()->get_data('pair_active');
+				}
+				$values = $this->_pair_active;
 				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
 			},
 		);
