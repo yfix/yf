@@ -31,11 +31,15 @@ class yf_blocks {
 			return !($row['name'] == 'center_area' && $row['type'] == 'admin');
 		};
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		return table('SELECT * FROM '.db('blocks').' ORDER BY type DESC, name ASC', array(
+		$default_filter = array(
+			'order_by' => 'type',
+			'order_direction' => 'desc',
+		);
+		return table('SELECT * FROM '.db('blocks').'', array(
 				'custom_fields' => array('num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'),
 #				'condensed' => 1,
 				'pager_records_on_page' => 10000,
-				'filter' => $_SESSION[$filter_name],
+				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
 				'filter_params' => array(
 					'name' => 'like',
 				),
