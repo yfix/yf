@@ -576,6 +576,8 @@ class yf_table2 {
 						$cond = $field_params;
 						$func = $supported_conds[$cond];
 					}
+				} else {
+					$func = $supported_conds[$cond];
 				}
 				// Field with __and on the end of its name is special one for 'between' condition
 				if ($func) {
