@@ -109,6 +109,9 @@ class yf_table2 {
 		if (is_array($sql)) {
 			$data = $sql;
 			unset($sql);
+			if ($params['filter']) {
+				$this->_filter_array($data, $params['filter'], $params['filter_params']);
+			}
 			list(,$pages,) = common()->divide_pages(null, null, null, $pager_records_on_page, count($data));
 			if (count($data) > $pager_records_on_page) {
 				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager_records_on_page;
@@ -599,6 +602,44 @@ class yf_table2 {
 			}
 		}
 		return array($filter_sql, $order_sql);
+	}
+
+	/**
+	* Simple filtering of the given array. Need to support table() raw array data with filtering
+	*/
+	function _filter_array(&$data, $filter = array(), $filter_params = array()) {
+		if (!$data || !$filter) {
+			return false;
+		}
+		foreach ((array)$data as $_id => $_data) {
+			foreach ((array)$filter as $fk => $fv) {
+				if (isset($_data[$fk]) && strlen($fv)) {
+					if (is_array($_data[$fk])) {
+						if (isset($filter_params[$fk]) && $filter_params[$fk] == 'like') {
+							foreach ((array)$_data[$fk] as $k2 => $v2) {
+								if (false === strpos($_data[$fk][$k2], $fv)) {
+									unset($data[$_id]);
+									continue 3;
+								}
+							}
+						} elseif (!isset($_data[$fk][$fv])) {
+							unset($data[$_id]);
+							continue 2;
+						}
+					} else {
+						if (isset($filter_params[$fk]) && $filter_params[$fk] == 'like') {
+							if (false === strpos($_data[$fk], $fv)) {
+								unset($data[$_id]);
+								continue 2;
+							}
+						} elseif ($_data[$fk] != $fv) {
+							unset($data[$_id]);
+							continue 2;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
