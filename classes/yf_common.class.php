@@ -1481,9 +1481,7 @@ class yf_common {
 	        array('миллион' ,'миллиона','миллионов' ,0),
     	    array('миллиард','милиарда','миллиардов',0),
     	);
-    	list($rub,$kop) = explode('.',sprintf("%015.2f", floatval($num)));
-		$tmp = explode('.', $num);
-		$kop = $tmp[1];
+    	list($rub,$kop) = explode(',',sprintf("%015.2f", floatval($num)));
 	    $out = array();
 	    if (intval($rub)>0) {
     	    foreach(str_split($rub,3) as $uk=>$v) { // by 3 symbols
