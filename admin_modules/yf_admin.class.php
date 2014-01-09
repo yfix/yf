@@ -34,9 +34,9 @@ class yf_admin {
 			->btn_active(array('display_func' => $func))
 			->btn_edit()
 			->btn_delete(array('display_func' => $func))
-			->btn('log_auth', './?object=log_admin_auth_view&action=show_for_admin&id=%d')
+			->btn('log_auth', './?object=log_admin_auth&action=show_for_admin&id=%d')
 			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d', array('display_func' => $func))
-			->footer_link('Failed auth log', './?object=log_admin_auth_fails_viewer')
+			->footer_link('Failed auth log', './?object=log_admin_auth_fails')
 			->footer_add();
 	}
 
