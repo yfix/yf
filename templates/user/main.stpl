@@ -26,6 +26,7 @@
 		</div>
 	</div>
 	<div class="container-fluid">
+{execute(common,show_permanent_error)}
 		<div class="row-fluid">
 			<div class="span2">
 {execute(graphics,_show_menu;name=user_main_menu)}
