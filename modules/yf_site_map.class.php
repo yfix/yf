@@ -108,6 +108,12 @@ class yf_site_map {
 		if (empty($this->MODULES_TO_INCLUDE)) {
 			$this->MODULES_TO_INCLUDE = $this->_get_modules_from_files();
 		}
+		// Ensure uniqueness of module names
+		$tmp = array();
+		foreach ((array)$this->MODULES_TO_INCLUDE as $v) {
+			$tmp[$v] = $v;
+		}
+		$this->MODULES_TO_INCLUDE = $tmp;
 		// Remove non-active modules
 		$Q = db()->query('SELECT * FROM '.db('user_modules').' WHERE active=0');
 		while ($A = db()->fetch_assoc($Q)) {
@@ -179,20 +185,15 @@ class yf_site_map {
 			// Put lock file
 			file_put_contents($this->LOCK_FILE_NAME, time());
 		}
-		// Set sitemap file counter
 		$this->_sitemap_file_counter = 1;		
-		// Check if sitemap store folder exists an create it if not
 		_mkdir_m($this->SITEMAP_STORE_FOLDER);
-		// Delete files in folder before create new sitemap
 		_class('dir')->delete_files($this->SITEMAP_STORE_FOLDER, '/'.$_sitemap_base_name.'.*/i');
-		// Create and open to write first sitemap file 
+
 		$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.$this->_sitemap_file_counter.$this->_file_extension, 'w+');
 		$this->_total_length = 0;
 		$this->_entries_counter = 0;
-		// Output header
-		// I use '_get_template_file' instead of 'parse' To avoid collisions with compiled stpls and xml headers
-		$header_text = tpl()->_get_template_file(__CLASS__.'/header');
-		$this->_output($header_text);
+
+		$this->_output($this->_tpl_sitemap_header());
 		$this->_total_length = strlen($header_text);
 		// Process modules hooks
 		foreach ((array)$this->MODULES_TO_INCLUDE as $_mod_name) {
@@ -203,15 +204,10 @@ class yf_site_map {
 			$MOD_OBJ->{$this->_HOOK_NAME}($this);
 		}
 		if (!$this->LIMIT_REACHED) {
-			// Output footer
-			$footer_text = tpl()->_get_template_file(__CLASS__.'/footer');
-			$this->_output($footer_text);
-			// Close file
+			$this->_output($this->_tpl_sitemap_footer());
 			@fclose($this->_fp);
 		}
-		// Verification the number of files with name $SITEMAP_FILE_NAME (if more than 1 create sitemap index)
 		$files = _class('dir')->scan_dir($this->SITEMAP_STORE_FOLDER);
-		// Create array of sitemap filenames 
 		foreach ((array)$files as $file_name) {
 			if (false !== strpos($file_name, '.svn')) {
 				continue;
@@ -219,7 +215,6 @@ class yf_site_map {
 			if (false !== strpos($file_name, '.git')) {
 				continue;
 			}
-			// Skip all other files except sitemaps
 			$path_info = pathinfo($file_name);
 			$_sitemap_filename_pattern = '/^('.$this->SITEMAP_FILE_NAME.')([0-9]{1,3})(\.xml)$/';
 			if (!preg_match($_sitemap_filename_pattern, $path_info['basename'])) {
@@ -228,7 +223,6 @@ class yf_site_map {
 				$sitemaps[$file_name] = $file_name;
 			}
 		}
-		// Process generated files
 		if ($sitemaps) {
 			foreach ((array)$sitemaps as $filename) {
 				$this->_process_sitemap_file($filename);
@@ -236,11 +230,10 @@ class yf_site_map {
 		} 
 		$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER). $this->SITEMAP_FILE_NAME.'1'.$this->_file_extension;
 		if ($sitemaps && count($sitemaps) > 1) {
+			$this->_output($this->_tpl_sitemap_index_header());
+
 			// Create sitemap index 
 			$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.'_index'.$this->_file_extension, 'w+');
-			// Put contents to sitemap index file
-			// Output header
-			$this->_output(tpl()->parse(__CLASS__.'/index_header'));
 			foreach ((array)$sitemaps as $sitemap_file){
 				// Gzip sitemap files
 				if ($this->USE_GZIP){
@@ -256,20 +249,18 @@ class yf_site_map {
 				// Store entry data to file
 				$this->_output($string);
 			}
-			// Output footer
-			$this->_output(tpl()->parse(__CLASS__.'/index_footer'));
-			// Close file
 			fclose($this->_fp);
+
+			$this->_output($this->_tpl_sitemap_index_footer());
 
 			$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER) .$this->SITEMAP_FILE_NAME. '_index'. $this->_file_extension;
 		}	
-
 		// Release lock
 		if ($this->USE_LOCKING) {
 			unlink($this->LOCK_FILE_NAME);
 		}
 		$this->_redirect_sitemap($this->_file_for_google);
-		// Notify google if needed
+
 		$this->_do_notify_google();
 	}
 
@@ -310,7 +301,7 @@ class yf_site_map {
 			// Finish to write file and create another one
 			if ($this->_fp) {
 				// Output footer
-				$this->_output(tpl()->_get_template_file(__CLASS__.'/footer'));
+				$this->_output($this->_tpl_sitemap_footer());
 				fclose($this->_fp);
 			}
 			if ($this->_entries_counter >= $this->MAX_ENTRIES || $this->_total_length >= $this->MAX_SIZE) {
@@ -326,8 +317,8 @@ class yf_site_map {
 				// Create and open to write next sitemap file 
 				$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.$this->_sitemap_file_counter.$this->_file_extension, 'w+');
 				// Output header
-				$this->_output(tpl()->_get_template_file(__CLASS__.'/header'));
-				$this->_total_length = strlen(tpl()->_get_template_file(__CLASS__.'/header'));
+				$this->_output($this->_tpl_sitemap_header());
+				$this->_total_length = strlen($this->_tpl_sitemap_header());
 			}
 		}
 		if (!$this->LIMIT_REACHED) {
@@ -388,13 +379,7 @@ class yf_site_map {
 	* backwards compatible for PHP version < 5
 	*/
 	function _iso8601_date($timestamp) {
-		if (PHP_VERSION < 5) {
-			$tzd = date('O',$timestamp);
-			$tzd = substr(chunk_split($tzd, 3, ':'),0,6);
-			return date('Y-m-d\TH:i:s', $timestamp) . $tzd;
-		} else {
-			return date('c', $timestamp);
-		}
+		return date('c', $timestamp);
 	}
 
 	/**
@@ -503,5 +488,35 @@ class yf_site_map {
 		}
 		ksort($user_modules_array);
 		return $user_modules_array;
+	}
+
+	/**
+	*/
+	function _tpl_sitemap_header () {
+		return '<?xml version="1.0" encoding="UTF-8"?>'
+			.PHP_EOL. '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+			.PHP_EOL. ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'
+			.PHP_EOL;
+	}
+
+	/**
+	*/
+	function _tpl_sitemap_footer () {
+		return PHP_EOL. '</urlset>'. PHP_EOL;
+	}
+
+	/**
+	*/
+	function _tpl_sitemap_index_header () {
+		return '<?xml version="1.0" encoding="UTF-8"?>'
+			.PHP_EOL. '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+			.PHP_EOL. ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">'
+			.PHP_EOL;
+	}
+
+	/**
+	*/
+	function _tpl_sitemap_index_footer () {
+		return PHP_EOL. '</sitemapindex>'. PHP_EOL;
 	}
 }
