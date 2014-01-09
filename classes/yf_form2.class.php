@@ -1130,10 +1130,10 @@ class yf_form2 {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 			if (!$extra['items']) {
-				$extra['items'] = array(
-					'0' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</span>',
-					'1' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</span>',
-				);
+				if (!isset($_this->_pair_active)) {
+					$_this->_pair_active = main()->get_data('pair_active');
+				}
+				$extra['items'] = $_this->_pair_active;
 			}
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
@@ -1158,20 +1158,20 @@ class yf_form2 {
 	/**
 	*/
 	function allow_deny_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		$extra['items'] = array(
-			'DENY' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</span>',
-			'ALLOW' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</span>',
-		);
+		if (!isset($this->_pair_allow_deny)) {
+			$this->_pair_allow_deny = main()->get_data('pair_allow_deny');
+		}
+		$extra['items'] = $this->_pair_allow_deny;
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
 	function yes_no_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		$extra['items'] = array(
-			'0' => '<span class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</span>',
-			'1' => '<span class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</span>',
-		);
+		if (!isset($this->_pair_yes_no)) {
+			$this->_pair_yes_no = main()->get_data('pair_yes_no');
+		}
+		$extra['items'] = $this->_pair_yes_no;
 		return $this->active_box($name, $desc, $extra, $replace);
 	}
 

@@ -206,7 +206,6 @@ class yf_admin {
 			))
 			->login('login')
 			->email('email')
-#			->number('group')
 			->select_box('group', main()->get_data('admin_groups'))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))

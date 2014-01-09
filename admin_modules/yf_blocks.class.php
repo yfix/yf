@@ -30,9 +30,20 @@ class yf_blocks {
 		$func = function($row) {
 			return !($row['name'] == 'center_area' && $row['type'] == 'admin');
 		};
-		return table('SELECT * FROM '.db('blocks').' ORDER BY type DESC, name ASC', array('custom_fields' => array(
-				'num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'
-			)))
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$default_filter = array(
+			'order_by' => 'type',
+			'order_direction' => 'desc',
+		);
+		return table('SELECT * FROM '.db('blocks').'', array(
+				'custom_fields' => array('num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'),
+#				'condensed' => 1,
+				'pager_records_on_page' => 10000,
+				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
+				'filter_params' => array(
+					'name' => 'like',
+				),
+			))
 			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d', '', array('link_field_name' => 'id'))
 			->text('type')
 			->text('num_rules')
@@ -383,6 +394,50 @@ class yf_blocks {
 			}
 		}
 		return (array)$output;
+	}
+
+	/**
+	*/
+	function filter_save() {
+		$filter_name = $_GET['object'].'__show';
+		if ($_GET['page'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+				if (isset($_SESSION[$filter_name][$f])) {
+					unset($_SESSION[$filter_name][$f]);
+				}
+			}
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+		);
+		$order_fields = array();
+		foreach (explode('|', 'name|active|stpl_name|method_name') as $f) {
+			$order_fields[$f] = $f;
+		}
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->text('name')
+			->select_box('type', array('admin' => 'admin', 'user' => 'user'), array('show_text' => 1))
+			->radio_box('active', main()->get_data('pair_active'))
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
 	}
 
 	/**
