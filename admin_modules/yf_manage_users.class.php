@@ -23,10 +23,10 @@ class yf_manage_users {
 			->btn_edit()
 			->btn_delete()
 			->btn_active()
-			->btn('log_auth', './?object=log_auth_view&action=show_for_user&id=%d')
+			->btn('log_auth', './?object=log_гыук_auth&action=show_for_user&id=%d')
 			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d')
 			->footer_add()
-			->footer_link('Failed auth log', './?object=log_auth_fails_viewer')
+			->footer_link('Failed auth log', './?object=log_user_auth_fails')
 		;
 // TODO: editing
 	}
@@ -200,18 +200,7 @@ class yf_manage_users {
 	/**
 	*/
 	function filter_save() {
-		$filter_name = $_GET['object'].'__show';
-		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = array();
-		} else {
-			$_SESSION[$filter_name] = $_POST;
-			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
-				if (isset($_SESSION[$filter_name][$f])) {
-					unset($_SESSION[$filter_name][$f]);
-				}
-			}
-		}
-		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+		return _class('admin_methods')->filter_save();
 	}
 
 	/**
@@ -236,7 +225,7 @@ class yf_manage_users {
 			->text('name')
 			->login('login')
 			->email('email')
-			->select_box('group', main()->get_data('user_groups'))
+			->select_box('group', main()->get_data('user_groups'), array('show_text' => 1))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
 			->save_and_clear();

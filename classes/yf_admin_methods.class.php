@@ -274,4 +274,60 @@ class yf_admin_methods {
 			return js_redirect('./?object='.$_GET['object']. _add_get(). $params['links_add']);
 		}
 	}
+
+	/**
+	*/
+	function filter_save($params = array()) {
+		$filter_name = $params['filter_name'] ?: $this->_params['filter_name'];
+		if (!$filter_name) {
+			$filter_name = $_GET['object'].'__show';
+		}
+		if ($_GET['page'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+			// Example: &filter=admin_id:1,ip:127.0.0.1
+			if (isset($_GET['filter'])) {
+				foreach (explode(',', $_GET['filter']) as $item) {
+					list($k,$v) = explode(':', $item);
+					if ($k && isset($v)) {
+						$_SESSION[$filter_name][$k] = $v;
+					}
+				}
+			}
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+				if (isset($_SESSION[$filter_name][$f])) {
+					unset($_SESSION[$filter_name][$f]);
+				}
+			}
+		}
+		$redrect_url = $params['redirect_url'] ?: './?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name);
+		return js_redirect($redrect_url);
+	}
+
+	/**
+	*/
+	function _show_filter($params = array()) {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+		);
+		$order_fields = array();
+		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
+			$order_fields[$f] = $f;
+		}
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->number('admin_id')
+			->text('ip')
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
+	}
 }

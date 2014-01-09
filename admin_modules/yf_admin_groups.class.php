@@ -24,15 +24,20 @@ class yf_admin_groups {
 			return !($row['id'] == $gid);
 		};
 		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="admin" AND active=1 LIMIT 1');
-		return table('SELECT * FROM '.db('admin_groups').' ORDER BY id ASC')
+		return table('SELECT * FROM '.db('admin_groups').' ORDER BY id ASC', array(
+				'custom_fields' => array('members_count' => 'SELECT `group`, COUNT(*) AS num FROM '.db('admin').' GROUP BY `group`'),
+			))
 			->text('name')
 			->text('go_after_login')
+			->text('members_count', array('link' => './?object=admin&action=filter_save&page=clear&filter=group:%d', 'link_field_name' => 'id'))
 			->btn_edit()
 			->btn_delete(array('display_func' => $func))
 			->btn_active(array('display_func' => $func))
 			->footer_add()
 			->footer_link('Blocks', './?object=blocks&action=show_rules&id='.$admin_center_id)
-			->footer_link('Menu', './?object=menus_editor&action=show_items&id='.$menu_id);
+			->footer_link('Menu', './?object=menus_editor&action=show_items&id='.$menu_id)
+			->footer_link('Auth fails', './?object=log_admin_auth_fails')
+		;
 	}
 
 	/**

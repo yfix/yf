@@ -753,6 +753,9 @@ class yf_table2 {
 				if ($extra['translate']) {
 					$text = t($text);
 				}
+				if ($params['max_length'] && strlen($text) > $params['max_length']) {
+					$text = substr($text, 0, $params['max_length']);
+				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
