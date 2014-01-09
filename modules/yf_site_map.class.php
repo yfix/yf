@@ -133,7 +133,8 @@ class yf_site_map {
 	*/
 	function show () {
 		if ($this->SECURITY_URL_PARAM && $_GET['id'] != $this->SECURITY_URL_PARAM) {
-			return _e('Wrong url');
+			main()->NO_GRAPHICS = true;
+			return print _e('Wrong url');
 		}
 		return $this->_generate_sitemap();
 	}
