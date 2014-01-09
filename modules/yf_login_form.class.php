@@ -114,11 +114,7 @@ class yf_login_form {
 	* Wrong Login
 	*/
 	function wrong_login () {
-#		$replace = array(
-#			'login_form_url'	=> process_url('./?object=login_form'),
-#		);
 		$_SESSION['permanent_errors'][] = 'Sorry, but some info you have entered is wrong.';
-#		return tpl()->parse(__CLASS__.'/wrong_login', $replace);
 		return js_redirect('./?object=login_form');
 	}
 
