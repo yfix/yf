@@ -399,18 +399,7 @@ class yf_blocks {
 	/**
 	*/
 	function filter_save() {
-		$filter_name = $_GET['object'].'__show';
-		if ($_GET['page'] == 'clear') {
-			$_SESSION[$filter_name] = array();
-		} else {
-			$_SESSION[$filter_name] = $_POST;
-			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
-				if (isset($_SESSION[$filter_name][$f])) {
-					unset($_SESSION[$filter_name][$f]);
-				}
-			}
-		}
-		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+		return _class('admin_methods')->filter_save();
 	}
 
 	/**

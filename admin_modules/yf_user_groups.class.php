@@ -19,10 +19,13 @@ class yf_user_groups {
 				break;
 			}
 		}
-		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="user" AND active="1" LIMIT 1');
-		return table('SELECT * FROM '.db('user_groups').' ORDER BY id ASC')
+		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="user" AND active=1 LIMIT 1');
+		return table('SELECT * FROM '.db('user_groups').' ORDER BY id ASC', array(
+				'custom_fields' => array('members_count' => 'SELECT `group`, COUNT(*) AS num FROM '.db('user').' GROUP BY `group`'),
+			))
 			->text('name')
 			->text('go_after_login')
+			->text('members_count', array('link' => './?object=manage_users&action=filter_save&page=clear&filter=group:%d', 'link_field_name' => 'id'))
 			->btn_edit()
 			->btn_delete()
 			->btn_active()
