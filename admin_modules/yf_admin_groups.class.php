@@ -35,7 +35,9 @@ class yf_admin_groups {
 			->btn_active(array('display_func' => $func))
 			->footer_add()
 			->footer_link('Blocks', './?object=blocks&action=show_rules&id='.$admin_center_id)
-			->footer_link('Menu', './?object=menus_editor&action=show_items&id='.$menu_id);
+			->footer_link('Menu', './?object=menus_editor&action=show_items&id='.$menu_id)
+			->footer_link('Auth fails', './?object=log_admin_auth_fails')
+		;
 	}
 
 	/**

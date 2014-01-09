@@ -26,7 +26,7 @@ class yf_manage_users {
 			->btn('log_auth', './?object=log_гыук_auth&action=show_for_user&id=%d')
 			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d')
 			->footer_add()
-			->footer_link('Failed auth log', './?object=log_auth_fails_viewer')
+			->footer_link('Failed auth log', './?object=log_user_auth_fails')
 		;
 // TODO: editing
 	}
