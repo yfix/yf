@@ -2,42 +2,38 @@
 
 /**
 * Admin "log in" info analyser
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
 */
 class yf_log_admin_auth_view {
 
-	/** @var bool Filter on/off */
-	public $USE_FILTER		= true;
-
 	/**
-	*/
-	function __construct () {
-		// Prepare filter data
-		if ($this->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
-	}
-
-	/**
-	* Default method
 	*/
 	function show () {
-		// Calling function to divide records per pages
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$default_filter = array(
+			'order_by' => 'date',
+			'order_direction' => 'desc',
+		);
+		$sql = 'SELECT * FROM '.db('log_admin_auth');
+		return table($sql, array(
+				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
+				'filter_params' => array(
+					'name'	=> 'like',
+				),
+			))
+			->admin('admin_id')
+			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
+			->date('date', 'full')
+			->text('user_agent')
+			->text('referer')
+		;
+/*
 		$sql = "SELECT * FROM ".db('log_admin_auth')." ";
-		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date ASC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
-		// Get records
 		$Q = db()->query($sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$records[] = $A;
 		}
-		// Process data
 		foreach ((array)$records as $A) {
-			// Process template
 			$replace2 = array(
 				"bg_class"		=> $i++ % 2 ? "bg1" : "bg2",
 //				"user_id"		=> intval($cur_user_info["id"]),
@@ -53,7 +49,6 @@ class yf_log_admin_auth_view {
 			);
 			$items .= tpl()->parse($_GET["object"]."/item", $replace2);
 		}
-		// Process template
 		$replace = array(
 			"total"				=> intval($total),
 			"items"				=> $items,
@@ -62,6 +57,7 @@ class yf_log_admin_auth_view {
 			"same_ips_action"	=> "./?object=".$_GET["object"]."&action=show_same_ips",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
+*/
 	}
 
 	/**
@@ -74,30 +70,6 @@ class yf_log_admin_auth_view {
 		}
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
-	}
-
-	/**
-	* Show log logins for selected user
-	*/
-	function show_for_admin () {
-		$_GET["id"] = intval($_GET["id"]);
-		// Do save filter
-		$_REQUEST["admin_id"] = $_GET["id"];
-		$this->clear_filter(1);
-		$this->save_filter(1);
-		return $this->show();
-	}
-
-	/**
-	* Show log logins for selected IP address
-	*/
-	function show_for_ip () {
-		$_GET["id"] = substr(preg_replace("/[^0-9\.]/", "", trim($_GET["id"])), 0, 15);
-		// Do save filter
-		$_REQUEST["ip"] = $_GET["id"];
-		$this->clear_filter(1);
-		$this->save_filter(1);
-		return $this->show();
 	}
 
 	/**
@@ -145,108 +117,76 @@ class yf_log_admin_auth_view {
 		return tpl()->parse($_GET["object"]."/same_ips", $replace);
 	}
 
-	// Prepare required data for filter
-	function _prepare_filter_data () {
-		// Filter session array name
-		$this->_filter_name	= $_GET["object"]."_filter";
-		// Prepare boxes
-		$this->_boxes = array_merge((array)$this->_boxes, array(
-			"sort_by"		=> 'select_box("sort_by",		$this->_sort_by,			$selected, 0, 2, "", false)',
-			"sort_order"	=> 'select_box("sort_order",	$this->_sort_orders,		$selected, 0, 2, "", false)',
-		));
-		// Connect common used arrays
-		if (file_exists(INCLUDE_PATH."common_code.php")) {
-			include (INCLUDE_PATH."common_code.php");
-		}
-		// Sort orders
-		$this->_sort_orders = array("DESC" => "Descending", "ASC" => "Ascending");
-		// Sort fields
-		$this->_sort_by = array(
-			"",
-			"date",
-			"ip",
-		);
-		// Fields in the filter
-		$this->_fields_in_filter = array(
-			"ip",
-			"admin_id",
-			"referer",
-			"sort_by",
-			"sort_order",
-		);
-	}
-
-	// Generate filter SQL query
-	function _create_filter_sql () {
-		$SF = &$_SESSION[$this->_filter_name];
-		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
-		// Generate filter for the common fileds
-		if ($SF["date_min"]) 			$sql .= " AND date >= ".strtotime($SF["date_min"])." \r\n";
-		if ($SF["date_max"])			$sql .= " AND date <= ".strtotime($SF["date_max"])." \r\n";
-		if ($SF["admin_id"])		 	$sql .= " AND admin_id = ".intval($SF["admin_id"])." \r\n";
-		if (strlen($SF["ip"]))			$sql .= " AND ip LIKE '"._es($SF["ip"])."%' \r\n";
-		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
-		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
-		return substr($sql, 0, -3);
-	}
-
-	// Session - based filter
-	function _show_filter () {
-		$replace = array(
-			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
-		);
-		foreach ((array)$this->_fields_in_filter as $name) {
-			$replace[$name] = $_SESSION[$this->_filter_name][$name];
-		}
-		// Process boxes
-		foreach ((array)$this->_boxes as $item_name => $v) {
-			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
-		}
-		return tpl()->parse($_GET["object"]."/filter", $replace);
-	}
-
-	// Filter save method
-	function save_filter ($silent = false) {
-		// Process featured countries
-		if (FEATURED_COUNTRY_SELECT && !empty($_REQUEST["country"]) && substr($_REQUEST["country"], 0, 2) == "f_") {
-			$_REQUEST["country"] = substr($_REQUEST["country"], 2);
-		}
-		if (is_array($this->_fields_in_filter)) {
-			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_REQUEST[$name];
-		}
-		if (!$silent) {
-			js_redirect($_SERVER["HTTP_REFERER"]);
-		}
-	}
-
-	// Clear filter
-	function clear_filter ($silent = false) {
-		if (is_array($_SESSION[$this->_filter_name])) {
-			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
-		}
-		if (!$silent) {
-			js_redirect("./?object=".$_GET["object"]._add_get());
-		}
-	}
-
-	// Process custom box
-	function _box ($name = "", $selected = "") {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval("return common()->".$this->_boxes[$name].";");
+	/**
+	*/
+	function show_for_admin() {
+		$_GET['page'] = 'clear';
+		$_GET['filter'] = 'admin_id:'.$_GET['id'];
+		return $this->filter_save();
 	}
 
 	/**
-	* Page header hook
 	*/
-	function _show_header() {
-		return array(
-			"header"	=> t("Log auth"),
-			"subheader"	=> "",
-		);
+	function show_for_ip() {
+		$_GET['page'] = 'clear';
+		$_GET['filter'] = 'ip:'.$_GET['id'];
+		return $this->filter_save();
 	}
 
+	/**
+	*/
+	function filter_save() {
+		$filter_name = $_GET['object'].'__show';
+		if ($_GET['page'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+			// Example: &filter=admin_id:1,ip:127.0.0.1
+			if (isset($_GET['filter'])) {
+				foreach (explode(',', $_GET['filter']) as $item) {
+					list($k,$v) = explode(':', $item);
+					if ($k && isset($v)) {
+						$_SESSION[$filter_name][$k] = $v;
+					}
+				}
+			}
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+				if (isset($_SESSION[$filter_name][$f])) {
+					unset($_SESSION[$filter_name][$f]);
+				}
+			}
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+		);
+		$order_fields = array();
+		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
+			$order_fields[$f] = $f;
+		}
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->number('admin_id')
+			->text('ip')
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
+	}
+
+	/**
+	*/
 	function _hook_widget__admin_auth_successes ($params = array()) {
 // TODO
 	}

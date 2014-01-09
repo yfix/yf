@@ -95,7 +95,15 @@ class yf_admin_modules {
 				'locations'	=> $locations,
 			);
 		}
-		return table($items, array('condensed' => 1, 'pager_records_on_page' => 10000))
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		return table($items, array(
+				'condensed' => 1,
+				'pager_records_on_page' => 10000,
+				'filter' => $_SESSION[$filter_name],
+				'filter_params' => array(
+					'name' => 'like',
+				),
+			))
 			->form()
 			->check_box('name', array('field_desc' => '#'))
 			->text('name')
@@ -552,6 +560,54 @@ class yf_admin_modules {
 			cache_set($cache_name, $data);
 		}
 		return $data;
+	}
+
+	/**
+	*/
+	function filter_save() {
+		$filter_name = $_GET['object'].'__show';
+		if ($_GET['page'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+				if (isset($_SESSION[$filter_name][$f])) {
+					unset($_SESSION[$filter_name][$f]);
+				}
+			}
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+		);
+		$order_fields = array();
+		foreach (explode('|', 'name|active') as $f) {
+			$order_fields[$f] = $f;
+		}
+		$locations = array();
+		foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|site') as $f) {
+			$locations[$f] = $f;
+		}
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->text('name')
+			->select_box('locations', $locations, array('show_text' => 1))
+			->radio_box('active', main()->get_data('pair_active'))
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
 	}
 
 	/**

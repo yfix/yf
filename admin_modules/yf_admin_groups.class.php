@@ -23,7 +23,7 @@ class yf_admin_groups {
 		$func = function($row) use ($gid) {
 			return !($row['id'] == $gid);
 		};
-		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="admin" AND active="1" LIMIT 1');
+		$menu_id = db()->get_one('SELECT id FROM '.db('menus').' WHERE type="admin" AND active=1 LIMIT 1');
 		return table('SELECT * FROM '.db('admin_groups').' ORDER BY id ASC')
 			->text('name')
 			->text('go_after_login')

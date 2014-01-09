@@ -7,8 +7,15 @@ class yf_manage_users {
 	/**
 	*/
 	function show () {
-// TODO: filter and editing
-		return table('SELECT * FROM '.db('user'))
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		return table('SELECT * FROM '.db('user'), array(
+				'filter' => $_SESSION[$filter_name],
+				'filter_params' => array(
+					'login'	=> 'like',
+					'email'	=> 'like',
+					'name'	=> 'like',
+				),
+			))
 			->text('id')
 			->text('login')
 			->text('email')
@@ -21,6 +28,7 @@ class yf_manage_users {
 			->footer_add()
 			->footer_link('Failed auth log', './?object=log_auth_fails_viewer')
 		;
+// TODO: editing
 	}
 
 	/**
@@ -191,8 +199,48 @@ class yf_manage_users {
 
 	/**
 	*/
-	function _show_filter () {
-// TODO
+	function filter_save() {
+		$filter_name = $_GET['object'].'__show';
+		if ($_GET['page'] == 'clear') {
+			$_SESSION[$filter_name] = array();
+		} else {
+			$_SESSION[$filter_name] = $_POST;
+			foreach (explode('|', 'clear_url|form_id|submit') as $f) {
+				if (isset($_SESSION[$filter_name][$f])) {
+					unset($_SESSION[$filter_name][$f]);
+				}
+			}
+		}
+		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+		);
+		$order_fields = array();
+		foreach (explode('|', 'name,login,email|add_date|last_login|num_logins|active') as $f) {
+			$order_fields[$f] = $f;
+		}
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->number('id')
+			->text('name')
+			->login('login')
+			->email('email')
+			->select_box('group', main()->get_data('user_groups'))
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
 	}
 
 	/**
