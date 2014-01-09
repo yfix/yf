@@ -22,7 +22,7 @@ class yf_log_admin_auth {
 			))
 			->admin('admin_id')
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
-			->date('date', 'full')
+			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->text('user_agent')
 			->text('referer')
 		;

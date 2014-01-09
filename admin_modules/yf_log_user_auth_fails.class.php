@@ -26,7 +26,7 @@ class yf_log_user_auth_fails {
 				),
 			))
 			->text('reason', array('data' => $this->_reasons))
-			->date('time', 'full')
+			->date('time', array('format' => 'full', 'nowrap' => 1))
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
 			->text('login')
 			->text('pswd')

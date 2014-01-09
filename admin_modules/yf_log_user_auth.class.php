@@ -24,7 +24,7 @@ class yf_log_user_auth {
 			->text('login')
 			->link('group', './?object=user_groups&action=edit&id=%d', main()->get_data('user_groups'))
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
-			->date('date', 'full')
+			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->text('user_agent')
 			->text('referer')
 		;
