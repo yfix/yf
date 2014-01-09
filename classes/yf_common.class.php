@@ -1373,6 +1373,14 @@ class yf_common {
 	    return $f5;
 	}
 
-
+	/**
+	*/
+	function show_permanent_error() {
+		if (empty($_SESSION['permanent_errors'])) {
+			return false;
+		}
+		$errors = (array)$_SESSION['permanent_errors'];
+		unset($_SESSION['permanent_errors']);
+		return '<div class="alert alert-error">'.implode('<br />'.PHP_EOL, t($errors)).'</div>';
+	}
 }
-
