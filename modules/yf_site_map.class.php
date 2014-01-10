@@ -60,6 +60,8 @@ class yf_site_map {
 	public $DIRECT_FILE_OUTPUT		= true;
 	/** @var bool */
 	public $TEST_MODE				= false;
+	/** @var bool */
+	public $SECURITY_URL_PARAM		= '';
 
 	/**
 	* Catch missing method call
@@ -130,6 +132,10 @@ class yf_site_map {
 	* Default method
 	*/
 	function show () {
+		if ($this->SECURITY_URL_PARAM && $_GET['id'] != $this->SECURITY_URL_PARAM) {
+			main()->NO_GRAPHICS = true;
+			return print _e('Wrong url');
+		}
 		return $this->_generate_sitemap();
 	}
 

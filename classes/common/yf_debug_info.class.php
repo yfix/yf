@@ -744,70 +744,52 @@ class yf_debug_info {
 		if (!$this->_SHOW_SPHINX) {
 			return "";
 		}
-// TODO
-#		$sphinx_debug = $this->_get_debug_data('sphinxsearch') || $GLOBALS['_SPHINX_QL_DEBUG'];
 		$sphinx_debug = $this->_get_debug_data('sphinx');
 		if (!$sphinx_debug) {
-			return "";
+			return '';
 		}
-		$body = "";
-		$body .= "<div class='debug_allow_close'><h5>".t("Sphinx Search QL")."</h5>";
-		$total_time = 0;
-
-		$body .= "".SPHINX_HOST.":".SPHINX_PORT."";
+		$body .= ''.SPHINX_HOST.':'.SPHINX_PORT.'';
 		$sphinx_connect = common()->sphinx_connect;
 		if (!$sphinx_connect) {
-			$sphinx_connect = $GLOBALS["sphinx_connect"];
+			$sphinx_connect = $GLOBALS['sphinx_connect'];
 		}
 		if (!isset($sphinx_connect)) {
-			$sphinx_connect = mysql_connect(SPHINX_HOST.":".SPHINX_PORT);
+			$sphinx_connect = mysql_connect(SPHINX_HOST.':'.SPHINX_PORT);
 		}
 		if ($sphinx_connect) {
 			$server_version = mysql_get_server_info($sphinx_connect);
-			$body .= ", SERVER VERSION: ".$server_version."";
+			$body .= ', SERVER VERSION: '.$server_version.'';
 		}
 
-		$body .= "<table border='1'>";
-		$body .= "<tr>";
-		$body .= "<td>#</td>";
-		$body .= "<td>Time</td>";
-		$body .= "<td>Rows</td>";
-		$body .= "<td>Query</td>";
-		$body .= "</tr>";
+		$sphinx_connect_debug = array();
 
-		foreach ((array)$sphinx_debug as $val) {
-			$_cur_trace = $val["trace"];
-
-			preg_match('/SELECT[\s\t]+.+[\s\t]+FROM[\s\t]+([a-z0-9\_]+)[\s\t]+WHERE[\s\t]+/ims', $val["query"], $m);
-			$desc = array();
-			if ($m[1]) {
-				$desc_raw = common()->sphinx_query("DESCRIBE ".$m[1]);
-				foreach ((array)$desc_raw as $v) {
-					$desc[$v['Field']] = $v['Type'];
-				}
+		$items = &$sphinx_debug;
+		foreach ((array)$items as $id => $item) {
+			if ($item['query'] == 'sphinx connect') {
+				$sphinx_connect_debug = $item;
+				unset($items[$id]);
+				continue;
 			}
-
-			$body .= "<tr>";
-			$body .= "<td><i>".++$i."</td>";
-			$body .= "<td>".common()->_format_time_value($val["time"]). ($val['cached'] ? "<small style='color:grey'>(CACHED)</small>" : "")."</td>";
-			$body .= "<td><i>".$val["count"]."</td>";
-			$body .= "<td ".(!empty($val['error']) ? " style='color:red;font-weight:bold;' " : "").">".str_replace(",", ", ", $val["query"])
-					.(!empty($val['error']) ? "<small style='color:red;'># ERROR: ".print_r($val["error"], 1)."</small>" : "")
-					.(!empty($val['meta']) ? "<small style='color:grey;'># META: ".print_r($val["meta"], 1)."</small>" : "")
-					.(!empty($desc) ? "<small style='color:grey;'># DESCRIBE INDEX: ".print_r($desc, 1).")</small>" : "")
-					.(!empty($_cur_trace) ? "<pre style='color:blue;'><small>"._prepare_html($_cur_trace)."</small></pre>" : "")
-					."</td>";
-			$body .= "</tr>";
-
-			$total_time += $val["time"];
+			if (preg_match('/SELECT[\s\t]+.+[\s\t]+FROM[\s\t]+([a-z0-9\_]+)[\s\t]+WHERE[\s\t]+/ims', $v['query'], $m)) {
+				$describe = array();
+				foreach ((array)common()->sphinx_query('DESCRIBE '.$m[1]) as $v) {
+					$describe[$v['Field']] = $v['Type'];
+				}
+				$item['describe'] = $describe;
+			}
+			$item['time'] = common()->_format_time_value($item['time']);
+			$item['results'] = '<pre>'.var_export($item['results'], 1).'</pre>';
+			$items[$id] = array('id' => $id) + $item;
 		}
-		$body .= "</table>";
-		$body .= "<i>".t("Total time").": ".common()->_format_time_value($total_time)." secs";
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
+
+#		$body .= '<i>'.t('Total time').': '.common()->_format_time_value($total_time).' secs';
+		$body .= $sphinx_connect_debug ? '<pre>'.print_r($sphinx_connect_debug, 1).'</pre>' : '';
+
 		$status = array();
-		foreach((array)common()->sphinx_query("SHOW STATUS") as $v) {
+		foreach((array)common()->sphinx_query('SHOW STATUS') as $v) {
 			$status[$v['Variable_name']] = $v['Value'];
 		}
-		$body .= "</div>";
 		if ($status) {
 			$body .= $this->_show_key_val_table($status);
 		}

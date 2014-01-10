@@ -3,41 +3,76 @@
 class yf_log_admin_exec{
 
 	/**
-	*
 	*/
-	function show() {
-/*
-		$sql = "SELECT * FROM ".db('log_admin_exec')."";
-		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
-		$sql .= strlen($filter_sql) ? " WHERE 1 ". $filter_sql : " ORDER BY date ASC ";
-		list($add_sql, $pages, $total) = common()->divide_pages($sql);
-		$Q = db()->query($sql. $add_sql);
-		while ($A = db()->fetch_assoc($Q)) {
-			$admin_info[$A["admin_id"]] = db()->query_fetch("SELECT login FROM ".db('admin')." WHERE id = '".$A["admin_id"]."' ORDER BY id ASC ");
-			$items[] = array(
-				"ip_country"	=> strtolower(common()->_get_country_by_ip($A["ip"])),
-				"id"			=> $A["id"],
-				"date"			=> _format_date($A["date"], full),
-				"ip"			=> _prepare_html($A["ip"]),
-				"admin"			=> _prepare_html($admin_info[$A["admin_id"]]["login"]),
-				"query_string"	=> _prepare_html($A["query_string"]),
-				"request_uri"	=> _prepare_html($A["request_uri"]),
-				"referer"		=> _prepare_html($A["referer"]),
-				"exec_time"		=> _prepare_html($A["exec_time"]),
-
-//				"view_url"		=> "./?object=".$_GET["object"]."&action=view&id=".$A["id"],
-			);
-		}
-		$replace = array(
-			"form_action"		=> "./?object=".$_GET["object"]."&action=".$_GET["action"]. ($_GET["id"] ? "&id=".$_GET["id"] : ""),
-			"error"				=> _e(),
-			"items"				=> $items,
-			"pages"				=> $pages,
-			"total"				=> $total,
-			"prune_action"		=> "./?object=".$_GET["object"]."&action=prune",
+	function show () {
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$default_filter = array(
+			'order_by' => 'date',
+			'order_direction' => 'desc',
 		);
-		return tpl()->parse($_GET["object"]."/main", $replace);
-*/
+		$sql = 'SELECT * FROM '.db('log_admin_exec');
+		return table($sql, array(
+				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
+				'filter_params' => array(
+					'name'	=> 'like',
+				),
+			))
+			->admin('admin_id')
+			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
+			->date('date', array('format' => 'full', 'nowrap' => 1))
+			->text('user_agent')
+			->text('referer')
+			->text('request_uri')
+			->text('exec_time')
+		;
+	}
+
+	/**
+	*/
+	function show_for_admin() {
+		$_GET['page'] = 'clear';
+		$_GET['filter'] = 'admin_id:'.intval($_GET['id']);
+		return $this->filter_save();
+	}
+
+	/**
+	*/
+	function show_for_ip() {
+		$_GET['page'] = 'clear';
+		$_GET['filter'] = 'ip:'.preg_replace('~[^0-9\.]+~ims', '', $_GET['id']);
+		return $this->filter_save();
+	}
+
+	/**
+	*/
+	function filter_save() {
+		return _class('admin_methods')->filter_save();
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+		);
+		$order_fields = array();
+		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
+			$order_fields[$f] = $f;
+		}
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->number('admin_id')
+			->text('ip')
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
 	}
 
 	function _hook_widget__admin_access_log ($params = array()) {
