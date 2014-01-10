@@ -10,21 +10,24 @@ class yf_manage_shop_express{
 			return $this->get_pdf();	
 		}
 		$date = date("Y-m-d");
-		$orders = db()->get_2d("SELECT id FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date."%'");
+		$orders_info = db()->query_fetch_all("SELECT * FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date."%'");
+		$orders = array_keys($orders_info);
 		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
 											FROM ".db('shop_order_items')." as o
 											RIGHT JOIN ".db('shop_products')." as p
 											ON o.product_id = p.id 
-											WHERE o.order_id IN(".implode(",", $orders).")");
+											WHERE o.order_id IN(".implode(",", $orders).")
+											ORDER BY o.order_id DESC");
 		$_category = _class("_shop_categories", "modules/shop/");
 		foreach($products as $k => $v){
 			$replace[] = array(
-				"product_id"=> $v['product_id'],
-				"name"		=> $v['name'],
-				"quantity"	=> $v['quantity'],
-				"price"		=> module('shop')->_format_price(floatval($v['price'])),
-				"order"		=> $v['order_id'],
-				"id"	=> $v['order_id'].'_'.$v['product_id'],
+				"product_id"	=> $v['product_id'],
+				"name"			=> $v['name'],
+				"quantity"		=> $v['quantity'],
+				"price"			=> module('shop')->_format_price(floatval($v['price'])),
+				"order_id"		=> $v['order_id'],
+				"id"			=> $v['order_id'].'_'.$v['product_id'],//unique_id
+				"time"			=> str_replace($date, "", $orders_info[$v['order_id']]['delivery_time']),
 			);
 			$table_tr[] = 'data-id="'.$v['order_id'].'_'.$v['product_id'].'" ' ;
 		}
@@ -32,10 +35,11 @@ class yf_manage_shop_express{
 			return json_encode($replace);
 		}
 		$table = table($replace)
-			->text('product_id')
+			->text('order_id')
+			->text('time')
 			->text('name')
-			->text('order')
 			->text('quantity')
+			->text('product_id')
 			->footer_link("PDF ".$date." 10-12", './?object='.$_GET['object'].'&action=express&hours=10-12')
 			->footer_link("PDF ".$date." 13-15", './?object='.$_GET['object'].'&action=express&hours=13-15')
 			->footer_link("PDF ".$date." 17-20", './?object='.$_GET['object'].'&action=express&hours=17-20')

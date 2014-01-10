@@ -8,10 +8,11 @@
 		var user_bet = data['user_bet'] == 1 ? ' info' : ''
 		var status_class = data['status'] == 'failed_no_bets' ? 'label-important' : '';
 		var html = '<tr data-id="'+data['id']+'" class="success" style="display:none;">'+
-				'<td>'+ data['product_id'] +'</td>'+
+				'<td>'+ data['order_id'] +'</td>'+
+				'<td>'+ data['time'] +'</td>'+
 				'<td>'+ data['name'] +'</td>'+
-				'<td>'+ data['order'] +'</td>'+
 				'<td>'+ data['quantity'] +'</td>'+
+				'<td>'+ data['product_id'] +'</td>'+
 			'</tr>';
 		return html;
 	}
