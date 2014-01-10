@@ -417,4 +417,37 @@ class yf_dynamic {
 	function captcha_image() {
 		return _class('captcha')->show_image();
 	}
+
+	/**
+	*/
+	function ajax_validate() {
+		main()->NO_GRAPHICS = true;
+		header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet');
+		$in = null;
+		if (isset($_POST['data'])) {
+			$in = $_POST['data'];
+		} elseif (isset($_GET['data'])) {
+			$in = $_GET['data'];
+		} elseif (isset($_GET['page'])) {
+			$in = $_GET['page'];
+		}
+		if (!$_GET['id'] || is_null($in)) {
+			return print 'Error: empty params';
+		}
+		$func = preg_replace('~[^a-z0-9_]+~ims', '', $_GET['id']);
+		if (!preg_match('~^[a-z][a-z0-9_]+$~ims', $func)) {
+			return print 'Error: wrong func name';
+		}
+		if (!method_exists(_class('validate'), $func)) {
+			return print 'Error: no such func';
+		}
+		$param = null;
+		if (isset($_POST['param'])) {
+			$param = $_POST['param'];
+		} elseif (isset($_GET['param'])) {
+			$param = $_GET['param'];
+		}
+// TODO: need to set list of allowed "param" values, example: user.login, user.email, etc
+		return print ( _class('validate')->$func($in, array('param' => $param)) ? 'ok' : 'ko' );
+	}
 }
