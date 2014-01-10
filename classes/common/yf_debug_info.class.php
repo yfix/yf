@@ -744,14 +744,12 @@ class yf_debug_info {
 		if (!$this->_SHOW_SPHINX) {
 			return "";
 		}
-		$sphinx_debug = $this->_get_debug_data('sphinx');
+		$sphinx_debug = $this->_get_debug_data('sphinxsearch');
 		if (!$sphinx_debug) {
 			return '';
 		}
-		$sphinxsearch = _class('sphinxsearch', 'classes/common/');
-
-		$body .= 'host: '. $sphinxsearch->_get_host();
-		$body .= ', version: '.$sphinxsearch->_get_server_version();
+		$body .= 'host: '. _class('sphinxsearch')->_get_host();
+		$body .= ', version: '._class('sphinxsearch')->_get_server_version();
 
 		$sphinx_connect_debug = array();
 		$items = &$sphinx_debug;
@@ -769,7 +767,7 @@ class yf_debug_info {
 #		$body .= '<i>'.t('Total time').': '.common()->_format_time_value($total_time).' secs';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
 		$body .= $sphinx_connect_debug ? '<pre>'.print_r($sphinx_connect_debug, 1).'</pre>' : '';
-		$body .= $this->_show_key_val_table($sphinxsearch->_get_server_status());
+		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
 		return $body;
 	}
 
