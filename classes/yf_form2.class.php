@@ -341,6 +341,12 @@ class yf_form2 {
 	* We need this to avoid encoding & => &amp; by standard htmlspecialchars()
 	*/
 	function _htmlchars($str = '') {
+		if (is_array($str)) {
+			foreach ((array)$str as $k => $v) {
+				$str[$k] = $this->_htmlchars($v);
+			}
+			return $str;
+		}
 		$replace = array(
 			'"' => '&quot;',
 			"'" => '&apos;',
@@ -359,19 +365,28 @@ class yf_form2 {
 				continue;
 			}
 			$val = $extra[$name];
-			if (!strlen($val)) {
-				continue;
+			if (is_array($val)) {
+				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+			} else {
+				if (!strlen($val)) {
+					continue;
+				}
+				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 			}
-			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 		}
 		foreach ((array)$extra['attr'] as $name => $val) {
 			if (!$name || !isset($val)) {
 				continue;
 			}
-			if (!strlen($val)) {
-				continue;
+			$val = $extra[$name];
+			if (is_array($val)) {
+				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+			} else {
+				if (!strlen($val)) {
+					continue;
+				}
+				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 			}
-			$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 		}
 		return ' '.implode(' ', $body);
 	}
@@ -624,7 +639,7 @@ class yf_form2 {
 			$extra['name'] = $name;
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 
-			$attrs_names = array('id','contenteditable','style','class');
+			$attrs_names = array('id','contenteditable','style','class','data-validate','data-ajax-validate');
 			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -665,13 +680,6 @@ class yf_form2 {
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];
 			}
-			$vr = $_this->_validate_rules[$extra['name']];
-			foreach ((array)$vr as $rule) {
-				if ($rule[0] == 'required') {
-					$extra['required'] = 1;
-					break;
-				}
-			}
 			// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
 			if ($vr['min_length'] && !isset($extra['pattern'])) {
 				$extra['pattern'] = '.{'.$vr['min_length'][1].','.($vr['max_length'] ? $vr['max_length'][1] : '').'}';
@@ -682,7 +690,19 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target');
+			$attrs_names = array();
+			$vr = &$_this->_validate_rules_names[$extra['name']];
+			if (isset($vr['required'])) {
+				$extra['required'] = 1;
+			}
+			if (isset($vr['ajax_is_unique'])) {
+				$extra['data-ajax-validate']['is_unique'] = $vr['ajax_is_unique'];
+			}
+// TODO: decide if it is safe to show this inside html
+#			if ($vr && is_array($vr)) {
+#				$extra['data-validate'] = (array)$extra['data-validate'] + $vr;
+#			}
+			$attrs_names += array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','data-validate','data-ajax-validate');
 			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -721,7 +741,7 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows');
+			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','data-validate','data-ajax-validate');
 			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -800,7 +820,7 @@ class yf_form2 {
 			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
 			$extra['type'] = 'hidden';
 
-			$attrs_names = array('type','id','name','value','data');
+			$attrs_names = array('type','id','name','value','data','data-validate','data-ajax-validate');
 			return '<input'.$_this->_attrs($extra, $attrs_names).'>';
 		};
 		if ($this->_chained_mode) {
@@ -1199,14 +1219,13 @@ class yf_form2 {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = $extra['class'] ? $extra['class'] : 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
-//			$extra['class'] = 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $extra['class'] ?: 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['value'] = t($extra['value']);
 			$extra['desc'] = ''; // We do not need label here
 			$extra['type'] = 'submit';
 
-			$attrs_names = array('type','name','id','class','style','value','disabled','target');
+			$attrs_names = array('type','name','id','class','style','value','disabled','target','data-validate','data-ajax-validate');
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? $_this->_htmlchars($extra['value']) : $extra['value']);
@@ -1917,7 +1936,7 @@ class yf_form2 {
 			$extra['id'] = $extra['name'];
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
-			$extra['input_attrs'] = $_this->_attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
+			$extra['input_attrs'] = $_this->_attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value','data-validate','data-ajax-validate'));
 			return $_this->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -2270,6 +2289,16 @@ class yf_form2 {
 			$this->hidden($form_id_field, array('value' => $form_id));
 		}
 		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
+		// Prepare array of rules by form method for quick access
+		if ($this->_validate_rules) {
+			foreach ((array)$this->_validate_rules as $item => $rules) {
+				foreach ((array)$rules as $rule) {
+					if (is_string($rule[0])) {
+						$this->_validate_rules_names[$item][$rule[0]] = $rule[1] ?: true;
+					}
+				}
+			}
+		}
 		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 		$data = (array)(!empty($post) ? $post : $_POST);
 		if (empty($data)) {
