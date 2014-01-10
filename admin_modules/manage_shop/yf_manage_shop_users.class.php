@@ -25,7 +25,7 @@ class yf_manage_shop_users{
 			->text('email')
 			->text('phone')
 			->text('address')
-			->date('add_date',array('format' => 'Y-m-d H:i:s','nowrap' => '1'))
+			->date('add_date', array('format' => 'full','nowrap' => 1))
 			->btn_edit('', './?object=manage_shop&action=user_edit&id=%d')
 			->btn('Login', './?object=manage_users&action=login_as&id=%d')
 			->btn_delete('', './?object=manage_shop&action=user_delete&id=%d')

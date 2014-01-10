@@ -16,7 +16,14 @@ class yf_admin {
 		$func = function($row) use ($admin_id) {
 			return !($row['id'] == $admin_id);
 		};
-		return table('SELECT * FROM '.db('admin'))
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		return table('SELECT * FROM '.db('admin'), array(
+				'filter' => $_SESSION[$filter_name],
+				'filter_params' => array(
+					'login'	=> 'like',
+					'email'	=> 'like',
+				),
+			))
 			->text('login')
 			->text('email')
 			->link('group', './?object=admin_groups&action=edit&id=%d', main()->get_data('admin_groups'))
@@ -27,9 +34,9 @@ class yf_admin {
 			->btn_active(array('display_func' => $func))
 			->btn_edit()
 			->btn_delete(array('display_func' => $func))
-			->btn('log_auth', './?object=log_admin_auth_view&action=show_for_admin&id=%d')
+			->btn('log_auth', './?object=log_admin_auth&action=show_for_admin&id=%d')
 			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d', array('display_func' => $func))
-			->footer_link('Failed auth log', './?object=log_admin_auth_fails_viewer')
+			->footer_link('Failed auth log', './?object=log_admin_auth_fails')
 			->footer_add();
 	}
 
@@ -160,6 +167,39 @@ class yf_admin {
 
 		$after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
 		return js_redirect($after_login ?: './');
+	}
+
+	/**
+	*/
+	function filter_save() {
+		return _class('admin_methods')->filter_save();
+	}
+
+	/**
+	*/
+	function _show_filter() {
+		if (!in_array($_GET['action'], array('show'))) {
+			return false;
+		}
+		$filter_name = $_GET['object'].'__'.$_GET['action'];
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+		);
+		$order_fields = array();
+		foreach (explode('|', 'login|email|group|first_name|last_name|add_date|last_login|num_logins|active') as $f) {
+			$order_fields[$f] = $f;
+		}
+		return form($r, array(
+				'selected'	=> $_SESSION[$filter_name],
+			))
+			->login('login', array('class' => 'input-medium'))
+			->email('email', array('class' => 'input-medium'))
+			->select_box('group', main()->get_data('admin_groups'))
+			->select_box('order_by', $order_fields, array('show_text' => 1))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->save_and_clear();
+		;
 	}
 
 	/**

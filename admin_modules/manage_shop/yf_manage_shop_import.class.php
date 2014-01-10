@@ -113,7 +113,6 @@ class yf_manage_shop_import {
 	/**
 	*/
 	function import_xls() {
-		return false;
 		set_time_limit(0);
 		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
 		$cat_aliases = db()->get_2d("SELECT name, cat_id FROM `".db('shop_suppliers_cat_aliases')."` WHERE supplier_id=".intval($SUPPLIER_ID));
@@ -162,11 +161,11 @@ class yf_manage_shop_import {
 		}
 		if (count($items) != 0) {
 //			return $this->process_items_ambar_update($items);
-			return $this->process_items_epicentr_update($items);
+//			return $this->process_items_epicentr_update($items);
 	//		return $this->process_items_fortuna($items);
 	//		return $this->process_items_talisman($items);
 //			return $this->process_items_talisman_update($items);	
-	//		return $this->process_items_talisman_import($items);
+			return $this->process_items_talisman_import_food($items);
 //			return $this->process_items_epicentr_import($items);			
 //			return $this->process_items_yugcontract_xls($items);
 		} else {
@@ -328,6 +327,7 @@ class yf_manage_shop_import {
 	}
 	
 	function process_items_ambar_update($items) {
+		return false;
 		$supplier_id = 103;
 		
 		$products = array();
@@ -389,6 +389,7 @@ class yf_manage_shop_import {
 	}
 	
 	function process_items_epicentr_update($items) {
+		return false;
 		$supplier_id = 101;
 		
 		$products = array();
@@ -458,7 +459,7 @@ class yf_manage_shop_import {
 	
 	
 	function process_items_epicentr_import($items) {
-		
+		return false;
 		$supplier_id = 101;
 		
 		
@@ -509,21 +510,6 @@ class yf_manage_shop_import {
 
 	function process_items_talisman_update($items) {
 		$supplier_id = 100;
-
-		$remap = array (
-			62517 => 'абсент', 
-			62505 => 'бальзам', 
-			62509 => 'вино', 
-			62510 => 'вермут', 
-			62495 => 'виски', 
-			62496 => 'водка', 
-			62497 => 'джин', 
-			62501 => 'коньяк', 
-			62502 => 'ликер', 
-			62504 => 'текила', 
-			62512 => 'пиво', 
-			62514 => 'слабоалкогольные напитки',
-		);
 		
 		$products = array();
 		$R = db()->query("SELECT * FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
@@ -535,30 +521,13 @@ class yf_manage_shop_import {
 		foreach ($items as $item) {
 			if ($item[3]=='' || $item[3] == 'Ед. изм.') continue;
 			
-			$cat_id = 0;
-			foreach ($remap as $k=>$v) {
-				if ($v == $item[4])
-					$cat_id = $k;
-			}
-
 			$v = array(
-				'name' => trim($item[0]),
-				'articul' => $item[1],
-				'cat_id' => $cat_id,
-				'price' => number_format($item[2], 2, '.', ''),
-				'url' => common()->_propose_url_from_name(trim($item[0])),				
-				'supplier_id' => $supplier_id, 
-				'active' => 1,
+				'name' => $item[0],
+				'articul' => trim($item[3]),
+				'price' => number_format($item[4], 2, '.', ''),
 			);
 			
-			if (empty($products[$v['articul']])) {
-				$result[] = array(
-					'articul' => $v['articul'],
-					'product' => $v['name'],
-					'price' => $v['price'],
-					'is_new' => 'new',
-				);
-			} else {
+			if (!empty($products[$v['articul']])) {
 				if ($v['articul']!='') {
 					$result[] = array(
 						'articul' => $v['articul'],
@@ -567,12 +536,13 @@ class yf_manage_shop_import {
 						'is_new' => 'upd',
 					);
 
-					db()->query("UPDATE `".db('shop_products')."` SET `name`='"._es($v['name'])."' WHERE `articul`='"._es($v['articul'])."' AND `supplier_id`=".$supplier_id);
+					db()->query("UPDATE `".db('shop_products')."` SET `price`='"._es($v['price'])."' WHERE `articul`='"._es($v['articul'])."' AND `supplier_id`=".$supplier_id);
+//					echo "UPDATE `".db('shop_products')."` SET `price`='"._es($v['price'])."',`articul`='"._es($v['articul'])."' WHERE `articul`='"._es($item[3])."' AND `supplier_id`=".$supplier_id.";\n";
 				}
-			}				
+			}
 			$i++;
 		}
- 
+
 		return table($result, array(
             'table_class'       => 'table-condensed',
             'auto_no_buttons'   => 1,
@@ -646,5 +616,52 @@ class yf_manage_shop_import {
  
 		return $result;
 	}
+
+	function process_items_talisman_import_food($items) {
+		$supplier_id = 100;
+		
+		$products = array();
+		$R = db()->query("SELECT * FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+		while ($A = db()->fetch_assoc($R)) {
+			$products[$A['articul']] = $A['id'];
+		}
+		
+		$i =0 ;
+		foreach ($items as $item) {
+			if ($i==0) {$i++;continue;}
+			
+			$v = array(
+				'name' => trim($item[0]),
+				'articul' => trim($item[3]),
+				'cat_id' => $item[5],
+				'price' => number_format($item[4], 2, '.', ''),
+				'url' => common()->_propose_url_from_name(trim($item[0])),				
+				'supplier_id' => $supplier_id, 
+				'active' => 1,
+			);
+		
+			if (empty($products[$v['articul']])) {
+				$result .= "articul: ".$v['articul']."; product: ".$v['name']." - ";
+
+				$result .= 'new - ';
+				$error = false;
+				db()->insert(db('shop_products'), _es($v)) or $error = true;
+				if ($error) {
+					$result .= 'ERROR';
+				} else {
+					$result .= 'OK';				
+				}
+				$result .= "<br />"; 
+			} else {
+				$result .= "articul: ".$v['articul']."; product: ".$v['name']." - ALREADY EXISTS<br />";
+			}
+ 
+			$i++;
+		}
+ 
+		return $result;
+	}
+	
+	
 	
 }

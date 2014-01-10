@@ -109,6 +109,9 @@ class yf_table2 {
 		if (is_array($sql)) {
 			$data = $sql;
 			unset($sql);
+			if ($params['filter']) {
+				$this->_filter_array($data, $params['filter'], $params['filter_params']);
+			}
 			list(,$pages,) = common()->divide_pages(null, null, null, $pager_records_on_page, count($data));
 			if (count($data) > $pager_records_on_page) {
 				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager_records_on_page;
@@ -573,6 +576,8 @@ class yf_table2 {
 						$cond = $field_params;
 						$func = $supported_conds[$cond];
 					}
+				} else {
+					$func = $supported_conds[$cond];
 				}
 				// Field with __and on the end of its name is special one for 'between' condition
 				if ($func) {
@@ -599,6 +604,44 @@ class yf_table2 {
 			}
 		}
 		return array($filter_sql, $order_sql);
+	}
+
+	/**
+	* Simple filtering of the given array. Need to support table() raw array data with filtering
+	*/
+	function _filter_array(&$data, $filter = array(), $filter_params = array()) {
+		if (!$data || !$filter) {
+			return false;
+		}
+		foreach ((array)$data as $_id => $_data) {
+			foreach ((array)$filter as $fk => $fv) {
+				if (isset($_data[$fk]) && strlen($fv)) {
+					if (is_array($_data[$fk])) {
+						if (isset($filter_params[$fk]) && $filter_params[$fk] == 'like') {
+							foreach ((array)$_data[$fk] as $k2 => $v2) {
+								if (false === strpos($_data[$fk][$k2], $fv)) {
+									unset($data[$_id]);
+									continue 3;
+								}
+							}
+						} elseif (!isset($_data[$fk][$fv])) {
+							unset($data[$_id]);
+							continue 2;
+						}
+					} else {
+						if (isset($filter_params[$fk]) && $filter_params[$fk] == 'like') {
+							if (false === strpos($_data[$fk], $fv)) {
+								unset($data[$_id]);
+								continue 2;
+							}
+						} elseif ($_data[$fk] != $fv) {
+							unset($data[$_id]);
+							continue 2;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -709,6 +752,9 @@ class yf_table2 {
 				}
 				if ($extra['translate']) {
 					$text = t($text);
+				}
+				if ($params['max_length'] && strlen($text) > $params['max_length']) {
+					$text = substr($text, 0, $params['max_length']);
 				}
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
@@ -931,10 +977,10 @@ class yf_table2 {
 	/**
 	*/
 	function allow_deny($name, $extra = array()) {
-		$extra['data'] = array(
-			'DENY' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Deny').'</button>',
-			'ALLOW' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Allow').'</button>',
-		);
+		if (!isset($this->_pair_allow_deny)) {
+			$this->_pair_allow_deny = main()->get_data('pair_allow_deny');
+		}
+		$extra['data'] = $this->_pair_allow_deny;
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
 			$extra['data'] = (array)$extra['data'];
@@ -945,10 +991,10 @@ class yf_table2 {
 	/**
 	*/
 	function yes_no($name = '', $extra = array()) {
-		$extra['data'] = array(
-			'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('No').'</button>',
-			'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Yes').'</button>',
-		);
+		if (!isset($this->_pair_yes_no)) {
+			$this->_pair_yes_no = main()->get_data('pair_yes_no');
+		}
+		$extra['data'] = $this->_pair_yes_no;
 		return $this->func($name, function($field, $params, $row) {
 			$extra = (array)$params['extra'];
 			$extra['data'] = (array)$extra['data'];
@@ -1157,7 +1203,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($row, $params, $instance_params) {
+			'func'	=> function($row, $params, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$override_id = '';
 				if (isset($extra['id'])) {
@@ -1171,10 +1217,10 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-				$values = array(
-					'0' => '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>',
-					'1' => '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>',
-				);
+				if (!isset($_this->_pair_active)) {
+					$_this->_pair_active = main()->get_data('pair_active');
+				}
+				$values = $_this->_pair_active;
 				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
 			},
 		);

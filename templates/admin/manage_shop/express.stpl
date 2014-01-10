@@ -1,0 +1,78 @@
+<h3>Доставка сегодня</h3>
+<div class="express_catalog">
+	{table}
+</div>
+
+<script>
+	var DOM = '.express_catalog table tbody';
+	var create_row = function(data){
+		var user_bet = data['user_bet'] == 1 ? ' info' : ''
+		var status_class = data['status'] == 'failed_no_bets' ? 'label-important' : '';
+		var html = '<tr data-id="'+data['id']+'" class="success" style="display:none;">'+
+				'<td>'+ data['order_id'] +'</td>'+
+				'<td>'+ data['time'] +'</td>'+
+				'<td>'+ data['name'] +'</td>'+
+				'<td>'+ data['quantity'] +'</td>'+
+				'<td>'+ data['product_id'] +'</td>'+
+			'</tr>';
+		return html;
+	}
+
+	var update_contracts = function(){
+	//	var API_url = './?object=manage_shop&action=express&ajax_mode=1';
+		var API_url = document.URL;
+		if ($(DOM).length <= 0) {
+			return false;	
+		}
+
+		$.getJSON(API_url, {ajax_mode: 1})
+		.done(function(data) {
+			if(data == ""){
+				console.log('Empty API-data');
+				return false;
+			}
+			for(var i = 0;i < data.length;i++){
+				var is_exists = 0;
+				$(DOM + ' tr').each(function(){
+					var ex_id = $(this).data('id');
+					var ex_status = $(this).data('status');
+					var time_end = $(this).find('span[data-time-end]').data('time-end'); 
+					var time_now = data[i]['u_time_now'];
+					if(ex_id == data[i]['id']){
+						$(this).find('.contract_users').text(data[i]['contract_users']);
+						$(this).find('.contract_amount').text(data[i]['contract_amount']);
+						if(!$(this).hasClass('info') && data[i]['user_bet'] == 1){
+							$(this).addClass('info');
+						}
+						is_exists = 1;
+					}
+				});
+
+				if(!is_exists){
+					console.log('new - '+data[i]['id']);
+					$(DOM).prepend(create_row(data[i])).find('tr[data-id="'+ data[i]['id'] +'"]').addClass('success').fadeIn('slow', function(){
+					});
+				}
+			}
+
+		})
+		.fail(function(){
+			console.log("API error");
+		});
+	};
+
+	$(function(){
+		$('.ajax_delete').on("click", function(){
+			$(this).parent().parent().remove();
+		});
+		$('button.update_rows').click(function(){
+			window.location.reload();
+		});
+		$(DOM).on("click", "tr", function(){
+			$(this).removeClass("success");
+		});
+		var interval = setInterval(function(){update_contracts();},7000);
+
+	});
+
+</script>

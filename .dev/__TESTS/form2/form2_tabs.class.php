@@ -14,9 +14,13 @@ class form2_tabs {
 			->tab_start('restrictions')
 				->check_box( 'restricted_view', '', array( 'desc' => 'Ограничить просмотр (категорий +21)', 'no_label' => true ) )
 				->check_box( 'restricted_view', 'Ограничить просмотр (категорий +21)' )
+				->currency_box(array('selected' => 'RUB'))
 			->tab_end()
 
 			->tab_start('other')
+				->icon_select_box(array('selected' => 'icon-anchor'))
+				->currency_box(array('selected' => 'RUB'))
+				->language_box(array('selected' => 'uk'))
 				->time_box()
 				->date_box()
 				->datetime_box()

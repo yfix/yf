@@ -1,5 +1,5 @@
 <img src="{img_src}" id="captcha_img" class="captcha_img img-rounded" />
-<input type="text" id="captcha_input" name="captcha" size="{num_symbols}" maxlength="{num_symbols}" class="input-small" value="" {input_attrs} />
+<input type="text" id="captcha_input" name="captcha" size="{num_symbols}" maxlength="{num_symbols}" class="input-small" value="{value}" {input_attrs} />
 {itip('Please, confirm your action by entering the digital code you see on the image')}
 <small><br /><a href="javascript:void(0)" id="captcha_reload_img">{t(Get new image)}</a></small>
 
