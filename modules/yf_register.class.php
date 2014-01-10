@@ -9,12 +9,13 @@ class yf_register {
 	*/
 	function show () {
 		$validate_rules = array(
-			'login'		=> array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean|ajax_is_unique[user.login]', function($in){ return module('register')->_login_not_exists($in); } ),
-			'email'		=> array( 'trim|required|valid_email|is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
-			'emailconf'	=> 'trim|required|valid_email|matches[email]',
-			'password'	=> 'trim|required', //|md5
-			'pswdconf'	=> 'trim|required|matches[password]', // |md5
-			'captcha'	=> 'trim|captcha',
+			'__form_id__'	=> 'register_form',
+			'login'			=> array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean|ajax_is_unique[user.login]', function($in){ return module('register')->_login_not_exists($in); } ),
+			'email'			=> array( 'trim|required|valid_email|is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
+			'emailconf'		=> 'trim|required|valid_email|matches[email]',
+			'password'		=> 'trim|required', //|md5
+			'pswdconf'		=> 'trim|required|matches[password]', // |md5
+			'captcha'		=> 'trim|captcha',
 		);
 		$a = $_POST;
 		$a['redirect_link'] = './?object='.$_GET['object'].'&action=success';
