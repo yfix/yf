@@ -19,6 +19,17 @@ class yf_manage_shop_express{
 											WHERE o.order_id IN(".implode(",", $orders).")
 											ORDER BY o.order_id DESC");
 		$_category = _class("_shop_categories", "modules/shop/");
+		//always add one empty row in table for ajax
+		if(empty($products)){
+			$products[] = array(
+				'product_id'	=> '-',
+				'name'			=> '-',
+				'quantity'		=> '-',
+				'price'			=> '-',
+				'order_id'		=> '-',
+			);
+			$orders_info['-']['delivery_time'] = '-';
+		}
 		foreach($products as $k => $v){
 			$replace[] = array(
 				"product_id"	=> $v['product_id'],
