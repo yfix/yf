@@ -205,6 +205,7 @@ class yf_captcha {
 			'img_src'		=> process_url($location),
 			'num_symbols'	=> intval($this->num_symbols),
 			'input_attrs'	=> $extra['input_attrs'],
+			'value'			=> $extra['value'],
 		);
 		return tpl()->parse($stpl_name, $replace);
 	}

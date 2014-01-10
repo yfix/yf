@@ -6,14 +6,69 @@ class yf_manage_shop_express{
 	/**
 	*/
 	function express () {
-		$date = date("Y-m-d");
-		if(!$_GET['hours']){
-			return form()
-				->link($date." 10-12", './?object='.$_GET['object'].'&action=express&hours=10-12')
-				->link($date." 13-15", './?object='.$_GET['object'].'&action=express&hours=13-15')
-				->link($date." 17-20", './?object='.$_GET['object'].'&action=express&hours=17-20')
-			;
+		if(intval($_GET['hours'])){
+			return $this->get_pdf();	
 		}
+		$date = date("Y-m-d");
+		$orders_info = db()->query_fetch_all("SELECT * FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date."%'");
+		$orders = array_keys($orders_info);
+		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
+											FROM ".db('shop_order_items')." as o
+											RIGHT JOIN ".db('shop_products')." as p
+											ON o.product_id = p.id 
+											WHERE o.order_id IN(".implode(",", $orders).")
+											ORDER BY o.order_id DESC");
+		$_category = _class("_shop_categories", "modules/shop/");
+		//always add one empty row in table for ajax
+		if(empty($products)){
+			$products[] = array(
+				'product_id'	=> '-',
+				'name'			=> '-',
+				'quantity'		=> '-',
+				'price'			=> '-',
+				'order_id'		=> '-',
+			);
+			$orders_info['-']['delivery_time'] = '-';
+		}
+		foreach($products as $k => $v){
+			$replace[] = array(
+				"product_id"	=> $v['product_id'],
+				"name"			=> $v['name'],
+				"quantity"		=> $v['quantity'],
+				"price"			=> module('shop')->_format_price(floatval($v['price'])),
+				"order_id"		=> $v['order_id'],
+				"id"			=> $v['order_id'].'_'.$v['product_id'],//unique_id
+				"time"			=> str_replace($date, "", $orders_info[$v['order_id']]['delivery_time']),
+			);
+			$table_tr[] = 'data-id="'.$v['order_id'].'_'.$v['product_id'].'" ' ;
+		}
+		if(!empty($_GET['ajax_mode'])){
+			return json_encode($replace);
+		}
+		$table = table($replace)
+			->text('order_id')
+			->text('time')
+			->text('name')
+			->text('quantity')
+			->text('product_id')
+			->footer_link("PDF ".$date." 10-12", './?object='.$_GET['object'].'&action=express&hours=10-12')
+			->footer_link("PDF ".$date." 13-15", './?object='.$_GET['object'].'&action=express&hours=13-15')
+			->footer_link("PDF ".$date." 17-20", './?object='.$_GET['object'].'&action=express&hours=17-20')
+			->render(array(
+				'table_attr' => 'id="express_catalog"',
+				'tr' => $table_tr
+			))
+		;
+		$replace = array(
+			'table' => $table,
+		);
+		return tpl()->parse("manage_shop/express", $replace);
+	}
+
+	/**
+	*/
+	function get_pdf() {
+		$date = date("Y-m-d");
 		$hours = intval($_GET['hours']);
 		$orders = db()->get_2d("SELECT id FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date." ".$hours."%'");
 		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
@@ -56,7 +111,7 @@ class yf_manage_shop_express{
 			}
 		}
 		$out = implode("<pagebreak />", $out);
-		return common()->pdf_page($out);//, date("d.m.Y")." ".$time_interval);
+		return common()->pdf_page($out);
 	}
 
 	/**
