@@ -1,3 +1,4 @@
+<h3>Доставка сегодня</h3>
 <div class="express_catalog">
 	{table}
 </div>
