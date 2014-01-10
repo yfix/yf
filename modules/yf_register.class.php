@@ -9,7 +9,7 @@ class yf_register {
 	*/
 	function show () {
 		$validate_rules = array(
-			'login'		=> array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
+			'login'		=> array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean|ajax_is_unique[user.login]', function($in){ return module('register')->_login_not_exists($in); } ),
 			'email'		=> array( 'trim|required|valid_email|is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
 			'emailconf'	=> 'trim|required|valid_email|matches[email]',
 			'password'	=> 'trim|required', //|md5
@@ -40,15 +40,13 @@ class yf_register {
 	/**
 	*/
 	function _login_not_exists($in = '') {
-// TODO
-		return true;
+		return ! db()->get_one('SELECT id FROM '.db('user').' WHERE login="'.db()->es($in).'"');
 	}
 
 	/**
 	*/
 	function _email_not_exists($in = '') {
-// TODO
-		return true;
+		return ! db()->get_one('SELECT id FROM '.db('user').' WHERE email="'.db()->es($in).'"');
 	}
 
 	/**
