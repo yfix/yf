@@ -153,6 +153,10 @@ class yf_manage_shop {
 	function _product_image_upload($product_id) {
 		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func($product_id);
 	}
+	
+	function product_image_search() {
+		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func();
+	}
 
 	function upload_images() {
 		$func = __FUNCTION__; return _class('shop_supplier_panel_upload_images', 'admin_modules/shop_supplier_panel/')->$func();

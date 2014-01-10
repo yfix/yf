@@ -70,12 +70,13 @@ class yf_manage_shop_express{
 	function get_pdf() {
 		$date = date("Y-m-d");
 		$hours = intval($_GET['hours']);
-		$orders = db()->get_2d("SELECT id FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date." ".$hours."%'");
+		$orders = db()->get_2d("SELECT id FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date." ".$hours."%' AND status = 1");
 		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
 											FROM ".db('shop_order_items')." as o
 											RIGHT JOIN ".db('shop_products')." as p
 											ON o.product_id = p.id 
-											WHERE o.order_id IN(".implode(",", $orders).")");
+											WHERE o.order_id IN(".implode(",", $orders).")
+												AND o.status = 1");
 		$ids = $replace = array();
 		$_category = _class("_shop_categories", "modules/shop/");
 		foreach($products as $k => $v){
