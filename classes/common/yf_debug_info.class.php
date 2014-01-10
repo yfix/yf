@@ -744,25 +744,14 @@ class yf_debug_info {
 		if (!$this->_SHOW_SPHINX) {
 			return "";
 		}
-		$sphinx_debug = $this->_get_debug_data('sphinx');
+		$sphinx_debug = $this->_get_debug_data('sphinxsearch');
 		if (!$sphinx_debug) {
 			return '';
 		}
-		$body .= ''.SPHINX_HOST.':'.SPHINX_PORT.'';
-		$sphinx_connect = common()->sphinx_connect;
-		if (!$sphinx_connect) {
-			$sphinx_connect = $GLOBALS['sphinx_connect'];
-		}
-		if (!isset($sphinx_connect)) {
-			$sphinx_connect = mysql_connect(SPHINX_HOST.':'.SPHINX_PORT);
-		}
-		if ($sphinx_connect) {
-			$server_version = mysql_get_server_info($sphinx_connect);
-			$body .= ', SERVER VERSION: '.$server_version.'';
-		}
+		$body .= 'host: '. _class('sphinxsearch')->_get_host();
+		$body .= ', version: '._class('sphinxsearch')->_get_server_version();
 
 		$sphinx_connect_debug = array();
-
 		$items = &$sphinx_debug;
 		foreach ((array)$items as $id => $item) {
 			if ($item['query'] == 'sphinx connect') {
@@ -770,29 +759,15 @@ class yf_debug_info {
 				unset($items[$id]);
 				continue;
 			}
-			if (preg_match('/SELECT[\s\t]+.+[\s\t]+FROM[\s\t]+([a-z0-9\_]+)[\s\t]+WHERE[\s\t]+/ims', $v['query'], $m)) {
-				$describe = array();
-				foreach ((array)common()->sphinx_query('DESCRIBE '.$m[1]) as $v) {
-					$describe[$v['Field']] = $v['Type'];
-				}
-				$item['describe'] = $describe;
-			}
-			$item['time'] = common()->_format_time_value($item['time']);
 			$item['results'] = '<pre>'.var_export($item['results'], 1).'</pre>';
+			$item['meta'] = '<pre>'.var_export($item['meta'], 1).'</pre>';
+			$item['describe'] = '<pre>'.var_export($item['describe'], 1).'</pre>';
 			$items[$id] = array('id' => $id) + $item;
 		}
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
-
 #		$body .= '<i>'.t('Total time').': '.common()->_format_time_value($total_time).' secs';
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
 		$body .= $sphinx_connect_debug ? '<pre>'.print_r($sphinx_connect_debug, 1).'</pre>' : '';
-
-		$status = array();
-		foreach((array)common()->sphinx_query('SHOW STATUS') as $v) {
-			$status[$v['Variable_name']] = $v['Value'];
-		}
-		if ($status) {
-			$body .= $this->_show_key_val_table($status);
-		}
+		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
 		return $body;
 	}
 

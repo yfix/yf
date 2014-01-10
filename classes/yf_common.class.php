@@ -31,8 +31,6 @@ class yf_common {
 	public $TRANSLIT_FROM	= 'cp1251';
 	/** @var string Required for the compatibility with old main class */
 	public $MEDIA_PATH		= '';
-	/** @var string Sphinx empty results logging path. Keep empty to disable. Example: /tmp/count_sphinx_empty.log */
-	public $SPHINX_EMPTY_LOG_PATH = '';	
 
 	/**
 	* Constructor
@@ -1175,13 +1173,13 @@ class yf_common {
 	* Sphinx QL query wrapper
 	*/
 	function sphinx_query ($sql, $need_meta = false) {
-		return _class('sphinxsearch', 'classes/common/')->query($sql, $need_meta);
+		return _class('sphinxsearch')->query($sql, $need_meta);
 	}
 
 	/**
 	*/
 	function sphinx_escape_string ($string) {
-		return _class('sphinxsearch', 'classes/common/')->escape_string($string);
+		return _class('sphinxsearch')->escape_string($string);
 	}
 
 	/**

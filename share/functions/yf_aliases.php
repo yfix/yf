@@ -199,10 +199,10 @@ if (!function_exists('gmtime')) {
 	function gmtime () { return common()->gmtime(); }
 }
 if (!function_exists('sphinx_query')) {
-	function sphinx_query ($sql, $need_meta = false) { return common()->sphinx_query($sql, $need_meta); }
+	function sphinx_query ($sql, $need_meta = false) { return _class('sphinxsearch')->query($sql, $need_meta); }
 }
 if (!function_exists('sphinx_escape_string')) {
-	function sphinx_escape_string ($string) { return common()->sphinx_escape_string($string); }
+	function sphinx_escape_string ($string) { return _class('sphinxsearch')->escape_string($string); }
 }
 if (!function_exists('html')) {
 	function html ($params) { return _class('html')->chained_wrapper($params); }
