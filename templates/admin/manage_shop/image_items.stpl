@@ -8,3 +8,9 @@
 {if("del_url" ne "")}
 		<a href="{del_url}" class="btn btn-mini"><i class="icon-trash"></i> {t(Delete)}</a><br/>
 {/if}
+{if("search_url" ne "")}
+<br />
+<a href="{search_url}" class="btn btn-mini btn-success">{t(Search images)}</a>
+<br />
+<br />
+{/if}

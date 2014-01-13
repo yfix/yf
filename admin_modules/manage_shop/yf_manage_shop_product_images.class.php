@@ -115,7 +115,7 @@ class yf_manage_shop_product_images{
 		$url = str_replace(array_keys($replace), array_values($replace), $url);
 		$clean_image_url = str_replace(array_keys($replace), array_values($replace), $clean_image_url);
 
-		foreach ((array)$_FILES['image'] ['tmp_name'] as $v) {
+		foreach ((array)$_FILES['image']['tmp_name'] as $v) {
 			$md5 = md5_file($v);
 			$db_item = db()->query_fetch('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id.' AND md5="'._es($md5).'"');
 			if (!empty($db_item)) {
@@ -165,6 +165,23 @@ class yf_manage_shop_product_images{
 		if (empty($product_info)) {
 			return js_redirect($_SERVER['HTTP_REFERER'], true, 'wrong product ID');
 		}
+
+		if (!empty($_POST['src'])) {
+			$tmp_file = '/tmp/search_image_'.$_GET['id'];
+			if (!copy($_POST['src'], $tmp_file)) {
+				_re("Error. Bad image.");
+			} else {
+				$_FILES['image']['tmp_name'][] = $tmp_file;
+				if(!empty($_POST['w']) && !empty($_POST['h'])){
+					common()->crop_image($tmp_file, $tmp_file, $_POST['w'], $_POST['h'], $_POST['x'], $_POST['y']);
+				}
+			}
+		}
+
+		// Image upload
+		if (!empty($_FILES)) {
+			$this->product_image_upload();
+		} 
 
 		$images = common()->shop_get_images($product_info['id']);
 		$base_url = WEB_PATH;
