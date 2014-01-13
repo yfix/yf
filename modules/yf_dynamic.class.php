@@ -447,8 +447,14 @@ class yf_dynamic {
 		} elseif (isset($_GET['param'])) {
 			$param = $_GET['param'];
 		}
-// TODO: need to set list of allowed "param" values, example: user.login, user.email, etc
-		print ( _class('validate')->$func($in, array('param' => $param)) ? 'ok' : 'ko' );
-		return true;
+		$allowed_params = array(
+			'user.login',
+			'user.email',
+			'user.nick',
+		);
+		if (strlen($param) && !in_array($param, $allowed_params)) {
+			return print 'Error: not allowed param';
+		}
+		return print ( _class('validate')->$func($in, array('param' => $param)) ? 'ok' : 'ko' );
 	}
 }
