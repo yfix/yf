@@ -470,6 +470,13 @@ class yf_dynamic {
 				$out = array('ko' => 1);
 			}
 		}
-		return print json_encode($out);
+		$is_ajax = conf('IS_AJAX');
+		if ($is_ajax) {
+			header('Content-type: application/json');
+		}
+		print json_encode($out);
+		if ($is_ajax) {
+			exit;
+		}
 	}
 }
