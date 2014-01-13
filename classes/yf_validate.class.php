@@ -696,6 +696,7 @@ class yf_validate {
 
 	/***/
 	function ajax_is_unique($in, $params = array(), $fields = array()) {
+// TODO: need to set list of allowed "param" values, example: user.login, user.email, etc in dynamic->ajax_validate()
 		return $this->is_unique($in, $params, $fields);
 	}
 }
