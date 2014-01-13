@@ -431,10 +431,10 @@ class yf_dynamic {
 		} elseif (isset($_GET['page'])) {
 			$in = $_GET['page'];
 		}
-		if (!$_GET['id'] || is_null($in)) {
-			return print 'Error: empty params';
+		if (is_null($in)) {
+			return print 'Error: empty data';
 		}
-		$func = preg_replace('~[^a-z0-9_]+~ims', '', $_GET['id']);
+		$func = preg_replace('~[^a-z0-9_]+~ims', '', (isset($_POST['func']) ? $_POST['func'] : (isset($_GET['func']) ? $_GET['func'] : $_GET['id'])));
 		if (!preg_match('~^[a-z][a-z0-9_]+$~ims', $func)) {
 			return print 'Error: wrong func name';
 		}
@@ -448,6 +448,7 @@ class yf_dynamic {
 			$param = $_GET['param'];
 		}
 // TODO: need to set list of allowed "param" values, example: user.login, user.email, etc
-		return print ( _class('validate')->$func($in, array('param' => $param)) ? 'ok' : 'ko' );
+		print ( _class('validate')->$func($in, array('param' => $param)) ? 'ok' : 'ko' );
+		return true;
 	}
 }
