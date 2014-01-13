@@ -245,6 +245,7 @@ class yf_debug_info {
 			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
+			'HTTP_OUT_HEADERS'	=> _prepare_html(headers_list()),
 		);
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;

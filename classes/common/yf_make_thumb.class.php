@@ -420,6 +420,7 @@ class yf_make_thumb {
 			if($output_type){
 				$I->set_output_type($output_type);
 			}
+			_class('dir')->mkdir(dirname($dest_file_path));
 			$I->save($dest_file_path);
 			$result = true;
 		}

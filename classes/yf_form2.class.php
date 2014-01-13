@@ -1863,10 +1863,9 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'location';
 		}
-
 // TODO
 		return $this->text($name, $data, $extra, $replace);
-
+/*
 		$data = array();
 		if ($extra['for_type'] == 'admin') {
 		} else {
@@ -1876,6 +1875,7 @@ class yf_form2 {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=blocks' : './?object=blocks';
 		}
 		return $this->list_box($name, $data, $extra, $replace);
+*/
 	}
 
 	/**
@@ -2018,7 +2018,6 @@ class yf_form2 {
 		return $func($extra, $replace, $this);
 	}
 
-
 	/**
 	*/
 	function custom_fields($name, $custom_fields, $extra = array(), $replace = array()) {
@@ -2151,7 +2150,6 @@ class yf_form2 {
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
 			$attrs_names = array('id','name','href','class','style','target');
-// TODO: use CSS abstraction layer
 			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
 		if ($this->_chained_mode) {
@@ -2248,12 +2246,14 @@ class yf_form2 {
 			if ($extra['rewrite']) {
 				$link_url = url($link_url);
 			}
-			$is_active = $r[$extra['name']];
-// TODO: use CSS abstraction layer
-			$html_0	= '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '.t('Disabled').'</button>';
-			$html_1 = '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> '.t('Active').'</button>';
-
-			return ' <a href="'.$link_url.'" class="change_active">'.($is_active ? $html_1 : $html_0).'</a> ';
+			$is_active = (bool)$r[$extra['name']];
+			if (!$extra['items']) {
+				if (!isset($_this->_pair_active_buttons)) {
+					$_this->_pair_active_buttons = main()->get_data('pair_active_buttons');
+				}
+				$extra['items'] = $_this->_pair_active_buttons;
+			}
+			return ' <a href="'.$link_url.'" class="change_active">'.$extra['items'][$is_active].'</a> ';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
