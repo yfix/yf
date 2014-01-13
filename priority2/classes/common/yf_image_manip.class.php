@@ -195,14 +195,14 @@ class yf_image_manip {
 		}
 		// Get file extentions
 		$ext = common()->get_file_ext(basename($original_path));
-		if (!empty($ext) && $ext == "jpg" | $ext == "jpeg") {
-			$src_resource		= imagecreatefromjpeg($original_path);
-		}
-		if (!empty($ext) && $ext == "gif") {
-			$src_resource		= imagecreatefromgif($original_path);
-		}
-		if (!empty($ext) && $ext == "png") {
-			$src_resource		= imagecreatefrompng($original_path);
+		if (!empty($ext) && ($ext == "jpg" || $ext == "jpeg")) {
+			$src_resource	= imagecreatefromjpeg($original_path);
+		} elseif (!empty($ext) && $ext == "gif") {
+			$src_resource	= imagecreatefromgif($original_path);
+		} elseif (!empty($ext) && $ext == "png") {
+			$src_resource	= imagecreatefrompng($original_path);
+		} else {
+			return false;
 		}
 		$rotate_resource	= imagerotate($src_resource, $angle, 0);
 		if (!imagejpeg($rotate_resource, $dest_file_path, 100)){
@@ -224,14 +224,18 @@ class yf_image_manip {
 		// crop original image
 		// Get file extentions
 		$ext = common()->get_file_ext(basename($original_path));
-		if (!empty($ext) && $ext == "jpg" | $ext == "jpeg") {
+		if (empty($ext)) {
+			$ext = getimagesize($original_path);
+			$ext = str_replace('image/', '', $ext['mime']);
+		}
+		if (!empty($ext) && ($ext == "jpg" || $ext == "jpeg")) {
 			$src_resource	= imagecreatefromjpeg($original_path);
-		}
-		if (!empty($ext) && $ext == "gif") {
+		} elseif (!empty($ext) && $ext == "gif") {
 			$src_resource	= imagecreatefromgif($original_path);
-		}
-		if (!empty($ext) && $ext == "png") {
+		} elseif (!empty($ext) && $ext == "png") {
 			$src_resource	= imagecreatefrompng($original_path);
+		} else {
+			return false;
 		}
 		$dest_resource	= imagecreatetruecolor($crop_width, $crop_height);
 		$result			= imagecopy($dest_resource, $src_resource, 0, 0, $pos_left, $pos_top, $crop_width, $crop_height);

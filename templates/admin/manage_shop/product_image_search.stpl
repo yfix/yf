@@ -6,11 +6,25 @@
 <br />
 <legend>{t(Selected image)}</legend>
 <p class="lead"><em><b>{t(Hint)}:</b></em> {t(You can crop image by clicking on it)}</p>
-<div class="crop_container">
-	<img id="jcrop_target" src="" />
-</div>
+
+<table cellpadding="0" cellspacing="0" border="0" width="80%">
+	<tbody>
+		<tr>
+			<td>
+				<div class="crop_container">
+					<img id="jcrop_target" src="" />
+				</div>
+			</td>
+			<td>
+				<div style="width:100px;height:100px;overflow:hidden;margin-left:5px;">
+					<img src="" id="preview" />
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
 <form action="{form_action}" method="post" class="form-horizontal">
-	<input type="hidden" name="crop" />
+	<input type="hidden" name="src" />
 	<input type="hidden" name="x" />
 	<input type="hidden" name="y" />
 	<input type="hidden" name="w" />
@@ -51,13 +65,24 @@
 		img.src = url;
 	}
 
+	function showPreview(coords) {
+		var rx = 100 / coords.w;
+		var ry = 100 / coords.h;
+
+		$('#preview').css({
+			width: Math.round(rx * 500) + 'px',
+			height: Math.round(ry * 370) + 'px',
+			marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+			marginTop: '-' + Math.round(ry * coords.y) + 'px'
+		});
+	}
+
 	function setFrame(data) {
-		console.log(data);
-		$('input[name="crop"]').val(true);
 		$('input[name="x"]').val(data.x);
 		$('input[name="y"]').val(data.y);
 		$('input[name="w"]').val(data.w);
 		$('input[name="h"]').val(data.h);
+		showPreview(data);
 	}
 
 	$(function(){
@@ -70,8 +95,9 @@
 			initJcrop();
 			function initJcrop() {
 				jcrop_api = $.Jcrop(crop_dom, {
-					onChange:  setFrame,
-					onnSelect: setFrame
+   					onChange:    setFrame,
+   					onnSelect:   setFrame,
+   					aspectRatio: 1,
 				});
 			};
 		});
@@ -85,8 +111,11 @@
 		});
 
 		modal_dom.on('click', '.select', function() {
-			crop_dom.attr('src', modal_dom.find('img').attr('src'));
-			jcrop_api.setImage(modal_dom.find('img').attr('src')); 
+			var src = modal_dom.find('img').attr('src');
+			crop_dom.attr('src', src);
+			jcrop_api.setImage(src); 
+			$('input[name="src"]').val(src);
+			$('#preview').attr('src', src);
 		});
 
 

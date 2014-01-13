@@ -6,5 +6,46 @@ $(function(){
 	})
 })
 </script>
+<script type="text/javascript">
+$(function(){
+	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
+	var ajax_link_validate = '{url(dynamic,ajax_validate)}';
+	var ajax_validate_cache = {};
+	$('input[data-ajax-validate]', 'form').on('blur', function(i){
+		var _val = $(this).val();
+		if (!_val.length) {
+			return false;
+		}
+		var validate_rules_str = $(this).attr('data-ajax-validate');
+		var result = '';
+		var cache_key = validate_rules_str + '-' + _val;
+		if (typeof ajax_validate_cache[cache_key] != 'undefined') {
+			result = ajax_validate_cache[cache_key];
+			console.log(result)
+		} else {
+			var validate_rules_arr = {}
+			// is_unique=user.login&other_rule=other_param
+			$.each(validate_rules_str.split('&'), function(i1, v1) {
+				var _splitted = v1.split('=');
+				validate_rules_arr[_splitted[0]] = _splitted[1];
+			})
+			var rules_to_post = {}
+			$.each(validate_rules_arr, function(rule_name, rule_param) {
+				rules_to_post[rule_name] = {
+					'func' : rule_name,
+					'param': rule_param,
+					"data" : _val
+				}
+			})
+			$.post( ajax_link_validate, {"rules" : rules_to_post}, function(data) {
+				result = data
+				console.log(result)
+				ajax_validate_cache[cache_key] = result
+			})
+		}
+		return result;
+	})
+})
+</script>
 
 {include("debug_console_js")}

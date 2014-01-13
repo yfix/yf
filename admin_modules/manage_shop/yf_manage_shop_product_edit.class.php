@@ -90,10 +90,11 @@ class yf_manage_shop_product_edit{
 		foreach((array)$images as $A) {
 			$product_image_delete_url = './?object=manage_shop&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
 			$replace2 = array(
-				'img_path' 		=> $base_url . $A['big'],
-				'thumb_path'	=> $base_url . $A['thumb'],
-				'del_url' 		=> $product_image_delete_url,
-				'image_key'		=> $A['id'],
+				'img_path'   => $base_url . $A['big'],
+				'thumb_path' => $base_url . $A['thumb'],
+				'del_url'    => $product_image_delete_url,
+				'image_key'  => $A['id'],
+				'search_url' => './?object=manage_shop&action=product_image_search&id='.$product_info['id'],
 			);
 			$items .= tpl()->parse('manage_shop/image_items', $replace2);
 		}

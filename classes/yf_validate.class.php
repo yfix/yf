@@ -693,10 +693,4 @@ class yf_validate {
 #	function _validate_url_by_http($url) {
 #		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
 #	}
-
-	/***/
-	function ajax_is_unique($in, $params = array(), $fields = array()) {
-// TODO: need to set list of allowed "param" values, example: user.login, user.email, etc in dynamic->ajax_validate()
-		return $this->is_unique($in, $params, $fields);
-	}
 }

@@ -364,6 +364,13 @@ class yf_common {
 	function multi_upload_image($new_file_path, $k , $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
 		return _class('multi_upload_image', 'classes/common/')->go($new_file_path, $k, $name_in_form, $max_image_size, $is_local);
 	} 
+	
+	/**
+	* Do crop image
+	*/
+	function crop_image($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $pos_left, $pos_top) {
+		return _class('image_manip', 'classes/common/')->crop($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $pos_left, $pos_top);
+	} 
 
 	/**
 	* Do upload archive file (zip, rar, tar accepted)

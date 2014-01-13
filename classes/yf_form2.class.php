@@ -695,8 +695,8 @@ class yf_form2 {
 			if (isset($vr['required'])) {
 				$extra['required'] = 1;
 			}
-			if (isset($vr['ajax_is_unique'])) {
-				$extra['data-ajax-validate']['is_unique'] = $vr['ajax_is_unique'];
+			if (isset($vr['is_unique'])) {
+				$extra['data-ajax-validate']['is_unique'] = $vr['is_unique'];
 			}
 // TODO: decide if it is safe to show this inside html
 #			if ($vr && is_array($vr)) {

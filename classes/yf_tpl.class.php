@@ -897,19 +897,32 @@ class yf_tpl {
 		}
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
-			$tmp_params	 = explode(';', str_replace(',', ';', $params));
-			$params  = array();
-			// Convert params string into array
-			foreach ((array)$tmp_params as $v) {
-				$attrib_name = '';
-				$attrib_value = '';
-				if (false !== strpos($v, '=')) {
-					list($attrib_name, $attrib_value) = explode('=', trim($v));
+			// Url like this: /object/action/id
+			if ($params[0] == '/') {
+				// Do nothing, just directly pass this to url() as string
+			} elseif (false !== strpos($params, '=')) {
+				$tmp_params	 = explode(';', str_replace(',', ';', $params));
+				$params  = array();
+				// Convert params string into array
+				foreach ((array)$tmp_params as $v) {
+					$attrib_name = '';
+					$attrib_value = '';
+					if (false !== strpos($v, '=')) {
+						list($attrib_name, $attrib_value) = explode('=', trim($v));
+					}
+					$params[trim($attrib_name)] = trim($attrib_value);
 				}
-				$params[trim($attrib_name)] = trim($attrib_value);
+			} else {
+				list($object, $action, $id, $page) = explode(';', str_replace(',', ';', $params));
+				$params = array(
+					'object'	=> $object,
+					'action'	=> $action,
+					'id'		=> $id,
+					'page'		=> $page,
+				);
 			}
 		}
-		return _force_get_url($params);
+		return url($params);
 	}
 
 	/**

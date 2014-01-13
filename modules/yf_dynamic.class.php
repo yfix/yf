@@ -423,31 +423,60 @@ class yf_dynamic {
 	function ajax_validate() {
 		main()->NO_GRAPHICS = true;
 		header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet');
-		$in = null;
-		if (isset($_POST['data'])) {
-			$in = $_POST['data'];
-		} elseif (isset($_GET['data'])) {
-			$in = $_GET['data'];
-		} elseif (isset($_GET['page'])) {
-			$in = $_GET['page'];
+		$allowed_params = array(
+			'user.login',
+			'user.email',
+			'user.nick',
+		);
+		$rules = array();
+		$errors = array();
+		if (isset($_POST['rules']) && is_array($_POST['rules'])) {
+			$rules = $_POST['rules'];
+		} else {
+			$rules[] = array(
+				'func'	=> preg_replace('~[^a-z0-9_]+~ims', '', (isset($_POST['func']) ? $_POST['func'] : (isset($_GET['func']) ? $_GET['func'] : $_GET['id']))),
+				'data'	=> isset($_POST['data']) ? $_POST['data'] : $_GET['data'],
+				'param'	=> isset($_POST['param']) ? $_POST['param'] : $_GET['param'],
+			);
 		}
-		if (!$_GET['id'] || is_null($in)) {
-			return print 'Error: empty params';
+		$class_validate = _class('validate');
+		$is_valid = false;
+		foreach ((array)$rules as $rule) {
+			if (is_null($rule['data'])) {
+				$errors[] = 'empty data';
+			}
+			if (strlen($rule['param']) && !in_array($rule['param'], $allowed_params)) {
+				$errors[] = 'not allowed param';
+			}
+			if (!preg_match('~^[a-z][a-z0-9_]+$~ims', $rule['func'])) {
+				$errors[] = 'wrong func name';
+			} elseif (!method_exists($class_validate, $rule['func'])) {
+				$errors[] = 'no such func';
+			}
+			if ($errors) {
+				break;
+			}
+			$is_valid = $class_validate->$rule['func']($rule['data'], array('param' => $rule['param']));
+			if (!$is_valid) {
+				break;
+			}
 		}
-		$func = preg_replace('~[^a-z0-9_]+~ims', '', $_GET['id']);
-		if (!preg_match('~^[a-z][a-z0-9_]+$~ims', $func)) {
-			return print 'Error: wrong func name';
+		if ($errors) {
+			$out = array('error' => $errors);
+		} else {
+			if ($is_valid) {
+				$out = array('ok' => 1);
+			} else {
+				$out = array('ko' => 1);
+			}
 		}
-		if (!method_exists(_class('validate'), $func)) {
-			return print 'Error: no such func';
+		$is_ajax = conf('IS_AJAX');
+		if ($is_ajax) {
+			header('Content-type: application/json');
 		}
-		$param = null;
-		if (isset($_POST['param'])) {
-			$param = $_POST['param'];
-		} elseif (isset($_GET['param'])) {
-			$param = $_GET['param'];
+		print json_encode($out);
+		if ($is_ajax) {
+			exit;
 		}
-// TODO: need to set list of allowed "param" values, example: user.login, user.email, etc
-		return print ( _class('validate')->$func($in, array('param' => $param)) ? 'ok' : 'ko' );
 	}
 }
