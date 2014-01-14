@@ -119,7 +119,7 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function add () {
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (!_ee()) {
 				db()->insert('dashboards', db()->es(array(
 					'name'		=> $_POST['name'],
@@ -149,7 +149,7 @@ class yf_manage_dashboards {
 		if (!$ds['id']) {
 			return _e('No such record');
 		}
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (!_ee()) {
 				db()->update('dashboards', db()->es(array(
 					'data'	=> json_encode($_POST['ds_data']),

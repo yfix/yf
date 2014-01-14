@@ -273,7 +273,7 @@ class yf_help extends yf_module {
 			return _e("This ticket is already closed!");
 		}
 		// Save data
-		if ($_POST) {
+		if (main()->is_post()) {
 			db()->UPDATE("help_tickets", array(
 				"status"		=> "closed",
 				"closed_date"	=> time(),

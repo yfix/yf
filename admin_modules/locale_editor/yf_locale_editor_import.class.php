@@ -7,7 +7,7 @@ class yf_locale_editor_import {
 	/**
 	*/
 	function import_vars() {
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (empty($_FILES['import_file']['name'])) {
 				_re('Please select file to process', 'name');
 			}

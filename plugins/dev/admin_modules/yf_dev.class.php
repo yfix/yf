@@ -107,7 +107,7 @@ class yf_dev{
 		$server_alias_regexp= "#ServerAlias ([^\r\n]+)#ims";
 		$doc_root_regexp	= "#DocumentRoot ([a-z0-9\*\.\/\-\_]+)#ims";
 		// Process config
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Do parse pache conf
 			preg_match_all($vhost_regexp, $_POST["apache_conf"], $m);
 			foreach ((array)$m["host"] as $k => $listen) {

@@ -66,7 +66,7 @@ class yf_manage_comments {
 		if (empty($a)) {
 			return _e('No such record');
 		}
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (empty($_POST['text'])) {
 				_re('Comment text required');
 			}

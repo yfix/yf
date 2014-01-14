@@ -8,7 +8,7 @@ class yf_locale_editor_export {
 	* Export vars
 	*/
 	function export_vars() {
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (empty($_POST['file_format']) || !isset($this->_file_formats[$_POST['file_format']])) {
 				_re(t('Please select file format'));
 			}

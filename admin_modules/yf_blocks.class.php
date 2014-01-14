@@ -220,7 +220,7 @@ class yf_blocks {
 		$a = $_POST;
 
 		$multi_selects = array('methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids');
-		if ($_POST) {
+		if (main()->is_post()) {
 			foreach ($multi_selects as $k) {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
@@ -267,7 +267,7 @@ class yf_blocks {
 		$a = $rule_info;
 
 		$multi_selects = array('methods', 'user_groups', 'themes', 'locales', 'site_ids', 'server_ids');
-		if ($_POST) {
+		if (main()->is_post()) {
 			foreach ($multi_selects as $k) {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}

@@ -129,7 +129,7 @@ class yf_manage_articles extends yf_module {
 		if (!empty($article_info["user_id"])) {
 			$user_info = db()->query_fetch("SELECT id,name,nick FROM ".db('user')." WHERE id=".intval($article_info["user_id"]));
 		}
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (!common()->_error_exists()) {
 				if (!empty($article_info["user_id"]) && $_POST["status"] == "active") {
 					$RECORD_ID	= $_GET["id"];
