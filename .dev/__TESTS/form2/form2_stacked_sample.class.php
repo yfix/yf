@@ -5,14 +5,6 @@ class form2_stacked_sample {
 		$replace = array(
 			'title'			=> 'title',
 			'amount'		=> '50',
-			'type'			=> common()->select_box('type',array(1,2)),
-			'split_period'	=> common()->select_box('split',array(1,2)),
-			'duration'		=> array(
-				'day'	=> 10,
-				'week'	=> 2,
-				'month'	=> 3,
-				'year'	=> 0,
-			),
 		);
 		$body .= form($replace)
 			->text('title')
