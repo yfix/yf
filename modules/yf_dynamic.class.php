@@ -456,6 +456,12 @@ class yf_dynamic {
 			if ($errors) {
 				break;
 			}
+			if ($rule['param'] == 'user.email') {
+				$email_valid = $class_validate->valid_email($rule['data']);
+				if (!$email_valid) {
+					break;
+				}
+			}
 			$is_valid = $class_validate->$rule['func']($rule['data'], array('param' => $rule['param']));
 			if (!$is_valid) {
 				break;
