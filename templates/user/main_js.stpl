@@ -9,20 +9,26 @@ $(function(){
 <script type="text/javascript">
 $(function(){
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
-	var ajax_link_validate = '{url(dynamic,ajax_validate)}';
-	var ajax_validate_cache = {};
+	var yf_ajax_link_validate = '{url(dynamic,ajax_validate)}';
+	var yf_ajax_validate_cache = {};
 	$('input[data-ajax-validate]', 'form').on('blur', function(i){
 		var _this = $(this);
 		var _val = _this.val();
 		if (!_val.length) {
 			return false;
 		}
+		if (typeof _this[0].validity == 'object') {
+			yf_ajax_validation_icon_clear(_this)
+			if (!_this[0].validity.valid) {
+				return false;
+			}
+		}
 		var validate_rules_str = _this.attr('data-ajax-validate');
 		var result = '';
 		var cache_key = validate_rules_str + '-' + _val;
-		if (typeof ajax_validate_cache[cache_key] != 'undefined') {
-			result = ajax_validate_cache[cache_key];
-			ajax_validation_icon_update(_this, result);
+		if (typeof yf_ajax_validate_cache[cache_key] != 'undefined') {
+			result = yf_ajax_validate_cache[cache_key];
+			yf_ajax_validation_icon_update(_this, result);
 //			console.log(result)
 		} else {
 			var validate_rules_arr = {}
@@ -39,26 +45,30 @@ $(function(){
 					"data" : _val
 				}
 			})
-			$.post( ajax_link_validate, {"rules" : rules_to_post}, function(data) {
+			$.post( yf_ajax_link_validate, {"rules" : rules_to_post}, function(data) {
 				result = data
-				ajax_validate_cache[cache_key] = result
-				ajax_validation_icon_update(_this, result);
+				yf_ajax_validate_cache[cache_key] = result
+				yf_ajax_validation_icon_update(_this, result);
 //				console.log(result)
 			})
 		}
 		return result;
 	})
 
-	function ajax_validation_icon_update(_this, result) {
+	function yf_ajax_validation_icon_clear(_this) {
+		_this.closest('.input-group').next('i.ajax-validation-status').remove()
+	}
+
+	function yf_ajax_validation_icon_update(_this, result) {
 		var icon = 'icon-ok-circle fa-check-circle';
 		var color = 'green';
 		var title = 'OK';
-		if (!result['ok']) {
+		if (!result || !result['ok']) {
 			icon = 'icon-ban-circle fa-times-circle';
 			color = 'red';
 			title = 'not good';
 		}
-		_this.closest('.input-group').next('i.ajax-validation-status').remove()
+		yf_ajax_validation_icon_clear(_this)
 		_this.closest('.input-group').after('&nbsp;<i class="ajax-validation-status icon icon-large ' + icon + '" style="color:' + color + ';" title="' + title + '"></i>');
 	}
 })
