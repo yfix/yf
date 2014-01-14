@@ -1746,6 +1746,13 @@ if ($class_name == 'yf_db_driver_mysql41') {
 	}
 
 	/**
+	* Checks whether current page was requested with POST method
+	*/
+	function is_post() {
+		return ($_SERVER['REQUEST_METHOD'] == 'POST');
+	}
+
+	/**
 	*/
 	function event_subscribe($name, $func, $params = array()) {
 // TODO: events system
