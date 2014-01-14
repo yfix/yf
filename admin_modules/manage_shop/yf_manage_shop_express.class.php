@@ -3,12 +3,13 @@ class yf_manage_shop_express{
 
 	var $alcohol_category = 4;
 
+	function _init(){
+		$this->PATH_TO_PDF = PROJECT_PATH."uploads/pdf/";
+	}
+
 	/**
 	*/
 	function express () {
-		if(intval($_GET['hours'])){
-			return $this->get_pdf();	
-		}
 		$date = date("Y-m-d");
 		$orders_info = db()->query_fetch_all("SELECT * FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date."%'");
 		$orders = array_keys($orders_info);
@@ -51,9 +52,9 @@ class yf_manage_shop_express{
 			->text('name')
 			->text('quantity')
 			->text('product_id')
-			->footer_link("PDF ".$date." 10-12", './?object='.$_GET['object'].'&action=express&hours=10-12')
-			->footer_link("PDF ".$date." 13-15", './?object='.$_GET['object'].'&action=express&hours=13-15')
-			->footer_link("PDF ".$date." 17-20", './?object='.$_GET['object'].'&action=express&hours=17-20')
+			->footer_link("PDF ".$date." 10-12", './?object='.$_GET['object'].'&action=express_pdf&hours=10-12')
+			->footer_link("PDF ".$date." 13-15", './?object='.$_GET['object'].'&action=express_pdf&hours=13-15')
+			->footer_link("PDF ".$date." 17-20", './?object='.$_GET['object'].'&action=express_pdf&hours=17-20')
 			->render(array(
 				'table_attr' => 'id="express_catalog"',
 				'tr' => $table_tr
@@ -67,7 +68,7 @@ class yf_manage_shop_express{
 
 	/**
 	*/
-	function get_pdf() {
+	function express_pdf($send_mail = false) {
 		$date = date("Y-m-d");
 		$hours = intval($_GET['hours']);
 		$orders = db()->get_2d("SELECT id FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date." ".$hours."%' AND status = 1");
@@ -105,14 +106,19 @@ class yf_manage_shop_express{
 				"order"		=> $v['order_id'],
 			);
 		}
-		$out[] = $this->_prepare_pdf_tpl($replace, $order_ids);
+		if($replace)
+			$out[] = $this->_prepare_pdf_tpl($replace, $order_ids);
 		if($replace_alcohol){
 			foreach($replace_alcohol as $order_id => $data){
 				$out[] = $this->_prepare_pdf_tpl($data);
 			}
 		}
 		$out = implode("<pagebreak />", $out);
-		return common()->pdf_page($out);
+		if($send_mail){
+			return array("body" => $out, "name" => date("Y-m-d H-i"));
+		}else{
+			return common()->pdf_page($out);
+		}
 	}
 
 	/**
@@ -154,6 +160,28 @@ class yf_manage_shop_express{
 		);
 		$Q = db()->get_2d('SELECT text FROM '.db('static_pages').' WHERE `name`= "express"');
 		return str_replace($replace_tpl, $replace, $Q[0]);
+	}
+
+	/**
+	*/
+	function mail_pdf(){
+		$time = intval($_GET['hours']);
+		if(empty($time)){
+			return _e("No delivery time");
+		}
+		$pdf = $this->express_pdf(true);
+		if(!$pdf['body']){
+			return false;
+		}	
+		common()->pdf_page($pdf['body'], $pdf['name'], "F");
+		$path_to_pdf = $this->PATH_TO_PDF.$pdf['name'].".pdf";
+		$path_to_pdf = file_exists($path_to_pdf) ? $path_to_pdf : '';
+		_class('_shop_mail', 'modules/shop/')->send_by_event( array(
+			'event'     => 'express_ticket',
+			'message' 	=> $pdf['body'],
+			'attaches'  => array($path_to_pdf),
+		));
+		return true;
 	}
 
 }
