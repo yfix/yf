@@ -290,7 +290,7 @@ class yf_form2 {
 			$extra['class'] = $extra['class'] ?: 'form-horizontal';
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
-			$body = '<form'.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype')).'>'.PHP_EOL;
+			$body = '<form'.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
 			$body .= '<fieldset>';
 			if ($extra['legend']) {
 				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>';
@@ -696,19 +696,21 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$attrs_names = array();
 			$vr = &$_this->_validate_rules_names[$extra['name']];
 			if (isset($vr['required'])) {
 				$extra['required'] = 1;
 			}
-			if (isset($vr['is_unique'])) {
-				$extra['data-ajax-validate']['is_unique'] = $vr['is_unique'];
+			foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
+				$_rule = str_replace('ajax_', '', $rule);
+				if (isset($vr[$rule])) {
+					$extra['data-ajax-validate'][$_rule] = $vr[$rule];
+				}
 			}
 // TODO: decide if it is safe to show this inside html
 #			if ($vr && is_array($vr)) {
 #				$extra['data-validate'] = (array)$extra['data-validate'] + $vr;
 #			}
-			$attrs_names += array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title');
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title');
 			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
