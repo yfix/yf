@@ -10,8 +10,8 @@ class yf_register {
 	function show () {
 		$validate_rules = array(
 			'__form_id__'	=> 'register_form',
-			'login'			=> array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
-			'email'			=> array( 'trim|required|valid_email|is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
+			'login'			=> array( 'trim|required|min_length[2]|max_length[12]|ajax_is_unique[user.login]|xss_clean', function($in){ return module('register')->_login_not_exists($in); } ),
+			'email'			=> array( 'trim|required|valid_email|ajax_is_unique[user.email]', function($in){ return module('register')->_email_not_exists($in); } ),
 			'emailconf'		=> 'trim|required|valid_email|matches[email]',
 			'password'		=> 'trim|required', //|md5
 			'pswdconf'		=> 'trim|required|matches[password]', // |md5
@@ -23,7 +23,7 @@ class yf_register {
 		return form($a, array('legend' => 'Registration'))
 			->validate($validate_rules)
 			->db_insert_if_ok('user', array('login','email','password'), null, array('on_success_text' => 'Your account was created successfully!'))
-			->login()
+			->login(array('pattern' => '^[a-zA-Z0-9]{4,32}$', 'title' => 'Only letters and numbers allowed, min 4, max 32 symbols'))
 			->email()
 			->email('emailconf')
 			->password()
