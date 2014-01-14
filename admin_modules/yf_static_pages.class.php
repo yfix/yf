@@ -62,7 +62,7 @@ class yf_static_pages {
 		if (!$page_info) {
 			return _e('No page info');
 		}
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (isset($_POST['name'])) {
 				$_POST['name'] = preg_replace('/[^a-z0-9\_\-]/i', '_', _strtolower($_POST['name']));
 				$_POST['name'] = str_replace(array('__', '___'), '_', $_POST['name']);

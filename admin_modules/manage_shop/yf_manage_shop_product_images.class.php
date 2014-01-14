@@ -28,7 +28,7 @@ class yf_manage_shop_product_images{
 	 */
 	function set_main_image(){
 		$product_id = intval($_GET['id']);
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'0\' WHERE `product_id`='.$product_id);
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'1\' WHERE `id`='.$_POST['main_image']);
 			module('manage_shop')->_product_images_add_revision($_GET['id']);

@@ -11,7 +11,7 @@ class yf_manage_shop_pics_browser {
 			$active = '';
 		}
 
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			foreach($_POST['delete'] as $k=>$v) {
 				list ($id,$product_id) = explode("_",$k);
 				module('manage_shop')->_product_image_delete($id, $product_id); 

@@ -7,7 +7,7 @@ class yf_manage_shop_product_edit{
 			return 'Empty ID!';
 		}
 		$product_info = db()->query_fetch('SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id']);
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');
 			}

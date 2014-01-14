@@ -6,7 +6,7 @@ class yf_shop__order_step_delivery{
 	*/
 	function _order_step_delivery($FORCE_DISPLAY_FORM = false) {
 		// Validate previous form
-		if (!empty($_POST) && !$FORCE_DISPLAY_FORM) {
+		if (main()->is_post() && !$FORCE_DISPLAY_FORM) {
 			module('shop')->_order_validate_delivery();
 			// Display next form if we have no errors
 			if (!common()->_error_exists()) {
