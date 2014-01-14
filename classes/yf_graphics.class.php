@@ -498,6 +498,9 @@ class yf_graphics {
 			// HTTP/1.0
 			header('Pragma: no-cache');
 		}
+		if (conf('IS_AJAX')/* || main()->is_post()*/) {
+			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
+		}
 		$this->_send_custom_http_headers();
 	}
 
