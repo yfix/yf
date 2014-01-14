@@ -59,7 +59,7 @@ class yf_community {
 			return _error_need_login();
 		}
 		
-		if($_POST){
+		if (main()->is_post()){
 			if($_POST["user"] == ""){
 				_re(t("Account name is required!"));
 			}else{
@@ -201,7 +201,7 @@ class yf_community {
 			return _e(t("only for owner"));
 		}
 
-		if($_POST){
+		if (main()->is_post()){
 			//save data
 			
 			db()->UPDATE("community", array(
@@ -277,7 +277,7 @@ class yf_community {
 			return _e(t("only for owner"));
 		}
 		
-		if($_POST){
+		if (main()->is_post()){
 			db()->UPDATE("community", array(
 				"membership"		=> $_POST["membership"], 
 				"nonmember_posting"	=> $_POST["nonmember_posting"], 
@@ -323,7 +323,7 @@ class yf_community {
 			}
 		}
 		
-		if($_POST){
+		if (main()->is_post()){
 			$Q = db()->query("SELECT * FROM ".db('community_users')." WHERE community_id=".$_GET["id"]."/* AND member = '1'*/");
 			while ($A = db()->fetch_assoc($Q)) {
 				$user_in_community[$A["user_id"]] = $A;

@@ -48,7 +48,7 @@ class yf_manage_news /*extends yf_news*/ {
 	* add
 	*/
 	function add(){
-		if($_POST){
+		if (main()->is_post()){
 			db()->INSERT("news", array(
 				"title"		=> _es($_POST["title"]), 
 				"head_text"	=> _es($_POST["head_text"]), 
@@ -80,7 +80,7 @@ class yf_manage_news /*extends yf_news*/ {
 			return _e("No id");
 		}
 		
-		if($_POST){
+		if (main()->is_post()){
 			db()->UPDATE("news", array(
 				"title"		=> _es($_POST["title"]), 
 				"head_text"	=> _es($_POST["head_text"]), 
