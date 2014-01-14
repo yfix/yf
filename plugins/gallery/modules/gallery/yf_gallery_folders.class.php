@@ -291,7 +291,7 @@ class yf_gallery_folders {
 			$folder_photos[$A["id"]] = $A;
 		}
 		// Do delete
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$NEW_FOLDER_ID = intval($_POST["new_folder_id"]);
 			// Check folder owner
 			if ($NEW_FOLDER_ID && !isset($user_folders[$NEW_FOLDER_ID])) {
@@ -434,7 +434,7 @@ class yf_gallery_folders {
 			return _e(t("No such folder!"));
 		}
 		// Check posted password with stored in folder
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!empty($cur_folder_info["password"]) && $_POST["pswd"] == $cur_folder_info["password"]) {
 				$_SESSION[module('gallery')->SESSION_PSWD_FIELD][$FOLDER_ID] = $cur_folder_info["password"];
 			} else {

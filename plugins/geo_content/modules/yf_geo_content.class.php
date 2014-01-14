@@ -247,7 +247,7 @@ class yf_geo_content {
 			}
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Update user info
 			if (isset($_POST["update_2"]) && main()->USER_ID && !empty($_POST["update_profile"]) && !empty($sel_data["city_name"])) {
 				if ($sel_data["country_code"] != $this->_user_info["country"]

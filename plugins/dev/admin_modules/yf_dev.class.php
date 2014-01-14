@@ -189,7 +189,7 @@ class yf_dev{
 	* Search code
 	*/
 	function code_search() {
-		if (!empty($_POST) && strlen($_POST["text"])) {
+		if (main()->is_post() && strlen($_POST["text"])) {
 			$items = array();
 			foreach ((array)_class('dir')->search(array(INCLUDE_PATH/*, YF_PATH*/), array("", "/\.class\.php/"), "/(svn|git)/", "#".preg_quote($_POST["text"], "#")."#") as $_path) {
 				$items[] = array(
@@ -713,7 +713,7 @@ class yf_dev{
 
 		$location_array = array_keys($folders_to_check);
 
-		if (!empty($_POST) || $internal_request == true) {
+		if (main()->is_post() || $internal_request == true) {
 		
 			if($internal_request){
 				$_POST["path_to_php"] = str_replace("\\", "/", dirname(ini_get("extension_dir"))); 
@@ -855,7 +855,7 @@ class yf_dev{
 
 //TODO atomatic theme download
 
-		if (!empty($_POST) || !empty($_FILES)) {
+		if (main()->is_post() || !empty($_FILES)) {
 
 			if ($_FILES["theme"]["type"] != "application/zip") {
 				_re("Not a zip file");

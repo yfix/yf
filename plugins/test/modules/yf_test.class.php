@@ -39,7 +39,7 @@ class yf_test {
 	// 
 	function change_debug () {
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$_SESSION['stpls_inline_edit']		= intval((bool)$_POST['stpl_edit']);
 			$_SESSION['locale_vars_edit']		= intval((bool)$_POST['locale_edit']);
 			$_SESSION['hide_debug_console']		= intval((bool)$_POST['hide_console']);
@@ -212,7 +212,7 @@ class yf_test {
 	function synonym () {
 		// NOTE: encoding = utf8
 		$source = '{сегодня|вчера|20 лет назад} [test|||test1] [te|s|t3|test4]#3# [te|s|t|5[te|s|t|5]#1,4#|t|e|s|t6]#6,4# {Жак Ив Кусто|Леонид Хрущев{ и его колеги|, а также родственники жены| в компании инопланетян}} {сообщил|утонул|занимался сексом c{ {Хилари Клинтон|Перис Хилтон|Надеждой Крупской|Мерлином Менсоном}}} {на %DEMO% Елисейских полях|на полях|в подезде|в ванной|в ванной с утятами|на унитазе|пьяным|%DEMO%|%DEMO%|}';
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$source = $_POST['source'];
 			$OBJ = _class('synonymizer');
 			$result .= '1) '. $OBJ->process($source). PHP_EOL;
@@ -235,7 +235,7 @@ class yf_test {
 			unlink(INCLUDE_PATH. $img_src);
 		}
 		// Do upload and resize to 500 x 500 px
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$img_dir = INCLUDE_PATH. dirname($img_src);
 			_mkdir_m($img_dir);
 			$upload_result	= common()->upload_image(INCLUDE_PATH. $img_src);
@@ -275,7 +275,7 @@ class yf_test {
 	// 
 	function filter_text (){
 		// Do process
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$BB_CODES_OBJ = _class('bb_codes');
 			if (is_object($BB_CODES_OBJ)) {
 				$result = $_POST['text'];
@@ -296,7 +296,7 @@ class yf_test {
 	
 	// 
 	function notice () {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			common()->set_notice($_POST['notice']);
 			return js_redirect($_SERVER['HTTP_REFERER']);
 		}

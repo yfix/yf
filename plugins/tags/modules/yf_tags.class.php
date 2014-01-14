@@ -221,7 +221,7 @@ class yf_tags {
 	*/
 	function search() {
 
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			foreach ((array)$_POST as $k => $V) {
 				if (strstr($k, "search_cats_")) {
 					$_obj_name_array[] = _es($this->avail_objects[$V]);
@@ -411,7 +411,7 @@ class yf_tags {
 		if (empty(main()->USER_ID)) {
 			 return _error_need_login();
 		}
-		if (!empty($_POST) && $this->ALLOWED_GROUP != $_POST["allowed_group"]) {
+		if (main()->is_post() && $this->ALLOWED_GROUP != $_POST["allowed_group"]) {
 			// Saving new settings if changed
 			db()->UPDATE("tags_settings", array(
 					"allowed_group" => $_POST["allowed_group"]

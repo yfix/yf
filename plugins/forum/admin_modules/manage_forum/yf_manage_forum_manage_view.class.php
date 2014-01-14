@@ -266,7 +266,7 @@ class yf_manage_forum_manage_view {
 		$forum_name = module("forum")->_forums_array[$forum_info['id']]["name"];
 		$cat_name	= $forum_info["category"] ? module("forum")->_forum_cats_array[$forum_info["category"]]["name"] : module("forum")->_forum_cats_array[module("forum")->_forums_array[$forum_info["forum"]]["category"]]["name"];
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$SPAM_EXISTS = false;//db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE created>".(time() - module("forum")->ANTISPAM_TIME)." AND poster_ip='".common()->get_ip()."' LIMIT 1");
 			if (!$SPAM_EXISTS) {
 				$sql = "INSERT INTO ".db('forum_topics')." (
@@ -374,7 +374,7 @@ class yf_manage_forum_manage_view {
 			$text = "[quote=\"".$post_info["user_name"]."\"]".$post_info["text"]."[/quote]";
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$SPAM_EXISTS = false;//db()->query_num_rows("SELECT id FROM ".db('forum_posts')." WHERE created>".(time() - module("forum")->ANTISPAM_TIME)." AND poster_ip='".common()->get_ip()."' LIMIT 1");
 			if ($topic_info['id'] && !$SPAM_EXISTS) {
 				db()->INSERT("forum_posts", array(

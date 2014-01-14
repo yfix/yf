@@ -19,7 +19,7 @@ class yf_manage_forum_manage_main {
 			return _e(t("No such category"));
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$sql = "UPDATE ".db('forum_categories')." SET 
 						name = '"._es($_POST["name"])."',
 						desc = '"._es($_POST["description"])."',
@@ -49,7 +49,7 @@ class yf_manage_forum_manage_main {
 	// Admin: add category
 	function _add_category () {
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$sql = "INSERT INTO ".db('forum_categories')." (
 					name,
 					desc,
@@ -125,7 +125,7 @@ class yf_manage_forum_manage_main {
 			return _e(t("No such forum"));
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Recoginize parent
 			$_parent_forum_id = intval($_POST["forum"]);
 			if (substr($_POST["forum"], 0, 2) == "c_") {
@@ -207,7 +207,7 @@ class yf_manage_forum_manage_main {
 	function _add_forum () {
 		$_GET['id'] = intval($_GET['id']);
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Recoginize parent
 			$_parent_forum_id = intval($_POST["forum"]);
 			if (substr($_POST["forum"], 0, 2) == "c_") {
@@ -299,7 +299,7 @@ class yf_manage_forum_manage_main {
 			return _e(t("No such topic"));
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$_POST["forum"] = intval($_POST["forum"]);
 			if (empty($_POST["forum"])) {
 				_re(t("Forum id required"));
@@ -427,7 +427,7 @@ class yf_manage_forum_manage_main {
 			return _e(t("No such post"));
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$sql = "UPDATE ".db('forum_posts')." SET 
 						subject = '"._es($_POST["subject"])."',
 						status = '"._es($_POST["activity"])."',

@@ -186,7 +186,7 @@ class yf_manage_articles extends yf_module {
 
 	// Add record
 	function add () {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!common()->_error_exists()) {
 				db()->INSERT("articles_texts", array(
 					"cat_id"		=> intval($_POST["cat_id"]),

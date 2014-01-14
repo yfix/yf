@@ -148,7 +148,7 @@ class yf_interests {
 		// Try to get data
 		$interests_info = db()->query_fetch("SELECT * FROM ".db('interests')." WHERE user_id=".intval($USER_ID));
 		// Save form
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Cleanup keywords
 			$_POST["keywords"] = $this->_pack_for_db($_POST["keywords"]);
 			// Check for errors and continue

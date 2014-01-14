@@ -108,7 +108,7 @@ class yf_poll {
 		}
 
 		// Check posted data and save
-		if (!empty($_POST) && $_POST["choice"]) {
+		if (main()->is_post() && $_POST["choice"]) {
 			if (!empty($last_vote)) {
 				if ($this->ONE_VOTE_FOR_USER) {
 					_re(t("You allowed to vote only one time in this poll"));
@@ -288,7 +288,7 @@ class yf_poll {
 	* Create new poll
 	*/
 	function create ($params = array()) {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$this->_create($params);
 		}
 	}

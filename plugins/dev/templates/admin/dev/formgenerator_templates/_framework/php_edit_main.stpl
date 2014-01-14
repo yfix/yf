@@ -7,7 +7,7 @@
 		if (!$A) {
 			return _e("No id");
 		}
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			db()->UPDATE("%table%", array(
 %items%
 			), "`id`=".intval($_GET["id"]));
@@ -29,7 +29,7 @@
 	* Add item
 	*/
 	function add () {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			db()->INSERT("%table%", array(
 %items%
 			));

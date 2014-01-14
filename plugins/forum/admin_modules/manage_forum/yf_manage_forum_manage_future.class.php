@@ -111,7 +111,7 @@ class yf_manage_forum_manage_future {
 			return _e(t("No user accounts specified for you."));
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$_POST["user_id"] = intval($_POST["user_id"]);
 			if (empty($_POST["user_id"]) || !isset($_users_array[$_POST["user_id"]])) {
 				_re(t("User id required"));
@@ -188,7 +188,7 @@ class yf_manage_forum_manage_future {
 		$topic_name = $topic_info["name"];
 		$cat_name	= $topic_info["category"] ? module("forum")->_forum_cats_array[$topic_info["category"]]["name"] : module("forum")->_forum_cats_array[module("forum")->_forums_array[$topic_info["forum"]]["category"]]["name"];
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Process multi-add
 			foreach ((array)$_POST["text"] as $_item_id => $_tmp) {
 				$DATA = array(
@@ -280,7 +280,7 @@ class yf_manage_forum_manage_future {
 		$Q = db()->query("SELECT * FROM ".db('admin')." ORDER BY first_name ASC");
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A["id"]] = $A;
 		// Do save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			db()->UPDATE("forum_future_posts", array(
 				"forum_id"			=> intval($_POST["forum"] ? $_POST["forum"] : $post_info["forum_id"]),
 				"user_id"			=> intval($_POST["user_id"]),
@@ -560,7 +560,7 @@ class yf_manage_forum_manage_future {
 		}
 		ksort($users_ids);
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Cleanup posted ids
 			$new_users_ids = array();
 			foreach (explode(",", $_POST["users_ids"]) as $_user_id) {
