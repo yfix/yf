@@ -5,24 +5,11 @@
 {/if}
 <br />
 <legend>{t(Selected image)}</legend>
-<p class="lead"><em><b>{t(Hint)}:</b></em> {t(You can crop image by clicking on it)}</p>
+<p id="hint_for_image" class="lead" style="display:none;"><em><b>{t(Hint)}:</b></em> {t(Optionally, you can crop the picture highlighting the mouse area on it. The selected area will be used to upload)}</p>
 
-<table cellpadding="0" cellspacing="0" border="0" width="80%">
-	<tbody>
-		<tr>
-			<td>
-				<div class="crop_container">
-					<img id="jcrop_target" src="" />
-				</div>
-			</td>
-			<td>
-				<div style="width:100px;height:100px;overflow:hidden;margin-left:5px;">
-					<img src="" id="preview" />
-				</div>
-			</td>
-		</tr>
-	</tbody>
-</table>
+<div class="crop_container">
+	<img id="jcrop_target" src="" />
+</div>
 <form action="{form_action}" method="post" class="form-horizontal">
 	<input type="hidden" name="src" />
 	<input type="hidden" name="x" />
@@ -30,12 +17,12 @@
 	<input type="hidden" name="w" />
 	<input type="hidden" name="h" />
 	<br />
-	<button type="submit" class="btn btn-success">{t(Upload image)}</button>
+	<button type="submit" class="btn btn-success btn-lg btn-large">{t(Upload image)}</button>
 </form>
 <br />
 <br />
 <legend>{t(List of found images)}</legend>
-<p class="lead"><em><b>{t(Hint)}:</b></em> {t(Click on image which you need to upload)}</p>
+<p class="lead"><em><b>{t(Hint)}:</b></em> {t(Click on image for selecting)}</p>
 <ul class="unstyled">
 	<li><b><span class="text-error">{t(Red)}</span> - {t(Too small size)}</b></li>
 	<li><b><span class="text-success">{t(Green)}</span> - {t(Good size)}</b></li>
@@ -48,6 +35,11 @@
 	var search_url = '{search_url}';
 	var found_images = {search_results};
 	var in_row = 6;
+	var image_prop = {
+		src    : '',
+		width  : 0,
+		height : 0,
+	};
 
 	function imageExists(url, callback) {
 		var img = new Image();
@@ -65,24 +57,11 @@
 		img.src = url;
 	}
 
-	function showPreview(coords) {
-		var rx = 100 / coords.w;
-		var ry = 100 / coords.h;
-
-		$('#preview').css({
-			width: Math.round(rx * 500) + 'px',
-			height: Math.round(ry * 370) + 'px',
-			marginLeft: '-' + Math.round(rx * coords.x) + 'px',
-			marginTop: '-' + Math.round(ry * coords.y) + 'px'
-		});
-	}
-
 	function setFrame(data) {
 		$('input[name="x"]').val(data.x);
 		$('input[name="y"]').val(data.y);
 		$('input[name="w"]').val(data.w);
 		$('input[name="h"]').val(data.h);
-		showPreview(data);
 	}
 
 	$(function(){
@@ -95,29 +74,38 @@
 			initJcrop();
 			function initJcrop() {
 				jcrop_api = $.Jcrop(crop_dom, {
-   					onChange:    setFrame,
-   					onnSelect:   setFrame,
-   					aspectRatio: 1,
+					onChange    : setFrame,
+					onnSelect   : setFrame,
 				});
 			};
 		});
 
 
 		images_dom.on('click', 'img', function() {
-			modal_dom.find('.modal-header h3').text($(this).parent().find('b').text());
-			modal_dom.find('.modal-body').html('<img src="'+ $(this).attr('src') +'" />');
-			modal_dom.find('#full_size').attr('href', $(this).attr('src'));
+			var cur_image = $(this)
+			image_prop.src    = cur_image.attr('src');
+			image_prop.width  = cur_image.data('width');
+			image_prop.height = cur_image.data('height');
+			console.log(image_prop);
+
+			modal_dom.find('.modal-header h3').text(cur_image.parent().find('b').text());
+			modal_dom.find('.modal-body').html('<img src="'+ image_prop.src +'" />');
+			modal_dom.find('#full_size').attr('href', image_prop.src);
 			modal_dom.modal('toggle');
 		});
 
 		modal_dom.on('click', '.select', function() {
-			var src = modal_dom.find('img').attr('src');
-			crop_dom.attr('src', src);
-			jcrop_api.setImage(src); 
-			$('input[name="src"]').val(src);
-			$('#preview').attr('src', src);
+			crop_dom.attr('src', image_prop.src);
+			jcrop_api.setImage(image_prop.src); 
+			$('input[name="src"]').val(image_prop.src);
+			$('#preview').attr('src', image_prop.src);
+			$('body').animate({ scrollTop: 0 }, 500);
+			$('#hint_for_image').show();
 		});
 
+		$(document).on('submit', function() {
+			$('#uploading').modal('show');
+		});
 
 		if (found_images.length > 0) {
 			var span_size = 12 / in_row;
@@ -132,7 +120,10 @@
 					}
 
 					if (exist_url) {
-						image_HTML = '<div class="span'+ span_size +'"><img class="img-polaroid '+ style +'" src="'+ exist_url +'" /><p class="text-center text-'+ style +'"><b>'+ width +'х'+ height +'</b></p></div>';
+						image_HTML = '<div class="span'+ span_size +'">'+
+							'<img class="img-polaroid '+ style +'" src="'+ exist_url +'" data-width="'+ width +'" data-height="'+ height +'"/>'+
+							'<p class="text-center text-'+ style +'"><b>'+ width +'х'+ height +'</b></p>'+
+							'</div>';
 						images_dom.find('.row').last().append(image_HTML);
 						count++;
 					}
@@ -160,6 +151,9 @@
 	#found_images img.success {border: solid 3px #468847;}
 	#found_images img.error {border: solid 3px #b94a48;}
 	.crop_container {overflow: auto;max-height: 600px;}
+	#uploading {width: 100%;left: 0;margin: 0;background: transparent;top: 200px;}
+	#uploading .progress {width: 30%;margin: 0 auto;}
+	#uploading h3 {color: #fff;}
 </style>
 <div class="modal hide fade" id="found_image_modal">
 	<div class="modal-header">
@@ -173,5 +167,12 @@
 		<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">{t(Close)}</button>
 		<button type="button" class="select btn btn-success" data-dismiss="modal" aria-hidden="true">{t(Select)}</button>
 		<a id="full_size" href="/" target="_blank" class="btn btn-info">{t(Show full size)}</a>
+	</div>
+</div>
+
+<div class="modal hide fade" id="uploading">
+	<h3 class="text-center">Uploading</h3>
+	<div class="progress progress-striped active">
+		<div class="bar" style="width: 100%;"></div>
 	</div>
 </div>

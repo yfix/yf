@@ -749,7 +749,7 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title');
+			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required');
 			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {

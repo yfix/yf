@@ -12,16 +12,18 @@ $(function(){
 	var ajax_link_validate = '{url(dynamic,ajax_validate)}';
 	var ajax_validate_cache = {};
 	$('input[data-ajax-validate]', 'form').on('blur', function(i){
-		var _val = $(this).val();
+		var _this = $(this);
+		var _val = _this.val();
 		if (!_val.length) {
 			return false;
 		}
-		var validate_rules_str = $(this).attr('data-ajax-validate');
+		var validate_rules_str = _this.attr('data-ajax-validate');
 		var result = '';
 		var cache_key = validate_rules_str + '-' + _val;
 		if (typeof ajax_validate_cache[cache_key] != 'undefined') {
 			result = ajax_validate_cache[cache_key];
-			console.log(result)
+			ajax_validation_icon_update(_this, result);
+//			console.log(result)
 		} else {
 			var validate_rules_arr = {}
 			// is_unique=user.login&other_rule=other_param
@@ -39,12 +41,26 @@ $(function(){
 			})
 			$.post( ajax_link_validate, {"rules" : rules_to_post}, function(data) {
 				result = data
-				console.log(result)
 				ajax_validate_cache[cache_key] = result
+				ajax_validation_icon_update(_this, result);
+//				console.log(result)
 			})
 		}
 		return result;
 	})
+
+	function ajax_validation_icon_update(_this, result) {
+		var icon = 'icon-ok-circle fa-check-circle';
+		var color = 'green';
+		var title = 'OK';
+		if (!result['ok']) {
+			icon = 'icon-ban-circle fa-times-circle';
+			color = 'red';
+			title = 'not good';
+		}
+		_this.closest('.input-group').next('i.ajax-validation-status').remove()
+		_this.closest('.input-group').after('&nbsp;<i class="ajax-validation-status icon icon-large ' + icon + '" style="color:' + color + ';" title="' + title + '"></i>');
+	}
 })
 </script>
 
