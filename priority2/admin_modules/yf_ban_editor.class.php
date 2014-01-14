@@ -50,7 +50,7 @@ class yf_ban_editor {
 	* Add new IP to ban list
 	*/
 	function add () {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$_POST["ip"] = trim(preg_replace("/[^0-9\.\/\*]/i", "", $_POST["ip"]));
 			if (!empty($_POST["ip"])) {
 				db()->INSERT("banned_ips", array(

@@ -73,7 +73,7 @@ class yf_analyze_admin_exec_log{
 
 		$DIR_OBJ = _class("dir");
 		// Return AJAX data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			main()->NO_GRAPHICS = true;
 
 			$min_time = time() - 86400;

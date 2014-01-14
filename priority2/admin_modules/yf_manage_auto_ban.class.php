@@ -71,7 +71,7 @@ class yf_manage_auto_ban {
 	// Add record
 	function add () {
 		// Save form
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$DATA = $_POST;
 			// Do insert data into db
 			db()->INSERT("user_ban", array(
@@ -143,7 +143,7 @@ class yf_manage_auto_ban {
 			}
 		}
 		// Save form
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Do update data
 			db()->UPDATE("user_ban", array(
 				"user_name"			=> _es($DATA["user_name"]),
@@ -250,7 +250,7 @@ class yf_manage_auto_ban {
 			}
 		}
 		// Save
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!common()->_error_exists()) {
 				$admin_info = db()->query_fetch("SELECT * FROM ".db('admin')." WHERE id=".intval($_SESSION["admin_id"]));
 				$admin_name = $admin_info["first_name"]." ".$admin_info["last_name"];

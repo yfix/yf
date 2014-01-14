@@ -52,7 +52,7 @@ class yf_admin_messages {
 			return _e("No such user");
 		}
 		// Do save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			db()->INSERT("admin_messages", array(
 				"user_id"	=> intval($user_id),
 				"author_id"	=> intval($_SESSION["admin_id"]),
