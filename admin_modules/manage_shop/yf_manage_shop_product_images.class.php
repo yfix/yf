@@ -181,6 +181,10 @@ class yf_manage_shop_product_images{
 		// Image upload
 		if (!empty($_FILES)) {
 			$this->product_image_upload();
+			//Delete temprary file
+			if (!empty($tmp_file)) {
+				@unlink($tmp_file);
+			}
 		} 
 
 		$images = common()->shop_get_images($product_info['id']);
@@ -198,23 +202,22 @@ class yf_manage_shop_product_images{
 			$items .= tpl()->parse('manage_shop/image_items', $replace2);
 		}
 
-		$search_url = 'http://images.yandex.ua/yandsearch?text='.urlencode($product_info['name']);
+		$search_url = 'http://yandex.com/images/search?text='.urlencode($product_info['name']);
 		$cache_key = 'external_images_'.$_GET['id'];
 		$search_results = cache_get($cache_key);
 		if (empty($search_results)) {
 
-			$time_start = microtime(true);
-
-
 			$search_results = file_get_contents($search_url);
 
-			$time_end = microtime(true);
-			echo $time = $time_end - $time_start;	
-
-			preg_match_all('/<a class="b-link b-images-item__maxdim" href="(.*?)"/umis', $search_results, $search_results);
+			preg_match_all('/<a class="serp-item__link".*?c.hit\((.*?)\)/umis', $search_results, $search_results);
 			$search_results = $search_results[1];
+			foreach ($search_results as $key => $item) {
+				$item = json_decode('['.html_entity_decode($item).']', true);
+				$search_results[$key] = $item[1]['href'];
+			}
 			cache_set($cache_key, $search_results);
 		}
+
 
 		$replace = array(
 			'form_action'    => '',
