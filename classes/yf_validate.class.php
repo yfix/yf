@@ -693,4 +693,22 @@ class yf_validate {
 #	function _validate_url_by_http($url) {
 #		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
 #	}
+
+	/**
+	*/
+	function ajax_is_unique($in, $params = array(), $fields = array()) {
+		return $this->is_unique($in, $params, $fields);
+	}
+
+	/**
+	*/
+	function ajax_is_unique_without($in, $params = array(), $fields = array()) {
+		return $this->is_unique_without($in, $params, $fields);
+	}
+
+	/**
+	*/
+	function ajax_exists($in, $params = array(), $fields = array()) {
+		return $this->exists($in, $params, $fields);
+	}
 }
