@@ -360,6 +360,12 @@ class yf_form2 {
 	*/
 	function _attrs($extra = array(), $names = array()) {
 		$body = array();
+		// Try to find and allow all data-* attributes automatically
+		foreach ((array)$extra as $k => $v) {
+			if (strpos($k, 'data-') === 0) {
+				$names[] = $k;
+			}
+		}
 		foreach ((array)$names as $name) {
 			if (!$name || !isset($extra[$name])) {
 				continue;
@@ -374,11 +380,11 @@ class yf_form2 {
 				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
 			}
 		}
+		// Custom html attributes forced with sub-array "attr"
 		foreach ((array)$extra['attr'] as $name => $val) {
 			if (!$name || !isset($val)) {
 				continue;
 			}
-			$val = $extra[$name];
 			if (is_array($val)) {
 				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
 			} else {
@@ -639,7 +645,7 @@ class yf_form2 {
 			$extra['name'] = $name;
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 
-			$attrs_names = array('id','contenteditable','style','class','data-validate','data-ajax-validate');
+			$attrs_names = array('id','contenteditable','style','class','title');
 			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -702,7 +708,7 @@ class yf_form2 {
 #			if ($vr && is_array($vr)) {
 #				$extra['data-validate'] = (array)$extra['data-validate'] + $vr;
 #			}
-			$attrs_names += array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','data-validate','data-ajax-validate');
+			$attrs_names += array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title');
 			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -741,7 +747,7 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','data-validate','data-ajax-validate');
+			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title');
 			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -820,7 +826,7 @@ class yf_form2 {
 			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
 			$extra['type'] = 'hidden';
 
-			$attrs_names = array('type','id','name','value','data','data-validate','data-ajax-validate');
+			$attrs_names = array('type','id','name','value','data');
 			return '<input'.$_this->_attrs($extra, $attrs_names).'>';
 		};
 		if ($this->_chained_mode) {
@@ -1225,7 +1231,7 @@ class yf_form2 {
 			$extra['desc'] = ''; // We do not need label here
 			$extra['type'] = 'submit';
 
-			$attrs_names = array('type','name','id','class','style','value','disabled','target','data-validate','data-ajax-validate');
+			$attrs_names = array('type','name','id','class','style','value','disabled','target');
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? $_this->_htmlchars($extra['value']) : $extra['value']);
@@ -1936,7 +1942,7 @@ class yf_form2 {
 			$extra['id'] = $extra['name'];
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
-			$extra['input_attrs'] = $_this->_attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value','data-validate','data-ajax-validate'));
+			$extra['input_attrs'] = $_this->_attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
 			return $_this->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
