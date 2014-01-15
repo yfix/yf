@@ -1,6 +1,7 @@
 {include("manage_shop/product_edit_js.stpl")}
 
 <form action="{form_action}" enctype="multipart/form-data" method="post" class="form-horizontal">
+	{form_row("info_link","product_url_user")}
 	{form_row("text","name")}
 {{--	{form_row("text","model")} --}}
 	{form_row("box","cat_id_box","Main category","categories_url")}
