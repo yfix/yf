@@ -76,6 +76,9 @@ class yf_manage_shop {
 		foreach ((array)$this->_suppliers as $k => $v) {
 			$this->_suppliers_for_select[$v['id']] = $v['name'];
 		}
+		if ($this->SUPPLIER_ID) {
+			$this->_suppliers_for_select = array();
+		}
 
 		$this->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
 		$this->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;

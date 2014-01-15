@@ -25,14 +25,14 @@ class yf_manage_shop_product_images{
 			$product = $this->_get_product($_GET['id']);
 		}
 		if (!$product['id']) {
-			return 'No such product!';
+			return _e('No such product!');
 		}
 		if (empty($_GET['key'])) {
-			return 'Empty image key!';
+			return _e('Empty image key!');
 		}
 		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' && `id`='.intval($_GET['key']));
 		if (count($A) == 0){
-			return 'Image not found';
+			return _e('Image not found');
 		}
 		module('manage_shop')->_product_image_delete($_GET['id'], $_GET['key']);
 		module('manage_shop')->_product_images_add_revision($_GET['id']);
@@ -50,7 +50,7 @@ class yf_manage_shop_product_images{
 			$product = $this->_get_product($_GET['id']);
 		}
 		if (!$product['id']) {
-			return 'No such product!';
+			return _e('No such product!');
 		}
 		$product_id = intval($_GET['id']);
 		if (main()->is_post()) {
@@ -118,7 +118,7 @@ class yf_manage_shop_product_images{
 			$product = $this->_get_product($_GET['id']);
 		}
 		if (!$product['id']) {
-			return 'No such product!';
+			return _e('No such product!');
 		}
 		module('manage_shop')->_product_image_upload($_GET['id']);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
@@ -189,7 +189,7 @@ class yf_manage_shop_product_images{
 			$product = $this->_get_product($_GET['id']);
 		}
 		if (!$product['id']) {
-			return 'No such product!';
+			return _e('No such product!');
 		}
 
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE id = '.$_GET['id'];

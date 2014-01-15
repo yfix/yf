@@ -73,7 +73,7 @@ class yf_manage_shop_manufacturers{
 	function manufacturer_edit () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+			return _e('Empty ID!');
 		}
 		$manufacturer_info = db()->query_fetch('SELECT * FROM '.db('shop_manufacturers').' WHERE id='.$_GET['id']);
 		if (main()->is_post()) {
@@ -145,7 +145,7 @@ class yf_manage_shop_manufacturers{
 	function upload_image () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+			return _e('Empty ID!');
 		}
 		$this->_upload_image($_GET['id']);
 		return js_redirect($_SERVER['HTTP_REFERER']);

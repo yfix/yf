@@ -4,7 +4,7 @@ class yf_manage_shop_product_edit{
 	function product_edit () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return 'Empty id';
+			return _e('Empty id');
 		}
 		if (module('manage_shop')->SUPPLIER_ID) {
 			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
@@ -17,7 +17,7 @@ class yf_manage_shop_product_edit{
 		}
 		$product_info = db()->query_fetch($sql);
 		if (empty($product_info['id'])) {
-			return 'Product not found';
+			return _e('Product not found');
 		}
 		if (main()->is_post()) {
 			if (!$_POST['name']) {

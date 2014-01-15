@@ -73,7 +73,7 @@ class yf_manage_shop_suppliers{
 	function supplier_edit () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+			return _e('Empty ID!');
 		}
 		$supplier_info = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.$_GET['id']);
 		if (main()->is_post()) {
