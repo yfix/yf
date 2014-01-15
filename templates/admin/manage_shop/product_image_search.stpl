@@ -161,7 +161,6 @@
 		<h3>Modal header</h3>
 	</div>
 	<div class="modal-body">
-		<p>One fine body…</p>
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">{t(Close)}</button>
@@ -171,7 +170,7 @@
 </div>
 
 <div class="modal hide fade" id="uploading">
-	<h3 class="text-center">Uploading</h3>
+	<h3 class="text-center">{t(Uploading)}</h3>
 	<div class="progress progress-striped active">
 		<div class="bar" style="width: 100%;"></div>
 	</div>
