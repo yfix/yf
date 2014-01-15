@@ -1173,6 +1173,9 @@ class yf_form2 {
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 			$extra['id'] = $extra['name'];
+			if (!isset($extra['horizontal'])) {
+				$extra['horizontal'] = true;
+			}
 			$extra['selected'] = isset($extra['selected']) ? $extra['selected'] : $r[$extra['name']];
 			if (isset($_this->_params['selected'])) {
 				$extra['selected'] = $_this->_params['selected'][$extra['name']];
