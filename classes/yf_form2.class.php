@@ -91,6 +91,7 @@ class yf_form2 {
 				$desc = $replace[$_desc];
 			}
 		}
+		// Allow to pass extra params like this: param1=val1;param2=val2
 		if (is_string($extra)) {
 			$extra = trim($extra);
 			if (false !== strpos($extra, ';') && false !== strpos($extra, '=')) {
@@ -1412,6 +1413,15 @@ class yf_form2 {
 		$replace[$name] = _format_date($r[$name], $extra['format']);
 		$this->_replace[$name] = $replace[$name];
 		return $this->info($name, $format, $extra, $replace);
+	}
+
+	/**
+	* Mostly for {form_row()}, as it can be emulated from php easily
+	*/
+	function info_link($name = '', $link = '', $extra = array(), $replace = array()) {
+		$r = (array)$this->_replace + (array)$replace;
+		$extra['link'] = $extra['link'] ?: ($link ?: $r[$name]);
+		return $this->info($name, '', $extra, $replace);
 	}
 
 	/**
