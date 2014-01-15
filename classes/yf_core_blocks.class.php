@@ -151,19 +151,26 @@ class yf_core_blocks {
 	* Action to on denied block
 	*/
 	function _action_on_block_denied ($block_name = '') {
-		if (MAIN_TYPE_USER && !main()->USER_ID && $block_name == 'center_area') {
-			$redir_params = array(
-				'%%object%%'		=> $_GET['object'],
-				'%%action%%'		=> $_GET['action'],
-				'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
-			);
-			$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
-			if (!empty($redir_url)) {
-				if ($_GET['object'] == 'login_form') {
-					return 'Access to login form denied on center block (graphics->_action_on_block_denied)';
-				} else {
-					return js_redirect($redir_url);
+		if ($block_name == 'center_area') {
+			if (MAIN_TYPE_USER && !main()->USER_ID) {
+				$redir_params = array(
+					'%%object%%'		=> $_GET['object'],
+					'%%action%%'		=> $_GET['action'],
+					'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
+				);
+				$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
+				if (!empty($redir_url)) {
+					if ($_GET['object'] == 'login_form') {
+						return 'Access to login form denied on center block (graphics->_action_on_block_denied)';
+					} else {
+						return js_redirect($redir_url);
+					}
 				}
+			} elseif (MAIN_TYPE_USER && main()->USER_ID) {
+				return '<div class="alert alert-error">'.t('Access denied').'</div>';
+			} elseif (MAIN_TYPE_ADMIN && main()->ADMIN_ID) {
+				return '<div class="alert alert-error">'.t('Access denied').'</div>';
+			//} elseif (MAIN_TYPE_ADMIN && !main()->ADMIN_ID) {
 			}
 		}
 		return false;
