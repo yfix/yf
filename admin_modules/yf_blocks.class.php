@@ -200,11 +200,11 @@ class yf_blocks {
 			->data('site_ids', $this->_sites, array('desc' => 'Sites'))
 			->data('server_ids', $this->_servers, array('desc' => 'Servers'))
 			->data('server_roles', $this->_server_roles, array('desc' => 'Server roles'))
-			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d')
+			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d', array('no_ajax' => 1))
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_rule&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_rule&id=%d')
 			->btn_active('', './?object='.$_GET['object'].'&action=activate_rule&id=%d')
-			->footer_add('', './?object='.$_GET['object'].'&action=add_rule&id='.$block_info['id'])
+			->footer_add('', './?object='.$_GET['object'].'&action=add_rule&id='.$block_info['id'], array('no_ajax' => 1))
 		;
 	}
 
