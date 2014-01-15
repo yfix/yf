@@ -13,7 +13,7 @@ class yf_locale_editor_user_vars {
 			$_GET['id'] = null;
 		}
 		// Group actions here
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (isset($_POST['multi-push'])) {
 				foreach ((array)$_POST['items'] as $_id) {
 					$_id = intval($_id);
@@ -103,7 +103,7 @@ class yf_locale_editor_user_vars {
 		if (!$A) {
 			return _e('No id');
 		}
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			db()->UPDATE('locale_user_tr', array(
 				'name'			=> _es($_POST['name']),
 				'translation'	=> _es($_POST['translation']),

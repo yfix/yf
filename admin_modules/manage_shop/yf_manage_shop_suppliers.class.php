@@ -21,7 +21,7 @@ class yf_manage_shop_suppliers{
 	/**
 	*/
 	function supplier_add () {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');
 			}
@@ -75,7 +75,7 @@ class yf_manage_shop_suppliers{
 			return 'Empty ID!';
 		}
 		$supplier_info = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.$_GET['id']);
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');
 			}

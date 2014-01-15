@@ -38,7 +38,7 @@ class yf_user_modules {
 	function show () {
 		$this->refresh_modules_list($silent = true);
 
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (is_array($_POST['name']) && !empty($_POST['name'])) {
 				$where = 'name IN("'.implode('","', _es(array_keys($_POST['name']))).'")';
 			}

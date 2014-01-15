@@ -42,20 +42,25 @@ class yf_manage_shop_filter{
 		$filters = array(
 			'products'	=> function($filter_name, $replace) {
 
-				$fields = array('name','cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date');
+				$fields = array('id','name','cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				return form($replace, array('selected' => $_SESSION[$filter_name]))
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->number('id')
 					->text('name')
-					->text('id')
 					->text('articul')
-					->money('price', array('class' => 'span1'))
-					->money('price__and', array('class' => 'span1'))
+					->row_start(array('desc' => 'price'))
+						->number('price', array('append' => '', 'prepend' => ''))
+						->number('price__and', array('append' => '', 'prepend' => ''))
+					->row_end()
 					->select_box('cat_id', _class('cats')->_get_items_names_cached('shop_cats'), array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
-					->radio_box('image', array(0 => 'No image', 1 => 'Have image'))
+					->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1))
+					->select_box('manufacturer_id', _class('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'no_translate' => 1))
+					->active_box('active', array('horizontal' => 1))
+					->yes_no_box('image', array('horizontal' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1))
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1))
 					->save_and_clear();
 
 			},

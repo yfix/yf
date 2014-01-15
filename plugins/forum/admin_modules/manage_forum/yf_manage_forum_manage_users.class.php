@@ -62,7 +62,7 @@ class yf_manage_forum_manage_users {
 		}
 		$user_info = user($_GET["id"]);
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Group name is required
 			if (!isset(module("forum")->_forum_groups[$_POST["group"]])) {
 				_re(t("Wrong group"));
@@ -144,7 +144,7 @@ class yf_manage_forum_manage_users {
 		}
 		$group_info = module("forum")->_forum_groups[$_GET["id"]];
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Group name is required
 			if (empty($_POST["title"])) {
 				_re(t("Title is required"));
@@ -201,7 +201,7 @@ class yf_manage_forum_manage_users {
 	*/
 	function _add_group () {
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Group name is required
 			if (empty($_POST["title"])) {
 				_re(t("Title is required"));
@@ -328,7 +328,7 @@ class yf_manage_forum_manage_users {
 		}
 		$mod_info = module("forum")->_forum_moderators[$_GET["id"]];
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!empty($_POST["forums_list"])) {
 				$_tmp_forums_list = array();
 				$_tmp_array = is_array($_POST["forums_list"]) ? $_POST["forums_list"] : explode(",", $_POST["forums_list"]);
@@ -454,7 +454,7 @@ class yf_manage_forum_manage_users {
 			$def_mod_rights[$_name] = $_value;
 		}
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// User ID is required
 			if (empty($_POST["user_id"])) {
 				_re(t("User ID is required"));

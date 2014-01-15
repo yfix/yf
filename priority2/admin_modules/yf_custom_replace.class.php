@@ -97,7 +97,7 @@ class yf_custom_replace {
 		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Do save
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("custom_replace_tags", array(
@@ -241,7 +241,7 @@ class yf_custom_replace {
 		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($_GET["id"]));
 		if (empty($tag_info["id"])) return "No such tag!";
 		// Do save
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Cleanup methods
 			$_POST["methods"]	= $this->_cleanup_methods_for_save($_POST["methods"]);
 			// Cleanup user_groups
@@ -315,7 +315,7 @@ class yf_custom_replace {
 			return _e(t("No such tag!"));
 		}
 		// Do save
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Cleanup methods
 			$_POST["methods"]	= $this->_cleanup_methods_for_save($_POST["methods"]);
 			// Cleanup user_groups
@@ -442,7 +442,7 @@ class yf_custom_replace {
 	*/
 	function add_word () {
 		// Do save
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->INSERT("custom_replace_words", array(
@@ -482,7 +482,7 @@ class yf_custom_replace {
 		$word_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_words')." WHERE id=".intval($_GET["id"]));
 		if (empty($word_info["id"])) return "No such word!";
 		// Do save
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Check for errors
 			if (!common()->_error_exists()) {
 				db()->UPDATE("custom_replace_words", array(

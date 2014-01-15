@@ -65,7 +65,7 @@ class yf_analyze_error_log {
 		$reg_query_string = "#QUERY_STRING\s*=\s*(?P<content>.+)#";
 		
 		// Return AJAX data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			main()->NO_GRAPHICS = true;
 
 			$min_time = time() - 86400;

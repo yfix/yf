@@ -3,7 +3,7 @@
 class yf_manage_shop_send_sms {
 
 	function send_sms() {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$phone = $_POST['phone'];
 			$text = mb_substr($_POST['text'],0,512);
 			

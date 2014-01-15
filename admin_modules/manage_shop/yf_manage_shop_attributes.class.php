@@ -28,7 +28,7 @@ class yf_manage_shop_attributes{
 	*/
 	function attribute_add () {
 		
-		if ($_POST) {			
+		if (main()->is_post()) {			
 			if (empty($_POST['title'])) {
 				_re('Title is required');
 			}
@@ -84,7 +84,7 @@ class yf_manage_shop_attributes{
 		$A = db()->query_fetch('SELECT * FROM `'.db('shop_productparams').'` WHERE `id`='.$_GET['id']);
 		$options = db()->get_2d('SELECT `id`,`title` FROM '.db('shop_productparams_options').' WHERE `productparams_id`='.$_GET['id'].' ORDER BY `title`');
 		$A['value_list'] = implode("\n",$options);
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (empty($_POST['title'])) {
 				_re('Title is required');
 			}

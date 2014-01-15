@@ -13,7 +13,7 @@ class yf_shop__order_step_select_payment{
 			$_POST["pay_type"] = module('shop')->FORCE_PAY_METHOD;
 			$FORCE_DISPLAY_FORM = false;
 		}
-		if (!empty($_POST) && !$FORCE_DISPLAY_FORM) {
+		if (main()->is_post() && !$FORCE_DISPLAY_FORM) {
 			module('shop')->_order_validate_select_payment();
 			// Verify products
 			if (!common()->_error_exists()) {

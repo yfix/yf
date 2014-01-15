@@ -22,7 +22,7 @@ class yf_manage_shop_manufacturers{
 	/**
 	*/
 	function manufacturer_add () {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');
 			}
@@ -76,7 +76,7 @@ class yf_manage_shop_manufacturers{
 			return 'Empty ID!';
 		}
 		$manufacturer_info = db()->query_fetch('SELECT * FROM '.db('shop_manufacturers').' WHERE id='.$_GET['id']);
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');
 			}

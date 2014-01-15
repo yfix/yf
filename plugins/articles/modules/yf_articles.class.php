@@ -343,7 +343,7 @@ class yf_articles extends yf_module {
 			return _e(t("No such article!"));
 		}
 		// Do save content
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Do check captcha (if needed)
 			if (module('articles')->USE_CAPTCHA) {
 				module('articles')->_captcha_check();
@@ -456,7 +456,7 @@ class yf_articles extends yf_module {
 			return _error_need_login();
 		}
 		// Do save content
-		if ($_POST) {
+		if (main()->is_post()) {
 			// Do check captcha (if needed)
 			if (module('articles')->USE_CAPTCHA) {
 				module('articles')->_captcha_check();

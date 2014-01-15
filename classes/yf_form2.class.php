@@ -91,6 +91,7 @@ class yf_form2 {
 				$desc = $replace[$_desc];
 			}
 		}
+		// Allow to pass extra params like this: param1=val1;param2=val2
 		if (is_string($extra)) {
 			$extra = trim($extra);
 			if (false !== strpos($extra, ';') && false !== strpos($extra, '=')) {
@@ -951,6 +952,10 @@ class yf_form2 {
 	/**
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'text';
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '$';
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : '.00';
@@ -1163,18 +1168,19 @@ class yf_form2 {
 				}
 				$extra['items'] = $_this->_pair_active;
 			}
+			$extra['values'] = $extra['items'];
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 			$extra['id'] = $extra['name'];
-
-			$selected = $r[$extra['name']];
-			if (isset($extra['selected'])) {
-				$selected = $extra['selected'];
-			} elseif (isset($_this->_params['selected'])) {
-				$selected = $_this->_params['selected'][$extra['name']];
+			if (!isset($extra['horizontal'])) {
+				$extra['horizontal'] = true;
 			}
-			return $_this->_row_html(_class('html_controls')->radio_box($extra['name'], $extra['items'], $selected, false, 2, '', false), $extra, $r);
+			$extra['selected'] = isset($extra['selected']) ? $extra['selected'] : $r[$extra['name']];
+			if (isset($_this->_params['selected'])) {
+				$extra['selected'] = $_this->_params['selected'][$extra['name']];
+			}
+			return $_this->_row_html(_class('html_controls')->radio_box($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1412,6 +1418,15 @@ class yf_form2 {
 		$replace[$name] = _format_date($r[$name], $extra['format']);
 		$this->_replace[$name] = $replace[$name];
 		return $this->info($name, $format, $extra, $replace);
+	}
+
+	/**
+	* Mostly for {form_row()}, as it can be emulated from php easily
+	*/
+	function info_link($name = '', $link = '', $extra = array(), $replace = array()) {
+		$r = (array)$this->_replace + (array)$replace;
+		$extra['link'] = $extra['link'] ?: ($link ?: $r[$name]);
+		return $this->info($name, '', $extra, $replace);
 	}
 
 	/**

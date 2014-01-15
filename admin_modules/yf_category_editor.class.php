@@ -185,7 +185,7 @@ class yf_category_editor {
 		}
 		$_GET['id'] = $cat_info['id'];
 		$cat_items = $this->_recursive_get_cat_items($_GET['id']);
-		if ($_POST) {
+		if (main()->is_post()) {
 			$batch = array();
 			foreach ((array)$cat_items as $a) {
 				if (!isset($_POST['name'][$a['id']])) {
@@ -235,7 +235,7 @@ class yf_category_editor {
 		$items = $this->_show_category_contents(array(
 			'cat_info' => $cat_info,
 		));
-		if ($_POST) {
+		if (main()->is_post()) {
 			$cur_items = $this->_auto_update_items_orders($cat_info['id']);
 			$batch = array();
 			foreach ((array)$_POST['items'] as $order_id => $info) {
@@ -448,7 +448,7 @@ class yf_category_editor {
 		}
 		$_GET['id'] = intval($cat_info['id']);
 
-		if ($_POST) {
+		if (main()->is_post()) {
 			$tmp = array();
 			foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
 				if ($field_name && $_POST['custom'][$field_name]) {
@@ -506,7 +506,7 @@ class yf_category_editor {
 		}
 		$_GET['id'] = intval($item_info['id']);
 
-		if ($_POST) {
+		if (main()->is_post()) {
 			$tmp = array();
 			foreach (explode(',', $cat_info['custom_fields']) as $field_name) {
 				if ($field_zzname && $_POST['custom'][$field_name]) {

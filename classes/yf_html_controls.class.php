@@ -210,17 +210,20 @@ class yf_html_controls {
 			if (common()->BOXES_USE_STPL) { 
 				$_what_compare = strval($type == 1 ? $val_name : $value);
 				$replace = array(
-					'name'		=> $name,
-					'value'		=> $value,
-					'selected'	=> $_what_compare == $selected ? 'checked="true"' : '',
-					'add_str'	=> $add_str,
-					'label'		=> $translate ? t($val_name) : $val_name,
-					'divider'	=> $flow_vertical ? '<br />' : '&nbsp;',
+					'name'			=> $name,
+					'value'			=> $value,
+					'selected'		=> $_what_compare == $selected ? 'checked="true"' : '',
+					'add_str'		=> $add_str,
+					'label'			=> $translate ? t($val_name) : $val_name,
+					'divider'		=> $flow_vertical ? '<br />' : '&nbsp;',
+					'horizontal'	=> $extra['horizontal'] ? 1 : 0,
 				);
 				$body .= tpl()->parse('system/common/radio_box_item', $replace);
 			} else {
-				$body .= '<label class="radio"><input type="radio" name="'.$name.'" id="check_'.$name.'" value="'.$value.'" '.$add_str.' '
-					.((strval($value) == $selected) ? 'checked' : '').'>'.t($val_name).'</label>'.PHP_EOL;
+				$body .= '<label class="radio'.($extra['horizontal'] ? ' radio-horizontal' : '').'">'
+					.'<input type="radio" name="'.$name.'" id="check_'.$name.'" value="'.$value.'" '.$add_str.' '
+					.((strval($value) == $selected) ? 'checked' : '').'>'
+					.t($val_name).'</label>'.PHP_EOL;
 			}
 		}
 		return $body;

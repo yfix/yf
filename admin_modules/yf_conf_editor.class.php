@@ -101,7 +101,7 @@ class yf_conf_editor {
 			$_GET["id"] = current($tmp);
 		}
 		// Saving
-		if ($_POST) {
+		if (main()->is_post()) {
 			$this->_save_data();
 		}
 		// Show 
@@ -128,7 +128,7 @@ class yf_conf_editor {
 			$_GET["id"] = current($tmp);
 		}
 		// Saving
-		if ($_POST) {
+		if (main()->is_post()) {
 			$this->_save_data();
 		}
 		// Show 
@@ -157,7 +157,7 @@ class yf_conf_editor {
 			$_GET["id"] = current($tmp);
 		}
 		// Saving
-		if ($_POST) {
+		if (main()->is_post()) {
 			$this->_save_data();
 		}
 		// Show 

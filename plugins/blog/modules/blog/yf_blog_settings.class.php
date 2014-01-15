@@ -32,7 +32,7 @@ class yf_blog_settings {
 		// Try to get user settings (also start them if not done yet)
 		$BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
 		// Save data
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Prepare posted blog links
 			$_posted_links = array();
 			for ($i = 0; $i < module('blog')->MAX_BLOG_LINKS_NUM; $i++) {

@@ -41,7 +41,7 @@ class yf_admin_methods {
 			}
 			$fields = array_keys($columns);
 		}
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!common()->_error_exists()) {
 				$sql = array();
 				foreach ((array)$fields as $f) {
@@ -106,7 +106,7 @@ class yf_admin_methods {
 		if (!$a) {
 			return _e('Wrong id');
 		}
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!common()->_error_exists()) {
 				$sql = array();
 				foreach ((array)$fields as $f) {

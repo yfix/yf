@@ -7,7 +7,7 @@ class yf_manage_shop_product_edit{
 			return 'Empty ID!';
 		}
 		$product_info = db()->query_fetch('SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id']);
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');
 			}
@@ -164,6 +164,7 @@ class yf_manage_shop_product_edit{
 			'product_related'    => module('manage_shop')->related_products($product_info['id']),
 			'set_main_image_url' => './?object='.$_GET['object'].'&action=set_main_image&id='.$product_info['id'],
 			'search_url'         => './?object=manage_shop&action=product_image_search&id='.$product_info['id'],
+			'product_url_user'	 => url('/shop/product/'.$product_info['id']),
 		);
 		return tpl()->parse('manage_shop/product_edit', $replace);
 	}

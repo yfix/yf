@@ -149,7 +149,7 @@ class yf_locale_editor {
 				unset($this->_langs[$A['locale']]);
 			}
 		}
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (empty($_POST['lang_code'])) {
 				common()->_error_exists('Please select language to add');
 			}
@@ -309,7 +309,7 @@ class yf_locale_editor {
 	/**
 	*/
 	function add_var() {
-		if ($_POST) {
+		if (main()->is_post()) {
 			$_POST['var_name'] = _strtolower(str_replace(' ', '_', $_POST['var_name']));
 			$var_info = db()->get('SELECT * FROM '.db('locale_vars').' WHERE LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($_POST['var_name']).'"');
 			if (!empty($_POST['var_name']) && empty($var_info)) {
@@ -388,7 +388,7 @@ class yf_locale_editor {
 			$var_tr[$A['locale']] = $A['value'];
 		}
 
-		if ($_POST) {
+		if (main()->is_post()) {
 			if (!_ee()) {
 				foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
 					if (!isset($_POST[$lang_info['locale']])) {

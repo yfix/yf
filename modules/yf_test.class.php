@@ -36,7 +36,7 @@ class yf_test {
 		if (!DEBUG_MODE) {
 			return;
 		}
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			$_SESSION['stpls_inline_edit']		= intval((bool)$_POST['stpl_edit']);
 			$_SESSION['locale_vars_edit']		= intval((bool)$_POST['locale_edit']);
 			return js_redirect($_SERVER['HTTP_REFERER'], 0);

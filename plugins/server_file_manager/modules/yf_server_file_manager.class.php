@@ -279,7 +279,7 @@ class yf_server_file_manager {
 		);
 
 //		if (!empty($_POST["user"]) || !empty($_POST["group"])) {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			// Save data
 			if ($_POST["mass_selected"]) {
 				$_POST["mass_selected"] = unserialize($_POST["mass_selected"]);

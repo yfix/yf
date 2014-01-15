@@ -2,7 +2,7 @@
 class yf_manage_shop_product_add{
 
 	function product_add () {
-		if (!empty($_POST)) {
+		if (main()->is_post()) {
 			if (!$_POST["name"]) {
 				_re("Product name must be filled");
 			}

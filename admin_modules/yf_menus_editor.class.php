@@ -209,7 +209,7 @@ class yf_menus_editor {
 		$_GET['id'] = intval($menu_info['id']);
 
 		$menu_items = $this->_auto_update_items_orders($menu_info['id']);
-		if ($_POST) {
+		if (main()->is_post()) {
 			$batch = array();
 			foreach ((array)$menu_items as $a) {
 				if (!isset($_POST['name'][$a['id']])) {
@@ -261,7 +261,7 @@ class yf_menus_editor {
 			'name'				=> $menu_info['name'],
 			'return_array'		=> 1,
 		));
-		if ($_POST) {
+		if (main()->is_post()) {
 			$old_info = $this->_auto_update_items_orders($menu_info['id']);
 			$batch = array();
 			foreach ((array)$_POST['items'] as $order_id => $info) {
@@ -516,7 +516,7 @@ class yf_menus_editor {
 		$_GET['id'] = intval($menu_info['id']);
 
 		$multi_selects = array('user_groups','site_ids','server_ids');
-		if ($_POST) {
+		if (main()->is_post()) {
 			foreach ($multi_selects as $k) {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
@@ -565,7 +565,7 @@ class yf_menus_editor {
 		$_GET['id'] = intval($item_info['id']);
 
 		$multi_selects = array('user_groups','site_ids','server_ids');
-		if ($_POST) {
+		if (main()->is_post()) {
 			foreach ($multi_selects as $k) {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
