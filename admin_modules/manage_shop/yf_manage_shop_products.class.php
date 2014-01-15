@@ -7,7 +7,15 @@ class yf_manage_shop_products{
 	/**
 	*/
 	function products () {
-		return table('SELECT * FROM '.db('shop_products'), array(
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT * FROM '.db('shop_products');
+		}
+		return table($sql, array(
 				'filter' => $_SESSION[$_GET['object'].'__products'],
 				'filter_params' => array(
 					'name'	=> 'like',
@@ -39,15 +47,32 @@ class yf_manage_shop_products{
 
 	/**
 	*/
+	function _get_product($pid) {
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						p.id='.intval($pid).'
+						AND m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.intval($pid);
+		}
+		return db()->get($sql);
+	}
+
+	/**
+	*/
 	function product_activate () {
-		if ($_GET['id']){
-			$A = db()->query_fetch('SELECT * FROM '.db('shop_products').' WHERE id='.intval($_GET['id']));
-			if ($A['active'] == 1) {
+		if ($_GET['id']) {
+			$a = $this->_get_product($_GET['id']);
+		}
+		if ($a['id']) {
+			if ($a['active'] == 1) {
 				$active = 0;
-			} elseif ($A['active'] == 0) {
+			} elseif ($a['active'] == 0) {
 				$active = 1;
 			}
-			db()->UPDATE(db('shop_products'), array('active' => $active), 'id='.intval($_GET['id']));
+			db()->update_safe(db('shop_products'), array('active' => $active), 'id='.intval($_GET['id']));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -61,16 +86,18 @@ class yf_manage_shop_products{
 	*/
 	function product_delete () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$a = $this->_get_product($_GET['id']);
 		}
-		module('manage_shop')->_product_image_delete($_GET['id']);
-		db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);		
-		db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);		
-		db()->query('DELETE FROM '.db('shop_product_productparams').' WHERE product_id='.$_GET['id']);
-		db()->query('DELETE FROM '.db('shop_products').' WHERE id='.$_GET['id']);
-		module("manage_shop")->_product_add_revision('delete',$_GET['id']);
-		common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
+		if ($a['id']) {
+			module('manage_shop')->_product_image_delete($_GET['id']);
+			db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);		
+			db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);		
+			db()->query('DELETE FROM '.db('shop_product_productparams').' WHERE product_id='.$_GET['id']);
+			db()->query('DELETE FROM '.db('shop_products').' WHERE id='.$_GET['id']);
+			module("manage_shop")->_product_add_revision('delete',$_GET['id']);
+			common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
+		}
 		return js_redirect('./?object='.main()->_get('object').'action=products');
 	}
 
@@ -78,14 +105,13 @@ class yf_manage_shop_products{
 	*/
 	function product_clone () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$a = $this->_get_product($_GET['id']);
 		}
-		$info = db()->query_fetch('SELECT * FROM '.db('shop_products').' WHERE id='.intval($_GET['id']));
-		if (empty($info['id'])) {
+		if (!$a['id']) {
 			return _e('No such product!');
 		}
-		$sql = $info;
+		$sql = $a;
 		$old_product_id = $sql['id'];
 		unset($sql['id']);
 		$sql['name'] = 'Clone '.$sql['name'];
@@ -93,7 +119,7 @@ class yf_manage_shop_products{
 
 		db()->insert('shop_products', $sql);
 		$new_product_id = db()->insert_id();
-		common()->admin_wall_add(array('shop product cloned: '.$info['name'], $new_product_id));
+		common()->admin_wall_add(array('shop product cloned: '.$a['name'], $new_product_id));
 		
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$new_product_id}'");
 		foreach ($arr as $v) {

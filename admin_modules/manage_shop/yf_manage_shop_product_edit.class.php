@@ -4,9 +4,21 @@ class yf_manage_shop_product_edit{
 	function product_edit () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+			return 'Empty id';
 		}
-		$product_info = db()->query_fetch('SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id']);
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						p.id='.intval($_GET['id']).'
+						AND m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id'];
+		}
+		$product_info = db()->query_fetch($sql);
+		if (empty($product_info['id'])) {
+			return 'Product not found';
+		}
 		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');

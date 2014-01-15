@@ -58,6 +58,8 @@ class yf_manage_shop {
 	* Constructor
 	*/
 	function _init() {
+		$this->SUPPLIER_ID = (int)db()->get_one('SELECT supplier_id FROM '.db('shop_admin_to_supplier').' WHERE admin_id='.intval(main()->ADMIN_ID));
+
 		$this->_statuses = common()->get_static_conf('order_status');
 		$this->_order_items_status = common()->get_static_conf('order_items_status');
 		$this->_category_names	= _class('cats')->_get_items_names_cached('shop_cats');
@@ -394,6 +396,18 @@ class yf_manage_shop {
 	}
 	function send_sms() {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_send_sms', 'admin_modules/'.$cl.'/')->$func($params);		
+	}
+	function category_mapping($params = array()) {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+	function category_mapping_add($params = array()) {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+	function category_mapping_edit($params = array()) {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+	function category_mapping_delete($params = array()) {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 	function _product_cache_purge($product_id = 0) {
 		if (!$product_id) {

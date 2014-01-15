@@ -5,6 +5,12 @@ class yf_manage_shop_orders{
 
 	/**
 	*/
+	function _init() {
+		$this->SUPPLIER_ID = module('manage_shop')->SUPPLIER_ID;
+	}
+
+	/**
+	*/
 	function orders_manage() {
 		return $this->show_orders();
 	}
@@ -12,10 +18,21 @@ class yf_manage_shop_orders{
 	/**
 	*/
 	function show_orders() {
-		$sql = 'SELECT o.*, COUNT(*) AS num_items 
-				FROM '.db('shop_orders').' AS o 
-				INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
-				GROUP BY o.id ORDER BY o.id DESC';
+		if ($this->SUPPLIER_ID) {
+			$sql = 'SELECT o.*, COUNT(*) AS num_items 
+					FROM '.db('shop_orders').' AS o 
+					INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
+					INNER JOIN '.db('shop_products').' AS p ON i.product_id = p.id 
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						m.admin_id='.intval(main()->ADMIN_ID).'
+					GROUP BY o.id ORDER BY o.id DESC';
+		} else {
+			$sql = 'SELECT o.*, COUNT(*) AS num_items 
+					FROM '.db('shop_orders').' AS o 
+					INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
+					GROUP BY o.id ORDER BY o.id DESC';
+		}
 		return table($sql, array(
 				'filter' => $_SESSION[$_GET['object'].'__orders']
 			))
@@ -41,7 +58,19 @@ class yf_manage_shop_orders{
 	function view_order() {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$order_info = db()->query_fetch('SELECT * FROM '.db('shop_orders').' WHERE id='.intval($_GET['id']));
+			if ($this->SUPPLIER_ID) {
+				$sql = 'SELECT o.* FROM '.db('shop_orders').' AS o
+						INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
+						INNER JOIN '.db('shop_products').' AS p ON i.product_id = p.id 
+						INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+						WHERE 
+							o.id='.intval($_GET['id']).'
+							AND m.admin_id='.intval(main()->ADMIN_ID).'
+						GROUP BY o.id';
+			} else {
+				$sql = 'SELECT * FROM '.db('shop_orders').' WHERE id='.intval($_GET['id']);
+			}
+			$order_info = db()->query_fetch($sql);
 		}
 		if (empty($order_info)) {
 			return _e('No such order');

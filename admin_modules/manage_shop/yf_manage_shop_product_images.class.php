@@ -3,11 +3,29 @@
 class yf_manage_shop_product_images{
 
 	/**
+	*/
+	function _get_product($pid) {
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						p.id='.intval($pid).'
+						AND m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.intval($pid);
+		}
+		return db()->get($sql);
+	}
+
+	/**
 	 */
 	function product_image_delete () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return 'No such product!';
 		}
 		if (empty($_GET['key'])) {
 			return 'Empty image key!';
@@ -28,6 +46,12 @@ class yf_manage_shop_product_images{
 	/**
 	 */
 	function set_main_image(){
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return 'No such product!';
+		}
 		$product_id = intval($_GET['id']);
 		if (main()->is_post()) {
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'0\' WHERE `product_id`='.$product_id);
@@ -90,8 +114,11 @@ class yf_manage_shop_product_images{
 	 */
 	function product_image_upload () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return 'No such product!';
 		}
 		module('manage_shop')->_product_image_upload($_GET['id']);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
@@ -158,8 +185,11 @@ class yf_manage_shop_product_images{
 	*/
 	function product_image_search () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return 'No such product!';
 		}
 
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE id = '.$_GET['id'];
