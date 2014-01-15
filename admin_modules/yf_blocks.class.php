@@ -286,7 +286,7 @@ class yf_blocks {
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
 					cache()->refresh('blocks_rules');
-				}
+				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
 			))
 			->info('type')
 			->allow_deny_box('rule_type')
@@ -376,9 +376,9 @@ class yf_blocks {
 	*/
 	function _multi_html_to_db($input = array()) {
 		if (is_array($input)) {
-			$input = ','.implode(',', $input).',';
+			$input = ','.implode(','.PHP_EOL, $input).',';
 		}
-		return (string)str_replace(array(' ',"\t","\r","\n",',,'), '', $input);
+		return (string)str_replace(array(' ',"\t","\r",',,'), '', $input);
 	}
 
 	/**
