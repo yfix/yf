@@ -25,5 +25,8 @@ td input[type=text], td textarea { margin-bottom: 0; }
 
 .label.labels-big, .badge.labels-big { font-size: inherit; }
 
+label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
+label.radio-horizontal input[type=radio]{ float: none; margin-left:inherit; }
+
 .tab-content { overflow: visible; }
 </style>
