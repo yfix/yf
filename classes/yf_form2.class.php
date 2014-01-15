@@ -952,6 +952,10 @@ class yf_form2 {
 	/**
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
 		$extra['type'] = 'text';
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '$';
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : '.00';
@@ -1164,18 +1168,16 @@ class yf_form2 {
 				}
 				$extra['items'] = $_this->_pair_active;
 			}
+			$extra['values'] = $extra['items'];
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 			$extra['id'] = $extra['name'];
-
-			$selected = $r[$extra['name']];
-			if (isset($extra['selected'])) {
-				$selected = $extra['selected'];
-			} elseif (isset($_this->_params['selected'])) {
-				$selected = $_this->_params['selected'][$extra['name']];
+			$extra['selected'] = isset($extra['selected']) ? $extra['selected'] : $r[$extra['name']];
+			if (isset($_this->_params['selected'])) {
+				$extra['selected'] = $_this->_params['selected'][$extra['name']];
 			}
-			return $_this->_row_html(_class('html_controls')->radio_box($extra['name'], $extra['items'], $selected, false, 2, '', false), $extra, $r);
+			return $_this->_row_html(_class('html_controls')->radio_box($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
