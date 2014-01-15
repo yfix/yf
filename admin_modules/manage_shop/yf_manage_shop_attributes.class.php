@@ -18,9 +18,9 @@ class yf_manage_shop_attributes{
 			))
 			->text('title')
 			->text('options')				
-			->btn_edit('', './?object=manage_shop&action=attribute_edit&id=%d')
-			->btn_delete('', './?object=manage_shop&action=attribute_delete&id=%d')
-			->footer_add('','./?object=manage_shop&action=attribute_add')
+			->btn_edit('', './?object='.main()->_get('object').'&action=attribute_edit&id=%d')
+			->btn_delete('', './?object='.main()->_get('object').'&action=attribute_delete&id=%d')
+			->footer_add('','./?object='.main()->_get('object').'&action=attribute_add')
 		;
 	}	
 
@@ -57,15 +57,15 @@ class yf_manage_shop_attributes{
 				}
 
 				common()->admin_wall_add(array('shop product attribute added: '.$_POST['title'], $insert_id));
-				return js_redirect('./?object=manage_shop&action=attributes');
+				return js_redirect('./?object='.main()->_get('object').'&action=attributes');
 			}
 		}
 		$form_fields = array('name','type','value_list','default_value','order', 'comment');
 		$replace = array_fill_keys($form_fields, '');
 		$replace = my_array_merge($replace, array(
-			'form_action'	=> './?object=manage_shop&action='.$_GET['action'].'&id='.$_GET['id'],
+			'form_action'	=> './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'error'			=> _e(),
-			'back_url'		=> './?object=manage_shop&action=attributes',
+			'back_url'		=> './?object='.main()->_get('object').'&action=attributes',
 			'active'		=> 1,
 		));
 		return form($replace)
@@ -121,15 +121,15 @@ class yf_manage_shop_attributes{
 					'title'			=> $_POST['title'],
 				)), 'id='.$_GET['id']); 
 				common()->admin_wall_add(array('shop product attribute updated: '.$_POST['title'], $_GET['id']));
-				return js_redirect('./?object=manage_shop&action=attributes'); 
+				return js_redirect('./?object='.main()->_get('object').'&action=attributes'); 
 			}
 		}
 		$replace = array(
-			'form_action'	=> './?object=manage_shop&action='.$_GET['action'].'&id='.$A['id'],
+			'form_action'	=> './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$A['id'],
 			'error'			=> _e(),
 			'title'			=> $A['title'],
 			'value_list'	=> $A['value_list'],
-			'back_url'		=> './?object=manage_shop&action=attributes',
+			'back_url'		=> './?object='.main()->_get('object').'&action=attributes',
 			'active'		=> 1,
 		);
 		return form($replace)

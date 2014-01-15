@@ -192,7 +192,7 @@ class yf_manage_shop_product_images{
 		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
 		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
 		foreach((array)$images as $A) {
-			$product_image_delete_url = './?object=manage_shop&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
+			$product_image_delete_url = './?object='.main()->_get('object').'&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
 			$replace2 = array(
 				'img_path' 		=> $base_url . $A['big'],
 				'thumb_path'	=> $base_url . $A['thumb'],
@@ -225,7 +225,7 @@ class yf_manage_shop_product_images{
 			'search_results' => json_encode($search_results),
 			'product_info'   => $product_info,
 			'image'          => $items,
-			'product_url'    => './?object=manage_shop&action=product_edit&id='.$product_info['id'],
+			'product_url'    => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
 		);
 
 		//return js_redirect($_SERVER['HTTP_REFERER']);

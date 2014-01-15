@@ -27,14 +27,14 @@ class yf_manage_shop_products{
 			->text('quantity')
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->text('articul')
-			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d',array('no_ajax' => 1))
-			->btn_delete('', './?object=manage_shop&action=product_delete&id=%d')
-			->btn_clone('', './?object=manage_shop&action=product_clone&id=%d')
-			->btn_active('', './?object=manage_shop&action=product_activate&id=%d')
-			->footer_add('Add product', './?object=manage_shop&action=product_add',array('no_ajax' => 1))
-			->footer_link('Attributes', './?object=manage_shop&action=attributes')
+			->btn_edit('', './?object='.main()->_get('object').'&action=product_edit&id=%d',array('no_ajax' => 1))
+			->btn_delete('', './?object='.main()->_get('object').'&action=product_delete&id=%d')
+			->btn_clone('', './?object='.main()->_get('object').'&action=product_clone&id=%d')
+			->btn_active('', './?object='.main()->_get('object').'&action=product_activate&id=%d')
+			->footer_add('Add product', './?object='.main()->_get('object').'&action=product_add',array('no_ajax' => 1))
+			->footer_link('Attributes', './?object='.main()->_get('object').'&action=attributes')
 			->footer_link('Categories', './?object=category_editor&action=show_items&id=shop_cats')
-			->footer_link('Orders', './?object=manage_shop&action=show_orders');
+			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders');
 	}
 
 	/**
@@ -53,7 +53,7 @@ class yf_manage_shop_products{
 			main()->NO_GRAPHICS = true;
 			echo ($active ? 1 : 0);
 		} else {
-			return js_redirect('./?object=manage_shop');
+			return js_redirect('./?object='.main()->_get('object').'');
 		}
 	}
 
@@ -71,7 +71,7 @@ class yf_manage_shop_products{
 		db()->query('DELETE FROM '.db('shop_products').' WHERE id='.$_GET['id']);
 		module("manage_shop")->_product_add_revision('delete',$_GET['id']);
 		common()->admin_wall_add(array('shop product deleted: '.$_GET['id'], $_GET['id']));
-		return js_redirect('./?object=manage_shopaction=products');
+		return js_redirect('./?object='.main()->_get('object').'action=products');
 	}
 
 	/**
@@ -151,7 +151,7 @@ class yf_manage_shop_products{
 				copy($old_image_path, $new_image_path);
 			}
 		}
-		return js_redirect('./?object=manage_shopaction=products');
+		return js_redirect('./?object='.main()->_get('object').'action=products');
 	}
 
 	/**

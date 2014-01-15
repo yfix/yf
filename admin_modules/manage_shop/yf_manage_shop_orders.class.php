@@ -30,7 +30,7 @@ class yf_manage_shop_orders{
 			->func('status', function($field, $params) { 
 				return common()->get_static_conf('order_status', $field);
 			}, array('nowrap' => 1))
-			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
+			->btn_edit('', './?object='.main()->_get('object').'&action=view_order&id=%d',array('no_ajax' => 1))
 			->btn('Paywill', './?object=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
 			->btn('PDF', './?object=paywill&id=%d&pdf=y',array('no_ajax' => 1, 'target' => '_blank'))
 		;
@@ -109,7 +109,7 @@ class yf_manage_shop_orders{
 			if ($sql) {
 				db()->update_safe(db('shop_orders'), $sql, 'id='.intval($_GET['id']));
 			}
-			return js_redirect('./?object=manage_shop&action=show_orders');
+			return js_redirect('./?object='.main()->_get('object').'&action=show_orders');
 		}
 		$products_ids = array();
 		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
@@ -142,7 +142,7 @@ class yf_manage_shop_orders{
 				'price'			=> $_info['quantity']*$_info['price'],
 				'currency'		=> _prepare_html(module('manage_shop')->CURRENCY),
 				'quantity'		=> intval($_info['quantity']),
-				'details_link'	=> process_url('./?object=manage_shop&action=view&id='.$_product['id']),
+				'details_link'	=> process_url('./?object='.main()->_get('object').'&action=view&id='.$_product['id']),
 				'dynamic_atts'	=> !empty($dynamic_atts) ? implode('<br />'.PHP_EOL, $dynamic_atts) : '',
 				'status'		=> module('manage_shop')->_box('status_item', $_info['status']),
 				'delete'		=> '', // will be filled later on table2()
@@ -152,7 +152,7 @@ class yf_manage_shop_orders{
 		$total_price = $order_info['total_sum'];
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
-			'form_action'	=> './?object=manage_shop&action='.$_GET['action'].'&id='.$_GET['id'],
+			'form_action'	=> './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'order_id'		=> $order_info['id'],
 			'total_sum'		=> module('manage_shop')->_format_price($order_info['total_sum']),
 			'user_link'		=> _profile_link($order_info['user_id']),
@@ -164,8 +164,8 @@ class yf_manage_shop_orders{
 			'pay_type'		=> module('manage_shop')->_pay_types[$order_info['pay_type']],
 			'date'			=> $order_info['date'],
 			'status_box'	=> module('manage_shop')->_box('status', $order_info['status']),
-			'back_url'		=> './?object=manage_shop&action=show_orders',
-			'print_url'		=> './?object=manage_shop&action=show_print&id='.$order_info['id'],
+			'back_url'		=> './?object='.main()->_get('object').'&action=show_orders',
+			'print_url'		=> './?object='.main()->_get('object').'&action=show_print&id='.$order_info['id'],
 			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 		));
 		
@@ -176,7 +176,7 @@ class yf_manage_shop_orders{
 			->info('name')
 			->email('email')
 			->info('phone')
-			->container('<a href="./?object=manage_shop&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
+			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
 			->info('address')
 			->info('house')
 			->info('apartment')
@@ -190,7 +190,7 @@ class yf_manage_shop_orders{
 			->info('payment', 'Payment method')
 			->container(
 				table2($products)
-					->link('product_id', './?object=manage_shop&action=product_edit&id=%d')
+					->link('product_id', './?object='.main()->_get('object').'&action=product_edit&id=%d')
 					->func('quantity',function($f, $p, $row){
 						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."_".$row['param_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
 						return $row['quantity'];
@@ -229,8 +229,8 @@ class yf_manage_shop_orders{
 			->text('total_sum', array('nowrap' => 1))
 
 			->text('num_items')
-			->btn_edit('', './?object=manage_shop&action=view_order&id=%d',array('no_ajax' => 1))
-			->btn('Merge', './?object=manage_shop&action=merge_order&id='.$order_info['id'].'&merge_id=%d',array('no_ajax' => 1))
+			->btn_edit('', './?object='.main()->_get('object').'&action=view_order&id=%d',array('no_ajax' => 1))
+			->btn('Merge', './?object='.main()->_get('object').'&action=merge_order&id='.$order_info['id'].'&merge_id=%d',array('no_ajax' => 1))
 		;									
 
 		return $out;
@@ -288,8 +288,8 @@ class yf_manage_shop_orders{
 		$total_price += intval($delivery_price);
 
 		db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($total_price, 2, '.', ''),'delivery_price' => $delivery_price),"`id`='".$_GET['id']."'");
-		db()->query("DELETE FROM `".db('shop_order_items')."` WHERE `order_id`='{$_GET['merge_id']}'");
-		return js_redirect("./?object=manage_shop&action=view_order&id={$_GET['id']}");
+		db()->query('DELETE FROM '.db('shop_order_items').' WHERE order_id='.intval($_GET['merge_id']));
+		return js_redirect('./?object='.main()->_get('object').'&action=view_order&id='.$_GET['id']);
 	}
 
 	/**
@@ -308,7 +308,7 @@ class yf_manage_shop_orders{
 			main()->NO_GRAPHICS = true;
 			$_GET['id'];
 		} else {
-			return js_redirect('./?object=manage_shop&action=show_orders');
+			return js_redirect('./?object='.main()->_get('object').'&action=show_orders');
 		}
 	}
 	

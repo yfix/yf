@@ -3,7 +3,8 @@
 /**
 * Special panel for the supplier
 */
-class yf_shop_supplier_panel {
+//load('manage_shop', 'framework');
+class yf_shop_supplier_panel /*extends yf_manage_shop*/ {
 
 	/**
 	*/
@@ -94,10 +95,8 @@ class yf_shop_supplier_panel {
 	function upload_images() {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_upload_images', 'admin_modules/'.$cl.'/')->$func($params);
 	}
-	/**
-	* Hook
-	*/
 	function _show_filter() {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_filter', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
 }
