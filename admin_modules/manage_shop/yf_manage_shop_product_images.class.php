@@ -1,4 +1,5 @@
 <?php
+
 class yf_manage_shop_product_images{
 
 	/**
@@ -153,6 +154,8 @@ class yf_manage_shop_product_images{
 		return $i;
 	}	
 
+	/**
+	*/
 	function product_image_search () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
@@ -165,7 +168,6 @@ class yf_manage_shop_product_images{
 		if (empty($product_info)) {
 			return js_redirect($_SERVER['HTTP_REFERER'], true, 'wrong product ID');
 		}
-
 		if (!empty($_POST['src'])) {
 			$tmp_file = '/tmp/search_image_'.$_GET['id'];
 			if (!copy($_POST['src'], $tmp_file)) {
@@ -177,7 +179,6 @@ class yf_manage_shop_product_images{
 				}
 			}
 		}
-
 		// Image upload
 		if (!empty($_FILES)) {
 			$this->product_image_upload();
@@ -186,11 +187,12 @@ class yf_manage_shop_product_images{
 				@unlink($tmp_file);
 			}
 		} 
-
 		$images = common()->shop_get_images($product_info['id']);
 		$base_url = WEB_PATH;
 		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
-		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
+		if (!empty($media_host)) {
+			$base_url = '//' . $media_host . '/';
+		}
 		foreach((array)$images as $A) {
 			$product_image_delete_url = './?object='.main()->_get('object').'&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
 			$replace2 = array(
@@ -201,14 +203,11 @@ class yf_manage_shop_product_images{
 			);
 			$items .= tpl()->parse('manage_shop/image_items', $replace2);
 		}
-
 		$search_url = 'http://yandex.com/images/search?text='.urlencode($product_info['name']);
 		$cache_key = 'external_images_'.$_GET['id'];
 		$search_results = cache_get($cache_key);
 		if (empty($search_results)) {
-
 			$search_results = file_get_contents($search_url);
-
 			preg_match_all('/<a class="serp-item__link".*?c.hit\((.*?)\)/umis', $search_results, $search_results);
 			$search_results = $search_results[1];
 			foreach ($search_results as $key => $item) {
@@ -217,8 +216,6 @@ class yf_manage_shop_product_images{
 			}
 			cache_set($cache_key, $search_results);
 		}
-
-
 		$replace = array(
 			'form_action'    => '',
 			'search_url'     => $search_url,
@@ -227,9 +224,6 @@ class yf_manage_shop_product_images{
 			'image'          => $items,
 			'product_url'    => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
 		);
-
-		//return js_redirect($_SERVER['HTTP_REFERER']);
 		return tpl()->parse($_GET['object'].'/product_image_search', $replace);
 	} 
-
 }
