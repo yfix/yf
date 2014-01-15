@@ -1012,9 +1012,13 @@ class yf_table2 {
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			$out = array();
-			foreach (explode(',', trim(trim($field,','))) as $k => $v) {
+			foreach (explode(',', trim(trim(str_replace(','.PHP_EOL, ',', $field),','))) as $k => $v) {
+				$v = trim($v);
+				if (!strlen($v)) {
+					continue;
+				}
 				if (!empty($extra['data'][$v])) {
-					$out[$v] = $extra['data'][$v];
+					$out[$v] = trim($extra['data'][$v]);
 				}
 			}
 			$body = $out ? implode('<br>', $out) : t('--All--');
