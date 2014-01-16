@@ -10,15 +10,6 @@
 class yf_form2 {
 
 	/**
-	*/
-	function _init() {
-		$this->USER_ID		= main()->USER_ID;
-		$this->USER_GROUP	= main()->USER_GROUP;
-		$this->ADMIN_ID		= main()->ADMIN_ID;
-		$this->ADMIN_GROUP	= main()->ADMIN_GROUP;
-	}
-
-	/**
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
@@ -489,6 +480,12 @@ class yf_form2 {
 		$after_content_html = 
 			($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
 			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
+
+		if ($extra['edit_link']) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($extra['edit_link'])) {
+				$extra['edit_link'] = '';
+			}
+		}
 
 		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
 		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
@@ -1350,6 +1347,11 @@ class yf_form2 {
 
 			$content = '';
 			if ($extra['link']) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($extra['link'])) {
+					$extra['link'] = '';
+				}
+			}
+			if ($extra['link']) {
 				if ($extra['rewrite']) {
 					$extra['link'] = url($extra['link']);
 				}
@@ -2181,6 +2183,11 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($link_url) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($link_url)) {
+					return '';
+				}
+			}
 			if ($extra['rewrite']) {
 				$link_url = url($link_url);
 			}
@@ -2281,6 +2288,11 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($link_url) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($link_url)) {
+					return '';
+				}
+			}
 			if ($extra['rewrite']) {
 				$link_url = url($link_url);
 			}
