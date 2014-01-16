@@ -13,6 +13,8 @@ class yf_common_admin {
 		$this->ADMIN_ID		= main()->ADMIN_ID;
 		$this->ADMIN_GROUP	= main()->ADMIN_GROUP;
 		$this->CENTER_BLOCK_ID = _class('core_blocks')->_get_center_block_id();
+		$this->ADMIN_URL_HOST	= parse_url(WEB_PATH, PHP_URL_HOST);
+		$this->ADMIN_URL_PATH	= parse_url(WEB_PATH, PHP_URL_PATH);
 	}
 
 	/**
@@ -30,8 +32,18 @@ class yf_common_admin {
 		if (main()->ADMIN_GROUP === 1) {
 			return true;
 		}
-		$u = array();
-		parse_str(parse_url($link, PHP_URL_QUERY), $u);
+		$link_parts = parse_url($link);
+		// Outer links simply allowed
+		if (isset($link_parts['scheme']) && $link_parts['host'] && $link_parts['path']) {
+			if ($link_parts['host']. $link_parts['path'] != $this->ADMIN_URL_HOST. $this->ADMIN_URL_PATH) {
+				return true;
+			}
+		}
+		// Maybe this is also outer link and no need to block it (or maybe rewrited?)
+		if (!isset($link_parts['query'])) {
+			return true;
+		}
+		parse_str($link_parts['query'], $u);
 		$u = (array)$u;
 		if (isset($u['task']) && in_array($u['task'], array('login','logout'))) {
 			return true;
