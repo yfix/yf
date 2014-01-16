@@ -482,7 +482,7 @@ class yf_form2 {
 			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
 
 		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($extra['edit_link'])) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
 				$extra['edit_link'] = '';
 			}
 		}
@@ -528,7 +528,7 @@ class yf_form2 {
 		$row_end = '</dl>'.PHP_EOL;
 
 		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($extra['edit_link'])) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
 				$extra['edit_link'] = '';
 			}
 		}
@@ -1357,7 +1357,7 @@ class yf_form2 {
 
 			$content = '';
 			if ($extra['link']) {
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($extra['link'])) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['link'])) {
 					$extra['link'] = '';
 				}
 			}
@@ -2194,7 +2194,7 @@ class yf_form2 {
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			if ($link_url) {
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($link_url)) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($link_url)) {
 					return '';
 				}
 			}
@@ -2299,7 +2299,7 @@ class yf_form2 {
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
 			if ($link_url) {
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($link_url)) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($link_url)) {
 					return '';
 				}
 			}

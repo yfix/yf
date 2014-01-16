@@ -771,7 +771,7 @@ class yf_table2 {
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
 					if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-						$is_link_allowed = common()->_admin_link_is_allowed($link);
+						$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
 					}
 				}
 				if ($link && $is_link_allowed) {
@@ -962,7 +962,7 @@ class yf_table2 {
 				}
 				if ($link_url) {
 					if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-						$is_link_allowed = common()->_admin_link_is_allowed($link_url);
+						$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link_url);
 						if (!$is_link_allowed) {
 							$link_url = '';
 						}
@@ -1081,7 +1081,7 @@ class yf_table2 {
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$is_link_allowed = true;
 				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = common()->_admin_link_is_allowed($link);
+					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
 				}
 				if (!$is_link_allowed) {
 					return '';
@@ -1249,7 +1249,7 @@ class yf_table2 {
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$is_link_allowed = true;
 				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = common()->_admin_link_is_allowed($link);
+					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
 				}
 				if (!$is_link_allowed) {
 					return '';
@@ -1288,7 +1288,7 @@ class yf_table2 {
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
 				$is_link_allowed = true;
 				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = common()->_admin_link_is_allowed($link);
+					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
 				}
 				if (!$is_link_allowed) {
 					return '';
