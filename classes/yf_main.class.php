@@ -1046,9 +1046,6 @@ class yf_main {
 					continue;
 				}
 			}
-if ($class_name == 'yf_db_driver_mysql41') {
-	echo $class_file.' | '.$_path.' | '.$_prefix.'<br>';
-}
 			$this->include_module($_path. $_prefix. $class_file);
 			if (class_exists($_prefix. $class_name)) {
 				$loaded_class_name	= $_prefix. $class_name;
@@ -1629,10 +1626,12 @@ if ($class_name == 'yf_db_driver_mysql41') {
 			return false;
 		}
 		if (MAIN_TYPE_ADMIN) {
-			$OBJ->USER_ID = $this->_get('user_id');
-		} elseif (MAIN_TYPE_USER && isset($_SESSION)) {
-			$OBJ->USER_ID	= (int)$this->_session('user_id');
-			$OBJ->USER_GROUP= (int)$this->_session('user_group');
+			$OBJ->USER_ID		= $this->_get('user_id');
+			$OBJ->ADMIN_ID		= (int)$this->_session('admiin_id');
+			$OBJ->ADMIN_GROUP	= (int)$this->_session('admin_group');
+		} elseif (MAIN_TYPE_USER) {
+			$OBJ->USER_ID		= (int)$this->_session('user_id');
+			$OBJ->USER_GROUP	= (int)$this->_session('user_group');
 		}
 		// Select user details
 		if (isset($OBJ->USER_ID) && !empty($OBJ->USER_ID)) {
