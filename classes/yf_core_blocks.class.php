@@ -222,7 +222,7 @@ class yf_core_blocks {
 		if (empty($block_id) || empty($OBJECT)) {
 			return false;
 		}
-		if(empty($ACTION)) {
+		if (empty($ACTION)) {
 			$ACTION = 'show';
 		}
 		$CUR_USER_GROUP = intval(MAIN_TYPE_ADMIN ? $_SESSION['admin_group'] : $_SESSION['user_group']);
