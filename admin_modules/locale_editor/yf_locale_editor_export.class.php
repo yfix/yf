@@ -10,11 +10,11 @@ class yf_locale_editor_export {
 	function export_vars() {
 		if (main()->is_post()) {
 			if (empty($_POST['file_format']) || !isset($this->_file_formats[$_POST['file_format']])) {
-				_re(t('Please select file format'));
+				_re('Please select file format');
 			}
 			$IS_TEMPLATE = intval((bool)$_POST['is_template']);
 			if (empty($_POST['lang_code']) && !$IS_TEMPLATE) {
-				_re(t('Please select language to export'));
+				_re('Please select language to export');
 			}
 			$cur_locale = !empty($_POST['lang_code']) ? $_POST['lang_code'] : 'en';
 			$cur_lang_info = array(
@@ -88,7 +88,7 @@ class yf_locale_editor_export {
 			}
 			if (!common()->_error_exists()) {
 				if (empty($body)) {
-					_re(t("Error while exporting data"));
+					_re("Error while exporting data");
 				}
 			}
 			if (!common()->_error_exists()) {

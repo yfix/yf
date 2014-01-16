@@ -582,9 +582,9 @@ class yf_validate {
 		$this->_prepare_reserved_words();
 		// Do check profile url
 		if (!empty($CUR_VALUE)) {
-			_re(t("You have already chosen your profile url. You are not allowed to change it!"));
+			_re("You have already chosen your profile url. You are not allowed to change it!");
 		} elseif (!preg_match("/^[a-z0-9]{0,64}$/ims", $TEXT_TO_CHECK)) {
-			_re(t("Wrong Profile url format! (Letters or numbers only with no Spaces)"));
+			_re("Wrong Profile url format! Letters or numbers only with no spaces");
 		} elseif (in_array($TEXT_TO_CHECK, $this->reserved_words)) {
 			_re("This profile url (\"".$TEXT_TO_CHECK."\") is our site reserved name. Please try another one.");
 		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE profile_url='"._es($TEXT_TO_CHECK)."'") >= 1) {
@@ -598,7 +598,7 @@ class yf_validate {
 	function _check_login () {
 // TODO: rewrite me
 		if ($_POST["login"] == "") {
-			_re(t('Login required'));
+			_re('Login required');
 		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE login='"._es($_POST['login'])."'") >= 1) {
 			_re("This login (".$_POST["login"].") has already been registered with us!");
 		}

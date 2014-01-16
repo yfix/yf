@@ -130,11 +130,11 @@ class yf_custom_design {
 			if ($ext == ".jpeg") $ext=".jpg";
 			// Check file extension
 			if ($ext != ".jpg" && $ext != ".gif") {
-				_re(t("Incorrect file format for background!"));
+				_re("Incorrect file format for background!");
 			}
 			// Check file size
 			if ($_FILES['back']['size'] > $this->MAX_BG_IMAGE_SIZE) {
-				_re(t("Background file is too big!"));
+				_re("Background file is too big!");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {

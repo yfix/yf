@@ -42,13 +42,13 @@ class yf_email_page {
 		if (!empty($_POST["go"])) {
 			// Check if email is already registered for someone
 			if (!common()->email_verify($_POST["email"])) {
-				_re(t("Invalid e-mail, please check your spelling!"));
+				_re("Invalid e-mail, please check your spelling!");
 			}
 			if (empty($_POST["name"])) {
-				_re(t("Friend name required!"));
+				_re("Friend name required!");
 			}
 			if (empty($_POST["message"])) {
-				_re(t("Message text required!"));
+				_re("Message text required!");
 			}
 			// Check for flood
 			if (!empty($_SESSION[$this->SESSION_TTL_NAME][$cur_page_md5]) && $_SESSION[$this->SESSION_TTL_NAME][$cur_page_md5] > (time() - $this->TTL)) {

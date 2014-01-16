@@ -17,7 +17,7 @@ class yf_ban_status {
 	*/
 	function _auto_check () {
 // TODO
-//_re(t("Testing auto-ban checking"));
+//_re("Testing auto-ban checking");
 //return true;
 return false;
 	}

@@ -14,32 +14,32 @@ class yf_get_pswd {
 		conf('_login_form_displayed', true);
 		if(!empty($_POST)){
 			if (empty($_POST['login']) && empty($_POST['email'])) {
-				_re(t("Login or Email required"));
+				_re("Login or Email required");
 			}
 			// Check if user with such login exists
 			if (!empty($_POST['login'])) {
 				$A = db()->query_fetch("SELECT id,name,login,password,email,nick FROM ".db('user')." WHERE login='"._es($_POST['login'])."'");
 				if (empty($A["id"])) {
-					_re(t("Login was not found"), "login");
+					_re("Login was not found", "login");
 				}
 				if (!common()->_error_exists()) {
 					$result = $this->_send_info_to_user($A);
 					if (!$result) {
-						_re(t("Server mail error"));
+						_re("Server mail error");
 					}
 				}
 			// Check if user with such email exists
 			} elseif (!empty($_POST['email'])) {
 				$Q = db()->query("SELECT id,name,login,password,email,nick FROM ".db('user')." WHERE email='"._es($_POST['email'])."'");
 				if (!db()->num_rows($Q)) {
-					_re(t("Email was not found"), "email");
+					_re("Email was not found", "email");
 				}
 				// Check if errors exists and send all found accounts
 				if (!common()->_error_exists()) {
 					while ($A = db()->fetch_assoc($Q)) {
 						$result = $this->_send_info_to_user($A);
 						if (!$result) {
-							_re(t("Server mail error"));
+							_re("Server mail error");
 						}
 					}
 				}
