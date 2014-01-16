@@ -24,8 +24,7 @@ class yf_manage_shop_orders{
 					INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
 					INNER JOIN '.db('shop_products').' AS p ON i.product_id = p.id 
 					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE /*FILTER*/
-						m.admin_id='.intval(main()->ADMIN_ID).'
+					WHERE m.admin_id='.intval(main()->ADMIN_ID).' /*FILTER*/
 					GROUP BY o.id /*ORDER*/'; // ORDER BY o.id DESC
 		} else {
 			$sql = 'SELECT o.*, COUNT(*) AS num_items 
@@ -42,13 +41,14 @@ class yf_manage_shop_orders{
 		return table($sql, array(
 				'filter' => $filter,
 				'filter_params' => array(
+					'id'	=> array('between','o.id'),
 					'status' => array('eq','o.status'),
 					'name' => array('like','o.name'),
 					'phone' => array('like','o.phone'),
 					'email' => array('like','o.phone'),
 					'user_id' => array('eq','o.user_id'),
 					'date' => array('field' => 'o.date'),
-					'total_sum' => array('field' => 'o.total_sum'),
+					'total_sum' => array('between','o.total_sum'),
 				),
 			))
 			->text('id')

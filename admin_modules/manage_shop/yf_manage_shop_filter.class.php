@@ -85,13 +85,17 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->row_start(array('desc' => 'id'))
-						->number('id', array('class' => 'span1'))
-						->number('id__and', array('class' => 'span1'))
+						->number('id')
+						->number('id__and')
 					->row_end()
 					->text('name')
 					->text('phone')
 					->text('email')
 					->number('user_id')
+					->row_start(array('desc' => 'total_sum'))
+						->number('total_sum')
+						->number('total_sum__and')
+					->row_end()
 					->select_box('status', common()->get_static_conf('order_status'), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1));
 
