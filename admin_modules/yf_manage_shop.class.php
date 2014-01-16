@@ -58,26 +58,35 @@ class yf_manage_shop {
 	* Constructor
 	*/
 	function _init() {
-		$this->SUPPLIER_ID = (int)db()->get_one('SELECT supplier_id FROM '.db('shop_admin_to_supplier').' WHERE admin_id='.intval(main()->ADMIN_ID));
+		$supplier = db()->get('SELECT supplier_id, main_cat_id FROM '.db('shop_admin_to_supplier').' WHERE admin_id='.intval(main()->ADMIN_ID));
+		if ($supplier['supplier_id']) {
+			$this->SUPPLIER_ID = $supplier['supplier_id'];
+			$supplier_parent_cat_item = $supplier['main_cat_id'];
+		}
 
 		$this->_statuses = common()->get_static_conf('order_status');
 		$this->_order_items_status = common()->get_static_conf('order_items_status');
 		$this->_category_names	= _class('cats')->_get_items_names_cached('shop_cats');
-		$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 0);
+
+		if ($this->SUPPLIER_ID && $supplier_parent_cat_item) {
+			$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 0, $supplier_parent_cat_item);
+		} else {
+			$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 0);
+		}
 
 		$this->man = db()->query_fetch_all('SELECT * FROM '.db('shop_manufacturers').' ORDER BY name ASC');
-		$this->_man_for_select[0] = '--NONE--';
+		$this->_man_for_select[''] = '--NONE--';
 		foreach ((array)$this->man as $k => $v) {
 			$this->_man_for_select[$v['id']] = $v['name'];
 		}
 
 		$this->_suppliers = db()->query_fetch_all('SELECT * FROM '.db('shop_suppliers').' ORDER BY name ASC');
-		$this->_suppliers_for_select[0] = '--NONE--';
-		foreach ((array)$this->_suppliers as $k => $v) {
-			$this->_suppliers_for_select[$v['id']] = $v['name'];
-		}
-		if ($this->SUPPLIER_ID) {
-			$this->_suppliers_for_select = array();
+		$this->_suppliers_for_select = array();
+		if (!$this->SUPPLIER_ID) {
+			$this->_suppliers_for_select[''] = '--NONE--';
+			foreach ((array)$this->_suppliers as $k => $v) {
+				$this->_suppliers_for_select[$v['id']] = $v['name'];
+			}
 		}
 
 		$this->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
