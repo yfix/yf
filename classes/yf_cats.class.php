@@ -77,7 +77,7 @@ class yf_cats {
 		} else {
 			$raw_items_array = $this->_items_cache[$cat_id];
 		}
-		if ($recursive_sort && !empty($raw_items_array)){
+		if ($recursive_sort && !empty($raw_items_array)) {
 			$raw_items_array = $this->_recursive_sort_items($raw_items_array);
 		}
 		return $raw_items_array ? $raw_items_array: false;
@@ -125,13 +125,13 @@ class yf_cats {
 
 	/**
 	*/
-	function _prepare_for_box_cached($cat_name = '', $with_all = 1) {
-		$cache_name = 'cats__prepare_for_box__'.$cat_name.'_'.$with_all;
+	function _prepare_for_box_cached($cat_name = '', $with_all = 1, $parent_item_id = 0) {
+		$cache_name = 'cats__prepare_for_box__'.$cat_name.'_'.$with_all.'_'.$parent_item_id;
 		$items = cache_get($cache_name);
 		if ($items) {
 			return $items;
 		}
-		$items = $this->_prepare_for_box($cat_name, $with_all);
+		$items = $this->_prepare_for_box($cat_name, $with_all, $parent_item_id);
 		cache_set($cache_name, $items);
 		return $items;
 	}
@@ -139,7 +139,7 @@ class yf_cats {
 	/**
 	* Prepare category items for use in box
 	*/
-	function _prepare_for_box($cat_items = array(), $with_all = 1) {
+	function _prepare_for_box($cat_items = array(), $with_all = true, $parent_item_id = 0) {
 		if (!empty($cat_items) && is_string($cat_items)) {
 			$cat_items = $this->_get_items_array($cat_items);
 		}
@@ -150,9 +150,19 @@ class yf_cats {
 		if ($with_all) {
 			$items_for_box[' ']	= t('-- All --');
 		}
-		foreach ((array)$cat_items as $cur_item_info) {
-			$cur_item_id = $cur_item_info['id'];
+		$only_children_ids = array();
+		if ($parent_item_id) {
+			// build list of children allowed and show only them
+			$only_children_ids[$parent_item_id] = $parent_item_id;
+			foreach ((array)$this->_recursive_get_children_ids($parent_item_id, $cat_items, $get_sub_children = true, $return_array = true) as $cid => $cinfo) {
+				$only_children_ids[$cid] = $cid;
+			}
+		}
+		foreach ((array)$cat_items as $cur_item_id => $cur_item_info) {
 			if (empty($cur_item_id)) {
+				continue;
+			}
+			if ($only_children_ids && !isset($only_children_ids[$cur_item_id])) {
 				continue;
 			}
 			$items_for_box[$cur_item_id] = str_repeat($this->BOX_LEVEL_SPACER, $cur_item_info['level'])
@@ -165,7 +175,7 @@ class yf_cats {
 	/**
 	* Prepare category items for use in box
 	*/
-	function _get_items_for_box($cat_name = '', $with_all = 1) {
+	function _get_items_for_box($cat_name = '', $with_all = true) {
 		return $this->_prepare_for_box($this->_get_items_array($cat_name), $with_all);
 	}
 
@@ -316,7 +326,7 @@ class yf_cats {
 
 	/**
 	*/
-	function _recursive_get_children_ids($cat_id = 0, $cat_items = array(), $get_sub_children = 1, $return_array = false) {
+	function _recursive_get_children_ids($cat_id = 0, $cat_items = array(), $get_sub_children = true, $return_array = false) {
 		$children_ids = array();
 		if (empty($cat_id)) {
 			return $children_ids;
@@ -338,7 +348,7 @@ class yf_cats {
 			}
 			if ($return_array) {
 				$children_ids[$cur_item_info['id']] = $cur_item_info['id'];
-				$children_ids = my_array_merge($children_ids, $sub_children);
+				$children_ids = $children_ids + (array)$sub_children;
 			} else {
 				$children_ids[$cur_item_info['id']] = $sub_children;
 			}
