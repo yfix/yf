@@ -886,14 +886,14 @@ class yf_debug_info {
 	/**
 	*/
 	function _debug_other () {
-		$body = array();
+		$items = array();
 		foreach (debug() as $k => $v) {
 			if (isset($this->_used_debug_datas[$k])) {
 				continue;
 			}
-			$body[] = $k.' = '.var_export($v, 1);
+			$items[$k] = '<pre>'.var_export($v, 1).'</pre>';
 		}
-		return nl2br(implode(PHP_EOL, $body));
+		return $this->_show_key_val_table($items);
 	}
 
 	/**
@@ -905,7 +905,7 @@ class yf_debug_info {
 			if (!method_exists($module_obj, $hook_name)) {
 				continue;
 			}
-			$items[$module_name] = $module_obj->$hook_name($this);
+			$items[$module_name] = '<pre>'.var_export($module_obj->$hook_name($this), 1).'</pre>';
 		}
 		return $this->_show_key_val_table($items);
 	}
