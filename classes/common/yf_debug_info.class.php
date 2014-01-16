@@ -86,83 +86,10 @@ class yf_debug_info {
 	*/
 	function go () {
 		$ts = microtime(true);
-/*
-		$body = "";
-		// Get debug hook from current $_GET["object"]
-		$obj = module($_GET["object"]);
-		if (is_object($obj) && in_array("_hook_debug", get_class_methods($obj))) {
-			$hook_result = $obj->_hook_debug();
-			if (is_array($hook_result)) {
-				$body .= "<div class='debug_allow_close'><h5>".t($_GET["object"])."</h5><ol>";
-				$_array_pairs = array(
-					" "			=> "	",
-					"	=>	"	=> " => ",
-					"array	("	=> "array(",
-				);
-				foreach ((array)$hook_result as $id => $text) {
-					$_prepared_text = "";
-					if (is_array($text)) {
-						$_prepared_text = str_replace(array_keys($_array_pairs), array_values($_array_pairs), var_export($text, 1));
-						$_prepared_text = preg_replace("#=>\s+array\(#i", "=> array(", $_prepared_text);
-					} else {
-						$_prepared_text = "'".htmlspecialchars($text)."'";
-					}
-					$body .= "['".htmlspecialchars($id)."'] => <pre><small>".$_prepared_text."</small></pre>,";
-				}
-				$body .= "</ol></div>";
-			} else {
-				$body .= $hook_result;
-			}
-			unset($hook_result);
-		}
-		// Gather sub-methods
-		$methods = array();
-		$class_name = get_class($this);
-		foreach ((array)get_class_methods($class_name) as $_method_name) {
-			// Skip unwanted methods
-			if (substr($_method_name, 0, strlen("_debug_")) != "_debug_" || $_method_name == $class_name || $_method_name == __FUNCTION__) {
-				continue;
-			}
-			$methods[$_method_name] = $_method_name;
-			$body .= $this->$_method_name();
-		}
 		// Do hide console if needed
 		if (isset($_SESSION['hide_debug_console']) && $_SESSION['hide_debug_console']) {
-			$body = "";
+			return '';
 		}
-		// !!! Needed to be on the bottom of the page
-		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {
-			// Prepare JS array
-			$body .= "<script type='text/javascript'>";
-
-			$body .= "var _i18n_for_page = {";
-			ksort($i18n_vars);
-			foreach ((array)$i18n_vars as $_var_name => $_var_value) {
-				$_var_name	= strtolower($_var_name);
-				$_var_name	= str_replace("_", " ", $_var_name);
-				$_var_name	= str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
-				$_var_value	= str_replace(array("\"","",""), array("\\\"","",""), $_var_value);
-				$body .= "\""._prepare_html($_var_name)."\":\""._prepare_html($_var_value)."\",";
-			}
-			$body .= "__dummy:null};";
-
-			$not_translated = _class('i18n')->_NOT_TRANSLATED;
-			if (!empty($not_translated)) {
-				ksort($not_translated);
-				$body .= "var _i18n_not_translated = {";
-				foreach ((array)$not_translated as $_var_name => $_hits) {
-					$_var_name	= strtolower($_var_name);
-					$_var_name	= str_replace("_", " ", $_var_name);
-					$_var_name = str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
-					$body .= "\""._prepare_html($_var_name)."\":\"".intval($_hits)."\",";
-				}
-				$body .= "__dummy:null};";
-			}
-
-			$body .= "</script>";
-		}
-*/
 		$methods = array();
 		$class_name = get_class($this);
 		foreach ((array)get_class_methods($class_name) as $method) {
@@ -971,6 +898,20 @@ class yf_debug_info {
 
 	/**
 	*/
+	function _debug_hooks () {
+		$items = array();
+		$hook_name = '_hook_debug';
+		foreach (main()->modules as $module_name => $module_obj) {
+			if (!method_exists($module_obj, $hook_name)) {
+				continue;
+			}
+			$items[$module_name] = $module_obj->$hook_name($this);
+		}
+		return $this->_show_key_val_table($items);
+	}
+
+	/**
+	*/
 	function _show_key_val_table ($a, $params = array(), $name = '') {
 		if (!$a) {
 			return false;
@@ -1109,5 +1050,43 @@ class yf_debug_info {
 		$data = debug($name);
 		debug($name, false);
 		return $data;
+	}
+
+	/**
+	*/
+	function _i18n_vars_todo () {
+// TODO
+		// !!! Needed to be on the bottom of the page
+		$i18n_vars = _class('i18n')->_I18N_VARS;
+		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {
+			// Prepare JS array
+			$body .= "<script type='text/javascript'>";
+
+			$body .= "var _i18n_for_page = {";
+			ksort($i18n_vars);
+			foreach ((array)$i18n_vars as $_var_name => $_var_value) {
+				$_var_name	= strtolower($_var_name);
+				$_var_name	= str_replace("_", " ", $_var_name);
+				$_var_name	= str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
+				$_var_value	= str_replace(array("\"","",""), array("\\\"","",""), $_var_value);
+				$body .= "\""._prepare_html($_var_name)."\":\""._prepare_html($_var_value)."\",";
+			}
+			$body .= "__dummy:null};";
+
+			$not_translated = _class('i18n')->_NOT_TRANSLATED;
+			if (!empty($not_translated)) {
+				ksort($not_translated);
+				$body .= "var _i18n_not_translated = {";
+				foreach ((array)$not_translated as $_var_name => $_hits) {
+					$_var_name	= strtolower($_var_name);
+					$_var_name	= str_replace("_", " ", $_var_name);
+					$_var_name = str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
+					$body .= "\""._prepare_html($_var_name)."\":\"".intval($_hits)."\",";
+				}
+				$body .= "__dummy:null};";
+			}
+			$body .= "</script>";
+		}
+		return $body;
 	}
 }
