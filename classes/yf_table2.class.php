@@ -26,6 +26,15 @@ class yf_table2 {
 	*/
 
 	/**
+	*/
+	function _init() {
+		$this->USER_ID		= main()->USER_ID;
+		$this->USER_GROUP	= main()->USER_GROUP;
+		$this->ADMIN_ID		= main()->ADMIN_ID;
+		$this->ADMIN_GROUP	= main()->ADMIN_GROUP;
+	}
+
+	/**
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
@@ -1255,10 +1264,17 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($params, $instance_params) {
+			'func'	=> function($params, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				$is_link_allowed = true;
+				if (MAIN_TYPE_ADMIN && $_this->ADMIN_ID != 1) {
+					$is_link_allowed = common()->_admin_link_is_allowed($link);
+				}
+				if (!$is_link_allowed) {
+					return '';
+				}
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
