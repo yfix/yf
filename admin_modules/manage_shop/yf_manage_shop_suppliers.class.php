@@ -1,4 +1,5 @@
 <?php
+
 class yf_manage_shop_suppliers{
 
 	/**
@@ -12,9 +13,9 @@ class yf_manage_shop_suppliers{
 			->text('url')
 			->text('meta_keywords')
 			->text('meta_desc')
-			->btn_edit('', './?object=manage_shop&action=supplier_edit&id=%d')
-			->btn_delete('', './?object=manage_shop&action=supplier_delete&id=%d')
-			->footer_add('', './?object=manage_shop&action=supplier_add')
+			->btn_edit('', './?object='.main()->_get('object').'&action=supplier_edit&id=%d')
+			->btn_delete('', './?object='.main()->_get('object').'&action=supplier_delete&id=%d')
+			->footer_add('', './?object='.main()->_get('object').'&action=supplier_add')
 		;
 	}	
 
@@ -39,7 +40,7 @@ class yf_manage_shop_suppliers{
 					module('manage_shop')->_upload_image ($man_id, $url);
 				} 
 			}
-			return js_redirect('./?object=manage_shop&action=suppliers');
+			return js_redirect('./?object='.main()->_get('object').'&action=suppliers');
 		}
 
 		$thumb_path = module('manage_shop')->supplier_img_dir.$supplier_info['url'].'_'.$supplier_info['id'].module('manage_shop')->THUMB_SUFFIX. '.jpg';
@@ -53,9 +54,9 @@ class yf_manage_shop_suppliers{
 			'sort_order'		=> '',
 			'desc'				=> '',
 			'thumb_path'		=> '',
-			'delete_image_url'	=> './?object=manage_shop&action=delete_image&id='.$supplier_info['id'],
-			'form_action'		=> './?object=manage_shop&action=supplier_add',
-			'back_url'			=> './?object=manage_shop&action=suppliers',
+			'delete_image_url'	=> './?object='.main()->_get('object').'&action=delete_image&id='.$supplier_info['id'],
+			'form_action'		=> './?object='.main()->_get('object').'&action=supplier_add',
+			'back_url'			=> './?object='.main()->_get('object').'&action=suppliers',
 		);
 		return form($replace)
 			->text('name')
@@ -72,7 +73,7 @@ class yf_manage_shop_suppliers{
 	function supplier_edit () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+			return _e('Empty ID!');
 		}
 		$supplier_info = db()->query_fetch('SELECT * FROM '.db('shop_suppliers').' WHERE id='.$_GET['id']);
 		if (main()->is_post()) {
@@ -93,7 +94,7 @@ class yf_manage_shop_suppliers{
 					$this->_upload_image($man_id, $url);
 				} 
 			}
-			return js_redirect('./?object=manage_shop&action=suppliers');
+			return js_redirect('./?object='.main()->_get('object').'&action=suppliers');
 		}
 		$thumb_path = module('manage_shop')->supplier_img_dir.$supplier_info['url'].'_'.$supplier_info['id'].module('manage_shop')->THUMB_SUFFIX. '.jpg';
 		if (!file_exists($thumb_path)) {
@@ -106,9 +107,9 @@ class yf_manage_shop_suppliers{
 			'sort_order'		=> $supplier_info['sort_order'],
 			'desc'				=> $supplier_info['desc'],
 			'thumb_path'		=> $thumb_path,
-			'delete_image_url'	=> './?object=manage_shop&action=delete_image&id='.$supplier_info['id'],
-			'form_action'		=> './?object=manage_shop&action=supplier_edit&id='.$supplier_info['id'],
-			'back_url'			=> './?object=manage_shop&action=suppliers',
+			'delete_image_url'	=> './?object='.main()->_get('object').'&action=delete_image&id='.$supplier_info['id'],
+			'form_action'		=> './?object='.main()->_get('object').'&action=supplier_edit&id='.$supplier_info['id'],
+			'back_url'			=> './?object='.main()->_get('object').'&action=suppliers',
 		);
 		return form($replace)
 			->text('name')
@@ -135,7 +136,7 @@ class yf_manage_shop_suppliers{
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object=manage_shop&action=suppliers');
+			return js_redirect('./?object='.main()->_get('object').'&action=suppliers');
 		}
 	}	
 }

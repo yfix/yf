@@ -749,9 +749,9 @@ class yf_menus_editor {
 	*/
 	function _multi_html_to_db($input = array()) {
 		if (is_array($input)) {
-			$input = ','.implode(',', $input).',';
+			$input = ','.implode(','.PHP_EOL, $input).',';
 		}
-		return (string)str_replace(array(' ',"\t","\r","\n",',,'), '', $input);
+		return (string)str_replace(array(' ',"\t","\r",',,'), '', $input);
 	}
 
 	/**

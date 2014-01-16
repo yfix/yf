@@ -446,6 +446,9 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
+		if ($extra['hide_empty'] && !strlen($content)) {
+			return '';
+		}
 		if ($this->_params['dd_mode']) {
 			return $this->_dd_row_html($content, $extra, $replace);
 		}
@@ -1478,6 +1481,9 @@ class yf_form2 {
 			$content = _class('html_controls')->$func($extra);
 			if ($extra['no_label'] || $_this->_params['no_label']) {
 				$extra['desc'] = '';
+			}
+			if ($extra['hide_empty'] && !strlen($content)) {
+				return '';
 			}
 			return $_this->_row_html($content, $extra, $r);
 		};

@@ -51,17 +51,15 @@ class yf_manage_shop_filter{
 					->text('name')
 					->text('articul')
 					->row_start(array('desc' => 'price'))
-						->number('price', array('append' => '', 'prepend' => ''))
-						->number('price__and', array('append' => '', 'prepend' => ''))
+						->number('price')
+						->number('price__and')
 					->row_end()
-					->select_box('cat_id', _class('cats')->_get_items_names_cached('shop_cats'), array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
-					->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1))
+					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
+					->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1, 'hide_empty' => 1))
 					->select_box('manufacturer_id', _class('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'no_translate' => 1))
 					->active_box('active', array('horizontal' => 1))
 					->yes_no_box('image', array('horizontal' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1))
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1))
-					->save_and_clear();
+					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
 			'users' => function($filter_name, $replace) {
@@ -70,29 +68,32 @@ class yf_manage_shop_filter{
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				return form($replace, array('selected' => $_SESSION[$filter_name]))
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->number('id', array('class' => 'span1'))
 					->text('name')
 					->text('email')
 					->text('phone')
 					->text('address')
-					->select_box('order_by', $order_fields)
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-					->save_and_clear();
+					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
 			'orders' => function($filter_name, $replace) {
 
-				$fields = array('id','add_date');
+				$fields = array('id','date','name','phone','email','total_sum','user_id','status');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				return form($replace, array('selected' => $_SESSION[$filter_name]))
-					->number('id', array('class' => 'span1'))
-					->number('id__and', array('class' => 'span1'))
-					->select_box('order_by', $order_fields)
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-					->save_and_clear();
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->row_start(array('desc' => 'id'))
+						->number('id', array('class' => 'span1'))
+						->number('id__and', array('class' => 'span1'))
+					->row_end()
+					->text('name')
+					->text('phone')
+					->text('email')
+					->number('user_id')
+					->select_box('status', common()->get_static_conf('order_status'), array('show_text' => 1))
+					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
 			'manufacturers' => function($filter_name, $replace) {
@@ -101,11 +102,9 @@ class yf_manage_shop_filter{
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				return form($replace, array('selected' => $_SESSION[$filter_name]))
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
-					->select_box('order_by', $order_fields)
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-					->save_and_clear();
+					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
 			'suppliers' => function($filter_name, $replace) {
@@ -114,11 +113,9 @@ class yf_manage_shop_filter{
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				return form($replace, array('selected' => $_SESSION[$filter_name]))
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
-					->select_box('order_by', $order_fields)
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-					->save_and_clear();
+					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
 			'product_sets' => function($filter_name, $replace) {
@@ -127,12 +124,10 @@ class yf_manage_shop_filter{
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				return form($replace, array('selected' => $_SESSION[$filter_name]))
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
 					->select_box('cat_id', _class('cats')->_get_items_names_cached('shop_cats'), array('desc' => 'Main category'))
-					->select_box('order_by', $order_fields)
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-					->save_and_clear();
+					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
 			'attributes' => function($filter_name, $replace) {
@@ -141,17 +136,17 @@ class yf_manage_shop_filter{
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				return form($replace, array('selected' => $_SESSION[$filter_name]))
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('title')
-					->select_box('order_by', $order_fields)
-					->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-					->save_and_clear();
+					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
 		);
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {
-			return $filters[$action]($filter_name, $replace);
+			return $filters[$action]($filter_name, $replace)
+				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1))
+				->save_and_clear();
 		}
 		return false;
 	}

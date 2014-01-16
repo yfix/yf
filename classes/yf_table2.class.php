@@ -595,7 +595,16 @@ class yf_table2 {
 			$filter_sql = ' AND '.implode(' AND ', $sql);
 		}
 		if ($filter_data['order_by'] && strpos(strtoupper($__sql), 'ORDER BY') === false) {
-			$order_sql = ' ORDER BY `'.str_replace('.', '`.`', db()->es($filter_data['order_by'])).'` ';
+			$order_by_field = $filter_data['order_by'];
+			if (isset($filter_params[$order_by_field])) {
+				$field_params = $filter_params[$order_by_field];
+				if ($field_params['field']) {
+					$order_by_field = $field_params['field'];
+				} elseif (isset($field_params[1])) {
+					$order_by_field = $field_params[1];
+				}
+			}
+			$order_sql = ' ORDER BY `'.str_replace('.', '`.`', db()->es($order_by_field)).'` ';
 			if ($filter_data['order_direction']) {
 				$direction = strtoupper($filter_data['order_direction']);
 			}
@@ -1012,9 +1021,13 @@ class yf_table2 {
 		return $this->func($name, function($field, $params, $row) {
 			$extra = $params['extra'];
 			$out = array();
-			foreach (explode(',', trim(trim($field,','))) as $k => $v) {
+			foreach (explode(',', trim(trim(str_replace(','.PHP_EOL, ',', $field),','))) as $k => $v) {
+				$v = trim($v);
+				if (!strlen($v)) {
+					continue;
+				}
 				if (!empty($extra['data'][$v])) {
-					$out[$v] = $extra['data'][$v];
+					$out[$v] = trim($extra['data'][$v]);
 				}
 			}
 			$body = $out ? implode('<br>', $out) : t('--All--');

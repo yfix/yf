@@ -1,19 +1,38 @@
 <?php
+
 class yf_manage_shop_product_images{
+
+	/**
+	*/
+	function _get_product($pid) {
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						p.id='.intval($pid).'
+						AND m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.intval($pid);
+		}
+		return db()->get($sql);
+	}
 
 	/**
 	 */
 	function product_image_delete () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return _e('No such product!');
 		}
 		if (empty($_GET['key'])) {
-			return 'Empty image key!';
+			return _e('Empty image key!');
 		}
 		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' && `id`='.intval($_GET['key']));
 		if (count($A) == 0){
-			return 'Image not found';
+			return _e('Image not found');
 		}
 		module('manage_shop')->_product_image_delete($_GET['id'], $_GET['key']);
 		module('manage_shop')->_product_images_add_revision($_GET['id']);
@@ -27,6 +46,12 @@ class yf_manage_shop_product_images{
 	/**
 	 */
 	function set_main_image(){
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return _e('No such product!');
+		}
 		$product_id = intval($_GET['id']);
 		if (main()->is_post()) {
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'0\' WHERE `product_id`='.$product_id);
@@ -89,8 +114,11 @@ class yf_manage_shop_product_images{
 	 */
 	function product_image_upload () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return _e('No such product!');
 		}
 		module('manage_shop')->_product_image_upload($_GET['id']);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
@@ -153,10 +181,15 @@ class yf_manage_shop_product_images{
 		return $i;
 	}	
 
+	/**
+	*/
 	function product_image_search () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+		if ($_GET['id']) {
+			$product = $this->_get_product($_GET['id']);
+		}
+		if (!$product['id']) {
+			return _e('No such product!');
 		}
 
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE id = '.$_GET['id'];
@@ -165,7 +198,6 @@ class yf_manage_shop_product_images{
 		if (empty($product_info)) {
 			return js_redirect($_SERVER['HTTP_REFERER'], true, 'wrong product ID');
 		}
-
 		if (!empty($_POST['src'])) {
 			$tmp_file = '/tmp/search_image_'.$_GET['id'];
 			if (!copy($_POST['src'], $tmp_file)) {
@@ -177,7 +209,6 @@ class yf_manage_shop_product_images{
 				}
 			}
 		}
-
 		// Image upload
 		if (!empty($_FILES)) {
 			$this->product_image_upload();
@@ -186,13 +217,14 @@ class yf_manage_shop_product_images{
 				@unlink($tmp_file);
 			}
 		} 
-
 		$images = common()->shop_get_images($product_info['id']);
 		$base_url = WEB_PATH;
 		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
-		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
+		if (!empty($media_host)) {
+			$base_url = '//' . $media_host . '/';
+		}
 		foreach((array)$images as $A) {
-			$product_image_delete_url = './?object=manage_shop&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
+			$product_image_delete_url = './?object='.main()->_get('object').'&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
 			$replace2 = array(
 				'img_path' 		=> $base_url . $A['big'],
 				'thumb_path'	=> $base_url . $A['thumb'],
@@ -201,14 +233,11 @@ class yf_manage_shop_product_images{
 			);
 			$items .= tpl()->parse('manage_shop/image_items', $replace2);
 		}
-
 		$search_url = 'http://yandex.com/images/search?text='.urlencode($product_info['name']);
 		$cache_key = 'external_images_'.$_GET['id'];
 		$search_results = cache_get($cache_key);
 		if (empty($search_results)) {
-
 			$search_results = file_get_contents($search_url);
-
 			preg_match_all('/<a class="serp-item__link".*?c.hit\((.*?)\)/umis', $search_results, $search_results);
 			$search_results = $search_results[1];
 			foreach ($search_results as $key => $item) {
@@ -217,19 +246,14 @@ class yf_manage_shop_product_images{
 			}
 			cache_set($cache_key, $search_results);
 		}
-
-
 		$replace = array(
 			'form_action'    => '',
 			'search_url'     => $search_url,
 			'search_results' => json_encode($search_results),
 			'product_info'   => $product_info,
 			'image'          => $items,
-			'product_url'    => './?object=manage_shop&action=product_edit&id='.$product_info['id'],
+			'product_url'    => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
 		);
-
-		//return js_redirect($_SERVER['HTTP_REFERER']);
 		return tpl()->parse($_GET['object'].'/product_image_search', $replace);
 	} 
-
 }

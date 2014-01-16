@@ -4,9 +4,21 @@ class yf_manage_shop_product_edit{
 	function product_edit () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return 'Empty ID!';
+			return _e('Empty id');
 		}
-		$product_info = db()->query_fetch('SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id']);
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						p.id='.intval($_GET['id']).'
+						AND m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id'];
+		}
+		$product_info = db()->query_fetch($sql);
+		if (empty($product_info['id'])) {
+			return _e('Product not found');
+		}
 		if (main()->is_post()) {
 			if (!$_POST['name']) {
 				_re('Product name must be filled');
@@ -80,7 +92,7 @@ class yf_manage_shop_product_edit{
 			}
 			module('manage_shop')->_product_add_revision('edit',$_GET['id']);
 			
-			return js_redirect('./?object=manage_shop&action=product_edit&id='.$_GET['id']);
+			return js_redirect('./?object='.main()->_get('object').'&action=product_edit&id='.$_GET['id']);
 		}
 		
 		$images = common()->shop_get_images($product_info['id']);
@@ -88,7 +100,7 @@ class yf_manage_shop_product_edit{
 		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
 		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
 		foreach((array)$images as $A) {
-			$product_image_delete_url = './?object=manage_shop&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
+			$product_image_delete_url = './?object='.main()->_get('object').'&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
 			$replace2 = array(
 				'img_path'   => $base_url . $A['big'],
 				'thumb_path' => $base_url . $A['thumb'],
@@ -152,18 +164,18 @@ class yf_manage_shop_product_edit{
 			'cat_id_box'         => common()->select_box('cat_id', module('manage_shop')->_cats_for_select, $product_info['cat_id'], false, 2),
 			'featured_box'       => module('manage_shop')->_box('featured', $product_info['featured']),
 			'featured'           => $product_info['featured'],
-			'form_action'        => './?object=manage_shop&action=product_edit&id='.$product_info['id'],
-			'back_url'           => './?object=manage_shop&action=products',
+			'form_action'        => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
+			'back_url'           => './?object='.main()->_get('object').'&action=products',
 			'image'              => $items,
 			'categories_url'     => './?object=category_editor&action=show_items&id=shop_cats',
-			'manufacturers_url'  => './?object=manage_shop&action=manufacturers',
-			'suppliers_url'      => './?object=manage_shop&action=suppliers',
-			'manage_attrs_url'   => './?object=manage_shop&action=attributes',
+			'manufacturers_url'  => './?object='.main()->_get('object').'&action=manufacturers',
+			'suppliers_url'      => './?object='.main()->_get('object').'&action=suppliers',
+			'manage_attrs_url'   => './?object='.main()->_get('object').'&action=attributes',
 			'group_prices'       => !empty($group_prices) ? $group_prices : '',
-			'link_get_product'   => process_url('./?object=manage_shop&action=show_product_by_category&cat_id='),
+			'link_get_product'   => process_url('./?object='.main()->_get('object').'&action=show_product_by_category&cat_id='),
 			'product_related'    => module('manage_shop')->related_products($product_info['id']),
 			'set_main_image_url' => './?object='.$_GET['object'].'&action=set_main_image&id='.$product_info['id'],
-			'search_url'         => './?object=manage_shop&action=product_image_search&id='.$product_info['id'],
+			'search_url'         => './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'],
 			'product_url_user'	 => url('/shop/product/'.$product_info['id']),
 		);
 		return tpl()->parse('manage_shop/product_edit', $replace);

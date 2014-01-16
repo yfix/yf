@@ -159,7 +159,8 @@ class yf_admin {
 		}
 		$t_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)$a['group']);
 		// Save previous session
-		$_SESSION['admin_prev_info'] = $_SESSION;
+		$tmp = $_SESSION;
+		$_SESSION['admin_prev_info'] = $tmp;
 		// Login as different admin user
 		$_SESSION['admin_id'] = $a['id'];
 		$_SESSION['admin_group'] = $a['group'];

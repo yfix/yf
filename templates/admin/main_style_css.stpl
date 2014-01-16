@@ -15,7 +15,9 @@
 td input[type=text], td textarea { margin-bottom: 0; }
 .modal { width: auto; }
 .modal.fade.in { top: 30px; }
-.modal .form-horizontal .control-group { margin-bottom: 5px; }
+.modal .form-horizontal .control-group { margin-bottom: 1em; }
+.modal .form-horizontal .controls { margin-left: 150px; margin-right: 20px; }
+.modal .form-horizontal .control-label { width: 130px; }
 
 .rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
 .rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }

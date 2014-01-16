@@ -26,10 +26,10 @@ class yf_manage_shop_users{
 			->text('phone')
 			->text('address')
 			->date('add_date', array('format' => 'full','nowrap' => 1))
-			->btn_edit('', './?object=manage_shop&action=user_edit&id=%d')
+			->btn_edit('', './?object='.main()->_get('object').'&action=user_edit&id=%d')
 			->btn('Login', './?object=manage_users&action=login_as&id=%d')
-			->btn_delete('', './?object=manage_shop&action=user_delete&id=%d')
-			->btn_active('', './?object=manage_shop&action=user_activate&id=%d')
+			->btn_delete('', './?object='.main()->_get('object').'&action=user_delete&id=%d')
+			->btn_active('', './?object='.main()->_get('object').'&action=user_activate&id=%d')
 		;
 	}
 
@@ -39,7 +39,7 @@ class yf_manage_shop_users{
 		$_GET['id'] = intval($_GET['id']);
 		$field_info = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id = '.intval($_GET['id']));
 		if (empty($field_info)) {
-			return _e(t('no field'));
+			return _e('no field');
 		}
 		if ($_GET['id']) {
 			db()->query('DELETE FROM '.db('user').' WHERE id='.$_GET['id']);
@@ -69,7 +69,7 @@ class yf_manage_shop_users{
 			main()->NO_GRAPHICS = true;
 			echo ($active ? 1 : 0);
 		} else {
-			return js_redirect('./?object=manage_shop&action=users');
+			return js_redirect('./?object='.main()->_get('object').'&action=users');
 		}
 	}
 	
@@ -79,7 +79,7 @@ class yf_manage_shop_users{
 		if ($_GET['id']){
 			$A = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
 			if (empty($A)) {
-				return js_redirect('./?object=manage_shop&action=users');
+				return js_redirect('./?object='.main()->_get('object').'&action=users');
 			}
 		}
 		$validate_rules = array(

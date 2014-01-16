@@ -200,11 +200,11 @@ class yf_blocks {
 			->data('site_ids', $this->_sites, array('desc' => 'Sites'))
 			->data('server_ids', $this->_servers, array('desc' => 'Servers'))
 			->data('server_roles', $this->_server_roles, array('desc' => 'Server roles'))
-			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d')
+			->btn_edit('', './?object='.$_GET['object'].'&action=edit_rule&id=%d', array('no_ajax' => 1))
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_rule&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_rule&id=%d')
 			->btn_active('', './?object='.$_GET['object'].'&action=activate_rule&id=%d')
-			->footer_add('', './?object='.$_GET['object'].'&action=add_rule&id='.$block_info['id'])
+			->footer_add('', './?object='.$_GET['object'].'&action=add_rule&id='.$block_info['id'], array('no_ajax' => 1))
 		;
 	}
 
@@ -235,7 +235,7 @@ class yf_blocks {
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
 					cache()->refresh('blocks_rules');
-				}
+				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
 			))
 			->info('type')
 			->allow_deny_box('rule_type')
@@ -286,7 +286,7 @@ class yf_blocks {
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
 					cache()->refresh('blocks_rules');
-				}
+				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
 			))
 			->info('type')
 			->allow_deny_box('rule_type')
@@ -376,9 +376,9 @@ class yf_blocks {
 	*/
 	function _multi_html_to_db($input = array()) {
 		if (is_array($input)) {
-			$input = ','.implode(',', $input).',';
+			$input = ','.implode(','.PHP_EOL, $input).',';
 		}
-		return (string)str_replace(array(' ',"\t","\r","\n",',,'), '', $input);
+		return (string)str_replace(array(' ',"\t","\r",',,'), '', $input);
 	}
 
 	/**

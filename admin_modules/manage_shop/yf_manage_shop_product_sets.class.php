@@ -24,9 +24,9 @@ class yf_manage_shop_product_sets{
 			->text('price')
 			->text('old_price')
 #			->text('products')
-			->btn_edit('','','./?object=manage_shop&action=product_set_edit&id=%d')
-			->btn_delete('','','./?object=manage_shop&action=product_set_delete&id=%d')
-			->footer_add('','./?object=manage_shop&action=product_set_add')
+			->btn_edit('','','./?object='.main()->_get('object').'&action=product_set_edit&id=%d')
+			->btn_delete('','','./?object='.main()->_get('object').'&action=product_set_delete&id=%d')
+			->footer_add('','./?object='.main()->_get('object').'&action=product_set_add')
 		;
 	}	
 
@@ -34,7 +34,7 @@ class yf_manage_shop_product_sets{
 	*/
 	function product_set_add () {
 //		$replace = _class('admin_methods')->add($this->_table);
-#		$replace['form_action'] = './?object=manage_shop&action=product_set_add';
+#		$replace['form_action'] = './?object='.main()->_get('object').'&action=product_set_add';
 		return form($replace)
 			->text('name')
 			->textarea('desc')
@@ -48,7 +48,7 @@ class yf_manage_shop_product_sets{
 	*/
 	function product_set_edit () {
 //		$replace = _class('admin_methods')->edit($this->_table);
-#		$replace['form_action'] = './?object=manage_shop&action=product_set_edit&id='.$_GET['id'];
+#		$replace['form_action'] = './?object='.main()->_get('object').'&action=product_set_edit&id='.$_GET['id'];
 		return form($replace)
 			->text('name')
 			->textarea('desc')
