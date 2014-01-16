@@ -58,14 +58,14 @@ class yf_manage_forum_manage_users {
 			$forum_user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".intval($_GET["id"]));
 		}
 		if (!$forum_user_info) {
-			return _e(t("No such user"));
+			return _e("No such user");
 		}
 		$user_info = user($_GET["id"]);
 		// Save data
 		if (main()->is_post()) {
 			// Group name is required
 			if (!isset(module("forum")->_forum_groups[$_POST["group"]])) {
-				_re(t("Wrong group"));
+				_re("Wrong group");
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -140,14 +140,14 @@ class yf_manage_forum_manage_users {
 	function _edit_group () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (!isset(module("forum")->_forum_groups[$_GET["id"]])) {
-			return _e(t("No such group"));
+			return _e("No such group");
 		}
 		$group_info = module("forum")->_forum_groups[$_GET["id"]];
 		// Save data
 		if (main()->is_post()) {
 			// Group name is required
 			if (empty($_POST["title"])) {
-				_re(t("Title is required"));
+				_re("Title is required");
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -204,7 +204,7 @@ class yf_manage_forum_manage_users {
 		if (main()->is_post()) {
 			// Group name is required
 			if (empty($_POST["title"])) {
-				_re(t("Title is required"));
+				_re("Title is required");
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -250,7 +250,7 @@ class yf_manage_forum_manage_users {
 	*/
 	function _delete_group () {
 		if (!isset(module("forum")->_forum_groups[$_GET["id"]])) {
-			return _e(t("No such group"));
+			return _e("No such group");
 		}
 		db()->query("DELETE FROM ".db('forum_groups')." WHERE id=".intval($_GET["id"]));
 
@@ -266,7 +266,7 @@ class yf_manage_forum_manage_users {
 	*/
 	function _clone_group () {
 		if (!isset(module("forum")->_forum_groups[$_GET["id"]])) {
-			return _e(t("No such group"));
+			return _e("No such group");
 		}
 		$group_info = module("forum")->_forum_groups[$_GET["id"]];
 		// Prepare SQL
@@ -324,7 +324,7 @@ class yf_manage_forum_manage_users {
 	function _edit_moderator () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (!isset(module("forum")->_forum_groups[$_GET["id"]])) {
-			return _e(t("No such moderator"));
+			return _e("No such moderator");
 		}
 		$mod_info = module("forum")->_forum_moderators[$_GET["id"]];
 		// Save data
@@ -343,7 +343,7 @@ class yf_manage_forum_manage_users {
 			}
 			// Forums list is required
 			if (empty($_POST["forums_list"])) {
-				_re(t("Forums list is required"));
+				_re("Forums list is required");
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -457,11 +457,11 @@ class yf_manage_forum_manage_users {
 		if (main()->is_post()) {
 			// User ID is required
 			if (empty($_POST["user_id"])) {
-				_re(t("User ID is required"));
+				_re("User ID is required");
 			} else {
 				$member_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE id=".intval($_POST["user_id"]));
 				if (empty($member_info)) {
-					_re(t("No user with such ID"));
+					_re("No user with such ID");
 				}
 			}
 			if (!empty($_POST["forums_list"])) {
@@ -478,7 +478,7 @@ class yf_manage_forum_manage_users {
 			}
 			// Forums list is required
 			if (empty($_POST["forums_list"])) {
-				_re(t("Forums list is required"));
+				_re("Forums list is required");
 			}
 			// Do save record
 			if (!common()->_error_exists()) {
@@ -557,7 +557,7 @@ class yf_manage_forum_manage_users {
 	*/
 	function _delete_moderator () {
 		if (!isset(module("forum")->_forum_moderators[$_GET["id"]])) {
-			return _e(t("No such moderator"));
+			return _e("No such moderator");
 		}
 		db()->query("DELETE FROM ".db('forum_moderators')." WHERE id=".intval($_GET["id"]));
 

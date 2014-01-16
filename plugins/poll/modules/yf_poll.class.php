@@ -72,14 +72,14 @@ class yf_poll {
 		}
 		// Check required params
 		if (empty($poll_info) && (empty($OBJECT_NAME) || empty($OBJECT_ID))) {
-			return !$params["silent"] ? _e(t("Missing required params for poll!")) : false;
+			return !$params["silent"] ? _e("Missing required params for poll!") : false;
 		}
 		// Get poll info
 		if (empty($poll_info)) {
 			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 		}
 		if (empty($poll_info) && !empty($POLL_ID)) {
-			return !$params["silent"] ? _e(t("No such poll!")) : false;
+			return !$params["silent"] ? _e("No such poll!") : false;
 		}
 		// Restore some missing params
 		if (empty($OBJECT_NAME)) {
@@ -111,14 +111,14 @@ class yf_poll {
 		if (main()->is_post() && $_POST["choice"]) {
 			if (!empty($last_vote)) {
 				if ($this->ONE_VOTE_FOR_USER) {
-					_re(t("You allowed to vote only one time in this poll"));
+					_re("You allowed to vote only one time in this poll");
 				} elseif ($this->VOTE_TTL && (time() - $last_vote["date"]) < $this->VOTE_TTL) {
 					_re("Please wait ".ceil((time() - $last_vote["date"]) / 60)." minutes before you can vote for this poll again");
 				}
 			}
 			// Check if something selected
 			if (empty($_POST["choice"])) {
-				_re(t("Please select something"));
+				_re("Please select something");
 			}
 			$_is_poll_owner = (main()->USER_ID && main()->USER_ID == $poll_info["user_id"]) ? 1 : 0;
 			// Check if owner can vote
@@ -218,7 +218,7 @@ class yf_poll {
 			);
 		}
 		if (empty($poll_info)) {
-			return !$params["silent"] ? _e(t("No such poll!")) : false;
+			return !$params["silent"] ? _e("No such poll!") : false;
 		}
 		// Prepare choices
 		foreach ((array)explode("\n", str_replace("\r", "", $poll_info["choices"])) as $_id => $_text) {
@@ -373,18 +373,18 @@ class yf_poll {
 		$OBJECT_ID		= !empty($params["object_id"])		? intval($params["object_id"]) : intval($_GET["id"]);
 		// Check required params
 		if (empty($poll_info) && (empty($OBJECT_NAME) || empty($OBJECT_ID))) {
-			return _e(t("Missing required params for poll!"));
+			return _e("Missing required params for poll!");
 		}
 		// Get poll info
 		if (empty($poll_info)) {
 			$poll_info = db()->query_fetch("SELECT * FROM ".db('polls')." WHERE object_name='"._es($OBJECT_NAME)."' AND object_id=".intval($OBJECT_ID). ($this->PROCESS_STATUS_FIELD ? " AND active='1' " : ""));
 		}
 		if (empty($poll_info)) {
-			return _e(t("No such poll!"));
+			return _e("No such poll!");
 		}
 		// Check owner
 		if (main()->USER_ID != $poll_info["user_id"]) {
-			return _e(t("Not your poll"));
+			return _e("Not your poll");
 		}
 		db()->query("DELETE FROM ".db('poll_votes')." WHERE poll_id = ".intval($poll_info["id"]));
 		db()->query("DELETE FROM ".db('polls')." WHERE id = ".intval($poll_info["id"]));

@@ -16,7 +16,7 @@ class yf_manage_forum_manage_main {
 			$cat_info = db()->query_fetch("SELECT * FROM ".db('forum_categories')." WHERE id=".$_GET['id']);
 		}
 		if (empty($cat_info)) {
-			return _e(t("No such category"));
+			return _e("No such category");
 		}
 		// Save data
 		if (main()->is_post()) {
@@ -118,11 +118,11 @@ class yf_manage_forum_manage_main {
 	function _edit_forum () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t("No forum id"));
+			return _e("No forum id");
 		}
 		$forum_info = db()->query_fetch("SELECT * FROM ".db('forum_forums')." WHERE id=".$_GET['id']);
 		if (empty($forum_info)) {
-			return _e(t("No such forum"));
+			return _e("No such forum");
 		}
 		// Save data
 		if (main()->is_post()) {
@@ -292,17 +292,17 @@ class yf_manage_forum_manage_main {
 	function _edit_topic () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
-			return _e(t("No topic id"));
+			return _e("No topic id");
 		}
 		$topic_info = db()->query_fetch("SELECT * FROM ".db('forum_topics')." WHERE id=".$_GET['id']);
 		if (empty($topic_info)) {
-			return _e(t("No such topic"));
+			return _e("No such topic");
 		}
 		// Save data
 		if (main()->is_post()) {
 			$_POST["forum"] = intval($_POST["forum"]);
 			if (empty($_POST["forum"])) {
-				_re(t("Forum id required"));
+				_re("Forum id required");
 			}
 			if (!common()->_error_exists()) {
 				$sql = "UPDATE ".db('forum_topics')." SET 
@@ -424,7 +424,7 @@ class yf_manage_forum_manage_main {
 			$post_info = db()->query_fetch("SELECT * FROM ".db('forum_posts')." WHERE id=".intval($POST_ID));
 		}
 		if (empty($post_info)) {
-			return _e(t("No such post"));
+			return _e("No such post");
 		}
 		// Save data
 		if (main()->is_post()) {

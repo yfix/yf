@@ -317,7 +317,7 @@ class yf_gallery extends yf_module {
 			$user_info = user($user_id, "", array("WHERE" => array("active" => "1")));
 		}
 		if (empty($user_info)) {
-			return _e(t("No such user in database!"));
+			return _e("No such user in database!");
 		}
 		if (empty($GLOBALS['user_info'])) {
 			$GLOBALS['user_info'] = $user_info;

@@ -26,7 +26,7 @@ class yf_blog_rss {
 	function _display_for_all_blogs() {
 		// Stop here if RSS export is turned off
 		if (empty(module('blog')->ALLOW_RSS_EXPORT)) {
-			return _e(t("RSS export is disabled!"));
+			return _e("RSS export is disabled!");
 		}
 		// Geo filter
 		if (module('blog')->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
@@ -104,7 +104,7 @@ class yf_blog_rss {
 	function _display_for_single_blog() {
 		// Stop here if RSS export is turned off
 		if (empty(module('blog')->ALLOW_RSS_EXPORT)) {
-			return _e(t("RSS export is disabled!"));
+			return _e("RSS export is disabled!");
 		}
 		// Check user id
 		$_GET["id"] = intval($_GET["id"]);
@@ -117,13 +117,13 @@ class yf_blog_rss {
 			$user_info = user($user_id);
 		}
 		if (empty($user_info["id"])) {
-			return _e(t("Wrong user ID!"));
+			return _e("Wrong user ID!");
 		}
 		// Get current blog settings
 		$this->BLOG_SETTINGS = module('blog')->_get_user_blog_settings($user_info["id"]);
 		// Check privacy permissions
 		if (!module('blog')->_privacy_check($this->BLOG_SETTINGS["privacy"], 0, $user_id)) {
-			return _e(t("You are not allowed to view this blog"));
+			return _e("You are not allowed to view this blog");
 		}
 		// Get latest posts
 		$Q = db()->query(
@@ -177,12 +177,12 @@ class yf_blog_rss {
 	function _display_for_cat() {
 		// Stop here if RSS export is turned off
 		if (empty(module('blog')->ALLOW_RSS_EXPORT)) {
-			return _e(t("RSS export is disabled!"));
+			return _e("RSS export is disabled!");
 		}
 		// Check category id
 		$_GET["id"] = intval($_GET["id"]);
 		if (!isset(module('blog')->_blog_cats[$_GET["id"]])) {
-			return _e(t("No such blogs category!"));
+			return _e("No such blogs category!");
 		}
 		// Geo filter
 		if (module('blog')->ALLOW_GEO_FILTERING && GEO_LIMIT_COUNTRY != "GEO_LIMIT_COUNTRY" && GEO_LIMIT_COUNTRY != "") {
@@ -263,7 +263,7 @@ class yf_blog_rss {
 	function _display_for_friends_posts() {
 		// Stop here if RSS export is turned off
 		if (empty(module('blog')->ALLOW_RSS_EXPORT)) {
-			return _e(t("RSS export is disabled!"));
+			return _e("RSS export is disabled!");
 		}
 		// Check user id
 		$_GET["id"] = intval($_GET["id"]);
@@ -273,13 +273,13 @@ class yf_blog_rss {
 			$user_info = user($user_id);
 		}
 		if (empty($user_info["id"])) {
-			return _e(t("Wrong user ID!"));
+			return _e("Wrong user ID!");
 		}
 		// Get current blog settings
 		$this->BLOG_SETTINGS = module('blog')->_get_user_blog_settings($user_info["id"]);
 		// Check privacy permissions
 		if (!module('blog')->_privacy_check($this->BLOG_SETTINGS["privacy"], 0, $user_id)) {
-			return _e(t("You are not allowed to view this blog"));
+			return _e("You are not allowed to view this blog");
 		}
 		// Get friends
 		$FRIENDS_OBJ	= module("friends");

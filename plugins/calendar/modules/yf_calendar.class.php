@@ -76,7 +76,7 @@ class yf_calendar {
 			$user_info = user($USER_ID, "full", array("WHERE" => array("active" => 1)));
 		}
 		if (empty($user_info)) {
-			return _e(t("No such user!"));
+			return _e("No such user!");
 		}
 		// Prepare month time
 		$cur_month_time = time();
@@ -238,7 +238,7 @@ class yf_calendar {
 			$user_info = user($USER_ID, "full", array("WHERE" => array("active" => 1)));
 		}
 		if (empty($user_info)) {
-			return _e(t("No such user!"));
+			return _e("No such user!");
 		}
 		// Prepare date
 		$cur_day_time = time();
@@ -379,7 +379,7 @@ class yf_calendar {
 			$end_day	= strtotime($_POST["end_year"]."-".$_POST["end_month"]."-".$_POST["end_day"]." 00:00:00 GMT");
 			// Check interval
 			if (!($end_date - $start_date)){
-				_re(t("Select date and time!"));
+				_re("Select date and time!");
 			}
 			// Do save statuses in selected time period
 			if (!common()->_error_exists()) {
@@ -538,7 +538,7 @@ class yf_calendar {
 			$start_time = intval($_POST["start_time"]);
 			$end_time	= intval($_POST["end_time"]);
 			if (!($end_time - $start_time)) {
-				_re(t("Please select time"));
+				_re("Please select time");
 			}
 			if (!common()->_error_exists()) {
 				for ($i = $start_time; $i <= $end_time; $i++){
@@ -729,13 +729,13 @@ class yf_calendar {
 		// Save settings
 		if (isset($_POST["save2"])) {
 			if (empty($_POST["status"])) {
-				_re(t("Status is required!"));
+				_re("Status is required!");
 			}
 			$start_time	= intval($_POST["start_time"]);
 			$end_time	= intval($_POST["end_time"]);
 
 			if (($end_time - $start_time) <= 0) {
-				_re(t("Please select time!"));
+				_re("Please select time!");
 			}
 			// Prepare new week days settings
 			$new_settings = array();
@@ -753,7 +753,7 @@ class yf_calendar {
 				);
 			}
 			if (empty($new_settings)) {
-				_re(t("Please select at least one week day!"));
+				_re("Please select at least one week day!");
 			}
 			if (!common()->_error_exists()) {
 				// Merge with old ones

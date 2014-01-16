@@ -358,11 +358,11 @@ class yf_reputation {
 		}
 		// Do check user id
 		if (empty($target_user_id)) {
-			_re(t("Missing target user ID!"));
+			_re("Missing target user ID!");
 		}
 		// Check if user voting himself
 		if (main()->USER_ID == $target_user_id) {
-			_re(t("You are trying to vote for yourself!"));
+			_re("You are trying to vote for yourself!");
 		}
 		if ($this->_user_info["ban_reput"]) {
 			_re(
@@ -374,7 +374,7 @@ class yf_reputation {
 		$user_info = user($target_user_id, "full", array("WHERE" => array("active" => 1)));
 
 		if (empty($user_info)) {
-			_re(t("No such user!"));
+			_re("No such user!");
 		}
 		// Check voting changing direction (good / bad)
 		$_POST["vote_change"] = intval($_POST["vote_change"]);
@@ -542,11 +542,11 @@ class yf_reputation {
 		}
 		// Do check user id
 		if (empty($target_user_id)) {
-			_re(t("Missing target user ID!"));
+			_re("Missing target user ID!");
 		}
 		// Check if user voting himself
 		if (main()->USER_ID == $target_user_id) {
-			_re(t("You are trying to vote for yourself!"));
+			_re("You are trying to vote for yourself!");
 		}
 		if ($this->_user_info["ban_reput"]) {
 			_re(
@@ -557,7 +557,7 @@ class yf_reputation {
 		// Check user info
 		$user_info = user($target_user_id, "full", array("WHERE" => array("active" => 1)));
 		if (empty($user_info)) {
-			_re(t("No such user!"));
+			_re("No such user!");
 		}
 		// Check multi-accounts
 		if (!common()->_error_exists()) {
@@ -612,7 +612,7 @@ class yf_reputation {
 		$MULTI_ACCOUNT_FOUND = common()->_check_multi_accounts($target_user_id, main()->USER_ID);
 		// Raise error message if we found multi-account
 		if ($MULTI_ACCOUNT_FOUND) {
-			_re(t("Sorry, your vote seems suspicious to our anti-cheat filter and can't be counted!"));
+			_re("Sorry, your vote seems suspicious to our anti-cheat filter and can't be counted!");
 		}
 	}
 
@@ -642,17 +642,17 @@ class yf_reputation {
 	function _check_if_vote_allowed ($target_user_id = 0) {
 		// Fast checks
 		if (empty($target_user_id) || empty(main()->USER_ID)) {
-			_re(t("Missing required params for vote checking!"));
+			_re("Missing required params for vote checking!");
 			return false;
 		}
 		if (!empty(main()->USER_ID) && $target_user_id == main()->USER_ID) {
-			_re(t("You are trying to vote for yourself!"));
+			_re("You are trying to vote for yourself!");
 			return false;
 		}
 		// Start more complex checks:
 		// alt power
 		if ($this->CUR_USER_ALT_POWER < 1) {
-			_re(t("Sorry, but you have no reputation altering power... Please be more active on our site and you will be able to vote soon!"));
+			_re("Sorry, but you have no reputation altering power... Please be more active on our site and you will be able to vote soon!");
 			return false;
 		}
 		// min reputation
@@ -696,7 +696,7 @@ class yf_reputation {
 				LIMIT 1"
 			);
 			if (!empty($voted_for_object)) {
-				_re(t("You have already voted for this post!"));
+				_re("You have already voted for this post!");
 				return false;
 			}
 		}

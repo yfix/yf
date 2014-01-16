@@ -97,25 +97,25 @@ class yf_manage_blogs {
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id"));
+			return _e("No id");
 		}
 		// Try to get record info
 		$post_info = db()->query_fetch("SELECT * FROM ".db('blog_posts')." WHERE id=".intval($_GET["id"]));
 		if (empty($post_info)) {
-			return _e(t("No such post"));
+			return _e("No such post");
 		}
 		// Try to get given user info
 		$user_info = db()->query_fetch("SELECT id,name,nick,photo_verified FROM ".db('user')." WHERE id=".intval($post_info["user_id"]));
 		if (empty($user_info["id"])) {
-			return _e(t("No such user!"));
+			return _e("No such user!");
 		}
 		// Check posted data and save
 		if (count($_POST) > 0) {
 			if (empty($_POST["title"])) {
-				_re(t("Title required"));
+				_re("Title required");
 			}
 			if (empty($_POST["text"])) {
-				_re(t("Text required"));
+				_re("Text required");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {

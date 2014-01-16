@@ -212,7 +212,7 @@ class yf_gallery_tags {
 	*/
 	function _show_by_tag() {
 		if (!module('gallery')->ALLOW_TAGGING) {
-			return _e(t("Tagging disabled"));
+			return _e("Tagging disabled");
 		}
 		$_POST["tag"] = trim(preg_replace($this->REGEXP_ALLOWED, "", $_GET["id"]));
 		module('gallery')->_SEARCH_AS_PHOTOS = $_POST["as_photos"] = 1;

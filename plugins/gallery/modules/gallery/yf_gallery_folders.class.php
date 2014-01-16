@@ -15,7 +15,7 @@ class yf_gallery_folders {
 	function _view_folder () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("Missing folder id!"));
+			return _e("Missing folder id!");
 		}
 		// Check if such folder exists
 		$sql = "SELECT * FROM ".db('gallery_folders')." WHERE ";
@@ -26,7 +26,7 @@ class yf_gallery_folders {
 		}
 		$cur_folder_info = db()->query_fetch($sql);
 		if (empty($cur_folder_info)) {
-			return _e(t("No such folder!"));
+			return _e("No such folder!");
 		}
 		$FOLDER_ID	= intval($cur_folder_info["id"]);
 		$user_id	= $cur_folder_info["user_id"];
@@ -35,7 +35,7 @@ class yf_gallery_folders {
 			$user_info = user($user_id, "", array("WHERE" => array("active" => "1")));
 		}
 		if (empty($user_info)) {
-			return _e(t("No such user in database!"));
+			return _e("No such user in database!");
 		}
 		if (empty($GLOBALS['user_info'])) {
 			$GLOBALS['user_info'] = $user_info;
@@ -78,7 +78,7 @@ class yf_gallery_folders {
 			$_POST["password"]	= substr($_POST["password"], 0, 32);
 			// Folder title is required
 			if (!strlen($_POST["title"])) {
-				_re(t("Folder title is required"));
+				_re("Folder title is required");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -150,7 +150,7 @@ class yf_gallery_folders {
 		// Prepare folder id
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("Missing folder id!"));
+			return _e("Missing folder id!");
 		}
 		// Fix second id
 		$_max_folder_id2 = $this->_fix_folder_id2(module('gallery')->USER_ID);
@@ -163,7 +163,7 @@ class yf_gallery_folders {
 		}
 		$cur_folder_info = db()->query_fetch($sql);
 		if (empty($cur_folder_info)) {
-			return _e(t("No such folder!"));
+			return _e("No such folder!");
 		}
 		// Fix owner for the admin section
 		if (MAIN_TYPE_ADMIN && empty(module('gallery')->USER_ID)) {
@@ -171,7 +171,7 @@ class yf_gallery_folders {
 		}
 		$FOLDER_ID	= intval($cur_folder_info["id"]);
 		if ($cur_folder_info["user_id"] != module('gallery')->USER_ID) {
-			return _e(t("Not your folder!"));
+			return _e("Not your folder!");
 		}
 		// Warn user about photos will not displayed in ads
 		$WARN_USER = 0;
@@ -189,7 +189,7 @@ class yf_gallery_folders {
 			$_POST["password"]	= substr($_POST["password"], 0, 32);
 			// Folder title is required
 			if (!strlen($_POST["title"])) {
-				_re(t("Folder title is required"));
+				_re("Folder title is required");
 			}
 			// Check for errors
 			if (!common()->_error_exists()) {
@@ -271,7 +271,7 @@ class yf_gallery_folders {
 		}
 		$cur_folder_info = db()->query_fetch($sql);
 		if (empty($cur_folder_info)) {
-			return _e(t("No such folder!"));
+			return _e("No such folder!");
 		}
 		// Fix owner for the admin section
 		if (MAIN_TYPE_ADMIN && empty(module('gallery')->USER_ID)) {
@@ -279,7 +279,7 @@ class yf_gallery_folders {
 		}
 		$FOLDER_ID	= intval($cur_folder_info["id"]);
 		if ($cur_folder_info["user_id"] != module('gallery')->USER_ID) {
-			return _e(t("Not your folder!"));
+			return _e("Not your folder!");
 		}
 		// Get current user folders
 		$user_folders = module('gallery')->_get_user_folders(module('gallery')->USER_ID);
@@ -425,20 +425,20 @@ class yf_gallery_folders {
 	function _enter_pswd ($FOLDER_ID = 0) {
 		// Prepare folder id
 		if (empty($FOLDER_ID)) {
-			return _e(t("Missing folder id!"));
+			return _e("Missing folder id!");
 		}
 		// Get current user folder info
 		$user_folders = module('gallery')->_user_folders_infos;
 		$cur_folder_info = $user_folders[$FOLDER_ID];
 		if (empty($cur_folder_info)) {
-			return _e(t("No such folder!"));
+			return _e("No such folder!");
 		}
 		// Check posted password with stored in folder
 		if (main()->is_post()) {
 			if (!empty($cur_folder_info["password"]) && $_POST["pswd"] == $cur_folder_info["password"]) {
 				$_SESSION[module('gallery')->SESSION_PSWD_FIELD][$FOLDER_ID] = $cur_folder_info["password"];
 			} else {
-				_re(t("Wrong password!"));
+				_re("Wrong password!");
 			}
 			// Return user back
 			if (!common()->_error_exists()) {
