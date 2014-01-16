@@ -514,6 +514,9 @@ class yf_form2 {
 	* Generate form row using dl>dt,dd html tags. Useful for user profle and other simple table-like content
 	*/
 	function _dd_row_html($content, $extra = array(), $replace = array()) {
+		if ($extra['hide_empty'] && !strlen($content)) {
+			return '';
+		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
@@ -523,6 +526,13 @@ class yf_form2 {
 		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
 		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
 		$row_end = '</dl>'.PHP_EOL;
+
+		if ($extra['edit_link']) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !common()->_admin_link_is_allowed($extra['edit_link'])) {
+				$extra['edit_link'] = '';
+			}
+		}
+		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
 
 		if ($extra['only_row_start']) {
 			return $row_start;
