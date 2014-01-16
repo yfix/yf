@@ -10,15 +10,19 @@
 class yf_cats {
 
 	/** @var mixed @conf_skip */
-	public $_category_sets			= null;
+	public $_category_sets		= null;
 	/** @var mixed @conf_skip */
-	public $_items_cache			= null;
+	public $_items_cache		= null;
 	/** @var mixed @conf_skip */
-	public $_default_callback		= null;
+	public $_default_callback	= null;
 	/** @var mixed @conf_skip */
 	public $_default_cats_block	= null;
 	/** @var bool */
-	public $USE_DYNAMIC_ATTS		= 1;
+	public $USE_DYNAMIC_ATTS	= 1;
+	/** @var string */
+	public $BOX_LEVEL_SPACER	= '&nbsp;&nbsp;';
+	/** @var string */
+	public $BOX_LEVEL_MARKER	= '&#0124;-- ';
 
 	/**
 	*/
@@ -151,7 +155,9 @@ class yf_cats {
 			if (empty($cur_item_id)) {
 				continue;
 			}
-			$items_for_box[$cur_item_id] = str_repeat('&nbsp;', $cur_item_info['level'] * 6).($cur_item_info['level'] > 0 ? /*' &#9492; '*/'&#0124;-- ' : '').t($cur_item_info['name']);
+			$items_for_box[$cur_item_id] = str_repeat($this->BOX_LEVEL_SPACER, $cur_item_info['level'])
+				.($cur_item_info['level'] > 0 ? $this->BOX_LEVEL_MARKER : '')
+				.t($cur_item_info['name']);
 		}
 		return $items_for_box;
 	}
