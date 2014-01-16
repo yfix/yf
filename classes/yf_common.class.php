@@ -333,11 +333,13 @@ class yf_common {
 			// Process array
 			if (is_array($value)) {
 				foreach ((array)$value as $k2 => $v2) {
-					if (is_array($v2)) continue;
-					$string .= '&'.$name.'['.$k2.']='.urlencode($v2);
+					if (is_array($v2)) {
+						continue;
+					}
+					$string .= '&'.urlencode($name).'['.urlencode($k2).']='.urlencode($v2);
 				}
 			} else {
-				$string .= '&'.$name.'='.urlencode($value);
+				$string .= '&'.urlencode($name).'='.urlencode($value);
 			}
 		}
 		$this->_get_vars_cache = $string;
@@ -1387,5 +1389,12 @@ class yf_common {
 		$errors = (array)$_SESSION['permanent_errors'];
 		unset($_SESSION['permanent_errors']);
 		return '<div class="alert alert-error">'.implode('<br />'.PHP_EOL, t($errors)).'</div>';
+	}
+
+	/**
+	*/
+	function _admin_link_is_allowed($link = '') {
+		$func = __FUNCTION__;
+		return _class('common_admin')->$func($link);
 	}
 }
