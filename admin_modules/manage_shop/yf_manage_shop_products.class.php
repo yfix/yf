@@ -13,14 +13,23 @@ class yf_manage_shop_products{
 					WHERE 
 						m.admin_id='.intval(main()->ADMIN_ID).'';
 		} else {
-			$sql = 'SELECT * FROM '.db('shop_products');
+			$sql = 'SELECT * FROM '.db('shop_products').' AS p';
 		}
 		return table($sql, array(
 				'filter' => $_SESSION[$_GET['object'].'__products'],
 				'filter_params' => array(
-					'name'	=> 'like',
-					'price' => 'between',
-					'articul' => 'like',
+					'name'			=> array('like','p.name'),
+					'price' 		=> array('between','p.price'),
+					'articul'		=> array('like','p.articul'),
+					'price'			=> array('eq','p.price'),
+					'supplier_id'	=> array('eq','p.supplier_id'),
+					'manufacturer_id' => array('eq','p.manufacturer_id'),
+					'active'		=> array('eq','p.active'),
+					'image'			=> array('eq','p.image'),
+					'cat_id'		=> array('field' => 'p.cat_id'),
+					'quantity'		=> array('field' => 'p.quantity'),
+					'add_date'		=> array('field' => 'p.add_date'),
+					'update_date'	=> array('field' => 'p.update_date'),
 				),
 			))
 			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {

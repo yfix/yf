@@ -24,17 +24,32 @@ class yf_manage_shop_orders{
 					INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
 					INNER JOIN '.db('shop_products').' AS p ON i.product_id = p.id 
 					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE 
+					WHERE /*FILTER*/
 						m.admin_id='.intval(main()->ADMIN_ID).'
-					GROUP BY o.id ORDER BY o.id DESC';
+					GROUP BY o.id /*ORDER*/'; // ORDER BY o.id DESC
 		} else {
 			$sql = 'SELECT o.*, COUNT(*) AS num_items 
 					FROM '.db('shop_orders').' AS o 
 					INNER JOIN '.db('shop_order_items').' AS i ON i.order_id = o.id 
-					GROUP BY o.id ORDER BY o.id DESC';
+					WHERE 1 /*FILTER*/
+					GROUP BY o.id /*ORDER*/'; //  ORDER BY o.id DESC
+		}
+		$filter = $_SESSION[$_GET['object'].'__orders'];
+		if (!$filter['order_by']) {
+			$filter['order_by'] = 'id';
+			$filter['order_direction'] = 'desc';
 		}
 		return table($sql, array(
-				'filter' => $_SESSION[$_GET['object'].'__orders']
+				'filter' => $filter,
+				'filter_params' => array(
+					'status' => array('eq','o.status'),
+					'name' => array('like','o.name'),
+					'phone' => array('like','o.phone'),
+					'email' => array('like','o.phone'),
+					'user_id' => array('eq','o.user_id'),
+					'date' => array('field' => 'o.date'),
+					'total_sum' => array('field' => 'o.total_sum'),
+				),
 			))
 			->text('id')
 			->date('date', array('format' => 'full', 'nowrap' => 1))
