@@ -774,10 +774,16 @@ class yf_table2 {
 				if ($params['max_length'] && strlen($text) > $params['max_length']) {
 					$text = substr($text, 0, $params['max_length']);
 				}
+				$is_link_allowed = true;
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
 					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
+					if (MAIN_TYPE_ADMIN && $_this->ADMIN_ID != 1) {
+						$is_link_allowed = common()->_admin_link_is_allowed($link);
+					}
+				}
+				if ($link && $is_link_allowed) {
 					if ($extra['rewrite']) {
 						$link = url($link);
 					}
@@ -925,7 +931,7 @@ class yf_table2 {
 			'desc'	=> $extra['desc'] ? $extra['desc'] : 'Image',
 			'path'	=> $path,
 			'link'	=> $link,
-			'func'	=> function($field, $params, $row, $instance_params) {
+			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$id = $row['id'];
 				$fs_path = $extra['fs_path'] ?: PROJECT_PATH;
@@ -962,6 +968,14 @@ class yf_table2 {
 				}
 				if ($extra['no_link']) {
 					$link_url = '';
+				}
+				if ($link_url) {
+					if (MAIN_TYPE_ADMIN && $_this->ADMIN_ID != 1) {
+						$is_link_allowed = common()->_admin_link_is_allowed($link_url);
+						if (!$is_link_allowed) {
+							$link_url = '';
+						}
+					}
 				}
 				$style = ($extra['width'] ? 'width:'.$extra['width'].';' : ''). ($extra['height'] ? 'height:'.$extra['height'].';' : ''). $extra['style'];
 				return ($link_url ? '<a href="'.$link_url.'">' : '')
@@ -1052,7 +1066,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($row, $params, $instance_params) {
+			'func'	=> function($row, $params, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$override_id = '';
 				if (isset($extra['id'])) {
@@ -1074,10 +1088,16 @@ class yf_table2 {
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				$is_link_allowed = true;
+				if (MAIN_TYPE_ADMIN && $_this->ADMIN_ID != 1) {
+					$is_link_allowed = common()->_admin_link_is_allowed($link);
+				}
+				if (!$is_link_allowed) {
+					return '';
+				}
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-
 				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
 				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
@@ -1236,6 +1256,13 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
+				$is_link_allowed = true;
+				if (MAIN_TYPE_ADMIN && $_this->ADMIN_ID != 1) {
+					$is_link_allowed = common()->_admin_link_is_allowed($link);
+				}
+				if (!$is_link_allowed) {
+					return '';
+				}
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
