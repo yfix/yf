@@ -446,6 +446,9 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
+		if ($extra['hide_empty'] && !strlen($content)) {
+			return '';
+		}
 		if ($this->_params['dd_mode']) {
 			return $this->_dd_row_html($content, $extra, $replace);
 		}
