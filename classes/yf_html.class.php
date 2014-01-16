@@ -11,15 +11,6 @@
 class yf_html {
 
 	/**
-	*/
-	function _init() {
-		$this->USER_ID		= main()->USER_ID;
-		$this->USER_GROUP	= main()->USER_GROUP;
-		$this->ADMIN_ID		= main()->ADMIN_ID;
-		$this->ADMIN_GROUP	= main()->ADMIN_GROUP;
-	}
-
-	/**
 	* Catch missing method call
 	*/
 	function __call($name, $arguments) {
