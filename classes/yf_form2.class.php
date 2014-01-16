@@ -1479,6 +1479,9 @@ class yf_form2 {
 			if ($extra['no_label'] || $_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
+			if ($extra['hide_empty'] && !strlen($content)) {
+				return '';
+			}
 			return $_this->_row_html($content, $extra, $r);
 		};
 		if ($this->_chained_mode) {
