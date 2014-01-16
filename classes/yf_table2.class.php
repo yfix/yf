@@ -510,7 +510,7 @@ class yf_table2 {
 			'lte'		=> function($a){ return ' <= "'._es($a['value']).'"'; }, // "lower or equal than"
 			'like'		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
 			'rlike'		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
-			'between'	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
+			'between'	=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"' : ' = "'._es($a['value']).'"'; }, // BETWEEN $min AND $max
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
