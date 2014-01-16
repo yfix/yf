@@ -217,6 +217,27 @@ class yf_core_blocks {
 	}
 
 	/**
+	*/
+	function _get_center_block_rules() {
+		$rules = &$this->CENTER_BLOCK_RULES;
+		if (isset($rules)) {
+			return $rules;
+		}
+		$this->CENTER_BLOCK_ID = $this->_get_center_block_id();
+
+		$rules = array();
+		foreach ((array)$this->_blocks_rules as $rid => $rinfo) {
+			if ($rinfo != $this->CENTER_BLOCK_ID) {
+				continue;
+			}
+			$rules[$rid] = $rinfo;
+		}
+
+		$this->CENTER_BLOCK_RULES = $rules;
+		return $rules;
+	}
+
+	/**
 	* Check rights for blocks
 	*/
 	function _check_block_rights ($block_id = 0, $OBJECT = '', $ACTION = '') {
