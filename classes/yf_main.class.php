@@ -862,7 +862,8 @@ class yf_main {
 		// Try to create instance of the class
 		if ($class_name_to_load) {
 			$this->modules[$class_name] = new $class_name_to_load($params);
-			$this->_init_cur_user_info($this->modules[$class_name]);
+			// make this usable only for main() to save resources
+#			$this->_init_cur_user_info($this->modules[$class_name]);
 			$this->_set_module_conf($class_name, $this->modules[$class_name], $params);
 		}
 		// Return reference to the module object
@@ -1619,6 +1620,7 @@ if ($class_name == 'yf_db_driver_mysql41') {
 	/**
 	* Init user info
 	*/
+// TODO: make this usable only for main() to save resources
 	function _init_cur_user_info(&$OBJ) {
 		if (in_array($this->_get('object'), (array)$this->_auto_info_skip_modules)) {
 			return false;
