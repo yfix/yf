@@ -1411,4 +1411,11 @@ class yf_db {
 	function query_builder() {
 		return _class('db_query_builder', 'classes/db/');
 	}
+
+	/**
+	* I plan to start query builder qurying from this shortcut
+	*/
+	function select($sql = array()) {
+		return _class('db_query_builder', 'classes/db/')->select($sql);
+	}
 }
