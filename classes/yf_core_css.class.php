@@ -220,5 +220,15 @@ class yf_core_css {
 		return false;
 	}
 
-}
+	/**
+	*/
+	function require_css() {
+// TODO
+	}
 
+	/**
+	*/
+	function include_css() {
+// TODO
+	}
+}
