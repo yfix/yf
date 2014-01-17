@@ -204,6 +204,7 @@ class yf_form2 {
 			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
 				$_display_allowed = $_extra['display_func']($_extra, $_replace, $this);
 				if (!$_display_allowed) {
+					$this->_body[$k] = '';
 					continue;
 				}
 			}
