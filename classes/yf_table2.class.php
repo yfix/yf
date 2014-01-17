@@ -239,6 +239,19 @@ class yf_table2 {
 			// Needed to correctly pass inside $instance_params to each function
 			$params['data_sql_names'] = $this->_data_sql_names;
 		}
+		$to_hide = array();
+		if ($data && $params['hide_empty']) {
+			foreach ((array)current($data) as $k => $v) {
+				$to_hide[$k] = $k;
+			}
+			foreach ((array)$data as $_id => $row) {
+				foreach ((array)$row as $k => $v) {
+					if (strlen($v)) {
+						unset($to_hide[$k]);
+					}
+				}
+			}
+		}
 		$body = '';
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $pages : '').PHP_EOL;
 
@@ -266,6 +279,9 @@ class yf_table2 {
 					if (!isset($data1row[$name])) {
 						continue;
 					}
+					if (isset($to_hide[$name])) {
+						continue;
+					}
 					$info['extra'] = (array)$info['extra'];
 					if (++$counter2 == 1 && $this->_params['first_col_width']) {
 						$info['extra']['width'] = $this->_params['first_col_width'];
@@ -288,9 +304,9 @@ class yf_table2 {
 			}
 
 			if ($params['rotate_table']) {
-				$body .= $this->_render_table_contents_rotated($data, $params);
+				$body .= $this->_render_table_contents_rotated($data, $params, $to_hide);
 			} else {
-				$body .= $this->_render_table_contents($data, $params);
+				$body .= $this->_render_table_contents($data, $params, $to_hide);
 			}
 
 			if ($params['show_total']) {
@@ -351,7 +367,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function _render_table_contents($data, $params = array()) {
+	function _render_table_contents($data, $params = array(), $to_hide = array()) {
 		$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
 			$tr_attrs = '';
@@ -366,6 +382,10 @@ class yf_table2 {
 			}
 			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
 			foreach ((array)$this->_fields as $info) {
+				$name = $info['name'];
+				if (isset($to_hide[$name])) {
+					continue;
+				}
 				$body .= $this->_render_table_td($info, $row, $params);
 			}
 			if ($this->_buttons) {
@@ -393,9 +413,13 @@ class yf_table2 {
 
 	/**
 	*/
-	function _render_table_contents_rotated($data = array(), $params) {
+	function _render_table_contents_rotated($data = array(), $params, $to_hide = array()) {
 		$body .= '<tbody>'.PHP_EOL;
 		foreach ((array)$this->_fields as $info) {
+			$name = $info['name'];
+			if (isset($to_hide[$name])) {
+				continue;
+			}
 			$body .= '<tr>'.PHP_EOL;
 			foreach ((array)$data as $_id => $row) {
 				$body .= $this->_render_table_td($info, $row, $params);
@@ -769,7 +793,9 @@ class yf_table2 {
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
-					$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
+					if ($link_id) {
+						$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
+					}
 					if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
 						$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
 					}
@@ -785,7 +811,7 @@ class yf_table2 {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
 					$a_class = $extra['a_class'];
-					$body = '<a href="'.$link.'" class="btn btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.$text.'</a>';
+					$body = '<a href="'.$link.'" class="btn btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.(strlen($text) ? $text : t('link')).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
