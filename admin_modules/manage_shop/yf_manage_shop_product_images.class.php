@@ -144,6 +144,9 @@ class yf_manage_shop_product_images{
 		$clean_image_url = str_replace(array_keys($replace), array_values($replace), $clean_image_url);
 
 		foreach ((array)$_FILES['image']['tmp_name'] as $v) {
+			if (!strlen($v)) {
+				continue;
+			}
 			$md5 = md5_file($v);
 			$db_item = db()->query_fetch('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id.' AND md5="'._es($md5).'"');
 			if (!empty($db_item)) {

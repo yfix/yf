@@ -6,7 +6,8 @@ class yf_manage_shop_suppliers{
 	*/
 	function suppliers () {
 		return table('SELECT * FROM '.db('shop_suppliers'), array(
-				'filter' => $_SESSION[$_GET['object'].'__suppliers']
+				'filter' => $_SESSION[$_GET['object'].'__suppliers'],
+				'hide_empty' => 1,
 			))
 			->image('id', 'uploads/shop/suppliers/%d.jpg', array('width' => '50px'))
 			->text('name')

@@ -6,7 +6,8 @@ class yf_manage_shop_manufacturers{
 	*/
 	function manufacturers () {
 		return table('SELECT * FROM '.db('shop_manufacturers'), array(
-				'filter' => $_SESSION[$_GET['object'].'__manufacturers']
+				'filter' => $_SESSION[$_GET['object'].'__manufacturers'],
+				'hide_empty' => 1,
 			))
 			->image('id', 'uploads/shop/manufacturers/%d.jpg', array('width' => '50px'))
 			->text('name')

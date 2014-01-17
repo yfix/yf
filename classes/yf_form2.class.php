@@ -204,6 +204,7 @@ class yf_form2 {
 			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
 				$_display_allowed = $_extra['display_func']($_extra, $_replace, $this);
 				if (!$_display_allowed) {
+					$this->_body[$k] = '';
 					continue;
 				}
 			}
@@ -437,6 +438,13 @@ class yf_form2 {
 				$css_class = $_css_class;
 			}
 		}
+		// Needed to not modify original class of element (sometimes complex), but just add css class there
+		if (isset($extra['class_add'])) {
+			$_css_class_add = is_array($extra['class_add']) && isset($extra['class_add'][$value]) ? $extra['class_add'][$value] : $extra['class_add'];
+			if ($_css_class_add) {
+				$css_class .= ' '.$_css_class_add;
+			}
+		}
 		if ($this->_params['big_labels']) {
 			$css_class .= ' labels-big';
 		}
@@ -446,7 +454,7 @@ class yf_form2 {
 	/**
 	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
-		if ($extra['hide_empty'] && !strlen($content)) {
+		if (!strlen($content) && ($extra['hide_empty'] || $this->_params['hide_empty'])) {
 			return '';
 		}
 		if ($this->_params['dd_mode']) {
@@ -976,8 +984,8 @@ class yf_form2 {
 			$desc = '';
 		}
 		$extra['type'] = 'text';
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '$';
-		$extra['append'] = isset($extra['append']) ? $extra['append'] : '.00';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '$');
+		$extra['append'] = isset($extra['append']) ? $extra['append'] : ''; // '.00';
 		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
 		return $this->input($name, $desc, $extra, $replace);
@@ -1366,7 +1374,10 @@ class yf_form2 {
 					$extra['link'] = url($extra['link']);
 				}
 				$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
-				$content = '<a href="'.$extra['link'].'" class="'.$extra['class'].'">'.$value.'</a>';
+				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
+				$extra['href'] = $extra['link'];
+				$attrs_names = array('href','name','class','style','disabled','target');
+				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$value.'</a>';
 			} else {
 				$extra['class'] = $extra['class'] ?: 'label label-info';
 				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$value.'</span>';

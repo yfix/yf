@@ -41,15 +41,16 @@ class yf_manage_shop_orders{
 		return table($sql, array(
 				'filter' => $filter,
 				'filter_params' => array(
-					'id'	=> array('between','o.id'),
-					'status' => array('eq','o.status'),
-					'name' => array('like','o.name'),
-					'phone' => array('like','o.phone'),
-					'email' => array('like','o.phone'),
-					'user_id' => array('eq','o.user_id'),
-					'date' => array('field' => 'o.date'),
+					'id'		=> array('between','o.id'),
+					'status'	=> array('eq','o.status'),
+					'name'		=> array('like','o.name'),
+					'phone'		=> array('like','o.phone'),
+					'email' 	=> array('like','o.phone'),
+					'user_id'	=> array('eq','o.user_id'),
+					'date'		=> array('field' => 'o.date'),
 					'total_sum' => array('between','o.total_sum'),
 				),
+				'hide_empty' => 1,
 			))
 			->text('id')
 			->date('date', array('format' => 'full', 'nowrap' => 1))
