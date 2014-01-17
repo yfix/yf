@@ -31,6 +31,7 @@ class yf_manage_shop_products{
 					'add_date'		=> array('field' => 'p.add_date'),
 					'update_date'	=> array('field' => 'p.update_date'),
 				),
+				'hide_empty' => 1,
 			))
 			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
                 $product_id = $row['id'];
