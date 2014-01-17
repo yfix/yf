@@ -25,27 +25,29 @@ class yf_manage_shop_product_edit {
 				_re('Product name must be filled', 'name');
 			}
 			if (!common()->_error_exists()) {
-				$sql_array = array(
+				$sql = array(
 					'url'				=> $_POST['url'] ?: common()->_propose_url_from_name($_POST['name']),
-					'price'				=> number_format($_POST['price'], 2, '.', ''),
-					'price_promo'		=> number_format($_POST['price_promo'], 2, '.', ''),
-					'price_partner'		=> number_format($_POST['price_partner'], 2, '.', ''),
-					'price_raw'			=> number_format($_POST['price_raw'], 2, '.', ''),
 					'active'			=> intval((bool)$_POST['active']),
 					'update_date'		=> time(),
 				);
-				foreach (array('name','description','model','articul','cat_id','meta_keywords','meta_desc','featured','external_url','sku','stock_status_id','old_price','manufacturer_id','supplier_id','quantity') as $k) {
+				foreach (array('name','description','model','articul','cat_id','meta_keywords','meta_desc','featured','external_url','sku','stock_status_id','manufacturer_id','supplier_id','quantity') as $k) {
 					if (isset($_POST[$k])) {
-						$sql_array[$k] = $_POST[$k];
+						$sql[$k] = $_POST[$k];
 					}
 				}
+				foreach (array('price','price_promo','price_partner','price_raw','old_price') as $k) {
+					if (isset($_POST[$k])) {
+						$sql[$k] = number_format($_POST[$k], 2, '.', '');
+					}
+				}
+				db()->update_safe(db('shop_products'), $sql, 'id='.$_GET['id']);
+
 				if (!empty($_FILES)) {
 					$last_img_insert_id = module('manage_shop')->_product_image_upload($_GET['id']);
 					if ($last_img_insert_id) {
 						module('manage_shop')->_product_images_add_revision($_GET['id']);
 					}
 				} 
-				db()->update_safe(db('shop_products'), $sql_array, 'id='.$_GET['id']);
 				
 				$params_to_insert = array();
 				foreach ((array)$_POST['productparams'] as $param_id) {
