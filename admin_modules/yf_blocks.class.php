@@ -43,6 +43,7 @@ class yf_blocks {
 				'filter_params' => array(
 					'name' => 'like',
 				),
+				'hide_empty' => 1,
 			))
 			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d', '', array('link_field_name' => 'id'))
 			->text('type')

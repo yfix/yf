@@ -112,7 +112,7 @@ class yf_user_modules {
 				),
 			))
 			->form()
-			->check_box('name', array('field_desc' => '#'))
+			->check_box('name', array('field_desc' => '#', 'width' => '1%'))
 			->text('name')
 			->func('locations', function($field, $params, $row) {
 				foreach ((array)$field as $loc => $link) {

@@ -87,7 +87,7 @@ class yf_file_manager {
 		$_tmp_array = array();
 		foreach ((array)explode("/", $cur_dir_name) as $_folder) {
 			$_tmp_path .= $_folder."/";
-			$_tmp_array[] = "<a href='./?object=".$_GET["object"]."&dir_name=".urlencode($_tmp_path)._add_get(array("dir_name"))."'>"._prepare_html($_folder)."</a>";
+			$_tmp_array[] = '<a href="./?object='.$_GET['object'].'&dir_name='.urlencode($_tmp_path)._add_get(array('dir_name')).'" class="btn btn-mini btn-xs">'._prepare_html($_folder).'</a>';
 		}
 		if ($_tmp_array) {
 			$cur_dir_name = implode("/", $_tmp_array);

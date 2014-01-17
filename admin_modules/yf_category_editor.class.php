@@ -209,7 +209,11 @@ class yf_category_editor {
 			}
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
-		return table($cat_items, array('pager_records_on_page' => $this->ITEMS_PER_PAGE, 'condensed' => 1))
+		return table($cat_items, array(
+				'pager_records_on_page' => $this->ITEMS_PER_PAGE,
+				'condensed' => 1,
+				'hide_empty' => 1,
+			))
 			->form()
 			->input_padded('name')
 			->input('url', array('propose_url_from' => $this->PROPOSE_SHORT_URL ? 'name' : false))
