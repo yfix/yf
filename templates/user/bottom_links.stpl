@@ -1,7 +1,0 @@
-<div id="bottom_links">
-	<small>
-		<a href="./?object=static_pages&action=show&id=privacy">{t(Privacy)}</a>&nbsp;
-		<a href="./?object=static_pages&action=show&id=terms">{t(Terms)}</a>&nbsp;
-		<a href="./?object=static_pages&action=show&id=about">{t(About)}</a>&nbsp;
-	</small>
-</div>
