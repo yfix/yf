@@ -1374,7 +1374,10 @@ class yf_form2 {
 					$extra['link'] = url($extra['link']);
 				}
 				$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
-				$content = '<a href="'.$extra['link'].'" class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$value.'</a>';
+				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
+				$extra['href'] = $extra['link'];
+				$attrs_names = array('href','name','class','style','disabled','target');
+				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$value.'</a>';
 			} else {
 				$extra['class'] = $extra['class'] ?: 'label label-info';
 				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$value.'</span>';
