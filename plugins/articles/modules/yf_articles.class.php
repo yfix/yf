@@ -107,13 +107,13 @@ class yf_articles extends yf_module {
 	*/
 	function view_cat () {
 		if (empty($_GET["id"])) {
-			return _e(t("No category id!"));
+			return _e("No category id!");
 		}
 		// Try to find such category
 		$cat_id = is_numeric($_GET["id"]) ? intval($_GET["id"]) : $this->_get_cat_id_by_url($_GET["id"]);
 		// Check if we found such category
 		if (empty($cat_id)) {
-			return _e(t("No such category!"));
+			return _e("No such category!");
 		}
 		// Do save filter
 		$_REQUEST["cat_id"] = $cat_id;
@@ -143,13 +143,13 @@ class yf_articles extends yf_module {
 	function view_by_user () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No user id!"));
+			return _e("No user id!");
 		}
 		$user_id = $_GET["id"];
 		// Try to get get user info
 		$user_info = user($user_id);
 		if (empty($user_info)) {
-			return _e(t("No such user!"));
+			return _e("No such user!");
 		}
 		// Do save filter
 		$_REQUEST["user_id"] = $user_id;
@@ -167,12 +167,12 @@ class yf_articles extends yf_module {
 	*/
 	function view_by_name () {
 		if (empty($_GET["id"])) {
-			return _e(t("Missing article name"));
+			return _e("Missing article name");
 		}
 		// Get article info
 		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE short_url='"._es($_GET["id"])."'");
 		if (empty($article_info)) {
-			return _e(t("No such article!"));
+			return _e("No such article!");
 		}
 		// Re-map id
 		$_GET["id"] = $article_info["id"];
@@ -186,14 +186,14 @@ class yf_articles extends yf_module {
 	function view ($article_info = array()) {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		// Get article info
 		if (empty($article_info)) {
 			$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($article_info)) {
-			return _e(t("No such article!"));
+			return _e("No such article!");
 		}
 		
 		$ids = _class_safe("unread")->_set_read("articles", $_GET["id"]);
@@ -213,7 +213,7 @@ class yf_articles extends yf_module {
 		$GLOBALS["_article_info"] = $article_info;
 		// Check if author exists
 		if (empty($author_info)) {
-//			return _e(t("No such user!"));
+//			return _e("No such user!");
 		}
 		if (!isset($GLOBALS['user_info'])) {
 			$GLOBALS['user_info'] = $author_info;
@@ -335,12 +335,12 @@ class yf_articles extends yf_module {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		// Get article info
 		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(main()->USER_ID));
 		if (empty($article_info)) {
-			return _e(t("No such article!"));
+			return _e("No such article!");
 		}
 		// Do save content
 		if (main()->is_post()) {
@@ -350,26 +350,26 @@ class yf_articles extends yf_module {
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
-				_re(t("Author Name is required"));
+				_re("Author Name is required");
 			}
 			// Article category, title, summary and full_text are required
 			if (empty($_POST["title"])) {
-				_re(t("Title is required"));
+				_re("Title is required");
 			} elseif (!empty($this->MAX_TITLE_LENGTH) && strlen($_POST["title"]) > $this->MAX_TITLE_LENGTH) {
 				_re(t("Title length (@item1) is more than allowed length (@item2)", array("@item1" => strlen($_POST["title"]), "@item2" => intval($this->MAX_TITLE_LENGTH))));
 			}
 			if (empty($_POST["summary"])) {
-				_re(t("Summary is required"));
+				_re("Summary is required");
 			} elseif (!empty($this->MAX_SUMMARY_LENGTH) && strlen($_POST["summary"]) > $this->MAX_SUMMARY_LENGTH) {
 				_re("Summary length (".strlen($_POST["summary"]).") is more than allowed length (".intval($this->MAX_SUMMARY_LENGTH).")");
 			}
 			if (empty($_POST["full_text"])) {
-				_re(t("Text is required"));
+				_re("Text is required");
 			} elseif (!empty($this->MAX_FULL_TEXT_LENGTH) && strlen($_POST["full_text"]) > $this->MAX_FULL_TEXT_LENGTH) {
 				_re("Text length (".strlen($_POST["full_text"]).") is more than allowed length (".intval($this->MAX_FULL_TEXT_LENGTH).")");
 			}
 			if (!empty($this->_articles_cats) && (empty($_POST["cat_id"])) || !isset($this->_articles_cats[$_POST["cat_id"]])) {
-				_re(t("Please select article category"));
+				_re("Please select article category");
 			}
 			// Check credentials length
 			if (!empty($this->MAX_CREDENTIALS_LENGTH) && strlen($_POST["credentials"]) > $this->MAX_CREDENTIALS_LENGTH) {
@@ -463,26 +463,26 @@ class yf_articles extends yf_module {
 			}
 			// Author name is required
 			if (empty($_POST["author_name"])) {
-				_re(t("Author Name is required"));
+				_re("Author Name is required");
 			}
 			// Article category, title, summary and full_text are required
 			if (empty($_POST["title"])) {
-				_re(t("Title is required"));
+				_re("Title is required");
 			} elseif (!empty($this->MAX_TITLE_LENGTH) && strlen($_POST["title"]) > $this->MAX_TITLE_LENGTH) {
 				_re("Title length (".strlen($_POST["title"]).") is more than allowed length (".intval($this->MAX_TITLE_LENGTH).")");
 			}
 			if (empty($_POST["summary"])) {
-				_re(t("Summary is required"));
+				_re("Summary is required");
 			} elseif (!empty($this->MAX_SUMMARY_LENGTH) && strlen($_POST["summary"]) > $this->MAX_SUMMARY_LENGTH) {
 				_re("Summary length (".strlen($_POST["summary"]).") is more than allowed length (".intval($this->MAX_SUMMARY_LENGTH).")");
 			}
 			if (empty($_POST["full_text"])) {
-				_re(t("Text is required"));
+				_re("Text is required");
 			} elseif (!empty($this->MAX_FULL_TEXT_LENGTH) && strlen($_POST["full_text"]) > $this->MAX_FULL_TEXT_LENGTH) {
 				_re("Text length (".strlen($_POST["full_text"]).") is more than allowed length (".intval($this->MAX_FULL_TEXT_LENGTH).")");
 			}
 			if (!empty($this->_articles_cats) && (empty($_POST["cat_id"])) || !isset($this->_articles_cats[$_POST["cat_id"]])) {
-				_re(t("Please select article category"));
+				_re("Please select article category");
 			}
 			// Check credentials length
 			if (!empty($this->MAX_CREDENTIALS_LENGTH) && strlen($_POST["credentials"]) > $this->MAX_CREDENTIALS_LENGTH) {
@@ -569,12 +569,12 @@ class yf_articles extends yf_module {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		// Get article info
 		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(main()->USER_ID));
 		if (empty($article_info)) {
-			return _e(t("No such article!"));
+			return _e("No such article!");
 		}
 		
 		$OBJ = module("unread");

@@ -194,10 +194,10 @@ class yf_forum_search {
 			if (!module('forum')->SETTINGS['ALLOW_SEARCH_ALL_POSTS']) {
 				// Check keywords
 				if (empty($AF['keywords']) && empty($AF['user_name']) && empty($AF['user_id']) && empty($AF['topic_id'])) {
-					_re(t('Please specify search keywords'));
+					_re('Please specify search keywords');
 				} elseif (empty($AF['user_name']) && empty($AF['user_id']) && empty($AF['topic_id'])) {
 					if (strlen($AF['keywords']) < module('forum')->SETTINGS['MIN_SEARCH_WORD']) {
-						_re(t('Too short keyword!'));
+						_re('Too short keyword!');
 					}
 				}
 			}

@@ -321,7 +321,7 @@ class yf_logs {
 		$sql_array = array(
 			'owner_id'		=> intval($owner_id),
 			'action_name'	=> _es($action_name),
-			'member_id'		=> $this->USER_ID,
+			'member_id'		=> main()->USER_ID,
 			'object_name'	=> _es($object_name),
 			'object_id'		=> intval($object_id),
 			'add_date'		=> time(),

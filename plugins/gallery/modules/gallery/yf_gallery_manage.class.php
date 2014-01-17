@@ -175,7 +175,7 @@ class yf_gallery_manage {
 			$cur_folder_info = $user_folders[$FOLDER_ID];
 		}
 		if (!empty($cur_folder_info["user_id"]) && $cur_folder_info["user_id"] != $NEW_USER_ID && MAIN_TYPE_USER) {
-			return _e(t("Not your folder!"));
+			return _e("Not your folder!");
 		}
 		// Prepare folders list for the box
 		foreach ((array)$user_folders as $_folder_id => $_folder_info) {
@@ -199,7 +199,7 @@ class yf_gallery_manage {
 			$_POST["folder_id"]		= intval($_POST["folder_id"]);
 			// Load original photo
 			if (empty($_POST["folder_id"]) || !isset($user_folders[$_POST["folder_id"]])) {
-				_re(t("Wrong selected folder"));
+				_re("Wrong selected folder");
 			}
 			// Cleanup wrong or incompleted photos from db
 			db()->query(
@@ -221,7 +221,7 @@ class yf_gallery_manage {
 			$_PHOTO = $_FILES[module('gallery')->PHOTO_NAME_IN_FORM];
 			// Check for photo
 			if (empty($_PHOTO) || empty($_PHOTO["size"])) {
-				_re(t("Photo file required"));
+				_re("Photo file required");
 			}
 			// Check for errors and try bulk mode
 			if (!common()->_error_exists()) {
@@ -260,7 +260,7 @@ class yf_gallery_manage {
 				// Get new record id
 				$PHOTO_RECORD_ID = intval(db()->INSERT_ID());
 				if (empty($PHOTO_RECORD_ID)) {
-					_re(t("Cant insert record into db"));
+					_re("Cant insert record into db");
 				}
 				// Save tags 
 				if (isset($_POST["tags"])) {
@@ -427,7 +427,7 @@ class yf_gallery_manage {
 			// Get new record id
 			$PHOTO_RECORD_ID = intval(db()->INSERT_ID());
 			if (empty($PHOTO_RECORD_ID)) {
-				_re(t("Cant insert record into db"));
+				_re("Cant insert record into db");
 			}
 			// Save tags 
 			if (isset($_POST["tags"])) {
@@ -546,7 +546,7 @@ class yf_gallery_manage {
 			$_POST["folder_id"]		= intval($_POST["folder_id"]);
 			// Load original photo
 			if (empty($_POST["folder_id"]) || !isset($user_folders[$_POST["folder_id"]])) {
-				_re(t("Wrong selected folder"));
+				_re("Wrong selected folder");
 			}
 			// Check number of photos to show in ads
 			if ($num_photos_for_ads >= module('gallery')->MAX_PHOTOS_FOR_ADS && $_POST["show_in_ads"] == 1) {
@@ -1013,7 +1013,7 @@ class yf_gallery_manage {
 		$upload_result = common()->upload_image($photo_path, $_PHOTO, module('gallery')->MAX_IMAGE_SIZE, $is_local);
 		if (!$upload_result) {
 			if (!common()->_error_exists()) {
-				_e(t("Unrecognized error occured while uploading image"));
+				_e("Unrecognized error occured while uploading image");
 			}
 			return false;
 		}
@@ -1023,7 +1023,7 @@ class yf_gallery_manage {
 		if (!empty($orig_max_x) || !empty($orig_max_y)) {
 			$orig_result = common()->make_thumb($photo_path, $photo_path, $orig_max_x, $orig_max_y);
 			if (!$orig_result || !file_exists($photo_path) || !filesize($photo_path)) {
-				_re(t("Cant resize original image"));
+				_re("Cant resize original image");
 				trigger_error("Cant resize original image \"".$photo_path."\"", E_USER_WARNING);
 				// Cleanup uploaded file
 				if (file_exists($photo_path)) {
@@ -1189,11 +1189,11 @@ class yf_gallery_manage {
 		}
 		$photo_info = db()->query_fetch($sql);
 		if (empty($photo_info["id"])) {
-			return _e(t("No such photo!"));
+			return _e("No such photo!");
 		}
 		// Check owner
 		if (MAIN_TYPE_USER && $photo_info["user_id"] != module('gallery')->USER_ID) {
-			return _e(t("Not your photo!"));
+			return _e("Not your photo!");
 		}
 
 		// Do not hide broken photos from owner

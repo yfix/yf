@@ -108,19 +108,19 @@ class yf_manage_forum_manage_future {
 		$_users_array = $all_posters_users[$_SESSION["admin_id"]];
 		unset($all_posters_users);
 		if (empty($_users_array)) {
-			return _e(t("No user accounts specified for you."));
+			return _e("No user accounts specified for you.");
 		}
 		// Save data
 		if (main()->is_post()) {
 			$_POST["user_id"] = intval($_POST["user_id"]);
 			if (empty($_POST["user_id"]) || !isset($_users_array[$_POST["user_id"]])) {
-				_re(t("User id required"));
+				_re("User id required");
 			}
 			if (empty($_POST["name"])) {
-				_re(t("Topic name required"));
+				_re("Topic name required");
 			}
 			if (empty($_POST["text"])) {
-				_re(t("Topic text required"));
+				_re("Topic text required");
 			}
 			if (!common()->_error_exists()) {
 				db()->INSERT("forum_future_posts", array(
@@ -181,7 +181,7 @@ class yf_manage_forum_manage_future {
 		$_users_array = $all_posters_users[$_SESSION["admin_id"]];
 		unset($all_posters_users);
 		if (empty($_users_array)) {
-			return _e(t("No user accounts specified for you."));
+			return _e("No user accounts specified for you.");
 		}
 		$parent_forum_id = module("forum")->_forums_array[$topic_info['forum']]["parent"];
 		$forum_name = module("forum")->_forums_array[$topic_info["forum"]]["name"];
@@ -266,7 +266,7 @@ class yf_manage_forum_manage_future {
 		$_users_array = $all_posters_users[$_SESSION["admin_id"]];
 		unset($all_posters_users);
 		if (empty($_users_array)) {
-			return _e(t("No user accounts specified for you."));
+			return _e("No user accounts specified for you.");
 		}
 		$is_new_topic = $post_info["new_topic"] ? 1 : 0;
 		$_forum_info = module("forum")->_forums_array[$post_info["forum_id"]];

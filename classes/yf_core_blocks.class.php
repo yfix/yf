@@ -21,15 +21,16 @@ class yf_core_blocks {
 	* Display main 'center' block contents
 	*/
 	function show_center () {
-		if (_class('graphics')->USE_SE_KEYWORDS) {
-			_class('graphics')->_set_se_keywords();
+		$graphics = _class('graphics');
+		if ($graphics->USE_SE_KEYWORDS) {
+			$graphics->_set_se_keywords();
 		}
-		if (_class('graphics')->IFRAME_CENTER) {
+		if ($graphics->IFRAME_CENTER) {
 			if (false !== strpos($_SERVER['QUERY_STRING'], 'center_area=1')) {
 				main()->NO_GRAPHICS = true;
 				$replace = array(
-					'css'	=> '<link rel="stylesheet" type="text/css" href="'._class('graphics')->MEDIA_PATH. tpl()->TPL_PATH. 'style.css">',
-					'text'	=> _class('graphics')->tasks(1),
+					'css'	=> '<link rel="stylesheet" type="text/css" href="'.$graphics->MEDIA_PATH. tpl()->TPL_PATH. 'style.css">',
+					'text'	=> $graphics->tasks(1),
 				);
 				$body = tpl()->parse('system/empty_page', $replace);
 				echo module('rewrite')->_replace_links_for_iframe($body);
@@ -43,12 +44,12 @@ class yf_core_blocks {
 			if (false !== strpos($_SERVER['QUERY_STRING'], 'center_area=1')) {
 				main()->NO_GRAPHICS = true;
 				$replace = array(
-					'css'	=> '<link rel="stylesheet" type="text/css" href="'._class('graphics')->MEDIA_PATH. tpl()->TPL_PATH.'style.css">',
-					'text'	=> _class('graphics')->tasks(1),
+					'css'	=> '<link rel="stylesheet" type="text/css" href="'.$graphics->MEDIA_PATH. tpl()->TPL_PATH.'style.css">',
+					'text'	=> $graphics->tasks(1),
 				);
 				echo tpl()->parse('system/empty_page', $replace);
 			} else {
-				$body = _class('graphics')->tasks(1);
+				$body = $graphics->tasks(1);
 			}
 		}
 		return $body;
@@ -216,13 +217,34 @@ class yf_core_blocks {
 	}
 
 	/**
+	*/
+	function _get_center_block_rules() {
+		$rules = &$this->CENTER_BLOCK_RULES;
+		if (isset($rules)) {
+			return $rules;
+		}
+		$this->CENTER_BLOCK_ID = $this->_get_center_block_id();
+
+		$rules = array();
+		foreach ((array)$this->_blocks_rules as $rid => $rinfo) {
+			if ($rinfo != $this->CENTER_BLOCK_ID) {
+				continue;
+			}
+			$rules[$rid] = $rinfo;
+		}
+
+		$this->CENTER_BLOCK_RULES = $rules;
+		return $rules;
+	}
+
+	/**
 	* Check rights for blocks
 	*/
 	function _check_block_rights ($block_id = 0, $OBJECT = '', $ACTION = '') {
 		if (empty($block_id) || empty($OBJECT)) {
 			return false;
 		}
-		if(empty($ACTION)) {
+		if (empty($ACTION)) {
 			$ACTION = 'show';
 		}
 		$CUR_USER_GROUP = intval(MAIN_TYPE_ADMIN ? $_SESSION['admin_group'] : $_SESSION['user_group']);

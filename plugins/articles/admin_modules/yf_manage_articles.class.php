@@ -120,11 +120,11 @@ class yf_manage_articles extends yf_module {
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id"));
+			return _e("No id");
 		}
 		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($article_info)) {
-			return _e(t("No such record"));
+			return _e("No such record");
 		}
 		if (!empty($article_info["user_id"])) {
 			$user_info = db()->query_fetch("SELECT id,name,nick FROM ".db('user')." WHERE id=".intval($article_info["user_id"]));
@@ -242,11 +242,11 @@ class yf_manage_articles extends yf_module {
 	function view () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		$article_info = db()->query_fetch("SELECT * FROM ".db('articles_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($article_info)) {
-			return _e(t("No such article!"));
+			return _e("No such article!");
 		}
 		$IS_OWN_ARTICLE = true;
 

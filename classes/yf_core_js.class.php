@@ -92,5 +92,17 @@ class yf_core_js {
 		}
 		return $body;
 	}
+
+	/**
+	*/
+	function require_js() {
+// TODO
+	}
+
+	/**
+	*/
+	function include_js() {
+// TODO
+	}
 }
 

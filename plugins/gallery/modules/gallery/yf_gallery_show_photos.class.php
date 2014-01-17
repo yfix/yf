@@ -27,7 +27,7 @@ class yf_gallery_show_photos {
 		module('gallery')->_photo_info = db()->query_fetch($sql);
 		$photo_info = &module('gallery')->_photo_info;
 		if (empty(module('gallery')->_photo_info["id"])) {
-			return _e(t("No such photo!"));
+			return _e("No such photo!");
 		}
 		// Try to get given user info
 		$user_id = module('gallery')->_photo_info["user_id"];
@@ -35,7 +35,7 @@ class yf_gallery_show_photos {
 			$user_info = user($user_id, "", array("WHERE" => array("active" => "1")));
 		}
 		if (empty($user_info)) {
-			return _e(t("No such user in database!"));
+			return _e("No such user in database!");
 		}
 		if (empty($GLOBALS['user_info'])) {
 			$GLOBALS['user_info'] = $user_info;
@@ -63,7 +63,7 @@ class yf_gallery_show_photos {
 		}
 		// Folder info is REQUIRED here
 		if (empty($cur_folder_info)) {
-			return _e(t("Folder info is required"));
+			return _e("Folder info is required");
 		}
 		// Prepare global vars
 		module('gallery')->_author_id		= intval($user_info["id"]);
@@ -75,7 +75,7 @@ class yf_gallery_show_photos {
 		if (!module('gallery')->is_own_gallery) {
 			// Check privacy permissions
 			if (!module('gallery')->_privacy_check($cur_folder_info["privacy"], module('gallery')->_photo_info["privacy"], $user_info["id"])) {
-				return _e(t("You are not allowed to view this gallery folder"));
+				return _e("You are not allowed to view this gallery folder");
 			}
 			// Check for password for protected gallery
 			if (!empty($cur_folder_info["password"])) {
@@ -498,7 +498,7 @@ class yf_gallery_show_photos {
 			if (!empty($cur_folder_info)) {
 				// Check privacy permissions
 				if (!module('gallery')->_privacy_check($cur_folder_info["privacy"], module('gallery')->_photo_info["privacy"], $user_info["id"])) {
-					return _e(t("You are not allowed to view this gallery folder"));
+					return _e("You are not allowed to view this gallery folder");
 				}
 				// Check for password for protected gallery
 				if (!empty($cur_folder_info["password"])) {

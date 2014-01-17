@@ -61,7 +61,7 @@ class yf_manage_dynamic_attributes{
 	
 		if (main()->is_post()){
 			if(empty($_POST["name"])){
-				_re(t("Name is required"));
+				_re("Name is required");
 			}
 			
 			if(!common()->_error_exists()){
@@ -91,12 +91,12 @@ class yf_manage_dynamic_attributes{
 		$category_info = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_categories')." WHERE id = ".intval($_GET["id"]));
 		
 		if(empty($category_info)){
-			return _e(t("No category"));
+			return _e("No category");
 		}
 	
 		if (main()->is_post()){
 			if(empty($_POST["name"])){
-				_re(t("Name is required"));
+				_re("Name is required");
 			}
 			
 			if(!common()->_error_exists()){
@@ -127,7 +127,7 @@ class yf_manage_dynamic_attributes{
 		$category_info = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_categories')." WHERE id = ".intval($_GET["id"]));
 		
 		if(empty($category_info)){
-			return _e(t("No category"));
+			return _e("No category");
 		}
 		
 		db()->query("DELETE FROM ".db('dynamic_fields_categories')." WHERE id=".intval($_GET["id"])." LIMIT 1");
@@ -141,7 +141,7 @@ class yf_manage_dynamic_attributes{
 	function view_category () {
 	
 		if(empty($_GET["id"])){
-			return _e(t("no id"));
+			return _e("no id");
 		}
 	
 		$sql = "SELECT * FROM ".db('dynamic_fields_info')." WHERE category_id = ".intval($_GET["id"])." ORDER BY `order`";
@@ -178,7 +178,7 @@ class yf_manage_dynamic_attributes{
 		if (main()->is_post()){
 		
 			if(empty($_POST["name"])){
-				_re(t("Name is required"));
+				_re("Name is required");
 			}
 			
 			if(!common()->_error_exists()){
@@ -233,7 +233,7 @@ class yf_manage_dynamic_attributes{
 	function edit () {
 	
 		if(empty($_GET["id"])){
-			return _e(t("no id"));
+			return _e("no id");
 		}
 
 		$_GET["id"] = intval($_GET["id"]);
@@ -243,7 +243,7 @@ class yf_manage_dynamic_attributes{
 		if (main()->is_post()){
 		
 			if(empty($_POST["name"])){
-					_re(t("Name is required"));
+					_re("Name is required");
 			}
 			
 			if(!common()->_error_exists()){
@@ -301,7 +301,7 @@ class yf_manage_dynamic_attributes{
 		$field_info = db()->query_fetch("SELECT * FROM ".db('dynamic_fields_info')." WHERE id = ".intval($_GET["id"]));
 		
 		if(empty($field_info)){
-			return _e(t("no field"));
+			return _e("no field");
 		}
 		
 		// Do delete record

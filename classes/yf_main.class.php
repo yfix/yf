@@ -862,7 +862,8 @@ class yf_main {
 		// Try to create instance of the class
 		if ($class_name_to_load) {
 			$this->modules[$class_name] = new $class_name_to_load($params);
-			$this->_init_cur_user_info($this->modules[$class_name]);
+			// make this usable only for main() to save resources
+#			$this->_init_cur_user_info($this->modules[$class_name]);
 			$this->_set_module_conf($class_name, $this->modules[$class_name], $params);
 		}
 		// Return reference to the module object
@@ -1045,9 +1046,6 @@ class yf_main {
 					continue;
 				}
 			}
-if ($class_name == 'yf_db_driver_mysql41') {
-	echo $class_file.' | '.$_path.' | '.$_prefix.'<br>';
-}
 			$this->include_module($_path. $_prefix. $class_file);
 			if (class_exists($_prefix. $class_name)) {
 				$loaded_class_name	= $_prefix. $class_name;
@@ -1619,6 +1617,7 @@ if ($class_name == 'yf_db_driver_mysql41') {
 	/**
 	* Init user info
 	*/
+// TODO: make this usable only for main() to save resources
 	function _init_cur_user_info(&$OBJ) {
 		if (in_array($this->_get('object'), (array)$this->_auto_info_skip_modules)) {
 			return false;
@@ -1627,10 +1626,12 @@ if ($class_name == 'yf_db_driver_mysql41') {
 			return false;
 		}
 		if (MAIN_TYPE_ADMIN) {
-			$OBJ->USER_ID = $this->_get('user_id');
-		} elseif (MAIN_TYPE_USER && isset($_SESSION)) {
-			$OBJ->USER_ID	= (int)$this->_session('user_id');
-			$OBJ->USER_GROUP= (int)$this->_session('user_group');
+			$OBJ->USER_ID		= $this->_get('user_id');
+			$OBJ->ADMIN_ID		= (int)$this->_session('admiin_id');
+			$OBJ->ADMIN_GROUP	= (int)$this->_session('admin_group');
+		} elseif (MAIN_TYPE_USER) {
+			$OBJ->USER_ID		= (int)$this->_session('user_id');
+			$OBJ->USER_GROUP	= (int)$this->_session('user_group');
 		}
 		// Select user details
 		if (isset($OBJ->USER_ID) && !empty($OBJ->USER_ID)) {

@@ -163,7 +163,7 @@ class yf_blog_search {
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		if (!isset(module('blog')->_blog_cats[$_GET["id"]])) {
-			return _e(t("No such blogs category!"));
+			return _e("No such blogs category!");
 		}
 		// Get posts in selected category
 		$sql = "SELECT 
@@ -258,7 +258,7 @@ class yf_blog_search {
 	function _show_friends_posts () {
 		// Check for member id
 		if (empty($_GET["id"])) {
-			return _e(t("Missing user id"));
+			return _e("Missing user id");
 		}
 		// Try to get user info
 		if (!empty($GLOBALS['user_info'])) {
@@ -267,7 +267,7 @@ class yf_blog_search {
 			$user_info = user($_GET["id"], "full", array("WHERE" => array("active" => 1)));
 		}
 		if (empty($user_info)) {
-			return _e(t("No such user"));
+			return _e("No such user");
 		}
 		// Get friends
 		$FRIENDS_OBJ	= module("friends");

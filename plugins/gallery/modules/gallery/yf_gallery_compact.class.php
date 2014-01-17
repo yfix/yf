@@ -17,13 +17,13 @@ class yf_gallery_compact {
 		// Prepare params
 		$PHOTO_ID	= intval(substr($_POST["id"], strlen("gallery_")));
 		if (empty($PHOTO_ID)) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		$PHOTO_TYPE	= "medium";
 		// Try to get given photo info
 		$photo_info = db()->query_fetch("SELECT * FROM ".db('gallery_photos')." WHERE id=".intval($PHOTO_ID));
 		if (empty($photo_info["id"])) {
-			return _e(t("No such photo!"));
+			return _e("No such photo!");
 		}
 		// Try to get given user info
 		$user_id = $photo_info["user_id"];
@@ -31,7 +31,7 @@ class yf_gallery_compact {
 			$user_info = user($user_id, "", array("WHERE" => array("active" => "1")));
 		}
 		if (empty($user_info)) {
-			return _e(t("No such user in database!"));
+			return _e("No such user in database!");
 		}
 		if (MAIN_TYPE_USER) {
 			module('gallery')->is_own_gallery = intval(!empty(module('gallery')->USER_ID) && module('gallery')->USER_ID == $photo_info["user_id"]);
@@ -52,7 +52,7 @@ class yf_gallery_compact {
 		}
 		// Folder info is REQUIRED here
 		if (empty($cur_folder_info)) {
-			return _e(t("Folder info is required"));
+			return _e("Folder info is required");
 		}
 		// ###########################
 		// Access checks
@@ -60,7 +60,7 @@ class yf_gallery_compact {
 		if (!module('gallery')->is_own_gallery) {
 			// Check privacy permissions
 			if (!module('gallery')->_privacy_check($cur_folder_info["privacy"], $photo_info["privacy"], $user_info["id"])) {
-				return _e(t("You are not allowed to view this gallery folder"));
+				return _e("You are not allowed to view this gallery folder");
 			}
 			// Check for password for protected gallery
 			if (!empty($cur_folder_info["password"])) {

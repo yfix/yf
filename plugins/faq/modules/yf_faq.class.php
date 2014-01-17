@@ -99,14 +99,14 @@ class yf_faq extends yf_module {
 	function view () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		// Get text info
 		if (empty($text_info)) {
 			$text_info = db()->query_fetch("SELECT * FROM ".db('faq_texts')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($text_info)) {
-			return _e(t("No such text!"));
+			return _e("No such text!");
 		}
 		$GLOBALS['_faq_question'] = $text_info["question_text"];
 		$GLOBALS['_faq_category'] = $this->_faqs_cats[$text_info["cat_id"]]["name"];

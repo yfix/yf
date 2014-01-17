@@ -49,10 +49,10 @@ class yf_blog_posting {
 			$_POST["post_text"]		= substr($_POST["post_text"], 0, module('blog')->MAX_POST_TEXT_LENGTH);
 			$_POST["mode_text"]		= substr($_POST["mode_text"], 0, module('blog')->MAX_MODE_TEXT_LENGTH);
 			if (empty($_POST["post_title"])) {
-				_re(t("Post title required"));
+				_re("Post title required");
 			}
 			if (empty($_POST["post_text"])) {
-				_re(t("Post text required"));
+				_re("Post text required");
 			}
 			// Do check captcha (if needed)
 			if (module('blog')->USE_CAPTCHA) {
@@ -252,7 +252,7 @@ class yf_blog_posting {
 		}
 		$post_info = db()->query_fetch($sql);
 		if (empty($post_info["id"])) {
-			return _e(t("No such post!"));
+			return _e("No such post!");
 		}
 		
 		//if this post in community
@@ -265,7 +265,7 @@ class yf_blog_posting {
 		$is_community?$post_info["user_id"] = $post_info["poster_id"]:"";
 		
 		if ($post_info["user_id"] != module('blog')->USER_ID) {
-			return _e(t("Not your post!"));
+			return _e("Not your post!");
 		}
 		// Get current blog settings
 		module('blog')->BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
@@ -291,10 +291,10 @@ class yf_blog_posting {
 			$_POST["post_text"]		= substr($_POST["post_text"], 0, module('blog')->MAX_POST_TEXT_LENGTH);
 			$_POST["mode_text"]		= substr($_POST["mode_text"], 0, module('blog')->MAX_MODE_TEXT_LENGTH);
 			if (empty($_POST["post_title"])) {
-				_re(t("Post title required"));
+				_re("Post title required");
 			}
 			if (empty($_POST["post_text"])) {
-				_re(t("Post text required"));
+				_re("Post text required");
 			}
 			// Do check captcha (if needed)
 			if (module('blog')->USE_CAPTCHA) {
@@ -491,7 +491,7 @@ class yf_blog_posting {
 		// Try to get given post info
 		$post_info = db()->query_fetch($sql);
 		if (empty($post_info["id"])) {
-			return _e(t("No such post!"));
+			return _e("No such post!");
 		}
 		
 		$is_community = $this->_check_community_permissions($post_info["user_id"]);
@@ -503,7 +503,7 @@ class yf_blog_posting {
 		$post_info_real_user_id = $is_community ? $post_info["poster_id"] : $post_info["user_id"];
 		
 		if ($post_info_real_user_id != module('blog')->USER_ID) {
-			return _e(t("Not your post!"));
+			return _e("Not your post!");
 		}
 		// Fix and get max second id
 		$max_id2 = module('blog')->_fix_id2(module('blog')->USER_ID);
@@ -558,7 +558,7 @@ class yf_blog_posting {
 		// Try to get given user info
 		$post_info = db()->query_fetch($sql);
 		if (empty($post_info["id"])) {
-			return _e(t("No such post!"));
+			return _e("No such post!");
 		}
 		
 		$is_community = $this->_check_community_permissions($post_info["user_id"]);
@@ -570,7 +570,7 @@ class yf_blog_posting {
 		$post_info_real_user_id = $is_community ? $post_info["poster_id"] : $post_info["user_id"];
 		
 		if ($post_info_real_user_id != module('blog')->USER_ID) {
-			return _e(t("Not your post!"));
+			return _e("Not your post!");
 		}
 
 		// Delete image
@@ -644,19 +644,19 @@ class yf_blog_posting {
 			$GLOBALS["community_info"] = $community_info;
 
 			if(empty($community_info)){
-				_re(t("No community"));
+				_re("No community");
 			}
 			
 			$community_user_settings = db()->query_fetch("SELECT * FROM ".db('community_users')." WHERE community_id=".intval($community_info["id"])." AND user_id = ".intval(module('blog')->USER_ID));
 			$GLOBALS["community_user_settings"] = $community_user_settings;
 					
 			if(empty($community_user_settings)){
-				_re(t("You not join to this community"));
+				_re("You not join to this community");
 			}
 			
 			if($community_info["postlevel"] == "select"){
 				if(!$community_user_settings["post"]){
-					_re(t("You not allowed post in this community"));
+					_re("You not allowed post in this community");
 				}
 			}
 			return true;

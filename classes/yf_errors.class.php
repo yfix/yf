@@ -117,6 +117,8 @@ class yf_errors {
 		}
 	} 
 
+	/**
+	*/
 	function exception_handler($exception) {
 		// these are our templates
 		$traceline = '#%s %s(%s): %s(%s)';

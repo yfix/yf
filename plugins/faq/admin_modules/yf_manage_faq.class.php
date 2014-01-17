@@ -122,14 +122,14 @@ class yf_manage_faq extends yf_module {
 	function view () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		// Get text info
 		if (empty($text_info)) {
 			$text_info = db()->query_fetch("SELECT * FROM ".db('faq_texts')." WHERE id=".intval($_GET["id"]));
 		}
 		if (empty($text_info)) {
-			return _e(t("No such text!"));
+			return _e("No such text!");
 		}
 		// Process template
 		$replace = array(
@@ -180,12 +180,12 @@ class yf_manage_faq extends yf_module {
 	function edit () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id"));
+			return _e("No id");
 		}
 		// Try to get record info
 		$text_info = db()->query_fetch("SELECT * FROM ".db('faq_texts')." WHERE id=".intval($_GET["id"]));
 		if (empty($text_info)) {
-			return _e(t("No such record"));
+			return _e("No such record");
 		}
 		// Try to get given user info
 		if (!empty($user_info["id"])) {

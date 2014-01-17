@@ -306,7 +306,7 @@ class yf_blog extends yf_module {
 	*/
 	function show_posts_archive () {
 		if (empty($_GET["id"])) {
-			return _e(t("No date specified!"));
+			return _e("No date specified!");
 		}
 		if ($this->HIDE_TOTAL_ID) {
 			list($this->CUR_YEAR, $this->CUR_MONTH, $this->CUR_DAY) = explode("-", $_GET["id"]);
@@ -320,7 +320,7 @@ class yf_blog extends yf_module {
 		$this->CUR_MONTH	= intval(sprintf("%02d", $this->CUR_MONTH));
 		$this->CUR_DAY		= intval(sprintf("%02d", $this->CUR_DAY));
 		if (empty($_GET["id"]) || empty($this->CUR_YEAR)) {
-			return _e(t("Wrong ID!"));
+			return _e("Wrong ID!");
 		}
 		$this->IS_ARCHIVE	= true;
 		// Show posts for the specified date
@@ -340,13 +340,13 @@ class yf_blog extends yf_module {
 			$GLOBALS['user_info'] = $user_info;
 		}
 		if (empty($user_info["id"])) {
-			return _e(t("Wrong user ID!"));
+			return _e("Wrong user ID!");
 		}
 		// Get current blog settings
 		$this->BLOG_SETTINGS = $this->_get_user_blog_settings($user_info["id"]);
 		// Check privacy permissions
 		if (!$this->_privacy_check($this->BLOG_SETTINGS["privacy"], 0, $user_id)) {
-			return _e(t("You are not allowed to view this blog"));
+			return _e("You are not allowed to view this blog");
 		}
 		// Get all user posts short info
 		$this->_get_posts_days();
@@ -537,7 +537,7 @@ class yf_blog extends yf_module {
 		}
 		$this->_post_info = db()->query_fetch($sql);
 		if (empty($this->_post_info["id"])) {
-			return _e(t("No such post!"));
+			return _e("No such post!");
 		}
 		
 		// if in community
@@ -549,7 +549,7 @@ class yf_blog extends yf_module {
 		$user_info = user($this->_post_info["user_id"]);
 		// Check if user exists
 		if (empty($user_info)) {
-			return _e(t("No such user"));
+			return _e("No such user");
 		}
 		if (empty($GLOBALS['user_info'])) {
 			$GLOBALS['user_info'] = $user_info;
@@ -558,7 +558,7 @@ class yf_blog extends yf_module {
 		$this->BLOG_SETTINGS = $this->_get_user_blog_settings($user_info["id"]);
 		// Check privacy permissions
 		if (!$this->_privacy_check($this->BLOG_SETTINGS["privacy"], $this->_post_info["privacy"], $user_info["id"])) {
-			return _e(t("You are not allowed to view this post"));
+			return _e("You are not allowed to view this post");
 		}
 		
 		// Check friends group permissions
@@ -578,7 +578,7 @@ class yf_blog extends yf_module {
 				$is_allowed = $FRIENDS_OBJ->check_mask_permissions($user_mask, $this->_post_info["mask"]);
 				
 				if(!$is_allowed){
-					return _e(t("You are not allowed to view this post"));
+					return _e("You are not allowed to view this post");
 				}
 			}
 		}
@@ -746,7 +746,7 @@ class yf_blog extends yf_module {
 		}
 		$user_id		= intval($user_id);
 		if (empty($user_id)) {
-			return _e(t("Wrong ID!"));
+			return _e("Wrong ID!");
 		}
 		// Get current blog settings
 		$this->BLOG_SETTINGS = $this->_get_user_blog_settings($user_id);
@@ -768,7 +768,7 @@ class yf_blog extends yf_module {
 		}
 		$custom_cat_id = intval($custom_cat_id);
 		if (!$custom_cat_id) {
-			return _e(t("No such category!"));
+			return _e("No such category!");
 		}
 		// Check if user already have started blog
 		$num_user_posts = db()->query_num_rows(

@@ -61,7 +61,7 @@ class yf_community {
 		
 		if (main()->is_post()){
 			if($_POST["user"] == ""){
-				_re(t("Account name is required!"));
+				_re("Account name is required!");
 			}else{
 				$name = db()->query_fetch("SELECT id FROM ".db('user')." WHERE login='".$_POST["user"]."'");
 				if(!empty($name)){
@@ -69,7 +69,7 @@ class yf_community {
 				}
 			}
 			if($_POST["title"] == ""){
-				_re(t("Community title is required!"));
+				_re("Community title is required!");
 			}
 			
 			if(!common()->_error_exists()){
@@ -137,13 +137,13 @@ class yf_community {
 	
 	function view(){
 		if (empty($_GET["id"])) {
-			return _e(t("id emty"));
+			return _e("id emty");
 		}
 		
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".intval($_GET["id"]));
 		
 		if(empty($community_info)){
-			return _e(t("No search community"));
+			return _e("No search community");
 		}
 		
 		$join_link = "./?object=".$_GET["object"]."&action=join&id=".$community_info["id"];
@@ -198,7 +198,7 @@ class yf_community {
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== main()->USER_ID){
-			return _e(t("only for owner"));
+			return _e("only for owner");
 		}
 
 		if (main()->is_post()){
@@ -274,7 +274,7 @@ class yf_community {
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== main()->USER_ID){
-			return _e(t("only for owner"));
+			return _e("only for owner");
 		}
 		
 		if (main()->is_post()){
@@ -311,7 +311,7 @@ class yf_community {
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== main()->USER_ID){
-			return _e(t("only for owner"));
+			return _e("only for owner");
 		}
 		
 		$OBJ_FRIENDS = module("friends");
@@ -357,10 +357,10 @@ class yf_community {
 					$new_member = db()->query_fetch("SELECT id,nick FROM ".db('user')." WHERE nick='"._es($member["name"])."' AND group != ".$this->COMMUNITY_GROUP);
 					
 					if(empty($new_member)){
-						_re(t("user with nick '".$member["name"]."' not found!"));
+						_re("user with nick '".$member["name"]."' not found!");
 					}else{
 						if(isset($members_ids[$new_member["id"]])){
-							_re(t("user with nick '".$member["name"]."' is in community user list!"));
+							_re("user with nick '".$member["name"]."' is in community user list!");
 						}else{
 							// add member to community
 							$OBJ_FRIENDS->_add_user_friends_ids($community_info["user_id"], $new_member["id"]);
@@ -448,7 +448,7 @@ class yf_community {
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== main()->USER_ID){
-			return _e(t("only for owner"));
+			return _e("only for owner");
 		}
 
 		$OBJ_FRIENDS = module("friends");	
@@ -465,7 +465,7 @@ class yf_community {
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".$_GET["id"]);
 		
 		if($community_info["owner_id"] !== main()->USER_ID){
-			return _e(t("only for owner"));
+			return _e("only for owner");
 		}
 
 		$OBJ_FRIENDS = module("friends");	
@@ -485,7 +485,7 @@ class yf_community {
 			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["sender"]);
 		}
 		if (main()->USER_ID != $community["owner_id"]){
-			return _e(t("Only for owner"));
+			return _e("Only for owner");
 		}
 		
 		if (!empty($_GET["id"])){
@@ -530,7 +530,7 @@ class yf_community {
 			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 		}
 		if (main()->USER_ID != $community["owner_id"]){
-			return _e(t("Only for owner"));
+			return _e("Only for owner");
 		}
 
 		if(!empty($handshake["id"])){
@@ -538,13 +538,13 @@ class yf_community {
 			// Check if such user exists
 			$target_user_info = user($handshake["sender"], "short", array("WHERE" => array("active" => 1)));
 			if (empty($target_user_info)) {
-				return _e(t("No such user"));
+				return _e("No such user");
 			}
 			// Check if user is already a friend
 			$OBJ_FRIENDS = module("friends");
 			$IS_A_FRIEND = $OBJ_FRIENDS->_is_a_friend($community["user_id"], $handshake["sender"]);
 			if ($IS_A_FRIEND) {
-				return _e(t("This user is already in your community list"));
+				return _e("This user is already in your community list");
 			}
 			// Do add user
 			$OBJ_FRIENDS->_add_user_friends_ids($community["user_id"], $handshake["sender"]);
@@ -576,7 +576,7 @@ class yf_community {
 			$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 		}
 		if (main()->USER_ID != $community["owner_id"]){
-			return _e(t("Only for owner"));
+			return _e("Only for owner");
 		}
 		
 		if(!empty($handshake["id"])){
@@ -584,14 +584,14 @@ class yf_community {
 			$OBJ_FRIENDS = module("friends");
 			$IS_A_FRIEND = $OBJ_FRIENDS->_is_a_friend($community["user_id"], $handshake["sender"]);
 			if ($IS_A_FRIEND) {
-				return _e(t("This user is already in your community list"));
+				return _e("This user is already in your community list");
 			}
 
 			if (!empty($_GET["id"])) {
 				$target_user_info = user($handshake["sender"], "short", array("WHERE" => array("active" => 1)));
 			}
 			if (empty($target_user_info["id"])) {
-				return _e(t("No such user"));
+				return _e("No such user");
 			}
 			
 			db()->UPDATE("handshake", array(
@@ -622,14 +622,14 @@ class yf_community {
 					$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 				}
 				if (main()->USER_ID != $community["owner_id"]){
-					return _e(t("Only for owner"));
+					return _e("Only for owner");
 				}
 
 				if(!empty($handshake["id"])){
 					// Check if such user exists
 					$target_user_info = user($handshake["sender"], "short", array("WHERE" => array("active" => 1)));
 					if (empty($target_user_info)) {
-						return _e(t("No such user"));
+						return _e("No such user");
 					}
 					// Check if user is already a friend
 					$OBJ_FRIENDS = module("friends");
@@ -663,14 +663,14 @@ class yf_community {
 					$community = db()->query_fetch("SELECT * FROM ".db('community')." WHERE user_id=".$handshake["receiver"]);
 				}
 				if (main()->USER_ID != $community["owner_id"]){
-					return _e(t("Only for owner!"));
+					return _e("Only for owner!");
 				}
 
 				if(!empty($handshake["id"])){
 					$target_user_info = user($handshake["sender"], "short", array("WHERE" => array("active" => 1)));
 
 					if (empty($target_user_info["id"])) {
-						return _e(t("No such user"));
+						return _e("No such user");
 					}
 
 					db()->UPDATE("handshake", array(
@@ -689,13 +689,13 @@ class yf_community {
 		}
 		
 		if (empty($_GET["id"])) {
-			return _e(t("id emty"));
+			return _e("id emty");
 		}
 		
 		$community_info = db()->query_fetch("SELECT * FROM ".db('community')." WHERE id=".intval($_GET["id"]));
 		
 		if(empty($community_info)){
-			return _e(t("No search community"));
+			return _e("No search community");
 		}
 		
 		if($community_info["membership"] == "open"){
@@ -717,7 +717,7 @@ class yf_community {
 		}
 		
 		if($community_info["membership"] == "closed"){
-			return _e(t("Closed Membership. Nobody can join the community"));
+			return _e("Closed Membership. Nobody can join the community");
 		}
 	}
 	
@@ -795,7 +795,7 @@ class yf_community {
 		}
 
 		if(empty($_GET["id"])){
-			return _e(t("no id"));
+			return _e("no id");
 		}
 		
 		db()->query("DELETE FROM ".db('blog_posts')." WHERE id=".intval($_GET["id"])." LIMIT 1");

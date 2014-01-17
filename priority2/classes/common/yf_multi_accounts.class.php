@@ -92,7 +92,7 @@ class yf_multi_accounts {
 /*
 		// Raise error message if we found multi-account
 		if ($MULTI_ACCOUNT_FOUND) {
-			_re(t("Sorry, your vote seems suspicious to our anti-cheat filter and can't be counted!"));
+			_re("Sorry, your vote seems suspicious to our anti-cheat filter and can't be counted!");
 		}
 */
 		return $MULTI_ACCOUNT_FOUND;

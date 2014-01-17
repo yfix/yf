@@ -481,6 +481,12 @@ class yf_form2 {
 			($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
 			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
 
+		if ($extra['edit_link']) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
+				$extra['edit_link'] = '';
+			}
+		}
+
 		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
 		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
 
@@ -508,6 +514,9 @@ class yf_form2 {
 	* Generate form row using dl>dt,dd html tags. Useful for user profle and other simple table-like content
 	*/
 	function _dd_row_html($content, $extra = array(), $replace = array()) {
+		if ($extra['hide_empty'] && !strlen($content)) {
+			return '';
+		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
@@ -517,6 +526,13 @@ class yf_form2 {
 		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
 		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
 		$row_end = '</dl>'.PHP_EOL;
+
+		if ($extra['edit_link']) {
+			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
+				$extra['edit_link'] = '';
+			}
+		}
+		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
 
 		if ($extra['only_row_start']) {
 			return $row_start;
@@ -1340,6 +1356,11 @@ class yf_form2 {
 			}
 
 			$content = '';
+			if ($extra['link']) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['link'])) {
+					$extra['link'] = '';
+				}
+			}
 			if ($extra['link']) {
 				if ($extra['rewrite']) {
 					$extra['link'] = url($extra['link']);
@@ -2172,6 +2193,11 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($link_url) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($link_url)) {
+					return '';
+				}
+			}
 			if ($extra['rewrite']) {
 				$link_url = url($link_url);
 			}
@@ -2272,6 +2298,11 @@ class yf_form2 {
 				}
 			}
 			$link_url = isset($r[$link]) ? $r[$link] : $link;
+			if ($link_url) {
+				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($link_url)) {
+					return '';
+				}
+			}
 			if ($extra['rewrite']) {
 				$link_url = url($link_url);
 			}

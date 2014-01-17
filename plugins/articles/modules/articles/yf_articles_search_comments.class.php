@@ -152,7 +152,7 @@ class yf_articles_search_comments {
 				AND id=".intval($_GET["id"])
 		);
 		if (empty($comment_info)) {
-			return _e(t("You have no rights to delete this comment"));
+			return _e("You have no rights to delete this comment");
 		}
 		$COMMENTS_OBJ = module("comments");
 		if (is_object($COMMENTS_OBJ)) {

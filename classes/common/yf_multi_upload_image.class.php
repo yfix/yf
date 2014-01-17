@@ -41,11 +41,11 @@ class yf_multi_upload_image {
 		$MAX_IMAGE_SIZE = $max_image_size;
 		// Check image size (first attempt)
 		if (empty($PHOTO['size'][$k]) || (!empty($MAX_IMAGE_SIZE) && $PHOTO['size'][$k] > $MAX_IMAGE_SIZE)) {
-			_re(t('Invalid image size'));
+			_re('Invalid image size');
 		}
 		// First mime type check (quick and simple)
 		if ($PHOTO['type'][$k] && !isset($this->ALLOWED_MIME_TYPES[$PHOTO['type'][$k]])) {
-			_re(t('Invalid image type'));
+			_re('Invalid image type');
 		}
 		// Check for errors and stop if exists
 		if (common()->_error_exists()) {
@@ -81,7 +81,7 @@ class yf_multi_upload_image {
 		// Second image type check (using GD)
 		$real_image_info = @getimagesize($photo_path);
 		if (empty($real_image_info) || !$real_image_info['mime'] || !isset($this->ALLOWED_MIME_TYPES[$real_image_info['mime']])) {
-			_re(t('Invalid image type'));
+			_re('Invalid image type');
 			trigger_error('Invalid image type', E_USER_WARNING);
 			unlink($photo_path);
 			return false;
@@ -110,7 +110,7 @@ class yf_multi_upload_image {
 		}
 		// Second image size checking (from the real file)
 		if (!empty($MAX_IMAGE_SIZE) && filesize($photo_path) > $MAX_IMAGE_SIZE) {
-			_re(t('Invalid image size'));
+			_re('Invalid image size');
 			trigger_error('Image size hacking attempt', E_USER_WARNING);
 			unlink($photo_path);
 			return false;

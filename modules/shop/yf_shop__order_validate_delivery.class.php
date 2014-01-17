@@ -20,7 +20,7 @@ class yf_shop__order_validate_delivery{
 			}
 		}
 		if ($_POST["email"] != "" && !common()->email_verify($_POST["email"])) {
-			_re(t("email  not  valid."));
+			_re("email not valid.");
 		}
 		/* foreach ((array)module('shop')->_s_fields as $_field) {
 			if (!strlen($_POST[$_field]) && in_array($_field, module('shop')->_required_fields)) {
@@ -28,7 +28,7 @@ class yf_shop__order_validate_delivery{
 			}
 		}
 		if (!common()->email_verify($_POST["s_email"])) {
-				_re(t("Shipping email  not  valid."));
+				_re("Shipping email not valid.");
 			} */
 	}
 	

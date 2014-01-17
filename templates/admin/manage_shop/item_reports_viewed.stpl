@@ -1,7 +1,0 @@
-<tr>
-	<td align="left">{name}</td>
-	<td align="left">{model}</td>
-	<td align="right">{viewed}</td>
-	<td align="right">{percent}</td>
-	
-</tr>

@@ -45,7 +45,7 @@ class yf_comments_manage {
 			if (!common()->_error_exists()) {
 				$_POST['text']	= substr($_POST['text'], 0, module('comments')->MAX_POST_TEXT_LENGTH);
 				if (empty($_POST['text'])) {
-					_re(t('Comment text required'));
+					_re('Comment text required');
 				}
 			}
 			if (module($_GET['object'])->USE_CAPTCHA) {
@@ -168,7 +168,7 @@ class yf_comments_manage {
 		$_GET['id'] = intval($_GET['id']);
 		$comment_info = db()->query_fetch('SELECT * FROM '.db('comments').' WHERE id='.intval($_GET['id']));
 		if (empty($comment_info['id'])) {
-			return _e(t('No such comment!'));
+			return _e('No such comment!');
 		}
 		$OBJECT_NAME	= !empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
 		$OBJECT_ID		= !empty($params['object_id']) ? intval($params['object_id']) : intval($_GET['id']);
@@ -200,18 +200,18 @@ class yf_comments_manage {
 			if(!empty(module('comments')->EDIT_LIMIT_TIME)){
 				$elapse_time = time() - $comment_info['add_date'];
 				if($elapse_time > module('comments')->EDIT_LIMIT_TIME){
-					return _e(t('allowed time to edit has expired'));
+					return _e('allowed time to edit has expired');
 				}
 			}
 		}
 		if (!$edit_allowed) {
-			return _e(t('You are not allowed to perform this action'));
+			return _e('You are not allowed to perform this action');
 		}
 		$user_info = user($comment_info['user_id'], array('id','name',module('comments')->_user_nick_field,'photo_verified'), array('WHERE' => array('active' => 1)));
 		if (count($_POST) > 0 && !isset($_POST['_not_for_comments'])) {
 			$_POST['text'] = substr($_POST['text'], 0, module('comments')->MAX_POST_TEXT_LENGTH);
 			if (empty($_POST['text'])) {
-				_re(t('Comment text required'));
+				_re('Comment text required');
 			}
 			if (module($_GET['object'])->USE_CAPTCHA) {
 				module($_GET['object'])->_captcha_check();
@@ -310,7 +310,7 @@ class yf_comments_manage {
 		$_GET['id'] = intval($_GET['id']);
 		$comment_info = db()->query_fetch('SELECT * FROM '.db('comments').' WHERE id='.intval($_GET['id']));
 		if (empty($comment_info['id'])) {
-			return _e(t('No such comment!'));
+			return _e('No such comment!');
 		}
 		$OBJECT_NAME	= !empty($params['object_name']) ? $params['object_name'] : $_GET['object'];
 		$OBJECT_ID		= !empty($params['object_id']) ? intval($params['object_id']) : intval($_GET['id']);
@@ -350,13 +350,13 @@ class yf_comments_manage {
 			if(!empty(module('comments')->EDIT_LIMIT_TIME)){
 				$elapse_time = time() - $comment_info['add_date'];
 				if($elapse_time > module('comments')->EDIT_LIMIT_TIME){
-					return _e(t('allowed time to delete has expired'));
+					return _e('allowed time to delete has expired');
 				}
 			}
 		}
 		
 		if (!$delete_allowed) {
-			return _e(t('You are not allowed to perform this action'));
+			return _e('You are not allowed to perform this action');
 		}
 		module('unread')->_set_read('comments', $_GET['id']);
 

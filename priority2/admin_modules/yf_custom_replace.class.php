@@ -302,17 +302,17 @@ class yf_custom_replace {
 	function edit_rule () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
-			return _e(t("No id!"));
+			return _e("No id!");
 		}
 		// Get current rule info
 		$rule_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_rules')." WHERE id=".intval($_GET["id"]));
 		if (empty($rule_info["id"])) {
-			return _e(t("No such rule!"));
+			return _e("No such rule!");
 		}
 		// Get current tag info
 		$tag_info = db()->query_fetch("SELECT * FROM ".db('custom_replace_tags')." WHERE id=".intval($rule_info["tag_id"]));
 		if (empty($tag_info["id"])) {
-			return _e(t("No such tag!"));
+			return _e("No such tag!");
 		}
 		// Do save
 		if (main()->is_post()) {

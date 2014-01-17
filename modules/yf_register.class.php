@@ -111,7 +111,7 @@ class yf_register {
 		}
 		// Check confirmation code
 		if (!strlen($_GET["id"])) {
-			return _e(t("Confirmation ID is required!"));
+			return _e("Confirmation ID is required!");
 		}
 		// Decode confirmation number
 		list($user_id, $member_date) = explode("wvcn", trim(base64_decode($_GET["id"])));
@@ -132,13 +132,13 @@ class yf_register {
 		// Check if code is expired
 		if (!common()->_error_exists()) {
 			if (!empty($member_date) && (time() - $member_date) > $this->CONFIRM_TTL) {
-				_re(t("Confirmation code has expired."));
+				_re("Confirmation code has expired.");
 			}
 		}
 		if (!common()->_error_exists()) {
 			// Check whole code
 			if ($_GET["id"] != $target_user_info["verify_code"]) {
-				_re(t("Wrong confirmation code"));
+				_re("Wrong confirmation code");
 			}
 		}
 		if (!common()->_error_exists()) {
@@ -175,24 +175,17 @@ class yf_register {
 	*/
 // TODO: convert into form()
 	function resend_code () {
-		// Process posted form
 		if (!empty($_POST["email"])) {
-			// Check if such user exists
 			$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE email='"._es($_POST["email"])."'");
 			if (empty($user_info)) {
 				return _e("No such user");
 			}
-			// Check if account already activated
 			if ($user_info["active"]) {
 				return "Your account is already activated.";
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
-				// Generate verification code
 				$code = base64_encode($user_info["id"] . "wvcn" . time());
-				// Update record with new code
 				update_user($user_info["id"], array("verify_code" => $code));
-				// Prepare email template
 				$replace = array(
 					"nick"			=> $user_info["nick"],
 					"confirm_code"	=> $code,
@@ -211,7 +204,6 @@ class yf_register {
 				$name_to	= $user_info["nick"];
 				$subject	= t("Membership confirmation required!");
 				$send_result = common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
-				// Check result
 				if ($send_result) {
 					return "Code sent. Please check your email.";
 				} else {
@@ -219,9 +211,6 @@ class yf_register {
 				}
 			}
 		}
-		// Display form
-		$replace = array(
-		);
 		return tpl()->parse($_GET["object"]."/resend_code", $replace);
 	}
 }

@@ -70,10 +70,10 @@ class yf_server_file_manager {
 	*/
 	function _module_action_handler($called_action = "") {
 		if (!$this->_server_info) {
-			return _e(t("Server not found"));
+			return _e("Server not found");
 		}
 		if (!_check_rights("$called_action")) {
-			return _e(t("Access denied"));
+			return _e("Access denied");
 		}
 		$body = $this->$called_action();
 		return $body;
@@ -226,7 +226,7 @@ class yf_server_file_manager {
 				$_SELECTED_FILES[] = $this->_prepare_path($path);
 			}
 		} else {
-			_re(t("File path missing"));
+			_re("File path missing");
 		}
 		if (common()->_error_exists()) {
 			return js_redirect($_SERVER["HTTP_REFERER"]);
