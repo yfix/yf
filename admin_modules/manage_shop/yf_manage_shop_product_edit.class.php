@@ -30,15 +30,15 @@ class yf_manage_shop_product_edit{
 			}
 			if (!common()->_error_exists()) {
 				$sql_array = array(
-					'name'				=> _es($_POST['name']),
-					'model'				=> _es($_POST['model']),
-					'articul'			=> _es($_POST['articul']),
-					'cat_id'			=> _es($_POST['cat_id']),
-					'url'				=> _es($_POST['url'] ?: common()->_propose_url_from_name($_POST['name'])),
-					'description'		=> _es($_POST['desc']),
-					'meta_keywords'		=> _es($_POST['meta_keywords']),
-					'meta_desc'			=> _es($_POST['meta_desc']),
-					'external_url'		=> _es($_POST['ext_url']),
+					'name'				=> $_POST['name'],
+					'model'				=> $_POST['model'],
+					'articul'			=> $_POST['articul'],
+					'cat_id'			=> $_POST['cat_id'],
+					'url'				=> $_POST['url'] ?: common()->_propose_url_from_name($_POST['name']),
+					'description'		=> $_POST['desc'],
+					'meta_keywords'		=> $_POST['meta_keywords'],
+					'meta_desc'			=> $_POST['meta_desc'],
+					'external_url'		=> $_POST['ext_url'],
 					'price'				=> number_format($_POST['price'], 2, '.', ''),
 					'price_promo'		=> number_format($_POST['price_promo'], 2, '.', ''),
 					'price_partner'		=> number_format($_POST['price_partner'], 2, '.', ''),
@@ -51,55 +51,79 @@ class yf_manage_shop_product_edit{
 					'active'			=> intval((bool)$_POST['active']),
 					'update_date'		=> time(),
 				);
-				// Image upload
 				if (!empty($_FILES)) {
 					module('manage_shop')->_product_image_upload($_GET['id']);
 					module('manage_shop')->_product_images_add_revision($_GET['id']);
 				} 
-				db()->UPDATE(db('shop_products'), $sql_array, 'id='.$_GET['id']);
+				db()->update_safe(db('shop_products'), $sql_array, 'id='.$_GET['id']);
 				
-				module('manage_shop')->_product_cache_purge($_GET['id']);
-
-				db()->query('DELETE FROM `'.db('shop_products_productparams').'` WHERE `product_id`='.$_GET['id']);
-				if (count($_POST['productparams']) != 0)
-					foreach ($_POST['productparams'] as $param_id)
-						if (intval($param_id) != 0) 
-							foreach($_POST['productparams_options_' . $param_id] as $v)
-								db()->INSERT('shop_products_productparams',array(
-									'product_id' => $_GET['id'],
-									'productparam_id' => $param_id,
-									'value'	=> $v,
-								));
-				
-				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
-				db()->query('DELETE FROM  '.db('shop_product_to_category').' WHERE product_id = '.$_GET['id']);
-				foreach ((array)$_POST['category'] as $k => $v){
-					$cat_id['product_id'] = $_GET['id'];
-					$cat_id['category_id'] = $v;
-					db()->INSERT(db('shop_product_to_category'), $cat_id);
-				}
-				
-				db()->query('DELETE FROM ' . db('shop_product_related') .'  WHERE product_id='. (int)$_GET['id']);
-
-				if (isset($_POST['product_related'])) {
-					foreach ((array)$_POST['product_related'] as $related_id) {
-						$related['product_id'] = $_GET['id'];
-						$related['related_id'] = $related_id;
-						db()->INSERT( db('shop_product_related'), $related);
+				$params_to_insert = array();
+				foreach ((array)$_POST['productparams'] as $param_id) {
+					$param_id = intval($param_id);
+					if (!$param_id) {
+						continue;
+					}
+					foreach ((array)$_POST['productparams_options_' . $param_id] as $v) {
+						$params_to_insert[] = array(
+							'product_id' => $_GET['id'],
+							'productparam_id' => $param_id,
+							'value'	=> $v,
+						);
 					}
 				}
+				if ($params_to_insert) {
+					db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.intval($_GET['id']));
+					db()->insert_safe('shop_products_productparams', $params_to_insert);
+				}
+
+				$product_to_category_insert = array();
+				foreach ((array)$_POST['category'] as $_cat_id) {
+					$_cat_id = intval($_cat_id);
+					if (!$_cat_id) {
+						continue;
+					}
+					$product_to_category_insert[] = array(
+						'product_id' => $_GET['id'],
+						'category_id' => $v,
+					);
+				}
+				if ($product_to_category_insert) {
+					db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.intval($_GET['id']));
+					db()->insert_safe(db('shop_product_to_category'), $product_to_category_insert);
+				}
+
+				$product_related_insert = array();
+				foreach ((array)$_POST['product_related'] as $related_id) {
+					$related_id = intval($related_id);
+					if (!$related_id) {
+						continue;
+					}
+					$product_related_insert[] = array(
+						'product_id' => $_GET['id'],
+						'related_id' => $related_id,
+					);
+				}
+				if ($product_related_insert) {
+					db()->query('DELETE FROM '.db('shop_product_related').' WHERE product_id='.intval($_GET['id']));
+					db()->insert_safe(db('shop_product_related'), $product_related_insert);
+				}
+
 				module('manage_shop')->_attributes_save($_GET['id']);
+				module('manage_shop')->_product_add_revision('edit',$_GET['id']);
+				module('manage_shop')->_product_cache_purge($_GET['id']);
+				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
 			}
-			module('manage_shop')->_product_add_revision('edit',$_GET['id']);
-			
 			return js_redirect('./?object='.main()->_get('object').'&action=product_edit&id='.$_GET['id']);
 		}
 		
 		$images = common()->shop_get_images($product_info['id']);
 		$base_url = WEB_PATH;
-		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
-		if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
-		foreach((array)$images as $A) {
+		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
+		if (!empty($media_host)) {
+			$base_url = '//' . $media_host . '/';
+		}
+		$images_items = array();
+		foreach ((array)$images as $A) {
 			$product_image_delete_url = './?object='.main()->_get('object').'&action=product_image_delete&id='.$product_info['id'].'&key='.$A['id'];
 			$replace2 = array(
 				'img_path'   => $base_url . $A['big'],
@@ -107,7 +131,7 @@ class yf_manage_shop_product_edit{
 				'del_url'    => $product_image_delete_url,
 				'image_key'  => $A['id'],
 			);
-			$items .= tpl()->parse('manage_shop/image_items', $replace2);
+			$images_items[] = tpl()->parse('manage_shop/image_items', $replace2);
 		}
 		// 1-st type of assigning attributes
 		$fields = module('manage_shop')->_attributes_html($_GET['id']);
@@ -166,7 +190,7 @@ class yf_manage_shop_product_edit{
 			'featured'           => $product_info['featured'],
 			'form_action'        => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
 			'back_url'           => './?object='.main()->_get('object').'&action=products',
-			'image'              => $items,
+			'image'              => $images_items ? implode(PHP_EOL, $images_items) : '',
 			'categories_url'     => './?object=category_editor&action=show_items&id=shop_cats',
 			'manufacturers_url'  => './?object='.main()->_get('object').'&action=manufacturers',
 			'suppliers_url'      => './?object='.main()->_get('object').'&action=suppliers',
@@ -178,6 +202,32 @@ class yf_manage_shop_product_edit{
 			'search_url'         => './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'],
 			'product_url_user'	 => url('/shop/product/'.$product_info['id']),
 		);
-		return tpl()->parse('manage_shop/product_edit', $replace);
+#		return tpl()->parse('manage_shop/product_edit', $replace);
+		return form($replace, array(
+				'for_upload' => 1,
+				'currency' => module('manage_shop')->CURRENCY,
+				'hide_empty' => 1
+			))
+			->info_link('product_url_user')
+			->text('name')
+			->text('articul')
+			->text('url')
+			->box('cat_id_box', 'Main category', array('edit_link' => 'categories_url'))
+			->box('category_box', 'Secondary categories', array('edit_link' => 'categories_url'))
+			->box('manufacturer_box', 'Manufacturer', array('edit_link' => 'manufacturers_url'))
+			->box('supplier_box', 'Supplier', array('edit_link' => 'suppliers_url'))
+			->textarea('desc', 'Description')
+			->money('price')
+			->money('price_promo')
+			->money('price_partner')
+			->money('price_raw')
+			->number('quantity')
+			->container(($images_items ? implode(PHP_EOL, $images_items) : ''). '<a class="btn btn-mini" onclick="addImage();"><span>{t(Add Image)}</span></a>'. '<div id="images"></div>', array('desc' => 'Images'))
+			->link('Set main image', $replace['set_main_image_url'], array('class_add' => 'ajax_edit', 'display_func' => function() use ($images_items) { return (is_array($images_items) && count($images_items) > 1); }))
+			->link('Search images', $replace['search_url'], array('class_add' => 'btn-success'))
+			->container(module('manage_shop')->_productparams_container($_GET['id']), array('desc' => 'Product params'))
+			->active_box('active')
+			->save_and_back()
+			.tpl()->parse('manage_shop/product_edit_js');
 	}
 }
