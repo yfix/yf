@@ -1,0 +1,68 @@
+<script>
+function image_upload(field, preview) {
+	$('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="index.php?route=common/filemanager&field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
+	$('#dialog').dialog({
+		title: 'Image Manager',
+		close: function (event, ui) {
+			if ($('#' + field).attr('value')) {
+				$.ajax({
+					url: 'index.php?route=common/filemanager/image',
+					type: 'POST',
+					data: 'image=' + encodeURIComponent($('#' + field).attr('value')),
+					dataType: 'text',
+					success: function(data) {
+						$('#' + preview).replaceWith('<img src="' + data + '" alt="" id="' + preview + '" style="border: 1px solid #EEEEEE;" />');
+					}
+				});
+			}
+		},	
+		bgiframe: false,
+		width: 700,
+		height: 400,
+		resizable: false,
+		modal: false
+	});
+};
+var image_row = 0;
+function addImage() {
+	html = '<div id="image_row' + image_row + '"><input type="file" name="image[' + image_row + ']"  value="">';
+	html += '<a onclick="$(\'#image_row' + image_row  + '\').remove();" class="btn btn-mini">Remove</a>';
+	html += '<br /></div>'; 
+	$('#images').append(html);
+	image_row++;
+}
+function addRelated() {
+	$('#product :selected').each(function() {
+		$(this).remove();
+		$('#related option[value=\'' + $(this).attr('value') + '\']').remove();
+		$('#related').append('<option value="' + $(this).attr('value') + '">' + $(this).text() + '</option>');
+		$('#product_related input[value=\'' + $(this).attr('value') + '\']').remove();
+		$('#product_related').append('<input type="hidden" name="product_related[]" value="' + $(this).attr('value') + '" />');
+	});
+}
+function removeRelated() {
+	$('#related :selected').each(function() {
+		$(this).remove();
+		$('#product option[value=\'' + $(this).attr('value') + '\']').remove();
+		$('#product').append('<option value="' + $(this).attr('value') + '">' + $(this).text() + '</option>');
+		$('#product_related input[value=\'' + $(this).attr('value') + '\']').remove();
+	});
+}
+function getProducts() {
+	$('#product option').remove();
+	$.ajax({
+		url: '{link_get_product}' + $('#category_select_box').attr('value'),
+		dataType: 'json',
+		success: function(data) {
+			for (i = 0; i < data.length; i++) {
+				$('#product').append('<option value="' + data[i]['product_id'] + '">' + data[i]['name'] + '</option>');
+			}
+		},
+	});
+}
+$(function(){
+	$("select#category_select_box").change(function(){
+		getProducts();
+	});
+});
+</script>
