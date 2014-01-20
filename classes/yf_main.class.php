@@ -1627,7 +1627,7 @@ class yf_main {
 		}
 		if (MAIN_TYPE_ADMIN) {
 			$OBJ->USER_ID		= $this->_get('user_id');
-			$OBJ->ADMIN_ID		= (int)$this->_session('admiin_id');
+			$OBJ->ADMIN_ID		= (int)$this->_session('admin_id');
 			$OBJ->ADMIN_GROUP	= (int)$this->_session('admin_group');
 		} elseif (MAIN_TYPE_USER) {
 			$OBJ->USER_ID		= (int)$this->_session('user_id');
