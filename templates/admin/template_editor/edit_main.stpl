@@ -1,26 +1,23 @@
-<h2>{t(Edit STPL)} "{stpl_name}" {t(for the theme)} "{theme_name}" {t(in)} "{location}"</h2>
-<br />
-<div class="button_div">
-<form method="post" action="{form_action}">
-	<p class="first"> 
-		<label for="stpl_text">{t(Template source)}:</label>
-		<textarea name="stpl_text" cols="90" rows="20" wrap="off" class="html_code" />{stpl_text}</textarea>
-	</p>	
-{if("location" ne "framework")}
-	<div class="button_div">
-		<input type="submit" value="{t(Save)}" />
+<h4>edit: {stpl_name} for theme: {theme_name}, inside: {location}</h4>
+
+{form_row("form_begin")}
+	{form_row("hidden","editor_to_save")}
+	<div class="control-group">
+		<div id="editor_html" style="width: 90%; height: 500px;">{stpl_text}</div>
 	</div>
-{/if}
-</form>
-</div>
-<br />
-<br />
-<div align="center"><a href="{back_url}">{t(Back)}</a></div>
-{if("location" eq "framework")}
-<br />
-<br />
-<div>	
-	<p class="label label-warning"><b>{t(NOTE)}:</b></p>
-	<p>{t(You can view or copy template source but can't make changes in FRAMEWORK templates)}</p>
-</div>
-{/if}
+	{form_row("save_and_back")}
+{form_row("form_end")}
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+<script>
+function initAceEditor() {
+	var html_editor = ace.edit("editor_html");
+	html_editor.setTheme("ace/theme/tomorrow_night");
+	html_editor.getSession().setMode("ace/mode/html");
+	html_editor.setFontSize("16px") ;
+	html_editor.setPrintMarginColumn(false);
+}
+initAceEditor()
+
+//	html_editor.session.getValue();
+</script>
