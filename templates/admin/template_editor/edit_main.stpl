@@ -1,7 +1,7 @@
 <h4>edit: {stpl_name} for theme: {theme_name}, inside: {location}</h4>
 
 {form_row("form_begin")}
-	{form_row("hidden","editor_to_save")}
+	{form_row("hidden","stpl_text")}
 	<div class="control-group">
 		<div id="editor_html" style="width: 90%; height: 500px;">{stpl_text}</div>
 	</div>
@@ -17,7 +17,11 @@ function initAceEditor() {
 	html_editor.setFontSize("16px") ;
 	html_editor.setPrintMarginColumn(false);
 }
-initAceEditor()
-
-//	html_editor.session.getValue();
+initAceEditor();
+</script>
+<script>
+$("#editor_html").closest("form").on("submit", function(){
+	$(this).find("#stpl_text").val(html_editor.session.getValue())
+	return true;
+})
 </script>
