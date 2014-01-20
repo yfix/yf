@@ -165,7 +165,7 @@ class yf_manage_shop_orders{
 			$order_items[$_info['product_id']."_".$_info['param_id']] = $_info;
 		}
 		if (!empty($products_ids)) {
-			$products_infos = db()->query_fetch_all('SELECT * FROM '.db('shop_products').' WHERE id IN('.implode(',', $products_ids).') AND active="1"');
+			$products_infos = db()->query_fetch_all('SELECT * FROM '.db('shop_products').' WHERE id IN('.implode(',', $products_ids).')');
 			$products_atts	= module('manage_shop')->_get_products_attributes($products_ids);
 		}
 		foreach ((array)$order_items as $_info) {
