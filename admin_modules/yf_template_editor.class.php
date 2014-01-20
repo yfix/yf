@@ -105,29 +105,23 @@ class yf_template_editor {
 		if ($_GET["location"] == "framework") {
 			return tpl()->parse($_GET["object"]."/framework_warning");
 		}
+		$new_theme_name	= $_POST["theme_name"];
+		if (empty($_GET["theme"]) && empty($new_theme_name)) {
+			return _e("Theme name required!");
+		}
+		if (main()->is_post()) {
+			if ($_GET["theme"] != $new_theme_name) {
+				rename($this->_dir_array[$_GET["location"]]. $_GET["theme"], $this->_dir_array[$_GET["location"]]. $new_theme_name);
+			}
+			return js_redirect("./?object=".$_GET["object"]."&action=show");
+		}
 		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=save_theme&theme=".$_GET["theme"]."&location=".$_GET["location"],
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&theme=".$_GET["theme"]."&location=".$_GET["location"],
 			"back_url"		=> "./?object=".$_GET["object"]."&action=show",
 			"theme_name" 	=> _prepare_html($_GET["theme"]),
 			"location"		=> $_GET["location"],
 		);
 		return tpl()->parse($_GET["object"]."/edit_theme", $replace);
-	}
-
-	/**
-	*/
-	function save_theme () {
-		$new_theme_name	= $_POST["theme_name"];
-		if ($_GET["location"] == "framework") {
-			return tpl()->parse($_GET["object"]."/framework_warning");
-		}
-		if (empty($_GET["theme"]) || empty($new_theme_name)) {
-			return "Theme name required!";
-		}
-		if ($_GET["theme"] != $new_theme_name) {
-			rename($this->_dir_array[$_GET["location"]]. $_GET["theme"], $this->_dir_array[$_GET["location"]]. $new_theme_name);
-		}
-		return js_redirect("./?object=".$_GET["object"]."&action=show");
 	}
 
 	/**
@@ -268,13 +262,25 @@ class yf_template_editor {
 		$theme_name	= $_GET["theme"];
 		$stpl_name	= $_GET["name"];
 		if (empty($theme_name) || empty($stpl_name)) {
-			return "Template name and theme required!";
+			return _e("Template name and theme required!");
+		}
+		if (main()->is_post()) {
+			if ($_GET["location"] == "framework") {
+				return _e(tpl()->parse($_GET["object"]."/framework_warning"));
+			}
+			$lib_stpl_path	= $this->_dir_array[$_GET["location"]]. $theme_name. "/". $stpl_name. tpl()->_STPL_EXT;
+			$text = $_POST["stpl_text"];
+			if (!file_exists($lib_stpl_path)) {
+				_mkdir_m(dirname($lib_stpl_path));
+			}
+			file_put_contents($lib_stpl_path, $text);
+			return js_redirect("./?object=".$_GET["object"]."&action=show_stpls_in_theme&theme=".$theme_name."&location=".$_GET["location"]);
 		}
 		// Get template file from lib
-		$lib_stpl_path		= $this->_dir_array[$_GET["location"]]. $theme_name. "/". $stpl_name. tpl()->_STPL_EXT;
+		$lib_stpl_path	= $this->_dir_array[$_GET["location"]]. $theme_name. "/". $stpl_name. tpl()->_STPL_EXT;
 		$text = file_get_contents($lib_stpl_path);
 		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=save_stpl&name=".$stpl_name."&theme=".$theme_name."&location=".$_GET["location"],
+			"form_action"	=> "./?object=".$_GET["object"]."&action=".$_GET["action"]."&name=".$stpl_name."&theme=".$theme_name."&location=".$_GET["location"],
 			"theme_name"	=> $theme_name,
 			"stpl_name"		=> $stpl_name,
 			"stpl_text"		=> _prepare_html($text, 0),
@@ -282,27 +288,6 @@ class yf_template_editor {
 			"location"		=> $_GET["location"],
 		);
 		return tpl()->parse($_GET["object"]."/edit_main", $replace);
-	}
-
-	/**
-	* Save STPL contents
-	*/
-	function save_stpl () {
-		$theme_name	= $_GET["theme"];
-		$stpl_name	= $_REQUEST["name"];
-		if ($_GET["location"] == "framework") {
-			return tpl()->parse($_GET["object"]."/framework_warning");
-		}
-		if (empty($theme_name) || empty($stpl_name)) {
-			return "Template name and theme required!";
-		}
-		$lib_stpl_path	= $this->_dir_array[$_GET["location"]]. $theme_name. "/". $stpl_name. tpl()->_STPL_EXT;
-		$text = $_POST["stpl_text"];
-		if (!file_exists($lib_stpl_path)) {
-			_mkdir_m(dirname($lib_stpl_path));
-		}
-		file_put_contents($lib_stpl_path, $text);
-		js_redirect("./?object=".$_GET["object"]."&action=show_stpls_in_theme&theme=".$theme_name."&location=".$_GET["location"]);
 	}
 
 	/**
