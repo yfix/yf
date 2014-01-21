@@ -513,6 +513,7 @@ class yf_form2 {
 			return $row_start
 					.$before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
+					.(isset($extra['ace_editor']) ? $this->_ace_editor_html($extra, $replace) : '')
 					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
 				.$row_end;
 		}
@@ -554,6 +555,7 @@ class yf_form2 {
 			return $row_start
 					.$before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
+					.(isset($extra['ace_editor']) ? $this->_ace_editor_html($extra, $replace) : '')
 					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
 				.$row_end;
 		}
@@ -881,6 +883,26 @@ class yf_form2 {
 		$this->_ckeditor_scripts_included = true;
 
 		return $body;
+	}
+
+	/**
+	*/
+	function _ace_editor_html($extra = array(), $replace = array()) {
+		$extra['id'] = $extra['id'] ?: 'editor_html';
+		return '<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript"></script>
+			<script type="text/javascript">
+			try {
+				var ace_editor = ace.edit("'.$extra['id'].'");
+//				$("#'.$extra['id'].'").ace_editor = ace_editor;
+				ace_editor.setTheme("ace/theme/'.($extra['ace']['theme'] ?: 'tomorrow_night').'");
+				ace_editor.getSession().setMode("ace/mode/html");
+				ace_editor.setFontSize("'.($extra['ace']['font-size'] ?: '16px').'");
+				ace_editor.setPrintMarginColumn(false);
+			} catch (e) {
+				console.log(e)
+			}
+			</script>
+		';
 	}
 
 	/**
