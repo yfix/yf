@@ -623,7 +623,7 @@ class yf_main {
 				session_start();
 			// Session need to be regenerated
 			} elseif ($percent > 10) {
-				session_regenerate_id(true);
+				session_regenerate_id(/*$delete_old_session = true*/);
 				$this->_session('last_update', $now);
 			}
 		} else {
