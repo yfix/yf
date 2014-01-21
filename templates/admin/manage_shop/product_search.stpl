@@ -1,0 +1,11 @@
+<script>
+$(function() {
+
+	$("#program_name").autocomplete("./?object=regreader2_download_stats&action=ajax_findprogram").result(function(event, data, formatted) {
+		$("#program_id").val(data[1]);
+	});
+});
+</script>
+	
+<b>Add product to basket</b> <input type="text" name="product_name" id="product_name" size="50" value="{product_name}">
+<input type="hidden" name="product_id" id="product_id" value="{product_id}">

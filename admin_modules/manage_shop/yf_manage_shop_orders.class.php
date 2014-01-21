@@ -146,7 +146,7 @@ class yf_manage_shop_orders{
 			$sql = array(
 				'status'	=> $_POST['status'],
 			);
-			foreach (array('address','phone') as $f) {
+			foreach (array('address','phone','address','house','apartment','floor','porch','intercom') as $f) {
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
 				}
@@ -222,12 +222,12 @@ class yf_manage_shop_orders{
 			->email('email')
 			->info('phone')
 			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
-			->info('address')
-			->info('house')
-			->info('apartment')
-			->info('floor')
-			->info('porch')
-			->info('intercom')
+			->text('address')
+			->text('house')
+			->text('apartment')
+			->text('floor')
+			->text('porch')
+			->text('intercom')
 			->info('comment')
 			->info('delivery_time')			
 			->info('delivery_price')
@@ -277,6 +277,8 @@ class yf_manage_shop_orders{
 			->btn_edit('', './?object='.main()->_get('object').'&action=view_order&id=%d',array('no_ajax' => 1))
 			->btn('Merge', './?object='.main()->_get('object').'&action=merge_order&id='.$order_info['id'].'&merge_id=%d',array('no_ajax' => 1))
 		;									
+
+	//	$out .= tpl()->parse('manage_shop/product_search',array());
 
 		return $out;
 	}
