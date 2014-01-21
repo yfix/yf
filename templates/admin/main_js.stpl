@@ -112,6 +112,18 @@ $(function(){
 		'trigger' : 'hover',
 		'delay'   : { 'show' : 0, 'hide' : 0 }
 	})
+
+	// Ace editor connection (http://ace.c9.io/)
+	$("form[data-onsubmit]").on("submit", function() {
+		var code = $(this).data("onsubmit");
+		console.log(code);
+		try {
+			eval(code);
+		} catch (_e) {
+			console.log(e)
+		}
+		return true;
+	})
 });
 </script>
 
