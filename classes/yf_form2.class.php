@@ -891,16 +891,18 @@ class yf_form2 {
 		$extra['id'] = $extra['id'] ?: 'editor_html';
 		return '<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript"></script>
 			<script type="text/javascript">
+			(function(){
 			try {
 				var ace_editor = ace.edit("'.$extra['id'].'");
-//				$("#'.$extra['id'].'").ace_editor = ace_editor;
 				ace_editor.setTheme("ace/theme/'.($extra['ace']['theme'] ?: 'tomorrow_night').'");
 				ace_editor.getSession().setMode("ace/mode/html");
 				ace_editor.setFontSize("'.($extra['ace']['font-size'] ?: '16px').'");
 				ace_editor.setPrintMarginColumn(false);
+				$("#'.$extra['id'].'").data("ace_editor", ace_editor);
 			} catch (e) {
 				console.log(e)
 			}
+			})()
 			</script>
 		';
 	}
