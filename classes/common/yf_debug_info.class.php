@@ -930,7 +930,7 @@ class yf_debug_info {
 			$v = is_array($v) ? var_export($v, 1) : $v;
 			$items[] = array(
 				'key'	=> $params['escape'] ? _prepare_html($k) : $k,
-				'value'	=> $params['escape'] ? '<pre>'._prepare_html($v).'</pre>' : $v,
+				'value'	=> $params['escape'] && strlen($v) ? '<pre>'._prepare_html($v).'</pre>' : $v,
 			);
 		}
 		if (!$items) {
