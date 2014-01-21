@@ -110,6 +110,31 @@ class yf_manage_shop_import {
 		die();
 	}	
 	
+	function import_csv() {
+		set_time_limit(0);
+		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
+		$cat_aliases = db()->get_2d("SELECT name, cat_id FROM `".db('shop_suppliers_cat_aliases')."` WHERE supplier_id=".intval($SUPPLIER_ID));
+		
+		if (empty($_FILES)) {
+			return form('',array('enctype' => 'multipart/form-data'))
+				->file("file")
+				->save('', "Upload");
+		}
+		$items = array();
+		
+		if (($fp = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
+			while (($data = fgetcsv($fp, 1000, ",")) !== FALSE) {
+				$items[] = $data;
+			}
+		}
+		
+		if (count($items) != 0) {
+			return $this->process_items_epicentr_update2($items);		
+		}
+				
+	}
+	
+	
 	/**
 	*/
 	function import_xls() {
@@ -130,7 +155,7 @@ class yf_manage_shop_import {
 		$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
 		
 		$objReader = PHPExcel_IOFactory::createReader($ext == 'xls' ? 'Excel5' : 'Excel2007');
-		$objReader->setReadDataOnly(false);
+//		$objReader->setReadDataOnly(false);
 		$objPHPExcel = $objReader->load($_FILES['file']['tmp_name']);
 		
 		$items = array();
@@ -153,19 +178,18 @@ class yf_manage_shop_import {
 					$i++;
 				}
 					
-//				$item['background_color'] = $objPHPExcel->getActiveSheet()->getStyle('A'.$row_number)->getFill()->getStartColor()->getRGB();
-//				$item['coordinate'] = 'A'.$row_number;
 				$items[] = $item;
 			}
 		
 		}
 		if (count($items) != 0) {
 //			return $this->process_items_ambar_update($items);
-//			return $this->process_items_epicentr_update($items);
-	//		return $this->process_items_fortuna($items);
-	//		return $this->process_items_talisman($items);
+			return $this->process_items_epicentr_update2($items);
+//			return $this->process_items_epicentr_update($items);			
+//			return $this->process_items_fortuna($items);
+//			return $this->process_items_talisman($items);
 //			return $this->process_items_talisman_update($items);	
-			return $this->process_items_talisman_import_food($items);
+//			return $this->process_items_talisman_import_food($items);
 //			return $this->process_items_epicentr_import($items);			
 //			return $this->process_items_yugcontract_xls($items);
 		} else {
@@ -628,7 +652,7 @@ class yf_manage_shop_import {
 		
 		$i =0 ;
 		foreach ($items as $item) {
-			if ($i==0) {$i++;continue;}
+			if ($i==0 || trim($item[3]) == '') {$i++;continue;}
 			
 			$v = array(
 				'name' => trim($item[0]),
@@ -645,23 +669,79 @@ class yf_manage_shop_import {
 
 				$result .= 'new - ';
 				$error = false;
-				db()->insert(db('shop_products'), _es($v)) or $error = true;
-				if ($error) {
-					$result .= 'ERROR';
-				} else {
-					$result .= 'OK';				
-				}
+				db()->insert(db('shop_products'), _es($v),false);
+/*				$sql .= ";\n";
+				echo $sql; */
 				$result .= "<br />"; 
 			} else {
 				$result .= "articul: ".$v['articul']."; product: ".$v['name']." - ALREADY EXISTS<br />";
-			}
+			} 
  
 			$i++;
 		}
  
 		return $result;
 	}
+
+	function epicentr_get_cat_id($cats) {
+		$parent_id = 62520;
+		foreach ($cats as $cat) {
+			$A = db()->get("SELECT * FROM `".db('category_items')."` WHERE `parent_id`='".$parent_id."' AND `name`='".$cat."'");
+			if (empty($A)) {
+				db()->insert(db('category_items'),array(
+					'parent_id' => $parent_id,
+					'name' => _es($cat),
+					'cat_id' => 1,
+					'active' => 1,
+					'url' => common()->_propose_url_from_name($cat),
+				));
+				$parent_id = db()->insert_id();
+			} else {
+				$parent_id = $A['id'];
+			}
+		}
+		return $parent_id;
+	}
 	
+	function process_items_epicentr_update2($items) {
+		$out = '';
+		$supplier_id = 101;
+		
+		$products = array();
+		$R = db()->query("SELECT * FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+		while ($A = db()->fetch_assoc($R)) {
+			$products[$A['articul']] = $A['id'];
+		}
+		
+		$result = array();
+		$cats = array();
+		$num_upd = 0;$num_new = 0;
+		foreach ($items as $item) {
+// Array ( [0] => 241 [1] => Raid Антимоль 4 сезона Весна-Лето [2] => 5010182991022 [3] => 17,7 [4] => SC Johnson [5] => Для дома [6] => средства против насекомых )
+			
+			if (intval($item[0]) == 0) continue;
+			if ($item[5]!='') $cats[0] = $item[5];
+			$cats[1] = $item[6];
+			$cats[1]= mb_strtoupper(mb_substr($cats[1], 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($cats[1], 1, mb_strlen($cats[1]), 'UTF-8');
+			
+			if (intval($item[2]) != 0) {
+				$new_cat_id = $this->epicentr_get_cat_id($cats);
+				
+				if (intval($products[$item[2]])!=0) {
+					// update
+					$out .= "UPDATE `".db('shop_products')."` SET `cat_id`=".$new_cat_id." WHERE `id`='".$products[$item[2]]."';<br />";
+					$num_upd ++;
+				} else {
+					$num_new ++;
+				}
+
+			} 
+
+		}
+		$out .= $num_upd.';'.$num_new;
+		
+		return $out;
+	}
 	
 	
 }
