@@ -254,23 +254,38 @@ class yf_template_editor {
 				return $this->_framework_warning();
 			}
 			$lib_stpl_path	= $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
-			$text = $_POST['stpl_text'];
+			$text = $_POST['stpl_text'] ?: $_POST['stpl_text_hidden'];
 			if (!file_exists($lib_stpl_path)) {
 				_mkdir_m(dirname($lib_stpl_path));
 			}
 			file_put_contents($lib_stpl_path, $text);
 			return js_redirect('./?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location']);
 		}
-		$text = file_get_contents($this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT);
+		$stpl_text = file_get_contents($this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT);
+		$stpl_text = _prepare_html($stpl_text, 0);
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&name='.$stpl_name.'&theme='.$theme_name.'&location='.$_GET['location'],
 			'theme_name'	=> $theme_name,
 			'stpl_name'		=> $stpl_name,
-			'stpl_text'		=> _prepare_html($text, 0),
+			'stpl_text'		=> $stpl_text,
 			'back_url'		=> './?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
 		);
-		return tpl()->parse($_GET['object'].'/edit_main', $replace);
+#		return tpl()->parse($_GET['object'].'/edit_main', $replace);
+		return '<h4>edit: '.$replace['stpl_name'].' for theme: '.$replace['theme_name'].', inside: '.$replace['location'].'</h4>'.
+			form($replace, array(
+				'data-onsubmit' => '$(this).find("#stpl_text").val( ace_editor.session.getValue() )',
+			))
+			->container('<div id="editor_html" style="width: 90%; height: 500px;">'.$stpl_text.'</div>', '', array(
+				'id'	=> 'editor_html',
+				'wide'	=> 1,
+#				'style' => 'width: 90%; height: 500px;',
+				'ace_editor' => array(
+#					'hidden_id'	=> 'stpl_text_hidden',
+				),
+			))
+			->hidden('stpl_text_hidden')
+			->save_and_back();
 	}
 
 	/**
