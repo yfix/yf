@@ -272,19 +272,18 @@ class yf_template_editor {
 			'location'		=> $_GET['location'],
 		);
 #		return tpl()->parse($_GET['object'].'/edit_main', $replace);
+		$div_id = 'editor_html';
+		$hidden_id = 'stpl_text_hidden';
 		return '<h4>edit: '.$replace['stpl_name'].' for theme: '.$replace['theme_name'].', inside: '.$replace['location'].'</h4>'.
 			form($replace, array(
-				'data-onsubmit' => '$(this).find("#stpl_text").val( ace_editor.session.getValue() )',
+				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
 			))
-			->container('<div id="editor_html" style="width: 90%; height: 500px;">'.$stpl_text.'</div>', '', array(
-				'id'	=> 'editor_html',
+			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$stpl_text.'</div>', '', array(
+				'id'	=> $div_id,
 				'wide'	=> 1,
-#				'style' => 'width: 90%; height: 500px;',
-				'ace_editor' => array(
-#					'hidden_id'	=> 'stpl_text_hidden',
-				),
+				'ace_editor' => array(),
 			))
-			->hidden('stpl_text_hidden')
+			->hidden($hidden_id)
 			->save_and_back();
 	}
 
@@ -375,6 +374,6 @@ class yf_template_editor {
 	/**
 	*/
 	function _framework_warning () {
-		return tpl()->parse($_GET['object'].'/framework_warning');
+		return _e( tpl()->parse($_GET['object'].'/framework_warning') );
 	}
 }
