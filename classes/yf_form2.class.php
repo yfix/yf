@@ -684,6 +684,65 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function _input_assign_params_from_validate($extra = array()) {
+		$vr = &$this->_validate_rules_names[$extra['name']];
+/*
+// TODO: move this into _class('validate')
+		if ($vr['min_length']) {
+		} elseif ($vr['max_length']) {
+		} elseif ($vr['exact_length']) {
+		} elseif ($vr['alpha']) {
+		} elseif ($vr['alpha_numeric']) {
+		} elseif ($vr['alpha_numeric_spaces']) {
+		} elseif ($vr['alpha_dash']) {
+		} elseif ($vr['exact_length']) {
+		} elseif ($vr['numeric']) {
+		} elseif ($vr['integer']) {
+		} elseif ($vr['decimal']) {
+		} elseif ($vr['is_natural']) {
+		} elseif ($vr['is_natural_no_zero']) {
+		} elseif ($vr['valid_email']) {
+			$extra['type'] = 'email';
+		} elseif ($vr['valid_url']) {
+			$extra['type'] = 'url';
+		} elseif ($vr['valid_ip']) {
+		} elseif ($vr['regex_match']) {
+		}
+		# $extra['title'] is used in html5 validation suggesting messages
+*/
+/*
+		if ($vr['numeric']) {
+			$extra['pattern'] = isset($extra['pattern']) ? $extra['pattern'] : '^[\-+]?[0-9]*\.?[0-9]+$';
+			$extra['title'] = isset($extra['title']) ? $extra['title'] : t('Field must contain only numbers');
+		}
+*/
+		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
+		if (isset($vr['min_length']) && strlen($vr['min_length']) && !isset($extra['pattern'])) {
+			$extra['pattern'] = '.{'.$vr['min_length'].','.($vr['max_length'] ?: '').'}';
+		}
+		if ($vr['max_length'] && !isset($extra['maxlength'])) {
+			$extra['maxlength'] = $vr['max_length'][1];
+		}
+		if (isset($vr['required'])) {
+			$extra['required'] = 1;
+		}
+		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
+			$_rule = str_replace('ajax_', '', $rule);
+			if (isset($vr[$rule])) {
+				$extra['data-ajax-validate'][$_rule] = $vr[$rule];
+			}
+		}
+		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
+			$_rule = str_replace('ajax_', '', $rule);
+			if (isset($vr[$rule])) {
+				$extra['data-ajax-validate'][$_rule] = $vr[$rule];
+			}
+		}
+		return $extra;
+	}
+
+	/**
 	* General input
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
@@ -714,30 +773,10 @@ class yf_form2 {
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];
 			}
-			// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
-			if ($vr['min_length'] && !isset($extra['pattern'])) {
-				$extra['pattern'] = '.{'.$vr['min_length'][1].','.($vr['max_length'] ? $vr['max_length'][1] : '').'}';
-			}
-			if ($vr['max_length'] && !isset($extra['maxlength'])) {
-				$extra['maxlength'] = $vr['max_length'][1];
-			}
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$vr = &$_this->_validate_rules_names[$extra['name']];
-			if (isset($vr['required'])) {
-				$extra['required'] = 1;
-			}
-			foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
-				$_rule = str_replace('ajax_', '', $rule);
-				if (isset($vr[$rule])) {
-					$extra['data-ajax-validate'][$_rule] = $vr[$rule];
-				}
-			}
-// TODO: decide if it is safe to show this inside html
-#			if ($vr && is_array($vr)) {
-#				$extra['data-validate'] = (array)$extra['data-validate'] + $vr;
-#			}
+			$extra = $_this->_input_assign_params_from_validate($extra);
 			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title');
 			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
 		};
@@ -777,6 +816,7 @@ class yf_form2 {
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
+			$extra = $_this->_input_assign_params_from_validate($extra);
 			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required');
 			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};

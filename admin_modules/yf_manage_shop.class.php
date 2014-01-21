@@ -437,23 +437,31 @@ class yf_manage_shop {
 	/*
 	 * Patterns for massive corrections of names of products
 	 */
-	function show_clear_patterns() {
+	function clear_patterns() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
 	
-	function add_clear_pattern() {
+	function clear_pattern_list() {
+		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function clear_pattern_add() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
 	
-	function edit_clear_pattern() {
+	function clear_pattern_edit() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
 	
-	function delete_clear_pattern() {
+	function clear_pattern_delete() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
 	
-	function run_clear_pattern() {
+	function clear_pattern_activate() {
+		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
+	
+	function clear_pattern_run() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
 }
