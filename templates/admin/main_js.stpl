@@ -113,15 +113,15 @@ $(function(){
 		'delay'   : { 'show' : 0, 'hide' : 0 }
 	})
 
-	// Ace editor connection (http://ace.c9.io/)
+	// inline hook (Ace editor connection (http://ace.c9.io/) is good example)
 	$("form[data-onsubmit]").on("submit", function() {
-		var code = $(this).data("onsubmit");
-		console.log(code);
-		try {
-			eval(code);
-		} catch (_e) {
-			console.log(e)
-		}
+		try { eval( $(this).data("onsubmit") ); } catch (_e) { console.log(e) }
+		return true;
+	})
+
+	// inline hook
+	$("[data-onclick]").on("click", function() {
+		try { eval( $(this).data("onclick") ); } catch (_e) { console.log(e) }
 		return true;
 	})
 });
