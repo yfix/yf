@@ -10,13 +10,13 @@
 class yf_utf8 {
 
 	/** @var @conf_skip Result of unicode checks, 1 -> fine, everything else - not */
-	private $MULTIBYTE = false;
+	public $MULTIBYTE = false;
 	/** @var @conf_skip Indicates an error during check for PHP unicode support. */
-	private $UNICODE_ERROR = -1;
+	public $UNICODE_ERROR = -1;
 	/** @var @conf_skip Indicates that standard PHP (emulated) unicode support is being used. */
-	private $UNICODE_SINGLEBYTE = 0;
+	public $UNICODE_SINGLEBYTE = 0;
 	/** @var @conf_skip Indicates that full unicode support with the PHP mbstring extension is being */
-	private $UNICODE_MULTIBYTE = 1;
+	public $UNICODE_MULTIBYTE = 1;
 
 	/**
 	* Constructor
