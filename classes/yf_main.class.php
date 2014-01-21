@@ -49,6 +49,8 @@ class yf_main {
 	public $SESSION_COOKIE_HTTPONLY	= false;
 	/** @var string */
 	public $SESSION_REFERER_CHECK	= ''; // WEB_PATH
+	/** @var string */
+	public $SESSION_DESTROY_EXPIRED	= false;
 	/** @var string Custom session name */
 	public $USE_UNIQUE_SESSION_NAME	= true;
 	/** @var bool Auto-detect spiders */
@@ -610,18 +612,18 @@ class yf_main {
 		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
-		$now = gmmktime();
+		$now = time();
 		$last_update = $this->_session('last_update');
 		if ($last_update) {
 			$diff = $now - $last_update;
 			$percent = $diff / $this->SESSION_LIFE_TIME * 100;
 			// Session expired
-			if ($percent > 100) {
+			if ($percent > 100 && $this->SESSION_DESTROY_EXPIRED) {
 				session_destroy();
 				session_start();
 			// Session need to be regenerated
 			} elseif ($percent > 10) {
-				session_regenerate_id();
+				session_regenerate_id(true);
 				$this->_session('last_update', $now);
 			}
 		} else {
