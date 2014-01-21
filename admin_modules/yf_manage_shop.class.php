@@ -173,7 +173,7 @@ class yf_manage_shop {
 	}
 
 	function upload_images() {
-		$func = __FUNCTION__; return _class('shop_supplier_panel_upload_images', 'admin_modules/shop_supplier_panel/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_upload_images', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function set_main_image() {
