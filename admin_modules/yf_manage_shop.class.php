@@ -464,4 +464,12 @@ class yf_manage_shop {
 	function clear_pattern_run() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
+	
+	function clear_pattern_child_process() {
+		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
+	
+	function clear_pattern_status() {
+		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
 }
