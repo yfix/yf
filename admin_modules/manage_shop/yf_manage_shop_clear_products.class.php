@@ -184,6 +184,22 @@ class yf_manage_shop_clear_products {
 		exit;
 	}
 
+	/*
+	 *
+	 */
+	function clear_pattern_status () {
+		if (empty($_POST['ids'])) {
+			exit;
+		}
+
+		$patterns = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id IN ('.implode(',', $_POST['ids']).')');
+		json_encode($patterns);
+		exit;
+	}
+
+	/*
+	 *
+	 */
 	function clear_pattern_child_process () {
 		if (!isset($_GET['id']) && intval($_GET['id'])) {
 			return t('Empty clear pattern ID');
