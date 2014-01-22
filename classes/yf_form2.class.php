@@ -243,7 +243,7 @@ class yf_form2 {
 			$tabbed_buffer = array();
 		}
 		if ($tabs) {
-			$this->_body[$tabs_container] = _class('html')->tabs($tabs);
+			$this->_body[$tabs_container] = _class('html')->tabs($tabs, $this->_params['tabs']);
 		}
 		$this->_rendered = implode(PHP_EOL, $this->_body);
 		if (DEBUG_MODE) {
@@ -634,6 +634,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
 			$_this->_tabs_name = $extra['name'];
+			$_this->_tabs_extra = $extra;
 			$_this->_tabbed_mode_on = true;
 		};
 		if ($this->_chained_mode) {
