@@ -53,7 +53,7 @@ class yf_manage_shop_clear_products {
 		if (empty($pattern_info)) {
 			return t('Wrong clean pattern');
 		}
-		
+
 		$where = '';	
 		if (!empty($pattern_info['cat_id'])) {
 			$cat_ids = $this->get_recursive_cat_ids($pattern_info['cat_id']);
@@ -167,15 +167,56 @@ class yf_manage_shop_clear_products {
 	 */
 	function clear_pattern_run () {
 		if (!isset($_GET['id']) && intval($_GET['id'])) {
+			exit;
+		}
+
+		$_GET['id'] = intval($_GET['id']);
+
+		$pattern_info = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id = '.$_GET['id'].' AND process = 0');
+		if (empty($pattern_info)) {
+			echo 'process';
+			exit;
+		}
+
+		shell_exec('cd '.INCLUDE_PATH.'admin/ && php index.php --object=manage_shop --action=clear_pattern_child_process --id='.$_GET['id'].' > /dev/null &');
+
+		echo 'process';
+		exit;
+	}
+
+	/*
+	 *
+	 */
+	function clear_pattern_status () {
+		if (empty($_POST['ids'])) {
+			exit;
+		}
+
+		$patterns = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id IN ('.implode(',', $_POST['ids']).')');
+		json_encode($patterns);
+		exit;
+	}
+
+	/*
+	 *
+	 */
+	function clear_pattern_child_process () {
+		if (!isset($_GET['id']) && intval($_GET['id'])) {
 			return t('Empty clear pattern ID');
 		}
 
 		$_GET['id'] = intval($_GET['id']);
 
-		$pattern_info = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id = '.$_GET['id']);
+		$process_id = getmypid();
+
+		db()->query('UPDATE '.db('shop_patterns').' SET process = '.$process_id.' WHERE process = 0 AND id = '.$_GET['id'].';');
+
+		$pattern_info = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id = '.$_GET['id'].' AND process = '.$product_id);
 		if (empty($pattern_info)) {
 			return t('Wrong clean pattern');
 		}
+
+		db()->begin();
 
 		$where = '';	
 		if (!empty($pattern_info['cat_id'])) {
@@ -183,16 +224,30 @@ class yf_manage_shop_clear_products {
 			$where = ' AND (cat_id IN ('.implode(',', $cat_ids).') OR id IN (SELECT product_id FROM '.db('shop_product_to_category').' WHERE category_id IN ('.implode(',', $cat_ids).')))';
 		}
 
-		$sql = 'SELECT * FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($pattern_info['search'], 'UTF-8').'[[:>:]]\''.$where;
+		$sql = 'SELECT * FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($pattern_info['search'], 'UTF-8').'[[:>:]]\''.$where.' LIMIT 5';
 		$sql = db()->query($sql);
 		while($row = db()->fetch_assoc($sql)) {
-			$pattern_list[] = array(
-				'now'     => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>$1</b>', $row['name']),
-				'will_be' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>'.$pattern_info['replace'].'</b>', $row['name']),
+			$update_array[] = array(
+				'id' => $row['id'],
+				'name' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', $pattern_info['replace'], $row['name']),
 			);
+
+			$update_ids[] = $row['id'];
 		}
 
+		if (!empty($update_array)) {
+			$update_array = array_chunk($update_array, 100);
+			foreach ($update_array as $update_items) {
+				db()->update_batch('shop_products', $update_items, 'id');
+			}
+		}
+
+		//module('manage_shop')->_product_add_revision('correct_name', $row['id']);
+
+		db()->rollback();
+
 	}
+
 
 	function get_recursive_cat_ids ($cat_id = 0, $all_cats = false) {
 		$cat_id = intval($cat_id);
@@ -202,7 +257,7 @@ class yf_manage_shop_clear_products {
 				return false;
 			}
 		}
-		
+
 		$current_func = __FUNCTION__;
 		$ids[$cat_id] = $cat_id;
 		foreach ($all_cats as $key => $item) {
