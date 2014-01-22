@@ -52,6 +52,22 @@ class yf_manage_shop__product_revisions {
 	/**
 	*/
 	function product_revisions() {
+		$rev_id = intval($_GET['id']);
+		if ($rev_id) {
+			return $this->product_revisions_view();
+		}
+		return table('SELECT * FROM '.db('shop_product_revisions'))
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
+			->admin('user_id', array('desc' => 'admin'))
+			->text('action')
+			->btn_view('', './?object=manage_shop&action=product_revisions&id=%d')
+		;
+	}
+	
+	/**
+	*/
+	function product_revisions_view() {
 		$sql = 'SELECT * FROM '.db('shop_product_revisions').' WHERE id='.intval($_GET['id']);
 		$a = db()->get($sql);
 		$product_info = module('manage_shop')->_product_get_info($a['item_id']);
