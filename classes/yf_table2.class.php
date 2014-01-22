@@ -375,7 +375,7 @@ class yf_table2 {
 				if (is_callable($params['tr'])) {
 					$tr_attrs = $params['tr']($row, $_id);
 				} elseif (is_array($params['tr'])) {
-					$tr_attrs = (isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '');
+					$tr_attrs = isset($params['tr'][$_id]) ? $this->_attrs($params['tr'][$_id], array('class', 'style')) : '';
 				} else {
 					$tr_attrs = $params['tr'];
 				}
@@ -710,6 +710,66 @@ class yf_table2 {
 			}
 		}
 		return $text;
+	}
+
+	/**
+	* We need this to avoid encoding & => &amp; by standard htmlspecialchars()
+	*/
+	function _htmlchars($str = '') {
+		if (is_array($str)) {
+			foreach ((array)$str as $k => $v) {
+				$str[$k] = $this->_htmlchars($v);
+			}
+			return $str;
+		}
+		$replace = array(
+			'"' => '&quot;',
+			"'" => '&apos;',
+			'<'	=> '&lt;',
+			'>'	=> '&gt;',
+		);
+		return str_replace(array_keys($replace), array_values($replace), $str);
+	}
+
+	/**
+	*/
+	function _attrs($extra = array(), $names = array()) {
+		$body = array();
+		// Try to find and allow all data-* attributes automatically
+		foreach ((array)$extra as $k => $v) {
+			if (strpos($k, 'data-') === 0) {
+				$names[] = $k;
+			}
+		}
+		foreach ((array)$names as $name) {
+			if (!$name || !isset($extra[$name])) {
+				continue;
+			}
+			$val = $extra[$name];
+			if (is_array($val)) {
+				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+			} else {
+				if (!strlen($val)) {
+					continue;
+				}
+				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+			}
+		}
+		// Custom html attributes forced with sub-array "attr"
+		foreach ((array)$extra['attr'] as $name => $val) {
+			if (!$name || !isset($val)) {
+				continue;
+			}
+			if (is_array($val)) {
+				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+			} else {
+				if (!strlen($val)) {
+					continue;
+				}
+				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+			}
+		}
+		return ' '.implode(' ', $body);
 	}
 
 	/**
