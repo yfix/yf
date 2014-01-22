@@ -7,15 +7,7 @@ class yf_manage_shop_product_edit {
 		if (empty($_GET['id'])) {
 			return _e('Empty id');
 		}
-		if (module('manage_shop')->SUPPLIER_ID) {
-			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE p.id='.intval($_GET['id']).'
-						AND m.admin_id='.intval(main()->ADMIN_ID).'';
-		} else {
-			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id'];
-		}
-		$product_info = db()->get($sql);
+		$product_info = module('manage_shop')->_product_get_info($_GET['id']);
 		if (empty($product_info['id'])) {
 			return _e('Product not found');
 		}
@@ -134,8 +126,14 @@ class yf_manage_shop_product_edit {
 // TODO: use validation
 				'for_upload' => 1,
 				'currency' => module('manage_shop')->CURRENCY,
-				'hide_empty' => 1
+				'hide_empty' => 1,
+				'tabs'	=> array(
+					'class' => 'span6',
+					'show_all' => 1,
+					'no_headers' => 1,
+				),
 			))
+		->tab_start('main')
 			->link('product_url_user', url('/shop/product/'.$product_info['id']), array('target' => '_blank'))
 			->text('name')
 			->text('articul')
@@ -151,6 +149,11 @@ class yf_manage_shop_product_edit {
 			->money('price_partner')
 			->money('price_raw')
 			->number('quantity')
+			->active_box('active')
+			->save_and_back()
+		->tab_end()
+		->tab_start('params')
+			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success'))
 			->container(
 				($images_items ? implode(PHP_EOL, $images_items) : ''). 
 				'<a class="btn btn-mini" onclick="addImage();"><span>'.t('Add Image').'</span></a> <div id="images"></div>'
@@ -160,12 +163,10 @@ class yf_manage_shop_product_edit {
 				'class_add' => 'ajax_edit',
 				'display_func' => function() use ($images_items) { return (is_array($images_items) && count($images_items) > 1); }
 			))
-			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success'))
 			->container(module('manage_shop')->_productparams_container($_GET['id']), array('desc' => 'Product params'/*, 'edit_link' => './?object='.main()->_get('object').'&action=attributes'*/))
 // TODO: replace with similar JS container as for params and images
 #			->container(module('manage_shop')->related_products($product_info['id']), array('desc' => 'Related products'))
-			->active_box('active')
-			->save_and_back()
+		->tab_end()
 			.tpl()->parse('manage_shop/product_edit_js');
 	}
 }

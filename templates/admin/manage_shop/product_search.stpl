@@ -1,0 +1,50 @@
+<link href="{CONST('WEB_PATH')}js/select2/select2.css" rel="stylesheet"/>
+<script src="{CONST('WEB_PATH')}js/select2/select2.min.js"></script>
+
+<script>
+$( document ).ready( function() {
+	
+	$("#product_name").select2({
+		placeholder: "{t('name')}",
+		minimumInputLength: 1,
+		ajax: { 
+		    url: "./?object=manage_shop&action=product_search_autocomplete",
+		    dataType: 'json',
+			data: function (term, page) {
+				return {
+					search_word: term
+				};
+			},
+			results: function (data, page) {
+				return { results: data };
+			}
+		},
+	});	
+	$("#product_name").on("change",function() {
+		$("#product_id").val($(this).val());
+		$("#add_product_button_container").show();
+	});
+	
+	$('#add_product_button').on("click",function() {
+		
+		$.ajax({
+			type: "POST",
+			url: "./?object=manage_shop&action=order_product_add_ajax",
+			data: { 
+				product_id: $("#product_id").val(), 
+				quantity: $("#add_product_quantity").val(), 
+				order_id: {order_id},
+			},
+			success: function() {
+				location.reload();
+			},
+			dataType: 'json'
+		});
+		
+		return false;
+	});
+});
+</script>
+<input type="text" name="product_name" id="product_name" style="width:500px;" value="">
+<input type="hidden" name="product_id" id="product_id" value="">
+<div id="add_product_button_container" style="display:none;">Кол-во: <input type="text" id="add_product_quantity" name="quantity" value="1" style="width:30px;"> <input type="button" id="add_product_button" value="Добавить в заказ"></div>

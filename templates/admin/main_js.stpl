@@ -112,6 +112,18 @@ $(function(){
 		'trigger' : 'hover',
 		'delay'   : { 'show' : 0, 'hide' : 0 }
 	})
+
+	// inline hook (Ace editor connection (http://ace.c9.io/) is good example)
+	$("form[data-onsubmit]").on("submit", function() {
+		try { eval( $(this).data("onsubmit") ); } catch (_e) { console.log(e) }
+		return true;
+	})
+
+	// inline hook
+	$("[data-onclick]").on("click", function() {
+		try { eval( $(this).data("onclick") ); } catch (_e) { console.log(e) }
+		return true;
+	})
 });
 </script>
 

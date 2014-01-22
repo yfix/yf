@@ -561,7 +561,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_GET_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_GET);
+		return $this->_show_key_val_table($_GET, array('escape' => 1));
 	}
 
 	/**
@@ -570,7 +570,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_POST_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_POST);
+		return $this->_show_key_val_table($_POST, array('escape' => 1));
 	}
 
 	/**
@@ -579,7 +579,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_COOKIE_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_COOKIE);
+		return $this->_show_key_val_table($_COOKIE, array('escape' => 1));
 	}
 
 	/**
@@ -588,7 +588,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_REQUEST_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_REQUEST);
+		return $this->_show_key_val_table($_REQUEST, array('escape' => 1));
 	}
 
 	/**
@@ -597,7 +597,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_FILES_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_FILES);
+		return $this->_show_key_val_table($_FILES, array('escape' => 1));
 	}
 
 	/**
@@ -622,7 +622,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_SERVER_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_SERVER);
+		return $this->_show_key_val_table($_SERVER, array('escape' => 1));
 	}
 
 	/**
@@ -631,7 +631,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_ENV_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_ENV);
+		return $this->_show_key_val_table($_ENV, array('escape' => 1));
 	}
 
 	/**
@@ -709,7 +709,7 @@ class yf_debug_info {
 		if (!isset(main()->modules['ssh'])) {
 			return '';
 		}
-		return $this->_show_key_val_table(_class('ssh')->_debug);
+		return $this->_show_key_val_table(_class('ssh')->_debug, array('escape' => 1));
 	}
 
 	/**
@@ -723,7 +723,7 @@ class yf_debug_info {
 		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
 			$eaccel_stats[$_k] = $_v['local_value'];
 		}
-		return $this->_show_key_val_table($eaccel_stats);
+		return $this->_show_key_val_table($eaccel_stats, array('escape' => 1));
 	}
 
 	/**
@@ -737,7 +737,7 @@ class yf_debug_info {
 #		foreach ((array)ini_get_all('apc') as $_k => $_v) {
 #			$data[$_k] = $_v['local_value'];
 #		}
-#		return $this->_show_key_val_table($data);
+#		return $this->_show_key_val_table($data, array('escape' => 1));
 	}
 
 	/**
@@ -750,7 +750,7 @@ class yf_debug_info {
 #		foreach ((array)ini_get_all('xcache') as $_k => $_v) {
 #			$data[$_k] = $_v['local_value'];
 #		}
-#		return $this->_show_key_val_table($data);
+#		return $this->_show_key_val_table($data, array('escape' => 1));
 	}
 
 	/**
@@ -891,9 +891,9 @@ class yf_debug_info {
 			if (isset($this->_used_debug_datas[$k])) {
 				continue;
 			}
-			$items[$k] = '<pre>'.var_export($v, 1).'</pre>';
+			$items[$k] = $v;
 		}
-		return $this->_show_key_val_table($items);
+		return $this->_show_key_val_table($items, array('escape' => 1));
 	}
 
 	/**
@@ -905,9 +905,9 @@ class yf_debug_info {
 			if (!method_exists($module_obj, $hook_name)) {
 				continue;
 			}
-			$items[$module_name] = '<pre>'.var_export($module_obj->$hook_name($this), 1).'</pre>';
+			$items[$module_name] = $module_obj->$hook_name($this);
 		}
-		return $this->_show_key_val_table($items);
+		return $this->_show_key_val_table($items, array('escape' => 1));
 	}
 
 	/**
@@ -927,9 +927,10 @@ class yf_debug_info {
 			if ($params['skip_empty_values'] && !$v) {
 				continue;
 			}
+			$v = is_array($v) ? var_export($v, 1) : $v;
 			$items[] = array(
-				'key'	=> $k,
-				'value'	=> is_array($v) ? print_r($v, 1) : $v,
+				'key'	=> $params['escape'] ? _prepare_html($k) : $k,
+				'value'	=> $params['escape'] && strlen($v) ? '<pre>'._prepare_html($v).'</pre>' : $v,
 			);
 		}
 		if (!$items) {

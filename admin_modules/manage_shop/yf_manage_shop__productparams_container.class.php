@@ -1,7 +1,7 @@
 <?php
 class yf_manage_shop__productparams_container {
 
-	function _productparams_container($product_id) {
+	function _productparams_container($product_id,$tpl_name = "productparams_container") {
 		$current_params = array();
 		$current_param_id = 0;
 		if (intval($product_id) != 0) {
@@ -30,7 +30,7 @@ class yf_manage_shop__productparams_container {
 			"params" => json_encode($params),
 			"params_selected" => json_encode($params_selected),
 		);
-		return tpl()->parse("manage_shop/productparams_container", $replace);
+		return tpl()->parse("manage_shop/".$tpl_name, $replace);
 	}
 	
 }

@@ -131,7 +131,7 @@ class yf_html {
 	*/
 	function tabs ($tabs = array(), $extra = array()) {
 		$headers = array();
-		$body = array();
+		$items = array();
 		foreach ((array)$tabs as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
@@ -143,12 +143,18 @@ class yf_html {
 			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
 			$id = $v['id'] ?: 'tab_'.$k;
 			$is_active = (++$i == 1);
-
-			$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.$desc.'</a></li>';
-			$body[] = '<div class="tab-pane '.($is_active ? 'active' : 'fade').'" id="'.$id.'"><p>'.$content.'</p></div>';
+			$css_class = ($is_active || $extra['show_all']) ? 'active' : 'fade';
+			if ($extra['class']) {
+				$css_class .= ' '.$extra['class'];
+			}
+			if (!$extra['no_headers']) {
+				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.$desc.'</a></li>';
+			}
+			$items[] = '<div class="tab-pane '.$css_class.'" id="'.$id.'">'.$content.'</div>';
 		}
 		$extra['id'] = $extra['id'] ?: 'tabs_'.substr(md5(microtime()), 0, 8);
-		return '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL
-			.'<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$body).'</div>';
+		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
+		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
+		return $body;
 	}
 }

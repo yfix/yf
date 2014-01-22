@@ -1,0 +1,27 @@
+<div id="productparams_container">
+</div>
+<script>
+$(function(){	
+	var params = {params};
+	var params_selected = {params_selected};
+	var code = '';
+	var selected = '';
+	var hidden = '';
+	
+	for(var param_id in params_selected) {
+		code = "";
+		for(var param_id2 in params) {
+			code += '<div class="productparams_options productparam_options_'+param_id2+'"> ' + params[param_id2]['title'] +"<br /><br />";
+			for (var option_id in params[param_id2]['items']) {
+				if (params_selected[param_id][option_id] == option_id) {
+					code += '<input type="checkbox" name="productparams_options_'+param_id2+'" value="'+option_id+'"> '+params[param_id2]['items'][option_id]+'<br />';
+				}
+			}
+			code += '<br /></div>';
+		}
+
+		code += '</div>';
+		$("#productparams_container").append(code);
+	}	
+});
+</script>

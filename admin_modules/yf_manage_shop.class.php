@@ -173,7 +173,7 @@ class yf_manage_shop {
 	}
 
 	function upload_images() {
-		$func = __FUNCTION__; return _class('shop_supplier_panel_upload_images', 'admin_modules/shop_supplier_panel/')->$func();
+		$func = __FUNCTION__; return _class('manage_shop_upload_images', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function set_main_image() {
@@ -364,63 +364,99 @@ class yf_manage_shop {
 	function _hook_widget__stats ($params = array()) {
 		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
 	}
+
 	function users() {
 		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
 	}	
+
 	function user_activate() {
 		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
 	}	
+
 	function user_delete() {
 		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
 	}	
+
 	function user_edit() {
 		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
 	}
+
 	function express() {
 		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func();
 	}
+
 	function express_pdf($params = array()) {
 		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func($params);
 	}
+
 	function mail_pdf() {
 		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func();
 	}
+
 	function _productparams_container($product_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->$func($product_id);
 	}
+
 	function _product_add_revision($action, $item_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
 	}
+
 	function _product_images_add_revision($item_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($item_id);
 	}
+
 	function import_xls($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
+	function import_csv($params = array()) {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
+	}	
+
 	function import_xml($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
 	function import_products() {
 		return $this->import_xls();
 	}
+	
+	function product_search_autocomplete(){
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+	
+	function order_product_add_ajax() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_orders', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+
+	function productparams_container_ajax() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'__productparams_container', 'admin_modules/'.$cl.'/')->_productparams_container($params,'productparams_container_ajax');
+	}
+	
 	function pics_browser($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_pics_browser', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
 	function send_sms() {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_send_sms', 'admin_modules/'.$cl.'/')->$func($params);		
 	}
+
 	function category_mapping($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
 	function category_mapping_add($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
 	function category_mapping_edit($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
 	function category_mapping_delete($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
 	}
+
 	function _product_cache_purge($product_id = 0) {
 		if (!$product_id) {
 			$product_id = $_GET['id'];
@@ -429,6 +465,27 @@ class yf_manage_shop {
 		cache_del('_shop_product_params|_product_image|'.$product_id);
 		cache_del('_shop_product_params|_get_params_by_product|'.$product_id);
 		cache_del('pattern_yf|_get_shop_product_details|'.$product_id);
+	}
+
+	function _product_get_info($product_id = 0) {
+		$product_id = intval($product_id);
+		if (!$product_id) {
+			return false;
+		}
+		if (isset($this->_products_info_cache[$product_id])) {
+			return $this->_products_info_cache[$product_id];
+		}
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE p.id='.intval($product_id).'
+						AND m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.intval($product_id);
+		}
+		$product_info = db()->get($sql);
+		$this->_products_info_cache[$product_id] = $product_info;
+		return $product_info;
 	}
 	
 	/*
@@ -460,5 +517,17 @@ class yf_manage_shop {
 	
 	function clear_pattern_run() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
+	
+	function clear_pattern_child_process() {
+		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
+	
+	function clear_pattern_status() {
+		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
+	
+	function _hook_side_column() {
+		$func = __FUNCTION__; return _class('manage_shop_hook_side_column', 'admin_modules/manage_shop/')->$func();
 	}
 }
