@@ -406,6 +406,20 @@ class yf_manage_shop {
 	function import_products() {
 		return $this->import_xls();
 	}
+	
+	function product_search_autocomplete(){
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+	
+	function order_product_add_ajax() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_orders', 'admin_modules/'.$cl.'/')->$func($params);
+	}
+		
+
+	function productparams_container_ajax() {
+		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'__productparams_container', 'admin_modules/'.$cl.'/')->_productparams_container($params,'productparams_container_ajax');
+	}
+	
 	function pics_browser($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_pics_browser', 'admin_modules/'.$cl.'/')->$func($params);
 	}

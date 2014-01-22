@@ -127,19 +127,7 @@ class yf_manage_shop_orders{
 				}
 			}
 			if ($recount_price) {
-				$total_price = 0;
-				$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
-				while ($_info = db()->fetch_assoc($Q)) {
-					$total_price += $_info['quantity']*$_info['price'];
-				}
-
-				$delivery_price = ((intval($total_price) < 200)? $this->delivery_price : 0);
-				$total_price += intval($delivery_price);
-
-				$order_info['total_sum']  = $total_price;
-				$order_info['delivery_price'] = $delivery_price;
-
-				db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($order_info['total_sum'], 2, '.', ''),'delivery_price' => $order_info['delivery_price']),"`id`='".$_GET['id']."'");
+				list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id']);
 			}
 		}
 		if (!empty($_POST['status'])) {
@@ -259,6 +247,7 @@ class yf_manage_shop_orders{
 					})
 				, array('wide' => 1)
 			)
+			->container(tpl()->parse('manage_shop/product_search',array('order_id' => $_GET['id'])),'Add product')
 			->box('status_box', 'Status order', array('selected' => $order_info['status']))
 			->save_and_back()
 		;
@@ -278,7 +267,7 @@ class yf_manage_shop_orders{
 			->btn('Merge', './?object='.main()->_get('object').'&action=merge_order&id='.$order_info['id'].'&merge_id=%d',array('no_ajax' => 1))
 		;									
 
-	//	$out .= tpl()->parse('manage_shop/product_search',array());
+//		$out .= tpl()->parse('manage_shop/product_search',array());
 
 		return $out;
 	}
@@ -357,6 +346,52 @@ class yf_manage_shop_orders{
 		} else {
 			return js_redirect('./?object='.main()->_get('object').'&action=show_orders');
 		}
+	}
+	
+	function order_product_add_ajax() {
+		$A = db()->get("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_POST['order_id']));
+		if (empty($A)) return json_encode('ko');
+		if (intval($_POST['quantity']) == 0) return json_encode('ko');
+		
+		$_product_info = db()->get("SELECT * FROM `".db('shop_products')."` WHERE `id`=".intval($_POST['product_id']));
+		if (empty($_product_info)) return json_encode('ko');
+		
+		$A = db()->get("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($_POST['order_id'])." AND `product_id`=".intval($_POST['product_id']));
+		
+		if (empty($A)) {
+			db()->insert(db('shop_order_items'), array(
+				'order_id' => intval($_POST['order_id']),
+				'product_id' => intval($_POST['product_id']),
+				'param_id' => 0,
+				'quantity' => intval($_POST['quantity']),
+				'price' => number_format(module('shop')->_product_get_price($_product_info), 2, '.', ''),
+			));
+		} else {
+			db()->update(db('shop_order_items'), array(
+				'quantity' => $A['quantity'] + intval($_POST['quantity']),
+			)," `order_id`=".intval($_POST['order_id'])." AND `product_id`=".intval($_POST['product_id']));
+		}
+		$this->_order_recount_price($_POST['order_id']);
+		
+		return json_encode('ok');
+	}
+	
+	function _order_recount_price($order_id) {
+		$total_price = 0;
+		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_id));
+		while ($_info = db()->fetch_assoc($Q)) {
+			$total_price += $_info['quantity']*$_info['price'];
+		}
+
+		$delivery_price = ((intval($total_price) < 200)? $this->delivery_price : 0);
+		$total_price += intval($delivery_price);
+
+		db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($total_price, 2, '.', ''),'delivery_price' => $delivery_price),"`id`='".$order_id."'");		
+		return array(
+			'total_sum' => $total_price,
+			'delivery_price' => $delivery_price,
+		);
+		
 	}
 	
 }

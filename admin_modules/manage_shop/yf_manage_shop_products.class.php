@@ -213,4 +213,27 @@ class yf_manage_shop_products{
 		}
 		echo json_encode($products);
 	}	
+	
+	function product_search_autocomplete () {
+		$_GLOBALS['no_graphics'] = true;
+		if(!$_GET['search_word']) return false;
+		$word = common()->sphinx_escape_string($_GET['search_word']);
+//		$word = str_replace("_", " ", common()->_propose_url_from_name($word));
+		$result = common()->sphinx_query("
+			SELECT product_id,name 
+			FROM products 
+			WHERE MATCH ('@name ".$word."*')
+			LIMIT 20"
+		);
+		if(!$result) return false;
+		foreach((array)$result as $k){
+			$return_array[] = array(
+				'id' => $k['product_id'],
+				'text' => '['.$k['product_id'].'] '.$k['name'],
+			);
+		}
+		return json_encode($return_array);
+
+	}
+
 }
