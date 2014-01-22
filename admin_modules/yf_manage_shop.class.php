@@ -196,6 +196,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_related_products', 'admin_modules/manage_shop/')->$func($id);
 	}
 
+	function product_revisions() {
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+	}
+
 	function orders() {
 		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->orders_manage();
 	}
