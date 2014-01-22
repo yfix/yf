@@ -61,7 +61,10 @@ class yf_manage_shop__product_revisions {
 		return form($a, array(
 				'dd_mode' => 1,
 			))
-			->info('item_id', array('link' => './?object='.$_GET['object'].'&action=product_edit&id='.$product_info['id'], 'desc' => 'Product'/*, 'value' => $product_info['name']*/))
+			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id='.$product_info['id'], array(
+				'desc' => 'Product',
+				'data' => array($a['item_id'] => $product_info['name']. ' [id='. $a['item_id'].']'),
+			))
 			->admin_info('user_id')
 			->info_date('add_date', array('format' => 'full'))
 			->info('action')
