@@ -3,26 +3,11 @@
 class yf_manage_shop_product_images{
 
 	/**
-	*/
-	function _get_product($pid) {
-		if (module('manage_shop')->SUPPLIER_ID) {
-			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE 
-						p.id='.intval($pid).'
-						AND m.admin_id='.intval(main()->ADMIN_ID).'';
-		} else {
-			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.intval($pid);
-		}
-		return db()->get($sql);
-	}
-
-	/**
 	 */
 	function product_image_delete () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$product = $this->_get_product($_GET['id']);
+			$product = module('manage_shop')->_product_get_info($_GET['id']);
 		}
 		if (!$product['id']) {
 			return _e('No such product!');
@@ -47,7 +32,7 @@ class yf_manage_shop_product_images{
 	 */
 	function set_main_image(){
 		if ($_GET['id']) {
-			$product = $this->_get_product($_GET['id']);
+			$product = module('manage_shop')->_product_get_info($_GET['id']);
 		}
 		if (!$product['id']) {
 			return _e('No such product!');
@@ -115,7 +100,7 @@ class yf_manage_shop_product_images{
 	function product_image_upload () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$product = $this->_get_product($_GET['id']);
+			$product = module('manage_shop')->_product_get_info($_GET['id']);
 		}
 		if (!$product['id']) {
 			return _e('No such product!');
@@ -189,7 +174,7 @@ class yf_manage_shop_product_images{
 	function product_image_search () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
-			$product = $this->_get_product($_GET['id']);
+			$product = module('manage_shop')->_product_get_info($_GET['id']);
 		}
 		if (!$product['id']) {
 			return _e('No such product!');
