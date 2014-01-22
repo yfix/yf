@@ -48,4 +48,24 @@ class yf_manage_shop__product_revisions {
 			'data' => json_encode($data),
 		));		
 	}	
+	
+	/**
+	*/
+	function product_revisions() {
+		$sql = 'SELECT * FROM '.db('shop_product_revisions').' WHERE id='.intval($_GET['id']);
+		$a = db()->get($sql);
+		$product_info = module('manage_shop')->_product_get_info($a['item_id']);
+		if (empty($product_info['id'])) {
+			return _e('Product not found');
+		}
+		return form($a, array(
+				'dd_mode' => 1,
+			))
+			->info('item_id', array('link' => './?object='.$_GET['object'].'&action=product_edit&id='.$product_info['id'], 'desc' => 'Product'/*, 'value' => $product_info['name']*/))
+			->admin_info('user_id')
+			->info_date('add_date', array('format' => 'full'))
+			->info('action')
+			->func('data', function($extra, $r, $_this){ return '<pre>'.var_export(_class('utils')->object_to_array(json_decode($r[$extra['name']])), 1).'</pre>'; })
+		;
+	}
 }
