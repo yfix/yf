@@ -14,7 +14,7 @@ class yf_manage_shop_manufacturers{
 			->text('url')
 			->text('meta_keywords')
 			->text('meta_desc')
-			->btn_edit('', './?object='.main()->_get('object').'&action=manufacturer_edit&id=%d')
+			->btn_edit('', './?object='.main()->_get('object').'&action=manufacturer_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object='.main()->_get('object').'&action=manufacturer_delete&id=%d')
 			->footer_add('', './?object='.main()->_get('object').'&action=manufacturer_add')
 		;

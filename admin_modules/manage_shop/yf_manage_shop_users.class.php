@@ -26,7 +26,7 @@ class yf_manage_shop_users{
 			->text('phone')
 			->text('address')
 			->date('add_date', array('format' => 'full','nowrap' => 1))
-			->btn_edit('', './?object='.main()->_get('object').'&action=user_edit&id=%d')
+			->btn_edit('', './?object='.main()->_get('object').'&action=user_edit&id=%d',array('no_ajax' => 1))
 			->btn('Login', './?object=manage_users&action=login_as&id=%d')
 			->btn_delete('', './?object='.main()->_get('object').'&action=user_delete&id=%d')
 			->btn_active('', './?object='.main()->_get('object').'&action=user_activate&id=%d')
