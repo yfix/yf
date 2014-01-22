@@ -750,12 +750,12 @@ class yf_table2 {
 			$extra = array();
 		}
 		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
 		}
 		$this->_fields[] = array(
 			'type'	=> __FUNCTION__,
@@ -830,46 +830,53 @@ class yf_table2 {
 	function link($name, $link = '', $data = '', $extra = array()) {
 		$extra['link'] = $link;
 		$extra['data'] = $data;
-		return $this->text($name, $extra['desc'], $extra);
+		return $this->text($name, '', $extra);
 	}
 
 	/**
 	* Currently designed only for admin usage
 	*/
 	function user($name = '', $link = '', $data = '', $extra = array()) {
+		if (is_array($link)) {
+			$extra += $link;
+			$link = '';
+		}
 		if (!$name) {
 			$name = 'user_id';
 		}
 		$_name = 'user';
-		$extra['link'] = $link ? $link : './?object=members&action=edit&id=%d';
+		$extra['link'] = $link ?: './?object=members&action=edit&id=%d';
 		$extra['link_field_name'] = $name;
 		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array(
 			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name 
 			FROM '.db('user').' WHERE id IN(%ids)'
 		, $name);
-		return $this->text($_name, $extra['desc'], $extra);
+		return $this->text($_name, '', $extra);
 	}
 
 	/**
 	* Currently designed only for admin usage
 	*/
 	function admin($name = '', $link = '', $data = '', $extra = array()) {
+		if (is_array($link)) {
+			$extra += $link;
+			$link = '';
+		}
 		if (!$name) {
 			$name = 'user_id';
 		}
 		$_name = 'user';
-		$extra['link'] = $link ? $link : './?object=admin&action=edit&id=%d';
+		$extra['link'] = $link ?: './?object=admin&action=edit&id=%d';
 		$extra['link_field_name'] = $name;
 		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name);
-		return $this->text($_name, $extra['desc'], $extra);
+		return $this->text($_name, '', $extra);
 	}
 
 	/**
 	*/
 	function date($name, $desc = '', $extra = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
