@@ -13,8 +13,9 @@ class yf_manage_shop_clear_products {
 	/**
 	 */
 	function clear_patterns () {
-		return table('SELECT * FROM '.db('shop_patterns'), array(
-			'filter' => $_SESSION[$_GET['object'].'__patterns'],
+		$html = table('SELECT * FROM '.db('shop_patterns'), array(
+			'table_attr'    => 'id="patterns_list"',
+			'filter'        => $_SESSION[$_GET['object'].'__patterns'],
 			'filter_params' => array(
 				'search'  => 'like',
 				'repalce' => 'like',
@@ -33,13 +34,20 @@ class yf_manage_shop_clear_products {
 			list($count) = db()->query_fetch($sql);
 			return '<span class="badge badge-info">'.$count.'</span>';
 		}, array('desc' => 'Products'))
-			->btn('Run', './?object=manage_shop&action=clear_pattern_run&id=%d', array('icon' => 'icon-play', 'class' => 'btn-info'))
-			->btn('View list of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list'))
-			->btn_edit('', './?object=manage_shop&action=clear_pattern_edit&id=%d',array('no_ajax' => 1))
-			->btn_delete('', './?object=manage_shop&action=clear_pattern_delete&id=%d')
-			->btn_active('', './?object=manage_shop&action=clear_pattern_activate&id=%d')
-			->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',array('no_ajax' => 1))
-			;
+		->btn_func('Run', function($row_info, $params, $instance_params, $_this) {
+			return '<button class="btn btn-mini btn-xs btn-info pattern_item" data-id="'.$row_info['id'].'"><i class="icon-play"></i> <span>'.t('Run').'</span></button>';
+		})
+		->btn('View list of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list'))
+		->btn_edit('', './?object=manage_shop&action=clear_pattern_edit&id=%d',array('no_ajax' => 1))
+		->btn_delete('', './?object=manage_shop&action=clear_pattern_delete&id=%d')
+		->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',array('no_ajax' => 1));
+
+		$replace = array(
+			'pattern_run_url'    => './?object=manage_shop&action=clear_pattern_run',
+			'pattern_status_url' => './?object=manage_shop&action=clear_pattern_status',
+		);
+		$html .= tpl()->parse('manage_shop/product_clear_patterns', $replace);
+		return $html;
 	}
 
 	function clear_pattern_list () {
@@ -191,9 +199,9 @@ class yf_manage_shop_clear_products {
 		if (empty($_POST['ids'])) {
 			exit;
 		}
-
-		$patterns = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id IN ('.implode(',', $_POST['ids']).')');
-		json_encode($patterns);
+		$sql = 'SELECT id, process FROM '.db('shop_patterns').' WHERE id IN ('.implode(',', $_POST['ids']).')';
+		$patterns = db()->get_2d($sql);
+		echo json_encode($patterns);
 		exit;
 	}
 
@@ -211,11 +219,15 @@ class yf_manage_shop_clear_products {
 
 		db()->query('UPDATE '.db('shop_patterns').' SET process = '.$process_id.' WHERE process = 0 AND id = '.$_GET['id'].';');
 
-		$pattern_info = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id = '.$_GET['id'].' AND process = '.$product_id);
+		$pattern_info = db()->query_fetch('SELECT * FROM '.db('shop_patterns').' WHERE id = '.$_GET['id'].' AND process = '.$process_id);
 		if (empty($pattern_info)) {
 			return t('Wrong clean pattern');
 		}
 
+		sleep(20);
+		db()->query('UPDATE '.db('shop_patterns').' SET process = 0 WHERE process = '.$process_id.' AND id = '.$_GET['id'].';');
+
+		exit;
 		db()->begin();
 
 		$where = '';	

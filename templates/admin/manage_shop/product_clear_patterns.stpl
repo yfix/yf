@@ -1,0 +1,38 @@
+<script>
+	var ids = [1,2];
+	var pattern_run_url    = '{pattern_run_url}';
+	var pattern_status_url = '{pattern_status_url}';
+	var ajax_request = function(url, data, callback, type){
+		type = (typeof type !== 'undefined') ? type : 'GET';
+		$.ajax({
+			'type'     : type,
+			'dataType' : 'json',
+			'url'      : url,
+			'data'     : data,
+			success    : function( data, status, xhr ) {
+				callback(data);
+			},
+			error      : function( xhr, status, error ) {
+				console.log(url + '::' + error);
+			}
+		});
+	};
+
+	var checking_patterns = function() {
+		if (ids.length <= 0) {
+			
+		}
+
+		ajax_request(pattern_status_url, {ids : ids}, function(data) {
+			console.log(data);
+			$
+		}, 'POST');
+	};
+
+
+	$(function() {
+		var interval = setInterval(function() {
+			checking_patterns();
+		}, 3000);
+	});
+</script>
