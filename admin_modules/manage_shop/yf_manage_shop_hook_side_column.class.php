@@ -20,7 +20,7 @@ class yf_manage_shop_hook_side_column {
 			return false;
 		}
 		$sql = 'SELECT * FROM '.db('shop_product_revisions').' WHERE item_id='.intval($product_id).' ORDER BY add_date DESC';
-		return table($sql, array('caption' => 'Product revisions'))
+		return table($sql, array('caption' => 'Product revisions', 'no_records_html' => ''))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
