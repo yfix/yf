@@ -878,8 +878,8 @@ class yf_table2 {
 					}
 					$body = $text;
 				}
-				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
-				return _class('table2')->_apply_badges($body, $extra, $field);
+				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
+				return $_this->_apply_badges($body, $extra, $field);
 			}
 		);
 		return $this;
@@ -949,10 +949,10 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
-			'func'	=> function($field, $params, $row, $instance_params) {
+			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $extra['format']));
-				return _class('table2')->_apply_badges($text, $extra, $field);
+				return $_this->_apply_badges($text, $extra, $field);
 			}
 		);
 		return $this;
@@ -974,7 +974,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
-			'func'	=> function($field, $params, $row, $instance_params) {
+			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$extra['id'] = $extra['name'];
 				$color_ok = $extra['color_ok'] ?: 'yellow';
@@ -1184,7 +1184,7 @@ class yf_table2 {
 				}
 				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
-				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
+				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
 			},
 		);
@@ -1452,7 +1452,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($params, $instance_params) {
+			'func'	=> function($params, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$value = $params['name'] ? $params['name'] : 'Submit';
 				if (is_array($value) && empty($extra)) {
