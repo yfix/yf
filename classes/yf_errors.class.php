@@ -71,6 +71,8 @@ class yf_errors {
 		16384	=> 'E_USER_DEPRECATED',
 	);
 
+// TODO: use _class('logs')
+
 	/**
 	* Constructor
 	*/
