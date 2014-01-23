@@ -10,7 +10,7 @@ class yf_log_admin_redirects {
 			'order_by' => 'date',
 			'order_direction' => 'desc',
 		);
-		$sql = 'SELECT * FROM '.db('log_redirects').' WHERE is_admin='.strval(!$this->FOR_USER ? 1 : 0);
+		$sql = 'SELECT * FROM '.db('log_redirects').' WHERE is_admin="'.strval(!$this->FOR_USER ? 1 : 0).'"';
 		return table($sql, array(
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
 				'filter_params' => array(
