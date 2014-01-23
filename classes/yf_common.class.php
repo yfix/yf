@@ -399,8 +399,8 @@ class yf_common {
 	/**
 	* Get user IP address
 	*/
-	function get_ip () {
-		return _class('client_utils', 'classes/common/')->_get_ip();
+	function get_ip ($check_type = 'force') {
+		return _class('client_utils', 'classes/common/')->_get_ip($check_type);
 	}
 
 	/**
