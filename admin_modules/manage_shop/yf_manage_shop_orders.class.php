@@ -92,7 +92,7 @@ class yf_manage_shop_orders{
 			return _e('No such order');
 		}
 		$recount_price = false;
-		if(!empty($_POST)){
+		if(main()->is_post()) {
 			foreach($_POST as $k => $v) {
 				if($k == 'status_item') {
 					foreach ($v as $k1 => $status) {
@@ -126,12 +126,9 @@ class yf_manage_shop_orders{
 					}
 				}
 			}
-		}
-		if (!empty($_POST['status'])) {
-			$sql = array(
-				'status'	=> $_POST['status'],
-			);
-			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price') as $f) {
+
+			$sql = array();
+			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status') as $f) {
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
 					if (($f == 'delivery_price') && ($_POST['delivery_price'] != $order_info['delivery_price'])) {
@@ -142,16 +139,13 @@ class yf_manage_shop_orders{
 					}
 				}
 			}
-			if ($sql) {
+			if (count($sql)>0) {
 				db()->update_safe(db('shop_orders'), $sql, 'id='.intval($_GET['id']));
 			}
 			if ($recount_price) {
 				list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id'],$order_info);
 			}			
 			return js_redirect('./?object='.main()->_get('object').'&action=show_orders&action=view_order&id='.$order_info['id']);
-		}
-		if ($recount_price) {
-			list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id'],$order_info);
 		}
 		
 		$products_ids = array();
