@@ -62,7 +62,7 @@ class yf_manage_shop__product_revisions {
 
 			$insert_array[] = array(
 				'user_id'  => intval(main()->ADMIN_ID),
-				'add_date' => $_SERVER['REQUEST_TIME'],
+				'add_date' => time(),
 				'action'   => $action,
 				'item_id'  => $id,
 				'data'     => isset($all_data[$id]) ? json_encode($all_data[$id]) : '',
