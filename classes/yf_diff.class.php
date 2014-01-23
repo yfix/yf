@@ -1,8 +1,6 @@
 <?php
 
 /**
-* Differences class
-*
 * Get file differences
 *
 * @example
@@ -13,28 +11,13 @@
 */
 class yf_diff {
 	
-	/**
-	* Shell command
-	* @var string
-	*/
+	/** Shell command */
 	public $diff_command = 'diff';
-	
-	/**
-	* Type of diff to use
-	* @var int
-	*/
-	public $method	   = 'exec';
-	
-	/**
-	* Differences found?
-	* @var int
-	*/
+	/** @var int Type of diff to use */
+	public $method		= 'exec';
+	/** @var int Differences found? */
 	public $diff_found   = 0;
-	
-	/**
-	* Post process DIFF result?
-	* @var int
-	*/
+	/** @var int Post process DIFF result? */
 	public $post_process = 1;
 
 	/**
@@ -42,7 +25,6 @@ class yf_diff {
 	function __construct () {
 		// Server?
 		if ((substr(PHP_OS, 0, 3) == 'WIN') || (!function_exists('exec'))) {
-//			$this->method = 'CGI';
 			$this->method = 'PHP';
 		}
 	}
