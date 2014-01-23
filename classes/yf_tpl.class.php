@@ -315,7 +315,8 @@ class yf_tpl {
 				}
 			}
 			$output = implode('', $body);
-			main()->_send_main_headers(strlen($output));
+			$this->_output_body_length = strlen($output);
+			main()->_send_main_headers($this->_output_body_length);
 			// Throw generated output to user
 			echo $output;
 		}
