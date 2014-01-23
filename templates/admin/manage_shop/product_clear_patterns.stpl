@@ -1,7 +1,10 @@
 <script>
-	var ids = [1,2];
+	var ids = [];
+	var patterns_dom = '#patterns_list';
 	var pattern_run_url    = '{pattern_run_url}';
 	var pattern_status_url = '{pattern_status_url}';
+	var pattern_stop_url = '{pattern_stop_url}';
+
 	var ajax_request = function(url, data, callback, type){
 		type = (typeof type !== 'undefined') ? type : 'GET';
 		$.ajax({
@@ -18,19 +21,57 @@
 		});
 	};
 
+	var change_btn_status = function(btn_dom, type) {
+		if (type == 'run') {
+			btn_dom.removeClass('btn-warning').addClass('btn-info')
+			btn_dom.find('i').removeClass('icon-refresh icon-spin').addClass('icon-play');
+			btn_dom.find('span').text('{t('Run')}');
+		} else if(type == 'process') {
+			btn_dom.removeClass('btn-info').addClass('btn-warning');
+			btn_dom.find('i').removeClass('icon-play').addClass('icon-refresh icon-spin');
+			btn_dom.find('span').text('{t('Process...')}');
+		}
+	}
+
 	var checking_patterns = function() {
 		if (ids.length <= 0) {
-			
+			$(patterns_dom +' .pattern_item').each(function() {
+				ids.push($(this).data('id'));
+			});
 		}
 
 		ajax_request(pattern_status_url, {ids : ids}, function(data) {
-			console.log(data);
-			$
+			$(patterns_dom +' .pattern_item').each(function() {
+				var btn_dom = $(this);
+				var pattern_id = btn_dom.data('id');
+				if (typeof data[pattern_id] !== 'undefined') {
+					if (data[pattern_id]['process'] == 0) {
+						change_btn_status(btn_dom, 'run');
+					} else {
+						change_btn_status(btn_dom, 'process');
+					}
+					btn_dom.parent().parent().find('.pattern_count').text(data[pattern_id]['count']);
+				}
+			});
 		}, 'POST');
 	};
 
 
 	$(function() {
+		$('.pattern_item').on('click', function() {
+			var btn_dom = $(this);
+			var pattern_id = btn_dom.data('id');
+			if ($(this).hasClass('btn-warning')) {
+				ajax_request(pattern_stop_url, {id : pattern_id}, function(data) {
+					change_btn_status(btn_dom, 'run');
+				});
+			} else {
+				ajax_request(pattern_run_url, {id : pattern_id}, function(data) {
+					change_btn_status(btn_dom, 'process');
+				});
+			}
+		});
+
 		var interval = setInterval(function() {
 			checking_patterns();
 		}, 3000);
