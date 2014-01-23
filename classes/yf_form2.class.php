@@ -1488,7 +1488,7 @@ class yf_form2 {
 	/**
 	*/
 	function admin_info($name = '', $desc = '', $extra = array(), $replace = array()) {
-		$name = 'user_name';
+		$name = 'admin_name';
 		$user_id = $this->_replace['user_id'];
 
 		$user_info = db()->get('SELECT login,id AS user_name FROM '.db('admin').' WHERE id='.intval($user_id));
@@ -1540,8 +1540,8 @@ class yf_form2 {
 			$extra += $link;
 			$link = '';
 		}
-		$extra['link'] = $link ?: $extra['link'];
-		$extra['value'] = $name;
+		$extra['link'] = isset($extra['link']) ? $extra['link'] : $link;
+		$extra['value'] = isset($extra['value']) ? $extra['value'] : $name;
 		if (!$extra['desc']) {
 			$extra['no_label'] = 1;
 		}

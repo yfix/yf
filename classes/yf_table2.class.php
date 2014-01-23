@@ -375,7 +375,7 @@ class yf_table2 {
 				if (is_callable($params['tr'])) {
 					$tr_attrs = $params['tr']($row, $_id);
 				} elseif (is_array($params['tr'])) {
-					$tr_attrs = (isset($params['tr'][$_id]) ? ' '.$params['tr'][$_id] : '');
+					$tr_attrs = isset($params['tr'][$_id]) ? $this->_attrs($params['tr'][$_id], array('class', 'style')) : '';
 				} else {
 					$tr_attrs = $params['tr'];
 				}
@@ -713,6 +713,66 @@ class yf_table2 {
 	}
 
 	/**
+	* We need this to avoid encoding & => &amp; by standard htmlspecialchars()
+	*/
+	function _htmlchars($str = '') {
+		if (is_array($str)) {
+			foreach ((array)$str as $k => $v) {
+				$str[$k] = $this->_htmlchars($v);
+			}
+			return $str;
+		}
+		$replace = array(
+			'"' => '&quot;',
+			"'" => '&apos;',
+			'<'	=> '&lt;',
+			'>'	=> '&gt;',
+		);
+		return str_replace(array_keys($replace), array_values($replace), $str);
+	}
+
+	/**
+	*/
+	function _attrs($extra = array(), $names = array()) {
+		$body = array();
+		// Try to find and allow all data-* attributes automatically
+		foreach ((array)$extra as $k => $v) {
+			if (strpos($k, 'data-') === 0) {
+				$names[] = $k;
+			}
+		}
+		foreach ((array)$names as $name) {
+			if (!$name || !isset($extra[$name])) {
+				continue;
+			}
+			$val = $extra[$name];
+			if (is_array($val)) {
+				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+			} else {
+				if (!strlen($val)) {
+					continue;
+				}
+				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+			}
+		}
+		// Custom html attributes forced with sub-array "attr"
+		foreach ((array)$extra['attr'] as $name => $val) {
+			if (!$name || !isset($val)) {
+				continue;
+			}
+			if (is_array($val)) {
+				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+			} else {
+				if (!strlen($val)) {
+					continue;
+				}
+				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+			}
+		}
+		return ' '.implode(' ', $body);
+	}
+
+	/**
 	* Used to embed hidden data blocks, that can be later displayed.
 	*/
 	function _hidden_data_container($row, $params, $instance_params) {
@@ -750,12 +810,12 @@ class yf_table2 {
 			$extra = array();
 		}
 		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra += $desc;
 			$desc = '';
 		}
 		if (!$desc) {
-			$desc = ucfirst(str_replace('_', ' ', $name));
+			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
 		}
 		$this->_fields[] = array(
 			'type'	=> __FUNCTION__,
@@ -818,8 +878,8 @@ class yf_table2 {
 					}
 					$body = $text;
 				}
-				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
-				return _class('table2')->_apply_badges($body, $extra, $field);
+				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
+				return $_this->_apply_badges($body, $extra, $field);
 			}
 		);
 		return $this;
@@ -830,46 +890,53 @@ class yf_table2 {
 	function link($name, $link = '', $data = '', $extra = array()) {
 		$extra['link'] = $link;
 		$extra['data'] = $data;
-		return $this->text($name, $extra['desc'], $extra);
+		return $this->text($name, '', $extra);
 	}
 
 	/**
 	* Currently designed only for admin usage
 	*/
 	function user($name = '', $link = '', $data = '', $extra = array()) {
+		if (is_array($link)) {
+			$extra += $link;
+			$link = '';
+		}
 		if (!$name) {
 			$name = 'user_id';
 		}
 		$_name = 'user';
-		$extra['link'] = $link ? $link : './?object=members&action=edit&id=%d';
+		$extra['link'] = $link ?: './?object=members&action=edit&id=%d';
 		$extra['link_field_name'] = $name;
 		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array(
 			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name 
 			FROM '.db('user').' WHERE id IN(%ids)'
 		, $name);
-		return $this->text($_name, $extra['desc'], $extra);
+		return $this->text($_name, '', $extra);
 	}
 
 	/**
 	* Currently designed only for admin usage
 	*/
 	function admin($name = '', $link = '', $data = '', $extra = array()) {
+		if (is_array($link)) {
+			$extra += $link;
+			$link = '';
+		}
 		if (!$name) {
 			$name = 'user_id';
 		}
 		$_name = 'user';
-		$extra['link'] = $link ? $link : './?object=admin&action=edit&id=%d';
+		$extra['link'] = $link ?: './?object=admin&action=edit&id=%d';
 		$extra['link_field_name'] = $name;
 		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name);
-		return $this->text($_name, $extra['desc'], $extra);
+		return $this->text($_name, '', $extra);
 	}
 
 	/**
 	*/
 	function date($name, $desc = '', $extra = array()) {
-		// Shortcut: use second param as $extra
 		if (is_array($desc) && empty($extra)) {
 			$extra = $desc;
 			$desc = '';
@@ -882,10 +949,10 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
-			'func'	=> function($field, $params, $row, $instance_params) {
+			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $extra['format']));
-				return _class('table2')->_apply_badges($text, $extra, $field);
+				return $_this->_apply_badges($text, $extra, $field);
 			}
 		);
 		return $this;
@@ -907,7 +974,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
-			'func'	=> function($field, $params, $row, $instance_params) {
+			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$extra['id'] = $extra['name'];
 				$color_ok = $extra['color_ok'] ?: 'yellow';
@@ -1117,7 +1184,7 @@ class yf_table2 {
 				}
 				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
-				$body .= $extra['hidden_data'] ? _class('table2')->_hidden_data_container($row, $params, $instance_params) : '';
+				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
 			},
 		);
@@ -1385,7 +1452,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($params, $instance_params) {
+			'func'	=> function($params, $instance_params, $_this) {
 				$extra = $params['extra'];
 				$value = $params['name'] ? $params['name'] : 'Submit';
 				if (is_array($value) && empty($extra)) {

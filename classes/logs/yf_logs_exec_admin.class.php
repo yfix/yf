@@ -1,33 +1,32 @@
 <?php
 
 /**
-* Save execution info log
+* Save execution info log for admin section
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_log_exec {
+class yf_logs_exec_admin {
 
 	/** @var array Stop-list for logging (REGEXPs allowed here) */
 	public $STOP_LIST				= array(
-		'object=(task_loader|aff).*',
-		'task=(login|logout)',
+#		'task=(login|logout)',
 	);
 	/** @var bool */
 	public $USE_STOP_LIST			= true;
 	/** @var bool */
-	public $LOG_NO_GRAPHICS_PAGES	= false;
+	public $LOG_NO_GRAPHICS_PAGES	= true;
 	/** @var bool */
-	public $FILTER_BOTS			= false;
+	public $FILTER_BOTS				= false;
 	/** @var bool */
-	public $LOG_NOT_FOUND_PAGES	= false;
+	public $LOG_NOT_FOUND_PAGES		= true;
 	/** @var enum('db','file') */
-	public $LOG_DRIVER				= 'file';
+	public $LOG_DRIVER				= 'db';
 	/** @var  */
-	public $LOG_DIR_NAME			= 'logs/log_exec/';
+	public $LOG_DIR_NAME			= 'logs/log_admin_exec/';
 	/** @var bool */
-	public $LOGGING				= true;
+	public $LOGGING					= true;
 
 	/**
 	* 
@@ -45,8 +44,8 @@ class yf_log_exec {
 		if (!$this->LOGGING) {
 			return false;
 		}
-		// Stop for now for the admin section
-		if (MAIN_TYPE_ADMIN) {
+		// Only admin section allowed
+		if (MAIN_TYPE_USER) {
 			return false;
 		}
 		// Stop on page that set main()->NO_GRAPHICS flag
@@ -72,24 +71,35 @@ class yf_log_exec {
 				return false;
 			}
 		}
-		$exec_time = $GLOBALS['time_end'] ? $GLOBALS['time_end'] : common()->_format_time_value(microtime(true) - main()->_time_start);
-		// Avoid wrong insering of floats with comma into database, also validate float
-		$exec_time = str_replace(',','.', floatval(str_replace(',','.', $exec_time)));
+		$exec_time = floatval($GLOBALS['time_end'] ? $GLOBALS['time_end'] : common()->_format_time_value(microtime(true) - main()->_time_start));
+
+		$query_string = $_SERVER['QUERY_STRING'];
+
+		// check if action realtime and skip logging here
+		list($object, $action) = explode('&action=',$query_string);
+		if($action == 'realtime'){
+			return false;
+		}
+		// Console mode tweaks
+		if (main()->CONSOLE_MODE) {
+			$query_string = http_build_query($_GET);
+		}
 		// Create and execute db query
 		if ($this->LOG_DRIVER == 'db') {
-			$sql = db()->INSERT('log_exec', array(
-				'user_id'		=> intval($_SESSION['user_id']),
-				'user_group'	=> intval($_SESSION['user_group']),
+			$sql = db()->INSERT('log_admin_exec', array(
+				'admin_id'		=> intval($_SESSION['admin_id']),
+				'admin_group'	=> intval($_SESSION['admin_group']),
 				'date'			=> time(),
 				'ip'			=> _es(common()->get_ip()),
 				'user_agent'	=> _es($_SERVER['HTTP_USER_AGENT']),
 				'referer'		=> _es($_SERVER['HTTP_REFERER']),
-				'query_string'	=> _es($_SERVER['QUERY_STRING']),
+				'query_string'	=> _es($query_string),
 				'request_uri'	=> _es($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']),
 				'exec_time'		=> $exec_time,
 				'num_dbq'		=> intval(db()->NUM_QUERIES),
 				'page_size'		=> intval(strlen(tpl()->CACHE['main']['string'])),
 				'site_id'		=> (int)conf('SITE_ID'),
+				'server_id'		=> (int)conf('SERVER_ID'),
 			), 1);
 			db()->_add_shutdown_query($sql);
 		// Log into file
@@ -100,18 +110,19 @@ class yf_log_exec {
 				_mkdir_m($log_dir_path);
 			}
 			$t = '';
-			$t .= '#@#'.intval($_SESSION['user_id']);
-			$t .= '#@#'.intval($_SESSION['user_group']);
+			$t .= '#@#'.intval($_SESSION['admin_id']);
+			$t .= '#@#'.intval($_SESSION['admin_group']);
 			$t .= '#@#'.time();
 			$t .= '#@#'.common()->get_ip();
 			$t .= '#@#'.$_SERVER['HTTP_USER_AGENT'];
 			$t .= '#@#'.$_SERVER['HTTP_REFERER'];
-			$t .= '#@#'.$_SERVER['QUERY_STRING'];
+			$t .= '#@#'.$query_string;
 			$t .= '#@#'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 			$t .= '#@#'.$exec_time;
 			$t .= '#@#'.intval(db()->NUM_QUERIES);
 			$t .= '#@#'.intval(strlen(tpl()->CACHE['main']['string']));
 			$t .= '#@#'.(int)conf('SITE_ID');
+			$t .= '#@#'.(int)conf('SERVER_ID');
 			$t .= '#@#0'; // mean: exec full mode (not from output cache)
 			$t .= PHP_EOL;
 			file_put_contents($log_file_path, $t, FILE_APPEND);

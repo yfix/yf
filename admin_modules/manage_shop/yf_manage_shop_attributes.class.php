@@ -18,7 +18,7 @@ class yf_manage_shop_attributes{
 			))
 			->text('title')
 			->text('options')				
-			->btn_edit('', './?object='.main()->_get('object').'&action=attribute_edit&id=%d')
+			->btn_edit('', './?object='.main()->_get('object').'&action=attribute_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object='.main()->_get('object').'&action=attribute_delete&id=%d')
 			->footer_add('','./?object='.main()->_get('object').'&action=attribute_add')
 		;

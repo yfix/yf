@@ -14,7 +14,7 @@ class yf_manage_shop_suppliers{
 			->text('url')
 			->text('meta_keywords')
 			->text('meta_desc')
-			->btn_edit('', './?object='.main()->_get('object').'&action=supplier_edit&id=%d')
+			->btn_edit('', './?object='.main()->_get('object').'&action=supplier_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object='.main()->_get('object').'&action=supplier_delete&id=%d')
 			->footer_add('', './?object='.main()->_get('object').'&action=supplier_add')
 		;

@@ -7,15 +7,7 @@ class yf_manage_shop_product_edit {
 		if (empty($_GET['id'])) {
 			return _e('Empty id');
 		}
-		if (module('manage_shop')->SUPPLIER_ID) {
-			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE p.id='.intval($_GET['id']).'
-						AND m.admin_id='.intval(main()->ADMIN_ID).'';
-		} else {
-			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.$_GET['id'];
-		}
-		$product_info = db()->get($sql);
+		$product_info = module('manage_shop')->_product_get_info($_GET['id']);
 		if (empty($product_info['id'])) {
 			return _e('Product not found');
 		}
