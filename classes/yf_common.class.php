@@ -544,10 +544,10 @@ class yf_common {
 	}
 
 	/**
-	* Log script execution params
+	* Alias
 	*/
 	function log_exec () {
-		return _class(MAIN_TYPE_ADMIN ? 'log_admin_exec' : 'log_exec', 'classes/common/')->go();
+		return _class('logs')->log_exec();
 	}
 
 	/**
