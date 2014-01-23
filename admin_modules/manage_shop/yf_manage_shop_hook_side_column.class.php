@@ -46,7 +46,7 @@ class yf_manage_shop_hook_side_column {
 				'caption' => t('Product revisions'),
 				'no_records_html' => '',
 				'tr' => array(
-					$rev['id'] => array('class' => 'success'),	
+					$rev['id'] => array('class' => 'success'),
 				),
 			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))

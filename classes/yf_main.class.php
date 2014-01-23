@@ -99,6 +99,9 @@ class yf_main {
 	public $SERVER_HEALTH_CHECK		= false;
 	/** @var bool Definies if we should connect firephp library */
 	public $FIREPHP_ENABLE			= false;
+	/** @var bool Logging of every engine call */
+// TODO: move all logs into _class('logs') and control all of them in one place
+	public $LOG_EXEC				= false;
 	/** @var int Execute method cache lifetime (in seconds), set to 0 to use cache module default value */
 	public $EXEC_CACHE_TTL			= 600;
 	/** @var string Template for exec cache name */

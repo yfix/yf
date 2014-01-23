@@ -315,7 +315,8 @@ class yf_tpl {
 				}
 			}
 			$output = implode('', $body);
-			main()->_send_main_headers(strlen($output));
+			$this->_output_body_length = strlen($output);
+			main()->_send_main_headers($this->_output_body_length);
 			// Throw generated output to user
 			echo $output;
 		}
@@ -327,8 +328,8 @@ class yf_tpl {
 		if (main()->NO_GRAPHICS && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 			_class('output_cache')->_put_page_to_output_cache(ob_get_contents());
 		}
-		if ($this->LOG_EXEC_INFO) {
-			common()->log_exec();
+		if (main()->LOG_EXEC || $this->LOG_EXEC_INFO) {
+			_class('logs')->log_exec();
 		}
 		// End sending main output
 		ob_end_flush();
