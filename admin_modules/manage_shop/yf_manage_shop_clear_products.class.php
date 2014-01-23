@@ -249,7 +249,8 @@ class yf_manage_shop_clear_products {
 			return t('Wrong clean pattern');
 		}
 
-
+		//give a chance to stop processing if it needs;
+		sleep(5);
 		db()->begin();
 
 		$where = '';	
@@ -277,7 +278,6 @@ class yf_manage_shop_clear_products {
 			
 			module('manage_shop')->_product_add_revision('correct_name', $update_ids);
 		}
-
 
 		db()->commit();
 		
