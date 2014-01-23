@@ -9,6 +9,8 @@
 */
 class yf_logs {
 
+// TODO: connect all logs drivers from classes/logs/
+
 	/** @var bool Turn logging on/off */
 	public $_LOGGING					= false;
 	/** @var bool Store user auth into log table */
@@ -38,6 +40,10 @@ class yf_logs {
 		'add_friend',
 		'del_friend',
 	);
+	/** @var bool Only if main()->LOG_EXEC enabled */
+	public $LOG_EXEC_USER	= false;
+	/** @var bool Only if main()->LOG_EXEC enabled */
+	public $LOG_EXEC_ADMIN	= true;
 
 	/**
 	* Catch missing method call
@@ -328,5 +334,16 @@ class yf_logs {
 		);
 		db()->INSERT('log_user_action', $sql_array);
 		return true;			
+	}
+
+	/**
+	* Log script execution params
+	*/
+	function log_exec () {
+		if (MAIN_TYPE_ADMIN && $this->LOG_EXEC_ADMIN) {
+			return _class('logs_exec_admin', 'classes/logs/')->go();
+		} elseif (MAIN_TYPE_USER && $this->LOG_EXEC_USER) {
+			return _class('logs_exec_user', 'classes/logs/')->go();
+		}
 	}
 }
