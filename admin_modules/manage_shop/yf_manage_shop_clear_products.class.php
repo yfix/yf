@@ -83,14 +83,16 @@ class yf_manage_shop_clear_products {
 		$sql = db()->query($sql);
 		while($row = db()->fetch_assoc($sql)) {
 			$pattern_list[] = array(
-				'now'     => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>$1</b>', $row['name']),
-				'will_be' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>'.$pattern_info['replace'].'</b>', $row['name']),
+  				'id'      => $row['id'],
+  				'now'     => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>$1</b>', $row['name']),
+  				'will_be' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>'.$pattern_info['replace'].'</b>', $row['name']),
 			);
 		}
 
 		return table($pattern_list)
 			->text('now')
 			->text('will_be')
+			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d', array('no_ajax' => 1))
 			->footer_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply'))
 			;
 	}
