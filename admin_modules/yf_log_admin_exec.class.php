@@ -14,7 +14,10 @@ class yf_log_admin_exec{
 		return table($sql, array(
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
 				'filter_params' => array(
-					'name'	=> 'like',
+					'ip'			=> 'like',
+					'user_agent'	=> 'like',
+					'referer'		=> 'like',
+					'request_uri'	=> 'like',
 				),
 			))
 			->admin('admin_id')
@@ -24,6 +27,8 @@ class yf_log_admin_exec{
 			->text('referer')
 			->text('request_uri')
 			->text('exec_time')
+			->text('num_dbq')
+			->text('page_size')
 		;
 	}
 
@@ -69,6 +74,9 @@ class yf_log_admin_exec{
 			))
 			->number('admin_id')
 			->text('ip')
+			->text('user_agent')
+			->text('referer')
+			->text('request_uri')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
 			->save_and_clear();
