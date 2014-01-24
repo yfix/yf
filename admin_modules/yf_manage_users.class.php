@@ -23,7 +23,7 @@ class yf_manage_users {
 			->btn_edit()
 			->btn_delete()
 			->btn_active()
-			->btn('log_auth', './?object=log_гыук_auth&action=show_for_user&id=%d')
+			->btn('log_auth', './?object=log_user_auth&action=show_for_user&id=%d')
 			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d')
 			->footer_add()
 			->footer_link('Failed auth log', './?object=log_user_auth_fails')
@@ -59,6 +59,7 @@ class yf_manage_users {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
+		$a['back_link'] = './?object='.$_GET['object'];
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
@@ -72,7 +73,12 @@ class yf_manage_users {
 			->email()
 			->text('name')
 			->active_box()
-			->save_and_back();
+			->row_start()
+				->save_and_back()
+				->link('log auth', './?object=log_user_auth&action=show_for_admin&id='.$a['id'])
+				->link('login as', './?object='.$_GET['object'].'&action=login_as&id='.$a['id'], array('display_func' => $func))
+			->row_end()
+		;
 	}
 
 	/**

@@ -46,6 +46,7 @@ $GLOBALS['PROJECT_CONF'] = my_array_merge((array)$GLOBALS['PROJECT_CONF'], array
 //		'USE_GEO_IP'			=> 1,
 //		'OUTPUT_CACHING'		=> 1,
 //		'OUTPUT_GZIP_COMPRESS'	=> 1,
+//		'LOG_EXEC'				=> 1,
 		'STATIC_PAGES_ROUTE_TOP'=> 1,
 	),
 	'auth_user' => array(

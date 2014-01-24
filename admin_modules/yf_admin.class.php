@@ -47,7 +47,12 @@ class yf_admin {
 		if (!$id) {
 			return _e('Wrong id');
 		}
+		$admin_id = main()->ADMIN_ID;
+		$func = function($row) use ($admin_id) {
+			return !($row['id'] == $admin_id);
+		};
 		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
+		$a['back_link'] = './?object='.$_GET['object'];
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
@@ -73,7 +78,12 @@ class yf_admin {
 			->select_box('group', main()->get_data('admin_groups'), array('selected' => $a['group']))
 			->active_box()
 			->info_date('add_date','Added')
-			->save_and_back();
+			->row_start()
+				->save_and_back()
+				->link('log auth', './?object=log_admin_auth&action=show_for_admin&id='.$a['id'])
+				->link('login as', './?object='.$_GET['object'].'&action=login_as&id='.$a['id'], array('display_func' => $func))
+			->row_end()
+		;
 	}
 
 	/**
@@ -104,7 +114,8 @@ class yf_admin {
 			->text('go_after_login', 'Url after login')
 			->select_box('group', main()->get_data('admin_groups'), array('selected' => $a['group']))
 			->active_box()
-			->save_and_back();
+			->save_and_back()
+		;
 	}
 
 	/**

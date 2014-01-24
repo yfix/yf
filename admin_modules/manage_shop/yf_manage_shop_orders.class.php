@@ -92,7 +92,7 @@ class yf_manage_shop_orders{
 			return _e('No such order');
 		}
 		$recount_price = false;
-		if(!empty($_POST)){
+		if(main()->is_post()) {
 			foreach($_POST as $k => $v) {
 				if($k == 'status_item') {
 					foreach ($v as $k1 => $status) {
@@ -126,24 +126,28 @@ class yf_manage_shop_orders{
 					}
 				}
 			}
-			if ($recount_price) {
-				list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id']);
-			}
-		}
-		if (!empty($_POST['status'])) {
-			$sql = array(
-				'status'	=> $_POST['status'],
-			);
-			foreach (array('address','phone','address','house','apartment','floor','porch','intercom') as $f) {
+
+			$sql = array();
+			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status') as $f) {
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
+					if (($f == 'delivery_price') && ($_POST['delivery_price'] != $order_info['delivery_price'])) {
+						 $sql['is_manual_delivery_price'] = 1;
+						 $order_info['is_manual_delivery_price'] = 1;
+						 $order_info['delivery_price'] = $sql['delivery_price'];
+						 $recount_price = true;
+					}
 				}
 			}
-			if ($sql) {
+			if (count($sql)>0) {
 				db()->update_safe(db('shop_orders'), $sql, 'id='.intval($_GET['id']));
 			}
-			return js_redirect('./?object='.main()->_get('object').'&action=show_orders');
+			if ($recount_price) {
+				list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id'],$order_info);
+			}			
+			return js_redirect('./?object='.main()->_get('object').'&action=show_orders&action=view_order&id='.$order_info['id']);
 		}
+		
 		$products_ids = array();
 		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
 		while ($_info = db()->fetch_assoc($Q)) {
@@ -218,7 +222,7 @@ class yf_manage_shop_orders{
 			->text('intercom')
 			->info('comment')
 			->info('delivery_time')			
-			->info('delivery_price')
+			->text('delivery_price')
 			->user_info('user_id')
 			->info('payment', 'Payment method')
 			->container(
@@ -349,8 +353,8 @@ class yf_manage_shop_orders{
 	}
 	
 	function order_product_add_ajax() {
-		$A = db()->get("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_POST['order_id']));
-		if (empty($A)) return json_encode('ko');
+		$order_info = db()->get("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_POST['order_id']));
+		if (empty($order_info)) return json_encode('ko');
 		if (intval($_POST['quantity']) == 0) return json_encode('ko');
 		
 		$_product_info = db()->get("SELECT * FROM `".db('shop_products')."` WHERE `id`=".intval($_POST['product_id']));
@@ -371,19 +375,24 @@ class yf_manage_shop_orders{
 				'quantity' => $A['quantity'] + intval($_POST['quantity']),
 			)," `order_id`=".intval($_POST['order_id'])." AND `product_id`=".intval($_POST['product_id']));
 		}
-		$this->_order_recount_price($_POST['order_id']);
+		$this->_order_recount_price($_POST['order_id'],$order_info);
 		
 		return json_encode('ok');
 	}
 	
-	function _order_recount_price($order_id) {
+	function _order_recount_price($order_id, $order_info = array()) {
+		
 		$total_price = 0;
 		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_id));
 		while ($_info = db()->fetch_assoc($Q)) {
 			$total_price += $_info['quantity']*$_info['price'];
 		}
 
-		$delivery_price = ((intval($total_price) < 200)? $this->delivery_price : 0);
+		if ($order_info['is_manual_delivery_price'] == 1) {
+			$delivery_price = $order_info['delivery_price'];
+		} else {
+			$delivery_price = ((intval($total_price) < 200)? $this->delivery_price : 0);
+		}
 		$total_price += intval($delivery_price);
 
 		db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($total_price, 2, '.', ''),'delivery_price' => $delivery_price),"`id`='".$order_id."'");		

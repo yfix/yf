@@ -82,7 +82,7 @@ class yf_locale_editor {
 			js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
 		}
 
-		$this->_langs_for_search['all'] = t('All languages');
+		$this->_langs_for_search[''] = t('All languages');
 		foreach ((array)$this->_cur_langs_array as $A) {
 			$this->_langs_for_search[$A['locale']] = t($A['name']);
 			$this->_cur_langs[$A['locale']] = t($A['name']);
@@ -291,6 +291,7 @@ class yf_locale_editor {
 					'value'			=> function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; },
 #					'value'			=> array('cond' => 'like', 'field' => 'v.value'),
 					'translation'	=> array('like', 't.value'),
+					'locale'		=> array('eq', 't.locale'),
 				),
 			))
 			->check_box('id', array('width' => '1%', 'desc' => ''))
@@ -833,6 +834,7 @@ class yf_locale_editor {
 		$order_fields = array(
 			'v.value'     => 'value',
 		);
+		$langs_for_select = $this->_langs_for_search;
 		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000);
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
@@ -840,7 +842,7 @@ class yf_locale_editor {
 			))
 			->text('value', 'Source var')
 			->text('translation')
-			->select_box('locale', $this->_langs_for_search)
+			->select_box('locale', $langs_for_select)
 			->select_box('per_page', $per_page)
 			->select_box('order_by', $order_fields, array('show_text' => 1))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))

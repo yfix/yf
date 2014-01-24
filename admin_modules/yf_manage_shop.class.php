@@ -196,6 +196,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_related_products', 'admin_modules/manage_shop/')->$func($id);
 	}
 
+	function product_revisions() {
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+	}
+
 	function orders() {
 		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->orders_manage();
 	}
@@ -494,35 +498,27 @@ class yf_manage_shop {
 	function clear_patterns() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-	
 	function clear_pattern_list() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-
 	function clear_pattern_add() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-	
 	function clear_pattern_edit() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-	
 	function clear_pattern_delete() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-	
-	function clear_pattern_activate() {
+	function clear_pattern_stop() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-	
 	function clear_pattern_run() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-	
 	function clear_pattern_child_process() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
-	
 	function clear_pattern_status() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}

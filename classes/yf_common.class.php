@@ -399,8 +399,8 @@ class yf_common {
 	/**
 	* Get user IP address
 	*/
-	function get_ip () {
-		return _class('client_utils', 'classes/common/')->_get_ip();
+	function get_ip ($check_type = 'force') {
+		return _class('client_utils', 'classes/common/')->_get_ip($check_type);
 	}
 
 	/**
@@ -544,10 +544,10 @@ class yf_common {
 	}
 
 	/**
-	* Log script execution params
+	* Alias
 	*/
 	function log_exec () {
-		return _class(MAIN_TYPE_ADMIN ? 'log_admin_exec' : 'log_exec', 'classes/common/')->go();
+		return _class('logs')->log_exec();
 	}
 
 	/**
