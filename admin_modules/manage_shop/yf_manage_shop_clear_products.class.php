@@ -90,10 +90,11 @@ class yf_manage_shop_clear_products {
 		}
 
 		return table($pattern_list)
+			->header_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply', 'class' => 'btn-warning'))
 			->text('now')
 			->text('will_be')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d', array('no_ajax' => 1))
-			->footer_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply'))
+			->footer_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply', 'class' => 'btn-warning'))
 			;
 	}
 
@@ -261,7 +262,7 @@ class yf_manage_shop_clear_products {
 			$where = ' AND (cat_id IN ('.implode(',', $cat_ids).') OR id IN (SELECT product_id FROM '.db('shop_product_to_category').' WHERE category_id IN ('.implode(',', $cat_ids).')))';
 		}
 
-		$sql = 'SELECT * FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($pattern_info['search'], 'UTF-8').'[[:>:]]\''.$where.' LIMIT 5';
+		$sql = 'SELECT * FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($pattern_info['search'], 'UTF-8').'[[:>:]]\''.$where;
 		$sql = db()->query($sql);
 		while($row = db()->fetch_assoc($sql)) {
 			$update_array[] = array(
