@@ -19,8 +19,6 @@ class yf_tpl {
 	public $CUSTOM_META_INFO	   = false;
 	/** @var bool Exit after sending main content */
 	public $EXIT_AFTER_ECHO		= false;
-	/** @var bool Do save execution info */
-	public $LOG_EXEC_INFO		  = false;
 	/** @var bool Use database to store templates */
 	public $GET_STPLS_FROM_DB	  = false;
 	/** @var bool SECURITY: allow or not eval php code (with _PATTERN_INCLUDE) */
@@ -163,9 +161,8 @@ class yf_tpl {
 		if (conf('HIGH_CPU_LOAD') == 1) {
 			main()->OUTPUT_GZIP_COMPRESS = false;
 			$this->COMPRESS_OUTPUT  = false;
-			$this->TIDY_OUTPUT	  = false;
+			$this->TIDY_OUTPUT		= false;
 			$this->FROM_DB_GET_ALL  = false;
-			$this->LOG_EXEC_INFO	= false;
 		}
 		// Force inline debug setting
 		if (isset($_SESSION['stpls_inline_edit'])) {
