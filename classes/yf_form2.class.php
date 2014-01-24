@@ -2279,7 +2279,7 @@ class yf_form2 {
 			}
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
 			$extra['href'] = $link_url;
-			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
+			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
 			$attrs_names = array('id','name','href','class','style','target');
 			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
@@ -2301,8 +2301,8 @@ class yf_form2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-edit';
 		}
-		if (!isset($extra['class'])) {
-			$extra['class'] = 'ajax_edit';
+		if (!isset($extra['class_add'])) {
+			$extra['class_add'] = 'ajax_edit';
 		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
@@ -2318,8 +2318,8 @@ class yf_form2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-trash';
 		}
-		if (!isset($extra['class'])) {
-			$extra['class'] = 'ajax_delete btn-danger';
+		if (!isset($extra['class_add'])) {
+			$extra['class_add'] = 'ajax_delete btn-danger';
 		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
@@ -2335,8 +2335,8 @@ class yf_form2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-plus';
 		}
-		if (!isset($extra['class'])) {
-			$extra['class'] = 'ajax_clone';
+		if (!isset($extra['class_add'])) {
+			$extra['class_add'] = 'ajax_clone';
 		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
@@ -2352,8 +2352,8 @@ class yf_form2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-eye-open';
 		}
-		if (!isset($extra['class'])) {
-			$extra['class'] = 'ajax_view';
+		if (!isset($extra['class_add'])) {
+			$extra['class_add'] = 'ajax_view';
 		}
 		return $this->tbl_link($name, $link, $extra, $replace);
 	}
