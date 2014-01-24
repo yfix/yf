@@ -48,7 +48,7 @@ if ($_GET['object'] == 'help' && $_GET['action'] == 'show_tip') {
 }
 // Finish fast init
 if ($done) {
-	if (module_conf('tpl', 'LOG_EXEC_INFO')) {
+	if (module_conf('main', 'LOG_EXEC')) {
 		_call_fast_func('log_exec');
 	}
 	if (DEBUG_MODE && !main()->_no_fast_init_debug) {
