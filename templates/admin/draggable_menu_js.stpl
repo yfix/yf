@@ -6,8 +6,8 @@
 .draggable_menu .dropzone { background-color: transparent; height: 4px; }
 .draggable_menu .dropzone.over { background-color: #aaa !important; }
 .draggable_menu .menu-container { }
-.draggable_menu .closed ul { display: none; }
-.draggable_menu .opened ul { display: block; }
+.draggable_menu ul { display: block; }
+.draggable_menu ul.closed { display: none; }
 .draggable_menu .controls_over { display: none; }
 .icon-move { cursor: move; }
 </style>
@@ -30,14 +30,33 @@ $(function(){
 		return false;
 	})
 
+	var caret_class_opened = 'icon-caret-down';
+	var caret_class_closed = 'icon-caret-right';
+
 	$('#draggable-menu-expand-all').on('click', function() {
 		var _this = $(this)
+		var i = $('.expander i', '.draggable_menu')
 		if ( ! _this.data('now_close_all') ) {
-			$('ul.closed', '.draggable_menu').removeClass('closed').addClass('opened');
+			$('ul.closed', '.draggable_menu').removeClass('closed');
+			i.removeClass(caret_class_closed).addClass(caret_class_opened);
 			_this.data('now_close_all', true);
 		} else {
-			$('ul.opened', '.draggable_menu').removeClass('opened').addClass('closed');
+			$('ul', '.draggable_menu').addClass('closed');
+			i.removeClass(caret_class_opened).addClass(caret_class_closed);
 			_this.data('now_close_all', false);
+		}
+		return false;
+	});
+
+	$(".draggable_menu").on('click', '.expander', function () {
+		var ul = $(this).closest('li').find('> ul');
+		var i = $(this).find('i');
+		if (ul.hasClass('closed')) {
+			ul.removeClass('closed')
+			i.removeClass(caret_class_closed).addClass(caret_class_opened);
+		} else {
+			ul.addClass('closed')
+			i.removeClass(caret_class_opened).addClass(caret_class_closed);
 		}
 		return false;
 	});
@@ -92,10 +111,6 @@ $(function() {
 			draggable_history.restore_state();
 		}
 	});
-	$(".draggable_menu").on('click', '.expander', function() {
-		$(this).closest('ul').toggleClass('opened').toggleClass('closed');
-		return false;
-	});
 
 	$('.controls_over', '.draggable_menu').hide();
 
@@ -105,7 +120,6 @@ $(function() {
 	$(".draggable_menu").on('mouseout', 'dl', function() {
 		$(this).find('.controls_over').hide();
 	});
-
 });
 var draggable_history = {
 	stack: new Array(),
