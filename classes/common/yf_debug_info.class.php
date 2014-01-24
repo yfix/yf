@@ -259,6 +259,7 @@ class yf_debug_info {
 			}
 			$body .= $this->_do_debug_db_connection_queries($v, $connect_trace);
 		}
+// TODO: db()->_SHUTDOWN_QUERIES;
 		return $body;
 	}
 
