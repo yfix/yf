@@ -37,6 +37,7 @@ class yf_category_editor {
 			->btn_edit()
 			->btn_delete()
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_cat&id=%d')
+			->btn('Drag', './?object='.$_GET['object'].'&action=drag_items&id=%d')
 			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
 			->btn_active()
 			->footer_add();
