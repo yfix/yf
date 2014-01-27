@@ -1,11 +1,10 @@
 <?php
 class yf_manage_shop__product_revisions {
 
-
 	function _product_add_revision($action = false, $ids = false) {
 		$this->_add_revision('product', $action, $ids);
 	}
-	
+
 	function _order_add_revision($action = false, $ids = false) {
 		$this->_add_revision('order', $action, $ids);
 	}
@@ -45,7 +44,7 @@ class yf_manage_shop__product_revisions {
 		if (!isset($all_queries[$type])) {
 			return false;
 		}
-		
+
 		//help to clear from temp values for diff before and after conditions
 		$temp_indexes['product']['add_date'] = 0;
 		$temp_indexes['product']['update_date'] = 0;
