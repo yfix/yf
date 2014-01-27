@@ -115,7 +115,7 @@ class yf_manage_shop_orders{
 						} else {
 							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						}
-						
+
 						$recount_price = true;
 					}
 				} elseif ($k=='price_unit') {
@@ -132,10 +132,10 @@ class yf_manage_shop_orders{
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
 					if (($f == 'delivery_price') && ($_POST['delivery_price'] != $order_info['delivery_price'])) {
-						 $sql['is_manual_delivery_price'] = 1;
-						 $order_info['is_manual_delivery_price'] = 1;
-						 $order_info['delivery_price'] = $sql['delivery_price'];
-						 $recount_price = true;
+						$sql['is_manual_delivery_price'] = 1;
+						$order_info['is_manual_delivery_price'] = 1;
+						$order_info['delivery_price'] = $sql['delivery_price'];
+						$recount_price = true;
 					}
 				}
 			}
@@ -145,6 +145,9 @@ class yf_manage_shop_orders{
 			if ($recount_price) {
 				list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id'],$order_info);
 			}			
+
+			module('manage_shop')->_order_add_revision('edit',$_GET['id']);
+
 			return js_redirect('./?object='.main()->_get('object').'&action=show_orders&action=view_order&id='.$order_info['id']);
 		}
 		
