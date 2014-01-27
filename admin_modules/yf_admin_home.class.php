@@ -236,6 +236,12 @@ class yf_admin_home {
 	}
 
 	/**
+	*/
+	function _hook_widget__admin_home ($params = array()) {
+// TODO: purge cache (memcached), disable site (maintenance), change default language, change default template, enable/disable other features here
+	}
+
+	/**
 	* Custom content specific only for this project (designed to be inherited)
 	*/
 	function _custom_content () {
