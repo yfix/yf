@@ -370,7 +370,7 @@ class yf_category_editor {
 					<dl>
 						<a href="#" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
 						.$content
-						.'<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
+						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
 						<div style="float:right;display:none;" class="controls_over">'
 						.str_replace('%d', $id, $form_controls)
 						.'</div>
