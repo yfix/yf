@@ -34,14 +34,15 @@ $(function(){
 	var caret_class_closed = 'icon-caret-right';
 
 	$('#draggable-menu-expand-all').on('click', function() {
-		var _this = $(this)
-		var i = $('.expander i', '.draggable_menu')
-		if ( ! _this.data('now_close_all') ) {
-			$('ul.closed', '.draggable_menu').removeClass('closed');
+		var _this = $(this);
+		var _context = '.draggable_menu';
+		var i = $('.expander i', _context).filter('.' + caret_class_opened + ', .' + caret_class_closed);
+		if (!_this.data('now_close_all')) {
+			$('ul.closed', _context).removeClass('closed');
 			i.removeClass(caret_class_closed).addClass(caret_class_opened);
 			_this.data('now_close_all', true);
 		} else {
-			$('ul', '.draggable_menu').addClass('closed');
+			$('ul', _context).addClass('closed');
 			i.removeClass(caret_class_opened).addClass(caret_class_closed);
 			_this.data('now_close_all', false);
 		}
