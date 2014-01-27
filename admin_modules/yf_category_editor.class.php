@@ -37,6 +37,7 @@ class yf_category_editor {
 			->btn_edit()
 			->btn_delete()
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_cat&id=%d')
+			->btn('Drag', './?object='.$_GET['object'].'&action=drag_items&id=%d')
 			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
 			->btn_active()
 			->footer_add();
@@ -280,17 +281,22 @@ class yf_category_editor {
 		if (isset($items[''])) {
 			unset($items['']);
 		}
+/*
 		$tpl_items = array();
 		foreach ((array)$items as $id => $item) {
 			if (!$id) {
 				continue;
 			}
-			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
-			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
-			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
-			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
+			$item =+ array(
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_item&id='.$id,
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_item&id='.$id,
+				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_item&id='.$id,
+				'active_link'	=> './?object='.$_GET['object'].'&action=activate_item&id='.$id,
+			);
 			$tpl_items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
+*/
+/*
 		$replace = array(
 			'items' 		=> implode(PHP_EOL, (array)$tpl_items),
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
@@ -298,6 +304,81 @@ class yf_category_editor {
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
 		);
 		return tpl()->parse($_GET['object'].'/drag_main', $replace);
+*/
+//		$tpl_items = $this->_drag_tpl_items($items);
+		return $this->_drag_tpl_main($items);
+	}
+
+	/**
+	* This pure-php method needed to greatly speedup page rendering time for 100+ items
+	*/
+	function _drag_tpl_main(&$items) {
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
+		);
+		return '<form action="'.$r['form_action'].'" method="post" id="draggable_form">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary btn-mini"><i class="icon-save"></i> '.t('Save').'</button>
+					<a href="'.$r['back_link'].'" class="btn btn-mini"><i class="icon-backward"></i> '.t('Go Back').'</a>
+					<a href="'.$r['add_link'].'" class="btn btn-mini ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>
+					<a href="javascript:void(0);" class="btn btn-mini" id="draggable-menu-expand-all"><i class="icon-expand-alt"></i> '.t('Expand').'</a>
+				</div>
+				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($items)).'</ul>
+			</form>'
+			.tpl()->parse('draggable_menu_js');
+	}
+
+	/**
+	* This pure-php method needed to greatly speedup page rendering time for 100+ items
+	*/
+	function _drag_tpl_items(&$items) {
+		$body = array();
+
+		$form = _class('form2');
+		$replace = array(
+			'edit_link'		=> './?object='.$_GET['object'].'&action=edit_item&id=%d',
+			'delete_link'	=> './?object='.$_GET['object'].'&action=delete_item&id=%d',
+			'clone_link'	=> './?object='.$_GET['object'].'&action=clone_item&id=%d',
+		);
+		$form_controls = 
+			$form->tpl_row('tbl_link_edit', $replace, '', '', '')
+			.$form->tpl_row('tbl_link_delete', $replace, '', '', '')
+			.$form->tpl_row('tbl_link_clone', $replace, '', '', '')
+		;
+		foreach ((array)$items as $id => $item) {
+			if (!$id) {
+				continue;
+			}
+			$expander_icon = '';
+			if ($item['have_children']) {
+				$expander_icon = $item['level_num'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
+			}
+			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
+			if ($item['link']) {
+				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
+			}
+			if ($item['have_children']) {
+				$footer = '<ul class="'.($item['level_num'] >= 1 ? 'closed' : '').'">';
+			} else {
+				$footer = '</li>'.str_repeat('</ul>'.PHP_EOL, $item['next_level_diff']);
+			}
+			$body[] = '
+				<li id="item_'.$id.'">
+					<div class="dropzone"></div>
+					<dl>
+						<a href="#" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
+						.$content
+						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
+						<div style="float:right;display:none;" class="controls_over">'
+						.str_replace('%d', $id, $form_controls)
+						.'</div>
+					</dl>'
+				.$footer
+			;
+		}
+		return $body;
 	}
 
 	/**

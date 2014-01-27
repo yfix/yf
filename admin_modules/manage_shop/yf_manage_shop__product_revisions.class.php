@@ -1,12 +1,20 @@
 <?php
 class yf_manage_shop__product_revisions {
 
+	function _product_add_revision($action = false, $ids = false) {
+		$this->_add_revision('product', $action, $ids);
+	}
+
+	function _order_add_revision($action = false, $ids = false) {
+		$this->_add_revision('order', $action, $ids);
+	}
+
 	/*
-	 * $ids can be single product id or array of products ids
+	 * $ids can be single item id or array of items' ids
 	 * when action equal 'delete' the data will be empty
 	 */
-	function _product_add_revision($action, $ids = false) {
-		if (empty($ids)) {
+	function _add_revision($type, $action, $ids = false) {
+		if (empty($ids) || empty($action) || empty($type)) {
 			return false;
 		} elseif (!is_array($ids) && intval($ids)) {
 			$ids = array(intval($ids));
@@ -14,33 +22,50 @@ class yf_manage_shop__product_revisions {
 
 		$ids_with_comma = implode(',', $ids);
 
-		if ($action != 'delete') {
-			$all_queries = array(
-				'product'             => 'SELECT * FROM '.db('shop_products').' WHERE id IN ('.$ids_with_comma.');',
-				'params'              => 'SELECT * FROM '.db('shop_products_productparams').' WHERE product_id IN ('.$ids_with_comma.');',
-				'product_to_category' => 'SELECT * FROM '.db('shop_product_to_category').' WHERE product_id IN ('.$ids_with_comma.');',
-				'product_to_region'   => 'SELECT * FROM '.db('shop_product_to_region').' WHERE product_id IN ('.$ids_with_comma.');',
-				'product_related'     => 'SELECT * FROM '.db('shop_product_related').' WHERE product_id IN ('.$ids_with_comma.');',
-			);
+		/* sql   - string query
+		 * filed - general field for all tables
+		 * multi - count flag for set array[] or array[][]
+		 */
+		$all_queries = array(
+			'product' => array(
+				'product'             => array('sql' => 'SELECT * FROM '.db('shop_products').' WHERE id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => false, ),
+				'params'              => array('sql' => 'SELECT * FROM '.db('shop_products_productparams').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
+				'product_to_category' => array('sql' => 'SELECT * FROM '.db('shop_product_to_category').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
+				'product_to_region'   => array('sql' => 'SELECT * FROM '.db('shop_product_to_region').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
+				'product_related'     => array('sql' => 'SELECT * FROM '.db('shop_product_related').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
+			),
+			'order' => array(
+				'orders'      => array('sql' => 'SELECT * FROM '.db('orders').' WHERE id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => false),
+				'order_items' => array('sql' => 'SELECT * FROM '.db('order_items').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => true),
+			),
+		);
+
+		//check SQL confs for getting data
+		if (!isset($all_queries[$type])) {
+			return false;
 		}
 
+		//help to clear from temp values for diff before and after conditions
+		$temp_indexes['product']['add_date'] = 0;
+		$temp_indexes['product']['update_date'] = 0;
+		$temp_indexes['order']['date'] = 0;
+		//-------------------------------------------------------------------
+
+		$revision_db = db('shop_'.$type.'_revisions');
 		$all_data = array();
 
-		if (!empty($all_queries )) {
-			$revision_sql = 'SELECT item_id, data FROM (SELECT item_id, data FROM '.db('shop_product_revisions').' WHERE item_id IN ('.$ids_with_comma.') ORDER BY id DESC) as r GROUP BY item_id';
+		if ($action != 'delete') {
+			$revision_sql = 'SELECT item_id, data FROM (SELECT item_id, data FROM '.$revision_db.' WHERE item_id IN ('.$ids_with_comma.') ORDER BY id DESC) as r GROUP BY item_id';
 			$all_last_revision = db()->get_2d($revision_sql);
 
-			//help to clear from temp values for diff before and after conditions
-			$temp_indexes['product']['add_date'] = 0;
-			$temp_indexes['product']['update_date'] = 0;
-
-			foreach ($all_queries as $query_key => $sql) {
-				$sql_res = db()->query($sql);
+			foreach ($all_queries[$type] as $key => $info) {
+				$sql_res = db()->query($info['sql']);
 				while ($row = db()->fetch_assoc($sql_res)) {
-					if ($query_key == 'product') {
-						$all_data[$row['id']][$query_key] = $row;
+					$complex_key = $row[$info['field']];
+					if ($info['multi']) {
+						$all_data[$complex_key][$key][] = $row;
 					} else {
-						$all_data[$row['product_id']][$query_key][] = $row;
+						$all_data[$complex_key][$key] = $row;
 					}
 				}
 			}
@@ -55,6 +80,7 @@ class yf_manage_shop__product_revisions {
 				$new_revision = $all_data[$id];
 				$new_revision = array_replace_recursive($new_revision , $temp_indexes);
 				$new_revision = json_encode($new_revision);
+
 				if ($cur_revision == $new_revision) {
 					continue;
 				}
@@ -72,7 +98,7 @@ class yf_manage_shop__product_revisions {
 		if (!empty($insert_array)) {
 			$insert_array = array_chunk($insert_array, 100);
 			foreach ($insert_array as $insert_item) {
-				db()->insert_safe('shop_product_revisions', $insert_item);
+				db()->insert_safe($revision_db, $insert_item);
 			}
 		}
 	}

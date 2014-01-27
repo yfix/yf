@@ -4,9 +4,12 @@
 */
 class yf_manage_shop_clear_products {
 
+	public $SEARCH_TIP = false;
+
 	function _init () {
 		$all_cats = main()->get_data('category_items_all');
 		conf('all_cats', $all_cats);
+		$this->SEARCH_TIP = t('Case-insensetive search').' ('.t('Example').': "'.t('Search').'" = "'.mb_strtolower(t('Search')).'" = "'.mb_strtoupper(t('Search')).'")';
 	}
 
 	/*
@@ -22,7 +25,7 @@ class yf_manage_shop_clear_products {
 				'cat_id'  => 'in',
 			),
 		))
-		->text('search')
+		->text('search', array('tip' => $this->SEARCH_TIP))
 		->text('replace')
 		->text('description')
 		->func('cat_id', function($value, $extra, $row_info) {
@@ -83,9 +86,9 @@ class yf_manage_shop_clear_products {
 		$sql = db()->query($sql);
 		while($row = db()->fetch_assoc($sql)) {
 			$pattern_list[] = array(
-  				'id'      => $row['id'],
-  				'now'     => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>$1</b>', $row['name']),
-  				'will_be' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b>'.$pattern_info['replace'].'</b>', $row['name']),
+				'id'      => $row['id'],
+				'now'     => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b class="text-warning">$1</b>', $row['name']),
+				'will_be' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', '<b class="text-success">'.$pattern_info['replace'].'</b>', $row['name']),
 			);
 		}
 
@@ -113,7 +116,7 @@ class yf_manage_shop_clear_products {
 		return form($a, array('legend' => t('Add pattern')))
 			->validate($validate_rules)
 			->db_insert_if_ok('shop_patterns', array('search','replace', 'cat_id'))
-			->text('search')
+			->text('search', array('tip' => $this->SEARCH_TIP))
 			->text('replace')
 			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Category', 'show_text' => 1))
 			->textarea('description')
@@ -136,8 +139,8 @@ class yf_manage_shop_clear_products {
 		}
 
 		$validate_rules = array(
-			'search' => array('trim|required|xss_clean'),
-			'replace'	 => array('trim|required|xss_clean'),
+			'search'  => array('trim|required|xss_clean'),
+			'replace' => array('trim|required|xss_clean'),
 		);
 
 		$a = $pattern_info;
@@ -146,7 +149,7 @@ class yf_manage_shop_clear_products {
 		return form($a, array('legend' => t('Edit pattern')))
 			->validate($validate_rules)
 			->db_update_if_ok('shop_patterns', array('search','replace', 'cat_id'), 'id = '.$_GET['id'])
-			->text('search')
+			->text('search', array('tip' => $this->SEARCH_TIP))
 			->text('replace')
 			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Category', 'show_text' => 1))
 			->textarea('description')
@@ -242,7 +245,6 @@ class yf_manage_shop_clear_products {
 		}
 
 		$_GET['id'] = intval($_GET['id']);
-
 		$process_id = getmypid();
 
 		db()->query('UPDATE '.db('shop_patterns').' SET process = '.$process_id.' WHERE process = 0 AND id = '.$_GET['id'].';');
@@ -261,12 +263,11 @@ class yf_manage_shop_clear_products {
 			$cat_ids = _class('cats')->_get_recursive_cat_ids($row_info['cat_id']);
 			$where = ' AND (cat_id IN ('.implode(',', $cat_ids).') OR id IN (SELECT product_id FROM '.db('shop_product_to_category').' WHERE category_id IN ('.implode(',', $cat_ids).')))';
 		}
-
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE LOWER(name) REGEXP \'[[:<:]]'.mb_strtolower($pattern_info['search'], 'UTF-8').'[[:>:]]\''.$where;
 		$sql = db()->query($sql);
 		while($row = db()->fetch_assoc($sql)) {
 			$update_array[] = array(
-				'id' => $row['id'],
+				'id'   => $row['id'],
 				'name' => preg_replace('/[<^\w\d]?('.$pattern_info['search'].')[<^\w\d]?/umis', $pattern_info['replace'], $row['name']),
 			);
 
