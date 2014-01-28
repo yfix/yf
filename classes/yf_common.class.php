@@ -1382,6 +1382,16 @@ class yf_common {
 
 	/**
 	*/
+	function add_permanent_error($text = '') {
+		if (!strlen($text)) {
+			return false;
+		}
+		$_SESSION['permanent_errors'][] = $text;
+		return true;
+	}
+
+	/**
+	*/
 	function show_permanent_error() {
 		if (empty($_SESSION['permanent_errors'])) {
 			return false;
