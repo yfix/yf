@@ -38,7 +38,7 @@ class yf_manage_cities {
 		return form($a)
 			->validate(array('name' => 'trim|required'))
 			->db_update_if_ok('cities', array('name','active'), 'id='.$a['id'], array('on_after_update' => function() {
-				cache()->refresh(array('cities'));
+				cache_del(array('cities'));
 				common()->admin_wall_add(array('city updated: '.$_POST['name'].'', $a['id']));
 			}))
 			->text('name')
@@ -58,7 +58,7 @@ class yf_manage_cities {
 		return form($a)
 			->validate(array('name' => 'trim|required'))
 			->db_insert_if_ok('cities', array('name','active'), array(), array('on_after_update' => function() {
-				cache()->refresh(array('cities'));
+				cache_del(array('cities'));
 				common()->admin_wall_add(array('city added: '.$_POST['name'].'', db()->insert_id()));
 			}))
 			->text('name')

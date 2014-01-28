@@ -166,7 +166,7 @@ class yf_forum_announce {
 				'end_time'	=> $_POST['announce_end']	? strtotime($_POST['announce_end']) : 0,
 				'active'	=> intval($_POST['announce_active']),
 			));
-			cache()->refresh('forum_announces');
+			cache_del('forum_announces');
 			return js_redirect('./?object='.'forum'.'&action=edit_announces'._add_get(array('page')));
 		}
 		$replace = array(
@@ -202,7 +202,7 @@ class yf_forum_announce {
 				'end_time'	=> $_POST['announce_end'] ? strtotime($_POST['announce_end']) : 0,
 				'active'	=> intval($_POST['announce_active']),
 			)), 'id='.intval($_GET['id']));
-			cache()->refresh('forum_announces');
+			cache_del('forum_announces');
 			return js_redirect('./?object='.'forum'.'&action=edit_announces'._add_get(array('page')));
 		}
 		$announce_info = db()->query_fetch('SELECT * FROM '.db('forum_announce').' WHERE id='.$_GET['id'].' LIMIT 1');
@@ -233,7 +233,7 @@ class yf_forum_announce {
 		if (!empty($_GET['id'])) {
 			db()->query('DELETE FROM '.db('forum_announce').' WHERE id='.intval($_GET['id']));
 		}
-		cache()->refresh('forum_announces');
+		cache_del('forum_announces');
 		return js_redirect('./?object='.'forum'.'&action=edit_announces'._add_get(array('page')));
 	}
 	
@@ -243,7 +243,7 @@ class yf_forum_announce {
 	function _retire_expired() {
 		db()->query('UPDATE '.db('forum_announce').' SET active=0 WHERE end_time != 0 AND end_time < '.time());
 		if (module('forum')->SETTINGS['ALLOW_ANNOUNCES']) {
-			cache()->refresh('forum_announces');
+			cache_del('forum_announces');
 		}
 	}
 

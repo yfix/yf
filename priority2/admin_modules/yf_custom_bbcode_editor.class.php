@@ -170,7 +170,7 @@ class yf_custom_bbcode_editor {
 			));	
 		}
 		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_bbcode");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_bbcode");
 
 		return js_redirect("./?object=".$_GET["object"]._add_get());
 	}
@@ -187,7 +187,7 @@ class yf_custom_bbcode_editor {
 		// Do delete record
 		db()->query("DELETE FROM ".db('custom_bbcode')." WHERE id=".intval($_GET["id"]));
 		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_bbcode");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_bbcode");
 		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -214,7 +214,7 @@ class yf_custom_bbcode_editor {
 			db()->query("DELETE FROM ".db('custom_bbcode')." WHERE id IN(".implode(",",$ids_to_delete).")");
 		}
 		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_bbcode");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_bbcode");
 		// Return user back
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}

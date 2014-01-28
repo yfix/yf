@@ -50,7 +50,7 @@ class yf_admin_groups {
 				'name' => 'trim|required|alpha_dash|is_unique[admin_groups.name]'
 			))
 			->db_insert_if_ok('admin_groups', array('name','go_after_login','active'), array(), array('on_after_update' => function() {
-				cache()->refresh(array('admin_groups', 'admin_groups_details'));
+				cache_del(array('admin_groups', 'admin_groups_details'));
 				common()->admin_wall_add(array('admin group added: '.$_POST['name'].'', db()->insert_id()));
 			}))
 			->text('name','Group name')
@@ -74,7 +74,7 @@ class yf_admin_groups {
 				'name' => 'trim|required|alpha_dash|is_unique_without[admin_groups.name.'.$id.']'
 			))
 			->db_update_if_ok('admin_groups', array('name','go_after_login'), 'id='.$id, array('on_after_update' => function() {
-				cache()->refresh(array('admin_groups', 'admin_groups_details'));
+				cache_del(array('admin_groups', 'admin_groups_details'));
 				common()->admin_wall_add(array('admin group edited: '.$_POST['name'].'', $id));
 			}))
 			->text('name','Group name')
@@ -93,7 +93,7 @@ class yf_admin_groups {
 			db()->query('DELETE FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			common()->admin_wall_add(array('admin group deleted', $_GET['id']));
 		}
-		cache()->refresh(array('admin_groups', 'admin_groups_details'));
+		cache_del(array('admin_groups', 'admin_groups_details'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -116,7 +116,7 @@ class yf_admin_groups {
 			db()->UPDATE('admin_groups', array('active'	=> intval(!$group_info['active'])), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		cache()->refresh(array('admin_groups', 'admin_groups_details'));
+		cache_del(array('admin_groups', 'admin_groups_details'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($group_info['active'] ? 0 : 1);

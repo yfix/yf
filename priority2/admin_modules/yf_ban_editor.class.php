@@ -60,7 +60,7 @@ class yf_ban_editor {
 				));
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("banned_ips");
+					cache_del("banned_ips");
 				}
 				return js_redirect("./?object=".$_GET["object"]);
 			}
@@ -82,7 +82,7 @@ class yf_ban_editor {
 			db()->query("DELETE FROM ".db('banned_ips')." WHERE ip = '"._es($IP)."'");
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("banned_ips");
+				cache_del("banned_ips");
 			}
 		}
 		return js_redirect("./?object=".$_GET["object"]);

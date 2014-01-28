@@ -85,7 +85,7 @@ class yf_admin_home {
 		}
 
 		if ($this->DISPLAY_STATS) {
-			$admin_statistics_array = cache()->get($this->CACHE_NAME, $this->ADMIN_HOME_CACHE_TIME);
+			$admin_statistics_array = cache_get($this->CACHE_NAME, $this->ADMIN_HOME_CACHE_TIME);
 		}
 		if ($this->DISPLAY_STATS && empty($admin_statistics_array)) {
 			// General info
@@ -117,7 +117,7 @@ class yf_admin_home {
 			foreach ((array)$B as $V) {
 				$admin_statistics_array[$V[0]] = $V[1];
 			}
-			cache()->put($this->CACHE_NAME, $admin_statistics_array);
+			cache_put($this->CACHE_NAME, $admin_statistics_array);
 		}
 
 	   	if ($this->DISPLAY_STATS) {

@@ -32,7 +32,7 @@ class yf_locale_editor_import {
 						'is_default'	=> 0,
 					));
 					$this->_create_empty_vars_for_locale($cur_locale);
-					cache()->refresh('locale_langs');
+					cache_del('locale_langs');
 				}
 			}
 			$file_format = $_POST['file_format'];
@@ -105,7 +105,7 @@ class yf_locale_editor_import {
 					}
 				}
 				unlink($new_file_path);
-				cache()->refresh('locale_translate_'.$cur_locale);
+				cache_del('locale_translate_'.$cur_locale);
 				return js_redirect('./?object='.$_GET['object'].'&action=show_vars');
 			}
 		}

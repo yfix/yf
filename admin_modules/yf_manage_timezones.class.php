@@ -47,7 +47,7 @@ class yf_manage_timezones {
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
 			->db_update_if_ok('timezones', array('name','active'), 'code="'._es($a['code']).'"', array('on_after_update' => function() {
-				cache()->refresh(array('timezones'));
+				cache_del(array('timezones'));
 				common()->admin_wall_add(array('timezone updated: '.$_POST['name'].'', $a['code']));
 			}))
 			->text('name')
@@ -62,7 +62,7 @@ class yf_manage_timezones {
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
 			->db_insert_if_ok('timezones', array('name','code','offset','active'), array(), array('on_after_update' => function() {
-				cache()->refresh(array('timezones'));
+				cache_del(array('timezones'));
 				common()->admin_wall_add(array('timezone added: '.$_POST['name'].'', db()->insert_id()));
 			}))
 			->text('code')
