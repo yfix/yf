@@ -49,7 +49,7 @@ class yf_user_modules {
 			}
 			if (isset($active) && $where) {
 				db()->update('user_modules', array('active' => $active), $where);
-				cache()->refresh(array('user_modules','user_modules_for_select'));
+				cache_del(array('user_modules','user_modules_for_select'));
 			}
 			return js_redirect('./?object='.$_GET['object']);
 		}
@@ -137,7 +137,7 @@ class yf_user_modules {
 		if (!empty($module_info)) {
 			db()->UPDATE('user_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
 		}
-		cache()->refresh(array('user_modules','user_modules_for_select'));
+		cache_del(array('user_modules','user_modules_for_select'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($module_info['active'] ? 0 : 1);
@@ -185,7 +185,7 @@ class yf_user_modules {
 		if ($delete_names) {
 			db()->query('DELETE FROM '.db('user_modules').' WHERE name IN("'.implode('","', _es($delete_names)).'")');
 		}
-		cache()->refresh(array('user_modules','user_modules_for_select'));
+		cache_del(array('user_modules','user_modules_for_select'));
 		if (!$silent) {
 			return js_redirect('./?object='.$_GET['object']);
 		}

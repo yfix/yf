@@ -557,7 +557,7 @@ class yf_forum_post {
 			}
 			// Refresh caches
 			if (main()->USE_SYSTEM_CACHE) {
-				cache()->refresh('forum_home_page_posts');
+				cache_del('forum_home_page_posts');
 			}
 		}
 		// Get post id

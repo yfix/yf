@@ -47,7 +47,7 @@ class yf_admin_modules {
 			}
 			if (isset($active) && $where) {
 				db()->update('admin_modules', array('active' => $active), $where);
-				cache()->refresh('admin_modules');
+				cache_del('admin_modules');
 			}
 			return js_redirect('./?object='.$_GET['object']);
 		}
@@ -130,7 +130,7 @@ class yf_admin_modules {
 		if (!empty($module_info)) {
 			db()->UPDATE('admin_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
 		}
-		cache()->refresh('admin_modules');
+		cache_del('admin_modules');
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($module_info['active'] ? 0 : 1);
@@ -177,7 +177,7 @@ class yf_admin_modules {
 		if ($delete_names) {
 			db()->query('DELETE FROM '.db('admin_modules').' WHERE name IN("'.implode('","', _es($delete_names)).'")');
 		}
-		cache()->refresh(array('admin_modules','admin_modules_for_select'));
+		cache_del(array('admin_modules','admin_modules_for_select'));
 		if (!$silent) {
 			return js_redirect('./?object='.$_GET['object']);
 		}

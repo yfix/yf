@@ -59,7 +59,7 @@ _debug_log("LOCALE: ".(++$j)." ## ".$ID." ## ".$source." ## ".$response_text." #
 				$buffer = array();
 				$_temp = array();
 			}
-			cache()->refresh('locale_translate_'.$LOCALE_RES);
+			cache_del('locale_translate_'.$LOCALE_RES);
 			return js_redirect('./?object='.$_GET['object']);
 		}
 

@@ -35,7 +35,7 @@ class yf_manage_icons {
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
 			->db_update_if_ok('icons', array('name','active'), 'id='.$a['id'], array('on_after_update' => function() {
-				cache()->refresh(array('icons'));
+				cache_del(array('icons'));
 				common()->admin_wall_add(array('icon updated: '.$_POST['name'].'', $a['id']));
 			}))
 			->text('name')
@@ -50,7 +50,7 @@ class yf_manage_icons {
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
 			->db_insert_if_ok('icons', array('name','active'), array(), array('on_after_update' => function() {
-				cache()->refresh(array('icons'));
+				cache_del(array('icons'));
 				common()->admin_wall_add(array('icon added: '.$_POST['name'].'', db()->insert_id()));
 			}))
 			->text('name')

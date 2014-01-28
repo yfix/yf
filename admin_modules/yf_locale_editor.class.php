@@ -170,7 +170,7 @@ class yf_locale_editor {
 					'is_default'	=> 0,
 				));
 				$this->_create_empty_vars_for_locale($_POST['lang_code']);
-				cache()->refresh('locale_langs');
+				cache_del('locale_langs');
 				return js_redirect('./?object='.$_GET['object']);
 			}
 		}
@@ -200,7 +200,7 @@ class yf_locale_editor {
 				'charset' => 'trim|required',
 			))
 			->db_update_if_ok('locale_langs', array('name','charset'), 'id='.$id, array('on_after_update' => function() {
-				cache()->refresh('locale_langs');
+				cache_del('locale_langs');
 				common()->admin_wall_add(array('locale lang updated: '.$_POST['name'].'', $id));
 			}))
 			->info('locale')
@@ -219,7 +219,7 @@ class yf_locale_editor {
 		if (!empty($info) && !$info['is_default']) {
 			db()->update('locale_langs', array('active' => intval(!$info['active'])), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('locale lang '.$info['name'].' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
-			cache()->refresh(array('locale_langs'));
+			cache_del(array('locale_langs'));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -240,7 +240,7 @@ class yf_locale_editor {
 			db()->update('locale_langs', array('is_default' => 0), '1=1');
 			db()->update('locale_langs', array('is_default' => 1), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('locale lang '.$info['name'].' made default', $_GET['id']));
-			cache()->refresh(array('locale_langs'));
+			cache_del(array('locale_langs'));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -259,7 +259,7 @@ class yf_locale_editor {
 			db()->query('DELETE FROM '.db('locale_translate').' WHERE locale="'._es($this->_cur_langs_array[$_GET['id']]['locale']).'"');
 			common()->admin_wall_add(array('locale language deleted: '.$this->_cur_langs_array[$_GET['id']]['locale'], $_GET['id']));
 		}
-		cache()->refresh('locale_langs');
+		cache_del('locale_langs');
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -340,7 +340,7 @@ class yf_locale_editor {
 				}
 				if ($sql && $INSERT_ID) {
 					db()->insert('locale_translate', $sql);
-					cache()->refresh($cnames);
+					cache_del($cnames);
 				}
 				common()->admin_wall_add(array('locale var added: '.$_POST['var_name']));
 				return js_redirect($INSERT_ID ? './?object='.$_GET['object'].'&action=edit_var&id='.intval($INSERT_ID) : './?object='.$_GET['object'].'&action=show_vars');
@@ -405,7 +405,7 @@ class yf_locale_editor {
 					} else {
 						db()->INSERT('locale_translate', $sql_data);
 					}
-					cache()->refresh('locale_translate_'.$lang_info['locale']);
+					cache_del('locale_translate_'.$lang_info['locale']);
 				}
 				common()->admin_wall_add(array('locale var updated: '.$var_info['value'], $_GET['id']));
 				return js_redirect('./?object='.$_GET['object'].'&action=show_vars');

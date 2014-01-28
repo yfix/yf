@@ -28,15 +28,15 @@ class yf_forum_sync {
 		$this->_fix_subforums();
 		// Refresh caches
 		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh('forum_categories');
-			cache()->refresh('forum_forums');
-			cache()->refresh('forum_user_ranks');
-			cache()->refresh('forum_home_page_posts');
-			cache()->refresh('forum_announces');
-			cache()->refresh('user_skins');
-			cache()->refresh('smilies');
+			cache_del('forum_categories');
+			cache_del('forum_forums');
+			cache_del('forum_user_ranks');
+			cache_del('forum_home_page_posts');
+			cache_del('forum_announces');
+			cache_del('user_skins');
+			cache_del('smilies');
 			if (module('forum')->SETTINGS['SEO_KEYWORDS']) {
-				cache()->refresh('search_engines');
+				cache_del('search_engines');
 			}
 			$this->_refresh_board_totals();
 		}
@@ -63,8 +63,8 @@ class yf_forum_sync {
 		$this->_fix_subforums();
 		// Refresh caches
 		if (main()->USE_SYSTEM_CACHE) {
-			cache()->refresh('forum_forums');
-			cache()->refresh('forum_home_page_posts');
+			cache_del('forum_forums');
+			cache_del('forum_home_page_posts');
 			$this->_refresh_board_totals();
 		}
 		return !$INNER_CALL ? js_redirect($_SERVER['HTTP_REFERER']) : false;
@@ -321,7 +321,7 @@ class yf_forum_sync {
 		db()->query($sql);
 		// Refresh caches
 		if (main()->USE_SYSTEM_CACHE && $cache_refresh) {
-			cache()->refresh('forum_home_page_posts');
+			cache_del('forum_home_page_posts');
 			$this->_refresh_board_totals();
 		}
 	}
@@ -365,8 +365,8 @@ class yf_forum_sync {
 		db()->query($sql);
 		// Refresh caches
 		if (main()->USE_SYSTEM_CACHE && $cache_refresh) {
-			cache()->refresh('forum_forums');
-			cache()->refresh('forum_home_page_posts');
+			cache_del('forum_forums');
+			cache_del('forum_home_page_posts');
 			$this->_refresh_board_totals();
 		}
 	}

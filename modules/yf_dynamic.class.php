@@ -238,7 +238,7 @@ class yf_dynamic {
 			'ip'			=> common()->get_ip(),
 			'comment'		=> _es('locale: '.$CUR_LOCALE),
 		));
-		cache()->refresh('locale_translate_'.$CUR_LOCALE);
+		cache_del('locale_translate_'.$CUR_LOCALE);
 		return print('Save OK');
 	}
 
@@ -324,7 +324,7 @@ class yf_dynamic {
 				), "name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
 			}
 		}
-		cache()->refresh('locale:tips');
+		cache_del('locale:tips');
 		echo 'Saved successfully';
 	}
 

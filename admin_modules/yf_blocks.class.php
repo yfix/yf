@@ -71,7 +71,7 @@ class yf_blocks {
 			))
 			->db_insert_if_ok('blocks', array('type','name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('block added: '.$_POST['name'].'', db()->insert_id()));
-				cache()->refresh('blocks_names');
+				cache_del('blocks_names');
 			}))
 			->radio_box('type', array('admin' => 'admin', 'user' => 'user'))
 			->text('name','Block name')
@@ -94,7 +94,7 @@ class yf_blocks {
 			))
 			->db_update_if_ok('blocks', array('name','desc','stpl_name','method_name','active'), 'id='.$_GET['id'], array('on_after_update' => function() {
 				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', $id));
-				cache()->refresh('blocks_names');
+				cache_del('blocks_names');
 			}))
 			->text('name','Block name')
 			->text('desc','Block Description')
@@ -124,7 +124,7 @@ class yf_blocks {
 			db()->query('DELETE FROM '.db('block_rules').' WHERE block_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block deleted: '.$block_info['name'].'', $_GET['id']));
 		}
-		cache()->refresh(array('blocks_names', 'blocks_rules'));
+		cache_del(array('blocks_names', 'blocks_rules'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -158,7 +158,7 @@ class yf_blocks {
 			$NEW_ITEM_ID = db()->INSERT_ID();
 		}
 		common()->admin_wall_add(array('block cloned: '.$_info['name'].' from '.$block_info['name'], $NEW_ITEM_ID));
-		cache()->refresh(array('blocks_names', 'blocks_rules'));
+		cache_del(array('blocks_names', 'blocks_rules'));
 		return js_redirect('./?object='.$_GET['object']);
 	}
 
@@ -173,7 +173,7 @@ class yf_blocks {
 			db()->UPDATE('blocks', array('active' => (int)!$block_info['active']), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block '.$block_info['name'].' '.($block_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		cache()->refresh(array('blocks_names', 'blocks_rules'));
+		cache_del(array('blocks_names', 'blocks_rules'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($block_info['active'] ? 0 : 1);
@@ -235,7 +235,7 @@ class yf_blocks {
 			->db_insert_if_ok('block_rules', array('rule_type','methods','user_groups','themes','locales','site_ids','server_ids','order','active'), array('block_id' => $block_info['id']), array(
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
-					cache()->refresh('blocks_rules');
+					cache_del('blocks_rules');
 				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
 			))
 			->info('type')
@@ -286,7 +286,7 @@ class yf_blocks {
 			->db_update_if_ok('block_rules', array('rule_type','methods','user_groups','themes','locales','site_ids','server_ids','order','active'), 'id='.$rule_info['id'], array(
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
-					cache()->refresh('blocks_rules');
+					cache_del('blocks_rules');
 				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
 			))
 			->info('type')
@@ -316,7 +316,7 @@ class yf_blocks {
 		if (!empty($block_info['id'])) {
 			db()->query('DELETE FROM '.db('block_rules').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			common()->admin_wall_add(array('block rule deleted for: '.$block_info['name'], $_GET['id']));
-			cache()->refresh('blocks_rules');
+			cache_del('blocks_rules');
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -346,7 +346,7 @@ class yf_blocks {
 		$NEW_RULE_ID = db()->INSERT_ID();
 
 		common()->admin_wall_add(array('block rule cloned for block '.$block_info['name'], $NEW_RULE_ID));
-		cache()->refresh(array('blocks_names', 'blocks_rules'));
+		cache_del(array('blocks_names', 'blocks_rules'));
 		return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
 	}
 
@@ -363,7 +363,7 @@ class yf_blocks {
 		if (!empty($block_info['id'])) {
 			db()->UPDATE('block_rules', array('active' => (int)!$rule_info['active']), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('block rule for '.$block_info['name'].' '.($rule_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
-			cache()->refresh(array('blocks_names', 'blocks_rules'));
+			cache_del(array('blocks_names', 'blocks_rules'));
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;

@@ -90,7 +90,7 @@ class yf_manage_users {
 		if (!empty($user_info)) {
 			update_user($user_info['id'], array('active' => (int)!$user_info['active']));
 		}
-		cache()->refresh('user');
+		cache_del('user');
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($user_info['active'] ? 0 : 1);

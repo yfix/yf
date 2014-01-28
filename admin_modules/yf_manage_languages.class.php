@@ -47,7 +47,7 @@ class yf_manage_languages {
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
 			->db_update_if_ok('languages', array('name','native','active'), 'code="'._es($a['code']).'"', array('on_after_update' => function() {
-				cache()->refresh(array('languages'));
+				cache_del(array('languages'));
 				common()->admin_wall_add(array('language updated: '.$_POST['name'].'', $a['code']));
 			}))
 			->text('name')
@@ -63,7 +63,7 @@ class yf_manage_languages {
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
 			->db_insert_if_ok('languages', array('name','code','native','active'), array(), array('on_after_update' => function() {
-				cache()->refresh(array('languages'));
+				cache_del(array('languages'));
 				common()->admin_wall_add(array('language added: '.$_POST['name'].'', db()->insert_id()));
 			}))
 			->text('code')
