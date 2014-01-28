@@ -75,7 +75,7 @@ class yf_manage_shop_upload_images {
                 $ext = $this->ALLOWED_MIME_TYPES[$file_type];
                 if($ext == 'rar') common()->rar_extract($archive_name, $EXTRACT_PATH);
                 if($ext == 'zip') common()->zip_extract($archive_name, $EXTRACT_PATH);
-                if($ext == 'tar' || $ext == 'gz') passthru($$ext);
+                if($ext == 'tar' || $ext == 'gz') exec($$ext);
 
                 $result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png|gif|bmp)$/', '/__MACOSX/');
                 foreach($result_files as $k => $v){
