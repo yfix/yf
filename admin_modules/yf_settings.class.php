@@ -27,6 +27,7 @@ class yf_settings {
 		'spacelab'	=> 'Spacelab (light)',
 		'united'	=> 'United (light)',
 	);
+	// TODO: add more skins from fs inside project
 	public $default_skins = array(
 		'user'	=> 'User (default)',
 		'admin'	=> 'Admin (default)',
@@ -40,27 +41,47 @@ class yf_settings {
 #		'postgre'	=> 'postgre',
 	);
 	public $cache_drivers = array(
-		'memcached'	=> 'memcaached',
+		'memcached'	=> 'memcached',
 		'xcache'	=> 'xcache',
 		'apc'		=> 'apc',
 		'files'		=> 'files',
+	);
+	public $tpl_drivers = array(
+		'yf'		=> 'YF stpl (default)',
+		'smarty'	=> 'smarty',
+		'fenom'		=> 'fenom',
+		'twig'		=> 'twig',
+		'blitz'		=> 'blitz',
 	);
 
 	/**
 	*/
 	function show() {
-// TODO: purge cache (memcached), disable site (maintenance), change default language, change default template, enable/disable other features here
-		return form()
+// TODO: long descriptions for each item
+// TODO: connect this (save to auto-generated file)
+/* TODO: add 3rd level of configuring:
+	1) class property
+	2) PROJECT_CONF
+	3) TODO: from auto-generated file or from conf('') ?
+	4) _init() still able to override everything
+*/
+// TODO: maybe use conf('module.$mod_name.$setting', '$value') for overriding PROJECT_CONF from here
+		$r = (array)$_POST + (array)conf();
+		return form($r, array('class' => 'form-horizontal form-condensed'))
 			->row_start()
+				->save()
 				->link('cache_purge', './?object='.$_GET['object'].'&action=cache_purge') // TODO: link, method, icon
 				->link('cache_stats', './?object='.$_GET['object'].'&action=cache_stats') // TODO: link, method, icon
+				->link('minify_css', './?object='.$_GET['object'].'&action=minify_css') // TODO: link, method, icon
+				->link('minify_js', './?object='.$_GET['object'].'&action=minify_js') // TODO: link, method, icon
 			->row_end()
 			->active_box('use_cache')
 			->select_box('cache_driver', $this->cache_drivers)
 			->number('cache_ttl')//, cache()->FILES_TTL
 
-			->active_box('site_maintenance')
+			->active_box('site_maintenance', array('tip' => ''))
 			->select_box('default_css_framework', $this->css_frameworks) // TODO: link to edit
+#			->select_box('DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')) // TODO: link to edit
 			->select_box('default_css_subtheme', $this->css_subthemes) // TODO: link to edit
 			->select_box('default_skin', $this->default_skins) // TODO: link to edit
 			->select_box('default_language', main()->get_data('languages')) // TODO: link to edit
@@ -71,9 +92,9 @@ class yf_settings {
 #			->city_box('default_city') // Where site is located and propose this by default for visitors // TODO: link to edit
 
 #			->text('site_name', conf('SITE_NAME'))
-#			->text('default_meta_keywords')
-#			->text('default_meta_description')
-#			->text('default_charset')
+			->text('meta_keywords', 'default_meta_keywords')
+			->text('meta_description', 'default_meta_description')
+			->text('charset', 'default_charset')
 #			->text('images_web_path')
 #			->text('media_path_web')
 #			->text('media_path_fs')
@@ -97,15 +118,15 @@ class yf_settings {
 #			->active_box('inline_stpl_edit')
 #			->active_box('xhprof_enable')
 
-#			->active_box('use_only_https')
-#			->active_box('css_minimize')
-#			->active_box('js_minimize')
-#			->active_box('use_phar_php_code')
-#			->active_box('online_users_tracking')
-#			->active_box('errors_custom_handler')
-#			->active_box('tpl_allow_use_db')
-#			->select_box('tpl_driver')
-#			->active_box('tpl_compile')
+			->active_box('use_only_https')
+			->active_box('css_minimize')
+			->active_box('js_minimize')
+			->active_box('use_phar_php_code')
+			->active_box('online_users_tracking')
+			->active_box('errors_custom_handler')
+			->select_box('tpl_driver', $this->tpl_drivers)
+			->active_box('tpl_compile')
+			->active_box('tpl_allow_use_db')
 
 #			->select_box('mail_default_driver')
 
@@ -118,6 +139,33 @@ class yf_settings {
 #			->active_box('db_query_cache_enabled')
 #			->number('db_query_cache_ttl')
 #			->select_box('db_query_cache_driver')
+
+			->save()
 		;
+	}
+
+	/**
+	*/
+	function cache_purge() {
+		$result = _class('cache')->_clear_all();
+		return js_redirect('./?object='.$_GET['object']);
+	}
+
+	/**
+	*/
+	function cache_stats() {
+// TODO
+	}
+
+	/**
+	*/
+	function minify_css() {
+// TODO
+	}
+
+	/**
+	*/
+	function minify_js() {
+// TODO
 	}
 }
