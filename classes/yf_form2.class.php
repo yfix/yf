@@ -383,17 +383,19 @@ class yf_form2 {
 			}
 		}
 		// Custom html attributes forced with sub-array "attr"
-		foreach ((array)$extra['attr'] as $name => $val) {
-			if (!$name || !isset($val)) {
-				continue;
-			}
-			if (is_array($val)) {
-				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
-			} else {
-				if (!strlen($val)) {
+		if (is_array($extra['attr'])) {
+			foreach ((array)$extra['attr'] as $name => $val) {
+				if (!$name || !isset($val)) {
 					continue;
 				}
-				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				if (is_array($val)) {
+					$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+				} else {
+					if (!strlen($val)) {
+						continue;
+					}
+					$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				}
 			}
 		}
 		return ' '.implode(' ', $body);
