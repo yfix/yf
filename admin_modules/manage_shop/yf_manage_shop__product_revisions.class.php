@@ -184,8 +184,13 @@ class yf_manage_shop__product_revisions {
 		$dir2 = substr($dirs, -3, 3);
 		$dir1 = substr($dirs, -6, 3);
 		$m_path = $dir1.'/'.$dir2.'/';
-		$image_thumb = WEB_PATH.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_thumb.jpg".(($a['action']=='delete')? "_":"");
-		$image_big = WEB_PATH.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_big.jpg".(($a['action']=='delete')? "_":"");
+		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
+		$base_url = WEB_PATH;
+		if (!empty($media_host)) {
+			$base_url = '//' . $media_host . '/';
+		}
+		$image_thumb = $base_url.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_thumb.jpg".(($a['action']=='delete')? "_":"");
+		$image_big = $base_url.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_big.jpg".(($a['action']=='delete')? "_":"");
 		return form($a, array(
 			'dd_mode' => 1,
 		))
@@ -193,7 +198,7 @@ class yf_manage_shop__product_revisions {
 			'desc' => t('Product'),
 			'data' => array($a['product_id'] => ' [id='. $a['product_id'].']'),
 		))
-		->admin_info('user_id')
+		->admin_info('user_id', "Editor")
 		->info_date('add_date', array('format' => 'full'))
 		->info('action')
 		->container("<a target=\"_blank\" title=\"View large\" href=\"".$image_big."\">
