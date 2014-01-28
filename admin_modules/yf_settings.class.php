@@ -59,7 +59,7 @@ class yf_settings {
 			->select_box('cache_driver', $this->cache_drivers)
 			->number('cache_ttl')//, cache()->FILES_TTL
 
-			->active_box('site_enabled')
+			->active_box('site_maintenance')
 			->select_box('default_css_framework', $this->css_frameworks) // TODO: link to edit
 			->select_box('default_css_subtheme', $this->css_subthemes) // TODO: link to edit
 			->select_box('default_skin', $this->default_skins) // TODO: link to edit
@@ -70,7 +70,7 @@ class yf_settings {
 #			->select_box('default_currency', main()->get_data('currencies')) // TODO: link to edit
 #			->city_box('default_city') // Where site is located and propose this by default for visitors // TODO: link to edit
 
-#			->text('site_name', conf(''))
+#			->text('site_name', conf('SITE_NAME'))
 #			->text('default_meta_keywords')
 #			->text('default_meta_description')
 #			->text('default_charset')
