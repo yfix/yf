@@ -1253,12 +1253,20 @@ class yf_main {
 		}
 		$module_conf_name = $module_name;
 		$project_conf = &$GLOBALS['PROJECT_CONF'];
+		$conf = &$GLOBALS['CONF'];
 		// Allow to have separate conf entries for admin or user only modules
 		if (isset($project_conf[MAIN_TYPE.':'.$module_name])) {
 			$module_conf_name = MAIN_TYPE.':'.$module_name;
 		}
 		if (isset($project_conf[$module_conf_name])) {
 			foreach ((array)$project_conf[$module_conf_name] as $k => $v) {
+				$MODULE_OBJ->$k = $v;
+			}
+		}
+		// Override PROJECT_CONF with specially set CONF (from web admin panel, as example)
+		$conf = &$GLOBALS['CONF'];
+		if (isset($conf['module.'.$module_conf_name])) {
+			foreach ((array)$conf['module.'.$module_conf_name] as $k => $v) {
 				$MODULE_OBJ->$k = $v;
 			}
 		}
