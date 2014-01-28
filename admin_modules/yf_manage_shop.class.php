@@ -200,6 +200,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
 	}
 
+	function product_images_revisions() {
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+	}
+ 
 	function orders() {
 		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->orders_manage();
 	}
@@ -405,8 +409,8 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
 	}
 
-	function _product_images_add_revision($item_id) {		
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($item_id);
+	function _product_images_add_revision($action, $product_id, $image_id) {		
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $product_id, $image_id);
 	}
 
 	function import_xls($params = array()) {
