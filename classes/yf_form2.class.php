@@ -2205,10 +2205,29 @@ class yf_form2 {
 			$class = $extra['class'] ?: 'star';
 			$body[] = '<span class="rating">';
 			foreach (range(1, $stars) as $num) {
-				$body[] = '<span class="'.$class.'"></span>';
+				$body[] = '<span class="'.$class.' '.$extra['name'].'" data-name="'.$extra['name'].'" data-value="'.($stars-$num+1).'"></span>';
 			}
 			$body[] = '</span>';
-// TODO: add jquery catching click and store inside hidden
+			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
+			
+			$body[] = '
+				<script>
+					$(function () {
+						$(".'.$class.'.'.$extra['name'].'").on("click",function() {
+							var value = $(this).attr("data-value");
+							$("#"+$(this).attr("data-name")).val(value);
+							$(".rating.star.'.$extra['name'].'").each(function() {
+								$(this).attr("data-value");
+								if (value>=$(this).attr("data-value")) {
+									$(this).addClass("rating_selected");								
+								} else {
+									$(this).removeClass("rating_selected");				
+								}
+							});
+						});
+					});
+				</script>';
+			
 			return $_this->_row_html(implode('', $body), $extra, $r);
 		};
 		if ($this->_chained_mode) {
