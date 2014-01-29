@@ -75,7 +75,7 @@ class yf_manage_shop_upload_images {
                 $ext = $this->ALLOWED_MIME_TYPES[$file_type];
                 if($ext == 'rar') common()->rar_extract($archive_name, $EXTRACT_PATH);
                 if($ext == 'zip') common()->zip_extract($archive_name, $EXTRACT_PATH);
-                if($ext == 'tar' || $ext == 'gz') passthru($$ext);
+                if($ext == 'tar' || $ext == 'gz') exec($$ext);
 
                 $result_files = _class('dir')->scan_dir($EXTRACT_PATH, true, '-f /\.(jpg|jpeg|png|gif|bmp)$/', '/__MACOSX/');
                 foreach($result_files as $k => $v){
@@ -100,7 +100,7 @@ class yf_manage_shop_upload_images {
                 unlink($this->ARCHIVE_FOLDER.$new_name);
                 common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']));
 
-                return tpl()->parse("shop_supplier_panel/upload_archive", $replace);
+                return tpl()->parse("manage_shop/upload_archive", $replace);
         }
 
         /**
@@ -120,9 +120,13 @@ class yf_manage_shop_upload_images {
                 }
                 if(!empty($articul[0])){
                         $articul = _es(strip_tags($articul[0]));
+/*
                         $sql = 'SELECT id FROM '.db('shop_products').'
                                         WHERE articul="'.$articul.'"
                                                 AND supplier_id='.$supplier_id;
+*/
+                        $sql = 'SELECT id FROM '.db('shop_products').'
+                                        WHERE id= '.$articul;
                         $product = db()->query_fetch($sql);
                 }else{
                         return "Articul_not_found";
@@ -179,7 +183,8 @@ class yf_manage_shop_upload_images {
                 }                        
                 db()->query("UPDATE `".db('shop_products')."` SET `image`='1' WHERE `id`=".$id);
                 db()->commit();
-                
+                module('manage_shop')->_product_images_add_revision('import', $id, $i);
+
                 return $thumb_name;
         }
 

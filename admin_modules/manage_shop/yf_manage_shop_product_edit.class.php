@@ -36,9 +36,6 @@ class yf_manage_shop_product_edit {
 
 				if (!empty($_FILES)) {
 					$last_img_insert_id = module('manage_shop')->_product_image_upload($_GET['id']);
-					if ($last_img_insert_id) {
-						module('manage_shop')->_product_images_add_revision($_GET['id']);
-					}
 				} 
 				
 				$params_to_insert = array();

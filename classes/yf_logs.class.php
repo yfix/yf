@@ -183,9 +183,9 @@ class yf_logs {
 		// Prepare log data
 		$log_data = date('Y-m-d H:i:s').' ['.$this->_error_levels_names[$log_level].'] '.$text.'  ('.$trace['file'].' on line '.$trace['line'].")\r\n";
 		// Save info to file
-		if ($fh = @fopen($LOGS_DIR.'debug_logs.log', 'a')) {
-			@fwrite($fh, $log_data);
-			@fclose($fh);
+		if ($fh = fopen($LOGS_DIR.'debug_logs.log', 'a')) {
+			fwrite($fh, $log_data);
+			fclose($fh);
 		}
 */
 	}

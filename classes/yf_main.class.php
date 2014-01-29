@@ -1262,6 +1262,13 @@ class yf_main {
 				$MODULE_OBJ->$k = $v;
 			}
 		}
+		// Override PROJECT_CONF with specially set CONF (from web admin panel, as example)
+		$conf = &$GLOBALS['CONF'];
+		if (isset($conf[$module_conf_name]) && is_array($conf[$module_conf_name])) {
+			foreach ((array)$conf[$module_conf_name] as $k => $v) {
+				$MODULE_OBJ->$k = $v;
+			}
+		}
 		// Implementation of hook 'init'
 		if (method_exists($MODULE_OBJ, $this->MODULE_CONSTRUCT)) {
 			$MODULE_OBJ->{$this->MODULE_CONSTRUCT}($params);

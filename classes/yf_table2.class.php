@@ -375,7 +375,11 @@ class yf_table2 {
 				if (is_callable($params['tr'])) {
 					$tr_attrs = $params['tr']($row, $_id);
 				} elseif (is_array($params['tr'])) {
-					$tr_attrs = isset($params['tr'][$_id]) ? $this->_attrs($params['tr'][$_id], array('class', 'style')) : '';
+					if (is_array($params['tr'][$_id])) {
+						$tr_attrs = isset($params['tr'][$_id]) ? $this->_attrs($params['tr'][$_id], array('class', 'style')) : '';
+					} elseif (is_string($params['tr'][$_id])) {
+						$tr_attrs = $params['tr'][$_id];
+					}
 				} else {
 					$tr_attrs = $params['tr'];
 				}
@@ -756,17 +760,19 @@ class yf_table2 {
 			}
 		}
 		// Custom html attributes forced with sub-array "attr"
-		foreach ((array)$extra['attr'] as $name => $val) {
-			if (!$name || !isset($val)) {
-				continue;
-			}
-			if (is_array($val)) {
-				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
-			} else {
-				if (!strlen($val)) {
+		if (is_array($extra['attr'])) {
+			foreach ((array)$extra['attr'] as $name => $val) {
+				if (!$name || !isset($val)) {
 					continue;
 				}
-				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				if (is_array($val)) {
+					$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+				} else {
+					if (!strlen($val)) {
+						continue;
+					}
+					$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				}
 			}
 		}
 		return ' '.implode(' ', $body);

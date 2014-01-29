@@ -2,15 +2,6 @@
 
 exit('Script is temporary');
 
-if (!function_exists('my_array_merge')) {
-	function my_array_merge($a1, $a2) {
-		foreach ((array)$a2 as $k => $v) { if (isset($a1[$k]) && is_array($a1[$k])) { if (is_array($a2[$k])) { 
-			foreach ((array)$a2[$k] as $k2 => $v2) { if (isset($a1[$k][$k1]) && is_array($a1[$k][$k1])) { $a1[$k][$k2] += $v2; } else { $a1[$k][$k2] = $v2; } 
-		} } else { $a1[$k] += $v; } } else { $a1[$k] = $v; } }
-		return $a1;
-	}
-}
-
 ##############
 
 $d = dirname(__FILE__).'/db_table_sql/';

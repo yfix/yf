@@ -59,6 +59,28 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function array_to_form($a = array(), $params = array(), $replace = array()) {
+		$this->_replace = $replace;
+		$this->_params = $params;
+		// Example of row: array('text', 'login', array('class' => 'input-medium'))
+		foreach ((array)$a as $v) {
+			$func = '';
+			if (is_string($v)) {
+				$func = $v;
+				$v = array();
+			} elseif (is_array($v)) {
+				$func = $v[0];
+			}
+			if (!$func || !method_exists($this, $func)) {
+				continue;
+			}
+			$this->$func($v[1], $v[2], $v[3], $v[4], $v[5]);
+		}
+		return $this;
+	}
+
+	/**
 	* Wrapper for template engine
 	* Example template:
 	*	{form_row('form_begin')}
@@ -149,6 +171,9 @@ class yf_form2 {
 		}
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
+		}
+		if (!is_array($this->_body)) {
+			$this->_body = array();
 		}
 		if (!$extra['no_form'] && !$this->_params['no_form']) {
 			// Call these methods, if not done yet, save 2 api calls
@@ -383,17 +408,19 @@ class yf_form2 {
 			}
 		}
 		// Custom html attributes forced with sub-array "attr"
-		foreach ((array)$extra['attr'] as $name => $val) {
-			if (!$name || !isset($val)) {
-				continue;
-			}
-			if (is_array($val)) {
-				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
-			} else {
-				if (!strlen($val)) {
+		if (is_array($extra['attr'])) {
+			foreach ((array)$extra['attr'] as $name => $val) {
+				if (!$name || !isset($val)) {
 					continue;
 				}
-				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				if (is_array($val)) {
+					$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+				} else {
+					if (!strlen($val)) {
+						continue;
+					}
+					$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				}
 			}
 		}
 		return ' '.implode(' ', $body);
@@ -1245,7 +1272,7 @@ class yf_form2 {
 			$desc = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {

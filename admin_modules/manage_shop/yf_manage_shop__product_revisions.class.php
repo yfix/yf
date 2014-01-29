@@ -35,8 +35,8 @@ class yf_manage_shop__product_revisions {
 				'product_related'     => array('sql' => 'SELECT * FROM '.db('shop_product_related').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
 			),
 			'order' => array(
-				'orders'      => array('sql' => 'SELECT * FROM '.db('orders').' WHERE id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => false),
-				'order_items' => array('sql' => 'SELECT * FROM '.db('order_items').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => true),
+				'orders'      => array('sql' => 'SELECT * FROM '.db('shop_orders').' WHERE id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => false),
+				'order_items' => array('sql' => 'SELECT * FROM '.db('shop_order_items').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => true),
 			),
 		);
 
@@ -74,11 +74,11 @@ class yf_manage_shop__product_revisions {
 		foreach ($ids as $id) {
 			if (isset($all_last_revision[$id]) && isset($all_data[$id])) {
 				$cur_revision = json_decode($all_last_revision[$id], true);
-				$cur_revision = array_replace_recursive($cur_revision, $temp_indexes);
+				$cur_revision = is_array($cur_revision) ? array_replace_recursive($cur_revision, $temp_indexes) : $cur_revision;
 				$cur_revision = json_encode($cur_revision);
 
 				$new_revision = $all_data[$id];
-				$new_revision = array_replace_recursive($new_revision , $temp_indexes);
+				$new_revision = is_array($new_revision) ? array_replace_recursive($new_revision , $temp_indexes) : $new_revision;
 				$new_revision = json_encode($new_revision);
 
 				if ($cur_revision == $new_revision) {
@@ -105,29 +105,15 @@ class yf_manage_shop__product_revisions {
 
 	/**
 	 */
-	function _product_images_add_revision($item_id) {
-		$dirs = sprintf('%06s', $item_id);
-		$dir2 = substr($dirs, -3, 3);
-		$dir1 = substr($dirs, -6, 3);
-		$m_path = $dir1.'/'.$dir2.'/';		
-		$images = _class('dir')->scan_dir(
-			module('manage_shop')->products_img_dir. $m_path,
-			true,
-			'/product_'.$item_id.'_.+?\.jpg/'
-		);
-		$data = array();
-		foreach ((array)$images as $v) {
-			if (!$v) {
-				continue;
-			}
-			$k = str_replace(module('manage_shop')->products_img_dir, "", $v);
-			$data[$k] = base64_encode(file_get_contents($v));
-		}
-		db()->INSERT(db('shop_product_images_revisions'),array(
+	function _product_images_add_revision($action, $product_id, $image_id = false) {
+		$images_ids = db()->get_2d('SELECT id FROM '.db('shop_product_images').' WHERE product_id = '.$product_id);
+		db()->insert_safe(db('shop_product_images_revisions'),array(
 			'user_id' => intval(main()->ADMIN_ID),
 			'add_date' => $_SERVER['REQUEST_TIME'],
-			'item_id' => $item_id,
-			'data' => json_encode($data),
+			'action'	=> $action,
+			'product_id' => $product_id,
+			'image_id' => $image_id,
+			'data'		=> implode (",", $images_ids),
 		));		
 	}	
 
@@ -167,6 +153,58 @@ class yf_manage_shop__product_revisions {
 		->info_date('add_date', array('format' => 'full'))
 		->info('action')
 		->func('data', function($extra, $r, $_this){ return '<pre>'.var_export(_class('utils')->object_to_array(json_decode($r[$extra['name']])), 1).'</pre>'; })
+		;
+	}
+
+	/**
+	 */
+	function product_images_revisions() {
+		$rev_id = intval($_GET['id']);
+		if ($rev_id) {
+			return $this->product_images_revisions_view();
+		}
+		return table('SELECT * FROM '.db('shop_product_images_revisions').' ORDER BY id DESC')
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
+			->admin('user_id', array('desc' => 'admin'))
+			->text('action')
+			->btn_view('', './?object=manage_shop&action=product_images_revisions&id=%d')
+			;
+	}
+
+	/**
+	 */
+	function product_images_revisions_view() {
+		$sql = 'SELECT * FROM '.db('shop_product_images_revisions').' WHERE id='.intval($_GET['id']);
+		$a = db()->get($sql);
+		if (empty($a)) {
+			return _e('Revision not found');
+		}
+		$dirs = sprintf('%06s', $a['product_id']);
+		$dir2 = substr($dirs, -3, 3);
+		$dir1 = substr($dirs, -6, 3);
+		$m_path = $dir1.'/'.$dir2.'/';
+		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
+		$base_url = WEB_PATH;
+		if (!empty($media_host)) {
+			$base_url = '//' . $media_host . '/';
+		}
+		$image_thumb = $base_url.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_thumb.jpg".(($a['action']=='delete')? "_":"");
+		$image_big = $base_url.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_big.jpg".(($a['action']=='delete')? "_":"");
+		return form($a, array(
+			'dd_mode' => 1,
+		))
+		->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id='.$a['product_id'], array(
+			'desc' => t('Product'),
+			'data' => array($a['product_id'] => ' [id='. $a['product_id'].']'),
+		))
+		->admin_info('user_id', "Editor")
+		->info_date('add_date', array('format' => 'full'))
+		->info('action')
+		->container("<a target=\"_blank\" title=\"View large\" href=\"".$image_big."\">
+			<img src=\"".$image_thumb."\" class=\"product_image img-polaroid\" style=\"width:90px;\"></a>")
+//		->button("checkout_action","Отменить изменение")
+		
 		;
 	}
 }

@@ -6,6 +6,7 @@ class yf_manage_shop_product_images{
 	 */
 	function product_image_delete () {
 		$_GET['id'] = intval($_GET['id']);
+		$_GET['key'] = intval($_GET['key']);
 		if ($_GET['id']) {
 			$product = module('manage_shop')->_product_get_info($_GET['id']);
 		}
@@ -20,7 +21,7 @@ class yf_manage_shop_product_images{
 			return _e('Image not found');
 		}
 		module('manage_shop')->_product_image_delete($_GET['id'], $_GET['key']);
-		module('manage_shop')->_product_images_add_revision($_GET['id']);
+		module('manage_shop')->_product_images_add_revision('delete', $_GET['id'], $_GET['key']);
 
 		module('manage_shop')->_product_cache_purge($_GET['id']);
 
@@ -41,7 +42,7 @@ class yf_manage_shop_product_images{
 		if (main()->is_post()) {
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'0\' WHERE `product_id`='.$product_id);
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'1\' WHERE `id`='.$_POST['main_image']);
-			module('manage_shop')->_product_images_add_revision($_GET['id']);
+			module('manage_shop')->_product_images_add_revision('change_main', $_GET['id']);
 
 			module('manage_shop')->_product_cache_purge($_GET['id']);
 		} else {
@@ -83,7 +84,7 @@ class yf_manage_shop_product_images{
 		);
 		foreach((array)$image_files as $filepath) {
 			if (file_exists($filepath)) {
-				unlink($filepath);
+				rename($filepath, $filepath."_");
 			}
 		}
 		db()->query('DELETE FROM `'.db('shop_product_images').'` WHERE `product_id`='.$id.' AND `id`='.$k);
@@ -165,6 +166,7 @@ class yf_manage_shop_product_images{
 			}
 			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'1\' WHERE `id`='.$product_id);
 			db()->commit();
+			module('manage_shop')->_product_images_add_revision('upload', $product_id, $i);
 		} 
 		return $i;
 	}	

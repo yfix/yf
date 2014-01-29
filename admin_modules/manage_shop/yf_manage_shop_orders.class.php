@@ -115,7 +115,7 @@ class yf_manage_shop_orders{
 						} else {
 							db()->UPDATE(db('shop_order_items'), array('quantity'	=> intval($qty)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						}
-						
+
 						$recount_price = true;
 					}
 				} elseif ($k=='price_unit') {
@@ -132,10 +132,10 @@ class yf_manage_shop_orders{
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
 					if (($f == 'delivery_price') && ($_POST['delivery_price'] != $order_info['delivery_price'])) {
-						 $sql['is_manual_delivery_price'] = 1;
-						 $order_info['is_manual_delivery_price'] = 1;
-						 $order_info['delivery_price'] = $sql['delivery_price'];
-						 $recount_price = true;
+						$sql['is_manual_delivery_price'] = 1;
+						$order_info['is_manual_delivery_price'] = 1;
+						$order_info['delivery_price'] = $sql['delivery_price'];
+						$recount_price = true;
 					}
 				}
 			}
@@ -145,6 +145,9 @@ class yf_manage_shop_orders{
 			if ($recount_price) {
 				list($order_info['total_sum'], $order_info['delivery_price']) = $this->_order_recount_price($order_info['id'],$order_info);
 			}			
+
+			module('manage_shop')->_order_add_revision('edit', intval($_GET['id']));
+
 			return js_redirect('./?object='.main()->_get('object').'&action=show_orders&action=view_order&id='.$order_info['id']);
 		}
 		
@@ -329,6 +332,9 @@ class yf_manage_shop_orders{
 
 		db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($total_price, 2, '.', ''),'delivery_price' => $delivery_price),"`id`='".$_GET['id']."'");
 		db()->query('DELETE FROM '.db('shop_order_items').' WHERE order_id='.intval($_GET['merge_id']));
+
+		module('manage_shop')->_order_add_revision('merge', array($_GET['id'], intval($_GET['merge_id'])));
+
 		return js_redirect('./?object='.main()->_get('object').'&action=view_order&id='.$_GET['id']);
 	}
 
@@ -344,6 +350,9 @@ class yf_manage_shop_orders{
 			db()->query('DELETE FROM '.db('shop_order_items').' WHERE `order_id`='.intval($_GET['id']));
 			common()->admin_wall_add(array('shop order deleted: '.$_GET['id'], $_GET['id']));
 		}
+
+		module('manage_shop')->_order_add_revision('delete', $_GET['id']);
+
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			$_GET['id'];
@@ -353,29 +362,45 @@ class yf_manage_shop_orders{
 	}
 	
 	function order_product_add_ajax() {
-		$order_info = db()->get("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".intval($_POST['order_id']));
-		if (empty($order_info)) return json_encode('ko');
-		if (intval($_POST['quantity']) == 0) return json_encode('ko');
+		if (empty($_POST['order_id']) || empty($_POST['product_id'])) {
+			return json_encode('ko');
+		}
+
+		$order_id = intval($_POST['order_id']);
+		$product_id = intval($_POST['product_id']);
+
+		if (intval($_POST['quantity']) == 0) {
+			return json_encode('ko');
+		}
+
+		$order_info = db()->get("SELECT * FROM `".db('shop_orders')."` WHERE `id`=".$order_id);
+		if (empty($order_info)) {
+			return json_encode('ko');
+		}
 		
-		$_product_info = db()->get("SELECT * FROM `".db('shop_products')."` WHERE `id`=".intval($_POST['product_id']));
-		if (empty($_product_info)) return json_encode('ko');
+		$_product_info = db()->get("SELECT * FROM `".db('shop_products')."` WHERE `id`=".$product_id);
+		if (empty($_product_info)) {
+			return json_encode('ko');
+		}
 		
-		$A = db()->get("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".intval($_POST['order_id'])." AND `product_id`=".intval($_POST['product_id']));
+		$A = db()->get("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".$order_id." AND `product_id`=".$product_id);
 		
 		if (empty($A)) {
 			db()->insert(db('shop_order_items'), array(
-				'order_id' => intval($_POST['order_id']),
-				'product_id' => intval($_POST['product_id']),
-				'param_id' => 0,
-				'quantity' => intval($_POST['quantity']),
-				'price' => number_format(module('shop')->_product_get_price($_product_info), 2, '.', ''),
+				'order_id'   => $order_id,
+				'product_id' => $product_id,
+				'param_id'   => 0,
+				'quantity'   => intval($_POST['quantity']),
+				'price'      => number_format(module('shop')->_product_get_price($_product_info), 2, '.', ''),
 			));
 		} else {
 			db()->update(db('shop_order_items'), array(
 				'quantity' => $A['quantity'] + intval($_POST['quantity']),
-			)," `order_id`=".intval($_POST['order_id'])." AND `product_id`=".intval($_POST['product_id']));
+			)," `order_id`=".$order_id." AND `product_id`=".$product_id);
 		}
-		$this->_order_recount_price($_POST['order_id'],$order_info);
+		$this->_order_recount_price($_POST['order_id'], $order_info);
+
+		module('manage_shop')->_order_add_revision('edit', $order_id);
 		
 		return json_encode('ok');
 	}

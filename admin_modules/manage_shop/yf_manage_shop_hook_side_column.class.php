@@ -5,7 +5,7 @@ class yf_manage_shop_hook_side_column {
 	/***/
 	function _hook_side_column () {
 		if ($_GET['action'] == 'product_edit') {
-			return $this->_product_revisions();
+			return $this->_product_revisions() . $this->_product_images_revisions();
 		} elseif ($_GET['action'] == 'product_revisions') {
 			return $this->_product_revisions_similar();
 		} elseif ($_GET['action'] == 'view_order') {
@@ -30,6 +30,25 @@ class yf_manage_shop_hook_side_column {
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
 			->btn_view('', './?object=manage_shop&action=product_revisions&id=%d')
+		;
+	}
+
+	/***/
+	function _product_images_revisions () {
+		$product_id = intval($_GET['id']);
+		$product_info = module('manage_shop')->_product_get_info($product_id);
+		if (!$product_info) {
+			return false;
+		}
+		$sql = 'SELECT * FROM '.db('shop_product_images_revisions').' WHERE product_id='.intval($product_id).' ORDER BY add_date DESC';
+		return table($sql, array(
+				'caption' => t('Product images revisions'),
+				'no_records_html' => '',
+			))
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->admin('user_id', array('desc' => 'admin'))
+			->text('action')
+			->btn_view('', './?object=manage_shop&action=product_images_revisions&id=%d')
 		;
 	}
 

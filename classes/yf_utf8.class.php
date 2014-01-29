@@ -146,11 +146,11 @@ class yf_utf8 {
 	*/
 	function convert_to_utf8($data, $encoding) {
 		if (function_exists('iconv')) {
-			$out = @iconv($encoding, 'utf-8', $data);
+			$out = iconv($encoding, 'utf-8', $data);
 		} else if (function_exists('mb_convert_encoding')) {
-			$out = @mb_convert_encoding($data, 'utf-8', $encoding);
+			$out = mb_convert_encoding($data, 'utf-8', $encoding);
 		} else if (function_exists('recode_string')) {
-			$out = @recode_string($encoding .'..utf-8', $data);
+			$out = recode_string($encoding .'..utf-8', $data);
 		} else {
 			_debug_log(t('Unsupported encoding %s. Please install iconv, GNU recode or mbstring for PHP.', array('%s' => $encoding)));
 			return FALSE;
