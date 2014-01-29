@@ -1427,6 +1427,12 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function split_sql(&$ret, $sql) {
+		return _class('db_utils', 'classes/db/')->split_sql($ret, $sql);
+	}
+
+	/**
 	* I plan to start query builder qurying from this shortcut
 	*/
 	function select($sql = array()) {
