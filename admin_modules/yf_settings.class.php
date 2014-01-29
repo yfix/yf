@@ -41,7 +41,7 @@ class yf_settings {
 #		'postgre'	=> 'postgre',
 	);
 	public $cache_drivers = array(
-		'memcached'	=> 'memcached',
+		'memcache'	=> 'memcache',
 		'xcache'	=> 'xcache',
 		'apc'		=> 'apc',
 		'files'		=> 'files',
