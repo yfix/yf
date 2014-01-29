@@ -56,6 +56,18 @@ class yf_settings {
 
 	/**
 	*/
+	function _addslashes($val) {
+		if (is_array($val)) {
+			foreach ($val as $k => $v) {
+				$val[$k] = $this->_addslashes($v);
+			}
+			return $val;
+		}
+		return addslashes($val);
+	}
+
+	/**
+	*/
 	function show() {
 // TODO: long descriptions for each item
 // TODO: connect this (save to auto-generated file)
@@ -65,8 +77,66 @@ class yf_settings {
 	3) TODO: from auto-generated file or from conf('') ?
 	4) _init() still able to override everything
 */
-// TODO: maybe use conf('module.$mod_name.$setting', '$value') for overriding PROJECT_CONF from here
+// TODO: maybe use conf('$mod_name::$setting', '$value') for overriding PROJECT_CONF from here
+#print_r($GLOBALS['CONF']);
+
+		if (main()->is_post()) {
+			$to_save = array();
+			foreach((array)$_POST as $k => $v) {
+				if (is_string($v) && !strlen($v)) {
+					continue;
+				}
+				if (is_array($v)) {
+					foreach((array)$v as $k2 => $v2) {
+						if (!$k2 || (is_string($v2) && !strlen($v2))) {
+							unset($v[$k2]);
+						}
+					}
+					if (!count($v)) {
+						continue;
+					}
+				}
+				$to_save[$k] = $v;
+			}
+			if ($to_save) {
+				foreach((array)$to_save as $k => $v) {
+					if (is_array($v)) {
+						foreach((array)$v as $k2 => $v2) {
+							$to_save[$k.'::'.$k2] = '$CONF[\''.$this->_addslashes($k).'\'][\''.$this->_addslashes($k2).'\'] = \''.$this->_addslashes($v2).'\';';
+						}
+						unset($to_save[$k]);
+					} elseif (false !== strpos($k, '__')) {
+						list($_module, $_setting) = explode('__', $k);
+						$to_save[$k] = '$CONF[\''.$this->_addslashes($_module).'\'][\''.$this->_addslashes($_setting).'\'] = \''.$this->_addslashes($v).'\';';
+					} else {
+						$to_save[$k] = '$CONF[\''.$this->_addslashes($k).'\'] = \''.$this->_addslashes($v).'\';';
+					}
+				}
+				if ($to_save) {
+					$saved_settings_content = '<'.'?php'.PHP_EOL.implode(PHP_EOL, $to_save).PHP_EOL;
+					$saved_settings_file = PROJECT_PATH.'saved_settings.php';
+					common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'._prepare_html($saved_settings_content).'</pre>');
+					file_put_contents($saved_settings_file, $saved_settings_content);
+					return js_redirect('./?object='.$_GET['object']);
+				}
+			}
+		}
 		$r = (array)$_POST + (array)conf();
+		$a = array(
+			'row_start',
+				'save',
+				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge'), // TODO: link, method, icon
+				array('link', 'cache_stats', './?object='.$_GET['object'].'&action=cache_stats'), // TODO: link, method, icon
+				array('link', 'minify_css', './?object='.$_GET['object'].'&action=minify_css'), // TODO: link, method, icon
+				array('link', 'minify_js', './?object='.$_GET['object'].'&action=minify_js'), // TODO: link, method, icon
+			'row_end',
+			array('active_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
+			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
+			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
+			'save',
+		);
+		return form()->array_to_form($a, array('class' => 'form-horizontal form-condensed'));
+/*
 		return form($r, array('class' => 'form-horizontal form-condensed'))
 			->row_start()
 				->save()
@@ -75,9 +145,9 @@ class yf_settings {
 				->link('minify_css', './?object='.$_GET['object'].'&action=minify_css') // TODO: link, method, icon
 				->link('minify_js', './?object='.$_GET['object'].'&action=minify_js') // TODO: link, method, icon
 			->row_end()
-			->active_box('use_cache')
-			->select_box('cache_driver', $this->cache_drivers)
-			->number('cache_ttl')//, cache()->FILES_TTL
+			->active_box('main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache'))
+			->select_box('cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver'))
+			->number('cache[FILES_TTL]', array('desc' => 'cache_ttl'))//, cache()->FILES_TTL
 
 			->active_box('site_maintenance', array('tip' => ''))
 			->select_box('default_css_framework', $this->css_frameworks) // TODO: link to edit
@@ -142,6 +212,7 @@ class yf_settings {
 
 			->save()
 		;
+*/
 	}
 
 	/**
