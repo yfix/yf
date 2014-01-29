@@ -78,8 +78,8 @@ class yf_tpl_driver_yf_compile {
 			'/(\{exec_cached\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,true);'.$_php_end,
 
-			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/ie'
-				=> $_php_start.'echo main()->_execute(\'graphics\',\'_show_block\',\'name=$1;$2\',\''.$name.'\',0,true);'.$_php_end,
+			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i'
+				=> $_php_start.'echo main()->_execute(\'graphics\',\'_show_block\',\'name=$1;$2\',\''.$name.'\',0,false);'.$_php_end,
 
 			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo _class_safe("graphics")->_show_help_tip(array("tip_id"=>\'$1\',"tip_type"=>\'$2\'));'.$_php_end,

@@ -85,6 +85,9 @@ if (!function_exists('db_slave')) {
 if (!function_exists('t')) {
 	function t($string, $args = 0, $lang = '') { return _class('i18n')->translate_string($string, $args, $lang); }
 }
+if (!function_exists('url')) {
+	function url($params = array(), $params2 = array()) { return module('rewrite')->_force_get_url($params, $params2); }
+}
 if (!function_exists('_force_get_url')) {
 	function _force_get_url($params = array(), $host = '', $url_str = '') { return module('rewrite')->_force_get_url($params, $host, $url_str); }
 }
@@ -106,21 +109,13 @@ if (!function_exists('table2')) {
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
 }
-// Alias for 't()'
-if (!function_exists('translate')) {
-	function translate ($string, $args = 0, $lang = '') { return t($string, $args, $lang); }
-}
-// Alias for 't()'
-if (!function_exists('i18n')) {
-	function i18n ($string, $args = 0, $lang = '') { return t($string, $args, $lang); }
-}
 // Redirect using JS
 if (!function_exists('js_redirect')) {
 	function js_redirect ($location, $rewrite = true, $text = '', $ttl = 0) { return common()->redirect($location, $rewrite, 'js', $text, $ttl); }
 }
 // Redirect using Meta tags
 if (!function_exists('redirect')) {
-	function redirect ($location, $rewrite = false, $text = '', $ttl = 3) {	return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
+	function redirect ($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
 }
 if (!function_exists('_e')) {
 	function _e($text = '', $clear_error = true) { return common()->_show_error_message($text, $clear_error); }
@@ -206,9 +201,6 @@ if (!function_exists('sphinx_escape_string')) {
 }
 if (!function_exists('html')) {
 	function html ($params) { return _class('html')->chained_wrapper($params); }
-}
-if (!function_exists('url')) {
-	function url($params = array(), $params2 = array()) { return module('rewrite')->_force_get_url($params, $params2); }
 }
 if (!function_exists('validate')) {
 	function validate($text = '', $rules = array()) { return _class('validate')->_process_text($text, $rules); }

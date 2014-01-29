@@ -308,7 +308,7 @@ class yf_dir {
 			}
 			if ($_is_dir) {
 				if (!file_exists($item_name_2)) {
-					@mkdir($item_name_2, 0777);
+					mkdir($item_name_2, 0777);
 				}
 				$this->move_dir($item_name_1, $item_name_2, $pattern_include, $pattern_exclude);
 			} else {
@@ -331,7 +331,7 @@ class yf_dir {
 			return false;
 		}
 		// Quick way
-		$result = @copy($path_from, $path_to);
+		$result = copy($path_from, $path_to);
 		if (!$result) {
 			$result = (bool)file_put_contents($path_to, file_get_contents($path_from));
 		}
@@ -360,24 +360,24 @@ class yf_dir {
 				continue;
 			}
 			$item_name = str_replace('//', '/', $start_dir.'/'.$f);
-			@chmod($item_name, 0777);
+			chmod($item_name, 0777);
 			// Delete files immediatelly
 			if (is_file($item_name)) {
-				@unlink($item_name);
+				unlink($item_name);
 			// Store folders to delete in stack and try to delete sub items
 			} elseif (is_dir($item_name)) {
 				$this->delete_dir ($item_name);
 				$sub_dirs_list[] = $item_name;
 			}
 		}
-		@closedir($dh);
+		closedir($dh);
 		// Now try to delete sub folders
 		foreach ((array)$sub_dirs_list as $dir_name) {
-			@rmdir($dir_name);
+			rmdir($dir_name);
 		}
 		// Do delete start dir if needed
 		if ($delete_start_dir) {
-			@rmdir($start_dir);
+			rmdir($start_dir);
 		}
 	}
 

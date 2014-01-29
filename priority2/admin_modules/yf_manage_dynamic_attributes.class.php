@@ -70,7 +70,7 @@ class yf_manage_dynamic_attributes{
 				));
 			}
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("dynamic_fields_categories");
+				cache_del("dynamic_fields_categories");
 			}
 			return js_redirect("./?object=".$_GET["object"]);
 		}
@@ -105,7 +105,7 @@ class yf_manage_dynamic_attributes{
 				), "id=".intval($_GET["id"]));
 			}
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("dynamic_fields_categories");
+				cache_del("dynamic_fields_categories");
 			}
 			
 			return js_redirect("./?object=".$_GET["object"]);
@@ -133,7 +133,7 @@ class yf_manage_dynamic_attributes{
 		db()->query("DELETE FROM ".db('dynamic_fields_categories')." WHERE id=".intval($_GET["id"])." LIMIT 1");
 
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("dynamic_fields_categories");
+			cache_del("dynamic_fields_categories");
 		}
 		return js_redirect("./?object=".$_GET["object"]);
 	}
@@ -203,7 +203,7 @@ class yf_manage_dynamic_attributes{
 				db()->INSERT("dynamic_fields_info", $sql_array); 
 
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("dynamic_fields_info");
+					cache_del("dynamic_fields_info");
 				}
 
 				return js_redirect("./?object=".$_GET["object"]."&action=view_category&id=".$_GET["id"]);
@@ -267,7 +267,7 @@ class yf_manage_dynamic_attributes{
 				db()->UPDATE("dynamic_fields_info", $sql_array, "id=".$_GET["id"]); 
 
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("dynamic_fields_info");
+					cache_del("dynamic_fields_info");
 				}
 
 				return js_redirect("./?object=".$_GET["object"]."&action=view_category&id=".$A["category_id"]);
@@ -310,7 +310,7 @@ class yf_manage_dynamic_attributes{
 			db()->query("DELETE FROM ".db('dynamic_fields_values')." WHERE category_id = ".$field_info["category_id"]." AND field_id = ".$_GET["id"]);
 
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("dynamic_fields_info");
+				cache_del("dynamic_fields_info");
 			}
 		}
 		// Return user back
@@ -340,7 +340,7 @@ class yf_manage_dynamic_attributes{
 			db()->UPDATE("dynamic_fields_info", $sql_array, "id=".intval($_GET["id"]));
 
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("dynamic_fields_info");
+				cache_del("dynamic_fields_info");
 			}
 		}
 		// Return user back

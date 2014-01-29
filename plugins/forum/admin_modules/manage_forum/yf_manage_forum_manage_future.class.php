@@ -606,7 +606,7 @@ class yf_manage_forum_manage_future {
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_posters_users");
+				cache_del("forum_posters_users");
 			}
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=show_forum_posters");

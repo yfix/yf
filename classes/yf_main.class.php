@@ -100,7 +100,6 @@ class yf_main {
 	/** @var bool Definies if we should connect firephp library */
 	public $FIREPHP_ENABLE			= false;
 	/** @var bool Logging of every engine call */
-// TODO: move all logs into _class('logs') and control all of them in one place
 	public $LOG_EXEC				= false;
 	/** @var int Execute method cache lifetime (in seconds), set to 0 to use cache module default value */
 	public $EXEC_CACHE_TTL			= 600;
@@ -1260,6 +1259,13 @@ class yf_main {
 		}
 		if (isset($project_conf[$module_conf_name])) {
 			foreach ((array)$project_conf[$module_conf_name] as $k => $v) {
+				$MODULE_OBJ->$k = $v;
+			}
+		}
+		// Override PROJECT_CONF with specially set CONF (from web admin panel, as example)
+		$conf = &$GLOBALS['CONF'];
+		if (isset($conf[$module_conf_name]) && is_array($conf[$module_conf_name])) {
+			foreach ((array)$conf[$module_conf_name] as $k => $v) {
 				$MODULE_OBJ->$k = $v;
 			}
 		}

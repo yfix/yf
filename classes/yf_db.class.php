@@ -109,6 +109,8 @@ class yf_db {
 	public $SQL_NO_CACHE			= false;
 	/** @var bool Needed for installation and repairing process */
 	public $ALLOW_AUTO_CREATE_DB	= false;
+	/** @var bool Use sql query revisions for update/insert/replace/delete */
+	public $QUERY_REVISIONS			= false;
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
 	/** @var array */
@@ -483,6 +485,9 @@ class yf_db {
 		if ($only_sql) {
 			return $sql;
 		}
+		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $data, 'replace' => $replace, 'ignore' => $ignore));
+		}
 		return $this->query($sql);
 	}
 
@@ -552,6 +557,9 @@ class yf_db {
 		$sql = 'UPDATE '.$this->enclose_field_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
 		if ($only_sql) {
 			return $sql;
+		}
+		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $data, 'where' => $where));
 		}
 		return $this->query($sql);
 	}
@@ -1316,6 +1324,9 @@ class yf_db {
 		if (is_array($where)) {
 			$cond = key($where).'='.$this->enclose_field_value(current($where));
 		}
+		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
+			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
+		}
 		$sql = 'DELETE FROM '.$this->_real_name($table).' WHERE '.$cond.' LIMIT 1';
 		return $this->query($sql);
 	}
@@ -1379,6 +1390,9 @@ class yf_db {
 		foreach ($final as $k => $v) {
 			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
 		}
+		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
+			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $values, 'index' => $index));
+		}
 		return 'UPDATE '.$this->enclose_field_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
 	}
 
@@ -1413,9 +1427,47 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function split_sql(&$ret, $sql) {
+		return _class('db_utils', 'classes/db/')->split_sql($ret, $sql);
+	}
+
+	/**
 	* I plan to start query builder qurying from this shortcut
 	*/
 	function select($sql = array()) {
 		return _class('db_query_builder', 'classes/db/')->select($sql);
+	}
+
+	/**
+	*/
+	function _save_query_revision($method, $table, $params = array()) {
+		$trace = main()->trace_string();
+		$trace = array_slice(explode(PHP_EOL, $trace), 1, 5);
+		$extra = array(
+			'get_object'	=> $_GET['object'],
+			'get_action'	=> $_GET['action'],
+			'get_id'		=> $_GET['id'],
+			'trace'			=> $trace,
+		);
+// TODO: data_old usign SELECT by $where
+// TODO: data_diff = diff data_new vs data_old
+		$to_insert = array(
+			'date'			=> date('Y-m-d H:i:s'),
+			'data_new'		=> $params['data'] ? json_encode($params['data']) : '',
+#			'data_old'		=> 
+#			'data_diff'		=> 
+			'user_id'		=> main()->ADMIN_ID,
+			'user_group'	=> main()->ADMIN_GROUP,
+			'site_id'		=> conf('SITE_ID'),
+			'server_id'		=> conf('SERVER_ID'),
+			'ip'			=> common()->get_ip(),
+			'query_method'	=> $method,
+			'query_table'	=> $table,
+			'extra'			=> json_encode($extra),
+			'url'			=> $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'],
+		);
+		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
+		$this->_add_shutdown_query($sql);
 	}
 }

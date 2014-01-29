@@ -368,4 +368,28 @@ class yf_cats {
 		}
 		return $this->_items_cache[$cat_id][$item_id]['name'];
 	}
+
+	function _get_recursive_cat_ids ($cat_id = 0, $all_cats = false) {
+		$cat_id = intval($cat_id);
+		if (empty($all_cats)) {
+			$all_cats = conf('all_cats');
+			if (empty($all_cats)) {
+				$all_cats = main()->get_data('category_items_all');
+				if (empty($all_cats)) {
+					return false;
+				}
+				conf('all_cats', $all_cats);
+			}
+		}
+
+		$current_func = __FUNCTION__;
+		$ids[$cat_id] = $cat_id;
+		foreach ($all_cats as $key => $item) {
+			if ($item['parent_id'] == $cat_id) {
+				$ids += $this->$current_func($item['id'], $all_cats);
+			}
+		}
+
+		return $ids;
+	}
 }

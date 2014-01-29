@@ -1,6 +1,6 @@
 <?php
 
-class yf_log_admin_exec{
+class yf_log_admin_redirects {
 
 	/**
 	*/
@@ -10,25 +10,25 @@ class yf_log_admin_exec{
 			'order_by' => 'date',
 			'order_direction' => 'desc',
 		);
-		$sql = 'SELECT * FROM '.db('log_admin_exec');
+		$sql = 'SELECT * FROM '.db('log_redirects').' WHERE is_admin="'.strval(!$this->FOR_USER ? 1 : 0).'"';
 		return table($sql, array(
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
 				'filter_params' => array(
+					'url_from'		=> 'like',
+					'url_to'		=> 'like',
 					'ip'			=> 'like',
 					'user_agent'	=> 'like',
 					'referer'		=> 'like',
-					'request_uri'	=> 'like',
 				),
 			))
-			->admin('admin_id')
+			->admin('user_id')
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
 			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->text('user_agent')
 			->text('referer')
-			->text('request_uri')
+			->text('url_from')
+			->text('url_to')
 			->text('exec_time')
-			->text('num_dbq')
-			->text('page_size')
 		;
 	}
 
@@ -66,24 +66,27 @@ class yf_log_admin_exec{
 			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
 		);
 		$order_fields = array();
-		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
+		foreach (explode('|', 'user_id|user_group|date|ip|user_agent|referer|url_from|url_to') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
 			))
-			->number('admin_id')
+			->number('user_id')
 			->text('ip')
 			->text('user_agent')
 			->text('referer')
-			->text('request_uri')
+			->text('url_from')
+			->text('url_to')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
 			->save_and_clear();
 		;
 	}
 
-	function _hook_widget__admin_access_log ($params = array()) {
+	/**
+	*/
+	function _hook_widget__redirects_log ($params = array()) {
 // TODO
 	}
 

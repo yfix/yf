@@ -329,9 +329,9 @@ class yf_manage_forum_manage_view {
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
-				cache()->refresh("forum_totals");
-				cache()->refresh("forum_home_page_posts");
+				cache_del("forum_forums");
+				cache_del("forum_totals");
+				cache_del("forum_home_page_posts");
 			}
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=view_forum&id=".$_GET['id']._add_get(array("id")));
@@ -406,9 +406,9 @@ class yf_manage_forum_manage_view {
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
-				cache()->refresh("forum_totals");
-				cache()->refresh("forum_home_page_posts");
+				cache_del("forum_forums");
+				cache_del("forum_totals");
+				cache_del("forum_home_page_posts");
 			}
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=view_topic&id=".$_GET['id']._add_get(array("id")));

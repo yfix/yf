@@ -29,7 +29,7 @@ class yf_manage_forum_manage_main {
 			db()->query($sql);
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_categories");
+				cache_del("forum_categories");
 			}
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]);
@@ -64,7 +64,7 @@ class yf_manage_forum_manage_main {
 			db()->query($sql);
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_categories");
+				cache_del("forum_categories");
 			}
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]);
@@ -100,10 +100,10 @@ class yf_manage_forum_manage_main {
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("forum_categories");
-			cache()->refresh("forum_forums");
-			cache()->refresh("forum_totals");
-			cache()->refresh("forum_home_page_posts");
+			cache_del("forum_categories");
+			cache_del("forum_forums");
+			cache_del("forum_totals");
+			cache_del("forum_home_page_posts");
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -162,7 +162,7 @@ class yf_manage_forum_manage_main {
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
+				cache_del("forum_forums");
 			}
 			return js_redirect("./?object=".$_GET["object"]);
 		}
@@ -229,7 +229,7 @@ class yf_manage_forum_manage_main {
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
+				cache_del("forum_forums");
 			}
 			return js_redirect("./?object=".$_GET["object"]);
 		}
@@ -275,9 +275,9 @@ class yf_manage_forum_manage_main {
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("forum_forums");
-			cache()->refresh("forum_totals");
-			cache()->refresh("forum_home_page_posts");
+			cache_del("forum_forums");
+			cache_del("forum_totals");
+			cache_del("forum_home_page_posts");
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -344,9 +344,9 @@ class yf_manage_forum_manage_main {
 				}
 				// Refresh system cache
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("forum_forums");
-					cache()->refresh("forum_totals");
-					cache()->refresh("forum_home_page_posts");
+					cache_del("forum_forums");
+					cache_del("forum_totals");
+					cache_del("forum_home_page_posts");
 				}
 				return js_redirect("./?object=".$_GET["object"]."&action=view_forum&id=".$_POST["forum"]);
 			}
@@ -395,9 +395,9 @@ class yf_manage_forum_manage_main {
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("forum_forums");
-			cache()->refresh("forum_totals");
-			cache()->refresh("forum_home_page_posts");
+			cache_del("forum_forums");
+			cache_del("forum_totals");
+			cache_del("forum_home_page_posts");
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -445,9 +445,9 @@ class yf_manage_forum_manage_main {
 			}
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
-				cache()->refresh("forum_totals");
-				cache()->refresh("forum_home_page_posts");
+				cache_del("forum_forums");
+				cache_del("forum_totals");
+				cache_del("forum_home_page_posts");
 			}
 			return js_redirect("./?object=".$_GET["object"]."&action=view_topic&id=".$post_info['topic']);
 		}
@@ -481,9 +481,9 @@ class yf_manage_forum_manage_main {
 		}
 		// Refresh system cache
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("forum_forums");
-			cache()->refresh("forum_totals");
-			cache()->refresh("forum_home_page_posts");
+			cache_del("forum_forums");
+			cache_del("forum_totals");
+			cache_del("forum_home_page_posts");
 		}
 		// Return user back
 		if ($_POST["ajax_mode"]) {
@@ -508,10 +508,10 @@ class yf_manage_forum_manage_main {
 			db()->UPDATE("forum_categories", array("status" => $cat_info["status"] == "a" ? "p" : "a"), "id=".intval($cat_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_categories");
-				cache()->refresh("forum_forums");
-				cache()->refresh("forum_totals");
-				cache()->refresh("forum_home_page_posts");
+				cache_del("forum_categories");
+				cache_del("forum_forums");
+				cache_del("forum_totals");
+				cache_del("forum_home_page_posts");
 			}
 		}
 		// Return user back
@@ -537,9 +537,9 @@ class yf_manage_forum_manage_main {
 			db()->UPDATE("forum_forums", array("status" => $forum_info["status"] == "a" ? "p" : "a"), "id=".intval($forum_info["id"]));
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
-				cache()->refresh("forum_totals");
-				cache()->refresh("forum_home_page_posts");
+				cache_del("forum_forums");
+				cache_del("forum_totals");
+				cache_del("forum_home_page_posts");
 			}
 		}
 		// Return user back
@@ -566,9 +566,9 @@ class yf_manage_forum_manage_main {
 			module("forum")->_update_forum_record($topic_info["forum"]);
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
-				cache()->refresh("forum_totals");
-				cache()->refresh("forum_home_page_posts");
+				cache_del("forum_forums");
+				cache_del("forum_totals");
+				cache_del("forum_home_page_posts");
 			}
 		}
 		// Return user back
@@ -596,9 +596,9 @@ class yf_manage_forum_manage_main {
 			module("forum")->_update_topic_record($post_info["topic"]);
 			// Refresh system cache
 			if (main()->USE_SYSTEM_CACHE)	{
-				cache()->refresh("forum_forums");
-				cache()->refresh("forum_totals");
-				cache()->refresh("forum_home_page_posts");
+				cache_del("forum_forums");
+				cache_del("forum_totals");
+				cache_del("forum_home_page_posts");
 			}
 		}
 		// Return user back

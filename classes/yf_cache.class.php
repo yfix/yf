@@ -589,7 +589,7 @@ class yf_cache {
 	function _clear_all () {
 		if ($this->DRIVER == 'memcache') {
 			if (isset($this->_memcache)) {
-				$this->_memcache->flush();
+				return $this->_memcache->flush();
 			} else {
 				$this->DRIVER = 'file';
 			}
@@ -614,12 +614,13 @@ class yf_cache {
 				}
 			}
 			closedir($dh);
+			return true;
 		} elseif ($this->DRIVER == 'eaccelerator') {
-			eaccelerator_clear();
+			return eaccelerator_clear();
 		} elseif ($this->DRIVER == 'apc') {
-			apc_clear_cache();
+			return apc_clear_cache();
 		} elseif ($this->DRIVER == 'xcache') {
-			xcache_clear_cache();
+			return xcache_clear_cache();
 		}
 	}
 

@@ -37,6 +37,7 @@ class yf_category_editor {
 			->btn_edit()
 			->btn_delete()
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_cat&id=%d')
+			->btn('Drag', './?object='.$_GET['object'].'&action=drag_items&id=%d')
 			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
 			->btn_active()
 			->footer_add();
@@ -54,7 +55,7 @@ class yf_category_editor {
 			))
 			->db_insert_if_ok('categories', array('type','name','desc','stpl_name','method_name','custom_fields','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('category added: '.$_POST['name'], db()->insert_id()));
-				cache()->refresh('category_sets');
+				cache_del('category_sets');
 			}))
 			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
 			->text('name')
@@ -81,7 +82,7 @@ class yf_category_editor {
 			))
 			->db_update_if_ok('categories', array('name','desc','stpl_name','method_name','custom_fields','active'), 'id='.$id, array('on_after_update' => function() {
 				common()->admin_wall_add(array('category updated: '.$a['name'], $id));
-				cache()->refresh('category_sets');
+				cache_del('category_sets');
 			}))
 			->info('type')
 			->text('name')
@@ -105,7 +106,7 @@ class yf_category_editor {
 			db()->query('DELETE FROM '.db('category_items').' WHERE cat_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('category deleted: '.$cat_info['name'], $_GET['id']));
 		}
-		cache()->refresh(array('category_sets', 'category_items'));
+		cache_del(array('category_sets', 'category_items'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -153,7 +154,7 @@ class yf_category_editor {
 			db()->UPDATE('category_items', array('parent_id' => $_new_parent_id), 'id='.intval($_new_id));
 		}
 		common()->admin_wall_add(array('category cloned: from '.$cat_info['name'].' into '.$sql['name'], $_GET['id']));
-		cache()->refresh(array('category_sets', 'category_items'));
+		cache_del(array('category_sets', 'category_items'));
 		return js_redirect('./?object='.$_GET['object']);
 	}
 
@@ -167,7 +168,7 @@ class yf_category_editor {
 			db()->UPDATE('categories', array('active' => (int)!$cat_info['active']), 'id='.intval($cat_info['id']));
 			common()->admin_wall_add(array('category '.$cat_info['name'].' '.($cat_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		cache()->refresh(array('category_sets', 'category_items'));
+		cache_del(array('category_sets', 'category_items'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($cat_info['active'] ? 0 : 1);
@@ -200,7 +201,7 @@ class yf_category_editor {
 			if ($batch) {
 				db()->update_batch('category_items', db()->es($batch));
 				common()->admin_wall_add(array('category items updated: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(array(
+				cache_del(array(
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
 					'cats__prepare_for_box__'.$cat_info['name'].'_0',
@@ -266,7 +267,7 @@ class yf_category_editor {
 			if ($batch) {
 				db()->update_batch('category_items', db()->es($batch));
 				common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(array(
+				cache_del(array(
 					'category_sets',
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
@@ -280,17 +281,22 @@ class yf_category_editor {
 		if (isset($items[''])) {
 			unset($items['']);
 		}
+/*
 		$tpl_items = array();
 		foreach ((array)$items as $id => $item) {
 			if (!$id) {
 				continue;
 			}
-			$item['edit_link']		= './?object='.$_GET['object'].'&action=edit_item&id='.$id;
-			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
-			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
-			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
+			$item =+ array(
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_item&id='.$id,
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_item&id='.$id,
+				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_item&id='.$id,
+				'active_link'	=> './?object='.$_GET['object'].'&action=activate_item&id='.$id,
+			);
 			$tpl_items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
+*/
+/*
 		$replace = array(
 			'items' 		=> implode(PHP_EOL, (array)$tpl_items),
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
@@ -298,6 +304,81 @@ class yf_category_editor {
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
 		);
 		return tpl()->parse($_GET['object'].'/drag_main', $replace);
+*/
+//		$tpl_items = $this->_drag_tpl_items($items);
+		return $this->_drag_tpl_main($items);
+	}
+
+	/**
+	* This pure-php method needed to greatly speedup page rendering time for 100+ items
+	*/
+	function _drag_tpl_main(&$items) {
+		$r = array(
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
+		);
+		return '<form action="'.$r['form_action'].'" method="post" id="draggable_form">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary btn-mini"><i class="icon-save"></i> '.t('Save').'</button>
+					<a href="'.$r['back_link'].'" class="btn btn-mini"><i class="icon-backward"></i> '.t('Go Back').'</a>
+					<a href="'.$r['add_link'].'" class="btn btn-mini ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>
+					<a href="javascript:void(0);" class="btn btn-mini" id="draggable-menu-expand-all"><i class="icon-expand-alt"></i> '.t('Expand').'</a>
+				</div>
+				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($items)).'</ul>
+			</form>'
+			.tpl()->parse('draggable_menu_js');
+	}
+
+	/**
+	* This pure-php method needed to greatly speedup page rendering time for 100+ items
+	*/
+	function _drag_tpl_items(&$items) {
+		$body = array();
+
+		$form = _class('form2');
+		$replace = array(
+			'edit_link'		=> './?object='.$_GET['object'].'&action=edit_item&id=%d',
+			'delete_link'	=> './?object='.$_GET['object'].'&action=delete_item&id=%d',
+			'clone_link'	=> './?object='.$_GET['object'].'&action=clone_item&id=%d',
+		);
+		$form_controls = 
+			$form->tpl_row('tbl_link_edit', $replace, '', '', '')
+			.$form->tpl_row('tbl_link_delete', $replace, '', '', '')
+			.$form->tpl_row('tbl_link_clone', $replace, '', '', '')
+		;
+		foreach ((array)$items as $id => $item) {
+			if (!$id) {
+				continue;
+			}
+			$expander_icon = '';
+			if ($item['have_children']) {
+				$expander_icon = $item['level_num'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
+			}
+			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
+			if ($item['link']) {
+				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
+			}
+			if ($item['have_children']) {
+				$footer = '<ul class="'.($item['level_num'] >= 1 ? 'closed' : '').'">';
+			} else {
+				$footer = '</li>'.str_repeat('</ul>'.PHP_EOL, $item['next_level_diff']);
+			}
+			$body[] = '
+				<li id="item_'.$id.'">
+					<div class="dropzone"></div>
+					<dl>
+						<a href="#" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
+						.$content
+						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
+						<div style="float:right;display:none;" class="controls_over">'
+						.str_replace('%d', $id, $form_controls)
+						.'</div>
+					</dl>'
+				.$footer
+			;
+		}
+		return $body;
 	}
 
 	/**
@@ -476,7 +557,7 @@ class yf_category_editor {
 				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
 			), array('cat_id' => $cat_info['id']), array('on_after_update' => function() use ($cat_info) {
 				common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(array(
+				cache_del(array(
 					'category_sets',
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
@@ -534,7 +615,7 @@ class yf_category_editor {
 				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
 			), 'id='.$item_info['id'], array('on_after_update' => function() use ($cat_info) {
 				common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
-				cache()->refresh(array(
+				cache_del(array(
 					'category_sets',
 					'category_items',
 					'cats__get_items_names__'.$cat_info['name'],
@@ -593,7 +674,7 @@ class yf_category_editor {
 			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($item_info['cat_id']));
 			db()->UPDATE('category_items', array('active' => (int)!$item_info['active']), 'id='.intval($item_info['id']));
 			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
-			cache()->refresh(array(
+			cache_del(array(
 				'category_sets',
 				'category_items',
 				'cats__get_items_names__'.$cat_info['name'],
@@ -620,7 +701,7 @@ class yf_category_editor {
 			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($item_info['cat_id']));
 			db()->query('DELETE FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
 			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
-			cache()->refresh(array(
+			cache_del(array(
 				'category_sets',
 				'category_items',
 				'cats__get_items_names__'.$cat_info['name'],
@@ -649,7 +730,7 @@ class yf_category_editor {
 			unset($sql['id']);
 			db()->INSERT('category_items', $sql);
 			common()->admin_wall_add(array('category item cloned from '.$item_info['id'].' into '.$item_info['id'], $_GET['id']));
-			cache()->refresh(array(
+			cache_del(array(
 				'category_sets',
 				'category_items',
 				'cats__get_items_names__'.$cat_info['name'],

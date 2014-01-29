@@ -164,7 +164,7 @@ class yf_manage_forum_manage_users {
 					"id=".intval($_GET["id"])
 				);
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("forum_groups");
+					cache_del("forum_groups");
 				}
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]."&action=manage_groups"._add_get(array("id")));
@@ -218,7 +218,7 @@ class yf_manage_forum_manage_users {
 				}
 				db()->INSERT("forum_groups", $sql_array);
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("forum_groups");
+					cache_del("forum_groups");
 				}
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]."&action=manage_groups"._add_get(array("id")));
@@ -255,7 +255,7 @@ class yf_manage_forum_manage_users {
 		db()->query("DELETE FROM ".db('forum_groups')." WHERE id=".intval($_GET["id"]));
 
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("forum_groups");
+			cache_del("forum_groups");
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=manage_groups"._add_get(array("id")));
@@ -278,7 +278,7 @@ class yf_manage_forum_manage_users {
 		$NEW_GROUP_ID = db()->INSERT_ID();
 
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("forum_groups");
+			cache_del("forum_groups");
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=manage_groups"._add_get(array("id")));
@@ -377,7 +377,7 @@ class yf_manage_forum_manage_users {
 					), "id=".intval($mod_info["member_id"]));
 				}
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("forum_moderators");
+					cache_del("forum_moderators");
 				}
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]."&action=manage_moderators"._add_get(array("id")));
@@ -513,7 +513,7 @@ class yf_manage_forum_manage_users {
 					), "id=".intval($mod_info["member_id"]));
 				}
 				if (main()->USE_SYSTEM_CACHE)	{
-					cache()->refresh("forum_moderators");
+					cache_del("forum_moderators");
 				}
 				// Return user back
 				return js_redirect("./?object=".$_GET["object"]."&action=manage_moderators"._add_get(array("id")));
@@ -562,7 +562,7 @@ class yf_manage_forum_manage_users {
 		db()->query("DELETE FROM ".db('forum_moderators')." WHERE id=".intval($_GET["id"]));
 
 		if (main()->USE_SYSTEM_CACHE)	{
-			cache()->refresh("forum_moderators");
+			cache_del("forum_moderators");
 		}
 		// Return user back
 		return js_redirect("./?object=".$_GET["object"]."&action=manage_moderators"._add_get(array("id")));

@@ -32,7 +32,7 @@
 {block(left_area)}
 			</div>
 			<div class="span8">
-{execute(common,show_permanent_error)}
+{execute(common,show_messages)}
 {block(center_area)}
 			</div>
 			<div class="span2">

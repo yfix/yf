@@ -215,10 +215,10 @@ class yf_user_dynamic_info {
 		if (!main()->USE_SYSTEM_CACHE) {
 			return false;
 		}
-		cache()->refresh("user_dynamic_fields");
-		cache()->refresh("dynamic_fields");
-		cache()->refresh("fields_map_simple");
-		cache()->refresh("fields_map_dynamic");
+		cache_del("user_dynamic_fields");
+		cache_del("dynamic_fields");
+		cache_del("fields_map_simple");
+		cache_del("fields_map_dynamic");
 	}
 
 	// Process custom box

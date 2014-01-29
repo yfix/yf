@@ -109,7 +109,7 @@ class yf_custom_replace {
 				), "id=".intval($_GET["id"]));
 			}
 			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_tags");
+			if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_tags");
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]);
 		}
@@ -141,7 +141,7 @@ class yf_custom_replace {
 			"active"			=> 1,
 		));
 		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_tags");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_tags");
 		// Return user back
 		js_redirect("./?object=".$_GET["object"]);
 	}
@@ -161,8 +161,8 @@ class yf_custom_replace {
 			db()->query("DELETE FROM ".db('custom_replace_rules')." WHERE tag_id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_tags");
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_rules");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_tags");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_rules");
 		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -265,7 +265,7 @@ class yf_custom_replace {
 				));
 			}
 			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_rules");
+			if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_rules");
 			// Return user back
 			js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$tag_info["id"]);
 		}
@@ -338,7 +338,7 @@ class yf_custom_replace {
 				), "id=".intval($_GET["id"]));
 			}
 			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_rules");
+			if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_rules");
 			// Return user back
 			return js_redirect("./?object=".$_GET["object"]."&action=show_rules&id=".$tag_info["id"]);
 		}
@@ -396,7 +396,7 @@ class yf_custom_replace {
 			db()->query("DELETE FROM ".db('custom_replace_rules')." WHERE id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_rules");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_rules");
 		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
@@ -453,7 +453,7 @@ class yf_custom_replace {
 				));
 			}
 			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_words");
+			if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_words");
 			// Return user back
 			js_redirect("./?object=".$_GET["object"]."&action=show_words");
 		}
@@ -493,7 +493,7 @@ class yf_custom_replace {
 				), "id=".intval($_GET["id"]));
 			}
 			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_words");
+			if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_words");
 			// Return user back
 			js_redirect("./?object=".$_GET["object"]."&action=show_words");
 		}
@@ -526,7 +526,7 @@ class yf_custom_replace {
 			db()->query("DELETE FROM ".db('custom_replace_words')." WHERE id=".intval($_GET["id"]));
 		}
 		// Refresh system cache
-		if (main()->USE_SYSTEM_CACHE)	cache()->refresh("custom_replace_words");
+		if (main()->USE_SYSTEM_CACHE)	cache_del("custom_replace_words");
 		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;

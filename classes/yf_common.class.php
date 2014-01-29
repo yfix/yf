@@ -399,8 +399,8 @@ class yf_common {
 	/**
 	* Get user IP address
 	*/
-	function get_ip () {
-		return _class('client_utils', 'classes/common/')->_get_ip();
+	function get_ip ($check_type = 'force') {
+		return _class('client_utils', 'classes/common/')->_get_ip($check_type);
 	}
 
 	/**
@@ -1382,13 +1382,60 @@ class yf_common {
 
 	/**
 	*/
-	function show_permanent_error() {
-		if (empty($_SESSION['permanent_errors'])) {
+	function message_success($text = '') {
+		return $this->add_message($text, 'success');
+	}
+
+	/**
+	*/
+	function message_info($text = '') {
+		return $this->add_message($text, 'info');
+	}
+
+	/**
+	*/
+	function message_warning($text = '') {
+		return $this->add_message($text, 'warning');
+	}
+
+	/**
+	*/
+	function message_error($text = '') {
+		return $this->add_message($text, 'error');
+	}
+
+	/**
+	*/
+	function add_message($text = '', $level = 'info') {
+		if (!strlen($text)) {
 			return false;
 		}
-		$errors = (array)$_SESSION['permanent_errors'];
-		unset($_SESSION['permanent_errors']);
-		return '<div class="alert alert-error">'.implode('<br />'.PHP_EOL, t($errors)).'</div>';
+		$_SESSION['permanent'][$level][] = $text;
+		return true;
+	}
+
+	/**
+	*/
+	function show_messages() {
+		if (empty($_SESSION['permanent'])) {
+			return false;
+		}
+		$body = array();
+		$level_to_style = array(
+			'info'		=> 'alert alert-info',
+			'success'	=> 'alert alert-success',
+			'warning'	=> 'alert alert-warning',
+			'error'		=> 'alert alert-error alert-danger',
+		);
+		foreach ((array)$level_to_style as $level => $css_style) {
+			$messages = $_SESSION['permanent'][$level];
+			if (!is_array($messages) || !count($messages)) {
+				continue;
+			}
+			$body[] = '<div class="'.$css_style.'"><button type="button" class="close" data-dismiss="alert">×</button>'.implode('<br />'.PHP_EOL, t($messages)).'</div>';
+		}
+		unset($_SESSION['permanent']);
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
