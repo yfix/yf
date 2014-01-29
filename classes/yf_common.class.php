@@ -1432,7 +1432,7 @@ class yf_common {
 			if (!is_array($messages) || !count($messages)) {
 				continue;
 			}
-			$body[] = '<div class="'.$css_style.'">'.implode('<br />'.PHP_EOL, t($messages)).'</div>';
+			$body[] = '<div class="'.$css_style.'"><button type="button" class="close" data-dismiss="alert">×</button>'.implode('<br />'.PHP_EOL, t($messages)).'</div>';
 		}
 		unset($_SESSION['permanent']);
 		return implode(PHP_EOL, $body);
