@@ -41,7 +41,7 @@ class yf_settings {
 #		'postgre'	=> 'postgre',
 	);
 	public $cache_drivers = array(
-		'memcached'	=> 'memcached',
+		'memcache'	=> 'memcache',
 		'xcache'	=> 'xcache',
 		'apc'		=> 'apc',
 		'files'		=> 'files',
@@ -70,16 +70,6 @@ class yf_settings {
 	*/
 	function show() {
 // TODO: long descriptions for each item
-// TODO: connect this (save to auto-generated file)
-/* TODO: add 3rd level of configuring:
-	1) class property
-	2) PROJECT_CONF
-	3) TODO: from auto-generated file or from conf('') ?
-	4) _init() still able to override everything
-*/
-// TODO: maybe use conf('$mod_name::$setting', '$value') for overriding PROJECT_CONF from here
-#print_r($GLOBALS['CONF']);
-
 		if (main()->is_post()) {
 			$to_save = array();
 			foreach((array)$_POST as $k => $v) {

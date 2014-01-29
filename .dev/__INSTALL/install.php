@@ -329,7 +329,7 @@ define(\'WEB_PATH\', \''.$_POST['install_web_path'].'\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=home_page\');
 define(\'SITE_ADVERT_NAME\', \''.$_POST['install_web_name'].'\');
 require dirname(__FILE__).\'/project_conf.php\';
-$GLOBALS[\'PROJECT_CONF\'][\'tpl\'][\'REWRITE_MODE\'] = true;
+$PROJECT_CONF[\'tpl\'][\'REWRITE_MODE\'] = true;
 require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 		$fpath = PROJECT_PATH.'index.php';
