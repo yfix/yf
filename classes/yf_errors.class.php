@@ -108,7 +108,7 @@ class yf_errors {
 	*/
 	function error_handler_destructor() {
 		// Restore startup working directory
-		@chdir(main()->_CWD);
+		chdir(main()->_CWD);
 		// Send the email if needed
 		if (strlen($this->mail_buffer)) {
 			common()->send_mail('', 'error_handler', $this->_email_addr_to, $this->_email_name_to, 'Error Report', '', '<pre>'.$this->mail_buffer.'</pre>');
