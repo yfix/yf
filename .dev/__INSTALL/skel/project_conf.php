@@ -1,9 +1,9 @@
 <?php
-define('CSS_FRAMEWORK',			'bootstrap2');
-// UPLOADS PATHS
-define('SITE_UPLOADS_DIR',			'uploads/');				// Root folder for all uploads
-define('SITE_AVATARS_DIR',			'uploads/avatars/');		// avatars folder
-// COMMON USED VARS SECTION
+define('CSS_FRAMEWORK',		'bootstrap2');
+
+define('SITE_UPLOADS_DIR',	'uploads/');				// Root folder for all uploads
+define('SITE_AVATARS_DIR',	'uploads/avatars/');		// avatars folder
+
 if (!defined('SITE_ADVERT_NAME')) {
 	define('SITE_ADVERT_NAME',	'Site name');	// Advertisement name
 }
@@ -11,18 +11,17 @@ define('SITE_ADVERT_TITLE',	'Site name');	// Advertisement title
 define('SITE_ADVERT_URL',	defined('WEB_PATH')?WEB_PATH:'');	// Advertisement URL
 define('SITE_ADMIN_NAME',	'Site admin');		// Site Admin name
 define('SITE_ADMIN_EMAIL',	'info@'.$_SERVER['HTTP_HOST']);	// Admin's email used in common cases
-// IMAGE OPTIONS
+
 define('AVATAR_MAX_X',	100);	// Avatar max sizes
 define('AVATAR_MAX_Y',	100);
 define('THUMB_WIDTH',	120);	// Thumbnail width (default value)
 define('THUMB_HEIGHT',	1000);	// Thumbnail maximum height (default value)
 define('THUMB_QUALITY',	75);	// JPEG quality
 define('MAX_IMAGE_SIZE',5000000);// Max image file size (in bytes)
-// Force resizing original photos if their size is greater (in bytes)
 define('FORCE_RESIZE_IMAGE_SIZE',500000);
 define('FORCE_RESIZE_WIDTH',	1280);	// width for force resize
 define('FORCE_RESIZE_HEIGHT',	1024);	// height for force resize
-//--------------
+
 if (!function_exists('my_array_merge')) {
 	function my_array_merge($a1, $a2) {
 		foreach ((array)$a2 as $k => $v) { if (isset($a1[$k]) && is_array($a1[$k])) { if (is_array($a2[$k])) { 
@@ -31,14 +30,10 @@ if (!function_exists('my_array_merge')) {
 		return $a1;
 	}
 }
-// GLOBALS PROJECT MODULES CONFIG VARS
-$GLOBALS['PROJECT_CONF'] = array();
-$GLOBALS['PROJECT_CONF'] = my_array_merge((array)$GLOBALS['PROJECT_CONF'], array(
-	// CORE CLASSES
+$PROJECT_CONF = my_array_merge((array)$PROJECT_CONF, array(
 	'main'	=> array(
 		'USE_CUSTOM_ERRORS'		=> 1,
 //		'USE_SYSTEM_CACHE'		=> 1,
-//		'USE_TASK_MANAGER'		=> 1,
 //		'NO_CACHE_HEADERS'		=> 1,
 //		'SPIDERS_DETECTION'		=> 1,
 //		'OVERLOAD_PROTECTION'	=> 0,
@@ -66,9 +61,6 @@ $GLOBALS['PROJECT_CONF'] = my_array_merge((array)$GLOBALS['PROJECT_CONF'], array
 	'graphics'	=> array(
 //		'META_KEYWORDS'			=> 'keyword',
 //		'META_DESCRIPTION'		=> 'description',
-//		'EMBED_CSS'			=> 0,
-//		'CACHE_CSS'			=> 1,
-		'CSS_ADD_RESET'		=> 1,
 	),
 	'i18n' => array(
 		'TRACK_TRANSLATED'  => 1,
@@ -83,33 +75,10 @@ $GLOBALS['PROJECT_CONF'] = my_array_merge((array)$GLOBALS['PROJECT_CONF'], array
 	'comments'	=> array(
 		'USE_TREE_MODE' => 1,
 	),
-	'_forum'	=> array(
-		'USE_GLOBAL_USERS'		=> 1,
-		'ALLOW_WYSIWYG_EDITOR'	=> 0,
-		'BB_CODE'				=> 1,
-		'ENABLE_SMILIES'		=> 1,
-		'SMILIES_IMAGES'		=> 1,
-		'SMILIES_SET'			=> 2,
-		'ALLOW_POLLS'			=> 1,
-	),
-	'_forum_def_rights'	=> array(
-		'make_polls'	=> 1,
-		'vote_polls'	=> 1,
-	),
-	'gallery'	=> array(
-		'ALLOW_RATE'	=> 1,
-		'ALLOW_TAGGING'	=> 1,
-	),
 	'logs'	=> array(
 		'_LOGGING'			=> 1,
 		'STORE_USER_AUTH'	=> 1,
 		'UPDATE_LAST_LOGIN'	=> 1,
-	),
-	'register'	=> array(
-		'NICK_ALLOWED_SYMBOLS'	=> array('а-я','a-z','0-9','_','\-','@','#',' '),
-	),
-	'validate'	=> array(
-		'NICK_ALLOWED_SYMBOLS'	=> array('а-я','a-z','0-9','_','\-','@','#',' '),
 	),
 	'bb_codes'	=> array(
 		'SMILIES_DIR'	=> 'uploads/forum/smilies/',

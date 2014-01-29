@@ -36,8 +36,8 @@ if (conf('USE_CACHE') === null) {
 	}
 	// By default we have cache enabled
 	$use_cache = true;
-	if (isset($GLOBALS['PROJECT_CONF']['main']['USE_SYSTEM_CACHE'])) {
-		$use_cache = (bool)$GLOBALS['PROJECT_CONF']['main']['USE_SYSTEM_CACHE'];
+	if (isset($PROJECT_CONF['main']['USE_SYSTEM_CACHE'])) {
+		$use_cache = (bool)$PROJECT_CONF['main']['USE_SYSTEM_CACHE'];
 	}
 // TODO: add DEBUG_MODE checking here to not allow no_cache attacks
 // TODO: maybe add check for: conf('cache_disable_token', 'something_random')
