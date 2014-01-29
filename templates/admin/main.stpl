@@ -28,7 +28,7 @@
 	</div>
 {block(left_area)}
 	<div class="container center_area">
-{execute(common,show_permanent_error)}
+{execute(common,show_messages)}
 {block(center_area)}
 	</div>
 	{include("main_js")}
