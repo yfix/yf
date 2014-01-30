@@ -32,7 +32,9 @@ class yf_locale_editor_export {
 				$source			= $A['value'];
 				$translation	= $IS_TEMPLATE ? $A['value'] : $tr_vars[$A['id']];
 				// Skip not translated vars
-				if (!$IS_TEMPLATE && empty($translation)) continue;
+				if (!$IS_TEMPLATE && empty($translation)) {
+					continue;
+				}
 				// Export only for specified location
 				if (!$IS_TEMPLATE && !empty($_POST['location']) && (false === strpos($A['location'], $_POST['location']))) {
 					continue;
@@ -40,8 +42,8 @@ class yf_locale_editor_export {
 				// Export only for specified module
 				if (!empty($_POST['module'])) {
 					$is_admin_module = false;
-					if (substr($_POST['module'], 0, strlen($this->_admin_modules_prefix)) == $this->_admin_modules_prefix) {
-						$_POST['module'] = substr($_POST['module'], strlen($this->_admin_modules_prefix));
+					if (substr($_POST['module'], 0, strlen('admin:')) == 'admin:') {
+						$_POST['module'] = substr($_POST['module'], strlen('admin:'));
 						$is_admin_module = true;
 					}
 					if ((false === strpos($A['location'], ($is_admin_module ? ADMIN_MODULES_DIR : USER_MODULES_DIR).$_POST['module'].'.class.php'))
