@@ -368,22 +368,29 @@ class yf_table2 {
 
 	/**
 	*/
+	function _get_attrs_from_params($params, $_id, $row) {
+		if (is_callable($params)) {
+			$attrs = $params($row, $_id);
+		} elseif (is_array($params)) {
+			if (is_array($params[$_id])) {
+				$attrs = isset($params[$_id]) ? $this->_attrs($params[$_id], array('class', 'style')) : '';
+			} elseif (is_string($params[$_id])) {
+				$attrs = $params[$_id];
+			}
+		} else {
+			$attrs = $params;
+		}
+		return $attrs;
+	}
+
+	/**
+	*/
 	function _render_table_contents($data, $params = array(), $to_hide = array()) {
 		$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
 			$tr_attrs = '';
 			if (isset($params['tr'])) {
-				if (is_callable($params['tr'])) {
-					$tr_attrs = $params['tr']($row, $_id);
-				} elseif (is_array($params['tr'])) {
-					if (is_array($params['tr'][$_id])) {
-						$tr_attrs = isset($params['tr'][$_id]) ? $this->_attrs($params['tr'][$_id], array('class', 'style')) : '';
-					} elseif (is_string($params['tr'][$_id])) {
-						$tr_attrs = $params['tr'][$_id];
-					}
-				} else {
-					$tr_attrs = $params['tr'];
-				}
+				$tr_attrs = $this->_get_attrs_from_params($params['tr'], $_id, $row);
 			}
 			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
 			foreach ((array)$this->_fields as $info) {
@@ -394,7 +401,11 @@ class yf_table2 {
 				$body .= $this->_render_table_td($info, $row, $params);
 			}
 			if ($this->_buttons) {
-				$body .= '<td nowrap>';
+				$td_attrs = '';
+				if (isset($params['td'])) {
+					$td_attrs = $this->_get_attrs_from_params($params['td'], 'buttons', $row);
+				}
+				$body .= '<td nowrap'.$td_attrs.'>';
 				foreach ((array)$this->_buttons as $info) {
 					$name = $info['name'];
 					$func = &$info['func'];
@@ -434,7 +445,11 @@ class yf_table2 {
 		if ($this->_buttons) {
 			$body .= '<tr>'.PHP_EOL;
 			foreach ((array)$data as $_id => $row) {
-				$body .= '<td nowrap>';
+				$td_attrs = '';
+				if (isset($params['td'])) {
+					$td_attrs = $this->_get_attrs_from_params($params['td'], $_id, $row);
+				}
+				$body .= '<td nowrap'.$td_attrs.'>';
 				foreach ((array)$this->_buttons as $info) {
 					$name = $info['name'];
 					$func = &$info['func'];
@@ -490,7 +505,11 @@ class yf_table2 {
 				return false;
 			}
 		}
-		return '<td'. $td_width. $td_nowrap.'>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
+		$td_attrs = '';
+		if (isset($params['td'])) {
+			$td_attrs = $this->_get_attrs_from_params($params['td'], $name, $row);
+		}
+		return '<td'. $td_width. $td_nowrap. $td_attrs. '>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
 	}
 
 	/**
