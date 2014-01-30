@@ -9,7 +9,7 @@
 	<style type="text/css">.container-valign-middle { margin:20% 30%; }</style>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
+<body class="bs-theme-{execute(common,bs_current_theme)}">
 	<div class="container-fluid container-valign-middle">
 {execute(login_form,_admin_login_form)}
 	</div>
