@@ -56,61 +56,22 @@ class yf_settings {
 
 	/**
 	*/
-	function _addslashes($val) {
-		if (is_array($val)) {
-			foreach ($val as $k => $v) {
-				$val[$k] = $this->_addslashes($v);
-			}
-			return $val;
-		}
-		return addslashes($val);
-	}
-
-	/**
-	*/
 	function show() {
 // TODO: long descriptions for each item
 		if (main()->is_post()) {
-			$to_save = array();
-			foreach((array)$_POST as $k => $v) {
-				if (is_string($v) && !strlen($v)) {
-					continue;
-				}
-				if (is_array($v)) {
-					foreach((array)$v as $k2 => $v2) {
-						if (!$k2 || (is_string($v2) && !strlen($v2))) {
-							unset($v[$k2]);
-						}
-					}
-					if (!count($v)) {
-						continue;
-					}
-				}
-				$to_save[$k] = $v;
-			}
+			$to_save = $this->_prepare_to_save($_POST);
 			if ($to_save) {
-				foreach((array)$to_save as $k => $v) {
-					if (is_array($v)) {
-						foreach((array)$v as $k2 => $v2) {
-							$to_save[$k.'::'.$k2] = '$CONF[\''.$this->_addslashes($k).'\'][\''.$this->_addslashes($k2).'\'] = \''.$this->_addslashes($v2).'\';';
-						}
-						unset($to_save[$k]);
-					} elseif (false !== strpos($k, '__')) {
-						list($_module, $_setting) = explode('__', $k);
-						$to_save[$k] = '$CONF[\''.$this->_addslashes($_module).'\'][\''.$this->_addslashes($_setting).'\'] = \''.$this->_addslashes($v).'\';';
-					} else {
-						$to_save[$k] = '$CONF[\''.$this->_addslashes($k).'\'] = \''.$this->_addslashes($v).'\';';
-					}
-				}
-				if ($to_save) {
-					$saved_settings_content = '<'.'?php'.PHP_EOL.implode(PHP_EOL, $to_save).PHP_EOL;
-					$saved_settings_file = PROJECT_PATH.'saved_settings.php';
-					common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'._prepare_html($saved_settings_content).'</pre>');
-					file_put_contents($saved_settings_file, $saved_settings_content);
-					return js_redirect('./?object='.$_GET['object']);
-				}
+				$saved_settings_content = '<'.'?php'.PHP_EOL.implode(PHP_EOL, $to_save).PHP_EOL;
+				$saved_settings_file = PROJECT_PATH.'saved_settings.php';
+				common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'._prepare_html($saved_settings_content).'</pre>');
+				file_put_contents($saved_settings_file, $saved_settings_content);
+				return js_redirect('./?object='.$_GET['object']);
 			}
 		}
+
+// TODO: connect this into form array
+		$hooks_data = _class('common_admin')->call_hooks('settings', array('this' => $this));
+
 		$r = (array)$_POST + (array)conf();
 		$a = array(
 			'row_start',
@@ -228,5 +189,55 @@ class yf_settings {
 	*/
 	function minify_js() {
 // TODO
+	}
+
+	/**
+	*/
+	function _addslashes($val) {
+		if (is_array($val)) {
+			foreach ($val as $k => $v) {
+				$val[$k] = $this->_addslashes($v);
+			}
+			return $val;
+		}
+		return addslashes($val);
+	}
+
+	/**
+	*/
+	function _prepare_to_save($a) {
+		$to_save = array();
+		foreach((array)$a as $k => $v) {
+			if (is_string($v) && !strlen($v)) {
+				continue;
+			}
+			if (is_array($v)) {
+				foreach((array)$v as $k2 => $v2) {
+					if (!$k2 || (is_string($v2) && !strlen($v2))) {
+						unset($v[$k2]);
+					}
+				}
+				if (!count($v)) {
+					continue;
+				}
+			}
+			$to_save[$k] = $v;
+		}
+		if ($to_save) {
+			foreach((array)$to_save as $k => $v) {
+				if (is_array($v)) {
+					foreach((array)$v as $k2 => $v2) {
+						$to_save[$k.'::'.$k2] = '$CONF[\''.$this->_addslashes($k).'\'][\''.$this->_addslashes($k2).'\'] = \''.$this->_addslashes($v2).'\';';
+					}
+					unset($to_save[$k]);
+				} elseif (false !== strpos($k, '__')) {
+					list($_module, $_setting) = explode('__', $k);
+					$to_save[$k] = '$CONF[\''.$this->_addslashes($_module).'\'][\''.$this->_addslashes($_setting).'\'] = \''.$this->_addslashes($v).'\';';
+				} else {
+					$to_save[$k] = '$CONF[\''.$this->_addslashes($k).'\'] = \''.$this->_addslashes($v).'\';';
+				}
+			}
+		}
+		return $to_save;
 	}
 }

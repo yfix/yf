@@ -40,27 +40,7 @@ class yf_locale_editor {
 			'module'		=> 'select_box("module",		$this->_modules,		$selected, false, 2, "", false)',
 		);
 
-
-// TODO: move out this into separate method and call only when needed
-		$this->_user_modules	= module('user_modules')->_get_modules(array('with_sub_modules' => 1));
-
-		$tmp_admin_modules		= module('admin_modules')->_get_modules(array('with_sub_modules' => 1));
-		$this->_admin_modules_prefix = 'admin___';
-		foreach ((array)$tmp_admin_modules as $module_name) {
-			$this->_admin_modules[$this->_admin_modules_prefix.$module_name] = $module_name;
-		}
-		$tmp_user_modules = $this->_user_modules;
-		unset($tmp_user_modules['']);
-
-		$this->_modules[''] = t('-- ALL --');
-		if (!empty($this->_admin_modules)) {
-			$this->_modules['admin'] = $this->_admin_modules;
-		}
-		if (!empty($tmp_user_modules)) {
-			$this->_modules['user'] = $tmp_user_modules;
-		}
-// ENDTODO
-
+		$this->_modules = _class('common_admin')->find_active_modules();
 
 		foreach ((array)$this->_get_iso639_list() as $lang_code => $lang_params) {
 			$this->_langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? ' ('.$lang_params[1].') ' : '');

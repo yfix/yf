@@ -8,7 +8,7 @@
 {execute(graphics,show_metatags)}
 
 </head>
-<body>
+<body class="bs-theme-{execute(common,bs_current_theme)}">
 	<div class="navbar navbar-inverse">
 		<div class="navbar-inner">
 			<a class="brand" href="{const(WEB_PATH)}">{const(SITE_ADVERT_NAME)}</a>
