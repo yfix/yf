@@ -253,7 +253,7 @@ class yf_table2 {
 			}
 		}
 		$body = '';
-		$body .= (ADMIN_TYPE_ADMIN && !$params['no_pages'] && !$params['no_total'] && $total) ? '<div class="label label-info" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$total.'</div>'.PHP_EOL : '';
+		$body .= (MAIN_TYPE_ADMIN && !$params['no_pages'] && !$params['no_total'] && $total) ? '<div class="label label-info" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$total.'</div>'.PHP_EOL : '';
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $pages : '').PHP_EOL;
 
 		if ($data) {
@@ -368,29 +368,12 @@ class yf_table2 {
 
 	/**
 	*/
-	function _get_attrs_from_params($params, $_id, $row) {
-		if (is_callable($params)) {
-			$attrs = $params($row, $_id);
-		} elseif (is_array($params)) {
-			if (is_array($params[$_id])) {
-				$attrs = isset($params[$_id]) ? $this->_attrs($params[$_id], array('class', 'style')) : '';
-			} elseif (is_string($params[$_id])) {
-				$attrs = $params[$_id];
-			}
-		} else {
-			$attrs = $params;
-		}
-		return $attrs;
-	}
-
-	/**
-	*/
 	function _render_table_contents($data, $params = array(), $to_hide = array()) {
 		$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
 			$tr_attrs = '';
 			if (isset($params['tr'])) {
-				$tr_attrs = $this->_get_attrs_from_params($params['tr'], $_id, $row);
+				$tr_attrs = $this->_get_attrs_string_from_params($params['tr'], $_id, $row);
 			}
 			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
 			foreach ((array)$this->_fields as $info) {
@@ -403,7 +386,7 @@ class yf_table2 {
 			if ($this->_buttons) {
 				$td_attrs = '';
 				if (isset($params['td'])) {
-					$td_attrs = $this->_get_attrs_from_params($params['td'], 'buttons', $row);
+					$td_attrs = $this->_get_attrs_string_from_params($params['td'], 'buttons', $row);
 				}
 				$body .= '<td nowrap'.$td_attrs.'>';
 				foreach ((array)$this->_buttons as $info) {
@@ -447,7 +430,7 @@ class yf_table2 {
 			foreach ((array)$data as $_id => $row) {
 				$td_attrs = '';
 				if (isset($params['td'])) {
-					$td_attrs = $this->_get_attrs_from_params($params['td'], $_id, $row);
+					$td_attrs = $this->_get_attrs_string_from_params($params['td'], $_id, $row);
 				}
 				$body .= '<td nowrap'.$td_attrs.'>';
 				foreach ((array)$this->_buttons as $info) {
@@ -506,8 +489,8 @@ class yf_table2 {
 			}
 		}
 		$td_attrs = '';
-		if (isset($params['td'])) {
-			$td_attrs = $this->_get_attrs_from_params($params['td'], $name, $row);
+		if (isset($params['td']) || isset($_extra['td'])) {
+			$td_attrs = $this->_get_attrs_string_from_params($params['td'] ?: $_extra['td'], $name, $row);
 		}
 		return '<td'. $td_width. $td_nowrap. $td_attrs. '>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
 	}
@@ -530,13 +513,6 @@ class yf_table2 {
 			}
 		}
 		return $text;
-	}
-
-	/**
-	*/
-	function _show_tip($value = '', $extra = array()) {
-// TODO: also add ability to pass tips array into table2() params like 'data', to provide different tips, according to value
-		return _class('graphics')->_show_help_tip(array('tip_id' => $value));
 	}
 
 	/**
@@ -796,6 +772,30 @@ class yf_table2 {
 			}
 		}
 		return ' '.implode(' ', $body);
+	}
+
+	/**
+	*/
+	function _get_attrs_string_from_params($params, $_id, $row) {
+		if (is_callable($params)) {
+			$attrs = $params($row, $_id);
+		} elseif (is_array($params)) {
+			if (is_array($params[$_id])) {
+				$attrs = isset($params[$_id]) ? $this->_attrs($params[$_id], array('class', 'style')) : '';
+			} elseif (is_string($params[$_id])) {
+				$attrs = $params[$_id];
+			}
+		} elseif (is_string($params)) {
+			$attrs = $params;
+		}
+		return $attrs ? ' '.$attrs : '';
+	}
+
+	/**
+	*/
+	function _show_tip($value = '', $extra = array()) {
+// TODO: also add ability to pass tips array into table2() params like 'data', to provide different tips, according to value
+		return _class('graphics')->_show_help_tip(array('tip_id' => $value));
 	}
 
 	/**
