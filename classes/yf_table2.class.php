@@ -253,6 +253,7 @@ class yf_table2 {
 			}
 		}
 		$body = '';
+		$body .= (!$params['no_pages'] && !$params['no_total'] && $total) ? '<div class="label label-info" style="float:left;">'.t('Total').':&nbsp;'.$total.'</div>'.PHP_EOL : '';
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $pages : '').PHP_EOL;
 
 		if ($data) {
