@@ -667,7 +667,7 @@ class yf_common {
 	*/
 	function _format_time_value($value = '', $round_to = 4) {
 		if (empty($value)) {
-			$value = 0.001;
+			$value = 0.0001;
 		}
 		return substr(round((float)$value, $round_to), 0, $round_to + 2);
 	}
