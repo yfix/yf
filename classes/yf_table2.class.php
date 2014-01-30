@@ -419,7 +419,11 @@ class yf_table2 {
 			if (isset($to_hide[$name])) {
 				continue;
 			}
-			$body .= '<tr>'.PHP_EOL;
+			$tr_attrs = '';
+			if (isset($params['tr'])) {
+				$tr_attrs = $this->_get_attrs_string_from_params($params['tr'], $name, $row);
+			}
+			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
 			foreach ((array)$data as $_id => $row) {
 				$body .= $this->_render_table_td($info, $row, $params);
 			}
