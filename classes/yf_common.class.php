@@ -1285,7 +1285,7 @@ class yf_common {
 	/**
 	*/
 	function shop_get_images($product_id) {
-		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' ORDER BY is_default DESC');
+		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' AND active=1 ORDER BY is_default DESC');
 		$d = sprintf('%09s', $product_id);
 		foreach((array)$A as $img){
 	    	$replace = array(
@@ -1301,6 +1301,27 @@ class yf_common {
 			);
 		}
 		return $images;
+	}
+
+	/**
+	*/
+	function shop_generate_image_name($product_id, $image_id, $media = false){
+		$dirs = sprintf('%06s', $product_id);
+		$dir2 = substr($dirs, -3, 3);
+		$dir1 = substr($dirs, -6, 3);
+		$m_path = $dir1.'/'.$dir2.'/';
+
+		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
+		$base_url = WEB_PATH;
+		if (!empty($media_host) && $media) {
+			$base_url = '//' . $media_host . '/';
+		}
+		$image = array(
+			'big' 		=> $base_url.'/uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_big.jpg',
+			'thumb' 	=> $base_url.'/uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_thumb.jpg',
+			'default' 	=> $base_url.'/uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'.jpg',
+		);
+		return $image;
 	}
 
 	/**

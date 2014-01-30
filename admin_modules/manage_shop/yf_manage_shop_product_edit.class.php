@@ -35,7 +35,7 @@ class yf_manage_shop_product_edit {
 				db()->update_safe(db('shop_products'), $sql, 'id='.$_GET['id']);
 
 				if (!empty($_FILES)) {
-					$last_img_insert_id = module('manage_shop')->_product_image_upload($_GET['id']);
+					module('manage_shop')->_product_image_upload($_GET['id']);
 				} 
 				
 				$params_to_insert = array();

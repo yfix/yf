@@ -105,15 +105,15 @@ class yf_manage_shop__product_revisions {
 
 	/**
 	 */
-	function _product_images_add_revision($action, $product_id, $image_id = false) {
-		$images_ids = db()->get_2d('SELECT id FROM '.db('shop_product_images').' WHERE product_id = '.$product_id);
+	function _product_images_add_revision($action, $product_id, $image_id) {
+		$images_ids = db()->get_2d('SELECT id, is_default FROM '.db('shop_product_images').' WHERE product_id = '.$product_id.' AND active=1');
 		db()->insert_safe(db('shop_product_images_revisions'),array(
 			'user_id' => intval(main()->ADMIN_ID),
 			'add_date' => $_SERVER['REQUEST_TIME'],
 			'action'	=> $action,
 			'product_id' => $product_id,
-			'image_id' => $image_id,
-			'data'		=> implode (",", $images_ids),
+			'image_id'  => $image_id,
+			'data'		=> $images_ids ? json_encode($images_ids): '[]',
 		));		
 	}	
 
@@ -180,17 +180,7 @@ class yf_manage_shop__product_revisions {
 		if (empty($a)) {
 			return _e('Revision not found');
 		}
-		$dirs = sprintf('%06s', $a['product_id']);
-		$dir2 = substr($dirs, -3, 3);
-		$dir1 = substr($dirs, -6, 3);
-		$m_path = $dir1.'/'.$dir2.'/';
-		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
-		$base_url = WEB_PATH;
-		if (!empty($media_host)) {
-			$base_url = '//' . $media_host . '/';
-		}
-		$image_thumb = $base_url.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_thumb.jpg".(($a['action']=='delete')? "_":"");
-		$image_big = $base_url.SITE_IMAGES_DIR.$m_path."product_".$a['product_id']."_".$a['image_id']."_big.jpg".(($a['action']=='delete')? "_":"");
+		$image = common()->shop_generate_image_name($a['product_id'], $a['image_id'], true);
 		return form($a, array(
 			'dd_mode' => 1,
 		))
@@ -201,10 +191,57 @@ class yf_manage_shop__product_revisions {
 		->admin_info('user_id', "Editor")
 		->info_date('add_date', array('format' => 'full'))
 		->info('action')
-		->container("<a target=\"_blank\" title=\"View large\" href=\"".$image_big."\">
-			<img src=\"".$image_thumb."\" class=\"product_image img-polaroid\" style=\"width:90px;\"></a>")
-//		->button("checkout_action","Отменить изменение")
-		
+		->container("<a target=\"_blank\" title=\"View large\" href=\"".$image['default']."\">
+			<img src=\"".$image['default']."\" class=\"product_image img-polaroid\" style=\"width:90px;\"></a>")
+		->link("Checkout action",'./?object=manage_shop&action=checkout_images_revision&id='.$a['id'])
 		;
+	}
+	
+	/**
+	*/
+	function checkout_images_revision() {
+		$_GET['id'] = intval($_GET['id']);
+		$now = db()->get('SELECT * FROM '.db('shop_product_images_revisions').' WHERE id='.$_GET['id']);
+		if (empty($now)) {
+			return _e('Revision not found');
+		}
+		$product_id = $now['product_id'];
+		$before = db()->get('SELECT * FROM '.db('shop_product_images_revisions').' 
+							WHERE product_id='.$product_id.' 
+								AND id<'.$_GET['id'].' 
+							ORDER BY id DESC');
+		if (empty($before)) {
+			return _e('No previous revision');
+		}
+		$back = json_decode($before['data'], true);
+
+		db()->begin();
+		$images = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id);
+		foreach($images as $id => $data){
+			$reset[] = array(
+				'id' 		=> $id,
+				'is_default'=> 0,
+				'active' 	=> 0,
+			);
+		}
+		db()->update_batch('shop_product_images', db()->es($reset));
+		if(empty($back)){
+			 db()->query('UPDATE '.db('shop_products').' SET image=0 WHERE id='.$product_id);
+		}else{
+			foreach($back as $id => $default_val){
+				$set[] = array(
+					'id' 		=> $id,
+					'is_default'=> $default_val,
+					'active' 	=> 1,
+				);
+			}
+			db()->update_batch('shop_product_images', db()->es($set));
+		}
+		db()->commit();
+		module('manage_shop')->_product_images_add_revision('checkout', $product_id);
+		module('manage_shop')->_product_cache_purge($_GET['id']);
+
+		common()->admin_wall_add(array('shop product checkout revision: '.$_GET['id'], $product_id));
+		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
 	}
 }

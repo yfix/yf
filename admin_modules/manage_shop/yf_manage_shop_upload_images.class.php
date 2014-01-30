@@ -120,13 +120,13 @@ class yf_manage_shop_upload_images {
                 }
                 if(!empty($articul[0])){
                         $articul = _es(strip_tags($articul[0]));
-/*
                         $sql = 'SELECT id FROM '.db('shop_products').'
                                         WHERE articul="'.$articul.'"
                                                 AND supplier_id='.$supplier_id;
-*/
+/*
                         $sql = 'SELECT id FROM '.db('shop_products').'
                                         WHERE id= '.$articul;
+*/
                         $product = db()->query_fetch($sql);
                 }else{
                         return "Articul_not_found";
@@ -161,8 +161,8 @@ class yf_manage_shop_upload_images {
 
                 db()->begin();
                 db()->insert(db('shop_product_images'), array(
-                        'product_id'         => $id,
-                        'md5'                        => $md5,
+                        'product_id'    => $id,
+                        'md5'           => $md5,
                         'date_uploaded' => $_SERVER['REQUEST_TIME'],
                 ));
                 $i = db()->insert_id();
@@ -176,10 +176,10 @@ class yf_manage_shop_upload_images {
                 common()->make_thumb($img, $thumb_name, module("manage_shop")->THUMB_X, module("manage_shop")->THUMB_Y);
                 common()->make_thumb($img, $big_name, module("manage_shop")->BIG_X, module("manage_shop")->BIG_Y, $watermark_name);
 
-                $A = db()->query_fetch("SELECT COUNT(*) AS cnt FROM ".db('shop_product_images')." WHERE product_id=".$id." AND is_default=1");
+                $A = db()->query_fetch("SELECT COUNT(*) AS cnt FROM ".db('shop_product_images')." WHERE product_id=".$id." AND is_default=1 AND active=1");
                 if ($A['cnt'] == 0) {
-                        $A = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$id." ORDER BY id");
-                        db()->query("UPDATE ".db('shop_product_images')." SET is_default='1' WHERE id=".$A['id']);
+                        $A = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$id." ORDER BY id DESC");
+                        db()->query("UPDATE ".db('shop_product_images')." SET is_default=1 WHERE id=".$A['id']);
                 }                        
                 db()->query("UPDATE `".db('shop_products')."` SET `image`='1' WHERE `id`=".$id);
                 db()->commit();
