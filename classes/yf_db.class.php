@@ -1333,6 +1333,12 @@ class yf_db {
 
 	/**
 	*/
+	function update_batch_safe($table, $data, $index = null, $only_sql = false) {
+		return $this->update_batch($table, $this->es($data), $index, $only_sql);
+	}
+
+	/**
+	*/
 	function update_batch($table, $data, $index = null, $only_sql = false) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
