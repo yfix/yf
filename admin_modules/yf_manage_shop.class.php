@@ -534,4 +534,11 @@ class yf_manage_shop {
 	function _hook_side_column() {
 		$func = __FUNCTION__; return _class('manage_shop_hook_side_column', 'admin_modules/manage_shop/')->$func();
 	}
+	
+	function feedback() {
+		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();		
+	}
+	function feedback_delete() {
+		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();		
+	}
 }
