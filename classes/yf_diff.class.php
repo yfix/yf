@@ -4,7 +4,7 @@
 * Get file differences
 *
 * @example
-*	$DIFF = _class("diff")->get_differences("aaa\n1", "aaa\nav");
+*	$DIFF = _class("diff")->get_diff("aaa\n1", "aaa\nav");
 *
 */
 class yf_diff {
