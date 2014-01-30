@@ -32,4 +32,6 @@ label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bo
 label.radio-horizontal input[type=radio]{ float: none; margin-left:inherit; margin-top:0; }
 
 .form-condensed .control-group { margin-bottom: 1em; }
+
+.bs-theme-slate { /* override styles per bs theme here */ }
 </style>

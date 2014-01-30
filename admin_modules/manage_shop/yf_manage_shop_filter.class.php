@@ -2,7 +2,7 @@
 
 class yf_manage_shop_filter{
 
-	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes');
+	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback');
 
 	/**
 	*/
@@ -145,6 +145,23 @@ class yf_manage_shop_filter{
 					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
+			'feedback' => function($filter_name, $replace) {
+				
+				$fields = array('id','product_id','name','email','content','pros','cons');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->number('id', array('class' => 'span1'))
+					->number('product_id', array('class' => 'span1'))
+					->text('name')
+					->text('email')
+					->text('content')
+					->text('pros')
+					->text('cons')
+					->select_box('order_by', $order_fields, array('show_text' => 1));
+
+			},					
 		);
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {

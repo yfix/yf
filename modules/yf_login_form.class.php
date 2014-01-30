@@ -114,7 +114,7 @@ class yf_login_form {
 	* Wrong Login
 	*/
 	function wrong_login () {
-		$_SESSION['permanent_errors'][] = 'Sorry, but some info you have entered is wrong.';
+		common()->message_error('Sorry, but some info you have entered is wrong.');
 		return js_redirect('./?object=login_form');
 	}
 

@@ -237,6 +237,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
 	}
 
+	function _order_add_revision($action, $item_id) {
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
+	}
+
 	function manufacturers() {
 		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
 	}
@@ -533,5 +537,12 @@ class yf_manage_shop {
 	
 	function _hook_side_column() {
 		$func = __FUNCTION__; return _class('manage_shop_hook_side_column', 'admin_modules/manage_shop/')->$func();
+	}
+	
+	function feedback() {
+		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();		
+	}
+	function feedback_delete() {
+		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();		
 	}
 }

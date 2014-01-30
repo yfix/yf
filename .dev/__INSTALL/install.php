@@ -319,13 +319,17 @@ $dev_settings = dirname(__FILE__).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
+$saved_settings = dirname(dirname(__FILE__)).\'/saved_settings.php\';
+if (file_exists($saved_settings)) {
+    require_once $saved_settings;
+}
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
 define(\'WEB_PATH\', \''.$_POST['install_web_path'].'\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=home_page\');
 define(\'SITE_ADVERT_NAME\', \''.$_POST['install_web_name'].'\');
 require dirname(__FILE__).\'/project_conf.php\';
-$GLOBALS[\'PROJECT_CONF\'][\'tpl\'][\'REWRITE_MODE\'] = true;
+$PROJECT_CONF[\'tpl\'][\'REWRITE_MODE\'] = true;
 require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 		$fpath = PROJECT_PATH.'index.php';
@@ -344,6 +348,10 @@ $dev_settings = dirname(dirname(__FILE__)).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
+$saved_settings = dirname(__FILE__).\'/saved_settings.php\';
+if (file_exists($saved_settings)) {
+    require_once $saved_settings;
+}
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=admin_home\');
@@ -358,6 +366,21 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		if (!file_exists($fpath)) {
 			file_put_contents($fpath, $admin_index_file_content);
+		}
+		return installer();
+	}
+	function import_sql_from_file ($sql_file, $prefix) {
+		$sql_file_content = file_get_contents($sql_file);
+		if (empty($sql_file_content)) {
+			return installer();
+		}
+		$splitted_sql = array();
+		db()->split_sql($splitted_sql, $sql_file_content);
+		foreach ((array)$splitted_sql as $item_info) {
+			if ($item_info['empty'] == 1) {
+				continue;
+			}
+			db()->query(str_replace('%%prefix%%', $prefix, $item_info['query']));
 		}
 		return installer();
 	}
@@ -413,7 +436,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 				include (INSTALLER_PATH.'install/data_menu_items.php');
 				db()->replace('sys_menu_items', db()->es($GLOBALS['INSTALL']['data_menu_items']));
 			} else {
-				import (INSTALLER_PATH.'install/sql/'.$table.'.sql', DB_PREFIX);
+				$this->import_sql_from_file(INSTALLER_PATH.'install/sql/'.$table.'.sql', DB_PREFIX);
 			}
 		}
 		return installer();
@@ -450,11 +473,11 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		foreach ($tables_to_create as $table) {
 			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 		}
-		import(INSTALLER_PATH.'install/sql/_initial_data_en.sql', DB_PREFIX);
+		$this->import_sql_from_file(INSTALLER_PATH.'install/sql/_initial_data_en.sql', DB_PREFIX);
 		if ($_POST['install_project_lang']){
 			$_custom_lang_path = INSTALLER_PATH.'install/sql/_initial_data_'.$_POST['install_project_lang'].'.sql';
 			if (file_exists($_custom_lang_path)) {
-				import ($_custom_lang_path, DB_PREFIX);
+				$this->import_sql_from_file($_custom_lang_path, DB_PREFIX);
 			}
 		}
 

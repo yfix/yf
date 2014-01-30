@@ -81,7 +81,7 @@ class yf_resize_images {
 			$this->_set_new_size_auto();
 			// Create processing fnuction name according to image type
 			$func_name = "imagecreatefrom".$this->source_type;
-			$this->tmp_img = strlen($this->source_type) ? @$func_name ($this->source_file) : null;
+			$this->tmp_img = strlen($this->source_type) ? $func_name ($this->source_file) : null;
 			if (empty($this->tmp_img)) {
 				return false;
 			}
@@ -141,14 +141,14 @@ class yf_resize_images {
 			|| $this->force_process
 		) {
 
-			$this->tmp_resampled = @imagecreatetruecolor($this->output_width, $this->output_height);
+			$this->tmp_resampled = imagecreatetruecolor($this->output_width, $this->output_height);
 			if (!$this->tmp_resampled) {
 				return false;
 			}
-			@imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
+			imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
 			// Create processing fnuction name according to image type
 			$func_name = "image".$this->output_type;
-			strlen($this->output_type) ? @$func_name ($this->tmp_resampled, $output_file, defined("THUMB_QUALITY") ? THUMB_QUALITY : 85) : null;
+			strlen($this->output_type) ? $func_name ($this->tmp_resampled, $output_file, defined("THUMB_QUALITY") ? THUMB_QUALITY : 85) : null;
 			// Destroy temporary image
 			imagedestroy ($this->tmp_resampled);
 		// If image file has another name - just copy it there (only if non-empty)
@@ -178,12 +178,12 @@ class yf_resize_images {
 		$this->_set_new_size_auto();
 		// Detect if need to resize image (if something has changed)
 		if ($this->output_width != $this->source_width || $this->output_height != $this->source_height || $this->output_type != $this->source_type) {
-			$this->tmp_resampled = @imagecreatetruecolor($this->output_width, $this->output_height); 
-			@imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
+			$this->tmp_resampled = imagecreatetruecolor($this->output_width, $this->output_height); 
+			imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
 		}
 		// Create processing fnuction name according to image type
 		$func_name = "image".$this->output_type;
-		strlen($this->output_type) ? @$func_name ($this->tmp_resampled) : null;
+		strlen($this->output_type) ? $func_name ($this->tmp_resampled) : null;
 
 		return true;
 	}
@@ -196,7 +196,7 @@ class yf_resize_images {
 		if (!file_exists($this->source_file) || !filesize($this->source_file)) {
 			return false;
 		}
-		list($this->source_width, $this->source_height, $type, $this->source_atts) = @getimagesize($this->source_file);
+		list($this->source_width, $this->source_height, $type, $this->source_atts) = getimagesize($this->source_file);
 		// Check if current type is supported
 		return array_key_exists($type, $this->_avail_types) ? ($this->source_type = $this->_avail_types[$type]) : false;
 	}

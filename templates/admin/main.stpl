@@ -8,7 +8,7 @@
 {include("main_style_css")}
 {execute(graphics,show_metatags)}
 </head>
-<body>
+<body class="bs-theme-{execute(common,bs_current_theme)}">
 {if("conf.css_framework" eq "bs3")}
 	<div class="navbar navbar-default">
 {else}
@@ -28,7 +28,7 @@
 	</div>
 {block(left_area)}
 	<div class="container center_area">
-{execute(common,show_permanent_error)}
+{execute(common,show_messages)}
 {block(center_area)}
 	</div>
 	{include("main_js")}

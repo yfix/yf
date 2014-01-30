@@ -27,6 +27,7 @@ class yf_settings {
 		'spacelab'	=> 'Spacelab (light)',
 		'united'	=> 'United (light)',
 	);
+	// TODO: add more skins from fs inside project
 	public $default_skins = array(
 		'user'	=> 'User (default)',
 		'admin'	=> 'Admin (default)',
@@ -40,27 +41,68 @@ class yf_settings {
 #		'postgre'	=> 'postgre',
 	);
 	public $cache_drivers = array(
-		'memcached'	=> 'memcaached',
+		'memcache'	=> 'memcache',
 		'xcache'	=> 'xcache',
 		'apc'		=> 'apc',
 		'files'		=> 'files',
+	);
+	public $tpl_drivers = array(
+		'yf'		=> 'YF stpl (default)',
+		'smarty'	=> 'smarty',
+		'fenom'		=> 'fenom',
+		'twig'		=> 'twig',
+		'blitz'		=> 'blitz',
 	);
 
 	/**
 	*/
 	function show() {
-// TODO: purge cache (memcached), disable site (maintenance), change default language, change default template, enable/disable other features here
-		return form()
+// TODO: long descriptions for each item
+		if (main()->is_post()) {
+			$to_save = $this->_prepare_to_save($_POST);
+			if ($to_save) {
+				$saved_settings_content = '<'.'?php'.PHP_EOL.implode(PHP_EOL, $to_save).PHP_EOL;
+				$saved_settings_file = PROJECT_PATH.'saved_settings.php';
+				common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'._prepare_html($saved_settings_content).'</pre>');
+				file_put_contents($saved_settings_file, $saved_settings_content);
+				return js_redirect('./?object='.$_GET['object']);
+			}
+		}
+
+// TODO: connect this into form array
+		$hooks_data = _class('common_admin')->call_hooks('settings', array('this' => $this));
+
+		$r = (array)$_POST + (array)conf();
+		$a = array(
+			'row_start',
+				'save',
+				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge'), // TODO: link, method, icon
+				array('link', 'cache_stats', './?object='.$_GET['object'].'&action=cache_stats'), // TODO: link, method, icon
+				array('link', 'minify_css', './?object='.$_GET['object'].'&action=minify_css'), // TODO: link, method, icon
+				array('link', 'minify_js', './?object='.$_GET['object'].'&action=minify_js'), // TODO: link, method, icon
+			'row_end',
+			array('active_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
+			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
+			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
+			'save',
+		);
+		return form()->array_to_form($a, array('class' => 'form-horizontal form-condensed'));
+/*
+		return form($r, array('class' => 'form-horizontal form-condensed'))
 			->row_start()
+				->save()
 				->link('cache_purge', './?object='.$_GET['object'].'&action=cache_purge') // TODO: link, method, icon
 				->link('cache_stats', './?object='.$_GET['object'].'&action=cache_stats') // TODO: link, method, icon
+				->link('minify_css', './?object='.$_GET['object'].'&action=minify_css') // TODO: link, method, icon
+				->link('minify_js', './?object='.$_GET['object'].'&action=minify_js') // TODO: link, method, icon
 			->row_end()
-			->active_box('use_cache')
-			->select_box('cache_driver', $this->cache_drivers)
-			->number('cache_ttl')//, cache()->FILES_TTL
+			->active_box('main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache'))
+			->select_box('cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver'))
+			->number('cache[FILES_TTL]', array('desc' => 'cache_ttl'))//, cache()->FILES_TTL
 
-			->active_box('site_maintenance')
+			->active_box('site_maintenance', array('tip' => ''))
 			->select_box('default_css_framework', $this->css_frameworks) // TODO: link to edit
+#			->select_box('DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')) // TODO: link to edit
 			->select_box('default_css_subtheme', $this->css_subthemes) // TODO: link to edit
 			->select_box('default_skin', $this->default_skins) // TODO: link to edit
 			->select_box('default_language', main()->get_data('languages')) // TODO: link to edit
@@ -71,9 +113,9 @@ class yf_settings {
 #			->city_box('default_city') // Where site is located and propose this by default for visitors // TODO: link to edit
 
 #			->text('site_name', conf('SITE_NAME'))
-#			->text('default_meta_keywords')
-#			->text('default_meta_description')
-#			->text('default_charset')
+			->text('meta_keywords', 'default_meta_keywords')
+			->text('meta_description', 'default_meta_description')
+			->text('charset', 'default_charset')
 #			->text('images_web_path')
 #			->text('media_path_web')
 #			->text('media_path_fs')
@@ -97,15 +139,15 @@ class yf_settings {
 #			->active_box('inline_stpl_edit')
 #			->active_box('xhprof_enable')
 
-#			->active_box('use_only_https')
-#			->active_box('css_minimize')
-#			->active_box('js_minimize')
-#			->active_box('use_phar_php_code')
-#			->active_box('online_users_tracking')
-#			->active_box('errors_custom_handler')
-#			->active_box('tpl_allow_use_db')
-#			->select_box('tpl_driver')
-#			->active_box('tpl_compile')
+			->active_box('use_only_https')
+			->active_box('css_minimize')
+			->active_box('js_minimize')
+			->active_box('use_phar_php_code')
+			->active_box('online_users_tracking')
+			->active_box('errors_custom_handler')
+			->select_box('tpl_driver', $this->tpl_drivers)
+			->active_box('tpl_compile')
+			->active_box('tpl_allow_use_db')
 
 #			->select_box('mail_default_driver')
 
@@ -118,6 +160,84 @@ class yf_settings {
 #			->active_box('db_query_cache_enabled')
 #			->number('db_query_cache_ttl')
 #			->select_box('db_query_cache_driver')
+
+			->save()
 		;
+*/
+	}
+
+	/**
+	*/
+	function cache_purge() {
+		$result = _class('cache')->_clear_all();
+		return js_redirect('./?object='.$_GET['object']);
+	}
+
+	/**
+	*/
+	function cache_stats() {
+// TODO
+	}
+
+	/**
+	*/
+	function minify_css() {
+// TODO
+	}
+
+	/**
+	*/
+	function minify_js() {
+// TODO
+	}
+
+	/**
+	*/
+	function _addslashes($val) {
+		if (is_array($val)) {
+			foreach ($val as $k => $v) {
+				$val[$k] = $this->_addslashes($v);
+			}
+			return $val;
+		}
+		return addslashes($val);
+	}
+
+	/**
+	*/
+	function _prepare_to_save($a) {
+		$to_save = array();
+		foreach((array)$a as $k => $v) {
+			if (is_string($v) && !strlen($v)) {
+				continue;
+			}
+			if (is_array($v)) {
+				foreach((array)$v as $k2 => $v2) {
+					if (!$k2 || (is_string($v2) && !strlen($v2))) {
+						unset($v[$k2]);
+					}
+				}
+				if (!count($v)) {
+					continue;
+				}
+			}
+			$to_save[$k] = $v;
+		}
+		if ($to_save) {
+			foreach((array)$to_save as $k => $v) {
+				if (is_array($v)) {
+					foreach((array)$v as $k2 => $v2) {
+						$to_save[$k.'::'.$k2] = '$CONF[\''.$this->_addslashes($k).'\'][\''.$this->_addslashes($k2).'\'] = \''.$this->_addslashes($v2).'\';';
+					}
+					unset($to_save[$k]);
+				} elseif (false !== strpos($k, '__')) {
+					list($_module, $_setting) = explode('__', $k);
+					$to_save[$k] = '$CONF[\''.$this->_addslashes($_module).'\'][\''.$this->_addslashes($_setting).'\'] = \''.$this->_addslashes($v).'\';';
+				} else {
+					$to_save[$k] = '$CONF[\''.$this->_addslashes($k).'\'] = \''.$this->_addslashes($v).'\';';
+				}
+			}
+		}
+		return $to_save;
 	}
 }

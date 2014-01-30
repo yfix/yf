@@ -31,3 +31,6 @@
 [submodule "libs/phpcrypt"]
 	path = libs/phpcrypt
 	url = https://github.com/yfix/phpcrypt.git
+[submodule "libs/php-diff"]
+	path = libs/php-diff
+	url = https://github.com/yfix/php-diff

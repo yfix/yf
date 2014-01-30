@@ -200,23 +200,7 @@ class yf_admin_home {
 	/**
 	*/
 	function _url_allowed ($url = "") {
-		$tmp_url = $url;
-		$params = array();
-		if (substr($tmp_url, 0, 3) == "./?") {
-			$tmp_url = substr($tmp_url, 3);
-		}
-		parse_str($tmp_url, $params);
-		if ($params["task"]) {
-			return $url;
-		}
-		if (!isset($this->_admin_modules[$params["object"]])) {
-			return "";
-		}
-		$center_block_id = _class("graphics")->_get_center_block_id();
-		if ($center_block_id && !_class("graphics")->_check_block_rights($center_block_id, $params["object"], $params["action"])) {
-			return "";
-		}
-		return $url;
+		return _class('common_admin')->_admin_link_is_allowed($url);
 	}
 
 	/**

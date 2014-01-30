@@ -1333,6 +1333,12 @@ class yf_db {
 
 	/**
 	*/
+	function update_batch_safe($table, $data, $index = null, $only_sql = false) {
+		return $this->update_batch($table, $this->es($data), $index, $only_sql);
+	}
+
+	/**
+	*/
 	function update_batch($table, $data, $index = null, $only_sql = false) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
@@ -1424,6 +1430,12 @@ class yf_db {
 	*/
 	function query_builder() {
 		return _class('db_query_builder', 'classes/db/');
+	}
+
+	/**
+	*/
+	function split_sql(&$ret, $sql) {
+		return _class('db_utils', 'classes/db/')->split_sql($ret, $sql);
 	}
 
 	/**

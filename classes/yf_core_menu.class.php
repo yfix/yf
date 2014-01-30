@@ -28,6 +28,7 @@ class yf_core_menu {
 	* Show menu
 	*/
 	function _show_menu ($input = array()) {
+// TODO: optimize for speed (takes too much time now)
 		/*
 		$_item_types = array(
 			1 => 'Internal link',
