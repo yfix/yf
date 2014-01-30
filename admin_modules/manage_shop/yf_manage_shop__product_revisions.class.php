@@ -1,12 +1,21 @@
 <?php
 class yf_manage_shop__product_revisions {
 
+	function _product_check_first_revision($ids) {
+		$sql = '...'.$this->get_revision_db($type);
+		$this->_add_revision('product', 'add', $ids);
+	}
+
 	function _product_add_revision($action = false, $ids = false) {
 		$this->_add_revision('product', $action, $ids);
 	}
 
 	function _order_add_revision($action = false, $ids = false) {
 		$this->_add_revision('order', $action, $ids);
+	}
+
+	function get_revision_db ($type) {
+		return db('shop_'.$type.'_revisions');
 	}
 
 	/*
@@ -51,7 +60,7 @@ class yf_manage_shop__product_revisions {
 		$temp_indexes['order']['date'] = 0;
 		//-------------------------------------------------------------------
 
-		$revision_db = db('shop_'.$type.'_revisions');
+		$revision_db = $this->get_revision_db($type);
 		$all_data = array();
 
 		if ($action != 'delete') {
@@ -152,7 +161,19 @@ class yf_manage_shop__product_revisions {
 		->admin_info('user_id')
 		->info_date('add_date', array('format' => 'full'))
 		->info('action')
-		->func('data', function($extra, $r, $_this){ return '<pre>'.var_export(_class('utils')->object_to_array(json_decode($r[$extra['name']])), 1).'</pre>'; })
+		->func('data', function($extra, $r, $_this) { 
+			$origin = json_decode($r[$extra['name']], true);
+			$new = $origin;
+
+			//test conf to test diff method
+			$new['product']['id'] = '777';
+
+			$origin = var_export($origin, true);
+			$new = var_export($new, true);
+			//return _class('diff')->get_diff($origin, $new);
+			
+			return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
+		})
 		;
 	}
 
