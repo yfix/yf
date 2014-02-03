@@ -352,14 +352,6 @@ class yf_shop extends yf_module {
 		return _class('shop__box', 'modules/shop/')->_box($name, $selected);
 	}
 
-	function _quick_menu() {
-		return _class('shop__quick_menu', 'modules/shop/')->_quick_menu();
-	}
-
-	function _show_header() {
-		return _class('shop__show_header', 'modules/shop/')->_show_header();
-	}
-
 	function _site_title($title) {
 		return _class('shop__site_title', 'modules/shop/')->_site_title($title);
 	}
