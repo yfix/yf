@@ -321,9 +321,9 @@ class yf_form2 {
 // TODO: use unified fieldset_start() method
 // Fieldset hardcode here needed to avoid strange bug with recursion
 			$_this->_fieldset_mode_on = true;
-			$body .= '<fieldset'.$_this->_attrs($extra['fieldset'], array('class','style','id','name')).'>'.PHP_EOL;
+			$body .= '<fieldset'.$_this->_attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
-				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
+				$body .= PHP_EOL.'<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
 			return $body;
 		};
@@ -370,9 +370,9 @@ class yf_form2 {
 			} else {
 				$_this->_fieldset_mode_on = true;
 			}
-			$body .= '<fieldset'.$_this->_attrs($extra, array('class','style','id','name')).'>'.PHP_EOL;
+			$body .= '<fieldset'.$_this->_attrs($extra, array('class','style','id','name')).'>';
 			if ($extra['legend']) {
-				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
+				$body .= PHP_EOL.'<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
 			return $body;
 		};
@@ -540,7 +540,7 @@ class yf_form2 {
 				}
 			}
 		}
-		return ' '.implode(' ', $body);
+		return $body ? ' '.implode(' ', $body) : '';
 	}
 
 	/**
