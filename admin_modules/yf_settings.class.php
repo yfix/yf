@@ -57,7 +57,6 @@ class yf_settings {
 	/**
 	*/
 	function show() {
-// TODO: long descriptions for each item
 		if (main()->is_post()) {
 			$to_save = $this->_prepare_to_save($_POST);
 			if ($to_save) {
@@ -68,91 +67,27 @@ class yf_settings {
 				return js_redirect('./?object='.$_GET['object']);
 			}
 		}
-
-		$r = (array)$_POST + (array)conf();
+#		$r = (array)$_POST + (array)conf();
 		$a = array(
 			'row_start',
-				array('save'),
-				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge'), // TODO: link, method, icon
-				array('link', 'cache_stats', './?object='.$_GET['object'].'&action=cache_stats'), // TODO: link, method, icon
-				array('link', 'minify_css', './?object='.$_GET['object'].'&action=minify_css'), // TODO: link, method, icon
-				array('link', 'minify_js', './?object='.$_GET['object'].'&action=minify_js'), // TODO: link, method, icon
+			array('save'),
+			array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge'), // TODO: link, method, icon
+			array('link', 'cache_stats', './?object='.$_GET['object'].'&action=cache_stats'), // TODO: link, method, icon
+			array('link', 'minify_css', './?object='.$_GET['object'].'&action=minify_css'), // TODO: link, method, icon
+			array('link', 'minify_js', './?object='.$_GET['object'].'&action=minify_js'), // TODO: link, method, icon
 			'row_end',
-			array('active_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
-			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
-			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
-			array('active_box', 'site_maintenance', array('tip' => '')),
-			array('select_box', 'default_css_framework', $this->css_frameworks), // TODO: link to edit
-
-#			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
-			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit
-			array('select_box', 'default_skin', $this->default_skins), // TODO: link to edit
-			array('select_box', 'default_language', main()->get_data('languages')), // TODO: link to edit
-#			array('select_box', 'default_server', main()->get_data('servers')), // TODO: link to edit
-#			array('select_box', 'default_site', main()->get_data('sites')), // TODO: link to edit
-#			array('select_box', 'default_timezone', main()->get_data('timezones')), // TODO: link to edit
-#			array('select_box', 'default_currency', main()->get_data('currencies')), // TODO: link to edit
-#			array('city_box', 'default_city'), // Where site is located and propose this by default for visitors // TODO: link to edit
-
-#			array('text', 'site_name', conf('SITE_NAME')),
-			array('text', 'meta_keywords', 'default_meta_keywords'),
-			array('text', 'meta_description', 'default_meta_description'),
-			array('text', 'charset', 'default_charset'),
-#			array('text', 'images_web_path'),
-#			array('text', 'media_path_web'),
-#			array('text', 'media_path_fs'),
-#			array('text', 'media_domain'),
-
-#			array('text', 'session_cookie_path'),
-#			array('text', 'session_cookie_domain'),
-#			array('text', 'session_cookie_lifetime'),
-#			array('active_box', 'session_cookie_httponly'),
-#			array('active_box', 'session_cookie_secure'),
-#			array('active_box', 'session_referer_check'),
-
-#			array('text', 'php_memory_limit'),
-#			array('text', 'php_max_execution_time'),
-
-#			array('active_box', 'rewrite_mode'),
-#			array('active_box', 'debug_mode'),
-#			array('active_box', 'dev_mode'),
-#			array('active_box', 'output_cache'),
-#			array('active_box', 'inline_locale_edit'),
-#			array('active_box', 'inline_stpl_edit'),
-#			array('active_box', 'xhprof_enable'),
-
-			array('active_box', 'use_only_https'),
-			array('active_box', 'css_minimize'),
-			array('active_box', 'js_minimize'),
-			array('active_box', 'use_phar_php_code'),
-			array('active_box', 'online_users_tracking'),
-			array('active_box', 'errors_custom_handler'),
-			array('select_box', 'tpl_driver', $this->tpl_drivers),
-			array('active_box', 'tpl_compile'),
-			array('active_box', 'tpl_allow_use_db'),
-
-#			array('select_box', 'mail_default_driver'),
-
-#			array('active_box', 'admin_ajax_edit'),
-#			array('active_box', 'admin_ajax_delete'),
-#			array('active_box', 'form_input_no_append'),
-
-			array('select_box', 'db_driver', $this->db_drivers),
-#			array('active_box', 'db_auto_restore_tables'),
-#			array('active_box', 'db_query_cache_enabled'),
-#			array('number', 'db_query_cache_ttl'),
-#			array('select_box', 'db_query_cache_driver'),
-
-			'save',
 		);
-
-// TODO: connect this into form array
 		$hooks_data = _class('common_admin')->call_hooks('settings', array('this' => $this));
 		foreach ((array)$hooks_data as $k => $v) {
-			$a[] = $v;
+			$a[] = array('fieldset_start', array('class' => 'well', 'legend' => $k));
+			foreach ((array)$v as $_a) {
+				$a[] = $_a;
+			}
+			$a[] = array('fieldset_end');
 		}
-
-		return form()->array_to_form($a, array('class' => 'form-horizontal form-condensed'));
+		return form()->array_to_form($a, array('class' => 'form-vertical form-condensed span8'
+// TODO: remove me
+, 'legend' => 'test'));
 	}
 
 	/**
@@ -228,5 +163,76 @@ class yf_settings {
 			}
 		}
 		return $to_save;
+	}
+
+	/**
+	*/
+	function _hook_settings() {
+		return array(
+			array('active_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
+			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
+			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
+			array('active_box', 'site_maintenance', array('tip' => '')),
+			array('select_box', 'default_css_framework', $this->css_frameworks), // TODO: link to edit
+
+#			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
+			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit
+			array('select_box', 'default_skin', $this->default_skins), // TODO: link to edit
+			array('select_box', 'default_language', main()->get_data('languages')), // TODO: link to edit
+#			array('select_box', 'default_server', main()->get_data('servers')), // TODO: link to edit
+#			array('select_box', 'default_site', main()->get_data('sites')), // TODO: link to edit
+#			array('select_box', 'default_timezone', main()->get_data('timezones')), // TODO: link to edit
+#			array('select_box', 'default_currency', main()->get_data('currencies')), // TODO: link to edit
+#			array('city_box', 'default_city'), // Where site is located and propose this by default for visitors // TODO: link to edit
+
+#			array('text', 'site_name', conf('SITE_NAME')),
+			array('text', 'meta_keywords', 'default_meta_keywords'),
+			array('text', 'meta_description', 'default_meta_description'),
+			array('text', 'charset', 'default_charset'),
+#			array('text', 'images_web_path'),
+#			array('text', 'media_path_web'),
+#			array('text', 'media_path_fs'),
+#			array('text', 'media_domain'),
+
+#			array('text', 'session_cookie_path'),
+#			array('text', 'session_cookie_domain'),
+#			array('text', 'session_cookie_lifetime'),
+#			array('active_box', 'session_cookie_httponly'),
+#			array('active_box', 'session_cookie_secure'),
+#			array('active_box', 'session_referer_check'),
+
+#			array('text', 'php_memory_limit'),
+#			array('text', 'php_max_execution_time'),
+
+#			array('active_box', 'rewrite_mode'),
+#			array('active_box', 'debug_mode'),
+#			array('active_box', 'dev_mode'),
+#			array('active_box', 'output_cache'),
+#			array('active_box', 'inline_locale_edit'),
+#			array('active_box', 'inline_stpl_edit'),
+#			array('active_box', 'xhprof_enable'),
+
+			array('active_box', 'use_only_https'),
+			array('active_box', 'css_minimize'),
+			array('active_box', 'js_minimize'),
+			array('active_box', 'use_phar_php_code'),
+			array('active_box', 'online_users_tracking'),
+			array('active_box', 'errors_custom_handler'),
+			array('select_box', 'tpl_driver', $this->tpl_drivers),
+			array('active_box', 'tpl_compile'),
+			array('active_box', 'tpl_allow_use_db'),
+
+#			array('select_box', 'mail_default_driver'),
+
+#			array('active_box', 'admin_ajax_edit'),
+#			array('active_box', 'admin_ajax_delete'),
+#			array('active_box', 'form_input_no_append'),
+
+			array('select_box', 'db_driver', $this->db_drivers),
+#			array('active_box', 'db_auto_restore_tables'),
+#			array('active_box', 'db_query_cache_enabled'),
+#			array('number', 'db_query_cache_ttl'),
+#			array('select_box', 'db_query_cache_driver'),
+		);
 	}
 }
