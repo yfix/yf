@@ -52,6 +52,28 @@ class yf_common_admin {
 	}
 
 	/**
+	*/
+	function admin_wall_add($data = array()) {
+# TODO: check this and enable
+#		if (!is_array($data)) {
+#			$data = func_get_args();
+#		}
+		return db()->insert_safe('admin_walls', array(
+			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
+			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
+			'user_id'	=> isset($data['user_id']) ? $data['user_id'] : (isset($data[2]) ? $data[2] : main()->ADMIN_ID),
+			'object'	=> isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
+			'action'	=> isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
+			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),
+			'old_data'	=> json_encode(isset($data['old_data']) ? $data['old_data'] : (isset($data[6]) ? $data[6] : '')),
+			'new_data'	=> json_encode(isset($data['new_data']) ? $data['new_data'] : (isset($data[7]) ? $data[7] : '')),
+			'add_date'	=> date('Y-m-d H:i:s'),
+			'server_id'	=> (int)main()->SERVER_ID,
+			'site_id'	=> (int)main()->SITE_ID,
+		));
+	}
+
+	/**
 	* This method will search and call all found hook methods from active modules
 	*/
 	function call_hooks($hook_name, $params = array(), $section = 'all') {
