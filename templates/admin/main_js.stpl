@@ -124,6 +124,9 @@ $(function(){
 		try { eval( $(this).data("onclick") ); } catch (_e) { console.log(e) }
 		return true;
 	})
+
+	// Affix used in settings TOC, idea got from Bootstrap docs
+	$(".bs-docs-sidenav").affix();
 });
 </script>
 
