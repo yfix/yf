@@ -188,6 +188,14 @@ class yf_manage_shop__product_revisions {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
+			->image('image_id', 'Image', array('width' => '70px', 'img_path_callback' => function($_p1, $_p2, $row) {
+				$dirs = sprintf('%06s', $row['product_id']);
+				$dir2 = substr($dirs, -3, 3);
+				$dir1 = substr($dirs, -6, 3);
+				$m_path = $dir1.'/'.$dir2.'/';
+				$image = SITE_IMAGES_DIR.$m_path.'product_'.$row['product_id'].'_'.$row['image_id'].'.jpg';
+				return $image; 
+            }))
 			->text('action')
 			->btn_view('', './?object=manage_shop&action=product_images_revisions&id=%d')
 			;
@@ -196,25 +204,41 @@ class yf_manage_shop__product_revisions {
 	/**
 	 */
 	function product_images_revisions_view() {
-		$sql = 'SELECT * FROM '.db('shop_product_images_revisions').' WHERE id='.intval($_GET['id']);
+		$sql = 'SELECT r.*, p.name 
+				FROM '.db('shop_product_images_revisions').' as r
+				RIGHT JOIN '.db('shop_products').' as p
+				ON r.product_id = p.id
+				WHERE r.id='.intval($_GET['id']);
 		$a = db()->get($sql);
 		if (empty($a)) {
 			return _e('Revision not found');
 		}
-		$image = common()->shop_generate_image_name($a['product_id'], $a['image_id'], true);
+		$data_stamp = json_decode($a['data'], true);
+		foreach($data_stamp as $image_id => $v){
+			$image_url = common()->shop_generate_image_name($a['product_id'], $image_id, true);
+			$image_html = tpl()->parse($_GET["object"]."/image_revision_item", $image_url);
+			if($v)
+				$main_image = $image_html;
+			$images_stamp .= $image_html;
+		}
+		if($a['image_id']){
+			$changed_image = common()->shop_generate_image_name($a['product_id'], $a['image_id'], true);
+			$changed_image = tpl()->parse($_GET["object"]."/image_revision_item", $changed_image);
+		}
 		return form($a, array(
 			'dd_mode' => 1,
 		))
 		->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id='.$a['product_id'], array(
 			'desc' => t('Product'),
-			'data' => array($a['product_id'] => ' [id='. $a['product_id'].']'),
+			'data' => array($a['product_id'] => $a['name'].' [id='. $a['product_id'].']'),
 		))
 		->admin_info('user_id', "Editor")
 		->info_date('add_date', array('format' => 'full'))
 		->info('action')
-		->container("<a target=\"_blank\" title=\"View large\" href=\"".$image['default']."\">
-			<img src=\"".$image['default']."\" class=\"product_image img-polaroid\" style=\"width:90px;\"></a>")
-		->link("Checkout action",'./?object=manage_shop&action=checkout_images_revision&id='.$a['id'])
+		->container($changed_image)
+		->container($images_stamp, 'Revision stamp')
+		->container($main_image, 'Main image')
+		->link("Retrieve current stamp",'./?object=manage_shop&action=checkout_images_revision&id='.$a['id'])
 		;
 	}
 	
@@ -222,20 +246,12 @@ class yf_manage_shop__product_revisions {
 	*/
 	function checkout_images_revision() {
 		$_GET['id'] = intval($_GET['id']);
-		$now = db()->get('SELECT * FROM '.db('shop_product_images_revisions').' WHERE id='.$_GET['id']);
-		if (empty($now)) {
+		$revision_data = db()->get('SELECT * FROM '.db('shop_product_images_revisions').' WHERE id='.$_GET['id']);
+		if (empty($revision_data)) {
 			return _e('Revision not found');
 		}
-		$product_id = $now['product_id'];
-		$before = db()->get('SELECT * FROM '.db('shop_product_images_revisions').' 
-							WHERE product_id='.$product_id.' 
-								AND id<'.$_GET['id'].' 
-							ORDER BY id DESC');
-		if (empty($before)) {
-			return _e('No previous revision');
-		}
-		$back = json_decode($before['data'], true);
-
+		$product_id = $revision_data['product_id'];
+		$data_stamp = json_decode($revision_data['data'], true);
 		db()->begin();
 		$images = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id);
 		foreach($images as $id => $data){
@@ -246,10 +262,10 @@ class yf_manage_shop__product_revisions {
 			);
 		}
 		db()->update_batch('shop_product_images', db()->es($reset));
-		if(empty($back)){
+		if(empty($data_stamp)){
 			 db()->query('UPDATE '.db('shop_products').' SET image=0 WHERE id='.$product_id);
 		}else{
-			foreach($back as $id => $default_val){
+			foreach($data_stamp as $id => $default_val){
 				$set[] = array(
 					'id' 		=> $id,
 					'is_default'=> $default_val,
@@ -259,7 +275,7 @@ class yf_manage_shop__product_revisions {
 			db()->update_batch('shop_product_images', db()->es($set));
 		}
 		db()->commit();
-		module('manage_shop')->_product_images_add_revision('checkout', $product_id);
+		module('manage_shop')->_product_images_add_revision('checkout', $product_id, false);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
 
 		common()->admin_wall_add(array('shop product checkout revision: '.$_GET['id'], $product_id));

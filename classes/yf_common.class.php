@@ -1317,9 +1317,9 @@ class yf_common {
 			$base_url = '//' . $media_host . '/';
 		}
 		$image = array(
-			'big' 		=> $base_url.'/uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_big.jpg',
-			'thumb' 	=> $base_url.'/uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_thumb.jpg',
-			'default' 	=> $base_url.'/uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'.jpg',
+			'big' 		=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_big.jpg',
+			'thumb' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_thumb.jpg',
+			'default' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'.jpg',
 		);
 		return $image;
 	}

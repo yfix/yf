@@ -44,11 +44,22 @@ class yf_manage_shop_hook_side_column {
 		return table($sql, array(
 				'caption' => t('Product images revisions'),
 				'no_records_html' => '',
+			//	'btn_no_text' => 1,
+			//	'no_header' => 1
 			))
-			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->date('add_date', array('format' => 'short', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
+			->image('image_id', 'Image', array('width' => '30px', 'img_path_callback' => function($_p1, $_p2, $row) {
+				$dirs = sprintf('%06s', $row['product_id']);
+				$dir2 = substr($dirs, -3, 3);
+				$dir1 = substr($dirs, -6, 3);
+				$m_path = $dir1.'/'.$dir2.'/';
+				$image = SITE_IMAGES_DIR.$m_path.'product_'.$row['product_id'].'_'.$row['image_id'].'.jpg';
+				return $image; 
+            }))
 			->text('action')
 			->btn_view('', './?object=manage_shop&action=product_images_revisions&id=%d')
+//			->footer_link('All revisions history', './?object=manage_shop&action=product_images_revisions')
 		;
 	}
 
