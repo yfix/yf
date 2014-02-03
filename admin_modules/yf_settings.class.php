@@ -79,13 +79,15 @@ class yf_settings {
 		);
 		$hooks_data = _class('common_admin')->call_hooks('settings', array('this' => $this));
 		foreach ((array)$hooks_data as $k => $v) {
-			$a[] = array('fieldset_start', array('class' => 'well', 'legend' => $k));
+			list($module_name,) = explode('___', $k);
+			$a[] = array('fieldset_start', array('class' => 'well', 'legend' => $module_name));
 			foreach ((array)$v as $_a) {
 				$a[] = $_a;
 			}
 			$a[] = array('fieldset_end');
 		}
-		return form()->array_to_form($a, array('class' => 'form-vertical form-condensed span8'));
+		return form()->array_to_form($a, array('class' => 'form-vertical form-condensed span6'));
+#		return form()->array_to_form($a, array('class' => 'form-horizontal form-condensed span8'));
 	}
 
 	/**
@@ -167,12 +169,12 @@ class yf_settings {
 	*/
 	function _hook_settings() {
 		return array(
+			array('active_box', 'site_maintenance', array('tip' => '')),
 			array('active_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
 			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
+/*
 			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
-			array('active_box', 'site_maintenance', array('tip' => '')),
 			array('select_box', 'default_css_framework', $this->css_frameworks), // TODO: link to edit
-
 #			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
 			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit
 			array('select_box', 'default_skin', $this->default_skins), // TODO: link to edit
@@ -231,6 +233,7 @@ class yf_settings {
 #			array('active_box', 'db_query_cache_enabled'),
 #			array('number', 'db_query_cache_ttl'),
 #			array('select_box', 'db_query_cache_driver'),
+*/
 		);
 	}
 }
