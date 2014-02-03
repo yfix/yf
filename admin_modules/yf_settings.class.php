@@ -35,10 +35,10 @@ class yf_settings {
 	public $db_drivers = array(
 		'mysql'		=> 'mysql',
 		'mysqli'	=> 'mysqli',
-#		'mysql_pdo'	=> 'mysql PDO',
-#		'sqlite'	=> 'sqlite',
-#		'oracle'	=> 'oracle',
-#		'postgre'	=> 'postgre',
+		'mysql_pdo'	=> 'mysql PDO',
+		'sqlite'	=> 'sqlite',
+		'oracle'	=> 'oracle',
+		'postgre'	=> 'postgre',
 	);
 	public $cache_drivers = array(
 		'memcache'	=> 'memcache',
@@ -67,27 +67,31 @@ class yf_settings {
 				return js_redirect('./?object='.$_GET['object']);
 			}
 		}
-#		$r = (array)$_POST + (array)conf();
+		$r = (array)$_POST;
+		$all_conf = conf();
+		foreach ((array)conf() as $k => $v) {
+			if (is_array($k)) {
+				foreach ((array)$v as $k2 => $v2) {
+				}
+			}
+		}
 		$a = array(
 			'row_start',
-			array('save'),
-			array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge'), // TODO: link, method, icon
-			array('link', 'cache_stats', './?object='.$_GET['object'].'&action=cache_stats'), // TODO: link, method, icon
-			array('link', 'minify_css', './?object='.$_GET['object'].'&action=minify_css'), // TODO: link, method, icon
-			array('link', 'minify_js', './?object='.$_GET['object'].'&action=minify_js'), // TODO: link, method, icon
+				array('save'),
+				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn')), // TODO: link, method, icon
 			'row_end',
 		);
 		$hooks_data = _class('common_admin')->call_hooks('settings', array('this' => $this));
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
-			$a[] = array('fieldset_start', array('class' => 'well', 'legend' => $module_name));
+			$a[] = array('fieldset_start', array('id' => 'module_'.$module_name, 'legend' => $module_name, 'class' => 'well'));
 			foreach ((array)$v as $_a) {
 				$a[] = $_a;
 			}
 			$a[] = array('fieldset_end');
+			$this->_used_modules[$module_name] = $module_name;
 		}
-		return form()->array_to_form($a, array('class' => 'form-vertical form-condensed span6'));
-#		return form()->array_to_form($a, array('class' => 'form-horizontal form-condensed span8'));
+		return form($r, array('class' => 'form-vertical form-condensed span6'))->array_to_form($a);
 	}
 
 	/**
@@ -95,24 +99,6 @@ class yf_settings {
 	function cache_purge() {
 		$result = _class('cache')->_clear_all();
 		return js_redirect('./?object='.$_GET['object']);
-	}
-
-	/**
-	*/
-	function cache_stats() {
-// TODO
-	}
-
-	/**
-	*/
-	function minify_css() {
-// TODO
-	}
-
-	/**
-	*/
-	function minify_js() {
-// TODO
 	}
 
 	/**
@@ -169,8 +155,8 @@ class yf_settings {
 	*/
 	function _hook_settings() {
 		return array(
-			array('active_box', 'site_maintenance', array('tip' => '')),
-			array('active_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
+			array('yes_no_box', 'site_maintenance', array('tip' => '')),
+			array('yes_no_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
 			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
 /*
 			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
@@ -233,7 +219,44 @@ class yf_settings {
 #			array('active_box', 'db_query_cache_enabled'),
 #			array('number', 'db_query_cache_ttl'),
 #			array('select_box', 'db_query_cache_driver'),
+			'row_start',
+#				array('link', 'cache_stats', './?object='.$_GET['object'].'&action=cache_stats'), // TODO: link, method, icon
+#				array('link', 'minify_css', './?object='.$_GET['object'].'&action=minify_css'), // TODO: link, method, icon
+#				array('link', 'minify_js', './?object='.$_GET['object'].'&action=minify_js'), // TODO: link, method, icon
+			'row_end',
 */
 		);
+	}
+	
+	/**
+	*/
+	function _hook_side_column() {
+		if (!$this->_used_modules) {
+			return false;
+		}
+		$items = array();
+		$url = process_url('./?object='.$_GET['object']);
+		foreach ((array)$this->_used_modules as $module_name) {
+			$items[] = '<li><a href="'.$url.'#module_'.$module_name.'"><i class="icon-chevron-right"></i> '.t($module_name).'</a></li>';
+		}
+		return '<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
+	}
+
+	/**
+	*/
+	function cache_stats() {
+// TODO
+	}
+
+	/**
+	*/
+	function minify_css() {
+// TODO
+	}
+
+	/**
+	*/
+	function minify_js() {
+// TODO
 	}
 }
