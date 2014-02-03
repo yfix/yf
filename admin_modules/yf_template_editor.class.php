@@ -15,19 +15,13 @@ class yf_template_editor {
 	* Framework constructor
 	*/
 	function _init () {
-		$this->templates_path_framework = YF_PATH. tpl()->_THEMES_PATH;
-		$this->templates_path_framework2 = YF_PATH. 'priority2/'. tpl()->_THEMES_PATH;
-
-		$this->templates_path_project = INCLUDE_PATH. tpl()->_THEMES_PATH;
-		$this->templates_path_project2 = INCLUDE_PATH. 'priority2/'. tpl()->_THEMES_PATH;
-
 		$this->_dir_array = array(
-			'framework'		=> $this->templates_path_framework,
-			'project'		=> $this->templates_path_project,
-#			'framework_p2'	=> $this->templates_path_framework2,
-#			'project_p2'	=> $this->templates_path_project2,
+			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
+			'project'			=> INCLUDE_PATH. tpl()->_THEMES_PATH,
+			'framework_p2'		=> YF_PATH. 'priority2/'. tpl()->_THEMES_PATH,
+			'project_p2'		=> INCLUDE_PATH. 'priority2/'. tpl()->_THEMES_PATH,
+			'framework_user'	=> YF_PATH. 'templates/user/',
 		);
-
 		foreach ((array)_class('sites_info')->info as $site_dir_array) {
 			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
 		}
@@ -54,8 +48,9 @@ class yf_template_editor {
 			cache_set($this->CACHE_NAME, $num_stpls_array);
 		}
 		// Process records
+		$rp = realpath($this->_dir_array['project']);
 		foreach ((array)$themes as $theme_class => $theme_attr) {
-			if (realpath($this->templates_path_project) == realpath($this->_dir_array[$theme_class]) && $theme_class != 'project') {
+			if ($rp == realpath($this->_dir_array[$theme_class]) && $theme_class != 'project') {
 				continue;
 			}
 			$replace3 = array(
@@ -89,7 +84,7 @@ class yf_template_editor {
 	/**
 	*/
 	function edit_theme () {
-		if ($_GET['location'] == 'framework') {
+		if (false !== strpos($_GET['location'], 'framework')) {
 			return $this->_framework_warning();
 		}
 		$new_theme_name	= $_POST['theme_name'];
@@ -250,7 +245,7 @@ class yf_template_editor {
 			return _e('Template name and theme required!');
 		}
 		if (main()->is_post()) {
-			if ($_GET['location'] == 'framework') {
+			if (false !== strpos($_GET['location'], 'framework')) {
 				return $this->_framework_warning();
 			}
 			$lib_stpl_path	= $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
