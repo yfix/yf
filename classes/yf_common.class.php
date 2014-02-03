@@ -295,21 +295,21 @@ class yf_common {
 	* Email verifying function
 	*/
 	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
-		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
+		return _class('validate')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
 	}
 
 	/**
 	* Verify url
 	*/
 	function url_verify ($url = '', $absolute = false) {
-		return preg_match('/^(http|https):\/\/(www\.){0,1}[a-z0-9\-]+\.[a-z]{2,5}[^\s]*$/i', $url);
+		return _class('validate')->_url_verify($url, $absolute);
 	}
 
 	/**
 	* Verify url using remote call
 	*/
 	function _validate_url_by_http($url) {
-		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
+		return _class('validate')->_validate_url_by_http($url);
 	}
 
 	/**
@@ -422,118 +422,6 @@ class yf_common {
 	*/
 	function pdf_page ($text = '', $name = '', $destination = 'I') {
 		return _class('pdf_page', 'classes/common/')->go($text, $name, $destination);
-	}
-
-	/**
-	* Raise user error
-	*/
-	function _raise_error ($text = '', $error_key = '') {
-		$text		= t((string)$text);
-		$error_key	= (string)$error_key;
-		if (!$text) {
-			return false;
-		}
-		if (!isset($this->USER_ERRORS)) {
-			$this->USER_ERRORS = array();
-		}
-		if ($error_key) {
-			$this->USER_ERRORS[$error_key] = $text;
-		} else {
-			$this->USER_ERRORS[] = $text;
-		}
-		return true;
-	}
-
-	/**
-	* Chec if user error exists
-	*/
-	function _error_exists ($error_key = '') {
-		if (!empty($error_key)) {
-			return (bool)$this->USER_ERRORS[$error_key];
-		}
-		return isset($this->USER_ERRORS) && count($this->USER_ERRORS) ? true : false;
-	}
-
-	/**
-	* Show formatted contents of user errors
-	*/
-	function _get_error_messages ($key = '') {
-		if (!$this->USER_ERRORS) {
-			return false;
-		}
-		return $key ? $this->USER_ERRORS[$key] : $this->USER_ERRORS;
-	}
-
-	/**
-	* Show formatted contents of user errors
-	*/
-	function _show_error_message ($cur_error_msg = '', $clear_error = true) {
-		// Prevent recursive display
-		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, '<!--YF_ERROR_MESSAGE_START-->')) {
-			return t($cur_error_msg);
-		}
-		if (!isset($this->USER_ERRORS)) {
-			$this->USER_ERRORS = array();
-		}
-		if (strlen($cur_error_msg)) {
-			$this->USER_ERRORS[] = $cur_error_msg;
-		}
-		foreach ((array)$this->USER_ERRORS as $error_key => $value) {
-			if (empty($value)) {
-				continue;
-			}
-			$items[$error_key] = $value;
-		}
-		// Try to save errors log
-		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
-			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
-		}
-		// Set default value
-		if ($clear_error) {
-			$this->USER_ERRORS = array();
-		}
-		// Do not display error messages to spiders
-		if (conf('IS_SPIDER')) {
-			return false;
-		}
-		// Do not show error messages on front
-		if (IS_FRONT == 1) {
-//			return false;
-		}
-		if (empty($items)) {
-			return '';
-		}
-		$replace = array(
-			'items' => $items,
-			'error' => 'error', // DO NOT REMOVE THIS!!! NEEDED TO AVOID INFINITE LOOP INSIDE TPL CLASS
-		);
-		return tpl()->parse('system/error_message', $replace);
-	}
-
-	/**
-	* Show formatted single error message
-	*/
-	function _show_error_inline ($error_key = '') {
-		if (empty($error_key)) {
-			return false;
-		}
-		// Try to get error message
-		$error_msg = '';
-		if (isset($this->USER_ERRORS[$error_key])) {
-			$error_msg = $this->USER_ERRORS[$error_key];
-// TODO: need to decide if we need to do this
-//			$this->USER_ERRORS[$error_key] = '';
-		}
-		// Last check
-		if (empty($error_msg)) {
-			return false;
-		}
-		// Prepare template
-		$replace = array(
-			'text'	=> $error_msg,
-			'key'	=> $error_key,
-		);
-		return tpl()->parse('system/error_inline', $replace);
 	}
 
 	/**
@@ -863,29 +751,6 @@ class yf_common {
 	}
 
 	/**
-	* Show formatted contents of notices for user
-	*/
-	function show_notices ($keep = false, $force_text = '') {
-		if ($force_text) {
-			$this->set_notice($force_text);
-		}
-		$name_in_session = '_user_notices';
-		$items = $_SESSION[$name_in_session];
-		if (!$keep) {
-			$_SESSION[$name_in_session] = array();
-			unset($_SESSION[$name_in_session]);
-		}
-		return $items ? tpl()->parse('system/user_notices', array('items' => $items)) : '';
-	}
-
-	/**
-	* Set notice to display on next page (usually after redirect)
-	*/
-	function set_notice ($text = '') {
-		$_SESSION['_user_notices'][crc32($text)] = $text;
-	}
-
-	/**
 	* Log user actions for stats
 	*/
 	function _log_user_action ($action_name, $member_id, $object_name = '', $object_id = 0) {
@@ -1123,47 +988,9 @@ class yf_common {
 
 	/**
 	* Threaded execution of the given object/action
-	* @example: 
-	*	$data_for_threads = array(
-	*		array('id' => 1), 
-	*		array('id' => 2),
-	* 	);
-	* @example: 
-	*	for ($i = 0; $i < 10; $i++) {
-	*		$threads[] = array('id' => $i);
-	*	}
-	*	print_r(common()->threaded_exec($_GET['object'], 'console', $threads), 1);
-	* @example: 
-	*	function console () {
-	*		main()->NO_GRAPHICS = true;
-	*		session_write_close();
-	*		if (!main()->CONSOLE_MODE) {
-	*			exit('No direct access to method allowed');
-	*		}
-	*		sleep(3);
-	*   	$params = common()->get_console_params();
-	*		echo $params['id'];
-	*		exit();
-	*	}
 	*/
 	function threaded_exec($object, $action = 'show', $threads_params = array(), $max_threads = 10) {
-		$results = array();
-		// Limit max number of parallel threads
-		foreach (array_chunk($threads_params, $max_threads, true) as $chunk) {
-			$ids_to_params = array();
-			foreach ((array)$chunk as $param_id => $_params) {
-				$thread_id = _class('threads')->new_framework_thread($object, $action, $_params);
-				$ids_to_params[$thread_id] = $param_id;
-			}
-			while (false !== ($result = _class('threads')->iteration())) {
-				if (!empty($result)) {
-					$thread_id	= $result[0];
-					$param_id	= $ids_to_params[$thread_id];
-					$results[$param_id] = $result[1];
-				}
-			}
-		}
-		return $results;
+		return _class('threads')->threaded_exec($object, $action, $threads_params, $max_threads);
 	}
 
 	/**
@@ -1214,23 +1041,7 @@ class yf_common {
 	/**
 	*/
 	function admin_wall_add($data = array()) {
-# TODO: check this and enable
-#		if (!is_array($data)) {
-#			$data = func_get_args();
-#		}
-		return db()->insert('admin_walls', db()->es(array(
-			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
-			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
-			'user_id'	=> isset($data['user_id']) ? $data['user_id'] : (isset($data[2]) ? $data[2] : main()->ADMIN_ID),
-			'object'	=> isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
-			'action'	=> isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
-			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),
-			'old_data'	=> json_encode(isset($data['old_data']) ? $data['old_data'] : (isset($data[6]) ? $data[6] : '')),
-			'new_data'	=> json_encode(isset($data['new_data']) ? $data['new_data'] : (isset($data[7]) ? $data[7] : '')),
-			'add_date'	=> date('Y-m-d H:i:s'),
-			'server_id'	=> (int)main()->SERVER_ID,
-			'site_id'	=> (int)main()->SITE_ID,
-		)));
+		return _class('common_admin')->admin_wall_add($data);
 	}
 
 	/**
@@ -1258,70 +1069,21 @@ class yf_common {
 	}
 
 	/**
-	*
 	*/
-	function date_picker ($name, $cur_date = '') {
-		$content = '';
-		if (empty($this->date_picker_count)) {
-			$content .= '
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.core.js"></script>
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.js"></script>
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.css">
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.all.css">
-				<script>
-					$(function() {
-						$( ".datepicker" ).datepicker(
-							{ dateFormat: "yy-mm-dd" }
-						);
-					});
-				</script>
-			';
-		}
-		$content .= '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" />';
-		$this->date_picker_count++;
-		return $content;
+	function date_picker($name, $cur_date = '') {
+		return _class('html_controls')->date_picker($name, $cur_date);
 	}
 
 	/**
 	*/
 	function shop_get_images($product_id) {
-		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' AND active=1 ORDER BY is_default DESC');
-		$d = sprintf('%09s', $product_id);
-		foreach((array)$A as $img){
-	    	$replace = array(
-			    '{subdir2}' => substr($d, -6, 3),
-			    '{subdir3}' => substr($d, -3, 3),
-		    	'{product_id}' => $product_id,
-			    '{image_id}' => $img['id'],
-			);
-			$images[] = array(
-				'big' 	=> str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_big.jpg'),
-				'thumb' => str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_thumb.jpg'),
-				'id'	=> $img['id'],
-			);
-		}
-		return $images;
+		return module('shop')->_get_images($product_id);
 	}
 
 	/**
 	*/
 	function shop_generate_image_name($product_id, $image_id, $media = false){
-		$dirs = sprintf('%06s', $product_id);
-		$dir2 = substr($dirs, -3, 3);
-		$dir1 = substr($dirs, -6, 3);
-		$m_path = $dir1.'/'.$dir2.'/';
-
-		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
-		$base_url = WEB_PATH;
-		if (!empty($media_host) && $media) {
-			$base_url = '//' . $media_host . '/';
-		}
-		$image = array(
-			'big' 		=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_big.jpg',
-			'thumb' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_thumb.jpg',
-			'default' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'.jpg',
-		);
-		return $image;
+		return module('shop')->_generate_image_name($product_id, $image_id, $media);
 	}
 
 	/**
@@ -1404,34 +1166,38 @@ class yf_common {
 	/**
 	*/
 	function message_success($text = '') {
-		return $this->add_message($text, 'success');
+		return $this->add_message($text, 'success', $key);
 	}
 
 	/**
 	*/
 	function message_info($text = '') {
-		return $this->add_message($text, 'info');
+		return $this->add_message($text, 'info', $key);
 	}
 
 	/**
 	*/
 	function message_warning($text = '') {
-		return $this->add_message($text, 'warning');
+		return $this->add_message($text, 'warning', $key);
 	}
 
 	/**
 	*/
 	function message_error($text = '') {
-		return $this->add_message($text, 'error');
+		return $this->add_message($text, 'error', $key);
 	}
 
 	/**
 	*/
-	function add_message($text = '', $level = 'info') {
+	function add_message($text = '', $level = 'info', $key = '') {
 		if (!strlen($text)) {
 			return false;
 		}
-		$_SESSION['permanent'][$level][] = $text;
+		if ($key) {
+			$_SESSION['permanent'][$level][$key] = $text;
+		} else {
+			$_SESSION['permanent'][$level][] = $text;
+		}
 		return true;
 	}
 
@@ -1460,9 +1226,137 @@ class yf_common {
 	}
 
 	/**
+	* Raise user error
 	*/
-	function _admin_link_is_allowed($link = '') {
-		$func = __FUNCTION__;
-		return _class('common_admin')->$func($link);
+	function _raise_error ($text = '', $error_key = '') {
+		$text		= t((string)$text);
+		$error_key	= (string)$error_key;
+		if (!$text) {
+			return false;
+		}
+		if (!isset($this->USER_ERRORS)) {
+			$this->USER_ERRORS = array();
+		}
+		if ($error_key) {
+			$this->USER_ERRORS[$error_key] = $text;
+		} else {
+			$this->USER_ERRORS[] = $text;
+		}
+		return true;
+	}
+
+	/**
+	* Chec if user error exists
+	*/
+	function _error_exists ($error_key = '') {
+		if (!empty($error_key)) {
+			return (bool)$this->USER_ERRORS[$error_key];
+		}
+		return isset($this->USER_ERRORS) && count($this->USER_ERRORS) ? true : false;
+	}
+
+	/**
+	* Show formatted contents of user errors
+	*/
+	function _get_error_messages ($key = '') {
+		if (!$this->USER_ERRORS) {
+			return false;
+		}
+		return $key ? $this->USER_ERRORS[$key] : $this->USER_ERRORS;
+	}
+
+	/**
+	* Show formatted contents of user errors
+	*/
+	function _show_error_message ($cur_error_msg = '', $clear_error = true) {
+		// Prevent recursive display
+		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, '<!--YF_ERROR_MESSAGE_START-->')) {
+			return t($cur_error_msg);
+		}
+		if (!isset($this->USER_ERRORS)) {
+			$this->USER_ERRORS = array();
+		}
+		if (strlen($cur_error_msg)) {
+			$this->USER_ERRORS[] = $cur_error_msg;
+		}
+		foreach ((array)$this->USER_ERRORS as $error_key => $value) {
+			if (empty($value)) {
+				continue;
+			}
+			$items[$error_key] = $value;
+		}
+		// Try to save errors log
+		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
+			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
+		}
+		// Set default value
+		if ($clear_error) {
+			$this->USER_ERRORS = array();
+		}
+		// Do not display error messages to spiders
+		if (conf('IS_SPIDER')) {
+			return false;
+		}
+		// Do not show error messages on front
+		if (IS_FRONT == 1) {
+//			return false;
+		}
+		if (empty($items)) {
+			return '';
+		}
+		$replace = array(
+			'items' => $items,
+			'error' => 'error', // DO NOT REMOVE THIS!!! NEEDED TO AVOID INFINITE LOOP INSIDE TPL CLASS
+		);
+		return tpl()->parse('system/error_message', $replace);
+	}
+
+	/**
+	* Show formatted single error message
+	*/
+	function _show_error_inline ($error_key = '') {
+		if (empty($error_key)) {
+			return false;
+		}
+		// Try to get error message
+		$error_msg = '';
+		if (isset($this->USER_ERRORS[$error_key])) {
+			$error_msg = $this->USER_ERRORS[$error_key];
+// TODO: need to decide if we need to do this
+//			$this->USER_ERRORS[$error_key] = '';
+		}
+		// Last check
+		if (empty($error_msg)) {
+			return false;
+		}
+		// Prepare template
+		$replace = array(
+			'text'	=> $error_msg,
+			'key'	=> $error_key,
+		);
+		return tpl()->parse('system/error_inline', $replace);
+	}
+
+	/**
+	* Show formatted contents of notices for user
+	*/
+	function show_notices ($keep = false, $force_text = '') {
+		if ($force_text) {
+			$this->set_notice($force_text);
+		}
+		$name_in_session = '_user_notices';
+		$items = $_SESSION[$name_in_session];
+		if (!$keep) {
+			$_SESSION[$name_in_session] = array();
+			unset($_SESSION[$name_in_session]);
+		}
+		return $items ? tpl()->parse('system/user_notices', array('items' => $items)) : '';
+	}
+
+	/**
+	* Set notice to display on next page (usually after redirect)
+	*/
+	function set_notice ($text = '') {
+		$_SESSION['_user_notices'][crc32($text)] = $text;
 	}
 }
