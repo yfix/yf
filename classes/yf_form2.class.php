@@ -61,8 +61,8 @@ class yf_form2 {
 	/**
 	*/
 	function array_to_form($a = array(), $params = array(), $replace = array()) {
-		$this->_replace = $replace;
-		$this->_params = $params;
+		$this->_params = $params + (array)$this->_params;
+		$this->_replace = $replace + (array)$this->_replace;
 		// Example of row: array('text', 'login', array('class' => 'input-medium'))
 		foreach ((array)$a as $v) {
 			$func = '';
@@ -318,9 +318,12 @@ class yf_form2 {
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
 			$body = '<form'.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
-			$body .= '<fieldset>';
+// TODO: use unified fieldset_start() method
+// Fieldset hardcode here needed to avoid strange bug with recursion
+			$_this->_fieldset_mode_on = true;
+			$body .= '<fieldset'.$_this->_attrs($extra['fieldset'], array('class','style','id','name')).'>'.PHP_EOL;
 			if ($extra['legend']) {
-				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>';
+				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
 			return $body;
 		};
@@ -338,7 +341,10 @@ class yf_form2 {
 			$extra = array();
 		}
 		$func = function($extra, $r, $_this) {
-			$body = '</fieldset>'.PHP_EOL;
+// TODO: use unified fieldset_start() method
+// Fieldset hardcode here needed to avoid strange bug with recursion
+			$_this->_fieldset_mode_on = false;
+			$body .= '</fieldset>'.PHP_EOL;
 			$body .= '</form>'.PHP_EOL;
 			return $body;
 		};
@@ -347,6 +353,115 @@ class yf_form2 {
 			return $this;
 		}
 		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Shortcut for adding fieldset
+	*/
+	function fieldset_start($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
+		$func = function($extra, $r, $_this) {
+			if ($_this->_fieldset_mode_on) {
+				$body = '</fieldset>'.PHP_EOL;
+			} else {
+				$_this->_fieldset_mode_on = true;
+			}
+			$body .= '<fieldset'.$_this->_attrs($extra, array('class','style','id','name')).'>'.PHP_EOL;
+			if ($extra['legend']) {
+				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
+			}
+			return $body;
+		};
+		if ($this->_chained_mode || $extra['chained_mode']) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+	}
+
+	/**
+	* Paired with fieldset_start
+	*/
+	function fieldset_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			if ($_this->_fieldset_mode_on) {
+				$_this->_fieldset_mode_on = false;
+				return '</fieldset>'.PHP_EOL;
+			}
+		};
+		if ($this->_chained_mode || $extra['chained_mode']) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+	}
+
+	/**
+	* Shortcut for starting form row, needed to build row with several inlined inputs
+	*/
+	function row_start($extra = array()) {
+		$func = function($extra, $r, $_this) {
+// TODO: auto-close row_end(), if not called implicitely
+			$_this->_stacked_mode_on = true;
+			$extra['errors'] = common()->_get_error_messages();
+			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Paired with row_start
+	*/
+	function row_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_stacked_mode_on = false;
+			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Shortcut for making tabbable form
+	*/
+	function tab_start($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra += $name;
+			$name = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
+		$func = function($extra, $r, $_this) {
+// TODO: auto-close tab_end(), if not called implicitely
+			$_this->_tabbed_mode_on = true;
+			$_this->_tabs_name = $extra['name'];
+			$_this->_tabs_extra = $extra;
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+	}
+
+	/**
+	* Paired with tab_start
+	*/
+	function tab_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_tabbed_mode_on = false;
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
 	}
 
 	/**
@@ -387,9 +502,11 @@ class yf_form2 {
 	*/
 	function _attrs($extra = array(), $names = array()) {
 		$body = array();
-		// Try to find and allow all data-* attributes automatically
+		// Try to find and allow all data-* and ng-* attributes automatically
 		foreach ((array)$extra as $k => $v) {
 			if (strpos($k, 'data-') === 0) {
+				$names[] = $k;
+			} elseif (strpos($k, 'ng-') === 0) {
 				$names[] = $k;
 			}
 		}
@@ -499,8 +616,13 @@ class yf_form2 {
 			$extra['css_framework'] = $css_framework;
 			return _class('html')->form_row($content, $extra, $replace, $this);
 		}
+		$css_group = '';
+		if (isset($extra['errors'][$extra['name']])) { $css_group = 'error'; }
+		if (isset($extra['success'][$extra['name']])) { $css_group = 'success'; }
+		if (isset($extra['warnings'][$extra['name']])) { $css_group = 'warning'; }
+		if (isset($extra['infos'][$extra['name']])) { $css_group = 'info'; }
 		$row_start = 
-			'<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
+			'<div class="control-group form-group'. ($css_group ? ' '.$css_group : '').'">'.PHP_EOL
 				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
 				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '');
 
@@ -585,101 +707,6 @@ class yf_form2 {
 					.(isset($extra['ace_editor']) ? $this->_ace_editor_html($extra, $replace) : '')
 					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
 				.$row_end;
-		}
-	}
-
-	/**
-	* Shortcut for starting form row, needed to build row with several inlined inputs
-	*/
-	function row_start($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = true;
-			$extra['errors'] = common()->_get_error_messages();
-			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Paired with row_start
-	*/
-	function row_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = false;
-			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Shortcut for starting navbar, needed to test div_box containers
-	*/
-	function navbar_start($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_params['no_form'] = true;
-			$_this->_stacked_mode_on = true;
-			return '<div class="navbar span2"><div class="navbar-inner"><ul class="nav">';
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Paired with navbar_start
-	*/
-	function navbar_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = false;
-			return '</ul></div></div>';
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Shortcut for making tabbable form
-	*/
-	function tab_start($name = '', $extra = array()) {
-		if (is_array($name)) {
-			$extra += $name;
-			$name = '';
-		}
-		$extra['name'] = $extra['name'] ?: $name;
-		$func = function($extra, $r, $_this) {
-			$_this->_tabs_name = $extra['name'];
-			$_this->_tabs_extra = $extra;
-			$_this->_tabbed_mode_on = true;
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-	}
-
-	/**
-	* Paired with tab_start
-	*/
-	function tab_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_tabbed_mode_on = false;
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
 		}
 	}
 
