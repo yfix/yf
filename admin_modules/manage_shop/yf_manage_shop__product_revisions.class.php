@@ -273,10 +273,11 @@ class yf_manage_shop__product_revisions {
 				);
 			}
 			db()->update_batch('shop_product_images', db()->es($set));
+			db()->query('UPDATE '.db('shop_products').' SET image=1 WHERE id='.$product_id);
 		}
 		db()->commit();
 		module('manage_shop')->_product_images_add_revision('checkout', $product_id, false);
-		module('manage_shop')->_product_cache_purge($_GET['id']);
+		module('manage_shop')->_product_cache_purge($product_id);
 
 		common()->admin_wall_add(array('shop product checkout revision: '.$_GET['id'], $product_id));
 		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
