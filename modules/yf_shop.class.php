@@ -404,4 +404,19 @@ class yf_shop extends yf_module {
 	function category() {
 // TODO: show category contents
 	}
+
+	/**
+	* Hook to provide settigns from shop
+	*/
+	function _hook_settings() {
+		return array(
+			array('yes_no_box', 'shop__sms_order_send', 'Send SMS to user when new order arrives'),
+			array('yes_no_box', 'shop__sms_order_copy', 'Send SMS copy when new order arrives'),
+			array('text', 		'shop__sms_order_copy_to', 'Phone numbers to send SMS copy when new order arrives'),
+			array('yes_no_box', 'shop__emails_all_send', 'Send emails'),
+			array('yes_no_box', 'shop__emails_all_copy', 'Send email copies'),
+			array('text', 		'shop__emails_all_copy_to', 'Emails to copy all userland emails'),
+			array('text', 		'shop__currency', 'Currency to use in userland'),
+		);
+	}
 }
