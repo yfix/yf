@@ -692,4 +692,28 @@ class yf_html_controls {
 				.'</div>';
 		return $body;
 	}
+
+	/**
+	*/
+	function date_picker ($name, $cur_date = '') {
+		$content = '';
+		if (empty($this->date_picker_count)) {
+			$content .= '
+				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.core.js"></script>
+				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.js"></script>
+				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.css">
+				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.all.css">
+				<script>
+					$(function() {
+						$( ".datepicker" ).datepicker(
+							{ dateFormat: "yy-mm-dd" }
+						);
+					});
+				</script>
+			';
+		}
+		$content .= '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" />';
+		$this->date_picker_count++;
+		return $content;
+	}
 }
