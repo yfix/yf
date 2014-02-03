@@ -85,9 +85,7 @@ class yf_settings {
 			}
 			$a[] = array('fieldset_end');
 		}
-		return form()->array_to_form($a, array('class' => 'form-vertical form-condensed span8'
-// TODO: remove me
-, 'legend' => 'test'));
+		return form()->array_to_form($a, array('class' => 'form-vertical form-condensed span8'));
 	}
 
 	/**
