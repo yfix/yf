@@ -775,7 +775,7 @@ class yf_table2 {
 				}
 			}
 		}
-		return ' '.implode(' ', $body);
+		return $body ? ' '.implode(' ', $body) : '';
 	}
 
 	/**
