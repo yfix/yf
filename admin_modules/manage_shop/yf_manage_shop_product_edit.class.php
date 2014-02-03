@@ -17,6 +17,7 @@ class yf_manage_shop_product_edit {
 				_re('Product name must be filled', 'name');
 			}
 			if (!common()->_error_exists()) {
+				module('manage_shop')->_product_check_first_revision('product', $_GET['id']);
 				$sql = array(
 					'url'				=> $_POST['url'] ?: common()->_propose_url_from_name($_POST['name']),
 					'active'			=> intval((bool)$_POST['active']),

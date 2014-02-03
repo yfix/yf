@@ -100,6 +100,7 @@ class yf_manage_shop_products{
 			$a = $this->_get_product($_GET['id']);
 		}
 		if ($a['id']) {
+			module('manage_shop')->_product_check_first_revision('product', $_GET['id']);
 			module('manage_shop')->_product_image_delete($_GET['id']);
 			db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);		
 			db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);		

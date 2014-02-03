@@ -1,9 +1,24 @@
 <?php
 class yf_manage_shop__product_revisions {
 
-	function _product_check_first_revision($ids) {
-		$sql = '...'.$this->get_revision_db($type);
-		$this->_add_revision('product', 'add', $ids);
+	function _product_check_first_revision($type = false, $ids = false) {
+		$db = $this->get_revision_db($type);
+		if($type == 'product_images'){
+			$sql = 'SELECT COUNT(*) as cnt FROM '.$db.' WHERE product_id='.$ids;
+			$first_revision = db()->get($sql);
+			if($first_revision['cnt'] == false){
+				$this->_product_images_add_revision('first', $ids, false);
+			}
+		}
+		if($type == 'product' || $type == 'order'){
+			$ids = (array)$ids;
+			foreach($ids as $k => $v){
+				$first_revision = db()->get('SELECT COUNT(*) as cnt FROM '.$db.' WHERE item_id ='.$v);
+				if($first_revision['cnt'] == false){
+					$this->_add_revision($type, 'first', $v);
+				}
+			}
+		}		
 	}
 
 	function _product_add_revision($action = false, $ids = false) {
@@ -278,7 +293,7 @@ class yf_manage_shop__product_revisions {
 		db()->commit();
 		module('manage_shop')->_product_images_add_revision('checkout', $product_id, false);
 		module('manage_shop')->_product_cache_purge($product_id);
-
+		common()->message_success("Revision retrieved");
 		common()->admin_wall_add(array('shop product checkout revision: '.$_GET['id'], $product_id));
 		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
 	}

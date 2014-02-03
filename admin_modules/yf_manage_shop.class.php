@@ -421,6 +421,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $product_id, $image_id);
 	}
 
+	function _product_check_first_revision($action, $item_id) {		
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
+	}
+ 
 	function import_xls($params = array()) {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
 	}
