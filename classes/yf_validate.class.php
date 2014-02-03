@@ -708,21 +708,21 @@ class yf_validate {
 
 	/**
 	*/
-#	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
-#		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
-#	}
+	function _email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
+		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
+	}
 
 	/**
 	*/
-#	function url_verify ($url = '', $absolute = false) {
-#		return preg_match('/^(http|https):\/\/(www\.){0,1}[a-z0-9\-]+\.[a-z]{2,5}[^\s]*$/i', $url);
-#	}
+	function _url_verify ($url = '', $absolute = false) {
+		return preg_match('/^(http|https):\/\/(www\.){0,1}[a-z0-9\-]+\.[a-z]{2,5}[^\s]*$/i', $url);
+	}
 
 	/**
 	*/
-#	function _validate_url_by_http($url) {
-#		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
-#	}
+	function _validate_url_by_http($url) {
+		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
+	}
 
 	/**
 	*/
