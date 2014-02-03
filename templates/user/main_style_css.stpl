@@ -33,6 +33,7 @@ label.radio-horizontal input[type=radio]{ float: none; margin-left:inherit; marg
 
 .form-condensed .control-group { margin-bottom: 1em; }
 
+fieldset.well { padding-bottom: 0; }
 fieldset.well legend { margin-bottom:0; padding: 0 0.5em; width: auto; line-height: 1.5em; background: inherit; }
 legend+.control-group { margin-top: 0; }
 
