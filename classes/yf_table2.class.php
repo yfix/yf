@@ -273,7 +273,11 @@ class yf_table2 {
 				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
 
 			if (!$params['no_header'] && !$params['rotate_table']) {
-				$body .= '<thead>'.PHP_EOL;
+				$thead_attrs = '';
+				if (isset($params['thead'])) {
+					$thead_attrs = is_array($params['thead']) ? $this->_attrs($params['thead'], array('class', 'id')) : ' '.$params['thead'];
+				}
+				$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
 				$data1row = current($data);
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
@@ -369,13 +373,11 @@ class yf_table2 {
 	/**
 	*/
 	function _render_table_contents($data, $params = array(), $to_hide = array()) {
-		$tbody_attrs = ' ';
-		if (isset($params['tbody_attrs']) && is_array($params['tbody_attrs'])) {
-			$tbody_attrs .= $this->_attrs($params['tbody_attrs'], array('class', 'id'));
-		} elseif(isset($params['tbody_attrs'])) {
-			$tbody_attrs .= $params['tbody_attrs'];
+		$tbody_attrs = '';
+		if (isset($params['tbody'])) {
+			$tbody_attrs = is_array($params['tbody']) ? $this->_attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
 		}
-		//$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
+// $body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
 			$tr_attrs = '';
@@ -748,7 +750,7 @@ class yf_table2 {
 		$body = array();
 		// Try to find and allow all data-* attributes automatically
 		foreach ((array)$extra as $k => $v) {
-			if (strpos($k, 'data-') === 0) {
+			if (strpos($k, 'data-') === 0 || strpos($k, 'ng-') === 0) {
 				$names[] = $k;
 			}
 		}
