@@ -354,6 +354,8 @@ if (file_exists($saved_settings)) {
 }
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
+define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(dirname(__FILE__)).\'/\');
+define(\'ADMIN_SITE_PATH\', dirname(__FILE__).\'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=admin_home\');
 define(\'ADMIN_FRAMESET_MODE\', 1);
 require dirname(dirname(__FILE__)).\'/project_conf.php\';
