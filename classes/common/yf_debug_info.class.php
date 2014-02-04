@@ -157,6 +157,8 @@ class yf_debug_info {
 			'YF_PATH'			=> YF_PATH,
 			'WEB_PATH'			=> WEB_PATH,
 			'MEDIA_PATH'		=> MEDIA_PATH,
+			'ADMIN_WEB_PATH'	=> ADMIN_WEB_PATH,
+			'ADMIN_SITE_PATH'	=> ADMIN_SITE_PATH,
 			'TPL_THEMES_PATH'	=> tpl()->_THEMES_PATH,
 			'TPL_PATH'			=> tpl()->TPL_PATH,
 			'TPL_SKIN'			=> conf('theme'),
@@ -1021,7 +1023,8 @@ class yf_debug_info {
 			'{{THEME}}'	=> conf('theme'),
 		);
 		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
-		$link = WEB_PATH. 'admin/?'. $url;
+//		$link = WEB_PATH. 'admin/?'. $url;
+		$link = ADMIN_WEB_PATH. '?'. $url;
 		if ($just_link) {
 			return $link;
 		}
