@@ -148,7 +148,7 @@ class yf_html {
 				$css_class .= ' '.$extra['class'];
 			}
 			if (!$extra['no_headers']) {
-				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.$desc.'</a></li>';
+				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
 			}
 			$items[] = '<div class="tab-pane '.$css_class.'" id="'.$id.'">'.$content.'</div>';
 		}
