@@ -2,6 +2,25 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
+/* TODO:
+* data-* attrs
+* ng-* attrs
+* extra merge with 1nd and 1st param
+* tab_start()
+* fieldset_start()
+* row_start()
+* array_to_form()
+* auto()
+* replace passing to form and directly to method
+* _attrs()
+* _htmlchars()
+* chained_wrapper()
+* clone (__clone)
+* _dd_row_html()
+* _input_assing_params_from_validate()
+* input,textarea,number,etc
+*/
+
 class class_form_test extends PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {
 		$_GET['object'] = 'dynamic';

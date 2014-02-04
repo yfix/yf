@@ -2,6 +2,15 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
+/* TODO:
+* array filtering
+* sql filtering (eq, between, callbacks, etc)
+* tr params (string, array, callback)
+* td params (string, array, callback)
+* rotated mode
+* auto()
+*/
+
 class class_table_test extends PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {
 		$_GET['object'] = 'dynamic';
