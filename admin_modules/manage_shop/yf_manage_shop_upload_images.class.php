@@ -139,6 +139,7 @@ class yf_manage_shop_upload_images {
                 if(!empty($db_item)){
                         return "Dublicate image";
                 }
+				module('manage_shop')->_product_check_first_revision('product_images', $product['id']);
                 $thumb_name = $this->resize_and_save_image($folder, $product['id'], $md5);
                 return array(
                         'status'=>"Success",
@@ -158,7 +159,6 @@ class yf_manage_shop_upload_images {
                 if (!file_exists($new_path)) {
                         mkdir($new_path, 0777, true);
                 }
-
                 db()->begin();
                 db()->insert(db('shop_product_images'), array(
                         'product_id'    => $id,
