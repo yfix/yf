@@ -18,9 +18,9 @@ class yf_template_editor {
 		$this->_dir_array = array(
 			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
 			'project'			=> INCLUDE_PATH. tpl()->_THEMES_PATH,
-			'framework_p2'		=> YF_PATH. 'priority2/'. tpl()->_THEMES_PATH,
-			'project_p2'		=> INCLUDE_PATH. 'priority2/'. tpl()->_THEMES_PATH,
-			'framework_user'	=> YF_PATH. 'templates/user/',
+#			'framework_p2'		=> YF_PATH. 'priority2/'. tpl()->_THEMES_PATH,
+#			'project_p2'		=> INCLUDE_PATH. 'priority2/'. tpl()->_THEMES_PATH,
+#			'framework_user'	=> YF_PATH. 'templates/user/',
 		);
 		foreach ((array)_class('sites_info')->info as $site_dir_array) {
 			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
