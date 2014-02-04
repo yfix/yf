@@ -184,7 +184,8 @@ class yf_manage_shop_clear_products {
 			exit;
 		}
 
-		shell_exec('cd '.INCLUDE_PATH.'admin/ && php index.php --object=manage_shop --action=clear_pattern_child_process --id='.$_GET['id'].' > /dev/null &');
+		$admin_fs_path = ADMIN_SITE_PATH; // INCLUDE_PATH.'admin/
+		shell_exec('cd '.$admin_fs_path.' && php index.php --object=manage_shop --action=clear_pattern_child_process --id='.$_GET['id'].' > /dev/null &');
 
 		echo json_encode(array('status' => 'done'));
 		exit;
