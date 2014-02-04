@@ -369,7 +369,14 @@ class yf_table2 {
 	/**
 	*/
 	function _render_table_contents($data, $params = array(), $to_hide = array()) {
-		$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
+		$tbody_attrs = ' ';
+		if (isset($params['tbody_attrs']) && is_array($params['tbody_attrs'])) {
+			$tbody_attrs .= $this->_attrs($params['tbody_attrs'], array('class', 'id'));
+		} elseif(isset($params['tbody_attrs'])) {
+			$tbody_attrs .= $params['tbody_attrs'];
+		}
+		//$body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
+		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
 			$tr_attrs = '';
 			if (isset($params['tr'])) {
