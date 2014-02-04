@@ -504,9 +504,7 @@ class yf_form2 {
 		$body = array();
 		// Try to find and allow all data-* and ng-* attributes automatically
 		foreach ((array)$extra as $k => $v) {
-			if (strpos($k, 'data-') === 0) {
-				$names[] = $k;
-			} elseif (strpos($k, 'ng-') === 0) {
+			if (strpos($k, 'data-') === 0 || strpos($k, 'ng-') === 0) {
 				$names[] = $k;
 			}
 		}
