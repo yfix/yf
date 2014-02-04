@@ -120,13 +120,13 @@ class yf_manage_shop_upload_images {
                 }
                 if(!empty($articul[0])){
                         $articul = _es(strip_tags($articul[0]));
+/*
                         $sql = 'SELECT id FROM '.db('shop_products').'
                                         WHERE articul="'.$articul.'"
                                                 AND supplier_id='.$supplier_id;
-/*
+*/
                         $sql = 'SELECT id FROM '.db('shop_products').'
                                         WHERE id= '.$articul;
-*/
                         $product = db()->query_fetch($sql);
                 }else{
                         return "Articul_not_found";
