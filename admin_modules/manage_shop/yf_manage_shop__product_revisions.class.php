@@ -2,13 +2,13 @@
 class yf_manage_shop__product_revisions {
 	
 	public $temp_fields = array(
-		'product'	=> array('image', 'add_date', 'update_date', 'last_viewed_date', 'viewed', 'sold', 'status', 'origin_url', 'source', 'featured', 'barcode', 'item_quantity'),
+		'product'	=> array('image', 'add_date', 'update_date', 'last_viewed_date', 'viewed', 'sold', 'status', 'origin_url', 'source', 'featured'),
 		'order'		=> array(),
 	);
 
 	public $all_queries = array(
 		'product' => array(
-			'product'             => array('table' => 'shop_products', 'field' => 'id', 'multi' => false, ),
+			'product'             => array('table' => 'shop_products', 'field' => 'id', 'multi' => false),
 			'params'              => array('table' => 'shop_products_productparams', 'field' => 'product_id', 'multi' => true),
 			'product_to_category' => array('table' => 'shop_product_to_category', 'field' => 'product_id', 'multi' => true),
 			'product_to_region'   => array('table' => 'shop_product_to_region', 'field' => 'product_id', 'multi' => true),
@@ -313,7 +313,12 @@ class yf_manage_shop__product_revisions {
 		foreach($data_stamp as $type => $array){
 			$table = $this->all_queries['product'][$type]['table'];
 			$field = $this->all_queries['product'][$type]['field'];
-			db()->update_batch_safe($table, $array, $field);
+			$multi = $this->all_queries['product'][$type]['multi'];
+			if(!$multi){
+				db()->update_safe($table, $array, $field.'='.$array['id']);
+			}else{
+				db()->update_batch_safe($table, $array, $field);
+			}
 		}
 		module('manage_shop')->_product_add_revision('checkout', $product_id);
 		db()->commit();

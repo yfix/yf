@@ -138,9 +138,6 @@ class yf_manage_shop_products{
 				'product_id' => $new_product_id,
 				'productparam_id' => $v['productparam_id'],
 				'value' => $v['value'],
-				'articul' => $v['articul'],
-				'item_quantity' => $v['item_quantity'],
-				'barcode' => $v['barcode'],
 			));
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$new_product_id}'");
