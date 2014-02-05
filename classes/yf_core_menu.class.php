@@ -9,6 +9,9 @@
 */
 class yf_core_menu {
 
+	/** @conf_skip */
+	public $USE_DYNAMIC_ATTS = 1;
+
 	/**
 	* Catch missing method call
 	*/
@@ -97,6 +100,27 @@ class yf_core_menu {
 			$menu_items = _class($special_class_name, $special_path)->$special_method_name($special_params);
 		} else {
 			$menu_items = $this->_recursive_get_menu_items($menu_id);
+		}
+		// Support for custom fields, that will be available as menu_items array keys
+		$custom_fields = array();
+		if ($cur_menu_info['custom_fields']) {
+			foreach (explode(',', str_replace(';', ',', trim($cur_menu_info['custom_fields']))) as $f) {
+				$f = trim($f);
+				if ($f) {
+					$custom_fields[$f] = $f;
+				}
+			}
+		}
+		if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
+			foreach ((array)$menu_items as $item_id => $item_info) {
+				if (!strlen($item_info['other_info'])) {
+					continue;
+				}
+				$custom_attrs = (array)$this->_convert_atts_string_into_array($item_info['other_info']);
+				foreach ((array)$custom_fields as $f) {
+					$menu_items[$item_id][$f] = strval($custom_attrs[$f]);
+				}
+			}
 		}
 		if ($force_stpl_name) {
 			$cur_menu_info['stpl_name'] = $force_stpl_name;
@@ -333,5 +357,20 @@ class yf_core_menu {
 		}
 		return $items_array;
 	}
-}
 
+	/**
+	* Convert string attributes (from field 'other_info') into array
+	*/
+	function _convert_atts_string_into_array($string = '') {
+		$output_array = array();
+		foreach (explode(';', trim($string)) as $tmp_string) {
+			list($try_key, $try_value) = explode('=', trim($tmp_string));
+			$try_key	= trim(trim(trim($try_key), '"'));
+			$try_value	= trim(trim(trim($try_value), '"'));
+			if (strlen($try_key) && strlen($try_value)) {
+				$output_array[$try_key] = $try_value;
+			}
+		}
+		return $output_array;
+	}
+}
