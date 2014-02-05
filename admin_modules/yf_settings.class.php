@@ -67,7 +67,6 @@ class yf_settings {
 				return js_redirect('./?object='.$_GET['object']);
 			}
 		}
-		$r = (array)$_POST;
 		$all_conf = conf();
 		foreach ((array)conf() as $k => $v) {
 			if (is_array($k)) {
@@ -81,6 +80,7 @@ class yf_settings {
 				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn')), // TODO: link, method, icon
 			'row_end',
 		);
+		$r = array();
 		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
@@ -91,6 +91,7 @@ class yf_settings {
 			$a[] = array('fieldset_end');
 			$this->_used_modules[$module_name] = $module_name;
 		}
+		$r = (array)$_POST + (array)$r;
 		return form($r, array('class' => 'form-vertical form-condensed span6'))->array_to_form($a);
 	}
 
@@ -153,7 +154,11 @@ class yf_settings {
 
 	/**
 	*/
-	function _hook_settings(&$params) {
+	function _hook_settings(&$selected = array()) {
+		$selected['site_maintenance'] = conf('site_maintenance') ?: 0;
+		$selected['main[USE_SYSTEM_CACHE]'] = module_conf('main', 'USE_SYSTEM_CACHE') || (defined('USE_CACHE') && USE_CACHE) ?: 0; // TODO: unify and simplify
+		$selected['cache[DRIVER]'] = module_conf('cache', 'DRIVER') ?: 'memcache';
+
 		return array(
 			array('yes_no_box', 'site_maintenance', array('tip' => '')),
 			array('yes_no_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
