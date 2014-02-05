@@ -7,6 +7,7 @@ $data = '
 	`active` enum(\'1\',\'0\') NOT NULL,
 	`stpl_name` varchar(255) NOT NULL,
 	`method_name` varchar(255) NOT NULL,
+	`other_info` text NOT NULL,
 	PRIMARY KEY (`id`)
 	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ';

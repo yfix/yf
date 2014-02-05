@@ -13,6 +13,7 @@ $data = '
 	`server_ids` varchar(255) NOT NULL,
 	`cond_code` varchar(255) NOT NULL default \'\',
 	`icon` varchar(255) NOT NULL,
+	`custom_fields` text NOT NULL,
 	PRIMARY KEY (`id`)
 	/** ENGINE=InnoDB DEFAULT CHARSET=utf8 **/
 ';
