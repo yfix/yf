@@ -46,6 +46,7 @@ class yf_menus_editor {
 			->text('type')
 			->text('stpl_name')
 			->text('method_name')
+			->text('custom_fields')
 			->btn('Items', './?object='.$_GET['object'].'&action=show_items&id=%d')
 			->btn_edit()
 			->btn_delete()
@@ -65,7 +66,7 @@ class yf_menus_editor {
 				'name'	=> 'trim|required|is_unique[menus.name]',
 				'type'	=> 'trim|required',
 			))
-			->db_insert_if_ok('menus', array('type','name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('menus', array('type','name','desc','stpl_name','method_name','custom_fields','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('menu added: '.$_POST['name'].'', db()->insert_id()));
 				cache_del('menus');
 			}))
@@ -74,6 +75,7 @@ class yf_menus_editor {
 			->text('desc', 'Description')
 			->text('stpl_name')
 			->text('method_name')
+			->text('custom_fields')
 			->active_box()
 			->save_and_back();
 	}
@@ -91,7 +93,7 @@ class yf_menus_editor {
 			->validate(array(
 				'name'	=> 'trim|required',
 			))
-			->db_update_if_ok('menus', array('name','desc','stpl_name','method_name','active'), 'id='.$id, array('on_after_update' => function() {
+			->db_update_if_ok('menus', array('name','desc','stpl_name','method_name','custom_fields','active'), 'id='.$id, array('on_after_update' => function() {
 				common()->admin_wall_add(array('menu updated: '.$_POST['name'].'', $menu_info['id']));
 				cache_del('menus');
 			}))
@@ -100,6 +102,7 @@ class yf_menus_editor {
 			->text('desc', 'Description')
 			->text('stpl_name')
 			->text('method_name')
+			->text('custom_fields')
 			->active_box()
 			->save_and_back();
 	}
@@ -229,13 +232,16 @@ class yf_menus_editor {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
 		$groups = $this->_groups[$menu_info['type']];
-		return table($menu_items, array('pager_records_on_page' => 10000, 'condensed' => 1))
+		return table($menu_items, array('pager_records_on_page' => 10000, 'condensed' => 1, 'hide_empty' => 1))
 			->form()
 			->icon('icon')
 			->input_padded('name')
 			->input('location')
 			->text('type_id', 'Item type', array('data' => $this->_item_types, 'nowrap' => 1))
 			->data('user_groups', $groups, array('desc' => 'Groups'))
+			->data('sites', $this->_sites)
+			->data('servers', $this->_servers)
+			->text('other_info')
 			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_item&id=%d')
@@ -517,6 +523,13 @@ class yf_menus_editor {
 
 		$multi_selects = array('user_groups','site_ids','server_ids');
 		if (main()->is_post()) {
+			$tmp = array();
+			foreach (explode(',', $menu_info['custom_fields']) as $field_name) {
+				if ($field_name && $_POST['custom'][$field_name]) {
+					$tmp[$field_name] = $field_name.'='.$_POST['custom'][$field_name];
+				}
+			}
+			$_POST['other_info'] = implode(';'.PHP_EOL, $tmp);
 			foreach ($multi_selects as $k) {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
@@ -532,7 +545,7 @@ class yf_menus_editor {
 				'name'	=> 'trim|required',
 			))
 			->db_insert_if_ok('menu_items', array(
-				'type_id','parent_id','name','location','icon','user_groups','site_ids','server_ids','active'
+				'type_id','parent_id','name','location','icon','user_groups','site_ids','server_ids','active','other_info'
 			), array('menu_id' => $menu_info['id']), array(
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('menu item added: '.$_POST['name'].'', db()->insert_id()));
@@ -548,6 +561,7 @@ class yf_menus_editor {
 			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
 			->icon_select_box('icon')
 			->active_box()
+			->custom_fields('other_info', $menu_info['custom_fields'])
 			->save_and_back();
 	}
 
@@ -566,6 +580,13 @@ class yf_menus_editor {
 
 		$multi_selects = array('user_groups','site_ids','server_ids');
 		if (main()->is_post()) {
+			$tmp = array();
+			foreach (explode(',', $menu_info['custom_fields']) as $field_name) {
+				if ($field_name && $_POST['custom'][$field_name]) {
+					$tmp[$field_name] = $field_name.'='.$_POST['custom'][$field_name];
+				}
+			}
+			$_POST['other_info'] = implode(';'.PHP_EOL, $tmp);
 			foreach ($multi_selects as $k) {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
@@ -581,7 +602,7 @@ class yf_menus_editor {
 				'name'	=> 'trim|required',
 			))
 			->db_update_if_ok('menu_items', array(
-				'type_id','parent_id','name','location','icon','user_groups','site_ids','server_ids','active'
+				'type_id','parent_id','name','location','icon','user_groups','site_ids','server_ids','active','other_info'
 			), 'id='.$item_info['id'], array(
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('menu item updated: '.$_POST['name'].'', $item_info['id']));
@@ -597,6 +618,7 @@ class yf_menus_editor {
 			->multi_select_box('server_ids', $this->_servers, array('edit_link' => './?object=manage_servers', 'desc' => 'Servers'))
 			->icon_select_box('icon')
 			->active_box()
+			->custom_fields('other_info', $menu_info['custom_fields'])
 			->save_and_back();
 	}
 
