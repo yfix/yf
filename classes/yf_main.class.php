@@ -241,9 +241,24 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function _check_site_maintenance () {
+		if (MAIN_TYPE_USER && !$this->CONSOLE_MODE && !DEBUG_MODE && conf('site_maintenance')) {
+			$this->NO_GRAPHICS = true;
+			header('HTTP/1.1 503 Service Temporarily Unavailable');
+			header('Status: 503 Service Temporarily Unavailable');
+			header('Retry-After: 300');
+			echo tpl()->parse('site_maintenance');
+			exit();
+		}
+	}
+
+	/**
 	* Allows to call code here before we begin with graphics
 	*/
 	function _after_init_hook () {
+		$this->_check_site_maintenance();
+
 		$this->_do_rewrite();
 
 		$this->_init_cur_user_info($this);
@@ -684,7 +699,6 @@ class yf_main {
 		}
 		conf('language',	$lang);
 		conf('charset',		'utf-8');
-		conf('site_enabled',1);
 	}
 
 	/**
