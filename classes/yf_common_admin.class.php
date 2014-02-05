@@ -76,7 +76,7 @@ class yf_common_admin {
 	/**
 	* This method will search and call all found hook methods from active modules
 	*/
-	function call_hooks($hook_name, $params = array(), $section = 'all') {
+	function call_hooks($hook_name, &$params = array(), $section = 'all') {
 		$data = array();
 		foreach ((array)$this->find_hooks($hook_name) as $module => $methods) {
 			foreach ((array)$methods as $method) {
