@@ -27,18 +27,19 @@
 
 {if("conf.css_framework" eq "bs3")}
 	{if(cur_theme eq "bootstrap")}
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap{min_ext}.css" rel="stylesheet">
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme{min_ext}.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap{min_ext}.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet">
 	{else}
-		<link href="//netdna.bootstrapcdn.com/bootswatch/3.0.3/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/bootswatch/3.1.0/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet">
 	{/if}
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap{min_ext}.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap{min_ext}.js"></script>
 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap{min_ext}.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls{min_ext}.js"></script>
 {/if}
 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome{min_ext}.css" rel="stylesheet">
+<!--link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome{min_ext}.css" rel="stylesheet"-->
 
 <script type="text/javascript" src="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/js/bootstrap-formhelpers-selectbox.js.gz"></script>
 <link rel="stylesheet" href="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz">
