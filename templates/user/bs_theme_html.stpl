@@ -3,22 +3,36 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery{min_ext}.js"></script>
 
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
-	{if("cur_theme" eq "bootstrap")}
-		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+	{if(cur_theme eq "bootstrap")}
+		{if(const.DEBUG_MODE eq 1)}
+			<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css" rel="stylesheet">
+		{else}
+			<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+		{/if}
 	{else}
-		<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/{cur_theme}/bootstrap.min.css" rel="stylesheet">
+		{if(const.DEBUG_MODE eq 1)}
+			<link href="http://bootswatch.com/2/{cur_theme}/bootstrap.css" rel="stylesheet">
+		{else}
+			<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/{cur_theme}/bootstrap.min.css" rel="stylesheet">
+		{/if}
 	{/if}
 	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap{min_ext}.js"></script>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.8.0/ui-bootstrap{min_ext}.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.8.0/ui-bootstrap-tpls{min_ext}.js"></script>
 {/if}
 
 {if("conf.css_framework" eq "bs3")}
-	{if("cur_theme" eq "bootstrap")}
+	{if(cur_theme eq "bootstrap")}
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap{min_ext}.css" rel="stylesheet">
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme{min_ext}.css" rel="stylesheet">
 	{else}
 		<link href="//netdna.bootstrapcdn.com/bootswatch/3.0.3/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet">
 	{/if}
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap{min_ext}.js"></script>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap{min_ext}.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls{min_ext}.js"></script>
 {/if}
 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome{min_ext}.css" rel="stylesheet">
@@ -42,3 +56,5 @@
 <!--[if lt IE 9]>
 	<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
