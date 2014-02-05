@@ -248,7 +248,7 @@ class yf_main {
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
 			header('Status: 503 Service Temporarily Unavailable');
 			header('Retry-After: 300');
-			echo tpl()->parse('site_maintenance');
+			echo common()->show_empty_page( tpl()->parse('site_maintenance') );
 			exit();
 		}
 	}
