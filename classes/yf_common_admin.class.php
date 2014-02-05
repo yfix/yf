@@ -109,9 +109,13 @@ class yf_common_admin {
 			$section = 'all';
 		}
 		$cache_name = __FUNCTION__.'__'.$section;
-		if (isset($this->cache[$cache_name])) {
-			return $this->cache[$cache_name];
+		$data = cache_get($cache_name);
+		if ($data) {
+			return $data;
 		}
+#		if (isset($this->cache[$cache_name])) {
+#			return $this->cache[$cache_name];
+#		}
 		$hooks_prefix = '_hook_';
 		$hooks_pl = strlen($hooks_prefix);
 
@@ -143,7 +147,8 @@ class yf_common_admin {
 		if (is_array($hooks)) {
 			ksort($hooks);
 		}
-		$this->cache[$cache_name] = $hooks;
+#		$this->cache[$cache_name] = $hooks;
+		cache_set($cache_name, $hooks);
 		return $hooks;
 	}
 
@@ -155,9 +160,13 @@ class yf_common_admin {
 			$section = 'all';
 		}
 		$cache_name = __FUNCTION__.'__'.$section;
-		if (isset($this->cache[$cache_name])) {
-			return $this->cache[$cache_name];
+		$data = cache_get($cache_name);
+		if ($data) {
+			return $data;
 		}
+#		if (isset($this->cache[$cache_name])) {
+#			return $this->cache[$cache_name];
+#		}
 		if (in_array($section, array('all', 'user'))) {
 			$user_modules = module('user_modules')->_get_modules(array('with_sub_modules' => 1));
 		}
@@ -174,7 +183,8 @@ class yf_common_admin {
 		if (!empty($user_modules)) {
 			$modules['user'] = $user_modules;
 		}
-		$this->cache[$cache_name] = $modules;
+#		$this->cache[$cache_name] = $modules;
+		cache_set($cache_name, $hooks);
 		return $modules;
 	}
 }
