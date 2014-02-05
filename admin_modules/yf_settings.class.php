@@ -81,7 +81,7 @@ class yf_settings {
 				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn')), // TODO: link, method, icon
 			'row_end',
 		);
-		$hooks_data = _class('common_admin')->call_hooks('settings', array('this' => $this));
+		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
 			$a[] = array('fieldset_start', array('id' => 'module_'.$module_name, 'legend' => $module_name, 'class' => 'well'));
@@ -153,7 +153,7 @@ class yf_settings {
 
 	/**
 	*/
-	function _hook_settings() {
+	function _hook_settings(&$params) {
 		return array(
 			array('yes_no_box', 'site_maintenance', array('tip' => '')),
 			array('yes_no_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
