@@ -49,7 +49,7 @@ class yf_manage_shop_hook_side_column {
 			//	'btn_no_text' => 1,
 			//	'no_header' => 1
 			))
-			->date('add_date', array('format' => 'short', 'nowrap' => 1))
+			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->image('image_id', 'Image', array('width' => '30px', 'img_path_callback' => function($_p1, $_p2, $row) {
 				$dirs = sprintf('%06s', $row['product_id']);

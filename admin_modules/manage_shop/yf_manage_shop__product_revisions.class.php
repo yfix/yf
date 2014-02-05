@@ -1,5 +1,24 @@
 <?php
 class yf_manage_shop__product_revisions {
+	
+	public $temp_fields = array(
+		'product'	=> array('image', 'add_date', 'update_date', 'last_viewed_date', 'viewed', 'sold', 'status', 'origin_url', 'source', 'featured', 'barcode', 'item_quantity'),
+		'order'		=> array(),
+	);
+
+	public $all_queries = array(
+		'product' => array(
+			'product'             => array('table' => 'shop_products', 'field' => 'id', 'multi' => false, ),
+			'params'              => array('table' => 'shop_products_productparams', 'field' => 'product_id', 'multi' => true),
+			'product_to_category' => array('table' => 'shop_product_to_category', 'field' => 'product_id', 'multi' => true),
+			'product_to_region'   => array('table' => 'shop_product_to_region', 'field' => 'product_id', 'multi' => true),
+			'product_related'     => array('table' => 'shop_product_related', 'field' => 'product_id', 'multi' => true),
+		),
+		'order' => array(
+			'orders'      => array('table' => 'shop_orders', 'field' => 'id', 'multi' => false),
+			'order_items' => array('table' => 'shop_order_items', 'field' => 'order_id', 'multi' => true),
+		),
+	);
 
 	function _product_check_first_revision($type = false, $ids = false) {
 		$db = $this->get_revision_db($type);
@@ -46,34 +65,10 @@ class yf_manage_shop__product_revisions {
 
 		$ids_with_comma = implode(',', $ids);
 
-		/* sql   - string query
-		 * filed - general field for all tables
-		 * multi - count flag for set array[] or array[][]
-		 */
-		$all_queries = array(
-			'product' => array(
-				'product'             => array('sql' => 'SELECT * FROM '.db('shop_products').' WHERE id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => false, ),
-				'params'              => array('sql' => 'SELECT * FROM '.db('shop_products_productparams').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
-				'product_to_category' => array('sql' => 'SELECT * FROM '.db('shop_product_to_category').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
-				'product_to_region'   => array('sql' => 'SELECT * FROM '.db('shop_product_to_region').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
-				'product_related'     => array('sql' => 'SELECT * FROM '.db('shop_product_related').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'product_id', 'multi' => true),
-			),
-			'order' => array(
-				'orders'      => array('sql' => 'SELECT * FROM '.db('shop_orders').' WHERE id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => false),
-				'order_items' => array('sql' => 'SELECT * FROM '.db('shop_order_items').' WHERE product_id IN ('.$ids_with_comma.');', 'field' => 'id', 'multi' => true),
-			),
-		);
-
 		//check SQL confs for getting data
-		if (!isset($all_queries[$type])) {
+		if (!isset($this->all_queries[$type])) {
 			return false;
 		}
-
-		//help to clear from temp values for diff before and after conditions
-		$temp_indexes['product']['add_date'] = 0;
-		$temp_indexes['product']['update_date'] = 0;
-		$temp_indexes['order']['date'] = 0;
-		//-------------------------------------------------------------------
 
 		$revision_db = $this->get_revision_db($type);
 		$all_data = array();
@@ -82,8 +77,8 @@ class yf_manage_shop__product_revisions {
 			$revision_sql = 'SELECT item_id, data FROM (SELECT item_id, data FROM '.$revision_db.' WHERE item_id IN ('.$ids_with_comma.') ORDER BY id DESC) as r GROUP BY item_id';
 			$all_last_revision = db()->get_2d($revision_sql);
 
-			foreach ($all_queries[$type] as $key => $info) {
-				$sql_res = db()->query($info['sql']);
+			foreach ($this->all_queries[$type] as $key => $info) {
+				$sql_res = db()->query('SELECT * FROM '.db($info['table']).' WHERE '.$info['field'].' IN ('.$ids_with_comma.');');
 				while ($row = db()->fetch_assoc($sql_res)) {
 					$complex_key = $row[$info['field']];
 					if ($info['multi']) {
@@ -94,18 +89,20 @@ class yf_manage_shop__product_revisions {
 				}
 			}
 		}
-
 		foreach ($ids as $id) {
-			if (isset($all_last_revision[$id]) && isset($all_data[$id])) {
-				$cur_revision = json_decode($all_last_revision[$id], true);
-				$cur_revision = is_array($cur_revision) ? array_replace_recursive($cur_revision, $temp_indexes) : $cur_revision;
-				$cur_revision = json_encode($cur_revision);
-
-				$new_revision = $all_data[$id];
-				$new_revision = is_array($new_revision) ? array_replace_recursive($new_revision , $temp_indexes) : $new_revision;
-				$new_revision = json_encode($new_revision);
-
-				if ($cur_revision == $new_revision) {
+			if(!isset($all_data[$id])){
+				continue;
+			}
+			$new_revision = $all_data[$id];
+			if(is_array($new_revision)){
+				foreach($this->temp_fields[$type] as $k => $v){
+					_class('utils')->recursive_unset($new_revision, $v);
+				}
+			}
+			$new_revision = json_encode($new_revision);
+			if (isset($all_last_revision[$id])) {
+				$old_revision = $all_last_revision[$id];
+				if ($old_revision == $new_revision) {
 					continue;
 				}
 			}
@@ -115,7 +112,7 @@ class yf_manage_shop__product_revisions {
 				'add_date' => time(),
 				'action'   => $action,
 				'item_id'  => $id,
-				'data'     => isset($all_data[$id]) ? json_encode($all_data[$id]) : '',
+				'data'     => $new_revision ? : '',
 			);
 		}
 
@@ -176,19 +173,22 @@ class yf_manage_shop__product_revisions {
 		->admin_info('user_id')
 		->info_date('add_date', array('format' => 'full'))
 		->info('action')
-		->func('data', function($extra, $r, $_this) { 
-			$origin = json_decode($r[$extra['name']], true);
-			$new = $origin;
-
-			//test conf to test diff method
-			$new['product']['id'] = '777';
-
-			$origin = var_export($origin, true);
-			$new = var_export($new, true);
-			//return _class('diff')->get_diff($origin, $new);
-			
-			return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
-		})
+		->link('Activate new version', './?object=manage_shop&action=checkout_product_revision&id='.$a['id'])
+		->tab_start('View_difference')
+			->func('data', function($extra, $r, $_this) {
+				$origin = json_decode($r[$extra['name']], true);
+				$before = db()->get('SELECT * FROM '.db('shop_product_revisions').' WHERE id<'.$r['id'].' AND item_id='.$r['item_id'].' ORDER BY id DESC' );
+				$before = json_decode($before[$extra['name']], true);
+				$origin = var_export($origin, true);
+				$before = var_export($before, true);
+				return _class('diff')->get_diff($before, $origin);
+			})
+		->tab_end()
+		->tab_start('New_version')
+			->func('data', function($extra, $r, $_this) {
+				return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
+			})
+		->tab_end()
 		;
 	}
 
@@ -290,11 +290,39 @@ class yf_manage_shop__product_revisions {
 			db()->update_batch('shop_product_images', db()->es($set));
 			db()->query('UPDATE '.db('shop_products').' SET image=1 WHERE id='.$product_id);
 		}
-		db()->commit();
 		module('manage_shop')->_product_images_add_revision('checkout', $product_id, false);
+		db()->commit();
+		module('manage_shop')->_product_cache_purge($product_id);
+		common()->message_success("Revision retrieved");
+		common()->admin_wall_add(array('shop product_image checkout revision: '.$_GET['id'], $product_id));
+		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
+	}
+
+	/**
+	*/
+	function checkout_product_revision() {
+		$_GET['id'] = intval($_GET['id']);
+		$revision_data = db()->get('SELECT * FROM '.db('shop_product_revisions').' WHERE id='.$_GET['id']);
+		if (empty($revision_data)) {
+			return _e('Revision not found');
+		}
+		$product_id = $revision_data['item_id'];
+		$data_stamp = json_decode($revision_data['data'], true);
+
+		db()->begin();
+		foreach($data_stamp as $type => $array){
+			$table = $this->all_queries['product'][$type]['table'];
+			$field = $this->all_queries['product'][$type]['field'];
+			db()->update_batch_safe($table, $array, $field);
+		}
+		module('manage_shop')->_product_add_revision('checkout', $product_id);
+		db()->commit();
+
 		module('manage_shop')->_product_cache_purge($product_id);
 		common()->message_success("Revision retrieved");
 		common()->admin_wall_add(array('shop product checkout revision: '.$_GET['id'], $product_id));
 		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
 	}
+
+
 }
