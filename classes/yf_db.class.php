@@ -1384,7 +1384,7 @@ class yf_db {
 	function _update_batch($table, $values, $index) {
 		$index = $this->enclose_field_name($index);
 		$ids = array();
-		foreach ($values as $key => $val) {
+		foreach ((array)$values as $key => $val) {
 			$ids[] = $val[$index];
 			foreach (array_keys($val) as $field) {
 				if ($field !== $index) {
@@ -1393,7 +1393,7 @@ class yf_db {
 			}
 		}
 		$cases = '';
-		foreach ($final as $k => $v) {
+		foreach ((array)$final as $k => $v) {
 			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
@@ -1408,10 +1408,10 @@ class yf_db {
 		if ( ! is_array($key)) {
 			return false;
 		}
-		foreach ($key as $k => $v) {
+		foreach ((array)$key as $k => $v) {
 			$index_set = FALSE;
 			$clean = array();
-			foreach ($v as $k2 => $v2) {
+			foreach ((array)$v as $k2 => $v2) {
 				if ($k2 === $index)	{
 					$index_set = TRUE;
 				}
