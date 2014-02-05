@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>{execute(graphics,show_site_title)}</title>
-	{execute(common,bs_theme_html)}
-	{include("main_style_css")}
-</head>
-<body class="bs-theme-{execute(common,bs_current_theme)}">
-	<div align="center" class="alert alert-error">
+<div class="container-fluid container-valign-middle">
+	<div class="alert alert-error">
 		Sorry, website is currently under maintenance process. Please visit us later.
 	</div>
-</body>
-</html>
+</div>
