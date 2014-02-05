@@ -67,13 +67,6 @@ class yf_settings {
 				return js_redirect('./?object='.$_GET['object']);
 			}
 		}
-		$all_conf = conf();
-		foreach ((array)conf() as $k => $v) {
-			if (is_array($k)) {
-				foreach ((array)$v as $k2 => $v2) {
-				}
-			}
-		}
 		$a = array(
 			'row_start',
 				array('save'),
@@ -81,6 +74,15 @@ class yf_settings {
 			'row_end',
 		);
 		$r = array();
+		foreach ((array)conf() as $k => $v) {
+			if (is_array($v)) {
+				foreach ((array)$v as $k2 => $v2) {
+					$r[$k.'__'.$k2] = $v2;
+				}
+			} else {
+				$r[$k] = $v;
+			}
+		}
 		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
