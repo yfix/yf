@@ -2,6 +2,9 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery{min_ext}.js"></script>
 
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular{min_ext}.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-loader{min_ext}.js"></script>
+
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 	{if(cur_theme eq "bootstrap")}
 		{if(const.DEBUG_MODE eq 1)}
@@ -54,8 +57,5 @@
 </style>
 
 <!--[if lt IE 9]>
-	<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv{min_ext}.js"></script>
 <![endif]-->
-
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-loader.min.js"></script>
