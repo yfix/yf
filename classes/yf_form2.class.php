@@ -602,7 +602,6 @@ class yf_form2 {
 		if ($this->_params['dd_mode']) {
 			return $this->_dd_row_html($content, $extra, $replace);
 		}
-		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append'] || conf('form_input_no_append')) {
 			$extra['append'] = '';
 			$extra['prepend'] = '';
@@ -610,60 +609,9 @@ class yf_form2 {
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
-		if ($css_framework) {
-			$extra['css_framework'] = $css_framework;
-			return _class('html')->form_row($content, $extra, $replace, $this);
-		}
-		$css_group = '';
-		if (isset($extra['errors'][$extra['name']])) { $css_group = 'error'; }
-		if (isset($extra['success'][$extra['name']])) { $css_group = 'success'; }
-		if (isset($extra['warnings'][$extra['name']])) { $css_group = 'warning'; }
-		if (isset($extra['infos'][$extra['name']])) { $css_group = 'info'; }
-		$row_start = 
-			'<div class="control-group form-group'. ($css_group ? ' '.$css_group : '').'">'.PHP_EOL
-				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '');
-
-		$row_end =
-				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
-			.'</div>';
-
-		$before_content_html = 
-			(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
-			.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '');
-
-		$after_content_html = 
-			($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
-			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
-
-		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
-				$extra['edit_link'] = '';
-			}
-		}
-
-		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
-		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
-
-		$inline_help_html = ($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '');
-		$inline_tip_html = ($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '');
-
-		if ($extra['only_row_start']) {
-			return $row_start;
-		} elseif ($extra['only_row_end']) {
-			return $row_end;
-		} elseif ($extra['stacked']) {
-			return $before_content_html. $content. PHP_EOL. $after_content_html
-				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
-		} else {
-			// Full variant
-			return $row_start
-					.$before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
-					.(isset($extra['ace_editor']) ? $this->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-				.$row_end;
-		}
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		$extra['css_framework'] = $css_framework;
+		return _class('html5')->form_row($content, $extra, $replace, $this);
 	}
 
 	/**
@@ -673,39 +621,12 @@ class yf_form2 {
 		if ($extra['hide_empty'] && !strlen($content)) {
 			return '';
 		}
-		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
-		$dd_class = $this->_params['dd_class'] ?: 'span6';
-
-		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
-		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
-		$row_end = '</dl>'.PHP_EOL;
-
-		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
-				$extra['edit_link'] = '';
-			}
-		}
-		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
-
-		if ($extra['only_row_start']) {
-			return $row_start;
-		} elseif ($extra['only_row_end']) {
-			return $row_end;
-		} elseif ($extra['stacked']) {
-			return $before_content_html. $content. PHP_EOL. $after_content_html
-				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
-		} else {
-			// Full variant
-			return $row_start
-					.$before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
-					.(isset($extra['ace_editor']) ? $this->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-				.$row_end;
-		}
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		$extra['css_framework'] = $css_framework;
+		return _class('html5')->form_dd_row($content, $extra, $replace, $this);
 	}
 
 	/**
