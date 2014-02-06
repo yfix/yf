@@ -241,7 +241,7 @@ class yf_debug_info {
 			->row_end()
 		;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1)).'</div>';
+			$body .= '<div class="span6 col-lg-6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -364,7 +364,7 @@ class yf_debug_info {
 		$data['vars'] = db()->get_2d('SHOW VARIABLES');
 #		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -396,7 +396,7 @@ class yf_debug_info {
 		}
 		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -664,7 +664,7 @@ class yf_debug_info {
 
 		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec<br>';
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
+			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -781,7 +781,7 @@ class yf_debug_info {
 		$data['globals'] = array_filter(array_keys($GLOBALS), function($v) { return $v[0] != '_';} );
 		sort($data['globals']);
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
+			$body .= '<div class="span4 col-lg-4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
 		}
 		return $body;
 	}
