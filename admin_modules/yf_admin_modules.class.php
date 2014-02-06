@@ -109,7 +109,7 @@ class yf_admin_modules {
 			->text('name')
 			->func('locations', function($field, $params, $row) {
 				foreach ((array)$field as $loc => $link) {
-					$out[] = '<a href="'.$link.'" class="btn btn-mini">'.$loc.'</a>';
+					$out[] = '<a href="'.$link.'" class="btn btn-mini btn-xs">'.$loc.'</a>';
 				}
 				return implode(PHP_EOL, (array)$out);
 			})

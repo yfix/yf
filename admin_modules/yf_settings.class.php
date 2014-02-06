@@ -70,7 +70,7 @@ class yf_settings {
 		$a = array(
 			'row_start',
 				array('save'),
-				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn')), // TODO: link, method, icon
+				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn btn-default')), // TODO: link, method, icon
 			'row_end',
 		);
 		$r = array();
