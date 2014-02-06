@@ -48,3 +48,12 @@ legend+.control-group { margin-top: 0; }
 /* override styles per bs theme here */
 .bs-theme-slate textarea { color: #52575c; }
 </style>
+{{--
+{if("conf.css_framework" eq "bs3")}
+<style type="text/css">
+input, textarea, select {
+	max-width: 300px;
+}
+</style>
+{/if}
+--}}
