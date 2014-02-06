@@ -271,6 +271,11 @@ class yf_form2 {
 			$this->_body[$tabs_container] = _class('html')->tabs($tabs, $this->_params['tabs']);
 		}
 		$this->_rendered = implode(PHP_EOL, $this->_body);
+
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		$extra['css_framework'] = $css_framework;
+		$this->_rendered = _class('html5')->form_render_out($this->_rendered, $extra, $replace, $this);
+
 		if (DEBUG_MODE) {
 			debug('form2[]', array(
 				'params'	=> $this->_params,
