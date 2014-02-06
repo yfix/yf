@@ -604,4 +604,12 @@ class yf_admin_modules {
 	function _hook_widget__admin_modules ($params = array()) {
 // TODO
 	}
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+#		return array(
+#			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
+#		);
+	}
 }

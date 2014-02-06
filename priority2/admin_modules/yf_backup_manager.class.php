@@ -310,4 +310,13 @@ class yf_backup_manager {
 	function _hook_widget__latest_backups ($params = array()) {
 // TODO
 	}
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+#		return array(
+#			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
+#			array('number', 'admin_home__ADMIN_HOME_CACHE_TIME'),
+#		);
+	}
 }
