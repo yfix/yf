@@ -237,7 +237,7 @@ class yf_debug_info {
 			->row_start()
 				->container('Locale edit')
 				->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
-				->save(array('class' => 'btn btn-mini'))
+				->save(array('class' => 'btn btn-default btn-mini btn-xs'))
 			->row_end()
 		;
 		foreach ($data as $name => $_data) {
@@ -302,7 +302,7 @@ class yf_debug_info {
 			.($db->DB_SOCKET ? '?socket='.$db->DB_SOCKET : '')
 			.')</b>';
 
-		$trace_html = ' <a href="javascript:void(0)" class="btn btn-mini btn-toggle" data-hidden-toggle="debug-db-connect-trace">'.t('Trace').'</a>'
+		$trace_html = ' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-db-connect-trace">'.t('Trace').'</a>'
 				.'<pre style="display:none;" id="debug-db-connect-trace"><small>'._prepare_html($connect_trace).'</small></pre>';
 
 		$body .= $connect_trace ? $trace_html : '';
@@ -336,7 +336,7 @@ class yf_debug_info {
 			$exec_time = common()->_format_time_value($db->QUERY_EXEC_TIME[$id]);
 			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
-				$exec_time = '<a href="'.$admin_link.'" class="btn btn-mini">'.$exec_time.'</a>';
+				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
 			}
 			$items[] = array(
 				'id'		=> ($id + 1),
@@ -1012,7 +1012,7 @@ class yf_debug_info {
 			return $text;
 		}
 		if ($type == 'link') {
-			return '<a href="'.$text.'" class="btn btn-mini">'.$text.'</a>';
+			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
 		}
 		$id = $text;
 		if ($type == 'show_db_table') {
@@ -1028,7 +1028,7 @@ class yf_debug_info {
 		if ($just_link) {
 			return $link;
 		}
-		return '<a href="'.$link.'" class="btn btn-mini">'.$text.'</a>';
+		return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
 	}
 
 	/**
