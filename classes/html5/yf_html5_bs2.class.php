@@ -7,6 +7,12 @@ class yf_html5_bs2 {
 
 	/**
 	*/
+	function form_render_out ($content, $extra = array(), $replace = array(), $obj) {
+		return $content;
+	}
+
+	/**
+	*/
 	function form_row ($content, $extra = array(), $replace = array(), $obj) {
 		$css_group = '';
 		if (isset($extra['errors'][$extra['name']])) { $css_group = 'error'; }
@@ -15,8 +21,8 @@ class yf_html5_bs2 {
 		if (isset($extra['infos'][$extra['name']])) { $css_group = 'info'; }
 		$row_start = 
 			'<div class="control-group form-group'. ($css_group ? ' '.$css_group : '').'">'.PHP_EOL
-				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '');
+				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-4" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
+				.(!$extra['wide'] ? '<div class="controls'.($extra['desc'] && !$extra['no_label'] ? ' col-lg-8' : ' col-lg-offset-4').'">'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
@@ -37,7 +43,7 @@ class yf_html5_bs2 {
 		}
 
 		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-default btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
-		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
+		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn btn-default">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
 
 		$inline_help_html = ($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '');
 		$inline_tip_html = ($extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '');
