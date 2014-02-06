@@ -59,6 +59,16 @@ class yf_html5 {
 
 	/**
 	*/
+	function form_render_out ($content, $extra = array(), $replace = array(), $obj) {
+		$css_framework = $extra['css_framework'] ?: conf('css_framework');
+		if (!$css_framework) {
+			$css_framework = $this->DEFAULT_CSS_FRAMEWORK;
+		}
+		return _class('html5_'.$css_framework, 'classes/html5/')->form_render_out($content, $extra, $replace, $obj);
+	}
+
+	/**
+	*/
 // TODO
 	function table_row (/*$content, $extra = array(), $replace = array(), $obj*/) {
 #		$css_framework = $extra['css_framework'] ?: conf('css_framework');
