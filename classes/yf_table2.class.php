@@ -260,10 +260,14 @@ class yf_table2 {
 			if ($this->_form_params) {
 				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
 			}
+			$header_links = array();
 			foreach ((array)$this->_header_links as $info) {
 				$name = $info['name'];
 				$func = &$info['func'];
-				$body .= $func($info, $params, $this).PHP_EOL;
+				$header_links[] = $func($info, $params, $this).PHP_EOL;
+			}
+			if ($header_links) {
+				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
 			}
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
@@ -328,10 +332,14 @@ class yf_table2 {
 				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
 			}
 		}
+		$footer_links = array();
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];
 			$func = &$info['func'];
-			$body .= $func($info, $params, $this).PHP_EOL;
+			$footer_links[] = $func($info, $params, $this).PHP_EOL;
+		}
+		if ($footer_links) {
+			$body .= '<div class="controls">'.implode(PHP_EOL, $footer_links).'</div>';
 		}
 		if ($data && $this->_form_params) {
 			$body .= '</form>';
@@ -910,7 +918,7 @@ class yf_table2 {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
 					$a_class = $extra['a_class'];
-					$body = '<a href="'.$link.'" class="btn btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.(strlen($text) ? $text : t('link')).'</a>';
+					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.(strlen($text) ? $text : t('link')).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -1221,7 +1229,7 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+				$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
@@ -1430,7 +1438,7 @@ class yf_table2 {
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$class = $extra['class'] ?: $extra['a_class'];
-				return '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		if (!$extra['display_in']) {
@@ -1502,7 +1510,7 @@ class yf_table2 {
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save');
 				$class = $extra['class'] ?: $extra['a_class'];
 				
-				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
+				return '<button type="submit" name="'.$value.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {

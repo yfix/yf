@@ -64,7 +64,7 @@ class yf_html {
 			'legend' => $replace['title'],
 			'no_form' => 1,
 			'dd_mode' => 1,
-			'dd_class' => 'span6',
+			'dd_class' => 'span6 col-lg-6',
 		));
 		foreach ((array)$replace as $name => $val) {
 			$func = 'container';
@@ -96,7 +96,7 @@ class yf_html {
 			}
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
-		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6';
+		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6 col-lg-6';
 		if (DEBUG_MODE) {
 			debug('dd_table[]', array(
 				'fields'		=> $replace,

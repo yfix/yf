@@ -104,7 +104,7 @@ class yf_login_form {
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me', "", array('no_label' => 1))
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
-			->link('Retrieve lost password', "./?object=get_pswd", array('class' => 'btn btn-mini'))
+			->link('Retrieve lost password', "./?object=get_pswd", array('class' => 'btn btn-mini btn-xs'))
 			->container($this->oauth(array('only_icons' => 1)), array('wide' => 1))
 			->hidden('action', '', array('value' => 'login'))
 		;
