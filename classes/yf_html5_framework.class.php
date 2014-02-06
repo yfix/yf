@@ -8,7 +8,7 @@
 *	Zurb Foundation	http://foundation.zurb.com/
 *	Pure CSS		http://purecss.io/
 */
-class yf_html5 {
+class yf_html5_framework {
 
 	/** @var */
 	public $DEFAULT_CSS_FRAMEWORK = 'bs2';
@@ -44,7 +44,7 @@ class yf_html5 {
 		if (!$css_framework) {
 			$css_framework = $this->DEFAULT_CSS_FRAMEWORK;
 		}
-		return _class('html5_'.$css_framework, 'classes/html5/')->form_row($content, $extra, $replace, $obj);
+		return _class('html5_framework_'.$css_framework, 'classes/html5_framework/')->form_row($content, $extra, $replace, $obj);
 	}
 
 	/**
@@ -54,7 +54,7 @@ class yf_html5 {
 		if (!$css_framework) {
 			$css_framework = $this->DEFAULT_CSS_FRAMEWORK;
 		}
-		return _class('html5_'.$css_framework, 'classes/html5/')->form_dd_row($content, $extra, $replace, $obj);
+		return _class('html5_framework_'.$css_framework, 'classes/html5_framework/')->form_dd_row($content, $extra, $replace, $obj);
 	}
 
 	/**
@@ -64,16 +64,6 @@ class yf_html5 {
 		if (!$css_framework) {
 			$css_framework = $this->DEFAULT_CSS_FRAMEWORK;
 		}
-		return _class('html5_'.$css_framework, 'classes/html5/')->form_render_out($content, $extra, $replace, $obj);
-	}
-
-	/**
-	*/
-// TODO
-	function table_row (/*$content, $extra = array(), $replace = array(), $obj*/) {
-#		$css_framework = $extra['css_framework'] ?: conf('css_framework');
-#		if ($css_framework) {
-#			return _class('html_'.$css_framework, 'classes/html/')->form_row($content, $extra, $replace, $obj);
-#		}
+		return _class('html5_framework_'.$css_framework, 'classes/html5_framework/')->form_render_out($content, $extra, $replace, $obj);
 	}
 }

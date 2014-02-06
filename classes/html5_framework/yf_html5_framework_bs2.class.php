@@ -3,7 +3,7 @@
 /**
 * Twitter bootstrap v2.3 html5 abstraction driver
 */
-class yf_html5_bs2 {
+class yf_html5_framework_bs2 {
 
 	/**
 	*/
