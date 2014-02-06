@@ -230,9 +230,9 @@ class yf_admin_home {
 	/**
 	*/
 	function _hook_settings(&$selected = array()) {
-		return array(
-			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
-			array('number', 'admin_home__ADMIN_HOME_CACHE_TIME'),
-		);
+#		return array(
+#			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
+#			array('number', 'admin_home__ADMIN_HOME_CACHE_TIME'),
+#		);
 	}
 }
