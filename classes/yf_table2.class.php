@@ -260,10 +260,14 @@ class yf_table2 {
 			if ($this->_form_params) {
 				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
 			}
+			$header_links = array();
 			foreach ((array)$this->_header_links as $info) {
 				$name = $info['name'];
 				$func = &$info['func'];
-				$body .= $func($info, $params, $this).PHP_EOL;
+				$header_links[] = $func($info, $params, $this).PHP_EOL;
+			}
+			if ($header_links) {
+				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
 			}
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
@@ -328,10 +332,14 @@ class yf_table2 {
 				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
 			}
 		}
+		$footer_links = array();
 		foreach ((array)$this->_footer_links as $info) {
 			$name = $info['name'];
 			$func = &$info['func'];
-			$body .= $func($info, $params, $this).PHP_EOL;
+			$footer_links[] = $func($info, $params, $this).PHP_EOL;
+		}
+		if ($footer_links) {
+			$body .= '<div class="controls">'.implode(PHP_EOL, $footer_links).'</div>';
 		}
 		if ($data && $this->_form_params) {
 			$body .= '</form>';
