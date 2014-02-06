@@ -165,9 +165,9 @@ class yf_settings {
 			array('yes_no_box', 'site_maintenance', array('tip' => '')),
 			array('yes_no_box', 'main[USE_SYSTEM_CACHE]', array('desc' => 'use_cache')),
 			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
+#			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
+			array('select_box', 'css_framework', $this->css_frameworks, array('show_text' => 1)), // TODO: link to edit
 /*
-			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
-			array('select_box', 'default_css_framework', $this->css_frameworks), // TODO: link to edit
 #			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
 			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit
 			array('select_box', 'default_skin', $this->default_skins), // TODO: link to edit
