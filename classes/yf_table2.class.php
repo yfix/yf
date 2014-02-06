@@ -910,7 +910,7 @@ class yf_table2 {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
 					$a_class = $extra['a_class'];
-					$body = '<a href="'.$link.'" class="btn btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.(strlen($text) ? $text : t('link')).'</a>';
+					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.(strlen($text) ? $text : t('link')).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -1221,7 +1221,7 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-				$body = '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+				$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
@@ -1430,7 +1430,7 @@ class yf_table2 {
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$class = $extra['class'] ?: $extra['a_class'];
-				return '<a href="'.$link.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		if (!$extra['display_in']) {
@@ -1502,7 +1502,7 @@ class yf_table2 {
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save');
 				$class = $extra['class'] ?: $extra['a_class'];
 				
-				return '<button type="submit" name="'.$value.'" class="btn btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
+				return '<button type="submit" name="'.$value.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {
