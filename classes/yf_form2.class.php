@@ -949,7 +949,7 @@ class yf_form2 {
 		}
 		$extra['value'] = t($extra['value']);
 		if (!$extra['class']) {
-			$extra['class'] = 'btn';
+			$extra['class'] = 'btn btn-default';
 		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -1298,7 +1298,7 @@ class yf_form2 {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = $extra['class'] ?: 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['value'] = t($extra['value']);
 			$extra['desc'] = ''; // We do not need label here
@@ -1411,7 +1411,7 @@ class yf_form2 {
 				if ($extra['rewrite']) {
 					$extra['link'] = url($extra['link']);
 				}
-				$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
+				$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs';
 				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
 				$extra['href'] = $extra['link'];
 				$attrs_names = array('href','name','class','style','disabled','target');
@@ -2271,7 +2271,7 @@ class yf_form2 {
 			}
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
 			$extra['href'] = $link_url;
-			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
 			$attrs_names = array('id','name','href','class','style','target');
 			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
