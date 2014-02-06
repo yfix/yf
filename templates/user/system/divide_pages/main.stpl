@@ -1,17 +1,35 @@
 {if("pages" ne "")}
+	{if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 <div class="pagination">
-    <ul >
+    <ul>
         {page_first}
         {block_prev}
     </ul>
-    <ul >
+    <ul>
         {page_prev}
         {pages}
         {page_next}
     </ul>
-    <ul >
+    <ul>
         {block_next}
         {page_last}
     </ul>
 </div>
+	{else}
+<div>
+    <ul class="pagination">
+        {page_first}
+        {block_prev}
+    </ul>
+    <ul class="pagination">
+        {page_prev}
+        {pages}
+        {page_next}
+    </ul>
+    <ul class="pagination">
+        {block_next}
+        {page_last}
+    </ul>
+</div>
+	{/if}
 {/if}
