@@ -1,6 +1,6 @@
 <?php
 
-class yf_html_empty {
+class yf_html5_empty {
 	function form_row ($content, $extra = array(), $replace = array(), $obj) {
 		$row_start = 
 			'<div>'.PHP_EOL
