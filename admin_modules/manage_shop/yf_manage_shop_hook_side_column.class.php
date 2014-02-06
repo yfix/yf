@@ -138,7 +138,7 @@ class yf_manage_shop_hook_side_column {
 		$order_id = intval($rev['item_id']);
 		$order_info = db()->get('SELECT * FROM '.db('shop_orders').' WHERE id='.$order_id);
 		if (empty($order_info)) {
-			return _e('No such order');
+			return false;
 		}
 		$sql = 'SELECT * FROM '.db('shop_order_revisions').' WHERE item_id='.intval($order_id).' ORDER BY id DESC';
 		return table($sql, array(

@@ -146,7 +146,7 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->product_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_product_revisions'))
+		return table('SELECT * FROM '.db('shop_product_revisions').' ORDER BY id DESC')
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
@@ -337,7 +337,7 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->order_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_order_revisions'))
+		return table('SELECT * FROM '.db('shop_order_revisions').' ORDER BY id DESC')
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('item_id', './?object='.$_GET['object'].'&action=view_order&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
