@@ -47,7 +47,8 @@ class yf_manage_shop_filter{
 					$order_fields[$v] = $v;
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-					->number('id')
+//					->number('id')
+					->container(_class('manage_shop_filter')->_product_search_widget('id',$_SESSION[$filter_name]['id']),'Id')						
 					->text('name')
 					->text('articul')
 					->row_start(array('desc' => 'price'))
@@ -153,7 +154,7 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->number('id', array('class' => 'span1'))
-					->number('product_id', array('class' => 'span1'))
+					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'product_id')						
 					->text('name')
 					->text('email')
 					->text('content')
@@ -170,5 +171,9 @@ class yf_manage_shop_filter{
 				->save_and_clear();
 		}
 		return false;
+	}
+	
+	function _product_search_widget($input_name,$input_value) {
+		return tpl()->parse('manage_shop/product_search_filter',array('input_name' => $input_name,'input_value' => $input_value));
 	}
 }

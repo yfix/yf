@@ -254,7 +254,7 @@ class yf_manage_shop_orders{
 					})
 				, array('wide' => 1)
 			)
-			->container(tpl()->parse('manage_shop/product_search',array('order_id' => $_GET['id'])),'Add product')
+			->container(tpl()->parse('manage_shop/product_search_order',array('order_id' => $_GET['id'])),'Add product')
 			->box('status_box', 'Status order', array('selected' => $order_info['status']))
 			->save_and_back()
 		;

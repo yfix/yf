@@ -1,0 +1,30 @@
+<link href="{CONST('WEB_PATH')}js/select2/select2.css" rel="stylesheet"/>
+<script src="{CONST('WEB_PATH')}js/select2/select2.min.js"></script>
+
+<script>
+$( document ).ready( function() {
+	
+	$("#{input_name}_search").select2({
+		placeholder: "",
+		minimumInputLength: 1,
+		ajax: {
+		    url: "./?object=manage_shop&action=product_search_autocomplete",
+		    dataType: 'json',
+			data: function (term, page) {
+				return {
+					search_word: term
+				};
+			},
+			results: function (data, page) {
+				return { results: data };
+			}
+		},
+	});	
+	$("#{input_name}_search").on("change",function() {
+		$("#{input_name}_value").val($(this).val());
+	});
+	
+});
+</script>
+<input type="text" id="{input_name}_search" value="" style="width:220px;"><br />
+<input type="text" name="{input_name}" id="{input_name}_value" value="{input_value}">
