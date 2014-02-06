@@ -203,12 +203,20 @@ class yf_manage_shop {
 	function product_images_revisions() {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
 	}
+
+	function order_revisions() {
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+	}
  
 	function checkout_images_revision() {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
 	}
 
 	function checkout_product_revision() {
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function checkout_order_revision() {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
 	}
 

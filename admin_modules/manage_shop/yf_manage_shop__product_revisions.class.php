@@ -3,7 +3,7 @@ class yf_manage_shop__product_revisions {
 	
 	public $temp_fields = array(
 		'product'	=> array('image', 'add_date', 'update_date', 'last_viewed_date', 'viewed', 'sold', 'status', 'origin_url', 'source', 'featured'),
-		'order'		=> array(),
+		'orders'		=> array(),
 	);
 
 	public $all_queries = array(
@@ -89,13 +89,14 @@ class yf_manage_shop__product_revisions {
 				}
 			}
 		}
+		$add_rev_date = time();
 		foreach ($ids as $id) {
 			if(!isset($all_data[$id])){
 				continue;
 			}
 			$new_revision = $all_data[$id];
 			if(is_array($new_revision)){
-				foreach($this->temp_fields[$type] as $k => $v){
+				foreach((array)$this->temp_fields[$type] as $k => $v){
 					_class('utils')->recursive_unset($new_revision, $v);
 				}
 			}
@@ -109,7 +110,7 @@ class yf_manage_shop__product_revisions {
 
 			$insert_array[] = array(
 				'user_id'  => intval(main()->ADMIN_ID),
-				'add_date' => time(),
+				'add_date' => $add_rev_date,
 				'action'   => $action,
 				'item_id'  => $id,
 				'data'     => $new_revision ? : '',
@@ -329,5 +330,89 @@ class yf_manage_shop__product_revisions {
 		return js_redirect('./?object=manage_shop&action=product_edit&id='.$product_id);
 	}
 
+	/**
+	 */
+	function order_revisions() {
+		$rev_id = intval($_GET['id']);
+		if ($rev_id) {
+			return $this->order_revisions_view();
+		}
+		return table('SELECT * FROM '.db('shop_order_revisions'))
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->link('item_id', './?object='.$_GET['object'].'&action=view_order&id=%d')
+			->admin('user_id', array('desc' => 'admin'))
+			->text('action')
+			->btn_view('', './?object=manage_shop&action=order_revisions&id=%d')
+			;
+	}
+
+	/**
+	 */
+	function order_revisions_view() {
+		$sql = 'SELECT * FROM '.db('shop_order_revisions').' WHERE id='.intval($_GET['id']);
+		$a = db()->get($sql);
+		$order_info = db()->get('SELECT * FROM '.db('shop_orders').' WHERE id='.$a['item_id']);
+		if (empty($order_info)) {
+			return _e('No such order');
+		}
+		return form($a, array(
+			'dd_mode' => 1,
+		))
+		->link('item_id', './?object='.$_GET['object'].'&action=view_order&id='.$order_info['id'], array(
+			'desc' => 'Order',
+			'data' => array($a['item_id'] => $order_info['name']. ' [id='. $a['item_id'].']'),
+		))
+		->admin_info('user_id')
+		->info_date('add_date', array('format' => 'full'))
+		->info('action')
+		->link('Activate new version', './?object=manage_shop&action=checkout_order_revision&id='.$a['id'])
+		->tab_start('View_difference')
+			->func('data', function($extra, $r, $_this) {
+				$origin = json_decode($r[$extra['name']], true);
+				$before = db()->get('SELECT * FROM '.db('shop_order_revisions').' WHERE id<'.$r['id'].' AND item_id='.$r['item_id'].' ORDER BY id DESC' );
+				$before = json_decode($before[$extra['name']], true);
+				$origin = var_export($origin, true);
+				$before = var_export($before, true);
+				return _class('diff')->get_diff($before, $origin);
+			})
+		->tab_end()
+		->tab_start('New_version')
+			->func('data', function($extra, $r, $_this) {
+				return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
+			})
+		->tab_end()
+		;
+	}
+
+	/**
+	*/
+	function checkout_order_revision() {
+		$_GET['id'] = intval($_GET['id']);
+		$revision_data = db()->get('SELECT * FROM '.db('shop_order_revisions').' WHERE id='.$_GET['id']);
+		if (empty($revision_data)) {
+			return _e('Revision not found');
+		}
+		$order_id = $revision_data['item_id'];
+		$data_stamp = json_decode($revision_data['data'], true);
+
+		db()->begin();
+		db()->query('DELETE FROM '.db('shop_order_items').' WHERE order_id='.$order_id);
+		foreach($data_stamp as $type => $array){
+			$table = $this->all_queries['order'][$type]['table'];
+			$field = $this->all_queries['order'][$type]['field'];
+			$multi = $this->all_queries['order'][$type]['multi'];
+			if(!$multi){
+				db()->update_safe($table, $array, $field.'='.$array['id']);
+			}else{
+				db()->insert_safe($table, $array);
+			}
+		}
+		module('manage_shop')->_order_add_revision('checkout', $order_id);
+		db()->commit();
+
+		common()->message_success("Revision retrieved");
+		common()->admin_wall_add(array('shop order checkout revision: '.$_GET['id'], $order_id));
+		return js_redirect('./?object=manage_shop&action=view_order&id='.$order_id);
+	}
 
 }

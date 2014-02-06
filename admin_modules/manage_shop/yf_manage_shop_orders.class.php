@@ -93,6 +93,7 @@ class yf_manage_shop_orders{
 		}
 		$recount_price = false;
 		if(main()->is_post()) {
+			module('manage_shop')->_product_check_first_revision('order', intval($_GET['id']));
 			foreach($_POST as $k => $v) {
 				if($k == 'status_item') {
 					foreach ($v as $k1 => $status) {
@@ -260,7 +261,12 @@ class yf_manage_shop_orders{
 		;
 					
 		// get similar orders
-		$sql= "SELECT o.*, COUNT(*) AS num_items FROM `".db('shop_orders')."` AS `o` INNER JOIN ".db('shop_order_items')." AS i ON i.order_id = o.id  WHERE `o`.`id`!='".$order_info['id']."' AND `o`.`phone`='".$order_info['phone']."' AND `o`.`status`='".$order_info['status']."' GROUP BY o.id ORDER BY o.id DESC";
+		$sql= "SELECT o.*, COUNT(*) AS num_items FROM `".db('shop_orders')."` AS `o` 
+				INNER JOIN ".db('shop_order_items')." AS i ON i.order_id = o.id  
+				WHERE `o`.`id`!='".$order_info['id']."' 
+					AND `o`.`phone`='".$order_info['phone']."' 
+					AND `o`.`status`='".$order_info['status']."' 
+				GROUP BY o.id ORDER BY o.id DESC";
 		$out .= "<br /><br /><h3>".t('Similar orders')."</h3>".table($sql)
 			->text('id')
 			->date('date', array('format' => 'full', 'nowrap' => 1))
@@ -287,6 +293,8 @@ class yf_manage_shop_orders{
 		if (empty($order_info)) {
 			return _e('No such order');
 		}
+		module('manage_shop')->_product_check_first_revision('order', $_GET['id']);
+
 		$_GET['merge_id'] = intval($_GET['merge_id']);
 		if ($_GET['merge_id']) {
 			$order_info_merge = db()->query_fetch('SELECT * FROM '.db('shop_orders').' WHERE id='.intval($_GET['merge_id'])." AND `id`!='".$order_info['id']."' AND `phone`='".$order_info['phone']."' AND `status`='".$order_info['status']."'");
@@ -294,6 +302,8 @@ class yf_manage_shop_orders{
 		if (empty($order_info_merge)) {
 			return _e('No order to merge');
 		}
+		module('manage_shop')->_product_check_first_revision('order', $_GET['merge_id']);
+
 		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
 		while ($_info = db()->fetch_assoc($Q)) {
 			$order_items[$_info['product_id']."_".$_info['param_id']] = $_info;
@@ -326,14 +336,16 @@ class yf_manage_shop_orders{
 		while ($_info = db()->fetch_assoc($Q)) {
 			$total_price += $_info['quantity']*$_info['price'];
 		}
-
 		$delivery_price = ((intval($total_price) < 200)? $this->delivery_price : 0);
 		$total_price += intval($delivery_price);
 
-		db()->UPDATE(db('shop_orders'), array('total_sum' => number_format($total_price, 2, '.', ''),'delivery_price' => $delivery_price),"`id`='".$_GET['id']."'");
-		db()->query('DELETE FROM '.db('shop_order_items').' WHERE order_id='.intval($_GET['merge_id']));
-
-		module('manage_shop')->_order_add_revision('merge', array($_GET['id'], intval($_GET['merge_id'])));
+		db()->UPDATE(db('shop_orders'), array(
+				'total_sum' 	=> number_format($total_price, 2, '.', ''),
+				'delivery_price' => $delivery_price,
+				'merge_id'		=> $_GET['merge_id'],
+			),"`id`='".$_GET['id']."'"
+		);
+		module('manage_shop')->_order_add_revision('merge', array($_GET['id'], $_GET['merge_id']));
 
 		return js_redirect('./?object='.main()->_get('object').'&action=view_order&id='.$_GET['id']);
 	}
@@ -346,6 +358,7 @@ class yf_manage_shop_orders{
 			$order_info = db()->query_fetch('SELECT * FROM '.db('shop_orders').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($order_info['id'])) {
+			module('manage_shop')->_product_check_first_revision('order', $_GET['id']);
 			db()->query('DELETE FROM '.db('shop_orders').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			db()->query('DELETE FROM '.db('shop_order_items').' WHERE `order_id`='.intval($_GET['id']));
 			common()->admin_wall_add(array('shop order deleted: '.$_GET['id'], $_GET['id']));
@@ -382,9 +395,9 @@ class yf_manage_shop_orders{
 		if (empty($_product_info)) {
 			return json_encode('ko');
 		}
-		
+
+		module('manage_shop')->_product_check_first_revision('order', $order_id);
 		$A = db()->get("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".$order_id." AND `product_id`=".$product_id);
-		
 		if (empty($A)) {
 			db()->insert(db('shop_order_items'), array(
 				'order_id'   => $order_id,
@@ -401,7 +414,6 @@ class yf_manage_shop_orders{
 		$this->_order_recount_price($_POST['order_id'], $order_info);
 
 		module('manage_shop')->_order_add_revision('edit', $order_id);
-		
 		return json_encode('ok');
 	}
 	
