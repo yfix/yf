@@ -914,6 +914,37 @@ class yf_debug_info {
 
 	/**
 	*/
+	function _debug_main () {
+		$all_timings = main()->_timing;
+		if (!$all_timings) {
+			return false;
+		}
+		$ts = main()->_time_start;
+		$time_all = end($all_timings)[0] - $ts;
+		$items = array();
+		foreach ((array)$all_timings as $i => $v) {
+			$time_offset = $v[0] - $ts;
+			$time_change = '';
+			$time_change_p = '';
+			if (isset($all_timings[$i + 1])) {
+				$time_change = $all_timings[$i + 1][0] - $v[0];
+			}
+			if ($time_change > 0.001) {
+				$time_change_p = round(100 - (($time_all - $time_change) / $time_all * 100), 1);
+			}
+			$items[] = array(
+				'time_offset'	=> common()->_format_time_value($time_offset),
+				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
+				'time_change_p'	=> $time_change_p ? $time_change_p.'%' : '',
+				'name'			=> (string)$v[1],
+				'arg'			=> (string)$v[2],
+			);
+		}
+		return $this->_show_auto_table($items, array('escape' => 1));
+	}
+
+	/**
+	*/
 	function _debug_hooks () {
 		$items = array();
 		$hook_name = '_hook_debug';
