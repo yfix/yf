@@ -221,7 +221,7 @@ class yf_main {
 	* Micro-framework 'fast_init' inside big YF framework. We use it when some actions need to be done at top speed.
 	*/
 	function try_fast_init () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->ALLOW_FAST_INIT) {
 			return false;
 		}
@@ -241,7 +241,7 @@ class yf_main {
 	* Allows to call code here before we begin initializing engine parts
 	*/
 	function _before_init_hook () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->NO_GRAPHICS = $GLOBALS['no_graphics'];
 		$GLOBALS['no_graphics'] = &$this->NO_GRAPHICS;
 		if (defined('DEBUG_MODE') && DEBUG_MODE) {
@@ -252,7 +252,7 @@ class yf_main {
 	/**
 	*/
 	function _check_site_maintenance () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (MAIN_TYPE_USER && !$this->CONSOLE_MODE && !DEBUG_MODE && conf('site_maintenance')) {
 			$this->NO_GRAPHICS = true;
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
@@ -267,7 +267,7 @@ class yf_main {
 	* Allows to call code here before we begin with graphics
 	*/
 	function _after_init_hook () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->_check_site_maintenance();
 
 		$this->_do_rewrite();
@@ -306,7 +306,7 @@ class yf_main {
 	* Url rewriting engine init and apply if rewrite is enabled
 	*/
     function _do_rewrite() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($this->CONSOLE_MODE || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
 			return false;
 		}
@@ -358,7 +358,7 @@ class yf_main {
 	* conf(), module_conf() wrappers
 	*/
 	function init_conf_functions () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$fwork_conf_path = dirname(dirname(__FILE__)).'/share/functions/yf_conf.php';
 		if (file_exists($fwork_conf_path)) {
 			$this->include_module($fwork_conf_path, 1);
@@ -369,7 +369,7 @@ class yf_main {
 	* cache_set(), cache_get(), cache_del() wrappers
 	*/
 	function init_cache_functions () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$fwork_cache_path	= dirname(dirname(__FILE__)).'/share/functions/yf_cache.php';
 		if (file_exists($fwork_cache_path)) {
 			$this->include_module($fwork_cache_path, 1);
@@ -380,7 +380,7 @@ class yf_main {
 	* Initialization of required files
 	*/
 	function init_files () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$include_files = array();
 		$required_files = array();
 		if ($this->NO_DB_CONNECT == 0) {
@@ -418,7 +418,7 @@ class yf_main {
 	/**
 	*/
 	function init_modules_base () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->modules = array();
 		$GLOBALS['modules'] = &$this->modules; // Compatibility with old code
 	}
@@ -426,7 +426,7 @@ class yf_main {
 	/**
 	*/
 	function init_db() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Check if current object/action not required db connection
 		$get_object = $this->_get('object');
 		$get_action = $this->_get('action');
@@ -450,7 +450,7 @@ class yf_main {
 	/**
 	*/
 	function init_common() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->init_class('common', 'classes/');
 		$this->common =& $this->modules['common'];
 		$GLOBALS['common'] =& $this->modules['common'];
@@ -459,7 +459,7 @@ class yf_main {
 	/**
 	*/
 	function init_tpl() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->init_class('tpl', 'classes/');
 		$this->tpl =& $this->modules['tpl'];
 		$GLOBALS['tpl'] =& $this->modules['tpl'];
@@ -468,7 +468,7 @@ class yf_main {
 	/**
 	*/
 	function init_cache() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($this->CACHE_CONTROL_FROM_URL && $this->_get('no_core_cache')) {
 			$this->USE_SYSTEM_CACHE = false;
 		}
@@ -486,7 +486,7 @@ class yf_main {
 	/**
 	*/
 	function init_error_reporting() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($this->USE_CUSTOM_ERRORS) {
 			$this->init_class('errors', 'classes/');
 			$this->error_handler =& $this->modules['errors'];
@@ -504,7 +504,7 @@ class yf_main {
 	/**
 	*/
 	function init_server_health() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Server health result (needed to correctly self turn off faulty box from frontend requests)
 		if (!$this->CONSOLE_MODE && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
 			$health_result = file_get_contents($this->SERVER_HEALTH_FILE);
@@ -526,7 +526,7 @@ class yf_main {
 	* FirePHP connection
 	*/
 	function init_firephp () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->FIREPHP_ENABLE) {
 			return false;
 		}
@@ -544,7 +544,7 @@ class yf_main {
 	* Try to detect spider
 	*/
 	function spider_detection () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->SPIDERS_DETECTION) {
 			return false;
 		}
@@ -569,7 +569,7 @@ class yf_main {
 	* Initialize session
 	*/
 	function init_session () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (isset($this->_session_init_complete) || $this->CONSOLE_MODE) {
 			return false;
 		}
@@ -678,7 +678,7 @@ class yf_main {
 	* Initialization settings stored in the database
 	*/
 	function init_settings() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->set_default_settings();
 		// Overriding default settings with the values stored in database
 		foreach ((array)$this->get_data('settings') as $k => $v) {
@@ -719,7 +719,7 @@ class yf_main {
 	* Default settings container
 	*/
 	function set_default_settings() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$lang = 'en'; // default lang
 		if (defined('DEFAULT_LANG') && DEFAULT_LANG != '') {
 			$lang = DEFAULT_LANG;
@@ -732,7 +732,7 @@ class yf_main {
 	* Try to find current site if not done yet
 	*/
 	function init_site_id() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!conf('SITE_ID')) {
 			$site_id = 1;
 			foreach ((array)$this->get_data('sites') as $site) {
@@ -751,7 +751,7 @@ class yf_main {
 	* Try to find current server if not done yet
 	*/
 	function init_server_id() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$servers = $this->get_data('servers');
 		$this->SERVER_ID = 0;
 		if (!conf('SERVER_ID')) {
@@ -776,7 +776,7 @@ class yf_main {
 	* Try to find current server role if not done yet
 	*/
 	function init_server_role() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->SERVER_ROLE = 'default';
 		if (!conf('SERVER_ROLE') && $this->SERVER_INFO['role']) {
 			$this->SERVER_ROLE = $this->SERVER_INFO['role'];
@@ -789,7 +789,7 @@ class yf_main {
 	* Starting language engine
 	*/
 	function init_locale () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($this->_get('no_lang') || conf('no_locale')) {
 			return false;
 		}
@@ -800,7 +800,7 @@ class yf_main {
 	* Init authentication
 	*/
 	function init_auth () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (defined('SITE_DEFAULT_PAGE')) {
 			conf('SITE_DEFAULT_PAGE', SITE_DEFAULT_PAGE);
 		}
@@ -839,7 +839,7 @@ class yf_main {
 	* Include module file
 	*/
 	function include_module($path_to_module = '', $is_required = false) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__, $path_to_module);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -885,7 +885,7 @@ class yf_main {
 		if (isset($this->modules[$class_name]) && is_object($this->modules[$class_name])) {
 			return $this->modules[$class_name];
 		}
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__, $class_name);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Strict installed modules check (currently only for user modules)
 		if ($this->STRICT_MODULES_INIT && empty($custom_path)) {
 			if (!isset($this->installed_user_modules)) {
@@ -929,7 +929,7 @@ class yf_main {
 	/**
 	*/
 	function _preload_plugins_list() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (isset($this->_plugins)) {
 			return $this->_plugins;
 		}
@@ -989,7 +989,7 @@ class yf_main {
 		if (substr($class_name, 0, strlen(YF_PREFIX)) === YF_PREFIX) {
 			$class_name = substr($class_name, strlen(YF_PREFIX));
 		}
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__, $class_name);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -1136,7 +1136,7 @@ class yf_main {
 	* Main $_GET tasks handler
 	*/
 	function tasks($CHECK_IF_ALLOWED = false) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($this->CONSOLE_MODE) {
 			$this->NO_GRAPHICS = true;
 		}
@@ -1163,7 +1163,6 @@ class yf_main {
 	* Try to return class method output
 	*/
 	function call_class_method ($class_name = '', $custom_path = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
-#		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
 		// Check required params
 		if (!strlen($class_name) || !strlen($method_name)) {
 			return false;
@@ -1227,7 +1226,6 @@ class yf_main {
 	* Try to return class method output (usually from templates)
 	*/
 	function _execute ($class_name = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
-#		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -1393,7 +1391,7 @@ class yf_main {
 	* Load common data handlers array from file
 	*/
 	function _load_data_handlers () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (conf('data_handlers')) {
 			return false;
 		}
@@ -1438,7 +1436,7 @@ class yf_main {
 	* Search for sites configuration overrides (in subfolder ./sites/)
 	*/
 	function _find_site($sites_dir = '') {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (empty($sites_dir)) {
 			$sites_dir = PROJECT_PATH.'sites/';
 		}
@@ -1473,7 +1471,6 @@ class yf_main {
 	*	 subdomain. subdomain.:443 sub1.sub2. sub1.sub2.:443
 	*/
 	function _find_site_path_best_match($sites, $server_ip, $server_port, $server_host) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
 		$sip = explode('.', $server_ip);
 		$sh = array_reverse(explode('.', $server_host));
 		$sh2 = explode('.', $server_host);
@@ -1508,7 +1505,7 @@ class yf_main {
 	* Check and try to fix required constants
 	*/
 	function fix_required_constants() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Save current working directory (to restore it later when execute shutdown functions)
 		$this->_CWD = getcwd();
 
@@ -1650,7 +1647,7 @@ class yf_main {
 	* Try to set required PHP runtime params
 	*/
 	function set_required_php_params() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
 		// Set path to PEAR
 		ini_set('url_rewriter.tags', '');
@@ -1669,7 +1666,7 @@ class yf_main {
 	* Send main headers
 	*/
 	function _send_main_headers($content_length = 0) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		return $this->init_class('graphics', 'classes/')->_send_main_headers($content_length);
 	}
 
@@ -1689,7 +1686,7 @@ class yf_main {
 	*/
 // TODO: make this usable only for main() to save resources
 	function _init_cur_user_info(&$OBJ) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, array(), $this->trace_string());
 		if (in_array($this->_get('object'), (array)$this->_auto_info_skip_modules)) {
 			return false;
 		}
@@ -1736,7 +1733,7 @@ class yf_main {
 	* Framework destructor handler
 	*/
 	function _framework_destruct() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Restore startup working directory
 		chdir($this->_CWD);
 		// Currently disabled by default
@@ -1758,7 +1755,7 @@ class yf_main {
 	* PHP code compression
 	*/
 	function _pack_php_code () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __FUNCTION__);
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->AUTO_PACK_PHP_CODE || MAIN_TYPE_ADMIN) {
 			return false;
 		}
