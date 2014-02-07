@@ -90,6 +90,7 @@ class yf_debug_info {
 		if (isset($_SESSION['hide_debug_console']) && $_SESSION['hide_debug_console']) {
 			return '';
 		}
+		$debug_timings = array();
 		$methods = array();
 		$class_name = get_class($this);
 		foreach ((array)get_class_methods($class_name) as $method) {
@@ -97,7 +98,9 @@ class yf_debug_info {
 				continue;
 			}
 			$name = substr($method, strlen('_debug_'));
+			$ts2 = microtime(true);
 			$content = $this->$method();
+			$debug_timings[$method] = common()->_format_time_value(microtime(true) - $ts2).' secs';
 			$debug_contents[$name] = $content;
 		}
 		$body .= '<div id="debug_console">';
@@ -121,7 +124,9 @@ class yf_debug_info {
 		}
 
 		$debug_time = round(microtime(true) - $ts, 5);
-		$body .= 'debug console rendering: '.$debug_time.' secs';
+		$body .= 'debug console rendering: '
+				.' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-timings">'.$debug_time.' secs</a>'
+				.'<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>';
 
 		$body .= '<ul class="nav nav-tabs">';
 		$body .= implode(PHP_EOL, $links);
@@ -261,7 +266,6 @@ class yf_debug_info {
 			}
 			$body .= $this->_do_debug_db_connection_queries($v, $connect_trace);
 		}
-// TODO: db()->_SHUTDOWN_QUERIES;
 		return $body;
 	}
 
@@ -351,6 +355,15 @@ class yf_debug_info {
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%','hidden_map' => array('explain' => 'sql', 'trace' => 'sql')));
 		return $body;
+	}
+
+	/**
+	*/
+	function _debug_db_shutdown () {
+		if (!$this->_SHOW_DB_QUERY_LOG) {
+			return '';
+		}
+		return $this->_show_key_val_table(db()->_SHUTDOWN_QUERIES, array('escape' => 1));
 	}
 
 	/**
