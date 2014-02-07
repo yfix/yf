@@ -171,7 +171,7 @@ class yf_settings {
 			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
 #			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
 			array('select_box', 'css_framework', $this->css_frameworks, array('show_text' => 1)), // TODO: link to edit
-			array('yes_no_box', 'main[ALLOW_DEBUG_PROFILING]', array('desc' => 'Use built-in code profiling')),
+			array('yes_no_box', 'main[ALLOW_DEBUG_PROFILING]', array('desc' => 'Use built-in code profiling (Works only in DEBUG_MODE)')),
 /*
 #			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
 			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit
