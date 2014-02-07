@@ -41,6 +41,7 @@ class yf_manage_shop_product_edit {
 				
 				$params_to_insert = array();
 				foreach ((array)$_POST['productparams'] as $param_id) {
+					db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.intval($_GET['id']));					
 					$param_id = intval($param_id);
 					if (!$param_id) {
 						continue;
@@ -54,7 +55,6 @@ class yf_manage_shop_product_edit {
 					}
 				}
 				if ($params_to_insert) {
-					db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.intval($_GET['id']));
 					db()->insert_safe('shop_products_productparams', $params_to_insert);
 				}
 
