@@ -138,7 +138,7 @@ class yf_main {
 	/** @var string @conf_skip Multi-server mode option */
 	public $SERVER_ROLE				= null;
 	/** @var bool */
-	public $ALLOW_DEBUG_PROFILING	= 1;
+	public $ALLOW_DEBUG_PROFILING	= 0;
 	/** @var bool @conf_skip */
 	public $PROFILING				= 0;
 
@@ -150,7 +150,8 @@ class yf_main {
 		if (!isset($this->_time_start)) {
 			$this->_time_start = microtime(true);
 		}
-		if (DEBUG_MODE && $this->ALLOW_DEBUG_PROFILING) {
+		global $CONF;
+		if (DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || $CONF['main']['ALLOW_DEBUG_PROFILING'])) {
 			$this->PROFILING = true;
 		}
 		if ($this->_server('argc') && !array_key_exists('REQUEST_METHOD', $this->_server())) {
