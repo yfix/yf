@@ -914,7 +914,7 @@ class yf_debug_info {
 
 	/**
 	*/
-	function _debug_main () {
+	function _debug_profiling () {
 		$all_timings = main()->_timing;
 		if (!$all_timings) {
 			return false;
@@ -929,18 +929,22 @@ class yf_debug_info {
 			if (isset($all_timings[$i + 1])) {
 				$time_change = $all_timings[$i + 1][0] - $v[0];
 			}
+			$time_warning = false;
 			if ($time_change > 0.001) {
 				$time_change_p = round(100 - (($time_all - $time_change) / $time_all * 100), 1);
+				if ($time_change_p >= 5) {
+					$time_warning = true;
+				}
 			}
 			$items[] = array(
 				'i'				=> $i,
 				'time_offset'	=> common()->_format_time_value($time_offset),
 				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
-				'time_change_p'	=> $time_change_p ? $time_change_p.'%' : '',
+				'time_change_p'	=> $time_change_p ? '<span class="'.($time_warning ? 'label label-warning' : '').'">'.$time_change_p.'%</span>' : '',
 				'class'			=> $v[1],
 				'method'		=> $v[2],
 				'trace'			=> $v[3],
-				'args'			=> $v[4] ?: '',
+				'args'			=> $v[4] ? var_export($v[4], 1) : '',
 			);
 		}
 		return $this->_show_auto_table($items, array('escape' => 1, 'hidden_map' => array('trace' => 'args')));
