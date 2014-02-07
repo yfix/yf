@@ -1686,7 +1686,7 @@ class yf_main {
 	*/
 // TODO: make this usable only for main() to save resources
 	function _init_cur_user_info(&$OBJ) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, array(), $this->trace_string());
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), array());
 		if (in_array($this->_get('object'), (array)$this->_auto_info_skip_modules)) {
 			return false;
 		}
