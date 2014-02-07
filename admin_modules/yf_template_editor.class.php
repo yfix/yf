@@ -371,4 +371,12 @@ class yf_template_editor {
 	function _framework_warning () {
 		return _e( tpl()->parse($_GET['object'].'/framework_warning') );
 	}
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+#		return array(
+#			array('text', 'template_editor__ACE_THEME'),
+#		);
+	}
 }

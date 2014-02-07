@@ -85,6 +85,9 @@ class yf_settings {
 		}
 		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
 		foreach ((array)$hooks_data as $k => $v) {
+			if (empty($v)) {
+				continue;
+			}
 			list($module_name,) = explode('___', $k);
 			$a[] = array('fieldset_start', array('id' => 'module_'.$module_name, 'legend' => $module_name, 'class' => 'well'));
 			foreach ((array)$v as $_a) {

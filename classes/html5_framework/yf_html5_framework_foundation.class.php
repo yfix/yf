@@ -1,7 +1,7 @@
 <?php
 
 // TODO
-class yf_html5_foundation {
+class yf_html5_framework_foundation {
 /*
 <!-- jsDelivr CDN -->
 <script src="//cdn.jsdelivr.net/foundation/4.3.1/js/foundation.min.js"></script>

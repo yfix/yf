@@ -42,7 +42,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
 <div class="control-group form-group">
-<div class="controls col-lg-4">
+<div class="controls col-lg-offset-4">
 <input type="text" class="form-control">
 </div>
 </div>
@@ -55,8 +55,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
 <div class="control-group form-group">
-<label class="control-label col-lg-2" for="name">Name</label>
-<div class="controls col-lg-4">
+<label class="control-label col-lg-4" for="name">Name</label>
+<div class="controls col-lg-8">
 <input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
 </div>
@@ -67,8 +67,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$html = form('', array('no_form' => 1))->text('name');
 		$this->assertEquals(  
 '<div class="control-group form-group">
-<label class="control-label col-lg-2" for="name">Name</label>
-<div class="controls col-lg-4">
+<label class="control-label col-lg-4" for="name">Name</label>
+<div class="controls col-lg-8">
 <input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
 </div>', trim($html));

@@ -1,5 +1,7 @@
 <?php
 
+// TODO: connect subclasses from manage_sphinx/, do refactoring from subclasses into closures
+
 class yf_manage_sphinx {
 
 	/** @var */
@@ -30,6 +32,15 @@ class yf_manage_sphinx {
 	public $REPLACE_CONFIG		= true;
 	/** @var */
 	public $WIN32_SERVICE		= "sphinxsearch";
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+#		return array(
+#			array('yes_no_box', 'manage_sphinx__USE_STOP_WORDS'),
+#			array('number', 'manage_sphinx__MAX_MATCHES'),
+#		);
+	}
 
 	/**
 	* Framework constructor

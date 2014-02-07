@@ -1114,4 +1114,15 @@ class yf_db_manager {
 	function _hook_widget__db_tables ($params = array()) {
 // TODO
 	}
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+/*
+		return array(
+			array('yes_no_box', 'db_manager__AUTO_GET_TABLES_STATUS'),
+			array('yes_no_box', 'db_manager__USE_HIGHLIGHT'),
+		);
+*/
+	}
 }

@@ -12,13 +12,15 @@ class yf_manage_shop_express{
 	function express () {
 		$date = date("Y-m-d");
 		$orders_info = db()->query_fetch_all("SELECT * FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date."%' AND status = 1");
-		$orders = array_keys($orders_info);
-		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
+		if(!empty($orders_info)){
+			$orders = array_keys($orders_info);
+			$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
 											FROM ".db('shop_order_items')." as o
 											RIGHT JOIN ".db('shop_products')." as p
 											ON o.product_id = p.id 
 											WHERE o.order_id IN(".implode(",", $orders).") AND o.status = 1
 											ORDER BY o.order_id DESC");
+		}
 		$_category = _class("_shop_categories", "modules/shop/");
 		//always add one empty row in table for ajax
 		if(empty($products)){
@@ -31,7 +33,7 @@ class yf_manage_shop_express{
 			);
 			$orders_info['-']['delivery_time'] = '-';
 		}
-		foreach($products as $k => $v){
+		foreach((array)$products as $k => $v){
 			$replace[] = array(
 				"product_id"	=> $v['product_id'],
 				"name"			=> $v['name'],

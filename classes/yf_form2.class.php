@@ -274,7 +274,7 @@ class yf_form2 {
 
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
-		$this->_rendered = _class('html5')->form_render_out($this->_rendered, $extra, $replace, $this);
+		$this->_rendered = _class('html5_framework')->form_render_out($this->_rendered, $extra, $replace, $this);
 
 		if (DEBUG_MODE) {
 			debug('form2[]', array(
@@ -616,7 +616,7 @@ class yf_form2 {
 		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
-		return _class('html5')->form_row($content, $extra, $replace, $this);
+		return _class('html5_framework')->form_row($content, $extra, $replace, $this);
 	}
 
 	/**
@@ -631,7 +631,7 @@ class yf_form2 {
 		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
-		return _class('html5')->form_dd_row($content, $extra, $replace, $this);
+		return _class('html5_framework')->form_dd_row($content, $extra, $replace, $this);
 	}
 
 	/**
