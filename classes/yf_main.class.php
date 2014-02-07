@@ -840,7 +840,7 @@ class yf_main {
 	* Include module file
 	*/
 	function include_module($path_to_module = '', $is_required = false) {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+#		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -990,7 +990,7 @@ class yf_main {
 		if (substr($class_name, 0, strlen(YF_PREFIX)) === YF_PREFIX) {
 			$class_name = substr($class_name, strlen(YF_PREFIX));
 		}
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+#		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
