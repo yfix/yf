@@ -76,9 +76,11 @@ class yf_manage_shop__product_revisions {
 		if ($action != 'delete') {
 			$revision_sql = 'SELECT item_id, data FROM (SELECT item_id, data FROM '.$revision_db.' WHERE item_id IN ('.$ids_with_comma.') ORDER BY id DESC) as r GROUP BY item_id';
 			$all_last_revision = db()->get_2d($revision_sql);
-
 			foreach ($this->all_queries[$type] as $key => $info) {
 				$sql_res = db()->query('SELECT * FROM '.db($info['table']).' WHERE '.$info['field'].' IN ('.$ids_with_comma.');');
+				foreach($ids as $k => $id){
+					$all_data[$id][$key] = array();
+				}
 				while ($row = db()->fetch_assoc($sql_res)) {
 					$complex_key = $row[$info['field']];
 					if ($info['multi']) {
@@ -318,7 +320,9 @@ class yf_manage_shop__product_revisions {
 			if(!$multi){
 				db()->update_safe($table, $array, $field.'='.$array['id']);
 			}else{
-				db()->update_batch_safe($table, $array, $field);
+				db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$product_id);
+				if(!empty($array))
+					db()->insert_safe($table, $array);
 			}
 		}
 		module('manage_shop')->_product_add_revision('checkout', $product_id);
@@ -404,7 +408,9 @@ class yf_manage_shop__product_revisions {
 			if(!$multi){
 				db()->update_safe($table, $array, $field.'='.$array['id']);
 			}else{
-				db()->insert_safe($table, $array);
+				db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$product_id);
+				if(!empty($array))
+					db()->insert_safe($table, $array);
 			}
 		}
 		module('manage_shop')->_order_add_revision('checkout', $order_id);
