@@ -933,14 +933,17 @@ class yf_debug_info {
 				$time_change_p = round(100 - (($time_all - $time_change) / $time_all * 100), 1);
 			}
 			$items[] = array(
+				'i'				=> $i,
 				'time_offset'	=> common()->_format_time_value($time_offset),
 				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
 				'time_change_p'	=> $time_change_p ? $time_change_p.'%' : '',
-				'name'			=> (string)$v[1],
-				'arg'			=> (string)$v[2],
+				'class'			=> $v[1],
+				'method'		=> $v[2],
+				'trace'			=> $v[3],
+				'args'			=> $v[4] ?: '',
 			);
 		}
-		return $this->_show_auto_table($items, array('escape' => 1));
+		return $this->_show_auto_table($items, array('escape' => 1, 'hidden_map' => array('trace' => 'args')));
 	}
 
 	/**
