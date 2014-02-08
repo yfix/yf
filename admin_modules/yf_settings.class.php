@@ -69,6 +69,7 @@ class yf_settings {
 		}
 		$a = array(
 			'row_start',
+				array('link', 'display_what', './?object='.$_GET['object'].'&action=display_what', array('no_text' => 1, 'icon' => 'icon-edit')),
 				array('save'),
 				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn btn-default')), // TODO: link, method, icon
 			'row_end',
@@ -105,6 +106,41 @@ class yf_settings {
 	function cache_purge() {
 		$result = _class('cache')->_clear_all();
 		return js_redirect('./?object='.$_GET['object']);
+	}
+
+	/**
+	*/
+	function display_what() {
+		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
+		$names = array();
+		foreach ((array)$hooks_data as $k => $v) {
+			list($module_name,) = explode('___', $k);
+			$names[] = ++$i.' '.t($module_name).' ('.count($v).')';
+		}
+		return form($a, array('legend' => 'Settings items'))
+			->container('
+<script type="text/javascript">
+$(function() {
+	var myapp = angular.module("myapp", ["ui"]);
+	myapp.controller("controller", function ($scope) {
+		$scope.list = '.($names ? json_encode($names) : '[]').';
+		$scope.sortableOptions = {
+			update: function(e, ui) {
+				console.log($scope.list.join(", "))
+			}
+		}
+		$("#settings-sortable-container").show()
+	});
+	angular.bootstrap(document, ["myapp"]);
+})
+</script>
+<div ng:controller="controller" class="span6" id="settings-sortable-container" style="display:none;">
+    <ul ui:sortable="sortableOptions" ng:model="list" class="nav nav-pills nav-stacked">
+        <li ng:repeat="item in list" class="item"><a><i class="icon icon-move"></i> {{item}}</a></li>
+    </ul>
+</div>
+			', array('wide' => 1))
+			->save();
 	}
 
 	/**
