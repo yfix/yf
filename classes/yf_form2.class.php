@@ -1405,13 +1405,16 @@ class yf_form2 {
 				$extra['desc'] = t($extra['desc']);
 				$value = t($value);
 			}
-
-			$content = '';
+			if ($extra['no_text']) {
+				$value = '';
+			}
 			if ($extra['link']) {
 				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['link'])) {
 					$extra['link'] = '';
 				}
 			}
+			$icon = $extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '';
+			$content = '';
 			if ($extra['link']) {
 				if ($extra['rewrite']) {
 					$extra['link'] = url($extra['link']);
@@ -1419,11 +1422,12 @@ class yf_form2 {
 				$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs';
 				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
 				$extra['href'] = $extra['link'];
-				$attrs_names = array('href','name','class','style','disabled','target');
-				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$value.'</a>';
+				$extra['title'] = $extra['desc'] ?: $extra['name'];
+				$attrs_names = array('href','name','class','style','disabled','target','alt','title');
+				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</a>';
 			} else {
 				$extra['class'] = $extra['class'] ?: 'label label-info';
-				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$value.'</span>';
+				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$icon. $value.'</span>';
 			}
 			return $_this->_row_html($content, $extra, $r);
 		};
@@ -2277,7 +2281,7 @@ class yf_form2 {
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
-			$attrs_names = array('id','name','href','class','style','target');
+			$attrs_names = array('id','name','href','class','style','target','alt','title');
 			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
 		if ($this->_chained_mode) {
