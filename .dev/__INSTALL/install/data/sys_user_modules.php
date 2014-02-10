@@ -1,6 +1,6 @@
 <?php
 
-$GLOBALS['INSTALL']['data_user_modules'] = array(
+$data = array(
 	array('id' => 1, 'active'=> '1','name'	=> 'home_page'),
 	array('id' => 2, 'active'=> '1','name'	=> 'login_form'),
 	array('id' => 3, 'active'=> '1','name'	=> 'static_pages'),
@@ -49,4 +49,3 @@ $GLOBALS['INSTALL']['data_user_modules'] = array(
 	array('id' => 53, 'active'=> '1','name'	=> 'rss'),
 	array('id' => 54, 'active'=> '1','name'	=> 'shop'),
 );
-?>

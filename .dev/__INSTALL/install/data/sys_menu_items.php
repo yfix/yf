@@ -1,6 +1,6 @@
 <?php
 
-$GLOBALS['INSTALL']['data_menu_items'] = array(
+$data = array(
 	// Next menu block start here (menu_id=2)
 	array(
 		'id'			=> 20,
@@ -284,5 +284,3 @@ $GLOBALS['INSTALL']['data_menu_items'] = array(
 		'active'		=> 1,
 	),
 );
-
-?>
