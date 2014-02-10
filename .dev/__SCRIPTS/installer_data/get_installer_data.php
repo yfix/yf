@@ -1,6 +1,9 @@
 #!/usr/bin/php
 <?php
 
+// TODO: remove me
+define('YF_PATH', '/home/www/yf/');
+
 $force = trim($argv[2]);
 $project_path = trim($argv[1]);
 if (!$project_path) {
@@ -23,10 +26,6 @@ if (!defined('DB_NAME')) {
 }
 ###########
 
-// TODO: remove me
-define('YF_PATH', '/home/www/yf/');
-
-
 if (!defined('YF_PATH')) {
 	define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
 }
@@ -36,9 +35,11 @@ if (!function_exists('main')) {
 	new yf_main('user', $no_db_connect = false, $auto_init_all = true);
 }
 ###########
+
 mkdir('./sql/', 0755, true);
 mkdir('./data/', 0755, true);
-foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.'sys_%"') as $table) {
+$tables_like = $tables_like ?: '%';
+foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.$tables_like.'"') as $table) {
 	$tname = substr($table, strlen(DB_PREFIX));
 	$db_create_sql = current(db()->get_2d('SHOW CREATE TABLE '.$table));
 	$p1 = strpos($db_create_sql, '(') + 1;
