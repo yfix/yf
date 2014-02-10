@@ -371,20 +371,19 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		return installer();
 	}
-	function import_sql_from_file ($sql_file, $prefix) {
-		$sql_file_content = file_get_contents($sql_file);
-		if (empty($sql_file_content)) {
-			return installer();
+	function import_table_data ($table, $dir = '') {
+		if (!$dir) {
+			$dir = INSTALLER_PATH.'install/data/';
 		}
-		$splitted_sql = array();
-		db()->split_sql($splitted_sql, $sql_file_content);
-		foreach ((array)$splitted_sql as $item_info) {
-			if ($item_info['empty'] == 1) {
-				continue;
-			}
-			db()->query(str_replace('%%prefix%%', $prefix, $item_info['query']));
+		$file = $dir. $table.'.data.php';
+		if (!file_exists($file)) {
+			return false;
 		}
-		return installer();
+		include $file;
+		if (empty($data)) {
+			return false;
+		}
+		return db()->replace_safe(DB_PREFIX.$table, $data);
 	}
 	function import_base_db_structure() {
 		$import_tables = array(
@@ -425,21 +424,15 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		foreach ((array)$import_tables as $table) {
 			$table = str_replace('sys_', '', $table);
+// TODO: replace with direct CREATE TABLE from _class('db_installer')
 			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 		}
 		foreach (array('admin', 'admin_groups') as $table) {
+// TODO: replace with direct CREATE TABLE from _class('db_installer')
 			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 		}
 		foreach ((array)$import_tables as $table){
-			if ($table == 'sys_user_modules') {
-				include (INSTALLER_PATH.'install/data_user_modules.php');
-				db()->replace('sys_user_modules', db()->es($GLOBALS['INSTALL']['data_user_modules']));
-			} elseif ($table == 'sys_menu_items') {
-				include (INSTALLER_PATH.'install/data_menu_items.php');
-				db()->replace('sys_menu_items', db()->es($GLOBALS['INSTALL']['data_menu_items']));
-			} else {
-				$this->import_sql_from_file(INSTALLER_PATH.'install/sql/'.$table.'.sql', DB_PREFIX);
-			}
+			$this->import_table_data($table);
 		}
 		return installer();
 	}
@@ -475,14 +468,18 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		foreach ($tables_to_create as $table) {
 			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 		}
-		$this->import_sql_from_file(INSTALLER_PATH.'install/sql/_initial_data_en.sql', DB_PREFIX);
-		if ($_POST['install_project_lang']){
-			$_custom_lang_path = INSTALLER_PATH.'install/sql/_initial_data_'.$_POST['install_project_lang'].'.sql';
-			if (file_exists($_custom_lang_path)) {
-				$this->import_sql_from_file($_custom_lang_path, DB_PREFIX);
+		$dir = INSTALLER_PATH.'install/data_en/';
+		foreach ((array)glob($dir.'*.data.php') as $f) {
+			$_table = substr(basename($f), 0, -strlen('.data.php'));
+			$this->import_table_data($table, $dir);
+		}
+		if ($_POST['install_project_lang']) {
+			$dir = INSTALLER_PATH.'install/data_'.$_POST['install_project_lang'].'/';
+			foreach ((array)glob($dir.'*.data.php') as $f) {
+				$_table = substr(basename($f), 0, -strlen('.data.php'));
+				$this->import_table_data($table, $dir);
 			}
 		}
-
 		ob_start();
 		module('forum')->_init();
 		_class('forum_sync', 'modules/forum/')->_sync_board();
