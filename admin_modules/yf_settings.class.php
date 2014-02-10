@@ -135,7 +135,7 @@ $(function() {
 <div ng:controller="controller" class="span6" id="settings-sortable-container">
 	<i class="icon icon-spinner icon-spin icon-2x" id="settings-spinner"></i>
     <ul ng:model="list" class="nav nav-pills nav-stacked" id="sortable_settings" style="display:none;">
-        <li ng:repeat="item in list" class="item"><a><i class="icon icon-move"></i> {{item}}</a></li>
+        <li ng:repeat="item in list" class="item"><a><i class="icon icon-move"></i> {{item}} <input type="checkbox" style="float:right;"></a></li>
     </ul>
 </div>
 			', array('wide' => 1))
