@@ -44,7 +44,7 @@ foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.'sys_%"') as $table) 
 	$p1 = strpos($db_create_sql, '(') + 1;
 	$p2 = strrpos($db_create_sql, ')');
 	$db_create_sql = trim(substr($db_create_sql, $p1, $p2 - $p1));
-	file_put_contents('./sql/'.$tname.'.db_table_sql.php', '<?'.'php'.PHP_EOL.'$data = \''.PHP_EOL.'  '.addslashes($db_create_sql).PHP_EOL.'\';');
+	file_put_contents('./sql/'.$tname.'.sql.php', '<?'.'php'.PHP_EOL.'$data = \''.PHP_EOL.'  '.addslashes($db_create_sql).PHP_EOL.'\';');
 	if (false !== strpos($table, 'sys_log_') || false !== strpos($table, '_revisions')) {
 		continue;
 	}
@@ -52,5 +52,5 @@ foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.'sys_%"') as $table) 
 	if (empty($data)) {
 		continue;
 	}
-	file_put_contents('./data/'.$tname.'.db_table_data.php', '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
+	file_put_contents('./data/'.$tname.'.data.php', '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 }
