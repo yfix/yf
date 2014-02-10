@@ -922,7 +922,8 @@ class yf_debug_info {
 			return false;
 		}
 		$ts = main()->_time_start;
-		$time_all = end($all_timings)[0] - $ts;
+		$_last_item = end($all_timings);
+		$time_all = $_last_item[0] - $ts;
 		$items = array();
 		foreach ((array)$all_timings as $i => $v) {
 			$time_offset = $v[0] - $ts;
