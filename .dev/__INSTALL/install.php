@@ -281,7 +281,6 @@ class yf_core_install {
 		}
 
 		define('INSTALLER_PATH', YF_PATH.'.dev/__INSTALL/');
-		require (INSTALLER_PATH.'install/function.php');
 		return installer();
 	}
 	function test_db_connection() {
@@ -313,7 +312,7 @@ define(\'DB_CHARSET\',\'utf8\');';
 		}
 		return installer();
 	}
-	function write_user_index_php() {
+	function write_user_index_php($rewrite_enabled = true) {
 		$index_file_content = '<?php
 $dev_settings = dirname(__FILE__).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
@@ -325,12 +324,12 @@ if (file_exists($saved_settings)) {
 }
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
-define(\'WEB_PATH\', \''.$_POST['install_web_path'].'\');
+define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=home_page\');
 define(\'SITE_ADVERT_NAME\', \''.$_POST['install_web_name'].'\');
-require dirname(__FILE__).\'/project_conf.php\';
-$PROJECT_CONF[\'tpl\'][\'REWRITE_MODE\'] = true;
-require YF_PATH.\'classes/yf_main.class.php\';
+require dirname(__FILE__).\'/project_conf.php\';'.PHP_EOL
+.($rewrite_enabled ? '$PROJECT_CONF[\'tpl\'][\'REWRITE_MODE\'] = true;'.PHP_EOL : '')
+.'require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 		$fpath = PROJECT_PATH.'index.php';
 		$d = dirname($fpath);
@@ -342,7 +341,7 @@ new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		return installer();
 	}
-	function write_admin_index_php() {
+	function write_admin_index_php($rewrite_enabled = true) {
 		$admin_index_file_content = '<?php
 $dev_settings = dirname(dirname(__FILE__)).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
@@ -354,7 +353,9 @@ if (file_exists($saved_settings)) {
 }
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
-define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(dirname(__FILE__)).\'/\');
+define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
+define(\'ADMIN_WEB_PATH\', WEB_PATH. basename(dirname(__FILE__)).\'/\');
+//define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(dirname(__FILE__)).\'/\');
 define(\'ADMIN_SITE_PATH\', dirname(__FILE__).\'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=admin_home\');
 define(\'ADMIN_FRAMESET_MODE\', 1);
@@ -386,13 +387,17 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		return db()->replace_safe(DB_PREFIX.$table, $data);
 	}
 	function import_base_db_structure() {
+// TODO: parse subdir for tables names: INSTALLER_PATH.'install/data/'
 		$import_tables = array(
 			'static_pages',
+			'sys_blocks',
+			'sys_block_rules',
 			'sys_categories',
 			'sys_category_items',
 			'sys_locale_langs',
 			'sys_locale_translate',
 			'sys_locale_vars',
+			'sys_menus',
 			'sys_menu_items',
 			'sys_user_groups',
 			'sys_user_modules',
@@ -418,7 +423,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			} else {
 				foreach ((array)$existing_db_tables as $value){
 					$value = str_replace(DB_PREFIX,'', $value);
-					unset($import_tables[$value]);
+#					unset($import_tables[$value]);
 				}
 			}
 		}
@@ -485,13 +490,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		_class('forum_sync', 'modules/forum/')->_sync_board();
 		ob_end_clean();
 
-		db()->update('sys_menu_items', array('active' => 1), '1=1');
+		db()->update_safe('sys_menu_items', array('active' => 1), '1=1');
 		return installer();
 	}
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess.txt');
-			db()->update('sys_settings', array('value' => 1), 'id=4');
+			db()->update_safe('sys_settings', array('value' => 1), 'id=4');
 		} else {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess2.txt');
 		}
@@ -503,7 +508,10 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			'id'		=> 1,
 			'login'		=> $_POST['install_admin_login'],
 			'password'	=> md5($_POST['install_admin_pswd']),
+			'first_name'=> $_POST['install_admin_login'],
 			'add_date'	=> gmmktime(),
+			'group'		=> 1,
+			'active'	=> 1,
 		));
 		return installer();
 	}
@@ -541,12 +549,13 @@ if ($errors) {
 	installer()->show_html('form', installer()->prepare_vars(), $errors);
 	exit();
 }
+$url_rewrite = $_POST['install_checkbox_rw_enabled'];
 installer()
 	->import_base_db_structure()
 	->write_db_setup()
-	->write_user_index_php()
-	->write_admin_index_php()
-	->write_htaccess($_POST['install_checkbox_rw_enabled'])
+	->write_user_index_php($url_rewrite)
+	->write_admin_index_php($url_rewrite)
+	->write_htaccess($url_rewrite)
 	->set_admin_login_pswd()
 	->copy_project_skeleton()
 ;
