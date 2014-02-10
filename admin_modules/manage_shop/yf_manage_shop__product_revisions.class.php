@@ -148,7 +148,16 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->product_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_product_revisions').' ORDER BY id DESC')
+		return table('SELECT * FROM '.db('shop_product_revisions'), array(
+				'filter' => $_SESSION[$_GET['object'].'__product_revisions'],
+				'filter_params' => array(
+					'action'	=> array('eq','action'),
+					'user_id'	=> array('eq','user_id'),
+					'add_date'	=> array('like','add_date'),
+					'item_id' 	=> array('eq','item_id'),
+				),
+				'hide_empty' => 1,
+			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
@@ -202,7 +211,16 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->product_images_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_product_images_revisions').' ORDER BY id DESC')
+		return table('SELECT * FROM '.db('shop_product_images_revisions'), array(
+				'filter' => $_SESSION[$_GET['object'].'__product_images_revisions'],
+				'filter_params' => array(
+					'action'	=> array('eq','action'),
+					'user_id'	=> array('eq','user_id'),
+					'add_date'	=> array('like','add_date'),
+					'product_id' 	=> array('eq','product_id'),
+				),
+				'hide_empty' => 1,
+			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
@@ -341,7 +359,16 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->order_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_order_revisions').' ORDER BY id DESC')
+		return table('SELECT * FROM '.db('shop_order_revisions'), array(
+				'filter' => $_SESSION[$_GET['object'].'__order_revisions'],
+				'filter_params' => array(
+					'action'	=> array('eq','action'),
+					'user_id'	=> array('eq','user_id'),
+					'add_date'	=> array('like','add_date'),
+					'item_id' 	=> array('eq','item_id'),
+				),
+				'hide_empty' => 1,
+			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('item_id', './?object='.$_GET['object'].'&action=view_order&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
