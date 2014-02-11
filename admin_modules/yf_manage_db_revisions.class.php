@@ -44,6 +44,7 @@ class yf_manage_db_revisions {
 			->admin_info('user_id')
 			->info_date('date', array('format' => 'full'))
 			->info('ip')
+			->info('url')
 			->func('data_new', function($extra, $r, $_this) {
 				return '<pre>'.var_export(json_decode($r['data_new'], true), 1).'</pre>';
 			})
