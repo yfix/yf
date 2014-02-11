@@ -5,29 +5,102 @@
 class yf_db_query_builder {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $arguments) {
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+	/**
+	* We cleanup object properties when cloning
+	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			$this->$k = null;
+		}
+	}
+
+	/**
+	* Need to avoid calling render() without params
+	*/
+	function __toString() {
+		return $this->render();
+	}
+
+	/**
 	*/
 	function _init () {
 		$this->db = _class('db');
 	}
 
 	/**
+	* Create text SQL from params
+	*/
+	function render() {
+		$a = array();
+		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
+		foreach (array('select','from','join','left_join','right_join','inner_join','where','group_by','having','order_by','limit') as $name) {
+			if ($this->_sql[$name]) {
+				$a[] = $this->_sql[$name];
+			}
+		}
+		if (empty($this->_sql['select']) || empty($this->_sql['from'])) {
+			return false;
+		}
+		if ($a) {
+			$sql = implode(' ', $a);
+		}
+		if (empty($sql)) {
+			return false;
+		}
+		return $sql;
+	}
+
+	/**
+	* Execute generated query
+	*/
+	function exec($as_sql = true) {
+		$sql = $this->render();
+		if ($as_sql) {
+			return $sql;
+		}
+		if ($sql) {
+#			return $this->db->query($sql);
+		}
+		return false;
+	}
+
+	/**
 	* Part of query-generation chain
 	* Examples:
 	*	db()
-	*	->select(array('id','name'))
+	*	->select('id','name')
 	*	->from('users','u')
 	*	->inner_join('groups','g',array('u.group_id'=>'g.id'))
 	*	->order_by('add_date')
 	*	->group_by('id')
 	*	->limit(10)
 	*/
-	function select($fields = array()) {
-		if (is_array($fields)) {
-			$sql = 'SELECT '.implode(',', $fields);
-		} elseif (empty($fields) || $fields == '*') {
+	function select() {
+		$sql = '';
+		$fields = func_get_args();
+		if (!count($fields)) {
 			$sql = 'SELECT *';
+		} else {
+			foreach ((array)$fields as $k => $v) {
+				if (is_string($v) && strlen($v) && !empty($v)) {
+					continue;
+				}
+				unset($fields[$k]);
+			}
+			if ($fields) {
+				$sql = 'SELECT '.implode(', ', $fields);
+			}
 		}
-		$this->_sql[__FUNCTION__] = $sql;
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
+		}
 		return $this;
 	}
 
@@ -164,26 +237,5 @@ class yf_db_query_builder {
 		$sql = $this->db->limit($count, $offset);
 		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
-	}
-
-	/**
-	* Execute generated query
-	*/
-	function exec($as_sql = true) {
-		$a = array();
-		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
-		foreach (array('select','from','join','left_join','right_join','inner_join','where','group_by','having','order_by','limit') as $name) {
-			if ($this->_sql[$name]) {
-				$a[] = $this->_sql[$name];
-			}
-		}
-		$sql = implode(' ', $a);
-		if (empty($sql)) {
-			return false;
-		}
-		if ($as_sql) {
-			return $sql;
-		}
-#		return $this->db->query($sql);
 	}
 }

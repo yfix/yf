@@ -2,7 +2,7 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
-class db_class_test extends PHPUnit_Framework_TestCase {
+class class_db_test extends PHPUnit_Framework_TestCase {
 	public function test_insert_01() {
 		$out = array();
 
