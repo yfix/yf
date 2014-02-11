@@ -88,19 +88,25 @@ class yf_db_query_builder {
 		if (!count($fields)) {
 			$sql = 'SELECT *';
 		} else {
-			$f = array();
+			$a = array();
 			foreach ((array)$fields as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					$v = trim($v);
-					$f[$k] = $v;
+// TODO
+#					$a[$k] = $this->db->enclose_field_value($v);
+					$a[$k] = $v;
+				} elseif (is_callable()) {
+// TODO
+				} elseif (is_array()) {
+// TODO
 				}
 				unset($fields[$k]);
 			}
-			if ($f) {
-				$sql = 'SELECT '.implode(', ', $f);
+			if ($a) {
+				$sql = 'SELECT '.implode(', ', $a);
 			}
 		}
 		if ($sql) {
@@ -111,9 +117,33 @@ class yf_db_query_builder {
 
 	/**
 	* Part of query-generation chain
-	* Examples: from('users'), from('users', 'u'), from(array('users' => 'u', 'suppliers' => 's'))
+	* Examples: from('users'), from(array('users' => 'u', 'suppliers' => 's'))
 	*/
-	function from($table, $as = '') {
+	function from() {
+		$sql = '';
+		$tables = func_get_args();
+		if (count($tables)) {
+			$a = array();
+			foreach ((array)$tables as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
+				if (is_string($v) && strlen($v) && !empty($v)) {
+					$v = trim($v);
+// TODO
+					$a[$k] = $this->db->_real_name($v);
+				} elseif (is_callable()) {
+// TODO
+				} elseif (is_array()) {
+// TODO
+				}
+				unset($tables[$k]);
+			}
+			if ($a) {
+				$sql = 'FROM '.implode(', ', $a);
+			}
+		}
+/*
 		$tt = array();
 		if (is_array($table)) {
 			foreach ((array)$table as $t => $_as) {
@@ -123,6 +153,9 @@ class yf_db_query_builder {
 			$tt[] = $this->_real_name($table). ($as ? ' AS '.$this->db->enclose_field_name($as) : '');
 		}
 		$sql = 'FROM '.implode(',', $tt);
+		$this->_sql[__FUNCTION__] = $sql;
+		return $this;
+*/
 		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
