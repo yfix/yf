@@ -681,10 +681,12 @@ class yf_main {
 	function init_settings() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->set_default_settings();
+/*
 		// Overriding default settings with the values stored in database
 		foreach ((array)$this->get_data('settings') as $k => $v) {
 			conf($k, $v);
 		}
+*/
 		// Overriding default settings with the values stored in database
 		foreach ((array)$this->get_data('conf') as $k => $v) {
 			conf($k, $v);
