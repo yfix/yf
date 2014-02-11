@@ -139,7 +139,7 @@ class yf_menus_editor {
 			unset($_info['level']);
 			$_info['menu_id'] = $NEW_MENU_ID;
 
-			db()->INSERT('menu_items', $_info);
+			db()->insert_safe('menu_items', $_info);
 			$NEW_ITEM_ID = db()->INSERT_ID();
 
 			$_old_to_new[$_id] = $NEW_ITEM_ID;
@@ -152,7 +152,7 @@ class yf_menus_editor {
 				continue;
 			}
 			$_new_parent_id = intval($_old_to_new[$_old_parent_id]);
-			db()->UPDATE('menu_items', array('parent_id' => $_new_parent_id), 'id='.intval($_new_id));
+			db()->update_safe('menu_items', array('parent_id' => $_new_parent_id), 'id='.intval($_new_id));
 		}
 		common()->admin_wall_add(array('menu cloned: '.$menu_info['name'].'', $NEW_ITEM_ID));
 		cache_del(array('menus', 'menu_items'));
@@ -171,8 +171,8 @@ class yf_menus_editor {
 			db()->query('DELETE FROM '.db('menus').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			db()->query('DELETE FROM '.db('menu_items').' WHERE menu_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('menu deleted: '.$menu_info['name'].'', $menu_info['id']));
+			cache_del(array('menus', 'menu_items'));
 		}
-		cache_del(array('menus', 'menu_items'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -191,8 +191,8 @@ class yf_menus_editor {
 		if (!empty($menu_info)) {
 			db()->UPDATE('menus', array('active' => (int)!$menu_info['active']), 'id='.intval($menu_info['id']));
 			common()->admin_wall_add(array('menu: '.$menu_info['name'].' '.($menu_info['active'] ? 'inactivated' : 'activated'), $menu_info['id']));
+			cache_del(array('menus', 'menu_items'));
 		}
-		cache_del(array('menus', 'menu_items'));
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($menu_info['active'] ? 0 : 1);
@@ -311,7 +311,6 @@ class yf_menus_editor {
 			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
-			$item['active']			= 1;
 			$tpl_items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
 		}
 		$replace = array(
@@ -352,6 +351,24 @@ class yf_menus_editor {
 	}
 
 	/**
+	* Compatibility with format main()->get_data('menu_items'), diference is that we show inactive here too
+	*/
+	function _get_menu_items($menu_id) {
+		$items = array();
+		foreach ((array)db()->get_all('SELECT * FROM '.db('menu_items').' WHERE menu_id='.intval($menu_id).' ORDER BY `order` ASC') as $id => $item) {
+			$items[$id] = $item + array('have_children' => 0);
+		}
+		foreach ((array)$items as $id => $item) {
+			$parent_id = $item['parent_id'];
+			if (!$parent_id) {
+				continue;
+			}
+			$items[$parent_id]['have_children']++;
+		}
+		return $items;
+	}
+
+	/**
 	* Show menu, it is customized comparing to classes/core_menu, for the needs of managing menus
 	*/
 	function _show_menu ($input = array()) {
@@ -362,7 +379,7 @@ class yf_menus_editor {
 			return false;
 		}
 		if (!isset($this->_menus_infos)) {
-			$this->_menus_infos = main()->get_data('menus');
+			$this->_menus_infos = db()->get_all('SELECT * FROM '.db('menus'));
 		}
 		if (empty($this->_menus_infos)) {
 			return false;
@@ -379,18 +396,14 @@ class yf_menus_editor {
 			return false;
 		}
 		$cur_menu_info	= &$this->_menus_infos[$menu_id];
-		if (!$cur_menu_info['active']) {
-			return false;
-		}
 		if (!isset($this->_menu_items)) {
-			$this->_menu_items = main()->get_data('menu_items');
+			$this->_menu_items[$menu_id] = $this->_get_menu_items($menu_id);
 		}
 		// Do not show menu if there is no items in it
 		if (empty($this->_menu_items[$menu_id])) {
 			return false;
 		}
-		$menu_items = $this->_recursive_get_menu_items2($menu_id);
-
+		$menu_items = $this->_recursive_get_menu_items($menu_id);
 		if ($force_stpl_name) {
 			$cur_menu_info['stpl_name'] = $force_stpl_name;
 		}
@@ -463,6 +476,7 @@ class yf_menus_editor {
 				'is_cur_page'	=> (int)$is_cur_page,
 				'have_children'	=> intval((bool)$item_info['have_children']),
 				'next_level_diff'=> intval(abs($item_info['level'] - $_next_level)),
+				'active'		=> intval($item_info['active']),
 			);
 			$items[$item_info['id']] = $replace2;
 			// Save current level for the next iteration
@@ -482,16 +496,19 @@ class yf_menus_editor {
 
 	/**
 	*/
-	function _recursive_get_menu_items2($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		if (empty($menu_id) || empty($this->_menu_items[$menu_id])) {
+	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
+		if (empty($menu_id)) {
+			return false;
+		}
+		if (!isset($this->_menu_items[$menu_id])) {
+			$this->_menu_items[$menu_id] = $this->_get_menu_items($menu_id);
+		}
+		if (empty($this->_menu_items[$menu_id])) {
 			return false;
 		}
 		$items_ids		= array();
 		$items_array	= array();
 		foreach ((array)$this->_menu_items[$menu_id] as $item_info) {
-			if (!is_array($item_info)) {
-				continue;
-			}
 			if ($item_info['parent_id'] != $parent_id) {
 				continue;
 			}
@@ -501,7 +518,7 @@ class yf_menus_editor {
 			$items_array[$item_info['id']] = $item_info;
 			$items_array[$item_info['id']]['level'] = $level;
 
-			$tmp_array = $this->_recursive_get_menu_items2($menu_id, $skip_item_id, $item_info['id'], $level + 1);
+			$tmp_array = $this->_recursive_get_menu_items($menu_id, $skip_item_id, $item_info['id'], $level + 1);
 			foreach ((array)$tmp_array as $sub_item_info) {
 				if ($sub_item_info['id'] == $item_info['id']) {
 					continue;
@@ -653,49 +670,10 @@ class yf_menus_editor {
 		}
 		$sql = $item_info;
 		unset($sql['id']);
-		db()->INSERT('menu_items', $sql);
+		db()->insert_safe('menu_items', $sql);
 		common()->admin_wall_add(array('menu item cloned: '.$item_info['name'].'', $item_info['id']));
 		cache_del(array('menus', 'menu_items'));
 		return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$menu_info['id']);
-	}
-
-	/**
-	* Get menu items ordered array (recursively)
-	*/
-	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		if (!isset($this->_menu_items_from_db)) {
-			$Q = db()->query(
-				'SELECT * FROM '.db('menu_items').' 
-				WHERE menu_id='.intval($menu_id).' 
-				ORDER BY `order` ASC'
-			);
-			while ($A = db()->fetch_assoc($Q)) {
-				$this->_menu_items_from_db[$A['id']] = $A;
-			}
-		}
-		if (empty($this->_menu_items_from_db)) {
-			return '';
-		}
-		$items_ids		= array();
-		$items_array	= array();
-		foreach ((array)$this->_menu_items_from_db as $item_info) {
-			if ($item_info['parent_id'] != $parent_id) {
-				continue;
-			}
-			if ($skip_item_id == $item_info['id']) {
-				continue;
-			}
-			$items_array[$item_info['id']] = $item_info;
-			$items_array[$item_info['id']]['level'] = $level;
-			$tmp_array = $this->_recursive_get_menu_items($menu_id, $skip_item_id, $item_info['id'], $level + 1);
-			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info['id'] == $item_info['id']) {
-					continue;
-				}
-				$items_array[$sub_item_info['id']] = $sub_item_info;
-			}
-		}
-		return $items_array;
 	}
 
 	/**
@@ -705,7 +683,7 @@ class yf_menus_editor {
 			$item_info = db()->query_fetch('SELECT * FROM '.db('menu_items').' WHERE id='.intval($_GET['id']));
 		}
 		if (!empty($item_info)) {
-			db()->UPDATE('menu_items', array('active' => (int)!$item_info['active']), 'id='.intval($item_info['id']));
+			db()->update('menu_items', array('active' => (int)!$item_info['active']), 'id='.intval($item_info['id']));
 			common()->admin_wall_add(array('menu item: '.$item_info['name'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $item_info['id']));
 		}
 		cache_del(array('menus', 'menu_items'));
@@ -726,7 +704,7 @@ class yf_menus_editor {
 		}
 		if (!empty($item_info)) {
 			db()->query('DELETE FROM '.db('menu_items').' WHERE id='.intval($_GET['id']));
-			db()->UPDATE('menu_items', array('parent_id' => 0), 'parent_id='.intval($_GET['id']));
+			db()->update('menu_items', array('parent_id' => 0), 'parent_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('menu item deleted: '.$item_info['name'].'', $item_info['id']));
 		}
 		cache_del(array('menus', 'menu_items'));
