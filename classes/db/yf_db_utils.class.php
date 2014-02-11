@@ -106,4 +106,4 @@ class yf_db_utils {
 		}
 		return TRUE;
 	}
-	}
+}
