@@ -43,14 +43,20 @@ class yf_manage_db_revisions {
 			))
 			->admin_info('user_id')
 			->info_date('date', array('format' => 'full'))
+			->info('query_table')
+			->info('query_method')
 			->info('ip')
 			->info('url')
-			->func('data_new', function($extra, $r, $_this) {
-				return '<pre>'.var_export(json_decode($r['data_new'], true), 1).'</pre>';
-			})
-			->func('extra', function($extra, $r, $_this) {
-				return '<pre>'.var_export(json_decode($r['extra'], true), 1).'</pre>';
-			})
+			->tab_start('new data')
+				->func('data_new', function($extra, $r, $_this) {
+					return '<pre>'.var_export(json_decode($r['data_new'], true), 1).'</pre>';
+				})
+			->tab_end()
+			->tab_start('trace')
+				->func('extra', function($extra, $r, $_this) {
+					return '<pre>'.var_export(json_decode($r['extra'], true), 1).'</pre>';
+				})
+			->tab_end()
 		;
 
 	}
