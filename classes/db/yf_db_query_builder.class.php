@@ -1,7 +1,8 @@
 <?php
 
 /**
- */
+* Query builder (Active Record)
+*/
 class yf_db_query_builder {
 
 	/**
@@ -32,6 +33,13 @@ class yf_db_query_builder {
 	*/
 	function _init () {
 		$this->db = _class('db');
+	}
+
+	/**
+	* Alias
+	*/
+	function sql() {
+		return $this->render()
 	}
 
 	/**
@@ -165,6 +173,7 @@ class yf_db_query_builder {
 	* Examples: join('suppliers', array('u.supplier_id' => 's.id'))
 	*/
 	function join($table, $as, $items, $join_type = 'JOIN') {
+// TODO: improve me: support for callable, sub-array, check values for emptiness
 		$on = array();
 		foreach ((array)$items as $k => $v) {
 			list($t1_as, $t1_field) = explode('.', $k);
@@ -201,7 +210,10 @@ class yf_db_query_builder {
 	* Part of query-generation chain
 	* Example: where(array('id','>','1'),array('name','!=','peter'))
 	*/
-	function where($items) {
+	function where() {
+// TODO: support for binding params (':field' => $val)
+		$items = array_get_args();
+// TODO: improve me: support for callable, sub-array, check values for emptiness
 		$where = array();
 		foreach ((array)$items as $v) {
 			$where[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
@@ -215,7 +227,9 @@ class yf_db_query_builder {
 	* Part of query-generation chain
 	* Examples: group_by('user_group'), group_by(array('supplier','manufacturer'))
 	*/
-	function group_by($items) {
+	function group_by() {
+		$items = array_get_args();
+// TODO: improve me: support for callable, sub-array, check values for emptiness
 		if (is_array($items)) {
 			$by = array();
 			foreach ((array)$items as $v) {
@@ -233,7 +247,9 @@ class yf_db_query_builder {
 	* Part of query-generation chain
 	* Examples: order_by('user_group'), order_by(array('supplier','manufacturer'))
 	*/
-	function order_by($items) {
+	function order_by() {
+		$items = array_get_args();
+// TODO: improve me: support for callable, sub-array, check values for emptiness
 		if (is_array($items)) {
 			$by = array();
 			foreach ((array)$items as $v) {
@@ -251,7 +267,9 @@ class yf_db_query_builder {
 	* Part of query-generation chain
 	* Examples: having(array('COUNT(*)','>','1'))
 	*/
-	function having($items) {
+	function having() {
+		$items = array_get_args();
+// TODO: improve me: support for callable, sub-array, check values for emptiness
 		$where = array();
 		foreach ((array)$items as $v) {
 			$where[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
@@ -266,6 +284,7 @@ class yf_db_query_builder {
 	* Examples: limit(10), limit(10,100)
 	*/
 	function limit($count, $offset = null) {
+// TODO: improve me: support for callable, sub-array, check values for emptiness
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -276,4 +295,10 @@ class yf_db_query_builder {
 		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
+
+// TODO:
+#	function get() { }
+#	function get_all() { }
+#	function get_2d() { }
+#	function get_deep_array() { }
 }
