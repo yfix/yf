@@ -88,14 +88,19 @@ class yf_db_query_builder {
 		if (!count($fields)) {
 			$sql = 'SELECT *';
 		} else {
+			$f = array();
 			foreach ((array)$fields as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					continue;
+					$v = trim($v);
+					$f[$k] = $v;
 				}
 				unset($fields[$k]);
 			}
-			if ($fields) {
-				$sql = 'SELECT '.implode(', ', $fields);
+			if ($f) {
+				$sql = 'SELECT '.implode(', ', $f);
 			}
 		}
 		if ($sql) {
