@@ -9,6 +9,7 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 	public function test_01() {
 		$this->assertEquals( 'SELECT *', self::qb()->select()->_sql['select'] );
 		$this->assertFalse( self::qb()->select()->render() );
+		$this->assertFalse( (string)self::qb()->select() );
 	}
 	public function test_02() {
 		$this->assertEquals( 'SELECT id', self::qb()->select('id')->_sql['select'] );
