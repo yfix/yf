@@ -53,6 +53,10 @@ class yf_db_query_builder {
 				$a[] = $this->_sql[$name];
 			}
 		}
+		// Save 1 call of select()
+		if (empty($this->_sql['select']) && !empty($this->_sql['from'])) {
+			$this->select();
+		}
 		if (empty($this->_sql['select']) || empty($this->_sql['from'])) {
 			return false;
 		}
@@ -74,7 +78,7 @@ class yf_db_query_builder {
 			return $sql;
 		}
 		if ($sql) {
-#			return $this->db->query($sql);
+			return $this->db->query($sql);
 		}
 		return false;
 	}
@@ -104,14 +108,22 @@ class yf_db_query_builder {
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					$v = trim($v);
 // TODO
-#					$a[$k] = $this->db->enclose_field_value($v);
-					$a[$k] = $v;
-				} elseif (is_callable()) {
-// TODO
-				} elseif (is_array()) {
-// TODO
+#					$a[] = $this->db->enclose_field_value($v);
+					$a[] = $v;
+				} elseif (is_callable($v)) {
+					$a[] = $v($this);
+				} elseif (is_array($v)) {
+					foreach ((array)$v as $k2 => $v2) {
+						if (!is_string($k2) || !is_string($v2)) {
+							continue;
+						}
+						$k2 = trim($k2);
+						$v2 = trim($v2);
+						if (strlen($k2) && strlen($v2)) {
+							$a[] = $k2.' AS '.$v2;
+						}
+					}
 				}
-				unset($fields[$k]);
 			}
 			if ($a) {
 				$sql = 'SELECT '.implode(', ', $a);
