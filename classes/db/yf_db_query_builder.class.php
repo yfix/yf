@@ -39,7 +39,7 @@ class yf_db_query_builder {
 	* Alias
 	*/
 	function sql() {
-		return $this->render()
+		return $this->render();
 	}
 
 	/**
