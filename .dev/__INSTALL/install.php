@@ -476,13 +476,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$dir = INSTALLER_PATH.'install/data_en/';
 		foreach ((array)glob($dir.'*.data.php') as $f) {
 			$_table = substr(basename($f), 0, -strlen('.data.php'));
-			$this->import_table_data($table, $dir);
+			$this->import_table_data($_table, $dir);
 		}
 		if ($_POST['install_project_lang']) {
 			$dir = INSTALLER_PATH.'install/data_'.$_POST['install_project_lang'].'/';
 			foreach ((array)glob($dir.'*.data.php') as $f) {
 				$_table = substr(basename($f), 0, -strlen('.data.php'));
-				$this->import_table_data($table, $dir);
+				$this->import_table_data($_table, $dir);
 			}
 		}
 		ob_start();
