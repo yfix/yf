@@ -84,7 +84,52 @@ class yf_db_query_builder {
 	}
 
 	/**
-	* Part of query-generation chain
+	* Render SQL and execute db->get()
+	*/
+	function get($use_cache = true) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get($sql, $use_cache);
+		}
+		return false;
+	}
+
+	/**
+	* Render SQL and execute db->get_all()
+	*/
+	function get_all($use_cache = true) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get_all($sql, $use_cache);
+		}
+		return false;
+	}
+
+	/**
+	* Render SQL and execute db->get_2d()
+	*/
+	function get_2d($use_cache = true) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get_2d($sql, $use_cache);
+		}
+		return false;
+	}
+
+	/**
+	* Render SQL and execute db->get_deep_array()
+	*/
+	function get_deep_array($levels = 1, $use_cache = true) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get_deep_array($sql, $levels, $use_cache);
+		}
+		return false;
+	}
+
+// TODO: correct fields escaping
+// TODO: optionally check available fields and tables with db_installer sql data
+	/**
 	* Examples:
 	*	db()
 	*	->select('id','name')
@@ -107,11 +152,9 @@ class yf_db_query_builder {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					$v = trim($v);
-// TODO
-#					$a[] = $this->db->enclose_field_value($v);
 					$a[] = $v;
 				} elseif (is_callable($v)) {
-					$a[] = $v($this);
+					$a[] = $v($fields, $this);
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {
 						if (!is_string($k2) || !is_string($v2)) {
@@ -136,7 +179,6 @@ class yf_db_query_builder {
 	}
 
 	/**
-	* Part of query-generation chain
 	* Examples: from('users'), from(array('users' => 'u', 'suppliers' => 's'))
 	*/
 	function from() {
@@ -150,167 +192,242 @@ class yf_db_query_builder {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					$v = trim($v);
-// TODO
-					$a[$k] = $this->db->_real_name($v);
-				} elseif (is_callable()) {
-// TODO
-				} elseif (is_array()) {
-// TODO
+					$a[] = $this->db->_real_name($v);
+				} elseif (is_callable($v)) {
+					$a[] = $v($tables, $this);
+				} elseif (is_array($v)) {
+					foreach ((array)$v as $k2 => $v2) {
+						if (!is_string($k2) || !is_string($v2)) {
+							continue;
+						}
+						$k2 = trim($k2);
+						$v2 = trim($v2);
+						if (strlen($k2) && strlen($v2)) {
+							$a[] = $k2.' AS '.$v2;
+						}
+					}
 				}
-				unset($tables[$k]);
 			}
 			if ($a) {
 				$sql = 'FROM '.implode(', ', $a);
 			}
 		}
-/*
-		$tt = array();
-		if (is_array($table)) {
-			foreach ((array)$table as $t => $_as) {
-				$tt[] = $this->_real_name($t). ($_as ? ' AS '.$this->db->enclose_field_name($_as) : '');
-			}
-		} else {
-			$tt[] = $this->_real_name($table). ($as ? ' AS '.$this->db->enclose_field_name($as) : '');
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
 		}
-		$sql = 'FROM '.implode(',', $tt);
-		$this->_sql[__FUNCTION__] = $sql;
-		return $this;
-*/
-		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
 
 	/**
-	* Part of query-generation chain
 	* Examples: join('suppliers', array('u.supplier_id' => 's.id'))
 	*/
-	function join($table, $as, $items, $join_type = 'JOIN') {
-// TODO: improve me: support for callable, sub-array, check values for emptiness
-		$on = array();
-		foreach ((array)$items as $k => $v) {
-			list($t1_as, $t1_field) = explode('.', $k);
-			list($t2_as, $t2_field) = explode('.', $v);
-			$on[] = $this->db->enclose_field_name($t1_as).'.'.$this->db->enclose_field_name($t1_field).' = '.$this->db->enclose_field_name($t2_as).'.'.$this->db->enclose_field_name($t2_field);
+	function join($table, $on, $join_type = 'JOIN') {
+		if (!$join_type) {
+			$join_type = 'JOIN';
 		}
-		$sql = $join_type.' '.$this->_real_name($table).' AS '.$this->db->enclose_field_name($as).' ON '.implode(',', $on);
-		$this->_sql[__FUNCTION__] = $sql;
+		$_on = array();
+		if (is_array($on)) {
+			foreach ((array)$on as $k => $v) {
+				list($t1_as, $t1_field) = explode('.', $k);
+				list($t2_as, $t2_field) = explode('.', $v);
+				$_on[] = $this->db->enclose_field_name($t1_as).'.'.$this->db->enclose_field_name($t1_field).' = '.$this->db->enclose_field_name($t2_as).'.'.$this->db->enclose_field_name($t2_field);
+			}
+		} elseif (is_callable($on)) {
+			$_on = $on($table, $this);
+		}
+		$as = '';
+		if (is_array($table)) {
+			$as = current($table);
+			$table = key($table);
+		}
+		$sql = '';
+		if (is_string($table) && !empty($_on)) {
+			$sql = strtoupper($join_type).' '.$this->db->_real_name($table). ($as ? ' AS '.$as : '').' ON '.implode(',', $_on);
+		}
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
+		}
 		return $this;
 	}
 
 	/**
-	* Part of query-generation chain
 	*/
-	function left_join($table, $as, $items) {
-		return $this->join($table, $as, $items, 'LEFT JOIN');
+	function left_join($table, $on) {
+		return $this->join($table, $on, 'LEFT JOIN');
 	}
 
 	/**
-	* Part of query-generation chain
 	*/
-	function right_join($table, $as, $items) {
-		return $this->join($table, $as, $items, 'RIGHT JOIN');
+	function right_join($table, $on) {
+		return $this->join($table, $on, 'RIGHT JOIN');
 	}
 
 	/**
-	* Part of query-generation chain
 	*/
-	function inner_join($table, $as, $items) {
-		return $this->join($table, $as, $items, 'INNER JOIN');
+	function inner_join($table, $on) {
+		return $this->join($table, $on, 'INNER JOIN');
 	}
 
 	/**
-	* Part of query-generation chain
-	* Example: where(array('id','>','1'),array('name','!=','peter'))
+	* Example: where(array('id','>','1'),'and',array('name','!=','peter'))
 	*/
 	function where() {
 // TODO: support for binding params (':field' => $val)
-		$items = array_get_args();
-// TODO: improve me: support for callable, sub-array, check values for emptiness
-		$where = array();
-		foreach ((array)$items as $v) {
-			$where[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
+		$sql = '';
+		$where = func_get_args();
+		if (count($where)) {
+			$a = array();
+			foreach ((array)$where as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
+				if (is_string($v) && strlen($v) && !empty($v)) {
+					$v = strtoupper(trim($v));
+					if (in_array($v, array('AND','OR','XOR'))) {
+						$a[] = $v;
+					}
+				// array('field', 'condition', 'value'), example: array('id','>','1')
+				} elseif (is_array($v) && count($v) == 3) {
+					$a[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
+				} elseif (is_callable($v)) {
+					$a[] = $v($where, $this);
+				}
+			}
+			if ($a) {
+				$sql = 'WHERE '.implode(' ', $a);
+			}
 		}
-		$sql = 'WHERE '.implode(' AND ', $where);
-		$this->_sql[__FUNCTION__] = $sql;
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
+		}
 		return $this;
 	}
 
 	/**
-	* Part of query-generation chain
 	* Examples: group_by('user_group'), group_by(array('supplier','manufacturer'))
 	*/
 	function group_by() {
+		$sql = '';
 		$items = array_get_args();
-// TODO: improve me: support for callable, sub-array, check values for emptiness
-		if (is_array($items)) {
-			$by = array();
-			foreach ((array)$items as $v) {
-				$by[] = $this->db->enclose_field_name($v);
+		if (count($items)) {
+			$a = array();
+			foreach ((array)$items as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
+				if (is_string($v) && strlen($v) && !empty($v)) {
+					$a[] = $this->db->enclose_field_name($v);
+				} elseif (is_array($v)) {
+					foreach ((array)$v as $v2) {
+						if (!is_string($v2)) {
+							continue;
+						}
+						$v2 = trim($v2);
+						if ($v2) {
+							$a[] = $this->db->enclose_field_name($v2);
+						}
+					}
+				} elseif (is_callable($items)) {
+					$a[] = $v($items, $this);
+				}
 			}
-		} else {
-			$by = array($this->db->enclose_field_name($items));
+			if ($a) {
+				$sql = 'GROUP BY '.implode(', ', $a);
+			}
 		}
-		$sql = 'GROUP BY '.implode(',', $by);
-		$this->_sql[__FUNCTION__] = $sql;
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
+		}
 		return $this;
 	}
 
 	/**
-	* Part of query-generation chain
-	* Examples: order_by('user_group'), order_by(array('supplier','manufacturer'))
+	* Examples: order_by('user_group'), order_by(array('supplier' => 'DESC','manufacturer' => ASC))
 	*/
 	function order_by() {
+		$sql = '';
 		$items = array_get_args();
-// TODO: improve me: support for callable, sub-array, check values for emptiness
-		if (is_array($items)) {
-			$by = array();
-			foreach ((array)$items as $v) {
-				$by[] = $this->db->enclose_field_name($v);
+		if (count($items)) {
+			$a = array();
+			foreach ((array)$items as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
+				if (is_string($v) && strlen($v) && !empty($v)) {
+					$a[] = $this->db->enclose_field_name($v).' ASC';
+				} elseif (is_array($v)) {
+					foreach ((array)$v as $k2 => $v2) {
+						if (!is_string($v2)) {
+							continue;
+						}
+						$direction = 'ASC';
+						$v2 = trim($v2);
+						if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
+							$direction = $v2;
+							$v2 = trim($k2);
+						}
+						if ($v2) {
+							$a[] = $v2.' '.strtoupper($direction);
+						}
+					}
+				} elseif (is_callable($items)) {
+					$a[] = $v($items, $this);
+				}
 			}
-		} else {
-			$by = array($this->db->enclose_field_name($items));
+			if ($a) {
+				$sql = 'ORDER BY '.implode(', ', $a);
+			}
 		}
-		$sql = 'ORDER BY '.implode(',', $by);
-		$this->_sql[__FUNCTION__] = $sql;
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
+		}
 		return $this;
 	}
 
 	/**
-	* Part of query-generation chain
 	* Examples: having(array('COUNT(*)','>','1'))
 	*/
 	function having() {
-		$items = array_get_args();
-// TODO: improve me: support for callable, sub-array, check values for emptiness
-		$where = array();
-		foreach ((array)$items as $v) {
-			$where[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
+		$sql = '';
+		$where = func_get_args();
+		if (count($where)) {
+			$a = array();
+			foreach ((array)$where as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
+				if (is_string($v) && strlen($v) && !empty($v)) {
+					$v = strtoupper(trim($v));
+					if (in_array($v, array('AND','OR','XOR'))) {
+						$a[] = $v;
+					}
+				// array('field', 'condition', 'value'), example: array('id','>','1')
+				} elseif (is_array($v) && count($v) == 3) {
+					$a[] = $v[0]. $v[1]. $v[2];
+				} elseif (is_callable($v)) {
+					$a[] = $v($where, $this);
+				}
+			}
+			if ($a) {
+				$sql = 'HAVING '.implode(' ', $a);
+			}
 		}
-		$sql = 'HAVING '.implode(' AND ', $where);
-		$this->_sql[__FUNCTION__] = $sql;
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
+		}
 		return $this;
 	}
 
 	/**
-	* Part of query-generation chain
 	* Examples: limit(10), limit(10,100)
 	*/
 	function limit($count, $offset = null) {
-// TODO: improve me: support for callable, sub-array, check values for emptiness
-		if (!$this->_connected && !$this->connect()) {
-			return false;
+		if ($count) {
+			$sql = $this->db->limit($count, $offset);
 		}
-		if (!is_object($this->db)) {
-			return false;
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
 		}
-		$sql = $this->db->limit($count, $offset);
-		$this->_sql[__FUNCTION__] = $sql;
 		return $this;
 	}
-
-// TODO:
-#	function get() { }
-#	function get_all() { }
-#	function get_2d() { }
-#	function get_deep_array() { }
 }
