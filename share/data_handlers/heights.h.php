@@ -1,4 +1,3 @@
 <?php
 
-$Q = db()->query("SELECT * FROM ".db("heights")."");
-while ($A = db()->fetch_assoc($Q)) $data[$A["id"]] = $A["height"];
+$data = db()->get_2d('SELECT id, height FROM '.db('heights'));

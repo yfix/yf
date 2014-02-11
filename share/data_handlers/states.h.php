@@ -1,5 +1,3 @@
 <?php
 
-$data[" "] = "Non US";
-$Q = db()->query("SELECT * FROM ".db("states")."");
-while ($A = db()->fetch_assoc($Q)) $data[$A["code"]] = $A["name"];
+$data = array(' ' => 'Non US') + db()->get_2d('SELECT code, name FROM '.db('states'));

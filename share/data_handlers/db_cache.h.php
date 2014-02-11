@@ -1,4 +1,6 @@
 <?php
 
-$Q = db()->query("SELECT * FROM ".db("cache")."");
-while ($A = db()->fetch_assoc($Q)) $data[$A["key"]] = $A;
+$q = db()->query('SELECT * FROM '.db('cache').'');
+while ($a = db()->fetch_assoc($q)) {
+	$data[$a['key']] = $a;
+}
