@@ -53,5 +53,8 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 	public function test_10() {
 		$this->assertFalse( self::qb()->select()->from()->render() );
 		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user', self::qb()->select()->from('user')->render() );
+#		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user AS u', self::qb()->select()->from(array('user' => 'u'))->render() );
+#		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user AS u, '.DB_PREFIX.'articles AS a', self::qb()->select()->from(array('user' => 'u', 'articles' => 'a'))->render() );
+#		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user AS u, '.DB_PREFIX.'articles AS a', self::qb()->select()->from(array('user' => 'u'), array('articles' => 'a'))->render() );
 	}
 }
