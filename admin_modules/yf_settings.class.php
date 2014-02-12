@@ -85,17 +85,28 @@ class yf_settings {
 			}
 		}
 		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
+		$avail_hook_modules = array();
 		foreach ((array)$hooks_data as $k => $v) {
-			if (empty($v)) {
+			list($module_name,) = explode('___', $k);
+			$avail_hook_modules[$module_name] = $k;
+		}
+		$settings = $this->_get_settings($hooks_data);
+		foreach ((array)$settings as $s) {
+			$name = $s['item'];
+			if (!isset($avail_hook_modules[$name])) {
 				continue;
 			}
-			list($module_name,) = explode('___', $k);
-			$a[] = array('fieldset_start', array('id' => 'module_'.$module_name, 'legend' => $module_name, 'class' => 'well'));
-			foreach ((array)$v as $_a) {
-				$a[] = $_a;
+			$hooks = $hooks_data[$avail_hook_modules[$name]];
+			$is_checked = $s['value'] ? 1 : 0;
+			if (!$is_checked || empty($hooks)) {
+				continue;
+			}
+			$a[] = array('fieldset_start', array('id' => 'module_'.$name, 'legend' => $name, 'class' => 'well'));
+			foreach ((array)$hooks as $hook_data) {
+				$a[] = $hook_data;
 			}
 			$a[] = array('fieldset_end');
-			$this->_used_modules[$module_name] = $module_name;
+			$this->_used_modules[$name] = $name;
 		}
 		$r = (array)$_POST + (array)$r;
 		return form($r, array('class' => 'form-vertical form-condensed span6'))->array_to_form($a);
@@ -110,14 +121,96 @@ class yf_settings {
 
 	/**
 	*/
+	function _get_settings($hooks_data) {
+		$settings = db()->get_all('SELECT * FROM '.db('settings').' ORDER BY `order` ASC', 'item', $cache = false);
+		if (!$settings && $hooks_data) {
+			$settings = array();
+			foreach ((array)$hooks_data as $k => $v) {
+				list($module_name,) = explode('___', $k);
+				$settings[] = array(
+					'item'	=> $module_name,
+					'value'	=> 0,
+					'order'	=> ++$i,
+				);
+			}
+			if ($settings) {
+				db()->insert_safe('settings', $settings);
+			}
+		}
+		return $settings;
+	}
+
+	/**
+	*/
 	function display_what() {
 		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
-		$names = array();
+		$avail_hook_modules = array();
 		foreach ((array)$hooks_data as $k => $v) {
 			list($module_name,) = explode('___', $k);
-			$names[] = ++$i.' '.t($module_name).' ('.count($v).')';
+			$avail_hook_modules[$module_name] = $k;
 		}
+		$settings = $this->_get_settings($hooks_data);
+		if (main()->is_post()) {
+			parse_str($_POST['sort'], $tmp);
+			$posted_sort = array();
+			foreach ((array)$tmp['sort'] as $v) {
+				$posted_sort[$v] = $v;
+			}
+			foreach ((array)$settings as $s) {
+				$name = $s['item'];
+				$_n = str_replace('_','',$name);
+				if (!isset($avail_hook_modules[$name])) {
+					unset($posted_sort[$_n]);
+					continue;
+				}
+				$posted_sort[$_n] = $name;
+			}
+			$to_save = array();
+			foreach ((array)$posted_sort as $_n => $name) {
+				$to_save[$name] = array(
+					'item'	=> $name,
+					'value'	=> isset($_POST['check'][$_n]) ? 1 : 0,
+					'order'	=> ++$i,
+				);
+			}
+			if ($to_save) {
+				db()->query('TRUNCATE TABLE '.db('settings'));
+				db()->insert_safe('settings', $to_save);
+			}
+			return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
+		}
+		$container_html = '
+<script type="text/javascript">
+$(function() {
+	var container = $("#settings-sortable-container")
+	container.find("ul").sortable();
+	container.closest("form").on("submit", function(){
+		$(this).find("input[name=sort][type=hidden]").val( container.find("ul").sortable("serialize", { key: "sort[]" }) )
+	});
+})
+</script>
+<div class="span6" id="settings-sortable-container">
+    <ul class="nav nav-pills nav-stacked" id="sortable_settings">
+';
+		foreach ((array)$settings as $s) {
+			$name = $s['item'];
+			if (!isset($avail_hook_modules[$name])) {
+				continue;
+			}
+			$hooks = $hooks_data[$avail_hook_modules[$name]];
+			$is_checked = $s['value'] ? 1 : 0;
+			$container_html .= '<li class="item" id="liitem_'.str_replace('_', '', $name).'"><a style="cursor:move;"><i class="icon icon-move"></i> '.t($name).' ('.(count($hooks)).')'
+				.' <input type="checkbox" name="check['.str_replace('_', '', $name).']" value="1" style="float:right;"'.($is_checked ? ' checked="checked"' : '').'></a></li>'.PHP_EOL;
+		}
+$container_html .= '
+    </ul>
+</div>
+			';
+		$a['back_link'] = './?object='.$_GET['object'];
 		return form($a, array('legend' => 'Settings items'))
+			->hidden('sort')
+			->container($container_html, array('wide' => 1))
+/*
 			->container('
 <script type="text/javascript">
 $(function() {
@@ -125,7 +218,7 @@ $(function() {
 	myapp.controller("controller", function ($scope) {
 		$scope.list = '.($names ? json_encode($names) : '[]').';
 		$("#settings-sortable-container").find("ul").show().sortable().end().find("#settings-spinner").hide();
-		$(this).closest("form").on("submit", function(){
+		$("#settings-sortable-container").closest("form").on("submit", function(){
 			return false;
 		})
 	});
@@ -139,7 +232,8 @@ $(function() {
     </ul>
 </div>
 			', array('wide' => 1))
-			->save();
+*/
+			->save_and_back();
 	}
 
 	/**
