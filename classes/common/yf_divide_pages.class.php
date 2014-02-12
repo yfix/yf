@@ -43,6 +43,7 @@ class yf_divide_pages {
 		$num_records	= isset($extra['num_records']) ? $extra['num_records'] : ($num_records ? $num_records : 0);
 		$tpls_path		= isset($extra['tpls_path']) ? $extra['tpls_path'] : ($tpls_path ? $tpls_path : ''); 
 		$add_get_vars	= isset($extra['add_get_vars']) ? $extra['add_get_vars'] : ($add_get_vars ? $add_get_vars : 1);
+		$sql_callback	= $extra['sql_callback'];
 		if (!strlen($tpls_path)) {
 			$tpls_path = 'system/divide_pages/';
 		}
@@ -54,7 +55,12 @@ class yf_divide_pages {
 			$_need_std_num_rows		= true;
 			// Try to rewrite query for more speed
 			if ($this->SQL_COUNT_REWRITE) {
-				$modified_sql = 'SELECT COUNT(*) AS `0` FROM ('.$sql.') AS __pager_tmp';
+				// Example of callback: function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
+				if (is_callable($sql_callback)) {
+					$modified_sql = $sql_callback($sql);
+				} else {
+					$modified_sql = 'SELECT COUNT(*) AS `0` FROM ('.$sql.') AS __pager_tmp';
+				}
 				if ($modified_sql != $sql) {
 					$_need_std_num_rows = false;
 				}
