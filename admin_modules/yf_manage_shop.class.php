@@ -298,6 +298,22 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
 	}
 
+	function units() {
+		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function unit_edit() {
+		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function unit_add() {
+		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function unit_delete() {
+		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+	}
+
 	function attributes() {
 		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
 	}
