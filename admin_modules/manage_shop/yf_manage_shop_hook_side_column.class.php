@@ -8,11 +8,11 @@ class yf_manage_shop_hook_side_column {
 			return $this->_product_revisions() . $this->_product_images_revisions();
 		} elseif ($_GET['action'] == 'view_order') {
 			return $this->_order_revisions();
-		} elseif ($_GET['action'] == 'product_revisions') {
+		} elseif ($_GET['action'] == 'product_revisions_view') {
 			return $this->_product_revisions_similar();
-		} elseif ($_GET['action'] == 'product_images_revisions') {
+		} elseif ($_GET['action'] == 'product_images_revisions_view') {
 			return $this->_product_images_revisions_similar();
-		} elseif ($_GET['action'] == 'order_revisions') {
+		} elseif ($_GET['action'] == 'order_revisions_view') {
 			return $this->_order_revisions_similar();
 		}
 		return '';
@@ -33,7 +33,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d')
 			->footer_link('All products revisions', './?object=manage_shop&action=product_revisions')
 		;
 	}
@@ -57,7 +57,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d')
 		;
 	}
 
@@ -86,7 +86,7 @@ class yf_manage_shop_hook_side_column {
 				return $image; 
             }))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_images_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d')
 			->footer_link('All images revisions', './?object=manage_shop&action=product_images_revisions')
 		;
 	}
@@ -110,7 +110,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_images_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d')
 		;
 	}
 
@@ -129,7 +129,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=order_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d')
 			->footer_link('All orders revisions', './?object=manage_shop&action=order_revisions')
 		;
 	}
@@ -153,7 +153,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=order_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d')
 		;
 	}
 

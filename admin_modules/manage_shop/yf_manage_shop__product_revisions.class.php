@@ -145,10 +145,6 @@ class yf_manage_shop__product_revisions {
 	/**
 	 */
 	function product_revisions() {
-		$rev_id = intval($_GET['id']);
-		if ($rev_id) {
-			return $this->product_revisions_view();
-		}
 		return table('SELECT * FROM '.db('shop_product_revisions'), array(
 				'filter' => $_SESSION[$_GET['object'].'__product_revisions'],
 				'filter_params' => array(
@@ -163,7 +159,7 @@ class yf_manage_shop__product_revisions {
 			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d')
 			;
 	}
 
@@ -208,10 +204,6 @@ class yf_manage_shop__product_revisions {
 	/**
 	 */
 	function product_images_revisions() {
-		$rev_id = intval($_GET['id']);
-		if ($rev_id) {
-			return $this->product_images_revisions_view();
-		}
 		return table('SELECT * FROM '.db('shop_product_images_revisions'), array(
 				'filter' => $_SESSION[$_GET['object'].'__product_images_revisions'],
 				'filter_params' => array(
@@ -234,7 +226,7 @@ class yf_manage_shop__product_revisions {
 				return $image; 
             }))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_images_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d')
 			;
 	}
 
@@ -356,10 +348,6 @@ class yf_manage_shop__product_revisions {
 	/**
 	 */
 	function order_revisions() {
-		$rev_id = intval($_GET['id']);
-		if ($rev_id) {
-			return $this->order_revisions_view();
-		}
 		return table('SELECT * FROM '.db('shop_order_revisions'), array(
 				'filter' => $_SESSION[$_GET['object'].'__order_revisions'],
 				'filter_params' => array(
@@ -374,7 +362,7 @@ class yf_manage_shop__product_revisions {
 			->link('item_id', './?object='.$_GET['object'].'&action=view_order&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=order_revisions&id=%d')
+			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d')
 			;
 	}
 
