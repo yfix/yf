@@ -1,6 +1,7 @@
 <?php
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require dirname(__FILE__).'/db_setup.php';
 
 class class_db_test extends PHPUnit_Framework_TestCase {
 	public function test_insert_01() {
