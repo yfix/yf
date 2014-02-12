@@ -103,6 +103,7 @@ class yf_table2 {
 		$pager_num_records = $params['pager_num_records'] ?: 0;
 		$pager_stpl_path = $params['pager_stpl_path'] ?: '';
 		$pager_add_get_vars = $params['pager_add_get_vars'] ?: 1;
+		$pager_extra['sql_callback'] = $params['pager_sql_callback'] ?: null;
 
 		$sql = $this->_sql;
 		$ids = array();
@@ -145,7 +146,7 @@ class yf_table2 {
 					}
 				}
 			}
-			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars);
+			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars, $pager_extra);
 
 			$items = array();
 			$q = $db->query($sql. $add_sql);
