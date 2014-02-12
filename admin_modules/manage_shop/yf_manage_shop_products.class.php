@@ -32,6 +32,7 @@ class yf_manage_shop_products{
 					'update_date'	=> array('field' => 'p.update_date'),
 				),
 				'hide_empty' => 1,
+				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
 			))
 			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
                 $product_id = $row['id'];
