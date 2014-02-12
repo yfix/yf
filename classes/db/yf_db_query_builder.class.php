@@ -60,6 +60,10 @@ class yf_db_query_builder {
 		if (empty($this->_sql['select']) || empty($this->_sql['from'])) {
 			return false;
 		}
+		// HAVING without GROUP BY makes no sense
+		if (!empty($this->_sql['having']) && empty($this->_sql['group_by'])) {
+			unset($this->_sql['having']);
+		}
 		if ($a) {
 			$sql = implode(' ', $a);
 		}
@@ -203,7 +207,7 @@ class yf_db_query_builder {
 						$k2 = trim($k2);
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
-							$a[] = $k2.' AS '.$v2;
+							$a[] = $this->db->_real_name($k2).' AS '.$v2;
 						}
 					}
 				}
@@ -288,7 +292,8 @@ class yf_db_query_builder {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-					$a[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
+#					$a[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
+					$a[] = $v[0]. $v[1]. $this->db->enclose_field_value($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -308,7 +313,7 @@ class yf_db_query_builder {
 	*/
 	function group_by() {
 		$sql = '';
-		$items = array_get_args();
+		$items = func_get_args();
 		if (count($items)) {
 			$a = array();
 			foreach ((array)$items as $k => $v) {
@@ -316,7 +321,8 @@ class yf_db_query_builder {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					$a[] = $this->db->enclose_field_name($v);
+#					$a[] = $this->db->enclose_field_name($v);
+					$a[] = $v;
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $v2) {
 						if (!is_string($v2)) {
@@ -324,58 +330,16 @@ class yf_db_query_builder {
 						}
 						$v2 = trim($v2);
 						if ($v2) {
-							$a[] = $this->db->enclose_field_name($v2);
+#							$a[] = $this->db->enclose_field_name($v2);
+							$a[] = $v2;
 						}
 					}
-				} elseif (is_callable($items)) {
+				} elseif (is_callable($v)) {
 					$a[] = $v($items, $this);
 				}
 			}
 			if ($a) {
 				$sql = 'GROUP BY '.implode(', ', $a);
-			}
-		}
-		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
-		}
-		return $this;
-	}
-
-	/**
-	* Examples: order_by('user_group'), order_by(array('supplier' => 'DESC','manufacturer' => ASC))
-	*/
-	function order_by() {
-		$sql = '';
-		$items = array_get_args();
-		if (count($items)) {
-			$a = array();
-			foreach ((array)$items as $k => $v) {
-				if (is_string($v)) {
-					$v = trim($v);
-				}
-				if (is_string($v) && strlen($v) && !empty($v)) {
-					$a[] = $this->db->enclose_field_name($v).' ASC';
-				} elseif (is_array($v)) {
-					foreach ((array)$v as $k2 => $v2) {
-						if (!is_string($v2)) {
-							continue;
-						}
-						$direction = 'ASC';
-						$v2 = trim($v2);
-						if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
-							$direction = $v2;
-							$v2 = trim($k2);
-						}
-						if ($v2) {
-							$a[] = $v2.' '.strtoupper($direction);
-						}
-					}
-				} elseif (is_callable($items)) {
-					$a[] = $v($items, $this);
-				}
-			}
-			if ($a) {
-				$sql = 'ORDER BY '.implode(', ', $a);
 			}
 		}
 		if ($sql) {
@@ -403,13 +367,57 @@ class yf_db_query_builder {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-					$a[] = $v[0]. $v[1]. $v[2];
+					$a[] = $v[0]. $v[1]. $this->db->enclose_field_value($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
 			}
 			if ($a) {
 				$sql = 'HAVING '.implode(' ', $a);
+			}
+		}
+		if ($sql) {
+			$this->_sql[__FUNCTION__] = $sql;
+		}
+		return $this;
+	}
+
+	/**
+	* Examples: order_by('user_group'), order_by(array('supplier' => 'DESC','manufacturer' => ASC))
+	*/
+	function order_by() {
+		$sql = '';
+		$items = func_get_args();
+		if (count($items)) {
+			$a = array();
+			foreach ((array)$items as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
+				if (is_string($v) && strlen($v) && !empty($v)) {
+#					$a[] = $this->db->enclose_field_name($v).' ASC';
+					$a[] = $v.' ASC';
+				} elseif (is_array($v)) {
+					foreach ((array)$v as $k2 => $v2) {
+						if (!is_string($v2)) {
+							continue;
+						}
+						$direction = 'ASC';
+						$v2 = trim($v2);
+						if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
+							$direction = $v2;
+							$v2 = trim($k2);
+						}
+						if ($v2) {
+							$a[] = $v2.' '.strtoupper($direction);
+						}
+					}
+				} elseif (is_callable($items)) {
+					$a[] = $v($items, $this);
+				}
+			}
+			if ($a) {
+				$sql = 'ORDER BY '.implode(', ', $a);
 			}
 		}
 		if ($sql) {
