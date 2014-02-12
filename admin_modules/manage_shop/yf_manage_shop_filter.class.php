@@ -179,6 +179,8 @@ class yf_manage_shop_filter{
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->container(_class('manage_shop_filter')->_product_search_widget('item_id',$_SESSION[$filter_name]['item_id']),'Item id')						
 					->text('user_id', 'Admin')
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
 					->select_box('action', common()->get_static_conf('product_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1));
 			},					
@@ -190,6 +192,8 @@ class yf_manage_shop_filter{
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('item_id','Order id')						
 					->text('user_id', 'Admin')
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
 					->select_box('action', common()->get_static_conf('order_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1));
 			},					
@@ -201,6 +205,8 @@ class yf_manage_shop_filter{
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'Product id')
 					->text('user_id', 'Admin')
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
 					->select_box('action', common()->get_static_conf('images_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1));
 			},					

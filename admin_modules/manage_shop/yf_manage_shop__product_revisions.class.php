@@ -150,7 +150,7 @@ class yf_manage_shop__product_revisions {
 				'filter_params' => array(
 					'action'	=> array('eq','action'),
 					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('like','add_date'),
+					'add_date'	=> array('dt_between','add_date'),
 					'item_id' 	=> array('eq','item_id'),
 				),
 				'hide_empty' => 1,
@@ -209,7 +209,7 @@ class yf_manage_shop__product_revisions {
 				'filter_params' => array(
 					'action'	=> array('eq','action'),
 					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('like','add_date'),
+					'add_date'	=> array('dt_between','add_date'),
 					'product_id' 	=> array('eq','product_id'),
 				),
 				'hide_empty' => 1,
@@ -353,7 +353,7 @@ class yf_manage_shop__product_revisions {
 				'filter_params' => array(
 					'action'	=> array('eq','action'),
 					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('like','add_date'),
+					'add_date'	=> array('dt_between','add_date'),
 					'item_id' 	=> array('eq','item_id'),
 				),
 				'hide_empty' => 1,
