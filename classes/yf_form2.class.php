@@ -2252,7 +2252,7 @@ class yf_form2 {
 <script type=\"text/javascript\" src=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js\"></script>
 <link rel=\"stylesheet\" type=\"text/css\" href=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css\">
 <div id=\"{$extra['name']}\" class=\"input-append date\">
-    <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\"></input>
+    <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\"></input>
     <span class=\"add-on\">
       <i data-time-icon=\"icon-time\" data-date-icon=\"icon-calendar\"></i>
     </span>		
