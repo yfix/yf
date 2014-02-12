@@ -13,6 +13,7 @@ class yf_manage_shop__product_revisions {
 			'product_to_category' => array('table' => 'shop_product_to_category', 'field' => 'product_id', 'multi' => true),
 			'product_to_region'   => array('table' => 'shop_product_to_region', 'field' => 'product_id', 'multi' => true),
 			'product_related'     => array('table' => 'shop_product_related', 'field' => 'product_id', 'multi' => true),
+			'product_to_unit'       => array('table' => 'shop_product_to_unit', 'field' => 'product_id', 'multi' => true),
 		),
 		'order' => array(
 			'orders'      => array('table' => 'shop_orders', 'field' => 'id', 'multi' => false),

@@ -88,7 +88,8 @@ class yf_manage_shop {
 				$this->_suppliers_for_select[$v['id']] = $v['name'];
 			}
 		}
-
+		$this->_units_for_select = db()->get_2d('SELECT id, title FROM '.db('shop_product_units'));
+		
 		$this->products_img_dir 	= INCLUDE_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
 		$this->products_img_webdir	= WEB_PATH. SITE_UPLOADS_DIR. $this->PROD_IMG_DIR;
 		if (!file_exists($this->products_img_dir)) {
