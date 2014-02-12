@@ -971,6 +971,16 @@ class yf_db {
 	}
 
 	/**
+	* Return database-specific limit of returned rows
+	*/
+	function limit($count, $offset = null) {
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		return $this->db->limit($count, $offset);
+	}
+
+	/**
 	* Enclose field names
 	*/
 	function enclose_field_name($data) {

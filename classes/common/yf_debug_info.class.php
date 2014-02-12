@@ -90,6 +90,7 @@ class yf_debug_info {
 		if (isset($_SESSION['hide_debug_console']) && $_SESSION['hide_debug_console']) {
 			return '';
 		}
+		$debug_timings = array();
 		$methods = array();
 		$class_name = get_class($this);
 		foreach ((array)get_class_methods($class_name) as $method) {
@@ -97,7 +98,9 @@ class yf_debug_info {
 				continue;
 			}
 			$name = substr($method, strlen('_debug_'));
+			$ts2 = microtime(true);
 			$content = $this->$method();
+			$debug_timings[$method] = common()->_format_time_value(microtime(true) - $ts2).' secs';
 			$debug_contents[$name] = $content;
 		}
 		$body .= '<div id="debug_console">';
@@ -121,7 +124,9 @@ class yf_debug_info {
 		}
 
 		$debug_time = round(microtime(true) - $ts, 5);
-		$body .= 'debug console rendering: '.$debug_time.' secs';
+		$body .= 'debug console rendering: '
+				.' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-timings">'.$debug_time.' secs</a>'
+				.'<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>';
 
 		$body .= '<ul class="nav nav-tabs">';
 		$body .= implode(PHP_EOL, $links);
@@ -227,7 +232,7 @@ class yf_debug_info {
 			'php_uname'				=> php_uname(),
 			'php_include_path'		=> get_include_path(),
 			'php_loaded_extensions'	=> implode(', ', get_loaded_extensions()),
-			'php_ini_scanned_files'	=> nl2br(php_ini_scanned_files()),
+			'php_ini_scanned_files'	=> php_ini_scanned_files(),
 		);
 		foreach ((array)ini_get_all('session') as $k => $v) {
 			$data['session'][$k] = $v['local_value'];
@@ -241,7 +246,7 @@ class yf_debug_info {
 			->row_end()
 		;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-lg-6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1)).'</div>';
+			$body .= '<div class="span6 col-lg-6">'.$this->_show_key_val_table(_prepare_html($_data), array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -259,9 +264,9 @@ class yf_debug_info {
 			if (isset($instances_trace[$k])) {
 				$connect_trace = $instances_trace[$k];
 			}
+// TODO: use subtabs here for different db instances
 			$body .= $this->_do_debug_db_connection_queries($v, $connect_trace);
 		}
-// TODO: db()->_SHUTDOWN_QUERIES;
 		return $body;
 	}
 
@@ -355,16 +360,26 @@ class yf_debug_info {
 
 	/**
 	*/
+	function _debug_db_shutdown () {
+		if (!$this->_SHOW_DB_QUERY_LOG) {
+			return '';
+		}
+		return $this->_show_key_val_table(db()->_SHUTDOWN_QUERIES);
+	}
+
+	/**
+	*/
 	function _debug_db_stats () {
 		if (!$this->_SHOW_DB_STATS) {
 			return '';
 		}
 // TODO: add support for multiple instances and multiple drivers
+// TODO: use subtabs here for different db instances
 		$data['stats'] = db()->get_2d('SHOW SESSION STATUS');
 		$data['vars'] = db()->get_2d('SHOW VARIABLES');
 #		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+			$body .= '<div class="span10 col-lg-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -564,7 +579,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_GET_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_GET, array('escape' => 1));
+		return $this->_show_key_val_table($_GET);
 	}
 
 	/**
@@ -573,7 +588,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_POST_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_POST, array('escape' => 1));
+		return $this->_show_key_val_table($_POST);
 	}
 
 	/**
@@ -582,7 +597,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_COOKIE_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_COOKIE, array('escape' => 1));
+		return $this->_show_key_val_table($_COOKIE);
 	}
 
 	/**
@@ -591,7 +606,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_REQUEST_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_REQUEST, array('escape' => 1));
+		return $this->_show_key_val_table($_REQUEST);
 	}
 
 	/**
@@ -600,7 +615,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_FILES_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_FILES, array('escape' => 1));
+		return $this->_show_key_val_table($_FILES);
 	}
 
 	/**
@@ -613,7 +628,7 @@ class yf_debug_info {
 		foreach ((array)$items as $k => $v) {
 			$items[$k] = array(
 				'key' => $k,
-				'value' => '<pre>'.var_export($v, 1).'</pre>',
+				'value' => '<pre>'._prepare_html(var_export($v, 1)).'</pre>',
 			);
 		}
 		return $this->_show_auto_table($items, array('first_col_width' => '1%'));
@@ -625,7 +640,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_SERVER_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_SERVER, array('escape' => 1));
+		return $this->_show_key_val_table($_SERVER);
 	}
 
 	/**
@@ -634,7 +649,7 @@ class yf_debug_info {
 		if (!$this->_SHOW_ENV_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_ENV, array('escape' => 1));
+		return $this->_show_key_val_table($_ENV);
 	}
 
 	/**
@@ -664,7 +679,7 @@ class yf_debug_info {
 
 		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec<br>';
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
+			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table(_prepare_html($_data), array('no_total' => 1, 'no_escape' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -690,14 +705,14 @@ class yf_debug_info {
 				unset($items[$id]);
 				continue;
 			}
-			$item['results'] = '<pre>'.var_export($item['results'], 1).'</pre>';
-			$item['meta'] = '<pre>'.var_export($item['meta'], 1).'</pre>';
-			$item['describe'] = '<pre>'.var_export($item['describe'], 1).'</pre>';
+			$item['results'] = '<pre>'._prepare_html(var_export($item['results'], 1)).'</pre>';
+			$item['meta'] = '<pre>'._prepare_html(var_export($item['meta'], 1)).'</pre>';
+			$item['describe'] = '<pre>'._prepare_html(var_export($item['describe'], 1)).'</pre>';
 			$items[$id] = array('id' => $id) + $item;
 		}
 #		$body .= '<i>'.t('Total time').': '.common()->_format_time_value($total_time).' secs';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
-		$body .= $sphinx_connect_debug ? '<pre>'.print_r($sphinx_connect_debug, 1).'</pre>' : '';
+		$body .= $sphinx_connect_debug ? '<pre>'._prepare_html(var_export($sphinx_connect_debug, 1)).'</pre>' : '';
 		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
 		return $body;
 	}
@@ -712,7 +727,7 @@ class yf_debug_info {
 		if (!isset(main()->modules['ssh'])) {
 			return '';
 		}
-		return $this->_show_key_val_table(_class('ssh')->_debug, array('escape' => 1));
+		return $this->_show_key_val_table(_class('ssh')->_debug);
 	}
 
 	/**
@@ -726,7 +741,7 @@ class yf_debug_info {
 		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
 			$eaccel_stats[$_k] = $_v['local_value'];
 		}
-		return $this->_show_key_val_table($eaccel_stats, array('escape' => 1));
+		return $this->_show_key_val_table($eaccel_stats);
 	}
 
 	/**
@@ -740,7 +755,7 @@ class yf_debug_info {
 #		foreach ((array)ini_get_all('apc') as $_k => $_v) {
 #			$data[$_k] = $_v['local_value'];
 #		}
-#		return $this->_show_key_val_table($data, array('escape' => 1));
+#		return $this->_show_key_val_table($data);
 	}
 
 	/**
@@ -753,7 +768,7 @@ class yf_debug_info {
 #		foreach ((array)ini_get_all('xcache') as $_k => $_v) {
 #			$data[$_k] = $_v['local_value'];
 #		}
-#		return $this->_show_key_val_table($data, array('escape' => 1));
+#		return $this->_show_key_val_table($data);
 	}
 
 	/**
@@ -824,7 +839,7 @@ class yf_debug_info {
 		foreach ((array)$items as $k => $v) {
 			$items[$k] = array(
 				'id' => $k + 1,
-				'info' => '<pre>'.var_export($v['info'], 1).'</pre>',
+				'info' => '<pre>'._prepare_html(var_export($v['info'], 1)).'</pre>',
 				'trace'	=> $v['trace'],
 			);
 		}
@@ -839,8 +854,8 @@ class yf_debug_info {
 		}
 		$items = $this->_get_debug_data('form2');
 		foreach ((array)$items as $k => $v) {
-			$v['params'] = '<pre>'.var_export($v['params'], 1).'</pre>';
-			$v['fields'] = '<pre>'.var_export($v['fields'], 1).'</pre>';
+			$v['params'] = '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>';
+			$v['fields'] = '<pre>'._prepare_html(var_export($v['fields'], 1)).'</pre>';
 			$items[$k] = array('id' => ++$i) + $v;
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'fields' => 'params')));
@@ -854,14 +869,14 @@ class yf_debug_info {
 		}
 		$items = $this->_get_debug_data('table2');
 		foreach ((array)$items as $k => $v) {
-			$v['params'] = '<pre>'.var_export($v['params'], 1).'</pre>';
-			$v['fields'] = '<pre>'.var_export($v['fields'], 1).'</pre>';
-			$v['buttons'] = '<pre>'.var_export($v['buttons'], 1).'</pre>';
+			$v['params'] = '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>';
+			$v['fields'] = '<pre>'._prepare_html(var_export($v['fields'], 1)).'</pre>';
+			$v['buttons'] = '<pre>'._prepare_html(var_export($v['buttons'], 1)).'</pre>';
 			if ($v['header_links']) {
-				$v['header_links'] = '<pre>'.var_export($v['header_links'], 1).'</pre>';
+				$v['header_links'] = '<pre>'._prepare_html(var_export($v['header_links'], 1)).'</pre>';
 			}
 			if ($v['footer_links']) {
-				$v['footer_links'] = '<pre>'.var_export($v['footer_links'], 1).'</pre>';
+				$v['footer_links'] = '<pre>'._prepare_html(var_export($v['footer_links'], 1)).'</pre>';
 			}
 			$items[$k] = array('id' => ++$i) + $v;
 		}
@@ -876,10 +891,10 @@ class yf_debug_info {
 		}
 		$items = $this->_get_debug_data('dd_table');
 		foreach ((array)$items as $k => $v) {
-			$v['fields'] = '<pre>'.var_export($v['fields'], 1).'</pre>';
-			$v['extra'] = '<pre>'.var_export($v['extra'], 1).'</pre>';
+			$v['fields'] = '<pre>'._prepare_html(var_export($v['fields'], 1)).'</pre>';
+			$v['extra'] = '<pre>'._prepare_html(var_export($v['extra'], 1)).'</pre>';
 			if ($v['field_types']) {
-				$v['field_types'] = '<pre>'.var_export($v['field_types'], 1).'</pre>';
+				$v['field_types'] = '<pre>'._prepare_html(var_export($v['field_types'], 1)).'</pre>';
 			}
 			$items[$k] = array('id' => ++$i) + $v;
 		}
@@ -896,7 +911,46 @@ class yf_debug_info {
 			}
 			$items[$k] = $v;
 		}
-		return $this->_show_key_val_table($items, array('escape' => 1));
+		return $this->_show_key_val_table($items);
+	}
+
+	/**
+	*/
+	function _debug_profiling () {
+		$all_timings = main()->_timing;
+		if (!$all_timings) {
+			return false;
+		}
+		$ts = main()->_time_start;
+		$_last_item = end($all_timings);
+		$time_all = $_last_item[0] - $ts;
+		$items = array();
+		foreach ((array)$all_timings as $i => $v) {
+			$time_offset = $v[0] - $ts;
+			$time_change = '';
+			$time_change_p = '';
+			if (isset($all_timings[$i + 1])) {
+				$time_change = $all_timings[$i + 1][0] - $v[0];
+			}
+			$time_warning = false;
+			if ($time_change > 0.001) {
+				$time_change_p = round(100 - (($time_all - $time_change) / $time_all * 100), 1);
+				if ($time_change_p >= 5) {
+					$time_warning = true;
+				}
+			}
+			$items[] = array(
+				'i'				=> $i,
+				'time_offset'	=> common()->_format_time_value($time_offset),
+				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
+				'time_change_p'	=> $time_change_p ? '<span class="'.($time_warning ? 'label label-warning' : '').'">'.$time_change_p.'%</span>' : '',
+				'class'			=> $v[1],
+				'method'		=> $v[2],
+				'trace'			=> $v[3],
+				'args'			=> $v[4] ? _prepare_html(var_export($v[4], 1)) : '',
+			);
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'args')));
 	}
 
 	/**
@@ -910,7 +964,7 @@ class yf_debug_info {
 			}
 			$items[$module_name] = $module_obj->$hook_name($this);
 		}
-		return $this->_show_key_val_table($items, array('escape' => 1));
+		return $this->_show_key_val_table($items);
 	}
 
 	/**
@@ -925,6 +979,10 @@ class yf_debug_info {
 		if (is_array($a) && !$params['no_sort']) {
 			ksort($a);
 		}
+		// Escape by default
+		if (!$params['no_escape']) {
+			$params['escape'] = 1;
+		}
 		$items = array();
 		foreach ((array)$a as $k => $v) {
 			if ($params['skip_empty_values'] && !$v) {
@@ -938,6 +996,9 @@ class yf_debug_info {
 		}
 		if (!$items) {
 			return false;
+		}
+		if ($params['escape']) {
+			$params['no_escape'] = 1; // Means we already escaped here
 		}
 		return $this->_show_auto_table($items, $params);
 	}
@@ -954,7 +1015,11 @@ class yf_debug_info {
 		foreach ($items as &$item) {
 			foreach ($item as $k => &$v) {
 				if (is_array($v)) {
-					$v = !empty($v) ? print_r($v, 1) : '';
+// TODO: add auto-escape here, but need to test before
+					$v = !empty($v) ? var_export($v, 1) : '';
+					if (!$params['no_escape']) {
+						$v = _prepare_html($v);
+					}
 				}
 				if ($k == 'time') {
 					$total_time += $v;

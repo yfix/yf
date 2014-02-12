@@ -62,13 +62,14 @@ class yf_settings {
 			if ($to_save) {
 				$saved_settings_content = '<'.'?php'.PHP_EOL.implode(PHP_EOL, $to_save).PHP_EOL;
 				$saved_settings_file = PROJECT_PATH.'saved_settings.php';
-				common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'._prepare_html($saved_settings_content).'</pre>');
+				common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'.str_replace('_', '&#95;', _prepare_html($saved_settings_content)).'</pre>');
 				file_put_contents($saved_settings_file, $saved_settings_content);
 				return js_redirect('./?object='.$_GET['object']);
 			}
 		}
 		$a = array(
 			'row_start',
+				array('link', 'display_what', './?object='.$_GET['object'].'&action=display_what', array('no_text' => 1, 'icon' => 'icon-edit')),
 				array('save'),
 				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn btn-default')), // TODO: link, method, icon
 			'row_end',
@@ -105,6 +106,40 @@ class yf_settings {
 	function cache_purge() {
 		$result = _class('cache')->_clear_all();
 		return js_redirect('./?object='.$_GET['object']);
+	}
+
+	/**
+	*/
+	function display_what() {
+		$hooks_data = _class('common_admin')->call_hooks('settings', $r);
+		$names = array();
+		foreach ((array)$hooks_data as $k => $v) {
+			list($module_name,) = explode('___', $k);
+			$names[] = ++$i.' '.t($module_name).' ('.count($v).')';
+		}
+		return form($a, array('legend' => 'Settings items'))
+			->container('
+<script type="text/javascript">
+$(function() {
+	var myapp = angular.module("myapp", ["ui"]);
+	myapp.controller("controller", function ($scope) {
+		$scope.list = '.($names ? json_encode($names) : '[]').';
+		$("#settings-sortable-container").find("ul").show().sortable().end().find("#settings-spinner").hide();
+		$(this).closest("form").on("submit", function(){
+			return false;
+		})
+	});
+	angular.bootstrap(document, ["myapp"]);
+})
+</script>
+<div ng:controller="controller" class="span6" id="settings-sortable-container">
+	<i class="icon icon-spinner icon-spin icon-2x" id="settings-spinner"></i>
+    <ul ng:model="list" class="nav nav-pills nav-stacked" id="sortable_settings" style="display:none;">
+        <li ng:repeat="item in list" class="item"><a><i class="icon icon-move"></i> {{item}} <input type="checkbox" style="float:right;"></a></li>
+    </ul>
+</div>
+			', array('wide' => 1))
+			->save();
 	}
 
 	/**
@@ -163,6 +198,7 @@ class yf_settings {
 		$selected['site_maintenance'] = conf('site_maintenance') ?: 0;
 		$selected['main[USE_SYSTEM_CACHE]'] = module_conf('main', 'USE_SYSTEM_CACHE') || (defined('USE_CACHE') && USE_CACHE) ?: 0; // TODO: unify and simplify
 		$selected['cache[DRIVER]'] = module_conf('cache', 'DRIVER') ?: 'memcache';
+		$selected['main[ALLOW_DEBUG_PROFILING]'] = main()->ALLOW_DEBUG_PROFILING;
 
 		return array(
 			array('yes_no_box', 'site_maintenance', array('tip' => '')),
@@ -170,6 +206,7 @@ class yf_settings {
 			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
 #			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
 			array('select_box', 'css_framework', $this->css_frameworks, array('show_text' => 1)), // TODO: link to edit
+			array('yes_no_box', 'main[ALLOW_DEBUG_PROFILING]', array('desc' => 'Use built-in code profiling (Works only in DEBUG_MODE)')),
 /*
 #			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
 			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit

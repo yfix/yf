@@ -76,9 +76,11 @@ class yf_manage_shop__product_revisions {
 		if ($action != 'delete') {
 			$revision_sql = 'SELECT item_id, data FROM (SELECT item_id, data FROM '.$revision_db.' WHERE item_id IN ('.$ids_with_comma.') ORDER BY id DESC) as r GROUP BY item_id';
 			$all_last_revision = db()->get_2d($revision_sql);
-
 			foreach ($this->all_queries[$type] as $key => $info) {
 				$sql_res = db()->query('SELECT * FROM '.db($info['table']).' WHERE '.$info['field'].' IN ('.$ids_with_comma.');');
+				foreach($ids as $k => $id){
+					$all_data[$id][$key] = array();
+				}
 				while ($row = db()->fetch_assoc($sql_res)) {
 					$complex_key = $row[$info['field']];
 					if ($info['multi']) {
@@ -146,7 +148,16 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->product_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_product_revisions').' ORDER BY id DESC')
+		return table('SELECT * FROM '.db('shop_product_revisions'), array(
+				'filter' => $_SESSION[$_GET['object'].'__product_revisions'],
+				'filter_params' => array(
+					'action'	=> array('eq','action'),
+					'user_id'	=> array('eq','user_id'),
+					'add_date'	=> array('like','add_date'),
+					'item_id' 	=> array('eq','item_id'),
+				),
+				'hide_empty' => 1,
+			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
@@ -200,7 +211,16 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->product_images_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_product_images_revisions').' ORDER BY id DESC')
+		return table('SELECT * FROM '.db('shop_product_images_revisions'), array(
+				'filter' => $_SESSION[$_GET['object'].'__product_images_revisions'],
+				'filter_params' => array(
+					'action'	=> array('eq','action'),
+					'user_id'	=> array('eq','user_id'),
+					'add_date'	=> array('like','add_date'),
+					'product_id' 	=> array('eq','product_id'),
+				),
+				'hide_empty' => 1,
+			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('product_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
@@ -318,7 +338,9 @@ class yf_manage_shop__product_revisions {
 			if(!$multi){
 				db()->update_safe($table, $array, $field.'='.$array['id']);
 			}else{
-				db()->update_batch_safe($table, $array, $field);
+				db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$product_id);
+				if(!empty($array))
+					db()->insert_safe($table, $array);
 			}
 		}
 		module('manage_shop')->_product_add_revision('checkout', $product_id);
@@ -337,7 +359,16 @@ class yf_manage_shop__product_revisions {
 		if ($rev_id) {
 			return $this->order_revisions_view();
 		}
-		return table('SELECT * FROM '.db('shop_order_revisions').' ORDER BY id DESC')
+		return table('SELECT * FROM '.db('shop_order_revisions'), array(
+				'filter' => $_SESSION[$_GET['object'].'__order_revisions'],
+				'filter_params' => array(
+					'action'	=> array('eq','action'),
+					'user_id'	=> array('eq','user_id'),
+					'add_date'	=> array('like','add_date'),
+					'item_id' 	=> array('eq','item_id'),
+				),
+				'hide_empty' => 1,
+			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('item_id', './?object='.$_GET['object'].'&action=view_order&id=%d')
 			->admin('user_id', array('desc' => 'admin'))
@@ -404,7 +435,9 @@ class yf_manage_shop__product_revisions {
 			if(!$multi){
 				db()->update_safe($table, $array, $field.'='.$array['id']);
 			}else{
-				db()->insert_safe($table, $array);
+				db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$product_id);
+				if(!empty($array))
+					db()->insert_safe($table, $array);
 			}
 		}
 		module('manage_shop')->_order_add_revision('checkout', $order_id);

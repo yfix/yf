@@ -1,4 +1,3 @@
 <?php
 
-$Q = db()->query("SELECT * FROM ".db("settings")."");
-while ($A = db()->fetch_assoc($Q)) $data[$A["item"]] = $A["value"];
+$data = db()->get_2d('SELECT item, value FROM '.db('settings'));

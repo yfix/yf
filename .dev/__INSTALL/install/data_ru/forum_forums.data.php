@@ -1,0 +1,43 @@
+<?php
+$data = array (
+  1 => 
+  array (
+    'id' => '1',
+    'parent' => '0',
+    'category' => '1',
+    'name' => 'Test forum',
+    'desc' => 'First auto-created test forum',
+    'created' => '1207235933',
+    'status' => 'a',
+    'icon' => '',
+    'order' => '0',
+    'num_views' => '0',
+    'num_topics' => '0',
+    'num_posts' => '0',
+    'last_post_id' => '0',
+    'last_post_date' => '0',
+    'language' => '0',
+    'options' => '',
+    'user_groups' => '',
+  ),
+  2 => 
+  array (
+    'id' => '2',
+    'parent' => '0',
+    'category' => '1',
+    'name' => 'friends',
+    'desc' => 'forum for friends',
+    'created' => '0',
+    'status' => 'a',
+    'icon' => '',
+    'order' => '2',
+    'num_views' => '0',
+    'num_topics' => '3',
+    'num_posts' => '9',
+    'last_post_id' => '21',
+    'last_post_date' => '1207837409',
+    'language' => '0',
+    'options' => '',
+    'user_groups' => '',
+  ),
+);
